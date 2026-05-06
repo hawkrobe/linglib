@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.Computability.MyhillNerode
 import Mathlib.Data.Finite.Prod
+import Mathlib.Data.Set.Finite.Range
 import Mathlib.GroupTheory.Congruence.Hom
 
 /-!
@@ -237,5 +238,42 @@ theorem IsRegular.finite_syntacticMonoid {L : Language α} (h : L.IsRegular) :
          b ∈ L.leftQuotient (a ++ FreeMonoid.toList v)
     rw [key]
   exact Finite.of_injective phi phi_inj
+
+-- ============================================================================
+-- § 4. Finite syntactic monoid ⟹ regularity (reverse Myhill direction)
+-- ============================================================================
+
+/-- **Myhill direction B**: a language with finite syntactic monoid is
+regular. Composes with mathlib's `Language.IsRegular.of_finite_range_leftQuotient`
+via the canonical factoring of `L.leftQuotient` through the syntactic
+monoid: `L.leftQuotient` is constant on syntactic-equivalence classes
+(by `SyntacticEquiv.leftQuotient_eq`), so it descends to a function
+`f : L.syntacticMonoid → Language α` whose range coincides with
+`Set.range L.leftQuotient`. Finiteness of `L.syntacticMonoid` then
+implies `Set.Finite (Set.range f) = Set.Finite (Set.range L.leftQuotient)`
+via `Set.finite_range`, closing the right-Nerode finiteness condition. -/
+theorem IsRegular.of_finite_syntacticMonoid {L : Language α}
+    [Finite L.syntacticMonoid] : L.IsRegular := by
+  apply Language.IsRegular.of_finite_range_leftQuotient
+  -- The forgetful map `[u] ↦ L.leftQuotient u`, well-defined on classes.
+  let f : L.syntacticMonoid → Language α := fun cls =>
+    Quotient.liftOn' cls L.leftQuotient
+      (fun _ _ huv => SyntacticEquiv.leftQuotient_eq huv)
+  -- `Set.range L.leftQuotient = Set.range f` (factorisation through quotient).
+  have hrange : Set.range L.leftQuotient = Set.range f := by
+    ext L'
+    refine ⟨fun ⟨u, hu⟩ => ⟨(syntacticCon L).toQuotient u, hu⟩, ?_⟩
+    rintro ⟨cls, hcls⟩
+    induction cls using Quotient.inductionOn' with
+    | _ u => exact ⟨u, hcls⟩
+  rw [hrange]
+  exact Set.finite_range f
+
+/-- **Myhill–Nerode (syntactic-monoid form)**: a language is regular iff
+its syntactic monoid is finite. The bidirectional bundling of
+`IsRegular.finite_syntacticMonoid` and `IsRegular.of_finite_syntacticMonoid`. -/
+theorem isRegular_iff_finite_syntacticMonoid {L : Language α} :
+    L.IsRegular ↔ Finite L.syntacticMonoid :=
+  ⟨IsRegular.finite_syntacticMonoid, fun _ => IsRegular.of_finite_syntacticMonoid⟩
 
 end Language
