@@ -1388,6 +1388,7 @@ theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
     (h_α_ne_Tj : α_t ≠ T_j)
     (h_β_ne_Ti : β ≠ T_i)
     (h_β_ne_Tj : β ≠ T_j)
+    (h_α_ne_β : α_t ≠ β)
     (h_distinct : T_i ≠ T_j) :
     mergeOp (R := R) α_t β
         (forestToHc ({T_i, T_j} : TraceForest α Unit))
@@ -1516,45 +1517,45 @@ theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
         rw [h_eq]
         exact Multiset.mem_cons_self _ _
       rcases Multiset.mem_add.mp h_α_mem with h | h
-      · -- α ∈ cf(c) where c : CutShape T_i. Need: c is the unique cut producing {α},
-        -- but c ≠ c_α. Hmm — α ∈ cf(c) doesn't directly imply cf(c) = {α}.
-        -- Need a more careful argument: cf(c) + cf(c') = {α, β}, T_i ∉ each cf
-        -- (h_α_ne_Ti irrelevant; not_mem_cutForest_self gives T_i ∉ cf(c); h_T_j_no_α
-        -- gives α ∉ cf(c') for c' on T_j. So if α ∈ LHS, must be in cf(c). And then
-        -- cf(c) ⊆ {α, β}: each elt is α or β. β ∉ cf(c) (h_T_i_no_β). So cf(c) = {α}
-        -- as a multiset (multiplicity issues handled). Then cf(c) = {α} contradicts
-        -- h_unique_α with hc_ne.
-        --
-        -- Element-level: since cf(c) ⊆ {α, β} (every elt of cf(c) is in {α, β});
-        -- elts can't be β (h_T_i_no_β); so cf(c) is a multiset of α's.
-        -- Then cf(c') = {α, β} - cf(c). T_i ∉ cf(c') (h_T_j_no_T_i isn't a hypothesis
-        -- for 3(b); we have h_T_j_no_α). So cf(c') has no α: but it contains
-        -- {α, β} - cf(c). If cf(c) = {} then cf(c') = {α, β} contains α — bad.
-        -- If cf(c) = {α} then cf(c') = {β}, fine BUT then cf(c) = {α} contradicts h_unique_α.
-        -- If cf(c) = {α, α} then cf(c') = {β} - {α} which doesn't make sense.
-        -- The clean version: derive cf(c) = {α} from the multiset constraint, then
-        -- contradict h_unique_α.
-        --
-        -- Actually let me approach differently: we have cf(c) + cf(c') = {α, β}, so
-        -- cf(c) ≤ {α, β}. Sub-multisets of {α, β} are: 0, {α}, {β}, {α, β}.
-        -- Claim: cf(c) = {α}.
-        --   - cf(c) = 0: then cf(c') = {α, β}, but α ∉ cf(c') (h_T_j_no_α). Contradiction.
-        --   - cf(c) = {α}: gives c = c_α by h_unique_α (NO — h_unique_α says other direction)
-        --     Hmm h_unique_α says: ∀ c ≠ c_α, cf(c) ≠ {α}. So if cf(c) = {α} and c ≠ c_α,
-        --     contradiction.
-        --   - cf(c) = {β}: but β ∉ cf(c) (h_T_i_no_β). Contradiction.
-        --   - cf(c) = {α, β}: contains β, contradiction.
-        --
-        -- So cf(c) = {α} and we can apply h_unique_α.
-        --
-        -- This requires `Multiset.le_iff_subset` for finite-cardinality multisets, or a
-        -- direct case analysis. Let me write it.
+      · -- α_t ∈ cf(c). Show cf(c) = {α_t} via element-count analysis on
+        -- cf(c) + cf(c') = {α_t, β}, then contradict h_unique_α.
         apply h_unique_α c hc_ne
-        -- Goal: cf(c) = {α}
-        -- Have: cf(c) + cf(c') = {α, β}, α ∈ cf(c)
-        -- Strategy: case-split on cf(c)'s sub-multiset relation to {α, β}.
-        -- Hmm this is getting painful. Let me sorry it.
-        sorry
+        -- Strategy: prove cf(c) = {α_t} by Multiset.ext (count-equality on each x).
+        apply Multiset.ext.mpr
+        intro x
+        -- Both sides have count 0 except at x = α_t (count 1).
+        -- count x (cf(c) + cf(c')) = count x cf(c) + count x cf(c') = count x {α_t, β}.
+        have h_count_sum := congrArg (Multiset.count x) h_eq
+        rw [Multiset.count_add] at h_count_sum
+        by_cases hx_α : x = α_t
+        · -- x = α_t: count α_t in cf(c) = 1.
+          subst hx_α
+          rw [Multiset.count_singleton_self]
+          -- count x ({x, β}) = 1 (since x ≠ β; here `x` is α_t after subst)
+          have h_count_target :
+              Multiset.count x (({x, β} : TraceForest α Unit)) = 1 := by
+            simp [Multiset.count_cons_self, Multiset.count_singleton, h_α_ne_β]
+          rw [h_count_target] at h_count_sum
+          -- count x (cf c') = 0 (h_T_j_no_α)
+          have h_count_c' : Multiset.count x (CutShape.cutForest c') = 0 :=
+            Multiset.count_eq_zero.mpr (h_T_j_no_α c')
+          rw [h_count_c', add_zero] at h_count_sum
+          exact h_count_sum
+        · -- x ≠ α_t: count = 0 in {α_t}; need count = 0 in cf(c).
+          rw [Multiset.count_singleton]
+          rw [if_neg hx_α]
+          by_cases hx_β : x = β
+          · -- x = β: count β cf(c) = 0 by h_T_i_no_β
+            subst hx_β
+            exact Multiset.count_eq_zero.mpr (h_T_i_no_β c)
+          · -- x ∉ {α_t, β}: count x {α_t, β} = 0, so count x cf(c) = 0.
+            have h_count_target_zero :
+                Multiset.count x (({α_t, β} : TraceForest α Unit)) = 0 := by
+              show Multiset.count x (α_t ::ₘ ({β} : TraceForest α Unit)) = 0
+              rw [Multiset.count_cons, Multiset.count_singleton,
+                  if_neg hx_α, if_neg hx_β]
+            rw [h_count_target_zero] at h_count_sum
+            exact (Nat.add_eq_zero_iff.mp h_count_sum).1
       · exact h_T_j_no_α c' h
     · intro h; exact absurd (Finset.mem_univ _) h
   rw [h_pp, h_ps, h_sp, h_ss]
