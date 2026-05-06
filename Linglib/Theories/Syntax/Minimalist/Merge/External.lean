@@ -483,11 +483,11 @@ theorem mergeOp_eps_zero_factor_out_singleton {R : Type*} [CommSemiring R]
   rw [mul_comm]
   rfl
 
-/-- **Phase 7d limit theorem (general F̂)**: at ε = 0, the cost-weighted Merge
-    operator on workspace `{S, S'} + F̂` produces `forestToHc ({.node S S'} + F̂)`
-    under just the **no-duplicate-component** hypothesis (`S, S' ∉ F̂`) — the
-    `no_cut_*` clauses of `MergeTargetFreeWorkspace` are derived from cost
-    minimization. -/
+/-- **Cost-derived EM Case 1 with arbitrary residual F̂.** At ε = 0, the
+    cost-weighted Merge operator on workspace `{S, S'} + F̂` produces
+    `forestToHc ({.node S S'} + F̂)` under just the **no-duplicate-component**
+    hypothesis (`S, S' ∉ F̂`) — the `no_cut_*` clauses of `CutAvoidingForest`
+    are derived from cost minimization (Sideward weights ε^d → 0). -/
 theorem mergeOp_eps_zero_residual {R : Type*} [CommSemiring R]
     {α : Type*} [DecidableEq α]
     {S S' : TraceTree α Unit} {Fhat : TraceForest α Unit}

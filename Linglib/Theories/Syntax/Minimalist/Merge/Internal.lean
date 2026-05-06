@@ -1,5 +1,4 @@
 import Linglib.Theories.Syntax.Minimalist.Merge.External
-import Linglib.Core.Algebra.ConnesKreimer.LaurentScalars
 
 /-!
 # Internal Merge bridge: algebraic ↔ linguistic
@@ -263,35 +262,39 @@ theorem mergeOp_im_matches_Step
   -- toHc_node: (.node a b).toHc = .node a.toHc b.toHc
   rfl
 
-/-! ## §4: Phase 7g — IM cost-survival at ε = 0 (M-C-B Prop 1.5.1 bullet 3)
+/-! ## §4: IM cost-survival at ε = 0 (M-C-B Prop 1.5.1 bullet 3)
 
-@cite{marcolli-chomsky-berwick-2025} Proposition 1.5.1 (book p. 60) says
-that "in the limit ε → 0, only derivations in which all the Merge
-operations are Internal Merge and External Merge remain." The Sideward
-suppression direction is proven in `Sideward.lean` §4.1
-(`mergeOp_eps_zero_for_sideward_*`); this section proves the
-**positive direction for IM**: IM via composition at ε = 0 produces a
-non-zero result (weight 1).
+@cite{marcolli-chomsky-berwick-2025} Proposition 1.5.1 says: "in the
+limit ε → 0, only derivations in which all the Merge operations are
+Internal Merge and External Merge remain." Sideward suppression is
+proven in `Sideward.lean` §4.1; this section proves the **IM positive
+direction** — IM via composition at ε = 0 produces a non-zero result
+(weight 1).
 
-**Why MCB rule 2 (negative quotient weight) is not needed in this proof.**
-The original audit (CHANGELOG 0.230.812) anticipated needing
-`LaurentPolynomial`-coefficient substrate for rule 2's `ε^{-d_v}` quotient
-weight. On closer reading of MCB §1.5.3 proof (book p. 60), the IM cost
-calculation `c(ℳ(T_v, T_i/T_v)) = c(T_v) + c(T_i/T_v) = d_v − d_v = 0`
-is **operationally redundant with rule 4** (`c(ℳ(T, 1)) = 0`):
+Operationally, IM's cost-zero status follows from rule 4
+(`c(ℳ(T, 1)) = 0`) for stage 1 plus rule 5 (member-depth 0) for stage 2,
+with no need for rule 2's negative quotient weight `ε^{-d_v}` to be
+separately tracked in substrate.
 
-- Stage 1 = `ℳ(T_v, 1)`: rule 4 gives cost 0 directly (regardless of T_v's
-  depth). Substrate-side: `mergeOpUnit` has no ε parameter — intrinsically
-  unweighted, matching rule 4.
-- Stage 2 = `ℳ(T_v, T_i/T_v)`: stage 1's output workspace `{T_v, T_i/T_v}`
-  has both operands as members at depth 0. Rule 5 gives cost 0 + 0 = 0.
-  Substrate-side: `mergeOp_eps_zero_pair` (already proven).
+**Caveat (MCB virtual-particles, §1.4.3).** Our two-stage realization
+materializes the workspace `{T_v, T_i/T_v}` between stages 1 and 2,
+whereas MCB's signed-weight cost calculation `c(ℳ(T_v, T_i/T_v)) =
+d_v − d_v = 0` works directly on a single `ℳ` action without
+instantiating the intermediate workspace. The two formulations agree
+numerically; the operational substitution requires accepting `ℳ_{β,1}`
+as a (virtual) intermediate stage. See @cite{marcolli-chomsky-berwick-2025}
+on the "virtual particles" caveat for the unit-stage operator.
 
-So IM cost-survival follows from existing substrate without LaurentPolynomial
-coefficients. The `LaurentScalars.lean` substrate is still useful for any
-future deeper-cost analysis (e.g., a unified Laurent-polynomial-weighted
-operator for the full Prop 1.5.1 statement), but is not load-bearing for
-the IM-specific positive direction proven here.
+**Scope.** This section directly realizes Prop 1.5.1 bullets 1+3 (cost-0
+characterization + ε=0 limit) at the per-merge level. Bullet 2 ("for ε < 1,
+IM/EM are leading-order terms in any derivation") follows compositionally
+from bullet 3 plus non-negativity of the cost weights: each merge step's
+constant (ε^0) coefficient is non-zero for EM/IM (this section + EM
+analogues in `External.lean`) and zero for Sideward (`Sideward.lean` §4.1),
+so a derivation chain's constant coefficient equals the product of
+per-step constant coefficients — yielding the EM/IM-only contribution.
+The chain-level bullet 2 statement is queued as a small follow-up
+(induction over the derivation chain length).
 -/
 
 /-- **IM cost-survival, ε = 0** (M-C-B Prop 1.5.1 bullet 3, IM positive

@@ -130,7 +130,7 @@ open ConnesKreimer
 /-- Forgetful map from `SyntacticObjectH = DecoratedTree LIToken` back
     to plain `SyntacticObject`: returns `none` if any trace leaf
     survives, otherwise `some` the reconstructed trace-free tree.
-    Used by `MergeAction.lean` to bridge the Hopf side to `Step.apply`
+    Used by `Merge.External` / `Merge.Internal` to bridge the Hopf side to `Step.apply`
     (which operates on `SyntacticObject`).
 
     Plain function rather than dot-notation extension on

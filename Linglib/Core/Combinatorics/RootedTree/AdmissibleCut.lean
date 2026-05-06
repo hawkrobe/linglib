@@ -670,7 +670,8 @@ the workspace F ∈ 𝔉_{SO_0} is a conserved quantity throughout all the
 forms of Merge described by (1.3.7)."
 
 Load-bearing for the IM positive direction of Prop 1.6.10
-(`im_satisfiesNCL` in `Hopf/MergeAction.lean §2.7`): the IM workspace
+(`im_satisfiesNCL` in `Theories/Syntax/Minimalist/Merge/NoComplexityLoss.lean`):
+the IM workspace
 transformation `{T} → {.node Q β}` preserves total leafCount because
 `β.leafCount + Q.leafCount = T.leafCount` for `Q = T/β` via this lemma. -/
 

@@ -25,9 +25,8 @@ where:
   algebra structure of `Hc`)
 
 This file builds the building blocks (`gammaMatch`, `deltaMatch`,
-`graftBinary`) and assembles `mergeOp`. The bridge to the legacy
-linguistic Merge (`Step.apply` from `Basic.lean`) lives in the next
-file (`MergeAction.lean`, which will replace the legacy version).
+`graftBinary`) and assembles `mergeOp`. The bridges to linguistic
+`Step.apply` live in `Merge.External` (EM) and `Merge.Internal` (IM).
 -/
 
 namespace Minimalist.Merge
@@ -169,8 +168,8 @@ noncomputable def mergeOp (S S' : TraceTree α Unit) : Hc R α →ₗ[R] Hc R α
     At ε = 0: only Case 1 (members-only matching) survives — Sideward
     contributions all carry positive cost and vanish.
 
-    The ε → 0 limit theorem (in `MergeAction.lean`) recovers
-    `mergeOp_pair_residual` WITHOUT requiring the `MergeTargetFreeWorkspace`
+    The ε → 0 limit theorem `mergeOp_eps_zero_residual` (in `Merge.External`)
+    recovers `mergeOp_pair_residual` WITHOUT requiring the `CutAvoidingForest`
     hypothesis: cost minimization automatically excludes Sideward Merge. -/
 noncomputable def mergeOp_eps (ε : R) (S S' : TraceTree α Unit) :
     Hc R α →ₗ[R] Hc R α :=

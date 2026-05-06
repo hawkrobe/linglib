@@ -524,7 +524,7 @@ theorem comulDelAlgHom_apply_single (F : TraceForest α Unit) :
 /-- **Δ^d on a 2-tree workspace** (M-C-B Def 1.2.8 with ω = d, applied
     to `F = {T1, T2}`). Multiplicativity of `comulDelAlgHom` gives
     `Δ^d({T1, T2}) = Δ^d(T1) · Δ^d(T2)` — the load-bearing fact for
-    the algebraic Merge bridge in `MergeAction.lean`. -/
+    the algebraic Merge bridge in `Theories/Syntax/Minimalist/Merge/External.lean`. -/
 theorem comulDelAlgHom_pair (T1 T2 : TraceTree α Unit) :
     comulDelAlgHom (R := R) (α := α)
         (forestToHc ({T1, T2} : TraceForest α Unit))
