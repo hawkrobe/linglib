@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Theories.Phonology.Subregular.ForbidPairs
+import Linglib.Core.Computability.Subregular.Multitier
 
 /-!
 # Rose & Walker (2004) @cite{rose-walker-2004}
@@ -229,11 +230,16 @@ theorem kikongoAgree_zero_iff_in_TSL (c : List KSeg) :
     "AGREE-[nas]/CC" KSeg.forbidNasalStop KSeg.onTier id c
 
 /-- **TSL_2 witness**: Kikongo nasal harmony is tier-strictly-local at
-window-size 2. Together with `IsTierStrictlyLocal.toIsBTSL` (in
-`Core.Computability.Subregular.Multitier`), this hands every existing
-`kikongoNasalHarmony` consumer a free `IsBTSL 2` corollary. -/
+window-size 2. -/
 theorem kikongoNasalHarmony_lang_isTSL2 :
     IsTierStrictlyLocal 2 kikongoNasalHarmony.lang :=
   ⟨kikongoNasalHarmony, rfl⟩
+
+/-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
+`Core.Computability.Subregular.Multitier`): Kikongo nasal harmony is in
+the multitier closure of strictly local languages, hence consumed by
+the @cite{lambert-2026} BTC framework. -/
+theorem kikongoNasalHarmony_lang_isBTSL2 : IsBTSL 2 kikongoNasalHarmony.lang :=
+  kikongoNasalHarmony_lang_isTSL2.toIsBTSL
 
 end Phonology.Studies.RoseWalker2004

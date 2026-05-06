@@ -4,6 +4,7 @@ import Linglib.Theories.Phonology.Subregular.OCP
 import Linglib.Theories.Learning.TolerancePrinciple
 import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Computability.Subregular.Tier
+import Linglib.Core.Computability.Subregular.Multitier
 
 /-!
 # Belth (2026): A Learning-Based Account of Phonological Tiers @cite{belth-2026}
@@ -566,11 +567,17 @@ suffices to demonstrate the schema, the empirical-limit pattern
 -/
 
 /-- **TSL_2 witness**: Latin liquid dissimilation is tier-strictly-local
-at window-size 2. Together with `IsTierStrictlyLocal.toIsBTSL` (in
-`Core.Computability.Subregular.Multitier`), this hands every existing
-`latinTSLGrammar` consumer a free `IsBTSL 2` corollary. -/
+at window-size 2. -/
 theorem latinTSLGrammar_lang_isTSL2 :
     Core.Computability.Subregular.IsTierStrictlyLocal 2 latinTSLGrammar.lang :=
   ⟨latinTSLGrammar, rfl⟩
+
+/-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
+`Core.Computability.Subregular.Multitier`): Latin liquid dissimilation
+is in the multitier closure of strictly local languages, hence consumed
+by the @cite{lambert-2026} BTC framework. -/
+theorem latinTSLGrammar_lang_isBTSL2 :
+    Core.Computability.Subregular.IsBTSL 2 latinTSLGrammar.lang :=
+  latinTSLGrammar_lang_isTSL2.toIsBTSL
 
 end Phenomena.Phonology.Studies.Belth2026

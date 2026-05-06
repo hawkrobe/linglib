@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
+import Linglib.Core.Computability.Subregular.Multitier
 
 /-!
 # Frisch, Pierrehumbert & Broe (2004) @cite{frisch-pierrehumbert-broe-2004}
@@ -426,6 +427,14 @@ docstring prose. -/
 theorem thresholdedTSL_lang_isTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
     Core.Computability.Subregular.IsTierStrictlyLocal 2 (thresholdedTSL xs t).lang :=
   ⟨thresholdedTSL xs t, rfl⟩
+
+/-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
+`Core.Computability.Subregular.Multitier`): every threshold-induced FPB
+grammar's stringset is in the multitier closure of strictly local
+languages, hence consumed by the @cite{lambert-2026} BTC framework. -/
+theorem thresholdedTSL_lang_isBTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
+    Core.Computability.Subregular.IsBTSL 2 (thresholdedTSL xs t).lang :=
+  (thresholdedTSL_lang_isTSL2 xs t).toIsBTSL
 
 /-- **The TSL_2 grammar makes a binary step-function decision on labial
 pairs.** For two labial segments `x, y`, the grammar

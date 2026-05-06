@@ -185,18 +185,24 @@ formula in (35) as a Boolean combination of tier-projected definite
 tests on the harmonizing-vowel tier and the dorsal-consonant tier.
 
 TODO: the proof is a finite Boolean combination of four tier-based
-definite tests, mirroring Lambert (2026) (35a)-(35b). Suffix-tier
-notation: `S_X` = the tier of suffix-X-class material; `[⋊]_{S_X}`
-asserts the `S_X` tier is non-empty (a tier-final on `S_X` exists).
-  (a) (35a.i)  [V_f⋊]_{V_f∪V_b} → [⋊]_{S_f}    (V_f rightmost in stem ⇒ front suffix)
-  (b) (35a.ii) [V_b⋊]_{V_f∪V_b} → [⋊]_{S_b}    (V_b rightmost in stem ⇒ back suffix)
-  (c) (35b.i)  ([⋉⋊]_{V_f∪V_b} ∧ [C_f⋊]_{C_f∪C_b}) → [⋊]_{S_f}
-                                                (no V, C_f rightmost ⇒ front suffix)
-  (d) (35b.ii) ([⋉⋊]_{V_f∪V_b} ∧ [C_b⋊]_{C_f∪C_b}) → [⋊]_{S_b}
-                                                (no V, C_b rightmost ⇒ back suffix)
-Each implication is `IsTierBased (IsDefinite 1)` (single-tier-suffix
-test); the conjunction is `BoolClosure.inter`-closed; therefore `k = 1`
-should suffice as the BTD witness. -/
+definite tests, mirroring Lambert (2026) (35a)-(35b) **as written**
+(negative formulation: the wrong-class suffix is forbidden by the
+opposite-class trigger). Notation: `S_X = V_X ∪ C_X` marked as
+suffix; `[⋊⋉]_{T}` asserts tier `T` is empty (no `T`-element in the
+word, since the only material between `⋊` and `⋉` on tier T is the
+T-projection itself).
+  (a) (35a.i)  [V_f⋊]_{V_f∪V_b} → [⋊⋉]_{S_b}
+                                  (V_f rightmost ⇒ S_b tier empty: no back suffix)
+  (b) (35a.ii) [V_b⋊]_{V_f∪V_b} → [⋊⋉]_{S_f}
+                                  (V_b rightmost ⇒ S_f tier empty: no front suffix)
+  (c) (35b.i)  ([⋊⋉]_{V_f∪V_b} ∧ [C_f⋊]_{C_f∪C_b}) → [⋊⋉]_{S_b}
+                                  (no V, C_f rightmost ⇒ no back suffix)
+  (d) (35b.ii) ([⋊⋉]_{V_f∪V_b} ∧ [C_b⋊]_{C_f∪C_b}) → [⋊⋉]_{S_f}
+                                  (no V, C_b rightmost ⇒ no front suffix)
+Each implication is a Boolean combination of tier-projected definite
+tests (paper p. 15: "All involve only tier-suffixes"); the conjunction
+is `BoolClosure.inter`-closed; the BTD witness `k` should be small
+(plausibly `k = 1`, but not stated in the paper). -/
 theorem uyghur_backness_isBTD : ∃ k, IsBTD k uyghurBacknessLang := by
   sorry
 

@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Theories.Phonology.Subregular.Agree
 import Linglib.Core.Computability.Subregular.StrictlyPiecewise
+import Linglib.Core.Computability.Subregular.Multitier
 
 /-!
 # Hansson (2010) @cite{hansson-2010}
@@ -208,6 +209,15 @@ theorem navajoSibilantHarmony_lang_isTSL2 :
     Core.Computability.Subregular.IsTierStrictlyLocal 2
       navajoSibilantHarmony.lang :=
   ⟨navajoSibilantHarmony, rfl⟩
+
+/-- **BTSL_2 corollary** (via the PR-4 bridge `IsTierStrictlyLocal.toIsBTSL`
+in `Core.Computability.Subregular.Multitier`): the Navajo sibilant
+harmony stringset is in the multitier closure of strictly local
+languages. Hands the @cite{lambert-2026} BTC framework a Hansson-data
+consumer without re-proving anything. -/
+theorem navajoSibilantHarmony_lang_isBTSL2 :
+    Core.Computability.Subregular.IsBTSL 2 navajoSibilantHarmony.lang :=
+  navajoSibilantHarmony_lang_isTSL2.toIsBTSL
 
 /-- The pre-harmony underlying form is **rejected**: it contains a
 tier-adjacent disagreeing-sibilant pair. -/
