@@ -1878,6 +1878,7 @@ import Linglib.Core.Algebra.ConnesKreimer.LhsIndex
 import Linglib.Core.Algebra.ConnesKreimer.LhsBridge
 import Linglib.Core.Algebra.ConnesKreimer.LhsEquiv
 import Linglib.Core.Algebra.ConnesKreimer.Bialgebra
+import Linglib.Core.Algebra.ConnesKreimer.CutAvoiding
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
@@ -2147,7 +2148,6 @@ import Linglib.Theories.Syntax.Minimalist.Counting
 import Linglib.Theories.Syntax.Minimalist.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalist.Merge.Defs
 import Linglib.Theories.Syntax.Minimalist.Merge.Basic
-import Linglib.Theories.Syntax.Minimalist.Merge.Bridge
 import Linglib.Theories.Syntax.Minimalist.Merge.External
 import Linglib.Theories.Syntax.Minimalist.Merge.Internal
 import Linglib.Theories.Syntax.Minimalist.Merge.Sideward

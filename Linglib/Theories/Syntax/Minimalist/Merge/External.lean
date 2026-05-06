@@ -1,4 +1,6 @@
-import Linglib.Theories.Syntax.Minimalist.Merge.Bridge
+import Linglib.Theories.Syntax.Minimalist.Merge.Basic
+import Linglib.Theories.Syntax.Minimalist.Derivation
+import Linglib.Core.Algebra.ConnesKreimer.CutAvoiding
 
 /-!
 # External Merge bridge: algebraic ↔ linguistic
@@ -22,7 +24,8 @@ to `R = ℤ`, `α = LIToken`, with `rfl` bridging
 
 **§2: Full Lemma 1.4.1 with residual workspace F̂** (lines ≈
 `mergeOp_factor_out_singleton`, `mergeOp_pair_residual`). Under
-`MergeTargetFreeWorkspace` (defined in `Bridge.lean`), Merge factors
+`CutAvoidingForest ({S, S'}) Fhat` (Connes-Kreimer "Case 1" condition,
+defined in `Core/Algebra/ConnesKreimer/CutAvoiding.lean`), Merge factors
 through multiplication by spectator components; induction on F̂ assembles
 the full Case-1 result.
 
@@ -180,12 +183,13 @@ theorem mergeOp_emL_matches_Step
 theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     {α : Type*} [DecidableEq α]
     {S S' T : TraceTree α Unit}
-    (hT : MergeTargetFree S S' T)
+    (hT_S : CutAvoiding S T) (hT_S' : CutAvoiding S' T)
     (w : Hc R α) :
     mergeOp (R := R) S S' (forestToHc ({T} : TraceForest α Unit) * w)
       = forestToHc ({T} : TraceForest α Unit) * mergeOp (R := R) S S' w := by
-  -- Project the bundled hypothesis into the four clauses.
-  obtain ⟨hT_ne_S, hT_ne_S', h_no_S_in_T_cuts, h_no_S'_in_T_cuts⟩ := hT
+  -- Project the two CutAvoiding hypotheses into their four clauses.
+  obtain ⟨hT_ne_S, h_no_S_in_T_cuts⟩ := hT_S
+  obtain ⟨hT_ne_S', h_no_S'_in_T_cuts⟩ := hT_S'
   -- Step 1: unfold mergeOp = mergePost ∘ comulDelAlgHom
   show (mergePost (R := R) (α := α) S S' ∘ₗ comulDelAlgHom.toLinearMap)
        (forestToHc (R := R) ({T} : TraceForest α Unit) * w) = _
@@ -272,7 +276,7 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
 /-- **Algebraic Merge with residual workspace** (M-C-B Lemma 1.4.1, p. 49 —
     formalization restricted to **Case 1** of §1.4.1, p. 48). For any pair
     `(S, S') : TraceTree α Unit` and any residual workspace
-    `Fhat : TraceForest α Unit` such that `MergeTargetFreeWorkspace S S' Fhat`
+    `Fhat : TraceForest α Unit` such that `CutAvoidingForest ({S, S'}) Fhat`
     (S, S' ∉ Fhat as components, no cut on any T ∈ Fhat extracts S or S' —
     excludes secondary member-level matchings per eq. (1.3.3) and the
     accessible-terms-inside Sideward cases 2(b), 3(a), 3(b) per Lemmas 1.4.4
@@ -292,11 +296,11 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     Sideward (per §1.5, pp. 56-59) is via **Minimal Search cost weighting** in
     the ε → 0 limit, NOT via stipulation of disjointness. A future Phase 7d
     will derive (rather than stipulate) Case-1 dominance from a cost-ordering
-    argument; for now, the `MergeTargetFreeWorkspace` predicate is the
-    well-defined bridge to single-output `Step.emR/emL` semantics. -/
+    argument; for now, the `CutAvoidingForest` predicate is the well-defined
+    bridge to single-output `Step.emR/emL` semantics. -/
 theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     {S S' : TraceTree α Unit} {Fhat : TraceForest α Unit}
-    (hF : MergeTargetFreeWorkspace S S' Fhat) :
+    (hF : CutAvoidingForest ({S, S'} : TraceForest α Unit) Fhat) :
     mergeOp (R := R) S S' (forestToHc (({S, S'} : TraceForest α Unit) + Fhat))
       = forestToHc (({.node S S'} : TraceForest α Unit) + Fhat) := by
   -- Strong induction on Fhat via Multiset.induction.
@@ -307,12 +311,11 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [Decidab
     exact mergeOp_pair S S'
   | cons T Fhat' ih =>
     -- Inductive case: Fhat = T ::ₘ Fhat'.
-    -- The bundled hypothesis decomposes: T satisfies MergeTargetFree, Fhat' satisfies
-    -- MergeTargetFreeWorkspace, by the head + of_cons projections.
-    have hT : MergeTargetFree S S' T := MergeTargetFreeWorkspace.head hF
+    -- Project: T avoids both S and S' (head); Fhat' is still {S, S'}-avoiding (of_cons).
+    obtain ⟨hT_S, hT_S'⟩ := CutAvoidingForest.head_pair hF
     have ih' : mergeOp (R := R) S S' (forestToHc (({S, S'} : TraceForest α Unit) + Fhat'))
               = forestToHc (({.node S S'} : TraceForest α Unit) + Fhat') :=
-      ih (MergeTargetFreeWorkspace.of_cons hF)
+      ih hF.of_cons
     -- forestToHc ({S, S'} + T ::ₘ Fhat') = forestToHc {T} * forestToHc ({S, S'} + Fhat')
     -- (using Multiset commutativity and forestToHc_add).
     have h_lhs_eq : ({S, S'} : TraceForest α Unit) + T ::ₘ Fhat'
@@ -325,7 +328,7 @@ theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [Decidab
       abel
     rw [h_lhs_eq, h_rhs_eq, forestToHc_add (R := R) ({T} : TraceForest α Unit) _,
         forestToHc_add (R := R) ({T} : TraceForest α Unit) _]
-    rw [mergeOp_factor_out_singleton hT]
+    rw [mergeOp_factor_out_singleton hT_S hT_S']
     -- Goal: forestToHc {T} * mergeOp(forestToHc({S,S'} + Fhat'))
     --     = forestToHc {T} * forestToHc({.node S S'} + Fhat')
     -- Apply ih' via congrArg on multiplication.
