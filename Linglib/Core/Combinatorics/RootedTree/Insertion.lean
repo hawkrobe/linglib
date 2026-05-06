@@ -610,20 +610,240 @@ def Edge.preserveAux : ∀ {T : TraceTree α β} (e f : Edge T)
   | _, .inR l _ e',  .inR _ _ f',  T₂ =>
       (Edge.preserveAux e' f' T₂).map (.inR l (insertAt e' T₂))
 
+/-! ### §9.1 headline: edge classification of `insertAt e T₂`
+
+The central decomposition: as a multiset, the edges of `insertAt e T₂`
+split into three disjoint classes:
+
+  (a) **Preserved edges** of `T` other than `e`, transported via
+      `Edge.preserveAux`.
+  (b) **Lifted edges** of `T₂`, transported via `Edge.lift`.
+  (c) The **three new edges** `e₁`, `e₂`, `e'` (`Edge.newE1`,
+      `Edge.newE2`, `Edge.newEprime`).
+
+Proved by structural induction on `e` (4 cases, mirror-symmetric in
+pairs). The `.rootL`/`.rootR` cases are direct (no IH); the `.inL`/`.inR`
+cases use the IH together with `Multiset.map_add` to push the
+decomposition through the recursive structure. -/
+
+/-- **§9.1 headline** (MCB Figure 1.6, book p. 79): edges of
+    `insertAt e T₂` decompose, as a multiset, into preserved + lifted
+    + the three new edges. The three new edges (`e₁`, `e₂`, `e'`) are
+    the ones created by splitting `e`; the preserved edges are the
+    edges of `T` other than `e`; the lifted edges are the edges of
+    `T₂` carried in by the insertion. -/
+theorem edges_insertAt_eq_classification {T : TraceTree α β}
+    (e : Edge T) (T₂ : TraceTree α β) :
+    (↑(edges (insertAt e T₂)) : Multiset (Edge (insertAt e T₂)))
+      = (↑((edges T).filterMap (fun f => Edge.preserveAux e f T₂))
+          : Multiset (Edge (insertAt e T₂)))
+        + (↑((edges T₂).map (Edge.lift e T₂))
+            : Multiset (Edge (insertAt e T₂)))
+        + (↑[Edge.newE1 e T₂, Edge.newE2 e T₂, Edge.newEprime e T₂]
+            : Multiset (Edge (insertAt e T₂))) := by
+  induction e with
+  | rootL l r =>
+    have hLHS : edges (insertAt (Edge.rootL l r) T₂)
+        = Edge.rootL (.node l T₂) r :: Edge.rootR (.node l T₂) r ::
+          Edge.inL (.node l T₂) r (.rootL l T₂) ::
+          Edge.inL (.node l T₂) r (.rootR l T₂) ::
+          ((edges l).map (fun f' => Edge.inL (.node l T₂) r (.inL l T₂ f')) ++
+           (edges T₂).map (fun f' => Edge.inL (.node l T₂) r (.inR l T₂ f'))) ++
+          (edges r).map (Edge.inR (.node l T₂) r) := by
+      show edges (.node (.node l T₂) r) = _
+      simp only [edges_node, List.map_cons, List.map_append, List.map_map,
+                 Function.comp_def, List.cons_append]
+    have hPres : (edges (.node l r)).filterMap
+                   (fun f => Edge.preserveAux (Edge.rootL l r) f T₂)
+        = Edge.rootR (.node l T₂) r ::
+          ((edges l).map (fun f' => Edge.inL (.node l T₂) r (.inL l T₂ f')) ++
+           (edges r).map (Edge.inR (.node l T₂) r)) := by
+      show List.filterMap _
+             (Edge.rootL l r :: Edge.rootR l r ::
+               ((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r))) = _
+      show (Edge.rootR (.node l T₂) r) ::
+           (((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r)).filterMap
+              (fun f => Edge.preserveAux (Edge.rootL l r) f T₂)) = _
+      congr 1
+      rw [List.filterMap_append, List.filterMap_map, List.filterMap_map]
+      simp only [Function.comp_def]
+      show List.filterMap (fun x => some (Edge.inL (.node l T₂) r (Edge.inL l T₂ x))) l.edges ++
+           List.filterMap (fun x => some (Edge.inR (.node l T₂) r x)) r.edges = _
+      rw [List.filterMap_eq_map', List.filterMap_eq_map']
+    rw [hLHS, hPres]
+    show (↑(Edge.rootL (.node l T₂) r :: Edge.rootR (.node l T₂) r ::
+            Edge.inL (.node l T₂) r (.rootL l T₂) ::
+            Edge.inL (.node l T₂) r (.rootR l T₂) ::
+            ((edges l).map (fun f' => Edge.inL (.node l T₂) r (.inL l T₂ f')) ++
+             (edges T₂).map (fun f' => Edge.inL (.node l T₂) r (.inR l T₂ f'))) ++
+            (edges r).map (Edge.inR (.node l T₂) r))
+          : Multiset (Edge (.node (.node l T₂) r))) =
+         ↑(Edge.rootR (.node l T₂) r ::
+           ((edges l).map (fun f' => Edge.inL (.node l T₂) r (.inL l T₂ f')) ++
+            (edges r).map (Edge.inR (.node l T₂) r))) +
+         ↑((edges T₂).map (fun f => Edge.inL (.node l T₂) r (.inR l T₂ f))) +
+         (Edge.rootL (.node l T₂) r ::ₘ
+          Edge.inL (.node l T₂) r (.rootL l T₂) ::ₘ
+          Edge.inL (.node l T₂) r (.rootR l T₂) ::ₘ 0)
+    simp only [← Multiset.cons_coe, ← Multiset.coe_add, ← Multiset.singleton_add]
+    ac_rfl
+  | rootR l r =>
+    have hLHS : edges (insertAt (Edge.rootR l r) T₂)
+        = Edge.rootL l (.node r T₂) :: Edge.rootR l (.node r T₂) ::
+          ((edges l).map (Edge.inL l (.node r T₂)) ++
+           (Edge.inR l (.node r T₂) (.rootL r T₂) ::
+            Edge.inR l (.node r T₂) (.rootR r T₂) ::
+            ((edges r).map (fun f' => Edge.inR l (.node r T₂) (.inL r T₂ f')) ++
+             (edges T₂).map (fun f' => Edge.inR l (.node r T₂) (.inR r T₂ f'))))) := by
+      show edges (.node l (.node r T₂)) = _
+      simp only [edges_node, List.map_cons, List.map_append, List.map_map,
+                 Function.comp_def]
+    have hPres : (edges (.node l r)).filterMap
+                   (fun f => Edge.preserveAux (Edge.rootR l r) f T₂)
+        = Edge.rootL l (.node r T₂) ::
+          ((edges l).map (Edge.inL l (.node r T₂)) ++
+           (edges r).map (fun f' => Edge.inR l (.node r T₂) (.inL r T₂ f'))) := by
+      show List.filterMap _
+             (Edge.rootL l r :: Edge.rootR l r ::
+               ((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r))) = _
+      show (Edge.rootL l (.node r T₂)) ::
+           ((Edge.rootR l r ::
+              ((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r))).filterMap
+              (fun f => Edge.preserveAux (Edge.rootR l r) f T₂)) = _
+      congr 1
+      show (((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r)).filterMap
+              (fun f => Edge.preserveAux (Edge.rootR l r) f T₂)) = _
+      rw [List.filterMap_append, List.filterMap_map, List.filterMap_map]
+      simp only [Function.comp_def]
+      show List.filterMap (fun x => some (Edge.inL l (.node r T₂) x)) l.edges ++
+           List.filterMap (fun x => some (Edge.inR l (.node r T₂) (.inL r T₂ x))) r.edges = _
+      rw [List.filterMap_eq_map', List.filterMap_eq_map']
+    rw [hLHS, hPres]
+    show (↑(Edge.rootL l (.node r T₂) :: Edge.rootR l (.node r T₂) ::
+            ((edges l).map (Edge.inL l (.node r T₂)) ++
+             (Edge.inR l (.node r T₂) (.rootL r T₂) ::
+              Edge.inR l (.node r T₂) (.rootR r T₂) ::
+              ((edges r).map (fun f' => Edge.inR l (.node r T₂) (.inL r T₂ f')) ++
+               (edges T₂).map (fun f' => Edge.inR l (.node r T₂) (.inR r T₂ f'))))))
+          : Multiset (Edge (.node l (.node r T₂)))) =
+         ↑(Edge.rootL l (.node r T₂) ::
+           ((edges l).map (Edge.inL l (.node r T₂)) ++
+            (edges r).map (fun f' => Edge.inR l (.node r T₂) (.inL r T₂ f')))) +
+         ↑((edges T₂).map (fun f => Edge.inR l (.node r T₂) (.inR r T₂ f))) +
+         (Edge.rootR l (.node r T₂) ::ₘ
+          Edge.inR l (.node r T₂) (.rootL r T₂) ::ₘ
+          Edge.inR l (.node r T₂) (.rootR r T₂) ::ₘ 0)
+    simp only [← Multiset.cons_coe, ← Multiset.coe_add, ← Multiset.singleton_add]
+    ac_rfl
+  | inL l r e' ih =>
+    change (↑(edges (.node (insertAt e' T₂) r))
+              : Multiset (Edge (.node (insertAt e' T₂) r))) = _
+    rw [edges_node]
+    have hPres : (edges (.node l r)).filterMap
+                   (fun f => Edge.preserveAux (Edge.inL l r e') f T₂)
+        = Edge.rootL (insertAt e' T₂) r :: Edge.rootR (insertAt e' T₂) r ::
+          (((edges l).filterMap (fun f' => Edge.preserveAux e' f' T₂)).map
+              (Edge.inL (insertAt e' T₂) r) ++
+           (edges r).map (Edge.inR (insertAt e' T₂) r)) := by
+      show List.filterMap _
+             (Edge.rootL l r :: Edge.rootR l r ::
+               ((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r))) = _
+      show Edge.rootL (insertAt e' T₂) r ::
+           ((Edge.rootR l r ::
+              ((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r))).filterMap
+              (fun f => Edge.preserveAux (Edge.inL l r e') f T₂)) = _
+      congr 1
+      show Edge.rootR (insertAt e' T₂) r ::
+           (((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r)).filterMap
+              (fun f => Edge.preserveAux (Edge.inL l r e') f T₂)) = _
+      congr 1
+      rw [List.filterMap_append, List.filterMap_map, List.filterMap_map]
+      simp only [Function.comp_def]
+      show List.filterMap (fun x => (Edge.preserveAux e' x T₂).map
+                                       (Edge.inL (insertAt e' T₂) r)) l.edges ++
+           List.filterMap (fun x => some (Edge.inR (insertAt e' T₂) r x)) r.edges = _
+      rw [← List.map_filterMap, List.filterMap_eq_map']
+    rw [hPres]
+    rw [show (edges T₂).map (Edge.lift (Edge.inL l r e') T₂)
+            = ((edges T₂).map (Edge.lift e' T₂)).map (Edge.inL (insertAt e' T₂) r) from by
+            rw [List.map_map]; rfl]
+    show (↑(Edge.rootL (insertAt e' T₂) r :: Edge.rootR (insertAt e' T₂) r ::
+            ((edges (insertAt e' T₂)).map (Edge.inL (insertAt e' T₂) r) ++
+             (edges r).map (Edge.inR (insertAt e' T₂) r)))
+          : Multiset (Edge (.node (insertAt e' T₂) r))) =
+          ↑(Edge.rootL (insertAt e' T₂) r :: Edge.rootR (insertAt e' T₂) r ::
+            (((edges l).filterMap (fun f' => Edge.preserveAux e' f' T₂)).map
+                (Edge.inL (insertAt e' T₂) r) ++
+             (edges r).map (Edge.inR (insertAt e' T₂) r))) +
+          ↑(((edges T₂).map (Edge.lift e' T₂)).map (Edge.inL (insertAt e' T₂) r)) +
+          ↑[Edge.inL (insertAt e' T₂) r (Edge.newE1 e' T₂),
+             Edge.inL (insertAt e' T₂) r (Edge.newE2 e' T₂),
+             Edge.inL (insertAt e' T₂) r (Edge.newEprime e' T₂)]
+    simp only [← Multiset.cons_coe, ← Multiset.coe_add, ← Multiset.singleton_add,
+               ← Multiset.map_coe]
+    rw [ih, Multiset.map_add, Multiset.map_add]
+    simp only [Multiset.map_coe, Multiset.map_singleton, Multiset.map_add,
+               List.map_map, Function.comp_def,
+               ← Multiset.cons_coe, ← Multiset.singleton_add]
+    ac_rfl
+  | inR l r e' ih =>
+    change (↑(edges (.node l (insertAt e' T₂)))
+              : Multiset (Edge (.node l (insertAt e' T₂)))) = _
+    rw [edges_node]
+    have hPres : (edges (.node l r)).filterMap
+                   (fun f => Edge.preserveAux (Edge.inR l r e') f T₂)
+        = Edge.rootL l (insertAt e' T₂) :: Edge.rootR l (insertAt e' T₂) ::
+          ((edges l).map (Edge.inL l (insertAt e' T₂)) ++
+           ((edges r).filterMap (fun f' => Edge.preserveAux e' f' T₂)).map
+              (Edge.inR l (insertAt e' T₂))) := by
+      show List.filterMap _
+             (Edge.rootL l r :: Edge.rootR l r ::
+               ((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r))) = _
+      show Edge.rootL l (insertAt e' T₂) ::
+           ((Edge.rootR l r ::
+              ((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r))).filterMap
+              (fun f => Edge.preserveAux (Edge.inR l r e') f T₂)) = _
+      congr 1
+      show Edge.rootR l (insertAt e' T₂) ::
+           (((edges l).map (Edge.inL l r) ++ (edges r).map (Edge.inR l r)).filterMap
+              (fun f => Edge.preserveAux (Edge.inR l r e') f T₂)) = _
+      congr 1
+      rw [List.filterMap_append, List.filterMap_map, List.filterMap_map]
+      simp only [Function.comp_def]
+      show List.filterMap (fun x => some (Edge.inL l (insertAt e' T₂) x)) l.edges ++
+           List.filterMap (fun x => (Edge.preserveAux e' x T₂).map
+                                       (Edge.inR l (insertAt e' T₂))) r.edges = _
+      rw [List.filterMap_eq_map', ← List.map_filterMap]
+    rw [hPres]
+    rw [show (edges T₂).map (Edge.lift (Edge.inR l r e') T₂)
+            = ((edges T₂).map (Edge.lift e' T₂)).map (Edge.inR l (insertAt e' T₂)) from by
+            rw [List.map_map]; rfl]
+    show (↑(Edge.rootL l (insertAt e' T₂) :: Edge.rootR l (insertAt e' T₂) ::
+            ((edges l).map (Edge.inL l (insertAt e' T₂)) ++
+             (edges (insertAt e' T₂)).map (Edge.inR l (insertAt e' T₂))))
+          : Multiset (Edge (.node l (insertAt e' T₂)))) =
+          ↑(Edge.rootL l (insertAt e' T₂) :: Edge.rootR l (insertAt e' T₂) ::
+            ((edges l).map (Edge.inL l (insertAt e' T₂)) ++
+             ((edges r).filterMap (fun f' => Edge.preserveAux e' f' T₂)).map
+                (Edge.inR l (insertAt e' T₂)))) +
+          ↑(((edges T₂).map (Edge.lift e' T₂)).map (Edge.inR l (insertAt e' T₂))) +
+          ↑[Edge.inR l (insertAt e' T₂) (Edge.newE1 e' T₂),
+             Edge.inR l (insertAt e' T₂) (Edge.newE2 e' T₂),
+             Edge.inR l (insertAt e' T₂) (Edge.newEprime e' T₂)]
+    simp only [← Multiset.cons_coe, ← Multiset.coe_add, ← Multiset.singleton_add,
+               ← Multiset.map_coe]
+    rw [ih, Multiset.map_add, Multiset.map_add]
+    simp only [Multiset.map_coe, Multiset.map_singleton, Multiset.map_add,
+               List.map_map, Function.comp_def,
+               ← Multiset.cons_coe, ← Multiset.singleton_add]
+    ac_rfl
+
 /-! ### Phase 3b §9.1 status
 
 Defined: `Edge.lift`, `Edge.newE1`, `Edge.newE2`, `Edge.newEprime`,
-`Edge.preserveAux`, plus a sample pairwise-distinctness lemma for the
-new edges.
-
-Pending for §9.1 completion:
-- Pairwise distinctness of the 4-way classification (lifted ≠ preserved
-  ≠ newE1 ≠ newE2 ≠ newEprime).
-- `preserveAux_eq_none_iff` characterising when `preserveAux e f T₂ = none`
-  (precisely when `f = e`).
-- `edges_insertAt_eq_classification`: the multiset/list-level
-  decomposition `edges (insertAt e T₂) = (preserved-edges) ++ (lifted-edges)
-  ++ [e₁, e₂, e']`.
+`Edge.preserveAux`, plus `newE1_ne_newE2` (sample distinctness) and the
+**§9.1 headline** `edges_insertAt_eq_classification` (multiset
+decomposition into the 5 classes).
 
 §9.2 (commutativity at different edges) and §9.3 (the actual pre-Lie
 identity discharge) are the remaining Phase 3b work. -/
