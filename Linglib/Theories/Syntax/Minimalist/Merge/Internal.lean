@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.Merge.External
+import Linglib.Core.Algebra.ConnesKreimer.LaurentScalars
 
 /-!
 # Internal Merge bridge: algebraic ↔ linguistic
@@ -262,5 +263,123 @@ theorem mergeOp_im_matches_Step
   -- toHc_node: (.node a b).toHc = .node a.toHc b.toHc
   rfl
 
+/-! ## §4: Phase 7g — IM cost-survival at ε = 0 (M-C-B Prop 1.5.1 bullet 3)
+
+@cite{marcolli-chomsky-berwick-2025} Proposition 1.5.1 (book p. 60) says
+that "in the limit ε → 0, only derivations in which all the Merge
+operations are Internal Merge and External Merge remain." The Sideward
+suppression direction is proven in `Sideward.lean` §4.1
+(`mergeOp_eps_zero_for_sideward_*`); this section proves the
+**positive direction for IM**: IM via composition at ε = 0 produces a
+non-zero result (weight 1).
+
+**Why MCB rule 2 (negative quotient weight) is not needed in this proof.**
+The original audit (CHANGELOG 0.230.812) anticipated needing
+`LaurentPolynomial`-coefficient substrate for rule 2's `ε^{-d_v}` quotient
+weight. On closer reading of MCB §1.5.3 proof (book p. 60), the IM cost
+calculation `c(ℳ(T_v, T_i/T_v)) = c(T_v) + c(T_i/T_v) = d_v − d_v = 0`
+is **operationally redundant with rule 4** (`c(ℳ(T, 1)) = 0`):
+
+- Stage 1 = `ℳ(T_v, 1)`: rule 4 gives cost 0 directly (regardless of T_v's
+  depth). Substrate-side: `mergeOpUnit` has no ε parameter — intrinsically
+  unweighted, matching rule 4.
+- Stage 2 = `ℳ(T_v, T_i/T_v)`: stage 1's output workspace `{T_v, T_i/T_v}`
+  has both operands as members at depth 0. Rule 5 gives cost 0 + 0 = 0.
+  Substrate-side: `mergeOp_eps_zero_pair` (already proven).
+
+So IM cost-survival follows from existing substrate without LaurentPolynomial
+coefficients. The `LaurentScalars.lean` substrate is still useful for any
+future deeper-cost analysis (e.g., a unified Laurent-polynomial-weighted
+operator for the full Prop 1.5.1 statement), but is not load-bearing for
+the IM-specific positive direction proven here.
+-/
+
+/-- **IM cost-survival, ε = 0** (M-C-B Prop 1.5.1 bullet 3, IM positive
+    direction). At ε = 0, the IM composition `mergeOp_eps 0 mover (T/mover)
+    ∘ mergeOpUnit mover` produces a NON-ZERO output of weight 1
+    (= `forestToHc {.node mover (T/mover)}`), confirming that IM is one
+    of the surviving derivations in the cost limit.
+
+    Compare with `mergeOp_eps_zero_for_sideward_2b/3a/3b` (in `Sideward.lean`
+    §4.1) which prove that Sideward variants vanish at ε = 0. Together
+    they realize MCB Prop 1.5.1's "only IM and EM survive" claim.
+
+    Structurally identical to `mergeOp_im_composition_moverLeft` (above)
+    but using `mergeOp_eps 0` instead of `mergeOp` for stage 2. The proof
+    swaps `mergeOp_pair` for `mergeOp_eps_zero_pair`. -/
+theorem mergeOp_eps_zero_im_composition_moverLeft
+    {α : Type*} [DecidableEq α]
+    {R : Type*} [CommSemiring R]
+    (β T Q : TraceTree α Unit) (c0 : CutShape T)
+    (h_cf : c0.cutForest = ({β} : TraceForest α Unit))
+    (h_remainder : c0.remainderDeletion = some Q)
+    (h_unique : ∀ c : CutShape T,
+      c.cutForest = ({β} : TraceForest α Unit) → c = c0)
+    (hTβ : T ≠ β) :
+    mergeOp_eps (R := R) 0 β Q
+        (mergeOpUnit (R := R) β (forestToHc ({T} : TraceForest α Unit)))
+      = forestToHc (R := R) ({.node β Q} : TraceForest α Unit) := by
+  rw [mergeOpUnit_apply_singleton_unique β T c0 h_cf h_unique hTβ, h_remainder]
+  show mergeOp_eps (R := R) 0 β Q
+        (forestToHc ({β} : TraceForest α Unit) *
+         forestToHc ({Q} : TraceForest α Unit)) = _
+  rw [← forestToHc_add]
+  -- {β} + {Q} = {β, Q} definitionally (no swap needed for mover-LEFT order)
+  show mergeOp_eps (R := R) 0 β Q
+        (forestToHc ({β, Q} : TraceForest α Unit)) = _
+  exact mergeOp_eps_zero_pair β Q
+
+/-- **IM cost-survival, ε = 0, original (Q-LEFT) argument order.** Analog
+    of `mergeOp_im_composition`. Q is the LEFT argument of the second
+    Merge stage; the result has Q-LEFT, β-RIGHT structure. -/
+theorem mergeOp_eps_zero_im_composition
+    {α : Type*} [DecidableEq α]
+    {R : Type*} [CommSemiring R]
+    (β T Q : TraceTree α Unit) (c0 : CutShape T)
+    (h_cf : c0.cutForest = ({β} : TraceForest α Unit))
+    (h_remainder : c0.remainderDeletion = some Q)
+    (h_unique : ∀ c : CutShape T,
+      c.cutForest = ({β} : TraceForest α Unit) → c = c0)
+    (hTβ : T ≠ β) :
+    mergeOp_eps (R := R) 0 Q β
+        (mergeOpUnit (R := R) β (forestToHc ({T} : TraceForest α Unit)))
+      = forestToHc (R := R) ({.node Q β} : TraceForest α Unit) := by
+  rw [mergeOpUnit_apply_singleton_unique β T c0 h_cf h_unique hTβ, h_remainder]
+  show mergeOp_eps (R := R) 0 Q β
+        (forestToHc ({β} : TraceForest α Unit) *
+         forestToHc ({Q} : TraceForest α Unit)) = _
+  rw [← forestToHc_add]
+  -- {β} + {Q} = {Q} + {β} = {Q, β} (multiset commutativity)
+  have h_swap : ({β} : TraceForest α Unit) + ({Q} : TraceForest α Unit)
+              = ({Q, β} : TraceForest α Unit) := add_comm _ _
+  rw [h_swap]
+  exact mergeOp_eps_zero_pair Q β
+
+/-- **Step.im algebraic bridge at ε = 0** (M-C-B Prop 1.5.1, IM positive
+    direction, linguistic specialization). The IM composition at ε = 0
+    reproduces `((Step.im mover traceId).apply current).toHc` with
+    weight 1, demonstrating that IM survives the Minimal Search cost
+    limit and is therefore one of the dominant Merge operations in
+    actual derivations. -/
+theorem mergeOp_eps_zero_im_matches_Step
+    (current mover : Minimalist.SyntacticObject) (traceId : Nat)
+    (c0 : CutShape current.toHc)
+    (h_cf : c0.cutForest = ({mover.toHc} : TraceForest LIToken Unit))
+    (h_remainder : c0.remainderDeletion =
+      some (current.replace mover (Minimalist.mkTrace traceId)).toHc)
+    (h_unique : ∀ c : CutShape current.toHc,
+      c.cutForest = ({mover.toHc} : TraceForest LIToken Unit) → c = c0)
+    (h_curr_ne_mover : current.toHc ≠ mover.toHc) :
+    mergeOp_eps (R := ℤ) 0 mover.toHc
+        (current.replace mover (Minimalist.mkTrace traceId)).toHc
+        (mergeOpUnit (R := ℤ) mover.toHc
+          (forestToHc ({current.toHc} : TraceForest LIToken Unit)))
+      = forestToHc (R := ℤ)
+          ({((Step.im mover traceId).apply current).toHc}
+            : TraceForest LIToken Unit) := by
+  rw [mergeOp_eps_zero_im_composition_moverLeft mover.toHc current.toHc
+        (current.replace mover (Minimalist.mkTrace traceId)).toHc
+        c0 h_cf h_remainder h_unique h_curr_ne_mover]
+  rfl
 
 end Minimalist.Merge
