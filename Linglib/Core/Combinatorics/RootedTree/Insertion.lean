@@ -570,15 +570,57 @@ theorem newE1_ne_newE2 :
       injection h with _ _ h₃
       exact newE1_ne_newE2 e T₂ h₃
 
+/-! ### Edge.preserveAux: carry a non-cut edge through the insertion
+
+The hardest §9.1 piece: given `e f : Edge T`, we want to produce the
+"corresponding" edge of `insertAt e T₂` whenever `f ≠ e`. We package
+this as an `Option`-valued function `preserveAux` that returns `none`
+exactly when `f = e`.
+
+Implementation: 16-case pattern match on `(e, f)` constructor-pairs.
+Each case maps `f`'s position in `T` to its position in `insertAt e T₂`
+based on whether `e` is "before", "after", or "alongside" `f`. -/
+
+/-- `preserveAux e f T₂` returns `some` of the edge of `insertAt e T₂`
+    corresponding to `f`, when `f ≠ e`; `none` when `f = e`. The
+    16-case pattern handles all combinations of root/in-l/in-r for
+    both `e` and `f`. -/
+def Edge.preserveAux : ∀ {T : TraceTree α β} (e f : Edge T)
+      (T₂ : TraceTree α β), Option (Edge (insertAt e T₂))
+  -- e = rootL: insertAt = .node (.node l T₂) r
+  | _, .rootL _ _,   .rootL _ _,   _  => none
+  | _, .rootL l _,   .rootR _ r,   T₂ => some (.rootR (.node l T₂) r)
+  | _, .rootL l _,   .inL _ r f',  T₂ => some (.inL (.node l T₂) r (.inL l T₂ f'))
+  | _, .rootL l _,   .inR _ r f',  T₂ => some (.inR (.node l T₂) r f')
+  -- e = rootR: insertAt = .node l (.node r T₂)
+  | _, .rootR l _,   .rootL _ r,   T₂ => some (.rootL l (.node r T₂))
+  | _, .rootR _ _,   .rootR _ _,   _  => none
+  | _, .rootR _ r,   .inL l _ f',  T₂ => some (.inL l (.node r T₂) f')
+  | _, .rootR _ r,   .inR l _ f',  T₂ => some (.inR l (.node r T₂) (.inL r T₂ f'))
+  -- e = inL e': insertAt = .node (insertAt e' T₂) r
+  | _, .inL _ _ e',  .rootL _ r,   T₂ => some (.rootL (insertAt e' T₂) r)
+  | _, .inL _ _ e',  .rootR _ r,   T₂ => some (.rootR (insertAt e' T₂) r)
+  | _, .inL _ r e',  .inL _ _ f',  T₂ =>
+      (Edge.preserveAux e' f' T₂).map (.inL (insertAt e' T₂) r)
+  | _, .inL _ _ e',  .inR _ r f',  T₂ => some (.inR (insertAt e' T₂) r f')
+  -- e = inR e': insertAt = .node l (insertAt e' T₂)
+  | _, .inR _ _ e',  .rootL l _,   T₂ => some (.rootL l (insertAt e' T₂))
+  | _, .inR _ _ e',  .rootR l _,   T₂ => some (.rootR l (insertAt e' T₂))
+  | _, .inR _ _ e',  .inL l _ f',  T₂ => some (.inL l (insertAt e' T₂) f')
+  | _, .inR l _ e',  .inR _ _ f',  T₂ =>
+      (Edge.preserveAux e' f' T₂).map (.inR l (insertAt e' T₂))
+
 /-! ### Phase 3b §9.1 status
 
 Defined: `Edge.lift`, `Edge.newE1`, `Edge.newE2`, `Edge.newEprime`,
-plus pairwise distinctness for the new edges (one direction shown;
-the other two are similar and can be added when needed by a consumer).
+`Edge.preserveAux`, plus a sample pairwise-distinctness lemma for the
+new edges.
 
 Pending for §9.1 completion:
-- `Edge.preserve : (e : Edge T) → (f : Edge T) → f ≠ e → Edge (insertAt e T₂)`
-  (carry an edge of T other than e through the insertion).
+- Pairwise distinctness of the 4-way classification (lifted ≠ preserved
+  ≠ newE1 ≠ newE2 ≠ newEprime).
+- `preserveAux_eq_none_iff` characterising when `preserveAux e f T₂ = none`
+  (precisely when `f = e`).
 - `edges_insertAt_eq_classification`: the multiset/list-level
   decomposition `edges (insertAt e T₂) = (preserved-edges) ++ (lifted-edges)
   ++ [e₁, e₂, e']`.
