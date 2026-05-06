@@ -272,23 +272,22 @@ def allFMonotone : List Cat → Bool
   | [_] => true
   | c₁ :: c₂ :: rest => fMonotone c₁ c₂ && allFMonotone (c₂ :: rest)
 
-/-- Compute the EP spine from a syntactic object by collecting categories
-    along the head-projection chain. Returns pairs of (SO, Cat) from
-    the deepest lexical head up to the root. -/
+/-- Compute the EP spine from a syntactic object by walking the
+    leftmost-leaf head chain (= `HeadFunction.leftSpine` per
+    @cite{marcolli-chomsky-berwick-2025} §1.13). Returns pairs of
+    (SO, Cat) from the deepest lexical head up to the root.
+
+    For a non-leftmost-headed analysis, replace the recursion's `a`
+    with the daughter whose head leaf matches `so.outerCat` under the
+    chosen head function, or rewrite this helper to take a
+    `HeadFunction` parameter. -/
 partial def computeEPSpine (so : SyntacticObject) : List (SyntacticObject × Cat) :=
   match so with
   | .leaf tok => [(so, tok.item.outerCat)]
-  | .node a b =>
-    -- Find which daughter is the head (projects)
-    let headDaughter := if selects a b then a
-                        else if selects b a then b
-                        else a  -- default: left daughter
-    let spineBelow := computeEPSpine headDaughter
-    match getCategory so with
-    | some c => spineBelow ++ [(so, c)]
-    | none   => spineBelow
+  | .node a _ => computeEPSpine a ++ [(so, so.outerCat)]
 
-/-- Build an ExtendedProjection from a syntactic object. -/
+/-- Build an ExtendedProjection from a syntactic object using the
+    leftmost-leaf head chain. -/
 def mkExtendedProjection (so : SyntacticObject) : ExtendedProjection :=
   let spinePairs := computeEPSpine so
   let cats := spinePairs.map Prod.snd

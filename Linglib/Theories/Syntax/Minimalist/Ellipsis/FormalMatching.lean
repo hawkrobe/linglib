@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.SmallClause
 import Linglib.Theories.Syntax.Minimalist.Labeling
+import Linglib.Theories.Syntax.Minimalist.CombinationSchemata
 
 /-!
 # Sluicing: Syntactic Isomorphism Condition
@@ -519,7 +520,7 @@ theorem verbframe_argdomain_complete :
     isInArgumentDomain .C .C = false := by decide
 
 -- ── Concrete tree verification ─────────────────────────────────
--- The following #guard checks verify at compile time that the
+-- The following examples verify at compile time that the
 -- concrete Minimalist trees built from VerbFrames have the expected
 -- structural properties (category labels, selection relations).
 
@@ -528,13 +529,15 @@ private def activeTree := activeFrame.tree 1 2 3
 /-- Passive transitive tree: [vP v[nonTh] [VP V DP]] -/
 private def passiveTree := passiveFrame.tree 1 2 3
 
--- Tree labels match expected categories
-example : getCategory activeTree = some .v := by decide
-example : getCategory passiveTree = some .v := by decide
+-- Tree labels match expected categories under the leftSpine head function.
+example : Labeling.labelRoot HeadFunction.leftSpine activeTree = some .v := by decide
+example : Labeling.labelRoot HeadFunction.leftSpine passiveTree = some .v := by decide
 
--- Selection holds: v selects VP, V selects DP
-example : selects (mkLeaf .v [.V] 1) (merge (mkLeaf .V [.D] 2) (mkLeaf .D [] 3)) := by decide
-example : selects (mkLeaf .V [.D] 2) (mkLeaf .D [] 3) := by decide
+-- Selection holds: v selects VP, V selects DP (under leftSpine).
+example : selects HeadFunction.leftSpine
+    (mkLeaf .v [.V] 1) (merge (mkLeaf .V [.D] 2) (mkLeaf .D [] 3)) := by decide
+example : selects HeadFunction.leftSpine
+    (mkLeaf .V [.D] 2) (mkLeaf .D [] 3) := by decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 5: Nonargument PPs and Chung's Generalization
@@ -842,16 +845,16 @@ theorem domain_root_is_divergence_source :
 -- `Phenomena/Ellipsis/Studies/Bruening2021Sluicing.lean`.
 
 /-- Maximal projections within a SO `root`: subtrees `t` such that
-    `Labeling.isMaximalIn t root`. Per @cite{bruening-2021} §5.5 ex. 122,
-    the identity condition quantifies over these XPs (modulo movement
-    non-heads).
+    `Labeling.isMaximalAt h root t` under head function `h`. Per
+    @cite{bruening-2021} §5.5 ex. 122, the identity condition
+    quantifies over these XPs (modulo movement non-heads).
 
-    Uses the propositional `isMaximalIn` + Decidable instance per the
-    project's Bool→Prop migration (`feedback_bool_migration_scope`); the
-    Decidable instance internally bounds the unbounded existential via
-    `isMaximalIn_iff_bounded` (`Labeling.lean`). -/
-def maximalProjections (root : SyntacticObject) : List SyntacticObject :=
-  root.subtrees.filter (fun t => decide (isMaximalIn t root))
+    Parametric over `h : HeadFunction` per
+    @cite{marcolli-chomsky-berwick-2025} §1.13.6 — there is no canonical
+    "the" labeling without a chosen head function. -/
+def maximalProjections (h : HeadFunction) (root : SyntacticObject) :
+    List SyntacticObject :=
+  root.subtrees.filter (fun t => decide (Labeling.isMaximalAt h root t))
 
 /-- A SO is a "nonhead member of a movement chain" iff it is a trace
     (lower copy left after movement). Per @cite{bruening-2021} §5.5 ex. 122
@@ -862,60 +865,60 @@ def isNonHeadMemberOfChain (x : SyntacticObject) : Bool :=
   (isTrace x).isSome
 
 /-- Path from `root` down to a target subtree, recorded as the sequence
-    of `labelCat`s at each node along the way (root included, target
-    included). Returns `none` if `target` is not a subtree of `root`.
+    of vertex labels under head function `h` at each node along the way
+    (root included, target included). Returns `none` if `target` is not
+    a subtree of `root`.
 
     Used to give each max-proj a position-aware identity per
     @cite{bruening-2021} §5.5 ex. 123 ("dominated by an identical sequence
-    of immediately dominating nodes"). Path equality replaces the looser
-    cat-only equality, ruling out cross-paradigm false positives where
-    two unrelated trees happen to share a max-proj cat multiset. -/
-def labelPathFromRoot : SyntacticObject → SyntacticObject → Option (List Cat)
+    of immediately dominating nodes"). Position-sensitive equality
+    replaces looser cat-only equality, ruling out cross-paradigm false
+    positives where two unrelated trees share a max-proj cat multiset. -/
+def labelPathFromRoot (h : HeadFunction) :
+    SyntacticObject → SyntacticObject → Option (List Cat)
   | root, target =>
     if root = target then
-      some ((labelCat root).toList)
+      some ((Labeling.labelVertex h root root).toList)
     else
       match root with
       | .leaf _ => none
       | .node a b =>
-        match labelPathFromRoot a target with
-        | some pa => some ((labelCat root).toList ++ pa)
+        match labelPathFromRoot h a target with
+        | some pa => some ((Labeling.labelVertex h (.node a b) (.node a b)).toList ++ pa)
         | none =>
-          match labelPathFromRoot b target with
-          | some pb => some ((labelCat root).toList ++ pb)
+          match labelPathFromRoot h b target with
+          | some pb => some ((Labeling.labelVertex h (.node a b) (.node a b)).toList ++ pb)
           | none => none
 
-/-- Filtered max-proj paths for a tree. Each filtered max-proj is paired
-    with its path from the root (= sequence of `labelCat`s). Movement
-    non-heads (wh-traces and other lower copies) are excluded — exactly
-    Bruening's "not a nonhead member of a movement chain" filter. -/
-def filteredMaxProjPaths (root : SyntacticObject) : List (List Cat) :=
-  ((maximalProjections root).filter (fun x => !isNonHeadMemberOfChain x)).filterMap
-    (labelPathFromRoot root ·)
+/-- Filtered max-proj paths for a tree under head function `h`. Each
+    filtered max-proj is paired with its path from the root (= sequence
+    of `Labeling.labelVertex` values). Movement non-heads (wh-traces and
+    other lower copies) are excluded — exactly Bruening's "not a nonhead
+    member of a movement chain" filter. -/
+def filteredMaxProjPaths (h : HeadFunction) (root : SyntacticObject) :
+    List (List Cat) :=
+  ((maximalProjections h root).filter (fun x => !isNonHeadMemberOfChain x)).filterMap
+    (labelPathFromRoot h root ·)
 
-/-- @cite{bruening-2021} §5.5 ex. 122 maximal-projection identity condition.
-    Ellipsis of `ellipsis` given `antecedent` is licit iff their filtered
-    max-proj path lists are permutations of each other — equivalently,
-    every max-proj in one has a position-matching correlate in the other.
+/-- @cite{bruening-2021} §5.5 ex. 122 maximal-projection identity
+    condition, parametric over the head function `h`. Ellipsis of
+    `ellipsis` given `antecedent` is licit iff their filtered max-proj
+    path lists are permutations of each other.
 
-    Position-aware via `labelPathFromRoot`: same-cat max-projs at DIFFERENT
-    structural positions (different domination sequences) do NOT match,
-    correctly ruling out cross-paradigm false positives where two unrelated
-    trees share a max-proj cat multiset.
+    Stated as Prop; decidable via `List.decidablePerm`. -/
+def bruening2021StructurallyIdentical
+    (h : HeadFunction) (antecedent ellipsis : SyntacticObject) : Prop :=
+  (filteredMaxProjPaths h antecedent).Perm (filteredMaxProjPaths h ellipsis)
 
-    Stated as Prop (per the project's Bool→Prop substrate convention);
-    decidable via `List.decidablePerm`. -/
-def bruening2021StructurallyIdentical (antecedent ellipsis : SyntacticObject) : Prop :=
-  (filteredMaxProjPaths antecedent).Perm (filteredMaxProjPaths ellipsis)
-
-instance (a e : SyntacticObject) :
-    Decidable (bruening2021StructurallyIdentical a e) :=
+instance (h : HeadFunction) (a e : SyntacticObject) :
+    Decidable (bruening2021StructurallyIdentical h a e) :=
   inferInstanceAs (Decidable (List.Perm _ _))
 
 /-- The maximal-projection identity condition is reflexive: any SO is
-    structurally identical to itself. -/
-theorem bruening2021StructurallyIdentical_refl (so : SyntacticObject) :
-    bruening2021StructurallyIdentical so so :=
+    structurally identical to itself (under any `h`). -/
+theorem bruening2021StructurallyIdentical_refl
+    (h : HeadFunction) (so : SyntacticObject) :
+    bruening2021StructurallyIdentical h so so :=
   List.Perm.refl _
 
 end Minimalist.Ellipsis.FormalMatching

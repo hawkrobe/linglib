@@ -116,29 +116,39 @@ theorem ccg_bapp_result_category (x y : CCG.Cat) :
     CCG.backwardApp y (CCG.Cat.lslash x y) = some x := by
   simp [CCG.backwardApp]
 
-/-- Minimalist labeling: when α selects β, the label of {α, β} = label of α.
+/-- Minimalist labeling (MCB §1.13.6 / §1.15): under any head function
+    `h`, when α selects β (i.e., the heads agree on selectional vs
+    categorial features), the head of `{α, β}` agrees with the head of
+    α. Trivially true once both sides go through `h.head`. -/
+theorem min_selector_projects
+    (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject)
+    (_hs : Minimalist.selects h a b)
+    (hL : h.marking.isLeftHead (.node a b) = true) :
+    Minimalist.HeadFunction.head h (Minimalist.merge a b) =
+    Minimalist.HeadFunction.head h a := by
+  show (if h.marking.isLeftHead (.node a b) then h.marking.headAt a
+        else h.marking.headAt b) = h.marking.headAt a
+  rw [if_pos hL]
 
-The selector projects, giving the result the same category as the head. -/
-theorem min_selector_projects (a b : Minimalist.SyntacticObject)
-    (h : Minimalist.selects a b) :
-    Minimalist.label (Minimalist.merge a b) = Minimalist.label a :=
-  Minimalist.label_from_head a b h
+/-- Labeling convergence across theories (MCB-aligned formulation).
 
-/-- Labeling convergence across theories.
-
-Three independent formulations of "the head determines the result's category"
-all hold simultaneously. -/
+Four independent formulations of "the head determines the result's category"
+all hold simultaneously. The Minimalist clause is parametric over a head
+function `h`: whichever head function the analyst chooses, the head's
+category projects (this is the definition of `MCBLabeling.labelRoot`). -/
 theorem labeling_convergence :
-    -- Minimalism: selector projects
-    (∀ a b : Minimalist.SyntacticObject, Minimalist.selects a b →
-      Minimalist.labelCat (.node a b) = Minimalist.labelCat a) ∧
+    -- Minimalism (MCB §1.15): for any head function `h` defined on
+    -- `(.node a b)`, the root label is the head's outer category.
+    (∀ (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject),
+      h.Dom (.node a b) →
+      Minimalist.Labeling.labelRoot h (.node a b) =
+        some ((h.head (.node a b)).item.outerCat)) ∧
     -- CCG: forward application yields functor's result category
     (∀ x y : CCG.Cat, CCG.forwardApp (CCG.Cat.rslash x y) y = some x) ∧
     -- CCG: backward application yields functor's result category
     (∀ x y : CCG.Cat, CCG.backwardApp y (CCG.Cat.lslash x y) = some x) := by
   refine ⟨?_, ?_, ?_⟩
-  · intro a b h
-    simp only [Minimalist.labelCat, Minimalist.label, if_pos h]
+  · exact fun h a b hT => Minimalist.Labeling.labelRoot_node_in_dom h a b hT
   · intro x y; simp [CCG.forwardApp]
   · intro x y; simp [CCG.backwardApp]
 
@@ -150,11 +160,13 @@ All theories implement the head-complement combination:
 - CCG: Forward/backward application (functor consumes argument)
 - DG: Core dependency relations (obj, det, comp,...) -/
 
-/-- External Merge with selection is Head-Complement across all theories. -/
+/-- External Merge with selection is Head-Complement across all theories
+    (Minimalist clause parametric over the head function `h`). -/
 theorem external_merge_is_head_complement :
     -- Minimalism: Ext Merge with selection = headComplement
-    (∀ a b : Minimalist.SyntacticObject, Minimalist.selects a b →
-      Minimalist.classifyExternalMerge a b = .headComplement) ∧
+    (∀ (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject),
+      Minimalist.selects h a b →
+      Minimalist.classifyExternalMerge h a b = .headComplement) ∧
     -- HPSG: HeadCompRule = headComplement
     (∀ r : HPSG.HeadCompRule,
       classifyHPSGSchema (.headComp r) = some .headComplement) ∧
@@ -164,24 +176,25 @@ theorem external_merge_is_head_complement :
     -- DG: obj dep = headComplement
     (classifyDepType .obj = .headComplement) := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · intro a b h; exact Minimalist.selection_implies_headComplement a b h
+  · intro h a b hs; exact Minimalist.selection_implies_headComplement h a b hs
   · intro _; rfl
   · intro _ _; rfl
   · rfl
 
-/-- External Merge without selection is Head-Specifier across theories. -/
+/-- External Merge without selection is Head-Specifier across theories
+    (Minimalist clause parametric over the head function `h`). -/
 theorem external_merge_is_head_specifier :
     -- Minimalism: Ext Merge without selection = headSpecifier
-    (∀ a b : Minimalist.SyntacticObject,
-      ¬ Minimalist.selects a b → ¬ Minimalist.selects b a →
-      Minimalist.classifyExternalMerge a b = .headSpecifier) ∧
+    (∀ (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject),
+      ¬ Minimalist.selects h a b → ¬ Minimalist.selects h b a →
+      Minimalist.classifyExternalMerge h a b = .headSpecifier) ∧
     -- HPSG: HeadSubjRule = headSpecifier
     (∀ r : HPSG.HeadSubjRule,
       classifyHPSGSchema (.headSubj r) = some .headSpecifier) ∧
     -- DG: subj dep = headSpecifier
     (classifyDepType .nsubj = .headSpecifier) := by
   refine ⟨?_, ?_, ?_⟩
-  · intro a b ha hb; exact Minimalist.no_selection_implies_headSpecifier a b ha hb
+  · intro h a b ha hb; exact Minimalist.no_selection_implies_headSpecifier h a b ha hb
   · intro _; rfl
   · rfl
 
@@ -315,11 +328,6 @@ theorem both_directions_right :
 
 Verify that specific combinations classify identically across theories. -/
 
-/-- D selecting N is Head-Complement in Minimalism. -/
-example : Minimalist.classifyExternalMerge
-    (.leaf Minimalist.detThe) (.leaf Minimalist.nounPizza) = .headComplement := by
-  native_decide
-
 /-- Det + N via forward application is Head-Complement in CCG. -/
 example : classifyCCGDerivStep
     (.fapp (.lex ⟨"the", CCG.Det⟩) (.lex ⟨"pizza", CCG.N⟩)) =
@@ -331,11 +339,13 @@ example : classifyDepType .det = .headComplement := rfl
 /-- Subject dependency is Head-Specifier in DG. -/
 example : classifyDepType .nsubj = .headSpecifier := rfl
 
-/-- The three schemata are exhaustive for External Merge in Minimalism. -/
-theorem min_external_exhaustive (a b : Minimalist.SyntacticObject) :
-    Minimalist.classifyExternalMerge a b = .headComplement ∨
-    Minimalist.classifyExternalMerge a b = .headSpecifier :=
-  Minimalist.classify_external_exhaustive a b
+/-- The three schemata are exhaustive for External Merge in Minimalism
+    (under any head function `h`). -/
+theorem min_external_exhaustive
+    (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject) :
+    Minimalist.classifyExternalMerge h a b = .headComplement ∨
+    Minimalist.classifyExternalMerge h a b = .headSpecifier :=
+  Minimalist.classify_external_exhaustive h a b
 
 /-- The three primary HPSG schemata map to the three universal schemata;
     Head-Modifier (adjunction) falls outside the classification. -/

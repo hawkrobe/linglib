@@ -146,8 +146,7 @@ open Minimalist
     (the D lexical item) and `b` is the complement. PIC freezes the
     complement domain, not the head/edge. -/
 theorem dp_phase_barrier_from_pic (tok : LIToken) (b : SyntacticObject)
-    (h : labelCat (.node (.leaf tok) b) = some .D)
-    (h_phase : isPhaseHeadOf .D (.node (.leaf tok) b) = true) :
+    (_h_phase : isPhaseHeadOf .D (.node (.leaf tok) b) = true) :
     ∀ (goal : SyntacticObject),
       contains b goal →
       phaseImpenetrable (.node (.leaf tok) b) goal := by

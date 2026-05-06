@@ -16,6 +16,15 @@ are the same operation. This file further classifies Merge by *combination kind*
 | External (specifier) | neither selects, arg is maximal | Head-Specifier |
 | Internal | `contains target mover` | Head-Filler |
 
+## MCB alignment
+
+Per @cite{marcolli-chomsky-berwick-2025} §1.13.6, head identification is
+parametric over a `HeadFunction`. All head-aware definitions in this
+file take `h : HeadFunction` explicitly; there is no hidden default.
+Callers wanting English-like leftmost-headed semantics pass
+`HeadFunction.leftSpine`; derivation-anchored Studies pass the
+head function tracked through the derivation; etc.
+
 ## Connection to @cite{mueller-2013}
 
 - §2.1: External Merge with selection ≈ Head-Complement
@@ -28,74 +37,92 @@ namespace Minimalist
 
 open Core
 
+/-! ## Selection (LIToken-level primitive + h-parametric SO wrapper) -/
+
+/-- LIToken-level c-selection: `selector` selects `selected` iff
+    `selector`'s outermost selectional feature equals `selected`'s outer
+    category. Pure LIToken relation; no SO structure involved. -/
+def LIToken.selects (selector selected : LIToken) : Prop :=
+  selector.item.outerSel.head? = some selected.item.outerCat
+
+instance (lt1 lt2 : LIToken) : Decidable (LIToken.selects lt1 lt2) := by
+  unfold LIToken.selects; infer_instance
+
+/-- SO-level c-selection parameterised over a head function:
+    `a` selects `b` (under `h`) iff `h`'s head-leaf for `a` selects
+    `h`'s head-leaf for `b`. -/
+def selects (h : HeadFunction) (a b : SyntacticObject) : Prop :=
+  (h.headAt a).selects (h.headAt b)
+
+instance (h : HeadFunction) (a b : SyntacticObject) :
+    Decidable (selects h a b) := by
+  unfold selects; infer_instance
+
 /-! ## Classification of Merge -/
 
-/-- Classify an External Merge (known to have no containment). -/
-def classifyExternalMerge (a b : SyntacticObject) : CombinationKind :=
-  if selects a b ∨ selects b a then
+/-- Classify an External Merge under head function `h`. -/
+def classifyExternalMerge (h : HeadFunction) (a b : SyntacticObject) :
+    CombinationKind :=
+  if selects h a b ∨ selects h b a then
     .headComplement
   else
     .headSpecifier
 
-/-- Classify an Internal Merge (known to have containment). -/
+/-- Classify an Internal Merge (head-function-independent: IM is always
+    Head-Filler regardless of which side projects). -/
 def classifyInternalMerge : CombinationKind := .headFiller
 
 /-! ## Which daughter is the head? -/
 
-/-- Determine which daughter is the head of a Merge.
-
-The head is the daughter whose label matches the result's label.
-In Minimalism, this is determined by which element projects. -/
-def mergeHead (a b result : SyntacticObject) : Option SyntacticObject :=
-  if labelCat result == labelCat a then some a
-  else if labelCat result == labelCat b then some b
+/-- Determine which daughter is the head of a Merge under head function `h`.
+    The head is the daughter whose head leaf agrees with the result's. -/
+def mergeHead (h : HeadFunction) (a b result : SyntacticObject) :
+    Option SyntacticObject :=
+  if h.head result = h.head a then some a
+  else if h.head result = h.head b then some b
   else none
 
 /-! ## Key theorems -/
 
-/-- External Merge with selection is Head-Complement.
+/-- External Merge with selection is Head-Complement (under any `h`). -/
+theorem selection_implies_headComplement
+    (h : HeadFunction) (a b : SyntacticObject) (hs : selects h a b) :
+    classifyExternalMerge h a b = .headComplement := by
+  simp [classifyExternalMerge, hs]
 
-When one SO selects the other (first merge consuming a selectional feature),
-this is the Head-Complement schema: the selector is the head, the selectee
-is the complement. -/
-theorem selection_implies_headComplement (a b : SyntacticObject)
-    (h : selects a b) :
-    classifyExternalMerge a b = .headComplement := by
-  simp [classifyExternalMerge, h]
-
-/-- External Merge without selection is Head-Specifier.
-
-When neither SO selects the other (e.g., subject merging with TP),
-this is the Head-Specifier schema. -/
-theorem no_selection_implies_headSpecifier (a b : SyntacticObject)
-    (ha : ¬ selects a b) (hb : ¬ selects b a) :
-    classifyExternalMerge a b = .headSpecifier := by
+/-- External Merge without selection is Head-Specifier (under any `h`). -/
+theorem no_selection_implies_headSpecifier
+    (h : HeadFunction) (a b : SyntacticObject)
+    (ha : ¬ selects h a b) (hb : ¬ selects h b a) :
+    classifyExternalMerge h a b = .headSpecifier := by
   simp [classifyExternalMerge, ha, hb]
 
-/-- Internal Merge is always Head-Filler.
-
-Movement (re-merge of a contained element) is always the Head-Filler schema,
-regardless of what the mover or target looks like. -/
+/-- Internal Merge is always Head-Filler. -/
 theorem internal_merge_is_headFiller :
     classifyInternalMerge = .headFiller := rfl
 
-/-- The classification is exhaustive: every External Merge is either
-Head-Complement or Head-Specifier. -/
-theorem classify_external_exhaustive (a b : SyntacticObject) :
-    classifyExternalMerge a b = .headComplement ∨
-    classifyExternalMerge a b = .headSpecifier := by
+/-- The classification is exhaustive (under any `h`). -/
+theorem classify_external_exhaustive
+    (h : HeadFunction) (a b : SyntacticObject) :
+    classifyExternalMerge h a b = .headComplement ∨
+    classifyExternalMerge h a b = .headSpecifier := by
   unfold classifyExternalMerge
-  by_cases h : selects a b ∨ selects b a <;> simp [h]
+  by_cases hs : selects h a b ∨ selects h b a <;> simp [hs]
 
-/-- Label = Head Feature Principle: when α selects β, the label of {α, β} = label α.
-
-This is the Minimalist analogue of the Head Feature Principle:
-the selector projects, so the result's label equals the selector's label. -/
-theorem label_from_head (a b : SyntacticObject) (h : selects a b) :
-    label (merge a b) = label a := by
-  show label (.node a b) = label a
-  rw [label]
-  exact if_pos h
+/-- Head Feature Principle (MCB §1.13.6 / Minimalist analogue): under
+    any head function `h` and the planar marking choice it supplies,
+    `h.head (.node a b)` is one of `h.head a` or `h.head b`. (Built into
+    `PlanarMarking.headAt`'s definition: at every node the marking
+    picks one daughter to descend.) -/
+theorem head_node_eq_daughter (h : HeadFunction) (a b : SyntacticObject) :
+    h.head (.node a b) = h.head a ∨ h.head (.node a b) = h.head b := by
+  show (if h.marking.isLeftHead (.node a b) then h.marking.headAt a
+        else h.marking.headAt b) = h.marking.headAt a ∨
+       (if h.marking.isLeftHead (.node a b) then h.marking.headAt a
+        else h.marking.headAt b) = h.marking.headAt b
+  by_cases hL : h.marking.isLeftHead (.node a b) = true
+  · left; rw [if_pos hL]
+  · right; rw [if_neg hL]
 
 /-! Concrete sanity-check examples (D-N selects, V-DP selects, label
 projection) were removed: their `decide`-based proofs failed because

@@ -15,10 +15,12 @@ Formalization of derivational phases following @cite{chomsky-2000},
 
 ## Design
 
-`isPhaseHeadOf c so` is DERIVED from `labelCat` (the formal labeling
-system) — `labelCat so == some c` — not stipulated. This grounds Phase
-Theory in the same projection machinery used by Containment → Labeling
-→ Agree → Workspace.
+`isPhaseHeadOf c so` is derived from `SyntacticObject.outerCat`, which
+returns the leftmost leaf's outer category — equivalent to
+`(HeadFunction.leftSpine.headAt so).item.outerCat` per
+@cite{marcolli-chomsky-berwick-2025} §1.13 (head function = leftSpine).
+For a study with a non-default head function, lift via
+`Minimalist.Labeling.labelRoot h so`.
 
 -/
 
@@ -28,12 +30,17 @@ import Linglib.Theories.Syntax.Minimalist.Features
 namespace Minimalist
 
 -- ============================================================================
--- Part 1: Phase Head Identification (derived from labelCat)
+-- Part 1: Phase Head Identification (derived from leftSpine head function)
 -- ============================================================================
 
-/-- Generic phase-head test: is the labeling category of `so` exactly `c`? -/
+/-- Generic phase-head test: is the head of `so` (under `leftSpine`)
+    exactly `c`? Uses `SyntacticObject.outerCat = leftmostLeaf.outerCat`,
+    which @cite{marcolli-chomsky-berwick-2025} §1.13 frames as the
+    `leftSpine` head function applied to `so`. For non-leftmost-headed
+    analyses, use `Minimalist.Labeling.labelRoot h so == some c` with
+    the study's chosen `h : HeadFunction`. -/
 def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool :=
-  labelCat so == some c
+  so.outerCat == c
 
 /-! ### Phase-head selectors
 
@@ -80,18 +87,42 @@ and @cite{pietraszko-2026} (Ndebele, A-movement & φ-agreement). -/
       as soon as the phase head is merged.
     - `weak` (PIC₂, @cite{chomsky-2001}): The complement of a phase is accessible
       until the next higher phase head is merged.
+    - `linearizationBound` (no PIC, @cite{fox-pesetsky-2005}, @cite{sande-clem-dabkowski-2026}):
+      No structural opacity at all — the only constraints on movement
+      out of an already-spelled-out phase are the ordering statements
+      emitted at that phase's spell-out (Cyclic Linearization). Material
+      can be moved out of the complement of any phase, provided the
+      resulting Ordering Table remains consistent. This is the regime
+      argued for by SCD 2026 §6.2 (against both PIC₁ and PIC₂):
+      Guébie discontinuous harmony requires that the particle, after
+      being spelled out inside the lower vP phase, remains accessible
+      to A′-fronting in the higher CP phase. Adopted independently by
+      @cite{branan-davis-2019}, @cite{halpert-2019}, @cite{lee-yip-2024}
+      among others. See `Theories/Syntax/Minimalist/Linearization/Cyclic.lean`
+      for the ordering-only locality machinery this mode delegates to.
+
+    Modular variants (e.g., the @cite{d-alessandro-scheer-2015} "Modular PIC"
+    proposal that PIC strength is parametrized per interface module) are
+    not yet operationalized in this enum.
 
     TODO: the strong/weak distinction is not yet operationalized in
     `phaseImpenetrable`, which currently models only the structural
     "goal sits in the complement" check shared by both variants. The
     real distinction lies in *when* the check fires relative to merge
     of the next phase head — that requires a derivational timeline
-    that this static API doesn't yet expose. Callers may pass either
-    constructor without effect on the predicate. -/
+    that this static API doesn't yet expose. Callers using `strong`
+    or `weak` get the same structural answer; callers using
+    `linearizationBound` should consult `Cyclic.SpelloutAndCheck`
+    rather than `phaseImpenetrable`. -/
 inductive PICStrength where
-  | strong   -- PIC₁: complement frozen immediately
-  | weak     -- PIC₂: complement accessible until next phase
+  | strong              -- PIC₁: complement frozen immediately
+  | weak                -- PIC₂: complement accessible until next phase
+  | linearizationBound  -- no opacity; only Cyclic Linearization constrains
   deriving Repr, DecidableEq
+
+-- The mode-aware extraction predicate `admitsExtraction` is defined in
+-- §4 below, after `phaseImpenetrable` (which it dispatches on for the
+-- strict-PIC modes).
 
 -- ============================================================================
 -- Part 3: Phase Structure
@@ -132,6 +163,52 @@ def phaseImpenetrable (phase goal : SyntacticObject) : Prop :=
   match phase with
   | .node _ complement => contains complement goal
   | _ => False
+
+instance (phase goal : SyntacticObject) : Decidable (phaseImpenetrable phase goal) := by
+  unfold phaseImpenetrable
+  cases phase <;> infer_instance
+
+/-- A phase admits movement of `goal` out of `phase.complement` under
+    `strength`. For `strong`/`weak`, this is the negation of
+    `phaseImpenetrable`. For `linearizationBound`, the predicate is
+    vacuously `True` — actual constraint comes from the Cyclic
+    Linearization table, not from phasehood per se.
+
+    The point of the predicate is to make the SCD-2026 stance ("PIC
+    is too strong, Cyclic Linearization is enough") expressible as a
+    different `PICStrength` argument rather than a different theorem
+    statement. Callers who pick `linearizationBound` should also
+    feed the derivation through
+    `Minimalist.Linearization.SpelloutAndCheck` to confirm it does
+    not crash on ordering grounds. -/
+def admitsExtraction (strength : PICStrength)
+    (phase goal : SyntacticObject) : Prop :=
+  match strength with
+  | .strong | .weak => ¬ phaseImpenetrable phase goal
+  | .linearizationBound => True
+
+instance (strength : PICStrength) (phase goal : SyntacticObject) :
+    Decidable (admitsExtraction strength phase goal) := by
+  unfold admitsExtraction
+  cases strength <;> infer_instance
+
+/-- Under `linearizationBound`, every phase admits extraction at the
+    phasehood layer. Concrete crashes come from the linearization
+    table (see `Minimalist.Linearization.SpelloutAndCheck`). This is the
+    formal content of @cite{sande-clem-dabkowski-2026}'s rejection of
+    strict PIC. -/
+theorem linearizationBound_admits_all (phase goal : SyntacticObject) :
+    admitsExtraction .linearizationBound phase goal := trivial
+
+/-- Strict PIC₁/PIC₂ both block extraction from a phase complement.
+    The mode-as-data design lets a study file pick its locality regime
+    by passing the `PICStrength` argument explicitly. -/
+theorem strict_PIC_blocks {strength : PICStrength}
+    (h : strength = .strong ∨ strength = .weak)
+    {phase goal : SyntacticObject}
+    (hp : phaseImpenetrable phase goal) :
+    ¬ admitsExtraction strength phase goal := by
+  rcases h with h | h <;> simp [admitsExtraction, h, hp]
 
 -- ============================================================================
 -- Part 5: Transfer

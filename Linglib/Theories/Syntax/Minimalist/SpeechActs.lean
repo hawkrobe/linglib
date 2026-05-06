@@ -207,7 +207,7 @@ theorem deriveMood_finite :
 --     SAP → root-only follows from SAP = highest phase.
 --     (Proved in Allocutivity.lean: `sa_based_aa_root_only`)
 theorem sa_is_phase_head (so : SyntacticObject)
-    (h : labelCat so = some .SA) :
+    (h : so.outerCat = .SA) :
     isPhaseHeadOf .SA so = true := by
   simp only [isPhaseHeadOf, h, beq_self_eq_true]
 
