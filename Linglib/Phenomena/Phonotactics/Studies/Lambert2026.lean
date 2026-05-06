@@ -152,6 +152,26 @@ theorem amara_isDefinite_two : IsDefinite 2 amaraLang :=
   ⟨amaraGrammar, rfl⟩
 
 -- ============================================================================
+-- § 2b. Finnish (Uralic): stress-initial ∈ K_1
+-- ============================================================================
+
+/-- Finnish stress @cite{suomi-toivanen-ylitalo-2008}: primary stress is
+fixed to the initial syllable. The reverse-definite dual of Iban
+stress-final, witnessing the `IsReverseDefinite 1` class @cite{lambert-2026}
+§2.2. -/
+def finnishGrammar : ReverseDefiniteGrammar 1 IbanSyl where
+  permitted := { [.stressed] }
+
+/-- The Finnish stress-initial language. -/
+def finnishLang : Language IbanSyl := finnishGrammar.lang
+
+/-- **Finnish stress-initial ∈ K_1** (Lambert 2026 §2.2, paper p. 5
+example (6)). Definitional witness: the `ReverseDefiniteGrammar 1`
+whose permitted initial 1-prefix is `[stressed]`. -/
+theorem finnish_isReverseDefinite_one : IsReverseDefinite 1 finnishLang :=
+  ⟨finnishGrammar, rfl⟩
+
+-- ============================================================================
 -- § 3. Uyghur backness harmony ∈ BTD
 -- ============================================================================
 
