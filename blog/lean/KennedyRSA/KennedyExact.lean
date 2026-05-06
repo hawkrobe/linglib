@@ -1,4 +1,5 @@
-import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge
+-- TODO: orphan import — Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge never landed
+-- import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge
 
 /-!
 # Kennedy (2015) exact semantics → G&S (2013) numeral implicatures
