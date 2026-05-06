@@ -111,6 +111,7 @@ without forcing them through the `SmallClause` constructor. -/
     of any non-leaf projects. -/
 def SyntacticObject.headCat : SyntacticObject → Cat
   | .leaf tok => tok.item.outerCat
+  | .trace _ => .N  -- traces project as N (default)
   | .node l _ => l.headCat
 
 @[simp] theorem SyntacticObject.headCat_leaf (tok : LIToken) :
@@ -138,10 +139,12 @@ instance : DecidablePred IsSmallClausePredicate :=
     Companion to `structure SmallClause`. -/
 def IsSmallClause : SyntacticObject → Prop
   | .leaf _ => False
+  | .trace _ => False
   | .node _ pred => IsSmallClausePredicate pred
 
 instance : DecidablePred IsSmallClause
   | .leaf _ => isFalse id
+  | .trace _ => isFalse id
   | .node _ pred => inferInstanceAs (Decidable (IsSmallClausePredicate pred))
 
 @[simp] theorem isSmallClause_leaf (tok : LIToken) :

@@ -236,11 +236,14 @@ def cutForest : ∀ {T : TraceTree α β}, CutShape T → TraceForest α β
   | .node _ _, .bothRecurse cl cr => cutForest cl + cutForest cr
 
 /-- The remainder of a cut (contraction-with-trace, M-C-B Def 1.2.4):
-    T with each cut subtree replaced by a `.trace` leaf. The trace label
-    is `default : β` from `[Inhabited β]` (e.g., `()` for the bialgebra
-    layer with `β = Unit`). For richer trace labels (head function, etc.),
-    use a different projection at the bialgebra boundary; this default
-    suffices for `Hc R α := AddMonoidAlgebra R (TraceForest α Unit)`.
+    T with each cut subtree replaced by a `.trace default` leaf.
+
+    The trace label is `default : β` from `[Inhabited β]`. Both
+    algebraic-side `β = Unit` (default = `()`, irrelevant) and
+    linguistic-side `β = Nat` (default = `0`, sentinel binding index)
+    have Inhabited automatically. Callers wanting a specific label can
+    provide it via a custom `Inhabited β` instance at the call site
+    (rare; in practice the default suffices).
 
     Note: by the `IsNotTrace` constraint on the extracting constructors, the
     children getting wrapped with `.trace` here are guaranteed to NOT already
@@ -639,7 +642,7 @@ shaped tree's only CutShape is `atTrace`, whose remainder is the same `.trace`. 
 
 /-- `IsNotTrace` is preserved by `remainder` in both directions. -/
 theorem isNotTrace_remainder_iff [Inhabited β] {l : TraceTree α β} (cl : CutShape l) :
-    TraceTree.IsNotTrace (remainder cl) ↔ TraceTree.IsNotTrace l := by
+    TraceTree.IsNotTrace cl.remainder ↔ TraceTree.IsNotTrace l := by
   cases l with
   | leaf _ => cases cl; exact Iff.rfl
   | trace _ => cases cl; exact Iff.rfl
@@ -648,12 +651,13 @@ theorem isNotTrace_remainder_iff [Inhabited β] {l : TraceTree α β} (cl : CutS
 /-- Forward direction: if `l` is not a trace marker, neither is its remainder
     after any cut. -/
 theorem isNotTrace_remainder [Inhabited β] {l : TraceTree α β} (cl : CutShape l)
-    (h : TraceTree.IsNotTrace l) : TraceTree.IsNotTrace (remainder cl) :=
+    (h : TraceTree.IsNotTrace l) : TraceTree.IsNotTrace cl.remainder :=
   (isNotTrace_remainder_iff cl).mpr h
 
 /-- Backward direction: if `remainder cl` is not a trace marker, neither is `l`. -/
-theorem isNotTrace_of_isNotTrace_remainder [Inhabited β] {l : TraceTree α β} (cl : CutShape l)
-    (h : TraceTree.IsNotTrace (remainder cl)) : TraceTree.IsNotTrace l :=
+theorem isNotTrace_of_isNotTrace_remainder [Inhabited β]
+    {l : TraceTree α β} (cl : CutShape l)
+    (h : TraceTree.IsNotTrace cl.remainder) : TraceTree.IsNotTrace l :=
   (isNotTrace_remainder_iff cl).mp h
 
 /-! ## §8: Δ^d leafCount conservation (M-C-B Def 1.6.2 + book p. 64 remark)
@@ -782,34 +786,549 @@ theorem deletionLeafCount_eq_of_remainderDeletion_some {T : TraceTree α β}
   rw [deletionLeafCount_eq_option_elim, h]
   rfl
 
-/-! ## §9: Δ^d deletion size primitive
+/-! ## §9: Δ^d size conservation (MCB Lemma 1.6.3 size analog)
 
-`deletionSize c` is the vertex count of the deletion-remainder `Q` of a
-cut `c` (for cuts where `c.remainderDeletion = some Q`). Defined as the
-`Option.elim` of `remainderDeletion`'s vertex count.
+The size analog of `cut_leafCount_conservation`: for any admissible cut
+`c` on `T`,
 
-The full size analog of `cut_leafCount_conservation` (a theorem of the
-form `T.size = cutForest.sizeForest + deletionSize + #contractions`) is
-non-trivial because the contracted-vertex count for `bothRecurse` cuts
-depends on whether the child remainders are `some` or `none` (the parent
-vertex is preserved only when both child remainders are `some`). For the
-specialized single-edge-cut case `T.size = β.size + Q.size + 1` (sufficient
-for IM, Sideward 2(b), and MCB Lemma 1.6.3 eq. 1.6.7/1.6.9), the proof
-needs case-analysis on the cut shape — queued as separate substrate
-work; consumers in `Merge/MinimalYield.lean` currently take this size
-relation as a hypothesis. -/
+  `T.size = c.cutForest.sizeForest + deletionSize c + numContractions c`
 
-/-- Total vertex count of the deletion-remainder. Analog of
-    `deletionLeafCount` for `size`. Defined as the `Option.elim` of
-    `remainderDeletion`'s vertex count. -/
-def deletionSize {T : TraceTree α β} (c : CutShape T) : Nat :=
-  (c.remainderDeletion).elim 0 TraceTree.size
+where:
+- `cutForest.sizeForest` is the total vertex count of extracted subtrees;
+- `deletionSize c = (c.remainderDeletion).elim 0 size` is the vertex count
+  of the binarized deletion-quotient (0 if it collapses entirely);
+- `numContractions c` counts the vertices LOST to edge-contraction during
+  the deletion-quotient construction. A `.bothCut` always contracts 1
+  parent vertex; an `only*Cut` always contracts 1 (its parent has only
+  the trace child after the recursion); a `.bothRecurse cl cr` contracts
+  1 iff at least one child's remainder collapses (parent loses ≥ 1 child
+  → contracts), 0 otherwise.
 
-/-- When a cut has a non-trivial Δ^d remainder `some t`, `deletionSize c = t.size`. -/
-theorem deletionSize_eq_of_remainderDeletion_some {T : TraceTree α β}
-    (c : CutShape T) (t : TraceTree α β) (h : c.remainderDeletion = some t) :
-    deletionSize c = t.size := by
-  unfold deletionSize; rw [h]; rfl
+This generalizes the leafCount conservation (which is contraction-free
+because contractions only affect non-leaf vertices). The single-edge
+case (`cutForest = {β_t}`, `remainderDeletion = some Q`) yields
+`T.size = β_t.size + Q.size + 1` (exactly 1 contraction at the immediate
+parent of the cut edge). -/
+
+/-- Number of vertices lost to edge contraction in the Δ^d quotient. See
+    §9 docstring for the per-constructor recursion. -/
+def numContractions : ∀ {T : TraceTree α β}, CutShape T → Nat
+  | .leaf _,   .atLeaf       => 0
+  | .trace _,  .atTrace      => 0
+  | .node _ _, .bothCut _ _  => 1
+  | .node _ _, .onlyLeftCut _ cr => 1 + numContractions cr
+  | .node _ _, .onlyRightCut _ cl => 1 + numContractions cl
+  | .node _ _, .bothRecurse cl cr =>
+      numContractions cl + numContractions cr +
+      (match cl.remainderDeletion, cr.remainderDeletion with
+       | some _, some _ => 0
+       | _,      _      => 1)
+
+/-- **Δ^d size conservation** (MCB Lemma 1.6.3 size analog, book p. 65).
+    For any cut `c` on `T`, the source tree's vertex count decomposes
+    as the sum of extracted-subtree vertices, deletion-remainder
+    vertices, and contracted vertices. Structural induction; each cut
+    constructor contributes a known number of contractions per the
+    `numContractions` recursion. -/
+theorem cut_size_conservation :
+    ∀ {T : TraceTree α β} (c : CutShape T),
+      T.size = c.cutForest.sizeForest +
+                 (c.remainderDeletion).elim 0 TraceTree.size +
+                 numContractions c
+  | .leaf _, .atLeaf => by
+      simp only [cutForest, remainderDeletion, numContractions,
+                 TraceForest.sizeForest_zero, Option.elim,
+                 TraceTree.size_leaf]
+  | .trace _, .atTrace => by
+      simp only [cutForest, remainderDeletion, numContractions,
+                 TraceForest.sizeForest_zero, Option.elim,
+                 TraceTree.size_trace]
+  | .node l r, .bothCut _ _ => by
+      simp only [cutForest, remainderDeletion, numContractions,
+                 TraceForest.sizeForest_pair, Option.elim,
+                 TraceTree.size_node]
+      omega
+  | .node l r, .onlyLeftCut _ cr => by
+      have ih := cut_size_conservation cr
+      simp only [cutForest, remainderDeletion, numContractions,
+                 TraceForest.sizeForest_add, TraceForest.sizeForest_singleton,
+                 TraceTree.size_node]
+      omega
+  | .node l r, .onlyRightCut _ cl => by
+      have ih := cut_size_conservation cl
+      simp only [cutForest, remainderDeletion, numContractions,
+                 TraceForest.sizeForest_add, TraceForest.sizeForest_singleton,
+                 TraceTree.size_node]
+      omega
+  | .node l r, .bothRecurse cl cr => by
+      have ihl := cut_size_conservation cl
+      have ihr := cut_size_conservation cr
+      simp only [cutForest, numContractions,
+                 TraceForest.sizeForest_add, TraceTree.size_node]
+      cases hl : cl.remainderDeletion <;> cases hr : cr.remainderDeletion <;>
+        simp only [hl, hr, remainderDeletion, Option.elim,
+                   TraceTree.size_node] at ihl ihr ⊢ <;>
+        omega
+
+/-! ### Δ^c size conservation -/
+
+/-- **Δ^c size conservation** (MCB Lemma 1.6.3 size analog for the
+    contraction quotient, book p. 65). For any cut `c` on a trace-free
+    `T`, the source tree's vertex count decomposes cleanly into
+    extracted-subtree vertices plus the contraction-remainder's
+    NON-TRACE vertex count:
+
+      `T.size = c.cutForest.sizeForest + (c.remainder).nonTraceSize`
+
+    The trace-free hypothesis is encoded as `T.nonTraceSize = T.size` —
+    matching MCB's setup where syntactic objects in the workspace are
+    trace-free; trace markers appear only in quotient trees.
+
+    No "contraction count" appears here — Δ^c preserves all parent
+    vertices (they hold the trace markers). The trace markers in the
+    remainder don't count toward `nonTraceSize`, exactly recovering the
+    extracted subtrees' vertex bookkeeping.
+
+    Compare to `cut_size_conservation` for Δ^d which has an extra
+    `numContractions c` term. -/
+theorem cut_size_conservation_contraction [Inhabited β] :
+    ∀ {T : TraceTree α β} (c : CutShape T),
+      T.nonTraceSize = T.size →
+      T.size = c.cutForest.sizeForest + c.remainder.nonTraceSize
+  | .leaf _, .atLeaf, _ => by
+      simp only [cutForest, remainder, TraceForest.sizeForest_zero,
+                 TraceTree.nonTraceSize_leaf, TraceTree.size_leaf]
+  | .trace _, .atTrace, h_tf => by
+      -- Trace at root: nonTraceSize = 0, size = 1, contradicts hypothesis.
+      simp only [TraceTree.nonTraceSize_trace, TraceTree.size_trace] at h_tf
+      omega
+  | .node l r, .bothCut hl hr, h_tf => by
+      simp only [cutForest, remainder, TraceForest.sizeForest_pair,
+                 TraceTree.nonTraceSize_node, TraceTree.nonTraceSize_trace,
+                 TraceTree.size_node]
+      -- l, r both trace-free from hypothesis (nonTraceSize_node = size_node).
+      simp only [TraceTree.nonTraceSize_node, TraceTree.size_node] at h_tf
+      have hl_tf : l.nonTraceSize = l.size := by
+        have := l.nonTraceSize_le_size
+        have := r.nonTraceSize_le_size
+        omega
+      have hr_tf : r.nonTraceSize = r.size := by
+        have := l.nonTraceSize_le_size
+        have := r.nonTraceSize_le_size
+        omega
+      omega
+  | .node l r, .onlyLeftCut hl cr, h_tf => by
+      simp only [TraceTree.nonTraceSize_node, TraceTree.size_node] at h_tf
+      have hl_tf : l.nonTraceSize = l.size := by
+        have := l.nonTraceSize_le_size
+        have := r.nonTraceSize_le_size
+        omega
+      have hr_tf : r.nonTraceSize = r.size := by
+        have := l.nonTraceSize_le_size
+        have := r.nonTraceSize_le_size
+        omega
+      have ih := cut_size_conservation_contraction cr hr_tf
+      simp only [cutForest, remainder, TraceForest.sizeForest_add,
+                 TraceForest.sizeForest_singleton,
+                 TraceTree.nonTraceSize_node, TraceTree.nonTraceSize_trace,
+                 TraceTree.size_node]
+      omega
+  | .node l r, .onlyRightCut hr cl, h_tf => by
+      simp only [TraceTree.nonTraceSize_node, TraceTree.size_node] at h_tf
+      have hl_tf : l.nonTraceSize = l.size := by
+        have := l.nonTraceSize_le_size
+        have := r.nonTraceSize_le_size
+        omega
+      have hr_tf : r.nonTraceSize = r.size := by
+        have := l.nonTraceSize_le_size
+        have := r.nonTraceSize_le_size
+        omega
+      have ih := cut_size_conservation_contraction cl hl_tf
+      simp only [cutForest, remainder, TraceForest.sizeForest_add,
+                 TraceForest.sizeForest_singleton,
+                 TraceTree.nonTraceSize_node, TraceTree.nonTraceSize_trace,
+                 TraceTree.size_node]
+      omega
+  | .node l r, .bothRecurse cl cr, h_tf => by
+      simp only [TraceTree.nonTraceSize_node, TraceTree.size_node] at h_tf
+      have hl_tf : l.nonTraceSize = l.size := by
+        have := l.nonTraceSize_le_size
+        have := r.nonTraceSize_le_size
+        omega
+      have hr_tf : r.nonTraceSize = r.size := by
+        have := l.nonTraceSize_le_size
+        have := r.nonTraceSize_le_size
+        omega
+      have ihl := cut_size_conservation_contraction cl hl_tf
+      have ihr := cut_size_conservation_contraction cr hr_tf
+      simp only [cutForest, remainder, TraceForest.sizeForest_add,
+                 TraceTree.nonTraceSize_node, TraceTree.size_node]
+      omega
+
+/-- Trace-freeness propagates: any subtree extracted by a cut on a
+    trace-free `T` is itself trace-free. Used by Δ^c counting to certify
+    that extracted accessible terms (β_t) have `accCountC = accCount`. -/
+theorem nonTraceSize_eq_size_of_mem_cutForest :
+    ∀ {T : TraceTree α β} (c : CutShape T) (t : TraceTree α β),
+      T.nonTraceSize = T.size →
+      t ∈ c.cutForest →
+      t.nonTraceSize = t.size
+  | .leaf _, .atLeaf, _, _, h_mem => by
+      simp only [cutForest, Multiset.notMem_zero] at h_mem
+  | .trace _, .atTrace, _, _, h_mem => by
+      simp only [cutForest, Multiset.notMem_zero] at h_mem
+  | .node l r, .bothCut _ _, t, h_tf, h_mem => by
+      simp only [TraceTree.nonTraceSize_node, TraceTree.size_node] at h_tf
+      have hl : l.nonTraceSize = l.size := by
+        have := l.nonTraceSize_le_size; have := r.nonTraceSize_le_size; omega
+      have hr : r.nonTraceSize = r.size := by
+        have := l.nonTraceSize_le_size; have := r.nonTraceSize_le_size; omega
+      simp only [cutForest] at h_mem
+      rw [show ({l, r} : TraceForest α β) = l ::ₘ {r} from rfl,
+          Multiset.mem_cons, Multiset.mem_singleton] at h_mem
+      rcases h_mem with rfl | rfl
+      · exact hl
+      · exact hr
+  | .node l r, .onlyLeftCut _ cr, t, h_tf, h_mem => by
+      simp only [TraceTree.nonTraceSize_node, TraceTree.size_node] at h_tf
+      have hl : l.nonTraceSize = l.size := by
+        have := l.nonTraceSize_le_size; have := r.nonTraceSize_le_size; omega
+      have hr : r.nonTraceSize = r.size := by
+        have := l.nonTraceSize_le_size; have := r.nonTraceSize_le_size; omega
+      simp only [cutForest, Multiset.mem_add, Multiset.mem_singleton] at h_mem
+      rcases h_mem with rfl | h_in_cr
+      · exact hl
+      · exact nonTraceSize_eq_size_of_mem_cutForest cr t hr h_in_cr
+  | .node l r, .onlyRightCut _ cl, t, h_tf, h_mem => by
+      simp only [TraceTree.nonTraceSize_node, TraceTree.size_node] at h_tf
+      have hl : l.nonTraceSize = l.size := by
+        have := l.nonTraceSize_le_size; have := r.nonTraceSize_le_size; omega
+      have hr : r.nonTraceSize = r.size := by
+        have := l.nonTraceSize_le_size; have := r.nonTraceSize_le_size; omega
+      simp only [cutForest, Multiset.mem_add, Multiset.mem_singleton] at h_mem
+      rcases h_mem with h_in_cl | rfl
+      · exact nonTraceSize_eq_size_of_mem_cutForest cl t hl h_in_cl
+      · exact hr
+  | .node l r, .bothRecurse cl cr, t, h_tf, h_mem => by
+      simp only [TraceTree.nonTraceSize_node, TraceTree.size_node] at h_tf
+      have hl : l.nonTraceSize = l.size := by
+        have := l.nonTraceSize_le_size; have := r.nonTraceSize_le_size; omega
+      have hr : r.nonTraceSize = r.size := by
+        have := l.nonTraceSize_le_size; have := r.nonTraceSize_le_size; omega
+      simp only [cutForest, Multiset.mem_add] at h_mem
+      rcases h_mem with h_in_cl | h_in_cr
+      · exact nonTraceSize_eq_size_of_mem_cutForest cl t hl h_in_cl
+      · exact nonTraceSize_eq_size_of_mem_cutForest cr t hr h_in_cr
+
+/-- For a cut on a `.node` source tree, the contraction-remainder has
+    `nonTraceSize ≥ 1` (the root parent vertex is preserved as a `.node`,
+    contributing 1 regardless of which child is replaced by `.trace`). -/
+theorem nonTraceSize_remainder_pos_of_node [Inhabited β]
+    {l r : TraceTree α β} (c : CutShape (.node l r)) :
+    c.remainder.nonTraceSize ≥ 1 := by
+  cases c with
+  | bothCut _ _ => simp only [remainder, TraceTree.nonTraceSize_node,
+                                TraceTree.nonTraceSize_trace]; omega
+  | onlyLeftCut _ _ => simp only [remainder, TraceTree.nonTraceSize_node,
+                                    TraceTree.nonTraceSize_trace]; omega
+  | onlyRightCut _ _ => simp only [remainder, TraceTree.nonTraceSize_node,
+                                     TraceTree.nonTraceSize_trace]; omega
+  | bothRecurse _ _ => simp only [remainder, TraceTree.nonTraceSize_node]; omega
+
+/-- A cut with a singleton cutForest forces `T` to be a `.node`. (Leaf
+    and trace roots have only the trivial empty cut, with `cutForest = 0`.)
+    Useful for downstream proofs that need to use
+    `nonTraceSize_remainder_pos_of_node` on a `T` introduced as
+    `TraceTree α β` rather than `.node l r` syntactically. -/
+theorem isNode_of_cutForest_singleton :
+    ∀ {T : TraceTree α β} (c : CutShape T) (β_t : TraceTree α β),
+      c.cutForest = ({β_t} : TraceForest α β) →
+      ∃ l r, T = .node l r
+  | .leaf _, .atLeaf, β_t, h => by
+      exfalso
+      simp only [cutForest] at h
+      have : β_t ∈ ({β_t} : TraceForest α β) := Multiset.mem_singleton.mpr rfl
+      rw [← h] at this; exact absurd this (Multiset.notMem_zero _)
+  | .trace _, .atTrace, β_t, h => by
+      exfalso
+      simp only [cutForest] at h
+      have : β_t ∈ ({β_t} : TraceForest α β) := Multiset.mem_singleton.mpr rfl
+      rw [← h] at this; exact absurd this (Multiset.notMem_zero _)
+  | .node l r, _, _, _ => ⟨l, r, rfl⟩
+
+/-- Convenience wrapper: a cut with singleton cutForest has
+    `remainder.nonTraceSize ≥ 1` regardless of how `T` is syntactically
+    introduced. Combines `isNode_of_cutForest_singleton` and
+    `nonTraceSize_remainder_pos_of_node`. -/
+theorem nonTraceSize_remainder_pos_of_cutForest_singleton [Inhabited β]
+    {T : TraceTree α β} (c : CutShape T) (β_t : TraceTree α β)
+    (h_cf : c.cutForest = ({β_t} : TraceForest α β)) :
+    c.remainder.nonTraceSize ≥ 1 := by
+  obtain ⟨l, r, rfl⟩ := isNode_of_cutForest_singleton c β_t h_cf
+  exact nonTraceSize_remainder_pos_of_node c
+
+/-- **MCB Lemma 1.6.3 eq. 1.6.8** (book p. 65): for a single-edge cut on
+    `T` extracting accessible term `β_t`, the contraction-quotient's
+    accCountC satisfies `α(T) = α(T_v) + α^c(T/^c T_v) + 1`. The `+1`
+    accounts for the root vertex of `T` (counted in `accCount T = T.size − 1`
+    but not in the per-piece sum since the root is the new merged node
+    when re-merging).
+
+    Concretely: `T.size − 1 = (β_t.size − 1) + ((T/^c β_t).nonTraceSize − 1) + 1`
+    follows from `cut_size_conservation_contraction` with cutForest = {β_t}
+    and the size-pos witnesses. -/
+theorem singleEdgeCut_contraction_alpha [Inhabited β]
+    {T : TraceTree α β} (c : CutShape T) (β_t : TraceTree α β)
+    (h_tf : T.nonTraceSize = T.size)
+    (h_cf : c.cutForest = ({β_t} : TraceForest α β)) :
+    T.accCount = β_t.accCount + c.remainder.accCountC + 1 := by
+  have h := cut_size_conservation_contraction c h_tf
+  rw [h_cf, TraceForest.sizeForest_singleton] at h
+  have hβ := β_t.size_pos
+  have hRem_pos : c.remainder.nonTraceSize ≥ 1 :=
+    nonTraceSize_remainder_pos_of_cutForest_singleton c β_t h_cf
+  show T.size - 1 = (β_t.size - 1) + (c.remainder.nonTraceSize - 1) + 1
+  omega
+
+/-- **MCB Lemma 1.6.3 eq. 1.6.10** (book p. 65): `σ(T) = σ(T_v) + σ(T/^c T_v)`
+    for a single-edge cut on T extracting β_t. (No `+1` in this case — the
+    root vertex is already counted in σ_v + σ_q via the b₀ contribution.)
+
+    Concretely: `1 + (T.size − 1) = (1 + (β_t.size − 1)) + (1 + ((T/^c β_t).nonTraceSize − 1))`
+    follows from `cut_size_conservation_contraction`. -/
+theorem singleEdgeCut_contraction_sigma [Inhabited β]
+    {T : TraceTree α β} (c : CutShape T) (β_t : TraceTree α β)
+    (h_tf : T.nonTraceSize = T.size)
+    (h_cf : c.cutForest = ({β_t} : TraceForest α β)) :
+    TraceForest.sigma ({T} : TraceForest α β)
+      = TraceForest.sigma ({β_t} : TraceForest α β)
+      + TraceForest.sigmaC ({c.remainder} : TraceForest α β) := by
+  have h_alpha := singleEdgeCut_contraction_alpha c β_t h_tf h_cf
+  rw [TraceForest.sigma_singleton, TraceForest.sigma_singleton,
+      TraceForest.sigmaC_singleton]
+  show 1 + T.accCount = 1 + β_t.accCount + (1 + c.remainder.accCountC)
+  omega
+
+/-- **Single-edge cut produces non-collapsing remainder**: if a cut has
+    a singleton `cutForest = {β_t}`, then its `remainderDeletion` is
+    `some _` (cannot be `none`). Contrapositive: a `none` remainder requires
+    a `.bothCut` at some node, which contributes ≥ 2 elements to `cutForest`.
+
+    Proved by structural recursion on the tree (and case-analysis on the
+    cut at each level), using `eq_empty_of_cutForest_eq_zero` to identify
+    the empty subordinate cuts and `remainderDeletion_empty` to discharge
+    them. -/
+theorem remainderDeletion_ne_none_of_cutForest_singleton :
+    ∀ {T : TraceTree α β} (c : CutShape T) (β_t : TraceTree α β),
+      c.cutForest = ({β_t} : TraceForest α β) →
+      c.remainderDeletion ≠ none
+  | .leaf _, .atLeaf, β_t, h_cf => by
+      exfalso
+      simp only [cutForest] at h_cf
+      have : β_t ∈ ({β_t} : TraceForest α β) := Multiset.mem_singleton.mpr rfl
+      rw [← h_cf] at this
+      exact absurd this (Multiset.notMem_zero _)
+  | .trace _, .atTrace, β_t, h_cf => by
+      exfalso
+      simp only [cutForest] at h_cf
+      have : β_t ∈ ({β_t} : TraceForest α β) := Multiset.mem_singleton.mpr rfl
+      rw [← h_cf] at this
+      exact absurd this (Multiset.notMem_zero _)
+  | .node l r, .bothCut _ _, β_t, h_cf => by
+      exfalso
+      simp only [cutForest] at h_cf
+      have hc : ({l, r} : TraceForest α β).card = ({β_t} : TraceForest α β).card := by
+        rw [h_cf]
+      rw [show ({l, r} : TraceForest α β) = l ::ₘ {r} from rfl,
+          Multiset.card_cons, Multiset.card_singleton, Multiset.card_singleton] at hc
+      omega
+  | .node l r, .onlyLeftCut _ cr, β_t, h_cf => by
+      simp only [cutForest] at h_cf
+      have h_card : (({l} : TraceForest α β) + cr.cutForest).card = 1 := by
+        rw [h_cf]; exact Multiset.card_singleton _
+      rw [Multiset.card_add, Multiset.card_singleton] at h_card
+      have h_cr_card : cr.cutForest.card = 0 := by omega
+      have h_cr_zero : cr.cutForest = 0 := Multiset.card_eq_zero.mp h_cr_card
+      have h_cr_empty : cr = CutShape.empty r :=
+        eq_empty_of_cutForest_eq_zero cr h_cr_zero
+      simp only [remainderDeletion]
+      rw [h_cr_empty, remainderDeletion_empty]
+      exact Option.some_ne_none _
+  | .node l r, .onlyRightCut _ cl, β_t, h_cf => by
+      simp only [cutForest] at h_cf
+      have h_card : (cl.cutForest + ({r} : TraceForest α β)).card = 1 := by
+        rw [h_cf]; exact Multiset.card_singleton _
+      rw [Multiset.card_add, Multiset.card_singleton] at h_card
+      have h_cl_card : cl.cutForest.card = 0 := by omega
+      have h_cl_zero : cl.cutForest = 0 := Multiset.card_eq_zero.mp h_cl_card
+      have h_cl_empty : cl = CutShape.empty l :=
+        eq_empty_of_cutForest_eq_zero cl h_cl_zero
+      simp only [remainderDeletion]
+      rw [h_cl_empty, remainderDeletion_empty]
+      exact Option.some_ne_none _
+  | .node l r, .bothRecurse cl cr, β_t, h_cf => by
+      simp only [cutForest] at h_cf
+      have h_card : (cl.cutForest + cr.cutForest).card = 1 := by
+        rw [h_cf]; exact Multiset.card_singleton _
+      rw [Multiset.card_add] at h_card
+      rcases Nat.eq_zero_or_pos cl.cutForest.card with h_cl_zero_card | h_cl_pos
+      · have h_cl_zero : cl.cutForest = 0 := Multiset.card_eq_zero.mp h_cl_zero_card
+        have h_cl_empty : cl = CutShape.empty l :=
+          eq_empty_of_cutForest_eq_zero cl h_cl_zero
+        have h_cr_eq : cr.cutForest = ({β_t} : TraceForest α β) := by
+          rw [h_cl_zero, zero_add] at h_cf; exact h_cf
+        have ih_cr := remainderDeletion_ne_none_of_cutForest_singleton cr β_t h_cr_eq
+        simp only [remainderDeletion]
+        rw [h_cl_empty, remainderDeletion_empty]
+        cases h_cr_rd : cr.remainderDeletion with
+        | none => exact absurd h_cr_rd ih_cr
+        | some _ => exact Option.some_ne_none _
+      · have h_cr_zero_card : cr.cutForest.card = 0 := by omega
+        have h_cr_zero : cr.cutForest = 0 := Multiset.card_eq_zero.mp h_cr_zero_card
+        have h_cr_empty : cr = CutShape.empty r :=
+          eq_empty_of_cutForest_eq_zero cr h_cr_zero
+        have h_cl_eq : cl.cutForest = ({β_t} : TraceForest α β) := by
+          rw [h_cr_zero, add_zero] at h_cf; exact h_cf
+        have ih_cl := remainderDeletion_ne_none_of_cutForest_singleton cl β_t h_cl_eq
+        simp only [remainderDeletion]
+        rw [h_cr_empty, remainderDeletion_empty]
+        cases h_cl_rd : cl.remainderDeletion with
+        | none => exact absurd h_cl_rd ih_cl
+        | some _ => exact Option.some_ne_none _
+
+/-- The empty cut contracts no vertices. -/
+@[simp] theorem numContractions_empty :
+    ∀ (T : TraceTree α β), numContractions (CutShape.empty T) = 0
+  | .leaf _ => rfl
+  | .trace _ => rfl
+  | .node l r => by
+      show numContractions
+              (CutShape.bothRecurse (CutShape.empty l) (CutShape.empty r)) = 0
+      simp only [numContractions, remainderDeletion_empty,
+                 numContractions_empty l, numContractions_empty r]
+
+/-- **Vertex-accounting master equation** (sharper bookkeeping at the
+    cardinality layer; companion to `cut_size_conservation` at the size
+    layer).
+
+    For any cut `c : CutShape T`,
+    `c.cutForest.card = numContractions c + (1 if rd = none, else 0)`.
+
+    Geometric reading: each cut edge contributes one extracted subtree
+    to `cutForest` and one contracted parent vertex to `numContractions`.
+    The root of `T` contributes an *extra* contraction precisely when
+    the cut includes a `.bothCut` at the root (`rd = none`); when
+    `rd = some`, the root survives into the deletion remainder.
+
+    Subsumes the legacy single-edge / two-edge contraction-count lemmas
+    (`numContractions_singleEdge`, `numContractions_twoEdge`); both are
+    restated below as 1-line `omega` corollaries. -/
+theorem cutForest_card_eq_numContractions_add :
+    ∀ {T : TraceTree α β} (c : CutShape T),
+      c.cutForest.card =
+        numContractions c + c.remainderDeletion.elim 1 (fun _ => 0)
+  | .leaf _, .atLeaf => rfl
+  | .trace _, .atTrace => rfl
+  | .node l r, .bothCut _ _ => by
+      show ({l, r} : TraceForest α β).card = 1 + 1
+      rw [show ({l, r} : TraceForest α β) = l ::ₘ {r} from rfl,
+          Multiset.card_cons, Multiset.card_singleton]
+  | .node _ _, .onlyLeftCut _ cr => by
+      have ih := cutForest_card_eq_numContractions_add cr
+      simp only [cutForest, Multiset.card_add, Multiset.card_singleton,
+                 numContractions, remainderDeletion]
+      omega
+  | .node _ _, .onlyRightCut _ cl => by
+      have ih := cutForest_card_eq_numContractions_add cl
+      simp only [cutForest, Multiset.card_add, Multiset.card_singleton,
+                 numContractions, remainderDeletion]
+      omega
+  | .node _ _, .bothRecurse cl cr => by
+      have ihl := cutForest_card_eq_numContractions_add cl
+      have ihr := cutForest_card_eq_numContractions_add cr
+      simp only [cutForest, Multiset.card_add, numContractions, remainderDeletion]
+      cases h_cl : cl.remainderDeletion with
+      | some _ =>
+          rw [h_cl] at ihl
+          cases h_cr : cr.remainderDeletion with
+          | some _ => rw [h_cr] at ihr; simp only [Option.elim] at ihl ihr ⊢; omega
+          | none   => rw [h_cr] at ihr; simp only [Option.elim] at ihl ihr ⊢; omega
+      | none =>
+          rw [h_cl] at ihl
+          cases h_cr : cr.remainderDeletion with
+          | some _ => rw [h_cr] at ihr; simp only [Option.elim] at ihl ihr ⊢; omega
+          | none   => rw [h_cr] at ihr; simp only [Option.elim] at ihl ihr ⊢; omega
+
+/-- Specialization of `cutForest_card_eq_numContractions_add` for the
+    `rd = some` branch: `numContractions c = c.cutForest.card`. -/
+theorem numContractions_eq_card_of_remainderDeletion_some
+    {T : TraceTree α β} {c : CutShape T} {Q : TraceTree α β}
+    (h_rd : c.remainderDeletion = some Q) :
+    numContractions c = c.cutForest.card := by
+  have h := cutForest_card_eq_numContractions_add c
+  rw [h_rd] at h; simp only [Option.elim] at h; omega
+
+/-- Specialization of `cutForest_card_eq_numContractions_add` for the
+    `rd = none` branch: `numContractions c + 1 = c.cutForest.card`. -/
+theorem numContractions_succ_eq_card_of_remainderDeletion_none
+    {T : TraceTree α β} {c : CutShape T}
+    (h_rd : c.remainderDeletion = none) :
+    numContractions c + 1 = c.cutForest.card := by
+  have h := cutForest_card_eq_numContractions_add c
+  rw [h_rd] at h; simp only [Option.elim] at h; omega
+
+/-- A single-edge cut has exactly 1 contracted vertex: the parent of the
+    cut edge. Corollary of `numContractions_eq_card_of_remainderDeletion_some`
+    with `cutForest.card = 1` and the singleton-implies-rd-some witness
+    `remainderDeletion_ne_none_of_cutForest_singleton`. -/
+theorem numContractions_singleEdge
+    {T : TraceTree α β} (c : CutShape T) (β_t : TraceTree α β)
+    (h_cf : c.cutForest = ({β_t} : TraceForest α β)) :
+    numContractions c = 1 := by
+  have h_rd_ne := remainderDeletion_ne_none_of_cutForest_singleton c β_t h_cf
+  cases h_rd : c.remainderDeletion with
+  | none => exact absurd h_rd h_rd_ne
+  | some Q =>
+      have h := numContractions_eq_card_of_remainderDeletion_some h_rd
+      rw [h_cf, Multiset.card_singleton] at h; exact h
+
+/-- **Two-edge cut has exactly 2 contracted vertices** (MCB Prop 1.6.8
+    case 3(a), book p. 70: "two edges are contracted, and hence the
+    counting of (non-root) vertices decreases by 2"). Corollary of
+    `numContractions_eq_card_of_remainderDeletion_some` with
+    `cutForest.card = 2`. -/
+theorem numContractions_twoEdge
+    {T : TraceTree α β} (c : CutShape T) (Q : TraceTree α β)
+    (h_card : c.cutForest.card = 2) (h_rd : c.remainderDeletion = some Q) :
+    numContractions c = 2 := by
+  have h := numContractions_eq_card_of_remainderDeletion_some h_rd
+  omega
+
+/-- **Single-edge-cut size relation** (MCB Lemma 1.6.3 size analog of
+    eq. 1.6.7 / 1.6.9, book p. 65). For any cut `c : CutShape T` whose
+    `cutForest` is the singleton `{β_t}` and whose `remainderDeletion` is
+    `some Q`, the source tree `T` decomposes as
+    `T.size = β_t.size + Q.size + 1`.
+
+    Geometric reading: a single edge cut splits `T` into the extracted
+    accessible term `β_t` and the binarized deletion-quotient `Q`, plus
+    the contracted parent vertex of the cut edge (the `+1`).
+
+    **Corollary of `cut_size_conservation`** with `numContractions = 1`
+    (single-edge case, by `numContractions_singleEdge`).
+
+    Used by `MinimalYield.im_pair_size_deltas_deltaD` and
+    `MinimalYield.sideward_2b_size_deltas_deltaD` to discharge the
+    `h_size` hypothesis from cut data. -/
+theorem singleEdgeCut_size_relation
+    {T : TraceTree α β} (c : CutShape T) (β_t Q : TraceTree α β)
+    (h_cf : c.cutForest = ({β_t} : TraceForest α β))
+    (h_rd : c.remainderDeletion = some Q) :
+    T.size = β_t.size + Q.size + 1 := by
+  have h_general := cut_size_conservation c
+  have h_nc := numContractions_singleEdge c β_t h_cf
+  rw [h_cf, h_rd, TraceForest.sizeForest_singleton, h_nc] at h_general
+  simpa using h_general
 
 end CutShape
 

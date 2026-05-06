@@ -1,5 +1,7 @@
 import Linglib.Theories.Syntax.SynGraph
 import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Theories.Syntax.Minimalist.Merge.MinimalYield
+import Linglib.Theories.Syntax.Minimalist.Merge.NoComplexityLoss
 
 set_option autoImplicit false
 
@@ -131,5 +133,83 @@ def subjectIslandStrength : ConstraintStrength := .weak
     than the adjunct itself — no amelioration mechanism is available.
     Derived from `adjunct_island_blocks` in SynGraph. -/
 def adjunctIslandStrength : ConstraintStrength := .strong
+
+-- ════════════════════════════════════════════════════
+-- § 4. Cross-framework convergence: Adger AL ↔ MCB §1.6 on Sideward
+-- ════════════════════════════════════════════════════
+
+/-! ## Cross-framework convergence
+
+@cite{adger-2025} (mereological Merge, this file) and
+@cite{marcolli-chomsky-berwick-2025} §1.6 (algebraic Merge) reach the
+SAME verdict on Sideward Merge from incompatible structural primitives:
+
+- **Adger**: Sideward subjunction (sibling subjoin) violates Angular
+  Locality — the would-be mover and target are both 1-parts of the same
+  parent vertex, so the candidate-α set is empty (no within-dimension
+  chain reaches the target). See `al_blocks_sideward` in `SynGraph.lean:300`.
+
+- **MCB**: Sideward operations 2(b), 3(a), 3(b) violate either
+  `MinimalYieldWeak` (Δb₀ > 0 — workspace components increase) or
+  `InducedMapNCL` (the canonical induced map decreases `leafCount`).
+  See `Theories/Syntax/Minimalist/Merge/MinimalYield.lean` and
+  `NoComplexityLoss.lean` (`sideward_3a/3b_violates_noDivergence{,Weak}`,
+  `sideward_2b/3a/3b_violatesInducedMapNCL`).
+
+The two frameworks share NO structural lemma. AL reasons about
+graph-theoretic parthood across dimensions; MCB reasons about Hopf-
+algebra coproduct counting and induced component maps. The shared
+verdict is convergent evidence from incompatible foundations — exactly
+the kind of theoretical incompatibility linglib is designed to make
+visible (CLAUDE.md: "high interconnection density: incompatibilities
+between theories ... become visible across the codebase").
+
+Each framework's elimination of Sideward is **fully internal** to its
+own primitives. Neither argument transfers directly to the other; the
+convergence is a *post-hoc agreement on verdicts*, not a derivation of
+one framework from the other.
+
+## Linguistic data convergence
+
+Both frameworks correctly predict the cross-linguistic absence of
+Sideward Merge as a productive grammatical operation: every alleged
+Sideward analysis (parasitic gaps, ATB extraction, certain Japanese
+clefts) has alternative analyses that fit within EM/IM. AL and MCB
+provide *different reasons* why this is so. -/
+
+/-- **Convergence theorem**: both frameworks reject Sideward Merge.
+
+    The MCB clause: any candidate Sideward 3(a) workspace transformation
+    violates `MinimalYieldWeak.noDivergence` (Δb₀ = +1 strictly increases
+    workspace components — `sideward_3a_violates_noDivergenceWeak`).
+
+    The Adger clause: the canonical Sideward subjunction graph
+    `g_sideward` (parent c with both candidate sibling daughters) fails
+    `satisfiesAL` (`al_blocks_sideward`).
+
+    Bundled to make the convergence visible at the type level. The two
+    sides share no Lean term — they're different propositions about
+    different structural objects, both true. -/
+theorem sideward_eliminated_by_both_frameworks
+    (T_i Tnode T_iq : ConnesKreimer.TraceTree Minimalist.LIToken Unit) :
+    -- MCB: Sideward 3(a)-shape transformation violates MinimalYieldWeak
+    (¬ Minimalist.Merge.MinimalYieldWeak
+        ({T_i} : ConnesKreimer.TraceForest Minimalist.LIToken Unit)
+        ({Tnode, T_iq} : ConnesKreimer.TraceForest Minimalist.LIToken Unit))
+    ∧
+    -- Adger: the canonical Sideward subjunction configuration fails AL
+    (g_sideward.satisfiesAL ⟨2, by decide⟩ ⟨1, by decide⟩ = false) :=
+  ⟨Minimalist.Merge.sideward_3a_violates_noDivergenceWeak T_i Tnode T_iq,
+   al_blocks_sideward⟩
+
+/-- Sub-claim of the convergence theorem extracted as `Bool`-decidable
+    sentinel: the AL framework explicitly returns `false` on the canonical
+    Sideward configuration. This is `decide`-checked at compile time
+    via `al_blocks_sideward`'s `native_decide`. -/
+def adgerRejectsSidewardConfiguration : Bool :=
+  g_sideward.satisfiesAL ⟨2, by decide⟩ ⟨1, by decide⟩
+
+@[simp] theorem adgerRejectsSidewardConfiguration_eq_false :
+    adgerRejectsSidewardConfiguration = false := al_blocks_sideward
 
 end Adger2025

@@ -70,6 +70,7 @@ def labelVertex (h : HeadFunction) (T v : SyntacticObject) : Option Cat :=
   if h.Dom T then
     match v with
     | .leaf _ => none
+    | .trace _ => none  -- traces unlabelable; no head function
     | .node _ _ => some (h.headAt v).item.outerCat
   else
     -- TODO: shared-feature fallback (Def 1.15.2 case 4): if T = .node a b
@@ -144,6 +145,7 @@ instance (h : HeadFunction) (T x y : SyntacticObject) :
 def isHeadOf (h : HeadFunction) (T x : SyntacticObject) : Prop :=
   match x with
   | .leaf tok => h.head T = tok
+  | .trace _ => False  -- traces are not heads
   | .node _ _ => False
 
 instance (h : HeadFunction) (T x : SyntacticObject) :

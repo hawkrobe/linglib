@@ -284,6 +284,7 @@ def allFMonotone : List Cat → Bool
 partial def computeEPSpine (so : SyntacticObject) : List (SyntacticObject × Cat) :=
   match so with
   | .leaf tok => [(so, tok.item.outerCat)]
+  | .trace _ => [(so, .N)]  -- traces default to N category for spine purposes
   | .node a _ => computeEPSpine a ++ [(so, so.outerCat)]
 
 /-- Build an ExtendedProjection from a syntactic object using the

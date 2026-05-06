@@ -212,6 +212,7 @@ def behindHorizonB (root probe target : SyntacticObject)
       tok.item.outerCat == horizonCat &&
       decide (cCommandsIn root n target) &&
       decide (cCommandsIn root probe n)
+    | .trace _ => false  -- traces don't act as horizons
     | .node _ _ => false
 
 -- ============================================================================

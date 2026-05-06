@@ -56,10 +56,8 @@ open Core.Tree
       `interp` evaluates as `g(n)` under assignment `g`)
     - Binary nodes → `Tree.bin left right` (preserving structure) -/
 def SyntacticObject.toLFTree : SyntacticObject → Tree Unit String
-  | .leaf tok =>
-    match isTrace (.leaf tok) with
-    | some n => .tr n
-    | none   => .leaf tok.phonForm
+  | .leaf tok => .leaf tok.phonForm
+  | .trace n => .tr n
   | .node a b => .bin a.toLFTree b.toLFTree
 
 /-- The PF branch of Spell-Out is `linearize` (defined in `Core/Basic.lean`):
@@ -74,32 +72,21 @@ abbrev SyntacticObject.toPF := @linearize
 the shape of the narrow-syntax SO (modulo trace nodes, which change
 from `leaf` to `trace`). -/
 
-/-- `isTrace` on a non-trace leaf returns `none`. -/
-private theorem isTrace_leaf_none (tok : LIToken) (h : tok.id < 10000) :
-    isTrace (SyntacticObject.leaf tok) = none := by
-  unfold isTrace; dsimp only []
-  rw [if_neg (show ¬ tok.id ≥ 10000 by omega)]
+/-- `isTrace` on a leaf returns `none` (post-Path-2: leaves are never traces). -/
+private theorem isTrace_leaf_none (tok : LIToken) :
+    isTrace (SyntacticObject.leaf tok) = none := rfl
 
 /-- `isTrace` on a trace returns `some n`. -/
 private theorem isTrace_mkTrace (n : Nat) :
-    isTrace (mkTrace n) = some n := by
-  unfold mkTrace isTrace; dsimp only []
-  rw [if_pos (show n + 10000 ≥ 10000 by omega)]
-  simp only [Nat.add_sub_cancel]
+    isTrace (mkTrace n) = some n := rfl
 
-/-- `toLFTree` on a non-trace leaf produces a terminal node. -/
-theorem toLFTree_leaf (tok : LIToken) (h : tok.id < 10000) :
-    (SyntacticObject.leaf tok).toLFTree = Tree.leaf tok.phonForm := by
-  show (match isTrace (SyntacticObject.leaf tok) with
-    | some n => Tree.tr n | none => Tree.leaf tok.phonForm) = _
-  rw [isTrace_leaf_none tok h]
+/-- `toLFTree` on a leaf produces a terminal node. -/
+theorem toLFTree_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).toLFTree = Tree.leaf tok.phonForm := rfl
 
 /-- `toLFTree` on a trace produces a trace node. -/
 theorem toLFTree_trace (n : Nat) :
-    (mkTrace n).toLFTree = Tree.tr n := by
-  unfold SyntacticObject.toLFTree mkTrace; dsimp only []
-  rw [show isTrace (SyntacticObject.leaf
-    ⟨LexicalItem.simple .N [], n + 10000⟩) = some n from isTrace_mkTrace n]
+    (mkTrace n).toLFTree = Tree.tr n := rfl
 
 /-- `toLFTree` on a binary node produces a binary node. -/
 theorem toLFTree_node (a b : SyntacticObject) :

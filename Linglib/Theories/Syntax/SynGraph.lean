@@ -293,7 +293,14 @@ theorem al_blocks_superlocal :
     a trying to subjoin to b (sibling). b has no 1-parts, so the
     candidate α set is empty. AL fails. -/
 
-private def g_sideward := mkGraph 3
+/-- The canonical 3-node Sideward subjunction graph from
+    @cite{adger-2025} eq. (31a) p. 92: parent c (0) with two daughter
+    1-parts b (1) and a (2). Trying to subjoin a to b (sibling) fails
+    Angular Locality because b has no 1-parts (the candidate-α set is
+    empty). Cross-referenced from `Phenomena/Islands/Studies/Adger2025.lean`
+    in the cross-framework convergence with MCB §1.6 (which independently
+    rejects the same configuration as Sideward 3(b)). -/
+def g_sideward := mkGraph 3
   [(⟨0, by omega⟩, ⟨1, by omega⟩)]
   [(⟨0, by omega⟩, ⟨2, by omega⟩)]
 

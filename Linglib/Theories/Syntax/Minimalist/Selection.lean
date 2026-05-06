@@ -127,6 +127,7 @@ structure SelectionalState where
     projecting head on the left. -/
 def SyntacticObject.checkedSel? : SyntacticObject → Option (List Cat)
   | .leaf tok => some tok.item.outerSel
+  | .trace _ => some []  -- traces are saturated (no selectional features to check)
   | .node l r =>
     match l.checkedSel?, r.checkedSel? with
     | some (c :: rest), some [] =>
@@ -159,8 +160,6 @@ def Step.applyChecked : Step → SelectionalState → Option SelectionalState
   | .emL item, ⟨so, head, sel⟩ => some ⟨.node item so, head, sel⟩
   | .im mover traceId, ⟨so, head, sel⟩ =>
     some ⟨(Step.im mover traceId).apply so, head, sel⟩
-  | .wlm restrictor target, ⟨so, head, sel⟩ =>
-    some ⟨(Step.wlm restrictor target).apply so, head, sel⟩
 
 /-- Run a derivation through `applyChecked`. Seeds the head from the
     initial leaf (M-C-B §1.13.3: leaves are always in `Dom(h)`); for

@@ -314,6 +314,31 @@ def size {α β : Type*} : TraceTree α β → Nat
 theorem size_pos {α β : Type*} (t : TraceTree α β) : 0 < t.size := by
   cases t <;> simp only [size] <;> omega
 
+/-- Vertex count excluding `.trace` markers. The trace-aware analog of
+    `size`. Used by Δ^c counting because per @cite{marcolli-chomsky-berwick-2025}
+    Lemma 1.6.3 eq. 1.6.8 (book p. 65), trace markers in T/^c T_v are NOT
+    counted as accessible terms ("cancellation of the deeper copy"). -/
+def nonTraceSize {α β : Type*} : TraceTree α β → Nat
+  | .leaf _   => 1
+  | .trace _  => 0
+  | .node l r => 1 + l.nonTraceSize + r.nonTraceSize
+
+@[simp] theorem nonTraceSize_leaf {α β : Type*} (a : α) :
+    (TraceTree.leaf a : TraceTree α β).nonTraceSize = 1 := rfl
+
+@[simp] theorem nonTraceSize_trace {α β : Type*} (b : β) :
+    (TraceTree.trace b : TraceTree α β).nonTraceSize = 0 := rfl
+
+@[simp] theorem nonTraceSize_node {α β : Type*} (l r : TraceTree α β) :
+    (TraceTree.node l r).nonTraceSize = 1 + l.nonTraceSize + r.nonTraceSize := rfl
+
+theorem nonTraceSize_le_size {α β : Type*} (t : TraceTree α β) :
+    t.nonTraceSize ≤ t.size := by
+  induction t with
+  | leaf _ => simp only [nonTraceSize_leaf, size_leaf]; omega
+  | trace _ => simp only [nonTraceSize_trace, size_trace]; omega
+  | node l r ihl ihr => simp only [nonTraceSize, size]; omega
+
 /-- Leaf count of a `TraceTree`. The Hopf-algebra grading on
     `Hc R α = AddMonoidAlgebra R (TraceForest α Unit)` per
     @cite{marcolli-chomsky-berwick-2025} Definition 1.6.2 (book p. 64):
@@ -336,8 +361,8 @@ def leafCount {α β : Type*} : TraceTree α β → Nat
 
 theorem leafCount_pos {α β : Type*} (t : TraceTree α β) : 0 < t.leafCount := by
   induction t with
-  | leaf _ => simp
-  | trace _ => simp
+  | leaf _ => simp only [leafCount_leaf]; omega
+  | trace _ => simp only [leafCount_trace]; omega
   | node l r ihl _ => simp only [leafCount]; omega
 
 end TraceTree
@@ -604,5 +629,83 @@ theorem TraceForest.sigma_merge_singleton {α β : Type*} (T_v T_w : TraceTree �
   rw [sigma_singleton, sigma_singleton, sigma_singleton,
       TraceTree.accCount_merge]
   omega
+
+/-! ## §7: Δ^c-aware forest measures (αᶜ, σᶜ)
+@cite{marcolli-chomsky-berwick-2025} §1.6.2
+
+Trace-aware analogs of `accCount` and `sigma` for the Δ^c counting (MCB
+Lemma 1.6.3 eq. 1.6.8 and 1.6.10). These count trace markers as zero
+contribution to "accessible terms" — implementing MCB's "cancellation of
+the deeper copy" principle (book p. 65-66). For trace-free trees,
+`accCountC = accCount`; the difference shows up only in contraction-
+quotient trees.
+
+Distinction from `accCount`:
+- `accCount T = T.size - 1` (every non-root vertex counted)
+- `accCountC T = T.nonTraceSize - 1` (only non-trace non-root vertices)
+
+For trace-free trees `nonTraceSize = size`, so `accCountC = accCount`.
+The two measures diverge on `T/^c T_v` (a trace marker for the cancelled
+copy), which is exactly where MCB's eq. 1.6.8/1.6.10 use them. -/
+
+/-- Δ^c-aware accCount: non-root non-trace vertex count. Excludes trace
+    markers per MCB Lemma 1.6.3 eq. 1.6.8 (book p. 65). For trace-free
+    trees agrees with `accCount`. -/
+def TraceTree.accCountC {α β : Type*} : TraceTree α β → Nat := fun T => T.nonTraceSize - 1
+
+@[simp] theorem TraceTree.accCountC_leaf {α β : Type*} (a : α) :
+    (TraceTree.leaf a : TraceTree α β).accCountC = 0 := rfl
+
+@[simp] theorem TraceTree.accCountC_trace {α β : Type*} (b : β) :
+    (TraceTree.trace b : TraceTree α β).accCountC = 0 := rfl
+
+@[simp] theorem TraceTree.accCountC_node {α β : Type*} (l r : TraceTree α β) :
+    (TraceTree.node l r).accCountC = l.nonTraceSize + r.nonTraceSize := by
+  show (1 + l.nonTraceSize + r.nonTraceSize) - 1 = l.nonTraceSize + r.nonTraceSize
+  omega
+
+/-- αᶜ on a forest. Non-trace non-root vertex count summed across components. -/
+def TraceForest.alphaC {α β : Type*} (F : TraceForest α β) : Nat :=
+  Multiset.sum (Multiset.map TraceTree.accCountC F)
+
+@[simp] theorem TraceForest.alphaC_zero {α β : Type*} :
+    TraceForest.alphaC (0 : TraceForest α β) = 0 := rfl
+
+@[simp] theorem TraceForest.alphaC_singleton {α β : Type*} (T : TraceTree α β) :
+    TraceForest.alphaC ({T} : TraceForest α β) = T.accCountC := by
+  unfold alphaC
+  rw [Multiset.map_singleton, Multiset.sum_singleton]
+
+@[simp] theorem TraceForest.alphaC_cons {α β : Type*} (T : TraceTree α β)
+    (F : TraceForest α β) :
+    TraceForest.alphaC (T ::ₘ F) = T.accCountC + F.alphaC := by
+  show Multiset.sum (Multiset.map _ (T ::ₘ F)) = T.accCountC + Multiset.sum _
+  rw [Multiset.map_cons, Multiset.sum_cons]
+
+@[simp] theorem TraceForest.alphaC_add {α β : Type*} (F G : TraceForest α β) :
+    TraceForest.alphaC (F + G) = F.alphaC + G.alphaC := by
+  show Multiset.sum (Multiset.map _ (F + G)) = _
+  rw [Multiset.map_add, Multiset.sum_add]
+  rfl
+
+/-- σᶜ on a forest: `σᶜ(F) = b₀(F) + αᶜ(F)`. Δ^c analog of `sigma`. -/
+def TraceForest.sigmaC {α β : Type*} (F : TraceForest α β) : Nat := F.b₀ + F.alphaC
+
+@[simp] theorem TraceForest.sigmaC_zero {α β : Type*} :
+    TraceForest.sigmaC (0 : TraceForest α β) = 0 := by
+  unfold sigmaC; simp only [b₀_zero, alphaC_zero]
+
+@[simp] theorem TraceForest.sigmaC_singleton {α β : Type*} (T : TraceTree α β) :
+    TraceForest.sigmaC ({T} : TraceForest α β) = 1 + T.accCountC := by
+  unfold sigmaC; rw [b₀_singleton, alphaC_singleton]
+
+@[simp] theorem TraceForest.sigmaC_cons {α β : Type*} (T : TraceTree α β)
+    (F : TraceForest α β) :
+    TraceForest.sigmaC (T ::ₘ F) = 1 + T.accCountC + F.sigmaC := by
+  unfold sigmaC; rw [b₀_cons, alphaC_cons]; omega
+
+@[simp] theorem TraceForest.sigmaC_add {α β : Type*} (F G : TraceForest α β) :
+    TraceForest.sigmaC (F + G) = F.sigmaC + G.sigmaC := by
+  unfold sigmaC; rw [b₀_add, alphaC_add]; omega
 
 end ConnesKreimer

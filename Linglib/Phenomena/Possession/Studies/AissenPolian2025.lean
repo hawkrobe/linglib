@@ -770,6 +770,7 @@ geometry and which nodes carry D features:
     (possessor DPs, D° heads, agent DPs) are potential goals. -/
 private def hasDFeatures : SyntacticObject → Bool
   | .leaf tok => tok.item.outerCat == .D
+  | .trace _ => false  -- traces are not D-bearing for EPP probe purposes
   | .node _ _ => false
 
 /-! ### Leaf Nodes -/

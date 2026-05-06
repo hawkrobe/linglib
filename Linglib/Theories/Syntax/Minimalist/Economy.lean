@@ -117,7 +117,7 @@ end DerivationCost
 def Derivation.cost (d : Derivation) : DerivationCost where
   lexicalItems :=
     d.steps.filter
-      (match · with | .emL _ | .emR _ | .wlm _ _ => true | _ => false)
+      (match · with | .emL _ | .emR _ => true | _ => false)
       |>.length
   mergeOps := d.steps.length
   agreeOps := 0

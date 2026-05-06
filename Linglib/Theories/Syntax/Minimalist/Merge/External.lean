@@ -589,10 +589,11 @@ the chain level: chains containing any Sideward step have weight ε^{c(φ)}
 → 0 in the limit ε → 0.
 
 Linglib's `Derivation` (in `Theories/Syntax/Minimalist/Derivation.lean`)
-has constructors `Step.emR`, `Step.emL`, `Step.im`, `Step.wlm` — only EM
-and IM are MCB-faithful Merge operations; wlm encodes Wholesale Late
-Merger (a candidate for derivation from EM/IM/Sideward per MCB §1.7).
-There is no `Step.sideward` because Sideward is suppressed by Prop 1.5.1.
+has constructors `Step.emR`, `Step.emL`, `Step.im`. There is no
+`Step.sideward` because Sideward is suppressed by Prop 1.5.1; there is
+no `Step.wlm` because Wholesale Late Merger derivations were never
+attested in Phenomena consumers and MCB §1.7 predicts wlm-outputs are
+derivable from EM/IM regardless.
 
 This section provides the **EM-only chain bridge**: a joint linguistic+
 algebraic fold that tracks the (SyntacticObject, Hc workspace) pair through
@@ -608,8 +609,8 @@ cut-existence from `SyntacticObject.replace` semantics — deferred.
     Returns the singleton workspace of the merged result.
 
     `noncomputable` because it depends on `mergeOp_eps`. Returns 0 for IM
-    and WLM steps (not handled at this chain level — see chain-theorem
-    docstring for caveats). -/
+    steps (not handled at this chain level — see chain-theorem docstring
+    for caveats). -/
 noncomputable def stepApplyEM_eps_zero :
     Step → Minimalist.SyntacticObject → Hc ℤ LIToken
   | .emR item, current =>
@@ -618,21 +619,19 @@ noncomputable def stepApplyEM_eps_zero :
   | .emL item, current =>
       mergeOp_eps (R := ℤ) 0 item.toHc current.toHc
         (forestToHc ({item.toHc, current.toHc} : TraceForest LIToken Unit))
-  | _, _ => 0  -- IM and WLM not handled at this chain level
+  | _, _ => 0  -- IM not handled at this chain level
 
 /-- For an EM step (`emR` or `emL`), the algebraic ε = 0 application produces
     the singleton workspace of `step.apply current`. Per-step witness for the
     chain theorem; assembles `mergeOp_eps_zero_emR/emL_matches_Step`. -/
 theorem stepApplyEM_eps_zero_match (step : Step) (current : Minimalist.SyntacticObject)
-    (h_em : ∀ mover traceId, step ≠ .im mover traceId)
-    (h_no_wlm : ∀ r t, step ≠ .wlm r t) :
+    (h_em : ∀ mover traceId, step ≠ .im mover traceId) :
     stepApplyEM_eps_zero step current
       = forestToHc (R := ℤ) ({(step.apply current).toHc} : TraceForest LIToken Unit) := by
   match step with
   | .emR item => exact mergeOp_eps_zero_emR_matches_Step current item
   | .emL item => exact mergeOp_eps_zero_emL_matches_Step item current
   | .im mover traceId => exact absurd rfl (h_em mover traceId)
-  | .wlm r t => exact absurd rfl (h_no_wlm r t)
 
 /-- **MCB Prop 1.5.1 chain-level, EM-only derivations** (book §1.5 rule 5,
     p. 59). For an EM-only Step list applied to an initial `SyntacticObject`,
@@ -649,8 +648,7 @@ theorem stepApplyEM_eps_zero_match (step : Step) (current : Minimalist.Syntactic
     For mixed EM/IM derivations, the IM-step bridge requires cut-data
     annotations (queued separately). -/
 theorem em_only_chain_eps_zero (steps : List Step) (initial : Minimalist.SyntacticObject)
-    (h_em_only : ∀ s ∈ steps,
-      (∀ mover traceId, s ≠ .im mover traceId) ∧ (∀ r t, s ≠ .wlm r t)) :
+    (h_em_only : ∀ s ∈ steps, ∀ mover traceId, s ≠ .im mover traceId) :
     steps.foldl
         (fun (state : Minimalist.SyntacticObject × Hc ℤ LIToken) step =>
           (step.apply state.1, stepApplyEM_eps_zero step state.1))
@@ -661,16 +659,14 @@ theorem em_only_chain_eps_zero (steps : List Step) (initial : Minimalist.Syntact
   induction steps generalizing initial with
   | nil => simp
   | cons step rest ih =>
-    have h_step_em : (∀ mover traceId, step ≠ .im mover traceId)
-                  ∧ (∀ r t, step ≠ .wlm r t) :=
+    have h_step_em : ∀ mover traceId, step ≠ .im mover traceId :=
       h_em_only step List.mem_cons_self
-    have h_rest_em : ∀ s ∈ rest,
-        (∀ mover traceId, s ≠ .im mover traceId) ∧ (∀ r t, s ≠ .wlm r t) :=
+    have h_rest_em : ∀ s ∈ rest, ∀ mover traceId, s ≠ .im mover traceId :=
       fun s hs => h_em_only s (List.mem_cons_of_mem step hs)
     have h_step_eq : stepApplyEM_eps_zero step initial
                   = forestToHc (R := ℤ)
                       ({(step.apply initial).toHc} : TraceForest LIToken Unit) :=
-      stepApplyEM_eps_zero_match step initial h_step_em.1 h_step_em.2
+      stepApplyEM_eps_zero_match step initial h_step_em
     show (rest.foldl _ (step.apply initial, stepApplyEM_eps_zero step initial)) = _
     rw [h_step_eq]
     exact ih (step.apply initial) h_rest_em

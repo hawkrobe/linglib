@@ -138,8 +138,8 @@ def interpSOTrace {F : Frame} (so : SyntacticObject) : Option (DenotG F .e) :=
 Get the trace index from a syntactic object (searches recursively).
 -/
 def getTraceIndex : SyntacticObject → Option ℕ
-  | .leaf tok =>
-    if tok.id ≥ 10000 then some (tok.id - 10000) else none
+  | .leaf _ => none
+  | .trace n => some n
   | .node a b => getTraceIndex a <|> getTraceIndex b
 
 -- ============================================================================

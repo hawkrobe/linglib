@@ -108,6 +108,7 @@ namespace PlanarMarking
     `h_T : V^o(T) → L(T)` for any T containing `v`. -/
 def headAt (m : PlanarMarking) : SyntacticObject → LIToken
   | .leaf tok => tok
+  | .trace n => mkTraceToken n  -- traces project to a synthetic token
   | .node a b =>
     if m.isLeftHead (.node a b) then m.headAt a else m.headAt b
 
@@ -131,6 +132,7 @@ end PlanarMarking
     `v` and `w` agree. -/
 def SyntacticObject.leafTokens : SyntacticObject → List LIToken
   | .leaf tok => [tok]
+  | .trace n => [mkTraceToken n]
   | .node a b => a.leafTokens ++ b.leafTokens
 
 @[simp] theorem SyntacticObject.leafTokens_leaf (tok : LIToken) :

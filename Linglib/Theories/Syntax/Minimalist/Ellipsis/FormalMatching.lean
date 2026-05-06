@@ -882,6 +882,7 @@ def labelPathFromRoot (h : HeadFunction) :
     else
       match root with
       | .leaf _ => none
+      | .trace _ => none
       | .node a b =>
         match labelPathFromRoot h a target with
         | some pa => some ((Labeling.labelVertex h (.node a b) (.node a b)).toList ++ pa)

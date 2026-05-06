@@ -240,6 +240,7 @@ end POSCat
     Computed structurally without materializing the linearization. -/
 def containsLeaf : SyntacticObject → LIToken → Bool
   | .leaf tok', tok => decide (tok = tok')
+  | .trace _, _ => false  -- traces don't carry the queried token
   | .node l r, tok => containsLeaf l tok || containsLeaf r tok
 
 /-- The case stack at a leaf, computed by structural recursion over
@@ -262,6 +263,7 @@ def containsLeaf : SyntacticObject → LIToken → Bool
 def caseStackAt : SyntacticObject → LIToken → List POSCat
   | .leaf tok', tok =>
     if tok = tok' ∧ tok'.item.outerCat = .N then [POSCat.N] else []
+  | .trace _, _ => []
   | .node head body, tok =>
     if containsLeaf head tok then
       caseStackAt head tok

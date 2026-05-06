@@ -1,6 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Free
 import Linglib.Core.UD
+import Linglib.Core.Combinatorics.RootedTree.Decorated
 
 /-!
 # Syntactic Objects and Containment
@@ -138,65 +139,81 @@ instance : DecidableEq LIToken := λ a b =>
   else
     isFalse (by intro heq; cases heq; exact hid rfl)
 
-/-- Syntactic object (Definition 11): the free magma over `LIToken`.
+/-- Syntactic object: the trace-aware binary tree over `LIToken`.
 
 Following @cite{marcolli-chomsky-berwick-2025}, bare phrase structure
-*is* `FreeMagma LIToken`. The two constructors are:
+is the algebraic underpinning of binary trees with optional trace
+markers. The three constructors are:
 
-- `.of tok` — a lexical leaf (aliased as `SyntacticObject.leaf tok`)
-- `.mul a b` — binary Merge (aliased as `SyntacticObject.node a b`,
-  also written `a * b` via the inherited `Mul` instance)
+- `.leaf tok` — a lexical leaf
+- `.trace n` — a trace marker with binding index `n : Nat`
+- `.node a b` — binary Merge
 
-Traces and binders, when needed by LF composition, are recovered via
-`SyntacticObject.toLFTree : SyntacticObject → Core.Tree.Tree Unit LIToken`. -/
-abbrev SyntacticObject := FreeMagma LIToken
+This is `TraceTree LIToken Nat` (in `Core/Combinatorics/RootedTree/Decorated.lean`),
+shared with the MCB algebraic-Merge substrate (which uses `TraceTree LIToken Unit`
+when the trace label is irrelevant). Traces are first-class structural rather
+than encoded as leaves with reserved IDs.
+
+For LF composition, see `SyntacticObject.toLFTree`. -/
+abbrev SyntacticObject := ConnesKreimer.TraceTree LIToken Nat
 
 namespace SyntacticObject
 
-/-- Leaf shim: `SyntacticObject.leaf tok ≡ FreeMagma.of tok`. -/
+/-- Leaf shim: `SyntacticObject.leaf tok ≡ TraceTree.leaf tok`. -/
 @[match_pattern] abbrev leaf (tok : LIToken) : SyntacticObject :=
-  FreeMagma.of tok
+  ConnesKreimer.TraceTree.leaf tok
 
-/-- Binary-node shim: `SyntacticObject.node l r ≡ FreeMagma.mul l r`
-    (definitionally equal to `l * r`). -/
+/-- Binary-node shim: `SyntacticObject.node l r ≡ TraceTree.node l r`. -/
 @[match_pattern] abbrev node (l r : SyntacticObject) : SyntacticObject :=
-  FreeMagma.mul l r
+  ConnesKreimer.TraceTree.node l r
 
-/-- Custom recursor with linguistic case names so consumers can write
-    `induction so with | leaf tok => ... | node a b iha ihb => ...`
-    instead of `FreeMagma`'s `of`/`mul` jargon. Marked
-    `induction_eliminator` so `induction`/`cases` pick it up by default. -/
+/-- Trace shim: `SyntacticObject.trace n ≡ TraceTree.trace n`. -/
+@[match_pattern] abbrev trace (n : Nat) : SyntacticObject :=
+  ConnesKreimer.TraceTree.trace n
+
+/-- Custom recursor with linguistic case names. Three cases now: leaf,
+    trace, node. Marked `induction_eliminator` so `induction`/`cases`
+    pick it up by default. -/
 @[elab_as_elim, induction_eliminator, cases_eliminator]
 def rec' {motive : SyntacticObject → Sort*}
     (leaf : ∀ tok, motive (.leaf tok))
+    (trace : ∀ n, motive (.trace n))
     (node : ∀ a b, motive a → motive b → motive (.node a b))
-    (so : SyntacticObject) : motive so :=
-  FreeMagma.recOnMul so leaf node
+    : (so : SyntacticObject) → motive so
+  | .leaf t   => leaf t
+  | .trace n  => trace n
+  | .node l r => node l r (rec' leaf trace node l) (rec' leaf trace node r)
 
 def isLeaf : SyntacticObject → Prop
   | .leaf _ => True
+  | .trace _ => True   -- trace markers are leaf-position
   | .node _ _ => False
 
 instance : DecidablePred isLeaf := fun so =>
   match so with
   | .leaf _ => isTrue trivial
+  | .trace _ => isTrue trivial
   | .node _ _ => isFalse id
 
 def isNode : SyntacticObject → Prop
   | .leaf _ => False
+  | .trace _ => False
   | .node _ _ => True
 
 instance : DecidablePred isNode := fun so =>
   match so with
   | .leaf _ => isFalse id
+  | .trace _ => isFalse id
   | .node _ _ => isTrue trivial
 
 def getLIToken : SyntacticObject → Option LIToken
   | .leaf tok => some tok
+  | .trace _ => none
   | .node _ _ => none
 
 def getConstituents : SyntacticObject → Option (SyntacticObject × SyntacticObject)
   | .leaf _ => none
+  | .trace _ => none
   | .node a b => some (a, b)
 
 end SyntacticObject
@@ -239,27 +256,37 @@ def uposToCat : UD.UPOS → Cat
   | .CCONJ => .C
   | _      => .N  -- default
 
-/-- Get the phonological yield of an SO (collect phonForms from leaves) -/
+/-- Get the phonological yield of an SO (collect phonForms from leaves).
+    Trace markers contribute nothing (silent at PF). -/
 def SyntacticObject.phonYield : SyntacticObject → List String
   | .leaf tok =>
     let phon := tok.item.features.head?.map (·.phonForm) |>.getD ""
     if phon.isEmpty then [] else [phon]
+  | .trace _ => []
   | .node a b => a.phonYield ++ b.phonYield
 
 /-- Linearize a `SyntacticObject` by collecting leaf `LIToken`s in
-    left-to-right traversal order. -/
+    left-to-right traversal order. Traces are silent. -/
 def linearize : SyntacticObject → List LIToken
   | .leaf tok => [tok]
+  | .trace _ => []
   | .node l r => linearize l ++ linearize r
+
+/-- Trace marker token: synthesized when traversal needs an LIToken at a
+    `.trace n` position (e.g., `leftmostLeaf` on a left-spine of traces).
+    Encodes the trace index in the id field (sentinel ≥ 10000), preserving
+    backward-compat for code that inspects `tok.id`. -/
+def mkTraceToken (index : Nat) : LIToken :=
+  ⟨.simple .N [] (phonForm := ""), index + 10000⟩
 
 /-- The leftmost leaf along the left spine of a `SyntacticObject`. For SOs
     built via `Step.emR` complement Merge or direct `merge` with the
     projecting head on the left, this leaf IS the projecting head. For
-    arbitrary `FreeMagma LIToken` values, it is a heuristic recovery of
-    the head — see `outerCat` and `HeadFunction.lean` for the M-C-B
-    formalism. -/
+    arbitrary tree values, it is a heuristic recovery of the head — see
+    `outerCat` and `HeadFunction.lean` for the M-C-B formalism. -/
 def SyntacticObject.leftmostLeaf : SyntacticObject → LIToken
   | .leaf tok => tok
+  | .trace n => mkTraceToken n
   | .node l _ => l.leftmostLeaf
 
 /-- The outer (projecting) categorial feature of an SO, recovered from the
@@ -295,19 +322,21 @@ theorem phonYield_eq_linearize (so : SyntacticObject) :
     simp only [SyntacticObject.phonYield, linearize, LIToken.phonForm]
     simp only [List.filterMap_cons, List.filterMap_nil]
     split <;> simp_all
+  | trace _ =>
+    simp only [SyntacticObject.phonYield, linearize, List.filterMap_nil]
   | node a b iha ihb =>
     simp only [SyntacticObject.phonYield, linearize, List.filterMap_append, iha, ihb]
 
-/-- Create a trace SO. Traces are leaves with a distinguished sentinel:
-    cat = N, sel = [], phonForm = "", and id = index + 10000.
-    This encoding is detectable via `isTrace`. -/
+/-- Create a trace SO with binding index `index`. Realized structurally
+    via the `.trace` constructor (no longer leaf-with-reserved-id).
+    Detectable via `isTrace`. -/
 def mkTrace (index : Nat) : SyntacticObject :=
-  .leaf ⟨.simple .N [] (phonForm := ""), index + 10000⟩
+  .trace index
 
-/-- Detect if an SO is a trace (created via mkTrace).
-    Returns the trace index if so. -/
+/-- Detect if an SO is a trace. Returns the trace index if so. -/
 def isTrace : SyntacticObject → Option Nat
-  | .leaf tok => if tok.id ≥ 10000 then some (tok.id - 10000) else none
+  | .trace n => some n
+  | .leaf _ => none
   | .node _ _ => none
 
 def exampleVerb : SyntacticObject := mkLeaf .V [.D] 1
@@ -316,19 +345,24 @@ def exampleNoun : SyntacticObject := mkLeaf .N [] 2
 
 def exampleDet : SyntacticObject := mkLeaf .D [.N] 3
 
-/-- Count nodes (Merge operations) in an SO -/
+/-- Count nodes (Merge operations) in an SO. Traces are leaf-position
+    (count 0 nodes). -/
 def SyntacticObject.nodeCount : SyntacticObject → Nat
   | .leaf _ => 0
+  | .trace _ => 0
   | .node a b => 1 + a.nodeCount + b.nodeCount
 
+/-- Count leaves and trace markers (anything in leaf position). -/
 def SyntacticObject.leafCount : SyntacticObject → Nat
   | .leaf _ => 1
+  | .trace _ => 1
   | .node a b => a.leafCount + b.leafCount
 
 theorem leaf_node_relation (so : SyntacticObject) :
     so.leafCount = so.nodeCount + 1 := by
   induction so with
   | leaf _ => rfl
+  | trace _ => rfl
   | node a b iha ihb =>
     simp only [SyntacticObject.leafCount, SyntacticObject.nodeCount, iha, ihb]; omega
 
@@ -336,21 +370,28 @@ theorem leaf_node_relation (so : SyntacticObject) :
 -- Subterm Enumeration
 -- ============================================================================
 
-/-- All nodes in a `SyntacticObject`, including the root itself. -/
+/-- All nodes in a `SyntacticObject`, including the root itself.
+    Traces are leaf-position; their `subtrees` is just `[self]`. -/
 def SyntacticObject.subtrees : SyntacticObject → List SyntacticObject
   | so@(.leaf _) => [so]
+  | so@(.trace _) => [so]
   | so@(.node l r) => so :: (l.subtrees ++ r.subtrees)
 
-/-- The terminal (leaf) nodes of a `SyntacticObject`. -/
+/-- The terminal (leaf) nodes of a `SyntacticObject`. Traces count as
+    terminals since they're at leaf positions. -/
 def terminalNodes : SyntacticObject → List SyntacticObject
   | so@(.leaf _) => [so]
+  | so@(.trace _) => [so]
   | .node l r => terminalNodes l ++ terminalNodes r
 
-/-- Every terminal node is a leaf. -/
+/-- Every terminal node is a leaf-position SO (leaf or trace). -/
 theorem terminalNodes_are_leaves {so t : SyntacticObject}
     (h : t ∈ terminalNodes so) : t.isLeaf := by
   induction so with
   | leaf _ =>
+    simp only [terminalNodes] at h
+    exact List.mem_singleton.mp h ▸ trivial
+  | trace _ =>
     simp only [terminalNodes] at h
     exact List.mem_singleton.mp h ▸ trivial
   | node l r ihl ihr =>
@@ -365,6 +406,10 @@ theorem terminalNodes_sub_subtrees {so t : SyntacticObject}
     simp only [terminalNodes] at h
     simp only [SyntacticObject.subtrees]
     exact h
+  | trace _ =>
+    simp only [terminalNodes] at h
+    simp only [SyntacticObject.subtrees]
+    exact h
   | node l r ihl ihr =>
     simp only [terminalNodes, List.mem_append] at h
     simp only [SyntacticObject.subtrees, List.mem_cons, List.mem_append]
@@ -375,6 +420,7 @@ theorem terminalNodes_sub_subtrees {so t : SyntacticObject}
 theorem self_mem_subtrees (so : SyntacticObject) : so ∈ so.subtrees := by
   cases so with
   | leaf _ => exact List.mem_singleton.mpr rfl
+  | trace _ => exact List.mem_singleton.mpr rfl
   | node _ _ => exact List.mem_cons.mpr (Or.inl rfl)
 
 /-- `subtrees` is downward-monotone along the subtree relation: if `t`
@@ -384,6 +430,9 @@ theorem subtrees_subset_of_mem {t s : SyntacticObject}
     (h : t ∈ s.subtrees) : t.subtrees ⊆ s.subtrees := by
   induction s with
   | leaf _ =>
+    simp only [SyntacticObject.subtrees, List.mem_singleton] at h
+    subst h; intro _ h'; exact h'
+  | trace _ =>
     simp only [SyntacticObject.subtrees, List.mem_singleton] at h
     subst h; intro _ h'; exact h'
   | node l r ihl ihr =>
@@ -412,6 +461,7 @@ theorem subtrees_subset_of_mem {t s : SyntacticObject}
 def immediatelyContains (x y : SyntacticObject) : Prop :=
   match x with
   | .leaf _ => False
+  | .trace _ => False
   | .node a b => y = a ∨ y = b
 
 /-- Decidable immediate containment -/
@@ -420,6 +470,7 @@ instance decImmediatelyContains (x y : SyntacticObject) :
   unfold immediatelyContains
   match x with
   | .leaf _ => exact isFalse id
+  | .trace _ => exact isFalse id
   | .node a b => exact inferInstanceAs (Decidable (y = a ∨ y = b))
 
 -- Part 2: Containment / Dominance (Definition 14)
@@ -473,6 +524,7 @@ theorem immediatelyContains_lt_nodeCount {x y : SyntacticObject}
     · omega
     · omega
   | .leaf _, h => exact h.elim
+  | .trace _, h => exact h.elim
 
 /-- Containment strictly decreases nodeCount -/
 theorem contains_lt_nodeCount {x y : SyntacticObject}
@@ -497,6 +549,10 @@ theorem contains_irrefl (x : SyntacticObject) : ¬contains x x := by
     is contained iff it is `a`, is `b`, or is contained in `a` or `b`. -/
 instance decContains : (x y : SyntacticObject) → Decidable (contains x y)
   | .leaf tok, y => isFalse (leaf_contains_nothing tok y)
+  | .trace _, y => isFalse (by
+      intro h; cases h with
+      | imm _ _ himm => simp [immediatelyContains] at himm
+      | trans _ _ _ himm _ => simp [immediatelyContains] at himm)
   | .node a b, y =>
     have _ha : Decidable (contains a y) := decContains a y
     have _hb : Decidable (contains b y) := decContains b y
@@ -579,6 +635,7 @@ theorem mem_subtrees_of_imm_contains {root w z : SyntacticObject}
   have hz_in_w : z ∈ w.subtrees := by
     cases w with
     | leaf _ => exact hwz.elim
+    | trace _ => exact hwz.elim
     | node a b =>
       simp only [immediatelyContains] at hwz
       simp only [SyntacticObject.subtrees, List.mem_cons, List.mem_append]
@@ -604,6 +661,9 @@ theorem isTermOf_of_mem_subtrees {y z : SyntacticObject}
     (h : z ∈ y.subtrees) : isTermOf z y := by
   induction y with
   | leaf _ =>
+      simp only [SyntacticObject.subtrees, List.mem_singleton] at h
+      exact Or.inl h
+  | trace _ =>
       simp only [SyntacticObject.subtrees, List.mem_singleton] at h
       exact Or.inl h
   | node l r ihl ihr =>
@@ -702,9 +762,11 @@ inductive TreeShape where
   | node : TreeShape → TreeShape → TreeShape
   deriving Repr, DecidableEq
 
-/-- Strip labels from a syntactic object, yielding its abstract shape. -/
+/-- Strip labels from a syntactic object, yielding its abstract shape.
+    Traces collapse to the same shape as leaves (both are leaf-position). -/
 def SyntacticObject.shape : SyntacticObject → TreeShape
   | .leaf _ => .leaf
+  | .trace _ => .leaf
   | .node l r => .node l.shape r.shape
 
 /-- Two syntactic objects are structurally isomorphic iff they have
