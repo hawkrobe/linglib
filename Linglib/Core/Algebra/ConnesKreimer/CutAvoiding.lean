@@ -85,6 +85,15 @@ lemma head_pair {S S' T : TraceTree α β} {W : TraceForest α β}
      show S' ∈ S ::ₘ ({S'} : TraceForest α β)
      exact Multiset.mem_cons_of_mem (Multiset.mem_singleton.mpr rfl))⟩
 
+/-- For a workspace `W` avoiding the pair-target forest `{S, S'}`, neither
+    target is a member of `W`. Convenience for the two-target case. -/
+lemma not_mem_pair {S S' : TraceTree α β} {W : TraceForest α β}
+    (h : CutAvoidingForest ({S, S'} : TraceForest α β) W) : S ∉ W ∧ S' ∉ W :=
+  ⟨h.not_mem S (Multiset.mem_cons_self _ _),
+   h.not_mem S' (by
+     show S' ∈ S ::ₘ ({S'} : TraceForest α β)
+     exact Multiset.mem_cons_of_mem (Multiset.mem_singleton.mpr rfl))⟩
+
 end CutAvoidingForest
 
 end ConnesKreimer

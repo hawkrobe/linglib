@@ -294,10 +294,11 @@ theorem mergeOp_factor_out_singleton {R : Type*} [CommSemiring R]
     the disjointness, `mergeOp` produces the sum-over-matchings of eq. (1.3.11),
     p. 45 — including Sideward contributions. M-C-B's own elimination of
     Sideward (per §1.5, pp. 56-59) is via **Minimal Search cost weighting** in
-    the ε → 0 limit, NOT via stipulation of disjointness. A future Phase 7d
-    will derive (rather than stipulate) Case-1 dominance from a cost-ordering
-    argument; for now, the `CutAvoidingForest` predicate is the well-defined
-    bridge to single-output `Step.emR/emL` semantics. -/
+    the ε → 0 limit, realized in `mergeOp_eps_zero_residual` (below) which
+    derives Case-1 dominance from cost minimization without the
+    `CutAvoidingForest` hypothesis. The connection between the two formulations
+    is `mergeOp_eq_mergeOp_eps_zero_under_avoiding`: under `CutAvoidingForest`
+    both operators agree pointwise. -/
 theorem mergeOp_pair_residual {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     {S S' : TraceTree α Unit} {Fhat : TraceForest α Unit}
     (hF : CutAvoidingForest ({S, S'} : TraceForest α Unit) Fhat) :
@@ -521,5 +522,29 @@ theorem mergeOp_eps_zero_residual {R : Type*} [CommSemiring R]
     rw [mergeOp_eps_zero_factor_out_singleton hT_ne_S hT_ne_S']
     exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
+/-- **Connection corollary** (closes Phase 7d's acceptance criteria, MCB §1.5.3).
+    Under the `CutAvoidingForest` hypothesis (Case 1 disjointness), the
+    unweighted Merge operator `mergeOp` and the cost-weighted `mergeOp_eps 0`
+    agree pointwise on `forestToHc ({S, S'} + Fhat)`.
+
+    Both produce `forestToHc ({.node S S'} + Fhat)`:
+    - `mergeOp` via `mergeOp_pair_residual` (disjointness-stipulated).
+    - `mergeOp_eps 0` via `mergeOp_eps_zero_residual` (cost-derived from
+      member disjointness, which `CutAvoidingForest` implies via `not_mem_pair`).
+
+    Architecturally: the cost framework is **strictly more general** than
+    the disjointness framework — it requires only `S, S' ∉ Fhat` (member
+    disjointness), not the stronger no-cut-extracts conditions. The
+    corollary witnesses that the cost-derived form *subsumes* the
+    disjointness-stipulated form. -/
+theorem mergeOp_eq_mergeOp_eps_zero_under_avoiding
+    {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+    {S S' : TraceTree α Unit} {Fhat : TraceForest α Unit}
+    (hF : CutAvoidingForest ({S, S'} : TraceForest α Unit) Fhat) :
+    mergeOp (R := R) S S' (forestToHc (({S, S'} : TraceForest α Unit) + Fhat))
+      = mergeOp_eps (R := R) 0 S S'
+          (forestToHc (({S, S'} : TraceForest α Unit) + Fhat)) := by
+  obtain ⟨hS, hS'⟩ := hF.not_mem_pair
+  rw [mergeOp_pair_residual hF, ← mergeOp_eps_zero_residual hS hS']
 
 end Minimalist.Merge
