@@ -330,34 +330,247 @@ theorem uyghur_backness_isBTD : ∃ k, IsBTD k uyghurBacknessLang := by
 inductive KShoTone | low | high
   deriving DecidableEq, Repr
 
-/-- Karanga Shona verb-stem tone language (post-hyphen material). The
-seven fully specified words are `ℓ, ℓh, ℓhℓ, h, hℓ, hℓh, hhℓh` (Lambert
-2026 §5.6 example (45) data row, paper p. 19); longer forms fall into
-one of two patterns: `ℓhhℓ ℓ*` for ℓ-toned roots and `hhhℓ ℓ* h` for
-h-toned roots (described in prose just below (45)). See file docstring
-for the @cite{jardine-2020} scope-restriction disclaimer. -/
+/-! ### Atomic IsGeneralizedDefinite languages (uniform `k = 5`)
+
+Each component of Lambert's `φ_F ∨ L_m ∨ H_m` reduces to a Boolean
+combination of edge-anchored substring tests and tier-projected
+substring tests. We encode each as a `Language KShoTone` and prove it's
+`IsGeneralizedDefinite 5` directly via `List.take_take` /
+`List.drop_drop`-style structural arguments. The uniform `k = 5` is
+chosen as `1 + max(prefix length, suffix length, tier-projection
+length, max φ_F word length) = 1 + 4`. -/
+
+/-- "Word starts with `xs`": the language `{w | w.take xs.length = xs}`. -/
+def startsWithLang (xs : List KShoTone) : Language KShoTone :=
+  { w | w.take xs.length = xs }
+
+/-- "Word ends with `xs`": the language `{w | w.drop (w.length - xs.length) = xs}`. -/
+def endsWithLang (xs : List KShoTone) : Language KShoTone :=
+  { w | w.drop (w.length - xs.length) = xs }
+
+/-- "Tier-projection by `T` equals exactly `xs`": the language
+`{w | w.filter T = xs}`. -/
+def tierEqualLang (T : KShoTone → Bool) (xs : List KShoTone) :
+    Language KShoTone :=
+  { w | w.filter T = xs }
+
+/-- Boolean tier predicate for `h`-tier (high tones only). -/
+def isHigh : KShoTone → Bool
+  | .high => true
+  | .low => false
+
+/-! ### IsGeneralizedDefinite witnesses at `k = 5`
+
+Unfolding helper: `Edge.left.takeAt k w = w.take k` and
+`Edge.right.takeAt k w = w.drop (w.length - k)` by `rfl`. The
+hypotheses from `IsGeneralizedDefinite k` come in the `Edge.takeAt`
+form; we unfold via `show` at the top of each proof. -/
+
+/-- `startsWithLang xs` is `IsGeneralizedDefinite k` for any `k ≥
+xs.length`. Proof: same `k`-prefix on both words determines the
+`xs.length`-prefix via `List.take_take`. -/
+lemma startsWithLang_isGenDef (xs : List KShoTone) (k : ℕ)
+    (hk : xs.length ≤ k) : IsGeneralizedDefinite k (startsWithLang xs) := by
+  intro w₁ w₂ hpre _
+  -- Unfold Edge.left.takeAt to List.take.
+  change w₁.take k = w₂.take k at hpre
+  have htake : w₁.take xs.length = w₂.take xs.length := by
+    rw [show w₁.take xs.length = (w₁.take k).take xs.length by
+          rw [List.take_take, min_eq_left hk],
+        hpre, List.take_take, min_eq_left hk]
+  exact Iff.intro
+    (fun h => show w₂.take xs.length = xs from htake.symm.trans h)
+    (fun h => show w₁.take xs.length = xs from htake.trans h)
+
+/-- `endsWithLang xs` is `IsGeneralizedDefinite k` for any `k ≥
+xs.length`. Symmetric to `startsWithLang_isGenDef`; the underlying
+identity is `w.drop (w.length - xs.length) = (w.drop (w.length - k)).drop
+(k - xs.length)` when `xs.length ≤ k ≤ w.length`. The general case
+splits on whether `w` is shorter than `k`. -/
+lemma endsWithLang_isGenDef (xs : List KShoTone) (k : ℕ)
+    (hk : xs.length ≤ k) : IsGeneralizedDefinite k (endsWithLang xs) := by
+  intro w₁ w₂ _ hsuf
+  -- Unfold Edge.right.takeAt to List.drop.
+  change w₁.drop (w₁.length - k) = w₂.drop (w₂.length - k) at hsuf
+  -- The k-suffixes have equal length, so word lengths are related.
+  have hlen_eq : min k w₁.length = min k w₂.length := by
+    have h := congrArg List.length hsuf
+    simp [List.length_drop] at h
+    omega
+  have hdrop : w₁.drop (w₁.length - xs.length) =
+               w₂.drop (w₂.length - xs.length) := by
+    by_cases hw1 : k ≤ w₁.length
+    · -- Case: w₁.length ≥ k. Then min k w₁.length = k, so min k w₂.length = k, so w₂.length ≥ k.
+      have hw2 : k ≤ w₂.length := by
+        rw [min_eq_left hw1] at hlen_eq
+        by_cases h : k ≤ w₂.length
+        · exact h
+        · push Not at h
+          rw [min_eq_right (le_of_lt h)] at hlen_eq
+          omega
+      -- xs.suffix is inside k-suffix.
+      rw [show w₁.length - xs.length = (w₁.length - k) + (k - xs.length) by omega,
+          show w₂.length - xs.length = (w₂.length - k) + (k - xs.length) by omega,
+          ← List.drop_drop, ← List.drop_drop, hsuf]
+    · -- Case: w₁.length < k. Then min k w₁.length = w₁.length.
+      push Not at hw1
+      rw [min_eq_right (le_of_lt hw1)] at hlen_eq
+      have hw1_drop : w₁.length - k = 0 := by omega
+      rw [hw1_drop, List.drop_zero] at hsuf
+      -- hsuf: w₁ = w₂.drop (w₂.length - k). Lengths: w₁.length = min k w₂.length.
+      by_cases hw2 : k ≤ w₂.length
+      · -- w₂.length ≥ k, but w₁.length = min k w₂.length = k ≥ w₁.length means w₁.length = k. Contradiction with hw1.
+        rw [min_eq_left hw2] at hlen_eq
+        omega
+      · push Not at hw2
+        have hw2_drop : w₂.length - k = 0 := by omega
+        rw [hw2_drop, List.drop_zero] at hsuf
+        -- hsuf: w₁ = w₂. So both .drop equal.
+        rw [hsuf]
+  exact Iff.intro
+    (fun h => show w₂.drop (w₂.length - xs.length) = xs from hdrop.symm.trans h)
+    (fun h => show w₁.drop (w₁.length - xs.length) = xs from hdrop.trans h)
+
+/-- `tierEqualLang T xs` is `IsTierBased (IsGeneralizedDefinite k)` for
+any `k > xs.length` (strict — without strictness, e.g. `{[h, h]}` is
+not GeneralizedDefinite 2 since `[h, h, h]` and `[h, h]` share both
+2-prefix and 2-suffix). -/
+lemma tierEqualLang_isTierBased (T : KShoTone → Bool) (xs : List KShoTone)
+    (k : ℕ) (hk : xs.length < k) :
+    IsTierBased (IsGeneralizedDefinite k) (tierEqualLang T xs) := by
+  refine ⟨T, {xs}, ?_, ?_⟩
+  · ext w; show (w.filter T = xs) ↔ w.filter T ∈ ({xs} : Set _)
+    simp [Set.mem_singleton_iff]
+  · -- {xs} is IsGeneralizedDefinite k for k ≥ xs.length.
+    -- Helper: a word `v` with `v.take k = xs` and `v.length ≤ k` (which we'll
+    -- establish) must equal `xs`.
+    have hxs_take : xs.take k = xs := List.take_of_length_le (le_of_lt hk)
+    -- The forward direction: if w₁ = xs, derive w₂ = xs from `xs.take k = w₂.take k`.
+    -- Since |xs| < k, we have |v.take k| = |xs| < k, forcing |v| < k, so v.take k = v.
+    have key : ∀ v : List KShoTone, xs.take k = v.take k → v = xs := by
+      intro v hv
+      rw [hxs_take] at hv
+      have hlen : xs.length = min k v.length := by
+        have := congrArg List.length hv
+        simpa [List.length_take] using this
+      have hv_lt : v.length < k := by
+        by_cases h : v.length ≤ k
+        · rcases eq_or_lt_of_le h with heq | hlt
+          · -- |v| = k. Then min k |v| = k. So |xs| = k, contradicting |xs| < k.
+            rw [heq, min_self] at hlen; omega
+          · exact hlt
+        · -- |v| > k impossible since min k |v| = k = |xs| contradicts |xs| < k.
+          push Not at h
+          rw [min_eq_left (le_of_lt h)] at hlen; omega
+      have hv_take : v.take k = v := List.take_of_length_le (le_of_lt hv_lt)
+      rw [hv_take] at hv
+      exact hv.symm
+    intro w₁ w₂ hpre _
+    change w₁.take k = w₂.take k at hpre
+    show w₁ ∈ ({xs} : Set _) ↔ w₂ ∈ ({xs} : Set _)
+    simp only [Set.mem_singleton_iff]
+    constructor
+    · intro h; exact key w₂ (h ▸ hpre)
+    · intro h; exact key w₁ (h ▸ hpre.symm)
+
+/-- The seven fully specified words from Lambert (2026) §5.6 (just above
+eq. (46), paper p. 19). Max length 4 (`hhℓh`). -/
+def kshonaSevenWords : List (List KShoTone) :=
+  [[.low], [.low, .high], [.low, .high, .low],
+   [.high], [.high, .low], [.high, .low, .high],
+   [.high, .high, .low, .high]]
+
+/-- The finite-language part `φ_F` of Lambert's witness — the seven
+fully specified words. -/
+def phi_F : Language KShoTone := { w | w ∈ kshonaSevenWords }
+
+/-- `phi_F` is `IsGeneralizedDefinite 5`. Max word length is 4, so for
+`k = 5 > 4`, any word of length ≤ 4 has `k`-prefix = whole word. Two
+words with same 5-prefix and length ≤ 4 are equal; any word with
+length > 4 has a 5-prefix of length 5 (or whole) which differs from
+any short word's 5-prefix. -/
+lemma phi_F_isGenDef : IsGeneralizedDefinite 5 phi_F := by
+  intro w₁ w₂ hpre _
+  change w₁.take 5 = w₂.take 5 at hpre
+  show w₁ ∈ phi_F ↔ w₂ ∈ phi_F
+  by_cases h1 : w₁.length ≤ 4
+  · -- w₁.take 5 = w₁.
+    have hw₁ : w₁.take 5 = w₁ := List.take_of_length_le (by omega)
+    rw [hw₁] at hpre
+    -- hpre : w₁ = w₂.take 5; |w₁| ≤ 4, so |w₂.take 5| ≤ 4, so |w₂| ≤ 4 too.
+    have hlen_eq : w₁.length = (w₂.take 5).length := by rw [← hpre]
+    rw [List.length_take] at hlen_eq
+    have hw₂_le : w₂.length ≤ 4 := by omega
+    have hw₂ : w₂.take 5 = w₂ := List.take_of_length_le (by omega)
+    rw [hw₂] at hpre
+    rw [show w₁ = w₂ from hpre]
+  · -- w₁.length > 4, so w₁ ∉ phi_F.
+    push Not at h1
+    have h2 : 4 < w₂.length := by
+      have hw₁_len : (w₁.take 5).length = 5 := by
+        rw [List.length_take]; omega
+      have hw₂_len : (w₂.take 5).length = 5 := by rw [← hpre]; exact hw₁_len
+      rw [List.length_take] at hw₂_len; omega
+    have hw₁_notin : w₁ ∉ phi_F := by
+      intro hin
+      simp [phi_F, kshonaSevenWords] at hin
+      rcases hin with h | h | h | h | h | h | h <;>
+        (rw [h] at h1; simp at h1)
+    have hw₂_notin : w₂ ∉ phi_F := by
+      intro hin
+      simp [phi_F, kshonaSevenWords] at hin
+      rcases hin with h | h | h | h | h | h | h <;>
+        (rw [h] at h2; simp at h2)
+    exact ⟨fun h => absurd h hw₁_notin, fun h => absurd h hw₂_notin⟩
+
+/-- The Karanga Shona verb-stem tone language as the disjunction `φ_F
+∨ L_m ∨ H_m` from Lambert (2026) §5.6 (formula appearing just after
+eq. (49), paper p. 19). -/
 def karangaShonaVerbStemLang : Language KShoTone :=
-  Set.univ -- placeholder; see karanga_shona_verb_stem_isBTLI TODO
+  -- φ_F: finite seven words
+  phi_F ⊔
+  -- L_m: ℓ-toned roots, multitier definite per (48)
+  -- L_m = ⋊ℓhhℓ ∧ [⋊hh⋉]_{h}
+  (startsWithLang [.low, .high, .high, .low] ⊓
+    tierEqualLang isHigh [.high, .high]) ⊔
+  -- H_m: h-toned roots, multitier definite per (49)
+  -- H_m = ⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}
+  (startsWithLang [.high, .high, .high, .low] ⊓
+    endsWithLang [.low, .high] ⊓
+    tierEqualLang isHigh [.high, .high, .high, .high])
 
-/-- **Karanga Shona verb-stem tone ∈ BTLI** (Lambert 2026 §5.6, refining
-@cite{jardine-2020}). The witness is `φ_F ∨ L_m ∨ H_m`, where `φ_F` is
-the finite-language part covering the seven fully specified words
-(defined in prose just above paper eq. (46), no equation number),
-`L_m = ⋊ℓhhℓ ∧ [⋊hh⋉]_{h}` is the ℓ-toned-root multitier-definite part
-per Lambert (2026) (48), and `H_m = ⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}` is the
-h-toned-root multitier-definite part per (49). Note that paper (47) is
-the *piecewise testable* h-toned witness `H_p` — not part of the
-multitier disjunction — so the citation range is (48)-(49), not
-(47)-(49). Each disjunct is in `IsBTC IsGeneralizedDefinite`; the
-disjunction stays in BTLI by Boolean closure.
-
-TODO: discharge the witness construction. The structural proof is a
-straightforward Boolean combination of edge-definite tests (for the
-left-anchored substrings) and tier-projected count constraints (for the
-high-tone-tier suffix patterns). -/
+/-- **Karanga Shona verb-stem tone ∈ BTLI₅** (Lambert 2026 §5.6,
+refining @cite{jardine-2020}). Constructive witness for the disjunction
+`φ_F ∨ L_m ∨ H_m` at uniform `k = 5`. Each disjunct lifts to
+`IsBTC (IsGeneralizedDefinite 5)` via `IsTierBased.of_class` +
+`BoolClosure.base`; the disjunction is closed by `BoolClosure.union`. -/
 theorem karanga_shona_verb_stem_isBTLI :
     ∃ k, IsBTLI k karangaShonaVerbStemLang := by
-  sorry
+  refine ⟨5, ?_⟩
+  -- φ_F via direct IsGeneralizedDefinite + IsTierBased.of_class
+  have hPhi : IsBTLI 5 phi_F := .base (.of_class phi_F_isGenDef)
+  -- L_m components
+  have hLm_pre : IsBTLI 5 (startsWithLang [.low, .high, .high, .low]) :=
+    .base (.of_class (startsWithLang_isGenDef _ 5 (by decide)))
+  have hLm_tier : IsBTLI 5 (tierEqualLang isHigh [.high, .high]) :=
+    .base (tierEqualLang_isTierBased isHigh _ 5 (by decide))
+  have hLm : IsBTLI 5
+      (startsWithLang [.low, .high, .high, .low] ⊓
+        tierEqualLang isHigh [.high, .high]) := .inter hLm_pre hLm_tier
+  -- H_m components
+  have hHm_pre : IsBTLI 5 (startsWithLang [.high, .high, .high, .low]) :=
+    .base (.of_class (startsWithLang_isGenDef _ 5 (by decide)))
+  have hHm_suf : IsBTLI 5 (endsWithLang [.low, .high]) :=
+    .base (.of_class (endsWithLang_isGenDef _ 5 (by decide)))
+  have hHm_tier : IsBTLI 5 (tierEqualLang isHigh [.high, .high, .high, .high]) :=
+    .base (tierEqualLang_isTierBased isHigh _ 5 (by decide))
+  have hHm : IsBTLI 5
+      (startsWithLang [.high, .high, .high, .low] ⊓
+        endsWithLang [.low, .high] ⊓
+        tierEqualLang isHigh [.high, .high, .high, .high]) :=
+    .inter (.inter hHm_pre hHm_suf) hHm_tier
+  -- Disjunction
+  exact .union (.union hPhi hLm) hHm
 
 -- ============================================================================
 -- § 5. Tsuut'ina asymmetric harmony ∈ TSL_2 ∖ BTLI
