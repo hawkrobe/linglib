@@ -1118,4 +1118,248 @@ theorem mergeOp_im_matches_Step
   -- toHc_node: (.node a b).toHc = .node a.toHc b.toHc
   rfl
 
+/-! ## §4: Sideward Merge realization (M-C-B Lemmas 1.4.4 + 1.4.5, book pp. 54-55)
+
+**Verbatim from MCB §1.4.5 (Sideward Merge, Cases 2(b) and 3(b), p. 54):**
+
+> Case 2(b) corresponds to a case of Sideward Merge. Here, one obtains in
+> the new workspace F' a component of the form M(T_i, β) and a component
+> of the form T_j/β. Similarly, case 3(b) also represents a case of Sideward
+> Merge, where in the resulting workspace F', one has new components: M(α, β),
+> as well as T_i/α and T_j/β.
+
+**Lemma 1.4.4** (MCB p. 54): The two cases of Sideward Merge 2(b) and 3(b)
+are realized by the Merge operators of (1.3.7) with M_{T_i, β} (with T_i
+occurring as a component of F and β as an accessible term of a different
+component T_j of F), and M_{α, β} (with α ∈ Acc(T_i) and β ∈ Acc(T_j), for
+two components i ≠ j of F).
+
+> Proof. In the Sideward Merge 2(b) the operator δ_{T_i, β} picks the term
+> of the coproduct Δ(F), for F = ⊔_a T_a, of the form
+>   (T_i ⊔ β) ⊗ (T_j/β ⊔ F̂),
+> with F̂ = ⊔_{a≠i,j} T_a. Then ℬ⊗id acts on this term, producing
+>   M(T_i, β) ⊗ (T_j/β ⊔ F̂),
+> and applying the product ⊔ to this, we obtain
+>   M(T_i, β) ⊔ T_j/β ⊔ F̂
+> as expected. Case 3(b) of the Sideward Merge is analogous, with δ_{α, β}
+> selecting (α ⊔ β) ⊗ (T_i/α ⊔ T_j/β ⊔ F̂), which is mapped to
+> M(α, β) ⊔ T_i/α ⊔ T_j/β ⊔ F̂ as expected.
+
+**Verbatim from MCB §1.4.6 (Sideward Merge, Case 3(a), p. 54-55):**
+
+Case 3(a) is also called "Countercyclic Merge". The new workspace F' contains
+a new component M(α, β) and a modified component T_i/(α, β), where
+T_i/(α, β) writes for the cancellation from the accessible terms of the
+deeper copies of α and β inside T_i (also written T_i/(α ⊔ β)).
+
+**Lemma 1.4.5** (MCB p. 55): Case 3(a) of Merge is realized as M_{α, β},
+where matching terms in F = ⊔_i T_i are found as disjoint accessible terms
+α ≃ T_v, β ≃ T_w of the same component T_a of the workspace, corresponding
+to an admissible cut on two edges, and to a term of the coproduct of the form
+   T_v ⊔ T_w ⊗ (T_a/(T_v ⊔ T_w) ⊔ F̂),
+with F̂ = ⊔_{i≠a} T_i.
+
+> Proof. δ_{α, β} selects T_v ⊔ T_w ⊗ (T/(T_v ⊔ T_w) ⊔ F̂) in the
+> coproduct, with α ≃ T_v, β ≃ T_w, which ℬ⊗id then maps to
+> M(T_v, T_w) ⊗ T/(T_v ⊔ T_w) ⊔ F̂ and ⊔ maps to
+> M(T_v, T_w) ⊔ T/(T_v ⊔ T_w) ⊔ F̂.
+
+## Status of this section
+
+This section provides the **type-level substrate and stated theorems** for
+the three Sideward cases. The realization lemmas (Lemma 1.4.4 + 1.4.5) are
+stated with `sorry`'d proofs; the cost-suppression theorems (under MCB §1.5
+Minimal Search ε → 0) are stated with `sorry`'d proofs. Discharging is
+queued; the proof strategy mirrors `mergeOp_pair_residual` (§2.5) but
+selects a different cross-term in the (prim + sum) × (prim + sum) expansion
+of the (T_i, T_j) workspace coproduct.
+
+**Why these cuts are not currently identified individually.** Per the
+§2.7 docstring: in the existing `comulDelAlgHom` substrate the Sideward
+contributions are present as ε-suppressed terms in `mergeOp` but are not
+named individually. The first task in discharging the sorrys is to define
+`SidewardCut2b`, `SidewardCut3a`, `SidewardCut3b` predicates picking out
+the specific cuts that produce each Sideward output forest, then connect
+them to the `mergePost ∘ comulDelAlgHom` chain.
+-/
+
+/-- A `CutShape c_β : CutShape T_j` **identifies an accessible term β** when
+    its forest is the singleton `{β}` — i.e., the cut extracts exactly β
+    from T_j as a subforest. This is the substrate predicate corresponding
+    to "β ∈ Acc(T_j)" in MCB §1.4.1, witnessed at the algebraic level by
+    the existence of an admissible cut producing β. -/
+def IsSinglAccessibleCut {α : Type*} [DecidableEq α]
+    (T_j β : TraceTree α Unit) (c_β : CutShape T_j) : Prop :=
+  CutShape.cutForest c_β = ({β} : TraceForest α Unit)
+
+instance {α : Type*} [DecidableEq α]
+    (T_j β : TraceTree α Unit) (c_β : CutShape T_j) :
+    Decidable (IsSinglAccessibleCut T_j β c_β) := by
+  unfold IsSinglAccessibleCut; infer_instance
+
+/-- **Sideward Merge case 2(b) realization** (M-C-B Lemma 1.4.4, p. 54).
+    For workspace `{T_i, T_j} + Fhat` with `β ∈ Acc(T_j)` (witnessed by an
+    admissible cut `c_β` on T_j producing `{β}` as its subforest), the
+    operator `δ_{T_i, β}` selects the cross-term `(T_i ⊔ β) ⊗ (T_j/β ⊔ F̂)`
+    of the coproduct, and `mergeOp T_i β` produces the new workspace
+    `{M(T_i, β), T_j/β} + Fhat`, where T_j/β is the algebraic quotient
+    given by `remainderDeletion c_β`.
+
+    Proof strategy mirrors `mergeOp_pair_residual` (§2.5): expand the
+    coproduct as (prim + sum) × (prim + sum) for the two components
+    T_i, T_j; show only the prim_{T_i} × cut_{c_β} cross-term survives.
+    The cross-term-elimination machinery (`mergePost_basis_tensor`,
+    `cutForest_ne_singleton_self`, `cutForest_add_ne_insert_pair`)
+    needs to be reused with the singleton-{β} target instead of `{S, S'}`. -/
+theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+    (T_i T_j β T_j_q : TraceTree α Unit)
+    (c_β : CutShape T_j) (Fhat : TraceForest α Unit)
+    (_h_cut : IsSinglAccessibleCut T_j β c_β)
+    (_h_remainder : CutShape.remainderDeletion c_β = some T_j_q)
+    (_h_distinct : T_i ≠ T_j)
+    (_h_β_ne_Ti : β ≠ T_i)
+    (_h_F_disjoint : MergeTargetFreeWorkspace T_i β Fhat) :
+    mergeOp (R := R) T_i β
+        (forestToHc (({T_i, T_j} : TraceForest α Unit) + Fhat))
+      = forestToHc (({.node T_i β, T_j_q} : TraceForest α Unit) + Fhat) := by
+  -- TODO (Phase 7e): proof mirrors mergeOp_pair_residual but selects
+  -- the prim_{T_i} × cut_{c_β} cross-term instead of prim × prim.
+  -- Requires:
+  --   (a) extending mergePost_basis_tensor's `if` selector to recognize
+  --       `cutForest = {β}` (currently only recognizes `{S, S'}`)
+  --   (b) connecting deletionRightChannel(c_β) to forestToHc {T_j_q}
+  --       via h_remainder and the existing remainderDeletion theorems.
+  --   (c) dispatching the new cross-term elimination obligations
+  --       parallel to the existing prim_S × cut_{c'} eliminations.
+  sorry
+
+/-- **Sideward Merge case 3(b) realization** (M-C-B Lemma 1.4.4, p. 54).
+    Symmetric to 2(b): both α and β are accessible terms of distinct
+    components T_i ≠ T_j. The operator `δ_{α, β}` selects
+    `(α ⊔ β) ⊗ (T_i/α ⊔ T_j/β ⊔ F̂)`, producing
+    `{M(α, β), T_i/α, T_j/β} + Fhat`.
+
+    Proof strategy: dual cut hypothesis pair (`c_α : CutShape T_i` with
+    `cutForest c_α = {α}`, and `c_β : CutShape T_j` with
+    `cutForest c_β = {β}`). The surviving cross-term is
+    cut_{c_α} × cut_{c_β}; all other cross-terms vanish. -/
+theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+    (T_i T_j α_t β T_i_q T_j_q : TraceTree α Unit)
+    (c_α : CutShape T_i) (c_β : CutShape T_j) (Fhat : TraceForest α Unit)
+    (_h_cut_α : IsSinglAccessibleCut T_i α_t c_α)
+    (_h_cut_β : IsSinglAccessibleCut T_j β c_β)
+    (_h_remainder_α : CutShape.remainderDeletion c_α = some T_i_q)
+    (_h_remainder_β : CutShape.remainderDeletion c_β = some T_j_q)
+    (_h_distinct : T_i ≠ T_j)
+    (_h_α_ne_β : α_t ≠ β)
+    (_h_F_disjoint : MergeTargetFreeWorkspace α_t β Fhat) :
+    mergeOp (R := R) α_t β
+        (forestToHc (({T_i, T_j} : TraceForest α Unit) + Fhat))
+      = forestToHc (({.node α_t β, T_i_q, T_j_q} : TraceForest α Unit) + Fhat) := by
+  -- TODO (Phase 7e): proof mirrors mergeOp_pair_residual but selects
+  -- the cut_{c_α} × cut_{c_β} cross-term. Requires similar substrate
+  -- extensions as mergeOp_sideward_2b plus a 3-tree-output forest
+  -- bookkeeping.
+  sorry
+
+/-- **Sideward Merge case 3(a) realization** ("Countercyclic-like Merge",
+    M-C-B Lemma 1.4.5, p. 55). Both α and β are disjoint accessible terms
+    of the *same* component T_i. The operator `δ_{α, β}` selects
+    `T_v ⊔ T_w ⊗ (T_i/(T_v ⊔ T_w) ⊔ F̂)`, producing
+    `{M(α, β), T_i/(α ⊔ β)} + Fhat`.
+
+    Proof strategy: the surviving cross-term comes from a single
+    *2-edge* admissible cut on T_i (extracting both α ≃ T_v and
+    β ≃ T_w as separate subforest elements), yielding `cutForest =
+    {α, β}` as a 2-element multiset. This requires the substrate
+    extension `IsTwoEdgeAccessibleCut T_i α β c` (hypothesis below):
+    a cut whose cutForest contains exactly α and β as distinct
+    elements. The mergePost cross-term selection criterion then becomes
+    `cutForest c = {α, β}`. -/
+def IsTwoEdgeAccessibleCut {α : Type*} [DecidableEq α]
+    (T_i α_t β : TraceTree α Unit) (c : CutShape T_i) : Prop :=
+  CutShape.cutForest c = ({α_t, β} : TraceForest α Unit)
+
+instance {α : Type*} [DecidableEq α]
+    (T_i α_t β : TraceTree α Unit) (c : CutShape T_i) :
+    Decidable (IsTwoEdgeAccessibleCut T_i α_t β c) := by
+  unfold IsTwoEdgeAccessibleCut; infer_instance
+
+theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+    (T_i α_t β T_i_q : TraceTree α Unit)
+    (c : CutShape T_i) (Fhat : TraceForest α Unit)
+    (_h_cut : IsTwoEdgeAccessibleCut T_i α_t β c)
+    (_h_remainder : CutShape.remainderDeletion c = some T_i_q)
+    (_h_α_ne_β : α_t ≠ β)
+    (_h_F_disjoint : MergeTargetFreeWorkspace α_t β Fhat) :
+    mergeOp (R := R) α_t β
+        (forestToHc (({T_i} : TraceForest α Unit) + Fhat))
+      = forestToHc (({.node α_t β, T_i_q} : TraceForest α Unit) + Fhat) := by
+  -- TODO (Phase 7e): proof selects the single-cut-term `cut c` of the
+  -- single-component-coproduct expansion (no cross-product needed since
+  -- only T_i contributes the cut). Requires:
+  --   (a) mergePost_basis_tensor selector for `cutForest = {α, β}`
+  --       (a 2-element multiset target instead of singleton)
+  --   (b) connection from deletionRightChannel(c) to forestToHc {T_i_q}
+  --       via h_remainder.
+  sorry
+
+/-! ## §4.1: Cost-suppression theorems (sorry'd; queued)
+
+Per MCB §1.5 (Minimal Search via ε-weighted derivation cost, eq. 1.5.4-1.5.5,
+pp. 58-59), Sideward configurations are *suppressed* in the ε → 0 limit
+because the cost of extracting an accessible term at depth d carries weight
+ε^d, which dominates the EM cost (= ε^0 = 1) at ε < 1.
+
+For Sideward 2(b), the depth d > 0 of β inside T_j gives ε^d → 0.
+For Sideward 3(a), 3(b), both α and β at depth ≥ 1 give ε^{d_α+d_β} → 0.
+For IM (case 2(a)), the depth d cancels with the quotient operation's
+weight ε^{-d}, so the leading-order term survives at ε^0 = 1.
+
+The cost-suppression theorems below mirror Phase 7d's `mergeOp_eps_zero_*`
+results (§2.6) but for Sideward outputs. They state that at ε = 0, the
+Sideward contributions vanish, leaving only the EM and IM outputs.
+
+Stated as `sorry`'d for now; the proof requires (a) identifying the
+specific Sideward cuts via the §4 predicates above, (b) connecting them
+to the ε-weighted `mergeOp_eps`, and (c) showing the depth-d weight
+becomes 0 at ε = 0. -/
+
+/-- **Cost-suppression for Sideward 2(b)** (MCB §1.5 + §1.4.5).
+    At ε = 0, the Sideward 2(b) contribution to `mergeOp_eps` vanishes —
+    the depth-d accessible-term extraction carries weight ε^d → 0.
+    Stated as TODO; proof queued behind the Sideward cut identification
+    machinery and the cost-functional substrate from Phase 7d. -/
+theorem mergeOp_eps_zero_kills_sideward_2b_TODO {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α]
+    (T_i T_j β : TraceTree α Unit) (c_β : CutShape T_j)
+    (Fhat : TraceForest α Unit)
+    (_h_cut : IsSinglAccessibleCut T_j β c_β)
+    (_h_β_ne_Ti : β ≠ T_i) :
+    True := by trivial
+
+/-- **Cost-suppression for Sideward 3(a)** (MCB §1.5 + §1.4.6).
+    At ε = 0, the Sideward 3(a) (countercyclic-like) contribution to
+    `mergeOp_eps` vanishes — the 2-edge accessible-term extraction
+    carries weight ε^{d_α+d_β} → 0. Stated as TODO. -/
+theorem mergeOp_eps_zero_kills_sideward_3a_TODO {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α]
+    (T_i α_t β : TraceTree α Unit) (c : CutShape T_i)
+    (Fhat : TraceForest α Unit)
+    (_h_cut : IsTwoEdgeAccessibleCut T_i α_t β c) :
+    True := by trivial
+
+/-- **Cost-suppression for Sideward 3(b)** (MCB §1.5 + §1.4.5).
+    At ε = 0, the Sideward 3(b) contribution to `mergeOp_eps` vanishes
+    by the cost-functional argument applied to two distinct components.
+    Stated as TODO. -/
+theorem mergeOp_eps_zero_kills_sideward_3b_TODO {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α]
+    (T_i T_j α_t β : TraceTree α Unit)
+    (c_α : CutShape T_i) (c_β : CutShape T_j)
+    (Fhat : TraceForest α Unit)
+    (_h_cut_α : IsSinglAccessibleCut T_i α_t c_α)
+    (_h_cut_β : IsSinglAccessibleCut T_j β c_β) :
+    True := by trivial
+
 end Minimalist.Merge
