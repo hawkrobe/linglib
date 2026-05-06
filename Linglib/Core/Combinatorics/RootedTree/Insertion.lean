@@ -183,6 +183,7 @@ composed with `ℕ → ℤ`. The bracket on basis pairs is
 `(T →₀ ℤ)` and the Jacobi identity are deferred to Phase 3 (proof from
 the right pre-Lie identity for `◁`). -/
 
+section ZLift
 variable [DecidableEq α] [DecidableEq β]
 
 /-- Lift a multiset of trees to a `ℤ`-coefficient formal sum in the
@@ -339,16 +340,179 @@ theorem insertSumLift_right_preLie (f g h : (TraceTree α β) →₀ ℤ) :
     f ◇ g ◇ h - f ◇ (g ◇ h) = f ◇ h ◇ g - f ◇ (h ◇ g) := by
   sorry
 
-/-! ## Phase 1-3a conclusion + roadmap
+end ZLift
+
+/-! ## §7: Per-edge insertion machinery (Phase 3b substrate)
+
+The pre-Lie identity proof requires identifying *which* edge is being
+inserted at, not just enumerating insertions. We add:
+
+- `Edge T` — indexed inductive type, one constructor per edge of `T`
+- `insertAt e T₂` — insertion at the specific edge `e : Edge T`
+- `edges T` — list-enumeration of all edges of `T`
+- `insertSum_eq_ofList_map_insertAt` — the decomposition relating
+  `insertSum` (multiset-level) to `(edges T).map (insertAt · T₂)`
+
+This substrate is what unblocks Phase 3b's case-by-case argument. -/
+
+/-- An edge of a `TraceTree`, indexed by the tree itself. The four
+    constructors mirror the four ways an edge can sit in a `.node l r`:
+    one of the two immediate root edges, or recursively in `l` / `r`. -/
+inductive Edge : TraceTree α β → Type max u v
+  | rootL (l r : TraceTree α β) : Edge (.node l r)
+  | rootR (l r : TraceTree α β) : Edge (.node l r)
+  | inL (l r : TraceTree α β) (e : Edge l) : Edge (.node l r)
+  | inR (l r : TraceTree α β) (e : Edge r) : Edge (.node l r)
+
+/-- Insert `T₂` at the specific edge `e` of some tree. Per-edge
+    sibling of `insertSum`: `insertSum T₁ T₂` is the multiset of all
+    `insertAt e T₂` for `e : Edge T₁`. -/
+def insertAt : ∀ {T : TraceTree α β}, Edge T → TraceTree α β → TraceTree α β
+  | _, .rootL l r,   T₂ => .node (.node l T₂) r
+  | _, .rootR l r,   T₂ => .node l (.node r T₂)
+  | _, .inL l r e,   T₂ => .node (insertAt e T₂) r
+  | _, .inR l r e,   T₂ => .node l (insertAt e T₂)
+
+@[simp] theorem insertAt_rootL (l r T₂ : TraceTree α β) :
+    insertAt (.rootL l r) T₂ = .node (.node l T₂) r := rfl
+
+@[simp] theorem insertAt_rootR (l r T₂ : TraceTree α β) :
+    insertAt (.rootR l r) T₂ = .node l (.node r T₂) := rfl
+
+@[simp] theorem insertAt_inL (l r T₂ : TraceTree α β) (e : Edge l) :
+    insertAt (.inL l r e) T₂ = .node (insertAt e T₂) r := rfl
+
+@[simp] theorem insertAt_inR (l r T₂ : TraceTree α β) (e : Edge r) :
+    insertAt (.inR l r e) T₂ = .node l (insertAt e T₂) := rfl
+
+/-- Enumeration of all edges of `T` as a `List`. Order: the two
+    immediate root edges first (rootL, rootR), then the recursive edges
+    of `l` (lifted via `.inL`), then `r` (via `.inR`). The total length
+    equals `numEdges T` (proved below). -/
+def edges : (T : TraceTree α β) → List (Edge T)
+  | .leaf _ => []
+  | .trace _ => []
+  | .node l r =>
+      .rootL l r :: .rootR l r ::
+        ((edges l).map (.inL l r) ++ (edges r).map (.inR l r))
+
+@[simp] theorem edges_leaf (a : α) :
+    edges (TraceTree.leaf a : TraceTree α β) = [] := rfl
+
+@[simp] theorem edges_trace (b : β) :
+    edges (TraceTree.trace b : TraceTree α β) = [] := rfl
+
+@[simp] theorem edges_node (l r : TraceTree α β) :
+    edges (TraceTree.node l r)
+      = .rootL l r :: .rootR l r ::
+          ((edges l).map (.inL l r) ++ (edges r).map (.inR l r)) := rfl
+
+/-- Edge count: `(edges T).length = numEdges T`. -/
+theorem length_edges_eq_numEdges :
+    ∀ (T : TraceTree α β), (edges T).length = numEdges T
+  | .leaf _ => rfl
+  | .trace _ => rfl
+  | .node l r => by
+      have ihl := length_edges_eq_numEdges l
+      have ihr := length_edges_eq_numEdges r
+      simp only [edges_node, List.length_cons, List.length_append,
+                 List.length_map, numEdges_node]
+      omega
+
+/-! ## §8: Decomposition of `insertSum` via `insertAt` -/
+
+/-- **Decomposition lemma**: `insertSum T₁ T₂` equals the multiset of
+    `insertAt e T₂` for `e` ranging over `edges T₁`. The bridge between
+    the recursive (Multiset) and per-edge formulations of MCB
+    Definition 1.7.1. -/
+theorem insertSum_eq_ofList_map_insertAt :
+    ∀ (T₁ T₂ : TraceTree α β),
+      T₁ ◁ T₂
+        = Multiset.ofList ((edges T₁).map (fun e => insertAt e T₂))
+  | .leaf _,   _ => rfl
+  | .trace _,  _ => rfl
+  | .node l r, T₂ => by
+      have ihl := insertSum_eq_ofList_map_insertAt l T₂
+      have ihr := insertSum_eq_ofList_map_insertAt r T₂
+      rw [insertSum_node, ihl, ihr]
+      simp only [edges_node, List.map_cons, List.map_append, List.map_map,
+                 Function.comp_def, insertAt_rootL, insertAt_rootR,
+                 insertAt_inL, insertAt_inR, Multiset.map_coe]
+      -- {a, b} = a ::ₘ {b}, which combined with `↑xs` yields `a ::ₘ b ::ₘ ↑xs`.
+      -- Final shape: `↑(a :: b :: (xs ++ ys))` matches via Multiset.coe_add.
+      rw [show ({(TraceTree.node (TraceTree.node l T₂) r),
+                  (TraceTree.node l (TraceTree.node r T₂))}
+                  : Multiset (TraceTree α β))
+              = (↑[TraceTree.node (TraceTree.node l T₂) r,
+                  TraceTree.node l (TraceTree.node r T₂)]
+                : Multiset (TraceTree α β)) from rfl,
+          Multiset.coe_add, Multiset.coe_add]
+      rfl
+
+/-- **Edge-count consistency restated** via `length_edges_eq_numEdges`
+    and `insertSum_eq_ofList_map_insertAt`. The two versions of edge
+    counting agree. -/
+theorem card_insertSum_via_edges (T₁ T₂ : TraceTree α β) :
+    (T₁ ◁ T₂).card = (edges T₁).length := by
+  rw [insertSum_eq_ofList_map_insertAt, Multiset.coe_card, List.length_map]
+
+/-- Size accounting for `insertAt`: a single insertion adds one
+    new vertex (the splitting node `v`) plus all of `T₂`'s vertices
+    to the parent tree. So `(insertAt e T₂).size = T.size + T₂.size + 1`. -/
+theorem size_insertAt :
+    ∀ {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α β),
+      (insertAt e T₂).size = T.size + T₂.size + 1
+  | _, .rootL l r,   T₂ => by
+      simp only [insertAt_rootL, size_node]; omega
+  | _, .rootR l r,   T₂ => by
+      simp only [insertAt_rootR, size_node]; omega
+  | _, .inL l r e,   T₂ => by
+      have ih := size_insertAt e T₂
+      simp only [insertAt_inL, size_node]; omega
+  | _, .inR l r e,   T₂ => by
+      have ih := size_insertAt e T₂
+      simp only [insertAt_inR, size_node]; omega
+
+/-- Edge accounting for `insertAt`: insertion at one edge produces
+    `numEdges T + numEdges T₂ + 2` total edges (the original count
+    minus 1 for the split edge, plus 1 for `e₁`/`e₂` from the split
+    parts each, plus 1 for `e'` to the inserted root, plus all
+    edges of `T₂`). Direct corollary of `size_insertAt` via
+    `numEdges = size − 1`. -/
+theorem numEdges_insertAt {T : TraceTree α β} (e : Edge T)
+    (T₂ : TraceTree α β) :
+    numEdges (insertAt e T₂) = numEdges T + numEdges T₂ + 2 := by
+  have h := size_insertAt e T₂
+  have hT := T.size_pos
+  have hT₂ := T₂.size_pos
+  simp only [numEdges]; omega
+
+/-! ## §9: Phase 3b roadmap
+
+The decomposition `insertSum_eq_ofList_map_insertAt` is the
+infrastructure piece that unblocks the pre-Lie proof. The remaining
+work for Phase 3b:
+
+- **§9.1 (Edge of inserted tree)**: Characterise `Edge (insertAt T e T₂)`
+  as a sum of three pieces: edges of T other than `e`, edges of T₂,
+  and the three "new" edges (`e₁`, `e₂` from splitting `e`, plus `e'`
+  from the new vertex to root of T₂).
+- **§9.2 (Commutativity at different edges)**: For `e ≠ e' ∈ Edge T`,
+  `insertAt e' (insertAt e T T₂) T₃ = insertAt e (insertAt e' T T₃) T₂`
+  (modulo path-update bookkeeping).
+- **§9.3 (Pre-Lie identity proof)**: Use the decomposition + §9.1 +
+  §9.2 to discharge the case analysis from MCB book p. 77-78. -/
+
+/-! ## Phase 1-3a + 3b-substrate conclusion + roadmap
 
 Phases 1-3a establish the substrate operation `◁` (Phase 1),
 ℤ-coefficient Lie bracket on basis pairs (Phase 2), and the bilinear
 extension `◇` with the right pre-Lie identity stated as a sorry-marked
-theorem (Phase 3a). Phase 3b discharges the sorry with the combinatorial
-case analysis from MCB book p. 77-78. Subsequent phases:
+theorem (Phase 3a). Phase 3b is in flight: substrate (`Edge`,
+`insertAt`, `edges`, decomposition) landed in §7-§8; the pre-Lie proof
+itself remains as the §9 roadmap. Subsequent phases:
 
-- **Phase 3b**: Prove `insertSumLift_right_preLie` via per-edge insertion
-  enumeration and the 3-case argument (Figure 1.6, book p. 79).
+- **Phase 3b**: Prove `insertSumLift_right_preLie` via §9.1-§9.3.
 - **Phase 3c**: Derive Jacobi for `⁅·,·⁆` lifted to `(T →₀ ℤ)` from
   pre-Lie + antisymmetry. Standard textbook argument.
 - **Phase 4**: `H^∨` (dual Hopf algebra of workspaces) construction +
