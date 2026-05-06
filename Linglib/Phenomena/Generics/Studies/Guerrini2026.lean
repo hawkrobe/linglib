@@ -158,7 +158,7 @@ Guerrini (2026), structure (30):
 -/
 def distributiveKindPred
     (kindExtension : W → Finset Atom)
-    (P : Atom → W → Bool)
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (s₀ : W) : Bool :=
   distMaximal P (kindExtension s₀) s₀
 
@@ -172,7 +172,7 @@ polarity reversals and exception tolerance.
 -/
 def distributiveKindPredTV
     (kindExtension : W → Finset Atom)
-    (P : Atom → W → Bool)
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (s₀ : W) : Truth3 :=
   pluralTruthValue P (kindExtension s₀) s₀
 
@@ -180,7 +180,7 @@ def distributiveKindPredTV
     Noncomputable because `Set.toFinset` requires classical decidability. -/
 noncomputable def distributiveKindPredOfKind
     (k : Kind W Atom)
-    (P : Atom → W → Bool)
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (s₀ : W) : Bool :=
   distributiveKindPred (kindExtensionFinset k) P s₀
 
@@ -703,7 +703,7 @@ open Core.Scale (deg thr)
     This is the proportion of kind-instances satisfying P: |{a ∈ ext | P(a,w)}| / |ext|.
     It is the bridge quantity between DKP (which checks ∀ atoms) and T&G (which
     checks prevalence > θ). -/
-def prevalenceAtWorld (P : Atom → W → Bool) (ext : Finset Atom) (w : W) : ℚ :=
+def prevalenceAtWorld (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (ext : Finset Atom) (w : W) : ℚ :=
   if ext.card = 0 then 0
   else (ext.filter (fun a => P a w)).card / ext.card
 
@@ -713,12 +713,12 @@ def prevalenceAtWorld (P : Atom → W → Bool) (ext : Finset Atom) (w : W) : �
     This is the extensional, non-generic truth condition of the DKP parse:
     the generalization is "true" in the same way a referential definite plural
     statement is true — all actual instances satisfy the predicate. -/
-theorem dkp_true_iff_prevalence_one (P : Atom → W → Bool) (ext : Finset Atom)
+theorem dkp_true_iff_prevalence_one (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (ext : Finset Atom)
     (w : W) (hne : ext.Nonempty) :
-    distMaximal P ext w = true ↔ prevalenceAtWorld P ext w = 1 := by
+    distMaximal P ext w ↔ prevalenceAtWorld P ext w = 1 := by
   have hcard : ext.card ≠ 0 := Finset.card_ne_zero.mpr hne
   have hcardQ : (ext.card : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr hcard
-  simp only [distMaximal, decide_eq_true_iff, prevalenceAtWorld, hcard, ↓reduceIte]
+  simp only [distMaximal, prevalenceAtWorld, hcard, ↓reduceIte]
   constructor
   · intro hall
     have hfilt : ext.filter (fun a => P a w) = ext := by
@@ -738,20 +738,20 @@ theorem dkp_true_iff_prevalence_one (P : Atom → W → Bool) (ext : Finset Atom
 
     When no atoms satisfy P, the generalization is determinately false,
     not merely gapped. -/
-theorem dkp_false_iff_prevalence_zero (P : Atom → W → Bool) (ext : Finset Atom)
+theorem dkp_false_iff_prevalence_zero (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (ext : Finset Atom)
     (w : W) :
-    noneSatisfy P ext w = true ↔ prevalenceAtWorld P ext w = 0 := by
+    noneSatisfy P ext w ↔ prevalenceAtWorld P ext w = 0 := by
   by_cases hne : ext.Nonempty
   · have hcard : ext.card ≠ 0 := Finset.card_ne_zero.mpr hne
     have hcardQ : (ext.card : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr hcard
-    simp only [noneSatisfy, decide_eq_true_iff, prevalenceAtWorld, hcard, ↓reduceIte]
+    simp only [noneSatisfy, prevalenceAtWorld, hcard, ↓reduceIte]
     constructor
     · intro hall
       have hfilt : ext.filter (fun a => P a w) = ∅ := by
         rw [Finset.eq_empty_iff_forall_notMem]
         intro a ha
         rw [Finset.mem_filter] at ha
-        exact absurd ha.2 (by rw [hall a ha.1]; decide)
+        exact hall a ha.1 ha.2
       rw [hfilt, Finset.card_empty, Nat.cast_zero, zero_div]
     · intro hdiv
       have heq : ((ext.filter (fun a => P a w)).card : ℚ) = 0 := by
@@ -759,12 +759,11 @@ theorem dkp_false_iff_prevalence_zero (P : Atom → W → Bool) (ext : Finset At
       have hceq : (ext.filter (fun a => P a w)).card = 0 := by exact_mod_cast heq
       have hfilt : ext.filter (fun a => P a w) = ∅ :=
         Finset.card_eq_zero.mp hceq
-      intro a ha
-      by_contra h
-      have htrue : P a w = true := by cases P a w <;> simp_all
-      have hmem : a ∈ ext.filter (fun a => P a w) := by
-        rw [Finset.mem_filter]; exact ⟨ha, htrue⟩
-      rw [hfilt] at hmem; exact absurd hmem (Finset.notMem_empty _)
+      intro a ha hPa
+      have hmem : a ∈ ext.filter (fun a => P a w) :=
+        Finset.mem_filter.mpr ⟨ha, hPa⟩
+      rw [hfilt] at hmem
+      exact absurd hmem (Finset.notMem_empty _)
   · -- ext = ∅: both sides trivially true
     rw [Finset.not_nonempty_iff_eq_empty] at hne
     subst hne
@@ -813,16 +812,15 @@ theorem dkp_gap_is_threshold_sensitive :
     threshold, and pragmatic inference determines what counts as
     "enough"). -/
 theorem parses_can_disagree :
-    (∃ (P : Fin 10 → Fin 1 → Bool) (ext : Finset (Fin 10)),
-      ext.Nonempty ∧
-      -- DKP: gap (not all, not none)
-      allSatisfy P ext (0 : Fin 1) = false ∧
-      noneSatisfy P ext (0 : Fin 1) = false ∧
-      -- BFG: true at threshold 60% with prevalence 70%
-      genericMeaning (thrPct 60) (prevPct 70) = true) := by
-  refine ⟨fun a _ => decide (a.val < 7), Finset.univ, Finset.univ_nonempty, ?_, ?_, ?_⟩
-  · native_decide
-  · native_decide
+    -- Witness: 10 atoms, 7 satisfy "a < 7", 3 don't.
+    -- DKP: gap (not all, not none).
+    -- BFG: true at threshold 60% with prevalence 70%.
+    (¬ allSatisfy (fun (a : Fin 10) (_ : Fin 1) => a.val < 7) Finset.univ (0 : Fin 1)) ∧
+    (¬ noneSatisfy (fun (a : Fin 10) (_ : Fin 1) => a.val < 7) Finset.univ (0 : Fin 1)) ∧
+    genericMeaning (thrPct 60) (prevPct 70) = true := by
+  refine ⟨?_, ?_, ?_⟩
+  · decide
+  · decide
   · native_decide
 
 end DKPPrevalence
@@ -1106,7 +1104,7 @@ end Longobardi2001Bridge
 
 section CumulativeKindPred
 
-open Semantics.Plurality.Cumulativity (cumulativeOp)
+open Semantics.Plurality.Cumulativity (Cumulative)
 
 variable {Atom Loc : Type} [DecidableEq Atom] [DecidableEq Loc]
 
@@ -1122,10 +1120,10 @@ This connects `GeneralizationLF.cumulativeKindPred` to the theory-layer
 `**` operator from `Cumulativity.lean`.
 -/
 def cumulativeKindPred
-    (R : Atom → Loc → Bool)
+    (R : Atom → Loc → Prop)
     (kindExtension : Finset Atom)
-    (locations : Finset Loc) : Bool :=
-  cumulativeOp R kindExtension locations
+    (locations : Finset Loc) : Prop :=
+  Cumulative R kindExtension locations
 
 end CumulativeKindPred
 
@@ -1806,7 +1804,7 @@ These are exactly the predictions of `distributiveKindPredTV` (§2) inheriting
     gives kind-denoting plurals their non-maximal, exception-tolerant
     readings. The parallel is not stipulated — it's structural. -/
 theorem dkp_homogeneity_from_dist {Atom W : Type} [DecidableEq Atom] [Fintype Atom]
-    (kindExtension : W → Finset Atom) (P : Atom → W → Bool) (s₀ : W) :
+    (kindExtension : W → Finset Atom) (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (s₀ : W) :
     distributiveKindPredTV kindExtension P s₀ = pluralTruthValue P (kindExtension s₀) s₀ := rfl
 
 -- ============================================================================

@@ -548,9 +548,9 @@ This can't be an `abbrev` — the types are different (Montague
 for cross-theory unification.
 -/
 theorem mu_is_distributive_check {F : Frame} [DecidableEq F.Entity]
-    (e1 e2 : F.Entity) (P : F.Entity → Unit → Bool) :
-    coordEntities (F := F) e1 e2 (fun a => P a () = true) ↔
-    (distMaximal P {e1, e2} () = true) := by
+    (e1 e2 : F.Entity) (P : F.Entity → Unit → Prop) [∀ a u, Decidable (P a u)] :
+    coordEntities (F := F) e1 e2 (fun a => P a ()) ↔
+    distMaximal P {e1, e2} () := by
   simp [coordEntities_both_satisfy, distMaximal_pair]
 
 end MUDistributivity

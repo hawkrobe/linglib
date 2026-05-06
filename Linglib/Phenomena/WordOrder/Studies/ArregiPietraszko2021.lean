@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.HeadMovement.GenHM
+import Linglib.Theories.Syntax.Minimalist.GenHM
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
@@ -9,20 +9,36 @@ Connects the GenHM formalization to empirical data from `SubjectAuxInversion.lea
 
 ## Structure
 
-**§1** English terminal strength assignment
-**§2** English GenHM chain configurations for the five do-support contexts
-**§3** Theorems pairing each empirical datum with GenHM predictions
-**§4** The parallelism theorem: do-support uniformity across all five contexts
-**§5** Deriving VMovementParam from GenHM
+**§1** English GenHM chain configurations for A&P's four do-support contexts
+**§2** The bridge table: each contextual datum paired with its GenHM prediction
+**§3** The parallelism theorem: do-support uniformity across all four contexts
+**§4** Deriving VMovementParam from GenHM
 
 ## Central Result
 
-The parallelism of do-support across negation, SAI, verum focus, tag questions,
-and VP ellipsis is a DERIVED consequence of GenHM chain structure, not a
-stipulation about the V-movement parameter. The five contexts involve three
-distinct structural reasons for chain-splitting — weak intervention,
-probe displacement, and goal absence — yet all produce the same do-support
-outcome because spell-out depends only on WHETHER the chain is split.
+The parallelism of do-support across A&P's three core contexts (negation,
+SAI, verum focus) plus VPE is a DERIVED consequence of GenHM chain
+structure, not a stipulation about the V-movement parameter. The four
+contexts involve two structurally distinct reasons for chain-splitting —
+intervention by a [+P] specifier (negation, SAI, verum) and post-syntactic
+[-P] on V* (VPE) — yet all produce the same do-support outcome because
+spell-out depends only on WHETHER the chain is split.
+
+A&P unify the three intervention contexts under a single specifier-intervention
+rule (footnote 30). SAI is intervention by the subject in Spec,TP, NOT
+"probe displacement"; verum focus is intervention by a covert specifier in
+Spec,ΣP, NOT a "weak Foc head".
+
+## Out of scope
+
+Tag questions (e.g. *She likes him, doesn't she?*) are not in A&P's paper;
+their analysis belongs in a future Sailor 2018 study file. A substantive
+`TenseSupportContext → GenHMChain` bridge that would connect this file's
+predictions to `Pollock1989.lean`'s `needsDoSupport` is deferred to a
+cross-framework wiring follow-up. Orphan Assignment (the actual do-insertion
+derivation) and the strong V parameter (A&P's cross-linguistic prediction)
+are deferred to follow-up substrate work; `needsDoSupportGenHM` here is a
+Boolean proxy.
 
 -/
 
@@ -32,201 +48,130 @@ open Phenomena.WordOrder.SubjectAuxInversion
 open Minimalist
 
 -- ============================================================================
--- § 1  English Terminal Strength Assignment
+-- § 1  English GenHM Chain Configurations
 -- ============================================================================
 
-/-- English terminal strength: Neg and Foc are weak; all others strong. -/
-def englishStrength : TerminalStrengthAssignment := defaultStrength
+/-! A&P's four do-support contexts as GenHM chains. The four chains involve
+two distinct split mechanisms:
 
-theorem neg_is_weak : englishStrength .Neg = .weak := rfl
-theorem foc_is_weak : englishStrength .Foc = .weak := rfl
-theorem v_is_strong : englishStrength .V = .strong := rfl
-theorem t_is_strong : englishStrength .T = .strong := rfl
-theorem c_is_strong : englishStrength .C = .strong := rfl
+- **Split-by-Intervention** (a [+P] specifier intervenes between top of
+  chain and V*): negation, SAI, verum focus.
+- **Split-by-Deletion** (V* marked [-P] post-syntactically): VPE. -/
 
--- ============================================================================
--- § 2  English GenHM Chain Configurations
--- ============================================================================
+/-- **Negation chain**: T ... [Spec,ΣP: *not*] ... V
 
-/-! The five do-support contexts, formalized as GenHM chains. Each chain has:
-- A probe (T) and goal (V)
-- A split reason encoding WHY the chain is split
-- The English strength assignment
-
-The five chains involve three distinct split mechanisms:
-- **Split-by-Intervention**: negation (Neg), verum focus (Foc)
-- **Split-by-Displacement**: SAI (T displaced to C)
-- **Split-by-Deletion**: tag questions, VP ellipsis (goal absent) -/
-
-/-- **Negation chain**: T ... Neg ... V
-
-    "Sue does not eat fish" — Neg (weak) intervenes between T and V.
+    "Sue does not eat fish" — overt *not* in Spec,ΣP intervenes.
     Split-by-Intervention. -/
 def negationChain : GenHMChain where
-  probeCat := .T
-  goalCat := .V
-  splitReason := some (.weakIntervener .Neg)
-  strength := englishStrength
+  probeCat    := .T
+  goalCat     := .V
+  splitReason := some (.intervention .negSpecifier)
 
-/-- **Verum focus chain**: T ... Foc ... V
+/-- **Verum focus chain**: T ... [Spec,ΣP: covert verum specifier] ... V
 
-    "Sue DOES eat fish" — Foc (weak) intervenes between T and V.
+    "Sue DOES eat fish" — covert specifier in Spec,ΣP intervenes
+    (cf. A&P fn. 30 — same intervention mechanism as negation).
     Split-by-Intervention. -/
 def verumChain : GenHMChain where
-  probeCat := .T
-  goalCat := .V
-  splitReason := some (.weakIntervener .Foc)
-  strength := englishStrength
+  probeCat    := .T
+  goalCat     := .V
+  splitReason := some (.intervention .verumCovertSpecifier)
 
-/-- **Question chain (SAI)**: C ← T ... V
+/-- **Question chain (SAI)**: C ← T ... [Spec,TP: subject] ... V
 
-    "Where does Sue eat fish?" — T is displaced to C via GenHM(C,T),
-    breaking the T–V chain. The M-value cannot lower to V because T
-    is no longer structurally adjacent to V.
-    Split-by-Displacement. -/
+    "Where does Sue eat fish?" — the subject in Spec,TP intervenes
+    between T (chained to C) and V*. Crucially this is intervention,
+    NOT "probe displacement" — see A&P, where GenHM is taken to relate
+    V, T, and C across the subject specifier.
+    Split-by-Intervention. -/
 def questionChain : GenHMChain where
-  probeCat := .T
-  goalCat := .V
-  splitReason := some .probeDisplaced
-  strength := englishStrength
+  probeCat    := .T
+  goalCat     := .V
+  splitReason := some (.intervention .subjectInSpecTP)
 
-/-- **Tag question chain**: T ... [VP absent]
+/-- **VP ellipsis chain**: T ... V (with V* marked [-P] post-syntactically)
 
-    "She likes him, doesn't she?" — VP is anaphoric/absent in the tag.
-    The M-value cannot lower because the goal is not available.
-    Split-by-Deletion. -/
-def tagChain : GenHMChain where
-  probeCat := .T
-  goalCat := .V
-  splitReason := some .goalAbsent
-  strength := englishStrength
-
-/-- **VP ellipsis chain**: T ... [VP deleted]
-
-    "She runs faster than he does" — VP is elided at PF. The M-value
-    cannot lower because the goal has been deleted.
-    Split-by-Deletion. -/
+    "She runs faster than he does" — V is present and chained to T;
+    VPE marks V* with [-P], blocking lowered Vocabulary Insertion.
+    Split-by-Deletion (NOT goal-absence — A&P's analysis crucially has
+    GenHM still applying). -/
 def vpEllipsisChain : GenHMChain where
-  probeCat := .T
-  goalCat := .V
-  splitReason := some .goalAbsent
-  strength := englishStrength
+  probeCat    := .T
+  goalCat     := .V
+  splitReason := some .deletion
 
 /-- A declarative chain with no split: T ... V
 
     "Sue eats fish" — clear chain, M-value lowers to V (affix hopping). -/
 def declarativeChain : GenHMChain where
-  probeCat := .T
-  goalCat := .V
+  probeCat    := .T
+  goalCat     := .V
   splitReason := none
-  strength := englishStrength
+
+/-- Behavioral fact about declaratives: M-value lowers (affix hopping). -/
+@[simp] theorem declarative_lowers : spellOutTarget declarativeChain = .onGoal := rfl
+
+/-- Behavioral fact about declaratives with lexical V: no do-support. -/
+@[simp] theorem declarative_no_doSupport :
+    needsDoSupportGenHM declarativeChain false = false := rfl
 
 -- ============================================================================
--- § 2b  Chain Properties
+-- § 2  Bridge Table: Empirical Data Meets GenHM Predictions
 -- ============================================================================
 
-theorem negation_chain_split : negationChain.isSplit = true := rfl
-theorem verum_chain_split : verumChain.isSplit = true := rfl
-theorem question_chain_split : questionChain.isSplit = true := rfl
-theorem tag_chain_split : tagChain.isSplit = true := rfl
-theorem vpEllipsis_chain_split : vpEllipsisChain.isSplit = true := rfl
-theorem declarative_chain_clear : declarativeChain.isSplit = false := rfl
+/-- A&P's do-support paradigm as a bridge table.
 
-/-- Well-formedness: intervention chains have genuinely weak interveners. -/
-theorem negation_chain_wf : negationChain.wellFormed = true := rfl
-theorem verum_chain_wf : verumChain.wellFormed = true := rfl
-theorem question_chain_wf : questionChain.wellFormed = true := rfl
-theorem tag_chain_wf : tagChain.wellFormed = true := rfl
-theorem vpEllipsis_chain_wf : vpEllipsisChain.wellFormed = true := rfl
-theorem declarative_chain_wf : declarativeChain.wellFormed = true := rfl
+    Each row pairs an empirical datum from `SubjectAuxInversion.lean`
+    with the GenHM chain configuration assigned in §1, the probe-content
+    Boolean (lexical V = false, auxiliary = true), and the do-support
+    prediction.
 
-/-- In declaratives, the M-value lowers to V (affix hopping). -/
-theorem declarative_lowers : spellOutTarget declarativeChain = .onGoal := rfl
+    Coverage: A&P's three core contexts (negation, SAI, verum focus) each
+    tested with both lexical V and auxiliary; VPE tested with lexical V
+    only (the auxiliary case is not a do-support trigger and not in A&P's
+    discussion of VPE). -/
+def doSupportTable : List (SAIDatum × GenHMChain × Bool × Bool) :=
+  [ (ex32, negationChain,    false, true)   -- "Sue does not eat fish"
+  , (ex34, negationChain,    true,  false)  -- "Sue is not eating fish"
+  , (ex27, questionChain,    false, true)   -- "Where does Sue eat fish?"
+  , (ex30, questionChain,    true,  false)  -- "Where is Sue eating fish?"
+  , (ex39, verumChain,       false, true)   -- "Sue DOES eat fish"
+  , (ex40, verumChain,       true,  false)  -- "She IS eating fish"
+  , (ex38, vpEllipsisChain,  false, true)   -- "She runs faster than he does"
+  ]
 
-/-- In declaratives with lexical verbs, no do-support is needed. -/
-theorem declarative_no_doSupport : needsDoSupportGenHM declarativeChain false = false := rfl
-
--- ============================================================================
--- § 3  Bridge Theorems: Do-Support Predictions
--- ============================================================================
-
--- § 3a: Negation context (Split-by-Intervention)
-
-/-- ex32 "Sue does not eat fish" — negation + lexical V → do-support -/
-theorem bridge_genHM_ex32 :
-    ex32.acceptability == .grammatical ∧
-    needsDoSupportGenHM negationChain false = true := ⟨rfl, rfl⟩
-
-/-- ex34 "Sue is not eating fish" — negation + auxiliary → no do-support -/
-theorem bridge_genHM_ex34 :
-    ex34.acceptability == .grammatical ∧
-    needsDoSupportGenHM negationChain true = false := ⟨rfl, rfl⟩
-
--- § 3b: Question context (Split-by-Displacement)
-
-/-- ex27 "Where does Sue eat fish?" — question + lexical V → do-support -/
-theorem bridge_genHM_ex27 :
-    ex27.acceptability == .grammatical ∧
-    needsDoSupportGenHM questionChain false = true := ⟨rfl, rfl⟩
-
-/-- ex30 "Where is Sue eating fish?" — question + auxiliary → no do-support -/
-theorem bridge_genHM_ex30 :
-    ex30.acceptability == .grammatical ∧
-    needsDoSupportGenHM questionChain true = false := ⟨rfl, rfl⟩
-
--- § 3c: Verum focus context (Split-by-Intervention)
-
-/-- ex39 "Sue DOES eat fish" — verum + lexical V → do-support -/
-theorem bridge_genHM_ex39 :
-    ex39.acceptability == .grammatical ∧
-    needsDoSupportGenHM verumChain false = true := ⟨rfl, rfl⟩
-
-/-- ex40 "She IS eating fish" — verum + auxiliary → no do-support -/
-theorem bridge_genHM_ex40 :
-    ex40.acceptability == .grammatical ∧
-    needsDoSupportGenHM verumChain true = false := ⟨rfl, rfl⟩
-
--- § 3d: Tag questions (Split-by-Deletion)
-
-/-- ex36 "She likes him, doesn't she?" — tag + lexical V → do-support -/
-theorem bridge_genHM_ex36 :
-    ex36.acceptability == .grammatical ∧
-    needsDoSupportGenHM tagChain false = true := ⟨rfl, rfl⟩
-
--- § 3e: VP ellipsis (Split-by-Deletion)
-
-/-- ex38 "She runs faster than he does" — VP ellipsis + lexical V → do-support -/
-theorem bridge_genHM_ex38 :
-    ex38.acceptability == .grammatical ∧
-    needsDoSupportGenHM vpEllipsisChain false = true := ⟨rfl, rfl⟩
+/-- Every row in the bridge table holds: the example is grammatical AND
+    GenHM predicts the right do-support outcome. This single theorem
+    replaces the per-example bridge theorems of earlier drafts — A&P's
+    parallelism claim is precisely that the table is uniform. -/
+theorem all_bridges_hold :
+    ∀ row ∈ doSupportTable,
+      row.1.acceptability = .grammatical ∧
+      needsDoSupportGenHM row.2.1 row.2.2.1 = row.2.2.2 := by
+  decide
 
 -- ============================================================================
--- § 4  The Parallelism Theorem
+-- § 3  The Parallelism Theorem
 -- ============================================================================
 
-/-- **The Parallelism Theorem (lexical verbs)**: Do-support is triggered
-    in ALL five contexts with lexical verbs (contentless T), despite three
-    different structural reasons for chain-splitting. -/
-theorem doSupport_parallel_all_contexts_lexical :
-    needsDoSupportGenHM negationChain false = true ∧
-    needsDoSupportGenHM questionChain false = true ∧
-    needsDoSupportGenHM verumChain false = true ∧
-    needsDoSupportGenHM tagChain false = true ∧
-    needsDoSupportGenHM vpEllipsisChain false = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- **Parallelism for lexical verbs**: any split chain triggers do-support
+    when the probe is contentless. Concrete consequence of the substrate
+    theorem `lexical_verb_needs_doSupport_when_split`. -/
+theorem doSupport_parallel_lexical
+    (chain : GenHMChain) (h : chain.isSplit = true) :
+    needsDoSupportGenHM chain false = true :=
+  lexical_verb_needs_doSupport_when_split chain h
 
-/-- With auxiliaries, do-support is never needed in ANY context. -/
-theorem doSupport_parallel_all_contexts_aux :
-    needsDoSupportGenHM negationChain true = false ∧
-    needsDoSupportGenHM questionChain true = false ∧
-    needsDoSupportGenHM verumChain true = false ∧
-    needsDoSupportGenHM tagChain true = false ∧
-    needsDoSupportGenHM vpEllipsisChain true = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+/-- **Parallelism for auxiliaries**: no chain triggers do-support when the
+    probe carries lexical content. Concrete consequence of
+    `auxiliaries_dont_need_doSupport`. -/
+theorem doSupport_parallel_aux (chain : GenHMChain) :
+    needsDoSupportGenHM chain true = false :=
+  auxiliaries_dont_need_doSupport chain
 
-/-- The abstract parallelism: for ANY two chains with the same split status,
-    the do-support decision is identical. The reason for the split
-    (intervention, displacement, deletion) is irrelevant. -/
+/-- **Context-irrelevance**: any two chains with the same split status give
+    the same do-support decision. The reason for the split (intervention
+    vs deletion) is irrelevant. -/
 theorem doSupport_context_irrelevant
     (chain₁ chain₂ : GenHMChain) (content : Bool)
     (h : chain₁.isSplit = chain₂.isSplit) :
@@ -234,7 +179,7 @@ theorem doSupport_context_irrelevant
   doSupport_uniform_across_contexts chain₁ chain₂ content content h rfl
 
 -- ============================================================================
--- § 5  Deriving VMovementParam from GenHM
+-- § 4  Deriving VMovementParam from GenHM
 -- ============================================================================
 
 /-- A clear chain (no split) yields the `.raises` surface pattern. -/
@@ -245,16 +190,10 @@ theorem genHM_derives_raises :
 theorem genHM_derives_inSitu :
     genHM_to_vMovementParam negationChain = .inSitu := rfl
 
-/-- The Pollock1989 `needsDoSupport` function is consistent with GenHM
-    predictions for lexical verbs across all contexts. -/
-theorem genHM_consistent_with_pollock_lexical (ctx : TenseSupportContext) :
-    needsDoSupport englishLexical ctx = true := by
-  cases ctx <;> rfl
-
-/-- The Pollock1989 `needsDoSupport` function is consistent with GenHM
-    predictions for auxiliaries across all contexts. -/
-theorem genHM_consistent_with_pollock_aux (ctx : TenseSupportContext) :
-    needsDoSupport englishAux ctx = false := by
-  cases ctx <;> rfl
+/-! TODO: a substantive `chainOf : TenseSupportContext → GenHMChain` map
+would let us state `needsDoSupport p ctx = needsDoSupportGenHM (chainOf ctx)
+(contentOf p)` — converting Pollock1989's flat parameter into a derived
+view of GenHM's chain structure. Deferred to a cross-framework wiring
+follow-up that also touches `Pollock1989.lean`. -/
 
 end ArregiPietraszko2021

@@ -59,31 +59,32 @@ The Addressing condition says no cell has both true and false worlds.
 Strong relevance says the truth predicate is constant on each cell.
 For bivalent sentences these are equivalent: if the predicate varies
 within a cell, one world must be true and the other false (there is
-no gap to break the dichotomy). -/
+no gap to break the dichotomy).
+
+`bivalentPred S : W → Bool` is wrapped as `(· = true) : W → Prop` to feed the
+Prop-typed `isStronglyRelevantProp`. -/
 theorem bivalent_addressing_iff_stronglyRelevant (q : QUD W) (S : SentenceTV W)
     (hbiv : isBivalent S) :
-    addressesIssue q S ↔ isStronglyRelevantProp q (bivalentPred S) := by
+    addressesIssue q S ↔ isStronglyRelevantProp q (fun w => bivalentPred S w = true) := by
   constructor
   · -- Addressing → strong relevance
     intro hAddr w₁ w₂ hEquiv
-    by_contra hNeq
-    simp only [bivalentPred] at hNeq
-    -- w₁ and w₂ have different truth values, both bivalent
+    simp only [bivalentPred, beq_iff_eq]
+    -- w₁ and w₂ have the same truth value because they are q-equivalent
     cases hbiv w₁ with
     | inl h₁ =>
       cases hbiv w₂ with
-      | inl h₂ => exact hNeq (by rw [h₁, h₂])
-      | inr h₂ => exact hAddr ⟨w₁, w₂, hEquiv, h₁, h₂⟩
+      | inl h₂ => rw [h₁, h₂]
+      | inr h₂ => exact absurd ⟨w₁, w₂, hEquiv, h₁, h₂⟩ hAddr
     | inr h₁ =>
       cases hbiv w₂ with
-      | inl h₂ => exact hAddr ⟨w₂, w₁, q.iseqv.symm hEquiv, h₂, h₁⟩
-      | inr h₂ => exact hNeq (by rw [h₁, h₂])
+      | inl h₂ => exact absurd ⟨w₂, w₁, q.iseqv.symm hEquiv, h₂, h₁⟩ hAddr
+      | inr h₂ => rw [h₁, h₂]
   · -- Strong relevance → Addressing
     intro hSR ⟨w₁, w₂, hEquiv, hTrue, hFalse⟩
-    have := hSR w₁ w₂ hEquiv
-    simp only [bivalentPred] at this
-    rw [hTrue, hFalse] at this
-    exact absurd this (by decide)
+    have hPred1 : bivalentPred S w₁ = true := by simp [bivalentPred, hTrue]
+    have hPred2 : bivalentPred S w₂ = true := (hSR w₁ w₂ hEquiv).mp hPred1
+    simp [bivalentPred, hFalse] at hPred2
 
 -- ============================================================================
 -- Section 2: Specialization to `all`-Sentences
@@ -101,22 +102,17 @@ This bridges Križ 2016's pragmatic mechanism (Addressing) to K&S 2021's
 filtering mechanism (strong relevance) for the specific case of universal
 quantification over pluralities. After the @cite{kriz-2016} §3.1 refactor
 that derives `allPluralTV` from `removeGap`, the bridge becomes a
-pointwise-equality result via `bivalentPred_allPluralTV_eq_allSatisfy`. -/
-theorem all_addressing_iff_relevant (q : QUD W) (P : Atom → W → Bool)
-    (x : Finset Atom) :
+pointwise-equivalence result via `bivalentPred_allPluralTV_eq_allSatisfy`. -/
+theorem all_addressing_iff_relevant (q : QUD W) (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) :
     addressesIssue q (allPluralTV P x) ↔
     isStronglyRelevantProp q (allSatisfy P x) := by
   rw [bivalent_addressing_iff_stronglyRelevant q _ (all_bivalent P x)]
-  constructor
-  · intro h w₁ w₂ hEquiv
-    have := h w₁ w₂ hEquiv
-    rwa [bivalentPred_allPluralTV_eq_allSatisfy P x w₁,
-         bivalentPred_allPluralTV_eq_allSatisfy P x w₂] at this
-  · intro h w₁ w₂ hEquiv
-    have := h w₁ w₂ hEquiv
-    rw [bivalentPred_allPluralTV_eq_allSatisfy P x w₁,
-        bivalentPred_allPluralTV_eq_allSatisfy P x w₂]
-    exact this
+  refine ⟨fun h w₁ w₂ hEquiv => ?_, fun h w₁ w₂ hEquiv => ?_⟩
+  · exact ((bivalentPred_allPluralTV_eq_allSatisfy P x w₁).symm.trans
+           (h w₁ w₂ hEquiv)).trans (bivalentPred_allPluralTV_eq_allSatisfy P x w₂)
+  · exact ((bivalentPred_allPluralTV_eq_allSatisfy P x w₁).trans
+           (h w₁ w₂ hEquiv)).trans (bivalentPred_allPluralTV_eq_allSatisfy P x w₂).symm
 
 -- ============================================================================
 -- Section 3: Candidate Conjunction = Trivalent Semantics (General Bridge)
@@ -139,8 +135,8 @@ candidates matter. -/
 
     This is a restatement of `pluralTruthValue_eq_candidateSemantics` in
     terms of the candidate conjunction operator. -/
-theorem candidateConjunction_matches_plural (P : Atom → W → Bool)
-    (x : Finset Atom) (w : W) (hne : x.Nonempty) :
+theorem candidateConjunction_matches_plural (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) (hne : x.Nonempty) :
     (pluralTruthValue P x w = .true ↔ trueOnAll (fullCandidateSet P x) w) ∧
     (pluralTruthValue P x w = .false ↔ falseOnAll (fullCandidateSet P x) w) :=
   let h := pluralTruthValue_eq_candidateSemantics P x w hne
@@ -162,9 +158,9 @@ All three agree: they are three views of the same trivalent denotation. -/
 /-- The ∀H characterization of `all` agrees with `allSatisfy`, which agrees
     with `allPluralTV_eq_removeGap`. This closes the triangle:
     ∀H ↔ allSatisfy ↔ removeGap(barePluralTV). -/
-theorem forallH_triangle [Fintype Atom] (P : Atom → W → Bool)
-    (x : Finset Atom) (w : W) :
-    allViaForallH P x w ↔ allSatisfy P x w = true :=
+theorem forallH_triangle [Fintype Atom] (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    allViaForallH P x w ↔ allSatisfy P x w :=
   allViaForallH_iff_allSatisfy P x w
 
 /-- The full bridge: `removeGap` on bare plural truth = `allViaForallH`.
@@ -172,10 +168,10 @@ theorem forallH_triangle [Fintype Atom] (P : Atom → W → Bool)
     deeper derivation (`∀H`). The semantic contribution of `all` can be
     understood either as gap removal or as universal H-quantification —
     they are provably the same. -/
-theorem removeGap_iff_forallH [Fintype Atom] (P : Atom → W → Bool)
-    (x : Finset Atom) (w : W) (hne : x.Nonempty) :
-    removeGap (fun w => pluralTruthValue P x w) w = .true ↔ allViaForallH P x w := by
-  rw [removeGap_plural_true_iff P x hne w, forallH_triangle P x w]
+theorem removeGap_iff_forallH [Fintype Atom] (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) (hne : x.Nonempty) :
+    removeGap (fun w => pluralTruthValue P x w) w = .true ↔ allViaForallH P x w :=
+  (removeGap_plural_true_iff P x hne w).trans (forallH_triangle P x w).symm
 
 -- ============================================================================
 -- Section 5: Non-Monotonic Context Finite Model
@@ -225,16 +221,19 @@ instance : Fintype NMWorld where
   complete := by intro x; cases x <;> simp
 
 /-- Did this student read this book in this world? -/
-def nmRead : NMStudent → NMBook → NMWorld → Bool
-  | .mary, _, .maryAll         => true
-  | .mary, _, .bothAll         => true
-  | .mary, _, .maryAllJohnA    => true
-  | .mary, _, .noneRead        => false
-  | .john, _, .maryAll         => false
-  | .john, _, .bothAll         => true
-  | .john, .a, .maryAllJohnA   => true
-  | .john, .b, .maryAllJohnA   => false
-  | .john, _, .noneRead        => false
+def nmRead : NMStudent → NMBook → NMWorld → Prop
+  | .mary, _, .maryAll         => True
+  | .mary, _, .bothAll         => True
+  | .mary, _, .maryAllJohnA    => True
+  | .mary, _, .noneRead        => False
+  | .john, _, .maryAll         => False
+  | .john, _, .bothAll         => True
+  | .john, .a, .maryAllJohnA   => True
+  | .john, .b, .maryAllJohnA   => False
+  | .john, _, .noneRead        => False
+
+instance nmRead.instDecidable : ∀ s b w, Decidable (nmRead s b w) := by
+  intro s b w; cases s <;> cases b <;> cases w <;> unfold nmRead <;> infer_instance
 
 def nmBooks : Finset NMBook := Finset.univ
 
@@ -265,11 +264,11 @@ theorem singleton_a_is_candidate :
 
 /-- That singleton candidate is TRUE at maryAllJohnA (John did read book a). -/
 theorem singleton_a_true_at_gap :
-    candidateProp (nmRead .john) {.a} .maryAllJohnA = true := by native_decide
+    candidateProp (nmRead .john) {.a} .maryAllJohnA := by decide
 
 /-- But the maximal candidate is FALSE (John didn't read all books). -/
 theorem maximal_candidate_false_at_gap :
-    candidateProp (nmRead .john) nmBooks .maryAllJohnA = false := by native_decide
+    ¬ candidateProp (nmRead .john) nmBooks .maryAllJohnA := by decide
 
 /-- The gap for John arises from candidate disagreement: some candidates
     are true (singleton {a}) and some are false (maximal {a,b}). This is
@@ -309,17 +308,16 @@ open Semantics.Homogeneity (generalisedTV generalisedTV_true_of_holds)
     didn't surround the castle" is undefined (not false) when the brigade
     participated with other soldiers in surrounding the castle. -/
 theorem upward_homogeneity_gap
-    (P : Finset Atom → Bool)
+    (P : Finset Atom → Prop) [DecidablePred P]
     (domain : Finset (Finset Atom))
     (x : Finset Atom)
-    (hPx : P x = false)
+    (hPx : ¬ P x)
     (b : Finset Atom) (hb : b ∈ domain)
     (hov : Semantics.Homogeneity.overlaps x b)
-    (hPb : P b = true) :
+    (hPb : P b) :
     generalisedTV P domain x = .indet := by
-  simp only [generalisedTV, hPx, Bool.false_eq_true, ite_false]
-  have : ∃ b ∈ domain, Semantics.Homogeneity.overlaps x b ∧ P b = true :=
+  have hex : ∃ b ∈ domain, Semantics.Homogeneity.overlaps x b ∧ P b :=
     ⟨b, hb, hov, hPb⟩
-  simp [decide_eq_true this]
+  simp [generalisedTV, if_neg hPx, if_pos hex]
 
 end KrizSpector2021

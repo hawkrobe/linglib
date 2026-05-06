@@ -830,14 +830,16 @@ and `List.Perm.refl` discharges the identity condition. -/
 
 /-- The C&G-Y CS bulk-sharing structure is robust to identity-condition
     choice: it trivially satisfies @cite{bruening-2021}'s max-projection
-    identity by `List.Perm.refl` on identical path lists.
+    identity by `List.Perm.refl` on identical path lists, for any
+    `HeadFunction` parameterizing the projection paths.
 
     This is a positive cross-framework consilience: the C&G-Y MD
     architecture and the Bruening 2021 identity condition agree on CS,
     so the paper's predictions for CS sluicing licensing do not depend
     on identity-condition choice. -/
-theorem cs_bulk_satisfies_bruening2021_identity (so : SyntacticObject) :
-    Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical so so :=
-  Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical_refl so
+theorem cs_bulk_satisfies_bruening2021_identity
+    (h : Minimalist.HeadFunction) (so : SyntacticObject) :
+    Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical h so so :=
+  Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical_refl h so
 
 end CitkoGracaninYuksek2025

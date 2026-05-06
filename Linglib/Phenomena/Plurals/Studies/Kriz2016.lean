@@ -106,7 +106,7 @@ variable {Atom W : Type*} [DecidableEq Atom]
 -- ============================================================================
 
 /-- The bare plural sentence "the Xs are P" as a trivalent sentence. -/
-def barePluralTV (P : Atom → W → Bool) (x : Finset Atom) : SentenceTV W :=
+def barePluralTV (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) : SentenceTV W :=
   λ w => pluralTruthValue P x w
 
 /-- The `all`-sentence "all the Xs are P". Per @cite{kriz-2016} §3.1,
@@ -115,19 +115,19 @@ def barePluralTV (P : Atom → W → Bool) (x : Finset Atom) : SentenceTV W :=
     into the negative extension. So we *derive* `allPluralTV` from the bare
     plural via `removeGap`, rather than stipulating its semantics. Bivalence
     and the truth-conditional behavior then follow from substrate lemmas. -/
-def allPluralTV (P : Atom → W → Bool) (x : Finset Atom) : SentenceTV W :=
+def allPluralTV (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) : SentenceTV W :=
   removeGap (barePluralTV P x)
 
 omit [DecidableEq Atom] in
 /-- `all` IS gap removal — by definition, after the @cite{kriz-2016} §3.1
     refactor. Retained as a named lemma for readability. -/
-theorem allPluralTV_eq_removeGap (P : Atom → W → Bool) (x : Finset Atom) :
+theorem allPluralTV_eq_removeGap (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) :
     allPluralTV P x = removeGap (barePluralTV P x) := rfl
 
 omit [DecidableEq Atom] in
 /-- `all` eliminates the extension gap. Direct consequence of
 `removeGap_not_homogeneous` from the substrate. -/
-theorem all_no_gap (P : Atom → W → Bool) (x : Finset Atom) :
+theorem all_no_gap (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) :
     gapExt (allPluralTV P x) = ∅ := by
   by_contra h
   exact removeGap_not_homogeneous (barePluralTV P x) h
@@ -135,7 +135,7 @@ theorem all_no_gap (P : Atom → W → Bool) (x : Finset Atom) :
 omit [DecidableEq Atom] in
 /-- `all` removes homogeneity: the `all`-sentence is never homogeneous.
 Direct consequence of substrate `removeGap_not_homogeneous`. -/
-theorem all_not_homogeneous (P : Atom → W → Bool) (x : Finset Atom) :
+theorem all_not_homogeneous (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) :
     ¬isHomogeneous (allPluralTV P x) :=
   removeGap_not_homogeneous (barePluralTV P x)
 
@@ -143,7 +143,7 @@ omit [DecidableEq Atom] in
 /-- A bare plural is homogeneous whenever a gap-world exists: the existence
 of a world where some-but-not-all atoms satisfy P makes the sentence
 homogeneous, enabling non-maximal readings via Sufficient Truth. -/
-theorem bare_plural_homogeneous (P : Atom → W → Bool) (x : Finset Atom)
+theorem bare_plural_homogeneous (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom)
     (w : W) (hGap : barePluralTV P x w = .indet) :
     isHomogeneous (barePluralTV P x) := by
   intro h; rw [Set.eq_empty_iff_forall_notMem] at h
@@ -152,7 +152,7 @@ theorem bare_plural_homogeneous (P : Atom → W → Bool) (x : Finset Atom)
 omit [DecidableEq Atom] in
 /-- Positive extensions agree: bare plural and `all`-sentence are true
 in the same worlds. Substrate consequence of `removeGap_posExt_eq`. -/
-theorem all_posExt_eq (P : Atom → W → Bool) (x : Finset Atom) :
+theorem all_posExt_eq (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) :
     posExt (allPluralTV P x) = posExt (barePluralTV P x) :=
   removeGap_posExt_eq (barePluralTV P x)
 
@@ -160,7 +160,7 @@ omit [DecidableEq Atom] in
 /-- `all` absorbs the gap into the negative extension: the negative extension
 of the `all`-sentence equals the union of the bare plural's negative extension
 and gap. Substrate consequence of `removeGap_negExt_eq`. -/
-theorem all_negExt_eq (P : Atom → W → Bool) (x : Finset Atom) :
+theorem all_negExt_eq (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) :
     negExt (barePluralTV P x) ∪ gapExt (barePluralTV P x) =
     negExt (allPluralTV P x) :=
   (removeGap_negExt_eq (barePluralTV P x)).symm
@@ -171,20 +171,20 @@ theorem all_negExt_eq (P : Atom → W → Bool) (x : Finset Atom) :
 
 omit [DecidableEq Atom] in
 /-- `all`-sentences are bivalent. Substrate consequence of `removeGap_bivalent`. -/
-theorem all_bivalent (P : Atom → W → Bool) (x : Finset Atom) :
+theorem all_bivalent (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom) :
     isBivalent (allPluralTV P x) :=
   removeGap_bivalent (barePluralTV P x)
 
 /-- Gap removal on a plural sentence is true iff all atoms satisfy P.
-    Substrate-side bridge between `removeGap` and the Bool `allSatisfy`
-    predicate. Used by `all_blocked_by_wide_issue` and downstream consumers
+    Substrate-side bridge between `removeGap` and the `allSatisfy` predicate.
+    Used by `all_blocked_by_wide_issue` and downstream consumers
     (`KrizSpector2021.removeGap_iff_forallH`). The `_hne` hypothesis is
     retained for compatibility with consumers; the proof itself doesn't
     need it (the empty case is vacuously true on both sides). -/
-theorem removeGap_plural_true_iff (P : Atom → W → Bool)
+theorem removeGap_plural_true_iff (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (_hne : x.Nonempty) (w : W) :
     removeGap (fun w => pluralTruthValue P x w) w = .true ↔
-    allSatisfy P x w = true := by
+    allSatisfy P x w := by
   rw [← pluralTruthValue_eq_true_iff]
   show Truth3.metaAssert (pluralTruthValue P x w) = .true ↔
        pluralTruthValue P x w = .true
@@ -193,37 +193,33 @@ theorem removeGap_plural_true_iff (P : Atom → W → Bool)
     simp only [Truth3.metaAssert_true, Truth3.metaAssert_false, Truth3.metaAssert_indet,
       iff_self, reduceCtorEq]
 
-/-- `bivalentPred` of an `all`-sentence equals `allSatisfy` pointwise.
-    Bridge between the trivalent encoding of `allPluralTV` and the
-    Bool-valued `allSatisfy` predicate K&S 2021's strong-relevance machinery
-    works on. Used by `KrizSpector2021.all_addressing_iff_relevant`. -/
-theorem bivalentPred_allPluralTV_eq_allSatisfy (P : Atom → W → Bool) (x : Finset Atom)
-    (w : W) : bivalentPred (allPluralTV P x) w = allSatisfy P x w := by
-  show ((allPluralTV P x w) == .true) = allSatisfy P x w
+/-- `bivalentPred` of an `all`-sentence is true iff `allSatisfy` holds.
+    Bridge between the trivalent encoding of `allPluralTV` and the Prop-valued
+    `allSatisfy` predicate K&S 2021's strong-relevance machinery works on.
+    Used by `KrizSpector2021.all_addressing_iff_relevant`. -/
+theorem bivalentPred_allPluralTV_eq_allSatisfy (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom)
+    (w : W) : bivalentPred (allPluralTV P x) w = true ↔ allSatisfy P x w := by
+  show ((allPluralTV P x w) == .true) = true ↔ allSatisfy P x w
   cases h : allPluralTV P x w with
   | true =>
+    refine ⟨fun _ => ?_, fun _ => rfl⟩
     have hPlural : pluralTruthValue P x w = .true := by
       show barePluralTV P x w = .true
       have hMem : w ∈ posExt (allPluralTV P x) := h
       rw [all_posExt_eq P x] at hMem
       exact hMem
-    rw [(pluralTruthValue_eq_true_iff P x w).mp hPlural]
-    rfl
+    exact (pluralTruthValue_eq_true_iff P x w).mp hPlural
   | false =>
-    have hAS : allSatisfy P x w = false := by
-      cases hAS : allSatisfy P x w with
-      | true =>
-        exfalso
-        have : allPluralTV P x w = .true := by
-          have hPlural : pluralTruthValue P x w = .true :=
-            (pluralTruthValue_eq_true_iff P x w).mpr hAS
-          have hMem : w ∈ posExt (barePluralTV P x) := hPlural
-          rw [← all_posExt_eq P x] at hMem
-          exact hMem
-        rw [this] at h
-        exact absurd h (by decide)
-      | false => rfl
-    rw [hAS]; rfl
+    refine ⟨fun hf => absurd hf (by decide), fun hAS => ?_⟩
+    exfalso
+    have : allPluralTV P x w = .true := by
+      have hPlural : pluralTruthValue P x w = .true :=
+        (pluralTruthValue_eq_true_iff P x w).mpr hAS
+      have hMem : w ∈ posExt (barePluralTV P x) := hPlural
+      rw [← all_posExt_eq P x] at hMem
+      exact hMem
+    rw [this] at h
+    exact absurd h (by decide)
   | indet =>
     exfalso
     cases all_bivalent P x w with
@@ -240,8 +236,8 @@ by `removeGap_posExt_eq`, the bare plural is also literally true at w; by
 clause of `usable` does no work in *this* direction — it's what blocks
 `all`-sentences from being USED at all in wide-issue contexts (see
 `all_blocked_by_wide_issue`). -/
-theorem all_prevents_nonmax (q : QUD W) (P : Atom → W → Bool) (x : Finset Atom)
-    (w : W) (h : usable q (allPluralTV P x) w) : allSatisfy P x w = true := by
+theorem all_prevents_nonmax (q : QUD W) (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom)
+    (w : W) (h : usable q (allPluralTV P x) w) : allSatisfy P x w := by
   -- bivalence + not-false ⇒ true
   have hTrue : allPluralTV P x w = .true :=
     ((bivalent_usable_iff_true q _ (all_bivalent P x) w).mp h).1
@@ -260,9 +256,9 @@ can only be uttered at all if every QUD cell agrees on whether `allSatisfy`
 holds. This is the @cite{kriz-2016} §3.4 wide-issue blocking that completes
 the picture: bivalence alone does not derive Križ's headline finding;
 Addressing also has to do work, in this complementary direction. -/
-theorem all_blocked_by_wide_issue (q : QUD W) (P : Atom → W → Bool) (x : Finset Atom)
+theorem all_blocked_by_wide_issue (q : QUD W) (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom)
     (hne : x.Nonempty)
-    (hWide : ∃ w₁ w₂, q.r w₁ w₂ ∧ allSatisfy P x w₁ = true ∧ allSatisfy P x w₂ = false) :
+    (hWide : ∃ w₁ w₂, q.r w₁ w₂ ∧ allSatisfy P x w₁ ∧ ¬ allSatisfy P x w₂) :
     ¬ addressesIssue q (allPluralTV P x) := by
   intro hAddr
   obtain ⟨w₁, w₂, hEq, h1, h2⟩ := hWide
@@ -271,10 +267,9 @@ theorem all_blocked_by_wide_issue (q : QUD W) (P : Atom → W → Bool) (x : Fin
   have h2' : allPluralTV P x w₂ = .false := by
     cases all_bivalent P x w₂ with
     | inl h =>
-      have hAll : allSatisfy P x w₂ = true :=
+      have hAll : allSatisfy P x w₂ :=
         (removeGap_plural_true_iff P x hne w₂).mp h
-      rw [hAll] at h2
-      exact absurd h2 (by decide)
+      exact absurd hAll h2
     | inr h => exact h
   exact hAddr ⟨w₁, w₂, hEq, h1', h2'⟩
 
@@ -282,11 +277,10 @@ theorem all_blocked_by_wide_issue (q : QUD W) (P : Atom → W → Bool) (x : Fin
 at w, there are no exceptions to mention. "#Although all the professors
 smiled, Smith didn't" is contradictory — `all` forces literal truth, so any
 exception makes the sentence false, and false sentences cannot be used. -/
-theorem all_exceptions_unmentionable (q : QUD W) (P : Atom → W → Bool)
+theorem all_exceptions_unmentionable (q : QUD W) (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (w : W) (a : Atom) (ha : a ∈ x)
-    (h : usable q (allPluralTV P x) w) : P a w = true := by
+    (h : usable q (allPluralTV P x) w) : P a w := by
   have := all_prevents_nonmax q P x w h
-  simp only [allSatisfy, decide_eq_true_eq] at this
   exact this a ha
 
 -- ============================================================================
@@ -301,7 +295,7 @@ Križ 2016 identifies for non-maximality: gap-worlds can be "true enough"
 without being literally true.
 
 This is an instance of the general `Semantics.Homogeneity.gap_enables_nonmax`. -/
-theorem plural_gap_enables_nonmax (q : QUD W) (P : Atom → W → Bool) (x : Finset Atom)
+theorem plural_gap_enables_nonmax (q : QUD W) (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (x : Finset Atom)
     (w w' : W)
     (hGap : barePluralTV P x w = .indet)
     (hEquiv : q.r w w')
@@ -364,22 +358,25 @@ instance : Fintype Prof where
 /-- Did this professor smile in this world? Note that Smith fails to smile
     in BOTH `smithNeutral` and `smithAngry`; the worlds differ only in what
     Smith does instead, which matters to QUD relevance (§4.2). -/
-def smiled : Prof → ProfWorld → Bool
-  | .smith, .allSmiled      => true
-  | .smith, .smithNeutral   => false
-  | .smith, .smithAngry     => false
-  | .smith, .onlyLeeSmiled  => false
-  | .smith, .noneSmiled     => false
-  | .jones, .allSmiled      => true
-  | .jones, .smithNeutral   => true
-  | .jones, .smithAngry     => true
-  | .jones, .onlyLeeSmiled  => false
-  | .jones, .noneSmiled     => false
-  | .lee,   .allSmiled      => true
-  | .lee,   .smithNeutral   => true
-  | .lee,   .smithAngry     => true
-  | .lee,   .onlyLeeSmiled  => true
-  | .lee,   .noneSmiled     => false
+def smiled : Prof → ProfWorld → Prop
+  | .smith, .allSmiled      => True
+  | .smith, .smithNeutral   => False
+  | .smith, .smithAngry     => False
+  | .smith, .onlyLeeSmiled  => False
+  | .smith, .noneSmiled     => False
+  | .jones, .allSmiled      => True
+  | .jones, .smithNeutral   => True
+  | .jones, .smithAngry     => True
+  | .jones, .onlyLeeSmiled  => False
+  | .jones, .noneSmiled     => False
+  | .lee,   .allSmiled      => True
+  | .lee,   .smithNeutral   => True
+  | .lee,   .smithAngry     => True
+  | .lee,   .onlyLeeSmiled  => True
+  | .lee,   .noneSmiled     => False
+
+instance smiled.instDecidable : ∀ p w, Decidable (smiled p w) := by
+  intro p w; cases p <;> cases w <;> unfold smiled <;> infer_instance
 
 /-- All three professors. -/
 def profs : Finset Prof := Finset.univ
@@ -464,7 +461,7 @@ cannot be mentioned because Smith did smile in every world where the
 `all`-sentence is usable. -/
 theorem smith_exception_unmentionable (q : QUD ProfWorld) (w : ProfWorld)
     (h : usable q (allPluralTV smiled profs) w) :
-    smiled .smith w = true :=
+    smiled .smith w :=
   all_exceptions_unmentionable q smiled profs w .smith (by simp [profs]) h
 
 /-- Communicated content under the coarse QUD includes the gap-world
@@ -635,7 +632,7 @@ omit [DecidableEq Atom] in
     This is the structural identity connecting homogeneity gaps to
     vagueness gaps: both arise from disagreement across specification
     points (atoms vs thresholds vs comparison classes). -/
-theorem barePluralTV_eq_superTrue (P : Atom → W → Bool)
+theorem barePluralTV_eq_superTrue (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (hne : x.Nonempty) (w : W) :
     barePluralTV P x w = superTrue (fun a => P a w) ⟨x, hne⟩ := by
   simp [barePluralTV, pluralTruthValue, dif_pos hne]
@@ -644,7 +641,7 @@ omit [DecidableEq Atom] in
 /-- Corollary: homogeneity (gap existence) is exactly supervaluation
     indefiniteness. If the bare plural is gapped at w, then `superTrue`
     returns `.indet` — witnesses exist on both sides. -/
-theorem homogeneity_gap_is_indefiniteness (P : Atom → W → Bool)
+theorem homogeneity_gap_is_indefiniteness (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (hne : x.Nonempty) (w : W)
     (hgap : barePluralTV P x w = .indet) :
     superTrue (fun a => P a w) ⟨x, hne⟩ = Truth3.indet := by
@@ -654,7 +651,7 @@ omit [DecidableEq Atom] in
 /-- Corollary: `all` removes homogeneity by collapsing the specification
     space to a single point (the universal check). This corresponds to
     Fine's fidelity theorem: singleton specification spaces are classical. -/
-theorem all_removes_supervaluation_gap (P : Atom → W → Bool)
+theorem all_removes_supervaluation_gap (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (w : W) :
     allPluralTV P x w ≠ .indet := by
   cases all_bivalent P x w with
@@ -698,19 +695,22 @@ instance : Fintype ConjWorld where
   elems := {.allWent, .dorasMissing, .onlyBert, .noneWent}
   complete := by intro x; cases x <;> simp
 
-def wentThere : ConjAtom → ConjWorld → Bool
-  | .bert,   .allWent       => true
-  | .bert,   .dorasMissing  => true
-  | .bert,   .onlyBert      => true
-  | .bert,   .noneWent      => false
-  | .claire, .allWent       => true
-  | .claire, .dorasMissing  => true
-  | .claire, .onlyBert      => false
-  | .claire, .noneWent      => false
-  | .dora,   .allWent       => true
-  | .dora,   .dorasMissing  => false
-  | .dora,   .onlyBert      => false
-  | .dora,   .noneWent      => false
+def wentThere : ConjAtom → ConjWorld → Prop
+  | .bert,   .allWent       => True
+  | .bert,   .dorasMissing  => True
+  | .bert,   .onlyBert      => True
+  | .bert,   .noneWent      => False
+  | .claire, .allWent       => True
+  | .claire, .dorasMissing  => True
+  | .claire, .onlyBert      => False
+  | .claire, .noneWent      => False
+  | .dora,   .allWent       => True
+  | .dora,   .dorasMissing  => False
+  | .dora,   .onlyBert      => False
+  | .dora,   .noneWent      => False
+
+instance wentThere.instDecidable : ∀ a w, Decidable (wentThere a w) := by
+  intro a w; cases a <;> cases w <;> unfold wentThere <;> infer_instance
 
 def threeCoworkers : Finset ConjAtom := Finset.univ
 

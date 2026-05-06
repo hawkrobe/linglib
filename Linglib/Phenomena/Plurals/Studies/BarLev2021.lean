@@ -131,6 +131,10 @@ def laughed : Kid → HomWorld → Prop
   | .kelly => kellyLaughed
   | .jane  => janeLaughed
 
+instance laughed.instDecidable : ∀ k w, Decidable (laughed k w) := by
+  intro k w
+  cases k <;> cases w <;> unfold laughed kellyLaughed janeLaughed <;> infer_instance
+
 /-- The plurality "the kids" = {Kelly, Jane}. -/
 def theKids : Finset Kid := {.kelly, .jane}
 
@@ -885,34 +889,17 @@ gap-world `onlyKelly`:
 The two predictions cannot both be right: this is the kernel-visible form
 of the §11 polarities-symmetric vs. polarities-asymmetric disagreement. -/
 
-/-- Bool-lifted version of `laughed`, for use with Križ's
-    `barePluralTV : (Atom → World → Bool) → Finset Atom → SentenceTV W`. -/
-def laughedBool : Kid → HomWorld → Bool
-  | .kelly, .neither    => false
-  | .kelly, .onlyKelly  => true
-  | .kelly, .onlyJane   => false
-  | .kelly, .both       => true
-  | .jane,  .neither    => false
-  | .jane,  .onlyKelly  => false
-  | .jane,  .onlyJane   => true
-  | .jane,  .both       => true
-
-/-- The Bool lift agrees with the Set version of `laughed`. -/
-theorem laughedBool_iff_laughed (k : Kid) (w : HomWorld) :
-    laughedBool k w = true ↔ laughed k w := by
-  cases k <;> cases w <;> simp [laughedBool, laughed, kellyLaughed, janeLaughed]
-
 /-- At `onlyKelly`, Križ's bare-plural denotation of "the kids laughed" is
     a homogeneity gap (.indet) — Kelly laughed, Jane didn't. -/
 theorem kriz_bare_kids_onlyKelly_gap :
-    Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughedBool theKids
+    Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughed theKids
       .onlyKelly = .indet := by decide
 
 /-- Križ's Strong-Kleene negation of a gap is also a gap. So the negation
     "the kids didn't laugh" at `onlyKelly` is `.indet` under Križ. -/
 theorem kriz_neg_bare_kids_onlyKelly_gap :
     Core.Duality.Truth3.neg
-      (Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughedBool theKids
+      (Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughed theKids
         .onlyKelly) = .indet := by
   rw [kriz_bare_kids_onlyKelly_gap]; decide
 
@@ -938,7 +925,7 @@ theorem barlev_neg_someLaughed_onlyKelly_false :
     in prose. -/
 theorem kriz_vs_barlev_negative_nonmax :
     Core.Duality.Truth3.neg
-      (Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughedBool theKids
+      (Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughed theKids
         .onlyKelly) = .indet ∧
     ¬ ¬ someLaughed .onlyKelly :=
   ⟨kriz_neg_bare_kids_onlyKelly_gap, barlev_neg_someLaughed_onlyKelly_false⟩
