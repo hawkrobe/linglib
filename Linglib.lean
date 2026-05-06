@@ -1874,6 +1874,7 @@ import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Combinatorics.RootedTree.Decorated
 import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
 import Linglib.Core.Combinatorics.RootedTree.Insertion
+import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Algebra.ConnesKreimer.Defs
 import Linglib.Core.Algebra.ConnesKreimer.Coproduct
 import Linglib.Core.Algebra.ConnesKreimer.AugmentedCut
