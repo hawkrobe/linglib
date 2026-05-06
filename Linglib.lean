@@ -1869,6 +1869,7 @@ import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
+import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Combinatorics.RootedTree.Decorated
 import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
 import Linglib.Core.Algebra.ConnesKreimer.Defs
