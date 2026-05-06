@@ -1395,118 +1395,26 @@ theorem mergeOp_sideward_2b_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
     mergeOp (R := R) T_i β
         (forestToHc ({T_i, T_j} : TraceForest α Unit))
       = forestToHc ({.node T_i β, T_j_q} : TraceForest α Unit) := by
-  -- Step 1: reduce mergeOp to mergePost ∘ comulDelAlgHom.
-  show (mergePost (R := R) (α := α) T_i β ∘ₗ comulDelAlgHom.toLinearMap)
-       (forestToHc ({T_i, T_j} : TraceForest α Unit)) = _
-  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulDelAlgHom_pair,
-      comulTreeDel_eq_prim_add_sum, comulTreeDel_eq_prim_add_sum]
-  rw [add_mul, mul_add, mul_add]
-  simp only [map_add]
-  -- Term 1 (prim_{T_i} × prim_{T_j}): F = {T_i, T_j} ≠ {T_i, β} since β ≠ T_j.
-  have h_pp : mergePost (R := R) (α := α) T_i β
-        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
-          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
-      = 0 := by
-    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
-    rw [show ({T_i} : TraceForest α Unit) + ({T_j} : TraceForest α Unit)
-          = ({T_i, T_j} : TraceForest α Unit) from rfl]
-    rw [mergePost_basis_tensor, if_neg]
-    intro h_eq
-    -- {T_i, T_j} = {T_i, β} ⟹ T_j = β by left-cancellation on multisets.
-    apply h_β_ne_Tj
-    have h1 : ({T_i, T_j} : TraceForest α Unit)
-            = ({T_i} : TraceForest α Unit) + ({T_j} : TraceForest α Unit) := rfl
-    have h2 : ({T_i, β} : TraceForest α Unit)
-            = ({T_i} : TraceForest α Unit) + ({β} : TraceForest α Unit) := rfl
-    rw [h1, h2] at h_eq
-    have h_singletons := Multiset.add_right_inj.mp h_eq
-    exact (Multiset.singleton_inj.mp h_singletons).symm
-  -- Term 2 (prim_{T_i} × cut sum): only c' = c_β survives, contributes the answer.
-  have h_ps : mergePost (R := R) (α := α) T_i β
-        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
-          * ∑ c' : CutShape T_j,
-              forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
-                deletionRightChannel (R := R) (CutShape.remainderDeletion c'))
-      = forestToHc (R := R) ({.node T_i β, T_j_q} : TraceForest α Unit) := by
-    rw [Finset.mul_sum]
-    simp only [map_sum]
-    rw [Finset.sum_eq_single c_β]
-    · -- c' = c_β: surviving term.
-      rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, one_mul]
-      rw [show ({T_i} : TraceForest α Unit) + CutShape.cutForest c_β
-            = ({T_i, β} : TraceForest α Unit) from by
-          rw [show CutShape.cutForest c_β = ({β} : TraceForest α Unit) from h_cut]
-          rfl]
-      rw [mergePost_basis_tensor, if_pos rfl, h_remainder]
-      show forestToHc (R := R) ({.node T_i β} : TraceForest α Unit) *
-            forestToHc (R := R) ({T_j_q} : TraceForest α Unit) = _
-      rw [← forestToHc_add]; rfl
-    · -- c' ≠ c_β: cf(c') ≠ {β}, so {T_i} + cf(c') ≠ {T_i, β}.
-      intro c' _ hc'
-      rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, one_mul]
-      rw [mergePost_basis_tensor, if_neg]
-      intro h_eq
-      apply h_unique c' hc'
-      have h_target : ({T_i, β} : TraceForest α Unit)
-                    = ({T_i} : TraceForest α Unit) + ({β} : TraceForest α Unit) := rfl
-      rw [h_target] at h_eq
-      exact Multiset.add_right_inj.mp h_eq
-    · intro h; exact absurd (Finset.mem_univ _) h
-  -- Term 3 (cut sum × prim_{T_j}): cf(c) + {T_j} = {T_i, β} forces T_j ∈ {T_i, β}.
-  have h_sp : mergePost (R := R) (α := α) T_i β
-        ((∑ c : CutShape T_i,
-            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
-              deletionRightChannel (R := R) (CutShape.remainderDeletion c))
-          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
-      = 0 := by
-    rw [Finset.sum_mul]
-    simp only [map_sum]
-    apply Finset.sum_eq_zero
-    intro c _
-    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
-    rw [mergePost_basis_tensor, if_neg]
-    intro h_eq
-    -- T_j ∈ LHS = cf(c) + {T_j}; under h_eq, T_j ∈ {T_i, β}.
-    have h_T_j_mem : T_j ∈ CutShape.cutForest c + ({T_j} : TraceForest α Unit) :=
-      Multiset.mem_add.mpr (Or.inr (Multiset.mem_singleton.mpr rfl))
-    rw [h_eq] at h_T_j_mem
-    rw [show ({T_i, β} : TraceForest α Unit) = T_i ::ₘ ({β} : TraceForest α Unit) from rfl,
-        Multiset.mem_cons, Multiset.mem_singleton] at h_T_j_mem
-    rcases h_T_j_mem with h | h
-    · exact h_distinct h.symm
-    · exact h_β_ne_Tj h.symm
-  -- Term 4 (sum × sum): cf(c) + cf(c') = {T_i, β} forces both to be empty,
-  -- but {T_i, β} ≠ ∅. Element analysis: cf(c) ⊆ Acc(T_i), excludes T_i (root)
-  -- and β (h_T_i_no_β). cf(c') ⊆ Acc(T_j), excludes T_j (root) and T_i (h_T_j_no_T_i).
-  -- Together: every elt of cf(c) is neither T_i nor β (so cf(c) = 0); similarly
-  -- every elt of cf(c') is not T_i, so cf(c') ⊆ {β}. Then total ∈ {0, {β}, {β, β}, ...},
-  -- never = {T_i, β}.
-  have h_ss : mergePost (R := R) (α := α) T_i β
-        ((∑ c : CutShape T_i,
-            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
-              deletionRightChannel (R := R) (CutShape.remainderDeletion c))
-          * (∑ c' : CutShape T_j,
-              forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
-                deletionRightChannel (R := R) (CutShape.remainderDeletion c')))
-      = 0 := by
-    rw [Fintype.sum_mul_sum]
-    simp only [map_sum]
-    apply Finset.sum_eq_zero
-    intro c _
-    apply Finset.sum_eq_zero
-    intro c' _
-    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add]
-    rw [mergePost_basis_tensor, if_neg]
-    intro h_eq
-    -- From cf(c) + cf(c') = {T_i, β}: T_i ∈ LHS.
-    have h_T_i_mem : T_i ∈ CutShape.cutForest c + CutShape.cutForest c' := by
-      rw [h_eq]
-      exact Multiset.mem_cons_self _ _
-    rcases Multiset.mem_add.mp h_T_i_mem with h | h
-    · exact CutShape.not_mem_cutForest_self c h
-    · exact h_T_j_no_T_i c' h
-  rw [h_pp, h_ps, h_sp, h_ss]
-  simp only [add_zero, zero_add]
+  -- Quickie corollary of the multi-witness `_general_pair`: the matching
+  -- cut set reduces to `{c_β}` under `h_unique`, so the sum collapses to
+  -- a single `deletionRightChannel`-of-`c_β` term, which equals
+  -- `forestToHc {T_j_q}` by `h_remainder`.
+  rw [mergeOp_sideward_2b_general_pair (R := R) T_i T_j β
+        h_T_i_no_β h_T_j_no_T_i h_distinct h_β_ne_Tj]
+  have h_singleton : matchingSingleEdgeCuts T_j β = {c_β} := by
+    apply Finset.ext_iff.mpr
+    intro c
+    simp only [matchingSingleEdgeCuts, Finset.mem_filter, Finset.mem_univ, true_and,
+               Finset.mem_singleton]
+    constructor
+    · intro h_cf
+      by_contra h_ne
+      exact h_unique c h_ne h_cf
+    · intro h_eq; subst h_eq; exact h_cut
+  rw [h_singleton, Finset.sum_singleton, h_remainder]
+  show forestToHc (R := R) ({.node T_i β} : TraceForest α Unit) *
+        forestToHc (R := R) ({T_j_q} : TraceForest α Unit) = _
+  rw [← forestToHc_add]; rfl
 
 /-- **Sideward Merge case 2(b) realization, full residual workspace**
     (M-C-B Lemma 1.4.4, p. 54). Generalization of `mergeOp_sideward_2b_pair`
@@ -1551,11 +1459,269 @@ theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R] {α : Type*} [Decidable
     rw [mergeOp_factor_out_singleton hT]
     exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
-/-- **Sideward Merge case 3(b) realization, F̂ = ∅ subcase** (M-C-B Lemma
-    1.4.4, p. 54). 2-tree-workspace base case for the configuration where
-    both α and β are accessible terms of distinct components T_i ≠ T_j.
-    The operator `δ_{α, β}` selects `(α ⊔ β) ⊗ (T_i/α ⊔ T_j/β ⊔ F̂)`,
-    producing `{M(α, β), T_i/α, T_j/β}`.
+/-- **Sideward Merge case 3(b), F̂ = ∅, multi-witness sum form** (M-C-B
+    Lemma 1.4.4, p. 54, full eq. (1.3.3)).
+
+    `mergeOp α_t β` on `{T_i, T_j}` produces the **double sum** over all
+    matching α-cuts on T_i and matching β-cuts on T_j. Output:
+    ```
+    forestToHc {.node α β} * (∑ α-cuts) * (∑ β-cuts)
+    ```
+    where the two sums are over `matchingSingleEdgeCuts T_i α_t` and
+    `matchingSingleEdgeCuts T_j β` respectively. The unique-witness
+    `mergeOp_sideward_3b_pair` follows when both filter sets are
+    singletons. -/
+theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α]
+    (T_i T_j α_t β : TraceTree α Unit)
+    (h_T_i_no_β : ∀ c : CutShape T_i, β ∉ CutShape.cutForest c)
+    (h_T_j_no_α : ∀ c : CutShape T_j, α_t ∉ CutShape.cutForest c)
+    (h_α_ne_Ti : α_t ≠ T_i)
+    (h_α_ne_Tj : α_t ≠ T_j)
+    (h_β_ne_Ti : β ≠ T_i)
+    (h_β_ne_Tj : β ≠ T_j)
+    (h_α_ne_β : α_t ≠ β)
+    (h_distinct : T_i ≠ T_j) :
+    mergeOp (R := R) α_t β
+        (forestToHc ({T_i, T_j} : TraceForest α Unit))
+      = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
+        * (∑ c ∈ matchingSingleEdgeCuts T_i α_t,
+            deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+        * (∑ c' ∈ matchingSingleEdgeCuts T_j β,
+            deletionRightChannel (R := R) (CutShape.remainderDeletion c')) := by
+  -- TODO (next session): the proof structure parallels
+  -- mergeOp_sideward_2b_general_pair but the surviving cross-term is
+  -- the cut × cut bivariate sum (Term 4 instead of Term 2). Need to
+  -- chain Finset.sum_congr through TWO Finset levels with the bivariate
+  -- filter `cf c = {α_t} ∧ cf c' = {β}`, then split into product of
+  -- single-variable filtered sums via Finset.mul_sum + Finset.sum_filter.
+  -- Statement is correct; proof drafted (~150 LOC) but currently brittle
+  -- on the Finset.sum_congr chaining inside the tensor-product algebra
+  -- expansion. Sorry'd here to land the multi-witness STATEMENT while
+  -- the proof is reworked in a follow-up commit.
+  sorry
+  -- (Phase 7e proof body removed for sorry'd landing — the unique-witness
+  -- mergeOp_sideward_3b_pair below is the canonical form for now.)
+  /-
+  show (mergePost (R := R) (α := α) α_t β ∘ₗ comulDelAlgHom.toLinearMap)
+       (forestToHc ({T_i, T_j} : TraceForest α Unit)) = _
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulDelAlgHom_pair,
+      comulTreeDel_eq_prim_add_sum, comulTreeDel_eq_prim_add_sum]
+  rw [add_mul, mul_add, mul_add]
+  simp only [map_add]
+  -- Term 1 (prim × prim): vanishes (T_i ∉ {α_t, β}).
+  have h_pp : mergePost (R := R) (α := α) α_t β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+      = 0 := by
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+    rw [show ({T_i} : TraceForest α Unit) + ({T_j} : TraceForest α Unit)
+          = ({T_i, T_j} : TraceForest α Unit) from rfl]
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    have h_T_i_mem : T_i ∈ ({T_i, T_j} : TraceForest α Unit) := Multiset.mem_cons_self _ _
+    rw [h_eq] at h_T_i_mem
+    rw [show ({α_t, β} : TraceForest α Unit) = α_t ::ₘ ({β} : TraceForest α Unit) from rfl,
+        Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
+    rcases h_T_i_mem with h | h
+    · exact h_α_ne_Ti h.symm
+    · exact h_β_ne_Ti h.symm
+  -- Term 2 (prim × cut sum): vanishes (T_i ∉ {α_t, β}).
+  have h_ps : mergePost (R := R) (α := α) α_t β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * ∑ c' : CutShape T_j,
+              forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                deletionRightChannel (R := R) (CutShape.remainderDeletion c'))
+      = 0 := by
+    rw [Finset.mul_sum]
+    simp only [map_sum]
+    apply Finset.sum_eq_zero
+    intro c' _
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, one_mul]
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    have h_T_i_mem : T_i ∈ ({T_i} : TraceForest α Unit) + CutShape.cutForest c' :=
+      Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
+    rw [h_eq] at h_T_i_mem
+    rw [show ({α_t, β} : TraceForest α Unit) = α_t ::ₘ ({β} : TraceForest α Unit) from rfl,
+        Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
+    rcases h_T_i_mem with h | h
+    · exact h_α_ne_Ti h.symm
+    · exact h_β_ne_Ti h.symm
+  -- Term 3 (cut sum × prim): vanishes (T_j ∉ {α_t, β}).
+  have h_sp : mergePost (R := R) (α := α) α_t β
+        ((∑ c : CutShape T_i,
+            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+      = 0 := by
+    rw [Finset.sum_mul]
+    simp only [map_sum]
+    apply Finset.sum_eq_zero
+    intro c _
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    have h_T_j_mem : T_j ∈ CutShape.cutForest c + ({T_j} : TraceForest α Unit) :=
+      Multiset.mem_add.mpr (Or.inr (Multiset.mem_singleton.mpr rfl))
+    rw [h_eq] at h_T_j_mem
+    rw [show ({α_t, β} : TraceForest α Unit) = α_t ::ₘ ({β} : TraceForest α Unit) from rfl,
+        Multiset.mem_cons, Multiset.mem_singleton] at h_T_j_mem
+    rcases h_T_j_mem with h | h
+    · exact h_α_ne_Tj h.symm
+    · exact h_β_ne_Tj h.symm
+  -- Term 4 (cut × cut): the surviving cross-terms — multi-witness double sum.
+  -- For (c, c') to contribute, need cf c + cf c' = {α_t, β}.
+  -- By element analysis: cf c ⊆ {α_t} and cf c' ⊆ {β}, so cf c = {α_t} and cf c' = {β}.
+  have h_summand : ∀ (c : CutShape T_i) (c' : CutShape T_j),
+      mergePost (R := R) (α := α) α_t β
+        ((forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+            deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+          * (forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c')))
+    = (if CutShape.cutForest c = ({α_t} : TraceForest α Unit) ∧
+          CutShape.cutForest c' = ({β} : TraceForest α Unit)
+        then forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
+              * (deletionRightChannel (R := R) (CutShape.remainderDeletion c)
+                * deletionRightChannel (R := R) (CutShape.remainderDeletion c'))
+        else 0) := by
+    intro c c'
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add]
+    rw [mergePost_basis_tensor]
+    by_cases h_sum : CutShape.cutForest c + CutShape.cutForest c'
+                   = ({α_t, β} : TraceForest α Unit)
+    · -- LHS hits the if_pos branch. Show the conjunction holds.
+      rw [if_pos h_sum]
+      -- Derive cf c = {α_t} and cf c' = {β} from h_sum.
+      have h_split : CutShape.cutForest c = ({α_t} : TraceForest α Unit) ∧
+                    CutShape.cutForest c' = ({β} : TraceForest α Unit) := by
+        constructor
+        · -- cf c = {α_t}: by Multiset.ext on element counts.
+          apply Multiset.ext.mpr
+          intro x
+          have h_count := congrArg (Multiset.count x) h_sum
+          rw [Multiset.count_add] at h_count
+          by_cases hx_α : x = α_t
+          · subst hx_α
+            rw [Multiset.count_singleton_self]
+            have h_target : Multiset.count x ({x, β} : TraceForest α Unit) = 1 := by
+              simp [Multiset.count_cons_self, Multiset.count_singleton, h_α_ne_β]
+            rw [h_target] at h_count
+            have h_c' : Multiset.count x (CutShape.cutForest c') = 0 :=
+              Multiset.count_eq_zero.mpr (h_T_j_no_α c')
+            omega
+          · rw [Multiset.count_singleton, if_neg hx_α]
+            by_cases hx_β : x = β
+            · subst hx_β
+              exact Multiset.count_eq_zero.mpr (h_T_i_no_β c)
+            · have h_target_zero : Multiset.count x ({α_t, β} : TraceForest α Unit) = 0 := by
+                show Multiset.count x (α_t ::ₘ ({β} : TraceForest α Unit)) = 0
+                rw [Multiset.count_cons, Multiset.count_singleton, if_neg hx_α, if_neg hx_β]
+              omega
+        · -- cf c' = {β}: symmetric.
+          apply Multiset.ext.mpr
+          intro x
+          have h_count := congrArg (Multiset.count x) h_sum
+          rw [Multiset.count_add] at h_count
+          by_cases hx_β : x = β
+          · subst hx_β
+            rw [Multiset.count_singleton_self]
+            have h_target : Multiset.count x ({α_t, x} : TraceForest α Unit) = 1 := by
+              simp [Multiset.count_cons, Multiset.count_singleton, Ne.symm h_α_ne_β]
+            rw [h_target] at h_count
+            have h_c : Multiset.count x (CutShape.cutForest c) = 0 :=
+              Multiset.count_eq_zero.mpr (h_T_i_no_β c)
+            omega
+          · rw [Multiset.count_singleton, if_neg hx_β]
+            by_cases hx_α : x = α_t
+            · subst hx_α
+              exact Multiset.count_eq_zero.mpr (h_T_j_no_α c')
+            · have h_target_zero : Multiset.count x ({α_t, β} : TraceForest α Unit) = 0 := by
+                show Multiset.count x (α_t ::ₘ ({β} : TraceForest α Unit)) = 0
+                rw [Multiset.count_cons, Multiset.count_singleton, if_neg hx_α, if_neg hx_β]
+              omega
+      rw [if_pos h_split]
+      ring
+    · -- LHS hits the if_neg branch. Show the conjunction fails.
+      rw [if_neg h_sum]
+      rw [if_neg]
+      intro ⟨h_c, h_c'⟩
+      apply h_sum
+      rw [h_c, h_c']
+      rfl
+  have h_ss : mergePost (R := R) (α := α) α_t β
+        ((∑ c : CutShape T_i,
+            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+          * (∑ c' : CutShape T_j,
+              forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                deletionRightChannel (R := R) (CutShape.remainderDeletion c')))
+      = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
+        * (∑ c ∈ matchingSingleEdgeCuts T_i α_t,
+            deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+        * (∑ c' ∈ matchingSingleEdgeCuts T_j β,
+            deletionRightChannel (R := R) (CutShape.remainderDeletion c')) := by
+    rw [Fintype.sum_mul_sum]
+    simp only [map_sum]
+    rw [Finset.sum_congr rfl (fun c _ => Finset.sum_congr rfl (fun c' _ => h_summand c c'))]
+    -- Now: ∑ c, ∑ c', if (cf c = {α_t} ∧ cf c' = {β}) then K * (rd c * rd c') else 0.
+    -- Re-express each summand as: K * (if α-match then rd c else 0) * (if β-match then rd c' else 0).
+    rw [Finset.sum_congr rfl (fun c _ => Finset.sum_congr rfl (fun c' _ => by
+      by_cases hc : CutShape.cutForest c = ({α_t} : TraceForest α Unit)
+      · by_cases hc' : CutShape.cutForest c' = ({β} : TraceForest α Unit)
+        · simp [hc, hc']
+        · simp [hc, hc']
+      · simp [hc]))]
+    -- Now: ∑ c, ∑ c', K * ((if α-match then rd c else 0) * (if β-match then rd c' else 0))
+    -- = K * (∑ c, if α-match then rd c else 0) * (∑ c', if β-match then rd c' else 0)
+    rw [show (∑ c : CutShape T_i, ∑ c' : CutShape T_j,
+              forestToHc (R := R) ({.node α_t β} : TraceForest α Unit) *
+                ((if CutShape.cutForest c = ({α_t} : TraceForest α Unit)
+                    then deletionRightChannel (R := R) (CutShape.remainderDeletion c)
+                    else 0) *
+                  (if CutShape.cutForest c' = ({β} : TraceForest α Unit)
+                    then deletionRightChannel (R := R) (CutShape.remainderDeletion c')
+                    else 0)))
+          = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit) *
+              (∑ c : CutShape T_i,
+                if CutShape.cutForest c = ({α_t} : TraceForest α Unit)
+                  then deletionRightChannel (R := R) (CutShape.remainderDeletion c)
+                  else 0) *
+              (∑ c' : CutShape T_j,
+                if CutShape.cutForest c' = ({β} : TraceForest α Unit)
+                  then deletionRightChannel (R := R) (CutShape.remainderDeletion c')
+                  else 0) from by
+      rw [Finset.mul_sum, Finset.sum_mul]
+      apply Finset.sum_congr rfl
+      intro c _
+      rw [Finset.mul_sum, Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro c' _
+      ring]
+    -- Convert the inner if-form sums to filter form via Finset.sum_filter.
+    rw [show ∑ c : CutShape T_i,
+            (if CutShape.cutForest c = ({α_t} : TraceForest α Unit)
+              then deletionRightChannel (R := R) (CutShape.remainderDeletion c)
+              else 0)
+          = ∑ c ∈ matchingSingleEdgeCuts T_i α_t,
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c) from
+        (Finset.sum_filter _ _).symm]
+    rw [show ∑ c' : CutShape T_j,
+            (if CutShape.cutForest c' = ({β} : TraceForest α Unit)
+              then deletionRightChannel (R := R) (CutShape.remainderDeletion c')
+              else 0)
+          = ∑ c' ∈ matchingSingleEdgeCuts T_j β,
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c') from
+        (Finset.sum_filter _ _).symm]
+  rw [h_pp, h_ps, h_sp, h_ss]
+  simp only [zero_add, add_zero]
+  -/
+
+/-- **Sideward Merge case 3(b) realization, F̂ = ∅ subcase, unique-witness form**
+    (M-C-B Lemma 1.4.4, p. 54). 2-tree-workspace base case for the
+    configuration where both α and β are accessible terms of distinct
+    components T_i ≠ T_j. The operator `δ_{α, β}` selects
+    `(α ⊔ β) ⊗ (T_i/α ⊔ T_j/β ⊔ F̂)`, producing `{M(α, β), T_i/α, T_j/β}`.
 
     Surviving cross-term: cut_{c_α} × cut_{c_β}, contributing
     `forestToHc {.node α β} * forestToHc {T_i_q} * forestToHc {T_j_q}`.
@@ -1929,50 +2095,21 @@ theorem mergeOp_sideward_3a_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
     mergeOp (R := R) α_t β (forestToHc ({T_i} : TraceForest α Unit))
       = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
         * forestToHc (R := R) ({T_i_q} : TraceForest α Unit) := by
-  show (mergePost (R := R) (α := α) α_t β ∘ₗ comulDelAlgHom.toLinearMap)
-       (forestToHc ({T_i} : TraceForest α Unit)) = _
-  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
-  rw [show comulDelAlgHom (R := R) (α := α)
-            (forestToHc (R := R) ({T_i} : TraceForest α Unit))
-          = comulTreeDel (R := R) T_i from by
-      unfold forestToHc
-      rw [comulDelAlgHom_apply_single, comulForestDel_singleton]]
-  rw [comulTreeDel_eq_prim_add_sum]
-  simp only [map_add]
-  -- Term 1 (prim_{T_i}): F_left = {T_i} ≠ {α, β} since T_i ∉ {α, β}.
-  have h_p : mergePost (R := R) (α := α) α_t β
-        (forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)) = 0 := by
-    rw [mergePost_basis_tensor, if_neg]
-    intro h_eq
-    -- T_i ∈ {T_i} = {α, β}, so T_i = α or T_i = β; both contradicted.
-    have h_T_i_mem : T_i ∈ ({T_i} : TraceForest α Unit) :=
-      Multiset.mem_singleton.mpr rfl
-    rw [h_eq] at h_T_i_mem
-    rw [show ({α_t, β} : TraceForest α Unit) = α_t ::ₘ ({β} : TraceForest α Unit) from rfl,
-        Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
-    rcases h_T_i_mem with h | h
-    · exact h_α_ne_Ti h.symm
-    · exact h_β_ne_Ti h.symm
-  -- Term 2 (sum c'): only c' = c survives (uniqueness), contributes the answer.
-  have h_s : mergePost (R := R) (α := α) α_t β
-        (∑ c' : CutShape T_i,
-            forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
-              deletionRightChannel (R := R) (CutShape.remainderDeletion c'))
-      = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
-        * forestToHc (R := R) ({T_i_q} : TraceForest α Unit) := by
-    simp only [map_sum]
-    rw [Finset.sum_eq_single c]
-    · -- c' = c: surviving term.
-      rw [show CutShape.cutForest c = ({α_t, β} : TraceForest α Unit) from h_cut]
-      rw [mergePost_basis_tensor, if_pos rfl, h_remainder]
-      rfl
-    · intro c' _ hc'_ne
-      rw [mergePost_basis_tensor, if_neg]
-      intro h_eq
-      exact h_unique c' hc'_ne h_eq
-    · intro h; exact absurd (Finset.mem_univ _) h
-  rw [h_p, h_s]
-  simp only [zero_add]
+  -- Quickie corollary of the multi-witness `_general_pair`: the matching
+  -- 2-edge cut set reduces to `{c}` under `h_unique`.
+  rw [mergeOp_sideward_3a_general_pair (R := R) T_i α_t β h_α_ne_Ti h_β_ne_Ti]
+  have h_singleton : matchingTwoEdgeCuts T_i α_t β = {c} := by
+    apply Finset.ext_iff.mpr
+    intro c'
+    simp only [matchingTwoEdgeCuts, Finset.mem_filter, Finset.mem_univ, true_and,
+               Finset.mem_singleton]
+    constructor
+    · intro h_cf
+      by_contra h_ne
+      exact h_unique c' h_ne h_cf
+    · intro h_eq; subst h_eq; exact h_cut
+  rw [h_singleton, Finset.sum_singleton, h_remainder]
+  rfl
 
 /-- **Sideward Merge case 3(a) realization, full residual workspace**
     (M-C-B Lemma 1.4.5, p. 55). Generalization of `mergeOp_sideward_3a_pair`
