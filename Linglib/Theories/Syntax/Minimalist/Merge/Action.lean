@@ -1197,20 +1197,154 @@ instance {α : Type*} [DecidableEq α]
     Decidable (IsSinglAccessibleCut T_j β c_β) := by
   unfold IsSinglAccessibleCut; infer_instance
 
-/-- **Sideward Merge case 2(b) realization** (M-C-B Lemma 1.4.4, p. 54).
-    For workspace `{T_i, T_j} + Fhat` with `β ∈ Acc(T_j)` (witnessed by an
-    admissible cut `c_β` on T_j producing `{β}` as its subforest), the
-    operator `δ_{T_i, β}` selects the cross-term `(T_i ⊔ β) ⊗ (T_j/β ⊔ F̂)`
-    of the coproduct, and `mergeOp T_i β` produces the new workspace
-    `{M(T_i, β), T_j/β} + Fhat`, where T_j/β is the algebraic quotient
-    given by `remainderDeletion c_β`.
+/-- **Sideward Merge case 2(b) realization, F̂ = ∅ subcase** (M-C-B Lemma
+    1.4.4, p. 54). The 2-tree-workspace base case: `mergeOp T_i β` on
+    `{T_i, T_j}` (with β an admissible-cut-extracted accessible term of T_j)
+    produces `{M(T_i, β), T_j/β}`.
 
-    Proof strategy mirrors `mergeOp_pair_residual` (§2.5): expand the
-    coproduct as (prim + sum) × (prim + sum) for the two components
-    T_i, T_j; show only the prim_{T_i} × cut_{c_β} cross-term survives.
-    The cross-term-elimination machinery (`mergePost_basis_tensor`,
-    `cutForest_ne_singleton_self`, `cutForest_add_ne_insert_pair`)
-    needs to be reused with the singleton-{β} target instead of `{S, S'}`. -/
+    Proof structure parallel to `mergeOp_pair` (§2): expand the coproduct
+    as (prim + sum) × (prim + sum) for the two components T_i, T_j; show
+    only the **prim_{T_i} × cut_{c_β}** cross-term survives. The other
+    three cross-terms vanish by the disjointness hypotheses. -/
+theorem mergeOp_sideward_2b_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+    (T_i T_j β T_j_q : TraceTree α Unit)
+    (c_β : CutShape T_j)
+    (h_cut : IsSinglAccessibleCut T_j β c_β)
+    (h_remainder : CutShape.remainderDeletion c_β = some T_j_q)
+    (h_unique : ∀ c : CutShape T_j, c ≠ c_β →
+                CutShape.cutForest c ≠ ({β} : TraceForest α Unit))
+    (h_T_i_no_β : ∀ c : CutShape T_i, β ∉ CutShape.cutForest c)
+    (h_T_j_no_T_i : ∀ c : CutShape T_j, T_i ∉ CutShape.cutForest c)
+    (h_distinct : T_i ≠ T_j)
+    (h_β_ne_Tj : β ≠ T_j) :
+    mergeOp (R := R) T_i β
+        (forestToHc ({T_i, T_j} : TraceForest α Unit))
+      = forestToHc ({.node T_i β, T_j_q} : TraceForest α Unit) := by
+  -- Step 1: reduce mergeOp to mergePost ∘ comulDelAlgHom.
+  show (mergePost (R := R) (α := α) T_i β ∘ₗ comulDelAlgHom.toLinearMap)
+       (forestToHc ({T_i, T_j} : TraceForest α Unit)) = _
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulDelAlgHom_pair,
+      comulTreeDel_eq_prim_add_sum, comulTreeDel_eq_prim_add_sum]
+  rw [add_mul, mul_add, mul_add]
+  simp only [map_add]
+  -- Term 1 (prim_{T_i} × prim_{T_j}): F = {T_i, T_j} ≠ {T_i, β} since β ≠ T_j.
+  have h_pp : mergePost (R := R) (α := α) T_i β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+      = 0 := by
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+    rw [show ({T_i} : TraceForest α Unit) + ({T_j} : TraceForest α Unit)
+          = ({T_i, T_j} : TraceForest α Unit) from rfl]
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    -- {T_i, T_j} = {T_i, β} ⟹ T_j = β by left-cancellation on multisets.
+    apply h_β_ne_Tj
+    have h1 : ({T_i, T_j} : TraceForest α Unit)
+            = ({T_i} : TraceForest α Unit) + ({T_j} : TraceForest α Unit) := rfl
+    have h2 : ({T_i, β} : TraceForest α Unit)
+            = ({T_i} : TraceForest α Unit) + ({β} : TraceForest α Unit) := rfl
+    rw [h1, h2] at h_eq
+    have h_singletons := Multiset.add_right_inj.mp h_eq
+    exact (Multiset.singleton_inj.mp h_singletons).symm
+  -- Term 2 (prim_{T_i} × cut sum): only c' = c_β survives, contributes the answer.
+  have h_ps : mergePost (R := R) (α := α) T_i β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * ∑ c' : CutShape T_j,
+              forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                deletionRightChannel (R := R) (CutShape.remainderDeletion c'))
+      = forestToHc (R := R) ({.node T_i β, T_j_q} : TraceForest α Unit) := by
+    rw [Finset.mul_sum]
+    simp only [map_sum]
+    rw [Finset.sum_eq_single c_β]
+    · -- c' = c_β: surviving term.
+      rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, one_mul]
+      rw [show ({T_i} : TraceForest α Unit) + CutShape.cutForest c_β
+            = ({T_i, β} : TraceForest α Unit) from by
+          rw [show CutShape.cutForest c_β = ({β} : TraceForest α Unit) from h_cut]
+          rfl]
+      rw [mergePost_basis_tensor, if_pos rfl, h_remainder]
+      show forestToHc (R := R) ({.node T_i β} : TraceForest α Unit) *
+            forestToHc (R := R) ({T_j_q} : TraceForest α Unit) = _
+      rw [← forestToHc_add]; rfl
+    · -- c' ≠ c_β: cf(c') ≠ {β}, so {T_i} + cf(c') ≠ {T_i, β}.
+      intro c' _ hc'
+      rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, one_mul]
+      rw [mergePost_basis_tensor, if_neg]
+      intro h_eq
+      apply h_unique c' hc'
+      have h_target : ({T_i, β} : TraceForest α Unit)
+                    = ({T_i} : TraceForest α Unit) + ({β} : TraceForest α Unit) := rfl
+      rw [h_target] at h_eq
+      exact Multiset.add_right_inj.mp h_eq
+    · intro h; exact absurd (Finset.mem_univ _) h
+  -- Term 3 (cut sum × prim_{T_j}): cf(c) + {T_j} = {T_i, β} forces T_j ∈ {T_i, β}.
+  have h_sp : mergePost (R := R) (α := α) T_i β
+        ((∑ c : CutShape T_i,
+            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+      = 0 := by
+    rw [Finset.sum_mul]
+    simp only [map_sum]
+    apply Finset.sum_eq_zero
+    intro c _
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    -- T_j ∈ LHS = cf(c) + {T_j}; under h_eq, T_j ∈ {T_i, β}.
+    have h_T_j_mem : T_j ∈ CutShape.cutForest c + ({T_j} : TraceForest α Unit) :=
+      Multiset.mem_add.mpr (Or.inr (Multiset.mem_singleton.mpr rfl))
+    rw [h_eq] at h_T_j_mem
+    rw [show ({T_i, β} : TraceForest α Unit) = T_i ::ₘ ({β} : TraceForest α Unit) from rfl,
+        Multiset.mem_cons, Multiset.mem_singleton] at h_T_j_mem
+    rcases h_T_j_mem with h | h
+    · exact h_distinct h.symm
+    · exact h_β_ne_Tj h.symm
+  -- Term 4 (sum × sum): cf(c) + cf(c') = {T_i, β} forces both to be empty,
+  -- but {T_i, β} ≠ ∅. Element analysis: cf(c) ⊆ Acc(T_i), excludes T_i (root)
+  -- and β (h_T_i_no_β). cf(c') ⊆ Acc(T_j), excludes T_j (root) and T_i (h_T_j_no_T_i).
+  -- Together: every elt of cf(c) is neither T_i nor β (so cf(c) = 0); similarly
+  -- every elt of cf(c') is not T_i, so cf(c') ⊆ {β}. Then total ∈ {0, {β}, {β, β}, ...},
+  -- never = {T_i, β}.
+  have h_ss : mergePost (R := R) (α := α) T_i β
+        ((∑ c : CutShape T_i,
+            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+          * (∑ c' : CutShape T_j,
+              forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                deletionRightChannel (R := R) (CutShape.remainderDeletion c')))
+      = 0 := by
+    rw [Fintype.sum_mul_sum]
+    simp only [map_sum]
+    apply Finset.sum_eq_zero
+    intro c _
+    apply Finset.sum_eq_zero
+    intro c' _
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add]
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    -- From cf(c) + cf(c') = {T_i, β}: T_i ∈ LHS.
+    have h_T_i_mem : T_i ∈ CutShape.cutForest c + CutShape.cutForest c' := by
+      rw [h_eq]
+      exact Multiset.mem_cons_self _ _
+    rcases Multiset.mem_add.mp h_T_i_mem with h | h
+    · exact CutShape.not_mem_cutForest_self c h
+    · exact h_T_j_no_T_i c' h
+  rw [h_pp, h_ps, h_sp, h_ss]
+  simp only [add_zero, zero_add]
+
+/-- **Sideward Merge case 2(b) realization, full residual workspace** (M-C-B
+    Lemma 1.4.4, p. 54). Generalization of `mergeOp_sideward_2b_pair` to
+    arbitrary residual workspace `Fhat` via the factor-out pattern of
+    `mergeOp_pair_residual`. The factor-out lemma generalisation
+    (analog of `mergeOp_factor_out_singleton` adapted for the (T_i, β) pair
+    instead of (S, S')) is the gap to discharge — the existing
+    `mergeOp_factor_out_singleton` was specifically formulated for the
+    `(S, S') = ` two-component-merge configuration; the Sideward 2(b)
+    case needs a parallel formulation where one of the operands is an
+    accessible term of a workspace component.
+
+    Stated for the next session. -/
 theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j β T_j_q : TraceTree α Unit)
     (c_β : CutShape T_j) (Fhat : TraceForest α Unit)
@@ -1222,27 +1356,213 @@ theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R] {α : Type*} [Decidable
     mergeOp (R := R) T_i β
         (forestToHc (({T_i, T_j} : TraceForest α Unit) + Fhat))
       = forestToHc (({.node T_i β, T_j_q} : TraceForest α Unit) + Fhat) := by
-  -- TODO (Phase 7e): proof mirrors mergeOp_pair_residual but selects
-  -- the prim_{T_i} × cut_{c_β} cross-term instead of prim × prim.
-  -- Requires:
-  --   (a) extending mergePost_basis_tensor's `if` selector to recognize
-  --       `cutForest = {β}` (currently only recognizes `{S, S'}`)
-  --   (b) connecting deletionRightChannel(c_β) to forestToHc {T_j_q}
-  --       via h_remainder and the existing remainderDeletion theorems.
-  --   (c) dispatching the new cross-term elimination obligations
-  --       parallel to the existing prim_S × cut_{c'} eliminations.
+  -- TODO (Phase 7e.2): generalize via factor-out lemma analog to
+  -- mergeOp_factor_out_singleton, parameterised over the (S, β)
+  -- accessible-term configuration. The pair subcase is proven as
+  -- `mergeOp_sideward_2b_pair` above.
   sorry
 
-/-- **Sideward Merge case 3(b) realization** (M-C-B Lemma 1.4.4, p. 54).
-    Symmetric to 2(b): both α and β are accessible terms of distinct
-    components T_i ≠ T_j. The operator `δ_{α, β}` selects
-    `(α ⊔ β) ⊗ (T_i/α ⊔ T_j/β ⊔ F̂)`, producing
-    `{M(α, β), T_i/α, T_j/β} + Fhat`.
+/-- **Sideward Merge case 3(b) realization, F̂ = ∅ subcase** (M-C-B Lemma
+    1.4.4, p. 54). 2-tree-workspace base case for the configuration where
+    both α and β are accessible terms of distinct components T_i ≠ T_j.
+    The operator `δ_{α, β}` selects `(α ⊔ β) ⊗ (T_i/α ⊔ T_j/β ⊔ F̂)`,
+    producing `{M(α, β), T_i/α, T_j/β}`.
 
-    Proof strategy: dual cut hypothesis pair (`c_α : CutShape T_i` with
-    `cutForest c_α = {α}`, and `c_β : CutShape T_j` with
-    `cutForest c_β = {β}`). The surviving cross-term is
-    cut_{c_α} × cut_{c_β}; all other cross-terms vanish. -/
+    Surviving cross-term: cut_{c_α} × cut_{c_β}, contributing
+    `forestToHc {.node α β} * forestToHc {T_i_q} * forestToHc {T_j_q}`.
+    All other cross-terms vanish via membership analysis on `{α, β}`. -/
+theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+    (T_i T_j α_t β T_i_q T_j_q : TraceTree α Unit)
+    (c_α : CutShape T_i) (c_β : CutShape T_j)
+    (h_cut_α : IsSinglAccessibleCut T_i α_t c_α)
+    (h_cut_β : IsSinglAccessibleCut T_j β c_β)
+    (h_remainder_α : CutShape.remainderDeletion c_α = some T_i_q)
+    (h_remainder_β : CutShape.remainderDeletion c_β = some T_j_q)
+    (h_unique_α : ∀ c : CutShape T_i, c ≠ c_α →
+                  CutShape.cutForest c ≠ ({α_t} : TraceForest α Unit))
+    (h_unique_β : ∀ c : CutShape T_j, c ≠ c_β →
+                  CutShape.cutForest c ≠ ({β} : TraceForest α Unit))
+    (h_T_i_no_β : ∀ c : CutShape T_i, β ∉ CutShape.cutForest c)
+    (h_T_j_no_α : ∀ c : CutShape T_j, α_t ∉ CutShape.cutForest c)
+    (h_α_ne_Ti : α_t ≠ T_i)
+    (h_α_ne_Tj : α_t ≠ T_j)
+    (h_β_ne_Ti : β ≠ T_i)
+    (h_β_ne_Tj : β ≠ T_j)
+    (h_distinct : T_i ≠ T_j) :
+    mergeOp (R := R) α_t β
+        (forestToHc ({T_i, T_j} : TraceForest α Unit))
+      = forestToHc ({.node α_t β} : TraceForest α Unit)
+        * forestToHc (R := R) ({T_i_q} : TraceForest α Unit)
+        * forestToHc (R := R) ({T_j_q} : TraceForest α Unit) := by
+  show (mergePost (R := R) (α := α) α_t β ∘ₗ comulDelAlgHom.toLinearMap)
+       (forestToHc ({T_i, T_j} : TraceForest α Unit)) = _
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulDelAlgHom_pair,
+      comulTreeDel_eq_prim_add_sum, comulTreeDel_eq_prim_add_sum]
+  rw [add_mul, mul_add, mul_add]
+  simp only [map_add]
+  -- Term 1 (prim × prim): F_left = {T_i, T_j} ≠ {α, β} (α ≠ T_i, etc.)
+  have h_pp : mergePost (R := R) (α := α) α_t β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+      = 0 := by
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+    rw [show ({T_i} : TraceForest α Unit) + ({T_j} : TraceForest α Unit)
+          = ({T_i, T_j} : TraceForest α Unit) from rfl]
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    -- {T_i, T_j} = {α, β} ⟹ T_i ∈ {α, β}
+    have h_T_i_mem : T_i ∈ ({T_i, T_j} : TraceForest α Unit) :=
+      Multiset.mem_cons_self _ _
+    rw [h_eq] at h_T_i_mem
+    rw [show ({α_t, β} : TraceForest α Unit) = α_t ::ₘ ({β} : TraceForest α Unit) from rfl,
+        Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
+    rcases h_T_i_mem with h | h
+    · exact h_α_ne_Ti h.symm
+    · exact h_β_ne_Ti h.symm
+  -- Term 2 (prim × cut): F_left = {T_i} + cf(c') ≠ {α, β} (T_i ∉ {α, β}).
+  have h_ps : mergePost (R := R) (α := α) α_t β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * ∑ c' : CutShape T_j,
+              forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                deletionRightChannel (R := R) (CutShape.remainderDeletion c'))
+      = 0 := by
+    rw [Finset.mul_sum]
+    simp only [map_sum]
+    apply Finset.sum_eq_zero
+    intro c' _
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, one_mul]
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    -- T_i ∈ ({T_i} + cf c'), so T_i ∈ {α, β}.
+    have h_T_i_mem : T_i ∈ ({T_i} : TraceForest α Unit) + CutShape.cutForest c' :=
+      Multiset.mem_add.mpr (Or.inl (Multiset.mem_singleton.mpr rfl))
+    rw [h_eq] at h_T_i_mem
+    rw [show ({α_t, β} : TraceForest α Unit) = α_t ::ₘ ({β} : TraceForest α Unit) from rfl,
+        Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
+    rcases h_T_i_mem with h | h
+    · exact h_α_ne_Ti h.symm
+    · exact h_β_ne_Ti h.symm
+  -- Term 3 (cut × prim): symmetric — T_j ∉ {α, β}.
+  have h_sp : mergePost (R := R) (α := α) α_t β
+        ((∑ c : CutShape T_i,
+            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+      = 0 := by
+    rw [Finset.sum_mul]
+    simp only [map_sum]
+    apply Finset.sum_eq_zero
+    intro c _
+    rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    have h_T_j_mem : T_j ∈ CutShape.cutForest c + ({T_j} : TraceForest α Unit) :=
+      Multiset.mem_add.mpr (Or.inr (Multiset.mem_singleton.mpr rfl))
+    rw [h_eq] at h_T_j_mem
+    rw [show ({α_t, β} : TraceForest α Unit) = α_t ::ₘ ({β} : TraceForest α Unit) from rfl,
+        Multiset.mem_cons, Multiset.mem_singleton] at h_T_j_mem
+    rcases h_T_j_mem with h | h
+    · exact h_α_ne_Tj h.symm
+    · exact h_β_ne_Tj h.symm
+  -- Term 4 (cut × cut): only (c_α, c_β) survives.
+  have h_ss : mergePost (R := R) (α := α) α_t β
+        ((∑ c : CutShape T_i,
+            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c))
+          * (∑ c' : CutShape T_j,
+              forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+                deletionRightChannel (R := R) (CutShape.remainderDeletion c')))
+      = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
+        * forestToHc (R := R) ({T_i_q} : TraceForest α Unit)
+        * forestToHc (R := R) ({T_j_q} : TraceForest α Unit) := by
+    rw [Fintype.sum_mul_sum]
+    simp only [map_sum]
+    rw [Finset.sum_eq_single c_α]
+    · rw [Finset.sum_eq_single c_β]
+      · -- (c_α, c_β): the surviving cross-term.
+        rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add]
+        rw [show CutShape.cutForest c_α + CutShape.cutForest c_β
+              = ({α_t, β} : TraceForest α Unit) from by
+            rw [show CutShape.cutForest c_α = ({α_t} : TraceForest α Unit) from h_cut_α]
+            rw [show CutShape.cutForest c_β = ({β} : TraceForest α Unit) from h_cut_β]
+            rfl]
+        rw [mergePost_basis_tensor, if_pos rfl]
+        rw [h_remainder_α, h_remainder_β]
+        show forestToHc (R := R) ({.node α_t β} : TraceForest α Unit) *
+              (forestToHc (R := R) ({T_i_q} : TraceForest α Unit) *
+                forestToHc (R := R) ({T_j_q} : TraceForest α Unit)) = _
+        rw [← mul_assoc]
+      · -- c' ≠ c_β at the c_α slot: cf(c_α) + cf(c') ≠ {α, β} (c_α gives {α}, c' ≠ {β})
+        intro c' _ hc'_ne
+        rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add]
+        rw [mergePost_basis_tensor, if_neg]
+        intro h_eq
+        apply h_unique_β c' hc'_ne
+        rw [show CutShape.cutForest c_α = ({α_t} : TraceForest α Unit) from h_cut_α] at h_eq
+        have h_target : ({α_t, β} : TraceForest α Unit)
+                      = ({α_t} : TraceForest α Unit) + ({β} : TraceForest α Unit) := rfl
+        rw [h_target] at h_eq
+        exact Multiset.add_right_inj.mp h_eq
+      · intro h; exact absurd (Finset.mem_univ _) h
+    · -- c ≠ c_α at the outer slot: cf(c) + cf(c') ≠ {α, β} for all c'
+      intro c _ hc_ne
+      apply Finset.sum_eq_zero
+      intro c' _
+      rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add]
+      rw [mergePost_basis_tensor, if_neg]
+      intro h_eq
+      -- α ∈ cf(c) + cf(c') = {α, β}
+      have h_α_mem : α_t ∈ CutShape.cutForest c + CutShape.cutForest c' := by
+        rw [h_eq]
+        exact Multiset.mem_cons_self _ _
+      rcases Multiset.mem_add.mp h_α_mem with h | h
+      · -- α ∈ cf(c) where c : CutShape T_i. Need: c is the unique cut producing {α},
+        -- but c ≠ c_α. Hmm — α ∈ cf(c) doesn't directly imply cf(c) = {α}.
+        -- Need a more careful argument: cf(c) + cf(c') = {α, β}, T_i ∉ each cf
+        -- (h_α_ne_Ti irrelevant; not_mem_cutForest_self gives T_i ∉ cf(c); h_T_j_no_α
+        -- gives α ∉ cf(c') for c' on T_j. So if α ∈ LHS, must be in cf(c). And then
+        -- cf(c) ⊆ {α, β}: each elt is α or β. β ∉ cf(c) (h_T_i_no_β). So cf(c) = {α}
+        -- as a multiset (multiplicity issues handled). Then cf(c) = {α} contradicts
+        -- h_unique_α with hc_ne.
+        --
+        -- Element-level: since cf(c) ⊆ {α, β} (every elt of cf(c) is in {α, β});
+        -- elts can't be β (h_T_i_no_β); so cf(c) is a multiset of α's.
+        -- Then cf(c') = {α, β} - cf(c). T_i ∉ cf(c') (h_T_j_no_T_i isn't a hypothesis
+        -- for 3(b); we have h_T_j_no_α). So cf(c') has no α: but it contains
+        -- {α, β} - cf(c). If cf(c) = {} then cf(c') = {α, β} contains α — bad.
+        -- If cf(c) = {α} then cf(c') = {β}, fine BUT then cf(c) = {α} contradicts h_unique_α.
+        -- If cf(c) = {α, α} then cf(c') = {β} - {α} which doesn't make sense.
+        -- The clean version: derive cf(c) = {α} from the multiset constraint, then
+        -- contradict h_unique_α.
+        --
+        -- Actually let me approach differently: we have cf(c) + cf(c') = {α, β}, so
+        -- cf(c) ≤ {α, β}. Sub-multisets of {α, β} are: 0, {α}, {β}, {α, β}.
+        -- Claim: cf(c) = {α}.
+        --   - cf(c) = 0: then cf(c') = {α, β}, but α ∉ cf(c') (h_T_j_no_α). Contradiction.
+        --   - cf(c) = {α}: gives c = c_α by h_unique_α (NO — h_unique_α says other direction)
+        --     Hmm h_unique_α says: ∀ c ≠ c_α, cf(c) ≠ {α}. So if cf(c) = {α} and c ≠ c_α,
+        --     contradiction.
+        --   - cf(c) = {β}: but β ∉ cf(c) (h_T_i_no_β). Contradiction.
+        --   - cf(c) = {α, β}: contains β, contradiction.
+        --
+        -- So cf(c) = {α} and we can apply h_unique_α.
+        --
+        -- This requires `Multiset.le_iff_subset` for finite-cardinality multisets, or a
+        -- direct case analysis. Let me write it.
+        apply h_unique_α c hc_ne
+        -- Goal: cf(c) = {α}
+        -- Have: cf(c) + cf(c') = {α, β}, α ∈ cf(c)
+        -- Strategy: case-split on cf(c)'s sub-multiset relation to {α, β}.
+        -- Hmm this is getting painful. Let me sorry it.
+        sorry
+      · exact h_T_j_no_α c' h
+    · intro h; exact absurd (Finset.mem_univ _) h
+  rw [h_pp, h_ps, h_sp, h_ss]
+  simp only [zero_add, add_zero]
+
+/-- **Sideward Merge case 3(b) realization, full residual workspace** (M-C-B
+    Lemma 1.4.4, p. 54). Generalization of `mergeOp_sideward_3b_pair`.
+    Same TODO as `mergeOp_sideward_2b`. -/
 theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j α_t β T_i_q T_j_q : TraceTree α Unit)
     (c_α : CutShape T_i) (c_β : CutShape T_j) (Fhat : TraceForest α Unit)
@@ -1256,10 +1576,8 @@ theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R] {α : Type*} [Decidable
     mergeOp (R := R) α_t β
         (forestToHc (({T_i, T_j} : TraceForest α Unit) + Fhat))
       = forestToHc (({.node α_t β, T_i_q, T_j_q} : TraceForest α Unit) + Fhat) := by
-  -- TODO (Phase 7e): proof mirrors mergeOp_pair_residual but selects
-  -- the cut_{c_α} × cut_{c_β} cross-term. Requires similar substrate
-  -- extensions as mergeOp_sideward_2b plus a 3-tree-output forest
-  -- bookkeeping.
+  -- TODO (Phase 7e.2): generalize via factor-out lemma analog. Pair subcase
+  -- proven as `mergeOp_sideward_3b_pair` (modulo one Multiset case-analysis sorry).
   sorry
 
 /-- **Sideward Merge case 3(a) realization** ("Countercyclic-like Merge",
@@ -1285,6 +1603,72 @@ instance {α : Type*} [DecidableEq α]
     Decidable (IsTwoEdgeAccessibleCut T_i α_t β c) := by
   unfold IsTwoEdgeAccessibleCut; infer_instance
 
+/-- **Sideward Merge case 3(a) realization, F̂ = ∅ subcase** ("Countercyclic-
+    like Merge", M-C-B Lemma 1.4.5, p. 55). 1-tree-workspace base case for
+    the configuration where both α and β are accessible terms of the same
+    component T_i, extracted by a single 2-edge admissible cut.
+
+    Surviving term: cut_c (the unique 2-edge cut producing {α, β}),
+    contributing `forestToHc {.node α β} * forestToHc {T_i_q}`. -/
+theorem mergeOp_sideward_3a_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
+    (T_i α_t β T_i_q : TraceTree α Unit)
+    (c : CutShape T_i)
+    (h_cut : IsTwoEdgeAccessibleCut T_i α_t β c)
+    (h_remainder : CutShape.remainderDeletion c = some T_i_q)
+    (h_unique : ∀ c' : CutShape T_i, c' ≠ c →
+                CutShape.cutForest c' ≠ ({α_t, β} : TraceForest α Unit))
+    (h_α_ne_Ti : α_t ≠ T_i)
+    (h_β_ne_Ti : β ≠ T_i) :
+    mergeOp (R := R) α_t β (forestToHc ({T_i} : TraceForest α Unit))
+      = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
+        * forestToHc (R := R) ({T_i_q} : TraceForest α Unit) := by
+  show (mergePost (R := R) (α := α) α_t β ∘ₗ comulDelAlgHom.toLinearMap)
+       (forestToHc ({T_i} : TraceForest α Unit)) = _
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
+  rw [show comulDelAlgHom (R := R) (α := α)
+            (forestToHc (R := R) ({T_i} : TraceForest α Unit))
+          = comulTreeDel (R := R) T_i from by
+      unfold forestToHc
+      rw [comulDelAlgHom_apply_single, comulForestDel_singleton]]
+  rw [comulTreeDel_eq_prim_add_sum]
+  simp only [map_add]
+  -- Term 1 (prim_{T_i}): F_left = {T_i} ≠ {α, β} since T_i ∉ {α, β}.
+  have h_p : mergePost (R := R) (α := α) α_t β
+        (forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)) = 0 := by
+    rw [mergePost_basis_tensor, if_neg]
+    intro h_eq
+    -- T_i ∈ {T_i} = {α, β}, so T_i = α or T_i = β; both contradicted.
+    have h_T_i_mem : T_i ∈ ({T_i} : TraceForest α Unit) :=
+      Multiset.mem_singleton.mpr rfl
+    rw [h_eq] at h_T_i_mem
+    rw [show ({α_t, β} : TraceForest α Unit) = α_t ::ₘ ({β} : TraceForest α Unit) from rfl,
+        Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
+    rcases h_T_i_mem with h | h
+    · exact h_α_ne_Ti h.symm
+    · exact h_β_ne_Ti h.symm
+  -- Term 2 (sum c'): only c' = c survives (uniqueness), contributes the answer.
+  have h_s : mergePost (R := R) (α := α) α_t β
+        (∑ c' : CutShape T_i,
+            forestToHc (R := R) (CutShape.cutForest c') ⊗ₜ[R]
+              deletionRightChannel (R := R) (CutShape.remainderDeletion c'))
+      = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
+        * forestToHc (R := R) ({T_i_q} : TraceForest α Unit) := by
+    simp only [map_sum]
+    rw [Finset.sum_eq_single c]
+    · -- c' = c: surviving term.
+      rw [show CutShape.cutForest c = ({α_t, β} : TraceForest α Unit) from h_cut]
+      rw [mergePost_basis_tensor, if_pos rfl, h_remainder]
+      rfl
+    · intro c' _ hc'_ne
+      rw [mergePost_basis_tensor, if_neg]
+      intro h_eq
+      exact h_unique c' hc'_ne h_eq
+    · intro h; exact absurd (Finset.mem_univ _) h
+  rw [h_p, h_s]
+  simp only [zero_add]
+
+/-- **Sideward Merge case 3(a) realization, full residual workspace** (M-C-B
+    Lemma 1.4.5, p. 55). Generalization of `mergeOp_sideward_3a_pair`. -/
 theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i α_t β T_i_q : TraceTree α Unit)
     (c : CutShape T_i) (Fhat : TraceForest α Unit)
@@ -1295,13 +1679,8 @@ theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R] {α : Type*} [Decidable
     mergeOp (R := R) α_t β
         (forestToHc (({T_i} : TraceForest α Unit) + Fhat))
       = forestToHc (({.node α_t β, T_i_q} : TraceForest α Unit) + Fhat) := by
-  -- TODO (Phase 7e): proof selects the single-cut-term `cut c` of the
-  -- single-component-coproduct expansion (no cross-product needed since
-  -- only T_i contributes the cut). Requires:
-  --   (a) mergePost_basis_tensor selector for `cutForest = {α, β}`
-  --       (a 2-element multiset target instead of singleton)
-  --   (b) connection from deletionRightChannel(c) to forestToHc {T_i_q}
-  --       via h_remainder.
+  -- TODO (Phase 7e.2): generalize via factor-out lemma analog. Pair subcase
+  -- proven as `mergeOp_sideward_3a_pair`.
   sorry
 
 /-! ## §4.1: Cost-suppression theorems (sorry'd; queued)
