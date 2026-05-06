@@ -1,6 +1,7 @@
 import Linglib.Core.Combinatorics.RootedTree.Decorated
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Finsupp.Multiset
+import Mathlib.Logic.Equiv.Defs
 
 set_option autoImplicit false
 
@@ -487,24 +488,35 @@ theorem numEdges_insertAt {T : TraceTree α β} (e : Edge T)
   have hT₂ := T₂.size_pos
   simp only [numEdges]; omega
 
-/-! ## §9: Edge classification of `insertAt e T₂` (Phase 3b §9.1)
+/-! ## §9: Edge classification of `insertAt e T₂` (Phase 3b)
 
-Every edge `f ∈ Edge (insertAt e T₂)` falls into exactly one of three
-classes (MCB Figure 1.6, book p. 79):
+Every edge `f ∈ Edge (insertAt e T₂)` falls into exactly one of 5
+classes (cf. MCB Figure 1.6 — page citation deliberately omitted
+pending verification against the book):
 
-  (a) **Lifted from T₂**: f corresponds to an edge of T₂, sitting as a
+  (a) **Preserved from T**: f corresponds to an edge of T other than e
+      itself. Constructor: `Edge.preserveOf` (option-free, takes
+      `h : f ≠ e`); `Edge.preserveAux` is the option-valued sibling.
+  (b) **Lifted from T₂**: f corresponds to an edge of T₂, sitting as a
       subtree at the new internal vertex `v`. Constructor: `Edge.lift`.
-  (b) **Preserved from T**: f corresponds to an edge of T other than e
-      itself. (The cut edge e is consumed by the split.) Constructor:
-      `Edge.preserve` (when supported by `f ≠ e`).
-  (c) **One of three new edges** created by the insertion:
-      `e₁` (root → v, the upper half of split e),
-      `e₂` (v → original child, the lower half of split e),
-      `e'` (v → root of T₂, the new edge to inserted subtree).
+  (c) **`e₁`** (root → v, the upper half of split e). Constructor:
+      `Edge.newE1`.
+  (d) **`e₂`** (v → original child, the lower half of split e).
+      Constructor: `Edge.newE2`.
+  (e) **`e'`** (v → root of T₂, the new edge to inserted subtree).
+      Constructor: `Edge.newEprime`.
 
-This section defines the three "lifted" / "new" constructors and proves
-their structural laws. The "preserved" case is more delicate (needs
-path bookkeeping) and is treated separately. -/
+The classification is exhibited as a bijection
+`Edge (insertAt e T₂) ≃ Edge.Classify e T₂` (`Edge.classifyEquiv`,
+§9.1 headline). The 3 pairwise distinctness lemmas
+(`newE1_ne_newE2`, `newE1_ne_newEprime`, `newE2_ne_newEprime`) and the
+multiset decomposition (§9.2 `edges_insertAt_eq_classification`)
+follow as corollaries.
+
+Layout: substrate constructors (`lift`, `newE1`, `newE2`, `newEprime`,
+`preserveAux`, `preserveOf`) → equivalence (`Classify`, `fromClassify`,
+`toClassify`, round-trip lemmas, `classifyEquiv`) → corollaries
+(distinctness, multiset decomposition). -/
 
 /-- **Lift an edge of T₂** into `Edge (insertAt e T₂)`. The lifted
     edge sits in the inserted subtree at vertex `v`. Recursive on the
@@ -547,29 +559,6 @@ def Edge.newEprime : ∀ {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α
   | _, .inL l r e,   T₂ => .inL (insertAt e T₂) r (Edge.newEprime e T₂)
   | _, .inR l r e,   T₂ => .inR l (insertAt e T₂) (Edge.newEprime e T₂)
 
-/-! ### Sanity: the 3 new edges are distinct -/
-
-/-- The 3 new edges differ pairwise: `e₁ ≠ e₂`, `e₁ ≠ e'`, `e₂ ≠ e'`.
-    Used in the Phase 3b pre-Lie proof to keep case analyses distinct.
-    Proved by structural induction on `e`. -/
-theorem newE1_ne_newE2 :
-    ∀ {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α β),
-      Edge.newE1 e T₂ ≠ Edge.newE2 e T₂
-  | _, .rootL l r,   _, h => by
-      simp only [Edge.newE1, Edge.newE2] at h
-      cases h
-  | _, .rootR l r,   _, h => by
-      simp only [Edge.newE1, Edge.newE2] at h
-      cases h
-  | _, .inL l r e,   T₂, h => by
-      simp only [Edge.newE1, Edge.newE2] at h
-      injection h with _ _ h₃
-      exact newE1_ne_newE2 e T₂ h₃
-  | _, .inR l r e,   T₂, h => by
-      simp only [Edge.newE1, Edge.newE2] at h
-      injection h with _ _ h₃
-      exact newE1_ne_newE2 e T₂ h₃
-
 /-! ### Edge.preserveAux: carry a non-cut edge through the insertion
 
 The hardest §9.1 piece: given `e f : Edge T`, we want to produce the
@@ -610,7 +599,436 @@ def Edge.preserveAux : ∀ {T : TraceTree α β} (e f : Edge T)
   | _, .inR l _ e',  .inR _ _ f',  T₂ =>
       (Edge.preserveAux e' f' T₂).map (.inR l (insertAt e' T₂))
 
-/-! ### §9.1 headline: edge classification of `insertAt e T₂`
+/-! ### Edge.preserveOf: option-free non-cut edge carry
+
+The Option-valued `preserveAux` becomes Option-free given a hypothesis
+`f ≠ e`: the only `none` cases are the diagonal pairs `(rootL,rootL)`,
+`(rootR,rootR)`, `(inL e', inL e')`, `(inR e', inR e')` — and on the
+diagonal the hypothesis itself rules them out (via `absurd rfl h` for
+the constructor diagonal, and a recursive disjointness lemma for the
+nested case).
+
+`preserveOf` is the constructor used by the `Equiv` below to produce
+preserved edges directly, without unwrapping `Option`. -/
+
+/-- Option-free `preserveAux`: produce the edge of `insertAt e T₂`
+    corresponding to `f`, assuming `f ≠ e`. Same 16-case pattern as
+    `preserveAux`; the diagonal cases use `absurd rfl h` to dispatch
+    the impossibility. -/
+def Edge.preserveOf : ∀ {T : TraceTree α β} (e f : Edge T) (_h : f ≠ e)
+      (T₂ : TraceTree α β), Edge (insertAt e T₂)
+  | _, .rootL _ _,   .rootL _ _,   h, _  => absurd rfl h
+  | _, .rootL l _,   .rootR _ r,   _, T₂ => .rootR (.node l T₂) r
+  | _, .rootL l _,   .inL _ r f',  _, T₂ => .inL (.node l T₂) r (.inL l T₂ f')
+  | _, .rootL l _,   .inR _ r f',  _, T₂ => .inR (.node l T₂) r f'
+  | _, .rootR l _,   .rootL _ r,   _, T₂ => .rootL l (.node r T₂)
+  | _, .rootR _ _,   .rootR _ _,   h, _  => absurd rfl h
+  | _, .rootR _ r,   .inL l _ f',  _, T₂ => .inL l (.node r T₂) f'
+  | _, .rootR _ r,   .inR l _ f',  _, T₂ => .inR l (.node r T₂) (.inL r T₂ f')
+  | _, .inL _ _ e',  .rootL _ r,   _, T₂ => .rootL (insertAt e' T₂) r
+  | _, .inL _ _ e',  .rootR _ r,   _, T₂ => .rootR (insertAt e' T₂) r
+  | _, .inL _ r e',  .inL _ _ f',  h, T₂ =>
+      .inL (insertAt e' T₂) r
+        (Edge.preserveOf e' f' (fun heq => h (by rw [heq])) T₂)
+  | _, .inL _ _ e',  .inR _ r f',  _, T₂ => .inR (insertAt e' T₂) r f'
+  | _, .inR _ _ e',  .rootL l _,   _, T₂ => .rootL l (insertAt e' T₂)
+  | _, .inR _ _ e',  .rootR l _,   _, T₂ => .rootR l (insertAt e' T₂)
+  | _, .inR _ _ e',  .inL l _ f',  _, T₂ => .inL l (insertAt e' T₂) f'
+  | _, .inR l _ e',  .inR _ _ f',  h, T₂ =>
+      .inR l (insertAt e' T₂)
+        (Edge.preserveOf e' f' (fun heq => h (by rw [heq])) T₂)
+
+/-- `preserveAux` returns `none` exactly on the diagonal `(e, e)`. -/
+theorem Edge.preserveAux_self : ∀ {T : TraceTree α β} (e : Edge T)
+      (T₂ : TraceTree α β),
+    Edge.preserveAux e e T₂ = none
+  | _, .rootL _ _, _ => rfl
+  | _, .rootR _ _, _ => rfl
+  | _, .inL _ _ e', T₂ => by
+    show (Edge.preserveAux e' e' T₂).map _ = none
+    rw [Edge.preserveAux_self e' T₂]; rfl
+  | _, .inR _ _ e', T₂ => by
+    show (Edge.preserveAux e' e' T₂).map _ = none
+    rw [Edge.preserveAux_self e' T₂]; rfl
+
+/-- Off the diagonal `(e, e)`, `preserveAux e f T₂` is `some (preserveOf e f h T₂)`. -/
+theorem Edge.preserveAux_of_ne : ∀ {T : TraceTree α β} (e f : Edge T) (h : f ≠ e)
+      (T₂ : TraceTree α β),
+    Edge.preserveAux e f T₂ = some (Edge.preserveOf e f h T₂)
+  | _, .rootL _ _, .rootL _ _, h, _ => absurd rfl h
+  | _, .rootL _ _, .rootR _ _, _, _ => rfl
+  | _, .rootL _ _, .inL _ _ _, _, _ => rfl
+  | _, .rootL _ _, .inR _ _ _, _, _ => rfl
+  | _, .rootR _ _, .rootL _ _, _, _ => rfl
+  | _, .rootR _ _, .rootR _ _, h, _ => absurd rfl h
+  | _, .rootR _ _, .inL _ _ _, _, _ => rfl
+  | _, .rootR _ _, .inR _ _ _, _, _ => rfl
+  | _, .inL _ _ _, .rootL _ _, _, _ => rfl
+  | _, .inL _ _ _, .rootR _ _, _, _ => rfl
+  | _, .inL _ _ e', .inL _ _ f', h, T₂ => by
+    show (Edge.preserveAux e' f' T₂).map _
+        = some (Edge.inL _ _ (Edge.preserveOf e' f' _ T₂))
+    rw [Edge.preserveAux_of_ne e' f' (fun heq => h (by rw [heq])) T₂]; rfl
+  | _, .inL _ _ _, .inR _ _ _, _, _ => rfl
+  | _, .inR _ _ _, .rootL _ _, _, _ => rfl
+  | _, .inR _ _ _, .rootR _ _, _, _ => rfl
+  | _, .inR _ _ _, .inL _ _ _, _, _ => rfl
+  | _, .inR _ _ e', .inR _ _ f', h, T₂ => by
+    show (Edge.preserveAux e' f' T₂).map _
+        = some (Edge.inR _ _ (Edge.preserveOf e' f' _ T₂))
+    rw [Edge.preserveAux_of_ne e' f' (fun heq => h (by rw [heq])) T₂]; rfl
+
+/-! ### §9.1 headline: the classification equivalence
+
+The 5 classes from `preserveOf` / `lift` / `newE1` / `newE2` /
+`newEprime` together form a *bijection* with `Edge (insertAt e T₂)`:
+every edge of `insertAt e T₂` is *exactly one* of the 5 forms. The
+inductive `Edge.Classify e T₂` packages the disjoint union, with
+`Edge.classifyEquiv` exhibiting the bijection.
+
+This Equiv is the structural unit of §9.1: pairwise distinctness of the
+3 new edges, disjointness of preserved/lifted/new, and the multiset
+decomposition (`edges_insertAt_eq_classification`, §9.2 below) all
+follow from it as corollaries. -/
+
+/-- Disjoint union of the 5 edge classes for `insertAt e T₂`:
+    preserved edges of `T` (other than `e`), lifted edges of `T₂`, and
+    the 3 new split edges `e₁`, `e₂`, `e'`. The Equiv `classifyEquiv`
+    below exhibits the bijection with `Edge (insertAt e T₂)`. -/
+inductive Edge.Classify : ∀ {T : TraceTree α β}, Edge T → TraceTree α β →
+    Type max u v
+  | preserved {T : TraceTree α β} {e : Edge T} {T₂ : TraceTree α β}
+      (f : Edge T) (h : f ≠ e) : Edge.Classify e T₂
+  | lifted {T : TraceTree α β} {e : Edge T} {T₂ : TraceTree α β}
+      (g : Edge T₂) : Edge.Classify e T₂
+  | newE1 {T : TraceTree α β} {e : Edge T} {T₂ : TraceTree α β} :
+      Edge.Classify e T₂
+  | newE2 {T : TraceTree α β} {e : Edge T} {T₂ : TraceTree α β} :
+      Edge.Classify e T₂
+  | newEprime {T : TraceTree α β} {e : Edge T} {T₂ : TraceTree α β} :
+      Edge.Classify e T₂
+
+/-- Realize a classification as an actual edge of `insertAt e T₂`. -/
+def Edge.fromClassify : ∀ {T : TraceTree α β} {e : Edge T} {T₂ : TraceTree α β},
+    Edge.Classify e T₂ → Edge (insertAt e T₂)
+  | _, _, _, .preserved f h => Edge.preserveOf _ f h _
+  | _, e, T₂, .lifted g => Edge.lift e T₂ g
+  | _, e, T₂, .newE1 => Edge.newE1 e T₂
+  | _, e, T₂, .newE2 => Edge.newE2 e T₂
+  | _, e, T₂, .newEprime => Edge.newEprime e T₂
+
+/-- Classify an edge of `insertAt e T₂` into one of the 5 classes.
+    Defined by structural recursion on `e` (4 cases), with nested case
+    analysis on the input edge to identify which class it belongs to. -/
+def Edge.toClassify : ∀ {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α β),
+    Edge (insertAt e T₂) → Edge.Classify e T₂
+  | _, .rootL l r, _, .rootL _ _ => .newE1
+  | _, .rootL l r, _, .rootR _ _ =>
+      .preserved (.rootR l r) (by intro h; cases h)
+  | _, .rootL l r, _, .inL _ _ f' =>
+      match f' with
+      | .rootL _ _ => .newE2
+      | .rootR _ _ => .newEprime
+      | .inL _ _ f'' => .preserved (.inL l r f'') (by intro h; cases h)
+      | .inR _ _ f'' => .lifted f''
+  | _, .rootL l r, _, .inR _ _ f' =>
+      .preserved (.inR l r f') (by intro h; cases h)
+  | _, .rootR l r, _, .rootL _ _ =>
+      .preserved (.rootL l r) (by intro h; cases h)
+  | _, .rootR l r, _, .rootR _ _ => .newE1
+  | _, .rootR l r, _, .inL _ _ f' =>
+      .preserved (.inL l r f') (by intro h; cases h)
+  | _, .rootR l r, _, .inR _ _ f' =>
+      match f' with
+      | .rootL _ _ => .newE2
+      | .rootR _ _ => .newEprime
+      | .inL _ _ f'' => .preserved (.inR l r f'') (by intro h; cases h)
+      | .inR _ _ f'' => .lifted f''
+  | _, .inL l r _e', _, .rootL _ _ =>
+      .preserved (.rootL l r) (by intro h; cases h)
+  | _, .inL l r _e', _, .rootR _ _ =>
+      .preserved (.rootR l r) (by intro h; cases h)
+  | _, .inL l r e', T₂, .inL _ _ f' =>
+      match Edge.toClassify e' T₂ f' with
+      | .preserved g hg =>
+          .preserved (.inL l r g) (by intro h; cases h; exact hg rfl)
+      | .lifted g => .lifted g
+      | .newE1 => .newE1
+      | .newE2 => .newE2
+      | .newEprime => .newEprime
+  | _, .inL l r _e', _, .inR _ _ f' =>
+      .preserved (.inR l r f') (by intro h; cases h)
+  | _, .inR l r _e', _, .rootL _ _ =>
+      .preserved (.rootL l r) (by intro h; cases h)
+  | _, .inR l r _e', _, .rootR _ _ =>
+      .preserved (.rootR l r) (by intro h; cases h)
+  | _, .inR l r _e', _, .inL _ _ f' =>
+      .preserved (.inL l r f') (by intro h; cases h)
+  | _, .inR l r e', T₂, .inR _ _ f' =>
+      match Edge.toClassify e' T₂ f' with
+      | .preserved g hg =>
+          .preserved (.inR l r g) (by intro h; cases h; exact hg rfl)
+      | .lifted g => .lifted g
+      | .newE1 => .newE1
+      | .newE2 => .newE2
+      | .newEprime => .newEprime
+
+/-- `fromClassify ∘ toClassify = id` on `Edge (insertAt e T₂)`. -/
+theorem Edge.fromClassify_toClassify : ∀ {T : TraceTree α β} (e : Edge T)
+      (T₂ : TraceTree α β) (f : Edge (insertAt e T₂)),
+    Edge.fromClassify (Edge.toClassify e T₂ f) = f
+  | _, .rootL l r, _, .rootL _ _ => rfl
+  | _, .rootL l r, _, .rootR _ _ => rfl
+  | _, .rootL l r, _, .inL _ _ (.rootL _ _) => rfl
+  | _, .rootL l r, _, .inL _ _ (.rootR _ _) => rfl
+  | _, .rootL l r, _, .inL _ _ (.inL _ _ _) => rfl
+  | _, .rootL l r, _, .inL _ _ (.inR _ _ _) => rfl
+  | _, .rootL l r, _, .inR _ _ _ => rfl
+  | _, .rootR l r, _, .rootL _ _ => rfl
+  | _, .rootR l r, _, .rootR _ _ => rfl
+  | _, .rootR l r, _, .inL _ _ _ => rfl
+  | _, .rootR l r, _, .inR _ _ (.rootL _ _) => rfl
+  | _, .rootR l r, _, .inR _ _ (.rootR _ _) => rfl
+  | _, .rootR l r, _, .inR _ _ (.inL _ _ _) => rfl
+  | _, .rootR l r, _, .inR _ _ (.inR _ _ _) => rfl
+  | _, .inL l r _e', _, .rootL _ _ => rfl
+  | _, .inL l r _e', _, .rootR _ _ => rfl
+  | _, .inL l r e', T₂, .inL _ _ f' => by
+    have ih := Edge.fromClassify_toClassify e' T₂ f'
+    show Edge.fromClassify
+        (match Edge.toClassify e' T₂ f' with
+        | .preserved g hg => .preserved (.inL l r g) (by intro h; cases h; exact hg rfl)
+        | .lifted g => .lifted g
+        | .newE1 => .newE1
+        | .newE2 => .newE2
+        | .newEprime => .newEprime) = _
+    cases hC : Edge.toClassify e' T₂ f' with
+    | preserved g hg =>
+      simp only [hC] at ih
+      show Edge.inL (insertAt e' T₂) r (Edge.preserveOf e' g hg T₂) = _
+      rw [show Edge.preserveOf e' g hg T₂ = f' from ih]
+    | lifted g =>
+      simp only [hC] at ih
+      show Edge.inL (insertAt e' T₂) r (Edge.lift e' T₂ g) = _
+      rw [show Edge.lift e' T₂ g = f' from ih]
+    | newE1 =>
+      simp only [hC] at ih
+      show Edge.inL (insertAt e' T₂) r (Edge.newE1 e' T₂) = _
+      rw [show Edge.newE1 e' T₂ = f' from ih]
+    | newE2 =>
+      simp only [hC] at ih
+      show Edge.inL (insertAt e' T₂) r (Edge.newE2 e' T₂) = _
+      rw [show Edge.newE2 e' T₂ = f' from ih]
+    | newEprime =>
+      simp only [hC] at ih
+      show Edge.inL (insertAt e' T₂) r (Edge.newEprime e' T₂) = _
+      rw [show Edge.newEprime e' T₂ = f' from ih]
+  | _, .inL l r _e', _, .inR _ _ _ => rfl
+  | _, .inR l r _e', _, .rootL _ _ => rfl
+  | _, .inR l r _e', _, .rootR _ _ => rfl
+  | _, .inR l r _e', _, .inL _ _ _ => rfl
+  | _, .inR l r e', T₂, .inR _ _ f' => by
+    have ih := Edge.fromClassify_toClassify e' T₂ f'
+    show Edge.fromClassify
+        (match Edge.toClassify e' T₂ f' with
+        | .preserved g hg => .preserved (.inR l r g) (by intro h; cases h; exact hg rfl)
+        | .lifted g => .lifted g
+        | .newE1 => .newE1
+        | .newE2 => .newE2
+        | .newEprime => .newEprime) = _
+    cases hC : Edge.toClassify e' T₂ f' with
+    | preserved g hg =>
+      simp only [hC] at ih
+      show Edge.inR l (insertAt e' T₂) (Edge.preserveOf e' g hg T₂) = _
+      rw [show Edge.preserveOf e' g hg T₂ = f' from ih]
+    | lifted g =>
+      simp only [hC] at ih
+      show Edge.inR l (insertAt e' T₂) (Edge.lift e' T₂ g) = _
+      rw [show Edge.lift e' T₂ g = f' from ih]
+    | newE1 =>
+      simp only [hC] at ih
+      show Edge.inR l (insertAt e' T₂) (Edge.newE1 e' T₂) = _
+      rw [show Edge.newE1 e' T₂ = f' from ih]
+    | newE2 =>
+      simp only [hC] at ih
+      show Edge.inR l (insertAt e' T₂) (Edge.newE2 e' T₂) = _
+      rw [show Edge.newE2 e' T₂ = f' from ih]
+    | newEprime =>
+      simp only [hC] at ih
+      show Edge.inR l (insertAt e' T₂) (Edge.newEprime e' T₂) = _
+      rw [show Edge.newEprime e' T₂ = f' from ih]
+
+/-! ### Round-trip lemmas: how `toClassify` behaves on each constructor
+
+Each of the 5 `fromClassify`-image constructors round-trips back to its
+class label under `toClassify`. These compose to give
+`toClassify_fromClassify` (the right inverse of the Equiv). -/
+
+theorem Edge.toClassify_lift : ∀ {T : TraceTree α β} (e : Edge T)
+      (T₂ : TraceTree α β) (g : Edge T₂),
+    Edge.toClassify e T₂ (Edge.lift e T₂ g) = .lifted g
+  | _, .rootL _ _, _, _ => rfl
+  | _, .rootR _ _, _, _ => rfl
+  | _, .inL _ _ e', T₂, g => by
+    show (match Edge.toClassify e' T₂ (Edge.lift e' T₂ g) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.lifted g
+    rw [Edge.toClassify_lift e' T₂ g]
+  | _, .inR _ _ e', T₂, g => by
+    show (match Edge.toClassify e' T₂ (Edge.lift e' T₂ g) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.lifted g
+    rw [Edge.toClassify_lift e' T₂ g]
+
+theorem Edge.toClassify_newE1 : ∀ {T : TraceTree α β} (e : Edge T)
+      (T₂ : TraceTree α β),
+    Edge.toClassify e T₂ (Edge.newE1 e T₂) = .newE1
+  | _, .rootL _ _, _ => rfl
+  | _, .rootR _ _, _ => rfl
+  | _, .inL _ _ e', T₂ => by
+    show (match Edge.toClassify e' T₂ (Edge.newE1 e' T₂) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.newE1
+    rw [Edge.toClassify_newE1 e' T₂]
+  | _, .inR _ _ e', T₂ => by
+    show (match Edge.toClassify e' T₂ (Edge.newE1 e' T₂) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.newE1
+    rw [Edge.toClassify_newE1 e' T₂]
+
+theorem Edge.toClassify_newE2 : ∀ {T : TraceTree α β} (e : Edge T)
+      (T₂ : TraceTree α β),
+    Edge.toClassify e T₂ (Edge.newE2 e T₂) = .newE2
+  | _, .rootL _ _, _ => rfl
+  | _, .rootR _ _, _ => rfl
+  | _, .inL _ _ e', T₂ => by
+    show (match Edge.toClassify e' T₂ (Edge.newE2 e' T₂) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.newE2
+    rw [Edge.toClassify_newE2 e' T₂]
+  | _, .inR _ _ e', T₂ => by
+    show (match Edge.toClassify e' T₂ (Edge.newE2 e' T₂) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.newE2
+    rw [Edge.toClassify_newE2 e' T₂]
+
+theorem Edge.toClassify_newEprime : ∀ {T : TraceTree α β} (e : Edge T)
+      (T₂ : TraceTree α β),
+    Edge.toClassify e T₂ (Edge.newEprime e T₂) = .newEprime
+  | _, .rootL _ _, _ => rfl
+  | _, .rootR _ _, _ => rfl
+  | _, .inL _ _ e', T₂ => by
+    show (match Edge.toClassify e' T₂ (Edge.newEprime e' T₂) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.newEprime
+    rw [Edge.toClassify_newEprime e' T₂]
+  | _, .inR _ _ e', T₂ => by
+    show (match Edge.toClassify e' T₂ (Edge.newEprime e' T₂) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.newEprime
+    rw [Edge.toClassify_newEprime e' T₂]
+
+theorem Edge.toClassify_preserveOf : ∀ {T : TraceTree α β} (e f : Edge T)
+      (h : f ≠ e) (T₂ : TraceTree α β),
+    Edge.toClassify e T₂ (Edge.preserveOf e f h T₂) = .preserved f h
+  | _, .rootL _ _, .rootL _ _, h, _ => absurd rfl h
+  | _, .rootL _ _, .rootR _ _, _, _ => rfl
+  | _, .rootL _ _, .inL _ _ _, _, _ => rfl
+  | _, .rootL _ _, .inR _ _ _, _, _ => rfl
+  | _, .rootR _ _, .rootL _ _, _, _ => rfl
+  | _, .rootR _ _, .rootR _ _, h, _ => absurd rfl h
+  | _, .rootR _ _, .inL _ _ _, _, _ => rfl
+  | _, .rootR _ _, .inR _ _ _, _, _ => rfl
+  | _, .inL _ _ _, .rootL _ _, _, _ => rfl
+  | _, .inL _ _ _, .rootR _ _, _, _ => rfl
+  | _, .inL l r e', .inL _ _ f', h, T₂ => by
+    show (match Edge.toClassify e' T₂ (Edge.preserveOf e' f' _ T₂) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.preserved (Edge.inL l r f') h
+    rw [Edge.toClassify_preserveOf e' f' (fun heq => h (by rw [heq])) T₂]
+  | _, .inL _ _ _, .inR _ _ _, _, _ => rfl
+  | _, .inR _ _ _, .rootL _ _, _, _ => rfl
+  | _, .inR _ _ _, .rootR _ _, _, _ => rfl
+  | _, .inR _ _ _, .inL _ _ _, _, _ => rfl
+  | _, .inR l r e', .inR _ _ f', h, T₂ => by
+    show (match Edge.toClassify e' T₂ (Edge.preserveOf e' f' _ T₂) with
+          | Edge.Classify.preserved g hg => _ | Edge.Classify.lifted g => _
+          | Edge.Classify.newE1 => _ | Edge.Classify.newE2 => _
+          | Edge.Classify.newEprime => _)
+        = Edge.Classify.preserved (Edge.inR l r f') h
+    rw [Edge.toClassify_preserveOf e' f' (fun heq => h (by rw [heq])) T₂]
+
+/-- `toClassify ∘ fromClassify = id` on `Edge.Classify e T₂`. Composes
+    the 5 round-trip lemmas above. -/
+theorem Edge.toClassify_fromClassify {T : TraceTree α β} (e : Edge T)
+    (T₂ : TraceTree α β) (c : Edge.Classify e T₂) :
+    Edge.toClassify e T₂ (Edge.fromClassify c) = c := by
+  cases c with
+  | preserved f h => exact Edge.toClassify_preserveOf e f h T₂
+  | lifted g => exact Edge.toClassify_lift e T₂ g
+  | newE1 => exact Edge.toClassify_newE1 e T₂
+  | newE2 => exact Edge.toClassify_newE2 e T₂
+  | newEprime => exact Edge.toClassify_newEprime e T₂
+
+/-- **§9.1 headline equivalence**: edges of `insertAt e T₂` correspond
+    bijectively to classifications. From this the multiset decomposition
+    (§9.2) and the 3 pairwise distinctness corollaries follow. -/
+def Edge.classifyEquiv {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α β) :
+    Edge (insertAt e T₂) ≃ Edge.Classify e T₂ where
+  toFun := Edge.toClassify e T₂
+  invFun := Edge.fromClassify
+  left_inv f := Edge.fromClassify_toClassify e T₂ f
+  right_inv c := Edge.toClassify_fromClassify e T₂ c
+
+/-! ### Pairwise distinctness of the 3 new edges (Equiv corollaries)
+
+Now that the classification is bijective, the 3 new edges are
+*automatically* pairwise distinct: their `toClassify` images are
+syntactically distinct constructors of `Edge.Classify`. -/
+
+theorem Edge.newE1_ne_newE2 {T : TraceTree α β} (e : Edge T)
+    (T₂ : TraceTree α β) :
+    Edge.newE1 e T₂ ≠ Edge.newE2 e T₂ := by
+  intro h
+  have := congrArg (Edge.toClassify e T₂) h
+  rw [Edge.toClassify_newE1, Edge.toClassify_newE2] at this
+  cases this
+
+theorem Edge.newE1_ne_newEprime {T : TraceTree α β} (e : Edge T)
+    (T₂ : TraceTree α β) :
+    Edge.newE1 e T₂ ≠ Edge.newEprime e T₂ := by
+  intro h
+  have := congrArg (Edge.toClassify e T₂) h
+  rw [Edge.toClassify_newE1, Edge.toClassify_newEprime] at this
+  cases this
+
+theorem Edge.newE2_ne_newEprime {T : TraceTree α β} (e : Edge T)
+    (T₂ : TraceTree α β) :
+    Edge.newE2 e T₂ ≠ Edge.newEprime e T₂ := by
+  intro h
+  have := congrArg (Edge.toClassify e T₂) h
+  rw [Edge.toClassify_newE2, Edge.toClassify_newEprime] at this
+  cases this
+
+/-! ### §9.2 multiset decomposition (corollary, currently independent proof)
 
 The central decomposition: as a multiset, the edges of `insertAt e T₂`
 split into three disjoint classes:
@@ -626,12 +1044,16 @@ pairs). The `.rootL`/`.rootR` cases are direct (no IH); the `.inL`/`.inR`
 cases use the IH together with `Multiset.map_add` to push the
 decomposition through the recursive structure. -/
 
-/-- **§9.1 headline** (MCB Figure 1.6, book p. 79): edges of
+/-- **§9.2 multiset corollary** of `Edge.classifyEquiv`: edges of
     `insertAt e T₂` decompose, as a multiset, into preserved + lifted
     + the three new edges. The three new edges (`e₁`, `e₂`, `e'`) are
     the ones created by splitting `e`; the preserved edges are the
-    edges of `T` other than `e`; the lifted edges are the edges of
-    `T₂` carried in by the insertion. -/
+    edges of `T` other than `e` (transported via `preserveAux`); the
+    lifted edges are the edges of `T₂` carried in by the insertion.
+
+    Currently proved by direct structural induction; could be
+    re-derived from `classifyEquiv` once a `Classify.universe`
+    enumeration is in scope. -/
 theorem edges_insertAt_eq_classification {T : TraceTree α β}
     (e : Edge T) (T₂ : TraceTree α β) :
     (↑(edges (insertAt e T₂)) : Multiset (Edge (insertAt e T₂)))
