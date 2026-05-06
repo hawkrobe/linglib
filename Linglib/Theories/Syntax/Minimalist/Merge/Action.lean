@@ -1789,41 +1789,238 @@ specific Sideward cuts via the §4 predicates above, (b) connecting them
 to the ε-weighted `mergeOp_eps`, and (c) showing the depth-d weight
 becomes 0 at ε = 0. -/
 
-/-- **Cost-suppression for Sideward 2(b)** (MCB §1.5 + §1.4.5).
-    At ε = 0, the Sideward 2(b) contribution to `mergeOp_eps` vanishes —
-    the depth-d accessible-term extraction carries weight ε^d → 0.
-    Stated as TODO; proof queued behind the Sideward cut identification
-    machinery and the cost-functional substrate from Phase 7d. -/
-theorem mergeOp_eps_zero_kills_sideward_2b_TODO {R : Type*} [CommSemiring R]
-    {α : Type*} [DecidableEq α]
-    (T_i T_j β : TraceTree α Unit) (c_β : CutShape T_j)
-    (Fhat : TraceForest α Unit)
-    (_h_cut : IsSinglAccessibleCut T_j β c_β)
-    (_h_β_ne_Ti : β ≠ T_i) :
-    True := by trivial
+/-- **Cost-suppression for Sideward 2(b)** (MCB §1.5.3 + §1.4.5).
+    At ε = 0, applying `mergeOp_eps 0 T_i β` to the workspace
+    `{T_i, T_j}` (where β is an accessible term of T_j, not a component)
+    yields **0** — the Sideward 2(b) realization of `mergeOp` (which
+    consumes the cut producing β) is entirely absent at ε = 0 because
+    `comulTreeDel_eps 0 T_j` reduces to the primitive part
+    `(T_j ⊗ 1) + (1 ⊗ T_j)` (no cut subforests).
 
-/-- **Cost-suppression for Sideward 3(a)** (MCB §1.5 + §1.4.6).
-    At ε = 0, the Sideward 3(a) (countercyclic-like) contribution to
-    `mergeOp_eps` vanishes — the 2-edge accessible-term extraction
-    carries weight ε^{d_α+d_β} → 0. Stated as TODO. -/
-theorem mergeOp_eps_zero_kills_sideward_3a_TODO {R : Type*} [CommSemiring R]
+    No primitive cross-term of (prim T_i) × (prim T_j) has LEFT-channel
+    forest equal to `{T_i, β}` (since β ∉ {T_i, T_j} when β ≠ T_i and
+    β ≠ T_j); `mergePost` annihilates all four. -/
+theorem mergeOp_eps_zero_kills_sideward_2b {R : Type*} [CommSemiring R]
     {α : Type*} [DecidableEq α]
-    (T_i α_t β : TraceTree α Unit) (c : CutShape T_i)
-    (Fhat : TraceForest α Unit)
-    (_h_cut : IsTwoEdgeAccessibleCut T_i α_t β c) :
-    True := by trivial
+    (T_i T_j β : TraceTree α Unit)
+    (h_β_ne_Ti : β ≠ T_i)
+    (h_β_ne_Tj : β ≠ T_j) :
+    mergeOp_eps (R := R) 0 T_i β
+        (forestToHc ({T_i, T_j} : TraceForest α Unit)) = 0 := by
+  show (mergePost (R := R) (α := α) T_i β ∘ₗ
+        (comulDelAlgHom_eps (0 : R)).toLinearMap)
+       (forestToHc ({T_i, T_j} : TraceForest α Unit)) = 0
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
+  show mergePost (R := R) (α := α) T_i β
+        (comulDelAlgHom_eps (R := R) (α := α) (0 : R)
+          (Finsupp.single ({T_i, T_j} : TraceForest α Unit) (1 : R))) = 0
+  rw [comulDelAlgHom_eps_apply_single]
+  show mergePost (R := R) (α := α) T_i β
+        ((({T_i, T_j} : TraceForest α Unit).map
+          (comulTreeDel_eps (R := R) 0)).prod) = 0
+  rw [show (({T_i, T_j} : TraceForest α Unit).map (comulTreeDel_eps (R := R) 0)).prod
+      = comulTreeDel_eps (R := R) 0 T_i * comulTreeDel_eps (R := R) 0 T_j from
+    Multiset.prod_pair _ _]
+  rw [comulTreeDel_eps_zero, comulTreeDel_eps_zero]
+  rw [add_mul, mul_add, mul_add]
+  simp only [map_add]
+  -- 4 cross-terms; LEFT-channel forest = {T_i, T_j}, {T_i}, {T_j}, ∅ — all ≠ {T_i, β}.
+  -- Term 1 (prim × prim): LEFT = {T_i, T_j} ≠ {T_i, β} (since T_j ≠ β).
+  rw [show mergePost (R := R) (α := α) T_i β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+      rw [show ({T_i} : TraceForest α Unit) + ({T_j} : TraceForest α Unit)
+          = ({T_i, T_j} : TraceForest α Unit) from rfl]
+      rw [mergePost_basis_tensor, if_neg]
+      intro h_eq
+      apply h_β_ne_Tj
+      have h_target : ({T_i, β} : TraceForest α Unit)
+                    = ({T_i} : TraceForest α Unit) + ({β} : TraceForest α Unit) := rfl
+      have h_lhs : ({T_i, T_j} : TraceForest α Unit)
+                 = ({T_i} : TraceForest α Unit) + ({T_j} : TraceForest α Unit) := rfl
+      rw [h_lhs, h_target] at h_eq
+      exact (Multiset.singleton_inj.mp (Multiset.add_right_inj.mp h_eq)).symm]
+  -- Term 2 (prim × empty): LEFT = {T_i}; cardinality 1 ≠ 2.
+  rw [show mergePost (R := R) (α := α) T_i β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * ((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T_j} : TraceForest α Unit)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul,
+          mergePost_basis_tensor, if_neg]
+      intro h_eq
+      have h_card_lhs : ({T_i} : TraceForest α Unit).card = 1 := Multiset.card_singleton _
+      have h_card_rhs : ({T_i, β} : TraceForest α Unit).card = 2 := rfl
+      rw [h_eq] at h_card_lhs
+      omega]
+  -- Term 3 (empty × prim): LEFT = {T_j}; cardinality 1 ≠ 2.
+  rw [show mergePost (R := R) (α := α) T_i β
+        (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T_i} : TraceForest α Unit))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul,
+          mergePost_basis_tensor, if_neg]
+      intro h_eq
+      have h_card_lhs : ({T_j} : TraceForest α Unit).card = 1 := Multiset.card_singleton _
+      have h_card_rhs : ({T_i, β} : TraceForest α Unit).card = 2 := rfl
+      rw [h_eq] at h_card_lhs
+      omega]
+  -- Term 4 (empty × empty): LEFT = ∅; cardinality 0 ≠ 2.
+  rw [show mergePost (R := R) (α := α) T_i β
+        (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T_i} : TraceForest α Unit))
+          * ((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T_j} : TraceForest α Unit)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul,
+          show (1 : Hc R α) = forestToHc (R := R) (0 : TraceForest α Unit) from
+            forestToHc_zero.symm,
+          mergePost_basis_tensor, if_neg]
+      intro h_eq
+      have h_card_lhs : (0 : TraceForest α Unit).card = 0 := Multiset.card_zero
+      have h_card_rhs : ({T_i, β} : TraceForest α Unit).card = 2 := rfl
+      rw [h_eq] at h_card_lhs
+      omega]
+  simp only [add_zero]
 
-/-- **Cost-suppression for Sideward 3(b)** (MCB §1.5 + §1.4.5).
-    At ε = 0, the Sideward 3(b) contribution to `mergeOp_eps` vanishes
-    by the cost-functional argument applied to two distinct components.
-    Stated as TODO. -/
-theorem mergeOp_eps_zero_kills_sideward_3b_TODO {R : Type*} [CommSemiring R]
+/-- **Cost-suppression for Sideward 3(a)** (MCB §1.5.3 + §1.4.6).
+    At ε = 0, applying `mergeOp_eps 0 α_t β` to the single-component
+    workspace `{T_i}` (where α_t, β are accessible terms of T_i) yields
+    **0**. Same reasoning: at ε = 0 only the primitive part of
+    `comulTreeDel_eps 0 T_i = (T_i ⊗ 1) + (1 ⊗ T_i)` survives; neither
+    primitive contributes LEFT = {α_t, β}. -/
+theorem mergeOp_eps_zero_kills_sideward_3a {R : Type*} [CommSemiring R]
+    {α : Type*} [DecidableEq α]
+    (T_i α_t β : TraceTree α Unit)
+    (h_α_ne_Ti : α_t ≠ T_i)
+    (h_β_ne_Ti : β ≠ T_i) :
+    mergeOp_eps (R := R) 0 α_t β
+        (forestToHc ({T_i} : TraceForest α Unit)) = 0 := by
+  show (mergePost (R := R) (α := α) α_t β ∘ₗ
+        (comulDelAlgHom_eps (0 : R)).toLinearMap)
+       (forestToHc ({T_i} : TraceForest α Unit)) = 0
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
+  show mergePost (R := R) (α := α) α_t β
+        (comulDelAlgHom_eps (R := R) (α := α) (0 : R)
+          (Finsupp.single ({T_i} : TraceForest α Unit) (1 : R))) = 0
+  rw [comulDelAlgHom_eps_apply_single]
+  show mergePost (R := R) (α := α) α_t β
+        ((({T_i} : TraceForest α Unit).map
+          (comulTreeDel_eps (R := R) 0)).prod) = 0
+  rw [Multiset.map_singleton, Multiset.prod_singleton, comulTreeDel_eps_zero]
+  -- comulTreeDel_eps 0 T_i = (T_i ⊗ 1) + (1 ⊗ T_i); both vanish under mergePost.
+  simp only [map_add]
+  -- Term 1 (T_i ⊗ 1): LEFT = {T_i}, cardinality 1 ≠ 2.
+  rw [show mergePost (R := R) (α := α) α_t β
+        (forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+        = 0 from by
+      rw [mergePost_basis_tensor, if_neg]
+      intro h_eq
+      have h_card_lhs : ({T_i} : TraceForest α Unit).card = 1 := Multiset.card_singleton _
+      have h_card_rhs : ({α_t, β} : TraceForest α Unit).card = 2 := rfl
+      rw [h_eq] at h_card_lhs
+      omega]
+  -- Term 2 (1 ⊗ T_i): LEFT = ∅, cardinality 0 ≠ 2.
+  rw [show mergePost (R := R) (α := α) α_t β
+        ((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T_i} : TraceForest α Unit))
+        = 0 from by
+      rw [show (1 : Hc R α) = forestToHc (R := R) (0 : TraceForest α Unit) from
+            forestToHc_zero.symm,
+          mergePost_basis_tensor, if_neg]
+      intro h_eq
+      have h_card_lhs : (0 : TraceForest α Unit).card = 0 := Multiset.card_zero
+      have h_card_rhs : ({α_t, β} : TraceForest α Unit).card = 2 := rfl
+      rw [h_eq] at h_card_lhs
+      omega]
+  rw [add_zero]
+
+/-- **Cost-suppression for Sideward 3(b)** (MCB §1.5.3 + §1.4.5).
+    At ε = 0, applying `mergeOp_eps 0 α_t β` to a 2-component workspace
+    `{T_i, T_j}` where α_t ∈ Acc(T_i), β ∈ Acc(T_j) yields **0**. Same
+    reasoning as 2(b): only primitive parts survive at ε = 0, and no
+    primitive cross-term has LEFT = {α_t, β}. -/
+theorem mergeOp_eps_zero_kills_sideward_3b {R : Type*} [CommSemiring R]
     {α : Type*} [DecidableEq α]
     (T_i T_j α_t β : TraceTree α Unit)
-    (c_α : CutShape T_i) (c_β : CutShape T_j)
-    (Fhat : TraceForest α Unit)
-    (_h_cut_α : IsSinglAccessibleCut T_i α_t c_α)
-    (_h_cut_β : IsSinglAccessibleCut T_j β c_β) :
-    True := by trivial
+    (h_α_ne_Ti : α_t ≠ T_i)
+    (h_α_ne_Tj : α_t ≠ T_j)
+    (h_β_ne_Ti : β ≠ T_i)
+    (h_β_ne_Tj : β ≠ T_j) :
+    mergeOp_eps (R := R) 0 α_t β
+        (forestToHc ({T_i, T_j} : TraceForest α Unit)) = 0 := by
+  show (mergePost (R := R) (α := α) α_t β ∘ₗ
+        (comulDelAlgHom_eps (0 : R)).toLinearMap)
+       (forestToHc ({T_i, T_j} : TraceForest α Unit)) = 0
+  rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply]
+  show mergePost (R := R) (α := α) α_t β
+        (comulDelAlgHom_eps (R := R) (α := α) (0 : R)
+          (Finsupp.single ({T_i, T_j} : TraceForest α Unit) (1 : R))) = 0
+  rw [comulDelAlgHom_eps_apply_single]
+  show mergePost (R := R) (α := α) α_t β
+        ((({T_i, T_j} : TraceForest α Unit).map
+          (comulTreeDel_eps (R := R) 0)).prod) = 0
+  rw [show (({T_i, T_j} : TraceForest α Unit).map (comulTreeDel_eps (R := R) 0)).prod
+      = comulTreeDel_eps (R := R) 0 T_i * comulTreeDel_eps (R := R) 0 T_j from
+    Multiset.prod_pair _ _]
+  rw [comulTreeDel_eps_zero, comulTreeDel_eps_zero]
+  rw [add_mul, mul_add, mul_add]
+  simp only [map_add]
+  -- 4 cross-terms; LEFT-channel forests {T_i, T_j}, {T_i}, {T_j}, ∅ — all ≠ {α_t, β}.
+  -- Term 1 (prim × prim): LEFT = {T_i, T_j}. T_i ∉ {α_t, β} → ≠.
+  rw [show mergePost (R := R) (α := α) α_t β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, ← forestToHc_add, mul_one]
+      rw [show ({T_i} : TraceForest α Unit) + ({T_j} : TraceForest α Unit)
+          = ({T_i, T_j} : TraceForest α Unit) from rfl]
+      rw [mergePost_basis_tensor, if_neg]
+      intro h_eq
+      have h_T_i_mem : T_i ∈ ({T_i, T_j} : TraceForest α Unit) :=
+        Multiset.mem_cons_self _ _
+      rw [h_eq] at h_T_i_mem
+      rw [show ({α_t, β} : TraceForest α Unit) = α_t ::ₘ ({β} : TraceForest α Unit) from rfl,
+          Multiset.mem_cons, Multiset.mem_singleton] at h_T_i_mem
+      rcases h_T_i_mem with h | h
+      · exact h_α_ne_Ti h.symm
+      · exact h_β_ne_Ti h.symm]
+  -- Term 2 (prim × empty): LEFT = {T_i}; cardinality 1 ≠ 2.
+  rw [show mergePost (R := R) (α := α) α_t β
+        ((forestToHc (R := R) ({T_i} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α))
+          * ((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T_j} : TraceForest α Unit)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul,
+          mergePost_basis_tensor, if_neg]
+      intro h_eq
+      have h_card_lhs : ({T_i} : TraceForest α Unit).card = 1 := Multiset.card_singleton _
+      have h_card_rhs : ({α_t, β} : TraceForest α Unit).card = 2 := rfl
+      rw [h_eq] at h_card_lhs
+      omega]
+  -- Term 3 (empty × prim): LEFT = {T_j}; cardinality 1 ≠ 2.
+  rw [show mergePost (R := R) (α := α) α_t β
+        (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T_i} : TraceForest α Unit))
+          * (forestToHc (R := R) ({T_j} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul,
+          mergePost_basis_tensor, if_neg]
+      intro h_eq
+      have h_card_lhs : ({T_j} : TraceForest α Unit).card = 1 := Multiset.card_singleton _
+      have h_card_rhs : ({α_t, β} : TraceForest α Unit).card = 2 := rfl
+      rw [h_eq] at h_card_lhs
+      omega]
+  -- Term 4 (empty × empty): LEFT = ∅; cardinality 0 ≠ 2.
+  rw [show mergePost (R := R) (α := α) α_t β
+        (((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T_i} : TraceForest α Unit))
+          * ((1 : Hc R α) ⊗ₜ[R] forestToHc (R := R) ({T_j} : TraceForest α Unit)))
+        = 0 from by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul,
+          show (1 : Hc R α) = forestToHc (R := R) (0 : TraceForest α Unit) from
+            forestToHc_zero.symm,
+          mergePost_basis_tensor, if_neg]
+      intro h_eq
+      have h_card_lhs : (0 : TraceForest α Unit).card = 0 := Multiset.card_zero
+      have h_card_rhs : ({α_t, β} : TraceForest α Unit).card = 2 := rfl
+      rw [h_eq] at h_card_lhs
+      omega]
+  simp only [add_zero]
 
 end Minimalist.Merge
