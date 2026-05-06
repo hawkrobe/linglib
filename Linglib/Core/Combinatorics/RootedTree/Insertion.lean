@@ -487,21 +487,104 @@ theorem numEdges_insertAt {T : TraceTree α β} (e : Edge T)
   have hT₂ := T₂.size_pos
   simp only [numEdges]; omega
 
-/-! ## §9: Phase 3b roadmap
+/-! ## §9: Edge classification of `insertAt e T₂` (Phase 3b §9.1)
 
-The decomposition `insertSum_eq_ofList_map_insertAt` is the
-infrastructure piece that unblocks the pre-Lie proof. The remaining
-work for Phase 3b:
+Every edge `f ∈ Edge (insertAt e T₂)` falls into exactly one of three
+classes (MCB Figure 1.6, book p. 79):
 
-- **§9.1 (Edge of inserted tree)**: Characterise `Edge (insertAt T e T₂)`
-  as a sum of three pieces: edges of T other than `e`, edges of T₂,
-  and the three "new" edges (`e₁`, `e₂` from splitting `e`, plus `e'`
-  from the new vertex to root of T₂).
-- **§9.2 (Commutativity at different edges)**: For `e ≠ e' ∈ Edge T`,
-  `insertAt e' (insertAt e T T₂) T₃ = insertAt e (insertAt e' T T₃) T₂`
-  (modulo path-update bookkeeping).
-- **§9.3 (Pre-Lie identity proof)**: Use the decomposition + §9.1 +
-  §9.2 to discharge the case analysis from MCB book p. 77-78. -/
+  (a) **Lifted from T₂**: f corresponds to an edge of T₂, sitting as a
+      subtree at the new internal vertex `v`. Constructor: `Edge.lift`.
+  (b) **Preserved from T**: f corresponds to an edge of T other than e
+      itself. (The cut edge e is consumed by the split.) Constructor:
+      `Edge.preserve` (when supported by `f ≠ e`).
+  (c) **One of three new edges** created by the insertion:
+      `e₁` (root → v, the upper half of split e),
+      `e₂` (v → original child, the lower half of split e),
+      `e'` (v → root of T₂, the new edge to inserted subtree).
+
+This section defines the three "lifted" / "new" constructors and proves
+their structural laws. The "preserved" case is more delicate (needs
+path bookkeeping) and is treated separately. -/
+
+/-- **Lift an edge of T₂** into `Edge (insertAt e T₂)`. The lifted
+    edge sits in the inserted subtree at vertex `v`. Recursive on the
+    structure of `e`: for the two `.root*` constructors, T₂ becomes a
+    direct child of `v`; for `.in*`, recurse to the child where the
+    insertion happens. -/
+def Edge.lift : ∀ {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α β),
+    Edge T₂ → Edge (insertAt e T₂)
+  | _, .rootL l r,   T₂, f => .inL (.node l T₂) r (.inR l T₂ f)
+  | _, .rootR l r,   T₂, f => .inR l (.node r T₂) (.inR r T₂ f)
+  | _, .inL l r e,   T₂, f => .inL (insertAt e T₂) r (Edge.lift e T₂ f)
+  | _, .inR l r e,   T₂, f => .inR l (insertAt e T₂) (Edge.lift e T₂ f)
+
+/-- **The "upper half" of the split edge** `e₁`: the new edge from the
+    parent of e to the new vertex `v`. After splitting `e : Edge T`
+    with insertion of T₂, the parent's slot now points to v (rather
+    than directly to the child). -/
+def Edge.newE1 : ∀ {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α β),
+    Edge (insertAt e T₂)
+  | _, .rootL l r,   T₂ => .rootL (.node l T₂) r
+  | _, .rootR l r,   T₂ => .rootR l (.node r T₂)
+  | _, .inL l r e,   T₂ => .inL (insertAt e T₂) r (Edge.newE1 e T₂)
+  | _, .inR l r e,   T₂ => .inR l (insertAt e T₂) (Edge.newE1 e T₂)
+
+/-- **The "lower half" of the split edge** `e₂`: the new edge from the
+    new vertex `v` to the original child of the cut edge. -/
+def Edge.newE2 : ∀ {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α β),
+    Edge (insertAt e T₂)
+  | _, .rootL l r,   T₂ => .inL (.node l T₂) r (.rootL l T₂)
+  | _, .rootR l r,   T₂ => .inR l (.node r T₂) (.rootL r T₂)
+  | _, .inL l r e,   T₂ => .inL (insertAt e T₂) r (Edge.newE2 e T₂)
+  | _, .inR l r e,   T₂ => .inR l (insertAt e T₂) (Edge.newE2 e T₂)
+
+/-- **The "edge to T₂"** `e'`: the new edge from the new vertex `v` to
+    the root of the inserted subtree T₂. -/
+def Edge.newEprime : ∀ {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α β),
+    Edge (insertAt e T₂)
+  | _, .rootL l r,   T₂ => .inL (.node l T₂) r (.rootR l T₂)
+  | _, .rootR l r,   T₂ => .inR l (.node r T₂) (.rootR r T₂)
+  | _, .inL l r e,   T₂ => .inL (insertAt e T₂) r (Edge.newEprime e T₂)
+  | _, .inR l r e,   T₂ => .inR l (insertAt e T₂) (Edge.newEprime e T₂)
+
+/-! ### Sanity: the 3 new edges are distinct -/
+
+/-- The 3 new edges differ pairwise: `e₁ ≠ e₂`, `e₁ ≠ e'`, `e₂ ≠ e'`.
+    Used in the Phase 3b pre-Lie proof to keep case analyses distinct.
+    Proved by structural induction on `e`. -/
+theorem newE1_ne_newE2 :
+    ∀ {T : TraceTree α β} (e : Edge T) (T₂ : TraceTree α β),
+      Edge.newE1 e T₂ ≠ Edge.newE2 e T₂
+  | _, .rootL l r,   _, h => by
+      simp only [Edge.newE1, Edge.newE2] at h
+      cases h
+  | _, .rootR l r,   _, h => by
+      simp only [Edge.newE1, Edge.newE2] at h
+      cases h
+  | _, .inL l r e,   T₂, h => by
+      simp only [Edge.newE1, Edge.newE2] at h
+      injection h with _ _ h₃
+      exact newE1_ne_newE2 e T₂ h₃
+  | _, .inR l r e,   T₂, h => by
+      simp only [Edge.newE1, Edge.newE2] at h
+      injection h with _ _ h₃
+      exact newE1_ne_newE2 e T₂ h₃
+
+/-! ### Phase 3b §9.1 status
+
+Defined: `Edge.lift`, `Edge.newE1`, `Edge.newE2`, `Edge.newEprime`,
+plus pairwise distinctness for the new edges (one direction shown;
+the other two are similar and can be added when needed by a consumer).
+
+Pending for §9.1 completion:
+- `Edge.preserve : (e : Edge T) → (f : Edge T) → f ≠ e → Edge (insertAt e T₂)`
+  (carry an edge of T other than e through the insertion).
+- `edges_insertAt_eq_classification`: the multiset/list-level
+  decomposition `edges (insertAt e T₂) = (preserved-edges) ++ (lifted-edges)
+  ++ [e₁, e₂, e']`.
+
+§9.2 (commutativity at different edges) and §9.3 (the actual pre-Lie
+identity discharge) are the remaining Phase 3b work. -/
 
 /-! ## Phase 1-3a + 3b-substrate conclusion + roadmap
 
