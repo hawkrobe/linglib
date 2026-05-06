@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Algebra.FreeMonoid.Basic
 import Mathlib.Computability.MyhillNerode
 import Mathlib.Data.Finite.Prod
-import Mathlib.GroupTheory.Congruence.Defs
+import Mathlib.GroupTheory.Congruence.Hom
 
 /-!
 # Syntactic Monoid
@@ -25,7 +25,15 @@ of the Myhill–Nerode theorem is
 
 > `L.IsRegular ↔ Finite L.syntacticMonoid`
 
-(Myhill 1957; see e.g. @cite{pin-2020} §I.5).
+(Myhill 1957; see e.g. Pin's *Mathematical Foundations of Automata
+Theory*, Chapter I).
+
+The empty word `[] : FreeMonoid α` becomes the identity of
+`syntacticMonoid L`. Some classical references (e.g. the Lambert (2026)
+phonology consumer of this file) work with the syntactic *semigroup*
+instead, omitting the empty word; the two characterisations coincide
+for the regularity ↔ finiteness statement, but the monoid version is
+mathlib-natural via `Con (FreeMonoid α)`.
 
 ## Main definitions
 
@@ -36,6 +44,8 @@ of the Myhill–Nerode theorem is
   monoid (concatenation).
 * `Language.syntacticMonoid L` — the quotient monoid
   `(syntacticCon L).Quotient`.
+* `Language.toSyntacticMonoid L : FreeMonoid α →* L.syntacticMonoid`
+  — the canonical projection (`(syntacticCon L).mk'`).
 
 ## Main results
 
@@ -59,19 +69,14 @@ DFA construction from a finite monoid action).
 elaborator does not unfold the `def`. The `SyntacticEquiv` predicate is
 stated on `List α` (so that `++` and `Language.leftQuotient` work
 without coercion gymnastics) and the `Con (FreeMonoid α)` upgrade reuses
-the `Setoid` via the definitional equality (`Setoid (List α)` is `Setoid
-(FreeMonoid α)` definitionally). Inside `mul'`, the `Mul`-on-`FreeMonoid`
-operation is bridged to `List.append` by way of `FreeMonoid.toList`,
-which is an `Equiv.refl _` — every use of `FreeMonoid.toList` is
-definitionally a no-op, but it makes the elaborator's job explicit.
+the `Setoid` via the definitional equality. Inside `mul'`, the
+`Mul`-on-`FreeMonoid` operation is bridged to `List.append` by way of
+`FreeMonoid.toList`, which is an `Equiv.refl _`.
 
 ## References
 
-* @cite{myhill-1957}
-* @cite{nerode-1958}
-* @cite{pin-2020}, Chapter I (algebraic preliminaries on syntactic
-  monoids and the syntactic-monoid characterization of star-free
-  languages — the "Schützenberger theorem").
+* Myhill (1957), Nerode (1958)
+* Pin, *Mathematical Foundations of Automata Theory*, Chapter I.
 
 ## Mathlib placement note
 
@@ -80,7 +85,7 @@ This file is structured to be promotable to mathlib as a sibling of
 relation uses only `++` and `Language` membership; the `Con` packaging
 uses only `Mathlib.GroupTheory.Congruence.Defs`. The
 finite-syntactic-monoid theorem composes with mathlib's existing
-`IsRegular.finite_range_leftQuotient`.
+`IsRegular.finite_range_leftQuotient` and `leftQuotient_append`.
 -/
 
 namespace Language
@@ -140,64 +145,37 @@ def syntacticSetoid (L : Language α) : Setoid (FreeMonoid α) where
 upgraded with the multiplicative-congruence law (closure under
 two-sided concatenation). The proof of `mul'` reassociates a two-sided
 context using `List.append_assoc`; `FreeMonoid.toList` (an
-`Equiv.refl _`) bridges the `Mul`-on-`FreeMonoid` operation to
-`List.append`. -/
+`Equiv.refl _`) bridges `*`-on-`FreeMonoid` to `++`-on-`List`. -/
 def syntacticCon (L : Language α) : Con (FreeMonoid α) where
   toSetoid := syntacticSetoid L
   mul' := by
     intro w x y z hwx hyz a b
-    -- Bridge `*` (FreeMonoid mul) to `++` (List append) via `toList`.
-    show a ++ FreeMonoid.toList (w * y) ++ b ∈ L ↔
-         a ++ FreeMonoid.toList (x * z) ++ b ∈ L
-    -- `toList (u * v) = toList u ++ toList v` definitionally.
-    have hwy : FreeMonoid.toList (w * y) =
-        FreeMonoid.toList w ++ FreeMonoid.toList y := rfl
-    have hxz : FreeMonoid.toList (x * z) =
-        FreeMonoid.toList x ++ FreeMonoid.toList z := rfl
-    rw [hwy, hxz]
-    -- hwx : SyntacticEquiv L w x; treat w, x as List α via defEq.
+    -- `(w * y).toList = w.toList ++ y.toList` by `rfl`.
+    show a ++ (FreeMonoid.toList w ++ FreeMonoid.toList y) ++ b ∈ L ↔
+         a ++ (FreeMonoid.toList x ++ FreeMonoid.toList z) ++ b ∈ L
     have h1 := hwx a (FreeMonoid.toList y ++ b)
-    -- h1 : a ++ w ++ (toList y ++ b) ∈ L ↔ a ++ x ++ (toList y ++ b) ∈ L
     have h2 := hyz (a ++ FreeMonoid.toList x) b
-    -- h2 : (a ++ toList x) ++ y ++ b ∈ L ↔ (a ++ toList x) ++ z ++ b ∈ L
-    -- Reassociate the two sides of the goal so they match h1's LHS / h2's RHS.
-    have lhs_assoc : a ++ (FreeMonoid.toList w ++ FreeMonoid.toList y) ++ b =
-        a ++ FreeMonoid.toList w ++ (FreeMonoid.toList y ++ b) := by
-      simp [List.append_assoc]
-    have rhs_assoc : a ++ (FreeMonoid.toList x ++ FreeMonoid.toList z) ++ b =
-        a ++ FreeMonoid.toList x ++ (FreeMonoid.toList z ++ b) := by
-      simp [List.append_assoc]
-    rw [lhs_assoc, rhs_assoc]
-    have h2' : a ++ FreeMonoid.toList x ++ (FreeMonoid.toList y ++ b) ∈ L ↔
-               a ++ FreeMonoid.toList x ++ (FreeMonoid.toList z ++ b) ∈ L := by
-      have eql : (a ++ FreeMonoid.toList x) ++ FreeMonoid.toList y ++ b =
-          a ++ FreeMonoid.toList x ++ (FreeMonoid.toList y ++ b) :=
-        List.append_assoc _ _ _
-      have eqr : (a ++ FreeMonoid.toList x) ++ FreeMonoid.toList z ++ b =
-          a ++ FreeMonoid.toList x ++ (FreeMonoid.toList z ++ b) :=
-        List.append_assoc _ _ _
-      rw [← eql, ← eqr]; exact h2
-    exact h1.trans h2'
+    -- Reassociate both sides to chain h1 and h2.
+    simp only [List.append_assoc] at h1 h2 ⊢
+    exact h1.trans h2
 
 /-- The *syntactic monoid* of `L`: the quotient of `FreeMonoid α` by the
-syntactic congruence. Carries a `Monoid` structure inherited from
-`Con.Quotient`. -/
+syntactic congruence. The `abbrev` is deliberate so `Monoid` typeclass
+search resolves through `Con.Quotient`. -/
 abbrev syntacticMonoid (L : Language α) : Type _ := (syntacticCon L).Quotient
 
-@[simp] lemma syntacticCon_apply (L : Language α) (u v : List α) :
-    (syntacticCon L) u v ↔ SyntacticEquiv L u v := Iff.rfl
+/-- The canonical monoid homomorphism from the free monoid to the
+syntactic monoid: each word is sent to its syntactic-equivalence class.
+A renamed alias of the underlying `Con.mk'`. -/
+def toSyntacticMonoid (L : Language α) : FreeMonoid α →* L.syntacticMonoid :=
+  (syntacticCon L).mk'
+
+@[simp] lemma toSyntacticMonoid_apply (L : Language α) (u : FreeMonoid α) :
+    L.toSyntacticMonoid u = (syntacticCon L).toQuotient u := rfl
 
 -- ============================================================================
 -- § 3. Regularity ⟹ finite syntactic monoid
 -- ============================================================================
-
-/-- The action of a word on a left quotient: `(L.leftQuotient x).leftQuotient u
-= L.leftQuotient (x ++ u)`. The closure-under-shift identity that makes
-the syntactic-monoid action well-defined on `Set.range L.leftQuotient`. -/
-private lemma leftQuotient_leftQuotient (L : Language α) (x u : List α) :
-    (L.leftQuotient x).leftQuotient u = L.leftQuotient (x ++ u) := by
-  ext y
-  simp only [Language.mem_leftQuotient, List.append_assoc]
 
 /-- **Myhill direction A**: a regular language has a finite syntactic
 monoid. Proved by injecting `syntacticMonoid L` into the finite function
@@ -211,13 +189,13 @@ theorem IsRegular.finite_syntacticMonoid {L : Language α} (h : L.IsRegular) :
     Finite L.syntacticMonoid := by
   classical
   set LQ : Set (Language α) := Set.range L.leftQuotient with hLQ_def
-  haveI hfin : Finite LQ := h.finite_range_leftQuotient.to_subtype
-  -- The action `Q ↦ Q.leftQuotient u` sends LQ to LQ.
+  haveI : Finite LQ := h.finite_range_leftQuotient.to_subtype
+  -- The action `Q ↦ Q.leftQuotient u` sends LQ to LQ via `leftQuotient_append`.
   let action : FreeMonoid α → (LQ → LQ) := fun u Q =>
     ⟨Q.val.leftQuotient (FreeMonoid.toList u), by
       obtain ⟨x, hx⟩ := Q.prop
-      refine ⟨x ++ FreeMonoid.toList u, ?_⟩
-      rw [← hx, leftQuotient_leftQuotient]⟩
+      exact ⟨x ++ FreeMonoid.toList u, by
+        rw [← hx, ← Language.leftQuotient_append]⟩⟩
   -- Action descends to the syntactic monoid.
   have action_well_defined :
       ∀ u v : FreeMonoid α, SyntacticEquiv L u v → action u = action v := by
@@ -227,7 +205,7 @@ theorem IsRegular.finite_syntacticMonoid {L : Language α} (h : L.IsRegular) :
     apply Subtype.ext
     show Q.val.leftQuotient (FreeMonoid.toList u) =
          Q.val.leftQuotient (FreeMonoid.toList v)
-    rw [← hx, leftQuotient_leftQuotient, leftQuotient_leftQuotient]
+    rw [← hx, ← Language.leftQuotient_append, ← Language.leftQuotient_append]
     -- Reduce to: L.leftQuotient (x ++ u) = L.leftQuotient (x ++ v).
     have hxshift : SyntacticEquiv L
         (x ++ FreeMonoid.toList u) (x ++ FreeMonoid.toList v) := by
@@ -253,10 +231,8 @@ theorem IsRegular.finite_syntacticMonoid {L : Language α} (h : L.IsRegular) :
       have hsub : (L.leftQuotient a).leftQuotient (FreeMonoid.toList u) =
                   (L.leftQuotient a).leftQuotient (FreeMonoid.toList v) :=
         congr_arg Subtype.val heq
-      rw [leftQuotient_leftQuotient, leftQuotient_leftQuotient] at hsub
+      rw [← Language.leftQuotient_append, ← Language.leftQuotient_append] at hsub
       exact hsub
-    show a ++ FreeMonoid.toList u ++ b ∈ L ↔
-         a ++ FreeMonoid.toList v ++ b ∈ L
     show b ∈ L.leftQuotient (a ++ FreeMonoid.toList u) ↔
          b ∈ L.leftQuotient (a ++ FreeMonoid.toList v)
     rw [key]
