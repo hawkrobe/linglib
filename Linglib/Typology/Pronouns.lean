@@ -1,15 +1,15 @@
-import Linglib.Datasets.WALS.Features.F39A
-import Linglib.Datasets.WALS.Features.F39B
-import Linglib.Datasets.WALS.Features.F40A
-import Linglib.Datasets.WALS.Features.F44A
-import Linglib.Datasets.WALS.Features.F45A
-import Linglib.Datasets.WALS.Features.F46A
-import Linglib.Datasets.WALS.Features.F47A
-import Linglib.Datasets.WALS.Features.F48A
-import Linglib.Datasets.WALS.Features.F136A
-import Linglib.Datasets.WALS.Features.F136B
-import Linglib.Datasets.WALS.Features.F137A
-import Linglib.Datasets.WALS.Features.F137B
+import Linglib.Data.WALS.Features.F39A
+import Linglib.Data.WALS.Features.F39B
+import Linglib.Data.WALS.Features.F40A
+import Linglib.Data.WALS.Features.F44A
+import Linglib.Data.WALS.Features.F45A
+import Linglib.Data.WALS.Features.F46A
+import Linglib.Data.WALS.Features.F47A
+import Linglib.Data.WALS.Features.F48A
+import Linglib.Data.WALS.Features.F136A
+import Linglib.Data.WALS.Features.F136B
+import Linglib.Data.WALS.Features.F137A
+import Linglib.Data.WALS.Features.F137B
 import Linglib.Core.Word
 import Linglib.Features.Register
 import Linglib.Features.Prominence
@@ -175,7 +175,7 @@ end Typology
 
 namespace Typology
 
-def fromWALS39A : Datasets.WALS.F39A.InclusiveExclusiveDistinctionInIndependentPronouns →
+def fromWALS39A : Data.WALS.F39A.InclusiveExclusiveDistinctionInIndependentPronouns →
     InclusiveExclusive
   | .noWe => .noWe
   | .weTheSameAsI => .weEqualsI
@@ -183,12 +183,12 @@ def fromWALS39A : Datasets.WALS.F39A.InclusiveExclusiveDistinctionInIndependentP
   | .onlyInclusive => .onlyInclusive
   | .inclusiveExclusive => .inclusiveExclusive
 
-def fromWALS39B : Datasets.WALS.F39B.InclusiveExclusiveFormsInPamaNyungan →
+def fromWALS39B : Data.WALS.F39B.InclusiveExclusiveFormsInPamaNyungan →
     InclusiveExclusivePamaNyungan
   | .noInclusiveExclusiveOpposition => .noOpposition
   | .inclusiveAndExclusiveDifferentiated => .differentiated
 
-def fromWALS40A : Datasets.WALS.F40A.InclusiveExclusiveDistinctionInVerbalInflection →
+def fromWALS40A : Data.WALS.F40A.InclusiveExclusiveDistinctionInVerbalInflection →
     InclusiveExclusiveVerbal
   | .noPersonMarking => .noPersonMarking
   | .weTheSameAsI => .weEqualsI
@@ -196,7 +196,7 @@ def fromWALS40A : Datasets.WALS.F40A.InclusiveExclusiveDistinctionInVerbalInflec
   | .onlyInclusive => .onlyInclusive
   | .inclusiveExclusive => .inclusiveExclusive
 
-def fromWALS44A : Datasets.WALS.F44A.GenderDistinctionsInIndependentPersonalPronouns →
+def fromWALS44A : Data.WALS.F44A.GenderDistinctionsInIndependentPersonalPronouns →
     GenderInPronouns
   | .in3rdPerson1stAndOr2ndPerson => .in3rdAndOtherPersons
   | .v3rdPersonOnlyButAlsoNonSingular => .in3rdPersonIncludingNonSg
@@ -205,25 +205,25 @@ def fromWALS44A : Datasets.WALS.F44A.GenderDistinctionsInIndependentPersonalPron
   | .v3rdPersonNonSingularOnly => .in3rdPersonNonSgOnly
   | .noGenderDistinctions => .noGenderDistinctions
 
-def fromWALS45A : Datasets.WALS.F45A.PolitenessDistinctionsInPronouns →
+def fromWALS45A : Data.WALS.F45A.PolitenessDistinctionsInPronouns →
     PolitenessDistinction
   | .noPolitenessDistinction => .none
   | .binaryPolitenessDistinction => .binary
   | .multiplePolitenessDistinctions => .multiple
   | .pronounsAvoidedForPoliteness => .pronounsAvoided
 
-def fromWALS46A : Datasets.WALS.F46A.IndefinitePronouns → IndefinitePronounType
+def fromWALS46A : Data.WALS.F46A.IndefinitePronouns → IndefinitePronounType
   | .interrogativeBased => .interrogativeBased
   | .genericNounBased => .genericNounBased
   | .special => .special
   | .mixed => .mixed
   | .existentialConstruction => .existentialConstruction
 
-def fromWALS47A : Datasets.WALS.F47A.IntensifierReflexive → IntensifierReflexive
+def fromWALS47A : Data.WALS.F47A.IntensifierReflexive → IntensifierReflexive
   | .identical => .identical
   | .differentiated => .differentiated
 
-def fromWALS48A : Datasets.WALS.F48A.PersonMarkingOnAdpositions → PersonMarkingOnAdpositions
+def fromWALS48A : Data.WALS.F48A.PersonMarkingOnAdpositions → PersonMarkingOnAdpositions
   | .noAdpositions => .noAdpositions
   | .noPersonMarking => .noPersonMarking
   | .pronounsOnly => .pronounsOnly
@@ -233,14 +233,14 @@ def fromWALS48A : Datasets.WALS.F48A.PersonMarkingOnAdpositions → PersonMarkin
 -- WALS chapter abbrevs + size theorems + distribution + generalizations
 -- ============================================================================
 
-private abbrev ch39 := Datasets.WALS.F39A.allData
-private abbrev ch39b := Datasets.WALS.F39B.allData
-private abbrev ch40 := Datasets.WALS.F40A.allData
-private abbrev ch44 := Datasets.WALS.F44A.allData
-private abbrev ch45 := Datasets.WALS.F45A.allData
-private abbrev ch46 := Datasets.WALS.F46A.allData
-private abbrev ch47 := Datasets.WALS.F47A.allData
-private abbrev ch48 := Datasets.WALS.F48A.allData
+private abbrev ch39 := Data.WALS.F39A.allData
+private abbrev ch39b := Data.WALS.F39B.allData
+private abbrev ch40 := Data.WALS.F40A.allData
+private abbrev ch44 := Data.WALS.F44A.allData
+private abbrev ch45 := Data.WALS.F45A.allData
+private abbrev ch46 := Data.WALS.F46A.allData
+private abbrev ch47 := Data.WALS.F47A.allData
+private abbrev ch48 := Data.WALS.F48A.allData
 
 set_option maxRecDepth 8192 in
 /-- Majority of languages (120/200) make no inclusive/exclusive
@@ -324,21 +324,21 @@ structure PronounShapeProfile where
 
 -- WALS converters for the four shape features.
 
-def fromWALS136A : Datasets.WALS.F136A.MTPronouns → MTPronounPattern
+def fromWALS136A : Data.WALS.F136A.MTPronouns → MTPronounPattern
   | .noMTPronouns              => .absent
   | .mTPronounsParadigmatic    => .paradigmatic
   | .mTPronounsNonParadigmatic => .nonParadigmatic
 
-def fromWALS136B : Datasets.WALS.F136B.MInFirstPersonSingular → MIn1SG
+def fromWALS136B : Data.WALS.F136B.MInFirstPersonSingular → MIn1SG
   | .noMInFirstPersonSingular => .absent
   | .mInFirstPersonSingular   => .present
 
-def fromWALS137A : Datasets.WALS.F137A.NMPronouns → NMPronounPattern
+def fromWALS137A : Data.WALS.F137A.NMPronouns → NMPronounPattern
   | .noNMPronouns              => .absent
   | .nMPronounsParadigmatic    => .paradigmatic
   | .nMPronounsNonParadigmatic => .nonParadigmatic
 
-def fromWALS137B : Datasets.WALS.F137B.MInSecondPersonSingular → MIn2SG
+def fromWALS137B : Data.WALS.F137B.MInSecondPersonSingular → MIn2SG
   | .noMInSecondPersonSingular => .absent
   | .mInSecondPersonSingular   => .present
 

@@ -1,6 +1,6 @@
 import Linglib.Theories.Phonology.Featural.Features
 import Linglib.Theories.Phonology.Process.LocalRewrite
-import Linglib.Datasets.PHOIBLE.Inventories.English
+import Linglib.Data.PHOIBLE.Inventories.English
 
 /-!
 # English Phonological Inventory
@@ -181,14 +181,14 @@ theorem k_is_voiceless_velar_stop :
 /-- Canonical English phoneme inventory: PHOIBLE InvID 160 ("stan1293"
     Standard English, source SPA). PHOIBLE 2.0 has 5 English doculects;
     this picks SPA as the canonical Fragment-layer choice. Other
-    inventories accessible via `Datasets.PHOIBLE.Inventories.English`
+    inventories accessible via `Data.PHOIBLE.Inventories.English`
     directly.
 
     Co-located with the Hayes-2009 SPE-style segments above (which are a
     different, theory-laden representation): SPE features are inferential
     primitives in `Theories/Phonology/Featural/Features.lean`; PHOIBLE
     inventory is the consensus-data alternative. -/
-def phonemeInventory : Datasets.PHOIBLE.Inventory :=
-  Datasets.PHOIBLE.Inventories.English.eng
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.English.eng
 
 end Fragments.English.Phonology

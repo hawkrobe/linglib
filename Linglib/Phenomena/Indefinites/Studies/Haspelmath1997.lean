@@ -1,5 +1,5 @@
 import Linglib.Typology.Indefinite
-import Linglib.Datasets.WALS.Features.F46A
+import Linglib.Data.WALS.Features.F46A
 import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.German.Indefinites
 import Linglib.Fragments.Yakut.Indefinites
@@ -58,7 +58,7 @@ namespace Phenomena.Indefinites.Studies.Haspelmath1997
 
 open _root_.Typology
 open _root_.Typology.Indefinite
-open Datasets.WALS
+open Data.WALS
 
 -- ============================================================================
 -- §1. Per-language WALS F46A bridge theorems

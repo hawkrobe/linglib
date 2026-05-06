@@ -20,7 +20,7 @@ This study file holds **cross-linguistic generalisations** that consume the
 Fragment-side `def question : QuestionProfile` data with non-trivial
 semantic content. Per-language Fragment-vs-WALS data-equality theorems are
 **deliberately absent** — verifying that
-`Fragments.X.Questions.question.field` equals `Datasets.WALS.lookup "iso"`
+`Fragments.X.Questions.question.field` equals `Data.WALS.lookup "iso"`
 is "encoding conclusions as definitions": the typed Fragment value already
 encodes the WALS coding at definition site, and the substrate's
 distribution theorems already capture the corpus-level claims.

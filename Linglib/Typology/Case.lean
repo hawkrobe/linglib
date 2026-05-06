@@ -1,7 +1,7 @@
-import Linglib.Datasets.WALS.Features.F49A
-import Linglib.Datasets.WALS.Features.F50A
-import Linglib.Datasets.WALS.Features.F51A
-import Linglib.Datasets.WALS.Features.F52A
+import Linglib.Data.WALS.Features.F49A
+import Linglib.Data.WALS.Features.F50A
+import Linglib.Data.WALS.Features.F51A
+import Linglib.Data.WALS.Features.F52A
 
 /-!
 # Case typology — WALS substrate (Chapters 49–52)
@@ -38,7 +38,7 @@ The substrate exposes:
   a clean mapping exists (`fromWALS49A`); sparse where Iggesen's WALS bins
   don't align cleanly (Ch 50's WALS-vs-Aissen issue noted above)
 - WALS distributional facts proved by `native_decide` over
-  `Datasets.WALS.F{49,50,51,52}A.allData`
+  `Data.WALS.F{49,50,51,52}A.allData`
 
 No Fragment imports (substrate discipline). Theory-specific apparatus
 (Aissen 2003 OT factorial typology, DeHoop-Malchukov BiOT, Grimm 2011
@@ -54,10 +54,10 @@ set_option autoImplicit false
 
 namespace Typology.Case
 
-private abbrev ch49 := Datasets.WALS.F49A.allData
-private abbrev ch50 := Datasets.WALS.F50A.allData
-private abbrev ch51 := Datasets.WALS.F51A.allData
-private abbrev ch52 := Datasets.WALS.F52A.allData
+private abbrev ch49 := Data.WALS.F49A.allData
+private abbrev ch50 := Data.WALS.F50A.allData
+private abbrev ch51 := Data.WALS.F51A.allData
+private abbrev ch52 := Data.WALS.F52A.allData
 
 -- ============================================================================
 -- §1. WALS Ch 49 — Number of Cases
@@ -103,7 +103,7 @@ def CaseCount.contains (cc : CaseCount) (n : Nat) : Bool :=
     Iggesen's `exclusivelyBorderlineCaseMarking` cell (e.g., English with
     case only on pronouns) has no clean mapping into the size-bin scheme
     and returns `Option.none`. -/
-def fromWALS49A : Datasets.WALS.F49A.CaseCount → Option CaseCount
+def fromWALS49A : Data.WALS.F49A.CaseCount → Option CaseCount
   | .noMorphologicalCaseMarking => some .none
   | .cases2                     => some .two
   | .cases3                     => some .threeFour
@@ -150,7 +150,7 @@ def AsymmetricalCaseMarking.isAsymmetric : AsymmetricalCaseMarking → Bool
     The WALS source has a `noCaseMarking` cell as well (no morphological
     case at all); we omit it from this enum since asymmetry is
     undefined when there is no case to be asymmetric about. -/
-def fromWALS50A : Datasets.WALS.F50A.AsymmetricalCaseMarking →
+def fromWALS50A : Data.WALS.F50A.AsymmetricalCaseMarking →
     Option AsymmetricalCaseMarking
   | .noCaseMarking                          => Option.none
   | .symmetrical                            => some .symmetrical

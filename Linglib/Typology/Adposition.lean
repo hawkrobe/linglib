@@ -1,4 +1,4 @@
-import Linglib.Datasets.WALS.Features.F85A
+import Linglib.Data.WALS.Features.F85A
 import Linglib.Core.Word
 
 /-!
@@ -70,7 +70,7 @@ inductive AdpositionOrder where
 namespace AdpositionOrder
 
 /-- Convert WALS F85A's `AdpositionNPOrder` to a local `AdpositionOrder`. -/
-def ofWALS85A : Datasets.WALS.F85A.AdpositionNPOrder → AdpositionOrder
+def ofWALS85A : Data.WALS.F85A.AdpositionNPOrder → AdpositionOrder
   | .prepositions => .prepositional
   | .postpositions => .postpositional
   | .inpositions => .inpositional
@@ -80,7 +80,7 @@ def ofWALS85A : Datasets.WALS.F85A.AdpositionNPOrder → AdpositionOrder
 /-- Look up Ch 85 adposition order for an ISO 639-3 code. Returns
     `.notInWALS` when the language is absent from the chapter. -/
 def ofWALS (iso : String) : AdpositionOrder :=
-  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F85A.allData iso with
+  match Data.WALS.Datapoint.lookupISO Data.WALS.F85A.allData iso with
   | some d => ofWALS85A d.value
   | none => .notInWALS
 

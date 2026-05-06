@@ -34,7 +34,7 @@ Fragment-side `negationProfile` data with non-trivial semantic content
 Per-language Fragment-vs-WALS data-equality theorems are **deliberately
 absent**: `Fragments.{Lang}.Negation.negationProfile` already encodes the
 typed value at definition site, and verifying it equals
-`Datasets.WALS.lookup "iso"` is "encoding conclusions as definitions" — the
+`Data.WALS.lookup "iso"` is "encoding conclusions as definitions" — the
 two would have to diverge for the theorem to fail, and the substrate's
 `NegationSystem.ofISO` already populates from the same WALS source.
 

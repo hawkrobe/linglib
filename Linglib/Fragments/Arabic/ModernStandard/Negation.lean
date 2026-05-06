@@ -130,7 +130,7 @@ def negMarkers : List NegMarkerEntry :=
   ]
 
 /-- Bundled `NegationSystem` (markers + WALS Ch 112A/143A/144A
-    datapoints pulled from `Datasets.WALS` by ISO code `arb`). -/
+    datapoints pulled from `Data.WALS` by ISO code `arb`). -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "arb" negMarkers
 

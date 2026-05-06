@@ -42,8 +42,14 @@ phenomenon-migration boundary. Lean doesn't care about co-location.
 
 ## Examples and generated content
 
-Per-paper example data is generated from `Datasets/Examples/{AuthorYear}.csv`
+Per-paper example data is generated from `Linglib/Data/Examples/{AuthorYear}.json`
 into a `namespace Examples ... end` block delimited by marker comments
 (`-- BEGIN GENERATED EXAMPLES` / `-- END GENERATED EXAMPLES`) inside the
-study file. See `Linglib/Datasets/Examples/Schema.lean` and
-`scripts/gen_examples.py`.
+study file. JSON (not CSV) because the `LinguisticExample` schema has
+nested fields (gloss pairs, alternatives, readings, source/reportedIn
+objects) that don't fit cleanly in CSV.
+
+See [`Linglib/Data/Examples/README.md`](../Data/Examples/README.md) for
+the schema reference, file-format conventions, and Leipzig glossing rules
+([Comrie/Haspelmath/Bickel 2008](https://www.eva.mpg.de/lingua/pdf/Glossing-Rules.pdf)).
+Generator: `scripts/gen_examples.py`. Schema: `Linglib/Data/Examples/Schema.lean`.

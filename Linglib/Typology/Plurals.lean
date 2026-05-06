@@ -14,7 +14,7 @@ plurality across @cite{wals-2013} chapters 33–36.
 - `PluralityProfile`: per-language bundle of the four
 
 Per-language data lives in `Fragments/{Lang}/Plurals.lean`. Raw WALS
-distributions live in `Datasets/WALS/Features/F3{3..6}A.lean` — count any
+distributions live in `Data/WALS/Features/F3{3..6}A.lean` — count any
 strategy directly via `F3XA.allData.countP (·.value == ...)` rather than
 re-tabulating here. Corbett 2000 *Number* refines several of these (general
 number, dual/trial/paucal inventory, facultative number, Smith-Stark animacy

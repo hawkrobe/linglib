@@ -1,5 +1,5 @@
-import Linglib.Datasets.WALS.Features.F122A
-import Linglib.Datasets.WALS.Features.F123A
+import Linglib.Data.WALS.Features.F122A
+import Linglib.Data.WALS.Features.F123A
 
 /-!
 # Cross-Linguistic Typology of Relativization (WALS Chapters 122/123)
@@ -54,8 +54,8 @@ to all higher positions.
 
 namespace Typology.Relativization
 
-private abbrev ch122 := Datasets.WALS.F122A.allData
-private abbrev ch123 := Datasets.WALS.F123A.allData
+private abbrev ch122 := Data.WALS.F122A.allData
+private abbrev ch123 := Data.WALS.F123A.allData
 
 set_option maxRecDepth 2000 in
 /-- WALS Ch 122: gap is the most common subject relativization strategy,

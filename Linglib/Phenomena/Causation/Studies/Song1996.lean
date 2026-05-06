@@ -1,5 +1,5 @@
-import Linglib.Datasets.WALS.Features.F110A
-import Linglib.Datasets.WALS.Features.F111A
+import Linglib.Data.WALS.Features.F110A
+import Linglib.Data.WALS.Features.F111A
 import Linglib.Theories.Semantics.Causation.Morphological
 
 /-!
@@ -207,8 +207,8 @@ theorem purp_not_implicative :
 -- WALS Abbreviations
 -- ============================================================================
 
-private abbrev ch110 := Datasets.WALS.F110A.allData
-private abbrev ch111 := Datasets.WALS.F111A.allData
+private abbrev ch110 := Data.WALS.F110A.allData
+private abbrev ch111 := Data.WALS.F111A.allData
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -219,7 +219,7 @@ private abbrev ch111 := Datasets.WALS.F111A.allData
     - `sequentialOnly` → AND (two clauses, sequential, implicative)
     - `purposiveOnly` → PURP (two clauses, purposive, non-implicative)
     - `both` → no single mapping (language has both) -/
-private def fromWALS110A : Datasets.WALS.F110A.PeriphrasticCausativeType →
+private def fromWALS110A : Data.WALS.F110A.PeriphrasticCausativeType →
     Option CausativeConstructionType
   | .sequentialOnly => some .and_
   | .purposiveOnly => some .purp
@@ -227,7 +227,7 @@ private def fromWALS110A : Datasets.WALS.F110A.PeriphrasticCausativeType →
 
 /-- Map WALS 111A nonperiphrastic causative type to whether the language
     has COMPACT causatives. -/
-private def fromWALS111A_hasCompact : Datasets.WALS.F111A.NonperiphrCausativeType → Bool
+private def fromWALS111A_hasCompact : Data.WALS.F111A.NonperiphrCausativeType → Bool
   | .neither => false
   | .morphologicalOnly => true
   | .compoundOnly => true
@@ -239,7 +239,7 @@ private def fromWALS111A_hasCompact : Datasets.WALS.F111A.NonperiphrCausativeTyp
     - `compoundOnly` → `.freeMorpheme` (compound = free morpheme in tight unit)
     - `both`, `neither` → no unique mapping -/
 private def fromWALS111A_morphology :
-    Datasets.WALS.F111A.NonperiphrCausativeType → Option CausativeMorphology
+    Data.WALS.F111A.NonperiphrCausativeType → Option CausativeMorphology
   | .morphologicalOnly => some .suffix
   | .compoundOnly => some .freeMorpheme
   | .neither => none
@@ -251,26 +251,26 @@ private def fromWALS111A_morphology :
 
 /-- English periphrastic causatives are sequential (AND-type) per WALS 110A. -/
 theorem english_ch110 :
-    (Datasets.WALS.F110A.lookup "eng").map (λ dp => fromWALS110A dp.value) =
+    (Data.WALS.F110A.lookup "eng").map (λ dp => fromWALS110A dp.value) =
       some (some CausativeConstructionType.and_) := by
   native_decide
 
 /-- Turkish periphrastic causatives are purposive (PURP-type) per WALS 110A. -/
 theorem turkish_ch110 :
-    (Datasets.WALS.F110A.lookup "tur").map (λ dp => fromWALS110A dp.value) =
+    (Data.WALS.F110A.lookup "tur").map (λ dp => fromWALS110A dp.value) =
       some (some CausativeConstructionType.purp) := by
   native_decide
 
 /-- Korean periphrastic causatives are purposive (PURP-type) per WALS 110A,
     consistent with the `-ke ha-` construction being PURP in Song's typology. -/
 theorem korean_ch110 :
-    (Datasets.WALS.F110A.lookup "kor").map (λ dp => fromWALS110A dp.value) =
+    (Data.WALS.F110A.lookup "kor").map (λ dp => fromWALS110A dp.value) =
       some (some CausativeConstructionType.purp) := by
   native_decide
 
 /-- Korean's WALS 110A classification matches our datum's construction type. -/
 theorem korean_ch110_matches_datum :
-    (Datasets.WALS.F110A.lookup "kor").map (λ dp => fromWALS110A dp.value) =
+    (Data.WALS.F110A.lookup "kor").map (λ dp => fromWALS110A dp.value) =
       some (some koreanKeHa.constructionType) := by
   native_decide
 
@@ -280,60 +280,60 @@ theorem korean_ch110_matches_datum :
 
 /-- English has nonperiphrastic (compact) causatives per WALS 111A. -/
 theorem english_ch111 :
-    (Datasets.WALS.F111A.lookup "eng").map (λ dp => fromWALS111A_hasCompact dp.value) =
+    (Data.WALS.F111A.lookup "eng").map (λ dp => fromWALS111A_hasCompact dp.value) =
       some true := by
   native_decide
 
 /-- English nonperiphrastic causatives are morphological per WALS 111A
     (corresponding to lexical causatives like *kill*). -/
 theorem english_ch111_morphology :
-    (Datasets.WALS.F111A.lookup "eng").map (λ dp => fromWALS111A_morphology dp.value) =
+    (Data.WALS.F111A.lookup "eng").map (λ dp => fromWALS111A_morphology dp.value) =
       some (some CausativeMorphology.suffix) := by
   native_decide
 
 /-- Turkish has nonperiphrastic (compact) causatives per WALS 111A. -/
 theorem turkish_ch111 :
-    (Datasets.WALS.F111A.lookup "tur").map (λ dp => fromWALS111A_hasCompact dp.value) =
+    (Data.WALS.F111A.lookup "tur").map (λ dp => fromWALS111A_hasCompact dp.value) =
       some true := by
   native_decide
 
 /-- Turkish nonperiphrastic causatives are morphological (suffix `-dür`) per WALS 111A,
     matching our datum. -/
 theorem turkish_ch111_morphology :
-    (Datasets.WALS.F111A.lookup "tur").map (λ dp => fromWALS111A_morphology dp.value) =
+    (Data.WALS.F111A.lookup "tur").map (λ dp => fromWALS111A_morphology dp.value) =
       some turkishDur.morphology := by
   native_decide
 
 /-- Japanese has nonperiphrastic (compact) causatives per WALS 111A. -/
 theorem japanese_ch111 :
-    (Datasets.WALS.F111A.lookup "jpn").map (λ dp => fromWALS111A_hasCompact dp.value) =
+    (Data.WALS.F111A.lookup "jpn").map (λ dp => fromWALS111A_hasCompact dp.value) =
       some true := by
   native_decide
 
 /-- Japanese nonperiphrastic causatives are morphological (suffix `-(s)ase`) per WALS 111A,
     matching our datum. -/
 theorem japanese_ch111_morphology :
-    (Datasets.WALS.F111A.lookup "jpn").map (λ dp => fromWALS111A_morphology dp.value) =
+    (Data.WALS.F111A.lookup "jpn").map (λ dp => fromWALS111A_morphology dp.value) =
       some japaneseAse.morphology := by
   native_decide
 
 /-- French has nonperiphrastic (compact) causatives per WALS 111A.
     WALS classifies French as `both` (morphological and compound). -/
 theorem french_ch111 :
-    (Datasets.WALS.F111A.lookup "fre").map (λ dp => fromWALS111A_hasCompact dp.value) =
+    (Data.WALS.F111A.lookup "fre").map (λ dp => fromWALS111A_hasCompact dp.value) =
       some true := by
   native_decide
 
 /-- Korean has nonperiphrastic (compact) causatives per WALS 111A,
     in addition to the periphrastic `-ke ha-` construction. -/
 theorem korean_ch111 :
-    (Datasets.WALS.F111A.lookup "kor").map (λ dp => fromWALS111A_hasCompact dp.value) =
+    (Data.WALS.F111A.lookup "kor").map (λ dp => fromWALS111A_hasCompact dp.value) =
       some true := by
   native_decide
 
 /-- Korean nonperiphrastic causatives are morphological per WALS 111A. -/
 theorem korean_ch111_morphology :
-    (Datasets.WALS.F111A.lookup "kor").map (λ dp => fromWALS111A_morphology dp.value) =
+    (Data.WALS.F111A.lookup "kor").map (λ dp => fromWALS111A_morphology dp.value) =
       some (some CausativeMorphology.suffix) := by
   native_decide
 

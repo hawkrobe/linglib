@@ -1,11 +1,11 @@
-import Linglib.Datasets.WALS.Datapoint
-import Linglib.Datasets.WALS.Features.F112A
-import Linglib.Datasets.WALS.Features.F113A
-import Linglib.Datasets.WALS.Features.F114A
-import Linglib.Datasets.WALS.Features.F115A
-import Linglib.Datasets.WALS.Features.F143A
-import Linglib.Datasets.WALS.Features.F144A
-import Linglib.Datasets.WALS.Features.F144B
+import Linglib.Data.WALS.Datapoint
+import Linglib.Data.WALS.Features.F112A
+import Linglib.Data.WALS.Features.F113A
+import Linglib.Data.WALS.Features.F114A
+import Linglib.Data.WALS.Features.F115A
+import Linglib.Data.WALS.Features.F143A
+import Linglib.Data.WALS.Features.F144A
+import Linglib.Data.WALS.Features.F144B
 
 /-!
 # Typology.Negation
@@ -69,13 +69,13 @@ set_option autoImplicit false
 
 namespace Typology.Negation
 
-private abbrev ch112  := Datasets.WALS.F112A.allData
-private abbrev ch113  := Datasets.WALS.F113A.allData
-private abbrev ch114  := Datasets.WALS.F114A.allData
-private abbrev ch115  := Datasets.WALS.F115A.allData
-private abbrev ch143A := Datasets.WALS.F143A.allData
-private abbrev ch144A := Datasets.WALS.F144A.allData
-private abbrev ch144B := Datasets.WALS.F144B.allData
+private abbrev ch112  := Data.WALS.F112A.allData
+private abbrev ch113  := Data.WALS.F113A.allData
+private abbrev ch114  := Data.WALS.F114A.allData
+private abbrev ch115  := Data.WALS.F115A.allData
+private abbrev ch143A := Data.WALS.F143A.allData
+private abbrev ch144A := Data.WALS.F144A.allData
+private abbrev ch144B := Data.WALS.F144B.allData
 
 -- ============================================================================
 -- §1. Substrate enums
@@ -84,7 +84,7 @@ private abbrev ch144B := Datasets.WALS.F144B.allData
 /-- Type of the standard negation morpheme @cite{dryer-2013-wals}.
 
     Six categories anchored on WALS Ch 112A (negative morpheme classification).
-    Direct projection from `Datasets.WALS.F112A.NegativeMorphemeType` via
+    Direct projection from `Data.WALS.F112A.NegativeMorphemeType` via
     `ofWALS112A`; the substrate enum exists for ergonomic pattern-matching
     in Fragment files. -/
 inductive NegMorphemeType where
@@ -232,15 +232,15 @@ structure NegationSystem where
   markers : List NegMarkerEntry
   /-- WALS Ch 112A: morpheme classification. Should not be hand-encoded
       in Fragment files — use `NegationSystem.ofISO` to populate from the
-      `Datasets.WALS` data, which is the single source of truth. -/
-  wals112A : Option Datasets.WALS.F112A.NegativeMorphemeType := none
+      `Data.WALS` data, which is the single source of truth. -/
+  wals112A : Option Data.WALS.F112A.NegativeMorphemeType := none
   /-- WALS Ch 143A: NegV / VNeg / double-negation pattern. Populated by
       `NegationSystem.ofISO`. -/
-  wals143A : Option Datasets.WALS.F143A.NegVerbOrder := none
+  wals143A : Option Data.WALS.F143A.NegVerbOrder := none
   /-- WALS Ch 144A: full S/O/V positional classification. Populated by
       `NegationSystem.ofISO`. -/
   wals144A :
-    Option Datasets.WALS.F144A.PositionOfNegativeWordWithRespectToSubjectObjectAndVerb
+    Option Data.WALS.F144A.PositionOfNegativeWordWithRespectToSubjectObjectAndVerb
     := none
   deriving Repr
 
@@ -288,7 +288,7 @@ structure NegationProfile where
 -- ============================================================================
 
 /-- WALS Ch 112A → `NegMorphemeType`. -/
-def ofWALS112A : Datasets.WALS.F112A.NegativeMorphemeType → NegMorphemeType
+def ofWALS112A : Data.WALS.F112A.NegativeMorphemeType → NegMorphemeType
   | .negativeAffix => .affix
   | .negativeParticle => .particle
   | .negativeAuxiliaryVerb => .auxVerb
@@ -297,14 +297,14 @@ def ofWALS112A : Datasets.WALS.F112A.NegativeMorphemeType → NegMorphemeType
   | .doubleNegation => .doubleNeg
 
 /-- WALS Ch 113A → `NegSymmetry`. -/
-def fromWALS113A : Datasets.WALS.F113A.NegationSymmetry → NegSymmetry
+def fromWALS113A : Data.WALS.F113A.NegationSymmetry → NegSymmetry
   | .symmetric  => .symmetric
   | .asymmetric => .asymmetric
   | .both       => .both
 
 /-- WALS Ch 114A → `AsymmetrySubtype`. -/
 def fromWALS114A :
-    Datasets.WALS.F114A.AsymmetricNegationSubtype → AsymmetrySubtype
+    Data.WALS.F114A.AsymmetricNegationSubtype → AsymmetrySubtype
   | .aFin           => .finiteness
   | .aNonreal       => .realityStatus
   | .aCat           => .otherCategories
@@ -315,14 +315,14 @@ def fromWALS114A :
 
 /-- WALS Ch 115A → `NegIndefiniteStrategy`. -/
 def fromWALS115A :
-    Datasets.WALS.F115A.NegativeIndefiniteType → NegIndefiniteStrategy
+    Data.WALS.F115A.NegativeIndefiniteType → NegIndefiniteStrategy
   | .predicateNegationAlsoPresent      => .cooccur
   | .noPredicateNegation               => .preclude
   | .mixedBehaviour                    => .mixed
   | .negativeExistentialConstruction   => .negExistential
 
 /-- WALS Ch 143A → `NegVerbPosition`. -/
-def fromWALS143A : Datasets.WALS.F143A.NegVerbOrder → NegVerbPosition
+def fromWALS143A : Data.WALS.F143A.NegVerbOrder → NegVerbPosition
   | .negv => .preverbalParticle
   | .vneg => .postverbalParticle
   | .negV => .preverbalAffix
@@ -342,13 +342,13 @@ def fromWALS143A : Datasets.WALS.F143A.NegVerbOrder → NegVerbPosition
   | .opttriplenegOptdoubleneg => .tripleNeg
 
 /-- Build a `NegationSystem` for a language identified by ISO 639-3 code,
-    pulling F112A / F143A / F144A values from the `Datasets.WALS` data. -/
+    pulling F112A / F143A / F144A values from the `Data.WALS` data. -/
 def NegationSystem.ofISO (iso : String) (markers : List NegMarkerEntry) :
     NegationSystem :=
   { markers
-  , wals112A := (Datasets.WALS.F112A.lookupISO iso).map (·.value)
-  , wals143A := (Datasets.WALS.F143A.lookupISO iso).map (·.value)
-  , wals144A := (Datasets.WALS.F144A.lookupISO iso).map (·.value)
+  , wals112A := (Data.WALS.F112A.lookupISO iso).map (·.value)
+  , wals143A := (Data.WALS.F143A.lookupISO iso).map (·.value)
+  , wals144A := (Data.WALS.F144A.lookupISO iso).map (·.value)
   }
 
 -- ============================================================================

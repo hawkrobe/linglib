@@ -1,4 +1,4 @@
-import Linglib.Datasets.PHOIBLE.Inventories.Georgian
+import Linglib.Data.PHOIBLE.Inventories.Georgian
 
 /-!
 # Georgian phonological inventory
@@ -6,7 +6,7 @@ import Linglib.Datasets.PHOIBLE.Inventories.Georgian
 
 Canonical PHOIBLE 2.0 phoneme inventory for Georgian (ISO `kat`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in
-`Datasets/PHOIBLE/Inventories/Georgian.lean`.
+`Data/PHOIBLE/Inventories/Georgian.lean`.
 
 The choice of which PHOIBLE inventory to treat as canonical (PHOIBLE has
 multiple doculects per ISO) is made here at the Fragment layer, so
@@ -17,7 +17,7 @@ naming a PHOIBLE InventoryID directly.
 namespace Fragments.Georgian.Phonology
 
 /-- Canonical Georgian phoneme inventory: first PHOIBLE inventory for ISO `kat`. -/
-def phonemeInventory : Datasets.PHOIBLE.Inventory :=
-  Datasets.PHOIBLE.Inventories.Georgian.kat
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.Georgian.kat
 
 end Fragments.Georgian.Phonology

@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Datasets.WALS.Features.F87A
+import Linglib.Data.WALS.Features.F87A
 import Linglib.Theories.Syntax.Minimalist.Modification
 import Linglib.Fragments.Greek.StandardModern.AdjAgreement
 import Linglib.Fragments.German.AdjAgreement
@@ -89,7 +89,7 @@ end Morphology.ICP
 
 namespace AlexeyenkoZeijlstra2025
 
-open Datasets.WALS.F87A
+open Data.WALS.F87A
 open Minimalist.Modification (AttrStatus AdjPosition AdjMorphProfile
   ModificationRoute MAGFeatureType AdjAgreementEntry
   modificationRoute morphStatusToAttrStatus)

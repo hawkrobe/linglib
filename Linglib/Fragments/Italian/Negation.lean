@@ -47,7 +47,7 @@ def non : NegMarkerEntry :=
 
 /-- The Italian negation system: a single preverbal particle.
     The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`.
-    WALS classifications are pulled from `Datasets/WALS/Features/F112A.lean`
+    WALS classifications are pulled from `Data/WALS/Features/F112A.lean`
     et al. via `NegationSystem.ofISO` — never hand-encoded. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "ita" [non]

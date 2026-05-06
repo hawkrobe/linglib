@@ -1,4 +1,4 @@
-import Linglib.Datasets.PHOIBLE.Inventories.MandarinChinese
+import Linglib.Data.PHOIBLE.Inventories.MandarinChinese
 
 /-!
 # Mandarin phonological inventory
@@ -6,7 +6,7 @@ import Linglib.Datasets.PHOIBLE.Inventories.MandarinChinese
 
 Canonical PHOIBLE 2.0 phoneme inventory for Mandarin (ISO `cmn`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in
-`Datasets/PHOIBLE/Inventories/MandarinChinese.lean`.
+`Data/PHOIBLE/Inventories/MandarinChinese.lean`.
 
 The choice of which PHOIBLE inventory to treat as canonical (PHOIBLE has
 multiple doculects per ISO) is made here at the Fragment layer, so
@@ -17,7 +17,7 @@ naming a PHOIBLE InventoryID directly.
 namespace Fragments.Mandarin.Phonology
 
 /-- Canonical Mandarin phoneme inventory: first PHOIBLE inventory for ISO `cmn`. -/
-def phonemeInventory : Datasets.PHOIBLE.Inventory :=
-  Datasets.PHOIBLE.Inventories.MandarinChinese.cmn
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.MandarinChinese.cmn
 
 end Fragments.Mandarin.Phonology

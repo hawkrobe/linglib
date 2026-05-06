@@ -1,7 +1,7 @@
-import Linglib.Datasets.WALS.Features.F132A
-import Linglib.Datasets.WALS.Features.F133A
-import Linglib.Datasets.WALS.Features.F134A
-import Linglib.Datasets.WALS.Features.F135A
+import Linglib.Data.WALS.Features.F132A
+import Linglib.Data.WALS.Features.F133A
+import Linglib.Data.WALS.Features.F134A
+import Linglib.Data.WALS.Features.F135A
 
 /-!
 # Color-term typology — substrate types and WALS data
@@ -133,7 +133,7 @@ structure ColorProfile where
 -- ============================================================================
 
 /-- Convert WALS 132A non-derived-color-count values into the substrate enum. -/
-def fromWALS132A : Datasets.WALS.F132A.NumberOfNonDerivedBasicColourCategories → NonDerivedColorCount
+def fromWALS132A : Data.WALS.F132A.NumberOfNonDerivedBasicColourCategories → NonDerivedColorCount
   | .v3  => .three
   | .v35 => .threeHalf
   | .v4  => .four
@@ -143,7 +143,7 @@ def fromWALS132A : Datasets.WALS.F132A.NumberOfNonDerivedBasicColourCategories �
   | .v6  => .six
 
 /-- Convert WALS 133A basic-color-count values into the substrate enum. -/
-def fromWALS133A : Datasets.WALS.F133A.NumberOfBasicColourCategories → BasicColorCount
+def fromWALS133A : Data.WALS.F133A.NumberOfBasicColourCategories → BasicColorCount
   | .v34   => .v3to4
   | .v4555 => .v4to5
   | .v665  => .v6to6h
@@ -153,7 +153,7 @@ def fromWALS133A : Datasets.WALS.F133A.NumberOfBasicColourCategories → BasicCo
   | .v11   => .v11
 
 /-- Convert WALS 134A green-blue values into the substrate enum. -/
-def fromWALS134A : Datasets.WALS.F134A.GreenAndBlue → GreenBlueRelation
+def fromWALS134A : Data.WALS.F134A.GreenAndBlue → GreenBlueRelation
   | .greenVsBlue       => .distinct
   | .greenBlue         => .merged
   | .blackGreenBlue    => .blackGreenBlue
@@ -163,7 +163,7 @@ def fromWALS134A : Datasets.WALS.F134A.GreenAndBlue → GreenBlueRelation
   | .none              => .noTerm
 
 /-- Convert WALS 135A red-yellow values into the substrate enum. -/
-def fromWALS135A : Datasets.WALS.F135A.RedAndYellow → RedYellowRelation
+def fromWALS135A : Data.WALS.F135A.RedAndYellow → RedYellowRelation
   | .redVsYellow          => .distinct
   | .redYellow            => .merged
   | .yellowGreenBlueVsRed => .yellowGreenBlueVsRed

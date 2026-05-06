@@ -1,6 +1,6 @@
-import Linglib.Datasets.WALS.Features.F98A
-import Linglib.Datasets.WALS.Features.F99A
-import Linglib.Datasets.WALS.Features.F100A
+import Linglib.Data.WALS.Features.F98A
+import Linglib.Data.WALS.Features.F99A
+import Linglib.Data.WALS.Features.F100A
 
 /-!
 # Typology.Alignment
@@ -58,9 +58,9 @@ set_option autoImplicit false
 
 namespace Typology.Alignment
 
-private abbrev ch98  := Datasets.WALS.F98A.allData
-private abbrev ch99  := Datasets.WALS.F99A.allData
-private abbrev ch100 := Datasets.WALS.F100A.allData
+private abbrev ch98  := Data.WALS.F98A.allData
+private abbrev ch99  := Data.WALS.F99A.allData
+private abbrev ch100 := Data.WALS.F100A.allData
 
 -- ============================================================================
 -- §1. Alignment types (Ch 98/99/100)
@@ -198,7 +198,7 @@ structure DitransitiveProfile where
 
 /-- WALS Ch 98A → `AlignmentType`. WALS distinguishes standard and marked-
     nominative accusative; we merge both. -/
-def fromWALS98A : Datasets.WALS.F98A.NPCaseAlignment → AlignmentType
+def fromWALS98A : Data.WALS.F98A.NPCaseAlignment → AlignmentType
   | .neutral                => .neutral
   | .nominativeAccusative   => .accusative
   | .nominativeAccusative_3 => .accusative
@@ -208,7 +208,7 @@ def fromWALS98A : Datasets.WALS.F98A.NPCaseAlignment → AlignmentType
 
 /-- WALS Ch 99A → `AlignmentType`. WALS has a `.none` value (no pronouns or
     no case on pronouns); we map it to `.neutral`. -/
-def fromWALS99A : Datasets.WALS.F99A.PronounCaseAlignment → AlignmentType
+def fromWALS99A : Data.WALS.F99A.PronounCaseAlignment → AlignmentType
   | .neutral                => .neutral
   | .nominativeAccusative   => .accusative
   | .nominativeAccusative_3 => .accusative
@@ -220,7 +220,7 @@ def fromWALS99A : Datasets.WALS.F99A.PronounCaseAlignment → AlignmentType
 /-- WALS Ch 100A → `Option AlignmentType`. The `.hierarchical` and `.split`
     values don't map cleanly to our 5-way enum and return `none`. -/
 def fromWALS100A :
-    Datasets.WALS.F100A.VerbalPersonAlignment → Option AlignmentType
+    Data.WALS.F100A.VerbalPersonAlignment → Option AlignmentType
   | .neutral      => some .neutral
   | .accusative   => some .accusative
   | .ergative     => some .ergative

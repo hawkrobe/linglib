@@ -1,7 +1,7 @@
 import Linglib.Typology.Possession
 import Linglib.Theories.Diachronic.Grammaticalization
 import Linglib.Theories.Semantics.Noun.Relational.Barker2011
-import Linglib.Datasets.WALS.Features.F117A
+import Linglib.Data.WALS.Features.F117A
 import Linglib.Fragments.Slavic.Russian.Possession
 import Linglib.Fragments.Finnish.Possession
 import Linglib.Fragments.Turkish.Possession
@@ -426,7 +426,7 @@ theorem genitive_predictions :
     possession (Heine's Companion Schema). Goal Schema languages are
     typically classified under WALS `locational` (since both use oblique
     possessors with existential predicates). -/
-def walsToSchema : Datasets.WALS.F117A.PredicativePossession → PossessionSource
+def walsToSchema : Data.WALS.F117A.PredicativePossession → PossessionSource
   | .locational    => .location
   | .genitive      => .genitive
   | .topic         => .topic

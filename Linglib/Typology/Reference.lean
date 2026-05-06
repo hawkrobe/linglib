@@ -1,8 +1,8 @@
-import Linglib.Datasets.WALS.Features.F37A
-import Linglib.Datasets.WALS.Features.F38A
-import Linglib.Datasets.WALS.Features.F41A
-import Linglib.Datasets.WALS.Features.F42A
-import Linglib.Datasets.WALS.Features.F43A
+import Linglib.Data.WALS.Features.F37A
+import Linglib.Data.WALS.Features.F38A
+import Linglib.Data.WALS.Features.F41A
+import Linglib.Data.WALS.Features.F42A
+import Linglib.Data.WALS.Features.F43A
 
 /-!
 # Article-and-demonstrative typology — substrate types and WALS data
@@ -207,7 +207,7 @@ def ArticleDemProfile.hasIndefinite (p : ArticleDemProfile) : Bool :=
 -- ============================================================================
 
 /-- Convert WALS 37A definite-article values into the substrate enum. -/
-def fromWALS37A : Datasets.WALS.F37A.DefiniteArticleType → DefiniteArticleType
+def fromWALS37A : Data.WALS.F37A.DefiniteArticleType → DefiniteArticleType
   | .definiteWordDistinctFromDemonstrative => .definiteWord
   | .demonstrativeWordUsedAsDefiniteArticle => .demonstrativeUsed
   | .definiteAffix => .definiteAffix
@@ -215,7 +215,7 @@ def fromWALS37A : Datasets.WALS.F37A.DefiniteArticleType → DefiniteArticleType
   | .noDefiniteOrIndefiniteArticle => .noArticle
 
 /-- Convert WALS 38A indefinite-article values into the substrate enum. -/
-def fromWALS38A : Datasets.WALS.F38A.IndefiniteArticleType → IndefiniteArticleType
+def fromWALS38A : Data.WALS.F38A.IndefiniteArticleType → IndefiniteArticleType
   | .indefiniteWordDistinctFromOne => .indefiniteWord
   | .indefiniteWordSameAsOne => .numeralOne
   | .indefiniteAffix => .indefiniteAffix
@@ -223,7 +223,7 @@ def fromWALS38A : Datasets.WALS.F38A.IndefiniteArticleType → IndefiniteArticle
   | .noDefiniteOrIndefiniteArticle => .noArticle
 
 /-- Convert WALS 41A distance-contrast values into the substrate enum. -/
-def fromWALS41A : Datasets.WALS.F41A.DistanceContrastsInDemonstratives → DemDistanceSystem
+def fromWALS41A : Data.WALS.F41A.DistanceContrastsInDemonstratives → DemDistanceSystem
   | .noDistanceContrast => .noContrast
   | .twoWayContrast => .twoWay
   | .threeWayContrast => .threeWay
@@ -231,13 +231,13 @@ def fromWALS41A : Datasets.WALS.F41A.DistanceContrastsInDemonstratives → DemDi
   | .fiveWayContrast => .fiveOrMore
 
 /-- Convert WALS 42A pronominal/adnominal-form values into the substrate enum. -/
-def fromWALS42A : Datasets.WALS.F42A.PronominalAndAdnominalDemonstratives → DemFormRelation
+def fromWALS42A : Data.WALS.F42A.PronominalAndAdnominalDemonstratives → DemFormRelation
   | .identical => .sameForms
   | .differentStem => .differentStems
   | .differentInflection => .differentInflection
 
 /-- Convert WALS 43A 3rd-person-pronoun values into the substrate enum. -/
-def fromWALS43A : Datasets.WALS.F43A.ThirdPersonPronounsAndDemonstratives → PronounDemRelation
+def fromWALS43A : Data.WALS.F43A.ThirdPersonPronounsAndDemonstratives → PronounDemRelation
   | .unrelated => .unrelated
   | .relatedForAllDemonstratives => .relatedAll
   | .relatedToRemoteDemonstratives => .relatedRemote

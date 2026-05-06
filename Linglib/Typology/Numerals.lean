@@ -1,7 +1,7 @@
 import Linglib.Typology.ClassifierSystem
-import Linglib.Datasets.WALS.Features.F53A
-import Linglib.Datasets.WALS.Features.F54A
-import Linglib.Datasets.WALS.Features.F131A
+import Linglib.Data.WALS.Features.F53A
+import Linglib.Data.WALS.Features.F54A
+import Linglib.Data.WALS.Features.F131A
 
 /-!
 # Numeral typology — substrate types and WALS data
@@ -167,7 +167,7 @@ def NumeralProfile.isEastSoutheastAsian (p : NumeralProfile) : Bool :=
     "First, two-th, three-th" and "First, two, three" both map to
     `firstSuppletion` (only "first" suppletive). "One, two, three" and
     "First/one-th, …" map to `various`. -/
-def fromWALS53A : Datasets.WALS.F53A.OrdinalNumerals → OrdinalFormation
+def fromWALS53A : Data.WALS.F53A.OrdinalNumerals → OrdinalFormation
   | .none => .noOrdinals
   | .oneTwoThree => .various
   | .firstTwoThree => .firstSuppletion
@@ -179,7 +179,7 @@ def fromWALS53A : Datasets.WALS.F53A.OrdinalNumerals → OrdinalFormation
 
 /-- Convert WALS 54A distributive numeral values to the substrate enum.
     Word-level and mixed strategies collapse into `markedByOtherMeans`. -/
-def fromWALS54A : Datasets.WALS.F54A.DistributiveNumerals → DistributiveNumeral
+def fromWALS54A : Data.WALS.F54A.DistributiveNumerals → DistributiveNumeral
   | .noDistributiveNumerals => .noDistributive
   | .markedByReduplication => .markedByReduplication
   | .markedByPrefix => .markedByPrefix
@@ -189,7 +189,7 @@ def fromWALS54A : Datasets.WALS.F54A.DistributiveNumerals → DistributiveNumera
   | .markedByMixedOrOtherStrategies => .markedByOtherMeans
 
 /-- Convert WALS 131A numeral base values to the substrate enum (one-to-one). -/
-def fromWALS131A : Datasets.WALS.F131A.NumeralBases → NumeralBase
+def fromWALS131A : Data.WALS.F131A.NumeralBases → NumeralBase
   | .decimal => .decimal
   | .pureVigesimal => .vigesimal
   | .hybridVigesimalDecimal => .hybridVigesimalDecimal

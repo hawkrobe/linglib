@@ -24,7 +24,7 @@ Cross-dataset bridge theorems verifying that PHOIBLE 2.0 inventories
 are consistent with the WALS Maddieson chapter classifications, for
 the 16 languages currently covered by `Fragments/{Lang}/Phonology.lean`.
 
-Inventories are accessed via Fragments (not Datasets directly), per
+Inventories are accessed via Fragments (not Data directly), per
 linglib's pattern that per-language data flows through Fragment files.
 
 ## Why this study file exists
@@ -70,7 +70,7 @@ set_option autoImplicit false
 namespace Phenomena.Phonology.Studies.Maddieson2013
 
 open Typology.Phonology
-open Datasets.PHOIBLE
+open Data.PHOIBLE
 
 /-- Whether a consonant count falls in the WALS Ch 1 bin for a given
     `CInventorySize`. Uses Maddieson's bin boundaries.
@@ -143,7 +143,7 @@ theorem zulu_consonants :
 -- falls into. Where PHOIBLE's bin disagrees with the WALS-stated value
 -- (different counting methodology), the PHOIBLE-derived bin is what's
 -- recorded — disagreement is then a grep-visible value contrast against
--- the WALS data in `Datasets.WALS.F1A`.
+-- the WALS data in `Data.WALS.F1A`.
 
 theorem english_phoible_in_moderatelyLarge :
     inWALS1ABin .moderatelyLarge

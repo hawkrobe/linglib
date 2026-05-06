@@ -1,11 +1,11 @@
-import Linglib.Datasets.WALS.Aggregation
-import Linglib.Datasets.WALS.Features.F94A
-import Linglib.Datasets.WALS.Features.F95A
-import Linglib.Datasets.WALS.Features.F124A
-import Linglib.Datasets.WALS.Features.F125A
-import Linglib.Datasets.WALS.Features.F126A
-import Linglib.Datasets.WALS.Features.F127A
-import Linglib.Datasets.WALS.Features.F128A
+import Linglib.Data.WALS.Aggregation
+import Linglib.Data.WALS.Features.F94A
+import Linglib.Data.WALS.Features.F95A
+import Linglib.Data.WALS.Features.F124A
+import Linglib.Data.WALS.Features.F125A
+import Linglib.Data.WALS.Features.F126A
+import Linglib.Data.WALS.Features.F127A
+import Linglib.Data.WALS.Features.F128A
 
 /-!
 # Typology.Complementation
@@ -70,13 +70,13 @@ set_option autoImplicit false
 
 namespace Typology.Complementation
 
-private abbrev ch94  := Datasets.WALS.F94A.allData
-private abbrev ch95  := Datasets.WALS.F95A.allData
-private abbrev ch124 := Datasets.WALS.F124A.allData
-private abbrev ch125 := Datasets.WALS.F125A.allData
-private abbrev ch126 := Datasets.WALS.F126A.allData
-private abbrev ch127 := Datasets.WALS.F127A.allData
-private abbrev ch128 := Datasets.WALS.F128A.allData
+private abbrev ch94  := Data.WALS.F94A.allData
+private abbrev ch95  := Data.WALS.F95A.allData
+private abbrev ch124 := Data.WALS.F124A.allData
+private abbrev ch125 := Data.WALS.F125A.allData
+private abbrev ch126 := Data.WALS.F126A.allData
+private abbrev ch127 := Data.WALS.F127A.allData
+private abbrev ch128 := Data.WALS.F128A.allData
 
 -- ============================================================================
 -- §1. Noonan Complement Typology
@@ -280,10 +280,10 @@ def SubordinationProfile.hasPostNominalRC (p : SubordinationProfile) : Bool :=
   p.rcPosition == .postNominal
 
 /-! `WALSCount` + `WALSCount.totalOf` are imported from
-    `Linglib/Datasets/WALS/Aggregation.lean` (shared with the other
+    `Linglib/Data/WALS/Aggregation.lean` (shared with the other
     Typology files that consume WALS distributions). -/
 
-open Datasets.WALS (WALSCount)
+open Data.WALS (WALSCount)
 
 -- ============================================================================
 -- §3. Cristofaro Complementation Typology (Ch 124--128)
@@ -336,7 +336,7 @@ structure ComplementationProfile where
 -- ============================================================================
 
 /-- Map WALS F124A to `WantCompStrategy`. -/
-def fromWALS124A : Datasets.WALS.F124A.WantComplementSubject → WantCompStrategy
+def fromWALS124A : Data.WALS.F124A.WantComplementSubject → WantCompStrategy
   | .subjectIsLeftImplicit     => .subjectImplicit
   | .subjectIsExpressedOvertly => .subjectOvert
   | .bothConstructionTypesExist => .both
@@ -344,25 +344,25 @@ def fromWALS124A : Datasets.WALS.F124A.WantComplementSubject → WantCompStrateg
   | .desiderativeParticle      => .desidParticle
 
 /-- Map WALS F125A to `BalancedDeranked`. -/
-def fromWALS125A : Datasets.WALS.F125A.PurposeClauseType → BalancedDeranked
+def fromWALS125A : Data.WALS.F125A.PurposeClauseType → BalancedDeranked
   | .balanced         => .balanced
   | .balancedDeranked => .balancedDeranked
   | .deranked         => .deranked
 
 /-- Map WALS F126A to `BalancedDeranked`. -/
-def fromWALS126A : Datasets.WALS.F126A.WhenClauseType → BalancedDeranked
+def fromWALS126A : Data.WALS.F126A.WhenClauseType → BalancedDeranked
   | .balanced         => .balanced
   | .balancedDeranked => .balancedDeranked
   | .deranked         => .deranked
 
 /-- Map WALS F127A to `BalancedDeranked`. -/
-def fromWALS127A : Datasets.WALS.F127A.ReasonClauseType → BalancedDeranked
+def fromWALS127A : Data.WALS.F127A.ReasonClauseType → BalancedDeranked
   | .balanced         => .balanced
   | .balancedDeranked => .balancedDeranked
   | .deranked         => .deranked
 
 /-- Map WALS F128A to `BalancedDeranked`. -/
-def fromWALS128A : Datasets.WALS.F128A.UtteranceComplementType → BalancedDeranked
+def fromWALS128A : Data.WALS.F128A.UtteranceComplementType → BalancedDeranked
   | .balanced         => .balanced
   | .balancedDeranked => .balancedDeranked
   | .deranked         => .deranked

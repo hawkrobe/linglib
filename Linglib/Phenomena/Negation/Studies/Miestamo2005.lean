@@ -1,7 +1,7 @@
 import Linglib.Typology.Negation
-import Linglib.Datasets.WALS.Features.F113A
-import Linglib.Datasets.WALS.Features.F114A
-import Linglib.Datasets.WALS.Features.F115A
+import Linglib.Data.WALS.Features.F113A
+import Linglib.Data.WALS.Features.F114A
+import Linglib.Data.WALS.Features.F115A
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.German.Negation
@@ -67,7 +67,7 @@ Every datum here is consistent with the coarser WALS classification:
 The book's representative sample (RS) covers **179 languages** (Table 3, p. 171):
 Sym 72 (40%), SymAsy 76 (42%), Asy 31 (17%).
 Note: the WALS Ch 113 sample (also by Miestamo) covers 297 languages with
-different numbers; those are captured separately via `Datasets.WALS.F113A`.
+different numbers; those are captured separately via `Data.WALS.F113A`.
 -/
 
 namespace Miestamo2005
@@ -895,7 +895,7 @@ theorem independent_count :
     sample (RS). These are the headline empirical results of Ch 4's
     typological survey. Note: the WALS Ch 113 sample (also by Miestamo)
     covers 297 languages with different numbers; those are captured
-    separately in `Typology.lean` via `Datasets.WALS.F113A`. -/
+    separately in `Typology.lean` via `Data.WALS.F113A`. -/
 structure SurveyDistribution where
   totalLanguages : Nat
   symmetricOnly : Nat

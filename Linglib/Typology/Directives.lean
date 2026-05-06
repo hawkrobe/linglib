@@ -1,7 +1,7 @@
-import Linglib.Datasets.WALS.Features.F70A
-import Linglib.Datasets.WALS.Features.F71A
-import Linglib.Datasets.WALS.Features.F72A
-import Linglib.Datasets.WALS.Features.F73A
+import Linglib.Data.WALS.Features.F70A
+import Linglib.Data.WALS.Features.F71A
+import Linglib.Data.WALS.Features.F72A
+import Linglib.Data.WALS.Features.F73A
 
 /-!
 # Imperative-system typology — substrate types and WALS data
@@ -172,12 +172,12 @@ def ImperativeProfile.hasSpecialProhibitive (p : ImperativeProfile) : Bool :=
     substrate enum. F70A tracks number distinctions, not whether the paradigm
     extends to other persons, so only `noSecondPersonImperatives` produces a
     determinate `noMorphological` value; other values return `none`. -/
-def fromWALS70A : Datasets.WALS.F70A.MorphologicalImperative → Option MorphImpType
+def fromWALS70A : Data.WALS.F70A.MorphologicalImperative → Option MorphImpType
   | .noSecondPersonImperatives => some .noMorphological
   | _ => none
 
 /-- Convert WALS 71A prohibitive values into the substrate enum (one-to-one). -/
-def fromWALS71A : Datasets.WALS.F71A.Prohibitive → ProhibitiveType
+def fromWALS71A : Data.WALS.F71A.Prohibitive → ProhibitiveType
   | .normalImperativeNormalNegative => .normalImpNormalNeg
   | .normalImperativeSpecialNegative => .normalImpSpecialNeg
   | .specialImperativeNormalNegative => .specialImpNormalNeg
@@ -187,13 +187,13 @@ def fromWALS71A : Datasets.WALS.F71A.Prohibitive → ProhibitiveType
     WALS uses `maximalSystem` / `minimalSystem` / `bothTypesOfSystem` /
     `neitherTypeOfSystem`; only the two extreme values map cleanly to the
     substrate's four-way split. -/
-def fromWALS72A : Datasets.WALS.F72A.ImperativeHortativeSystems → Option ImpHortSystem
+def fromWALS72A : Data.WALS.F72A.ImperativeHortativeSystems → Option ImpHortSystem
   | .neitherTypeOfSystem => some .imperativeOnly
   | .maximalSystem => some .allThree
   | _ => none
 
 /-- Convert WALS 73A optative values into the substrate enum (one-to-one). -/
-def fromWALS73A : Datasets.WALS.F73A.Optative → OptativePresence
+def fromWALS73A : Data.WALS.F73A.Optative → OptativePresence
   | .present => .present
   | .absent => .absent
 

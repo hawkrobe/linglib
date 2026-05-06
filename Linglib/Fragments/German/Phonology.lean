@@ -1,4 +1,4 @@
-import Linglib.Datasets.PHOIBLE.Inventories.German
+import Linglib.Data.PHOIBLE.Inventories.German
 
 /-!
 # German phonological inventory
@@ -6,7 +6,7 @@ import Linglib.Datasets.PHOIBLE.Inventories.German
 
 Canonical PHOIBLE 2.0 phoneme inventory for German (ISO `deu`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in
-`Datasets/PHOIBLE/Inventories/German.lean`.
+`Data/PHOIBLE/Inventories/German.lean`.
 
 The choice of which PHOIBLE inventory to treat as canonical (PHOIBLE has
 multiple doculects per ISO) is made here at the Fragment layer, so
@@ -17,7 +17,7 @@ naming a PHOIBLE InventoryID directly.
 namespace Fragments.German.Phonology
 
 /-- Canonical German phoneme inventory: first PHOIBLE inventory for ISO `deu`. -/
-def phonemeInventory : Datasets.PHOIBLE.Inventory :=
-  Datasets.PHOIBLE.Inventories.German.deu
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.German.deu
 
 end Fragments.German.Phonology

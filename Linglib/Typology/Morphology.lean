@@ -1,20 +1,20 @@
-import Linglib.Datasets.WALS.Aggregation
-import Linglib.Datasets.WALS.Features.F20A
-import Linglib.Datasets.WALS.Features.F21A
-import Linglib.Datasets.WALS.Features.F21B
-import Linglib.Datasets.WALS.Features.F22A
-import Linglib.Datasets.WALS.Features.F23A
-import Linglib.Datasets.WALS.Features.F24A
-import Linglib.Datasets.WALS.Features.F25A
-import Linglib.Datasets.WALS.Features.F25B
-import Linglib.Datasets.WALS.Features.F26A
-import Linglib.Datasets.WALS.Features.F27A
-import Linglib.Datasets.WALS.Features.F28A
-import Linglib.Datasets.WALS.Features.F29A
-import Linglib.Datasets.WALS.Features.F62A
-import Linglib.Datasets.WALS.Features.F79A
-import Linglib.Datasets.WALS.Features.F79B
-import Linglib.Datasets.WALS.Features.F80A
+import Linglib.Data.WALS.Aggregation
+import Linglib.Data.WALS.Features.F20A
+import Linglib.Data.WALS.Features.F21A
+import Linglib.Data.WALS.Features.F21B
+import Linglib.Data.WALS.Features.F22A
+import Linglib.Data.WALS.Features.F23A
+import Linglib.Data.WALS.Features.F24A
+import Linglib.Data.WALS.Features.F25A
+import Linglib.Data.WALS.Features.F25B
+import Linglib.Data.WALS.Features.F26A
+import Linglib.Data.WALS.Features.F27A
+import Linglib.Data.WALS.Features.F28A
+import Linglib.Data.WALS.Features.F29A
+import Linglib.Data.WALS.Features.F62A
+import Linglib.Data.WALS.Features.F79A
+import Linglib.Data.WALS.Features.F79B
+import Linglib.Data.WALS.Features.F80A
 
 /-!
 # Typology.Morphology
@@ -69,28 +69,28 @@ set_option autoImplicit false
 
 namespace Typology.Morphology
 
-private abbrev ch20  := Datasets.WALS.F20A.allData
-private abbrev ch21  := Datasets.WALS.F21A.allData
-private abbrev ch21b := Datasets.WALS.F21B.allData
-private abbrev ch22  := Datasets.WALS.F22A.allData
-private abbrev ch23  := Datasets.WALS.F23A.allData
-private abbrev ch24  := Datasets.WALS.F24A.allData
-private abbrev ch25a := Datasets.WALS.F25A.allData
-private abbrev ch25b := Datasets.WALS.F25B.allData
-private abbrev ch26  := Datasets.WALS.F26A.allData
-private abbrev ch27  := Datasets.WALS.F27A.allData
-private abbrev ch28  := Datasets.WALS.F28A.allData
-private abbrev ch29  := Datasets.WALS.F29A.allData
-private abbrev ch62  := Datasets.WALS.F62A.allData
-private abbrev ch79a := Datasets.WALS.F79A.allData
-private abbrev ch79b := Datasets.WALS.F79B.allData
-private abbrev ch80  := Datasets.WALS.F80A.allData
+private abbrev ch20  := Data.WALS.F20A.allData
+private abbrev ch21  := Data.WALS.F21A.allData
+private abbrev ch21b := Data.WALS.F21B.allData
+private abbrev ch22  := Data.WALS.F22A.allData
+private abbrev ch23  := Data.WALS.F23A.allData
+private abbrev ch24  := Data.WALS.F24A.allData
+private abbrev ch25a := Data.WALS.F25A.allData
+private abbrev ch25b := Data.WALS.F25B.allData
+private abbrev ch26  := Data.WALS.F26A.allData
+private abbrev ch27  := Data.WALS.F27A.allData
+private abbrev ch28  := Data.WALS.F28A.allData
+private abbrev ch29  := Data.WALS.F29A.allData
+private abbrev ch62  := Data.WALS.F62A.allData
+private abbrev ch79a := Data.WALS.F79A.allData
+private abbrev ch79b := Data.WALS.F79B.allData
+private abbrev ch80  := Data.WALS.F80A.allData
 
 /-! `WALSCount` + `WALSCount.totalOf` are imported from
-    `Linglib/Datasets/WALS/Aggregation.lean` (shared with the other
+    `Linglib/Data/WALS/Aggregation.lean` (shared with the other
     Typology files that consume WALS distributions). -/
 
-open Datasets.WALS (WALSCount)
+open Data.WALS (WALSCount)
 
 
 /-- WALS Ch 20: exclusively concatenative is the most common single

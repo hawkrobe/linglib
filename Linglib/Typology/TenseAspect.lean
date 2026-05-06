@@ -1,9 +1,9 @@
-import Linglib.Datasets.WALS.Features.F65A
-import Linglib.Datasets.WALS.Features.F66A
-import Linglib.Datasets.WALS.Features.F67A
-import Linglib.Datasets.WALS.Features.F68A
-import Linglib.Datasets.WALS.Features.F69A
-import Linglib.Datasets.WALS.Features.F78A
+import Linglib.Data.WALS.Features.F65A
+import Linglib.Data.WALS.Features.F66A
+import Linglib.Data.WALS.Features.F67A
+import Linglib.Data.WALS.Features.F68A
+import Linglib.Data.WALS.Features.F69A
+import Linglib.Data.WALS.Features.F78A
 
 /-!
 # Tense-aspect typology — substrate types and WALS data
@@ -203,27 +203,27 @@ def TAProfile.lacksMajorTAGrams (p : TAProfile) : Bool :=
 -- WALS converters
 -- ============================================================================
 
-def fromWALS65A : Datasets.WALS.F65A.PerfectiveImperfective → AspectMarking
+def fromWALS65A : Data.WALS.F65A.PerfectiveImperfective → AspectMarking
   | .grammaticalMarking => .grammatical
   | .noGrammaticalMarking => .none
 
-def fromWALS66A : Datasets.WALS.F66A.PastTenseType → PastMarking
+def fromWALS66A : Data.WALS.F66A.PastTenseType → PastMarking
   | .presentNoRemotenessDistinctions => .marked
   | .present23RemotenessDistinctions => .markedRemoteness2_3
   | .present4OrMoreRemotenessDistinctions => .markedRemoteness4plus
   | .noPastTense => .none
 
-def fromWALS67A : Datasets.WALS.F67A.FutureTenseType → FutureMarking
+def fromWALS67A : Data.WALS.F67A.FutureTenseType → FutureMarking
   | .inflectionalFutureExists => .inflectional
   | .noInflectionalFuture => .none
 
-def fromWALS68A : Datasets.WALS.F68A.PerfectType → PerfectType
+def fromWALS68A : Data.WALS.F68A.PerfectType → PerfectType
   | .fromPossessive => .fromPossessive
   | .fromFinishAlready => .fromFinishAlready
   | .otherPerfect => .other
   | .noPerfect => .none
 
-def fromWALS69A : Datasets.WALS.F69A.TenseAspectAffixPosition → TAAffixPosition
+def fromWALS69A : Data.WALS.F69A.TenseAspectAffixPosition → TAAffixPosition
   | .tenseAspectPrefixes => .prefixing
   | .tenseAspectSuffixes => .suffixing
   | .tenseAspectTone => .tonal

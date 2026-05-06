@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
-import Linglib.Datasets.WALS.Features.F46A
+import Linglib.Data.WALS.Features.F46A
 
 /-!
 # Indefinite-pronoun typology — consensus substrate
@@ -39,7 +39,7 @@ set_option autoImplicit false
 
 namespace Typology.Indefinite
 
-open Datasets.WALS
+open Data.WALS
 
 -- ============================================================================
 -- §1. Haspelmath 1997 function map

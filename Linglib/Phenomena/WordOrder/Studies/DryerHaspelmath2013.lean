@@ -1,18 +1,18 @@
-import Linglib.Datasets.WALS.Features.F81A
-import Linglib.Datasets.WALS.Features.F82A
-import Linglib.Datasets.WALS.Features.F83A
-import Linglib.Datasets.WALS.Features.F87A
-import Linglib.Datasets.WALS.Features.F88A
-import Linglib.Datasets.WALS.Features.F90A
-import Linglib.Datasets.WALS.Features.F94A
-import Linglib.Datasets.WALS.Features.F95A
-import Linglib.Datasets.WALS.Features.F96A
-import Linglib.Datasets.WALS.Features.F97A
-import Linglib.Datasets.WALS.Features.F81B
-import Linglib.Datasets.WALS.Features.F90B
-import Linglib.Datasets.WALS.Features.F90C
-import Linglib.Datasets.WALS.Features.F60A
-import Linglib.Datasets.WALS.Features.F61A
+import Linglib.Data.WALS.Features.F81A
+import Linglib.Data.WALS.Features.F82A
+import Linglib.Data.WALS.Features.F83A
+import Linglib.Data.WALS.Features.F87A
+import Linglib.Data.WALS.Features.F88A
+import Linglib.Data.WALS.Features.F90A
+import Linglib.Data.WALS.Features.F94A
+import Linglib.Data.WALS.Features.F95A
+import Linglib.Data.WALS.Features.F96A
+import Linglib.Data.WALS.Features.F97A
+import Linglib.Data.WALS.Features.F81B
+import Linglib.Data.WALS.Features.F90B
+import Linglib.Data.WALS.Features.F90C
+import Linglib.Data.WALS.Features.F60A
+import Linglib.Data.WALS.Features.F61A
 
 /-!
 # Dryer & Haspelmath (eds., 2013): WALS aggregate generalizations
@@ -21,7 +21,7 @@ import Linglib.Datasets.WALS.Features.F61A
 Aggregate cross-linguistic generalizations derived directly from the WALS
 Online corpus (@cite{dryer-haspelmath-2013}). Each theorem here is a
 distributional fact about WALS chapter values: a count or comparative-count
-predicate over `Datasets.WALS.Features.F{N}A.allData`.
+predicate over `Data.WALS.Features.F{N}A.allData`.
 
 These are not Greenberg-1963 implicational universals (which are conditional,
 per-language statements; see `Studies/Greenberg1963.lean`). They are
@@ -47,21 +47,21 @@ synthesis of many of these correlations, predating WALS.
 
 namespace Phenomena.WordOrder.Studies.DryerHaspelmath2013
 
-private abbrev ch81  := Datasets.WALS.F81A.allData
-private abbrev ch82  := Datasets.WALS.F82A.allData
-private abbrev ch83  := Datasets.WALS.F83A.allData
-private abbrev ch87  := Datasets.WALS.F87A.allData
-private abbrev ch88  := Datasets.WALS.F88A.allData
-private abbrev ch90  := Datasets.WALS.F90A.allData
-private abbrev ch94  := Datasets.WALS.F94A.allData
-private abbrev ch95  := Datasets.WALS.F95A.allData
-private abbrev ch96  := Datasets.WALS.F96A.allData
-private abbrev ch97  := Datasets.WALS.F97A.allData
-private abbrev ch81B := Datasets.WALS.F81B.allData
-private abbrev ch90B := Datasets.WALS.F90B.allData
-private abbrev ch90C := Datasets.WALS.F90C.allData
-private abbrev ch60  := Datasets.WALS.F60A.allData
-private abbrev ch61  := Datasets.WALS.F61A.allData
+private abbrev ch81  := Data.WALS.F81A.allData
+private abbrev ch82  := Data.WALS.F82A.allData
+private abbrev ch83  := Data.WALS.F83A.allData
+private abbrev ch87  := Data.WALS.F87A.allData
+private abbrev ch88  := Data.WALS.F88A.allData
+private abbrev ch90  := Data.WALS.F90A.allData
+private abbrev ch94  := Data.WALS.F94A.allData
+private abbrev ch95  := Data.WALS.F95A.allData
+private abbrev ch96  := Data.WALS.F96A.allData
+private abbrev ch97  := Data.WALS.F97A.allData
+private abbrev ch81B := Data.WALS.F81B.allData
+private abbrev ch90B := Data.WALS.F90B.allData
+private abbrev ch90C := Data.WALS.F90C.allData
+private abbrev ch60  := Data.WALS.F60A.allData
+private abbrev ch61  := Data.WALS.F61A.allData
 
 -- ============================================================================
 -- §1. Basic constituent order (Ch 81–83)

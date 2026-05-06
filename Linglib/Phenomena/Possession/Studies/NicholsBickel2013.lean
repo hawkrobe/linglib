@@ -1,6 +1,6 @@
 import Linglib.Typology.Possession
-import Linglib.Datasets.WALS.Features.F58A
-import Linglib.Datasets.WALS.Features.F59A
+import Linglib.Data.WALS.Features.F58A
+import Linglib.Data.WALS.Features.F59A
 import Linglib.Fragments.English.Possession
 import Linglib.Fragments.Slavic.Russian.Possession
 import Linglib.Fragments.Japanese.Possession
@@ -40,7 +40,7 @@ distribution claims that depend on filtering by chapter value.
 
 Per-language Fragment-vs-WALS data-equality theorems are **deliberately
 absent** — verifying that `Fragments.X.Possession.possession.field` equals
-`Datasets.WALS.lookup "iso"` is "encoding conclusions as definitions": the
+`Data.WALS.lookup "iso"` is "encoding conclusions as definitions": the
 two would have to silently diverge for the theorem to fail, and the typed
 Fragment value already encodes the WALS coding at definition site.
 
@@ -55,8 +55,8 @@ namespace Phenomena.Possession.Studies.NicholsBickel2013
 
 open Typology.Possession
 
-private abbrev ch58 := Datasets.WALS.F58A.allData
-private abbrev ch59 := Datasets.WALS.F59A.allData
+private abbrev ch58 := Data.WALS.F58A.allData
+private abbrev ch59 := Data.WALS.F59A.allData
 
 -- ============================================================================
 -- §1. The 19-language Fragment sample

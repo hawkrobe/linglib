@@ -1,55 +1,68 @@
 #!/usr/bin/env python3
-"""Generate Lean 4 LinguisticExample defs from per-paper CSV files.
+"""Generate Lean 4 LinguisticExample defs from per-paper JSON files.
 
 Usage:
     python3 scripts/gen_examples.py <AuthorYear>
 
 Example:
     python3 scripts/gen_examples.py Charlow2014
-        Reads:    Datasets/Examples/Charlow2014.csv
-        Locates:  Linglib/Studies/*/Charlow2014.lean (must be unique)
+        Reads:    Linglib/Data/Examples/Charlow2014.json
+        Locates:  Linglib/Studies/*/Charlow2014.lean (or
+                  Linglib/Phenomena/*/Studies/Charlow2014.lean during migration)
         Inserts:  generated `namespace Examples ... end` block between markers
-                  -- ── BEGIN GENERATED EXAMPLES ──
-                  -- ── END GENERATED EXAMPLES ──
+                  -- BEGIN GENERATED EXAMPLES
+                  -- END GENERATED EXAMPLES
+
+JSON file format: a single top-level JSON array of example objects. Each
+object's fields mirror the `LinguisticExample` Lean struct:
+
+  {
+    "id": "charlow2014_donkey1",
+    "source":     {"bibkey": "geach-1962", "paperLabel": "ch. III, ..."},
+    "reportedIn": {"bibkey": "charlow-2014", "paperLabel": "Ch. 2"},  // optional
+    "language": "stan1293",                  // Glottocode
+    "primaryText": "...",
+    "discourseSegments": [],                 // empty for single-sentence
+    "glossedTokens": [["Every", "every"], ...],  // pairs as 2-arrays
+    "translation": "...",
+    "context": "",
+    "judgment": "acceptable",                // one of the 5 cases
+    "alternatives": [{"form": "...", "judgment": "unacceptable"}],
+    "readings":     [{"name": "strong", "judgment": "acceptable"},
+                     {"name": "weak",   "judgment": "acceptable"}],
+    "comment": "...",
+    "metaLanguage": "stan1293",              // optional, default "stan1293"
+    "lgrConformance": "WORD_ALIGNED"         // optional, default ""
+  }
 
 Behavior:
-- Errors out (exit 1) if the CSV doesn't exist.
+- Errors out (exit 1) if the JSON file doesn't exist.
 - Errors out if zero or multiple study files match the AuthorYear.
 - Errors out if either marker is missing in the target file.
+- Errors out on schema violations (unknown judgment value, gloss/word
+  length mismatch, missing required field, missing source.bibkey).
 - Replaces *only* the content between markers; everything else is preserved.
-- Idempotent: re-running on unchanged CSV produces no diff.
+- Idempotent: re-running on unchanged JSON produces no diff.
 
 Defer to follow-on:
 - `--check` mode (regenerate in-memory and assert no diff).
-- Cross-paper namespace imports (when needed by a 2nd consumer).
-- Schema extensions (Tree, multi-LF readings, paradigm clusters, etc.)
-- Content-hashed IDs for stable references under correction.
+- Schema extensions (Tree, indexed anaphora, paper-relativized
+  classifications) when a consuming study demands them.
 
-Dependencies: pure stdlib (csv module).
+Dependencies: pure stdlib (json module).
 """
 
-import csv
+import json
 import sys
 from pathlib import Path
 
 ROOT       = Path(__file__).resolve().parent.parent
-CSV_DIR    = ROOT / "Datasets" / "Examples"
+JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
 STUDIES    = ROOT / "Linglib" / "Studies"
 PHENOMENA  = ROOT / "Linglib" / "Phenomena"
 
-# Plain ASCII markers — safe across editors / encodings / locales.
 BEGIN_MARKER = "-- BEGIN GENERATED EXAMPLES"
 END_MARKER   = "-- END GENERATED EXAMPLES"
-
-# CSV columns (CLDF Examples component + two extensions).
-EXPECTED_COLS = [
-    "ID", "Language_ID", "Primary_Text", "Analyzed_Word", "Gloss",
-    "Translated_Text", "Meta_Language_ID", "LGR_Conformance", "Comment",
-    "Source_Bibkey", "Source_Label", "Judgment", "Context",
-]
-
-# Multi-token fields use "|" as inner separator (avoids comma/tab collision).
-MULTI_TOKEN_SEP = "|"
 
 VALID_JUDGMENTS = {
     "acceptable", "marginal", "questionable", "unacceptable", "ungrammatical",
@@ -61,15 +74,8 @@ def lean_string(s: str) -> str:
     return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
-def lean_string_list(items: list[str]) -> str:
-    """Render a list of strings as a Lean list literal."""
-    if not items:
-        return "[]"
-    return "[" + ", ".join(lean_string(s) for s in items) + "]"
-
-
 def lean_identifier(example_id: str, author_year_lower: str) -> str:
-    """Derive a Lean-valid identifier from a CSV example ID.
+    """Derive a Lean-valid identifier from a JSON example ID.
 
     `charlow2014_donkey1` → `donkey1` (strip the AuthorYear_ prefix and use
     the rest as the local identifier inside `namespace Examples`).
@@ -79,84 +85,183 @@ def lean_identifier(example_id: str, author_year_lower: str) -> str:
         local = example_id[len(prefix):]
     else:
         local = example_id
-    # Replace anything non-identifier with underscore; ensure starts with letter.
     local = "".join(c if c.isalnum() or c == "_" else "_" for c in local)
     if not local or not local[0].isalpha():
         local = "ex_" + local
     return local
 
 
-def parse_judgment(s: str) -> str:
-    s = s.strip().lower()
-    if s not in VALID_JUDGMENTS:
+def parse_judgment(raw: str, where: str) -> str:
+    j = (raw or "").strip().lower()
+    if j not in VALID_JUDGMENTS:
         raise ValueError(
-            f"invalid Judgment {s!r}; expected one of {sorted(VALID_JUDGMENTS)}"
+            f"{where}: invalid judgment {raw!r}; expected one of "
+            f"{sorted(VALID_JUDGMENTS)}"
         )
-    return f".{s}"
+    return f".{j}"
 
 
-def lean_pair_list(pairs: list[tuple[str, str]]) -> str:
-    """Render a list of string pairs as a Lean list of tuple literals."""
-    if not pairs:
+def emit_source_ref(s: dict, where: str) -> str:
+    """Emit a SourceRef literal from a {bibkey, paperLabel} object."""
+    if not isinstance(s, dict):
+        raise ValueError(f"{where}: source/reportedIn must be an object, got {type(s).__name__}")
+    bib = (s.get("bibkey") or "").strip()
+    lab = (s.get("paperLabel") or "").strip()
+    if not bib:
+        raise ValueError(f"{where}: source.bibkey is required and non-empty")
+    return f"⟨{lean_string(bib)}, {lean_string(lab)}⟩"
+
+
+def emit_reported_in(r, where: str) -> str:
+    """Emit `none` for null/absent, `some ⟨…⟩` for a SourceRef object."""
+    if r is None:
+        return "none"
+    return f"some {emit_source_ref(r, where + '.reportedIn')}"
+
+
+def emit_string_list(xs, where: str) -> str:
+    if not isinstance(xs, list) or not all(isinstance(x, str) for x in xs):
+        raise ValueError(f"{where}: expected list of strings")
+    if not xs:
         return "[]"
-    items = ", ".join(f"({lean_string(a)}, {lean_string(b)})" for a, b in pairs)
-    return "[" + items + "]"
+    return "[" + ", ".join(lean_string(x) for x in xs) + "]"
 
 
-def emit_example(row: dict, author_year_lower: str) -> str:
-    """Emit one `def <local_id> : LinguisticExample := { ... }` block."""
-    ex_id      = row["ID"].strip()
-    local_id   = lean_identifier(ex_id, author_year_lower)
-    bibkey     = row["Source_Bibkey"].strip()
-    label      = row["Source_Label"].strip()
-    language   = row["Language_ID"].strip()
-    primary    = row["Primary_Text"].strip()
-    analyzed   = [t for t in row["Analyzed_Word"].strip().split(MULTI_TOKEN_SEP) if t]
-    gloss      = [t for t in row["Gloss"].strip().split(MULTI_TOKEN_SEP) if t]
-    if len(analyzed) != len(gloss):
-        raise ValueError(
-            f"row {ex_id!r}: Analyzed_Word ({len(analyzed)} tokens) and "
-            f"Gloss ({len(gloss)} tokens) lengths disagree"
-        )
-    glossed_pairs = list(zip(analyzed, gloss))
-    translation = row["Translated_Text"].strip()
-    context    = row["Context"].strip()
-    judgment   = parse_judgment(row["Judgment"])
-    comment    = row["Comment"].strip()
-    meta_lang  = row.get("Meta_Language_ID", "stan1293").strip() or "stan1293"
-    lgr        = row.get("LGR_Conformance", "").strip()
+def emit_glossed_tokens(xs, where: str) -> str:
+    """Emit a List (String × String) literal from JSON pairs.
 
-    return f"""def {local_id} : LinguisticExample :=
+    Each entry must be a 2-element array: [analyzedWord, gloss].
+    """
+    if not isinstance(xs, list):
+        raise ValueError(f"{where}: glossedTokens must be an array")
+    if not xs:
+        return "[]"
+    items = []
+    for i, pair in enumerate(xs):
+        if not (isinstance(pair, list) and len(pair) == 2
+                and all(isinstance(s, str) for s in pair)):
+            raise ValueError(
+                f"{where}.glossedTokens[{i}]: expected 2-string array, got {pair!r}"
+            )
+        items.append(f"({lean_string(pair[0])}, {lean_string(pair[1])})")
+    return "[" + ", ".join(items) + "]"
+
+
+def emit_string_pair_list(xs, where: str) -> str:
+    """Emit a List (String × String) literal from JSON.
+
+    Accepts either:
+    - list of 2-element arrays:  [["key", "value"], ...]
+    - list of objects:           [{"key": "...", "value": "..."}, ...]
+    - object (treated as dict):  {"k1": "v1", "k2": "v2"}
+    """
+    if isinstance(xs, dict):
+        items = list(xs.items())
+    elif isinstance(xs, list):
+        items = []
+        for i, entry in enumerate(xs):
+            if isinstance(entry, list) and len(entry) == 2 and all(isinstance(s, str) for s in entry):
+                items.append((entry[0], entry[1]))
+            elif isinstance(entry, dict) and "key" in entry and "value" in entry:
+                if not (isinstance(entry["key"], str) and isinstance(entry["value"], str)):
+                    raise ValueError(f"{where}[{i}]: key/value must be strings")
+                items.append((entry["key"], entry["value"]))
+            else:
+                raise ValueError(
+                    f"{where}[{i}]: expected 2-string array or {{key, value}} object"
+                )
+    else:
+        raise ValueError(f"{where}: expected array or object")
+    if not items:
+        return "[]"
+    return "[" + ", ".join(
+        f"({lean_string(k)}, {lean_string(v)})" for k, v in items
+    ) + "]"
+
+
+def emit_form_judgment_list(xs, where: str, key: str) -> str:
+    """Emit a List (String × Judgment) literal.
+
+    Each entry is `{key: <string>, judgment: <judgment>}`. `key` is "form"
+    for alternatives or "name" for readings.
+    """
+    if not isinstance(xs, list):
+        raise ValueError(f"{where}: expected an array")
+    if not xs:
+        return "[]"
+    items = []
+    for i, entry in enumerate(xs):
+        if not isinstance(entry, dict):
+            raise ValueError(f"{where}[{i}]: expected an object")
+        s = entry.get(key)
+        j = entry.get("judgment")
+        if not isinstance(s, str):
+            raise ValueError(f"{where}[{i}].{key}: expected a string")
+        items.append(f"({lean_string(s)}, {parse_judgment(j, f'{where}[{i}].judgment')})")
+    return "[" + ", ".join(items) + "]"
+
+
+def emit_example(ex: dict, author_year_lower: str) -> str:
+    ex_id   = (ex.get("id") or "").strip()
+    if not ex_id:
+        raise ValueError("example missing required `id`")
+    where   = f"example {ex_id!r}"
+    local   = lean_identifier(ex_id, author_year_lower)
+
+    src         = emit_source_ref(ex.get("source") or {}, where + ".source")
+    reported_in = emit_reported_in(ex.get("reportedIn"), where)
+    language    = (ex.get("language") or "").strip()
+    primary     = ex.get("primaryText") or ""
+    discourse   = emit_string_list(ex.get("discourseSegments", []), where + ".discourseSegments")
+    glossed     = emit_glossed_tokens(ex.get("glossedTokens", []), where)
+    translation = ex.get("translation") or ""
+    context     = ex.get("context") or ""
+    judgment    = parse_judgment(ex.get("judgment", ""), where + ".judgment")
+    alternatives = emit_form_judgment_list(ex.get("alternatives", []), where + ".alternatives", "form")
+    readings    = emit_form_judgment_list(ex.get("readings", []), where + ".readings", "name")
+    features    = emit_string_pair_list(ex.get("paperFeatures", []), where + ".paperFeatures")
+    comment     = ex.get("comment") or ""
+    meta_lang   = (ex.get("metaLanguage") or "stan1293").strip() or "stan1293"
+    lgr         = (ex.get("lgrConformance") or "").strip()
+
+    return f"""def {local} : LinguisticExample :=
   {{ id := {lean_string(ex_id)}
-    source := ⟨{lean_string(bibkey)}, {lean_string(label)}⟩
+    source := {src}
+    reportedIn := {reported_in}
     language := {lean_string(language)}
     primaryText := {lean_string(primary)}
-    glossedTokens := {lean_pair_list(glossed_pairs)}
+    discourseSegments := {discourse}
+    glossedTokens := {glossed}
     translation := {lean_string(translation)}
     context := {lean_string(context)}
     judgment := {judgment}
+    alternatives := {alternatives}
+    readings := {readings}
+    paperFeatures := {features}
     comment := {lean_string(comment)}
     metaLanguage := {lean_string(meta_lang)}
     lgrConformance := {lean_string(lgr)} }}"""
 
 
-def emit_block(author_year: str, rows: list[dict]) -> str:
-    """Emit the full `namespace Examples ... end` block for insertion between markers."""
+def emit_block(author_year: str, examples: list) -> str:
     ay_lower = author_year.lower()
-    if not rows:
-        body = "-- (no rows in CSV)"
+    if not examples:
+        body = "-- (no examples in JSON)"
         all_def = "def all : List LinguisticExample := []"
     else:
-        body = "\n\n".join(emit_example(r, ay_lower) for r in rows)
-        local_ids = [lean_identifier(r["ID"].strip(), ay_lower) for r in rows]
+        body = "\n\n".join(emit_example(e, ay_lower) for e in examples)
+        local_ids = [
+            lean_identifier((e.get("id") or "").strip(), ay_lower)
+            for e in examples
+        ]
         all_def = f"def all : List LinguisticExample := [{', '.join(local_ids)}]"
 
     return f"""{BEGIN_MARKER}
--- (Generated from Datasets/Examples/{author_year}.csv by scripts/gen_examples.py.
--- Do not edit between markers; re-run the generator after editing the CSV.)
+-- (Generated from Linglib/Data/Examples/{author_year}.json by scripts/gen_examples.py.
+-- Do not edit between markers; re-run the generator after editing the JSON.)
 
 namespace Examples
-open Datasets.Examples
+open Data.Examples
 
 {body}
 
@@ -167,13 +272,6 @@ end Examples
 
 
 def find_target_file(author_year: str) -> Path:
-    """Locate the unique study file matching <AuthorYear>.lean.
-
-    Searches both the new top-level layout (`Linglib/Studies/*/`) and the
-    legacy layout (`Linglib/Phenomena/*/Studies/`) so the generator works
-    on all phenomena during the in-progress relocation. Errors on 0 or >1
-    matches across both locations.
-    """
     new_matches    = list(STUDIES.glob(f"*/{author_year}.lean"))
     legacy_matches = list(PHENOMENA.glob(f"*/Studies/{author_year}.lean"))
     matches        = new_matches + legacy_matches
@@ -197,7 +295,6 @@ def find_target_file(author_year: str) -> Path:
 
 
 def replace_between_markers(file_path: Path, new_block: str) -> bool:
-    """Replace content between BEGIN/END markers. Return True if file changed."""
     text = file_path.read_text(encoding="utf-8")
     lines = text.splitlines(keepends=True)
 
@@ -250,30 +347,39 @@ def main():
         sys.exit(1)
 
     author_year = sys.argv[1]
-    csv_path = CSV_DIR / f"{author_year}.csv"
-    if not csv_path.exists():
-        sys.stderr.write(f"FATAL: CSV not found at {csv_path.relative_to(ROOT)}\n")
+    json_path = JSON_DIR / f"{author_year}.json"
+    if not json_path.exists():
+        sys.stderr.write(f"FATAL: JSON not found at {json_path.relative_to(ROOT)}\n")
         sys.exit(1)
 
-    with open(csv_path, encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        missing = set(EXPECTED_COLS) - set(reader.fieldnames or [])
-        if missing:
-            sys.stderr.write(
-                f"FATAL: CSV {csv_path.relative_to(ROOT)} missing columns: {sorted(missing)}\n"
-            )
-            sys.exit(1)
-        rows = list(reader)
+    try:
+        with open(json_path, encoding="utf-8") as f:
+            examples = json.load(f)
+    except json.JSONDecodeError as e:
+        sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: invalid JSON: {e}\n")
+        sys.exit(1)
+
+    if not isinstance(examples, list):
+        sys.stderr.write(
+            f"FATAL: {json_path.relative_to(ROOT)}: top level must be an array of "
+            f"example objects (got {type(examples).__name__})\n"
+        )
+        sys.exit(1)
 
     target = find_target_file(author_year)
-    block = emit_block(author_year, rows)
-    changed = replace_between_markers(target, block)
+    try:
+        block = emit_block(author_year, examples)
+    except ValueError as e:
+        sys.stderr.write(f"FATAL: {json_path.relative_to(ROOT)}: {e}\n")
+        sys.exit(1)
 
+    changed = replace_between_markers(target, block)
     rel_target = target.relative_to(ROOT)
-    rel_csv    = csv_path.relative_to(ROOT)
+    rel_json   = json_path.relative_to(ROOT)
+    n = len(examples)
     if changed:
         sys.stdout.write(
-            f"[gen] {rel_target} ← {rel_csv} ({len(rows)} example{'s' if len(rows) != 1 else ''})\n"
+            f"[gen] {rel_target} ← {rel_json} ({n} example{'s' if n != 1 else ''})\n"
         )
     else:
         sys.stdout.write(f"[gen] {rel_target} unchanged\n")

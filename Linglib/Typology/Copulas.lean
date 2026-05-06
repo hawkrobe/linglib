@@ -1,7 +1,7 @@
-import Linglib.Datasets.WALS.Features.F117A
-import Linglib.Datasets.WALS.Features.F118A
-import Linglib.Datasets.WALS.Features.F119A
-import Linglib.Datasets.WALS.Features.F120A
+import Linglib.Data.WALS.Features.F117A
+import Linglib.Data.WALS.Features.F118A
+import Linglib.Data.WALS.Features.F119A
+import Linglib.Data.WALS.Features.F120A
 
 /-!
 # Typology.Copulas
@@ -61,10 +61,10 @@ set_option autoImplicit false
 
 namespace Typology.Copulas
 
-private abbrev ch117 := Datasets.WALS.F117A.allData
-private abbrev ch118 := Datasets.WALS.F118A.allData
-private abbrev ch119 := Datasets.WALS.F119A.allData
-private abbrev ch120 := Datasets.WALS.F120A.allData
+private abbrev ch117 := Data.WALS.F117A.allData
+private abbrev ch118 := Data.WALS.F118A.allData
+private abbrev ch119 := Data.WALS.F119A.allData
+private abbrev ch120 := Data.WALS.F120A.allData
 
 -- ============================================================================
 -- §1. WALS Ch 118: Predicative Adjective Strategy
@@ -253,13 +253,13 @@ def CopulaProfile.alwaysRequiresCopula (p : CopulaProfile) : Bool :=
 -- ============================================================================
 
 /-- Map WALS F118A (predicative adjectives) to `PredAdjStrategy`. -/
-def fromWALS118A : Datasets.WALS.F118A.PredicativeAdjectiveType → PredAdjStrategy
+def fromWALS118A : Data.WALS.F118A.PredicativeAdjectiveType → PredAdjStrategy
   | .verbalEncoding    => .verbal
   | .nonverbalEncoding => .nonVerbal
   | .mixed             => .mixed
 
 /-- Map WALS F119A (nominal and locational predication) to `NomLocStrategy`. -/
-def fromWALS119A : Datasets.WALS.F119A.NominalLocationalPredication → NomLocStrategy
+def fromWALS119A : Data.WALS.F119A.NominalLocationalPredication → NomLocStrategy
   | .different => .different
   | .identical => .identical
 
@@ -270,14 +270,14 @@ def fromWALS119A : Datasets.WALS.F119A.NominalLocationalPredication → NomLocSt
     "possible." The mapping is therefore lossy: `.impossible` maps exactly,
     but `.possible` is ambiguous between `.restricted` and `.widespread`.
     Returns `Option` for the ambiguous case. -/
-def fromWALS120A : Datasets.WALS.F120A.ZeroCopulaType → Option ZeroCopulaStatus
+def fromWALS120A : Data.WALS.F120A.ZeroCopulaType → Option ZeroCopulaStatus
   | .impossible => some .impossible
   | .possible   => none
 
 /-- Decidable weakening of `fromWALS120A`: does WALS F120A say zero copula
     is at least possible? Suitable for cross-checking against
     `CopulaProfile.allowsZeroCopula`. -/
-def wals120A_allowsZero : Datasets.WALS.F120A.ZeroCopulaType → Bool
+def wals120A_allowsZero : Data.WALS.F120A.ZeroCopulaType → Bool
   | .impossible => false
   | .possible   => true
 

@@ -1,9 +1,9 @@
 import Linglib.Features.Evidentiality
-import Linglib.Datasets.WALS.Features.F74A
-import Linglib.Datasets.WALS.Features.F75A
-import Linglib.Datasets.WALS.Features.F76A
-import Linglib.Datasets.WALS.Features.F77A
-import Linglib.Datasets.WALS.Features.F78A
+import Linglib.Data.WALS.Features.F74A
+import Linglib.Data.WALS.Features.F75A
+import Linglib.Data.WALS.Features.F76A
+import Linglib.Data.WALS.Features.F77A
+import Linglib.Data.WALS.Features.F78A
 
 /-!
 # Typology.Modality
@@ -58,11 +58,11 @@ set_option autoImplicit false
 
 namespace Typology.Modality
 
-private abbrev ch74 := Datasets.WALS.F74A.allData
-private abbrev ch75 := Datasets.WALS.F75A.allData
-private abbrev ch76 := Datasets.WALS.F76A.allData
-private abbrev ch77 := Datasets.WALS.F77A.allData
-private abbrev ch78 := Datasets.WALS.F78A.allData
+private abbrev ch74 := Data.WALS.F74A.allData
+private abbrev ch75 := Data.WALS.F75A.allData
+private abbrev ch76 := Data.WALS.F76A.allData
+private abbrev ch77 := Data.WALS.F77A.allData
+private abbrev ch78 := Data.WALS.F78A.allData
 
 -- ============================================================================
 -- §1. Ch 77 / 78 substrate enums
@@ -174,7 +174,7 @@ structure EvidentialityProfile where
 /-- WALS Ch 77 → `EvidentialSystem`. WALS Ch 77's 3-way classification maps
     onto our 4-way; `threeOrMore` cannot be reached from WALS alone (WALS
     lumps three-or-more systems with `directAndIndirect`). -/
-def fromWALS77A : Datasets.WALS.F77A.EvidentialityDistinctions → EvidentialSystem
+def fromWALS77A : Data.WALS.F77A.EvidentialityDistinctions → EvidentialSystem
   | .noGrammaticalEvidentials => .noGrammatical
   | .indirectOnly             => .indirectOnly
   | .directAndIndirect        => .directAndIndirect
@@ -182,7 +182,7 @@ def fromWALS77A : Datasets.WALS.F77A.EvidentialityDistinctions → EvidentialSys
 /-- WALS Ch 78 → `EvidentialCoding`. WALS lumps "verbal affix or clitic";
     the `mixed` and `modalMorpheme` categories are mapped to closest local
     cells (best-effort). -/
-def fromWALS78A : Datasets.WALS.F78A.EvidentialityCoding → EvidentialCoding
+def fromWALS78A : Data.WALS.F78A.EvidentialityCoding → EvidentialCoding
   | .noGrammaticalEvidentials => .notApplicable
   | .verbalAffixOrClitic      => .verbalAffix
   | .partOfTheTenseSystem     => .partOfTAM
@@ -227,10 +227,10 @@ def countByCoding (langs : List EvidentialityProfile) (c : EvidentialCoding) :
 -- ============================================================================
 
 def walsEvidentialSystem (iso : String) : Option EvidentialSystem :=
-  (Datasets.WALS.F77A.lookupISO iso).map (fromWALS77A ·.value)
+  (Data.WALS.F77A.lookupISO iso).map (fromWALS77A ·.value)
 
 def walsEvidentialCoding (iso : String) : Option EvidentialCoding :=
-  (Datasets.WALS.F78A.lookupISO iso).map (fromWALS78A ·.value)
+  (Data.WALS.F78A.lookupISO iso).map (fromWALS78A ·.value)
 
 /-- Build an `EvidentialityProfile` from an ISO 639-3 code via WALS lookups
     for Chs 77/78. Required-field fallbacks (`systemFb`, `codingFb`) fire

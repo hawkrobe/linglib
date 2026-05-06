@@ -1,6 +1,6 @@
-import Linglib.Datasets.WALS.Features.F129A
-import Linglib.Datasets.WALS.Features.F130A
-import Linglib.Datasets.WALS.Features.F130B
+import Linglib.Data.WALS.Features.F129A
+import Linglib.Data.WALS.Features.F130A
+import Linglib.Data.WALS.Features.F130B
 
 /-!
 # Body-part terminology — substrate types and WALS data
@@ -76,12 +76,12 @@ structure BodyPartProfile where
 -- ============================================================================
 
 /-- Convert WALS 129A hand-arm values into the substrate enum. -/
-def fromWALS129A : Datasets.WALS.F129A.HandAndArm → HandArmRelation
+def fromWALS129A : Data.WALS.F129A.HandAndArm → HandArmRelation
   | .identical => .identical
   | .different => .different
 
 /-- Convert WALS 130A finger-hand values into the substrate enum. -/
-def fromWALS130A : Datasets.WALS.F130A.FingerAndHand → FingerHandRelation
+def fromWALS130A : Data.WALS.F130A.FingerAndHand → FingerHandRelation
   | .identical => .identical
   | .different => .different
 

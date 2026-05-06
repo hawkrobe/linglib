@@ -73,79 +73,93 @@ def SpecSpace.singleton {Spec : Type*} [DecidableEq Spec] (s : Spec) : SpecSpace
 -- § 2. Supervaluation Operator
 -- ════════════════════════════════════════════════════
 
-/-- Supervaluation operator. Maps a Bool-valued predicate over
+/-- Supervaluation operator. Maps a Prop-valued predicate over
     specifications to a three-valued truth value:
-    - `Truth3.true` if true at ALL admissible specifications
-    - `Truth3.false` if false at ALL admissible specifications
+    - `Truth3.true` if the predicate holds at ALL admissible specifications
+    - `Truth3.false` if the predicate fails at ALL admissible specifications
     - `Truth3.indet` otherwise (the borderline case) -/
-def superTrue {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) : Truth3 :=
-  if ∀ s ∈ S.admissible, eval s = true then Truth3.true
-  else if ∀ s ∈ S.admissible, eval s = false then Truth3.false
+def superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) : Truth3 :=
+  if ∀ s ∈ S.admissible, eval s then Truth3.true
+  else if ∀ s ∈ S.admissible, ¬ eval s then Truth3.false
   else Truth3.indet
 
 /-- The D (definitely) operator. DA is true iff A is true at ALL
     admissible specifications — i.e., A is super-true. In modal logic
     terms, D is □ in S5 with universal access among specification points. -/
-def definitely {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) : Bool :=
-  decide (∀ s ∈ S.admissible, eval s = true)
+def definitely {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) : Prop :=
+  ∀ s ∈ S.admissible, eval s
+
+instance definitely.instDecidable {Spec : Type*} (eval : Spec → Prop)
+    [DecidablePred eval] (S : SpecSpace Spec) :
+    Decidable (definitely eval S) := by unfold definitely; infer_instance
 
 /-- The I (indefinite) operator. IA ≡ ¬DA ∧ ¬D¬A: A is neither
     definitely true nor definitely false. -/
-def indefinite {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) : Bool :=
-  !definitely eval S && !definitely (fun s => !eval s) S
+def indefinite {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) : Prop :=
+  ¬ definitely eval S ∧ ¬ definitely (fun s => ¬ eval s) S
+
+instance indefinite.instDecidable {Spec : Type*} (eval : Spec → Prop)
+    [DecidablePred eval] (S : SpecSpace Spec) :
+    Decidable (indefinite eval S) := by unfold indefinite; infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 3. Characterization Lemmas
 -- ════════════════════════════════════════════════════
 
 /-- Super-truth ↔ universally true across the space. -/
-theorem superTrue_true_iff {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
-    superTrue eval S = Truth3.true ↔ ∀ s ∈ S.admissible, eval s = true := by
+theorem superTrue_true_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) :
+    superTrue eval S = Truth3.true ↔ ∀ s ∈ S.admissible, eval s := by
   unfold superTrue
-  constructor
-  · intro h
-    by_contra hc; push_neg at hc; obtain ⟨s, hs, hv⟩ := hc
-    rw [if_neg (fun h' => hv (h' s hs))] at h; split at h <;> cases h
-  · exact fun h => if_pos h
+  refine ⟨fun h => ?_, fun h => if_pos h⟩
+  by_cases hall : ∀ s ∈ S.admissible, eval s
+  · exact hall
+  · rw [if_neg hall] at h
+    split at h <;> cases h
 
 /-- Super-falsity ↔ universally false across the space. -/
-theorem superTrue_false_iff {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
-    superTrue eval S = Truth3.false ↔ ∀ s ∈ S.admissible, eval s = false := by
+theorem superTrue_false_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) :
+    superTrue eval S = Truth3.false ↔ ∀ s ∈ S.admissible, ¬ eval s := by
   unfold superTrue
-  constructor
-  · intro h
-    have hnt : ¬(∀ s ∈ S.admissible, eval s = true) := by
-      by_contra ht
-      rw [if_pos ht] at h; cases h
+  refine ⟨fun h => ?_, fun haf => ?_⟩
+  · have hnt : ¬(∀ s ∈ S.admissible, eval s) := by
+      intro ht; rw [if_pos ht] at h; cases h
     rw [if_neg hnt] at h
-    by_contra hc; push_neg at hc; obtain ⟨s, hs, hv⟩ := hc
-    rw [if_neg (fun h' => hv (h' s hs))] at h; cases h
-  · intro haf
-    have hnt : ¬(∀ s ∈ S.admissible, eval s = true) := by
+    by_cases haf : ∀ s ∈ S.admissible, ¬ eval s
+    · exact haf
+    · rw [if_neg haf] at h; cases h
+  · have hnt : ¬(∀ s ∈ S.admissible, eval s) := by
       obtain ⟨s₀, hs₀⟩ := S.nonempty
-      intro ht; have := ht s₀ hs₀; rw [haf s₀ hs₀] at this; cases this
+      intro ht; exact haf s₀ hs₀ (ht s₀ hs₀)
     rw [if_neg hnt, if_pos haf]
 
 /-- Indefiniteness ↔ witnesses on both sides. -/
-theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
+theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) :
     superTrue eval S = Truth3.indet ↔
-      (∃ s ∈ S.admissible, eval s = true) ∧ (∃ s ∈ S.admissible, eval s = false) := by
+      (∃ s ∈ S.admissible, eval s) ∧ (∃ s ∈ S.admissible, ¬ eval s) := by
   unfold superTrue
-  constructor
-  · intro h
-    have hnt : ¬(∀ s ∈ S.admissible, eval s = true) := by
+  refine ⟨fun h => ?_, fun ⟨⟨st, hst, hvt⟩, ⟨sf, hsf, hvf⟩⟩ => ?_⟩
+  · have hnt : ¬(∀ s ∈ S.admissible, eval s) := by
       intro ht; rw [if_pos ht] at h; cases h
-    have hnf : ¬(∀ s ∈ S.admissible, eval s = false) := by
+    have hnf : ¬(∀ s ∈ S.admissible, ¬ eval s) := by
       intro hf; rw [if_neg hnt, if_pos hf] at h; cases h
-    push_neg at hnt hnf
-    obtain ⟨st, hst, hvt⟩ := hnt; obtain ⟨sf, hsf, hvf⟩ := hnf
-    exact ⟨⟨sf, hsf, by cases hv : eval sf <;> simp_all⟩,
-           ⟨st, hst, by cases hv : eval st <;> simp_all⟩⟩
-  · intro ⟨⟨st, hst, hvt⟩, ⟨sf, hsf, hvf⟩⟩
-    have hnt : ¬(∀ s ∈ S.admissible, eval s = true) :=
-      fun h => by rw [h sf hsf] at hvf; cases hvf
-    have hnf : ¬(∀ s ∈ S.admissible, eval s = false) :=
-      fun h => by rw [h st hst] at hvt; cases hvt
+    refine ⟨?_, ?_⟩
+    · by_contra hcon
+      apply hnf
+      intro s hs hes
+      exact hcon ⟨s, hs, hes⟩
+    · by_contra hcon
+      apply hnt
+      intro s hs
+      by_contra hes
+      exact hcon ⟨s, hs, hes⟩
+  · have hnt : ¬(∀ s ∈ S.admissible, eval s) := fun h => hvf (h sf hsf)
+    have hnf : ¬(∀ s ∈ S.admissible, ¬ eval s) := fun h => h st hst hvt
     rw [if_neg hnt, if_neg hnf]
 
 /-- **`superTrue` is `Core.Duality.dist` on the admissible Finset.**
@@ -154,45 +168,36 @@ theorem superTrue_indet_iff {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace
     canonical trivalent classifier (`Core.Duality.dist` in
     `Linglib/Core/Logic/Duality.lean`). Both are van Fraassen 1966's
     supervaluation construction; `dist` is the more general form
-    parameterized over an arbitrary `Finset α + (α → Bool)`, while
+    parameterized over an arbitrary `Finset α + (α → Prop)`, while
     `superTrue` adds the `SpecSpace` wrapper (admissible Finset +
     nonemptiness witness) and Fine's specification-space ordering.
 
     On the empty case the two agree definitionally (both give `.true`
     vacuously), but `SpecSpace` rules out empty admissible sets by
     construction so the empty case never arises here. -/
-theorem superTrue_eq_dist {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
+theorem superTrue_eq_dist {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) :
     superTrue eval S = Core.Duality.dist S.admissible eval := by
   unfold superTrue Core.Duality.dist
-  cases h_inf : S.admissible.inf eval
-  · -- inf = false: ¬(∀ s, eval s = true)
-    have h_not_all_true : ¬ ∀ s ∈ S.admissible, eval s = true := by
-      intro ht
-      have : S.admissible.inf eval = true :=
-        (Finset.inf_eq_top_iff (α := Bool) eval S.admissible).mpr ht
-      rw [h_inf] at this; cases this
-    rw [if_neg h_not_all_true]
-    cases h_sup : S.admissible.sup eval
-    · -- sup = false: ∀ s, eval s = false → both give .false
-      have h_all_false : ∀ s ∈ S.admissible, eval s = false :=
-        (Finset.sup_eq_bot_iff (α := Bool) eval S.admissible).mp h_sup
-      rw [if_pos h_all_false]; rfl
-    · -- sup = true: some eval s = true → both give .indet
-      have h_not_all_false : ¬ ∀ s ∈ S.admissible, eval s = false := by
-        intro hf
-        have : S.admissible.sup eval = false :=
-          (Finset.sup_eq_bot_iff (α := Bool) eval S.admissible).mpr hf
-        rw [h_sup] at this; cases this
-      rw [if_neg h_not_all_false]; rfl
-  · -- inf = true: ∀ s, eval s = true → both give .true
-    have h_all_true : ∀ s ∈ S.admissible, eval s = true :=
-      (Finset.inf_eq_top_iff (α := Bool) eval S.admissible).mp h_inf
-    rw [if_pos h_all_true]; rfl
+  by_cases h_all : ∀ a ∈ S.admissible, eval a
+  · rw [if_pos h_all, if_pos h_all]
+  · rw [if_neg h_all, if_neg h_all]
+    by_cases h_some : ∃ a ∈ S.admissible, eval a
+    · rw [if_pos h_some]
+      have hnaf : ¬ ∀ s ∈ S.admissible, ¬ eval s := by
+        obtain ⟨s, hs, hev⟩ := h_some
+        intro hf; exact hf s hs hev
+      rw [if_neg hnaf]
+    · rw [if_neg h_some]
+      have haf : ∀ s ∈ S.admissible, ¬ eval s := by
+        intro s hs hev; exact h_some ⟨s, hs, hev⟩
+      rw [if_pos haf]
 
-/-- D = super-truth projected to Bool. -/
-theorem definitely_iff_superTrue {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
-    definitely eval S = true ↔ superTrue eval S = Truth3.true := by
-  rw [superTrue_true_iff]; unfold definitely; rw [decide_eq_true_eq]
+/-- D = super-truth projected to its `Prop` characterization. -/
+theorem definitely_iff_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) :
+    definitely eval S ↔ superTrue eval S = Truth3.true := by
+  rw [superTrue_true_iff]; rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. Penumbral Connections
@@ -200,17 +205,17 @@ theorem definitely_iff_superTrue {Spec : Type*} (eval : Spec → Bool) (S : Spec
 
 /-- **Excluded middle is super-true.** P ∨ ¬P is true on every
     precisification, hence true on ALL. Classical tautologies survive. -/
-theorem excludedMiddle_superTrue {Spec : Type*} (eval : Spec → Bool)
+theorem excludedMiddle_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    superTrue (fun s => eval s || !eval s) S = Truth3.true :=
-  (superTrue_true_iff _ S).mpr (fun s _ => by cases eval s <;> simp)
+    superTrue (fun s => eval s ∨ ¬ eval s) S = Truth3.true :=
+  (superTrue_true_iff _ S).mpr (fun s _ => Decidable.em _)
 
 /-- **Non-contradiction is super-false.** P ∧ ¬P is false on every
     precisification, hence false on ALL. -/
-theorem nonContradiction_superFalse {Spec : Type*} (eval : Spec → Bool)
+theorem nonContradiction_superFalse {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S : SpecSpace Spec) :
-    superTrue (fun s => eval s && !eval s) S = Truth3.false :=
-  (superTrue_false_iff _ S).mpr (fun s _ => by cases eval s <;> simp)
+    superTrue (fun s => eval s ∧ ¬ eval s) S = Truth3.false :=
+  (superTrue_false_iff _ S).mpr (fun _ _ ⟨h, hn⟩ => hn h)
 
 /-- **Complementary predicates.** If P and Q never hold simultaneously at
     any admissible specification, their conjunction is super-false.
@@ -218,19 +223,20 @@ theorem nonContradiction_superFalse {Spec : Type*} (eval : Spec → Bool)
     This is Fine's "external penumbral connection": the relationship between
     "pink" and "red" across the color boundary (p. 270). -/
 theorem complementary_superFalse {Spec : Type*}
-    (P Q : Spec → Bool) (S : SpecSpace Spec)
-    (hcomp : ∀ s ∈ S.admissible, (P s && Q s) = false) :
-    superTrue (fun s => P s && Q s) S = Truth3.false := by
-  rw [superTrue_false_iff]; exact hcomp
+    (P Q : Spec → Prop) [DecidablePred P] [DecidablePred Q]
+    (S : SpecSpace Spec) (hcomp : ∀ s ∈ S.admissible, ¬ (P s ∧ Q s)) :
+    superTrue (fun s => P s ∧ Q s) S = Truth3.false :=
+  (superTrue_false_iff _ S).mpr hcomp
 
 /-- **Conjunction with self.** P ∧ P has the same super-truth value as P.
-    This is trivial (Bool.and_self), but combined with
+    This is trivial (`and_self`), but combined with
     `nonContradiction_superFalse`, it resolves Kamp's dilemma:
     supervaluation distinguishes P ∧ P from P ∧ ¬P, while Strong Kleene
     three-valued logic maps both to `indet` when P is borderline. -/
-theorem conjunction_self {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
-    superTrue (fun s => eval s && eval s) S = superTrue eval S := by
-  congr 1; funext s; exact Bool.and_self (eval s)
+theorem conjunction_self {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) :
+    superTrue (fun s => eval s ∧ eval s) S = superTrue eval S := by
+  congr 1; funext s; exact propext (and_self_iff)
 
 -- ════════════════════════════════════════════════════
 -- § 5. Classical Validity = Super-Validity
@@ -243,17 +249,18 @@ theorem conjunction_self {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Sp
 
 /-- Forward: classical tautology → super-valid. -/
 theorem classical_implies_superValid {Spec : Type*}
-    (eval : Spec → Bool) (htaut : ∀ s, eval s = true) (S : SpecSpace Spec) :
+    (eval : Spec → Prop) [DecidablePred eval]
+    (htaut : ∀ s, eval s) (S : SpecSpace Spec) :
     superTrue eval S = Truth3.true :=
   (superTrue_true_iff eval S).mpr (fun s _ => htaut s)
 
 /-- Converse: super-valid → classical tautology. The key step: each
     classical model is a singleton specification space. If `eval` is
-    super-true in the singleton `{s}`, then `eval s = true`. -/
+    super-true in the singleton `{s}`, then `eval s` holds. -/
 theorem superValid_implies_classical {Spec : Type*} [DecidableEq Spec]
-    (eval : Spec → Bool)
+    (eval : Spec → Prop) [DecidablePred eval]
     (hvalid : ∀ S : SpecSpace Spec, superTrue eval S = Truth3.true) :
-    ∀ s, eval s = true := by
+    ∀ s, eval s := by
   intro s
   exact (superTrue_true_iff eval (.singleton s)).mp (hvalid _) s
     (Finset.mem_singleton.mpr rfl)
@@ -262,8 +269,8 @@ theorem superValid_implies_classical {Spec : Type*} [DecidableEq Spec]
     result in @cite{fine-1975}: supervaluationism makes a difference to
     truth but not to logic. -/
 theorem superValid_iff_classical {Spec : Type*} [DecidableEq Spec]
-    (eval : Spec → Bool) :
-    (∀ S : SpecSpace Spec, superTrue eval S = Truth3.true) ↔ (∀ s, eval s = true) :=
+    (eval : Spec → Prop) [DecidablePred eval] :
+    (∀ S : SpecSpace Spec, superTrue eval S = Truth3.true) ↔ (∀ s, eval s) :=
   ⟨superValid_implies_classical eval, fun h S => classical_implies_superValid eval h S⟩
 
 -- ════════════════════════════════════════════════════
@@ -272,31 +279,34 @@ theorem superValid_iff_classical {Spec : Type*} [DecidableEq Spec]
 
 /-- Super-consequence: B follows from A iff B is super-true whenever A is,
     across all specification spaces. -/
-def superConsequence {Spec : Type*} (evalA evalB : Spec → Bool) : Prop :=
-  ∀ S : SpecSpace Spec, superTrue evalA S = Truth3.true → superTrue evalB S = Truth3.true
+def superConsequence {Spec : Type*}
+    (evalA evalB : Spec → Prop) [DecidablePred evalA] [DecidablePred evalB] : Prop :=
+  ∀ S : SpecSpace Spec, superTrue evalA S = Truth3.true →
+    superTrue evalB S = Truth3.true
 
 /-- Forward: classical consequence → super-consequence. -/
 theorem classical_implies_superConsequence {Spec : Type*}
-    (evalA evalB : Spec → Bool) (h : ∀ s, evalA s = true → evalB s = true) :
+    (evalA evalB : Spec → Prop) [DecidablePred evalA] [DecidablePred evalB]
+    (h : ∀ s, evalA s → evalB s) :
     superConsequence evalA evalB :=
   fun S hA => (superTrue_true_iff evalB S).mpr
     (fun s hs => h s ((superTrue_true_iff evalA S).mp hA s hs))
 
 /-- Converse: super-consequence → classical consequence. -/
 theorem superConsequence_implies_classical {Spec : Type*} [DecidableEq Spec]
-    (evalA evalB : Spec → Bool) (h : superConsequence evalA evalB) :
-    ∀ s, evalA s = true → evalB s = true := by
+    (evalA evalB : Spec → Prop) [DecidablePred evalA] [DecidablePred evalB]
+    (h : superConsequence evalA evalB) :
+    ∀ s, evalA s → evalB s := by
   intro s hAs
   have hA : superTrue evalA (.singleton s) = Truth3.true :=
     (superTrue_true_iff evalA _).mpr
       (fun s' hs' => by have := Finset.mem_singleton.mp hs'; subst this; exact hAs)
-  have hB := (superTrue_true_iff evalB _).mp (h _ hA) s (Finset.mem_singleton.mpr rfl)
-  exact hB
+  exact (superTrue_true_iff evalB _).mp (h _ hA) s (Finset.mem_singleton.mpr rfl)
 
 /-- **Super-consequence ↔ classical consequence.** -/
 theorem superConsequence_iff_classical {Spec : Type*} [DecidableEq Spec]
-    (evalA evalB : Spec → Bool) :
-    superConsequence evalA evalB ↔ (∀ s, evalA s = true → evalB s = true) :=
+    (evalA evalB : Spec → Prop) [DecidablePred evalA] [DecidablePred evalB] :
+    superConsequence evalA evalB ↔ (∀ s, evalA s → evalB s) :=
   ⟨superConsequence_implies_classical evalA evalB,
    classical_implies_superConsequence evalA evalB⟩
 
@@ -312,7 +322,7 @@ theorem superConsequence_iff_classical {Spec : Type*} [DecidableEq Spec]
     with respect to the subset ordering on specification spaces. -/
 
 /-- Restricting the specification space preserves super-truth. -/
-theorem stability_superTrue {Spec : Type*} (eval : Spec → Bool)
+theorem stability_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S T : SpecSpace Spec) (hsub : T.admissible ⊆ S.admissible)
     (hst : superTrue eval S = Truth3.true) :
     superTrue eval T = Truth3.true :=
@@ -320,7 +330,7 @@ theorem stability_superTrue {Spec : Type*} (eval : Spec → Bool)
     (fun s hs => (superTrue_true_iff eval S).mp hst s (hsub hs))
 
 /-- Restricting the specification space preserves super-falsity. -/
-theorem stability_superFalse {Spec : Type*} (eval : Spec → Bool)
+theorem stability_superFalse {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S T : SpecSpace Spec) (hsub : T.admissible ⊆ S.admissible)
     (hsf : superTrue eval S = Truth3.false) :
     superTrue eval T = Truth3.false :=
@@ -329,7 +339,7 @@ theorem stability_superFalse {Spec : Type*} (eval : Spec → Bool)
 
 /-- Restriction can resolve indefiniteness but never create it.
     If A is definite (true or false) in S, it stays definite in T ⊆ S. -/
-theorem stability_definite {Spec : Type*} (eval : Spec → Bool)
+theorem stability_definite {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     (S T : SpecSpace Spec) (hsub : T.admissible ⊆ S.admissible)
     (hdef : superTrue eval S ≠ Truth3.indet) :
     superTrue eval T ≠ Truth3.indet := by
@@ -351,14 +361,14 @@ theorem stability_definite {Spec : Type*} (eval : Spec → Bool)
     The full antitonicity on `Truth3`'s lattice ordering does NOT hold
     (restriction can turn `indet` into `true`), but this weaker
     preservation-of-definiteness property is what matters for Fine. -/
-theorem stability_antitone_superTrue {Spec : Type*} (eval : Spec → Bool)
+theorem stability_antitone_superTrue {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     {S T : SpecSpace Spec} (hle : S ≤ T)
     (h : superTrue eval S = Truth3.true) :
     superTrue eval T = Truth3.true :=
   stability_superTrue eval S T hle h
 
 /-- Dual: super-falsity is also preserved under the information ordering. -/
-theorem stability_antitone_superFalse {Spec : Type*} (eval : Spec → Bool)
+theorem stability_antitone_superFalse {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
     {S T : SpecSpace Spec} (hle : S ≤ T)
     (h : superTrue eval S = Truth3.false) :
     superTrue eval T = Truth3.false :=
@@ -377,40 +387,39 @@ theorem stability_antitone_superFalse {Spec : Type*} (eval : Spec → Bool)
 /-- **T axiom: DA → A is super-valid.** Material implication
     `¬(DA) ∨ A` is true at every specification point: either D is false
     (the disjunction holds) or D is true and A holds at all points. -/
-theorem D_implies_A {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
-    superTrue (fun s => !definitely eval S || eval s) S = Truth3.true := by
+theorem D_implies_A {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) :
+    superTrue (fun s => ¬ definitely eval S ∨ eval s) S = Truth3.true := by
   apply (superTrue_true_iff _ S).mpr
   intro s hs
-  match hd : definitely eval S with
-  | true =>
-    simp only [Bool.not_true, Bool.false_or]
-    have hall := (definitely_iff_superTrue eval S).mp hd
-    exact (superTrue_true_iff eval S).mp hall s hs
-  | false => simp
+  by_cases hd : definitely eval S
+  · exact Or.inr (hd s hs)
+  · exact Or.inl hd
 
 /-- **Converse fails: A → DA is NOT super-valid.** Counterexample: two
     specification points, `eval = id`, space = `{true, false}`.
     At point `true`: A is true but DA is false (A fails at `false`).
     So `A → DA` is false at `true`, hence not super-true. -/
 theorem A_not_implies_DA :
-    ∃ (eval : Bool → Bool) (S : SpecSpace Bool),
-      superTrue (fun s => !eval s || definitely eval S) S ≠ Truth3.true := by
-  refine ⟨id, ⟨{true, false}, ⟨true, by simp⟩⟩, ?_⟩
-  -- definitely id this_space = false (since id false ≠ true)
-  -- So the formula is (fun s => !s || false) = (fun s => !s)
-  -- superTrue (!·) {true, false} = indet ≠ true
-  rw [show superTrue (fun s => !id s || definitely id ⟨{true, false}, ⟨true, by simp⟩⟩)
-        ⟨{true, false}, ⟨true, by simp⟩⟩ = Truth3.indet from by native_decide]
-  exact Truth3.noConfusion
+    ∃ (eval : Bool → Prop) (_ : DecidablePred eval) (S : SpecSpace Bool),
+      superTrue (fun s => ¬ eval s ∨ definitely eval S) S ≠ Truth3.true := by
+  refine ⟨fun b => b = true, inferInstance,
+          ⟨{true, false}, ⟨true, by simp⟩⟩, ?_⟩
+  intro h
+  have := (superTrue_true_iff _ _).mp h true (by simp)
+  rcases this with h1 | h2
+  · exact h1 rfl
+  · have := h2 false (by simp); cases this
 
 /-- **DA is a consequence of A.** If A is super-true, then DA is
     super-true (since DA just says "A is true at all specs"). Combined
     with `A_not_implies_DA`, this shows the asymmetry characteristic of
     supervaluationism (Fine § 5, p. 290): asserting A commits one to DA,
     but A → DA is not a logical truth. -/
-theorem DA_consequence_of_A {Spec : Type*} (eval : Spec → Bool) :
+theorem DA_consequence_of_A {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval] :
     ∀ S : SpecSpace Spec,
-      superTrue eval S = Truth3.true → superTrue (fun _ => definitely eval S) S = Truth3.true := by
+      superTrue eval S = Truth3.true →
+      superTrue (fun _ => definitely eval S) S = Truth3.true := by
   intro S hA
   apply (superTrue_true_iff _ S).mpr
   intro _ _
@@ -425,7 +434,7 @@ theorem DA_consequence_of_A {Spec : Type*} (eval : Spec → Bool) :
     false — never indefinite. Supervaluation reduces to classical
     evaluation. -/
 theorem fidelity {Spec : Type*} [DecidableEq Spec]
-    (eval : Spec → Bool) (s : Spec) :
+    (eval : Spec → Prop) [DecidablePred eval] (s : Spec) :
     superTrue eval (.singleton s) ≠ Truth3.indet := by
   intro h
   have hi := (superTrue_indet_iff eval (.singleton s)).mp h
@@ -433,6 +442,6 @@ theorem fidelity {Spec : Type*} [DecidableEq Spec]
   have hst' := Finset.mem_singleton.mp hst
   have hsf' := Finset.mem_singleton.mp hsf
   subst hst'; subst hsf'
-  rw [hvt] at hvf; cases hvf
+  exact hvf hvt
 
 end Semantics.Supervaluation

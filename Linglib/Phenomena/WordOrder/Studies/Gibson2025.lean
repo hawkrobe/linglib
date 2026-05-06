@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
-import Linglib.Datasets.WALS.Features.F95A
+import Linglib.Data.WALS.Features.F95A
 import Linglib.Core.Word
 
 /-!
@@ -33,7 +33,7 @@ level).
 ## Substrate-derivation evidence: WALS Ch 95
 
 `fromWALSCh95` constructs a `CrossTab` directly from
-`Datasets.WALS.F95A.allData` (verb-object × adposition correlation;
+`Data.WALS.F95A.allData` (verb-object × adposition correlation;
 @cite{dryer-haspelmath-2013} Ch 95). This is internal evidence that
 Gibson's hand-coded Table 1 corresponds to the substrate-derivable
 form: same correlation, same harmonic-dominance conclusion. Counts
@@ -287,7 +287,7 @@ example : oberstesGesetz disharmonicFH 2 = false := by native_decide
     correlation viewed via raw WALS counts rather than Gibson's
     hand-coded snapshot. -/
 def CrossTab.fromWALSCh95 : CrossTab :=
-  let data := Datasets.WALS.F95A.allData
+  let data := Data.WALS.F95A.allData
   let voPrep   := (data.filter (·.value == .voAndPrepositions)).length
   let voPostp  := (data.filter (·.value == .voAndPostpositions)).length
   let ovPrep   := (data.filter (·.value == .ovAndPrepositions)).length

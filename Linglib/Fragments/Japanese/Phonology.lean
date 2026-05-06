@@ -1,4 +1,4 @@
-import Linglib.Datasets.PHOIBLE.Inventories.Japanese
+import Linglib.Data.PHOIBLE.Inventories.Japanese
 
 /-!
 # Japanese phonological inventory
@@ -6,7 +6,7 @@ import Linglib.Datasets.PHOIBLE.Inventories.Japanese
 
 Canonical PHOIBLE 2.0 phoneme inventory for Japanese (ISO `jpn`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in
-`Datasets/PHOIBLE/Inventories/Japanese.lean`.
+`Data/PHOIBLE/Inventories/Japanese.lean`.
 
 The choice of which PHOIBLE inventory to treat as canonical (PHOIBLE has
 multiple doculects per ISO) is made here at the Fragment layer, so
@@ -17,7 +17,7 @@ naming a PHOIBLE InventoryID directly.
 namespace Fragments.Japanese.Phonology
 
 /-- Canonical Japanese phoneme inventory: first PHOIBLE inventory for ISO `jpn`. -/
-def phonemeInventory : Datasets.PHOIBLE.Inventory :=
-  Datasets.PHOIBLE.Inventories.Japanese.jpn
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.Japanese.jpn
 
 end Fragments.Japanese.Phonology

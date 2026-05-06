@@ -1,6 +1,6 @@
-import Linglib.Datasets.WALS.Features.F81A
-import Linglib.Datasets.WALS.Features.F82A
-import Linglib.Datasets.WALS.Features.F83A
+import Linglib.Data.WALS.Features.F81A
+import Linglib.Data.WALS.Features.F82A
+import Linglib.Data.WALS.Features.F83A
 
 /-!
 # Word-order typology: per-language profile substrate
@@ -107,7 +107,7 @@ structure WordOrderProfile where
 namespace BasicOrder
 
 /-- Convert WALS F81A's `BasicWordOrder` value to a `BasicOrder`. -/
-def ofWALS81A : Datasets.WALS.F81A.BasicWordOrder → BasicOrder
+def ofWALS81A : Data.WALS.F81A.BasicWordOrder → BasicOrder
   | .sov => .sov
   | .svo => .svo
   | .vso => .vso
@@ -119,7 +119,7 @@ def ofWALS81A : Datasets.WALS.F81A.BasicWordOrder → BasicOrder
 /-- Look up Ch 81 basic order for an ISO 639-3 code. Returns
     `.notInWALS` when the language is absent from the chapter. -/
 def ofWALS (iso : String) : BasicOrder :=
-  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F81A.allData iso with
+  match Data.WALS.Datapoint.lookupISO Data.WALS.F81A.allData iso with
   | some d => ofWALS81A d.value
   | none => .notInWALS
 
@@ -128,7 +128,7 @@ end BasicOrder
 namespace SVOrder
 
 /-- Convert WALS F82A's `SubjectVerbOrder` to an `SVOrder`. -/
-def ofWALS82A : Datasets.WALS.F82A.SubjectVerbOrder → SVOrder
+def ofWALS82A : Data.WALS.F82A.SubjectVerbOrder → SVOrder
   | .sv => .sv
   | .vs => .vs
   | .noDominantOrder => .noDominant
@@ -136,7 +136,7 @@ def ofWALS82A : Datasets.WALS.F82A.SubjectVerbOrder → SVOrder
 /-- Look up Ch 82 subject–verb order for an ISO 639-3 code. Returns
     `.notInWALS` when the language is absent from the chapter. -/
 def ofWALS (iso : String) : SVOrder :=
-  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F82A.allData iso with
+  match Data.WALS.Datapoint.lookupISO Data.WALS.F82A.allData iso with
   | some d => ofWALS82A d.value
   | none => .notInWALS
 
@@ -145,7 +145,7 @@ end SVOrder
 namespace OVOrder
 
 /-- Convert WALS F83A's `ObjectVerbOrder` to an `OVOrder`. -/
-def ofWALS83A : Datasets.WALS.F83A.ObjectVerbOrder → OVOrder
+def ofWALS83A : Data.WALS.F83A.ObjectVerbOrder → OVOrder
   | .ov => .ov
   | .vo => .vo
   | .noDominantOrder => .noDominant
@@ -153,7 +153,7 @@ def ofWALS83A : Datasets.WALS.F83A.ObjectVerbOrder → OVOrder
 /-- Look up Ch 83 object–verb order for an ISO 639-3 code. Returns
     `.notInWALS` when the language is absent from the chapter. -/
 def ofWALS (iso : String) : OVOrder :=
-  match Datasets.WALS.Datapoint.lookupISO Datasets.WALS.F83A.allData iso with
+  match Data.WALS.Datapoint.lookupISO Data.WALS.F83A.allData iso with
   | some d => ofWALS83A d.value
   | none => .notInWALS
 

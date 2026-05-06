@@ -8,8 +8,8 @@ Examples:
     python3 scripts/gen_phoible.py eng deu jpn   # specific ISO codes
     python3 scripts/gen_phoible.py               # the 16 PhonProfile defaults
 
-Reads from:  data/phoible-2019/phoible.csv
-Writes to:   Linglib/Datasets/PHOIBLE/Inventories/{Name}.lean
+Reads from:  Linglib/Data/PHOIBLE/raw/phoible.csv
+Writes to:   Linglib/Data/PHOIBLE/Inventories/{Name}.lean
              (one Lean file per requested ISO; first inventory per ISO).
 
 The first inventory per ISO is taken (lowest InventoryID), which matches
@@ -29,8 +29,8 @@ from pathlib import Path
 from collections import OrderedDict
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "data" / "phoible-2019" / "phoible.csv"
-OUT  = ROOT / "Linglib" / "Datasets" / "PHOIBLE" / "Inventories"
+DATA = ROOT / "Linglib" / "Data" / "PHOIBLE" / "raw" / "phoible.csv"
+OUT  = ROOT / "Linglib" / "Data" / "PHOIBLE" / "Inventories"
 
 # ── Default ISO set (the 16 PhonProfile languages from
 #                    Phenomena/Phonology/Typology.lean) ──────────────────────
@@ -192,7 +192,7 @@ def emit_module(iso: str, rows_by_inv: dict, module_name: str) -> str:
     head = rows[0]
     lang_name = head.get("LanguageName", "").strip().strip('"')
 
-    return f"""import Linglib.Datasets.PHOIBLE.Schema
+    return f"""import Linglib.Data.PHOIBLE.Schema
 
 /-!
 # PHOIBLE inventory: {lang_name} ({iso}, ID {first_inv_id})
@@ -205,13 +205,13 @@ Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 Source: PHOIBLE donor `{head.get("Source", "").strip().strip(chr(34))}`.
 -/
 
-namespace Datasets.PHOIBLE.Inventories.{module_name}
+namespace Data.PHOIBLE.Inventories.{module_name}
 
-open Datasets.PHOIBLE
+open Data.PHOIBLE
 
 {inv_block}
 
-end Datasets.PHOIBLE.Inventories.{module_name}
+end Data.PHOIBLE.Inventories.{module_name}
 """
 
 # ── Main ───────────────────────────────────────────────────────────────────

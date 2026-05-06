@@ -1,7 +1,7 @@
 import Linglib.Features.Coordination
-import Linglib.Datasets.WALS.Features.F56A
-import Linglib.Datasets.WALS.Features.F63A
-import Linglib.Datasets.WALS.Features.F64A
+import Linglib.Data.WALS.Features.F56A
+import Linglib.Data.WALS.Features.F63A
+import Linglib.Data.WALS.Features.F64A
 
 /-!
 # Typology.Coordination
@@ -53,9 +53,9 @@ namespace Typology.Coordination
 
 open Features.Coordination
 
-private abbrev ch56 := Datasets.WALS.F56A.allData
-private abbrev ch63 := Datasets.WALS.F63A.allData
-private abbrev ch64 := Datasets.WALS.F64A.allData
+private abbrev ch56 := Data.WALS.F56A.allData
+private abbrev ch63 := Data.WALS.F63A.allData
+private abbrev ch64 := Data.WALS.F64A.allData
 
 -- ============================================================================
 -- §1. Haspelmath 2007 structural enums
@@ -140,13 +140,13 @@ inductive AndWithStatus where
 -- ============================================================================
 
 /-- WALS Ch 56: conjunction-quantifier relation. -/
-abbrev ConjQuantRelation := Datasets.WALS.F56A.ConjunctionsAndUniversalQuantifiers
+abbrev ConjQuantRelation := Data.WALS.F56A.ConjunctionsAndUniversalQuantifiers
 
 /-- WALS Ch 63: noun-phrase conjunction (and-vs-with). -/
-abbrev ConjComitativeRelation := Datasets.WALS.F63A.NounPhraseConjunction
+abbrev ConjComitativeRelation := Data.WALS.F63A.NounPhraseConjunction
 
 /-- WALS Ch 64: nominal-vs-verbal conjunction. -/
-abbrev NomVerbalConjRelation := Datasets.WALS.F64A.NominalAndVerbalConjunction
+abbrev NomVerbalConjRelation := Data.WALS.F64A.NominalAndVerbalConjunction
 
 /-- Derive AND/WITH status from the conjunction-comitative relation
     (@cite{stassen-2000}'s diagnostic). -/

@@ -1,7 +1,7 @@
 import Linglib.Typology.ArgumentStructure
-import Linglib.Datasets.WALS.Features.F108A
-import Linglib.Datasets.WALS.Features.F109A
-import Linglib.Datasets.WALS.Features.F111A
+import Linglib.Data.WALS.Features.F108A
+import Linglib.Data.WALS.Features.F109A
+import Linglib.Data.WALS.Features.F111A
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.English.Pronouns
 

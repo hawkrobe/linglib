@@ -1,23 +1,23 @@
-import Linglib.Datasets.WALS.Features.F1A
-import Linglib.Datasets.WALS.Features.F2A
-import Linglib.Datasets.WALS.Features.F3A
-import Linglib.Datasets.WALS.Features.F4A
-import Linglib.Datasets.WALS.Features.F5A
-import Linglib.Datasets.WALS.Features.F6A
-import Linglib.Datasets.WALS.Features.F7A
-import Linglib.Datasets.WALS.Features.F8A
-import Linglib.Datasets.WALS.Features.F9A
-import Linglib.Datasets.WALS.Features.F10A
-import Linglib.Datasets.WALS.Features.F10B
-import Linglib.Datasets.WALS.Features.F11A
-import Linglib.Datasets.WALS.Features.F12A
-import Linglib.Datasets.WALS.Features.F13A
-import Linglib.Datasets.WALS.Features.F14A
-import Linglib.Datasets.WALS.Features.F15A
-import Linglib.Datasets.WALS.Features.F16A
-import Linglib.Datasets.WALS.Features.F17A
-import Linglib.Datasets.WALS.Features.F18A
-import Linglib.Datasets.WALS.Features.F19A
+import Linglib.Data.WALS.Features.F1A
+import Linglib.Data.WALS.Features.F2A
+import Linglib.Data.WALS.Features.F3A
+import Linglib.Data.WALS.Features.F4A
+import Linglib.Data.WALS.Features.F5A
+import Linglib.Data.WALS.Features.F6A
+import Linglib.Data.WALS.Features.F7A
+import Linglib.Data.WALS.Features.F8A
+import Linglib.Data.WALS.Features.F9A
+import Linglib.Data.WALS.Features.F10A
+import Linglib.Data.WALS.Features.F10B
+import Linglib.Data.WALS.Features.F11A
+import Linglib.Data.WALS.Features.F12A
+import Linglib.Data.WALS.Features.F13A
+import Linglib.Data.WALS.Features.F14A
+import Linglib.Data.WALS.Features.F15A
+import Linglib.Data.WALS.Features.F16A
+import Linglib.Data.WALS.Features.F17A
+import Linglib.Data.WALS.Features.F18A
+import Linglib.Data.WALS.Features.F19A
 
 /-!
 # Phonological typology — WALS substrate (Chapters 1–19)
@@ -79,7 +79,7 @@ Maddieson's UPSID-based methodology (~451 inventories) is the 1980s baseline
 WALS Ch 1–11/18–19 inherits. The field-canonical post-2019 successor is
 PHOIBLE 2.0 (@cite{moran-mccloy-2019}; ~3000 inventories with full IPA
 transcription + 37-feature decomposition), housed in
-`Linglib/Datasets/PHOIBLE/`. WALS partitions remain useful for cross-paper
+`Linglib/Data/PHOIBLE/`. WALS partitions remain useful for cross-paper
 *classification* references; PHOIBLE provides the underlying inventories.
 Bridge theorems WALS↔PHOIBLE live in
 `Phenomena/Phonology/Studies/Maddieson2013.lean`.
@@ -90,26 +90,26 @@ set_option autoImplicit false
 
 namespace Typology.Phonology
 
-private abbrev ch1   := Datasets.WALS.F1A.allData
-private abbrev ch2   := Datasets.WALS.F2A.allData
-private abbrev ch3   := Datasets.WALS.F3A.allData
-private abbrev ch4   := Datasets.WALS.F4A.allData
-private abbrev ch5   := Datasets.WALS.F5A.allData
-private abbrev ch6   := Datasets.WALS.F6A.allData
-private abbrev ch7   := Datasets.WALS.F7A.allData
-private abbrev ch8   := Datasets.WALS.F8A.allData
-private abbrev ch9   := Datasets.WALS.F9A.allData
-private abbrev ch10  := Datasets.WALS.F10A.allData
-private abbrev ch10b := Datasets.WALS.F10B.allData
-private abbrev ch11  := Datasets.WALS.F11A.allData
-private abbrev ch12  := Datasets.WALS.F12A.allData
-private abbrev ch13  := Datasets.WALS.F13A.allData
-private abbrev ch14  := Datasets.WALS.F14A.allData
-private abbrev ch15  := Datasets.WALS.F15A.allData
-private abbrev ch16  := Datasets.WALS.F16A.allData
-private abbrev ch17  := Datasets.WALS.F17A.allData
-private abbrev ch18  := Datasets.WALS.F18A.allData
-private abbrev ch19  := Datasets.WALS.F19A.allData
+private abbrev ch1   := Data.WALS.F1A.allData
+private abbrev ch2   := Data.WALS.F2A.allData
+private abbrev ch3   := Data.WALS.F3A.allData
+private abbrev ch4   := Data.WALS.F4A.allData
+private abbrev ch5   := Data.WALS.F5A.allData
+private abbrev ch6   := Data.WALS.F6A.allData
+private abbrev ch7   := Data.WALS.F7A.allData
+private abbrev ch8   := Data.WALS.F8A.allData
+private abbrev ch9   := Data.WALS.F9A.allData
+private abbrev ch10  := Data.WALS.F10A.allData
+private abbrev ch10b := Data.WALS.F10B.allData
+private abbrev ch11  := Data.WALS.F11A.allData
+private abbrev ch12  := Data.WALS.F12A.allData
+private abbrev ch13  := Data.WALS.F13A.allData
+private abbrev ch14  := Data.WALS.F14A.allData
+private abbrev ch15  := Data.WALS.F15A.allData
+private abbrev ch16  := Data.WALS.F16A.allData
+private abbrev ch17  := Data.WALS.F17A.allData
+private abbrev ch18  := Data.WALS.F18A.allData
+private abbrev ch19  := Data.WALS.F19A.allData
 
 -- ============================================================================
 -- §1. Per-chapter enums
@@ -233,38 +233,38 @@ inductive UncommonPresent where
 -- §2. WALS converter functions
 -- ============================================================================
 
-def fromWALS1A : Datasets.WALS.F1A.ConsonantInventories → CInventorySize
+def fromWALS1A : Data.WALS.F1A.ConsonantInventories → CInventorySize
   | .small           => .small
   | .moderatelySmall => .moderatelySmall
   | .average         => .average
   | .moderatelyLarge => .moderatelyLarge
   | .large           => .large
 
-def fromWALS2A : Datasets.WALS.F2A.VowelQualityInventories → VInventorySize
+def fromWALS2A : Data.WALS.F2A.VowelQualityInventories → VInventorySize
   | .small   => .small
   | .average => .average
   | .large   => .large
 
-def fromWALS3A : Datasets.WALS.F3A.ConsonantVowelRatio → CVRatio
+def fromWALS3A : Data.WALS.F3A.ConsonantVowelRatio → CVRatio
   | .low            => .low
   | .moderatelyLow  => .moderatelyLow
   | .average        => .average
   | .moderatelyHigh => .moderatelyHigh
   | .high           => .high
 
-def fromWALS4A : Datasets.WALS.F4A.VoicingInPlosivesAndFricatives → VoicingContrast
+def fromWALS4A : Data.WALS.F4A.VoicingInPlosivesAndFricatives → VoicingContrast
   | .noVoicingContrast           => .none
   | .inPlosivesAlone             => .plosivesOnly
   | .inFricativesAlone           => .fricativesOnly
   | .inBothPlosivesAndFricatives => .both
 
-def fromWALS6A : Datasets.WALS.F6A.UvularConsonants → UvularPresence
+def fromWALS6A : Data.WALS.F6A.UvularConsonants → UvularPresence
   | .none                       => .none
   | .uvularStopsOnly            => .stopsOnly
   | .uvularContinuantsOnly      => .continuantsOnly
   | .uvularStopsAndContinuants  => .stopsAndContinuants
 
-def fromWALS7A : Datasets.WALS.F7A.GlottalizedConsonants → GlottalizedType
+def fromWALS7A : Data.WALS.F7A.GlottalizedConsonants → GlottalizedType
   | .noGlottalizedConsonants                    => .none
   | .ejectivesOnly                              => .ejectivesOnly
   | .implosivesOnly                             => .implosivesOnly
@@ -274,42 +274,42 @@ def fromWALS7A : Datasets.WALS.F7A.GlottalizedConsonants → GlottalizedType
   | .implosivesAndGlottalizedResonants          => .implosivesAndResonants
   | .ejectivesImplosivesAndGlottalizedResonants => .allThree
 
-def fromWALS8A : Datasets.WALS.F8A.LateralConsonants → LateralType
+def fromWALS8A : Data.WALS.F8A.LateralConsonants → LateralType
   | .noLaterals                              => .noLaterals
   | .lNoObstruentLaterals                    => .lOnly
   | .lateralsButNoLNoObstruentLaterals       => .lateralsNoL
   | .lAndLateralObstruent                    => .lAndObstruent
   | .noLButLateralObstruents                 => .obstruentOnly
 
-def fromWALS9A : Datasets.WALS.F9A.VelarNasal → VelarNasalStatus
+def fromWALS9A : Data.WALS.F9A.VelarNasal → VelarNasalStatus
   | .initialVelarNasal   => .initial
   | .noInitialVelarNasal => .noInitial
   | .noVelarNasal        => .absent
 
-def fromWALS10B : Datasets.WALS.F10B.NasalVowelsInWestAfrica → NasalVowelWA
+def fromWALS10B : Data.WALS.F10B.NasalVowelsInWestAfrica → NasalVowelWA
   | .noNasalVsOralVowelContrast                                  => .noContrast
   | .twoWayNasalVsOralVowelContrastWithoutNasalSpreading         => .twoWayNoSpreading
   | .twoWayNasalVsOralVowelContrastWithNasalSpreading            => .twoWaySpreading
   | .fourWayNasalVsOralVowelContrastWithoutNasalSpreading        => .fourWayNoSpreading
   | .fourWayNasalVsOralVowelContrastWithNasalSpreading           => .fourWaySpreading
 
-def fromWALS11A : Datasets.WALS.F11A.FrontRoundedVowels → FrontRounded
+def fromWALS11A : Data.WALS.F11A.FrontRoundedVowels → FrontRounded
   | .none       => .none
   | .highAndMid => .highAndMid
   | .highOnly   => .highOnly
   | .midOnly    => .midOnly
 
-def fromWALS12A : Datasets.WALS.F12A.SyllableStructure → SyllableComplexity
+def fromWALS12A : Data.WALS.F12A.SyllableStructure → SyllableComplexity
   | .simple            => .simple
   | .moderatelyComplex => .moderatelyComplex
   | .complex           => .complex
 
-def fromWALS13A : Datasets.WALS.F13A.Tone → ToneSystem
+def fromWALS13A : Data.WALS.F13A.Tone → ToneSystem
   | .noTones          => .none
   | .simpleToneSystem => .simple
   | .complexToneSystem => .complex
 
-def fromWALS14A : Datasets.WALS.F14A.FixedStressLocations → StressLocation
+def fromWALS14A : Data.WALS.F14A.FixedStressLocations → StressLocation
   | .noFixedStress   => .noFixed
   | .initial         => .initial
   | .second          => .second
@@ -318,7 +318,7 @@ def fromWALS14A : Datasets.WALS.F14A.FixedStressLocations → StressLocation
   | .penultimate     => .penultimate
   | .ultimate        => .ultimate
 
-def fromWALS15A : Datasets.WALS.F15A.WeightSensitiveStress → WeightStress
+def fromWALS15A : Data.WALS.F15A.WeightSensitiveStress → WeightStress
   | .leftEdgeFirstOrSecond           => .leftEdge
   | .leftOrientedOneOfTheFirstThree  => .leftOriented
   | .rightEdgeUltimateOrPenultimate  => .rightEdge
@@ -328,7 +328,7 @@ def fromWALS15A : Datasets.WALS.F15A.WeightSensitiveStress → WeightStress
   | .notPredictable                  => .notPredictable
   | .fixedStress                     => .fixedNoWeight
 
-def fromWALS16A : Datasets.WALS.F16A.WeightFactorsInWeightSensitiveStressSystems → WeightFactor
+def fromWALS16A : Data.WALS.F16A.WeightFactorsInWeightSensitiveStressSystems → WeightFactor
   | .noWeight                  => .noWeight
   | .longVowel                 => .longVowel
   | .codaConsonant             => .codaConsonant
@@ -337,14 +337,14 @@ def fromWALS16A : Datasets.WALS.F16A.WeightFactorsInWeightSensitiveStressSystems
   | .lexicalStress             => .lexicalStress
   | .combined                  => .combined
 
-def fromWALS17A : Datasets.WALS.F17A.RhythmTypes → RhythmType
+def fromWALS17A : Data.WALS.F17A.RhythmTypes → RhythmType
   | .trochaic                       => .trochaic
   | .iambic                         => .iambic
   | .dualBothTrochaicAndIambic      => .dual
   | .undetermined                   => .undetermined
   | .noRhythmicStress               => .noRhythm
 
-def fromWALS18A : Datasets.WALS.F18A.AbsenceOfCommonConsonants → MissingCommon
+def fromWALS18A : Data.WALS.F18A.AbsenceOfCommonConsonants → MissingCommon
   | .allPresent           => .allPresent
   | .noBilabials          => .noBilabials
   | .noFricatives         => .noFricatives
@@ -352,7 +352,7 @@ def fromWALS18A : Datasets.WALS.F18A.AbsenceOfCommonConsonants → MissingCommon
   | .noBilabialsOrNasals  => .noBilabialsOrNasals
   | .noFricativesOrNasals => .noFricativesOrNasals
 
-def fromWALS19A : Datasets.WALS.F19A.PresenceOfUncommonConsonants → UncommonPresent
+def fromWALS19A : Data.WALS.F19A.PresenceOfUncommonConsonants → UncommonPresent
   | .none              => .none
   | .clicks            => .clicks
   | .labialVelars      => .labialVelars

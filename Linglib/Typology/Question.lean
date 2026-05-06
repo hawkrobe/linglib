@@ -1,6 +1,6 @@
-import Linglib.Datasets.WALS.Features.F92A
-import Linglib.Datasets.WALS.Features.F93A
-import Linglib.Datasets.WALS.Features.F116A
+import Linglib.Data.WALS.Features.F92A
+import Linglib.Data.WALS.Features.F93A
+import Linglib.Data.WALS.Features.F116A
 
 /-!
 # Question typology — substrate
@@ -56,9 +56,9 @@ set_option autoImplicit false
 
 namespace Typology.Question
 
-private abbrev ch92  := Datasets.WALS.F92A.allData
-private abbrev ch93  := Datasets.WALS.F93A.allData
-private abbrev ch116 := Datasets.WALS.F116A.allData
+private abbrev ch92  := Data.WALS.F92A.allData
+private abbrev ch93  := Data.WALS.F93A.allData
+private abbrev ch116 := Data.WALS.F116A.allData
 
 /-- WALS Ch 93A: position of interrogative phrases (wh-words). -/
 inductive WhMovementStrategy where
@@ -191,7 +191,7 @@ structure QuestionProfile where
 -- ============================================================================
 
 /-- WALS Ch 92A → `QParticlePosition`. -/
-def fromWALS92A : Datasets.WALS.F92A.PositionOfPolarQuestionParticles →
+def fromWALS92A : Data.WALS.F92A.PositionOfPolarQuestionParticles →
     QParticlePosition
   | .initial                => .initial
   | .final                  => .final
@@ -202,14 +202,14 @@ def fromWALS92A : Datasets.WALS.F92A.PositionOfPolarQuestionParticles →
 
 /-- WALS Ch 93A → `WhMovementStrategy`. -/
 def fromWALS93A :
-    Datasets.WALS.F93A.PositionOfInterrogativePhrasesInContentQuestions →
+    Data.WALS.F93A.PositionOfInterrogativePhrasesInContentQuestions →
     WhMovementStrategy
   | .initialInterrogativePhrase    => .initial
   | .notInitialInterrogativePhrase => .inSitu
   | .mixed                         => .mixed
 
 /-- WALS Ch 116A → `PolarQuestionStrategy`. -/
-def fromWALS116A : Datasets.WALS.F116A.PolarQuestionType →
+def fromWALS116A : Data.WALS.F116A.PolarQuestionType →
     PolarQuestionStrategy
   | .questionParticle                      => .particle
   | .interrogativeVerbMorphology           => .verbMorphology

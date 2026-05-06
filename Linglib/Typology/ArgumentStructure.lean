@@ -1,11 +1,11 @@
-import Linglib.Datasets.WALS.Features.F105A
-import Linglib.Datasets.WALS.Features.F106A
-import Linglib.Datasets.WALS.Features.F107A
-import Linglib.Datasets.WALS.Features.F108A
-import Linglib.Datasets.WALS.Features.F108B
-import Linglib.Datasets.WALS.Features.F109A
-import Linglib.Datasets.WALS.Features.F109B
-import Linglib.Datasets.WALS.Features.F111A
+import Linglib.Data.WALS.Features.F105A
+import Linglib.Data.WALS.Features.F106A
+import Linglib.Data.WALS.Features.F107A
+import Linglib.Data.WALS.Features.F108A
+import Linglib.Data.WALS.Features.F108B
+import Linglib.Data.WALS.Features.F109A
+import Linglib.Data.WALS.Features.F109B
+import Linglib.Data.WALS.Features.F111A
 import Linglib.Core.Case.Basic
 
 /-!
@@ -75,14 +75,14 @@ set_option autoImplicit false
 
 namespace Typology.ArgumentStructure
 
-private abbrev f105a := Datasets.WALS.F105A.allData
-private abbrev f106a := Datasets.WALS.F106A.allData
-private abbrev f107a := Datasets.WALS.F107A.allData
-private abbrev f108a := Datasets.WALS.F108A.allData
-private abbrev f108b := Datasets.WALS.F108B.allData
-private abbrev f109a := Datasets.WALS.F109A.allData
-private abbrev f109b := Datasets.WALS.F109B.allData
-private abbrev f111a := Datasets.WALS.F111A.allData
+private abbrev f105a := Data.WALS.F105A.allData
+private abbrev f106a := Data.WALS.F106A.allData
+private abbrev f107a := Data.WALS.F107A.allData
+private abbrev f108a := Data.WALS.F108A.allData
+private abbrev f108b := Data.WALS.F108B.allData
+private abbrev f109a := Data.WALS.F109A.allData
+private abbrev f109b := Data.WALS.F109B.allData
+private abbrev f111a := Data.WALS.F111A.allData
 
 -- ============================================================================
 -- §1. Reciprocal Constructions (Ch 106 + Nordlinger 2023 strategy/valency)
@@ -389,21 +389,21 @@ def ValenceProfile.hasPassive (p : ValenceProfile) : Bool :=
 -- ============================================================================
 
 /-- Convert WALS 105A value to `DitransitiveType`. -/
-def fromWALS105A : Datasets.WALS.F105A.DitransitiveConstructionsTheVerbGive → DitransitiveType
+def fromWALS105A : Data.WALS.F105A.DitransitiveConstructionsTheVerbGive → DitransitiveType
   | .indirectObjectConstruction  => .indirectObject
   | .doubleObjectConstruction    => .doubleObject
   | .secondaryObjectConstruction => .secondaryObject
   | .mixed                       => .mixed
 
 /-- Convert WALS 106A value to `ReciprocalType`. -/
-def fromWALS106A : Datasets.WALS.F106A.ReciprocalType → ReciprocalType
+def fromWALS106A : Data.WALS.F106A.ReciprocalType → ReciprocalType
   | .noReciprocalConstruction => .noDedicated
   | .distinctFromReflexive    => .distinctFromReflexive
   | .mixed                    => .mixed
   | .identicalToReflexive     => .identicalToReflexive
 
 /-- Convert WALS 108A value to `AntipassiveType`. -/
-def fromWALS108A : Datasets.WALS.F108A.AntipassiveType → AntipassiveType
+def fromWALS108A : Data.WALS.F108A.AntipassiveType → AntipassiveType
   | .implicitPatient => .implicitPatient
   | .obliquePatient  => .obliquePatient
   | .noAntipassive   => .noAntipassive
@@ -411,7 +411,7 @@ def fromWALS108A : Datasets.WALS.F108A.AntipassiveType → AntipassiveType
 /-- Convert WALS 109A value to `ApplicativeType`. The WALS enum encodes
     base-transitivity and semantic role together; we decompose into
     `ApplicativeBase` × `AppliedObjectRole`. -/
-def fromWALS109A : Datasets.WALS.F109A.ApplicativeType → ApplicativeType
+def fromWALS109A : Data.WALS.F109A.ApplicativeType → ApplicativeType
   | .benefactiveBothBases         => .applicative .bothBases .benefactiveOnly
   | .benefactiveTransOnly         => .applicative .transitiveOnly .benefactiveOnly
   | .benefactiveAndOtherBothBases => .applicative .bothBases .benefactiveAndOther
@@ -427,7 +427,7 @@ def fromWALS109A : Datasets.WALS.F109A.ApplicativeType → ApplicativeType
     Instrument, locative, and instrument-and-locative all map to
     `.nonbenefactiveOnly`; the finer distinction is preserved in the WALS
     source data. -/
-def fromWALS109B : Datasets.WALS.F109B.AppliedObjectRole → Option AppliedObjectRole
+def fromWALS109B : Data.WALS.F109B.AppliedObjectRole → Option AppliedObjectRole
   | .instrument            => some .nonbenefactiveOnly
   | .locative              => some .nonbenefactiveOnly
   | .instrumentAndLocative => some .nonbenefactiveOnly
@@ -435,7 +435,7 @@ def fromWALS109B : Datasets.WALS.F109B.AppliedObjectRole → Option AppliedObjec
   | .noApplicative         => none
 
 /-- Convert WALS 111A value to `NonperiphrCausativeType`. -/
-def fromWALS111A : Datasets.WALS.F111A.NonperiphrCausativeType → NonperiphrCausativeType
+def fromWALS111A : Data.WALS.F111A.NonperiphrCausativeType → NonperiphrCausativeType
   | .neither           => .neither
   | .morphologicalOnly => .morphologicalOnly
   | .compoundOnly      => .compoundOnly

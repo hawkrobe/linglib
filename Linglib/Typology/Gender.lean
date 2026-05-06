@@ -1,8 +1,8 @@
 import Linglib.Core.Agreement.Target
 import Linglib.Features.Gender
-import Linglib.Datasets.WALS.Features.F30A
-import Linglib.Datasets.WALS.Features.F31A
-import Linglib.Datasets.WALS.Features.F32A
+import Linglib.Data.WALS.Features.F30A
+import Linglib.Data.WALS.Features.F31A
+import Linglib.Data.WALS.Features.F32A
 
 /-!
 # Typology.Gender
@@ -54,9 +54,9 @@ namespace Typology.Gender
 
 open Core (AgreementTarget)
 
-private abbrev ch30 := Datasets.WALS.F30A.allData
-private abbrev ch31 := Datasets.WALS.F31A.allData
-private abbrev ch32 := Datasets.WALS.F32A.allData
+private abbrev ch30 := Data.WALS.F30A.allData
+private abbrev ch31 := Data.WALS.F31A.allData
+private abbrev ch32 := Data.WALS.F32A.allData
 
 -- ============================================================================
 -- §1. Substrate enums
@@ -243,7 +243,7 @@ end GenderProfile
 -- ============================================================================
 
 /-- WALS Ch 30A → `GenderCount`. -/
-def fromWALS30A : Datasets.WALS.F30A.GenderCount → GenderCount
+def fromWALS30A : Data.WALS.F30A.GenderCount → GenderCount
   | .none       => .none
   | .two        => .two
   | .three      => .three
@@ -251,14 +251,14 @@ def fromWALS30A : Datasets.WALS.F30A.GenderCount → GenderCount
   | .fiveOrMore => .fivePlus
 
 /-- WALS Ch 31A → `GenderBasis`. -/
-def fromWALS31A : Datasets.WALS.F31A.GenderBasis → GenderBasis
+def fromWALS31A : Data.WALS.F31A.GenderBasis → GenderBasis
   | .noGender    => .noGender
   | .sexBased    => .sexBased
   | .nonSexBased => .nonSexBased
 
 /-- WALS Ch 32A → `AssignmentSystem`. -/
 def fromWALS32A :
-    Datasets.WALS.F32A.SystemsOfGenderAssignment → AssignmentSystem
+    Data.WALS.F32A.SystemsOfGenderAssignment → AssignmentSystem
   | .noGender          => .noGender
   | .semantic          => .semanticOnly
   | .semanticAndFormal => .semanticAndFormal
@@ -268,13 +268,13 @@ def fromWALS32A :
 -- ============================================================================
 
 def walsGenderCount (iso : String) : Option GenderCount :=
-  (Datasets.WALS.F30A.lookupISO iso).map (fromWALS30A ·.value)
+  (Data.WALS.F30A.lookupISO iso).map (fromWALS30A ·.value)
 
 def walsGenderBasis (iso : String) : Option GenderBasis :=
-  (Datasets.WALS.F31A.lookupISO iso).map (fromWALS31A ·.value)
+  (Data.WALS.F31A.lookupISO iso).map (fromWALS31A ·.value)
 
 def walsAssignment (iso : String) : Option AssignmentSystem :=
-  (Datasets.WALS.F32A.lookupISO iso).map (fromWALS32A ·.value)
+  (Data.WALS.F32A.lookupISO iso).map (fromWALS32A ·.value)
 
 /-- Build a `GenderProfile` from an ISO 639-3 code via WALS lookups for
     Chs 30/31/32. The three required-field fallbacks (`genderCountFb`,

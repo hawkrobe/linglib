@@ -1,4 +1,4 @@
-import Linglib.Datasets.PHOIBLE.Inventories.Turkish
+import Linglib.Data.PHOIBLE.Inventories.Turkish
 
 /-!
 # Turkish phonological inventory
@@ -6,7 +6,7 @@ import Linglib.Datasets.PHOIBLE.Inventories.Turkish
 
 Canonical PHOIBLE 2.0 phoneme inventory for Turkish (ISO `tur`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in
-`Datasets/PHOIBLE/Inventories/Turkish.lean`.
+`Data/PHOIBLE/Inventories/Turkish.lean`.
 
 The choice of which PHOIBLE inventory to treat as canonical (PHOIBLE has
 multiple doculects per ISO) is made here at the Fragment layer, so
@@ -17,7 +17,7 @@ naming a PHOIBLE InventoryID directly.
 namespace Fragments.Turkish.Phonology
 
 /-- Canonical Turkish phoneme inventory: first PHOIBLE inventory for ISO `tur`. -/
-def phonemeInventory : Datasets.PHOIBLE.Inventory :=
-  Datasets.PHOIBLE.Inventories.Turkish.tur
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.Turkish.tur
 
 end Fragments.Turkish.Phonology

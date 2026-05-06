@@ -1,7 +1,7 @@
 import Linglib.Typology.ArgumentStructure
 import Linglib.Phenomena.ArgumentStructure.Studies.Siloni2012
 import Linglib.Phenomena.ArgumentStructure.Studies.Polinsky2013
-import Linglib.Datasets.WALS.Features.F106A
+import Linglib.Data.WALS.Features.F106A
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.Swahili.Reciprocals
 
@@ -273,25 +273,25 @@ theorem recip_profile_count : allRecipProfiles.length = 12 := by native_decide
     Lookups use ISO 639-3 codes via `Datapoint.lookupISO`, so the join
     between profile and WALS row is structural (no string-coincidence). -/
 theorem rp_english_wals :
-    (Datasets.WALS.F106A.lookupISO rp_english.iso).map (fromWALS106A ·.value) =
+    (Data.WALS.F106A.lookupISO rp_english.iso).map (fromWALS106A ·.value) =
       some rp_english.reflexiveRelation := by native_decide
 theorem rp_russian_wals :
-    (Datasets.WALS.F106A.lookupISO rp_russian.iso).map (fromWALS106A ·.value) =
+    (Data.WALS.F106A.lookupISO rp_russian.iso).map (fromWALS106A ·.value) =
       some rp_russian.reflexiveRelation := by native_decide
 theorem rp_swahili_wals :
-    (Datasets.WALS.F106A.lookupISO rp_swahili.iso).map (fromWALS106A ·.value) =
+    (Data.WALS.F106A.lookupISO rp_swahili.iso).map (fromWALS106A ·.value) =
       some rp_swahili.reflexiveRelation := by native_decide
 theorem rp_greek_wals :
-    (Datasets.WALS.F106A.lookupISO rp_greek.iso).map (fromWALS106A ·.value) =
+    (Data.WALS.F106A.lookupISO rp_greek.iso).map (fromWALS106A ·.value) =
       some rp_greek.reflexiveRelation := by native_decide
 theorem rp_german_wals :
-    (Datasets.WALS.F106A.lookupISO rp_german.iso).map (fromWALS106A ·.value) =
+    (Data.WALS.F106A.lookupISO rp_german.iso).map (fromWALS106A ·.value) =
       some rp_german.reflexiveRelation := by native_decide
 theorem rp_mandarin_wals :
-    (Datasets.WALS.F106A.lookupISO rp_mandarin.iso).map (fromWALS106A ·.value) =
+    (Data.WALS.F106A.lookupISO rp_mandarin.iso).map (fromWALS106A ·.value) =
       some rp_mandarin.reflexiveRelation := by native_decide
 theorem rp_wambaya_wals :
-    (Datasets.WALS.F106A.lookupISO rp_wambaya.iso).map (fromWALS106A ·.value) =
+    (Data.WALS.F106A.lookupISO rp_wambaya.iso).map (fromWALS106A ·.value) =
       some rp_wambaya.reflexiveRelation := by native_decide
 
 -- ============================================================================

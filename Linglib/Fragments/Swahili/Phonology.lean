@@ -1,4 +1,4 @@
-import Linglib.Datasets.PHOIBLE.Inventories.Swahili
+import Linglib.Data.PHOIBLE.Inventories.Swahili
 
 /-!
 # Swahili phonological inventory
@@ -6,7 +6,7 @@ import Linglib.Datasets.PHOIBLE.Inventories.Swahili
 
 Canonical PHOIBLE 2.0 phoneme inventory for Swahili (ISO `swh`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in
-`Datasets/PHOIBLE/Inventories/Swahili.lean`.
+`Data/PHOIBLE/Inventories/Swahili.lean`.
 
 The choice of which PHOIBLE inventory to treat as canonical (PHOIBLE has
 multiple doculects per ISO) is made here at the Fragment layer, so
@@ -17,7 +17,7 @@ naming a PHOIBLE InventoryID directly.
 namespace Fragments.Swahili.Phonology
 
 /-- Canonical Swahili phoneme inventory: first PHOIBLE inventory for ISO `swh`. -/
-def phonemeInventory : Datasets.PHOIBLE.Inventory :=
-  Datasets.PHOIBLE.Inventories.Swahili.swh
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.Swahili.swh
 
 end Fragments.Swahili.Phonology

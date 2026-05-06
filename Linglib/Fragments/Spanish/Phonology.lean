@@ -1,4 +1,4 @@
-import Linglib.Datasets.PHOIBLE.Inventories.Spanish
+import Linglib.Data.PHOIBLE.Inventories.Spanish
 
 /-!
 # Spanish phonological inventory
@@ -6,7 +6,7 @@ import Linglib.Datasets.PHOIBLE.Inventories.Spanish
 
 Canonical PHOIBLE 2.0 phoneme inventory for Spanish (ISO `spa`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in
-`Datasets/PHOIBLE/Inventories/Spanish.lean`.
+`Data/PHOIBLE/Inventories/Spanish.lean`.
 
 The choice of which PHOIBLE inventory to treat as canonical (PHOIBLE has
 multiple doculects per ISO) is made here at the Fragment layer, so
@@ -17,7 +17,7 @@ naming a PHOIBLE InventoryID directly.
 namespace Fragments.Spanish.Phonology
 
 /-- Canonical Spanish phoneme inventory: first PHOIBLE inventory for ISO `spa`. -/
-def phonemeInventory : Datasets.PHOIBLE.Inventory :=
-  Datasets.PHOIBLE.Inventories.Spanish.spa
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.Spanish.spa
 
 end Fragments.Spanish.Phonology

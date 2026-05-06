@@ -1,19 +1,19 @@
-import Linglib.Datasets.WALS.Features.F20A
-import Linglib.Datasets.WALS.Features.F21A
-import Linglib.Datasets.WALS.Features.F22A
-import Linglib.Datasets.WALS.Features.F23A
-import Linglib.Datasets.WALS.Features.F24A
-import Linglib.Datasets.WALS.Features.F25A
-import Linglib.Datasets.WALS.Features.F25B
-import Linglib.Datasets.WALS.Features.F26A
-import Linglib.Datasets.WALS.Features.F27A
-import Linglib.Datasets.WALS.Features.F28A
-import Linglib.Datasets.WALS.Features.F29A
-import Linglib.Datasets.WALS.Features.F21B
-import Linglib.Datasets.WALS.Features.F62A
-import Linglib.Datasets.WALS.Features.F79A
-import Linglib.Datasets.WALS.Features.F79B
-import Linglib.Datasets.WALS.Features.F80A
+import Linglib.Data.WALS.Features.F20A
+import Linglib.Data.WALS.Features.F21A
+import Linglib.Data.WALS.Features.F22A
+import Linglib.Data.WALS.Features.F23A
+import Linglib.Data.WALS.Features.F24A
+import Linglib.Data.WALS.Features.F25A
+import Linglib.Data.WALS.Features.F25B
+import Linglib.Data.WALS.Features.F26A
+import Linglib.Data.WALS.Features.F27A
+import Linglib.Data.WALS.Features.F28A
+import Linglib.Data.WALS.Features.F29A
+import Linglib.Data.WALS.Features.F21B
+import Linglib.Data.WALS.Features.F62A
+import Linglib.Data.WALS.Features.F79A
+import Linglib.Data.WALS.Features.F79B
+import Linglib.Data.WALS.Features.F80A
 
 /-!
 # Morphological Profile Types
@@ -286,7 +286,7 @@ structure MorphProfile where
 
 /-- Convert WALS 20A fusion type to the local three-way `Fusion` classification.
     Returns `none` for mixed categories that do not map cleanly. -/
-def fromWALS20A : Datasets.WALS.F20A.FusionType → Option Fusion
+def fromWALS20A : Data.WALS.F20A.FusionType → Option Fusion
   | .exclusivelyConcatenative => some .concatenative
   | .exclusivelyIsolating     => some .isolating
   | .exclusivelyTonal         => some .nonlinear
@@ -297,7 +297,7 @@ def fromWALS20A : Datasets.WALS.F20A.FusionType → Option Fusion
 
 /-- Convert WALS 21A exponence type to the local `Exponence` classification.
     Returns `none` for `noCase` (no information about overall exponence). -/
-def fromWALS21A : Datasets.WALS.F21A.ExponenceType → Option Exponence
+def fromWALS21A : Data.WALS.F21A.ExponenceType → Option Exponence
   | .monoexponentialCase  => some .monoexponential
   | .caseNumber           => some .polyexponential
   | .caseReferentiality   => some .polyexponential
@@ -305,7 +305,7 @@ def fromWALS21A : Datasets.WALS.F21A.ExponenceType → Option Exponence
   | .noCase               => none
 
 /-- Convert WALS 22A inflectional synthesis to the local three-way classification. -/
-def fromWALS22A : Datasets.WALS.F22A.InflectionalSynthesis → VerbSynthesis
+def fromWALS22A : Data.WALS.F22A.InflectionalSynthesis → VerbSynthesis
   | .categoryPerWord0_1    => .low
   | .categoriesPerWord2_3  => .low
   | .categoriesPerWord4_5  => .moderate
@@ -314,7 +314,7 @@ def fromWALS22A : Datasets.WALS.F22A.InflectionalSynthesis → VerbSynthesis
   | .categoriesPerWord10_11 => .high
   | .categoriesPerWord12_13 => .high
 
-def fromWALS26A : Datasets.WALS.F26A.PrefixSuffixPreference → PrefixSuffix
+def fromWALS26A : Data.WALS.F26A.PrefixSuffixPreference → PrefixSuffix
   | .littleAffixation             => .littleAffixation
   | .stronglySuffixing            => .stronglySuffixing
   | .weaklySuffixing              => .weaklySuffixing
@@ -322,12 +322,12 @@ def fromWALS26A : Datasets.WALS.F26A.PrefixSuffixPreference → PrefixSuffix
   | .weaklyPrefixing              => .weaklyPrefixing
   | .strongPrefixing              => .stronglyPrefixing
 
-def fromWALS27A : Datasets.WALS.F27A.ReduplicationType → Reduplication
+def fromWALS27A : Data.WALS.F27A.ReduplicationType → Reduplication
   | .productiveFullAndPartialReduplication => .productiveFull
   | .fullReduplicationOnly                => .fullOnly
   | .noProductiveReduplication            => .noProductive
 
-def fromWALS23A : Datasets.WALS.F23A.LocusOfMarkingInTheClause → LocusClause
+def fromWALS23A : Data.WALS.F23A.LocusOfMarkingInTheClause → LocusClause
   | .headMarking      => .headMarking
   | .dependentMarking => .dependentMarking
   | .doubleMarking    => .doubleMarking
@@ -335,7 +335,7 @@ def fromWALS23A : Datasets.WALS.F23A.LocusOfMarkingInTheClause → LocusClause
   | .other            => .other
 
 def fromWALS24A :
-    Datasets.WALS.F24A.LocusOfMarkingInPossessiveNounPhrases → LocusPossessive
+    Data.WALS.F24A.LocusOfMarkingInPossessiveNounPhrases → LocusPossessive
   | .headMarking      => .headMarking
   | .dependentMarking => .dependentMarking
   | .doubleMarking    => .doubleMarking
@@ -343,7 +343,7 @@ def fromWALS24A :
   | .other            => .other
 
 def fromWALS25A :
-    Datasets.WALS.F25A.LocusOfMarkingWholeLanguageTypology → WholeLanguageMarking
+    Data.WALS.F25A.LocusOfMarkingWholeLanguageTypology → WholeLanguageMarking
   | .headMarking         => .headMarking
   | .dependentMarking    => .dependentMarking
   | .doubleMarking       => .doubleMarking
@@ -351,24 +351,24 @@ def fromWALS25A :
   | .inconsistentOrOther => .inconsistentOrOther
 
 def fromWALS25B :
-    Datasets.WALS.F25B.ZeroMarkingOfAAndPArguments → ZeroMarkingAP
+    Data.WALS.F25B.ZeroMarkingOfAAndPArguments → ZeroMarkingAP
   | .zeroMarking    => .zeroMarking
   | .nonZeroMarking => .nonZeroMarking
 
-def fromWALS28A : Datasets.WALS.F28A.CaseSyncretism → CaseSyncretism
+def fromWALS28A : Data.WALS.F28A.CaseSyncretism → CaseSyncretism
   | .noCaseMarking  => .noCaseMarking
   | .coreCasesOnly  => .coreCasesOnly
   | .coreAndNonCore => .coreAndNonCore
   | .noSyncretism   => .noSyncretism
 
 def fromWALS29A :
-    Datasets.WALS.F29A.SyncretismInVerbalPersonNumberMarking → VerbalSyncretism
+    Data.WALS.F29A.SyncretismInVerbalPersonNumberMarking → VerbalSyncretism
   | .noSubjectPersonNumberMarking => .noSubjectMarking
   | .syncretic                    => .syncretic
   | .notSyncretic                 => .notSyncretic
 
 def fromWALS21B :
-    Datasets.WALS.F21B.ExponenceOfTenseAspectMoodInflection → TAMExponence
+    Data.WALS.F21B.ExponenceOfTenseAspectMoodInflection → TAMExponence
   | .monoexponentialTam      => .monoexponential
   | .tamAgreement            => .tamAgreement
   | .tamAgreementDiathesis   => .tamAgreementDiathesis
@@ -377,7 +377,7 @@ def fromWALS21B :
   | .noTam                   => .noTam
 
 def fromWALS62A :
-    Datasets.WALS.F62A.ActionNominalConstructions → ActionNominal
+    Data.WALS.F62A.ActionNominalConstructions → ActionNominal
   | .sentential           => .sentential
   | .possessiveAccusative => .possessiveAccusative
   | .ergativePossessive   => .ergativePossessive
@@ -388,14 +388,14 @@ def fromWALS62A :
   | .noActionNominals     => .noActionNominals
 
 def fromWALS79A :
-    Datasets.WALS.F79A.SuppletionAccordingToTenseAndAspect → SuppletionTA
+    Data.WALS.F79A.SuppletionAccordingToTenseAndAspect → SuppletionTA
   | .tense          => .tense
   | .aspect         => .aspect
   | .tenseAndAspect => .tenseAndAspect
   | .none           => .none
 
 def fromWALS79B :
-    Datasets.WALS.F79B.SuppletionInImperativesAndHortatives → SuppletionImperative
+    Data.WALS.F79B.SuppletionInImperativesAndHortatives → SuppletionImperative
   | .aRegularAndASuppletiveFormAlternate => .alternating
   | .imperative                          => .imperative
   | .hortative                           => .hortative
@@ -403,7 +403,7 @@ def fromWALS79B :
   | .none                                => .none
 
 def fromWALS80A :
-    Datasets.WALS.F80A.VerbalNumberAndSuppletion → VerbalNumber
+    Data.WALS.F80A.VerbalNumberAndSuppletion → VerbalNumber
   | .none                                    => .none
   | .singularPluralPairsNoSuppletion         => .pairsNoSuppletion
   | .singularPluralPairsSuppletion           => .pairsSuppletion
@@ -429,55 +429,55 @@ def locusClauseToLocus : LocusClause → LocusOfMarking
     when WALS cannot help. -/
 
 def walsFusion (iso : String) : Option Fusion :=
-  (Datasets.WALS.F20A.lookupISO iso).bind (fromWALS20A ·.value)
+  (Data.WALS.F20A.lookupISO iso).bind (fromWALS20A ·.value)
 
 def walsExponence (iso : String) : Option Exponence :=
-  (Datasets.WALS.F21A.lookupISO iso).bind (fromWALS21A ·.value)
+  (Data.WALS.F21A.lookupISO iso).bind (fromWALS21A ·.value)
 
 def walsVerbSynthesis (iso : String) : Option VerbSynthesis :=
-  (Datasets.WALS.F22A.lookupISO iso).map (fromWALS22A ·.value)
+  (Data.WALS.F22A.lookupISO iso).map (fromWALS22A ·.value)
 
 def walsLocus (iso : String) : Option LocusOfMarking :=
-  (Datasets.WALS.F23A.lookupISO iso).map (λ e => locusClauseToLocus (fromWALS23A e.value))
+  (Data.WALS.F23A.lookupISO iso).map (λ e => locusClauseToLocus (fromWALS23A e.value))
 
 def walsPrefixSuffix (iso : String) : Option PrefixSuffix :=
-  (Datasets.WALS.F26A.lookupISO iso).map (fromWALS26A ·.value)
+  (Data.WALS.F26A.lookupISO iso).map (fromWALS26A ·.value)
 
 def walsReduplication (iso : String) : Option Reduplication :=
-  (Datasets.WALS.F27A.lookupISO iso).map (fromWALS27A ·.value)
+  (Data.WALS.F27A.lookupISO iso).map (fromWALS27A ·.value)
 
 def walsLocusClause (iso : String) : Option LocusClause :=
-  (Datasets.WALS.F23A.lookupISO iso).map (fromWALS23A ·.value)
+  (Data.WALS.F23A.lookupISO iso).map (fromWALS23A ·.value)
 
 def walsLocusPossessive (iso : String) : Option LocusPossessive :=
-  (Datasets.WALS.F24A.lookupISO iso).map (fromWALS24A ·.value)
+  (Data.WALS.F24A.lookupISO iso).map (fromWALS24A ·.value)
 
 def walsWholeLanguageMarking (iso : String) : Option WholeLanguageMarking :=
-  (Datasets.WALS.F25A.lookupISO iso).map (fromWALS25A ·.value)
+  (Data.WALS.F25A.lookupISO iso).map (fromWALS25A ·.value)
 
 def walsZeroMarkingAP (iso : String) : Option ZeroMarkingAP :=
-  (Datasets.WALS.F25B.lookupISO iso).map (fromWALS25B ·.value)
+  (Data.WALS.F25B.lookupISO iso).map (fromWALS25B ·.value)
 
 def walsCaseSyncretism (iso : String) : Option CaseSyncretism :=
-  (Datasets.WALS.F28A.lookupISO iso).map (fromWALS28A ·.value)
+  (Data.WALS.F28A.lookupISO iso).map (fromWALS28A ·.value)
 
 def walsVerbalSyncretism (iso : String) : Option VerbalSyncretism :=
-  (Datasets.WALS.F29A.lookupISO iso).map (fromWALS29A ·.value)
+  (Data.WALS.F29A.lookupISO iso).map (fromWALS29A ·.value)
 
 def walsTAMExponence (iso : String) : Option TAMExponence :=
-  (Datasets.WALS.F21B.lookupISO iso).map (fromWALS21B ·.value)
+  (Data.WALS.F21B.lookupISO iso).map (fromWALS21B ·.value)
 
 def walsActionNominal (iso : String) : Option ActionNominal :=
-  (Datasets.WALS.F62A.lookupISO iso).map (fromWALS62A ·.value)
+  (Data.WALS.F62A.lookupISO iso).map (fromWALS62A ·.value)
 
 def walsSuppletionTA (iso : String) : Option SuppletionTA :=
-  (Datasets.WALS.F79A.lookupISO iso).map (fromWALS79A ·.value)
+  (Data.WALS.F79A.lookupISO iso).map (fromWALS79A ·.value)
 
 def walsSuppletionImperative (iso : String) : Option SuppletionImperative :=
-  (Datasets.WALS.F79B.lookupISO iso).map (fromWALS79B ·.value)
+  (Data.WALS.F79B.lookupISO iso).map (fromWALS79B ·.value)
 
 def walsVerbalNumber (iso : String) : Option VerbalNumber :=
-  (Datasets.WALS.F80A.lookupISO iso).map (fromWALS80A ·.value)
+  (Data.WALS.F80A.lookupISO iso).map (fromWALS80A ·.value)
 
 -- ============================================================================
 -- §4½. Smart Constructor

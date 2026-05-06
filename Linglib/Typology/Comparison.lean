@@ -1,4 +1,4 @@
-import Linglib.Datasets.WALS.Features.F121A
+import Linglib.Data.WALS.Features.F121A
 
 /-!
 # Typology.Comparison
@@ -50,7 +50,7 @@ set_option autoImplicit false
 
 namespace Typology.Comparison
 
-private abbrev ch121 := Datasets.WALS.F121A.allData
+private abbrev ch121 := Data.WALS.F121A.allData
 
 -- ============================================================================
 -- §1. Substrate enums
@@ -143,7 +143,7 @@ structure ComparativeProfile where
 /-- WALS Ch 121A → `ComparativeType`. The generated WALS data uses four
     categories; `mixed` is not a separate WALS value (languages are assigned
     to whichever single type best characterises them). -/
-def ofWALS121A : Datasets.WALS.F121A.ComparativeType → ComparativeType
+def ofWALS121A : Data.WALS.F121A.ComparativeType → ComparativeType
   | .locational => .locational
   | .exceed     => .exceed
   | .conjoined  => .conjoined

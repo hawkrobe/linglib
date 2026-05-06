@@ -1,7 +1,7 @@
 import Linglib.Core.Relativization.Basic
-import Linglib.Datasets.WALS.Features.F90D
-import Linglib.Datasets.WALS.Features.F122A
-import Linglib.Datasets.WALS.Features.F123A
+import Linglib.Data.WALS.Features.F90D
+import Linglib.Data.WALS.Features.F122A
+import Linglib.Data.WALS.Features.F123A
 
 /-!
 # `RelativizationProfile`: per-language relativization typology
@@ -136,7 +136,7 @@ structure RelativizationProfile where
     WALS does not distinguish a "mixed" category, so languages whose
     profile is `.mixed` cannot be grounded against WALS via this converter
     alone. -/
-def fromWALS122A : Datasets.WALS.F122A.SubjectRelativization → SubjRelStrategy
+def fromWALS122A : Data.WALS.F122A.SubjectRelativization → SubjRelStrategy
   | .relativePronoun => .relativePronoun
   | .nonReduction    => .nonReduction
   | .pronounRetention => .pronounRetention
@@ -145,7 +145,7 @@ def fromWALS122A : Datasets.WALS.F122A.SubjectRelativization → SubjRelStrategy
 /-- Convert a WALS 123A oblique relativization value to `OblRelStrategy`.
     WALS `.notPossible` becomes `.notRelativizable`; `.mixed` profiles
     cannot be grounded against WALS via this converter. -/
-def fromWALS123A : Datasets.WALS.F123A.ObliqueRelativization → OblRelStrategy
+def fromWALS123A : Data.WALS.F123A.ObliqueRelativization → OblRelStrategy
   | .relativePronoun => .relativePronoun
   | .nonReduction    => .nonReduction
   | .pronounRetention => .pronounRetention
@@ -155,7 +155,7 @@ def fromWALS123A : Datasets.WALS.F123A.ObliqueRelativization → OblRelStrategy
 /-- Convert a WALS 90D internally-headed value to `InternallyHeadedStrategy`.
     WALS does not code an `.absent` case (the chapter only sampled languages
     that *have* the strategy), so absence is asserted by hand in the Fragment. -/
-def fromWALS90D : Datasets.WALS.F90D.InternallyHeadedRelativeClauses →
+def fromWALS90D : Data.WALS.F90D.InternallyHeadedRelativeClauses →
     InternallyHeadedStrategy
   | .relativeClauseDominant   => .dominant
   | .orReln                   => .coRelN

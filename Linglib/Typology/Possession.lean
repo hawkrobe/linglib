@@ -1,8 +1,8 @@
-import Linglib.Datasets.WALS.Aggregation
-import Linglib.Datasets.WALS.Features.F57A
-import Linglib.Datasets.WALS.Features.F58A
-import Linglib.Datasets.WALS.Features.F58B
-import Linglib.Datasets.WALS.Features.F59A
+import Linglib.Data.WALS.Aggregation
+import Linglib.Data.WALS.Features.F57A
+import Linglib.Data.WALS.Features.F58A
+import Linglib.Data.WALS.Features.F58B
+import Linglib.Data.WALS.Features.F59A
 
 /-!
 # Possession typology — substrate
@@ -64,10 +64,10 @@ set_option autoImplicit false
 
 namespace Typology.Possession
 
-private abbrev ch57  := Datasets.WALS.F57A.allData
-private abbrev ch58  := Datasets.WALS.F58A.allData
-private abbrev ch58b := Datasets.WALS.F58B.allData
-private abbrev ch59  := Datasets.WALS.F59A.allData
+private abbrev ch57  := Data.WALS.F57A.allData
+private abbrev ch58  := Data.WALS.F58A.allData
+private abbrev ch58b := Data.WALS.F58B.allData
+private abbrev ch59  := Data.WALS.F59A.allData
 
 /-- WALS Ch 58A: whether some nouns (typically kinship, body parts) require
     obligatory possessive marking. Unpossessed forms are either ungrammatical
@@ -298,7 +298,7 @@ def PossessionProfile.isDependentMarking (p : PossessionProfile) : Bool :=
 -- ============================================================================
 
 /-- WALS Ch 57A → `PossessiveAffixPosition`. -/
-def fromWALS57A : Datasets.WALS.F57A.PositionOfPronominalPossessiveAffixes →
+def fromWALS57A : Data.WALS.F57A.PositionOfPronominalPossessiveAffixes →
     PossessiveAffixPosition
   | .possessivePrefixes  => .prefixes
   | .possessiveSuffixes  => .suffixes
@@ -307,13 +307,13 @@ def fromWALS57A : Datasets.WALS.F57A.PositionOfPronominalPossessiveAffixes →
 
 /-- WALS Ch 58A → `ObligatoryPossession`. WALS only encodes `exists`/`absent`;
     our substrate adds `.unclear` for languages with optional/disputed coding. -/
-def fromWALS58A : Datasets.WALS.F58A.ObligatoryPossessiveInflection →
+def fromWALS58A : Data.WALS.F58A.ObligatoryPossessiveInflection →
     ObligatoryPossession
   | .exists => .exists_
   | .absent => .noObligatory
 
 /-- WALS Ch 58B → `NumberOfPossessiveNouns`. -/
-def fromWALS58B : Datasets.WALS.F58B.NumberOfPossessiveNouns →
+def fromWALS58B : Data.WALS.F58B.NumberOfPossessiveNouns →
     NumberOfPossessiveNouns
   | .noneReported => .noneReported
   | .one          => .one
@@ -322,7 +322,7 @@ def fromWALS58B : Datasets.WALS.F58B.NumberOfPossessiveNouns →
 
 /-- WALS Ch 59A → `PossessiveClassification`. WALS distinguishes "3–5
     classes" from "more than 5"; we collapse both into `.threeOrMore`. -/
-def fromWALS59A : Datasets.WALS.F59A.PossessiveClassification →
+def fromWALS59A : Data.WALS.F59A.PossessiveClassification →
     PossessiveClassification
   | .noPossessiveClassification => .noClassification
   | .twoClasses                 => .twoWay
@@ -334,10 +334,10 @@ def fromWALS59A : Datasets.WALS.F59A.PossessiveClassification →
 -- ============================================================================
 
 /-! `WALSCount` + `WALSCount.totalOf` are imported from
-    `Linglib/Datasets/WALS/Aggregation.lean` (shared with the other
+    `Linglib/Data/WALS/Aggregation.lean` (shared with the other
     Typology files that consume WALS distributions). -/
 
-open Datasets.WALS (WALSCount)
+open Data.WALS (WALSCount)
 
 /-- Ch 58 distribution: obligatory possessive inflection (N = 244). -/
 def ch58Counts : List WALSCount :=

@@ -1,4 +1,13 @@
-/-
+import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Powerset
+import Linglib.Core.Question.Partition.QUD
+import Linglib.Core.Question.PrecisionProjection
+import Linglib.Core.Discourse.QUDStack
+import Linglib.Core.Discourse.Strategy
+import Linglib.Core.Logic.Truth3
+import Linglib.Theories.Semantics.Supervaluation.Basic
+
+/-!
 # Plural Distributivity and Non-Maximality
 
 Formalizes the independence of distributivity and maximality,
@@ -21,20 +30,12 @@ This parallels how QUDs partition propositions in `Core/QUD.lean`.
 
 -/
 
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Powerset
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.PrecisionProjection
-import Linglib.Core.Discourse.QUDStack
-import Linglib.Core.Discourse.Strategy
-import Linglib.Core.Logic.Truth3
-import Linglib.Theories.Semantics.Supervaluation.Basic
-
 namespace Semantics.Plurality.Distributivity
 
 variable {Atom W : Type*} [DecidableEq Atom]
 
--- Tolerance Relations (Križ & @cite{kriz-spector-2021}, Definition 14)
+-- Tolerance Relations (Križ & @cite{kriz-spector-2021}, the tolerance-on-
+-- plural-info-states relation introduced in their non-maximality section)
 
 /--
 A tolerance relation determines which sub-pluralities count as
@@ -44,25 +45,36 @@ Formally: ⪯ is reflexive and respects mereological structure.
 -/
 structure Tolerance (Atom : Type*) [DecidableEq Atom] where
   /-- y ⪯ x: y is similar enough to x -/
-  rel : Finset Atom → Finset Atom → Bool
+  rel : Finset Atom → Finset Atom → Prop
+  /-- Decidability of the tolerance relation. -/
+  decRel : ∀ x y, Decidable (rel x y)
   /-- Reflexivity -/
-  refl : ∀ x, rel x x = true
+  refl : ∀ x, rel x x
   /-- Tolerance implies part-of -/
-  sub : ∀ x y, rel x y = true → x ⊆ y
+  sub : ∀ x y, rel x y → x ⊆ y
+
+/-- Per-`Tolerance` decidability instance for the relation. -/
+instance Tolerance.instDecidableRel {Atom : Type*} [DecidableEq Atom]
+    (tol : Tolerance Atom) (x y : Finset Atom) : Decidable (tol.rel x y) :=
+  tol.decRel x y
 
 namespace Tolerance
 
 /-- Identity: only x ⪯ x (forces maximal reading) -/
 def identity : Tolerance Atom where
-  rel x y := x == y
-  refl x := beq_self_eq_true x
-  sub x y h := by simp only [beq_iff_eq] at h; exact h ▸ Finset.Subset.refl x
+  rel x y := x = y
+  decRel x y := decEq x y
+  refl _ := rfl
+  sub x y h := h ▸ Finset.Subset.refl x
 
-/-- Full: any part is tolerant (allows existential reading) -/
-def full : Tolerance Atom where
-  rel x y := decide (x ⊆ y)
-  refl x := by simp
-  sub x y h := by simp only [decide_eq_true_iff] at h; exact h
+/-- Trivial: any part is tolerated (allows existential reading).
+    @cite{kriz-spector-2021} call this the *trivial* tolerance — the
+    relation is just sub-pluralityhood, with no further restriction. -/
+def trivial : Tolerance Atom where
+  rel x y := x ⊆ y
+  decRel x y := Finset.decidableDforallFinset
+  refl _ := Finset.Subset.refl _
+  sub _ _ h := h
 
 end Tolerance
 
@@ -73,8 +85,13 @@ Maximal distributive: ⟦each P⟧(x) = ∀a ∈ x. P(a)
 
 This is the semantics of English "each", German "jeder".
 -/
-def distMaximal (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
-  decide (∀ a ∈ x, P a w = true)
+def distMaximal (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) : Prop :=
+  ∀ a ∈ x, P a w
+
+instance distMaximal.instDecidable (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    Decidable (distMaximal P x w) := by unfold distMaximal; infer_instance
 
 /--
 Tolerant distributive: ⟦each* P⟧^⪯(x) = ∃z. z ⪯ x ∧ z ≠ ∅ ∧ ∀a ∈ z. P(a)
@@ -83,41 +100,43 @@ This is the semantics of German "jeweils" (for non-max speakers).
 The nonemptiness constraint prevents the empty set from vacuously
 witnessing truth (∀a ∈ ∅, P a w is trivially true).
 -/
-def distTolerant (P : Atom → W → Bool) (tol : Tolerance Atom)
-    (x : Finset Atom) (w : W) : Bool :=
-  decide (∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x = true ∧ ∀ a ∈ z, P a w = true)
+def distTolerant (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (tol : Tolerance Atom) (x : Finset Atom) (w : W) : Prop :=
+  ∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x ∧ ∀ a ∈ z, P a w
+
+instance distTolerant.instDecidable (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (tol : Tolerance Atom)
+    (x : Finset Atom) (w : W) :
+    Decidable (distTolerant P tol x w) := by unfold distTolerant; infer_instance
 
 -- Key Theorems
 
-/-- Maximal distributive = tolerant distributive with identity tolerance
+/-- Maximal distributive ↔ tolerant distributive with identity tolerance
     (on nonempty pluralities). -/
-theorem distMaximal_eq_identity (P : Atom → W → Bool) (x : Finset Atom) (w : W)
+theorem distMaximal_iff_identity (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W)
     (hne : x.Nonempty) :
-    distMaximal P x w = distTolerant P Tolerance.identity x w := by
-  simp only [distMaximal, distTolerant, Tolerance.identity, decide_eq_decide]
-  constructor
-  · intro h
-    exact ⟨x, Finset.mem_powerset.mpr (Finset.Subset.refl x), hne, beq_self_eq_true x, h⟩
-  · intro ⟨z, _, _, hz_eq, hz_all⟩
-    simp only [beq_iff_eq] at hz_eq
+    distMaximal P x w ↔ distTolerant P Tolerance.identity x w := by
+  unfold distMaximal distTolerant
+  refine ⟨fun h => ?_, fun ⟨z, _, _, hz_eq, hz_all⟩ => ?_⟩
+  · exact ⟨x, Finset.mem_powerset.mpr (Finset.Subset.refl x), hne,
+      show (x : Finset Atom) = x from rfl, h⟩
+  · simp only [Tolerance.identity] at hz_eq
     exact hz_eq ▸ hz_all
 
-omit [DecidableEq Atom] in
 /-- Maximal distributive forces all atoms to satisfy P -/
-theorem distMaximal_forces_all (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    distMaximal P x w = true → ∀ a ∈ x, P a w = true := by
-  simp only [distMaximal, decide_eq_true_iff]
-  exact id
+theorem distMaximal_forces_all (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) :
+    distMaximal P x w → ∀ a ∈ x, P a w := id
 
-/-- Tolerant distributive with full tolerance allows exceptions -/
-theorem distTolerant_allows_exceptions (P : Atom → W → Bool)
-    (x : Finset Atom) (w : W) (a : Atom) (ha : a ∈ x) (hPa : P a w = true) :
-    distTolerant P Tolerance.full x w = true := by
-  simp only [distTolerant, decide_eq_true_iff]
+/-- Tolerant distributive with trivial tolerance allows exceptions -/
+theorem distTolerant_allows_exceptions (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) (a : Atom) (ha : a ∈ x) (hPa : P a w) :
+    distTolerant P Tolerance.trivial x w := by
   refine ⟨{a}, Finset.mem_powerset.mpr (Finset.singleton_subset_iff.mpr ha),
           ⟨a, Finset.mem_singleton.mpr rfl⟩, ?_, ?_⟩
-  · simp only [Tolerance.full, Finset.singleton_subset_iff, decide_eq_true_iff]; exact ha
-  · simp [hPa]
+  · exact Finset.singleton_subset_iff.mpr ha
+  · intro b hb; rw [Finset.mem_singleton.mp hb]; exact hPa
 
 -- Križ & @cite{kriz-spector-2021}: Full Formalization
 
@@ -150,16 +169,31 @@ variable {Atom W : Type*} [DecidableEq Atom]
 -- Part 1: Basic Predicates on Pluralities
 
 /-- All atoms in x satisfy P at w -/
-def allSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
-  decide (∀ a ∈ x, P a w = true)
+def allSatisfy (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) : Prop :=
+  ∀ a ∈ x, P a w
+
+instance allSatisfy.instDecidable (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    Decidable (allSatisfy P x w) := by unfold allSatisfy; infer_instance
 
 /-- Some atom in x satisfies P at w -/
-def someSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
-  decide (∃ a ∈ x, P a w = true)
+def someSatisfy (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) : Prop :=
+  ∃ a ∈ x, P a w
+
+instance someSatisfy.instDecidable (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    Decidable (someSatisfy P x w) := by unfold someSatisfy; infer_instance
 
 /-- No atom in x satisfies P at w -/
-def noneSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
-  decide (∀ a ∈ x, P a w = false)
+def noneSatisfy (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) : Prop :=
+  ∀ a ∈ x, ¬ P a w
+
+instance noneSatisfy.instDecidable (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    Decidable (noneSatisfy P x w) := by unfold noneSatisfy; infer_instance
 
 -- Part 2: Trivalent Truth Values (Core.Duality.Truth3)
 
@@ -178,44 +212,60 @@ as a supervaluation over the atoms of the plurality: each atom is a
 "specification point", and predication is super-true iff the predicate
 holds at all of them.
 -/
-def pluralTruthValue (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Truth3 :=
+def pluralTruthValue (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) : Truth3 :=
   if h : x.Nonempty then
     superTrue (fun a => P a w) ⟨x, h⟩
   else .true  -- empty plurality: vacuously true
 
 /-- pluralTruthValue is .true iff allSatisfy holds -/
 @[simp]
-theorem pluralTruthValue_eq_true_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    pluralTruthValue P x w = .true ↔ allSatisfy P x w = true := by
-  unfold pluralTruthValue superTrue allSatisfy
-  simp only [decide_eq_true_eq]
-  split_ifs <;> simp_all
+theorem pluralTruthValue_eq_true_iff (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    pluralTruthValue P x w = .true ↔ allSatisfy P x w := by
+  unfold pluralTruthValue allSatisfy
+  by_cases h : x.Nonempty
+  · rw [dif_pos h, Semantics.Supervaluation.superTrue_true_iff]
+  · rw [dif_neg h]
+    have hx : x = ∅ := Finset.not_nonempty_iff_eq_empty.mp h
+    simp [hx]
 
-/-- pluralTruthValue is .false iff noneSatisfy holds (and not allSatisfy) -/
+/-- pluralTruthValue is .false iff noneSatisfy holds (and x is nonempty) -/
 @[simp]
-theorem pluralTruthValue_eq_false_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    pluralTruthValue P x w = .false ↔ allSatisfy P x w = false ∧ noneSatisfy P x w = true := by
-  unfold pluralTruthValue superTrue allSatisfy noneSatisfy
-  simp only [decide_eq_true_eq]
-  split_ifs <;> simp_all
+theorem pluralTruthValue_eq_false_iff (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    pluralTruthValue P x w = .false ↔ x.Nonempty ∧ noneSatisfy P x w := by
+  unfold pluralTruthValue noneSatisfy
+  by_cases h : x.Nonempty
+  · rw [dif_pos h, Semantics.Supervaluation.superTrue_false_iff]
+    exact ⟨fun hf => ⟨h, hf⟩, fun ⟨_, hf⟩ => hf⟩
+  · rw [dif_neg h]
+    refine ⟨fun hf => Truth3.noConfusion hf, fun ⟨h', _⟩ => absurd h' h⟩
 
-/-- pluralTruthValue is .indet iff neither all nor none satisfy -/
+/-- pluralTruthValue is .indet iff witnesses on both sides exist -/
 @[simp]
-theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    pluralTruthValue P x w = .indet ↔ allSatisfy P x w = false ∧ noneSatisfy P x w = false := by
-  unfold pluralTruthValue superTrue allSatisfy noneSatisfy
-  simp only [decide_eq_true_eq]
-  split_ifs <;> simp_all
+theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    pluralTruthValue P x w = .indet ↔
+    (∃ a ∈ x, P a w) ∧ (∃ a ∈ x, ¬ P a w) := by
+  unfold pluralTruthValue
+  by_cases h : x.Nonempty
+  · rw [dif_pos h, Semantics.Supervaluation.superTrue_indet_iff]
+  · rw [dif_neg h]
+    have hx : x = ∅ := Finset.not_nonempty_iff_eq_empty.mp h
+    refine ⟨fun hf => Truth3.noConfusion hf, fun ⟨⟨a, ha, _⟩, _⟩ => ?_⟩
+    rw [hx] at ha; exact absurd ha (Finset.notMem_empty _)
 
 /-- **`pluralTruthValue` is `Core.Duality.dist` on the plurality.**
 
     Bridge from Križ-Spector trivalent plural predication to the canonical
     trivalent classifier. Both are Fine super-truth (van Fraassen 1966
     supervaluation) — `pluralTruthValue` parameterized over an atom-world
-    predicate, `dist` over an arbitrary `Finset α + (α → Bool)`. The
+    predicate, `dist` over an arbitrary `Finset α + (α → Prop)`. The
     nonempty case routes through `superTrue_eq_dist`; the empty case
     matches because both give `.true` (vacuous super-truth). -/
-theorem pluralTruthValue_eq_dist (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
+theorem pluralTruthValue_eq_dist (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = Core.Duality.dist x (fun a => P a w) := by
   unfold pluralTruthValue
   by_cases h : x.Nonempty
@@ -227,54 +277,22 @@ theorem pluralTruthValue_eq_dist (P : Atom → W → Bool) (x : Finset Atom) (w 
     exact (Core.Duality.dist_empty _).symm
 
 /-- If all satisfy P, then none satisfy ¬P -/
-theorem allSatisfy_imp_noneSatisfy_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    allSatisfy P x w = true → noneSatisfy (λ a w => !P a w) x w = true := by
-  simp only [allSatisfy, noneSatisfy, decide_eq_true_eq, Bool.not_eq_false']
-  intro h a ha
-  exact h a ha
+theorem allSatisfy_imp_noneSatisfy_neg (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    allSatisfy P x w → noneSatisfy (fun a w => ¬ P a w) x w := by
+  intro h a ha hPa; exact hPa (h a ha)
 
 /-- If none satisfy P, then all satisfy ¬P -/
-theorem noneSatisfy_imp_allSatisfy_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    noneSatisfy P x w = true → allSatisfy (λ a w => !P a w) x w = true := by
-  simp only [allSatisfy, noneSatisfy, decide_eq_true_eq, Bool.not_eq_true']
-  intro h a ha
-  exact h a ha
-
-/-- If not all satisfy ¬P, then not none satisfy P -/
-theorem not_allSatisfy_neg_imp_not_noneSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    allSatisfy (λ a w => !P a w) x w = false → noneSatisfy P x w = false := by
-  intro h
-  unfold allSatisfy at h
-  unfold noneSatisfy
-  simp only [decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_true'] at h
-  push_neg at h
-  simp only [decide_eq_false_iff_not, decide_eq_true_eq]
-  push_neg
-  obtain ⟨a, ha, hPa⟩ := h
-  refine ⟨a, ha, ?_⟩
-  -- hPa : !(P a w) ≠ true means !(P a w) = false means P a w = true
-  cases hP : P a w <;> simp_all
-
-/-- If not none satisfy ¬P, then not all satisfy P -/
-theorem not_noneSatisfy_neg_imp_not_allSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    noneSatisfy (λ a w => !P a w) x w = false → allSatisfy P x w = false := by
-  intro h
-  unfold noneSatisfy at h
-  unfold allSatisfy
-  simp only [decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_false'] at h
-  push_neg at h
-  simp only [decide_eq_false_iff_not, decide_eq_true_eq]
-  push_neg
-  obtain ⟨a, ha, hPa⟩ := h
-  refine ⟨a, ha, ?_⟩
-  -- hPa : !(P a w) ≠ false means !(P a w) = true means P a w = false
-  cases hP : P a w <;> simp_all
+theorem noneSatisfy_imp_allSatisfy_neg (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    noneSatisfy P x w → allSatisfy (fun a w => ¬ P a w) x w := id
 
 -- Part 3: The Homogeneity Theorem
 
 /-- The gap condition: some but not all atoms satisfy P -/
-def inGap (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Prop :=
-  (∃ a ∈ x, P a w = true) ∧ (∃ a ∈ x, P a w = false)
+def inGap (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) : Prop :=
+  (∃ a ∈ x, P a w) ∧ (∃ a ∈ x, ¬ P a w)
 
 /--
 Homogeneity Theorem (Križ & @cite{kriz-spector-2021}, Section 2.1).
@@ -288,66 +306,61 @@ This explains why:
 
 Proof: The gap for P is {∃a.P(a) ∧ ∃a.¬P(a)}.
        The gap for ¬P is {∃a.¬P(a) ∧ ∃a.¬¬P(a)} = {∃a.¬P(a) ∧ ∃a.P(a)}.
-       These are identical.
+       These are identical (in classical logic; uses Decidable on P).
 -/
-theorem homogeneity_gap_symmetric (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    inGap P x w ↔ inGap (λ a w => !P a w) x w := by
-  simp only [inGap, Bool.not_eq_true', Bool.not_eq_false']
-  constructor <;> (intro ⟨⟨a, ha, hPa⟩, ⟨b, hb, hPb⟩⟩; exact ⟨⟨b, hb, hPb⟩, ⟨a, ha, hPa⟩⟩)
+theorem homogeneity_gap_symmetric (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    inGap P x w ↔ inGap (fun a w => ¬ P a w) x w := by
+  unfold inGap
+  refine ⟨fun ⟨⟨a, ha, hPa⟩, ⟨b, hb, hPb⟩⟩ => ?_,
+          fun ⟨⟨a, ha, hnPa⟩, ⟨b, hb, hnnPb⟩⟩ => ?_⟩
+  · exact ⟨⟨b, hb, hPb⟩, ⟨a, ha, fun hnPa => hnPa hPa⟩⟩
+  · refine ⟨⟨b, hb, ?_⟩, ⟨a, ha, hnPa⟩⟩
+    by_contra hPb; exact hnnPb hPb
 
 /--
 Corollary: pluralTruthValue is gap iff negated version is gap.
 -/
-theorem pluralTruthValue_gap_iff_neg_gap (P : Atom → W → Bool) (x : Finset Atom) (w : W)
-    (_hne : x.Nonempty) :
-    pluralTruthValue P x w = .indet ↔ pluralTruthValue (λ a w => !P a w) x w = .indet := by
+theorem pluralTruthValue_gap_iff_neg_gap (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) (_hne : x.Nonempty) :
+    pluralTruthValue P x w = .indet ↔
+    pluralTruthValue (fun a w => ¬ P a w) x w = .indet := by
   rw [pluralTruthValue_eq_gap_iff, pluralTruthValue_eq_gap_iff]
-  simp only [allSatisfy, noneSatisfy, decide_eq_false_iff_not,
-             Bool.not_eq_true', Bool.not_eq_false']
-  exact And.comm
+  refine ⟨fun ⟨⟨a, ha, hPa⟩, ⟨b, hb, hnPb⟩⟩ => ?_,
+          fun ⟨⟨a, ha, hnPa⟩, ⟨b, hb, hnnPb⟩⟩ => ?_⟩
+  · exact ⟨⟨b, hb, hnPb⟩, ⟨a, ha, fun hnPa => hnPa hPa⟩⟩
+  · refine ⟨⟨b, hb, ?_⟩, ⟨a, ha, hnPa⟩⟩
+    by_contra hPb; exact hnnPb hPb
 
 /--
 Homogeneity Polarity Theorem: Truth and falsity swap under negation.
 
 If "the Xs are P" is TRUE, then "the Xs are ¬P" is FALSE, and vice versa.
 
-Note: Requires x to be nonempty. For empty x, both `allSatisfy P` and `allSatisfy ¬P`
-are vacuously true, so the theorem doesn't hold.
+Note: Requires x to be nonempty. For empty x, both `allSatisfy P` and
+`allSatisfy ¬P` are vacuously true, so the theorem doesn't hold.
 -/
-theorem pluralTruthValue_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W) (hne : x.Nonempty) :
-    pluralTruthValue (λ a w => !P a w) x w =
+theorem pluralTruthValue_neg (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) (hne : x.Nonempty) :
+    pluralTruthValue (fun a w => ¬ P a w) x w =
     match pluralTruthValue P x w with
     | .true => .false
     | .false => .true
     | .indet => .indet := by
   cases h : pluralTruthValue P x w
-  -- Case .true → .false: allSatisfy P ⇒ noneSatisfy ¬P, not allSatisfy ¬P
-  · rw [pluralTruthValue_eq_true_iff] at h
+  · -- Case .true → .false
+    rw [pluralTruthValue_eq_true_iff] at h
     rw [pluralTruthValue_eq_false_iff]
-    refine ⟨?_, allSatisfy_imp_noneSatisfy_neg P x w h⟩
-    simp only [allSatisfy, decide_eq_true_eq, Bool.not_eq_true'] at h
-    simp only [allSatisfy, Bool.not_eq_true', decide_eq_false_iff_not, decide_eq_true_eq,
-               not_forall, exists_prop]
-    obtain ⟨a, ha⟩ := hne
-    exact ⟨a, ha, by simp [h a ha]⟩
-  -- Case .false → .true: noneSatisfy P ⇒ allSatisfy ¬P
-  · rw [pluralTruthValue_eq_false_iff] at h
+    exact ⟨hne, fun a ha hnPa => hnPa (h a ha)⟩
+  · -- Case .false → .true
+    rw [pluralTruthValue_eq_false_iff] at h
     rw [pluralTruthValue_eq_true_iff]
-    exact noneSatisfy_imp_allSatisfy_neg P x w h.2
-  -- Case .gap → .gap: witnesses on both sides
-  · rw [pluralTruthValue_eq_gap_iff] at h
+    intro a ha hPa; exact h.2 a ha hPa
+  · -- Case .indet → .indet
+    rw [pluralTruthValue_eq_gap_iff] at h
     rw [pluralTruthValue_eq_gap_iff]
-    obtain ⟨hNotAll, hNotNone⟩ := h
-    simp only [allSatisfy, decide_eq_false_iff_not, decide_eq_true_eq] at hNotAll
-    push_neg at hNotAll
-    obtain ⟨a, ha, hPa⟩ := hNotAll
-    simp only [noneSatisfy, decide_eq_false_iff_not, decide_eq_true_eq] at hNotNone
-    push_neg at hNotNone
-    obtain ⟨b, hb, hPb⟩ := hNotNone
-    exact ⟨by simp only [allSatisfy, decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_true',
-                          not_forall, exists_prop]; exact ⟨b, hb, by simp [hPb]⟩,
-           by simp only [noneSatisfy, decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_false',
-                          not_forall, exists_prop]; exact ⟨a, ha, by simp [hPa]⟩⟩
+    obtain ⟨⟨a, ha, hPa⟩, ⟨b, hb, hnPb⟩⟩ := h
+    exact ⟨⟨b, hb, hnPb⟩, ⟨a, ha, fun hnPa => hnPa hPa⟩⟩
 
 end KrizSpector
 
@@ -358,13 +371,13 @@ On singletons, `distMaximal` reduces to the predicate itself.
 
 This is WHY `each`/`jeder` forces maximality: when it distributes P to individual
 atoms, the result is just P(a) — there's no plurality for tolerance to weaken.
-@cite{haslinger-etal-2025} §2.3, the argument below equation (21d).
+@cite{haslinger-etal-2025} §2.3, the argument below the four-way classification.
 -/
 theorem distMaximal_singleton {Atom : Type*} {W : Type*}
-    (P : Atom → W → Bool) (a : Atom) (w : W) :
-    distMaximal P {a} w = P a w := by
-  simp only [distMaximal, Finset.mem_singleton, forall_eq]
-  cases P a w <;> simp
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (a : Atom) (w : W) :
+    distMaximal P {a} w ↔ P a w := by
+  unfold distMaximal
+  simp
 
 /--
 On pairs, `distMaximal` reduces to conjunction of individual checks.
@@ -374,12 +387,13 @@ This is the two-atom instance of Link's distributive inference
 `*P` on a two-atom plurality {a, b} reduces to P(a) ∧ P(b).
 
 When `a = b`, `{a, b} = {a}` (Finset dedup) and the result
-degenerates to `P a w` (= `P a w && P a w` by `Bool.and_self`).
+degenerates to `P a w` (= `P a w ∧ P a w` by `and_self`).
 -/
-theorem distMaximal_pair (P : Atom → W → Bool) (a b : Atom) (w : W) :
-    distMaximal P {a, b} w = (P a w && P b w) := by
-  simp only [distMaximal, Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
-  cases P a w <;> cases P b w <;> simp
+theorem distMaximal_pair (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (a b : Atom) (w : W) :
+    distMaximal P {a, b} w ↔ P a w ∧ P b w := by
+  unfold distMaximal
+  simp [and_comm]
 
 /--
 **Atom Vacuity Theorem (general).**
@@ -388,50 +402,36 @@ On singletons, `distTolerant` reduces to the predicate itself for ANY
 tolerance relation — not just identity tolerance.
 
 This is because {a} has exactly one nonempty subset (itself), and
-`tol.refl` guarantees `tol.rel {a} {a} = true`. The tolerance parameter
-literally has nothing to vary over: there is no proper nonempty
-sub-plurality of {a} that could serve as a weaker witness.
-
-This is the formal content of @cite{haslinger-etal-2025}'s argument for
-why the +dist/−max cell requires a *distance* distributor (*jeweils*),
-not a DP-internal one (*jeder*): DP-internal distributors scope over
-atoms, where tolerance is vacuous, so they can never exhibit
-non-maximality regardless of the tolerance context.
+`tol.refl` guarantees `tol.rel {a} {a}` holds. The tolerance parameter
+literally has nothing to vary over.
 -/
 theorem distTolerant_singleton {Atom : Type*} [DecidableEq Atom] {W : Type*}
-    (P : Atom → W → Bool) (tol : Tolerance Atom) (a : Atom) (w : W) :
-    distTolerant P tol {a} w = P a w := by
-  cases hP : P a w
-  · -- P a w = false: distTolerant must also be false
-    simp only [distTolerant]
-    rw [decide_eq_false_iff_not]
-    intro ⟨z, hz_mem, hz_ne, _, hz_all⟩
-    obtain ⟨b, hb⟩ := hz_ne
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (tol : Tolerance Atom) (a : Atom) (w : W) :
+    distTolerant P tol {a} w ↔ P a w := by
+  unfold distTolerant
+  refine ⟨fun ⟨z, hz_mem, hz_ne, _, hz_all⟩ => ?_, fun hPa => ?_⟩
+  · obtain ⟨b, hb⟩ := hz_ne
     have hba : b = a := Finset.mem_singleton.mp (Finset.mem_powerset.mp hz_mem hb)
-    exact absurd (hba ▸ hz_all b hb) (by rw [hP]; decide)
-  · -- P a w = true: distTolerant must also be true
-    simp only [distTolerant, decide_eq_true_iff]
-    exact ⟨{a}, Finset.mem_powerset.mpr (Finset.Subset.refl _),
+    have hPb : P b w := hz_all b hb
+    exact hba ▸ hPb
+  · exact ⟨{a}, Finset.mem_powerset.mpr (Finset.Subset.refl _),
            ⟨a, Finset.mem_singleton.mpr rfl⟩, tol.refl {a},
-           fun b hb => by rw [Finset.mem_singleton.mp hb]; exact hP⟩
+           fun b hb => by rw [Finset.mem_singleton.mp hb]; exact hPa⟩
 
 /--
 Corollary: on singletons, all tolerance relations agree.
-
-Tolerance is structurally irrelevant on atoms — the parameter has no
-room to vary. This is the deepest explanation of why `each`/`jeder`
-forces maximality: it's not that identity tolerance is "strict," but
-that ANY tolerance collapses to identity on atoms.
 -/
 theorem distTolerant_singleton_independent {Atom : Type*} [DecidableEq Atom] {W : Type*}
-    (P : Atom → W → Bool) (tol₁ tol₂ : Tolerance Atom) (a : Atom) (w : W) :
-    distTolerant P tol₁ {a} w = distTolerant P tol₂ {a} w := by
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (tol₁ tol₂ : Tolerance Atom) (a : Atom) (w : W) :
+    distTolerant P tol₁ {a} w ↔ distTolerant P tol₂ {a} w := by
   rw [distTolerant_singleton, distTolerant_singleton]
 
-/-- Special case: identity tolerance on singletons. Now a corollary of the
-    general `distTolerant_singleton`. -/
-theorem distTolerant_identity_singleton (P : Atom → W → Bool) (a : Atom) (w : W) :
-    distTolerant P Tolerance.identity {a} w = P a w :=
+/-- Special case: identity tolerance on singletons. -/
+theorem distTolerant_identity_singleton (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (a : Atom) (w : W) :
+    distTolerant P Tolerance.identity {a} w ↔ P a w :=
   distTolerant_singleton P Tolerance.identity a w
 
 -- The Independence Result
@@ -439,8 +439,9 @@ theorem distTolerant_identity_singleton (P : Atom → W → Bool) (a : Atom) (w 
 /--
 Classification by [±distributive] × [±maximal].
 
-@cite{haslinger-etal-2025} Table (5): the two properties are orthogonal.
-All four cells are attested or predicted.
+@cite{haslinger-etal-2025} present a four-cell typology in which the
+two properties are argued to be orthogonal: all four cells are
+attested or predicted.
 -/
 structure DistMaxClass where
   /-- Does this operator force the predicate to apply to each atom separately? -/
@@ -460,16 +461,18 @@ def DistMaxClass.nonDistNonMax : DistMaxClass := ⟨false, false⟩
 
 /--
 Hypothetical exception-tolerant DP quantifier.
-@cite{haslinger-etal-2025} eq. (27): predicted possible by the Križ & @cite{kriz-spector-2021}
-framework but not attested in any known language. The non-attestation is a typological
-puzzle — the formal tools for non-maximality (tolerance relations) don't inherently
-block DP-internal quantifiers from using them.
+@cite{haslinger-etal-2025} flag this as a typology cell predicted
+possible by the Križ & @cite{kriz-spector-2021} framework but not
+attested in any known language. The non-attestation is a typological
+puzzle — the formal tools for non-maximality (tolerance relations)
+don't inherently block DP-internal quantifiers from using them.
 
 ⟦[jeder* P] Q⟧^≤ = λw.∃z[z ≤ ⊕P ∧ ∀y[y ∈ AT ∧ y ⊑ z → ⟦Q⟧^≤(w)(y)]]
 -/
-def distTolerantQuant (restrictor scope : Atom → W → Bool) (tol : Tolerance Atom)
-    (x : Finset Atom) (w : W) : Bool :=
-  decide (∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x = true ∧
-    (∀ a ∈ z, restrictor a w = true) ∧ (∀ a ∈ z, scope a w = true))
+def distTolerantQuant (restrictor scope : Atom → W → Prop)
+    [∀ a w, Decidable (restrictor a w)] [∀ a w, Decidable (scope a w)]
+    (tol : Tolerance Atom) (x : Finset Atom) (w : W) : Prop :=
+  ∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x ∧
+    (∀ a ∈ z, restrictor a w) ∧ (∀ a ∈ z, scope a w)
 
 end Semantics.Plurality.Distributivity

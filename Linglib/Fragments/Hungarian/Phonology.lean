@@ -1,4 +1,4 @@
-import Linglib.Datasets.PHOIBLE.Inventories.Hungarian
+import Linglib.Data.PHOIBLE.Inventories.Hungarian
 
 /-!
 # Hungarian phonological inventory
@@ -6,7 +6,7 @@ import Linglib.Datasets.PHOIBLE.Inventories.Hungarian
 
 Canonical PHOIBLE 2.0 phoneme inventory for Hungarian (ISO `hun`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in
-`Datasets/PHOIBLE/Inventories/Hungarian.lean`.
+`Data/PHOIBLE/Inventories/Hungarian.lean`.
 
 The choice of which PHOIBLE inventory to treat as canonical (PHOIBLE has
 multiple doculects per ISO) is made here at the Fragment layer, so
@@ -17,7 +17,7 @@ naming a PHOIBLE InventoryID directly.
 namespace Fragments.Hungarian.Phonology
 
 /-- Canonical Hungarian phoneme inventory: first PHOIBLE inventory for ISO `hun`. -/
-def phonemeInventory : Datasets.PHOIBLE.Inventory :=
-  Datasets.PHOIBLE.Inventories.Hungarian.hun
+def phonemeInventory : Data.PHOIBLE.Inventory :=
+  Data.PHOIBLE.Inventories.Hungarian.hun
 
 end Fragments.Hungarian.Phonology
