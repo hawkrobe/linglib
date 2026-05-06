@@ -247,12 +247,11 @@ import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Theories.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
 import Linglib.Features.Genericity
-import Linglib.Core.Computability.Subregular.Basic
+import Linglib.Core.Computability.Subregular.Defs
 import Linglib.Core.Computability.Subregular.StrictlyLocal
 import Linglib.Core.Computability.Subregular.LocallyTestable
 import Linglib.Core.Computability.Subregular.Tier
-import Linglib.Core.Computability.Subregular.Hierarchy
-import Linglib.Core.Computability.Subregular.Piecewise
+import Linglib.Core.Computability.Subregular.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
 import Linglib.Core.Direction
@@ -1879,6 +1878,7 @@ import Linglib.Core.Algebra.ConnesKreimer.LhsBridge
 import Linglib.Core.Algebra.ConnesKreimer.LhsEquiv
 import Linglib.Core.Algebra.ConnesKreimer.Bialgebra
 import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
+import Linglib.Core.Combinatorics.RootedTree.ForestSize
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
@@ -2144,7 +2144,6 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 import Linglib.Phenomena.ArgumentStructure.Studies.Bruening2021
 import Linglib.Phenomena.ArgumentStructure.Studies.Newman2024
 import Linglib.Theories.Syntax.Minimalist.Algebra
-import Linglib.Theories.Syntax.Minimalist.Counting
 import Linglib.Theories.Syntax.Minimalist.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalist.Merge.Defs
 import Linglib.Theories.Syntax.Minimalist.Merge.Basic
@@ -2152,6 +2151,7 @@ import Linglib.Theories.Syntax.Minimalist.Merge.External
 import Linglib.Theories.Syntax.Minimalist.Merge.Internal
 import Linglib.Theories.Syntax.Minimalist.Merge.Sideward
 import Linglib.Theories.Syntax.Minimalist.Merge.NoComplexityLoss
+import Linglib.Theories.Syntax.Minimalist.Merge.MinimalYield
 import Linglib.Theories.Syntax.Minimalist.Merge.Phase
 import Linglib.Theories.Syntax.Minimalist.SpellOut
 import Linglib.Theories.Syntax.Minimalist.Linearization.LCA
