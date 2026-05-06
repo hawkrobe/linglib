@@ -1,7 +1,6 @@
 import Linglib.Core.CylindricAlgebra
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
-import Linglib.Phenomena.Anaphora.Studies.Charlow2019
 
 /-!
 # Cylindric Algebra Bridges for Dynamic Semantics
@@ -109,32 +108,10 @@ theorem cdrt_eq_dref_eq_diagonal {E : Type*} (i j : Nat) :
 
 end CDRT
 
--- ════════════════════════════════════════════════════════════════
--- § Charlow 2019 bridges
--- ════════════════════════════════════════════════════════════════
-
-section Charlow
-
-open Semantics.Dynamic.Charlow2019
-open Semantics.Dynamic.DPL
-
-/-- Static existential truth = cylindrification.
-
-Charlow's `staticExists x body` tests whether `∃ d, body(g[x↦d])`,
-which is exactly `cylindrify x body`. -/
-theorem charlow_static_eq_cylindrify {E : Type*}
-    (x : Nat) (body : Assignment E → Prop) (g : Assignment E) :
-    trueAt (staticExists x body) g ↔ cylindrify x body g := by
-  simp only [trueAt, staticExists, DPLRel.atom, cylindrify]
-  exact ⟨fun ⟨_, rfl, d, hb⟩ => ⟨d, hb⟩, fun ⟨d, hb⟩ => ⟨g, rfl, d, hb⟩⟩
-
-/-- Dynamic existential truth = cylindrification (same truth conditions). -/
-theorem charlow_dynamic_eq_cylindrify {E : Type*}
-    (x : Nat) (body : Assignment E → Prop) (g : Assignment E) :
-    trueAt (dynamicExists x body) g ↔ cylindrify x body g := by
-  rw [← static_dynamic_same_truth]
-  exact charlow_static_eq_cylindrify x body g
-
-end Charlow
+-- The Charlow 2019 bridges that previously lived here have been moved to
+-- `Linglib/Studies/Anaphora/Charlow2019.lean` (§ Cylindric algebra bridges).
+-- A Core file cannot import from Studies — the substrate→Phenomena arrow
+-- runs the other way. The DPL and CDRT bridges above are layering-legal
+-- because their substrate lives in `Theories/Semantics/Dynamic/`.
 
 end Core.CylindricAlgebra
