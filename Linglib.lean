@@ -2143,7 +2143,6 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 import Linglib.Phenomena.ArgumentStructure.Studies.Bruening2021
 import Linglib.Phenomena.ArgumentStructure.Studies.Newman2024
 import Linglib.Theories.Syntax.Minimalist.Algebra
-import Linglib.Theories.Syntax.Minimalist.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalist.Merge.Defs
 import Linglib.Theories.Syntax.Minimalist.Merge.Basic
 import Linglib.Theories.Syntax.Minimalist.Merge.External

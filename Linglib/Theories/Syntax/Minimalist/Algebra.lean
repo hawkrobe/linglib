@@ -167,8 +167,7 @@ theorem mul_eq_merge (x y : SyntacticObject) : x * y = merge x y := rfl
 
 /-- `*` unfolds to the `.node` constructor. Plain lemma, NOT `@[simp]`:
     competes with `mul_eq_merge` for `x * y` rewriting; downstream files
-    that prefer `.node`-pattern (`Counting.lean`, `BinaryOptimality.lean`)
-    can `simp [mul_eq_node]` explicitly. -/
+    that prefer `.node`-pattern can `simp [mul_eq_node]` explicitly. -/
 theorem mul_eq_node (x y : SyntacticObject) : x * y = .node x y := rfl
 
 /-! ## Universal property
