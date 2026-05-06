@@ -174,8 +174,52 @@ def toSyntacticMonoid (L : Language α) : FreeMonoid α →* L.syntacticMonoid :
 @[simp] lemma toSyntacticMonoid_apply (L : Language α) (u : FreeMonoid α) :
     L.toSyntacticMonoid u = (syntacticCon L).toQuotient u := rfl
 
+/-- **L is saturated by the syntactic congruence**: if `u ∈ L` and `u`
+is syntactically equivalent to `v`, then `v ∈ L`. Direct specialisation
+of `SyntacticEquiv` to the trivial two-sided context (`x = y = []`).
+This is the core property of the syntactic congruence — it is the
+*coarsest* congruence on `FreeMonoid α` for which `L` is a union of
+classes. -/
+theorem mem_iff_of_syntacticEquiv {L : Language α} {u v : List α}
+    (h : SyntacticEquiv L u v) : u ∈ L ↔ v ∈ L := by
+  simpa using h [] []
+
 -- ============================================================================
--- § 3. Regularity ⟹ finite syntactic monoid
+-- § 3. Universal property: every L-recognising hom factors through the
+--     syntactic monoid
+-- ============================================================================
+
+/-- A monoid hom `φ : FreeMonoid α →* M` *recognises* a language `L`
+when `L` is a union of `φ`-fibres: there is some accepting set `S ⊆ M`
+with `L = φ⁻¹ S`. Equivalently, membership in `L` depends only on the
+`φ`-image. The standard textbook definition (Pin, *Mathematical
+Foundations of Automata Theory*, Chapter I). -/
+def Recognises {α : Type*} {M : Type*} [Monoid M]
+    (φ : FreeMonoid α →* M) (L : Language α) : Prop :=
+  ∃ S : Set M, L = φ ⁻¹' S
+
+/-- **Universal property** (kernel direction): every L-recognising hom's
+kernel is contained in the syntactic congruence. The syntactic
+congruence is the *coarsest* congruence on `FreeMonoid α` saturating
+`L`; any other saturating congruence (such as `Con.ker φ` for a
+recognising `φ`) is finer. Composing with mathlib's `Con.lift` then
+gives the factoring `MonoidHom`:
+`(syntacticCon L).lift φ syntacticCon_ge_ker_of_recognises`. -/
+theorem syntacticCon_ge_ker_of_recognises {L : Language α} {M : Type*}
+    [Monoid M] {φ : FreeMonoid α →* M} (hrec : Recognises φ L) :
+    Con.ker φ ≤ syntacticCon L := by
+  obtain ⟨S, hS⟩ := hrec
+  intro u v huv
+  -- `huv : Con.ker φ u v` unfolds to `φ u = φ v` (via `Setoid.ker`).
+  -- Goal `SyntacticEquiv L u v` unfolds (via defEq `List α = FreeMonoid α`)
+  -- to `∀ x y : FreeMonoid α, x * u * y ∈ L ↔ x * v * y ∈ L`.
+  change ∀ x y : FreeMonoid α, x * u * y ∈ L ↔ x * v * y ∈ L
+  intro x y
+  have step : ∀ w : FreeMonoid α, w ∈ L ↔ φ w ∈ S := fun w => by rw [hS]; rfl
+  rw [step, step, φ.map_mul, φ.map_mul, φ.map_mul, φ.map_mul, huv]
+
+-- ============================================================================
+-- § 4. Regularity ⟹ finite syntactic monoid
 -- ============================================================================
 
 /-- **Myhill direction A**: a regular language has a finite syntactic
