@@ -7,6 +7,7 @@ import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
+import Linglib.Theories.Phonology.SibilantTier
 
 /-!
 # @cite{lambert-2026}: Multitier phonotactics with logic and algebra
@@ -248,28 +249,17 @@ theorem karanga_shona_verb_stem_isBTLI :
 -- § 5. Tsuut'ina asymmetric harmony ∈ TSL_2 ∖ BTLI
 -- ============================================================================
 
-/-- Tsuut'ina sibilant alphabet @cite{cook-1978}: 's' (anterior) and 'ʃ'
-(non-anterior); plus other (non-sibilant). -/
-inductive TsuutinaSeg | anterior | nonAnterior | other
-  deriving DecidableEq, Repr
-
-/-- The sibilant tier predicate: keep `anterior` and `nonAnterior`,
-discard everything else. -/
-def tsuutinaTier (s : TsuutinaSeg) : Prop :=
-  s = .anterior ∨ s = .nonAnterior
-
-instance : DecidablePred tsuutinaTier := fun s => by
-  cases s <;> simp [tsuutinaTier] <;> infer_instance
+/-- The Tsuut'ina sibilant alphabet @cite{cook-1978} is the shared
+three-class `SibilantTierSeg` (anterior `s`, posterior `ʃ`, neutral
+non-sibilant) defined in `Theories/Phonology/SibilantTier.lean`. -/
+abbrev TsuutinaSeg := Theories.Phonology.SibilantTier.SibilantTierSeg
 
 /-- The TSL_2 grammar for Tsuut'ina asymmetric sibilant harmony
-@cite{cook-1978} @cite{lambert-2026} §4.2: project onto the sibilant
-tier, then forbid the length-2 factor `[anterior, nonAnterior]` (an
-anterior sibilant immediately preceding a non-anterior sibilant on the
-tier — which on the un-projected string means anterior preceding
-non-anterior at any distance). -/
-def tsuutinaTSLGrammar : TSLGrammar 2 TsuutinaSeg where
-  tier := tsuutinaTier
-  permitted := { f | f ≠ [some .anterior, some .nonAnterior] }
+@cite{cook-1978} @cite{lambert-2026} §4.2: anterior preceding posterior
+on the sibilant tier is forbidden. Reuses the shared substrate
+`asymmetricHarmonyAntFirst` from `Theories/Phonology/SibilantTier.lean`. -/
+def tsuutinaTSLGrammar : TSLGrammar 2 TsuutinaSeg :=
+  Theories.Phonology.SibilantTier.asymmetricHarmonyAntFirst
 
 /-- The Tsuut'ina asymmetric sibilant harmony language. Defined as the
 language of the TSL_2 witness so that the membership theorem is
