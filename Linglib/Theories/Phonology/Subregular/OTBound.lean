@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Theories.Phonology.Subregular.ForbidPairs
-import Mathlib.Computability.MyhillNerode
+import Linglib.Core.Computability.NonRegular.AnBn
 
 /-!
 # OT–Subregular Bridge: Bound and Counterexample
@@ -80,100 +80,10 @@ theorem mkForbidPairsOnTier_zeroSet_eq
 -- ============================================================================
 -- § 3. Supraregular counterexample: `{ aⁿ bⁿ | n ≥ 0 }`
 -- ============================================================================
-
-/-- The 2-letter alphabet `{a, b}` over which the classical non-regular
-language `{ aⁿ bⁿ }` is defined. -/
-inductive AB | a | b
-  deriving DecidableEq, Repr
-
-/-- Decidable equality is enough for `Fintype` here; the type has only two
-inhabitants. -/
-instance : Fintype AB :=
-  ⟨{AB.a, AB.b}, fun x => by cases x <;> decide⟩
-
-/-- A word over `AB` is *balanced* iff it consists of `n` copies of `a`
-followed by `n` copies of `b`, where `n = w.length / 2`. The total
-length of any balanced word is `2 n`, so the count is recoverable from
-the length and the equation is decidable. -/
-def IsBalanced (w : List AB) : Prop :=
-  w = List.replicate (w.length / 2) AB.a ++ List.replicate (w.length / 2) AB.b
-
-instance : DecidablePred IsBalanced := fun _ => decEq _ _
-
-/-- The classical non-regular language `{ aⁿ bⁿ | n ≥ 0 }`, packaged as a
-`Language AB`. -/
-def balancedAB : Language AB := { w | IsBalanced w }
-
-@[simp] lemma mem_balancedAB (w : List AB) :
-    w ∈ balancedAB ↔ IsBalanced w := Iff.rfl
-
-/-- The witness side: `aⁿ ++ bⁿ` is balanced. The forward direction of
-the language description, packaged for use in the Myhill–Nerode
-distinguishing-prefix argument. -/
-lemma replicate_a_append_replicate_b_isBalanced (n : ℕ) :
-    IsBalanced (List.replicate n AB.a ++ List.replicate n AB.b) := by
-  unfold IsBalanced
-  have hlen :
-      (List.replicate n AB.a ++ List.replicate n AB.b).length = 2 * n := by
-    simp [List.length_append, List.length_replicate, two_mul]
-  rw [hlen]
-  congr 2 <;> omega
-
-/-- The anti-witness side: `aᵐ ++ bⁿ` with `m ≠ n` is *not* balanced. The
-proof counts `a`s and `b`s on both sides of the supposed balanced
-decomposition. -/
-lemma replicate_a_append_replicate_b_not_isBalanced
-    {m n : ℕ} (hmn : m ≠ n) :
-    ¬ IsBalanced (List.replicate m AB.a ++ List.replicate n AB.b) := by
-  intro heq
-  unfold IsBalanced at heq
-  set k := (List.replicate m AB.a ++ List.replicate n AB.b).length / 2 with hk
-  have hcount_a :
-      List.count AB.a (List.replicate m AB.a ++ List.replicate n AB.b) =
-      List.count AB.a (List.replicate k AB.a ++ List.replicate k AB.b) := by
-    rw [heq]
-  have hcount_b :
-      List.count AB.b (List.replicate m AB.a ++ List.replicate n AB.b) =
-      List.count AB.b (List.replicate k AB.a ++ List.replicate k AB.b) := by
-    rw [heq]
-  simp [List.count_append, List.count_replicate] at hcount_a hcount_b
-  -- After simp: hcount_a : m = k, hcount_b : n = k
-  exact hmn (hcount_a.trans hcount_b.symm)
-
-/-- The Myhill–Nerode separation: for `m ≠ n`, the test word `bⁿ` is in
-`leftQuotient balancedAB (replicate n a)` but not in
-`leftQuotient balancedAB (replicate m a)`. Hence the two left quotients
-differ, and the map `n ↦ balancedAB.leftQuotient (replicate n a)` is
-injective. -/
-lemma leftQuotient_replicate_a_injective :
-    Function.Injective fun n : ℕ =>
-      balancedAB.leftQuotient (List.replicate n AB.a) := by
-  intro m n hmn
-  by_contra hne
-  -- The separator `replicate n .b` distinguishes the two quotients.
-  have hin : List.replicate n AB.b ∈
-      balancedAB.leftQuotient (List.replicate n AB.a) :=
-    replicate_a_append_replicate_b_isBalanced n
-  have hout : List.replicate n AB.b ∉
-      balancedAB.leftQuotient (List.replicate m AB.a) :=
-    replicate_a_append_replicate_b_not_isBalanced hne
-  -- Beta-reduce hmn to the plain quotient equality.
-  have hmn' : balancedAB.leftQuotient (List.replicate m AB.a) =
-              balancedAB.leftQuotient (List.replicate n AB.a) := hmn
-  exact hout (hmn'.symm ▸ hin)
-
-/-- **`{ aⁿ bⁿ }` is not regular**. Classical Myhill–Nerode argument: the
-left quotients by `aⁿ` for distinct `n` are all distinct, so
-`Set.range balancedAB.leftQuotient` is infinite, contradicting
-`Language.IsRegular.finite_range_leftQuotient`. -/
-theorem balancedAB_not_isRegular : ¬ balancedAB.IsRegular := by
-  intro h
-  have hfin := h.finite_range_leftQuotient
-  have hinf : (Set.range balancedAB.leftQuotient).Infinite :=
-    Set.infinite_of_injective_forall_mem
-      leftQuotient_replicate_a_injective
-      (fun n => Set.mem_range_self _)
-  exact hinf hfin
+-- The non-regular witness language `balancedAB` (= `{ aⁿbⁿ | n ≥ 0 }`)
+-- and the Myhill–Nerode non-regularity argument live in
+-- `Core/Computability/NonRegular/AnBn.lean` (PR-11). This file consumes
+-- `IsBalanced`, `balancedAB`, and `balancedAB_not_isRegular` from there.
 
 -- ============================================================================
 -- § 4. Headline existence theorem

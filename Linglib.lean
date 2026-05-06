@@ -1867,6 +1867,7 @@ import Linglib.Core.Computability.NonContextFree.BlockWitness
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
+import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Computability.SyntacticMonoid
