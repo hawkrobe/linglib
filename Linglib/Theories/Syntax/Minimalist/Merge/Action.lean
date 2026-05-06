@@ -1489,20 +1489,6 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
             deletionRightChannel (R := R) (CutShape.remainderDeletion c))
         * (∑ c' ∈ matchingSingleEdgeCuts T_j β,
             deletionRightChannel (R := R) (CutShape.remainderDeletion c')) := by
-  -- TODO (next session): the proof structure parallels
-  -- mergeOp_sideward_2b_general_pair but the surviving cross-term is
-  -- the cut × cut bivariate sum (Term 4 instead of Term 2). Need to
-  -- chain Finset.sum_congr through TWO Finset levels with the bivariate
-  -- filter `cf c = {α_t} ∧ cf c' = {β}`, then split into product of
-  -- single-variable filtered sums via Finset.mul_sum + Finset.sum_filter.
-  -- Statement is correct; proof drafted (~150 LOC) but currently brittle
-  -- on the Finset.sum_congr chaining inside the tensor-product algebra
-  -- expansion. Sorry'd here to land the multi-witness STATEMENT while
-  -- the proof is reworked in a follow-up commit.
-  sorry
-  -- (Phase 7e proof body removed for sorry'd landing — the unique-witness
-  -- mergeOp_sideward_3b_pair below is the canonical form for now.)
-  /-
   show (mergePost (R := R) (α := α) α_t β ∘ₗ comulDelAlgHom.toLinearMap)
        (forestToHc ({T_i, T_j} : TraceForest α Unit)) = _
   rw [LinearMap.comp_apply, AlgHom.toLinearMap_apply, comulDelAlgHom_pair,
@@ -1641,7 +1627,6 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
                 rw [Multiset.count_cons, Multiset.count_singleton, if_neg hx_α, if_neg hx_β]
               omega
       rw [if_pos h_split]
-      ring
     · -- LHS hits the if_neg branch. Show the conjunction fails.
       rw [if_neg h_sum]
       rw [if_neg]
@@ -1665,39 +1650,55 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
     simp only [map_sum]
     rw [Finset.sum_congr rfl (fun c _ => Finset.sum_congr rfl (fun c' _ => h_summand c c'))]
     -- Now: ∑ c, ∑ c', if (cf c = {α_t} ∧ cf c' = {β}) then K * (rd c * rd c') else 0.
-    -- Re-express each summand as: K * (if α-match then rd c else 0) * (if β-match then rd c' else 0).
-    rw [Finset.sum_congr rfl (fun c _ => Finset.sum_congr rfl (fun c' _ => by
+    -- Re-express each summand as: K * ((if α-match then rd c else 0) * (if β-match then rd c' else 0)).
+    have h_split_summand : ∀ (c : CutShape T_i) (c' : CutShape T_j),
+        (if CutShape.cutForest c = ({α_t} : TraceForest α Unit) ∧
+              CutShape.cutForest c' = ({β} : TraceForest α Unit)
+          then forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
+                * (deletionRightChannel (R := R) (CutShape.remainderDeletion c)
+                  * deletionRightChannel (R := R) (CutShape.remainderDeletion c'))
+          else (0 : Hc R α)) =
+        forestToHc (R := R) ({.node α_t β} : TraceForest α Unit) *
+          ((if CutShape.cutForest c = ({α_t} : TraceForest α Unit)
+              then deletionRightChannel (R := R) (CutShape.remainderDeletion c)
+              else 0) *
+            (if CutShape.cutForest c' = ({β} : TraceForest α Unit)
+              then deletionRightChannel (R := R) (CutShape.remainderDeletion c')
+              else 0)) := by
+      intro c c'
       by_cases hc : CutShape.cutForest c = ({α_t} : TraceForest α Unit)
       · by_cases hc' : CutShape.cutForest c' = ({β} : TraceForest α Unit)
         · simp [hc, hc']
         · simp [hc, hc']
-      · simp [hc]))]
+      · simp [hc]
+    rw [Finset.sum_congr rfl
+        (fun c _ => Finset.sum_congr rfl (fun c' _ => h_split_summand c c'))]
     -- Now: ∑ c, ∑ c', K * ((if α-match then rd c else 0) * (if β-match then rd c' else 0))
     -- = K * (∑ c, if α-match then rd c else 0) * (∑ c', if β-match then rd c' else 0)
-    rw [show (∑ c : CutShape T_i, ∑ c' : CutShape T_j,
-              forestToHc (R := R) ({.node α_t β} : TraceForest α Unit) *
-                ((if CutShape.cutForest c = ({α_t} : TraceForest α Unit)
-                    then deletionRightChannel (R := R) (CutShape.remainderDeletion c)
-                    else 0) *
-                  (if CutShape.cutForest c' = ({β} : TraceForest α Unit)
-                    then deletionRightChannel (R := R) (CutShape.remainderDeletion c')
-                    else 0)))
-          = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit) *
-              (∑ c : CutShape T_i,
-                if CutShape.cutForest c = ({α_t} : TraceForest α Unit)
+    -- Re-bracket: ∑ c, ∑ c', K * (X c * Y c') = K * (∑ c, X c) * (∑ c', Y c').
+    -- Strategy: pull K out of both sums (Finset.mul_sum), then combine the
+    -- double sum into a product of two single sums (Fintype.sum_mul_sum).
+    have h_factor :
+        (∑ c : CutShape T_i, ∑ c' : CutShape T_j,
+            forestToHc (R := R) ({.node α_t β} : TraceForest α Unit) *
+              ((if CutShape.cutForest c = ({α_t} : TraceForest α Unit)
                   then deletionRightChannel (R := R) (CutShape.remainderDeletion c)
                   else 0) *
-              (∑ c' : CutShape T_j,
-                if CutShape.cutForest c' = ({β} : TraceForest α Unit)
+                (if CutShape.cutForest c' = ({β} : TraceForest α Unit)
                   then deletionRightChannel (R := R) (CutShape.remainderDeletion c')
-                  else 0) from by
-      rw [Finset.mul_sum, Finset.sum_mul]
-      apply Finset.sum_congr rfl
-      intro c _
-      rw [Finset.mul_sum, Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro c' _
-      ring]
+                  else 0)))
+        = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit) *
+            (∑ c : CutShape T_i,
+              if CutShape.cutForest c = ({α_t} : TraceForest α Unit)
+                then deletionRightChannel (R := R) (CutShape.remainderDeletion c)
+                else 0) *
+            (∑ c' : CutShape T_j,
+              if CutShape.cutForest c' = ({β} : TraceForest α Unit)
+                then deletionRightChannel (R := R) (CutShape.remainderDeletion c')
+                else 0) := by
+      simp_rw [← Finset.mul_sum, ← Finset.sum_mul]
+      ring
+    rw [h_factor]
     -- Convert the inner if-form sums to filter form via Finset.sum_filter.
     rw [show ∑ c : CutShape T_i,
             (if CutShape.cutForest c = ({α_t} : TraceForest α Unit)
@@ -1715,7 +1716,6 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
         (Finset.sum_filter _ _).symm]
   rw [h_pp, h_ps, h_sp, h_ss]
   simp only [zero_add, add_zero]
-  -/
 
 /-- **Sideward Merge case 3(b) realization, F̂ = ∅ subcase, unique-witness form**
     (M-C-B Lemma 1.4.4, p. 54). 2-tree-workspace base case for the
