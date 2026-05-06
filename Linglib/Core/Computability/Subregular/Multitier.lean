@@ -218,4 +218,43 @@ theorem IsBTK.toIsBTLI {k : ℕ} {L : Language α} (h : IsBTK k L) :
     IsBTLI k L :=
   IsBTC.mono (fun _ => IsReverseDefinite.toIsGeneralizedDefinite) h
 
+/-! ## Bridge: TSL ↔ tier-based SL -/
+
+/-- **TSL_k = `IsTierBased (IsStrictlyLocal k)`**. The
+`TSLGrammar`-witnessed predicate `IsTierStrictlyLocal` and the generic
+preimage-of-SL predicate `IsTierBased ∘ IsStrictlyLocal` are co-extensive
+on `Language α`. The bridge gives every existing `IsTierStrictlyLocal`
+witness a free `IsBTSL` corollary via `BoolClosure.base`. -/
+theorem isTierStrictlyLocal_iff_isTierBased_isStrictlyLocal {k : ℕ}
+    {L : Language α} :
+    IsTierStrictlyLocal k L ↔ IsTierBased (IsStrictlyLocal k) L := by
+  refine ⟨?_, ?_⟩
+  · rintro ⟨G, rfl⟩
+    refine ⟨fun x => decide (G.tier x), (⟨G.permitted⟩ : SLGrammar k α).lang,
+            ?_, ⟨_, rfl⟩⟩
+    ext w
+    show (∀ f ∈ kFactors k (boundary k (tierProject G.tier w)), f ∈ G.permitted) ↔
+         ∀ f ∈ kFactors k (boundary k (List.filter _ w)), f ∈ G.permitted
+    rw [tierProject_eq_filter]
+  · rintro ⟨T, L', hL_eq, ⟨G', rfl⟩⟩
+    let tier_pred : α → Prop := fun x => T x = true
+    have dec : DecidablePred tier_pred := fun x => Bool.decEq (T x) true
+    refine ⟨{ tier := tier_pred, decTier := dec, permitted := G'.permitted }, ?_⟩
+    have hT : (fun x => decide (tier_pred x)) = T := by
+      funext x
+      show decide (T x = true) = T x
+      exact Bool.decide_eq_true
+    ext w
+    show (∀ f ∈ kFactors k (boundary k (tierProject tier_pred w)),
+            f ∈ G'.permitted) ↔ w ∈ L
+    rw [hL_eq, tierProject_eq_filter, hT]
+    rfl
+
+/-- **TSL_k → BTSL_k**: every tier-based strictly local language is in
+the multitier closure of strictly local languages. Combines the bridge
+with `BoolClosure.base`. -/
+theorem IsTierStrictlyLocal.toIsBTSL {k : ℕ} {L : Language α}
+    (h : IsTierStrictlyLocal k L) : IsBTSL k L :=
+  .base (isTierStrictlyLocal_iff_isTierBased_isStrictlyLocal.mp h)
+
 end Core.Computability.Subregular

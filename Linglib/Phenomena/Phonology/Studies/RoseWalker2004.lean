@@ -228,4 +228,12 @@ theorem kikongoAgree_zero_iff_in_TSL (c : List KSeg) :
   mkForbidPairsOnTier_zero_iff_in_lang
     "AGREE-[nas]/CC" KSeg.forbidNasalStop KSeg.onTier id c
 
+/-- **TSL_2 witness**: Kikongo nasal harmony is tier-strictly-local at
+window-size 2. Together with `IsTierStrictlyLocal.toIsBTSL` (in
+`Core.Computability.Subregular.Multitier`), this hands every existing
+`kikongoNasalHarmony` consumer a free `IsBTSL 2` corollary. -/
+theorem kikongoNasalHarmony_lang_isTSL2 :
+    IsTierStrictlyLocal 2 kikongoNasalHarmony.lang :=
+  ⟨kikongoNasalHarmony, rfl⟩
+
 end Phonology.Studies.RoseWalker2004

@@ -565,4 +565,12 @@ suffices to demonstrate the schema, the empirical-limit pattern
 (*lunaris*), the Tolerance Principle bridge, and the OCP-tier OT bridge.
 -/
 
+/-- **TSL_2 witness**: Latin liquid dissimilation is tier-strictly-local
+at window-size 2. Together with `IsTierStrictlyLocal.toIsBTSL` (in
+`Core.Computability.Subregular.Multitier`), this hands every existing
+`latinTSLGrammar` consumer a free `IsBTSL 2` corollary. -/
+theorem latinTSLGrammar_lang_isTSL2 :
+    Core.Computability.Subregular.IsTierStrictlyLocal 2 latinTSLGrammar.lang :=
+  ⟨latinTSLGrammar, rfl⟩
+
 end Phenomena.Phonology.Studies.Belth2026
