@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
-import Linglib.Core.Computability.Subregular.Function.Hierarchy
 
 /-!
 # Meinhardt, Mai, Baković & McCollum (2024): ATR Harmony Subregular Classification
@@ -87,7 +86,7 @@ Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
   reasoning, deferred to a follow-up dedicated to negative results).
 * Does not encode the leftward pass or the bidirectional composition
   (substrate ready: `SFST.compose` from `Function/Subsequential.lean`
-  and `IsLeftSubsequential.comp` from `Function/Hierarchy.lean` would
+  and `IsLeftSubsequential.comp` from `Function/Subsequential.lean` would
   be the building blocks; the WD predicate then certifies non-
   interaction of the two passes).
 

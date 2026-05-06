@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Theories.Phonology.Subregular.Agree
-import Linglib.Core.Computability.Subregular.Piecewise
+import Linglib.Core.Computability.Subregular.StrictlyPiecewise
 
 /-!
 # Hansson (2010) @cite{hansson-2010}

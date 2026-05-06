@@ -158,4 +158,50 @@ theorem isRightOutputStrictlyLocal_iff_left_reverse {k : ℕ}
     rw [List.reverse_reverse] at h
     rw [h, List.reverse_reverse]
 
+/-! ## OSL → Subsequential
+
+Construction-with-cast co-located on the source side, mirroring the ISL
+treatment. -/
+
+/-- Construction: every Left-OSL rule induces an SFST whose state is the
+output window (length ≤ k − 1) and whose `finalOutput` is empty.
+
+The `windowOutput` call is repeated in the two tuple components rather
+than `let`-bound so that `(step ow x).2` reduces definitionally to
+`r.windowOutput ow x` for the proof of `toSFST_run_eq_apply`. -/
+def OSLRule.toSFST {k : ℕ} (r : OSLRule k α β) : SFST (List β) α β where
+  initial := []
+  step outputWindow x :=
+    (lastN (k - 1) (outputWindow ++ r.windowOutput outputWindow x),
+     r.windowOutput outputWindow x)
+  finalOutput _ := []
+
+/-- The SFST induced by an OSL rule computes the same string function. -/
+theorem OSLRule.toSFST_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
+    r.toSFST.run = r.apply := by
+  funext input
+  show SFST.runFrom r.toSFST [] input = OSLRule.applyAux r [] input
+  suffices h : ∀ outputWindow : List β,
+      SFST.runFrom r.toSFST outputWindow input
+        = OSLRule.applyAux r outputWindow input from h []
+  intro outputWindow
+  induction input generalizing outputWindow with
+  | nil => rfl
+  | cons x xs ih =>
+    change r.windowOutput outputWindow x
+              ++ SFST.runFrom r.toSFST
+                  (lastN (k - 1) (outputWindow ++ r.windowOutput outputWindow x)) xs
+         = r.windowOutput outputWindow x
+              ++ OSLRule.applyAux r
+                  (lastN (k - 1) (outputWindow ++ r.windowOutput outputWindow x)) xs
+    rw [ih]
+
+/-- **Left-OSL ⊆ Left-Subsequential**: every Left-OSL function is
+computed by some SFST scanning left-to-right. -/
+theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ}
+    {f : List α → List β} (h : IsLeftOutputStrictlyLocal k f) :
+    IsLeftSubsequential f := by
+  obtain ⟨r, hr⟩ := h
+  exact ⟨List β, r.toSFST, hr ▸ r.toSFST_run_eq_apply⟩
+
 end Core.Computability.Subregular.Function

@@ -206,6 +206,30 @@ def compose (Tg : SFST σg β γ) (Tf : SFST σf α β) : SFST (σf × σg) α �
     let (sg', out) := Tg.runOnList s.2 (Tf.finalOutput s.1)
     out ++ Tg.finalOutput sg'
 
+/-- **Compose's `runFrom` agrees with sequential `runFrom`s**. The product
+SFST `compose Tg Tf` walks `Tf` over the input from `s.1`, threading
+each emitted block through `Tg` from `s.2`. -/
+theorem compose_runFrom (Tg : SFST σg β γ) (Tf : SFST σf α β)
+    (s : σf × σg) (xs : List α) :
+    (Tg.compose Tf).runFrom s xs = Tg.runFrom s.2 (Tf.runFrom s.1 xs) := by
+  induction xs generalizing s with
+  | nil =>
+    -- Both sides reduce to the final-output handling.
+    show (Tg.compose Tf).finalOutput s = Tg.runFrom s.2 (Tf.finalOutput s.1)
+    show (Tg.runOnList s.2 (Tf.finalOutput s.1)).2
+            ++ Tg.finalOutput (Tg.runOnList s.2 (Tf.finalOutput s.1)).1
+         = Tg.runFrom s.2 (Tf.finalOutput s.1)
+    rw [SFST.runFrom_eq_runOnList]
+  | cons x xs ih =>
+    show (Tg.compose Tf).runFrom s (x :: xs) = Tg.runFrom s.2 (Tf.runFrom s.1 (x :: xs))
+    rw [SFST.runFrom_cons, SFST.runFrom_cons]
+    show (Tg.runOnList s.2 (Tf.step s.1 x).2).2
+           ++ (Tg.compose Tf).runFrom
+                ((Tf.step s.1 x).1, (Tg.runOnList s.2 (Tf.step s.1 x).2).1) xs
+         = Tg.runFrom s.2
+              ((Tf.step s.1 x).2 ++ Tf.runFrom (Tf.step s.1 x).1 xs)
+    rw [SFST.runFrom_append, ih]
+
 end SFST
 
 /-! ### Universe-level constraint on classification predicates
@@ -273,5 +297,25 @@ theorem isRightSubsequential_iff_left_reverse {α β : Type}
     -- h : T.run xs.reverse = (f xs.reverse.reverse).reverse = (f xs).reverse
     rw [List.reverse_reverse] at h
     rw [h, List.reverse_reverse]
+
+/-- **Subsequential functions are closed under composition** (Mohri 1997
+§3, originally Schützenberger and Choffrut). The load-bearing fact that
+makes the Heinz-Lai 2013 Weakly Deterministic class definition work as
+the composition of two subsequential functions reading from opposite
+directions. -/
+theorem IsLeftSubsequential.comp {α β γ : Type}
+    {g : List β → List γ} (hg : IsLeftSubsequential g)
+    {f : List α → List β} (hf : IsLeftSubsequential f) :
+    IsLeftSubsequential (g ∘ f) := by
+  obtain ⟨σf, Tf, hTf⟩ := hf
+  obtain ⟨σg, Tg, hTg⟩ := hg
+  refine ⟨σf × σg, Tg.compose Tf, ?_⟩
+  funext xs
+  show (Tg.compose Tf).run xs = g (f xs)
+  show (Tg.compose Tf).runFrom (Tf.initial, Tg.initial) xs = g (f xs)
+  rw [SFST.compose_runFrom]
+  show Tg.runFrom Tg.initial (Tf.runFrom Tf.initial xs) = g (f xs)
+  show Tg.run (Tf.run xs) = g (f xs)
+  rw [hTf, hTg]
 
 end Core.Computability.Subregular.Function

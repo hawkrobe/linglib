@@ -124,4 +124,16 @@ end TSLGrammar
 def IsTierStrictlyLocal (k : ℕ) (L : Language α) : Prop :=
   ∃ G : TSLGrammar k α, G.lang = L
 
+/-! ## Inclusions -/
+
+/-- **SL_k ⊆ TSL_k**: take the universal tier (every symbol on tier), so
+projection is the identity and the TSL grammar's `lang` reduces to the
+underlying SL grammar's `lang`. -/
+theorem IsStrictlyLocal.toIsTierStrictlyLocal {k : ℕ} {L : Language α}
+    (h : IsStrictlyLocal k L) : IsTierStrictlyLocal k L := by
+  obtain ⟨G, rfl⟩ := h
+  refine ⟨{ tier := fun _ => True, permitted := G.permitted }, ?_⟩
+  ext w
+  simp only [TSLGrammar.mem_lang, SLGrammar.mem_lang, tierProject_univ]
+
 end Core.Computability.Subregular

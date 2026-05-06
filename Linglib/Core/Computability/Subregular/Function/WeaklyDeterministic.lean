@@ -4,14 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Function.Subsequential
-import Linglib.Core.Computability.Subregular.Function.Hierarchy
 
 /-!
 # Weakly Deterministic (WD) Functions
 
 The **Weakly Deterministic** function class sits between Subsequential
 and the full Non-Deterministic regular relations in the function-level
-subregular hierarchy (`Function/Hierarchy.lean`;
+subregular hierarchy (`Function/{ISL,OSL,Subsequential}.lean`;
 @cite{aksenova-rawski-graf-heinz-2020} Fig. 1;
 @cite{meinhardt-mai-bakovic-mccollum-2024} Fig. 1):
 

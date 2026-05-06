@@ -258,7 +258,6 @@ import Linglib.Core.Direction
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
-import Linglib.Core.Computability.Subregular.Function.Hierarchy
 import Linglib.Core.Computability.Subregular.Function.WeaklyDeterministic
 import Linglib.Core.StringHom
 import Linglib.Features.VerbCluster

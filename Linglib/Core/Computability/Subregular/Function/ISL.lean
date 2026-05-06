@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Basic
 import Linglib.Core.Direction
 import Linglib.Core.StringHom
+import Linglib.Core.Computability.Subregular.Function.Subsequential
 
 /-!
 # Input Strictly Local (ISL) Functions
@@ -262,5 +263,67 @@ theorem Core.Tier.apply_isLeftInputStrictlyLocal_one (T : Core.Tier α β) :
     | some v =>
       simp only [List.flatMap_cons, List.filterMap_cons, h, Option.toList_some,
         List.cons_append, List.nil_append, ih]
+
+/-! ## ISL → Subsequential
+
+Construction-with-cast co-located on the source side: `ISLRule.toSFST` is
+the SFST view of an ISL rule, and the inclusion proof rides on it. This
+diverges from the language-side convention "cast lives with the larger
+class" because the dependency direction (SFST primitive in
+`Subsequential.lean`; ISL projects into it) forces the construction's
+home file to also house the cast. Mathlib precedent for `X.toY` living
+with the source X: `MulHom.toAddHom`, `Subgroup.toSubmonoid`. -/
+
+section ISLToSubseq
+
+variable {α β : Type}
+
+/-- Construction: every ISL rule induces an SFST whose state is the
+input window (length ≤ k − 1) and whose `finalOutput` is empty. -/
+def ISLRule.toSFST {k : ℕ} (r : ISLRule k α β) : SFST (List α) α β where
+  initial := []
+  step window x := (lastN (k - 1) (window ++ [x]), r.windowOutput window x)
+  finalOutput _ := []
+
+/-- The SFST induced by an ISL rule computes the same string function. -/
+theorem ISLRule.toSFST_run_eq_apply {k : ℕ} (r : ISLRule k α β) :
+    r.toSFST.run = r.apply := by
+  funext input
+  show SFST.runFrom r.toSFST [] input = ISLRule.applyAux r [] input
+  suffices h : ∀ window : List α,
+      SFST.runFrom r.toSFST window input = ISLRule.applyAux r window input from h []
+  intro window
+  induction input generalizing window with
+  | nil => rfl
+  | cons x xs ih =>
+    change r.windowOutput window x
+              ++ SFST.runFrom r.toSFST (lastN (k - 1) (window ++ [x])) xs
+         = r.windowOutput window x
+              ++ ISLRule.applyAux r (lastN (k - 1) (window ++ [x])) xs
+    rw [ih]
+
+/-- **Left-ISL ⊆ Left-Subsequential**: every Left-ISL function is
+computed by some SFST scanning left-to-right (@cite{chandlee-heinz-2018}
+§4). -/
+theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ}
+    {f : List α → List β} (h : IsLeftInputStrictlyLocal k f) :
+    IsLeftSubsequential f := by
+  obtain ⟨r, hr⟩ := h
+  exact ⟨List α, r.toSFST, hr ▸ r.toSFST_run_eq_apply⟩
+
+/-- Direction-parameterised: ISL_d ⊆ Subseq_d for both directions. -/
+theorem isInputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
+    {f : List α → List β} (h : IsInputStrictlyLocal d k f) :
+    IsSubsequential d f := by
+  cases d with
+  | left => exact isLeftInputStrictlyLocal_left_subsequential h
+  | right =>
+    rw [isSubsequential_right]
+    rw [isInputStrictlyLocal_right] at h
+    rw [isRightInputStrictlyLocal_iff_left_reverse] at h
+    rw [isRightSubsequential_iff_left_reverse]
+    exact isLeftInputStrictlyLocal_left_subsequential h
+
+end ISLToSubseq
 
 end Core.Computability.Subregular.Function

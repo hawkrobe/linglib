@@ -28,8 +28,12 @@ closed under `~_LT`.
 * `factorCount k t f w` — multiplicity of `f` in `boundary k w`, capped at `t`.
 * `IsLocallyThresholdTestable k t L` — closure under equality of `factorCount`.
 
-The class inclusion `IsStrictlyLocal k L → IsLocallyTestable k L` lives in
-`Hierarchy.lean`; here we only set up the predicates.
+## Inclusions
+
+The cast lemma `IsStrictlyLocal k L → IsLocallyTestable k L` lives at the
+end of the file (the larger-class file holds the cast, mathlib-style).
+The companion cast `LT_k ⊆ LTT_{k,t}` for `t ≥ 1` lives inside the
+`DecidableEq`-scoped section with `IsLocallyThresholdTestable`.
 -/
 
 namespace Core.Computability.Subregular
@@ -51,6 +55,18 @@ def factorSet (k : ℕ) (w : List α) : Set (Augmented α) :=
 def IsLocallyTestable (k : ℕ) (L : Language α) : Prop :=
   ∀ w₁ w₂ : List α, factorSet k w₁ = factorSet k w₂ → (w₁ ∈ L ↔ w₂ ∈ L)
 
+/-- **SL_k ⊆ LT_k**: every strictly-`k`-local language is locally
+`k`-testable. The SL test ("every factor is permitted") trivially
+depends only on the *set* of factors, not their order or multiplicity. -/
+theorem IsStrictlyLocal.toIsLocallyTestable {k : ℕ} {L : Language α}
+    (h : IsStrictlyLocal k L) : IsLocallyTestable k L := by
+  obtain ⟨G, rfl⟩ := h
+  intro w₁ w₂ heq
+  have key : ∀ w, w ∈ G.lang ↔ ∀ f ∈ factorSet k w, f ∈ G.permitted := fun _ => Iff.rfl
+  rw [key, key, heq]
+
+section
+
 variable [DecidableEq α]
 
 /-- Saturated multiplicity: how many times factor `f` occurs in `w`'s
@@ -65,5 +81,23 @@ the same `t`-saturated factor counts agree on membership. Specializing to
 def IsLocallyThresholdTestable (k t : ℕ) (L : Language α) : Prop :=
   ∀ w₁ w₂ : List α,
     (∀ f, factorCount k t f w₁ = factorCount k t f w₂) → (w₁ ∈ L ↔ w₂ ∈ L)
+
+/-- **LT_k ⊆ LTT_{k,t}** for `t ≥ 1`. A factor occurs in `w` iff its
+saturated count is positive, so closure under count-equivalence implies
+closure under set-equivalence. -/
+theorem IsLocallyTestable.toIsLocallyThresholdTestable
+    {k t : ℕ} (ht : 1 ≤ t) {L : Language α}
+    (h : IsLocallyTestable k L) : IsLocallyThresholdTestable k t L := by
+  intro w₁ w₂ heq
+  apply h
+  ext f
+  have key : ∀ w : List α, f ∈ factorSet k w ↔ 0 < factorCount k t f w := by
+    intro w
+    simp only [factorSet, Set.mem_setOf_eq, factorCount, lt_min_iff,
+               List.count_pos_iff]
+    exact ⟨fun hf => ⟨ht, hf⟩, fun ⟨_, hf⟩ => hf⟩
+  rw [key w₁, key w₂, heq f]
+
+end
 
 end Core.Computability.Subregular
