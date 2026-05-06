@@ -35,18 +35,19 @@ the syntactic-semigroup characterization of each class via Eilenberg
 `IsTierBased`) lives in `Subregular/Multitier.lean`; the algebraic
 characterization is queued for a future `SyntacticMonoid` PR.
 
-## Disclaimer 1: McCollum (2019) Uyghur gradience
+## Disclaimer 1: McCollum (2019) Uyghur gradience (linglib audit)
 
-The BTD analysis of Uyghur backness harmony is faithful to
-@cite{mayer-major-2018}'s **categorical idealization** but does not
-account for the morphophonological gradience documented in
-@cite{mccollum-2019}. McCollum shows that the suffix backness assignment
-is not categorical in the way the categorical multitier-definite formula
-requires; in particular, the "arbitrarily specified, statistical
-tendency to be back" clause that Lambert quotes from M&M is precisely
+This disclaimer is **not** a scope qualification carried by Lambert
+(2026); the paper does not cite McCollum. It is a linglib-internal
+audit annotation: Lambert's BTD analysis is faithful to
+@cite{mayer-major-2018}'s **categorical idealization**, and a separate
+literature line — @cite{mccollum-2019} — argues the suffix backness
+assignment is not categorical in the way the multitier-definite formula
+requires. The "arbitrarily specified, statistical tendency to be back"
+clause that Mayer & Major report for the no-V no-C case is precisely
 the locus where McCollum's gradient data resists categorical analysis.
-The headline theorem `uyghur_backness_isBTD` therefore characterizes
-the categorical pattern only.
+The headline theorem `uyghur_backness_isBTD` characterizes the
+categorical pattern only; the gradience is out of scope.
 
 ## Disclaimer 2: Karanga Shona scope restriction
 
@@ -121,8 +122,11 @@ def ibanGrammar : DefiniteGrammar 1 IbanSyl where
 /-- The Iban stress-final language as a `Language IbanSyl`. -/
 def ibanLang : Language IbanSyl := ibanGrammar.lang
 
-/-- **Iban stress-final ∈ D_1** (Lambert 2026 (4)). Definitional witness:
-the `DefiniteGrammar 1` whose permitted final 1-suffix is `[stressed]`. -/
+/-- **Iban stress-final ∈ D_1** (Lambert 2026 §2.1, paper p. 4 example
+(2)). Definitional witness: the `DefiniteGrammar 1` whose permitted
+final 1-suffix is `[stressed]`. The general k-definite Proposition (4)
+characterizes this class abstractly; the Iban witness is the
+specialisation for k = 1. -/
 theorem iban_isDefinite_one : IsDefinite 1 ibanLang :=
   ⟨ibanGrammar, rfl⟩
 
@@ -175,19 +179,24 @@ def uyghurBacknessLang : Language UyghurSeg :=
   -- {C_f ∪ C_b} and definite (suffix-only) tests on each.
   Set.univ -- placeholder; see uyghur_backness_isBTD TODO
 
-/-- **Uyghur backness harmony ∈ BTD** (Lambert 2026 §4.3, refining
-@cite{mayer-major-2018}). The full proof constructs the formula in (35)
-as a Boolean combination of tier-projected definite tests on the
-harmonizing-vowel tier and the dorsal-consonant tier.
+/-- **Uyghur backness harmony ∈ BTD** (Lambert 2026 §4.3, eq. (35),
+refining @cite{mayer-major-2018}). The full proof constructs the
+formula in (35) as a Boolean combination of tier-projected definite
+tests on the harmonizing-vowel tier and the dorsal-consonant tier.
 
-TODO: the proof is a finite Boolean combination of three tier-based
-definite tests:
-  (a) [V_f×]_{V_f∪V_b} → [×suffixBackVowelᶜ]_{S_f}     (V_f rightmost ⇒ no back suffix)
-  (b) [V_b×]_{V_f∪V_b} → [×suffixFrontVowelᶜ]_{S_b}    (V_b rightmost ⇒ no front suffix)
-  (c) ([×]_{V_f∪V_b} ∧ [C_f×]_{C_f∪C_b}) → [×suffixBackVowel]_{S_f}
-  (d) ([×]_{V_f∪V_b} ∧ [C_b×]_{C_f∪C_b}) → [×suffixFrontVowel]_{S_b}
-Each implication is `IsTierBased (IsDefinite k)`; the conjunction is
-`BoolClosure.inter`-closed. -/
+TODO: the proof is a finite Boolean combination of four tier-based
+definite tests, mirroring Lambert (2026) (35a)-(35b). Suffix-tier
+notation: `S_X` = the tier of suffix-X-class material; `[⋊]_{S_X}`
+asserts the `S_X` tier is non-empty (a tier-final on `S_X` exists).
+  (a) (35a.i)  [V_f⋊]_{V_f∪V_b} → [⋊]_{S_f}    (V_f rightmost in stem ⇒ front suffix)
+  (b) (35a.ii) [V_b⋊]_{V_f∪V_b} → [⋊]_{S_b}    (V_b rightmost in stem ⇒ back suffix)
+  (c) (35b.i)  ([⋉⋊]_{V_f∪V_b} ∧ [C_f⋊]_{C_f∪C_b}) → [⋊]_{S_f}
+                                                (no V, C_f rightmost ⇒ front suffix)
+  (d) (35b.ii) ([⋉⋊]_{V_f∪V_b} ∧ [C_b⋊]_{C_f∪C_b}) → [⋊]_{S_b}
+                                                (no V, C_b rightmost ⇒ back suffix)
+Each implication is `IsTierBased (IsDefinite 1)` (single-tier-suffix
+test); the conjunction is `BoolClosure.inter`-closed; therefore `k = 1`
+should suffice as the BTD witness. -/
 theorem uyghur_backness_isBTD : ∃ k, IsBTD k uyghurBacknessLang := by
   sorry
 
@@ -201,20 +210,25 @@ inductive KShoTone | low | high
   deriving DecidableEq, Repr
 
 /-- Karanga Shona verb-stem tone language (post-hyphen material). The
-seven fully specified words are `ℓ, ℓh, ℓhℓ, h, hℓ, hℓh, hhℓh`; longer
-forms fall into one of two patterns: `ℓhhℓ ℓ*` for ℓ-toned roots and
-`hhhℓ ℓ* h` for h-toned roots (Lambert 2026 (45)). See file docstring
+seven fully specified words are `ℓ, ℓh, ℓhℓ, h, hℓ, hℓh, hhℓh` (Lambert
+2026 §5.6 example (45) data row, paper p. 19); longer forms fall into
+one of two patterns: `ℓhhℓ ℓ*` for ℓ-toned roots and `hhhℓ ℓ* h` for
+h-toned roots (described in prose just below (45)). See file docstring
 for the @cite{jardine-2020} scope-restriction disclaimer. -/
 def karangaShonaVerbStemLang : Language KShoTone :=
   Set.univ -- placeholder; see karanga_shona_verb_stem_isBTLI TODO
 
 /-- **Karanga Shona verb-stem tone ∈ BTLI** (Lambert 2026 §5.6, refining
-@cite{jardine-2020}). The witness is `φ_F ∨ L_m ∨ H_m` per (47)-(49):
-the finite-language part `φ_F` (the seven fully specified words), the
-ℓ-toned-root multitier-definite part `L_m = ⋊ℓhhℓ ∧ [⋊hh⋉]_{h}`, and
-the h-toned-root multitier-definite part
-`H_m = ⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}`. Each disjunct is in `IsBTC
-IsGeneralizedDefinite`; the disjunction stays in BTLI by Boolean closure.
+@cite{jardine-2020}). The witness is `φ_F ∨ L_m ∨ H_m`, where `φ_F` is
+the finite-language part covering the seven fully specified words
+(defined in prose just above paper eq. (46), no equation number),
+`L_m = ⋊ℓhhℓ ∧ [⋊hh⋉]_{h}` is the ℓ-toned-root multitier-definite part
+per Lambert (2026) (48), and `H_m = ⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}` is the
+h-toned-root multitier-definite part per (49). Note that paper (47) is
+the *piecewise testable* h-toned witness `H_p` — not part of the
+multitier disjunction — so the citation range is (48)-(49), not
+(47)-(49). Each disjunct is in `IsBTC IsGeneralizedDefinite`; the
+disjunction stays in BTLI by Boolean closure.
 
 TODO: discharge the witness construction. The structural proof is a
 straightforward Boolean combination of edge-definite tests (for the
