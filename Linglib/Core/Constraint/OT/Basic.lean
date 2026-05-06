@@ -1,4 +1,5 @@
 import Linglib.Core.Constraint.Evaluation
+import Mathlib.Computability.Language
 
 /-!
 # Optimality Theory — Core Vocabulary
@@ -91,6 +92,19 @@ def NamedConstraint.comap {C D : Type*} (f : C → D) (c : NamedConstraint D) :
 
 @[simp] theorem NamedConstraint.comap_family {C D : Type*} (f : C → D)
     (c : NamedConstraint D) : (c.comap f).family = c.family := rfl
+
+/-- The zero-violation set of a `NamedConstraint` over list candidates,
+viewed as a `Language α`. Lets the OT-side `eval = 0` predicate compose
+with mathlib's `Language.IsRegular` and the project's
+`IsTierStrictlyLocal`/`IsBTC` classifiers. The dot-notation form
+`c.zeroSet` is the canonical access pattern. -/
+def NamedConstraint.zeroSet {α : Type} (c : NamedConstraint (List α)) :
+    Language α :=
+  { w | c.eval w = 0 }
+
+lemma NamedConstraint.mem_zeroSet {α : Type}
+    (c : NamedConstraint (List α)) (w : List α) :
+    w ∈ c.zeroSet ↔ c.eval w = 0 := Iff.rfl
 
 -- ============================================================================
 -- § 2: Tableau Construction

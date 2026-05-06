@@ -99,4 +99,17 @@ theorem mkAgreeOnTier_zero_iff_in_agree_lang [DecidableEq α] {C : Type}
       extract c ∈ (TSLGrammar.agree p).lang :=
   mkForbidPairsOnTier_zero_iff_in_lang name (· ≠ ·) p extract c
 
+/-- **Zero-set bridge** (AGREE on tier): the `Language α`-form
+restatement of `mkAgreeOnTier_zero_iff_in_agree_lang` (with
+`extract := id`). The AGREE markedness constraint's zero-set *is* the
+corresponding AGREE-TSL_2 language. Sibling of
+`mkForbidPairsOnTier_zeroSet_eq` in OTBound.lean and
+`mkOCPOnTier_zeroSet_eq` in OCP.lean. -/
+theorem mkAgreeOnTier_zeroSet_eq [DecidableEq α]
+    (name : String) (p : α → Prop) [DecidablePred p] :
+    (mkAgreeOnTier name (Tier.byClass p) (id : List α → List α)).zeroSet =
+      (TSLGrammar.agree p).lang := by
+  ext w
+  exact mkAgreeOnTier_zero_iff_in_agree_lang name p id w
+
 end Phonology.Subregular

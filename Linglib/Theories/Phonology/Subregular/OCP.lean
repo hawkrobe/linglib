@@ -106,4 +106,15 @@ theorem mkOCPOnTier_zero_iff_in_ocp_lang [DecidableEq α] {C : Type}
       extract c ∈ (TSLGrammar.ocp p).lang :=
   mkForbidPairsOnTier_zero_iff_in_lang name (· = ·) p extract c
 
+/-- **Zero-set bridge** (OCP on tier): the `Language α`-form restatement
+of `mkOCPOnTier_zero_iff_in_ocp_lang` (with `extract := id`). The OCP
+markedness constraint's zero-set *is* the corresponding OCP-TSL_2
+language. Sibling of `mkForbidPairsOnTier_zeroSet_eq` in OTBound.lean. -/
+theorem mkOCPOnTier_zeroSet_eq [DecidableEq α]
+    (name : String) (p : α → Prop) [DecidablePred p] :
+    (mkOCPOnTier name (Tier.byClass p) (id : List α → List α)).zeroSet =
+      (TSLGrammar.ocp p).lang := by
+  ext w
+  exact mkOCPOnTier_zero_iff_in_ocp_lang name p id w
+
 end Phonology.Subregular

@@ -47,26 +47,9 @@ subregular hierarchy.
 -/
 
 -- ============================================================================
--- § 1. NamedConstraint zero-sets as Language α
+-- § 1. (NamedConstraint zero-set API moved to Core/Constraint/OT/Basic.lean
+--       in PR-7d to make it visible to non-phonology consumers.)
 -- ============================================================================
-
-namespace Core.Constraint.OT
-
-/-- The zero-violation set of a `NamedConstraint` over list candidates,
-viewed as a `Language α`. Lets the OT-side `eval = 0` predicate compose
-with mathlib's `Language.IsRegular` and the project's
-`IsTierStrictlyLocal`/`IsBTC` classifiers. Defined inside
-`Core.Constraint.OT` so the dot-notation `c.zeroSet` resolves correctly
-on `c : NamedConstraint (List α)`. -/
-def NamedConstraint.zeroSet {α : Type} (c : NamedConstraint (List α)) :
-    Language α :=
-  { w | c.eval w = 0 }
-
-@[simp] lemma NamedConstraint.mem_zeroSet {α : Type}
-    (c : NamedConstraint (List α)) (w : List α) :
-    w ∈ c.zeroSet ↔ c.eval w = 0 := Iff.rfl
-
-end Core.Constraint.OT
 
 namespace Phonology.Subregular.OTBound
 
