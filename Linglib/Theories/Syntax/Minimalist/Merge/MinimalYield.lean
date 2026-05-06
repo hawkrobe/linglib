@@ -110,28 +110,55 @@ theorem em_pair_satisfiesMinimalYield (S S' : TraceTree α β)
     show 1 + (S.size + S'.size) = 1 + 1 + (S.size - 1 + (S'.size - 1)) + 1
     omega
 
-/-- **IM via composition (Δ^d): size table for Prop 1.6.4 IM/Δ^d row**
-    (M-C-B p. 66). IM `{T} → {.node mover (T/mover)}` via composition.
-    Under Δ^d (deletion), `(.node Q β).leafCount = Q.leafCount + β.leafCount = T.leafCount`
-    by `cut_leafCount_conservation`, and the SIZE conservation `(.node Q β).size = T.size`
-    similarly holds when the cut extracts mover at depth d_β with quotient Q being
-    the deletion-rebinarization remainder.
+/-- **IM via composition (Δ^d): size deltas for MCB Prop 1.6.4 IM/Δ^d row**
+    (book p. 66). IM `{T} → {.node mover Q}` (where `Q = T/mover` is the
+    Δ^d deletion-remainder) preserves all three size measures under the
+    cut-shape size-conservation invariant `T.size = mover.size + Q.size + 1`.
 
-    UNVERIFIED: the .size conservation requires `Q.size + β.size + 1 = T.size + 1`,
-    i.e., `Q.size + β.size = T.size`. This is plausible from the cut structure but
-    not proven — depends on the specific structure of `deletionRightChannel` /
-    `remainderDeletion` for the cut producing `{β}`.
+    | Measure | Before `{T}` | After `{.node mover Q}` | Δ |
+    |---|---|---|---|
+    | b₀ | 1 | 1 | 0 |
+    | α | T.size − 1 | mover.size + Q.size = T.size − 1 | 0 |
+    | σ | T.size | T.size | 0 |
 
-    Per MCB Prop 1.6.4 IM/Δ^d row: Δb₀ = 0, Δα = 0, Δσ = 0. So MinimalYield's
-    minimal_yield (σ' = σ + 1) does NOT hold for IM under Δ^d — it satisfies only
-    the weaker form. This theorem gives the size deltas but does not assert
-    Minimal Yield satisfaction.
+    **Why MinimalYield is NOT satisfied here**: per MCB Prop 1.6.4, IM under
+    Δ^d gives Δσ = 0, but `MinimalYield`'s `minimal_yield` field requires
+    `σ' = σ + 1`. So IM under Δ^d satisfies only the weaker constraints
+    (no_divergence, no_info_loss) but fails the strong "minimality of yield"
+    condition. MCB notes (Remark 1.6.6, p. 67) that this just reflects the
+    Δ^c vs Δ^d counting difference, not a difference in Merge itself; under
+    Δ^c, IM gives Δσ = +1 and satisfies MinimalYield strongly.
 
-    Stated as a TODO; the `T.size = Q.size + β.size` invariant is the size analog
-    of `cut_leafCount_conservation` and would need its own substrate lemma. -/
-theorem im_pair_size_invariant_TODO (T mover Q : TraceTree α β) :
-    -- Placeholder: states the IM size relation; proven only under cut hypotheses
-    -- that aren't easy to express here without Internal.lean's full IM substrate.
-    True := trivial
+    **Hypothesis `h_size`**: a tree-size analog of `cut_leafCount_conservation`.
+    For a single-edge cut producing `mover` with remainder `Q`, `T.size =
+    mover.size + Q.size + 1` (the +1 accounts for the parent vertex contracted
+    by Δ^d's edge-deletion-and-rebinarization rule per MCB Def 1.2.5). Stated
+    as hypothesis here; the substrate lemma deriving it from cut-shape data
+    is queued. -/
+theorem im_pair_size_deltas_deltaD {T mover Q : TraceTree α β}
+    (h_size : T.size = mover.size + Q.size + 1) :
+    TraceForest.b0 ({.node mover Q} : TraceForest α β)
+        = TraceForest.b0 ({T} : TraceForest α β)
+      ∧
+    TraceForest.alpha ({.node mover Q} : TraceForest α β)
+        = TraceForest.alpha ({T} : TraceForest α β)
+      ∧
+    TraceForest.sigma ({.node mover Q} : TraceForest α β)
+        = TraceForest.sigma ({T} : TraceForest α β) := by
+  refine ⟨?_, ?_, ?_⟩
+  · -- Δb₀ = 0: both forests are singletons.
+    rfl
+  · -- Δα = 0: accCount(.node mover Q) = mover.size + Q.size = T.size - 1 = accCount T.
+    rw [TraceForest.alpha_singleton, TraceForest.alpha_singleton,
+        TraceTree.accCount_node]
+    show mover.size + Q.size = TraceTree.accCount T
+    show mover.size + Q.size = T.size - 1
+    omega
+  · -- Δσ = 0: σ = b₀ + α; both b₀ and α agree.
+    rw [TraceForest.sigma_singleton, TraceForest.sigma_singleton,
+        TraceTree.accCount_node]
+    show 1 + (mover.size + Q.size) = 1 + TraceTree.accCount T
+    show 1 + (mover.size + Q.size) = 1 + (T.size - 1)
+    omega
 
 end Minimalist.Merge
