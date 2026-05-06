@@ -2696,6 +2696,7 @@ import Linglib.Theories.Phonology.Subregular.TierProjection
 import Linglib.Theories.Phonology.Subregular.ForbidPairs
 import Linglib.Theories.Phonology.Subregular.OCP
 import Linglib.Theories.Phonology.Subregular.Agree
+import Linglib.Theories.Phonology.Subregular.OTBound
 import Linglib.Theories.Phonology.LexicalFrequency.Defs
 import Linglib.Theories.Phonology.LexicalFrequency.IndexedConstraints
 import Linglib.Theories.Phonology.LexicalFrequency.RepresentationStrength
