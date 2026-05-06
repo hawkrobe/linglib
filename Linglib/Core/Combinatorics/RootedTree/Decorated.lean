@@ -423,6 +423,36 @@ def TraceForest.degForest {α β : Type*} (F : TraceForest α β) : Nat :=
   show TraceForest.degForest (l ::ₘ ({r} : TraceForest α β)) = _
   rw [TraceForest.degForest_cons, TraceForest.degForest_singleton]
 
+/-- Total vertex count of a `TraceForest`: sum of `TraceTree.size` over its
+    components. Vertex-count analog of `degForest` (which sums `leafCount`).
+    Used by `cut_size_conservation` (in `AdmissibleCut.lean`) to express the
+    Δ^d size analog of MCB's leafCount-conservation observation. -/
+def TraceForest.sizeForest {α β : Type*} (F : TraceForest α β) : Nat :=
+  Multiset.sum (Multiset.map TraceTree.size F)
+
+@[simp] theorem TraceForest.sizeForest_zero {α β : Type*} :
+    TraceForest.sizeForest (0 : TraceForest α β) = 0 := rfl
+
+@[simp] theorem TraceForest.sizeForest_singleton {α β : Type*} (T : TraceTree α β) :
+    TraceForest.sizeForest ({T} : TraceForest α β) = T.size := by
+  simp only [sizeForest, Multiset.map_singleton, Multiset.sum_singleton]
+
+@[simp] theorem TraceForest.sizeForest_cons {α β : Type*} (T : TraceTree α β)
+    (F : TraceForest α β) :
+    TraceForest.sizeForest (T ::ₘ F) = T.size + F.sizeForest := by
+  unfold sizeForest
+  rw [Multiset.map_cons, Multiset.sum_cons]
+
+@[simp] theorem TraceForest.sizeForest_add {α β : Type*} (F G : TraceForest α β) :
+    TraceForest.sizeForest (F + G) = F.sizeForest + G.sizeForest := by
+  unfold sizeForest
+  rw [Multiset.map_add, Multiset.sum_add]
+
+@[simp] theorem TraceForest.sizeForest_pair {α β : Type*} (l r : TraceTree α β) :
+    TraceForest.sizeForest ({l, r} : TraceForest α β) = l.size + r.size := by
+  show TraceForest.sizeForest (l ::ₘ ({r} : TraceForest α β)) = _
+  rw [TraceForest.sizeForest_cons, TraceForest.sizeForest_singleton]
+
 /-- Project a forest to a `TraceForest α β` via the per-tree `anon h` map.
 
     Defined as prefix `Forest.anon h F` rather than dot-notation `F.anon`,
@@ -451,5 +481,128 @@ def Forest.anon {α β : Type*} (h : DecoratedTree α → β) (F : Forest α) :
     Forest.anon h (T ::ₘ F : Forest α)
       = DecoratedTree.anon h T ::ₘ Forest.anon h F :=
   Multiset.map_cons _ _ _
+
+/-! ## §6: Forest size measures (b₀, α, σ)
+@cite{marcolli-chomsky-berwick-2025} §1.2 + §1.6.1
+
+Three counting functions on a `TraceForest α β`, parallel to `degForest`
+and `sizeForest` above:
+
+- **`b₀(F)` — number of components**: cardinality of `F` as a multiset.
+- **`α(F)` — accessible terms**: per MCB Def 1.2.2 (the "more precise
+  discussion" of the §1.1 prose-definition on book p. 21: "the accessible
+  terms of a syntactic object T are the subtrees T_v, with v a non-root
+  vertex of T"), `α(F) = Σ_T #Acc(T)`. For a `TraceTree`, every vertex
+  is the root of some subtree, so `#Acc(T) = #V(T) - 1 = T.size - 1`.
+- **`σ(F) = b₀(F) + α(F)`** (MCB §1.6.1).
+
+Lemma 1.6.3 (book §1.6.2) supplies counting identities for these under
+`merge` (the `.node` constructor); the merge-side identities matching MCB
+eq. 1.6.5 / 1.6.6 are proven below. The cut-quotient identities (eq. 1.6.7-
+1.6.10) need substrate from `AdmissibleCut.lean` and live in
+`Theories/Syntax/Minimalist/Merge/MinimalYield.lean`.
+
+Generic over leaf alphabet `α` and trace alphabet `β`. -/
+
+/-- Number of accessible terms of a tree: `#V(T) - 1` per MCB Def 1.2.2,
+    where accessible terms are subtrees `T_v` with `v` a non-root vertex
+    of `T` (book p. 21). -/
+def TraceTree.accCount {α β : Type*} : TraceTree α β → Nat := fun T => T.size - 1
+
+@[simp] theorem TraceTree.accCount_leaf {α β : Type*} (a : α) :
+    (TraceTree.leaf a : TraceTree α β).accCount = 0 := rfl
+
+@[simp] theorem TraceTree.accCount_trace {α β : Type*} (b : β) :
+    (TraceTree.trace b : TraceTree α β).accCount = 0 := rfl
+
+@[simp] theorem TraceTree.accCount_node {α β : Type*} (l r : TraceTree α β) :
+    (TraceTree.node l r).accCount = l.size + r.size := by
+  show (1 + l.size + r.size) - 1 = l.size + r.size
+  omega
+
+/-- **MCB Lemma 1.6.3 eq. 1.6.5** (book p. 65): `α(M(T_v, T_w)) = α(T_v) +
+    α(T_w) + 2`. Trivially follows from `accCount_node` plus `size_pos`. -/
+theorem TraceTree.accCount_merge {α β : Type*} (T_v T_w : TraceTree α β) :
+    (TraceTree.node T_v T_w).accCount = T_v.accCount + T_w.accCount + 2 := by
+  rw [TraceTree.accCount_node]
+  show T_v.size + T_w.size = T_v.size - 1 + (T_w.size - 1) + 2
+  have := T_v.size_pos
+  have := T_w.size_pos
+  omega
+
+/-- `b₀(F)` — number of components. M-C-B Definition 1.2.2. -/
+def TraceForest.b₀ {α β : Type*} (F : TraceForest α β) : Nat := Multiset.card F
+
+@[simp] theorem TraceForest.b₀_zero {α β : Type*} :
+    TraceForest.b₀ (0 : TraceForest α β) = 0 := rfl
+
+@[simp] theorem TraceForest.b₀_singleton {α β : Type*} (T : TraceTree α β) :
+    TraceForest.b₀ ({T} : TraceForest α β) = 1 := by
+  unfold b₀; exact Multiset.card_singleton _
+
+@[simp] theorem TraceForest.b₀_cons {α β : Type*} (T : TraceTree α β)
+    (F : TraceForest α β) :
+    TraceForest.b₀ (T ::ₘ F) = 1 + F.b₀ := by
+  show Multiset.card (T ::ₘ F) = 1 + Multiset.card F
+  rw [Multiset.card_cons]; omega
+
+@[simp] theorem TraceForest.b₀_add {α β : Type*} (F G : TraceForest α β) :
+    TraceForest.b₀ (F + G) = F.b₀ + G.b₀ :=
+  Multiset.card_add F G
+
+/-- `α(F)` — total accessible terms across components. M-C-B Def 1.2.2 / §1.6.1. -/
+def TraceForest.alpha {α β : Type*} (F : TraceForest α β) : Nat :=
+  Multiset.sum (Multiset.map TraceTree.accCount F)
+
+@[simp] theorem TraceForest.alpha_zero {α β : Type*} :
+    TraceForest.alpha (0 : TraceForest α β) = 0 := rfl
+
+@[simp] theorem TraceForest.alpha_singleton {α β : Type*} (T : TraceTree α β) :
+    TraceForest.alpha ({T} : TraceForest α β) = T.accCount := by
+  unfold alpha
+  rw [Multiset.map_singleton, Multiset.sum_singleton]
+
+@[simp] theorem TraceForest.alpha_cons {α β : Type*} (T : TraceTree α β)
+    (F : TraceForest α β) :
+    TraceForest.alpha (T ::ₘ F) = T.accCount + F.alpha := by
+  show Multiset.sum (Multiset.map _ (T ::ₘ F)) = T.accCount + Multiset.sum _
+  rw [Multiset.map_cons, Multiset.sum_cons]
+
+@[simp] theorem TraceForest.alpha_add {α β : Type*} (F G : TraceForest α β) :
+    TraceForest.alpha (F + G) = F.alpha + G.alpha := by
+  show Multiset.sum (Multiset.map _ (F + G)) = _
+  rw [Multiset.map_add, Multiset.sum_add]
+  rfl
+
+/-- `σ(F) = b₀(F) + α(F)` — total accessible-terms-of-forest measure
+    (MCB §1.6.1 eq. 1.6.1). -/
+def TraceForest.sigma {α β : Type*} (F : TraceForest α β) : Nat := F.b₀ + F.alpha
+
+@[simp] theorem TraceForest.sigma_zero {α β : Type*} :
+    TraceForest.sigma (0 : TraceForest α β) = 0 := by
+  unfold sigma; simp only [b₀_zero, alpha_zero]
+
+@[simp] theorem TraceForest.sigma_singleton {α β : Type*} (T : TraceTree α β) :
+    TraceForest.sigma ({T} : TraceForest α β) = 1 + T.accCount := by
+  unfold sigma; rw [b₀_singleton, alpha_singleton]
+
+@[simp] theorem TraceForest.sigma_cons {α β : Type*} (T : TraceTree α β)
+    (F : TraceForest α β) :
+    TraceForest.sigma (T ::ₘ F) = 1 + T.accCount + F.sigma := by
+  unfold sigma; rw [b₀_cons, alpha_cons]; omega
+
+@[simp] theorem TraceForest.sigma_add {α β : Type*} (F G : TraceForest α β) :
+    TraceForest.sigma (F + G) = F.sigma + G.sigma := by
+  unfold sigma; rw [b₀_add, alpha_add]; omega
+
+/-- **MCB Lemma 1.6.3 eq. 1.6.6** (book p. 65): `σ(M(T_v, T_w)) = σ(T_v) +
+    σ(T_w) + 1` at the singleton-forest level. -/
+theorem TraceForest.sigma_merge_singleton {α β : Type*} (T_v T_w : TraceTree α β) :
+    TraceForest.sigma ({TraceTree.node T_v T_w} : TraceForest α β)
+      = TraceForest.sigma ({T_v} : TraceForest α β)
+        + TraceForest.sigma ({T_w} : TraceForest α β) + 1 := by
+  rw [sigma_singleton, sigma_singleton, sigma_singleton,
+      TraceTree.accCount_merge]
+  omega
 
 end ConnesKreimer

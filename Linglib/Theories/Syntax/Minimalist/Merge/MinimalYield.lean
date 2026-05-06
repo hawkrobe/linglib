@@ -1,6 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.Merge.External
 import Linglib.Theories.Syntax.Minimalist.Merge.Internal
-import Linglib.Core.Combinatorics.RootedTree.ForestSize
 
 /-!
 # Minimal Yield (MCB Definition 1.6.1)
@@ -275,5 +274,32 @@ theorem sideward_3b_violates_noDivergence
     ¬ MinimalYield ({T_i, T_j} : TraceForest α β)
                    ({Tnode, T_iq, T_jq} : TraceForest α β) :=
   fun h => sideward_3b_violates_noDivergenceWeak T_i T_j Tnode T_iq T_jq h.toWeak
+
+/-! ## §4: Unit-merge violation (MCB Remark 1.6.7, book p. 67)
+-/
+
+/-- **M_{S,1} alone violates MinimalYield** (MCB Remark 1.6.7, book p. 67).
+    The unit-merge stage of IM via composition transforms `{T} → {β, T/β}`
+    (extracting an accessible term β from T, leaving the deletion-quotient
+    Q = T/β as the other component). Δb₀ = +1 violates `noDivergence`.
+
+    MCB's argument: this shows M_{S,1} cannot occur **standalone** as a
+    Merge operation — it can occur only in the composition
+    `M_{β, T/β} ∘ M_{β, 1}` that gives Internal Merge (Prop 1.4.2). The
+    "virtual particles" caveat in `Internal.lean §4` corresponds to this
+    same observation.
+
+    Proof: structurally identical to `sideward_3a_b₀_increases` —
+    `{T} → {β, T/β}` is one-component-in, two-components-out. -/
+theorem unitMerge_violates_noDivergenceWeak (T β_t Q : TraceTree α β) :
+    ¬ MinimalYieldWeak ({T} : TraceForest α β)
+                       ({β_t, Q} : TraceForest α β) :=
+  sideward_3a_violates_noDivergenceWeak T β_t Q
+
+/-- Strong-form corollary of `unitMerge_violates_noDivergenceWeak`. -/
+theorem unitMerge_violates_noDivergence (T β_t Q : TraceTree α β) :
+    ¬ MinimalYield ({T} : TraceForest α β)
+                   ({β_t, Q} : TraceForest α β) :=
+  sideward_3a_violates_noDivergence T β_t Q
 
 end Minimalist.Merge

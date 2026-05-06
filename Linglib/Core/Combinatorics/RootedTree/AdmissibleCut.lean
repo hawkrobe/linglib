@@ -773,13 +773,43 @@ theorem deletionLeafCount_eq_option_elim :
 
 /-- Corollary: when a cut has a non-trivial Δ^d remainder `some t`, the
     structural `deletionLeafCount` agrees with `t.leafCount`. The IM-NCL
-    theorem in `Hopf/MergeAction.lean §2.7` uses this to identify
-    `Q.leafCount = deletionLeafCount c0` for `c0.remainderDeletion = some Q`. -/
+    theorem in `Theories/Syntax/Minimalist/Merge/NoComplexityLoss.lean` uses
+    this to identify `Q.leafCount = deletionLeafCount c0` for
+    `c0.remainderDeletion = some Q`. -/
 theorem deletionLeafCount_eq_of_remainderDeletion_some {T : TraceTree α β}
     (c : CutShape T) (t : TraceTree α β) (h : c.remainderDeletion = some t) :
     deletionLeafCount c = t.leafCount := by
   rw [deletionLeafCount_eq_option_elim, h]
   rfl
+
+/-! ## §9: Δ^d deletion size primitive
+
+`deletionSize c` is the vertex count of the deletion-remainder `Q` of a
+cut `c` (for cuts where `c.remainderDeletion = some Q`). Defined as the
+`Option.elim` of `remainderDeletion`'s vertex count.
+
+The full size analog of `cut_leafCount_conservation` (a theorem of the
+form `T.size = cutForest.sizeForest + deletionSize + #contractions`) is
+non-trivial because the contracted-vertex count for `bothRecurse` cuts
+depends on whether the child remainders are `some` or `none` (the parent
+vertex is preserved only when both child remainders are `some`). For the
+specialized single-edge-cut case `T.size = β.size + Q.size + 1` (sufficient
+for IM, Sideward 2(b), and MCB Lemma 1.6.3 eq. 1.6.7/1.6.9), the proof
+needs case-analysis on the cut shape — queued as separate substrate
+work; consumers in `Merge/MinimalYield.lean` currently take this size
+relation as a hypothesis. -/
+
+/-- Total vertex count of the deletion-remainder. Analog of
+    `deletionLeafCount` for `size`. Defined as the `Option.elim` of
+    `remainderDeletion`'s vertex count. -/
+def deletionSize {T : TraceTree α β} (c : CutShape T) : Nat :=
+  (c.remainderDeletion).elim 0 TraceTree.size
+
+/-- When a cut has a non-trivial Δ^d remainder `some t`, `deletionSize c = t.size`. -/
+theorem deletionSize_eq_of_remainderDeletion_some {T : TraceTree α β}
+    (c : CutShape T) (t : TraceTree α β) (h : c.remainderDeletion = some t) :
+    deletionSize c = t.size := by
+  unfold deletionSize; rw [h]; rfl
 
 end CutShape
 

@@ -1880,7 +1880,6 @@ import Linglib.Core.Algebra.ConnesKreimer.LhsBridge
 import Linglib.Core.Algebra.ConnesKreimer.LhsEquiv
 import Linglib.Core.Algebra.ConnesKreimer.Bialgebra
 import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
-import Linglib.Core.Combinatorics.RootedTree.ForestSize
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
