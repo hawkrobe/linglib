@@ -161,4 +161,125 @@ theorem im_pair_size_deltas_deltaD {T mover Q : TraceTree α β}
     show 1 + (mover.size + Q.size) = 1 + (T.size - 1)
     omega
 
+/-! ## §2: Sideward Minimal Yield violations (MCB Prop 1.6.8, book p. 69)
+
+The three Sideward forms — 2(b), 3(a), 3(b) — produce workspace transformations
+that, when measured against MinimalYield (Def 1.6.1), behave as follows:
+
+- **Sideward 3(a) and 3(b)**: Δb₀ = +1 (a NEW workspace component is created).
+  This **violates `no_divergence`** (which requires Δb₀ ≤ 0). MCB Prop 1.6.8
+  (book p. 69) confirms the table of size deltas.
+- **Sideward 2(b)**: Δb₀ = 0, and under the same size-conservation hypotheses
+  as IM, the (Δα, Δσ) = (0, 0) deltas under Δ^d match IM (cf. Prop 1.6.4 IM/Δ^d
+  row). This is **Remark 1.6.9 (book p. 71)**: "the Sideward Merge of type 2(b)
+  cannot be distinguished solely in terms of its effect on the sizes b₀, α, and
+  σ from Internal Merge." NCL (`NoComplexityLoss`) is what rules out Sideward 2(b).
+
+This section provides the b₀ deltas (the load-bearing observations from
+Prop 1.6.8 that yield Minimal Yield violations); the full (α, σ) table for
+Sideward requires the size-conservation substrate lemma queued for IM and
+is deferred. -/
+
+/-- **Sideward 2(b) preserves b₀** (MCB Prop 1.6.8, book p. 69, 2(b) row).
+    Workspace `{T_i, T_j} → {.node T_i β, T_j/β}` retains 2 components. -/
+theorem sideward_2b_pair_b0_preserved (T_i T_j Tnode T_j_q : TraceTree α β) :
+    TraceForest.b0 ({Tnode, T_j_q} : TraceForest α β)
+      = TraceForest.b0 ({T_i, T_j} : TraceForest α β) := by
+  show Multiset.card _ = Multiset.card _
+  rw [show ({Tnode, T_j_q} : TraceForest α β) = Tnode ::ₘ ({T_j_q} : TraceForest α β)
+        from rfl,
+      show ({T_i, T_j} : TraceForest α β) = T_i ::ₘ ({T_j} : TraceForest α β)
+        from rfl]
+  simp
+
+/-- **Sideward 3(a) increases b₀ by 1** (MCB Prop 1.6.8, book p. 69, 3(a) row).
+    Workspace `{T_i} → {.node α β, T_i/(α⊔β)}`: 1 component becomes 2. The
+    extra component is `.node α β`, the merged α and β extracted from the
+    same component T_i. -/
+theorem sideward_3a_pair_b0_increases (T_i Tnode T_iq : TraceTree α β) :
+    TraceForest.b0 ({Tnode, T_iq} : TraceForest α β)
+      = TraceForest.b0 ({T_i} : TraceForest α β) + 1 := by
+  show Multiset.card _ = Multiset.card _ + 1
+  rw [show ({Tnode, T_iq} : TraceForest α β) = Tnode ::ₘ ({T_iq} : TraceForest α β)
+        from rfl]
+  simp
+
+/-- **Sideward 3(b) increases b₀ by 1** (MCB Prop 1.6.8, book p. 69, 3(b) row).
+    Workspace `{T_i, T_j} → {.node α β, T_i/α, T_j/β}`: 2 components become 3.
+    The extra component is `.node α β`, the merged α and β extracted from
+    different components. -/
+theorem sideward_3b_pair_b0_increases
+    (T_i T_j Tnode T_iq T_jq : TraceTree α β) :
+    TraceForest.b0 ({Tnode, T_iq, T_jq} : TraceForest α β)
+      = TraceForest.b0 ({T_i, T_j} : TraceForest α β) + 1 := by
+  show Multiset.card _ = Multiset.card _ + 1
+  rw [show ({Tnode, T_iq, T_jq} : TraceForest α β)
+        = Tnode ::ₘ T_iq ::ₘ ({T_jq} : TraceForest α β) from rfl,
+      show ({T_i, T_j} : TraceForest α β)
+        = T_i ::ₘ ({T_j} : TraceForest α β) from rfl]
+  simp
+
+/-- **Sideward 3(a) violates MinimalYield's `no_divergence`** (MCB Prop 1.6.8 +
+    Def 1.6.1). The Δb₀ = +1 increase rules out Sideward 3(a) under any
+    coproduct convention. -/
+theorem sideward_3a_violates_no_divergence (T_i Tnode T_iq : TraceTree α β) :
+    ¬ MinimalYield ({T_i} : TraceForest α β)
+                   ({Tnode, T_iq} : TraceForest α β) := by
+  intro h
+  have h_b0 := h.no_divergence
+  have h_F : TraceForest.b0 ({T_i} : TraceForest α β) = 1 := by
+    rw [TraceForest.b0_singleton]
+  have h_F' : TraceForest.b0 ({Tnode, T_iq} : TraceForest α β) = 2 :=
+    sideward_3a_pair_b0_increases T_i Tnode T_iq |>.trans (by rw [h_F])
+  rw [h_F, h_F'] at h_b0
+  omega
+
+/-- **Sideward 3(b) violates MinimalYield's `no_divergence`** (MCB Prop 1.6.8 +
+    Def 1.6.1). The Δb₀ = +1 increase rules out Sideward 3(b). -/
+theorem sideward_3b_violates_no_divergence
+    (T_i T_j Tnode T_iq T_jq : TraceTree α β) :
+    ¬ MinimalYield ({T_i, T_j} : TraceForest α β)
+                   ({Tnode, T_iq, T_jq} : TraceForest α β) := by
+  intro h
+  have h_b0 := h.no_divergence
+  have h_F : TraceForest.b0 ({T_i, T_j} : TraceForest α β) = 2 := by
+    show Multiset.card _ = 2
+    rw [show ({T_i, T_j} : TraceForest α β) = T_i ::ₘ ({T_j} : TraceForest α β)
+          from rfl]
+    simp
+  have h_F' : TraceForest.b0 ({Tnode, T_iq, T_jq} : TraceForest α β) = 3 :=
+    sideward_3b_pair_b0_increases T_i T_j Tnode T_iq T_jq |>.trans (by rw [h_F])
+  rw [h_F, h_F'] at h_b0
+  omega
+
+/-! ## §3: Sideward 2(b) and IM are indistinguishable by size measures
+    (MCB Remark 1.6.9, book p. 71)
+
+MCB observes that Sideward 2(b) and IM produce identical (b₀, α, σ) deltas
+under Δ^d:
+
+- IM: `{T} → {.node mover Q}` gives (Δb₀, Δα, Δσ) = (0, 0, 0) — see
+  `im_pair_size_deltas_deltaD`.
+- Sideward 2(b): `{T_i, T_j} → {.node T_i β, T_j/β}` gives (Δb₀, Δα, Δσ) =
+  (0, 0, 0) under analogous size-conservation hypothesis on the cut producing β.
+
+Both fail MinimalYield's strong form (`minimal_yield` requires Δσ = +1). MCB
+(book p. 72): "The Sideward Merge of type 2(b) cannot be distinguished solely
+in terms of its effect on the sizes b₀, α, and σ from Internal Merge."
+
+The discrimination requires `NoComplexityLoss` (Def 1.6.2): IM preserves
+component degree (`im_satisfiesNCL`), while Sideward 2(b) does NOT (the
+T_j component maps to T_j/β with strictly lower degree).
+
+**Substrate gap (queued)**: linglib's `NCLBetween` predicate (in
+`NoComplexityLoss.lean`) uses an existential — "∃ component map satisfying
+the constraint." MCB Def 1.6.2 specifies the **induced map** `Φ₀ : π₀(F) →
+π₀(Φ(F))` (a specific function determined by the workspace transformation).
+Proving NCL FAILS for Sideward (Prop 1.6.10 negative direction) requires
+either strengthening `NCLBetween` to encode the induced-map requirement, OR
+adding a separate `InducedMapNCL` predicate. Both are substrate work that
+hasn't landed. Without it, the existential `NCLBetween` may be vacuously
+true for some Sideward configurations (e.g., when a component happens to
+have leafCount large enough for some Φ₀ to map T_j into it). -/
+
 end Minimalist.Merge
