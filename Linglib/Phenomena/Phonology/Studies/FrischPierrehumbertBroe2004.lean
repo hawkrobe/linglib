@@ -418,6 +418,15 @@ def thresholdedTSL (xs : List (Finset Arabic)) (t : ℚ) : Core.Computability.Su
   Core.Computability.Subregular.TSLGrammar.ofForbiddenPairs
     (λ x y => similarity xs x y ≥ t) Arabic.isLabial
 
+/-- **Every threshold-induced FPB grammar is TSL_2.** Explicit
+`IsTierStrictlyLocal 2` typing of the implicit complexity claim made by
+the `thresholdedTSL` constructor — the substrate-classification "any
+two-valued threshold model is TSL_2" is now a typed theorem rather than
+docstring prose. -/
+theorem thresholdedTSL_lang_isTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
+    Core.Computability.Subregular.IsTierStrictlyLocal 2 (thresholdedTSL xs t).lang :=
+  ⟨thresholdedTSL xs t, rfl⟩
+
 /-- **The TSL_2 grammar makes a binary step-function decision on labial
 pairs.** For two labial segments `x, y`, the grammar
 `thresholdedTSL xs t` accepts the bigram `[x, y]` iff their similarity

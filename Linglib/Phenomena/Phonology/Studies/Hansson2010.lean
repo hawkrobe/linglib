@@ -199,6 +199,16 @@ tier projection is empty. -/
 -- § 4: Theorems — TSL_2 captures the surface phonotactic
 -- ============================================================================
 
+/-- **Navajo sibilant harmony stringset is TSL_2** (Hansson 2010 §2.4.1.1).
+Explicit `IsTierStrictlyLocal 2` typing of the implicit complexity claim
+made by the `navajoSibilantHarmony : TSLGrammar 2 NSeg` grammar — the
+co-extensiveness of "the surface phonotactic" and "TSL_2 stringset" was
+asserted in the file docstring; this theorem types that assertion. -/
+theorem navajoSibilantHarmony_lang_isTSL2 :
+    Core.Computability.Subregular.IsTierStrictlyLocal 2
+      navajoSibilantHarmony.lang :=
+  ⟨navajoSibilantHarmony, rfl⟩
+
 /-- The pre-harmony underlying form is **rejected**: it contains a
 tier-adjacent disagreeing-sibilant pair. -/
 theorem preSiDze_violates : preSiDze ∉ navajoSibilantHarmony.lang := by
@@ -279,6 +289,14 @@ material is built in. The `permitted` field is given as a function
 through to the underlying decidable equalities on `NSeg` lists. -/
 def navajoSibilantHarmonySP : SPGrammar 2 NSeg where
   permitted s := s ≠ [.antSib, .postSib] ∧ s ≠ [.postSib, .antSib]
+
+/-- **Navajo sibilant harmony stringset is SP_2** under the alternative
+@cite{mcmullin-2016} characterisation. Explicit `IsStrictlyPiecewise 2`
+typing of the SP_2 grammar's implicit complexity claim. -/
+theorem navajoSibilantHarmonySP_lang_isSP2 :
+    Core.Computability.Subregular.IsStrictlyPiecewise 2
+      navajoSibilantHarmonySP.lang :=
+  ⟨navajoSibilantHarmonySP, rfl⟩
 
 /-! ### § 6.2 Agreement on Navajo's transparent inputs
 
