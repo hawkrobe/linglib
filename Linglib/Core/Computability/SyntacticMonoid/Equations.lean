@@ -237,12 +237,36 @@ theorem IsDefinite.satisfies_kDefiniteEquation
   exact Quotient.sound
     (definite_freeMonoid_satisfiesEq G hG s' hs'_ne ws (by omega) hws_ne)
 
-/-- **Lambert Prop 53 (reverse direction, scaffolding)**: if a language's
+/-- **Lambert Prop 53 (reverse direction, deferred)**: if a language's
 syntactic monoid satisfies the `k`-definite equation, then the language
-is `k`-definite. Proof deferred — see file docstring. -/
+is `k`-definite.
+
+**Construction sketch** (Lambert §6.2 p. 23): use `DefiniteGrammar k`
+with `permitted := {Edge.right.takeAt k w | w ∈ L}`. The trivial
+direction `L ⊆ G.lang` holds with witness `w' = w`. The interesting
+direction `G.lang ⊆ L` (a word `w` with the same `k`-suffix as some
+`w' ∈ L` is itself in `L`) splits on word length:
+1. `w'.length < k`: the `k`-suffix is `w'` itself; same `k`-suffix
+   forces `w = w'`.
+2. `w'.length ≥ k`: both decompose as `prefix ++ ks`. The equation
+   should give `[prefix ++ ks] = [ks]` in the syntactic monoid;
+   saturation then yields `prefix ++ ks ∈ L ↔ ks ∈ L`.
+
+**Trivial-letter complication** (deferred): in the long-word case, the
+equation needs a length-`k` decomposition of `ks` into non-identity
+syntactic-monoid elements. The natural choice — single-letter chunks
+`xs := [[α₁], …, [αₖ]]` — fails when some letter `αⱼ` is L-trivial
+(i.e., `[αⱼ] = 1` in the syntactic monoid). Lambert's semigroup framing
+sidesteps this by construction; the monoid form requires either
+(a) a re-chunking argument merging trivial letters with their
+neighbours, or (b) a direct induction on the syntactic-monoid
+structure. Both are mechanically clean but several screens of code, so
+deferred to a follow-up. The forward direction (proven above) is the
+substantive new content of PR-15b.
+-/
 theorem isDefinite_of_satisfies_kDefiniteEquation
     {L : Language α} {k : ℕ}
-    (h : Lambert.Equations.kDefiniteEquation k L.syntacticMonoid) :
+    (_h : Lambert.Equations.kDefiniteEquation k L.syntacticMonoid) :
     IsDefinite k L := by
   sorry
 
