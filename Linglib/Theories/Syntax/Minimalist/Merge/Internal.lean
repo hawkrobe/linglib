@@ -187,10 +187,7 @@ theorem mergeOp_im_composition
               = ({Q, β} : TraceForest α Unit) :=
     add_comm _ _
   rw [h_swap]
-  -- Now apply EM Case 1: mergeOp Q β (forestToHc {Q, β}) = forestToHc {.node Q β}
-  -- Use mergeOp_eps_zero_pair (which is for ε = 0) and mergeOp_eps_one to bridge.
-  -- Actually the cleanest is to use mergeOp_pair directly. Let me check what's available.
-  -- Since mergeOp = mergeOp_eps 1, we use mergeOp_pair (the ε=1 EM Case 1 theorem).
+  -- Apply EM Case 1: mergeOp Q β (forestToHc {Q, β}) = forestToHc {.node Q β}
   exact mergeOp_pair Q β
 
 /-- **Step.im argument-order variant of `mergeOp_im_composition`.**

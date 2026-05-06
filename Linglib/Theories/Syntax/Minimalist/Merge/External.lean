@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Merge.Basic
 import Linglib.Theories.Syntax.Minimalist.Derivation
-import Linglib.Core.Algebra.ConnesKreimer.CutAvoiding
+import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
 
 /-!
 # External Merge bridge: algebraic ↔ linguistic
@@ -25,7 +25,7 @@ to `R = ℤ`, `α = LIToken`, with `rfl` bridging
 **§2: Full Lemma 1.4.1 with residual workspace F̂** (lines ≈
 `mergeOp_factor_out_singleton`, `mergeOp_pair_residual`). Under
 `CutAvoidingForest ({S, S'}) Fhat` (Connes-Kreimer "Case 1" condition,
-defined in `Core/Algebra/ConnesKreimer/CutAvoiding.lean`), Merge factors
+defined in `Core/Combinatorics/RootedTree/CutAvoiding.lean`), Merge factors
 through multiplication by spectator components; induction on F̂ assembles
 the full Case-1 result.
 
@@ -522,21 +522,25 @@ theorem mergeOp_eps_zero_residual {R : Type*} [CommSemiring R]
     rw [mergeOp_eps_zero_factor_out_singleton hT_ne_S hT_ne_S']
     exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
-/-- **Connection corollary** (closes Phase 7d's acceptance criteria, MCB §1.5.3).
-    Under the `CutAvoidingForest` hypothesis (Case 1 disjointness), the
-    unweighted Merge operator `mergeOp` and the cost-weighted `mergeOp_eps 0`
-    agree pointwise on `forestToHc ({S, S'} + Fhat)`.
+/-- **Connection corollary** (MCB §1.5.3, EM Case 1). Under the
+    `CutAvoidingForest` hypothesis, both the unweighted `mergeOp` (proven
+    via `mergeOp_pair_residual` with the full Case 1 disjointness) and
+    the cost-weighted `mergeOp_eps 0` (proven via `mergeOp_eps_zero_residual`
+    with only member disjointness, the rest derived from cost minimization)
+    produce the same output `forestToHc ({.node S S'} + Fhat)`.
 
-    Both produce `forestToHc ({.node S S'} + Fhat)`:
-    - `mergeOp` via `mergeOp_pair_residual` (disjointness-stipulated).
-    - `mergeOp_eps 0` via `mergeOp_eps_zero_residual` (cost-derived from
-      member disjointness, which `CutAvoidingForest` implies via `not_mem_pair`).
+    The two formulations answer different questions:
+    - `mergeOp_pair_residual`: under Case-1 disjointness, what does the
+      *unweighted* Merge produce? Answer: only EM's contribution survives
+      because no Sideward matchings exist.
+    - `mergeOp_eps_zero_residual`: under member disjointness alone, what
+      does the *cost-weighted* Merge produce at ε = 0? Answer: only EM's
+      contribution survives because Sideward matchings exist but vanish at
+      ε = 0.
 
-    Architecturally: the cost framework is **strictly more general** than
-    the disjointness framework — it requires only `S, S' ∉ Fhat` (member
-    disjointness), not the stronger no-cut-extracts conditions. The
-    corollary witnesses that the cost-derived form *subsumes* the
-    disjointness-stipulated form. -/
+    This corollary witnesses that the two answers coincide on the EM
+    Case-1 input, even though they reach the conclusion via different
+    suppression mechanisms. -/
 theorem mergeOp_eq_mergeOp_eps_zero_under_avoiding
     {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     {S S' : TraceTree α Unit} {Fhat : TraceForest α Unit}

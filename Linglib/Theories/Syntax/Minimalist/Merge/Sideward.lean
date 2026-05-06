@@ -187,7 +187,7 @@ theorem mergeOp_sideward_2b_general_pair {R : Type*} [CommSemiring R]
               (if CutShape.cutForest c' = ({β} : TraceForest α Unit)
                 then deletionRightChannel (R := R) (CutShape.remainderDeletion c')
                 else (0 : Hc R α))) from
-        Finset.sum_congr rfl (fun c' _ => by split_ifs <;> simp)]
+        Finset.sum_congr rfl (fun c' _ => by split_ifs <;> simp only [mul_zero])]
     rw [← Finset.mul_sum]
     congr 1
     -- ∑ c', if p c' then f c' else 0 = ∑ c ∈ filter p, f c via Finset.sum_filter.
@@ -242,15 +242,12 @@ theorem mergeOp_sideward_2b_general_pair {R : Type*} [CommSemiring R]
   rw [h_pp, h_ps, h_sp, h_ss]
   simp only [add_zero, zero_add]
 
-/-- **Sideward Merge case 2(b) realization, F̂ = ∅ subcase** (M-C-B Lemma
-    1.4.4, p. 54). The 2-tree-workspace base case: `mergeOp T_i β` on
-    `{T_i, T_j}` (with β an admissible-cut-extracted accessible term of T_j)
-    produces `{M(T_i, β), T_j/β}`.
-
-    Proof structure parallel to `mergeOp_pair` (§2): expand the coproduct
-    as (prim + sum) × (prim + sum) for the two components T_i, T_j; show
-    only the **prim_{T_i} × cut_{c_β}** cross-term survives. The other
-    three cross-terms vanish by the disjointness hypotheses. -/
+/-- **Sideward Merge case 2(b) realization, F̂ = ∅ subcase, didactic
+    unique-witness form**. Quick corollary of `mergeOp_sideward_2b_general_pair`
+    when β has a UNIQUE matching cut `c_β` on T_j. The unique-witness
+    framing is convenient for analyst-supplied derivations but is **not**
+    in M-C-B Lemma 1.4.4 (which sums over all matching cuts per eq. (1.3.3)).
+    For MCB-faithful claims, prefer the `_general_pair` form above. -/
 theorem mergeOp_sideward_2b_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j β T_j_q : TraceTree α Unit)
     (c_β : CutShape T_j)
@@ -587,15 +584,13 @@ theorem mergeOp_sideward_3b_general_pair {R : Type*} [CommSemiring R]
   rw [h_pp, h_ps, h_sp, h_ss]
   simp only [zero_add, add_zero]
 
-/-- **Sideward Merge case 3(b) realization, F̂ = ∅ subcase, unique-witness form**
-    (M-C-B Lemma 1.4.4, p. 54). 2-tree-workspace base case for the
-    configuration where both α and β are accessible terms of distinct
-    components T_i ≠ T_j. The operator `δ_{α, β}` selects
-    `(α ⊔ β) ⊗ (T_i/α ⊔ T_j/β ⊔ F̂)`, producing `{M(α, β), T_i/α, T_j/β}`.
-
-    Surviving cross-term: cut_{c_α} × cut_{c_β}, contributing
-    `forestToHc {.node α β} * forestToHc {T_i_q} * forestToHc {T_j_q}`.
-    All other cross-terms vanish via membership analysis on `{α, β}`. -/
+/-- **Sideward Merge case 3(b) realization, F̂ = ∅ subcase, didactic
+    unique-witness form**. Quick corollary of `mergeOp_sideward_3b_general_pair`
+    when both `α` (in T_i) and `β` (in T_j) have UNIQUE matching cuts
+    `c_α`, `c_β`. The unique-witness framing is convenient for analyst-
+    supplied derivations but is **not** in M-C-B Lemma 1.4.4 (which sums
+    over all matching cuts per eq. (1.3.3)). For MCB-faithful claims,
+    prefer the `_general_pair` form above. -/
 theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j α_t β T_i_q T_j_q : TraceTree α Unit)
     (c_α : CutShape T_i) (c_β : CutShape T_j)
@@ -939,7 +934,7 @@ theorem mergeOp_sideward_3a_general_pair {R : Type*} [CommSemiring R]
               (if CutShape.cutForest c' = ({α_t, β} : TraceForest α Unit)
                 then deletionRightChannel (R := R) (CutShape.remainderDeletion c')
                 else (0 : Hc R α))) from
-        Finset.sum_congr rfl (fun c' _ => by split_ifs <;> simp)]
+        Finset.sum_congr rfl (fun c' _ => by split_ifs <;> simp only [mul_zero])]
     rw [← Finset.mul_sum]
     congr 1
     exact (Finset.sum_filter
@@ -947,11 +942,13 @@ theorem mergeOp_sideward_3a_general_pair {R : Type*} [CommSemiring R]
             (fun c => deletionRightChannel (R := R) (CutShape.remainderDeletion c))).symm
   rw [h_p, h_s, zero_add]
 
-/-- **Sideward Merge case 3(a) realization, F̂ = ∅ subcase, unique-witness form**
-    (M-C-B Lemma 1.4.5, p. 55). 1-tree-workspace base case where both α and β
-    are accessible terms of the same component T_i, extracted by a unique
-    2-edge admissible cut. Surviving term: cut_c, contributing
-    `forestToHc {.node α β} * forestToHc {T_i_q}`. -/
+/-- **Sideward Merge case 3(a) realization, F̂ = ∅ subcase, didactic
+    unique-witness form**. Quick corollary of `mergeOp_sideward_3a_general_pair`
+    when the 2-edge cut producing `{α_t, β}` is uniquely witnessed by `c`.
+    The unique-witness framing is convenient for analyst-supplied derivations
+    but is **not** in M-C-B Lemma 1.4.5 (which sums over all matching 2-edge
+    cuts per eq. (1.3.3)). For MCB-faithful claims, prefer the `_general_pair`
+    form above. -/
 theorem mergeOp_sideward_3a_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i α_t β T_i_q : TraceTree α Unit)
     (c : CutShape T_i)

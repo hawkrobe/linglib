@@ -50,7 +50,7 @@ variable {F W : TraceForest α β}
 
 /-- Empty workspace is trivially `F`-avoiding for any target forest `F`. -/
 lemma empty (F : TraceForest α β) : CutAvoidingForest F (0 : TraceForest α β) :=
-  fun _ h => by simp at h
+  fun _ h => absurd h (Multiset.notMem_zero _)
 
 /-- Cons preservation: if `T ::ₘ W` is `F`-avoiding then so is `W`. -/
 lemma of_cons {T : TraceTree α β} (h : CutAvoidingForest F (T ::ₘ W)) :
