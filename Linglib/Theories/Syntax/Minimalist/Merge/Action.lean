@@ -1333,34 +1333,48 @@ theorem mergeOp_sideward_2b_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
   rw [h_pp, h_ps, h_sp, h_ss]
   simp only [add_zero, zero_add]
 
-/-- **Sideward Merge case 2(b) realization, full residual workspace** (M-C-B
-    Lemma 1.4.4, p. 54). Generalization of `mergeOp_sideward_2b_pair` to
-    arbitrary residual workspace `Fhat` via the factor-out pattern of
-    `mergeOp_pair_residual`. The factor-out lemma generalisation
-    (analog of `mergeOp_factor_out_singleton` adapted for the (T_i, β) pair
-    instead of (S, S')) is the gap to discharge — the existing
-    `mergeOp_factor_out_singleton` was specifically formulated for the
-    `(S, S') = ` two-component-merge configuration; the Sideward 2(b)
-    case needs a parallel formulation where one of the operands is an
-    accessible term of a workspace component.
-
-    Stated for the next session. -/
+/-- **Sideward Merge case 2(b) realization, full residual workspace**
+    (M-C-B Lemma 1.4.4, p. 54). Generalization of `mergeOp_sideward_2b_pair`
+    to arbitrary residual workspace `Fhat` via the factor-out pattern.
+    The existing `mergeOp_factor_out_singleton` is parametric in (S, S')
+    and applies directly to (S, S') = (T_i, β) with `MergeTargetFreeWorkspace
+    T_i β Fhat` providing the per-spectator disjointness. -/
 theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j β T_j_q : TraceTree α Unit)
     (c_β : CutShape T_j) (Fhat : TraceForest α Unit)
-    (_h_cut : IsSinglAccessibleCut T_j β c_β)
-    (_h_remainder : CutShape.remainderDeletion c_β = some T_j_q)
-    (_h_distinct : T_i ≠ T_j)
-    (_h_β_ne_Ti : β ≠ T_i)
-    (_h_F_disjoint : MergeTargetFreeWorkspace T_i β Fhat) :
+    (h_cut : IsSinglAccessibleCut T_j β c_β)
+    (h_remainder : CutShape.remainderDeletion c_β = some T_j_q)
+    (h_unique : ∀ c : CutShape T_j, c ≠ c_β →
+                CutShape.cutForest c ≠ ({β} : TraceForest α Unit))
+    (h_T_i_no_β : ∀ c : CutShape T_i, β ∉ CutShape.cutForest c)
+    (h_T_j_no_T_i : ∀ c : CutShape T_j, T_i ∉ CutShape.cutForest c)
+    (h_distinct : T_i ≠ T_j)
+    (h_β_ne_Tj : β ≠ T_j)
+    (h_F_disjoint : MergeTargetFreeWorkspace T_i β Fhat) :
     mergeOp (R := R) T_i β
         (forestToHc (({T_i, T_j} : TraceForest α Unit) + Fhat))
       = forestToHc (({.node T_i β, T_j_q} : TraceForest α Unit) + Fhat) := by
-  -- TODO (Phase 7e.2): generalize via factor-out lemma analog to
-  -- mergeOp_factor_out_singleton, parameterised over the (S, β)
-  -- accessible-term configuration. The pair subcase is proven as
-  -- `mergeOp_sideward_2b_pair` above.
-  sorry
+  induction Fhat using Multiset.induction with
+  | empty =>
+    rw [add_zero, add_zero]
+    exact mergeOp_sideward_2b_pair T_i T_j β T_j_q c_β
+      h_cut h_remainder h_unique h_T_i_no_β h_T_j_no_T_i h_distinct h_β_ne_Tj
+  | cons T Fhat' ih =>
+    have hT : MergeTargetFree T_i β T := MergeTargetFreeWorkspace.head h_F_disjoint
+    have ih' := ih (MergeTargetFreeWorkspace.of_cons h_F_disjoint)
+    have h_lhs_eq : ({T_i, T_j} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit)
+                    + (({T_i, T_j} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]; abel
+    have h_rhs_eq : ({.node T_i β, T_j_q} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit)
+                    + (({.node T_i β, T_j_q} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]; abel
+    rw [h_lhs_eq, h_rhs_eq,
+        forestToHc_add (R := R) ({T} : TraceForest α Unit) _,
+        forestToHc_add (R := R) ({T} : TraceForest α Unit) _]
+    rw [mergeOp_factor_out_singleton hT]
+    exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
 /-- **Sideward Merge case 3(b) realization, F̂ = ∅ subcase** (M-C-B Lemma
     1.4.4, p. 54). 2-tree-workspace base case for the configuration where
@@ -1561,25 +1575,66 @@ theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
   rw [h_pp, h_ps, h_sp, h_ss]
   simp only [zero_add, add_zero]
 
-/-- **Sideward Merge case 3(b) realization, full residual workspace** (M-C-B
-    Lemma 1.4.4, p. 54). Generalization of `mergeOp_sideward_3b_pair`.
-    Same TODO as `mergeOp_sideward_2b`. -/
+/-- **Sideward Merge case 3(b) realization, full residual workspace**
+    (M-C-B Lemma 1.4.4, p. 54). Generalization of `mergeOp_sideward_3b_pair`
+    via the factor-out pattern, parameterised on (S, S') = (α_t, β). -/
 theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j α_t β T_i_q T_j_q : TraceTree α Unit)
     (c_α : CutShape T_i) (c_β : CutShape T_j) (Fhat : TraceForest α Unit)
-    (_h_cut_α : IsSinglAccessibleCut T_i α_t c_α)
-    (_h_cut_β : IsSinglAccessibleCut T_j β c_β)
-    (_h_remainder_α : CutShape.remainderDeletion c_α = some T_i_q)
-    (_h_remainder_β : CutShape.remainderDeletion c_β = some T_j_q)
-    (_h_distinct : T_i ≠ T_j)
-    (_h_α_ne_β : α_t ≠ β)
-    (_h_F_disjoint : MergeTargetFreeWorkspace α_t β Fhat) :
+    (h_cut_α : IsSinglAccessibleCut T_i α_t c_α)
+    (h_cut_β : IsSinglAccessibleCut T_j β c_β)
+    (h_remainder_α : CutShape.remainderDeletion c_α = some T_i_q)
+    (h_remainder_β : CutShape.remainderDeletion c_β = some T_j_q)
+    (h_unique_α : ∀ c : CutShape T_i, c ≠ c_α →
+                  CutShape.cutForest c ≠ ({α_t} : TraceForest α Unit))
+    (h_unique_β : ∀ c : CutShape T_j, c ≠ c_β →
+                  CutShape.cutForest c ≠ ({β} : TraceForest α Unit))
+    (h_T_i_no_β : ∀ c : CutShape T_i, β ∉ CutShape.cutForest c)
+    (h_T_j_no_α : ∀ c : CutShape T_j, α_t ∉ CutShape.cutForest c)
+    (h_α_ne_Ti : α_t ≠ T_i)
+    (h_α_ne_Tj : α_t ≠ T_j)
+    (h_β_ne_Ti : β ≠ T_i)
+    (h_β_ne_Tj : β ≠ T_j)
+    (h_α_ne_β : α_t ≠ β)
+    (h_distinct : T_i ≠ T_j)
+    (h_F_disjoint : MergeTargetFreeWorkspace α_t β Fhat) :
     mergeOp (R := R) α_t β
         (forestToHc (({T_i, T_j} : TraceForest α Unit) + Fhat))
       = forestToHc (({.node α_t β, T_i_q, T_j_q} : TraceForest α Unit) + Fhat) := by
-  -- TODO (Phase 7e.2): generalize via factor-out lemma analog. Pair subcase
-  -- proven as `mergeOp_sideward_3b_pair` (modulo one Multiset case-analysis sorry).
-  sorry
+  induction Fhat using Multiset.induction with
+  | empty =>
+    rw [add_zero, add_zero]
+    -- The pair version produces forestToHc {.node α β} * forestToHc {T_i_q} * forestToHc {T_j_q}.
+    -- Convert to forestToHc {.node α β, T_i_q, T_j_q}.
+    have h_pair := mergeOp_sideward_3b_pair (R := R)
+      T_i T_j α_t β T_i_q T_j_q c_α c_β
+      h_cut_α h_cut_β h_remainder_α h_remainder_β h_unique_α h_unique_β
+      h_T_i_no_β h_T_j_no_α h_α_ne_Ti h_α_ne_Tj h_β_ne_Ti h_β_ne_Tj h_α_ne_β h_distinct
+    rw [h_pair]
+    rw [show forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
+            * forestToHc (R := R) ({T_i_q} : TraceForest α Unit)
+            * forestToHc (R := R) ({T_j_q} : TraceForest α Unit)
+        = forestToHc (R := R) (({.node α_t β} : TraceForest α Unit)
+                                + ({T_i_q} : TraceForest α Unit)
+                                + ({T_j_q} : TraceForest α Unit)) from by
+        rw [forestToHc_add, forestToHc_add]]
+    congr 1
+  | cons T Fhat' ih =>
+    have hT : MergeTargetFree α_t β T := MergeTargetFreeWorkspace.head h_F_disjoint
+    have ih' := ih (MergeTargetFreeWorkspace.of_cons h_F_disjoint)
+    have h_lhs_eq : ({T_i, T_j} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit)
+                    + (({T_i, T_j} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]; abel
+    have h_rhs_eq : ({.node α_t β, T_i_q, T_j_q} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit)
+                    + (({.node α_t β, T_i_q, T_j_q} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]; abel
+    rw [h_lhs_eq, h_rhs_eq,
+        forestToHc_add (R := R) ({T} : TraceForest α Unit) _,
+        forestToHc_add (R := R) ({T} : TraceForest α Unit) _]
+    rw [mergeOp_factor_out_singleton hT]
+    exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
 /-- **Sideward Merge case 3(a) realization** ("Countercyclic-like Merge",
     M-C-B Lemma 1.4.5, p. 55). Both α and β are disjoint accessible terms
@@ -1668,21 +1723,50 @@ theorem mergeOp_sideward_3a_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
   rw [h_p, h_s]
   simp only [zero_add]
 
-/-- **Sideward Merge case 3(a) realization, full residual workspace** (M-C-B
-    Lemma 1.4.5, p. 55). Generalization of `mergeOp_sideward_3a_pair`. -/
+/-- **Sideward Merge case 3(a) realization, full residual workspace**
+    (M-C-B Lemma 1.4.5, p. 55). Generalization of `mergeOp_sideward_3a_pair`
+    via the factor-out pattern, parameterised on (S, S') = (α_t, β). -/
 theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i α_t β T_i_q : TraceTree α Unit)
     (c : CutShape T_i) (Fhat : TraceForest α Unit)
-    (_h_cut : IsTwoEdgeAccessibleCut T_i α_t β c)
-    (_h_remainder : CutShape.remainderDeletion c = some T_i_q)
-    (_h_α_ne_β : α_t ≠ β)
-    (_h_F_disjoint : MergeTargetFreeWorkspace α_t β Fhat) :
+    (h_cut : IsTwoEdgeAccessibleCut T_i α_t β c)
+    (h_remainder : CutShape.remainderDeletion c = some T_i_q)
+    (h_unique : ∀ c' : CutShape T_i, c' ≠ c →
+                CutShape.cutForest c' ≠ ({α_t, β} : TraceForest α Unit))
+    (h_α_ne_Ti : α_t ≠ T_i)
+    (h_β_ne_Ti : β ≠ T_i)
+    (h_F_disjoint : MergeTargetFreeWorkspace α_t β Fhat) :
     mergeOp (R := R) α_t β
         (forestToHc (({T_i} : TraceForest α Unit) + Fhat))
       = forestToHc (({.node α_t β, T_i_q} : TraceForest α Unit) + Fhat) := by
-  -- TODO (Phase 7e.2): generalize via factor-out lemma analog. Pair subcase
-  -- proven as `mergeOp_sideward_3a_pair`.
-  sorry
+  induction Fhat using Multiset.induction with
+  | empty =>
+    rw [add_zero, add_zero]
+    have h_pair := mergeOp_sideward_3a_pair (R := R)
+      T_i α_t β T_i_q c h_cut h_remainder h_unique h_α_ne_Ti h_β_ne_Ti
+    rw [h_pair]
+    rw [show forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
+            * forestToHc (R := R) ({T_i_q} : TraceForest α Unit)
+        = forestToHc (R := R) (({.node α_t β} : TraceForest α Unit)
+                                + ({T_i_q} : TraceForest α Unit)) from by
+        rw [forestToHc_add]]
+    congr 1
+  | cons T Fhat' ih =>
+    have hT : MergeTargetFree α_t β T := MergeTargetFreeWorkspace.head h_F_disjoint
+    have ih' := ih (MergeTargetFreeWorkspace.of_cons h_F_disjoint)
+    have h_lhs_eq : ({T_i} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit)
+                    + (({T_i} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]; abel
+    have h_rhs_eq : ({.node α_t β, T_i_q} : TraceForest α Unit) + T ::ₘ Fhat'
+                  = ({T} : TraceForest α Unit)
+                    + (({.node α_t β, T_i_q} : TraceForest α Unit) + Fhat') := by
+      rw [show T ::ₘ Fhat' = ({T} : TraceForest α Unit) + Fhat' from rfl]; abel
+    rw [h_lhs_eq, h_rhs_eq,
+        forestToHc_add (R := R) ({T} : TraceForest α Unit) _,
+        forestToHc_add (R := R) ({T} : TraceForest α Unit) _]
+    rw [mergeOp_factor_out_singleton hT]
+    exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
 /-! ## §4.1: Cost-suppression theorems (sorry'd; queued)
 
