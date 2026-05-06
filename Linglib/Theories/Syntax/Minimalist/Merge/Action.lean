@@ -737,10 +737,15 @@ gives them the same leading order (book Remark 1.6.9, p. 71).
   are not formalized here). The bridge lemma
   `CutShape.deletionLeafCount_eq_of_remainderDeletion_some` connects the
   structural `deletionLeafCount` to the Option-valued `remainderDeletion`.
-- Sideward 2(b), 3(a), 3(b), 𝔐_{T,1}: blocked on identifying which
-  `comulDelAlgHom` cuts produce each Sideward output forest (currently the
-  Sideward contributions are present in `mergeOp` as ε-suppressed terms but
-  are not named individually).
+- Sideward 2(b), 3(a), 3(b): the cuts that produce each Sideward output
+  forest are now identified via §4's `IsSingleEdgeAccessibleCut` and
+  `IsTwoEdgeAccessibleCut` predicates, with realization theorems
+  `mergeOp_sideward_2b/3a/3b{_pair}` (sorry-free as of 0.230.803). The
+  cost-suppression at ε = 0 is in §4.1's `mergeOp_eps_zero_for_sideward_*`
+  (sorry-free as of 0.230.804). What remains for §2.7 NCL: the Sideward
+  *negative* directions (showing each Sideward case violates NCL) require
+  the existential-component-map argument flagged below. The 𝔐_{S,1} case
+  is independently sorry'd.
 
 **Existential weakening of Def 1.6.2.** M-C-B's Φ_0 is the **induced** map
 from root-vertex tracking; ours is existentially quantified over component
@@ -1166,21 +1171,28 @@ with F̂ = ⊔_{i≠a} T_i.
 
 ## Status of this section
 
-This section provides the **type-level substrate and stated theorems** for
-the three Sideward cases. The realization lemmas (Lemma 1.4.4 + 1.4.5) are
-stated with `sorry`'d proofs; the cost-suppression theorems (under MCB §1.5
-Minimal Search ε → 0) are stated with `sorry`'d proofs. Discharging is
-queued; the proof strategy mirrors `mergeOp_pair_residual` (§2.5) but
-selects a different cross-term in the (prim + sum) × (prim + sum) expansion
-of the (T_i, T_j) workspace coproduct.
+**Sorry-free as of 0.230.804.** The realization lemmas (Lemma 1.4.4 + 1.4.5)
+are proven for both the F̂ = ∅ subcase (`*_pair`) and the residual F̂ ≠ ∅
+generalisation (bare name) — the residuals reuse `mergeOp_factor_out_singleton`
+via Multiset induction, parametric in (S, S'). The cost-suppression
+theorems (§4.1) are proven via `comulTreeDel_eps_zero` collapsing the
+ε-weighted coproduct to its primitive part at ε = 0; no Phase 7d
+machinery (residual factor-out) is used since the suppression argument
+is a coproduct-degeneration, not a workspace-induction.
 
-**Why these cuts are not currently identified individually.** Per the
-§2.7 docstring: in the existing `comulDelAlgHom` substrate the Sideward
-contributions are present as ε-suppressed terms in `mergeOp` but are not
-named individually. The first task in discharging the sorrys is to define
-`SidewardCut2b`, `SidewardCut3a`, `SidewardCut3b` predicates picking out
-the specific cuts that produce each Sideward output forest, then connect
-them to the `mergePost ∘ comulDelAlgHom` chain.
+**Cut identification.** The cuts producing Sideward outputs are named
+by the `IsSingleEdgeAccessibleCut T_j β c_β` (cf c_β = {β}) and
+`IsTwoEdgeAccessibleCut T_i α_t β c` (cf c = {α_t, β}) predicates
+defined below. These pick out the surviving cross-term in the
+(prim + sum) × (prim + sum) expansion of `comulDelAlgHom`.
+
+**Scope tightening (vs. MCB Lemma 1.4.4 / 1.4.5 in their full form).**
+The realization theorems all carry uniqueness hypotheses (`h_unique`,
+`h_unique_α`, `h_unique_β`) requiring there be a **unique** cut producing
+the given subforest. MCB's lemmas implicitly sum over all matching cuts
+(eq. (1.3.3)); the unique-witness restriction is a real scope tightening,
+appropriate for the analyst-supplied case where the derivation has a
+canonical extraction. The general multi-witness sum case is queued.
 -/
 
 /-- A `CutShape c_β : CutShape T_j` **identifies an accessible term β** when
@@ -1188,14 +1200,14 @@ them to the `mergePost ∘ comulDelAlgHom` chain.
     from T_j as a subforest. This is the substrate predicate corresponding
     to "β ∈ Acc(T_j)" in MCB §1.4.1, witnessed at the algebraic level by
     the existence of an admissible cut producing β. -/
-def IsSinglAccessibleCut {α : Type*} [DecidableEq α]
+def IsSingleEdgeAccessibleCut {α : Type*} [DecidableEq α]
     (T_j β : TraceTree α Unit) (c_β : CutShape T_j) : Prop :=
   CutShape.cutForest c_β = ({β} : TraceForest α Unit)
 
 instance {α : Type*} [DecidableEq α]
     (T_j β : TraceTree α Unit) (c_β : CutShape T_j) :
-    Decidable (IsSinglAccessibleCut T_j β c_β) := by
-  unfold IsSinglAccessibleCut; infer_instance
+    Decidable (IsSingleEdgeAccessibleCut T_j β c_β) := by
+  unfold IsSingleEdgeAccessibleCut; infer_instance
 
 /-- **Sideward Merge case 2(b) realization, F̂ = ∅ subcase** (M-C-B Lemma
     1.4.4, p. 54). The 2-tree-workspace base case: `mergeOp T_i β` on
@@ -1209,7 +1221,7 @@ instance {α : Type*} [DecidableEq α]
 theorem mergeOp_sideward_2b_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j β T_j_q : TraceTree α Unit)
     (c_β : CutShape T_j)
-    (h_cut : IsSinglAccessibleCut T_j β c_β)
+    (h_cut : IsSingleEdgeAccessibleCut T_j β c_β)
     (h_remainder : CutShape.remainderDeletion c_β = some T_j_q)
     (h_unique : ∀ c : CutShape T_j, c ≠ c_β →
                 CutShape.cutForest c ≠ ({β} : TraceForest α Unit))
@@ -1342,7 +1354,7 @@ theorem mergeOp_sideward_2b_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
 theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j β T_j_q : TraceTree α Unit)
     (c_β : CutShape T_j) (Fhat : TraceForest α Unit)
-    (h_cut : IsSinglAccessibleCut T_j β c_β)
+    (h_cut : IsSingleEdgeAccessibleCut T_j β c_β)
     (h_remainder : CutShape.remainderDeletion c_β = some T_j_q)
     (h_unique : ∀ c : CutShape T_j, c ≠ c_β →
                 CutShape.cutForest c ≠ ({β} : TraceForest α Unit))
@@ -1388,8 +1400,8 @@ theorem mergeOp_sideward_2b {R : Type*} [CommSemiring R] {α : Type*} [Decidable
 theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j α_t β T_i_q T_j_q : TraceTree α Unit)
     (c_α : CutShape T_i) (c_β : CutShape T_j)
-    (h_cut_α : IsSinglAccessibleCut T_i α_t c_α)
-    (h_cut_β : IsSinglAccessibleCut T_j β c_β)
+    (h_cut_α : IsSingleEdgeAccessibleCut T_i α_t c_α)
+    (h_cut_β : IsSingleEdgeAccessibleCut T_j β c_β)
     (h_remainder_α : CutShape.remainderDeletion c_α = some T_i_q)
     (h_remainder_β : CutShape.remainderDeletion c_β = some T_j_q)
     (h_unique_α : ∀ c : CutShape T_i, c ≠ c_α →
@@ -1581,8 +1593,8 @@ theorem mergeOp_sideward_3b_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
 theorem mergeOp_sideward_3b {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     (T_i T_j α_t β T_i_q T_j_q : TraceTree α Unit)
     (c_α : CutShape T_i) (c_β : CutShape T_j) (Fhat : TraceForest α Unit)
-    (h_cut_α : IsSinglAccessibleCut T_i α_t c_α)
-    (h_cut_β : IsSinglAccessibleCut T_j β c_β)
+    (h_cut_α : IsSingleEdgeAccessibleCut T_i α_t c_α)
+    (h_cut_β : IsSingleEdgeAccessibleCut T_j β c_β)
     (h_remainder_α : CutShape.remainderDeletion c_α = some T_i_q)
     (h_remainder_β : CutShape.remainderDeletion c_β = some T_j_q)
     (h_unique_α : ∀ c : CutShape T_i, c ≠ c_α →
@@ -1674,7 +1686,8 @@ theorem mergeOp_sideward_3a_pair {R : Type*} [CommSemiring R] {α : Type*} [Deci
     (h_unique : ∀ c' : CutShape T_i, c' ≠ c →
                 CutShape.cutForest c' ≠ ({α_t, β} : TraceForest α Unit))
     (h_α_ne_Ti : α_t ≠ T_i)
-    (h_β_ne_Ti : β ≠ T_i) :
+    (h_β_ne_Ti : β ≠ T_i)
+    (_h_α_ne_β : α_t ≠ β) :
     mergeOp (R := R) α_t β (forestToHc ({T_i} : TraceForest α Unit))
       = forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
         * forestToHc (R := R) ({T_i_q} : TraceForest α Unit) := by
@@ -1735,6 +1748,7 @@ theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R] {α : Type*} [Decidable
                 CutShape.cutForest c' ≠ ({α_t, β} : TraceForest α Unit))
     (h_α_ne_Ti : α_t ≠ T_i)
     (h_β_ne_Ti : β ≠ T_i)
+    (h_α_ne_β : α_t ≠ β)
     (h_F_disjoint : MergeTargetFreeWorkspace α_t β Fhat) :
     mergeOp (R := R) α_t β
         (forestToHc (({T_i} : TraceForest α Unit) + Fhat))
@@ -1743,7 +1757,7 @@ theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R] {α : Type*} [Decidable
   | empty =>
     rw [add_zero, add_zero]
     have h_pair := mergeOp_sideward_3a_pair (R := R)
-      T_i α_t β T_i_q c h_cut h_remainder h_unique h_α_ne_Ti h_β_ne_Ti
+      T_i α_t β T_i_q c h_cut h_remainder h_unique h_α_ne_Ti h_β_ne_Ti h_α_ne_β
     rw [h_pair]
     rw [show forestToHc (R := R) ({.node α_t β} : TraceForest α Unit)
             * forestToHc (R := R) ({T_i_q} : TraceForest α Unit)
@@ -1768,26 +1782,41 @@ theorem mergeOp_sideward_3a {R : Type*} [CommSemiring R] {α : Type*} [Decidable
     rw [mergeOp_factor_out_singleton hT]
     exact congrArg (forestToHc (R := R) ({T} : TraceForest α Unit) * ·) ih'
 
-/-! ## §4.1: Cost-suppression theorems (sorry'd; queued)
+/-! ## §4.1: Cost-suppression theorems (sorry-free as of 0.230.804)
 
-Per MCB §1.5 (Minimal Search via ε-weighted derivation cost, eq. 1.5.4-1.5.5,
-pp. 58-59), Sideward configurations are *suppressed* in the ε → 0 limit
-because the cost of extracting an accessible term at depth d carries weight
-ε^d, which dominates the EM cost (= ε^0 = 1) at ε < 1.
+Per MCB §1.5 (Minimal Search via ε-weighted derivation cost — rules 1-5
+of §1.5.2 with eq. (1.5.1)-(1.5.2), pp. 59-60), Sideward configurations
+are *subdominant and suppressed* in the ε → 0 limit because the cost of
+extracting an accessible term at depth d carries weight ε^d, which goes
+to 0 strictly faster than the EM cost (= ε^0 = 1) for d > 0.
 
 For Sideward 2(b), the depth d > 0 of β inside T_j gives ε^d → 0.
 For Sideward 3(a), 3(b), both α and β at depth ≥ 1 give ε^{d_α+d_β} → 0.
 For IM (case 2(a)), the depth d cancels with the quotient operation's
 weight ε^{-d}, so the leading-order term survives at ε^0 = 1.
 
-The cost-suppression theorems below mirror Phase 7d's `mergeOp_eps_zero_*`
-results (§2.6) but for Sideward outputs. They state that at ε = 0, the
-Sideward contributions vanish, leaving only the EM and IM outputs.
+The cost-suppression theorems below state that **at literal ε = 0**, the
+Sideward outputs are zero. Note: this is *pointwise at ε = 0*, not a
+limit theorem — but the two coincide for d > 0 because `0^d = 0` for
+d > 0. The proof mechanism: at ε = 0, `comulTreeDel_eps 0 T` collapses
+to the primitive part `(T ⊗ 1) + (1 ⊗ T)` (cuts vanish from the
+ε-weighted coproduct); no primitive cross-term has LEFT-channel forest
+matching the Sideward target.
 
-Stated as `sorry`'d for now; the proof requires (a) identifying the
-specific Sideward cuts via the §4 predicates above, (b) connecting them
-to the ε-weighted `mergeOp_eps`, and (c) showing the depth-d weight
-becomes 0 at ε = 0. -/
+**Caveat — NCL is needed for IM-vs-Sideward 2(b)** (MCB Remark 1.6.9, p. 71):
+"the Sideward Merge of type 2(b) cannot be distinguished from Internal
+Merge, solely on the basis of the size measures of Definition 1.2.2".
+Minimal Search alone (this section) is necessary but not sufficient;
+the No Complexity Loss principle (§2.7 above, Prop 1.6.10) is what
+formally distinguishes IM from Sideward 2(b).
+
+**MCB Prop 1.5.1** (book p. 60) is the anchor: bullet 3 states "in the
+limit ε → 0, only derivations in which all the Merge operations are
+Internal Merge and External Merge remain." The theorems below implement
+the *negative direction* (Sideward → 0); the positive direction
+(IM survives at weight 1) is queued as Phase 7g — requires extending
+the ε-weighted substrate with rule 2's negative-depth weight on the
+right channel (`ε^{-d_v}` on `T/T_v`). -/
 
 /-- **Cost-suppression for Sideward 2(b)** (MCB §1.5.3 + §1.4.5).
     At ε = 0, applying `mergeOp_eps 0 T_i β` to the workspace
@@ -1800,7 +1829,7 @@ becomes 0 at ε = 0. -/
     No primitive cross-term of (prim T_i) × (prim T_j) has LEFT-channel
     forest equal to `{T_i, β}` (since β ∉ {T_i, T_j} when β ≠ T_i and
     β ≠ T_j); `mergePost` annihilates all four. -/
-theorem mergeOp_eps_zero_kills_sideward_2b {R : Type*} [CommSemiring R]
+theorem mergeOp_eps_zero_for_sideward_2b {R : Type*} [CommSemiring R]
     {α : Type*} [DecidableEq α]
     (T_i T_j β : TraceTree α Unit)
     (h_β_ne_Ti : β ≠ T_i)
@@ -1888,7 +1917,7 @@ theorem mergeOp_eps_zero_kills_sideward_2b {R : Type*} [CommSemiring R]
     **0**. Same reasoning: at ε = 0 only the primitive part of
     `comulTreeDel_eps 0 T_i = (T_i ⊗ 1) + (1 ⊗ T_i)` survives; neither
     primitive contributes LEFT = {α_t, β}. -/
-theorem mergeOp_eps_zero_kills_sideward_3a {R : Type*} [CommSemiring R]
+theorem mergeOp_eps_zero_for_sideward_3a {R : Type*} [CommSemiring R]
     {α : Type*} [DecidableEq α]
     (T_i α_t β : TraceTree α Unit)
     (h_α_ne_Ti : α_t ≠ T_i)
@@ -1938,7 +1967,7 @@ theorem mergeOp_eps_zero_kills_sideward_3a {R : Type*} [CommSemiring R]
     `{T_i, T_j}` where α_t ∈ Acc(T_i), β ∈ Acc(T_j) yields **0**. Same
     reasoning as 2(b): only primitive parts survive at ε = 0, and no
     primitive cross-term has LEFT = {α_t, β}. -/
-theorem mergeOp_eps_zero_kills_sideward_3b {R : Type*} [CommSemiring R]
+theorem mergeOp_eps_zero_for_sideward_3b {R : Type*} [CommSemiring R]
     {α : Type*} [DecidableEq α]
     (T_i T_j α_t β : TraceTree α Unit)
     (h_α_ne_Ti : α_t ≠ T_i)
