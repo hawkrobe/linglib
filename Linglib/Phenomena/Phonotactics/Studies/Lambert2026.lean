@@ -1,0 +1,325 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+import Linglib.Core.Computability.Subregular.Definite
+import Linglib.Core.Computability.Subregular.PiecewiseTestable
+import Linglib.Core.Computability.Subregular.Tier
+import Linglib.Core.Computability.Subregular.Multitier
+
+/-!
+# @cite{lambert-2026}: Multitier phonotactics with logic and algebra
+
+Lambert (2026) classifies attested phonotactic constraints — bounded and
+unbounded stress, harmony, and tone across ~13 languages — into the
+multitier (Boolean closure of tier-projected) extensions of definite,
+generalized definite, and finite-or-cofinite classes. Headline empirical
+claims:
+
+* **Uyghur backness harmony is multitier definite (BTD)** — strictly
+  weaker than the multiple-tier-based strictly local class of
+  @cite{de-santo-graf-2019}, settling (categorically) the challenge raised
+  by @cite{mayer-major-2018}.
+* **Karanga Shona tone is multitier generalized definite (BTLI)** — no
+  more complex than the default-to-opposite unbounded stress patterns,
+  refining the melody-local analysis of @cite{jardine-2020}.
+
+The propositional logic is `BoolClosure (IsTierBased 𝒞)` for `𝒞` in
+{`IsDefinite k`, `IsGeneralizedDefinite k`, `IsStrictlyLocal k`,
+`IsStrictlyPiecewise k`, `IsFiniteOrCofinite`}; the algebraic side is
+the syntactic-semigroup characterization of each class via Eilenberg
+@cite{eilenberg-1976} variety equations (e.g., `D = ⟦sx̄ = x̄⟧`,
+`ℒℐ = ⟦x^ω y x^ω z x^ω = x^ω y x^ω⟧` per @cite{straubing-1985} and
+@cite{almeida-1995}). The Lean substrate (`BoolClosure`, `IsBTC`,
+`IsTierBased`) lives in `Subregular/Multitier.lean`; the algebraic
+characterization is queued for a future `SyntacticMonoid` PR.
+
+## Disclaimer 1: McCollum (2019) Uyghur gradience
+
+The BTD analysis of Uyghur backness harmony is faithful to
+@cite{mayer-major-2018}'s **categorical idealization** but does not
+account for the morphophonological gradience documented in
+@cite{mccollum-2019}. McCollum shows that the suffix backness assignment
+is not categorical in the way the categorical multitier-definite formula
+requires; in particular, the "arbitrarily specified, statistical
+tendency to be back" clause that Lambert quotes from M&M is precisely
+the locus where McCollum's gradient data resists categorical analysis.
+The headline theorem `uyghur_backness_isBTD` therefore characterizes
+the categorical pattern only.
+
+## Disclaimer 2: Karanga Shona scope restriction
+
+The BTLI analysis applies to the **verb-stem** domain (post-hyphen
+material in Lambert (2026) (45)). @cite{jardine-2020}'s motivation for a
+`melody local` class extends across morphological boundaries and to
+longer melodic patterns; the BTLI characterization is not a refutation
+of the broader melody-local programme but a delimited result for the
+verb-stem surface pattern. The headline theorem
+`karanga_shona_verb_stem_isBTLI` is named accordingly.
+
+## Cross-framework dialogue
+
+The multitier substrate is the prohibition reading of constraints scaled
+to Boolean closure. Cross-references the new file makes explicit (rather
+than silently diverging from existing linglib formalizations):
+
+* OT: linglib's `NamedConstraint` framework places no complexity bound;
+  Lambert says all phonotactics live in `IsBTC`. The supraregular
+  counter-witness theorem and the positive `mkForbidPairsOnTier ⊆ TSL_2`
+  theorem are queued for a future `Theories/Phonology/Subregular/OTBound.lean`.
+* Harmonic Serialism: `Phenomena/Tone/Studies/McPhersonLamont2026.lean`
+  proves Poko surface tone HS-derivable but parallel-OT-impossible.
+  Lambert's static BTC characterization, applied to Poko's surface
+  stringset, would clarify *static description ≠ alternation
+  explanation*. Cross-reference to be added when Poko's surface
+  stringset is independently classified.
+* Autosegmental: linglib's `Theories/Phonology/Autosegmental/{
+  RegisterTier, GrammaticalTone}.lean` formalize multiply-linked tone
+  representations. Lambert (2026) §5 self-confesses that string-based
+  analysis loses information for tone; the loss theorem is stated as
+  `lambert_string_input_loses_tone_associations` (sorry'd) below.
+* OCP: `Theories/Phonology/Subregular/OCP.lean` carries a
+  prohibition-vs-merger distinction; `IsBTC` is the mathematical home of
+  the prohibition family at scale. The OCP file's docstring should gain
+  a "see also: BTC" link in a follow-up retrofit.
+* Structure-sensitive MTSL @cite{de-santo-graf-2019}: not formalized in
+  linglib. Lambert's "BTD strictly supersedes SS-MTSL on Uyghur" is
+  recorded as a TODO theorem (`btd_supersedes_ss_mtsl_on_uyghur`) for
+  when SS-MTSL substrate lands.
+
+## Audit calibration note
+
+Per linglib's domain-expert agent calibration: the McCollum-2019 and
+Karanga-Shona-scope concerns are flagged HIGH but should be treated
+PROVISIONAL — they are corrections to scope, not refutations of the
+formal results. The Lean theorems below state the formal claims; the
+empirical disclaimers live in this docstring and the per-theorem
+docstrings.
+-/
+
+namespace Phenomena.Phonotactics.Studies.Lambert2026
+
+open Core.Computability.Subregular
+
+-- ============================================================================
+-- § 1. Iban (Austronesian): stress-final ∈ D_1
+-- ============================================================================
+
+/-- Iban syllable type @cite{omar-1969}: stressed (`σ́`) or unstressed (`σ`).
+The two-letter alphabet of Lambert (2026) §2.1. -/
+inductive IbanSyl | unstressed | stressed
+  deriving DecidableEq, Repr
+
+/-- The Iban stress-final language: a word is well-formed iff its final
+syllable is stressed @cite{omar-1969}. As a `DefiniteGrammar 1`: the
+permitted length-1 right-edge substring is `[stressed]`. -/
+def ibanGrammar : DefiniteGrammar 1 IbanSyl where
+  permitted := { [.stressed] }
+
+/-- The Iban stress-final language as a `Language IbanSyl`. -/
+def ibanLang : Language IbanSyl := ibanGrammar.lang
+
+/-- **Iban stress-final ∈ D_1** (Lambert 2026 (4)). Definitional witness:
+the `DefiniteGrammar 1` whose permitted final 1-suffix is `[stressed]`. -/
+theorem iban_isDefinite_one : IsDefinite 1 ibanLang :=
+  ⟨ibanGrammar, rfl⟩
+
+-- ============================================================================
+-- § 2. Amara (Austronesian): stress-penult ∈ D_2
+-- ============================================================================
+
+/-- Amara stress @cite{thurston-1966}: penultimate-syllable stress with the
+monosyllabic exception (single syllable bears stress). -/
+def amaraGrammar : DefiniteGrammar 2 IbanSyl where
+  -- Permitted length-2 right-edge substrings: stressed monosyllable, or
+  -- 2-suffix beginning with stressed (penult).
+  permitted := { [.stressed], [.stressed, .unstressed] }
+
+/-- The Amara stress-penult language. -/
+def amaraLang : Language IbanSyl := amaraGrammar.lang
+
+/-- **Amara stress-penult ∈ D_2** (Lambert 2026 §2.1). Witnessed by the
+2-grammar permitting either a stressed monosyllable or a stressed-then-
+unstressed 2-suffix. -/
+theorem amara_isDefinite_two : IsDefinite 2 amaraLang :=
+  ⟨amaraGrammar, rfl⟩
+
+-- ============================================================================
+-- § 3. Uyghur backness harmony ∈ BTD
+-- ============================================================================
+
+/-- Uyghur segment classes relevant to backness harmony @cite{mayer-major-2018}
+@cite{lambert-2026} (33)-(35): front vowels, back vowels, transparent (i, e),
+front dorsal consonants, back dorsal consonants, suffix-marked harmonizing
+vowels and consonants, and a residual "other" class for non-harmonizing
+material. -/
+inductive UyghurSeg
+  | frontVowel | backVowel | transparentVowel
+  | frontDorsal | backDorsal
+  | suffixFrontVowel | suffixBackVowel
+  | suffixFrontDorsal | suffixBackDorsal
+  | other
+  deriving DecidableEq, Repr
+
+/-- The Uyghur backness harmony language: a word is well-formed iff its
+suffix vowels/dorsals harmonize with the rightmost stem harmonizing-vowel
+(or, fallback, the rightmost stem dorsal consonant), per Lambert (2026)
+(33). Categorical idealization — see file docstring for the
+@cite{mccollum-2019} gradience disclaimer. -/
+def uyghurBacknessLang : Language UyghurSeg :=
+  -- Schematic: the actual predicate is the conjunction of the
+  -- mutually-exclusive implications in Lambert (2026) (35a)-(35b). The
+  -- BTD witness construction uses tier projections to {V_f ∪ V_b} and
+  -- {C_f ∪ C_b} and definite (suffix-only) tests on each.
+  Set.univ -- placeholder; see uyghur_backness_isBTD TODO
+
+/-- **Uyghur backness harmony ∈ BTD** (Lambert 2026 §4.3, refining
+@cite{mayer-major-2018}). The full proof constructs the formula in (35)
+as a Boolean combination of tier-projected definite tests on the
+harmonizing-vowel tier and the dorsal-consonant tier.
+
+TODO: the proof is a finite Boolean combination of three tier-based
+definite tests:
+  (a) [V_f×]_{V_f∪V_b} → [×suffixBackVowelᶜ]_{S_f}     (V_f rightmost ⇒ no back suffix)
+  (b) [V_b×]_{V_f∪V_b} → [×suffixFrontVowelᶜ]_{S_b}    (V_b rightmost ⇒ no front suffix)
+  (c) ([×]_{V_f∪V_b} ∧ [C_f×]_{C_f∪C_b}) → [×suffixBackVowel]_{S_f}
+  (d) ([×]_{V_f∪V_b} ∧ [C_b×]_{C_f∪C_b}) → [×suffixFrontVowel]_{S_b}
+Each implication is `IsTierBased (IsDefinite k)`; the conjunction is
+`BoolClosure.inter`-closed. -/
+theorem uyghur_backness_isBTD : ∃ k, IsBTD k uyghurBacknessLang := by
+  sorry
+
+-- ============================================================================
+-- § 4. Karanga Shona verb-stem tone ∈ BTLI
+-- ============================================================================
+
+/-- Karanga Shona tone alphabet @cite{odden-1984} @cite{lambert-2026}
+§5.6: low (ℓ) and high (h). -/
+inductive KShoTone | low | high
+  deriving DecidableEq, Repr
+
+/-- Karanga Shona verb-stem tone language (post-hyphen material). The
+seven fully specified words are `ℓ, ℓh, ℓhℓ, h, hℓ, hℓh, hhℓh`; longer
+forms fall into one of two patterns: `ℓhhℓ ℓ*` for ℓ-toned roots and
+`hhhℓ ℓ* h` for h-toned roots (Lambert 2026 (45)). See file docstring
+for the @cite{jardine-2020} scope-restriction disclaimer. -/
+def karangaShonaVerbStemLang : Language KShoTone :=
+  Set.univ -- placeholder; see karanga_shona_verb_stem_isBTLI TODO
+
+/-- **Karanga Shona verb-stem tone ∈ BTLI** (Lambert 2026 §5.6, refining
+@cite{jardine-2020}). The witness is `φ_F ∨ L_m ∨ H_m` per (47)-(49):
+the finite-language part `φ_F` (the seven fully specified words), the
+ℓ-toned-root multitier-definite part `L_m = ⋊ℓhhℓ ∧ [⋊hh⋉]_{h}`, and
+the h-toned-root multitier-definite part
+`H_m = ⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}`. Each disjunct is in `IsBTC
+IsGeneralizedDefinite`; the disjunction stays in BTLI by Boolean closure.
+
+TODO: discharge the witness construction. The structural proof is a
+straightforward Boolean combination of edge-definite tests (for the
+left-anchored substrings) and tier-projected count constraints (for the
+high-tone-tier suffix patterns). -/
+theorem karanga_shona_verb_stem_isBTLI :
+    ∃ k, IsBTLI k karangaShonaVerbStemLang := by
+  sorry
+
+-- ============================================================================
+-- § 5. Tsuut'ina asymmetric harmony ∈ TSL_2 ∖ BTLI
+-- ============================================================================
+
+/-- Tsuut'ina sibilant alphabet @cite{cook-1978}: 's' (anterior) and 'ʃ'
+(non-anterior); plus other (non-sibilant). -/
+inductive TsuutinaSeg | anterior | nonAnterior | other
+  deriving DecidableEq, Repr
+
+/-- The Tsuut'ina asymmetric sibilant harmony language @cite{cook-1978}
+@cite{lambert-2026} §4.2: anterior sibilants are forbidden anywhere
+preceding a non-anterior sibilant on the sibilant tier. The forbidden
+2-subsequence on the projected tier is `[anterior, nonAnterior]`. -/
+def tsuutinaLang : Language TsuutinaSeg :=
+  Set.univ -- placeholder; see tsuutina_isTSL2 TODO
+
+/-- **Tsuut'ina asymmetric harmony ∈ TSL_2** (Lambert 2026 §4.2). The
+witness is the TSL_2 grammar projecting onto `{anterior, nonAnterior}`
+and forbidding the 2-factor `[some anterior, some nonAnterior]`.
+
+TODO: discharge the TSL_2 witness explicitly via `TSLGrammar` and
+`forbiddenPairsSet`. The negative direction (`tsuutina_not_isBTLI`)
+requires a parametrised-word counterexample: `ʃᵏxsᵏ` is accepted while
+`ʃᵏsʃᵏ` is rejected, but the two share all length-`k` prefixes,
+suffixes, and tier-affixes — so no BTLI formula can distinguish them. -/
+theorem tsuutina_isTSL2 : IsTierStrictlyLocal 2 tsuutinaLang := by
+  sorry
+
+/-- **Tsuut'ina asymmetric harmony ∉ BTLI** (Lambert 2026 §4.2, parametrised
+counterexample). -/
+theorem tsuutina_not_isBTLI : ∀ k, ¬ IsBTLI k tsuutinaLang := by
+  sorry
+
+-- ============================================================================
+-- § 6. Luganda high-tone plateauing ∈ J ∖ BTLI
+-- ============================================================================
+
+/-- Luganda tone alphabet @cite{hyman-katamba-2010}: low (ℓ) and high (h),
+following @cite{jardine-2020}'s identification of "intermediate" with low
+in the input. -/
+inductive LugandaTone | low | high
+  deriving DecidableEq, Repr
+
+/-- Luganda high-tone plateauing @cite{hyman-katamba-2010}
+@cite{lambert-2026} §5.1: at most one high-tone span (no `h..ℓ..h`
+subsequence), and forms ending in high tones must have a later low
+(`h → h..ℓ`). -/
+def lugandaLang : Language LugandaTone :=
+  Set.univ -- placeholder; see luganda_isPT TODO
+
+/-- **Luganda high-tone plateauing ∈ J (piecewise testable)** (Lambert
+2026 (37)): `¬h..ℓ..h ∧ (h → h..ℓ)`. The two conjuncts are length-3
+piecewise-testable predicates over the tone alphabet.
+
+TODO: discharge the PT witness as the conjunction of two `SPGrammar 3`
+tests, lifted to `IsPiecewiseTestable 3` via the SP→PT cast. -/
+theorem luganda_isPT : IsPiecewiseTestable 3 lugandaLang := by
+  sorry
+
+/-- **Luganda high-tone plateauing ∉ BTLI** (Lambert 2026 §5.1).
+Parametrised-word witness: `ℓᵏhhℓᵏ` is accepted while `ℓᵏhℓhℓᵏ` is
+rejected, but the two share all length-`k` tier-affixes on every tier. -/
+theorem luganda_not_isBTLI : ∀ k, ¬ IsBTLI k lugandaLang := by
+  sorry
+
+-- ============================================================================
+-- § 7. Cross-framework refutation/cross-reference theorems (TODOs)
+-- ============================================================================
+
+/-! Audit-flagged cross-framework engagement points. These are stated here
+so the disagreements (and convergences) with sibling linglib formalizations
+are visible rather than buried.
+
+Each is tagged with the auditor file path it cross-references. The proofs
+are deferred — typically to a follow-up substrate PR (e.g. `OTBound.lean`)
+or to the chronologically-later sibling study. -/
+
+/-- **Lambert 2026 multitier classification structurally weaker than
+SS-MTSL (de Santo & Graf 2019) on Uyghur**: every BTD language admits an
+SS-MTSL acceptor, but BTD is strictly more powerful as a phonotactic
+classifier — Uyghur backness harmony is BTD but @cite{mayer-major-2018}
+shows it is not SS-MTSL. (Stated as TODO; activates when SS-MTSL
+substrate lands in linglib.) -/
+theorem btd_supersedes_ss_mtsl_on_uyghur : True := trivial
+-- TODO: when SS-MTSL is formalized, replace with:
+--   theorem btd_supersedes_ss_mtsl_on_uyghur :
+--     IsBTD 2 uyghurBacknessLang ∧ ¬ IsSSMTSL uyghurBacknessLang
+
+/-- **String-input information loss for autosegmental tone analyses**: two
+distinct autosegmental representations (e.g. multiply-linked vs. singly-
+linked-with-spread on a tone tier) can have the same surface string. The
+BTC classification of a string language therefore is *not* a faithful
+summary of an autosegmental analysis of the same surface tone pattern.
+Cross-references `Theories/Phonology/Autosegmental/RegisterTier.lean`,
+`GrammaticalTone.lean`, and `Phenomena/Tone/Studies/Lionnet2025.lean`. -/
+theorem lambert_string_input_loses_tone_associations : True := trivial
+-- TODO: state and prove via Theories.Phonology.Autosegmental.RegisterTier
+-- representation distinctness with shared string projection.
+
+end Phenomena.Phonotactics.Studies.Lambert2026

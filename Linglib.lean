@@ -1818,6 +1818,7 @@ import Linglib.Phenomena.Phonology.Studies.ZurawHayes2017
 import Linglib.Phenomena.Reduplication.Studies.McCarthyPrince1995
 import Linglib.Phenomena.Phonology.Studies.SiptarTorkenczy2000
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
+import Linglib.Phenomena.Phonotactics.Studies.Lambert2026
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 import Linglib.Phenomena.Tone.Studies.Lionnet2025
 import Linglib.Phenomena.Tone.Studies.AkinboFwangwar2026
