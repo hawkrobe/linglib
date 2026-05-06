@@ -252,7 +252,9 @@ import Linglib.Core.Computability.Subregular.StrictlyLocal
 import Linglib.Core.Computability.Subregular.LocallyTestable
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.StrictlyPiecewise
+import Linglib.Core.Computability.Subregular.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Definite
+import Linglib.Core.Computability.Subregular.Multitier
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
 import Linglib.Core.Direction
 import Linglib.Core.Computability.Subregular.Function.ISL
@@ -2142,7 +2144,6 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 import Linglib.Phenomena.ArgumentStructure.Studies.Bruening2021
 import Linglib.Phenomena.ArgumentStructure.Studies.Newman2024
-import Linglib.Theories.Syntax.Minimalist.Algebra
 import Linglib.Theories.Syntax.Minimalist.Merge.Defs
 import Linglib.Theories.Syntax.Minimalist.Merge.Basic
 import Linglib.Theories.Syntax.Minimalist.Merge.External
