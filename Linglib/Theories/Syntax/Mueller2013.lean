@@ -116,19 +116,42 @@ theorem ccg_bapp_result_category (x y : CCG.Cat) :
     CCG.backwardApp y (CCG.Cat.lslash x y) = some x := by
   simp [CCG.backwardApp]
 
-/-- Minimalist labeling (MCB §1.13.6 / §1.15): under any head function
-    `h`, when α selects β (i.e., the heads agree on selectional vs
-    categorial features), the head of `{α, β}` agrees with the head of
-    α. Trivially true once both sides go through `h.head`. -/
+/-- A head function is **selection-respecting** at `(a, b)` iff when
+    `a` selects `b` (the head's outerSel matches `b`'s outerCat), the
+    marking places the projecting head on the left daughter. This is
+    the explicit MCB-aligned encoding of "selector projects": the
+    legacy assumption is no longer baked into `HeadFunction` itself,
+    but reappears as a property a particular `h` may or may not
+    satisfy. -/
+def IsSelectionRespectingAt
+    (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject) : Prop :=
+  Minimalist.selects h a b → h.marking.isLeftHead (.node a b) = true
+
+/-- Minimalist labeling (MCB §1.13.6 / §1.15): under a selection-respecting
+    head function `h`, when α selects β, the head of `{α, β}` agrees with
+    the head of α. The legacy `selector projects` claim restated MCB-
+    natively: it is no longer a property of labeling, but a property of
+    a chosen head function — namely those satisfying
+    `IsSelectionRespectingAt`. -/
 theorem min_selector_projects
     (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject)
-    (_hs : Minimalist.selects h a b)
-    (hL : h.marking.isLeftHead (.node a b) = true) :
+    (hs : Minimalist.selects h a b)
+    (h_resp : IsSelectionRespectingAt h a b) :
     Minimalist.HeadFunction.head h (Minimalist.merge a b) =
     Minimalist.HeadFunction.head h a := by
   show (if h.marking.isLeftHead (.node a b) then h.marking.headAt a
         else h.marking.headAt b) = h.marking.headAt a
-  rw [if_pos hL]
+  rw [if_pos (h_resp hs)]
+
+/-- The substantive refutation theorem MCB's framework now makes
+    statable: there exist a concrete LIToken pair and a `HeadFunction`
+    whose marking contradicts the legacy selector-projects assumption.
+    Formalising MCB's "selection ≠ projection" position at the
+    theorem level. Deferred to the next session — requires a concrete
+    pair of leaves with non-trivial `outerSel` and a `rightSpine`-
+    style marking. -/
+theorem selection_marking_independence_refutation_TODO :
+    True := trivial
 
 /-- Labeling convergence across theories (MCB-aligned formulation).
 

@@ -12,7 +12,7 @@ is parametric over the head function chosen by the analyst.
 This file is the **single source of truth** for Minimalist labeling.
 The pre-MCB selection-driven algorithm (`getCategory`, `label`,
 `labelCat`, `selects`, `sameLabel`, `projectsIn`, `isMaximalIn`,
-`isHeadIn`, `isPhraseIn`, etc.) was deleted at 0.230.X — it predated
+`isHeadIn`, `isPhraseIn`, etc.) was deleted at 0.230.798 — it predated
 both linglib's MCB substrate and the @cite{marcolli-chomsky-berwick-2025}
 formalisation, and bridged-via-`HeadFunction.selectionBased`
 preservation was rejected as perpetuating the legacy mindset (selection
@@ -57,8 +57,15 @@ open Minimalist (HeadFunction Cat SyntacticObject LIToken)
     their own `LIToken`'s category directly, not a "label" in the
     head-function sense) and when `T ∉ Dom(h)`.
 
-    Implements @cite{marcolli-chomsky-berwick-2025} §1.15.2 case 1
-    (default): `h_T(v).outerCat` for non-leaf `v` in `T ∈ Dom(h)`. -/
+    Implements @cite{marcolli-chomsky-berwick-2025} §1.15 Labeling
+    Algorithm in its default case: the projecting head's outer
+    category. UNVERIFIED: the precise case structure (1-4 vs (i)-(iv)
+    vs Chomsky 2013-style cases) needs to be checked against MCB
+    Definition 1.15.2 in the published book; the docstring previously
+    described "case 1" without page-level verification. The
+    shared-feature fallback (corresponding to Chomsky 2013's {XP, YP}
+    sharing-of-φ) is not yet implemented; deferred to next session
+    along with the case-numbering verification. -/
 def labelVertex (h : HeadFunction) (T v : SyntacticObject) : Option Cat :=
   if h.Dom T then
     match v with
@@ -154,19 +161,42 @@ instance (h : HeadFunction) (T x : SyntacticObject) :
     Decidable (projectsAt h T x) := by
   unfold projectsAt; infer_instance
 
-/-- `x` is **+max(imal)** in `T` under `h`: `x ⊆ T` and `x` does not
-    project at any strict ancestor in `T`. The classic MCB-style
-    notion of a maximal projection (@cite{marcolli-chomsky-berwick-2025}
-    Lemma 1.14.1's terminus of a γ_ℓ projection path).
+/-- `x` is **+max(imal)** in `T` under `h`: `x ⊆ T` and no strict
+    ancestor of `x` in `T` carries the same label. A linglib-formulated
+    "maximal projection" predicate; not yet proved equivalent to
+    @cite{marcolli-chomsky-berwick-2025} Lemma 1.14.1's terminus of a
+    γ_ℓ projection path (which would require the §1.14 algebraic
+    substrate).
 
-    Bounded over `T.subtrees` so the predicate is decidable. -/
+    Bounded over `T.subtrees` so the predicate is decidable. The
+    implication form `z ≠ x → ¬ sameLabelAt` (rather than the
+    disjunction `¬ sameLabelAt ∨ z = x`) reads as "for every strict
+    ancestor, labels disagree" — the standard mathlib idiom. -/
 def isMaximalAt (h : HeadFunction) (T x : SyntacticObject) : Prop :=
   containsOrEq T x ∧
-    ∀ z ∈ T.subtrees, contains z x → ¬ sameLabelAt h T x z ∨ z = x
+    ∀ z ∈ T.subtrees, contains z x → z ≠ x → ¬ sameLabelAt h T x z
 
 instance (h : HeadFunction) (T x : SyntacticObject) :
     Decidable (isMaximalAt h T x) := by
   unfold isMaximalAt; infer_instance
+
+/-- `isMaximalAt`'s bounded `∀ z ∈ T.subtrees` quantifier is equivalent
+    to the textbook unbounded `∀ z, isTermOf z T → ...` form. The
+    bounded form is taken as the canonical definition for decidability;
+    this lemma anchors the soundness against the unbounded statement.
+
+    Restored from the pre-rewrite `isMaximalIn_iff_bounded` audit
+    trail. -/
+theorem isMaximalAt_iff_unbounded (h : HeadFunction) (T x : SyntacticObject) :
+    isMaximalAt h T x ↔
+      containsOrEq T x ∧
+        ∀ z, isTermOf z T → contains z x → z ≠ x → ¬ sameLabelAt h T x z := by
+  refine and_congr_right (fun _ => ?_)
+  constructor
+  · intro h_bounded z hzT hcontains hne
+    exact h_bounded z ((isTermOf_iff_mem_subtrees T z).mp hzT) hcontains hne
+  · intro h_unbounded z hz hcontains hne
+    exact h_unbounded z ((isTermOf_iff_mem_subtrees T z).mpr hz) hcontains hne
 
 /-- `x` is **+min(imal)** in `T` under `h`: `x` is a leaf in `T`. (MCB
     treats heads as leaves; `+min` adds the membership requirement.) -/
@@ -185,12 +215,10 @@ instance (h : HeadFunction) (T x : SyntacticObject) :
     Decidable (isHeadIn h T x) := by
   unfold isHeadIn; infer_instance
 
-/-- A **phrase** in `T`: `+max`. MCB §1.15 classification carried over. -/
-def isPhraseIn (h : HeadFunction) (T x : SyntacticObject) : Prop :=
+/-- A **phrase** in `T`: `+max`. MCB §1.15 classification carried over.
+    `abbrev` of `isMaximalAt` so the two names unify in elaboration —
+    the legacy file separated them but the semantic content is identical. -/
+abbrev isPhraseIn (h : HeadFunction) (T x : SyntacticObject) : Prop :=
   isMaximalAt h T x
-
-instance (h : HeadFunction) (T x : SyntacticObject) :
-    Decidable (isPhraseIn h T x) := by
-  unfold isPhraseIn; infer_instance
 
 end Minimalist.Labeling

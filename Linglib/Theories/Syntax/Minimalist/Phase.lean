@@ -16,11 +16,18 @@ Formalization of derivational phases following @cite{chomsky-2000},
 ## Design
 
 `isPhaseHeadOf c so` is derived from `SyntacticObject.outerCat`, which
-returns the leftmost leaf's outer category — equivalent to
-`(HeadFunction.leftSpine.headAt so).item.outerCat` per
-@cite{marcolli-chomsky-berwick-2025} §1.13 (head function = leftSpine).
-For a study with a non-default head function, lift via
-`Minimalist.Labeling.labelRoot h so`.
+returns the leftmost leaf's outer category — provably equal to
+`(HeadFunction.leftSpine.headAt so).item.outerCat` (this is a linglib
+substrate identity, not MCB content: `leftSpine` is a linglib name for
+the always-pick-left-daughter head function; @cite{marcolli-chomsky-berwick-2025}
+§1.13 introduces head functions in general but does not single this
+one out). The leftmost-leaf shortcut is a left-headed-only convenience
+suitable for English-style analyses. For a study with a non-default
+head function (e.g., a head-final Korean/Japanese phase analysis),
+lift via `Minimalist.Labeling.labelRoot h so` directly with the chosen
+`h : HeadFunction`. A latent trap: any head-final consumer that calls
+`isPhaseHeadOf` will silently misfire — flagged for h-parameterization
+in a future session.
 
 -/
 
