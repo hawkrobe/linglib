@@ -2147,7 +2147,11 @@ import Linglib.Theories.Syntax.Minimalist.Counting
 import Linglib.Theories.Syntax.Minimalist.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalist.Merge.Defs
 import Linglib.Theories.Syntax.Minimalist.Merge.Basic
-import Linglib.Theories.Syntax.Minimalist.Merge.Action
+import Linglib.Theories.Syntax.Minimalist.Merge.Bridge
+import Linglib.Theories.Syntax.Minimalist.Merge.External
+import Linglib.Theories.Syntax.Minimalist.Merge.Internal
+import Linglib.Theories.Syntax.Minimalist.Merge.Sideward
+import Linglib.Theories.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Theories.Syntax.Minimalist.Merge.Phase
 import Linglib.Theories.Syntax.Minimalist.SpellOut
 import Linglib.Theories.Syntax.Minimalist.Linearization.LCA
