@@ -39,6 +39,17 @@ uses `AlgClosure` because the strata are existentially closed; covers
 are the right primitive when the parts must be supplied (anaphoric
 distributivity, contextually-salient partitions).
 
+## Consumer status
+
+This file currently has no Lean `import` consumers — only a docstring
+mention in `Phenomena/Anaphora/Studies/Sternefeld1998.lean`. The
+substrate is structurally sound (the
+@cite{schwarzschild-1996}-`AlgClosure` bridge `algClosure_of_finCover`
+is the natural API any anaphoric-distributivity Studies file would
+consume). Queued: a Studies file landing the Schwarzschild-style
+anaphoric distributivity examples would activate this substrate
+(@cite{champollion-2017} Ch 8 §8.1 on the *Part* operator is the
+natural anchor).
 -/
 
 namespace Semantics.Plurality.Cover
@@ -84,10 +95,9 @@ theorem isCover_pair {α : Type*} [SemilatticeSup α] (x y : α) :
 -- ════════════════════════════════════════════════════
 
 /-- @cite{schwarzschild-1996} *partition*: a cover whose parts are
-    pairwise disjoint. Used by atomic distributivity
-    (@cite{lasersohn-1989}, @cite{schwarzschild-1996} for the special
-    atomic case) where each plural element distributes to a unique
-    cell of the partition.
+    pairwise disjoint. Used by atomic distributivity (the special
+    atomic case of @cite{schwarzschild-1996}) where each plural element
+    distributes to a unique cell of the partition.
 
     "Disjoint" here is meet-bottom; requires the carrier to have a
     `SemilatticeInf` and `OrderBot`. -/

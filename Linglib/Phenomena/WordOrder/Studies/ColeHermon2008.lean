@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Theories.Syntax.Minimalist.Derivation
 import Linglib.Theories.Syntax.Minimalist.Position
+import Linglib.Theories.Syntax.Minimalist.Movement.Remnant
 import Linglib.Fragments.TobaBatak.Basic
 
 /-!
@@ -636,3 +637,44 @@ theorem cross_linguistic_binding_contrast :
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 end ColeHermon2008
+
+-- ============================================================================
+-- § 8: Connection to `Theories/Syntax/Minimalist/Movement/Remnant.lean`
+-- ============================================================================
+
+/-! ### Toba Batak VP-raising as a `RemnantFronting` instance
+
+@cite{cole-hermon-2008}'s VP-raising analysis is one of the canonical
+empirical motivations for remnant-XP movement substrate
+(`Theories/Syntax/Minimalist/Movement/Remnant.lean`). The full §4
+analysis has IO/Adv evacuating before VoiceP raises — making the
+fronted constituent a genuine remnant. The simplified §1 derivation
+formalised above keeps the IO/Adv inside vP for tractability, but the
+core VP-raising mechanism is the same.
+
+Below we register the simplified Toba Batak derivation as a
+`Minimalist.Movement.RemnantFronting` witness. The substrate is then
+*used* — `properRemnant` is decidable on the witness — rather than
+implicitly referenced in prose. -/
+
+open Minimalist.Movement (RemnantFronting properRemnant)
+
+/-- Toba Batak VP-raising as a remnant-fronting witness. In the
+    simplified §1 derivation, no head has evacuated `vp` before it
+    fronts (V stays inside VP, no IO/Adv extraction), so the
+    `evacuatedHeads` list is empty — vacuously a "remnant" in the
+    structural sense, though not a contentful remnant in the §4 sense
+    of evacuated IO/Adv. The full §4 instance would populate
+    `evacuatedHeads` with the IO and adverbials. -/
+def tobaBatakVPRaising_remnant : RemnantFronting :=
+  { frontedXP      := ColeHermon2008.vp
+    evacuatedHeads := []  -- §1 simplification; §4 would have IO/Adv here
+    landingSite    := ColeHermon2008.t_head }
+
+/-- The §1-simplified Toba Batak fronting trivially satisfies
+    `properRemnant`: an empty evacuation list vacuously satisfies
+    the universal "every evacuated head was originally inside the
+    fronted XP". -/
+theorem tobaBatakVPRaising_properRemnant :
+    properRemnant tobaBatakVPRaising_remnant := by
+  intro h hh; cases hh

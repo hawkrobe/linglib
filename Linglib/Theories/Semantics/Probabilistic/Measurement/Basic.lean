@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.Scale
+import Linglib.Theories.Semantics.Entailment.Extremum
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Field.Rat
 
@@ -391,7 +392,8 @@ This is the formal content of Scontras's CARD unification thesis: CARD
 and kilo are the same kind of object, but the proof that their semantics
 agrees with the MIP goes through different lemmas. -/
 
-open Core.Scale (atLeastDeg IsMaxInf)
+open Core.Scale (atLeastDeg)
+open Semantics.Entailment.Extremum (IsMaxInf HasMaxInf)
 
 /-- **Scontras–Kennedy equivalence for dense dimensions.**
 
@@ -407,7 +409,7 @@ This is the genuinely non-trivial hypothesis — it fails for count nouns
 theorem scontras_kennedy_dense {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E)
     (hSurj : Function.Surjective μ.apply) :
     IsMaxInf (atLeastDeg μ.apply) n x ↔ μ.apply x = n :=
-  Core.Scale.isMaxInf_atLeast_iff_eq μ.apply n x hSurj
+  Semantics.Entailment.Extremum.isMaxInf_atLeast_iff_eq μ.apply n x hSurj
 
 /-- **Scontras–Kennedy equivalence for cardinality (discrete).**
 
@@ -419,15 +421,15 @@ identity). -/
 theorem scontras_kennedy_card {E : Type*} (cardFn : E → ℕ) (n : ℕ) (x : E)
     (hSurj : Function.Surjective cardFn) :
     IsMaxInf (atLeastDeg cardFn) n x ↔ cardFn x = n :=
-  Core.Scale.isMaxInf_atLeast_iff_eq cardFn n x hSurj
+  Semantics.Entailment.Extremum.isMaxInf_atLeast_iff_eq cardFn n x hSurj
 
 /-- The MIP always exists for at-least degree properties, regardless of density.
 This is why bare numerals always generate scalar implicatures: the lower-bound
 meaning has a well-defined maximum (the true value), so the MIP can derive
 exactness. Contrast with `moreThanDeg`, where the MIP fails on dense scales. -/
 theorem mip_always_exists_atLeast {E : Type*} (μ : MeasureFn E) (x : E) :
-    Core.Scale.HasMaxInf (atLeastDeg μ.apply) x :=
-  Core.Scale.atLeast_hasMaxInf μ.apply x
+    HasMaxInf (atLeastDeg μ.apply) x :=
+  Semantics.Entailment.Extremum.atLeast_hasMaxInf μ.apply x
 
 -- ============================================================================
 -- § 11. Dimension Typing Theorems

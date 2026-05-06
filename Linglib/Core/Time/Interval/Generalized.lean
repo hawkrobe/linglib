@@ -109,6 +109,35 @@ def toInterval (gi : GInterval Time) : Interval Time where
 @[simp] theorem toOpen_idempotent (gi : GInterval Time) :
     gi.toOpen.toOpen = gi.toOpen := rfl
 
+/-- The closed counterpart of an interval contains its endpoints (definitional). -/
+@[simp] theorem closed_gcontains_start (i : Interval Time) :
+    (closed i).gcontains i.start := ⟨le_refl _, i.valid⟩
+
+@[simp] theorem closed_gcontains_finish (i : Interval Time) :
+    (closed i).gcontains i.finish := ⟨i.valid, le_refl _⟩
+
+/-- A closed interval contained in an open generalized interval forces strict
+    inequalities at both endpoints. The right hypothesis the prior MaxInfo
+    `no_smallest_open_including_closed` had to *assume* (`pts.left < runtime.start`)
+    is *derivable* once openness is enforced structurally — instantiate
+    `gsubinterval` at the closed endpoints and unfold `gcontains`. -/
+theorem gsubinterval_closed_open_strict
+    (rt : Interval Time) (gi : GInterval Time)
+    (h_open : gi.isOpen) (h_sub : (closed rt).gsubinterval gi) :
+    gi.left < rt.start ∧ rt.finish < gi.right := by
+  have h_start := h_sub rt.start (closed_gcontains_start rt)
+  have h_finish := h_sub rt.finish (closed_gcontains_finish rt)
+  obtain ⟨hL, hR⟩ := h_open
+  refine ⟨?_, ?_⟩
+  · -- gi.left < rt.start: from h_start.1 with leftType = .open_
+    have := h_start.1
+    rw [hL] at this
+    exact this
+  · -- rt.finish < gi.right: from h_finish.2 with rightType = .open_
+    have := h_finish.2
+    rw [hR] at this
+    exact this
+
 end GInterval
 
 end Core.Time.Interval

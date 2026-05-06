@@ -34,6 +34,20 @@ nominal A'-extraction from cyclic linearization (@cite{fox-pesetsky-2005}).
 5. **Cross-linguistic variation** (Desa, SI/SM, polite/familiar Madurese)
    reduces to parametric differences in vocabulary items for Voice and *v*.
 
+## PIC mode
+
+@cite{erlewine-sommerlot-2025}'s analysis derives the meN-deletion
+constraint from cyclic linearization alone, without invoking the
+Phase Impenetrability Condition. This positions them at
+`PICStrength.linearizationBound` (per `Theories/Syntax/Minimalist/Phase.lean`):
+no opacity constraint per se, only ordering constraints from
+`SpelloutAndCheck`. Same regime adopted by
+@cite{sande-clem-dabkowski-2026} for Guébie discontinuous harmony,
+@cite{branan-davis-2019} for agreement-edge unlocking, and others.
+The structural diagnostic that the meN-deletion derivation is
+ruled out is precisely *not* a PIC-violation but a Cyclic Linearization
+contradiction — see `men_deletion` below.
+
 ## Formalization strategy
 
 We model each derivation as a sequence of Spell-out domains, where each

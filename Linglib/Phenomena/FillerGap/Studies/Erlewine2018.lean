@@ -3,6 +3,7 @@ import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Typology.Relativization.ExtractionBridge
 import Linglib.Theories.Syntax.Minimalist.Position
 import Linglib.Theories.Syntax.Minimalist.Derivation
+import Linglib.Theories.Syntax.Minimalist.Movement.Remnant
 import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
 
 /-!
@@ -430,5 +431,31 @@ theorem vP_ccommands_subject_erlewine :
 /-- Same VP base in both analyses (stage after first merge). -/
 theorem same_vp :
     tobaBatakVOS.stageAt 1 = erlewineDerivation.stageAt 1 := by decide
+
+-- ============================================================================
+-- § 11: Connection to `Theories/Syntax/Minimalist/Movement/Remnant.lean`
+-- ============================================================================
+
+/-! ### Erlewine's vP-to-Spec,CP fronting as a `RemnantFronting` instance
+
+@cite{erlewine-2018}'s analysis is a *genuine* remnant fronting: the
+subject DP first moves out of vP to Spec,TP (step 5 of
+`erlewineDerivation`), and only then does the remnant vP — now
+containing only the subject trace — front to Spec,CP (step 7).
+
+This is structurally different from @cite{cole-hermon-2008}'s
+analysis: there, the VP fronts with the subject still in vP-internal
+position; under Erlewine's analysis, the subject has evacuated
+*before* the larger constituent fronts. Erlewine's case fits
+`RemnantFronting` more directly. -/
+
+open Minimalist.Movement (RemnantFronting properRemnant) in
+/-- Erlewine's vP-to-Spec,CP fronting as a remnant-fronting witness.
+    The subject DP `n_dakdanakan` evacuates to Spec,TP before the vP
+    fronts to Spec,CP, leaving the trace `mkTrace 0` behind. -/
+def erlewineVPRemnant : RemnantFronting :=
+  { frontedXP      := vP_traced  -- vP with subject trace
+    evacuatedHeads := [n_dakdanakan]  -- subject moved to Spec,TP first
+    landingSite    := c_head_e }
 
 end Phenomena.FillerGap.Studies.Erlewine2018

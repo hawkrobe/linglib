@@ -860,26 +860,40 @@ open Core.Duality (distList)
     = .true` (vacuous super-truth, mathlib's empty-fold convention). -/
 theorem shouldEval_eq_distList (domain : List World) (p : World → Bool)
     (hne : domain ≠ []) :
-    shouldEval domain p = distList domain p := by
+    shouldEval domain p = distList domain (fun w => p w = true) := by
   have hne' : domain.isEmpty = false := by
     cases domain with
     | nil => exact absurd rfl hne
     | cons _ _ => rfl
   unfold shouldEval distList
   rw [hne']
-  cases hap : domain.all p
-  · -- domain.all p = false; case-split on domain.any p
-    cases hany : domain.any p
-    · -- both false: shouldEval should give .false (via all (!p) = true)
-      have h_all_neg : domain.all (fun w => !p w) = true := by
-        rw [List.all_eq_not_any_not]; simp [hany]
-      simp [h_all_neg]
-    · -- all p false, any p true: shouldEval gives .indet
-      have h_all_neg : domain.all (fun w => !p w) = false := by
-        rw [List.all_eq_not_any_not]; simp [hany]
-      simp [h_all_neg]
-  · -- domain.all p = true: both .true
-    rfl
+  by_cases hall : ∀ w ∈ domain, p w = true
+  · -- All true on both sides
+    have h_all_eq : domain.all p = true := List.all_eq_true.mpr hall
+    rw [if_pos hall]; simp [h_all_eq]
+  · -- Not all true; case-split on existence
+    have h_all_eq : domain.all p = false := by
+      rw [Bool.eq_false_iff]
+      intro hc
+      exact hall (List.all_eq_true.mp hc)
+    rw [if_neg hall]
+    by_cases hsome : ∃ w ∈ domain, p w = true
+    · rw [if_pos hsome]
+      have h_any_eq : domain.any p = true := by
+        obtain ⟨w, hw, hpw⟩ := hsome
+        exact List.any_eq_true.mpr ⟨w, hw, hpw⟩
+      have h_all_neg_eq : domain.all (fun w => !p w) = false := by
+        rw [List.all_eq_not_any_not]; simp [h_any_eq]
+      simp [h_all_eq, h_all_neg_eq]
+    · rw [if_neg hsome]
+      have h_any_eq : domain.any p = false := by
+        rw [Bool.eq_false_iff]
+        intro hc
+        obtain ⟨w, hw, hpw⟩ := List.any_eq_true.mp hc
+        exact hsome ⟨w, hw, hpw⟩
+      have h_all_neg_eq : domain.all (fun w => !p w) = true := by
+        rw [List.all_eq_not_any_not]; simp [h_any_eq]
+      simp [h_all_eq, h_all_neg_eq]
 
 /-- `mustEval` is `ofBool ∘ List.all`, confirming must stays bivalent. -/
 theorem mustEval_eq_ofBool (domain : List World) (p : World → Bool) :

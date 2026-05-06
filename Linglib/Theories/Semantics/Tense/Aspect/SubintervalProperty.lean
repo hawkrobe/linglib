@@ -16,8 +16,10 @@ This property is central to the semantics of temporal adverbials
 (@cite{iatridou-zeijlstra-2021}), and the distribution of progressive
 and imperfective aspect crosslinguistically.
 
-Extracted from `MaximalInformativity.lean` because it is a general property
-of event predicates, not specific to any particular analysis.
+Originally extracted from a Rouillard-2026 substrate file (since deleted in
+the 2026-05 rebuild — see `Phenomena/TenseAspect/Studies/Rouillard2026.lean`)
+because it is a general property of event predicates, not specific to any
+particular analysis.
 -/
 
 namespace Semantics.Tense.Aspect.SubintervalProperty

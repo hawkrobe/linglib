@@ -41,7 +41,7 @@ not whether F is overt. See `MovedConstituent`.
 - `Theories.Semantics.Events.SpatialTrace`: PathShape → telicity
 - `Phenomena.AuxiliaryVerbs.Selection`: Dutch *zijn*/*hebben* split
 - `Dendikken1995`: particles as P heads
-- `Datasets.WALS.Features.F85A`: cross-linguistic adposition order
+- `Data.WALS.Features.F85A`: cross-linguistic adposition order
 -/
 
 namespace BroekhuisCorver2026

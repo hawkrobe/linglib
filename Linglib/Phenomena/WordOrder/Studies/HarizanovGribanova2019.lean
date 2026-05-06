@@ -1,6 +1,4 @@
-import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Bulgarian
-import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019Germanic
-import Linglib.Theories.Syntax.Minimalist.HeadMovement.VerbMovement
+import Linglib.Theories.Syntax.Minimalist.VerbMovementParameter
 import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
 import Linglib.Fragments.German.V2
 

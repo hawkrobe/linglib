@@ -25,7 +25,7 @@ individuals in E.
 |---|---|---|
 | `*P` | Closure of P under ⊔ᵢ | `Mereology.AlgClosure` |
 | `⊕P` | `*P ∧ ¬At` (proper plural) | `properPlural` |
-| `Distr(P)` | `∀x. Px → At x` | `Distr` |
+| `IsDistr(P)` | `∀x. Px → At x` | `IsDistr` |
 | `Inv(P)` | Closed under m-equivalent substitution | `Inv` |
 | `a Π b` | `a ≤ᵢ b` (individual part) | `≤` |
 | `a ⊤ b` | `h(a) ≤ h(b)` (material part) | `mPart` |
@@ -62,11 +62,11 @@ abbrev star (P : E → Prop) : E → Prop := AlgClosure P
 def properPlural (P : E → Prop) (x : E) : Prop :=
   AlgClosure P x ∧ ¬Atom x
 
-/-- `Distr(P)`: P is a distributive predicate (D.19).
+/-- `IsDistr(P)`: P is a distributive predicate (D.19).
     Distributive predicates are true of atoms only.
     Common nouns like "child" and intransitive verbs like "die"
     are distributive. Collective predicates like "gather" are not. -/
-def Distr (P : E → Prop) : Prop :=
+def IsDistr (P : E → Prop) : Prop :=
   ∀ x, P x → Atom x
 
 /-- `Inv(P)`: P is an invariant predicate (D.21).
@@ -142,21 +142,21 @@ section Theorems
 variable {E : Type*} [SemilatticeSup E]
 
 /-- T.7: `P ⊆ *P` — every predicate is contained in its plural closure. -/
-theorem T7_star_extends {P : E → Prop} {x : E} (h : P x) :
+theorem star_of_pred {P : E → Prop} {x : E} (h : P x) :
     star P x :=
   subset_algClosure h
 
 /-- T.11: `CUM(*P)` — *P is always cumulative.
     If `*P(x)` and `*P(y)` then `*P(x ⊔ y)`. This is the formal
     content of Link's "homogeneous reference" property. -/
-theorem T11_star_cum {P : E → Prop} : CUM (star P) :=
+theorem cum_star {P : E → Prop} : CUM (star P) :=
   algClosure_cum
 
 /-- T.8 (backward): For atoms, `*P` implies `P`.
     An atom cannot arise as a proper join (since `a ≤ a ⊔ b`
     forces `a = a ⊔ b` for atoms), so the only way
     `AlgClosure P x` can hold for an atom is via the base case. -/
-theorem T8_atom_of_star {P : E → Prop} :
+theorem pred_of_atom_star {P : E → Prop} :
     ∀ {x : E}, Atom x → AlgClosure P x → P x := by
   intro x hAtom hStar
   induction hStar with
@@ -170,13 +170,13 @@ theorem T8_atom_of_star {P : E → Prop} :
     exact h
 
 /-- T.8: `At x → (Px ↔ *Px)` — for atoms, P and *P coincide. -/
-theorem T8_atom_star_iff {P : E → Prop} {x : E} (hAtom : Atom x) :
+theorem pred_iff_star_of_atom {P : E → Prop} {x : E} (hAtom : Atom x) :
     P x ↔ star P x :=
-  ⟨subset_algClosure, T8_atom_of_star hAtom⟩
+  ⟨subset_algClosure, pred_of_atom_star hAtom⟩
 
 /-- T.9 (partial): every element of `*P` has a P-individual as a part.
     Every plural individual contains at least one base individual. -/
-theorem T9_star_has_base_part {P : E → Prop} {x : E}
+theorem star_has_base_part {P : E → Prop} {x : E}
     (hStar : star P x) : ∃ y, P y ∧ y ≤ x := by
   induction hStar with
   | base hp => exact ⟨_, hp, le_refl _⟩
@@ -187,17 +187,17 @@ theorem T9_star_has_base_part {P : E → Prop} {x : E}
 /-- T.6: Distributive predicates and proper plurals are disjoint.
     If P is distributive (true of atoms only), then no P-individual
     is a proper plural (non-atomic). -/
-theorem T6_distr_disjoint_properPlural {P : E → Prop}
-    (hDistr : Distr P) {x : E} (hPx : P x) :
+theorem distr_disjoint_properPlural {P : E → Prop}
+    (hDistr : IsDistr P) {x : E} (hPx : P x) :
     ¬properPlural P x :=
   fun ⟨_, hNotAtom⟩ => hNotAtom (hDistr x hPx)
 
 /-- Contrapositive of T.6: proper plurals of distributive predicates
     are NOT in P itself. -/
 theorem properPlural_not_base {P : E → Prop}
-    (hDistr : Distr P) {x : E} (hPP : properPlural P x) :
+    (hDistr : IsDistr P) {x : E} (hPP : properPlural P x) :
     ¬P x :=
-  fun hPx => T6_distr_disjoint_properPlural hDistr hPx hPP
+  fun hPx => distr_disjoint_properPlural hDistr hPx hPP
 
 end Theorems
 
@@ -224,7 +224,7 @@ def AtomJoinPrime (E : Type*) [SemilatticeSup E] : Prop :=
     "Paul is a pop star" → `popStar(p)`
 
     Requires atoms to be join-prime (holds in Link's Boolean algebra). -/
-theorem distr_atom_part {P : E → Prop} (hDistr : Distr P)
+theorem distr_atom_part {P : E → Prop} (hDistr : IsDistr P)
     (hJP : AtomJoinPrime E) :
     ∀ {x : E}, star P x → ∀ {y : E}, Atom y → y ≤ x → P y := by
   intro x hStar
@@ -252,7 +252,7 @@ variable {E : Type*} [SemilatticeSup E]
 /-- If P is distributive, then ⊕P extends P with genuinely new
     entities: the join of two distinct P-atoms is a proper plural. -/
 theorem distr_properPlural_extends {P : E → Prop}
-    (_hDistr : Distr P) {x y : E}
+    (_hDistr : IsDistr P) {x y : E}
     (hx : P x) (hy : P y) (hne : x ≠ y) :
     properPlural P (x ⊔ y) :=
   ⟨AlgClosure.sum (AlgClosure.base hx) (AlgClosure.base hy),
@@ -274,7 +274,7 @@ end Classification
 -- § 6. Connection to Finset-Based Distributivity
 -- ════════════════════════════════════════════════════
 
-/-! Link's `Distr(P)` — P applies to atoms only — is the mereological
+/-! Link's `IsDistr(P)` — P applies to atoms only — is the mereological
     foundation for `distMaximal` in `Distributivity.lean`. The Finset-based
     operator `distMaximal P x w = ∀a ∈ x. P(a)(w)` corresponds to
     Link's distributive inference (`distr_atom_part`): if P is distributive,
@@ -285,7 +285,7 @@ end Classification
     - Link's atoms A ⊆ E = the type `Atom` in `Distributivity.lean`
     - Link's ≤ᵢ (individual part) = Finset membership `a ∈ x`
     - Link's `*P(x)` (plural closure) = "the members of x all satisfy P"
-    - `Distr(P) ∧ *P(x)` → `∀a atom-part-of x. P(a)` = `distMaximal P x w` -/
+    - `IsDistr(P) ∧ *P(x)` → `∀a atom-part-of x. P(a)` = `distMaximal P x w` -/
 
 /-- Link's `distr_atom_part` is the mereological justification for
     `Distributivity.distMaximal`. In the Finset-based setting:
@@ -294,16 +294,16 @@ end Classification
     - Each element `a ∈ x` corresponds to an atom `a ≤ᵢ x`
     - `distMaximal P x w = ∀a ∈ x. P(a)(w)` checks every atom
 
-    For distributive predicates (`Distr P`), `distr_atom_part` proves
+    For distributive predicates (`IsDistr P`), `distr_atom_part` proves
     this is correct: `*P(x)` holds iff every atom-part of x satisfies P.
-    For collective predicates (¬Distr P), `distMaximal` would be
+    For collective predicates (¬IsDistr P), `distMaximal` would be
     too strong — the predicate may hold of the plurality without
     holding of each atom (e.g., "gathered", "surrounded").
 
     The key correspondence:
     - `distr_atom_part` (lattice) ≅ `distMaximal_forces_all` (Finset)
-    - `T8_atom_star_iff` (lattice) ≅ `distMaximal_singleton` (Finset) -/
-theorem distr_star_iff_all_atoms {P : E → Prop} (hDistr : Distr P)
+    - `pred_iff_star_of_atom` (lattice) ≅ `distMaximal_singleton` (Finset) -/
+theorem distr_star_iff_all_atoms {P : E → Prop} (hDistr : IsDistr P)
     (hJP : AtomJoinPrime E) {x : E} :
     star P x → ∀ {y : E}, Atom y → y ≤ x → P y :=
   distr_atom_part hDistr hJP

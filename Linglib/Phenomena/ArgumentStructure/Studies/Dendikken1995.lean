@@ -1,6 +1,46 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Theories.Syntax.Minimalist.SmallClause
-import Linglib.Theories.Syntax.Minimalist.HeadMovement.Basic
+
+/-! # Complex LI formation — local primitives
+
+Inlined from the deleted `Theories/Syntax/Minimalist/HeadMovement/Basic.lean`
+at 0.230.788 when the legacy `Movement` record was removed. This is the
+only file that uses `formComplexLI`, so the substrate is co-located here.
+If a second consumer arises, promote to its own file (most natural home:
+`Theories/Morphology/` per @cite{senturia-marcolli-2025} §1, where
+amalgamation operations live in MCB-aligned terms). -/
+
+namespace Minimalist
+
+/-- Build a complex `LIToken` by combining two LIs' feature bundles.
+    The target's identity (id) is preserved; the mover's features are
+    appended. Used by both overt head-to-head incorporation and LF
+    abstract incorporation / cosuperscripting (@cite{baker-1988} GTC). -/
+def formComplexLI (target mover : LIToken) : LIToken :=
+  ⟨target.item.combine mover.item, target.id⟩
+
+/-- Complex LI enables reprojection: the outer features project. -/
+theorem complex_li_outer_projects (target mover : LIToken) :
+    (formComplexLI target mover).item.outerCat = target.item.outerCat := by
+  simp [formComplexLI, LexicalItem.combine, LexicalItem.outerCat]
+  cases htf : target.item.features with
+  | nil => exact absurd htf target.item.nonempty
+  | cons h t => simp
+
+/-- Overt head-to-head incorporation alias: complex head exists at PF. -/
+abbrev formOvertIncorporation : LIToken → LIToken → LIToken := formComplexLI
+
+/-- Abstract LF incorporation (@cite{baker-1988} GTC): heads share
+    features at LF without a PF reflex. -/
+abbrev formAbstractIncorporation : LIToken → LIToken → LIToken := formComplexLI
+
+/-- The two named aliases are definitionally equal. -/
+theorem formAbstractIncorporation_eq_formOvertIncorporation
+    (target mover : LIToken) :
+    formAbstractIncorporation target mover = formOvertIncorporation target mover :=
+  rfl
+
+end Minimalist
 
 /-!
 # Triadic constructions and Dative Shift — den Dikken's SC-in-SC analysis

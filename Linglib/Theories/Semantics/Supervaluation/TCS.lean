@@ -156,14 +156,23 @@ open Semantics.Supervaluation (SpecSpace superTrue
     `Prop`-valued so that it integrates directly with `boxR`/`diamondR`.
     Decidability is added per-model where computation is needed. -/
 structure TModel (D Pred : Type*) where
-  /-- Classical interpretation `I : Pred → D → Bool`. -/
-  interp : Pred → D → Bool
+  /-- Classical interpretation `I : Pred → D → Prop`. -/
+  interp : Pred → D → Prop
+  /-- Decidability of the interpretation (per predicate, per individual).
+      Bundled so each `TModel` instance carries its own decision procedure. -/
+  decInterp : ∀ P d, Decidable (interp P d)
   /-- Tolerance (indifference) relation `~_P` per predicate. -/
   sim : Pred → D → D → Prop
   /-- Reflexivity: every individual is similar to itself. -/
   sim_refl : ∀ P, IsReflexive (sim P)
   /-- Symmetry: similarity is undirected. -/
   sim_symm : ∀ P, IsSymmetric (sim P)
+
+/-- Per-`TModel` decidability instance for the classical interpretation,
+    extracted from the bundled `decInterp` field. -/
+instance TModel.instDecidablePredInterp {D Pred : Type*}
+    (M : TModel D Pred) (P : Pred) : DecidablePred (M.interp P) :=
+  M.decInterp P
 
 namespace TModel
 
@@ -234,24 +243,24 @@ variable {D Pred : Type*}
     of `a`. Definition 9, atomic clause for `⊨ˢ`. Modal-logic-wise,
     this is `boxR (M.simAccess P)` over the classical extension. -/
 def StrictAt (M : TModel D Pred) (P : Pred) (a : D) : Prop :=
-  ∀ d, M.sim P a d → M.interp P d = true
+  ∀ d, M.sim P a d → M.interp P d
 
 /-- **Tolerant** atomic satisfaction: `P` holds at some `~_P`-neighbour
     of `a`. Definition 9, atomic clause for `⊨ᵗ`. Modal-logic-wise,
     this is `diamondR (M.simAccess P)` over the classical extension. -/
 def TolerantAt (M : TModel D Pred) (P : Pred) (a : D) : Prop :=
-  ∃ d, M.sim P a d ∧ M.interp P d = true
+  ∃ d, M.sim P a d ∧ M.interp P d
 
 /-- **Strict atom = `boxR` over the similarity frame.** This is
     definitionally true; the lemma exists to expose the modal-logic
     framing and to let downstream proofs invoke `boxR_T`/`boxR_B`
     directly. -/
 theorem strictAt_eq_boxR (M : TModel D Pred) (P : Pred) (a : D) :
-    StrictAt M P a = boxR (M.simAccess P) (λ d => M.interp P d = true) a := rfl
+    StrictAt M P a = boxR (M.simAccess P) (λ d => M.interp P d) a := rfl
 
 /-- **Tolerant atom = `diamondR` over the similarity frame.** Definitional. -/
 theorem tolerantAt_eq_diamondR (M : TModel D Pred) (P : Pred) (a : D) :
-    TolerantAt M P a = diamondR (M.simAccess P) (λ d => M.interp P d = true) a := rfl
+    TolerantAt M P a = diamondR (M.simAccess P) (λ d => M.interp P d) a := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. Lemma 1 atomic (extension hierarchy, p. 357)
@@ -261,13 +270,13 @@ theorem tolerantAt_eq_diamondR (M : TModel D Pred) (P : Pred) (a : D) :
     `~_P`-neighbour of `a`, it holds for `a` itself by reflexivity of
     `~_P`. This is the **T axiom** instantiated. -/
 theorem StrictAt.imp_classical (M : TModel D Pred) (P : Pred) (a : D)
-    (hs : StrictAt M P a) : M.interp P a = true :=
+    (hs : StrictAt M P a) : M.interp P a :=
   boxR_T (M.simAccess P) (M.simAccess_isReflexive P) _ a hs
 
 /-- **Classical ⟹ tolerant** at the atomic level: `a` itself
     witnesses the existential by reflexivity of `~_P`. -/
 theorem TolerantAt.of_classical (M : TModel D Pred) (P : Pred) (a : D)
-    (hc : M.interp P a = true) : TolerantAt M P a :=
+    (hc : M.interp P a) : TolerantAt M P a :=
   ⟨a, M.sim_refl P a, hc⟩
 
 /-- **Strict ⟹ tolerant** (transitive from above). -/
@@ -322,8 +331,8 @@ def IsBorderline (M : TModel D Pred) (P : Pred) (a : D) : Prop :=
     underlying paper p. 355's discussion of borderline-as-disagreement. -/
 theorem IsBorderline.iff_both_witnesses (M : TModel D Pred) (P : Pred) (a : D) :
     IsBorderline M P a ↔
-      (∃ d, M.sim P a d ∧ M.interp P d = true) ∧
-      (∃ d, M.sim P a d ∧ M.interp P d = false) := by
+      (∃ d, M.sim P a d ∧ M.interp P d) ∧
+      (∃ d, M.sim P a d ∧ ¬ M.interp P d) := by
   refine ⟨?_, ?_⟩
   · rintro ⟨⟨d, hsd, hpd⟩, hns⟩
     refine ⟨⟨d, hsd, hpd⟩, ?_⟩
@@ -331,17 +340,11 @@ theorem IsBorderline.iff_both_witnesses (M : TModel D Pred) (P : Pred) (a : D) :
     apply hns
     intro e hse
     by_contra hne
-    apply hc
-    refine ⟨e, hse, ?_⟩
-    cases hv : M.interp P e
-    · rfl
-    · exact absurd hv hne
+    exact hc ⟨e, hse, hne⟩
   · rintro ⟨⟨d, hsd, hpd⟩, ⟨e, hse, hne⟩⟩
     refine ⟨⟨d, hsd, hpd⟩, ?_⟩
     intro hs
-    have := hs e hse
-    rw [this] at hne
-    exact Bool.noConfusion hne
+    exact hne (hs e hse)
 
 -- ════════════════════════════════════════════════════
 -- § 7. Bridge: TCS atoms ↔ Supervaluation (paper p. 355 footnote 5)
@@ -382,16 +385,13 @@ theorem TolerantAt.not_iff_superFalse (M : TModel D Pred) (P : Pred) (a : D)
       superTrue (M.interp P) (toleranceSpace M P a) = Truth3.false := by
   rw [superTrue_false_iff]
   refine ⟨?_, ?_⟩
-  · intro h d hd
+  · intro h d hd hpd
     have hsim := (Finset.mem_filter.mp hd).2
-    cases hv : M.interp P d
-    · rfl
-    · exact absurd ⟨d, hsim, hv⟩ h
+    exact h ⟨d, hsim, hpd⟩
   · rintro h ⟨d, hsim, hpd⟩
     have hd : d ∈ Finset.univ.filter (M.sim P a) :=
       Finset.mem_filter.mpr ⟨Finset.mem_univ d, hsim⟩
-    rw [h d hd] at hpd
-    exact Bool.noConfusion hpd
+    exact h d hd hpd
 
 /-- **Borderline = supervaluationally indeterminate** over the tolerance
     neighborhood. Connects TCS to @cite{fine-1975}: borderline cases are
@@ -443,14 +443,14 @@ end SatMode
     standing assumption above Definition 9). -/
 def Sat (M : TModel D Pred) : SatMode → TCSFormula Pred D → Prop
   | _, .atom (.sim P a b) => M.sim P a b
-  | .classical, .atom (.pred P a) => M.interp P a = true
+  | .classical, .atom (.pred P a) => M.interp P a
   | .tolerant, .atom (.pred P a) => TolerantAt M P a
   | .strict, .atom (.pred P a) => StrictAt M P a
   | m, .neg φ => ¬ Sat M m.dual φ
   | m, .conj φ ψ => Sat M m φ ∧ Sat M m ψ
 
 @[simp] theorem Sat.atom_classical_pred (M : TModel D Pred) (P : Pred) (a : D) :
-    Sat M .classical (.atom (.pred P a)) = (M.interp P a = true) := rfl
+    Sat M .classical (.atom (.pred P a)) = (M.interp P a) := rfl
 
 @[simp] theorem Sat.atom_tolerant_pred (M : TModel D Pred) (P : Pred) (a : D) :
     Sat M .tolerant (.atom (.pred P a)) = TolerantAt M P a := rfl
@@ -522,28 +522,31 @@ theorem Sat.strict_imp_tolerant (M : TModel D Pred) (φ : TCSFormula Pred D) :
 
     The construction is parameterised by an `interp` and produces the
     T-model whose similarity relation is `(· = ·)`. -/
-def identityModel (interp : Pred → D → Bool) : TModel D Pred where
+def identityModel (interp : Pred → D → Prop) [∀ P d, Decidable (interp P d)] :
+    TModel D Pred where
   interp := interp
+  decInterp := inferInstance
   sim _ d₁ d₂ := d₁ = d₂
   sim_refl _ _ := rfl
   sim_symm _ _ _ h := h.symm
 
 /-- In an identity model, tolerant atomic = classical. -/
-theorem identityModel.tolerantAt_iff (interp : Pred → D → Bool)
-    (P : Pred) (a : D) :
-    TolerantAt (identityModel interp) P a ↔ interp P a = true :=
+theorem identityModel.tolerantAt_iff (interp : Pred → D → Prop)
+    [∀ P d, Decidable (interp P d)] (P : Pred) (a : D) :
+    TolerantAt (identityModel interp) P a ↔ interp P a :=
   ⟨λ ⟨_, hsim, hp⟩ => by cases hsim; exact hp,
    λ h => ⟨a, rfl, h⟩⟩
 
 /-- In an identity model, strict atomic = classical. -/
-theorem identityModel.strictAt_iff (interp : Pred → D → Bool)
-    (P : Pred) (a : D) :
-    StrictAt (identityModel interp) P a ↔ interp P a = true :=
+theorem identityModel.strictAt_iff (interp : Pred → D → Prop)
+    [∀ P d, Decidable (interp P d)] (P : Pred) (a : D) :
+    StrictAt (identityModel interp) P a ↔ interp P a :=
   ⟨λ h => h a rfl, λ h _ hsim => by cases hsim; exact h⟩
 
 /-- **Lemma 2** (formula level): all three modes agree in an identity
     model, for every formula. -/
-theorem identityModel.modes_agree (interp : Pred → D → Bool)
+theorem identityModel.modes_agree (interp : Pred → D → Prop)
+    [∀ P d, Decidable (interp P d)]
     (mode : SatMode) (φ : TCSFormula Pred D) :
     Sat (identityModel interp) mode φ ↔ Sat (identityModel interp) .classical φ := by
   induction φ generalizing mode with
@@ -1031,7 +1034,7 @@ theorem tcs_vs_supervaluation_borderline_contradiction
     (M : TModel D Pred) (P : Pred) (a : D) [DecidablePred (M.sim P a)]
     (hb : IsBorderline M P a) :
     Sat M .tolerant (.conj (.atom (.pred P a)) (.neg (.atom (.pred P a)))) ∧
-    superTrue (λ d => M.interp P d && !M.interp P d) (toleranceSpace M P a)
+    superTrue (fun d => M.interp P d ∧ ¬ M.interp P d) (toleranceSpace M P a)
       = Truth3.false := by
   refine ⟨?_, nonContradiction_superFalse _ _⟩
   -- TCS side: tolerant(P) ∧ tolerant(¬P)

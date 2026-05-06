@@ -132,32 +132,32 @@ theorem isBivalent_iff_not_homogeneous (S : SentenceTV W) :
     FALSE iff it fails at ALL, GAP iff it holds at some but not all. -/
 
 /-- Construct a trivalent sentence from a supervaluation instance.
-    `eval w` gives the Bool predicate over spec points at world `w`,
+    `eval w` gives the Prop predicate over spec points at world `w`,
     and `space w` gives the spec space at world `w`. -/
-def supervaluationTV {Spec W : Type*} (eval : W → Spec → Bool)
-    (space : W → SpecSpace Spec) : SentenceTV W :=
+def supervaluationTV {Spec W : Type*} (eval : W → Spec → Prop)
+    [∀ w s, Decidable (eval w s)] (space : W → SpecSpace Spec) : SentenceTV W :=
   λ w => superTrue (eval w) (space w)
 
 /-- A supervaluation sentence is true iff the predicate holds at all specs. -/
-theorem supervaluationTV_true_iff {Spec W : Type*} (eval : W → Spec → Bool)
-    (space : W → SpecSpace Spec) (w : W) :
+theorem supervaluationTV_true_iff {Spec W : Type*} (eval : W → Spec → Prop)
+    [∀ w s, Decidable (eval w s)] (space : W → SpecSpace Spec) (w : W) :
     supervaluationTV eval space w = .true ↔
-    ∀ s ∈ (space w).admissible, eval w s = true :=
+    ∀ s ∈ (space w).admissible, eval w s :=
   superTrue_true_iff (eval w) (space w)
 
 /-- A supervaluation sentence is false iff the predicate fails at all specs. -/
-theorem supervaluationTV_false_iff {Spec W : Type*} (eval : W → Spec → Bool)
-    (space : W → SpecSpace Spec) (w : W) :
+theorem supervaluationTV_false_iff {Spec W : Type*} (eval : W → Spec → Prop)
+    [∀ w s, Decidable (eval w s)] (space : W → SpecSpace Spec) (w : W) :
     supervaluationTV eval space w = .false ↔
-    ∀ s ∈ (space w).admissible, eval w s = false :=
+    ∀ s ∈ (space w).admissible, ¬ eval w s :=
   superTrue_false_iff (eval w) (space w)
 
 /-- A supervaluation sentence is gapped iff witnesses exist on both sides. -/
-theorem supervaluationTV_gap_iff {Spec W : Type*} (eval : W → Spec → Bool)
-    (space : W → SpecSpace Spec) (w : W) :
+theorem supervaluationTV_gap_iff {Spec W : Type*} (eval : W → Spec → Prop)
+    [∀ w s, Decidable (eval w s)] (space : W → SpecSpace Spec) (w : W) :
     supervaluationTV eval space w = .indet ↔
-    (∃ s ∈ (space w).admissible, eval w s = true) ∧
-    (∃ s ∈ (space w).admissible, eval w s = false) :=
+    (∃ s ∈ (space w).admissible, eval w s) ∧
+    (∃ s ∈ (space w).admissible, ¬ eval w s) :=
   superTrue_indet_iff (eval w) (space w)
 
 -- ════════════════════════════════════════════════════════════════════════════
@@ -351,7 +351,8 @@ variable {W : Type*} [DecidableEq W]
     equivalence with `superTrue` via `selectional_as_supervaluation`. The
     two formalizations use different input representations (Finset vs
     SimilarityOrdering) but compute the same three-valued truth value. -/
-def conditionalTV (closestPWorlds : W → Finset W) (Q : W → Bool) : SentenceTV W :=
+def conditionalTV (closestPWorlds : W → Finset W) (Q : W → Prop) [DecidablePred Q] :
+    SentenceTV W :=
   λ w =>
     let pWorlds := closestPWorlds w
     if h : pWorlds.Nonempty then
@@ -361,21 +362,23 @@ def conditionalTV (closestPWorlds : W → Finset W) (Q : W → Bool) : SentenceT
 /-- A strict conditional "if P, necessarily Q" — the `all` of conditionals.
     Defined as gap removal on the bare conditional: `necessarily` collapses
     the homogeneity gap, just as `all` does for plurals. -/
-def strictConditionalTV (closestPWorlds : W → Finset W) (Q : W → Bool) :
+def strictConditionalTV (closestPWorlds : W → Finset W) (Q : W → Prop) [DecidablePred Q] :
     SentenceTV W :=
   removeGap (conditionalTV closestPWorlds Q)
 
 omit [DecidableEq W] in
 /-- Strict conditionals are bivalent — `necessarily` removes the gap,
     just as `all` removes homogeneity for plurals. -/
-theorem strictConditionalTV_bivalent (closestPWorlds : W → Finset W) (Q : W → Bool) :
+theorem strictConditionalTV_bivalent (closestPWorlds : W → Finset W)
+    (Q : W → Prop) [DecidablePred Q] :
     isBivalent (strictConditionalTV closestPWorlds Q) :=
   removeGap_bivalent _
 
 omit [DecidableEq W] in
 /-- Positive extensions agree: the bare conditional and the strict conditional
     are true in the same worlds. Parallel to `all_posExt_eq` for plurals. -/
-theorem conditionalTV_posExt_eq (closestPWorlds : W → Finset W) (Q : W → Bool) :
+theorem conditionalTV_posExt_eq (closestPWorlds : W → Finset W)
+    (Q : W → Prop) [DecidablePred Q] :
     posExt (conditionalTV closestPWorlds Q) = posExt (strictConditionalTV closestPWorlds Q) :=
   (removeGap_posExt_eq _).symm
 
@@ -384,9 +387,10 @@ omit [DecidableEq W] in
     does for plurals. If a strict conditional is usable at w, Q holds at
     all closest P-worlds (when they exist). -/
 theorem necessarily_prevents_nonmax (q : QUD W) (closestPWorlds : W → Finset W)
-    (Q : W → Bool) (w : W) (h : usable q (strictConditionalTV closestPWorlds Q) w)
+    (Q : W → Prop) [DecidablePred Q] (w : W)
+    (h : usable q (strictConditionalTV closestPWorlds Q) w)
     (hne : (closestPWorlds w).Nonempty) :
-    ∀ w' ∈ closestPWorlds w, Q w' = true := by
+    ∀ w' ∈ closestPWorlds w, Q w' := by
   -- strictConditionalTV is bivalent; usability requires not-false, so it's true
   have hTrue : strictConditionalTV closestPWorlds Q w = .true := by
     cases strictConditionalTV_bivalent closestPWorlds Q w with
@@ -440,14 +444,14 @@ instance (a b : Finset Atom) : Decidable (overlaps a b) :=
     `domain` is the set of all relevant pluralities (e.g., all subgroups
     of the universe of discourse). For distributive predicates, singletons
     suffice; for collective predicates, larger groups are needed. -/
-def generalisedTV (P : Finset Atom → Bool) (domain : Finset (Finset Atom))
-    (a : Finset Atom) : Truth3 :=
+def generalisedTV (P : Finset Atom → Prop) [DecidablePred P]
+    (domain : Finset (Finset Atom)) (a : Finset Atom) : Truth3 :=
   if P a then .true
-  else if decide (∃ b ∈ domain, overlaps a b ∧ P b = true) then .indet
+  else if ∃ b ∈ domain, overlaps a b ∧ P b then .indet
   else .false
 
 /-- Generalised homogeneity is a genuine three-way partition. -/
-theorem generalisedTV_trichotomy (P : Finset Atom → Bool)
+theorem generalisedTV_trichotomy (P : Finset Atom → Prop) [DecidablePred P]
     (domain : Finset (Finset Atom)) (a : Finset Atom) :
     generalisedTV P domain a = .true ∨
     generalisedTV P domain a = .false ∨
@@ -455,8 +459,8 @@ theorem generalisedTV_trichotomy (P : Finset Atom → Bool)
   simp only [generalisedTV]; split_ifs <;> simp
 
 /-- If P holds of a, the generalised truth value is TRUE. -/
-theorem generalisedTV_true_of_holds (P : Finset Atom → Bool)
-    (domain : Finset (Finset Atom)) (a : Finset Atom) (h : P a = true) :
+theorem generalisedTV_true_of_holds (P : Finset Atom → Prop) [DecidablePred P]
+    (domain : Finset (Finset Atom)) (a : Finset Atom) (h : P a) :
     generalisedTV P domain a = .true := by
   simp [generalisedTV, h]
 
@@ -466,57 +470,35 @@ theorem generalisedTV_true_of_holds (P : Finset Atom → Bool)
     against each sub-plurality; the overlap condition reduces to checking
     individual atoms of `a`. -/
 theorem generalisedTV_distributive_reduction
-    (pred : Atom → Bool) (a : Finset Atom) (hne : a.Nonempty)
+    (pred : Atom → Prop) [DecidablePred pred] (a : Finset Atom) (hne : a.Nonempty)
     (domain : Finset (Finset Atom))
     (hdomain : ∀ x ∈ a, {x} ∈ domain) :
-    generalisedTV (λ s => decide (∀ x ∈ s, pred x = true)) domain a =
-    superTrue (λ x => pred x) ⟨a, hne⟩ := by
-  by_cases hall : ∀ x ∈ a, pred x = true
-  · -- All satisfy: both return .true
-    have hLHS : generalisedTV (λ s => decide (∀ x ∈ s, pred x = true)) domain a = .true :=
-      generalisedTV_true_of_holds _ domain a (decide_eq_true hall)
-    rw [hLHS]; symm; exact (superTrue_true_iff _ _).mpr hall
-  · by_cases hnone : ∀ x ∈ a, pred x = false
+    generalisedTV (fun s => ∀ x ∈ s, pred x) domain a =
+    superTrue pred ⟨a, hne⟩ := by
+  unfold generalisedTV superTrue
+  by_cases hall : ∀ x ∈ a, pred x
+  · rw [if_pos hall, if_pos hall]
+  · rw [if_neg hall, if_neg hall]
+    by_cases hnone : ∀ x ∈ a, ¬ pred x
     · -- None satisfy: both return .false
-      have hPaFalse : (decide (∀ x ∈ a, pred x = true)) = false := decide_eq_false hall
-      have hNoWitness : ¬∃ b ∈ domain, overlaps a b ∧
-          (decide (∀ x ∈ b, pred x = true)) = true := by
-        intro ⟨b, _, hov, hPb⟩
-        rw [decide_eq_true_iff] at hPb
+      have hNoWitness : ¬ ∃ b ∈ domain, overlaps a b ∧ ∀ x ∈ b, pred x := by
+        rintro ⟨b, _, hov, hPb⟩
         obtain ⟨y, hy⟩ := Finset.not_disjoint_iff_nonempty_inter.mp hov
         rw [Finset.mem_inter] at hy
-        exact absurd (hPb y hy.2) (by rw [hnone y hy.1]; decide)
-      simp only [generalisedTV, hPaFalse, Bool.false_eq_true, ite_false,
-        decide_eq_false hNoWitness]
-      symm; exact (superTrue_false_iff _ _).mpr hnone
+        exact hnone y hy.1 (hPb y hy.2)
+      rw [if_neg hNoWitness, if_pos hnone]
     · -- Mixed: both return .indet
-      have hPaFalse : (decide (∀ x ∈ a, pred x = true)) = false := decide_eq_false hall
-      -- Find an atom with pred = true
       push_neg at hnone
       obtain ⟨x, hxa, hpx⟩ := hnone
-      have hpx_true : pred x = true := by
-        cases h : pred x with
-        | false => exact absurd h hpx
-        | true => rfl
       have hOv : overlaps a {x} := by
         unfold overlaps
         rw [Finset.disjoint_singleton_right]
         exact fun h => h hxa
-      have hWitness : ∃ b ∈ domain, overlaps a b ∧
-          (decide (∀ x ∈ b, pred x = true)) = true :=
+      have hWitness : ∃ b ∈ domain, overlaps a b ∧ ∀ y ∈ b, pred y :=
         ⟨{x}, hdomain x hxa, hOv,
-          decide_eq_true (λ y hy => by rw [Finset.mem_singleton.mp hy]; exact hpx_true)⟩
-      simp only [generalisedTV, hPaFalse, Bool.false_eq_true, ite_false,
-        decide_eq_true hWitness, ite_true]
-      -- Find an atom with pred = false
-      push_neg at hall
-      obtain ⟨z, hza, hpz⟩ := hall
-      have hpz_false : pred z = false := by
-        cases h : pred z with
-        | false => rfl
-        | true => exact absurd h hpz
-      symm
-      exact (superTrue_indet_iff _ _).mpr ⟨⟨x, hxa, hpx_true⟩, ⟨z, hza, hpz_false⟩⟩
+          fun y hy => by rw [Finset.mem_singleton.mp hy]; exact hpx⟩
+      rw [if_pos hWitness, if_neg]
+      intro hf; exact hf x hxa hpx
 
 end GeneralisedHomogeneity
 

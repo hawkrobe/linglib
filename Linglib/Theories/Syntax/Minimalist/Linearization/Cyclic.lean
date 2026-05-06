@@ -338,4 +338,85 @@ theorem cycle_direct_agree_malayic :
              allPrecs ["theme", "agent", "Aux", "me-", "NV"]
     HasCycle t ↔ HasContradiction t := by decide
 
+-- ============================================================================
+-- § 7: Feature Preservation Across Phases
+-- ============================================================================
+
+/-! ### Per-cycle frozen feature assignments
+
+@cite{fox-pesetsky-2005}'s Order Preservation says precedences emitted
+at one Spell-out are preserved through subsequent Spell-outs. The same
+shape applies to *feature values* established by phase-bounded
+phonological computation: when vP is spelled out and a feature value
+(e.g. `+ATR` on a particle) is set by phase-internal phonology, that
+value is preserved through later syntactic movement of the bearer.
+
+@cite{sande-clem-dabkowski-2026} §6.1 argues this is the right way to
+think about Guébie discontinuous harmony: the particle's ATR value is
+fixed at vP spell-out (when the verb is local to it inside vP), and
+later A′-movement of the remnant VP carries the frozen value to
+Spec,CP. The intervening subject/auxiliary/object are spelled out in
+the higher CP phase with their own (unaffected) ATR values.
+
+This section provides the analogous append-only accumulator for feature
+freezings. It does *not* generalize `OrderingTable` (which stays
+precedence-only); the two registries can be combined externally by a
+study file when needed.
+-/
+
+/-- A frozen feature assignment: terminal `t` had feature `f` set to
+    `value` at the spell-out cycle that emitted this entry. -/
+structure FrozenFeature where
+  terminal : String
+  feature  : String
+  value    : Bool
+  deriving DecidableEq, Repr
+
+/-- Per-cycle log of feature assignments preserved across spell-out.
+    The analogue of `OrderingTable` for features rather than precedences.
+    Append-only: never deleted. -/
+abbrev FrozenFeatureTable := List FrozenFeature
+
+/-- Extend a frozen-feature table with the assignments emitted by one
+    spell-out cycle. The analogue of `extendOrderingTable`. -/
+def extendFrozenFeatures (existing : FrozenFeatureTable)
+    (phaseFreezings : List FrozenFeature) : FrozenFeatureTable :=
+  existing ++ phaseFreezings
+
+/-- Order-Preservation analogue for features: feature freezings emitted
+    at earlier phases survive subsequent spell-out. The formal content
+    of @cite{sande-clem-dabkowski-2026}'s "the ATR value persists through
+    syntactic movement" claim. -/
+theorem extendFrozenFeatures_preserves
+    (existing : FrozenFeatureTable) (phaseFreezings : List FrozenFeature)
+    (f : FrozenFeature) (h : f ∈ existing) :
+    f ∈ extendFrozenFeatures existing phaseFreezings := by
+  unfold extendFrozenFeatures; exact List.mem_append_left _ h
+
+/-- Lookup the most-recently-frozen value of `feature` on `terminal`,
+    if any. Returns `none` if not yet frozen.
+
+    Phase-internal phonology that resets a feature value writes a new
+    entry; the most recent assignment wins per `List.find?` traversal
+    order (we reverse so later-appended entries are checked first). -/
+def frozenValue (table : FrozenFeatureTable) (terminal feature : String) : Option Bool :=
+  (table.reverse.find? (fun f => f.terminal == terminal && f.feature == feature)).map (·.value)
+
+/-- Two-phase feature preservation example: ATR value frozen at vP
+    survives the CP-phase spell-out. Mimics SCD 2026's PartSAuxOV
+    derivation: at vP spell-out, the particle (`Part`) is set to
+    `+ATR` by harmony with the verb; the CP phase emits no further
+    ATR assignments on `Part`; the value persists. -/
+theorem frozen_atr_persists_through_cp_phase :
+    frozenValue (extendFrozenFeatures [⟨"Part", "ATR", true⟩] []) "Part" "ATR"
+      = some true := by decide
+
+/-- A later phase that re-freezes the same feature overrides the earlier
+    value. (Not used by SCD 2026, which posits no CP-phase ATR re-write
+    for the particle, but documents the intended override semantics.) -/
+theorem frozen_value_later_overrides :
+    frozenValue
+      (extendFrozenFeatures [⟨"Part", "ATR", true⟩] [⟨"Part", "ATR", false⟩])
+      "Part" "ATR" = some false := by decide
+
 end Minimalist.Linearization

@@ -1,5 +1,6 @@
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Scales.Scale
+import Linglib.Theories.Semantics.Entailment.Extremum
 import Linglib.Theories.Semantics.Degree.Core
 
 /-!
@@ -28,7 +29,7 @@ The maximally informative answer is the one with d = height(Kim)
 ## The Fox-Hackl unification (@cite{fox-hackl-2006})
 
 Degree questions, definite descriptions, and scalar implicatures all involve
-the same maximality requirement (`Core.Scale.HasMaxInf`). When the relevant
+the same maximality requirement (`Semantics.Entailment.Extremum.HasMaxInf`). When the relevant
 scale is dense (`[DenselyOrdered α]`), this requirement
 interacts with negation and modals to produce systematic acceptability patterns.
 
@@ -62,7 +63,8 @@ and discrete–dense divergence theorems are in `Core.Scale` (§ 6 of
 
 namespace Semantics.Degree.Question
 
-open Core.Scale (IsMaxInf HasMaxInf)
+open Semantics.Entailment.Extremum (IsMaxInf HasMaxInf)
+open Semantics.Entailment.Extremum
 open Core.Scale
 open Core.Modality (ModalForce)
 
@@ -106,7 +108,7 @@ def hasMaximalAnswer {W D : Type*} [LinearOrder D]
     (because "at least d" is a closed degree property). -/
 theorem simple_degree_question_has_answer {W D : Type*} [LinearOrder D]
     (μ : W → D) (w : W) : hasMaximalAnswer μ w :=
-  Core.Scale.atLeast_hasMaxInf μ w
+  atLeast_hasMaxInf μ w
 
 -- ════════════════════════════════════════════════════
 -- § 3. Negative Islands (@cite{fox-2007} §3)

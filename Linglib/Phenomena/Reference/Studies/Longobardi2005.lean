@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.Kripke
-import Linglib.Theories.Syntax.Minimalist.HeadMovement.Basic
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Theories.Syntax.Minimalist.Economy
 import Linglib.Phenomena.Reference.Studies.Longobardi2001

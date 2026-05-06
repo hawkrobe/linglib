@@ -1,7 +1,6 @@
 import Linglib.Core.Scales.MereoDim
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Theories.Semantics.Events.SpatialTrace
-import Linglib.Theories.Semantics.Tense.MaximalInformativity
 
 /-!
 # Cross-Dimension Bridge (Theory-Specific)
@@ -18,8 +17,10 @@ the theory-neutral infrastructure in `Core/MereoDim.lean`, `Core/Time.lean`,
    join `Boundedness`, `MereoTag`, `BoundaryType` as pipeline sources.
 
 2. **Full commutativity diamond**: All six classification paths converge at
-   `Boundedness`. Proved pairwise: VendlerClass → Telicity → Boundedness =
-   VendlerClass → scaleBoundedness, and likewise for PathShape.
+   `Boundedness`. The compositional chain
+   `VendlerClass →.telicity Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness`
+   coincides with the direct `LicensingPipeline VendlerClass` instance by
+   `rfl`; analogously for `PathShape`.
 
 3. **Concrete dimension chains**: Temporal (τ, dur), spatial (σ, dist), and
    object (θ, μ) chains instantiate `DimensionChain`, with end-to-end QUA
@@ -36,7 +37,6 @@ open Semantics.Verb
 open Semantics.Events.SpatialTrace
 open Semantics.Events
 open Semantics.Events.Mereology
-open Semantics.Tense.MaximalInformativity
 open Core.Scale
 open Semantics.Spatial.Path
 open Core.Time
@@ -75,13 +75,6 @@ instance : LicensingPipeline PathShape where
 -- ════════════════════════════════════════════════════
 -- § 3. Commutativity Squares
 -- ════════════════════════════════════════════════════
-
-/-- VendlerClass → Telicity → Boundedness = VendlerClass → Boundedness.
-    Both paths route through the same compositional chain
-    (VendlerClass →.telicity Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness),
-    so agreement is definitional. -/
-theorem vendler_comm (c : VendlerClass) :
-    telicityToBoundedness c.telicity = scaleBoundedness c := rfl
 
 /-- PathShape → Telicity → Boundedness = PathShape → Boundedness.
     The compositional chain (PathShape → Telicity → MereoTag → Boundedness)

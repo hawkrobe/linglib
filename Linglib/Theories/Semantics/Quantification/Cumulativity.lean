@@ -31,7 +31,7 @@ substantive cross-framework theorems are deferred to a follow-up session.
 The bridge questions:
 
 - Tower-continuation `cumulativeTower v u boys movies saw' = ?` Beck-Sauerland's
-  `cumulativeOp (fun b m => saw b m) (boys.toFinset) (movies.toFinset) = true`?
+  `Cumulative (fun b m => saw b m) (boys.toFinset) (movies.toFinset)`?
   Both purport to express "every boy saw at least one movie AND every movie
   was seen by at least one boy"; equivalence holds on the obvious shared
   scenario but the type-level packaging differs (DRS-state-threading vs

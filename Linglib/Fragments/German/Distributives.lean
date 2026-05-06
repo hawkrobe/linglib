@@ -44,7 +44,8 @@ Equivalent to `distTolerant` with identity tolerance
 
 @cite{haslinger-etal-2025} examples (1), (22b-c).
 -/
-def jederSem (P : Atom → W → Bool) : Finset Atom → W → Bool :=
+def jederSem (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] :
+    Finset Atom → W → Prop :=
   distMaximal P
 
 /--
@@ -56,8 +57,8 @@ parameter allows exceptions irrelevant to the QUD.
 
 @cite{haslinger-etal-2025} eq. (25), examples (22a), (23b), (24b).
 -/
-def jeweilsSem (P : Atom → W → Bool) (tol : Tolerance Atom) :
-    Finset Atom → W → Bool :=
+def jeweilsSem (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (tol : Tolerance Atom) : Finset Atom → W → Prop :=
   distTolerant P tol
 
 /--
@@ -72,7 +73,8 @@ This is equivalent to `allSatisfy` by `allViaForallH_iff_allSatisfy`.
 
 @cite{haslinger-etal-2025} eq. (20b); @cite{kriz-spector-2021} §5.3.
 -/
-def alleSem [Fintype Atom] (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Prop :=
+def alleSem [Fintype Atom] (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) : Prop :=
   allViaForallH P x w
 
 -- Lexical Properties
@@ -117,25 +119,25 @@ def alleEntry : DistributiveEntry :=
 -- Grounding Theorems
 
 /-- jeder's semantics IS distMaximal -/
-theorem jeder_eq_distMaximal (P : Atom → W → Bool) :
+theorem jeder_eq_distMaximal (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] :
     jederSem P = distMaximal P := rfl
 
-/-- jeder = distTolerant with identity tolerance (on nonempty pluralities) -/
-theorem jeder_eq_identity_tolerant (P : Atom → W → Bool)
+/-- jeder ↔ distTolerant with identity tolerance (on nonempty pluralities) -/
+theorem jeder_iff_identity_tolerant (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (w : W) (hne : x.Nonempty) :
-    jederSem P x w = distTolerant P Tolerance.identity x w :=
-  distMaximal_eq_identity P x w hne
+    jederSem P x w ↔ distTolerant P Tolerance.identity x w :=
+  distMaximal_iff_identity P x w hne
 
-/-- jeweils with identity tolerance = jeder (on nonempty pluralities) -/
-theorem jeweils_identity_eq_jeder (P : Atom → W → Bool)
+/-- jeweils with identity tolerance ↔ jeder (on nonempty pluralities) -/
+theorem jeweils_identity_iff_jeder (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (w : W) (hne : x.Nonempty) :
-    jeweilsSem P Tolerance.identity x w = jederSem P x w :=
-  (distMaximal_eq_identity P x w hne).symm
+    jeweilsSem P Tolerance.identity x w ↔ jederSem P x w :=
+  (distMaximal_iff_identity P x w hne).symm
 
 /-- alle reduces to simple universal check on atoms -/
-theorem alle_eq_allSatisfy [Fintype Atom] (P : Atom → W → Bool)
-    (x : Finset Atom) (w : W) :
-    alleSem P x w ↔ allSatisfy P x w = true :=
+theorem alle_iff_allSatisfy [Fintype Atom] (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
+    alleSem P x w ↔ allSatisfy P x w :=
   allViaForallH_iff_allSatisfy P x w
 
 -- Typological Correlation

@@ -3,7 +3,7 @@ import Mathlib.Data.Finset.Basic
 /-!
 # Existential Pluralization Operator (∃-PL)
 
-@cite{bar-lev-2021} @cite{schwarzschild-1994} @cite{gajewski-2005}
+@cite{bar-lev-2021} @cite{schwarzschild-1996} @cite{krifka-1996}
 
 The existential pluralization operator ∃-PL gives definite plurals a
 basic *existential* meaning: "the kids laughed" ≈ "at least one kid laughed."
@@ -16,7 +16,7 @@ of Homogeneity theories:
 | Operator | Basic meaning | Strengthening | Framework |
 |----------|--------------|---------------|-----------|
 | ∃-PL     | existential  | Exh^{IE+II}   | Implicature (@cite{magri-2014}, @cite{bar-lev-2021}) |
-| `*`/DIST | universal    | truth-value gap | Trivalent (@cite{schwarzschild-1994}, @cite{kriz-2015}) |
+| `*`/DIST | universal    | truth-value gap | Trivalent (@cite{schwarzschild-1996}, @cite{kriz-2015}) |
 
 ## Key Property
 
@@ -37,7 +37,7 @@ bridge if needed.
 ## Connection to Existing Infrastructure
 
 - `Core/Mereology.lean`: `AlgClosure` = Link's `*` (the universal dual)
-- `Lexical/Plural/Link1983.lean`: `star`, `Distr`
+- `Theories/Semantics/Plurality/Link1983.lean`: `star`, `IsDistr`
 - `Lexical/Plural/Distributivity.lean`: `distMaximal` (∀ atoms satisfy P)
 - `Exhaustification/Operators/Basic.lean` (Exh^{IE+II}) +
   `Phenomena/Modality/Studies/BarLevFox2020.lean` (worked FC example):
@@ -56,8 +56,8 @@ variable {Atom W : Type*}
     "visible" for predication. Subdomain alternatives arise from
     replacing D with D' ⊆ D.
 
-    @cite{bar-lev-2021} def. (31); see also @cite{schwarzschild-1994},
-    @cite{gajewski-2005}. -/
+    @cite{bar-lev-2021} def. (31); see also @cite{schwarzschild-1996},
+    @cite{krifka-1996}. -/
 def existPL (D : Finset Atom) (P : Atom → W → Prop) (x : Finset Atom)
     (w : W) : Prop :=
   ∃ a ∈ x, a ∈ D ∧ P a w

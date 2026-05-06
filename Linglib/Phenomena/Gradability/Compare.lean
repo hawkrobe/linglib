@@ -130,31 +130,31 @@ open Semantics.Supervaluation
     The supervaluationism profile claims `preservesClassicalLogic = true`;
     this theorem proves the claim. -/
 theorem supervaluationism_classical_verified {Spec : Type*} [DecidableEq Spec]
-    (eval : Spec → Bool) :
-    (∀ S : SpecSpace Spec, superTrue eval S = Truth3.true) ↔ (∀ s, eval s = true) :=
+    (eval : Spec → Prop) [DecidablePred eval] :
+    (∀ S : SpecSpace Spec, superTrue eval S = Truth3.true) ↔ (∀ s, eval s) :=
   superValid_iff_classical eval
 
 /-- Truth-value gaps: indefiniteness ↔ witnesses exist on both sides.
     The supervaluationism profile claims `allowsTruthValueGaps = true`;
     this theorem proves gap existence is well-defined. -/
 theorem supervaluationism_gaps_verified {Spec : Type*}
-    (eval : Spec → Bool) (S : SpecSpace Spec) :
+    (eval : Spec → Prop) [DecidablePred eval] (S : SpecSpace Spec) :
     superTrue eval S = Truth3.indet ↔
-    (∃ s ∈ S.admissible, eval s = true) ∧ (∃ s ∈ S.admissible, eval s = false) :=
+    (∃ s ∈ S.admissible, eval s) ∧ (∃ s ∈ S.admissible, ¬ eval s) :=
   superTrue_indet_iff eval S
 
 /-- Consequence preservation: super-consequence ↔ classical consequence.
     Supervaluationism makes a difference to truth but not to logic. -/
 theorem supervaluationism_consequence_verified {Spec : Type*} [DecidableEq Spec]
-    (evalA evalB : Spec → Bool) :
-    superConsequence evalA evalB ↔ (∀ s, evalA s = true → evalB s = true) :=
+    (evalA evalB : Spec → Prop) [DecidablePred evalA] [DecidablePred evalB] :
+    superConsequence evalA evalB ↔ (∀ s, evalA s → evalB s) :=
   superConsequence_iff_classical evalA evalB
 
 /-- The D operator eliminates borderline cases: DA → A is super-valid
     (T axiom), but A → DA is not. -/
 theorem supervaluationism_D_verified {Spec : Type*}
-    (eval : Spec → Bool) (S : SpecSpace Spec) :
-    superTrue (fun s => !definitely eval S || eval s) S = Truth3.true :=
+    (eval : Spec → Prop) [DecidablePred eval] (S : SpecSpace Spec) :
+    superTrue (fun s => ¬ definitely eval S ∨ eval s) S = Truth3.true :=
   D_implies_A eval S
 
 -- ════════════════════════════════════════════════════

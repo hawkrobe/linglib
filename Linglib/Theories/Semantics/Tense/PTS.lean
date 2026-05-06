@@ -25,9 +25,11 @@ they produce two noncancelable inferences:
 
 This module consolidates the PTS/UTS framework that was previously scattered
 across `Aspect/Core.lean` (RB, LB, PERF), `TemporalAdverbials.lean`
-(PTSConstraint), `PerfectPolysemy.lean` (PerfectReading), and
-`MaximalInformativity.lean` (pts, MeasureFun). It re-exports the core
-operators and adds the unified boundary-adverbial abstraction.
+(PTSConstraint), and `PerfectPolysemy.lean` (PerfectReading). It re-exports
+the core operators and adds the unified boundary-adverbial abstraction. The
+measure-theoretic `pts`/`TimeMeasure` substrate co-locates with its single
+consumer in `Phenomena/TenseAspect/Studies/Rouillard2026.lean` and would
+graduate here if a second paper-anchored Studies file consumes it.
 
 ## Architecture
 

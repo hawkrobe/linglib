@@ -63,8 +63,9 @@ def mkSpec {max : Nat} (S : Finset (Threshold max)) (hne : S.Nonempty) :
   ⟨S, hne⟩
 
 /-- Supervaluation of a degree predicate: fix a degree, vary the threshold. -/
-def superTrueAt {max : Nat} (meaning : Degree max → Threshold max → Bool)
-    (d : Degree max) (S : SpecSpace (Threshold max)) : Truth3 :=
+def superTrueAt {max : Nat} (meaning : Degree max → Threshold max → Prop)
+    [∀ d θ, Decidable (meaning d θ)] (d : Degree max)
+    (S : SpecSpace (Threshold max)) : Truth3 :=
   superTrue (meaning d) S
 
 -- ════════════════════════════════════════════════════
@@ -79,13 +80,12 @@ def superTrueAt {max : Nat} (meaning : Degree max → Threshold max → Bool)
 theorem comparative_entailment {max : Nat}
     (d₁ d₂ : Degree max) (S : SpecSpace (Threshold max))
     (hgt : d₂.toNat < d₁.toNat)
-    (hd₂ : superTrueAt (fun d θ => decide (d.toNat > θ.toNat)) d₂ S = Truth3.true) :
-    superTrueAt (fun d θ => decide (d.toNat > θ.toNat)) d₁ S = Truth3.true := by
+    (hd₂ : superTrueAt (fun d θ => d.toNat > θ.toNat) d₂ S = Truth3.true) :
+    superTrueAt (fun d θ => d.toNat > θ.toNat) d₁ S = Truth3.true := by
   unfold superTrueAt at *
   rw [Semantics.Supervaluation.superTrue_true_iff] at hd₂ ⊢
   intro θ hθ
   have := hd₂ θ hθ
-  simp only [decide_eq_true_eq] at this ⊢
   omega
 
 -- ════════════════════════════════════════════════════
@@ -119,22 +119,25 @@ theorem tolerance_fails_at_boundary {max : Nat}
     determines both predicates, creating the penumbral connection. -/
 
 /-- Pink: degree above the boundary (on a single color dimension). -/
-def isPink {max : Nat} (d : Degree max) (θ : Threshold max) : Bool :=
-  decide (d.toNat > θ.toNat)
+def isPink {max : Nat} (d : Degree max) (θ : Threshold max) : Prop :=
+  d.toNat > θ.toNat
+
+instance {max : Nat} (d : Degree max) (θ : Threshold max) :
+    Decidable (isPink d θ) := by unfold isPink; infer_instance
 
 /-- Red: degree at or below the boundary (complementary to pink). -/
-def isRed {max : Nat} (d : Degree max) (θ : Threshold max) : Bool :=
-  decide (d.toNat ≤ θ.toNat)
+def isRed {max : Nat} (d : Degree max) (θ : Threshold max) : Prop :=
+  d.toNat ≤ θ.toNat
+
+instance {max : Nat} (d : Degree max) (θ : Threshold max) :
+    Decidable (isRed d θ) := by unfold isRed; infer_instance
 
 /-- Pink and red are complementary: nothing can be both. -/
 theorem pink_red_complementary {max : Nat} (d : Degree max) (θ : Threshold max) :
-    (isPink d θ && isRed d θ) = false := by
+    ¬ (isPink d θ ∧ isRed d θ) := by
   unfold isPink isRed
-  rcases hgt : decide (d.toNat > θ.toNat) with _ | _
-  · simp
-  · simp only [Bool.true_and, decide_eq_false_iff_not]
-    rw [decide_eq_true_eq] at hgt
-    omega
+  intro ⟨h1, h2⟩
+  omega
 
 /-- **"The blob is pink and red" is super-false.** Even when both
     conjuncts are individually indefinite, their conjunction is false
@@ -145,15 +148,15 @@ theorem pink_red_complementary {max : Nat} (d : Degree max) (θ : Threshold max)
     logic, `indet ∧ indet = indet`; supervaluation gives `false`. -/
 theorem pink_and_red_superFalse {max : Nat} (d : Degree max)
     (S : SpecSpace (Threshold max)) :
-    superTrue (fun θ => isPink d θ && isRed d θ) S = Truth3.false :=
+    superTrue (fun θ => isPink d θ ∧ isRed d θ) S = Truth3.false :=
   (Semantics.Supervaluation.superTrue_false_iff _ S).mpr
     (fun θ _ => pink_red_complementary d θ)
 
 /-- Both "pink" and "red" can individually be indefinite (borderline). -/
 theorem pink_indefinite_example :
-    superTrue (isPink ⟨5, by omega⟩ : Threshold 10 → Bool)
+    superTrue (isPink (max := 10) ⟨5, by omega⟩)
       ⟨{⟨3, by omega⟩, ⟨7, by omega⟩}, ⟨⟨3, by omega⟩, by simp⟩⟩ = Truth3.indet := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Bridge: Gap Region ↔ Truth3.indet
@@ -201,22 +204,16 @@ theorem gap_implies_disagreement {max : Nat} (d : Degree max) (tp : ThresholdPai
     space itself* being vague — requiring nested spaces (boundaries of
     boundaries). We do not formalize nested spaces here. -/
 
-/-- D collapses under iteration: DD = D. Since `definitely eval S` is a
-    constant Bool (independent of the specification point), applying D
+/-- D collapses under iteration: DD ↔ D. Since `definitely eval S` is a
+    constant Prop (independent of the specification point), applying D
     again yields the same value. -/
-theorem D_idempotent {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
-    definitely (fun _ => definitely eval S) S = definitely eval S := by
+theorem D_idempotent {Spec : Type*} (eval : Spec → Prop) [DecidablePred eval]
+    (S : SpecSpace Spec) :
+    definitely (fun _ => definitely eval S) S ↔ definitely eval S := by
   unfold definitely
-  cases hd : decide (∀ s ∈ S.admissible, eval s = true)
-  · -- D is false. DD asks: is "false" true at all specs? No.
-    simp only [decide_eq_false_iff_not]
-    intro hall
-    obtain ⟨s₀, hs₀⟩ := S.nonempty
-    exact absurd (hall s₀ hs₀) (by simp)
-  · -- D is true. DD asks: is "true" true at all specs? Yes.
-    simp only [decide_eq_true_eq]
-    intro _ _
-    trivial
+  refine ⟨fun h => ?_, fun h _ _ => h⟩
+  obtain ⟨s₀, hs₀⟩ := S.nonempty
+  exact h s₀ hs₀
 
 -- ════════════════════════════════════════════════════
 -- § 7. Verification: Vagueness.lean Data

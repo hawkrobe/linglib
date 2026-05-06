@@ -186,9 +186,9 @@ but a semantic equivalence on the shared domain. -/
     distMaximal gets there via ∀a ∈ X, P(a)(w). -/
 theorem QForall_atoms_iff_distMaximal
     {Atom W : Type*} [DecidableEq Atom]
-    (P : Atom → W → Bool) (X : Finset Atom) (w : W) :
-    (∀ a ∈ X, P a w = true) ↔ (distMaximal P X w = true) := by
-  simp [distMaximal]
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (X : Finset Atom) (w : W) :
+    (∀ a ∈ X, P a w) ↔ distMaximal P X w := Iff.rfl
 
 /-- Q_∀ on a CUM restrictor is semantically equivalent to `allSatisfy`
     applied to the maximal element (when it exists).
@@ -198,8 +198,9 @@ theorem QForall_atoms_iff_distMaximal
     max, while `allSatisfy` directly iterates. -/
 theorem QForall_cum_iff_allSatisfy
     {Atom W : Type*} [DecidableEq Atom]
-    (P : Atom → W → Bool) (X : Finset Atom) (w : W) :
-    allSatisfy P X w = true ↔ (∀ a ∈ X, P a w = true) := by
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (X : Finset Atom) (w : W) :
+    allSatisfy P X w ↔ (∀ a ∈ X, P a w) := by
   simp [allSatisfy]
 
 -- ════════════════════════════════════════════════════
@@ -291,8 +292,9 @@ def every_distMaxClass : DistMaxClass := .distMax
 def all_distMaxClass : DistMaxClass := .nonDistMax
 
 /-- English each: distributes via `distMaximal`. -/
-def eachSem {Atom W : Type*} [DecidableEq Atom] (P : Atom → W → Bool) :
-    Finset Atom → W → Bool :=
+def eachSem {Atom W : Type*} [DecidableEq Atom] (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] :
+    Finset Atom → W → Prop :=
   distMaximal P
 
 /-- English each's DistMaxClass matches the ONE_AT prediction:
@@ -323,7 +325,8 @@ theorem each_every_same_distmax_different_presup :
     Q_∀[ONE_AT] ⊢ ∀x, P(x) → Q(x) (by `every_distributes`),
     and `distMaximal` checks ∀a ∈ X, P(a)(w). -/
 theorem eachSem_is_distMaximal {Atom W : Type*} [DecidableEq Atom]
-    (P : Atom → W → Bool) : eachSem P = distMaximal P := rfl
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] :
+    eachSem P = distMaximal P := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 8. The *each ten minutes Test

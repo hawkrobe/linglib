@@ -90,6 +90,20 @@ Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
   and `IsLeftSubsequential.comp` from `Function/Hierarchy.lean` would
   be the building blocks; the WD predicate then certifies non-
   interaction of the two passes).
+
+## Scope note: cross-construction extrapolation
+
+The OSL framing here characterises ATR harmony **within a single
+spell-out domain** (root + affixes). @cite{sande-clem-dabkowski-2026}
+argue that ATR harmony in Guébie particle-verb focus-fronting
+constructions is *also* local at the moment of spell-out but
+*surface-discontinuous* after subsequent A′-movement. Their pattern
+is not a counterexample to the OSL classification of root-internal
+ATR harmony — the two analyses describe disjoint construction types
+— but it does refute the broader extrapolation that "ATR harmony is
+strictly local on the surface" universally. See
+`Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean` for the
+discontinuous case.
 -/
 
 namespace Phenomena.Phonology.Studies.MeinhardtEtAl2024

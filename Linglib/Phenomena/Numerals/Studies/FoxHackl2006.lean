@@ -1,14 +1,16 @@
 import Linglib.Core.Scales.Scale
+import Linglib.Theories.Semantics.Entailment.Extremum
 import Linglib.Theories.Semantics.Numerals.Basic
 
 /-!
 # Numeral MIP Bridge
 @cite{fox-hackl-2006} @cite{kennedy-2015}
 
-Surfaces the abstract `Core.Scale` maximal informativity theorems at the
-Phenomena level, connecting numeral semantics (the named `*Meaning`
-functions) to the `HasMaxInf` / `IsMaxInf` infrastructure and the
-@cite{fox-hackl-2006} density predictions.
+Surfaces the maximal informativity theorems from
+`Theories/Semantics/Entailment/Extremum.lean` at the Phenomena level,
+connecting numeral semantics (the named `*Meaning` functions) to the
+`HasMaxInf` / `IsMaxInf` infrastructure and the @cite{fox-hackl-2006}
+density predictions.
 
 ## Bridge Structure
 
@@ -31,6 +33,7 @@ construction, no bridge lemma needed.
 namespace Phenomena.Numerals.MIPBridge
 
 open Core.Scale
+open Semantics.Entailment.Extremum
 open Semantics.Numerals
 
 -- ════════════════════════════════════════════════════

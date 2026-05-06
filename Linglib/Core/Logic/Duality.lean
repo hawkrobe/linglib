@@ -269,71 +269,71 @@ theorem aggregate_map_ofBool_mixed (bs : List Bool)
     the name `dist`); @cite{kriz-2016} and @cite{kriz-spector-2021}
     formalize the modern trivalent-homogeneity treatment.
 
-    Reachable cases on a Finset `s : Finset α` and predicate `P : α → Bool`:
-    | `s.inf P` | `s.sup P` | meaning              | `dist s P` |
-    |-----------|-----------|----------------------|------------|
-    | `true`    | `true`    | nonempty, all P      | `.true`    |
-    | `true`    | `false`   | empty (vacuous)      | `.true`    |
-    | `false`   | `true`    | mixed                | `.indet`   |
-    | `false`   | `false`   | nonempty, no P       | `.false`   |
+    Reachable cases on a Finset `s : Finset α` and predicate `P : α → Prop`
+    with `[DecidablePred P]`:
+    | `∀ a ∈ s, P a` | `∃ a ∈ s, P a` | meaning              | `dist s P` |
+    |----------------|----------------|----------------------|------------|
+    | `true`         | `true`         | nonempty, all P      | `.true`    |
+    | `true`         | `false`        | empty (vacuous)      | `.true`    |
+    | `false`        | `true`         | mixed                | `.indet`   |
+    | `false`        | `false`        | nonempty, no P       | `.false`   |
 -/
 
 /-- **Trivalent classifier (Fine super-truth, finite-Boolean specialization).**
     `dist s P` is `.true` if `P` holds at every element of `s` (vacuously
     on `∅`), `.false` if `P` fails at every element of nonempty `s`,
-    `.indet` (mixed) otherwise. The (∀, ∃) Bool pair `(s.inf P, s.sup P)`
-    is the supervaluation's universal/existential decision; the if-chain
-    classifies it into `Truth3`. -/
-def dist {α : Type*} (s : Finset α) (P : α → Bool) : Truth3 :=
-  if s.inf P then .true
-  else if s.sup P then .indet
+    `.indet` (mixed) otherwise. The supervaluation's universal/existential
+    decision pair `(∀, ∃)` is the kernel; the if-chain classifies it into
+    `Truth3`. -/
+def dist {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] : Truth3 :=
+  if ∀ a ∈ s, P a then .true
+  else if ∃ a ∈ s, P a then .indet
   else .false
 
-/-- List variant of `dist` — direct definition over `List.all`/`List.any`,
+/-- List variant of `dist` — direct definition over `∀`/`∃` on a List,
     no `[DecidableEq α]` required. Same trichotomy: `.true` on (vacuously
     or genuinely) all-`P`, `.false` on nonempty-but-no-`P`, `.indet` mixed.
     Agrees with `dist l.toFinset P` when `[DecidableEq α]` is available. -/
-def distList {α : Type*} (l : List α) (P : α → Bool) : Truth3 :=
-  if l.all P then .true
-  else if l.any P then .indet
+def distList {α : Type*} (l : List α) (P : α → Prop) [DecidablePred P] : Truth3 :=
+  if ∀ a ∈ l, P a then .true
+  else if ∃ a ∈ l, P a then .indet
   else .false
 
 /-- `dist` is `.true` on the empty Finset (vacuous super-truth). -/
-@[simp] theorem dist_empty {α : Type*} (P : α → Bool) :
+@[simp] theorem dist_empty {α : Type*} (P : α → Prop) [DecidablePred P] :
     dist (∅ : Finset α) P = .true := by simp [dist]
 
-/-- `dist` on a singleton agrees with `Truth3.ofBool` of the predicate. -/
-@[simp] theorem dist_singleton {α : Type*} [DecidableEq α] (a : α) (P : α → Bool) :
-    dist ({a} : Finset α) P = Truth3.ofBool (P a) := by
-  simp only [dist, Finset.inf_singleton, Finset.sup_singleton]
-  cases h : P a <;> rfl
+/-- `dist` on a singleton: `.true` if `P a` holds, `.false` otherwise. -/
+@[simp] theorem dist_singleton {α : Type*} [DecidableEq α] (a : α)
+    (P : α → Prop) [DecidablePred P] :
+    dist ({a} : Finset α) P = if P a then .true else .false := by
+  simp only [dist, Finset.mem_singleton, forall_eq, exists_eq_left]
+  by_cases h : P a
+  · simp [h]
+  · simp [h]
 
 /-- `dist` is `.true` on the constantly-true predicate. -/
 @[simp] theorem dist_const_true {α : Type*} (s : Finset α) :
-    dist s (fun _ => true) = .true := by
-  have h : s.inf (fun _ : α => true) = true := by
-    induction s using Finset.cons_induction with
-    | empty => rfl
-    | cons a s _ ih => simp [Finset.inf_cons, ih]
-  simp [dist, h]
+    dist s (fun _ => True) = .true := by
+  simp [dist]
 
 /-- `distList` is `.true` on the empty list (vacuous super-truth). -/
-@[simp] theorem distList_nil {α : Type*} (P : α → Bool) :
-    distList ([] : List α) P = .true := rfl
+@[simp] theorem distList_nil {α : Type*} (P : α → Prop) [DecidablePred P] :
+    distList ([] : List α) P = .true := by simp [distList]
 
-/-- `distList` on a singleton agrees with `Truth3.ofBool` of the predicate. -/
-@[simp] theorem distList_singleton {α : Type*} (a : α) (P : α → Bool) :
-    distList [a] P = Truth3.ofBool (P a) := by
-  cases h : P a <;> simp [distList, h, Truth3.ofBool]
+/-- `distList` on a singleton: `.true` if `P a` holds, `.false` otherwise. -/
+@[simp] theorem distList_singleton {α : Type*} (a : α)
+    (P : α → Prop) [DecidablePred P] :
+    distList [a] P = if P a then .true else .false := by
+  simp only [distList, List.mem_singleton, forall_eq, exists_eq_left]
+  by_cases h : P a
+  · simp [h]
+  · simp [h]
 
 /-- `distList` is `.true` on the constantly-true predicate. -/
 @[simp] theorem distList_const_true {α : Type*} (l : List α) :
-    distList l (fun _ => true) = .true := by
-  have h : l.all (fun _ : α => true) = true := by
-    induction l with
-    | nil => rfl
-    | cons _ _ ih => simp [List.all_cons, ih]
-  simp [distList, h]
+    distList l (fun _ => True) = .true := by
+  simp [distList]
 
 -- ════════════════════════════════════════════════════
 -- § 2. Prop-valued Quantifier Projection

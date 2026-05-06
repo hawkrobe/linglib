@@ -446,32 +446,17 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
   fun h => h (bimonotone_constant P hUp hDown)
 
 -- ════════════════════════════════════════════════════
--- § 3b. Maximal Informativity (@cite{fox-2007}, @cite{rouillard-2026})
+-- § 3b. Maximal informativity is downstream
 -- ════════════════════════════════════════════════════
 
-/-- A scale value `x` is **maximally informative** in a degree property `P`
-    at world `w` iff `P x w` is true and `P x` entails `P y` for every
-    other true `P y w`.
-
-    @cite{fox-2007} §4: the unified exhaustivity requirement underlying
-    implicatures (*only*), degree questions, and definite
-    descriptions.
-
-    @cite{rouillard-2026} eq. (75): max⊨(w, P) specializes this to temporal domains.
-    This definition is domain-general. -/
-def IsMaxInf {W : Type*} (P : α → W → Prop) (x : α) (w : W) : Prop :=
-  P x w ∧ ∀ y, P y w → (∀ w', P x w' → P y w')
-
-/-- A degree property **has** a maximally informative element at world `w`. -/
-def HasMaxInf {W : Type*} (P : α → W → Prop) (w : W) : Prop :=
-  ∃ x, IsMaxInf P x w
-
-/-- Information collapse: no element is maximally informative at any world.
-    Fox & Hackl: this is why degree questions fail over dense complements,
-    why *only* + "more than n" is contradictory, and why definite descriptions
-    over dense open sets lack a presupposition-satisfying referent. -/
-def InformationCollapse {W : Type*} (P : α → W → Prop) : Prop :=
-  ∀ w, ¬ HasMaxInf P w
+/-! The cross-world entailment-based `IsMaxInf` (Fox 2007 / vFFI 2014 /
+    Beck-Rullmann 1999 / Rouillard 2026) is linguistic substrate, not
+    pure order theory — it lives in
+    `Theories/Semantics/Entailment/Extremum.lean`. The per-world
+    specialization is just `IsLeast {y | P y w} x` from mathlib
+    (`Mathlib.Order.Bounds.Defs`); the per-world↔cross-world bridge under
+    monotonicity is mathlib's `MonotoneOn.map_isLeast` family
+    (`Mathlib.Order.Bounds.Image`). -/
 
 -- ════════════════════════════════════════════════════
 -- § 4. Typeclass-Based Licensing Theorems
@@ -595,64 +580,17 @@ theorem atLeastDeg_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (at
 theorem moreThanDeg_downMono {W : Type*} (μ : W → α) : IsDownwardMonotone (moreThanDeg μ) :=
   fun _ _ hxy _ hy => lt_of_le_of_lt hxy hy
 
-/-- "At least d" always has a maximally informative element: d₀ = μ(w).
-
-    This holds on ANY scale — dense or discrete — because the actual
-    value μ(w) is always in the domain and "at least μ(w)" entails
-    "at least d" for all d ≤ μ(w) by transitivity.
-
-    This is why bare numerals generate scalar implicatures regardless
-    of scale density: the `≥` relation creates a closed set with a
-    natural maximum at the true value. -/
-theorem atLeast_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
-    HasMaxInf (atLeastDeg μ) w :=
-  ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hd hw'⟩
-
-/-- **Implicature asymmetry** (@cite{fox-2007} §2):
-    on a dense scale, "more than n" has NO maximally informative element.
-
-    For any candidate d₀ < μ(w), density gives d' ∈ (d₀, μ(w)).
-    A witness world w₁ with μ(w₁) ∈ (d₀, d') has "more than d₀"
-    true but "more than d'" false — so d₀ does not entail d'.
-
-    The `hSurj` hypothesis says every degree value is realized by some
-    possible world. -/
-theorem moreThan_noMaxInf {W : Type*} [DenselyOrdered α] (μ : W → α)
-    (hSurj : Function.Surjective μ) (w : W) :
-    ¬ HasMaxInf (moreThanDeg μ) w := by
-  intro ⟨d₀, hd₀, hent⟩
-  obtain ⟨d', hd₀d', hd'w⟩ := DenselyOrdered.dense d₀ (μ w) hd₀
-  obtain ⟨m, hd₀m, hmd'⟩ := DenselyOrdered.dense d₀ d' hd₀d'
-  obtain ⟨w₁, rfl⟩ := hSurj m
-  exact absurd (hent d' hd'w w₁ hd₀m) (not_lt.mpr (le_of_lt hmd'))
-
-/-- **Kennedy–F&H bridge**: `IsMaxInf` of the "at least" degree property
-    at value m and world w holds iff the measure at w equals m. -/
-theorem isMaxInf_atLeast_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
-    (hSurj : Function.Surjective μ) :
-    IsMaxInf (atLeastDeg μ) m w ↔ μ w = m := by
-  constructor
-  · intro ⟨hge, hent⟩
-    obtain ⟨w_m, hw_m⟩ := hSurj m
-    have h : μ w_m ≥ μ w := hent (μ w) (le_refl _) w_m (le_of_eq hw_m.symm)
-    have : μ w ≤ m := by rw [← hw_m]; exact h
-    exact (le_antisymm hge this).symm
-  · rintro rfl
-    exact ⟨le_refl _, fun _ hd _ hn' => le_trans hd hn'⟩
-
 /-- On ℕ, `>` collapses to `≥` with successor: "more than m" ↔ "at least m+1".
     This is the discrete equivalence that density breaks. -/
 theorem moreThan_eq_atLeast_succ {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W) :
     moreThanDeg μ m w ↔ atLeastDeg μ (m + 1) w :=
   Iff.rfl
 
-/-- On ℕ, "more than m" has `HasMaxInf`: the discrete collapse rescues maximality.
-    Contrast with `moreThan_noMaxInf`: on dense scales, `HasMaxInf` fails. -/
-theorem moreThan_nat_hasMaxInf {W : Type*} (μ : W → ℕ) (w : W) (hw : moreThanDeg μ 0 w) :
-    HasMaxInf (moreThanDeg μ) w := by
-  refine ⟨μ w - 1, ?_, fun d hd w' hw' => ?_⟩
-  · have : μ w > 0 := hw; show μ w > μ w - 1; omega
-  · have : μ w' > μ w - 1 := hw'; have : μ w > d := hd; show μ w' > d; omega
+/-! IsMaxInf-flavored consequences of these degree predicates
+    (`atLeast_hasMaxInf`, `moreThan_noMaxInf`, `isMaxInf_atLeast_iff_eq`,
+    `moreThan_nat_hasMaxInf`) live in
+    `Theories/Semantics/Entailment/Extremum.lean` since they depend on
+    the linguistic-substrate `IsMaxInf` predicate. -/
 
 -- ════════════════════════════════════════════════════
 -- § 6b. Order-Sensitive MAX (@cite{rett-2026})
@@ -997,27 +935,9 @@ theorem distinct_no_universal_witness {α : Type*} (k₁ k₂ : α) (hne : k₁ 
 theorem atMostDeg_upMono {W : Type*} (μ : W → α) : IsUpwardMonotone (atMostDeg μ) :=
   fun _ _ hxy _ hy => le_trans hy hxy
 
-/-- "At most d" always has a maximally informative element: d₀ = μ(w).
-    Symmetric to `atLeast_hasMaxInf`. -/
-theorem atMost_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
-    HasMaxInf (atMostDeg μ) w :=
-  ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hw' hd⟩
-
-/-- **Kennedy–Rouillard bridge**: `IsMaxInf` of "at most d" at value m and
-    world w holds iff the measure at w equals m. Symmetric to
-    `isMaxInf_atLeast_iff_eq`: the MIP derives exact meaning from "at most"
-    just as it does from "at least". -/
-theorem isMaxInf_atMost_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
-    (hSurj : Function.Surjective μ) :
-    IsMaxInf (atMostDeg μ) m w ↔ μ w = m := by
-  constructor
-  · intro ⟨hle, hent⟩
-    obtain ⟨w_m, hw_m⟩ := hSurj m
-    have h : μ w_m ≤ μ w := hent (μ w) (le_refl _) w_m (le_of_eq hw_m)
-    have : m ≤ μ w := hw_m ▸ h
-    exact le_antisymm hle this
-  · rintro rfl
-    exact ⟨le_refl _, fun _ hd _ hw' => le_trans hw' hd⟩
+/-! IsMaxInf-flavored consequences of `atMostDeg` (`atMost_hasMaxInf`,
+    `isMaxInf_atMost_iff_eq`) live in
+    `Theories/Semantics/Entailment/Extremum.lean`. -/
 
 -- ════════════════════════════════════════════════════
 -- § 8. MIP Domain: Kennedy–Rouillard Unification
@@ -1118,39 +1038,15 @@ theorem four_frameworks_agree
 end DirectedMeasure
 
 -- ════════════════════════════════════════════════════
--- § 9. MIP = Kennedy's Type-Shift
+-- § 9. MIP = Kennedy's Type-Shift (downstream)
 -- ════════════════════════════════════════════════════
 
-/-! The punchline: Kennedy's de-Fregean type-shift is not a separate mechanism.
-    It IS the MIP applied to a monotone degree property. For both "at least"
-    (Kennedy) and "at most" (Rouillard), max⊨ at world w = μ(w), the true
-    value. So the MIP universally derives exact meaning from monotone
-    degree properties, regardless of monotonicity direction.
-
-    `isMaxInf_atLeast_iff_eq`: max⊨(atLeastDeg μ, m, w) ↔ μ(w) = m
-    `isMaxInf_atMost_iff_eq`: max⊨(atMostDeg μ, m, w) ↔ μ(w) = m
-
-    Both directions yield `eqDeg μ m w` — exact meaning. -/
-
-/-- MIP derives exact meaning from "at least" (Kennedy's direction). -/
-theorem mip_atLeast_is_exact {W : Type*} (μ : W → α) (m : α) (w : W)
-    (hSurj : Function.Surjective μ) :
-    IsMaxInf (atLeastDeg μ) m w ↔ eqDeg μ m w :=
-  isMaxInf_atLeast_iff_eq μ m w hSurj
-
-/-- MIP derives exact meaning from "at most" (Rouillard's direction). -/
-theorem mip_atMost_is_exact {W : Type*} (μ : W → α) (m : α) (w : W)
-    (hSurj : Function.Surjective μ) :
-    IsMaxInf (atMostDeg μ) m w ↔ eqDeg μ m w :=
-  isMaxInf_atMost_iff_eq μ m w hSurj
-
-/-- The MIP is direction-invariant: "at least" and "at most" yield the
-    same exact meaning under maximal informativity. Kennedy's type-shift
-    and Rouillard's MIP are literally the same operation. -/
-theorem mip_direction_invariant {W : Type*} (μ : W → α) (m : α) (w : W)
-    (hSurj : Function.Surjective μ) :
-    IsMaxInf (atLeastDeg μ) m w ↔ IsMaxInf (atMostDeg μ) m w := by
-  rw [mip_atLeast_is_exact μ m w hSurj, mip_atMost_is_exact μ m w hSurj]
+/-! Kennedy's de-Fregean type-shift is the MIP applied to a monotone degree
+    property: for both "at least" (Kennedy) and "at most" (Rouillard),
+    max⊨ at world w = μ(w). The IsMaxInf-flavored consequences
+    (`mip_atLeast_is_exact`, `mip_atMost_is_exact`, `mip_direction_invariant`)
+    live in `Theories/Semantics/Entailment/Extremum.lean` since they depend
+    on the linguistic-substrate `IsMaxInf` predicate. -/
 
 -- ════════════════════════════════════════════════════
 -- § 11. Discrete Bounded Scales

@@ -116,10 +116,11 @@ instance : DecidableRel soritesSim := λ x y =>
     chain `a ~ b ~ c ~ d`. -/
 def soritesModel : TModel Elt VPred where
   interp
-    | .tall, .a => true
-    | .tall, .b => true
-    | .tall, .c => false
-    | .tall, .d => false
+    | .tall, .a => True
+    | .tall, .b => True
+    | .tall, .c => False
+    | .tall, .d => False
+  decInterp P x := by cases P; cases x <;> simp only [] <;> infer_instance
   sim _ := soritesSim
   sim_refl _ x := by cases x <;> decide
   sim_symm _ x y h := by cases x <;> cases y <;> first | decide | exact h
@@ -169,11 +170,11 @@ theorem strict_extension :
 
 /-- **Classical extension** of `tall`: `{a, b}` directly from `I(tall)`. -/
 theorem classical_extension :
-    soritesModel.interp .tall .a = true ∧
-    soritesModel.interp .tall .b = true ∧
-    soritesModel.interp .tall .c = false ∧
-    soritesModel.interp .tall .d = false := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> rfl
+    soritesModel.interp .tall .a ∧
+    soritesModel.interp .tall .b ∧
+    ¬ soritesModel.interp .tall .c ∧
+    ¬ soritesModel.interp .tall .d := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> simp [soritesModel]
 
 /-- **Tolerant extension** of `tall`: `{a, b, c}`. `d` is too far from
     the classical extension to count as tolerantly tall (three steps
@@ -428,9 +429,9 @@ theorem klein_delineation_tension_concrete :
     -- They are tolerantly similar:
     soritesModel.sim .tall .b .c ∧
     -- Yet classically separated:
-    soritesModel.interp .tall .b = true ∧
-    soritesModel.interp .tall .c = false :=
-  ⟨b_is_borderline, c_is_borderline, by decide, rfl, rfl⟩
+    soritesModel.interp .tall .b ∧
+    ¬ soritesModel.interp .tall .c :=
+  ⟨b_is_borderline, c_is_borderline, by decide, by simp [soritesModel], by simp [soritesModel]⟩
 
 -- ════════════════════════════════════════════════════
 -- § 11. Backwards-compatibility shim for Compare.lean

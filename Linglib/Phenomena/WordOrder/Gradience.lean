@@ -268,7 +268,7 @@ theorem so_proportion_is_continuous :
     indonesian.soProportion1000 - lithuanian.soProportion1000 > 350 := by native_decide
 
 -- ============================================================================
--- §4: Bridges to Existing Datasets
+-- §4: Bridges to Existing Data
 -- ============================================================================
 
 -- Bridge 1: Gradient harmony ↔ categorical harmony (Typology.lean)

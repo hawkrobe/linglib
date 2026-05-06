@@ -207,30 +207,32 @@ instance : Fintype MWorld where
   complete := by intro x; cases x; simp
 
 /-- "This box contains two magnets" -/
-def hasTwoMagnets : Box → MWorld → Bool
-  | .b1, _ => true
-  | .b2, _ => true
-  | .b3, _ => true
-  | .b4, _ => true
-  | .b5, _ => false  -- exception: only 1 magnet
+def hasTwoMagnets : Box → MWorld → Prop
+  | .b1, _ => True
+  | .b2, _ => True
+  | .b3, _ => True
+  | .b4, _ => True
+  | .b5, _ => False  -- exception: only 1 magnet
+
+instance hasTwoMagnets.instDecidable : ∀ b w, Decidable (hasTwoMagnets b w) := by
+  intro b w; cases b <;> unfold hasTwoMagnets <;> infer_instance
 
 def allBoxes : Finset Box := Finset.univ
 
 /-- jeder rejects: not all boxes have 2 magnets -/
 theorem jeder_rejects_magnets :
-    distMaximal hasTwoMagnets allBoxes .actual = false := by native_decide
+    ¬ distMaximal hasTwoMagnets allBoxes .actual := by decide
 
 /-- jeweils accepts: there exists a sub-plurality where all boxes have 2 magnets.
-    We use full tolerance (any subset is tolerant) — the 4-box subset {b1,b2,b3,b4}
-    witnesses truth because all four satisfy `hasTwoMagnets`. -/
+    We use trivial tolerance (any subset is tolerant) — the 4-box subset
+    {b1,b2,b3,b4} witnesses truth because all four satisfy `hasTwoMagnets`. -/
 theorem jeweils_accepts_magnets :
-    distTolerant hasTwoMagnets Tolerance.full allBoxes .actual = true := by
-  native_decide
+    distTolerant hasTwoMagnets Tolerance.trivial allBoxes .actual := by decide
 
 /-- The atom-vacuity principle in action: distributing to individual boxes,
     maximality follows because each singleton has no room for tolerance. -/
 theorem each_box_maximal (b : Box) :
-    distMaximal hasTwoMagnets {b} .actual = hasTwoMagnets b .actual :=
+    distMaximal hasTwoMagnets {b} .actual ↔ hasTwoMagnets b .actual :=
   distMaximal_singleton hasTwoMagnets b .actual
 
 end MagnetsModel

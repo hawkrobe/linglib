@@ -124,41 +124,22 @@ theorem selectionalCounterfactual_eq_dist {W : Type*} [DecidableEq W] [Fintype W
     (sim : SimilarityOrdering W) (A B : W → Prop)
     [DecidablePred A] [DecidablePred B] (w : W) :
     selectionalCounterfactual sim A B w =
-    Core.Duality.dist (sim.closestWorlds w (Finset.univ.filter A))
-      (fun w' => decide (B w')) := by
+    Core.Duality.dist (sim.closestWorlds w (Finset.univ.filter A)) B := by
   unfold selectionalCounterfactual Core.Duality.dist
   set s := sim.closestWorlds w (Finset.univ.filter A)
-  by_cases h_all_true : ∀ w' ∈ s, B w'
-  · -- All true: both sides give .true
-    rw [if_pos h_all_true]
-    have h_inf : s.inf (fun w' => decide (B w')) = true := by
-      rw [show (true : Bool) = ⊤ from rfl, Finset.inf_eq_top_iff]
-      intro w' hw'; exact decide_eq_true (h_all_true w' hw')
-    simp [h_inf]
-  · rw [if_neg h_all_true]
-    have h_inf : s.inf (fun w' => decide (B w')) = false := by
-      cases h : s.inf (fun w' => decide (B w')) with
-      | true =>
-        exfalso; apply h_all_true
-        have := (Finset.inf_eq_top_iff (α := Bool) (fun w' => decide (B w')) s).mp h
-        intro w' hw'; exact of_decide_eq_true (this w' hw')
-      | false => rfl
-    simp [h_inf]
-    by_cases h_all_false : ∀ w' ∈ s, ¬ B w'
-    · rw [if_pos h_all_false]
-      have h_sup : s.sup (fun w' => decide (B w')) = false := by
-        rw [show (false : Bool) = ⊥ from rfl, Finset.sup_eq_bot_iff]
-        intro w' hw'; exact decide_eq_false (h_all_false w' hw')
-      simp [h_sup]
-    · rw [if_neg h_all_false]
-      have h_sup : s.sup (fun w' => decide (B w')) = true := by
-        cases h : s.sup (fun w' => decide (B w')) with
-        | false =>
-          exfalso; apply h_all_false
-          have := (Finset.sup_eq_bot_iff (α := Bool) (fun w' => decide (B w')) s).mp h
-          intro w' hw' hB; exact (Bool.eq_false_iff.mp (this w' hw')) (decide_eq_true hB)
-        | true => rfl
-      simp [h_sup]
+  by_cases h_all : ∀ w' ∈ s, B w'
+  · rw [if_pos h_all, if_pos h_all]
+  · rw [if_neg h_all, if_neg h_all]
+    by_cases h_some : ∃ w' ∈ s, B w'
+    · rw [if_pos h_some]
+      have hnaf : ¬ ∀ w' ∈ s, ¬ B w' := by
+        obtain ⟨w', hw', hB⟩ := h_some
+        intro hf; exact hf w' hw' hB
+      rw [if_neg hnaf]
+    · rw [if_neg h_some]
+      have haf : ∀ w' ∈ s, ¬ B w' := by
+        intro w' hw' hB; exact h_some ⟨w', hw', hB⟩
+      rw [if_pos haf]
 
 /--
 Conditional Excluded Middle (CEM) holds for selectional semantics.
@@ -296,42 +277,27 @@ open Semantics.Supervaluation (SpecSpace superTrue)
 
 /-- **Selectional counterfactual = supervaluation over closest worlds.**
     When the closest-worlds set is non-empty, the selectional semantics
-    equals `superTrue (decide ∘ B)` over the closest worlds as a
-    specification space.
+    equals `superTrue B` over the closest worlds as a specification space.
 
     This makes explicit that Stalnaker's "supervaluate over ties" IS
     Fine's supervaluation with `Spec = W` and `admissible = closest(w, A)`.
-    The `decide ∘ B` reflection is needed because `superTrue` takes a
-    `Bool`-valued evaluator; for any `[DecidablePred B]` this is the
-    canonical Bool reflection. -/
+    Now that `superTrue` takes `Prop`-valued evaluators directly (post
+    Bool→Prop substrate migration), the bridge is `Iff.rfl`-thin on the
+    underlying `∀` / `∃` checks. -/
 theorem selectional_as_supervaluation {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W) (A B : W → Prop)
     [DecidablePred A] [DecidablePred B] (w : W)
     (hne : (sim.closestWorlds w
       (Finset.univ.filter A)).Nonempty) :
     selectionalCounterfactual sim A B w =
-    superTrue (fun w' => decide (B w'))
-      ⟨sim.closestWorlds w (Finset.univ.filter A), hne⟩ := by
-  -- The two `∀` conditions on each side correspond up to `decide`.
-  have h_true_iff : (∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w') ↔
-      (∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), decide (B w') = true) := by
-    constructor
-    · intro h w' hw'; exact decide_eq_true (h w' hw')
-    · intro h w' hw'; exact of_decide_eq_true (h w' hw')
-  have h_false_iff : (∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), ¬ B w') ↔
-      (∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), decide (B w') = false) := by
-    constructor
-    · intro h w' hw'; exact decide_eq_false (h w' hw')
-    · intro h w' hw' hB
-      have : decide (B w') = false := h w' hw'
-      exact (of_decide_eq_false this) hB
+    superTrue B ⟨sim.closestWorlds w (Finset.univ.filter A), hne⟩ := by
   unfold selectionalCounterfactual superTrue
   by_cases hT : ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w'
-  · rw [if_pos hT, if_pos (h_true_iff.mp hT)]
-  · rw [if_neg hT, if_neg (fun h => hT (h_true_iff.mpr h))]
+  · rw [if_pos hT, if_pos hT]
+  · rw [if_neg hT, if_neg hT]
     by_cases hF : ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), ¬ B w'
-    · rw [if_pos hF, if_pos (h_false_iff.mp hF)]
-    · rw [if_neg hF, if_neg (fun h => hF (h_false_iff.mpr h))]
+    · rw [if_pos hF, if_pos hF]
+    · rw [if_neg hF, if_neg hF]
 
 -- ════════════════════════════════════════════════════
 -- Architectural Grounding via Aggregation Pushforward

@@ -177,7 +177,7 @@ def altConditionalResults (sim : SimilarityOrdering W)
 def homogeneityEval (sim : SimilarityOrdering W)
     (alts : List (DecAlt W)) (C : W → Prop) [DecidablePred C]
     (w : W) : Truth3 :=
-  distList (altConditionalResults sim alts C w) id
+  distList (altConditionalResults sim alts C w) (· = true)
 
 /-- **SDA reading** (Simplification of Disjunctive Antecedents):
     universal resolution of DIST_π. "If A or B, C" is true iff every
@@ -235,7 +235,19 @@ theorem sda_iff_homogeneity_true (sim : SimilarityOrdering W)
     sdaEval sim alts C w ↔ homogeneityEval sim alts C w = .true := by
   unfold sdaEval homogeneityEval Core.Duality.distList
   generalize altConditionalResults sim alts C w = rs
-  cases hall : rs.all id <;> cases hany : rs.any id <;> simp_all
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · have hall : ∀ b ∈ rs, b = true := by
+      intro b hb
+      have := List.all_eq_true.mp h b hb
+      simpa using this
+    rw [if_pos hall]
+  · by_contra hc
+    have hnall : ¬ (∀ b ∈ rs, b = true) := by
+      intro hall
+      apply hc
+      exact List.all_eq_true.mpr hall
+    rw [if_neg hnall] at h
+    split_ifs at h <;> cases h
 
 
 -- ════════════════════════════════════════════════════
