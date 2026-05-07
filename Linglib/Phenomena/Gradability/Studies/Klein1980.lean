@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Comparison.Delineation
+import Linglib.Theories.Semantics.Gradability.Delineation
 import Linglib.Phenomena.Gradability.Studies.Kamp1975
 
 /-!
@@ -52,7 +52,7 @@ equivalence) lives in the theory layer: `Delineation.lean` §10.
 
 namespace Klein1980
 
-open Semantics.Comparison.Delineation
+open Semantics.Gradability.Delineation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Nonlinear Delineation Witness

@@ -2167,7 +2167,7 @@ import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Theories.Syntax.SynGraph
 -- Theories: Semantics.Degree (degree semantics frameworks)
 import Linglib.Theories.Semantics.Degree.Abstraction
-import Linglib.Theories.Semantics.Degree.Aggregation
+import Linglib.Theories.Semantics.Gradability.Aggregation
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Theories.Semantics.Degree.Differential
@@ -2179,8 +2179,8 @@ import Linglib.Theories.Semantics.Degree.MeasureFunction
 import Linglib.Theories.Semantics.Degree.Question
 import Linglib.Theories.Semantics.Degree.Superlative
 import Linglib.Theories.Semantics.Degree.ThanClause
-import Linglib.Theories.Semantics.Comparison.Delineation
-import Linglib.Theories.Semantics.Comparison.Hierarchy
+import Linglib.Theories.Semantics.Gradability.Delineation
+import Linglib.Theories.Semantics.Gradability.Hierarchy
 import Linglib.Theories.Semantics.Comparison.Metalinguistic
 import Linglib.Theories.Semantics.Comparison.MetalinguisticDegree
 -- Theories: Semantics.Supervaluation (general supervaluation framework)

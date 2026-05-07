@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Comparison.Delineation
+import Linglib.Theories.Semantics.Gradability.Delineation
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 
 /-!
@@ -44,9 +44,9 @@ function can induce.
 11. **very_degree_chain**: Klein's `very` = two-step degree chain
 -/
 
-namespace Semantics.Comparison.Hierarchy
+namespace Semantics.Gradability.Hierarchy
 
-open Semantics.Comparison.Delineation
+open Semantics.Gradability.Delineation
 open Semantics.Probabilistic.Measurement (MeasureFn Dimension)
 open Core.Scale (HasDegree)
 
@@ -447,4 +447,4 @@ theorem very_strictly_stronger_degree :
   simp only [id] at hlt_z hlt_y
   omega
 
-end Semantics.Comparison.Hierarchy
+end Semantics.Gradability.Hierarchy

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Comparison.Delineation
+import Linglib.Theories.Semantics.Gradability.Delineation
 
 /-!
 # @cite{bochnak-2015} Degree Semantics Parameter and Washo
@@ -90,7 +90,7 @@ paper-anchored here since the footnote is Bochnak-specific.
 
 namespace Phenomena.Gradability.Studies.Bochnak2015
 
-open Semantics.Comparison.Delineation
+open Semantics.Gradability.Delineation
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Degree Semantics Parameter

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Degree.Aggregation
+import Linglib.Theories.Semantics.Gradability.Aggregation
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Mathlib.Data.Rat.Defs
@@ -54,7 +54,7 @@ Bedeutung 27*, pp. 674–692.
 
 namespace WaldonEtAl2023
 
-open Semantics.Degree.Aggregation
+open Semantics.Gradability.Aggregation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Domain Types
@@ -272,7 +272,7 @@ theorem boombox_utility_noise_gt_light :
 
 /-! The utility function U(goal, obj) is structurally a weighted score
     over dimensional measures — the same mechanism as `weightedScore`
-    from `Semantics.Degree.Aggregation`. In the paper's eq. (8), the
+    from `Semantics.Gradability.Aggregation`. In the paper's eq. (8), the
     artifact noun denotation is Σ_f f(x) · **W**(noun, f). Here, each
     goal selects ONE feature dimension (emit-light, emit-noise, or
     can-record), so the utility reduces to the feature's raw value.

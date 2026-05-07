@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Degree.Abstraction
-import Linglib.Theories.Semantics.Comparison.Delineation
+import Linglib.Theories.Semantics.Gradability.Delineation
 import Linglib.Theories.Semantics.Degree.Intervals
 import Linglib.Theories.Semantics.Degree.Comparative
 
@@ -90,7 +90,7 @@ theorem klein_correspondence {Entity D : Type*} [LinearOrder D]
     (hdiscrim : μ a > μ b →
       ∃ C : Set Entity, delineation C a ∧ ¬ delineation C b) :
     Semantics.Degree.Comparative.comparativeSem μ a b .positive →
-    Semantics.Comparison.Delineation.comparativeSem delineation a b := by
+    Semantics.Gradability.Delineation.comparativeSem delineation a b := by
   exact hdiscrim
 
 /-- **Strengthened Klein correspondence**: degree comparative ↔ Klein's
@@ -100,9 +100,9 @@ theorem klein_measure_equivalence {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (cc : Set Entity) (a b : Entity)
     (ha : a ∈ cc) (hb : b ∈ cc) :
     Semantics.Degree.Comparative.comparativeSem μ a b .positive ↔
-    Semantics.Comparison.Delineation.ordering
-      (Semantics.Comparison.Delineation.measureDelineation μ) cc a b := by
+    Semantics.Gradability.Delineation.ordering
+      (Semantics.Gradability.Delineation.measureDelineation μ) cc a b := by
   simp only [Semantics.Degree.Comparative.comparativeSem,
-    Semantics.Comparison.Delineation.ordering_iff_degree μ cc a b ha hb]
+    Semantics.Gradability.Delineation.ordering_iff_degree μ cc a b ha hb]
 
 end Phenomena.Comparison.Compare

@@ -38,7 +38,7 @@ namespace DAmbrosioHedden2024
 
 open Semantics.Gradability (DimensionBindingType conjunctiveBinding
   disjunctiveBinding)
-open Semantics.Degree.Aggregation
+open Semantics.Gradability.Aggregation
 open Semantics.Gradability.Aggregation
 
 -- ════════════════════════════════════════════════════

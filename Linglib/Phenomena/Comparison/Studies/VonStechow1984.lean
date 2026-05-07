@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Theories.Semantics.Degree.Core
-import Linglib.Theories.Semantics.Comparison.Delineation
+import Linglib.Theories.Semantics.Gradability.Delineation
 import Linglib.Phenomena.Comparison.Compare
 
 /-!
@@ -354,8 +354,8 @@ theorem klein_agrees_on_simple {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (cc : Set Entity) (a b : Entity)
     (ha : a ∈ cc) (hb : b ∈ cc) :
     comparativeSem μ a b .positive ↔
-      Semantics.Comparison.Delineation.ordering
-        (Semantics.Comparison.Delineation.measureDelineation μ) cc a b :=
+      Semantics.Gradability.Delineation.ordering
+        (Semantics.Gradability.Delineation.measureDelineation μ) cc a b :=
   Phenomena.Comparison.Compare.klein_measure_equivalence μ cc a b ha hb
 
 -- ════════════════════════════════════════════════════
