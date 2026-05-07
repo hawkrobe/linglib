@@ -406,18 +406,33 @@ bottom-up accounts. The disagreement is about the **mechanism**: closeness
     the *mechanism* that derives downstream predictions from it
     (linear closeness vs structural prominence).
 
-    **Substrate note (post-MCB Phase 1.0).** This is now a *stipulation*
-    rather than a derivation from Merge structure. Under
+    **Substrate note (post-MCB Phase 1.0).** Under
     @cite{marcolli-chomsky-berwick-2025} Definition 1.1.1 (book p. 22)
     + Remark 1.1.2 (p. 23), syntactic objects are the *free,
     non-associative, **commutative*** magma over SO_0 — `merge x y`
     and `merge y x` are *strictly equal* on the quotient (`mul_comm`
-    is a strict equality, not just an isomorphism). Merge therefore
-    cannot ground a "first conjunct vs second conjunct" asymmetry on
-    its own; the asymmetry must come from Externalization (LCA / head
-    directionality, MCB §1.13), Agreement, or a stipulated Coord head
-    structure. Bruening's earlier framing — that the asymmetry follows
-    *from* Merge — does not survive the move to nonplanar SOs. -/
+    is a strict equality, not just an isomorphism).
+
+    **B&AK's account survives nonplanar Merge cleanly.** Their headline
+    closeness mechanism (§3.1, §4) is *PF-side / linear-order-side*:
+    "the closest conjunct at PF wins" is built simultaneously with LF
+    in the Left-to-Right Derivation, with feature checking at &P
+    proceeding *linearly*, not from Merge structure. The `linear`
+    `FeaturePercolation` mode in this file is in fact pure-Externalization
+    — exactly what nonplanar Merge wants. The (now-stipulated)
+    `mergeCoordSymmetry := .asymmetric` is an assumption B&AK *also*
+    make (asymmetric &P structure), independent of Merge symmetry.
+
+    **The bottom-up alternatives** (Munn 1993, Zhang 2010, Citko 2011
+    — *Symmetry in Syntax*) are the accounts whose status is genuinely
+    affected. They depend on hierarchical asymmetry within &P, which
+    nonplanar Merge does not provide. Such accounts now require either
+    (i) hierarchical asymmetry from a stipulated Coord head, or
+    (ii) re-derivation of asymmetry from LCA + head-directionality
+    (MCB §1.13). Citko 2011 in particular makes the case that
+    coordination is the *prototype* of symmetric merge (multidominance);
+    that view aligns with MCB but is incompatible with the bottom-up
+    structural-prominence approach. -/
 def mergeCoordSymmetry : CoordSymmetry := .asymmetric
 
 /-- Despite assuming asymmetric structure, B&AK's closeness prediction
@@ -488,17 +503,15 @@ theorem stipulated_symmetry_matches_percolation :
     **Substrate note (post-MCB Phase 1.0).** This was previously
     `merge_grounds_prediction`, which claimed (1) was *derived* from
     Merge structure rather than stipulated. Under MCB nonplanar Merge
-    that derivation does not run (`merge_is_symmetric` is the headline:
-    `merge x y = merge y x`). The Coord-asymmetry stipulation is now
-    epistemically free — neither this file nor MCB grounds it. The
-    bottom-up prediction (`predictOrder .structural pos = .dpFirst`)
-    follows from the stipulation alone, not from Minimalist
-    architecture per se.
+    (`merge_is_symmetric` headline) that derivation does not run.
 
-    A future Phase 2+ refactor — once linearization (LCA + head
-    directionality) lands — could re-derive the asymmetry as an
-    *Externalization* fact rather than a Merge fact. Until then,
-    treat `mergeCoordSymmetry` as the load-bearing stipulation. -/
+    The downstream prediction (`predictOrder .structural pos = .dpFirst`)
+    is the *bottom-up* (structural prominence) variant — it requires the
+    asymmetry stipulation. B&AK's own headline (linear closeness) does
+    *not* require it: their `linear` mode would predict from PF position
+    alone. So the stipulation is load-bearing only for the *alternative*
+    account this file also formalizes (Munn 1993 / Zhang 2010 /
+    @cite{citko-2011}-style structural prominence), not for B&AK's own. -/
 theorem prediction_chain_from_stipulation (pos : VerbPosition) :
     mergeCoordSymmetry = .asymmetric ∧
     FeaturePercolation.requiredSymmetry .structural = some mergeCoordSymmetry ∧

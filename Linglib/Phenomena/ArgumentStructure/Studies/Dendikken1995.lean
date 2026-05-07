@@ -413,27 +413,34 @@ def sc1_send_doc_dstr : SyntacticObject :=
     (the `.node spec1 (.node ...)` pattern distinguishes left/right
     children), so under MCB nonplanar SOs (FreeCommMagma carrier)
     the pattern match no longer reduces. Phase 2 will lift through
-    `Quot.out` for a planar representative or use an explicit
-    `RotorTree` view. For now we sorry-stub the function so consumers
-    still typecheck. TODO Phase 2: restore. -/
+    a head-function-aware planar projection or use an explicit
+    `RotorTree` view.
+
+    **The function body is the sorry**: previously this was stubbed
+    as `fun _ => none`, which made the downstream `_isSome = true`
+    theorems falsifiable. Now `sorry` lives in the function body
+    itself, so the function's behaviour is correctly *unknown*; any
+    downstream theorem about it must accept that or carry its own
+    `sorry`. TODO Phase 2: restore body via head-function projection. -/
 noncomputable def predicateInversion : SyntacticObject → Option SyntacticObject :=
-  fun _ => none
+  sorry
 
 /-- **The derivation theorem**: applying `predicateInversion` to the
     DOC D-structure yields exactly the (previously stipulated) DOC
     S-structure `sc1_send_post`.
-    Phase 1.0 sorry: blocked on `predicateInversion` planar pattern match. -/
+    Phase 1.0 sorry: function body itself is sorried; this theorem
+    cannot be discharged until Phase 2 restores the function. -/
 theorem predicateInversion_sc1_send_doc_dstr_eq_sc1_send_post :
     predicateInversion sc1_send_doc_dstr = some sc1_send_post := by sorry
 
 /-- Predicate Inversion is genuinely applicable to the DOC D-structure.
-    Phase 1.0 sorry: blocked on `predicateInversion` planar pattern match. -/
+    Phase 1.0 sorry: function body itself is sorried. -/
 theorem predicateInversion_sc1_send_doc_dstr_isSome :
     (predicateInversion sc1_send_doc_dstr).isSome = true := by sorry
 
 /-- The PI-derived output is *not* structurally isomorphic to its input
     (Predicate Inversion is structure-changing).
-    Phase 1.0 sorry: blocked on `predicateInversion` placeholder. -/
+    Phase 1.0 sorry: function body itself is sorried. -/
 theorem predicateInversion_changes_shape :
     ¬ structurallyIsomorphic
       ((predicateInversion sc1_send_doc_dstr).getD sc1_send_doc_dstr)

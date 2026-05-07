@@ -156,30 +156,41 @@ The three "constructors" at the SO interface are:
 - binary Merge, written `l * r` (commutative: `l * r = r * l` as a strict
   equality inside the quotient)
 
-### Trace handling: linglib commits to MCB's ^ρ-projection (with indexing)
+### Trace handling: linglib's `LIToken ⊕ Nat` is a deliberate divergence from MCB
 
 MCB's SO_0 (book p. 22, Def 1.1.1) consists of *lexical items and syntactic
-features only* — not trace markers. After Internal Merge extracts an accessible
-term, MCB enumerates **three** forms of remainder (Defs 1.2.5–1.2.8, p. 31–35):
+features only* — not trace markers. Internal Merge in MCB is a workspace-level
+cut-and-extract operation: an accessible term is extracted, leaving one of
+three possible remainder forms (Defs 1.2.5–1.2.8, book p. 31–35):
 
-- `T/^c F_v` (contraction) — extracted term becomes a "deeper copy", visible
-  to semantics but cancelled at PF
-- `T/^d F_v` (deletion) — edge contraction collapses the position, no marker
-- `T/^ρ F_v` (admissible cut) — an unlabeled structural vertex remains as the
-  trace, used by the combined process
+- `T/^c F_v` (contraction) — extracted term becomes a "deeper copy" labelling
+  the leaf left by edge-contraction; visible to semantics, cancelled at PF
+- `T/^d F_v` (deletion) — edge-contracted, no trace marker carried
+- `T/^ρ F_v` (admissible cut) — an *unlabeled* structural vertex remains as
+  the trace; used by the combined process
 
-Linglib's `SyntacticObject := FreeCommMagma (LIToken ⊕ Nat)` is a substrate-
-level commitment to **the ^ρ-projection with explicit indexing**: `Sum.inr n`
-is a trace vertex tagged with which mover produced it. MCB's ^ρ vertex is
-unlabeled; linglib enriches it with a `Nat` index for cross-reference.
+These are **three forms of the *remainder* tree after extraction**, not three
+carrier choices for the SO type itself. In all three, the SO type's base
+alphabet is `SO_0` = lexical items + syntactic features only.
 
-This is faithful to MCB's framework — it instantiates one of the three
-quotients MCB explicitly enumerates, not a deviation. Documented as a Phase 2+
-upgrade target: a future revision could expose all three projections as
-separate views of a workspace-level IM operation, with the SO type itself
-being `FreeCommMagma LIToken` (trace-free); current trace-marker operations
-would become projection-side rather than substrate. See the project memory
-note `project_so_carrier_rho_projection.md`.
+**Linglib makes a different choice.** `SyntacticObject := FreeCommMagma
+(LIToken ⊕ Nat)` adds *labeled, indexed* trace markers to the **base alphabet**.
+This is structurally distinct from MCB's ^ρ form (where the trace is an
+unlabeled structural vertex in the *remainder* tree only). Linglib's encoding
+admits trace-bearing SOs at any stage of derivation, not just as remainders.
+
+Why this divergence is here: chain-tracking ergonomics. The `Nat` index lets
+downstream code identify which mover produced a given trace, which is
+load-bearing for binding theory and reconstruction effects. MCB handles
+chain-identification at the *workspace level* (a workspace forest may have
+multiple connected components that are isomorphic to the same tree, and
+those isomorphism classes are the chain). Linglib's chain-tracking-via-index
+is expressively sufficient but inexpressively redundant w.r.t. MCB.
+
+**Phase 2+ migration target**: replace `LIToken ⊕ Nat` with `LIToken` and
+move chain-identification to the workspace layer. All current `.trace` /
+`.isTrace` / `mkTrace` / `Step.im` operations become projection-side rather
+than substrate. See project memory note `project_so_carrier_rho_projection.md`.
 
 The migration from the prior planar `TraceTree LIToken Nat` carrier landed
 at version 0.230.857 (Phase 0.5 substrate) + 0.230.858 (mathlib-canonical
