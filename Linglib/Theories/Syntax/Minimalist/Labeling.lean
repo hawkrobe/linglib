@@ -69,11 +69,11 @@ open Minimalist (HeadFunction Cat SyntacticObject LIToken)
 noncomputable def labelVertex (h : HeadFunction) (T v : SyntacticObject) : Option Cat :=
   if h.Dom T then
     if Minimalist.SyntacticObject.isNode v
-      then some (h.headAt v).item.outerCat
+      then some (h.head v).item.outerCat
       else none
   else
     -- TODO: shared-feature fallback (Def 1.15.2 case 4): if T = .node a b
-    -- and h.headAt a, h.headAt b share a feature, label root by that
+    -- and h.head a, h.head b share a feature, label root by that
     -- feature. Requires feature-bundle-intersection from CategorialFeatures.
     none
 

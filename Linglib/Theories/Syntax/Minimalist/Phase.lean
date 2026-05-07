@@ -169,14 +169,14 @@ noncomputable def phaseComplement? : SyntacticObject → Option SyntacticObject 
 
 /-- Parameterized phase-complement accessor: under harmonic head-initial
     convention (head daughter to the LEFT of the planar representative),
-    the complement is the RIGHT daughter of `h.externalize so`. Computable
-    when `h.externalize` is.
+    the complement is the RIGHT daughter of `h.section_.σ so`. Computable
+    when `h.section_.σ` is.
 
-    Returns `none` when `h.externalize so` is a leaf or trace (no daughter
+    Returns `none` when `h.section_.σ so` is a leaf or trace (no daughter
     structure). For nodes, returns the right daughter as a `SyntacticObject`. -/
 def phaseComplementWith? (h : HeadFunction) (so : SyntacticObject) :
     Option SyntacticObject :=
-  match h.externalize so with
+  match h.section_.σ so with
   | .of _ => none
   | .mul _ r => some (FreeCommMagma.mk r)
 

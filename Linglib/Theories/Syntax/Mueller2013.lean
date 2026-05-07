@@ -128,7 +128,7 @@ theorem ccg_bapp_result_category (x y : CCG.Cat) :
     "the head of the merged node equals the head of `a`". -/
 def IsSelectionRespectingAt
     (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject) : Prop :=
-  Minimalist.selects h a b → h.headAt (.node a b) = h.headAt a
+  Minimalist.selects h a b → h.head (.node a b) = h.head a
 
 /-- Minimalist labeling (MCB §1.13.6 / §1.15): under a selection-respecting
     head function `h`, when α selects β, the head of `{α, β}` agrees with
@@ -158,7 +158,7 @@ theorem min_selector_projects
     Merge).
 
     **Witness construction (Phase 2-aware)**: with the externalize-based
-    `HeadFunction`, witnesses require a custom `h.externalize` that places
+    `HeadFunction`, witnesses require a custom `h.section_.σ` that places
     `b`'s head as the leftmost-leaf of `.node a b`'s planar representative
     (so `headAt h (.node a b) = headAt h b ≠ headAt h a`), violating
     `IsSelectionRespectingAt`. The `leftSpine`/`rightSpine` defaults both

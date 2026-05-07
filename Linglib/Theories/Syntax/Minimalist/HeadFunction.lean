@@ -13,72 +13,118 @@ is modelled as a **section** `σ_L : 𝔗_{SO_0} → 𝔗^{pl}_{SO_0}` of the pr
 The section satisfies `Π ∘ σ_L = id` and is:
 
 - **NOT a morphism of magmas** (Lemma 1.13.1: no morphism of magmas exists from
-  the commutative `SO` to the noncommutative `SO^{nc}` — a commutative submagma
-  argument rules it out).
-- **Noncanonical** — it depends on the language `L` (word-order parameters).
+  the commutative `SO` to the noncommutative `SO^{nc}`).
+- **Noncanonical** — depends on the language `L`.
 
 A **head function** (Def 1.13.6) is a partial map `h` defined on a subdomain
 `Dom(h) ⊂ 𝔗_{SO_0}` that assigns to each `T ∈ Dom(h)` a function
-`h_T : V^o(T) → L(T)` from non-leaf vertices of T to leaves, satisfying the
-coherence: `T_v ⊆ T_w  ∧  h_T(w) ∈ L(T_v) ⊆ L(T_w)  ⟹  h_T(w) = h_T(v)`
-(Def 1.13.3).
+`h_T : V^o(T) → L(T)` from non-leaf vertices of T to leaves, satisfying coherence:
+`T_v ⊆ T_w  ∧  h_T(w) ∈ L(T_v) ⊆ L(T_w)  ⟹  h_T(w) = h_T(v)` (Def 1.13.3).
 
 Per **Lemma 1.13.5**, head functions on T are in bijection with planar
-embeddings of T (under the harmonic head-initial convention: head daughter
-to the left of each binary node). This identifies head functions with
-sections σ_L.
+embeddings of T — under either the harmonic head-initial convention (head
+daughter to the LEFT) or the harmonic head-final convention (head daughter
+to the RIGHT). The choice between conventions inverts the bijection.
 
-## Encoding choice (Phase 2 refactor)
+## Encoding
 
-We encode `HeadFunction` as the **section σ_L directly** (the §1.12 view).
-Cascading functions become `f h so := fPlanar (h.externalize so)`,
-computable when `h.externalize` is.
+`HeadFunction` is a `FreeCommMagma.Section` (the σ_L part) plus head-side
+convention (initial vs final per Lemma 1.13.5) plus partial domain (Def 1.13.6):
 
-This replaces the prior `PlanarMarking { isLeftHead : SyntacticObject → Bool }`
-encoding, which was structurally broken: a Bool on the FreeCommMagma quotient
-cannot distinguish "left of (a*b)" from "left of (b*a)" — they're the same
-quotient element, so `isLeftHead` returns the same value, but recursion targets
-`headAtPlanar a` vs `headAtPlanar b` are different leaves. MCB Lemma 1.13.1
-explains why no fix is possible at that interface: there is no morphism of
-magmas SO → SO^{nc}, so head selection cannot be derived canonically from SO
-alone — a section σ_L must be **supplied**, and it depends on the language.
+```
+structure HeadFunction where
+  section_  : FreeCommMagma.Section (LIToken ⊕ Nat)
+  headSide  : ConventionDir
+  Dom       : SyntacticObject → Prop
+  decDom    : DecidablePred Dom
+```
 
-## Out of scope (queued)
+The substrate primitive is **`headAtVertex h T v`** (MCB Def 1.13.3):
+the head leaf at vertex `v` of `T`. The root special case `head h T` is derived
+as `headAtVertex h T T`.
 
-- The Labeling Algorithm itself (Def 1.15.2) — see `Labeling.lean`
-- The complemented head function (Def 1.14.2) — extends `h(v)` to `(h(v), Z_v)`
-- The maximal-projection paths γ_ℓ (Lemma 1.14.1) — partial in `Merge/Phase.lean`
-- Phase-theoretic restrictions on `Dom(h)` (MCB §1.14)
-- `headAt_coherent` (Def 1.13.3) — currently sorried; Tier D
+Per Lemma 1.13.5, the head leaf at vertex v is:
+- under `.initial`: leftmost-leaf of `h.section_.σ v`
+- under `.final`:   rightmost-leaf of `h.section_.σ v`
+
+## Key definitions
+
+- `ConventionDir` — harmonic head-side (`.initial`/`.final`)
+- `HeadFunction` — bundle of section + side + domain
+- `headAtVertex h T v` — MCB Def 1.13.3 head function at vertex (substrate primitive)
+- `head h T` — root special case (MCB notation `h(T)`)
+- `outerCat h so`, `outerSel h so` — head's category/selectional stack
+- `linearize h so`, `phonYield h so`, `terminalNodes h so`, `leafTokens h so` — planar yields
+- `IsRaisingClauseI`, `IsRaisingClauseII`, `IsRaising` — Def 1.15.1 raising condition
+
+## Out of scope (queued for §1.14+)
+
+- **Complemented head function (Def 1.14.2)**: extends `h(v)` to `(h(v), Z_v)`
+  with the head's complement subtree. Will be a sibling structure
+  `ComplementedHeadFunction extends HeadFunction with complement : V^o T → Option SO`.
+- **Maximal-projection paths γ_ℓ (Lemma 1.14.1)**: requires `headAtVertex` (now landed)
+  to define paths of constant-head vertices.
+- **Phase Theory restrictions on Dom(h) (MCB §1.14)**.
+- **Π_L language filter (eq 1.12.4)**: second projection separate from σ_L.
+  Will be a sibling structure `LanguageFilter` if/when needed; not merged into Dom.
+- **Mixed-direction headSide**: empirically real (German VP head-final + CP head-initial)
+  but MCB don't address. Future refinement: `headSide : Cat → ConventionDir`.
+  Current global encoding suffices for §1.13-§1.16.
+- **Lemma 1.13.7 three Chomsky [23] §4 properties**: equivalent characterizations
+  of head functions via per-vertex projection-marking. Optional sibling
+  constructor `fromProjectionMarking`.
+- **Module-side lifting (§1.12.3, §1.12.5)**: `Section.σ` lifts to
+  `V(𝔗_{SO_0}) → V(𝔗^{pl}_{SO_0})` linear map via `Quot.lift`. Add when needed.
+- **`headAtVertex_coherent` proof**: requires well-founded induction on planar
+  descent; statement is correct here, proof is queued.
 -/
 
 namespace Minimalist
 
+/-! ### Convention direction (MCB Lemma 1.13.5) -/
+
+/-- The harmonic head-side convention. Per @cite{marcolli-chomsky-berwick-2025}
+    Lemma 1.13.5 (book p. 127), head functions on T are in bijection with planar
+    embeddings of T, under one of two equally valid conventions:
+
+    - `.initial` (harmonic head-initial): the head daughter is to the LEFT of
+      each binary node. The head leaf is the leftmost-leaf of the planar tree.
+      Canonical for English-like analyses.
+    - `.final` (harmonic head-final): the head daughter is to the RIGHT.
+      The head leaf is the rightmost-leaf. Canonical for Japanese/Korean/Turkish.
+
+    A head function bundles a planar section + a side convention. Mixed-direction
+    languages (e.g. German with head-final VP and head-initial CP) require a
+    refinement (`headSide : Cat → ConventionDir`) that is currently out of scope. -/
+inductive ConventionDir where
+  | initial
+  | final
+  deriving Repr, DecidableEq, Inhabited
+
 -- ============================================================================
--- § 1: HeadFunction (MCB §1.12.1 + Def 1.13.6)
+-- § 1: HeadFunction (MCB §1.12.1 + §1.13.5 + Def 1.13.6)
 -- ============================================================================
 
 /-- A **head function** in the @cite{marcolli-chomsky-berwick-2025} sense:
-    the data of an Externalization (MCB §1.12.1 section σ_L of Π) plus a
-    domain restriction (MCB Def 1.13.6).
+    a planar Externalization (MCB §1.12.1 section σ_L of Π) plus a head-side
+    convention (Lemma 1.13.5) plus a partial domain (Def 1.13.6).
 
-    Per Lemma 1.13.5, the planar embedding chosen by σ_L IS the head
-    function, under the harmonic head-initial convention (head daughter
-    to the left of each binary node in the planar embedding). The head
-    leaf `h(T)` is then the leftmost-leaf of `σ_L(T)`.
+    Per Lemma 1.13.5, the planar embedding chosen by σ_L IS the head function,
+    once a head-side convention is fixed. The head leaf `h(T)` is the
+    leftmost-leaf (`.initial`) or rightmost-leaf (`.final`) of `σ_L(T)`.
 
     The bundle records:
-    - `externalize`: the section σ_L : 𝔗_{SO_0} → 𝔗^{pl}_{SO_0}
-    - `isSection`: Π ∘ externalize = id
+    - `section_`: the underlying section σ_L
+    - `headSide`: harmonic head-initial vs head-final
     - `Dom`: the subdomain on which `h` is "well defined" linguistically
     - `decDom`: decidability of `Dom` membership -/
 structure HeadFunction where
-  /-- MCB §1.12.1 section σ_L : 𝔗_{SO_0} → 𝔗^{pl}_{SO_0}. Returns a planar
-      representative for each (nonplanar) syntactic object. -/
-  externalize : SyntacticObject → FreeMagma (LIToken ⊕ Nat)
-  /-- Section property: Π ∘ externalize = id. The planar representative
-      really is a representative of the original SO. -/
-  isSection : ∀ T, FreeCommMagma.mk (externalize T) = T
+  /-- MCB §1.12.1 section σ_L : 𝔗_{SO_0} → 𝔗^{pl}_{SO_0}, lifted to
+      `FreeCommMagma.Section (LIToken ⊕ Nat)`. -/
+  section_ : FreeCommMagma.Section (LIToken ⊕ Nat)
+  /-- Harmonic head-side convention (Lemma 1.13.5): head daughter to the
+      LEFT (`.initial`) or RIGHT (`.final`) of the planar embedding. -/
+  headSide : ConventionDir
   /-- MCB Def 1.13.6 subdomain on which the head function is defined. -/
   Dom : SyntacticObject → Prop
   /-- Decidability of domain membership. -/
@@ -88,26 +134,46 @@ attribute [instance] HeadFunction.decDom
 
 namespace HeadFunction
 
-/-- The head leaf token at the root of `so` under the harmonic head-initial
-    convention (Lemma 1.13.5): the leftmost leaf of the planar representative
-    `externalize so`.
+/-- The head leaf token at vertex `v` of T under head function `h` (MCB Def 1.13.3).
 
-    Computable when `externalize` is computable. For the default
-    `externalize := Quot.out` (used by `leftSpine`/`rightSpine`), this
-    matches `SyntacticObject.leftmostLeaf`. -/
-def headAt (h : HeadFunction) (so : SyntacticObject) : LIToken :=
-  leftmostLeafPlanar (h.externalize so)
+    Substrate primitive. The root special case `head h T := headAtVertex h T T`
+    is derived below.
 
-/-- Alias for `headAt`: the head h(T) of T at the root (MCB notation). -/
-def head (h : HeadFunction) (T : SyntacticObject) : LIToken := h.headAt T
+    Under harmonic head-initial (`.initial`), this is the leftmost-leaf of
+    `h.section_.σ v`. Under harmonic head-final (`.final`), the rightmost-leaf.
+
+    **Note on the (T, v) signature**: per MCB Def 1.13.3, head functions are
+    indexed by the containing tree T and quantify vertices "of T". The `T`
+    parameter here is currently unused in the body (we descend into v's own
+    representative), but it is load-bearing for the COHERENCE theorem
+    `headAtVertex_coherent` below, which requires `v ⊆ T`. This signals
+    "this head reading is about T's structure"; consumer theorems add the
+    `v ∈ T.subtrees` hypothesis. Section's `σ` is defined on the whole quotient,
+    so `headAtVertex h T v` is well-defined for any v; the T-relativity is a
+    documentary constraint enforced by consumers. -/
+def headAtVertex (h : HeadFunction) (_T v : SyntacticObject) : LIToken :=
+  match h.headSide with
+  | .initial => leftmostLeafPlanar (h.section_.σ v)
+  | .final   => rightmostLeafPlanar (h.section_.σ v)
+
+/-- The head leaf at the root of T (MCB notation `h(T)`). Derived from
+    `headAtVertex` at v = T. -/
+def head (h : HeadFunction) (T : SyntacticObject) : LIToken :=
+  h.headAtVertex T T
 
 /-- The head's outer categorial feature, when defined. -/
-def outerCatOf (h : HeadFunction) (so : SyntacticObject) : Cat :=
-  (h.headAt so).item.outerCat
+def outerCat (h : HeadFunction) (so : SyntacticObject) : Cat :=
+  (h.head so).item.outerCat
 
 /-- The head's selectional stack, when defined. -/
-def outerSelOf (h : HeadFunction) (so : SyntacticObject) : SelStack :=
-  (h.headAt so).item.outerSel
+def outerSel (h : HeadFunction) (so : SyntacticObject) : SelStack :=
+  (h.head so).item.outerSel
+
+/-- A section is injective; routed through `FreeCommMagma.Section.injective`
+    which derives via mathlib's `Function.LeftInverse.injective`. -/
+theorem externalize_injective (h : HeadFunction) :
+    Function.Injective h.section_.σ :=
+  h.section_.injective
 
 end HeadFunction
 
@@ -117,316 +183,252 @@ end HeadFunction
 
 namespace HeadFunction
 
-/-- The trivial head function: defined only on leaves, where every vertex
-    is its own head. The `externalize` choice is irrelevant since the only
-    SOs in `Dom` are leaves (which have a unique planar representative
-    via the singleton-class structure of `FreeMagma.CommRel`). -/
+/-- The trivial head function: defined only on leaves, where every vertex is
+    its own head. The section choice is irrelevant since the only SOs in
+    `Dom` are leaves (which have a unique planar representative via the
+    singleton-class structure). Convention is `.initial` by default
+    (irrelevant on leaves). -/
 noncomputable def leafOnly : HeadFunction where
-  externalize := Quot.out
-  isSection := Quot.out_eq
-  Dom so := so.isLeaf
-  decDom := inferInstance
+  section_  := FreeCommMagma.Section.out
+  headSide  := .initial
+  Dom so    := so.isLeaf
+  decDom    := inferInstance
 
 /-- Default head function: harmonic head-initial with planar representative
-    chosen via `Quot.out`. Defined on **all** SOs.
-
-    Name preserved from the old planar-marking design; in the FreeCommMagma
-    carrier, "left spine" means "leftmost-leaf of the `Quot.out`
-    representative". For linguistically-meaningful planar choices (e.g.,
-    head-final languages), supply a custom `externalize`. -/
+    via `Quot.out`. Defined on **all** SOs. Use a custom `section_` for
+    linguistically-meaningful planar choices. -/
 noncomputable def leftSpine : HeadFunction where
-  externalize := Quot.out
-  isSection := Quot.out_eq
-  Dom _ := True
-  decDom _ := isTrue trivial
+  section_  := FreeCommMagma.Section.out
+  headSide  := .initial
+  Dom _     := True
+  decDom _  := isTrue trivial
 
-/-- Right-headed dual to `leftSpine`. With `externalize := Quot.out`, this
-    is structurally identical to `leftSpine` in the FreeCommMagma carrier
-    (since the `Quot.out` representative is fixed); kept as an alias to
-    preserve consumer compatibility (e.g. `Mueller2013` witness construction).
-
-    Distinct head-final witnesses require providing a custom `externalize`
-    that puts heads on the right of each binary node — see Phase 2 follow-ups. -/
-noncomputable def rightSpine : HeadFunction := leftSpine
+/-- Right-headed dual to `leftSpine`: same `Quot.out` section, but
+    `.final` head-side convention. Models a harmonic head-final language
+    (Japanese, Korean, Turkish). Genuinely distinct from `leftSpine` —
+    `rightSpine.head` returns the rightmost-leaf where `leftSpine.head`
+    returns the leftmost-leaf of the same planar representative. -/
+noncomputable def rightSpine : HeadFunction where
+  section_  := FreeCommMagma.Section.out
+  headSide  := .final
+  Dom _     := True
+  decDom _  := isTrue trivial
 
 end HeadFunction
 
 -- ============================================================================
--- § 3: Singleton-class lemmas
+-- § 3: Singleton-class simp lemmas (via Section.σ_of keystone)
 -- ============================================================================
 
 namespace HeadFunction
 
-/-- `leftSpine.headAt` on a leaf returns the leaf token. Reduces to
-    `Basic.lean`'s `leftmostLeaf_leaf`: since `leftSpine.externalize := Quot.out`,
-    we have `leftSpine.headAt so = leftmostLeafPlanar (Quot.out so) = so.leftmostLeaf`. -/
-@[simp] theorem leftSpine_headAt_leaf (tok : LIToken) :
-    leftSpine.headAt (.leaf tok) = tok := by
-  show leftmostLeafPlanar (SyntacticObject.leaf tok).out = tok
-  exact SyntacticObject.leftmostLeaf_leaf tok
+/-- For a leaf SO, `headAtVertex` returns the leaf token (independent of head
+    function choice — leaves are their own head, and singleton-class structure
+    means the section returns the canonical `.of (.inl tok)`).
 
-/-- `leftSpine.head` on a leaf returns the leaf token. -/
-@[simp] theorem leftSpine_head_leaf (tok : LIToken) :
-    leftSpine.head (.leaf tok) = tok :=
-  leftSpine_headAt_leaf tok
+    Routes through `Section.σ_of` which absorbs the singleton-class
+    case-analysis once for all consumers. -/
+@[simp] theorem headAtVertex_leaf (h : HeadFunction) (T : SyntacticObject)
+    (tok : LIToken) :
+    h.headAtVertex T (.leaf tok) = tok := by
+  unfold headAtVertex
+  -- `h.section_.σ (.leaf tok) = h.section_.σ (FreeCommMagma.of (.inl tok))
+  --   = FreeMagma.of (.inl tok)` by Section.σ_of
+  rw [show (SyntacticObject.leaf tok : SyntacticObject) = FreeCommMagma.of (.inl tok)
+      from rfl, h.section_.σ_of]
+  -- Now both leftmost and rightmost on `.of (.inl tok)` reduce to `tok`
+  cases h.headSide <;> rfl
 
-/-- `rightSpine.headAt` on a leaf returns the leaf token (same as leftSpine,
-    since `rightSpine := leftSpine`). -/
-@[simp] theorem rightSpine_headAt_leaf (tok : LIToken) :
-    rightSpine.headAt (.leaf tok) = tok :=
-  leftSpine_headAt_leaf tok
+/-- For a trace SO, `headAtVertex` returns the synthetic trace token. -/
+@[simp] theorem headAtVertex_trace (h : HeadFunction) (T : SyntacticObject)
+    (n : Nat) :
+    h.headAtVertex T (.trace n) = mkTraceToken n := by
+  unfold headAtVertex
+  rw [show (SyntacticObject.trace n : SyntacticObject) = FreeCommMagma.of (.inr n)
+      from rfl, h.section_.σ_of]
+  cases h.headSide <;> rfl
 
-/-- `leftSpine.headAt` on a trace returns the synthetic trace token. -/
-@[simp] theorem leftSpine_headAt_trace (n : Nat) :
-    leftSpine.headAt (.trace n) = mkTraceToken n := by
-  show leftmostLeafPlanar (SyntacticObject.trace n).out = mkTraceToken n
-  exact SyntacticObject.leftmostLeaf_trace n
+/-- For a leaf SO, `head` returns the leaf token. Derived from `headAtVertex_leaf`
+    at v = T. -/
+@[simp] theorem head_leaf (h : HeadFunction) (tok : LIToken) :
+    h.head (.leaf tok) = tok :=
+  h.headAtVertex_leaf _ tok
+
+/-- For a trace SO, `head` returns the synthetic trace token. -/
+@[simp] theorem head_trace (h : HeadFunction) (n : Nat) :
+    h.head (.trace n) = mkTraceToken n :=
+  h.headAtVertex_trace _ n
+
+/-- For a leaf SO, `outerCat` reduces to the leaf token's outer category. -/
+@[simp] theorem outerCat_leaf (h : HeadFunction) (tok : LIToken) :
+    h.outerCat (.leaf tok) = tok.item.outerCat := by
+  unfold outerCat
+  rw [head_leaf]
+
+/-- For a leaf SO, `outerSel` reduces to the leaf token's outer selectional stack. -/
+@[simp] theorem outerSel_leaf (h : HeadFunction) (tok : LIToken) :
+    h.outerSel (.leaf tok) = tok.item.outerSel := by
+  unfold outerSel
+  rw [head_leaf]
 
 end HeadFunction
 
 -- ============================================================================
--- § 4: leafTokens accessor (used by Merge/Phase.lean and the coherence theorem)
+-- § 4: Planar yield accessors (parameterized cascade)
 -- ============================================================================
 
-/-- Underlying leaf-token enumeration on a planar `FreeMagma` representative. -/
-private def leafTokensPlanar : FreeMagma (LIToken ⊕ Nat) → List LIToken
+/-- Underlying leaf-token enumeration on a planar `FreeMagma` representative.
+    Used by `HeadFunction.leafTokens` (parameterized below) and by the
+    coherence theorem statement. -/
+def leafTokensPlanar : FreeMagma (LIToken ⊕ Nat) → List LIToken
   | .of (.inl tok) => [tok]
   | .of (.inr n) => [mkTraceToken n]
   | .mul a b => leafTokensPlanar a ++ leafTokensPlanar b
 
-/-- The leaves of `v` as a list of LITokens, under the chosen planar
-    representative.
-
-    Noncomputable via `Quot.out`: this is the legacy unparameterized form,
-    used by `Merge/Phase.lean` and the coherence theorem statement. The
-    parameterized `HeadFunction.leafTokensWith h so := leafTokensPlanar
-    (h.externalize so)` form is the Tier A target. -/
-noncomputable def SyntacticObject.leafTokens (so : SyntacticObject) : List LIToken :=
-  leafTokensPlanar so.out
-
 namespace HeadFunction
 
-/-- The leaves of `so` under head function `h`'s planar representative.
-    Computable when `h.externalize` is. -/
-def leafTokensWith (h : HeadFunction) (so : SyntacticObject) : List LIToken :=
-  leafTokensPlanar (h.externalize so)
+/-- The leaves of `so` under head function `h`'s planar representative,
+    as a list of LITokens. Computable when `h.section_.σ` is. -/
+def leafTokens (h : HeadFunction) (so : SyntacticObject) : List LIToken :=
+  leafTokensPlanar (h.section_.σ so)
 
 /-- Linearize `so` under head function `h`: collect leaf tokens in the
-    left-to-right order of `h.externalize so`. Computable when
-    `h.externalize` is. The harmonic head-initial counterpart of
-    `SyntacticObject.linearize` (which used `Quot.out` implicitly). -/
-def linearizeWith (h : HeadFunction) (so : SyntacticObject) : List LIToken :=
-  linearizePlanar (h.externalize so)
+    left-to-right order of `h.section_.σ so`. Per @cite{marcolli-chomsky-berwick-2025}
+    book p. 123, "linearization" in linguistics IS planarization (= section
+    choice); the term is reserved for the resulting word ordering on leaves. -/
+def linearize (h : HeadFunction) (so : SyntacticObject) : List LIToken :=
+  linearizePlanar (h.section_.σ so)
 
 /-- Phonological yield of `so` under head function `h`: the non-empty
-    `phonForm` strings of leaves in `h.externalize so`'s left-to-right
-    order. Computable when `h.externalize` is. -/
-def phonYieldWith (h : HeadFunction) (so : SyntacticObject) : List String :=
-  phonYieldPlanar (h.externalize so)
+    `phonForm` strings of leaves in left-to-right order. -/
+def phonYield (h : HeadFunction) (so : SyntacticObject) : List String :=
+  phonYieldPlanar (h.section_.σ so)
 
-/-- Terminal nodes of `so` under head function `h`: the leaf-position
-    SOs of `h.externalize so` in left-to-right order. Computable when
-    `h.externalize` is. -/
-def terminalNodesWith (h : HeadFunction) (so : SyntacticObject) :
+/-- Terminal nodes of `so` under head function `h`: the leaf-position SOs
+    of the planar representative, in left-to-right order. -/
+def terminalNodes (h : HeadFunction) (so : SyntacticObject) :
     List SyntacticObject :=
-  (terminalNodesPlanar (h.externalize so)).map (Quot.mk _)
+  (terminalNodesPlanar (h.section_.σ so)).map (Quot.mk _)
 
 end HeadFunction
 
 -- ============================================================================
--- § 4b: Singleton-class simp lemmas for the parameterized cascade
+-- § 5: MCB Def 1.13.3 coherence (statement; proof queued for Phase 3.B+)
 -- ============================================================================
 
-namespace HeadFunction
+/-- @cite{marcolli-chomsky-berwick-2025} Def 1.13.3 coherence: under a head
+    function `h` on a tree T, if vertex `v` is contained in vertex `w` (both
+    vertices of T) and the head leaf of `w` appears among the leaves of `v`,
+    then the head leaves of `v` and `w` agree.
 
-/-- For a leaf SO, `outerCatOf` reduces to the leaf token's outer category
-    (independent of head function — leaves are their own head). -/
-@[simp] theorem outerCatOf_leaf (h : HeadFunction) (tok : LIToken) :
-    h.outerCatOf (.leaf tok) = tok.item.outerCat := by
-  show (h.headAt (.leaf tok)).item.outerCat = tok.item.outerCat
-  show (leftmostLeafPlanar (h.externalize (SyntacticObject.leaf tok))).item.outerCat
-        = tok.item.outerCat
-  -- `h.externalize (.leaf tok)` is some FreeMagma representative of the leaf;
-  -- by singleton-class structure (no swap fires on `.of _`), its leftmost-leaf
-  -- is `tok`. Routes through h.isSection + the same singleton-class chain
-  -- as `leftmostLeaf_leaf` in Basic.lean.
-  have hSec : FreeCommMagma.mk (h.externalize (.leaf tok)) =
-      (.leaf tok : SyntacticObject) := h.isSection _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
-  match hext : h.externalize (.leaf tok) with
-  | .of x =>
-    rw [hext] at hSec
-    show (leftmostLeafPlanar (.of x)).item.outerCat = tok.item.outerCat
-    cases x with
-    | inl t =>
-      simp only [leftmostLeafPlanar]
-      exact congrArg (fun y => y.item.outerCat)
-        (Sum.inl.inj (hSec : Sum.inl t = Sum.inl tok))
-    | inr n => exact absurd (hSec : Sum.inr n = Sum.inl tok) (by intro; contradiction)
-  | .mul _ _ =>
-    rw [hext] at hSec
-    exact absurd hSec (by simp [FreeMagma.CommEqv])
+    Statement uses `headAtVertex h T v`/`headAtVertex h T w` (the T-relative
+    head functions per MCB), not the standalone `head h v`/`head h w`. The
+    key observation: `headAtVertex h T v` is well-defined for any `v`, but
+    the coherence claim requires `v ⊆ T` (the `hvw : v ∈ w.subtrees` and
+    `hw : w ∈ T.subtrees` hypotheses).
 
-/-- For a leaf SO, `outerSelOf` reduces to the leaf token's outer selectional
-    stack (independent of head function). -/
-@[simp] theorem outerSelOf_leaf (h : HeadFunction) (tok : LIToken) :
-    h.outerSelOf (.leaf tok) = tok.item.outerSel := by
-  show (h.headAt (.leaf tok)).item.outerSel = tok.item.outerSel
-  show (leftmostLeafPlanar (h.externalize (SyntacticObject.leaf tok))).item.outerSel
-        = tok.item.outerSel
-  have hSec : FreeCommMagma.mk (h.externalize (.leaf tok)) =
-      (.leaf tok : SyntacticObject) := h.isSection _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
-  match hext : h.externalize (.leaf tok) with
-  | .of x =>
-    rw [hext] at hSec
-    show (leftmostLeafPlanar (.of x)).item.outerSel = tok.item.outerSel
-    cases x with
-    | inl t =>
-      simp only [leftmostLeafPlanar]
-      exact congrArg (fun y => y.item.outerSel)
-        (Sum.inl.inj (hSec : Sum.inl t = Sum.inl tok))
-    | inr n => exact absurd (hSec : Sum.inr n = Sum.inl tok) (by intro; contradiction)
-  | .mul _ _ =>
-    rw [hext] at hSec
-    exact absurd hSec (by simp [FreeMagma.CommEqv])
-
-/-- For a leaf SO, `headAt` returns the leaf token (independent of head function).
-    Generalizes `leftSpine_headAt_leaf` to arbitrary head functions. -/
-@[simp] theorem headAt_leaf (h : HeadFunction) (tok : LIToken) :
-    h.headAt (.leaf tok) = tok := by
-  show leftmostLeafPlanar (h.externalize (SyntacticObject.leaf tok)) = tok
-  have hSec : FreeCommMagma.mk (h.externalize (.leaf tok)) =
-      (.leaf tok : SyntacticObject) := h.isSection _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
-  match hext : h.externalize (.leaf tok) with
-  | .of x =>
-    rw [hext] at hSec
-    show leftmostLeafPlanar (.of x) = tok
-    cases x with
-    | inl t =>
-      simp only [leftmostLeafPlanar]
-      exact (Sum.inl.inj (hSec : Sum.inl t = Sum.inl tok))
-    | inr n => exact absurd (hSec : Sum.inr n = Sum.inl tok) (by intro; contradiction)
-  | .mul _ _ =>
-    rw [hext] at hSec
-    exact absurd hSec (by simp [FreeMagma.CommEqv])
-
-/-- For a trace SO, `headAt` returns the synthetic trace token. -/
-@[simp] theorem headAt_trace (h : HeadFunction) (n : Nat) :
-    h.headAt (.trace n) = mkTraceToken n := by
-  show leftmostLeafPlanar (h.externalize (SyntacticObject.trace n)) = mkTraceToken n
-  have hSec : FreeCommMagma.mk (h.externalize (.trace n)) =
-      (.trace n : SyntacticObject) := h.isSection _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
-  match hext : h.externalize (.trace n) with
-  | .of x =>
-    rw [hext] at hSec
-    show leftmostLeafPlanar (.of x) = mkTraceToken n
-    cases x with
-    | inl t => exact absurd (hSec : Sum.inl t = Sum.inr n) (by intro; contradiction)
-    | inr m =>
-      simp only [leftmostLeafPlanar]
-      exact congrArg mkTraceToken (Sum.inr.inj (hSec : Sum.inr m = Sum.inr n))
-  | .mul _ _ =>
-    rw [hext] at hSec
-    exact absurd hSec (by simp [FreeMagma.CommEqv])
-
-end HeadFunction
-
--- ============================================================================
--- § 5: MCB Def 1.13.3 coherence (currently sorried; Tier D)
--- ============================================================================
-
-/-- @cite{marcolli-chomsky-berwick-2025} Definition 1.13.3 coherence:
-    if vertex `v` is contained in vertex `w` and the head of `w` appears
-    among the leaves of `v`, then the head of `v` equals the head of `w`.
-
-    Under the externalize encoding, this becomes a path-uniqueness argument
-    on the planar representative `h.externalize w`: the leftmost-leaf path
-    from `w` down, when it lands in `T_v`, must pass through `v`, so
-    `headAt v` is computed from the same descent.
-
-    TODO Tier D: discharge the proof. The strategy is well-founded induction
-    on `w.size`. The "leaf-disjointness" lemma needed (distinct subtrees of
-    T have disjoint leaf-token sets when token ids are unique) holds for
-    SOs built by `Step.em` from distinct lexical items but is not enforced
-    by the SO type, so the unconditional version requires a `Nodup` hypothesis
-    on leaf-token ids. -/
-theorem HeadFunction.headAt_coherent (h : HeadFunction) :
-    ∀ v w : SyntacticObject, contains w v →
-      h.headAt w ∈ v.leafTokens → h.headAt w = h.headAt v := by
-  -- See TODO above. Discharging this requires a leaf-token uniqueness
-  -- invariant on the SO that the substrate doesn't yet encode.
+    TODO Phase 3.B+: discharge the proof. The strategy is well-founded
+    induction on the planar descent of `h.section_.σ T` — the head leaf of
+    `w` (which lies in `v`) determines a path from `T`'s root through `w`
+    that passes through `v`. The "leaf-disjointness" hypothesis (distinct
+    subtrees of T have disjoint leaf-token sets) is implicit when token
+    ids are unique; for the unconditional version, requires a `Nodup`
+    hypothesis on leaf-token ids. -/
+theorem HeadFunction.headAtVertex_coherent (h : HeadFunction) (T : SyntacticObject)
+    {v w : SyntacticObject} (_hw : w ∈ T.subtrees) (_hvw : v ∈ w.subtrees)
+    (_hmem : h.headAtVertex T w ∈ leafTokensPlanar (h.section_.σ v)) :
+    h.headAtVertex T w = h.headAtVertex T v := by
+  -- Phase 3.B+: well-founded induction on planar descent through h.section_.σ T.
+  -- See docstring for proof strategy.
   sorry
 
 -- ============================================================================
--- § 6: MCB Def 1.15.1 raising condition
+-- § 7: MCB Def 1.15.1 raising condition (two clauses, per audit H1)
 -- ============================================================================
 
 namespace HeadFunction
 
-/-- @cite{marcolli-chomsky-berwick-2025} Definition 1.15.1: a head function
-    `h` is **raising** when its head assignment is preserved by Internal
-    Merge in the configuration where the mover is not the head of the
-    source tree.
+/-- @cite{marcolli-chomsky-berwick-2025} Def 1.15.1, **clause (i)** (the
+    Dom-closure clause):
 
-    The MCB statement has two clauses:
-    - **(i)** For any `T ∈ Dom(h)` and any subtree `v ⊂ T` such that
-      `h(T) = h(T/^d v)` (the mover doesn't carry the head of T —
-      "deleting" v with a trace doesn't change the head), the IM result
-      `M(v, T/^c v)` is in `Dom(h)`, with `h(M(v, T/^c v)) = h(T/^d v)`.
-    - **(ii)** For arbitrary `T` and any subtree `v ⊂ T` such that
-      both `M(v, T/^c v) ∈ Dom(h)` and `T/^d v ∈ Dom(h)`, we have
-      `h(M(v, T/^c v)) = h(T/^d v)`.
+    For any `T ∈ Dom(h)` and any subtree `v ⊂ T` such that
+    `h(T) = h(T/^d v)` (the mover doesn't carry the head of T), the IM result
+    `M(v, T/^c v)` is in `Dom(h)`, with `h(M(v, T/^c v)) = h(T/^d v)`.
 
-    Linguistically: when a head moves via IM, the new structure's head
-    is the same as the original's (the mover doesn't project from the
-    new root; the trace position determines projection).
+    The Dom-membership in the conclusion is a **non-trivial closure assertion**
+    independent of clause (ii) — Internal Merge preserves the head function's
+    domain in this configuration.
 
-    Encoded here using `Step.im` from `Derivation.lean`. The deletion-
-    quotient `T/^d v` is `T.replace v (mkTrace n)`; the contraction-
-    quotient `T/^c v` is the same in our encoding (linglib uses
-    `mkTrace` uniformly; the Δ^d vs Δ^c distinction lives at the
-    `TraceTree` layer in `Merge/Defs.lean`). -/
-def IsRaising (h : HeadFunction) : Prop :=
-  -- Clause (ii) — the more general; (i) is its restriction under an extra
-  -- precondition.
+    Encoded using `Step.im` from `Derivation.lean`. The deletion-quotient
+    `T/^d v` is `T.replace v (mkTrace n)`; the contraction-quotient `T/^c v`
+    is the same in our encoding. -/
+def IsRaisingClauseI (h : HeadFunction) : Prop :=
+  ∀ (T v : SyntacticObject) (traceId : Nat),
+    h.Dom T →
+    h.head T = h.head (T.replace v (mkTrace traceId)) →
+    h.Dom (SyntacticObject.node v (T.replace v (mkTrace traceId))) ∧
+      h.head (SyntacticObject.node v (T.replace v (mkTrace traceId))) =
+        h.head (T.replace v (mkTrace traceId))
+
+/-- @cite{marcolli-chomsky-berwick-2025} Def 1.15.1, **clause (ii)** (the
+    head-equation clause):
+
+    For arbitrary `T` and any subtree `v ⊂ T` such that both
+    `M(v, T/^c v) ∈ Dom(h)` and `T/^d v ∈ Dom(h)`, we have
+    `h(M(v, T/^c v)) = h(T/^d v)`.
+
+    No Dom-closure claim — just the head equation under both Dom-membership
+    hypotheses. -/
+def IsRaisingClauseII (h : HeadFunction) : Prop :=
   ∀ (T v : SyntacticObject) (traceId : Nat),
     h.Dom (SyntacticObject.node v (T.replace v (mkTrace traceId))) →
     h.Dom (T.replace v (mkTrace traceId)) →
-    h.headAt (SyntacticObject.node v (T.replace v (mkTrace traceId))) =
-      h.headAt (T.replace v (mkTrace traceId))
+    h.head (SyntacticObject.node v (T.replace v (mkTrace traceId))) =
+      h.head (T.replace v (mkTrace traceId))
 
-/-- The trivial `leafOnly` head function is vacuously raising: the IM result
-    is always a `.node`, never a leaf, so the `Dom` precondition fails for
-    `leafOnly.Dom = isLeaf`. -/
-theorem leafOnly_isRaising : leafOnly.IsRaising := by
+/-- A head function is **raising** when both Def 1.15.1 clauses hold. -/
+def IsRaising (h : HeadFunction) : Prop :=
+  h.IsRaisingClauseI ∧ h.IsRaisingClauseII
+
+/-- The trivial `leafOnly` head function satisfies clause (ii) **vacuously**:
+    the IM result is always a `.node`, never a leaf, so the `Dom (.node ...)`
+    precondition fails for `leafOnly.Dom = isLeaf`. -/
+theorem leafOnly_isRaisingClauseII : leafOnly.IsRaisingClauseII := by
   intro T v traceId hIM _hD
   exact absurd hIM (by
     show ¬ SyntacticObject.isLeaf (v * (T.replace v (mkTrace traceId)))
     exact SyntacticObject.isLeaf_mul _ _)
 
+/-! **Note on clause (i) for `leafOnly`**: `leafOnly` does NOT satisfy
+clause (i). Counterexample: when T is a leaf and v doesn't occur in T,
+`T.replace v (mkTrace _) = T` (no occurrence to replace), so the
+precondition `head T = head (T/^d v)` holds vacuously, but the
+conclusion `Dom (.node v T)` requires `isLeaf (v * T)` which is False.
+`leafOnly` violates the Dom-closure aspect of clause (i): its domain
+is not closed under the IM construction.
+
+This is a substantive linguistic fact, not a formalization artifact:
+Internal Merge always produces a node, but `leafOnly` only labels leaves.
+Honest head functions for §1.15.2 Labeling will define `Dom` to be
+IM-closed. -/
+
 end HeadFunction
 
 -- ============================================================================
--- § 7: MCB Lemma 1.13.4 (counting head functions on T)
+-- § 8: MCB Lemma 1.13.4 counting (deferred — requires V^o(T) primitive)
 -- ============================================================================
 
-/-- @cite{marcolli-chomsky-berwick-2025} Lemma 1.13.4: there are exactly
-    `2^#V^o(T)` head functions on T, where `V^o(T)` is the set of non-leaf
-    vertices of T.
+/-! @cite{marcolli-chomsky-berwick-2025} Lemma 1.13.4 (book p. 127): there are
+exactly `2^|V^o(T)|` head functions on T, where `V^o(T)` is the set of
+non-leaf vertices of T.
 
-    Under the externalize encoding, a head function on T corresponds to a
-    choice of planar representative for T, which (per Lemma 1.13.5) is in
-    bijection with assignments of left/right marking at each non-leaf
-    vertex — giving `|Bool|^|V^o(T)| = 2^|V^o(T)|`.
+Under the externalize-based encoding, head functions on T are in bijection
+with planar embeddings of T (Lemma 1.13.5), which are in bijection with
+markings of left/right at each non-leaf vertex.
 
-    Statement-only here: the bijection is a structural fact whose formal
-    construction would duplicate the externalize encoding's content. -/
-theorem head_function_count (T : SyntacticObject) :
-    -- The number of distinct head functions on T equals 2^|V^o(T)|.
-    -- Documented as content; proof omitted (constructive bijection).
-    True := trivial
+Statement deferred until Phase 3.B+ when `V^o(T)` is a properly enumerable
+substrate primitive (currently `Multiset SyntacticObject` via `T.Acc`).
+The vacuous-True placeholder previously here was deleted as an
+anti-pattern. -/
 
 end Minimalist

@@ -86,7 +86,7 @@ open Minimalist (HeadFunction SyntacticObject LIToken)
     only ℓ itself) if ℓ is not the head of any internal vertex. -/
 noncomputable def projectionPath (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) : Multiset SyntacticObject :=
-  T.subtrees.filter (fun w => decide (h.headAt w = ℓ))
+  T.subtrees.filter (fun w => decide (h.head w = ℓ))
 
 /-- The **maximal projection vertex** v_ℓ of leaf ℓ in T
     (@cite{marcolli-chomsky-berwick-2025} Lemma 1.14.1): the topmost
@@ -116,16 +116,15 @@ noncomputable def isNonTrivialProjection (h : HeadFunction) (T : SyntacticObject
 -- § 2: Phase Head Leaves L_Φ(T) (Definition 1.14.3)
 -- ============================================================================
 
-/-- The set L(T) of leaves of T as LITokens. Renamed alias for
-    `SyntacticObject.leafTokens`, matching MCB notation.
-    Phase 1.0 noncomputable (delegates to Quot.out). -/
-noncomputable abbrev leafSet (T : SyntacticObject) : List LIToken := T.leafTokens
+/-- The set L(T) of leaves of T as LITokens, under head function `h`.
+    Renamed alias for `HeadFunction.leafTokens`, matching MCB notation. -/
+def leafSet (h : HeadFunction) (T : SyntacticObject) : List LIToken := h.leafTokens T
 
 /-- @cite{marcolli-chomsky-berwick-2025} Definition 1.14.3 (eq 1.14.1):
     L_Φ(T) = the set of leaves ℓ ∈ L(T) such that γ_ℓ contains
     interior (non-leaf) vertices. Each such ℓ is the head of a phase. -/
 noncomputable def phaseHeadLeaves (h : HeadFunction) (T : SyntacticObject) : List LIToken :=
-  (leafSet T).filter (fun ℓ => isNonTrivialProjection h T ℓ)
+  (leafSet h T).filter (fun ℓ => isNonTrivialProjection h T ℓ)
 
 -- ============================================================================
 -- § 3: Phase Interior Φ°_ℓ and Edge ∂Φ_ℓ (Definitions 1.14.3, 1.14.4)

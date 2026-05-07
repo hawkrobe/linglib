@@ -449,13 +449,23 @@ noncomputable def linearize (so : SyntacticObject) : List LIToken :=
   linearizePlanar so.out
 
 /-- Underlying leftmost-leaf on a planar `FreeMagma` representative.
-    Exposed (not `private`) so `HeadFunction.headAt` can compose it
-    with a chosen `externalize` section to produce a head accessor
-    that's computable when the section is. -/
+    Exposed (not `private`) so `HeadFunction.head` can compose it
+    with a chosen `Section.σ` to produce a head accessor that's computable
+    when the section is. Used for harmonic head-initial convention. -/
 def leftmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
   | .of (.inl tok) => tok
   | .of (.inr n) => mkTraceToken n
   | .mul l _ => leftmostLeafPlanar l
+
+/-- Underlying rightmost-leaf on a planar `FreeMagma` representative.
+    Mirror of `leftmostLeafPlanar` for harmonic head-final convention
+    (per @cite{marcolli-chomsky-berwick-2025} Lemma 1.13.5: head functions
+    on T are in bijection with planar embeddings, with two equally valid
+    conventions about which side carries the head). -/
+def rightmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
+  | .of (.inl tok) => tok
+  | .of (.inr n) => mkTraceToken n
+  | .mul _ r => rightmostLeafPlanar r
 
 /-- The leftmost leaf of a `SyntacticObject` under the chosen planar
     representative. Phase 1.0 placeholder via `Quot.out`; Phase 2 replaces

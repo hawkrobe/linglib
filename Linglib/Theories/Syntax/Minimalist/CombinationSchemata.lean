@@ -52,7 +52,7 @@ instance (lt1 lt2 : LIToken) : Decidable (LIToken.selects lt1 lt2) := by
     `a` selects `b` (under `h`) iff `h`'s head-leaf for `a` selects
     `h`'s head-leaf for `b`. -/
 def selects (h : HeadFunction) (a b : SyntacticObject) : Prop :=
-  (h.headAt a).selects (h.headAt b)
+  (h.head a).selects (h.head b)
 
 noncomputable instance (h : HeadFunction) (a b : SyntacticObject) :
     Decidable (selects h a b) := by
@@ -113,8 +113,8 @@ theorem classify_external_exhaustive
     any head function `h` and the externalize choice it supplies,
     `h.head (.node a b)` is one of `h.head a` or `h.head b`.
 
-    TODO: with `headAt h so := leftmostLeafPlanar (h.externalize so)`,
-    proving this requires reasoning about what `h.externalize (a*b)`
+    TODO: with `headAt h so := leftmostLeafPlanar (h.section_.σ so)`,
+    proving this requires reasoning about what `h.section_.σ (a*b)`
     looks like — concretely, that it's some planar tree whose leftmost
     leaf descends from either `a` or `b`. This needs a coherence lemma
     about how externalize interacts with binary nodes, which is part of

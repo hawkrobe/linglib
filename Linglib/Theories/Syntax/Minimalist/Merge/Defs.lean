@@ -76,11 +76,11 @@ noncomputable def SyntacticObject.toH (so : SyntacticObject) : Minimalist.Merge.
   toHPlanar so.out
 
 /-- Parameterized embedding: `toH` under head function `h`, using
-    `h.externalize` to pick the planar representative. Computable when
-    `h.externalize` is. -/
+    `h.section_.σ` to pick the planar representative. Computable when
+    `h.section_.σ` is. -/
 def HeadFunction.toHWith (h : HeadFunction) (so : SyntacticObject) :
     Minimalist.Merge.SyntacticObjectH :=
-  toHPlanar (h.externalize so)
+  toHPlanar (h.section_.σ so)
 
 /-- Underlying `FreeMagma`-side toHc on a planar representative. Public
     so `HeadFunction.toHcWith` can compose it with a chosen `externalize`. -/
@@ -102,11 +102,11 @@ noncomputable def SyntacticObject.toHc (so : SyntacticObject) :
   toHcPlanar so.out
 
 /-- Parameterized projection: `toHc` under head function `h`, using
-    `h.externalize` to pick the planar representative. Computable when
-    `h.externalize` is. -/
+    `h.section_.σ` to pick the planar representative. Computable when
+    `h.section_.σ` is. -/
 def HeadFunction.toHcWith (h : HeadFunction) (so : SyntacticObject) :
     ConnesKreimer.TraceTree LIToken Unit :=
-  toHcPlanar (h.externalize so)
+  toHcPlanar (h.section_.σ so)
 
 /-! ### Singleton-class simp lemmas
 
@@ -159,69 +159,31 @@ is planar (`.node a b ≠ .node b a`). Phase 2 will take an
     rw [h] at hmk
     exact absurd hmk (by simp [FreeMagma.CommEqv])
 
-/-! ### Singleton-class simp lemmas for `toHcWith` (parameterized version) -/
+/-! ### Singleton-class simp lemmas for `toHcWith`/`toHWith` (parameterized)
 
-/-- `toHcWith h` on a leaf returns the corresponding `TraceTree.leaf`.
-    Routes through `h.isSection` (instead of `Quot.out_eq`) and the
-    same singleton-class chain. -/
+All three lemmas reduce via the keystone `FreeCommMagma.Section.σ_of` helper:
+the section's image of `FreeCommMagma.of x` is exactly `FreeMagma.of x`. -/
+
+/-- `toHcWith h` on a leaf returns the corresponding `TraceTree.leaf`. -/
 @[simp] theorem HeadFunction.toHcWith_leaf (h : HeadFunction) (tok : LIToken) :
     h.toHcWith (.leaf tok) = ConnesKreimer.TraceTree.leaf tok := by
-  show toHcPlanar (h.externalize (.leaf tok)) = _
-  have hSec : FreeCommMagma.mk (h.externalize (.leaf tok)) =
-      (SyntacticObject.leaf tok : SyntacticObject) := h.isSection _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
-  match hext : h.externalize (.leaf tok) with
-  | .of x =>
-    rw [hext] at hSec
-    show toHcPlanar (.of x) = _
-    cases x with
-    | inl t =>
-      simp only [toHcPlanar]
-      exact congrArg ConnesKreimer.TraceTree.leaf
-        (Sum.inl.inj (hSec : Sum.inl t = Sum.inl tok))
-    | inr n => exact absurd (hSec : Sum.inr n = Sum.inl tok) (by intro; contradiction)
-  | .mul _ _ =>
-    rw [hext] at hSec
-    exact absurd hSec (by simp [FreeMagma.CommEqv])
+  show toHcPlanar (h.section_.σ (FreeCommMagma.of (.inl tok))) = _
+  rw [h.section_.σ_of]
+  rfl
 
 /-- `toHcWith h` on a trace returns `TraceTree.trace ()`. -/
 @[simp] theorem HeadFunction.toHcWith_trace (h : HeadFunction) (n : Nat) :
     h.toHcWith (.trace n) = ConnesKreimer.TraceTree.trace () := by
-  show toHcPlanar (h.externalize (.trace n)) = _
-  have hSec : FreeCommMagma.mk (h.externalize (.trace n)) =
-      (SyntacticObject.trace n : SyntacticObject) := h.isSection _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
-  match hext : h.externalize (.trace n) with
-  | .of x =>
-    rw [hext] at hSec
-    show toHcPlanar (.of x) = _
-    cases x with
-    | inl t => exact absurd (hSec : Sum.inl t = Sum.inr n) (by intro; contradiction)
-    | inr m => simp only [toHcPlanar]
-  | .mul _ _ =>
-    rw [hext] at hSec
-    exact absurd hSec (by simp [FreeMagma.CommEqv])
+  show toHcPlanar (h.section_.σ (FreeCommMagma.of (.inr n))) = _
+  rw [h.section_.σ_of]
+  rfl
 
 /-- `toHWith h` on a leaf returns the corresponding `DecoratedTree.leaf`. -/
 @[simp] theorem HeadFunction.toHWith_leaf (h : HeadFunction) (tok : LIToken) :
     h.toHWith (.leaf tok) = (.leaf tok : Minimalist.Merge.SyntacticObjectH) := by
-  show toHPlanar (h.externalize (.leaf tok)) = _
-  have hSec : FreeCommMagma.mk (h.externalize (.leaf tok)) =
-      (SyntacticObject.leaf tok : SyntacticObject) := h.isSection _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
-  match hext : h.externalize (.leaf tok) with
-  | .of x =>
-    rw [hext] at hSec
-    show toHPlanar (.of x) = _
-    cases x with
-    | inl t =>
-      simp only [toHPlanar]
-      exact congrArg (fun y => (.leaf y : Minimalist.Merge.SyntacticObjectH))
-        (Sum.inl.inj (hSec : Sum.inl t = Sum.inl tok))
-    | inr n => exact absurd (hSec : Sum.inr n = Sum.inl tok) (by intro; contradiction)
-  | .mul _ _ =>
-    rw [hext] at hSec
-    exact absurd hSec (by simp [FreeMagma.CommEqv])
+  show toHPlanar (h.section_.σ (FreeCommMagma.of (.inl tok))) = _
+  rw [h.section_.σ_of]
+  rfl
 
 end Minimalist
 

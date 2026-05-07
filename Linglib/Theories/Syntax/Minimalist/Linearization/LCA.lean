@@ -71,11 +71,11 @@ private theorem leaf_inj {a b : LIToken}
 noncomputable def dominatedTerminals : SyntacticObject → List SyntacticObject :=
   terminalNodes
 
-/-- Parameterized d(X) under head function `h`: the terminals of `h.externalize X`
-    in left-to-right order. Computable when `h.externalize` is. Alias for
-    `HeadFunction.terminalNodesWith`. -/
+/-- Parameterized d(X) under head function `h`: the terminals of `h.section_.σ X`
+    in left-to-right order. Computable when `h.section_.σ` is. Alias for
+    `HeadFunction.terminalNodes`. -/
 def dominatedTerminalsWith (h : HeadFunction) : SyntacticObject → List SyntacticObject :=
-  HeadFunction.terminalNodesWith h
+  HeadFunction.terminalNodes h
 
 /-- Tree-relative LCA precedence.
     Terminal `a` precedes terminal `b` within `root` iff there exist
@@ -299,8 +299,8 @@ theorem no_right_specifier
     `*`-product of its children's externalizations, linearization concatenates
     in left-to-right order (mover then target).
 
-    The hypothesis `h_ext_node : h.externalize (.node mover target) =
-    h.externalize mover * h.externalize target` is the **local-magma-morphism
+    The hypothesis `h_ext_node : h.section_.σ (.node mover target) =
+    h.section_.σ mover * h.section_.σ target` is the **local-magma-morphism
     property** at this specific node. MCB Lemma 1.13.1 rules out a *global*
     magma morphism `SO → SO^{nc}`, but a *particular* externalize choice can
     satisfy this property at any specific node — and consumers who supply a
@@ -311,12 +311,12 @@ theorem no_right_specifier
     may pick either `mover.out * target.out` or `target.out * mover.out`. -/
 theorem adjunction_left_only_with
     (h : HeadFunction) (mover target : SyntacticObject)
-    (h_ext_node : h.externalize (.node mover target) =
-      h.externalize mover * h.externalize target) :
-    HeadFunction.linearizeWith h (.node mover target) =
-    HeadFunction.linearizeWith h mover ++ HeadFunction.linearizeWith h target := by
-  show linearizePlanar (h.externalize (.node mover target)) =
-    linearizePlanar (h.externalize mover) ++ linearizePlanar (h.externalize target)
+    (h_ext_node : h.section_.σ (SyntacticObject.node mover target) =
+      h.section_.σ mover * h.section_.σ target) :
+    HeadFunction.linearize h (.node mover target) =
+    HeadFunction.linearize h mover ++ HeadFunction.linearize h target := by
+  show linearizePlanar (h.section_.σ (SyntacticObject.node mover target)) =
+    linearizePlanar (h.section_.σ mover) ++ linearizePlanar (h.section_.σ target)
   rw [h_ext_node]
   rfl
 
