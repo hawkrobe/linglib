@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.HeadFunction
 
 /-!
 # Linear Correspondence Axiom
@@ -65,9 +66,16 @@ private theorem leaf_inj {a b : LIToken}
 
 /-- d(X): the set of terminals dominated by (or equal to) X.
     Corresponds to Kayne's d function (p. 16). Noncomputable in Phase
-    1.0 because `terminalNodes` lifts via `Quot.out`. -/
+    1.0 because `terminalNodes` lifts via `Quot.out`. The Phase 2
+    parameterized variant is `dominatedTerminalsWith h` (below). -/
 noncomputable def dominatedTerminals : SyntacticObject → List SyntacticObject :=
   terminalNodes
+
+/-- Parameterized d(X) under head function `h`: the terminals of `h.externalize X`
+    in left-to-right order. Computable when `h.externalize` is. Alias for
+    `HeadFunction.terminalNodesWith`. -/
+def dominatedTerminalsWith (h : HeadFunction) : SyntacticObject → List SyntacticObject :=
+  HeadFunction.terminalNodesWith h
 
 /-- Tree-relative LCA precedence.
     Terminal `a` precedes terminal `b` within `root` iff there exist
@@ -286,28 +294,46 @@ theorem no_right_specifier
 
 -- 3b. Adjunction asymmetry
 
-/-- **Head-to-head adjunction must be left-adjunction.** When a moving head
-    `mover` adjoins to a target, the linearization function places
-    mover's material before target's material (left-adjunction).
-    This matches Kayne's result (1994, pp. 22-24).
+/-- **Head-to-head adjunction must be left-adjunction (parameterized).**
+    Under a head function `h` whose externalize section sends a node to the
+    `*`-product of its children's externalizations, linearization concatenates
+    in left-to-right order (mover then target).
 
-    Phase 1.0 status: `linearize` is `Quot.out`-based and noncomputable
-    after the FreeCommMagma migration; the equality `linearize (mover * target)
-    = linearize mover ++ linearize target` was previously `rfl` against
-    the planar `TraceTree` carrier but no longer holds definitionally
-    on the FreeCommMagma quotient (the choice of representative for
-    `(mover * target)` is not constrained to be `(out mover) * (out target)`).
+    The hypothesis `h_ext_node : h.externalize (.node mover target) =
+    h.externalize mover * h.externalize target` is the **local-magma-morphism
+    property** at this specific node. MCB Lemma 1.13.1 rules out a *global*
+    magma morphism `SO → SO^{nc}`, but a *particular* externalize choice can
+    satisfy this property at any specific node — and consumers who supply a
+    derivation-built externalize get this for free per construction.
 
-    TODO Phase 2: with an LCA-derived planarization parameter, this
-    becomes a theorem about the parameterized `linearizeWith` rather
-    than the bare `linearize`. -/
+    The unparameterized `adjunction_left_only` (currently sorry) cannot be
+    proven without committing to an externalize: `Quot.out (.node mover target)`
+    may pick either `mover.out * target.out` or `target.out * mover.out`. -/
+theorem adjunction_left_only_with
+    (h : HeadFunction) (mover target : SyntacticObject)
+    (h_ext_node : h.externalize (.node mover target) =
+      h.externalize mover * h.externalize target) :
+    HeadFunction.linearizeWith h (.node mover target) =
+    HeadFunction.linearizeWith h mover ++ HeadFunction.linearizeWith h target := by
+  show linearizePlanar (h.externalize (.node mover target)) =
+    linearizePlanar (h.externalize mover) ++ linearizePlanar (h.externalize target)
+  rw [h_ext_node]
+  rfl
+
+/-- **Head-to-head adjunction must be left-adjunction (legacy unparameterized).**
+    The Phase 1.0 statement on the bare `linearize` (= `linearizeWith leftSpine`).
+    Cannot be proven without committing to an externalize choice — see
+    `adjunction_left_only_with` for the principled parameterized version that
+    requires a local-magma-morphism hypothesis on the externalize section. -/
 theorem adjunction_left_only
     (mover target : SyntacticObject) :
     linearize (.node mover target) =
     linearize mover ++ linearize target := by
-  -- TODO Phase 2: linearize is Quot.out-based; this requires a
-  -- Quot.out-equality argument or replacement of linearize with
-  -- a non-out-based encoding.
+  -- Cannot be proven on the bare `linearize`: `Quot.out (.node mover target)`
+  -- may pick either `mover.out * target.out` or `target.out * mover.out`,
+  -- giving different concatenation orders. Use `adjunction_left_only_with`
+  -- with a `HeadFunction` whose externalize respects the merge structure
+  -- locally.
   sorry
 
 -- ============================================================================
