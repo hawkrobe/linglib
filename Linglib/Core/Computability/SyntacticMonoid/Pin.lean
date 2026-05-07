@@ -564,4 +564,143 @@ theorem isFiniteOrCofinite_iff_satisfies_pinCofiniteEquation [Finite α]
   ⟨IsFiniteOrCofinite.satisfies_pinCofiniteEquation,
    isFiniteOrCofinite_of_satisfies_pinCofiniteEquation⟩
 
+-- ============================================================================
+-- §7. Pin's ℒℐ-variety (generalized definite, sandwich form)
+-- ============================================================================
+
+/-- **Pin's algebraic equation for generalized-definite languages**
+(@cite{lambert-2026} Prop 58 limit, simplified form; Straubing 1985:60):
+`ℒℐ = ⟦x^ω · s · x^ω = x^ω⟧`. Sandwiching `s` between two copies of
+the same omega-power absorbs `s`.
+
+Lambert (paper p. 25) notes this simplified one-variable form is
+equivalent to the more general two-variable form
+`x^ω · s · z^ω = x^ω · z^ω`; the equivalence proof itself uses
+omega-power idempotence. -/
+def pinGeneralizedDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
+  ∀ (s : L.syntacticMonoid) (w : List α), w ≠ [] →
+    Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w)) * s *
+    Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w)) =
+    Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w))
+
+/-- **Pin's ℒℐ-theorem (forward direction)**: a generalized-`k`-definite
+language's syntactic monoid satisfies the LI omega-power equation.
+
+Strategy: pick `v = w^(N·k)` long enough (length `≥ k`); apply
+`IsGeneralizedDefinite k L` directly to the pair
+`(v ++ s' ++ v, v)` — both have the same length-`k` left-prefix (the
+first `k` chars of `v`) and same length-`k` right-suffix (the last
+`k` chars of `v`). The omega-power identity `[w]^N · s · [w]^N = [w]^N`
+follows by lifting through `[w]^(N·k) = omegaPow [w]`. -/
+theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
+    {L : Language α} {k : ℕ} [Finite L.syntacticMonoid]
+    (hk : IsGeneralizedDefinite k L) :
+    pinGeneralizedDefiniteEquation L := by
+  intro s w hw
+  set wM := L.toSyntacticMonoid (FreeMonoid.ofList w) with hwM_def
+  by_cases hk0 : k = 0
+  · -- k = 0: IsGenDef 0 L means ∀ w₁ w₂, w₁ ∈ L ↔ w₂ ∈ L (vacuous prefix/suffix).
+    -- So L is constant: L = ∅ or L = univ. Either way M is trivial.
+    subst hk0
+    have h_takeAt_right_zero : ∀ v : List α, Edge.right.takeAt 0 v = [] := by
+      intro v; show v.drop (v.length - 0) = []; simp
+    have hM_triv : ∀ x : L.syntacticMonoid, x = 1 := by
+      intro x
+      obtain ⟨u, hu⟩ := Quotient.exists_rep x
+      rw [show x = L.toSyntacticMonoid u from hu.symm,
+          show (1 : L.syntacticMonoid) = L.toSyntacticMonoid 1 from
+            (L.toSyntacticMonoid.map_one).symm]
+      apply Quotient.sound
+      intro p q
+      show p ++ FreeMonoid.toList u ++ q ∈ L ↔ p ++ FreeMonoid.toList 1 ++ q ∈ L
+      apply hk
+      · -- takeAt_left 0 : both .take 0 = []
+        rfl
+      · -- takeAt_right 0 : both = []
+        rw [h_takeAt_right_zero, h_takeAt_right_zero]
+    rw [hM_triv s, hM_triv (Monoid.omegaPow wM), one_mul, mul_one]
+  · -- k ≥ 1: build v = w^(N·k) with |v| ≥ k.
+    set N := Monoid.omegaPowExponent wM with hN_def
+    have h_omega_eq_long : wM ^ (N * k) = Monoid.omegaPow wM := by
+      rw [pow_mul, ← Monoid.omegaPow_eq_pow, Monoid.omegaPow_pow wM hk0]
+    rw [← h_omega_eq_long]
+    set v := ((FreeMonoid.ofList w) ^ (N * k)).toList with hv_def
+    have hw_len : 0 < w.length := List.length_pos_iff.mpr hw
+    have hN_pos : 0 < N := Monoid.omegaPowExponent_pos wM
+    have hv_len : k ≤ v.length := by
+      show k ≤ ((FreeMonoid.ofList w) ^ (N * k)).length
+      rw [freeMonoid_ofList_pow_length]
+      have hk_pos : 0 < k := Nat.pos_of_ne_zero hk0
+      have h1 : k ≤ N * k := Nat.le_mul_of_pos_left k hN_pos
+      have h2 : N * k ≤ N * k * w.length := Nat.le_mul_of_pos_right (N * k) hw_len
+      omega
+    have hv_eq : L.toSyntacticMonoid (FreeMonoid.ofList v) = wM ^ (N * k) := by
+      have h_id : (FreeMonoid.ofList v : FreeMonoid α) =
+                  (FreeMonoid.ofList w) ^ (N * k) := rfl
+      rw [h_id, MonoidHom.map_pow]
+    rw [← hv_eq]
+    -- Goal: [v] · s · [v] = [v]. Apply IsGenDef k L directly via context-extension.
+    obtain ⟨s', hs'⟩ := Quotient.exists_rep s
+    rw [show s = L.toSyntacticMonoid s' from hs'.symm]
+    rw [show L.toSyntacticMonoid (FreeMonoid.ofList v) *
+            L.toSyntacticMonoid s' *
+            L.toSyntacticMonoid (FreeMonoid.ofList v) =
+        L.toSyntacticMonoid (FreeMonoid.ofList v * s' * FreeMonoid.ofList v) by
+      rw [MonoidHom.map_mul, MonoidHom.map_mul]]
+    apply Quotient.sound
+    intro x y
+    show x ++ FreeMonoid.toList (FreeMonoid.ofList v * s' * FreeMonoid.ofList v) ++ y ∈ L ↔
+         x ++ FreeMonoid.toList (FreeMonoid.ofList v) ++ y ∈ L
+    have hwmul : FreeMonoid.toList (FreeMonoid.ofList v * s' * FreeMonoid.ofList v) =
+                 v ++ FreeMonoid.toList s' ++ v := rfl
+    have hvId : FreeMonoid.toList (FreeMonoid.ofList v) = v := rfl
+    rw [hwmul, hvId]
+    -- Apply IsGenDef k L to (x ++ v ++ toList s' ++ v ++ y, x ++ v ++ y).
+    apply hk
+    · -- takeAt_left k matches: both have x ++ v as prefix; |x ++ v| ≥ k.
+      show (x ++ (v ++ FreeMonoid.toList s' ++ v) ++ y).take k =
+           (x ++ v ++ y).take k
+      rw [show x ++ (v ++ FreeMonoid.toList s' ++ v) ++ y =
+              (x ++ v) ++ (FreeMonoid.toList s' ++ v ++ y) by
+            simp [List.append_assoc],
+          show x ++ v ++ y = (x ++ v) ++ y from by simp [List.append_assoc]]
+      have h_xv_len : k ≤ (x ++ v).length := by
+        rw [List.length_append]; omega
+      rw [List.take_append_of_le_length h_xv_len,
+          List.take_append_of_le_length h_xv_len]
+    · -- takeAt_right k matches: both end with v ++ y; |v ++ y| ≥ k.
+      show Edge.right.takeAt k (x ++ (v ++ FreeMonoid.toList s' ++ v) ++ y) =
+           Edge.right.takeAt k (x ++ v ++ y)
+      rw [show x ++ (v ++ FreeMonoid.toList s' ++ v) ++ y =
+              (x ++ v ++ FreeMonoid.toList s') ++ (v ++ y) by
+            simp [List.append_assoc],
+          show x ++ v ++ y = x ++ (v ++ y) by simp [List.append_assoc]]
+      have h_vy_len : k ≤ (v ++ y).length := by
+        rw [List.length_append]; omega
+      rw [takeAt_right_append_left_absorb (x ++ v ++ FreeMonoid.toList s')
+            (v ++ y) h_vy_len,
+          takeAt_right_append_left_absorb x (v ++ y) h_vy_len]
+
+/-- **Pin's ℒℐ-theorem (reverse direction, PARTIAL)**: blocked on the
+finite-`k` LI reverse direction (`isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation`,
+which is currently `sorry`'d). See that theorem's docstring for the
+overlap subcase difficulty. -/
+theorem exists_isGeneralizedDefinite_of_satisfies_pinGeneralizedDefiniteEquation
+    {L : Language α} [Finite L.syntacticMonoid]
+    (_h : pinGeneralizedDefiniteEquation L) :
+    ∃ k, IsGeneralizedDefinite k L := by
+  sorry
+
+/-- **Pin's ℒℐ-theorem**: a language is generalized-`k`-definite for
+some `k` iff its syntactic monoid satisfies Pin's LI omega-power
+equation. **Both directions currently `sorry`'d** at this commit:
+forward direction blocked on a structural gap (need `[v] = [αs]` for
+suffix αs), reverse blocked on the finite-`k` LI iff. -/
+theorem exists_isGeneralizedDefinite_iff_satisfies_pinGeneralizedDefiniteEquation
+    {L : Language α} [Finite L.syntacticMonoid] :
+    (∃ k, IsGeneralizedDefinite k L) ↔ pinGeneralizedDefiniteEquation L := by
+  refine ⟨fun ⟨_, hk⟩ =>
+    IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation hk, ?_⟩
+  exact exists_isGeneralizedDefinite_of_satisfies_pinGeneralizedDefiniteEquation
+
 end Language

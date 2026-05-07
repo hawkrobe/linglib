@@ -146,7 +146,7 @@ variable {α : Type*}
 
 /-- The right-`k`-suffix of `x ++ rest` equals the right-`k`-suffix
 of `rest` whenever `rest.length ≥ k`. -/
-private lemma takeAt_right_append_left_absorb {α : Type*}
+lemma takeAt_right_append_left_absorb {α : Type*}
     (x rest : List α) {k : ℕ} (h : k ≤ rest.length) :
     Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest := by
   show (x ++ rest).drop ((x ++ rest).length - k) =
@@ -509,5 +509,145 @@ theorem isReverseDefinite_iff_satisfies_kReverseDefiniteEquation
     IsReverseDefinite k L ↔ Lambert.Equations.kReverseDefiniteEquation L k :=
   ⟨IsReverseDefinite.satisfies_kReverseDefiniteEquation,
    isReverseDefinite_of_satisfies_kReverseDefiniteEquation⟩
+
+end Language
+
+-- ============================================================================
+-- §5. Lambert Prop 58 — generalized definite (sandwich form)
+-- ============================================================================
+
+namespace Lambert.Equations
+
+/-- **Lambert (2026) Prop 58 equation** for **generalized `k`-definite**
+languages (length-`k` letter-sequence, sandwich monoid form): for any
+`s` and any length-`k` letter sequence `αs`, sandwiching `s` between
+two copies of `[αs]` absorbs `s`:
+`[αs] · s · [αs] = [αs]`.
+
+Lambert's notation: `ℒℐ_k = ⟦x₁ ⋯ xₖ s x₁ ⋯ xₖ = x₁ ⋯ xₖ⟧` (paper
+Prop 58, Straubing 1985:60). The two `αs` instances are bound to the
+**same** letter sequence; this is the "simplified" form of the more
+general two-variable equation `[αs · s · βs] = [αs · βs]` that Lambert
+remarks (paper p. 25) defines the same class. -/
+def kGeneralizedDefiniteEquation {α : Type*} (L : Language α) (k : ℕ) : Prop :=
+  ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
+    L.toSyntacticMonoid (FreeMonoid.ofList αs) * s *
+    L.toSyntacticMonoid (FreeMonoid.ofList αs) =
+    L.toSyntacticMonoid (FreeMonoid.ofList αs)
+
+end Lambert.Equations
+
+namespace Language
+
+variable {α : Type*}
+
+-- §5.1. Lifting LI equation to `SyntacticEquiv`
+
+/-- Under the LI equation, sandwiching any word `w` between two copies
+of a length-`k` word `αs` is syntactically equivalent to `αs` alone. -/
+lemma syntacticEquiv_of_kGeneralizedDefiniteEquation
+    {L : Language α} {k : ℕ}
+    (h : Lambert.Equations.kGeneralizedDefiniteEquation L k)
+    (αs w : List α) (hαs_len : αs.length = k) :
+    SyntacticEquiv L (αs ++ w ++ αs) αs := by
+  have h_eq :=
+    h (L.toSyntacticMonoid (FreeMonoid.ofList w)) αs hαs_len
+  have h_pre :
+      L.toSyntacticMonoid (FreeMonoid.ofList (αs ++ w ++ αs)) =
+      L.toSyntacticMonoid (FreeMonoid.ofList αs) := by
+    rw [FreeMonoid.ofList_append, FreeMonoid.ofList_append, MonoidHom.map_mul,
+        MonoidHom.map_mul]
+    exact h_eq
+  exact Quotient.exact h_pre
+
+-- §5.2. Lambert Prop 58 — forward direction
+
+/-- **Lambert Prop 58 (forward direction)**: a generalized-`k`-definite
+language's syntactic monoid satisfies the LI equation.
+
+Proof: apply `IsGeneralizedDefinite` to the pair
+`(x ++ αs ++ s ++ αs ++ y, x ++ αs ++ y)`. They share the
+length-`k` left-prefix (both have `x ++ αs` as prefix) and the
+length-`k` right-suffix (both have `αs ++ y` as suffix). -/
+theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
+    {L : Language α} {k : ℕ} (hL : IsGeneralizedDefinite k L) :
+    Lambert.Equations.kGeneralizedDefiniteEquation L k := by
+  intro s αs hαs_len
+  obtain ⟨w, hw⟩ := Quotient.exists_rep s
+  rw [show s = L.toSyntacticMonoid w from hw.symm]
+  rw [show L.toSyntacticMonoid (FreeMonoid.ofList αs) * L.toSyntacticMonoid w *
+        L.toSyntacticMonoid (FreeMonoid.ofList αs) =
+      L.toSyntacticMonoid (FreeMonoid.ofList αs * w * FreeMonoid.ofList αs) by
+    rw [MonoidHom.map_mul, MonoidHom.map_mul]]
+  apply Quotient.sound
+  intro x y
+  show x ++ FreeMonoid.toList (FreeMonoid.ofList αs * w * FreeMonoid.ofList αs) ++ y ∈ L ↔
+       x ++ FreeMonoid.toList (FreeMonoid.ofList αs) ++ y ∈ L
+  -- Both sides reduce to checking IsGeneralizedDefinite on appropriate words.
+  have hwmul : FreeMonoid.toList (FreeMonoid.ofList αs * w * FreeMonoid.ofList αs) =
+               αs ++ FreeMonoid.toList w ++ αs := rfl
+  have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
+  rw [hwmul, hαsId]
+  -- Apply IsGenDef to (x ++ αs ++ toList w ++ αs ++ y, x ++ αs ++ y).
+  apply hL
+  · -- takeAt_left k matches: both have x ++ αs as prefix.
+    show (x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y).take k =
+         (x ++ αs ++ y).take k
+    rw [show x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y =
+            (x ++ αs) ++ (FreeMonoid.toList w ++ αs ++ y) by
+          simp [List.append_assoc],
+        show x ++ αs ++ y = (x ++ αs) ++ y from by simp [List.append_assoc]]
+    have h_xαs_len : k ≤ (x ++ αs).length := by
+      rw [List.length_append]; omega
+    rw [List.take_append_of_le_length h_xαs_len,
+        List.take_append_of_le_length h_xαs_len]
+  · -- takeAt_right k matches: both end with αs ++ y.
+    show Edge.right.takeAt k (x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y) =
+         Edge.right.takeAt k (x ++ αs ++ y)
+    rw [show x ++ (αs ++ FreeMonoid.toList w ++ αs) ++ y =
+            (x ++ αs ++ FreeMonoid.toList w) ++ (αs ++ y) by
+          simp [List.append_assoc],
+        show x ++ αs ++ y = x ++ (αs ++ y) by simp [List.append_assoc]]
+    have h_αsy_len : k ≤ (αs ++ y).length := by
+      rw [List.length_append]; omega
+    rw [takeAt_right_append_left_absorb (x ++ αs ++ FreeMonoid.toList w)
+          (αs ++ y) h_αsy_len,
+        takeAt_right_append_left_absorb x (αs ++ y) h_αsy_len]
+
+-- §5.3. Lambert Prop 58 — reverse direction (PARTIAL)
+
+/-- **Lambert Prop 58 (reverse direction, PARTIAL)**: if a language's
+syntactic monoid satisfies the LI equation, then `L` is generalized
+`k`-definite.
+
+**Status**: `sorry`. The proof has a difficult **overlap subcase**
+(when `k < |w| < 2k` so that `w`'s `k`-prefix and `k`-suffix overlap):
+matching prefix-and-suffix of length `k` forces a periodic structure
+that the simplified one-variable equation `[αs · s · αs] = [αs]` does
+not directly resolve. The proof likely requires either:
+(a) the more general two-variable equation `[αs · s · βs] = [αs · βs]`
+    (which Lambert (2026) p. 25 shows is equivalent to the simplified
+    form, but the equivalence proof is non-trivial); or
+(b) a periodicity argument exploiting that the equation forces `[w₁]`
+    to be idempotent for `|w₁| = k` and using cyclic-submonoid stability.
+
+The forward direction (above) is clean. The other three varieties
+(D, K, N) have full iffs at this commit. -/
+theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
+    {L : Language α} {k : ℕ}
+    (_h : Lambert.Equations.kGeneralizedDefiniteEquation L k) :
+    IsGeneralizedDefinite k L := by
+  sorry
+
+/-- **Lambert (2026) Prop 58**: a language is generalized `k`-definite
+iff its syntactic monoid satisfies the LI equation. The reverse
+direction is currently `sorry`'d — see
+`isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation`. -/
+theorem isGeneralizedDefinite_iff_satisfies_kGeneralizedDefiniteEquation
+    {L : Language α} {k : ℕ} :
+    IsGeneralizedDefinite k L ↔
+    Lambert.Equations.kGeneralizedDefiniteEquation L k :=
+  ⟨IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation,
+   isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation⟩
 
 end Language
