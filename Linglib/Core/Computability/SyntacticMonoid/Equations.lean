@@ -198,9 +198,7 @@ lemma syntacticEquiv_of_kDefiniteEquation {L : Language α} {k : ℕ}
   have h_pre :
       L.toSyntacticMonoid (FreeMonoid.ofList (w ++ αs)) =
       L.toSyntacticMonoid (FreeMonoid.ofList αs) := by
-    have hmul : (FreeMonoid.ofList (w ++ αs) : FreeMonoid α) =
-                FreeMonoid.ofList w * FreeMonoid.ofList αs := rfl
-    rw [hmul, MonoidHom.map_mul]
+    rw [FreeMonoid.ofList_append, MonoidHom.map_mul]
     exact h_eq
   exact Quotient.exact h_pre
 
@@ -332,5 +330,184 @@ theorem isDefinite_iff_satisfies_kDefiniteEquation
     IsDefinite k L ↔ Lambert.Equations.kDefiniteEquation L k :=
   ⟨IsDefinite.satisfies_kDefiniteEquation,
    isDefinite_of_satisfies_kDefiniteEquation⟩
+
+end Language
+
+-- ============================================================================
+-- §4. Lambert Prop 57 — reverse-definite (mirror of D)
+-- ============================================================================
+
+namespace Lambert.Equations
+
+/-- **Lambert (2026) Prop 57 equation** for **reverse-definite**
+languages (length-`k` letter-sequence, monoid form): for any element
+`s` of the syntactic monoid and any length-`k` letter sequence `αs`,
+**post**-multiplying `[αs]` by `s` preserves it. Mirror of
+`kDefiniteEquation` with right-multiplication instead of left.
+
+Lambert's notation: `𝒦_k = ⟦x₁ ⋯ xₖ s = x₁ ⋯ xₖ⟧` (paper Prop 57). -/
+def kReverseDefiniteEquation {α : Type*} (L : Language α) (k : ℕ) : Prop :=
+  ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
+    L.toSyntacticMonoid (FreeMonoid.ofList αs) * s =
+    L.toSyntacticMonoid (FreeMonoid.ofList αs)
+
+end Lambert.Equations
+
+namespace Language
+
+variable {α : Type*}
+
+-- §4.1. Helper lemmas on `Edge.left.takeAt` (mirror of §1)
+
+/-- The left-`k`-prefix of `xs ++ y` equals the left-`k`-prefix of
+`xs` whenever `xs.length ≥ k`. -/
+private lemma takeAt_left_append_right_absorb {α : Type*}
+    (xs y : List α) {k : ℕ} (h : k ≤ xs.length) :
+    Edge.left.takeAt k (xs ++ y) = Edge.left.takeAt k xs := by
+  show (xs ++ y).take k = xs.take k
+  exact List.take_append_of_le_length h
+
+/-- When `xs.length ≤ k`, the left-`k`-prefix of `xs` is `xs` itself. -/
+private lemma takeAt_left_of_short {α : Type*} {k : ℕ} {xs : List α}
+    (h : xs.length ≤ k) : Edge.left.takeAt k xs = xs := by
+  show xs.take k = xs
+  exact List.take_of_length_le h
+
+/-- When `xs.length ≥ k`, the left-`k`-prefix of `xs` has length exactly `k`. -/
+private lemma takeAt_left_length_of_long {α : Type*} {k : ℕ} {xs : List α}
+    (h : k ≤ xs.length) : (Edge.left.takeAt k xs).length = k := by
+  show (xs.take k).length = k
+  rw [List.length_take]; omega
+
+/-- A list `xs` of length `≥ k` decomposes as
+`Edge.left.takeAt k xs ++ xs.drop k`. -/
+private lemma decompose_at_left_takeAt {α : Type*} {k : ℕ} {xs : List α}
+    (_h : k ≤ xs.length) :
+    xs = Edge.left.takeAt k xs ++ xs.drop k := by
+  show xs = xs.take k ++ xs.drop k
+  exact (List.take_append_drop _ _).symm
+
+-- §4.2. Lifting the K equation to `SyntacticEquiv`
+
+/-- Under the reverse-`k`-definite equation, **appending** any suffix to
+a length-`k` word gives a syntactically equivalent word. Mirror of
+`syntacticEquiv_of_kDefiniteEquation`. -/
+lemma syntacticEquiv_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
+    (h : Lambert.Equations.kReverseDefiniteEquation L k)
+    (αs w : List α) (hαs_len : αs.length = k) :
+    SyntacticEquiv L (αs ++ w) αs := by
+  have h_eq :=
+    h (L.toSyntacticMonoid (FreeMonoid.ofList w)) αs hαs_len
+  have h_pre :
+      L.toSyntacticMonoid (FreeMonoid.ofList (αs ++ w)) =
+      L.toSyntacticMonoid (FreeMonoid.ofList αs) := by
+    rw [FreeMonoid.ofList_append, MonoidHom.map_mul]
+    exact h_eq
+  exact Quotient.exact h_pre
+
+-- §4.3. Lambert Prop 57 — both directions
+
+/-- **Lambert Prop 57 (forward direction)**: a reverse-`k`-definite
+language's syntactic monoid satisfies the reverse-`k`-definite equation. -/
+theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation
+    {L : Language α} {k : ℕ} (hL : IsReverseDefinite k L) :
+    Lambert.Equations.kReverseDefiniteEquation L k := by
+  obtain ⟨G, hG⟩ := hL
+  intro s αs hαs_len
+  obtain ⟨w, hw⟩ := Quotient.exists_rep s
+  rw [show s = L.toSyntacticMonoid w from hw.symm, ← MonoidHom.map_mul]
+  apply Quotient.sound
+  intro x y
+  show x ++ FreeMonoid.toList (FreeMonoid.ofList αs * w) ++ y ∈ L ↔
+       x ++ FreeMonoid.toList (FreeMonoid.ofList αs) ++ y ∈ L
+  have hwmul : FreeMonoid.toList (FreeMonoid.ofList αs * w) =
+               αs ++ FreeMonoid.toList w := rfl
+  have hαsId : FreeMonoid.toList (FreeMonoid.ofList αs) = αs := rfl
+  rw [hwmul, hαsId, ← hG]
+  show Edge.left.takeAt k (x ++ (αs ++ FreeMonoid.toList w) ++ y) ∈ G.permitted ↔
+       Edge.left.takeAt k (x ++ αs ++ y) ∈ G.permitted
+  -- We need takeAt_left of (x ++ αs ++ FreeMonoid.toList w ++ y)
+  --      = takeAt_left of (x ++ αs ++ y)
+  -- Both have x ++ αs as a prefix. If |x ++ αs| ≥ k, takeAt only sees x ++ αs.
+  have hpre_eq :
+      Edge.left.takeAt k (x ++ (αs ++ FreeMonoid.toList w) ++ y) =
+      Edge.left.takeAt k (x ++ αs ++ y) := by
+    rw [show x ++ (αs ++ FreeMonoid.toList w) ++ y =
+            (x ++ αs) ++ (FreeMonoid.toList w ++ y) by simp [List.append_assoc],
+        show x ++ αs ++ y = (x ++ αs) ++ y from by simp [List.append_assoc]]
+    have h_combined_len : k ≤ (x ++ αs).length := by
+      rw [List.length_append]; omega
+    rw [takeAt_left_append_right_absorb (x ++ αs)
+          (FreeMonoid.toList w ++ y) h_combined_len,
+        takeAt_left_append_right_absorb (x ++ αs) y h_combined_len]
+  rw [hpre_eq]
+
+/-- **Lambert Prop 57 (reverse direction)**: if a language's syntactic
+monoid satisfies the reverse-`k`-definite equation, then the language is
+reverse-`k`-definite. Mirror of `isDefinite_of_satisfies_kDefiniteEquation`. -/
+theorem isReverseDefinite_of_satisfies_kReverseDefiniteEquation
+    {L : Language α} {k : ℕ}
+    (h : Lambert.Equations.kReverseDefiniteEquation L k) :
+    IsReverseDefinite k L := by
+  refine ⟨{ permitted := { ks | ∃ w ∈ L, Edge.left.takeAt k w = ks } }, ?_⟩
+  ext w
+  refine ⟨?_, fun hw => ⟨w, hw, rfl⟩⟩
+  rintro ⟨u, hu, hpre⟩
+  by_cases hu_short : u.length ≤ k
+  · have hu_eq : Edge.left.takeAt k u = u := takeAt_left_of_short hu_short
+    by_cases hw_short : w.length ≤ k
+    · have hw_eq : Edge.left.takeAt k w = w := takeAt_left_of_short hw_short
+      rw [hu_eq, hw_eq] at hpre
+      rw [← hpre]; exact hu
+    · push_neg at hw_short
+      have hw_len_pre : (Edge.left.takeAt k w).length = k :=
+        takeAt_left_length_of_long (le_of_lt hw_short)
+      rw [← hpre, hu_eq] at hw_len_pre
+      rw [hu_eq] at hpre
+      have hw_decomp : w = u ++ w.drop k := by
+        rw [hpre]
+        exact decompose_at_left_takeAt (le_of_lt hw_short)
+      have hequiv : SyntacticEquiv L w u := by
+        rw [hw_decomp]
+        exact syntacticEquiv_of_kReverseDefiniteEquation h _ _ hw_len_pre
+      rw [mem_iff_of_syntacticEquiv hequiv]; exact hu
+  · push_neg at hu_short
+    have hu_len_pre : (Edge.left.takeAt k u).length = k :=
+      takeAt_left_length_of_long (le_of_lt hu_short)
+    by_cases hw_short : w.length ≤ k
+    · have hw_eq : Edge.left.takeAt k w = w := takeAt_left_of_short hw_short
+      rw [hw_eq] at hpre
+      rw [hpre] at hu_len_pre
+      have hu_decomp : u = w ++ u.drop k := by
+        rw [← hpre]
+        exact decompose_at_left_takeAt (le_of_lt hu_short)
+      have hequiv : SyntacticEquiv L u w := by
+        rw [hu_decomp]
+        exact syntacticEquiv_of_kReverseDefiniteEquation h _ _ hu_len_pre
+      exact (mem_iff_of_syntacticEquiv hequiv).mp hu
+    · push_neg at hw_short
+      have hw_len_pre : (Edge.left.takeAt k w).length = k :=
+        takeAt_left_length_of_long (le_of_lt hw_short)
+      have hequiv_u : SyntacticEquiv L u (Edge.left.takeAt k u) := by
+        have base := syntacticEquiv_of_kReverseDefiniteEquation h
+          (Edge.left.takeAt k u) (u.drop k) hu_len_pre
+        rwa [← decompose_at_left_takeAt (le_of_lt hu_short)] at base
+      have hequiv_w : SyntacticEquiv L w (Edge.left.takeAt k w) := by
+        have base := syntacticEquiv_of_kReverseDefiniteEquation h
+          (Edge.left.takeAt k w) (w.drop k) hw_len_pre
+        rwa [← decompose_at_left_takeAt (le_of_lt hw_short)] at base
+      have hequiv : SyntacticEquiv L w u := by
+        apply hequiv_w.trans
+        rw [← hpre]
+        exact hequiv_u.symm
+      rw [mem_iff_of_syntacticEquiv hequiv]; exact hu
+
+/-- **Lambert (2026) Prop 57**: a language is reverse-`k`-definite iff
+its syntactic monoid satisfies the reverse-`k`-definite equation. -/
+theorem isReverseDefinite_iff_satisfies_kReverseDefiniteEquation
+    {L : Language α} {k : ℕ} :
+    IsReverseDefinite k L ↔ Lambert.Equations.kReverseDefiniteEquation L k :=
+  ⟨IsReverseDefinite.satisfies_kReverseDefiniteEquation,
+   isReverseDefinite_of_satisfies_kReverseDefiniteEquation⟩
 
 end Language
