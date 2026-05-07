@@ -2,6 +2,7 @@ import Mathlib.Algebra.Free
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Multiset.MapFold
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+import Linglib.Core.Algebra.Free.CommMagma
 
 /-!
 # Decorated Binary Rooted Trees @cite{marcolli-chomsky-berwick-2025} @cite{foissy-2002}
@@ -364,6 +365,57 @@ theorem leafCount_pos {α β : Type*} (t : TraceTree α β) : 0 < t.leafCount :=
   | leaf _ => simp only [leafCount_leaf]; omega
   | trace _ => simp only [leafCount_trace]; omega
   | node l r ihl _ => simp only [leafCount]; omega
+
+/-! ### Migration bridge to `FreeCommMagma`
+
+The planar `TraceTree α β` is being migrated to the nonplanar
+`FreeCommMagma (α ⊕ β)` per the M-C-B (2025) Definition 1.1.1
+"free, non-associative, **commutative** magma" identification of
+syntactic objects (book p. 22, Remark 1.1.2). Linguistically-essential
+operations like phonological yield and head projection move to a
+separate Linearization theory; the `TraceTree` carrier becomes a
+"chosen planar embedding" rather than the primary representation.
+
+The coercion below is a **one-way bridge** (planar → nonplanar):
+`TraceTree.toFreeCommMagma` forgets the left/right child order at
+each `.node`, mapping it onto the unordered `FreeCommMagma.mul`. The
+reverse direction requires a linearization choice (Phase 2 of the
+migration) and is not single-valued. -/
+
+/-- **Migration bridge**: forget the planar order. Maps `TraceTree α β`
+    into `FreeCommMagma (α ⊕ β)` by sending `.leaf a` to `of (.inl a)`,
+    `.trace b` to `of (.inr b)`, and `.node l r` to `l.toFreeCommMagma
+    * r.toFreeCommMagma` (multiplication is commutative on the target,
+    so the planar choice is forgotten).
+
+    This is a one-way coercion intended for the migration window: the
+    nonplanar carrier is the canonical M-C-B-aligned representation;
+    the planar `TraceTree` survives only as a chosen planar embedding
+    consumed by Linearization. -/
+def toFreeCommMagma {α β : Type*} : TraceTree α β → FreeCommMagma (α ⊕ β)
+  | .leaf a => FreeCommMagma.of (.inl a)
+  | .trace b => FreeCommMagma.of (.inr b)
+  | .node l r => l.toFreeCommMagma * r.toFreeCommMagma
+
+@[simp] theorem toFreeCommMagma_leaf {α β : Type*} (a : α) :
+    (TraceTree.leaf a : TraceTree α β).toFreeCommMagma
+      = FreeCommMagma.of (.inl a) := rfl
+
+@[simp] theorem toFreeCommMagma_trace {α β : Type*} (b : β) :
+    (TraceTree.trace b : TraceTree α β).toFreeCommMagma
+      = FreeCommMagma.of (.inr b) := rfl
+
+@[simp] theorem toFreeCommMagma_node {α β : Type*} (l r : TraceTree α β) :
+    (TraceTree.node l r).toFreeCommMagma
+      = l.toFreeCommMagma * r.toFreeCommMagma := rfl
+
+/-- Sanity: planar swap collapses under `toFreeCommMagma`. The two
+    distinct planar trees `.node l r` and `.node r l` map to the same
+    `FreeCommMagma` element (the witness that the bridge is "forgetful"
+    in the right way). -/
+theorem toFreeCommMagma_swap {α β : Type*} (l r : TraceTree α β) :
+    (TraceTree.node l r).toFreeCommMagma = (TraceTree.node r l).toFreeCommMagma := by
+  simp only [toFreeCommMagma_node]; exact mul_comm _ _
 
 end TraceTree
 

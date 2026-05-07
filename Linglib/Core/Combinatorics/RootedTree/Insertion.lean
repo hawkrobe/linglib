@@ -327,16 +327,34 @@ matching cases 2 and 3 across the symmetric expressions. -/
     to `◇`). Implies the Jacobi identity for `⁅·,·⁆` lifted bilinearly
     to `(TraceTree α β) →₀ ℤ`.
 
-    PROOF SORRY (Phase 3b): the proof requires explicit per-edge
-    insertion machinery and case-by-case bookkeeping of insertion
-    locations as outlined in the §6 docstring. Unblocking this needs:
+    ⚠ **PROVABLY FALSE on planar `TraceTree`** ⚠
 
-    - `insertAt T₁ e T₂` indexed by an `Edge T₁` type
-    - decomposition `insertSum T₁ T₂ = Σ_{e : Edge T₁} insertAt T₁ e T₂`
-    - edge enumeration of `insertAt T₁ e T₂`: `Edge T₁ \\ {e} ⊔
-      Edge T₂ ⊔ {e₁, e₂, e'}` where the last three are the "new" edges
-      created by the split (Figure 1.6, book p. 79)
-    - proof that insertions at different edges commute. -/
+    A Lean-verified counterexample at
+    `scratch/test_preLie_planar.lean` shows
+    `(T₁ ◁ T₂).bind (· ◁ T₃) ≠ (T₁ ◁ T₃).bind (· ◁ T₂)` for
+    `T₁ = .node (.leaf 0) (.leaf 1)`, `T₂ = .leaf 2`, `T₃ = .leaf 3`.
+    The discrepancy is the `newEprime` case at each MCB-edge: the new
+    sibling pair `{T₂, T₃}` versus `{T₃, T₂}` is identical only under
+    nonplanar identification, which planar `TraceTree` does not provide.
+
+    MCB Definition 1.7.1 (book p. 77) explicitly says "two **nonplanar**
+    binary rooted trees T₁, T₂ ∈ 𝔗_{SO₀}", and Definition 1.1.1 (book
+    p. 22) identifies syntactic objects with the **commutative** free
+    magma. The current planar carrier is at odds with §1.1 of the book.
+
+    **Migration in progress (Phase 0 landed 2026-05-06):** the
+    nonplanar carrier `FreeCommMagma α` is being introduced in
+    `Linglib/Core/Algebra/Free/CommMagma.lean`. The pre-Lie identity
+    on `(FreeCommMagma α) →₀ ℤ` *is* a strict equality (the (c)
+    `newEprime` discrepancy collapses via `Quot.sound .swap`); see
+    `scratch/nonplanar_migration_plan.md` for the full migration plan.
+    This `sorry` will be replaced by the nonplanar version (Phase 1b)
+    rather than discharged on the current planar carrier.
+
+    The §9.1–§9.4 substrate already landed (`Edge.classifyEquiv`,
+    `edges_insertAt_eq_classification`, `insertAt_commute_diff`,
+    `insertAt_lift_eq_nested`) is reusable on the nonplanar carrier;
+    the migration ports rather than re-derives. -/
 theorem insertSumLift_right_preLie (f g h : (TraceTree α β) →₀ ℤ) :
     f ◇ g ◇ h - f ◇ (g ◇ h) = f ◇ h ◇ g - f ◇ (h ◇ g) := by
   sorry
@@ -1308,17 +1326,107 @@ theorem insertAt_commute_diff : ∀ {T : TraceTree α β} (e f : Edge T)
     congr 1
     exact insertAt_commute_diff e' f' (fun heq => h (by rw [heq])) T₂ T₃
 
-/-! ### Phase 3b §9.1-§9.3 status
+/-! ### §9.4 substrate: insertion at a lifted edge factors through the inserted subtree
+
+For the pre-Lie identity, the (b) "lifted" class of edges must be
+identified with nested insertions: inserting `T₃` at a lifted edge
+`Edge.lift e T₂ g` of `insertAt e T₂` is the same as first inserting
+`T₃` at `g` in `T₂`, then inserting the resulting tree at `e` in `T`.
+
+Proof: 4-case structural induction on `e`. The two `.root*` cases reduce
+to one-step `insertAt` evaluations (the lifted edge is `.inR ... g` in
+the new vertex, and `insertAt (.inR _ _ g) T₃` directly hits T₂'s
+substructure). The two `.in*` cases push the IH through the recursive
+parent-tree context. -/
+
+/-- **Lifted-equals-nested** (substrate for the pre-Lie (b) cancellation):
+    inserting `T₃` at a lifted edge of `T₂` (lifted into `insertAt e T₂`)
+    factors as `insertAt e (insertAt g T₃)`.
+
+    This identifies the (b) "lifted" class of `Edge (insertAt e T₂)` with
+    nested insertions over `T₂ ◁ T₃`, summed against `e ∈ Edge T₁` —
+    exactly matching `T₁ ◇ (T₂ ◁ T₃)`. -/
+theorem insertAt_lift_eq_nested : ∀ {T : TraceTree α β} (e : Edge T)
+      (T₂ T₃ : TraceTree α β) (g : Edge T₂),
+    insertAt (Edge.lift e T₂ g) T₃ = insertAt e (insertAt g T₃)
+  | _, .rootL _ _, _, _, _ => rfl
+  | _, .rootR _ _, _, _, _ => rfl
+  | _, .inL l r e', T₂, T₃, g => by
+    show TraceTree.node (insertAt (Edge.lift e' T₂ g) T₃) r
+        = TraceTree.node (insertAt e' (insertAt g T₃)) r
+    rw [insertAt_lift_eq_nested e' T₂ T₃ g]
+  | _, .inR l r e', T₂, T₃, g => by
+    show TraceTree.node l (insertAt (Edge.lift e' T₂ g) T₃)
+        = TraceTree.node l (insertAt e' (insertAt g T₃))
+    rw [insertAt_lift_eq_nested e' T₂ T₃ g]
+
+/-! ### Phase 3b §9.1-§9.4-substrate status + planar/nonplanar blocker
 
 Substrate complete:
 - §9.1: `Edge.classifyEquiv` (5-class bijection).
 - §9.2: `edges_insertAt_eq_classification` (multiset decomposition).
 - §9.3: `insertAt_commute_diff` (insertions at distinct edges commute).
+- §9.4 substrate: `insertAt_lift_eq_nested` (the (b) cancellation
+  identity).
 - Pairwise distinctness corollaries (`newE1_ne_newE2`,
   `newE1_ne_newEprime`, `newE2_ne_newEprime`).
 
-Remaining: §9.4 — the actual pre-Lie identity discharge of
-`insertSumLift_right_preLie` (currently `sorry` at §6). -/
+**Blocker for the §6 `sorry`: planar `TraceTree` vs. nonplanar identity.**
+
+MCB Definition 1.7.1 (book p. 77) explicitly states the operation `T₁ ◁ T₂`
+on **nonplanar** binary rooted trees `T₁, T₂ ∈ 𝔗_{SO₀}`, and Lemma 1.7.2
+(book p. 77–78) is the right pre-Lie identity for that nonplanar setting.
+MCB's proof of case (3) in the four-case decomposition (book p. 78) reads
+"The terms obtained in case (3) match, as shown in Figure 1.6" (book p.
+79) — that matching uses the nonplanar identification `{T₂, T₃} = {T₃, T₂}`
+of the new sibling pair under the fresh vertex. (Lemma 1.10.1, book p.
+92, makes the nonplanarity / commutativity of Merge explicit: `𝔗` is the
+free **commutative** nonassociative magma; planar embeddings appear only
+as multiplicities in §1.10.)
+
+Our `TraceTree` is planar — `.node l r` distinguishes left from right
+child — so the strict identity in `insertSumLift_right_preLie` is FALSE
+on basis triples. Per-edge bookkeeping at the basis level:
+
+  (a) **Preserved edges** cancel via §9.3.
+  (b) **Lifted edges** cancel via `insertAt_lift_eq_nested`.
+  (c) **New edges**: `newE1 ↔ newE2` swap matches under T₂ ↔ T₃, but
+      `newEprime` produces `.node ... (.node T₂ T₃) ...` on the LHS and
+      `.node ... (.node T₃ T₂) ...` on the RHS — distinct in planar
+      trees, equivalent under MCB's nonplanar Merge.
+
+A Lean-verified counterexample (`scratch/test_preLie_planar.lean`):
+`T₁ = .node (.leaf 0) (.leaf 1)`, `T₂ = .leaf 2`, `T₃ = .leaf 3`. Both
+`T₂` and `T₃` have zero edges, so `T₁ ◇ (T₂ ◁ T₃) = T₁ ◇ (T₃ ◁ T₂) = 0`
+and the pre-Lie identity reduces to `(T₁ ◁ T₂) ◇ T₃ = (T₁ ◁ T₃) ◇ T₂`
+at the multiset level. `decide` confirms `(T₁ ◁ T₂).bind (· ◁ T₃) ≠
+(T₁ ◁ T₃).bind (· ◁ T₂)`; the discrepancy is exactly the pair of
+sibling-order-swapped trees produced by the `newEprime` case at each
+edge of `T₁`.
+
+**Path forward (architectural decision needed):**
+
+  1. **Quotient `TraceTree`** by planar-rotation equivalence
+     (`Quot (planarEquiv)` with `.node l r ~ .node r l`). Faithful to
+     MCB but requires lifting the entire Hopf algebra / `mergeOp`
+     substrate through the quotient; affects every downstream consumer.
+  2. **Symmetrize `insertSum` only** (this file). Generate both
+     `.node old T₂` and `.node T₂ old` planar orderings per MCB-edge.
+     Localizes the change but doubles multiset cardinality, breaks
+     `numEdges = size − 1`, and requires full §7–§9 substrate refactor.
+  3. **Restate pre-Lie modulo a planar equivalence on `(T →₀ ℤ)`.**
+     Define a `≈` relation that identifies coefficient sums differing
+     only by `.node l r ↔ .node r l` rotations, and prove
+     `f ◇ g ◇ h - f ◇ (g ◇ h) ≈ f ◇ h ◇ g - f ◇ (h ◇ g)`. Loses the
+     direct equality but admits a clean proof in the current setting.
+  4. **Add per-MCB-edge symmetrization at insertion time.** Define
+     `T₁ ◁ T₂ := Σ_e (T₁ ◁_e^L T₂ + T₁ ◁_e^R T₂)` for both sibling
+     orderings; only this file changes.
+
+The §6 `sorry` is left in place pending this decision. The substrate
+proved in §9.1–§9.4 (`classifyEquiv`, edge multiset decomposition,
+per-pair commutativity, lifted-equals-nested) is independent of the
+planar/nonplanar choice and is reusable under any of the four paths. -/
 
 /-! ## Phase 1-3a + 3b-substrate conclusion + roadmap
 

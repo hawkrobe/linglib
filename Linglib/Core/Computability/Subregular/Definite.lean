@@ -83,6 +83,31 @@ def takeAt (e : Edge) (k : ℕ) (xs : List α) : List α :=
   | .left  => xs.take k
   | .right => xs.drop (xs.length - k)
 
+/-- Edge-parameterized monoid combination. The "anchor" element `x`
+sits on the side dictated by `e` (left edge → x is on the left,
+right edge → x is on the right); `s` multiplies on the **opposite**
+side. Concretely:
+* `combine .left  x s = x * s`  (anchor on left, s appended)
+* `combine .right x s = s * x`  (anchor on right, s prepended)
+
+This unifies the two structurally-symmetric monoid operations that
+appear in Pin's algebraic equations:
+* D (definite, suffix-determined) uses `combine .right [αs] s = s · [αs]`
+* K (reverse-definite, prefix-determined) uses `combine .left [αs] s = [αs] · s`
+
+The Edge tag selects which edge is "load-bearing" for membership; `s`
+is the absorbed element acting from the opposite end. -/
+def combine {M : Type*} [Mul M] (e : Edge) (x s : M) : M :=
+  match e with
+  | .left  => x * s
+  | .right => s * x
+
+@[simp] lemma combine_left {M : Type*} [Mul M] (x s : M) :
+    Edge.combine .left x s = x * s := rfl
+
+@[simp] lemma combine_right {M : Type*} [Mul M] (x s : M) :
+    Edge.combine .right x s = s * x := rfl
+
 end Edge
 
 /-- An **edge-definite `k`-grammar** over `α`: a set of permitted
