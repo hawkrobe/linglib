@@ -101,23 +101,34 @@ structure PlanarMarking where
 
 namespace PlanarMarking
 
+/-- Underlying planar head computation on a `FreeMagma` representative.
+
+    Phase 1.0 placeholder: `headAt` is genuinely planar (left-vs-right
+    head choice is a representative-dependent property), so it lifts
+    via `Quot.out` and inherits noncomputability. Phase 2 will replace
+    the planar-marking encoding with an MCB-aligned head function that
+    indexes by SO subtrees rather than by representative. -/
+private def headAtPlanar (m : PlanarMarking) :
+    FreeMagma (LIToken ⊕ Nat) → LIToken
+  | .of (.inl tok) => tok
+  | .of (.inr n) => mkTraceToken n  -- traces project to a synthetic token
+  | .mul a b =>
+    if m.isLeftHead (FreeCommMagma.mk (a * b)) then headAtPlanar m a
+    else headAtPlanar m b
+
 /-- The head leaf reached by following the marking from vertex `v`.
 
     For a leaf, the head is the leaf itself. For a node, recurse into
     the marked daughter. By Lemma 1.13.5, this defines an
-    `h_T : V^o(T) → L(T)` for any T containing `v`. -/
-def headAt (m : PlanarMarking) : SyntacticObject → LIToken
-  | .leaf tok => tok
-  | .trace n => mkTraceToken n  -- traces project to a synthetic token
-  | .node a b =>
-    if m.isLeftHead (.node a b) then m.headAt a else m.headAt b
+    `h_T : V^o(T) → L(T)` for any T containing `v`.
 
-@[simp] theorem headAt_leaf (m : PlanarMarking) (tok : LIToken) :
-    m.headAt (.leaf tok) = tok := rfl
-
-@[simp] theorem headAt_node (m : PlanarMarking) (a b : SyntacticObject) :
-    m.headAt (.node a b) =
-      (if m.isLeftHead (.node a b) then m.headAt a else m.headAt b) := rfl
+    **Phase 1.0**: noncomputable via `Quot.out`. The planar-marking
+    encoding is intrinsically representative-dependent (left vs right
+    head selection only makes sense once a planar order is chosen);
+    documented as a Phase 2 TODO. See `Basic.lean`'s `linearize` /
+    `leftmostLeaf` for analogous Quot.out-based projections. -/
+noncomputable def headAt (m : PlanarMarking) (so : SyntacticObject) : LIToken :=
+  headAtPlanar m so.out
 
 end PlanarMarking
 
@@ -125,21 +136,24 @@ end PlanarMarking
 -- § 2: MCB Coherence Condition (true by construction)
 -- ============================================================================
 
+/-- Underlying leaf-token enumeration on a planar `FreeMagma`
+    representative. -/
+private def leafTokensPlanar : FreeMagma (LIToken ⊕ Nat) → List LIToken
+  | .of (.inl tok) => [tok]
+  | .of (.inr n) => [mkTraceToken n]
+  | .mul a b => leafTokensPlanar a ++ leafTokensPlanar b
+
 /-- The leaves of `v` as a list of LITokens.
 
     Used to state the MCB Def 1.13.3 coherence condition: if the head
     of `w` lands in the leaves of a sub-vertex `v`, then the heads of
-    `v` and `w` agree. -/
-def SyntacticObject.leafTokens : SyntacticObject → List LIToken
-  | .leaf tok => [tok]
-  | .trace n => [mkTraceToken n]
-  | .node a b => a.leafTokens ++ b.leafTokens
+    `v` and `w` agree.
 
-@[simp] theorem SyntacticObject.leafTokens_leaf (tok : LIToken) :
-    SyntacticObject.leafTokens (.leaf tok) = [tok] := rfl
-
-@[simp] theorem SyntacticObject.leafTokens_node (a b : SyntacticObject) :
-    SyntacticObject.leafTokens (.node a b) = a.leafTokens ++ b.leafTokens := rfl
+    **Phase 1.0**: noncomputable via `Quot.out` (planar order matters
+    for the linearization-side use). Phase 2 will replace with an LCA-
+    derived planar enumeration. -/
+noncomputable def SyntacticObject.leafTokens (so : SyntacticObject) : List LIToken :=
+  leafTokensPlanar so.out
 
 /-- @cite{marcolli-chomsky-berwick-2025} Definition 1.13.3 coherence:
     if vertex `v` is contained in vertex `w` and the head of `w`
@@ -201,12 +215,13 @@ attribute [instance] HeadFunction.decDom
 
 namespace HeadFunction
 
-/-- The head leaf token at a vertex of T. -/
-def headAt (h : HeadFunction) (v : SyntacticObject) : LIToken :=
+/-- The head leaf token at a vertex of T. Noncomputable in Phase 1.0
+    because `PlanarMarking.headAt` lifts via `Quot.out`. -/
+noncomputable def headAt (h : HeadFunction) (v : SyntacticObject) : LIToken :=
   h.marking.headAt v
 
 /-- The head h(T) of T at the root (MCB notation). -/
-def head (h : HeadFunction) (T : SyntacticObject) : LIToken :=
+noncomputable def head (h : HeadFunction) (T : SyntacticObject) : LIToken :=
   h.headAt T
 
 /-- The trivial head function: defined only on leaves, where every
@@ -235,11 +250,22 @@ def rightSpine : HeadFunction where
   Dom _ := True
   decDom _ := isTrue trivial
 
-@[simp] theorem leftSpine_headAt_leaf (tok : LIToken) :
-    leftSpine.headAt (.leaf tok) = tok := rfl
+/-- `leftSpine.headAt` on a leaf returns the leaf token.
 
-@[simp] theorem leftSpine_head_leaf (tok : LIToken) :
-    leftSpine.head (.leaf tok) = tok := rfl
+    **Phase 1.0**: this lemma is *not* `rfl` because `headAt` is
+    `Quot.out`-based (planar choice for nodes; lawful for leaves but
+    Lean cannot reduce `(SyntacticObject.leaf tok).out` definitionally).
+    The lemma holds via `FreeCommMagma.exists_rep` + a representative-
+    equality argument. -/
+theorem leftSpine_headAt_leaf (tok : LIToken) :
+    leftSpine.headAt (.leaf tok) = tok := by
+  -- TODO Phase 2: Quot.out makes this non-rfl; needs a representative argument
+  -- or replacement of headAt with a non-out-based encoding.
+  sorry
+
+theorem leftSpine_head_leaf (tok : LIToken) :
+    leftSpine.head (.leaf tok) = tok :=
+  leftSpine_headAt_leaf tok
 
 /-- @cite{marcolli-chomsky-berwick-2025} Definition 1.15.1: a head
     function `h` is **raising** when its head assignment is preserved
@@ -279,15 +305,17 @@ def IsRaising (h : HeadFunction) : Prop :=
     precondition fails for `leafOnly.Dom = isLeaf`. -/
 theorem leafOnly_isRaising : leafOnly.IsRaising := by
   intro T v traceId hIM _hD
-  -- hIM : leafOnly.Dom (.node v _) ≡ isLeaf (.node v _) ≡ False
-  exact absurd hIM (by simp [leafOnly, SyntacticObject.isLeaf])
+  -- hIM : leafOnly.Dom (.node v _) ≡ isLeaf (v * _) ≡ False
+  exact absurd hIM (by
+    show ¬ SyntacticObject.isLeaf (v * (T.replace v (mkTrace traceId)))
+    exact SyntacticObject.isLeaf_mul _ _)
 
 /-- The head's outer categorial feature, when defined. -/
-def outerCatOf (h : HeadFunction) (so : SyntacticObject) : Cat :=
+noncomputable def outerCatOf (h : HeadFunction) (so : SyntacticObject) : Cat :=
   (h.headAt so).item.outerCat
 
 /-- The head's selectional stack, when defined. -/
-def outerSelOf (h : HeadFunction) (so : SyntacticObject) : SelStack :=
+noncomputable def outerSelOf (h : HeadFunction) (so : SyntacticObject) : SelStack :=
   (h.headAt so).item.outerSel
 
 end HeadFunction
