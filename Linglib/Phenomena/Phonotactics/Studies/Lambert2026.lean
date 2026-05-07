@@ -936,7 +936,101 @@ theorem luganda_not_isBTLI : ∀ k, ¬ IsBTLI k lugandaLang := by
   · exact lugandaRejected_notMem k
 
 -- ============================================================================
--- § 7. Cross-framework refutation/cross-reference theorems (TODOs)
+-- § 7. Prinmi pitch-accent ∈ PT_3 ∖ BTLI
+-- ============================================================================
+
+/-! Lambert 2026 §5.2 (@cite{ding-2006}): Prinmi pitch-accent lexically
+selects a high-tone position within a domain (morpheme or span of
+adjacent morphemes); high may spread progressively to the next syllable.
+The resulting pattern enforces:
+
+1. **Obligatoriness**: at least one high tone (`h`).
+2. **At most one high span**: no `[h, ℓ, h]` subsequence (same as
+   Luganda §5.1).
+3. **Span length ≤ 2**: no `[h, h, h]` subsequence (new conjunct
+   not present in Luganda).
+
+Lambert: "the same words witness this nonmembership as for high-tone
+plateauing: `ℓᵏ h h ℓᵏ` is valid but `ℓᵏ h ℓ h ℓᵏ` is not, despite
+the two having the same k-affixes on every tier." So we **reuse**
+`lugandaAccepted` / `lugandaRejected` as witnesses and `luganda_tierAffixes`
+as the indistinguishability proof — the substrate `Sandwich`'s
+`not_sublist_sandwich` discharges both the `[h, ℓ, h]` and the new
+`[h, h, h]` non-subsequence claims uniformly.
+
+Alphabet: `LugandaTone` reused per Lambert's unified `ℓ`/`h` notation
+across §5.
+
+Disclaimer (Lambert §5.2): @cite{ding-2006} assumes maximally
+quadrisyllabic domains with significant compounding; that finite-domain
+restriction would make Prinmi *co/finite* (a stronger classification).
+The PT_3-and-not-BTLI result formalised here applies to the *unbounded*
+analysis Lambert presents; the bounded analysis is out of scope. -/
+
+/-- The Prinmi pitch-accent predicate @cite{lambert-2026} (39):
+* `[h] <+ w` — at least one high tone (obligatoriness).
+* `¬ [h, ℓ, h] <+ w` — at most one high span.
+* `¬ [h, h, h] <+ w` — high span length ≤ 2 syllables. -/
+def prinmiPred (w : List LugandaTone) : Prop :=
+  ([LugandaTone.high] <+ w) ∧
+    (¬ ([LugandaTone.high, .low, .high] <+ w)) ∧
+    (¬ ([LugandaTone.high, .high, .high] <+ w))
+
+/-- The Prinmi pitch-accent language. -/
+def prinmiLang : Language LugandaTone := { w | prinmiPred w }
+
+/-- Membership in `prinmiLang` is membership in `prinmiPred`. -/
+@[simp] lemma mem_prinmiLang (w : List LugandaTone) :
+    w ∈ prinmiLang ↔ prinmiPred w := Iff.rfl
+
+/-- **Prinmi pitch-accent ∈ PT_3** (Lambert 2026 (39)). All three
+conjuncts depend only on length-≤-3 subsequence presence: the length-1
+`[h]` and the two length-3 patterns. -/
+theorem prinmi_isPT : IsPiecewiseTestable 3 prinmiLang := by
+  intro w₁ w₂ heq
+  simp only [mem_prinmiLang, prinmiPred]
+  have h1 : ([LugandaTone.high] <+ w₁) ↔ ([LugandaTone.high] <+ w₂) :=
+    subseqSet_eq_iff heq (by decide : (1 : ℕ) ≤ 3)
+  have h_hlh : ([LugandaTone.high, .low, .high] <+ w₁) ↔
+               ([LugandaTone.high, .low, .high] <+ w₂) :=
+    subseqSet_eq_iff heq (by decide : (3 : ℕ) ≤ 3)
+  have h_hhh : ([LugandaTone.high, .high, .high] <+ w₁) ↔
+               ([LugandaTone.high, .high, .high] <+ w₂) :=
+    subseqSet_eq_iff heq (by decide : (3 : ℕ) ≤ 3)
+  exact and_congr h1 (and_congr (not_congr h_hlh) (not_congr h_hhh))
+
+/-- The accepted Luganda witness also satisfies `prinmiPred`. The first
+two conjuncts mirror Luganda; the third (no `[h, h, h]` subseq) follows
+from `not_sublist_sandwich` since the explicit middle `[low, high, high,
+low]` contains no three highs. -/
+private lemma prinmiAccepted_mem (k : ℕ) :
+    lugandaAccepted k ∈ prinmiLang := by
+  show prinmiPred (lugandaAccepted k)
+  refine ⟨?_, ?_, ?_⟩
+  · exact sublist_sandwich_of_sublist_mid (by decide) k _ k _
+  · exact not_sublist_sandwich (by decide) (by decide) (by decide) k k
+  · exact not_sublist_sandwich (by decide) (by decide) (by decide) k k
+
+/-- The rejected Luganda witness fails `prinmiPred` because its explicit
+middle `[low, high, low, high, low]` contains `[high, low, high]` as a
+subsequence — exactly the second conjunct of `prinmiPred`. -/
+private lemma prinmiRejected_notMem (k : ℕ) :
+    lugandaRejected k ∉ prinmiLang := by
+  intro h_mem
+  exact h_mem.2.1 (sublist_sandwich_of_sublist_mid (by decide) k _ k _)
+
+/-- **Prinmi pitch-accent ∉ BTLI** (Lambert 2026 §5.2). Same witnesses
+and tier-affix proof as Luganda §5.1 — Lambert: "The same words witness
+this nonmembership as for high-tone plateauing." -/
+theorem prinmi_not_isBTLI : ∀ k, ¬ IsBTLI k prinmiLang := by
+  intro k
+  apply not_isBTC_of_indist (w₁ := lugandaAccepted k) (w₂ := lugandaRejected k)
+  · exact IsBTC.indist_isGenDef_of_tierAffixes (luganda_tierAffixes k)
+  · exact prinmiAccepted_mem k
+  · exact prinmiRejected_notMem k
+
+-- ============================================================================
+-- § 8. Cross-framework refutation/cross-reference theorems (TODOs)
 -- ============================================================================
 
 /-! Audit-flagged cross-framework engagement points. These are stated here
