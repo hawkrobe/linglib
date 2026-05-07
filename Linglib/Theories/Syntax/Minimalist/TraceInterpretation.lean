@@ -134,33 +134,55 @@ def interpSOTrace {F : Frame} (so : SyntacticObject) : Option (DenotG F .e) :=
   | some n => some (interpTrace n)
   | none => none
 
-/--
-Get the trace index from a syntactic object (searches recursively).
+/-- Collect ALL trace indices in a syntactic object, as a `Multiset Nat`.
 
-For nonplanar SOs, searching is order-independent — `<|>` on `Option`
-combines via "first non-none". `Option.orElse` on a swap-respecting
-recursion is itself swap-invariant only when the predicate (`isSome`)
-is mutual-exclusive across children. For SOs with a single mover,
-that's the typical case; for multi-trace SOs, the result is "any
-trace index in the SO". Lifted via `FreeCommMagma.lift`. -/
-private def getTraceIndexAux : FreeMagma (LIToken ⊕ Nat) → Option ℕ
-  | .of (.inl _) => none
-  | .of (.inr n) => some n
-  | .mul a b => getTraceIndexAux a <|> getTraceIndexAux b
+    Returning a multiset (rather than `Option Nat`) is what makes the
+    operation swap-respecting: `Multiset` addition is commutative, so
+    enumerating both children's traces and combining via `+` is order-
+    independent. The previous `Option`-valued version with `<|>` was
+    *unsoundly* sorried because `Option.orElse` is left-biased — for
+    multi-trace SOs `getTraceIndexAux (mul a b)` and
+    `getTraceIndexAux (mul b a)` return different values, so the
+    `_respects` proposition was false-by-construction.
 
-private theorem getTraceIndexAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
-    (h : FreeMagma.CommRel a b) : getTraceIndexAux a = getTraceIndexAux b := by
-  -- The `swap` case requires `getTraceIndexAux a <|> getTraceIndexAux b
-  -- = getTraceIndexAux b <|> getTraceIndexAux a` which is NOT generally
-  -- true on Option (`<|>` is left-biased). For multi-trace SOs the
-  -- trace returned will depend on the chosen swap order. This is a
-  -- Phase 2+ TODO: replace with a `Finset Nat`-valued helper that
-  -- collects all trace indices, with the trace-index access then
-  -- being `Finset.min?` or similar.
-  sorry
+    Single-trace consumers should use `traceIndex?` (defined below) to
+    extract the unique index. -/
+private def traceIndicesAux : FreeMagma (LIToken ⊕ Nat) → Multiset ℕ
+  | .of (.inl _) => 0  -- empty multiset
+  | .of (.inr n) => {n}
+  | .mul a b => traceIndicesAux a + traceIndicesAux b
 
-def getTraceIndex : SyntacticObject → Option ℕ :=
-  FreeCommMagma.lift getTraceIndexAux getTraceIndexAux_respects
+private theorem traceIndicesAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
+    (h : FreeMagma.CommRel a b) : traceIndicesAux a = traceIndicesAux b := by
+  induction h with
+  | swap _ _ => simp only [traceIndicesAux]; exact add_comm _ _
+  | mul_left _ _ ih => simp only [traceIndicesAux, ih]
+  | mul_right _ _ ih => simp only [traceIndicesAux, ih]
+
+/-- All trace indices appearing in an SO, as a `Multiset` (multiplicity
+    preserved, order-blind). -/
+def traceIndices : SyntacticObject → Multiset ℕ :=
+  FreeCommMagma.lift traceIndicesAux traceIndicesAux_respects
+
+@[simp] theorem traceIndices_leaf (tok : LIToken) :
+    traceIndices (SyntacticObject.leaf tok) = 0 := rfl
+
+@[simp] theorem traceIndices_trace (n : Nat) :
+    traceIndices (SyntacticObject.trace n) = {n} := rfl
+
+@[simp] theorem traceIndices_mul (l r : SyntacticObject) :
+    traceIndices (l * r) = traceIndices l + traceIndices r := by
+  induction l, r using FreeCommMagma.inductionOn₂ with | _ a b => rfl
+
+/-- Extract a trace index, returning `none` if the SO has no traces.
+    For single-trace SOs returns the unique index; for multi-trace SOs,
+    returns *some* index (the first in `Multiset.toList`'s arbitrary
+    enumeration). Use `traceIndices` directly for the canonical
+    multiset.
+
+    Noncomputable because `Multiset.toList` is. -/
+noncomputable def getTraceIndex (so : SyntacticObject) : Option ℕ :=
+  (traceIndices so).toList.head?
 
 -- ============================================================================
 -- Theorems about Movement Interpretation

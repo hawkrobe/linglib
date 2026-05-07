@@ -301,6 +301,10 @@ def traceExample : SyntacticObject := mkTrace 1
 /--
 Extracting the trace index from a syntactic object.
 -/
-theorem trace_example_has_index : getTraceIndex traceExample = some 1 := rfl
+theorem trace_example_has_index : getTraceIndex traceExample = some 1 := by
+  show (Multiset.toList (Minimalist.traceIndices (mkTrace 1))).head? = some 1
+  rw [show Minimalist.mkTrace 1 = SyntacticObject.trace 1 from rfl,
+      Minimalist.traceIndices_trace, Multiset.toList_singleton]
+  rfl
 
 end Minimalist.RelativeClauses

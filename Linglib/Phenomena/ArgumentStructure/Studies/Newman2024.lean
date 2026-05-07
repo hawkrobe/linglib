@@ -360,33 +360,35 @@ def NominalType.subsumes : NominalType → NominalType → Bool
     Requires checking [·D·] on T. -/
 def NominalType.canAMove (n : NominalType) : Bool := n.checksMerge .D
 
-/-- A KP is a DP wrapped in an inherent case shell (K head).
-    KPs behave as `NominalType.nonDP` for feature-checking:
-    they cannot check `[·D·]`, only `[·X·]`.
+/-- Test whether a single FreeMagma branch is a K-headed leaf. -/
+private def isKLeaf : FreeMagma (LIToken ⊕ Nat) → Bool
+  | .of (.inl tok) => tok.item.outerCat == .K
+  | _ => false
+
+/-- A KP is a DP wrapped in an inherent case shell (K head). At the
+    immediate-child level: a node is "KP" iff *some* immediate daughter
+    is a K-headed leaf. Symmetric in left/right by construction (`||`),
+    so swap-respect is trivial.
 
     Phase 1.0 substrate caveat: under MCB nonplanar SOs (FreeCommMagma
-    carrier), `merge` is unordered, so checking "the left child is a
-    K-headed leaf" is undecidable; either child of a node could be the
-    K-leaf. This predicate is restated as: *some* immediate child is a
-    K-headed leaf. Under nonplanar Merge this is the natural unordered
-    analogue. TODO Phase 2: refine via LCA-based head selection. -/
+    carrier), `merge` is unordered, so the head's identity is not
+    structurally distinguished — we settle for "some daughter is K".
+    Under MCB this is the natural unordered analogue. TODO Phase 2:
+    refine via head-function-aware projection. -/
 private def isKPAux : FreeMagma (LIToken ⊕ Nat) → Bool
   | .of _ => false
-  | .mul (.of (.inl tok)) _ => tok.item.outerCat == .K
-  | .mul _ (.of (.inl tok)) => tok.item.outerCat == .K
-  | _ => false
+  | .mul a b => isKLeaf a || isKLeaf b
 
 private theorem isKPAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
     (h : FreeMagma.CommRel a b) : isKPAux a = isKPAux b := by
-  -- Phase 1.0 placeholder: structural respects-proof is involved
-  -- (case-split on the inductive shapes of a, b at each constructor).
-  -- The aux def is OR-symmetric on .mul branches so swap is OK; the
-  -- mul_left/mul_right cases need careful sub-pattern analysis.
-  -- TODO Phase 2: revisit with a cleaner LCA-derived isKP.
-  sorry
-
-def isKP (so : SyntacticObject) : Bool :=
-  FreeCommMagma.lift isKPAux isKPAux_respects so
+  induction h with
+  | swap _ _ => simp only [isKPAux]; exact Bool.or_comm _ _
+  | @mul_left a' b' h_inner c _ =>
+    -- h_inner : CommRel a' b' — both sides are .mul (CommRel only relates .muls);
+    -- so isKLeaf a' = isKLeaf b' = false (isKLeaf returns false on .mul).
+    cases h_inner <;> rfl
+  | @mul_right a' b' c h_inner _ =>
+    cases h_inner <;> rfl
 
 -- ============================================================================
 -- § 9: Anti-Redundancy in Agreement
