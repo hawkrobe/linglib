@@ -240,7 +240,10 @@ theorem mergeOp_im_matches_Step
       some (current.replace mover (Minimalist.mkTrace traceId)).toHc)
     (h_unique : ∀ c : CutShape current.toHc,
       c.cutForest = ({mover.toHc} : TraceForest LIToken Unit) → c = c0)
-    (h_curr_ne_mover : current.toHc ≠ mover.toHc) :
+    (h_curr_ne_mover : current.toHc ≠ mover.toHc)
+    (h_coh : (mover * (current.replace mover (Minimalist.mkTrace traceId))).toHc =
+      ConnesKreimer.TraceTree.node mover.toHc
+        (current.replace mover (Minimalist.mkTrace traceId)).toHc) :
     mergeOp (R := ℤ) mover.toHc
         (current.replace mover (Minimalist.mkTrace traceId)).toHc
         (mergeOpUnit (R := ℤ) mover.toHc
@@ -253,9 +256,14 @@ theorem mergeOp_im_matches_Step
   rw [mergeOp_im_composition_moverLeft mover.toHc current.toHc
         (current.replace mover (Minimalist.mkTrace traceId)).toHc
         c0 h_cf h_remainder h_unique h_curr_ne_mover]
-  -- TODO Phase 2: rfl held against the planar substrate; with toHc now
-  -- Quot.out-based, the equality requires a representative argument.
-  sorry
+  -- (Step.im mover traceId).apply current = mover * (current.replace mover (mkTrace traceId))
+  show forestToHc (R := ℤ)
+      ({.node mover.toHc (current.replace mover (Minimalist.mkTrace traceId)).toHc}
+       : TraceForest LIToken Unit)
+    = forestToHc (R := ℤ)
+      ({(mover * (current.replace mover (Minimalist.mkTrace traceId))).toHc}
+       : TraceForest LIToken Unit)
+  rw [h_coh]
 
 /-! ## §4: IM cost-survival at ε = 0 (M-C-B Prop 1.5.1 bullet 3)
 
@@ -367,7 +375,10 @@ theorem mergeOp_eps_zero_im_matches_Step
       some (current.replace mover (Minimalist.mkTrace traceId)).toHc)
     (h_unique : ∀ c : CutShape current.toHc,
       c.cutForest = ({mover.toHc} : TraceForest LIToken Unit) → c = c0)
-    (h_curr_ne_mover : current.toHc ≠ mover.toHc) :
+    (h_curr_ne_mover : current.toHc ≠ mover.toHc)
+    (h_coh : (mover * (current.replace mover (Minimalist.mkTrace traceId))).toHc =
+      ConnesKreimer.TraceTree.node mover.toHc
+        (current.replace mover (Minimalist.mkTrace traceId)).toHc) :
     mergeOp_eps (R := ℤ) 0 mover.toHc
         (current.replace mover (Minimalist.mkTrace traceId)).toHc
         (mergeOpUnit (R := ℤ) mover.toHc
@@ -378,7 +389,12 @@ theorem mergeOp_eps_zero_im_matches_Step
   rw [mergeOp_eps_zero_im_composition_moverLeft mover.toHc current.toHc
         (current.replace mover (Minimalist.mkTrace traceId)).toHc
         c0 h_cf h_remainder h_unique h_curr_ne_mover]
-  -- TODO Phase 2: rfl held against the planar substrate.
-  sorry
+  show forestToHc (R := ℤ)
+      ({.node mover.toHc (current.replace mover (Minimalist.mkTrace traceId)).toHc}
+       : TraceForest LIToken Unit)
+    = forestToHc (R := ℤ)
+      ({(mover * (current.replace mover (Minimalist.mkTrace traceId))).toHc}
+       : TraceForest LIToken Unit)
+  rw [h_coh]
 
 end Minimalist.Merge

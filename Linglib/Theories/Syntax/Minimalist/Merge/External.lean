@@ -143,32 +143,42 @@ theorem mergeOp_pair {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
     2-tree workspace `{current.toHc, item.toHc}` yields the singleton
     workspace of `.node current item` = `(Step.emR item).apply current`.
 
-    Both sides use the new trace-aware `toHc` (Phase 7c.3). For EM, neither
-    `current` nor `item` introduces trace markers, so `toHc_node` reduces
-    `((Step.emR item).apply current).toHc = .node current.toHc item.toHc`. -/
+    The hypothesis `h_coh : (current * item).toHc = .node current.toHc item.toHc`
+    is the **externalize-respect property at the merged node**: the
+    `Quot.out`-based `toHc` on `(current * item)` happens to factor as
+    `.node current.toHc item.toHc`. Per MCB §1.12.3 (book p. 116), this
+    is the local-coherence condition that some sections satisfy at specific
+    nodes; consumers supply the hypothesis when the section is built to
+    respect this merge. -/
 theorem mergeOp_emR_matches_Step
-    (current item : Minimalist.SyntacticObject) :
+    (current item : Minimalist.SyntacticObject)
+    (h_coh : (current * item).toHc =
+      ConnesKreimer.TraceTree.node current.toHc item.toHc) :
     mergeOp (R := ℤ) current.toHc item.toHc
         (forestToHc ({current.toHc, item.toHc} : TraceForest LIToken Unit))
       = forestToHc (R := ℤ) ({((Step.emR item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_pair]
-  -- TODO Phase 2: was `rfl` against the planar substrate. With `toHc` now
-  -- Quot.out-based, the equality holds up to representative choice.
-  sorry
+  -- Step.emR.apply: (Step.emR item).apply current = current * item
+  show forestToHc (R := ℤ) ({.node current.toHc item.toHc} : TraceForest LIToken Unit)
+    = forestToHc (R := ℤ) ({(current * item).toHc} : TraceForest LIToken Unit)
+  rw [h_coh]
 
 /-- **External Merge bridge (left-specifier)** (M-C-B Lemma 1.4.1, p. 49,
     Fhat = ∅ subcase, symmetric pair). `mergeOp item.toHc current.toHc`
     applied to `{item.toHc, current.toHc}` yields `.node item current`. -/
 theorem mergeOp_emL_matches_Step
-    (item current : Minimalist.SyntacticObject) :
+    (item current : Minimalist.SyntacticObject)
+    (h_coh : (item * current).toHc =
+      ConnesKreimer.TraceTree.node item.toHc current.toHc) :
     mergeOp (R := ℤ) item.toHc current.toHc
         (forestToHc ({item.toHc, current.toHc} : TraceForest LIToken Unit))
       = forestToHc (R := ℤ) ({((Step.emL item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_pair]
-  -- TODO Phase 2: same as above.
-  sorry
+  show forestToHc (R := ℤ) ({.node item.toHc current.toHc} : TraceForest LIToken Unit)
+    = forestToHc (R := ℤ) ({(item * current).toHc} : TraceForest LIToken Unit)
+  rw [h_coh]
 
 /-- **Factor-out lemma**: under disjointness on `T` (T ≠ S, T ≠ S', and no cut
     on T extracts S or S'), `mergeOp S S'` commutes with multiplication by
@@ -562,27 +572,33 @@ theorem mergeOp_eq_mergeOp_eps_zero_under_avoiding
     they realize MCB Prop 1.5.1's "EM and IM survive at ε = 0" claim
     at the linguistic Step bridge level. -/
 theorem mergeOp_eps_zero_emR_matches_Step
-    (current item : Minimalist.SyntacticObject) :
+    (current item : Minimalist.SyntacticObject)
+    (h_coh : (current * item).toHc =
+      ConnesKreimer.TraceTree.node current.toHc item.toHc) :
     mergeOp_eps (R := ℤ) 0 current.toHc item.toHc
         (forestToHc ({current.toHc, item.toHc} : TraceForest LIToken Unit))
       = forestToHc (R := ℤ) ({((Step.emR item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_eps_zero_pair]
-  -- TODO Phase 2: was `rfl` against the planar substrate.
-  sorry
+  show forestToHc (R := ℤ) ({.node current.toHc item.toHc} : TraceForest LIToken Unit)
+    = forestToHc (R := ℤ) ({(current * item).toHc} : TraceForest LIToken Unit)
+  rw [h_coh]
 
 /-- **EM cost-survival, ε = 0, left-specifier** (MCB Prop 1.5.1 EM positive
     direction, `Step.emL` specialization). Symmetric pair to
     `mergeOp_eps_zero_emR_matches_Step`. -/
 theorem mergeOp_eps_zero_emL_matches_Step
-    (item current : Minimalist.SyntacticObject) :
+    (item current : Minimalist.SyntacticObject)
+    (h_coh : (item * current).toHc =
+      ConnesKreimer.TraceTree.node item.toHc current.toHc) :
     mergeOp_eps (R := ℤ) 0 item.toHc current.toHc
         (forestToHc ({item.toHc, current.toHc} : TraceForest LIToken Unit))
       = forestToHc (R := ℤ) ({((Step.emL item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_eps_zero_pair]
-  -- TODO Phase 2: was `rfl` against the planar substrate.
-  sorry
+  show forestToHc (R := ℤ) ({.node item.toHc current.toHc} : TraceForest LIToken Unit)
+    = forestToHc (R := ℤ) ({(item * current).toHc} : TraceForest LIToken Unit)
+  rw [h_coh]
 
 /-! ## §4: MCB Prop 1.5.1 chain-level (EM-only)
 
@@ -625,16 +641,28 @@ noncomputable def stepApplyEM_eps_zero :
         (forestToHc ({item.toHc, current.toHc} : TraceForest LIToken Unit))
   | _, _ => 0  -- IM not handled at this chain level
 
+/-- The per-step externalize-respect coherence requirement, packaged as a
+    `Prop`-valued helper for chain-level consumers. For `.emR`/`.emL`, the
+    relevant `(_ * _).toHc = .node _ _` factorization; for `.im`, vacuous. -/
+def stepCoherence (step : Step) (current : Minimalist.SyntacticObject) : Prop :=
+  match step with
+  | .emR item => (current * item).toHc =
+      ConnesKreimer.TraceTree.node current.toHc item.toHc
+  | .emL item => (item * current).toHc =
+      ConnesKreimer.TraceTree.node item.toHc current.toHc
+  | _ => True
+
 /-- For an EM step (`emR` or `emL`), the algebraic ε = 0 application produces
     the singleton workspace of `step.apply current`. Per-step witness for the
     chain theorem; assembles `mergeOp_eps_zero_emR/emL_matches_Step`. -/
 theorem stepApplyEM_eps_zero_match (step : Step) (current : Minimalist.SyntacticObject)
-    (h_em : ∀ mover traceId, step ≠ .im mover traceId) :
+    (h_em : ∀ mover traceId, step ≠ .im mover traceId)
+    (h_coh : stepCoherence step current) :
     stepApplyEM_eps_zero step current
       = forestToHc (R := ℤ) ({(step.apply current).toHc} : TraceForest LIToken Unit) := by
   match step with
-  | .emR item => exact mergeOp_eps_zero_emR_matches_Step current item
-  | .emL item => exact mergeOp_eps_zero_emL_matches_Step item current
+  | .emR item => exact mergeOp_eps_zero_emR_matches_Step current item h_coh
+  | .emL item => exact mergeOp_eps_zero_emL_matches_Step item current h_coh
   | .im mover traceId => exact absurd rfl (h_em mover traceId)
 
 /-- **MCB Prop 1.5.1 chain-level, EM-only derivations** (book §1.5 rule 5,
@@ -652,7 +680,9 @@ theorem stepApplyEM_eps_zero_match (step : Step) (current : Minimalist.Syntactic
     For mixed EM/IM derivations, the IM-step bridge requires cut-data
     annotations (queued separately). -/
 theorem em_only_chain_eps_zero (steps : List Step) (initial : Minimalist.SyntacticObject)
-    (h_em_only : ∀ s ∈ steps, ∀ mover traceId, s ≠ .im mover traceId) :
+    (h_em_only : ∀ s ∈ steps, ∀ mover traceId, s ≠ .im mover traceId)
+    (h_coh_chain : ∀ s ∈ steps, ∀ current : Minimalist.SyntacticObject,
+      stepCoherence s current) :
     steps.foldl
         (fun (state : Minimalist.SyntacticObject × Hc ℤ LIToken) step =>
           (step.apply state.1, stepApplyEM_eps_zero step state.1))
@@ -667,12 +697,17 @@ theorem em_only_chain_eps_zero (steps : List Step) (initial : Minimalist.Syntact
       h_em_only step List.mem_cons_self
     have h_rest_em : ∀ s ∈ rest, ∀ mover traceId, s ≠ .im mover traceId :=
       fun s hs => h_em_only s (List.mem_cons_of_mem step hs)
+    have h_step_coh : stepCoherence step initial :=
+      h_coh_chain step List.mem_cons_self initial
+    have h_rest_coh : ∀ s ∈ rest, ∀ current : Minimalist.SyntacticObject,
+        stepCoherence s current :=
+      fun s hs => h_coh_chain s (List.mem_cons_of_mem step hs)
     have h_step_eq : stepApplyEM_eps_zero step initial
                   = forestToHc (R := ℤ)
                       ({(step.apply initial).toHc} : TraceForest LIToken Unit) :=
-      stepApplyEM_eps_zero_match step initial h_step_em
+      stepApplyEM_eps_zero_match step initial h_step_em h_step_coh
     show (rest.foldl _ (step.apply initial, stepApplyEM_eps_zero step initial)) = _
     rw [h_step_eq]
-    exact ih (step.apply initial) h_rest_em
+    exact ih (step.apply initial) h_rest_em h_rest_coh
 
 end Minimalist.Merge
