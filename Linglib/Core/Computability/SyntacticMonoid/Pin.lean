@@ -11,39 +11,66 @@ import Mathlib.Data.Fintype.Pigeonhole
 import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
-# Pin's algebraic characterization of definite languages
+# Pin's algebraic characterization of subregular language classes
 
-A regular language `L` is **definite** (i.e. `k`-definite for some `k`)
-iff its syntactic monoid satisfies the **omega-power equation**
+The classical algebraic-automata-theory characterization of three
+basic subregular varieties via **omega-power equations** on the
+syntactic monoid:
 
-> `s · [w]^ω = [w]^ω`     for every `s ∈ L.syntacticMonoid` and every
-                          non-empty word `w : List α`,
+| Variety | Equation | Meaning |
+|---|---|---|
+| `𝒟` (definite) | `s · [w]^ω = [w]^ω` | left-absorbing |
+| `𝒦` (reverse-definite) | `[w]^ω · s = [w]^ω` | right-absorbing |
+| `𝒩` (co/finite) | both `𝒟`'s and `𝒦`'s | both-sided absorbing |
 
-where `[w]^ω = Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w))`
+Where `[w]^ω = Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w))`
 is the unique idempotent in the cyclic submonoid of `[w]` (see
-`Linglib/Core/Algebra/IdempotentPower.lean`). This is Pin's classical
-characterization of the variety **D** of definite languages, lifted to
-the monoid setting using the same alphabet-relativized quantification
-as `kDefiniteEquation` (see `Equations.lean` for the trivial-letter
-counterexample that motivates the relativization).
+`Linglib/Core/Algebra/IdempotentPower.lean`). The variables `s` range
+over `L.syntacticMonoid` and `w` over non-empty `List α`
+(alphabet-relativized form — see `Equations.lean` for the trivial-letter
+counterexample motivating the non-empty-`w` restriction).
+
+The fourth variety in @cite{lambert-2026}'s Table 6, `ℒℐ` (generalized
+definite, `[w]^ω · s · [w]^ω = [w]^ω`), is queued for a follow-up file.
 
 ## Why omega-power and not finite-`k`?
 
-@cite{lambert-2026} Prop 53 (in `Equations.lean`) gives a **finite-`k`**
-characterization, parameterized by the suffix-length `k`. Pin's
-characterization is the **unbounded** version: a language is definite
-(for some `k`) iff a single `k`-free equation holds in the syntactic
-monoid. The `omegaPow` substrate is what eliminates the `k` parameter.
+@cite{lambert-2026} Props 53/57 (in `Equations.lean`) give **finite-`k`**
+characterizations parameterized by the suffix/prefix length `k`. Pin's
+forms are the **unbounded** versions: a single `k`-free equation in
+the syntactic monoid characterizes membership in the variety. The
+`omegaPow` substrate is what eliminates the `k` parameter.
 
 The two characterizations cohere: `IsDefinite k L → kDefiniteEquation L k`
 is the finite-`k` half; `(∃ k, IsDefinite k L) ↔ pinDefiniteEquation L`
 is the unbounded half. The unbounded form is the natural Pin/Eilenberg
 form used throughout algebraic automata theory.
 
+## Main definitions
+
+* `Language.pinDefiniteEquation L` — `s · [w]^ω = [w]^ω`.
+* `Language.pinReverseDefiniteEquation L` — `[w]^ω · s = [w]^ω`.
+* `Language.pinCofiniteEquation L` — conjunction of the above two.
+
+All three require `[Finite L.syntacticMonoid]` (equivalent to `L` being
+regular, by `IsRegular.finite_syntacticMonoid`).
+
+## Main results
+
+* `Language.exists_isDefinite_iff_satisfies_pinDefiniteEquation` —
+  Pin's `𝒟`-iff.
+* `Language.exists_isReverseDefinite_iff_satisfies_pinReverseDefiniteEquation` —
+  Pin's `𝒦`-iff.
+* `Language.isFiniteOrCofinite_iff_satisfies_pinCofiniteEquation` —
+  Pin's `𝒩`-iff (additionally requires `[Finite α]`; the
+  language-level reverse direction in `Subregular/Definite.lean` does
+  not hold for infinite alphabets).
+
 ## References
 
 * Pin, *Mathematical Foundations of Automata Theory*, Chapter II.
 * @cite{eilenberg-1976}.
+* @cite{almeida-1995}.
 * @cite{lambert-2026} §6.2 (finite-`k` companion in `Equations.lean`).
 -/
 
@@ -364,7 +391,7 @@ Mirror of `left_absorbing_of_pin_pigeonhole` but using suffix pigeonhole.
 For suffixes, smaller index ⇒ longer suffix, so `[v.drop i_lo]` is the
 longer one. The decomposition is
 `v.drop i_lo = middle ++ v.drop i_hi` where `middle = (v.drop i_lo).take (i_hi - i_lo)`. -/
-private lemma right_absorbing_of_pin_pigeonhole_K
+private lemma right_absorbing_of_pin_pigeonhole
     {L : Language α} [Finite L.syntacticMonoid]
     (h : pinReverseDefiniteEquation L)
     {v : List α}
@@ -465,8 +492,8 @@ private lemma right_absorbing_of_pinReverseDefiniteEquation
   have hi_le : i.val ≤ v.length := le_trans (Nat.lt_succ_iff.mp i.isLt) hv
   have hj_le : j.val ≤ v.length := le_trans (Nat.lt_succ_iff.mp j.isLt) hv
   rcases lt_or_gt_of_ne h_val_ne with hij | hij
-  · exact right_absorbing_of_pin_pigeonhole_K h hij hj_le h_eq s
-  · exact right_absorbing_of_pin_pigeonhole_K h hij hi_le h_eq.symm s
+  · exact right_absorbing_of_pin_pigeonhole h hij hj_le h_eq s
+  · exact right_absorbing_of_pin_pigeonhole h hij hi_le h_eq.symm s
 
 /-- **Pin's K-theorem (reverse direction)**: if a regular language's
 syntactic monoid satisfies Pin's reverse-definite omega-power equation,
@@ -488,5 +515,53 @@ theorem exists_isReverseDefinite_iff_satisfies_pinReverseDefiniteEquation
     (∃ k, IsReverseDefinite k L) ↔ pinReverseDefiniteEquation L := by
   refine ⟨fun ⟨_, hk⟩ => IsReverseDefinite.satisfies_pinReverseDefiniteEquation hk, ?_⟩
   exact exists_isReverseDefinite_of_satisfies_pinReverseDefiniteEquation
+
+-- ============================================================================
+-- §6. Pin's N-variety (co/finite languages)
+-- ============================================================================
+
+/-- **Pin's algebraic equation for co/finite languages**
+(@cite{lambert-2026} Prop 59; Almeida 1995): `𝒩 = ⟦sx^ω = x^ω = x^ω s⟧`.
+The conjunction of D's left-absorbing equation and K's right-absorbing
+equation. -/
+def pinCofiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
+  pinDefiniteEquation L ∧ pinReverseDefiniteEquation L
+
+/-- **Pin's N-theorem (forward direction)**: a finite-or-cofinite
+language's syntactic monoid satisfies the conjunction of Pin's D and K
+omega-power equations. Composes the substrate lemma
+`IsFiniteOrCofinite.exists_isDefinite_and_isReverseDefinite` (in
+`Subregular/Definite.lean`) with the Pin D and Pin K iff theorems. -/
+theorem IsFiniteOrCofinite.satisfies_pinCofiniteEquation
+    {L : Language α} [Finite L.syntacticMonoid]
+    (h : IsFiniteOrCofinite L) : pinCofiniteEquation L := by
+  obtain ⟨⟨k, hD⟩, ⟨k', hRD⟩⟩ := h.exists_isDefinite_and_isReverseDefinite
+  exact ⟨IsDefinite.satisfies_pinDefiniteEquation hD,
+         IsReverseDefinite.satisfies_pinReverseDefiniteEquation hRD⟩
+
+/-- **Pin's N-theorem (reverse direction, α-finite case)**: if a
+language over a finite alphabet has a syntactic monoid satisfying both
+Pin's D and K equations, then it is finite-or-cofinite.
+
+Requires `[Finite α]` because the language-level reverse direction
+(`isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite` in
+`Subregular/Definite.lean`) needs it: with infinite α, words of
+bounded length need not form a finite set. -/
+theorem isFiniteOrCofinite_of_satisfies_pinCofiniteEquation [Finite α]
+    {L : Language α} [Finite L.syntacticMonoid]
+    (h : pinCofiniteEquation L) : IsFiniteOrCofinite L := by
+  obtain ⟨hD, hRD⟩ := h
+  exact isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite
+    ⟨exists_isDefinite_of_satisfies_pinDefiniteEquation hD,
+     exists_isReverseDefinite_of_satisfies_pinReverseDefiniteEquation hRD⟩
+
+/-- **Pin's N-theorem**: over a finite alphabet, a language is
+finite-or-cofinite iff its syntactic monoid satisfies the conjunction
+of Pin's D and K omega-power equations. -/
+theorem isFiniteOrCofinite_iff_satisfies_pinCofiniteEquation [Finite α]
+    {L : Language α} [Finite L.syntacticMonoid] :
+    IsFiniteOrCofinite L ↔ pinCofiniteEquation L :=
+  ⟨IsFiniteOrCofinite.satisfies_pinCofiniteEquation,
+   isFiniteOrCofinite_of_satisfies_pinCofiniteEquation⟩
 
 end Language

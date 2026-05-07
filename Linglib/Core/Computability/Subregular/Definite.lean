@@ -4,6 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Defs
+import Mathlib.Data.Set.Finite.Lemmas
+import Mathlib.Data.Set.Finite.List
+import Mathlib.Data.Fintype.Order
 
 /-!
 # Definite and Reverse-Definite Languages (D_k, RD_k)
@@ -163,5 +166,251 @@ intersection of the definite and reverse-definite classes for
 sufficiently large `k`. -/
 def IsFiniteOrCofinite (L : Language α) : Prop :=
   L.Finite ∨ Lᶜ.Finite
+
+/-! ## Co/finite = D ∩ RD (classical Pin/Eilenberg theorem)
+
+A language is finite-or-cofinite iff it is `k`-definite for some `k`
+**and** reverse-`k'`-definite for some `k'`. This is a language-level
+theorem: pure list combinatorics, no syntactic-monoid content. The
+algebraic counterpart (Pin's `𝒩 = ⟦sx^ω = x^ω = x^ω s⟧` characterization)
+lives in `SyntacticMonoid/Pin.lean`. -/
+
+/-- A bounded language (every word of length ≤ N) admits a `k`-definite
+grammar with `k = N + 1`. Internal helper used for both Finite and
+Cofinite halves; the `permitted` set is supplied by the caller. -/
+private theorem IsDefinite_of_bounded_aux {L : Language α} {N : ℕ}
+    (h_bound : ∀ w ∈ L, w.length ≤ N) :
+    IsDefinite (N + 1) L := by
+  refine ⟨⟨{ ks : List α | ks.length < N + 1 ∧ ks ∈ L }⟩, ?_⟩
+  ext w
+  show Edge.right.takeAt (N + 1) w ∈ {ks | ks.length < N + 1 ∧ ks ∈ L} ↔ w ∈ L
+  by_cases hw_short : w.length < N + 1
+  · have hw_eq : Edge.right.takeAt (N + 1) w = w := by
+      show w.drop (w.length - (N + 1)) = w
+      have : w.length - (N + 1) = 0 := by omega
+      rw [this, List.drop_zero]
+    rw [hw_eq]
+    exact ⟨And.right, fun hL => ⟨hw_short, hL⟩⟩
+  · push_neg at hw_short
+    refine ⟨?_, ?_⟩
+    · rintro ⟨hlen, _⟩
+      have : (Edge.right.takeAt (N + 1) w).length = N + 1 := by
+        show (w.drop (w.length - (N + 1))).length = N + 1
+        rw [List.length_drop]; omega
+      omega
+    · intro hL
+      have := h_bound w hL
+      omega
+
+/-- Mirror for the left edge. -/
+private theorem IsReverseDefinite_of_bounded_aux {L : Language α} {N : ℕ}
+    (h_bound : ∀ w ∈ L, w.length ≤ N) :
+    IsReverseDefinite (N + 1) L := by
+  refine ⟨⟨{ ks : List α | ks.length < N + 1 ∧ ks ∈ L }⟩, ?_⟩
+  ext w
+  show Edge.left.takeAt (N + 1) w ∈ {ks | ks.length < N + 1 ∧ ks ∈ L} ↔ w ∈ L
+  by_cases hw_short : w.length < N + 1
+  · have hw_eq : Edge.left.takeAt (N + 1) w = w :=
+      List.take_of_length_le (le_of_lt hw_short)
+    rw [hw_eq]
+    exact ⟨And.right, fun hL => ⟨hw_short, hL⟩⟩
+  · push_neg at hw_short
+    refine ⟨?_, ?_⟩
+    · rintro ⟨hlen, _⟩
+      have : (Edge.left.takeAt (N + 1) w).length = N + 1 := by
+        show (w.take (N + 1)).length = N + 1
+        rw [List.length_take]; omega
+      omega
+    · intro hL
+      have := h_bound w hL
+      omega
+
+/-- A "co-bounded" language (complement bounded) admits a `k`-definite
+grammar where the `permitted` set accepts all length-`k` suffixes. -/
+private theorem IsDefinite_of_cobounded_aux {L : Language α} {N : ℕ}
+    (h_bound : ∀ w ∈ Lᶜ, w.length ≤ N) :
+    IsDefinite (N + 1) L := by
+  refine ⟨⟨{ ks : List α |
+    (ks.length < N + 1 ∧ ks ∈ L) ∨ ks.length = N + 1 }⟩, ?_⟩
+  ext w
+  show Edge.right.takeAt (N + 1) w ∈
+       {ks | (ks.length < N + 1 ∧ ks ∈ L) ∨ ks.length = N + 1} ↔ w ∈ L
+  by_cases hw_short : w.length < N + 1
+  · have hw_eq : Edge.right.takeAt (N + 1) w = w := by
+      show w.drop (w.length - (N + 1)) = w
+      have : w.length - (N + 1) = 0 := by omega
+      rw [this, List.drop_zero]
+    rw [hw_eq]
+    refine ⟨?_, fun hL => Or.inl ⟨hw_short, hL⟩⟩
+    rintro (⟨_, hL⟩ | hlen)
+    · exact hL
+    · omega
+  · push_neg at hw_short
+    refine ⟨?_, ?_⟩
+    · intro _
+      by_contra hcontra
+      have hLc : w ∈ Lᶜ := hcontra
+      have := h_bound w hLc
+      omega
+    · intro _
+      right
+      show (Edge.right.takeAt (N + 1) w).length = N + 1
+      show (w.drop (w.length - (N + 1))).length = N + 1
+      rw [List.length_drop]; omega
+
+private theorem IsReverseDefinite_of_cobounded_aux {L : Language α} {N : ℕ}
+    (h_bound : ∀ w ∈ Lᶜ, w.length ≤ N) :
+    IsReverseDefinite (N + 1) L := by
+  refine ⟨⟨{ ks : List α |
+    (ks.length < N + 1 ∧ ks ∈ L) ∨ ks.length = N + 1 }⟩, ?_⟩
+  ext w
+  show Edge.left.takeAt (N + 1) w ∈
+       {ks | (ks.length < N + 1 ∧ ks ∈ L) ∨ ks.length = N + 1} ↔ w ∈ L
+  by_cases hw_short : w.length < N + 1
+  · have hw_eq : Edge.left.takeAt (N + 1) w = w :=
+      List.take_of_length_le (le_of_lt hw_short)
+    rw [hw_eq]
+    refine ⟨?_, fun hL => Or.inl ⟨hw_short, hL⟩⟩
+    rintro (⟨_, hL⟩ | hlen)
+    · exact hL
+    · omega
+  · push_neg at hw_short
+    refine ⟨?_, ?_⟩
+    · intro _
+      by_contra hcontra
+      have hLc : w ∈ Lᶜ := hcontra
+      have := h_bound w hLc
+      omega
+    · intro _
+      right
+      show (Edge.left.takeAt (N + 1) w).length = N + 1
+      show (w.take (N + 1)).length = N + 1
+      rw [List.length_take]; omega
+
+/-- A finite set of words has a length bound. Bridges the
+`Set.Finite`/`Finite ↑·` representation issue by going through
+`Set.Finite.image` with an explicit `Set.Finite` annotation. -/
+private theorem exists_length_bound_of_finite {S : Set (List α)}
+    (h : S.Finite) : ∃ N, ∀ w ∈ S, w.length ≤ N := by
+  classical
+  have h_set : Set.Finite S := h
+  obtain ⟨N, hN⟩ := (Set.Finite.image (·.length) h_set).exists_le
+  exact ⟨N, fun w hw => hN _ ⟨w, hw, rfl⟩⟩
+
+/-- **Forward direction of Pin's `𝒩 = 𝒟 ∩ 𝒦` theorem**: a finite-or-cofinite
+language is both `k`-definite and reverse-`k'`-definite for some `k`, `k'`. -/
+theorem IsFiniteOrCofinite.exists_isDefinite_and_isReverseDefinite
+    {L : Language α} (h : IsFiniteOrCofinite L) :
+    (∃ k, IsDefinite k L) ∧ (∃ k', IsReverseDefinite k' L) := by
+  rcases h with h | h
+  · obtain ⟨N, hN⟩ := exists_length_bound_of_finite h
+    exact ⟨⟨N + 1, IsDefinite_of_bounded_aux hN⟩,
+           ⟨N + 1, IsReverseDefinite_of_bounded_aux hN⟩⟩
+  · obtain ⟨N, hN⟩ := exists_length_bound_of_finite h
+    exact ⟨⟨N + 1, IsDefinite_of_cobounded_aux hN⟩,
+           ⟨N + 1, IsReverseDefinite_of_cobounded_aux hN⟩⟩
+
+/-- Helper: bridge two long words via `w' = w₂.take k' ++ w₁.drop (w₁.length - k)`.
+The bridge has length `k' + k`, shares the right-`k`-suffix with `w₁`,
+and shares the left-`k'`-prefix with `w₂`. -/
+private lemma takeAt_right_eq_of_bridge {α : Type*} {k k' : ℕ}
+    {w₁ w₂ : List α} (hw₁ : k ≤ w₁.length) (hw₂ : k' ≤ w₂.length) :
+    Edge.right.takeAt k (w₂.take k' ++ w₁.drop (w₁.length - k)) =
+    Edge.right.takeAt k w₁ := by
+  show (w₂.take k' ++ w₁.drop (w₁.length - k)).drop
+        ((w₂.take k' ++ w₁.drop (w₁.length - k)).length - k) =
+       w₁.drop (w₁.length - k)
+  have h_take_len : (w₂.take k').length = k' := by
+    rw [List.length_take]; omega
+  have h_drop_len : (w₁.drop (w₁.length - k)).length = k := by
+    rw [List.length_drop]; omega
+  have h_total : (w₂.take k' ++ w₁.drop (w₁.length - k)).length = k' + k := by
+    rw [List.length_append, h_take_len, h_drop_len]
+  have hlen_diff :
+      (w₂.take k' ++ w₁.drop (w₁.length - k)).length - k = k' := by
+    rw [h_total]; omega
+  rw [hlen_diff]
+  exact List.drop_left' h_take_len
+
+private lemma takeAt_left_eq_of_bridge {α : Type*} {k k' : ℕ}
+    {w₁ w₂ : List α} (_hw₁ : k ≤ w₁.length) (hw₂ : k' ≤ w₂.length) :
+    Edge.left.takeAt k' (w₂.take k' ++ w₁.drop (w₁.length - k)) =
+    Edge.left.takeAt k' w₂ := by
+  show (w₂.take k' ++ w₁.drop (w₁.length - k)).take k' = w₂.take k'
+  have h_take_len : (w₂.take k').length = k' := by
+    rw [List.length_take]; omega
+  rw [List.take_append_of_le_length (by rw [h_take_len])]
+  rw [List.take_take]
+  congr 1; omega
+
+/-- **Reverse direction of Pin's `𝒩 = 𝒟 ∩ 𝒦` theorem (α-finite case)**:
+if `L` is both `k`-definite and reverse-`k'`-definite, AND the alphabet
+is finite, then `L` is finite-or-cofinite.
+
+The α-finiteness hypothesis is necessary: with infinite α, words of
+bounded length need not form a finite set. The phonology context
+(@cite{lambert-2026}) implicitly assumes finite alphabets.
+
+Proof sketch: for words of length `≥ k + k'`, membership is constant.
+Bridge argument: any two such words `w₁`, `w₂` are related via
+`w' = w₂.take k' ++ w₁.drop (w₁.length - k)` of length `k' + k`. By
+`k`-definiteness applied to (w₁, w'), they share L-membership; by
+reverse-`k'`-definiteness applied to (w', w₂), they share L-membership.
+Then either all long words are in `L` (so `Lᶜ` is bounded, hence finite)
+or none are (so `L` is bounded). -/
+theorem isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite [Finite α]
+    {L : Language α}
+    (h : (∃ k, IsDefinite k L) ∧ (∃ k', IsReverseDefinite k' L)) :
+    IsFiniteOrCofinite L := by
+  classical
+  obtain ⟨⟨k, GD, hGD⟩, ⟨k', GR, hGR⟩⟩ := h
+  -- Constancy: for w₁, w₂ both of length ≥ k + k', w₁ ∈ L ↔ w₂ ∈ L.
+  have constancy : ∀ w₁ w₂ : List α,
+      k + k' ≤ w₁.length → k + k' ≤ w₂.length → (w₁ ∈ L ↔ w₂ ∈ L) := by
+    intro w₁ w₂ hw₁ hw₂
+    set w' := w₂.take k' ++ w₁.drop (w₁.length - k) with hw'_def
+    have hk_le_w₁ : k ≤ w₁.length := by omega
+    have hk'_le_w₂ : k' ≤ w₂.length := by omega
+    have h_right : Edge.right.takeAt k w' = Edge.right.takeAt k w₁ :=
+      takeAt_right_eq_of_bridge hk_le_w₁ hk'_le_w₂
+    have h_left : Edge.left.takeAt k' w' = Edge.left.takeAt k' w₂ :=
+      takeAt_left_eq_of_bridge hk_le_w₁ hk'_le_w₂
+    have hw₁_iff_w' : w₁ ∈ L ↔ w' ∈ L := by
+      rw [← hGD]; show _ ∈ GD.permitted ↔ _ ∈ GD.permitted; rw [h_right]
+    have hw'_iff_w₂ : w' ∈ L ↔ w₂ ∈ L := by
+      rw [← hGR]; show _ ∈ GR.permitted ↔ _ ∈ GR.permitted; rw [h_left]
+    exact hw₁_iff_w'.trans hw'_iff_w₂
+  -- For α finite, the set of words of length < k + k' is finite.
+  have h_short_finite : Set.Finite {w : List α | w.length < k + k'} :=
+    List.finite_length_lt α (k + k')
+  by_cases h_witness : ∃ w₀, k + k' ≤ w₀.length ∧ w₀ ∈ L
+  · right
+    obtain ⟨w₀, hw₀_len, hw₀_L⟩ := h_witness
+    apply Set.Finite.subset h_short_finite
+    intro w hwLc
+    show w.length < k + k'
+    by_contra hge
+    push_neg at hge
+    -- w of length ≥ k+k', and w₀ ∈ L of length ≥ k+k'. By constancy, w ∈ L.
+    -- But hwLc says w ∈ Lᶜ, contradiction.
+    exact hwLc ((constancy w w₀ hge hw₀_len).mpr hw₀_L)
+  · left
+    push_neg at h_witness
+    apply Set.Finite.subset h_short_finite
+    intro w hwL
+    show w.length < k + k'
+    by_contra hge
+    push_neg at hge
+    exact h_witness w hge hwL
+
+/-- **Pin's `𝒩 = 𝒟 ∩ 𝒦` theorem (α-finite case)**: a language over a
+finite alphabet is finite-or-cofinite iff it is both `k`-definite for
+some `k` **and** reverse-`k'`-definite for some `k'`. -/
+theorem isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite [Finite α]
+    {L : Language α} :
+    IsFiniteOrCofinite L ↔
+    (∃ k, IsDefinite k L) ∧ (∃ k', IsReverseDefinite k' L) :=
+  ⟨IsFiniteOrCofinite.exists_isDefinite_and_isReverseDefinite,
+   isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite⟩
 
 end Core.Computability.Subregular
