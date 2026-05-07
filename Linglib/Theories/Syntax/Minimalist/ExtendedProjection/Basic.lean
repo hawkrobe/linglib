@@ -272,6 +272,20 @@ def allFMonotone : List Cat → Bool
   | [_] => true
   | c₁ :: c₂ :: rest => fMonotone c₁ c₂ && allFMonotone (c₂ :: rest)
 
+/-- Underlying planar EP-spine computation on a `FreeMagma`
+    representative. Phase 1.0: the EP spine is intrinsically planar
+    (left-spine head chain), so this lifts noncomputably via `Quot.out`. -/
+private noncomputable def computeEPSpinePlanar :
+    FreeMagma (LIToken ⊕ Nat) → List (SyntacticObject × Cat)
+  | .of (.inl tok) =>
+    [((FreeCommMagma.mk (.of (.inl tok)) : SyntacticObject), tok.item.outerCat)]
+  | .of (.inr n) =>
+    [((FreeCommMagma.mk (.of (.inr n)) : SyntacticObject), .N)]
+  | .mul a b =>
+    computeEPSpinePlanar a ++
+      [((FreeCommMagma.mk (.mul a b) : SyntacticObject),
+         SyntacticObject.outerCat (FreeCommMagma.mk (.mul a b)))]
+
 /-- Compute the EP spine from a syntactic object by walking the
     leftmost-leaf head chain (= `HeadFunction.leftSpine` per
     @cite{marcolli-chomsky-berwick-2025} §1.13). Returns pairs of
@@ -280,16 +294,14 @@ def allFMonotone : List Cat → Bool
     For a non-leftmost-headed analysis, replace the recursion's `a`
     with the daughter whose head leaf matches `so.outerCat` under the
     chosen head function, or rewrite this helper to take a
-    `HeadFunction` parameter. -/
-partial def computeEPSpine (so : SyntacticObject) : List (SyntacticObject × Cat) :=
-  match so with
-  | .leaf tok => [(so, tok.item.outerCat)]
-  | .trace _ => [(so, .N)]  -- traces default to N category for spine purposes
-  | .node a _ => computeEPSpine a ++ [(so, so.outerCat)]
+    `HeadFunction` parameter. Phase 1.0 noncomputable. -/
+noncomputable def computeEPSpine (so : SyntacticObject) :
+    List (SyntacticObject × Cat) :=
+  computeEPSpinePlanar so.out
 
 /-- Build an ExtendedProjection from a syntactic object using the
     leftmost-leaf head chain. -/
-def mkExtendedProjection (so : SyntacticObject) : ExtendedProjection :=
+noncomputable def mkExtendedProjection (so : SyntacticObject) : ExtendedProjection :=
   let spinePairs := computeEPSpine so
   let cats := spinePairs.map Prod.snd
   { root := so

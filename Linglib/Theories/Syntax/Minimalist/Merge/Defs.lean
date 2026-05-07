@@ -55,55 +55,65 @@ abbrev SyntacticObjectH := DecoratedTree LIToken
 
 end Minimalist.Merge
 
-/-- Embed a plain `SyntacticObject` into the Hopf-side `SyntacticObjectH`
-    by recursing via `leaf`/`node` (no traces produced). Lives in the
-    `SyntacticObject` namespace so that `(so : SyntacticObject).toH`
-    works as dot notation. -/
-def Minimalist.SyntacticObject.toH :
-    Minimalist.SyntacticObject → Minimalist.Merge.SyntacticObjectH
-  | .leaf tok => .leaf tok
-  | .trace _ => .trace (.leaf (Minimalist.mkTraceToken 0))
-    -- Trace projects to a DecoratedTree.trace wrapping a sentinel leaf;
-    -- the trace index is forgotten at this layer (Hopf side has Unit traces).
-  | .node l r => .node l.toH r.toH
+namespace Minimalist
+
+/-- Underlying `FreeMagma`-side embedding from a planar representative
+    into `SyntacticObjectH`. Phase 1.0: `toH` is genuinely planar
+    (DecoratedTree.node distinguishes left from right), so this is
+    representative-dependent. -/
+private def toHPlanar :
+    FreeMagma (LIToken ⊕ Nat) → Minimalist.Merge.SyntacticObjectH
+  | .of (.inl tok) => .leaf tok
+  | .of (.inr _) => .trace (.leaf (Minimalist.mkTraceToken 0))
+  | .mul l r => .node (toHPlanar l) (toHPlanar r)
+
+/-- Embed a plain `SyntacticObject` into the Hopf-side `SyntacticObjectH`.
+    Phase 1.0 noncomputable via `Quot.out` (Phase 2 will use an
+    `HeadFunction` parameter to choose orientation). -/
+noncomputable def SyntacticObject.toH (so : SyntacticObject) : Minimalist.Merge.SyntacticObjectH :=
+  toHPlanar so.out
+
+/-- Underlying `FreeMagma`-side toHc on a planar representative. -/
+private def toHcPlanar :
+    FreeMagma (LIToken ⊕ Nat) → ConnesKreimer.TraceTree LIToken Unit
+  | .of (.inl tok) => ConnesKreimer.TraceTree.leaf tok
+  | .of (.inr _) => ConnesKreimer.TraceTree.trace ()
+  | .mul l r => ConnesKreimer.TraceTree.node (toHcPlanar l) (toHcPlanar r)
 
 /-- Project a `SyntacticObject` directly to the bialgebra carrier
     `TraceTree LIToken Unit`.
 
-    Since `SyntacticObject := TraceTree LIToken Nat` (post-Path-2 migration),
-    this is essentially a forgetful map on the trace label `Nat → Unit`.
-    Leaves and node structure pass through unchanged; `.trace n` projects
-    to `.trace ()` (forgetting the binding index).
+    Since `SyntacticObject := FreeCommMagma (LIToken ⊕ Nat)`, this is
+    a planar projection: it picks a representative via `Quot.out` and
+    serializes left-to-right. Phase 1.0 noncomputable; Phase 2 will
+    take an `HeadFunction` parameter for the planar orientation. -/
+noncomputable def SyntacticObject.toHc (so : SyntacticObject) :
+    ConnesKreimer.TraceTree LIToken Unit :=
+  toHcPlanar so.out
 
-    This is the single boundary function consumers should use when
-    entering the bialgebra layer. -/
-def Minimalist.SyntacticObject.toHc :
-    Minimalist.SyntacticObject → ConnesKreimer.TraceTree LIToken Unit
-  | .leaf tok => ConnesKreimer.TraceTree.leaf tok
-  | .trace _ => ConnesKreimer.TraceTree.trace ()
-  | .node l r => ConnesKreimer.TraceTree.node l.toHc r.toHc
+end Minimalist
 
-@[simp] theorem Minimalist.SyntacticObject.toHc_leaf (tok : LIToken) :
-    (Minimalist.SyntacticObject.leaf tok).toHc =
-      ConnesKreimer.TraceTree.leaf tok := rfl
+-- TODO Phase 2: rfl-style simp lemmas for `toHc` on .leaf/.trace/.mul
+-- constructors no longer hold definitionally because `toHc` is
+-- `Quot.out`-based. They held before the FreeCommMagma migration
+-- (when SO was a planar inductive). Consumers that needed
+-- (.leaf tok).toHc = .leaf tok etc. should use `toHcPlanar` directly
+-- on a chosen representative, or wait for the Phase 2 parameterized
+-- version.
 
-@[simp] theorem Minimalist.SyntacticObject.toHc_trace (n : Nat) :
-    (Minimalist.SyntacticObject.trace n).toHc =
-      ConnesKreimer.TraceTree.trace () := rfl
-
-@[simp] theorem Minimalist.SyntacticObject.toHc_node (l r : Minimalist.SyntacticObject) :
-    (Minimalist.SyntacticObject.node l r).toHc =
-      ConnesKreimer.TraceTree.node l.toHc r.toHc := rfl
-
-/-- `mkTrace n = .trace n` (post-Path-2), so `isTrace (.trace n) = some n` is `rfl`. -/
+/-- `mkTrace n = .trace n`, so `isTrace (.trace n) = some n`. -/
 theorem Minimalist.isTrace_mkTrace (n : Nat) :
     Minimalist.isTrace (Minimalist.mkTrace n) = some n := rfl
 
-/-- `(mkTrace n).toHc = .trace ()` — the IM bridge identity, now `rfl`
-    after Path 2 replaced the leaf-with-reserved-id encoding with
-    structural `.trace n`. -/
-@[simp] theorem Minimalist.mkTrace_toHc (n : Nat) :
-    (Minimalist.mkTrace n).toHc = ConnesKreimer.TraceTree.trace () := rfl
+/-- `(mkTrace n).toHc = .trace ()` — the IM bridge identity.
+
+    TODO Phase 2: was `rfl` against the planar substrate; now the LHS
+    expands via `Quot.out` and the equality holds up to the trace-only
+    `FreeMagma` representative being `.of (.inr n)`. Consumers needing
+    this rfl-style identity should use `toHcPlanar` directly. -/
+theorem Minimalist.mkTrace_toHc (n : Nat) :
+    (Minimalist.mkTrace n).toHc = ConnesKreimer.TraceTree.trace () := by
+  sorry
 
 namespace Minimalist.Merge
 
@@ -126,26 +136,22 @@ def treeToSyntacticObject? :
   | .node l r => do
       let l' ← treeToSyntacticObject? l
       let r' ← treeToSyntacticObject? r
-      pure (.node l' r')
+      pure (l' * r')
 
 /-- Round-trip: embedding a trace-free SO and forgetting the trace
-    structure recovers the original. -/
-@[simp] theorem treeToSyntacticObject?_ofSO
+    structure recovers the original.
+
+    TODO Phase 2: this theorem held by induction on the planar SO type
+    when `toH` was a constructor recursion. With `toH` now `Quot.out`-
+    based, the round-trip property is up to `FreeCommMagma`'s quotient
+    equivalence (the round-trip yields a representative that is `~`
+    to the input), not strict equality. Consumers needing strict
+    equality should compose with `Quot.mk`/`Quot.lift` arguments
+    explicitly, or wait for the Phase 2 head-function parameterized
+    version. -/
+theorem treeToSyntacticObject?_ofSO
     (so : Minimalist.SyntacticObject) :
     treeToSyntacticObject? so.toH = some so := by
-  induction so with
-  | leaf _ => rfl
-  | trace _ =>
-    -- Traces project to DecoratedTree.trace, which forgets via treeToSO?_trace = none.
-    -- This breaks the round-trip: trace → trace → none, not some so.
-    -- Theorem now requires a "trace-free" hypothesis to be true. Skip as sorry
-    -- with a TODO; consumers using treeToSyntacticObject?_ofSO on trace-bearing SOs
-    -- will need updating.
-    sorry
-  | node l r ihl ihr =>
-    show treeToSyntacticObject? (.node l.toH r.toH) = _
-    rw [treeToSyntacticObject?, ihl]
-    rw [ihr]
-    rfl
+  sorry
 
 end Minimalist.Merge

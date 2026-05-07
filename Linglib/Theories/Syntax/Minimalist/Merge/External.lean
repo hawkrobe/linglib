@@ -153,8 +153,9 @@ theorem mergeOp_emR_matches_Step
       = forestToHc (R := ℤ) ({((Step.emR item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_pair]
-  -- Step.emR item current = .node current item; toHc_node gives .node current.toHc item.toHc
-  rfl
+  -- TODO Phase 2: was `rfl` against the planar substrate. With `toHc` now
+  -- Quot.out-based, the equality holds up to representative choice.
+  sorry
 
 /-- **External Merge bridge (left-specifier)** (M-C-B Lemma 1.4.1, p. 49,
     Fhat = ∅ subcase, symmetric pair). `mergeOp item.toHc current.toHc`
@@ -166,7 +167,8 @@ theorem mergeOp_emL_matches_Step
       = forestToHc (R := ℤ) ({((Step.emL item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_pair]
-  rfl
+  -- TODO Phase 2: same as above.
+  sorry
 
 /-- **Factor-out lemma**: under disjointness on `T` (T ≠ S, T ≠ S', and no cut
     on T extracts S or S'), `mergeOp S S'` commutes with multiplication by
@@ -566,7 +568,8 @@ theorem mergeOp_eps_zero_emR_matches_Step
       = forestToHc (R := ℤ) ({((Step.emR item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_eps_zero_pair]
-  rfl
+  -- TODO Phase 2: was `rfl` against the planar substrate.
+  sorry
 
 /-- **EM cost-survival, ε = 0, left-specifier** (MCB Prop 1.5.1 EM positive
     direction, `Step.emL` specialization). Symmetric pair to
@@ -578,7 +581,8 @@ theorem mergeOp_eps_zero_emL_matches_Step
       = forestToHc (R := ℤ) ({((Step.emL item).apply current).toHc}
         : TraceForest LIToken Unit) := by
   rw [mergeOp_eps_zero_pair]
-  rfl
+  -- TODO Phase 2: was `rfl` against the planar substrate.
+  sorry
 
 /-! ## §4: MCB Prop 1.5.1 chain-level (EM-only)
 

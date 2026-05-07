@@ -84,8 +84,8 @@ open Minimalist (PlanarMarking SyntacticObject LIToken)
     Per Lemma 1.14.1, this set is a path in T from ℓ up to the
     maximal projection vertex v_ℓ. The path is "trivial" (contains
     only ℓ itself) if ℓ is not the head of any internal vertex. -/
-def projectionPath (m : PlanarMarking) (T : SyntacticObject)
-    (ℓ : LIToken) : List SyntacticObject :=
+noncomputable def projectionPath (m : PlanarMarking) (T : SyntacticObject)
+    (ℓ : LIToken) : Multiset SyntacticObject :=
   T.subtrees.filter (fun w => decide (m.headAt w = ℓ))
 
 /-- The **maximal projection vertex** v_ℓ of leaf ℓ in T
@@ -93,32 +93,38 @@ def projectionPath (m : PlanarMarking) (T : SyntacticObject)
     vertex on `projectionPath m T ℓ`. Returns `none` if ℓ is not in T
     (or, more precisely, has empty projection path).
 
-    Since `subtrees` enumerates T in top-down order, the first
-    element of the filtered path is the highest vertex. -/
-def maximalProjectionVertex (m : PlanarMarking) (T : SyntacticObject)
+    Phase 1.0 status: with `subtrees` now a `Multiset`, "the topmost
+    vertex" is not well-defined without an order. Returns an arbitrary
+    representative via `Multiset.toList.head!` for now; Phase 2 will
+    require ordering by `nodeCount` to recover the topmost-first
+    semantics. -/
+noncomputable def maximalProjectionVertex (m : PlanarMarking) (T : SyntacticObject)
     (ℓ : LIToken) : Option SyntacticObject :=
-  (projectionPath m T ℓ).head?
+  if (projectionPath m T ℓ).toList.isEmpty
+    then none
+    else some (projectionPath m T ℓ).toList.head!
 
 /-- A projection path is **non-trivial** (contains at least one
     internal vertex) when its length exceeds 1 — i.e., the leaf has
     ascended at least one level. Per Definition 1.14.3, only
     non-trivial projection paths give rise to phases. -/
-def isNonTrivialProjection (m : PlanarMarking) (T : SyntacticObject)
+noncomputable def isNonTrivialProjection (m : PlanarMarking) (T : SyntacticObject)
     (ℓ : LIToken) : Bool :=
-  decide (1 < (projectionPath m T ℓ).length)
+  decide (1 < (projectionPath m T ℓ).card)
 
 -- ============================================================================
 -- § 2: Phase Head Leaves L_Φ(T) (Definition 1.14.3)
 -- ============================================================================
 
 /-- The set L(T) of leaves of T as LITokens. Renamed alias for
-    `SyntacticObject.leafTokens`, matching MCB notation. -/
-abbrev leafSet (T : SyntacticObject) : List LIToken := T.leafTokens
+    `SyntacticObject.leafTokens`, matching MCB notation.
+    Phase 1.0 noncomputable (delegates to Quot.out). -/
+noncomputable abbrev leafSet (T : SyntacticObject) : List LIToken := T.leafTokens
 
 /-- @cite{marcolli-chomsky-berwick-2025} Definition 1.14.3 (eq 1.14.1):
     L_Φ(T) = the set of leaves ℓ ∈ L(T) such that γ_ℓ contains
     interior (non-leaf) vertices. Each such ℓ is the head of a phase. -/
-def phaseHeadLeaves (m : PlanarMarking) (T : SyntacticObject) : List LIToken :=
+noncomputable def phaseHeadLeaves (m : PlanarMarking) (T : SyntacticObject) : List LIToken :=
   (leafSet T).filter (fun ℓ => isNonTrivialProjection m T ℓ)
 
 -- ============================================================================
@@ -135,10 +141,10 @@ def phaseHeadLeaves (m : PlanarMarking) (T : SyntacticObject) : List LIToken :=
     Per MCB Remark 1.14.4, this is the part of the phase that becomes
     inaccessible to further computation once a higher phase is built
     via External Merge. -/
-def phaseInterior (m : PlanarMarking) (T : SyntacticObject)
-    (ℓ : LIToken) : List SyntacticObject :=
+noncomputable def phaseInterior (m : PlanarMarking) (T : SyntacticObject)
+    (ℓ : LIToken) : Multiset SyntacticObject :=
   match maximalProjectionVertex m T ℓ with
-  | none    => []
+  | none    => 0
   | some vℓ =>
     -- Acc'(T): all subtrees of T (per MCB notation)
     -- restricted to those contained in T_{v_ℓ}
@@ -159,10 +165,10 @@ def phaseInterior (m : PlanarMarking) (T : SyntacticObject)
     requires the sister-vertex lookup which currently lives elsewhere
     in linglib. -/
 def phaseEdge (m : PlanarMarking) (T : SyntacticObject)
-    (_ℓ : LIToken) : List SyntacticObject :=
+    (_ℓ : LIToken) : Multiset SyntacticObject :=
   -- TODO: implement using sister-vertex lookup. The structural shape
   -- is (interior of T_{v_ℓ}) minus (interior of T_{s_ℓ}).
-  []
+  0
 
 -- ============================================================================
 -- § 4: Inaccessibility Set Y_ℓ (eq 1.14.5)
@@ -172,7 +178,7 @@ def phaseEdge (m : PlanarMarking) (T : SyntacticObject)
     after Definition 1.14.3): Φ_ℓ is a **lower phase** than Φ_ℓ' when
     Φ_ℓ ⊂ Φ_ℓ' as sets of accessible terms. We approximate this by
     interior containment of the maximal projection vertices. -/
-def isLowerPhaseThan (m : PlanarMarking) (T : SyntacticObject)
+noncomputable def isLowerPhaseThan (m : PlanarMarking) (T : SyntacticObject)
     (ℓ ℓ' : LIToken) : Bool :=
   match maximalProjectionVertex m T ℓ, maximalProjectionVertex m T ℓ' with
   | some vℓ, some vℓ' => decide (Minimalist.contains vℓ' vℓ)
@@ -186,11 +192,11 @@ def isLowerPhaseThan (m : PlanarMarking) (T : SyntacticObject)
     — accessible terms that lie in the interior of any *strictly
     lower* phase. The complement Φ_ℓ ∖ Y_ℓ is the set of terms
     available for computation in phase Φ_ℓ. -/
-def inaccessibleTerms (m : PlanarMarking) (T : SyntacticObject)
-    (ℓ : LIToken) : List SyntacticObject :=
+noncomputable def inaccessibleTerms (m : PlanarMarking) (T : SyntacticObject)
+    (ℓ : LIToken) : Multiset SyntacticObject :=
   let lowerPhases := (phaseHeadLeaves m T).filter (fun ℓ' => isLowerPhaseThan m T ℓ' ℓ)
-  -- Union of interiors of all lower phases
-  lowerPhases.flatMap (phaseInterior m T)
+  -- Union of interiors of all lower phases (Multiset sum)
+  (lowerPhases.map (phaseInterior m T)).foldr (· + ·) 0
 
 /-- The **accessible terms in phase Φ_ℓ**: the phase content minus the
     inaccessibility set. These are the terms available for further
@@ -199,8 +205,8 @@ def inaccessibleTerms (m : PlanarMarking) (T : SyntacticObject)
     This is the set summed over by the algebraic phase coproduct
     Δ^c_Φ (Definition 1.14.5 eq 1.14.6) — when the algebraic-side
     substrate lands. -/
-def phaseAccessibleAt (m : PlanarMarking) (T : SyntacticObject)
-    (ℓ : LIToken) : List SyntacticObject :=
+noncomputable def phaseAccessibleAt (m : PlanarMarking) (T : SyntacticObject)
+    (ℓ : LIToken) : Multiset SyntacticObject :=
   let interior := phaseInterior m T ℓ
   let inaccessible := inaccessibleTerms m T ℓ
   interior.filter (fun Tv => decide (Tv ∉ inaccessible))

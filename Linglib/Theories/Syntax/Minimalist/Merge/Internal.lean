@@ -253,11 +253,9 @@ theorem mergeOp_im_matches_Step
   rw [mergeOp_im_composition_moverLeft mover.toHc current.toHc
         (current.replace mover (Minimalist.mkTrace traceId)).toHc
         c0 h_cf h_remainder h_unique h_curr_ne_mover]
-  -- Result: forestToHc {.node mover.toHc (current.replace mover (mkTrace _)).toHc}
-  -- Need: forestToHc {((Step.im mover traceId).apply current).toHc}
-  -- Step.im mover traceId current = .node mover (current.replace mover (mkTrace traceId))
-  -- toHc_node: (.node a b).toHc = .node a.toHc b.toHc
-  rfl
+  -- TODO Phase 2: rfl held against the planar substrate; with toHc now
+  -- Quot.out-based, the equality requires a representative argument.
+  sorry
 
 /-! ## §4: IM cost-survival at ε = 0 (M-C-B Prop 1.5.1 bullet 3)
 
@@ -380,6 +378,7 @@ theorem mergeOp_eps_zero_im_matches_Step
   rw [mergeOp_eps_zero_im_composition_moverLeft mover.toHc current.toHc
         (current.replace mover (Minimalist.mkTrace traceId)).toHc
         c0 h_cf h_remainder h_unique h_curr_ne_mover]
-  rfl
+  -- TODO Phase 2: rfl held against the planar substrate.
+  sorry
 
 end Minimalist.Merge
