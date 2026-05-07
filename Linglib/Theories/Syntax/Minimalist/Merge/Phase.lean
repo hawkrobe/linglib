@@ -56,7 +56,7 @@ Condition. Lemma 1.14.6 proves Δ^c_Φ is well-defined and coassociative.
 
 namespace Minimalist.Merge
 
-open Minimalist (HeadFunction SyntacticObject LIToken)
+open Minimalist (HeadFunction ComplementedHeadFunction SyntacticObject LIToken)
 
 -- ============================================================================
 -- § 1: Maximal Projection Vertex (Lemma 1.14.1)
@@ -164,28 +164,45 @@ noncomputable def phaseInterior (h : HeadFunction) (T : SyntacticObject)
     T.subtrees.filter (fun Tv => decide (Minimalist.contains vℓ Tv))
 
 /-- @cite{marcolli-chomsky-berwick-2025} Definition 1.14.3 (eq 1.14.4):
-    The **edge** ∂Φ_ℓ of phase Φ_ℓ.
+    The **edge** ∂Φ_ℓ of phase Φ_ℓ, parameterized over a
+    `ComplementedHeadFunction`.
 
-    For ℓ ∈ L_Φ(T) with maximal projection v_ℓ and complement Z_v non-empty
-    (sister s_ℓ), the edge consists of accessible terms contained in
-    T_{v_ℓ} but NOT in T_{s_ℓ}:
+    For ℓ ∈ L_Φ(T) with maximal projection v_ℓ and complement
+    `h.complementOf T v_ℓ = some Z_v` (non-empty case): the edge consists
+    of accessible terms contained in T_{v_ℓ} but NOT in `Z_v` (the complement
+    of the head):
 
-      ∂Φ_ℓ := { T_v ∈ Acc'(T) | T_v ⊆ T_{v_ℓ} ∧ T_v ⊄ T_{s_ℓ} }
+      ∂Φ_ℓ := { T_v ∈ Acc'(T) | T_v ⊆ T_{v_ℓ} ∧ T_v ⊄ Z_v }
 
-    For Z_v = ∅ (head is exocentric or has no complement), ∂Φ_ℓ = Φ_ℓ
-    (the entire phase content is at the edge).
+    For `h.complementOf T v_ℓ = none` (exocentric head, no complement):
+    ∂Φ_ℓ = Φ_ℓ (the entire phase content is at the edge).
 
-    Phase 3.B.3 work: requires `ComplementedHeadFunction.complementOf` for
-    the sister-vertex s_ℓ lookup. The current definition returns the empty
-    multiset as a structural placeholder; the proper edge computation
-    awaits `ComplementedHeadFunction` substrate (Phase 3.B.2). -/
-def phaseEdge (_h : HeadFunction) (_T : SyntacticObject)
-    (_ℓ : LIToken) : Multiset SyntacticObject :=
-  -- TODO Phase 3.B.3: implement using ComplementedHeadFunction.complementOf
-  -- for sister-vertex lookup. The structural shape is
-  --   (interior of T_{v_ℓ}) ∖ (interior of T_{s_ℓ})
-  -- where s_ℓ is the sister of v_ℓ on the projection path γ_ℓ.
-  0
+    Note: this signature takes a `ComplementedHeadFunction` (extending
+    `HeadFunction` with complement info per MCB Def 1.14.2). For consumers
+    holding only a bare `HeadFunction`, lift via
+    `ComplementedHeadFunction.leftSpine` (or supply a custom
+    `complementOf`). -/
+noncomputable def phaseEdgeWith (h : ComplementedHeadFunction)
+    (T : SyntacticObject) (ℓ : LIToken) : Multiset SyntacticObject :=
+  match maximalProjection h.toHeadFunction T ℓ with
+  | none    => 0
+  | some vℓ =>
+    let phaseContent := T.subtrees.filter
+      (fun Tv => decide (Minimalist.contains vℓ Tv))
+    match h.complementOf T vℓ with
+    | none =>
+      -- Empty-complement case: edge = entire phase content
+      phaseContent
+    | some Zv =>
+      -- Non-empty complement: edge = phase content minus Zv-interior
+      phaseContent.filter (fun Tv => decide (¬ Minimalist.contains Zv Tv))
+
+/-- Bare `phaseEdge` for `HeadFunction`-only consumers: lifts to the trivial
+    `ComplementedHeadFunction` with `complementOf = none` (exocentric).
+    Returns the entire phase content per the empty-complement case. -/
+noncomputable def phaseEdge (h : HeadFunction) (T : SyntacticObject)
+    (ℓ : LIToken) : Multiset SyntacticObject :=
+  phaseEdgeWith ⟨h, fun _ _ => none⟩ T ℓ
 
 -- ============================================================================
 -- § 4: Inaccessibility Set Y_ℓ (eq 1.14.5)

@@ -415,7 +415,71 @@ IM-closed. -/
 end HeadFunction
 
 -- ============================================================================
--- § 8: MCB Lemma 1.13.4 counting (deferred — requires V^o(T) primitive)
+-- § 8: ComplementedHeadFunction (MCB Def 1.14.2)
+-- ============================================================================
+
+/-- @cite{marcolli-chomsky-berwick-2025} Def 1.14.2 (book p. 134):
+    a **complemented (abstract) head function** `h_{T,Z}` extends a head
+    function to additionally assign each non-leaf vertex its **complement**:
+
+      h_{T,Z} : V^o(T) → L(T) × (Acc(T) ∪ {1})
+      h_{T,Z}(v) = (h_T(v), Z_v)
+
+    where `Z_v ⊂ T_{s_{h_T(v)}}` is a (possibly empty) subset of the sister
+    vertex's subtree. The cases:
+
+    - `Z_v = ∅`: head has no complement at v; sister is purely modifier.
+    - `Z_v ≠ ∅`: head has complement Z_v at v; remaining sister content is
+      modifier.
+
+    "Modifiers" (per MCB book p. 134): structures merged that retain the
+    head's projection — going from `T_v` to `T_{w'}` where `h_T(w') = h_T(v)`.
+
+    This is the substrate Phase Theory needs (MCB §1.14): the phase edge
+    `∂Φ_ℓ` is defined relative to the head's complement Z_v (not its full
+    sister subtree), per Def 1.14.3 step 4-5.
+
+    Encoding: extends `HeadFunction` with `complementOf : SO → SO → Option SO`
+    indexed by (T, v) pair. Returns `none` for the empty-complement case,
+    `some Z` for the non-empty case. -/
+structure ComplementedHeadFunction extends HeadFunction where
+  /-- For each (T, v) where v is an internal vertex of T, the head's
+      **complement** at v: a subtree of v's sister-of-head, or `none`
+      if the head has no complement at v (sister is purely modifier).
+
+      Coherence: when defined, `complementOf T v` is contained in
+      `s_{h_T(v)}` — the sister vertex of `h_T(v)` on the projection
+      path γ_{h_T(v)}. Consumers may add this as a hypothesis. -/
+  complementOf : SyntacticObject → SyntacticObject → Option SyntacticObject
+
+-- `decDom` instance is inherited via `extends HeadFunction` and the
+-- existing `attribute [instance] HeadFunction.decDom` at the top of this file.
+
+namespace ComplementedHeadFunction
+
+/-- The trivial complemented head function: extends `leafOnly` with
+    `complementOf := fun _ _ => none` (no complement, since leaves have
+    no complement structure to begin with). -/
+noncomputable def leafOnly : ComplementedHeadFunction where
+  toHeadFunction := HeadFunction.leafOnly
+  complementOf _ _ := none
+
+/-- The trivial complemented version of `leftSpine`: assumes no complement
+    structure beyond the planar embedding (consumers needing complements
+    should supply a custom `complementOf`). -/
+noncomputable def leftSpine : ComplementedHeadFunction where
+  toHeadFunction := HeadFunction.leftSpine
+  complementOf _ _ := none
+
+/-- The complemented version of `rightSpine`. -/
+noncomputable def rightSpine : ComplementedHeadFunction where
+  toHeadFunction := HeadFunction.rightSpine
+  complementOf _ _ := none
+
+end ComplementedHeadFunction
+
+-- ============================================================================
+-- § 9: MCB Lemma 1.13.4 counting (deferred — requires V^o(T) primitive)
 -- ============================================================================
 
 /-! @cite{marcolli-chomsky-berwick-2025} Lemma 1.13.4 (book p. 127): there are
