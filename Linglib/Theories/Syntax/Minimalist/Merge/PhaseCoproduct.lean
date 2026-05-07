@@ -73,7 +73,7 @@ This is the next migration once the algebraic side is complete.
 namespace Minimalist.Merge
 
 open ConnesKreimer
-open Minimalist (PlanarMarking SyntacticObject LIToken)
+open Minimalist (HeadFunction SyntacticObject LIToken)
 
 -- ============================================================================
 -- § 1: Phase-compatibility predicate on TraceTree subtrees
@@ -103,10 +103,10 @@ def traceTreeToSyntacticObject? :
     cannot be projected back to an SO (trace-containing); per the
     `IsNotTrace` invariant of `CutShape`, this case does not arise
     for actual cut-extracted subtrees, but is handled defensively. -/
-noncomputable def isInaccessibleSubtree (m : PlanarMarking) (T : SyntacticObject)
+noncomputable def isInaccessibleSubtree (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) (subtree : TraceTree LIToken Unit) : Bool :=
   match traceTreeToSyntacticObject? subtree with
-  | some so => decide (so ∈ inaccessibleTerms m T ℓ)
+  | some so => decide (so ∈ inaccessibleTerms h T ℓ)
   | none    => false
 
 /-- A cut shape on `T.toHc` is **phase-compatible** with phase `Φ_ℓ`
@@ -121,10 +121,10 @@ noncomputable def isInaccessibleSubtree (m : PlanarMarking) (T : SyntacticObject
     relies on `Quot.unquot` and is non-constructive. The substantive
     Δ^c_Φ implementation will avoid this — for the scaffold, the
     classical existence is sufficient. -/
-noncomputable def cutPhaseCompatible (m : PlanarMarking) (T : SyntacticObject)
+noncomputable def cutPhaseCompatible (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) (c : CutShape T.toHc) : Bool :=
   ((CutShape.cutForest c).toFinset.toList).all
-    (fun subtree => !isInaccessibleSubtree m T ℓ subtree)
+    (fun subtree => !isInaccessibleSubtree h T ℓ subtree)
 
 -- ============================================================================
 -- § 2: Restricted coproduct Δ^c_Φ (TODO scaffold)
@@ -139,7 +139,7 @@ noncomputable def cutPhaseCompatible (m : PlanarMarking) (T : SyntacticObject)
 
     TODO: implement the restricted sum construction. The cleanest path:
 
-    1. Take `(CutShape.all T.toHc).filter (cutPhaseCompatible m T ℓ ·)`.
+    1. Take `(CutShape.all T.toHc).filter (cutPhaseCompatible h T ℓ ·)`.
     2. For each cut `c`, build the tensor `forestToHc (cutForest c) ⊗ₜ
        (toHc-embed of remainderDeletion c)`.
     3. Sum.
@@ -148,7 +148,7 @@ noncomputable def cutPhaseCompatible (m : PlanarMarking) (T : SyntacticObject)
     `phaseCoproductDefined`) since the full implementation requires
     careful integration with `AddMonoidAlgebra` tensor structure, and
     intermediate steps are best done in a focused refactor. -/
-def phaseCoproductDefined (_m : PlanarMarking) (_T : SyntacticObject)
+def phaseCoproductDefined (_h : HeadFunction) (_T : SyntacticObject)
     (_ℓ : LIToken) : Prop := True
 
 /-- @cite{marcolli-chomsky-berwick-2025} Lemma 1.14.6: Δ^c_Φ is well-
@@ -165,8 +165,8 @@ def phaseCoproductDefined (_m : PlanarMarking) (_T : SyntacticObject)
     Stated here as TODO; the bridge from `Merge/Phase.lean`
     type-level substrate to the algebraic coassociativity proof is
     the next session's work. -/
-theorem comulPhaseDel_coassoc (m : PlanarMarking) (T : SyntacticObject)
+theorem comulPhaseDel_coassoc (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) :
-    phaseCoproductDefined m T ℓ := trivial
+    phaseCoproductDefined h T ℓ := trivial
 
 end Minimalist.Merge

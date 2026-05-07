@@ -117,15 +117,18 @@ theorem ccg_bapp_result_category (x y : CCG.Cat) :
   simp [CCG.backwardApp]
 
 /-- A head function is **selection-respecting** at `(a, b)` iff when
-    `a` selects `b` (the head's outerSel matches `b`'s outerCat), the
-    marking places the projecting head on the left daughter. This is
-    the explicit MCB-aligned encoding of "selector projects": the
-    legacy assumption is no longer baked into `HeadFunction` itself,
-    but reappears as a property a particular `h` may or may not
-    satisfy. -/
+    `a` selects `b`, the head function picks `a`'s head leaf as the head
+    of `.node a b` (i.e., `a` projects). This is the explicit MCB-aligned
+    encoding of "selector projects": the legacy assumption is no longer
+    baked into `HeadFunction` itself, but reappears as a property a
+    particular `h` may or may not satisfy.
+
+    Restated against the Phase 2 externalize encoding (MCB §1.12.1):
+    "marking places the projecting head on the left daughter" becomes
+    "the head of the merged node equals the head of `a`". -/
 def IsSelectionRespectingAt
     (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject) : Prop :=
-  Minimalist.selects h a b → h.marking.isLeftHead (.node a b) = true
+  Minimalist.selects h a b → h.headAt (.node a b) = h.headAt a
 
 /-- Minimalist labeling (MCB §1.13.6 / §1.15): under a selection-respecting
     head function `h`, when α selects β, the head of `{α, β}` agrees with
@@ -154,13 +157,15 @@ theorem min_selector_projects
     is a property of *some* head functions, not a structural fact about
     Merge).
 
-    **Witness construction**: take `h := Minimalist.HeadFunction.rightSpine`
-    (the head function that always picks the right daughter). For any
-    `a`/`b` such that `selects rightSpine a b` holds, `IsSelectionRespectingAt`
-    fails because `rightSpine.marking.isLeftHead` is constantly `false`
-    (by construction — see `Minimalist.HeadFunction.rightSpine`). So the
-    selection-respecting property is genuinely separable from selection
-    itself.
+    **Witness construction (Phase 2-aware)**: with the externalize-based
+    `HeadFunction`, witnesses require a custom `h.externalize` that places
+    `b`'s head as the leftmost-leaf of `.node a b`'s planar representative
+    (so `headAt h (.node a b) = headAt h b ≠ headAt h a`), violating
+    `IsSelectionRespectingAt`. The `leftSpine`/`rightSpine` defaults both
+    use `Quot.out` and so cannot serve as distinct witnesses post-Phase-2;
+    a constructive witness needs a per-test `externalize` choice. The
+    statement remains TODO until Tier B+ provides parameterized
+    selection apparatus (`checkedSelWith?`).
 
     **Why this matters cross-framework**: HPSG's Head Feature Principle
     and CCG's slash-functor invariance both bake "the selector projects"

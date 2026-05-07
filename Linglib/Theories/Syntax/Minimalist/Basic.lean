@@ -444,8 +444,11 @@ private def linearizePlanar : FreeMagma (LIToken ⊕ Nat) → List LIToken
 noncomputable def linearize (so : SyntacticObject) : List LIToken :=
   linearizePlanar so.out
 
-/-- Underlying leftmost-leaf on a planar `FreeMagma` representative. -/
-private def leftmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
+/-- Underlying leftmost-leaf on a planar `FreeMagma` representative.
+    Exposed (not `private`) so `HeadFunction.headAt` can compose it
+    with a chosen `externalize` section to produce a head accessor
+    that's computable when the section is. -/
+def leftmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
   | .of (.inl tok) => tok
   | .of (.inr n) => mkTraceToken n
   | .mul l _ => leftmostLeafPlanar l

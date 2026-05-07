@@ -110,16 +110,15 @@ theorem classify_external_exhaustive
   by_cases hs : selects h a b ∨ selects h b a <;> simp [hs]
 
 /-- Head Feature Principle (MCB §1.13.6 / Minimalist analogue): under
-    any head function `h` and the planar marking choice it supplies,
-    `h.head (.node a b)` is one of `h.head a` or `h.head b`. (Built into
-    `PlanarMarking.headAt`'s definition: at every node the marking
-    picks one daughter to descend.)
+    any head function `h` and the externalize choice it supplies,
+    `h.head (.node a b)` is one of `h.head a` or `h.head b`.
 
-    TODO Phase 2: with `headAt` now Quot.out-based, the per-node "left
-    vs right daughter" decomposition no longer reduces under `show`/`by_cases`
-    on the marking. Will be re-proved against an `HeadFunction`-parameterized
-    version of `headAt` that exposes left/right choice as a constructor-level
-    operation rather than a Quot.out projection. -/
+    TODO: with `headAt h so := leftmostLeafPlanar (h.externalize so)`,
+    proving this requires reasoning about what `h.externalize (a*b)`
+    looks like — concretely, that it's some planar tree whose leftmost
+    leaf descends from either `a` or `b`. This needs a coherence lemma
+    about how externalize interacts with binary nodes, which is part of
+    the Tier A cascade. -/
 theorem head_node_eq_daughter (h : HeadFunction) (a b : SyntacticObject) :
     h.head (.node a b) = h.head a ∨ h.head (.node a b) = h.head b := by
   sorry
