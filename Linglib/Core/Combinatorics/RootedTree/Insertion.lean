@@ -344,7 +344,7 @@ matching cases 2 and 3 across the symmetric expressions. -/
 
     **Migration in progress (Phase 0 landed 2026-05-06):** the
     nonplanar carrier `FreeCommMagma α` is being introduced in
-    `Linglib/Core/Algebra/Free/CommMagma.lean`. The pre-Lie identity
+    `Linglib/Core/Algebra/Free.lean`. The pre-Lie identity
     on `(FreeCommMagma α) →₀ ℤ` *is* a strict equality (the (c)
     `newEprime` discrepancy collapses via `Quot.sound .swap`); see
     `docs/nonplanar-migration-plan.md` for the full migration plan.

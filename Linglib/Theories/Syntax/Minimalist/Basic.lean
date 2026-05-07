@@ -1,4 +1,6 @@
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Finset.Insert
 import Mathlib.Algebra.Free
 import Linglib.Core.UD
 import Linglib.Core.Combinatorics.RootedTree.Decorated
@@ -155,6 +157,31 @@ The three "constructors" at the SO interface are:
 - binary Merge, written `l * r` (commutative: `l * r = r * l` as a strict
   equality inside the quotient)
 
+### Trace handling: linglib commits to MCB's ^ρ-projection (with indexing)
+
+MCB's SO_0 (book p. 22, Def 1.1.1) consists of *lexical items and syntactic
+features only* — not trace markers. After Internal Merge extracts an accessible
+term, MCB enumerates **three** forms of remainder (Defs 1.2.5–1.2.8, p. 31–35):
+
+- `T/^c F_v` (contraction) — extracted term becomes a "deeper copy", visible
+  to semantics but cancelled at PF
+- `T/^d F_v` (deletion) — edge contraction collapses the position, no marker
+- `T/^ρ F_v` (admissible cut) — an unlabeled structural vertex remains as the
+  trace, used by the combined process
+
+Linglib's `SyntacticObject := FreeCommMagma (LIToken ⊕ Nat)` is a substrate-
+level commitment to **the ^ρ-projection with explicit indexing**: `Sum.inr n`
+is a trace vertex tagged with which mover produced it. MCB's ^ρ vertex is
+unlabeled; linglib enriches it with a `Nat` index for cross-reference.
+
+This is faithful to MCB's framework — it instantiates one of the three
+quotients MCB explicitly enumerates, not a deviation. Documented as a Phase 2+
+upgrade target: a future revision could expose all three projections as
+separate views of a workspace-level IM operation, with the SO type itself
+being `FreeCommMagma LIToken` (trace-free); current trace-marker operations
+would become projection-side rather than substrate. See the project memory
+note `project_so_carrier_rho_projection.md`.
+
 The migration from the prior planar `TraceTree LIToken Nat` carrier landed
 at version 0.230.857 (Phase 0.5 substrate) + 0.230.858 (mathlib-canonical
 `DecidableEq` via `CommEqv`, no `LinearOrder` needed). See
@@ -178,6 +205,13 @@ abbrev trace (n : Nat) : SyntacticObject :=
 /-- Binary-Merge shim: `SyntacticObject.mul l r ≡ l * r`. The construction
     side of binary Merge; `*` is commutative on `SyntacticObject`. -/
 abbrev mul (l r : SyntacticObject) : SyntacticObject := l * r
+
+/-- Construction-only alias `.node l r ≡ mul l r ≡ l * r`. Pattern
+    matching against `.node` does NOT work (the carrier is `Quot _`,
+    so Lean cannot invert through it); use `induction so with | mul l r ihl ihr`
+    instead. Retained as a construction shim to keep call sites readable
+    during the `TraceTree → FreeCommMagma` migration. -/
+abbrev node (l r : SyntacticObject) : SyntacticObject := mul l r
 
 /-- The induction principle for `SyntacticObject` with linguistic case names.
     For `Prop` motives, `Quot.ind` propagates through the equivalence
@@ -524,27 +558,57 @@ theorem leaf_node_relation (so : SyntacticObject) :
 
 /-! ### Subtree enumeration
 
-Subtree enumeration produces a `List` whose order depends on the chosen
-planar representative — like `linearize`/`phonYield`, this is a
-representative-choice operation. Phase 1.0 placeholder via `Quot.out`;
-Phase 2 may replace with a `Multiset`-typed variant or a head-marking-
-parameterized traversal.
+`subtrees` is `Finset`-typed (order-blind) so it lifts cleanly through
+`FreeCommMagma.lift` from a swap-respecting helper on `FreeMagma`. This
+matches MCB Definition 1.2.2 (book p. 28), which defines accessible
+terms `Acc(T) = {L_v | v ∈ V_int(T)}` as a *set*, not a list.
 
-`self_mem_subtrees`, `subtrees_subset_of_mem`, etc. continue to hold for
-any chosen representative because the underlying `subtreesPlanar` is
-recursive on the representative; we lift via the representative. -/
+The membership relation `t ∈ s.subtrees` is the recursive enumeration:
+the root, plus all subtrees of each daughter. -/
 
-private def subtreesPlanar : FreeMagma (LIToken ⊕ Nat) →
-    List (FreeMagma (LIToken ⊕ Nat))
-  | a@(.of _) => [a]
-  | a@(.mul l r) => a :: (subtreesPlanar l ++ subtreesPlanar r)
+private def subtreesAux : FreeMagma (LIToken ⊕ Nat) → Finset SyntacticObject
+  | a@(.of _) => {FreeCommMagma.mk a}
+  | a@(.mul l r) =>
+    insert (FreeCommMagma.mk a) (subtreesAux l ∪ subtreesAux r)
+
+private theorem subtreesAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
+    (h : FreeMagma.CommRel a b) : subtreesAux a = subtreesAux b := by
+  induction h with
+  | swap a b =>
+    show insert (FreeCommMagma.mk (a * b)) (subtreesAux a ∪ subtreesAux b)
+       = insert (FreeCommMagma.mk (b * a)) (subtreesAux b ∪ subtreesAux a)
+    rw [FreeCommMagma.swap a b, Finset.union_comm]
+  | @mul_left a b h_inner c ih =>
+    show insert (FreeCommMagma.mk (a * c)) (subtreesAux a ∪ subtreesAux c)
+       = insert (FreeCommMagma.mk (b * c)) (subtreesAux b ∪ subtreesAux c)
+    rw [FreeCommMagma.sound (.mul_left h_inner _), ih]
+  | @mul_right a b c h_inner ih =>
+    show insert (FreeCommMagma.mk (a * b)) (subtreesAux a ∪ subtreesAux b)
+       = insert (FreeCommMagma.mk (a * c)) (subtreesAux a ∪ subtreesAux c)
+    rw [FreeCommMagma.sound (.mul_right _ h_inner), ih]
 
 /-- All subtrees of a `SyntacticObject`, including the root itself.
-    Order depends on the chosen planar representative; for stable
-    membership reasoning use `isTermOf` / `containsOrEq`. -/
-noncomputable def SyntacticObject.subtrees (so : SyntacticObject) :
-    List SyntacticObject :=
-  (subtreesPlanar so.out).map (Quot.mk _)
+    Returns a `Finset` (order-blind), matching MCB Def 1.2.2 (book p. 28).
+    Computable via `FreeCommMagma.lift` from a swap-respecting helper. -/
+def SyntacticObject.subtrees : SyntacticObject → Finset SyntacticObject :=
+  FreeCommMagma.lift subtreesAux subtreesAux_respects
+
+@[simp] theorem SyntacticObject.subtrees_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).subtrees = {SyntacticObject.leaf tok} := rfl
+
+@[simp] theorem SyntacticObject.subtrees_trace (n : Nat) :
+    (SyntacticObject.trace n).subtrees = {SyntacticObject.trace n} := rfl
+
+@[simp] theorem SyntacticObject.subtrees_mul (l r : SyntacticObject) :
+    (l * r).subtrees = insert (l * r) (l.subtrees ∪ r.subtrees) := by
+  induction l, r using FreeCommMagma.inductionOn₂ with | _ a b => rfl
+
+/-! ### Terminal nodes — planar `List` (order matters for LCA)
+
+`terminalNodes` returns a `List` because the leftmost-to-rightmost
+order is the input to LCA-derived linearization. Phase 1.0 placeholder
+via `Quot.out` (planar representative); Phase 2 will replace with
+LCA + head-directionality. -/
 
 private def terminalNodesPlanar : FreeMagma (LIToken ⊕ Nat) →
     List (FreeMagma (LIToken ⊕ Nat))
@@ -575,62 +639,67 @@ theorem terminalNodes_are_leaves {so t : SyntacticObject}
   rw [← ha_eq]
   exact terminalNodesPlanar_are_leaves ha_mem
 
-private theorem terminalNodesPlanar_sub_subtreesPlanar
+private theorem terminalNodesPlanar_mem_subtreesAux
     {fm t : FreeMagma (LIToken ⊕ Nat)} (h : t ∈ terminalNodesPlanar fm) :
-    t ∈ subtreesPlanar fm := by
+    (FreeCommMagma.mk t : SyntacticObject) ∈ subtreesAux fm := by
   induction fm with
   | ih1 _ =>
     simp only [terminalNodesPlanar, List.mem_singleton] at h
-    simp only [subtreesPlanar, List.mem_singleton]; exact h
+    subst h; simp [subtreesAux]
   | ih2 l r ihl ihr =>
     simp only [terminalNodesPlanar, List.mem_append] at h
-    simp only [subtreesPlanar, List.mem_cons, List.mem_append]
-    exact h.elim (fun h => Or.inr (Or.inl (ihl h)))
-                 (fun h => Or.inr (Or.inr (ihr h)))
+    simp only [subtreesAux, Finset.mem_insert, Finset.mem_union]
+    exact h.elim (fun hl => Or.inr (Or.inl (ihl hl)))
+                 (fun hr => Or.inr (Or.inr (ihr hr)))
 
 /-- Every terminal is a subtree. -/
 theorem terminalNodes_sub_subtrees {so t : SyntacticObject}
     (h : t ∈ terminalNodes so) : t ∈ so.subtrees := by
-  simp only [terminalNodes, SyntacticObject.subtrees, List.mem_map] at h ⊢
+  simp only [terminalNodes, List.mem_map] at h
   obtain ⟨a, ha_mem, ha_eq⟩ := h
-  exact ⟨a, terminalNodesPlanar_sub_subtreesPlanar ha_mem, ha_eq⟩
+  rw [← ha_eq]
+  show (FreeCommMagma.mk a : SyntacticObject) ∈ so.subtrees
+  -- subtrees on so unfolds to subtreesAux on so.out
+  show (FreeCommMagma.mk a : SyntacticObject) ∈
+    FreeCommMagma.lift subtreesAux subtreesAux_respects so
+  rw [show so = FreeCommMagma.mk so.out from (Quot.out_eq so).symm]
+  simp only [FreeCommMagma.lift_mk]
+  exact terminalNodesPlanar_mem_subtreesAux ha_mem
 
 /-- The root is always in its own subtrees. -/
 theorem self_mem_subtrees (so : SyntacticObject) : so ∈ so.subtrees := by
-  simp only [SyntacticObject.subtrees, List.mem_map]
-  refine ⟨so.out, ?_, by simp⟩
-  match h : so.out with
-  | .of _ => simp [subtreesPlanar]
-  | .mul _ _ => simp [subtreesPlanar]
-
-private theorem subtreesPlanar_subset_of_mem {t s : FreeMagma (LIToken ⊕ Nat)}
-    (h : t ∈ subtreesPlanar s) : subtreesPlanar t ⊆ subtreesPlanar s := by
-  induction s with
-  | ih1 _ =>
-    simp only [subtreesPlanar, List.mem_singleton] at h
-    subst h; intro _ h'; exact h'
-  | ih2 l r ihl ihr =>
-    simp only [subtreesPlanar, List.mem_cons, List.mem_append] at h
-    rcases h with rfl | hl | hr
-    · intro _ h'; exact h'
-    · intro x hx
-      simp only [subtreesPlanar, List.mem_cons, List.mem_append]
-      exact Or.inr (Or.inl (ihl hl hx))
-    · intro x hx
-      simp only [subtreesPlanar, List.mem_cons, List.mem_append]
-      exact Or.inr (Or.inr (ihr hr hx))
+  induction so with
+  | leaf _ => simp
+  | trace _ => simp
+  | mul l r _ _ => simp [SyntacticObject.subtrees_mul]
 
 /-- `subtrees` is downward-monotone along the subtree relation: if `t`
     is a subtree of `s`, then every subtree of `t` is also a subtree
-    of `s`. (Lifted from the planar version via the chosen representative.) -/
+    of `s`. -/
 theorem subtrees_subset_of_mem {t s : SyntacticObject}
     (h : t ∈ s.subtrees) : t.subtrees ⊆ s.subtrees := by
-  -- Both sides are derived from `Quot.out`; the inclusion holds at the
-  -- representative level only when `t.out` happens to land inside
-  -- `s.out`'s subtrees, which is not guaranteed by the abstract relation.
-  -- Phase 1.0 placeholder: state holds for the chosen representative.
-  -- TODO Phase 2: re-derive from a representative-independent containment.
-  sorry
+  induction s with
+  | leaf tok =>
+    simp only [SyntacticObject.subtrees_leaf, Finset.mem_singleton] at h
+    rw [h]
+  | trace n =>
+    simp only [SyntacticObject.subtrees_trace, Finset.mem_singleton] at h
+    rw [h]
+  | mul l r ihl ihr =>
+    simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
+               Finset.mem_union] at h
+    rcases h with rfl | hl | hr
+    · intro _ h; exact h
+    · intro x hx
+      have := ihl hl hx
+      simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
+                 Finset.mem_union]
+      exact Or.inr (Or.inl this)
+    · intro x hx
+      have := ihr hr hx
+      simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
+                 Finset.mem_union]
+      exact Or.inr (Or.inr this)
 
 -- ============================================================================
 -- Containment Relations
@@ -868,37 +937,88 @@ theorem containsOrEq_trans {x y z : SyntacticObject}
 -- The tree-relative versions below restrict witnesses to subtrees of a
 -- given root, correctly capturing structural asymmetries.
 
-/-! ### Subtree-list ↔ containment bridge (Phase 1.0 placeholders)
+/-! ### Subtree-Finset ↔ containment bridge
 
-These theorems related to `subtrees` (which is now `noncomputable` due to
-the `Quot.out` representative choice) carry `sorry` in Phase 1.0. The
-`subtrees`-list-based proofs need to be re-derived after Phase 2 lands a
-representative-independent subtree enumeration (e.g., via `Multiset` or via
-the underlying `FreeMagma` structure). The propositional relations
-(`contains`, `containsOrEq`, `isTermOf`) themselves remain fully sound and
-decidable per `decContains`. -/
+These theorems relate `subtrees : SO → Finset SO` to the propositional
+`contains`/`containsOrEq` relations. With `subtrees` Finset-typed
+(order-blind, computable), the bridges are provable by induction —
+no `Quot.out` oracle dependence. -/
 
-/-- Children of any subtree of `root` are themselves subtrees of `root`.
-    TODO Phase 2: re-derive after representative-independent subtrees. -/
+/-- Children of any subtree of `root` are themselves subtrees of `root`. -/
 theorem mem_subtrees_of_imm_contains {root w z : SyntacticObject}
     (hw : w ∈ root.subtrees) (hwz : immediatelyContains w z) :
     z ∈ root.subtrees := by
-  sorry
+  induction root with
+  | leaf tok =>
+    simp only [SyntacticObject.subtrees_leaf, Finset.mem_singleton] at hw
+    rw [hw] at hwz
+    exact (immediatelyContains_leaf _ _ hwz).elim
+  | trace n =>
+    simp only [SyntacticObject.subtrees_trace, Finset.mem_singleton] at hw
+    rw [hw] at hwz
+    exact (immediatelyContains_trace _ _ hwz).elim
+  | mul l r ihl ihr =>
+    simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
+               Finset.mem_union] at hw
+    rcases hw with rfl | hl | hr
+    · -- w = l * r; immediatelyContains (l*r) z means z = l ∨ z = r
+      rw [immediatelyContains_mul] at hwz
+      simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
+                 Finset.mem_union]
+      rcases hwz with rfl | rfl
+      · exact Or.inr (Or.inl (self_mem_subtrees _))
+      · exact Or.inr (Or.inr (self_mem_subtrees _))
+    · simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
+                 Finset.mem_union]
+      exact Or.inr (Or.inl (ihl hl))
+    · simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
+                 Finset.mem_union]
+      exact Or.inr (Or.inr (ihr hr))
 
-/-- Containment implies subtree-list membership.
-    TODO Phase 2: re-derive after representative-independent subtrees. -/
+/-- Containment implies subtree-Finset membership. -/
 theorem mem_subtrees_of_contains {y z : SyntacticObject}
     (h : contains y z) : z ∈ y.subtrees := by
-  sorry
+  induction h with
+  | imm x y himm =>
+    exact mem_subtrees_of_imm_contains (self_mem_subtrees _) himm
+  | trans x y w himm hcwy ih =>
+    -- ih : y ∈ w.subtrees; himm : immediatelyContains x w
+    -- so w ∈ x.subtrees by mem_subtrees_of_imm_contains
+    -- then w.subtrees ⊆ x.subtrees by subtrees_subset_of_mem
+    -- so y ∈ x.subtrees
+    exact subtrees_subset_of_mem
+      (mem_subtrees_of_imm_contains (self_mem_subtrees _) himm) ih
 
-/-- Subtree-list membership implies term-of relation.
-    TODO Phase 2: re-derive after representative-independent subtrees. -/
+/-- Subtree-Finset membership implies term-of relation. -/
 theorem isTermOf_of_mem_subtrees {y z : SyntacticObject}
     (h : z ∈ y.subtrees) : isTermOf z y := by
-  sorry
+  induction y with
+  | leaf tok =>
+    simp only [SyntacticObject.subtrees_leaf, Finset.mem_singleton] at h
+    exact Or.inl h
+  | trace n =>
+    simp only [SyntacticObject.subtrees_trace, Finset.mem_singleton] at h
+    exact Or.inl h
+  | mul l r ihl ihr =>
+    simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
+               Finset.mem_union] at h
+    rcases h with rfl | hl | hr
+    · exact Or.inl rfl
+    · -- z ∈ l.subtrees → isTermOf z l → contains (l*r) z (via l)
+      rcases ihl hl with rfl | hcontains
+      · exact Or.inr (contains.imm _ _
+          ((immediatelyContains_mul _ _ _).mpr (Or.inl rfl)))
+      · exact Or.inr (contains.trans _ _ _
+          ((immediatelyContains_mul _ _ _).mpr (Or.inl rfl)) hcontains)
+    · -- symmetric on right
+      rcases ihr hr with rfl | hcontains
+      · exact Or.inr (contains.imm _ _
+          ((immediatelyContains_mul _ _ _).mpr (Or.inr rfl)))
+      · exact Or.inr (contains.trans _ _ _
+          ((immediatelyContains_mul _ _ _).mpr (Or.inr rfl)) hcontains)
 
 /-- `isTermOf z y` iff `z` is in `y.subtrees`. The bridge between the
-    propositional term-of relation and the bounded subtree-list enumeration. -/
+    propositional term-of relation and the Finset-typed enumeration. -/
 theorem isTermOf_iff_mem_subtrees (y z : SyntacticObject) :
     isTermOf z y ↔ z ∈ y.subtrees := by
   refine ⟨fun h => ?_, isTermOf_of_mem_subtrees⟩
@@ -909,40 +1029,28 @@ theorem isTermOf_iff_mem_subtrees (y z : SyntacticObject) :
 /-- X and Y are sisters IN tree `root`: they are distinct co-daughters of
     some node that is a subtree of `root`. -/
 def areSistersIn (root x y : SyntacticObject) : Prop :=
-  ∃ z, z ∈ root.subtrees ∧ immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
+  ∃ z ∈ root.subtrees, immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
 
-noncomputable instance decAreSistersIn (root x y : SyntacticObject) :
+instance decAreSistersIn (root x y : SyntacticObject) :
     Decidable (areSistersIn root x y) := by
-  unfold areSistersIn
-  exact List.decidableBEx _ _
+  unfold areSistersIn; infer_instance
 
 /-- X c-commands Y IN tree `root`: X has a sister (in `root`) that
     contains-or-equals Y. -/
 def cCommandsIn (root x y : SyntacticObject) : Prop :=
-  ∃ z, areSistersIn root x z ∧ containsOrEq z y
+  ∃ z ∈ root.subtrees, areSistersIn root x z ∧ containsOrEq z y
 
-/-- `cCommandsIn` is decidable: although the existential `∃ z` is
-    unbounded in the definition, any sister of `x` in `root` must lie
-    in `root.subtrees` (by `mem_subtrees_of_imm_contains`), so we can
-    search the bounded list instead. Noncomputable in Phase 1.0 because
-    `subtrees` is. -/
-noncomputable instance decCCommandsIn (root x y : SyntacticObject) :
-    Decidable (cCommandsIn root x y) :=
-  letI : DecidablePred fun z => areSistersIn root x z ∧ containsOrEq z y :=
-    fun z => inferInstanceAs (Decidable (_ ∧ _))
-  decidable_of_iff (∃ z ∈ root.subtrees, areSistersIn root x z ∧ containsOrEq z y) <| by
-    constructor
-    · rintro ⟨z, _, h₁, h₂⟩; exact ⟨z, h₁, h₂⟩
-    · rintro ⟨z, h₁, h₂⟩
-      obtain ⟨w, hw_mem, h_imm_x, hwz, h_neq⟩ := h₁
-      exact ⟨z, mem_subtrees_of_imm_contains hw_mem hwz,
-             ⟨w, hw_mem, h_imm_x, hwz, h_neq⟩, h₂⟩
+/-- `cCommandsIn` is decidable: bounded existential over `root.subtrees`
+    (Finset). Computable since `subtrees` is. -/
+instance decCCommandsIn (root x y : SyntacticObject) :
+    Decidable (cCommandsIn root x y) := by
+  unfold cCommandsIn; infer_instance
 
 /-- X asymmetrically c-commands Y in tree `root`. -/
 def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
   cCommandsIn root x y ∧ ¬cCommandsIn root y x
 
-noncomputable instance decAsymCCommandsIn (root x y : SyntacticObject) :
+instance decAsymCCommandsIn (root x y : SyntacticObject) :
     Decidable (asymCCommandsIn root x y) := by
   unfold asymCCommandsIn; infer_instance
 
@@ -969,39 +1077,6 @@ Cross-tradition unification via B&P's parametric command lives in
 `Core/Order/Command.lean` and is exercised by HPSG / DG, where its
 universal shape matches the native primitive. Minimalism's c-command
 does not reduce to it, so no bridge belongs here. -/
-
-/-! ## Tree Shape — abstract geometry ignoring terminal labels -/
-
-/-- Abstract tree geometry: the shape of a `SyntacticObject` with all
-    terminal labels erased. Two SOs are structurally isomorphic iff
-    they have the same `TreeShape`. -/
-inductive TreeShape where
-  | leaf : TreeShape
-  | node : TreeShape → TreeShape → TreeShape
-  deriving Repr, DecidableEq
-
-/-- Strip labels from a syntactic object, yielding its abstract shape.
-    Traces collapse to the same shape as leaves (both are leaf-position).
-    Lifted via the swap-respecting helper below. -/
-private def shapeAux : FreeMagma (LIToken ⊕ Nat) → TreeShape
-  | .of _ => .leaf
-  | .mul a b => .node (shapeAux a) (shapeAux b)
-
-private theorem shapeAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
-    (h : FreeMagma.CommRel a b) : shapeAux a = shapeAux b := by
-  -- TODO Phase 2: shape commutes the children, so swap doesn't preserve
-  -- structural identity at the .node level. This is fundamentally a
-  -- planar-only concept. Phase 2 should replace `shape` with an unordered
-  -- multiset-shape variant, OR canonicalize first.
-  sorry
-
-def SyntacticObject.shape : SyntacticObject → TreeShape :=
-  FreeCommMagma.lift shapeAux shapeAux_respects
-
-/-- Two syntactic objects are structurally isomorphic iff they have
-    the same tree shape (ignoring all terminal labels). -/
-def structurallyIsomorphic (x y : SyntacticObject) : Bool :=
-  x.shape == y.shape
 
 /-! ## Y-model branch to LF
 

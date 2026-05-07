@@ -86,17 +86,28 @@ end FreeMagma
     The non-associative, commutative analogue of `FreeMonoid` /
     `FreeCommMonoid`.
 
+    Declared as `abbrev` (not `def`) so that `Quot`-aware lemmas
+    (`Quot.eq`, `Quot.exists_rep`, `Quot.recOnSubsingleton`, …) fire
+    on `FreeCommMagma α` without needing an unfold. Mirrors
+    `Sym2 α := Quot _` (`Mathlib/Data/Sym/Sym2.lean:100`).
+
     Universal property: any `α → β` to a `CommMagma`-equipped `β`
     extends uniquely to `FreeCommMagma α →ₙ* β` (the `lift` below). -/
-def FreeCommMagma (α : Type u) : Type u :=
+abbrev FreeCommMagma (α : Type u) : Type u :=
   Quot (@FreeMagma.CommRel α)
 
 namespace FreeCommMagma
 
 variable {α : Type u} {β : Type v}
 
+/-- Public alias for `Quot.mk _` on `FreeCommMagma α`. Use this instead
+    of writing `(Quot.mk _ a : FreeCommMagma α)` at call sites — the
+    type ascription is inferred. Mirrors `Sym2.mk` (`Sym2.lean:103`). -/
+protected abbrev mk (a : FreeMagma α) : FreeCommMagma α := Quot.mk _ a
+
 /-- Embed a leaf as a `FreeCommMagma`. Mirrors `FreeMagma.of`. -/
-def of (a : α) : FreeCommMagma α := Quot.mk _ (FreeMagma.of a)
+protected abbrev of (a : α) : FreeCommMagma α :=
+  FreeCommMagma.mk (FreeMagma.of a)
 
 /-- Multiplication on `FreeCommMagma α` lifted from `FreeMagma.mul`
     via `Quot.lift₂`. The swap-respect proofs are exactly the
@@ -110,22 +121,17 @@ def mul : FreeCommMagma α → FreeCommMagma α → FreeCommMagma α :=
 instance : Mul (FreeCommMagma α) := ⟨mul⟩
 
 @[simp] theorem of_mul_of (a b : α) :
-    (of a : FreeCommMagma α) * of b
-      = Quot.mk _ (FreeMagma.of a * FreeMagma.of b) := rfl
+    (FreeCommMagma.of a : FreeCommMagma α) * FreeCommMagma.of b
+      = FreeCommMagma.mk (FreeMagma.of a * FreeMagma.of b) := rfl
 
 /-- **Headline**: multiplication is commutative. The reason this
-    type was constructed. Private — use `mul_comm` from the
-    `CommMagma` typeclass instance below. -/
-private theorem mul_comm_aux (a b : FreeCommMagma α) : a * b = b * a := by
-  induction a using Quot.ind with
-  | _ a =>
-    induction b using Quot.ind with
-    | _ b => exact Quot.sound (.swap a b)
-
-/-- `CommMagma` typeclass instance: external `_root_.mul_comm`
-    just works. -/
+    type was constructed. -/
 instance : CommMagma (FreeCommMagma α) where
-  mul_comm := mul_comm_aux
+  mul_comm a b := by
+    induction a using Quot.ind with
+    | _ a =>
+      induction b using Quot.ind with
+      | _ b => exact Quot.sound (.swap a b)
 
 /-- Lift a `FreeMagma α → β` function that respects `CommRel` to a
     `FreeCommMagma α → β` function. Mirrors `Quot.lift`. -/
@@ -136,7 +142,24 @@ def lift (f : FreeMagma α → β)
 
 @[simp] theorem lift_mk (f : FreeMagma α → β)
     (h : ∀ a b, FreeMagma.CommRel a b → f a = f b) (a : FreeMagma α) :
-    lift f h (Quot.mk _ a) = f a := rfl
+    lift f h (FreeCommMagma.mk a) = f a := rfl
+
+/-- Lemma form of `Quot.sound` specialized to `FreeCommMagma`. -/
+protected theorem sound {a b : FreeMagma α} (h : FreeMagma.CommRel a b) :
+    (FreeCommMagma.mk a : FreeCommMagma α) = FreeCommMagma.mk b := Quot.sound h
+
+/-- Specialized `swap`: `mk (a * b) = mk (b * a)` as a named lemma.
+    Mirrors `mul_comm` on the quotient but stated at the `FreeMagma`
+    level to spare consumers an `induction`. -/
+protected theorem swap (a b : FreeMagma α) :
+    (FreeCommMagma.mk (a * b) : FreeCommMagma α) = FreeCommMagma.mk (b * a) :=
+  FreeCommMagma.sound (.swap a b)
+
+/-- The eqv-gen-soundness companion to `sound`: equality on the quotient
+    extracts a `EqvGen CommRel` proof. Mirrors `Sym2.exact`-style API. -/
+protected theorem exact {a b : FreeMagma α}
+    (h : (FreeCommMagma.mk a : FreeCommMagma α) = FreeCommMagma.mk b) :
+    Relation.EqvGen FreeMagma.CommRel a b := Quot.eqvGen_exact h
 
 /-- Induction principle for `FreeCommMagma α`: to prove `motive t`
     for all `t : FreeCommMagma α`, it suffices to prove it for every
@@ -152,11 +175,22 @@ protected theorem ind {motive : FreeCommMagma α → Prop}
     `respect` hypothesis explicitly (Quot.recOn obligation). -/
 @[elab_as_elim]
 protected def recOn {motive : FreeCommMagma α → Sort*}
-    (t : FreeCommMagma α) (h : ∀ a : FreeMagma α, motive (Quot.mk _ a))
+    (t : FreeCommMagma α) (h : ∀ a : FreeMagma α, motive (FreeCommMagma.mk a))
     (respect : ∀ a b (r : FreeMagma.CommRel a b),
-        (Quot.sound r : (Quot.mk _ a : FreeCommMagma α) = Quot.mk _ b) ▸ h a = h b) :
+        (FreeCommMagma.sound r) ▸ h a = h b) :
     motive t :=
   Quot.recOn t h respect
+
+/-- Subsingleton elimination — the typical shape for `Decidable`,
+    `DecidablePred`, and other proof-irrelevant `Sort`-valued motives.
+    Mirrors `Sym2.recOnSubsingleton` (`Sym2.lean:168`). Saves consumers
+    from writing `Quot.recOnSubsingleton` raw and ascribing the type. -/
+@[elab_as_elim]
+protected abbrev recOnSubsingleton {motive : FreeCommMagma α → Sort*}
+    [∀ a : FreeMagma α, Subsingleton (motive (FreeCommMagma.mk a))]
+    (t : FreeCommMagma α) (h : ∀ a : FreeMagma α, motive (FreeCommMagma.mk a)) :
+    motive t :=
+  Quot.recOnSubsingleton t h
 
 /-- `lift₂`: lift a binary `FreeMagma α → FreeMagma α → β` function
     that respects `CommRel` on each argument. Mirrors `Quot.lift₂`. -/
@@ -168,26 +202,23 @@ def lift₂ (f : FreeMagma α → FreeMagma α → β)
 
 @[simp] theorem lift₂_mk (f : FreeMagma α → FreeMagma α → β) (hr) (hs)
     (a b : FreeMagma α) :
-    lift₂ f hr hs (Quot.mk _ a) (Quot.mk _ b) = f a b := rfl
+    lift₂ f hr hs (FreeCommMagma.mk a) (FreeCommMagma.mk b) = f a b := rfl
 
-/-- Alias for `ind` matching the mathlib `Sym2.inductionOn` convention. -/
-@[elab_as_elim]
-protected theorem inductionOn {motive : FreeCommMagma α → Prop}
-    (t : FreeCommMagma α)
-    (h : ∀ a : FreeMagma α, motive (Quot.mk _ a)) : motive t :=
-  Quot.ind h t
-
-/-- Two-argument induction: useful for binary operations. -/
+/-- Two-argument induction: useful for binary operations. The `t`-then-`s`
+    argument order mirrors `Sym2.inductionOn₂` so callers can pass binary
+    SOs in their natural left-then-right order. -/
 @[elab_as_elim]
 protected theorem inductionOn₂ {motive : FreeCommMagma α → FreeCommMagma α → Prop}
     (t s : FreeCommMagma α)
-    (h : ∀ a b : FreeMagma α, motive (Quot.mk _ a) (Quot.mk _ b)) : motive t s := by
+    (h : ∀ a b : FreeMagma α, motive (FreeCommMagma.mk a) (FreeCommMagma.mk b)) :
+    motive t s := by
   induction t using Quot.ind with
   | _ a => induction s using Quot.ind with | _ b => exact h a b
 
 /-- Surjectivity of `Quot.mk`: every `FreeCommMagma α` element has
     *some* `FreeMagma α` representative. Useful with `obtain`. -/
-theorem exists_rep (t : FreeCommMagma α) : ∃ a : FreeMagma α, Quot.mk _ a = t :=
+theorem exists_rep (t : FreeCommMagma α) :
+    ∃ a : FreeMagma α, FreeCommMagma.mk a = t :=
   Quot.exists_rep t
 
 /-! ### Basic operations
@@ -208,10 +239,7 @@ private def sizeAux : FreeMagma α → Nat
 
 private theorem sizeAux_respects_commRel
     (a b : FreeMagma α) (h : FreeMagma.CommRel a b) : sizeAux a = sizeAux b := by
-  induction h with
-  | swap a b => simp only [sizeAux_mul]; omega
-  | mul_left _ _ ih => simp only [sizeAux_mul]; omega
-  | mul_right _ _ ih => simp only [sizeAux_mul]; omega
+  induction h <;> simp only [sizeAux_mul] <;> omega
 
 /-- `size t` counts the constructors of any planar representative of
     `t : FreeCommMagma α`. Well-defined because addition is
@@ -219,12 +247,12 @@ private theorem sizeAux_respects_commRel
 def size : FreeCommMagma α → Nat :=
   lift sizeAux sizeAux_respects_commRel
 
-@[simp] theorem size_of (a : α) : size (of a : FreeCommMagma α) = 1 := rfl
+@[simp] theorem size_of (a : α) :
+    size (FreeCommMagma.of a : FreeCommMagma α) = 1 := rfl
 
 @[simp] theorem size_mul (a b : FreeCommMagma α) :
     size (a * b) = 1 + size a + size b := by
-  induction a using Quot.ind with
-  | _ a => induction b using Quot.ind with | _ b => rfl
+  induction a, b using FreeCommMagma.inductionOn₂ with | _ a b => rfl
 
 /-! ### Universal property (CommMagma adjunction)
 
@@ -270,7 +298,31 @@ def liftHom (f : α → β) : FreeCommMagma α →ₙ* β where
     | _ x => induction y using Quot.ind with | _ y => rfl
 
 @[simp] theorem liftHom_of (f : α → β) (a : α) :
-    liftHom f (of a) = f a := rfl
+    liftHom f (FreeCommMagma.of a) = f a := rfl
+
+end FreeCommMagma
+
+/-! ### Functoriality: `map`
+
+`FreeCommMagma` is a functor in `α`. `map f` is the lift of `of ∘ f` to a
+magma homomorphism — the universal property gives uniqueness. -/
+
+namespace FreeCommMagma
+
+variable {α : Type u} {β : Type v}
+
+/-- Functorial map: `map f` lifts `f : α → β` to
+    `FreeCommMagma α →ₙ* FreeCommMagma β`. The codomain `FreeCommMagma β`
+    is itself a `CommMagma` (instance above), so this is just `liftHom`
+    applied to the `of`-composed function. -/
+def map (f : α → β) : FreeCommMagma α →ₙ* FreeCommMagma β :=
+  liftHom (FreeCommMagma.of ∘ f)
+
+@[simp] theorem map_of (f : α → β) (a : α) :
+    map f (FreeCommMagma.of a) = FreeCommMagma.of (f a) := rfl
+
+@[simp] theorem map_mul (f : α → β) (l r : FreeCommMagma α) :
+    map f (l * r) = map f l * map f r := MulHom.map_mul (map f) l r
 
 end FreeCommMagma
 
@@ -691,5 +743,29 @@ variable [DecidableEq α]
 instance : DecidableEq (FreeCommMagma α) := fun x y =>
   Quot.recOnSubsingleton₂ x y fun a b =>
     decidable_of_iff _ (mk_eq_iff_commEqv a b).symm
+
+end FreeCommMagma
+
+/-! ### `Repr` — placeholder
+
+`FreeCommMagma α` doesn't have a canonical printable form without
+canonicalization (`[LinearOrder α]` + `normalize`); printing an
+arbitrary representative is `unsafe` (Multiset's strategy at
+`Mathlib/Data/Multiset/Sort.lean:106`) and propagates `unsafe` to every
+consumer that wants `deriving Repr`.
+
+This **placeholder** instance returns the string `"<FreeCommMagma>"`
+so that downstream `deriving Repr` on structures containing
+`FreeCommMagma α` fields (e.g., linglib's `Derivation { initial : SO }`)
+synthesizes safely. The output is uninformative; substantive printing
+needs a `[LinearOrder α]`-based `normalize`-canonicalized variant in a
+follow-up. -/
+
+namespace FreeCommMagma
+
+variable {α : Type u}
+
+instance : Repr (FreeCommMagma α) where
+  reprPrec _ _ := "<FreeCommMagma>"
 
 end FreeCommMagma

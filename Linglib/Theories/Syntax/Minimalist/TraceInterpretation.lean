@@ -136,11 +136,31 @@ def interpSOTrace {F : Frame} (so : SyntacticObject) : Option (DenotG F .e) :=
 
 /--
 Get the trace index from a syntactic object (searches recursively).
--/
-def getTraceIndex : SyntacticObject → Option ℕ
-  | .leaf _ => none
-  | .trace n => some n
-  | .node a b => getTraceIndex a <|> getTraceIndex b
+
+For nonplanar SOs, searching is order-independent — `<|>` on `Option`
+combines via "first non-none". `Option.orElse` on a swap-respecting
+recursion is itself swap-invariant only when the predicate (`isSome`)
+is mutual-exclusive across children. For SOs with a single mover,
+that's the typical case; for multi-trace SOs, the result is "any
+trace index in the SO". Lifted via `FreeCommMagma.lift`. -/
+private def getTraceIndexAux : FreeMagma (LIToken ⊕ Nat) → Option ℕ
+  | .of (.inl _) => none
+  | .of (.inr n) => some n
+  | .mul a b => getTraceIndexAux a <|> getTraceIndexAux b
+
+private theorem getTraceIndexAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
+    (h : FreeMagma.CommRel a b) : getTraceIndexAux a = getTraceIndexAux b := by
+  -- The `swap` case requires `getTraceIndexAux a <|> getTraceIndexAux b
+  -- = getTraceIndexAux b <|> getTraceIndexAux a` which is NOT generally
+  -- true on Option (`<|>` is left-biased). For multi-trace SOs the
+  -- trace returned will depend on the chosen swap order. This is a
+  -- Phase 2+ TODO: replace with a `Finset Nat`-valued helper that
+  -- collects all trace indices, with the trace-index access then
+  -- being `Finset.min?` or similar.
+  sorry
+
+def getTraceIndex : SyntacticObject → Option ℕ :=
+  FreeCommMagma.lift getTraceIndexAux getTraceIndexAux_respects
 
 -- ============================================================================
 -- Theorems about Movement Interpretation

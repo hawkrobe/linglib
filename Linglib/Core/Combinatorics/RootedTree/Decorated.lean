@@ -2,7 +2,7 @@ import Mathlib.Algebra.Free
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Multiset.MapFold
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
-import Linglib.Core.Algebra.Free.CommMagma
+import Linglib.Core.Algebra.Free
 
 /-!
 # Decorated Binary Rooted Trees @cite{marcolli-chomsky-berwick-2025} @cite{foissy-2002}

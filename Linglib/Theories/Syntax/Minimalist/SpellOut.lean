@@ -47,6 +47,12 @@ open Core.Tree
 
 /-! ## LF branch of Spell-Out -/
 
+/-- Underlying LF transfer on a planar `FreeMagma` representative. -/
+private def toLFTreePlanar : FreeMagma (LIToken ⊕ Nat) → Tree Unit String
+  | .of (.inl tok) => .leaf tok.phonForm
+  | .of (.inr n) => .tr n
+  | .mul a b => .bin (toLFTreePlanar a) (toLFTreePlanar b)
+
 /-- Convert a narrow-syntax `SyntacticObject` to an LF tree for
     compositional interpretation.
 
@@ -54,92 +60,43 @@ open Core.Tree
       phonological form, which `interp` uses for lexical lookup)
     - Traces (id ≥ 10000) → `Tree.tr n` (indexed trace nodes, which
       `interp` evaluates as `g(n)` under assignment `g`)
-    - Binary nodes → `Tree.bin left right` (preserving structure) -/
-def SyntacticObject.toLFTree : SyntacticObject → Tree Unit String
-  | .leaf tok => .leaf tok.phonForm
-  | .trace n => .tr n
-  | .node a b => .bin a.toLFTree b.toLFTree
+    - Binary nodes → `Tree.bin left right` (preserving structure)
+
+    `Tree` is planar (`.bin a b ≠ .bin b a` in general); this transfer
+    therefore depends on a planar representative of the underlying
+    `FreeCommMagma`. Phase 1.0 placeholder via `Quot.out`; Phase 2 will
+    replace with LCA-derived linearization parameterized by head
+    directionality. -/
+noncomputable def SyntacticObject.toLFTree (so : SyntacticObject) : Tree Unit String :=
+  toLFTreePlanar so.out
 
 /-- The PF branch of Spell-Out is `linearize` (defined in `Core/Basic.lean`):
     `linearize : SyntacticObject → List LIToken`.
 
-    This alias makes the Y-model explicit. -/
-abbrev SyntacticObject.toPF := @linearize
+    This alias makes the Y-model explicit. Noncomputable because
+    `linearize` itself is (Phase 1.0 placeholder via `Quot.out`). -/
+noncomputable abbrev SyntacticObject.toPF := @linearize
 
-/-! ## Structural preservation
+/-! ## Structural preservation — Phase 2 TODO
 
-`toLFTree` preserves tree geometry: the shape of the LF tree matches
-the shape of the narrow-syntax SO (modulo trace nodes, which change
-from `leaf` to `trace`). -/
+The previous structural preservation theorems (`toLFTree_leaf`,
+`toLFTree_trace`, `toLFTree_node`, `toLFTree_merge` and the YModelDemo
+end-to-end test) were written when `SyntacticObject` was a planar
+inductive (`TraceTree`) — they relied on `rfl` against the planar
+constructor pattern. After the nonplanar migration (Phase 1.0), `Tree`
+remains planar (`.bin a b ≠ .bin b a`) while `SyntacticObject` is
+nonplanar; `toLFTree` therefore goes through `Quot.out` (a noncomputable
+representative choice). The preservation theorems are not provable by
+`rfl` against an arbitrary representative.
 
-/-- `isTrace` on a leaf returns `none` (post-Path-2: leaves are never traces). -/
-private theorem isTrace_leaf_none (tok : LIToken) :
-    isTrace (SyntacticObject.leaf tok) = none := rfl
+**Phase 2 plan.** Replace `Quot.out`-based `toLFTree` with an
+LCA-derived linearization parameterized by head directionality, then
+restate preservation as "for the canonical planar representative
+(per the LCA), the structural correspondence holds". The YModelDemo
+end-to-end test will then be re-proved against that canonical form.
 
-/-- `isTrace` on a trace returns `some n`. -/
-private theorem isTrace_mkTrace (n : Nat) :
-    isTrace (mkTrace n) = some n := rfl
-
-/-- `toLFTree` on a leaf produces a terminal node. -/
-theorem toLFTree_leaf (tok : LIToken) :
-    (SyntacticObject.leaf tok).toLFTree = Tree.leaf tok.phonForm := rfl
-
-/-- `toLFTree` on a trace produces a trace node. -/
-theorem toLFTree_trace (n : Nat) :
-    (mkTrace n).toLFTree = Tree.tr n := rfl
-
-/-- `toLFTree` on a binary node produces a binary node. -/
-theorem toLFTree_node (a b : SyntacticObject) :
-    (SyntacticObject.node a b).toLFTree = .bin a.toLFTree b.toLFTree := by
-  rfl
-
-/-- `toLFTree` on Merge = binary node of the LF-transferred children. -/
-theorem toLFTree_merge (x y : SyntacticObject) :
-    (merge x y).toLFTree = .bin x.toLFTree y.toLFTree := by
-  rfl
-
-/-! ## End-to-end derivation: the Y-model pipeline
-
-Demonstrate the full narrow-syntax → Spell-Out → LF/PF path for a
-minimal VP "sat the cat", proving the Y-model actually composes:
-
-```
-                    ┌→ LF: .bin (.leaf "sat") (.bin (.leaf "the") (.leaf "cat"))
-sat the cat → SO →
-                    └→ PF: ["sat", "the", "cat"]
-```
--/
-
-section YModelDemo
-
-private def sat : SyntacticObject := mkLeafPhon .V [.D] "sat" 1
-private def the : SyntacticObject := mkLeafPhon .D [.N] "the" 2
-private def cat : SyntacticObject := mkLeafPhon .N [] "cat" 3
-
-/-- Step 1 — Narrow syntax: build DP via Merge(the, cat) -/
-private def thecat : SyntacticObject := merge the cat
-
-/-- Step 2 — Narrow syntax: build VP via Merge(sat, DP) -/
-private def satthecat : SyntacticObject := merge sat thecat
-
-/-- Step 3a — Spell-Out → LF: `toLFTree` produces a binary tree of
-    phonological labels ready for compositional interpretation. -/
-theorem satthecat_toLFTree :
-    satthecat.toLFTree = .bin (.leaf "sat") (.bin (.leaf "the") (.leaf "cat")) := by
-  rfl
-
-/-- Step 3b — Spell-Out → PF: `linearize` yields left-to-right word order. -/
-theorem satthecat_toPF :
-    (linearize satthecat).map LIToken.phonForm = ["sat", "the", "cat"] := by
-  rfl
-
-/-- PF and LF are independent projections of the same SO (the Y-model).
-    Both branches start from `satthecat` but produce different types. -/
-theorem y_model_branches :
-    satthecat.toLFTree = .bin (.leaf "sat") (.bin (.leaf "the") (.leaf "cat")) ∧
-    (linearize satthecat).map LIToken.phonForm = ["sat", "the", "cat"] :=
-  ⟨satthecat_toLFTree, satthecat_toPF⟩
-
-end YModelDemo
+Keeping `toLFTree` itself as a noncomputable placeholder until that
+work lands. The constructor on the LF side (`.leaf`/`.tr`/`.bin`) is
+unchanged; the change is purely on the *order* preserved. -/
 
 end Minimalist
