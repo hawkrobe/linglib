@@ -316,29 +316,46 @@ end HeadFunction
 -- § 5: MCB Def 1.13.3 coherence (statement; proof queued for Phase 3.B+)
 -- ============================================================================
 
+/-- For a section `σ`, the **local-coherence** property at T: σ respects
+    binary nodes structurally (with possible left/right swap).
+
+    Per @cite{marcolli-chomsky-berwick-2025} §1.12.3 (book p. 116), σ is NOT
+    a magma morphism globally (Lemma 1.13.1), but it can be locally coherent
+    at specific subtrees. This is the property that makes MCB Def 1.13.3
+    coherence (`headAtVertex_coherent` below) provable. -/
+def HeadFunction.LocallyCoherent (h : HeadFunction) (T : SyntacticObject) : Prop :=
+  ∀ a b : SyntacticObject, (a * b) ∈ T.subtrees →
+    h.section_.σ (a * b) = h.section_.σ a * h.section_.σ b ∨
+    h.section_.σ (a * b) = h.section_.σ b * h.section_.σ a
+
 /-- @cite{marcolli-chomsky-berwick-2025} Def 1.13.3 coherence: under a head
-    function `h` on a tree T, if vertex `v` is contained in vertex `w` (both
-    vertices of T) and the head leaf of `w` appears among the leaves of `v`,
-    then the head leaves of `v` and `w` agree.
+    function `h` on a tree T (with σ locally coherent on T), if vertex `v`
+    is contained in vertex `w` (both vertices of T) and the head leaf of `w`
+    appears among the leaves of `v`, then the head leaves of `v` and `w` agree.
 
-    Statement uses `headAtVertex h T v`/`headAtVertex h T w` (the T-relative
-    head functions per MCB), not the standalone `head h v`/`head h w`. The
-    key observation: `headAtVertex h T v` is well-defined for any `v`, but
-    the coherence claim requires `v ⊆ T` (the `hvw : v ∈ w.subtrees` and
-    `hw : w ∈ T.subtrees` hypotheses).
+    **Why a `LocallyCoherent` hypothesis is needed**: the current `headAtVertex T v`
+    body computes `head h v` (descends through `σ v`'s planar tree) without
+    routing through T. Without local coherence, σ v's leaves might NOT
+    structurally appear inside σ T (σ v could pick a different representative
+    than σ T's v-subtree). The MCB coherence claim implicitly assumes σ
+    behaves coherently on T — captured here as `LocallyCoherent h T`.
 
-    TODO Phase 3.B+: discharge the proof. The strategy is well-founded
-    induction on the planar descent of `h.section_.σ T` — the head leaf of
-    `w` (which lies in `v`) determines a path from `T`'s root through `w`
-    that passes through `v`. The "leaf-disjointness" hypothesis (distinct
-    subtrees of T have disjoint leaf-token sets) is implicit when token
-    ids are unique; for the unconditional version, requires a `Nodup`
-    hypothesis on leaf-token ids. -/
+    TODO Phase 3.C: discharge the proof. The strategy:
+    1. Induction on the chain `v ⊆ w ⊆ T` using `subtrees` membership.
+    2. For each step, use `LocallyCoherent` to factor σ at the merge node.
+    3. Under harmonic head-initial, the leftmost-leaf path through σ w
+       passes through σ v exactly when v is the head-side daughter at
+       the merge node containing it.
+    4. Conclude head leaf equality via `leftmostLeafPlanar`'s recursive
+       structure.
+
+    For the unconditional version (no Nodup on leaf tokens), see Phase 3.C+. -/
 theorem HeadFunction.headAtVertex_coherent (h : HeadFunction) (T : SyntacticObject)
+    (_hCoh : h.LocallyCoherent T)
     {v w : SyntacticObject} (_hw : w ∈ T.subtrees) (_hvw : v ∈ w.subtrees)
     (_hmem : h.headAtVertex T w ∈ leafTokensPlanar (h.section_.σ v)) :
     h.headAtVertex T w = h.headAtVertex T v := by
-  -- Phase 3.B+: well-founded induction on planar descent through h.section_.σ T.
+  -- Phase 3.C: induction on subtree chain v ⊆ w ⊆ T using LocallyCoherent.
   -- See docstring for proof strategy.
   sorry
 
