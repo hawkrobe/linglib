@@ -697,6 +697,29 @@ theorem terminalNodes_are_leaves {so t : SyntacticObject}
   rw [← ha_eq]
   exact terminalNodesPlanar_are_leaves ha_mem
 
+/-- For a leaf SO, `terminalNodes` is the singleton list `[.leaf tok]`.
+    Same singleton-class argument as `leftmostLeaf_leaf`. -/
+@[simp] theorem terminalNodes_leaf (tok : LIToken) :
+    terminalNodes (SyntacticObject.leaf tok) = [SyntacticObject.leaf tok] := by
+  show (terminalNodesPlanar (SyntacticObject.leaf tok).out).map _ = _
+  have hmk :
+      (Quot.mk FreeMagma.CommRel (SyntacticObject.leaf tok).out : SyntacticObject)
+        = FreeCommMagma.mk (FreeMagma.of (Sum.inl tok)) := Quot.out_eq _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
+  match h : (SyntacticObject.leaf tok).out with
+  | .of x =>
+    rw [h] at hmk
+    show (terminalNodesPlanar (.of x)).map _ = _
+    cases x with
+    | inl t =>
+      simp only [terminalNodesPlanar, List.map_cons, List.map_nil]
+      exact congrArg (fun y => [SyntacticObject.leaf y])
+        (Sum.inl.inj (hmk : Sum.inl t = Sum.inl tok))
+    | inr n => exact absurd (hmk : Sum.inr n = Sum.inl tok) (by intro; contradiction)
+  | .mul _ _ =>
+    rw [h] at hmk
+    exact absurd hmk (by simp [FreeMagma.CommEqv])
+
 private theorem terminalNodesPlanar_mem_subtreesAux
     {fm t : FreeMagma (LIToken ⊕ Nat)} (h : t ∈ terminalNodesPlanar fm) :
     (FreeCommMagma.mk t : SyntacticObject) ∈ subtreesAux fm := by

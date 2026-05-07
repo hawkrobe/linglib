@@ -187,9 +187,9 @@ private theorem inner_not_cCommandsIn_outer (s h c : LIToken)
 /-- A leaf is in its own dominated terminals (Phase 1.0: noncomputable). -/
 private theorem leaf_mem_dominatedTerminals (tok : LIToken) :
     SyntacticObject.leaf tok ∈ dominatedTerminals (.leaf tok) := by
-  -- TODO Phase 2: terminalNodes is Quot.out-based; the membership lemma
-  -- requires a representative argument. Marked sorry for Phase 2.
-  sorry
+  show SyntacticObject.leaf tok ∈ terminalNodes (SyntacticObject.leaf tok)
+  rw [terminalNodes_leaf]
+  exact List.mem_singleton.mpr rfl
 
 /-- **Outer precedes inner under the LCA.** For `root = node (leaf x) (node (leaf y) (leaf z))`
     where all three are distinct leaves, `x` precedes both `y` and `z`

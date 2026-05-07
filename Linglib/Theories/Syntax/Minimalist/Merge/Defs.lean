@@ -91,29 +91,67 @@ noncomputable def SyntacticObject.toHc (so : SyntacticObject) :
     ConnesKreimer.TraceTree LIToken Unit :=
   toHcPlanar so.out
 
-end Minimalist
+/-! ### Singleton-class simp lemmas
 
--- TODO Phase 2: rfl-style simp lemmas for `toHc` on .leaf/.trace/.mul
--- constructors no longer hold definitionally because `toHc` is
--- `Quot.out`-based. They held before the FreeCommMagma migration
--- (when SO was a planar inductive). Consumers that needed
--- (.leaf tok).toHc = .leaf tok etc. should use `toHcPlanar` directly
--- on a chosen representative, or wait for the Phase 2 parameterized
--- version.
+`toHc_leaf` / `toHc_trace` are recoverable as `simp` lemmas because
+leaf-only equivalence classes under `FreeMagma.CommRel` are singletons
+(no `swap` constructor fires on `.of _`). The proof routes through
+`Quot.out_eq` + `mk_eq_iff_commEqv` + the singleton structure of `.of`.
+
+`toHc_mul` does NOT recover at this level: `(l * r).out` may pick
+either `mul l.out r.out` or `mul r.out l.out`, and `TraceTree.node`
+is planar (`.node a b ≠ .node b a`). Phase 2 will take an
+`HeadFunction` parameter to canonicalize the orientation. -/
+
+@[simp] theorem SyntacticObject.toHc_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).toHc = ConnesKreimer.TraceTree.leaf tok := by
+  show toHcPlanar (SyntacticObject.leaf tok).out = _
+  have hmk :
+      (Quot.mk FreeMagma.CommRel (SyntacticObject.leaf tok).out : SyntacticObject)
+        = FreeCommMagma.mk (FreeMagma.of (Sum.inl tok)) := Quot.out_eq _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
+  match h : (SyntacticObject.leaf tok).out with
+  | .of x =>
+    rw [h] at hmk
+    show toHcPlanar (.of x) = _
+    cases x with
+    | inl t =>
+      simp only [toHcPlanar]
+      exact congrArg ConnesKreimer.TraceTree.leaf
+        (Sum.inl.inj (hmk : Sum.inl t = Sum.inl tok))
+    | inr n => exact absurd (hmk : Sum.inr n = Sum.inl tok) (by intro; contradiction)
+  | .mul _ _ =>
+    rw [h] at hmk
+    exact absurd hmk (by simp [FreeMagma.CommEqv])
+
+@[simp] theorem SyntacticObject.toHc_trace (n : Nat) :
+    (SyntacticObject.trace n).toHc = ConnesKreimer.TraceTree.trace () := by
+  show toHcPlanar (SyntacticObject.trace n).out = _
+  have hmk :
+      (Quot.mk FreeMagma.CommRel (SyntacticObject.trace n).out : SyntacticObject)
+        = FreeCommMagma.mk (FreeMagma.of (Sum.inr n)) := Quot.out_eq _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
+  match h : (SyntacticObject.trace n).out with
+  | .of x =>
+    rw [h] at hmk
+    show toHcPlanar (.of x) = _
+    cases x with
+    | inl t => exact absurd (hmk : Sum.inl t = Sum.inr n) (by intro; contradiction)
+    | inr m => simp only [toHcPlanar]
+  | .mul _ _ =>
+    rw [h] at hmk
+    exact absurd hmk (by simp [FreeMagma.CommEqv])
+
+end Minimalist
 
 /-- `mkTrace n = .trace n`, so `isTrace (.trace n) = some n`. -/
 theorem Minimalist.isTrace_mkTrace (n : Nat) :
     Minimalist.isTrace (Minimalist.mkTrace n) = some n := rfl
 
-/-- `(mkTrace n).toHc = .trace ()` — the IM bridge identity.
-
-    TODO Phase 2: was `rfl` against the planar substrate; now the LHS
-    expands via `Quot.out` and the equality holds up to the trace-only
-    `FreeMagma` representative being `.of (.inr n)`. Consumers needing
-    this rfl-style identity should use `toHcPlanar` directly. -/
+/-- `(mkTrace n).toHc = .trace ()` — the IM bridge identity. -/
 theorem Minimalist.mkTrace_toHc (n : Nat) :
-    (Minimalist.mkTrace n).toHc = ConnesKreimer.TraceTree.trace () := by
-  sorry
+    (Minimalist.mkTrace n).toHc = ConnesKreimer.TraceTree.trace () :=
+  Minimalist.SyntacticObject.toHc_trace n
 
 namespace Minimalist.Merge
 
