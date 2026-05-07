@@ -643,45 +643,233 @@ sibilant tier. -/
 abbrev tsuutinaRejected (k : ℕ) : List TsuutinaSeg :=
   List.replicate k SibilantTierSeg.posterior ++ [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++ List.replicate k SibilantTierSeg.anterior
 
-/-! Proof recipe for `tsuutina_not_isBTLI` (TODO):
+/-- Tier-affix equality on every Bool tier. Case-split on
+`(T posterior, T anterior)`. For three of four cases the projections
+are equal as lists; for `(true, true)` they share length-`k` prefix
+`posterior^k` and length-`k` suffix `anterior^k` via `take_left'` /
+`drop_left'` after `List.append_assoc` reassociation. -/
+private lemma tsuutina_tierAffixes (k : ℕ) (T : TsuutinaSeg → Bool) :
+    Edge.left.takeAt k ((tsuutinaAccepted k).filter T) =
+      Edge.left.takeAt k ((tsuutinaRejected k).filter T) ∧
+    Edge.right.takeAt k ((tsuutinaAccepted k).filter T) =
+      Edge.right.takeAt k ((tsuutinaRejected k).filter T) := by
+  -- Establish negation hypotheses upfront for filter_*_of_neg.
+  unfold tsuutinaAccepted tsuutinaRejected
+  match h_post : T SibilantTierSeg.posterior, h_ant : T SibilantTierSeg.anterior with
+  | false, false =>
+    have h_post' : ¬ T SibilantTierSeg.posterior = true := by simp [h_post]
+    have h_ant' : ¬ T SibilantTierSeg.anterior = true := by simp [h_ant]
+    -- Both filters give [], takeAt of [] = [].
+    have h_acc :
+        (List.replicate (k + 1) SibilantTierSeg.posterior ++
+           List.replicate (k + 1) SibilantTierSeg.anterior).filter T = [] := by
+      simp [List.filter_append, List.filter_replicate_of_neg h_post',
+            List.filter_replicate_of_neg h_ant']
+    have h_rej :
+        (List.replicate k SibilantTierSeg.posterior ++
+           [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+           List.replicate k SibilantTierSeg.anterior).filter T = [] := by
+      simp [List.filter_append, List.filter_replicate_of_neg h_post',
+            List.filter_replicate_of_neg h_ant',
+            List.filter_cons_of_neg h_ant',
+            List.filter_cons_of_neg h_post']
+    rw [h_acc, h_rej]
+    exact ⟨rfl, rfl⟩
+  | true, false =>
+    have h_ant' : ¬ T SibilantTierSeg.anterior = true := by simp [h_ant]
+    -- accepted.filter = post^(k+1); rejected.filter = post^k ++ [post].
+    have heq : (List.replicate (k + 1) SibilantTierSeg.posterior ++
+                  List.replicate (k + 1) SibilantTierSeg.anterior).filter T =
+               (List.replicate k SibilantTierSeg.posterior ++
+                  [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+                  List.replicate k SibilantTierSeg.anterior).filter T := by
+      simp only [List.filter_append, List.filter_replicate_of_pos h_post,
+                 List.filter_replicate_of_neg h_ant',
+                 List.filter_cons_of_neg h_ant',
+                 List.filter_cons_of_pos h_post,
+                 List.filter_nil, List.append_nil, List.nil_append]
+      -- post^(k+1) = post^k ++ [post]
+      rw [List.replicate_succ']
+    rw [heq]; exact ⟨rfl, rfl⟩
+  | false, true =>
+    have h_post' : ¬ T SibilantTierSeg.posterior = true := by simp [h_post]
+    have heq : (List.replicate (k + 1) SibilantTierSeg.posterior ++
+                  List.replicate (k + 1) SibilantTierSeg.anterior).filter T =
+               (List.replicate k SibilantTierSeg.posterior ++
+                  [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+                  List.replicate k SibilantTierSeg.anterior).filter T := by
+      simp only [List.filter_append, List.filter_replicate_of_pos h_ant,
+                 List.filter_replicate_of_neg h_post',
+                 List.filter_cons_of_pos h_ant,
+                 List.filter_cons_of_neg h_post',
+                 List.filter_nil, List.append_nil, List.nil_append]
+      -- ant^(k+1) = [ant] ++ ant^k via replicate_succ + replicate 1 = [_]
+      show List.replicate (k + 1) SibilantTierSeg.anterior =
+           SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior
+      rw [List.replicate_succ]
+    rw [heq]; exact ⟨rfl, rfl⟩
+  | true, true =>
+    -- Both filters are identity; show takeAt-prefix = post^k and
+    -- takeAt-suffix = ant^k via take_left' / drop_left' after reassociation.
+    have h_acc :
+        (List.replicate (k + 1) SibilantTierSeg.posterior ++
+           List.replicate (k + 1) SibilantTierSeg.anterior).filter T =
+        List.replicate (k + 1) SibilantTierSeg.posterior ++
+           List.replicate (k + 1) SibilantTierSeg.anterior := by
+      simp [List.filter_append, List.filter_replicate_of_pos h_post,
+            List.filter_replicate_of_pos h_ant]
+    have h_rej :
+        (List.replicate k SibilantTierSeg.posterior ++
+           [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+           List.replicate k SibilantTierSeg.anterior).filter T =
+        List.replicate k SibilantTierSeg.posterior ++
+          [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+          List.replicate k SibilantTierSeg.anterior := by
+      simp [List.filter_append, List.filter_replicate_of_pos h_post,
+            List.filter_replicate_of_pos h_ant,
+            List.filter_cons_of_pos h_ant,
+            List.filter_cons_of_pos h_post]
+    rw [h_acc, h_rej]
+    refine ⟨?_, ?_⟩
+    · -- Prefix: take k of both = post^k.
+      show (List.replicate (k + 1) SibilantTierSeg.posterior ++
+              List.replicate (k + 1) SibilantTierSeg.anterior).take k =
+           (List.replicate k SibilantTierSeg.posterior ++
+              [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+              List.replicate k SibilantTierSeg.anterior).take k
+      -- Reassociate accepted: post^(k+1) = post^k ++ [post]
+      rw [show List.replicate (k + 1) SibilantTierSeg.posterior =
+              List.replicate k SibilantTierSeg.posterior ++
+                [SibilantTierSeg.posterior] from List.replicate_succ',
+          List.append_assoc]
+      -- accepted is now post^k ++ ([post] ++ ant^(k+1)); take_left' closes.
+      rw [List.take_left' (by simp [List.length_replicate])]
+      -- For rejected, reassociate (post^k ++ [ant, post]) ++ ant^k as
+      -- post^k ++ ([ant, post] ++ ant^k); take_left' closes.
+      rw [List.append_assoc, List.take_left' (by simp [List.length_replicate])]
+    · -- Suffix: drop ((2k+2) - k) = drop (k+2) of both = ant^k.
+      show Edge.right.takeAt k _ = Edge.right.takeAt k _
+      show (List.replicate (k + 1) SibilantTierSeg.posterior ++
+              List.replicate (k + 1) SibilantTierSeg.anterior).drop _ =
+           (List.replicate k SibilantTierSeg.posterior ++
+              [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+              List.replicate k SibilantTierSeg.anterior).drop _
+      -- Compute lengths to k+2.
+      rw [show (List.replicate (k + 1) SibilantTierSeg.posterior ++
+                  List.replicate (k + 1) SibilantTierSeg.anterior).length - k = k + 2 from by
+            rw [List.length_append, List.length_replicate, List.length_replicate]; omega,
+          show (List.replicate k SibilantTierSeg.posterior ++
+                  [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+                  List.replicate k SibilantTierSeg.anterior).length - k = k + 2 from by
+            simp [List.length_append, List.length_replicate]]
+      -- Reassociate accepted: ant^(k+1) = [ant] ++ ant^k, then group
+      -- post^(k+1) ++ [ant] = chunk of length k+2.
+      rw [show List.replicate (k + 1) SibilantTierSeg.anterior =
+              SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior from
+            List.replicate_succ]
+      rw [show List.replicate (k + 1) SibilantTierSeg.posterior ++
+              (SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior) =
+              (List.replicate (k + 1) SibilantTierSeg.posterior ++
+                [SibilantTierSeg.anterior]) ++ List.replicate k SibilantTierSeg.anterior from by
+            simp [List.append_assoc]]
+      rw [List.drop_left' (by simp [List.length_append, List.length_replicate])]
+      -- Rejected: (post^k ++ [ant, post]) has length k+2; drop_left'.
+      rw [List.drop_left' (by simp [List.length_append, List.length_replicate])]
 
-1. **Tier-affix equality**: prove `tsuutina_tierAffixes (k : ℕ) (T : TsuutinaSeg → Bool)` —
-   for every Bool tier, `Edge.left.takeAt k ((tsuutinaAccepted k).filter T) =
-   Edge.left.takeAt k ((tsuutinaRejected k).filter T)` and the symmetric for
-   `Edge.right.takeAt`. Case-split on `(T anterior, T posterior)` — `T neutral`
-   is irrelevant (no neutral material in either witness):
-   - `(false, false)`: both filtered = `[]`.
-   - `(true, false)`: both filtered = `anterior^(k+1)`.
-   - `(false, true)`: both filtered = `posterior^(k+1)`.
-   - `(true, true)`: filtered accepted = `posterior^(k+1) ++ anterior^(k+1)`,
-     filtered rejected = `posterior^k ++ [anterior, posterior] ++ anterior^k`.
-     Both have length `2k+2`. Length-`k` prefix is `posterior^k` for both;
-     length-`k` suffix is `anterior^k` for both.
+/-- The accepted Tsuut'ina witness lies in `tsuutinaLang`. The sibilant
+tier projection is the witness itself (no neutral material), and on
+that string the only adjacency types are `(posterior, posterior)`,
+`(posterior, anterior)` (the boundary), and `(anterior, anterior)` —
+none of which equal the forbidden `(anterior, posterior)`. -/
+private lemma tsuutinaAccepted_mem (k : ℕ) :
+    tsuutinaAccepted k ∈ tsuutinaLang := by
+  show tsuutinaAccepted k ∈ (TSLGrammar.ofForbiddenPairs antPostForbidden
+                              SibilantTierSeg.onTier).lang
+  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  -- Filter to sibilants: identity since no neutrals in the witness.
+  have h_filter : (tsuutinaAccepted k).filter
+                    (fun x => decide (SibilantTierSeg.onTier x)) =
+                  tsuutinaAccepted k := by
+    unfold tsuutinaAccepted
+    simp [List.filter_append,
+          List.filter_replicate_of_pos
+            (show decide (SibilantTierSeg.onTier SibilantTierSeg.posterior) = true
+             from by decide),
+          List.filter_replicate_of_pos
+            (show decide (SibilantTierSeg.onTier SibilantTierSeg.anterior) = true
+             from by decide)]
+  rw [h_filter]
+  -- IsChain (¬ antPostForbidden) on post^(k+1) ++ ant^(k+1).
+  show (List.replicate (k + 1) SibilantTierSeg.posterior ++
+          List.replicate (k + 1) SibilantTierSeg.anterior).IsChain
+        (fun a b => ¬ antPostForbidden a b)
+  rw [List.isChain_append]
+  refine ⟨?_, ?_, ?_⟩
+  · exact List.isChain_replicate_of_rel _ (by decide)
+  · exact List.isChain_replicate_of_rel _ (by decide)
+  · intro x hx y hy
+    rw [List.getLast?_replicate] at hx
+    rw [List.head?_replicate] at hy
+    simp at hx hy
+    obtain ⟨_, rfl⟩ := hx
+    obtain ⟨_, rfl⟩ := hy
+    decide
 
-2. **Indistinguishability**: combine via `IsBTC.indist_isGenDef_of_tierAffixes`
-   to get `IsBTC.Indist (IsGeneralizedDefinite k) (tsuutinaAccepted k) (tsuutinaRejected k)`.
-
-3. **Membership separation**: prove
-   - `tsuutinaAccepted k ∈ tsuutinaLang`: via `mem_ofForbiddenPairs_lang_iff_filter_isChain`;
-     filtered = `posterior^(k+1) ++ anterior^(k+1)`, no adjacent (anterior, posterior)
-     pair, so `IsChain (¬ antPostForbidden)`.
-   - `tsuutinaRejected k ∉ tsuutinaLang`: filtered contains adjacent
-     `[anterior, posterior]` (the middle two characters), violating `IsChain`.
-
-4. **Refutation**: `not_isBTC_of_indist` from `IsBTC.Indist` + membership separation
-   directly gives `¬ IsBTLI k tsuutinaLang`.
-
-The Lean infrastructure is in place via `IsBTC.Indist`, `IsBTC.mem_iff_of_indist`,
-`not_isBTC_of_indist`, `IsBTC.indist_isGenDef_of_tierAffixes` (`Subregular/Multitier.lean`).
-The remaining work is the per-witness combinatorial reasoning over `List.replicate`
-and `List.filter`. -/
+/-- The rejected Tsuut'ina witness is **not** in `tsuutinaLang`. The
+internal `[anterior, posterior]` is precisely the forbidden adjacency
+on the sibilant tier. -/
+private lemma tsuutinaRejected_notMem (k : ℕ) :
+    tsuutinaRejected k ∉ tsuutinaLang := by
+  show ¬ (tsuutinaRejected k ∈ (TSLGrammar.ofForbiddenPairs antPostForbidden
+                                  SibilantTierSeg.onTier).lang)
+  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  -- Filter is identity (no neutrals).
+  have h_filter : (tsuutinaRejected k).filter
+                    (fun x => decide (SibilantTierSeg.onTier x)) =
+                  tsuutinaRejected k := by
+    unfold tsuutinaRejected
+    simp [List.filter_append,
+          List.filter_replicate_of_pos
+            (show decide (SibilantTierSeg.onTier SibilantTierSeg.posterior) = true
+             from by decide),
+          List.filter_replicate_of_pos
+            (show decide (SibilantTierSeg.onTier SibilantTierSeg.anterior) = true
+             from by decide),
+          List.filter_cons_of_pos
+            (show decide (SibilantTierSeg.onTier SibilantTierSeg.anterior) = true
+             from by decide),
+          List.filter_cons_of_pos
+            (show decide (SibilantTierSeg.onTier SibilantTierSeg.posterior) = true
+             from by decide)]
+  rw [h_filter]
+  -- The witness contains the adjacent pair (anterior, posterior).
+  -- Use isChain_append_cons_cons to expose it.
+  show ¬ (List.replicate k SibilantTierSeg.posterior ++
+            [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+            List.replicate k SibilantTierSeg.anterior).IsChain
+        (fun a b => ¬ antPostForbidden a b)
+  intro hchain
+  -- Exhibit the witness in the form l₁ ++ a :: b :: l₂ to apply isChain_append_cons_cons.
+  rw [show List.replicate k SibilantTierSeg.posterior ++
+          [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
+          List.replicate k SibilantTierSeg.anterior =
+          List.replicate k SibilantTierSeg.posterior ++
+          (SibilantTierSeg.anterior :: SibilantTierSeg.posterior ::
+            List.replicate k SibilantTierSeg.anterior) by
+        simp [List.append_assoc]] at hchain
+  rw [List.isChain_append_cons_cons] at hchain
+  -- Middle conjunct: ¬ antPostForbidden anterior posterior. But this IS forbidden.
+  exact hchain.2.1 (by decide : antPostForbidden SibilantTierSeg.anterior
+                                              SibilantTierSeg.posterior)
 
 /-- **Tsuut'ina asymmetric harmony ∉ BTLI** (Lambert 2026 §4.2, parametrised
-counterexample). The witnesses `tsuutinaAccepted k` and `tsuutinaRejected k`
-satisfy the Lambert-style "shared length-`k` tier-affixes on every tier"
-property; the framework `not_isBTC_of_indist` then refutes BTLI membership. -/
+counterexample). -/
 theorem tsuutina_not_isBTLI : ∀ k, ¬ IsBTLI k tsuutinaLang := by
-  sorry
+  intro k
+  apply not_isBTC_of_indist (w₁ := tsuutinaAccepted k) (w₂ := tsuutinaRejected k)
+  · exact IsBTC.indist_isGenDef_of_tierAffixes (tsuutina_tierAffixes k)
+  · exact tsuutinaAccepted_mem k
+  · exact tsuutinaRejected_notMem k
 
 -- ============================================================================
 -- § 6. Luganda high-tone plateauing ∈ J ∖ BTLI
