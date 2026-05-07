@@ -73,33 +73,160 @@ noncomputable def projectionPath (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) : Multiset SyntacticObject :=
   T.subtrees.filter (fun w => decide (h.headAtVertex T w = ℓ))
 
-/-- **Lemma 1.14.1 (chain property)**: any two vertices on the same
-    projection path γ_ℓ are comparable under containment — one contains
-    the other.
+/-- Helper: subtree membership gives equality OR containment.
+    Direct from `Minimalist.isTermOf_iff_mem_subtrees`. -/
+private theorem mem_subtrees_imp_eq_or_contains
+    {y z : SyntacticObject} (h : z ∈ y.subtrees) :
+    z = y ∨ Minimalist.contains y z := by
+  rcases (Minimalist.isTermOf_iff_mem_subtrees y z).mpr h with heq | hcontains
+  · exact Or.inl heq
+  · exact Or.inr hcontains
 
-    @cite{marcolli-chomsky-berwick-2025} Lemma 1.14.1 (book p. 132).
-    The "γ_ℓ is a path" claim has two parts:
-    (a) **Connectedness**: vertices form a containment-chain (this theorem).
-    (b) **Endpoints**: leaf ℓ at the bottom, maximal projection v_ℓ at the top.
+/-- Auxiliary version of `projectionPath_chain` parameterized by an outer
+    induction on T. Both `headAtVertex T w = ℓ` and `w ∈ T.subtrees` are
+    surfaced as separate hypotheses (since `headAtVertex` doesn't depend on T,
+    we can apply IH cleanly to subtrees). -/
+private theorem projectionPath_chain_aux (h : HeadFunction) :
+    ∀ T : SyntacticObject, h.LocallyCoherent T →
+      (leafTokensPlanar (h.section_.σ T)).Nodup →
+      ∀ (ℓ : LIToken) (w₁ w₂ : SyntacticObject),
+        w₁ ∈ T.subtrees → w₂ ∈ T.subtrees →
+        h.headAtVertex T w₁ = ℓ → h.headAtVertex T w₂ = ℓ →
+        Minimalist.contains w₁ w₂ ∨ Minimalist.contains w₂ w₁ ∨ w₁ = w₂ := by
+  intro T
+  induction T with
+  | leaf tok =>
+    intro _ _ ℓ w₁ w₂ hw₁ hw₂ _ _
+    rw [SyntacticObject.subtrees_leaf, Multiset.mem_singleton] at hw₁ hw₂
+    subst hw₁; subst hw₂; exact Or.inr (Or.inr rfl)
+  | trace n =>
+    intro _ _ ℓ w₁ w₂ hw₁ hw₂ _ _
+    rw [SyntacticObject.subtrees_trace, Multiset.mem_singleton] at hw₁ hw₂
+    subst hw₁; subst hw₂; exact Or.inr (Or.inr rfl)
+  | mul a b iha ihb =>
+    intro hCoh hNodup ℓ w₁ w₂ hw₁ hw₂ hℓ₁ hℓ₂
+    have ha_in_ab : a ∈ (a * b).subtrees := by
+      rw [SyntacticObject.subtrees_mul]
+      exact Multiset.mem_cons_of_mem
+        (Multiset.mem_add.mpr (Or.inl (self_mem_subtrees a)))
+    have hb_in_ab : b ∈ (a * b).subtrees := by
+      rw [SyntacticObject.subtrees_mul]
+      exact Multiset.mem_cons_of_mem
+        (Multiset.mem_add.mpr (Or.inr (self_mem_subtrees b)))
+    have hCoh_a : h.LocallyCoherent a := hCoh.descent ha_in_ab
+    have hCoh_b : h.LocallyCoherent b := hCoh.descent hb_in_ab
+    have hN_a : (leafTokensPlanar (h.section_.σ a)).Nodup :=
+      σ_leafTokensPlanar_nodup_subtree h _ hCoh hNodup ha_in_ab
+    have hN_b : (leafTokensPlanar (h.section_.σ b)).Nodup :=
+      σ_leafTokensPlanar_nodup_subtree h _ hCoh hNodup hb_in_ab
+    -- Useful: (a*b) immediately contains a and b
+    have hab_imm_a : Minimalist.immediatelyContains (a * b) a :=
+      (immediatelyContains_mul _ _ _).mpr (Or.inl rfl)
+    have hab_imm_b : Minimalist.immediatelyContains (a * b) b :=
+      (immediatelyContains_mul _ _ _).mpr (Or.inr rfl)
+    -- For any w' ∈ a.subtrees, a*b contains w' (or w' = a, contained immediately)
+    have ab_contains_a_subtree : ∀ {w' : SyntacticObject}, w' ∈ a.subtrees →
+        Minimalist.contains (a * b) w' := by
+      intro w' hw'
+      rcases mem_subtrees_imp_eq_or_contains hw' with rfl | hca
+      · exact Minimalist.contains.imm _ _ hab_imm_a
+      · exact Minimalist.contains.trans _ _ a hab_imm_a hca
+    have ab_contains_b_subtree : ∀ {w' : SyntacticObject}, w' ∈ b.subtrees →
+        Minimalist.contains (a * b) w' := by
+      intro w' hw'
+      rcases mem_subtrees_imp_eq_or_contains hw' with rfl | hcb
+      · exact Minimalist.contains.imm _ _ hab_imm_b
+      · exact Minimalist.contains.trans _ _ b hab_imm_b hcb
+    -- Decompose w₁, w₂ ∈ (a*b).subtrees
+    rw [SyntacticObject.subtrees_mul] at hw₁ hw₂
+    rcases Multiset.mem_cons.mp hw₁ with h1eq | h1sub
+    · -- w₁ = a*b
+      subst h1eq
+      rcases Multiset.mem_cons.mp hw₂ with h2eq | h2sub
+      · -- w₂ = a*b
+        subst h2eq; exact Or.inr (Or.inr rfl)
+      · -- w₂ ∈ a.subtrees + b.subtrees: contains (a*b) w₂
+        left
+        rcases Multiset.mem_add.mp h2sub with h2a | h2b
+        · exact ab_contains_a_subtree h2a
+        · exact ab_contains_b_subtree h2b
+    · rcases Multiset.mem_cons.mp hw₂ with h2eq | h2sub
+      · -- w₂ = a*b: symmetric
+        subst h2eq
+        right; left
+        rcases Multiset.mem_add.mp h1sub with h1a | h1b
+        · exact ab_contains_a_subtree h1a
+        · exact ab_contains_b_subtree h1b
+      · -- Both w₁, w₂ in a.subtrees + b.subtrees
+        rcases Multiset.mem_add.mp h1sub with h1a | h1b
+        all_goals rcases Multiset.mem_add.mp h2sub with h2a | h2b
+        · -- Both in a.subtrees: apply iha
+          exact iha hCoh_a hN_a ℓ w₁ w₂ h1a h2a hℓ₁ hℓ₂
+        · -- w₁ in a.subtrees, w₂ in b.subtrees: contradiction via disjointness
+          exfalso
+          have hℓ_in_w₁ : ℓ ∈ leafTokensPlanar (h.section_.σ w₁) := by
+            unfold HeadFunction.headAtVertex at hℓ₁
+            cases h_side : h.headSide
+            · rw [h_side] at hℓ₁; rw [← hℓ₁]
+              exact leftmostLeafPlanar_mem_leafTokens _
+            · rw [h_side] at hℓ₁; rw [← hℓ₁]
+              exact rightmostLeafPlanar_mem_leafTokens _
+          have hℓ_in_w₂ : ℓ ∈ leafTokensPlanar (h.section_.σ w₂) := by
+            unfold HeadFunction.headAtVertex at hℓ₂
+            cases h_side : h.headSide
+            · rw [h_side] at hℓ₂; rw [← hℓ₂]
+              exact leftmostLeafPlanar_mem_leafTokens _
+            · rw [h_side] at hℓ₂; rw [← hℓ₂]
+              exact rightmostLeafPlanar_mem_leafTokens _
+          have hℓ_a : ℓ ∈ leafTokensPlanar (h.section_.σ a) :=
+            Multiset.mem_of_le (σ_leafMultiset_le_root h a hCoh_a w₁ h1a) hℓ_in_w₁
+          have hℓ_b : ℓ ∈ leafTokensPlanar (h.section_.σ b) :=
+            Multiset.mem_of_le (σ_leafMultiset_le_root h b hCoh_b w₂ h2b) hℓ_in_w₂
+          exact σ_leafTokens_disjoint_at_mul h _ hCoh hNodup
+            (by rw [SyntacticObject.subtrees_mul]; exact Multiset.mem_cons_self _ _)
+            hℓ_a hℓ_b
+        · -- w₁ in b.subtrees, w₂ in a.subtrees: symmetric contradiction
+          exfalso
+          have hℓ_in_w₁ : ℓ ∈ leafTokensPlanar (h.section_.σ w₁) := by
+            unfold HeadFunction.headAtVertex at hℓ₁
+            cases h_side : h.headSide
+            · rw [h_side] at hℓ₁; rw [← hℓ₁]
+              exact leftmostLeafPlanar_mem_leafTokens _
+            · rw [h_side] at hℓ₁; rw [← hℓ₁]
+              exact rightmostLeafPlanar_mem_leafTokens _
+          have hℓ_in_w₂ : ℓ ∈ leafTokensPlanar (h.section_.σ w₂) := by
+            unfold HeadFunction.headAtVertex at hℓ₂
+            cases h_side : h.headSide
+            · rw [h_side] at hℓ₂; rw [← hℓ₂]
+              exact leftmostLeafPlanar_mem_leafTokens _
+            · rw [h_side] at hℓ₂; rw [← hℓ₂]
+              exact rightmostLeafPlanar_mem_leafTokens _
+          have hℓ_b : ℓ ∈ leafTokensPlanar (h.section_.σ b) :=
+            Multiset.mem_of_le (σ_leafMultiset_le_root h b hCoh_b w₁ h1b) hℓ_in_w₁
+          have hℓ_a : ℓ ∈ leafTokensPlanar (h.section_.σ a) :=
+            Multiset.mem_of_le (σ_leafMultiset_le_root h a hCoh_a w₂ h2a) hℓ_in_w₂
+          exact σ_leafTokens_disjoint_at_mul h _ hCoh hNodup
+            (by rw [SyntacticObject.subtrees_mul]; exact Multiset.mem_cons_self _ _)
+            hℓ_a hℓ_b
+        · -- Both w₁, w₂ in b.subtrees: apply ihb
+          exact ihb hCoh_b hN_b ℓ w₁ w₂ h1b h2b hℓ₁ hℓ₂
 
-    Hypotheses required for Phase 3.C proof:
-    - `LocallyCoherent h T`: σ behaves structurally on T's subtrees.
-    - `Nodup` on σ T's planar leaves: linguistic well-formedness.
-
-    Proof strategy: vertices `w` with `headAtVertex T w = ℓ` correspond
-    to ancestors of `ℓ`'s leaf-position in the planar embedding `σ T`.
-    Ancestors of any node form a containment-chain. Discharging via
-    `headAtVertex_coherent` (currently sorry'd, see Phase 3.C TODO). -/
+/-- **Lemma 1.14.1 chain property** (Phase 3.D: discharged).
+    Public-facing version: decodes `projectionPath` membership into
+    `T.subtrees` + `headAtVertex T w = ℓ` and dispatches to the
+    inductive helper `projectionPath_chain_aux`. -/
 theorem projectionPath_chain (h : HeadFunction) (T : SyntacticObject)
-    (_hCoh : h.LocallyCoherent T)
-    (_hNodup : (leafTokensPlanar (h.section_.σ T)).Nodup)
+    (hCoh : h.LocallyCoherent T)
+    (hNodup : (leafTokensPlanar (h.section_.σ T)).Nodup)
     (ℓ : LIToken) {w₁ w₂ : SyntacticObject}
-    (_h₁ : w₁ ∈ projectionPath h T ℓ) (_h₂ : w₂ ∈ projectionPath h T ℓ) :
+    (h₁ : w₁ ∈ projectionPath h T ℓ) (h₂ : w₂ ∈ projectionPath h T ℓ) :
     Minimalist.contains w₁ w₂ ∨ Minimalist.contains w₂ w₁ ∨ w₁ = w₂ := by
-  -- Phase 3.C TODO: discharge via `headAtVertex_coherent` + planar-descent
-  -- argument. Both hypotheses (LocallyCoherent + Nodup) are forwarded to
-  -- the substrate theorem.
-  sorry
+  unfold projectionPath at h₁ h₂
+  rw [Multiset.mem_filter] at h₁ h₂
+  obtain ⟨hw₁, hℓ₁⟩ := h₁
+  obtain ⟨hw₂, hℓ₂⟩ := h₂
+  rw [decide_eq_true_eq] at hℓ₁ hℓ₂
+  exact projectionPath_chain_aux h T hCoh hNodup ℓ w₁ w₂ hw₁ hw₂ hℓ₁ hℓ₂
 
 /-- The **maximal projection vertex** v_ℓ of leaf ℓ in T
     (@cite{marcolli-chomsky-berwick-2025} Lemma 1.14.1): the topmost

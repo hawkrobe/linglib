@@ -122,19 +122,13 @@ theorem comulTree_eq_sum_AugCutShape (T : TraceTree α Unit) :
             ⊗ₜ[R] forestToHc (R := R) (AugCutShape.remainderForest ac) := by
   -- Split the AugCutShape sum into Sum.inl (real cuts) and Sum.inr (extractWhole).
   rw [Fintype.sum_sum_type]
-  -- LHS = comulTree T = forestToHc {T} ⊗ 1 + ∑ C, ... (by definition)
-  unfold comulTree
-  -- After unfolding: LHS = forestToHc {T} ⊗ 1 + ∑ C : CutShape T, ...
-  -- RHS = ∑ C : CutShape T, ... + ∑ () : Unit, forestToHc {T} ⊗ forestToHc 0
-  --     = ∑ C, ... + (forestToHc {T} ⊗ 1)  (one unit term; forestToHc 0 = 1)
+  -- Use the `_eq_prim_add_sum` form of comulTree to expose primitive + cut-sum.
+  rw [comulTree_eq_prim_add_sum]
+  -- LHS: forestToHc {T} ⊗ 1 + ∑ C : CutShape T, ...
+  -- RHS: ∑ C : CutShape T, ... + ∑ () : Unit, forestToHc {T} ⊗ forestToHc 0
+  --    = ∑ C, ... + (forestToHc {T} ⊗ 1)  (one unit term; forestToHc 0 = 1)
   rw [add_comm]
-  -- After splitting and add_comm:
-  --   LHS: ∑ C, forestToHc (cutForest C) ⊗ forestToHc {remainder C} + forestToHc {T} ⊗ 1
-  --   RHS: ∑ a₁ : CutShape T, ... + ∑ a₂ : Unit, ...
-  -- Both halves are definitionally equal:
-  --   ∑ C agree because `cutForest_aug (.inl C) = cutForest C` etc. by rfl;
-  --   the explicit `forestToHc {T} ⊗ 1` agrees with the singleton `∑ () : Unit, ...`
-  --   because `forestToHc 0 = single 0 1 = (1 : Hc R α)` and `Unit` summing collapses.
+  -- Both halves now agree definitionally (same as previous proof structure).
   rfl
 
 /-! ## §3: `pairsMS` and `comulTreeMS` for multi-tree sections

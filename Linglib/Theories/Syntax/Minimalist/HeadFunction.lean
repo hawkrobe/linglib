@@ -395,42 +395,231 @@ theorem σ_leafMultiset_at_mul (h : HeadFunction)
   · rw [heq, leafTokensPlanar_mul, ← Multiset.coe_add]
   · rw [heq, leafTokensPlanar_mul, ← Multiset.coe_add, add_comm]
 
-/-- @cite{marcolli-chomsky-berwick-2025} Def 1.13.3 coherence statement.
+/-- Under `LocallyCoherent h T`, the planar leaf-multiset of any subtree
+    `w ⊆ T` is ≤ (multiset-wise) the planar leaf-multiset of `σ T`.
 
-    **Phase 3.C status (deferred)**: the proof requires a structural sub-list
-    lemma (`σ w`'s leaves are a contiguous sub-list of `σ T`'s leaves under
-    LocallyCoherent), plus a Nodup hypothesis on `σ T`'s leaves to handle
-    the swap-case vacuously. The substrate machinery (
-    `leftmostLeafPlanar_mem_leafTokens`, `σ_leafMultiset_at_mul`, etc.)
-    is in place; the full induction is mechanical but lengthy.
+    This is the **descent lemma** that makes the §5 coherence proof tractable:
+    σ on T's subtrees produces leaf-lists whose token-counts are bounded by
+    σ T's leaf-list. Combined with Nodup on σ T's leaves, this gives:
+    (a) Nodup on σ w's leaves for any w ∈ T.subtrees (via `Multiset.nodup_of_le`);
+    (b) Disjointness of σa's and σb's leaves at any (a*b) ∈ T.subtrees. -/
+theorem σ_leafMultiset_le_root (h : HeadFunction) :
+    ∀ (T : SyntacticObject) (_hCoh : h.LocallyCoherent T)
+      (w : SyntacticObject) (_hw : w ∈ T.subtrees),
+      (↑(leafTokensPlanar (h.section_.σ w)) : Multiset LIToken)
+        ≤ ↑(leafTokensPlanar (h.section_.σ T)) := by
+  intro T
+  induction T with
+  | leaf tok =>
+    intro _ w hw
+    rw [SyntacticObject.subtrees_leaf, Multiset.mem_singleton] at hw
+    subst hw; exact le_refl _
+  | trace n =>
+    intro _ w hw
+    rw [SyntacticObject.subtrees_trace, Multiset.mem_singleton] at hw
+    subst hw; exact le_refl _
+  | mul a b iha ihb =>
+    intro hCoh w hw
+    have hab_in : (a * b) ∈ (a * b).subtrees := by
+      rw [SyntacticObject.subtrees_mul]; exact Multiset.mem_cons_self _ _
+    have hsplit := hCoh a b hab_in
+    have hperm := σ_leafMultiset_at_mul h hsplit
+    rw [SyntacticObject.subtrees_mul] at hw
+    rcases Multiset.mem_cons.mp hw with hw_eq | hw_sub
+    · subst hw_eq; exact le_refl _
+    · rcases Multiset.mem_add.mp hw_sub with hwa | hwb
+      · -- w ∈ a.subtrees: apply iha then add σb's leaves
+        have ha_in_ab : a ∈ (a * b).subtrees := by
+          rw [SyntacticObject.subtrees_mul]
+          exact Multiset.mem_cons_of_mem
+            (Multiset.mem_add.mpr (Or.inl (self_mem_subtrees a)))
+        have hCoh_a : h.LocallyCoherent a := hCoh.descent ha_in_ab
+        have h_le_a := iha hCoh_a w hwa
+        rw [hperm]
+        exact h_le_a.trans (Multiset.le_add_right _ _)
+      · have hb_in_ab : b ∈ (a * b).subtrees := by
+          rw [SyntacticObject.subtrees_mul]
+          exact Multiset.mem_cons_of_mem
+            (Multiset.mem_add.mpr (Or.inr (self_mem_subtrees b)))
+        have hCoh_b : h.LocallyCoherent b := hCoh.descent hb_in_ab
+        have h_le_b := ihb hCoh_b w hwb
+        rw [hperm]
+        exact h_le_b.trans (Multiset.le_add_left _ _)
+
+/-- Under `LocallyCoherent h T` with `Nodup` on σ T's planar leaves, every
+    subtree `w ⊆ T` also has `Nodup` planar leaves. Direct corollary of
+    `σ_leafMultiset_le_root` plus `Multiset.nodup_of_le`. -/
+theorem σ_leafTokensPlanar_nodup_subtree (h : HeadFunction) (T : SyntacticObject)
+    (hCoh : h.LocallyCoherent T)
+    (hNodup : (leafTokensPlanar (h.section_.σ T)).Nodup)
+    {w : SyntacticObject} (hw : w ∈ T.subtrees) :
+    (leafTokensPlanar (h.section_.σ w)).Nodup := by
+  have h_le := σ_leafMultiset_le_root h T hCoh w hw
+  -- Nodup on the larger multiset implies Nodup on the smaller (via coercion).
+  exact Multiset.nodup_of_le h_le hNodup
+
+/-- Under `LocallyCoherent h T` with `Nodup` on σ T's planar leaves, the
+    leaf-lists of σa and σb at any `(a*b) ∈ T.subtrees` are DISJOINT
+    (no shared token). Direct consequence of Nodup on σ(a*b)'s leaves
+    (which decomposes into σa's leaves ++ σb's leaves modulo swap). -/
+theorem σ_leafTokens_disjoint_at_mul (h : HeadFunction) (T : SyntacticObject)
+    (hCoh : h.LocallyCoherent T)
+    (hNodup : (leafTokensPlanar (h.section_.σ T)).Nodup)
+    {a b : SyntacticObject} (hab : (a * b) ∈ T.subtrees)
+    {x : LIToken} (hxa : x ∈ leafTokensPlanar (h.section_.σ a))
+    (hxb : x ∈ leafTokensPlanar (h.section_.σ b)) : False := by
+  -- Get Nodup at (a*b) via descent
+  have hab_nodup := σ_leafTokensPlanar_nodup_subtree h T hCoh hNodup hab
+  -- σ(a*b) = σa*σb or σb*σa: either way Nodup of the concatenation gives disjoint.
+  rcases hCoh a b hab with heq | heq
+  · rw [heq, leafTokensPlanar_mul] at hab_nodup
+    have ⟨_, _, hdisj⟩ := List.nodup_append'.mp hab_nodup
+    exact hdisj hxa hxb
+  · rw [heq, leafTokensPlanar_mul] at hab_nodup
+    have ⟨_, _, hdisj⟩ := List.nodup_append'.mp hab_nodup
+    exact hdisj hxb hxa
+
+/-- @cite{marcolli-chomsky-berwick-2025} Def 1.13.3 coherence: under a head
+    function `h` on a tree T (locally coherent on T, with planar leaves
+    `Nodup`), if vertex `v` is contained in vertex `w` (both vertices of T)
+    and the head leaf of `w` appears among the leaves of `v`, then the head
+    leaves of `v` and `w` agree.
 
     **Why a `Nodup` hypothesis is needed**: in the swap case σ(a*b) = σb*σa
     with v ⊆ a, the head leaf of (a*b) is leftmost(σ b). For it to appear
     in σ v's leaves (⊆ σ a's leaves), σa and σb would need to share a
-    token. Nodup on σ T's leaves rules this out, making the case vacuous.
+    token. Nodup on σ T's leaves rules this out (via
+    `σ_leafTokens_disjoint_at_mul`), making the case vacuous.
 
     The Nodup hypothesis is satisfied by any well-formed derivation where
     each LI is uniquely instantiated (the typical linguistic case).
 
-    **Proof strategy**: structural induction on `w`.
+    **Proof**: structural induction on `w`.
     - Base: w is a leaf/trace; w.subtrees = {w}, so v = w trivially.
-    - Step: w = a*b. Under LocallyCoherent, σ(a*b) = σa*σb or σb*σa,
-      determining whether the head leaf comes from `a` or `b`'s side.
-    - For v on the head-carrying side: apply IH to that side (smaller w).
-    - For v on the opposite side: under Nodup-derived disjointness, the
-      head leaf cannot appear in v's leaves; contradiction with hmem.
-
-    TODO: discharge the proof. Requires `Multiset.Nodup` propagation along
-    `≤` (find/prove the right mathlib lemma), or alternative `List.Sublist`-
-    based path. The `_hNodup` hypothesis is supplied for forward
-    compatibility once the proof lands. -/
+    - Step: w = a*b. By LocallyCoherent, σ(a*b) = σa*σb or σb*σa.
+      Under headSide × swap × v's side (8 cases total):
+      • Head-from-a + v⊆a: apply iha.
+      • Head-from-b + v⊆b: apply ihb.
+      • Head-from-a + v⊆b OR Head-from-b + v⊆a: contradiction via
+        `σ_leafTokens_disjoint_at_mul`. -/
 theorem HeadFunction.headAtVertex_coherent (h : HeadFunction) (T : SyntacticObject)
-    (_hCoh : h.LocallyCoherent T)
-    (_hNodup : (leafTokensPlanar (h.section_.σ T)).Nodup)
-    {v w : SyntacticObject} (_hw : w ∈ T.subtrees) (_hvw : v ∈ w.subtrees)
-    (_hmem : h.headAtVertex T w ∈ leafTokensPlanar (h.section_.σ v)) :
+    (hCoh : h.LocallyCoherent T)
+    (hNodup : (leafTokensPlanar (h.section_.σ T)).Nodup)
+    {v w : SyntacticObject} (hw : w ∈ T.subtrees) (hvw : v ∈ w.subtrees)
+    (hmem : h.headAtVertex T w ∈ leafTokensPlanar (h.section_.σ v)) :
     h.headAtVertex T w = h.headAtVertex T v := by
-  sorry
+  induction w with
+  | leaf tok =>
+    rw [SyntacticObject.subtrees_leaf, Multiset.mem_singleton] at hvw
+    subst hvw; rfl
+  | trace n =>
+    rw [SyntacticObject.subtrees_trace, Multiset.mem_singleton] at hvw
+    subst hvw; rfl
+  | mul a b iha ihb =>
+    have ha_in_T : a ∈ T.subtrees :=
+      subtrees_subset_of_mem hw (by
+        rw [SyntacticObject.subtrees_mul]
+        exact Multiset.mem_cons_of_mem
+          (Multiset.mem_add.mpr (Or.inl (self_mem_subtrees a))))
+    have hb_in_T : b ∈ T.subtrees :=
+      subtrees_subset_of_mem hw (by
+        rw [SyntacticObject.subtrees_mul]
+        exact Multiset.mem_cons_of_mem
+          (Multiset.mem_add.mpr (Or.inr (self_mem_subtrees b))))
+    have hsplit := hCoh a b hw
+    -- Decompose hvw : v ∈ (a*b).subtrees
+    rw [SyntacticObject.subtrees_mul] at hvw
+    rcases Multiset.mem_cons.mp hvw with hv_eq | hv_sub
+    · subst hv_eq; rfl
+    rcases Multiset.mem_add.mp hv_sub with hva | hvb
+    -- For each (v⊆a or v⊆b), case-split on h.headSide and on hsplit (4 cases each).
+    -- The 4 subcases per v-side combine into "head from a" vs "head from b":
+    --   v⊆a → "head from a" applies iha; "head from b" contradicts via disjointness.
+    --   v⊆b → "head from b" applies ihb; "head from a" contradicts via disjointness.
+    all_goals (
+      -- Helper: extract the "head from a" or "head from b" identification
+      -- via case-split on (headSide, hsplit). We avoid duplicating cases
+      -- by computing `headAtVertex T (a*b)` for each of the 4 subcases.
+      cases h_side : h.headSide
+      <;> rcases hsplit with heq | heq
+    )
+    -- Now we have 4 subcases per v-side (8 total). Solve each:
+    -- v⊆a, .initial, no-swap: head = leftmost(σa). Apply iha.
+    · have hAB_eq_A : h.headAtVertex T (a * b) = h.headAtVertex T a := by
+        unfold HeadFunction.headAtVertex; rw [h_side, heq]; rfl
+      rw [hAB_eq_A]; rw [hAB_eq_A] at hmem
+      exact iha ha_in_T hva hmem
+    -- v⊆a, .initial, swap: head = leftmost(σb). Disjointness contradiction.
+    · exfalso
+      have hAB_eq_B : h.headAtVertex T (a * b) = h.headAtVertex T b := by
+        unfold HeadFunction.headAtVertex; rw [h_side, heq]; rfl
+      rw [hAB_eq_B] at hmem
+      have hxb : h.headAtVertex T b ∈ leafTokensPlanar (h.section_.σ b) := by
+        unfold HeadFunction.headAtVertex; rw [h_side]
+        exact leftmostLeafPlanar_mem_leafTokens _
+      have h_le_a : (↑(leafTokensPlanar (h.section_.σ v)) : Multiset LIToken) ≤
+          ↑(leafTokensPlanar (h.section_.σ a)) :=
+        σ_leafMultiset_le_root h a (hCoh.descent ha_in_T) v hva
+      have hxa : h.headAtVertex T b ∈ leafTokensPlanar (h.section_.σ a) :=
+        Multiset.mem_of_le h_le_a hmem
+      exact σ_leafTokens_disjoint_at_mul h T hCoh hNodup hw hxa hxb
+    -- v⊆a, .final, no-swap: head = rightmost(σb). Disjointness contradiction.
+    · exfalso
+      have hAB_eq_B : h.headAtVertex T (a * b) = h.headAtVertex T b := by
+        unfold HeadFunction.headAtVertex; rw [h_side, heq]; rfl
+      rw [hAB_eq_B] at hmem
+      have hxb : h.headAtVertex T b ∈ leafTokensPlanar (h.section_.σ b) := by
+        unfold HeadFunction.headAtVertex; rw [h_side]
+        exact rightmostLeafPlanar_mem_leafTokens _
+      have h_le_a : (↑(leafTokensPlanar (h.section_.σ v)) : Multiset LIToken) ≤
+          ↑(leafTokensPlanar (h.section_.σ a)) :=
+        σ_leafMultiset_le_root h a (hCoh.descent ha_in_T) v hva
+      have hxa : h.headAtVertex T b ∈ leafTokensPlanar (h.section_.σ a) :=
+        Multiset.mem_of_le h_le_a hmem
+      exact σ_leafTokens_disjoint_at_mul h T hCoh hNodup hw hxa hxb
+    -- v⊆a, .final, swap: head = rightmost(σa). Apply iha.
+    · have hAB_eq_A : h.headAtVertex T (a * b) = h.headAtVertex T a := by
+        unfold HeadFunction.headAtVertex; rw [h_side, heq]; rfl
+      rw [hAB_eq_A]; rw [hAB_eq_A] at hmem
+      exact iha ha_in_T hva hmem
+    -- v⊆b, .initial, no-swap: head = leftmost(σa). Disjointness contradiction.
+    · exfalso
+      have hAB_eq_A : h.headAtVertex T (a * b) = h.headAtVertex T a := by
+        unfold HeadFunction.headAtVertex; rw [h_side, heq]; rfl
+      rw [hAB_eq_A] at hmem
+      have hxa : h.headAtVertex T a ∈ leafTokensPlanar (h.section_.σ a) := by
+        unfold HeadFunction.headAtVertex; rw [h_side]
+        exact leftmostLeafPlanar_mem_leafTokens _
+      have h_le_b : (↑(leafTokensPlanar (h.section_.σ v)) : Multiset LIToken) ≤
+          ↑(leafTokensPlanar (h.section_.σ b)) :=
+        σ_leafMultiset_le_root h b (hCoh.descent hb_in_T) v hvb
+      have hxb : h.headAtVertex T a ∈ leafTokensPlanar (h.section_.σ b) :=
+        Multiset.mem_of_le h_le_b hmem
+      exact σ_leafTokens_disjoint_at_mul h T hCoh hNodup hw hxa hxb
+    -- v⊆b, .initial, swap: head = leftmost(σb). Apply ihb.
+    · have hAB_eq_B : h.headAtVertex T (a * b) = h.headAtVertex T b := by
+        unfold HeadFunction.headAtVertex; rw [h_side, heq]; rfl
+      rw [hAB_eq_B]; rw [hAB_eq_B] at hmem
+      exact ihb hb_in_T hvb hmem
+    -- v⊆b, .final, no-swap: head = rightmost(σb). Apply ihb.
+    · have hAB_eq_B : h.headAtVertex T (a * b) = h.headAtVertex T b := by
+        unfold HeadFunction.headAtVertex; rw [h_side, heq]; rfl
+      rw [hAB_eq_B]; rw [hAB_eq_B] at hmem
+      exact ihb hb_in_T hvb hmem
+    -- v⊆b, .final, swap: head = rightmost(σa). Disjointness contradiction.
+    · exfalso
+      have hAB_eq_A : h.headAtVertex T (a * b) = h.headAtVertex T a := by
+        unfold HeadFunction.headAtVertex; rw [h_side, heq]; rfl
+      rw [hAB_eq_A] at hmem
+      have hxa : h.headAtVertex T a ∈ leafTokensPlanar (h.section_.σ a) := by
+        unfold HeadFunction.headAtVertex; rw [h_side]
+        exact rightmostLeafPlanar_mem_leafTokens _
+      have h_le_b : (↑(leafTokensPlanar (h.section_.σ v)) : Multiset LIToken) ≤
+          ↑(leafTokensPlanar (h.section_.σ b)) :=
+        σ_leafMultiset_le_root h b (hCoh.descent hb_in_T) v hvb
+      have hxb : h.headAtVertex T a ∈ leafTokensPlanar (h.section_.σ b) :=
+        Multiset.mem_of_le h_le_b hmem
+      exact σ_leafTokens_disjoint_at_mul h T hCoh hNodup hw hxa hxb
 
 -- ============================================================================
 -- § 7: MCB Def 1.15.1 raising condition (two clauses, per audit H1)

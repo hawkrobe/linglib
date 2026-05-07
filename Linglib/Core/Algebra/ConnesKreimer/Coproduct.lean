@@ -130,14 +130,54 @@ noncomputable def forestToHc (F : TraceForest α Unit) : Hc R α :=
     (R := R) (M := TraceForest α Unit) F G 1 1
     |>.trans (by rw [mul_one])).symm
 
-/-- The tree-level Connes-Kreimer coproduct.
-    Δ^c(T) = T ⊗ 1 + Σ_c (cutForest c) ⊗ ({remainder c}). -/
-noncomputable def comulTree (T : TraceTree α Unit) : Hc R α ⊗[R] Hc R α :=
+/-- The **filtered** tree-level Connes-Kreimer coproduct: same shape as
+    `comulTree` but the cut-set sum is restricted to cuts satisfying a
+    Boolean predicate `P`. The primitive `T ⊗ 1` term is always retained.
+
+    Common subsumed cases (each is `comulTreeFiltered T P` for some `P`):
+    - `comulTree T` = `comulTreeFiltered T (fun _ => true)` (unrestricted Δ^c).
+    - `comulPhaseC h T ℓ` (in `Merge/PhaseCoproduct.lean`) =
+      `comulTreeFiltered T.toHc (cutPhaseCompatible h T ℓ)` (Δ^c_Φ).
+    - Future cost-restricted, complexity-restricted, feature-restricted
+      coproducts can all use the same primitive.
+
+    Decoupling the filtering predicate from the carrier lets consumers state
+    "unrestricted limit recovery" lemmas (e.g., `comulTreeFiltered T (fun _
+    => true) = comulTree T` is `rfl` modulo `Finset.filter_true`). -/
+noncomputable def comulTreeFiltered (T : TraceTree α Unit)
+    (P : CutShape T → Bool) : Hc R α ⊗[R] Hc R α :=
   forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)
   +
-  ∑ c : CutShape T,
+  ∑ c ∈ (Finset.univ : Finset (CutShape T)).filter (fun c => P c = true),
     forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
     forestToHc (R := R) ({CutShape.remainder c} : TraceForest α Unit)
+
+/-- The tree-level Connes-Kreimer coproduct.
+    Δ^c(T) = T ⊗ 1 + Σ_c (cutForest c) ⊗ ({remainder c}).
+
+    Defined as the unrestricted (filter-true) case of `comulTreeFiltered`. -/
+noncomputable def comulTree (T : TraceTree α Unit) : Hc R α ⊗[R] Hc R α :=
+  comulTreeFiltered T (fun _ => true)
+
+/-- Recovery: when the filter is constantly true, `comulTreeFiltered`
+    reduces to `comulTree`. -/
+@[simp] theorem comulTreeFiltered_true (T : TraceTree α Unit) :
+    comulTreeFiltered (R := R) T (fun _ => true) = comulTree T := rfl
+
+/-- Structural decomposition of `comulTree T` into the explicit primitive
+    `T ⊗ 1` term plus the unfiltered sum over admissible cuts. Direct from
+    the definition (`comulTree := comulTreeFiltered _ true`,
+    `Finset.filter_true_of_mem` makes the filter trivial). -/
+theorem comulTree_eq_prim_add_sum (T : TraceTree α Unit) :
+    comulTree (R := R) T
+      = forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : Hc R α)
+        + ∑ c : CutShape T,
+            forestToHc (R := R) (CutShape.cutForest c) ⊗ₜ[R]
+              forestToHc (R := R) ({CutShape.remainder c} : TraceForest α Unit) := by
+  unfold comulTree comulTreeFiltered
+  congr 1
+  apply Finset.sum_congr (Finset.ext (fun c => by simp))
+  intros; rfl
 
 /-! ## §2: Forest-level coproduct (multiplicative extension)
 

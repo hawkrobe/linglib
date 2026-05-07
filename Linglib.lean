@@ -2158,6 +2158,7 @@ import Linglib.Theories.Syntax.Minimalist.Merge.Sideward
 import Linglib.Theories.Syntax.Minimalist.Merge.NoComplexityLoss
 import Linglib.Theories.Syntax.Minimalist.Merge.MinimalYield
 import Linglib.Theories.Syntax.Minimalist.Merge.Phase
+import Linglib.Theories.Syntax.Minimalist.Merge.PhaseCoproduct
 import Linglib.Theories.Syntax.Minimalist.SpellOut
 import Linglib.Theories.Syntax.Minimalist.Linearization.LCA
 import Linglib.Theories.Morphology.DM.VocabSimple

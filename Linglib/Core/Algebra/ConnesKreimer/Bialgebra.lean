@@ -160,7 +160,7 @@ private lemma counit_rTensor_apply_comulTree (T : TraceTree α Unit) :
     (Algebra.TensorProduct.map (counit (R := R) (α := α))
         (AlgHom.id R (Hc R α))) (comulTree T)
       = (1 : R) ⊗ₜ[R] forestToHc (R := R) ({T} : TraceForest α Unit) := by
-  unfold comulTree
+  rw [comulTree_eq_prim_add_sum]
   rw [map_add]
   unfold forestToHc
   rw [Algebra.TensorProduct.map_tmul]
@@ -207,7 +207,7 @@ private lemma counit_lTensor_apply_comulTree (T : TraceTree α Unit) :
     (Algebra.TensorProduct.map (AlgHom.id R (Hc R α))
         (counit (R := R) (α := α))) (comulTree T)
       = forestToHc (R := R) ({T} : TraceForest α Unit) ⊗ₜ[R] (1 : R) := by
-  unfold comulTree
+  rw [comulTree_eq_prim_add_sum]
   rw [map_add, Algebra.TensorProduct.map_tmul]
   simp only [AlgHom.coe_id, id_eq, map_one]
   rw [map_sum, Finset.sum_eq_zero, add_zero]

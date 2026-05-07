@@ -342,19 +342,28 @@ matching cases 2 and 3 across the symmetric expressions. -/
     p. 22) identifies syntactic objects with the **commutative** free
     magma. The current planar carrier is at odds with §1.1 of the book.
 
-    **Migration in progress (Phase 0 landed 2026-05-06):** the
-    nonplanar carrier `FreeCommMagma α` is being introduced in
-    `Linglib/Core/Algebra/Free.lean`. The pre-Lie identity
-    on `(FreeCommMagma α) →₀ ℤ` *is* a strict equality (the (c)
-    `newEprime` discrepancy collapses via `Quot.sound .swap`); see
-    `docs/nonplanar-migration-plan.md` for the full migration plan.
-    This `sorry` will be replaced by the nonplanar version (Phase 1b)
-    rather than discharged on the current planar carrier.
+    **FreeCommMagma substrate is LANDED** (Phase 3.A, 2026-05-07): the
+    nonplanar carrier `FreeCommMagma α` in `Linglib/Core/Algebra/Free.lean`
+    is complete (889 LOC, 0 sorrys; `Section`, `mk`, `lift`, `inductionOn`,
+    `commLift` etc.). The pre-Lie identity on `(FreeCommMagma α) →₀ ℤ`
+    *is* a strict equality — the (c) `newEprime` discrepancy collapses via
+    `Quot.sound .swap`.
 
-    The §9.1–§9.4 substrate already landed (`Edge.classifyEquiv`,
-    `edges_insertAt_eq_classification`, `insertAt_commute_diff`,
-    `insertAt_lift_eq_nested`) is reusable on the nonplanar carrier;
-    the migration ports rather than re-derives. -/
+    **Port queued for Phase 3.E** (separate scope from 3.D Δ^c_Φ work):
+    define `insertSumComm : FreeCommMagma α → FreeCommMagma α →
+    Multiset (FreeCommMagma α)` by descent through a planar
+    representative + quotient projection, then prove the right pre-Lie
+    identity on `(FreeCommMagma α) →₀ ℤ`. The §9.1–§9.4 substrate
+    (`Edge.classifyEquiv`, `edges_insertAt_eq_classification`,
+    `insertAt_commute_diff`, `insertAt_lift_eq_nested`) is reusable for
+    the nonplanar carrier — migration ports rather than re-derives.
+    Estimated ~600-1000 LOC.
+
+    The current planar `sorry` is left in place because the identity is
+    genuinely false on planar `TraceTree` (Lean-verified counterexample)
+    — the planar version cannot be discharged; only the FreeCommMagma
+    version can. Consumers of this file should switch to the nonplanar
+    version once Phase 3.E lands. -/
 theorem insertSumLift_right_preLie (f g h : (TraceTree α β) →₀ ℤ) :
     f ◇ g ◇ h - f ◇ (g ◇ h) = f ◇ h ◇ g - f ◇ (h ◇ g) := by
   sorry

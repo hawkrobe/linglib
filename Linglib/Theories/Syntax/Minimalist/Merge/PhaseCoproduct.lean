@@ -166,6 +166,11 @@ noncomputable def cutPhaseCompatible (h : HeadFunction) (T : SyntacticObject)
     using the contraction coproduct shape (Δ^c, with `remainder` rather than
     `remainderDeletion`).
 
+    **Implementation**: routes through `comulTreeFiltered` (in
+    `ConnesKreimer/Coproduct.lean`), the shared filtered-coproduct primitive
+    that also defines `comulTree` (with `fun _ => true`). The phase-restricted
+    case uses `cutPhaseCompatible h T ℓ` as the filter.
+
     Sums over admissible cuts `c : CutShape T.toHc` on the planar embedding
     of `T` that are phase-compatible (extract only phase-accessible subtrees
     per `cutPhaseCompatible`). Includes the explicit `T ⊗ 1` primitive term;
@@ -173,19 +178,26 @@ noncomputable def cutPhaseCompatible (h : HeadFunction) (T : SyntacticObject)
 
     Compared to the standard `comulTree` (in `ConnesKreimer/Coproduct.lean`),
     this version drops cuts that extract subtrees in `Y_ℓ` (the inaccessibility
-    set of lower phases). When no cuts are inaccessible (e.g., `T` has only
-    a single phase), this reduces to `comulTree T.toHc`. -/
+    set of lower phases). The unrestricted-limit recovery is provable by
+    `comulPhaseC_eq_comulTree_of_no_filter` below. -/
 noncomputable def comulPhaseC (h : HeadFunction) (T : SyntacticObject)
     (ℓ : LIToken) :
     Hc ℤ LIToken ⊗[ℤ] Hc ℤ LIToken :=
-  -- Primitive term T ⊗ 1 (always present, no cuts involved)
-  forestToHc (R := ℤ) ({T.toHc} : TraceForest LIToken Unit) ⊗ₜ[ℤ] (1 : Hc ℤ LIToken)
-  +
-  -- Filtered sum over phase-compatible cuts
-  ∑ c ∈ (Finset.univ : Finset (CutShape T.toHc)).filter
-      (fun c => decide (cutPhaseCompatible h T ℓ c = true)),
-    forestToHc (R := ℤ) (CutShape.cutForest c) ⊗ₜ[ℤ]
-    forestToHc (R := ℤ) ({CutShape.remainder c} : TraceForest LIToken Unit)
+  comulTreeFiltered T.toHc (cutPhaseCompatible h T ℓ)
+
+/-- **Unrestricted-limit recovery**: when no cuts are phase-incompatible
+    (the filter is constantly true), Δ^c_Φ recovers the standard Δ^c.
+    Substantive content of "Δ^c_Φ is a *restriction* of Δ^c, not a parallel
+    definition" — provable as a one-liner via the shared `comulTreeFiltered`
+    primitive. -/
+theorem comulPhaseC_eq_comulTree_of_no_filter
+    (h : HeadFunction) (T : SyntacticObject) (ℓ : LIToken)
+    (hAll : ∀ c : CutShape T.toHc, cutPhaseCompatible h T ℓ c = true) :
+    comulPhaseC h T ℓ = comulTree T.toHc := by
+  unfold comulPhaseC comulTree comulTreeFiltered
+  congr 1
+  apply Finset.sum_congr (Finset.ext (fun c => by simp [hAll c]))
+  intros; rfl
 
 /-- Standard `comulTree T.toHc` (= unrestricted Δ^c on T's planar embedding)
     in the same shape as `comulPhaseC`. The unfiltered sum form. Useful for
@@ -195,52 +207,34 @@ noncomputable def comulC_unrestricted (T : SyntacticObject) :
   comulTree T.toHc
 
 -- ============================================================================
--- § 3: Coassociativity statement (MCB Lemma 1.14.6, sorry'd)
+-- § 3: Coassociativity (MCB Lemma 1.14.6) — DEFERRED to Phase 3.E
 -- ============================================================================
 
-/-- @cite{marcolli-chomsky-berwick-2025} Lemma 1.14.6 — informal statement:
-    Δ^c_Φ is well-defined and coassociative.
+/-! ### Coassociativity status
 
-    Formal statement: at the tree level, the iterated phase coproduct
-    (Δ^c_Φ ⊗ id) ∘ Δ^c_Φ equals (id ⊗ Δ^c_Φ) ∘ Δ^c_Φ when expanded
-    structurally. Stating this requires either a `LinearMap`-shaped Δ^c_Φ
-    (deferred — see module docstring) or a per-summand bijection between
-    the LHS and RHS expansions.
+The headline algebraic theorem MCB Lemma 1.14.6 — `(Δ^c_Φ ⊗ id) ∘ Δ^c_Φ =
+(id ⊗ Δ^c_Φ) ∘ Δ^c_Φ` — is **not stated here**. Stating it requires a
+`LinearMap`-shaped Δ^c_Φ to express the iterated composition; the current
+`comulPhaseC` returns `Hc ⊗ Hc` directly (single tree, no per-channel
+recursion). The LinearMap extension is non-trivial because the per-tree
+phase context (h, T, ℓ) doesn't propagate to extracted sub-trees in a
+canonical way (each sub-tree has its own phase configuration).
 
-    The simpler stable proxy: equality of the **first-iteration coassoc
-    consistency** condition — for any phase-compatible cut `c₁` and any
-    phase-compatible cut `c₂` on the remainder of c₁, the cut composition
-    is also phase-compatible. (This is the substrate underpinning the
-    full coassociativity bijection.)
+**Proof strategy when LinearMap version lands** (MCB book p. 138):
+1. Define `cutAtPhaseHeadEdges T h ℓ : CutShape T.toHc` — the canonical
+   admissible cut that severs every phase-head edge.
+2. Show `comulPhaseC h T ℓ` corresponds to `comulTree (T.toHc / cutAtPhaseHeadEdges)`
+   under a label-renaming bijection that relabels the new leaves with their
+   `T_{s_ℓ}` originals.
+3. Apply `comul_coassoc` (`ConnesKreimer/Bialgebra.lean`) on the cut tree;
+   pushforward through the bijection gives Δ^c_Φ coassoc.
 
-    **Proof strategy** (MCB book p. 138):
-    1. Identify `comulPhaseC h T ℓ` with `comulTree (T/^c π_C(T))` via
-       a label-renaming bijection. The bijection maps phase-compatible cuts
-       on T to ALL admissible cuts on T/^c π_C(T), where `π_C(T)` is the
-       admissible cut that cuts each edge above each vertex `s_ℓ` (the
-       sister of the head of each phase).
-    2. The label-renaming replaces the new leaves of T/^c π_C(T) (which
-       carry placeholder labels for the contracted subtrees) with the
-       restored `T_{s_ℓ}` labels.
-    3. Coassociativity of Δ^c (`comul_coassoc` in
-       `ConnesKreimer/Bialgebra.lean`) lifts via the bijection to
-       coassociativity of Δ^c_Φ.
-
-    TODO: discharge the proof. The substantive content is the bijection
-    construction (defining `cutAtPhaseHeadEdges` and proving the cuts-of-cuts
-    compatibility under the bijection), then the pushforward of
-    `comul_coassoc`. ~300-500 LOC.
-
-    The placeholder statement here records that the algebraic claim holds:
-    Δ^c_Φ(T) is a well-defined element of Hc ⊗ Hc (constructively, via
-    the explicit sum). The full coassociativity identity is queued. -/
-theorem comulPhaseC_well_defined (h : HeadFunction) (T : SyntacticObject)
-    (ℓ : LIToken) :
-    ∃ x : Hc ℤ LIToken ⊗[ℤ] Hc ℤ LIToken, x = comulPhaseC h T ℓ :=
-  ⟨_, rfl⟩
+Phase 3.E will land the LinearMap extension and discharge the bijection.
+The current substrate is sufficient for downstream tree-level reasoning.
+-/
 
 -- ============================================================================
--- § 4: PICStrength dispatch (Phase 3.C.4)
+-- § 4: PICStrength dispatch (weak PIC properly wired)
 -- ============================================================================
 
 /-- The **inaccessibility set `Y_ℓ` under WEAK PIC**: relaxed version of
@@ -268,12 +262,30 @@ noncomputable def inaccessibleTerms_weak (h : HeadFunction) (T : SyntacticObject
       |> List.toFinset |>.val
   strict.filter (fun Tv => decide (Tv ∉ phaseHeadSOs))
 
+/-- WEAK-PIC analog of `cutPhaseCompatible`: a cut is **weak-phase-compatible**
+    when every extracted subtree is in the WEAK accessible set
+    (`inaccessibleTerms_weak` allows phase-heads to remain accessible). -/
+noncomputable def cutPhaseCompatible_weak (h : HeadFunction) (T : SyntacticObject)
+    (ℓ : LIToken) (c : CutShape T.toHc) : Bool :=
+  ((CutShape.cutForest c).toFinset.toList).all
+    (fun subtree => match traceTreeToSyntacticObject? subtree with
+      | some so => decide (so ∉ inaccessibleTerms_weak h T ℓ)
+      | none    => true)
+
+/-- The **WEAK** tree-level phase coproduct Δ^c_Φ_weak: filtered with
+    `cutPhaseCompatible_weak` (phase heads remain accessible). -/
+noncomputable def comulPhaseC_weak (h : HeadFunction) (T : SyntacticObject)
+    (ℓ : LIToken) :
+    Hc ℤ LIToken ⊗[ℤ] Hc ℤ LIToken :=
+  comulTreeFiltered T.toHc (cutPhaseCompatible_weak h T ℓ)
+
 /-- The phase-coproduct under PICStrength dispatch. Selects between the
     strict, weak, and linearization-bound variants per `Phase.lean`'s
     `PICStrength` enum.
 
-    - `.strong`: standard Δ^c_Φ with strict `Y_ℓ`.
-    - `.weak`: Δ^c_Φ with relaxed `Y_ℓ_weak` (phase-heads accessible).
+    - `.strong`: standard Δ^c_Φ with strict `Y_ℓ` (`comulPhaseC`).
+    - `.weak`: Δ^c_Φ with relaxed `Y_ℓ_weak` (`comulPhaseC_weak`); phase-heads
+      accessible per @cite{marcolli-chomsky-berwick-2025} Remark 1.14.4.
     - `.linearizationBound`: unrestricted Δ^c (no phase filtering); the
       linearization gate is enforced separately at the externalization layer. -/
 noncomputable def comulPICStrength (mode : PICStrength)
@@ -281,10 +293,7 @@ noncomputable def comulPICStrength (mode : PICStrength)
     Hc ℤ LIToken ⊗[ℤ] Hc ℤ LIToken :=
   match mode with
   | .strong              => comulPhaseC h T ℓ
-  | .weak                =>
-    -- TODO Phase 3.C.4: define `comulPhaseC_weak` using `inaccessibleTerms_weak`
-    -- (parallel to `comulPhaseC` but with weak Y_ℓ). For now: same as strong.
-    comulPhaseC h T ℓ
+  | .weak                => comulPhaseC_weak h T ℓ
   | .linearizationBound  => comulC_unrestricted T
 
 end Minimalist.Merge
