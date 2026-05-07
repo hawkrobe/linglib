@@ -1,4 +1,7 @@
-/-
+import Linglib.Theories.Syntax.Minimalist.Labeling
+import Linglib.Theories.Syntax.Minimalist.Features
+
+/-!
 # Phase Theory
 
 Formalization of derivational phases following @cite{chomsky-2000},
@@ -15,24 +18,14 @@ Formalization of derivational phases following @cite{chomsky-2000},
 
 ## Design
 
-`isPhaseHeadOf c so` is derived from `SyntacticObject.outerCat`, which
-returns the leftmost leaf's outer category — provably equal to
-`(HeadFunction.leftSpine.headAt so).item.outerCat` (this is a linglib
-substrate identity, not MCB content: `leftSpine` is a linglib name for
-the always-pick-left-daughter head function; @cite{marcolli-chomsky-berwick-2025}
-§1.13 introduces head functions in general but does not single this
-one out). The leftmost-leaf shortcut is a left-headed-only convenience
-suitable for English-style analyses. For a study with a non-default
-head function (e.g., a head-final Korean/Japanese phase analysis),
-lift via `Minimalist.Labeling.labelRoot h so` directly with the chosen
-`h : HeadFunction`. A latent trap: any head-final consumer that calls
-`isPhaseHeadOf` will silently misfire — flagged for h-parameterization
-in a future session.
-
+`isPhaseHeadOf c so` is derived from `HeadFunction.leftSpine.outerCat so` —
+the leftmost leaf's outer category under the harmonic head-initial convention.
+For head-final analyses (Korean, Japanese), supply a head function with
+`headSide := .final` (e.g. `HeadFunction.rightSpine`) and lift via
+`Minimalist.Labeling.labelRoot h so` directly. A latent trap: any head-final
+consumer that calls `isPhaseHeadOf` will silently misfire — flagged for
+h-parameterization in a future session.
 -/
-
-import Linglib.Theories.Syntax.Minimalist.Labeling
-import Linglib.Theories.Syntax.Minimalist.Features
 
 namespace Minimalist
 

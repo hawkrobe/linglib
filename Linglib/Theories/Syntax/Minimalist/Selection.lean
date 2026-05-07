@@ -124,8 +124,14 @@ consumed by matching against `r`'s outer category, and the residual is `l`'s
 remaining stack. -/
 
 /-- Underlying parameterized `checkedSel?` on a planar `FreeMagma`
-    representative, taking a `HeadFunction` to recursively check
-    `outerCat` of subtrees. -/
+    representative.
+
+    For a binary node `(l, r)`, computes the right child's outer category
+    by `leftmostLeafPlanar r |>.item.outerCat` (or `rightmostLeafPlanar r`
+    under head-final), staying entirely in the planar world. This avoids
+    the `externalize ∘ mk ≠ id` round-trip bug: re-applying `h.section_.σ`
+    to `FreeCommMagma.mk r` would target a potentially DIFFERENT
+    representative than the `r` we already have in hand. -/
 def checkedSelWithPlanar (h : HeadFunction) :
     FreeMagma (LIToken ⊕ Nat) → Option (List Cat)
   | .of (.inl tok) => some tok.item.outerSel
@@ -133,7 +139,10 @@ def checkedSelWithPlanar (h : HeadFunction) :
   | .mul l r =>
     match checkedSelWithPlanar h l, checkedSelWithPlanar h r with
     | some (c :: rest), some [] =>
-      if h.outerCat (FreeCommMagma.mk r) = c then some rest else none
+      let rHeadLeaf := match h.headSide with
+        | .initial => leftmostLeafPlanar r
+        | .final   => rightmostLeafPlanar r
+      if rHeadLeaf.item.outerCat = c then some rest else none
     | _, _ => none
 
 /-- Parameterized `checkedSel?`: under head function `h` (with externalize
