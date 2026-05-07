@@ -1,6 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Insert
+import Mathlib.Data.Multiset.Basic
 import Mathlib.Algebra.Free
 import Linglib.Core.UD
 import Linglib.Core.Combinatorics.RootedTree.Decorated
@@ -556,41 +555,48 @@ theorem leaf_node_relation (so : SyntacticObject) :
 -- Subterm Enumeration
 -- ============================================================================
 
-/-! ### Subtree enumeration
+/-! ### Subtree enumeration — `Multiset` (MCB-faithful)
 
-`subtrees` is `Finset`-typed (order-blind) so it lifts cleanly through
-`FreeCommMagma.lift` from a swap-respecting helper on `FreeMagma`. This
-matches MCB Definition 1.2.2 (book p. 28), which defines accessible
-terms `Acc(T) = {L_v | v ∈ V_int(T)}` as a *set*, not a list.
+`subtrees` returns a `Multiset` because MCB's accessible-term operator
+`Acc(T)` (Def 1.2.2, book p. 28) is multiplicity-preserving — eq (1.2.5)
+`#V(F) = b_0(F) + #Acc(F)` requires multiplicities to match. The "set"
+notation in MCB is loose; the formal object is indexed by `V_int(T)`,
+which is a multiset of vertices (one per non-root vertex, with possibly
+repeated subtree values when leaves repeat).
 
-The membership relation `t ∈ s.subtrees` is the recursive enumeration:
-the root, plus all subtrees of each daughter. -/
+For linglib's typical use (LIToken-indexed leaves with distinct ids),
+each subtree is a distinct value, so Multiset and Finset coincide
+extensionally. Multiset is preferred for substrate faithfulness.
 
-private def subtreesAux : FreeMagma (LIToken ⊕ Nat) → Finset SyntacticObject
+Multiset addition (`+`) preserves multiplicity (additive union); cons
+(`::ₘ`) adds an element regardless of presence. Both are needed. -/
+
+private def subtreesAux : FreeMagma (LIToken ⊕ Nat) → Multiset SyntacticObject
   | a@(.of _) => {FreeCommMagma.mk a}
   | a@(.mul l r) =>
-    insert (FreeCommMagma.mk a) (subtreesAux l ∪ subtreesAux r)
+    (FreeCommMagma.mk a) ::ₘ (subtreesAux l + subtreesAux r)
 
 private theorem subtreesAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
     (h : FreeMagma.CommRel a b) : subtreesAux a = subtreesAux b := by
   induction h with
   | swap a b =>
-    show insert (FreeCommMagma.mk (a * b)) (subtreesAux a ∪ subtreesAux b)
-       = insert (FreeCommMagma.mk (b * a)) (subtreesAux b ∪ subtreesAux a)
-    rw [FreeCommMagma.swap a b, Finset.union_comm]
+    show (FreeCommMagma.mk (a * b)) ::ₘ (subtreesAux a + subtreesAux b)
+       = (FreeCommMagma.mk (b * a)) ::ₘ (subtreesAux b + subtreesAux a)
+    rw [FreeCommMagma.swap a b, add_comm]
   | @mul_left a b h_inner c ih =>
-    show insert (FreeCommMagma.mk (a * c)) (subtreesAux a ∪ subtreesAux c)
-       = insert (FreeCommMagma.mk (b * c)) (subtreesAux b ∪ subtreesAux c)
+    show (FreeCommMagma.mk (a * c)) ::ₘ (subtreesAux a + subtreesAux c)
+       = (FreeCommMagma.mk (b * c)) ::ₘ (subtreesAux b + subtreesAux c)
     rw [FreeCommMagma.sound (.mul_left h_inner _), ih]
   | @mul_right a b c h_inner ih =>
-    show insert (FreeCommMagma.mk (a * b)) (subtreesAux a ∪ subtreesAux b)
-       = insert (FreeCommMagma.mk (a * c)) (subtreesAux a ∪ subtreesAux c)
+    show (FreeCommMagma.mk (a * b)) ::ₘ (subtreesAux a + subtreesAux b)
+       = (FreeCommMagma.mk (a * c)) ::ₘ (subtreesAux a + subtreesAux c)
     rw [FreeCommMagma.sound (.mul_right _ h_inner), ih]
 
 /-- All subtrees of a `SyntacticObject`, including the root itself.
-    Returns a `Finset` (order-blind), matching MCB Def 1.2.2 (book p. 28).
+    Returns a `Multiset` (multiplicity-preserving), matching MCB Def 1.2.2
+    (book p. 28) and supporting eq (1.2.5)'s vertex-counting identity.
     Computable via `FreeCommMagma.lift` from a swap-respecting helper. -/
-def SyntacticObject.subtrees : SyntacticObject → Finset SyntacticObject :=
+def SyntacticObject.subtrees : SyntacticObject → Multiset SyntacticObject :=
   FreeCommMagma.lift subtreesAux subtreesAux_respects
 
 @[simp] theorem SyntacticObject.subtrees_leaf (tok : LIToken) :
@@ -600,7 +606,7 @@ def SyntacticObject.subtrees : SyntacticObject → Finset SyntacticObject :=
     (SyntacticObject.trace n).subtrees = {SyntacticObject.trace n} := rfl
 
 @[simp] theorem SyntacticObject.subtrees_mul (l r : SyntacticObject) :
-    (l * r).subtrees = insert (l * r) (l.subtrees ∪ r.subtrees) := by
+    (l * r).subtrees = (l * r) ::ₘ (l.subtrees + r.subtrees) := by
   induction l, r using FreeCommMagma.inductionOn₂ with | _ a b => rfl
 
 /-! ### Terminal nodes — planar `List` (order matters for LCA)
@@ -648,7 +654,7 @@ private theorem terminalNodesPlanar_mem_subtreesAux
     subst h; simp [subtreesAux]
   | ih2 l r ihl ihr =>
     simp only [terminalNodesPlanar, List.mem_append] at h
-    simp only [subtreesAux, Finset.mem_insert, Finset.mem_union]
+    simp only [subtreesAux, Multiset.mem_cons, Multiset.mem_add]
     exact h.elim (fun hl => Or.inr (Or.inl (ihl hl)))
                  (fun hr => Or.inr (Or.inr (ihr hr)))
 
@@ -658,8 +664,6 @@ theorem terminalNodes_sub_subtrees {so t : SyntacticObject}
   simp only [terminalNodes, List.mem_map] at h
   obtain ⟨a, ha_mem, ha_eq⟩ := h
   rw [← ha_eq]
-  show (FreeCommMagma.mk a : SyntacticObject) ∈ so.subtrees
-  -- subtrees on so unfolds to subtreesAux on so.out
   show (FreeCommMagma.mk a : SyntacticObject) ∈
     FreeCommMagma.lift subtreesAux subtreesAux_respects so
   rw [show so = FreeCommMagma.mk so.out from (Quot.out_eq so).symm]
@@ -674,31 +678,32 @@ theorem self_mem_subtrees (so : SyntacticObject) : so ∈ so.subtrees := by
   | mul l r _ _ => simp [SyntacticObject.subtrees_mul]
 
 /-- `subtrees` is downward-monotone along the subtree relation: if `t`
-    is a subtree of `s`, then every subtree of `t` is also a subtree
-    of `s`. -/
+    is a subtree of `s` (at any multiplicity), then every subtree of
+    `t` is also a subtree of `s` (`Multiset.Subset` ignores
+    multiplicity, only membership). -/
 theorem subtrees_subset_of_mem {t s : SyntacticObject}
     (h : t ∈ s.subtrees) : t.subtrees ⊆ s.subtrees := by
   induction s with
   | leaf tok =>
-    simp only [SyntacticObject.subtrees_leaf, Finset.mem_singleton] at h
-    rw [h]
+    simp only [SyntacticObject.subtrees_leaf, Multiset.mem_singleton] at h
+    rw [h]; exact Multiset.Subset.refl _
   | trace n =>
-    simp only [SyntacticObject.subtrees_trace, Finset.mem_singleton] at h
-    rw [h]
+    simp only [SyntacticObject.subtrees_trace, Multiset.mem_singleton] at h
+    rw [h]; exact Multiset.Subset.refl _
   | mul l r ihl ihr =>
-    simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
-               Finset.mem_union] at h
+    simp only [SyntacticObject.subtrees_mul, Multiset.mem_cons,
+               Multiset.mem_add] at h
     rcases h with rfl | hl | hr
     · intro _ h; exact h
     · intro x hx
       have := ihl hl hx
-      simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
-                 Finset.mem_union]
+      simp only [SyntacticObject.subtrees_mul, Multiset.mem_cons,
+                 Multiset.mem_add]
       exact Or.inr (Or.inl this)
     · intro x hx
       have := ihr hr hx
-      simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
-                 Finset.mem_union]
+      simp only [SyntacticObject.subtrees_mul, Multiset.mem_cons,
+                 Multiset.mem_add]
       exact Or.inr (Or.inr this)
 
 -- ============================================================================
@@ -950,29 +955,29 @@ theorem mem_subtrees_of_imm_contains {root w z : SyntacticObject}
     z ∈ root.subtrees := by
   induction root with
   | leaf tok =>
-    simp only [SyntacticObject.subtrees_leaf, Finset.mem_singleton] at hw
+    simp only [SyntacticObject.subtrees_leaf, Multiset.mem_singleton] at hw
     rw [hw] at hwz
     exact (immediatelyContains_leaf _ _ hwz).elim
   | trace n =>
-    simp only [SyntacticObject.subtrees_trace, Finset.mem_singleton] at hw
+    simp only [SyntacticObject.subtrees_trace, Multiset.mem_singleton] at hw
     rw [hw] at hwz
     exact (immediatelyContains_trace _ _ hwz).elim
   | mul l r ihl ihr =>
-    simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
-               Finset.mem_union] at hw
+    simp only [SyntacticObject.subtrees_mul, Multiset.mem_cons,
+               Multiset.mem_add] at hw
     rcases hw with rfl | hl | hr
     · -- w = l * r; immediatelyContains (l*r) z means z = l ∨ z = r
       rw [immediatelyContains_mul] at hwz
-      simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
-                 Finset.mem_union]
+      simp only [SyntacticObject.subtrees_mul, Multiset.mem_cons,
+                 Multiset.mem_add]
       rcases hwz with rfl | rfl
       · exact Or.inr (Or.inl (self_mem_subtrees _))
       · exact Or.inr (Or.inr (self_mem_subtrees _))
-    · simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
-                 Finset.mem_union]
+    · simp only [SyntacticObject.subtrees_mul, Multiset.mem_cons,
+                 Multiset.mem_add]
       exact Or.inr (Or.inl (ihl hl))
-    · simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
-                 Finset.mem_union]
+    · simp only [SyntacticObject.subtrees_mul, Multiset.mem_cons,
+                 Multiset.mem_add]
       exact Or.inr (Or.inr (ihr hr))
 
 /-- Containment implies subtree-Finset membership. -/
@@ -989,19 +994,19 @@ theorem mem_subtrees_of_contains {y z : SyntacticObject}
     exact subtrees_subset_of_mem
       (mem_subtrees_of_imm_contains (self_mem_subtrees _) himm) ih
 
-/-- Subtree-Finset membership implies term-of relation. -/
+/-- Subtree-Multiset membership implies term-of relation. -/
 theorem isTermOf_of_mem_subtrees {y z : SyntacticObject}
     (h : z ∈ y.subtrees) : isTermOf z y := by
   induction y with
   | leaf tok =>
-    simp only [SyntacticObject.subtrees_leaf, Finset.mem_singleton] at h
+    simp only [SyntacticObject.subtrees_leaf, Multiset.mem_singleton] at h
     exact Or.inl h
   | trace n =>
-    simp only [SyntacticObject.subtrees_trace, Finset.mem_singleton] at h
+    simp only [SyntacticObject.subtrees_trace, Multiset.mem_singleton] at h
     exact Or.inl h
   | mul l r ihl ihr =>
-    simp only [SyntacticObject.subtrees_mul, Finset.mem_insert,
-               Finset.mem_union] at h
+    simp only [SyntacticObject.subtrees_mul, Multiset.mem_cons,
+               Multiset.mem_add] at h
     rcases h with rfl | hl | hr
     · exact Or.inl rfl
     · -- z ∈ l.subtrees → isTermOf z l → contains (l*r) z (via l)
@@ -1032,8 +1037,8 @@ def areSistersIn (root x y : SyntacticObject) : Prop :=
   ∃ z ∈ root.subtrees, immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
 
 instance decAreSistersIn (root x y : SyntacticObject) :
-    Decidable (areSistersIn root x y) := by
-  unfold areSistersIn; infer_instance
+    Decidable (areSistersIn root x y) :=
+  Multiset.decidableExistsMultiset
 
 /-- X c-commands Y IN tree `root`: X has a sister (in `root`) that
     contains-or-equals Y. -/
@@ -1041,10 +1046,10 @@ def cCommandsIn (root x y : SyntacticObject) : Prop :=
   ∃ z ∈ root.subtrees, areSistersIn root x z ∧ containsOrEq z y
 
 /-- `cCommandsIn` is decidable: bounded existential over `root.subtrees`
-    (Finset). Computable since `subtrees` is. -/
+    (Multiset). Computable since `subtrees` is. -/
 instance decCCommandsIn (root x y : SyntacticObject) :
-    Decidable (cCommandsIn root x y) := by
-  unfold cCommandsIn; infer_instance
+    Decidable (cCommandsIn root x y) :=
+  Multiset.decidableExistsMultiset
 
 /-- X asymmetrically c-commands Y in tree `root`. -/
 def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
