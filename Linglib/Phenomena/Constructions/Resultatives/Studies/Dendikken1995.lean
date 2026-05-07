@@ -154,11 +154,14 @@ so the well-formedness invariant `predicate.headCat = predCat.toCat`
 holds by `rfl`. -/
 
 /-- The well-formedness invariant for `datumToSC` holds by construction.
-    Phase 1.0 sorry: `headCat` is `noncomputable` (Phase 1.0 placeholder
-    via `Quot.out`); the rfl no longer reduces. TODO Phase 2: restore. -/
+    Discharged via the `outerCat_leaf` substrate simp on the
+    `mkLeafPhon`-built predicate. -/
 theorem datumToSC_consistent (d : ResultativeDatum) (dpId predId : Nat) :
     (datumToSC d dpId predId).predicate.headCat =
-      (datumToSC d dpId predId).predCat.toCat := by sorry
+      (datumToSC d dpId predId).predCat.toCat := by
+  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [mkLeafPhon, SyntacticObject.outerCat_leaf]
+  rfl
 
 /-- Resultative SCs satisfy the `IsSmallClause` companion predicate
     over raw `SyntacticObject`s. -/

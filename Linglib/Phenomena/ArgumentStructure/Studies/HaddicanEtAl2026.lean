@@ -357,12 +357,32 @@ theorem bruening_shapes_differ :
 theorem bruening_both_use_incorporation :
     (∃ tok ∈ (doc_bruening.subtrees.filterMap SyntacticObject.getLIToken), tok.item.isComplex) ∧
     (∃ tok ∈ (pvc_bruening.subtrees.filterMap SyntacticObject.getLIToken), tok.item.isComplex) := by
-  -- TODO Phase 2: discharge via Multiset membership + decidable enumeration of subtrees.
-  -- Both witnesses exist (the `give.combine ∅_R` complex LIToken in DOC, and
-  -- the `tap.combine ∅_R` complex LIToken in PVC), but proving membership in
-  -- the Multiset.filterMap requires unfolding subtrees through Quot.out, which
-  -- isn't decidable without the full LCA-derived enumeration.
-  sorry
+  refine ⟨?_, ?_⟩
+  · -- DOC witness: the explicit complex `give.combine ∅_R` LIToken
+    refine ⟨⟨(LexicalItem.simple .V [.D, .D] "give").combine
+              (LexicalItem.simple .P [] "∅_R"), 14⟩, ?_, by decide⟩
+    rw [Multiset.mem_filterMap]
+    refine ⟨SyntacticObject.leaf
+            ⟨(LexicalItem.simple .V [.D, .D] "give").combine
+              (LexicalItem.simple .P [] "∅_R"), 14⟩, ?_, rfl⟩
+    -- The complex-give leaf is in `doc_bruening.subtrees` as the LHS of the outer merge
+    show _ ∈ doc_bruening.subtrees
+    simp only [doc_bruening, merge, SyntacticObject.subtrees_mul,
+               SyntacticObject.subtrees_leaf,
+               Multiset.mem_cons, Multiset.mem_add, Multiset.mem_singleton]
+    tauto
+  · -- PVC witness: the explicit complex `lift.combine up` LIToken
+    refine ⟨⟨(LexicalItem.simple .V [.D] "lift").combine
+              (LexicalItem.simple .P [] "up"), 7⟩, ?_, by decide⟩
+    rw [Multiset.mem_filterMap]
+    refine ⟨SyntacticObject.leaf
+            ⟨(LexicalItem.simple .V [.D] "lift").combine
+              (LexicalItem.simple .P [] "up"), 7⟩, ?_, rfl⟩
+    show _ ∈ pvc_bruening.subtrees
+    simp only [pvc_bruening, pvc_complexPred, merge,
+               SyntacticObject.subtrees_mul, SyntacticObject.subtrees_leaf,
+               Multiset.mem_cons, Multiset.mem_add, Multiset.mem_singleton]
+    tauto
 
 theorem bruening_doc_matches_sc_doc :
     structurallyIsomorphic doc_bruening doc_sc := by decide

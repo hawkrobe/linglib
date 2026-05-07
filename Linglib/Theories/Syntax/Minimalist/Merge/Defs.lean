@@ -179,17 +179,24 @@ def treeToSyntacticObject? :
 /-- Round-trip: embedding a trace-free SO and forgetting the trace
     structure recovers the original.
 
-    TODO Phase 2: this theorem held by induction on the planar SO type
-    when `toH` was a constructor recursion. With `toH` now `Quot.out`-
-    based, the round-trip property is up to `FreeCommMagma`'s quotient
-    equivalence (the round-trip yields a representative that is `~`
-    to the input), not strict equality. Consumers needing strict
-    equality should compose with `Quot.mk`/`Quot.lift` arguments
-    explicitly, or wait for the Phase 2 head-function parameterized
-    version. -/
+    **The statement as given is FALSE for SOs containing traces**:
+    `treeToSyntacticObject?` returns `none` on trace leaves by
+    construction (line 173), so the round-trip is undefined whenever
+    `so` contains a `.trace _`. The honest reformulation requires
+    a "trace-free" hypothesis (e.g., `(traceIndices so).card = 0`,
+    importable from `TraceInterpretation`).
+
+    Even with the trace-free hypothesis, the proof requires a
+    representative-level induction through `Quot.out`-based `toH` that
+    is more involved than the leaf/trace singleton-class simps.
+    Deferred to Phase 2 alongside head-function parameterization. -/
 theorem treeToSyntacticObject?_ofSO
     (so : Minimalist.SyntacticObject) :
     treeToSyntacticObject? so.toH = some so := by
+  -- TODO Phase 2: statement is false for trace-containing SOs;
+  -- restate with `(traceIndices so).card = 0` hypothesis once
+  -- Defs.lean can import TraceInterpretation, then prove via
+  -- representative-level induction.
   sorry
 
 end Minimalist.Merge

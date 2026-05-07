@@ -92,12 +92,15 @@ theorem pvToSmallClause_toSO_shape (pv : ParticleVerb) (dpId prtId : Nat) :
 
 /-- The `predCat` field of `pvToSmallClause` agrees with the
     `predicate.headCat` reading — the well-formedness invariant
-    consumed by `SmallClause.toSO_isSmallClause`.
-    Phase 1.0 sorry: `headCat` is `noncomputable` (Phase 1.0 placeholder
-    via `Quot.out`); the rfl no longer reduces. TODO Phase 2: restore. -/
+    consumed by `SmallClause.toSO_isSmallClause`. Discharged via
+    the `outerCat_leaf` substrate simp on the `mkLeafPhon`-built
+    predicate (which is structurally a leaf SO). -/
 theorem pvToSmallClause_consistent (pv : ParticleVerb) (dpId prtId : Nat) :
     (pvToSmallClause pv dpId prtId).predicate.headCat =
-      (pvToSmallClause pv dpId prtId).predCat.toCat := by sorry
+      (pvToSmallClause pv dpId prtId).predCat.toCat := by
+  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [mkLeafPhon, SyntacticObject.outerCat_leaf]
+  rfl
 
 /-- The PVC small clause satisfies `IsSmallClause` — the companion
     predicate over raw `SyntacticObject`s. Discharges via the
