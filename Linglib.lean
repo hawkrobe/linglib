@@ -1365,7 +1365,6 @@ import Linglib.Phenomena.Comparison.Studies.Bobaljik2012
 import Linglib.Phenomena.Comparison.Studies.BhattPancheva2004
 import Linglib.Phenomena.Comparison.Studies.Lechner2004
 import Linglib.Phenomena.Comparison.Studies.BhattTakahashi2011
-import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014PMF
 import Linglib.Phenomena.Directives.Studies.CondoravdiLauer2012
@@ -1870,13 +1869,13 @@ import Linglib.Core.Computability.NonContextFree.AnBnCn
 import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
+import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Computability.SyntacticMonoid
 import Linglib.Core.Computability.SyntacticMonoid.Equations
 import Linglib.Core.Computability.SyntacticMonoid.Pin
 import Linglib.Core.Combinatorics.RootedTree.Decorated
 import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
 import Linglib.Core.Combinatorics.RootedTree.Insertion
-import Linglib.Core.Algebra.IdempotentPower
 import Linglib.Core.Algebra.ConnesKreimer.Defs
 import Linglib.Core.Algebra.ConnesKreimer.Coproduct
 import Linglib.Core.Algebra.ConnesKreimer.AugmentedCut
@@ -2167,22 +2166,23 @@ import Linglib.Theories.Syntax.MereologicalSyntax.Bridge
 import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Theories.Syntax.SynGraph
 -- Theories: Semantics.Degree (degree semantics frameworks)
+import Linglib.Theories.Semantics.Degree.Abstraction
 import Linglib.Theories.Semantics.Degree.Aggregation
-import Linglib.Theories.Semantics.Degree.Core
-import Linglib.Theories.Semantics.Degree.MeasureFunction
 import Linglib.Theories.Semantics.Degree.Comparative
+import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Differential
 import Linglib.Theories.Semantics.Degree.Equative
+import Linglib.Theories.Semantics.Degree.Granularity
+import Linglib.Theories.Semantics.Degree.Intensional
+import Linglib.Theories.Semantics.Degree.Intervals
+import Linglib.Theories.Semantics.Degree.MeasureFunction
+import Linglib.Theories.Semantics.Degree.Question
 import Linglib.Theories.Semantics.Degree.Superlative
 import Linglib.Theories.Semantics.Degree.ThanClause
-import Linglib.Theories.Semantics.Degree.Differential
-import Linglib.Theories.Semantics.Degree.Question
-import Linglib.Theories.Semantics.Degree.Abstraction
-import Linglib.Theories.Semantics.Degree.Intervals
 import Linglib.Theories.Semantics.Comparison.Delineation
 import Linglib.Theories.Semantics.Comparison.Hierarchy
 import Linglib.Theories.Semantics.Comparison.Metalinguistic
 import Linglib.Theories.Semantics.Comparison.MetalinguisticDegree
-import Linglib.Theories.Semantics.Degree.Granularity
 -- Theories: Semantics.Supervaluation (general supervaluation framework)
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Theories.Semantics.Supervaluation.TCS

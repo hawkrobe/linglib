@@ -96,7 +96,7 @@ The letter-sequence monoid form makes this explicit.)
 
 ## Out of scope (queued for follow-up files)
 
-* `omegaPow` for finite monoids (Almeida 1995): the unique idempotent
+* `omegaPow` for finite monoids (@cite{almeida-1995}): the unique idempotent
   in `⟨x⟩`. Required for Lambert Props 56/57/58 (definite,
   reverse-definite, generalized-definite equations using `x^ω`).
   Mathlib-promotable as a sibling of `Mathlib.Algebra.Group.Idempotent`.
@@ -524,11 +524,12 @@ languages (length-`k` letter-sequence, sandwich monoid form): for any
 two copies of `[αs]` absorbs `s`:
 `[αs] · s · [αs] = [αs]`.
 
-Lambert's notation: `ℒℐ_k = ⟦x₁ ⋯ xₖ s x₁ ⋯ xₖ = x₁ ⋯ xₖ⟧` (paper
-Prop 58, Straubing 1985:60). The two `αs` instances are bound to the
-**same** letter sequence; this is the "simplified" form of the more
-general two-variable equation `[αs · s · βs] = [αs · βs]` that Lambert
-remarks (paper p. 25) defines the same class. -/
+Lambert's notation: `ℒℐ_k = ⟦x₁ ⋯ xₖ s x₁ ⋯ xₖ = x₁ ⋯ xₖ⟧`
+(@cite{lambert-2026} Prop 58; @cite{straubing-1985}). The two `αs`
+instances are bound to the **same** letter sequence; this is the
+"simplified" form of the more general two-variable equation
+`[αs · s · βs] = [αs · βs]` that @cite{lambert-2026} remarks defines
+the same class. -/
 def kGeneralizedDefiniteEquation {α : Type*} (L : Language α) (k : ℕ) : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
     L.toSyntacticMonoid (FreeMonoid.ofList αs) * s *
