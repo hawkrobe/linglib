@@ -536,10 +536,160 @@ theorem mk_eq_iff_normalize_eq (a b : FreeMagma α) :
       .trans _ _ _ h₁ (h ▸ .symm _ _ h₂)
     exact Quot.eqvGen_sound hab
 
+end DecidableEq
+
+end FreeCommMagma
+
+/-! ### DecidableEq via direct recursion (the mathlib idiom)
+
+`Multiset.decidableEq` requires only `[DecidableEq α]` because
+`List.Perm` has a clever direct decision procedure (count each element
+on both sides). For `FreeCommMagma`, the analogous fact: each `.mul`
+node has exactly 2 children, so `(l₁*r₁) ~ (l₂*r₂)` iff
+`{l₁, r₁} = {l₂, r₂}` as a 2-element multiset, which decomposes to
+`(l₁~l₂ ∧ r₁~r₂) ∨ (l₁~r₂ ∧ r₁~l₂)`. Recursive and decidable from
+`[DecidableEq α]` alone — no `[LinearOrder α]` needed.
+
+Crucially this works because `FreeMagma` is non-associative —
+`((a*b)*c)` and `(a*(b*c))` are NOT `CommRel`-equivalent. The
+equivalence preserves tree structure modulo per-node swap.
+
+This is the mathlib-canonical answer: don't canonicalize when a direct
+`DecidableRel` on the equivalence works. The LinearOrder-based
+canonicalization above is still useful when a normal form is wanted
+(e.g., `Repr`), but `DecidableEq` doesn't need it. -/
+
+namespace FreeMagma
+
+variable {α : Type u}
+
+/-- Constructor count, used as a recursion measure for `CommEqv.trans`.
+    Public so termination proofs in this namespace can reference it. -/
+def nodeCount : FreeMagma α → Nat
+  | .of _ => 1
+  | .mul l r => 1 + nodeCount l + nodeCount r
+
+@[simp] theorem nodeCount_of (a : α) : nodeCount (FreeMagma.of a) = 1 := rfl
+@[simp] theorem nodeCount_mul (l r : FreeMagma α) :
+    nodeCount (l * r) = 1 + nodeCount l + nodeCount r := rfl
+
+/-- Recursive equivalence relation matching `EqvGen CommRel`. At each
+    `.mul` node, try both pairings of children. -/
+def CommEqv : FreeMagma α → FreeMagma α → Prop
+  | .of a, .of b => a = b
+  | .of _, .mul _ _ => False
+  | .mul _ _, .of _ => False
+  | .mul l₁ r₁, .mul l₂ r₂ =>
+      (CommEqv l₁ l₂ ∧ CommEqv r₁ r₂) ∨ (CommEqv l₁ r₂ ∧ CommEqv r₁ l₂)
+
+instance instDecidableCommEqv [DecidableEq α] :
+    (a b : FreeMagma α) → Decidable (CommEqv a b)
+  | .of a, .of b => inferInstanceAs (Decidable (a = b))
+  | .of _, .mul _ _ => isFalse id
+  | .mul _ _, .of _ => isFalse id
+  | .mul l₁ r₁, .mul l₂ r₂ =>
+    have : Decidable (CommEqv l₁ l₂) := instDecidableCommEqv l₁ l₂
+    have : Decidable (CommEqv r₁ r₂) := instDecidableCommEqv r₁ r₂
+    have : Decidable (CommEqv l₁ r₂) := instDecidableCommEqv l₁ r₂
+    have : Decidable (CommEqv r₁ l₂) := instDecidableCommEqv r₁ l₂
+    inferInstanceAs (Decidable (_ ∨ _))
+
+theorem CommEqv.refl (a : FreeMagma α) : CommEqv a a := by
+  induction a with
+  | ih1 _ => rfl
+  | ih2 l r ihl ihr => exact .inl ⟨ihl, ihr⟩
+
+theorem CommEqv.symm {a b : FreeMagma α} : CommEqv a b → CommEqv b a := by
+  induction a generalizing b with
+  | ih1 x =>
+    match b with
+    | .of y => exact Eq.symm
+    | .mul _ _ => exact id
+  | ih2 l r ihl ihr =>
+    match b with
+    | .of _ => exact id
+    | .mul l' r' =>
+      rintro (⟨h1, h2⟩ | ⟨h1, h2⟩)
+      · exact .inl ⟨ihl h1, ihr h2⟩
+      · exact .inr ⟨ihr h2, ihl h1⟩
+
+theorem CommEqv.trans : ∀ {a b c : FreeMagma α},
+    CommEqv a b → CommEqv b c → CommEqv a c
+  | .of x, .of y, .of z, hab, hbc => by
+    show x = z; exact (show x = y from hab).trans (show y = z from hbc)
+  | .of _, .of _, .mul _ _, _, h => h.elim
+  | .of _, .mul _ _, _, h, _ => h.elim
+  | .mul _ _, .of _, _, h, _ => h.elim
+  | .mul _ _, .mul _ _, .of _, _, h => h.elim
+  | .mul l r, .mul l' r', .mul l'' r'', hab, hbc => by
+    rcases hab with ⟨ha1, ha2⟩ | ⟨ha1, ha2⟩ <;>
+      rcases hbc with ⟨hb1, hb2⟩ | ⟨hb1, hb2⟩
+    · exact .inl ⟨CommEqv.trans ha1 hb1, CommEqv.trans ha2 hb2⟩
+    · exact .inr ⟨CommEqv.trans ha1 hb1, CommEqv.trans ha2 hb2⟩
+    · exact .inr ⟨CommEqv.trans ha1 hb2, CommEqv.trans ha2 hb1⟩
+    · exact .inl ⟨CommEqv.trans ha1 hb2, CommEqv.trans ha2 hb1⟩
+termination_by a b c _ _ => nodeCount a + nodeCount b + nodeCount c
+
+theorem CommEqv.of_commRel {a b : FreeMagma α} (h : CommRel a b) : CommEqv a b := by
+  induction h with
+  | swap a b => exact .inr ⟨.refl _, .refl _⟩
+  | mul_left _ c ih => exact .inl ⟨ih, .refl _⟩
+  | mul_right c _ ih => exact .inl ⟨.refl _, ih⟩
+
+/-- The headline correspondence: `CommEqv` is exactly the equivalence
+    closure of `CommRel`. Forward: induction on `EqvGen` using refl,
+    symm, trans, and `of_commRel`. Reverse: induction on the recursive
+    structure of `CommEqv`, lifting through congruence rules. -/
+theorem commEqv_iff_eqvGen (a b : FreeMagma α) :
+    CommEqv a b ↔ Relation.EqvGen CommRel a b := by
+  refine ⟨?_, ?_⟩
+  · -- CommEqv → EqvGen CommRel
+    induction a generalizing b with
+    | ih1 x =>
+      match b with
+      | .of y => intro h; cases h; exact .refl _
+      | .mul _ _ => intro h; exact h.elim
+    | ih2 l r ihl ihr =>
+      match b with
+      | .of _ => intro h; exact h.elim
+      | .mul l' r' =>
+        rintro (⟨hl, hr⟩ | ⟨hl, hr⟩)
+        · exact .trans _ _ _ (eqvGen_mul_left (ihl _ hl) r) (eqvGen_mul_right l' (ihr _ hr))
+        · -- (l*r) ~ (r*l) by swap, then (r*l) ~ (l'*l) ~ (l'*r')
+          have step1 : Relation.EqvGen CommRel (l * r) (r * l) := .rel _ _ (.swap _ _)
+          have step2 : Relation.EqvGen CommRel (r * l) (l' * l) :=
+            eqvGen_mul_left (ihr _ hr) l
+          have step3 : Relation.EqvGen CommRel (l' * l) (l' * r') :=
+            eqvGen_mul_right l' (ihl _ hl)
+          exact .trans _ _ _ step1 (.trans _ _ _ step2 step3)
+  · -- EqvGen CommRel → CommEqv
+    intro h
+    induction h with
+    | rel _ _ h => exact CommEqv.of_commRel h
+    | refl a => exact CommEqv.refl a
+    | symm _ _ _ ih => exact ih.symm
+    | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+end FreeMagma
+
+namespace FreeCommMagma
+
+variable {α : Type u}
+
+/-- Bridge: `Quot.mk` equality on `FreeCommMagma α` corresponds exactly
+    to `CommEqv`-equivalence on `FreeMagma α`. -/
+theorem mk_eq_iff_commEqv (a b : FreeMagma α) :
+    (Quot.mk _ a : FreeCommMagma α) = Quot.mk _ b ↔ FreeMagma.CommEqv a b := by
+  rw [Quot.eq, ← FreeMagma.commEqv_iff_eqvGen]
+
+variable [DecidableEq α]
+
+/-- `DecidableEq` from `[DecidableEq α]` alone, mirroring
+    `Multiset.decidableEq`. The `LinearOrder`-based `normalize` exists
+    above for cases that need a canonical form (e.g., `Repr`), but
+    `DecidableEq` doesn't go through it. -/
 instance : DecidableEq (FreeCommMagma α) := fun x y =>
   Quot.recOnSubsingleton₂ x y fun a b =>
-    decidable_of_iff _ (mk_eq_iff_normalize_eq a b).symm
-
-end DecidableEq
+    decidable_of_iff _ (mk_eq_iff_commEqv a b).symm
 
 end FreeCommMagma
