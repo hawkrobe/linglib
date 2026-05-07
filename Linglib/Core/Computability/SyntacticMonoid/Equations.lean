@@ -67,7 +67,7 @@ The letter-sequence monoid form makes this explicit.)
 
 ## Main definitions
 
-* `Lambert.Equations.kDefiniteEquation L k` — the equation
+* `Language.kDefiniteEquation L k` — the equation
   `∀ s ∈ L.syntacticMonoid, ∀ αs : List α with αs.length = k,
   s * [αs] = [αs]`. The product on the left is monoid multiplication
   in `L.syntacticMonoid`; `[αs]` denotes
@@ -94,15 +94,13 @@ The letter-sequence monoid form makes this explicit.)
 * `Language.isDefinite_iff_satisfies_kDefiniteEquation` — Lambert
   Prop 53 bidirectional bundling.
 
+In the same file, Lambert Prop 57 (reverse-definite, K) and Prop 58
+(generalized definite, ℒℐ) are also landed using the same letter-sequence
+template. The Pin omega-power forms (`Pin.lean`) consume these finite-`k`
+iffs to derive their own iffs.
+
 ## Out of scope (queued for follow-up files)
 
-* `omegaPow` for finite monoids (@cite{almeida-1995}): the unique idempotent
-  in `⟨x⟩`. Required for Lambert Props 56/57/58 (definite,
-  reverse-definite, generalized-definite equations using `x^ω`).
-  Mathlib-promotable as a sibling of `Mathlib.Algebra.Group.Idempotent`.
-* Lambert Props 56/57/58 themselves — once `omegaPow` lands, each is a
-  one-screen proof following the same letter-sequence template as
-  Prop 53 here.
 * `multitier ℬ𝒯C` extensions (@cite{lambert-2026} §6.3, Table 6 right
   column).
 
@@ -113,7 +111,9 @@ The letter-sequence monoid form makes this explicit.)
   framework Lambert builds on.
 -/
 
-namespace Lambert.Equations
+open Core.Computability.Subregular
+
+namespace Language
 
 /-- **Lambert (2026) Prop 53 equation** (length-`k` letter-sequence form):
 for any element `s` of `L.syntacticMonoid` and any length-`k` letter
@@ -131,12 +131,6 @@ def kDefiniteEquation {α : Type*} (L : Language α) (k : ℕ) : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
     s * L.toSyntacticMonoid (FreeMonoid.ofList αs) =
     L.toSyntacticMonoid (FreeMonoid.ofList αs)
-
-end Lambert.Equations
-
-open Core.Computability.Subregular
-
-namespace Language
 
 variable {α : Type*}
 
@@ -190,7 +184,7 @@ L.toSyntacticMonoid αs` gives the syntactic-monoid equality
 `[w * αs] = [αs]`, which lifts via `Quotient.exact` to the two-sided
 syntactic equivalence on the underlying lists. -/
 lemma syntacticEquiv_of_kDefiniteEquation {L : Language α} {k : ℕ}
-    (h : Lambert.Equations.kDefiniteEquation L k)
+    (h : Language.kDefiniteEquation L k)
     (w αs : List α) (hαs_len : αs.length = k) :
     SyntacticEquiv L (w ++ αs) αs := by
   have h_eq :=
@@ -212,7 +206,7 @@ syntactic-monoid element `s` to a length-`k` letter sequence `αs`
 preserves the syntactic class of `αs`. -/
 theorem IsDefinite.satisfies_kDefiniteEquation
     {L : Language α} {k : ℕ} (hL : IsDefinite k L) :
-    Lambert.Equations.kDefiniteEquation L k := by
+    Language.kDefiniteEquation L k := by
   obtain ⟨G, hG⟩ := hL
   intro s αs hαs_len
   obtain ⟨w, hw⟩ := Quotient.exists_rep s
@@ -262,7 +256,7 @@ interesting direction `G.lang ⊆ L`: if `w ∈ G.lang`, there is some
    `SyntacticEquiv L u ks`; chain transitively, then saturation. -/
 theorem isDefinite_of_satisfies_kDefiniteEquation
     {L : Language α} {k : ℕ}
-    (h : Lambert.Equations.kDefiniteEquation L k) :
+    (h : Language.kDefiniteEquation L k) :
     IsDefinite k L := by
   refine ⟨{ permitted := { ks | ∃ w ∈ L, Edge.right.takeAt k w = ks } }, ?_⟩
   ext w
@@ -327,17 +321,13 @@ bundling of `IsDefinite.satisfies_kDefiniteEquation` and
 `isDefinite_of_satisfies_kDefiniteEquation`. -/
 theorem isDefinite_iff_satisfies_kDefiniteEquation
     {L : Language α} {k : ℕ} :
-    IsDefinite k L ↔ Lambert.Equations.kDefiniteEquation L k :=
+    IsDefinite k L ↔ Language.kDefiniteEquation L k :=
   ⟨IsDefinite.satisfies_kDefiniteEquation,
    isDefinite_of_satisfies_kDefiniteEquation⟩
-
-end Language
 
 -- ============================================================================
 -- §4. Lambert Prop 57 — reverse-definite (mirror of D)
 -- ============================================================================
-
-namespace Lambert.Equations
 
 /-- **Lambert (2026) Prop 57 equation** for **reverse-definite**
 languages (length-`k` letter-sequence, monoid form): for any element
@@ -346,16 +336,10 @@ languages (length-`k` letter-sequence, monoid form): for any element
 `kDefiniteEquation` with right-multiplication instead of left.
 
 Lambert's notation: `𝒦_k = ⟦x₁ ⋯ xₖ s = x₁ ⋯ xₖ⟧` (paper Prop 57). -/
-def kReverseDefiniteEquation {α : Type*} (L : Language α) (k : ℕ) : Prop :=
+def kReverseDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
     L.toSyntacticMonoid (FreeMonoid.ofList αs) * s =
     L.toSyntacticMonoid (FreeMonoid.ofList αs)
-
-end Lambert.Equations
-
-namespace Language
-
-variable {α : Type*}
 
 -- §4.1. Helper lemmas on `Edge.left.takeAt` (mirror of §1)
 
@@ -393,7 +377,7 @@ private lemma decompose_at_left_takeAt {α : Type*} {k : ℕ} {xs : List α}
 a length-`k` word gives a syntactically equivalent word. Mirror of
 `syntacticEquiv_of_kDefiniteEquation`. -/
 lemma syntacticEquiv_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
-    (h : Lambert.Equations.kReverseDefiniteEquation L k)
+    (h : Language.kReverseDefiniteEquation L k)
     (αs w : List α) (hαs_len : αs.length = k) :
     SyntacticEquiv L (αs ++ w) αs := by
   have h_eq :=
@@ -411,7 +395,7 @@ lemma syntacticEquiv_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
 language's syntactic monoid satisfies the reverse-`k`-definite equation. -/
 theorem IsReverseDefinite.satisfies_kReverseDefiniteEquation
     {L : Language α} {k : ℕ} (hL : IsReverseDefinite k L) :
-    Lambert.Equations.kReverseDefiniteEquation L k := by
+    Language.kReverseDefiniteEquation L k := by
   obtain ⟨G, hG⟩ := hL
   intro s αs hαs_len
   obtain ⟨w, hw⟩ := Quotient.exists_rep s
@@ -447,7 +431,7 @@ monoid satisfies the reverse-`k`-definite equation, then the language is
 reverse-`k`-definite. Mirror of `isDefinite_of_satisfies_kDefiniteEquation`. -/
 theorem isReverseDefinite_of_satisfies_kReverseDefiniteEquation
     {L : Language α} {k : ℕ}
-    (h : Lambert.Equations.kReverseDefiniteEquation L k) :
+    (h : Language.kReverseDefiniteEquation L k) :
     IsReverseDefinite k L := by
   refine ⟨{ permitted := { ks | ∃ w ∈ L, Edge.left.takeAt k w = ks } }, ?_⟩
   ext w
@@ -506,17 +490,13 @@ theorem isReverseDefinite_of_satisfies_kReverseDefiniteEquation
 its syntactic monoid satisfies the reverse-`k`-definite equation. -/
 theorem isReverseDefinite_iff_satisfies_kReverseDefiniteEquation
     {L : Language α} {k : ℕ} :
-    IsReverseDefinite k L ↔ Lambert.Equations.kReverseDefiniteEquation L k :=
+    IsReverseDefinite k L ↔ Language.kReverseDefiniteEquation L k :=
   ⟨IsReverseDefinite.satisfies_kReverseDefiniteEquation,
    isReverseDefinite_of_satisfies_kReverseDefiniteEquation⟩
-
-end Language
 
 -- ============================================================================
 -- §5. Lambert Prop 58 — generalized definite (sandwich form)
 -- ============================================================================
-
-namespace Lambert.Equations
 
 /-- **Lambert (2026) Prop 58 equation** for **generalized `k`-definite**
 languages (length-`k` letter-sequence, sandwich monoid form): for any
@@ -530,17 +510,12 @@ instances are bound to the **same** letter sequence; this is the
 "simplified" form of the more general two-variable equation
 `[αs · s · βs] = [αs · βs]` that @cite{lambert-2026} remarks defines
 the same class. -/
-def kGeneralizedDefiniteEquation {α : Type*} (L : Language α) (k : ℕ) : Prop :=
+def kGeneralizedDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →
     L.toSyntacticMonoid (FreeMonoid.ofList αs) * s *
     L.toSyntacticMonoid (FreeMonoid.ofList αs) =
     L.toSyntacticMonoid (FreeMonoid.ofList αs)
 
-end Lambert.Equations
-
-namespace Language
-
-variable {α : Type*}
 
 -- §5.1. Lifting LI equation to `SyntacticEquiv`
 
@@ -548,7 +523,7 @@ variable {α : Type*}
 of a length-`k` word `αs` is syntactically equivalent to `αs` alone. -/
 lemma syntacticEquiv_of_kGeneralizedDefiniteEquation
     {L : Language α} {k : ℕ}
-    (h : Lambert.Equations.kGeneralizedDefiniteEquation L k)
+    (h : Language.kGeneralizedDefiniteEquation L k)
     (αs w : List α) (hαs_len : αs.length = k) :
     SyntacticEquiv L (αs ++ w ++ αs) αs := by
   have h_eq :=
@@ -572,7 +547,7 @@ length-`k` left-prefix (both have `x ++ αs` as prefix) and the
 length-`k` right-suffix (both have `αs ++ y` as suffix). -/
 theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
     {L : Language α} {k : ℕ} (hL : IsGeneralizedDefinite k L) :
-    Lambert.Equations.kGeneralizedDefiniteEquation L k := by
+    Language.kGeneralizedDefiniteEquation L k := by
   intro s αs hαs_len
   obtain ⟨w, hw⟩ := Quotient.exists_rep s
   rw [show s = L.toSyntacticMonoid w from hw.symm]
@@ -615,39 +590,125 @@ theorem IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation
           (αs ++ y) h_αsy_len,
         takeAt_right_append_left_absorb x (αs ++ y) h_αsy_len]
 
--- §5.3. Lambert Prop 58 — reverse direction (PARTIAL)
+-- §5.3. Lambert Prop 58 — reverse direction
 
-/-- **Lambert Prop 58 (reverse direction, PARTIAL)**: if a language's
-syntactic monoid satisfies the LI equation, then `L` is generalized
-`k`-definite.
+/-- **Lambert Prop 58 (reverse direction)**: if a language's syntactic
+monoid satisfies the LI equation, then `L` is generalized `k`-definite.
 
-**Status**: `sorry`. The proof has a difficult **overlap subcase**
-(when `k < |w| < 2k` so that `w`'s `k`-prefix and `k`-suffix overlap):
-matching prefix-and-suffix of length `k` forces a periodic structure
-that the simplified one-variable equation `[αs · s · αs] = [αs]` does
-not directly resolve. The proof likely requires either:
-(a) the more general two-variable equation `[αs · s · βs] = [αs · βs]`
-    (which Lambert (2026) p. 25 shows is equivalent to the simplified
-    form, but the equivalence proof is non-trivial); or
-(b) a periodicity argument exploiting that the equation forces `[w₁]`
-    to be idempotent for `|w₁| = k` and using cyclic-submonoid stability.
+**Strategy** (double-sandwich on `[w₁ · w₂]`): for `w₁`, `w₂` of length
+`≥ k` with shared length-`k` prefix `αs` and length-`k` suffix `βs`,
+both decompose two ways: `wᵢ = αs ++ bᵢ = cᵢ ++ βs`. Then in the
+syntactic monoid:
 
-The forward direction (above) is clean. The other three varieties
-(D, K, N) have full iffs at this commit. -/
+* `[w₁ · w₂] = [αs · b₁ · αs · b₂] = [αs · b₂] = [w₂]`
+  (αs-sandwich applied with `s := [b₁]`)
+* `[w₁ · w₂] = [c₁ · βs · c₂ · βs] = [c₁ · βs] = [w₁]`
+  (βs-sandwich applied with `s := [c₂]`)
+
+so `[w₁] = [w₂]` and hence `w₁ ≡_L w₂`. This single double-sandwich
+move handles both the long case (`|wᵢ| ≥ 2k`, `αs` and `βs` disjoint)
+and the overlap case (`k ≤ |wᵢ| < 2k`, `αs` and `βs` overlap in `wᵢ`)
+uniformly — the algebra in `M_L` is identical because the absorption
+acts on the `[bᵢ]`/`[cᵢ]` factors regardless of their length.
+
+The short case (`|w₁| < k` or `|w₂| < k`) is forced trivial: equal
+`takeAt_left k` requires equal lengths when one side is shorter than
+`k`, so `w₁ = w₂` directly. -/
 theorem isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
     {L : Language α} {k : ℕ}
-    (_h : Lambert.Equations.kGeneralizedDefiniteEquation L k) :
+    (h : Language.kGeneralizedDefiniteEquation L k) :
     IsGeneralizedDefinite k L := by
-  sorry
+  intro w₁ w₂ hpre hsuf
+  by_cases hw₁_long : k ≤ w₁.length
+  · -- Both `|wᵢ| ≥ k`: the matching length-`k` prefix forces `|w₂| ≥ k` too,
+    -- since otherwise `Edge.left.takeAt k w₂` would be shorter than `k`.
+    have h_pre_len_w₁ : (Edge.left.takeAt k w₁).length = k := by
+      show (w₁.take k).length = k
+      rw [List.length_take]; omega
+    have hw₂_long : k ≤ w₂.length := by
+      have h_pre_len_w₂ : (Edge.left.takeAt k w₂).length = k := by
+        rw [← hpre]; exact h_pre_len_w₁
+      have : (w₂.take k).length = k := h_pre_len_w₂
+      rw [List.length_take] at this; omega
+    -- Set up αs, βs, b_i, c_i and the two decompositions of each wᵢ.
+    set αs := Edge.left.takeAt k w₁ with hαs_def
+    set βs := Edge.right.takeAt k w₁ with hβs_def
+    have hαs_len : αs.length = k := h_pre_len_w₁
+    have hβs_len : βs.length = k := by
+      show (w₁.drop (w₁.length - k)).length = k
+      rw [List.length_drop]; omega
+    set b₁ := w₁.drop k with hb₁_def
+    set b₂ := w₂.drop k with hb₂_def
+    set c₁ := w₁.take (w₁.length - k) with hc₁_def
+    set c₂ := w₂.take (w₂.length - k) with hc₂_def
+    -- αs-decompositions: wᵢ = αs ++ bᵢ.
+    have hw₁_αs : w₁ = αs ++ b₁ := by
+      show w₁ = w₁.take k ++ w₁.drop k
+      exact (List.take_append_drop _ _).symm
+    have hw₂_αs : w₂ = αs ++ b₂ := by
+      have : Edge.left.takeAt k w₂ = αs := hpre.symm
+      have h_w₂_take : w₂.take k = αs := this
+      show w₂ = αs ++ w₂.drop k
+      rw [← h_w₂_take]; exact (List.take_append_drop _ _).symm
+    -- βs-decompositions: wᵢ = cᵢ ++ βs.
+    have hw₁_βs : w₁ = c₁ ++ βs := by
+      show w₁ = w₁.take (w₁.length - k) ++ w₁.drop (w₁.length - k)
+      exact (List.take_append_drop _ _).symm
+    have hw₂_βs : w₂ = c₂ ++ βs := by
+      have : Edge.right.takeAt k w₂ = βs := hsuf.symm
+      have h_w₂_drop : w₂.drop (w₂.length - k) = βs := this
+      show w₂ = w₂.take (w₂.length - k) ++ βs
+      rw [← h_w₂_drop]; exact (List.take_append_drop _ _).symm
+    -- Way 1: αs-sandwich gives `(w₁ ++ w₂) ≡_L w₂`.
+    have h_αs_eq : SyntacticEquiv L (w₁ ++ w₂) w₂ := by
+      rw [hw₁_αs, hw₂_αs]
+      intro x y
+      -- Apply (αs ++ b₁ ++ αs) ≡_L αs at context (x, b₂ ++ y).
+      have h_inner := syntacticEquiv_of_kGeneralizedDefiniteEquation
+        h αs b₁ hαs_len x (b₂ ++ y)
+      simp only [List.append_assoc] at h_inner ⊢
+      exact h_inner
+    -- Way 2: βs-sandwich gives `(w₁ ++ w₂) ≡_L w₁`.
+    have h_βs_eq : SyntacticEquiv L (w₁ ++ w₂) w₁ := by
+      rw [hw₁_βs, hw₂_βs]
+      intro x y
+      -- Apply (βs ++ c₂ ++ βs) ≡_L βs at context (x ++ c₁, y).
+      have h_inner := syntacticEquiv_of_kGeneralizedDefiniteEquation
+        h βs c₂ hβs_len (x ++ c₁) y
+      simp only [List.append_assoc] at h_inner ⊢
+      exact h_inner
+    -- Combine: w₁ ≡_L w₂.
+    have hequiv : SyntacticEquiv L w₁ w₂ := h_βs_eq.symm.trans h_αs_eq
+    exact mem_iff_of_syntacticEquiv hequiv
+  · -- Short case: `|w₁| < k`. Then `Edge.left.takeAt k w₁ = w₁`, so
+    -- the prefix equality yields `w₁ = Edge.left.takeAt k w₂`, which
+    -- forces `|w₂| ≤ k` (otherwise the takeAt has length `k > |w₁|`).
+    push_neg at hw₁_long
+    have h_w₁_pre : Edge.left.takeAt k w₁ = w₁ := by
+      show w₁.take k = w₁
+      exact List.take_of_length_le (le_of_lt hw₁_long)
+    rw [h_w₁_pre] at hpre
+    -- Now hpre : w₁ = Edge.left.takeAt k w₂.
+    by_cases hw₂_long : k ≤ w₂.length
+    · -- Length-`k` takeAt of `w₂` has length `k > |w₁|`. Contradicts hpre.
+      have h_pre_len : (Edge.left.takeAt k w₂).length = k := by
+        show (w₂.take k).length = k
+        rw [List.length_take]; omega
+      rw [← hpre] at h_pre_len
+      omega
+    · push_neg at hw₂_long
+      have h_w₂_pre : Edge.left.takeAt k w₂ = w₂ := by
+        show w₂.take k = w₂
+        exact List.take_of_length_le (le_of_lt hw₂_long)
+      rw [h_w₂_pre] at hpre
+      rw [hpre]
 
 /-- **Lambert (2026) Prop 58**: a language is generalized `k`-definite
-iff its syntactic monoid satisfies the LI equation. The reverse
-direction is currently `sorry`'d — see
-`isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation`. -/
+iff its syntactic monoid satisfies the LI equation. -/
 theorem isGeneralizedDefinite_iff_satisfies_kGeneralizedDefiniteEquation
     {L : Language α} {k : ℕ} :
     IsGeneralizedDefinite k L ↔
-    Lambert.Equations.kGeneralizedDefiniteEquation L k :=
+    Language.kGeneralizedDefiniteEquation L k :=
   ⟨IsGeneralizedDefinite.satisfies_kGeneralizedDefiniteEquation,
    isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation⟩
 

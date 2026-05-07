@@ -13,7 +13,7 @@ import Mathlib.SetTheory.Cardinal.Finite
 /-!
 # Pin's algebraic characterization of subregular language classes
 
-The classical algebraic-automata-theory characterization of three
+The classical algebraic-automata-theory characterization of four
 basic subregular varieties via **omega-power equations** on the
 syntactic monoid:
 
@@ -22,6 +22,7 @@ syntactic monoid:
 | `𝒟` (definite) | `s · [w]^ω = [w]^ω` | left-absorbing |
 | `𝒦` (reverse-definite) | `[w]^ω · s = [w]^ω` | right-absorbing |
 | `𝒩` (co/finite) | both `𝒟`'s and `𝒦`'s | both-sided absorbing |
+| `ℒℐ` (generalized definite) | `[w]^ω · s · [w]^ω = [w]^ω` | sandwich-absorbing |
 
 Where `[w]^ω = Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w))`
 is the unique idempotent in the cyclic submonoid of `[w]` (see
@@ -29,9 +30,6 @@ is the unique idempotent in the cyclic submonoid of `[w]` (see
 over `L.syntacticMonoid` and `w` over non-empty `List α`
 (alphabet-relativized form — see `Equations.lean` for the trivial-letter
 counterexample motivating the non-empty-`w` restriction).
-
-The fourth variety in @cite{lambert-2026}'s Table 6, `ℒℐ` (generalized
-definite, `[w]^ω · s · [w]^ω = [w]^ω`), is queued for a follow-up file.
 
 ## Why omega-power and not finite-`k`?
 
@@ -51,8 +49,9 @@ form used throughout algebraic automata theory.
 * `Language.pinDefiniteEquation L` — `s · [w]^ω = [w]^ω`.
 * `Language.pinReverseDefiniteEquation L` — `[w]^ω · s = [w]^ω`.
 * `Language.pinCofiniteEquation L` — conjunction of the above two.
+* `Language.pinGeneralizedDefiniteEquation L` — `[w]^ω · s · [w]^ω = [w]^ω`.
 
-All three require `[Finite L.syntacticMonoid]` (equivalent to `L` being
+All four require `[Finite L.syntacticMonoid]` (equivalent to `L` being
 regular, by `IsRegular.finite_syntacticMonoid`).
 
 ## Main results
@@ -65,6 +64,10 @@ regular, by `IsRegular.finite_syntacticMonoid`).
   Pin's `𝒩`-iff (additionally requires `[Finite α]`; the
   language-level reverse direction in `Subregular/Definite.lean` does
   not hold for infinite alphabets).
+* `Language.exists_isGeneralizedDefinite_iff_satisfies_pinGeneralizedDefiniteEquation` —
+  Pin's `ℒℐ`-iff. The reverse direction uses the same prefix-pigeonhole
+  template as `𝒟`/`𝒦`, replacing one-sided absorption with the LI
+  sandwich identity (`sandwich_absorbing_of_pin_pigeonhole`).
 
 ## References
 
@@ -91,7 +94,7 @@ trivial-letter case the same way `kDefiniteEquation` does — see the
 counterexample in `Equations.lean`. Despite living in a sibling file
 to Lambert's `kDefiniteEquation`, this is a *classical* Pin/Eilenberg
 omega-power equation, not Lambert-specific — hence the namespace is
-`Language` rather than `Lambert.Equations`. -/
+`Language` (no author-named namespace). -/
 def pinDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Prop :=
   ∀ (s : L.syntacticMonoid) (w : List α), w ≠ [] →
     s * Monoid.omegaPow (L.toSyntacticMonoid (FreeMonoid.ofList w)) =
@@ -118,7 +121,7 @@ private lemma freeMonoid_ofList_pow_length (w : List α) (n : ℕ) :
 /-- Under the `k`-definite equation, the syntactic class of any word
 of length `≥ k` is **left-absorbing**. -/
 private lemma left_absorbing_of_kDefiniteEquation {L : Language α} {k : ℕ}
-    (hkEq : Lambert.Equations.kDefiniteEquation L k)
+    (hkEq : Language.kDefiniteEquation L k)
     {v : List α} (hv : k ≤ v.length) (s : L.syntacticMonoid) :
     s * L.toSyntacticMonoid (FreeMonoid.ofList v) =
     L.toSyntacticMonoid (FreeMonoid.ofList v) := by
@@ -331,7 +334,7 @@ def pinReverseDefiniteEquation (L : Language α) [Finite L.syntacticMonoid] : Pr
 of length `≥ k` is right-absorbing, decomposing `v = pre ++ suf` with
 `pre` of length `k`. -/
 private lemma right_absorbing_of_kReverseDefiniteEquation {L : Language α} {k : ℕ}
-    (hkEq : Lambert.Equations.kReverseDefiniteEquation L k)
+    (hkEq : Language.kReverseDefiniteEquation L k)
     {v : List α} (hv : k ≤ v.length) (s : L.syntacticMonoid) :
     L.toSyntacticMonoid (FreeMonoid.ofList v) * s =
     L.toSyntacticMonoid (FreeMonoid.ofList v) := by
@@ -684,21 +687,138 @@ theorem IsGeneralizedDefinite.satisfies_pinGeneralizedDefiniteEquation
             (v ++ y) h_vy_len,
           takeAt_right_append_left_absorb x (v ++ y) h_vy_len]
 
-/-- **Pin's ℒℐ-theorem (reverse direction, PARTIAL)**: blocked on the
-finite-`k` LI reverse direction (`isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation`,
-which is currently `sorry`'d). See that theorem's docstring for the
-overlap subcase difficulty. -/
+/-- Helper for the LI reverse direction: given a pigeonhole pair
+`i_lo < i_hi` of indices into `v` whose prefixes have the same
+syntactic class, conclude that `[v]` is **sandwich-absorbing**:
+`[v] · s · [v] = [v]` for any `s ∈ M_L`.
+
+Proof: pigeonhole gives `preM = preM * middleM` for `preM = [v.take i_lo]`,
+`middleM = [v[i_lo..i_hi]]`. Iterating: `preM = preM * middleM^n`, hence
+`preM = preM * ω(middleM)`. So `[v] = preM * sufM = preM * ω(middleM) * sufM`
+(with `sufM = [v.drop i_hi]`). Then by Pin LI's omega equation
+`ω · t · ω = ω`, sandwiching `s` between two copies of `[v]` yields
+`preM * (ω * (sufM * s * preM) * ω) * sufM = preM * ω * sufM = [v]`.
+
+Mirror of `left_absorbing_of_pin_pigeonhole` for the LI sandwich
+form, sharing all of the prefix-pigeonhole substrate (h_pre_idemp,
+h_iter, h_pre_omega) but using Pin LI's two-sided absorption instead
+of D's one-sided absorption to close. -/
+private lemma sandwich_absorbing_of_pin_pigeonhole
+    {L : Language α} [Finite L.syntacticMonoid]
+    (h : pinGeneralizedDefiniteEquation L)
+    {v : List α}
+    {i_lo i_hi : ℕ} (hij : i_lo < i_hi) (hi_hi_le : i_hi ≤ v.length)
+    (h_eq : L.toSyntacticMonoid (FreeMonoid.ofList (v.take i_lo)) =
+            L.toSyntacticMonoid (FreeMonoid.ofList (v.take i_hi)))
+    (s : L.syntacticMonoid) :
+    L.toSyntacticMonoid (FreeMonoid.ofList v) * s *
+    L.toSyntacticMonoid (FreeMonoid.ofList v) =
+    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
+  set pre := v.take i_lo with hpre_def
+  set middle := (v.drop i_lo).take (i_hi - i_lo) with hmiddle_def
+  set suf := v.drop i_hi with hsuf_def
+  have hmiddle_len : middle.length = i_hi - i_lo := by
+    show ((v.drop i_lo).take (i_hi - i_lo)).length = i_hi - i_lo
+    rw [List.length_take, List.length_drop]
+    have hi_lo_le : i_lo ≤ v.length := le_trans (le_of_lt hij) hi_hi_le
+    omega
+  have h_middle_ne : middle ≠ [] := by
+    intro hcontra
+    have h_zero : middle.length = 0 := by rw [hcontra]; simp
+    omega
+  have h_take_j_decomp : v.take i_hi = pre ++ middle := by
+    rw [hpre_def, hmiddle_def, ← List.take_append_drop i_lo (v.take i_hi),
+        List.take_take, List.drop_take]
+    (congr 2; omega)
+  have h_v_decomp : v = pre ++ middle ++ suf := by
+    rw [show pre ++ middle = v.take i_hi from h_take_j_decomp.symm, hsuf_def,
+        List.take_append_drop]
+  set preM := L.toSyntacticMonoid (FreeMonoid.ofList pre) with hpreM_def
+  set middleM := L.toSyntacticMonoid (FreeMonoid.ofList middle) with hmiddleM_def
+  set sufM := L.toSyntacticMonoid (FreeMonoid.ofList suf) with hsufM_def
+  have h_take_j_M : L.toSyntacticMonoid (FreeMonoid.ofList (v.take i_hi)) =
+                    preM * middleM := by
+    rw [h_take_j_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul]
+  have h_pre_idemp : preM = preM * middleM := h_eq.trans h_take_j_M
+  have h_iter : ∀ n : ℕ, preM = preM * middleM ^ n := by
+    intro n
+    induction n with
+    | zero => simp
+    | succ n ih => rw [pow_succ, ← mul_assoc, ← ih]; exact h_pre_idemp
+  have h_pre_omega : preM = preM * Monoid.omegaPow middleM := by
+    rw [Monoid.omegaPow_eq_pow]; exact h_iter _
+  -- [v] = preM * middleM * sufM = preM * sufM = preM * ω(middleM) * sufM.
+  have h_v_omega : L.toSyntacticMonoid (FreeMonoid.ofList v) =
+                   preM * Monoid.omegaPow middleM * sufM := by
+    rw [h_v_decomp, FreeMonoid.ofList_append, MonoidHom.map_mul,
+        FreeMonoid.ofList_append, MonoidHom.map_mul,
+        ← h_pre_idemp, ← h_pre_omega]
+  -- Apply Pin LI: ω · (sufM * s * preM) · ω = ω.
+  have h_pin := h (sufM * s * preM) middle h_middle_ne
+  rw [h_v_omega]
+  -- Reshape preM * ω * sufM * s * (preM * ω * sufM) into
+  -- preM * (ω * (sufM * s * preM) * ω) * sufM, apply h_pin.
+  rw [show preM * Monoid.omegaPow middleM * sufM * s *
+        (preM * Monoid.omegaPow middleM * sufM) =
+      preM *
+        (Monoid.omegaPow middleM * (sufM * s * preM) * Monoid.omegaPow middleM) *
+        sufM by simp only [mul_assoc]]
+  rw [h_pin]
+
+/-- Under Pin's LI omega-power equation, the syntactic class of any
+word of length `≥ Nat.card L.syntacticMonoid` is **sandwich-absorbing**:
+`[v] · s · [v] = [v]` for any `s`. Mirror of
+`left_absorbing_of_pinDefiniteEquation` for the LI sandwich form. -/
+private lemma sandwich_absorbing_of_pinGeneralizedDefiniteEquation
+    {L : Language α} [Finite L.syntacticMonoid]
+    (h : pinGeneralizedDefiniteEquation L)
+    {v : List α} (hv : Nat.card L.syntacticMonoid ≤ v.length)
+    (s : L.syntacticMonoid) :
+    L.toSyntacticMonoid (FreeMonoid.ofList v) * s *
+    L.toSyntacticMonoid (FreeMonoid.ofList v) =
+    L.toSyntacticMonoid (FreeMonoid.ofList v) := by
+  classical
+  haveI : Fintype L.syntacticMonoid := Fintype.ofFinite _
+  have hNat : Nat.card L.syntacticMonoid = Fintype.card L.syntacticMonoid :=
+    Nat.card_eq_fintype_card
+  rw [hNat] at hv
+  -- Pigeonhole on the |M|+1 prefixes v.take 0, …, v.take |M|.
+  have hcard : Fintype.card L.syntacticMonoid <
+               Fintype.card (Fin (Fintype.card L.syntacticMonoid + 1)) := by
+    rw [Fintype.card_fin]; omega
+  obtain ⟨i, j, h_ne, h_eq⟩ :=
+    Fintype.exists_ne_map_eq_of_card_lt
+      (fun n : Fin (Fintype.card L.syntacticMonoid + 1) =>
+        L.toSyntacticMonoid (FreeMonoid.ofList (v.take n.val)))
+      hcard
+  have h_val_ne : i.val ≠ j.val := fun h => h_ne (Fin.ext h)
+  have hi_le : i.val ≤ v.length := le_trans (Nat.lt_succ_iff.mp i.isLt) hv
+  have hj_le : j.val ≤ v.length := le_trans (Nat.lt_succ_iff.mp j.isLt) hv
+  rcases lt_or_gt_of_ne h_val_ne with hij | hij
+  · exact sandwich_absorbing_of_pin_pigeonhole h hij hj_le h_eq s
+  · exact sandwich_absorbing_of_pin_pigeonhole h hij hi_le h_eq.symm s
+
+/-- **Pin's ℒℐ-theorem (reverse direction)**: if a regular language's
+syntactic monoid satisfies Pin's LI omega-power equation, then `L` is
+generalized-`k`-definite for some `k` (specifically,
+`k = Nat.card L.syntacticMonoid`).
+
+Proof: `sandwich_absorbing_of_pinGeneralizedDefiniteEquation` lifts the
+omega-power equation to a finite-`k` sandwich on length-`k` words; this
+is exactly `kGeneralizedDefiniteEquation L k`, which by Lambert Prop 58
+(reverse direction in `Equations.lean`) gives `IsGeneralizedDefinite k L`. -/
 theorem exists_isGeneralizedDefinite_of_satisfies_pinGeneralizedDefiniteEquation
     {L : Language α} [Finite L.syntacticMonoid]
-    (_h : pinGeneralizedDefiniteEquation L) :
+    (h : pinGeneralizedDefiniteEquation L) :
     ∃ k, IsGeneralizedDefinite k L := by
-  sorry
+  refine ⟨Nat.card L.syntacticMonoid, ?_⟩
+  apply isGeneralizedDefinite_of_satisfies_kGeneralizedDefiniteEquation
+  intro s αs hαs_len
+  exact sandwich_absorbing_of_pinGeneralizedDefiniteEquation h (by rw [hαs_len]) s
 
 /-- **Pin's ℒℐ-theorem**: a language is generalized-`k`-definite for
 some `k` iff its syntactic monoid satisfies Pin's LI omega-power
-equation. **Both directions currently `sorry`'d** at this commit:
-forward direction blocked on a structural gap (need `[v] = [αs]` for
-suffix αs), reverse blocked on the finite-`k` LI iff. -/
+equation. -/
 theorem exists_isGeneralizedDefinite_iff_satisfies_pinGeneralizedDefiniteEquation
     {L : Language α} [Finite L.syntacticMonoid] :
     (∃ k, IsGeneralizedDefinite k L) ↔ pinGeneralizedDefiniteEquation L := by
