@@ -82,15 +82,23 @@ noncomputable def projectionPath (h : HeadFunction) (T : SyntacticObject)
     (a) **Connectedness**: vertices form a containment-chain (this theorem).
     (b) **Endpoints**: leaf ℓ at the bottom, maximal projection v_ℓ at the top.
 
-    TODO Phase 3.B.5: discharge via `headAtVertex_coherent` (MCB Def 1.13.3).
-    The proof descends through `h.section_.σ T`'s planar tree: vertices on
-    γ_ℓ correspond to subtrees in the planar embedding whose leftmost (or
-    rightmost, under `.final`) descendant is ℓ. These subtrees nest. -/
+    Hypotheses required for Phase 3.C proof:
+    - `LocallyCoherent h T`: σ behaves structurally on T's subtrees.
+    - `Nodup` on σ T's planar leaves: linguistic well-formedness.
+
+    Proof strategy: vertices `w` with `headAtVertex T w = ℓ` correspond
+    to ancestors of `ℓ`'s leaf-position in the planar embedding `σ T`.
+    Ancestors of any node form a containment-chain. Discharging via
+    `headAtVertex_coherent` (currently sorry'd, see Phase 3.C TODO). -/
 theorem projectionPath_chain (h : HeadFunction) (T : SyntacticObject)
+    (_hCoh : h.LocallyCoherent T)
+    (_hNodup : (leafTokensPlanar (h.section_.σ T)).Nodup)
     (ℓ : LIToken) {w₁ w₂ : SyntacticObject}
     (_h₁ : w₁ ∈ projectionPath h T ℓ) (_h₂ : w₂ ∈ projectionPath h T ℓ) :
     Minimalist.contains w₁ w₂ ∨ Minimalist.contains w₂ w₁ ∨ w₁ = w₂ := by
-  -- Phase 3.B.5+: depends on `headAtVertex_coherent`.
+  -- Phase 3.C TODO: discharge via `headAtVertex_coherent` + planar-descent
+  -- argument. Both hypotheses (LocallyCoherent + Nodup) are forwarded to
+  -- the substrate theorem.
   sorry
 
 /-- The **maximal projection vertex** v_ℓ of leaf ℓ in T

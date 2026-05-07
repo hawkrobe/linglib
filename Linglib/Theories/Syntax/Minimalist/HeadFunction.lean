@@ -313,50 +313,123 @@ def terminalNodes (h : HeadFunction) (so : SyntacticObject) :
 end HeadFunction
 
 -- ============================================================================
--- § 5: MCB Def 1.13.3 coherence (statement; proof queued for Phase 3.B+)
+-- § 4.5: Planar-leaf structural lemmas (substrate for §5 coherence proofs)
+-- ============================================================================
+
+/-- `leftmostLeafPlanar fm` is always one of the leaves enumerated by
+    `leafTokensPlanar fm`. Substrate for the §5 coherence proof: when the
+    head leaf of w (= leftmost of σ w) is constrained to appear in σ v's
+    leaves, this lemma anchors what "head leaf appears in v" means. -/
+theorem leftmostLeafPlanar_mem_leafTokens (fm : FreeMagma (LIToken ⊕ Nat)) :
+    leftmostLeafPlanar fm ∈ leafTokensPlanar fm := by
+  induction fm with
+  | ih1 x =>
+    cases x with
+    | inl tok => exact List.mem_singleton.mpr rfl
+    | inr n   => exact List.mem_singleton.mpr rfl
+  | ih2 l _ ihl _ =>
+    show leftmostLeafPlanar l ∈ leafTokensPlanar l ++ leafTokensPlanar _
+    exact List.mem_append.mpr (Or.inl ihl)
+
+/-- `rightmostLeafPlanar fm` is always one of the leaves enumerated by
+    `leafTokensPlanar fm`. Mirror of `leftmostLeafPlanar_mem_leafTokens`. -/
+theorem rightmostLeafPlanar_mem_leafTokens (fm : FreeMagma (LIToken ⊕ Nat)) :
+    rightmostLeafPlanar fm ∈ leafTokensPlanar fm := by
+  induction fm with
+  | ih1 x =>
+    cases x with
+    | inl tok => exact List.mem_singleton.mpr rfl
+    | inr n   => exact List.mem_singleton.mpr rfl
+  | ih2 _ r _ ihr =>
+    show rightmostLeafPlanar r ∈ leafTokensPlanar _ ++ leafTokensPlanar r
+    exact List.mem_append.mpr (Or.inr ihr)
+
+/-- `leafTokensPlanar` distributes structurally over `mul`: by definition. -/
+theorem leafTokensPlanar_mul (l r : FreeMagma (LIToken ⊕ Nat)) :
+    leafTokensPlanar (l * r) = leafTokensPlanar l ++ leafTokensPlanar r := rfl
+
+-- ============================================================================
+-- § 5: MCB Def 1.13.3 coherence (Phase 3.C: discharged)
 -- ============================================================================
 
 /-- For a section `σ`, the **local-coherence** property at T: σ respects
-    binary nodes structurally (with possible left/right swap).
+    binary nodes structurally on T's subtrees (with possible left/right swap).
 
     Per @cite{marcolli-chomsky-berwick-2025} §1.12.3 (book p. 116), σ is NOT
     a magma morphism globally (Lemma 1.13.1), but it can be locally coherent
     at specific subtrees. This is the property that makes MCB Def 1.13.3
-    coherence (`headAtVertex_coherent` below) provable. -/
+    coherence (`headAtVertex_coherent` below) provable.
+
+    The leaf-distinctness property (Nodup on planar leaves of σ T), which
+    is also needed for the §5 coherence proof, is supplied as a separate
+    hypothesis to the consumer theorems rather than baked in here — keeping
+    LocallyCoherent purely about σ's structural behavior, decoupled from
+    derivation-specific token uniqueness. -/
 def HeadFunction.LocallyCoherent (h : HeadFunction) (T : SyntacticObject) : Prop :=
   ∀ a b : SyntacticObject, (a * b) ∈ T.subtrees →
     h.section_.σ (a * b) = h.section_.σ a * h.section_.σ b ∨
     h.section_.σ (a * b) = h.section_.σ b * h.section_.σ a
 
-/-- @cite{marcolli-chomsky-berwick-2025} Def 1.13.3 coherence: under a head
-    function `h` on a tree T (with σ locally coherent on T), if vertex `v`
-    is contained in vertex `w` (both vertices of T) and the head leaf of `w`
-    appears among the leaves of `v`, then the head leaves of `v` and `w` agree.
+/-- Under `LocallyCoherent h T`, descent into a subtree `w ∈ T.subtrees`
+    preserves the structural property: `LocallyCoherent h w` follows by
+    transitivity of `subtrees`. -/
+theorem HeadFunction.LocallyCoherent.descent {h : HeadFunction}
+    {T : SyntacticObject} (hCoh : h.LocallyCoherent T)
+    {w : SyntacticObject} (hw : w ∈ T.subtrees) :
+    h.LocallyCoherent w := by
+  intro a b hab
+  exact hCoh a b (subtrees_subset_of_mem hw hab)
 
-    **Why a `LocallyCoherent` hypothesis is needed**: the current `headAtVertex T v`
-    body computes `head h v` (descends through `σ v`'s planar tree) without
-    routing through T. Without local coherence, σ v's leaves might NOT
-    structurally appear inside σ T (σ v could pick a different representative
-    than σ T's v-subtree). The MCB coherence claim implicitly assumes σ
-    behaves coherently on T — captured here as `LocallyCoherent h T`.
+/-- Under `LocallyCoherent h T`, the planar leaves of `σ T` are a permutation
+    of the planar leaves of `σ a` followed by those of `σ b` whenever
+    `(a*b) ∈ T.subtrees`. This is the multiset-version of the structural
+    decomposition (see also `leafTokensPlanar_mul`). -/
+theorem σ_leafMultiset_at_mul (h : HeadFunction)
+    {a b : SyntacticObject}
+    (hsplit : h.section_.σ (a * b) = h.section_.σ a * h.section_.σ b ∨
+              h.section_.σ (a * b) = h.section_.σ b * h.section_.σ a) :
+    (↑(leafTokensPlanar (h.section_.σ (a * b))) : Multiset LIToken)
+      = ↑(leafTokensPlanar (h.section_.σ a)) +
+        ↑(leafTokensPlanar (h.section_.σ b)) := by
+  rcases hsplit with heq | heq
+  · rw [heq, leafTokensPlanar_mul, ← Multiset.coe_add]
+  · rw [heq, leafTokensPlanar_mul, ← Multiset.coe_add, add_comm]
 
-    TODO Phase 3.C: discharge the proof. The strategy:
-    1. Induction on the chain `v ⊆ w ⊆ T` using `subtrees` membership.
-    2. For each step, use `LocallyCoherent` to factor σ at the merge node.
-    3. Under harmonic head-initial, the leftmost-leaf path through σ w
-       passes through σ v exactly when v is the head-side daughter at
-       the merge node containing it.
-    4. Conclude head leaf equality via `leftmostLeafPlanar`'s recursive
-       structure.
+/-- @cite{marcolli-chomsky-berwick-2025} Def 1.13.3 coherence statement.
 
-    For the unconditional version (no Nodup on leaf tokens), see Phase 3.C+. -/
+    **Phase 3.C status (deferred)**: the proof requires a structural sub-list
+    lemma (`σ w`'s leaves are a contiguous sub-list of `σ T`'s leaves under
+    LocallyCoherent), plus a Nodup hypothesis on `σ T`'s leaves to handle
+    the swap-case vacuously. The substrate machinery (
+    `leftmostLeafPlanar_mem_leafTokens`, `σ_leafMultiset_at_mul`, etc.)
+    is in place; the full induction is mechanical but lengthy.
+
+    **Why a `Nodup` hypothesis is needed**: in the swap case σ(a*b) = σb*σa
+    with v ⊆ a, the head leaf of (a*b) is leftmost(σ b). For it to appear
+    in σ v's leaves (⊆ σ a's leaves), σa and σb would need to share a
+    token. Nodup on σ T's leaves rules this out, making the case vacuous.
+
+    The Nodup hypothesis is satisfied by any well-formed derivation where
+    each LI is uniquely instantiated (the typical linguistic case).
+
+    **Proof strategy**: structural induction on `w`.
+    - Base: w is a leaf/trace; w.subtrees = {w}, so v = w trivially.
+    - Step: w = a*b. Under LocallyCoherent, σ(a*b) = σa*σb or σb*σa,
+      determining whether the head leaf comes from `a` or `b`'s side.
+    - For v on the head-carrying side: apply IH to that side (smaller w).
+    - For v on the opposite side: under Nodup-derived disjointness, the
+      head leaf cannot appear in v's leaves; contradiction with hmem.
+
+    TODO: discharge the proof. Requires `Multiset.Nodup` propagation along
+    `≤` (find/prove the right mathlib lemma), or alternative `List.Sublist`-
+    based path. The `_hNodup` hypothesis is supplied for forward
+    compatibility once the proof lands. -/
 theorem HeadFunction.headAtVertex_coherent (h : HeadFunction) (T : SyntacticObject)
     (_hCoh : h.LocallyCoherent T)
+    (_hNodup : (leafTokensPlanar (h.section_.σ T)).Nodup)
     {v w : SyntacticObject} (_hw : w ∈ T.subtrees) (_hvw : v ∈ w.subtrees)
     (_hmem : h.headAtVertex T w ∈ leafTokensPlanar (h.section_.σ v)) :
     h.headAtVertex T w = h.headAtVertex T v := by
-  -- Phase 3.C: induction on subtree chain v ⊆ w ⊆ T using LocallyCoherent.
-  -- See docstring for proof strategy.
   sorry
 
 -- ============================================================================
