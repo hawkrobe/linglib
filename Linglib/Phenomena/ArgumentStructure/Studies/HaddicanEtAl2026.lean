@@ -337,13 +337,32 @@ theorem bruening_shapes_differ :
     ¬ structurallyIsomorphic doc_bruening pvc_bruening := by decide
 
 /-- Both Bruening structures use a complex (incorporated) head leaf.
-    Phase 1.0 caveat: under MCB nonplanar SOs (FreeCommMagma carrier),
-    the planar `match doc_bruening with | .node (.leaf tok) _ => ...`
-    pattern doesn't reduce — children of `.mul` are unordered. The
-    complex-head leaf still exists in `subtrees`; an unordered-shape
-    pattern over it is Phase 2 substrate work.
-    TODO Phase 2: re-state via `unorderedShape` once substrate provides it. -/
-theorem bruening_both_use_incorporation : True ∧ True := ⟨trivial, trivial⟩
+    The original theorem (planar substrate) projected the head via
+    `match doc_bruening with | .node (.leaf tok) _ => tok.item.isComplex`,
+    which doesn't reduce under MCB nonplanar SOs (children of `.mul` are
+    unordered).
+
+    The claim itself remains true and verifiable: both DOC and PVC
+    structures contain a complex (head-incorporated) LIToken among their
+    subtrees. Reformulate as a Multiset-membership claim:
+
+    ```
+    (∃ tok ∈ doc_bruening.subtrees.filterMap getLIToken, tok.item.isComplex) ∧
+    (∃ tok ∈ pvc_bruening.subtrees.filterMap getLIToken, tok.item.isComplex)
+    ```
+
+    TODO Phase 2 / polish: prove the Multiset-version directly, or
+    re-derive from a head-function-aware `headLIToken : SO → Option LIToken`
+    once Phase 2 substrate lands. -/
+theorem bruening_both_use_incorporation :
+    (∃ tok ∈ (doc_bruening.subtrees.filterMap SyntacticObject.getLIToken), tok.item.isComplex) ∧
+    (∃ tok ∈ (pvc_bruening.subtrees.filterMap SyntacticObject.getLIToken), tok.item.isComplex) := by
+  -- TODO Phase 2: discharge via Multiset membership + decidable enumeration of subtrees.
+  -- Both witnesses exist (the `give.combine ∅_R` complex LIToken in DOC, and
+  -- the `tap.combine ∅_R` complex LIToken in PVC), but proving membership in
+  -- the Multiset.filterMap requires unfolding subtrees through Quot.out, which
+  -- isn't decidable without the full LCA-derived enumeration.
+  sorry
 
 theorem bruening_doc_matches_sc_doc :
     structurallyIsomorphic doc_bruening doc_sc := by decide
