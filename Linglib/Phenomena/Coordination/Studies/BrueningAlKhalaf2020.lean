@@ -398,14 +398,26 @@ bottom-up accounts. The disagreement is about the **mechanism**: closeness
 - Bottom-up: structural prominence → predictions are position-invariant
 -/
 
-/-- Coordination structure under Minimalist Merge is asymmetric:
-    Merge distinguishes its children (`merge_distinguishes_children`),
-    so the first conjunct (specifier) is structurally more prominent
-    than the second (complement).
+/-- Coordination structure as adopted by both B&AK and the bottom-up
+    accounts is asymmetric: the first conjunct (specifier) is treated
+    as structurally more prominent than the second (complement).
 
-    Both B&AK and bottom-up accounts accept this (§4). The disagreement
-    is about the mechanism (closeness vs structural prominence), not
-    the structure itself. -/
+    Both accounts accept this asymmetry (§4) and disagree only about
+    the *mechanism* that derives downstream predictions from it
+    (linear closeness vs structural prominence).
+
+    **Substrate note (post-MCB Phase 1.0).** This is now a *stipulation*
+    rather than a derivation from Merge structure. Under
+    @cite{marcolli-chomsky-berwick-2025} Definition 1.1.1 (book p. 22)
+    + Remark 1.1.2 (p. 23), syntactic objects are the *free,
+    non-associative, **commutative*** magma over SO_0 — `merge x y`
+    and `merge y x` are *strictly equal* on the quotient (`mul_comm`
+    is a strict equality, not just an isomorphism). Merge therefore
+    cannot ground a "first conjunct vs second conjunct" asymmetry on
+    its own; the asymmetry must come from Externalization (LCA / head
+    directionality, MCB §1.13), Agreement, or a stipulated Coord head
+    structure. Bruening's earlier framing — that the asymmetry follows
+    *from* Merge — does not survive the move to nonplanar SOs. -/
 def mergeCoordSymmetry : CoordSymmetry := .asymmetric
 
 /-- Despite assuming asymmetric structure, B&AK's closeness prediction
@@ -437,38 +449,57 @@ theorem structural_requires_asymmetric :
     FeaturePercolation.requiredSymmetry .linear = none :=
   ⟨rfl, rfl⟩
 
-/-- Merge produces structurally asymmetric objects: the two children
-    of `merge x y` are distinguished (x is the specifier, y is the
-    complement). When x ≠ y, swapping them produces a different
-    syntactic object.
+/-- **Merge is symmetric on the SO carrier.** Under MCB nonplanar SOs
+    (@cite{marcolli-chomsky-berwick-2025} Def 1.1.1, Remark 1.1.2),
+    `merge x y = merge y x` is a strict equality. This was *not* the
+    case under the prior planar `TraceTree` carrier — the earlier
+    version of this file proved a `merge_distinguishes_children`
+    theorem (`merge x y ≠ merge y x` for distinct `x`, `y`) by
+    `injection`. That theorem is now provably *false*: `merge` is
+    `(· * ·)` on `FreeCommMagma _`, which the `CommMagma` instance
+    proves commutative.
 
-    This is the structural foundation of `CoordSymmetry.asymmetric`:
-    if coordination is External Merge, then the first conjunct is
-    always structurally distinguished from the second. -/
-theorem merge_distinguishes_children
-    (x y : Minimalist.SyntacticObject) (h : x ≠ y) :
-    Minimalist.merge x y ≠ Minimalist.merge y x := by
-  intro heq
-  apply h
-  show x = y
-  unfold Minimalist.merge at heq
-  injection heq
+    The change is consequential for Bruening's argument: the
+    "first vs second conjunct" asymmetry can no longer be grounded in
+    Merge structure (which is the original Bruening-style derivation).
+    The asymmetry survives only as a *stipulation* on the Coord head
+    or as a downstream consequence of *Externalization* (LCA / head
+    directionality / linearization). See `mergeCoordSymmetry`'s
+    substrate note. -/
+theorem merge_is_symmetric (x y : Minimalist.SyntacticObject) :
+    Minimalist.merge x y = Minimalist.merge y x := by
+  unfold Minimalist.merge; exact mul_comm _ _
 
-/-- Merge's asymmetry satisfies structural percolation's presupposition. -/
-theorem merge_satisfies_structural_presupposition :
+/-- Stipulation: structural percolation's required-symmetry hypothesis
+    matches the stipulated `mergeCoordSymmetry`. Trivially true since
+    both are `.asymmetric` by stipulation; this lemma exists to make
+    the dependency explicit at the type level rather than load-bearing
+    on Merge's structure. -/
+theorem stipulated_symmetry_matches_percolation :
     FeaturePercolation.requiredSymmetry .structural = some mergeCoordSymmetry := rfl
 
-/-- The full Merge → prediction chain:
+/-- The downstream chain from Coord-asymmetry to bottom-up prediction:
 
-    1. Merge distinguishes children (`merge_distinguishes_children`)
-    2. Therefore coordination via Merge is asymmetric (`mergeCoordSymmetry`)
-    3. Structural percolation's presupposition is met
-       (`merge_satisfies_structural_presupposition`)
-    4. `predictOrder .structural` yields position-invariant DP-first
+    1. `mergeCoordSymmetry := .asymmetric` (STIPULATION — see substrate note)
+    2. Structural percolation's presupposition is met by stipulation
+       (`stipulated_symmetry_matches_percolation`)
+    3. `predictOrder .structural` yields position-invariant DP-first
 
-    This grounds the bottom-up prediction in Minimalist architecture
-    rather than stipulating `CoordSymmetry.asymmetric`. -/
-theorem merge_grounds_prediction (pos : VerbPosition) :
+    **Substrate note (post-MCB Phase 1.0).** This was previously
+    `merge_grounds_prediction`, which claimed (1) was *derived* from
+    Merge structure rather than stipulated. Under MCB nonplanar Merge
+    that derivation does not run (`merge_is_symmetric` is the headline:
+    `merge x y = merge y x`). The Coord-asymmetry stipulation is now
+    epistemically free — neither this file nor MCB grounds it. The
+    bottom-up prediction (`predictOrder .structural pos = .dpFirst`)
+    follows from the stipulation alone, not from Minimalist
+    architecture per se.
+
+    A future Phase 2+ refactor — once linearization (LCA + head
+    directionality) lands — could re-derive the asymmetry as an
+    *Externalization* fact rather than a Merge fact. Until then,
+    treat `mergeCoordSymmetry` as the load-bearing stipulation. -/
+theorem prediction_chain_from_stipulation (pos : VerbPosition) :
     mergeCoordSymmetry = .asymmetric ∧
     FeaturePercolation.requiredSymmetry .structural = some mergeCoordSymmetry ∧
     predictOrder .structural pos = .dpFirst :=
