@@ -1260,15 +1260,65 @@ theorem edges_insertAt_eq_classification {T : TraceTree α β}
                ← Multiset.cons_coe, ← Multiset.singleton_add]
     ac_rfl
 
-/-! ### Phase 3b §9.1 status
+/-! ### §9.3: insertions at different edges commute
 
-Defined: `Edge.lift`, `Edge.newE1`, `Edge.newE2`, `Edge.newEprime`,
-`Edge.preserveAux`, plus `newE1_ne_newE2` (sample distinctness) and the
-**§9.1 headline** `edges_insertAt_eq_classification` (multiset
-decomposition into the 5 classes).
+For two distinct edges `e ≠ f` of `T`, inserting `T₂` at `e` and
+then `T₃` at the corresponding edge in the result, equals inserting
+`T₃` at `f` first and then `T₂` at the corresponding edge. The
+"corresponding edge" is given by `Edge.preserveOf`.
 
-§9.2 (commutativity at different edges) and §9.3 (the actual pre-Lie
-identity discharge) are the remaining Phase 3b work. -/
+This is the per-pair commutativity that the pre-Lie identity will
+exploit on the preserved-edges class of the §9.1 decomposition.
+
+Proof: 16 cases on `(e, f)`. Two are absurd (the diagonals via `h`).
+12 are `rfl` (different constructors, or same constructor on
+different branches). The 2 same-child recursive cases (`.inL/.inL`,
+`.inR/.inR`) reduce to the IH on the smaller subtree. -/
+
+/-- **§9.3 commutativity** (substrate for the pre-Lie cancellation):
+    inserting `T₂` at `e` then `T₃` at the `f`-image, equals
+    inserting `T₃` at `f` then `T₂` at the `e`-image. Both produce
+    the same tree. -/
+theorem insertAt_commute_diff : ∀ {T : TraceTree α β} (e f : Edge T)
+      (h : f ≠ e) (T₂ T₃ : TraceTree α β),
+    insertAt (Edge.preserveOf e f h T₂) T₃
+      = insertAt (Edge.preserveOf f e h.symm T₃) T₂
+  | _, .rootL _ _, .rootL _ _, h, _, _ => absurd rfl h
+  | _, .rootR _ _, .rootR _ _, h, _, _ => absurd rfl h
+  | _, .rootL _ _, .rootR _ _, _, _, _ => rfl
+  | _, .rootL _ _, .inL _ _ _, _, _, _ => rfl
+  | _, .rootL _ _, .inR _ _ _, _, _, _ => rfl
+  | _, .rootR _ _, .rootL _ _, _, _, _ => rfl
+  | _, .rootR _ _, .inL _ _ _, _, _, _ => rfl
+  | _, .rootR _ _, .inR _ _ _, _, _, _ => rfl
+  | _, .inL _ _ _, .rootL _ _, _, _, _ => rfl
+  | _, .inL _ _ _, .rootR _ _, _, _, _ => rfl
+  | _, .inR _ _ _, .rootL _ _, _, _, _ => rfl
+  | _, .inR _ _ _, .rootR _ _, _, _, _ => rfl
+  | _, .inL _ _ _, .inR _ _ _, _, _, _ => rfl
+  | _, .inR _ _ _, .inL _ _ _, _, _, _ => rfl
+  | _, .inL _ r e', .inL _ _ f', h, T₂, T₃ => by
+    show TraceTree.node (insertAt (Edge.preserveOf e' f' _ T₂) T₃) r
+        = TraceTree.node (insertAt (Edge.preserveOf f' e' _ T₃) T₂) r
+    congr 1
+    exact insertAt_commute_diff e' f' (fun heq => h (by rw [heq])) T₂ T₃
+  | _, .inR l _ e', .inR _ _ f', h, T₂, T₃ => by
+    show TraceTree.node l (insertAt (Edge.preserveOf e' f' _ T₂) T₃)
+        = TraceTree.node l (insertAt (Edge.preserveOf f' e' _ T₃) T₂)
+    congr 1
+    exact insertAt_commute_diff e' f' (fun heq => h (by rw [heq])) T₂ T₃
+
+/-! ### Phase 3b §9.1-§9.3 status
+
+Substrate complete:
+- §9.1: `Edge.classifyEquiv` (5-class bijection).
+- §9.2: `edges_insertAt_eq_classification` (multiset decomposition).
+- §9.3: `insertAt_commute_diff` (insertions at distinct edges commute).
+- Pairwise distinctness corollaries (`newE1_ne_newE2`,
+  `newE1_ne_newEprime`, `newE2_ne_newEprime`).
+
+Remaining: §9.4 — the actual pre-Lie identity discharge of
+`insertSumLift_right_preLie` (currently `sorry` at §6). -/
 
 /-! ## Phase 1-3a + 3b-substrate conclusion + roadmap
 
