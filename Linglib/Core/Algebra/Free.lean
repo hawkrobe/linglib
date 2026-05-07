@@ -769,3 +769,121 @@ instance : Repr (FreeCommMagma α) where
   reprPrec _ _ := "<FreeCommMagma>"
 
 end FreeCommMagma
+
+/-! ### Sections of the quotient projection `Quot.mk : FreeMagma → FreeCommMagma`
+
+A **section** of the projection picks a planar representative (a `FreeMagma α`)
+for each nonplanar tree (a `FreeCommMagma α`). This is the natural primitive
+for the **Externalization** models of @cite{marcolli-chomsky-berwick-2025} §1.12.1
+(book pp. 105-108): the section σ_L assigns to each abstract syntactic object
+T ∈ 𝔗_{SO_0} a planar embedding σ_L(T) ∈ 𝔗^{pl}_{SO_0}, language-dependently.
+
+**Key properties** (MCB §1.12.1):
+- The section is a **map of sets, NOT a morphism of magmas**. Per MCB Lemma 1.13.1
+  (book p. 124), no morphism of magmas exists from `FreeCommMagma α` to
+  `FreeMagma α` — a commutative submagma argument rules it out.
+- The section is **noncanonical**: it depends on choices (e.g., language-specific
+  word-order parameters in linguistics).
+
+**Mathlib shape**: a section is captured exactly by `Function.LeftInverse mk σ`
+on the standard quotient projection. We bundle it into a `Section` structure for
+ergonomic field access (downstream `HeadFunction` etc. embed `section_ : Section _`
+as a single field rather than two).
+
+**Downstream uses** (forward references):
+- `Linglib/Theories/Syntax/Minimalist/HeadFunction.lean` uses `Section (LIToken ⊕ Nat)`
+  as the substrate for MCB head functions
+- The `Section.σ_of` keystone lemma absorbs ~13 sites of singleton-class
+  case-analysis into a single application
+- Per MCB §1.12.3, σ_L can be lifted to a linear map of vector spaces
+  `V(𝔗_{SO_0}) → V(𝔗^{pl}_{SO_0})` — this lift is straightforward via
+  `Quot.lift` once the algebra-side substrate is in place; Section captures
+  the underlying set-level fact
+
+This abstraction generalizes any future MCB-style "section of a quotient
+projection" need (e.g. Π_L of MCB eq 1.12.4, second projection).
+-/
+
+namespace FreeCommMagma
+
+variable {α : Type u}
+
+/-- A **section** of the quotient projection `Quot.mk : FreeMagma α → FreeCommMagma α`,
+    per @cite{marcolli-chomsky-berwick-2025} §1.12.1.
+
+    The section σ : `FreeCommMagma α → FreeMagma α` picks a planar representative
+    for each nonplanar tree. The `isSection` field witnesses
+    `Function.LeftInverse mk σ`, i.e. `∀ T, FreeCommMagma.mk (σ T) = T`.
+
+    Per MCB Lemma 1.13.1, σ is **not** a morphism of magmas (no such morphism
+    exists from `FreeCommMagma α` to `FreeMagma α`). It is a map of sets only.
+    Constructing σ is **noncanonical**: distinct sections correspond to distinct
+    planar embedding choices.
+
+    Equivalent to a (noncomputable) bare `(σ, isSection)` pair, but bundled for
+    ergonomic field access in downstream structures (e.g. `HeadFunction`). -/
+structure Section (α : Type u) where
+  /-- The underlying section function: assigns a planar representative to each
+      nonplanar tree. -/
+  σ : FreeCommMagma α → FreeMagma α
+  /-- Section equation: `mk` is a left inverse of `σ`, i.e. composing yields id. -/
+  isSection : Function.LeftInverse (FreeCommMagma.mk : FreeMagma α → FreeCommMagma α) σ
+
+namespace Section
+
+variable {α : Type u}
+
+/-- A section is injective: distinct quotient elements have distinct planar
+    representatives. Derived via mathlib's `Function.LeftInverse.injective`. -/
+theorem injective (s : Section α) : Function.Injective s.σ :=
+  s.isSection.injective
+
+/-- The trivial section via `Quot.out`: noncomputable (classical choice).
+    Useful as a default when no language-specific section is supplied. -/
+noncomputable def out : Section α where
+  σ := Quot.out
+  isSection := Quot.out_eq
+
+/-- **The keystone helper for singleton-class proofs.**
+
+    For any `a : α`, the section's image of `FreeCommMagma.of a` has the
+    `FreeMagma.of a` shape: `s.σ (of a) = of a`.
+
+    **Why this lemma exists**: downstream consumers (e.g. `HeadFunction.head_leaf`,
+    `outerCat_leaf`, `checkedSel_leaf`, `toHc_leaf`, ...) repeatedly need to prove
+    `f (s.σ (of a)) = expected` by case-analysis on `s.σ (of a)`'s `FreeMagma`
+    shape — leveraging that the equivalence class of `of a` under `CommRel` is a
+    singleton (no swap fires on `.of _`). Without this lemma, every consumer
+    repeats the same 5-line scaffold:
+    ```
+    have hSec := s.isSection (of a)
+    rw [mk_eq_iff_commEqv] at hSec
+    match hext : s.σ (of a) with
+    | .of x => exact ...
+    | .mul _ _ => exact absurd hSec ...
+    ```
+    With this lemma, the consumer just rewrites `s.σ (of a)` to `of a` and
+    continues structurally.
+
+    Proof: composing `mk` with `s.σ` recovers the input (`isSection`); since
+    the equivalence class of `of a` is a singleton modulo `CommRel`, `s.σ (of a)`
+    must itself be `of a`. -/
+theorem σ_of (s : Section α) (a : α) :
+    s.σ (FreeCommMagma.of a) = FreeMagma.of a := by
+  have hSec : FreeCommMagma.mk (s.σ (FreeCommMagma.of a))
+      = (FreeCommMagma.of a : FreeCommMagma α) := s.isSection _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
+  -- hSec : FreeMagma.CommEqv (s.σ (of a)) (of a)
+  match hext : s.σ (FreeCommMagma.of a) with
+  | .of x =>
+    rw [hext] at hSec
+    -- hSec : x = a (CommEqv on .of cells reduces to equality)
+    exact congrArg FreeMagma.of hSec
+  | .mul _ _ =>
+    rw [hext] at hSec
+    -- absurd: CommEqv (mul _ _) (of a) is False by definition
+    exact absurd hSec (by simp [FreeMagma.CommEqv])
+
+end Section
+
+end FreeCommMagma
