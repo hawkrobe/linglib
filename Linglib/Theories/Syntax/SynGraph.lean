@@ -37,8 +37,13 @@ impossibility of sideward/downward movement.
 
 - `MereologicalSyntax.SynObj`: tree-based, cannot express multiparthood.
   Embeds into `SynGraph` by construction.
-- `Minimalist.SyntacticObject`: binary tree. Embeds as a `SynGraph`
-  satisfying `isTree`.
+- `Minimalist.SyntacticObject`: binary nonplanar tree (FreeCommMagma quotient,
+  post-MCB Phase 1.0). A `SynGraph` embedding requires a planar order on
+  daughters; under the nonplanar substrate, this needs a head function +
+  head-directionality choice (Phase 2+ LCA work). Until that lands, the
+  embedding `SyntacticObject → SynGraph` is not built — it would have to
+  pick `Quot.out` or a stipulated planar representative, neither of which
+  is consumer-callable cleanly.
 - `Core.Tree C W`: n-ary tree for compositional interpretation, not a
   syntactic structure type.
 -/

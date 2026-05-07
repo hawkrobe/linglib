@@ -338,6 +338,20 @@ end SyntacticObject
 def merge (x y : SyntacticObject) : SyntacticObject :=
   x * y
 
+/-- **Headline of the MCB Phase 1.0 nonplanar migration**:
+    Merge is symmetric on the FreeCommMagma carrier.
+    `merge x y = merge y x` as strict equality on the quotient,
+    per @cite{marcolli-chomsky-berwick-2025} Definition 1.1.1
+    (book p. 22) + Remark 1.1.2 (p. 23). The earlier planar
+    `TraceTree`-based theorem `merge_distinguishes_children`
+    (`x ≠ y → merge x y ≠ merge y x`) is now PROVABLY FALSE; this
+    `merge_comm` lemma is what replaces it at the substrate level.
+
+    Available as a `simp` lemma so consumers can rewrite
+    `merge x y` to `merge y x` (or vice versa) freely. -/
+@[simp] theorem merge_comm (x y : SyntacticObject) : merge x y = merge y x := by
+  unfold merge; exact mul_comm _ _
+
 def validMerge (x y : SyntacticObject) : Prop :=
   x ≠ y
 

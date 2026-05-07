@@ -96,9 +96,21 @@ structure SharedNode where
 /-- A coordination structure with PF reduction.
 
     Models a coordinate &P where material is either multiply dominated
-    (shared between conjuncts) or elided by an E-feature. -/
+    (shared between conjuncts) or elided by an E-feature.
+
+    **Substrate note (post-MCB Phase 1.0).** The `conjunct1` / `conjunct2`
+    field names are **stipulated planar labels** at the coord-structure
+    *meta*-level, NOT inherited from the SO substrate (which is nonplanar
+    via FreeCommMagma — see `Minimalist.merge_comm`). The first-vs-second
+    conjunct distinction tracked by these fields is a *coordination-
+    specific stipulation* about which conjunct hosts the shared / deleted
+    material, parallel to `BrueningAlKhalaf2020.mergeCoordSymmetry`.
+    Phase 2+: harmonize with @cite{citko-2011}'s symmetric-merge
+    multidominance framework, where conjunct ordering is genuinely
+    a multiset operation. -/
 structure PFReducedCoordination where
-  /-- First conjunct. -/
+  /-- First conjunct. Planar label is stipulated at coord-structure level
+      (not inherited from substrate). -/
   conjunct1 : SyntacticObject
   /-- Second conjunct. -/
   conjunct2 : SyntacticObject

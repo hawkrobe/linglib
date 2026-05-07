@@ -28,10 +28,19 @@ shape into the polymorphic `lateMergerBleeds` operation, with
 
 ## Core ideas
 
-Under the copy theory of movement, a moved phrase leaves copies at
-every position on its chain. Late merger allows the relevant
-sub-constituent to be introduced at *any* copy position, subject to
-the flavor's admissibility constraint.
+The late-merger account is theory-neutral about the encoding of
+movement chains. Under the **copy theory** of movement, a moved
+phrase leaves explicit copies at every position on its chain. Under
+the **trace-as-leaf encoding** that linglib's substrate currently
+uses (MCB ^ρ-form-with-indexing — see `Basic.lean` `SyntacticObject`
+docstring), each chain position is marked by a `.trace n` leaf
+sharing the index `n` with its mover. Either encoding licenses the
+same Late Merger reasoning: the sub-constituent is introduced at any
+admissible chain position, regardless of how that position is
+materialized in the SO. This file's `chain : List ChainPosition`
+abstraction is encoding-agnostic at the API level; the substrate
+choice (trace-as-leaf) shows up only at the level of the concrete
+SO produced after IM.
 
 If the late-merged constituent contains an R-expression that would be
 c-commanded by a coreferential pronoun at the base position, full
