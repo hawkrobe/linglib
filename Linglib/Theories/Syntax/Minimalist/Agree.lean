@@ -175,15 +175,25 @@ def closestGoalB (root probe goal : SyntacticObject)
     (pred : SyntacticObject → Bool) : Bool :=
   decide (cCommandsIn root probe goal) &&
   pred goal &&
-  !(root.subtrees.any fun x =>
-    x != goal &&
-    pred x &&
-    decide (cCommandsIn root probe x) &&
-    decide (cCommandsIn root x goal))
+  (! @decide (∃ x ∈ root.subtrees,
+    x ≠ goal ∧ pred x = true ∧
+    cCommandsIn root probe x ∧ cCommandsIn root x goal)
+    Multiset.decidableExistsMultiset)
 
 -- ============================================================================
 -- § 3c: Horizons (@cite{keine-2019})
 -- ============================================================================
+
+/-- Per-vertex horizon predicate: leaf with category = horizonCat. -/
+private def isHorizonLeafFor (horizonCat : Cat) (n : SyntacticObject) : Prop :=
+  match SyntacticObject.getLIToken n with
+  | some tok => tok.item.outerCat = horizonCat
+  | none => False
+
+instance (horizonCat : Cat) (n : SyntacticObject) :
+    Decidable (isHorizonLeafFor horizonCat n) := by
+  unfold isHorizonLeafFor
+  cases SyntacticObject.getLIToken n <;> infer_instance
 
 /-- Is `target` behind a horizon of category `horizonCat` relative to
     `probe` in tree `root`?
@@ -206,14 +216,11 @@ def closestGoalB (root probe goal : SyntacticObject)
     pied-piping. -/
 def behindHorizonB (root probe target : SyntacticObject)
     (horizonCat : Cat) : Bool :=
-  root.subtrees.any fun n =>
-    match n with
-    | .leaf tok =>
-      tok.item.outerCat == horizonCat &&
-      decide (cCommandsIn root n target) &&
-      decide (cCommandsIn root probe n)
-    | .trace _ => false  -- traces don't act as horizons
-    | .node _ _ => false
+  @decide (∃ n ∈ root.subtrees,
+    isHorizonLeafFor horizonCat n ∧
+    cCommandsIn root n target ∧
+    cCommandsIn root probe n)
+    Multiset.decidableExistsMultiset
 
 -- ============================================================================
 -- § 4: Feature Valuation

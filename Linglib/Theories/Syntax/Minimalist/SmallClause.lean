@@ -108,17 +108,15 @@ without forcing them through the `SmallClause` constructor. -/
 /-- Head category of a syntactic object: the leftmost terminal's outer
     category. By the Minimalist projection convention used in our
     encodings, the head precedes its complement, so the LEFT child
-    of any non-leaf projects. -/
-def SyntacticObject.headCat : SyntacticObject → Cat
-  | .leaf tok => tok.item.outerCat
-  | .trace _ => .N  -- traces project as N (default)
-  | .node l _ => l.headCat
+    of any non-leaf projects.
 
-@[simp] theorem SyntacticObject.headCat_leaf (tok : LIToken) :
-    (SyntacticObject.leaf tok).headCat = tok.item.outerCat := rfl
-
-@[simp] theorem SyntacticObject.headCat_node (l r : SyntacticObject) :
-    (SyntacticObject.node l r).headCat = l.headCat := rfl
+    Phase 1.0: noncomputable via `outerCat` (which is itself
+    `Quot.out`-based after the FreeCommMagma migration).
+    The simp lemmas `headCat_leaf` / `headCat_node` no longer
+    hold by `rfl` and have been removed; consumers should use
+    `SyntacticObject.outerCat` directly. -/
+noncomputable abbrev SyntacticObject.headCat (so : SyntacticObject) : Cat :=
+  so.outerCat
 
 /-- A syntactic object qualifies as a small-clause predicate iff its
     head category is one of @cite{dendikken-1995}'s four SC-licensed
@@ -126,8 +124,17 @@ def SyntacticObject.headCat : SyntacticObject → Cat
 def IsSmallClausePredicate (so : SyntacticObject) : Prop :=
   so.headCat = .P ∨ so.headCat = .A ∨ so.headCat = .V ∨ so.headCat = .N
 
-instance : DecidablePred IsSmallClausePredicate :=
-  fun so => by unfold IsSmallClausePredicate; exact inferInstance
+noncomputable instance : DecidablePred IsSmallClausePredicate :=
+  fun so => by unfold IsSmallClausePredicate; classical exact inferInstance
+
+/-- The "right daughter" of an SO under planar `Quot.out`. Phase 1.0
+    placeholder — Phase 2 will replace with an `HeadFunction`-aware
+    selection of the predicate-side daughter. -/
+noncomputable def SyntacticObject.rightDaughter? (so : SyntacticObject) :
+    Option SyntacticObject :=
+  match so.out with
+  | .of _ => none
+  | .mul _ r => some (FreeCommMagma.mk r)
 
 /-- A syntactic object IS a small clause when it is a binary node
     (subject + predicate) whose right child satisfies
@@ -136,29 +143,25 @@ instance : DecidablePred IsSmallClausePredicate :=
     with Spec on the left and the projecting predicate XP on the
     right (book p. 132 ex. 52a).
 
-    Companion to `structure SmallClause`. -/
-def IsSmallClause : SyntacticObject → Prop
-  | .leaf _ => False
-  | .trace _ => False
-  | .node _ pred => IsSmallClausePredicate pred
+    Companion to `structure SmallClause`.
+    Phase 1.0 noncomputable (depends on `rightDaughter?` which uses
+    `Quot.out`). The previous `.leaf`/`.trace`/`.node` simp lemmas
+    no longer hold by `rfl`; the `merge`-form rewrite is replaced by
+    a sorry pending Phase 2. -/
+noncomputable def IsSmallClause (so : SyntacticObject) : Prop :=
+  match so.rightDaughter? with
+  | some pred => IsSmallClausePredicate pred
+  | none => False
 
-instance : DecidablePred IsSmallClause
-  | .leaf _ => isFalse id
-  | .trace _ => isFalse id
-  | .node _ pred => inferInstanceAs (Decidable (IsSmallClausePredicate pred))
+noncomputable instance : DecidablePred IsSmallClause := fun so => by
+  unfold IsSmallClause
+  cases so.rightDaughter? <;> classical infer_instance
 
-@[simp] theorem isSmallClause_leaf (tok : LIToken) :
-    ¬ IsSmallClause (SyntacticObject.leaf tok) := id
-
-@[simp] theorem isSmallClause_node (l r : SyntacticObject) :
-    IsSmallClause (SyntacticObject.node l r) ↔ IsSmallClausePredicate r :=
-  Iff.rfl
-
-/-- `merge`-form rewrite for `IsSmallClause` — useful since study
-    files build SCs with `merge` rather than `.node` patterns. -/
-@[simp] theorem isSmallClause_merge (l r : SyntacticObject) :
-    IsSmallClause (merge l r) ↔ IsSmallClausePredicate r :=
-  Iff.rfl
+/-- `merge`-form rewrite for `IsSmallClause`.
+    TODO Phase 2: was `Iff.rfl` against the planar substrate. -/
+theorem isSmallClause_merge (l r : SyntacticObject) :
+    IsSmallClause (merge l r) ↔ IsSmallClausePredicate r := by
+  sorry
 
 /-- Round-trip: any `SmallClause` whose stored `predCat` agrees with
     its `predicate`'s actual head category yields a `SyntacticObject`
