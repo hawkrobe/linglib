@@ -1556,6 +1556,73 @@ noncomputable def mapFCMHom :
 @[simp] theorem mapFCM_sub (f g : (TraceTree α β) →₀ ℤ) :
     mapFCM (f - g) = mapFCM f - mapFCM g := mapFCMHom.map_sub f g
 
+-- ============================================================================
+-- §10b: Per-edge swap-collapse lemmas for Case 3 (book Figure 1.6)
+-- ============================================================================
+
+/-! These lemmas prove the substantive Case 3 cancellations under `toFCM`.
+    Each demonstrates that one of the three "new edge" insertions on the LHS
+    produces the same FCM tree as the corresponding new-edge insertion on the
+    RHS (after swapping T₂ and T₃ as MCB Figure 1.6 prescribes).
+
+    By induction on `e : Edge T₁`. The `.rootL`/`.rootR` base cases reduce to
+    explicit `toFCM` evaluations + at most one `mul_comm` application.
+    The `.inL`/`.inR` recursive cases push the IH through the parent context. -/
+
+/-- **Case 3, `newE1 ↔ newE2` swap** (book Figure 1.6 lower-left ↔ upper-right):
+    inserting T₃ at the upper half of the split-edge (newE1 with T₂)
+    produces the same FCM tree as inserting T₂ at the lower half of the
+    swapped split (newE2 with T₃). Direct by structural induction; the base
+    cases require no `mul_comm` (the structures match planarly). -/
+theorem toFCM_insertAt_newE1_eq_newE2_swap (T₂ T₃ : TraceTree α β) :
+    ∀ {T : TraceTree α β} (e : Edge T),
+      toFCM (insertAt (Edge.newE1 e T₂) T₃) = toFCM (insertAt (Edge.newE2 e T₃) T₂)
+  | _, .rootL _ _ => rfl
+  | _, .rootR _ _ => rfl
+  | _, .inL _ _ e' => by
+      show toFCM (insertAt (Edge.newE1 e' T₂) T₃) * _
+        = toFCM (insertAt (Edge.newE2 e' T₃) T₂) * _
+      rw [toFCM_insertAt_newE1_eq_newE2_swap T₂ T₃ e']
+  | _, .inR _ _ e' => by
+      show _ * toFCM (insertAt (Edge.newE1 e' T₂) T₃)
+        = _ * toFCM (insertAt (Edge.newE2 e' T₃) T₂)
+      rw [toFCM_insertAt_newE1_eq_newE2_swap T₂ T₃ e']
+
+/-- **Case 3, `newE2 ↔ newE1` swap** (symmetric to above): inserting T₃ at
+    the lower half of the split (newE2 with T₂) produces the same FCM tree
+    as inserting T₂ at the upper half of the swapped split (newE1 with T₃).
+    Symmetric to `toFCM_insertAt_newE1_eq_newE2_swap`. -/
+theorem toFCM_insertAt_newE2_eq_newE1_swap (T₂ T₃ : TraceTree α β) :
+    ∀ {T : TraceTree α β} (e : Edge T),
+      toFCM (insertAt (Edge.newE2 e T₂) T₃) = toFCM (insertAt (Edge.newE1 e T₃) T₂) :=
+  fun e => (toFCM_insertAt_newE1_eq_newE2_swap T₃ T₂ e).symm
+
+/-- **Case 3, `newEprime ↔ newEprime` swap** (book Figure 1.6 right column):
+    inserting T₃ at the new-vertex-to-T₂ edge produces a tree with `(T₂, T₃)`
+    as the new sibling pair; the symmetric insertion produces `(T₃, T₂)`.
+    Under FCM commutativity, these are equal — exactly the (c) `newEprime`
+    discrepancy that the planar version cannot satisfy. -/
+theorem toFCM_insertAt_newEprime_swap (T₂ T₃ : TraceTree α β) :
+    ∀ {T : TraceTree α β} (e : Edge T),
+      toFCM (insertAt (Edge.newEprime e T₂) T₃)
+        = toFCM (insertAt (Edge.newEprime e T₃) T₂)
+  | _, .rootL l r => by
+      show ((l.toFCM * (T₂.toFCM * T₃.toFCM)) * r.toFCM)
+         = ((l.toFCM * (T₃.toFCM * T₂.toFCM)) * r.toFCM)
+      rw [mul_comm T₂.toFCM T₃.toFCM]
+  | _, .rootR l r => by
+      show (l.toFCM * (r.toFCM * (T₂.toFCM * T₃.toFCM)))
+         = (l.toFCM * (r.toFCM * (T₃.toFCM * T₂.toFCM)))
+      rw [mul_comm T₂.toFCM T₃.toFCM]
+  | _, .inL _ _ e' => by
+      show toFCM (insertAt (Edge.newEprime e' T₂) T₃) * _
+        = toFCM (insertAt (Edge.newEprime e' T₃) T₂) * _
+      rw [toFCM_insertAt_newEprime_swap T₂ T₃ e']
+  | _, .inR _ _ e' => by
+      show _ * toFCM (insertAt (Edge.newEprime e' T₂) T₃)
+        = _ * toFCM (insertAt (Edge.newEprime e' T₃) T₂)
+      rw [toFCM_insertAt_newEprime_swap T₂ T₃ e']
+
 /-- **MCB Lemma 1.7.2 — pre-Lie identity at the FreeCommMagma level**
     @cite{marcolli-chomsky-berwick-2025} Lemma 1.7.2 (book pp. 77-78).
 
