@@ -10,7 +10,7 @@ import Linglib.Theories.Semantics.Quantification.Quantifier
 The numeral surface forms ("three", "more than three", "at least three", "at
 most three", "fewer than three") are five `Nat`-instantiations of
 @cite{kennedy-2015}'s unified de-Fregean GQ
-`λP. max{d | #P ≥ d} REL m`, captured in `Core.Scale.kennedyGQ`. Each named
+`λP. max{d | #P ≥ d} REL m`, captured in `Core.Scale.relationalGQ`. Each named
 meaning is the corresponding `Core.Scale.{...}Deg id` specialization, and so
 inherits the scale infrastructure (maximal informativity, monotonicity,
 density) by construction.
@@ -25,8 +25,8 @@ The only theory disagreement is the bare-numeral semantics:
 Modified numerals are theory-independent — everyone agrees "more than 3"
 means `> 3`. The Class A / Class B distinction (@cite{geurts-nouwen-2007},
 @cite{nouwen-2010}) reduces to reflexivity vs irreflexivity of the modifier's
-underlying relation; see `Core.Scale.kennedyGQ_refl_at_boundary` and
-`Core.Scale.kennedyGQ_irrefl_at_boundary`.
+underlying relation; see `Core.Scale.relationalGQ_refl_at_boundary` and
+`Core.Scale.relationalGQ_irrefl_at_boundary`.
 
 ## Sections
 
@@ -58,7 +58,7 @@ The distinction predicts ignorance implicature patterns:
 
 Structurally: Class B iff the underlying relation is reflexive (`Std.Refl`),
 Class A iff irreflexive (`Std.Irrefl`); see
-`Core.Scale.kennedyGQ_refl_at_boundary`. -/
+`Core.Scale.relationalGQ_refl_at_boundary`. -/
 inductive ModifierClass where
   | classA  -- strict: >, <
   | classB  -- non-strict: ≥, ≤
@@ -211,15 +211,15 @@ def kennedyAlternatives (n : Nat) : List NumeralExpr :=
     world; non-strict modifiers (`≥`, `≤`) include it. The classification is
     derived from `NumeralExpr.modifierClass`; the inclusion/exclusion theorems
     below apply the corresponding general lemmas
-    `Core.Scale.kennedyGQ_irrefl_at_boundary` and
-    `Core.Scale.kennedyGQ_refl_at_boundary`, instantiated at `μ = id`. -/
+    `Core.Scale.relationalGQ_irrefl_at_boundary` and
+    `Core.Scale.relationalGQ_refl_at_boundary`, instantiated at `μ = id`. -/
 
 /-- **Class A excludes the bare-numeral world** (universal). For every
     `e : NumeralExpr` whose modifier class is A, the meaning fails at
     `n = e.argument`, regardless of which bare-numeral semantics is chosen.
 
     Each non-vacuous branch delegates to
-    `Core.Scale.kennedyGQ_irrefl_at_boundary` at `μ = id`. -/
+    `Core.Scale.relationalGQ_irrefl_at_boundary` at `μ = id`. -/
 theorem classA_excludes_bare_world (bare : Nat → Nat → Prop) (e : NumeralExpr)
     (h : e.modifierClass = some .classA) :
     ¬ e.meaning bare e.argument := by
@@ -227,15 +227,15 @@ theorem classA_excludes_bare_world (bare : Nat → Nat → Prop) (e : NumeralExp
   | bare _      => simp [NumeralExpr.modifierClass] at h
   | atLeast _   => simp [NumeralExpr.modifierClass] at h
   | atMost _    => simp [NumeralExpr.modifierClass] at h
-  | moreThan _  => exact Core.Scale.kennedyGQ_irrefl_at_boundary (rel := (· > ·)) id rfl
-  | fewerThan _ => exact Core.Scale.kennedyGQ_irrefl_at_boundary (rel := (· < ·)) id rfl
+  | moreThan _  => exact Core.Scale.relationalGQ_irrefl_at_boundary (rel := (· > ·)) id rfl
+  | fewerThan _ => exact Core.Scale.relationalGQ_irrefl_at_boundary (rel := (· < ·)) id rfl
 
 /-- **Class B includes the bare-numeral world** (universal). For every
     `e : NumeralExpr` whose modifier class is B, the meaning holds at
     `n = e.argument`, regardless of which bare-numeral semantics is chosen.
 
     Each non-vacuous branch delegates to
-    `Core.Scale.kennedyGQ_refl_at_boundary` at `μ = id`. -/
+    `Core.Scale.relationalGQ_refl_at_boundary` at `μ = id`. -/
 theorem classB_includes_bare_world (bare : Nat → Nat → Prop) (e : NumeralExpr)
     (h : e.modifierClass = some .classB) :
     e.meaning bare e.argument := by
@@ -243,8 +243,8 @@ theorem classB_includes_bare_world (bare : Nat → Nat → Prop) (e : NumeralExp
   | bare _      => simp [NumeralExpr.modifierClass] at h
   | moreThan _  => simp [NumeralExpr.modifierClass] at h
   | fewerThan _ => simp [NumeralExpr.modifierClass] at h
-  | atLeast _   => exact Core.Scale.kennedyGQ_refl_at_boundary (rel := (· ≥ ·)) id rfl
-  | atMost _    => exact Core.Scale.kennedyGQ_refl_at_boundary (rel := (· ≤ ·)) id rfl
+  | atLeast _   => exact Core.Scale.relationalGQ_refl_at_boundary (rel := (· ≥ ·)) id rfl
+  | atMost _    => exact Core.Scale.relationalGQ_refl_at_boundary (rel := (· ≤ ·)) id rfl
 
 /-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization
     of `Core.Scale.eqDeg_imp_atLeastDeg`. -/

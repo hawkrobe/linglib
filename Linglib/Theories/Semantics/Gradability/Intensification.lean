@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Basic
 import Mathlib.Data.Rat.Defs
 
 /-!

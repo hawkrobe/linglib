@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Degree.Aggregation
-import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Basic
 
 /-!
 # Adjective–Aggregation Bridge

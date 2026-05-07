@@ -2198,7 +2198,8 @@ import Linglib.Theories.Semantics.Gradability.ClauseEmbedding
 import Linglib.Theories.Semantics.Gradability.Classification
 import Linglib.Theories.Semantics.Gradability.Intensification
 import Linglib.Theories.Semantics.Gradability.Aggregation
-import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Basic
+import Linglib.Theories.Semantics.Gradability.MaximalInformativity
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Syntax.Minimalist.MinimalPronoun
 import Linglib.Theories.Syntax.Minimalist.LongDistanceAgree

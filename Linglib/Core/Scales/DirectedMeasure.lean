@@ -10,7 +10,7 @@ A `DirectedMeasure D E` packages a degree type, entity type, measure function,
 boundedness classification, and direction. The common algebraic core of
 `GradablePredicate`, MIP domain constructors, and epistemic threshold semantics.
 
-The MIP domain framework operators (`kennedyNumeral`, `kennedyAdjective`,
+The MIP domain framework operators (`numeral`, `adjective`,
 `rouillardETIA`, `rouillardGTIA`) currently live in this file. Per master
 plan v4 Phase B, these will move to `Theories/Semantics/Gradability/{Kennedy,Rouillard}.lean`.
 
@@ -55,7 +55,7 @@ namespace Core.Scale
     these extends or instantiates `DirectedMeasure`:
 
     - `GradablePredicate E D` extends `DirectedMeasure D E` with `form`
-    - `kennedyNumeral`, `rouillardETIA`, etc. produce `DirectedMeasure` instances
+    - `numeral`, `rouillardETIA`, etc. produce `DirectedMeasure` instances
     - Epistemic vocabulary: `DirectedMeasure ℚ (E × (W → Prop))`
 
     The degree property (`atLeastDeg` for positive, `atMostDeg` for
@@ -114,7 +114,7 @@ The `isMaxInf_atLeast_iff_eq` and `isMaxInf_atMost_iff_eq` theorems prove this
 for both monotonicity directions. The Kennedy type-shift is not a separate
 mechanism — it IS the MIP applied to "at least n".
 
-Per master plan v4, these MIP-domain operators (kennedyNumeral, kennedyAdjective,
+Per master plan v4, these MIP-domain operators (numeral, adjective,
 rouillardETIA, rouillardGTIA) are scheduled to move to
 `Theories/Semantics/Gradability/{Kennedy,Rouillard}.lean` in Phase B. -/
 
@@ -127,69 +127,33 @@ variable {α : Type*} [LinearOrder α] {W : Type*}
 /-- @cite{kennedy-2015} numeral domain: "at least n" over cardinality.
     Closed scale (ℕ well-ordered) → always licensed.
     Type-shift to exact = MIP applied to atLeastDeg. -/
-def kennedyNumeral (μ : W → α) : DirectedMeasure α W :=
+def numeral (μ : W → α) : DirectedMeasure α W :=
   { boundedness := .closed, μ := μ }
 
 /-- @cite{kennedy-2007} gradable adjective domain.
     Boundedness varies by adjective class (tall: open, full: closed). -/
-def kennedyAdjective (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
+def adjective (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
   { boundedness := b, μ := μ }
-
-/-- @cite{rouillard-2026} E-TIA domain: event runtime ≤ interval size.
-    Boundedness determined by Vendler class (telic → closed, atelic → open). -/
-def rouillardETIA (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
-  { boundedness := b, μ := μ, direction := .negative }
-
-/-- @cite{rouillard-2026} G-TIA domain: PTS extent on open intervals.
-    Always open → always blocked (information collapse). -/
-def rouillardGTIA (μ : W → α) : DirectedMeasure α W :=
-  { boundedness := .open_, μ := μ, direction := .negative }
 
 -- ── Licensing Theorems ──────────────────────────────
 
-/-- Kennedy numeral domains are always licensed (closed scale). -/
-theorem kennedyNumeral_licensed (μ : W → α) :
-    (kennedyNumeral μ).licensed = true := rfl
+/-- Numeral domains are always licensed (closed scale). -/
+theorem numeral_licensed (μ : W → α) :
+    (numeral μ).licensed = true := rfl
 
-/-- Kennedy Class B adjectives (closed scale) are licensed. -/
+/-- Class B adjectives (closed scale) are licensed. -/
 theorem classB_licensed (μ : W → α) :
-    (kennedyAdjective μ .closed).licensed = true := rfl
+    (adjective μ .closed).licensed = true := rfl
 
-/-- Kennedy Class A adjectives (open scale) are blocked. -/
+/-- Class A adjectives (open scale) are blocked. -/
 theorem classA_blocked (μ : W → α) :
-    (kennedyAdjective μ .open_).licensed = false := rfl
-
-/-- Rouillard telic E-TIAs are licensed (closed runtime scale). -/
-theorem eTIA_telic_licensed (μ : W → α) :
-    (rouillardETIA μ .closed).licensed = true := rfl
-
-/-- Rouillard atelic E-TIAs are blocked (open runtime scale). -/
-theorem eTIA_atelic_blocked (μ : W → α) :
-    (rouillardETIA μ .open_).licensed = false := rfl
-
-/-- Rouillard G-TIAs are always blocked (open PTS). -/
-theorem gTIA_blocked (μ : W → α) :
-    (rouillardGTIA μ).licensed = false := rfl
-
--- ── The Kennedy–Rouillard Isomorphism ───────────────
-
-/-- The deep isomorphism: a Kennedy numeral domain and a Rouillard E-TIA
-    domain on a closed scale have identical licensing, despite using
-    opposite directions (positive vs negative). -/
-theorem kennedy_rouillard_same_licensing (μ₁ μ₂ : W → α) :
-    (kennedyNumeral μ₁).licensed = (rouillardETIA μ₂ .closed).licensed := rfl
-
-/-- All four frameworks agree: licensing depends solely on boundedness.
-    @cite{kennedy-2007}: closed-scale adjectives license degree modifiers.
-    @cite{rouillard-2026}: closed-runtime VPs license E-TIAs.
-    @cite{krifka-1989}: QUA predicates yield telic (bounded) VPs.
-    @cite{zwarts-2005}: bounded paths yield telic VPs.
-    All four route through Boundedness.isLicensed. -/
-theorem four_frameworks_agree
-    (b : Boundedness) {W : Type*} (μ₁ μ₂ : W → α) :
-    (kennedyAdjective μ₁ b).licensed =
-    (rouillardETIA μ₂ b).licensed := rfl
+    (adjective μ .open_).licensed = false := rfl
 
 end DirectedMeasure
+
+/-! Rouillard 2026's E-TIA / G-TIA MIP-domain operators (negative direction)
+    have moved to `Theories/Semantics/Gradability/MaximalInformativity.lean`
+    per master plan v4 Phase B (idea-named: `etia`/`gtia`). The
+    cross-framework licensing equivalence theorems also live there. -/
 
 end Core.Scale

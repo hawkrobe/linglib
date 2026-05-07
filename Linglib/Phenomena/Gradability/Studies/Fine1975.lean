@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Basic
 import Linglib.Phenomena.Gradability.Vagueness
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic

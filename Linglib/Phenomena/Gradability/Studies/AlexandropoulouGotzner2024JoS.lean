@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Basic
 import Linglib.Theories.Semantics.Gradability.Antonymy
 import Linglib.Theories.Semantics.Gradability.AntonymPrediction
 import Linglib.Phenomena.Negation.Studies.Krifka2007

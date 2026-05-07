@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Basic
 
 /-!
 # States-Based Gradable Adjective Semantics

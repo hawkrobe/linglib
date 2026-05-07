@@ -22,7 +22,7 @@ content has been carved into:
 - `DirectedMeasure.lean` — DirectedMeasure + Kennedy/Rouillard MIP-domain operators
   (the framework operators move to `Theories/Semantics/Gradability/{Kennedy,Rouillard}.lean`
   in Phase B)
-- `Predicate.lean` — IsUpwardMonotone/etc. + eqDeg/atLeastDeg/etc. + kennedyGQ
+- `Predicate.lean` — IsUpwardMonotone/etc. + eqDeg/atLeastDeg/etc. + relationalGQ
 - `Bounds.lean` — typeclass licensing theorems + maxOnScale/IsMaxDetermined
 - `HasMeasure.lean` — HasMeasure typeclass (renames HasDegree) + Degree/Threshold types
 - `HasComparison.lean` — primitive comparison typeclass + ofMeasure smart constructor

@@ -13,14 +13,14 @@ by a measure function `μ : W → α`:
 
 - `IsUpwardMonotone` / `IsDownwardMonotone` / `IsConstant` / `AdmitsOptimum`
 - `eqDeg` / `atLeastDeg` / `moreThanDeg` / `atMostDeg` / `lessThanDeg` (Fox 2007 §2)
-- `kennedyGQ` (unified Kennedy 2015 GQ denotation)
+- `relationalGQ` (unified Kennedy 2015 GQ denotation)
 - `typeLower` (Partee 1987 existential lowering)
 - Anti-Horn-scale lemmas (general)
 
 This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
 
-Per master plan v4, `kennedyGQ` and its lemmas may move to
+Per master plan v4, `relationalGQ` and its lemmas may move to
 `Theories/Semantics/Gradability/Kennedy.lean` in Phase B (it's a
 Kennedy-2015-framework operator, not a domain-general primitive).
 -/
@@ -239,10 +239,10 @@ distinguishing surface forms is the relation `REL ∈ {=, ≥, >, ≤, <}`.
 
 Specialised to a property of the form `atLeastDeg μ`, the maximum degree
 satisfying `atLeastDeg μ d w` is `μ w` itself, so Kennedy's denotation
-collapses to `rel (μ w) m` — captured here as `kennedyGQ rel μ m w`.
+collapses to `rel (μ w) m` — captured here as `relationalGQ rel μ m w`.
 
 The five existing degree properties (`eqDeg`, `atLeastDeg`, `moreThanDeg`,
-`atMostDeg`, `lessThanDeg`) are definitionally `kennedyGQ` instantiated at
+`atMostDeg`, `lessThanDeg`) are definitionally `relationalGQ` instantiated at
 the corresponding relation. The Class A vs Class B distinction
 (@cite{geurts-nouwen-2007}, @cite{nouwen-2010}) collapses to a structural
 property of `rel`: Class B ↔ `IsRefl α rel`; Class A ↔ `IsIrrefl α rel`.
@@ -252,37 +252,37 @@ property of `rel`: Class B ↔ `IsRefl α rel`; Class A ↔ `IsIrrefl α rel`.
 
 /-- Kennedy's unified GQ denotation: `(rel) (μ w) d`. The five named degree
     properties are definitionally equal to instantiations of this. -/
-def kennedyGQ {W : Type*} (rel : α → α → Prop) (μ : W → α) (d : α) (w : W) : Prop :=
+def relationalGQ {W : Type*} (rel : α → α → Prop) (μ : W → α) (d : α) (w : W) : Prop :=
   rel (μ w) d
 
 omit [LinearOrder α] in
 /-- Specialisation to `(· = ·)` recovers `eqDeg`. -/
-theorem kennedyGQ_eq_eqDeg {W : Type*} (μ : W → α) :
-    kennedyGQ (· = ·) μ = eqDeg μ := rfl
+theorem relationalGQ_eq_eqDeg {W : Type*} (μ : W → α) :
+    relationalGQ (· = ·) μ = eqDeg μ := rfl
 
 /-- Specialisation to `(· ≥ ·)` recovers `atLeastDeg`. -/
-theorem kennedyGQ_ge_eq_atLeastDeg {W : Type*} (μ : W → α) :
-    kennedyGQ (· ≥ ·) μ = atLeastDeg μ := rfl
+theorem relationalGQ_ge_eq_atLeastDeg {W : Type*} (μ : W → α) :
+    relationalGQ (· ≥ ·) μ = atLeastDeg μ := rfl
 
 /-- Specialisation to `(· > ·)` recovers `moreThanDeg`. -/
-theorem kennedyGQ_gt_eq_moreThanDeg {W : Type*} (μ : W → α) :
-    kennedyGQ (· > ·) μ = moreThanDeg μ := rfl
+theorem relationalGQ_gt_eq_moreThanDeg {W : Type*} (μ : W → α) :
+    relationalGQ (· > ·) μ = moreThanDeg μ := rfl
 
 /-- Specialisation to `(· ≤ ·)` recovers `atMostDeg`. -/
-theorem kennedyGQ_le_eq_atMostDeg {W : Type*} (μ : W → α) :
-    kennedyGQ (· ≤ ·) μ = atMostDeg μ := rfl
+theorem relationalGQ_le_eq_atMostDeg {W : Type*} (μ : W → α) :
+    relationalGQ (· ≤ ·) μ = atMostDeg μ := rfl
 
 /-- Specialisation to `(· < ·)` recovers `lessThanDeg`. -/
-theorem kennedyGQ_lt_eq_lessThanDeg {W : Type*} (μ : W → α) :
-    kennedyGQ (· < ·) μ = lessThanDeg μ := rfl
+theorem relationalGQ_lt_eq_lessThanDeg {W : Type*} (μ : W → α) :
+    relationalGQ (· < ·) μ = lessThanDeg μ := rfl
 
 omit [LinearOrder α] in
 /-- **Class B inclusion at the boundary** (general). If `rel` is reflexive,
     Kennedy's GQ holds at any world `w` whose measure equals the boundary `d`.
     Specialised to numerals: "at least 3" / "at most 3" hold at `w = 3`. -/
-theorem kennedyGQ_refl_at_boundary {W : Type*} {rel : α → α → Prop}
+theorem relationalGQ_refl_at_boundary {W : Type*} {rel : α → α → Prop}
     [Std.Refl rel] (μ : W → α) {d : α} {w : W} (h : μ w = d) :
-    kennedyGQ rel μ d w := by
+    relationalGQ rel μ d w := by
   show rel (μ w) d
   rw [h]; exact Std.Refl.refl _
 
@@ -290,9 +290,9 @@ omit [LinearOrder α] in
 /-- **Class A exclusion at the boundary** (general). If `rel` is irreflexive,
     Kennedy's GQ fails at any world `w` whose measure equals the boundary `d`.
     Specialised to numerals: "more than 3" / "fewer than 3" fail at `w = 3`. -/
-theorem kennedyGQ_irrefl_at_boundary {W : Type*} {rel : α → α → Prop}
+theorem relationalGQ_irrefl_at_boundary {W : Type*} {rel : α → α → Prop}
     [Std.Irrefl rel] (μ : W → α) {d : α} {w : W} (h : μ w = d) :
-    ¬ kennedyGQ rel μ d w := by
+    ¬ relationalGQ rel μ d w := by
   intro hk
   have hdd : rel d d := h ▸ (hk : rel (μ w) d)
   exact (Std.Irrefl.irrefl (r := rel) d) hdd

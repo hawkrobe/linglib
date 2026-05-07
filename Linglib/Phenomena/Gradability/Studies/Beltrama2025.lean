@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Degree.Core
-import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Basic
 import Linglib.Theories.Semantics.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale

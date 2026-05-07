@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Events.DimensionBridge
-import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Basic
+import Linglib.Theories.Semantics.Gradability.MaximalInformativity
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
@@ -98,7 +99,7 @@ theorem six_sources_agree_open :
 theorem kennedy_rouillard_agree {max : Nat} {W₁ W₂ : Type*}
     (μ₁ : W₁ → Degree max) (μ₂ : W₂ → ℕ) :
     (adjMeasure μ₁ full).licensed =
-    (DirectedMeasure.rouillardETIA μ₂ .closed).licensed := rfl
+    (Semantics.Gradability.MaximalInformativity.etia μ₂ .closed).licensed := rfl
 
 /-- Adjective licensing and VP licensing use the same reason:
     both derive from `Boundedness.closed.isLicensed`. -/

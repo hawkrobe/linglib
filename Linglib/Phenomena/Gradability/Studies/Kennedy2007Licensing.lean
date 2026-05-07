@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
 import Linglib.Features.PropertyDomain
@@ -431,13 +431,13 @@ theorem full_licenses_completely {max : Nat} {W : Type*} (μ : W → Degree max)
 /-- "wet" (lower-bounded) → DirectedMeasure licenses. -/
 theorem wet_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
     (adjMeasure μ wet).licensed = true := by
-  simp only [adjMeasure, DirectedMeasure.kennedyAdjective,
+  simp only [adjMeasure, DirectedMeasure.adjective,
         DirectedMeasure.licensed, wet, Boundedness.isLicensed]
 
 /-- "dry" (upper-bounded) → DirectedMeasure licenses. -/
 theorem dry_licensed {max : Nat} {W : Type*} (μ : W → Degree max) :
     (adjMeasure μ dry).licensed = true := by
-  simp only [adjMeasure, DirectedMeasure.kennedyAdjective,
+  simp only [adjMeasure, DirectedMeasure.adjective,
         DirectedMeasure.licensed, dry, Boundedness.isLicensed]
 
 -- ════════════════════════════════════════════════════
@@ -487,7 +487,7 @@ theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Degree 
     LicensingPipeline.isLicensed dry.scaleType = (adjMeasure μ dry).licensed := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
     simp [LicensingPipeline.isLicensed, LicensingPipeline.toBoundedness,
-          adjMeasure, DirectedMeasure.kennedyAdjective, DirectedMeasure.licensed,
+          adjMeasure, DirectedMeasure.adjective, DirectedMeasure.licensed,
           tall, full, wet, dry, Boundedness.isLicensed]
 
 -- ════════════════════════════════════════════════════
