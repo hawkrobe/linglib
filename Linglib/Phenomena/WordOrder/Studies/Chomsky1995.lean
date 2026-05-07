@@ -1,3 +1,4 @@
+import Linglib.Theories.Syntax.Minimalist.HeadFunction
 import Linglib.Theories.Syntax.Minimalist.FromFragments
 import Linglib.Theories.Syntax.Minimalist.Derivation
 import Linglib.Phenomena.WordOrder.Basic
@@ -33,7 +34,8 @@ def john_sees_mary : Derivation :=
     (Phase 1.0 placeholder via `Quot.out`). TODO Phase 2: restore once
     LCA-based linearization lands. -/
 theorem models_svo_word_order :
-    let yield := String.intercalate " " john_sees_mary.final.phonYield
+    let yield := String.intercalate " "
+      (HeadFunction.leftSpine.phonYield john_sees_mary.final)
     Phenomena.WordOrder.data.pairs.any (·.grammatical == yield) := by
   sorry
 

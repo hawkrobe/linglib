@@ -164,12 +164,14 @@ an ad hoc empty object) stands in the section docstring above. -/
     migration; `decide` no longer reduces. Re-prove with parameterized
     linearization. -/
 theorem monovalent_wrong_linearization :
-    (merge (.leaf sleepsToken) (.leaf maxToken)).phonYield = ["sleeps", "Max"] := by
+    HeadFunction.leftSpine.phonYield (merge (.leaf sleepsToken) (.leaf maxToken))
+      = ["sleeps", "Max"] := by
   sorry
 
 /-- The desired order differs from the linearization. -/
 theorem monovalent_desired_order_differs :
-    ["Max", "sleeps"] ≠ (merge (.leaf sleepsToken) (.leaf maxToken)).phonYield := by
+    ["Max", "sleeps"] ≠
+      HeadFunction.leftSpine.phonYield (merge (.leaf sleepsToken) (.leaf maxToken)) := by
   sorry
 
 end MonovalentVerbProblem

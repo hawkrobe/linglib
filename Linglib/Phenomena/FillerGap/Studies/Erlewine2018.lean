@@ -1,3 +1,4 @@
+import Linglib.Theories.Syntax.Minimalist.HeadFunction
 import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Typology.Relativization.ExtractionBridge
@@ -338,7 +339,7 @@ theorem nonDP_unrestricted :
     - @cite{cole-hermon-2008}: VP moves to Spec,TP; subject stranded in Spec,vP
     - @cite{erlewine-2018}: vP moves to Spec,CP; subject stranded in Spec,TP -/
 theorem predicate_fronting_yields_vi_order :
-    ColeHermon2008.tobaBatakVOS.final.phonYield.head?
+    (HeadFunction.leftSpine.phonYield ColeHermon2008.tobaBatakVOS.final).head?
       = some "mangatuk" := by
   -- TODO Phase 2: blocked on noncomputable phonYield
   sorry
@@ -397,13 +398,13 @@ def erlewineDerivation : Derivation :=
 
 /-- Erlewine's derivation yields VOS word order. -/
 theorem erlewine_yields_vos :
-    erlewineDerivation.final.phonYield = ["mangatuk", "biangi", "dakdanakan"] := by
+    HeadFunction.leftSpine.phonYield erlewineDerivation.final = ["mangatuk", "biangi", "dakdanakan"] := by
   -- TODO Phase 2: blocked on noncomputable phonYield
   sorry
 
 /-- Both analyses agree on VOS surface order despite different structural heights. -/
 theorem cole_erlewine_agree_on_order :
-    tobaBatakVOS.final.phonYield = erlewineDerivation.final.phonYield := by
+    HeadFunction.leftSpine.phonYield tobaBatakVOS.final = HeadFunction.leftSpine.phonYield erlewineDerivation.final := by
   -- TODO Phase 2: blocked on noncomputable phonYield
   sorry
 

@@ -207,7 +207,7 @@ theorem deriveMood_finite :
 --     SAP → root-only follows from SAP = highest phase.
 --     (Proved in Allocutivity.lean: `sa_based_aa_root_only`)
 theorem sa_is_phase_head (so : SyntacticObject)
-    (h : so.outerCat = .SA) :
+    (h : HeadFunction.leftSpine.outerCat so = .SA) :
     isPhaseHeadOf .SA so = true := by
   simp only [isPhaseHeadOf, h, beq_self_eq_true]
 
@@ -224,7 +224,7 @@ theorem hearer_is_addressee_in_context {W E P T : Type*} (ctx : KContext W E P T
 theorem sa_phase_derivation_final :
     isPhaseHeadOf .SA (mkLeaf .SA [] 0) = true := by
   unfold isPhaseHeadOf mkLeaf
-  rw [SyntacticObject.outerCat_leaf]
+  rw [HeadFunction.outerCat_leaf]
   rfl
 
 -- E10: fValue is injective on the canonical verbal EP spine (one head per

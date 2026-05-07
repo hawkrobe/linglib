@@ -284,7 +284,7 @@ private noncomputable def computeEPSpinePlanar :
   | .mul a b =>
     computeEPSpinePlanar a ++
       [((FreeCommMagma.mk (.mul a b) : SyntacticObject),
-         SyntacticObject.outerCat (FreeCommMagma.mk (.mul a b)))]
+         HeadFunction.leftSpine.outerCat (FreeCommMagma.mk (.mul a b)))]
 
 /-- Compute the EP spine from a syntactic object by walking the
     leftmost-leaf head chain (= `HeadFunction.leftSpine` per
@@ -292,7 +292,7 @@ private noncomputable def computeEPSpinePlanar :
     (SO, Cat) from the deepest lexical head up to the root.
 
     For a non-leftmost-headed analysis, replace the recursion's `a`
-    with the daughter whose head leaf matches `so.outerCat` under the
+    with the daughter whose head leaf matches `HeadFunction.leftSpine.outerCat so` under the
     chosen head function, or rewrite this helper to take a
     `HeadFunction` parameter. Phase 1.0 noncomputable. -/
 noncomputable def computeEPSpine (so : SyntacticObject) :

@@ -47,7 +47,7 @@ namespace Minimalist
     analyses, use `Minimalist.Labeling.labelRoot h so == some c` with
     the study's chosen `h : HeadFunction`. -/
 noncomputable def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool :=
-  so.outerCat == c
+  HeadFunction.leftSpine.outerCat so == c
 
 /-! ### Phase-head selectors
 

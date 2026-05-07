@@ -178,19 +178,18 @@ def john_gives_mary_book : Derivation :=
 
 /-- "John sleeps" — intransitive: empty `pending` stack consumed trivially. -/
 theorem john_sleeps_wellFormed : john_sleeps.WellFormed := by
-  -- sleepsSO is mkLeafPhon-built; its checkedSel? = some [] via leaf simp + sleep.complementType = .none
-  have h : sleepsSO.checkedSel? = some [] := by
-    show (SyntacticObject.leaf _).checkedSel? = _
-    rw [SyntacticObject.checkedSel?_leaf]; rfl
+  have h : checkedSelWith? HeadFunction.leftSpine sleepsSO = some [] := by
+    show checkedSelWith? HeadFunction.leftSpine (SyntacticObject.leaf _) = _
+    rw [checkedSelWith?_leaf]; rfl
   unfold Derivation.WellFormed Derivation.checkedFinal? john_sleeps
   simp only [h, Option.bind, List.foldl, Step.applyChecked]
   rfl
 
 /-- "Mary arrives" — intransitive variant. -/
 theorem mary_arrives_wellFormed : mary_arrives.WellFormed := by
-  have h : arrivesSO.checkedSel? = some [] := by
-    show (SyntacticObject.leaf _).checkedSel? = _
-    rw [SyntacticObject.checkedSel?_leaf]; rfl
+  have h : checkedSelWith? HeadFunction.leftSpine arrivesSO = some [] := by
+    show checkedSelWith? HeadFunction.leftSpine (SyntacticObject.leaf _) = _
+    rw [checkedSelWith?_leaf]; rfl
   unfold Derivation.WellFormed Derivation.checkedFinal? mary_arrives
   simp only [h, Option.bind, List.foldl, Step.applyChecked]
   rfl

@@ -1,3 +1,4 @@
+import Linglib.Theories.Syntax.Minimalist.HeadFunction
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Order
 import Linglib.Fragments.Slavic.Russian.Case
@@ -283,7 +284,7 @@ where
         caseStackAtPlanar head tok
       else if containsLeafAux tok body then
         let bodyStack := caseStackAtPlanar body tok
-        match POSCat.ofCat? (SyntacticObject.outerCat (FreeCommMagma.mk head)) with
+        match POSCat.ofCat? (Minimalist.HeadFunction.leftSpine.outerCat (FreeCommMagma.mk head)) with
         | some c => c :: bodyStack
         | none => bodyStack
       else []

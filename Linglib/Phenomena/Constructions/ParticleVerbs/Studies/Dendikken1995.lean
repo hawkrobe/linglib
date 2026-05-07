@@ -98,8 +98,8 @@ theorem pvToSmallClause_toSO_shape (pv : ParticleVerb) (dpId prtId : Nat) :
 theorem pvToSmallClause_consistent (pv : ParticleVerb) (dpId prtId : Nat) :
     (pvToSmallClause pv dpId prtId).predicate.headCat =
       (pvToSmallClause pv dpId prtId).predCat.toCat := by
-  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [mkLeafPhon, SyntacticObject.outerCat_leaf]
+  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
   rfl
 
 /-- The PVC small clause satisfies `IsSmallClause` — the companion

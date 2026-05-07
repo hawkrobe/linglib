@@ -429,29 +429,17 @@ def phonYieldPlanar : FreeMagma (LIToken ⊕ Nat) → List String
   | .of (.inr _) => []
   | .mul a b => phonYieldPlanar a ++ phonYieldPlanar b
 
-/-- Phonological yield of an SO. Order depends on the chosen planar
-    representative (Phase 1.0 placeholder via `Quot.out`); Phase 2
-    replaces this with LCA-derived linearization. -/
-noncomputable def SyntacticObject.phonYield (so : SyntacticObject) : List String :=
-  phonYieldPlanar so.out
-
 /-- Underlying linearization on a planar `FreeMagma` representative.
-    Public so `HeadFunction.linearizeWith` can compose it with a chosen
-    `externalize` section. -/
+    Public so `HeadFunction.linearize` can compose it with a chosen
+    `Section.σ` for harmonic head-initial linearization. -/
 def linearizePlanar : FreeMagma (LIToken ⊕ Nat) → List LIToken
   | .of (.inl tok) => [tok]
   | .of (.inr _) => []
   | .mul l r => linearizePlanar l ++ linearizePlanar r
 
-/-- Linearize an SO by collecting leaf tokens in the chosen planar order.
-    Phase 1.0 placeholder via `Quot.out`; Phase 2 replaces with LCA. -/
-noncomputable def linearize (so : SyntacticObject) : List LIToken :=
-  linearizePlanar so.out
-
 /-- Underlying leftmost-leaf on a planar `FreeMagma` representative.
-    Exposed (not `private`) so `HeadFunction.head` can compose it
-    with a chosen `Section.σ` to produce a head accessor that's computable
-    when the section is. Used for harmonic head-initial convention. -/
+    Exposed (not `private`) so `HeadFunction.head` can compose it with
+    a chosen `Section.σ` for harmonic head-initial head extraction. -/
 def leftmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
   | .of (.inl tok) => tok
   | .of (.inr n) => mkTraceToken n
@@ -459,95 +447,21 @@ def leftmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
 
 /-- Underlying rightmost-leaf on a planar `FreeMagma` representative.
     Mirror of `leftmostLeafPlanar` for harmonic head-final convention
-    (per @cite{marcolli-chomsky-berwick-2025} Lemma 1.13.5: head functions
-    on T are in bijection with planar embeddings, with two equally valid
-    conventions about which side carries the head). -/
+    (per @cite{marcolli-chomsky-berwick-2025} Lemma 1.13.5). -/
 def rightmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
   | .of (.inl tok) => tok
   | .of (.inr n) => mkTraceToken n
   | .mul _ r => rightmostLeafPlanar r
-
-/-- The leftmost leaf of a `SyntacticObject` under the chosen planar
-    representative. Phase 1.0 placeholder via `Quot.out`; Phase 2 replaces
-    with head-marking-aware projection.
-
-    **M-C-B alignment** (@cite{marcolli-chomsky-berwick-2025} §1.13.3,
-    §1.15): in NEW Minimalism, head functions are *external* and *partial*
-    — defined only on `Dom(h) ⊂ SO`. This accessor is the partial extension
-    to all values via the leftmost-leaf heuristic, valid only when the
-    chosen planar representative happens to put the head on the left. For
-    derivation-based code, prefer `Derivation.outerCat?` (in
-    `Selection.lean`), which is **total** on leaf-initial derivations
-    because head info is tracked through the derivation history rather than
-    recovered from the tree. The full formalism (head function + Labeling
-    Algorithm) lives in `Theories/Syntax/Minimalism/HeadFunction.lean`. -/
-noncomputable def SyntacticObject.leftmostLeaf (so : SyntacticObject) : LIToken :=
-  leftmostLeafPlanar so.out
-
-/-- For a leaf SO, the leftmost-leaf is the leaf itself — the
-    equivalence class is a singleton, so `Quot.out` cannot pick a
-    different representative. Lifts the singleton structure through
-    `mk_eq_iff_commEqv`. -/
-@[simp] theorem SyntacticObject.leftmostLeaf_leaf (tok : LIToken) :
-    (SyntacticObject.leaf tok).leftmostLeaf = tok := by
-  show leftmostLeafPlanar (SyntacticObject.leaf tok).out = tok
-  have hmk :
-      (Quot.mk FreeMagma.CommRel (SyntacticObject.leaf tok).out : SyntacticObject)
-        = FreeCommMagma.mk (FreeMagma.of (Sum.inl tok)) := Quot.out_eq _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
-  match h : (SyntacticObject.leaf tok).out with
-  | .of x =>
-    rw [h] at hmk
-    -- hmk : FreeMagma.CommEqv (.of x) (.of (.inl tok)), which unfolds to x = .inl tok
-    show leftmostLeafPlanar (.of x) = tok
-    cases x with
-    | inl t =>
-      simp only [leftmostLeafPlanar]
-      exact (Sum.inl.inj (hmk : Sum.inl t = Sum.inl tok))
-    | inr n => exact absurd (hmk : Sum.inr n = Sum.inl tok) (by intro; contradiction)
-  | .mul _ _ =>
-    rw [h] at hmk
-    exact absurd hmk (by simp [FreeMagma.CommEqv])
-
-/-- For a trace SO, the leftmost-leaf is the synthetic trace token. -/
-@[simp] theorem SyntacticObject.leftmostLeaf_trace (n : Nat) :
-    (SyntacticObject.trace n).leftmostLeaf = mkTraceToken n := by
-  show leftmostLeafPlanar (SyntacticObject.trace n).out = mkTraceToken n
-  have hmk :
-      (Quot.mk FreeMagma.CommRel (SyntacticObject.trace n).out : SyntacticObject)
-        = FreeCommMagma.mk (FreeMagma.of (Sum.inr n)) := Quot.out_eq _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
-  match h : (SyntacticObject.trace n).out with
-  | .of x =>
-    rw [h] at hmk
-    show leftmostLeafPlanar (.of x) = mkTraceToken n
-    cases x with
-    | inl t => exact absurd (hmk : Sum.inl t = Sum.inr n) (by intro; contradiction)
-    | inr m =>
-      simp only [leftmostLeafPlanar]
-      exact congrArg mkTraceToken (Sum.inr.inj (hmk : Sum.inr m = Sum.inr n))
-  | .mul _ _ =>
-    rw [h] at hmk
-    exact absurd hmk (by simp [FreeMagma.CommEqv])
-
-/-- The outer (projecting) categorial feature of an SO, recovered from the
-    leftmost leaf along the left spine of a chosen planar representative. -/
-noncomputable def SyntacticObject.outerCat (so : SyntacticObject) : Cat :=
-  so.leftmostLeaf.item.outerCat
-
-/-- For a leaf SO, `outerCat` is the leaf's outer category. -/
-@[simp] theorem SyntacticObject.outerCat_leaf (tok : LIToken) :
-    (SyntacticObject.leaf tok).outerCat = tok.item.outerCat := by
-  show (SyntacticObject.leaf tok).leftmostLeaf.item.outerCat = tok.item.outerCat
-  rw [leftmostLeaf_leaf]
 
 /-- Extract the phonological form from an LIToken. -/
 def LIToken.phonForm (tok : LIToken) : String :=
   tok.item.features.head?.map (·.phonForm) |>.getD ""
 
 /-- Underlying agreement on a planar representative: `phonYield` is the
-    non-empty-phonForm filter of `linearize`. -/
-private theorem phonYield_eq_linearize_planar (fm : FreeMagma (LIToken ⊕ Nat)) :
+    non-empty-phonForm filter of `linearize`. Used as a lemma for any
+    `HeadFunction h` consumer that wants to relate `h.phonYield` to
+    `h.linearize`. -/
+theorem phonYield_eq_linearize_planar (fm : FreeMagma (LIToken ⊕ Nat)) :
     phonYieldPlanar fm = (linearizePlanar fm).filterMap
       (λ tok => let p := tok.phonForm; if p.isEmpty then none else some p) := by
   induction fm with
@@ -561,14 +475,6 @@ private theorem phonYield_eq_linearize_planar (fm : FreeMagma (LIToken ⊕ Nat))
       simp only [phonYieldPlanar, linearizePlanar, List.filterMap_nil]
   | ih2 a b iha ihb =>
     simp only [phonYieldPlanar, linearizePlanar, List.filterMap_append, iha, ihb]
-
-/-- `phonYield` and `linearize` agree: `phonYield` extracts the non-empty
-    phonological forms from the linearization. Lifts via the planar
-    representative theorem. -/
-theorem phonYield_eq_linearize (so : SyntacticObject) :
-    so.phonYield = (linearize so).filterMap
-      (λ tok => let p := tok.phonForm; if p.isEmpty then none else some p) :=
-  phonYield_eq_linearize_planar so.out
 
 /-- Create a trace SO with binding index `index`. Detectable via `isTrace`. -/
 def mkTrace (index : Nat) : SyntacticObject :=

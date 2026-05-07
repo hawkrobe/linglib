@@ -278,8 +278,8 @@ theorem affixal_particles_share_category :
     X_sanuma_ma.headCat = .P ∧
     X_indonesian_kan.headCat = .P := by
   refine ⟨?_, ?_, ?_⟩ <;>
-    (show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-     simp only [mkLeafPhon, SyntacticObject.outerCat_leaf]
+    (show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+     simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
      rfl)
 
 /-! ## §9. Structural assimilation theorem (book ex. 47/48)
@@ -324,8 +324,8 @@ theorem dutch_ver_matches_low_recipient_appl :
     X_dutch_ver.headCat = .P ∧
     ApplType.toSCPredCategory .lowRecipient = some .P := by
   refine ⟨?_, rfl⟩
-  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [mkLeafPhon, SyntacticObject.outerCat_leaf]
+  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
   rfl
 
 /-- The Sanuma *-ma* affixal particle and a Pylkkänen low-source
@@ -334,8 +334,8 @@ theorem sanuma_ma_matches_low_source_appl :
     X_sanuma_ma.headCat = .P ∧
     ApplType.toSCPredCategory .lowSource = some .P := by
   refine ⟨?_, rfl⟩
-  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [mkLeafPhon, SyntacticObject.outerCat_leaf]
+  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
   rfl
 
 /-- High applicatives DO NOT match the affixal-particle X — they project
@@ -345,8 +345,8 @@ theorem high_appl_not_affixal_particle :
     ApplType.toSCPredCategory .high = none ∧
     X_indonesian_kan.headCat = .P := by
   refine ⟨rfl, ?_⟩
-  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [mkLeafPhon, SyntacticObject.outerCat_leaf]
+  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
   rfl
 
 end Phenomena.Constructions.Causatives.Studies.Dendikken1995

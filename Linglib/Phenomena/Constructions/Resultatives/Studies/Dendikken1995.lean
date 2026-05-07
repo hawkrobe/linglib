@@ -159,8 +159,8 @@ holds by `rfl`. -/
 theorem datumToSC_consistent (d : ResultativeDatum) (dpId predId : Nat) :
     (datumToSC d dpId predId).predicate.headCat =
       (datumToSC d dpId predId).predCat.toCat := by
-  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [mkLeafPhon, SyntacticObject.outerCat_leaf]
+  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
   rfl
 
 /-- Resultative SCs satisfy the `IsSmallClause` companion predicate

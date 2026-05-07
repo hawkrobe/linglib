@@ -320,21 +320,10 @@ theorem adjunction_left_only_with
   rw [h_ext_node]
   rfl
 
-/-- **Head-to-head adjunction must be left-adjunction (legacy unparameterized).**
-    The Phase 1.0 statement on the bare `linearize` (= `linearizeWith leftSpine`).
-    Cannot be proven without committing to an externalize choice — see
-    `adjunction_left_only_with` for the principled parameterized version that
-    requires a local-magma-morphism hypothesis on the externalize section. -/
-theorem adjunction_left_only
-    (mover target : SyntacticObject) :
-    linearize (.node mover target) =
-    linearize mover ++ linearize target := by
-  -- Cannot be proven on the bare `linearize`: `Quot.out (.node mover target)`
-  -- may pick either `mover.out * target.out` or `target.out * mover.out`,
-  -- giving different concatenation orders. Use `adjunction_left_only_with`
-  -- with a `HeadFunction` whose externalize respects the merge structure
-  -- locally.
-  sorry
+-- Legacy `adjunction_left_only` (sorry) deleted in Phase 3.A.4 cleanup.
+-- The parameterized `adjunction_left_only_with` above is the kept (proven)
+-- version; consumers should use it with their chosen `h : HeadFunction`
+-- and the local-magma-morphism hypothesis on the relevant node.
 
 -- ============================================================================
 -- Part 4: Sister-Terminal Limitation

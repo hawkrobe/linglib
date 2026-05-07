@@ -461,8 +461,8 @@ theorem pvc_sc_inner_isSmallClause :
   show IsSmallClausePredicate Prt_up
   unfold IsSmallClausePredicate
   left
-  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [Prt_up, mkLeafPhon, SyntacticObject.outerCat_leaf]
+  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [Prt_up, mkLeafPhon, HeadFunction.outerCat_leaf]
   rfl
 
 theorem resultative_sc_inner_isSmallClause :
@@ -472,8 +472,8 @@ theorem resultative_sc_inner_isSmallClause :
   show IsSmallClausePredicate AP_flat
   unfold IsSmallClausePredicate
   right; left
-  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [AP_flat, mkLeafPhon, SyntacticObject.outerCat_leaf]
+  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [AP_flat, mkLeafPhon, HeadFunction.outerCat_leaf]
   rfl
 
 theorem causative_sc_inner_isSmallClause :
@@ -483,8 +483,8 @@ theorem causative_sc_inner_isSmallClause :
   show IsSmallClausePredicate VP_laugh
   unfold IsSmallClausePredicate
   right; right; left
-  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-  simp only [VP_laugh, mkLeafPhon, SyntacticObject.outerCat_leaf]
+  show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [VP_laugh, mkLeafPhon, HeadFunction.outerCat_leaf]
   rfl
 
 /-- Diagnostic: the flat DP–DP DOC encoding does NOT satisfy
@@ -501,13 +501,13 @@ theorem doc_sc_flat_inner_not_smallClause :
   · -- DP_hsu has outerCat = .D, not in {P,A,V,N}
     unfold IsSmallClausePredicate at hl
     have hhsu : DP_hsu.headCat = .D := by
-      show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-      simp only [DP_hsu, mkLeafPhon, SyntacticObject.outerCat_leaf]; rfl
+      show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+      simp only [DP_hsu, mkLeafPhon, HeadFunction.outerCat_leaf]; rfl
     rcases hl with h | h | h | h <;> rw [hhsu] at h <;> contradiction
   · unfold IsSmallClausePredicate at hr
     have hbook : DP_book.headCat = .D := by
-      show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
-      simp only [DP_book, mkLeafPhon, SyntacticObject.outerCat_leaf]; rfl
+      show HeadFunction.leftSpine.outerCat (mkLeafPhon _ _ _ _) = _
+      simp only [DP_book, mkLeafPhon, HeadFunction.outerCat_leaf]; rfl
     rcases hr with h | h | h | h <;> rw [hbook] at h <;> contradiction
 
 end HaddicanEtAl2026

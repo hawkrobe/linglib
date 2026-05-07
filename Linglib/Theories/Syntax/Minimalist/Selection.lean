@@ -108,71 +108,20 @@ structure SelectionalState where
   pending : List Cat
   deriving Repr, DecidableEq
 
-/-- Recursively check that an SO is built consistent with Adger 2003
-    c-selection (eq. 106 Checking under Sisterhood, eq. 132 Merge at root).
-    Returns the head's residual pending features after all internal
-    checking, or `none` if the structure is ill-built.
+/-! ### `checkedSel?` — parameterized over a head function
 
-    For a leaf, returns the leaf's `outerSel` untouched.
+`checkedSel? h so` recursively checks an SO is built consistent with Adger 2003
+c-selection (eq. 106 Checking under Sisterhood, eq. 132 Merge at root).
+Returns the head's residual pending features after all internal checking,
+or `none` if the structure is ill-built.
 
-    For a node `(l, r)`, the convention is: `l` is the projecting head,
-    the complement `r` must be saturated (its `checkedSel? = some []`),
-    `l`'s first pending feature is consumed by matching against
-    `r.outerCat`, and the residual is `l`'s remaining stack.
+For a leaf, returns the leaf's `outerSel` untouched.
 
-    **Caveat**: relies on the leftmost-leaf head heuristic from
-    `Basic.lean`'s `outerCat` (= `HeadFunction.leftSpine` in
-    `HeadFunction.lean`). Sound for left-headed trees built via
-    `Step.emR`-style complement Merge or direct `merge` with the
-    projecting head on the left.
-
-    Phase 1.0 status: this function is genuinely planar (it
-    distinguishes the projecting "left" head from the complement
-    "right"), so it lifts via `Quot.out` and inherits noncomputability.
-    Phase 2 will replace with an `HeadFunction`-parameterized version. -/
-private noncomputable def checkedSelPlanar :
-    FreeMagma (LIToken ⊕ Nat) → Option (List Cat)
-  | .of (.inl tok) => some tok.item.outerSel
-  | .of (.inr _) => some []
-  | .mul l r =>
-    match checkedSelPlanar l, checkedSelPlanar r with
-    | some (c :: rest), some [] =>
-      if SyntacticObject.outerCat (FreeCommMagma.mk r) = c then some rest else none
-    | _, _ => none
-
-noncomputable def SyntacticObject.checkedSel? (so : SyntacticObject) : Option (List Cat) :=
-  checkedSelPlanar so.out
-
-/-- For a leaf SO, `checkedSel?` returns the leaf's outer selection list.
-    Singleton-class proof — same recipe as `leftmostLeaf_leaf` etc. -/
-@[simp] theorem SyntacticObject.checkedSel?_leaf (tok : LIToken) :
-    (SyntacticObject.leaf tok).checkedSel? = some tok.item.outerSel := by
-  show checkedSelPlanar (SyntacticObject.leaf tok).out = _
-  have hmk :
-      (Quot.mk FreeMagma.CommRel (SyntacticObject.leaf tok).out : SyntacticObject)
-        = FreeCommMagma.mk (FreeMagma.of (Sum.inl tok)) := Quot.out_eq _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
-  match h : (SyntacticObject.leaf tok).out with
-  | .of x =>
-    rw [h] at hmk
-    show checkedSelPlanar (.of x) = _
-    cases x with
-    | inl t =>
-      simp only [checkedSelPlanar]
-      exact congrArg (fun y => some y.item.outerSel)
-        (Sum.inl.inj (hmk : Sum.inl t = Sum.inl tok))
-    | inr n => exact absurd (hmk : Sum.inr n = Sum.inl tok) (by intro; contradiction)
-  | .mul _ _ =>
-    rw [h] at hmk
-    exact absurd hmk (by simp [FreeMagma.CommEqv])
-
-/-! ### Parameterized variant: `checkedSelWith? h`
-
-The Phase 2 parameterized version takes an explicit `HeadFunction` that
-fixes the planar order via `externalize`. Computable when `h.section_.σ`
-is. Consumers should migrate from `checkedSel?` to `checkedSelWith? h`
-when they have a meaningful `h` available; the unparameterized `checkedSel?`
-remains as a `Quot.out`-based default. -/
+For a node `(l, r)` of `h.section_.σ so`, the convention is: `l` is the
+projecting head (under harmonic head-initial), the complement `r` must be
+saturated (its `checkedSelPlanar = some []`), `l`'s first pending feature is
+consumed by matching against `r`'s outer category, and the residual is `l`'s
+remaining stack. -/
 
 /-- Underlying parameterized `checkedSel?` on a planar `FreeMagma`
     representative, taking a `HeadFunction` to recursively check
@@ -213,24 +162,9 @@ def checkedSelWith? (h : HeadFunction) (so : SyntacticObject) :
   rw [h.section_.σ_of]
   rfl
 
-/-- For a trace SO, `checkedSel?` returns `some []`. -/
-@[simp] theorem SyntacticObject.checkedSel?_trace (n : Nat) :
-    (SyntacticObject.trace n).checkedSel? = some [] := by
-  show checkedSelPlanar (SyntacticObject.trace n).out = _
-  have hmk :
-      (Quot.mk FreeMagma.CommRel (SyntacticObject.trace n).out : SyntacticObject)
-        = FreeCommMagma.mk (FreeMagma.of (Sum.inr n)) := Quot.out_eq _
-  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
-  match h : (SyntacticObject.trace n).out with
-  | .of x =>
-    rw [h] at hmk
-    show checkedSelPlanar (.of x) = _
-    cases x with
-    | inl t => exact absurd (hmk : Sum.inl t = Sum.inr n) (by intro; contradiction)
-    | inr m => simp only [checkedSelPlanar]
-  | .mul _ _ =>
-    rw [h] at hmk
-    exact absurd hmk (by simp [FreeMagma.CommEqv])
+-- Legacy `SyntacticObject.checkedSel?_trace` deleted in Phase 3.A.4 cleanup.
+-- The parameterized `checkedSelWith?_trace` above (h : HeadFunction) subsumes it
+-- via the keystone `Section.σ_of` helper.
 
 /-- Apply a `Step` under c-selection (@cite{adger-2003} eq. 134 Checking
     Requirement, eq. 106 Checking under Sisterhood). The projecting head
@@ -250,9 +184,11 @@ def checkedSelWith? (h : HeadFunction) (so : SyntacticObject) :
     mismatch, or unsaturated complement). -/
 noncomputable def Step.applyChecked : Step → SelectionalState → Option SelectionalState
   | .emR item, ⟨so, head, c :: rest⟩ =>
-    match item.checkedSel? with
+    match checkedSelWith? HeadFunction.leftSpine item with
     | some [] =>
-      if item.outerCat = c then some ⟨.node so item, head, rest⟩ else none
+      if HeadFunction.leftSpine.outerCat item = c then
+        some ⟨.node so item, head, rest⟩
+      else none
     | _ => none
   | .emR _, ⟨_, _, []⟩ => none
   | .emL item, ⟨so, head, sel⟩ => some ⟨.node item so, head, sel⟩
@@ -261,14 +197,14 @@ noncomputable def Step.applyChecked : Step → SelectionalState → Option Selec
 
 /-- Run a derivation through `applyChecked`. Seeds the head from the
     initial leaf (M-C-B §1.13.3: leaves are always in `Dom(h)`); for
-    node-initial derivations falls back to the leftmost-leaf heuristic.
+    node-initial derivations falls back to `HeadFunction.leftSpine.head`.
     Returns `none` if the initial is ill-built or any step violates
     c-selection. -/
 noncomputable def Derivation.checkedFinal? (d : Derivation) : Option SelectionalState := do
-  let pending ← d.initial.checkedSel?
+  let pending ← checkedSelWith? HeadFunction.leftSpine d.initial
   d.steps.foldl
     (fun st? step => st?.bind (Step.applyChecked step))
-    (some ⟨d.initial, d.initial.leftmostLeaf, pending⟩)
+    (some ⟨d.initial, HeadFunction.leftSpine.head d.initial, pending⟩)
 
 /-- A derivation is **well-formed** (Adger's Full Interpretation,
     @cite{adger-2003} eq. 104+161) iff it completes with no unchecked
@@ -334,11 +270,13 @@ constructor. Front-loaded so consumers (paper-replication study files) can
 reason about specific derivations without unfolding `foldl`. -/
 
 /-- `emR` with a saturated, category-matching item consumes the first
-    selectional feature; head is preserved. -/
+    selectional feature; head is preserved. Stated against
+    `HeadFunction.leftSpine` (the default head function used by
+    `Step.applyChecked`). -/
 @[simp] theorem applyChecked_emR_match
     (so item : SyntacticObject) (head : LIToken) (c : Cat) (rest : List Cat)
-    (hsat : item.checkedSel? = some [])
-    (hcat : item.outerCat = c) :
+    (hsat : checkedSelWith? HeadFunction.leftSpine item = some [])
+    (hcat : HeadFunction.leftSpine.outerCat item = c) :
     Step.applyChecked (.emR item) ⟨so, head, c :: rest⟩
       = some ⟨.node so item, head, rest⟩ := by
   simp [Step.applyChecked, hsat, hcat]
@@ -359,17 +297,19 @@ theorem wellFormed_initial_no_sel (tok : LIToken)
     (h : tok.item.outerSel = []) :
     Derivation.WellFormed ⟨.leaf tok, []⟩ := by
   unfold Derivation.WellFormed Derivation.checkedFinal?
-  simp only [SyntacticObject.checkedSel?_leaf, h, List.foldl_nil, Option.bind,
-             Option.map]
+  simp only [checkedSelWith?_leaf, h, List.foldl_nil, Option.bind, Option.map]
   rfl
 
 /-- `nullDWrap` of any leaf whose `outerCat = .N` is saturated.
 
-    TODO Phase 2: same as above — Quot.out-based `checkedSel?` doesn't
-    reduce under simp. Re-prove with parameterized version. -/
+    TODO Phase 3.B+: requires an externalize-respect hypothesis on the
+    `.node (nullD id) n` merge to rewrite `checkedSelWith? leftSpine` past
+    the binary node. The substantive fact (nullD wraps a saturated N to
+    yield a saturated DP) is correct; the proof is queued. -/
 theorem checkedSel_nullDWrap_leaf (n : SyntacticObject) (id : Nat)
-    (hN : n.outerCat = .N) (hsat : n.checkedSel? = some []) :
-    (nullDWrap n id).checkedSel? = some [] := by
+    (_hN : HeadFunction.leftSpine.outerCat n = .N)
+    (_hsat : checkedSelWith? HeadFunction.leftSpine n = some []) :
+    checkedSelWith? HeadFunction.leftSpine (nullDWrap n id) = some [] := by
   sorry
 
 end Minimalist

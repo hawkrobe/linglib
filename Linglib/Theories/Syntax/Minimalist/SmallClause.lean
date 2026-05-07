@@ -116,7 +116,7 @@ without forcing them through the `SmallClause` constructor. -/
     hold by `rfl` and have been removed; consumers should use
     `SyntacticObject.outerCat` directly. -/
 noncomputable abbrev SyntacticObject.headCat (so : SyntacticObject) : Cat :=
-  so.outerCat
+  HeadFunction.leftSpine.outerCat so
 
 /-- A syntactic object qualifies as a small-clause predicate iff its
     head category is one of @cite{dendikken-1995}'s four SC-licensed

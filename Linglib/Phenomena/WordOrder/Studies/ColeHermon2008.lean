@@ -158,13 +158,13 @@ def englishSVO : Derivation :=
 
 /-- VP-raising yields Verb-Object-Subject surface order. -/
 theorem toba_batak_is_vos :
-    tobaBatakVOS.final.phonYield = ["mangatuk", "biangi", "dakdanakan"] := by
+    HeadFunction.leftSpine.phonYield tobaBatakVOS.final = ["mangatuk", "biangi", "dakdanakan"] := by
   -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
   sorry
 
 /-- Subject-raising yields Subject-Verb-Object surface order. -/
 theorem english_is_svo :
-    englishSVO.final.phonYield = ["John", "saw", "Mary"] := by
+    HeadFunction.leftSpine.phonYield englishSVO.final = ["John", "saw", "Mary"] := by
   -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
   sorry
 
@@ -493,14 +493,14 @@ def tobaBatakSVO : Derivation :=
 
 /-- The VOS Hypothesis derives SVO surface order. -/
 theorem toba_batak_svo_order :
-    tobaBatakSVO.final.phonYield = ["dakdanakan", "mangatuk", "biangi"] := by
+    HeadFunction.leftSpine.phonYield tobaBatakSVO.final = ["dakdanakan", "mangatuk", "biangi"] := by
   -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
   sorry
 
 /-- SVO goes through VOS: at stage 5 (before subject-raising), the
     intermediate tree has VOS order — the same as `tobaBatakVOS.final`. -/
 theorem svo_passes_through_vos :
-    (tobaBatakSVO.stageAt 5).phonYield = tobaBatakVOS.final.phonYield := by
+    HeadFunction.leftSpine.phonYield (tobaBatakSVO.stageAt 5) = HeadFunction.leftSpine.phonYield tobaBatakVOS.final := by
   -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
   sorry
 
@@ -573,7 +573,7 @@ def englishPassive : Derivation :=
 
 /-- English passive yields patient-verb-agent surface order. -/
 theorem english_passive_order :
-    englishPassive.final.phonYield = ["the-boy", "was-injured", "by-himself"] := by
+    HeadFunction.leftSpine.phonYield englishPassive.final = ["the-boy", "was-injured", "by-himself"] := by
   -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
   sorry
 

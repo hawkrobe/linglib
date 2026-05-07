@@ -39,6 +39,7 @@ for the full admissibility conditions.
 -/
 
 import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Theories.Syntax.Minimalist.HeadFunction
 import Linglib.Core.Tree
 
 namespace Minimalist
@@ -70,12 +71,13 @@ private def toLFTreePlanar : FreeMagma (LIToken ⊕ Nat) → Tree Unit String
 noncomputable def SyntacticObject.toLFTree (so : SyntacticObject) : Tree Unit String :=
   toLFTreePlanar so.out
 
-/-- The PF branch of Spell-Out is `linearize` (defined in `Core/Basic.lean`):
-    `linearize : SyntacticObject → List LIToken`.
-
-    This alias makes the Y-model explicit. Noncomputable because
-    `linearize` itself is (Phase 1.0 placeholder via `Quot.out`). -/
-noncomputable abbrev SyntacticObject.toPF := @linearize
+/-- The PF branch of Spell-Out is `HeadFunction.linearize` parameterized
+    over a head function: `h.linearize : SyntacticObject → List LIToken`.
+    This alias pins to `HeadFunction.leftSpine` (= `Quot.out`-based
+    representative under harmonic head-initial), matching the legacy
+    `linearize` semantics. -/
+noncomputable abbrev SyntacticObject.toPF : SyntacticObject → List LIToken :=
+  HeadFunction.leftSpine.linearize
 
 /-! ## Structural preservation — Phase 2 TODO
 
