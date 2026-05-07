@@ -252,16 +252,29 @@ def rightSpine : HeadFunction where
 
 /-- `leftSpine.headAt` on a leaf returns the leaf token.
 
-    **Phase 1.0**: this lemma is *not* `rfl` because `headAt` is
-    `Quot.out`-based (planar choice for nodes; lawful for leaves but
-    Lean cannot reduce `(SyntacticObject.leaf tok).out` definitionally).
-    The lemma holds via `FreeCommMagma.exists_rep` + a representative-
-    equality argument. -/
+    Proof: leaf equivalence classes under `FreeMagma.CommRel` are
+    singletons (no `swap` constructor fires on a single `.of _`), so
+    `Quot.out` returns `FreeMagma.of (.inl tok)` up to `CommEqv`-equality
+    on `.of`-form, which on `Sum.inl` reduces to `tok = tok`. -/
 theorem leftSpine_headAt_leaf (tok : LIToken) :
     leftSpine.headAt (.leaf tok) = tok := by
-  -- TODO Phase 2: Quot.out makes this non-rfl; needs a representative argument
-  -- or replacement of headAt with a non-out-based encoding.
-  sorry
+  show PlanarMarking.headAtPlanar _ (SyntacticObject.leaf tok).out = tok
+  have hmk :
+      (Quot.mk FreeMagma.CommRel (SyntacticObject.leaf tok).out : SyntacticObject)
+        = FreeCommMagma.mk (FreeMagma.of (Sum.inl tok)) := Quot.out_eq _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
+  match h : (SyntacticObject.leaf tok).out with
+  | .of x =>
+    rw [h] at hmk
+    show PlanarMarking.headAtPlanar _ (.of x) = tok
+    cases x with
+    | inl t =>
+      simp only [PlanarMarking.headAtPlanar]
+      exact (Sum.inl.inj (hmk : Sum.inl t = Sum.inl tok))
+    | inr n => exact absurd (hmk : Sum.inr n = Sum.inl tok) (by intro; contradiction)
+  | .mul _ _ =>
+    rw [h] at hmk
+    exact absurd hmk (by simp [FreeMagma.CommEqv])
 
 theorem leftSpine_head_leaf (tok : LIToken) :
     leftSpine.head (.leaf tok) = tok :=

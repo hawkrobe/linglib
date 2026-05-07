@@ -222,7 +222,10 @@ theorem hearer_is_addressee_in_context {W E P T : Type*} (ctx : KContext W E P T
 -- E9: Bridge to Phase.lean — `isPhaseHeadOf .SA` identifies SA as a phase.
 --     SAP is derivation-final (highest phase).
 theorem sa_phase_derivation_final :
-    isPhaseHeadOf .SA (mkLeaf .SA [] 0) = true := rfl
+    isPhaseHeadOf .SA (mkLeaf .SA [] 0) = true := by
+  unfold isPhaseHeadOf mkLeaf
+  rw [SyntacticObject.outerCat_leaf]
+  rfl
 
 -- E10: fValue is injective on the canonical verbal EP spine (one head per
 --      F-level: V=0, v=1, T=2, Fin=3, Foc=4, Top=5, C=6, SA=7).

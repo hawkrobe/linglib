@@ -144,14 +144,32 @@ open Minimalist
 
     The SO is decomposed as `node (leaf tok) b` — the head is a leaf
     (the D lexical item) and `b` is the complement. PIC freezes the
-    complement domain, not the head/edge. -/
+    complement domain, not the head/edge.
+
+    **Phase 1.0 status.** The proof previously used `exact hcontains`
+    because under the planar `TraceTree` carrier `phaseComplement?`
+    reduced definitionally on `.node (leaf _) b` to `some b`. With the
+    nonplanar `FreeCommMagma` carrier, `phaseComplement?` picks the
+    right daughter of the `Quot.out` representative — which may be
+    either child after the swap quotient. The theorem statement
+    presupposes a planar choice that the substrate cannot make.
+
+    **Phase 2 plan.** Replace `phaseComplement?` with a head-function-
+    parameterized variant that picks the *complement* (the non-head
+    daughter) rather than "the right daughter of an arbitrary
+    representative." Once that lands, `dp_phase_barrier_from_pic` can
+    be re-proved by a head-function argument: if `tok` is the head,
+    the complement is `b`, so PIC freezes `b`'s contents. -/
 theorem dp_phase_barrier_from_pic (tok : LIToken) (b : SyntacticObject)
     (_h_phase : isPhaseHeadOf .D (.node (.leaf tok) b) = true) :
     ∀ (goal : SyntacticObject),
       contains b goal →
       phaseImpenetrable (.node (.leaf tok) b) goal := by
-  intro goal hcontains
-  exact hcontains
+  intro goal _hcontains
+  -- TODO Phase 2: blocked on head-function-aware `phaseComplement?`;
+  -- current `Quot.out`-based version doesn't reduce on a specific
+  -- planar shape.
+  sorry
 
 end PhaseBridge
 

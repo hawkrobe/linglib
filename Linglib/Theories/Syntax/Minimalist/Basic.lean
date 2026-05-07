@@ -428,10 +428,62 @@ private def leftmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
 noncomputable def SyntacticObject.leftmostLeaf (so : SyntacticObject) : LIToken :=
   leftmostLeafPlanar so.out
 
+/-- For a leaf SO, the leftmost-leaf is the leaf itself — the
+    equivalence class is a singleton, so `Quot.out` cannot pick a
+    different representative. Lifts the singleton structure through
+    `mk_eq_iff_commEqv`. -/
+@[simp] theorem SyntacticObject.leftmostLeaf_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).leftmostLeaf = tok := by
+  show leftmostLeafPlanar (SyntacticObject.leaf tok).out = tok
+  have hmk :
+      (Quot.mk FreeMagma.CommRel (SyntacticObject.leaf tok).out : SyntacticObject)
+        = FreeCommMagma.mk (FreeMagma.of (Sum.inl tok)) := Quot.out_eq _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
+  match h : (SyntacticObject.leaf tok).out with
+  | .of x =>
+    rw [h] at hmk
+    -- hmk : FreeMagma.CommEqv (.of x) (.of (.inl tok)), which unfolds to x = .inl tok
+    show leftmostLeafPlanar (.of x) = tok
+    cases x with
+    | inl t =>
+      simp only [leftmostLeafPlanar]
+      exact (Sum.inl.inj (hmk : Sum.inl t = Sum.inl tok))
+    | inr n => exact absurd (hmk : Sum.inr n = Sum.inl tok) (by intro; contradiction)
+  | .mul _ _ =>
+    rw [h] at hmk
+    exact absurd hmk (by simp [FreeMagma.CommEqv])
+
+/-- For a trace SO, the leftmost-leaf is the synthetic trace token. -/
+@[simp] theorem SyntacticObject.leftmostLeaf_trace (n : Nat) :
+    (SyntacticObject.trace n).leftmostLeaf = mkTraceToken n := by
+  show leftmostLeafPlanar (SyntacticObject.trace n).out = mkTraceToken n
+  have hmk :
+      (Quot.mk FreeMagma.CommRel (SyntacticObject.trace n).out : SyntacticObject)
+        = FreeCommMagma.mk (FreeMagma.of (Sum.inr n)) := Quot.out_eq _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
+  match h : (SyntacticObject.trace n).out with
+  | .of x =>
+    rw [h] at hmk
+    show leftmostLeafPlanar (.of x) = mkTraceToken n
+    cases x with
+    | inl t => exact absurd (hmk : Sum.inl t = Sum.inr n) (by intro; contradiction)
+    | inr m =>
+      simp only [leftmostLeafPlanar]
+      exact congrArg mkTraceToken (Sum.inr.inj (hmk : Sum.inr m = Sum.inr n))
+  | .mul _ _ =>
+    rw [h] at hmk
+    exact absurd hmk (by simp [FreeMagma.CommEqv])
+
 /-- The outer (projecting) categorial feature of an SO, recovered from the
     leftmost leaf along the left spine of a chosen planar representative. -/
 noncomputable def SyntacticObject.outerCat (so : SyntacticObject) : Cat :=
   so.leftmostLeaf.item.outerCat
+
+/-- For a leaf SO, `outerCat` is the leaf's outer category. -/
+@[simp] theorem SyntacticObject.outerCat_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).outerCat = tok.item.outerCat := by
+  show (SyntacticObject.leaf tok).leftmostLeaf.item.outerCat = tok.item.outerCat
+  rw [leftmostLeaf_leaf]
 
 /-- Extract the phonological form from an LIToken. -/
 def LIToken.phonForm (tok : LIToken) : String :=

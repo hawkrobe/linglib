@@ -107,8 +107,13 @@ namespace NestedAgreeConfig
 def length (c : NestedAgreeConfig) : Nat := c.stack.length
 
 /-- Probe 0's c-command domain, filtered by phi-activity. Derived
-    from `cCommandsIn` (Minimalist c-command on `SyntacticObject`). -/
-def initialDomain (c : NestedAgreeConfig) : List SyntacticObject :=
+    from `cCommandsIn` (Minimalist c-command on `SyntacticObject`).
+
+    `subtrees` returns `Multiset` (post-Phase-1.0; MCB-faithful per
+    Def 1.2.2), so the filtered domain is also `Multiset`. Membership
+    checks (`goalHead ∈ initialDomain`) work identically to the prior
+    `List` flavor. -/
+def initialDomain (c : NestedAgreeConfig) : Multiset SyntacticObject :=
   c.root.subtrees.filter (fun y =>
     decide (cCommandsIn c.root c.probingHead y) && c.validGoal y)
 
@@ -116,7 +121,7 @@ def initialDomain (c : NestedAgreeConfig) : List SyntacticObject :=
     c-commands, filtered by phi-activity. The reflexive inclusion of
     `goalHead` is required by maximized matching — every post-initial
     probe must be able to find the goal again. -/
-def daughters (c : NestedAgreeConfig) : List SyntacticObject :=
+def daughters (c : NestedAgreeConfig) : Multiset SyntacticObject :=
   c.root.subtrees.filter (fun y =>
     (y == c.goalHead || decide (cCommandsIn c.root c.goalHead y)) &&
       c.validGoal y)
@@ -124,7 +129,7 @@ def daughters (c : NestedAgreeConfig) : List SyntacticObject :=
 /-- Search domain at probe `i`: derived from the structural
     primitives. The matryoshka claim is encoded definitionally —
     `searchDomain (i+1) = daughters` for all `i ≥ 0`. -/
-def searchDomain (c : NestedAgreeConfig) : Nat → List SyntacticObject
+def searchDomain (c : NestedAgreeConfig) : Nat → Multiset SyntacticObject
   | 0     => c.initialDomain
   | _ + 1 => c.daughters
 
@@ -183,8 +188,8 @@ theorem goalHead_mem_daughters (c : NestedAgreeConfig)
     (h : IsNestedAgreeConfig c) :
     c.goalHead ∈ c.daughters := by
   unfold IsNestedAgreeConfig at h
-  rw [NestedAgreeConfig.initialDomain, List.mem_filter] at h
-  rw [NestedAgreeConfig.daughters, List.mem_filter]
+  rw [NestedAgreeConfig.initialDomain, Multiset.mem_filter] at h
+  rw [NestedAgreeConfig.daughters, Multiset.mem_filter]
   refine ⟨h.1, ?_⟩
   rw [Bool.and_eq_true] at h ⊢
   refine ⟨?_, h.2.2⟩
