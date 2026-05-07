@@ -1135,6 +1135,42 @@ Cross-tradition unification via B&P's parametric command lives in
 universal shape matches the native primitive. Minimalism's c-command
 does not reduce to it, so no bridge belongs here. -/
 
+/-! ## Multiset shape — abstract geometry over the nonplanar quotient
+
+The unlabeled SO shape: replace every leaf token / trace marker with
+`()`. The result lives in `FreeCommMagma Unit` — the canonical
+*nonplanar* analog of the prior planar `TreeShape` (which was deleted
+because `.node L R = .node R L` failed to hold under MCB §1.1.3,
+book p. 23). Two SOs are *structurally isomorphic* iff their shapes
+are equal as elements of `FreeCommMagma Unit`. -/
+
+/-- The unlabeled multiset-shape of an SO: forget every leaf token
+    and trace marker, keeping only the binary-tree structure modulo
+    nonplanar quotient. Functorial via `FreeCommMagma.map`. -/
+def SyntacticObject.shape : SyntacticObject → FreeCommMagma Unit :=
+  FreeCommMagma.map (Function.const _ ())
+
+@[simp] theorem SyntacticObject.shape_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).shape = FreeCommMagma.of () := rfl
+
+@[simp] theorem SyntacticObject.shape_trace (n : Nat) :
+    (SyntacticObject.trace n).shape = FreeCommMagma.of () := rfl
+
+@[simp] theorem SyntacticObject.shape_mul (l r : SyntacticObject) :
+    (l * r).shape = l.shape * r.shape :=
+  MulHom.map_mul (FreeCommMagma.map _) l r
+
+/-- Two SOs are structurally isomorphic iff they have the same
+    nonplanar shape (ignoring all leaf labels). Replaces the prior
+    `Bool`-valued `structurallyIsomorphic` from the planar substrate;
+    `Prop`-valued + `DecidableEq` is more mathlib-aligned. -/
+def structurallyIsomorphic (x y : SyntacticObject) : Prop :=
+  x.shape = y.shape
+
+instance (x y : SyntacticObject) :
+    Decidable (structurallyIsomorphic x y) := by
+  unfold structurallyIsomorphic; infer_instance
+
 /-! ## Y-model branch to LF
 
 The LF lift `SyntacticObject.toLFTree : SyntacticObject → Tree Unit String`
