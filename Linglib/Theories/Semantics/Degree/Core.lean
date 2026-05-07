@@ -376,7 +376,9 @@ inductive AdjectiveClass where
   deriving Repr, DecidableEq
 
 /-- Coarse 2-way classification: relative vs absolute.
-    Collapses absoluteMaximum and absoluteMinimum. -/
+    Collapses absoluteMaximum and absoluteMinimum.
+    Used by `Phenomena/Gradability/Studies/Beltrama2025.lean` to
+    classify MPAs (mildly positive adjectives) as not-relative. -/
 def AdjectiveClass.IsRelative (c : AdjectiveClass) : Prop :=
   c = .relativeGradable
 

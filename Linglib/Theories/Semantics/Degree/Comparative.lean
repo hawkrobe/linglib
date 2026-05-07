@@ -18,9 +18,8 @@ Hoeksema's polarity-asymmetry consumers (Boolean-hom `npComparativeGQ`,
 the licensing-context registry connection) remain in
 `Phenomena/Polarity/Studies/Hoeksema1983.lean`.
 
-This module was extracted from `Theories/Semantics/Lexical/Adjective/Comparative.lean`
-(which now re-exports from here). The framework-specific content (MAX,
-ambidirectionality, manner implicature) is in `Degree/Frameworks/Rett.lean`.
+Framework-specific content for Rett 2026 (MAX, ambidirectionality,
+manner implicature) lives in `Phenomena/Negation/Studies/Rett2026.lean`.
 
 ## Key Results
 
@@ -200,10 +199,6 @@ structure MannerEffect where
   /-- Is the EN form pragmatically marked (optional, stylistic)? -/
   atypical : Bool
   deriving DecidableEq, Repr
-
-/-- EN in ambidirectional constructions triggers evaluativity. -/
-def enEvaluativeEffect : MannerEffect :=
-  { evaluative := true, atypical := false }
 
 -- ════════════════════════════════════════════════════
 -- § 7. Comparative as Extent Inclusion

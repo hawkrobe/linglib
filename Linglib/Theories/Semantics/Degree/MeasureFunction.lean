@@ -2,28 +2,32 @@ import Linglib.Theories.Semantics.Events.ScalarResult
 import Linglib.Theories.Semantics.Events.Basic
 import Mathlib.Order.Defs.LinearOrder
 
-set_option linter.dupNamespace false
-
 /-!
 # Measure Functions, Difference Functions, and Measure of Change
 @cite{kennedy-levin-2008} @cite{hay-kennedy-levin-1999} @cite{kennedy-mcnally-2005}
-@cite{bartsch-vennemann-1972} @cite{kennedy-1999b}
+@cite{bartsch-vennemann-1972} @cite{kennedy-1999}
 
 The substrate for @cite{kennedy-levin-2008}'s "Measure of Change"
 analysis of degree achievements (DAs) — the time-indexed measure
-functions that gradable adjectives lexicalise (footnote 9), the
-difference functions derived from them (eq. 23), and the measure-of-
-change function `m_Δ` that powers the DA semantics (eq. 25).
+functions that gradable adjectives lexicalise (introduced in
+@cite{hay-kennedy-levin-1999} eq. 11; restated in K&L 2008 §7.3.1
+main text on p. 167), the difference functions derived from them
+(K&L eq. 23), and the measure-of-change function `m_Δ` that powers
+the DA semantics (K&L eq. 25).
 
 ## K&L 2008 §7.3 in Lean
 
-| K&L primitive                     | This file                       |
-|-----------------------------------|---------------------------------|
-| Measure function `m : e × t → d` (fn 9)  | `MeasureFunction α δ Time` |
-| Scale `⟨S, R, δ⟩` (fn 8)         | `[LinearOrder δ]`               |
-| Difference function `m_d^↑` (eq. 23) | `differenceFunction`        |
-| Measure of change `m_Δ` (eq. 25)  | `measureOfChange`               |
-| `init(e)` / `fin(e)` time projection | event runtime start/finish |
+| K&L primitive                                | This file                       |
+|----------------------------------------------|---------------------------------|
+| Measure function `m : e × t → d` (HKL eq. 11; K&L p. 167) | `MeasureFunction α δ Time` |
+| Scale `⟨S, R, δ⟩` (K&L fn 8)                 | `[LinearOrder δ]`               |
+| Difference function `m_d^↑` (K&L eq. 23)     | `differenceFunction`            |
+| Measure of change `m_Δ` (K&L eq. 25)         | `measureOfChange`               |
+| `init(e)` / `fin(e)` time projection         | event runtime start/finish      |
+
+K&L 2008 fn 9 is about the *alternative* ⟨d,⟨e,t⟩⟩ analysis (Cresswell,
+von Stechow, Heim, Klein), NOT the time-indexed measure function. The
+time-indexing originates with @cite{hay-kennedy-levin-1999} eq. 11.
 
 ## Bridge to Beavers' affectedness hierarchy
 
@@ -64,9 +68,11 @@ open Semantics.Events.ScalarResult
 -- § 1. MeasureFunction (K&L 2008 footnote 9)
 -- ════════════════════════════════════════════════════
 
+set_option linter.dupNamespace false in
 /-- A **time-indexed measure function** `m : α → Time → δ`
-    (@cite{kennedy-levin-2008} footnote 9): a function from objects
-    and times to degrees on a scale.
+    (@cite{hay-kennedy-levin-1999} eq. 11; restated in
+    @cite{kennedy-levin-2008} §7.3.1 main text p. 167): a function
+    from objects and times to degrees on a scale.
 
     "An object can have different degrees of height, weight, temperature,
     etc. at different times" — so the K&L analysis relativises the
@@ -88,8 +94,9 @@ open Semantics.Events.ScalarResult
 
     The duplicated `MeasureFunction` namespace (file-level
     `Semantics.Degree.MeasureFunction` + the type itself) is harmless
-    here — same pattern as mathlib's `Function` files. The
-    `dupNamespace` linter is disabled at file-top level. -/
+    here — same pattern as mathlib's `Function` files. The `set_option
+    linter.dupNamespace false in` immediately above silences the
+    namespace-duplication warning for this single declaration. -/
 abbrev MeasureFunction (α : Type*) (δ : Type*) (Time : Type*) :=
   α → Time → δ
 
@@ -246,11 +253,21 @@ instance HasScalarResult.ofHasMeasureFunction
     For verbs already declaring `HasScalarResult` via the auto-instance
     above, this is the parallel constructor.
 
-    For pure force-recipient verbs (no result state, e.g., *push,
-    scrub*), users provide their own `HasLatentScale` instance with
-    nontrivial content directly — the substrate's independent
-    HasScalarResult and HasLatentScale primitives accommodate both
-    paths. -/
+    The body `latentScale _ _ := True` is correct content (not a
+    placeholder): a verb with a measure function definitionally puts
+    its patient on a scale, so the latent-scale relation holds for
+    every patient/event pair. The Potential affectedness level
+    (`∀x∀e[θ(x,e) → latentScale x e]`) reduces to `θ`-membership
+    when `latentScale` is `True`, which matches Beavers' (60d)
+    semantics for verbs whose patients are scale-typed by lexical
+    commitment. For pure force-recipient verbs (no result state,
+    e.g., *push, scrub*), users provide their own `HasLatentScale`
+    instance with the nontrivial force-applied relation directly.
+
+    `@[reducible]` is required by Lean for class-type `def`s (without
+    it Lean warns that typeclass resolution will not see through the
+    definition). This is unrelated to the body's content; it's purely
+    a typeclass-elaboration hygiene marker. -/
 @[reducible]
 def HasLatentScale.ofHasMeasureFunction
     {α δ Time : Type*} [LinearOrder Time] [HasMeasureFunction α δ Time] :

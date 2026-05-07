@@ -122,9 +122,12 @@ theorem isMaxDeg_matrixPredicate {Entity D : Type*} [LinearOrder D]
 /-- An adjective denotation (type ⟨d,et⟩) is **monotone** iff
     tall(x,d) implies tall(x,d') for all d' ≤ d.
 
-    Heim (p. 216, def. (3)): a function f of type ⟨d,et⟩ is monotone
-    iff ∀x∀d∀d'[f(d)(x) = 1 & d' < d → f(d')(x) = 1]. -/
-def Monotone {Entity D : Type*} [Preorder D]
+    @cite{heim-2001}: a function f of type ⟨d,et⟩ is monotone
+    iff ∀x∀d∀d'[f(d)(x) = 1 & d' < d → f(d')(x) = 1].
+
+    Named `IsMonotoneAdj` (not `Monotone`) to avoid shadowing
+    mathlib's `Monotone`. -/
+def IsMonotoneAdj {Entity D : Type*} [Preorder D]
     (adj : D → Entity → Prop) : Prop :=
   ∀ (x : Entity) (d d' : D), adj d x → d' ≤ d → adj d' x
 
