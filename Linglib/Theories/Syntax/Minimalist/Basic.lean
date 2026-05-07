@@ -223,6 +223,20 @@ abbrev mul (l r : SyntacticObject) : SyntacticObject := l * r
     during the `TraceTree → FreeCommMagma` migration. -/
 abbrev node (l r : SyntacticObject) : SyntacticObject := mul l r
 
+/-- Cascade combinator: lift a `FreeMagma (LIToken ⊕ Nat) → β` aux to
+    `SyntacticObject → β`, hiding the `FreeMagma.CommRel` machinery
+    from Phenomena consumers. Same as `FreeCommMagma.lift` modulo the
+    SO type ascription at the SO interface. The `_respects` hypothesis
+    still has to be provided, but the type signature is consumer-friendly.
+
+    For OR-symmetric `Bool`-valued predicates, see `liftFM_orSymmetric`
+    below — that version takes a per-FreeMagma-shape predicate and
+    discharges the `_respects` proof automatically. -/
+abbrev liftFM {β : Type*} (f : FreeMagma (LIToken ⊕ Nat) → β)
+    (h : ∀ a b, FreeMagma.CommRel a b → f a = f b) :
+    SyntacticObject → β :=
+  FreeCommMagma.lift f h
+
 /-- The induction principle for `SyntacticObject` with linguistic case names.
     For `Prop` motives, `Quot.ind` propagates through the equivalence
     automatically — no swap-respect obligation needed. The `mul` case must
@@ -1220,6 +1234,14 @@ are equal as elements of `FreeCommMagma Unit`. -/
     nonplanar quotient. Functorial via `FreeCommMagma.map`. -/
 def SyntacticObject.shape : SyntacticObject → FreeCommMagma Unit :=
   FreeCommMagma.map (Function.const _ ())
+
+/-- The unit shape — a single leaf in `FreeCommMagma Unit`. Useful
+    abbreviation for stating shape equalities like
+    `so.shape = leafShape * (leafShape * leafShape)`. Was previously
+    duplicated as `private def leafShape` in three Phenomena Studies
+    files (DendikkenBasic, HaddicanEtAl, Causatives); hoisted to
+    substrate to eliminate the triplicate. -/
+abbrev leafShape : FreeCommMagma Unit := FreeCommMagma.of ()
 
 @[simp] theorem SyntacticObject.shape_leaf (tok : LIToken) :
     (SyntacticObject.leaf tok).shape = FreeCommMagma.of () := rfl

@@ -173,7 +173,8 @@ def causative_sc : SyntacticObject :=
 /-! ## Explicit shapes -/
 
 /-- A leaf shape, abbreviated. -/
-private def leafShape : FreeCommMagma Unit := FreeCommMagma.of ()
+-- Local alias for substrate `Minimalist.leafShape` (hoisted in 0.230.877).
+private abbrev leafShape : FreeCommMagma Unit := Minimalist.leafShape
 
 /-- DOC small clause: `[VP V [SC DP DP]]` — three leaves in a
     right-branching shape. -/

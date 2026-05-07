@@ -272,7 +272,8 @@ def triadicSStructure_PD_send : SyntacticObject := triadicDStructure_send
 /-! ## §7. Structural facts -/
 
 /-- A leaf shape on the FreeCommMagma Unit carrier. -/
-private def leafShape : FreeCommMagma Unit := FreeCommMagma.of ()
+-- Local alias for substrate `Minimalist.leafShape` (hoisted in 0.230.877).
+private abbrev leafShape : FreeCommMagma Unit := Minimalist.leafShape
 
 /-- D-structure for *send a package off to Bob* has the deep
     SC-in-SC-in-SC shape predicted by (52a) — 7 levels of right-branching. -/

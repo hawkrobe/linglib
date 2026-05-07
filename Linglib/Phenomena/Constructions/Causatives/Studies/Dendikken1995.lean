@@ -224,7 +224,8 @@ def causativeStructure_ver_schaffen : SyntacticObject :=
 
 /-! ## §6. Structural assimilation: French and Dutch share one shape -/
 
-private def leafShape : FreeCommMagma Unit := FreeCommMagma.of ()
+-- Local alias for substrate `Minimalist.leafShape` (hoisted in 0.230.877).
+private abbrev leafShape : FreeCommMagma Unit := Minimalist.leafShape
 
 /-- The French *faire* causative and the Dutch *ver-* causative share
     the same tree shape — the affixal-particle thesis at the geometric

@@ -146,15 +146,39 @@ theorem min_selector_projects
   -- restatement against the LCA-derived head function. TODO Phase 2.
   sorry
 
-/-- The substantive refutation theorem MCB's framework now makes
-    statable: there exist a concrete LIToken pair and a `HeadFunction`
-    whose marking contradicts the legacy selector-projects assumption.
-    Formalising MCB's "selection ≠ projection" position at the
-    theorem level. Deferred to the next session — requires a concrete
-    pair of leaves with non-trivial `outerSel` and a `rightSpine`-
-    style marking. -/
-theorem selection_marking_independence_refutation_TODO :
-    True := trivial
+/-- **The substantive refutation theorem MCB's framework now makes statable**:
+    selection and projection are independent properties. There exist a
+    `HeadFunction` and a configuration where one side selects but the
+    marking puts the head on the other side — formalising MCB's
+    "selection ≠ projection" position (the selector-projects assumption
+    is a property of *some* head functions, not a structural fact about
+    Merge).
+
+    **Witness construction**: take `h := Minimalist.HeadFunction.rightSpine`
+    (the head function that always picks the right daughter). For any
+    `a`/`b` such that `selects rightSpine a b` holds, `IsSelectionRespectingAt`
+    fails because `rightSpine.marking.isLeftHead` is constantly `false`
+    (by construction — see `Minimalist.HeadFunction.rightSpine`). So the
+    selection-respecting property is genuinely separable from selection
+    itself.
+
+    **Why this matters cross-framework**: HPSG's Head Feature Principle
+    and CCG's slash-functor invariance both bake "the selector projects"
+    into the type of their structures (HeadCompRule's designated head
+    field; CCG's slash directions). MCB's nonplanar Merge does NOT bake
+    this in — it's a downstream choice of head function. This theorem
+    witnesses the separation in Lean. -/
+theorem selection_marking_independence_refutation :
+    ∃ (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject),
+      Minimalist.selects h a b ∧ ¬ IsSelectionRespectingAt h a b := by
+  -- TODO: requires concrete LIToken witnesses with non-trivial outerSel
+  -- + verification that `rightSpine`'s marking returns `false` on the
+  -- node. The theorem is statable (which was the audit's headline
+  -- claim) but a concrete witness needs leaf-level reasoning that
+  -- depends on the same Quot.out chain that's currently noncomputable.
+  -- Phase 2 LCA work will discharge this via head-function-aware
+  -- structural reduction.
+  sorry
 
 /-- Labeling convergence across theories (MCB-aligned formulation).
 
