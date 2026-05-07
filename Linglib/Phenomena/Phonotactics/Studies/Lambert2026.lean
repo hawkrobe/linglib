@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.PiecewiseTestable
+import Linglib.Core.Computability.Subregular.Sandwich
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
 import Linglib.Theories.Phonology.SibilantTier
@@ -624,157 +625,83 @@ theorem tsuutina_isTSL2 : IsTierStrictlyLocal 2 tsuutinaLang :=
 Lambert (2026) §4.2 parameterised counterexample: for every `k`, the
 words `ʃᵏ⁺¹sᵏ⁺¹` (accepted) and `ʃᵏ s ʃ sᵏ` (rejected) share the
 length-`k` tier-prefix and length-`k` tier-suffix on every Bool tier.
-The 8-tier enumeration (3 alphabet classes × 2 keep/drop choices)
-collapses to 4 because both witnesses contain no neutral material; on
-the three non-empty Bool combinations of (anterior, posterior), the
-tier-projected words are **equal** (cases 2-3) or have **matching**
-length-`k` affixes (case 1: both kinds kept, the `s` and `ʃ` swap in
-the middle of the rejected word doesn't reach the length-`k` window). -/
+Both witnesses are sandwiches with **asymmetric** bookends `posterior`
+on the left and `anterior` on the right; widths differ between
+witnesses (`k+1` for accepted, `k` for rejected). The 8-tier
+enumeration (3 alphabet classes × 2 keep/drop) collapses to 4 since the
+witnesses contain no neutrals.
+
+The substrate `Sandwich` (in `Core/Computability/Subregular/Sandwich.lean`)
+handles the (true, true) case directly via `takeAt_*_sandwich` (the
+bookends are wide enough); the other three cases reduce to filtered
+words being equal (after a `replicate_succ` rewrite to merge the middle
+contribution into the bookend). -/
 
 /-- The accepted Tsuut'ina parameterised witness `ʃᵏ⁺¹ sᵏ⁺¹`. Sibilant
 tier projection: `posterior^(k+1) ++ anterior^(k+1)` — no anterior
 precedes any posterior. -/
 abbrev tsuutinaAccepted (k : ℕ) : List TsuutinaSeg :=
-  List.replicate (k + 1) SibilantTierSeg.posterior ++ List.replicate (k + 1) SibilantTierSeg.anterior
+  sandwich (k + 1) SibilantTierSeg.posterior [] (k + 1) SibilantTierSeg.anterior
 
 /-- The rejected Tsuut'ina parameterised witness `ʃᵏ s ʃ sᵏ`. The
 internal `[anterior, posterior]` is the forbidden adjacency on the
 sibilant tier. -/
 abbrev tsuutinaRejected (k : ℕ) : List TsuutinaSeg :=
-  List.replicate k SibilantTierSeg.posterior ++ [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++ List.replicate k SibilantTierSeg.anterior
+  sandwich k SibilantTierSeg.posterior [.anterior, .posterior] k SibilantTierSeg.anterior
 
 /-- Tier-affix equality on every Bool tier. Case-split on
-`(T posterior, T anterior)`. For three of four cases the projections
-are equal as lists; for `(true, true)` they share length-`k` prefix
-`posterior^k` and length-`k` suffix `anterior^k` via `take_left'` /
-`drop_left'` after `List.append_assoc` reassociation. -/
+`(T posterior, T anterior)`. The (true, true) case applies the
+substrate's `takeAt_*_sandwich` directly (bookends wide enough). The
+other three cases collapse the filtered witnesses to a single replicate
+(with `replicate_succ` to merge bookend + middle contribution). -/
 private lemma tsuutina_tierAffixes (k : ℕ) (T : TsuutinaSeg → Bool) :
     Edge.left.takeAt k ((tsuutinaAccepted k).filter T) =
       Edge.left.takeAt k ((tsuutinaRejected k).filter T) ∧
     Edge.right.takeAt k ((tsuutinaAccepted k).filter T) =
       Edge.right.takeAt k ((tsuutinaRejected k).filter T) := by
-  -- Establish negation hypotheses upfront for filter_*_of_neg.
   unfold tsuutinaAccepted tsuutinaRejected
   match h_post : T SibilantTierSeg.posterior, h_ant : T SibilantTierSeg.anterior with
   | false, false =>
     have h_post' : ¬ T SibilantTierSeg.posterior = true := by simp [h_post]
     have h_ant' : ¬ T SibilantTierSeg.anterior = true := by simp [h_ant]
-    -- Both filters give [], takeAt of [] = [].
-    have h_acc :
-        (List.replicate (k + 1) SibilantTierSeg.posterior ++
-           List.replicate (k + 1) SibilantTierSeg.anterior).filter T = [] := by
-      simp [List.filter_append, List.filter_replicate_of_neg h_post',
-            List.filter_replicate_of_neg h_ant']
-    have h_rej :
-        (List.replicate k SibilantTierSeg.posterior ++
-           [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-           List.replicate k SibilantTierSeg.anterior).filter T = [] := by
-      simp [List.filter_append, List.filter_replicate_of_neg h_post',
-            List.filter_replicate_of_neg h_ant',
-            List.filter_cons_of_neg h_ant',
-            List.filter_cons_of_neg h_post']
-    rw [h_acc, h_rej]
-    exact ⟨rfl, rfl⟩
+    rw [filter_sandwich_of_neg_neg h_post' h_ant',
+        filter_sandwich_of_neg_neg h_post' h_ant']
+    have h_rej : ([SibilantTierSeg.anterior, .posterior] : List _).filter T = [] := by
+      simp [List.filter_cons_of_neg h_ant', List.filter_cons_of_neg h_post']
+    simp [h_rej]
   | true, false =>
     have h_ant' : ¬ T SibilantTierSeg.anterior = true := by simp [h_ant]
-    -- accepted.filter = post^(k+1); rejected.filter = post^k ++ [post].
-    have heq : (List.replicate (k + 1) SibilantTierSeg.posterior ++
-                  List.replicate (k + 1) SibilantTierSeg.anterior).filter T =
-               (List.replicate k SibilantTierSeg.posterior ++
-                  [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-                  List.replicate k SibilantTierSeg.anterior).filter T := by
-      simp only [List.filter_append, List.filter_replicate_of_pos h_post,
-                 List.filter_replicate_of_neg h_ant',
-                 List.filter_cons_of_neg h_ant',
-                 List.filter_cons_of_pos h_post,
-                 List.filter_nil, List.append_nil, List.nil_append]
-      -- post^(k+1) = post^k ++ [post]
-      rw [List.replicate_succ']
-    rw [heq]; exact ⟨rfl, rfl⟩
+    rw [filter_sandwich_of_pos_neg h_post h_ant',
+        filter_sandwich_of_pos_neg h_post h_ant']
+    -- accepted: replicate (k+1) post ++ [].filter T = replicate (k+1) post
+    -- rejected: replicate k post ++ [post] = replicate (k+1) post
+    have h_rej : ([SibilantTierSeg.anterior, .posterior] : List _).filter T =
+                 [SibilantTierSeg.posterior] := by
+      simp [List.filter_cons_of_neg h_ant', List.filter_cons_of_pos h_post]
+    rw [List.filter_nil, List.append_nil, h_rej, ← List.replicate_succ']
+    exact ⟨rfl, rfl⟩
   | false, true =>
     have h_post' : ¬ T SibilantTierSeg.posterior = true := by simp [h_post]
-    have heq : (List.replicate (k + 1) SibilantTierSeg.posterior ++
-                  List.replicate (k + 1) SibilantTierSeg.anterior).filter T =
-               (List.replicate k SibilantTierSeg.posterior ++
-                  [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-                  List.replicate k SibilantTierSeg.anterior).filter T := by
-      simp only [List.filter_append, List.filter_replicate_of_pos h_ant,
-                 List.filter_replicate_of_neg h_post',
-                 List.filter_cons_of_pos h_ant,
-                 List.filter_cons_of_neg h_post',
-                 List.filter_nil, List.append_nil, List.nil_append]
-      -- ant^(k+1) = [ant] ++ ant^k via replicate_succ + replicate 1 = [_]
-      show List.replicate (k + 1) SibilantTierSeg.anterior =
-           SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior
-      rw [List.replicate_succ]
-    rw [heq]; exact ⟨rfl, rfl⟩
+    rw [filter_sandwich_of_neg_pos h_post' h_ant,
+        filter_sandwich_of_neg_pos h_post' h_ant]
+    -- accepted: [].filter T ++ replicate (k+1) ant = replicate (k+1) ant
+    -- rejected: [ant] ++ replicate k ant = replicate (k+1) ant
+    have h_rej : ([SibilantTierSeg.anterior, .posterior] : List _).filter T =
+                 [SibilantTierSeg.anterior] := by
+      simp [List.filter_cons_of_pos h_ant, List.filter_cons_of_neg h_post']
+    rw [List.filter_nil, List.nil_append, h_rej]
+    show (SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior).take k =
+         (List.replicate (k + 1) SibilantTierSeg.anterior).take k ∧
+         (SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior).drop _ =
+         (List.replicate (k + 1) SibilantTierSeg.anterior).drop _
+    rw [← List.replicate_succ]
+    exact ⟨rfl, rfl⟩
   | true, true =>
-    -- Both filters are identity; show takeAt-prefix = post^k and
-    -- takeAt-suffix = ant^k via take_left' / drop_left' after reassociation.
-    have h_acc :
-        (List.replicate (k + 1) SibilantTierSeg.posterior ++
-           List.replicate (k + 1) SibilantTierSeg.anterior).filter T =
-        List.replicate (k + 1) SibilantTierSeg.posterior ++
-           List.replicate (k + 1) SibilantTierSeg.anterior := by
-      simp [List.filter_append, List.filter_replicate_of_pos h_post,
-            List.filter_replicate_of_pos h_ant]
-    have h_rej :
-        (List.replicate k SibilantTierSeg.posterior ++
-           [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-           List.replicate k SibilantTierSeg.anterior).filter T =
-        List.replicate k SibilantTierSeg.posterior ++
-          [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-          List.replicate k SibilantTierSeg.anterior := by
-      simp [List.filter_append, List.filter_replicate_of_pos h_post,
-            List.filter_replicate_of_pos h_ant,
-            List.filter_cons_of_pos h_ant,
-            List.filter_cons_of_pos h_post]
-    rw [h_acc, h_rej]
-    refine ⟨?_, ?_⟩
-    · -- Prefix: take k of both = post^k.
-      show (List.replicate (k + 1) SibilantTierSeg.posterior ++
-              List.replicate (k + 1) SibilantTierSeg.anterior).take k =
-           (List.replicate k SibilantTierSeg.posterior ++
-              [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-              List.replicate k SibilantTierSeg.anterior).take k
-      -- Reassociate accepted: post^(k+1) = post^k ++ [post]
-      rw [show List.replicate (k + 1) SibilantTierSeg.posterior =
-              List.replicate k SibilantTierSeg.posterior ++
-                [SibilantTierSeg.posterior] from List.replicate_succ',
-          List.append_assoc]
-      -- accepted is now post^k ++ ([post] ++ ant^(k+1)); take_left' closes.
-      rw [List.take_left' (by simp [List.length_replicate])]
-      -- For rejected, reassociate (post^k ++ [ant, post]) ++ ant^k as
-      -- post^k ++ ([ant, post] ++ ant^k); take_left' closes.
-      rw [List.append_assoc, List.take_left' (by simp [List.length_replicate])]
-    · -- Suffix: drop ((2k+2) - k) = drop (k+2) of both = ant^k.
-      show Edge.right.takeAt k _ = Edge.right.takeAt k _
-      show (List.replicate (k + 1) SibilantTierSeg.posterior ++
-              List.replicate (k + 1) SibilantTierSeg.anterior).drop _ =
-           (List.replicate k SibilantTierSeg.posterior ++
-              [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-              List.replicate k SibilantTierSeg.anterior).drop _
-      -- Compute lengths to k+2.
-      rw [show (List.replicate (k + 1) SibilantTierSeg.posterior ++
-                  List.replicate (k + 1) SibilantTierSeg.anterior).length - k = k + 2 from by
-            rw [List.length_append, List.length_replicate, List.length_replicate]; omega,
-          show (List.replicate k SibilantTierSeg.posterior ++
-                  [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-                  List.replicate k SibilantTierSeg.anterior).length - k = k + 2 from by
-            simp [List.length_append, List.length_replicate]]
-      -- Reassociate accepted: ant^(k+1) = [ant] ++ ant^k, then group
-      -- post^(k+1) ++ [ant] = chunk of length k+2.
-      rw [show List.replicate (k + 1) SibilantTierSeg.anterior =
-              SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior from
-            List.replicate_succ]
-      rw [show List.replicate (k + 1) SibilantTierSeg.posterior ++
-              (SibilantTierSeg.anterior :: List.replicate k SibilantTierSeg.anterior) =
-              (List.replicate (k + 1) SibilantTierSeg.posterior ++
-                [SibilantTierSeg.anterior]) ++ List.replicate k SibilantTierSeg.anterior from by
-            simp [List.append_assoc]]
-      rw [List.drop_left' (by simp [List.length_append, List.length_replicate])]
-      -- Rejected: (post^k ++ [ant, post]) has length k+2; drop_left'.
-      rw [List.drop_left' (by simp [List.length_append, List.length_replicate])]
+    rw [filter_sandwich_of_pos_pos h_post h_ant,
+        filter_sandwich_of_pos_pos h_post h_ant,
+        takeAt_left_sandwich (Nat.le_succ k), takeAt_left_sandwich (le_refl k),
+        takeAt_right_sandwich (Nat.le_succ k), takeAt_right_sandwich (le_refl k)]
+    exact ⟨rfl, rfl⟩
 
 /-- The accepted Tsuut'ina witness lies in `tsuutinaLang`. The sibilant
 tier projection is the witness itself (no neutral material), and on
@@ -790,20 +717,16 @@ private lemma tsuutinaAccepted_mem (k : ℕ) :
   have h_filter : (tsuutinaAccepted k).filter
                     (fun x => decide (SibilantTierSeg.onTier x)) =
                   tsuutinaAccepted k := by
-    unfold tsuutinaAccepted
-    simp [List.filter_append,
-          List.filter_replicate_of_pos
-            (show decide (SibilantTierSeg.onTier SibilantTierSeg.posterior) = true
-             from by decide),
-          List.filter_replicate_of_pos
-            (show decide (SibilantTierSeg.onTier SibilantTierSeg.anterior) = true
-             from by decide)]
+    unfold tsuutinaAccepted sandwich
+    simp
   rw [h_filter]
-  -- IsChain (¬ antPostForbidden) on post^(k+1) ++ ant^(k+1).
-  show (List.replicate (k + 1) SibilantTierSeg.posterior ++
-          List.replicate (k + 1) SibilantTierSeg.anterior).IsChain
+  -- IsChain (¬ antPostForbidden) on sandwich (k+1) post [] (k+1) ant
+  -- = post^(k+1) ++ [] ++ ant^(k+1) = post^(k+1) ++ ant^(k+1).
+  show (sandwich (k + 1) SibilantTierSeg.posterior []
+          (k + 1) SibilantTierSeg.anterior).IsChain
         (fun a b => ¬ antPostForbidden a b)
-  rw [List.isChain_append]
+  unfold sandwich
+  rw [List.append_nil, List.isChain_append]
   refine ⟨?_, ?_, ?_⟩
   · exact List.isChain_replicate_of_rel _ (by decide)
   · exact List.isChain_replicate_of_rel _ (by decide)
@@ -827,29 +750,17 @@ private lemma tsuutinaRejected_notMem (k : ℕ) :
   have h_filter : (tsuutinaRejected k).filter
                     (fun x => decide (SibilantTierSeg.onTier x)) =
                   tsuutinaRejected k := by
-    unfold tsuutinaRejected
-    simp [List.filter_append,
-          List.filter_replicate_of_pos
-            (show decide (SibilantTierSeg.onTier SibilantTierSeg.posterior) = true
-             from by decide),
-          List.filter_replicate_of_pos
-            (show decide (SibilantTierSeg.onTier SibilantTierSeg.anterior) = true
-             from by decide),
-          List.filter_cons_of_pos
-            (show decide (SibilantTierSeg.onTier SibilantTierSeg.anterior) = true
-             from by decide),
-          List.filter_cons_of_pos
-            (show decide (SibilantTierSeg.onTier SibilantTierSeg.posterior) = true
-             from by decide)]
+    unfold tsuutinaRejected sandwich
+    simp
   rw [h_filter]
   -- The witness contains the adjacent pair (anterior, posterior).
-  -- Use isChain_append_cons_cons to expose it.
-  show ¬ (List.replicate k SibilantTierSeg.posterior ++
-            [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
-            List.replicate k SibilantTierSeg.anterior).IsChain
+  -- Unfold sandwich, then use isChain_append_cons_cons to expose the pair.
+  show ¬ (sandwich k SibilantTierSeg.posterior
+            [SibilantTierSeg.anterior, .posterior] k SibilantTierSeg.anterior).IsChain
         (fun a b => ¬ antPostForbidden a b)
+  unfold sandwich
   intro hchain
-  -- Exhibit the witness in the form l₁ ++ a :: b :: l₂ to apply isChain_append_cons_cons.
+  -- Reassociate: post^k ++ [ant, post] ++ ant^k = post^k ++ (ant :: post :: ant^k).
   rw [show List.replicate k SibilantTierSeg.posterior ++
           [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++
           List.replicate k SibilantTierSeg.anterior =
@@ -858,7 +769,6 @@ private lemma tsuutinaRejected_notMem (k : ℕ) :
             List.replicate k SibilantTierSeg.anterior) by
         simp [List.append_assoc]] at hchain
   rw [List.isChain_append_cons_cons] at hchain
-  -- Middle conjunct: ¬ antPostForbidden anterior posterior. But this IS forbidden.
   exact hchain.2.1 (by decide : antPostForbidden SibilantTierSeg.anterior
                                               SibilantTierSeg.posterior)
 
@@ -920,11 +830,110 @@ theorem luganda_isPT : IsPiecewiseTestable 3 lugandaLang := by
   rw [mem_iff_sublist, mem_iff_sublist]
   exact and_congr (not_congr h3) (imp_congr h1 h2)
 
+/-! ### Refutation: Luganda ∉ BTLI
+
+Lambert (2026) §5.1 parameterised counterexample: for every `k`, the words
+`ℓᵏ ℓ h h ℓ ℓᵏ` (accepted) and `ℓᵏ ℓ h ℓ h ℓ ℓᵏ` (rejected) share the
+length-`k` tier-prefix and length-`k` tier-suffix on every Bool tier.
+Both witnesses are sandwiches with bookend `low` and width `k`; the
+substrate `Sandwich` (in `Core/Computability/Subregular/Sandwich.lean`)
+handles the bookend-keeps-tier-affix case directly, leaving only the
+small filtered-middle equality as per-witness work.
+
+Membership separation is **predicate-level** (not TSL-grammar level):
+`lugandaPred` requires no `[h, ℓ, h]` subsequence and (if any high
+appears) a `[h, ℓ]` subsequence. Accepted satisfies both; rejected fails
+the first because its explicit middle `[ℓ, h, ℓ, h, ℓ]` contains
+`[h, ℓ, h]` as a subsequence. -/
+
+/-- The accepted Luganda parameterised witness `ℓᵏ ℓ h h ℓ ℓᵏ`. The two
+high tones are adjacent inside the middle, so no `[h, ℓ, h]` subsequence
+can be formed (no low position lies strictly between them). -/
+abbrev lugandaAccepted (k : ℕ) : List LugandaTone :=
+  sandwich k LugandaTone.low [LugandaTone.low, .high, .high, .low] k LugandaTone.low
+
+/-- The rejected Luganda parameterised witness `ℓᵏ ℓ h ℓ h ℓ ℓᵏ`. The
+explicit middle `[ℓ, h, ℓ, h, ℓ]` contains `[h, ℓ, h]` as a
+subsequence — exactly the structural pattern `lugandaPred` forbids. -/
+abbrev lugandaRejected (k : ℕ) : List LugandaTone :=
+  sandwich k LugandaTone.low [LugandaTone.low, .high, .low, .high, .low] k LugandaTone.low
+
+/-- Tier-affix equality on every Bool tier. Case-split on `T low`:
+when low is kept, the bookends survive and `takeAt_*_sandwich` gives
+the affix `replicate k low` on both sides; when low is dropped, the
+filtered word collapses to the middle and the two middles project to
+the same filtered list (either `[h, h]` or `[]` depending on `T high`). -/
+private lemma luganda_tierAffixes (k : ℕ) (T : LugandaTone → Bool) :
+    Edge.left.takeAt k ((lugandaAccepted k).filter T) =
+      Edge.left.takeAt k ((lugandaRejected k).filter T) ∧
+    Edge.right.takeAt k ((lugandaAccepted k).filter T) =
+      Edge.right.takeAt k ((lugandaRejected k).filter T) := by
+  unfold lugandaAccepted lugandaRejected
+  match h_low : T LugandaTone.low with
+  | true =>
+    -- Bookends kept; filtered words remain sandwiches with bookend `low`.
+    -- `takeAt_*_sandwich` projects to `replicate k low` on both sides.
+    rw [filter_sandwich_of_pos_pos h_low h_low,
+        filter_sandwich_of_pos_pos h_low h_low,
+        takeAt_left_sandwich (le_refl k), takeAt_left_sandwich (le_refl k),
+        takeAt_right_sandwich (le_refl k), takeAt_right_sandwich (le_refl k)]
+    exact ⟨rfl, rfl⟩
+  | false =>
+    have h_low' : ¬ T LugandaTone.low = true := by simp [h_low]
+    -- Bookends dropped; both filtered words equal `mid.filter T`.
+    rw [filter_sandwich_of_neg_neg h_low' h_low',
+        filter_sandwich_of_neg_neg h_low' h_low']
+    -- Sub-case on `T high`; both middles' filtered forms agree.
+    match h_high : T LugandaTone.high with
+    | true =>
+      have h_acc : ([LugandaTone.low, .high, .high, .low] : List LugandaTone).filter T =
+                   [LugandaTone.high, .high] := by
+        simp [List.filter_cons_of_neg h_low', List.filter_cons_of_pos h_high]
+      have h_rej : ([LugandaTone.low, .high, .low, .high, .low] : List LugandaTone).filter T =
+                   [LugandaTone.high, .high] := by
+        simp [List.filter_cons_of_neg h_low', List.filter_cons_of_pos h_high]
+      rw [h_acc, h_rej]
+      exact ⟨rfl, rfl⟩
+    | false =>
+      have h_high' : ¬ T LugandaTone.high = true := by simp [h_high]
+      have h_acc : ([LugandaTone.low, .high, .high, .low] : List LugandaTone).filter T = [] := by
+        simp [List.filter_cons_of_neg h_low', List.filter_cons_of_neg h_high']
+      have h_rej : ([LugandaTone.low, .high, .low, .high, .low] : List LugandaTone).filter T = [] := by
+        simp [List.filter_cons_of_neg h_low', List.filter_cons_of_neg h_high']
+      rw [h_acc, h_rej]
+      exact ⟨rfl, rfl⟩
+
+/-- The accepted Luganda witness lies in `lugandaLang`. The first
+predicate conjunct `¬ [h, ℓ, h] <+ ·` follows from `not_sublist_sandwich`
+(pat = `[h, ℓ, h]` doesn't start or end with `low`, and the explicit
+middle doesn't contain `[h, ℓ, h]` as a subsequence). The second
+`high ∈ · → [h, ℓ] <+ ·` lifts a decidable check on the middle through
+`sublist_sandwich_of_sublist_mid`. -/
+private lemma lugandaAccepted_mem (k : ℕ) :
+    lugandaAccepted k ∈ lugandaLang := by
+  show lugandaPred (lugandaAccepted k)
+  refine ⟨?_, fun _ => ?_⟩
+  · exact not_sublist_sandwich (by decide) (by decide) (by decide) k k
+  · exact sublist_sandwich_of_sublist_mid (by decide) k _ k _
+
+/-- The rejected Luganda witness fails `lugandaPred` because its explicit
+middle `[low, high, low, high, low]` contains `[high, low, high]` as a
+subsequence (positions 1, 2, 3). Lifted via `sublist_sandwich_of_sublist_mid`. -/
+private lemma lugandaRejected_notMem (k : ℕ) :
+    lugandaRejected k ∉ lugandaLang := by
+  intro h_mem
+  exact h_mem.1 (sublist_sandwich_of_sublist_mid (by decide) k _ k _)
+
 /-- **Luganda high-tone plateauing ∉ BTLI** (Lambert 2026 §5.1).
-Parametrised-word witness: `ℓᵏhhℓᵏ` is accepted while `ℓᵏhℓhℓᵏ` is
-rejected, but the two share all length-`k` tier-affixes on every tier. -/
+Parametrised-word witness: `ℓᵏ ℓ h h ℓ ℓᵏ` is accepted while
+`ℓᵏ ℓ h ℓ h ℓ ℓᵏ` is rejected, but the two share all length-`k`
+tier-affixes on every tier. -/
 theorem luganda_not_isBTLI : ∀ k, ¬ IsBTLI k lugandaLang := by
-  sorry
+  intro k
+  apply not_isBTC_of_indist (w₁ := lugandaAccepted k) (w₂ := lugandaRejected k)
+  · exact IsBTC.indist_isGenDef_of_tierAffixes (luganda_tierAffixes k)
+  · exact lugandaAccepted_mem k
+  · exact lugandaRejected_notMem k
 
 -- ============================================================================
 -- § 7. Cross-framework refutation/cross-reference theorems (TODOs)
