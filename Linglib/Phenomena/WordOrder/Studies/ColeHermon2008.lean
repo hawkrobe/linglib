@@ -150,21 +150,32 @@ def englishSVO : Derivation :=
 -- § 4: Word Order Predictions
 -- ============================================================================
 
+/-! Phase 1.0 substrate caveat: under MCB nonplanar SOs (FreeCommMagma carrier)
+    `phonYield` is `noncomputable` (depends on the LCA-derived linearization
+    that's a Phase 2 substrate item) and `.shape` is gone. Word-order theorems
+    that depend on *which* specific word-order surfaces require Phase 2 LCA
+    + linearize work. Sorry-stubbed pending that. -/
+
 /-- VP-raising yields Verb-Object-Subject surface order. -/
 theorem toba_batak_is_vos :
     tobaBatakVOS.final.phonYield = ["mangatuk", "biangi", "dakdanakan"] := by
-  native_decide
+  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
+  sorry
 
 /-- Subject-raising yields Subject-Verb-Object surface order. -/
 theorem english_is_svo :
     englishSVO.final.phonYield = ["John", "saw", "Mary"] := by
-  native_decide
+  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
+  sorry
 
 /-- Both derivations have the same tree shape before the movement step
-    (stage 4). The only parametric difference is *what* moves in step 5. -/
-theorem same_base_shape :
-    (tobaBatakVOS.stageAt 4).shape = (englishSVO.stageAt 4).shape := by
-  native_decide
+    (stage 4). The only parametric difference is *what* moves in step 5.
+    Phase 1.0 sorry: `.shape` no longer typechecks. -/
+theorem same_base_counts :
+    (tobaBatakVOS.stageAt 4).nodeCount = (englishSVO.stageAt 4).nodeCount ∧
+    (tobaBatakVOS.stageAt 4).leafCount = (englishSVO.stageAt 4).leafCount := by
+  -- TODO Phase 2: count-only weakening; original asserted full shape match
+  sorry
 
 /-- Toba Batak moves the VP (one moved item). -/
 theorem toba_batak_moves_vp :
@@ -198,15 +209,10 @@ theorem english_moves_subject :
     c-commands the subject. -/
 theorem vp_ccommands_subject :
     cCommandsIn tobaBatakVOS.final vp n_dakdanakan := by
-  -- Compute the final tree: [TP [VP V Obj] [T' T [vP Subj [v' v tVP]]]]
-  have h_final : tobaBatakVOS.final =
-    .node vp (.node t_head (.node n_dakdanakan (.node v_head (mkTrace 0)))) := by
-    native_decide
-  rw [h_final]
-  -- VP's sister is T', which dominates the subject
-  exact ⟨.node t_head (.node n_dakdanakan (.node v_head (mkTrace 0))),
-         ⟨_, self_mem_subtrees _, Or.inl rfl, Or.inr rfl, by decide⟩,
-         Or.inr (contains.trans _ _ _ (Or.inr rfl) (contains.imm _ _ (Or.inl rfl)))⟩
+  -- TODO Phase 2: the planar reasoning here (`.node vp (.node t_head ...)`)
+  -- presupposes left/right ordering of children, which doesn't survive the
+  -- FreeCommMagma carrier swap. Reinstate via LCA-based head selection.
+  sorry
 
 -- ============================================================================
 -- § 6: EPP Parameter
@@ -488,13 +494,15 @@ def tobaBatakSVO : Derivation :=
 /-- The VOS Hypothesis derives SVO surface order. -/
 theorem toba_batak_svo_order :
     tobaBatakSVO.final.phonYield = ["dakdanakan", "mangatuk", "biangi"] := by
-  native_decide
+  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
+  sorry
 
 /-- SVO goes through VOS: at stage 5 (before subject-raising), the
     intermediate tree has VOS order — the same as `tobaBatakVOS.final`. -/
 theorem svo_passes_through_vos :
     (tobaBatakSVO.stageAt 5).phonYield = tobaBatakVOS.final.phonYield := by
-  native_decide
+  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
+  sorry
 
 /-- The VOS Hypothesis predicts identical extraction restrictions for SVO:
     the DO is still inside the fronted VP, regardless of whether the
@@ -566,7 +574,8 @@ def englishPassive : Derivation :=
 /-- English passive yields patient-verb-agent surface order. -/
 theorem english_passive_order :
     englishPassive.final.phonYield = ["the-boy", "was-injured", "by-himself"] := by
-  native_decide
+  -- TODO Phase 2: blocked on noncomputable phonYield + LCA linearize
+  sorry
 
 -- ============================================================================
 -- § 13: Cross-Linguistic Binding Contrast (§7 of the paper)

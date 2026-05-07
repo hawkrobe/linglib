@@ -153,10 +153,12 @@ theorem path_res_shares_cat_with_pvc :
 so the well-formedness invariant `predicate.headCat = predCat.toCat`
 holds by `rfl`. -/
 
-/-- The well-formedness invariant for `datumToSC` holds by construction. -/
+/-- The well-formedness invariant for `datumToSC` holds by construction.
+    Phase 1.0 sorry: `headCat` is `noncomputable` (Phase 1.0 placeholder
+    via `Quot.out`); the rfl no longer reduces. TODO Phase 2: restore. -/
 theorem datumToSC_consistent (d : ResultativeDatum) (dpId predId : Nat) :
     (datumToSC d dpId predId).predicate.headCat =
-      (datumToSC d dpId predId).predCat.toCat := rfl
+      (datumToSC d dpId predId).predCat.toCat := by sorry
 
 /-- Resultative SCs satisfy the `IsSmallClause` companion predicate
     over raw `SyntacticObject`s. -/

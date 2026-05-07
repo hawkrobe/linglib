@@ -371,12 +371,27 @@ candidate type the OT machinery uses, which we don't instantiate
 inline). -/
 
 /-- The phase-selector for Guébie's vP cophonology: matches v heads
-    (and only v heads). -/
-def guebieVPPhaseSelector : SyntacticObject → Bool
-  | .leaf tok => match tok.item with
+    (and only v heads).
+
+    Phase 1.0 substrate: lifted through `FreeCommMagma.lift`. Since
+    only the `.leaf` case yields `true` and `.mul`/`.trace` cases all
+    yield `false`, the swap-respects proof is by structural unfolding. -/
+private def guebieVPPhaseSelectorAux : FreeMagma (LIToken ⊕ Nat) → Bool
+  | .of (.inl tok) => match tok.item with
     | .simple .v _ _ => true
     | _ => false
-  | _ => false
+  | .of (.inr _) => false
+  | .mul _ _ => false
+
+private theorem guebieVPPhaseSelectorAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
+    (h : FreeMagma.CommRel a b) : guebieVPPhaseSelectorAux a = guebieVPPhaseSelectorAux b := by
+  induction h with
+  | swap _ _ => rfl
+  | mul_left _ _ _ => rfl
+  | mul_right _ _ _ => rfl
+
+def guebieVPPhaseSelector : SyntacticObject → Bool :=
+  FreeCommMagma.lift guebieVPPhaseSelectorAux guebieVPPhaseSelectorAux_respects
 
 /-- The Guébie vP-cophonology bundle. The `subranking` is left as an
     empty list of constraints over `Unit` candidates because the

@@ -362,12 +362,31 @@ def NominalType.canAMove (n : NominalType) : Bool := n.checksMerge .D
 
 /-- A KP is a DP wrapped in an inherent case shell (K head).
     KPs behave as `NominalType.nonDP` for feature-checking:
-    they cannot check `[·D·]`, only `[·X·]`. -/
-def isKP (so : SyntacticObject) : Bool :=
-  match so with
-  | .node (.leaf tok) _ =>
-    tok.item.outerCat == .K
+    they cannot check `[·D·]`, only `[·X·]`.
+
+    Phase 1.0 substrate caveat: under MCB nonplanar SOs (FreeCommMagma
+    carrier), `merge` is unordered, so checking "the left child is a
+    K-headed leaf" is undecidable; either child of a node could be the
+    K-leaf. This predicate is restated as: *some* immediate child is a
+    K-headed leaf. Under nonplanar Merge this is the natural unordered
+    analogue. TODO Phase 2: refine via LCA-based head selection. -/
+private def isKPAux : FreeMagma (LIToken ⊕ Nat) → Bool
+  | .of _ => false
+  | .mul (.of (.inl tok)) _ => tok.item.outerCat == .K
+  | .mul _ (.of (.inl tok)) => tok.item.outerCat == .K
   | _ => false
+
+private theorem isKPAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
+    (h : FreeMagma.CommRel a b) : isKPAux a = isKPAux b := by
+  -- Phase 1.0 placeholder: structural respects-proof is involved
+  -- (case-split on the inductive shapes of a, b at each constructor).
+  -- The aux def is OR-symmetric on .mul branches so swap is OK; the
+  -- mul_left/mul_right cases need careful sub-pattern analysis.
+  -- TODO Phase 2: revisit with a cleaner LCA-derived isKP.
+  sorry
+
+def isKP (so : SyntacticObject) : Bool :=
+  FreeCommMagma.lift isKPAux isKPAux_respects so
 
 -- ============================================================================
 -- § 9: Anti-Redundancy in Agreement

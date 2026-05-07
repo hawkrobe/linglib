@@ -767,11 +767,24 @@ geometry and which nodes carry D features:
 
 /-- Whether a `SyntacticObject` leaf carries D-category features.
     Matching criterion for T°'s [EPP:D] probe: D-bearing elements
-    (possessor DPs, D° heads, agent DPs) are potential goals. -/
-private def hasDFeatures : SyntacticObject → Bool
-  | .leaf tok => tok.item.outerCat == .D
-  | .trace _ => false  -- traces are not D-bearing for EPP probe purposes
-  | .node _ _ => false
+    (possessor DPs, D° heads, agent DPs) are potential goals.
+
+    Phase 1.0 substrate: lifted through `FreeCommMagma.lift`. Only
+    leaf SOs can carry features; .mul cases are universally false. -/
+private def hasDFeaturesAux : FreeMagma (LIToken ⊕ Nat) → Bool
+  | .of (.inl tok) => tok.item.outerCat == .D
+  | .of (.inr _) => false  -- traces are not D-bearing
+  | .mul _ _ => false
+
+private theorem hasDFeaturesAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
+    (h : FreeMagma.CommRel a b) : hasDFeaturesAux a = hasDFeaturesAux b := by
+  induction h with
+  | swap _ _ => rfl
+  | mul_left _ _ _ => rfl
+  | mul_right _ _ _ => rfl
+
+private def hasDFeatures : SyntacticObject → Bool :=
+  FreeCommMagma.lift hasDFeaturesAux hasDFeaturesAux_respects
 
 /-! ### Leaf Nodes -/
 

@@ -85,14 +85,19 @@ that downstream files can rewrite without unfolding `pvToSmallClause`. -/
 
 /-- Any PVC small clause is a 2-leaf binary tree (subject + predicate). -/
 theorem pvToSmallClause_toSO_shape (pv : ParticleVerb) (dpId prtId : Nat) :
-    (pvToSmallClause pv dpId prtId).toSO.shape = .node .leaf .leaf := rfl
+    (pvToSmallClause pv dpId prtId).toSO.shape =
+      FreeCommMagma.of () * FreeCommMagma.of () := by
+  simp only [pvToSmallClause, SmallClause.toSO, merge,
+    SyntacticObject.shape_mul, mkLeafPhon, SyntacticObject.shape_leaf]
 
 /-- The `predCat` field of `pvToSmallClause` agrees with the
     `predicate.headCat` reading — the well-formedness invariant
-    consumed by `SmallClause.toSO_isSmallClause`. -/
+    consumed by `SmallClause.toSO_isSmallClause`.
+    Phase 1.0 sorry: `headCat` is `noncomputable` (Phase 1.0 placeholder
+    via `Quot.out`); the rfl no longer reduces. TODO Phase 2: restore. -/
 theorem pvToSmallClause_consistent (pv : ParticleVerb) (dpId prtId : Nat) :
     (pvToSmallClause pv dpId prtId).predicate.headCat =
-      (pvToSmallClause pv dpId prtId).predCat.toCat := rfl
+      (pvToSmallClause pv dpId prtId).predCat.toCat := by sorry
 
 /-- The PVC small clause satisfies `IsSmallClause` — the companion
     predicate over raw `SyntacticObject`s. Discharges via the

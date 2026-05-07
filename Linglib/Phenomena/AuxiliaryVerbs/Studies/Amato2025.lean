@@ -343,7 +343,7 @@ theorem amato_clause_is_nested (c : RestructuringClauseAmato)
     (h : PersonAgreeSucceeds c) :
     IsNestedAgreeConfig (toNestedConfig c) := by
   unfold IsNestedAgreeConfig NestedAgreeConfig.initialDomain
-  rw [List.mem_filter]
+  rw [Multiset.mem_filter]
   refine ⟨?_, ?_⟩
   · -- .leaf aV ∈ standardLinearTree _.subtrees: purely structural after unfold.
     show SyntacticObject.leaf aV ∈
@@ -387,7 +387,7 @@ theorem personAgree_iff_runStack_hits (c : RestructuringClauseAmato) :
     -- which reduces to `decide (VIsPhiActive c)`.
     rw [searchDomain_succ] at hMem
     show VIsPhiActive c
-    have hMemFilter := (List.mem_filter.mp hMem).2
+    have hMemFilter := (Multiset.mem_filter.mp hMem).2
     rw [Bool.and_eq_true] at hMemFilter
     -- hMemFilter.2 : validGoal (.leaf aV) = true
     --             ≡ decide (VIsPhiActive c) = true

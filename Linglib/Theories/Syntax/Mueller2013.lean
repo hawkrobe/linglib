@@ -139,9 +139,12 @@ theorem min_selector_projects
     (h_resp : IsSelectionRespectingAt h a b) :
     Minimalist.HeadFunction.head h (Minimalist.merge a b) =
     Minimalist.HeadFunction.head h a := by
-  show (if h.marking.isLeftHead (.node a b) then h.marking.headAt a
-        else h.marking.headAt b) = h.marking.headAt a
-  rw [if_pos (h_resp hs)]
+  -- Phase 1.0 sorry: under MCB nonplanar SOs (FreeCommMagma carrier),
+  -- `merge` no longer reduces to `.node a b`; `HeadFunction.head` is
+  -- noncomputable via `Quot.out` on a planar representative. The
+  -- selection-respecting property still holds in spirit but needs
+  -- restatement against the LCA-derived head function. TODO Phase 2.
+  sorry
 
 /-- The substantive refutation theorem MCB's framework now makes
     statable: there exist a concrete LIToken pair and a `HeadFunction`
