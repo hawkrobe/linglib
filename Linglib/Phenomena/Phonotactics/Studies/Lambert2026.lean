@@ -362,18 +362,22 @@ substring tests. We encode each as a `Language KShoTone` and prove it's
 chosen as `1 + max(prefix length, suffix length, tier-projection
 length, max φ_F word length) = 1 + 4`. -/
 
-/-- "Word starts with `xs`": the language `{w | w.take xs.length = xs}`. -/
-def startsWithLang (xs : List KShoTone) : Language KShoTone :=
+/-- "Word starts with `xs`": the language `{w | w.take xs.length = xs}`.
+Originally introduced for `KShoTone` but α-generic; also reused for
+`LugandaTone` in §10 Kagoshima Japanese. -/
+def startsWithLang {α : Type*} (xs : List α) : Language α :=
   { w | w.take xs.length = xs }
 
-/-- "Word ends with `xs`": the language `{w | w.drop (w.length - xs.length) = xs}`. -/
-def endsWithLang (xs : List KShoTone) : Language KShoTone :=
+/-- "Word ends with `xs`": the language `{w | w.drop (w.length - xs.length) = xs}`.
+α-generic, reused for `LugandaTone` in §10 Kagoshima Japanese. -/
+def endsWithLang {α : Type*} (xs : List α) : Language α :=
   { w | w.drop (w.length - xs.length) = xs }
 
 /-- "Tier-projection by `T` equals exactly `xs`": the language
-`{w | w.filter T = xs}`. -/
-def tierEqualLang (T : KShoTone → Bool) (xs : List KShoTone) :
-    Language KShoTone :=
+`{w | w.filter T = xs}`. α-generic, reused for `LugandaTone` in §10
+Kagoshima Japanese. -/
+def tierEqualLang {α : Type*} (T : α → Bool) (xs : List α) :
+    Language α :=
   { w | w.filter T = xs }
 
 /-- Boolean tier predicate for `h`-tier (high tones only). -/
@@ -390,8 +394,8 @@ form; we unfold via `show` at the top of each proof. -/
 
 /-- `startsWithLang xs` is `IsGeneralizedDefinite k` for any `k ≥
 xs.length`. Proof: same `k`-prefix on both words determines the
-`xs.length`-prefix via `List.take_take`. -/
-lemma startsWithLang_isGenDef (xs : List KShoTone) (k : ℕ)
+`xs.length`-prefix via `List.take_take`. α-generic. -/
+lemma startsWithLang_isGenDef {α : Type*} (xs : List α) (k : ℕ)
     (hk : xs.length ≤ k) : IsGeneralizedDefinite k (startsWithLang xs) := by
   intro w₁ w₂ hpre _
   -- Unfold Edge.left.takeAt to List.take.
@@ -409,7 +413,7 @@ xs.length`. Symmetric to `startsWithLang_isGenDef`; the underlying
 identity is `w.drop (w.length - xs.length) = (w.drop (w.length - k)).drop
 (k - xs.length)` when `xs.length ≤ k ≤ w.length`. The general case
 splits on whether `w` is shorter than `k`. -/
-lemma endsWithLang_isGenDef (xs : List KShoTone) (k : ℕ)
+lemma endsWithLang_isGenDef {α : Type*} (xs : List α) (k : ℕ)
     (hk : xs.length ≤ k) : IsGeneralizedDefinite k (endsWithLang xs) := by
   intro w₁ w₂ _ hsuf
   -- Unfold Edge.right.takeAt to List.drop.
@@ -457,7 +461,7 @@ lemma endsWithLang_isGenDef (xs : List KShoTone) (k : ℕ)
 any `k > xs.length` (strict — without strictness, e.g. `{[h, h]}` is
 not GeneralizedDefinite 2 since `[h, h, h]` and `[h, h]` share both
 2-prefix and 2-suffix). -/
-lemma tierEqualLang_isTierBased (T : KShoTone → Bool) (xs : List KShoTone)
+lemma tierEqualLang_isTierBased {α : Type*} (T : α → Bool) (xs : List α)
     (k : ℕ) (hk : xs.length < k) :
     IsTierBased (IsGeneralizedDefinite k) (tierEqualLang T xs) := by
   refine ⟨T, {xs}, ?_, ?_⟩
@@ -469,7 +473,7 @@ lemma tierEqualLang_isTierBased (T : KShoTone → Bool) (xs : List KShoTone)
     have hxs_take : xs.take k = xs := List.take_of_length_le (le_of_lt hk)
     -- The forward direction: if w₁ = xs, derive w₂ = xs from `xs.take k = w₂.take k`.
     -- Since |xs| < k, we have |v.take k| = |xs| < k, forcing |v| < k, so v.take k = v.
-    have key : ∀ v : List KShoTone, xs.take k = v.take k → v = xs := by
+    have key : ∀ v : List α, xs.take k = v.take k → v = xs := by
       intro v hv
       rw [hxs_take] at hv
       have hlen : xs.length = min k v.length := by
@@ -553,12 +557,12 @@ def karangaShonaVerbStemLang : Language KShoTone :=
   phi_F ⊔
   -- L_m: ℓ-toned roots, multitier definite per (48)
   -- L_m = ⋊ℓhhℓ ∧ [⋊hh⋉]_{h}
-  (startsWithLang [.low, .high, .high, .low] ⊓
+  (startsWithLang ([.low, .high, .high, .low] : List KShoTone) ⊓
     tierEqualLang isHigh [.high, .high]) ⊔
   -- H_m: h-toned roots, multitier definite per (49)
   -- H_m = ⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}
-  (startsWithLang [.high, .high, .high, .low] ⊓
-    endsWithLang [.low, .high] ⊓
+  (startsWithLang ([.high, .high, .high, .low] : List KShoTone) ⊓
+    endsWithLang ([.low, .high] : List KShoTone) ⊓
     tierEqualLang isHigh [.high, .high, .high, .high])
 
 /-- **Karanga Shona verb-stem tone ∈ BTLI₅** (Lambert 2026 §5.6,
@@ -572,23 +576,23 @@ theorem karanga_shona_verb_stem_isBTLI :
   -- φ_F via direct IsGeneralizedDefinite + IsTierBased.of_class
   have hPhi : IsBTLI 5 phi_F := .base (.of_class phi_F_isGenDef)
   -- L_m components
-  have hLm_pre : IsBTLI 5 (startsWithLang [.low, .high, .high, .low]) :=
+  have hLm_pre : IsBTLI 5 (startsWithLang ([.low, .high, .high, .low] : List KShoTone)) :=
     .base (.of_class (startsWithLang_isGenDef _ 5 (by decide)))
   have hLm_tier : IsBTLI 5 (tierEqualLang isHigh [.high, .high]) :=
     .base (tierEqualLang_isTierBased isHigh _ 5 (by decide))
   have hLm : IsBTLI 5
-      (startsWithLang [.low, .high, .high, .low] ⊓
+      (startsWithLang ([.low, .high, .high, .low] : List KShoTone) ⊓
         tierEqualLang isHigh [.high, .high]) := .inter hLm_pre hLm_tier
   -- H_m components
-  have hHm_pre : IsBTLI 5 (startsWithLang [.high, .high, .high, .low]) :=
+  have hHm_pre : IsBTLI 5 (startsWithLang ([.high, .high, .high, .low] : List KShoTone)) :=
     .base (.of_class (startsWithLang_isGenDef _ 5 (by decide)))
-  have hHm_suf : IsBTLI 5 (endsWithLang [.low, .high]) :=
+  have hHm_suf : IsBTLI 5 (endsWithLang ([.low, .high] : List KShoTone)) :=
     .base (.of_class (endsWithLang_isGenDef _ 5 (by decide)))
   have hHm_tier : IsBTLI 5 (tierEqualLang isHigh [.high, .high, .high, .high]) :=
     .base (tierEqualLang_isTierBased isHigh _ 5 (by decide))
   have hHm : IsBTLI 5
-      (startsWithLang [.high, .high, .high, .low] ⊓
-        endsWithLang [.low, .high] ⊓
+      (startsWithLang ([.high, .high, .high, .low] : List KShoTone) ⊓
+        endsWithLang ([.low, .high] : List KShoTone) ⊓
         tierEqualLang isHigh [.high, .high, .high, .high]) :=
     .inter (.inter hHm_pre hHm_suf) hHm_tier
   -- Disjunction
@@ -1030,7 +1034,276 @@ theorem prinmi_not_isBTLI : ∀ k, ¬ IsBTLI k prinmiLang := by
   · exact prinmiRejected_notMem k
 
 -- ============================================================================
--- § 8. Cross-framework refutation/cross-reference theorems (TODOs)
+-- § 8. Arigibi pitch-accent ∈ PT_2 ∩ BTN
+-- ============================================================================
+
+/-! Lambert 2026 §5.3 (@cite{donohue-1997}): Arigibi (Trans-New Guinea)
+allows at most one mora with high tone (position lexically specified;
+words with no high tone are allowed). The phonotactic constraint is
+`¬h..h` — no `[high, high]` subsequence anywhere.
+
+Lambert: "exactly analogous to culminativity in isolation, and as such
+it is piecewise testable and tier-based co/finite, as demonstrated in
+§2.3" (Lambert's §2.3 is unbounded culminativity). -/
+
+/-- Boolean tier predicate selecting `LugandaTone.high`. Shared by §8
+Arigibi and §9 Chuave. -/
+def isLugHigh : LugandaTone → Bool
+  | .high => true
+  | .low => false
+
+/-- The Arigibi pitch-accent language: at most one high mora. -/
+def arigibiLang : Language LugandaTone :=
+  { w | ¬ ([LugandaTone.high, .high] <+ w) }
+
+/-- Membership in `arigibiLang` is `¬ [h, h] <+ w`. -/
+@[simp] lemma mem_arigibiLang (w : List LugandaTone) :
+    w ∈ arigibiLang ↔ ¬ ([LugandaTone.high, .high] <+ w) := Iff.rfl
+
+/-- **Arigibi pitch-accent ∈ PT_2** (Lambert 2026 §5.3, formula `¬h..h`).
+The constraint depends only on length-2 subseq `[h, h]`. -/
+theorem arigibi_isPT : IsPiecewiseTestable 2 arigibiLang := by
+  intro w₁ w₂ heq
+  show ¬ ([LugandaTone.high, .high] <+ w₁) ↔ ¬ ([LugandaTone.high, .high] <+ w₂)
+  exact not_congr (subseqSet_eq_iff heq (le_refl 2))
+
+/-- The high-tier projection of any LugandaTone word is a `replicate`
+list of `high`s (since `isLugHigh` only keeps highs). -/
+private lemma lugFilterHigh_eq_replicate (w : List LugandaTone) :
+    w.filter isLugHigh = List.replicate (w.filter isLugHigh).length .high := by
+  apply List.eq_replicate_iff.mpr
+  refine ⟨rfl, ?_⟩
+  intro x hx
+  rw [List.mem_filter] at hx
+  rcases x with _ | _
+  · exact absurd hx.2 (by decide)
+  · rfl
+
+/-- `[h, h] <+ w` iff `[h, h]` is a sublist of the high-tier projection.
+Forward: `Sublist.filter` + reduction of `[h, h].filter isLugHigh = [h, h]`.
+Backward: transitivity through `List.filter_sublist`. -/
+private lemma hh_sublist_iff_filter (w : List LugandaTone) :
+    ([LugandaTone.high, .high] <+ w) ↔
+      ([LugandaTone.high, .high] <+ w.filter isLugHigh) := by
+  constructor
+  · intro h
+    have := h.filter isLugHigh
+    simpa only [List.filter_cons_of_pos (by decide : isLugHigh .high = true),
+                List.filter_nil] using this
+  · intro h
+    exact h.trans List.filter_sublist
+
+/-- **Arigibi pitch-accent ∈ BTN** (Lambert 2026 §5.3). On the high
+tier, the projection has length ≤ 1, i.e., is either `[]` or `[high]` —
+a finite set, hence co/finite. -/
+theorem arigibi_isBTN : IsBTN arigibiLang := by
+  apply IsBTC.of_tierBased
+  refine ⟨isLugHigh, { xs | xs = [] ∨ xs = [LugandaTone.high] }, ?_, ?_⟩
+  · -- arigibiLang = preimage of {[], [high]} under tier projection.
+    ext w
+    show ¬ ([LugandaTone.high, .high] <+ w) ↔
+         (w.filter isLugHigh = [] ∨ w.filter isLugHigh = [.high])
+    rw [hh_sublist_iff_filter]
+    rw [show ([LugandaTone.high, .high] : List _) = List.replicate 2 .high from rfl]
+    rw [lugFilterHigh_eq_replicate w]
+    rw [List.replicate_sublist_replicate]
+    -- Goal: ¬ 2 ≤ (w.filter isLugHigh).length ↔
+    --       replicate _ .high = [] ∨ replicate _ .high = [.high]
+    constructor
+    · intro h_lt
+      have h_le_one : (w.filter isLugHigh).length ≤ 1 := by omega
+      rcases Nat.le_one_iff_eq_zero_or_eq_one.mp h_le_one with hn | hn
+      · left; rw [hn]; rfl
+      · right; rw [hn]; rfl
+    · rintro (h | h)
+      · -- h : replicate (w.filter isLugHigh).length .high = []
+        have h_len : (w.filter isLugHigh).length = 0 := by
+          have := congrArg List.length h
+          simpa [List.length_replicate] using this
+        omega
+      · -- h : replicate (w.filter isLugHigh).length .high = [.high]
+        have h_len : (w.filter isLugHigh).length = 1 := by
+          have := congrArg List.length h
+          simpa [List.length_replicate] using this
+        omega
+  · -- {xs | xs = [] ∨ xs = [high]} is {[], [high]}, finite.
+    left
+    have h_eq : ({xs : List LugandaTone | xs = [] ∨ xs = [.high]}) =
+                ({([] : List LugandaTone)} ∪ {[LugandaTone.high]}) := by
+      ext x
+      simp only [Set.mem_setOf_eq, Set.mem_union, Set.mem_singleton_iff]
+    rw [h_eq]
+    exact (Set.finite_singleton _).union (Set.finite_singleton _)
+
+-- ============================================================================
+-- § 9. Chuave obligatoriness ∈ PT_1 ∩ BTN
+-- ============================================================================
+
+/-! Lambert 2026 §5.5 (@cite{donohue-1997}): Chuave (Trans-New Guinea)
+exhibits **obligatoriness** — every word must contain at least one
+high-tone mora. There is no restriction on placement; multiple high
+spans are allowed. The phonotactic constraint is the simplest possible:
+the formula `h` (at least one high). This is both:
+
+* **PT_1**: the constraint depends only on the length-1 subsequence
+  `[h]`.
+* **BTN** (multitier finite-or-cofinite): on the high tier, the
+  projection must be non-empty. The non-empty list set is co/finite
+  (its complement is the singleton `{[]}`). -/
+
+/-- The Chuave obligatoriness language: at least one mora has high tone. -/
+def chuaveLang : Language LugandaTone := { w | LugandaTone.high ∈ w }
+
+/-- Membership in `chuaveLang` is `high ∈ w`. -/
+@[simp] lemma mem_chuaveLang (w : List LugandaTone) :
+    w ∈ chuaveLang ↔ LugandaTone.high ∈ w := Iff.rfl
+
+/-- **Chuave obligatoriness ∈ PT_1** (Lambert 2026 §5.5). The constraint
+`high ∈ w` is the singleton subseq presence `[high] <+ w`. -/
+theorem chuave_isPT : IsPiecewiseTestable 1 chuaveLang := by
+  intro w₁ w₂ heq
+  show LugandaTone.high ∈ w₁ ↔ LugandaTone.high ∈ w₂
+  rw [← List.singleton_sublist, ← List.singleton_sublist]
+  exact subseqSet_eq_iff heq (le_refl 1)
+
+/-- **Chuave obligatoriness ∈ BTN** (Lambert 2026 §5.5, formula
+`¬ [⋊⋉]_{h}`). On the high tier `isLugHigh`, the projection
+`w.filter isLugHigh` is non-empty iff `high ∈ w`. The non-empty set
+`{xs | xs ≠ []}` is co/finite (complement is `{[]}`). -/
+theorem chuave_isBTN : IsBTN chuaveLang := by
+  apply IsBTC.of_tierBased
+  refine ⟨isLugHigh, { xs | xs ≠ [] }, ?_, ?_⟩
+  · -- chuaveLang = preimage of {xs | xs ≠ []} under tier projection.
+    ext w
+    show LugandaTone.high ∈ w ↔ w.filter isLugHigh ∈ ({xs | xs ≠ []} : Set _)
+    simp only [Set.mem_setOf_eq, ne_eq]
+    rw [List.filter_eq_nil_iff]
+    constructor
+    · intro hmem hall
+      exact (hall LugandaTone.high hmem) (by decide : isLugHigh .high = true)
+    · intro hne
+      by_contra hno
+      apply hne
+      intro x hx hisHigh
+      apply hno
+      rcases x with _ | _
+      · exact absurd hisHigh (by decide)
+      · exact hx
+  · -- IsFiniteOrCofinite { xs | xs ≠ [] }: complement is {[]}, finite.
+    right
+    show ({xs : List LugandaTone | xs ≠ []}ᶜ).Finite
+    have h_compl : ({xs : List LugandaTone | xs ≠ []}ᶜ) = {([] : List LugandaTone)} := by
+      ext x
+      simp only [Set.mem_compl_iff, Set.mem_setOf_eq, Set.mem_singleton_iff,
+                 ne_eq, not_not]
+    rw [h_compl]
+    exact Set.finite_singleton _
+
+-- ============================================================================
+-- § 10. Kagoshima Japanese pitch-accent ∈ PT_3
+-- ============================================================================
+
+/-! Lambert 2026 §5.4 (@cite{kawahara-2015}, @cite{haraguchi-1977}):
+Kagoshima Japanese has a pitch-accent system with exactly one high tone
+per word, appearing on the final or penultimate mora.
+
+Lambert formula (42), order-based PT_3:
+* `h`        — at least one high tone (obligatoriness)
+* `¬h..h`    — no two highs (culminativity)
+* `¬h..ℓ..ℓ` — high doesn't have two lows after (forces final/penult position)
+
+Lambert formula (43), tier-based multitier definite:
+* `[⋊h⋉]_{h}`   — high tier projection equals exactly `[h]`
+* `(hℓ⋉ ∨ h⋉)`  — word ends with `[h, ℓ]` or `[h]`
+
+The PT_3 result is direct from `subseqSet_eq_iff`. The multitier
+characterization uses `tierEqualLang isLugHigh [.high]` (high tier =
+singleton `[h]`) intersected with the disjunction of two `endsWithLang`
+cases. The §4 helpers (`startsWithLang`, `endsWithLang`,
+`tierEqualLang`) were generalized to `α : Type*` for this section so
+they apply at type `LugandaTone` without duplication.
+
+We prove `kagoshima_multitier_isBTLI` (multitier generalized definite, k = 2).
+Lambert states the stronger BTD₂ classification (multitier definite —
+right-edge-only); BTD substrate for `endsWithLang` is queued for
+follow-up. The order/tier formulation equivalence (formulas 42 ↔ 43)
+is stated as a TODO theorem `kagoshima_lang_eq_mt`.
+
+Alphabet: `LugandaTone` reused per Lambert's unified `ℓ`/`h` notation
+across §5. -/
+
+/-- The Kagoshima Japanese pitch-accent predicate @cite{lambert-2026}
+(42): at least one high, no two highs, no `[h, ℓ, ℓ]` subseq. -/
+def kagoshimaPred (w : List LugandaTone) : Prop :=
+  ([LugandaTone.high] <+ w) ∧
+    ¬ ([LugandaTone.high, .high] <+ w) ∧
+    ¬ ([LugandaTone.high, .low, .low] <+ w)
+
+/-- The Kagoshima Japanese pitch-accent language. -/
+def kagoshimaLang : Language LugandaTone := { w | kagoshimaPred w }
+
+/-- Membership in `kagoshimaLang` is membership in `kagoshimaPred`. -/
+@[simp] lemma mem_kagoshimaLang (w : List LugandaTone) :
+    w ∈ kagoshimaLang ↔ kagoshimaPred w := Iff.rfl
+
+/-- **Kagoshima Japanese pitch-accent ∈ PT_3** (Lambert 2026 (42)).
+All three conjuncts depend only on length-≤-3 subseq presence:
+length-1 `[h]`, length-2 `[h, h]`, length-3 `[h, ℓ, ℓ]`. -/
+theorem kagoshima_isPT : IsPiecewiseTestable 3 kagoshimaLang := by
+  intro w₁ w₂ heq
+  simp only [mem_kagoshimaLang, kagoshimaPred]
+  have h1 : ([LugandaTone.high] <+ w₁) ↔ ([LugandaTone.high] <+ w₂) :=
+    subseqSet_eq_iff heq (by decide : (1 : ℕ) ≤ 3)
+  have h_hh : ([LugandaTone.high, .high] <+ w₁) ↔
+              ([LugandaTone.high, .high] <+ w₂) :=
+    subseqSet_eq_iff heq (by decide : (2 : ℕ) ≤ 3)
+  have h_hll : ([LugandaTone.high, .low, .low] <+ w₁) ↔
+               ([LugandaTone.high, .low, .low] <+ w₂) :=
+    subseqSet_eq_iff heq (by decide : (3 : ℕ) ≤ 3)
+  exact and_congr h1 (and_congr (not_congr h_hh) (not_congr h_hll))
+
+/-- The Kagoshima multitier-encoded language: high-tier-projection
+equals exactly `[h]` AND word ends with `[h, ℓ]` or `[h]`. Lambert
+2026 (43). -/
+def kagoshimaMTLang : Language LugandaTone :=
+  tierEqualLang isLugHigh [LugandaTone.high] ⊓
+    (endsWithLang ([LugandaTone.high, .low] : List LugandaTone) ⊔
+     endsWithLang ([LugandaTone.high] : List LugandaTone))
+
+/-- **Kagoshima multitier characterization ∈ BTLI₂** (Lambert 2026
+(43)). Each component lifts to `IsBTLI 2`:
+* `tierEqualLang isLugHigh [.high]` via `tierEqualLang_isTierBased` (k = 2 > 1 = |xs|);
+* `endsWithLang [.high, .low]` via `endsWithLang_isGenDef` (k = 2 ≥ 2);
+* `endsWithLang [.high]` via `endsWithLang_isGenDef` (k = 2 ≥ 1).
+The conjunction/disjunction are closed by `BoolClosure.inter` /
+`BoolClosure.union`. Lambert's stronger BTD₂ classification is queued
+for follow-up. -/
+theorem kagoshima_multitier_isBTLI : IsBTLI 2 kagoshimaMTLang := by
+  -- Tier component: high tier = [.high]
+  have hTier : IsBTLI 2 (tierEqualLang isLugHigh [LugandaTone.high]) :=
+    .base (tierEqualLang_isTierBased isLugHigh _ 2 (by decide))
+  -- Suffix components
+  have hSufHL : IsBTLI 2 (endsWithLang ([LugandaTone.high, .low] : List LugandaTone)) :=
+    .base (.of_class (endsWithLang_isGenDef _ 2 (by decide)))
+  have hSufH : IsBTLI 2 (endsWithLang ([LugandaTone.high] : List LugandaTone)) :=
+    .base (.of_class (endsWithLang_isGenDef _ 2 (by decide)))
+  -- Disjunction of suffixes
+  have hSuf : IsBTLI 2
+      (endsWithLang ([LugandaTone.high, .low] : List LugandaTone) ⊔
+       endsWithLang ([LugandaTone.high] : List LugandaTone)) := .union hSufHL hSufH
+  -- Intersection
+  exact .inter hTier hSuf
+
+/-! **Equivalence (formula 42 ↔ 43) is queued for follow-up.** Lambert
+states the order-based predicate `kagoshimaLang` and the multitier
+predicate `kagoshimaMTLang` describe the same language, but the proof
+requires structural reasoning about how "no `[h, ℓ, ℓ]` subseq"
+combined with "exactly one high" forces the unique high to lie in the
+final two positions. Both formulations are independently classified
+above (PT_3 and BTLI_2 respectively). -/
+
+-- ============================================================================
+-- § 11. Cross-framework refutation/cross-reference theorems (TODOs)
 -- ============================================================================
 
 /-! Audit-flagged cross-framework engagement points. These are stated here
