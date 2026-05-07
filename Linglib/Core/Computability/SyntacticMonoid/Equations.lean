@@ -189,7 +189,7 @@ equation at `s = [w]` and unfolding
 L.toSyntacticMonoid αs` gives the syntactic-monoid equality
 `[w * αs] = [αs]`, which lifts via `Quotient.exact` to the two-sided
 syntactic equivalence on the underlying lists. -/
-private lemma syntacticEquiv_of_kDefiniteEquation {L : Language α} {k : ℕ}
+lemma syntacticEquiv_of_kDefiniteEquation {L : Language α} {k : ℕ}
     (h : Lambert.Equations.kDefiniteEquation L k)
     (w αs : List α) (hαs_len : αs.length = k) :
     SyntacticEquiv L (w ++ αs) αs := by

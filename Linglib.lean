@@ -1871,6 +1871,8 @@ import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Computability.SyntacticMonoid
+import Linglib.Core.Computability.SyntacticMonoid.Equations
+import Linglib.Core.Computability.SyntacticMonoid.Pin
 import Linglib.Core.Combinatorics.RootedTree.Decorated
 import Linglib.Core.Combinatorics.RootedTree.AdmissibleCut
 import Linglib.Core.Combinatorics.RootedTree.Insertion
