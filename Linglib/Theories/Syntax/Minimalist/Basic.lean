@@ -620,19 +620,24 @@ theorem leaf_node_relation (so : SyntacticObject) :
 
 /-! ### Subtree enumeration — `Multiset` (MCB-faithful)
 
-`subtrees` returns a `Multiset` because MCB's accessible-term operator
-`Acc(T)` (Def 1.2.2, book p. 28) is multiplicity-preserving — eq (1.2.5)
-`#V(F) = b_0(F) + #Acc(F)` requires multiplicities to match. The "set"
-notation in MCB is loose; the formal object is indexed by `V_int(T)`,
-which is a multiset of vertices (one per non-root vertex, with possibly
-repeated subtree values when leaves repeat).
+Two operators, distinguished by whether the root is included:
 
-For linglib's typical use (LIToken-indexed leaves with distinct ids),
-each subtree is a distinct value, so Multiset and Finset coincide
-extensionally. Multiset is preferred for substrate faithfulness.
+- **`subtrees : SO → Multiset SO`** — *all* subtrees including the root.
+  Useful for membership tests like "is `x` an internal node of `s`".
+- **`Acc : SO → Multiset SO`** — accessible-terms-only (excludes the
+  root). This is MCB's `Acc(T)` from Def 1.2.2 (book p. 28). Eq (1.2.5)
+  `#V(F) = b₀(F) + #Acc(F)` only holds for the proper-accessible-terms
+  version. Internal vertices (`V_int(T)`) by MCB's definition exclude
+  the root.
+
+Both are `Multiset`-valued (multiplicity-preserving) because MCB §1.6/§1.7
+counting and the pre-Lie matching coefficient `c^T_{T_1,T_2}` (book p. 79)
+require multiplicities. For linglib's typical use (distinct-`LIToken.id`
+leaves), each subtree is a distinct value, so Multiset and Finset coincide
+extensionally — but the substrate commits to Multiset for faithfulness.
 
 Multiset addition (`+`) preserves multiplicity (additive union); cons
-(`::ₘ`) adds an element regardless of presence. Both are needed. -/
+(`::ₘ`) adds an element regardless of presence. -/
 
 private def subtreesAux : FreeMagma (LIToken ⊕ Nat) → Multiset SyntacticObject
   | a@(.of _) => {FreeCommMagma.mk a}
@@ -656,8 +661,8 @@ private theorem subtreesAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
     rw [FreeCommMagma.sound (.mul_right _ h_inner), ih]
 
 /-- All subtrees of a `SyntacticObject`, including the root itself.
-    Returns a `Multiset` (multiplicity-preserving), matching MCB Def 1.2.2
-    (book p. 28) and supporting eq (1.2.5)'s vertex-counting identity.
+    Returns a `Multiset` (multiplicity-preserving). For the MCB
+    accessible-terms operator that excludes the root, see `Acc` below.
     Computable via `FreeCommMagma.lift` from a swap-respecting helper. -/
 def SyntacticObject.subtrees : SyntacticObject → Multiset SyntacticObject :=
   FreeCommMagma.lift subtreesAux subtreesAux_respects
@@ -671,6 +676,24 @@ def SyntacticObject.subtrees : SyntacticObject → Multiset SyntacticObject :=
 @[simp] theorem SyntacticObject.subtrees_mul (l r : SyntacticObject) :
     (l * r).subtrees = (l * r) ::ₘ (l.subtrees + r.subtrees) := by
   induction l, r using FreeCommMagma.inductionOn₂ with | _ a b => rfl
+
+/-- MCB's accessible-terms operator `Acc(T)` (Def 1.2.2, book p. 28):
+    the multiset of all proper subtrees of `T`, excluding the root.
+    Defined as `subtrees - {self}` (Multiset difference subtracts one
+    occurrence). This is the operator that satisfies the MCB
+    vertex-counting identity `#V(F) = b₀(F) + #Acc(F)` (eq. 1.2.5). -/
+def SyntacticObject.Acc (so : SyntacticObject) : Multiset SyntacticObject :=
+  so.subtrees - {so}
+
+@[simp] theorem SyntacticObject.Acc_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).Acc = 0 := by
+  show ({SyntacticObject.leaf tok} : Multiset _) - {SyntacticObject.leaf tok} = 0
+  simp
+
+@[simp] theorem SyntacticObject.Acc_trace (n : Nat) :
+    (SyntacticObject.trace n).Acc = 0 := by
+  show ({SyntacticObject.trace n} : Multiset _) - {SyntacticObject.trace n} = 0
+  simp
 
 /-! ### Terminal nodes — planar `List` (order matters for LCA)
 
