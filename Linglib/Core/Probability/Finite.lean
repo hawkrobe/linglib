@@ -170,23 +170,6 @@ posterior-ratio update. -/
 noncomputable def impactRatio (p : PMF α) (R A : Set α) : ℝ≥0∞ :=
   p.condProbSet R A / p.probOfSet A
 
-omit [Fintype α] in
-/-- CDF-style cumulative mass: probability that a sample falls strictly below
-`a`. Definitionally `p.toOuterMeasure {a' | a' < a}`, so every mathlib lemma
-about `toOuterMeasure` (monotonicity, partition, complement) applies.
-
-Required by `Theories/Semantics/Gradability/Probabilistic.lean` for the
-Lassiter-Goodman threshold-prior account: the posterior probability that
-an entity exceeds the threshold is `1 - massBelow prior (measure x)`,
-i.e. `P(threshold < measure x) = ∫ 𝟙[t < measure x] · prior(t) dt`.
-
-No `Fintype α` needed (`toOuterMeasure` works for any countable PMF), but
-consumers wanting an explicit Finset-sum can locally `[Fintype α]` and
-combine with `probOfSet_apply`. -/
-noncomputable abbrev massBelow {β : Type*} [LinearOrder β]
-    (p : PMF β) (a : β) : ℝ≥0∞ :=
-  p.toOuterMeasure {a' | a' < a}
-
 /-- When `A ⊆ R ⊆ R'` and `P(R) < P(R')` strictly, conditioning on the
 larger set `R'` strictly decreases `P(A | ·)` (for `A` of positive prior).
 
