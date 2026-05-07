@@ -211,6 +211,127 @@ namespace HeadFunction
 def leafTokensWith (h : HeadFunction) (so : SyntacticObject) : List LIToken :=
   leafTokensPlanar (h.externalize so)
 
+/-- Linearize `so` under head function `h`: collect leaf tokens in the
+    left-to-right order of `h.externalize so`. Computable when
+    `h.externalize` is. The harmonic head-initial counterpart of
+    `SyntacticObject.linearize` (which used `Quot.out` implicitly). -/
+def linearizeWith (h : HeadFunction) (so : SyntacticObject) : List LIToken :=
+  linearizePlanar (h.externalize so)
+
+/-- Phonological yield of `so` under head function `h`: the non-empty
+    `phonForm` strings of leaves in `h.externalize so`'s left-to-right
+    order. Computable when `h.externalize` is. -/
+def phonYieldWith (h : HeadFunction) (so : SyntacticObject) : List String :=
+  phonYieldPlanar (h.externalize so)
+
+/-- Terminal nodes of `so` under head function `h`: the leaf-position
+    SOs of `h.externalize so` in left-to-right order. Computable when
+    `h.externalize` is. -/
+def terminalNodesWith (h : HeadFunction) (so : SyntacticObject) :
+    List SyntacticObject :=
+  (terminalNodesPlanar (h.externalize so)).map (Quot.mk _)
+
+end HeadFunction
+
+-- ============================================================================
+-- § 4b: Singleton-class simp lemmas for the parameterized cascade
+-- ============================================================================
+
+namespace HeadFunction
+
+/-- For a leaf SO, `outerCatOf` reduces to the leaf token's outer category
+    (independent of head function — leaves are their own head). -/
+@[simp] theorem outerCatOf_leaf (h : HeadFunction) (tok : LIToken) :
+    h.outerCatOf (.leaf tok) = tok.item.outerCat := by
+  show (h.headAt (.leaf tok)).item.outerCat = tok.item.outerCat
+  show (leftmostLeafPlanar (h.externalize (SyntacticObject.leaf tok))).item.outerCat
+        = tok.item.outerCat
+  -- `h.externalize (.leaf tok)` is some FreeMagma representative of the leaf;
+  -- by singleton-class structure (no swap fires on `.of _`), its leftmost-leaf
+  -- is `tok`. Routes through h.isSection + the same singleton-class chain
+  -- as `leftmostLeaf_leaf` in Basic.lean.
+  have hSec : FreeCommMagma.mk (h.externalize (.leaf tok)) =
+      (.leaf tok : SyntacticObject) := h.isSection _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
+  match hext : h.externalize (.leaf tok) with
+  | .of x =>
+    rw [hext] at hSec
+    show (leftmostLeafPlanar (.of x)).item.outerCat = tok.item.outerCat
+    cases x with
+    | inl t =>
+      simp only [leftmostLeafPlanar]
+      exact congrArg (fun y => y.item.outerCat)
+        (Sum.inl.inj (hSec : Sum.inl t = Sum.inl tok))
+    | inr n => exact absurd (hSec : Sum.inr n = Sum.inl tok) (by intro; contradiction)
+  | .mul _ _ =>
+    rw [hext] at hSec
+    exact absurd hSec (by simp [FreeMagma.CommEqv])
+
+/-- For a leaf SO, `outerSelOf` reduces to the leaf token's outer selectional
+    stack (independent of head function). -/
+@[simp] theorem outerSelOf_leaf (h : HeadFunction) (tok : LIToken) :
+    h.outerSelOf (.leaf tok) = tok.item.outerSel := by
+  show (h.headAt (.leaf tok)).item.outerSel = tok.item.outerSel
+  show (leftmostLeafPlanar (h.externalize (SyntacticObject.leaf tok))).item.outerSel
+        = tok.item.outerSel
+  have hSec : FreeCommMagma.mk (h.externalize (.leaf tok)) =
+      (.leaf tok : SyntacticObject) := h.isSection _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
+  match hext : h.externalize (.leaf tok) with
+  | .of x =>
+    rw [hext] at hSec
+    show (leftmostLeafPlanar (.of x)).item.outerSel = tok.item.outerSel
+    cases x with
+    | inl t =>
+      simp only [leftmostLeafPlanar]
+      exact congrArg (fun y => y.item.outerSel)
+        (Sum.inl.inj (hSec : Sum.inl t = Sum.inl tok))
+    | inr n => exact absurd (hSec : Sum.inr n = Sum.inl tok) (by intro; contradiction)
+  | .mul _ _ =>
+    rw [hext] at hSec
+    exact absurd hSec (by simp [FreeMagma.CommEqv])
+
+/-- For a leaf SO, `headAt` returns the leaf token (independent of head function).
+    Generalizes `leftSpine_headAt_leaf` to arbitrary head functions. -/
+@[simp] theorem headAt_leaf (h : HeadFunction) (tok : LIToken) :
+    h.headAt (.leaf tok) = tok := by
+  show leftmostLeafPlanar (h.externalize (SyntacticObject.leaf tok)) = tok
+  have hSec : FreeCommMagma.mk (h.externalize (.leaf tok)) =
+      (.leaf tok : SyntacticObject) := h.isSection _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
+  match hext : h.externalize (.leaf tok) with
+  | .of x =>
+    rw [hext] at hSec
+    show leftmostLeafPlanar (.of x) = tok
+    cases x with
+    | inl t =>
+      simp only [leftmostLeafPlanar]
+      exact (Sum.inl.inj (hSec : Sum.inl t = Sum.inl tok))
+    | inr n => exact absurd (hSec : Sum.inr n = Sum.inl tok) (by intro; contradiction)
+  | .mul _ _ =>
+    rw [hext] at hSec
+    exact absurd hSec (by simp [FreeMagma.CommEqv])
+
+/-- For a trace SO, `headAt` returns the synthetic trace token. -/
+@[simp] theorem headAt_trace (h : HeadFunction) (n : Nat) :
+    h.headAt (.trace n) = mkTraceToken n := by
+  show leftmostLeafPlanar (h.externalize (SyntacticObject.trace n)) = mkTraceToken n
+  have hSec : FreeCommMagma.mk (h.externalize (.trace n)) =
+      (.trace n : SyntacticObject) := h.isSection _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
+  match hext : h.externalize (.trace n) with
+  | .of x =>
+    rw [hext] at hSec
+    show leftmostLeafPlanar (.of x) = mkTraceToken n
+    cases x with
+    | inl t => exact absurd (hSec : Sum.inl t = Sum.inr n) (by intro; contradiction)
+    | inr m =>
+      simp only [leftmostLeafPlanar]
+      exact congrArg mkTraceToken (Sum.inr.inj (hSec : Sum.inr m = Sum.inr n))
+  | .mul _ _ =>
+    rw [hext] at hSec
+    exact absurd hSec (by simp [FreeMagma.CommEqv])
+
 end HeadFunction
 
 -- ============================================================================

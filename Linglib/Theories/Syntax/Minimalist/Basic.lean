@@ -419,8 +419,10 @@ linearization a parameterized choice rather than an arbitrary one. -/
 def mkTraceToken (index : Nat) : LIToken :=
   ⟨.simple .N [] (phonForm := ""), index + 10000⟩
 
-/-- Underlying phonological yield on a planar `FreeMagma` representative. -/
-private def phonYieldPlanar : FreeMagma (LIToken ⊕ Nat) → List String
+/-- Underlying phonological yield on a planar `FreeMagma` representative.
+    Public so `HeadFunction.phonYieldWith` can compose it with a chosen
+    `externalize` section. -/
+def phonYieldPlanar : FreeMagma (LIToken ⊕ Nat) → List String
   | .of (.inl tok) =>
     let phon := tok.item.features.head?.map (·.phonForm) |>.getD ""
     if phon.isEmpty then [] else [phon]
@@ -433,8 +435,10 @@ private def phonYieldPlanar : FreeMagma (LIToken ⊕ Nat) → List String
 noncomputable def SyntacticObject.phonYield (so : SyntacticObject) : List String :=
   phonYieldPlanar so.out
 
-/-- Underlying linearization on a planar `FreeMagma` representative. -/
-private def linearizePlanar : FreeMagma (LIToken ⊕ Nat) → List LIToken
+/-- Underlying linearization on a planar `FreeMagma` representative.
+    Public so `HeadFunction.linearizeWith` can compose it with a chosen
+    `externalize` section. -/
+def linearizePlanar : FreeMagma (LIToken ⊕ Nat) → List LIToken
   | .of (.inl tok) => [tok]
   | .of (.inr _) => []
   | .mul l r => linearizePlanar l ++ linearizePlanar r
@@ -733,7 +737,10 @@ order is the input to LCA-derived linearization. Phase 1.0 placeholder
 via `Quot.out` (planar representative); Phase 2 will replace with
 LCA + head-directionality. -/
 
-private def terminalNodesPlanar : FreeMagma (LIToken ⊕ Nat) →
+/-- Underlying terminal-node enumeration on a planar `FreeMagma`
+    representative. Public so `HeadFunction.terminalNodesWith` can compose
+    it with a chosen `externalize` section. -/
+def terminalNodesPlanar : FreeMagma (LIToken ⊕ Nat) →
     List (FreeMagma (LIToken ⊕ Nat))
   | a@(.of _) => [a]
   | .mul l r => terminalNodesPlanar l ++ terminalNodesPlanar r
