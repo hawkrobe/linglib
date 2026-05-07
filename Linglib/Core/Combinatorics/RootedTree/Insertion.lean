@@ -330,7 +330,7 @@ matching cases 2 and 3 across the symmetric expressions. -/
     ⚠ **PROVABLY FALSE on planar `TraceTree`** ⚠
 
     A Lean-verified counterexample at
-    `scratch/test_preLie_planar.lean` shows
+    `Linglib/Scratch/PreLiePlanarCheck.lean` shows
     `(T₁ ◁ T₂).bind (· ◁ T₃) ≠ (T₁ ◁ T₃).bind (· ◁ T₂)` for
     `T₁ = .node (.leaf 0) (.leaf 1)`, `T₂ = .leaf 2`, `T₃ = .leaf 3`.
     The discrepancy is the `newEprime` case at each MCB-edge: the new
@@ -347,7 +347,7 @@ matching cases 2 and 3 across the symmetric expressions. -/
     `Linglib/Core/Algebra/Free/CommMagma.lean`. The pre-Lie identity
     on `(FreeCommMagma α) →₀ ℤ` *is* a strict equality (the (c)
     `newEprime` discrepancy collapses via `Quot.sound .swap`); see
-    `scratch/nonplanar_migration_plan.md` for the full migration plan.
+    `docs/nonplanar-migration-plan.md` for the full migration plan.
     This `sorry` will be replaced by the nonplanar version (Phase 1b)
     rather than discharged on the current planar carrier.
 
@@ -1395,7 +1395,7 @@ on basis triples. Per-edge bookkeeping at the basis level:
       `.node ... (.node T₃ T₂) ...` on the RHS — distinct in planar
       trees, equivalent under MCB's nonplanar Merge.
 
-A Lean-verified counterexample (`scratch/test_preLie_planar.lean`):
+A Lean-verified counterexample (`Linglib/Scratch/PreLiePlanarCheck.lean`):
 `T₁ = .node (.leaf 0) (.leaf 1)`, `T₂ = .leaf 2`, `T₃ = .leaf 3`. Both
 `T₂` and `T₃` have zero edges, so `T₁ ◇ (T₂ ◁ T₃) = T₁ ◇ (T₃ ◁ T₂) = 0`
 and the pre-Lie identity reduces to `(T₁ ◁ T₂) ◇ T₃ = (T₁ ◁ T₃) ◇ T₂`
