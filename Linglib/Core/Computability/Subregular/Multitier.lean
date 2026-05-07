@@ -257,4 +257,74 @@ theorem IsTierStrictlyLocal.toIsBTSL {k : ℕ} {L : Language α}
     (h : IsTierStrictlyLocal k L) : IsBTSL k L :=
   .base (isTierStrictlyLocal_iff_isTierBased_isStrictlyLocal.mp h)
 
+/-! ## Indistinguishability framework for refuting `IsBTC` membership
+
+Standard mathematical technique for `L ∉ IsBTC 𝒞`: exhibit two words
+`w₁`, `w₂` that are 𝒞-tier-indistinguishable (every `𝒞`-language under
+every Bool tier projection assigns them the same membership) but differ
+in `L`-membership. Lambert (2026) §4.2 (Tsuut'ina) and §5.1 (Luganda)
+both use this technique with the specialization for
+`IsGeneralizedDefinite k` (sharing length-`k` prefix-and-suffix on every
+tier projection — see `indist_isGenDef_of_tierAffixes`). -/
+
+/-- Two words are **𝒞-tier-indistinguishable** iff under every Bool tier
+projection, every `𝒞`-language assigns them the same membership. -/
+def IsBTC.Indist (𝒞 : Language α → Prop) (w₁ w₂ : List α) : Prop :=
+  ∀ T : α → Bool, ∀ L' : Language α, 𝒞 L' →
+    (w₁.filter T ∈ L' ↔ w₂.filter T ∈ L')
+
+namespace IsBTC.Indist
+
+variable {𝒞 : Language α → Prop}
+
+@[refl] protected theorem refl (𝒞 : Language α → Prop) (w : List α) :
+    IsBTC.Indist 𝒞 w w := fun _ _ _ => Iff.rfl
+
+@[symm] protected theorem symm {w₁ w₂ : List α}
+    (h : IsBTC.Indist 𝒞 w₁ w₂) : IsBTC.Indist 𝒞 w₂ w₁ :=
+  fun T L' hL' => (h T L' hL').symm
+
+end IsBTC.Indist
+
+/-- Tier-indistinguishability transports through the Boolean closure:
+`w₁` and `w₂` 𝒞-tier-indistinguishable implies same membership in every
+`IsBTC 𝒞`-language. Proof by induction on `BoolClosure`: `base` is the
+defining property of `Indist`; `inter`/`union`/`compl` lift via
+`and_congr`/`or_congr`/`not_congr`. -/
+theorem IsBTC.mem_iff_of_indist {𝒞 : Language α → Prop}
+    {w₁ w₂ : List α} {L : Language α}
+    (hL : IsBTC 𝒞 L) (hindist : IsBTC.Indist 𝒞 w₁ w₂) :
+    w₁ ∈ L ↔ w₂ ∈ L := by
+  induction hL with
+  | base hbase =>
+    obtain ⟨T, L', hL_eq, hL'⟩ := hbase
+    rw [hL_eq]
+    exact hindist T L' hL'
+  | inter _ _ ih₁ ih₂ => exact and_congr ih₁ ih₂
+  | union _ _ ih₁ ih₂ => exact or_congr ih₁ ih₂
+  | compl _ ih => exact not_congr ih
+
+/-- **Refutation lemma**: if `w₁ ∈ L` and `w₂ ∉ L` but `w₁` and `w₂` are
+𝒞-tier-indistinguishable, then `L ∉ IsBTC 𝒞`. -/
+theorem not_isBTC_of_indist {𝒞 : Language α → Prop}
+    {w₁ w₂ : List α} {L : Language α}
+    (h_indist : IsBTC.Indist 𝒞 w₁ w₂)
+    (h_w₁ : w₁ ∈ L) (h_w₂ : w₂ ∉ L) :
+    ¬ IsBTC 𝒞 L :=
+  fun hL => h_w₂ ((IsBTC.mem_iff_of_indist hL h_indist).mp h_w₁)
+
+/-- Shared length-`k` prefix-and-suffix on every Bool-tier projection
+implies `IsBTC.Indist (IsGeneralizedDefinite k)`. This is the standard
+specialization Lambert (2026) §4.2 / §5.1 use for refuting `IsBTLI k`
+membership: producing two words with matching tier-affixes on every
+tier reduces to providing a `Bool`-tier-parameterised pair of equalities. -/
+theorem IsBTC.indist_isGenDef_of_tierAffixes {k : ℕ} {w₁ w₂ : List α}
+    (h : ∀ T : α → Bool,
+      Edge.left.takeAt k (w₁.filter T) = Edge.left.takeAt k (w₂.filter T) ∧
+      Edge.right.takeAt k (w₁.filter T) = Edge.right.takeAt k (w₂.filter T)) :
+    IsBTC.Indist (IsGeneralizedDefinite k) w₁ w₂ := by
+  intro T L' hL'
+  obtain ⟨h_pre, h_suf⟩ := h T
+  exact hL' (w₁.filter T) (w₂.filter T) h_pre h_suf
+
 end Core.Computability.Subregular

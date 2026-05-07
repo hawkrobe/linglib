@@ -104,6 +104,7 @@ namespace Phenomena.Phonotactics.Studies.Lambert2026
 
 open Core.Computability.Subregular
 open List  -- for `<+` (List.Sublist) infix in subseqSet equivalence proofs
+open Theories.Phonology.SibilantTier  -- for SibilantTierSeg constructors in tsuutina refutation
 
 -- ============================================================================
 -- § 1. Iban (Austronesian): stress-final ∈ D_1
@@ -618,8 +619,67 @@ Definitional witness: the TSL_2 grammar `tsuutinaTSLGrammar`. -/
 theorem tsuutina_isTSL2 : IsTierStrictlyLocal 2 tsuutinaLang :=
   ⟨tsuutinaTSLGrammar, rfl⟩
 
+/-! ### Refutation: Tsuut'ina ∉ BTLI
+
+Lambert (2026) §4.2 parameterised counterexample: for every `k`, the
+words `ʃᵏ⁺¹sᵏ⁺¹` (accepted) and `ʃᵏ s ʃ sᵏ` (rejected) share the
+length-`k` tier-prefix and length-`k` tier-suffix on every Bool tier.
+The 8-tier enumeration (3 alphabet classes × 2 keep/drop choices)
+collapses to 4 because both witnesses contain no neutral material; on
+the three non-empty Bool combinations of (anterior, posterior), the
+tier-projected words are **equal** (cases 2-3) or have **matching**
+length-`k` affixes (case 1: both kinds kept, the `s` and `ʃ` swap in
+the middle of the rejected word doesn't reach the length-`k` window). -/
+
+/-- The accepted Tsuut'ina parameterised witness `ʃᵏ⁺¹ sᵏ⁺¹`. Sibilant
+tier projection: `posterior^(k+1) ++ anterior^(k+1)` — no anterior
+precedes any posterior. -/
+abbrev tsuutinaAccepted (k : ℕ) : List TsuutinaSeg :=
+  List.replicate (k + 1) SibilantTierSeg.posterior ++ List.replicate (k + 1) SibilantTierSeg.anterior
+
+/-- The rejected Tsuut'ina parameterised witness `ʃᵏ s ʃ sᵏ`. The
+internal `[anterior, posterior]` is the forbidden adjacency on the
+sibilant tier. -/
+abbrev tsuutinaRejected (k : ℕ) : List TsuutinaSeg :=
+  List.replicate k SibilantTierSeg.posterior ++ [SibilantTierSeg.anterior, SibilantTierSeg.posterior] ++ List.replicate k SibilantTierSeg.anterior
+
+/-! Proof recipe for `tsuutina_not_isBTLI` (TODO):
+
+1. **Tier-affix equality**: prove `tsuutina_tierAffixes (k : ℕ) (T : TsuutinaSeg → Bool)` —
+   for every Bool tier, `Edge.left.takeAt k ((tsuutinaAccepted k).filter T) =
+   Edge.left.takeAt k ((tsuutinaRejected k).filter T)` and the symmetric for
+   `Edge.right.takeAt`. Case-split on `(T anterior, T posterior)` — `T neutral`
+   is irrelevant (no neutral material in either witness):
+   - `(false, false)`: both filtered = `[]`.
+   - `(true, false)`: both filtered = `anterior^(k+1)`.
+   - `(false, true)`: both filtered = `posterior^(k+1)`.
+   - `(true, true)`: filtered accepted = `posterior^(k+1) ++ anterior^(k+1)`,
+     filtered rejected = `posterior^k ++ [anterior, posterior] ++ anterior^k`.
+     Both have length `2k+2`. Length-`k` prefix is `posterior^k` for both;
+     length-`k` suffix is `anterior^k` for both.
+
+2. **Indistinguishability**: combine via `IsBTC.indist_isGenDef_of_tierAffixes`
+   to get `IsBTC.Indist (IsGeneralizedDefinite k) (tsuutinaAccepted k) (tsuutinaRejected k)`.
+
+3. **Membership separation**: prove
+   - `tsuutinaAccepted k ∈ tsuutinaLang`: via `mem_ofForbiddenPairs_lang_iff_filter_isChain`;
+     filtered = `posterior^(k+1) ++ anterior^(k+1)`, no adjacent (anterior, posterior)
+     pair, so `IsChain (¬ antPostForbidden)`.
+   - `tsuutinaRejected k ∉ tsuutinaLang`: filtered contains adjacent
+     `[anterior, posterior]` (the middle two characters), violating `IsChain`.
+
+4. **Refutation**: `not_isBTC_of_indist` from `IsBTC.Indist` + membership separation
+   directly gives `¬ IsBTLI k tsuutinaLang`.
+
+The Lean infrastructure is in place via `IsBTC.Indist`, `IsBTC.mem_iff_of_indist`,
+`not_isBTC_of_indist`, `IsBTC.indist_isGenDef_of_tierAffixes` (`Subregular/Multitier.lean`).
+The remaining work is the per-witness combinatorial reasoning over `List.replicate`
+and `List.filter`. -/
+
 /-- **Tsuut'ina asymmetric harmony ∉ BTLI** (Lambert 2026 §4.2, parametrised
-counterexample). -/
+counterexample). The witnesses `tsuutinaAccepted k` and `tsuutinaRejected k`
+satisfy the Lambert-style "shared length-`k` tier-affixes on every tier"
+property; the framework `not_isBTC_of_indist` then refutes BTLI membership. -/
 theorem tsuutina_not_isBTLI : ∀ k, ¬ IsBTLI k tsuutinaLang := by
   sorry
 
