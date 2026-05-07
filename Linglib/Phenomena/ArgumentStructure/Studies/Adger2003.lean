@@ -177,10 +177,23 @@ def john_gives_mary_book : Derivation :=
     once LCA-based head/leftmostLeaf/checkedSel land, restore `by decide`. -/
 
 /-- "John sleeps" — intransitive: empty `pending` stack consumed trivially. -/
-theorem john_sleeps_wellFormed : john_sleeps.WellFormed := by sorry
+theorem john_sleeps_wellFormed : john_sleeps.WellFormed := by
+  -- sleepsSO is mkLeafPhon-built; its checkedSel? = some [] via leaf simp + sleep.complementType = .none
+  have h : sleepsSO.checkedSel? = some [] := by
+    show (SyntacticObject.leaf _).checkedSel? = _
+    rw [SyntacticObject.checkedSel?_leaf]; rfl
+  unfold Derivation.WellFormed Derivation.checkedFinal? john_sleeps
+  simp only [h, Option.bind, List.foldl, Step.applyChecked]
+  rfl
 
 /-- "Mary arrives" — intransitive variant. -/
-theorem mary_arrives_wellFormed : mary_arrives.WellFormed := by sorry
+theorem mary_arrives_wellFormed : mary_arrives.WellFormed := by
+  have h : arrivesSO.checkedSel? = some [] := by
+    show (SyntacticObject.leaf _).checkedSel? = _
+    rw [SyntacticObject.checkedSel?_leaf]; rfl
+  unfold Derivation.WellFormed Derivation.checkedFinal? mary_arrives
+  simp only [h, Option.bind, List.foldl, Step.applyChecked]
+  rfl
 
 /-- "John sees Mary" — transitive: *see*'s [.D] is checked by *Mary*'s D. -/
 theorem john_sees_mary_wellFormed : john_sees_mary.WellFormed := by sorry

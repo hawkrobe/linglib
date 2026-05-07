@@ -143,6 +143,48 @@ private noncomputable def checkedSelPlanar :
 noncomputable def SyntacticObject.checkedSel? (so : SyntacticObject) : Option (List Cat) :=
   checkedSelPlanar so.out
 
+/-- For a leaf SO, `checkedSel?` returns the leaf's outer selection list.
+    Singleton-class proof — same recipe as `leftmostLeaf_leaf` etc. -/
+@[simp] theorem SyntacticObject.checkedSel?_leaf (tok : LIToken) :
+    (SyntacticObject.leaf tok).checkedSel? = some tok.item.outerSel := by
+  show checkedSelPlanar (SyntacticObject.leaf tok).out = _
+  have hmk :
+      (Quot.mk FreeMagma.CommRel (SyntacticObject.leaf tok).out : SyntacticObject)
+        = FreeCommMagma.mk (FreeMagma.of (Sum.inl tok)) := Quot.out_eq _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
+  match h : (SyntacticObject.leaf tok).out with
+  | .of x =>
+    rw [h] at hmk
+    show checkedSelPlanar (.of x) = _
+    cases x with
+    | inl t =>
+      simp only [checkedSelPlanar]
+      exact congrArg (fun y => some y.item.outerSel)
+        (Sum.inl.inj (hmk : Sum.inl t = Sum.inl tok))
+    | inr n => exact absurd (hmk : Sum.inr n = Sum.inl tok) (by intro; contradiction)
+  | .mul _ _ =>
+    rw [h] at hmk
+    exact absurd hmk (by simp [FreeMagma.CommEqv])
+
+/-- For a trace SO, `checkedSel?` returns `some []`. -/
+@[simp] theorem SyntacticObject.checkedSel?_trace (n : Nat) :
+    (SyntacticObject.trace n).checkedSel? = some [] := by
+  show checkedSelPlanar (SyntacticObject.trace n).out = _
+  have hmk :
+      (Quot.mk FreeMagma.CommRel (SyntacticObject.trace n).out : SyntacticObject)
+        = FreeCommMagma.mk (FreeMagma.of (Sum.inr n)) := Quot.out_eq _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hmk
+  match h : (SyntacticObject.trace n).out with
+  | .of x =>
+    rw [h] at hmk
+    show checkedSelPlanar (.of x) = _
+    cases x with
+    | inl t => exact absurd (hmk : Sum.inl t = Sum.inr n) (by intro; contradiction)
+    | inr m => simp only [checkedSelPlanar]
+  | .mul _ _ =>
+    rw [h] at hmk
+    exact absurd hmk (by simp [FreeMagma.CommEqv])
+
 /-- Apply a `Step` under c-selection (@cite{adger-2003} eq. 134 Checking
     Requirement, eq. 106 Checking under Sisterhood). The projecting head
     is preserved across all step constructors — this matches M-C-B §1.15
@@ -265,16 +307,14 @@ theorem applyChecked_emL
       = some ⟨.node item so, head, sel⟩ := rfl
 
 /-- A leaf-initial derivation with empty `outerSel` and no steps is
-    well-formed (Adger eq. 104: vacuously satisfies Full Interpretation).
-
-    TODO Phase 2: simp-based proof was straightforward against the planar
-    `TraceTree` carrier; with `checkedSel?` Quot.out-based, the unfolding
-    no longer reduces. Will be re-proved against an `HeadFunction`-
-    parameterized version. -/
+    well-formed (Adger eq. 104: vacuously satisfies Full Interpretation). -/
 theorem wellFormed_initial_no_sel (tok : LIToken)
     (h : tok.item.outerSel = []) :
     Derivation.WellFormed ⟨.leaf tok, []⟩ := by
-  sorry
+  unfold Derivation.WellFormed Derivation.checkedFinal?
+  simp only [SyntacticObject.checkedSel?_leaf, h, List.foldl_nil, Option.bind,
+             Option.map]
+  rfl
 
 /-- `nullDWrap` of any leaf whose `outerCat = .N` is saturated.
 
