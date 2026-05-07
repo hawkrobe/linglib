@@ -129,7 +129,12 @@ noncomputable instance : DecidablePred IsSmallClausePredicate :=
 
 /-- The "right daughter" of an SO under planar `Quot.out`. Phase 1.0
     placeholder — Phase 2 will replace with an `HeadFunction`-aware
-    selection of the predicate-side daughter. -/
+    selection of the predicate-side daughter.
+
+    Retained as a noncomputable accessor for downstream code that
+    actively wants the planar choice. The `IsSmallClause` predicate
+    no longer routes through this — see below for the swap-respecting
+    Multiset reformulation. -/
 noncomputable def SyntacticObject.rightDaughter? (so : SyntacticObject) :
     Option SyntacticObject :=
   match so.out with
@@ -137,31 +142,47 @@ noncomputable def SyntacticObject.rightDaughter? (so : SyntacticObject) :
   | .mul _ r => some (FreeCommMagma.mk r)
 
 /-- A syntactic object IS a small clause when it is a binary node
-    (subject + predicate) whose right child satisfies
-    `IsSmallClausePredicate`. The right child encodes the predicate
-    because den Dikken's SC structure has the form `[SC Spec XP]`
-    with Spec on the left and the projecting predicate XP on the
-    right (book p. 132 ex. 52a).
+    (subject + predicate) **some** immediate daughter of which satisfies
+    `IsSmallClausePredicate`. Den Dikken's SC structure (book p. 132
+    ex. 52a) has the form `[SC Spec XP]` with Spec one daughter and
+    the projecting predicate XP the other; under MCB nonplanar Merge
+    we don't structurally distinguish "left" from "right", so the
+    swap-invariant formulation asks "*one of* the immediate daughters
+    is the predicate".
 
-    Companion to `structure SmallClause`.
-    Phase 1.0 noncomputable (depends on `rightDaughter?` which uses
-    `Quot.out`). The previous `.leaf`/`.trace`/`.node` simp lemmas
-    no longer hold by `rfl`; the `merge`-form rewrite is replaced by
-    a sorry pending Phase 2. -/
-noncomputable def IsSmallClause (so : SyntacticObject) : Prop :=
-  match so.rightDaughter? with
-  | some pred => IsSmallClausePredicate pred
-  | none => False
+    This existential matches the consumer pattern: the test discharges
+    when *either* the SC's predicate is structurally findable, regardless
+    of which Quot.out representative was chosen. Computable via
+    `immediatelyContains` (which is decidable and Multiset-based). -/
+def IsSmallClause (so : SyntacticObject) : Prop :=
+  ∃ pred, immediatelyContains so pred ∧ IsSmallClausePredicate pred
 
 noncomputable instance : DecidablePred IsSmallClause := fun so => by
-  unfold IsSmallClause
-  cases so.rightDaughter? <;> classical infer_instance
+  unfold IsSmallClause; classical infer_instance
 
-/-- `merge`-form rewrite for `IsSmallClause`.
-    TODO Phase 2: was `Iff.rfl` against the planar substrate. -/
+/-- `merge`-form rewrite for `IsSmallClause`. Symmetric — by the swap-
+    invariant existential, the predicate can be either the left or the
+    right child. -/
 theorem isSmallClause_merge (l r : SyntacticObject) :
-    IsSmallClause (merge l r) ↔ IsSmallClausePredicate r := by
-  sorry
+    IsSmallClause (merge l r) ↔
+      (IsSmallClausePredicate l ∨ IsSmallClausePredicate r) := by
+  unfold IsSmallClause
+  constructor
+  · rintro ⟨pred, himm, hpred⟩
+    -- merge l r = l * r; immediatelyContains_mul: pred = l ∨ pred = r
+    rw [show merge l r = l * r from rfl] at himm
+    rw [immediatelyContains_mul] at himm
+    rcases himm with rfl | rfl
+    · exact Or.inl hpred
+    · exact Or.inr hpred
+  · intro h
+    rcases h with hl | hr
+    · refine ⟨l, ?_, hl⟩
+      rw [show merge l r = l * r from rfl, immediatelyContains_mul]
+      exact Or.inl rfl
+    · refine ⟨r, ?_, hr⟩
+      rw [show merge l r = l * r from rfl, immediatelyContains_mul]
+      exact Or.inr rfl
 
 /-- Round-trip: any `SmallClause` whose stored `predCat` agrees with
     its `predicate`'s actual head category yields a `SyntacticObject`

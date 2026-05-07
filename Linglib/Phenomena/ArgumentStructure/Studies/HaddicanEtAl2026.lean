@@ -453,22 +453,60 @@ BE+P decomposition / Predicate Inversion) in
     via `decide` fail at the kernel-reduction step. TODO Phase 2: once
     LCA-based head selection lands, restore `by decide`. -/
 theorem pvc_sc_inner_isSmallClause :
-    IsSmallClause (merge DP_hsu Prt_up) := by sorry
+    IsSmallClause (merge DP_hsu Prt_up) := by
+  rw [isSmallClause_merge]
+  right
+  -- Prt_up has outerCat = .P
+  show IsSmallClausePredicate Prt_up
+  unfold IsSmallClausePredicate
+  left
+  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [Prt_up, mkLeafPhon, SyntacticObject.outerCat_leaf]
+  rfl
 
 theorem resultative_sc_inner_isSmallClause :
-    IsSmallClause (merge DP_metal AP_flat) := by sorry
+    IsSmallClause (merge DP_metal AP_flat) := by
+  rw [isSmallClause_merge]
+  right
+  show IsSmallClausePredicate AP_flat
+  unfold IsSmallClausePredicate
+  right; left
+  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [AP_flat, mkLeafPhon, SyntacticObject.outerCat_leaf]
+  rfl
 
 theorem causative_sc_inner_isSmallClause :
-    IsSmallClause (merge DP_child VP_laugh) := by sorry
+    IsSmallClause (merge DP_child VP_laugh) := by
+  rw [isSmallClause_merge]
+  right
+  show IsSmallClausePredicate VP_laugh
+  unfold IsSmallClausePredicate
+  right; right; left
+  show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
+  simp only [VP_laugh, mkLeafPhon, SyntacticObject.outerCat_leaf]
+  rfl
 
 /-- Diagnostic: the flat DP–DP DOC encoding does NOT satisfy
-    `IsSmallClause` (the right child is a DP, head category D, not
-    in the SC predicate set {P,A,V,N}). The companion predicate
-    surfaces the simplification — the encoding is correct *for
-    the priming argument* but incomplete as a structural SC analysis;
-    den Dikken's BE+P decomposition supplies the missing predicate.
-    Phase 1.0 sorry: blocked on noncomputable `IsSmallClause`. -/
+    `IsSmallClause` — neither child is in the SC predicate set
+    {P,A,V,N}. Both children are DPs (head category D). The companion
+    predicate surfaces the simplification — the encoding is correct
+    *for the priming argument* but incomplete as a structural SC
+    analysis; den Dikken's BE+P decomposition supplies the missing
+    predicate. -/
 theorem doc_sc_flat_inner_not_smallClause :
-    ¬ IsSmallClause (merge DP_hsu DP_book) := by sorry
+    ¬ IsSmallClause (merge DP_hsu DP_book) := by
+  rw [isSmallClause_merge]
+  rintro (hl | hr)
+  · -- DP_hsu has outerCat = .D, not in {P,A,V,N}
+    unfold IsSmallClausePredicate at hl
+    have hhsu : DP_hsu.headCat = .D := by
+      show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
+      simp only [DP_hsu, mkLeafPhon, SyntacticObject.outerCat_leaf]; rfl
+    rcases hl with h | h | h | h <;> rw [hhsu] at h <;> contradiction
+  · unfold IsSmallClausePredicate at hr
+    have hbook : DP_book.headCat = .D := by
+      show SyntacticObject.outerCat (mkLeafPhon _ _ _ _) = _
+      simp only [DP_book, mkLeafPhon, SyntacticObject.outerCat_leaf]; rfl
+    rcases hr with h | h | h | h <;> rw [hbook] at h <;> contradiction
 
 end HaddicanEtAl2026
