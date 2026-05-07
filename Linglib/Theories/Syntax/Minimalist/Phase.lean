@@ -46,7 +46,7 @@ namespace Minimalist
     `leftSpine` head function applied to `so`. For non-leftmost-headed
     analyses, use `Minimalist.Labeling.labelRoot h so == some c` with
     the study's chosen `h : HeadFunction`. -/
-def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool :=
+noncomputable def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool :=
   so.outerCat == c
 
 /-! ### Phase-head selectors
@@ -158,6 +158,15 @@ structure Phase where
 -- Part 4: Phase Impenetrability Condition
 -- ============================================================================
 
+/-- The phase complement is the right daughter of the phase node, picked
+    via the planar `Quot.out` representative. Phase 1.0 noncomputable
+    placeholder; Phase 2 will replace with an `HeadFunction`-aware
+    selection of complement-vs-spec. -/
+noncomputable def phaseComplement? : SyntacticObject → Option SyntacticObject :=
+  fun so => match so.out with
+    | .of _ => none
+    | .mul _ r => some (FreeCommMagma.mk r)
+
 /-- Phase Impenetrability Condition: material inside a phase complement
     is inaccessible to operations outside the phase.
 
@@ -167,13 +176,14 @@ structure Phase where
     the phase's complement? — so this predicate is currently
     strength-agnostic. See `PICStrength` for the TODO. -/
 def phaseImpenetrable (phase goal : SyntacticObject) : Prop :=
-  match phase with
-  | .node _ complement => contains complement goal
-  | _ => False
+  match phaseComplement? phase with
+  | some complement => contains complement goal
+  | none => False
 
-instance (phase goal : SyntacticObject) : Decidable (phaseImpenetrable phase goal) := by
+noncomputable instance (phase goal : SyntacticObject) :
+    Decidable (phaseImpenetrable phase goal) := by
   unfold phaseImpenetrable
-  cases phase <;> infer_instance
+  cases phaseComplement? phase <;> classical infer_instance
 
 /-- A phase admits movement of `goal` out of `phase.complement` under
     `strength`. For `strong`/`weak`, this is the negation of
@@ -194,10 +204,10 @@ def admitsExtraction (strength : PICStrength)
   | .strong | .weak => ¬ phaseImpenetrable phase goal
   | .linearizationBound => True
 
-instance (strength : PICStrength) (phase goal : SyntacticObject) :
+noncomputable instance (strength : PICStrength) (phase goal : SyntacticObject) :
     Decidable (admitsExtraction strength phase goal) := by
   unfold admitsExtraction
-  cases strength <;> infer_instance
+  cases strength <;> classical infer_instance
 
 /-- Under `linearizationBound`, every phase admits extraction at the
     phasehood layer. Concrete crashes come from the linearization
@@ -365,12 +375,19 @@ verb via head movement. The DP is no longer a phase boundary —
 projecting independently.
 
 This models the effect described by @cite{davies-dubinsky-2003} and
-@cite{shen-huang-2026}: VOCs neutralize the PIC for definite DPs. -/
+@cite{shen-huang-2026}: VOCs neutralize the PIC for definite DPs.
+
+Note: the `wasPhase` default `isPhaseHeadOf .D dHead` from the prior
+planar substrate is Phase-1.0 unavailable as a default (since
+`isPhaseHeadOf` is now noncomputable). Callers must supply the field
+explicitly. -/
 structure DPPhaseStatus where
   /-- The D head (before incorporation) -/
   dHead : SyntacticObject
-  /-- Whether D was originally a phase head -/
-  wasPhase : Bool := isPhaseHeadOf .D dHead
+  /-- Whether D was originally a phase head. Set explicitly per
+      derivation; in Phase 1.0 the substrate cannot compute this from
+      `dHead` alone. -/
+  wasPhase : Bool
   /-- Whether incorporation has applied -/
   incorporated : Bool
   deriving Repr

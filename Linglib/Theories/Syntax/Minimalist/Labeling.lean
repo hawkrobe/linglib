@@ -66,12 +66,11 @@ open Minimalist (HeadFunction Cat SyntacticObject LIToken)
     shared-feature fallback (corresponding to Chomsky 2013's {XP, YP}
     sharing-of-φ) is not yet implemented; deferred to next session
     along with the case-numbering verification. -/
-def labelVertex (h : HeadFunction) (T v : SyntacticObject) : Option Cat :=
+noncomputable def labelVertex (h : HeadFunction) (T v : SyntacticObject) : Option Cat :=
   if h.Dom T then
-    match v with
-    | .leaf _ => none
-    | .trace _ => none  -- traces unlabelable; no head function
-    | .node _ _ => some (h.headAt v).item.outerCat
+    if Minimalist.SyntacticObject.isNode v
+      then some (h.headAt v).item.outerCat
+      else none
   else
     -- TODO: shared-feature fallback (Def 1.15.2 case 4): if T = .node a b
     -- and h.headAt a, h.headAt b share a feature, label root by that
@@ -79,7 +78,7 @@ def labelVertex (h : HeadFunction) (T v : SyntacticObject) : Option Cat :=
     none
 
 /-- The label at the root of `T` (a frequent special case). -/
-def labelRoot (h : HeadFunction) (T : SyntacticObject) : Option Cat :=
+noncomputable def labelRoot (h : HeadFunction) (T : SyntacticObject) : Option Cat :=
   labelVertex h T T
 
 /-- For `T ∈ Dom(h)` with `T = .node a b`, the root label is the
@@ -89,7 +88,9 @@ def labelRoot (h : HeadFunction) (T : SyntacticObject) : Option Cat :=
     labelRoot h (.node a b) = some ((h.head (.node a b)).item.outerCat) := by
   show labelVertex h (.node a b) (.node a b) = _
   unfold labelVertex HeadFunction.head
-  rw [if_pos hT]
+  rw [if_pos hT,
+    if_pos (show Minimalist.SyntacticObject.isNode (a * b) from
+      Minimalist.SyntacticObject.isNode_mul a b)]
 
 /-- Leaves never get a "label" from the algorithm — they carry their
     own `LIToken`'s category. -/
@@ -97,7 +98,9 @@ def labelRoot (h : HeadFunction) (T : SyntacticObject) : Option Cat :=
     (tok : LIToken) :
     labelVertex h T (.leaf tok) = none := by
   unfold labelVertex
-  split <;> rfl
+  split
+  · rw [if_neg]; intro hN; exact (Minimalist.SyntacticObject.isNode_leaf tok) hN
+  · rfl
 
 /-- When `T ∉ Dom(h)`, the algorithm's default case fails (returns
     `none`); the shared-feature fallback (case 4) is not yet
@@ -115,9 +118,9 @@ theorem labelVertex_not_in_dom (h : HeadFunction) (T v : SyntacticObject)
 def isLabelable (h : HeadFunction) (T v : SyntacticObject) : Prop :=
   (labelVertex h T v).isSome
 
-instance (h : HeadFunction) (T v : SyntacticObject) :
+noncomputable instance (h : HeadFunction) (T v : SyntacticObject) :
     Decidable (isLabelable h T v) := by
-  unfold isLabelable; infer_instance
+  unfold isLabelable; classical infer_instance
 
 /-- For `T ∈ Dom(h)`, every internal vertex is labelable (default case applies). -/
 theorem internal_vertex_labelable_in_dom
@@ -125,7 +128,7 @@ theorem internal_vertex_labelable_in_dom
     (hT : h.Dom T) :
     isLabelable h T (.node a b) := by
   unfold isLabelable labelVertex
-  rw [if_pos hT]
+  rw [if_pos hT, if_pos (Minimalist.SyntacticObject.isNode_mul a b)]
   exact rfl
 
 -- ============================================================================
@@ -136,22 +139,21 @@ theorem internal_vertex_labelable_in_dom
 def sameLabelAt (h : HeadFunction) (T x y : SyntacticObject) : Prop :=
   labelVertex h T x = labelVertex h T y ∧ (labelVertex h T x).isSome
 
-instance (h : HeadFunction) (T x y : SyntacticObject) :
+noncomputable instance (h : HeadFunction) (T x y : SyntacticObject) :
     Decidable (sameLabelAt h T x y) := by
-  unfold sameLabelAt; infer_instance
+  unfold sameLabelAt; classical infer_instance
 
 /-- `x` is the projecting head of `T` under `h`: `x` is a leaf whose
     token equals `h.head T`. Decidable on `LIToken.DecidableEq`. -/
 def isHeadOf (h : HeadFunction) (T x : SyntacticObject) : Prop :=
-  match x with
-  | .leaf tok => h.head T = tok
-  | .trace _ => False  -- traces are not heads
-  | .node _ _ => False
+  match Minimalist.SyntacticObject.getLIToken x with
+  | some tok => h.head T = tok
+  | none => False  -- traces and nodes are not heads
 
-instance (h : HeadFunction) (T x : SyntacticObject) :
+noncomputable instance (h : HeadFunction) (T x : SyntacticObject) :
     Decidable (isHeadOf h T x) := by
   unfold isHeadOf
-  cases x <;> infer_instance
+  cases Minimalist.SyntacticObject.getLIToken x <;> classical infer_instance
 
 /-- `x` projects at vertex `x` of `T` under `h`: `x` is a non-leaf
     contained in `T` whose label equals `T`'s root label. This is the
@@ -159,9 +161,9 @@ instance (h : HeadFunction) (T x : SyntacticObject) :
 def projectsAt (h : HeadFunction) (T x : SyntacticObject) : Prop :=
   containsOrEq T x ∧ labelVertex h T x = labelRoot h T ∧ (labelRoot h T).isSome
 
-instance (h : HeadFunction) (T x : SyntacticObject) :
+noncomputable instance (h : HeadFunction) (T x : SyntacticObject) :
     Decidable (projectsAt h T x) := by
-  unfold projectsAt; infer_instance
+  unfold projectsAt; classical infer_instance
 
 /-- `x` is **+max(imal)** in `T` under `h`: `x ⊆ T` and no strict
     ancestor of `x` in `T` carries the same label. A linglib-formulated
@@ -178,9 +180,9 @@ def isMaximalAt (h : HeadFunction) (T x : SyntacticObject) : Prop :=
   containsOrEq T x ∧
     ∀ z ∈ T.subtrees, contains z x → z ≠ x → ¬ sameLabelAt h T x z
 
-instance (h : HeadFunction) (T x : SyntacticObject) :
+noncomputable instance (h : HeadFunction) (T x : SyntacticObject) :
     Decidable (isMaximalAt h T x) := by
-  unfold isMaximalAt; infer_instance
+  unfold isMaximalAt; classical infer_instance
 
 /-- `isMaximalAt`'s bounded `∀ z ∈ T.subtrees` quantifier is equivalent
     to the textbook unbounded `∀ z, isTermOf z T → ...` form. The
@@ -213,9 +215,9 @@ instance (T x : SyntacticObject) : Decidable (isMinimalAt T x) := by
 def isHeadIn (h : HeadFunction) (T x : SyntacticObject) : Prop :=
   isMinimalAt T x ∧ ¬ isMaximalAt h T x
 
-instance (h : HeadFunction) (T x : SyntacticObject) :
+noncomputable instance (h : HeadFunction) (T x : SyntacticObject) :
     Decidable (isHeadIn h T x) := by
-  unfold isHeadIn; infer_instance
+  unfold isHeadIn; classical infer_instance
 
 /-- A **phrase** in `T`: `+max`. MCB §1.15 classification carried over.
     `abbrev` of `isMaximalAt` so the two names unify in elaboration —
