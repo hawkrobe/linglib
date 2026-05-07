@@ -166,6 +166,78 @@ noncomputable def SyntacticObject.checkedSel? (so : SyntacticObject) : Option (L
     rw [h] at hmk
     exact absurd hmk (by simp [FreeMagma.CommEqv])
 
+/-! ### Parameterized variant: `checkedSelWith? h`
+
+The Phase 2 parameterized version takes an explicit `HeadFunction` that
+fixes the planar order via `externalize`. Computable when `h.externalize`
+is. Consumers should migrate from `checkedSel?` to `checkedSelWith? h`
+when they have a meaningful `h` available; the unparameterized `checkedSel?`
+remains as a `Quot.out`-based default. -/
+
+/-- Underlying parameterized `checkedSel?` on a planar `FreeMagma`
+    representative, taking a `HeadFunction` to recursively check
+    `outerCat` of subtrees. -/
+def checkedSelWithPlanar (h : HeadFunction) :
+    FreeMagma (LIToken ⊕ Nat) → Option (List Cat)
+  | .of (.inl tok) => some tok.item.outerSel
+  | .of (.inr _) => some []
+  | .mul l r =>
+    match checkedSelWithPlanar h l, checkedSelWithPlanar h r with
+    | some (c :: rest), some [] =>
+      if h.outerCatOf (FreeCommMagma.mk r) = c then some rest else none
+    | _, _ => none
+
+/-- Parameterized `checkedSel?`: under head function `h` (with externalize
+    section), recursively check c-selection consistency on the planar
+    representative `h.externalize so`. Computable when `h.externalize` is.
+
+    Not given as a `SyntacticObject.checkedSelWith?` dot-notation method
+    because `SyntacticObject := Quot _` doesn't admit dot-method projection
+    through the quotient. Call as `checkedSelWith? h so`. -/
+def checkedSelWith? (h : HeadFunction) (so : SyntacticObject) :
+    Option (List Cat) :=
+  checkedSelWithPlanar h (h.externalize so)
+
+/-- For a leaf SO, `checkedSelWith?` returns the leaf's outer selection list
+    (independent of head function). -/
+@[simp] theorem checkedSelWith?_leaf (h : HeadFunction) (tok : LIToken) :
+    checkedSelWith? h (.leaf tok) = some tok.item.outerSel := by
+  show checkedSelWithPlanar h (h.externalize (.leaf tok)) = _
+  have hSec : FreeCommMagma.mk (h.externalize (.leaf tok)) =
+      (SyntacticObject.leaf tok : SyntacticObject) := h.isSection _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
+  match hext : h.externalize (.leaf tok) with
+  | .of x =>
+    rw [hext] at hSec
+    show checkedSelWithPlanar h (.of x) = _
+    cases x with
+    | inl t =>
+      simp only [checkedSelWithPlanar]
+      exact congrArg (fun y => some y.item.outerSel)
+        (Sum.inl.inj (hSec : Sum.inl t = Sum.inl tok))
+    | inr n => exact absurd (hSec : Sum.inr n = Sum.inl tok) (by intro; contradiction)
+  | .mul _ _ =>
+    rw [hext] at hSec
+    exact absurd hSec (by simp [FreeMagma.CommEqv])
+
+/-- For a trace SO, `checkedSelWith?` returns `some []`. -/
+@[simp] theorem checkedSelWith?_trace (h : HeadFunction) (n : Nat) :
+    checkedSelWith? h (.trace n) = some [] := by
+  show checkedSelWithPlanar h (h.externalize (.trace n)) = _
+  have hSec : FreeCommMagma.mk (h.externalize (.trace n)) =
+      (SyntacticObject.trace n : SyntacticObject) := h.isSection _
+  rw [FreeCommMagma.mk_eq_iff_commEqv] at hSec
+  match hext : h.externalize (.trace n) with
+  | .of x =>
+    rw [hext] at hSec
+    show checkedSelWithPlanar h (.of x) = _
+    cases x with
+    | inl t => exact absurd (hSec : Sum.inl t = Sum.inr n) (by intro; contradiction)
+    | inr m => simp only [checkedSelWithPlanar]
+  | .mul _ _ =>
+    rw [hext] at hSec
+    exact absurd hSec (by simp [FreeMagma.CommEqv])
+
 /-- For a trace SO, `checkedSel?` returns `some []`. -/
 @[simp] theorem SyntacticObject.checkedSel?_trace (n : Nat) :
     (SyntacticObject.trace n).checkedSel? = some [] := by

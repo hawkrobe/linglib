@@ -160,12 +160,25 @@ structure Phase where
 
 /-- The phase complement is the right daughter of the phase node, picked
     via the planar `Quot.out` representative. Phase 1.0 noncomputable
-    placeholder; Phase 2 will replace with an `HeadFunction`-aware
-    selection of complement-vs-spec. -/
+    placeholder; the parameterized version `phaseComplementWith?` below
+    takes a `HeadFunction` for explicit externalize choice. -/
 noncomputable def phaseComplement? : SyntacticObject → Option SyntacticObject :=
   fun so => match so.out with
     | .of _ => none
     | .mul _ r => some (FreeCommMagma.mk r)
+
+/-- Parameterized phase-complement accessor: under harmonic head-initial
+    convention (head daughter to the LEFT of the planar representative),
+    the complement is the RIGHT daughter of `h.externalize so`. Computable
+    when `h.externalize` is.
+
+    Returns `none` when `h.externalize so` is a leaf or trace (no daughter
+    structure). For nodes, returns the right daughter as a `SyntacticObject`. -/
+def phaseComplementWith? (h : HeadFunction) (so : SyntacticObject) :
+    Option SyntacticObject :=
+  match h.externalize so with
+  | .of _ => none
+  | .mul _ r => some (FreeCommMagma.mk r)
 
 /-- Phase Impenetrability Condition: material inside a phase complement
     is inaccessible to operations outside the phase.
