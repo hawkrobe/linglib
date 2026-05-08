@@ -1795,37 +1795,365 @@ theorem insertSumLift_single_basis (T₁ T₂ : TraceTree α β) :
   rw [Finsupp.sum_single_index (by simp), Finsupp.sum_single_index (by simp)]
   simp
 
-/-- **Basis-triple FCM pre-Lie identity** (basis case of MCB Lemma 1.7.2).
-    For trees T₁, T₂, T₃, the pre-Lie associator under `mapFCM` is
-    symmetric in T₂, T₃.
+/-! #### §11.3.0: Bridge from `◇`-with-singleton to `Multiset.bind` -/
 
-    **Proof outline** (Phase 3.E.2.3 deferred):
+/-- `toFinsuppZ s ◇ single T₃ 1 = toFinsuppZ (s.bind (· ◁ T₃))`.
+    Reduces an `insertSumLift` against a basis singleton on the right to a
+    multiset bind. Used in §11.3 to convert `(insertSumZ T₁ T₂) ◇ single T₃ 1`
+    into a multiset `bind` form. -/
+private theorem insertSumLift_toFinsuppZ_single_right
+    (s : Multiset (TraceTree α β)) (T₃ : TraceTree α β) :
+    Multiset.toFinsuppZ s ◇ Finsupp.single T₃ 1
+      = Multiset.toFinsuppZ (s.bind (fun S => S ◁ T₃)) := by
+  induction s using Multiset.induction_on with
+  | empty =>
+    simp only [Multiset.toFinsuppZ_zero, insertSumLift_zero_left, Multiset.zero_bind]
+  | cons a s' ih =>
+    have hcons : (a ::ₘ s') = ({a} : Multiset (TraceTree α β)) + s' := by
+      rw [← Multiset.singleton_add]
+    rw [hcons, Multiset.toFinsuppZ_add, insertSumLift_add_left, ih,
+        Multiset.add_bind, Multiset.toFinsuppZ_add]
+    congr 1
+    rw [Multiset.toFinsuppZ_singleton, insertSumLift_single_basis,
+        Multiset.singleton_bind]
+    rfl
 
-    1. By the bridge (`insertSumLift_single_basis` + `mapFCM_insertSumZ_eq`),
-       both sides become `Multiset.toFinsuppZFCM` applied to multisets of
-       FCM trees obtained from §1 `bind` operations.
+/-- `single T₁ 1 ◇ toFinsuppZ s = toFinsuppZ (s.bind (T₁ ◁ ·))`. Companion to
+    `insertSumLift_toFinsuppZ_single_right` for the left-singleton case. -/
+private theorem insertSumLift_toFinsuppZ_single_left
+    (T₁ : TraceTree α β) (s : Multiset (TraceTree α β)) :
+    (Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ Multiset.toFinsuppZ s
+      = Multiset.toFinsuppZ (s.bind (fun S => T₁ ◁ S)) := by
+  induction s using Multiset.induction_on with
+  | empty =>
+    simp only [Multiset.toFinsuppZ_zero, insertSumLift_zero_right, Multiset.zero_bind]
+  | cons a s' ih =>
+    have hcons : (a ::ₘ s') = ({a} : Multiset (TraceTree α β)) + s' := by
+      rw [← Multiset.singleton_add]
+    rw [hcons, Multiset.toFinsuppZ_add, insertSumLift_add_right, ih,
+        Multiset.add_bind, Multiset.toFinsuppZ_add]
+    congr 1
+    rw [Multiset.toFinsuppZ_singleton, insertSumLift_single_basis,
+        Multiset.singleton_bind]
+    rfl
 
-    2. By §9.2 (`edges_insertAt_eq_classification`) decomposition,
-       `(T₁ ◁ T₂).bind (· ◁ T₃)` splits into:
-       (a) lifted-edges: equals `(T₂ ◁ T₃).bind (T₁ ◁ ·)` via §9.4
-           (`insertAt_lift_eq_nested`) + Fubini.
-       (b) preserved-edges: symmetric in (T₂, T₃) at planar level via §9.3
-           (`insertAt_commute_diff`).
-       (c) 3 new-edges per `e ∈ edges T₁`: symmetric only at FCM level via
-           §10b (`toFCM_insertAt_newE1_eq_newE2_swap`,
-           `toFCM_insertAt_newEprime_swap`).
+/-- `mapFCM (toFinsuppZ s ◇ single T₃ 1) = toFinsuppZFCM ((s.bind (· ◁ T₃)).map toFCM)`. -/
+private theorem mapFCM_toFinsuppZ_lift_right
+    (s : Multiset (TraceTree α β)) (T₃ : TraceTree α β) :
+    mapFCM (Multiset.toFinsuppZ s ◇ Finsupp.single T₃ 1)
+      = Multiset.toFinsuppZFCM ((s.bind (fun S => S ◁ T₃)).map toFCM) := by
+  rw [insertSumLift_toFinsuppZ_single_right, mapFCM_toFinsuppZ_eq]
 
-    3. The "associator surplus" is `(b) + (c)`. The two sides of the
-       pre-Lie identity differ only in this surplus (after subtracting
-       the lifted = `T₁ ◇ (T₂ ◁ T₃)` term from both sides). Surplus.map
-       toFCM = swapped-Surplus.map toFCM by (b) + (c) cancellations. -/
+/-- `mapFCM (single T₁ 1 ◇ toFinsuppZ s) = toFinsuppZFCM ((s.bind (T₁ ◁ ·)).map toFCM)`. -/
+private theorem mapFCM_toFinsuppZ_lift_left
+    (T₁ : TraceTree α β) (s : Multiset (TraceTree α β)) :
+    mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ Multiset.toFinsuppZ s)
+      = Multiset.toFinsuppZFCM ((s.bind (fun S => T₁ ◁ S)).map toFCM) := by
+  rw [insertSumLift_toFinsuppZ_single_left, mapFCM_toFinsuppZ_eq]
+
+/-! #### §11.3.1: Per-edge classification of `(T₁ ◁ T₂).bind (· ◁ T₃)`
+
+By §9.2 `edges_insertAt_eq_classification`, the edges of `insertAt e T₂`
+decompose as preserved (from edges of `T₁` other than `e`) + lifted (from
+edges of `T₂`) + 3 new edges per `e`. Mapping insertion-of-T₃ over each
+class gives a 3-way decomposition of `(T₁ ◁ T₂).bind (· ◁ T₃)`.
+
+For the swap proof, `preservedPart` is defined via a double-bind over
+`(edges T₁) × (edges T₁)` with an `Option.elim` per `(e, f)` cell — this
+form is directly amenable to Fubini swap + per-cell §9.3 application. -/
+
+/-- Per `(e, f)` cell: the Multiset contribution to inserting `T₃` at the
+    `f`-image inside `insertAt e T₂` (zero when `f = e`, singleton
+    otherwise). Wraps `Edge.preserveAux` via `Option.elim`. -/
+noncomputable def preserveContrib (T₁ : TraceTree α β) (T₂ T₃ : TraceTree α β)
+    (e f : Edge T₁) : Multiset (TraceTree α β) :=
+  (Edge.preserveAux e f T₂).elim (0 : Multiset (TraceTree α β))
+    (fun pres => {insertAt pres T₃})
+
+/-- Multiset of trees from inserting `T₃` at preserved edges of every
+    `insertAt e T₂` — defined as a double-bind over `(edges T₁) × (edges T₁)`
+    via `preserveContrib`. The (e, f)-cell is non-zero exactly when `f ≠ e`. -/
+noncomputable def preservedPart (T₁ T₂ T₃ : TraceTree α β) :
+    Multiset (TraceTree α β) :=
+  (↑(edges T₁) : Multiset (Edge T₁)).bind (fun e =>
+    (↑(edges T₁) : Multiset (Edge T₁)).bind (fun f =>
+      preserveContrib T₁ T₂ T₃ e f))
+
+/-- Multiset of trees from inserting `T₃` at the 3 new edges produced by
+    each `insertAt e T₂`. Three trees per edge `e ∈ edges T₁`. -/
+noncomputable def newPart (T₁ T₂ T₃ : TraceTree α β) :
+    Multiset (TraceTree α β) :=
+  (↑(edges T₁) : Multiset (Edge T₁)).bind (fun e =>
+    ((↑[Edge.newE1 e T₂, Edge.newE2 e T₂, Edge.newEprime e T₂]
+        : Multiset (Edge (insertAt e T₂))).map (fun ne => insertAt ne T₃)))
+
+/-- `preservedPart` matches the §9.2-shaped per-edge form: for each `e`, the
+    inner contribution equals `(filterMap preserveAux).map (insertAt · T₃)`. -/
+private theorem preservedPart_at_eq_filterMap (T₁ T₂ T₃ : TraceTree α β) (e : Edge T₁) :
+    (↑(edges T₁) : Multiset (Edge T₁)).bind (fun f => preserveContrib T₁ T₂ T₃ e f)
+    = (↑((edges T₁).filterMap (fun f => Edge.preserveAux e f T₂))
+        : Multiset (Edge (insertAt e T₂))).map (fun pres => insertAt pres T₃) := by
+  rw [show (↑((edges T₁).filterMap (fun f => Edge.preserveAux e f T₂))
+              : Multiset (Edge (insertAt e T₂)))
+        = (↑(edges T₁) : Multiset (Edge T₁)).filterMap
+            (fun f => Edge.preserveAux e f T₂) from rfl,
+      Multiset.filterMap_eq_bind, Multiset.map_bind]
+  apply Multiset.bind_congr
+  intro f _
+  unfold preserveContrib
+  cases Edge.preserveAux e f T₂ with
+  | none => simp
+  | some pres => simp
+
+/-- **Per-edge expansion**: `(insertAt e T₂) ◁ T₃` decomposes via §9.2 into
+    lifted + preserved-via-bind + new contributions. This is the per-`e` lemma
+    consumed by `bind_insertAt_decomp` to give the global decomposition. -/
+private theorem insertSum_insertAt_decomp (T₁ T₂ T₃ : TraceTree α β) (e : Edge T₁) :
+    insertAt e T₂ ◁ T₃ =
+      (↑((edges T₂).map (Edge.lift e T₂))
+        : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃)
+      + (↑(edges T₁) : Multiset (Edge T₁)).bind
+          (fun f => preserveContrib T₁ T₂ T₃ e f)
+      + (↑[Edge.newE1 e T₂, Edge.newE2 e T₂, Edge.newEprime e T₂]
+          : Multiset (Edge (insertAt e T₂))).map (fun ne => insertAt ne T₃) := by
+  rw [insertSum_eq_ofList_map_insertAt (insertAt e T₂) T₃]
+  show (↑(edges (insertAt e T₂)) : Multiset (Edge (insertAt e T₂))).map
+          (fun g => insertAt g T₃) = _
+  rw [edges_insertAt_eq_classification e T₂, Multiset.map_add, Multiset.map_add]
+  -- §9.2 gives preserved + lifted + new; we want lifted + preserved + new.
+  rw [show
+        ((↑((edges T₁).filterMap (fun f => Edge.preserveAux e f T₂))
+            : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃))
+        + ((↑((edges T₂).map (Edge.lift e T₂))
+            : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃))
+        + ((↑[Edge.newE1 e T₂, Edge.newE2 e T₂, Edge.newEprime e T₂]
+            : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃))
+        = ((↑((edges T₂).map (Edge.lift e T₂))
+            : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃))
+          + ((↑((edges T₁).filterMap (fun f => Edge.preserveAux e f T₂))
+              : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃))
+          + ((↑[Edge.newE1 e T₂, Edge.newE2 e T₂, Edge.newEprime e T₂]
+              : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃))
+      from by ac_rfl]
+  rw [← preservedPart_at_eq_filterMap T₁ T₂ T₃ e]
+
+/-- **Decomposition of `(T₁ ◁ T₂).bind (· ◁ T₃)` per the §9.2 edge
+    classification of each `insertAt e T₂`**. The lifted part is identified
+    with `(T₂ ◁ T₃).bind (T₁ ◁ ·)` via §9.4 + Fubini in `liftedPart_eq` (no
+    free-standing `liftedPart` is needed). -/
+theorem bind_insertAt_decomp (T₁ T₂ T₃ : TraceTree α β) :
+    (T₁ ◁ T₂).bind (fun S => S ◁ T₃)
+      = ((↑(edges T₁) : Multiset (Edge T₁)).bind (fun e =>
+            (↑((edges T₂).map (Edge.lift e T₂))
+              : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃)))
+        + preservedPart T₁ T₂ T₃ + newPart T₁ T₂ T₃ := by
+  rw [insertSum_eq_ofList_map_insertAt T₁ T₂]
+  show ((↑((edges T₁).map (fun e => insertAt e T₂)) : Multiset (TraceTree α β)).bind
+          (fun S => S ◁ T₃)) = _
+  rw [show (↑((edges T₁).map (fun e => insertAt e T₂)) : Multiset (TraceTree α β))
+        = (↑(edges T₁) : Multiset (Edge T₁)).map (fun e => insertAt e T₂) from rfl,
+      Multiset.bind_map]
+  unfold preservedPart newPart
+  conv_lhs =>
+    rw [show (fun e : Edge T₁ => insertAt e T₂ ◁ T₃)
+          = (fun e : Edge T₁ =>
+              (↑((edges T₂).map (Edge.lift e T₂))
+                : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃)
+              + (↑(edges T₁) : Multiset (Edge T₁)).bind
+                  (fun f => preserveContrib T₁ T₂ T₃ e f)
+              + (↑[Edge.newE1 e T₂, Edge.newE2 e T₂, Edge.newEprime e T₂]
+                  : Multiset (Edge (insertAt e T₂))).map (fun ne => insertAt ne T₃))
+        from funext (insertSum_insertAt_decomp T₁ T₂ T₃)]
+  -- LHS is now `s.bind (fun e => (lifted + preserved) + new)`.
+  -- Distribute via `bind_add` (for the outer `+`), then again for the inner.
+  rw [show (fun e : Edge T₁ =>
+            ((↑((edges T₂).map (Edge.lift e T₂))
+                : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃)
+              + (↑(edges T₁) : Multiset (Edge T₁)).bind
+                  (fun f => preserveContrib T₁ T₂ T₃ e f))
+            + (↑[Edge.newE1 e T₂, Edge.newE2 e T₂, Edge.newEprime e T₂]
+                : Multiset (Edge (insertAt e T₂))).map (fun ne => insertAt ne T₃))
+        = (fun e : Edge T₁ =>
+            ((↑((edges T₂).map (Edge.lift e T₂))
+                : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃)
+              + (↑(edges T₁) : Multiset (Edge T₁)).bind
+                  (fun f => preserveContrib T₁ T₂ T₃ e f))
+            + (↑[Edge.newE1 e T₂, Edge.newE2 e T₂, Edge.newEprime e T₂]
+                : Multiset (Edge (insertAt e T₂))).map (fun ne => insertAt ne T₃))
+        from rfl,
+      Multiset.bind_add, Multiset.bind_add]
+
+/-- The lifted part equals `(T₂ ◁ T₃).bind (T₁ ◁ ·)`, by §9.4 + Fubini. -/
+theorem liftedPart_eq (T₁ T₂ T₃ : TraceTree α β) :
+    (↑(edges T₁) : Multiset (Edge T₁)).bind (fun e =>
+      (↑((edges T₂).map (Edge.lift e T₂))
+        : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃))
+    = (T₂ ◁ T₃).bind (fun S => T₁ ◁ S) := by
+  -- LHS: (eds T₁).bind (fun e => ((eds T₂).map (Edge.lift e T₂)).map (insertAt · T₃))
+  -- After collapsing the inner map composition and applying §9.4:
+  -- LHS = (eds T₁).bind (fun e => (eds T₂).map (fun g => insertAt e (insertAt g T₃)))
+  -- RHS: (T₂ ◁ T₃).bind (T₁ ◁ ·)
+  --   = ((eds T₂).map (insertAt · T₃)).bind (fun S => T₁ ◁ S)
+  --   = (eds T₂).bind (fun g => T₁ ◁ insertAt g T₃)                  (Multiset.bind_map)
+  --   = (eds T₂).bind (fun g => (eds T₁).map (insertAt · (insertAt g T₃)))
+  -- Equal by Multiset.bind_map_comm (Fubini).
+  rw [insertSum_eq_ofList_map_insertAt T₂ T₃]
+  rw [show (↑((edges T₂).map (fun g => insertAt g T₃)) : Multiset (TraceTree α β))
+        = (↑(edges T₂) : Multiset (Edge T₂)).map (fun g => insertAt g T₃) from rfl,
+      Multiset.bind_map]
+  -- Goal: ... = (eds T₂).bind (fun g => T₁ ◁ insertAt g T₃)
+  rw [show (fun e : Edge T₁ =>
+            (↑((edges T₂).map (Edge.lift e T₂))
+              : Multiset (Edge (insertAt e T₂))).map (fun g => insertAt g T₃))
+        = (fun e : Edge T₁ =>
+            (↑(edges T₂) : Multiset (Edge T₂)).map
+              (fun g => insertAt e (insertAt g T₃)))
+        from funext fun e => by
+          rw [show (↑((edges T₂).map (Edge.lift e T₂))
+                      : Multiset (Edge (insertAt e T₂)))
+                = (↑(edges T₂) : Multiset (Edge T₂)).map (Edge.lift e T₂) from rfl,
+              Multiset.map_map]
+          apply Multiset.map_congr rfl
+          intro g _
+          exact insertAt_lift_eq_nested e T₂ T₃ g]
+  rw [show (fun g : Edge T₂ => T₁ ◁ insertAt g T₃)
+        = (fun g : Edge T₂ =>
+            (↑(edges T₁) : Multiset (Edge T₁)).map
+              (fun e => insertAt e (insertAt g T₃)))
+        from funext fun g => by
+          rw [insertSum_eq_ofList_map_insertAt T₁ (insertAt g T₃)]
+          rfl]
+  exact Multiset.bind_map_comm _ _
+
+/-! #### §11.3.2: Swap symmetries
+
+`preservedPart` is planar-symmetric in `(T₂, T₃)` via §9.3.
+`newPart` is FCM-symmetric (only after `.map toFCM`) via §10b. -/
+
+/-- `preserveContrib` is swap-symmetric per `(e, f)`: the `(e, f)`-cell with
+    parameters `(T₂, T₃)` equals the `(f, e)`-cell with parameters `(T₃, T₂)`,
+    via §9.3 `insertAt_commute_diff`. -/
+private theorem preserveContrib_swap (T₁ T₂ T₃ : TraceTree α β) (e f : Edge T₁) :
+    preserveContrib T₁ T₂ T₃ e f = preserveContrib T₁ T₃ T₂ f e := by
+  unfold preserveContrib
+  by_cases h : f = e
+  · -- f = e: both preserveAux hit the diagonal and return none.
+    rw [h, Edge.preserveAux_self e T₂, Edge.preserveAux_self e T₃]
+    rfl
+  · -- f ≠ e: both preserveAux return some, and §9.3 connects them.
+    have hne : f ≠ e := h
+    have hen : e ≠ f := fun heq => h heq.symm
+    rw [Edge.preserveAux_of_ne e f hne T₂, Edge.preserveAux_of_ne f e hen T₃]
+    show ({insertAt (Edge.preserveOf e f hne T₂) T₃} : Multiset _)
+        = ({insertAt (Edge.preserveOf f e hen T₃) T₂} : Multiset _)
+    congr 1
+    exact insertAt_commute_diff e f hne T₂ T₃
+
+/-- **Planar swap symmetry of `preservedPart`** — by `preserveContrib_swap`
+    per cell + Fubini swap (`Multiset.bind_bind`) on the double-bind. -/
+theorem preservedPart_swap (T₁ T₂ T₃ : TraceTree α β) :
+    preservedPart T₁ T₂ T₃ = preservedPart T₁ T₃ T₂ := by
+  unfold preservedPart
+  -- Per-cell rewrite using preserveContrib_swap.
+  rw [show (fun e : Edge T₁ =>
+            (↑(edges T₁) : Multiset (Edge T₁)).bind
+              (fun f => preserveContrib T₁ T₂ T₃ e f))
+        = (fun e : Edge T₁ =>
+            (↑(edges T₁) : Multiset (Edge T₁)).bind
+              (fun f => preserveContrib T₁ T₃ T₂ f e))
+        from funext fun e => by
+          apply Multiset.bind_congr
+          intro f _
+          exact preserveContrib_swap T₁ T₂ T₃ e f]
+  -- Now apply Fubini to swap the order of the two binds.
+  exact Multiset.bind_bind _ _
+
+/-- **FCM swap symmetry of `newPart`** — the new-edge multiset becomes
+    swap-symmetric under `.map toFCM`, via §10b lemmas. -/
+theorem newPart_swap_under_toFCM (T₁ T₂ T₃ : TraceTree α β) :
+    (newPart T₁ T₂ T₃).map toFCM = (newPart T₁ T₃ T₂).map toFCM := by
+  unfold newPart
+  rw [Multiset.map_bind, Multiset.map_bind]
+  apply Multiset.bind_congr
+  intro e _
+  -- Per `e`, expand both sides to a 3-element multiset of FCM trees,
+  -- then apply §10b swap-collapse lemmas + a single cons_swap.
+  rw [Multiset.map_map, Multiset.map_map]
+  show (↑[(toFCM ∘ (fun ne => insertAt ne T₃)) (Edge.newE1 e T₂),
+          (toFCM ∘ (fun ne => insertAt ne T₃)) (Edge.newE2 e T₂),
+          (toFCM ∘ (fun ne => insertAt ne T₃)) (Edge.newEprime e T₂)]
+            : Multiset (FreeCommMagma (α ⊕ β)))
+       = ↑[(toFCM ∘ (fun ne => insertAt ne T₂)) (Edge.newE1 e T₃),
+            (toFCM ∘ (fun ne => insertAt ne T₂)) (Edge.newE2 e T₃),
+            (toFCM ∘ (fun ne => insertAt ne T₂)) (Edge.newEprime e T₃)]
+  show (↑[toFCM (insertAt (Edge.newE1 e T₂) T₃),
+          toFCM (insertAt (Edge.newE2 e T₂) T₃),
+          toFCM (insertAt (Edge.newEprime e T₂) T₃)]
+            : Multiset (FreeCommMagma (α ⊕ β)))
+       = ↑[toFCM (insertAt (Edge.newE1 e T₃) T₂),
+            toFCM (insertAt (Edge.newE2 e T₃) T₂),
+            toFCM (insertAt (Edge.newEprime e T₃) T₂)]
+  rw [toFCM_insertAt_newE1_eq_newE2_swap T₂ T₃ e,
+      toFCM_insertAt_newE2_eq_newE1_swap T₂ T₃ e,
+      toFCM_insertAt_newEprime_swap T₂ T₃ e]
+  -- LHS: [toFCM (insertAt (newE2 e T₃) T₂), toFCM (insertAt (newE1 e T₃) T₂),
+  --        toFCM (insertAt (newEprime e T₃) T₂)]
+  -- RHS: [toFCM (insertAt (newE1 e T₃) T₂), toFCM (insertAt (newE2 e T₃) T₂),
+  --        toFCM (insertAt (newEprime e T₃) T₂)]
+  -- Differ by transposition of the first two — equal as multisets.
+  show ((toFCM (insertAt (Edge.newE2 e T₃) T₂)) ::ₘ
+        (toFCM (insertAt (Edge.newE1 e T₃) T₂)) ::ₘ
+        (toFCM (insertAt (Edge.newEprime e T₃) T₂)) ::ₘ 0)
+     = ((toFCM (insertAt (Edge.newE1 e T₃) T₂)) ::ₘ
+        (toFCM (insertAt (Edge.newE2 e T₃) T₂)) ::ₘ
+        (toFCM (insertAt (Edge.newEprime e T₃) T₂)) ::ₘ 0)
+  exact Multiset.cons_swap _ _ _
+
+/-! #### §11.3.3: Combine — basis-triple FCM pre-Lie identity -/
+
+/-- **Basis-triple FCM pre-Lie identity** (basis case of MCB Lemma 1.7.2,
+    book pp. 77-78). The pre-Lie associator under `mapFCM` is symmetric
+    in T₂, T₃ on basis triples.
+
+    **Proof structure** (book §1.7.2, p. 78):
+    1. Bridge to multisets via `mapFCM_toFinsuppZ_lift_*`.
+    2. Decompose `(T₁ ◁ T₂).bind (· ◁ T₃)` via `bind_insertAt_decomp` into
+       lifted + preserved + new.
+    3. The lifted part equals `(T₂ ◁ T₃).bind (T₁ ◁ ·)` via `liftedPart_eq`,
+       cancelling the second term of LHS.
+    4. By `preservedPart_swap` and `newPart_swap_under_toFCM`, the residual
+       `preserved + new` is FCM-symmetric in (T₂, T₃). -/
 theorem mapFCM_insertSumLift_basis_preLie (T₁ T₂ T₃ : TraceTree α β) :
     mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ Finsupp.single T₂ 1
               ◇ Finsupp.single T₃ 1
             - Finsupp.single T₁ 1 ◇ (Finsupp.single T₂ 1 ◇ Finsupp.single T₃ 1))
       = mapFCM (Finsupp.single T₁ 1 ◇ Finsupp.single T₃ 1 ◇ Finsupp.single T₂ 1
             - Finsupp.single T₁ 1 ◇ (Finsupp.single T₃ 1 ◇ Finsupp.single T₂ 1)) := by
-  sorry
+  -- Step 1: Apply `insertSumLift_single_basis` to reduce inner singletons.
+  rw [insertSumLift_single_basis T₁ T₂, insertSumLift_single_basis T₂ T₃,
+      insertSumLift_single_basis T₁ T₃, insertSumLift_single_basis T₃ T₂]
+  rw [mapFCM_sub, mapFCM_sub]
+  -- Step 2: Bridge to multisets.
+  rw [show insertSumZ T₁ T₂ = Multiset.toFinsuppZ (T₁ ◁ T₂) from rfl,
+      show insertSumZ T₂ T₃ = Multiset.toFinsuppZ (T₂ ◁ T₃) from rfl,
+      show insertSumZ T₁ T₃ = Multiset.toFinsuppZ (T₁ ◁ T₃) from rfl,
+      show insertSumZ T₃ T₂ = Multiset.toFinsuppZ (T₃ ◁ T₂) from rfl]
+  rw [mapFCM_toFinsuppZ_lift_right, mapFCM_toFinsuppZ_lift_left,
+      mapFCM_toFinsuppZ_lift_right, mapFCM_toFinsuppZ_lift_left]
+  -- Step 3: Apply bind_insertAt_decomp + liftedPart_eq.
+  rw [bind_insertAt_decomp T₁ T₂ T₃, ← liftedPart_eq T₁ T₂ T₃,
+      bind_insertAt_decomp T₁ T₃ T₂, ← liftedPart_eq T₁ T₃ T₂]
+  -- Step 4: Distribute toFCM-map and toFinsuppZFCM over `+`, then cancel
+  --         the lifted parts using preservedPart_swap and newPart_swap_under_toFCM.
+  rw [Multiset.map_add, Multiset.map_add, Multiset.toFinsuppZFCM_add,
+      Multiset.toFinsuppZFCM_add,
+      Multiset.map_add, Multiset.map_add, Multiset.toFinsuppZFCM_add,
+      Multiset.toFinsuppZFCM_add]
+  rw [show preservedPart T₁ T₂ T₃ = preservedPart T₁ T₃ T₂ from
+        preservedPart_swap T₁ T₂ T₃,
+      show (newPart T₁ T₂ T₃).map toFCM = (newPart T₁ T₃ T₂).map toFCM from
+        newPart_swap_under_toFCM T₁ T₂ T₃]
+  abel
 
 /-! ### §11.4: Trilinearity reduction → close the headline -/
 
