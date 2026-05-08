@@ -2,8 +2,6 @@ import Linglib.Core.Combinatorics.RootedTree.Planar
 
 set_option autoImplicit false
 
-universe u
-
 /-!
 # Admissible cuts on planar n-ary rooted trees
 @cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
@@ -16,11 +14,15 @@ deleting the selected edges, T decomposes into:
   separated from the root after the deletion.
 - The *remainder*: the connected component containing the root, which
   comes in two flavors:
-  - **Deletion** `remainderDeletion c`: just delete the cut subtrees;
-    the parent vertex now has fewer children. (MCB §1.2.4 T/^p; book p. 100.)
-  - **Trace** `remainderTrace c` (requires `[Inhabited α]`): replace
-    each cut subtree with a single trace-leaf labeled `default`; the
-    parent's arity is preserved. (MCB §1.2.4 T/^c; book p. 100.)
+  - **`remainderDeletion`** ≈ MCB's `T/^p` (admissible cut, Definition 1.2.6,
+    book p. 31): just remove the cut subtrees; the parent vertex now has
+    fewer children, so the remainder lives in the *at-most-n-ary* substrate
+    (Lemma 1.2.11, book p. 38). NOT MCB's `T/^d` (Definition 1.2.5),
+    which would re-binarize via edge contraction.
+  - **`remainderTrace`** ≈ MCB's `T/^c` (contraction, Definition 1.2.4,
+    book p. 30; requires `[Inhabited α]`): replace each cut subtree with
+    a single trace-leaf labeled `default`; the parent's arity is preserved.
+    Used at the C-I (semantic) interface for FormCopy.
 
 This file provides admissible cuts on `RootedTree.Planar α` (the
 list-based n-ary planar carrier from `Planar.lean`). The cuts work
@@ -32,17 +34,22 @@ uniformly across arities — the binary case inherits as a subtype.
 
 ## MCB anchor
 
-@cite{marcolli-chomsky-berwick-2025} Definition 1.2.6 (book p. 32) for
-the admissible cut definition; Lemma 1.2.7 for the equivalence with
-forest extraction. §1.11.6 (book p. 100) for the two remainder
-flavors `T/^c` (trace) and `T/^p` (deletion).
+@cite{marcolli-chomsky-berwick-2025} Definition 1.2.6 (book p. 31) for
+the admissible cut definition; Lemma 1.2.7 (book p. 32) for the
+equivalence with forest extraction. Definitions 1.2.4 (T/^c, p. 30),
+1.2.5 (T/^d, p. 31), 1.2.6 (T/^p, p. 31) for the three remainder
+flavors. We expose `remainderDeletion` (T/^p, p. 31) and
+`remainderTrace` (T/^c, p. 30); MCB's T/^d (deletion-then-rebinarize)
+is not directly exposed here since it's the closest to the consumer-
+visible "Externalization" form (PF interface) and can be derived from
+T/^p via tree-binarization at the algebra layer.
 -/
 
 namespace RootedTree
 
 namespace Planar
 
-variable {α : Type u}
+variable {α : Type*}
 
 /-! ## §1: The `Cut` inductive
 
@@ -56,20 +63,20 @@ mutual
 /-- An admissible cut on a tree T: at the root vertex, a per-child
     cut decision for each child. (For a leaf, the empty list of
     children gives the unique trivial cut.) -/
-inductive Cut : Planar α → Type u
+inductive Cut : Planar α → Type _
   /-- A cut on a tree, given as a per-child decision list (matching
       the children list of the root by length). -/
   | mk {a : α} {cs : List (Planar α)} (decisions : ChildCutList cs) : Cut (.node a cs)
 /-- A per-child cut decision: either `extract` (cut the edge and
     extract this subtree whole) or `recurse cut` (keep this edge,
     apply `cut` to the subtree). -/
-inductive ChildCut : Planar α → Type u
+inductive ChildCut : Planar α → Type _
   /-- Extract this subtree whole. -/
   | extract (t : Planar α) : ChildCut t
   /-- Don't cut at this edge; recurse into the subtree. -/
   | recurse {t : Planar α} (c : Cut t) : ChildCut t
 /-- A list of `ChildCut` decisions, indexed by the children list. -/
-inductive ChildCutList : List (Planar α) → Type u
+inductive ChildCutList : List (Planar α) → Type _
   | nil : ChildCutList []
   | cons {t : Planar α} {ts : List (Planar α)} (d : ChildCut t) (ds : ChildCutList ts) :
       ChildCutList (t :: ts)

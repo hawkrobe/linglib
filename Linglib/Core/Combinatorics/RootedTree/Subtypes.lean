@@ -2,8 +2,6 @@ import Linglib.Core.Combinatorics.RootedTree.Planar
 
 set_option autoImplicit false
 
-universe u
-
 /-!
 # Arity-restricted subtypes of `RootedTree.Planar`
 @cite{marcolli-chomsky-berwick-2025}
@@ -34,7 +32,7 @@ namespace RootedTree
 
 namespace Planar
 
-variable {α : Type u}
+variable {α : Type*}
 
 /-! ## §1: Predicate machinery — recursive over tree structure -/
 
@@ -121,15 +119,15 @@ instance (t : Planar α) : Decidable (isBinary t) :=
 /-! ## §3: Subtypes -/
 
 /-- The subtype of trees with arity ≤ `n` everywhere. -/
-abbrev SubAtMost (n : Nat) (α : Type u) : Type u :=
+abbrev SubAtMost (n : Nat) (α : Type*) : Type _ :=
   { t : Planar α // isAtMost n t }
 
 /-- The subtype of trees with arity exactly `n` at every internal vertex. -/
-abbrev SubExactly (n : Nat) (α : Type u) : Type u :=
+abbrev SubExactly (n : Nat) (α : Type*) : Type _ :=
   { t : Planar α // isExactly n t }
 
 /-- The subtype of binary (full-binary) trees. -/
-abbrev SubBinary (α : Type u) : Type u :=
+abbrev SubBinary (α : Type*) : Type _ :=
   { t : Planar α // isBinary t }
 
 /-! ## §4: Sanity checks -/

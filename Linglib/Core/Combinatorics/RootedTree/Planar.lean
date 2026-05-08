@@ -4,8 +4,6 @@ import Mathlib.Logic.Equiv.Defs
 
 set_option autoImplicit false
 
-universe u v
-
 /-!
 # Planar n-ary rooted trees with vertex labels in `α`
 @cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
@@ -70,12 +68,12 @@ label and `cs : List (Planar α)` is the ordered list of children.
 Leaves are `node a []`. -/
 
 /-- A planar rooted tree with α-labeled vertices and ordered children. -/
-inductive Planar (α : Type u) : Type u
+inductive Planar (α : Type*) : Type _
   | node (a : α) (cs : List (Planar α)) : Planar α
 
 namespace Planar
 
-variable {α : Type u}
+variable {α : Type*}
 
 /-! ## §2: Basic projections -/
 

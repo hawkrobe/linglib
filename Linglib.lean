@@ -1885,7 +1885,7 @@ import Linglib.Core.Combinatorics.RootedTree.Subtypes
 import Linglib.Core.Combinatorics.RootedTree.PlanarCut
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Algebra.RootedTree.CoproductDeletion
+import Linglib.Core.Algebra.RootedTree.Coproduct
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
@@ -2699,7 +2699,7 @@ import Linglib.Theories.Phonology.ParadigmUniformity.OptimalParadigms
 import Linglib.Theories.Phonology.ParadigmUniformity.LexicalConservatism
 import Linglib.Theories.Phonology.ParadigmUniformity.Antifaithfulness
 import Linglib.Theories.Phonology.ParadigmUniformity.Transderivational
-import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
+import Linglib.Theories.Phonology.OptimalityTheory.Stratal
 import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Theories.Phonology.OptimalityTheory.Doubling
 import Linglib.Theories.Phonology.Subregular.TierProjection

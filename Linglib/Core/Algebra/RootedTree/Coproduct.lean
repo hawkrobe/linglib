@@ -5,52 +5,63 @@ import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 
 set_option autoImplicit false
 
-universe u
-
 /-!
-# Δ^p (deletion) coproduct on `RootedTree.Planar α`
+# Δ^p (admissible-cut) coproduct on `RootedTree.Planar α`
 @cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
 
-The **deletion variant** of the Connes-Kreimer coproduct on planar
-n-ary rooted trees. For a tree T:
+The **admissible-cut variant** of the Connes-Kreimer coproduct on
+planar n-ary rooted trees. For a tree T:
 
   Δ^p(T) = T ⊗ 1 + Σ_{c : Cut T} of'(cutForest c) ⊗ ofTree(remainderDeletion c)
 
 where the empty cut contributes `1 ⊗ T` (since cutForest empty = ∅).
 
-**The deletion variant** removes cut subtrees entirely, so the parent
-vertex's arity decreases. The result lives in `Planar α` (no trace
-markers needed). MCB §1.11.6 calls this `T/^p T_v`.
+**Naming** follows MCB Definition 1.2.6 (book p. 31): T/^p F_v removes
+cut subtrees, leaving the parent with fewer children. The result lives
+in *at-most-n-ary* trees (Lemma 1.2.11, book p. 38). Per MCB Remark 1.2.9
+(book p. 34), this Δ^p coproduct corresponds to the **Foissy
+Connes-Kreimer Hopf algebra of (not-necessarily-binary) rooted trees**,
+where the right channel can contain rooted trees that are not binary.
+NOT to be confused with MCB's Δ^d (Definition 1.2.5, deletion-then-
+rebinarize); that variant is the closest to PF Externalization and would
+be derived from this one at a higher layer.
 
-For the trace variant Δ^c (parent arity preserved via trace leaves),
-see `CoproductTrace.lean` (Phase D — substantive cuts-of-cuts content).
+For the trace variant Δ^c (T/^c F_v, parent arity preserved via
+trace leaves; MCB Definition 1.2.4, book p. 30), see the eventual
+sibling `CoproductDecorated.lean` (Phase D — substantive cuts-of-cuts
+content). MCB Δ^c on binary nonplanar = restriction of the
+Connes-Kreimer Hopf algebra of Feynman graphs (a different, related
+Hopf algebra; Remark 1.2.9, p. 34). Used at the C-I (semantic)
+interface for FormCopy.
 
 ## Foissy clean coassoc
 
-Δ^p satisfies the Hochschild 1-cocycle condition with B+:
+Δ^p satisfies the Hochschild 1-cocycle condition with B+ (graft as
+new root):
 
   Δ^p ∘ B+_a = B+_a ⊗ 1 + (id ⊗ B+_a) ∘ Δ^p
 
-where B+_a (forest) = the tree with new root labeled a and the forest as
-children. This is what makes the Foissy clean proof of coassoc work
-(see `Cocycle.lean` and `Bialgebra.lean`).
+The B+ operator only well-defines on `Multiset (Nonplanar α) → Nonplanar α`
+(unordered children of a new root). On `Planar α` with `Multiset`
+forests, B+ would need a canonical ordering. Hence the eventual
+sorry-free coassoc proof for Δ^p will be on `RootedTree.Nonplanar α`
+once the smart-constructor `Nonplanar.node : α → Multiset (Nonplanar α) → Nonplanar α`
+lands. See `Cocycle.lean` and `Bialgebra.lean` (deferred).
 
 ## Status
 
-`[UPSTREAM]` candidate. cutSummands recursive definition mirrors the
-legacy `cutSummands` for FCM CK but for n-ary planar without traces.
+`[UPSTREAM]` candidate. cutSummands recursive definition; coassoc
+proof deferred to Phase A.7 (after Nonplanar smart constructor).
 -/
 
 namespace RootedTree
-
-namespace Algebra
 
 namespace ConnesKreimer
 
 open scoped TensorProduct
 open Finsupp
 
-variable {R : Type*} [CommSemiring R] {α : Type u}
+variable {R : Type*} [CommSemiring R] {α : Type*}
 
 /-! ## §1: cutSummandsP — multiset of (cut forest, deletion remainder) pairs
 
@@ -164,7 +175,5 @@ noncomputable def comulAlgHomP :
   simp only [Multiset.map_singleton, Multiset.prod_singleton]
 
 end ConnesKreimer
-
-end Algebra
 
 end RootedTree

@@ -5,8 +5,6 @@ import Mathlib.Data.Multiset.Basic
 
 set_option autoImplicit false
 
-universe u
-
 /-!
 # Connes-Kreimer Hopf algebra carrier on n-ary planar rooted trees
 @cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
@@ -48,15 +46,20 @@ T parameterized.
 
 ## Naming
 
-`Forest T := Multiset T` for the basis, `ConnesKreimer R T` for the
-algebra. Avoids shadowing the existing `FreeCommMagma.ConnesKreimer R α`
-in `Linglib/Core/Algebra/Free/ConnesKreimer.lean` (which is binary FCM
-specific).
+Type: `RootedTree.ConnesKreimer R T` with eponymous namespace
+`RootedTree.ConnesKreimer`. Eponymous-type-and-namespace pattern matches
+mathlib idiom (`Polynomial`, `WittVector`, `PowerSeries`, etc.) — no
+abbreviation. The legacy `open ConnesKreimer` statements in soon-to-be-
+rebuilt consumer files (Adger2025, Merge/*, etc.) referred to the now-
+deleted top-level `ConnesKreimer.{TraceTree, Hc, ...}` and won't compile
+against the new substrate anyway, so the silent re-binding hazard is
+moot — those files need full Phase D rewrites.
+
+The eventual upstream-mathlib home would be
+`Mathlib.RingTheory.HopfAlgebra.RootedTree.ConnesKreimer` or similar.
 -/
 
 namespace RootedTree
-
-namespace Algebra
 
 /-! ## §1: Forest type alias
 
@@ -64,7 +67,7 @@ A **forest** is a multiset of trees. Multiset addition is the disjoint
 union (forest concatenation). -/
 
 /-- A forest of T-shaped trees: finite multiset. -/
-abbrev Forest (T : Type u) : Type u := Multiset T
+abbrev Forest (T : Type*) : Type _ := Multiset T
 
 /-! ## §2: The Connes-Kreimer Hopf algebra carrier -/
 
@@ -72,7 +75,7 @@ abbrev Forest (T : Type u) : Type u := Multiset T
     `AddMonoidAlgebra R (Forest T)`. As an algebra: product = forest
     disjoint union (commutative), unit = empty forest. The Bialgebra
     structure (coproduct + coassoc + counit laws) is in sibling files. -/
-def ConnesKreimer (R : Type*) [CommSemiring R] (T : Type u) : Type _ :=
+def ConnesKreimer (R : Type*) [CommSemiring R] (T : Type*) : Type _ :=
   AddMonoidAlgebra R (Forest T)
 
 namespace ConnesKreimer
@@ -84,7 +87,7 @@ Bialgebra structure from mathlib's default `AddMonoidAlgebra.instBialgebra`
 (group-like coproduct). Forward `CommSemiring`, `Algebra`, and `FunLike`
 explicitly. -/
 
-variable {R : Type*} [CommSemiring R] {T : Type u}
+variable {R : Type*} [CommSemiring R] {T : Type*}
 
 noncomputable instance instCommSemiring : CommSemiring (ConnesKreimer R T) :=
   inferInstanceAs (CommSemiring (AddMonoidAlgebra R (Forest T)))
@@ -199,7 +202,5 @@ noncomputable def counit : ConnesKreimer R T →ₐ[R] R :=
   exact if_neg (by decide)
 
 end ConnesKreimer
-
-end Algebra
 
 end RootedTree

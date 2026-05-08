@@ -6,8 +6,6 @@ import Mathlib.Data.Multiset.Basic
 
 set_option autoImplicit false
 
-universe u
-
 /-!
 # Nonplanar n-ary rooted trees as a quotient of `Planar α`
 @cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
@@ -57,7 +55,7 @@ namespace RootedTree
 
 namespace Planar
 
-variable {α : Type u}
+variable {α : Type*}
 
 /-! ## §1: PlanarStep — elementary moves
 
@@ -186,11 +184,11 @@ end Planar
 
 /-- A nonplanar n-ary rooted tree with α-labeled vertices: the quotient
     of `Planar α` by `PlanarEquiv`. -/
-def Nonplanar (α : Type u) : Type u := Quotient (Planar.instSetoid : Setoid (Planar α))
+def Nonplanar (α : Type*) : Type _ := Quotient (Planar.instSetoid : Setoid (Planar α))
 
 namespace Nonplanar
 
-variable {α : Type u}
+variable {α : Type*}
 
 /-- The canonical projection from planar to nonplanar trees. -/
 def mk (t : Planar α) : Nonplanar α := Quotient.mk _ t

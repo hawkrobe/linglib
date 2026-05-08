@@ -26,8 +26,18 @@ Both `T₂` and `T₃` have empty edge sets, so `T₁ ◇ (T₂ ◁ T₃) = T₁
 and the pre-Lie identity reduces to `(T₁ ◁ T₂) ◇ T₃ = (T₁ ◁ T₃) ◇ T₂`
 at the multiset level. `decide` confirms this fails.
 
-See `docs/nonplanar-migration-plan.md` for the migration to nonplanar
-substrate (`FreeCommMagma α`) where the identity holds strictly. -/
+## FCM-native resolution (LANDED, Phase 3.E.4 2026-05-07)
+
+`Linglib/Core/Algebra/Free/PreLie.lean` formalizes the strict pre-Lie
+identity on the natural nonplanar carrier `(FreeCommMagma α) →₀ ℤ`:
+
+  `FreeCommMagma.insertSumLift_right_preLie : ∀ f g h, f ◇ g ◇ h - f ◇ (g ◇ h) = f ◇ h ◇ g - f ◇ (h ◇ g)`
+
+with `RightPreLieRing` / `RightPreLieAlgebra ℤ` / `LieRing` /
+`LieAlgebra ℤ` instances on `FreeCommMagma.InsertionAlgebra α`. The
+counterexample below remains as motivation for choosing the nonplanar
+carrier: on planar `TraceTree`, the (c) `newEprime` Case 3 sub-pair
+demonstrably differs; the FCM `Quot.sound .swap` collapses it. -/
 
 open ConnesKreimer
 open ConnesKreimer.TraceTree
