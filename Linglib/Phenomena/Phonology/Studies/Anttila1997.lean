@@ -1,3 +1,4 @@
+import Linglib.Core.Constraint.PartiallyOrderedConstraints
 import Linglib.Core.Constraint.PermSubsetCombinatorics
 import Mathlib.Tactic.NormNum
 
@@ -15,12 +16,12 @@ under which that variant wins.
 
 Anttila stratifies 16 constraints into 5 mutually-ranked strata, with
 internal random ordering within each stratum
-(@cite{anttila-1997} (49)–(50)):
+(@cite{anttila-1997} eq. (49)–(50), page 21):
 
   Set 1 ≫ Set 2 ≫ Set 3 ≫ Set 4 ≫ Set 5
 
-  - Set 1: \*X.X̀ (1 constraint, NoClash)
-  - Set 2: \*L̀, \*H̀ (2 constraints)
+  - Set 1: \*X̀.X̀ (1 constraint, NoClash)
+  - Set 2: \*L̀, \*H̀ (2 constraints; secondary-stress *L, *H)
   - Set 3: \*H/I, \*Í, \*L.L (3 constraints)
   - Set 4: \*H/O, \*Ó, \*L/A, \*H.H, \*X.X, \*H́ (6 constraints; final
     constraint is `*H́` acute = primary-stressed-heavy, distinct from
@@ -29,216 +30,338 @@ internal random ordering within each stratum
 
 ## Substrate consumption
 
-Each variant comparison this paper formalizes is decided by the
-internal ordering of *one* stratum (the variants share violations in
-all higher strata). Within that stratum, the variant choice is the
-classic head-in-Y predicate: the variant that the highest-ranked
-distinguishing constraint penalizes less wins. So
-`Core.Constraint.PermSubsetCombinatorics.perm_filter_head_in_card`
-gives each prediction in closed form:
+This file routes through the project's POC (Partially Ordered
+Constraints) substrate. For each motif, a violation-profile function
+`vp : Input → Variant → Fin n → ℕ` derives `relevant` (where vp
+disagrees on the two variants) and `yesFav` (where vp favors the
+chosen variant). `pocPredict` over `discrete n` (uniform sampling
+over all `n!` total orders) gives the variant probability;
+`picksAt_rate_eq` reduces `pocPredict` to `|Y ∩ D| / |D|` in closed
+form — no enumeration of `n!` rankings.
 
-  `count × |D| = n! × |Y ∩ D|`
+Two POC instances, one per stratum:
 
-where `n = |stratum|`, `D` = constraints distinguishing the variants
-within that stratum, `Y` = constraints that favor the chosen variant.
-Variant probability = `count / n!`.
+- **Set 3 (n = 3)**: motif 3ab only. Input is `Unit` (single motif).
+- **Set 4 (n = 6)**: motifs 4ab and 5ab. Input is `Set4Motif` to
+  distinguish the two motifs' violation profiles.
+
+## Note on candidate-feature substrate
+
+We stipulate violation profiles via `vp` rather than defining
+`NamedConstraint` instances. This matches Anttila's own level of
+abstraction: the paper works directly with violation profiles
+(@cite{anttila-1997} page 22: "knowing that the weak variant violates
+one constraint (\*L.L) while the strong variant violates two (\*H/I,
+\*Í) gives us the result directly"). True `NamedConstraint`
+formalisations would require a Finnish syllable substrate (input
+forms with stress / weight / sonority features feeding into syllable
+structure) which doesn't yet exist in linglib.
 
 ## Predictions formalized
 
-From @cite{anttila-1997} table 53:
+From @cite{anttila-1997} table 52 (page 22) and table 53 (page 23):
 
   - **3ab** (`L.TÍI` ∼ `L.TI`, e.g. `naa.pu.rei.den` ∼ `naa.pu.ri.en`):
-    decided in Set 3 (n=3). Weak (`L.TI`) wins 2/3, strong wins 1/3.
+    decided in Set 3 (n=3). Strong wins 1/3, weak wins 2/3.
+    Observed: 36.9% / 63.1% (215 / 368 corpus tokens).
   - **4ab** (`H.TÁA` ∼ `H.TA`, e.g. `máa.il.mòi.den` ∼ `máa.il.mo.jen`):
     decided in Set 4 (n=6) with both variants violating two Set-4
     constraints. Each wins 1/2.
+    Observed: 50.5% / 49.5% (46 / 45 corpus tokens).
   - **5ab** (`H.TÓO` ∼ `H.TO`, e.g. `kór.jaa.mòi.den` ∼ `kór.jaa.mo.jen`):
-    decided in Set 4. Strong (`H.TÓO`) wins 1/5, weak wins 4/5.
+    decided in Set 4. Strong wins 1/5, weak wins 4/5.
+    Observed: 17.8% / 82.2% (76 / 350 corpus tokens).
 
-The categorical motifs (1ab, 2ab, 6ab → 100%/0%) follow from
-higher-stratum constraints decisively favoring one variant; we don't
-formalize them here.
+## Out of scope
 
-## Same closed form as @cite{zuraw-2010}
+- **Categorical motifs 1ab, 2ab, 6ab.** Per @cite{anttila-1997} table 52,
+  these are decided by Set 1 (NoClash) and Set 2 (\*L̀ / \*H̀), which this
+  file doesn't model. The categorical predictions follow from
+  higher-stratum constraints decisively favoring one variant.
+- **`NamedConstraint` instances** for \*H/I, \*Í, \*L.L, etc. — would
+  require a Finnish syllable substrate (see "Note on candidate-feature
+  substrate" above).
+- **Observed-vs-predicted comparison theorems.** The paper's table 53
+  shows a small gap between predicted (1/3, 2/3, 1/2, 1/2, 1/5, 4/5)
+  and observed; this gap is empirical noise around the discrete
+  prediction (the paper itself notes "as the quantitative predictions
+  of our model are discrete probabilities (1/2, 1/3, 1/5 etc.) it
+  would be difficult to get any closer", page 23).
 
-Zuraw's Tagalog factorial typology and Anttila's Finnish variation
-predictions both reduce to the same substrate theorem. The reusability
-across two phonological domains (English-style segmental constraints
-vs. prosodic syllable-prominence constraints) validates the
-abstraction.
+## Same closed form as @cite{zuraw-2010}, @cite{coetzee-pater-2011}
 
-## Implementation note
-
-We state each prediction as a theorem about
-`(Finset.univ.filter <explicit-predicate>).card`, not via a named
-intermediate `def count_*` wrapper. Wrapping the filter card in a
-named def causes Lean's typeclass elaboration to walk through the
-Decidable instance for the predicate during theorem-statement
-elaboration, which interacts badly with subsequent `rw` steps inside
-the proof — the fix is to state theorems in the unfolded form.
+Anttila's Finnish variation, Zuraw's Tagalog factorial typology, and
+Coetzee & Pater's English t/d-deletion all reduce to the same
+substrate predictor `pocPredict (discrete n)` with binary candidate
+spaces — variant probability = `|Y ∩ D| / |D|` (where D distinguishes
+and Y favors the chosen variant). The reusability across three
+phonological domains validates the abstraction; see
+`Phenomena/Phonology/Studies/Zuraw2010.lean` and
+`Phenomena/Phonology/Studies/CoetzeePater2011.lean` for sister
+consumers.
 -/
 
 namespace Anttila1997
 
-open Core.Constraint.PermSubsetCombinatorics
+open Core.Constraint Core.Constraint.PartialOrderConstraints
+
+/-! ## § 0: Variant type — strong vs weak genitive plural -/
+
+/-- The two genitive-plural variants: strong (heavy penult, final
+    syllable onset /t/ or /d/) vs weak (light penult, onset /j/ or
+    absent). See @cite{anttila-1997} ex. (1) page 3. -/
+inductive Variant
+  | strong
+  | weak
+  deriving DecidableEq, Repr, Fintype
+
+/-- The opposite variant: `strong ↔ weak`. -/
+def Variant.other : Variant → Variant
+  | .strong => .weak
+  | .weak   => .strong
+
+@[simp] theorem Variant.other_strong : Variant.other .strong = .weak := rfl
+@[simp] theorem Variant.other_weak   : Variant.other .weak   = .strong := rfl
+
+/-- The two variants are distinct. -/
+theorem Variant.ne_other : ∀ v : Variant, v ≠ v.other
+  | .strong => fun heq => Variant.noConfusion heq
+  | .weak   => fun heq => Variant.noConfusion heq
 
 -- ============================================================================
--- § 1: Set 3 — three constraints, n = 3
+-- § 1: Set 3 — three constraints, n = 3 (motif 3ab)
 -- ============================================================================
 
-/-- Set-3 constraint indices: `*H/I = 0`, `*Í = 1`, `*L.L = 2`. -/
-def D3ab : Finset (Fin 3) := {0, 1, 2}
+/-- Set-3 candidate set per (trivial, single-motif) input. -/
+def m3Cands : Unit → Finset Variant := fun _ => Finset.univ
 
-/-- Constraints favoring strong `L.TÍI`: only `*L.L` (which `L.TI`
-    violates). -/
-def Y_LTII : Finset (Fin 3) := {2}
+/-- Set-3 violation profile for motif 3ab (`L.TÍI` ∼ `L.TI`). Constraint
+    indexing matches @cite{anttila-1997} eq. (50): `*H/I = 0`, `*Í = 1`,
+    `*L.L = 2`. Strong (`L.TÍI`) violates `*H/I` and `*Í`; weak (`L.TI`)
+    violates `*L.L`. -/
+def m3Vp : Unit → Variant → Fin 3 → ℕ
+  | (), .strong, ⟨0, _⟩ => 1   -- L.TÍI violates *H/I
+  | (), .strong, ⟨1, _⟩ => 1   -- L.TÍI violates *Í
+  | (), .weak,   ⟨2, _⟩ => 1   -- L.TI   violates *L.L
+  | _,  _,       _      => 0
 
-/-- Constraints favoring weak `L.TI`: `*H/I` and `*Í` (which `L.TÍI`
-    violates). -/
-def Y_LTI : Finset (Fin 3) := {0, 1}
+/-- Constraints in Set 3 that distinguish strong from weak for motif 3ab. -/
+def relevant_3 : Finset (Fin 3) :=
+  Finset.univ.filter (fun i => m3Vp () .strong i ≠ m3Vp () .weak i)
 
-/-- **Strong `L.TÍI` wins 1/3 of Set-3 rankings**: 2 out of 6.
-    Closed form via `perm_filter_head_in_card`: `count × 3 = 6 × 1`. -/
-theorem strong_3ab_count :
-    (Finset.univ.filter (fun σ : Equiv.Perm (Fin 3) =>
-      ∃ x ∈ Y_LTII, (permDList σ D3ab).head? = some x)).card = 2 := by
-  have h := perm_filter_head_in_card D3ab Y_LTII
-  have h6 : Nat.factorial 3 = 6 := by decide
-  have hD : D3ab.card = 3 := by decide
-  have hY : (Y_LTII ∩ D3ab).card = 1 := by decide
-  rw [h6, hD, hY] at h
-  omega
+/-- Constraints in Set 3 that favor strong for motif 3ab. -/
+def yesFav_3_strong : Finset (Fin 3) :=
+  Finset.univ.filter (fun i => m3Vp () .strong i < m3Vp () .weak i)
 
-/-- **Weak `L.TI` wins 2/3 of Set-3 rankings**: 4 out of 6. Matches
+/-- Constraints in Set 3 that favor weak for motif 3ab. -/
+def yesFav_3_weak : Finset (Fin 3) :=
+  Finset.univ.filter (fun i => m3Vp () .weak i < m3Vp () .strong i)
+
+@[simp] theorem relevant_3_eq : relevant_3 = ({0, 1, 2} : Finset (Fin 3)) := by decide
+@[simp] theorem yesFav_3_strong_eq : yesFav_3_strong = ({2} : Finset (Fin 3)) := by decide
+@[simp] theorem yesFav_3_weak_eq : yesFav_3_weak = ({0, 1} : Finset (Fin 3)) := by decide
+
+/-- Variant probability via POC sampling under the discrete partial order. -/
+def subProb_3 (v : Variant) : ℚ :=
+  pocPredict m3Cands m3Vp (discrete 3) () v
+
+/-- The candidate set for motif 3, written as `{v, v.other}` for any
+    variant `v` (used to satisfy `picksAt_rate_eq`'s two-cand hypothesis
+    for both choices of `chosen`). -/
+private theorem m3Cands_eq_pair (v : Variant) :
+    m3Cands () = ({v, v.other} : Finset Variant) := by
+  unfold m3Cands; cases v <;> (ext o; cases o <;> simp [Variant.other])
+
+/-- Bridge from `pocPredict` to closed-form rate `|Y ∩ D| / |D|` for
+    motif 3, factored once and reused by both rate theorems. -/
+private theorem subProb_3_eq_rate (v : Variant)
+    (D Y : Finset (Fin 3))
+    (h_D : ∀ k, k ∈ D ↔ m3Vp () v k ≠ m3Vp () v.other k)
+    (h_Y : ∀ k, k ∈ Y ↔ m3Vp () v k < m3Vp () v.other k) :
+    subProb_3 v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
+  unfold subProb_3 pocPredict
+  rw [consistentTotalOrders_discrete, Finset.card_univ,
+      Fintype.card_perm, Fintype.card_fin]
+  exact picksAt_rate_eq m3Cands m3Vp () v v.other
+    (m3Cands_eq_pair v) (Variant.ne_other v) D Y h_D h_Y
+
+/-- **Strong `L.TÍI` wins 1/3 of Set-3 rankings**. Closed form via
+    `picksAt_rate_eq`: `|{2} ∩ {0,1,2}| / |{0,1,2}| = 1/3`. -/
+theorem strongProb_3_eq : subProb_3 .strong = 1/3 := by
+  rw [subProb_3_eq_rate .strong relevant_3 yesFav_3_strong
+        (fun k => by simp [relevant_3])
+        (fun k => by simp [yesFav_3_strong]),
+      relevant_3_eq, yesFav_3_strong_eq,
+      show (({2} : Finset (Fin 3)) ∩ {0, 1, 2}).card = 1 from by decide,
+      show ({0, 1, 2} : Finset (Fin 3)).card = 3 from by decide]
+  norm_num
+
+/-- **Weak `L.TI` wins 2/3 of Set-3 rankings**. Matches
     @cite{anttila-1997}'s observed frequency 63.1% for `naa.pu.ri.en`
     (table 53, row 3b). -/
-theorem weak_3ab_count :
-    (Finset.univ.filter (fun σ : Equiv.Perm (Fin 3) =>
-      ∃ x ∈ Y_LTI, (permDList σ D3ab).head? = some x)).card = 4 := by
-  have h := perm_filter_head_in_card D3ab Y_LTI
-  have h6 : Nat.factorial 3 = 6 := by decide
-  have hD : D3ab.card = 3 := by decide
-  have hY : (Y_LTI ∩ D3ab).card = 2 := by decide
-  rw [h6, hD, hY] at h
-  omega
-
-/-- The two Set-3 outcomes partition the 6 rankings. -/
-theorem strong_plus_weak_3ab :
-    (Finset.univ.filter (fun σ : Equiv.Perm (Fin 3) =>
-      ∃ x ∈ Y_LTII, (permDList σ D3ab).head? = some x)).card +
-    (Finset.univ.filter (fun σ : Equiv.Perm (Fin 3) =>
-      ∃ x ∈ Y_LTI, (permDList σ D3ab).head? = some x)).card = 6 := by
-  rw [strong_3ab_count, weak_3ab_count]
+theorem weakProb_3_eq : subProb_3 .weak = 2/3 := by
+  rw [subProb_3_eq_rate .weak relevant_3 yesFav_3_weak
+        (fun k => by
+          simp only [relevant_3, Finset.mem_filter, Finset.mem_univ, true_and]
+          exact ⟨fun h => h.symm, fun h => h.symm⟩)
+        (fun k => by simp [yesFav_3_weak]),
+      relevant_3_eq, yesFav_3_weak_eq,
+      show (({0, 1} : Finset (Fin 3)) ∩ {0, 1, 2}).card = 2 from by decide,
+      show ({0, 1, 2} : Finset (Fin 3)).card = 3 from by decide]
+  norm_num
 
 -- ============================================================================
--- § 2: Set 4 — six constraints, n = 6
+-- § 2: Set 4 — six constraints, n = 6 (motifs 4ab and 5ab)
 -- ============================================================================
 
-/-- For motif 4ab (`H.TÁA` ∼ `H.TA`): both variants violate two Set-4
-    constraints, but disjoint pairs.
-    `H.TÁA` violates `*H.H = 3`, `*H́ = 5`.
-    `H.TA` violates `*L/A = 2`, `*X.X = 4`.
-    Distinguishing constraints: union `{2, 3, 4, 5}`. -/
-def D4ab : Finset (Fin 6) := {2, 3, 4, 5}
+/-- The two motifs decided by Set 4: 4ab (`H.TÁA` ∼ `H.TA`) and 5ab
+    (`H.TÓO` ∼ `H.TO`). They share the same six-constraint stratum but
+    have different violation profiles. -/
+inductive Set4Motif
+  | four
+  | five
+  deriving DecidableEq, Repr, Fintype
 
-/-- Constraints favoring strong `H.TÁA`: `H.TA`'s violations `{2, 4}`. -/
-def Y_HTAA : Finset (Fin 6) := {2, 4}
+/-- Set-4 candidate set per motif. -/
+def m45Cands : Set4Motif → Finset Variant := fun _ => Finset.univ
 
-/-- Constraints favoring weak `H.TA`: `H.TÁA`'s violations `{3, 5}`. -/
-def Y_HTA : Finset (Fin 6) := {3, 5}
+/-- Set-4 violation profile for motifs 4ab and 5ab. Constraint indexing
+    matches @cite{anttila-1997} eq. (50): `*H/O = 0`, `*Ó = 1`,
+    `*L/A = 2`, `*H.H = 3`, `*X.X = 4`, `*H́ = 5`.
 
-/-- **Strong `H.TÁA` wins 1/2 of Set-4 rankings** (4ab is symmetric).
-    Closed form: `count × 4 = 720 × 2 = 1440`, so `count = 360`. -/
-theorem strong_4ab_count :
-    (Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) =>
-      ∃ x ∈ Y_HTAA, (permDList σ D4ab).head? = some x)).card = 360 := by
-  have h := perm_filter_head_in_card D4ab Y_HTAA
-  have h720 : Nat.factorial 6 = 720 := by decide
-  have hD : D4ab.card = 4 := by decide
-  have hY : (Y_HTAA ∩ D4ab).card = 2 := by decide
-  rw [h720, hD, hY] at h
-  omega
+    Motif 4ab (`H.TÁA` ∼ `H.TA`): strong violates `*H.H, *H́`; weak
+    violates `*L/A, *X.X` (per @cite{anttila-1997} table 52).
+    Motif 5ab (`H.TÓO` ∼ `H.TO`): strong violates `*H/O, *Ó, *H.H, *H́`;
+    weak violates only `*X.X`. -/
+def m45Vp : Set4Motif → Variant → Fin 6 → ℕ
+  | .four, .strong, ⟨3, _⟩ => 1   -- H.TÁA violates *H.H
+  | .four, .strong, ⟨5, _⟩ => 1   -- H.TÁA violates *H́
+  | .four, .weak,   ⟨2, _⟩ => 1   -- H.TA  violates *L/A
+  | .four, .weak,   ⟨4, _⟩ => 1   -- H.TA  violates *X.X
+  | .five, .strong, ⟨0, _⟩ => 1   -- H.TÓO violates *H/O
+  | .five, .strong, ⟨1, _⟩ => 1   -- H.TÓO violates *Ó
+  | .five, .strong, ⟨3, _⟩ => 1   -- H.TÓO violates *H.H
+  | .five, .strong, ⟨5, _⟩ => 1   -- H.TÓO violates *H́
+  | .five, .weak,   ⟨4, _⟩ => 1   -- H.TO  violates *X.X
+  | _,     _,       _      => 0
 
-/-- **Weak `H.TA` wins 1/2 of Set-4 rankings**. Matches
-    @cite{anttila-1997} observed: 49.5% (table 53, row 4b). -/
-theorem weak_4ab_count :
-    (Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) =>
-      ∃ x ∈ Y_HTA, (permDList σ D4ab).head? = some x)).card = 360 := by
-  have h := perm_filter_head_in_card D4ab Y_HTA
-  have h720 : Nat.factorial 6 = 720 := by decide
-  have hD : D4ab.card = 4 := by decide
-  have hY : (Y_HTA ∩ D4ab).card = 2 := by decide
-  rw [h720, hD, hY] at h
-  omega
+/-- Set-4 distinguishing-constraint set for motif `m`. -/
+def relevant_45 (m : Set4Motif) : Finset (Fin 6) :=
+  Finset.univ.filter (fun i => m45Vp m .strong i ≠ m45Vp m .weak i)
 
--- ============================================================================
--- § 3: Set 4 again — motif 5ab (asymmetric)
--- ============================================================================
+/-- Set-4 strong-favoring constraint set for motif `m`. -/
+def yesFav_45_strong (m : Set4Motif) : Finset (Fin 6) :=
+  Finset.univ.filter (fun i => m45Vp m .strong i < m45Vp m .weak i)
 
-/-- For motif 5ab (`H.TÓO` ∼ `H.TO`): `H.TÓO` violates four Set-4
-    constraints (`*H/O`, `*Ó`, `*H.H`, `*H́` = `{0, 1, 3, 5}`),
-    `H.TO` violates only one (`*X.X` = `{4}`).
-    Distinguishing constraints: `{0, 1, 3, 4, 5}`. -/
-def D5ab : Finset (Fin 6) := {0, 1, 3, 4, 5}
+/-- Set-4 weak-favoring constraint set for motif `m`. -/
+def yesFav_45_weak (m : Set4Motif) : Finset (Fin 6) :=
+  Finset.univ.filter (fun i => m45Vp m .weak i < m45Vp m .strong i)
 
-/-- Constraints favoring strong `H.TÓO`: `H.TO`'s sole violation `{4}`. -/
-def Y_HTOO : Finset (Fin 6) := {4}
+@[simp] theorem relevant_45_four : relevant_45 .four = ({2, 3, 4, 5} : Finset (Fin 6)) := by decide
+@[simp] theorem relevant_45_five : relevant_45 .five = ({0, 1, 3, 4, 5} : Finset (Fin 6)) := by decide
+@[simp] theorem yesFav_45_strong_four : yesFav_45_strong .four = ({2, 4} : Finset (Fin 6)) := by decide
+@[simp] theorem yesFav_45_weak_four : yesFav_45_weak .four = ({3, 5} : Finset (Fin 6)) := by decide
+@[simp] theorem yesFav_45_strong_five : yesFav_45_strong .five = ({4} : Finset (Fin 6)) := by decide
+@[simp] theorem yesFav_45_weak_five : yesFav_45_weak .five = ({0, 1, 3, 5} : Finset (Fin 6)) := by decide
 
-/-- Constraints favoring weak `H.TO`: `H.TÓO`'s four violations
-    `{0, 1, 3, 5}`. -/
-def Y_HTO : Finset (Fin 6) := {0, 1, 3, 5}
+/-- Variant probability via POC sampling under the discrete partial order. -/
+def subProb_45 (m : Set4Motif) (v : Variant) : ℚ :=
+  pocPredict m45Cands m45Vp (discrete 6) m v
 
-/-- **Strong `H.TÓO` wins 1/5 of Set-4 rankings**: 144 of 720.
-    Closed form: `count × 5 = 720 × 1 = 720`, so `count = 144`. -/
-theorem strong_5ab_count :
-    (Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) =>
-      ∃ x ∈ Y_HTOO, (permDList σ D5ab).head? = some x)).card = 144 := by
-  have h := perm_filter_head_in_card D5ab Y_HTOO
-  have h720 : Nat.factorial 6 = 720 := by decide
-  have hD : D5ab.card = 5 := by decide
-  have hY : (Y_HTOO ∩ D5ab).card = 1 := by decide
-  rw [h720, hD, hY] at h
-  omega
+/-- The Set-4 candidate set for any motif, written as `{v, v.other}` for
+    any variant `v`. -/
+private theorem m45Cands_eq_pair (m : Set4Motif) (v : Variant) :
+    m45Cands m = ({v, v.other} : Finset Variant) := by
+  unfold m45Cands; cases v <;> (ext o; cases o <;> simp [Variant.other])
 
-/-- **Weak `H.TO` wins 4/5 of Set-4 rankings**: 576 of 720. Matches
+/-- Bridge from `pocPredict` to closed-form rate `|Y ∩ D| / |D|` for
+    Set-4 motifs, factored once and reused by all four rate theorems. -/
+private theorem subProb_45_eq_rate (m : Set4Motif) (v : Variant)
+    (D Y : Finset (Fin 6))
+    (h_D : ∀ k, k ∈ D ↔ m45Vp m v k ≠ m45Vp m v.other k)
+    (h_Y : ∀ k, k ∈ Y ↔ m45Vp m v k < m45Vp m v.other k) :
+    subProb_45 m v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
+  unfold subProb_45 pocPredict
+  rw [consistentTotalOrders_discrete, Finset.card_univ,
+      Fintype.card_perm, Fintype.card_fin]
+  exact picksAt_rate_eq m45Cands m45Vp m v v.other
+    (m45Cands_eq_pair m v) (Variant.ne_other v) D Y h_D h_Y
+
+/-- **Motif 4ab strong `H.TÁA` wins 1/2 of Set-4 rankings**. Closed form
+    via `picksAt_rate_eq`: `|{2,4} ∩ {2,3,4,5}| / |{2,3,4,5}| = 2/4 = 1/2`. -/
+theorem strongProb_4ab_eq : subProb_45 .four .strong = 1/2 := by
+  rw [subProb_45_eq_rate .four .strong (relevant_45 .four) (yesFav_45_strong .four)
+        (fun k => by simp [relevant_45])
+        (fun k => by simp [yesFav_45_strong]),
+      relevant_45_four, yesFav_45_strong_four,
+      show (({2, 4} : Finset (Fin 6)) ∩ {2, 3, 4, 5}).card = 2 from by decide,
+      show ({2, 3, 4, 5} : Finset (Fin 6)).card = 4 from by decide]
+  norm_num
+
+/-- **Motif 4ab weak `H.TA` wins 1/2 of Set-4 rankings**. Matches
+    @cite{anttila-1997} observed 49.5% (table 53, row 4b). -/
+theorem weakProb_4ab_eq : subProb_45 .four .weak = 1/2 := by
+  rw [subProb_45_eq_rate .four .weak (relevant_45 .four) (yesFav_45_weak .four)
+        (fun k => by
+          simp only [relevant_45, Finset.mem_filter, Finset.mem_univ, true_and]
+          exact ⟨fun h => h.symm, fun h => h.symm⟩)
+        (fun k => by simp [yesFav_45_weak]),
+      relevant_45_four, yesFav_45_weak_four,
+      show (({3, 5} : Finset (Fin 6)) ∩ {2, 3, 4, 5}).card = 2 from by decide,
+      show ({2, 3, 4, 5} : Finset (Fin 6)).card = 4 from by decide]
+  norm_num
+
+/-- **Motif 5ab strong `H.TÓO` wins 1/5 of Set-4 rankings**. Closed form:
+    `|{4} ∩ {0,1,3,4,5}| / |{0,1,3,4,5}| = 1/5`. -/
+theorem strongProb_5ab_eq : subProb_45 .five .strong = 1/5 := by
+  rw [subProb_45_eq_rate .five .strong (relevant_45 .five) (yesFav_45_strong .five)
+        (fun k => by simp [relevant_45])
+        (fun k => by simp [yesFav_45_strong]),
+      relevant_45_five, yesFav_45_strong_five,
+      show (({4} : Finset (Fin 6)) ∩ {0, 1, 3, 4, 5}).card = 1 from by decide,
+      show ({0, 1, 3, 4, 5} : Finset (Fin 6)).card = 5 from by decide]
+  norm_num
+
+/-- **Motif 5ab weak `H.TO` wins 4/5 of Set-4 rankings**. Matches
     @cite{anttila-1997} observed 82.2% (table 53, row 5b). -/
-theorem weak_5ab_count :
-    (Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) =>
-      ∃ x ∈ Y_HTO, (permDList σ D5ab).head? = some x)).card = 576 := by
-  have h := perm_filter_head_in_card D5ab Y_HTO
-  have h720 : Nat.factorial 6 = 720 := by decide
-  have hD : D5ab.card = 5 := by decide
-  have hY : (Y_HTO ∩ D5ab).card = 4 := by decide
-  rw [h720, hD, hY] at h
-  omega
+theorem weakProb_5ab_eq : subProb_45 .five .weak = 4/5 := by
+  rw [subProb_45_eq_rate .five .weak (relevant_45 .five) (yesFav_45_weak .five)
+        (fun k => by
+          simp only [relevant_45, Finset.mem_filter, Finset.mem_univ, true_and]
+          exact ⟨fun h => h.symm, fun h => h.symm⟩)
+        (fun k => by simp [yesFav_45_weak]),
+      relevant_45_five, yesFav_45_weak_five,
+      show (({0, 1, 3, 5} : Finset (Fin 6)) ∩ {0, 1, 3, 4, 5}).card = 4 from by decide,
+      show ({0, 1, 3, 4, 5} : Finset (Fin 6)).card = 5 from by decide]
+  norm_num
 
 -- ============================================================================
--- § 4: Variation rates as fractions
+-- § 3: Variation rates aggregator + binary completeness
 -- ============================================================================
 
-/-- All three non-categorical predictions from @cite{anttila-1997}
-    table 53 derived in closed form from `perm_filter_head_in_card`.
-    Each ratio is `|Y ∩ D| / |D|`, the fraction of permutations of the
-    relevant stratum where the corresponding variant wins. -/
+/-- All six variation rate predictions from @cite{anttila-1997} table 52
+    derived in closed form from the POC substrate. -/
 theorem variation_rates :
-    -- 3ab: strong 1/3, weak 2/3 (counts: 2/6, 4/6)
-    ((Finset.univ.filter (fun σ : Equiv.Perm (Fin 3) =>
-      ∃ x ∈ Y_LTII, (permDList σ D3ab).head? = some x)).card : ℚ) / 6 = 1/3 ∧
-    ((Finset.univ.filter (fun σ : Equiv.Perm (Fin 3) =>
-      ∃ x ∈ Y_LTI, (permDList σ D3ab).head? = some x)).card : ℚ) / 6 = 2/3 ∧
-    -- 4ab: each 1/2 (counts: 360/720)
-    ((Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) =>
-      ∃ x ∈ Y_HTAA, (permDList σ D4ab).head? = some x)).card : ℚ) / 720 = 1/2 ∧
-    ((Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) =>
-      ∃ x ∈ Y_HTA, (permDList σ D4ab).head? = some x)).card : ℚ) / 720 = 1/2 ∧
-    -- 5ab: strong 1/5, weak 4/5 (counts: 144/720, 576/720)
-    ((Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) =>
-      ∃ x ∈ Y_HTOO, (permDList σ D5ab).head? = some x)).card : ℚ) / 720 = 1/5 ∧
-    ((Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) =>
-      ∃ x ∈ Y_HTO, (permDList σ D5ab).head? = some x)).card : ℚ) / 720 = 4/5 := by
-  rw [strong_3ab_count, weak_3ab_count,
-      strong_4ab_count, weak_4ab_count,
-      strong_5ab_count, weak_5ab_count]
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> norm_num
+    subProb_3 .strong = 1/3 ∧ subProb_3 .weak = 2/3 ∧
+    subProb_45 .four .strong = 1/2 ∧ subProb_45 .four .weak = 1/2 ∧
+    subProb_45 .five .strong = 1/5 ∧ subProb_45 .five .weak = 4/5 :=
+  ⟨strongProb_3_eq, weakProb_3_eq,
+   strongProb_4ab_eq, weakProb_4ab_eq,
+   strongProb_5ab_eq, weakProb_5ab_eq⟩
+
+/-- The two binary outcomes for motif 3ab partition the probability mass
+    (sum to 1). Direct corollary of the rate equalities. -/
+theorem binary_complete_3ab : subProb_3 .strong + subProb_3 .weak = 1 := by
+  rw [strongProb_3_eq, weakProb_3_eq]; norm_num
+
+/-- The two binary outcomes for motif 4ab partition the probability mass. -/
+theorem binary_complete_4ab :
+    subProb_45 .four .strong + subProb_45 .four .weak = 1 := by
+  rw [strongProb_4ab_eq, weakProb_4ab_eq]; norm_num
+
+/-- The two binary outcomes for motif 5ab partition the probability mass. -/
+theorem binary_complete_5ab :
+    subProb_45 .five .strong + subProb_45 .five .weak = 1 := by
+  rw [strongProb_5ab_eq, weakProb_5ab_eq]; norm_num
 
 end Anttila1997
