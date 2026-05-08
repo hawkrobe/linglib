@@ -1163,14 +1163,16 @@ private theorem insertSum_descent_right (T₁ : FreeMagma α) :
 
 /-- **Left descent**: `(T ◁ T₂).map mk = (T' ◁ T₂).map mk` whenever
     `T ~ T'` (CommRel). Proven by induction on the CommRel derivation
-    + FCM commutativity at each cell.
+    + FCM commutativity at each cell. The three CommRel cases:
+    - `swap a b`: root planar swap; uses `insertSum_mul` decomposition +
+      `mul_comm` on FCM at each summand + multiset commutativity.
+    - `mul_left h c` / `mul_right a h`: structural propagation through a
+      subtree using the IH.
 
-    TODO (Phase 3.E.4b): substantive proof. Three CommRel cases:
-    - `swap a b`: root planar swap; uses §9.2-style decomposition +
-      multiset commutativity + `mul_comm` on FCM.
-    - `mul_left h c`: structural propagation through left subtree;
-      uses IH + `Multiset.map_map` to push through.
-    - `mul_right a h`: symmetric for right subtree. -/
+    **TODO (Phase 3.E.4b)**: substantive proof. Sketched in CHANGELOG
+    0.230.886; the per-summand mul_comm + cons_swap argument works on
+    paper but the Lean bookkeeping for the full multiset structure
+    (post-`map_add` / `map_map`) is detailed (~150-300 LOC). -/
 private theorem insertSum_descent_left :
     ∀ {T T' : FreeMagma α}, FreeMagma.CommRel T T' → ∀ (T₂ : FreeMagma α),
     (T ◁ T₂).map FreeCommMagma.mk = (T' ◁ T₂).map FreeCommMagma.mk := by
