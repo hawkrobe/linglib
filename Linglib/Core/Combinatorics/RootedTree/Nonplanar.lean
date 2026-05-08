@@ -171,6 +171,231 @@ theorem weight_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
+/-! ### §3b: Label invariance -/
+
+/-- The root label is preserved by every `PlanarStep`. -/
+private theorem planarStep_label_eq {t s : Planar α} (h : PlanarStep t s) :
+    t.label = s.label := by
+  cases h with
+  | swapAtRoot => rfl
+  | recurse _ => rfl
+
+/-- The root label is preserved by `PlanarEquiv`. -/
+theorem planarEquiv_label_eq {t s : Planar α} (h : PlanarEquiv t s) :
+    t.label = s.label := by
+  induction h with
+  | rel _ _ hstep => exact planarStep_label_eq hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-! ### §3c: Lifting child-list operations to `PlanarEquiv`
+
+The smart constructor `Nonplanar.node` needs to know that the
+parent-node equivalence respects the natural list-of-children
+operations: cons (sibling-prepend), permutation, and componentwise
+equivalence. -/
+
+/-- Lift a `PlanarEquiv` from a child to the parent that has identical
+    pre- and post-siblings (a chain of `recurse` moves). -/
+theorem planarEquiv_recurse_lift {a : α} (pre post : List (Planar α))
+    {old new : Planar α} (h : PlanarEquiv old new) :
+    PlanarEquiv (.node a (pre ++ old :: post))
+                (.node a (pre ++ new :: post)) := by
+  induction h with
+  | rel _ _ hstep => exact PlanarEquiv.of_step (.recurse hstep)
+  | refl _ => exact PlanarEquiv.refl _
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- Lift a single root-children `PlanarStep` under a sibling-cons head. -/
+private theorem planarStep_cons_lift (x : Planar α) {a : α}
+    {cs ds : List (Planar α)}
+    (h : PlanarStep (.node a cs) (.node a ds)) :
+    PlanarStep (.node a (x :: cs)) (.node a (x :: ds)) := by
+  cases h with
+  | @swapAtRoot _ l r pre post =>
+    show PlanarStep (.node a ((x :: pre) ++ l :: r :: post))
+                    (.node a ((x :: pre) ++ r :: l :: post))
+    exact .swapAtRoot
+  | @recurse _ pre old new post hstep =>
+    show PlanarStep (.node a ((x :: pre) ++ old :: post))
+                    (.node a ((x :: pre) ++ new :: post))
+    exact .recurse hstep
+
+/-- Auxiliary form of `planarEquiv_cons_lift` over arbitrary `t s`. The
+    `trans` case needs `EqvGen` intermediates to be characterized as
+    `.node a _`, which we obtain via `planarEquiv_label_eq` on the
+    sub-chains. -/
+private theorem planarEquiv_cons_lift_aux
+    {t s : Planar α} (h : PlanarEquiv t s) :
+    ∀ {a : α} {cs ds : List (Planar α)} (x : Planar α),
+      t = .node a cs → s = .node a ds →
+      PlanarEquiv (.node a (x :: cs)) (.node a (x :: ds)) := by
+  induction h with
+  | rel u v hstep =>
+    intro a cs ds x hu hv
+    subst hu; subst hv
+    exact PlanarEquiv.of_step (planarStep_cons_lift x hstep)
+  | refl u =>
+    intro a cs ds x hu hv
+    subst hu
+    cases hv
+    exact PlanarEquiv.refl _
+  | symm u v _ ih =>
+    intro a cs ds x hu hv
+    exact (ih x hv hu).symm
+  | trans u v w h1 _ ih1 ih2 =>
+    intro a cs ds x hu hw
+    subst hu; subst hw
+    have hvlab : v.label = a := by
+      have hlab := planarEquiv_label_eq h1
+      simp at hlab
+      exact hlab.symm
+    have hvform : v = .node a v.children := by
+      cases v with
+      | node b vs =>
+        simp only [Planar.label_node] at hvlab
+        rw [hvlab]
+        rfl
+    exact (ih1 x rfl hvform).trans (ih2 x hvform rfl)
+
+/-- A `PlanarEquiv` between root nodes lifts under a sibling-cons. -/
+theorem planarEquiv_cons_lift (x : Planar α) {a : α}
+    {cs ds : List (Planar α)}
+    (h : PlanarEquiv (.node a cs) (.node a ds)) :
+    PlanarEquiv (.node a (x :: cs)) (.node a (x :: ds)) :=
+  planarEquiv_cons_lift_aux h x rfl rfl
+
+/-- A `List.Perm` at root level lifts to `PlanarEquiv` on the node. -/
+theorem planarEquiv_root_perm {a : α} {cs ds : List (Planar α)}
+    (h : cs.Perm ds) :
+    PlanarEquiv (.node a cs) (.node a ds) := by
+  induction h with
+  | nil => exact PlanarEquiv.refl _
+  | cons x _ ih => exact planarEquiv_cons_lift x ih
+  | swap x y l =>
+    apply PlanarEquiv.of_step
+    show PlanarStep (.node a ([] ++ y :: x :: l))
+                    (.node a ([] ++ x :: y :: l))
+    exact .swapAtRoot
+  | trans _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- A componentwise `PlanarEquiv` on root children lifts to `PlanarEquiv`
+    on the node. -/
+theorem planarEquiv_node_componentwise {a : α} {cs ds : List (Planar α)}
+    (h : List.Forall₂ PlanarEquiv cs ds) :
+    PlanarEquiv (.node a cs) (.node a ds) := by
+  induction h with
+  | nil => exact PlanarEquiv.refl _
+  | @cons c d cs' ds' hcd _ ih =>
+    have step1 : PlanarEquiv (.node a (c :: cs')) (.node a (d :: cs')) :=
+      planarEquiv_recurse_lift [] cs' hcd
+    have step2 : PlanarEquiv (.node a (d :: cs')) (.node a (d :: ds')) :=
+      planarEquiv_cons_lift d ih
+    exact step1.trans step2
+
+/-! ### §3d: Arity / depth / isLeaf invariance
+
+Three more invariants of tree structure that are preserved by
+`PlanarEquiv`. The pattern follows weight (§3a): prove `*_planarStep`
+by case on the step constructor (using a per-list permutation lemma
+when the function aggregates over children), then lift to `*_planarEquiv`
+via `EqvGen` induction. -/
+
+/-- `depthMaxList` is invariant under children-list permutation: max is
+    commutative, so any permutation of the multiset gives the same max. -/
+private theorem depthMaxList_perm (cs ds : List (Planar α))
+    (h : List.Perm cs ds) :
+    depthMaxList cs = depthMaxList ds := by
+  induction h with
+  | nil => rfl
+  | cons _ _ ih =>
+    show max (depth _) (depthMaxList _) = max (depth _) (depthMaxList _)
+    rw [ih]
+  | swap _ _ _ =>
+    show max (depth _) (max (depth _) (depthMaxList _))
+       = max (depth _) (max (depth _) (depthMaxList _))
+    rw [← max_assoc, ← max_assoc, max_comm (depth _) (depth _)]
+  | trans _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- Arity (root child count) is invariant under `PlanarStep`: both
+    `swapAtRoot` and `recurse` keep the children list's length fixed. -/
+private theorem arity_planarStep {t s : Planar α} (h : PlanarStep t s) :
+    t.arity = s.arity := by
+  cases h with
+  | @swapAtRoot _ l r pre post =>
+    show (pre ++ l :: r :: post).length = (pre ++ r :: l :: post).length
+    simp [List.length_append]
+  | @recurse _ pre old new post _ =>
+    show (pre ++ old :: post).length = (pre ++ new :: post).length
+    simp [List.length_append]
+
+/-- Arity is invariant under `PlanarEquiv`. -/
+theorem arity_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
+    t.arity = s.arity := by
+  induction h with
+  | rel _ _ hstep => exact arity_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- Depth is invariant under `PlanarStep`. The `swapAtRoot` case uses
+    `depthMaxList_perm`; the `recurse` case inducts on `pre` to push the
+    childpoint-equivalence through `depthMaxList`. -/
+private theorem depth_planarStep {t s : Planar α} (h : PlanarStep t s) :
+    t.depth = s.depth := by
+  induction h with
+  | swapAtRoot =>
+    rename_i a l r pre post
+    show 1 + depthMaxList _ = 1 + depthMaxList _
+    apply congrArg (1 + ·)
+    apply depthMaxList_perm
+    apply List.Perm.append_left
+    exact .swap r l post
+  | recurse _ ih =>
+    rename_i a pre old new post _hstep
+    show 1 + depthMaxList _ = 1 + depthMaxList _
+    apply congrArg (1 + ·)
+    induction pre with
+    | nil =>
+      show max (depth old) (depthMaxList post) = max (depth new) (depthMaxList post)
+      rw [ih]
+    | cons head tail ih_pre =>
+      simp only [List.cons_append]
+      show max (depth head) (depthMaxList (tail ++ old :: post))
+         = max (depth head) (depthMaxList (tail ++ new :: post))
+      rw [ih_pre]
+
+/-- Depth is invariant under `PlanarEquiv`. -/
+theorem depth_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
+    t.depth = s.depth := by
+  induction h with
+  | rel _ _ hstep => exact depth_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- Leaf-ness is invariant under `PlanarStep`. Both `swapAtRoot` and
+    `recurse` require a non-empty children list on both source and target,
+    so both sides are non-leaves. -/
+private theorem isLeaf_planarStep {t s : Planar α} (h : PlanarStep t s) :
+    t.isLeaf = s.isLeaf := by
+  cases h with
+  | @swapAtRoot a' l r pre post =>
+    cases pre <;> rfl
+  | @recurse a' pre old new post _ =>
+    cases pre <;> rfl
+
+/-- Leaf-ness is invariant under `PlanarEquiv`. -/
+theorem isLeaf_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
+    t.isLeaf = s.isLeaf := by
+  induction h with
+  | rel _ _ hstep => exact isLeaf_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
 /-! ## §4: Setoid instance -/
 
 /-- The setoid on `Planar α` whose quotient is `Nonplanar α`. -/
@@ -231,6 +456,89 @@ def weight : Nonplanar α → Nat :=
 @[simp] theorem weight_leaf (a : α) : (leaf a : Nonplanar α).weight = 1 := by
   show (Planar.leaf a).weight = 1
   unfold Planar.leaf Planar.weight Planar.weightList; rfl
+
+/-- The **arity** (root child count) of a nonplanar tree. -/
+def arity : Nonplanar α → Nat :=
+  Nonplanar.lift Planar.arity (fun _ _ h => Planar.arity_planarEquiv h)
+
+@[simp] theorem arity_mk (t : Planar α) : (mk t).arity = t.arity := rfl
+
+@[simp] theorem arity_leaf (a : α) : (leaf a : Nonplanar α).arity = 0 := rfl
+
+/-- The **depth** (longest root-to-leaf path) of a nonplanar tree. -/
+def depth : Nonplanar α → Nat :=
+  Nonplanar.lift Planar.depth (fun _ _ h => Planar.depth_planarEquiv h)
+
+@[simp] theorem depth_mk (t : Planar α) : (mk t).depth = t.depth := rfl
+
+@[simp] theorem depth_leaf (a : α) : (leaf a : Nonplanar α).depth = 1 := by
+  show (Planar.leaf a).depth = 1
+  unfold Planar.leaf Planar.depth Planar.depthMaxList; rfl
+
+/-- A nonplanar tree is a **leaf** if its root has no children. (Audit
+    item: queue migrate to `Prop` + `[DecidablePred]` once the matching
+    `Planar.isLeaf` is migrated.) -/
+def isLeaf : Nonplanar α → Bool :=
+  Nonplanar.lift Planar.isLeaf (fun _ _ h => Planar.isLeaf_planarEquiv h)
+
+@[simp] theorem isLeaf_mk (t : Planar α) : (mk t).isLeaf = t.isLeaf := rfl
+
+@[simp] theorem isLeaf_leaf (a : α) : (leaf a : Nonplanar α).isLeaf = true := rfl
+
+/-! ## §7: Smart node constructor
+
+The B+ operator (Phase A.7) and the Δ^c trace coproduct (Phase D) both
+require building a `Nonplanar α` from a label and an *unordered*
+collection of children. The smart constructor `node a cs` does this on
+`Multiset (Nonplanar α)`; well-definedness follows from
+`Planar.planarEquiv_root_perm` (children-list permutation invariance).
+The characterization `node_mk_planar_list` then bridges back to the
+underlying planar `node` via `Quotient.mk_out` componentwise. -/
+
+/-- Build a `Nonplanar α` from a label and an unordered multiset of
+    children. Implementation: pick a list representative of the
+    multiset (`Quotient.liftOn`), then per-child planar representatives
+    via `Quotient.out`, and quotient back. -/
+noncomputable def node (a : α) (cs : Multiset (Nonplanar α)) : Nonplanar α :=
+  Quotient.liftOn cs
+    (fun (lst : List (Nonplanar α)) =>
+      mk (.node a (lst.map Quotient.out)))
+    (fun l1 l2 hperm => by
+      apply mk_eq_mk_iff.mpr
+      apply Planar.planarEquiv_root_perm
+      exact hperm.map _)
+
+/-- Characterization: building a `Nonplanar α` from a list of planar
+    children (lifted to nonplanar via `mk`) agrees with directly lifting
+    the planar `node a ps`. -/
+theorem node_mk_planar_list (a : α) (ps : List (Planar α)) :
+    node a (Multiset.ofList (ps.map mk)) = mk (.node a ps) := by
+  show mk (.node a ((ps.map mk).map Quotient.out)) = mk (.node a ps)
+  apply mk_eq_mk_iff.mpr
+  apply Planar.planarEquiv_node_componentwise
+  induction ps with
+  | nil => exact List.Forall₂.nil
+  | cons p ps ih =>
+    refine List.Forall₂.cons ?_ ih
+    exact Quotient.exact (Quotient.out_eq (mk p))
+
+/-! ### §7a: Sanity tests -/
+
+/-- Sibling order doesn't matter at the root: this is built into the
+    `Multiset` carrier. -/
+example {α : Type*} (a b c : α) :
+    node a (Multiset.ofList [leaf b, leaf c]) =
+      node a (Multiset.ofList [leaf c, leaf b]) := by
+  congr 1
+  exact (Multiset.coe_eq_coe.mpr (List.Perm.swap _ _ _))
+
+/-- A nonplanar binary node built via `node` agrees with the canonical
+    planar binary node lifted via `mk`. -/
+example {α : Type*} (a b c : α) :
+    node a (Multiset.ofList [leaf b, leaf c]) =
+      mk (Planar.node a [Planar.leaf b, Planar.leaf c]) := by
+  have := node_mk_planar_list a [Planar.leaf b, Planar.leaf c]
+  simpa [leaf] using this
 
 end Nonplanar
 
