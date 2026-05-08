@@ -1883,6 +1883,7 @@ import Linglib.Core.Computability.SyntacticMonoid.Pin
 import Linglib.Core.Combinatorics.RootedTree.Planar
 import Linglib.Core.Combinatorics.RootedTree.Subtypes
 import Linglib.Core.Combinatorics.RootedTree.PlanarCut
+import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.CoproductDeletion
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
