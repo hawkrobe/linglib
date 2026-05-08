@@ -1,0 +1,198 @@
+import Linglib.Core.Combinatorics.RootedTree.Planar
+
+set_option autoImplicit false
+
+universe u
+
+/-!
+# Admissible cuts on planar n-ary rooted trees
+@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+
+An **admissible cut** of a tree T is a subset of edges such that every
+root-to-leaf path of T contains at most one selected edge. After
+deleting the selected edges, T decomposes into:
+
+- The *cut forest* `cutForest c`: the multiset of subtrees that get
+  separated from the root after the deletion.
+- The *remainder*: the connected component containing the root, which
+  comes in two flavors:
+  - **Deletion** `remainderDeletion c`: just delete the cut subtrees;
+    the parent vertex now has fewer children. (MCB §1.2.4 T/^p; book p. 100.)
+  - **Trace** `remainderTrace c` (requires `[Inhabited α]`): replace
+    each cut subtree with a single trace-leaf labeled `default`; the
+    parent's arity is preserved. (MCB §1.2.4 T/^c; book p. 100.)
+
+This file provides admissible cuts on `RootedTree.Planar α` (the
+list-based n-ary planar carrier from `Planar.lean`). The cuts work
+uniformly across arities — the binary case inherits as a subtype.
+
+## Status
+
+`[UPSTREAM]` candidate. No sorries.
+
+## MCB anchor
+
+@cite{marcolli-chomsky-berwick-2025} Definition 1.2.6 (book p. 32) for
+the admissible cut definition; Lemma 1.2.7 for the equivalence with
+forest extraction. §1.11.6 (book p. 100) for the two remainder
+flavors `T/^c` (trace) and `T/^p` (deletion).
+-/
+
+namespace RootedTree
+
+namespace Planar
+
+variable {α : Type u}
+
+/-! ## §1: The `Cut` inductive
+
+A cut is recursively built from a per-vertex choice: at the root, for
+each child edge, decide whether to (a) cut this edge (extracting that
+subtree), or (b) recurse into that subtree's own cut. The "antichain"
+condition (no two cuts on the same root-to-leaf path) is baked in
+because once you cut an edge, you don't recurse beneath it. -/
+
+mutual
+/-- An admissible cut on a tree T: at the root vertex, a per-child
+    cut decision for each child. (For a leaf, the empty list of
+    children gives the unique trivial cut.) -/
+inductive Cut : Planar α → Type u
+  /-- A cut on a tree, given as a per-child decision list (matching
+      the children list of the root by length). -/
+  | mk {a : α} {cs : List (Planar α)} (decisions : ChildCutList cs) : Cut (.node a cs)
+/-- A per-child cut decision: either `extract` (cut the edge and
+    extract this subtree whole) or `recurse cut` (keep this edge,
+    apply `cut` to the subtree). -/
+inductive ChildCut : Planar α → Type u
+  /-- Extract this subtree whole. -/
+  | extract (t : Planar α) : ChildCut t
+  /-- Don't cut at this edge; recurse into the subtree. -/
+  | recurse {t : Planar α} (c : Cut t) : ChildCut t
+/-- A list of `ChildCut` decisions, indexed by the children list. -/
+inductive ChildCutList : List (Planar α) → Type u
+  | nil : ChildCutList []
+  | cons {t : Planar α} {ts : List (Planar α)} (d : ChildCut t) (ds : ChildCutList ts) :
+      ChildCutList (t :: ts)
+end
+
+/-! ## §2: The empty cut
+
+For every tree, there is a canonical "empty cut" that recurses everywhere
+and extracts nothing. -/
+
+mutual
+/-- The empty cut on a tree: recurse into every child with the empty
+    cut, never extract. -/
+def emptyCut : (t : Planar α) → Cut t
+  | .node _ cs => .mk (emptyCutList cs)
+/-- The all-recurse decision list for a list of children. -/
+def emptyCutList : (cs : List (Planar α)) → ChildCutList cs
+  | [] => .nil
+  | t :: ts => .cons (.recurse (emptyCut t)) (emptyCutList ts)
+end
+
+/-- The total cut: extract every child whole at the root level. (Note:
+    this is shallow — it doesn't recurse. The "total cut" in Foissy's
+    sense extracting the whole tree as a single piece is not directly
+    representable in this Cut type; it lives at the bialgebra layer
+    via the explicit `T ⊗ 1` term.) -/
+def shallowTotalCut (t : Planar α) : Cut t :=
+  match t with
+  | .node _ cs =>
+    let rec go : (cs : List (Planar α)) → ChildCutList cs
+      | [] => .nil
+      | t :: ts => .cons (.extract t) (go ts)
+    .mk (go cs)
+
+/-! ## §3: The cut forest
+
+For a cut `c : Cut T`, `cutForest c` is the multiset of subtrees
+extracted by `c`. We use `List` for now (the multiset structure
+emerges at the Hopf algebra layer via `Multiset.ofList`). -/
+
+mutual
+/-- The list of subtrees extracted by a cut. -/
+def cutForest : {t : Planar α} → Cut t → List (Planar α)
+  | _, .mk decisions => cutForestList decisions
+/-- Auxiliary: extracted subtrees from a child-decision list. -/
+def cutForestList : {cs : List (Planar α)} → ChildCutList cs → List (Planar α)
+  | _, .nil => []
+  | _, .cons d ds => cutForestChild d ++ cutForestList ds
+/-- Auxiliary: extracted subtrees from a single child-decision. -/
+def cutForestChild : {t : Planar α} → ChildCut t → List (Planar α)
+  | _, .extract t => [t]
+  | _, .recurse c => cutForest c
+end
+
+/-! ## §4: Remainders
+
+Two remainder flavors per MCB §1.11.6:
+
+- `remainderDeletion c` (T/^p): subtree replaced by *nothing*
+  (parent loses a child). Arity of remainder vertices may decrease.
+- `remainderTrace c` (T/^c, with `[Inhabited α]`): subtree replaced by
+  a trace-leaf labeled `default`. Arity is preserved everywhere.
+-/
+
+mutual
+/-- Deletion remainder T/^p: cut subtrees disappear; parent loses children. -/
+def remainderDeletion : {t : Planar α} → Cut t → Planar α
+  | .node a _, .mk decisions => .node a (remainderDeletionList decisions)
+/-- Auxiliary: deletion remainder for a child-decision list — extracted
+    children disappear from the list. -/
+def remainderDeletionList : {cs : List (Planar α)} → ChildCutList cs → List (Planar α)
+  | _, .nil => []
+  | _, .cons d ds =>
+    match d with
+    | .extract _ => remainderDeletionList ds        -- this child gone
+    | .recurse c => remainderDeletion c :: remainderDeletionList ds
+end
+
+mutual
+/-- Trace remainder T/^c: cut subtrees replaced with `default`-leaves.
+    Arity of all vertices preserved. -/
+def remainderTrace [Inhabited α] : {t : Planar α} → Cut t → Planar α
+  | .node a _, .mk decisions => .node a (remainderTraceList decisions)
+/-- Auxiliary: trace remainder for a child-decision list. -/
+def remainderTraceList [Inhabited α] :
+    {cs : List (Planar α)} → ChildCutList cs → List (Planar α)
+  | _, .nil => []
+  | _, .cons d ds =>
+    match d with
+    | .extract _ => leaf default :: remainderTraceList ds  -- replace with trace
+    | .recurse c => remainderTrace c :: remainderTraceList ds
+end
+
+/-! ## §5: Sanity tests
+
+Verify on a small concrete cut that `cutForest`, `remainderDeletion`,
+and `remainderTrace` behave as expected. -/
+
+section Tests
+
+private def testTree : Planar Nat :=
+  binary 0 (leaf 1) (leaf 2)
+-- testTree = node 0 [node 1 [], node 2 []]
+
+example : cutForest (emptyCut (testTree)) = [] := by
+  unfold testTree binary leaf emptyCut emptyCutList cutForest cutForestList cutForestChild
+  rfl
+
+example : cutForest (shallowTotalCut testTree) = [leaf 1, leaf 2] := by
+  unfold testTree binary leaf shallowTotalCut shallowTotalCut.go cutForest cutForestList cutForestChild
+  rfl
+
+example : remainderDeletion (shallowTotalCut testTree) = nary 0 [] := by
+  unfold testTree binary leaf shallowTotalCut shallowTotalCut.go remainderDeletion remainderDeletionList nary
+  rfl
+
+example [Inhabited Nat] : remainderTrace (shallowTotalCut testTree) =
+    binary 0 (leaf default) (leaf default) := by
+  unfold testTree binary leaf shallowTotalCut shallowTotalCut.go remainderTrace remainderTraceList
+  rfl
+
+end Tests
+
+end Planar
+
+end RootedTree
