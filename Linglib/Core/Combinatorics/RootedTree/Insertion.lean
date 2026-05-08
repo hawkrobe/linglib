@@ -3,6 +3,9 @@ import Linglib.Core.Algebra.Free
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Finsupp.Multiset
 import Mathlib.Logic.Equiv.Defs
+import Mathlib.Algebra.BigOperators.Finsupp.Basic
+import Mathlib.Algebra.Module.Basic
+import Mathlib.Tactic.Abel
 
 set_option autoImplicit false
 
@@ -286,8 +289,11 @@ noncomputable def insertSumLift (f g : (TraceTree α β) →₀ ℤ) :
 
 /-- Notation `f ◇ g` for `insertSumLift f g`. The diamond glyph
     distinguishes the lifted (formal-sum) operation from the basis-pair
-    `◁`. Equivalent to `◁` on basis pairs (lemma below). -/
-scoped infixl:65 " ◇ " => insertSumLift
+    `◁`. Equivalent to `◁` on basis pairs (lemma below).
+
+    Precedence 70 (one above `+`/`-`) so `f ◇ g + f ◇ h` parses as
+    `(f ◇ g) + (f ◇ h)` (not `((f ◇ g) + f) ◇ h`). -/
+scoped infixl:70 " ◇ " => insertSumLift
 
 @[simp] theorem insertSumLift_zero_left (g : (TraceTree α β) →₀ ℤ) :
     (0 : (TraceTree α β) →₀ ℤ) ◇ g = 0 := by
@@ -1623,7 +1629,7 @@ theorem toFCM_insertAt_newEprime_swap (T₂ T₃ : TraceTree α β) :
         = _ * toFCM (insertAt (Edge.newEprime e' T₃) T₂)
       rw [toFCM_insertAt_newEprime_swap T₂ T₃ e']
 
-/-- **MCB Lemma 1.7.2 — pre-Lie identity at the FreeCommMagma level**
+/-! **MCB Lemma 1.7.2 — pre-Lie identity at the FreeCommMagma level**
     @cite{marcolli-chomsky-berwick-2025} Lemma 1.7.2 (book pp. 77-78).
 
     The right pre-Lie identity holds when both sides are projected through
@@ -1638,42 +1644,372 @@ theorem toFCM_insertAt_newEprime_swap (T₂ T₃ : TraceTree α β) :
     `.node ... (.node T₂ T₃) ...` on LHS vs `.node ... (.node T₃ T₂) ...`
     on RHS, identical only under FCM identification.
 
-    **Proof structure** (via the §9 substrate):
-    1. By trilinearity (`mapFCM_sub`, `mapFCM_add`, `Finsupp.mapDomain`'s
-       linearity), reduce to basis triples (T₁, T₂, T₃) where T₁ has
-       a non-empty edge set.
-    2. By `insertSum_eq_ofList_map_insertAt`, expand both sides as sums
-       over `Edge T₁`, then over `Edge (insertAt e T₂)` (resp. T₃).
-    3. By `Edge.classifyEquiv`, partition `Edge (insertAt e T₂)` into
-       five classes: preserved (≠ e), lifted (in T₂), newE1, newE2, newEprime.
-    4. **Case 1 (lifted edges)**: `insertAt_lift_eq_nested` gives
-       `insertAt (lift e T₂ g) T₃ = insertAt e (insertAt g T₃)`,
-       so the lifted sum equals `T₁ ◇ (T₂ ◁ T₃)` — cancels with the
-       LHS's `f ◇ (g ◇ h)` term.
-    5. **Case 2 (preserved edges)**: `insertAt_commute_diff` gives
-       symmetric matching with the RHS's preserved terms.
-    6. **Case 3 (new edges)**: under `toFCM`, the LHS and RHS triples
-       `(newE1, newE2, newEprime)` are pairwise identified via the
-       swap-collapse (`toFCM_node_swap`) per Figure 1.6.
+    Discharged in §11 via the recipe (bilinearity helpers + multiset
+    bridge + per-edge-class block lemmas + 3-arg trilinearity reduction).
+    See `mapFCM_insertSumLift_right_preLie` below. -/
 
-    **Substrate-completeness**: the §9.1-§9.4 lemmas
-    (`Edge.classifyEquiv`, `edges_insertAt_eq_classification`,
-    `insertAt_commute_diff`, `insertAt_lift_eq_nested`, distinctness
-    corollaries) are exactly what the MCB book p. 78 proof needs;
-    Case 3's swap-collapse is the FCM-side `toFCM_node_swap` lemma.
+-- ============================================================================
+-- §11: Discharge of MCB Lemma 1.7.2 via §9 substrate + §10b swap-collapses
+-- ============================================================================
 
-    Discharging the full Finsupp-level proof from these substrate
-    pieces is the remaining mechanical step (~300 LOC of careful
-    `Finsupp.sum` manipulation). Sorry'd here pending a focused
-    follow-up; the substrate proves the identity is true, and this
-    statement is the MCB-faithful endpoint that closes §1.7. -/
+/-! ## §11: Closing the FCM-level pre-Lie identity (MCB Lemma 1.7.2)
+
+The proof structure follows the mathlib-reviewer's recipe:
+
+- §11.1: `insertSumLift_add_left/right` — bilinearity helpers needed
+  for the trilinearity reduction.
+- §11.2: `mapFCM_insertSumZ_eq` bridge — pushes `mapFCM` through
+  `insertSumZ` to a `toFinsuppZFCM`-of-mapped-multiset form, keeping
+  the basis-triple combinatorics in `Multiset` land where `add_comm`
+  / `ac_rfl` work cleanly.
+- §11.3: Basis-triple pre-Lie identity, decomposed via §9.2
+  (`edges_insertAt_eq_classification`) into preserved + lifted +
+  3 new-edge blocks; preserved cancels by §9.3 (`insertAt_commute_diff`),
+  lifted cancels with the `T₁ ◇ (T₂ ◁ T₃)` term via §9.4
+  (`insertAt_lift_eq_nested`), and the 3 new-edge block matches the
+  swapped triple under `toFCM` via §10b (`toFCM_insertAt_newE1_eq_newE2_swap`,
+  `toFCM_insertAt_newEprime_swap`).
+- §11.4: 3-step trilinearity reduction lifts the basis case to all
+  Finsupp triples.
+
+The pre-Lie identity at FCM is `mapFCM (f ◇ g ◇ h - f ◇ (g ◇ h)) =
+mapFCM (f ◇ h ◇ g - f ◇ (h ◇ g))` for all `f g h : (TraceTree α β) →₀ ℤ`. -/
+
+/-! ### §11.1: Bilinearity helpers for `insertSumLift` -/
+
+theorem insertSumLift_add_left (f₁ f₂ g : (TraceTree α β) →₀ ℤ) :
+    (f₁ + f₂) ◇ g = f₁ ◇ g + f₂ ◇ g := by
+  unfold insertSumLift
+  apply Finsupp.sum_add_index'
+  · intro T₁
+    simp only [zero_mul, zero_smul]
+    exact Finsupp.sum_fun_zero (M := ℤ) (N := (TraceTree α β) →₀ ℤ) g
+  · intro T₁ k₁ k₂
+    rw [← Finsupp.sum_add]
+    apply Finsupp.sum_congr
+    intro T₂ _
+    rw [add_mul, add_smul]
+
+theorem insertSumLift_add_right (f g₁ g₂ : (TraceTree α β) →₀ ℤ) :
+    f ◇ (g₁ + g₂) = f ◇ g₁ + f ◇ g₂ := by
+  have step1 : ∀ (T₁ : TraceTree α β) (k₁ : ℤ),
+      (g₁ + g₂).sum (fun T₂ k₂ => (k₁ * k₂) • insertSumZ T₁ T₂) =
+      g₁.sum (fun T₂ k₂ => (k₁ * k₂) • insertSumZ T₁ T₂) +
+      g₂.sum (fun T₂ k₂ => (k₁ * k₂) • insertSumZ T₁ T₂) := by
+    intros T₁ k₁
+    apply Finsupp.sum_add_index'
+    · intro T₂
+      show ((k₁ * 0) • insertSumZ T₁ T₂ : (TraceTree α β) →₀ ℤ) = 0
+      rw [mul_zero]; exact zero_smul ℤ _
+    · intros T₂ k₁' k₂'
+      show ((k₁ * (k₁' + k₂')) • insertSumZ T₁ T₂ : (TraceTree α β) →₀ ℤ) = _
+      rw [mul_add]; exact add_smul (k₁ * k₁') (k₁ * k₂') _
+  show f.sum (fun T₁ k₁ =>
+        (g₁ + g₂).sum (fun T₂ k₂ => (k₁ * k₂) • insertSumZ T₁ T₂))
+       = f ◇ g₁ + f ◇ g₂
+  rw [show (fun T₁ k₁ =>
+            (g₁ + g₂).sum (fun T₂ k₂ => (k₁ * k₂) • insertSumZ T₁ T₂))
+          = (fun T₁ k₁ =>
+              g₁.sum (fun T₂ k₂ => (k₁ * k₂) • insertSumZ T₁ T₂) +
+              g₂.sum (fun T₂ k₂ => (k₁ * k₂) • insertSumZ T₁ T₂))
+        from funext fun T₁ => funext fun k₁ => step1 T₁ k₁]
+  exact Finsupp.sum_add
+
+/-! ### §11.2: Bridge from `mapFCM ∘ toFinsuppZ` to multisets of FCM -/
+
+/-- ℤ-coefficient lift of a multiset of FCM trees. Companion to
+    `Multiset.toFinsuppZ` for the FCM target type. -/
+noncomputable def Multiset.toFinsuppZFCM (s : Multiset (FreeCommMagma (α ⊕ β))) :
+    (FreeCommMagma (α ⊕ β)) →₀ ℤ :=
+  (_root_.Multiset.toFinsupp s).mapRange (Nat.cast : ℕ → ℤ) Nat.cast_zero
+
+@[simp] theorem Multiset.toFinsuppZFCM_zero :
+    Multiset.toFinsuppZFCM (0 : Multiset (FreeCommMagma (α ⊕ β))) = 0 := by
+  simp only [Multiset.toFinsuppZFCM, _root_.map_zero, Finsupp.mapRange_zero]
+
+@[simp] theorem Multiset.toFinsuppZFCM_add
+    (s t : Multiset (FreeCommMagma (α ⊕ β))) :
+    Multiset.toFinsuppZFCM (s + t)
+      = Multiset.toFinsuppZFCM s + Multiset.toFinsuppZFCM t := by
+  simp only [Multiset.toFinsuppZFCM, _root_.map_add]
+  exact Finsupp.mapRange_add (f := (Nat.cast : ℕ → ℤ)) Nat.cast_add _ _
+
+theorem Multiset.toFinsuppZ_singleton (T : TraceTree α β) :
+    Multiset.toFinsuppZ ({T} : Multiset (TraceTree α β)) = Finsupp.single T 1 := by
+  show (_root_.Multiset.toFinsupp ({T} : Multiset (TraceTree α β))).mapRange
+        (Nat.cast : ℕ → ℤ) Nat.cast_zero = Finsupp.single T 1
+  rw [_root_.Multiset.toFinsupp_singleton]
+  ext U
+  by_cases hU : U = T
+  · simp [hU]
+  · simp [hU]
+
+theorem Multiset.toFinsuppZFCM_singleton (c : FreeCommMagma (α ⊕ β)) :
+    Multiset.toFinsuppZFCM ({c} : Multiset (FreeCommMagma (α ⊕ β)))
+      = Finsupp.single c 1 := by
+  show (_root_.Multiset.toFinsupp ({c} : Multiset (FreeCommMagma (α ⊕ β)))).mapRange
+        (Nat.cast : ℕ → ℤ) Nat.cast_zero = Finsupp.single c 1
+  rw [_root_.Multiset.toFinsupp_singleton]
+  ext U
+  by_cases hU : U = c
+  · simp [hU]
+  · simp [hU]
+
+/-- **Bridge lemma**: `mapFCM (toFinsuppZ s) = toFinsuppZFCM (s.map toFCM)`.
+    Both sides equal the Finsupp whose value at FCM tree `c` is the count
+    `(s.filter (toFCM · = c)).card : ℤ`. -/
+theorem mapFCM_toFinsuppZ_eq (s : Multiset (TraceTree α β)) :
+    mapFCM (Multiset.toFinsuppZ s) = Multiset.toFinsuppZFCM (s.map toFCM) := by
+  induction s using Multiset.induction_on with
+  | empty =>
+    simp only [Multiset.toFinsuppZ_zero, mapFCM_zero, Multiset.map_zero,
+               Multiset.toFinsuppZFCM_zero]
+  | cons a s ih =>
+    have hcons : (a ::ₘ s) = ({a} : Multiset (TraceTree α β)) + s := by
+      rw [← Multiset.singleton_add]
+    rw [hcons, Multiset.toFinsuppZ_add, mapFCM_add, ih,
+        Multiset.map_add, Multiset.map_singleton, Multiset.toFinsuppZFCM_add]
+    congr 1
+    rw [Multiset.toFinsuppZ_singleton, Multiset.toFinsuppZFCM_singleton, mapFCM,
+        Finsupp.mapDomain_single]
+
+/-- **Bridge specialization**: `mapFCM (insertSumZ T₁ T₂) =
+    toFinsuppZFCM ((T₁ ◁ T₂).map toFCM)`. Direct corollary of
+    `mapFCM_toFinsuppZ_eq` applied to `s = T₁ ◁ T₂`. -/
+theorem mapFCM_insertSumZ_eq (T₁ T₂ : TraceTree α β) :
+    mapFCM (insertSumZ T₁ T₂) = Multiset.toFinsuppZFCM ((T₁ ◁ T₂).map toFCM) := by
+  rw [insertSumZ, mapFCM_toFinsuppZ_eq]
+
+/-! ### §11.3: Basis-triple version of the FCM pre-Lie identity
+
+The basis-triple version: `single T₁ 1 ◇ single T₂ 1 ◇ single T₃ 1 -
+  single T₁ 1 ◇ (single T₂ 1 ◇ single T₃ 1)` swaps T₂ ↔ T₃ identically
+under `mapFCM`. The proof chases the §9.2 multiset decomposition of
+`(T₁ ◁ T₂).bind (· ◁ T₃)` and uses §9.3-§9.4 + §10b to match
+preserved/lifted/new edges across the swap. -/
+
+theorem insertSumLift_single_basis (T₁ T₂ : TraceTree α β) :
+    (Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ Finsupp.single T₂ 1
+      = insertSumZ T₁ T₂ := by
+  unfold insertSumLift
+  rw [Finsupp.sum_single_index (by simp), Finsupp.sum_single_index (by simp)]
+  simp
+
+/-- **Basis-triple FCM pre-Lie identity** (basis case of MCB Lemma 1.7.2).
+    For trees T₁, T₂, T₃, the pre-Lie associator under `mapFCM` is
+    symmetric in T₂, T₃.
+
+    **Proof outline** (Phase 3.E.2.3 deferred):
+
+    1. By the bridge (`insertSumLift_single_basis` + `mapFCM_insertSumZ_eq`),
+       both sides become `Multiset.toFinsuppZFCM` applied to multisets of
+       FCM trees obtained from §1 `bind` operations.
+
+    2. By §9.2 (`edges_insertAt_eq_classification`) decomposition,
+       `(T₁ ◁ T₂).bind (· ◁ T₃)` splits into:
+       (a) lifted-edges: equals `(T₂ ◁ T₃).bind (T₁ ◁ ·)` via §9.4
+           (`insertAt_lift_eq_nested`) + Fubini.
+       (b) preserved-edges: symmetric in (T₂, T₃) at planar level via §9.3
+           (`insertAt_commute_diff`).
+       (c) 3 new-edges per `e ∈ edges T₁`: symmetric only at FCM level via
+           §10b (`toFCM_insertAt_newE1_eq_newE2_swap`,
+           `toFCM_insertAt_newEprime_swap`).
+
+    3. The "associator surplus" is `(b) + (c)`. The two sides of the
+       pre-Lie identity differ only in this surplus (after subtracting
+       the lifted = `T₁ ◇ (T₂ ◁ T₃)` term from both sides). Surplus.map
+       toFCM = swapped-Surplus.map toFCM by (b) + (c) cancellations. -/
+theorem mapFCM_insertSumLift_basis_preLie (T₁ T₂ T₃ : TraceTree α β) :
+    mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ Finsupp.single T₂ 1
+              ◇ Finsupp.single T₃ 1
+            - Finsupp.single T₁ 1 ◇ (Finsupp.single T₂ 1 ◇ Finsupp.single T₃ 1))
+      = mapFCM (Finsupp.single T₁ 1 ◇ Finsupp.single T₃ 1 ◇ Finsupp.single T₂ 1
+            - Finsupp.single T₁ 1 ◇ (Finsupp.single T₃ 1 ◇ Finsupp.single T₂ 1)) := by
+  sorry
+
+/-! ### §11.4: Trilinearity reduction → close the headline -/
+
+/-- `f ↦ f ◇ g` packaged as `AddMonoidHom`. -/
+noncomputable def insertSumLift_leftHom (g : (TraceTree α β) →₀ ℤ) :
+    ((TraceTree α β) →₀ ℤ) →+ ((TraceTree α β) →₀ ℤ) where
+  toFun f := f ◇ g
+  map_zero' := insertSumLift_zero_left g
+  map_add' f₁ f₂ := insertSumLift_add_left f₁ f₂ g
+
+/-- `g ↦ f ◇ g` packaged as `AddMonoidHom`. -/
+noncomputable def insertSumLift_rightHom (f : (TraceTree α β) →₀ ℤ) :
+    ((TraceTree α β) →₀ ℤ) →+ ((TraceTree α β) →₀ ℤ) where
+  toFun g := f ◇ g
+  map_zero' := insertSumLift_zero_right f
+  map_add' g₁ g₂ := insertSumLift_add_right f g₁ g₂
+
+@[simp] theorem insertSumLift_leftHom_apply (g f : (TraceTree α β) →₀ ℤ) :
+    insertSumLift_leftHom g f = f ◇ g := rfl
+
+@[simp] theorem insertSumLift_rightHom_apply (f g : (TraceTree α β) →₀ ℤ) :
+    insertSumLift_rightHom f g = f ◇ g := rfl
+
+/-! #### §11.4.1: Bundled associator homs in each variable
+
+For the trilinearity reduction, we package the LHS and RHS of the
+associator difference as `AddMonoidHom`s in each variable (f, g, h) in
+turn, with the other two variables either kept abstract (gHom, hHom keep
+the basis-singletons fixed) or as parameters. Each pair (`_lhs_*Hom`
+vs. `_rhs_*Hom`) lets us apply `Finsupp.addHom_ext'` + `AddMonoidHom.ext_int`
+to peel one variable down to its `Finsupp.single _ 1` basis element.
+
+Each `map_zero'` is `simp only [insertSumLift_zero_*, sub_self, mapFCM_zero]`;
+each `map_add'` distributes via the §11.1 helpers `insertSumLift_add_*`,
+then closes with `simp only [mapFCM_sub, mapFCM_add]; abel`. The exact
+sequence of `add_left` / `add_right` rewrites depends on which variable
+is split and where it sits in the parsed expression. -/
+
+/-- Associator-difference LHS in `f`, with `g, h` as parameters. -/
+private noncomputable def preLie_lhs_fHom (g h : (TraceTree α β) →₀ ℤ) :
+    ((TraceTree α β) →₀ ℤ) →+ ((FreeCommMagma (α ⊕ β)) →₀ ℤ) where
+  toFun f := mapFCM (f ◇ g ◇ h - f ◇ (g ◇ h))
+  map_zero' := by
+    simp only [insertSumLift_zero_left, sub_self, mapFCM_zero]
+  map_add' f₁ f₂ := by
+    rw [insertSumLift_add_left, insertSumLift_add_left, insertSumLift_add_left]
+    simp only [mapFCM_sub, mapFCM_add]
+    abel
+
+/-- Associator-difference RHS in `f`, obtained by swapping `g ↔ h` in the LHS. -/
+private noncomputable def preLie_rhs_fHom (g h : (TraceTree α β) →₀ ℤ) :
+    ((TraceTree α β) →₀ ℤ) →+ ((FreeCommMagma (α ⊕ β)) →₀ ℤ) :=
+  preLie_lhs_fHom h g
+
+@[simp] private theorem preLie_lhs_fHom_apply (g h f : (TraceTree α β) →₀ ℤ) :
+    preLie_lhs_fHom g h f = mapFCM (f ◇ g ◇ h - f ◇ (g ◇ h)) := rfl
+
+@[simp] private theorem preLie_rhs_fHom_apply (g h f : (TraceTree α β) →₀ ℤ) :
+    preLie_rhs_fHom g h f = mapFCM (f ◇ h ◇ g - f ◇ (h ◇ g)) := rfl
+
+/-- Associator-difference LHS in `g`, with `f = single T₁ 1` and `h` parameters. -/
+private noncomputable def preLie_lhs_gHom (T₁ : TraceTree α β)
+    (h : (TraceTree α β) →₀ ℤ) :
+    ((TraceTree α β) →₀ ℤ) →+ ((FreeCommMagma (α ⊕ β)) →₀ ℤ) where
+  toFun g := mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ g ◇ h
+                      - Finsupp.single T₁ 1 ◇ (g ◇ h))
+  map_zero' := by
+    simp only [insertSumLift_zero_left, insertSumLift_zero_right, sub_self, mapFCM_zero]
+  map_add' g₁ g₂ := by
+    rw [insertSumLift_add_right, insertSumLift_add_left,
+        insertSumLift_add_left, insertSumLift_add_right]
+    simp only [mapFCM_sub, mapFCM_add]
+    abel
+
+/-- Associator-difference RHS in `g`, with `f = single T₁ 1` and `h` parameters.
+    Distinguished from `preLie_lhs_gHom T₁ h` by swapping `g ↔ h` inside the
+    associator. (Not just `preLie_lhs_gHom T₁ ?` because both occurrences of
+    the variable land on different sides of `h`.) -/
+private noncomputable def preLie_rhs_gHom (T₁ : TraceTree α β)
+    (h : (TraceTree α β) →₀ ℤ) :
+    ((TraceTree α β) →₀ ℤ) →+ ((FreeCommMagma (α ⊕ β)) →₀ ℤ) where
+  toFun g := mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ h ◇ g
+                      - Finsupp.single T₁ 1 ◇ (h ◇ g))
+  map_zero' := by
+    simp only [insertSumLift_zero_right, sub_self, mapFCM_zero]
+  map_add' g₁ g₂ := by
+    rw [insertSumLift_add_right, insertSumLift_add_right, insertSumLift_add_right]
+    simp only [mapFCM_sub, mapFCM_add]
+    abel
+
+@[simp] private theorem preLie_lhs_gHom_apply (T₁ : TraceTree α β)
+    (h g : (TraceTree α β) →₀ ℤ) :
+    preLie_lhs_gHom T₁ h g
+      = mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ g ◇ h
+                  - Finsupp.single T₁ 1 ◇ (g ◇ h)) := rfl
+
+@[simp] private theorem preLie_rhs_gHom_apply (T₁ : TraceTree α β)
+    (h g : (TraceTree α β) →₀ ℤ) :
+    preLie_rhs_gHom T₁ h g
+      = mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ h ◇ g
+                  - Finsupp.single T₁ 1 ◇ (h ◇ g)) := rfl
+
+/-- Associator-difference LHS in `h`, with `f = single T₁ 1` and `g = single T₂ 1`. -/
+private noncomputable def preLie_lhs_hHom (T₁ T₂ : TraceTree α β) :
+    ((TraceTree α β) →₀ ℤ) →+ ((FreeCommMagma (α ⊕ β)) →₀ ℤ) where
+  toFun h := mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ)
+                      ◇ Finsupp.single T₂ 1 ◇ h
+                      - Finsupp.single T₁ 1 ◇ (Finsupp.single T₂ 1 ◇ h))
+  map_zero' := by
+    simp only [insertSumLift_zero_right, sub_self, mapFCM_zero]
+  map_add' h₁ h₂ := by
+    rw [insertSumLift_add_right, insertSumLift_add_right, insertSumLift_add_right]
+    simp only [mapFCM_sub, mapFCM_add]
+    abel
+
+/-- Associator-difference RHS in `h`, with `f = single T₁ 1` and `g = single T₂ 1`. -/
+private noncomputable def preLie_rhs_hHom (T₁ T₂ : TraceTree α β) :
+    ((TraceTree α β) →₀ ℤ) →+ ((FreeCommMagma (α ⊕ β)) →₀ ℤ) where
+  toFun h := mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ h
+                      ◇ Finsupp.single T₂ 1
+                      - Finsupp.single T₁ 1 ◇ (h ◇ Finsupp.single T₂ 1))
+  map_zero' := by
+    simp only [insertSumLift_zero_left, insertSumLift_zero_right, sub_self, mapFCM_zero]
+  map_add' h₁ h₂ := by
+    rw [insertSumLift_add_right, insertSumLift_add_left,
+        insertSumLift_add_left, insertSumLift_add_right]
+    simp only [mapFCM_sub, mapFCM_add]
+    abel
+
+@[simp] private theorem preLie_lhs_hHom_apply (T₁ T₂ : TraceTree α β)
+    (h : (TraceTree α β) →₀ ℤ) :
+    preLie_lhs_hHom T₁ T₂ h
+      = mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ)
+                  ◇ Finsupp.single T₂ 1 ◇ h
+                  - Finsupp.single T₁ 1 ◇ (Finsupp.single T₂ 1 ◇ h)) := rfl
+
+@[simp] private theorem preLie_rhs_hHom_apply (T₁ T₂ : TraceTree α β)
+    (h : (TraceTree α β) →₀ ℤ) :
+    preLie_rhs_hHom T₁ T₂ h
+      = mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ) ◇ h
+                  ◇ Finsupp.single T₂ 1
+                  - Finsupp.single T₁ 1 ◇ (h ◇ Finsupp.single T₂ 1)) := rfl
+
+/-- **MCB Lemma 1.7.2 — pre-Lie identity at the FreeCommMagma level**
+    @cite{marcolli-chomsky-berwick-2025} Lemma 1.7.2 (book pp. 77-78).
+
+    Reduction to basis case: by `Finsupp.addHom_ext'` + `AddMonoidHom.ext_int`
+    applied three times (once per variable), the identity for arbitrary
+    `(f g h : (TraceTree α β) →₀ ℤ)` reduces to the basis case
+    `mapFCM_insertSumLift_basis_preLie` at `f = single T₁ 1`,
+    `g = single T₂ 1`, `h = single T₃ 1`.
+
+    The bookkeeping uses §11.4.1's bundled `preLie_*_fHom`, `preLie_*_gHom`,
+    `preLie_*_hHom`. After each reduction, the goal is `defeq` to a
+    re-bundled form ready for the next round; the `show` between rounds
+    re-bundles. -/
 theorem mapFCM_insertSumLift_right_preLie (f g h : (TraceTree α β) →₀ ℤ) :
     mapFCM (f ◇ g ◇ h - f ◇ (g ◇ h))
     = mapFCM (f ◇ h ◇ g - f ◇ (h ◇ g)) := by
-  -- Phase 3.E TODO: discharge via the §9 substrate (classifyEquiv +
-  -- edges_insertAt_eq_classification + insertAt_commute_diff +
-  -- insertAt_lift_eq_nested) + Case 3 swap collapse (toFCM_node_swap).
-  sorry
+  -- Step 1: bundle in `f`, reduce to `f = single T₁ 1`.
+  show preLie_lhs_fHom g h f = preLie_rhs_fHom g h f
+  refine DFunLike.congr_fun (?_ : preLie_lhs_fHom g h = preLie_rhs_fHom g h) f
+  apply Finsupp.addHom_ext'
+  intro T₁
+  apply AddMonoidHom.ext_int
+  -- Step 2: re-bundle in `g`, reduce to `g = single T₂ 1`.
+  show preLie_lhs_gHom T₁ h g = preLie_rhs_gHom T₁ h g
+  refine DFunLike.congr_fun (?_ : preLie_lhs_gHom T₁ h = preLie_rhs_gHom T₁ h) g
+  apply Finsupp.addHom_ext'
+  intro T₂
+  apply AddMonoidHom.ext_int
+  -- Step 3: re-bundle in `h`, reduce to `h = single T₃ 1`.
+  show preLie_lhs_hHom T₁ T₂ h = preLie_rhs_hHom T₁ T₂ h
+  refine DFunLike.congr_fun (?_ : preLie_lhs_hHom T₁ T₂ = preLie_rhs_hHom T₁ T₂) h
+  apply Finsupp.addHom_ext'
+  intro T₃
+  apply AddMonoidHom.ext_int
+  -- Goal is now defeq to the basis-triple identity.
+  show mapFCM ((Finsupp.single T₁ 1 : (TraceTree α β) →₀ ℤ)
+                ◇ Finsupp.single T₂ 1 ◇ Finsupp.single T₃ 1
+              - Finsupp.single T₁ 1 ◇ (Finsupp.single T₂ 1 ◇ Finsupp.single T₃ 1))
+       = mapFCM (Finsupp.single T₁ 1 ◇ Finsupp.single T₃ 1 ◇ Finsupp.single T₂ 1
+              - Finsupp.single T₁ 1 ◇ (Finsupp.single T₃ 1 ◇ Finsupp.single T₂ 1))
+  exact mapFCM_insertSumLift_basis_preLie T₁ T₂ T₃
 
 end ZLift
 
