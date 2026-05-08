@@ -26,6 +26,11 @@ Equations:
 - (22b) ⟦PERF⟧ = λp.λt.∃tPTS[RB(tPTS, t) ∧ p(tPTS)]
 - (23b) ⟦PERF_XN⟧ = λp.λt.∃tPTS.∃tLB ∈ tᵣ[LB(tLB,tPTS) ∧ RB(tPTS,t) ∧ p(tPTS)]
 
+UNVERIFIED: equation numbers (25), (28), (22b), (23b) above are cited from
+@cite{knick-sharf-2026} but have not been checked against the published
+proceedings; treat as approximate locators per CLAUDE.md anti-hallucination
+discipline.
+
 -/
 
 import Linglib.Core.WorldTimeIndex

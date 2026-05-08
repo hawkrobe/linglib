@@ -14,14 +14,14 @@ experimental data (@cite{wang-2025} Experiments 1-3).
 |----------|------------|---------------|---------------|-----------------|
 | 也 ye    | also       | iterative     | deletion      | ∅               |
 | 又 you   | again      | iterative     | deletion      | ∅               |
-| 仍 reng  | still      | iterative     | deletion      | ∅               |
+| 仍 reng  | still      | continuative  | deletion      | ∅               |
 | 就 jiu   | only       | cleft         | none          | ∅               |
 | 知道 zhidao | know    | factive       | replacement   | believe (以为)   |
 | 不再 buzai | no longer | changeOfState | replacement   | not (不)         |
 | 开始 kaishi | start   | aspectual     | replacement   | do (做)          |
 | 反而 fan'er | instead | iterative     | replacement   | and (和)         |
 | 而 er    | instead    | iterative     | replacement   | and (和)         |
-| 还 hai   | still      | iterative     | deletion      | ∅               |
+| 还 hai   | still      | continuative  | deletion      | ∅               |
 
 ## Cross-Module Connections
 
@@ -77,10 +77,15 @@ def you : PresupParticle :=
   , triggerEntry := { trigger := .iterative, altStructure := .deletion }
   , dataTrigger := .you }
 
-/-- 仍 reng 'still' — continuative, deletion alternative. -/
+/-- 仍 reng 'still' — continuative, deletion alternative.
+    Distinct from 又 *you* 'again' (iterative): *reng*'s presupposition is
+    *uninterrupted continuation* of P throughout an interval, whereas
+    *you* presupposes P-then-not-P-then-P-again. The original encoding
+    of *reng* as `.iterative` (matching *you*) collapsed this contrast;
+    `.continuative` was added to `PresupTrigger` to distinguish them. -/
 def reng : PresupParticle :=
   { hanzi := "仍", pinyin := "réng", gloss := "still"
-  , triggerEntry := { trigger := .iterative, altStructure := .deletion }
+  , triggerEntry := { trigger := .continuative, altStructure := .deletion }
   , dataTrigger := .reng }
 
 /-- 就 jiu 'only' — exclusive, NO structural alternative. -/

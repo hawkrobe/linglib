@@ -49,8 +49,17 @@ inductive PresupTrigger where
   | factive
   /-- Change-of-state predicates: "stop/start V-ing" presupposes prior state -/
   | changeOfState
-  /-- Iteratives: "again", "still" presuppose prior occurrence -/
+  /-- Repetitive iteratives: "again" presuppose prior occurrence
+      followed by an interruption (P-then-¬P-then-P-again).
+      English *again*, German *wieder*, Mandarin *you* 又, Cantonese *jau*. -/
   | iterative
+  /-- Continuatives: "still" presuppose **uninterrupted** continuation
+      of P throughout an interval up to and including the reference time.
+      Distinct from `.iterative` (which presupposes P-¬P-P) and from
+      `.changeOfState` (which involves a polarity flip).
+      English *still*, Mandarin *reng* 仍 / *hai* 还, Cantonese *zung* 仲.
+      Cf. Ippolito 2007 on *still* vs *again*. -/
+  | continuative
   /-- Cleft constructions: "It was X that..." presupposes existence -/
   | cleft
   /-- Aspectual predicates: "finish", "continue" presuppose event structure -/
@@ -164,11 +173,12 @@ Default mapping based on cross-linguistic generalizations.
 Language-specific entries may override (see Fragments/Mandarin/).
 -/
 def PresupTrigger.defaultAltStructure : PresupTrigger → AltStructure
-  | .definite => .replacement    -- "the" → "a"
-  | .factive => .replacement     -- "know" → "believe"
+  | .definite => .replacement     -- "the" → "a"
+  | .factive => .replacement      -- "know" → "believe"
   | .changeOfState => .replacement -- "stop" → "not do"
-  | .iterative => .deletion      -- "again" → ∅
-  | .cleft => .none              -- no obvious alternative
-  | .aspectual => .replacement   -- "start" → "do"
+  | .iterative => .deletion       -- "again" → ∅
+  | .continuative => .deletion    -- "still" → ∅ (interval-internal omission)
+  | .cleft => .none               -- no obvious alternative
+  | .aspectual => .replacement    -- "start" → "do"
 
 end Semantics.Presupposition.TriggerTypology

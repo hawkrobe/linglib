@@ -61,8 +61,29 @@ inductive PhaseComplement where
     require a separate `.completion` `CoSType`; cessation is the
     closest fit in the current taxonomy.
 
+    `dao → inception` and `hao → inception` are both blunt fits:
+    @cite{sybesma-2017} distinguishes -dao 到 (telos-attainment, "reach
+    a goal") from -hao 好 (norm-attainment, "achieve a satisfactory
+    state") and from -diao 掉 (patient-removal). All three are kinds
+    of *completion* / event-endpoint, not *inception*; the taxonomy
+    here is forced because `CoSType` lacks a `.completion` constructor.
+    Refining `CoSType` with `.completion` (or `.attainment`) would let
+    these be distinguished from genuine inceptives like `start`/`begin`,
+    but the cross-linguistic blast radius (~20 consumers) makes that
+    refactor a separate workstream.
+
+    Additionally, the surface form `dao` covers two Mandarin morphemes
+    written with different characters: 倒 'fall' (a directional/RVC
+    use, e.g. *tui-dao* 'push over') and 到 'arrive/attain' (the
+    phase-complement use, e.g. *mai-dao* 'succeed in buying'). The
+    `phase_dao` entry below glosses 'fall', but Liu & Yip 2026 App. B
+    treats the phase-complement -dao as 到. The conflation should be
+    split when the substrate refactor lands.
+
     -- UNVERIFIED: Tay 2024's exact taxonomy of wan; the cessation
-    classification is the project's best fit, not a literal citation. -/
+    classification is the project's best fit, not a literal citation.
+    -- UNVERIFIED: dao/hao both → .inception; per @cite{sybesma-2017}
+    these are completion/attainment, not inception. -/
 def PhaseComplement.cosType : PhaseComplement → CoSType
   | .dao  => .inception
   | .wan  => .cessation
