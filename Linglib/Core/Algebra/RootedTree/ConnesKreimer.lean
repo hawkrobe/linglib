@@ -1,0 +1,205 @@
+import Linglib.Core.Combinatorics.RootedTree.Planar
+import Mathlib.Algebra.MonoidAlgebra.Basic
+import Mathlib.Data.Finsupp.Basic
+import Mathlib.Data.Multiset.Basic
+
+set_option autoImplicit false
+
+universe u
+
+/-!
+# Connes-Kreimer Hopf algebra carrier on n-ary planar rooted trees
+@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+
+The **Connes-Kreimer Hopf algebra** on a tree type T is the formal
+R-linear combinations of forests (multisets of trees), with product =
+forest disjoint union and coproduct = sum over admissible cuts (defined
+in `CoproductDeletion.lean` for Δ^p, `CoproductTrace.lean` for Δ^c).
+
+This file provides the **carrier and counit** generic over a tree type T
+(parameterized over `Type u`). The intended specializations:
+
+- `T = RootedTree.Planar α` — n-ary planar rooted trees (this file).
+- `T = RootedTree.Nonplanar α` — n-ary nonplanar (future Phase A.4).
+- `T = subtype of Planar` — binary, at-most-n-ary, exactly-n-ary
+  (subtypes from `Subtypes.lean`).
+
+The product structure (algebra) doesn't depend on which T is used —
+forests are multisets, multiset addition is commutative (Hopf
+algebra is commutative). The coproduct depends on the cut substrate
+of T; see sibling files for specific instantiations.
+
+## Layer status
+
+`[UPSTREAM]` candidate. No sorries.
+
+## MCB anchor
+
+@cite{marcolli-chomsky-berwick-2025} §1.2 "Workspaces: Product and
+Coproduct" introduces the Hopf algebra of workspaces; the carrier is
+`V(𝔉_{SO_0}) = AddMonoidAlgebra R (Multiset (FCM α))`. This file
+generalizes the carrier to arbitrary tree type T, with binary FCM as
+one specialization (eventual Phase B target).
+
+@cite{foissy-introduction-hopf-algebras-trees} §1.2: "The Hopf algebra
+H_R is the free associative commutative unitary K-algebra generated
+by T", where T is the set of rooted trees. Same structure here, with
+T parameterized.
+
+## Naming
+
+`Forest T := Multiset T` for the basis, `ConnesKreimer R T` for the
+algebra. Avoids shadowing the existing `FreeCommMagma.ConnesKreimer R α`
+in `Linglib/Core/Algebra/Free/ConnesKreimer.lean` (which is binary FCM
+specific).
+-/
+
+namespace RootedTree
+
+namespace Algebra
+
+/-! ## §1: Forest type alias
+
+A **forest** is a multiset of trees. Multiset addition is the disjoint
+union (forest concatenation). -/
+
+/-- A forest of T-shaped trees: finite multiset. -/
+abbrev Forest (T : Type u) : Type u := Multiset T
+
+/-! ## §2: The Connes-Kreimer Hopf algebra carrier -/
+
+/-- The **Connes-Kreimer Hopf algebra** on tree type T:
+    `AddMonoidAlgebra R (Forest T)`. As an algebra: product = forest
+    disjoint union (commutative), unit = empty forest. The Bialgebra
+    structure (coproduct + coassoc + counit laws) is in sibling files. -/
+def ConnesKreimer (R : Type*) [CommSemiring R] (T : Type u) : Type _ :=
+  AddMonoidAlgebra R (Forest T)
+
+namespace ConnesKreimer
+
+/-! ## §3: Forwarded mathlib instances
+
+`ConnesKreimer R T` is a `def`, not `abbrev`, isolating its eventual
+Bialgebra structure from mathlib's default `AddMonoidAlgebra.instBialgebra`
+(group-like coproduct). Forward `CommSemiring`, `Algebra`, and `FunLike`
+explicitly. -/
+
+variable {R : Type*} [CommSemiring R] {T : Type u}
+
+noncomputable instance instCommSemiring : CommSemiring (ConnesKreimer R T) :=
+  inferInstanceAs (CommSemiring (AddMonoidAlgebra R (Forest T)))
+
+noncomputable instance instAlgebra : Algebra R (ConnesKreimer R T) :=
+  inferInstanceAs (Algebra R (AddMonoidAlgebra R (Forest T)))
+
+instance instFunLike : FunLike (ConnesKreimer R T) (Forest T) R :=
+  inferInstanceAs (FunLike (Forest T →₀ R) (Forest T) R)
+
+/-! ## §4: Basis embeddings — `of'`, `ofTree`
+
+The natural inclusions of basis elements (forests, single trees) into
+the algebra. Mirrors mathlib's `MonoidAlgebra.of'` (bare function form)
+and `MonoidAlgebra.of` (`MonoidHom` form). -/
+
+/-- **Bare embedding**: a forest as the basis vector `Finsupp.single F 1`. -/
+noncomputable def of' (F : Forest T) : ConnesKreimer R T :=
+  Finsupp.single F (1 : R)
+
+/-- **MonoidHom embedding**: `Multiplicative (Forest T) →* ConnesKreimer R T`. -/
+noncomputable def of : Multiplicative (Forest T) →* ConnesKreimer R T where
+  toFun F := of' (R := R) F.toAdd
+  map_one' := by
+    show (of' (R := R) (1 : Multiplicative (Forest T)).toAdd : ConnesKreimer R T) = 1
+    show (Finsupp.single (0 : Forest T) (1 : R)
+            : AddMonoidAlgebra R (Forest T))
+       = (1 : AddMonoidAlgebra R (Forest T))
+    exact AddMonoidAlgebra.one_def.symm
+  map_mul' F G := by
+    show of' (R := R) (F * G).toAdd = of' (R := R) F.toAdd * of' (R := R) G.toAdd
+    show of' (R := R) (F.toAdd + G.toAdd) = of' (R := R) F.toAdd * of' (R := R) G.toAdd
+    unfold of'
+    exact (AddMonoidAlgebra.single_mul_single
+      (R := R) (M := Forest T) F.toAdd G.toAdd 1 1
+      |>.trans (by rw [mul_one])).symm
+
+/-- Embed a single tree as a singleton-forest basis vector. -/
+noncomputable def ofTree (t : T) : ConnesKreimer R T :=
+  of' ({t} : Forest T)
+
+theorem of_apply (F : Multiplicative (Forest T)) :
+    (of (R := R) F : ConnesKreimer R T) = of' F.toAdd := rfl
+
+theorem of'_apply (F : Forest T) :
+    (of' (R := R) F : ConnesKreimer R T) = Finsupp.single F 1 := rfl
+
+@[simp] theorem of'_zero :
+    (of' (R := R) (0 : Forest T) : ConnesKreimer R T) = 1 :=
+  (of (R := R) (T := T)).map_one
+
+/-- Headline algebraic fact: forest disjoint union ↔ algebra product. -/
+@[simp] theorem of'_add (F G : Forest T) :
+    (of' (R := R) (F + G) : ConnesKreimer R T)
+      = of' (R := R) F * of' (R := R) G :=
+  (of (R := R) (T := T)).map_mul (Multiplicative.ofAdd F) (Multiplicative.ofAdd G)
+
+@[simp] theorem of'_singleton (t : T) :
+    (of' (R := R) ({t} : Forest T) : ConnesKreimer R T) = ofTree t := rfl
+
+/-! ## §5: Counit
+
+The counit ε : ConnesKreimer R T → R extracts the coefficient of the
+empty forest, packaged as an algebra hom. -/
+
+/-- The counit as a `Multiplicative (Forest T) →* R` monoid hom.
+
+    Uses `Multiset.card_eq_zero` to avoid requiring `DecidableEq T`:
+    test "is empty" via "has cardinality zero" (card is Nat, decidable). -/
+noncomputable def counitMonoidHom :
+    Multiplicative (Forest T) →* R where
+  toFun F := if F.toAdd.card = 0 then 1 else 0
+  map_one' := by
+    show (if (0 : Forest T).card = 0 then (1 : R) else 0) = 1
+    rw [Multiset.card_zero, if_pos rfl]
+  map_mul' F G := by
+    show (if (F.toAdd + G.toAdd).card = 0 then (1 : R) else 0)
+       = (if F.toAdd.card = 0 then (1 : R) else 0)
+       * (if G.toAdd.card = 0 then (1 : R) else 0)
+    rw [Multiset.card_add]
+    by_cases hF : F.toAdd.card = 0
+    · by_cases hG : G.toAdd.card = 0
+      · rw [if_pos hF, if_pos hG, if_pos (by rw [hF, hG]), mul_one]
+      · rw [if_pos hF, if_neg hG, if_neg (by rw [hF, zero_add]; exact hG), one_mul]
+    · by_cases hG : G.toAdd.card = 0
+      · rw [if_neg hF, if_pos hG, if_neg (by rw [hG, Nat.add_zero]; exact hF), mul_one]
+      · have h : ¬ (F.toAdd.card + G.toAdd.card = 0) :=
+          fun h => hF (Nat.add_eq_zero_iff.mp h).1
+        rw [if_neg hF, if_neg hG, if_neg h, mul_zero]
+
+/-- The **counit** on `ConnesKreimer R T` as an algebra hom. -/
+noncomputable def counit : ConnesKreimer R T →ₐ[R] R :=
+  AddMonoidAlgebra.lift R R (Forest T) counitMonoidHom
+
+/-- `counit (of' F) = if F.card = 0 then 1 else 0`. The `card`
+    formulation avoids needing `DecidableEq T`. -/
+@[simp] theorem counit_of' (F : Forest T) :
+    (counit : ConnesKreimer R T →ₐ[R] R) (of' F)
+      = (if F.card = 0 then 1 else 0 : R) := by
+  show AddMonoidAlgebra.lift R R (Forest T) counitMonoidHom
+        (Finsupp.single F 1) = _
+  rw [AddMonoidAlgebra.lift_single, one_smul]
+  rfl
+
+@[simp] theorem counit_one :
+    (counit : ConnesKreimer R T →ₐ[R] R) 1 = 1 := map_one _
+
+@[simp] theorem counit_ofTree (t : T) :
+    (counit : ConnesKreimer R T →ₐ[R] R) (ofTree t) = 0 := by
+  unfold ofTree
+  rw [counit_of', Multiset.card_singleton]
+  exact if_neg (by decide)
+
+end ConnesKreimer
+
+end Algebra
+
+end RootedTree
