@@ -20,16 +20,29 @@ following @cite{knick-sharf-2026}.
 EventPred ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[TENSE]──▷ Prop
 ```
 
-Equations:
-- (25) ⟦IMPF⟧ = λP.λt.∃e[t ⊂ τ(e) ∧ P(e)]
-- (28) ⟦PRFV⟧ = λP.λt.∃e[τ(e) ⊆ t ∧ P(e)]
-- (22b) ⟦PERF⟧ = λp.λt.∃tPTS[RB(tPTS, t) ∧ p(tPTS)]
-- (23b) ⟦PERF_XN⟧ = λp.λt.∃tPTS.∃tLB ∈ tᵣ[LB(tLB,tPTS) ∧ RB(tPTS,t) ∧ p(tPTS)]
+Equations (verified against the @cite{knick-sharf-2026} proceedings PDF):
 
-UNVERIFIED: equation numbers (25), (28), (22b), (23b) above are cited from
-@cite{knick-sharf-2026} but have not been checked against the published
-proceedings; treat as approximate locators per CLAUDE.md anti-hallucination
-discipline.
+- (25) ⟦IMPF⟧^g = λP.λt.∃e[t ⊂ τ(e) ∧ P(e)]
+- (28) ⟦PRFV⟧^g = λP.λt.∃e[τ(e) ⊆ t ∧ P(e)]
+- (22b) standard XN: ⟦PERF⟧^g = λp_it.λt.∃t_PTS.[RB(t_PTS, t) ∧ p(t)]
+- (23b) K&S revision: ⟦PERF⟧^g = λp_it.λt.∃t_PTS.∃t_LB ⊆ tᵣ
+                                  [LB(t_LB, t_PTS) ∧ RB(t_PTS, t) ∧ p(t)]
+
+Note on `p(t)` (vs the more obvious `p(t_PTS)`): the paper writes p applied
+to the outer reference time t, with the convention (paper §4.2.1, sentence
+following eq. 25) that "when the imperfective appears beneath the perfect,
+t corresponds to the PTS." The IMPF's own λt is bound to t_PTS at composition
+time, so beta-reduction yields the equivalent `∃e[t_PTS ⊂ τ(e) ∧ P(e)]` —
+see (26) for K&S's own worked composition.
+
+Note on (22b) vs (23b) labeling: both equations are labeled ⟦PERF⟧^g in the
+paper. (22b) is K&S's transcription of the standard Iatridou-style XN entry
+(no LB); (23b) is K&S's own revision adding an LB existential bounded by the
+domain restriction t_r. The variant named `PERF_XN` here in the past was
+backwards — fixed to follow K&S's own conventions.
+
+The constraint `t_LB ⊆ t_r` (subset) was previously transcribed as `∈`
+(membership). Fixed.
 
 -/
 
@@ -166,14 +179,39 @@ def RB (pts : Interval Time) (t : Time) : Prop := pts.finish = t
 def LB (tLB : Time) (pts : Interval Time) : Prop := pts.start = tLB
 
 /-- **PERFECT**: introduces Perfect Time Span.
-    @cite{knick-sharf-2026} eq. 22b. -/
+    @cite{knick-sharf-2026} eq. 22b — the standard XN-theoretic entry
+    that K&S start from. Verified against the proceedings PDF.
+
+    K&S notation: `λp_it.λt.∃t_PTS.[RB(t_PTS, t) ∧ p(t)]`. The `p(t)` is
+    written by K&S as application to the outer reference time, with the
+    composition convention that `t` is bound to `t_PTS` when IMPF appears
+    below PERF (paper §4.2.1, sentence after eq. 25). The implementation
+    here applies p to `pts` directly (the post-composition meaning), which
+    matches K&S's worked composition in their (26). -/
 def PERF (p : IntervalPred W Time) : PointPred W Time :=
   λ s => ∃ pts : Interval Time, RB pts s.time ∧ p s.world pts
 
-/-- **PERFECT with Extended Now** (domain-restricted left boundary).
-    @cite{knick-sharf-2026} eq. 23b.
-    The domain restriction tᵣ constrains where the LB can be placed.
-    Narrow focus on BEEN generates alternatives over tᵣ. -/
+/-- **PERFECT with Extended Now** (K&S's revision: domain-restricted left
+    boundary). @cite{knick-sharf-2026} eq. 23b. Verified against the
+    proceedings PDF.
+
+    K&S notation: `λp_it.λt.∃t_PTS.∃t_LB ⊆ tᵣ. [LB(t_LB, t_PTS) ∧
+    RB(t_PTS, t) ∧ p(t)]`. The domain restriction tᵣ constrains where the
+    LB can be placed; narrow focus on BEEN generates alternatives over tᵣ.
+
+    K&S's (23b) is *not* the standard XN entry — that's their (22b),
+    realized here as `PERF`. (23b) is K&S's own revision adding an LB
+    existential bounded by the domain restriction. The legacy name
+    `PERF_XN` predates this clarification; both `PERF` and `PERF_XN` are
+    XN-theoretic, the difference being the LB+domain-restriction.
+
+    Type-level simplification: K&S's `t_LB` is an *initial subinterval* of
+    t_PTS (per their 23a), and `t_LB ⊆ t_r` compares two interval-sets.
+    The implementation here uses `tLB : Time` (a single point) with
+    `∃ tLB ∈ tᵣ` (membership), simplifying K&S's set-theoretic LB to a
+    single time witness inside the domain-restriction set. The simpler
+    typing is sufficient for the empirical predictions K&S draw and
+    avoids carrying intervals at every level. -/
 def PERF_XN (p : IntervalPred W Time) (tᵣ : Set Time) : PointPred W Time :=
   λ s => ∃ pts : Interval Time, ∃ tLB ∈ tᵣ,
     LB tLB pts ∧ RB pts s.time ∧ p s.world pts
