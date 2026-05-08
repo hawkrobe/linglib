@@ -1,4 +1,5 @@
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Core.Constraint.PartiallyOrderedConstraints
 import Linglib.Core.Constraint.PermSubsetCombinatorics
 
 /-!
@@ -15,30 +16,50 @@ place of the latter:
 
 ## Substrate consumption
 
-Each constraint ranking is an `Equiv.Perm (Fin 6)`. For each stem-initial
-consonant `c`, the YES/NO decision under ranking `σ` is determined by the
-*first* distinguishing constraint in the ranking, captured by
-`Core.Constraint.PermSubsetCombinatorics.perm_filter_head_in_card`:
+This file routes through the project's POC (Partially Ordered
+Constraints) substrate. For each stem-initial consonant `c`:
 
-  `(# rankings where YES wins for c) × |D_c| = 6! × |Y_c ∩ D_c|`
+- `vp : StemC → SubSt → Fin 6 → ℕ` is the violation profile derived
+  directly from the six constraint definitions (no separate stipulation).
+- `relevant c : Finset (Fin 6)` and `yesFav c : Finset (Fin 6)` are
+  computed from `vp` (`{i : vp c .yes i ≠ vp c .no i}` and
+  `{i : vp c .yes i < vp c .no i}` respectively), with concrete
+  `decide`-discharged values.
+- `subProb c : ℚ` is `Core.Constraint.PartialOrderConstraints.pocPredict`
+  applied to the discrete partial order on `Fin 6` — i.e. uniform sampling
+  over all 720 total orders.
+- The closed-form rate `|Y_c ∩ D_c| / |D_c|` follows by a single
+  application of `picksAt_rate_eq` (which combines the binary-PicksAt
+  bridge with `perm_filter_head_in_card`'s rational form), with
+  no enumeration of 6! = 720 rankings.
 
-where `D_c` is the set of constraint indices that distinguish YES from NO
-for `c`, and `Y_c ⊆ D_c` is the subset that favors YES. This closed form
-yields each per-consonant substitution count by a single arithmetic step,
-with no 6! = 720 enumeration.
+The structural implication theorems in §7 reuse
+`Core.Constraint.PermSubsetCombinatorics.head_filter_subset_extends`
+and `head_filter_smaller_inherits` (lifted from earlier versions of
+this file's private helpers) — pure list-filter monotonicity facts
+that any binary-output OT factorial-typology study can consume.
 
 ## Constraint set
 
-Six constraints drive the typology:
+Six constraints drive the factorial typology, matching @cite{zuraw-2010}'s
+§4.2 footnote 17 (page 446) where the free-ranking enumeration appears:
 
-- **NasSub** (markedness; Zuraw 2010 §4.2 names this DEP-C): penalizes
-  nasal+obstruent sequences across morpheme boundaries — violated by
-  NO (the faithful cluster) for every stem. Project-canonical name is
-  NasSub for consistency with @cite{zuraw-hayes-2017} ex. (3).
-- **\*NC** (markedness): penalizes nasal + voiceless-obstruent clusters
-- **\*ASSOC** (markedness): penalizes multiple association (coalescence)
-- **\*\[ŋ, \*\[n, \*\[m** (markedness, stringent hierarchy): penalizes
-  stem-initial nasals resulting from coalescence
+- **NasSub** (project-canonical name following @cite{zuraw-hayes-2017}
+  ex. (3); extensionally coincides with @cite{zuraw-2010}'s DEP-C —
+  see `nasSub` docstring): violated by NO for every stem.
+- **\*NC**, after @cite{pater-1999}: penalizes nasal+voiceless-obstruent
+  clusters; violated by NO for voiceless stems.
+- **\*ASSOC** (faithfulness): penalizes adding a new association line;
+  violated by YES for every stem.
+- **\*\[ŋ, \*\[n, \*\[m** (markedness, stringent hierarchy after
+  @cite{prince-1997-stringency} and @cite{delacy-2002}): penalize
+  stem-initial nasals at velar/coronal/labial places respectively
+  (with backer = more violations).
+
+Other Zuraw 2010 constraints (MAX(+nas), UNIFORMITY, MORPHEMECOHESION,
+NOCODA, \*GEMINATE, NASASSIM, IDENT(place), FAITH-OO, INTEGRITY-IO) are
+held high-ranked per Zuraw's analytical choice and do not appear here;
+they would not vary the YES/NO outcome on the candidate set considered.
 
 ## Implicational universals (structural)
 
@@ -46,12 +67,15 @@ The voicing effect (voiced→YES implies voiceless→YES at the same place)
 and the place effect (backer→YES implies fronter→YES within a voicing
 class) follow from the set-theoretic relationships between `D_c` and
 `Y_c` across consonants — proved structurally per-ranking, no enumeration.
+These typological generalizations are independently established in
+@cite{newman-1984}'s overview of Western Austronesian and replicated
+in @cite{blust-2004}'s 48-language survey.
 
 ## Dictionary data
 
-@cite{zuraw-2010}'s Tagalog dictionary counts confirm the voicing
-effect: voiceless stems show higher substitution rates than voiced
-stems at the labial place (p: 253/263 vs b: 177/277).
+@cite{zuraw-2010}'s Tagalog dictionary counts (paper §2.2, page 423)
+confirm the voicing effect: voiceless stems show higher substitution
+rates than voiced stems at the labial place (p: 253/263 vs b: 177/277).
 
 ## Relation to other Tagalog NS analyses
 
@@ -63,12 +87,15 @@ under a different constraint inventory (NasSub / \*NC / \*[stemŋ] /
 \*[stemŋ]/n / prefix-indexed UNIFORMITY) for a MaxEnt analysis of the
 Hayes-Zuraw shifted-sigmoids generalization. The constraint sets and
 the data slices differ; the two strands are complementary readings of
-@cite{zuraw-2010}'s underlying phenomenon.
+@cite{zuraw-2010}'s underlying phenomenon. ZurawHayes2017 and Magri2025
+import the constraint identity definitions in §1 below via `comap` —
+those definitions must remain stable.
 -/
 
 namespace Zuraw2010
 
-open Core.Constraint.OT Phonology.Constraints
+open Core.Constraint Core.Constraint.OT Phonology.Constraints
+open Core.Constraint.PartialOrderConstraints
 open Core.Constraint.PermSubsetCombinatorics
 
 /-! ## § 0: Stems, Substitution Decisions, Dictionary Counts -/
@@ -79,25 +106,25 @@ open Core.Constraint.PermSubsetCombinatorics
 inductive StemC where
   | p | t | k   -- voiceless
   | b | d | g   -- voiced
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Whether nasal substitution applies. -/
 inductive SubSt where
   | yes  -- coalescence: nasal + obstruent → nasal
   | no   -- faithful: nasal cluster preserved
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- A candidate is a stem consonant paired with a substitution decision. -/
 abbrev NSCand := StemC × SubSt
 
 /-- Dictionary substitution rate for voiceless labial p (253/263 ≈ 96.2%).
-    Counts as reported in @cite{zuraw-2010} from a Tagalog dictionary
-    corpus study. -/
+    Counts as reported in @cite{zuraw-2010} §2.2 (page 423) from a
+    Tagalog dictionary corpus study. -/
 def dictRate_p : ℚ := 253 / 263
 
 /-- Dictionary substitution rate for voiced labial b (177/277 ≈ 63.9%).
-    Counts as reported in @cite{zuraw-2010} from a Tagalog dictionary
-    corpus study. -/
+    Counts as reported in @cite{zuraw-2010} §2.2 (page 423) from a
+    Tagalog dictionary corpus study. -/
 def dictRate_b : ℚ := 177 / 277
 
 /-- **Voicing effect in dictionary data** (labial place): voiceless p
@@ -109,50 +136,70 @@ theorem dict_voicing_labial : dictRate_p > dictRate_b := by
 -- § 1: Constraints
 -- ============================================================================
 
-/-- NasSub: penalizes nasal+obstruent sequences across morpheme
-    boundaries. Violated by NO for every stem (the faithful cluster
-    contains the offending nasal+obstruent sequence; YES coalesces and
-    has no such sequence).
+/-- **NasSub** (project-canonical name following @cite{zuraw-hayes-2017}
+    ex. (3)). Extensionally equivalent to @cite{zuraw-2010}'s DEP-C in
+    the present 6-constraint analysis, though the two papers frame the
+    same constraint differently:
 
-    @cite{zuraw-2010} §4.2 calls this constraint "DEP-C" and frames it
-    via faithfulness; @cite{zuraw-hayes-2017} ex. (3) calls it "NasSub"
-    and frames it via markedness. Same numeric constraint under the two
-    framings — project-canonical name is NasSub for consistency with the
-    Magri 2025 / Z&H 2017 literature.
+    - @cite{zuraw-2010} §3.1 (page 432, ex. 6): **faithfulness DEP-C**,
+      penalizes inserting a segmental host for the floating [+nas]
+      feature. Violated by NO candidate `pamⱼ-bɪɡaj` because the
+      inserted [m] segment has no input correspondent.
+    - @cite{zuraw-hayes-2017} ex. (3): **markedness NasSub**, penalizes
+      nasal + obstruent across morpheme boundaries.
 
-    NB: in earlier commits this constraint was labeled \*NC; renamed for
-    fidelity to the paper's notation, where \*NC is reserved for the
-    voiceless-only constraint (see `starNC` below). -/
+    Both fire on every NO candidate in the present 6-constraint subset,
+    so the violation profile coincides. We follow Zuraw-Hayes 2017's
+    naming for consistency with downstream files
+    (`ZurawHayes2017.lean`, `Magri2025.lean`).
+
+    NB: In earlier commits this constraint was labeled \*NC; renamed
+    for fidelity to the paper's notation, where \*NC is reserved for
+    the voiceless-only constraint (see `starNC` below). -/
 def nasSub : NamedConstraint NSCand :=
   mkMark "NasSub" fun c => c.2 = SubSt.no
 
-/-- \*NC: penalizes nasal + voiceless-obstruent sequences. Violated by NO
-    for voiceless stems only. Per @cite{zuraw-2010} ex. (17):
-    "\*NC: A [+nasal] segment must not be immediately followed by a
-    [-voice, -sonorant] segment". -/
+/-- **\*NC**, after @cite{pater-1999} (Austronesian NS) and
+    @cite{pater-2001} (revisited). Penalizes nasal + voiceless-obstruent
+    sequences. Violated by NO for voiceless stems only. Per
+    @cite{zuraw-2010} ex. (17) (page 436): "\*NC: A [+nasal] segment
+    must not be immediately followed by a [-voice, -sonorant] segment". -/
 def starNC : NamedConstraint NSCand :=
   mkMark "*NC" fun c => c.1 ∈ [StemC.p, .t, .k] ∧ c.2 = .no
 
-/-- *ASSOC: penalizes multiple association (coalescence). Violated by YES. -/
+/-- **\*ASSOC**: penalizes adding a new association line (faithfulness).
+    Per @cite{zuraw-2010} (page 432, ex. 7), this is
+    "*ASSOCIATE_hetero-morphemic" — the local restriction of a more
+    general *ASSOC family that fires on association lines crossing
+    morpheme boundaries. Violated by YES for every stem. -/
 def starAssoc : NamedConstraint NSCand :=
   mkMark "*ASSOC" fun c => c.2 = SubSt.yes
 
-/-- *\[ŋ: stems must not begin with ŋ. Violated by YES for velar stems. -/
+/-- **\*\[ŋ**, after @cite{prince-1997-stringency} and @cite{delacy-2002}
+    on stringency hierarchies; @cite{zuraw-2010} ex. (19) (page 437).
+    Stems must not begin with ŋ. Violated by YES for velar stems
+    (k, g coalesce to stem-initial ŋ). -/
 def starInitVelar : NamedConstraint NSCand :=
   mkMark "*[ŋ" fun c => c.1 ∈ [StemC.k, .g] ∧ c.2 = .yes
 
-/-- *\[n: stems must not begin with n or backer. Violated by YES for
-    coronal and velar stems. -/
+/-- **\*\[n**: stringency-hierarchy member after
+    @cite{prince-1997-stringency}, @cite{delacy-2002}; @cite{zuraw-2010}
+    ex. (19) (page 437). Stems must not begin with n or backer.
+    Violated by YES for coronal and velar stems. -/
 def starInitCorVel : NamedConstraint NSCand :=
   mkMark "*[n" fun c => c.1 ∈ [StemC.t, .d, .k, .g] ∧ c.2 = .yes
 
-/-- *\[m: stems must not begin with m or backer. Violated by YES for all. -/
+/-- **\*\[m**: top of the stringency hierarchy after
+    @cite{prince-1997-stringency}, @cite{delacy-2002}; @cite{zuraw-2010}
+    ex. (19) (page 437). Stems must not begin with m or backer.
+    Violated by YES for all stems (every coalesced output is
+    stem-initial nasal of some place). -/
 def starInitAll : NamedConstraint NSCand :=
   mkMark "*[m" fun c => c.2 = SubSt.yes
 
 /-- The six constraints, indexed for substrate consumption.
-    Order matches @cite{zuraw-2010}'s six freely-ranked constraints:
-    NasSub, \*NC, \*ASSOCIATE, \*[ŋ, \*[n, \*[m. -/
+    Order matches @cite{zuraw-2010}'s §4.2 footnote 17 (page 446):
+    NasSub, \*NC, \*ASSOC, \*[ŋ, \*[n, \*[m. -/
 def constraint : Fin 6 → NamedConstraint NSCand
   | 0 => nasSub
   | 1 => starNC
@@ -160,10 +207,6 @@ def constraint : Fin 6 → NamedConstraint NSCand
   | 3 => starInitVelar
   | 4 => starInitCorVel
   | 5 => starInitAll
-
-/-- Legacy list form, retained for callers that want a `List`. -/
-def allConstraints : List (NamedConstraint NSCand) :=
-  [nasSub, starNC, starAssoc, starInitVelar, starInitCorVel, starInitAll]
 
 -- ============================================================================
 -- § 2: Constraint Violation Profiles
@@ -179,301 +222,269 @@ theorem stringency_violations :
     starInitAll.eval (.k, .yes) + starInitCorVel.eval (.k, .yes) +
       starInitVelar.eval (.k, .yes) = 3 := by decide
 
-/-- *ASSOC and *\[m have identical violation profiles. -/
+/-- *ASSOC and *\[m have identical violation profiles on this candidate
+    space. A coincidence of the 0/1-violation simplification rather than
+    a deep identity: in @cite{zuraw-2010}'s richer analysis, *ASSOC's
+    flat penalty contrasts with *[m's stringency-hierarchy role. -/
 theorem assoc_eq_initAll (c : StemC) (s : SubSt) :
     starAssoc.eval (c, s) = starInitAll.eval (c, s) := by
   cases c <;> cases s <;> rfl
 
 -- ============================================================================
--- § 3: D_c and Y_c — distinguishing and YES-favoring constraint sets
+-- § 3: Substrate Adapter (POC-routed)
 -- ============================================================================
 
-/-- For each consonant `c`, the set of constraint indices that distinguish
-    `(c, YES)` from `(c, NO)`. The substitution outcome depends only on
-    the relative order of these constraints. -/
-def relevant : StemC → Finset (Fin 6)
-  | .p => {0, 1, 2, 5}
-  | .t => {0, 1, 2, 4, 5}
-  | .k => {0, 1, 2, 3, 4, 5}
-  | .b => {0, 2, 5}
-  | .d => {0, 2, 4, 5}
-  | .g => {0, 2, 3, 4, 5}
+/-- Violation profile derived from the constraint definitions, in the
+    `Input → Output → Fin n → ℕ` shape required by
+    `PartialOrderConstraints.PicksAt` and `pocPredict`. -/
+def vp (c : StemC) (s : SubSt) (i : Fin 6) : ℕ :=
+  (constraint i).eval (c, s)
 
-/-- For each consonant `c`, the constraint indices that favor YES
-    (assign fewer violations to YES than NO). -/
-def yesFav : StemC → Finset (Fin 6)
-  | .p => {0, 1}
-  | .t => {0, 1}
-  | .k => {0, 1}
-  | .b => {0}
-  | .d => {0}
-  | .g => {0}
+/-- POC candidate set per stem: both YES and NO are available for every
+    stem-initial obstruent. -/
+def nsCands : StemC → Finset SubSt := fun _ => Finset.univ
+
+/-- The set of constraint indices that distinguish YES from NO for stem
+    `c` — i.e. constraints that disagree on the two candidates' violation
+    counts. Computed directly from `vp`; see `relevant_*` below for
+    concrete `decide`-discharged values. -/
+def relevant (c : StemC) : Finset (Fin 6) :=
+  Finset.univ.filter (fun i => vp c .yes i ≠ vp c .no i)
+
+/-- The set of constraint indices that **favor YES** for stem `c` —
+    constraints assigning fewer violations to YES than to NO. Computed
+    from `vp`; see `yesFav_*` below for concrete values. -/
+def yesFav (c : StemC) : Finset (Fin 6) :=
+  Finset.univ.filter (fun i => vp c .yes i < vp c .no i)
+
+/-! Concrete `decide`-discharged values for `relevant` and `yesFav`,
+matching @cite{zuraw-2010} §4.2 footnote 17's per-consonant constraint
+subsets. -/
+
+@[simp] theorem relevant_p : relevant .p = ({0, 1, 2, 5} : Finset (Fin 6)) := by decide
+@[simp] theorem relevant_t : relevant .t = ({0, 1, 2, 4, 5} : Finset (Fin 6)) := by decide
+@[simp] theorem relevant_k : relevant .k = ({0, 1, 2, 3, 4, 5} : Finset (Fin 6)) := by decide
+@[simp] theorem relevant_b : relevant .b = ({0, 2, 5} : Finset (Fin 6)) := by decide
+@[simp] theorem relevant_d : relevant .d = ({0, 2, 4, 5} : Finset (Fin 6)) := by decide
+@[simp] theorem relevant_g : relevant .g = ({0, 2, 3, 4, 5} : Finset (Fin 6)) := by decide
+
+@[simp] theorem yesFav_p : yesFav .p = ({0, 1} : Finset (Fin 6)) := by decide
+@[simp] theorem yesFav_t : yesFav .t = ({0, 1} : Finset (Fin 6)) := by decide
+@[simp] theorem yesFav_k : yesFav .k = ({0, 1} : Finset (Fin 6)) := by decide
+@[simp] theorem yesFav_b : yesFav .b = ({0} : Finset (Fin 6)) := by decide
+@[simp] theorem yesFav_d : yesFav .d = ({0} : Finset (Fin 6)) := by decide
+@[simp] theorem yesFav_g : yesFav .g = ({0} : Finset (Fin 6)) := by decide
+
+/-- The candidate set for any stem is the two-element set `{.yes, .no}`. -/
+private theorem nsCands_two (c : StemC) : nsCands c = {SubSt.yes, SubSt.no} := by
+  unfold nsCands; ext o; cases o <;> simp
 
 -- ============================================================================
--- § 4: Per-Consonant Substitution Predicate (substrate-native)
+-- § 4: Substitution Probability via POC
 -- ============================================================================
 
-/-- YES wins over NO for consonant `c` under ranking `σ` iff the
-    highest-ranked constraint that distinguishes them is YES-favoring. -/
-def subWinsP (σ : Equiv.Perm (Fin 6)) (c : StemC) : Prop :=
-  ∃ x ∈ yesFav c, (permDList σ (relevant c)).head? = some x
-
-instance : ∀ (σ : Equiv.Perm (Fin 6)) (c : StemC), Decidable (subWinsP σ c) :=
-  fun _ _ => Multiset.decidableExistsMultiset
-
-/-- The per-consonant substitution count: number of rankings under
-    which YES wins for consonant `c`. -/
-def subCount (c : StemC) : Nat :=
-  (Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) => subWinsP σ c)).card
+/-- Substitution probability under POC sampling with the discrete partial
+    order: the fraction of all `6! = 720` total orders that pick YES as
+    the OT optimum for stem `c`. -/
+def subProb (c : StemC) : ℚ :=
+  pocPredict nsCands vp (discrete 6) c .yes
 
 -- ============================================================================
--- § 5: Closed-Form Substitution Counts via the Substrate
+-- § 5: Closed-Form Rates via the Substrate
 -- ============================================================================
 
-/-- The substrate equation specialized to consonant `c`:
-    `subCount c × |D_c| = 6! × |Y_c ∩ D_c|`. -/
-theorem subCount_mul_relevant (c : StemC) :
-    subCount c * (relevant c).card =
-      720 * ((yesFav c) ∩ (relevant c)).card := by
-  have h := perm_filter_head_in_card (relevant c) (yesFav c)
-  have h720 : Nat.factorial 6 = 720 := by decide
-  rw [h720] at h
-  -- subCount and the substrate's filter use the same set, possibly with different
-  -- DecidablePred instances. Use Finset.filter_congr (Iff.rfl) to bridge.
-  have h_filter : Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) => subWinsP σ c) =
-      Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) =>
-        ∃ x ∈ yesFav c, (permDList σ (relevant c)).head? = some x) :=
-    Finset.filter_congr (fun _ _ => Iff.rfl)
-  show (Finset.univ.filter (fun σ : Equiv.Perm (Fin 6) => subWinsP σ c)).card *
-      (relevant c).card = _
-  rw [h_filter]; exact h
+/-- The substrate-derived closed-form rate: `subProb c = |Y_c ∩ D_c| / |D_c|`,
+    where `Y_c = yesFav c` and `D_c = relevant c`. Combines `pocPredict`'s
+    discrete-PO unfolding with `picksAt_rate_eq` (substrate). -/
+private theorem subProb_eq_rate (c : StemC) :
+    subProb c = ((yesFav c ∩ relevant c).card : ℚ) / (relevant c).card := by
+  unfold subProb pocPredict
+  rw [consistentTotalOrders_discrete, Finset.card_univ,
+      Fintype.card_perm, Fintype.card_fin]
+  exact picksAt_rate_eq nsCands vp c .yes .no
+    (nsCands_two c) (fun heq => SubSt.noConfusion heq)
+    (relevant c) (yesFav c)
+    (fun k => by simp [relevant])
+    (fun k => by simp [yesFav])
 
-/-- Substitution count for voiceless labial p: 360 of 720 rankings. -/
-theorem subCount_p : subCount .p = 360 := by
-  have h := subCount_mul_relevant .p
-  have hD : (relevant .p).card = 4 := by decide
-  have hY : ((yesFav .p) ∩ (relevant .p)).card = 2 := by decide
-  rw [hD, hY] at h; omega
+/-- Substitution rate for voiceless labial p: 50% of 720 rankings. -/
+theorem subProb_p : subProb .p = 1/2 := by
+  rw [subProb_eq_rate, relevant_p, yesFav_p,
+      show (({0, 1} : Finset (Fin 6)) ∩ {0, 1, 2, 5}).card = 2 from by decide,
+      show ({0, 1, 2, 5} : Finset (Fin 6)).card = 4 from by decide]
+  norm_num
 
-/-- Substitution count for voiceless coronal t: 288 of 720 rankings. -/
-theorem subCount_t : subCount .t = 288 := by
-  have h := subCount_mul_relevant .t
-  have hD : (relevant .t).card = 5 := by decide
-  have hY : ((yesFav .t) ∩ (relevant .t)).card = 2 := by decide
-  rw [hD, hY] at h; omega
+/-- Substitution rate for voiceless coronal t: 40% of 720 rankings. -/
+theorem subProb_t : subProb .t = 2/5 := by
+  rw [subProb_eq_rate, relevant_t, yesFav_t,
+      show (({0, 1} : Finset (Fin 6)) ∩ {0, 1, 2, 4, 5}).card = 2 from by decide,
+      show ({0, 1, 2, 4, 5} : Finset (Fin 6)).card = 5 from by decide]
+  norm_num
 
-/-- Substitution count for voiceless velar k: 240 of 720 rankings. -/
-theorem subCount_k : subCount .k = 240 := by
-  have h := subCount_mul_relevant .k
-  have hD : (relevant .k).card = 6 := by decide
-  have hY : ((yesFav .k) ∩ (relevant .k)).card = 2 := by decide
-  rw [hD, hY] at h; omega
+/-- Substitution rate for voiceless velar k: 33⅓% of 720 rankings. -/
+theorem subProb_k : subProb .k = 1/3 := by
+  rw [subProb_eq_rate, relevant_k, yesFav_k,
+      show (({0, 1} : Finset (Fin 6)) ∩ {0, 1, 2, 3, 4, 5}).card = 2 from by decide,
+      show ({0, 1, 2, 3, 4, 5} : Finset (Fin 6)).card = 6 from by decide]
+  norm_num
 
-/-- Substitution count for voiced labial b: 240 of 720 rankings. -/
-theorem subCount_b : subCount .b = 240 := by
-  have h := subCount_mul_relevant .b
-  have hD : (relevant .b).card = 3 := by decide
-  have hY : ((yesFav .b) ∩ (relevant .b)).card = 1 := by decide
-  rw [hD, hY] at h; omega
+/-- Substitution rate for voiced labial b: 33⅓% of 720 rankings. -/
+theorem subProb_b : subProb .b = 1/3 := by
+  rw [subProb_eq_rate, relevant_b, yesFav_b,
+      show (({0} : Finset (Fin 6)) ∩ {0, 2, 5}).card = 1 from by decide,
+      show ({0, 2, 5} : Finset (Fin 6)).card = 3 from by decide]
+  norm_num
 
-/-- Substitution count for voiced coronal d: 180 of 720 rankings. -/
-theorem subCount_d : subCount .d = 180 := by
-  have h := subCount_mul_relevant .d
-  have hD : (relevant .d).card = 4 := by decide
-  have hY : ((yesFav .d) ∩ (relevant .d)).card = 1 := by decide
-  rw [hD, hY] at h; omega
+/-- Substitution rate for voiced coronal d: 25% of 720 rankings. -/
+theorem subProb_d : subProb .d = 1/4 := by
+  rw [subProb_eq_rate, relevant_d, yesFav_d,
+      show (({0} : Finset (Fin 6)) ∩ {0, 2, 4, 5}).card = 1 from by decide,
+      show ({0, 2, 4, 5} : Finset (Fin 6)).card = 4 from by decide]
+  norm_num
 
-/-- Substitution count for voiced velar g: 144 of 720 rankings. -/
-theorem subCount_g : subCount .g = 144 := by
-  have h := subCount_mul_relevant .g
-  have hD : (relevant .g).card = 5 := by decide
-  have hY : ((yesFav .g) ∩ (relevant .g)).card = 1 := by decide
-  rw [hD, hY] at h; omega
+/-- Substitution rate for voiced velar g: 20% of 720 rankings. -/
+theorem subProb_g : subProb .g = 1/5 := by
+  rw [subProb_eq_rate, relevant_g, yesFav_g,
+      show (({0} : Finset (Fin 6)) ∩ {0, 2, 3, 4, 5}).card = 1 from by decide,
+      show ({0, 2, 3, 4, 5} : Finset (Fin 6)).card = 5 from by decide]
+  norm_num
 
-/-- All six factorial percentages, matching @cite{zuraw-2010} §3.5's
-    free-ranking summary (the prose enumerates them as 50%, 40%, 33%,
-    33%, 25%, 20% for p, t/s, k, b, d, g respectively).
-    Each derived in closed form from the substrate's
-    `perm_filter_head_in_card` — no 6! enumeration. -/
-theorem factorial_percentages :
-    subCount .p = 360 ∧ subCount .t = 288 ∧ subCount .k = 240 ∧
-    subCount .b = 240 ∧ subCount .d = 180 ∧ subCount .g = 144 :=
-  ⟨subCount_p, subCount_t, subCount_k, subCount_b, subCount_d, subCount_g⟩
-
-/-- The factorial percentages as fractions of 720 total rankings:
-    p=50%, t=40%, k=33⅓%, b=33⅓%, d=25%, g=20%. -/
+/-- All six factorial percentages, matching @cite{zuraw-2010} §4.2
+    footnote 17 (page 446)'s free-ranking summary (50%, 40%, 33⅓%,
+    33⅓%, 25%, 20% for p, t, k, b, d, g respectively). Each derived in
+    closed form from the substrate's `picksAt_rate_eq` — no 6!
+    enumeration. -/
 theorem factorial_rates :
-    (subCount .p : ℚ) / 720 = 1/2 ∧
-    (subCount .t : ℚ) / 720 = 2/5 ∧
-    (subCount .k : ℚ) / 720 = 1/3 ∧
-    (subCount .b : ℚ) / 720 = 1/3 ∧
-    (subCount .d : ℚ) / 720 = 1/4 ∧
-    (subCount .g : ℚ) / 720 = 1/5 := by
-  rw [subCount_p, subCount_t, subCount_k, subCount_b, subCount_d, subCount_g]
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> norm_num
+    subProb .p = 1/2 ∧ subProb .t = 2/5 ∧ subProb .k = 1/3 ∧
+    subProb .b = 1/3 ∧ subProb .d = 1/4 ∧ subProb .g = 1/5 :=
+  ⟨subProb_p, subProb_t, subProb_k, subProb_b, subProb_d, subProb_g⟩
 
 -- ============================================================================
--- § 6: Place and Voicing Monotonicity (count-level)
+-- § 6: Place and Voicing Monotonicity (rate-level)
 -- ============================================================================
 
-/-- Place monotonicity: the factorial percentage strictly decreases from
-    labial to velar within each voicing class. -/
+/-- **Place monotonicity** (model property): the factorial rate strictly
+    decreases from labial to velar within each voicing class. NB: the
+    place effect within voiceless is statistically *not* significant
+    in @cite{zuraw-2010}'s §5 acceptability data (paper page 459: in a
+    mixed-effects model labials get a slightly *lower* rating difference
+    than dentals — by 0.3 points — but this is not significant). The
+    strict inequality below is therefore a property of the 6-constraint
+    factorial idealization, not a paper-citable empirical claim about
+    voiceless stems. -/
 theorem place_monotonicity :
-    subCount .p > subCount .t ∧ subCount .t > subCount .k ∧
-    subCount .b > subCount .d ∧ subCount .d > subCount .g := by
-  rw [subCount_p, subCount_t, subCount_k, subCount_b, subCount_d, subCount_g]
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+    subProb .p > subProb .t ∧ subProb .t > subProb .k ∧
+    subProb .b > subProb .d ∧ subProb .d > subProb .g := by
+  rw [subProb_p, subProb_t, subProb_k, subProb_b, subProb_d, subProb_g]
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num
 
-/-- Voicing monotonicity: voiceless substitution count is at least as
-    high as voiced at every place. -/
+/-- **Voicing monotonicity**: voiceless substitution rate is at least as
+    high as voiced at every place. Empirically robust across all of
+    @cite{zuraw-2010}'s data sources (Fig 1 dictionary, Fig 8 corpus,
+    Fig 14 acceptability, Fig 15 web survey) — also significant in
+    every mixed-effects model the paper reports. -/
 theorem voicing_monotonicity :
-    subCount .p ≥ subCount .b ∧ subCount .t ≥ subCount .d ∧
-    subCount .k ≥ subCount .g := by
-  rw [subCount_p, subCount_t, subCount_k, subCount_b, subCount_d, subCount_g]
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+    subProb .p ≥ subProb .b ∧ subProb .t ≥ subProb .d ∧
+    subProb .k ≥ subProb .g := by
+  rw [subProb_p, subProb_t, subProb_k, subProb_b, subProb_d, subProb_g]
+  refine ⟨?_, ?_, ?_⟩ <;> norm_num
 
 -- ============================================================================
--- § 7: Implicational Universals (structural, per-ranking)
+-- § 7: Implicational Universals (per-ranking, structural)
 -- ============================================================================
 
-/-- Helper: filtering `z :: zs` by `(· ∈ D)` when `z ∈ D` puts `z` first. -/
-private lemma filter_cons_head_of_mem {α : Type*} [DecidableEq α]
-    (D : Finset α) (z : α) (zs : List α) (hzD : z ∈ D) :
-    ((z :: zs).filter (· ∈ D)).head? = some z := by
-  rw [List.filter_cons, if_pos (by simpa using hzD)]
-  rfl
+/-! These structural per-ranking implication theorems formalize the
+cross-linguistic implicational universals established in
+@cite{newman-1984}'s overview of Western Austronesian (replicated in
+@cite{blust-2004}'s 48-language survey): *if NS applies to a voiced
+obstruent, it applies to the corresponding voiceless obstruent;
+if NS applies to a stop, it applies to any fronter stop of the same
+voicing*. The substrate proofs go via the lifted helpers
+`Core.Constraint.PermSubsetCombinatorics.head_filter_subset_extends`
+and `head_filter_smaller_inherits` (originally private here, lifted to
+substrate alongside `perm_filter_head_in_card`). -/
 
-/-- Helper: filtering `z :: zs` by `(· ∈ D)` when `z ∉ D` recurses to `zs`. -/
-private lemma filter_cons_head_of_not_mem {α : Type*} [DecidableEq α]
-    (D : Finset α) (z : α) (zs : List α) (hzD : z ∉ D) :
-    ((z :: zs).filter (· ∈ D)).head? = (zs.filter (· ∈ D)).head? := by
-  rw [List.filter_cons, if_neg (by simpa using hzD)]
-
-/-- Helper: the head of a list filtered by `D` is the first element of
-    the original list that lies in `D`. Used in both implication theorems.
-
-    Hypotheses: `D' ⊆ D`, `Y' ⊆ Y`, and any "extra" element of `D \ D'`
-    is in `Y` (so it's a YES-favoring element when it appears as head of
-    `L.filter (· ∈ D)`). -/
-private lemma head_filter_subset_extends
-    {α : Type*} [DecidableEq α] {D D' Y Y' : Finset α}
-    (h_D : D' ⊆ D) (h_Y : Y' ⊆ Y)
-    (h_extra : ∀ x ∈ D, x ∉ D' → x ∈ Y) :
-    ∀ (L : List α),
-      (∃ x ∈ Y', (L.filter (· ∈ D')).head? = some x) →
-      (∃ y ∈ Y, (L.filter (· ∈ D)).head? = some y) := by
-  intro L
-  induction L with
-  | nil =>
-    rintro ⟨_, _, hx⟩; simp at hx
-  | cons z zs ih =>
-    rintro ⟨x, hxY', hx⟩
-    by_cases hzD : z ∈ D
-    · refine ⟨z, ?_, filter_cons_head_of_mem D z zs hzD⟩
-      by_cases hzD' : z ∈ D'
-      · -- z is the head of the D'-filter, so z = x ∈ Y' ⊆ Y
-        rw [filter_cons_head_of_mem D' z zs hzD'] at hx
-        rw [show z = x from Option.some.inj hx]
-        exact h_Y hxY'
-      · exact h_extra z hzD hzD'
-    · -- z ∉ D ⊇ D', so z ∉ D': both filters skip z
-      have hzD' : z ∉ D' := fun h => hzD (h_D h)
-      rw [filter_cons_head_of_not_mem D' z zs hzD'] at hx
-      obtain ⟨y, hyY, hy⟩ := ih ⟨x, hxY', hx⟩
-      exact ⟨y, hyY, (filter_cons_head_of_not_mem D z zs hzD).trans hy⟩
-
-/-- Helper: when `D ⊆ D'`, if the head of `L.filter (· ∈ D')` is in
-    `Y' ⊆ D`, then the head of `L.filter (· ∈ D)` exists, equals it,
-    and lies in `Y` (assuming `Y' ⊆ Y`). Used for the place-effect
-    implication where the "source" `c'` has the larger D. -/
-private lemma head_filter_smaller_inherits
-    {α : Type*} [DecidableEq α] {D D' Y Y' : Finset α}
-    (h_D : D ⊆ D') (h_Y : Y' ⊆ Y) (h_Y_in_D : Y' ⊆ D) :
-    ∀ (L : List α),
-      (∃ x ∈ Y', (L.filter (· ∈ D')).head? = some x) →
-      (∃ y ∈ Y, (L.filter (· ∈ D)).head? = some y) := by
-  intro L
-  induction L with
-  | nil =>
-    rintro ⟨_, _, hx⟩; simp at hx
-  | cons z zs ih =>
-    rintro ⟨x, hxY', hx⟩
-    by_cases hzD' : z ∈ D'
-    · -- z is the head of the D'-filter, so z = x ∈ Y' ⊆ D
-      rw [filter_cons_head_of_mem D' z zs hzD'] at hx
-      rw [show z = x from Option.some.inj hx]
-      have hxD : x ∈ D := h_Y_in_D hxY'
-      exact ⟨x, h_Y hxY', filter_cons_head_of_mem D x zs hxD⟩
-    · -- z ∉ D' ⊇ D, so z ∉ D: both filters skip z
-      have hzD : z ∉ D := fun h => hzD' (h_D h)
-      rw [filter_cons_head_of_not_mem D' z zs hzD'] at hx
-      obtain ⟨y, hyY, hy⟩ := ih ⟨x, hxY', hx⟩
-      exact ⟨y, hyY, (filter_cons_head_of_not_mem D z zs hzD).trans hy⟩
-
-/-- **Voicing-style implication**: if `c'` has a smaller distinguishing
-    set than `c`, but `c`'s extras all favor YES, then `c' subbed ⇒ c
-    subbed`. Used for voiced→voiceless implications. -/
-theorem subWinsP_extends_smaller_D
-    {c c' : StemC} {σ : Equiv.Perm (Fin 6)}
+/-- **Voicing-style extension**: if `c'` has a smaller distinguishing
+    set than `c` but `c`'s extras all favor YES, then `c' substitutes`
+    implies `c substitutes`. Used for voiced→voiceless implications. -/
+theorem PicksAt_extends_smaller_D
+    {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_D : relevant c' ⊆ relevant c)
     (h_Y : yesFav c' ⊆ yesFav c)
     (h_extra : ∀ x ∈ relevant c, x ∉ relevant c' → x ∈ yesFav c)
-    (h_c' : subWinsP σ c') : subWinsP σ c := by
-  exact head_filter_subset_extends h_D h_Y h_extra (permToList σ) h_c'
+    (h_c' : PicksAt nsCands vp σ c' .yes) :
+    PicksAt nsCands vp σ c .yes := by
+  rw [picksAt_binary_iff_permDList_head_lt
+        nsCands vp c' .yes .no (nsCands_two c')
+        (fun heq => SubSt.noConfusion heq)] at h_c'
+  rw [picksAt_binary_iff_permDList_head_lt
+        nsCands vp c .yes .no (nsCands_two c)
+        (fun heq => SubSt.noConfusion heq)]
+  exact head_filter_subset_extends h_D h_Y h_extra _ h_c'
 
-/-- **Place-style implication**: if `c'` has a larger distinguishing
-    set than `c`, but `c'`'s YES-favorers all lie in `c`'s smaller set,
-    then `c' subbed ⇒ c subbed`. Used for backer→fronter implications
-    within a voicing class. -/
-theorem subWinsP_extends_larger_D
-    {c c' : StemC} {σ : Equiv.Perm (Fin 6)}
+/-- **Place-style extension**: if `c'` has a larger distinguishing set
+    than `c` but `c'`'s YES-favorers all lie in `c`'s smaller set, then
+    `c' substitutes` implies `c substitutes`. Used for backer→fronter
+    implications within a voicing class. -/
+theorem PicksAt_extends_larger_D
+    {σ : Equiv.Perm (Fin 6)} {c c' : StemC}
     (h_D : relevant c ⊆ relevant c')
     (h_Y : yesFav c' ⊆ yesFav c)
     (h_subset : yesFav c' ⊆ relevant c)
-    (h_c' : subWinsP σ c') : subWinsP σ c := by
-  exact head_filter_smaller_inherits h_D h_Y h_subset (permToList σ) h_c'
+    (h_c' : PicksAt nsCands vp σ c' .yes) :
+    PicksAt nsCands vp σ c .yes := by
+  rw [picksAt_binary_iff_permDList_head_lt
+        nsCands vp c' .yes .no (nsCands_two c')
+        (fun heq => SubSt.noConfusion heq)] at h_c'
+  rw [picksAt_binary_iff_permDList_head_lt
+        nsCands vp c .yes .no (nsCands_two c)
+        (fun heq => SubSt.noConfusion heq)]
+  exact head_filter_smaller_inherits h_D h_Y h_subset _ h_c'
 
 /-- **Voicing effect, labial**: if voiced labial b undergoes substitution,
     so does voiceless labial p. Per-ranking, structural — no enumeration. -/
 theorem voicing_b_implies_p (σ : Equiv.Perm (Fin 6)) :
-    subWinsP σ .b → subWinsP σ .p :=
-  subWinsP_extends_smaller_D (by decide) (by decide) (by decide)
+    PicksAt nsCands vp σ .b .yes → PicksAt nsCands vp σ .p .yes :=
+  PicksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- **Voicing effect, coronal**: voiced d subs implies voiceless t subs. -/
 theorem voicing_d_implies_t (σ : Equiv.Perm (Fin 6)) :
-    subWinsP σ .d → subWinsP σ .t :=
-  subWinsP_extends_smaller_D (by decide) (by decide) (by decide)
+    PicksAt nsCands vp σ .d .yes → PicksAt nsCands vp σ .t .yes :=
+  PicksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- **Voicing effect, velar**: voiced g subs implies voiceless k subs. -/
 theorem voicing_g_implies_k (σ : Equiv.Perm (Fin 6)) :
-    subWinsP σ .g → subWinsP σ .k :=
-  subWinsP_extends_smaller_D (by decide) (by decide) (by decide)
+    PicksAt nsCands vp σ .g .yes → PicksAt nsCands vp σ .k .yes :=
+  PicksAt_extends_smaller_D (by decide) (by decide) (by decide)
 
 /-- **Place effect, voiceless k→t**: if velar k subs, coronal t also subs. -/
 theorem place_k_implies_t (σ : Equiv.Perm (Fin 6)) :
-    subWinsP σ .k → subWinsP σ .t :=
-  subWinsP_extends_larger_D (by decide) (by decide) (by decide)
+    PicksAt nsCands vp σ .k .yes → PicksAt nsCands vp σ .t .yes :=
+  PicksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- **Place effect, voiceless t→p**: if coronal t subs, labial p also subs. -/
 theorem place_t_implies_p (σ : Equiv.Perm (Fin 6)) :
-    subWinsP σ .t → subWinsP σ .p :=
-  subWinsP_extends_larger_D (by decide) (by decide) (by decide)
+    PicksAt nsCands vp σ .t .yes → PicksAt nsCands vp σ .p .yes :=
+  PicksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- **Place effect, voiced g→d**: if velar g subs, coronal d also subs. -/
 theorem place_g_implies_d (σ : Equiv.Perm (Fin 6)) :
-    subWinsP σ .g → subWinsP σ .d :=
-  subWinsP_extends_larger_D (by decide) (by decide) (by decide)
+    PicksAt nsCands vp σ .g .yes → PicksAt nsCands vp σ .d .yes :=
+  PicksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- **Place effect, voiced d→b**: if coronal d subs, labial b also subs. -/
 theorem place_d_implies_b (σ : Equiv.Perm (Fin 6)) :
-    subWinsP σ .d → subWinsP σ .b :=
-  subWinsP_extends_larger_D (by decide) (by decide) (by decide)
+    PicksAt nsCands vp σ .d .yes → PicksAt nsCands vp σ .b .yes :=
+  PicksAt_extends_larger_D (by decide) (by decide) (by decide)
 
 /-- **Tagalog-style maximal substitution**: if velar voiced g subs, every
-    other consonant subs too. Composition of voicing + place effects. -/
-theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : subWinsP σ .g) :
-    subWinsP σ .p ∧ subWinsP σ .t ∧ subWinsP σ .k ∧
-    subWinsP σ .b ∧ subWinsP σ .d ∧ subWinsP σ .g := by
+    other consonant subs too. Composition of voicing + place effects —
+    the upper end of the @cite{newman-1984} / @cite{blust-2004}
+    implicational hierarchy. -/
+theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nsCands vp σ .g .yes) :
+    PicksAt nsCands vp σ .p .yes ∧ PicksAt nsCands vp σ .t .yes ∧
+    PicksAt nsCands vp σ .k .yes ∧ PicksAt nsCands vp σ .b .yes ∧
+    PicksAt nsCands vp σ .d .yes ∧ PicksAt nsCands vp σ .g .yes := by
   have h_d := place_g_implies_d σ h
   have h_b := place_d_implies_b σ h_d
   have h_k := voicing_g_implies_k σ h
@@ -482,27 +493,26 @@ theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : subWinsP σ .g) :
   exact ⟨h_p, h_t, h_k, h_b, h_d, h⟩
 
 -- ============================================================================
--- § 8: Connection to Tagalog
+-- § 8: Pattern (j) Witness — Maximal Substitution
 -- ============================================================================
 
-/-- Tagalog exhibits nasal substitution for all six consonants. The
-    grammar realizing this corresponds to NasSub (and \*NC, where
-    voicelessness applies) ranked above every YES-disfavoring constraint.
-    The probabilistic 2×2-square version of this pattern under a
-    different constraint inventory is treated in
-    `Phenomena/Phonology/Studies/ZurawHayes2017.lean` and
-    `Phenomena/Phonology/Studies/Magri2025.lean`.
+/-- A ranking exists under which every consonant undergoes substitution
+    — corresponding to **Pattern (j)** in @cite{zuraw-2010} Table 5
+    (page 462), exemplified by Limos Kalinga, Ginaang Kalinga, and
+    Sarangani Manobo (paper page 463; not Tagalog itself, which has
+    *variation*: Fig 1 rates of 96/91/92/64/26/2% for p/t/k/b/d/g).
+    Witness: the identity permutation, under which NasSub (constraint
+    index 0) is highest-ranked and favors YES for every stem.
 
-    Witness for full substitution: any ranking with NasSub at position 0.
-    Then for every consonant c, head of permDList σ (relevant c) = 0,
-    which is in yesFav c. Concretely, the identity permutation suffices. -/
-theorem tagalog_full_substitution :
+    The probabilistic 2×2-square version of the Tagalog variation
+    pattern under a different constraint inventory is treated in
+    `Phenomena/Phonology/Studies/ZurawHayes2017.lean` and
+    `Phenomena/Phonology/Studies/Magri2025.lean`. -/
+theorem pattern_j_witness :
     ∃ σ : Equiv.Perm (Fin 6),
-      subWinsP σ .p ∧ subWinsP σ .t ∧ subWinsP σ .k ∧
-      subWinsP σ .b ∧ subWinsP σ .d ∧ subWinsP σ .g := by
-  refine ⟨1, ?_⟩  -- identity permutation: σ i = i, so first relevant index is 0
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    · refine ⟨0, by decide, ?_⟩
-      decide
+      PicksAt nsCands vp σ .p .yes ∧ PicksAt nsCands vp σ .t .yes ∧
+      PicksAt nsCands vp σ .k .yes ∧ PicksAt nsCands vp σ .b .yes ∧
+      PicksAt nsCands vp σ .d .yes ∧ PicksAt nsCands vp σ .g .yes :=
+  ⟨1, by decide, by decide, by decide, by decide, by decide, by decide⟩
 
 end Zuraw2010

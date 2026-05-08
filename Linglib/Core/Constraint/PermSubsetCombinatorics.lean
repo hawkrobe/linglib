@@ -430,4 +430,101 @@ theorem perm_filter_head_in_rate (D Y : Finset (Fin n)) :
     field_simp
     linarith [h_cast]
 
+-- ============================================================================
+-- § 7: List-filter head monotonicity under subset relations
+-- ============================================================================
+
+/-! Pure list-filter / `head?` facts about how `(L.filter (· ∈ D)).head?`
+behaves under subset relations between `D` and `D'`. Used by factorial-typology
+studies (e.g., `Phenomena/Phonology/Studies/Zuraw2010.lean`'s structural
+voicing/place implications) to propagate "first element of `L` falling in
+`D` lies in `Y`" properties across distinguishing-set / favoring-set pairs.
+
+Originally lived `private` inside `Zuraw2010.lean`; lifted here because they
+are pure list/Finset facts with zero phonology content, and any cross-input
+implication theorem in a binary-output OT factorial typology needs them. -/
+
+variable {α : Type*} [DecidableEq α]
+
+/-- Filtering `z :: zs` by `(· ∈ D)` when `z ∈ D` puts `z` first. -/
+theorem filter_cons_head_of_mem (D : Finset α) (z : α) (zs : List α)
+    (hzD : z ∈ D) :
+    ((z :: zs).filter (· ∈ D)).head? = some z := by
+  rw [List.filter_cons, if_pos (by simpa using hzD)]
+  rfl
+
+/-- Filtering `z :: zs` by `(· ∈ D)` when `z ∉ D` recurses to `zs`. -/
+theorem filter_cons_head_of_not_mem (D : Finset α) (z : α) (zs : List α)
+    (hzD : z ∉ D) :
+    ((z :: zs).filter (· ∈ D)).head? = (zs.filter (· ∈ D)).head? := by
+  rw [List.filter_cons, if_neg (by simpa using hzD)]
+
+/-- The head of a list filtered by a larger set `D ⊇ D'` still satisfies a
+    "head-in-Y" property, provided `Y' ⊆ Y` and any element of the extra
+    region `D \ D'` is in `Y` (so it counts as YES-favoring when it appears
+    as the head of `L.filter (· ∈ D)`).
+
+    Used for "voicing-style" implications in factorial typology: if `c'`
+    has a smaller distinguishing set than `c` and `c`'s extras all favor
+    YES, then `c' subbed ⇒ c subbed`. -/
+theorem head_filter_subset_extends
+    {D D' Y Y' : Finset α}
+    (h_D : D' ⊆ D) (h_Y : Y' ⊆ Y)
+    (h_extra : ∀ x ∈ D, x ∉ D' → x ∈ Y) :
+    ∀ (L : List α),
+      (∃ x ∈ Y', (L.filter (· ∈ D')).head? = some x) →
+      (∃ y ∈ Y, (L.filter (· ∈ D)).head? = some y) := by
+  intro L
+  induction L with
+  | nil =>
+    rintro ⟨_, _, hx⟩; simp at hx
+  | cons z zs ih =>
+    rintro ⟨x, hxY', hx⟩
+    by_cases hzD : z ∈ D
+    · refine ⟨z, ?_, filter_cons_head_of_mem D z zs hzD⟩
+      by_cases hzD' : z ∈ D'
+      · -- z is the head of the D'-filter, so z = x ∈ Y' ⊆ Y
+        rw [filter_cons_head_of_mem D' z zs hzD'] at hx
+        rw [show z = x from Option.some.inj hx]
+        exact h_Y hxY'
+      · exact h_extra z hzD hzD'
+    · -- z ∉ D ⊇ D', so z ∉ D': both filters skip z
+      have hzD' : z ∉ D' := fun h => hzD (h_D h)
+      rw [filter_cons_head_of_not_mem D' z zs hzD'] at hx
+      obtain ⟨y, hyY, hy⟩ := ih ⟨x, hxY', hx⟩
+      exact ⟨y, hyY, (filter_cons_head_of_not_mem D z zs hzD).trans hy⟩
+
+/-- The head of a list filtered by a smaller set `D ⊆ D'` inherits a
+    "head-in-Y" property from the larger filter, provided the YES-favorers
+    `Y'` of the larger setting are entirely contained in the smaller `D`
+    (so when the head of `L.filter (· ∈ D')` lies in `Y'`, it is also in
+    `D`, hence the head of `L.filter (· ∈ D)`).
+
+    Used for "place-style" implications in factorial typology: if `c'`
+    has a larger distinguishing set than `c` but `c'`'s YES-favorers all
+    lie in `c`'s smaller set, then `c' subbed ⇒ c subbed`. -/
+theorem head_filter_smaller_inherits
+    {D D' Y Y' : Finset α}
+    (h_D : D ⊆ D') (h_Y : Y' ⊆ Y) (h_Y_in_D : Y' ⊆ D) :
+    ∀ (L : List α),
+      (∃ x ∈ Y', (L.filter (· ∈ D')).head? = some x) →
+      (∃ y ∈ Y, (L.filter (· ∈ D)).head? = some y) := by
+  intro L
+  induction L with
+  | nil =>
+    rintro ⟨_, _, hx⟩; simp at hx
+  | cons z zs ih =>
+    rintro ⟨x, hxY', hx⟩
+    by_cases hzD' : z ∈ D'
+    · -- z is the head of the D'-filter, so z = x ∈ Y' ⊆ D
+      rw [filter_cons_head_of_mem D' z zs hzD'] at hx
+      rw [show z = x from Option.some.inj hx]
+      have hxD : x ∈ D := h_Y_in_D hxY'
+      exact ⟨x, h_Y hxY', filter_cons_head_of_mem D x zs hxD⟩
+    · -- z ∉ D' ⊇ D, so z ∉ D: both filters skip z
+      have hzD : z ∉ D := fun h => hzD' (h_D h)
+      rw [filter_cons_head_of_not_mem D' z zs hzD'] at hx
+      obtain ⟨y, hyY, hy⟩ := ih ⟨x, hxY', hx⟩
+      exact ⟨y, hyY, (filter_cons_head_of_not_mem D z zs hzD).trans hy⟩
+
 end Core.Constraint.PermSubsetCombinatorics

@@ -470,6 +470,60 @@ theorem picksAt_binary_iff_permDList_head_lt {Output : Type*} [DecidableEq Outpu
       rw [h_σk_x]
       exact (h_Y_iff x).mp hx_Y
 
+-- ============================================================================
+-- § 7: Closed-form rate for binary candidates
+-- ============================================================================
+
+variable {Input Output : Type*} [DecidableEq Output] {n : ℕ}
+
+/-- **Closed-form rate for binary `pocPredict` under the discrete partial
+    order**: when `cands i = {chosen, other}`, the fraction of all `n!`
+    permutations that pick `chosen` for input `i` equals `|Y ∩ D| / |D|`,
+    where `D` is the distinguishing set (constraints where `vp` differs)
+    and `Y` is the favoring set (constraints where `chosen` has fewer
+    violations).
+
+    Combines `picksAt_binary_iff_permDList_head_lt` (the bridge from
+    `PicksAt` to head-of-`permDList`) with
+    `Core.Constraint.PermSubsetCombinatorics.perm_filter_head_in_rate`
+    (the rate form of the closed-form combinatorics).
+
+    Consumed by `Phenomena/Phonology/Studies/CoetzeePater2011.lean`
+    (binary `{retain, delete}` over Fin 4) and
+    `Phenomena/Phonology/Studies/Zuraw2010.lean` (binary `{yes, no}`
+    over Fin 6). -/
+theorem picksAt_rate_eq
+    (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
+    (i : Input) (chosen other : Output)
+    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
+    (D Y : Finset (Fin n))
+    (h_D : ∀ k, k ∈ D ↔ vp i chosen k ≠ vp i other k)
+    (h_Y : ∀ k, k ∈ Y ↔ vp i chosen k < vp i other k) :
+    ((Finset.univ.filter (fun σ : Equiv.Perm (Fin n) =>
+      PicksAt cands vp σ i chosen)).card : ℚ) / (Nat.factorial n : ℚ) =
+    ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
+  have h_filter_eq :
+      (Finset.univ.filter (fun σ : Equiv.Perm (Fin n) =>
+        PicksAt cands vp σ i chosen)) =
+      (Finset.univ.filter (fun σ : Equiv.Perm (Fin n) =>
+        ∃ x ∈ Finset.univ.filter
+          (fun k : Fin n => vp i chosen k < vp i other k),
+        (Core.Constraint.PermSubsetCombinatorics.permDList σ
+          (Finset.univ.filter
+            (fun k : Fin n => vp i chosen k ≠ vp i other k))).head?
+            = some x)) :=
+    Finset.filter_congr (fun σ _ =>
+      picksAt_binary_iff_permDList_head_lt cands vp i chosen other h_two h_ne σ)
+  rw [h_filter_eq]
+  have h_D_eq : D = Finset.univ.filter
+      (fun k : Fin n => vp i chosen k ≠ vp i other k) :=
+    Finset.ext (fun k => by simp [h_D k])
+  have h_Y_eq : Y = Finset.univ.filter
+      (fun k : Fin n => vp i chosen k < vp i other k) :=
+    Finset.ext (fun k => by simp [h_Y k])
+  rw [h_D_eq, h_Y_eq]
+  exact Core.Constraint.PermSubsetCombinatorics.perm_filter_head_in_rate _ _
+
 end PartialOrderConstraints
 
 end Core.Constraint

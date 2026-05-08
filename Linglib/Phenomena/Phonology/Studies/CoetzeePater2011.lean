@@ -1,4 +1,4 @@
-import Linglib.Core.Constraint.Variation
+import Linglib.Core.Constraint.Weighted
 import Linglib.Core.Constraint.System
 import Linglib.Core.Constraint.PartiallyOrderedConstraints
 import Linglib.Core.Constraint.PermSubsetCombinatorics
@@ -214,10 +214,11 @@ def deletionProb (ctx : Context) : ℚ :=
   PartialOrderConstraints.pocPredict tdCands tdVp
     (PartialOrderConstraints.discrete 4) ctx .delete
 
-/-- Helper: bridge + substrate rate corollary collapse `pocPredict` to the
-    closed-form rate `|Y ∩ D| / |D|`. Returns the ℚ-rate form directly
-    (which is what `pocPredict` returns), eliminating the Nat-omega
-    intermediate computation. -/
+/-- Local wrapper around substrate `PartialOrderConstraints.picksAt_rate_eq`
+    with `tdCands`/`tdVp` baked in. The substrate handles the bridge from
+    `PicksAt` to head-of-`permDList` and the closed-form combinatorics; the
+    file-local arguments are: `cands ctx = {.delete, .retain}` and the two
+    output values are distinct. -/
 private theorem picksAt_rate_eq (ctx : Context)
     (D Y : Finset (Fin 4))
     (h_D : ∀ k, k ∈ D ↔ tdVp ctx .delete k ≠ tdVp ctx .retain k)
@@ -225,32 +226,10 @@ private theorem picksAt_rate_eq (ctx : Context)
     ((Finset.univ.filter (fun σ : Equiv.Perm (Fin 4) =>
       PartialOrderConstraints.PicksAt tdCands tdVp σ ctx .delete)).card : ℚ) /
       (Nat.factorial 4 : ℚ) =
-    ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
-  have h_two : tdCands ctx = {.delete, .retain} := by
-    unfold tdCands
-    ext o; cases o <;> simp
-  have h_filter_eq :
-      (Finset.univ.filter (fun σ : Equiv.Perm (Fin 4) =>
-        PartialOrderConstraints.PicksAt tdCands tdVp σ ctx .delete)) =
-      (Finset.univ.filter (fun σ : Equiv.Perm (Fin 4) =>
-        ∃ x ∈ Finset.univ.filter
-          (fun k : Fin 4 => tdVp ctx .delete k < tdVp ctx .retain k),
-        (Core.Constraint.PermSubsetCombinatorics.permDList σ
-          (Finset.univ.filter
-            (fun k : Fin 4 => tdVp ctx .delete k ≠ tdVp ctx .retain k))).head?
-            = some x)) :=
-    Finset.filter_congr (fun σ _ =>
-      PartialOrderConstraints.picksAt_binary_iff_permDList_head_lt tdCands tdVp ctx
-        .delete .retain h_two (fun heq => TDOutput.noConfusion heq) σ)
-  rw [h_filter_eq]
-  have h_D_eq : D = Finset.univ.filter
-      (fun k : Fin 4 => tdVp ctx .delete k ≠ tdVp ctx .retain k) :=
-    Finset.ext (fun k => by simp [h_D k])
-  have h_Y_eq : Y = Finset.univ.filter
-      (fun k : Fin 4 => tdVp ctx .delete k < tdVp ctx .retain k) :=
-    Finset.ext (fun k => by simp [h_Y k])
-  rw [h_D_eq, h_Y_eq]
-  exact Core.Constraint.PermSubsetCombinatorics.perm_filter_head_in_rate _ _
+    ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
+  PartialOrderConstraints.picksAt_rate_eq tdCands tdVp ctx .delete .retain
+    (by unfold tdCands; ext o; cases o <;> simp)
+    (fun heq => TDOutput.noConfusion heq) D Y h_D h_Y
 
 /-- Pre-vocalic deletion probability: 8/24 = 1/3.
     Closed form via `picksAt_rate_eq`: `count / 4! = |Y ∩ D| / |D|` with
@@ -416,7 +395,7 @@ theorem maxent_deletion_preferred (wCT wMax wMaxPreV wMaxFin : ℚ)
            ⟨ctx, .delete⟩ >
          harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
            ⟨ctx, .retain⟩) :
-    moreProbable (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
+    harmonyDominates (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
       ⟨ctx, .delete⟩ ⟨ctx, .retain⟩ := h
 
 /-- With AAVE weights from table (23) ME-HG row, deletion probability
@@ -620,14 +599,14 @@ theorem aave_preC_prefers_delete :
     (aaveSystem .preC).predict TDOutput.delete :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
-    (harmonyScoreR_lt_of_moreProbable (by
-      unfold moreProbable aaveWeights mkWeightedConstraints harmonyScore
+    (harmonyScoreR_lt_of_dominates (by
+      unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
         starCT mkMark maxC mkMax maxPreV mkMaxCtx maxFinal
       simp only [List.foldl, beq_iff_eq, decide_true, decide_false,
         Bool.true_and, Bool.false_and, and_true, and_false,
         ↓reduceIte, Nat.cast_zero, Nat.cast_one]
       norm_num :
-      moreProbable aaveWeights ⟨.preC, .delete⟩ ⟨.preC, .retain⟩))
+      harmonyDominates aaveWeights ⟨.preC, .delete⟩ ⟨.preC, .retain⟩))
 
 /-- In the pre-vocalic context, the AAVE system predicts retention over
     deletion: pre-V deletion violates both MAX and MAX-PRE-V, costing
@@ -638,14 +617,14 @@ theorem aave_preV_prefers_retain :
     (aaveSystem .preV).predict TDOutput.retain :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
-    (harmonyScoreR_lt_of_moreProbable (by
-      unfold moreProbable aaveWeights mkWeightedConstraints harmonyScore
+    (harmonyScoreR_lt_of_dominates (by
+      unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
         starCT mkMark maxC mkMax maxPreV mkMaxCtx maxFinal
       simp only [List.foldl, beq_iff_eq, decide_true, decide_false,
         Bool.true_and, Bool.false_and, and_true, and_false,
         ↓reduceIte, Nat.cast_zero, Nat.cast_one]
       norm_num :
-      moreProbable aaveWeights ⟨.preV, .retain⟩ ⟨.preV, .delete⟩))
+      harmonyDominates aaveWeights ⟨.preV, .retain⟩ ⟨.preV, .delete⟩))
 
 /-- The per-context AAVE system is a probability distribution over
     `TDOutput`. Generic property of `softmaxDecoder`. -/
