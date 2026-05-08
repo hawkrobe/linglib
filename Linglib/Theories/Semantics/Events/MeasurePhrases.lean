@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Events.CumulativityPropagation
 import Linglib.Theories.Semantics.Events.StratifiedReference
-import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Theories.Semantics.Measurement.Basic
 
 /-!
 # Measure Phrases and Quantizing Modification (QMOD)
@@ -157,18 +157,15 @@ transfer chain requires. -/
     entities and positivity. This bridges Scontras's measurement
     framework to Krifka's mereological telicity machinery. -/
 def MeasureFn.IsExtensive {E : Type*} [SemilatticeSup E]
-    (μ : Semantics.Probabilistic.Measurement.MeasureFn E) : Prop :=
+    (μ : Semantics.Measurement.MeasureFn E) : Prop :=
   ExtMeasure E μ.apply
 
-/-- When a measure term uses the default exact relation (= n),
-    `applyNumeral n` checks μ(x) == n. This is the Boolean analog of
-    Krifka's QMOD. Stated for the default-rel constructor to ensure
-    definitional equality. -/
+/-- A measure function applied to a numeral checks `μ(x) == n`. This is
+    the Boolean analog of Krifka's QMOD: the predicate "x measures n by μ". -/
 theorem measureTerm_default_applyNumeral_eq
-    {E : Type*} (μ : Semantics.Probabilistic.Measurement.MeasureFn E)
+    {E : Type*} (μ : Semantics.Measurement.MeasureFn E)
     (n : ℚ) (x : E) :
-    ({ measureFn := μ } : Semantics.Probabilistic.Measurement.MeasureTermSem E).applyNumeral n x
-      = (μ.apply x == n) := rfl
+    μ.applyNumeral n x = (μ.apply x == n) := rfl
 
 /-- When a `MeasureFn` is extensive (in Krifka's sense), QMOD with
     that measure function at any positive value produces a QUA
@@ -176,7 +173,7 @@ theorem measureTerm_default_applyNumeral_eq
     telicity machinery. -/
 theorem extensive_measureFn_qmod_qua
     {E : Type*} [inst : SemilatticeSup E]
-    {μ : Semantics.Probabilistic.Measurement.MeasureFn E}
+    {μ : Semantics.Measurement.MeasureFn E}
     (hExt : MeasureFn.IsExtensive μ)
     {R : E → Prop} {n : ℚ} (hn : 0 < n) :
     QUA (QMOD R μ.apply n) := by

@@ -1,5 +1,6 @@
 import Linglib.Features.Acceptability
-import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Features.Dimension
+import Linglib.Theories.Semantics.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 import Linglib.Phenomena.Quantification.Studies.BaleSchwarz2022
 
@@ -46,7 +47,7 @@ Two tests distinguish compositional from non-compositional *per*-phrases:
 namespace Phenomena.Quantification.BaleSchwarz2026
 
 open Phenomena
-open Semantics.Probabilistic.Measurement (Dimension QuotientDimension DimensionType)
+open Features.Dimension (Dimension QuotientDimension DimensionType)
 open Fragments.English.MeasurePhrases (PerInterpretation)
 
 -- ============================================================================
@@ -306,7 +307,7 @@ theorem simplex_is_compositional_2022 :
 extends to the 2026 analysis: the simplex examples here predict
 that the entity's volume must meet the per-unit threshold. -/
 theorem unit_sensitivity_carries_forward {E : Type*}
-    (μ : Semantics.Probabilistic.Measurement.MeasureFn E) (x : E)
+    (μ : Semantics.Measurement.MeasureFn E) (x : E)
     (h : μ.apply x = 5) :
     perPresup μ 1 x = true ∧ perPresup μ 1000 x = false := by
   simp [perPresup, h]; decide

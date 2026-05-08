@@ -1,0 +1,320 @@
+import Linglib.Core.Scales.Scale
+import Linglib.Theories.Semantics.Entailment.Extremum
+import Linglib.Features.Dimension
+import Mathlib.Data.Rat.Defs
+
+/-!
+# Measurement Semantics
+@cite{bale-schwarz-2026} @cite{kennedy-2015} @cite{krifka-1989} @cite{scontras-2014} @cite{zabbal-2005}
+
+Formal semantics of measurement: measure functions, the bridge to bare numerals
+via CARD, the quantity-uniform property, and the connection to existing
+degree-semantics infrastructure.
+
+## Theoretical Foundation
+
+@cite{scontras-2014}'s *The Semantics of Measurement* (Ch. 2) aligns measure
+terms (kilo, liter) with the Num-head CARD, treating both as instances of a
+single category M. The CARD primitive originates with @cite{zabbal-2005}; its
+relational shape (numerals as relations between numbers and individuals) follows
+@cite{krifka-1989}. Scontras's contribution is the unification: CARD and kilo
+share the type signature of a measure term, and number marking on basic nouns
+(`one boy` vs. `two boys`) is the same operation as number marking on measure
+terms (`one kilo` vs. `two kilos`).
+
+### Measure Functions
+
+A **measure function** μ maps individuals to non-negative rationals along a
+specific physical dimension:
+
+    μ : Entity → ℚ≥0
+
+The dimension tag (mass, volume, distance, time, cardinality, ...) lives in
+`Features/Dimension.lean`; this module imports it and exposes `MeasureFn`,
+which carries the tag plus the underlying `apply` function.
+
+### Measure Terms
+
+A measure term (gram, liter, mile) **names** a specific measure function.
+Its (intransitive) denotation in @cite{scontras-2014}, eq. (33):
+
+    ⟦kilo⟧ = λn. λx. μ_kg(x) = n
+
+This is a function from a numeral to a predicate — a modifier of type
+⟨n, ⟨e,t⟩⟩. The Lean encoding is `MeasureFn.applyNumeral`.
+
+### CARD
+
+Scontras (eqs. (23) / (36)) gives CARD the parallel form
+
+    ⟦CARD⟧ = λP. λn. λx. P(x) ∧ μ_CARD(x) = n
+
+so a bare numeral phrase composes with a kind-denoting noun via CARD,
+yielding a predicate restricted to individuals of the appropriate
+cardinality. The point of the alignment is that the same #-head machinery
+governs both `one boy` (via CARD + μ_CARD) and `one kilo of apples`
+(via μ_kg). Here we expose `μ_CARD` as a `MeasureFn` (`cardMeasure`); the
+CARD Num-head itself lives at the syntactic level.
+
+### Connection to Scale Infrastructure
+
+The `HasMeasure` (legacy `HasDegree`) typeclass in `Core/Scales/HasMeasure.lean`
+gives `E → α`. This module adds:
+
+- typed dimensions (what μ measures), via `Features.Dimension.Dimension`
+- multiple measure functions per entity (a box has weight AND volume AND
+  cardinality — `MeasureFn` is not a typeclass)
+- the quantity-uniform property (Scontras's QU_μ, eq. (44) p. 43)
+
+## Connection to @cite{bale-schwarz-2026}
+
+`Features/Dimension.lean` provides the typed-dimension substrate
+(`Dimension`, `QuotientDimension`, `DimensionType`) used by
+`Studies/BaleSchwarz2026.lean` to formulate the No Division Hypothesis
+(eq. (5), p. 135): "Quantity division is not available as an operation for
+semantic composition." The hypothesis itself is stated and applied in the
+consuming Studies file, not here.
+
+-/
+
+namespace Semantics.Measurement
+
+open Features.Dimension (Dimension)
+
+-- ============================================================================
+-- § 1. Measure Functions
+-- ============================================================================
+
+/-- A measure function maps entities to non-negative rational magnitudes
+along a specific dimension.
+
+@cite{scontras-2014}: degrees are pairs ⟨μ, n⟩ where μ is the measure
+function and n is the numerical value. A measure function is individuated
+by its dimension: μ_kg measures mass, μ_L measures volume, μ_CARD counts.
+
+We use ℚ rather than ℝ to match the library's exact-arithmetic convention
+for computational semantics. -/
+structure MeasureFn (E : Type*) where
+  /-- Which dimension this function measures. -/
+  dimension : Dimension
+  /-- The measure function itself: maps an entity to its magnitude. -/
+  apply : E → ℚ
+  /-- Measure values are non-negative. -/
+  nonneg : ∀ e, apply e ≥ 0
+
+/-- Apply a measure function to an entity. -/
+instance {E : Type*} : CoeFun (MeasureFn E) (fun _ => E → ℚ) where
+  coe μ := μ.apply
+
+-- ============================================================================
+-- § 2. Measure-Term Application
+-- ============================================================================
+
+/-- Apply a measure function to a numeral n, yielding a predicate over entities:
+
+    ⟦kilo⟧(3) = λx. μ_kg(x) = 3
+
+@cite{scontras-2014}: measure terms are nouns that name specific measure
+functions. Their type is ⟨n, ⟨e,t⟩⟩ — they take a numeral and return a
+predicate. The exact-equality reading is the lexical meaning; pragmatic
+strengthening to lower-bound or at-most readings happens at the numeral
+level (see `bareMeaning` / `atLeastMeaning` / `atMostMeaning` in
+`Semantics.Numerals`), not on the measure term itself. -/
+def MeasureFn.applyNumeral {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) : Bool :=
+  μ.apply x == n
+
+-- ============================================================================
+-- § 3. CARD: Cardinality as a Measure Function
+-- ============================================================================
+
+/-- The cardinality measure: μ_CARD x = |x|.
+
+The CARD Num-head originates with @cite{zabbal-2005}; its relational shape
+(numerals as relations between numbers and individuals) follows
+@cite{krifka-1989}. @cite{scontras-2014} (eqs. (23), (36)) gives CARD the form
+
+    ⟦CARD⟧ = λP. λn. λx. P(x) ∧ μ_CARD(x) = n
+
+aligning it with measure terms whose intransitive form (eq. (33)) is
+⟦kilo⟧ = λn. λx. μ_kg(x) = n. This file exposes the underlying μ_CARD as
+a `MeasureFn`; the CARD Num-head itself (which composes with a kind) lives
+at the syntactic level. -/
+def cardMeasure (E : Type*) (cardFn : E → ℚ) (h : ∀ e, cardFn e ≥ 0) : MeasureFn E :=
+  { dimension := .cardinality, apply := cardFn, nonneg := h }
+
+-- ============================================================================
+-- § 4. Quantity-Uniform Property
+-- ============================================================================
+
+/-- A predicate P is **quantity-uniform** with respect to measure function μ
+(@cite{scontras-2014}, eq. (44), p. 43; restated as eq. (53), p. 48):
+
+    QU_μ(P) ↔ ∀ x y, P(x) ∧ P(y) → μ(x) = μ(y)
+
+Every individual in P's denotation evaluates to the same μ-value. This is
+a uniformity condition on the predicate, NOT closure under sum (a different
+condition closer to Krifka's cumulativity). The MP `one CARD boy` is QU
+under μ_CARD because every member denotes a single boy; `one kilo of apples`
+is QU under μ_kg because every member weighs 1 kg.
+
+The role in Scontras's account: `⟦SG⟧` checks that the modified predicate
+is QU under some relevant μ, with that μ supplying the "1-ness" presupposition
+of singular morphology (eq. (54), p. 48). Predicates fail QU when they are
+not measure-modified — e.g. bare `boy` is not QU under μ_CARD because two
+distinct boys can have different cardinalities (one vs. plural). -/
+def IsQuantityUniform {E : Type*} (P : E → Bool) (μ : MeasureFn E) : Prop :=
+  ∀ x y, P x = true → P y = true → μ.apply x = μ.apply y
+
+-- ============================================================================
+-- § 5. Bridge to HasDegree
+-- ============================================================================
+
+/-- A `MeasureFn` induces a `HasDegree` instance: the degree of an entity
+is its measure value.
+
+Note: `HasDegree` (= `HasMeasure`) is a typeclass with one designated degree
+per (entity, codomain) pair. For entities with multiple measurable dimensions,
+use `MeasureFn` directly — the typeclass projection is the specialization for
+when a single dimension is contextually salient. -/
+@[reducible]
+def MeasureFn.toHasDegree {E : Type} (μ : MeasureFn E) : Core.Scale.HasDegree E ℚ :=
+  { degree := μ.apply }
+
+-- ============================================================================
+-- § 6. Quantizing Nouns (@cite{scontras-2014}, Ch. 3)
+-- ============================================================================
+
+/-- Classification of quantizing nouns (Scontras Ch. 3): nouns that turn
+substance terms into countable expressions.
+
+@cite{scontras-2014} identifies three classes via Rothstein-style
+diagnostics (Table 3.5, p. 89):
+
+- **Measure terms** (kilo, liter): name a measure function directly;
+  always license a MEASURE reading.
+- **Container nouns** (glass, box): non-relational predicates with a
+  CONTAINER reading by default but ambiguous toward MEASURE when the
+  container's volume can serve as a measure unit.
+- **Atomizers** (grain, drop, piece): relational, partitioning nouns
+  (eqs. (77), (87)) that impose a partition into self-connected atoms
+  via π; they are *counted* (by CARD over the partition), not measured. -/
+inductive QuantizingNounClass where
+  | measureTerm    -- kilo, liter, meter
+  | containerNoun  -- glass, box, cup
+  | atomizer       -- grain, piece, drop
+  deriving Repr, DecidableEq
+
+/-- Container nouns are ambiguous between two readings (Scontras Ch. 3 §3.2):
+
+- **CONTAINER**: the noun denotes physical containers; "three glasses of water"
+  refers to three individual glasses containing water.
+
+- **MEASURE**: the noun functions as a measure term; "three glasses of water"
+  refers to a quantity of water whose volume equals three glass-volumes. -/
+inductive ContainerReading where
+  | container
+  | measure
+  deriving Repr, DecidableEq
+
+/-- Whether a class/reading combination licenses a MEASURE reading (Scontras
+Ch. 3, Table 3.5 p. 89).
+
+| Class         | Reading         | MEASURE? | Reason                            |
+|---------------|-----------------|----------|-----------------------------------|
+| measureTerm   | (n/a)           | true     | Names a measure function directly |
+| containerNoun |.measure        | true     | Container's volume = measure unit |
+| containerNoun |.container/none | false    | Individuated containers           |
+| atomizer      | (n/a)           | false    | Atomizers resist MEASURE (Ch. 3.3)|
+
+The original framing of this table as a "QU prediction" was misleading.
+Atomizers fail to license a MEASURE reading because they do not name a
+measure function; but the predicates they yield, after partitioning by π,
+ARE quantity-uniform under μ_CARD (Scontras p. 100: "atomizers are counted
+by cardinal numerals formed by CARD"). What's predicted here is MEASURE
+licensing, not QU-status under all conceivable μ. -/
+def licensesMeasureReading (cls : QuantizingNounClass)
+    (reading : Option ContainerReading) : Bool :=
+  match cls, reading with
+  | .measureTerm,   _                 => true
+  | .containerNoun, some .measure     => true
+  | .containerNoun, some .container   => false
+  | .containerNoun, none              => false
+  | .atomizer,      _                 => false
+
+/-- Measure terms always license a MEASURE reading. -/
+theorem measureTerm_always_licensesMeasure (r : Option ContainerReading) :
+    licensesMeasureReading .measureTerm r = true := by
+  cases r <;> rfl
+
+/-- Atomizers never license a MEASURE reading
+(@cite{scontras-2014} Ch. 3 §3.3, Table 3.5 p. 89). They impose a partition
+into atoms (eq. (77)) and are counted by CARD, not measured. -/
+theorem atomizer_no_MEASURE_reading (r : Option ContainerReading) :
+    licensesMeasureReading .atomizer r = false := by
+  cases r with
+  | none => rfl
+  | some r => cases r <;> rfl
+
+/-- Container nouns license a MEASURE reading iff in MEASURE reading. -/
+theorem containerNoun_licensesMeasure_iff_measure (r : ContainerReading) :
+    licensesMeasureReading .containerNoun (some r) = true ↔ r = .measure := by
+  cases r <;> decide
+
+-- ============================================================================
+-- § 7. Measure-term exact meaning vs Kennedy's max-quantifier semantics
+-- ============================================================================
+
+/-! ### Formalization-internal observation
+
+@cite{scontras-2014}'s measure-term denotation gives exact meaning directly:
+
+    ⟦kilo⟧(n)(x) = (μ_kg(x) = n)               -- eq. (33), p. 37
+
+@cite{kennedy-2015}'s "de-Fregean" analysis gives bare numerals a two-sided
+meaning via `max`:
+
+    ⟦three⟧ = λD. max{n | D(n)} = 3            -- eq. (29), p. 15
+
+Kennedy explicitly **rejects** the lower-bound + exhaustification approach
+(p. 19-20: the de-Fregean meaning "can only be derived [from a lower-bound
+basis] through the addition of some meaning changing operation, such as
+exhaustification"). Kennedy's pragmatics for ignorance implicatures with
+modified numerals is neo-Gricean Quantity (Sauerland-style primary
+implicatures, eq. (43) p. 22), NOT Maximize Informativity.
+
+The two proposals are independent — different empirical domains (measure
+terms vs. bare numerals) and different formal mechanisms. They nonetheless
+yield equivalent truth conditions for `n μ-units of stuff` whenever n is
+realized in the image of μ: under that point-realization condition, the
+`max` of the at-least-degree property at n equals the exact-measure
+predicate `μ(x) = n`. The theorems below state this equivalence as a
+formalization-internal observation; it is not stated in either source paper.
+
+The key infrastructure is `isMaxInf_atLeast_of_hit` in
+`Theories/Semantics/Entailment/Extremum.lean`, which requires only point-
+realization (`∃ e, μ(e) = n`) rather than full surjectivity. Mass nouns
+realize every n ∈ ℚ≥0 (rice is uniformly divisible by hypothesis); count
+nouns realize only n ∈ ℕ. -/
+
+open Core.Scale (atLeastDeg)
+open Semantics.Entailment.Extremum (IsMaxInf HasMaxInf)
+
+/-- For a measure function μ on ℚ: when n is realized by some entity, the
+MIP applied to the at-least degree property at n yields μ(x) = n.
+
+*Formalization-internal observation* — not stated by Scontras or Kennedy.
+Bridges Scontras's exact measure-term meaning with the `max{n | ...} = n`
+form of Kennedy's de-Fregean analysis. -/
+theorem scontras_kennedy_dense {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E)
+    (hHit : ∃ e, μ.apply e = n) :
+    IsMaxInf (atLeastDeg μ.apply) n x ↔ μ.apply x = n :=
+  Semantics.Entailment.Extremum.isMaxInf_atLeast_of_hit μ.apply n x hHit
+
+/-- For a cardinality function on ℕ: same point-realization equivalence.
+*Formalization-internal observation* — see the prose above. -/
+theorem scontras_kennedy_card {E : Type*} (cardFn : E → ℕ) (n : ℕ) (x : E)
+    (hHit : ∃ e, cardFn e = n) :
+    IsMaxInf (atLeastDeg cardFn) n x ↔ cardFn x = n :=
+  Semantics.Entailment.Extremum.isMaxInf_atLeast_of_hit cardFn n x hHit
+
+end Semantics.Measurement

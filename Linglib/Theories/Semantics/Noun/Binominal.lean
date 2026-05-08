@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Noun.BinominalDefs
 import Linglib.Theories.Semantics.Noun.GradableNouns
-import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Theories.Semantics.Measurement.Basic
 import Linglib.Theories.Semantics.Gradability.Intensification
 
 /-!
@@ -40,7 +40,7 @@ in @cite{ten-wolde-2023}'s taxonomy.
 namespace Semantics.Noun.Binominal
 
 open Semantics.Noun.GradableNouns (GradableNoun)
-open Semantics.Probabilistic.Measurement (QuantizingNounClass)
+open Semantics.Measurement (QuantizingNounClass)
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 1: Evaluative BNP Semantics

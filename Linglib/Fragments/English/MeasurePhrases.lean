@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Features.Dimension
+import Linglib.Theories.Semantics.Measurement.Basic
 
 /-!
 # English Measure Phrase Fragment
@@ -13,16 +14,18 @@ This fragment provides the English-specific data layer for measurement:
 
 ## Architecture
 
-Theory types (`Dimension`, `MeasureFn`, `MeasureTermSem`) live in
-`Semantics.Probabilistic.Measurement.Basic`. This file provides English lexical
-entries — pure data typed by those theory types, following the
-Theories → Fragments dependency discipline.
+The `Dimension` / `QuotientDimension` / `DimensionType` taxonomies live
+in `Features/Dimension.lean`. The `MeasureFn` structure and
+`MeasureFn.applyNumeral` semantics live in
+`Theories/Semantics/Measurement/Basic.lean`. This file
+provides English lexical entries — pure data typed by those substrate
+types, following the Theories → Fragments dependency discipline.
 
 -/
 
 namespace Fragments.English.MeasurePhrases
 
-open Semantics.Probabilistic.Measurement (Dimension QuotientDimension DimensionType)
+open Features.Dimension (Dimension QuotientDimension DimensionType)
 
 -- ============================================================================
 -- § 1. Measure Term Entries
@@ -31,7 +34,8 @@ open Semantics.Probabilistic.Measurement (Dimension QuotientDimension DimensionT
 /-- A measure term entry: an English noun that names a specific measure function.
 
 This is the Fragment-level data for measure terms. The Theory-level semantics
-(`MeasureTermSem`) is in `Semantics.Probabilistic.Measurement.Basic`. -/
+(`MeasureFn`, `MeasureFn.applyNumeral`) is in
+`Semantics.Measurement.Basic`. -/
 structure MeasureTermEntry where
   /-- Surface form (e.g., "gram", "milliliter", "mile"). -/
   form : String
@@ -69,7 +73,7 @@ def allMeasureTerms : List MeasureTermEntry :=
 -- § 2. Quantizing Noun Entries (@cite{scontras-2014}, Ch. 3)
 -- ============================================================================
 
-open Semantics.Probabilistic.Measurement (QuantizingNounClass ContainerReading)
+open Semantics.Measurement (QuantizingNounClass ContainerReading)
 
 /-- A quantizing noun entry: an English noun that turns a mass term into a
 countable expression.

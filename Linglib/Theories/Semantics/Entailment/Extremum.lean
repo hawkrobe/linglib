@@ -169,20 +169,30 @@ theorem moreThan_noMaxInf {W : Type*} [DenselyOrdered α] (μ : W → α)
   obtain ⟨w₁, rfl⟩ := hSurj m
   exact absurd (hent d' hd'w w₁ hd₀m) (not_lt.mpr (le_of_lt hmd'))
 
-/-- **Kennedy / @cite{fox-hackl-2006} bridge**: `IsMaxInf` of the "at least"
-    degree property at value m and world w holds iff the measure at w
-    equals m. -/
-theorem isMaxInf_atLeast_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
-    (hSurj : Function.Surjective μ) :
+/-- **Kennedy / @cite{fox-hackl-2006} bridge (point-realization form)**:
+    `IsMaxInf` of the "at least" degree property at value m and world w holds
+    iff `μ w = m`, given only that `m` itself is in the image of `μ`. This is
+    strictly weaker than full `Function.Surjective μ` and is the hypothesis
+    actually used in the proof. -/
+theorem isMaxInf_atLeast_of_hit {W : Type*} (μ : W → α) (m : α) (w : W)
+    (hHit : ∃ w', μ w' = m) :
     IsMaxInf (atLeastDeg μ) m w ↔ μ w = m := by
   constructor
   · intro ⟨hge, hent⟩
-    obtain ⟨w_m, hw_m⟩ := hSurj m
+    obtain ⟨w_m, hw_m⟩ := hHit
     have h : μ w_m ≥ μ w := hent (μ w) (le_refl _) w_m (le_of_eq hw_m.symm)
     have : μ w ≤ m := by rw [← hw_m]; exact h
     exact (le_antisymm hge this).symm
   · rintro rfl
     exact ⟨le_refl _, fun _ hd _ hn' => le_trans hd hn'⟩
+
+/-- **Kennedy / @cite{fox-hackl-2006} bridge**: `IsMaxInf` of the "at least"
+    degree property at value m and world w holds iff the measure at w
+    equals m, under full surjectivity. Corollary of `isMaxInf_atLeast_of_hit`. -/
+theorem isMaxInf_atLeast_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
+    (hSurj : Function.Surjective μ) :
+    IsMaxInf (atLeastDeg μ) m w ↔ μ w = m :=
+  isMaxInf_atLeast_of_hit μ m w (hSurj m)
 
 /-- On ℕ, "more than m" has `HasMaxInf`: the discrete collapse rescues maximality.
     Contrast with `moreThan_noMaxInf`: on dense scales, `HasMaxInf` fails. -/

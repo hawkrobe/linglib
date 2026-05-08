@@ -1,5 +1,6 @@
+import Linglib.Features.Dimension
 import Linglib.Theories.Semantics.Gradability.Delineation
-import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Theories.Semantics.Measurement.Basic
 
 /-!
 # Degree Semantics Hierarchy
@@ -47,7 +48,8 @@ function can induce.
 namespace Semantics.Gradability.Hierarchy
 
 open Semantics.Gradability.Delineation
-open Semantics.Probabilistic.Measurement (MeasureFn Dimension)
+open Semantics.Measurement (MeasureFn)
+open Features.Dimension (Dimension)
 open Core.Scale (HasDegree)
 
 -- ════════════════════════════════════════════════════

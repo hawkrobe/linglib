@@ -1,64 +1,70 @@
-import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Theories.Semantics.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
 # @cite{scontras-2014} — The Semantics of Measurement
-@cite{chierchia-1998} @cite{krifka-1989} @cite{scontras-2014}
+@cite{chierchia-1998} @cite{krifka-1989} @cite{scontras-2014} @cite{zabbal-2005}
 
 Empirical observations and bridge theorems for Scontras's quantizing noun
 typology (Ch. 3).
 
 ## Key Empirical Claim
 
-The three classes of quantizing nouns differ systematically in their
-quantity-uniformity (QU) behavior:
+The three classes of quantizing nouns differ systematically in whether they
+license a MEASURE reading (Scontras Ch. 3, Table 3.5 p. 89). The MEASURE
+reading is the one in which a quantizing noun functions as a unit-name for
+the substance, rather than denoting the substance's containers or atoms.
 
-- **Measure terms** (kilo, liter): ALWAYS quantity-uniform.
-  "Three kilos of rice + three kilos of rice = six kilos of rice" ✓
+- **Measure terms** (kilo, liter): ALWAYS license MEASURE.
+  "Three kilos of rice" is necessarily a 3-kilo quantity of rice.
 
 - **Container nouns** (glass, box): AMBIGUOUS.
-  - CONTAINER reading: NOT quantity-uniform.
-    "Three glasses of water + three glasses of water ≠ three glasses of water"
-  - MEASURE reading: IS quantity-uniform.
-    "Three glasses of water + three glasses of water = six glasses of water"
-    (as a volume measure: 3 glass-volumes + 3 glass-volumes = 6 glass-volumes)
+  - CONTAINER reading (default): "three glasses of water in the cupboard" —
+    three individual glass-objects.
+  - MEASURE reading (forced by recipe context, etc.): "add three glasses of
+    water" — a quantity of water equal to three glass-volumes.
 
-- **Atomizers** (grain, piece): NOT quantity-uniform.
-  "Three grains of rice + three grains of rice ≠ three grains of rice"
+- **Atomizers** (grain, piece): NEVER license MEASURE.
+  Atomizers impose a partition into atoms via π (Scontras eqs. (77), (87))
+  and are then *counted* by CARD over the partition (Scontras p. 100).
+  The atoms-after-partition predicate IS quantity-uniform under μ_CARD —
+  atomizers fail MEASURE-licensing because they don't name a measure
+  function, not because the resulting predicate is non-uniform under
+  every conceivable μ.
 
-## Disambiguation Diagnostics
+## Diagnostics for the MEASURE/CONTAINER ambiguity
 
-Container nouns can be disambiguated between CONTAINER and MEASURE readings:
+Container nouns can be disambiguated:
 
 - **Locative "in X"**: "three glasses of water in the pitcher" → CONTAINER
-  (the three glasses are in the pitcher)
 - **Recipe context**: "three glasses of water in the recipe" → MEASURE
-  (three glass-volumes of water called for)
-- **Additive closure test**: "I drank three glasses of water, then three more;
-  that's six glasses total" → MEASURE (additive = QU)
+- **Demonstratives**: "those three glasses" → CONTAINER (individuated)
 
 ## Architecture
 
 This is a Phenomena file: it encodes empirical observations and proves that
 the Fragment entries (class assignments) correctly predict the Theory's
-QU predictions.
+MEASURE-reading licensing.
 
 Dependency chain:
-  Theory (`predictsQU`) → Fragment (`QuantizingNounEntry.nounClass`) → Phenomena (this file)
+  Theory (`licensesMeasureReading`) → Fragment (`QuantizingNounEntry.nounClass`)
+    → Phenomena (this file)
 
 -/
 
 namespace Phenomena.Quantification.Scontras2014
 
-open Semantics.Probabilistic.Measurement (QuantizingNounClass ContainerReading predictsQU)
+open Semantics.Measurement
+  (QuantizingNounClass ContainerReading licensesMeasureReading)
 open Fragments.English.MeasurePhrases
 
 -- ============================================================================
--- § 1. Empirical Observations: QU Behavior
+-- § 1. Empirical Observations: MEASURE Licensing
 -- ============================================================================
 
-/-- An observed QU judgment for a quantizing noun in a specific context. -/
-structure QUObservation where
+/-- An observed MEASURE-licensing judgment for a quantizing noun in a
+specific context. -/
+structure MeasureObservation where
   /-- The quantizing noun being tested. -/
   noun : QuantizingNounEntry
   /-- The mass noun complement (e.g., "rice", "water"). -/
@@ -67,147 +73,139 @@ structure QUObservation where
   reading : Option ContainerReading
   /-- The test sentence. -/
   sentence : String
-  /-- Observed: is the additive closure test felicitous? -/
-  additiveOK : Bool
-  /-- Observed: is the predicate quantity-uniform? -/
-  isQU : Bool
+  /-- Observed: does the phrase license a MEASURE-quantity reading? -/
+  licensesMeasure : Bool
   deriving Repr, BEq
 
--- Measure terms: always QU
+-- Measure terms: always MEASURE
 
-/-- "Three kilos of rice + three kilos of rice = six kilos of rice."
-Measure terms always pass the additive closure test. -/
-def obs_kilo_rice : QUObservation where
+/-- "Three kilos of rice" — a measure of rice. -/
+def obs_kilo_rice : MeasureObservation where
   noun := { form := "kilo", formPlural := "kilos",
             nounClass := .measureTerm, measureDimension := some .mass }
   complement := "rice"
   reading := none
-  sentence := "I bought three kilos of rice, then three more; that's six kilos of rice"
-  additiveOK := true
-  isQU := true
+  sentence := "Three kilos of rice (a 3-kilo quantity)"
+  licensesMeasure := true
 
-def obs_liter_water : QUObservation where
+def obs_liter_water : MeasureObservation where
   noun := { form := "liter", formPlural := "liters",
             nounClass := .measureTerm, measureDimension := some .volume }
   complement := "water"
   reading := none
-  sentence := "I drank three liters of water, then three more; that's six liters"
-  additiveOK := true
-  isQU := true
+  sentence := "Three liters of water (a 3-liter quantity)"
+  licensesMeasure := true
 
--- Container nouns, CONTAINER reading: NOT QU
+-- Container nouns, CONTAINER reading: NOT MEASURE
 
-/-- "Three glasses of water (CONTAINER) + three glasses of water ≠ three glasses."
-In the CONTAINER reading, glasses are individuated objects that don't sum. -/
-def obs_glass_water_container : QUObservation where
+/-- "Three glasses of water in the cupboard" — three individual glass-objects.
+The CONTAINER reading is forced by the locative; MEASURE is unavailable. -/
+def obs_glass_water_container : MeasureObservation where
   noun := glass
   complement := "water"
   reading := some .container
-  sentence := "#Three glasses of water in the cupboard plus three more equals three glasses"
-  additiveOK := false
-  isQU := false
+  sentence := "Three glasses of water in the cupboard (CONTAINER, not MEASURE)"
+  licensesMeasure := false
 
-def obs_box_books_container : QUObservation where
+def obs_box_books_container : MeasureObservation where
   noun := box
   complement := "books"
   reading := some .container
-  sentence := "#Three boxes of books on the shelf plus three more equals three boxes"
-  additiveOK := false
-  isQU := false
+  sentence := "Three boxes of books on the shelf (CONTAINER, not MEASURE)"
+  licensesMeasure := false
 
--- Container nouns, MEASURE reading: IS QU
+-- Container nouns, MEASURE reading: IS MEASURE
 
-/-- "Three glasses of water (MEASURE) + three glasses of water = six glasses."
-In the MEASURE reading, "glass" functions as a volume unit. -/
-def obs_glass_water_measure : QUObservation where
+/-- "Add three glasses of water" — a 3-glass-volume quantity of water.
+The MEASURE reading is forced by the recipe context. -/
+def obs_glass_water_measure : MeasureObservation where
   noun := glass
   complement := "water"
   reading := some .measure
-  sentence := "The recipe calls for three glasses of water; use six for a double batch"
-  additiveOK := true
-  isQU := true
+  sentence := "Add three glasses of water to the recipe (MEASURE)"
+  licensesMeasure := true
 
-def obs_cup_flour_measure : QUObservation where
+def obs_cup_flour_measure : MeasureObservation where
   noun := cup
   complement := "flour"
   reading := some .measure
-  sentence := "Three cups of flour plus three cups of flour is six cups of flour"
-  additiveOK := true
-  isQU := true
+  sentence := "Three cups of flour, doubled to six (MEASURE)"
+  licensesMeasure := true
 
--- Atomizers: NOT QU
+-- Atomizers: NOT MEASURE (counted by CARD instead)
 
-/-- "Three grains of rice + three grains of rice ≠ three grains of rice."
-Atomizers impose individuation; atoms don't sum back to atoms. -/
-def obs_grain_rice : QUObservation where
+/-- "Three grains of rice" — three rice-grain individuals.
+Atomizers do not name a measure function; they impose a partition into atoms
+(Scontras eq. (77)) and the resulting atoms are counted by CARD (Scontras
+p. 100). MEASURE-reading licensing fails — there is no μ_grain. -/
+def obs_grain_rice : MeasureObservation where
   noun := grain
   complement := "rice"
   reading := none
-  sentence := "#Three grains of rice plus three grains of rice equals three grains"
-  additiveOK := false
-  isQU := false
+  sentence := "Three grains of rice (counted, not measured: no μ_grain)"
+  licensesMeasure := false
 
-def obs_drop_water : QUObservation where
+def obs_drop_water : MeasureObservation where
   noun := drop
   complement := "water"
   reading := none
-  sentence := "#Three drops of water plus three drops of water equals three drops"
-  additiveOK := false
-  isQU := false
+  sentence := "Three drops of water (counted, not measured: no μ_drop)"
+  licensesMeasure := false
 
-def obs_piece_cake : QUObservation where
+def obs_piece_cake : MeasureObservation where
   noun := piece
   complement := "cake"
   reading := none
-  sentence := "#Three pieces of cake plus three pieces of cake equals three pieces"
-  additiveOK := false
-  isQU := false
+  sentence := "Three pieces of cake (counted, not measured: no μ_piece)"
+  licensesMeasure := false
 
-def allObservations : List QUObservation :=
+def allObservations : List MeasureObservation :=
   [ obs_kilo_rice, obs_liter_water
   , obs_glass_water_container, obs_box_books_container
   , obs_glass_water_measure, obs_cup_flour_measure
   , obs_grain_rice, obs_drop_water, obs_piece_cake ]
 
 -- ============================================================================
--- § 2. Bridge Theorems: Fragment Class Predicts Observed QU
+-- § 2. Bridge Theorems: Fragment Class Predicts Observed MEASURE Licensing
 -- ============================================================================
 
 /-! ### The central bridge
 
 The Fragment assigns each noun a `nounClass` (from the Theory's
-`QuantizingNounClass`). The Theory defines `predictsQU` mapping
-class + reading to a QU prediction. We prove that this prediction
-matches the empirical observation for EVERY example in our data.
+`QuantizingNounClass`). The Theory defines `licensesMeasureReading` mapping
+class + reading to a MEASURE-licensing prediction (Scontras Table 3.5 p. 89).
+We prove that this prediction matches the empirical observation for EVERY
+example in our data.
 
-This is the payoff of the Theories → Fragments → Phenomena architecture:
-if someone changes a noun's class assignment in the Fragment, or changes
-the `predictsQU` function in the Theory, the bridge theorems break. -/
+This is the payoff of the Theories → Fragments → Phenomena architecture: if
+someone changes a noun's class assignment in the Fragment, or changes the
+`licensesMeasureReading` function in the Theory, the bridge theorems break. -/
 
-/-- The Theory's QU prediction matches the empirical observation for
-every example in our data set. -/
+/-- The Theory's MEASURE-licensing prediction matches the empirical
+observation for every example in our data set. -/
 theorem theory_predicts_observations :
     ∀ obs ∈ allObservations,
-      predictsQU obs.noun.nounClass obs.reading = obs.isQU := by
+      licensesMeasureReading obs.noun.nounClass obs.reading = obs.licensesMeasure := by
   simp [allObservations]; decide
 
-/-- For measure term observations: the Theory predicts QU = true. -/
-theorem measureTerm_observations_QU :
+/-- For measure term observations: the Theory predicts MEASURE = true. -/
+theorem measureTerm_observations_licenseMeasure :
     ∀ obs ∈ allObservations, obs.noun.nounClass = .measureTerm →
-      obs.isQU = true := by
+      obs.licensesMeasure = true := by
   simp [allObservations]; decide
 
-/-- For atomizer observations: the Theory predicts QU = false. -/
-theorem atomizer_observations_not_QU :
+/-- For atomizer observations: the Theory predicts MEASURE = false
+(atomizers are counted by CARD, not measured). -/
+theorem atomizer_observations_no_MEASURE :
     ∀ obs ∈ allObservations, obs.noun.nounClass = .atomizer →
-      obs.isQU = false := by
+      obs.licensesMeasure = false := by
   simp [allObservations]; decide
 
-/-- For container noun observations: QU depends on the reading.
-CONTAINER → not QU; MEASURE → QU. -/
-theorem container_QU_depends_on_reading :
+/-- For container noun observations: MEASURE-licensing depends on the reading.
+CONTAINER → not MEASURE; MEASURE → MEASURE. -/
+theorem container_MEASURE_depends_on_reading :
     ∀ obs ∈ allObservations, obs.noun.nounClass = .containerNoun →
-      (obs.isQU = true ↔ obs.reading = some .measure) := by
+      (obs.licensesMeasure = true ↔ obs.reading = some .measure) := by
   simp [allObservations]; decide
 
 -- ============================================================================
@@ -235,21 +233,10 @@ theorem drop_class_consistent :
     drop.nounClass = obs_drop_water.noun.nounClass := rfl
 
 -- ============================================================================
--- § 4. Additivity = QU (Diagnostic Alignment)
+-- § 4. Disambiguation Context Predictions
 -- ============================================================================
 
-/-- Additive closure aligns perfectly with QU: a noun passes the additive
-test iff it is quantity-uniform. This is not a definition — it's an
-empirical observation that the two diagnostics never diverge. -/
-theorem additivity_iff_QU :
-    ∀ obs ∈ allObservations, obs.additiveOK = obs.isQU := by
-  simp [allObservations]; decide
-
--- ============================================================================
--- § 5. Disambiguation Context Predictions
--- ============================================================================
-
-/-- Disambiguation contexts for container nouns (Scontras §3.2.1).
+/-- Disambiguation contexts for container nouns (Scontras Ch. 3 §3.2.1).
 
 A sentence context can force one reading of an ambiguous container noun:
 - Locative PPs ("in the cupboard") → CONTAINER (the physical objects are located)
@@ -310,16 +297,16 @@ theorem recipe_forces_measure :
     disamb_glass_recipe.forcedReading = .measure ∧
     disamb_cup_recipe.forcedReading = .measure := ⟨rfl, rfl⟩
 
-/-- Combining disambiguation with QU prediction: recipe contexts yield QU,
-locative contexts yield non-QU. -/
-theorem recipe_context_yields_QU :
+/-- Combining disambiguation with the licensing prediction:
+recipe contexts yield MEASURE, locative contexts yield non-MEASURE. -/
+theorem recipe_context_yields_MEASURE :
     ∀ d ∈ allDisambiguations, d.forcedReading = .measure →
-      predictsQU d.noun.nounClass (some d.forcedReading) = true := by
+      licensesMeasureReading d.noun.nounClass (some d.forcedReading) = true := by
   simp [allDisambiguations]; decide
 
-theorem locative_context_yields_not_QU :
+theorem locative_context_yields_no_MEASURE :
     ∀ d ∈ allDisambiguations, d.forcedReading = .container →
-      predictsQU d.noun.nounClass (some d.forcedReading) = false := by
+      licensesMeasureReading d.noun.nounClass (some d.forcedReading) = false := by
   simp [allDisambiguations]; decide
 
 end Phenomena.Quantification.Scontras2014

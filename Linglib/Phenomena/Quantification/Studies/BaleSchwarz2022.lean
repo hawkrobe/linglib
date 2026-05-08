@@ -1,6 +1,7 @@
 import Linglib.Features.Acceptability
+import Linglib.Features.Dimension
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Theories.Semantics.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
@@ -48,7 +49,8 @@ the 2026 paper shows this is reformulable using multiplication only.
 
 namespace Phenomena.Quantification.BaleSchwarz2022
 
-open Semantics.Probabilistic.Measurement
+open Semantics.Measurement
+open Features.Dimension (Dimension QuotientDimension quotient_components_distinct)
 open Fragments.English.MeasurePhrases (gram kilo milliliter liter MeasureTermEntry)
 open Core.Presupposition (PrProp PrValue)
 open Features (Acceptability)
@@ -243,19 +245,21 @@ element MUCH mediates pseudo-partitives (eq. 24). MUCH's denotation (eq. 25):
 
     ⟦MUCH⟧ = λq. λx. μ(x) = q
 
-This is identical to `MeasureTermSem.applyNumeral` — MUCH IS a measure term,
+This is identical to `MeasureFn.applyNumeral` — MUCH IS a measure term,
 but with an underspecified measure function μ resolved contextually:
 - μ_WT in "0.9 grams of salt" (eq. 24a)
 - μ_VOL in "0.8 milliliters of salt" (eq. 24b)
 - An anaphorically determined function in *per*-phrases (eq. 30) -/
 
-/-- MUCH as a `MeasureTermSem` (eq. 25). The measure function μ is
-underspecified — resolved contextually to the appropriate dimension. -/
-def MUCH {E : Type*} (μ : MeasureFn E) : MeasureTermSem E :=
-  { measureFn := μ }
+/-- MUCH as a measure function (eq. 25). The measure function μ is
+underspecified — resolved contextually to the appropriate dimension.
+After the substrate refactor, the measure-term layer collapses into
+`MeasureFn` itself, so MUCH is just the identity at the type level;
+the def survives as the linguistic name for the construct. -/
+def MUCH {E : Type*} (μ : MeasureFn E) : MeasureFn E := μ
 
 /-- MUCH's denotation matches measure term semantics by construction:
-⟦MUCH⟧(q)(x) = (μ(x) == q) = MeasureTermSem.applyNumeral(q)(x). -/
+⟦MUCH⟧(q)(x) = (μ(x) == q) = MeasureFn.applyNumeral(q)(x). -/
 theorem MUCH_is_measureTerm {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
     (MUCH μ).applyNumeral n x = (μ.apply x == n) := rfl
 

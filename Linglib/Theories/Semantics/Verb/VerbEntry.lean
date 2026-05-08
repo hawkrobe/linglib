@@ -8,7 +8,8 @@ import Linglib.Theories.Semantics.Verb.LevinClass
 import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
-import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Features.Dimension
+import Linglib.Theories.Semantics.Measurement.Basic
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Causation.Interpretation
@@ -54,7 +55,7 @@ open Core.Presupposition
 open Features
 open Semantics.Verb.Roots
 open Features.ChangeOfState
-open Semantics.Probabilistic.Measurement (Dimension)
+open Features.Dimension (Dimension)
 open Semantics.Attitudes.Preferential (NVPClass PreferentialPredicate)
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)
