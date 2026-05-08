@@ -2,7 +2,6 @@ import Linglib.Core.Mereology
 import Linglib.Core.Scales.Scale
 import Linglib.Theories.Semantics.Entailment.Extremum
 import Linglib.Features.Dimension
-import Mathlib.Data.Rat.Defs
 
 /-!
 # Measurement Semantics
@@ -228,10 +227,13 @@ Ch. 3, Table 3.5 p. 89).
 | atomizer      | (n/a)           | false    | Atomizers resist MEASURE (Ch. 3.3)|
 
 The original framing of this table as a "QU prediction" was misleading.
-Atomizers fail to license a MEASURE reading because they do not name a
-measure function; but the predicates they yield, after partitioning by π,
-ARE quantity-uniform under μ_CARD (Scontras p. 100: "atomizers are counted
-by cardinal numerals formed by CARD"). What's predicted here is MEASURE
+Atomizers fail to license a MEASURE reading because their semantics is
+inherently relational and partitioning (Scontras eqs. (77)/(87), pp. 89-90),
+not measure-naming — they don't supply a measure function; instead they
+take a substance noun and impose a partition into self-connected atoms.
+The resulting predicates, after partitioning by π, are then counted by
+CARD (Scontras p. 100: atomizers are nominal and get counted by CARD-formed
+cardinals just like basic nouns). What's predicted here is MEASURE
 licensing, not QU-status under all conceivable μ. -/
 def licensesMeasureReading (cls : QuantizingNounClass)
     (reading : Option ContainerReading) : Bool :=
@@ -329,16 +331,19 @@ Wellwood admissibility (`StrictMono` / `admissibleMeasure`) — are properties
 that a `MeasureFn` may carry. The bridges below let consumers move between
 the concrete and abstract views without re-stipulation. -/
 
-/-- A `MeasureFn` is **extensive** in @cite{krifka-1989}'s sense: its underlying
-function satisfies `Mereology.ExtMeasure` (additive over non-overlapping
-entities, positive, strictly monotone over the part-whole order). -/
-def MeasureFn.IsExtensive {E : Type*} [SemilatticeSup E]
+/-- A `MeasureFn` is **extensive** in the @cite{krifka-1998} sense (additive
+over non-overlapping entities, positive, strictly monotone over the part-whole
+order; the formalism traces to @cite{krifka-1989}'s cumulative/quantized
+distinction). Definitionally `Mereology.ExtMeasure E μ.apply`; declared as
+`abbrev` so the underlying class instance elaborates through it without manual
+unfolding. -/
+abbrev MeasureFn.IsExtensive {E : Type*} [SemilatticeSup E]
     (μ : MeasureFn E) : Prop :=
   Mereology.ExtMeasure E μ.apply
 
 /-- A `MeasureFn` is **admissible** (in @cite{wellwood-2015}'s /
-@cite{schwarzschild-2002}'s sense) iff its underlying function is `StrictMono`
-on the part-whole order. Definitionally equal to
+@cite{schwarzschild-2006}'s Monotonicity Constraint sense) iff its underlying
+function is `StrictMono` on the part-whole order. Definitionally equal to
 `Semantics.Gradability.StatesBased.admissibleMeasure μ.apply` — both are
 `StrictMono μ.apply` — so consumers can prove the equivalence by `Iff.rfl`
 when both abbrevs are in scope. -/

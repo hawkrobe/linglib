@@ -25,12 +25,14 @@ the substance, rather than denoting the substance's containers or atoms.
     water" — a quantity of water equal to three glass-volumes.
 
 - **Atomizers** (grain, piece): NEVER license MEASURE.
-  Atomizers impose a partition into atoms via π (Scontras eqs. (77), (87))
-  and are then *counted* by CARD over the partition (Scontras p. 100).
+  Atomizers' semantics is inherently relational and partitioning
+  (Scontras eqs. (77), (87), pp. 89-90): they take a substance noun
+  and impose a partition into self-connected atoms via π. They are
+  then *counted* by CARD over the partition (Scontras p. 100).
   The atoms-after-partition predicate IS quantity-uniform under μ_CARD —
-  atomizers fail MEASURE-licensing because they don't name a measure
-  function, not because the resulting predicate is non-uniform under
-  every conceivable μ.
+  atomizers fail MEASURE-licensing because their semantics is relational
+  / partitioning rather than measure-naming, not because the resulting
+  predicate is non-uniform under every conceivable μ.
 
 ## Diagnostics for the MEASURE/CONTAINER ambiguity
 
@@ -135,28 +137,30 @@ def obs_cup_flour_measure : MeasureObservation where
 -- Atomizers: NOT MEASURE (counted by CARD instead)
 
 /-- "Three grains of rice" — three rice-grain individuals.
-Atomizers do not name a measure function; they impose a partition into atoms
-(Scontras eq. (77)) and the resulting atoms are counted by CARD (Scontras
-p. 100). MEASURE-reading licensing fails — there is no μ_grain. -/
+Atomizers' semantics is inherently relational and partitioning
+(Scontras eqs. (77), (87), pp. 89-90): grain takes the substance noun rice
+and imposes a partition into self-connected rice-atoms via π. The atoms
+are then counted by CARD (Scontras p. 100). MEASURE-reading fails because
+the semantics is partitioning rather than measure-naming. -/
 def obs_grain_rice : MeasureObservation where
   noun := grain
   complement := "rice"
   reading := none
-  sentence := "Three grains of rice (counted, not measured: no μ_grain)"
+  sentence := "Three grains of rice (counted via CARD over π(rice); atomizers are relational/partitioning, not measure-naming)"
   licensesMeasure := false
 
 def obs_drop_water : MeasureObservation where
   noun := drop
   complement := "water"
   reading := none
-  sentence := "Three drops of water (counted, not measured: no μ_drop)"
+  sentence := "Three drops of water (counted via CARD over π(water); atomizers are relational/partitioning, not measure-naming)"
   licensesMeasure := false
 
 def obs_piece_cake : MeasureObservation where
   noun := piece
   complement := "cake"
   reading := none
-  sentence := "Three pieces of cake (counted, not measured: no μ_piece)"
+  sentence := "Three pieces of cake (counted via CARD over π(cake); atomizers are relational/partitioning, not measure-naming)"
   licensesMeasure := false
 
 def allObservations : List MeasureObservation :=

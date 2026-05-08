@@ -2230,7 +2230,7 @@ import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Phenomena.Reference.Studies.AhnZhu2025
 import Linglib.Phenomena.Indefinites.Studies.DeganoAloni2025
-import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
+import Linglib.Theories.Semantics.Measurement.Basic
 import Linglib.Theories.Semantics.Numerals.Basic
 import Linglib.Theories.Semantics.Numerals.Degree
 import Linglib.Theories.Semantics.Numerals.Precision
