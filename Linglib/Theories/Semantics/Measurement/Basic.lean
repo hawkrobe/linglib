@@ -120,8 +120,12 @@ predicate. The exact-equality reading is the lexical meaning; pragmatic
 strengthening to lower-bound or at-most readings happens at the numeral
 level (see `bareMeaning` / `atLeastMeaning` / `atMostMeaning` in
 `Semantics.Numerals`), not on the measure term itself. -/
-def MeasureFn.applyNumeral {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) : Bool :=
-  μ.apply x == n
+def MeasureFn.applyNumeral {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) : Prop :=
+  μ.apply x = n
+
+instance {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
+    Decidable (μ.applyNumeral n x) := by
+  unfold MeasureFn.applyNumeral; infer_instance
 
 -- ============================================================================
 -- § 3. CARD: Cardinality as a Measure Function
@@ -162,8 +166,8 @@ is QU under some relevant μ, with that μ supplying the "1-ness" presupposition
 of singular morphology (eq. (54), p. 48). Predicates fail QU when they are
 not measure-modified — e.g. bare `boy` is not QU under μ_CARD because two
 distinct boys can have different cardinalities (one vs. plural). -/
-def IsQuantityUniform {E : Type*} (P : E → Bool) (μ : MeasureFn E) : Prop :=
-  ∀ x y, P x = true → P y = true → μ.apply x = μ.apply y
+def IsQuantityUniform {E : Type*} (P : E → Prop) (μ : MeasureFn E) : Prop :=
+  ∀ x y, P x → P y → μ.apply x = μ.apply y
 
 -- ============================================================================
 -- § 5. Bridge to HasDegree
@@ -235,33 +239,40 @@ The resulting predicates, after partitioning by π, are then counted by
 CARD (Scontras p. 100: atomizers are nominal and get counted by CARD-formed
 cardinals just like basic nouns). What's predicted here is MEASURE
 licensing, not QU-status under all conceivable μ. -/
-def licensesMeasureReading (cls : QuantizingNounClass)
-    (reading : Option ContainerReading) : Bool :=
-  match cls, reading with
-  | .measureTerm,   _                 => true
-  | .containerNoun, some .measure     => true
-  | .containerNoun, some .container   => false
-  | .containerNoun, none              => false
-  | .atomizer,      _                 => false
+def licensesMeasureReading :
+    QuantizingNounClass → Option ContainerReading → Prop
+  | .measureTerm,   _                 => True
+  | .containerNoun, some .measure     => True
+  | .containerNoun, some .container   => False
+  | .containerNoun, none              => False
+  | .atomizer,      _                 => False
+
+instance : ∀ (cls : QuantizingNounClass) (r : Option ContainerReading),
+    Decidable (licensesMeasureReading cls r)
+  | .measureTerm,   _                 => isTrue trivial
+  | .containerNoun, some .measure     => isTrue trivial
+  | .containerNoun, some .container   => isFalse id
+  | .containerNoun, none              => isFalse id
+  | .atomizer,      _                 => isFalse id
 
 /-- Measure terms always license a MEASURE reading. -/
 theorem measureTerm_always_licensesMeasure (r : Option ContainerReading) :
-    licensesMeasureReading .measureTerm r = true := by
-  cases r <;> rfl
+    licensesMeasureReading .measureTerm r := by
+  cases r <;> trivial
 
 /-- Atomizers never license a MEASURE reading
 (@cite{scontras-2014} Ch. 3 §3.3, Table 3.5 p. 89). They impose a partition
 into atoms (eq. (77)) and are counted by CARD, not measured. -/
 theorem atomizer_no_MEASURE_reading (r : Option ContainerReading) :
-    licensesMeasureReading .atomizer r = false := by
+    ¬ licensesMeasureReading .atomizer r := by
   cases r with
-  | none => rfl
-  | some r => cases r <;> rfl
+  | none => exact id
+  | some r => cases r <;> exact id
 
 /-- Container nouns license a MEASURE reading iff in MEASURE reading. -/
 theorem containerNoun_licensesMeasure_iff_measure (r : ContainerReading) :
-    licensesMeasureReading .containerNoun (some r) = true ↔ r = .measure := by
-  cases r <;> decide
+    licensesMeasureReading .containerNoun (some r) ↔ r = .measure := by
+  cases r <;> simp [licensesMeasureReading]
 
 -- ============================================================================
 -- § 7. Measure-term exact meaning vs Kennedy's max-quantifier semantics
@@ -366,12 +377,11 @@ theorem extensive_measureFn_qmod_qua
   have hμ_qua := @Mereology.extMeasure_qua E inst μ.apply hExt' n hn
   exact hμ_qua x y hx_eq hlt hy_eq
 
-/-- **Bridge to QMOD.** The Scontras-style `applyNumeral` (Bool-valued) and
-the Krifka-style `QMOD` (Prop-valued) check the same condition `μ(x) = n`
-when QMOD's restrictor `R` is taken to be the trivial `True`. -/
+/-- **Bridge to QMOD.** Scontras's `applyNumeral` and Krifka's `QMOD` check the
+same condition `μ(x) = n` when QMOD's restrictor is taken to be trivial. -/
 theorem MeasureFn.applyNumeral_iff_qmod {E : Type*}
     (μ : MeasureFn E) (n : ℚ) (x : E) :
-    μ.applyNumeral n x = true ↔ Mereology.QMOD (fun _ => True) μ.apply n x := by
-  simp only [MeasureFn.applyNumeral, Mereology.QMOD, beq_iff_eq, true_and]
+    μ.applyNumeral n x ↔ Mereology.QMOD (fun _ => True) μ.apply n x := by
+  simp [MeasureFn.applyNumeral, Mereology.QMOD]
 
 end Semantics.Measurement

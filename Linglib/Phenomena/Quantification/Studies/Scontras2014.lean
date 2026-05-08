@@ -189,7 +189,7 @@ someone changes a noun's class assignment in the Fragment, or changes the
 observation for every example in our data set. -/
 theorem theory_predicts_observations :
     ∀ obs ∈ allObservations,
-      licensesMeasureReading obs.noun.nounClass obs.reading = obs.licensesMeasure := by
+      licensesMeasureReading obs.noun.nounClass obs.reading ↔ obs.licensesMeasure = true := by
   simp [allObservations]; decide
 
 /-- For measure term observations: the Theory predicts MEASURE = true. -/
@@ -305,12 +305,12 @@ theorem recipe_forces_measure :
 recipe contexts yield MEASURE, locative contexts yield non-MEASURE. -/
 theorem recipe_context_yields_MEASURE :
     ∀ d ∈ allDisambiguations, d.forcedReading = .measure →
-      licensesMeasureReading d.noun.nounClass (some d.forcedReading) = true := by
+      licensesMeasureReading d.noun.nounClass (some d.forcedReading) := by
   simp [allDisambiguations]; decide
 
 theorem locative_context_yields_no_MEASURE :
     ∀ d ∈ allDisambiguations, d.forcedReading = .container →
-      licensesMeasureReading d.noun.nounClass (some d.forcedReading) = false := by
+      ¬ licensesMeasureReading d.noun.nounClass (some d.forcedReading) := by
   simp [allDisambiguations]; decide
 
 end Phenomena.Quantification.Scontras2014

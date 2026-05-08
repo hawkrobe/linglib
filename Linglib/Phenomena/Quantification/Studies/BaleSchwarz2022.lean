@@ -259,9 +259,9 @@ the def survives as the linguistic name for the construct. -/
 def MUCH {E : Type*} (μ : MeasureFn E) : MeasureFn E := μ
 
 /-- MUCH's denotation matches measure term semantics by construction:
-⟦MUCH⟧(q)(x) = (μ(x) == q) = MeasureFn.applyNumeral(q)(x). -/
+⟦MUCH⟧(q)(x) ↔ (μ(x) = q) = MeasureFn.applyNumeral(q)(x). -/
 theorem MUCH_is_measureTerm {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
-    (MUCH μ).applyNumeral n x = (μ.apply x == n) := rfl
+    (MUCH μ).applyNumeral n x ↔ μ.apply x = n := Iff.rfl
 
 /-- The measure verb semantics (eq. 5) is used in the anaphoric derivation:
 the truth conditions are stated as measureVerbSem μ_wt q sample = true,
