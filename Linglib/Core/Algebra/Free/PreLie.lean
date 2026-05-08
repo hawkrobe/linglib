@@ -1090,4 +1090,123 @@ theorem insertAt_lift_eq_nested : ∀ {T : FreeMagma α} (e : Edge T)
         = l * (insertAt e' (insertAt g T₃))
     rw [insertAt_lift_eq_nested e' T₂ T₃ g]
 
+/-! ## §10: Descent through `FreeCommMagma.mk`
+
+To define `FreeCommMagma.insertSum` via `lift₂`, we need to show the
+planar `(T ◁ S).map FreeCommMagma.mk` is invariant under `CommRel` on
+each argument. This descent realizes MCB Lemma 1.10.1 (book p. 92):
+ℑ is the free **nonassociative commutative magma**, so insertion
+descends from the planar substrate to the nonplanar carrier.
+
+- `descent_right`: per-edge equality propagates the swap of `S` through
+  every `insertAt e S`. Easy: `mk` is a magma homomorphism.
+- `descent_left`: structural induction on `CommRel T T'` plus FCM
+  commutativity at each cell. Substantive — analogous to the §10b/§11
+  swap-collapse work in the legacy `Insertion.lean`, but at the
+  swap-anywhere level rather than the new-vertex level.
+-/
+
+/-- Per-edge propagation: if `mk T₂ = mk T₂'` then `mk (insertAt e T₂)
+    = mk (insertAt e T₂')` for every edge `e` of `T`. By structural
+    induction on `e` + `mk` being a magma homomorphism. -/
+private theorem mk_insertAt_descent {T : FreeMagma α} (e : Edge T) :
+    ∀ {T₂ T₂' : FreeMagma α},
+    (FreeCommMagma.mk T₂ : FreeCommMagma α) = FreeCommMagma.mk T₂' →
+    (FreeCommMagma.mk (insertAt e T₂) : FreeCommMagma α)
+      = FreeCommMagma.mk (insertAt e T₂') := by
+  induction e with
+  | rootL l r =>
+    intro T₂ T₂' h
+    show (FreeCommMagma.mk ((l * T₂) * r) : FreeCommMagma α)
+        = FreeCommMagma.mk ((l * T₂') * r)
+    -- `mk (a * b) = mk a * mk b` by definition of FCM.mul (Quot.lift₂).
+    show (FreeCommMagma.mk l * FreeCommMagma.mk T₂) * FreeCommMagma.mk r
+        = (FreeCommMagma.mk l * FreeCommMagma.mk T₂') * FreeCommMagma.mk r
+    rw [h]
+  | rootR l r =>
+    intro T₂ T₂' h
+    show (FreeCommMagma.mk (l * (r * T₂)) : FreeCommMagma α)
+        = FreeCommMagma.mk (l * (r * T₂'))
+    show FreeCommMagma.mk l * (FreeCommMagma.mk r * FreeCommMagma.mk T₂)
+        = FreeCommMagma.mk l * (FreeCommMagma.mk r * FreeCommMagma.mk T₂')
+    rw [h]
+  | inL l r e' ih =>
+    intro T₂ T₂' h
+    show (FreeCommMagma.mk ((insertAt e' T₂) * r) : FreeCommMagma α)
+        = FreeCommMagma.mk ((insertAt e' T₂') * r)
+    show FreeCommMagma.mk (insertAt e' T₂) * FreeCommMagma.mk r
+        = FreeCommMagma.mk (insertAt e' T₂') * FreeCommMagma.mk r
+    rw [ih h]
+  | inR l r e' ih =>
+    intro T₂ T₂' h
+    show (FreeCommMagma.mk (l * (insertAt e' T₂)) : FreeCommMagma α)
+        = FreeCommMagma.mk (l * (insertAt e' T₂'))
+    show FreeCommMagma.mk l * FreeCommMagma.mk (insertAt e' T₂)
+        = FreeCommMagma.mk l * FreeCommMagma.mk (insertAt e' T₂')
+    rw [ih h]
+
+/-- **Right descent**: `(T₁ ◁ T₂).map mk = (T₁ ◁ T₂').map mk` whenever
+    `T₂ ~ T₂'` (CommRel). Direct corollary of `mk_insertAt_descent`
+    applied per-edge. -/
+private theorem insertSum_descent_right (T₁ : FreeMagma α) :
+    ∀ {T₂ T₂' : FreeMagma α}, FreeMagma.CommRel T₂ T₂' →
+    (T₁ ◁ T₂).map FreeCommMagma.mk = (T₁ ◁ T₂').map FreeCommMagma.mk := by
+  intro T₂ T₂' h
+  have hmk : (FreeCommMagma.mk T₂ : FreeCommMagma α) = FreeCommMagma.mk T₂' :=
+    Quot.sound h
+  rw [insertSum_eq_ofList_map_insertAt, insertSum_eq_ofList_map_insertAt,
+      Multiset.map_coe, Multiset.map_coe, List.map_map, List.map_map]
+  congr 1
+  apply List.map_congr_left
+  intro e _
+  exact mk_insertAt_descent e hmk
+
+/-- **Left descent**: `(T ◁ T₂).map mk = (T' ◁ T₂).map mk` whenever
+    `T ~ T'` (CommRel). Proven by induction on the CommRel derivation
+    + FCM commutativity at each cell.
+
+    TODO (Phase 3.E.4b): substantive proof. Three CommRel cases:
+    - `swap a b`: root planar swap; uses §9.2-style decomposition +
+      multiset commutativity + `mul_comm` on FCM.
+    - `mul_left h c`: structural propagation through left subtree;
+      uses IH + `Multiset.map_map` to push through.
+    - `mul_right a h`: symmetric for right subtree. -/
+private theorem insertSum_descent_left :
+    ∀ {T T' : FreeMagma α}, FreeMagma.CommRel T T' → ∀ (T₂ : FreeMagma α),
+    (T ◁ T₂).map FreeCommMagma.mk = (T' ◁ T₂).map FreeCommMagma.mk := by
+  sorry
+
 end FreeMagma
+
+/-! ## §11: Native `FreeCommMagma.insertSum` via `lift₂`
+
+The public-API insertion on the FCM carrier, defined by lifting from
+the planar `FreeMagma.insertSum` through `Free.lean`'s `lift₂`. The
+descent proofs (§10) discharge the well-definedness obligations. -/
+
+namespace FreeCommMagma
+
+universe u
+variable {α : Type u}
+
+/-- **Native insertion sum on `FreeCommMagma α`** (MCB Definition 1.7.1
+    on the natural nonplanar carrier). Lifted from the planar
+    `FreeMagma.insertSum` via `Quot.lift₂`. The descent proofs
+    `FreeMagma.insertSum_descent_left/right` discharge the
+    well-definedness obligation. -/
+noncomputable def insertSum : FreeCommMagma α → FreeCommMagma α →
+    Multiset (FreeCommMagma α) :=
+  Quot.lift₂ (fun (a b : FreeMagma α) => (FreeMagma.insertSum a b).map FreeCommMagma.mk)
+    (fun a _ _ h => FreeMagma.insertSum_descent_right a h)
+    (fun _ _ b h => FreeMagma.insertSum_descent_left h b)
+
+/-- Notation `T₁ ◁ T₂` for `insertSum T₁ T₂` on `FreeCommMagma`. The
+    same right-triangle glyph as the planar version, scoped to the
+    `FreeCommMagma` namespace to avoid clashing. -/
+scoped infixl:65 " ◁ " => insertSum
+
+@[simp] theorem insertSum_mk (a b : FreeMagma α) :
+    (FreeCommMagma.mk a : FreeCommMagma α) ◁ FreeCommMagma.mk b
+      = (FreeMagma.insertSum a b).map FreeCommMagma.mk := rfl
+
+end FreeCommMagma
