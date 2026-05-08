@@ -105,7 +105,75 @@ theorem isEquivalence : Equivalence (PlanarEquiv : Planar α → Planar α → P
 
 end PlanarEquiv
 
-/-! ## §3: Setoid instance -/
+/-! ## §3: Lifting structural invariants from `Planar` to `Nonplanar`
+
+Functions `Planar α → β` that are invariant under `PlanarStep` lift
+through the equivalence closure to functions `Nonplanar α → β`. Below
+we lift `weight` (vertex count) and `arity-at-root` as worked examples.
+
+The pattern: prove invariance under the elementary `PlanarStep`, then
+extend to `PlanarEquiv = EqvGen PlanarStep` by an `EqvGen` induction. -/
+
+/-! ### §3a: Weight invariance -/
+
+/-- Weight is invariant under children-list permutation: any permutation
+    of `cs` has the same `weightList`, since `weightList` is a sum. -/
+private theorem weightList_perm (cs ds : List (Planar α))
+    (h : List.Perm cs ds) :
+    weightList cs = weightList ds := by
+  -- weightList recurses as a fold; for perms, sum is invariant
+  induction h with
+  | nil => rfl
+  | cons _ _ ih =>
+    show weight _ + weightList _ = weight _ + weightList _
+    rw [ih]
+  | swap _ _ _ =>
+    show weight _ + (weight _ + weightList _)
+       = weight _ + (weight _ + weightList _)
+    omega
+  | trans _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- Weight is invariant under `PlanarStep`. By induction on the step
+    constructors. -/
+private theorem weight_planarStep {t s : Planar α} (h : PlanarStep t s) :
+    t.weight = s.weight := by
+  induction h with
+  | swapAtRoot =>
+    rename_i a l r pre post
+    show 1 + weightList _ = 1 + weightList _
+    apply congrArg (1 + ·)
+    -- Show weightList (pre ++ l :: r :: post) = weightList (pre ++ r :: l :: post)
+    apply weightList_perm
+    -- These two lists are permutations: the only difference is l and r swapped
+    apply List.Perm.append_left
+    exact .swap r l post
+  | recurse _ ih =>
+    rename_i a pre old new post _hstep
+    show 1 + weightList _ = 1 + weightList _
+    apply congrArg (1 + ·)
+    -- weightList (pre ++ old :: post) = weightList (pre ++ new :: post)
+    -- by ih : old.weight = new.weight
+    -- Induct on pre, normalising `++` to `List.append` via `simp only`.
+    induction pre with
+    | nil =>
+      show weight old + weightList post = weight new + weightList post
+      rw [ih]
+    | cons head tail ih_pre =>
+      simp only [List.cons_append]
+      show weight head + weightList (tail ++ old :: post)
+         = weight head + weightList (tail ++ new :: post)
+      rw [ih_pre]
+
+/-- Weight is invariant under `PlanarEquiv`. By induction on `EqvGen`. -/
+theorem weight_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
+    t.weight = s.weight := by
+  induction h with
+  | rel _ _ hstep => exact weight_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-! ## §4: Setoid instance -/
 
 /-- The setoid on `Planar α` whose quotient is `Nonplanar α`. -/
 instance instSetoid : Setoid (Planar α) where
@@ -145,15 +213,26 @@ def lift {β : Sort*} (f : Planar α → β)
     (h : ∀ t s, Planar.PlanarEquiv t s → f t = f s) (t : Planar α) :
     lift f h (mk t) = f t := rfl
 
-/-! ## §5: Smart leaf constructor
+/-! ## §6: Smart leaf constructor + lifted `weight`
 
-A leaf in `Nonplanar α` is just `mk (Planar.leaf a)`. Provided as a
-named convenience. -/
+A leaf in `Nonplanar α` is `mk (Planar.leaf a)`. Weight is the
+canonical first lifted invariant. -/
 
 /-- A nonplanar leaf labeled `a`. -/
 def leaf (a : α) : Nonplanar α := mk (Planar.leaf a)
 
 @[simp] theorem leaf_def (a : α) : (leaf a : Nonplanar α) = mk (Planar.leaf a) := rfl
+
+/-- The **weight** (vertex count) of a nonplanar tree, lifted from
+    `Planar.weight` via `PlanarEquiv`-invariance. -/
+def weight : Nonplanar α → Nat :=
+  Nonplanar.lift Planar.weight (fun _ _ h => Planar.weight_planarEquiv h)
+
+@[simp] theorem weight_mk (t : Planar α) : (mk t).weight = t.weight := rfl
+
+@[simp] theorem weight_leaf (a : α) : (leaf a : Nonplanar α).weight = 1 := by
+  show (Planar.leaf a).weight = 1
+  unfold Planar.leaf Planar.weight Planar.weightList; rfl
 
 end Nonplanar
 
