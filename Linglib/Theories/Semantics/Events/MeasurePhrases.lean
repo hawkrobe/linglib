@@ -131,53 +131,15 @@ theorem measure_phrase_makes_qua
     QUA (VP θ (QMOD R μ n)) :=
   qua_propagation (qmod_of_cum_is_qua hCum hn)
 
--- ════════════════════════════════════════════════════
--- § 4. Bridge to @cite{scontras-2014}'s Measurement Framework
--- ════════════════════════════════════════════════════
+/-! ### Scontras vs. Krifka
 
-/-! ### Scontras vs. Krifka: different properties, different predicates
-
-@cite{scontras-2014}'s QU (quantity-uniform) applies to the **base
-predicate**: QU_μ(rice) says that rice-quantities of the same μ-measure
-can be summed.
-
-@cite{krifka-1989}'s QUA applies to the **modified predicate**:
-QUA("three kilos of rice") says no proper part of a 3kg-of-rice
-entity is also 3kg-of-rice.
-
-These are complementary: QU is a precondition on the base noun for
-measure modification to be felicitous, while QUA is a *consequence*
-of the modification that drives telicity transfer. The bridge between
-them: when MeasureFn is extensive, QMOD produces QUA predicates,
-which is exactly the quantizing effect that Krifka's telicity
-transfer chain requires. -/
-
-/-- A `MeasureFn` is extensive (in Krifka's sense) when its underlying
-    function satisfies `ExtMeasure`: additivity over non-overlapping
-    entities and positivity. This bridges Scontras's measurement
-    framework to Krifka's mereological telicity machinery. -/
-def MeasureFn.IsExtensive {E : Type*} [SemilatticeSup E]
-    (μ : Semantics.Measurement.MeasureFn E) : Prop :=
-  ExtMeasure E μ.apply
-
-/-- A measure function applied to a numeral checks `μ(x) == n`. This is
-    the Boolean analog of Krifka's QMOD: the predicate "x measures n by μ". -/
-theorem measureTerm_default_applyNumeral_eq
-    {E : Type*} (μ : Semantics.Measurement.MeasureFn E)
-    (n : ℚ) (x : E) :
-    μ.applyNumeral n x = (μ.apply x == n) := rfl
-
-/-- When a `MeasureFn` is extensive (in Krifka's sense), QMOD with
-    that measure function at any positive value produces a QUA
-    predicate. This bridges Scontras's `MeasureFn` to Krifka's
-    telicity machinery. -/
-theorem extensive_measureFn_qmod_qua
-    {E : Type*} [inst : SemilatticeSup E]
-    {μ : Semantics.Measurement.MeasureFn E}
-    (hExt : MeasureFn.IsExtensive μ)
-    {R : E → Prop} {n : ℚ} (hn : 0 < n) :
-    QUA (QMOD R μ.apply n) := by
-  have : @ExtMeasure E inst μ.apply := hExt
-  exact @qmod_qua E inst _ _ this n hn
+The substrate-level bridges between @cite{scontras-2014}'s `MeasureFn` and
+@cite{krifka-1989}'s `Mereology.ExtMeasure` / `QMOD` / `QUA` machinery —
+`MeasureFn.IsExtensive`, `extensive_measureFn_qmod_qua`,
+`MeasureFn.applyNumeral_iff_qmod` — live in
+`Theories/Semantics/Measurement/Basic.lean` (see § 8 there). They were
+previously sited here, but they're properties of `MeasureFn` rather than
+of event-side QMOD machinery, so they belong with the canonical
+`MeasureFn` definition. -/
 
 end Semantics.Events.MeasurePhrases

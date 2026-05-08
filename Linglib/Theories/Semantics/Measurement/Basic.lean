@@ -1,3 +1,4 @@
+import Linglib.Core.Mereology
 import Linglib.Core.Scales.Scale
 import Linglib.Theories.Semantics.Entailment.Extremum
 import Linglib.Features.Dimension
@@ -316,5 +317,56 @@ theorem scontras_kennedy_card {E : Type*} (cardFn : E → ℕ) (n : ℕ) (x : E)
     (hHit : ∃ e, cardFn e = n) :
     IsMaxInf (atLeastDeg cardFn) n x ↔ cardFn x = n :=
   Semantics.Entailment.Extremum.isMaxInf_atLeast_of_hit cardFn n x hHit
+
+-- ============================================================================
+-- § 8. Bridges to Mereology (Krifka) and admissibleMeasure (Wellwood)
+-- ============================================================================
+
+/-! `MeasureFn` is the concrete Scontras-flavored substrate (a function plus a
+typed dimension and a non-negativity proof). The abstract characterizations
+elsewhere in linglib — Krifka extensivity (`Mereology.ExtMeasure`),
+Wellwood admissibility (`StrictMono` / `admissibleMeasure`) — are properties
+that a `MeasureFn` may carry. The bridges below let consumers move between
+the concrete and abstract views without re-stipulation. -/
+
+/-- A `MeasureFn` is **extensive** in @cite{krifka-1989}'s sense: its underlying
+function satisfies `Mereology.ExtMeasure` (additive over non-overlapping
+entities, positive, strictly monotone over the part-whole order). -/
+def MeasureFn.IsExtensive {E : Type*} [SemilatticeSup E]
+    (μ : MeasureFn E) : Prop :=
+  Mereology.ExtMeasure E μ.apply
+
+/-- A `MeasureFn` is **admissible** (in @cite{wellwood-2015}'s /
+@cite{schwarzschild-2002}'s sense) iff its underlying function is `StrictMono`
+on the part-whole order. Definitionally equal to
+`Semantics.Gradability.StatesBased.admissibleMeasure μ.apply` — both are
+`StrictMono μ.apply` — so consumers can prove the equivalence by `Iff.rfl`
+when both abbrevs are in scope. -/
+abbrev MeasureFn.IsAdmissible {E : Type*} [Preorder E]
+    (μ : MeasureFn E) : Prop :=
+  StrictMono μ.apply
+
+/-- **Scontras-Krifka bridge.** When a `MeasureFn` is extensive, applying
+@cite{krifka-1989}'s QMOD with that measure function at any positive value
+produces a QUA predicate. Measure terms ("three kilos of rice") yield
+quantized predicates because their measure function is extensive. -/
+theorem extensive_measureFn_qmod_qua
+    {E : Type*} [inst : SemilatticeSup E]
+    {μ : MeasureFn E}
+    (hExt : MeasureFn.IsExtensive μ)
+    {R : E → Prop} {n : ℚ} (hn : 0 < n) :
+    Mereology.QUA (Mereology.QMOD R μ.apply n) := by
+  intro x y ⟨_, hx_eq⟩ hlt ⟨_, hy_eq⟩
+  have hExt' : @Mereology.ExtMeasure E inst μ.apply := hExt
+  have hμ_qua := @Mereology.extMeasure_qua E inst μ.apply hExt' n hn
+  exact hμ_qua x y hx_eq hlt hy_eq
+
+/-- **Bridge to QMOD.** The Scontras-style `applyNumeral` (Bool-valued) and
+the Krifka-style `QMOD` (Prop-valued) check the same condition `μ(x) = n`
+when QMOD's restrictor `R` is taken to be the trivial `True`. -/
+theorem MeasureFn.applyNumeral_iff_qmod {E : Type*}
+    (μ : MeasureFn E) (n : ℚ) (x : E) :
+    μ.applyNumeral n x = true ↔ Mereology.QMOD (fun _ => True) μ.apply n x := by
+  simp only [MeasureFn.applyNumeral, Mereology.QMOD, beq_iff_eq, true_and]
 
 end Semantics.Measurement
