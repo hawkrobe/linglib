@@ -3,21 +3,11 @@ import Linglib.Theories.Syntax.Minimalist.Probe
 import Linglib.Theories.Syntax.Minimalist.ClauseSpine
 import Linglib.Typology.Complementation
 import Linglib.Features.Aktionsart
+import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Cantonese.Aspect
 import Linglib.Fragments.Cantonese.Particles
 import Linglib.Fragments.Cantonese.Predicates
 import Linglib.Fragments.Cantonese.ResultativeComplements
-
-/-! Note on imports: Mandarin Fragment files (`Mandarin/Predicates`,
-`Mandarin/Particles`) are NOT imported here, even though the paper engages
-Mandarin centrally. Reason: `Mandarin/Predicates` transitively pulls in
-`Theories/Semantics/Verb/VerbEntry` → `Probabilistic.Measurement.Basic`,
-which adds substantial weight (and at the time of writing is in a
-mid-flight refactor by another session). The Mandarin-side analytical
-content lives via the substrate (`AspHead`) rather than via Fragment
-imports; the Mandarin drift sentry analogous to §9 below is
-`Fragments.Mandarin.Predicates.liuyip_partition`, landed in
-0.230.891 alongside the Mandarin verbs themselves. -/
 
 /-! # Liu & Yip 2026: Again, finiteness, and split aspect in Chinese languages
 
@@ -38,47 +28,46 @@ imports; the Mandarin drift sentry analogous to §9 below is
 (4) **Defective intervention.** When the embedded clause is TP-sized, its
     *embedded* AspP_outer blocks the matrix probe's reach to the embedded
     *again*-element.
-(5) **Wurmbrand-Lohninger 2023 ICH** (proposition > situation > event)
+(5) **@cite{wurmbrand-lohninger-2023} ICH** (proposition > situation > event)
     instantiated by Chinese as CP > TP > vP.
 (6) **vP is the minimal nonfinite size.** Empirical: AspP_inner is mandatory
     above V; aspect-lowering and *-gwo*-lowering systematically don't occur.
 
 ## What this Studies file commits to substrate
 
-- *No* new substrate files. Per the audit on this paper's integration plan,
-  the Wurmbrand-Lohninger ICH, the Wurmbrand 2001 truncation operator, and
-  the Pesetsky 2021 Exfoliation primitive all violate the ≥ 2-paper-anchor
-  graduation rule. They live as local definitions here, ready to graduate
-  when a second study consumes them.
+- *No* new substrate files. The @cite{wurmbrand-lohninger-2023} ICH, the
+  @cite{wurmbrand-2001} truncation operator, and the @cite{pesetsky-2021}
+  Exfoliation primitive all violate the ≥ 2-paper-anchor graduation rule.
+  They live as local definitions here, ready to graduate when a second
+  study consumes them.
 
-- The substrate-level addition Liu & Yip's analysis *does* motivate is the
-  bipartite split-aspect typing: `AspFlavor` and `AspHead`, landed in
+- The substrate-level addition @cite{liu-yip-2026}'s analysis *does* motivate
+  is the bipartite split-aspect typing: `AspFlavor` and `AspHead`, landed in
   `Theories/Syntax/Minimalist/Aspect.lean` parallel to `VoiceHead { flavor }`.
   That commitment is independent of the analytical claims of this paper —
-  it is consumed by Travis 2010, MacDonald 2008, Tsai 2008, Sybesma 2017,
-  and Liu & Yip 2026 jointly — so it warranted substrate placement.
+  it is consumed by @cite{travis-2010}, @cite{macdonald-2008},
+  @cite{tsai-2008}, @cite{sybesma-2017}, and @cite{liu-yip-2026} jointly —
+  so it warranted substrate placement.
 
 ## What this Studies file does NOT commit to
 
-Per the audits:
-
-- **Defective intervention is NOT bilateral labeling.** Liu & Yip's intervener
-  is a *featurally-matching head occupying a probe position* (Chomsky 2000
-  defective intervention), not a *category in a bilateral label*
-  (Keine 2020 horizon opacity). The two coincide on the Type II / Type III
-  contrast but make distinct predictions on featural mismatch. The
-  `defectiveIntervention` predicate below uses head-as-intervener; it does
-  *not* call `ProbeProfile.transparentToLabel`.
+- **Defective intervention is NOT bilateral labeling.** @cite{liu-yip-2026}'s
+  intervener is a *featurally-matching head occupying a probe position*
+  (@cite{chomsky-2000} defective intervention), not a *category in a
+  bilateral label* (@cite{keine-2020} horizon opacity). The two coincide on
+  the Type II / Type III contrast but make distinct predictions on featural
+  mismatch. The `defectiveIntervention` predicate below uses
+  head-as-intervener; it does *not* call `ProbeProfile.transparentToLabel`.
 
 - **Aspect-lowering and *-faan*-lowering are parallel, not the same.** Both
   involve matrix-AspP_outer Agree across a vP boundary, but the empirical
   diagnostics differ (e.g., -*zhe*_CONT vs -*zhe*_IPFV asymmetry; -*gwo* not
   lowering in Cantonese). No reduction theorem is asserted.
 
-- **Wurmbrand-Lohninger ICH is not a baked-in `LinearOrder`** with an
-  implication on transparency. The order on `ComplementClass` is independent
-  of the claim that transparency is downward-closed; the latter is a
-  theorem about a transparency relation, not a definitional property.
+- **The @cite{wurmbrand-lohninger-2023} ICH is not a baked-in `LinearOrder`**
+  with an implication on transparency. The order on `ComplementClass` is
+  independent of the claim that transparency is downward-closed; the latter
+  is a theorem about a transparency relation, not a definitional property.
 
 - **Minimal-vP is empirical, not structural.** Encoded as a per-fragment
   drift sentry, falsifiable by a single new datum.
@@ -87,11 +76,11 @@ Per the audits:
 
 §11 below documents divergences with HPSG (lexical-rule analysis of
 "you-skipping"), Dependency Grammar (no AspP, no ICH), CCG (forward
-composition), `Fragments/Italian/Modals.lean`'s Hacquard 2006 restructuring
-substrate, `Phenomena/Control/Studies/Landau2015.lean`'s `ControlTier`,
-and `Theories/Syntax/Minimalist/Phase.lean`. The Cinque 2006 vs.
-Wurmbrand 2001 restructuring rivalry is made explicit in §10 as a
-refutation theorem candidate.
+composition), `Fragments/Italian/Modals.lean`'s @cite{hacquard-2006}
+restructuring substrate, `Phenomena/Control/Studies/Landau2015.lean`'s
+`ControlTier`, and `Theories/Syntax/Minimalist/Phase.lean`. The
+@cite{cinque-2006} vs. @cite{wurmbrand-2001} restructuring rivalry is made
+explicit in §10 as a refutation theorem candidate.
 -/
 
 namespace Phenomena.Complementation.Studies.LiuYip2026
@@ -103,16 +92,16 @@ open Typology.Complementation (CTPClass ComplementClauseStructure)
 -- §1. Three Chinese clause types as ComplementSize instances
 -- ============================================================================
 
-/-- Liu & Yip 2026's Type I: finite (CP). Selected by *xiangxin* 'believe',
+/-- @cite{liu-yip-2026}'s Type I: finite (CP). Selected by *xiangxin* 'believe',
     *shuo* 'say' etc.; blocks *you*-skipping and *-faan*-lowering. -/
 def typeI : ComplementSize := ComplementSize.cP
 
-/-- Liu & Yip 2026's Type II: nonfinite without Aspect Restructuring (TP).
+/-- @cite{liu-yip-2026}'s Type II: nonfinite without Aspect Restructuring (TP).
     Selected when the predicate licenses TP but blocks *-faan*-lowering
     via embedded AspP_outer intervention. -/
 def typeII : ComplementSize := ComplementSize.tP
 
-/-- Liu & Yip 2026's Type III: nonfinite *with* Aspect Restructuring (vP).
+/-- @cite{liu-yip-2026}'s Type III: nonfinite *with* Aspect Restructuring (vP).
     Selected by *xiang* 'want', *rang* 'let' etc.; permits *you*-skipping
     and *-faan*-lowering. -/
 def typeIII : ComplementSize := ComplementSize.vP
@@ -133,11 +122,11 @@ theorem types_ordered :
     studies and Phenomena/Complementation/Studies/Grano2024.lean as candidate
     second sites).
 
-    `LinearOrder` is *not* derived: the audit flagged that the implicational
-    content of the ICH is a theorem about a *transparency relation*, not a
-    structural property of the class lattice. The order here is just the
-    enum's natural one (event < situation < proposition); the implicational
-    claim is `transparency_downward_closed` below. -/
+    `LinearOrder` is *not* derived: the implicational content of the ICH is
+    a theorem about a *transparency relation*, not a structural property of
+    the class lattice. The order here is just the enum's natural one
+    (event < situation < proposition); the implicational claim is
+    `transparency_downward_closed` below. -/
 inductive ComplementClass where
   /-- Smallest, most transparent: vP-level event reports. -/
   | event
@@ -157,11 +146,11 @@ def ComplementClass.rank : ComplementClass → Nat
 -- §3. Local complementClass: derived from ComplementSize.fValue
 -- ============================================================================
 
-/-- Project a `ComplementSize` onto the Wurmbrand-Lohninger 3-tier
-    `ComplementClass`, by `fValue` thresholds. This is Liu & Yip 2026's
-    *Chinese-specific* mapping (the paper's footnote 22 explicitly notes
-    that other languages may calibrate differently). The Studies file
-    instantiates the mapping; a richer cross-linguistic substrate would
+/-- Project a `ComplementSize` onto the @cite{wurmbrand-lohninger-2023}
+    3-tier `ComplementClass`, by `fValue` thresholds. This is
+    @cite{liu-yip-2026}'s *Chinese-specific* mapping (the paper notes
+    explicitly that other languages may calibrate differently). The Studies
+    file instantiates the mapping; a richer cross-linguistic substrate would
     parameterize it per-language. -/
 def complementClass (cs : ComplementSize) : ComplementClass :=
   if cs.fLevel ≥ fValue .C then .proposition
@@ -173,16 +162,17 @@ theorem typeII_situation : complementClass typeII = .situation := by decide
 theorem typeIII_event : complementClass typeIII = .event := by decide
 
 -- ============================================================================
--- §4. Local restructure operator (truncation; Wurmbrand 2001 flavor)
+-- §4. Local restructure operator (truncation; @cite{wurmbrand-2001} flavor)
 -- ============================================================================
 
-/-- Wurmbrand 2001-style restructuring: drop the topmost projected head from a
-    `ClauseSpine`. Returns `none` if the spine has only one head (the floor).
+/-- @cite{wurmbrand-2001}-style restructuring: drop the topmost projected
+    head from a `ClauseSpine`. Returns `none` if the spine has only one
+    head (the floor).
 
-    Local to this Studies file. The audit flagged this as failing the
-    ≥2-consumer rule for substrate; promotion candidate when
-    `Fragments/Italian/Modals.lean`'s informal restructuring discussion gets
-    a Studies file or when a Wurmbrand 2014 study lands.
+    Local to this Studies file. Fails the ≥2-consumer rule for substrate;
+    promotion candidate when `Fragments/Italian/Modals.lean`'s informal
+    restructuring discussion gets a Studies file or when a
+    @cite{wurmbrand-2014} study lands.
 
     Implementation: the dropLast of an at-least-2-element list is non-empty,
     proved via the `[x, y :: rest]` pattern's structural guarantee. -/
@@ -215,10 +205,10 @@ theorem restructure_decreases (s : ClauseSpine) :
 -- §5. Defective intervention (head-as-intervener; NOT bilateral labeling)
 -- ============================================================================
 
-/-- Liu & Yip 2026's defective intervention (Chomsky 2000): an *embedded* head
-    of the same category as the matrix probe blocks Agree, regardless of
-    bilateral labeling. The featural-compatibility check captures the audit's
-    insistence that intervention is by an *element occupying an embedded
+/-- @cite{liu-yip-2026}'s defective intervention (@cite{chomsky-2000}): an
+    *embedded* head of the same category as the matrix probe blocks Agree,
+    regardless of bilateral labeling. The featural-compatibility check
+    enforces that intervention is by an *element occupying an embedded
     probe position*, not by a category in a sister's label.
 
     `intervenes` returns `true` when the embedded head's selectional
@@ -227,9 +217,9 @@ theorem restructure_decreases (s : ClauseSpine) :
     intervention configuration. The simplest such check: same-flavor +
     same-or-compatible selectional spec.
 
-    This predicate deliberately does NOT call `ProbeProfile.transparentToLabel`;
-    the syntax audit on this paper's plan explained why the two mechanisms
-    diverge. -/
+    This predicate deliberately does NOT call
+    `ProbeProfile.transparentToLabel` — head-as-intervener and label-as-locus
+    diverge on featurally-mismatched probes. -/
 def intervenes (matrixProbe : AspHead) (embeddedHead : AspHead) : Bool :=
   -- Same flavor + featurally compatible (or both indifferent)
   matrixProbe.flavor = embeddedHead.flavor &&
@@ -248,7 +238,7 @@ def intervenes (matrixProbe : AspHead) (embeddedHead : AspHead) : Bool :=
     selectional restriction (per @cite{lin-liu-2009}, building on
     @cite{shen-2004}). The lexical entry in `Fragments/Mandarin/Particles.lean`
     carries only the presupposition trigger; the syntactic typing here
-    is Liu & Yip's analytical commitment. -/
+    is @cite{liu-yip-2026}'s analytical commitment. -/
 def youAspHead : AspHead := AspHead.outerDynamic
 
 /-- Studies-side projection: Mandarin *zai* 'again' is typed as an
@@ -266,10 +256,10 @@ theorem zai_no_requirement :
 -- §7. Cantonese -faan / -gwo split-aspect typing
 -- ============================================================================
 
-/-- Studies-side projection: Cantonese *-faan* 'again' is AspP_outer-associated
-    but, unlike Mandarin *you*, does NOT carry a [+D] selectional restriction
-    (it is compatible with stative *jau* 'have' per Liu & Yip §6 footnote on
-    (78)). -/
+/-- Studies-side projection: Cantonese *-faan* 'again' is
+    AspP_outer-associated but, unlike Mandarin *you*, does NOT carry a [+D]
+    selectional restriction (it is compatible with stative *jau* 'have' per
+    @cite{liu-yip-2026}). -/
 def faanAspHead : AspHead := Fragments.Cantonese.Aspect.faan.toAspHead
 
 /-- Studies-side projection: Cantonese *-gwo* (repetitive use) is
@@ -284,8 +274,8 @@ theorem faan_outer_no_dyn :
 theorem gwo_inner :
     gwoAspHead.flavor = .inner := rfl
 
-/-- The audit-flagged contrast: Mandarin *you* and Cantonese *-faan* are
-    BOTH outer-aspect, but only *you* carries [+D]. Encoding *-faan* with
+/-- Mandarin *you* and Cantonese *-faan* are BOTH outer-aspect, but only
+    *you* carries [+D]. Encoding *-faan* with
     `selectsDynamicity = some .dynamic` would over-predict (it would force
     incompatibility with stative *jau*). -/
 theorem you_vs_faan_dynamicity :
@@ -297,8 +287,9 @@ theorem you_vs_faan_dynamicity :
 -- §8. The four generalizations as theorems on the substrate
 -- ============================================================================
 
-/-- **Generalization I** (Liu & Yip 2026 (16)): in Mandarin, an *again*-element
-    exhibits exceptional scopal behavior IFF it is outer-aspect-associated.
+/-- **Generalization I** (@cite{liu-yip-2026}): in Mandarin, an
+    *again*-element exhibits exceptional scopal behavior IFF it is
+    outer-aspect-associated.
 
     On the substrate: `youAspHead.isOuter = true` (you may skip);
     `zaiAspHead.isOuter = false` (zai may not). The empirical content is the
@@ -314,7 +305,7 @@ theorem generalization_I_cantonese :
     faanAspHead.isOuter = true ∧ gwoAspHead.isOuter = false := by
   refine ⟨rfl, rfl⟩
 
-/-- **Generalization II** (Liu & Yip 2026 (20)): the exceptional scopal
+/-- **Generalization II** (@cite{liu-yip-2026}): the exceptional scopal
     behavior of *again* may cross nonfinite (vP) but not finite (CP) clause
     boundaries.
 
@@ -326,7 +317,7 @@ theorem generalization_I_cantonese :
 theorem generalization_II_mandarin :
     typeIII.fLevel < typeII.fLevel ∧ typeII.fLevel < typeI.fLevel := by decide
 
-/-- **Correlation I** (Liu & Yip 2026 (30), Mandarin): an *again*-element
+/-- **Correlation I** (@cite{liu-yip-2026}, Mandarin): an *again*-element
     exhibits exceptional scopal behavior IFF it cannot surface in an
     embedded nonfinite clause without a dynamic ([+D]) aspect.
 
@@ -341,7 +332,7 @@ theorem correlation_I_mandarin :
     zaiAspHead.licensesDynamicity .stative = true := by
   refine ⟨rfl, rfl, rfl, rfl⟩
 
-/-- **Correlation II** (Liu & Yip 2026 (36)): an *again*-element exhibits
+/-- **Correlation II** (@cite{liu-yip-2026}): an *again*-element exhibits
     exceptional scopal behavior IFF it is structurally higher than
     aspectual elements.
 
@@ -355,38 +346,38 @@ theorem correlation_II_mandarin :
 -- §9. Minimal-vP claim as a per-fragment drift sentry
 -- ============================================================================
 
-/-! Per the syntax audit: the minimal-vP claim is an *empirical* generalization
-about Chinese, not a structural property derived from substrate. Stated here
-as a per-fragment assertion that every nonfinite-clause-taking predicate in
-the Mandarin and Cantonese fragments selects a complement of size ≥ vP.
-Falsifiable by a single new datum. -/
+/-! The minimal-vP claim is an *empirical* generalization about Chinese, not
+a structural property derived from substrate. Stated here as a per-fragment
+assertion that every nonfinite-clause-taking predicate in the Mandarin and
+Cantonese fragments selects a complement of size ≥ vP. Falsifiable by a
+single new datum. -/
 
-/-! The Mandarin counterpart of the per-fragment minimal-vP sentry lives
-    in `Fragments.Mandarin.Predicates.liuyip_partition` (commit 0.230.891).
-    It records that the six Mandarin nonfinite-takers (xiang, rang, quan,
-    bi, dasuan, shefa) all have `complementType = .infinitival` —
-    consistent with vP-as-floor and falsifiable by a single new datum.
-    Stated separately to keep this Studies file independent of the
-    `Theories.Semantics.Verb.VerbEntry` import chain. -/
+open Fragments.Mandarin.Predicates in
+/-- All Mandarin nonfinite-takers (xiang, rang, quan, bi, dasuan, shefa)
+    have `complementType = .infinitival`, consistent with vP-as-floor and
+    falsifiable by a single new datum. The Fragment-side companion is
+    `Fragments.Mandarin.Predicates.liuyip_partition`. -/
+theorem mandarin_nonfinite_takers_min_vP :
+    [xiang, rang, quan, bi, dasuan, shefa].all
+      (·.complementType = .infinitival) = true := by decide
 
 open Fragments.Cantonese.Predicates in
 /-- All Cantonese nonfinite-takers select `[.vP]` per the per-language
-    fragment classification (Liu & Yip's (79)). -/
+    fragment classification (@cite{liu-yip-2026}). -/
 theorem cantonese_nonfinite_takers_min_vP :
     [soeng, hyun, bik, giu, daasyun].all (·.selects = [.vP]) = true := by decide
 
 -- ============================================================================
--- §10. The Cinque 2006 vs Wurmbrand 2001 restructuring rivalry
+-- §10. The @cite{cinque-2006} vs @cite{wurmbrand-2001} restructuring rivalry
 -- ============================================================================
 
-/-! ### Internal tension in the Liu & Yip 2026 architecture
+/-! ### Internal tension in the @cite{liu-yip-2026} architecture
 
-The cross-framework reconciler audit on this paper's integration plan
-flagged a hidden incoherence: the spine substrate (`ClauseSpine` +
+There is a hidden incoherence: the spine substrate (`ClauseSpine` +
 `AspFlavor.outer` / `inner` always projected when present) commits to
-**Cinque 2006**'s "always project all functional heads" view; the
+@cite{cinque-2006}'s "always project all functional heads" view; the
 restructuring operator above (truncate the topmost head) commits to
-**Wurmbrand 2001**'s "remove projection on restructuring" view. These
+@cite{wurmbrand-2001}'s "remove projection on restructuring" view. These
 are direct rivals on the same Chinese aspect data.
 
 The current formalization adopts both — and lives with the tension —
@@ -403,15 +394,15 @@ because:
     trivially, `id`. The substrate accommodates both projections; the
     rivalry is *visible* rather than hidden.
 
-The sharp refutation theorem the cross-framework audit suggested —
-`¬ (Wurmbrand.truncated.projects .Asp ↔ Cinque.full.projects .Asp)` —
-is contingent on a Cinque-style "always project" formalization landing
-in `Theories/Syntax/Minimalist/`. Until then, the rivalry is
-documented in prose, not theorem. -/
+The sharp refutation theorem
+`¬ (Wurmbrand.truncated.projects .Asp ↔ Cinque.full.projects .Asp)` is
+contingent on a Cinque-style "always project" formalization landing in
+`Theories/Syntax/Minimalist/`. Until then, the rivalry is documented in
+prose, not theorem. -/
 
 /-- A trivial Cinque-flavored "restructuring" (identity) for comparison
-    with the Wurmbrand-flavored `restructure` above. Cinque 2006's claim
-    is that restructuring is *projection-marking*, not truncation;
+    with the Wurmbrand-flavored `restructure` above. @cite{cinque-2006}'s
+    claim is that restructuring is *projection-marking*, not truncation;
     structurally, the spine is unchanged. -/
 def cinqueRestructure (s : ClauseSpine) : ClauseSpine := s
 
@@ -426,8 +417,7 @@ theorem cinque_vs_wurmbrand_diverge (s : ClauseSpine) :
 
 /-! ### Sister-framework treatments of "you-skipping" / *-faan*-lowering
 
-Per the cross-framework reconciler audit on this paper's integration plan,
-each major sister framework analyzes the same data via a fundamentally
+Each major sister framework analyzes the same data via a fundamentally
 different mechanism. This section documents the divergences without
 attempting bridge theorems (which would require the sister frameworks to
 have Studies-level Chinese formalizations they currently lack):
@@ -435,7 +425,7 @@ have Studies-level Chinese formalizations they currently lack):
 - **HPSG** (`Theories/Syntax/HPSG/Core/Basic.lean`): no clausal spine, no
   AspP, no ICH. The "you-skipping" pattern would naturally be a *lexical
   rule on argument structure* (compare `LexicalRules.lean:36-95`'s
-  `passiveRule`, `dativeShiftRule`, `resultativeRule`). Liu & Yip's
+  `passiveRule`, `dativeShiftRule`, `resultativeRule`). @cite{liu-yip-2026}'s
   movement+reconstruction has no HPSG analog. SILENT DIVERGENCE.
 
 - **Dependency Grammar** (`Phenomena/Complementation/Studies/Osborne2019Control.lean`):
@@ -452,27 +442,29 @@ have Studies-level Chinese formalizations they currently lack):
   is tractable on a small fragment but not attempted here.
 
 - **`Fragments/Italian/Modals.lean`** has a developed restructuring
-  substrate based on @cite{rizzi-1978} + Hacquard 2006 (event-relativity
-  analysis). The Liu & Yip formalization here uses a Wurmbrand 2001
-  truncation operator (§4 above). The two are direct rivals; integration
-  with the Italian substrate would be a productive next step but is
-  deferred (the Italian file currently has no Wurmbrand-truncation
-  bridge of its own).
+  substrate based on @cite{rizzi-1978} + @cite{hacquard-2006}
+  (event-relativity analysis). The @cite{liu-yip-2026} formalization here
+  uses a @cite{wurmbrand-2001} truncation operator (§4 above). The two
+  are direct rivals; integration with the Italian substrate would be a
+  productive next step but is deferred (the Italian file currently has
+  no Wurmbrand-truncation bridge of its own).
 
 - **`Phenomena/Control/Studies/Landau2015.lean`** has `ControlTier`
   (predicative vs logophoric) cross-classifying CTPs along an axis the
-  Wurmbrand-Lohninger ICH `ComplementClass` (event/situation/proposition)
-  parallels. A bridge theorem `LiuYip.proposition → Landau.logophoric`
-  is candidate future work; both Studies files currently formalize
-  their own complement-class projections without sharing substrate.
+  @cite{wurmbrand-lohninger-2023} ICH `ComplementClass`
+  (event/situation/proposition) parallels. A bridge theorem
+  `LiuYip.proposition → Landau.logophoric` is candidate future work;
+  both Studies files currently formalize their own complement-class
+  projections without sharing substrate.
 
-- **`Theories/Syntax/Minimalist/Phase.lean`** has Chomsky-2000/2001 phase
-  machinery (`PICStrength`). Liu & Yip's intervention is by AspP_outer,
-  a *non-phase* head — defective intervention is a third locality
-  regime alongside `PICStrength.{strong, weak, linearizationBound}`.
-  The current formalization silently bypasses the `Phase` substrate.
-  Resolution: either extend `PICStrength` with a "head-as-intervener"
-  case, or add explicit prose noting the alternative locality model. -/
+- **`Theories/Syntax/Minimalist/Phase.lean`** has @cite{chomsky-2000}
+  / @cite{chomsky-2001} phase machinery (`PICStrength`).
+  @cite{liu-yip-2026}'s intervention is by AspP_outer, a *non-phase*
+  head — defective intervention is a third locality regime alongside
+  `PICStrength.{strong, weak, linearizationBound}`. The current
+  formalization silently bypasses the `Phase` substrate. Resolution:
+  either extend `PICStrength` with a "head-as-intervener" case, or add
+  explicit prose noting the alternative locality model. -/
 
 -- ============================================================================
 -- §12. Bridge to Typology.Complementation.ComplementClauseStructure
@@ -481,14 +473,14 @@ have Studies-level Chinese formalizations they currently lack):
 /-- The local `ComplementClass` projects to the existing theory-neutral
     surface enum `Typology.Complementation.ComplementClauseStructure`.
     This converts the planned ICH from a parallel third axis into a
-    projection over substrate that already serves Deal 2026, Landau 2015,
-    Cristofaro 2013, and Noonan 2007 — the interconnection-density
-    discipline CLAUDE.md describes.
+    projection over substrate that already serves @cite{deal-2026},
+    @cite{landau-2015}, @cite{cristofaro-2013}, and @cite{noonan-2007}
+    — the interconnection-density discipline CLAUDE.md describes.
 
-    Note: the projection collapses Wurmbrand-Lohninger's three classes
-    onto two surface patterns (`barePropositionalCP` for proposition,
-    `abarInternalCP` for situation/event). The collapse is correct for
-    Chinese but may not generalize. -/
+    Note: the projection collapses @cite{wurmbrand-lohninger-2023}'s
+    three classes onto two surface patterns (`barePropositionalCP` for
+    proposition, `abarInternalCP` for situation/event). The collapse is
+    correct for Chinese but may not generalize. -/
 def toSurfacePattern : ComplementClass → ComplementClauseStructure
   | .proposition => .barePropositionalCP
   | .situation => .abarInternalCP
@@ -501,37 +493,36 @@ theorem proposition_surface :
 -- §13. Open / deferred items
 -- ============================================================================
 
-/-! ### Audit-flagged deferrals
+/-! ### Deferred items
 
-- **Pesetsky 2021 Exfoliation**: not formalized here. The `shuo`-CP puzzle
-  Liu & Yip resolve via Exfoliation (CP layer peelable under A-dependency)
-  is left as prose. Pesetsky 2021 is in `references.bib`; promotion to
-  a substrate operator awaits a second consumer.
+- **@cite{pesetsky-2021} Exfoliation**: not formalized here. The `shuo`-CP
+  puzzle @cite{liu-yip-2026} resolve via Exfoliation (CP layer peelable
+  under A-dependency) is left as prose. Promotion to a substrate operator
+  awaits a second consumer.
 
-- **`Theories/Semantics/Again/` substrate**: the audit recommended a
-  uniform *again*-presupposition substrate (von Stechow 1996 / Beck 2006 /
-  Bale 2007 parameterization). Without it, every *again*-element's
+- **`Theories/Semantics/Again/` substrate**: a uniform *again*-presupposition
+  substrate (@cite{von-stechow-1996} / @cite{beck-2006} parameterization)
+  is recommended but not landed. Without it, every *again*-element's
   presupposition is encoded independently in its Fragment lexical entry,
   which silently commits to an anti-decompositional account when it
-  type-equates *you*'s repetitive reading with *zai*'s. Bib entries
-  `von-stechow-1996` and `beck-2006` are present; the substrate
+  type-equates *you*'s repetitive reading with *zai*'s. The substrate
   module is deferred until a German-*wieder* or English-*again* study
   joins.
 
-- **The repetitive-vs-restitutive distinction** (T. Xu 2012, 2016; Liu
-  2021, 2024): explicitly bracketed by Liu & Yip 2026 as out of scope.
-  The Mandarin `you` Fragment entry currently encodes only the repetitive
-  reading; a `you_restitutive` companion entry would be a small addition
-  if needed.
+- **The repetitive-vs-restitutive distinction**: explicitly bracketed by
+  @cite{liu-yip-2026} as out of scope. The Mandarin `you` Fragment entry
+  currently encodes only the repetitive reading; a `you_restitutive`
+  companion entry would be a small addition if needed.
 
 - **The minimal-vP empirical claim** (§9): per-fragment drift sentries
   here cover Mandarin (6 verbs) and Cantonese (5 verbs). A larger
   cohort, especially for typologically distant languages claimed to
   have similar restructuring, would strengthen the empirical content.
 
-- **Wurmbrand 2014a restructuring data** (German / Romance): the local
-  `restructure` operator is Wurmbrand-2001-flavored and tested only on
-  Chinese. Wurmbrand 2014a's lexical / functional restructuring
-  dichotomy is a richer typology this Studies file does not yet engage. -/
+- **@cite{wurmbrand-2014} restructuring data** (German / Romance): the
+  local `restructure` operator is @cite{wurmbrand-2001}-flavored and
+  tested only on Chinese. @cite{wurmbrand-2014}'s lexical / functional
+  restructuring dichotomy is a richer typology this Studies file does
+  not yet engage. -/
 
 end Phenomena.Complementation.Studies.LiuYip2026
