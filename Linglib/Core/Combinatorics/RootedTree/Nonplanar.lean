@@ -57,7 +57,7 @@ namespace Planar
 
 variable {α : Type*}
 
-/-! ## §1: PlanarStep — elementary moves
+/-! ### PlanarStep — elementary moves
 
 A `PlanarStep t s` says: `s` is obtained from `t` by either:
 - swapping two adjacent children of some vertex, or
@@ -73,7 +73,7 @@ inductive PlanarStep : Planar α → Planar α → Prop where
             {post : List (Planar α)} (h : PlanarStep old new) :
       PlanarStep (.node a (pre ++ old :: post)) (.node a (pre ++ new :: post))
 
-/-! ## §2: PlanarEquiv — equivalence closure
+/-! ### PlanarEquiv — equivalence closure
 
 The nonplanar-equivalence relation on planar trees: the equivalence
 closure of `PlanarStep`. Built using `Relation.EqvGen`, so it's
@@ -103,7 +103,7 @@ theorem isEquivalence : Equivalence (PlanarEquiv : Planar α → Planar α → P
 
 end PlanarEquiv
 
-/-! ## §3: Lifting structural invariants from `Planar` to `Nonplanar`
+/-! ### Lifting structural invariants from `Planar` to `Nonplanar`
 
 Functions `Planar α → β` that are invariant under `PlanarStep` lift
 through the equivalence closure to functions `Nonplanar α → β`. Below
@@ -112,7 +112,7 @@ we lift `weight` (vertex count) and `arity-at-root` as worked examples.
 The pattern: prove invariance under the elementary `PlanarStep`, then
 extend to `PlanarEquiv = EqvGen PlanarStep` by an `EqvGen` induction. -/
 
-/-! ### §3a: Weight invariance -/
+/-! #### Weight invariance -/
 
 /-- Weight is invariant under children-list permutation: any permutation
     of `cs` has the same `weightList`, since `weightList` is a sum. -/
@@ -171,7 +171,7 @@ theorem weight_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ### §3b: Label invariance -/
+/-! #### Label invariance -/
 
 /-- The root label is preserved by every `PlanarStep`. -/
 private theorem planarStep_label_eq {t s : Planar α} (h : PlanarStep t s) :
@@ -189,7 +189,7 @@ theorem planarEquiv_label_eq {t s : Planar α} (h : PlanarEquiv t s) :
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ### §3c: Lifting child-list operations to `PlanarEquiv`
+/-! #### Lifting child-list operations to `PlanarEquiv`
 
 The smart constructor `Nonplanar.node` needs to know that the
 parent-node equivalence respects the natural list-of-children
@@ -295,7 +295,7 @@ theorem planarEquiv_node_componentwise {a : α} {cs ds : List (Planar α)}
       planarEquiv_cons_lift d ih
     exact step1.trans step2
 
-/-! ### §3d: Arity / depth / isLeaf invariance
+/-! #### Arity / depth / isLeaf invariance
 
 Three more invariants of tree structure that are preserved by
 `PlanarEquiv`. The pattern follows weight (§3a): prove `*_planarStep`
@@ -396,7 +396,7 @@ theorem isLeaf_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ## §4: Setoid instance -/
+/-! ### Setoid instance -/
 
 /-- The setoid on `Planar α` whose quotient is `Nonplanar α`. -/
 instance instSetoid : Setoid (Planar α) where
@@ -405,7 +405,7 @@ instance instSetoid : Setoid (Planar α) where
 
 end Planar
 
-/-! ## §4: Nonplanar — the quotient type -/
+/-! ## Nonplanar — the quotient type -/
 
 /-- A nonplanar n-ary rooted tree with α-labeled vertices: the quotient
     of `Planar α` by `PlanarEquiv`. -/
@@ -436,7 +436,7 @@ def lift {β : Sort*} (f : Planar α → β)
     (h : ∀ t s, Planar.PlanarEquiv t s → f t = f s) (t : Planar α) :
     lift f h (mk t) = f t := rfl
 
-/-! ## §6: Smart leaf constructor + lifted `weight`
+/-! ### Smart leaf constructor + lifted `weight`
 
 A leaf in `Nonplanar α` is `mk (Planar.leaf a)`. Weight is the
 canonical first lifted invariant. -/
@@ -485,7 +485,7 @@ def isLeaf : Nonplanar α → Bool :=
 
 @[simp] theorem isLeaf_leaf (a : α) : (leaf a : Nonplanar α).isLeaf = true := rfl
 
-/-! ## §7: Smart node constructor
+/-! ### Smart node constructor
 
 The B+ operator (Phase A.7) and the Δ^c trace coproduct (Phase D) both
 require building a `Nonplanar α` from a label and an *unordered*
@@ -522,7 +522,7 @@ theorem node_mk_planar_list (a : α) (ps : List (Planar α)) :
     refine List.Forall₂.cons ?_ ih
     exact Quotient.exact (Quotient.out_eq (mk p))
 
-/-! ### §7a: Sanity tests -/
+/-! #### Sanity tests -/
 
 /-- Sibling order doesn't matter at the root: this is built into the
     `Multiset` carrier. -/

@@ -7,24 +7,33 @@ set_option autoImplicit false
 # Δ^p on `ConnesKreimer R (Nonplanar α)` via projection from `Planar`
 @cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
 
-Phase A.7 substrate. The Nonplanar Δ^p is obtained by descending the
-planar Δ^p (`Coproduct.lean`) through the projection
-`mk : Planar α → Nonplanar α`. Foissy's clean proof of coassociativity
-(via the Hochschild 1-cocycle property of `B+_a = Nonplanar.node a`) then
-gives a sorry-free `Bialgebra` instance.
+The Nonplanar Δ^p is obtained by descending the planar Δ^p
+(`Coproduct.lean`) through the projection `mk : Planar α → Nonplanar α`.
+The descent requires showing that the projected cut summands
+(`(cutSummandsP T).map projSummand`) depend on `T : Planar α` only
+through `mk T`, i.e., are invariant under `Planar.PlanarEquiv`. Once
+established, `Nonplanar.lift` produces `cutSummandsN`, which extends to
+`comulTreeN`, `comulForestN`, and the algebra hom `comulAlgHomN`.
 
 ## Status
 
-`[UPSTREAM]` candidate. Phase A.7-α (this file's first section): the
-projection algebra hom + API. Δ^p, cocycle, coassoc, Bialgebra instance
-land in subsequent sub-phases (A.7-β / γ / δ).
+`[UPSTREAM]` candidate. Sorry-free for the descent (`comulAlgHomN`).
+Hochschild cocycle for `B+`, Foissy clean coassoc, and the
+`Bialgebra (ConnesKreimer R (Nonplanar α))` instance are deferred —
+see `## Phase A.7-γ` and `## Phase A.7-δ` sections below.
 
 ## Architecture
 
-The projection algebra hom is built directly on top of mathlib's
-`AddMonoidAlgebra.mapDomainAlgHom`, applied to the additive monoid hom
-`Multiset.mapAddMonoidHom Nonplanar.mk`. No bespoke construction —
-the universal property of `AddMonoidAlgebra` does the heavy lifting.
+- **Projection algebra hom** (`planarToNonplanarAlg`): directly on top of
+  mathlib's `AddMonoidAlgebra.mapDomainAlgHom`, applied to the additive
+  monoid hom `Multiset.mapAddMonoidHom Nonplanar.mk`. The universal
+  property of `AddMonoidAlgebra` does the heavy lifting.
+- **Cut-summand descent** (§3): pointwise projection
+  (`projSummand`/`projForest`/`projAugAction`) plus a clean factoring of
+  the `cutListSummandsP` cons case as a Nonplanar-level cartesian
+  product (`cutListSummandsP_cons_proj`); structural induction on
+  `PlanarStep` for the headline invariance, with pure `EqvGen`/`Forall₂`
+  lifts for `PlanarEquiv` and `List.Forall₂` versions.
 -/
 
 namespace RootedTree
@@ -35,7 +44,7 @@ open scoped TensorProduct
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-! ## §1: Projection algebra hom `Planar → Nonplanar`
+/-! ## Projection algebra hom `Planar → Nonplanar`
 
 `Nonplanar.mk : Planar α → Nonplanar α` extends to an algebra hom on
 `ConnesKreimer R` via `AddMonoidAlgebra.mapDomainAlgHom`. Surjective at
@@ -54,7 +63,7 @@ noncomputable def planarToNonplanarAlg :
     ConnesKreimer R (Planar α) →ₐ[R] ConnesKreimer R (Nonplanar α) :=
   AddMonoidAlgebra.mapDomainAlgHom R R (forestProjAddHom (α := α))
 
-/-! ## §2: API lemmas — action on `of'` and `ofTree` -/
+/-! ## API lemmas — action on `of'` and `ofTree` -/
 
 @[simp] theorem planarToNonplanarAlg_of' (F : Forest (Planar α)) :
     planarToNonplanarAlg (R := R) (of' F) =
@@ -80,16 +89,25 @@ noncomputable def planarToNonplanarAlg :
       planarToNonplanarAlg x * planarToNonplanarAlg y :=
   map_mul _ _ _
 
-/-! ## §3: Phase A.7-β — projection of cut summands
+/-! ## Phase A.7-β — projection of cut summands, descent of Δ^p
 
 To descend Δ^p from `Planar` to `Nonplanar`, we need a Nonplanar-side
 cut-summand multiset that is `PlanarEquiv`-invariant. The strategy:
 project each planar cut summand through `mk` componentwise, then prove
 the resulting multiset depends on `T : Planar α` only through `mk T`.
 
-The proof factors cleanly through an intermediate `projForest` that
-discards the list-order of the remainder children (since
-`mk (.node a L)` only depends on `L` as a multiset). -/
+The proof factors through three layers:
+- **Pointwise projection** (`projSummand`, `projForest`, `projAugAction`):
+  the per-element `Nonplanar.mk` lifts.
+- **Combine factoring** (`cutListSummandsP_cons_proj`): the cons case of
+  `cutListSummandsP` distributes over the projection, giving a clean
+  cartesian-product recursion at the `Nonplanar` level.
+- **Headline lifts** (`cutSummandsP_proj_planarStep`,
+  `cutSummandsP_proj_planarEquiv`, `cutListSummandsP_proj_componentwise`):
+  structural induction on `PlanarStep` for the substantive content;
+  pure `EqvGen` / `Forall₂` lifts for the rest. -/
+
+/-! ### Pointwise projection -/
 
 /-- Project a planar cut summand to a nonplanar one. -/
 def projSummand : Forest (Planar α) × Planar α →
@@ -98,16 +116,20 @@ def projSummand : Forest (Planar α) × Planar α →
 
 /-- Project a `cutListSummandsP` summand to nonplanar level, discarding
     the list-order of the remainder children. The discarded order doesn't
-    affect the eventual `mk (.node a remainder)`, since
-    `mk` is invariant under children-list permutation
-    (`Planar.planarEquiv_root_perm`). -/
+    affect the eventual `mk (.node a remainder)`, since `mk` is invariant
+    under children-list permutation (`Planar.planarEquiv_root_perm`). -/
 def projForest : Forest (Planar α) × List (Planar α) →
     Forest (Nonplanar α) × Multiset (Nonplanar α) :=
   fun p => (p.1.map Nonplanar.mk, Multiset.ofList (p.2.map Nonplanar.mk))
 
-/-- The bridge: applying `cutSummandsP_node`'s wrapper `(p.1, .node a p.2)`
-    then `projSummand` factors through `projForest` followed by
-    `(F, ms) ↦ (F, Nonplanar.node a ms)`. -/
+/-- Project an `augActionP` summand to nonplanar level (per-child decision). -/
+def projAugAction : Forest (Planar α) × Option (Planar α) →
+    Forest (Nonplanar α) × Option (Nonplanar α) :=
+  fun p => (p.1.map Nonplanar.mk, p.2.map Nonplanar.mk)
+
+/-- Bridge: applying `cutSummandsP_node`'s wrapper `(p.1, .node a p.2)`
+    then `projSummand` factors through `projForest` followed by the
+    `Nonplanar.node a` smart constructor. -/
 theorem projSummand_node_factors (a : α) (p : Forest (Planar α) × List (Planar α)) :
     projSummand (p.1, .node a p.2) =
       ((projForest p).1, Nonplanar.node a (projForest p).2) := by
@@ -116,53 +138,320 @@ theorem projSummand_node_factors (a : α) (p : Forest (Planar α) × List (Plana
   congr 1
   exact (Nonplanar.node_mk_planar_list a p.2).symm
 
-/-! ### §3a: Tier 2.1 — list-perm invariance (TO PROVE)
+/-! ### Combine factoring through projection
 
-`cutListSummandsP cs` viewed at the `projForest` level is
-permutation-invariant in `cs`. Substantive content: the cartesian-product
-structure of `cutListSummandsP`'s recursive case is symmetric in its
-factors at the multiset level, so swapping two adjacent siblings in `cs`
-gives a multiset that's bijection-related and yields equal `projForest`
-values per pair.
+The cons case of `cutListSummandsP` combines a per-child decision
+(`augActionP`) with the cut-summands of the remaining children. This
+combination distributes over the `Nonplanar` projection: the "projected
+combiner" `innerCombinerProj` operates on
+`(Forest × Option) × (Forest × Multiset)` and matches `projForest` of
+the inline planar combiner. The headline result is
+`cutListSummandsP_cons_proj`, which expresses the cons case of the
+projected `cutListSummandsP` as a clean cartesian product at the
+Nonplanar level. -/
 
-Proof strategy (next session): induction on `List.Perm`; the `swap` case
-is the substantive work and may benefit from an intermediate
-characterization of `cutListSummandsP` as `Multiset.product`-style
-cartesian product over `cs`. The `cons` case follows from a
-`combine_proj` factoring lemma showing `projForest ∘ combine` only
-depends on the second factor through `projForest` itself. -/
+/-- The Nonplanar-level combiner: given a per-child decision and the
+    accumulated cuts of the remaining children, produce the merged
+    (cut forest, remainder multiset) pair. Mirrors the inline lambda in
+    `cutListSummandsP`'s cons case but operates on `Multiset` remainders. -/
+private def innerCombinerProj :
+    (Forest (Nonplanar α) × Option (Nonplanar α)) ×
+    (Forest (Nonplanar α) × Multiset (Nonplanar α)) →
+    Forest (Nonplanar α) × Multiset (Nonplanar α)
+  | ((F, Option.none), (G, ms)) => (F + G, ms)
+  | ((F, Option.some r), (G, ms)) => (F + G, r ::ₘ ms)
 
-/-- TODO Phase A.7-β Tier 2.1. Decomposed: `nil`/`trans` close
-    structurally; `cons`/`swap` are the substantive remaining
-    obligations. -/
+/-- Pointwise: `projForest` of an applied planar combiner equals
+    `innerCombinerProj` applied to the projected pair-of-pairs. -/
+private theorem projForest_innerCombiner_apply
+    (p : (Forest (Planar α) × Option (Planar α)) ×
+         (Forest (Planar α) × List (Planar α))) :
+    projForest (match p.1.2 with
+                | Option.none => (p.1.1 + p.2.1, p.2.2)
+                | Option.some r => (p.1.1 + p.2.1, r :: p.2.2)) =
+      innerCombinerProj (projAugAction p.1, projForest p.2) := by
+  obtain ⟨⟨F, dec⟩, ⟨G, list⟩⟩ := p
+  cases dec with
+  | none =>
+    show ((F + G).map Nonplanar.mk, Multiset.ofList (list.map Nonplanar.mk)) =
+         (F.map Nonplanar.mk + G.map Nonplanar.mk, Multiset.ofList (list.map Nonplanar.mk))
+    rw [Multiset.map_add]
+  | some r =>
+    show ((F + G).map Nonplanar.mk, Multiset.ofList ((r :: list).map Nonplanar.mk)) =
+         (F.map Nonplanar.mk + G.map Nonplanar.mk,
+          Nonplanar.mk r ::ₘ Multiset.ofList (list.map Nonplanar.mk))
+    rw [Multiset.map_add]
+    rfl
+
+/-- Pointwise: `projAugAction` of `augActionP old` is determined by the
+    Nonplanar projection of the cut summands plus the equality of the
+    `Nonplanar.mk`-projection of the trees themselves (needed for the
+    extract-whole element of `augActionP`). -/
+private theorem augActionP_proj_eq_of_step_data
+    {old new : Planar α}
+    (h_mk : Nonplanar.mk old = Nonplanar.mk new)
+    (h_proj : (cutSummandsP old).map projSummand =
+              (cutSummandsP new).map projSummand) :
+    (augActionP old).map projAugAction =
+      (augActionP new).map projAugAction := by
+  rw [augActionP_eq, augActionP_eq, Multiset.map_cons, Multiset.map_cons]
+  congr 1
+  · -- First element (extract-whole): projAugAction ({old}, none) = ({mk old}, none)
+    show (({old} : Forest (Planar α)).map Nonplanar.mk,
+          (Option.none : Option (Planar α)).map Nonplanar.mk) =
+         (({new} : Forest (Planar α)).map Nonplanar.mk,
+          (Option.none : Option (Planar α)).map Nonplanar.mk)
+    rw [Multiset.map_singleton, Multiset.map_singleton, h_mk]
+  · -- Tail: projAugAction-of-projection = (s.1, some s.2) ∘ projSummand
+    rw [Multiset.map_map, Multiset.map_map]
+    -- Both sides now: (cutSummandsP _).map (projAugAction ∘ (fun p => (p.1, some p.2)))
+    -- Rewrite this composed function as (fun s => (s.1, some s.2)) ∘ projSummand
+    have eq_fn : (projAugAction (α := α)) ∘
+        (fun (p : Forest (Planar α) × Planar α) => (p.1, Option.some p.2)) =
+        (fun (s : Forest (Nonplanar α) × Nonplanar α) => (s.1, Option.some s.2)) ∘
+        (projSummand (α := α)) := by
+      funext p
+      rfl
+    rw [eq_fn]
+    -- Now: (cutSummandsP old).map (g ∘ projSummand) = (cutSummandsP new).map (g ∘ projSummand)
+    -- = ((cutSummandsP old).map projSummand).map g = ((cutSummandsP new).map projSummand).map g
+    rw [← Multiset.map_map, ← Multiset.map_map, h_proj]
+
+/-! ### Cartesian-product distributivity
+
+The pair-componentwise `Prod.map` distributes over `Multiset.product`
+(`×ˢ`). Mathlib has the bind-side analogues but not this exact form for
+multiset products; the proof is one inductive line via `cons_product`. -/
+
+private theorem map_prodMap_product {α β γ δ : Type*}
+    (f : α → γ) (g : β → δ)
+    (s : Multiset α) (t : Multiset β) :
+    (s ×ˢ t).map (Prod.map f g) = s.map f ×ˢ t.map g := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons a s ih =>
+    simp only [Multiset.cons_product, Multiset.map_add, Multiset.map_map,
+               Multiset.map_cons, ih]
+    rfl
+
+/-! ### Headline factoring: cons case of projected `cutListSummandsP` -/
+
+/-- The projected `cutListSummandsP` on a cons list factors as a clean
+    cartesian product at the Nonplanar level. This is the key lemma
+    enabling all subsequent invariance proofs. -/
+private theorem cutListSummandsP_cons_proj (t : Planar α) (ts : List (Planar α)) :
+    (cutListSummandsP (t :: ts)).map projForest =
+      ((augActionP t).map projAugAction ×ˢ
+       (cutListSummandsP ts).map projForest).map innerCombinerProj := by
+  rw [cutListSummandsP_cons, Multiset.map_map, ← map_prodMap_product,
+      Multiset.map_map]
+  apply Multiset.map_congr rfl
+  intro p _
+  exact projForest_innerCombiner_apply p
+
+/-! ### List-side projection invariants
+
+These three theorems establish that the projected `cutListSummandsP` is
+invariant under (1) substituting an "augAction-projection-equal" child,
+(2) substituting a "projForest-equal" tail, and (3) any list permutation. -/
+
+/-- Substituting `old` with `new` in `cutListSummandsP` is invariant
+    under `projForest` if `(augActionP old).map projAugAction =
+    (augActionP new).map projAugAction`. -/
+private theorem cutListSummandsP_proj_at_via_augAction
+    {pre post : List (Planar α)} {old new : Planar α}
+    (h : (augActionP old).map projAugAction =
+         (augActionP new).map projAugAction) :
+    (cutListSummandsP (pre ++ old :: post)).map projForest =
+    (cutListSummandsP (pre ++ new :: post)).map projForest := by
+  induction pre with
+  | nil =>
+    show (cutListSummandsP (old :: post)).map projForest =
+         (cutListSummandsP (new :: post)).map projForest
+    rw [cutListSummandsP_cons_proj, cutListSummandsP_cons_proj, h]
+  | cons p pre' ih =>
+    show (cutListSummandsP (p :: (pre' ++ old :: post))).map projForest =
+         (cutListSummandsP (p :: (pre' ++ new :: post))).map projForest
+    rw [cutListSummandsP_cons_proj, cutListSummandsP_cons_proj, ih]
+
+/-- Tail lift: `cutListSummandsP` is invariant under `projForest`-equal
+    tails when consed with a fixed head. -/
+private theorem cutListSummandsP_proj_tail_lift (d : Planar α)
+    {cs ds : List (Planar α)}
+    (h : (cutListSummandsP cs).map projForest =
+         (cutListSummandsP ds).map projForest) :
+    (cutListSummandsP (d :: cs)).map projForest =
+      (cutListSummandsP (d :: ds)).map projForest := by
+  rw [cutListSummandsP_cons_proj, cutListSummandsP_cons_proj, h]
+
+/-- Triple-combiner symmetry: combining three pieces (two decisions plus
+    the accumulated rest) at the projected level is symmetric in the
+    first two decision arguments. -/
+private theorem innerCombinerProj_swap_args
+    (a b : Forest (Nonplanar α) × Option (Nonplanar α))
+    (c : Forest (Nonplanar α) × Multiset (Nonplanar α)) :
+    innerCombinerProj (a, innerCombinerProj (b, c)) =
+    innerCombinerProj (b, innerCombinerProj (a, c)) := by
+  obtain ⟨Fa, da⟩ := a
+  obtain ⟨Fb, db⟩ := b
+  obtain ⟨Fc, mc⟩ := c
+  cases da with
+  | none =>
+    cases db with
+    | none =>
+      show (Fa + (Fb + Fc), mc) = (Fb + (Fa + Fc), mc)
+      rw [← add_assoc, ← add_assoc, add_comm Fa Fb]
+    | some rb =>
+      show (Fa + (Fb + Fc), rb ::ₘ mc) = (Fb + (Fa + Fc), rb ::ₘ mc)
+      rw [← add_assoc, ← add_assoc, add_comm Fa Fb]
+  | some ra =>
+    cases db with
+    | none =>
+      show (Fa + (Fb + Fc), ra ::ₘ mc) = (Fb + (Fa + Fc), ra ::ₘ mc)
+      rw [← add_assoc, ← add_assoc, add_comm Fa Fb]
+    | some rb =>
+      show (Fa + (Fb + Fc), ra ::ₘ rb ::ₘ mc) =
+           (Fb + (Fa + Fc), rb ::ₘ ra ::ₘ mc)
+      have hF : Fa + (Fb + Fc) = Fb + (Fa + Fc) := by
+        rw [← add_assoc, ← add_assoc, add_comm Fa Fb]
+      have hM : (ra ::ₘ rb ::ₘ mc : Multiset (Nonplanar α)) = rb ::ₘ ra ::ₘ mc :=
+        Multiset.cons_swap ra rb mc
+      rw [hF, hM]
+
+/-- Doubly-applied `innerCombinerProj` over a triple cartesian product
+    is symmetric in the first two factors. The substantive content of
+    `cutListSummandsP_proj_perm`'s `swap` case. -/
+private theorem swap_double_combinerProj
+    (A B : Multiset (Forest (Nonplanar α) × Option (Nonplanar α)))
+    (C : Multiset (Forest (Nonplanar α) × Multiset (Nonplanar α))) :
+    (A ×ˢ (B ×ˢ C).map innerCombinerProj).map innerCombinerProj =
+    (B ×ˢ (A ×ˢ C).map innerCombinerProj).map innerCombinerProj := by
+  -- Convert both sides to triple-bind form, swap outer two binds via
+  -- `bind_bind`, then close pointwise via `innerCombinerProj_swap_args`.
+  have lhs :
+      (A ×ˢ (B ×ˢ C).map innerCombinerProj).map innerCombinerProj =
+        A.bind (fun a => B.bind (fun b => C.map (fun c =>
+          innerCombinerProj (a, innerCombinerProj (b, c))))) := by
+    show ((A.bind fun a => ((B ×ˢ C).map innerCombinerProj).map (Prod.mk a))
+          ).map innerCombinerProj = _
+    rw [Multiset.map_bind]
+    apply Multiset.bind_congr; intro a _
+    show ((((B.bind fun b => C.map (Prod.mk b)) : Multiset _).map innerCombinerProj).map
+            (Prod.mk a)).map innerCombinerProj = _
+    rw [Multiset.map_bind, Multiset.map_bind, Multiset.map_bind]
+    apply Multiset.bind_congr; intro b _
+    rw [Multiset.map_map, Multiset.map_map, Multiset.map_map]
+    rfl
+  have rhs :
+      (B ×ˢ (A ×ˢ C).map innerCombinerProj).map innerCombinerProj =
+        B.bind (fun b => A.bind (fun a => C.map (fun c =>
+          innerCombinerProj (b, innerCombinerProj (a, c))))) := by
+    show ((B.bind fun b => ((A ×ˢ C).map innerCombinerProj).map (Prod.mk b))
+          ).map innerCombinerProj = _
+    rw [Multiset.map_bind]
+    apply Multiset.bind_congr; intro b _
+    show ((((A.bind fun a => C.map (Prod.mk a)) : Multiset _).map innerCombinerProj).map
+            (Prod.mk b)).map innerCombinerProj = _
+    rw [Multiset.map_bind, Multiset.map_bind, Multiset.map_bind]
+    apply Multiset.bind_congr; intro a _
+    rw [Multiset.map_map, Multiset.map_map, Multiset.map_map]
+    rfl
+  rw [lhs, rhs, Multiset.bind_bind]
+  apply Multiset.bind_congr; intro b _
+  apply Multiset.bind_congr; intro a _
+  apply Multiset.map_congr rfl; intro c _
+  exact innerCombinerProj_swap_args a b c
+
+/-- The projected `cutListSummandsP` is `List.Perm`-invariant: two
+    permutation-related child lists yield the same projected
+    cut-summand multiset. -/
 theorem cutListSummandsP_proj_perm
     {cs ds : List (Planar α)} (h : cs.Perm ds) :
     (cutListSummandsP cs).map projForest =
       (cutListSummandsP ds).map projForest := by
   induction h with
   | nil => rfl
-  | cons _ _ ih =>
-    -- TODO: combine_proj factoring lemma — projForest ∘ combine
-    -- factors through (id × projForest) on the multiset product
-    sorry
-  | swap _ _ _ =>
-    -- TODO: substantive — Multiset.product symmetry + projForest's
-    -- multiset-of-list invariance under decision-order swap
-    sorry
+  | cons c _ ih => exact cutListSummandsP_proj_tail_lift c ih
+  | swap c d cs =>
+    rw [cutListSummandsP_cons_proj, cutListSummandsP_cons_proj,
+        cutListSummandsP_cons_proj, cutListSummandsP_cons_proj]
+    exact (swap_double_combinerProj _ _ _).symm
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ### §3b: Tier 2.2 + Tier 3 — mutually recursive PlanarEquiv invariance (TO PROVE)
+/-! ### Headline: PlanarStep + EqvGen lift
 
-The `cutSummandsP` headline theorem and the `cutListSummandsP`
-componentwise-PlanarEquiv variant are mutually recursive (via
-`augActionP`). Strategy chosen: mutual `theorem` block with termination
-measured by tree weight (`Planar.weight`). For now, structural
-EqvGen/Forall₂ cases close inline; substantive PlanarStep `swapAtRoot`/
-`recurse` cases remain `sorry`. -/
+Substantive content: `cutSummandsP_proj_planarStep` proves projection
+invariance under a single elementary step (`PlanarStep`). The
+`PlanarEquiv` (`EqvGen`) and `Forall₂` versions follow as straightforward
+lifts. The structural induction on `PlanarStep` handles the recursion:
+the `recurse` case calls itself on a strictly smaller child tree. -/
 
-/-- TODO Phase A.7-β Tier 2.2 (mutual with cutSummandsP_proj_planarEquiv).
-    Decomposed: `nil` closes structurally; `cons` is substantive
-    (needs Tier 3 plus combine_proj factoring). -/
+/-- Projection invariance under a single `PlanarStep`. Structural
+    induction on the step constructor: `swapAtRoot` uses
+    `cutListSummandsP_proj_perm`; `recurse` uses the inductive
+    hypothesis combined with `cutListSummandsP_proj_at_via_augAction`. -/
+theorem cutSummandsP_proj_planarStep
+    {t s : Planar α} (h : Planar.PlanarStep t s) :
+    (cutSummandsP t).map projSummand =
+      (cutSummandsP s).map projSummand := by
+  induction h with
+  | @swapAtRoot a l r pre post =>
+    -- t = .node a (pre ++ l :: r :: post), s = .node a (pre ++ r :: l :: post)
+    -- Use cutSummandsP_node + projSummand_node_factors + cutListSummandsP_proj_perm
+    rw [cutSummandsP_node, cutSummandsP_node, Multiset.map_map, Multiset.map_map]
+    have hperm : (pre ++ l :: r :: post).Perm (pre ++ r :: l :: post) :=
+      List.Perm.append_left pre (List.Perm.swap r l post)
+    have hL : (cutListSummandsP (pre ++ l :: r :: post)).map projForest =
+              (cutListSummandsP (pre ++ r :: l :: post)).map projForest :=
+      cutListSummandsP_proj_perm hperm
+    -- LHS: (cutListSummandsP _).map ((projSummand) ∘ (fun p => (p.1, .node a p.2)))
+    --    = (cutListSummandsP _).map (fun p => ((projForest p).1, Nonplanar.node a (projForest p).2))
+    --    = ((cutListSummandsP _).map projForest).map (fun pf => (pf.1, Nonplanar.node a pf.2))
+    have eq_fn :
+        (projSummand (α := α)) ∘
+          (fun (p : Forest (Planar α) × List (Planar α)) => (p.1, .node a p.2)) =
+        (fun (pf : Forest (Nonplanar α) × Multiset (Nonplanar α)) =>
+          (pf.1, Nonplanar.node a pf.2)) ∘ (projForest (α := α)) := by
+      funext p
+      exact projSummand_node_factors a p
+    rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
+  | @recurse a pre old new post hsub ih =>
+    -- t = .node a (pre ++ old :: post), s = .node a (pre ++ new :: post)
+    -- ih : (cutSummandsP old).map projSummand = (cutSummandsP new).map projSummand
+    -- We need: (cutSummandsP t).map projSummand = (cutSummandsP s).map projSummand
+    rw [cutSummandsP_node, cutSummandsP_node, Multiset.map_map, Multiset.map_map]
+    have h_mk : Nonplanar.mk old = Nonplanar.mk new :=
+      Nonplanar.mk_eq_mk_iff.mpr (Planar.PlanarEquiv.of_step hsub)
+    have h_aug : (augActionP old).map projAugAction =
+                 (augActionP new).map projAugAction :=
+      augActionP_proj_eq_of_step_data h_mk ih
+    have hL : (cutListSummandsP (pre ++ old :: post)).map projForest =
+              (cutListSummandsP (pre ++ new :: post)).map projForest :=
+      cutListSummandsP_proj_at_via_augAction h_aug
+    have eq_fn :
+        (projSummand (α := α)) ∘
+          (fun (p : Forest (Planar α) × List (Planar α)) => (p.1, .node a p.2)) =
+        (fun (pf : Forest (Nonplanar α) × Multiset (Nonplanar α)) =>
+          (pf.1, Nonplanar.node a pf.2)) ∘ (projForest (α := α)) := by
+      funext p
+      exact projSummand_node_factors a p
+    rw [eq_fn, ← Multiset.map_map, ← Multiset.map_map, hL]
+
+/-- Projection invariance under `PlanarEquiv`. Pure `EqvGen` lift of
+    `cutSummandsP_proj_planarStep`. -/
+theorem cutSummandsP_proj_planarEquiv
+    {t s : Planar α} (h : Planar.PlanarEquiv t s) :
+    (cutSummandsP t).map projSummand =
+      (cutSummandsP s).map projSummand := by
+  induction h with
+  | rel _ _ hstep => exact cutSummandsP_proj_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- Componentwise `PlanarEquiv` invariance for child lists. Pure
+    `Forall₂` induction using `cutListSummandsP_proj_at_via_augAction`
+    on the head and the IH on the tail. -/
 theorem cutListSummandsP_proj_componentwise
     {cs ds : List (Planar α)}
     (h : List.Forall₂ Planar.PlanarEquiv cs ds) :
@@ -170,40 +459,34 @@ theorem cutListSummandsP_proj_componentwise
       (cutListSummandsP ds).map projForest := by
   induction h with
   | nil => rfl
-  | cons _ _ _ =>
-    -- TODO: substantive — apply Tier 3 to head equiv, IH to tail,
-    -- then combine_proj factoring on the multiset product
-    sorry
+  | @cons c d cs' ds' hcd _ ih =>
+    -- Replace c with d at head, then push cs' → ds' under d via ih.
+    have h_mk : Nonplanar.mk c = Nonplanar.mk d :=
+      Nonplanar.mk_eq_mk_iff.mpr hcd
+    have h_proj : (cutSummandsP c).map projSummand =
+                  (cutSummandsP d).map projSummand :=
+      cutSummandsP_proj_planarEquiv hcd
+    have h_aug : (augActionP c).map projAugAction =
+                 (augActionP d).map projAugAction :=
+      augActionP_proj_eq_of_step_data h_mk h_proj
+    have step1 : (cutListSummandsP (c :: cs')).map projForest =
+                 (cutListSummandsP (d :: cs')).map projForest := by
+      have := cutListSummandsP_proj_at_via_augAction (pre := []) (post := cs') h_aug
+      simpa using this
+    have step2 : (cutListSummandsP (d :: cs')).map projForest =
+                 (cutListSummandsP (d :: ds')).map projForest :=
+      cutListSummandsP_proj_tail_lift d ih
+    exact step1.trans step2
 
-/-- TODO Phase A.7-β Tier 3 (mutual with cutListSummandsP_proj_componentwise).
-    The headline invariance: PlanarEquiv-equivalent trees produce equal
-    projected cut-summand multisets. Decomposed: structural
-    `refl`/`symm`/`trans` close inline; the `rel` case dispatches on
-    PlanarStep into substantive `swapAtRoot` and `recurse` cases. -/
-theorem cutSummandsP_proj_planarEquiv
-    {t s : Planar α} (h : Planar.PlanarEquiv t s) :
-    (cutSummandsP t).map projSummand =
-      (cutSummandsP s).map projSummand := by
-  induction h with
-  | rel _ _ hstep =>
-    -- TODO: cases on PlanarStep
-    -- swapAtRoot case: use cutListSummandsP_proj_perm + projSummand_node_factors
-    -- recurse case: use cutListSummandsP_proj_componentwise on the singleton
-    --   List.Forall₂ chain (pre eq, old↝new, post eq) + Tier 3 recursion on the
-    --   sub-step (well-founded by tree weight strictly less in the child)
-    sorry
-  | refl _ => rfl
-  | symm _ _ _ ih => exact ih.symm
-  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+/-! ### Δ^p on Nonplanar via descent
 
-/-! ### §3c: Tier 4 — Δ^p on Nonplanar via descent
-
-These definitions inherit the Tier 3 sorry transitively (until A.7-β is
-closed); the architecture is in place so consumers can target the API. -/
+The `cutSummandsP_proj_planarEquiv` invariance lifts `cutSummandsP`
+through `Nonplanar.lift`, giving a well-defined `cutSummandsN`. The
+tree-level coproduct `comulTreeN` then extends multiplicatively to a
+forest-level monoid hom and finally to the algebra hom `comulAlgHomN`. -/
 
 /-- The **Nonplanar cut-summand multiset**, defined via `Nonplanar.lift`
-    using the (Tier 3) PlanarEquiv invariance. Sorry-blocked transitively
-    via `cutSummandsP_proj_planarEquiv`. -/
+    using the `cutSummandsP_proj_planarEquiv` invariance. -/
 noncomputable def cutSummandsN :
     Nonplanar α → Multiset (Forest (Nonplanar α) × Nonplanar α) :=
   Nonplanar.lift (fun T => (cutSummandsP T).map projSummand)
@@ -267,7 +550,7 @@ noncomputable def comulAlgHomN :
   unfold comulForestN
   simp only [Multiset.map_singleton, Multiset.prod_singleton]
 
-/-! ## §4: Phase A.7-γ — Hochschild 1-cocycle (TO STATE & PROVE)
+/-! ## Phase A.7-γ — Hochschild 1-cocycle (TO STATE & PROVE)
 
 `B+_a : Multiset (Nonplanar α) → Nonplanar α` is the smart constructor
 `Nonplanar.node a`. The Hochschild 1-cocycle property is
@@ -287,7 +570,7 @@ noncomputable def bPlus (a : α) (F : Forest (Nonplanar α)) :
 @[simp] theorem bPlus_def (a : α) (F : Forest (Nonplanar α)) :
     bPlus a F = Nonplanar.node a F := rfl
 
-/-! ## §5: Phase A.7-δ — Foissy clean coassoc + Bialgebra instance (PENDING)
+/-! ## Phase A.7-δ — Foissy clean coassoc + Bialgebra instance (PENDING)
 
 Foissy's 5-line proof: define `A := {x : Δ ⊗ id (Δ x) = id ⊗ Δ (Δ x)}`.
 Both sides are algebra homs (Δ by construction; tensoring with id and

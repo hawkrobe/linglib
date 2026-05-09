@@ -63,7 +63,7 @@ open Finsupp
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-! ## §1: cutSummandsP — multiset of (cut forest, deletion remainder) pairs
+/-! ### cutSummandsP — multiset of (cut forest, deletion remainder) pairs
 
 Recursive enumeration of cut summands. For a leaf, the only cut is the
 empty cut. For a node, sum over all per-child decisions: each child can
@@ -75,12 +75,12 @@ mutual
 /-- Multiset of (cut forest, deletion remainder) pairs for a planar tree.
     Each summand corresponds to one admissible cut on T under the
     deletion semantics. -/
-noncomputable def cutSummandsP : Planar α →
+def cutSummandsP : Planar α →
     Multiset (Forest (Planar α) × Planar α)
   | .node a cs => (cutListSummandsP cs).map (fun p => (p.1, .node a p.2))
 /-- Auxiliary: cut summands for a list of children. The remainder is a
     list (children of the parent that survived the cut). -/
-noncomputable def cutListSummandsP : List (Planar α) →
+def cutListSummandsP : List (Planar α) →
     Multiset (Forest (Planar α) × List (Planar α))
   | [] => {((0 : Forest (Planar α)), ([] : List (Planar α)))}
   | t :: ts =>
@@ -90,7 +90,7 @@ noncomputable def cutListSummandsP : List (Planar α) →
           | Option.some r => (p.1.1 + p.2.1, r :: p.2.2))
 /-- Auxiliary: per-child action — either extract whole (`none` remainder)
     or recurse with a cut (`some remainder`). -/
-noncomputable def augActionP : Planar α →
+def augActionP : Planar α →
     Multiset (Forest (Planar α) × Option (Planar α))
   | t => (({t} : Forest (Planar α)), Option.none) ::ₘ
          (cutSummandsP t).map (fun p => (p.1, Option.some p.2))
@@ -108,7 +108,22 @@ end
       {((0 : Forest (Planar α)), ([] : List (Planar α)))} := by
   unfold cutListSummandsP; rfl
 
-/-! ## §2: comulTreePlanarP — tree-level Δ^p
+/-- Recursive formula for cutListSummandsP on a cons list. -/
+@[simp] theorem cutListSummandsP_cons (t : Planar α) (ts : List (Planar α)) :
+    cutListSummandsP (t :: ts) =
+      ((augActionP t ×ˢ cutListSummandsP ts) : Multiset _).map
+        (fun p => match p.1.2 with
+          | Option.none => (p.1.1 + p.2.1, p.2.2)
+          | Option.some r => (p.1.1 + p.2.1, r :: p.2.2)) := by
+  conv_lhs => unfold cutListSummandsP
+
+/-- Recursive formula for augActionP. -/
+@[simp] theorem augActionP_eq (t : Planar α) :
+    augActionP t = (({t} : Forest (Planar α)), Option.none) ::ₘ
+                   (cutSummandsP t).map (fun p => (p.1, Option.some p.2)) := by
+  conv_lhs => unfold augActionP
+
+/-! ### comulTreePlanarP — tree-level Δ^p
 
 Sum the cut summands as tensors, plus the explicit `T ⊗ 1` term. -/
 
@@ -119,7 +134,7 @@ noncomputable def comulTreePlanarP (T : Planar α) :
   ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Planar α))
   + ((cutSummandsP T).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
-/-! ## §3: comulForestPlanarP — forest-level Δ^p
+/-! ### comulForestPlanarP — forest-level Δ^p
 
 Multiplicative extension over the disjoint-union product on forests:
 Δ(F + G) = Δ(F) · Δ(G). -/
@@ -140,7 +155,7 @@ noncomputable def comulForestPlanarP (F : Forest (Planar α)) :
   unfold comulForestPlanarP
   rw [Multiset.map_add, Multiset.prod_add]
 
-/-! ## §4: comulMonoidHom and comulAlgHom
+/-! ### comulMonoidHom and comulAlgHom
 
 Package the multiplicative extension as a `MonoidHom`, then lift to the
 full `AlgHom` via `AddMonoidAlgebra.lift`. -/
