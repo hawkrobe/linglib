@@ -1,5 +1,7 @@
 import Linglib.Core.Algebra.RootedTree.Coproduct
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Mathlib.LinearAlgebra.Finsupp.LSum
+import Mathlib.LinearAlgebra.TensorProduct.Basic
 
 set_option autoImplicit false
 
@@ -519,6 +521,16 @@ noncomputable def comulForestN (F : Forest (Nonplanar α)) :
   unfold comulForestN
   rw [Multiset.map_add, Multiset.prod_add]
 
+/-- Recursive formula: `comulForestN (T ::ₘ F) = comulTreeN T * comulForestN F`. -/
+@[simp] theorem comulForestN_cons (T : Nonplanar α) (F : Forest (Nonplanar α)) :
+    comulForestN (R := R) (T ::ₘ F) =
+      comulTreeN (R := R) T * comulForestN (R := R) F := by
+  show comulForestN (R := R) (({T} : Multiset (Nonplanar α)) + F) = _
+  rw [comulForestN_add]
+  congr 1
+  show ((({T} : Multiset (Nonplanar α)).map (comulTreeN (R := R))).prod : _) = _
+  rw [Multiset.map_singleton, Multiset.prod_singleton]
+
 /-- `comulForestN` packaged as a `MonoidHom` from
     `Multiplicative (Forest (Nonplanar α))`. -/
 noncomputable def comulMonoidHomN :
@@ -550,16 +562,25 @@ noncomputable def comulAlgHomN :
   unfold comulForestN
   simp only [Multiset.map_singleton, Multiset.prod_singleton]
 
-/-! ## Phase A.7-γ — Hochschild 1-cocycle (TO STATE & PROVE)
+/-! ## Phase A.7-γ — Hochschild 1-cocycle for `B+_a`
 
-`B+_a : Multiset (Nonplanar α) → Nonplanar α` is the smart constructor
-`Nonplanar.node a`. The Hochschild 1-cocycle property is
-`Δ^p ∘ B+_a = B+_a ⊗ 1 + (id ⊗ B+_a) ∘ Δ^p` (Foissy §3 / MCB §1.2.11).
+`B+_a : Forest (Nonplanar α) → Nonplanar α` is the smart constructor
+`Nonplanar.node a`. Linearly extended to `bPlusLin a : H →ₗ[R] H` (sending
+basis element `of' F` to `ofTree (Nonplanar.node a F)`), it satisfies
+the **Hochschild 1-cocycle** property (Foissy / MCB §1.2.11):
 
-Statement and proof deferred — the precise tensor/linear-map shape
-depends on the chosen Bialgebra encoding for the Nonplanar carrier
-(mathlib's `Bialgebra.comul` vs. our `comulAlgHomN`), so it's cleaner
-to state alongside the Bialgebra instance in §5. -/
+  Δ^p ∘ B+_a = (·) ⊗ 1 ∘ B+_a + (id ⊗ B+_a) ∘ Δ^p
+
+i.e., for every `x : H`:
+
+  Δ^p (B+_a x) = (B+_a x) ⊗ 1 + (id ⊗ B+_a)(Δ^p x).
+
+This is the algebraic input to Foissy's clean inductive proof of
+coassociativity (§A.7-δ): the subalgebra `A := {x | (Δ ⊗ id)(Δ x) =
+(id ⊗ Δ)(Δ x)}` is closed under `B+_a`, contains all leaves (which are
+`B+_a 1`), hence equals the whole algebra. -/
+
+/-! ### B+_a as a function, smart constructor, and linear map -/
 
 /-- The **B+_a** operator: graft an unordered forest of Nonplanar trees
     under a new root labeled `a`. Identical to the smart constructor. -/
@@ -569,6 +590,98 @@ noncomputable def bPlus (a : α) (F : Forest (Nonplanar α)) :
 
 @[simp] theorem bPlus_def (a : α) (F : Forest (Nonplanar α)) :
     bPlus a F = Nonplanar.node a F := rfl
+
+/-- The **B+_a linear map**: linearly extend the smart constructor `bPlus a`
+    to an `R`-linear endomorphism of `ConnesKreimer R (Nonplanar α)`,
+    sending the basis element `of' F` to `ofTree (Nonplanar.node a F)`. -/
+noncomputable def bPlusLin (a : α) :
+    ConnesKreimer R (Nonplanar α) →ₗ[R] ConnesKreimer R (Nonplanar α) :=
+  Finsupp.lift _ R (Forest (Nonplanar α))
+    (fun F => ofTree (Nonplanar.node a F))
+
+@[simp] theorem bPlusLin_of' (a : α) (F : Forest (Nonplanar α)) :
+    bPlusLin (R := R) a (of' F) = ofTree (Nonplanar.node a F) := by
+  show Finsupp.lift _ R _ _ (Finsupp.single F 1) = _
+  rw [Finsupp.lift_apply, Finsupp.sum_single_index] <;> simp
+
+@[simp] theorem bPlusLin_one (a : α) :
+    bPlusLin (R := R) a (1 : ConnesKreimer R (Nonplanar α)) =
+      ofTree (Nonplanar.leaf a) := by
+  show bPlusLin (R := R) a (of' 0) = _
+  rw [bPlusLin_of']
+  show ofTree (Nonplanar.node a 0) = ofTree (Nonplanar.leaf a)
+  rfl
+
+/-! ### The cocycle theorem (basis-level) -/
+
+/-- For the empty forest: `Nonplanar.node a 0 = Nonplanar.leaf a`. -/
+@[simp] theorem Nonplanar_node_zero (a : α) :
+    (Nonplanar.node a (0 : Multiset (Nonplanar α)) : Nonplanar α) =
+      Nonplanar.leaf a := rfl
+
+/-- The cut summands of a leaf: only one summand `(0, leaf a)`,
+    corresponding to the empty cut. -/
+theorem cutSummandsN_leaf (a : α) :
+    cutSummandsN (Nonplanar.leaf a : Nonplanar α) =
+      ({((0 : Forest (Nonplanar α)), Nonplanar.leaf a)} : Multiset _) := by
+  show (cutSummandsP (Planar.leaf a)).map (projSummand (α := α)) = _
+  rw [show Planar.leaf a = Planar.node a [] from rfl, cutSummandsP_node,
+      cutListSummandsP_nil, Multiset.map_singleton, Multiset.map_singleton]
+  rfl
+
+/-- The tree-level coproduct on a leaf:
+    `comulTreeN (leaf a) = ofTree (leaf a) ⊗ 1 + 1 ⊗ ofTree (leaf a)`. -/
+theorem comulTreeN_leaf (a : α) :
+    comulTreeN (R := R) (Nonplanar.leaf a) =
+      ofTree (Nonplanar.leaf a) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
+      (1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ofTree (Nonplanar.leaf a) := by
+  unfold comulTreeN
+  rw [cutSummandsN_leaf, Multiset.map_singleton, Multiset.sum_singleton, of'_zero]
+
+/-- The **Hochschild 1-cocycle property of B+_a**, on basis elements:
+    for every forest `F`, the coproduct of the grafted tree
+    `Nonplanar.node a F` decomposes as the explicit primitive term plus
+    the right-channel B+ application of `comulForestN F`. -/
+theorem comulTreeN_node_cocycle (a : α) (F : Forest (Nonplanar α)) :
+    comulTreeN (R := R) (Nonplanar.node a F) =
+      ofTree (Nonplanar.node a F) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
+      (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulForestN F) := by
+  induction F using Multiset.induction with
+  | empty =>
+    rw [Nonplanar_node_zero, comulForestN_zero, comulTreeN_leaf]
+    -- Goal: ofTree (leaf a) ⊗ 1 + 1 ⊗ ofTree (leaf a) =
+    --       ofTree (leaf a) ⊗ 1 + (id ⊗ bPlusLin a)(1)
+    congr 1
+    show (1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ofTree (Nonplanar.leaf a) =
+         (LinearMap.lTensor _ (bPlusLin (R := R) a))
+           (1 : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
+    show _ = (LinearMap.lTensor _ (bPlusLin (R := R) a))
+              ((1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))
+    rw [LinearMap.lTensor_tmul, bPlusLin_one]
+  | cons T F' ih =>
+    -- TODO Phase A.7-γ cons case (~200-300 LOC of tensor algebra).
+    -- Strategy:
+    --   1. comulForestN_cons: comulForestN (T ::ₘ F') = comulTreeN T * comulForestN F'
+    --   2. Decompose comulTreeN T = ofTree T ⊗ 1 + (cuts sum). Distribute multiplication.
+    --   3. (id ⊗ bPlus) is linear; distributes over sum.
+    --   4. (ofTree T ⊗ 1) commutes with (id ⊗ bPlus) (verify by TensorProduct.ext).
+    --      Use IH to rewrite (id ⊗ bPlus)(comulForestN F') = cuts sum of (node a F').
+    --      First half: (ofTree T ⊗ 1) * cuts sum of (node a F') matches "extract T whole"
+    --                  branch of cuts of node a (T ::ₘ F').
+    --   5. Second half: (id ⊗ bPlus)(cuts(T) * comulForestN F') matches "recurse cut"
+    --      branch of cuts of node a (T ::ₘ F'). Uses cutListSummandsP_cons-style
+    --      enumeration.
+    --   6. Sum of both halves matches the full cuts sum of node a (T ::ₘ F') (via
+    --      cutListSummandsP_cons_proj at the projected level).
+    sorry
+
+/-- The cocycle, lifted to the algebra-hom level on tree basis elements. -/
+theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (Nonplanar α)) :
+    comulAlgHomN (R := R) (bPlusLin (R := R) a (of' F)) =
+      bPlusLin (R := R) a (of' F) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
+      (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulAlgHomN (of' F)) := by
+  rw [bPlusLin_of', comulAlgHomN_apply_ofTree, comulAlgHomN_apply_of']
+  exact comulTreeN_node_cocycle a F
 
 /-! ## Phase A.7-δ — Foissy clean coassoc + Bialgebra instance (PENDING)
 
