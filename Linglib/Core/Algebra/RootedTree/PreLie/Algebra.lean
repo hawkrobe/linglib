@@ -6,6 +6,7 @@ import Mathlib.Algebra.NonAssoc.PreLie.Basic
 import Mathlib.LinearAlgebra.Finsupp.SumProd
 import Mathlib.Data.Multiset.Bind
 import Mathlib.Data.Finsupp.SMul
+import Mathlib.LinearAlgebra.Finsupp.LSum
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.LinearCombination
 
@@ -554,24 +555,260 @@ theorem assoc_symm_singleton (T₁ T₂ T₃ : Nonplanar α) :
   congr 1
   exact assoc_symm_planar t₁ t₂ t₃
 
+/-! ## §5-prep: Scalar pull-out for the custom Mul (R.3d Part 2 Step 4)
+
+The custom `Mul` is bilinear in the ℤ-coefficients: `(c • x) * y = c • (x * y)`
+and `x * (c • y) = c • (x * y)`. Proved by direct unfolding of `mul_def` +
+`Finsupp.sum_smul_index'` + `Finsupp.smul_sum`. These are needed by the
+basis case of `assoc_symm`'s triple `Finsupp.induction_linear`. -/
+
+/-- Scalar pull-out on the LEFT factor for the basis case:
+    `(c • ofTree t) * y = c • (ofTree t * y)`. -/
+private theorem smul_ofTree_mul (c : ℤ) (t : Nonplanar α) (y : InsertionAlgebra α) :
+    ((c • ofTree t : InsertionAlgebra α) * y) = c • (ofTree t * y) := by
+  -- c • ofTree t = single t c; ofTree t = single t 1.
+  have h_ot : (c • ofTree t : InsertionAlgebra α) = Finsupp.single t c := by
+    show (c • Finsupp.single t (1 : ℤ) : Nonplanar α →₀ ℤ) = Finsupp.single t c
+    rw [Finsupp.smul_single, smul_eq_mul, mul_one]
+  rw [h_ot]
+  show (Finsupp.single t c).sum
+        (fun t' (a' : ℤ) =>
+          y.sum (fun s (b : ℤ) =>
+            (a' * b) • ofMultiset (Nonplanar.insertSum t' s))) =
+       c • (Finsupp.single t (1 : ℤ)).sum
+        (fun t' (a' : ℤ) =>
+          y.sum (fun s (b : ℤ) =>
+            (a' * b) • ofMultiset (Nonplanar.insertSum t' s)))
+  have hzero : ∀ (t' : Nonplanar α),
+      y.sum (fun s (b : ℤ) =>
+          ((0 : ℤ) * b) • ofMultiset (Nonplanar.insertSum t' s)) = 0 := fun t' => by
+    simp only [Int.zero_mul, zero_smul]
+    exact Finsupp.sum_fun_zero (f := y) (N := InsertionAlgebra α)
+  rw [Finsupp.sum_single_index (hzero t),
+      Finsupp.sum_single_index (hzero t)]
+  -- Now: y.sum (fun s b => (c * b) • _) = c • y.sum (fun s b => (1 * b) • _)
+  rw [Finsupp.smul_sum]
+  apply Finsupp.sum_congr; intro s b_in
+  -- Goal: (c * b_in) • _ = c • ((1 * b_in) • _)
+  rw [one_mul, mul_smul]
+
+/-- Scalar pull-out on the RIGHT factor for the basis case. -/
+private theorem mul_smul_ofTree (x : InsertionAlgebra α) (c : ℤ) (s : Nonplanar α) :
+    (x * (c • ofTree s : InsertionAlgebra α)) = c • (x * ofTree s) := by
+  have h_os : (c • ofTree s : InsertionAlgebra α) = Finsupp.single s c := by
+    show (c • Finsupp.single s (1 : ℤ) : Nonplanar α →₀ ℤ) = Finsupp.single s c
+    rw [Finsupp.smul_single, smul_eq_mul, mul_one]
+  rw [h_os]
+  show x.sum (fun t (a : ℤ) =>
+        (Finsupp.single s c).sum (fun s' (b' : ℤ) =>
+          (a * b') • ofMultiset (Nonplanar.insertSum t s'))) =
+       c • x.sum (fun t (a : ℤ) =>
+        (Finsupp.single s (1 : ℤ)).sum (fun s' (b' : ℤ) =>
+          (a * b') • ofMultiset (Nonplanar.insertSum t s')))
+  rw [Finsupp.smul_sum]
+  apply Finsupp.sum_congr; intro t _
+  -- The inner `a` value of the Finsupp.sum is unbound here; use a fresh name.
+  show (Finsupp.single s c).sum (fun s' (b' : ℤ) =>
+          (x t * b') • ofMultiset (Nonplanar.insertSum t s')) =
+       c • (Finsupp.single s (1 : ℤ)).sum (fun s' (b' : ℤ) =>
+          (x t * b') • ofMultiset (Nonplanar.insertSum t s'))
+  have hzero : ∀ (s' : Nonplanar α),
+      (((x t : ℤ) * 0)) • ofMultiset (Nonplanar.insertSum t s') = 0 := fun s' => by
+    simp only [Int.mul_zero, zero_smul]
+  rw [Finsupp.sum_single_index (hzero s),
+      Finsupp.sum_single_index (hzero s)]
+  -- Goal: (x t * c) • _ = c • ((x t * 1) • _)
+  rw [mul_one, show ((x t : ℤ) * c) = c * x t from mul_comm _ _, mul_smul]
+
+/-- Right multiplication by `y` is an `AddMonoidHom`. Used to derive
+    ℤ-linearity (`smul_mul_left`) from `add_mul` + `zero_mul`. -/
+private noncomputable def mulRightHom (y : InsertionAlgebra α) :
+    InsertionAlgebra α →+ InsertionAlgebra α where
+  toFun x := x * y
+  map_zero' := zero_mul y
+  map_add' x₁ x₂ := add_mul x₁ x₂ y
+
+/-- Left multiplication by `x` is an `AddMonoidHom`. Used to derive
+    ℤ-linearity (`mul_smul_right`) from `mul_add` + `mul_zero`. -/
+private noncomputable def mulLeftHom (x : InsertionAlgebra α) :
+    InsertionAlgebra α →+ InsertionAlgebra α where
+  toFun y := x * y
+  map_zero' := mul_zero x
+  map_add' y₁ y₂ := mul_add x y₁ y₂
+
+/-- Scalar pull-out on the LEFT factor: `(c • x) * y = c • (x * y)`.
+    Direct corollary of `AddMonoidHom.map_zsmul` for `mulRightHom y`. -/
+private theorem smul_mul_left (c : ℤ) (x y : InsertionAlgebra α) :
+    ((c • x : InsertionAlgebra α) * y) = c • (x * y) :=
+  (mulRightHom y).map_zsmul x c
+
+/-- Scalar pull-out on the RIGHT factor: `x * (c • y) = c • (x * y)`.
+    Direct corollary of `AddMonoidHom.map_zsmul` for `mulLeftHom x`. -/
+private theorem mul_smul_right (x : InsertionAlgebra α) (c : ℤ) (y : InsertionAlgebra α) :
+    (x * (c • y : InsertionAlgebra α)) = c • (x * y) :=
+  (mulLeftHom x).map_zsmul y c
+
 /-! ## §5: Pre-Lie identity (Phase C, the meat)
 
 The headline. By bilinearity, reduces to `assoc_symm_singleton`. -/
 
+/-- Each of the four product terms reduces to a single scalar coefficient
+    times a tree-product. Helper for `assoc_symm_basis`. -/
+private theorem smul_triple_left (a b c : ℤ) (X Y Z : InsertionAlgebra α) :
+    (a • X) * (b • Y) * (c • Z) = (a * b * c) • ((X * Y) * Z) := by
+  simp only [smul_mul_left, mul_smul_right, smul_smul, mul_assoc]
+  congr 1
+  ring
+
+private theorem smul_triple_right (a b c : ℤ) (X Y Z : InsertionAlgebra α) :
+    (a • X) * ((b • Y) * (c • Z)) = (a * b * c) • (X * (Y * Z)) := by
+  simp only [smul_mul_left, mul_smul_right, smul_smul, mul_assoc]
+  congr 1
+  ring
+
+/-- Triple-singleton basis case in `a • ofTree T` form. -/
+private theorem assoc_symm_basis (T₁ T₂ T₃ : Nonplanar α) (a₁ a₂ a₃ : ℤ) :
+    (a₁ • ofTree T₁ : InsertionAlgebra α) * (a₂ • ofTree T₂) * (a₃ • ofTree T₃) -
+      (a₁ • ofTree T₁ : InsertionAlgebra α) *
+        ((a₂ • ofTree T₂) * (a₃ • ofTree T₃)) =
+    (a₁ • ofTree T₁ : InsertionAlgebra α) * (a₃ • ofTree T₃) * (a₂ • ofTree T₂) -
+      (a₁ • ofTree T₁ : InsertionAlgebra α) *
+        ((a₃ • ofTree T₃) * (a₂ • ofTree T₂)) := by
+  rw [smul_triple_left, smul_triple_right, smul_triple_left, smul_triple_right]
+  -- Goal: (a₁*a₂*a₃) • ((T₁*T₂)*T₃) - (a₁*a₂*a₃) • (T₁*(T₂*T₃)) =
+  --       (a₁*a₃*a₂) • ((T₁*T₃)*T₂) - (a₁*a₃*a₂) • (T₁*(T₃*T₂))
+  rw [show a₁ * a₃ * a₂ = a₁ * a₂ * a₃ from by ring]
+  rw [← smul_sub, ← smul_sub, assoc_symm_singleton T₁ T₂ T₃]
+
+/-- Triple-singleton form (with explicit `a • ofTree T` packaging). Workhorse
+    for `assoc_symm`'s singleton basis after triple `addHom_ext`. -/
+private theorem assoc_symm_three_singletons
+    (T₁ T₂ T₃ : Nonplanar α) (a₁ a₂ a₃ : ℤ) :
+    let s₁ : InsertionAlgebra α := a₁ • ofTree T₁
+    let s₂ : InsertionAlgebra α := a₂ • ofTree T₂
+    let s₃ : InsertionAlgebra α := a₃ • ofTree T₃
+    s₁ * s₂ * s₃ - s₁ * (s₂ * s₃) = s₁ * s₃ * s₂ - s₁ * (s₃ * s₂) :=
+  assoc_symm_basis T₁ T₂ T₃ a₁ a₂ a₃
+
+/-- AddMonoidHom for `x ↦ x * y * z - x * (y * z)`, additive in `x`. -/
+private noncomputable def assocLHSHom (y z : InsertionAlgebra α) :
+    InsertionAlgebra α →+ InsertionAlgebra α :=
+  (mulRightHom z).comp (mulRightHom y) - mulRightHom (y * z)
+
+/-- AddMonoidHom for `x ↦ x * z * y - x * (z * y)`, additive in `x`. -/
+private noncomputable def assocRHSHom (y z : InsertionAlgebra α) :
+    InsertionAlgebra α →+ InsertionAlgebra α :=
+  (mulRightHom y).comp (mulRightHom z) - mulRightHom (z * y)
+
+/-- `assocLHSHom y z x = x * y * z - x * (y * z)`. -/
+@[simp] private theorem assocLHSHom_apply (x y z : InsertionAlgebra α) :
+    assocLHSHom y z x = x * y * z - x * (y * z) := by
+  show (mulRightHom z) ((mulRightHom y) x) - (mulRightHom (y * z)) x =
+       x * y * z - x * (y * z)
+  rfl
+
+/-- `assocRHSHom y z x = x * z * y - x * (z * y)`. -/
+@[simp] private theorem assocRHSHom_apply (x y z : InsertionAlgebra α) :
+    assocRHSHom y z x = x * z * y - x * (z * y) := by
+  show (mulRightHom y) ((mulRightHom z) x) - (mulRightHom (z * y)) x =
+       x * z * y - x * (z * y)
+  rfl
+
+/-- AddMonoidHom for `y ↦ x * y * z - x * (y * z)`, additive in `y`
+    (with `x, z` fixed). -/
+private noncomputable def assocLHSHomY (x z : InsertionAlgebra α) :
+    InsertionAlgebra α →+ InsertionAlgebra α :=
+  (mulRightHom z).comp (mulLeftHom x) -
+    (mulLeftHom x).comp (mulRightHom z)
+
+/-- AddMonoidHom for `y ↦ x * z * y - x * (z * y)`, additive in `y`
+    (with `x, z` fixed). -/
+private noncomputable def assocRHSHomY (x z : InsertionAlgebra α) :
+    InsertionAlgebra α →+ InsertionAlgebra α :=
+  (mulLeftHom (x * z)) - (mulLeftHom x).comp (mulLeftHom z)
+
+/-- `assocLHSHomY x z y = x * y * z - x * (y * z)`. -/
+@[simp] private theorem assocLHSHomY_apply (x y z : InsertionAlgebra α) :
+    assocLHSHomY x z y = x * y * z - x * (y * z) := by
+  show (mulRightHom z) ((mulLeftHom x) y) - (mulLeftHom x) ((mulRightHom z) y) =
+       x * y * z - x * (y * z)
+  rfl
+
+/-- `assocRHSHomY x z y = x * z * y - x * (z * y)`. -/
+@[simp] private theorem assocRHSHomY_apply (x y z : InsertionAlgebra α) :
+    assocRHSHomY x z y = x * z * y - x * (z * y) := by
+  show (mulLeftHom (x * z)) y - (mulLeftHom x) ((mulLeftHom z) y) =
+       x * z * y - x * (z * y)
+  rfl
+
+/-- AddMonoidHom for `z ↦ x * y * z - x * (y * z)`, additive in `z`
+    (with `x, y` fixed). -/
+private noncomputable def assocLHSHomZ (x y : InsertionAlgebra α) :
+    InsertionAlgebra α →+ InsertionAlgebra α :=
+  (mulLeftHom (x * y)) - (mulLeftHom x).comp (mulLeftHom y)
+
+/-- AddMonoidHom for `z ↦ x * z * y - x * (z * y)`, additive in `z`
+    (with `x, y` fixed). -/
+private noncomputable def assocRHSHomZ (x y : InsertionAlgebra α) :
+    InsertionAlgebra α →+ InsertionAlgebra α :=
+  (mulRightHom y).comp (mulLeftHom x) -
+    (mulLeftHom x).comp (mulRightHom y)
+
+/-- `assocLHSHomZ x y z = x * y * z - x * (y * z)`. -/
+@[simp] private theorem assocLHSHomZ_apply (x y z : InsertionAlgebra α) :
+    assocLHSHomZ x y z = x * y * z - x * (y * z) := by
+  show (mulLeftHom (x * y)) z - (mulLeftHom x) ((mulLeftHom y) z) =
+       x * y * z - x * (y * z)
+  rfl
+
+/-- `assocRHSHomZ x y z = x * z * y - x * (z * y)`. -/
+@[simp] private theorem assocRHSHomZ_apply (x y z : InsertionAlgebra α) :
+    assocRHSHomZ x y z = x * z * y - x * (z * y) := by
+  show (mulRightHom y) ((mulLeftHom x) z) - (mulLeftHom x) ((mulRightHom y) z) =
+       x * z * y - x * (z * y)
+  rfl
+
 /-- The **pre-Lie identity** on `InsertionAlgebra α`:
     `(x * y) * z - x * (y * z) = (x * z) * y - x * (z * y)`.
 
-    Equivalently, the associator `(x * y) * z - x * (y * z)` is symmetric
-    in its last two arguments. This is exactly mathlib's
-    `RightPreLieRing.assoc_symm'`. -/
+    By trilinearity (three nested `Finsupp.addHom_ext`), reduces to
+    `assoc_symm_three_singletons`. -/
 theorem assoc_symm (x y z : InsertionAlgebra α) :
     x * y * z - x * (y * z) = x * z * y - x * (z * y) := by
-  -- TODO Step 5: bilinear extension via triple Finsupp.induction_linear.
-  -- Strategy: smul_mul_left/right helpers (Step 4) + triple Finsupp.induction_linear.
-  -- Basis case (single t₁ a₁ * single t₂ a₂ * single t₃ a₃ ...) reduces via
-  -- Finsupp.smul_single + scalar pull-outs to (a₁ * a₂ * a₃) • assoc_symm_singleton t₁ t₂ t₃.
-  -- Plan: /Users/rxdh/.claude/plans/partitioned-yawning-parrot.md §"Step 4+5".
-  sorry
+  -- Reduce x to single via addHom_ext on x.
+  have hx : assocLHSHom y z = assocRHSHom y z := by
+    refine Finsupp.addHom_ext fun T₁ a₁ => ?_
+    -- Goal: assocLHSHom y z (single T₁ a₁) = assocRHSHom y z (single T₁ a₁)
+    -- Use a let-binding to give the singleton an explicit IA type.
+    set s₁ : InsertionAlgebra α := Finsupp.single T₁ a₁ with s₁_def
+    show assocLHSHom y z s₁ = assocRHSHom y z s₁
+    rw [assocLHSHom_apply, assocRHSHom_apply]
+    -- Reduce y to single via addHom_ext on y.
+    have hy : assocLHSHomY s₁ z = assocRHSHomY s₁ z := by
+      refine Finsupp.addHom_ext fun T₂ a₂ => ?_
+      set s₂ : InsertionAlgebra α := Finsupp.single T₂ a₂ with s₂_def
+      show assocLHSHomY s₁ z s₂ = assocRHSHomY s₁ z s₂
+      rw [assocLHSHomY_apply, assocRHSHomY_apply]
+      -- Reduce z to single via addHom_ext on z.
+      have hz : assocLHSHomZ s₁ s₂ = assocRHSHomZ s₁ s₂ := by
+        refine Finsupp.addHom_ext fun T₃ a₃ => ?_
+        set s₃ : InsertionAlgebra α := Finsupp.single T₃ a₃ with s₃_def
+        show assocLHSHomZ s₁ s₂ s₃ = assocRHSHomZ s₁ s₂ s₃
+        rw [assocLHSHomZ_apply, assocRHSHomZ_apply]
+        -- Convert each sᵢ to aᵢ • ofTree Tᵢ form.
+        rw [show s₁ = a₁ • ofTree T₁ from (Finsupp.smul_single_one T₁ a₁).symm,
+            show s₂ = a₂ • ofTree T₂ from (Finsupp.smul_single_one T₂ a₂).symm,
+            show s₃ = a₃ • ofTree T₃ from (Finsupp.smul_single_one T₃ a₃).symm]
+        exact assoc_symm_basis T₁ T₂ T₃ a₁ a₂ a₃
+      have hzApp := DFunLike.congr_fun hz z
+      rw [assocLHSHomZ_apply, assocRHSHomZ_apply] at hzApp
+      exact hzApp
+    have hyApp := DFunLike.congr_fun hy y
+    rw [assocLHSHomY_apply, assocRHSHomY_apply] at hyApp
+    exact hyApp
+  have hxApp := DFunLike.congr_fun hx x
+  rw [assocLHSHom_apply, assocRHSHom_apply] at hxApp
+  exact hxApp
 
 /-! ## §6: `RightPreLieRing` instance (Phase D) -/
 
