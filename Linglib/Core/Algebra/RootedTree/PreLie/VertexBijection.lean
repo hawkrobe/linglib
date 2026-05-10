@@ -723,14 +723,75 @@ private theorem vertices_insertAt_decomp_aux : ∀ {T : Planar α}
       + ((vertices t₂ : Multiset _).map (Vertex.lift v t₂))
   | _, .root a cs, t₂ => by
     -- v = root a cs, T = node a cs, insertAt v t₂ = node a (t₂ :: cs).
-    -- LHS = vertices (node a (t₂ :: cs)) (as Multiset). RHS reduces via:
-    --   vertices T = root a cs :: (verticesList cs).map (inChild a cs)
-    --   preserve? (root a cs) (root a cs) t₂ = none (skip head)
-    --   preserve? (root a cs) (inChild a cs vl) t₂ = some (inChild a (t₂::cs) (tail t₂ cs vl))
-    --   sourceSelf (root a cs) t₂ = root a (t₂ :: cs)
-    --   lift (root a cs) t₂ g = inChild a (t₂::cs) (head t₂ cs g)
-    -- Both reduce to the same 3-component sum {root a (t₂::cs)} + lifted-block + preserved-block.
-    sorry
+    -- Strategy: both sides reduce to
+    --   {root a (t₂ :: cs)} + (vertices t₂).map (inChild a (t₂::cs) ∘ head t₂ cs)
+    --                       + (verticesList cs).map (inChild a (t₂::cs) ∘ tail t₂ cs)
+    -- LHS: unfolds via vertices_node + verticesList_cons + List.map_append + List.map_map + coe.
+    -- RHS: filterMap on (root :: ...) — head matches preserve?_self (none),
+    --      tail collapses via filterMap_map + (some ∘ f) → map f.
+    -- Move insertAt → node a (t₂ :: cs) in BOTH LHS and RHS via dsimp (definitional rewrite).
+    -- This unfolds .sourceSelf, .lift, .insertAt to their syntactic forms.
+    dsimp only [insertAt_root, Vertex.sourceSelf, Vertex.lift]
+    -- Now state hpres in the post-dsimp world (LHS and RHS at `Vertex (Planar.node a (t₂ :: cs))`).
+    have hpres :
+        ((fun w => (Vertex.root a cs).preserve? w t₂) ∘ Vertex.inChild a cs) =
+        (Option.some ∘ (Vertex.inChild a (t₂ :: cs) ∘ VertexList.tail t₂ cs)) := rfl
+    rw [vertices_node, verticesList_cons, List.map_append, List.map_map, List.map_map]
+    -- Now LHS is ↑(root a (t₂::cs) :: (List.map (inChild ∘ head) (vertices t₂) ++
+    --                                  List.map (inChild ∘ tail) (verticesList cs))).
+    -- Push coe inward: ↑(a :: l) = a ::ₘ ↑l, ↑(l₁ ++ l₂) = ↑l₁ + ↑l₂, ↑(l.map f) = (↑l).map f.
+    rw [(Multiset.cons_coe (Vertex.root a (t₂ :: cs))
+          (List.map (Vertex.inChild a (t₂ :: cs) ∘ VertexList.head t₂ cs) (vertices t₂) ++
+            List.map (Vertex.inChild a (t₂ :: cs) ∘ VertexList.tail t₂ cs) (verticesList cs))).symm,
+        (Multiset.coe_add
+          (List.map (Vertex.inChild a (t₂ :: cs) ∘ VertexList.head t₂ cs) (vertices t₂))
+          (List.map (Vertex.inChild a (t₂ :: cs) ∘ VertexList.tail t₂ cs) (verticesList cs))).symm,
+        ← Multiset.map_coe (Vertex.inChild a (t₂ :: cs) ∘ VertexList.head t₂ cs) (vertices t₂),
+        ← Multiset.map_coe (Vertex.inChild a (t₂ :: cs) ∘ VertexList.tail t₂ cs) (verticesList cs)]
+    -- RHS: vertices (node a cs) = root a cs :: (verticesList cs).map (inChild a cs).
+    -- Push coe inward and apply filterMap_cons_none on root (preserve?_self).
+    rw [show ((vertices (Planar.node a cs) : List _) :
+              Multiset (Vertex (Planar.node a cs))) =
+              Vertex.root a cs ::ₘ (((verticesList cs).map (Vertex.inChild a cs) : List _) :
+                  Multiset (Vertex (Planar.node a cs))) from rfl,
+        Multiset.filterMap_cons_none _ _ (Vertex.preserve?_self _ _),
+        ← Multiset.map_coe (Vertex.inChild a cs) (verticesList cs),
+        Multiset.filterMap_map]
+    -- Normalize Function.comp to lambda form for syntactic uniformity.
+    simp only [Function.comp_def]
+    -- The goal mixes types `Vertex (insertAt (root a cs) t₂)` (in the original ascription)
+    -- and `Vertex (Planar.node a (t₂ :: cs))` (after dsimp). They're defeq, so the equation
+    -- typechecks, but rw can't match across the discrepancy. Workaround: rewrite the inner
+    -- filterMap → map equation as a UNIVERSAL lemma indexed by both types,
+    -- proved per-case by the value-level equality.
+    have hfmA :
+        ∀ M : Multiset (VertexList cs),
+        @Multiset.filterMap (VertexList cs) (Vertex (Planar.node a (t₂ :: cs)))
+          (fun x : VertexList cs => (Vertex.root a cs).preserve? (Vertex.inChild a cs x) t₂) M =
+        @Multiset.map (VertexList cs) (Vertex (Planar.node a (t₂ :: cs)))
+          (fun x : VertexList cs => Vertex.inChild a (t₂ :: cs) (VertexList.tail t₂ cs x)) M := by
+      intro M
+      have h : (fun x : VertexList cs =>
+                  (Vertex.root a cs).preserve? (Vertex.inChild a cs x) t₂) =
+                some ∘ (fun x : VertexList cs =>
+                          Vertex.inChild a (t₂ :: cs) (VertexList.tail t₂ cs x)) := rfl
+      rw [h]
+      exact congr_fun (Multiset.filterMap_eq_map _) M
+    rw [hfmA]
+    rw [← Multiset.singleton_add]
+    -- LHS = {root} + (map(head) + map(tail)); RHS = map(tail) + {root} + map(head). AC.
+    -- Use Multiset's commutative monoid; abel/ring don't fire due to mixed instance args.
+    rw [Multiset.add_comm
+          (Multiset.map (fun x => Vertex.inChild a (t₂ :: cs) (VertexList.head t₂ cs x))
+            ((↑(vertices t₂) : Multiset (Vertex t₂))))
+          (Multiset.map (fun x => Vertex.inChild a (t₂ :: cs) (VertexList.tail t₂ cs x))
+            ((↑(verticesList cs) : Multiset (VertexList cs)))),
+        ← Multiset.add_assoc,
+        Multiset.add_comm
+          ({Vertex.root a (t₂ :: cs)} : Multiset (Vertex (Planar.node a (t₂ :: cs))))
+          (Multiset.map (fun x => Vertex.inChild a (t₂ :: cs) (VertexList.tail t₂ cs x))
+            ((↑(verticesList cs) : Multiset (VertexList cs))))]
+    rfl
   | _, .inChild a cs vl, t₂ => by
     -- v = inChild a cs vl, T = node a cs.
     -- insertAt v t₂ = node a (insertAtList vl t₂).
