@@ -12,7 +12,7 @@ set_option autoImplicit false
 The **Connes-Kreimer Hopf algebra** on a tree type T is the formal
 R-linear combinations of forests (multisets of trees), with product =
 forest disjoint union and coproduct = sum over admissible cuts (defined
-in `CoproductDeletion.lean` for Δ^p, `CoproductTrace.lean` for Δ^c).
+in `CoproductDeletion.lean` for Δ^ρ, `CoproductTrace.lean` for Δ^c).
 
 This file provides the **carrier and counit** generic over a tree type T
 (parameterized over `Type u`). The intended specializations:

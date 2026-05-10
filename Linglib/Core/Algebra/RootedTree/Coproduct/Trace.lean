@@ -16,7 +16,7 @@ encoder `τ : Planar (α ⊕ β) → β`. For a tree T:
 
 where `remainderTrace c` keeps a placeholder leaf at every cut site —
 the leaf's label is `Sum.inr (τ T_v)` for the cut subtree `T_v`. This
-contrasts with the deletion variant `Δ^p` (sibling `Coproduct.lean`),
+contrasts with the deletion variant `Δ^ρ` (sibling `Coproduct.lean`),
 where cut sites simply disappear (the parent loses a child).
 
 ## Carrier and encoder
@@ -63,7 +63,7 @@ into Planar (α ⊕ β) via `Planar.map Sum.inl T`. No separate
   Nonplanar layer; not in this file).
 
 The trace-leaf contraction underlies the C-I (semantic) interface for
-FormCopy in the MCB analysis. For the admissible-cut variant Δ^p
+FormCopy in the MCB analysis. For the admissible-cut variant Δ^ρ
 (corresponds to MCB's Δ^ρ; cut sites removed entirely; result lives
 in *at-most-n-ary* trees), see `Coproduct.lean`.
 
@@ -229,7 +229,7 @@ example (τ : Planar (Unit ⊕ Unit) → Unit) :
 
 /-- The trace-extract branch sits in the augmented per-child action for
     a `Sum.inl`-rooted subtree. Witness that Δ^c (placeholder leaf)
-    differs from Δ^p (admissible-cut pruning). -/
+    differs from Δ^ρ (admissible-cut pruning). -/
 example (τ : Planar (Unit ⊕ Unit) → Unit) :
     (({Planar.leaf (Sum.inl ())} : Forest (Planar (Unit ⊕ Unit))),
       [traceLeaf (τ (Planar.leaf (Sum.inl ())))]) ∈

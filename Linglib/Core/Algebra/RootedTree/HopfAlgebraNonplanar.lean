@@ -204,7 +204,7 @@ private theorem cutSummandsN_subtree_depth_lt (T : Nonplanar α)
 
 /-! ### Weight conservation (vertex count) for cuts
 
-Δ^p (the deletion variant) preserves total vertex count: for every cut
+Δ^ρ (the deletion variant) preserves total vertex count: for every cut
 `(cf, rem)` of `T`, the cut forest's total weight plus the remainder's
 weight equals `T`'s weight. Substrate for the lTensor sorry closure: the
 "right antipode" `antipodeRight` recurses on `rem` (weight strictly

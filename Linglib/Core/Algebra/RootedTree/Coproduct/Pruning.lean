@@ -6,21 +6,21 @@ import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 set_option autoImplicit false
 
 /-!
-# Δ^p (admissible-cut, root-component pruning) coproduct on `RootedTree.Planar α`
+# Δ^ρ (admissible-cut, root-component pruning) coproduct on `RootedTree.Planar α`
 @cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
 
 The **admissible-cut, root-component pruning** variant of the
 Connes-Kreimer coproduct on planar n-ary rooted trees. For a tree T:
 
-  Δ^p(T) = T ⊗ 1 + Σ_{c : Cut T} of'(cutForest c) ⊗ ofTree(remainderDeletion c)
+  Δ^ρ(T) = T ⊗ 1 + Σ_{c : Cut T} of'(cutForest c) ⊗ ofTree(remainderDeletion c)
 
 where the empty cut contributes `1 ⊗ T` (since cutForest empty = ∅).
 
-**Naming.** Linglib's "Δ^p" corresponds to MCB Definition 1.2.6's
+**Naming.** Linglib's "Δ^ρ" corresponds to MCB Definition 1.2.6's
 **Δ^ρ** (book p. 31) — the admissible-cut coproduct whose right channel
 is the root component `ρ_C(T)` after pruning the cut subtrees from the
 parent's children list. The result lives in *at-most-n-ary* trees
-(Lemma 1.2.11, book p. 38). Per MCB Remark 1.2.9 (book p. 34), this Δ^p
+(Lemma 1.2.11, book p. 38). Per MCB Remark 1.2.9 (book p. 34), this Δ^ρ
 coproduct corresponds to the **Foissy Connes-Kreimer Hopf algebra of
 (not-necessarily-binary) rooted trees**, where the right channel can
 contain rooted trees that are not binary.
@@ -28,7 +28,7 @@ contain rooted trees that are not binary.
 NOT MCB's **Δ^d** (Definition 1.2.5, p. 31), which is "deletion +
 rebinarization" — Δ^d additionally contracts edges to recover binarity.
 Δ^d is the closest to PF Externalization and would be derived from this
-Δ^p (or built independently) when a consumer needs it. See sibling
+Δ^ρ (or built independently) when a consumer needs it. See sibling
 `Coproduct/Deletion.lean` (FUTURE) for that.
 
 For the trace variant **Δ^c** (T/^c F_v, parent arity preserved via
@@ -40,15 +40,15 @@ interface for FormCopy.
 
 ## Foissy clean coassoc
 
-Δ^p satisfies the Hochschild 1-cocycle condition with B+ (graft as
+Δ^ρ satisfies the Hochschild 1-cocycle condition with B+ (graft as
 new root):
 
-  Δ^p ∘ B+_a = B+_a ⊗ 1 + (id ⊗ B+_a) ∘ Δ^p
+  Δ^ρ ∘ B+_a = B+_a ⊗ 1 + (id ⊗ B+_a) ∘ Δ^ρ
 
 The B+ operator only well-defines on `Multiset (Nonplanar α) → Nonplanar α`
 (unordered children of a new root). On `Planar α` with `Multiset`
 forests, B+ would need a canonical ordering. Hence the sorry-free
-coassoc proof for Δ^p lives in `Coproduct/PruningNonplanar.lean` on
+coassoc proof for Δ^ρ lives in `Coproduct/PruningNonplanar.lean` on
 `RootedTree.Nonplanar α`. (Note: this Foissy clean coassoc strategy
 does NOT generalize to Δ^c — B+ is not a Hochschild 1-cocycle for the
 trace variant. Δ^c coassoc uses Grossman-Larson duality instead; see
@@ -130,23 +130,23 @@ end
                    (cutSummandsP t).map (fun p => (p.1, Option.some p.2)) := by
   conv_lhs => unfold augActionP
 
-/-! ### comulTreePlanarP — tree-level Δ^p
+/-! ### comulTreePlanarP — tree-level Δ^ρ
 
 Sum the cut summands as tensors, plus the explicit `T ⊗ 1` term. -/
 
-/-- The **planar tree-level Δ^p** coproduct: explicit `T ⊗ 1` term plus
+/-- The **planar tree-level Δ^ρ** coproduct: explicit `T ⊗ 1` term plus
     the sum of cut-summand tensors. -/
 noncomputable def comulTreePlanarP (T : Planar α) :
     ConnesKreimer R (Planar α) ⊗[R] ConnesKreimer R (Planar α) :=
   ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Planar α))
   + ((cutSummandsP T).map (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
-/-! ### comulForestPlanarP — forest-level Δ^p
+/-! ### comulForestPlanarP — forest-level Δ^ρ
 
 Multiplicative extension over the disjoint-union product on forests:
 Δ(F + G) = Δ(F) · Δ(G). -/
 
-/-- The **planar forest-level Δ^p**: multiplicative product of tree-level
+/-- The **planar forest-level Δ^ρ**: multiplicative product of tree-level
     coproducts over the components of the forest. -/
 noncomputable def comulForestPlanarP (F : Forest (Planar α)) :
     ConnesKreimer R (Planar α) ⊗[R] ConnesKreimer R (Planar α) :=
@@ -175,7 +175,7 @@ noncomputable def comulMonoidHomP :
   map_one' := comulForestPlanarP_zero
   map_mul' F G := comulForestPlanarP_add F.toAdd G.toAdd
 
-/-- The **Δ^p coproduct on `ConnesKreimer R (Planar α)`** as an algebra hom. -/
+/-- The **Δ^ρ coproduct on `ConnesKreimer R (Planar α)`** as an algebra hom. -/
 noncomputable def comulAlgHomP :
     ConnesKreimer R (Planar α) →ₐ[R]
       ConnesKreimer R (Planar α) ⊗[R] ConnesKreimer R (Planar α) :=

@@ -8,10 +8,10 @@ import Mathlib.RingTheory.TensorProduct.Maps
 set_option autoImplicit false
 
 /-!
-# Δ^p on `ConnesKreimer R (Nonplanar α)` via projection from `Planar`
+# Δ^ρ on `ConnesKreimer R (Nonplanar α)` via projection from `Planar`
 @cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
 
-The Nonplanar Δ^p is obtained by descending the planar Δ^p
+The Nonplanar Δ^ρ is obtained by descending the planar Δ^ρ
 (`Coproduct.lean`) through the projection `mk : Planar α → Nonplanar α`.
 The descent requires showing that the projected cut summands
 (`(cutSummandsP T).map projSummand`) depend on `T : Planar α` only
@@ -98,9 +98,9 @@ noncomputable def planarToNonplanarAlg :
       planarToNonplanarAlg x * planarToNonplanarAlg y :=
   map_mul _ _ _
 
-/-! ## Phase A.7-β — projection of cut summands, descent of Δ^p
+/-! ## Phase A.7-β — projection of cut summands, descent of Δ^ρ
 
-To descend Δ^p from `Planar` to `Nonplanar`, we need a Nonplanar-side
+To descend Δ^ρ from `Planar` to `Nonplanar`, we need a Nonplanar-side
 cut-summand multiset that is `PlanarEquiv`-invariant. The strategy:
 project each planar cut summand through `mk` componentwise, then prove
 the resulting multiset depends on `T : Planar α` only through `mk T`.
@@ -487,7 +487,7 @@ theorem cutListSummandsP_proj_componentwise
       cutListSummandsP_proj_tail_lift d ih
     exact step1.trans step2
 
-/-! ### Δ^p on Nonplanar via descent
+/-! ### Δ^ρ on Nonplanar via descent
 
 The `cutSummandsP_proj_planarEquiv` invariance lifts `cutSummandsP`
 through `Nonplanar.lift`, giving a well-defined `cutSummandsN`. The
@@ -504,7 +504,7 @@ noncomputable def cutSummandsN :
 @[simp] theorem cutSummandsN_mk (T : Planar α) :
     cutSummandsN (Nonplanar.mk T) = (cutSummandsP T).map projSummand := rfl
 
-/-- The **nonplanar tree-level Δ^p**: explicit `T ⊗ 1` term plus the
+/-- The **nonplanar tree-level Δ^ρ**: explicit `T ⊗ 1` term plus the
     sum of cut-summand tensors at the Nonplanar level. -/
 noncomputable def comulTreeN (T : Nonplanar α) :
     ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
@@ -512,7 +512,7 @@ noncomputable def comulTreeN (T : Nonplanar α) :
   + ((cutSummandsN T).map
       (fun p => of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)).sum
 
-/-- The **nonplanar forest-level Δ^p**: multiplicative product of
+/-- The **nonplanar forest-level Δ^ρ**: multiplicative product of
     tree-level coproducts over the components of the forest. -/
 noncomputable def comulForestN (F : Forest (Nonplanar α)) :
     ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
@@ -547,7 +547,7 @@ noncomputable def comulMonoidHomN :
   map_one' := comulForestN_zero
   map_mul' F G := comulForestN_add F.toAdd G.toAdd
 
-/-- The **Δ^p coproduct on `ConnesKreimer R (Nonplanar α)`** as an
+/-- The **Δ^ρ coproduct on `ConnesKreimer R (Nonplanar α)`** as an
     algebra hom. -/
 noncomputable def comulAlgHomN :
     ConnesKreimer R (Nonplanar α) →ₐ[R]
@@ -576,11 +576,11 @@ noncomputable def comulAlgHomN :
 basis element `of' F` to `ofTree (Nonplanar.node a F)`), it satisfies
 the **Hochschild 1-cocycle** property (Foissy / MCB §1.2.11):
 
-  Δ^p ∘ B+_a = (·) ⊗ 1 ∘ B+_a + (id ⊗ B+_a) ∘ Δ^p
+  Δ^ρ ∘ B+_a = (·) ⊗ 1 ∘ B+_a + (id ⊗ B+_a) ∘ Δ^ρ
 
 i.e., for every `x : H`:
 
-  Δ^p (B+_a x) = (B+_a x) ⊗ 1 + (id ⊗ B+_a)(Δ^p x).
+  Δ^ρ (B+_a x) = (B+_a x) ⊗ 1 + (id ⊗ B+_a)(Δ^ρ x).
 
 This is the algebraic input to Foissy's clean inductive proof of
 coassociativity (§A.7-δ): the subalgebra `A := {x | (Δ ⊗ id)(Δ x) =

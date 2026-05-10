@@ -15,13 +15,13 @@ position calls `extract` on the cut subtree:
 - `extract t = none` — cuts at this subtree are forbidden (the
   "extract whole" branch is omitted).
 - `extract t = some []` — extract whole, leaving NOTHING in the
-  parent's child slot (the deletion / Δ^p convention).
+  parent's child slot (the deletion / Δ^ρ convention).
 - `extract t = some [r]` — extract whole, leaving a single replacement
   leaf `r` in the parent's child slot (the trace / Δ^c convention).
 - `extract t = some [r₁, r₂, ...]` — extract whole, leaving multiple
   replacement leaves (general; not used by current consumers).
 
-Both Δ^p (deletion-style, `Coproduct.lean`) and Δ^c (trace-preserving,
+Both Δ^ρ (deletion-style, `Coproduct.lean`) and Δ^c (trace-preserving,
 `CoproductDecorated.lean`) are specializations of this enumeration. The
 combinatorial cut bookkeeping is shared; only the per-cut remainder
 semantics varies.
@@ -56,7 +56,7 @@ but with the per-child decision factored through `extract`. The
 remainder type is `List (Planar α)` (zero, one, or many replacement
 leaves per cut), uniform across deletion and trace variants.
 
-For Δ^p: `extract t := some []` (always extract, leave nothing).
+For Δ^ρ: `extract t := some []` (always extract, leave nothing).
 For Δ^c: `extract` returns `some [traceLeaf (τ t)]` for `Sum.inl`-rooted
 inputs and `none` for `Sum.inr`-rooted inputs. -/
 
