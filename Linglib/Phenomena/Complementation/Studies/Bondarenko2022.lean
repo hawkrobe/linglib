@@ -195,51 +195,99 @@ theorem subset_does_not_force_functionality :
 -- § 4. Sit-CP Transparency vs. Cont-CP Opacity
 -- ════════════════════════════════════════════════════════════════
 --
--- Paper §1.1.1.1 ex. 5 (Russian Sit-NP transparency) vs ex. 6
--- (Cont-NP opacity) is the central transparency contrast. We
--- formalize the abstract content: predicates inside a Sit-CP
--- evaluate at the actual situation; predicates inside a Cont-CP
--- evaluate at content-related situations.
+-- The central transparency-vs-opacity contrast (Russian and Korean
+-- substitution-test data, paper Chapter 2 §2.2.3 ex. 120-122,
+-- pp. 106-108; Chapter 1 ex. 5-6 is the brief-summary version).
+--
+-- The substitution test: under a Cont-NP like *slux* 'rumor',
+-- (a) "Lena noticed a rumor that this woman arrived on a horse"
+--   + (b) "this woman = the queen of Great Britain"
+--   ⇏ (c) "Lena noticed a rumor that the queen arrived on a horse".
+-- The DPs *this woman* and *the queen* are coextensional at the
+-- evaluation world but the rumor's content may not connect the
+-- two. Cont-CPs constitute a referentially opaque domain
+-- (@cite{barwise-1981}, @cite{higginbotham-1983}).
+--
+-- Under a Sit-NP like *slučaj* 'event', the same premises DO
+-- entail the conclusion: all DPs inside the Sit-CP are evaluated
+-- at the same world as the matrix verb.
+--
+-- **Two transparency notions**: STRONG transparency requires
+-- coextensional-everywhere predicates to be substitutable; WEAK
+-- transparency (`At`) only requires coextensionality at the
+-- evaluation world. Strong transparency is trivial (it follows
+-- from `funext` for any clause), so the substantive contrast is
+-- in the WEAK form.
 
-/-- A predicate is *referentially transparent* with respect to
-    a clause iff its evaluation is at the actual situation
-    (substitution under co-extensionality preserves truth). -/
-def ReferentiallyTransparent {S : Type*} (clause : (S → Prop) → S → Prop)
-    (s : S) : Prop :=
+/-- **Weak transparency** at evaluation world `s`: substitution
+    of predicates that agree AT s preserves clause truth. This is
+    the notion that distinguishes Sit-CPs (transparentAt) from
+    Cont-CPs (NOT transparentAt). -/
+def ReferentiallyTransparentAt {S : Type*}
+    (clause : (S → Prop) → S → Prop) (s : S) : Prop :=
+  ∀ p q : S → Prop, (p s ↔ q s) → (clause p s ↔ clause q s)
+
+/-- **Strong transparency**: substitution of predicates that agree
+    EVERYWHERE preserves clause truth. By `funext`+`propext` this is
+    trivially satisfied by every clause; included for completeness
+    and to disambiguate from `ReferentiallyTransparentAt`. -/
+def ReferentiallyTransparentEverywhere {S : Type*}
+    (clause : (S → Prop) → S → Prop) (s : S) : Prop :=
   ∀ p q : S → Prop, (∀ s', p s' ↔ q s') → (clause p s ↔ clause q s)
 
-/-- A Sit-CP is referentially transparent: paper §1.1.1.1, derived
-    from the Sit-CP denotation `λs'. φ(s')` evaluating predicates
-    at the actual situation `s`. Witness: any clause built as a
-    Sit-CP via @cite{bondarenko-2022}'s ex. 1b structure. -/
-theorem sit_cp_transparent {S : Type*} (s : S) :
-    ReferentiallyTransparent (fun p s' => p s') s := by
+/-- A Sit-CP (modeled as `fun p s' => p s'`) IS weak-transparent:
+    its evaluation is at the actual situation `s`, so
+    coextensional-at-s predicates yield the same value. -/
+theorem sit_cp_transparentAt {S : Type*} (s : S) :
+    ReferentiallyTransparentAt (fun p s' => p s') s := by
+  intro p q hpq
+  exact hpq
+
+/-- A Sit-CP is also (vacuously) strong-transparent — but this is
+    trivial for any clause, so it carries no empirical content. -/
+theorem sit_cp_transparentEverywhere {S : Type*} (s : S) :
+    ReferentiallyTransparentEverywhere (fun p s' => p s') s := by
   intro p q hpq
   exact hpq s
 
-/-- A Cont-CP is referentially OPAQUE in the sense that
-    co-extensional substitution at the actual world `s` does not
-    preserve truth — the relevant evaluation point is determined
-    by `CONT(x)`, not by `s`.
+/-- **Cont-CP is NOT weak-transparent** (Bondarenko ex. 120,
+    p. 106). Constructive witness: a 2-world model where
+    `xc.cont` picks out only one world, and two predicates that
+    agree at the evaluation world but disagree elsewhere.
 
-    Witness construction (paper §1.1.1.1 ex. 6, Russian *Lena
-    noticed a rumor that this woman arrived on a horse*): even if
-    `this woman = the queen of Great Britain` holds at `s`, the
-    rumor's content may not contain the queen.
-
-    TODO: replace `sorry` with a concrete witness model where two
-    co-extensional predicates yield different Cont-CP truth values.
-    Requires distinguishing actual-world extension from CONT-internal
-    extension. -/
-theorem cont_cp_opaque {W : Type*} :
-    ¬ ∀ (xc : ContentIndividual W) (w : W),
-      ReferentiallyTransparent (fun p _ => compC p xc) w := by
-  -- TODO: construct a witness ContentIndividual whose content holds
-  -- exactly at one world w0 ≠ w, and two predicates that agree at
-  -- w but differ at w0. Then transparency would force the Cont-CP
-  -- to be insensitive to the difference, but compC's equality test
-  -- detects it. Requires Bool/two-world model.
-  sorry
+    Concretely: `W := Bool`, evaluation world `false`, content
+    individual with `cont = (fun b => b = false)` (= the
+    proposition true only at `false`). Predicates:
+    * `p := (fun b => b = false)` — true at `false`, false at `true`
+    * `q := (fun _ => True)`     — true at both
+    They agree at the evaluation world `false` (both true), but
+    `compC p xc` (= xc.cont = p) HOLDS while `compC q xc` FAILS
+    (since `xc.cont` differs from `q` at `true`). -/
+theorem cont_cp_not_transparentAt :
+    ¬ ∀ (xc : ContentIndividual Bool) (w : Bool),
+      ReferentiallyTransparentAt (fun p _ => compC p xc) w := by
+  intro h
+  let xc : ContentIndividual Bool := ⟨fun b => b = false⟩
+  let p : Bool → Prop := fun b => b = false
+  let q : Bool → Prop := fun _ => True
+  -- p and q agree at the evaluation world `false`
+  have h_at : p false ↔ q false := by
+    constructor
+    · intro _; trivial
+    · intro _; rfl
+  -- transparency would equate compC p xc with compC q xc at false
+  have h_eq : compC p xc ↔ compC q xc := h xc false p q h_at
+  -- compC p xc holds (xc.cont = p definitionally)
+  have hp : compC p xc := rfl
+  -- compC q xc would force xc.cont = (fun _ => True), but they
+  -- differ at b = true: xc.cont true = false ≠ True
+  have hq : ¬ compC q xc := by
+    intro heq
+    have : (fun b : Bool => b = false) true = (fun _ : Bool => True) true :=
+      congrFun heq true
+    -- LHS reduces to (true = false) = False; RHS to True
+    simp at this
+  exact hq (h_eq.mp hp)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Transparent Syntax-Semantics Mapping Thesis
@@ -608,5 +656,101 @@ def overtContPExponents : List (String × String) :=
   [ ("Tigrinya",  "kemzi"),  -- @cite{cacchioli-2025} factive
     ("Buryat",    "gɔ"),     -- @cite{bondarenko-2022} §4.3.1
     ("Korean",    "-ta") ]   -- @cite{bogal-allbritten-moulton-2018} / Bondarenko §4.3.2
+
+-- ════════════════════════════════════════════════════════════════
+-- § 13. Chapter 2 §2.2.3: noun-predicate co-occurrence diagnostics
+-- ════════════════════════════════════════════════════════════════
+--
+-- The chapter-2 substantive distinct-denotation argument relies on
+-- two empirical predicate-class co-occurrence asymmetries
+-- (§2.2.3 ex. 105-112, pp. 102-105):
+--
+--   - Cont-NPs combine with truth-evaluable predicates ('true',
+--     'false', 'mistaken'); Sit-NPs do NOT (paper ex. 105-107).
+--   - Sit-NPs combine with occurrence/happening predicates
+--     (Russian *proizojti* / *slučitsja* 'occur/happen'; Korean
+--     *ilena* 'occur'); Cont-NPs do NOT (paper ex. 108-112).
+--
+-- These are not three independent stipulations but reflect the
+-- type-theoretic distinction encoded in `NominalSort`: content
+-- individuals carry propositional content (and so can be
+-- truth-evaluated); situations are points of evaluation (and so
+-- can occur/happen but lack truth values). The two predicates
+-- below project the asymmetry from the sort.
+
+/-- A nominal sort is *truth-evaluable* iff it can combine with
+    'true' / 'false' / 'mistaken' — paper §2.2.3 ex. 105-107. -/
+def NominalSort.truthEvaluable : NominalSort → Prop
+  | .content   => True
+  | .situation => False
+
+instance : ∀ s, Decidable (NominalSort.truthEvaluable s) := fun s => by
+  cases s <;> (unfold NominalSort.truthEvaluable; infer_instance)
+
+/-- A nominal sort is *occurrence-compatible* iff it can combine
+    with 'occur' / 'happen' (Russian *proizojti*, *slučitsja*;
+    Korean *ilena*) — paper §2.2.3 ex. 108-112. -/
+def NominalSort.occurrenceCompatible : NominalSort → Prop
+  | .content   => False
+  | .situation => True
+
+instance : ∀ s, Decidable (NominalSort.occurrenceCompatible s) := fun s => by
+  cases s <;> (unfold NominalSort.occurrenceCompatible; infer_instance)
+
+/-- The two predicates partition the sorts: content is
+    truth-evaluable but not occurrence-compatible; situation
+    is occurrence-compatible but not truth-evaluable. -/
+theorem truth_vs_occurrence_partition :
+    NominalSort.truthEvaluable .content ∧
+    ¬ NominalSort.occurrenceCompatible .content ∧
+    ¬ NominalSort.truthEvaluable .situation ∧
+    NominalSort.occurrenceCompatible .situation := by
+  refine ⟨trivial, ?_, ?_, trivial⟩ <;> exact id
+
+-- ════════════════════════════════════════════════════════════════
+-- § 14. Chapter 2 §2.3 Proposal: the Cont head denotation
+-- ════════════════════════════════════════════════════════════════
+--
+-- @cite{bondarenko-2022} §2.3 ex. 150 proposes:
+--
+--     ⟦Cont⟧^{s,g,t} = λp_{st}.λx_e. CONT(x) = p
+--
+-- which is precisely the existing `compC` from
+-- `Theories/Semantics/Attitudes/ClauseDenotation/Content.lean`. So
+-- the substrate primitive `compC` IS Bondarenko's proposed Cont
+-- head denotation. This bridge is one-line `rfl`-grade — included
+-- here to make the substrate-paper correspondence explicit.
+--
+-- The dual Comp head denotation (paper ex. 151)
+--
+--     ⟦Comp⟧^{s,g,t} = λp_{et}.λx_e. x ⊑ s ∧ x ⊩_e p
+--
+-- requires the *exact-exemplification* relation `⊩_e` from
+-- truthmaker / Kratzer-1989 situation semantics, which has only
+-- partial substrate support in linglib (see
+-- `Core/Logic/Intensional/Situations.lean` for `Persistent` /
+-- `IsWorld` but NO exemplification primitive). The Comp side is
+-- thus deferred; the Cont side is bridged below.
+
+/-- @cite{bondarenko-2022} §2.3 ex. 150 Cont head denotation IS
+    the existing `compC` substrate (modulo argument order). The
+    proposal at the chapter-2 level just instantiates the
+    Kratzer/Moulton CONT-equality machinery already in linglib. -/
+theorem cont_head_denotation_is_compC {W : Type*}
+    (p : W → Prop) (xc : ContentIndividual W) :
+    -- Bondarenko's ⟦Cont⟧(p)(x) = (CONT(x) = p)
+    -- compC's signature: compC p xc = (xc.cont = p)
+    compC p xc = (xc.cont = p) := rfl
+
+/-- The Comp head denotation (paper ex. 151) is queued for
+    formalisation. Stating the signature here for grep-
+    discoverability; the body requires the `⊩_e` exact-
+    exemplification relation from Truthmaker / Kratzer-1989 not
+    yet a linglib substrate primitive. TODO: instantiate when
+    `Theories/Semantics/Truthmaker/Exemplification.lean` lands. -/
+def compHeadSignature {S : Type*} (_p : S → Prop) (_x : S) (_evalSit : S) : Prop :=
+  -- Intended: x ⊑ evalSit ∧ x ⊩_e p
+  -- Currently a placeholder — Truthmaker substrate not yet integrated.
+  True
 
 end Phenomena.Complementation.Studies.Bondarenko2022
