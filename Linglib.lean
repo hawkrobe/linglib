@@ -591,6 +591,7 @@ import Linglib.Fragments.Arabic.ModernStandard.Directives
 import Linglib.Fragments.Arabic.Egyptian.TenseAspect
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Height
+import Linglib.Fragments.Buryat.Complementizers
 import Linglib.Fragments.Dutch.Adjectives
 import Linglib.Fragments.Dutch.Adpositions
 import Linglib.Fragments.Dutch.Binominals
@@ -819,6 +820,7 @@ import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Korean.Modals
 import Linglib.Fragments.Korean.MedialVerbs
+import Linglib.Fragments.Korean.Complementizers
 import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Korean.Phonology
 import Linglib.Fragments.Japanese.TemporalConnectives

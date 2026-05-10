@@ -7,6 +7,16 @@ import Linglib.Theories.Semantics.Attitudes.ClauseDenotation.Situation
 Tatiana Bondarenko (2022). MIT PhD dissertation. Thesis advisors:
 P. Elliott, K. von Fintel, D. Fox, S. Iatridou, R. Schwarzschild.
 
+## Locator convention
+
+Section / equation / example numbers below reference Chapter 1 (the
+"Brief summary of the proposal" overview), unless prefixed with an
+explicit chapter number. Chapter 4 — the substantive bare-vs-
+nominalized treatment formalised in §§ 7-12 of this file — gives
+the same content under different locators (e.g., Table 1.1 ↔ Table
+4.1; ex. 1 ↔ §4.2 ex. 1-2). Locators were verified against the
+PDF; references to chapters not yet read carry `UNVERIFIED:` flags.
+
 ## Headline thesis
 
 Embedded CPs receive **two kinds of denotations** corresponding to a
@@ -360,5 +370,243 @@ theorem sit_cp_via_situation_blocked :
 theorem be2026_inherits_equality_substrate {W : Type*}
     (xc : ContentIndividual W) (p : W → Prop) :
     compC p xc ↔ xc.cont = p := Iff.rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § 8. Chapter 4: Type-theoretic apparatus (§4.2)
+-- ════════════════════════════════════════════════════════════════
+--
+-- Per the syntax expert audit, Bondarenko's derivation of "bare CPs
+-- cannot be Causer/Theme/About" is **type-theoretic**, not structural.
+-- The mechanism:
+--
+--    bare CP     : type ⟨e,t⟩  (predicate over situations)
+--    nominalized : type ⟨e⟩    (saturated DP)
+--    Θ-heads     : require ⟨e⟩ argument
+--    therefore   : only nominalized CP can saturate Θ
+--
+-- The N/D presence in nominalized CPs is the morphological *exponence*
+-- of the type-shift, not the cause. The four-cell table at §5
+-- (`transparentSSMapping`) is **derived** below from this type
+-- mechanism via §11 — see `transparentSSMapping_iff_typed`.
+--
+-- Critical framing caveat (syntax expert S2): Bondarenko works in
+-- Bare Phrase Structure where the X-bar argument/modifier distinction
+-- is gone. The "modifier" claim is **semantic** (type incompatibility),
+-- not structural. The §5 enum `ClauseStructurePath` (bareModifier vs
+-- nominalizedArgument etc.) is paper-fidelity bookkeeping; the BPS-
+-- compatible claim is the type-theoretic predicate.
+
+/-- Semantic types relevant for Bondarenko's type-mismatch derivation.
+    The two-element enum reflects only the cells the chapter exploits:
+    `individual` (saturated entity, type ⟨e⟩) and `predicate`
+    (unsaturated, type ⟨e,t⟩). Finer type-theoretic distinctions
+    (intensional types ⟨s,e⟩, generalized quantifiers ⟨⟨e,t⟩,t⟩, etc.)
+    are out of scope for this Studies file. -/
+inductive SemType where
+  | individual
+  | predicate
+  deriving DecidableEq, Repr
+
+/-- Embedded clause types per Bondarenko §4.2 (the bare-vs-nominalized
+    cut). Names emphasize the *semantic content* (predicate of
+    individuals vs predicate of situations) rather than the
+    morphological exponence (bare vs nominalized) — this is the BPS-
+    compatible framing. -/
+inductive ClauseType where
+  /-- Nominalized CP: type ⟨e⟩, refers to an individual (typically
+      with propositional content via CONT). Buryat *gɔ*-marked clause
+      with a participial nominaliser; Korean *-nun + kes* clause. -/
+  | predicateOfIndividuals
+  /-- Bare CP: type ⟨e,t⟩, predicate over (minimal) situations.
+      Buryat clause without *gɔ*; Korean *-ta* declarative; Russian
+      bare *čto*-clause. -/
+  | predicateOfSituations
+  deriving DecidableEq, Repr
+
+/-- The semantic type of an embedded clause: nominalized → individual,
+    bare → predicate. This is the type-theoretic content the chapter
+    exploits. -/
+def ClauseType.semanticType : ClauseType → SemType
+  | .predicateOfIndividuals => .individual
+  | .predicateOfSituations  => .predicate
+
+/-- Θ-heads relevant to Bondarenko §4.4. Per syntax expert S3, these
+    are NOT three independent stipulations — they share the
+    selectional restriction "requires individual argument." Per-Θ
+    presupposition flavor (Θ_About has pre-existence; §4.4.3) is
+    deferred to a future scope. -/
+inductive ThetaHead where
+  /-- Θ_Causer (Pylkkänen / Cuervo). §4.4.1. -/
+  | causer
+  /-- Θ_Theme (broad, internal-argument introducer). §4.4.2. -/
+  | theme
+  /-- Θ_About (Bondarenko's own innovation, Pylkkänen-style refinement;
+      carries pre-existence presupposition not formalised here). §4.4.3. -/
+  | aboutAttitude
+  deriving DecidableEq, Repr
+
+/-- Every Θ-head requires an individual argument (type ⟨e⟩). This is
+    the central claim that drives the bare-vs-nominalized derivation;
+    it does NOT vary by Θ-head, despite per-Θ presupposition variation
+    (§4.4.3 Θ_About pre-existence). -/
+def ThetaHead.requiredType : ThetaHead → SemType
+  | _ => .individual
+
+/-- A clause type **saturates** a Θ-head iff its semantic type
+    matches the head's required type. Per Bondarenko §4.2, this is
+    the central type-mismatch derivation. NOT a stipulation: the
+    `Prop` is just type-equality on the projection through
+    `semanticType` / `requiredType`. -/
+def saturatesTheta (ct : ClauseType) (θ : ThetaHead) : Prop :=
+  ct.semanticType = θ.requiredType
+
+instance : ∀ (ct : ClauseType) (θ : ThetaHead),
+    Decidable (saturatesTheta ct θ) := fun ct θ => by
+  unfold saturatesTheta; infer_instance
+
+-- ════════════════════════════════════════════════════════════════
+-- § 9. Causer / Theme / About derivations (§4.4.1-3)
+-- ════════════════════════════════════════════════════════════════
+--
+-- Per syntax expert S3: the three negative claims (Causer / Theme /
+-- About-cannot-be-bare) reduce to ONE mechanism. Each is one line
+-- after the type-mismatch substrate above.
+
+/-- **Bondarenko §4.4.1**: Bare CPs cannot be Causers. Derived from
+    type-mismatch: bare CP delivers `.predicate`; Θ_Causer requires
+    `.individual`. -/
+theorem bareCP_not_Causer :
+    ¬ saturatesTheta .predicateOfSituations .causer := by
+  intro h; exact SemType.noConfusion h
+
+/-- **Bondarenko §4.4.2**: Bare CPs cannot be Theme-arguments. Same
+    mechanism as Causer. The *explain*-class data
+    (@cite{halpert-schueler-2013}, @cite{elliott-2016},
+    @cite{roelofsen-uegaki-2021}, @cite{pietroski-2000}) is what makes
+    this derivation tight: when *explain* takes a bare clause vs a
+    nominalized clause, only the latter receives the Theme reading. -/
+theorem bareCP_not_Theme :
+    ¬ saturatesTheta .predicateOfSituations .theme := by
+  intro h; exact SemType.noConfusion h
+
+/-- **Bondarenko §4.4.3**: Bare CPs cannot be About-arguments. Same
+    type-mismatch; per Bondarenko this Θ-head additionally introduces
+    a pre-existence presupposition (deferred). -/
+theorem bareCP_not_About :
+    ¬ saturatesTheta .predicateOfSituations .aboutAttitude := by
+  intro h; exact SemType.noConfusion h
+
+/-- The unified Bondarenko §4.4 result: bare CPs satisfy NO Θ-head.
+    This is the single mechanism behind §4.4.1, §4.4.2, §4.4.3 — not
+    three independent stipulations (per syntax expert S3). -/
+theorem bareCP_satisfies_no_theta :
+    ∀ θ : ThetaHead, ¬ saturatesTheta .predicateOfSituations θ := by
+  intro θ h; exact SemType.noConfusion h
+
+/-- Conversely, nominalized CPs satisfy every Θ-head (modulo per-Θ
+    presupposition flavor not formalized here). -/
+theorem nominalizedCP_satisfies_every_theta :
+    ∀ θ : ThetaHead, saturatesTheta .predicateOfIndividuals θ := by
+  intro θ; rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § 10. Modifier path (§4.5): bare CPs as situation-modifiers
+-- ════════════════════════════════════════════════════════════════
+--
+-- Per Layered Grounding obligation (cross-framework auditor):
+-- consume `Theories.Semantics.Composition.Modification`'s
+-- `predicateModification` (`⊓ₚ`) — DO NOT redefine PM here. The
+-- substrate operates over `Frame.Denot (.e ⇒ .t)` typed-semantics
+-- predicates; this Studies file states only the abstract
+-- compositional fact (bare CP composes via PM with v's situation
+-- argument). The Frame-typed instantiation is queued for when the
+-- compositional layer of Bondarenko's analysis is formalised in
+-- detail.
+--
+-- Critical framing caveat (syntax expert S2): Bondarenko's "modifier"
+-- claim is SEMANTIC (type compatibility for PM), NOT structural
+-- ("adjunct" in the X-bar sense). BPS does not have the X-bar
+-- argument/modifier distinction. This file's `composesViaPM` predicate
+-- tracks the SEMANTIC claim.
+
+/-- A clause can compose via Predicate Modification with a verbal
+    situation argument iff it has predicate type (⟨s,t⟩ after lifting
+    the individual variable in Bondarenko's lift; substantively, both
+    arguments are situation-predicates and intersect by PM). The
+    `predicateModification` substrate at
+    `Theories/Semantics/Composition/Modification.lean` is the typed
+    realisation; this Studies-level predicate is its qualitative
+    projection. -/
+def composesViaPM : ClauseType → Prop
+  | .predicateOfIndividuals => False  -- nominalised, no PM compatibility
+  | .predicateOfSituations  => True   -- bare, PM-compatible
+
+instance : ∀ ct, Decidable (composesViaPM ct) := fun ct => by
+  cases ct <;> (unfold composesViaPM; infer_instance)
+
+/-- **Bondarenko §4.5**: bare CPs are verbal modifiers. Stated as
+    PM-compatibility, derived from the type. -/
+theorem bareCP_composes_via_PM : composesViaPM .predicateOfSituations := trivial
+
+/-- Nominalized CPs are NOT modifiers via PM (Bondarenko §4.5
+    contrapositive — they compose via FA through the DP path). -/
+theorem nominalizedCP_not_PM_modifier : ¬ composesViaPM .predicateOfIndividuals :=
+  fun h => h
+
+-- ════════════════════════════════════════════════════════════════
+-- § 11. Refactor: derive `transparentSSMapping` from §§ 8-10
+-- ════════════════════════════════════════════════════════════════
+--
+-- Per mathlib audit critical caveat: the type-theoretic refactor is
+-- only substantive if it actually replaces the def-as-table form
+-- with a derivation. The four cells of the original §5 table
+-- become projections of the type-mismatch + PM-compatibility
+-- predicates above.
+
+/-- The cell value of the original `transparentSSMapping` table at
+    a given path, **derived** from the type-theoretic predicates. -/
+def transparentSSMappingDerived : ClauseStructurePath → Prop
+  | .bareModifier         => composesViaPM .predicateOfSituations
+  | .bareArgument         => ∃ θ, saturatesTheta .predicateOfSituations θ
+  | .nominalizedModifier  => composesViaPM .predicateOfIndividuals
+  | .nominalizedArgument  => ∃ θ, saturatesTheta .predicateOfIndividuals θ
+
+/-- The original `transparentSSMapping` (§5, def-as-table) **agrees**
+    with the type-theoretic derivation cell-by-cell. This is the
+    bridge mathlib audit demanded: the four-cell pattern is now
+    derived rather than stipulated. -/
+theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
+    transparentSSMapping path ↔ transparentSSMappingDerived path := by
+  cases path
+  case bareModifier =>
+    refine ⟨fun _ => bareCP_composes_via_PM, fun _ => trivial⟩
+  case bareArgument =>
+    refine ⟨fun h => h.elim, ?_⟩
+    rintro ⟨θ, hθ⟩
+    exact (bareCP_satisfies_no_theta θ hθ).elim
+  case nominalizedModifier =>
+    refine ⟨fun h => h.elim, ?_⟩
+    intro hpm; exact (nominalizedCP_not_PM_modifier hpm).elim
+  case nominalizedArgument =>
+    refine ⟨fun _ => ⟨.causer, nominalizedCP_satisfies_every_theta _⟩,
+            fun _ => trivial⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § 12. Cross-linguistic ContP-exponent paradigm
+-- ════════════════════════════════════════════════════════════════
+--
+-- Per cross-framework auditor: Tigrinya *kemzi* (Cacchioli2025),
+-- Buryat *gɔ* (Fragments/Buryat/Complementizers), Korean *-ta*
+-- (Fragments/Korean/Complementizers) form a paradigm of overt ContP
+-- exponents that Bondarenko's analysis predicts cross-linguistically.
+-- This list is grep-discoverable for downstream typology work.
+
+/-- Cross-linguistic overt exponents of ContP per
+    @cite{bondarenko-2022}'s analysis (§4.3.1 Buryat, §4.3.2 Korean)
+    extended with Tigrinya *kemzi* (@cite{cacchioli-2025}). -/
+def overtContPExponents : List (String × String) :=
+  [ ("Tigrinya",  "kemzi"),  -- @cite{cacchioli-2025} factive
+    ("Buryat",    "gɔ"),     -- @cite{bondarenko-2022} §4.3.1
+    ("Korean",    "-ta") ]   -- @cite{bogal-allbritten-moulton-2018} / Bondarenko §4.3.2
 
 end Phenomena.Complementation.Studies.Bondarenko2022

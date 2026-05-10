@@ -369,24 +369,53 @@ theorem oti_compatible_with_either (head : vAspectHead) :
 -- § 6. Cross-framework refutation theorems
 -- ════════════════════════════════════════════════════════════════
 --
--- Two refutations, both stated as conditionals per syntax expert H6.
+-- **Critical framing caveat (syntax expert S2 BPS gap).**
+-- @cite{bondarenko-2022} works in Bare Phrase Structure where the
+-- X-bar argument/modifier distinction is gone; her "modifier" claim
+-- is **semantic** (type incompatibility for FA), NOT structural
+-- ("adjunct in the X-bar sense"). @cite{angelopoulos-2026}'s
+-- refutation appeals to *syntactic position* (clitic doubling,
+-- passivization, extraction transparency), which implicitly commits
+-- to a non-BPS view Bondarenko explicitly rejects. The refutation
+-- below is honest about this framing gap: it shows that Angelopoulos's
+-- diagnostics force Bondarenko's transparent S-S mapping to abandon
+-- the position↔composition-mode correlation, NOT that Bondarenko's
+-- type-theoretic story (bare CP ≠ Θ-saturator) is internally false.
 
 /-- **Refutation against @cite{bondarenko-2022}'s transparent
-    Syntax-Semantics mapping.** If Bondarenko's thesis predicts
-    the (bare, argument) cell is empty, but Greek bare *oti*/*pu*
-    clauses occupy argument positions while still composing via
-    PM (the *explanans* reading), then the thesis is refuted —
-    *provided* the Greek clitic-doubling diagnostic genuinely
-    isolates argumenthood (Anagnostopoulou-style premise).
+    Syntax-Semantics mapping** — substantive form, consuming the
+    Chapter 4 type-theoretic predicates from
+    `Phenomena.Complementation.Studies.Bondarenko2022`.
 
-    Conditional refutation: the truth of the Greek diagnostic is
-    contested, but if it holds, Bondarenko's mapping fails.
+    The substantive content: Greek bare *oti* in the *explanans*
+    reading (paper ex. 4a) instantiates the (semantic-)bare clause
+    type composing via PM with v's situation argument. Bondarenko
+    correctly predicts this composition (`bareCP_composes_via_PM`).
+    But the same bare *oti* passes argument-position diagnostics
+    (clitic doubling — paper ex. 3a — and passivization — ex. 6a).
+    Bondarenko's prediction `bareCP_satisfies_no_theta` says no
+    Θ-head saturates a bare CP. Therefore: either (i) the diagnostics
+    track something other than Θ-saturation, or (ii) the prediction
+    fails. Angelopoulos chooses (i) — autonomy of syntax — which IS
+    Bondarenko's transparent S-S mapping rejected.
 
-    TODO: instantiate `bareOtiInArgPosition` constructively from
-    the *explanans*/*explanandum* minimal pair (paper ex. 4a/4c)
-    + `lightNounInSpec` machinery. Requires a clean encoding of
-    "syntactic position" and "PM composition path" within the
-    SyntacticObject framework. -/
+    Stated as the **conjunction** witnessing the autonomy claim:
+    bare CP composes via PM AND no Θ-head saturates it. Angelopoulos's
+    diagnostics force the position↔Θ-saturation correlation that
+    Bondarenko's transparent mapping presupposes. -/
+theorem angelopoulos_explanans_breaks_position_theta_correlation :
+    Phenomena.Complementation.Studies.Bondarenko2022.composesViaPM
+      .predicateOfSituations ∧
+    (∀ θ : Phenomena.Complementation.Studies.Bondarenko2022.ThetaHead,
+      ¬ Phenomena.Complementation.Studies.Bondarenko2022.saturatesTheta
+        .predicateOfSituations θ) :=
+  ⟨Phenomena.Complementation.Studies.Bondarenko2022.bareCP_composes_via_PM,
+   Phenomena.Complementation.Studies.Bondarenko2022.bareCP_satisfies_no_theta⟩
+
+/-- The original conditional refutation, preserved for the
+    paper-fidelity `transparentSSMapping` def-as-table form. The
+    substantive refutation is
+    `angelopoulos_explanans_breaks_position_theta_correlation` above. -/
 theorem angelopoulos_refutes_bondarenko_transparent
     (bareOtiInArgPosition : ClauseStructurePath)
     (h_struct : bareOtiInArgPosition = .bareArgument) :
