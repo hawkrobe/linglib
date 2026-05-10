@@ -31,10 +31,13 @@ The trace encoder `τ` is an explicit per-definition parameter, not a
 section variable. Consumers pick `τ` to encode whatever trace
 information they want about the cut subtree:
 
-- **Deletion variant** Δ^d: `τ = Function.const _ ()` (β = Unit) — the
-  placeholder is just a Unit-labeled leaf, identical for every cut.
-- **Identity trace**: `τ = id` if β = Planar (α ⊕ β) — the placeholder
-  carries the full cut subtree as label.
+- **Unit trace**: `β = Unit`, `τ = Function.const _ ()` — placeholder is
+  a single Unit-labeled leaf, identical for every cut. Distinct from
+  MCB's Δ^d (Definition 1.2.5, p. 31), which is deletion-then-rebinarize
+  and would require separate substrate.
+- **Identity trace**: `τ = id` if β = Planar (α ⊕ β) — placeholder
+  carries the full cut subtree as label. Closest match to the book's
+  notation `F̄_v`.
 - **Quotient trace**: `τ` projects to syntactic features, semantic
   representations, etc. (consumer-specific).
 
@@ -44,16 +47,26 @@ The substrate is encoder-free: an α-only tree T : Planar α is embedded
 into Planar (α ⊕ β) via `Planar.map Sum.inl T`. No separate
 `mapDecoration` primitive.
 
-## Naming and MCB anchor
+## MCB anchors
 
-@cite{marcolli-chomsky-berwick-2025} Definition 1.2.4 (book p. 30)
-defines T/^c F_v: parent arity preserved by replacing each cut subtree
-with a single trace-leaf labeled by an encoder of the subtree. This
-file's `comulCAlgHomP τ` realises Δ^c on the full Hopf algebra carrier.
+- **Definition 1.2.4** (book p. 30): T/^c F_v — contraction of each
+  cut subtree to its root vertex, which becomes a leaf carrying a
+  trace label F̄_v. Parent arity preserved.
+- **Definition 1.2.8** (book p. 33), formula (1.2.8) with ω = c: the
+  coproduct itself, Δ^c(T) := T ⊗ 1 + 1 ⊗ T + Σ F_v ⊗ T/^c F_v. The
+  `1 ⊗ T` term is absorbed into the sum here as the empty-cut summand
+  (matching `Coproduct.lean`'s convention; the `T ⊗ 1` term is kept
+  explicit).
+- **Remark 1.2.9** (book p. 34): on nonplanar binary rooted trees, Δ^c
+  is the restriction of the coproduct of the Connes-Kreimer Hopf
+  algebra of Feynman graphs.
+- **Lemma 1.2.10** (book p. 35): coassociativity of Δ^c (proved at the
+  Nonplanar layer; not in this file).
 
 The trace-leaf contraction underlies the C-I (semantic) interface for
-FormCopy in the MCB analysis. For the deletion variant Δ^p (cut sites
-removed; result lives in *at-most-n-ary* trees), see `Coproduct.lean`.
+FormCopy in the MCB analysis. For the admissible-cut variant Δ^p
+(corresponds to MCB's Δ^ρ; cut sites removed entirely; result lives
+in *at-most-n-ary* trees), see `Coproduct.lean`.
 
 ## Status
 
