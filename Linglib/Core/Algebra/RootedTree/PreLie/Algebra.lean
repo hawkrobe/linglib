@@ -522,9 +522,138 @@ private theorem assoc_symm_planar (t₁ t₂ t₃ : Planar α) :
         Nonplanar.mk : Multiset (Nonplanar α))
       + (((Planar.insertSum t₂ t₃).bind (fun S => Planar.insertSum t₁ S)).map
           Nonplanar.mk : Multiset (Nonplanar α)) := by
-  -- TODO Step 2: 3-class decomposition of inner insertSum via vertices_insertAt_decomp.
-  -- See plan at /Users/rxdh/.claude/plans/partitioned-yawning-parrot.md §"Step 2".
-  sorry
+  -- Strategy: decompose LHS₁ and RHS₁ via vertices_insertAt_decomp into
+  -- (preserved + sourceSelf + lifted)-mk classes. Identify
+  --   * preserved_mk LHS = RHS via S1 (planar swap, after .map mk congr).
+  --   * sourceSelf_mk LHS = RHS via mk_insertAt_sourceSelf_swap pointwise.
+  --   * lifted_mk LHS = RHS₂_mk via S2.
+  --   * lifted_mk RHS = LHS₂_mk via S2 (with t₂ ↔ t₃).
+  -- Add and conclude.
+  --
+  -- Step 1: Reduce each "(t ◁ s) ◁ u" into a vertex-indexed form via S3.
+  rw [insertSum_bind_insertSum_eq_bind_vertices t₁ t₂ t₃,
+      insertSum_bind_insertSum_eq_bind_vertices t₁ t₃ t₂]
+  -- Step 2: Inside each outer bind, expand `(insertAt v _) ◁ _` via
+  -- insertSum_eq_coe_map_insertAt + vertices_insertAt_decomp.
+  -- Use Multiset.map_bind to push .map mk inside the bind.
+  simp_rw [Multiset.map_bind]
+  conv_lhs =>
+    enter [1, 2]; ext v
+    rw [Planar.insertSum_eq_coe_map_insertAt (Planar.insertAt v t₂) t₃,
+        ← Multiset.map_coe, Planar.vertices_insertAt_decomp v t₂,
+        Multiset.map_add, Multiset.map_add,
+        Multiset.map_add, Multiset.map_add,
+        Multiset.map_map, Multiset.map_map, Multiset.map_map]
+  conv_rhs =>
+    enter [1, 2]; ext v
+    rw [Planar.insertSum_eq_coe_map_insertAt (Planar.insertAt v t₃) t₂,
+        ← Multiset.map_coe, Planar.vertices_insertAt_decomp v t₃,
+        Multiset.map_add, Multiset.map_add,
+        Multiset.map_add, Multiset.map_add,
+        Multiset.map_map, Multiset.map_map, Multiset.map_map]
+  -- Normalize composition `mk ∘ (insertAt · t)` to lambda form for matching.
+  simp only [Function.comp_def]
+  -- Now each outer bind has `fun v => preserved_v_mk + sourceSelf_v_mk +
+  -- lifted_v_mk` inside. Distribute bind over the +'s via Multiset.bind_add.
+  simp_rw [Multiset.bind_add]
+  -- Goal:
+  --   (LHS₁_pres_mk + LHS₁_self_mk + LHS₁_lift_mk) + LHS₂_mk
+  --   = (RHS₁_pres_mk + RHS₁_self_mk + RHS₁_lift_mk) + RHS₂_mk
+  -- Now identify each piece.
+  -- Preserved-mk equality (S1 + map_mk congr):
+  have hpres : ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
+                  (fun v => ((↑(Planar.vertices t₁) :
+                      Multiset (Planar.Vertex t₁)).filterMap
+                        (fun w => Planar.Vertex.preserve? v w t₂)).map
+                      (fun w => Nonplanar.mk (Planar.insertAt w t₃))))
+              = ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
+                  (fun v => ((↑(Planar.vertices t₁) :
+                      Multiset (Planar.Vertex t₁)).filterMap
+                        (fun w => Planar.Vertex.preserve? v w t₃)).map
+                      (fun w => Nonplanar.mk (Planar.insertAt w t₂)))) := by
+    -- Pull mk inside the filterMap via Multiset.map_filterMap, then apply S1
+    -- with `mk ∘ insertAt · t₃` and `mk ∘ insertAt · t₂` mapping over the
+    -- Option from preserve?. The pointwise relation is the same as in S1
+    -- (mk preserves equality).
+    simp_rw [Multiset.map_filterMap]
+    -- New form: bind v: filterMap w: (preserve? v w t).map (mk ∘ insertAt · u)
+    -- We want to replace `(preserve? v w t₂).map (mk ∘ insertAt · t₃)` by
+    -- `(preserve? w v t₃).map (mk ∘ insertAt · t₂)` (after swap).
+    -- Use S1 in conjunction with map_mk. Specifically, S1 is at the planar
+    -- level; we lift to Nonplanar via Multiset.map Nonplanar.mk.
+    have key := Planar.bind_filterMap_preserve?_swap t₁ t₂ t₃
+    -- key : LHS_planar = RHS_planar where map's apply (insertAt · t).
+    -- Apply Multiset.map Nonplanar.mk to both sides. We need LHS' and RHS'
+    -- to differ from key by replacing `(insertAt · t)` with `mk ∘ (insertAt · t)`.
+    -- This is achieved by Multiset.map_filterMap on each side of key.map mk.
+    have hkey : Multiset.map Nonplanar.mk
+                  ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
+                    (fun v => ((↑(Planar.vertices t₁) :
+                        Multiset (Planar.Vertex t₁)).filterMap
+                          (fun w => (Planar.Vertex.preserve? v w t₂).map
+                            (fun pos => Planar.insertAt pos t₃)))))
+              = Multiset.map Nonplanar.mk
+                  ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
+                    (fun v => ((↑(Planar.vertices t₁) :
+                        Multiset (Planar.Vertex t₁)).filterMap
+                          (fun w => (Planar.Vertex.preserve? v w t₃).map
+                            (fun pos => Planar.insertAt pos t₂))))) := by
+      rw [key]
+    -- Convert each side of hkey via map_bind / map_filterMap to match our goal.
+    rw [Multiset.map_bind, Multiset.map_bind] at hkey
+    simp_rw [Multiset.map_filterMap, Option.map_map, Function.comp_def] at hkey
+    -- After the conversion, hkey matches the goal directly.
+    exact hkey
+  -- SourceSelf-mk equality (pointwise mk_insertAt_sourceSelf_swap):
+  have hself : ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
+                  (fun v => ({Planar.Vertex.sourceSelf v t₂} :
+                      Multiset (Planar.Vertex (Planar.insertAt v t₂))).map
+                      (fun w => Nonplanar.mk (Planar.insertAt w t₃))))
+              = ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
+                  (fun v => ({Planar.Vertex.sourceSelf v t₃} :
+                      Multiset (Planar.Vertex (Planar.insertAt v t₃))).map
+                      (fun w => Nonplanar.mk (Planar.insertAt w t₂)))) := by
+    apply Multiset.bind_congr
+    intros v _
+    show ({Nonplanar.mk (Planar.insertAt (Planar.Vertex.sourceSelf v t₂) t₃)} :
+            Multiset (Nonplanar α))
+        = ({Nonplanar.mk (Planar.insertAt (Planar.Vertex.sourceSelf v t₃) t₂)} :
+            Multiset (Nonplanar α))
+    rw [mk_insertAt_sourceSelf_swap v t₂ t₃]
+  -- Lifted-mk identity for LHS₁: lifted_LHS_mk = RHS₂_mk (distributed form
+  -- post simp_rw [Multiset.map_bind]) via S2.
+  have hlift_lhs : ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
+                      (fun v => ((↑(Planar.vertices t₂) :
+                          Multiset (Planar.Vertex t₂)).map
+                            (Planar.Vertex.lift v t₂)).map
+                          (fun w => Nonplanar.mk (Planar.insertAt w t₃))))
+                  = (Planar.insertSum t₂ t₃).bind
+                      (fun S => Multiset.map Nonplanar.mk
+                          (Planar.insertSum t₁ S)) := by
+    rw [← Multiset.map_bind, ← lifted_class_eq_cross t₁ t₂ t₃,
+        Multiset.map_bind]
+    apply Multiset.bind_congr; intros v _
+    simp only [Multiset.map_map, Function.comp_def]
+  -- Lifted-mk identity for RHS₁: lifted_RHS_mk = LHS₂_mk (distributed form).
+  have hlift_rhs : ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
+                      (fun v => ((↑(Planar.vertices t₃) :
+                          Multiset (Planar.Vertex t₃)).map
+                            (Planar.Vertex.lift v t₃)).map
+                          (fun w => Nonplanar.mk (Planar.insertAt w t₂))))
+                  = (Planar.insertSum t₃ t₂).bind
+                      (fun S => Multiset.map Nonplanar.mk
+                          (Planar.insertSum t₁ S)) := by
+    rw [← Multiset.map_bind, ← lifted_class_eq_cross t₁ t₃ t₂,
+        Multiset.map_bind]
+    apply Multiset.bind_congr; intros v _
+    simp only [Multiset.map_map, Function.comp_def]
+  -- Combine: rewrite hpres, hself, hlift_lhs, hlift_rhs into the goal.
+  rw [hpres, hself, hlift_lhs, hlift_rhs]
+  -- Goal: (RHS₁_pres_mk + RHS₁_self_mk + RHS₂_mk) + LHS₂_mk
+  --       = (RHS₁_pres_mk + RHS₁_self_mk + RHS₁_lift_mk) + RHS₂_mk
+  -- where RHS₁_lift_mk has been rewritten to LHS₂_mk on RHS, and LHS₁_lift_mk
+  -- has been rewritten to RHS₂_mk on LHS. Now arithmetic:
+  abel
 
 /-! ## §5: Singleton-reduction lemma (Phase C, prep)
 
