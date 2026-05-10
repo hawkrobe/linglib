@@ -272,6 +272,35 @@ def nullD (id : Nat) : SyntacticObject :=
 def nullDWrap (n : SyntacticObject) (id : Nat) : SyntacticObject :=
   .node (nullD id) n
 
+/-! ## Angelopoulos 2026: silent light noun for [n]-feature checking
+
+@cite{angelopoulos-2026} §3.1 (following @cite{arsenijevic-2009},
+@cite{moltmann-2019}) analyses Greek *oti*/*pu* as bearing an
+uninterpretable [n]-feature checked by a silent light noun in their
+specifier. The light noun is then licensed by incorporation
+(@cite{hale-keyser-1993}) into a higher *lexical* head (`v_State` or
+`v_Event`); incorporation into a *functional* head (`T`) is impossible.
+
+`nullN id` builds a saturated silent little-n leaf, parallel to
+`nullD`. It carries no further selectional features — its role is to
+be Merged into Spec,CP, where it checks the C head's [n]-feature, and
+subsequently to head-move into a hosting v. Uses the existing `Cat.n`
+constructor (Marantz 2001 / Distributed Morphology nominal categorizer);
+no new `Cat` constructor required. -/
+
+/-- A silent light noun (n head) with no selectional features, used for
+    checking a complementizer's [n]-feature in its specifier per
+    @cite{angelopoulos-2026} §3.1. The `id` argument should be unique
+    within the derivation. Mirrors `nullD`. -/
+def nullN (id : Nat) : SyntacticObject :=
+  mkLeafPhon .n [] "" id
+
+@[simp] theorem nullN_outerCat_leftSpine (id : Nat) :
+    HeadFunction.leftSpine.outerCat (nullN id) = .n := rfl
+
+@[simp] theorem nullN_checkedSel_leftSpine (id : Nat) :
+    checkedSelWith? HeadFunction.leftSpine (nullN id) = some [] := rfl
+
 /-! ## Step-level lemmas
 
 Destructor lemmas describing how `applyChecked` interacts with each `Step`

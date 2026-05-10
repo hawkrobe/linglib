@@ -717,6 +717,7 @@ import Linglib.Fragments.Greek.StandardModern.AdjAgreement
 import Linglib.Fragments.Greek.StandardModern.Modals
 import Linglib.Fragments.Greek.StandardModern.MoodChoice
 import Linglib.Fragments.Greek.StandardModern.Possession
+import Linglib.Fragments.Greek.StandardModern.Complementizers
 import Linglib.Fragments.Greek.AncientGreek.Directives
 import Linglib.Fragments.Greek.Grevena.Possession
 import Linglib.Fragments.Greek.Smyrna.Possession
@@ -1265,6 +1266,8 @@ import Linglib.Phenomena.Complementation.Studies.LiuYip2026
 import Linglib.Phenomena.Causation.Studies.Nadathur2024
 import Linglib.Phenomena.Complementation.Studies.Osborne2019Control
 import Linglib.Phenomena.Complementation.Studies.TheilerRoelofsenAloni2018
+import Linglib.Phenomena.Complementation.Studies.Bondarenko2022
+import Linglib.Phenomena.Complementation.Studies.Angelopoulos2026
 import Linglib.Phenomena.Control.Studies.Chierchia1984
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Control.Studies.Ostrove2026
@@ -2373,7 +2376,8 @@ import Linglib.Theories.Semantics.Events.TemporalDecomposition
 import Linglib.Theories.Semantics.Events.SpatiotemporalDistance
 import Linglib.Theories.Semantics.Attitudes.BuilderProperties
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
-import Linglib.Theories.Semantics.Attitudes.ContentComposition
+import Linglib.Theories.Semantics.Attitudes.ClauseDenotation.Content
+import Linglib.Theories.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Theories.Semantics.Attitudes.ContextQuantification
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Parasitic
