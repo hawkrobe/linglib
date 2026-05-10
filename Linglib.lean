@@ -1898,6 +1898,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Algebra
 import Linglib.Core.Algebra.RootedTree.PreLie.Defs
 import Linglib.Core.Algebra.RootedTree.PreLie.Nonplanar
 import Linglib.Core.Algebra.RootedTree.PreLie.VertexBijection
+import Linglib.Core.Algebra.SymmetricAlgebra.Derivation
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
