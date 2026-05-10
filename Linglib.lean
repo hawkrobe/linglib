@@ -1890,8 +1890,10 @@ import Linglib.Core.Combinatorics.RootedTree.Subtypes
 import Linglib.Core.Combinatorics.RootedTree.PlanarCut
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
-import Linglib.Core.Algebra.RootedTree.Coproduct
-import Linglib.Core.Algebra.RootedTree.CoproductNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.Defs
+import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
+import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
+import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation

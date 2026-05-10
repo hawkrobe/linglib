@@ -1,4 +1,4 @@
-import Linglib.Core.Algebra.RootedTree.CoproductNonplanar
+import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 import Mathlib.RingTheory.Coalgebra.Convolution
