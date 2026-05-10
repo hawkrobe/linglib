@@ -157,7 +157,120 @@ def nary (a : α) (cs : List (Planar α)) : Planar α := .node a cs
 @[simp] theorem nary_def (a : α) (cs : List (Planar α)) :
     nary a cs = .node a cs := rfl
 
-/-! ## §5: Sanity tests at compile time -/
+/-! ## §5: Functoriality
+
+`Planar` is a functor in the vertex-label parameter: a function `f : α → β`
+lifts to `Planar α → Planar β` by relabeling every vertex. Defined by
+mutual structural recursion on `(tree, list-of-trees)`. Counterpart
+of mathlib's `Tree.map` for binary trees and `List.map` for lists. -/
+
+mutual
+/-- Map a function over the vertex labels of a planar rooted tree. -/
+def map {β : Type*} (f : α → β) : Planar α → Planar β
+  | .node a cs => .node (f a) (mapList f cs)
+/-- Auxiliary: map across a list of children. -/
+def mapList {β : Type*} (f : α → β) : List (Planar α) → List (Planar β)
+  | [] => []
+  | c :: cs => map f c :: mapList f cs
+end
+
+@[simp] theorem map_node {β : Type*} (f : α → β) (a : α) (cs : List (Planar α)) :
+    map f (Planar.node a cs) = .node (f a) (mapList f cs) := rfl
+
+@[simp] theorem mapList_nil {β : Type*} (f : α → β) :
+    mapList f ([] : List (Planar α)) = [] := rfl
+
+@[simp] theorem mapList_cons {β : Type*} (f : α → β)
+    (c : Planar α) (cs : List (Planar α)) :
+    mapList f (c :: cs) = map f c :: mapList f cs := rfl
+
+/-- `mapList f` agrees with `List.map (map f)`. Bridge to mathlib's
+    `List.map` API. -/
+theorem mapList_eq_listMap {β : Type*} (f : α → β) (cs : List (Planar α)) :
+    mapList f cs = cs.map (map f) := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp only [mapList_cons, List.map_cons, ih]
+
+/-- `map` on a leaf. Provable by `simp` from `leaf_def + map_node + mapList_nil`,
+    so kept as a plain `rw` lemma (no `@[simp]`) to avoid simp non-confluence. -/
+theorem map_leaf {β : Type*} (f : α → β) (a : α) :
+    map f (leaf a) = leaf (f a) := rfl
+
+mutual
+/-- Functoriality: `map id = id`. -/
+@[simp] theorem map_id : ∀ (t : Planar α), map id t = t
+  | .node a cs => by rw [map_node, mapList_id]; rfl
+@[simp] theorem mapList_id : ∀ (cs : List (Planar α)), mapList id cs = cs
+  | [] => rfl
+  | c :: cs => by rw [mapList_cons, map_id, mapList_id]
+end
+
+mutual
+/-- Functoriality: `map (g ∘ f) = map g ∘ map f`. -/
+@[simp] theorem map_map {β γ : Type*} (f : α → β) (g : β → γ) :
+    ∀ (t : Planar α), map g (map f t) = map (g ∘ f) t
+  | .node a cs => by rw [map_node, map_node, map_node, mapList_mapList]; rfl
+@[simp] theorem mapList_mapList {β γ : Type*} (f : α → β) (g : β → γ) :
+    ∀ (cs : List (Planar α)), mapList g (mapList f cs) = mapList (g ∘ f) cs
+  | [] => rfl
+  | c :: cs => by
+    rw [mapList_cons, mapList_cons, mapList_cons, map_map, mapList_mapList]
+end
+
+/-! ### Counting interactions -/
+
+mutual
+@[simp] theorem weight_map {β : Type*} (f : α → β) :
+    ∀ (t : Planar α), (map f t).weight = t.weight
+  | .node a cs => by
+    rw [map_node]
+    show 1 + weightList (mapList f cs) = 1 + weightList cs
+    rw [weightList_mapList f cs]
+theorem weightList_mapList {β : Type*} (f : α → β) :
+    ∀ (cs : List (Planar α)), weightList (mapList f cs) = weightList cs
+  | [] => by rfl
+  | c :: cs => by
+    rw [mapList_cons]
+    show weight (map f c) + weightList (mapList f cs)
+       = weight c + weightList cs
+    rw [weight_map f c, weightList_mapList f cs]
+end
+
+mutual
+@[simp] theorem depth_map {β : Type*} (f : α → β) :
+    ∀ (t : Planar α), (map f t).depth = t.depth
+  | .node a cs => by
+    rw [map_node]
+    show 1 + depthMaxList (mapList f cs) = 1 + depthMaxList cs
+    rw [depthMaxList_mapList f cs]
+theorem depthMaxList_mapList {β : Type*} (f : α → β) :
+    ∀ (cs : List (Planar α)), depthMaxList (mapList f cs) = depthMaxList cs
+  | [] => by rfl
+  | c :: cs => by
+    rw [mapList_cons]
+    show max (depth (map f c)) (depthMaxList (mapList f cs))
+       = max (depth c) (depthMaxList cs)
+    rw [depth_map f c, depthMaxList_mapList f cs]
+end
+
+@[simp] theorem arity_map {β : Type*} (f : α → β) (t : Planar α) :
+    (map f t).arity = t.arity := by
+  cases t with
+  | node a cs =>
+    rw [map_node]
+    show (mapList f cs).length = cs.length
+    rw [mapList_eq_listMap, List.length_map]
+
+@[simp] theorem isLeaf_map {β : Type*} (f : α → β) (t : Planar α) :
+    (map f t).isLeaf = t.isLeaf := by
+  cases t with
+  | node a cs =>
+    cases cs with
+    | nil => rfl
+    | cons _ _ => rfl
+
+/-! ## §5b: Sanity tests at compile time -/
 
 example : Planar.weight (leaf 1 : Planar Nat) = 1 := by
   unfold leaf weight weightList; rfl

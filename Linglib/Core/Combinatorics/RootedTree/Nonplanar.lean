@@ -542,4 +542,116 @@ example {α : Type*} (a b c : α) :
 
 end Nonplanar
 
+/-! ## Functoriality of `map` under `PlanarEquiv`
+
+Setup for `Nonplanar.map`: lift `Planar.map` through the quotient by
+showing it preserves the equivalence relation. Done in two steps:
+elementary `PlanarStep` preservation, then closure under `EqvGen`. -/
+
+namespace Planar
+
+variable {α β γ : Type*}
+
+/-- `Planar.map` preserves `PlanarStep`. -/
+private theorem planarStep_map (f : α → β) {t s : Planar α} (h : PlanarStep t s) :
+    PlanarStep (map f t) (map f s) := by
+  induction h with
+  | @swapAtRoot a l r pre post =>
+    show PlanarStep (.node (f a) (mapList f (pre ++ l :: r :: post)))
+                    (.node (f a) (mapList f (pre ++ r :: l :: post)))
+    -- Bridge mapList to List.map and use the swapAtRoot constructor.
+    rw [mapList_eq_listMap, mapList_eq_listMap]
+    rw [List.map_append, List.map_append, List.map_cons, List.map_cons,
+        List.map_cons, List.map_cons]
+    exact PlanarStep.swapAtRoot
+  | @recurse a pre old new post _hstep ih =>
+    show PlanarStep (.node (f a) (mapList f (pre ++ old :: post)))
+                    (.node (f a) (mapList f (pre ++ new :: post)))
+    rw [mapList_eq_listMap, mapList_eq_listMap]
+    rw [List.map_append, List.map_append, List.map_cons, List.map_cons]
+    exact PlanarStep.recurse ih
+
+/-- `Planar.map` preserves `PlanarEquiv` (the equivalence closure of
+    `PlanarStep`). Substrate for `Nonplanar.map`. -/
+theorem planarEquiv_map (f : α → β) {t s : Planar α} (h : PlanarEquiv t s) :
+    PlanarEquiv (map f t) (map f s) := by
+  induction h with
+  | rel _ _ hstep => exact .of_step (planarStep_map f hstep)
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
+
+end Planar
+
+namespace Nonplanar
+
+variable {α β γ : Type*}
+
+/-! ## Functoriality
+
+Lift `Planar.map` through the quotient. Counterpart of `List.map` for
+lists: a function `f : α → β` lifts to `Nonplanar α → Nonplanar β` by
+relabeling every vertex. -/
+
+/-- Map a function over the vertex labels of a nonplanar rooted tree.
+    Lifted from `Planar.map` via `Quotient.map`. -/
+def map (f : α → β) : Nonplanar α → Nonplanar β :=
+  Quotient.map (Planar.map f)
+    (fun _ _ h => Planar.planarEquiv_map f h)
+
+/-- Quotient-unfolding for `Nonplanar.map`. Plain lemma (not `@[simp]`)
+    since mathlib's generic `Quotient.map_mk` covers the same ground. -/
+theorem map_mk (f : α → β) (t : Planar α) :
+    map f (mk t) = mk (Planar.map f t) := rfl
+
+theorem map_leaf (f : α → β) (a : α) :
+    map f (leaf a) = leaf (f a) := by
+  show map f (mk (Planar.leaf a)) = mk (Planar.leaf (f a))
+  rw [map_mk, Planar.map_leaf]
+
+@[simp] theorem map_id (t : Nonplanar α) : map id t = t := by
+  refine Quotient.inductionOn t ?_
+  intro p
+  show map id (mk p) = mk p
+  rw [map_mk, Planar.map_id]
+
+theorem map_map (f : α → β) (g : β → γ) (t : Nonplanar α) :
+    map g (map f t) = map (g ∘ f) t := by
+  refine Quotient.inductionOn t ?_
+  intro p
+  show map g (map f (mk p)) = map (g ∘ f) (mk p)
+  rw [map_mk, map_mk, map_mk, Planar.map_map]
+
+/-! ### Counting interactions -/
+
+@[simp] theorem weight_map (f : α → β) (t : Nonplanar α) :
+    (map f t).weight = t.weight := by
+  refine Quotient.inductionOn t ?_
+  intro p
+  show (map f (mk p)).weight = (mk p).weight
+  rw [map_mk, weight_mk, weight_mk, Planar.weight_map]
+
+@[simp] theorem depth_map (f : α → β) (t : Nonplanar α) :
+    (map f t).depth = t.depth := by
+  refine Quotient.inductionOn t ?_
+  intro p
+  show (map f (mk p)).depth = (mk p).depth
+  rw [map_mk, depth_mk, depth_mk, Planar.depth_map]
+
+@[simp] theorem arity_map (f : α → β) (t : Nonplanar α) :
+    (map f t).arity = t.arity := by
+  refine Quotient.inductionOn t ?_
+  intro p
+  show (map f (mk p)).arity = (mk p).arity
+  rw [map_mk, arity_mk, arity_mk, Planar.arity_map]
+
+@[simp] theorem isLeaf_map (f : α → β) (t : Nonplanar α) :
+    (map f t).isLeaf = t.isLeaf := by
+  refine Quotient.inductionOn t ?_
+  intro p
+  show (map f (mk p)).isLeaf = (mk p).isLeaf
+  rw [map_mk, isLeaf_mk, isLeaf_mk, Planar.isLeaf_map]
+
+end Nonplanar
+
 end RootedTree
