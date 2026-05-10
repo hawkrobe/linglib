@@ -5,6 +5,9 @@ import Mathlib.Algebra.MonoidAlgebra.Defs
 import Mathlib.Algebra.NonAssoc.PreLie.Basic
 import Mathlib.LinearAlgebra.Finsupp.SumProd
 import Mathlib.Data.Multiset.Bind
+import Mathlib.Data.Finsupp.SMul
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.LinearCombination
 
 set_option autoImplicit false
 
@@ -563,12 +566,11 @@ The headline. By bilinearity, reduces to `assoc_symm_singleton`. -/
     `RightPreLieRing.assoc_symm'`. -/
 theorem assoc_symm (x y z : InsertionAlgebra α) :
     x * y * z - x * (y * z) = x * z * y - x * (z * y) := by
-  -- TODO (Phase C body, deferred): bilinear extension from singletons.
-  -- Strategy: induct on `x` via `Finsupp.induction` (single, add); for
-  -- single t₁ a₁ case, induct on `y` similarly; for single t₂ a₂ case,
-  -- induct on `z`. The triple-induction reduces to
-  -- `assoc_symm_singleton` (modulo scalar multiplication, which
-  -- distributes since the Mul is bilinear).
+  -- TODO Step 5: bilinear extension via triple Finsupp.induction_linear.
+  -- Strategy: smul_mul_left/right helpers (Step 4) + triple Finsupp.induction_linear.
+  -- Basis case (single t₁ a₁ * single t₂ a₂ * single t₃ a₃ ...) reduces via
+  -- Finsupp.smul_single + scalar pull-outs to (a₁ * a₂ * a₃) • assoc_symm_singleton t₁ t₂ t₃.
+  -- Plan: /Users/rxdh/.claude/plans/partitioned-yawning-parrot.md §"Step 4+5".
   sorry
 
 /-! ## §6: `RightPreLieRing` instance (Phase D) -/
