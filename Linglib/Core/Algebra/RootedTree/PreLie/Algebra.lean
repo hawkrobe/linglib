@@ -445,6 +445,55 @@ private theorem ofTree_triple_right (T₁ T₂ T₃ : Nonplanar α) :
         (fun S => Nonplanar.insertSum T₁ S)) := by
   rw [ofTree_mul_ofTree, ofTree_mul_ofMultiset]
 
+/-! ## §4-prep: Vertex-indexed bind reformulation (R.3d Part 2 Step 2 substrate)
+
+Two reformulation lemmas that convert `(t₁ ◁ t₂).bind (T ↦ T ◁ t₃)` and
+`(vertices t₁).bind (fun v => map (insertAt (lift v t₂ g) t₃)` to the
+clean vertex-indexed and cross-term forms used by `assoc_symm_planar`. -/
+
+/-- Step A reformulation: the outer-then-inner double-`insertSum` rewrites
+    as a `vertices`-indexed `bind`. Pure mathlib `bind_map`. -/
+private theorem insertSum_bind_insertSum_eq_bind_vertices
+    (t₁ t₂ t₃ : Planar α) :
+    (Planar.insertSum t₁ t₂).bind (fun T => Planar.insertSum T t₃)
+      = ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
+          (fun v => Planar.insertSum (Planar.insertAt v t₂) t₃)) := by
+  rw [Planar.insertSum_eq_coe_map_insertAt t₁ t₂, ← Multiset.map_coe,
+      Multiset.bind_map]
+
+/-- Step C reformulation: the lifted class summed over `vertices t₁`
+    coincides with the cross term `(t₂ ◁ t₃).bind (t₁ ◁ ·)`. The proof
+    chains `insertAt_lift_eq_nested` + Fubini swap (`Multiset.bind_bind`-style)
+    + backward `insertSum_eq_coe_map_insertAt` twice. -/
+private theorem lifted_class_eq_cross (t₁ t₂ t₃ : Planar α) :
+    ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind (fun v =>
+        ((↑(Planar.vertices t₂) : Multiset (Planar.Vertex t₂)).map
+          (fun g => Planar.insertAt (Planar.Vertex.lift v t₂ g) t₃))))
+      = (Planar.insertSum t₂ t₃).bind (fun S => Planar.insertSum t₁ S) := by
+  -- Step C.1: rewrite each summand via insertAt_lift_eq_nested.
+  simp_rw [Planar.insertAt_lift_eq_nested]
+  -- Goal: (vertices t₁).bind (fun v =>
+  --        (vertices t₂).map (fun g => insertAt v (insertAt g t₃))) =
+  --       (insertSum t₂ t₃).bind (fun S => insertSum t₁ S)
+  -- Step C.2: swap the two binds (Fubini) so v is inner and g is outer.
+  rw [Multiset.bind_map_comm]
+  -- Goal: (vertices t₂).bind (fun g =>
+  --        (vertices t₁).map (fun v => insertAt v (insertAt g t₃))) = ...
+  -- Step C.3: recognize inner map as `t₁ ◁ (insertAt g t₃)` via Multiset.map_coe
+  -- (forward) followed by backward insertSum_eq_coe_map_insertAt.
+  rw [show (fun g : Planar.Vertex t₂ =>
+            Multiset.map (fun v => Planar.insertAt v (Planar.insertAt g t₃))
+              (↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁))) =
+          (fun g => Planar.insertSum t₁ (Planar.insertAt g t₃)) from
+        funext fun g => by
+          rw [Multiset.map_coe,
+              ← Planar.insertSum_eq_coe_map_insertAt t₁ (Planar.insertAt g t₃)]]
+  -- Goal: (vertices t₂).bind (fun g => insertSum t₁ (insertAt g t₃)) =
+  --       (insertSum t₂ t₃).bind (fun S => insertSum t₁ S)
+  -- Step C.4: recognize outer bind as bind over (insertSum t₂ t₃).
+  rw [Planar.insertSum_eq_coe_map_insertAt t₂ t₃, ← Multiset.map_coe,
+      Multiset.bind_map]
+
 /-! ## §4: Planar 3-class identity (R.3d Part 2 Step 2)
 
 The planar Multiset (Nonplanar α) equality at the heart of the pre-Lie
