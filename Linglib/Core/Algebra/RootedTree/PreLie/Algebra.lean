@@ -415,43 +415,141 @@ private theorem ofTree_mul_ofMultiset (T : Nonplanar α) (M : Multiset (Nonplana
     rw [ofMultiset_cons, mul_add, ih, ofTree_mul_ofTree,
         Multiset.cons_bind, ofMultiset_add]
 
-/-! ## §4: Singleton-reduction lemma (Phase C, prep)
+/-! ## §4-prep: Triple-product unfolding (R.3d Part 2 Step 1)
+
+Two glue lemmas reducing `ofTree T₁ * ofTree T₂ * ofTree T₃` (and the
+right-associated form) to `ofMultiset` of a Multiset.bind chain. These
+are the chain `ofTree_mul_ofTree → ofMultiset_mul_ofTree` (left-assoc)
+and `ofTree_mul_ofTree → ofTree_mul_ofMultiset` (right-assoc). Used in
+`assoc_symm_singleton` (§5) to drop into Multiset arithmetic. -/
+
+/-- Left-associated triple product unfolds to `ofMultiset` of a
+    `Multiset.bind` chain: first graft `T₂` at every vertex of `T₁`,
+    then graft `T₃` at every vertex of each resulting tree. -/
+private theorem ofTree_triple_left (T₁ T₂ T₃ : Nonplanar α) :
+    (ofTree T₁ : InsertionAlgebra α) * ofTree T₂ * ofTree T₃ =
+      ofMultiset ((Nonplanar.insertSum T₁ T₂).bind
+        (fun T => Nonplanar.insertSum T T₃)) := by
+  rw [ofTree_mul_ofTree, ofMultiset_mul_ofTree]
+
+/-- Right-associated triple product unfolds analogously: first graft `T₃`
+    at every vertex of `T₂`, then graft each resulting tree at every
+    vertex of `T₁`. -/
+private theorem ofTree_triple_right (T₁ T₂ T₃ : Nonplanar α) :
+    (ofTree T₁ : InsertionAlgebra α) * (ofTree T₂ * ofTree T₃) =
+      ofMultiset ((Nonplanar.insertSum T₂ T₃).bind
+        (fun S => Nonplanar.insertSum T₁ S)) := by
+  rw [ofTree_mul_ofTree, ofTree_mul_ofMultiset]
+
+/-! ## §4: Planar 3-class identity (R.3d Part 2 Step 2)
+
+The planar Multiset (Nonplanar α) equality at the heart of the pre-Lie
+identity. After `Quotient.inductionOn₃` reduces to planar `t₁ t₂ t₃`,
+the pre-Lie associator's two halves rearrange to this form. The proof
+uses `vertices_insertAt_decomp` to split each `(insertAt v t₂) ◁ t₃`
+into preserved + sourceSelf + lifted classes:
+
+- **Lifted** cancels with the cross term (LHS₂ / RHS₂) via
+  `insertAt_lift_eq_nested` + `Multiset.bind_bind`.
+- **Preserved** cancels at PLANAR level (no Nonplanar quotient needed)
+  via `insertAt_commute_diff` + (v, w) ↔ (w, v) re-keying.
+- **SourceSelf** cancels at NONPLANAR level via
+  `mk_insertAt_sourceSelf_swap` (the only Nonplanar-specific step). -/
+
+/-- The planar Multiset (Nonplanar α) identity: combining the four
+    bind-of-insertSum chains for `t₁, t₂, t₃` (and their t₂↔t₃ swap)
+    gives equal sums after `.map mk`. This is the substance of the
+    pre-Lie identity, modulo the bilinear extension to InsertionAlgebra. -/
+private theorem assoc_symm_planar (t₁ t₂ t₃ : Planar α) :
+    (((Planar.insertSum t₁ t₂).bind (fun T => Planar.insertSum T t₃)).map
+        Nonplanar.mk : Multiset (Nonplanar α))
+      + (((Planar.insertSum t₃ t₂).bind (fun S => Planar.insertSum t₁ S)).map
+          Nonplanar.mk : Multiset (Nonplanar α)) =
+    (((Planar.insertSum t₁ t₃).bind (fun T => Planar.insertSum T t₂)).map
+        Nonplanar.mk : Multiset (Nonplanar α))
+      + (((Planar.insertSum t₂ t₃).bind (fun S => Planar.insertSum t₁ S)).map
+          Nonplanar.mk : Multiset (Nonplanar α)) := by
+  -- TODO Step 2: 3-class decomposition of inner insertSum via vertices_insertAt_decomp.
+  -- See plan at /Users/rxdh/.claude/plans/partitioned-yawning-parrot.md §"Step 2".
+  sorry
+
+/-! ## §5: Singleton-reduction lemma (Phase C, prep)
 
 The pre-Lie identity `(x*y)*z - x*(y*z) = (x*z)*y - x*(z*y)` is bilinear
 in each of x, y, z. By bilinearity, it suffices to prove on singletons
 `ofTree T₁`, `ofTree T₂`, `ofTree T₃` for `T₁ T₂ T₃ : Nonplanar α`.
 
 This section sets up the singleton reduction; the actual identity proof
-is in §5. -/
+is in §6. -/
 
-/-- The pre-Lie identity on singletons reduces to a multiset equality on
-    `Nonplanar.insertSum`. Specifically:
-
-    `(ofTree T₁ * ofTree T₂) * ofTree T₃ - ofTree T₁ * (ofTree T₂ * ofTree T₃)`
-    `= ofMultiset (Nonplanar.insertSum (insertSum T₁ T₂)-flattened T₃) -`
-    `  ofMultiset (T₁ insertSum'd against (T₂ ◁ T₃)-flattened)`.
-
-    The full statement is proved in §5 via the `Vertex.classifyEquiv`
-    decomposition. -/
+/-- The pre-Lie identity on singletons. After `Quotient.inductionOn₃`
+    reduces to planar t₁, t₂, t₃, the four triple products unfold via
+    `ofTree_triple_left/right` to `ofMultiset` of planar bind chains
+    projected through `Nonplanar.mk`. The combinatorial identity is
+    `assoc_symm_planar`. -/
 theorem assoc_symm_singleton (T₁ T₂ T₃ : Nonplanar α) :
     (ofTree T₁ : InsertionAlgebra α) * ofTree T₂ * ofTree T₃
       - ofTree T₁ * (ofTree T₂ * ofTree T₃) =
     (ofTree T₁ : InsertionAlgebra α) * ofTree T₃ * ofTree T₂
       - ofTree T₁ * (ofTree T₃ * ofTree T₂) := by
-  -- TODO (Phase C body, deferred): prove via `Vertex.classifyEquiv`-based
-  -- 3-class decomposition + Nonplanar swap-cancellation. The proof
-  -- structure is documented in `scratch/mcb_phase_e3_r3d_session_prompt.md`
-  -- and follows Foissy 2018 Proposition 2.2 (page 7). Three sub-lemmas:
-  --   1. `assoc_symm_preserved_class` — preserved vertices cancel via
-  --      `Vertex.insertAt_commute_diff` (R.3b §10).
-  --   2. `assoc_symm_lifted_class` — lifted vertices match the inner
-  --      `T₁ • (T₂ • T₃)` expansion via `Vertex.insertAt_lift_eq_nested`
-  --      (R.3b §10).
-  --   3. `assoc_symm_sourceSelf_class` — the source-vertex case
-  --      contributes only at the Nonplanar level via children-list swap
-  --      invariance (R.3c descent). This is where the choice of
-  --      `Nonplanar` (not `Planar`) carrier matters.
-  sorry
+  refine Quotient.inductionOn₃ T₁ T₂ T₃ (fun t₁ t₂ t₃ => ?_)
+  -- Reduce both sides via Step 1 helpers. After `change` to align ⟦t⟧ with Nonplanar.mk t,
+  -- the chain simp fires.
+  change (ofTree (Nonplanar.mk t₁) : InsertionAlgebra α) * ofTree (Nonplanar.mk t₂) *
+            ofTree (Nonplanar.mk t₃)
+      - ofTree (Nonplanar.mk t₁) * (ofTree (Nonplanar.mk t₂) * ofTree (Nonplanar.mk t₃)) =
+        ofTree (Nonplanar.mk t₁) * ofTree (Nonplanar.mk t₃) * ofTree (Nonplanar.mk t₂)
+      - ofTree (Nonplanar.mk t₁) * (ofTree (Nonplanar.mk t₃) * ofTree (Nonplanar.mk t₂))
+  rw [ofTree_triple_left, ofTree_triple_right,
+      ofTree_triple_left, ofTree_triple_right,
+      Nonplanar.mk_insertSum, Nonplanar.mk_insertSum,
+      Nonplanar.mk_insertSum, Nonplanar.mk_insertSum,
+      Multiset.bind_map, Multiset.bind_map,
+      Multiset.bind_map, Multiset.bind_map]
+  -- Now each inner Nonplanar.insertSum (mk t) (mk s) → (Planar.insertSum t s).map mk
+  -- + map_bind to extract .map mk
+  conv_lhs =>
+    rw [show ∀ M : Multiset (Planar α), ∀ s : Planar α,
+            M.bind (fun t => Nonplanar.insertSum (Nonplanar.mk t) (Nonplanar.mk s)) =
+            (M.bind (fun t => Planar.insertSum t s)).map Nonplanar.mk from
+        fun M s => by
+          rw [show (fun t : Planar α =>
+                    Nonplanar.insertSum (Nonplanar.mk t) (Nonplanar.mk s)) =
+                  (fun t => (Planar.insertSum t s).map Nonplanar.mk) from
+                funext fun _ => Nonplanar.mk_insertSum _ _]
+          exact (Multiset.map_bind M _ _).symm,
+        show ∀ M : Multiset (Planar α), ∀ t : Planar α,
+            M.bind (fun s => Nonplanar.insertSum (Nonplanar.mk t) (Nonplanar.mk s)) =
+            (M.bind (fun s => Planar.insertSum t s)).map Nonplanar.mk from
+        fun M t => by
+          rw [show (fun s : Planar α =>
+                    Nonplanar.insertSum (Nonplanar.mk t) (Nonplanar.mk s)) =
+                  (fun s => (Planar.insertSum t s).map Nonplanar.mk) from
+                funext fun _ => Nonplanar.mk_insertSum _ _]
+          exact (Multiset.map_bind M _ _).symm]
+  conv_rhs =>
+    rw [show ∀ M : Multiset (Planar α), ∀ s : Planar α,
+            M.bind (fun t => Nonplanar.insertSum (Nonplanar.mk t) (Nonplanar.mk s)) =
+            (M.bind (fun t => Planar.insertSum t s)).map Nonplanar.mk from
+        fun M s => by
+          rw [show (fun t : Planar α =>
+                    Nonplanar.insertSum (Nonplanar.mk t) (Nonplanar.mk s)) =
+                  (fun t => (Planar.insertSum t s).map Nonplanar.mk) from
+                funext fun _ => Nonplanar.mk_insertSum _ _]
+          exact (Multiset.map_bind M _ _).symm,
+        show ∀ M : Multiset (Planar α), ∀ t : Planar α,
+            M.bind (fun s => Nonplanar.insertSum (Nonplanar.mk t) (Nonplanar.mk s)) =
+            (M.bind (fun s => Planar.insertSum t s)).map Nonplanar.mk from
+        fun M t => by
+          rw [show (fun s : Planar α =>
+                    Nonplanar.insertSum (Nonplanar.mk t) (Nonplanar.mk s)) =
+                  (fun s => (Planar.insertSum t s).map Nonplanar.mk) from
+                funext fun _ => Nonplanar.mk_insertSum _ _]
+          exact (Multiset.map_bind M _ _).symm]
+  -- Goal: ofMultiset ((bind ...).map mk) - ofMultiset ((bind ...).map mk) = ...
+  rw [sub_eq_sub_iff_add_eq_add, ← ofMultiset_add, ← ofMultiset_add]
+  congr 1
+  exact assoc_symm_planar t₁ t₂ t₃
 
 /-! ## §5: Pre-Lie identity (Phase C, the meat)
 
