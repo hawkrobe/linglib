@@ -9,13 +9,23 @@ P. Elliott, K. von Fintel, D. Fox, S. Iatridou, R. Schwarzschild.
 
 ## Locator convention
 
-Section / equation / example numbers below reference Chapter 1 (the
-"Brief summary of the proposal" overview), unless prefixed with an
-explicit chapter number. Chapter 4 — the substantive bare-vs-
-nominalized treatment formalised in §§ 7-12 of this file — gives
-the same content under different locators (e.g., Table 1.1 ↔ Table
-4.1; ex. 1 ↔ §4.2 ex. 1-2). Locators were verified against the
-PDF; references to chapters not yet read carry `UNVERIFIED:` flags.
+The §-numbers below DO NOT track a single dissertation chapter;
+the file is paper-anchored as a whole and the sections were added
+across multiple phases:
+
+- §§ 1-7: reference @cite{bondarenko-2022} Chapter 1 brief summary
+  overview (locators verified at the chapter-1 level).
+- §§ 8-12: reference Chapter 4 substantive bare-vs-nominalized
+  treatment (Phase 2 type-theoretic refactor; §§4.2-4.5).
+- §§ 13-14: reference Chapter 2 substantive distinct-denotation
+  argument (Phase 3 §§2.2.3 noun-predicate co-occurrence + §2.3
+  Cont/Comp head denotations).
+
+Cross-chapter equivalence claims in the chapter-1 sections (e.g.
+"Table 1.1 ↔ Table 4.1"; "ex. 1 ↔ §4.2 ex. 1-2") were noted from
+context but not re-checked across chapters and carry implicit
+`UNVERIFIED:` status. References to chapters not yet read carry
+explicit `UNVERIFIED:` flags inline.
 
 ## Headline thesis
 
@@ -222,18 +232,14 @@ theorem subset_does_not_force_functionality :
 /-- **Weak transparency** at evaluation world `s`: substitution
     of predicates that agree AT s preserves clause truth. This is
     the notion that distinguishes Sit-CPs (transparentAt) from
-    Cont-CPs (NOT transparentAt). -/
+    Cont-CPs (NOT transparentAt).
+
+    The everywhere-quantified variant (`∀ s', p s' ↔ q s'`) is
+    `funext`+`propext`-trivial for any clause and carries no
+    empirical content; only `At` is the substantive notion. -/
 def ReferentiallyTransparentAt {S : Type*}
     (clause : (S → Prop) → S → Prop) (s : S) : Prop :=
   ∀ p q : S → Prop, (p s ↔ q s) → (clause p s ↔ clause q s)
-
-/-- **Strong transparency**: substitution of predicates that agree
-    EVERYWHERE preserves clause truth. By `funext`+`propext` this is
-    trivially satisfied by every clause; included for completeness
-    and to disambiguate from `ReferentiallyTransparentAt`. -/
-def ReferentiallyTransparentEverywhere {S : Type*}
-    (clause : (S → Prop) → S → Prop) (s : S) : Prop :=
-  ∀ p q : S → Prop, (∀ s', p s' ↔ q s') → (clause p s ↔ clause q s)
 
 /-- A Sit-CP (modeled as `fun p s' => p s'`) IS weak-transparent:
     its evaluation is at the actual situation `s`, so
@@ -243,50 +249,52 @@ theorem sit_cp_transparentAt {S : Type*} (s : S) :
   intro p q hpq
   exact hpq
 
-/-- A Sit-CP is also (vacuously) strong-transparent — but this is
-    trivial for any clause, so it carries no empirical content. -/
-theorem sit_cp_transparentEverywhere {S : Type*} (s : S) :
-    ReferentiallyTransparentEverywhere (fun p s' => p s') s := by
-  intro p q hpq
-  exact hpq s
+/-- **`compC` is operator-level intensional** (NOT
+    weak-transparent): there exist two propositions `p, q`
+    coextensional at the evaluation world such that `compC p xc`
+    and `compC q xc` differ. Constructive witness via `W := Bool`:
 
-/-- **Cont-CP is NOT weak-transparent** (Bondarenko ex. 120,
-    p. 106). Constructive witness: a 2-world model where
-    `xc.cont` picks out only one world, and two predicates that
-    agree at the evaluation world but disagree elsewhere.
+    * `xc.cont := (fun b => b = false)` (true only at `false`)
+    * `p := (fun b => b = false)` — agrees with `xc.cont`
+    * `q := (fun _ => True)` — disagrees at `b = true`
 
-    Concretely: `W := Bool`, evaluation world `false`, content
-    individual with `cont = (fun b => b = false)` (= the
-    proposition true only at `false`). Predicates:
-    * `p := (fun b => b = false)` — true at `false`, false at `true`
-    * `q := (fun _ => True)`     — true at both
-    They agree at the evaluation world `false` (both true), but
-    `compC p xc` (= xc.cont = p) HOLDS while `compC q xc` FAILS
-    (since `xc.cont` differs from `q` at `true`). -/
-theorem cont_cp_not_transparentAt :
+    At evaluation world `false`, `p false ↔ q false` (both true);
+    but `compC p xc` HOLDS (= xc.cont) while `compC q xc` FAILS
+    (xc.cont differs from q at `true`).
+
+    **Caveat (per syntax expert):** this is the *propositional-
+    operator* shadow of Bondarenko's claim, not the full DP-level
+    de dicto reading. Bondarenko §2.2.3 ex. 120 is specifically
+    about substitution failure of two **DPs** (*this woman* /
+    *the queen*) coextensional at the evaluation world but
+    diverging across content-related worlds. The DP-level reading
+    requires a binding-theoretic encoding of de dicto vs de re
+    (Moltmann 2020/2021 actuality-condition apparatus, Elliott
+    2020 CONT-as-content-restrictor) that is NOT yet a linglib
+    substrate primitive. The theorem below establishes the
+    operator-level intensionality that *underwrites* the DP-level
+    de dicto reading; the DP-level theorem itself is queued. -/
+theorem compC_not_transparentAt :
     ¬ ∀ (xc : ContentIndividual Bool) (w : Bool),
       ReferentiallyTransparentAt (fun p _ => compC p xc) w := by
   intro h
   let xc : ContentIndividual Bool := ⟨fun b => b = false⟩
   let p : Bool → Prop := fun b => b = false
   let q : Bool → Prop := fun _ => True
-  -- p and q agree at the evaluation world `false`
   have h_at : p false ↔ q false := by
     constructor
     · intro _; trivial
     · intro _; rfl
-  -- transparency would equate compC p xc with compC q xc at false
   have h_eq : compC p xc ↔ compC q xc := h xc false p q h_at
-  -- compC p xc holds (xc.cont = p definitionally)
   have hp : compC p xc := rfl
-  -- compC q xc would force xc.cont = (fun _ => True), but they
-  -- differ at b = true: xc.cont true = false ≠ True
   have hq : ¬ compC q xc := by
     intro heq
-    have : (fun b : Bool => b = false) true = (fun _ : Bool => True) true :=
+    -- xc.cont and q differ at b = true: xc.cont true = (true = false) = False
+    -- but q true = True. Use congrFun + Bool.noConfusion.
+    have h_true : (fun b : Bool => b = false) true = (fun _ : Bool => True) true :=
       congrFun heq true
-    -- LHS reduces to (true = false) = False; RHS to True
-    simp at this
+    -- LHS reduces to `True = False` after rewriting `true = false ↔ False`.
+    exact Bool.noConfusion <| (iff_of_eq h_true).mpr trivial
   exact hq (h_eq.mp hp)
 
 -- ════════════════════════════════════════════════════════════════
@@ -684,73 +692,103 @@ def NominalSort.truthEvaluable : NominalSort → Prop
   | .content   => True
   | .situation => False
 
-instance : ∀ s, Decidable (NominalSort.truthEvaluable s) := fun s => by
-  cases s <;> (unfold NominalSort.truthEvaluable; infer_instance)
+instance : DecidablePred NominalSort.truthEvaluable
+  | .content   => isTrue trivial
+  | .situation => isFalse id
 
 /-- A nominal sort is *occurrence-compatible* iff it can combine
     with 'occur' / 'happen' (Russian *proizojti*, *slučitsja*;
-    Korean *ilena*) — paper §2.2.3 ex. 108-112. -/
+    Korean *ilena*) — paper §2.2.3 ex. 108-112. The footnote-28
+    consultant comment ("*alachay* just does not sound good with
+    'claim'") is a weaker rejection than False; the binary
+    encoding here aggregates with the main paradigm. -/
 def NominalSort.occurrenceCompatible : NominalSort → Prop
   | .content   => False
   | .situation => True
 
-instance : ∀ s, Decidable (NominalSort.occurrenceCompatible s) := fun s => by
-  cases s <;> (unfold NominalSort.occurrenceCompatible; infer_instance)
+instance : DecidablePred NominalSort.occurrenceCompatible
+  | .content   => isFalse id
+  | .situation => isTrue trivial
 
-/-- The two predicates partition the sorts: content is
-    truth-evaluable but not occurrence-compatible; situation
-    is occurrence-compatible but not truth-evaluable. -/
-theorem truth_vs_occurrence_partition :
-    NominalSort.truthEvaluable .content ∧
-    ¬ NominalSort.occurrenceCompatible .content ∧
-    ¬ NominalSort.truthEvaluable .situation ∧
-    NominalSort.occurrenceCompatible .situation := by
-  refine ⟨trivial, ?_, ?_, trivial⟩ <;> exact id
+-- The truth/occurrence partition is by-construction true (each is
+-- a 2-cell `match`; the conjunction unfolds to four `rfl`s). The
+-- substantive content lives in the projection definitions above,
+-- not in a partition theorem; the audit-flagged
+-- `truth_vs_occurrence_partition` rewrap was deleted as a vacuous
+-- def-as-table tautology (mathlib + integration audit, Phase 3
+-- re-audit).
 
 -- ════════════════════════════════════════════════════════════════
--- § 14. Chapter 2 §2.3 Proposal: the Cont head denotation
+-- § 14. Chapter 2 §2.3 Proposal: Cont and Comp head denotations
 -- ════════════════════════════════════════════════════════════════
 --
--- @cite{bondarenko-2022} §2.3 ex. 150 proposes:
+-- @cite{bondarenko-2022} §2.3 ex. 150 proposes the Cont head
+-- denotation; ex. 151 proposes the Comp head denotation. Both are
+-- formalised below by consuming existing substrate (Layered
+-- Grounding obligation per cross-framework audit).
 --
---     ⟦Cont⟧^{s,g,t} = λp_{st}.λx_e. CONT(x) = p
+-- **Cont head** (ex. 150): ⟦Cont⟧^{s,g,t} = λp_{st}.λx_e. CONT(x) = p
+-- — IS the existing `compC` from
+-- `Theories/Semantics/Attitudes/ClauseDenotation/Content.lean`.
 --
--- which is precisely the existing `compC` from
--- `Theories/Semantics/Attitudes/ClauseDenotation/Content.lean`. So
--- the substrate primitive `compC` IS Bondarenko's proposed Cont
--- head denotation. This bridge is one-line `rfl`-grade — included
--- here to make the substrate-paper correspondence explicit.
+-- **Comp head** (ex. 151): ⟦Comp⟧^{s,g,t} = λp_{et}.λx_e. x ⊑ s ∧ x ⊩_e p
+-- — `x ⊑ s` is situation parthood (`Core/Logic/Intensional/
+-- Situations.lean` `≼` / mathlib `≤`); `x ⊩_e p` is exact
+-- exemplification (the bare verifier-membership `p x`,
+-- distinguished from inexact exemplification `Truthmaker/Inexact.
+-- lean inexactVer` which existentially closes over parts).
 --
--- The dual Comp head denotation (paper ex. 151)
+-- **Substantiation status (per syntax expert S6).** The
+-- *justification* for the equality shape of Cont (vs subset
+-- `entails` or existential) lives partly in §3 above
+-- (`cont_function_blocks_conjunction` — Bassi & Bondarenko 2021
+-- argument) and partly in @cite{bondarenko-2022} §2.4 (deferred:
+-- the nominal-CP-interpretation argument). One of three §2.4
+-- arguments is therefore already present in this file.
 --
---     ⟦Comp⟧^{s,g,t} = λp_{et}.λx_e. x ⊑ s ∧ x ⊩_e p
---
--- requires the *exact-exemplification* relation `⊩_e` from
--- truthmaker / Kratzer-1989 situation semantics, which has only
--- partial substrate support in linglib (see
--- `Core/Logic/Intensional/Situations.lean` for `Persistent` /
--- `IsWorld` but NO exemplification primitive). The Comp side is
--- thus deferred; the Cont side is bridged below.
+-- **Note (per syntax expert S3).** The situation-parameter `s` in
+-- ex. 150 is omitted in this Chapter-2 reduction; @cite{bondarenko-2022}
+-- footnote 37 anticipates it becoming consequential in §5.2.3
+-- (clauses as restrictors of existential quantifiers). When
+-- Chapter 5 is formalised, the parameter must be re-introduced.
 
 /-- @cite{bondarenko-2022} §2.3 ex. 150 Cont head denotation IS
-    the existing `compC` substrate (modulo argument order). The
-    proposal at the chapter-2 level just instantiates the
-    Kratzer/Moulton CONT-equality machinery already in linglib. -/
+    the existing `compC` substrate. The denotational identity is
+    one-line — the substantive Layered-Grounding fact is that
+    Bondarenko's Chapter-2 proposal does NOT introduce new
+    machinery; it instantiates the Kratzer/Moulton CONT-equality
+    apparatus already in linglib. -/
 theorem cont_head_denotation_is_compC {W : Type*}
     (p : W → Prop) (xc : ContentIndividual W) :
-    -- Bondarenko's ⟦Cont⟧(p)(x) = (CONT(x) = p)
-    -- compC's signature: compC p xc = (xc.cont = p)
-    compC p xc = (xc.cont = p) := rfl
+    compC p xc ↔ (xc.cont = p) := Iff.rfl
 
-/-- The Comp head denotation (paper ex. 151) is queued for
-    formalisation. Stating the signature here for grep-
-    discoverability; the body requires the `⊩_e` exact-
-    exemplification relation from Truthmaker / Kratzer-1989 not
-    yet a linglib substrate primitive. TODO: instantiate when
-    `Theories/Semantics/Truthmaker/Exemplification.lean` lands. -/
-def compHeadSignature {S : Type*} (_p : S → Prop) (_x : S) (_evalSit : S) : Prop :=
-  -- Intended: x ⊑ evalSit ∧ x ⊩_e p
-  -- Currently a placeholder — Truthmaker substrate not yet integrated.
-  True
+/-- @cite{bondarenko-2022} §2.3 ex. 151 Comp head denotation,
+    consuming the Truthmaker substrate
+    (`Theories/Semantics/Truthmaker/Basic.lean` `attHolds`-style
+    parthood `s ≤ σ x`, `Theories/Semantics/Truthmaker/Inexact.lean`
+    `inexactVer` for the part-existential variant) and situation
+    parthood (`Core/Logic/Intensional/Situations.lean` `≼`).
+
+    `compHead p x evalSit` holds iff `x` is a situation that is
+    part of the evaluation situation AND `x` exactly verifies `p`
+    (verifier-membership; distinguished from inexact exemplification
+    where existential closure over parts is allowed).
+
+    Type signature follows Bondarenko's `⟨e,t⟩` shape with `S` as
+    the situation-typed-individual sort: `p : S → Prop` is the
+    propositional argument, `x : S` is the candidate verifier,
+    `evalSit : S` is the evaluation situation. -/
+def compHead {S : Type*} [Preorder S]
+    (p : S → Prop) (x evalSit : S) : Prop :=
+  x ≤ evalSit ∧ p x
+
+/-- Exact exemplification implies inexact exemplification (a
+    verifier is a part of itself). Substrate connection to
+    `Theories/Semantics/Truthmaker/Inexact.lean`'s
+    `inexactVer_of_exact`. -/
+theorem compHead_implies_inexactVerifier {S : Type*} [Preorder S]
+    (p : S → Prop) (x evalSit : S) (h : compHead p x evalSit) :
+    ∃ u, u ≤ evalSit ∧ p u :=
+  ⟨x, h.1, h.2⟩
 
 end Phenomena.Complementation.Studies.Bondarenko2022
