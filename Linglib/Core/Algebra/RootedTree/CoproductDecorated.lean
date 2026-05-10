@@ -92,7 +92,17 @@ def traceLeaf (b : β) : Planar (α ⊕ β) := .node (Sum.inr b) []
 
 Mirrors `cutSummandsP` (Δ^p): the "extract whole" branch in `augActionCP`
 produces `traceLeaf (τ t)` instead of `Option.none`, so the remainder
-type is `Planar`, not `Option Planar`. -/
+type is `Planar`, not `Option Planar`.
+
+**Trace-leaf restriction.** The "extract whole" branch fires ONLY when
+the input is rooted at `Sum.inl` (an original-decoration vertex). For
+inputs rooted at `Sum.inr` (a trace-marker vertex from a previous Δ^c
+application), the extract branch is omitted — only the empty-cut summand
+survives. This matches MCB Definition 1.2.2's restriction of cuts to
+"accessible terms" at internal non-root vertices, which excludes trace
+placeholders, AND is required for coassociativity: without the
+restriction, iterated Δ^c produces "trace of trace" right-channel terms
+that break the coassoc bijection. -/
 
 mutual
 /-- Multiset of (cut forest, trace remainder) pairs for a planar tree
@@ -110,13 +120,19 @@ def cutListSummandsCP (τ : Planar (α ⊕ β) → β) : List (Planar (α ⊕ β
   | t :: ts =>
       ((augActionCP τ t ×ˢ cutListSummandsCP τ ts) : Multiset _).map
         (fun p => (p.1.1 + p.2.1, p.1.2 :: p.2.2))
-/-- Auxiliary: per-child action — either extract whole (remainder
-    is the trace placeholder `traceLeaf (τ t)`) or apply a (possibly
-    empty) cut to t (remainder is the cut's remainder of t). -/
+/-- Auxiliary: per-child action. For an `Sum.inl`-rooted (non-trace)
+    subtree, either extract whole (remainder = `traceLeaf (τ t)`) or
+    apply a (possibly empty) cut to t. For a `Sum.inr`-rooted (trace)
+    subtree, extract is forbidden — only cuts inherited from
+    `cutSummandsCP` survive (the empty cut at minimum). -/
 def augActionCP (τ : Planar (α ⊕ β) → β) : Planar (α ⊕ β) →
     Multiset (Forest (Planar (α ⊕ β)) × Planar (α ⊕ β))
-  | t => (({t} : Forest (Planar (α ⊕ β))), traceLeaf (τ t)) ::ₘ
-         cutSummandsCP τ t
+  | .node (Sum.inl a) cs =>
+      (({Planar.node (Sum.inl a) cs} : Forest (Planar (α ⊕ β))),
+        traceLeaf (τ (Planar.node (Sum.inl a) cs))) ::ₘ
+        cutSummandsCP τ (Planar.node (Sum.inl a) cs)
+  | .node (Sum.inr b) cs =>
+      cutSummandsCP τ (Planar.node (Sum.inr b) cs)
 end
 
 /-- Recursive formula on a node: cutSummandsCP unfolds via cutListSummandsCP. -/
@@ -140,12 +156,23 @@ end
         (fun p => (p.1.1 + p.2.1, p.1.2 :: p.2.2)) := by
   conv_lhs => unfold cutListSummandsCP
 
-/-- Recursive formula for augActionCP. -/
-@[simp] theorem augActionCP_eq (τ : Planar (α ⊕ β) → β) (t : Planar (α ⊕ β)) :
-    augActionCP τ t =
-      (({t} : Forest (Planar (α ⊕ β))), traceLeaf (τ t)) ::ₘ
-        cutSummandsCP τ t := by
-  conv_lhs => unfold augActionCP
+/-- Recursive formula for augActionCP on an `Sum.inl`-rooted (non-trace)
+    subtree: includes the trace-extract branch. -/
+@[simp] theorem augActionCP_inl (τ : Planar (α ⊕ β) → β)
+    (a : α) (cs : List (Planar (α ⊕ β))) :
+    augActionCP τ (Planar.node (Sum.inl a) cs) =
+      (({Planar.node (Sum.inl a) cs} : Forest (Planar (α ⊕ β))),
+        traceLeaf (τ (Planar.node (Sum.inl a) cs))) ::ₘ
+          cutSummandsCP τ (Planar.node (Sum.inl a) cs) := by
+  unfold augActionCP; rfl
+
+/-- Recursive formula for augActionCP on an `Sum.inr`-rooted (trace)
+    subtree: NO trace-extract branch — only the inherited cut summands. -/
+@[simp] theorem augActionCP_inr (τ : Planar (α ⊕ β) → β)
+    (b : β) (cs : List (Planar (α ⊕ β))) :
+    augActionCP τ (Planar.node (Sum.inr b) cs) =
+      cutSummandsCP τ (Planar.node (Sum.inr b) cs) := by
+  unfold augActionCP; rfl
 
 /-! ### comulCTreePlanar — tree-level Δ^c
 
@@ -232,14 +259,25 @@ example (τ : Planar (Unit ⊕ Unit) → Unit) :
   rw [cutSummandsCP_node, cutListSummandsCP_nil]
   rfl
 
-/-- The trace-extract branch sits in `augActionCP`'s output. This is the
-    structural witness that Δ^c (placeholder leaf) differs from Δ^p
-    (which would put `Option.none` here). -/
+/-- The trace-extract branch sits in `augActionCP`'s output for an
+    `Sum.inl`-rooted (non-trace) subtree. This is the structural witness
+    that Δ^c (placeholder leaf) differs from Δ^p (`Option.none`). -/
 example (τ : Planar (Unit ⊕ Unit) → Unit) :
     (({Planar.leaf (Sum.inl ())} : Forest (Planar (Unit ⊕ Unit))),
       traceLeaf (τ (Planar.leaf (Sum.inl ())))) ∈
         augActionCP τ (Planar.leaf (Sum.inl ()) : Planar (Unit ⊕ Unit)) := by
-  rw [augActionCP_eq]; exact Multiset.mem_cons_self _ _
+  show _ ∈ augActionCP τ (Planar.node (Sum.inl ()) [])
+  rw [augActionCP_inl]; exact Multiset.mem_cons_self _ _
+
+/-- Trace-marker leaves are NOT extracted by `augActionCP`: only the
+    inherited cut summands (the empty cut at minimum) survive. Required
+    for coassoc — without this restriction, iterated Δ^c produces
+    "trace of trace" terms that break the bijection. -/
+example (b : Unit) (τ : Planar (Unit ⊕ Unit) → Unit) :
+    augActionCP τ (traceLeaf b : Planar (Unit ⊕ Unit))
+      = cutSummandsCP τ (Planar.node (Sum.inr b) []) := by
+  show augActionCP τ (Planar.node (Sum.inr b) []) = _
+  rw [augActionCP_inr]
 
 /-- The `traceLeaf` placeholder is a `Sum.inr`-labeled leaf. -/
 example (b : β) : (traceLeaf b : Planar (α ⊕ β)).arity = 0 := rfl
