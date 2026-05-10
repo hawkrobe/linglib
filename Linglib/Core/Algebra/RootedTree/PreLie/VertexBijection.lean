@@ -1,5 +1,6 @@
 import Linglib.Core.Algebra.RootedTree.PreLie.Defs
 import Mathlib.Data.Multiset.Filter
+import Mathlib.Data.Multiset.Bind
 import Mathlib.Tactic.Abel
 
 set_option autoImplicit false
@@ -1069,6 +1070,70 @@ theorem vertices_insertAt_decomp {T : Planar α} (v : Vertex T) (t₂ : Planar �
       + ({Vertex.sourceSelf v t₂} : Multiset _)
       + ((vertices t₂ : Multiset _).map (Vertex.lift v t₂)) :=
   vertices_insertAt_decomp_aux v t₂
+
+/-! ## §11.5: Preserved-class swap
+
+The (v, w) ↔ (w, v) symmetry for preserved-class double sums. Used by
+`assoc_symm_planar` to identify the preserved class of `(t₁ ◁ t₂) ◁ t₃`
+with the preserved class of `(t₁ ◁ t₃) ◁ t₂`.
+
+The pointwise bridge is `insertAt_commute_diff`: at distinct vertices
+`v ≠ w` of `t₁`, grafting `t₂` at `v` then `t₃` at the `w`-image equals
+grafting `t₃` at `w` then `t₂` at the `v`-image. The diagonal `v = w` is
+discarded by `preserve?_self = none` on both sides. -/
+
+/-- Preserved-class swap: the double sum
+`Σ_v Σ_{w ≠ v} insertAt (preserveOf v w t₂) t₃` (LHS) equals the same
+sum with `t₂` and `t₃` swapped (RHS). Proof: Fubini swap (`bind_bind`)
+plus pointwise `insertAt_commute_diff`. -/
+theorem bind_filterMap_preserve?_swap (t₁ t₂ t₃ : Planar α) :
+    Multiset.bind (↑(vertices t₁) : Multiset (Vertex t₁)) (fun v =>
+        Multiset.filterMap (fun w =>
+          (Vertex.preserve? v w t₂).map (fun pos => insertAt pos t₃))
+          (↑(vertices t₁) : Multiset (Vertex t₁)))
+    = Multiset.bind (↑(vertices t₁) : Multiset (Vertex t₁)) (fun v =>
+        Multiset.filterMap (fun w =>
+          (Vertex.preserve? v w t₃).map (fun pos => insertAt pos t₂))
+          (↑(vertices t₁) : Multiset (Vertex t₁))) := by
+  -- Pointwise: at each (v, w), the LHS Option agrees with the RHS Option
+  -- under the (v, w) ↔ (w, v) swap.
+  have hpw : ∀ v w : Vertex t₁,
+      (Vertex.preserve? v w t₂).map (fun pos => insertAt pos t₃)
+      = (Vertex.preserve? w v t₃).map (fun pos => insertAt pos t₂) := by
+    intro v w
+    by_cases h : w = v
+    · subst h
+      rw [Vertex.preserve?_self, Vertex.preserve?_self]; rfl
+    · rw [Vertex.preserve?_of_ne v w h t₂,
+          Vertex.preserve?_of_ne w v (Ne.symm h) t₃]
+      simp only [Option.map_some]
+      congr 1
+      exact insertAt_commute_diff v w h t₂ t₃
+  -- Convert both sides to bind-of-bind via filterMap_eq_bind, apply hpw inside
+  -- LHS, then use bind_bind for the (v ↔ w) Fubini swap.
+  simp_rw [Multiset.filterMap_eq_bind]
+  -- LHS = m.bind (fun v => m.bind (fun w => ((preserve? v w t₂).map (insertAt · t₃)
+  --                                           |>.map singleton).getD 0))
+  -- RHS = m.bind (fun v => m.bind (fun w => ((preserve? v w t₃).map (insertAt · t₂)
+  --                                           |>.map singleton).getD 0))
+  -- Step 1: pointwise rewrite LHS via hpw to get preserve? in (w, v) form on LHS.
+  have step1 : ∀ v w : Vertex t₁,
+      (((Vertex.preserve? v w t₂).map (fun pos => insertAt pos t₃)).map
+          (fun b : Planar α => ({b} : Multiset (Planar α)))).getD 0
+      = (((Vertex.preserve? w v t₃).map (fun pos => insertAt pos t₂)).map
+          (fun b : Planar α => ({b} : Multiset (Planar α)))).getD 0 := by
+    intros v w; rw [hpw v w]
+  rw [show (fun v : Vertex t₁ =>
+            (↑(vertices t₁) : Multiset (Vertex t₁)).bind (fun w =>
+              (((Vertex.preserve? v w t₂).map (fun pos => insertAt pos t₃)).map
+                (fun b : Planar α => ({b} : Multiset (Planar α)))).getD 0)) =
+          (fun v =>
+            (↑(vertices t₁) : Multiset (Vertex t₁)).bind (fun w =>
+              (((Vertex.preserve? w v t₃).map (fun pos => insertAt pos t₂)).map
+                (fun b : Planar α => ({b} : Multiset (Planar α)))).getD 0)) from
+        funext fun v => Multiset.bind_congr (fun w _ => step1 v w)]
+  -- Step 2: bind_bind to swap v ↔ w.
+  rw [Multiset.bind_bind]
 
 /-! ## §12: Sanity tests at compile time -/
 
