@@ -5,10 +5,12 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.PreLie.Nonplanar
+import Mathlib.Algebra.BigOperators.Ring.Multiset
 import Mathlib.Data.Multiset.AddSub
 import Mathlib.Data.Multiset.Bind
 import Mathlib.Data.Multiset.MapFold
 import Mathlib.Data.Multiset.Powerset
+import Mathlib.Data.Multiset.ZeroCons
 import Mathlib.LinearAlgebra.BilinearMap
 import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 
@@ -184,20 +186,79 @@ noncomputable def insertTree (T : Nonplanar α) :
   show Finsupp.linearCombination R (insertTreeForest T) (Finsupp.single F 1) = _
   rw [Finsupp.linearCombination_single, one_smul]
 
-/-- **Leibniz cons decomposition** for `insertTreeForest`. Load-bearing
-    for the multi-tree insertion recursion: each step peels one tree
-    off the operand. The disjoint-union factor on the RHS is taken at
-    the underlying `ConnesKreimer` carrier via `op`/`unop`. **TODO**:
-    proof via `Multiset.cons_bind` + `Multiset.erase_cons_head` (front
-    term) and a case-split on `S₀ = S` (tail term, factoring `of' {S}
-    *` out via `Multiset.sum_map_mul_left` + `of'_add`). -/
+/-- **Leibniz cons decomposition for `insertTreeForest`** (CK-level form).
+
+    Stated at the underlying `ConnesKreimer` level (via `unop`) where the
+    disjoint-union `*` is unambiguous. The GL-level corollary
+    `insertTreeForest_cons` follows.
+
+    Strategy: `Multiset.cons_bind` + `Multiset.sum_add` split LHS into
+    "S as cons-front" + "S₀ ∈ F" parts. The front simplifies via
+    `Multiset.erase_cons_head`. For the tail, the auxiliary
+    `(S ::ₘ F).erase S₀ = S ::ₘ F.erase S₀` (case-split on `S₀ = S`,
+    using `cons_erase` on the equal case) lets us apply
+    `ConnesKreimer.of'_add` to factor `of' {S}` out of each summand. Then
+    `Multiset.sum_bind` + `Multiset.sum_map_mul_left` (twice) pull
+    `of' {S}` out of the bind. -/
+private theorem unop_insertTreeForest_cons
+    (T S : Nonplanar α) (F : Forest (Nonplanar α)) :
+    unop (insertTreeForest (R := R) T (S ::ₘ F)) =
+      ((Nonplanar.insertSum T S).map
+        (fun S' => unop (of' (R := R) (S' ::ₘ F)))).sum +
+      unop (of' (R := R) ({S} : Forest (Nonplanar α))) *
+        unop (insertTreeForest (R := R) T F) := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  -- `unop` is the identity; unfolding both `unop` and `insertTreeForest`
+  -- + `of'` (which is `ConnesKreimer.of'` definitionally) reduces the
+  -- statement to a pure CK equality.
+  show ((((S : Nonplanar α) ::ₘ F).bind fun S₀ =>
+          (Nonplanar.insertSum T S₀).map fun S' =>
+            ConnesKreimer.of' (R := R) (S' ::ₘ ((S : Nonplanar α) ::ₘ F).erase S₀)).sum)
+      = ((Nonplanar.insertSum T S).map fun S' =>
+          ConnesKreimer.of' (R := R) (S' ::ₘ F)).sum +
+        ConnesKreimer.of' (R := R) ({S} : Forest (Nonplanar α)) *
+          ((F.bind fun S₀ =>
+            (Nonplanar.insertSum T S₀).map fun S' =>
+              ConnesKreimer.of' (R := R) (S' ::ₘ F.erase S₀)).sum)
+  rw [Multiset.cons_bind, Multiset.sum_add]
+  congr 1
+  · -- Front: erase_cons_head simplifies (S ::ₘ F).erase S to F
+    apply congr_arg Multiset.sum
+    apply Multiset.map_congr rfl
+    intros
+    rw [Multiset.erase_cons_head]
+  · -- Tail: factor `of' {S}` from each summand
+    have h_erase : ∀ S₀ ∈ F,
+        ((S : Nonplanar α) ::ₘ F).erase S₀ = S ::ₘ F.erase S₀ := fun S₀ hS₀ => by
+      by_cases h : S₀ = S
+      · subst h; rw [Multiset.erase_cons_head, Multiset.cons_erase hS₀]
+      · exact Multiset.erase_cons_tail _ (Ne.symm h)
+    have h_factor : ∀ S₀ ∈ F,
+        ((Nonplanar.insertSum T S₀).map fun S' =>
+            ConnesKreimer.of' (R := R) (S' ::ₘ ((S : Nonplanar α) ::ₘ F).erase S₀))
+        = ((Nonplanar.insertSum T S₀).map fun S' =>
+            ConnesKreimer.of' (R := R) ({S} : Forest (Nonplanar α)) *
+              ConnesKreimer.of' (R := R) (S' ::ₘ F.erase S₀)) := fun S₀ hS₀ => by
+      apply Multiset.map_congr rfl
+      intro S' _
+      rw [h_erase S₀ hS₀, Multiset.cons_swap, ← Multiset.singleton_add,
+          ConnesKreimer.of'_add]
+    rw [Multiset.bind_congr h_factor]
+    -- Pull out `of' {S}`: sum_bind, sum_map_mul_left (pointwise), again, reverse.
+    rw [Multiset.sum_bind,
+        Multiset.map_congr (rfl : F = F) (fun _ _ => Multiset.sum_map_mul_left),
+        Multiset.sum_map_mul_left, ← Multiset.sum_bind]
+
+/-- **Leibniz cons decomposition** for `insertTreeForest` (GL-level form).
+    GL-level corollary of `unop_insertTreeForest_cons` via the
+    definitional identity of `op` and `unop`. -/
 theorem insertTreeForest_cons (T S : Nonplanar α) (F : Forest (Nonplanar α)) :
     insertTreeForest (R := R) T (S ::ₘ F) =
       ((Nonplanar.insertSum T S).map
         (fun S' => of' (R := R) (S' ::ₘ F))).sum +
       op (unop (of' (R := R) ({S} : Forest (Nonplanar α))) *
-          unop (insertTreeForest T F)) := by
-  sorry
+          unop (insertTreeForest T F)) :=
+  unop_insertTreeForest_cons T S F
 
 /-! ### Multi-tree insertion
 
