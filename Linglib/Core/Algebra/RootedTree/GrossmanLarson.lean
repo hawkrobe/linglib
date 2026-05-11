@@ -18,11 +18,34 @@ set_option autoImplicit false
 # Grossman-Larson Hopf algebra on forests of nonplanar rooted trees
 @cite{grossman-larson-1989}
 @cite{foissy-typed-decorated-rooted-trees-2018}
+@cite{marcolli-chomsky-berwick-2025}
 
 The **Grossman-Larson product** `⋆` is the associative non-commutative
 product on `ConnesKreimer R (Nonplanar α)`, dual to the disjoint-union
 product. Together with the appropriate coproduct, it yields a Hopf
 algebra dual to the Connes-Kreimer Hopf algebra.
+
+## MCB targets
+
+The GL framework is **the unification** that lets MCB's three coproducts
+(Δ^c, Δ^d, Δ^ρ) share one substrate (see
+`memory/project_mcb_unification_rationale.md`). Specifically:
+
+* **Lemma 1.2.10** (Δ^c bialgebra on `V(F_{SO_0})`): closed via the
+  GL-CK duality once R.5/R.6/R.7 sorries land. See
+  `Coproduct/TraceNonplanar.lean`.
+* **Lemma 1.2.11** (Δ^ρ Hopf algebra on `V(\tilde F_{SO_0})`):
+  currently has a parallel proof in `Coproduct/PruningNonplanar.lean`
+  (Foissy clean coassoc); R.8 will redo via GL duality and delete the
+  parallel.
+* **Lemma 1.7.3** (Insertion Lie Algebra of §1.7 = Lie algebra of
+  primitives in `H^∨` after `1 − α` quotient): direct consequence of
+  the GL-dual Lie bracket, with MCB Def 1.7.1's binary `◁_e` being the
+  binary specialization (NOT a parallel algebra; see
+  `feedback_mcb_section_1_7_not_foissy.md`).
+* **Δ^d** (MCB Def 1.2.5): falls out as a different extraction policy
+  + projection from the same framework (NOT a parallel substrate; see
+  `project_mcb_unification_rationale.md`).
 
 ## Construction
 

@@ -11,6 +11,7 @@ set_option autoImplicit false
 # Symmetry-weighted pairing for GL ↔ CK duality
 @cite{foissy-typed-decorated-rooted-trees-2018}
 @cite{grossman-larson-1989}
+@cite{marcolli-chomsky-berwick-2025}
 
 The pairing `⟨·, ·⟩ : H × H → R` (where `H = ConnesKreimer R (Nonplanar α)`)
 realizes the duality between the Connes-Kreimer (CK) and
@@ -18,6 +19,20 @@ Grossman-Larson (GL) Hopf algebras on the shared carrier. By
 Foissy 2018 (hal-01924416, §4.2), GL associativity ⇔ Δ^c
 coassociativity via the pairing — the Δ^c proof in R.7 transports the
 GL proof from `GrossmanLarson.lean` (R.5) through this duality.
+
+## MCB targets
+
+The pairing is the **bridge** that makes the GL framework
+(`GrossmanLarson.lean`) usable to prove MCB's coassociativity claims:
+
+* **Lemma 1.2.10** (Δ^c bialgebra): coassoc transported via this
+  pairing from `GrossmanLarson.product_assoc`.
+* **Lemma 1.7.3** (Insertion Lie ↔ primitives in `H^∨`): the dual Lie
+  bracket on `H^∨` is induced by this pairing; MCB's binary `◁_e`
+  (Def 1.7.1) is its binary specialization after `1 − α` quotient.
+* **Δ^d** (MCB Def 1.2.5) and Δ^ρ (Lemma 1.2.11): same pairing
+  framework, different extraction policies. See
+  `memory/project_mcb_unification_rationale.md`.
 
 ## The pairing (Foissy 2018 §4.2)
 

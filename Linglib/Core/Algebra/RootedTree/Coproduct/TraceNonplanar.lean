@@ -23,6 +23,16 @@ proved via Foissy 2018 §4.2 GL-CK duality: GL associativity (`product`
 in `GrossmanLarson.lean`) ⇔ Δ^c coassociativity, transported through
 the symmetry-weighted pairing in `GrossmanLarsonPairing.lean`.
 
+## MCB target: Lemma 1.2.10
+
+`comulCN_coassoc` + `Bialgebra` instance closes MCB Lemma 1.2.10 (the
+graded bialgebra structure of `(V(F_{SO_0}), ⊔, Δ^c)`). The GL/duality
+route is the **unification approach** that also enables Δ^d (Def 1.2.5,
+via different extraction policy + projection) and Δ^ρ (Lemma 1.2.11,
+currently parallel — to be unified at R.8). See
+`memory/project_mcb_unification_rationale.md` for why this matters
+architecturally (avoids ~thousands of LOC of duplication).
+
 The descent layer mirrors `Coproduct/PruningNonplanar.lean`'s descent
 of Δ^ρ. The duality-based coassoc proof is the *new* technique that
 handles Δ^c — for which Foissy clean coassoc (used for Δ^ρ) does NOT
