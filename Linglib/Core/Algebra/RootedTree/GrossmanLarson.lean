@@ -297,16 +297,18 @@ that defined `insertForest` via `Multiset.foldr` of `insertTree` was
 based on this misreading and has been removed.
 
 **Implementation status**: `sorry`d. The all-at-once function-sum
-requires either a `Nonplanar.Vertex` substrate (we have `Planar.Vertex`
-but no Nonplanar version) or a marker-trick reformulation that
-distinguishes original-`F` vertices from grafted ones. Both are
-substantial substrate work, deferred until the rest of R.5/R.6/R.7
-sorry-decay enables a clearer view of what the `insertOp` API needs
-to support downstream. -/
+requires building a forest-vertex-enumeration substrate + descent of
+the multi-graft operation through `Nonplanar.mk` (mirroring
+`PreLie/Nonplanar.lean`'s ~530-LOC descent of `insertSum`). Detailed
+plan in `memory/project_phase_e3_insertOp_plan.md` — estimated ~460
+LOC across 6 sub-steps. This is the keystone sorry: closing it
+unblocks all of R.5.3/4/5 + R.6 + R.7. Best done as a focused
+multi-day session. -/
 
 /-- The bilinear insertion operator `F • G : GrossmanLarson R α`.
-    See module-level docstring for the (non-trivial) intended semantics.
-    **TODO**: implementation. -/
+    See module-level docstring for the (non-trivial) intended semantics
+    and `memory/project_phase_e3_insertOp_plan.md` for the
+    implementation plan. **TODO** (R.5.1.7): implementation. -/
 noncomputable def insertOp :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
   sorry
