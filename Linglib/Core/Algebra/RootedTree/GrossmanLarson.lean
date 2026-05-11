@@ -5,6 +5,8 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.PreLie.Nonplanar
+import Mathlib.Data.Multiset.Bind
+import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 
 set_option autoImplicit false
 
@@ -75,14 +77,15 @@ summed over `vⱼ ∈ V(Sⱼ)`.
 
 ## Implementation roadmap
 
-- **R.5.1**: `gl_insert_tree : Nonplanar α → H → H` — single-tree
+- ✅ **R.5.1**: `glInsertTree : Nonplanar α → H →ₗ[ℤ] H` — single-tree
   insertion `T ↦ (F ↦ F • T)`, defined via `Nonplanar.insertSum` lifted
-  through `ofForest`. Bilinear in F.
-- **R.5.2**: `gl_insert : H → H → H` — `F ↦ G ↦ F • G`. Recursion on `G`
-  via the formula `F • (T · G') = (F • T) • G'`. Need to verify
-  well-definedness on multisets (since G is a multiset, not a list).
-- **R.5.3**: `gl : H → H → H` — `F ↦ G ↦ F ⋆ G`. Recursion on `G` via
-  the formula `F ⋆ (T · G') = (F ⋆ G') · T + (F • T) ⋆ G'`.
+  through `of'`. ℤ-linear in F. (Cons-decomp lemma deferred to R.5.1.5.)
+- **R.5.1.5**: Leibniz cons decomposition for `glInsertTreeForest`
+  (see §3 below).
+- **R.5.2**: `glInsert : H →ₗ[ℤ] H →ₗ[ℤ] H` — `F ↦ G ↦ F • G`.
+  Recursion on `G` via `F • (T · G') = (F • T) • G'`. Needs cons-decomp.
+- **R.5.3**: `gl : H →ₗ[ℤ] H →ₗ[ℤ] H` — `F ↦ G ↦ F ⋆ G`. Recursion on
+  `G` via `F ⋆ (T · G') = (F ⋆ G') · T + (F • T) ⋆ G'`.
 - **R.5.4**: Right-unitality `F ⋆ 1 = F`.
 - **R.5.5**: Associativity `(F₁ ⋆ F₂) ⋆ F₃ = F₁ ⋆ (F₂ ⋆ F₃)` by induction
   on F₃ (the cleanest case, using the recursive formula directly).
@@ -93,7 +96,8 @@ summed over `vⱼ ∈ V(Sⱼ)`.
 
 ## Status
 
-Stub: roadmap only. R.5.1 will be the first concrete sub-commit.
+R.5.1 landed: `glInsertTreeForest`, `glInsertTree`, plus the basic
+`_zero` and `_of'` simp lemmas. Sorry-free. Cons-decomp deferred.
 
 ## Out of scope (deferred)
 
@@ -105,10 +109,91 @@ Stub: roadmap only. R.5.1 will be the first concrete sub-commit.
   (would require PBW; deferred indefinitely).
 -/
 
+namespace RootedTree
+
 namespace ConnesKreimer.GrossmanLarson
 
 variable {α : Type*}
 
--- R.5.1+ implementations land here in subsequent commits.
+/-! ## §1: Single-tree insertion at a forest (R.5.1)
+
+The basic combinatorial action: given a tree `T` and a forest
+`F = {S₁, …, Sₘ} : Forest (Nonplanar α)`, sum over each occurrence of
+a tree `Sⱼ ∈ F` (with multiplicity) and each grafting summand `S' ∈
+Nonplanar.insertSum T Sⱼ` the basis vector for the resulting forest
+`{S₁, …, Sⱼ₋₁, S', Sⱼ₊₁, …, Sₘ}`.
+
+Reduction to existing substrate: `Nonplanar.insertSum T Sⱼ` (R.3
+substrate, sorry-free) gives the multiset of trees obtained by grafting
+`T` at each vertex of `Sⱼ`. **Argument-swap convention**: Foissy 2021's
+`F • T` (graft `T` into `F`) is `Nonplanar.insertSum T S` (which grafts
+the FIRST argument into the SECOND).
+
+`Multiset.erase` requires `DecidableEq`; we use `Classical.decEq`
+locally so consumers do not need to thread a `DecidableEq (Nonplanar α)`
+hypothesis. The function is `noncomputable` regardless. -/
+
+/-- `glInsertTreeForest T F`: forest-level insertion of `T` at each
+    occurrence of each tree of `F`. Sum of basis vectors. -/
+noncomputable def glInsertTreeForest
+    (T : Nonplanar α) (F : Forest (Nonplanar α)) :
+    ConnesKreimer ℤ (Nonplanar α) :=
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  ((F.bind (fun S =>
+    (Nonplanar.insertSum T S).map
+      (fun S' => of' (R := ℤ) (S' ::ₘ F.erase S)))).sum)
+
+/-- Empty forest has no insertion sites. -/
+@[simp] theorem glInsertTreeForest_zero (T : Nonplanar α) :
+    glInsertTreeForest T (0 : Forest (Nonplanar α)) = 0 := by
+  unfold glInsertTreeForest
+  simp
+
+/-! ## §2: Bilinear extension to `H` (R.5.1)
+
+Lift the basis-level `glInsertTreeForest T` to a ℤ-linear map on
+`H = ConnesKreimer ℤ (Nonplanar α) = Forest (Nonplanar α) →₀ ℤ` via
+`Finsupp.linearCombination`. The result is automatically additive in
+its `H`-argument; bilinearity in `T` is left to a later sub-commit
+(R.5.2 will likely promote `glInsertTree` to a `Nonplanar α → H →ₗ[ℤ] H`
+and then to a bilinear `H →ₗ[ℤ] H →ₗ[ℤ] H` via R.5's `glInsert`). -/
+
+/-- `glInsertTree T : H →ₗ[ℤ] H`: ℤ-linear extension of the forest-level
+    insertion `glInsertTreeForest T`. -/
+noncomputable def glInsertTree (T : Nonplanar α) :
+    ConnesKreimer ℤ (Nonplanar α) →ₗ[ℤ] ConnesKreimer ℤ (Nonplanar α) :=
+  Finsupp.linearCombination ℤ (glInsertTreeForest T)
+
+/-- `glInsertTree T 0 = 0` (linearity). -/
+@[simp] theorem glInsertTree_zero (T : Nonplanar α) :
+    glInsertTree T (0 : ConnesKreimer ℤ (Nonplanar α)) = 0 :=
+  LinearMap.map_zero _
+
+/-- Basis identity: `glInsertTree T (of' F) = glInsertTreeForest T F`. -/
+@[simp] theorem glInsertTree_of' (T : Nonplanar α) (F : Forest (Nonplanar α)) :
+    glInsertTree T (of' (R := ℤ) F) = glInsertTreeForest T F := by
+  show Finsupp.linearCombination ℤ (glInsertTreeForest T)
+        (Finsupp.single F 1) = _
+  rw [Finsupp.linearCombination_single, one_smul]
+
+/-! ## §3: Deferred for R.5.1.5 — Leibniz cons decomposition
+
+The Leibniz-style decomposition over multiset cons,
+```
+glInsertTreeForest T (S ::ₘ F) =
+  ((Nonplanar.insertSum T S).map (fun S' => of' (S' ::ₘ F))).sum +
+  of' {S} * glInsertTreeForest T F
+```
+is the load-bearing lemma for R.5.2's `glInsert` recursion. Proof
+sketch: `Multiset.cons_bind` + `Multiset.erase_cons_head` for the
+front term; for the tail term, use `(S ::ₘ F).erase S₀ = S ::ₘ F.erase S₀`
+(case-split on `S₀ = S`, using `Multiset.cons_erase` when `S₀ = S` to
+reconcile both sides through F), then factor `of' {S} *` out via
+`Multiset.sum_map_mul_left` and `of'_add`. Uses the Classical
+`DecidableEq` instance from `glInsertTreeForest`'s `letI`; care
+required to ensure both sides invoke the same instance. Deferred to a
+focused R.5.1.5 sub-commit. -/
 
 end ConnesKreimer.GrossmanLarson
+
+end RootedTree
