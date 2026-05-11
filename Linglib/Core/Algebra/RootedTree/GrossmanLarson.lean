@@ -52,12 +52,21 @@ The GL framework is **the unification** that lets MCB's three coproducts
 ## Construction
 
 For trees `T₁, T₂ : Nonplanar α`:
-* The **insertion operator** `T₁ • T₂` sums over each vertex `v` of `T₂`
-  the tree obtained by grafting `T₁` at `v` as a new child. Reduces to
-  `Nonplanar.insertSum T₁ T₂` from `PreLie/Nonplanar.lean`.
-* For a single tree `T` and a forest `F`, `F • T` extends bilinearly:
-  `(S₁ ⊔ ⋯ ⊔ Sₘ) • T = Σⱼ {S₁, …, insertAt(T, vⱼ, Sⱼ), …, Sₘ}` summed
-  over `vⱼ ∈ V(Sⱼ)`. Implemented as `insertTreeForest`.
+* The **insertion operator** `T₁ • T₂` sums over each vertex `v` of `T₁`
+  the tree obtained by grafting `T₂` at `v` as a new child. Reduces to
+  `Nonplanar.insertSum T₁ T₂` from `PreLie/Nonplanar.lean` (whose
+  convention is `insertSum T_host T_graft`).
+* For a single tree `T` and a forest `F`, `F • T` is the forest obtained
+  by replacing one occurrence of a tree `S ∈ F` with `S` augmented by
+  `T` grafted at one of its vertices: `F • T = Σ_{S ∈ F, v ∈ V(S)}
+  (F.erase S + {S[v ↦ T]})`. Implemented as `insertTreeForest`.
+* For a multi-tree operand `G_forest`, the multi-tree insertion `F • G`
+  is defined as the **all-at-once** sum over assignments of each tree
+  in `G` to a vertex of the *original* `F`. **Importantly, this is NOT
+  the iterated single-tree insertion**: those don't commute (see
+  `feedback_inserttree_does_not_commute.md`). The correct definition
+  is `F • G_forest = Σ_{f : G_forest → V(F)} of' (F with each T ∈ G
+  grafted at f(T))`. Currently `sorry`'d in `insertOp`.
 
 The Grossman-Larson product is given by Foissy 2021 Theorem 5.1:
 ```
@@ -76,13 +85,12 @@ underlying carrier, different multiplication.
 ## Status
 
 `[UPSTREAM]` candidate. Skeleton API (basis embeddings, single-tree
-insertion, multi-tree insertion, GL product) sorry-free for the bilinear
-infrastructure. The combinatorial commutativity (`insertTree_comm`),
-the cons-decomposition lemma (`insertTreeForest_cons`), forest-level
-linearity-in-F lemmas for `productForest`, and the unitality + assoc
-theorems remain as `sorry`s. The `Semigroup`/`Monoid` typeclass
-instances for the GL product are NOT registered until the underlying
-proofs land — only the forwarding `theorem`s are stated.
+insertion, GL product, Mul instance). Open `sorry`s: `insertOp`
+(multi-tree insertion — needs `Nonplanar.Vertex` substrate or
+marker-trick reformulation), three `productForest_*_left` linearity
+lemmas, `mul_one`, `one_mul`, `mul_assoc`. The `Semigroup`/`Monoid`
+typeclass instances for the GL product are NOT registered until the
+underlying proofs land — only the forwarding `theorem`s are stated.
 -/
 
 namespace RootedTree
@@ -162,15 +170,18 @@ noncomputable def ofTree (t : Nonplanar α) : GrossmanLarson R α :=
 `insertTreeForest T F : GrossmanLarson R α` is the basis-level
 forest-insertion operator: for each occurrence of a tree `S ∈ F` (with
 multiplicity), sum over each grafting summand `S' ∈ Nonplanar.insertSum
-T S` the basis vector for the resulting forest `S ::ₘ F.erase S` with
-`S` replaced by `S'`. -/
+S T` (`S` host, `T` graft, summed over vertices of `S`) the basis
+vector for the resulting forest `S ::ₘ F.erase S` with `S` replaced by
+`S'`. The convention `Nonplanar.insertSum T_host T_graft` is fixed by
+`PreLie/Defs.lean` (verified against test + `card_insertSum_eq_weight`). -/
 
-/-- Forest-level single-tree insertion. -/
+/-- Forest-level single-tree insertion: graft `T` at one vertex of one
+    tree of `F`, summed over (tree, vertex). -/
 noncomputable def insertTreeForest (T : Nonplanar α) (F : Forest (Nonplanar α)) :
     GrossmanLarson R α :=
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   (F.bind fun S =>
-    (Nonplanar.insertSum T S).map fun S' => of' (R := R) (S' ::ₘ F.erase S)).sum
+    (Nonplanar.insertSum S T).map fun S' => of' (R := R) (S' ::ₘ F.erase S)).sum
 
 @[simp] theorem insertTreeForest_zero (T : Nonplanar α) :
     insertTreeForest (R := R) T (0 : Forest (Nonplanar α)) = 0 := by
@@ -203,7 +214,7 @@ noncomputable def insertTree (T : Nonplanar α) :
 private theorem unop_insertTreeForest_cons
     (T S : Nonplanar α) (F : Forest (Nonplanar α)) :
     unop (insertTreeForest (R := R) T (S ::ₘ F)) =
-      ((Nonplanar.insertSum T S).map
+      ((Nonplanar.insertSum S T).map
         (fun S' => unop (of' (R := R) (S' ::ₘ F)))).sum +
       unop (of' (R := R) ({S} : Forest (Nonplanar α))) *
         unop (insertTreeForest (R := R) T F) := by
@@ -212,13 +223,13 @@ private theorem unop_insertTreeForest_cons
   -- + `of'` (which is `ConnesKreimer.of'` definitionally) reduces the
   -- statement to a pure CK equality.
   show ((((S : Nonplanar α) ::ₘ F).bind fun S₀ =>
-          (Nonplanar.insertSum T S₀).map fun S' =>
+          (Nonplanar.insertSum S₀ T).map fun S' =>
             ConnesKreimer.of' (R := R) (S' ::ₘ ((S : Nonplanar α) ::ₘ F).erase S₀)).sum)
-      = ((Nonplanar.insertSum T S).map fun S' =>
+      = ((Nonplanar.insertSum S T).map fun S' =>
           ConnesKreimer.of' (R := R) (S' ::ₘ F)).sum +
         ConnesKreimer.of' (R := R) ({S} : Forest (Nonplanar α)) *
           ((F.bind fun S₀ =>
-            (Nonplanar.insertSum T S₀).map fun S' =>
+            (Nonplanar.insertSum S₀ T).map fun S' =>
               ConnesKreimer.of' (R := R) (S' ::ₘ F.erase S₀)).sum)
   rw [Multiset.cons_bind, Multiset.sum_add]
   congr 1
@@ -234,9 +245,9 @@ private theorem unop_insertTreeForest_cons
       · subst h; rw [Multiset.erase_cons_head, Multiset.cons_erase hS₀]
       · exact Multiset.erase_cons_tail _ (Ne.symm h)
     have h_factor : ∀ S₀ ∈ F,
-        ((Nonplanar.insertSum T S₀).map fun S' =>
+        ((Nonplanar.insertSum S₀ T).map fun S' =>
             ConnesKreimer.of' (R := R) (S' ::ₘ ((S : Nonplanar α) ::ₘ F).erase S₀))
-        = ((Nonplanar.insertSum T S₀).map fun S' =>
+        = ((Nonplanar.insertSum S₀ T).map fun S' =>
             ConnesKreimer.of' (R := R) ({S} : Forest (Nonplanar α)) *
               ConnesKreimer.of' (R := R) (S' ::ₘ F.erase S₀)) := fun S₀ hS₀ => by
       apply Multiset.map_congr rfl
@@ -254,82 +265,51 @@ private theorem unop_insertTreeForest_cons
     definitional identity of `op` and `unop`. -/
 theorem insertTreeForest_cons (T S : Nonplanar α) (F : Forest (Nonplanar α)) :
     insertTreeForest (R := R) T (S ::ₘ F) =
-      ((Nonplanar.insertSum T S).map
+      ((Nonplanar.insertSum S T).map
         (fun S' => of' (R := R) (S' ::ₘ F))).sum +
       op (unop (of' (R := R) ({S} : Forest (Nonplanar α))) *
           unop (insertTreeForest T F)) :=
   unop_insertTreeForest_cons T S F
 
-/-! ### Multi-tree insertion
+/-! ### Multi-tree insertion (the insertion operator `F • G`)
 
-`insertOp F G` (notation `F • G`) inserts each tree of `G` into `F`,
-summed over all sequences of vertex choices. Order-independence
-(commutativity of single-tree insertions) is encoded as a
-`LeftCommutative` instance on `insertTree`, used by `Multiset.foldr`
-to define the basis-level `insertForest`. The bilinear bundle
-`insertOp` lifts this to all of `GrossmanLarson R α` in both arguments. -/
+The bilinear operator `F • G : GrossmanLarson R α` for `F G : H`
+inserts each tree of `G` (counted with multiplicity) at a vertex of
+the *original* `F`. Specifically, for `F = of' F_forest` and `G = of'
+G_forest`:
+```
+F • G = Σ_{f : G_forest → V(F_forest)} of' (F_forest with each T ∈ G grafted at f(T))
+```
+where the sum is over functions from `G_forest`'s elements to vertices
+of `F_forest` (counted with multiplicity).
 
-/-- **Order-independence of single-tree insertions**. Reduces to a
-    vertex-bijection between double-insertion sites of `T₁ • T₂` and
-    `T₂ • T₁`. **TODO**: proof. -/
-private theorem insertTree_comm (T₁ T₂ : Nonplanar α) (X : GrossmanLarson R α) :
-    insertTree T₁ (insertTree T₂ X) = insertTree T₂ (insertTree T₁ X) := by
-  sorry
+**This is well-defined on `G_forest` as a multiset** because the result
+is invariant under permutation of `G_forest`'s elements (the
+function-sum doesn't care about the order of `G_forest`'s indexing).
 
-instance instLeftCommutative :
-    LeftCommutative (fun (T : Nonplanar α) (acc : GrossmanLarson R α) =>
-      insertTree (R := R) T acc) where
-  left_comm := insertTree_comm
+**This is NOT iterated single-tree insertion**: `insertTree` applications
+do *not* commute (single-tree insertions add new vertices that subsequent
+insertions could graft into, breaking permutation-invariance). See
+`feedback_inserttree_does_not_commute.md` for the counterexample
+(F = {leaf a}, T₁ = leaf b, T₂ = node(c, [d]) gives 3 vs 2 summands
+for the two orders) and the correct semantics. The earlier scaffold
+that defined `insertForest` via `Multiset.foldr` of `insertTree` was
+based on this misreading and has been removed.
 
-/-- Forest-level multi-tree insertion via `Multiset.foldr`. -/
-noncomputable def insertForest (F : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
-    GrossmanLarson R α :=
-  G.foldr (fun T acc => insertTree T acc) F
+**Implementation status**: `sorry`d. The all-at-once function-sum
+requires either a `Nonplanar.Vertex` substrate (we have `Planar.Vertex`
+but no Nonplanar version) or a marker-trick reformulation that
+distinguishes original-`F` vertices from grafted ones. Both are
+substantial substrate work, deferred until the rest of R.5/R.6/R.7
+sorry-decay enables a clearer view of what the `insertOp` API needs
+to support downstream. -/
 
-@[simp] theorem insertForest_zero (F : GrossmanLarson R α) :
-    insertForest F (0 : Forest (Nonplanar α)) = F :=
-  Multiset.foldr_zero _ _
-
-@[simp] theorem insertForest_cons (F : GrossmanLarson R α) (T : Nonplanar α)
-    (G : Forest (Nonplanar α)) :
-    insertForest F (T ::ₘ G) = insertTree T (insertForest F G) :=
-  Multiset.foldr_cons _ _ _ _
-
-private theorem insertForest_zero_left (G : Forest (Nonplanar α)) :
-    insertForest (0 : GrossmanLarson R α) G = 0 := by
-  induction G using Multiset.induction with
-  | empty => exact insertForest_zero _
-  | cons T G' ih => rw [insertForest_cons, ih, LinearMap.map_zero]
-
-private theorem insertForest_add_left
-    (F₁ F₂ : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
-    insertForest (F₁ + F₂) G = insertForest F₁ G + insertForest F₂ G := by
-  induction G using Multiset.induction with
-  | empty => simp only [insertForest_zero]
-  | cons T G' ih =>
-    rw [insertForest_cons, insertForest_cons, insertForest_cons, ih,
-        LinearMap.map_add]
-
-private theorem insertForest_smul_left
-    (c : R) (F : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
-    insertForest (c • F) G = c • insertForest F G := by
-  induction G using Multiset.induction with
-  | empty => simp only [insertForest_zero]
-  | cons T G' ih =>
-    rw [insertForest_cons, insertForest_cons, ih, LinearMap.map_smul]
-
-/-- Internal: `insertForest`-bundled-as-LinearMap-in-F, parameterized by
-    the operand forest. Used to lift to the bilinear `insertOp`. -/
-private noncomputable def insertForestLin (G : Forest (Nonplanar α)) :
-    GrossmanLarson R α →ₗ[R] GrossmanLarson R α where
-  toFun F := insertForest F G
-  map_add' F₁ F₂ := insertForest_add_left F₁ F₂ G
-  map_smul' c F := insertForest_smul_left c F G
-
-/-- The bilinear insertion operator `F • G : GrossmanLarson R α`. -/
+/-- The bilinear insertion operator `F • G : GrossmanLarson R α`.
+    See module-level docstring for the (non-trivial) intended semantics.
+    **TODO**: implementation. -/
 noncomputable def insertOp :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
-  (Finsupp.linearCombination R (insertForestLin (R := R) (α := α))).flip
+  sorry
 
 /-! ### Grossman-Larson product
 
