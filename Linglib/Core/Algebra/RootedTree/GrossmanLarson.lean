@@ -5,195 +5,332 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.PreLie.Nonplanar
+import Mathlib.Data.Multiset.AddSub
 import Mathlib.Data.Multiset.Bind
+import Mathlib.Data.Multiset.MapFold
+import Mathlib.Data.Multiset.Powerset
+import Mathlib.LinearAlgebra.BilinearMap
 import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 
 set_option autoImplicit false
 
 /-!
-# The Grossman-Larson product on `H = ConnesKreimer ℤ (Nonplanar α)`
+# Grossman-Larson Hopf algebra on forests of nonplanar rooted trees
 @cite{grossman-larson-1989}
 @cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{oudom-guin-2008}
 
-The Grossman-Larson product `⋆ : H → H → H` is the associative
-non-commutative product on the (commutative) algebra `H` of forests of
-nonplanar rooted trees. By Foissy 2018/2021, `(H, ⋆, Δ_⊔)` is a Hopf
-algebra dual to the Connes-Kreimer Hopf algebra `(H, ⊔, Δ^c)` (with `⊔`
-the disjoint-union product and `Δ^c` the contraction-extraction
-coproduct used in MCB).
+The **Grossman-Larson product** `⋆` is the associative non-commutative
+product on `ConnesKreimer R (Nonplanar α)`, dual to the disjoint-union
+product. Together with the appropriate coproduct, it yields a Hopf
+algebra dual to the Connes-Kreimer Hopf algebra.
 
-This file constructs `⋆` directly via a combinatorial recursion (Foissy
-2021 Theorem 5.1), bypassing the abstract Guin-Oudom isomorphism
-`(S(InsertionAlgebra α), ⋆) ≃ U(InsertionAlgebra α)_Lie` that would
-otherwise need PBW (which mathlib lacks; see
-`Linglib/Core/Algebra/PreLie/GuinOudom.lean` C3 deferment note). The
-combinatorial route gives associativity directly via induction on
-forests, no PBW required.
+## Construction
 
-## The formula (Foissy 2021 Theorem 5.1, untyped specialization)
+For trees `T₁, T₂ : Nonplanar α`:
+* The **insertion operator** `T₁ • T₂` sums over each vertex `v` of `T₂`
+  the tree obtained by grafting `T₁` at `v` as a new child. Reduces to
+  `Nonplanar.insertSum T₁ T₂` from `PreLie/Nonplanar.lean`.
+* For a single tree `T` and a forest `F`, `F • T` extends bilinearly:
+  `(S₁ ⊔ ⋯ ⊔ Sₘ) • T = Σⱼ {S₁, …, insertAt(T, vⱼ, Sⱼ), …, Sₘ}` summed
+  over `vⱼ ∈ V(Sⱼ)`. Implemented as `insertTreeForest`.
 
-For forest `F : H` and trees `T₁, …, Tₙ : Nonplanar α`:
-
+The Grossman-Larson product is given by Foissy 2021 Theorem 5.1:
 ```
-F ⋆ (T₁ ⊔ ⋯ ⊔ Tₙ) = ∑_{I ⊆ [n]} (F • ∏_{i ∈ I} Tᵢ) · ∏_{i ∉ I} Tᵢ
+F ⋆ G = Σ_{G₁ ⊆ G_forest} (F • of' G₁) · of' (G_forest - G₁)
 ```
+where the sum is over sub-multisets of `G_forest` and `·` is the
+disjoint-union product on `ConnesKreimer R (Nonplanar α)`.
 
-where:
-- `·` is the commutative product on `H` (forest disjoint union ⊔, lifted bilinearly)
-- `F • G` is the **insertion operator**: insert each tree of `G` at any
-  vertex of `F`, summed over choices of vertex sequences (defined below)
-- `F • 1 = F` (empty insertion is identity)
-- `F • (T · G) = (F • T) • G` (insert one tree at a time, associatively
-  on the right operand)
-- `F • T` for `T` a single tree = `Σ_{v ∈ V(F)} F[v ↦ insertAt(T, v)]`
-  (replace the tree of `F` containing `v` with that tree with `T`
-  grafted at `v` as a new child)
+## Type alias
 
-**Recursive form** (cleaner for Lean):
-```
-F ⋆ 1 = F
-F ⋆ (T · F') = (F ⋆ F') · T + (F • T) ⋆ F'
-```
-
-For trees on both sides:
-```
-T₁ ⋆ T₂ = T₁ · T₂ + (T₁ • T₂)
-        = forest{T₁, T₂} + ∑_{v ∈ V(T₁)} singleton_forest{insertAt(T₂, v, T₁)}
-```
-
-## Reduction to the existing pre-Lie substrate
-
-The single-tree insertion `T₁ • T₂ : H` for `T₁, T₂ : Nonplanar α`
-matches the existing `Nonplanar.insertSum T₂ T₁ : Multiset (Nonplanar α)`
-(R.3 substrate, sorry-free), embedded in `H` via `ofForest`.
-**Note the argument swap**: `Nonplanar.insertSum T₁ T₂` grafts `T₁` at
-vertices of `T₂`, but Foissy 2021's `T₁ • T₂` grafts `T₂` at vertices
-of `T₁`. So `T₁ • T₂ = embed (Nonplanar.insertSum T₂ T₁)`.
-
-For forests, `F • T` extends bilinearly across the trees of `F`:
-`(S₁ ⊔ ⋯ ⊔ Sₘ) • T = Σⱼ {S₁, …, Sⱼ₋₁, insertAt(T, vⱼ, Sⱼ), Sⱼ₊₁, …, Sₘ}`
-summed over `vⱼ ∈ V(Sⱼ)`.
-
-## Implementation roadmap
-
-- ✅ **R.5.1**: `glInsertTree : Nonplanar α → H →ₗ[ℤ] H` — single-tree
-  insertion `T ↦ (F ↦ F • T)`, defined via `Nonplanar.insertSum` lifted
-  through `of'`. ℤ-linear in F. (Cons-decomp lemma deferred to R.5.1.5.)
-- **R.5.1.5**: Leibniz cons decomposition for `glInsertTreeForest`
-  (see §3 below).
-- **R.5.2**: `glInsert : H →ₗ[ℤ] H →ₗ[ℤ] H` — `F ↦ G ↦ F • G`.
-  Recursion on `G` via `F • (T · G') = (F • T) • G'`. Needs cons-decomp.
-- **R.5.3**: `gl : H →ₗ[ℤ] H →ₗ[ℤ] H` — `F ↦ G ↦ F ⋆ G`. Recursion on
-  `G` via `F ⋆ (T · G') = (F ⋆ G') · T + (F • T) ⋆ G'`.
-- **R.5.4**: Right-unitality `F ⋆ 1 = F`.
-- **R.5.5**: Associativity `(F₁ ⋆ F₂) ⋆ F₃ = F₁ ⋆ (F₂ ⋆ F₃)` by induction
-  on F₃ (the cleanest case, using the recursive formula directly).
-- **R.5.6**: Bundle as `Mul`/`Semigroup`/`Ring` instance on a type alias
-  `HGL := H` (since H already has a different `Mul` from `AddMonoidAlgebra`,
-  the disjoint-union product). Mirror our `InsertionAlgebra α := Nonplanar α →₀ ℤ`
-  pattern.
+`GrossmanLarson R α` is a type alias for `ConnesKreimer R (Nonplanar α)`
+that overrides the default disjoint-union `Mul` with the Grossman-Larson
+product. Mirrors mathlib's `MultiplicativeOpposite` pattern: same
+underlying carrier, different multiplication.
 
 ## Status
 
-R.5.1 landed: `glInsertTreeForest`, `glInsertTree`, plus the basic
-`_zero` and `_of'` simp lemmas. Sorry-free. Cons-decomp deferred.
-
-## Out of scope (deferred)
-
-- The full Hopf algebra structure on `(HGL, ⋆, Δ_⊔)`. Just `⋆` here.
-- The pairing `⟨·, ·⟩ : H × H → ℤ` for GL ↔ CK duality (R.6).
-- The `Δ^c` coassoc theorem on `H` via duality (R.7).
-- Specialization of the abstract `★ : S(L) →ₗ S(L)` from
-  `Linglib/Core/Algebra/PreLie/GuinOudom.lean` to this concrete `⋆`
-  (would require PBW; deferred indefinitely).
+`[UPSTREAM]` candidate. Skeleton API (basis embeddings, single-tree
+insertion, multi-tree insertion, GL product) sorry-free for the bilinear
+infrastructure. The combinatorial commutativity (`insertTree_comm`),
+the cons-decomposition lemma (`insertTreeForest_cons`), forest-level
+linearity-in-F lemmas for `productForest`, and the unitality + assoc
+theorems remain as `sorry`s. The `Semigroup`/`Monoid` typeclass
+instances for the GL product are NOT registered until the underlying
+proofs land — only the forwarding `theorem`s are stated.
 -/
 
 namespace RootedTree
 
-namespace ConnesKreimer.GrossmanLarson
+/-! ### The Grossman-Larson Hopf algebra carrier -/
 
-variable {α : Type*}
+/-- The Hopf algebra of forests of nonplanar rooted trees, equipped
+    (via the `Mul` instance below) with the Grossman-Larson product. -/
+def GrossmanLarson (R : Type*) [CommSemiring R] (α : Type*) : Type _ :=
+  ConnesKreimer R (Nonplanar α)
 
-/-! ## §1: Single-tree insertion at a forest (R.5.1)
+namespace GrossmanLarson
 
-The basic combinatorial action: given a tree `T` and a forest
-`F = {S₁, …, Sₘ} : Forest (Nonplanar α)`, sum over each occurrence of
-a tree `Sⱼ ∈ F` (with multiplicity) and each grafting summand `S' ∈
-Nonplanar.insertSum T Sⱼ` the basis vector for the resulting forest
-`{S₁, …, Sⱼ₋₁, S', Sⱼ₊₁, …, Sₘ}`.
+variable {R : Type*} [CommSemiring R] {α : Type*}
 
-Reduction to existing substrate: `Nonplanar.insertSum T Sⱼ` (R.3
-substrate, sorry-free) gives the multiset of trees obtained by grafting
-`T` at each vertex of `Sⱼ`. **Argument-swap convention**: Foissy 2021's
-`F • T` (graft `T` into `F`) is `Nonplanar.insertSum T S` (which grafts
-the FIRST argument into the SECOND).
+/-! ### Forwarded module instances
 
-`Multiset.erase` requires `DecidableEq`; we use `Classical.decEq`
-locally so consumers do not need to thread a `DecidableEq (Nonplanar α)`
-hypothesis. The function is `noncomputable` regardless. -/
+These propagate from the underlying `ConnesKreimer` carrier without
+exposing the disjoint-union `Mul` (which would clash with the
+Grossman-Larson `Mul` defined later). -/
 
-/-- `glInsertTreeForest T F`: forest-level insertion of `T` at each
-    occurrence of each tree of `F`. Sum of basis vectors. -/
-noncomputable def glInsertTreeForest
-    (T : Nonplanar α) (F : Forest (Nonplanar α)) :
-    ConnesKreimer ℤ (Nonplanar α) :=
+noncomputable instance instAddCommMonoid : AddCommMonoid (GrossmanLarson R α) :=
+  inferInstanceAs (AddCommMonoid (ConnesKreimer R (Nonplanar α)))
+
+noncomputable instance instModule : Module R (GrossmanLarson R α) :=
+  inferInstanceAs (Module R (ConnesKreimer R (Nonplanar α)))
+
+noncomputable instance instOne : One (GrossmanLarson R α) :=
+  inferInstanceAs (One (ConnesKreimer R (Nonplanar α)))
+
+instance instFunLike : FunLike (GrossmanLarson R α) (Forest (Nonplanar α)) R :=
+  inferInstanceAs (FunLike (ConnesKreimer R (Nonplanar α)) (Forest (Nonplanar α)) R)
+
+/-! ### Underlying-carrier coercions
+
+The type alias `GrossmanLarson R α := ConnesKreimer R (Nonplanar α)`
+makes the carriers definitionally equal, but Lean does not always
+unfold `def` for type ascription or instance resolution. Explicit
+identity-coercion helpers `op`/`unop` (mirroring `MulOpposite.op` /
+`unop` from mathlib) let us reach the underlying disjoint-union `Mul`
+when defining the GL product, without exposing the disjoint-union
+`Mul` on `GrossmanLarson R α` itself. -/
+
+/-- Reinterpret a `ConnesKreimer R (Nonplanar α)` element as a
+    `GrossmanLarson R α` element (identity at the carrier level). -/
+noncomputable def op (x : ConnesKreimer R (Nonplanar α)) : GrossmanLarson R α := x
+
+/-- Reinterpret a `GrossmanLarson R α` element as a
+    `ConnesKreimer R (Nonplanar α)` element (identity at the carrier level). -/
+noncomputable def unop (x : GrossmanLarson R α) : ConnesKreimer R (Nonplanar α) := x
+
+@[simp] theorem op_unop (x : GrossmanLarson R α) :
+    op (unop (R := R) x) = x := rfl
+
+@[simp] theorem unop_op (x : ConnesKreimer R (Nonplanar α)) :
+    unop (op (R := R) (α := α) x) = x := rfl
+
+/-! ### Smart constructors
+
+The basis-embedding constructors are inherited from the underlying
+`ConnesKreimer` via definitional equality. -/
+
+/-- Embed a forest as a basis vector. -/
+noncomputable def of' (F : Forest (Nonplanar α)) : GrossmanLarson R α :=
+  ConnesKreimer.of' (R := R) F
+
+/-- Embed a single tree as a singleton-forest basis vector. -/
+noncomputable def ofTree (t : Nonplanar α) : GrossmanLarson R α :=
+  ConnesKreimer.ofTree (R := R) t
+
+@[simp] theorem of'_zero :
+    (of' (R := R) (0 : Forest (Nonplanar α)) : GrossmanLarson R α) = 1 :=
+  ConnesKreimer.of'_zero
+
+/-! ### Single-tree insertion
+
+`insertTreeForest T F : GrossmanLarson R α` is the basis-level
+forest-insertion operator: for each occurrence of a tree `S ∈ F` (with
+multiplicity), sum over each grafting summand `S' ∈ Nonplanar.insertSum
+T S` the basis vector for the resulting forest `S ::ₘ F.erase S` with
+`S` replaced by `S'`. -/
+
+/-- Forest-level single-tree insertion. -/
+noncomputable def insertTreeForest (T : Nonplanar α) (F : Forest (Nonplanar α)) :
+    GrossmanLarson R α :=
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
-  ((F.bind (fun S =>
-    (Nonplanar.insertSum T S).map
-      (fun S' => of' (R := ℤ) (S' ::ₘ F.erase S)))).sum)
+  (F.bind fun S =>
+    (Nonplanar.insertSum T S).map fun S' => of' (R := R) (S' ::ₘ F.erase S)).sum
 
-/-- Empty forest has no insertion sites. -/
-@[simp] theorem glInsertTreeForest_zero (T : Nonplanar α) :
-    glInsertTreeForest T (0 : Forest (Nonplanar α)) = 0 := by
-  unfold glInsertTreeForest
-  simp
+@[simp] theorem insertTreeForest_zero (T : Nonplanar α) :
+    insertTreeForest (R := R) T (0 : Forest (Nonplanar α)) = 0 := by
+  simp only [insertTreeForest, Multiset.zero_bind, Multiset.sum_zero]
 
-/-! ## §2: Bilinear extension to `H` (R.5.1)
+/-- ℤ-linear extension of `insertTreeForest T` to `GrossmanLarson R α`. -/
+noncomputable def insertTree (T : Nonplanar α) :
+    GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
+  Finsupp.linearCombination R (insertTreeForest T)
 
-Lift the basis-level `glInsertTreeForest T` to a ℤ-linear map on
-`H = ConnesKreimer ℤ (Nonplanar α) = Forest (Nonplanar α) →₀ ℤ` via
-`Finsupp.linearCombination`. The result is automatically additive in
-its `H`-argument; bilinearity in `T` is left to a later sub-commit
-(R.5.2 will likely promote `glInsertTree` to a `Nonplanar α → H →ₗ[ℤ] H`
-and then to a bilinear `H →ₗ[ℤ] H →ₗ[ℤ] H` via R.5's `glInsert`). -/
-
-/-- `glInsertTree T : H →ₗ[ℤ] H`: ℤ-linear extension of the forest-level
-    insertion `glInsertTreeForest T`. -/
-noncomputable def glInsertTree (T : Nonplanar α) :
-    ConnesKreimer ℤ (Nonplanar α) →ₗ[ℤ] ConnesKreimer ℤ (Nonplanar α) :=
-  Finsupp.linearCombination ℤ (glInsertTreeForest T)
-
-/-- `glInsertTree T 0 = 0` (linearity). -/
-@[simp] theorem glInsertTree_zero (T : Nonplanar α) :
-    glInsertTree T (0 : ConnesKreimer ℤ (Nonplanar α)) = 0 :=
-  LinearMap.map_zero _
-
-/-- Basis identity: `glInsertTree T (of' F) = glInsertTreeForest T F`. -/
-@[simp] theorem glInsertTree_of' (T : Nonplanar α) (F : Forest (Nonplanar α)) :
-    glInsertTree T (of' (R := ℤ) F) = glInsertTreeForest T F := by
-  show Finsupp.linearCombination ℤ (glInsertTreeForest T)
-        (Finsupp.single F 1) = _
+@[simp] theorem insertTree_of' (T : Nonplanar α) (F : Forest (Nonplanar α)) :
+    insertTree (R := R) T (of' F) = insertTreeForest T F := by
+  show Finsupp.linearCombination R (insertTreeForest T) (Finsupp.single F 1) = _
   rw [Finsupp.linearCombination_single, one_smul]
 
-/-! ## §3: Deferred for R.5.1.5 — Leibniz cons decomposition
+/-- **Leibniz cons decomposition** for `insertTreeForest`. Load-bearing
+    for the multi-tree insertion recursion: each step peels one tree
+    off the operand. The disjoint-union factor on the RHS is taken at
+    the underlying `ConnesKreimer` carrier via `op`/`unop`. **TODO**:
+    proof via `Multiset.cons_bind` + `Multiset.erase_cons_head` (front
+    term) and a case-split on `S₀ = S` (tail term, factoring `of' {S}
+    *` out via `Multiset.sum_map_mul_left` + `of'_add`). -/
+theorem insertTreeForest_cons (T S : Nonplanar α) (F : Forest (Nonplanar α)) :
+    insertTreeForest (R := R) T (S ::ₘ F) =
+      ((Nonplanar.insertSum T S).map
+        (fun S' => of' (R := R) (S' ::ₘ F))).sum +
+      op (unop (of' (R := R) ({S} : Forest (Nonplanar α))) *
+          unop (insertTreeForest T F)) := by
+  sorry
 
-The Leibniz-style decomposition over multiset cons,
-```
-glInsertTreeForest T (S ::ₘ F) =
-  ((Nonplanar.insertSum T S).map (fun S' => of' (S' ::ₘ F))).sum +
-  of' {S} * glInsertTreeForest T F
-```
-is the load-bearing lemma for R.5.2's `glInsert` recursion. Proof
-sketch: `Multiset.cons_bind` + `Multiset.erase_cons_head` for the
-front term; for the tail term, use `(S ::ₘ F).erase S₀ = S ::ₘ F.erase S₀`
-(case-split on `S₀ = S`, using `Multiset.cons_erase` when `S₀ = S` to
-reconcile both sides through F), then factor `of' {S} *` out via
-`Multiset.sum_map_mul_left` and `of'_add`. Uses the Classical
-`DecidableEq` instance from `glInsertTreeForest`'s `letI`; care
-required to ensure both sides invoke the same instance. Deferred to a
-focused R.5.1.5 sub-commit. -/
+/-! ### Multi-tree insertion
 
-end ConnesKreimer.GrossmanLarson
+`insertOp F G` (notation `F • G`) inserts each tree of `G` into `F`,
+summed over all sequences of vertex choices. Order-independence
+(commutativity of single-tree insertions) is encoded as a
+`LeftCommutative` instance on `insertTree`, used by `Multiset.foldr`
+to define the basis-level `insertForest`. The bilinear bundle
+`insertOp` lifts this to all of `GrossmanLarson R α` in both arguments. -/
+
+/-- **Order-independence of single-tree insertions**. Reduces to a
+    vertex-bijection between double-insertion sites of `T₁ • T₂` and
+    `T₂ • T₁`. **TODO**: proof. -/
+private theorem insertTree_comm (T₁ T₂ : Nonplanar α) (X : GrossmanLarson R α) :
+    insertTree T₁ (insertTree T₂ X) = insertTree T₂ (insertTree T₁ X) := by
+  sorry
+
+instance instLeftCommutative :
+    LeftCommutative (fun (T : Nonplanar α) (acc : GrossmanLarson R α) =>
+      insertTree (R := R) T acc) where
+  left_comm := insertTree_comm
+
+/-- Forest-level multi-tree insertion via `Multiset.foldr`. -/
+noncomputable def insertForest (F : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    GrossmanLarson R α :=
+  G.foldr (fun T acc => insertTree T acc) F
+
+@[simp] theorem insertForest_zero (F : GrossmanLarson R α) :
+    insertForest F (0 : Forest (Nonplanar α)) = F :=
+  Multiset.foldr_zero _ _
+
+@[simp] theorem insertForest_cons (F : GrossmanLarson R α) (T : Nonplanar α)
+    (G : Forest (Nonplanar α)) :
+    insertForest F (T ::ₘ G) = insertTree T (insertForest F G) :=
+  Multiset.foldr_cons _ _ _ _
+
+private theorem insertForest_zero_left (G : Forest (Nonplanar α)) :
+    insertForest (0 : GrossmanLarson R α) G = 0 := by
+  induction G using Multiset.induction with
+  | empty => exact insertForest_zero _
+  | cons T G' ih => rw [insertForest_cons, ih, LinearMap.map_zero]
+
+private theorem insertForest_add_left
+    (F₁ F₂ : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    insertForest (F₁ + F₂) G = insertForest F₁ G + insertForest F₂ G := by
+  induction G using Multiset.induction with
+  | empty => simp only [insertForest_zero]
+  | cons T G' ih =>
+    rw [insertForest_cons, insertForest_cons, insertForest_cons, ih,
+        LinearMap.map_add]
+
+private theorem insertForest_smul_left
+    (c : R) (F : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    insertForest (c • F) G = c • insertForest F G := by
+  induction G using Multiset.induction with
+  | empty => simp only [insertForest_zero]
+  | cons T G' ih =>
+    rw [insertForest_cons, insertForest_cons, ih, LinearMap.map_smul]
+
+/-- Internal: `insertForest`-bundled-as-LinearMap-in-F, parameterized by
+    the operand forest. Used to lift to the bilinear `insertOp`. -/
+private noncomputable def insertForestLin (G : Forest (Nonplanar α)) :
+    GrossmanLarson R α →ₗ[R] GrossmanLarson R α where
+  toFun F := insertForest F G
+  map_add' F₁ F₂ := insertForest_add_left F₁ F₂ G
+  map_smul' c F := insertForest_smul_left c F G
+
+/-- The bilinear insertion operator `F • G : GrossmanLarson R α`. -/
+noncomputable def insertOp :
+    GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
+  (Finsupp.linearCombination R (insertForestLin (R := R) (α := α))).flip
+
+/-! ### Grossman-Larson product
+
+The associative product `F ⋆ G` is defined via the Foissy 2021 closed
+form (sum over sub-multisets of `G`'s underlying forest). The
+disjoint-union `*` used inside the definition is the underlying
+`ConnesKreimer` multiplication, exposed via type ascription (the def
+`GrossmanLarson R α := ConnesKreimer R (Nonplanar α)` makes the
+ascription a no-op). -/
+
+/-- Forest-level Grossman-Larson product. -/
+noncomputable def productForest (F : GrossmanLarson R α)
+    (G : Forest (Nonplanar α)) : GrossmanLarson R α :=
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  (G.powerset.map fun G₁ =>
+    op (unop (insertOp F (of' (R := R) G₁)) * unop (of' (R := R) (G - G₁)))).sum
+
+/-- F-additivity. **TODO**: proof. -/
+private theorem productForest_zero_left (G : Forest (Nonplanar α)) :
+    productForest (0 : GrossmanLarson R α) G = 0 := by
+  sorry
+
+/-- F-additivity. **TODO**: proof. -/
+private theorem productForest_add_left
+    (F₁ F₂ : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    productForest (F₁ + F₂) G = productForest F₁ G + productForest F₂ G := by
+  sorry
+
+/-- F-scalar-compatibility. **TODO**: proof. -/
+private theorem productForest_smul_left
+    (c : R) (F : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    productForest (c • F) G = c • productForest F G := by
+  sorry
+
+/-- Internal: `productForest`-bundled-as-LinearMap-in-F. -/
+private noncomputable def productForestLin (G : Forest (Nonplanar α)) :
+    GrossmanLarson R α →ₗ[R] GrossmanLarson R α where
+  toFun F := productForest F G
+  map_add' F₁ F₂ := productForest_add_left F₁ F₂ G
+  map_smul' c F := productForest_smul_left c F G
+
+/-- The **Grossman-Larson product** `F ⋆ G : GrossmanLarson R α`,
+    bilinear in both arguments. -/
+noncomputable def product :
+    GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
+  (Finsupp.linearCombination R (productForestLin (R := R) (α := α))).flip
+
+/-! ### Multiplicative structure
+
+The `Mul` instance is registered now. The `Semigroup`/`Monoid` instances
+are intentionally NOT registered until associativity is proved
+(registering them prematurely would silently propagate the open `sorry`
+through any `[Semigroup]`-using consumer). The forwarding `theorem`s
+`mul_one`, `one_mul`, `mul_assoc` are stated for downstream convenience
+but carry the same `sorry`s. -/
+
+noncomputable instance instMul : Mul (GrossmanLarson R α) where
+  mul x y := product x y
+
+theorem mul_def (x y : GrossmanLarson R α) : x * y = product x y := rfl
+
+/-- **Right unit**. `mul_one` for the GL product. **TODO**: proof.
+    Sketch: `productForest F 0 = (powerset 0).map (...) = {0}.map (...)
+    .sum = insertOp F 1 * 1 = F * 1 = F`, using `insertOp F 1 = F`
+    (empty-forest insertion is identity). -/
+theorem mul_one (F : GrossmanLarson R α) : F * 1 = F := by
+  sorry
+
+/-- **Left unit**. `one_mul` for the GL product. **TODO**: proof. Holds
+    because `insertOp 1 (of' G₁) = 0` for non-empty `G₁` (inserting
+    trees into the empty forest produces `0`, since the empty forest
+    has no host vertices), so the powerset sum collapses to the single
+    `G₁ = 0` summand `1 * of' G_forest = of' G_forest = F`. -/
+theorem one_mul (F : GrossmanLarson R α) : (1 : GrossmanLarson R α) * F = F := by
+  sorry
+
+/-- **Associativity**. Proved by induction on the multiset structure of
+    the rightmost argument, using the `productForest` powerset formula
+    and Fubini-style re-indexing of nested sub-multiset choices. Foissy
+    2018 §4.2 establishes this via Guin-Oudom + PBW; we bypass PBW
+    with a direct combinatorial induction. **TODO**: proof. -/
+theorem mul_assoc (F₁ F₂ F₃ : GrossmanLarson R α) :
+    F₁ * F₂ * F₃ = F₁ * (F₂ * F₃) := by
+  sorry
+
+end GrossmanLarson
 
 end RootedTree
