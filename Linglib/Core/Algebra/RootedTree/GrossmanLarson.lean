@@ -136,11 +136,11 @@ when defining the GL product, without exposing the disjoint-union
 
 /-- Reinterpret a `ConnesKreimer R (Nonplanar α)` element as a
     `GrossmanLarson R α` element (identity at the carrier level). -/
-noncomputable def op (x : ConnesKreimer R (Nonplanar α)) : GrossmanLarson R α := x
+def op (x : ConnesKreimer R (Nonplanar α)) : GrossmanLarson R α := x
 
 /-- Reinterpret a `GrossmanLarson R α` element as a
     `ConnesKreimer R (Nonplanar α)` element (identity at the carrier level). -/
-noncomputable def unop (x : GrossmanLarson R α) : ConnesKreimer R (Nonplanar α) := x
+def unop (x : GrossmanLarson R α) : ConnesKreimer R (Nonplanar α) := x
 
 @[simp] theorem op_unop (x : GrossmanLarson R α) :
     op (unop (R := R) x) = x := rfl

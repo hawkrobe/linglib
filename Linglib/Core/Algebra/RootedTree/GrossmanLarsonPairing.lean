@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
+import Linglib.Core.Combinatorics.RootedTree.Aut
 
 set_option autoImplicit false
 
@@ -55,12 +56,14 @@ torsion subtleties when |Aut(F)| = 0 or non-invertible).
 
 ## Status
 
-`[UPSTREAM]` candidate. Skeleton API only. All proofs `sorry`.
-The auts substrate (`Aut`/`autCard` for nonplanar trees) is itself a
-prerequisite that does not yet exist as substrate; the placeholder
-`autCard` here is sorry'd. Eventual implementation: lift through
-`Nonplanar.mk` from a planar `autCard` based on children-list
-permutations.
+`[UPSTREAM]` candidate. Open `sorry`s: `pairing` definition,
+`pairing_of'_of'` evaluation, `pairing_symm`, `pairing_nondegenerate`.
+The aut-cardinality substrate `Nonplanar.autCard` /
+`Nonplanar.forestAutCard` lives in
+`Linglib/Core/Combinatorics/RootedTree/Aut.lean` (re-exported here as
+`treeAutCard` / `forestAutCard`) — it has its own `sorry` for the
+implementation, which doesn't block proving the pairing's API
+properties.
 -/
 
 namespace RootedTree
@@ -72,18 +75,18 @@ variable {R : Type*} [CommSemiring R] {α : Type*}
 /-! ### Automorphism count
 
 The cardinality of the automorphism group of a rooted nonplanar tree
-(or forest), used as the symmetry weight in the pairing. **TODO**
-substrate: define `autCard` properly via planar `Nonplanar.mk`-descent
-on children-list multisets. -/
+(or forest) is the symmetry weight in the pairing. The actual
+substrate for these is in
+`Linglib/Core/Combinatorics/RootedTree/Aut.lean` — re-exported here
+under the `GrossmanLarson` namespace for use in the pairing. -/
 
-/-- The cardinality of the automorphism group of a rooted nonplanar
-    tree. **TODO**: implementation. -/
-noncomputable def treeAutCard (t : Nonplanar α) : ℕ := sorry
+/-- Re-export `Nonplanar.autCard` for use in the pairing. -/
+noncomputable def treeAutCard (t : Nonplanar α) : ℕ :=
+  Nonplanar.autCard t
 
-/-- The cardinality of the automorphism group of a forest as a
-    multiset of trees: `∏_{distinct trees T in F} (treeAutCard T)^{m_T} ·
-    m_T!`. **TODO**: implementation. -/
-noncomputable def forestAutCard (F : Forest (Nonplanar α)) : ℕ := sorry
+/-- Re-export `Nonplanar.forestAutCard` for use in the pairing. -/
+noncomputable def forestAutCard (F : Forest (Nonplanar α)) : ℕ :=
+  Nonplanar.forestAutCard F
 
 /-! ### The bilinear pairing -/
 
