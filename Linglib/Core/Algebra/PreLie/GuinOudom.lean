@@ -42,32 +42,42 @@ multiplication and is mediated by mathlib's
 `RightPreLieRing.instLeftPreLieRingMop`. Foissy formulas can be cited
 after the convention swap.
 
-## Mathematical structure (forward look)
+## Main definitions
 
 For a `RightPreLieAlgebra R L`:
 
-1. **Lie bracket** (free from mathlib): `[x, y] := x * y - y * x` via
-   `RightPreLieRing → LieAdmissibleRing → LieRing` instance chain.
-2. **Pre-Lie action `▷` on `S(L)`** (R.4.1, this file): for each `x : L`,
-   a derivation `δ_x : S(L) → S(L)` extending `δ_x (ι y) = ι (x * y)`
-   via `SymmetricAlgebra.liftDerivation`.
-3. **Guin-Oudom product `★`** (R.4.2): defined by recursion
-   `(ι x * s) ★ t = ι x * (s ★ t) - (x ▷ s) ★ t` and bilinear extension.
-4. **Associativity of `★`** (R.4.3): the deep step. Foissy 2018 Prop 2.7.
-5. **Iso `(S(L), ★) ≃ₐ[R] U(L_Lie)`** (R.4.4): via universal property
-   of `SymmetricAlgebra.lift` and `UniversalEnvelopingAlgebra.lift`.
+* `PreLie.GuinOudom.preLieAction` — the pre-Lie action `▷ : L →ₗ[R]
+  Der R (S(L)) (S(L))` extending `x ▷ ι y = ι (y * x)` via
+  `SymmetricAlgebra.liftDerivation` (the mathlib-gap substrate, in the
+  sibling file `Core/LinearAlgebra/SymmetricAlgebra/Derivation.lean`).
+* `PreLie.GuinOudom.M` — Manchon's operator `M_a u := ι(a) · u − (a ▷ u)`,
+  bundled as `L →ₗ[R] End(S(L))`. The MINUS sign (vs Manchon's PLUS)
+  compensates for the right-to-left pre-Lie translation.
+* `PreLie.GuinOudom.MLieHom` — `M` as a Lie algebra morphism, witnessed by
+  `M_lie_hom : M ⁅a, b⁆ = ⁅M a, M b⁆` for the mathlib `LieAdmissibleRing`
+  bracket.
+* `PreLie.GuinOudom.MAlgHom` — the lift `U(L_Lie) →ₐ[R] End(S(L))` via
+  `UniversalEnvelopingAlgebra.lift R MLieHom`.
+* `PreLie.GuinOudom.η` — Manchon's `η : U(L_Lie) →ₗ[R] S(L)`, defined as
+  `η(u) := MAlgHom u 1`.
 
-## Implementation status (R.4 C1)
+## TODO
 
-§1 (the pre-Lie action `▷`) is sorry-free. The `★` product, associativity,
-and iso are introduced in subsequent commits.
-
-## Note on the substrate
-
-The mathlib-gap `SymmetricAlgebra.liftDerivation` (universal property of
-derivations on `S(M)`) is in the sibling file
-`Linglib/Core/Algebra/SymmetricAlgebra/Derivation.lean`, kept separate as
-an upstream-PR candidate. -/
+* `★ : SymmetricAlgebra R L → SymmetricAlgebra R L → SymmetricAlgebra R L` —
+  the Guin-Oudom product, naturally defined as `s ★ t := η(η⁻¹(s) · η⁻¹(t))`.
+  Requires `η` to be an isomorphism, i.e. the PBW theorem for
+  `U(L_Lie) ≅ S(L)` as filtered modules. Mathlib does not currently have
+  PBW (no `Poincare`/`BirkhoffWitt`/`Witt`/`PBW` namespace; no
+  `SymmetricAlgebra ≃ UEA`; no associated-graded for UEA; only adjacent
+  is `UEA(FreeLieAlg X) ≃ FreeAlgebra X` in `Mathlib.Algebra.Lie.Free`
+  which doesn't generalize). Blocked on PBW upstream.
+* `guinOudom : (SymmetricAlgebra R L, ★) ≃ₐ[R] UniversalEnvelopingAlgebra R L`
+  — the Guin-Oudom isomorphism. Same blocker.
+* For downstream `Δ^c` coassociativity on
+  `ConnesKreimer ℤ (Nonplanar α)`, the Grossman-Larson product is
+  defined directly via Foissy 2021 Theorem 5.1's combinatorial formula
+  in `Linglib/Core/Algebra/RootedTree/GrossmanLarson.lean`, bypassing
+  the abstract `★` and the PBW dependency. -/
 
 /-! ### Sanity tests: Lie instances are inferable from `RightPreLieRing`
 
