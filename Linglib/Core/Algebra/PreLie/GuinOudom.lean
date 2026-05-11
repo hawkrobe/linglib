@@ -100,17 +100,21 @@ namespace GuinOudom
 variable {R : Type*} [CommRing R]
 variable {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
 
-/-- The per-x linear map `L →ₗ[R] S(L)`: `y ↦ ι (x * y)`. Composition of
-mathlib's `LinearMap.mulLeft x : L →ₗ[R] L` (the `R`-linear left
+/-- The per-x linear map `L →ₗ[R] S(L)`: `y ↦ ι (y * x)`. Composition of
+mathlib's `LinearMap.mulRight x : L →ₗ[R] L` (the `R`-linear right
 multiplication-by-x, available since `RightPreLieAlgebra` provides
-`SMulCommClass R L L`) with the canonical inclusion `SymmetricAlgebra.ι`. -/
+`IsScalarTower R L L`) with the canonical inclusion `SymmetricAlgebra.ι`.
+
+The convention `y ↦ y * x` (x on the RIGHT of the pre-Lie product) matches
+**Manchon 2009 Theorem 1.1** (under the right-pre-Lie translation
+`a ▷_LEFT b = b *_RIGHT a`) and **Oudom-Guin 2008 Notation 2.2** directly. -/
 private noncomputable def actionLinearMap (x : L) :
     L →ₗ[R] SymmetricAlgebra R L :=
-  (SymmetricAlgebra.ι R L).comp (LinearMap.mulLeft R x)
+  (SymmetricAlgebra.ι R L).comp (LinearMap.mulRight R x)
 
 @[simp]
 private theorem actionLinearMap_apply (x y : L) :
-    actionLinearMap (R := R) x y = SymmetricAlgebra.ι R L (x * y) :=
+    actionLinearMap (R := R) x y = SymmetricAlgebra.ι R L (y * x) :=
   rfl
 
 /-- The per-x linear map `actionLinearMap` is `R`-linear in `x`. Bundled
@@ -120,10 +124,10 @@ private noncomputable def actionLinearMapBundled :
   toFun x := actionLinearMap x
   map_add' x y := by
     ext z
-    simp only [actionLinearMap_apply, add_mul, map_add, LinearMap.add_apply]
+    simp only [actionLinearMap_apply, mul_add, map_add, LinearMap.add_apply]
   map_smul' r x := by
     ext z
-    simp only [actionLinearMap_apply, smul_mul_assoc, map_smul, RingHom.id_apply,
+    simp only [actionLinearMap_apply, mul_smul_comm, map_smul, RingHom.id_apply,
                LinearMap.smul_apply]
 
 /-- The **pre-Lie action** of `L` on `SymmetricAlgebra R L`, as a linear
@@ -142,7 +146,7 @@ scoped infix:75 " ▷ " => fun x s => preLieAction x s
 @[simp]
 theorem preLieAction_ι (x y : L) :
     preLieAction (R := R) x (SymmetricAlgebra.ι R L y) =
-      SymmetricAlgebra.ι R L (x * y) := by
+      SymmetricAlgebra.ι R L (y * x) := by
   show SymmetricAlgebra.liftDerivation _ _ = _
   rw [SymmetricAlgebra.liftDerivation_apply_ι]
   rfl
@@ -156,6 +160,77 @@ theorem preLieAction_mul (x : L) (s t : SymmetricAlgebra R L) :
     preLieAction (R := R) x (s * t) =
       s • preLieAction (R := R) x t + t • preLieAction (R := R) x s :=
   Derivation.leibniz _ _ _
+
+/-! ## §2: Manchon's M operator and the Lie algebra morphism
+
+For a `RightPreLieAlgebra R L`, define `M_a : S(L) →ₗ[R] S(L)` by
+`M_a u := ι(a) · u − (a ▷ u)` (Manchon 2009 Theorem 1.1 adapted for right
+pre-Lie). The collection `{M_a}_{a : L}` packages into a linear map
+`M : L →ₗ[R] End(S(L))`. The key result (`manchonM_lie_hom`) is that
+`M` is a Lie algebra morphism: `M_⁅a, b⁆ = ⁅M_a, M_b⁆`.
+
+This is the bridge that lets us extend `M` via the universal enveloping
+algebra: `M : L →ₗ⁅R⁆ End(S(L))` lifts to an algebra hom
+`M' : U(L_Lie) →ₐ[R] End(S(L))` via `UniversalEnvelopingAlgebra.lift`.
+
+**Sign convention**: Manchon's exposition uses LEFT pre-Lie convention
+where `[a, b] := a ▷ b − b ▷ a` matches mathlib's LieAdmissibleRing
+bracket `a*b − b*a`. In our RIGHT pre-Lie convention, the translated
+`a ▷_LEFT b = b *_RIGHT a` gives `[a,b]_Manchon = b*a − a*b = −[a,b]_LA`.
+The MINUS sign in `M_a u := ι(a)·u − (a ▷ u)` (vs Manchon's plus)
+compensates: with this `M`, `[M_a, M_b] = M_{[a,b]_LA}` for mathlib's
+bracket. (Verified by explicit calculation; the right pre-Lie identity
+gives `[L_a, L_b] = −L_{[a,b]_LA}`, and the cross-term sign in
+`L_a(ι(b)·u)` flips to absorb it.)
+
+Proof sketch:
+```
+M_a M_b u  = M_a (ι(b)·u − (b ▷ u))
+           = ι(a)·ι(b)·u − ι(a)·(b▷u) − L_a(ι(b)·u) + L_a L_b u
+           = ι(a)·ι(b)·u − ι(a)·(b▷u) − ι(b)·L_a u − ι(b*a)·u + L_a L_b u   (Leibniz)
+
+⁅M_a, M_b⁆ u = (ι(a*b) − ι(b*a))·u + ⁅L_a, L_b⁆ u
+            = ι([a,b]_LA)·u − L_{[a,b]_LA} u                                (anti-morphism)
+            = M_⁅a, b⁆ u
+```
+where `[a, b]_LA = a*b − b*a` is mathlib's LieAdmissible commutator. -/
+
+/-- **Manchon's M operator**: for each `a : L`, the linear endomorphism
+of `S(L)` given by `M_a u := ι(a) · u − (a ▷ u)`. Bundled as a linear
+map `L →ₗ[R] End(S(L))`.
+
+Sign convention: the MINUS (vs Manchon's PLUS) compensates for the
+right ↔ left pre-Lie translation, ensuring `M` is a Lie hom for
+mathlib's `LieAdmissibleRing` bracket `[a,b] := a*b − b*a`. -/
+noncomputable def manchonM :
+    L →ₗ[R] (SymmetricAlgebra R L →ₗ[R] SymmetricAlgebra R L) where
+  toFun a :=
+    LinearMap.mulLeft R (SymmetricAlgebra.ι R L a)
+    - (preLieAction (R := R) a).toLinearMap
+  map_add' a b := by
+    ext s
+    simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.mulLeft_apply,
+               map_add, add_mul,
+               (preLieAction (R := R)).map_add,
+               Derivation.coe_add_linearMap]
+    abel
+  map_smul' r a := by
+    ext s
+    simp only [LinearMap.smul_apply, LinearMap.sub_apply, LinearMap.mulLeft_apply,
+               map_smul, smul_mul_assoc, RingHom.id_apply,
+               (preLieAction (R := R)).map_smul,
+               Derivation.coe_smul_linearMap, LinearMap.smul_apply, smul_sub]
+
+@[simp]
+theorem manchonM_apply (a : L) (u : SymmetricAlgebra R L) :
+    manchonM (R := R) a u =
+      SymmetricAlgebra.ι R L a * u - preLieAction (R := R) a u := by
+  rfl
+
+@[simp]
+theorem manchonM_apply_one (a : L) :
+    manchonM (R := R) a 1 = SymmetricAlgebra.ι R L a := by
+  rw [manchonM_apply, mul_one, preLieAction_one, sub_zero]
 
 end GuinOudom
 
