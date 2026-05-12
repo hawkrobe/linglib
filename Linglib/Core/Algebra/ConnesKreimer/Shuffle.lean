@@ -368,6 +368,118 @@ Stated below pointwise on basis elements (avoiding tensor-LinearMap
 typeclass synthesis hazards). The full LinearMap form follows by
 linearity. -/
 
+/-- **Substrate**: nested-powerset reparameterization. The two iteration orders
+    over (F₁, F₁_a) with F₁_a ⊆ F₁ ⊆ F vs (G₁, G₂_a) with G₁ ⊆ F, G₂_a ⊆ F - G₁
+    enumerate the same multiset of pairs, where the bijection is
+    `(F₁, F₁_a) ↦ (G₁ = F₁_a, G₂_a = F₁ - F₁_a)`.
+
+    `[UPSTREAM]` candidate. -/
+theorem _root_.Multiset.powerset_powerset_pair_swap {α : Type*} [DecidableEq α]
+    (F : Multiset α) :
+    F.powerset.bind (fun F₁ : Multiset α =>
+      F₁.powerset.map (fun A : Multiset α => (A, F₁ - A))) =
+    F.powerset.bind (fun A : Multiset α =>
+      (F - A).powerset.map (fun B : Multiset α => (A, B))) := by
+  induction F using Multiset.induction with
+  | empty =>
+    rw [Multiset.powerset_zero]
+    simp [Multiset.singleton_bind]
+  | cons a s ih =>
+    rw [Multiset.powerset_cons, Multiset.add_bind, Multiset.add_bind]
+    rw [Multiset.bind_map]
+    -- Split LHS into 3 parts via inner powerset_cons:
+    -- LHS = s.powerset.bind (fun F₁' => F₁'.powerset.map (fun A => (A, F₁' - A))) [a ∉ F₁ case]
+    --     + s.powerset.bind (fun F₁' => (a ::ₘ F₁').powerset.map (...)) [a ∈ F₁ case]
+    -- Inner (a ∈ F₁) splits via powerset_cons of (a ::ₘ F₁'):
+    --   (a ::ₘ F₁').powerset = F₁'.powerset + F₁'.powerset.map (cons a)
+    --   For A ∈ F₁'.powerset (a ∉ A): (a ::ₘ F₁') - A = a ::ₘ (F₁' - A)
+    --   For A = a ::ₘ A' (a ∈ A): (a ::ₘ F₁') - A = F₁' - A'
+    have h_inner_split : ∀ F₁' : Multiset α,
+        (a ::ₘ F₁').powerset.map (fun A => (A, (a ::ₘ F₁') - A)) =
+        F₁'.powerset.map (fun A => (A, a ::ₘ (F₁' - A))) +
+        F₁'.powerset.map (fun A' => (a ::ₘ A', F₁' - A')) := by
+      intro F₁'
+      rw [Multiset.powerset_cons, Multiset.map_add]
+      congr 1
+      · refine Multiset.map_congr rfl fun A hA => ?_
+        congr 1
+        exact Multiset.cons_sub_of_le a (Multiset.mem_powerset.mp hA)
+      · rw [Multiset.map_map]
+        refine Multiset.map_congr rfl fun A' _ => ?_
+        show (Multiset.cons a A', (a ::ₘ F₁') - (a ::ₘ A')) = (a ::ₘ A', F₁' - A')
+        rw [Multiset.sub_cons, Multiset.erase_cons_head]
+    -- Apply h_inner_split inside the second LHS bind
+    rw [show (s.powerset.bind fun F₁' => (a ::ₘ F₁').powerset.map (fun A => (A, (a ::ₘ F₁') - A))) =
+            (s.powerset.bind fun F₁' =>
+              F₁'.powerset.map (fun A => (A, a ::ₘ (F₁' - A))) +
+              F₁'.powerset.map (fun A' => (a ::ₘ A', F₁' - A'))) from
+          Multiset.bind_congr fun F₁' _ => h_inner_split F₁']
+    rw [Multiset.bind_add]
+    -- Rewrite each LHS piece using LHS_for_s.map (fun p => ...)
+    have h_lhs_part2 : (s.powerset.bind fun F₁' =>
+                          F₁'.powerset.map (fun A => (A, a ::ₘ (F₁' - A)))) =
+        (s.powerset.bind fun F₁' =>
+          F₁'.powerset.map (fun A => (A, F₁' - A))).map (fun p => (p.1, a ::ₘ p.2)) := by
+      rw [Multiset.map_bind]
+      refine Multiset.bind_congr fun F₁' _ => ?_
+      rw [Multiset.map_map]; rfl
+    have h_lhs_part3 : (s.powerset.bind fun F₁' =>
+                          F₁'.powerset.map (fun A' => (a ::ₘ A', F₁' - A'))) =
+        (s.powerset.bind fun F₁' =>
+          F₁'.powerset.map (fun A' => (A', F₁' - A'))).map (fun p => (a ::ₘ p.1, p.2)) := by
+      rw [Multiset.map_bind]
+      refine Multiset.bind_congr fun F₁' _ => ?_
+      rw [Multiset.map_map]; rfl
+    rw [h_lhs_part2, h_lhs_part3, ih]
+    -- Now LHS = RHS_for_s + (RHS_for_s).map (p ↦ (p.1, a ::ₘ p.2)) + (RHS_for_s).map (p ↦ (a ::ₘ p.1, p.2))
+    -- Compute RHS for (a ::ₘ s) similarly.
+    -- RHS = ((a ::ₘ s).powerset.bind fun A => ((a ::ₘ s) - A).powerset.map (fun B => (A, B)))
+    --     = s.powerset.bind ... [a ∉ A case]
+    --       + (s.powerset.map (cons a)).bind ... [a ∈ A case]
+    rw [Multiset.bind_map]
+    -- For the "a ∉ A" piece: A ⊆ s, so (a ::ₘ s) - A = a ::ₘ (s - A).
+    have h_a_notin_A : ∀ A : Multiset α, A ∈ s.powerset →
+        ((a ::ₘ s) - A).powerset.map (fun B => (A, B)) =
+        (s - A).powerset.map (fun B => (A, B)) +
+        (s - A).powerset.map (fun B' => (A, a ::ₘ B')) := by
+      intros A hA
+      have hA_le : A ≤ s := Multiset.mem_powerset.mp hA
+      rw [show (a ::ₘ s) - A = a ::ₘ (s - A) from Multiset.cons_sub_of_le a hA_le]
+      rw [Multiset.powerset_cons, Multiset.map_add]
+      congr 1
+      rw [Multiset.map_map]; rfl
+    -- Apply for the "a ∉ A" branch
+    rw [show (s.powerset.bind fun A => ((a ::ₘ s) - A).powerset.map (fun B => (A, B))) =
+            (s.powerset.bind fun A =>
+              (s - A).powerset.map (fun B => (A, B)) +
+              (s - A).powerset.map (fun B' => (A, a ::ₘ B'))) from
+          Multiset.bind_congr h_a_notin_A]
+    rw [Multiset.bind_add]
+    -- For the "a ∈ A" branch: A = cons a A', A' ⊆ s, (a ::ₘ s) - (a ::ₘ A') = s - A'.
+    have h_rhs_part3 : (s.powerset.bind fun A' =>
+                          ((a ::ₘ s) - (a ::ₘ A')).powerset.map (fun B => (a ::ₘ A', B))) =
+        (s.powerset.bind fun A' => (s - A').powerset.map (fun B => (A', B))).map
+          (fun p => (a ::ₘ p.1, p.2)) := by
+      rw [Multiset.map_bind]
+      refine Multiset.bind_congr fun A' _ => ?_
+      rw [show (a ::ₘ s) - (a ::ₘ A') = s - A' from by
+            rw [Multiset.sub_cons, Multiset.erase_cons_head]]
+      rw [Multiset.map_map]; rfl
+    rw [h_rhs_part3]
+    -- The "a ∈ A, a ∉ B" piece via map identity
+    have h_rhs_part2 : (s.powerset.bind fun A => (s - A).powerset.map (fun B' => (A, a ::ₘ B'))) =
+        (s.powerset.bind fun A => (s - A).powerset.map (fun B => (A, B))).map
+          (fun p => (p.1, a ::ₘ p.2)) := by
+      rw [Multiset.map_bind]
+      refine Multiset.bind_congr fun A _ => ?_
+      rw [Multiset.map_map]; rfl
+    rw [h_rhs_part2]
+    -- Both LHS and RHS now: (RHS_for_s) + (RHS_for_s).map (p ↦ (p.1, a ::ₘ p.2)) + (RHS_for_s).map (p ↦ (a ::ₘ p.1, p.2))
+    -- LHS form: A + B + C where A is base, B is the lift in 2nd slot, C is the lift in 1st slot.
+    -- RHS form: A + B + C where A is base, B is the lift in 2nd slot, C is the lift in 1st slot.
+    -- abel handles the reordering.
+    abel
+
 /-- Coassociativity on basis: applied to `of' F`, summing over double
     partitions gives the same triple tensor whether we partition the
     left or right side first.
@@ -375,7 +487,8 @@ linearity. -/
     `Σ_{F₁ + F₂ = F, F₁_a + F₁_b = F₁} of' F₁_a ⊗ of' F₁_b ⊗ of' F₂`
     `= Σ_{G₁ + G₂ = F, G₂_a + G₂_b = G₂} of' G₁ ⊗ of' G₂_a ⊗ of' G₂_b`
 
-    Both equal `Σ_{F_a + F_b + F_c = F} of' F_a ⊗ of' F_b ⊗ of' F_c`. -/
+    Both equal `Σ_{F_a + F_b + F_c = F} of' F_a ⊗ of' F_b ⊗ of' F_c`.
+    Direct corollary of `Multiset.powerset_powerset_pair_swap`. -/
 theorem comulShuffle_coassoc_basis [DecidableEq T] (F : Forest T) :
     (F.powerset.map fun F₁ : Forest T =>
       (F₁.powerset.map fun F₁_a : Forest T =>
@@ -387,7 +500,72 @@ theorem comulShuffle_coassoc_basis [DecidableEq T] (F : Forest T) :
         (of' (R := R) G₁) ⊗ₜ[R]
           (of' (R := R) G₂_a) ⊗ₜ[R]
           (of' (R := R) (F - G₁ - G₂_a))).sum).sum := by
-  sorry
+  -- Convert nested map.sum to bind, apply pair-swap substrate, convert back.
+  rw [show (F.powerset.map fun F₁ : Forest T =>
+            (F₁.powerset.map fun F₁_a : Forest T =>
+              (of' (R := R) F₁_a) ⊗ₜ[R]
+                (of' (R := R) (F₁ - F₁_a)) ⊗ₜ[R]
+                (of' (R := R) (F - F₁))).sum).sum =
+          (F.powerset.bind fun F₁ : Forest T =>
+            F₁.powerset.map fun F₁_a : Forest T =>
+              (of' (R := R) F₁_a) ⊗ₜ[R]
+                (of' (R := R) (F₁ - F₁_a)) ⊗ₜ[R]
+                (of' (R := R) (F - F₁))).sum from by
+        rw [Multiset.sum_bind]]
+  rw [show (F.powerset.map fun G₁ : Forest T =>
+            ((F - G₁).powerset.map fun G₂_a : Forest T =>
+              (of' (R := R) G₁) ⊗ₜ[R]
+                (of' (R := R) G₂_a) ⊗ₜ[R]
+                (of' (R := R) (F - G₁ - G₂_a))).sum).sum =
+          (F.powerset.bind fun G₁ : Forest T =>
+            (F - G₁).powerset.map fun G₂_a : Forest T =>
+              (of' (R := R) G₁) ⊗ₜ[R]
+                (of' (R := R) G₂_a) ⊗ₜ[R]
+                (of' (R := R) (F - G₁ - G₂_a))).sum from by
+        rw [Multiset.sum_bind]]
+  -- Now both sides are `(bind ... map ...).sum`. Reformulate via the pair-swap.
+  have h_bind_LHS : (F.powerset.bind fun F₁ : Forest T =>
+            F₁.powerset.map fun F₁_a : Forest T =>
+              (of' (R := R) F₁_a) ⊗ₜ[R]
+                (of' (R := R) (F₁ - F₁_a)) ⊗ₜ[R]
+                (of' (R := R) (F - F₁))) =
+          (F.powerset.bind fun F₁ : Forest T =>
+            F₁.powerset.map fun F₁_a : Forest T => (F₁_a, F₁ - F₁_a)).map
+              (fun p : Forest T × Forest T =>
+                (of' (R := R) p.1) ⊗ₜ[R] (of' (R := R) p.2) ⊗ₜ[R]
+                  (of' (R := R) (F - (p.1 + p.2)))) := by
+    rw [Multiset.map_bind]
+    refine Multiset.bind_congr fun F₁ hF₁ => ?_
+    have hF₁_le : F₁ ≤ F := Multiset.mem_powerset.mp hF₁
+    rw [Multiset.map_map]
+    refine Multiset.map_congr rfl fun F₁_a hF₁_a => ?_
+    have hF₁_a_le : F₁_a ≤ F₁ := Multiset.mem_powerset.mp hF₁_a
+    show (of' (R := R) F₁_a) ⊗ₜ[R] (of' (R := R) (F₁ - F₁_a)) ⊗ₜ[R] (of' (R := R) (F - F₁)) =
+         (of' (R := R) F₁_a) ⊗ₜ[R] (of' (R := R) (F₁ - F₁_a)) ⊗ₜ[R]
+           (of' (R := R) (F - (F₁_a + (F₁ - F₁_a))))
+    rw [show F₁_a + (F₁ - F₁_a) = F₁ from by
+          rw [add_comm, tsub_add_cancel_of_le hF₁_a_le]]
+  have h_bind_RHS : (F.powerset.bind fun G₁ : Forest T =>
+            (F - G₁).powerset.map fun G₂_a : Forest T =>
+              (of' (R := R) G₁) ⊗ₜ[R]
+                (of' (R := R) G₂_a) ⊗ₜ[R]
+                (of' (R := R) (F - G₁ - G₂_a))) =
+          (F.powerset.bind fun G₁ : Forest T =>
+            (F - G₁).powerset.map fun G₂_a : Forest T => (G₁, G₂_a)).map
+              (fun p : Forest T × Forest T =>
+                (of' (R := R) p.1) ⊗ₜ[R] (of' (R := R) p.2) ⊗ₜ[R]
+                  (of' (R := R) (F - (p.1 + p.2)))) := by
+    rw [Multiset.map_bind]
+    refine Multiset.bind_congr fun G₁ _ => ?_
+    rw [Multiset.map_map]
+    refine Multiset.map_congr rfl fun G₂_a _ => ?_
+    show (of' (R := R) G₁) ⊗ₜ[R] (of' (R := R) G₂_a) ⊗ₜ[R] (of' (R := R) (F - G₁ - G₂_a)) =
+         (of' (R := R) G₁) ⊗ₜ[R] (of' (R := R) G₂_a) ⊗ₜ[R]
+           (of' (R := R) (F - (G₁ + G₂_a)))
+    rw [show F - G₁ - G₂_a = F - (G₁ + G₂_a) from (tsub_add_eq_tsub_tsub F G₁ G₂_a).symm]
+  rw [h_bind_LHS, h_bind_RHS]
+  congr 2
+  exact Multiset.powerset_powerset_pair_swap F
 
 end ConnesKreimer
 
