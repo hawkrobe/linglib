@@ -80,6 +80,21 @@ theorem _root_.RootedTree.Nonplanar.insertionMultiset_add_host
         ((Nonplanar.insertionMultiset A C₁) ×ˢ
           (Nonplanar.insertionMultiset B (C - C₁))).map
           (fun p => p.1 + p.2)) := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  -- Step 1: Unfold NIM on both sides.
+  unfold Nonplanar.insertionMultiset
+  -- Step 2: Apply host-Perm to convert (A+B).toList.map Q.out → A.toList.map Q.out ++ B.toList.map Q.out.
+  rw [Planar.Pathed.insertionForest_perm_host_msform
+        (Nonplanar.toList_map_Q_out_add_perm A B) (C.toList.map Quotient.out)]
+  -- Step 3: Apply hostBucketSum bridge (in reverse direction).
+  rw [← Planar.Pathed.hostBucketSum_eq_insertionForest]
+  -- Step 4: Apply assignment_rewrite.
+  rw [Planar.Pathed.hostBucketSum_assignment_rewrite]
+  -- Step 5: Push msform through outer bind.
+  rw [Multiset.map_bind]
+  -- Step 6: For each assn, the inner is hostBucketSum at leaf form. Reduce.
+  -- Then rewrite via powerset bridge to convert bind-over-assn to bind-over-C.powerset.
+  -- The detailed steps are still substantial; defer for the next session.
   sorry
 
 /-- **Prop 2.7.iii** (Oudom-Guin 2004): for basis forests A, B, C, the

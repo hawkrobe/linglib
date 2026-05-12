@@ -53,7 +53,7 @@ each side's `insertionForest` is concatenated. -/
     the cartesian product of `insertionForest host_A pre_A` and
     `insertionForest host_B pre_B`, joined by list concatenation.
     At a cons, bind over `[true, false]` and extend either bucket. -/
-private def hostBucketSum (host_A host_B : List (Planar α)) :
+def hostBucketSum (host_A host_B : List (Planar α)) :
     List (Planar α) → List (Planar α) → List (Planar α) →
       Multiset (List (Planar α))
   | pre_A, pre_B, []       =>
@@ -83,7 +83,7 @@ private theorem hostBucketSum_cons_remaining (host_A host_B : List (Planar α))
     assignments of `Ts` of `hostBucketSum` on empty remaining with the
     accumulators augmented by the partition. Mirrors
     `forestPairSum_assignment_rewrite` in `Insertion.lean`. -/
-private theorem hostBucketSum_assignment_rewrite
+theorem hostBucketSum_assignment_rewrite
     (host_A host_B : List (Planar α)) :
     ∀ (pre_A pre_B Ts : List (Planar α)),
     hostBucketSum host_A host_B pre_A pre_B Ts =
@@ -719,7 +719,7 @@ private theorem hostTripleSum_T_split (T : Planar α) (F_A host_B : List (Planar
     -- and they should match.
     ac_rfl
 
-private theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (Planar α)) :
+theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (Planar α)) :
     hostBucketSum host_A host_B [] [] guests =
       insertionForest (host_A ++ host_B) guests := by
   induction host_A generalizing guests with
