@@ -567,6 +567,165 @@ theorem comulShuffle_coassoc_basis [DecidableEq T] (F : Forest T) :
   congr 2
   exact Multiset.powerset_powerset_pair_swap F
 
+/-! ### §6: Coalgebra and Bialgebra structure on `ConnesKreimer R T`
+
+With Δ = `comulShuffle` and ε = `counit` (extracts coefficient of empty
+forest), `ConnesKreimer R T` becomes a coalgebra and a bialgebra over `R`.
+The shuffle Δ is cocommutative (`comulShuffle_comm`) but the bialgebra
+laws are independent of cocommutativity. -/
+
+/-- Helper: applies the associator `(H ⊗ H) ⊗ H → H ⊗ (H ⊗ H)` summand-wise
+    to a doubly-nested `(M.map fun N => (N.map fun p => of'-triple).sum).sum`
+    over a multiset of multisets of forest-triples. -/
+private theorem assocHom_double_sum [DecidableEq T]
+    (M : Multiset (Multiset (Forest T × Forest T × Forest T))) :
+    (TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T) (ConnesKreimer R T))
+        ((M.map fun N => (N.map fun p =>
+            (of' (R := R) p.1) ⊗ₜ[R] (of' (R := R) p.2.1) ⊗ₜ[R]
+              (of' (R := R) p.2.2)).sum).sum) =
+      (M.map fun N => (N.map fun p =>
+          (of' (R := R) p.1) ⊗ₜ[R]
+            ((of' (R := R) p.2.1) ⊗ₜ[R]
+              (of' (R := R) p.2.2))).sum).sum := by
+  set assocHom : (ConnesKreimer R T ⊗[R] ConnesKreimer R T) ⊗[R] ConnesKreimer R T →+
+      ConnesKreimer R T ⊗[R] (ConnesKreimer R T ⊗[R] ConnesKreimer R T) :=
+    (TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T)
+      (ConnesKreimer R T)).toLinearMap.toAddMonoidHom
+  show assocHom _ = _
+  rw [assocHom.map_multiset_sum, Multiset.map_map]
+  refine congrArg Multiset.sum (Multiset.map_congr rfl fun N _ => ?_)
+  show assocHom _ = _
+  rw [assocHom.map_multiset_sum, Multiset.map_map]
+  refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ => ?_)
+  show (TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T)
+          (ConnesKreimer R T))
+          (((of' (R := R) p.1) ⊗ₜ[R] (of' (R := R) p.2.1)) ⊗ₜ[R]
+            (of' (R := R) p.2.2)) = _
+  rw [TensorProduct.assoc_tmul]
+
+/-- LinearMap form of `comulShuffle` coassociativity, as required by
+    the `Coalgebra` typeclass: `(Δ ⊗ id) ∘ Δ = (id ⊗ Δ) ∘ Δ` (up to
+    associator). Lifted from basis form `comulShuffle_coassoc_basis`
+    via single-variable `Finsupp.addHom_ext` reduction; the powerset
+    sum is pushed through `assoc`/`rTensor`/`lTensor` via
+    `AddMonoidHom.map_multiset_sum`. -/
+theorem comulShuffle_coassoc [DecidableEq T] :
+    TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T) (ConnesKreimer R T) ∘ₗ
+      (comulShuffle (R := R)).rTensor (ConnesKreimer R T) ∘ₗ
+        comulShuffle (R := R) =
+    (comulShuffle (R := R)).lTensor (ConnesKreimer R T) ∘ₗ comulShuffle (R := R) := by
+  ext F
+  show (TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T) (ConnesKreimer R T))
+        ((comulShuffle (R := R)).rTensor _ (comulShuffle (R := R) F)) =
+       (comulShuffle (R := R)).lTensor _ (comulShuffle (R := R) F)
+  -- Reduce arbitrary `F` to basis singleton via `Finsupp.addHom_ext`.
+  have h : (((TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T)
+                (ConnesKreimer R T)).toLinearMap.comp
+                ((comulShuffle (R := R)).rTensor (ConnesKreimer R T))).comp
+                (comulShuffle (R := R))).toAddMonoidHom =
+            (((comulShuffle (R := R)).lTensor (ConnesKreimer R T)).comp
+                (comulShuffle (R := R))).toAddMonoidHom := by
+    refine Finsupp.addHom_ext fun F₀ r => ?_
+    set sF : ConnesKreimer R T := Finsupp.single F₀ r with sF_def
+    show (TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T) (ConnesKreimer R T))
+          ((comulShuffle (R := R)).rTensor _ (comulShuffle (R := R) sF)) =
+         (comulShuffle (R := R)).lTensor _ (comulShuffle (R := R) sF)
+    rw [show sF = r • of' (R := R) F₀ from (Finsupp.smul_single_one F₀ r).symm]
+    simp only [map_smul]
+    congr 1
+    -- Reduced goal on `of' F₀`. AddMonoidHom abbreviations for distributing.
+    set assocHom : (ConnesKreimer R T ⊗[R] ConnesKreimer R T) ⊗[R] ConnesKreimer R T →+
+        ConnesKreimer R T ⊗[R] (ConnesKreimer R T ⊗[R] ConnesKreimer R T) :=
+      (TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T)
+        (ConnesKreimer R T)).toLinearMap.toAddMonoidHom with assocHom_def
+    set rTensorHom : ConnesKreimer R T ⊗[R] ConnesKreimer R T →+
+        (ConnesKreimer R T ⊗[R] ConnesKreimer R T) ⊗[R] ConnesKreimer R T :=
+      ((comulShuffle (R := R)).rTensor (ConnesKreimer R T)).toAddMonoidHom
+    set lTensorHom : ConnesKreimer R T ⊗[R] ConnesKreimer R T →+
+        ConnesKreimer R T ⊗[R] (ConnesKreimer R T ⊗[R] ConnesKreimer R T) :=
+      ((comulShuffle (R := R)).lTensor (ConnesKreimer R T)).toAddMonoidHom
+    -- Use `comulShuffle_coassoc_basis F₀` (in `(H⊗H)⊗H`) with `assoc` applied.
+    have hbasis' :=
+      congrArg (TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T)
+        (ConnesKreimer R T)) (comulShuffle_coassoc_basis (R := R) F₀)
+    rw [comulShuffle_of']
+    show assocHom (rTensorHom ((F₀.powerset.map fun F₁ : Forest T =>
+              (of' (R := R) F₁) ⊗ₜ[R] (of' (R := R) (F₀ - F₁))).sum)) =
+         lTensorHom ((F₀.powerset.map fun F₁ : Forest T =>
+              (of' (R := R) F₁) ⊗ₜ[R] (of' (R := R) (F₀ - F₁))).sum)
+    -- LHS distribution: assoc ∘ rTensor on the powerset sum.
+    rw [show assocHom (rTensorHom ((F₀.powerset.map fun F₁ : Forest T =>
+              (of' (R := R) F₁) ⊗ₜ[R] (of' (R := R) (F₀ - F₁))).sum)) =
+            (F₀.powerset.map fun F₁ : Forest T =>
+              (F₁.powerset.map fun F₁_a : Forest T =>
+                (of' (R := R) F₁_a) ⊗ₜ[R]
+                  ((of' (R := R) (F₁ - F₁_a)) ⊗ₜ[R]
+                    (of' (R := R) (F₀ - F₁)))).sum).sum from ?_]
+    rw [show lTensorHom ((F₀.powerset.map fun F₁ : Forest T =>
+              (of' (R := R) F₁) ⊗ₜ[R] (of' (R := R) (F₀ - F₁))).sum) =
+            (F₀.powerset.map fun G₁ : Forest T =>
+              ((F₀ - G₁).powerset.map fun G₂_a : Forest T =>
+                (of' (R := R) G₁) ⊗ₜ[R]
+                  ((of' (R := R) G₂_a) ⊗ₜ[R]
+                    (of' (R := R) (F₀ - G₁ - G₂_a)))).sum).sum from ?_]
+    · -- Reformulate hbasis' to match the goal.
+      have hLHS_eq : (F₀.powerset.map fun F₁ : Forest T =>
+            (F₁.powerset.map fun F₁_a : Forest T =>
+              (of' (R := R) F₁_a) ⊗ₜ[R] (of' (R := R) (F₁ - F₁_a)) ⊗ₜ[R]
+                (of' (R := R) (F₀ - F₁))).sum).sum =
+          ((F₀.powerset.map fun F₁ : Forest T =>
+            F₁.powerset.map fun F₁_a : Forest T =>
+              (F₁_a, F₁ - F₁_a, F₀ - F₁)).map fun N =>
+                (N.map fun p => (of' (R := R) p.1) ⊗ₜ[R]
+                  (of' (R := R) p.2.1) ⊗ₜ[R] (of' (R := R) p.2.2)).sum).sum := by
+        simp only [Multiset.map_map, Function.comp_def]
+      have hRHS_eq : (F₀.powerset.map fun G₁ : Forest T =>
+            ((F₀ - G₁).powerset.map fun G₂_a : Forest T =>
+              (of' (R := R) G₁) ⊗ₜ[R] (of' (R := R) G₂_a) ⊗ₜ[R]
+                (of' (R := R) (F₀ - G₁ - G₂_a))).sum).sum =
+          ((F₀.powerset.map fun G₁ : Forest T =>
+            (F₀ - G₁).powerset.map fun G₂_a : Forest T =>
+              (G₁, G₂_a, F₀ - G₁ - G₂_a)).map fun N =>
+                (N.map fun p => (of' (R := R) p.1) ⊗ₜ[R]
+                  (of' (R := R) p.2.1) ⊗ₜ[R] (of' (R := R) p.2.2)).sum).sum := by
+        simp only [Multiset.map_map, Function.comp_def]
+      rw [hLHS_eq, hRHS_eq, assocHom_double_sum, assocHom_double_sum] at hbasis'
+      simp only [Multiset.map_map, Function.comp_def] at hbasis'
+      exact hbasis'
+    · -- RHS per-summand: lTensor (of' G₁ ⊗ of' (F₀-G₁)) = of' G₁ ⊗ Δ(of' (F₀-G₁)).
+      rw [lTensorHom.map_multiset_sum, Multiset.map_map]
+      refine congrArg Multiset.sum (Multiset.map_congr rfl fun G₁ _ => ?_)
+      show (comulShuffle (R := R)).lTensor _
+              ((of' (R := R) G₁) ⊗ₜ[R] (of' (R := R) (F₀ - G₁))) = _
+      rw [LinearMap.lTensor_tmul, comulShuffle_of']
+      set leftTensor : ConnesKreimer R T ⊗[R] ConnesKreimer R T →+
+          ConnesKreimer R T ⊗[R] (ConnesKreimer R T ⊗[R] ConnesKreimer R T) :=
+        (TensorProduct.mk R (ConnesKreimer R T)
+          (ConnesKreimer R T ⊗[R] ConnesKreimer R T) (of' (R := R) G₁)) |>.toAddMonoidHom
+      show leftTensor _ = _
+      rw [leftTensor.map_multiset_sum, Multiset.map_map]; rfl
+    · -- LHS per-summand: assoc(rTensor (of' F₁ ⊗ of' (F₀-F₁))) = assoc(Δ(of' F₁) ⊗ of' (F₀-F₁)).
+      rw [rTensorHom.map_multiset_sum, Multiset.map_map,
+          assocHom.map_multiset_sum, Multiset.map_map]
+      refine congrArg Multiset.sum (Multiset.map_congr rfl fun F₁ _ => ?_)
+      show assocHom ((comulShuffle (R := R)).rTensor _
+              ((of' (R := R) F₁) ⊗ₜ[R] (of' (R := R) (F₀ - F₁)))) = _
+      rw [LinearMap.rTensor_tmul, comulShuffle_of']
+      set rightTensor : ConnesKreimer R T ⊗[R] ConnesKreimer R T →+
+          (ConnesKreimer R T ⊗[R] ConnesKreimer R T) ⊗[R] ConnesKreimer R T :=
+        (TensorProduct.mk R (ConnesKreimer R T ⊗[R] ConnesKreimer R T)
+            (ConnesKreimer R T)).flip (of' (R := R) (F₀ - F₁)) |>.toAddMonoidHom
+      show assocHom (rightTensor _) = _
+      rw [rightTensor.map_multiset_sum, Multiset.map_map,
+          assocHom.map_multiset_sum, Multiset.map_map]
+      refine congrArg Multiset.sum (Multiset.map_congr rfl fun F₁_a _ => ?_)
+      show (TensorProduct.assoc R (ConnesKreimer R T) (ConnesKreimer R T)
+              (ConnesKreimer R T))
+              (((of' (R := R) F₁_a) ⊗ₜ[R] (of' (R := R) (F₁ - F₁_a))) ⊗ₜ[R]
+                (of' (R := R) (F₀ - F₁))) = _
+      rw [TensorProduct.assoc_tmul]
+  exact DFunLike.congr_fun h F
+
 end ConnesKreimer
 
 end RootedTree
