@@ -64,14 +64,14 @@ def hostBucketSum (host_A host_B : List (Planar α)) :
         if b then hostBucketSum host_A host_B (pre_A ++ [x]) pre_B rest
         else hostBucketSum host_A host_B pre_A (pre_B ++ [x]) rest
 
-private theorem hostBucketSum_nil_remaining (host_A host_B : List (Planar α))
+theorem hostBucketSum_nil_remaining (host_A host_B : List (Planar α))
     (pre_A pre_B : List (Planar α)) :
     hostBucketSum host_A host_B pre_A pre_B [] =
       ((insertionForest host_A pre_A) ×ˢ (insertionForest host_B pre_B)).map
         fun p => p.fst ++ p.snd := by
   unfold hostBucketSum; rfl
 
-private theorem hostBucketSum_cons_remaining (host_A host_B : List (Planar α))
+theorem hostBucketSum_cons_remaining (host_A host_B : List (Planar α))
     (pre_A pre_B : List (Planar α)) (x : Planar α) (rest : List (Planar α)) :
     hostBucketSum host_A host_B pre_A pre_B (x :: rest) =
       (Multiset.ofList [true, false]).bind fun b =>
@@ -936,7 +936,7 @@ the `C.powerset.bind` form on the RHS. -/
 /-- The complementary `filter_t / filter_f` operations on a bit-vector
     over a list `l` partition `l` (as multisets) when their lengths match:
     `↑(filter_t l assn) + ↑(filter_f l assn) = ↑l`. -/
-private theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
+theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
     (l : List β) (assn : List Bool) (hlen : assn.length = l.length) :
     ((l.zip assn).filterMap (fun p => if p.snd then some p.fst else none) :
         Multiset β) +
@@ -947,10 +947,10 @@ private theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
   | nil =>
     have : assn = [] := List.length_eq_zero_iff.mp (by simpa using hlen)
     subst this
-    simp
+    rfl
   | cons a l_rest ih =>
     cases assn with
-    | nil => simp at hlen
+    | nil => exact absurd hlen (by simp)
     | cons b assn_rest =>
       have hlen' : assn_rest.length = l_rest.length := by
         simpa [List.length_cons] using hlen
@@ -982,7 +982,7 @@ private theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
         exact ih assn_rest hlen'
 
 /-- Corollary: `↑(filter_f l assn) = ↑l - ↑(filter_t l assn)`, given matching length. -/
-private theorem filterMap_f_eq_sub {β : Type*} [DecidableEq β]
+theorem filterMap_f_eq_sub {β : Type*} [DecidableEq β]
     (l : List β) (assn : List Bool) (hlen : assn.length = l.length) :
     ((l.zip assn).filterMap (fun p => if p.snd then none else some p.fst) :
         Multiset β) =
@@ -994,7 +994,7 @@ private theorem filterMap_f_eq_sub {β : Type*} [DecidableEq β]
 
 /-- Length lemma: every element of `listChoices [b₁, b₂] n` has length exactly `n`.
     A re-export of the existing `mem_listChoices_length` for `[true, false]`. -/
-private theorem mem_listChoices_bool_length :
+theorem mem_listChoices_bool_length :
     ∀ (n : Nat) (assn : List Bool),
     assn ∈ listChoices [true, false] n → assn.length = n :=
   mem_listChoices_length [true, false]
@@ -1002,7 +1002,7 @@ private theorem mem_listChoices_bool_length :
 /-- **Bit-vector ↔ powerset bridge (paired form, first-component map only)**:
     enumerating bit-vectors and mapping to `↑(filter_t)` gives the powerset
     of `↑l`. (No second component yet — see paired version below.) -/
-private theorem listChoices_bridge_powerset {β : Type*} [DecidableEq β]
+theorem listChoices_bridge_powerset {β : Type*} [DecidableEq β]
     (l : List β) :
     (Multiset.ofList (listChoices [true, false] l.length)).map (fun assn =>
       ((l.zip assn).filterMap (fun p => if p.snd then some p.fst else none) :
@@ -1105,7 +1105,7 @@ private theorem listChoices_bridge_powerset {β : Type*} [DecidableEq β]
     and pairing `(filter_t, filter_f)` gives the powerset paired with
     complement `(s, ↑l - s)`. Derived from the single-component version +
     `filterMap_f_eq_sub`. -/
-private theorem listChoices_bridge_powerset_paired {β : Type*} [DecidableEq β]
+theorem listChoices_bridge_powerset_paired {β : Type*} [DecidableEq β]
     (l : List β) :
     (Multiset.ofList (listChoices [true, false] l.length)).map
       (fun assn : List Bool =>

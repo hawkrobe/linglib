@@ -103,16 +103,21 @@ and its `Q.out`-mapped lift to the planar level. Used by
 disjoint-host concatenation `A.toList.map Q.out ++ B.toList.map Q.out`. -/
 
 /-- `(M + N).toList` is `Perm`-equivalent to `M.toList ++ N.toList`. Both
-    have multiset `M + N`; `Perm` follows from `Multiset.coe_eq_coe`. -/
+    have multiset `M + N`; `Perm` follows from `Multiset.coe_eq_coe`.
+
+    `[UPSTREAM]` candidate: pure `Multiset` substrate, no rooted-tree
+    dependencies. Belongs in mathlib's `Mathlib.Data.Multiset.Basic`
+    alongside `Multiset.coe_toList` and `Multiset.coe_add`. -/
 theorem _root_.Multiset.toList_add_perm {β : Type*} (M N : Multiset β) :
     (M + N).toList.Perm (M.toList ++ N.toList) := by
   apply Multiset.coe_eq_coe.mp
   rw [Multiset.coe_toList, ← Multiset.coe_add, Multiset.coe_toList,
       Multiset.coe_toList]
 
-/-- `Q.out`-mapped lift of `Multiset.toList_add_perm`: at the Planar level,
-    `(M + N).toList.map Q.out` is Perm to `M.toList.map Q.out ++ N.toList.map Q.out`. -/
-theorem toList_map_Q_out_add_perm (M N : Multiset (Nonplanar α)) :
+/-- `Quotient.out`-mapped lift of `Multiset.toList_add_perm`: at the Planar
+    level, `(M + N).toList.map Quotient.out` is Perm to
+    `M.toList.map Quotient.out ++ N.toList.map Quotient.out`. -/
+theorem toList_map_quotientOut_add_perm (M N : Multiset (Nonplanar α)) :
     ((M + N).toList.map Quotient.out).Perm
       (M.toList.map Quotient.out ++ N.toList.map Quotient.out) := by
   rw [← List.map_append]

@@ -1649,7 +1649,9 @@ with each output wrapped in a singleton list. Used downstream to handle
 theorem insertion_nil_guests (T : Planar α) :
     insertion T ([] : List (Planar α)) = ({T} : Multiset (Planar α)) := by
   rw [insertion_def]
-  simp [listChoices_zero, multiGraft_nil]
+  simp only [List.length_nil, listChoices_zero, List.zip_nil_right,
+             multiGraft_nil, List.map_cons, List.map_nil,
+             Multiset.coe_singleton]
 
 /-- `forestPairSum [T] pre (a :: pre_F_rest) gs = 0`. With a non-empty `pre_F`
     accumulator, the inner `insertionForest [] (a :: pre_F_rest ++ ...)` is 0,

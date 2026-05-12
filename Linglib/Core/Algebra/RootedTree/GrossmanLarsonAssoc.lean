@@ -86,7 +86,7 @@ theorem _root_.RootedTree.Nonplanar.insertionMultiset_add_host
   -- rewrite, and push msform through the outer bind.
   unfold Nonplanar.insertionMultiset
   rw [Planar.Pathed.insertionForest_perm_host_msform
-        (Nonplanar.toList_map_Q_out_add_perm A B) (C.toList.map Quotient.out)]
+        (Nonplanar.toList_map_quotientOut_add_perm A B) (C.toList.map Quotient.out)]
   rw [← Planar.Pathed.hostBucketSum_eq_insertionForest]
   rw [Planar.Pathed.hostBucketSum_assignment_rewrite]
   rw [Multiset.map_bind, List.length_map]
@@ -1064,15 +1064,339 @@ The chain expands `(of'A * of'B) * of'C` step-by-step:
 7. Similarly expand the RHS, observe that after `powerset_partition_swap`
    the two expressions are *syntactically* the same multiset sum. -/
 
-/-- **Headline**: `mul_assoc_basis` proved via Lemma 2.10's chain.
+/-! #### Helpers for the chain proof
 
-    The proof structure follows the 6-line Oudom-Guin chain:
-    - LHS: `(A * B) * C` expanded via `mul_of'_sum_form` (twice nested) +
-      `insertion_mul_distrib_gen` (Prop 2.7.iii on the inner bracket) +
-      `insertion_assoc_shuffled` (Prop 2.7.v on the resulting iterated
-      insertion).
-    - The C-trio re-indexing uses `powerset_partition_swap`.
-    - RHS: `A * (B * C)` expanded similarly. -/
+Each helper expresses one stage of the LHS or RHS expansion. -/
+
+/-- Basis-form rewrite: `(of' F₁) * (of' F₂)` as a sum of basis vectors `of' (X + (F₂ - B₁))`
+    indexed by `B₁ ⊆ F₂` and `X ∈ NIM F₁ B₁`. Uses `mul_of'_sum_form` then
+    `insertion_of'_of'` and `of'_add` to collapse to a forest sum. -/
+private theorem of'_mul_of'_nim_form (F₁ F₂ : Forest (Nonplanar α)) :
+    (of' F₁ : GrossmanLarson R α) * of' F₂ =
+      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
+       F₂.powerset.bind fun B₁ =>
+        (Nonplanar.insertionMultiset F₁ B₁).map
+          fun X => (of' (R := R) (X + (F₂ - B₁)) : GrossmanLarson R α)).sum := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  rw [mul_of'_sum_form, Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro B₁ _
+  -- Inner: op (unop (insertion (of' F₁) (of' B₁)) * unop (of' (F₂ - B₁)))
+  --      = ((NIM F₁ B₁).map (fun X => of' (X + (F₂ - B₁)))).sum
+  rw [insertion_of'_of']
+  unfold insertionBasis
+  -- Goal: op (unop (((NIM F₁ B₁).map of').sum) * unop (of' (F₂ - B₁))) = ...
+  show ((((Nonplanar.insertionMultiset F₁ B₁).map
+            (fun F' => (ConnesKreimer.of' (R := R) F' :
+              ConnesKreimer R (Nonplanar α)))).sum *
+          (ConnesKreimer.of' (R := R) (F₂ - B₁) :
+            ConnesKreimer R (Nonplanar α))) :
+            ConnesKreimer R (Nonplanar α)) =
+      ((Nonplanar.insertionMultiset F₁ B₁).map
+        (fun X => (ConnesKreimer.of' (R := R) (X + (F₂ - B₁)) :
+          ConnesKreimer R (Nonplanar α)))).sum
+  rw [← Multiset.sum_map_mul_right]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro X _
+  show (ConnesKreimer.of' (R := R) X : ConnesKreimer R (Nonplanar α)) *
+        ConnesKreimer.of' (R := R) (F₂ - B₁) =
+      ConnesKreimer.of' (R := R) (X + (F₂ - B₁))
+  rw [ConnesKreimer.of'_add]
+
+/-- Right-distributivity of `*` over `Multiset.sum`:
+    `s.sum * of' G = (s.map (fun X => X * of' G)).sum`. Mirror of `of'_mul_sum_form`
+    but for the right side. -/
+private theorem sum_mul_of' (s : Multiset (GrossmanLarson R α))
+    (G : Forest (Nonplanar α)) :
+    s.sum * (of' G : GrossmanLarson R α) = (s.map (fun X => X * of' G)).sum := by
+  induction s using Multiset.induction with
+  | empty =>
+    rw [Multiset.sum_zero, Multiset.map_zero, Multiset.sum_zero]
+    show product (0 : GrossmanLarson R α) (of' G) = 0
+    show ((product : GrossmanLarson R α →ₗ[R] _).flip (of' G)) 0 = 0
+    exact LinearMap.map_zero _
+  | cons a s ih =>
+    rw [Multiset.sum_cons, Multiset.map_cons, Multiset.sum_cons]
+    show product (a + s.sum) (of' G) = product a (of' G) + (s.map _).sum
+    show ((product : GrossmanLarson R α →ₗ[R] _).flip (of' G)) (a + s.sum) = _
+    rw [LinearMap.map_add]
+    show product a (of' G) + product s.sum (of' G) = _
+    show product a (of' G) + s.sum * (of' G : GrossmanLarson R α) = _
+    rw [ih]
+
+/-- Basis-form rewrite of LHS `((of' F₁) * of' F₂) * of' F₃` as a quadruple-bind
+    sum. The outer two binds come from the Foissy-form expansion; the inner
+    two come from `insertionMultiset_add_host` applied to `NIM (X + (F₂-B₁)) C₁`. -/
+private theorem lhs_quadruple_form (F₁ F₂ F₃ : Forest (Nonplanar α)) :
+    ((of' F₁ : GrossmanLarson R α) * of' F₂) * of' F₃ =
+      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
+       F₂.powerset.bind fun B₁ =>
+        (Nonplanar.insertionMultiset F₁ B₁).bind fun X =>
+          F₃.powerset.bind fun C₁ =>
+            (C₁.powerset.bind fun D =>
+              ((Nonplanar.insertionMultiset X D) ×ˢ
+                (Nonplanar.insertionMultiset (F₂ - B₁) (C₁ - D))).map
+                  fun p => (of' (R := R) (p.1 + p.2 + (F₃ - C₁)) :
+                    GrossmanLarson R α))).sum := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  -- Step 1: rewrite (A * B) using of'_mul_of'_nim_form.
+  rw [of'_mul_of'_nim_form]
+  -- Step 2: push `(...) * of' F₃` through the outer sums.
+  rw [sum_mul_of']
+  -- Step 3: rearrange map-bind to bind-map.
+  rw [show ((F₂.powerset.bind fun B₁ =>
+              (Nonplanar.insertionMultiset F₁ B₁).map
+                fun X => (of' (R := R) (X + (F₂ - B₁)) :
+                  GrossmanLarson R α)).map fun X => X * of' F₃) =
+          F₂.powerset.bind fun B₁ =>
+            (Nonplanar.insertionMultiset F₁ B₁).map
+              fun X => (of' (R := R) (X + (F₂ - B₁)) :
+                GrossmanLarson R α) * of' F₃ from by
+        rw [Multiset.map_bind]
+        apply Multiset.bind_congr
+        intros B₁ _
+        rw [Multiset.map_map]
+        rfl]
+  rw [Multiset.sum_bind, Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro B₁ _
+  -- For each B₁: ((NIM F₁ B₁).map (X => of'(X+(F₂-B₁)) * of' F₃)).sum
+  --            = ((NIM F₁ B₁).bind (X => F₃.powerset.bind (C₁ => ...))).sum
+  rw [Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro X _
+  -- Goal: of' (X + (F₂-B₁)) * of' F₃ = (F₃.powerset.bind (C₁ => ...)).sum
+  rw [of'_mul_of'_nim_form]
+  -- Goal: (F₃.powerset.bind (fun C₁ => (NIM (X + (F₂-B₁)) C₁).map (Y => of' (Y + (F₃-C₁))))).sum
+  --     = (F₃.powerset.bind (fun C₁ => (C₁.powerset.bind (D => ...)))).sum
+  rw [Multiset.sum_bind, Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro C₁ _
+  -- Now: NIM (X + (F₂-B₁)) C₁ = C₁.powerset.bind (D => (NIM X D) ×ˢ (NIM (F₂-B₁) (C₁-D)) |>.map (fun p => p.1 + p.2))
+  -- via insertionMultiset_add_host.
+  rw [Nonplanar.insertionMultiset_add_host]
+  -- LHS_inner: ((C₁.powerset.bind (D => ...)).map (Y => of' (Y + (F₃-C₁)))).sum
+  -- RHS_inner: ((C₁.powerset.bind (D => ((NIM X D) ×ˢ (NIM (F₂-B₁) (C₁-D))).map (fun p => of' (p.1 + p.2 + (F₃-C₁))))).sum
+  rw [Multiset.map_bind, Multiset.sum_bind, Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro D _
+  rw [Multiset.map_map]
+  rfl
+
+/-- Basis-form rewrite of RHS `(of' F₁) * ((of' F₂) * of' F₃)` as a quintuple-bind
+    sum (after applying `Multiset.powerset_add` to `(Z + (F₃-C₁')).powerset`):
+
+    Σ_{C₁' ⊆ F₃, Z ∈ NIM F₂ C₁', P_Z ⊆ Z, P_F ⊆ F₃-C₁', W ∈ NIM F₁ (P_Z+P_F)}
+      of' (W + (Z - P_Z) + ((F₃-C₁') - P_F))
+-/
+private theorem rhs_quintuple_form (F₁ F₂ F₃ : Forest (Nonplanar α)) :
+    (of' F₁ : GrossmanLarson R α) * (of' F₂ * of' F₃) =
+      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
+       F₃.powerset.bind fun C₁' =>
+        (Nonplanar.insertionMultiset F₂ C₁').bind fun Z =>
+          Z.powerset.bind fun P_Z =>
+            (F₃ - C₁').powerset.bind fun P_F =>
+              (Nonplanar.insertionMultiset F₁ (P_Z + P_F)).map
+                fun W => (of' (R := R) (W + ((Z - P_Z) + ((F₃ - C₁') - P_F))) :
+                  GrossmanLarson R α)).sum := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  -- Step 1: rewrite of' F₂ * of' F₃ via of'_mul_of'_nim_form.
+  rw [of'_mul_of'_nim_form]
+  -- Step 2: push of' F₁ * (.).sum through using of'_mul_sum_form.
+  rw [of'_mul_sum_form]
+  -- Step 3: collapse map-bind to bind-map.
+  rw [show ((F₃.powerset.bind fun C₁' =>
+              (Nonplanar.insertionMultiset F₂ C₁').map
+                fun Z => (of' (R := R) (Z + (F₃ - C₁')) :
+                  GrossmanLarson R α)).map fun X => of' F₁ * X) =
+          F₃.powerset.bind fun C₁' =>
+            (Nonplanar.insertionMultiset F₂ C₁').map fun Z =>
+              (of' F₁ : GrossmanLarson R α) * of' (R := R) (Z + (F₃ - C₁')) from by
+        rw [Multiset.map_bind]
+        apply Multiset.bind_congr
+        intros C₁' _
+        rw [Multiset.map_map]
+        rfl]
+  rw [Multiset.sum_bind, Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro C₁' _
+  -- Inner: ((NIM F₂ C₁').map (Z => of' F₁ * of' (Z + (F₃-C₁')))).sum
+  --       = ((NIM F₂ C₁').bind (Z => Z.powerset.bind (P_Z => (F₃-C₁').powerset.bind (...)))).sum
+  rw [Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro Z hZ
+  -- Goal: of' F₁ * of' (Z + (F₃-C₁')) = ...
+  rw [of'_mul_of'_nim_form]
+  -- Goal LHS: ((Z + (F₃-C₁')).powerset.bind (P => (NIM F₁ P).map (W => of' (W + ((Z+(F₃-C₁')) - P))))).sum
+  -- Apply Multiset.powerset_add Z (F₃-C₁') to split P.
+  rw [Multiset.powerset_add]
+  -- After: (Z.powerset.bind (P_Z => (F₃-C₁').powerset.map (P_F => P_Z + P_F))).bind (P => ...)
+  rw [Multiset.bind_assoc]
+  rw [Multiset.sum_bind, Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro P_Z hP_Z
+  -- Now: ((F₃-C₁').powerset.map (P_F => P_Z + P_F)).bind (P => (NIM F₁ P).map (W => of' (W + ...)))
+  rw [Multiset.bind_map]
+  rw [Multiset.sum_bind, Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intro P_F hP_F
+  -- Goal: (NIM F₁ (P_Z + P_F)).map (W => of' (W + ((Z + (F₃-C₁')) - (P_Z + P_F)))).sum
+  --     = (NIM F₁ (P_Z + P_F)).map (W => of' (W + ((Z - P_Z) + ((F₃-C₁') - P_F)))).sum
+  -- Use tsub_add_tsub_comm.
+  have hP_Z_le : P_Z ≤ Z := Multiset.mem_powerset.mp hP_Z
+  have hP_F_le : P_F ≤ F₃ - C₁' := Multiset.mem_powerset.mp hP_F
+  have h_sub : (Z + (F₃ - C₁')) - (P_Z + P_F) = (Z - P_Z) + ((F₃ - C₁') - P_F) :=
+    (tsub_add_tsub_comm hP_Z_le hP_F_le).symm
+  rw [h_sub]
+
+/-- Bridge form: LHS expressed as a 5-fold sum after applying
+    `insertionMultiset_assoc F₁ B₁ D` to the inner `(NIM F₁ B₁).bind (X => NIM X D)`.
+
+    Σ_{B₁⊆F₂, C₁⊆F₃, D⊆C₁, D₁⊆D, X'∈NIM B₁ D₁, YA∈NIM F₁ (X'+(D-D₁)), YB∈NIM (F₂-B₁) (C₁-D)}
+      of' (YA + YB + (F₃-C₁))
+-/
+private theorem lhs_after_assoc (F₁ F₂ F₃ : Forest (Nonplanar α)) :
+    ((of' F₁ : GrossmanLarson R α) * of' F₂) * of' F₃ =
+      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
+       F₂.powerset.bind fun B₁ =>
+        F₃.powerset.bind fun C₁ =>
+          C₁.powerset.bind fun D =>
+            D.powerset.bind fun D₁ =>
+              (Nonplanar.insertionMultiset B₁ D₁).bind fun X' =>
+                ((Nonplanar.insertionMultiset F₁ (X' + (D - D₁))) ×ˢ
+                  (Nonplanar.insertionMultiset (F₂ - B₁) (C₁ - D))).map
+                    fun p => (of' (R := R) (p.1 + p.2 + (F₃ - C₁)) :
+                      GrossmanLarson R α)).sum := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  rw [lhs_quadruple_form]
+  -- Reorder bind: (NIM F₁ B₁).bind (X => F₃.powerset.bind (C₁ => C₁.powerset.bind (D => ...)))
+  -- needs to become F₃.powerset.bind (C₁ => C₁.powerset.bind (D => (NIM F₁ B₁).bind (X => ...))).
+  -- Step 1: pull out F₃.powerset and C₁.powerset binds via Multiset.bind_bind (swap).
+  apply congr_arg Multiset.sum
+  apply Multiset.bind_congr
+  intros B₁ _
+  -- Goal: (NIM F₁ B₁).bind (X => F₃.powerset.bind (C₁ => C₁.powerset.bind (D => (NIM X D ×ˢ M_YB).map ...)))
+  --     = F₃.powerset.bind (C₁ => C₁.powerset.bind (D => D.powerset.bind (D₁ => (NIM B₁ D₁).bind (X' => ...))))
+  -- Step 2: swap the OUTER (NIM F₁ B₁).bind with F₃.powerset.bind.
+  rw [Multiset.bind_bind
+        (Nonplanar.insertionMultiset F₁ B₁) F₃.powerset]
+  -- Now LHS is F₃.powerset.bind (C₁ => (NIM F₁ B₁).bind (X => C₁.powerset.bind (D => ...))).
+  apply Multiset.bind_congr
+  intros C₁ _
+  rw [Multiset.bind_bind
+        (Nonplanar.insertionMultiset F₁ B₁) C₁.powerset]
+  apply Multiset.bind_congr
+  intros D _
+  -- Now: (NIM F₁ B₁).bind (X => (NIM X D ×ˢ M_YB).map ...)
+  --    = D.powerset.bind (D₁ => (NIM B₁ D₁).bind (X' => (NIM F₁ (X' + (D-D₁)) ×ˢ M_YB).map ...))
+  set M_YB : Multiset (Forest (Nonplanar α)) :=
+    Nonplanar.insertionMultiset (F₂ - B₁) (C₁ - D) with hM_YB
+  set f : Forest (Nonplanar α) → Multiset (GrossmanLarson R α) :=
+    fun YA => M_YB.map fun YB => (of' (R := R) (YA + YB + (F₃ - C₁)) :
+      GrossmanLarson R α) with hf
+  -- Show: (NIM F₁ B₁).bind (X => (NIM X D ×ˢ M_YB).map ...) = (NIM F₁ B₁).bind (X => (NIM X D).bind f).
+  rw [show (Nonplanar.insertionMultiset F₁ B₁).bind (fun X =>
+        ((Nonplanar.insertionMultiset X D) ×ˢ M_YB).map
+          (fun p => (of' (R := R) (p.1 + p.2 + (F₃ - C₁)) :
+            GrossmanLarson R α))) =
+      (Nonplanar.insertionMultiset F₁ B₁).bind (fun X =>
+        (Nonplanar.insertionMultiset X D).bind f) from by
+    apply Multiset.bind_congr
+    intros X _
+    show ((Nonplanar.insertionMultiset X D).bind (fun a => M_YB.map (Prod.mk a))).map _ =
+      (Nonplanar.insertionMultiset X D).bind (fun YA =>
+        M_YB.map (fun YB => (of' (R := R) (YA + YB + (F₃ - C₁)) :
+          GrossmanLarson R α)))
+    rw [Multiset.map_bind]
+    apply Multiset.bind_congr
+    intros YA _
+    rw [Multiset.map_map]
+    rfl]
+  -- Apply bind-bind associativity: bind (bind a b) c = bind a (fun x => bind (b x) c).
+  -- Goal: (NIM F₁ B₁).bind (X => (NIM X D).bind f) = ((NIM F₁ B₁).bind (X => NIM X D)).bind f.
+  rw [show (Nonplanar.insertionMultiset F₁ B₁).bind
+            (fun X => (Nonplanar.insertionMultiset X D).bind f) =
+          ((Nonplanar.insertionMultiset F₁ B₁).bind
+            (fun X => Nonplanar.insertionMultiset X D)).bind f from by
+    rw [Multiset.bind_assoc]]
+  -- Apply insertionMultiset_assoc.
+  rw [Nonplanar.insertionMultiset_assoc]
+  -- Goal: (D.powerset.bind (D₁ => (NIM B₁ D₁).bind (X' => NIM F₁ (X' + (D-D₁))))).bind f
+  --     = D.powerset.bind (D₁ => (NIM B₁ D₁).bind (X' => (NIM F₁ (X' + (D-D₁)) ×ˢ M_YB).map ...))
+  rw [Multiset.bind_assoc]
+  apply Multiset.bind_congr
+  intros D₁ _
+  rw [Multiset.bind_assoc]
+  apply Multiset.bind_congr
+  intros X' _
+  -- Goal: (NIM F₁ (X' + (D-D₁))).bind f = ((NIM F₁ (X'+(D-D₁))) ×ˢ M_YB).map ...
+  rw [hf]
+  rw [show ((Nonplanar.insertionMultiset F₁ (X' + (D - D₁))) ×ˢ M_YB).map
+        (fun p => (of' (R := R) (p.1 + p.2 + (F₃ - C₁)) :
+          GrossmanLarson R α)) =
+      (Nonplanar.insertionMultiset F₁ (X' + (D - D₁))).bind (fun YA =>
+        M_YB.map (fun YB => (of' (R := R) (YA + YB + (F₃ - C₁)) :
+          GrossmanLarson R α))) from by
+    show ((Nonplanar.insertionMultiset F₁ (X' + (D - D₁))).bind
+            (fun a => M_YB.map (Prod.mk a))).map _ = _
+    rw [Multiset.map_bind]
+    apply Multiset.bind_congr
+    intros YA _
+    rw [Multiset.map_map]
+    rfl]
+
+/-! #### Bridge between LHS and RHS NIM forms
+
+After `lhs_after_assoc` + `rhs_quintuple_form`, both sides are NIM-bind sums
+over partitions of F₂ and F₃. The bridge uses the **labeled host
+decomposition lemma**: summing over `(B₁ ⊆ F₂, X' ∈ NIM B₁ D', YB ∈ NIM (F₂-B₁) (C₁'-D'))`
+gives a multiset of `(X', YB)` pairs that matches `(Z, P_Z) ↦ (P_Z, Z-P_Z)`
+for `Z ∈ NIM F₂ C₁'`.
+
+This is essentially `insertionMultiset_add_host` "labeled" — it tracks not just
+which trees of `Z` came from grafting into B₁ vs F₂-B₁ at the multiset-quotient
+level, but as a labeled structure.
+
+The bijection works because each tree of `Z = X' + YB ∈ NIM F₂ C₁'` corresponds
+to a unique tree of F₂ (via the multi-graft semantics), so picking `P_Z ⊆ Z`
+determines `B₁ ⊆ F₂` (the corresponding sub-multiset) uniquely.
+-/
+
+/-- **Labeled host decomposition** for `Nonplanar.insertionMultiset`. Strengthens
+    `insertionMultiset_add_host` by tracking the (X', YB) pair separately rather
+    than just `X' + YB`. Summing over all sub-host choices `B₁ ⊆ F₂` and all
+    sub-guest choices `D' ⊆ C₁'` gives the same multiset of pairs as enumerating
+    `Z ∈ NIM F₂ C₁'` paired with all sub-multiset choices `P_Z ⊆ Z`.
+
+    The "missing" labeled-decomposition substrate that bridges
+    `lhs_after_assoc` to `rhs_quintuple_form` in Oudom-Guin's chain. Proved by
+    descent through `Planar.Pathed.insertionForest`'s host-tree-correspondence
+    structure.
+
+    **TODO** (deep substrate, parallel to `insertionMultiset_add_host`/_assoc).
+    Full proof requires the planar host-bijection from `MultiGraftNonplanar.lean`. -/
+private theorem _root_.RootedTree.Nonplanar.insertionMultiset_labeled_decomp
+    (F₂ C₁' : Forest (Nonplanar α)) :
+    (letI : DecidableEq (Nonplanar α) := Classical.decEq _
+     F₂.powerset.bind fun B₁ =>
+      C₁'.powerset.bind fun D' =>
+        ((Nonplanar.insertionMultiset B₁ D') ×ˢ
+          (Nonplanar.insertionMultiset (F₂ - B₁) (C₁' - D')))) =
+      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
+       (Nonplanar.insertionMultiset F₂ C₁').bind fun Z =>
+        Z.powerset.map fun P_Z => (P_Z, Z - P_Z)) := by
+  sorry
+
 theorem mul_assoc_basis_via_oudom_guin (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     ((of' F₁ : GrossmanLarson R α) * of' F₂) * of' F₃ =
       of' F₁ * (of' F₂ * of' F₃) := by
@@ -1080,26 +1404,33 @@ theorem mul_assoc_basis_via_oudom_guin (F₁ F₂ F₃ : Forest (Nonplanar α)) 
   -- The proof reduces both sides to a common quadruple-`bind` form over
   -- partitions of F₂ and F₃ and `Nonplanar.insertionMultiset` (NIM) bind
   -- chains. The bridge between them uses
-  -- `Nonplanar.insertionMultiset_add_host` (host distributivity) and
-  -- `Nonplanar.insertionMultiset_assoc` (NIM-bind associativity), both
-  -- present as substrate sorries lower in this file.
+  -- `Nonplanar.insertionMultiset_add_host` (host distributivity),
+  -- `Nonplanar.insertionMultiset_assoc` (NIM-bind associativity), and
+  -- `Nonplanar.insertionMultiset_labeled_decomp` (labeled host decomposition),
+  -- all present as substrate sorries lower in this file or above.
   --
-  -- LHS structure (after expansions):
-  -- Σ_{B₁ ≤ F₂} Σ_{X ∈ NIM F₁ B₁} Σ_{C₁ ≤ F₃} Σ_{Y ∈ NIM (X + (F₂-B₁)) C₁}
-  --   of' (Y + (F₃ - C₁))
+  -- LHS structure (after `lhs_after_assoc`):
+  -- Σ_{B₁⊆F₂, C₁⊆F₃, D⊆C₁, D₁⊆D, X'∈NIM B₁ D₁, YA∈NIM F₁ (X'+(D-D₁)),
+  --   YB∈NIM (F₂-B₁) (C₁-D)} of' (YA + YB + (F₃-C₁))
   --
-  -- RHS structure (after expansions):
-  -- Σ_{C₁' ≤ F₃} Σ_{Z ∈ NIM F₂ C₁'} Σ_{P ≤ Z + (F₃-C₁')} Σ_{W ∈ NIM F₁ P}
-  --   of' (W + (Z + (F₃-C₁') - P))
+  -- RHS structure (after `rhs_quintuple_form`):
+  -- Σ_{C₁'⊆F₃, Z∈NIM F₂ C₁', P_Z⊆Z, P_F⊆F₃-C₁', W∈NIM F₁ (P_Z+P_F)}
+  --   of' (W + (Z-P_Z) + ((F₃-C₁')-P_F))
   --
-  -- The bijection between LHS and RHS bind structures follows from the
-  -- two NIM identities plus Multiset.powerset_add (the shuffle of a
-  -- disjoint-union forest's powerset).
+  -- Bridge bijection (B₁, C₁, D, D₁, X', YA, YB) ↔ (C₁', Z, P_Z, P_F, W):
+  --   C₁' = D₁ + (C₁-D),  P_F = D - D₁
+  --   Z = X' + YB,  P_Z = X',  W = YA.
+  --   Inverse: (C₁', P_F, P_Z) gives (D₁ = "P_Z's host part of C₁'",
+  --     D = D₁ + P_F, C₁ = D + (C₁'-D₁) = P_F + C₁').
   --
-  -- The structured chain is several hundred LOC. For now, the proof is
-  -- deferred. Helpers `mul_of'_sum_form`, `insertion_sum_left/right`,
-  -- `insertion_mul_distrib_gen`, `insertion_assoc_shuffled_gen` (above)
-  -- and `Nonplanar.insertionMultiset_assoc` already provide the substrate.
+  -- The (B₁, X', YB) ↔ (Z, P_Z) decomposition uses the labeled NIM bridge.
+  -- The (C₁, D, D₁) ↔ (C₁', P_F, D₁) is a `Multiset.powerset_add`-style reindex.
+  rw [lhs_after_assoc, rhs_quintuple_form]
+  -- Below we'd apply `Multiset.powerset_add`, swap binds, and apply
+  -- `insertionMultiset_labeled_decomp` to bridge.
+  -- The combinatorial identity is genuine (verified by examples), but its full
+  -- formalization requires ~200+ LOC of multiset manipulation plus the
+  -- labeled-decomp substrate. Deferred as scaffolding for future work.
   sorry
 
 end GrossmanLarson
