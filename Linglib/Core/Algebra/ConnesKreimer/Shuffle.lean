@@ -168,15 +168,60 @@ theorem comulShuffle_mul_of' [DecidableEq T] (F G : Forest T) :
   rw [of'_add, of'_add]
   rw [Algebra.TensorProduct.tmul_mul_tmul]
 
+/-- AddMonoidHom form of `F ↦ comulShuffle (F * G)` (G fixed). -/
+private noncomputable def comulShuffleMulLHom [DecidableEq T] (G : ConnesKreimer R T) :
+    ConnesKreimer R T →+ ConnesKreimer R T ⊗[R] ConnesKreimer R T :=
+  (comulShuffle (R := R)).toAddMonoidHom.comp
+    (AddMonoidHom.mulRight (G : ConnesKreimer R T))
+
+/-- AddMonoidHom form of `F ↦ comulShuffle F * comulShuffle G` (G fixed). -/
+private noncomputable def comulShuffleMulRHom [DecidableEq T] (G : ConnesKreimer R T) :
+    ConnesKreimer R T →+ ConnesKreimer R T ⊗[R] ConnesKreimer R T :=
+  (AddMonoidHom.mulRight (comulShuffle (R := R) G)).comp
+    (comulShuffle (R := R)).toAddMonoidHom
+
+@[simp] private theorem comulShuffleMulLHom_apply [DecidableEq T]
+    (F G : ConnesKreimer R T) :
+    comulShuffleMulLHom G F = comulShuffle (R := R) (F * G) := rfl
+
+@[simp] private theorem comulShuffleMulRHom_apply [DecidableEq T]
+    (F G : ConnesKreimer R T) :
+    comulShuffleMulRHom G F = comulShuffle (R := R) F * comulShuffle (R := R) G := rfl
+
 /-- The shuffle coproduct is an algebra hom on `ConnesKreimer R T`:
     `Δ(F · G) = Δ(F) · Δ(G)` in the tensor algebra
-    `ConnesKreimer R T ⊗[R] ConnesKreimer R T`.
-
-    **TODO**: lift from basis form `comulShuffle_mul_of'` via bilinearity. -/
+    `ConnesKreimer R T ⊗[R] ConnesKreimer R T`. Bilinear lift of
+    `comulShuffle_mul_of'` via two nested `Finsupp.addHom_ext` reductions to
+    basis singletons (mirrors `assoc_symm` in `PreLie/Algebra.lean`). -/
 theorem comulShuffle_mul [DecidableEq T] (F G : ConnesKreimer R T) :
     comulShuffle (R := R) (F * G) =
       comulShuffle (R := R) F * comulShuffle (R := R) G := by
-  sorry
+  -- Outer: reduce F to `Finsupp.single F₀ r` via addHom_ext.
+  have hF : comulShuffleMulLHom (R := R) G = comulShuffleMulRHom (R := R) G := by
+    refine Finsupp.addHom_ext fun F₀ r => ?_
+    set sF : ConnesKreimer R T := Finsupp.single F₀ r with sF_def
+    show comulShuffleMulLHom G sF = comulShuffleMulRHom G sF
+    rw [comulShuffleMulLHom_apply, comulShuffleMulRHom_apply]
+    -- Inner: reduce G to `Finsupp.single G₀ s` via addHom_ext on the
+    -- AddMonoidHom `G ↦ comulShuffle (sF * G)` vs `G ↦ comulShuffle sF * comulShuffle G`.
+    have hG : (comulShuffle (R := R)).toAddMonoidHom.comp (AddMonoidHom.mulLeft sF) =
+              (AddMonoidHom.mulLeft (comulShuffle (R := R) sF)).comp
+                (comulShuffle (R := R)).toAddMonoidHom := by
+      refine Finsupp.addHom_ext fun G₀ s => ?_
+      set sG : ConnesKreimer R T := Finsupp.single G₀ s with sG_def
+      show comulShuffle (sF * sG) = comulShuffle sF * comulShuffle sG
+      rw [show sF = r • of' (R := R) F₀ from (Finsupp.smul_single_one F₀ r).symm,
+          show sG = s • of' (R := R) G₀ from (Finsupp.smul_single_one G₀ s).symm]
+      rw [smul_mul_smul_comm, LinearMap.map_smul, LinearMap.map_smul, LinearMap.map_smul,
+          smul_mul_smul_comm]
+      congr 1
+      exact comulShuffle_mul_of' F₀ G₀
+    have hGapp := DFunLike.congr_fun hG G
+    show comulShuffle (sF * G) = comulShuffle sF * comulShuffle G
+    exact hGapp
+  have hFapp := DFunLike.congr_fun hF F
+  rw [comulShuffleMulLHom_apply, comulShuffleMulRHom_apply] at hFapp
+  exact hFapp
 
 /-! ### §4: Cocommutativity
 
@@ -267,16 +312,51 @@ theorem comulShuffle_comm_multiset [DecidableEq T] (F : Forest T) :
     (fun X Y => (of' (R := R) X : ConnesKreimer R T) ⊗ₜ[R]
                   (of' (R := R) Y : ConnesKreimer R T))
 
-/-- Cocommutativity of `comulShuffle`: `swap ∘ Δ = Δ` where `swap` is
-    the tensor-product flip.
+/-- Helper: `swap` distributes through the powerset-sum form of `comulShuffle`. -/
+private theorem swap_comulShuffle_powerset [DecidableEq T] (F : Forest T) :
+    (TensorProduct.comm R (ConnesKreimer R T) (ConnesKreimer R T))
+      ((F.powerset.map fun F₁ : Forest T =>
+          (of' (R := R) F₁ : ConnesKreimer R T) ⊗ₜ[R]
+            (of' (R := R) (F - F₁) : ConnesKreimer R T)).sum) =
+    (F.powerset.map fun F₁ : Forest T =>
+        (of' (R := R) (F - F₁) : ConnesKreimer R T) ⊗ₜ[R]
+          (of' (R := R) F₁ : ConnesKreimer R T)).sum := by
+  set swapHom : ConnesKreimer R T ⊗[R] ConnesKreimer R T →+
+                  ConnesKreimer R T ⊗[R] ConnesKreimer R T :=
+    (TensorProduct.comm R (ConnesKreimer R T) (ConnesKreimer R T)).toLinearMap.toAddMonoidHom
+  show swapHom _ = _
+  rw [swapHom.map_multiset_sum, Multiset.map_map]
+  apply congrArg Multiset.sum
+  apply Multiset.map_congr rfl
+  intros F₁ _
+  show (TensorProduct.comm R (ConnesKreimer R T) (ConnesKreimer R T))
+        ((of' (R := R) F₁) ⊗ₜ[R] (of' (R := R) (F - F₁))) =
+       (of' (R := R) (F - F₁)) ⊗ₜ[R] (of' (R := R) F₁)
+  exact TensorProduct.comm_tmul R _ _ _ _
 
-    **TODO**: prove via `comulShuffle_comm_multiset` + LinearMap distribution
-    over multiset sums. Awaiting cleaner mathlib API for `LinearEquiv` push
-    inside Multiset.sum. -/
+/-- Cocommutativity of `comulShuffle`: `swap ∘ Δ = Δ` where `swap` is
+    the tensor-product flip. Lifted from basis form `comulShuffle_comm_multiset`
+    via single-variable `Finsupp.addHom_ext` reduction. -/
 theorem comulShuffle_comm [DecidableEq T] :
     (TensorProduct.comm R (ConnesKreimer R T) (ConnesKreimer R T)).toLinearMap.comp
       (comulShuffle (R := R)) = comulShuffle (R := R) := by
-  sorry
+  ext F
+  show (TensorProduct.comm R (ConnesKreimer R T) (ConnesKreimer R T))
+        (comulShuffle (R := R) F) = comulShuffle (R := R) F
+  have h : ((TensorProduct.comm R (ConnesKreimer R T) (ConnesKreimer R T)).toLinearMap.comp
+              (comulShuffle (R := R))).toAddMonoidHom =
+            (comulShuffle (R := R)).toAddMonoidHom := by
+    refine Finsupp.addHom_ext fun F₀ r => ?_
+    set sF : ConnesKreimer R T := Finsupp.single F₀ r with sF_def
+    show (TensorProduct.comm R (ConnesKreimer R T) (ConnesKreimer R T))
+          (comulShuffle (R := R) sF) = comulShuffle (R := R) sF
+    rw [show sF = r • of' (R := R) F₀ from (Finsupp.smul_single_one F₀ r).symm]
+    rw [LinearMap.map_smul, map_smul]
+    congr 1
+    rw [comulShuffle_of']
+    rw [swap_comulShuffle_powerset (R := R) F₀]
+    exact (comulShuffle_comm_multiset F₀).symm
+  exact DFunLike.congr_fun h F
 
 /-! ### §5: Coassociativity
 
