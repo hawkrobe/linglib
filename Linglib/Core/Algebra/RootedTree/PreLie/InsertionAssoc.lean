@@ -426,28 +426,81 @@ theorem assocBucketSum_eq_insertionForest_iterated_msform
         rw [Multiset.map_zero]
       | cons T F_A =>
         -- host_A = T :: F_A, guests_B = b :: restB, guests_C = c :: rest.
-        -- The deepest combinatorial case. The structural sketch:
+        -- The deepest combinatorial case. The proof skeleton uses
+        -- `assocBucketSum_assignment_rewrite` on the RHS to reorganize the
+        -- triple bind, then bridges to the LHS via vertex-bucketing.
         --
-        -- LHS expansion via `insertionForest_cons_assignment`:
-        --   bind α_B (over guests_B): bind T_ins ∈ insertion T (filter_t α_B):
+        -- ## Detailed structure (after substrate exploration):
+        --
+        -- LHS expansion via `insertionForest_cons_cons` (twice):
+        --   bind α_B (over [t,f]^|guests_B|): bind T_ins ∈ insertion T (filter_t α_B):
         --     bind F_ins ∈ insertionForest F_A (filter_f α_B):
         --       (insertionForest (T_ins :: F_ins) (c :: rest)).map msform
         --
-        -- Inner `insertionForest (T_ins :: F_ins) (c :: rest)` further expands via
-        -- `insertionForest_cons_assignment` to a γ-bind. Reorganizing all 6 binds:
-        --   bind α_B, γ_C: (T-side: insert-then-insert) × (F_A-side: insertionForest-then-insertionForest)
-        --     -- where the F_A side is captured by IH (via guest-Perm + msform-invariance).
+        -- The inner `insertionForest (T_ins :: F_ins) (c :: rest)` re-expands
+        -- via `insertionForest_cons_cons` to a γ-bind splitting c-guests
+        -- across T_ins-bucket vs F_ins-bucket. After unfolding, we have a
+        -- 4-fold nested bind structure (α_B × γ_C × T_ins × F_ins).
         --
-        -- RHS via `assocBucketSum_assignment_rewrite` then `insertionForest_cons_assignment`:
+        -- RHS expansion via `assocBucketSum_assignment_rewrite` then
+        -- `insertionForest_cons_cons`:
         --   bind α_C: (insertionForest (b :: restB) (filter_f α_C)).bind X' =>
-        --     bind β: (insertion T ((X' ++ α_C.t).filter_t β)).bind T'_R =>
-        --     (insertionForest F_A ((X' ++ α_C.t).filter_f β)).map F'_R => T'_R :: F'_R
+        --     bind β: (insertion T ((X' ++ filter_t α_C).filter_t β)).bind T'_R =>
+        --     (insertionForest F_A ((X' ++ filter_t α_C).filter_f β)).map F'_R => T'_R :: F'_R
         --
-        -- The X' enumeration in RHS corresponds to the (α_B, T_ins, F_ins)-via-graft
-        -- enumeration in LHS via the bijection described in the docstring.
+        -- ## Bijection (LHS ↔ RHS at the (β, γ) ↔ (α, β', β'') level)
         --
-        -- Closing this requires a 5-bucket aggregator (γ_C-going-to-T-A, γ_C-going-to-T-B,
-        -- γ_C-going-to-F_A-A, γ_C-going-to-F_A-B, plus α_B's split). Estimated ~300 LOC.
+        -- The X' enumeration on RHS captures: (filter_f α_C-guests grafted into
+        -- guests_B's vertices) - this collects the c's that "go inside B".
+        -- Each LHS (α_B, γ_C) configuration corresponds to:
+        --   - α_C: derived from γ_C — for each c, true iff γ_C(c) is an
+        --          A-original vertex of T_ins :: F_ins.
+        --   - X': derived from (α_B, γ_C-restricted-to-B-side) — concretely, the
+        --         B-trees with the filter_f α_C subset of γ_C grafted into them.
+        --   - β: derived from α_B together with which side of T vs F_A each X'
+        --        and filter_t α_C lands on.
+        --
+        -- The bijection is at the multiset level (after msform), not at the
+        -- planar level — because LHS orders X = T_ins :: F_ins (T-side first)
+        -- whereas RHS β-bucketing yields X'-trees in arbitrary planar order.
+        -- The host-Perm + msform invariance (`insertionForest_perm_host_msform`,
+        -- `insertionForest_msform_invariance_guests`) absorbs this.
+        --
+        -- ## Substrate gap — what's NOT yet built
+        --
+        -- 1. **`iteratedTripleSum`** — 5-bucket aggregator paralleling `hostTripleSum`:
+        --    `iteratedTripleSum T F_A host_B pre_T_A pre_T_B pre_FA_A pre_FA_B pre_B remaining`
+        --    where buckets are (γ_C → T-A-original, γ_C → T-B-grafted, γ_C → F_A-A-original,
+        --    γ_C → F_A-B-grafted, plus α_B's split). ~100 LOC.
+        --
+        -- 2. **`iteratedTripleSum_eq_assocBucketSum`** — bridge to the RHS form
+        --    via `hostBucketSum_eq_insertionForest`-style reasoning. ~80 LOC.
+        --
+        -- 3. **`iteratedTripleSum_eq_LHS_msform`** — bridge to the LHS form
+        --    via host-Perm + guest-msform-invariance. ~150 LOC.
+        --
+        -- 4. **Final closure** — chaining the two bridges. ~30 LOC.
+        --
+        -- ## Why deferred
+        --
+        -- This is the combinatorial heart of Oudom-Guin Prop 2.7.v at the
+        -- planar-list level. The substrate is mathlib-quality work
+        -- (~360 LOC) — best done as a focused multi-day session rather
+        -- than tacked onto an existing one. The IH-via-induction-on-`rest` /
+        -- `restB` patterns don't trivially apply because the inductive case
+        -- requires the same dichotomy on a smaller instance, and the IH
+        -- doesn't see "X" as having vertex provenance information.
+        --
+        -- An alternative approach via `multiGraft`-level induction (deeper than
+        -- `insertionForest_cons_cons`) might bypass the 5-bucket aggregator,
+        -- but would require new substrate at the path-list level.
+        --
+        -- ## Downstream impact
+        --
+        -- This bridges to `Nonplanar.insertionMultiset_assoc` (currently sorry
+        -- in `GrossmanLarsonAssoc.lean:455`). Closing the latter unblocks
+        -- `insertion_assoc_shuffled` (Oudom-Guin Prop 2.7.v at the algebra
+        -- level) and the GL-pre-Lie associativity chain.
         sorry
 
 /-! ## §3: NIM-level lift to `Nonplanar.insertionMultiset_assoc`
