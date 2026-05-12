@@ -226,6 +226,40 @@ private theorem hostBucketSum_nil_A
   rw [List.nil_append] at this
   exact this
 
+/-! ## §3: The full bridge — `hostBucketSum host_A host_B [] [] guests = insertionForest (host_A ++ host_B) guests`
+
+The headline planar identity. Combined with the Nonplanar lift below
+(via `Quotient.out` + host-Perm invariance lifted through `Nonplanar.mk`),
+this yields the substrate for `Nonplanar.insertionMultiset_add_host`.
+
+**TODO**: prove. The proof goes by induction on `host_A`. The base
+case (`host_A = []`) is `hostBucketSum_nil_A` (above). The inductive
+case `host_A = T :: F_A` requires showing that:
+
+1. `hostBucketSum (T :: F_A) host_B [] [] guests` (with structure: per-guest A/B bucket, then within A bucket pick T or F_A)
+
+equals
+
+2. `insertionForest ((T :: F_A) ++ host_B) guests = insertionForest (T :: (F_A ++ host_B)) guests` (with structure: per-guest T/(F_A++host_B), then within (F_A++host_B) pick by IH)
+
+Both sides reduce to a per-guest three-way assignment {T, F_A-bucket, host_B-bucket}; the proof reorganizes the nested bind structure. Likely requires ~150-300 LOC using `Multiset.bind_assoc`, `Multiset.bind_bind`, and careful tracking of `listChoices` assignments. -/
+private theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (Planar α)) :
+    hostBucketSum host_A host_B [] [] guests =
+      insertionForest (host_A ++ host_B) guests := by
+  induction host_A with
+  | nil =>
+    rw [List.nil_append]
+    exact hostBucketSum_nil_A host_B guests
+  | cons T F_A ih =>
+    -- TODO: inductive step.
+    -- Both sides equal a per-guest 3-way assignment {T, F_A's trees, host_B's trees}.
+    -- LHS unfolds via assignment_rewrite + leaf (insertionForest (T :: F_A) ×ˢ insertionForest host_B).
+    -- The inner insertionForest (T :: F_A) further decomposes via forestPairSum_eq_insertionForest.
+    -- RHS unfolds via insertionForest_cons_cons (T as head) + recursion on F_A ++ host_B.
+    -- The recursion on F_A ++ host_B can be replaced by `hostBucketSum F_A host_B` via IH.
+    -- The two decision-tree shapes are then equal up to bind-reorganization.
+    sorry
+
 end Pathed
 
 end Planar
