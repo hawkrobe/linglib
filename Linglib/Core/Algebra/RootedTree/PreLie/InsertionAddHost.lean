@@ -1147,6 +1147,111 @@ private theorem listChoices_bridge_powerset_paired {β : Type*} [DecidableEq β]
   rw [← Multiset.map_map]
   rw [listChoices_bridge_powerset]
 
+/-! ## §7: Guest-multiset invariance at the msform level
+
+`(insertionForest host gs).map msform` depends only on the multiset image
+of `gs.map mk`, not on the planar representatives or order. This combines
+guest-Perm invariance + guest-PlanarEquiv invariance into a single lemma
+matching the level used by `Nonplanar.insertionMultiset`. -/
+
+/-- General `Perm` lifting: if `(l₁.map f).Perm (l₂.map f)`, there exists
+    a planar list `l_mid` such that `l₁.Perm l_mid` and `l_mid.map f = l₂.map f`
+    AS LISTS (so `Forall₂ (mk · = mk ·) l_mid l₂` follows). -/
+private theorem perm_lift_through_map {α₁ β₁ : Type*} (f : α₁ → β₁) :
+    ∀ {l₂ l₁ : List α₁}, (l₁.map f).Perm (l₂.map f) →
+    ∃ l_mid : List α₁, l₁.Perm l_mid ∧ l_mid.map f = l₂.map f := by
+  intro l₂
+  induction l₂ with
+  | nil =>
+    intro l₁ h
+    rw [List.map_nil] at h
+    have h_eq : l₁.map f = [] := h.eq_nil
+    have hl₁ : l₁ = [] := List.map_eq_nil_iff.mp h_eq
+    exact ⟨[], hl₁ ▸ List.Perm.refl _, by simp⟩
+  | cons b l₂_rest ih =>
+    intro l₁ h
+    -- f b ∈ l₁.map f (by Perm).
+    have hfb_mem : f b ∈ l₁.map f := by
+      apply h.symm.subset
+      rw [List.map_cons]
+      exact List.mem_cons_self
+    obtain ⟨a, ha_mem, hfa_eq⟩ := List.mem_map.mp hfb_mem
+    letI : DecidableEq α₁ := Classical.decEq _
+    -- l₁ Perm (a :: l₁.erase a)
+    have hperm_l₁ : l₁.Perm (a :: l₁.erase a) := List.perm_cons_erase ha_mem
+    -- ((a :: l₁.erase a).map f) Perm ((b :: l₂_rest).map f)
+    have h' : ((a :: l₁.erase a).map f).Perm ((b :: l₂_rest).map f) :=
+      (hperm_l₁.map f).symm.trans h
+    rw [List.map_cons, List.map_cons] at h'
+    rw [hfa_eq] at h'
+    -- (f b :: (l₁.erase a).map f) Perm (f b :: l₂_rest.map f)
+    have h_inner : ((l₁.erase a).map f).Perm (l₂_rest.map f) := h'.cons_inv
+    obtain ⟨l_mid_rest, hperm_rest, hmap_rest⟩ := ih h_inner
+    refine ⟨a :: l_mid_rest, ?_, ?_⟩
+    · exact hperm_l₁.trans (hperm_rest.cons a)
+    · rw [List.map_cons, List.map_cons, hfa_eq, hmap_rest]
+
+/-- Filter_t preserves `Forall₂ PlanarEquiv` on guests. -/
+private theorem filter_t_preserves_planarEquiv
+    {Ts Ts' : List (Planar α)} (h : List.Forall₂ PlanarEquiv Ts Ts')
+    (assn : List Bool) :
+    List.Forall₂ PlanarEquiv
+      ((Ts.zip assn).filterMap (fun p => if p.snd then some p.fst else none))
+      ((Ts'.zip assn).filterMap (fun p => if p.snd then some p.fst else none)) := by
+  induction h generalizing assn with
+  | nil =>
+    rw [show ([] : List (Planar α)).zip assn = [] from rfl]
+    exact List.Forall₂.nil
+  | @cons T T' Ts_tail Ts'_tail hd_pe _tail_pe ih =>
+    cases assn with
+    | nil =>
+      rw [show (T :: Ts_tail).zip ([] : List Bool) = [] from rfl,
+          show (T' :: Ts'_tail).zip ([] : List Bool) = [] from rfl]
+      exact List.Forall₂.nil
+    | cons b assn_rest =>
+      rw [show (T :: Ts_tail).zip (b :: assn_rest) = (T, b) :: Ts_tail.zip assn_rest from rfl,
+          show (T' :: Ts'_tail).zip (b :: assn_rest) =
+              (T', b) :: Ts'_tail.zip assn_rest from rfl]
+      simp only [List.filterMap_cons]
+      cases b with
+      | true =>
+        simp only [if_pos rfl]
+        exact List.Forall₂.cons hd_pe (ih assn_rest)
+      | false =>
+        simp only [if_neg (by decide : (false : Bool) ≠ true)]
+        exact ih assn_rest
+
+/-- Filter_f preserves `Forall₂ PlanarEquiv` on guests. -/
+private theorem filter_f_preserves_planarEquiv
+    {Ts Ts' : List (Planar α)} (h : List.Forall₂ PlanarEquiv Ts Ts')
+    (assn : List Bool) :
+    List.Forall₂ PlanarEquiv
+      ((Ts.zip assn).filterMap (fun p => if p.snd then none else some p.fst))
+      ((Ts'.zip assn).filterMap (fun p => if p.snd then none else some p.fst)) := by
+  induction h generalizing assn with
+  | nil =>
+    rw [show ([] : List (Planar α)).zip assn = [] from rfl]
+    exact List.Forall₂.nil
+  | @cons T T' Ts_tail Ts'_tail hd_pe _tail_pe ih =>
+    cases assn with
+    | nil =>
+      rw [show (T :: Ts_tail).zip ([] : List Bool) = [] from rfl,
+          show (T' :: Ts'_tail).zip ([] : List Bool) = [] from rfl]
+      exact List.Forall₂.nil
+    | cons b assn_rest =>
+      rw [show (T :: Ts_tail).zip (b :: assn_rest) = (T, b) :: Ts_tail.zip assn_rest from rfl,
+          show (T' :: Ts'_tail).zip (b :: assn_rest) =
+              (T', b) :: Ts'_tail.zip assn_rest from rfl]
+      simp only [List.filterMap_cons]
+      cases b with
+      | true =>
+        simp only [if_pos rfl]
+        exact ih assn_rest
+      | false =>
+        simp only [if_neg (by decide : (false : Bool) ≠ true)]
+        exact List.Forall₂.cons hd_pe (ih assn_rest)
+
+
 end Pathed
 
 end Planar
