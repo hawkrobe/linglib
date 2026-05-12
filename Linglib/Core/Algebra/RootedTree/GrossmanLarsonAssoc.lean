@@ -212,15 +212,7 @@ theorem insertion_assoc_shuffled (A B C : Forest (Nonplanar α)) :
     show insertion (R := R) (((Nonplanar.insertionMultiset A B).map
             (fun F' => of' (R := R) F')).sum) (of' C) = _
     -- Push `insertion · (of' C)` (linear in first arg) through the sum.
-    rw [Multiset.map_bind]
-    rw [show ((Nonplanar.insertionMultiset A B).bind
-          (fun X => Nonplanar.insertionMultiset X C)).map
-            (fun F' => (of' (R := R) F' : GrossmanLarson R α))
-        = (Nonplanar.insertionMultiset A B).bind
-            (fun X => (Nonplanar.insertionMultiset X C).map
-              (fun F' => (of' (R := R) F' : GrossmanLarson R α))) from
-      Multiset.map_bind _ _ _]
-    rw [Multiset.sum_bind]
+    rw [Multiset.map_bind, Multiset.sum_bind]
     -- Goal: insertion ((map of').sum) (of' C) = (bind (map of') ).sum  =  (map (sum ...)).sum
     -- linearity in first arg of insertion: push sum out.
     have hSumApp : ∀ (s : Multiset (GrossmanLarson R α)),
@@ -318,7 +310,7 @@ theorem insertion_assoc_shuffled (A B C : Forest (Nonplanar α)) :
           ((Nonplanar.insertionMultiset B C₁).map
             (fun X' => (ConnesKreimer.of' (R := R) (X' + (C - C₁)) :
               ConnesKreimer R (Nonplanar α)))).sum
-      rw [Multiset.sum_mul, Multiset.map_map]
+      rw [← Multiset.sum_map_mul_right]
       apply congr_arg Multiset.sum
       apply Multiset.map_congr rfl
       intros X' _
@@ -413,22 +405,124 @@ LinearMap-general form via standard linearity arguments.
 The lifts are routine `Finsupp.induction_linear` (zero / additive /
 scalar-of-basis) reductions to the basis form. -/
 
-/-- Push `X * of' G` to `productForest X G` for ANY `X`. Generalization
-    of `of'_mul_of'` to non-basis LEFT factor.
+/-- Push `X * of' G` to the explicit powerset sum form for ANY `X`.
+    Generalization of `of'_mul_of'` + `productForest` unfolding to non-basis
+    LEFT factor.
 
-    Proof: `product = (linearCombination productForestLin).flip`, so
-    `product X (of' G) = (linearCombination productForestLin) (of' G) X
-    = (1 • productForestLin G) X = productForest X G`. -/
-private theorem mul_of' (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
-    X * of' G = productForest X G := by
-  show product X (of' G) = productForest X G
-  show ((Finsupp.linearCombination R (productForestLin (R := R) (α := α))).flip
-          X) (of' G) = productForest X G
-  rw [LinearMap.flip_apply]
-  show ((Finsupp.linearCombination R (productForestLin (R := R) (α := α)))
-          (Finsupp.single G (1 : R))) X = productForest X G
-  rw [Finsupp.linearCombination_single, one_smul]
-  rfl
+    Stated via `product` (the bilinear underlying map of `*`) to avoid
+    Finsupp/GrossmanLarson type-alias mismatches in the induction. -/
+private theorem product_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    product X (of' G) =
+      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
+       G.powerset.map fun G₁ =>
+        op (unop (insertion X (of' G₁)) *
+            unop (of' (G - G₁)))).sum := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  refine Finsupp.induction_linear (M := R) X ?_ ?_ ?_
+  · -- X = 0
+    have h_prod_zero : (product : GrossmanLarson R α →ₗ[R] _) 0 (of' G) =
+        (0 : GrossmanLarson R α) := by
+      rw [(product : GrossmanLarson R α →ₗ[R] _).map_zero]
+      rfl
+    -- Convert goal to match (the 0 cast issue): explicit show.
+    show (product : GrossmanLarson R α →ₗ[R] _) (0 : GrossmanLarson R α) (of' G) = _
+    rw [h_prod_zero]
+    symm
+    apply Multiset.sum_eq_zero
+    intro x hx
+    rw [Multiset.mem_map] at hx
+    obtain ⟨G₁, _, hG₁_eq⟩ := hx
+    rw [← hG₁_eq]
+    have h_ins0 : insertion (R := R) (0 : GrossmanLarson R α) (of' G₁) = 0 := by
+      have := ((insertion : GrossmanLarson R α →ₗ[R]
+        GrossmanLarson R α →ₗ[R] GrossmanLarson R α).flip (of' G₁)).map_zero
+      exact this
+    -- `0 : GL` and `0 : Forest →₀ R` are the same; pass through.
+    show op (unop (insertion (0 : GrossmanLarson R α) (of' G₁)) *
+        unop (of' (R := R) (G - G₁))) = 0
+    rw [h_ins0]
+    show op ((0 : ConnesKreimer R (Nonplanar α)) *
+        unop (of' (R := R) (G - G₁))) = 0
+    rw [zero_mul]; rfl
+  · -- additive
+    intro X₁ X₂ ih₁ ih₂
+    -- Use the underlying AddMonoidHom of the LinearMap to apply map_add.
+    have h_prod_add : product (X₁ + X₂) (of' G) =
+        product X₁ (of' G) + product X₂ (of' G) :=
+      AddMonoidHom.map_add
+        ((product : GrossmanLarson R α →ₗ[R] _).flip (of' G)).toAddMonoidHom X₁ X₂
+    rw [h_prod_add, ih₁, ih₂, ← Multiset.sum_map_add]
+    apply congr_arg Multiset.sum
+    apply Multiset.map_congr rfl
+    intro G₁ _
+    -- Goal is at the inner level; X₁ + X₂ in insertion is on Finsupp.
+    show op (unop (insertion (X₁ : GrossmanLarson R α) (of' G₁)) *
+              unop (of' (R := R) (G - G₁))) +
+        op (unop (insertion (X₂ : GrossmanLarson R α) (of' G₁)) *
+            unop (of' (R := R) (G - G₁))) =
+        op (unop (insertion ((X₁ + X₂ : GrossmanLarson R α)) (of' G₁)) *
+            unop (of' (R := R) (G - G₁)))
+    have h_split_ins : insertion (R := R) ((X₁ + X₂) : GrossmanLarson R α) (of' G₁) =
+        insertion (R := R) (X₁ : GrossmanLarson R α) (of' G₁) +
+        insertion (R := R) (X₂ : GrossmanLarson R α) (of' G₁) := by
+      have := ((insertion : GrossmanLarson R α →ₗ[R]
+        GrossmanLarson R α →ₗ[R] GrossmanLarson R α).flip (of' G₁)).map_add
+          (X₁ : GrossmanLarson R α) (X₂ : GrossmanLarson R α)
+      exact this
+    rw [h_split_ins]
+    show op (unop (insertion (X₁ : GrossmanLarson R α) (of' G₁)) *
+              unop (of' (R := R) (G - G₁))) +
+        op (unop (insertion (X₂ : GrossmanLarson R α) (of' G₁)) *
+            unop (of' (R := R) (G - G₁))) =
+        op ((unop (insertion (X₁ : GrossmanLarson R α) (of' G₁)) +
+             unop (insertion (X₂ : GrossmanLarson R α) (of' G₁))) *
+             unop (of' (R := R) (G - G₁)))
+    rw [add_mul]; rfl
+  · -- single basis: reduce to of'_mul_of'.
+    intro A c
+    -- Single A c = c • (single A 1) = c • of' A (via Finsupp.smul_single_one).
+    show product ((Finsupp.single A c : GrossmanLarson R α)) (of' G) = _
+    rw [show ((Finsupp.single A c : Forest (Nonplanar α) →₀ R) :
+            GrossmanLarson R α) = c • (of' A : GrossmanLarson R α)
+        from (Finsupp.smul_single_one A c).symm]
+    rw [product.map_smul, LinearMap.smul_apply]
+    -- Goal: c • product (of' A) (of' G) = (sum form with c • of' A)
+    show c • ((of' A : GrossmanLarson R α) * of' G) = _
+    rw [of'_mul_of']
+    show c • productForest (of' (R := R) A) G =
+        (G.powerset.map fun G₁ =>
+          op (unop (insertion (c • (of' (R := R) A : GrossmanLarson R α)) (of' G₁)) *
+              unop (of' (R := R) (G - G₁)))).sum
+    show c • (G.powerset.map fun G₁ =>
+              op (unop (insertion (of' (R := R) A) (of' G₁)) *
+                  unop (of' (R := R) (G - G₁)))).sum =
+        (G.powerset.map fun G₁ =>
+          op (unop (insertion (c • (of' (R := R) A : GrossmanLarson R α)) (of' G₁)) *
+              unop (of' (R := R) (G - G₁)))).sum
+    rw [Multiset.smul_sum, Multiset.map_map]
+    apply congr_arg Multiset.sum
+    apply Multiset.map_congr rfl
+    intro G₁ _
+    have h_smul : insertion (R := R) (c • (of' A : GrossmanLarson R α)) (of' G₁) =
+        c • insertion (R := R) (of' A) (of' G₁) := by
+      have := ((insertion : GrossmanLarson R α →ₗ[R]
+        GrossmanLarson R α →ₗ[R] GrossmanLarson R α).flip (of' G₁)).map_smul c (of' A)
+      exact this
+    rw [h_smul]
+    show c • op (unop (insertion (of' (R := R) A) (of' G₁)) *
+                  unop (of' (R := R) (G - G₁))) =
+        op ((c • unop (insertion (of' (R := R) A) (of' G₁))) *
+            unop (of' (R := R) (G - G₁)))
+    rw [smul_mul_assoc]; rfl
+
+/-- Corollary: `mul_of'_sum_form` (the `*` form, given by `mul_def`). -/
+private theorem mul_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+    X * of' G =
+      (letI : DecidableEq (Nonplanar α) := Classical.decEq _
+       G.powerset.map fun G₁ =>
+        op (unop (insertion X (of' G₁)) *
+            unop (of' (G - G₁)))).sum :=
+  product_of'_sum_form X G
 
 /-- `insertion` distributes over a `Multiset.sum` in its first argument
     (since the LinearMap on the first arg pushes through Multiset.sum). -/
@@ -444,7 +538,7 @@ private theorem insertion_sum_left (s : Multiset (GrossmanLarson R α))
     rw [Multiset.sum_cons, Multiset.map_cons, Multiset.sum_cons]
     show ((insertion : GrossmanLarson R α →ₗ[R] _).flip G) (a + s.sum) = _
     rw [LinearMap.map_add]
-    show insertion a G + ((insertion : GrossmanLarson R α →ₗ[R] _).flip G) s.sum =
+    show insertion a G + insertion s.sum G =
          insertion a G + (s.map (fun X => insertion X G)).sum
     rw [ih]
 
@@ -472,30 +566,30 @@ private theorem insertion_mul_distrib_gen
             unop (insertion (of' Y) (of' (C - C₁))))).sum := by
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   refine Finsupp.induction_linear X ?_ ?_ ?_
-  · -- X = 0 case. LHS: insertion (op (unop 0 * unop (of' Y))) (of' C)
-    -- = insertion (op (0 * unop (of' Y))) (of' C)   [unop 0 = 0]
-    -- = insertion (op 0) (of' C)                    [zero_mul]
-    -- = insertion 0 (of' C)                         [op 0 = 0]
-    -- = 0                                            [bilinearity]
-    -- RHS sum: each summand has `insertion 0 (of' C₁) = 0`, hence sum = 0.
-    have h_unop_zero : unop (0 : GrossmanLarson R α) =
-        (0 : ConnesKreimer R (Nonplanar α)) := rfl
-    have h_op_zero : op (0 : ConnesKreimer R (Nonplanar α)) =
-        (0 : GrossmanLarson R α) := rfl
-    have h_lhs : insertion (R := R) (op (unop (0 : GrossmanLarson R α) *
-                  unop (of' (R := R) Y))) (of' C) =
-                (0 : GrossmanLarson R α) := by
-      rw [h_unop_zero, zero_mul, h_op_zero]
+  · -- X = 0 case: both sides reduce to 0.
+    -- LHS = insertion (op (0 * unop (of' Y))) (of' C) = insertion 0 (of' C) = 0
+    -- RHS = each summand `op(0 * ...) = 0`, hence sum = 0.
+    show insertion (R := R) (op (unop (0 : GrossmanLarson R α) *
+            unop (of' (R := R) Y))) (of' C) = _
+    rw [show unop (0 : GrossmanLarson R α) =
+        (0 : ConnesKreimer R (Nonplanar α)) from rfl]
+    rw [zero_mul]
+    rw [show op (0 : ConnesKreimer R (Nonplanar α)) =
+            (0 : GrossmanLarson R α) from rfl]
+    have h_ins0_C : insertion (R := R) (0 : GrossmanLarson R α) (of' C) =
+        (0 : GrossmanLarson R α) := by
       have := ((insertion : GrossmanLarson R α →ₗ[R]
         GrossmanLarson R α →ₗ[R] GrossmanLarson R α).flip (of' C)).map_zero
       exact this
-    rw [h_lhs]
+    rw [h_ins0_C]
     symm
     apply Multiset.sum_eq_zero
     intro x hx
     rw [Multiset.mem_map] at hx
     obtain ⟨C₁, _, hC₁_eq⟩ := hx
     rw [← hC₁_eq]
+    show op (unop (insertion (R := R) (0 : GrossmanLarson R α) (of' C₁)) *
+              unop (insertion (of' (R := R) Y) (of' (C - C₁)))) = 0
     have h_ins0 : insertion (R := R) (0 : GrossmanLarson R α) (of' C₁) =
         (0 : GrossmanLarson R α) := by
       have := ((insertion : GrossmanLarson R α →ₗ[R]
@@ -661,10 +755,39 @@ The chain expands `(of'A * of'B) * of'C` step-by-step:
 7. Similarly expand the RHS, observe that after `powerset_partition_swap`
    the two expressions are *syntactically* the same multiset sum. -/
 
-/-- **Headline**: `mul_assoc_basis` proved via Lemma 2.10's chain. -/
+/-- **Headline**: `mul_assoc_basis` proved via Lemma 2.10's chain.
+
+    The proof structure follows the 6-line Oudom-Guin chain:
+    - LHS: `(A * B) * C` expanded via `mul_of'_sum_form` (twice nested) +
+      `insertion_mul_distrib_gen` (Prop 2.7.iii on the inner bracket) +
+      `insertion_assoc_shuffled` (Prop 2.7.v on the resulting iterated
+      insertion).
+    - The C-trio re-indexing uses `powerset_partition_swap`.
+    - RHS: `A * (B * C)` expanded similarly. -/
 theorem mul_assoc_basis_via_oudom_guin (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     ((of' F₁ : GrossmanLarson R α) * of' F₂) * of' F₃ =
       of' F₁ * (of' F₂ * of' F₃) := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  -- ## LHS expansion to canonical quadruple-sum form.
+  -- Step 1: `(A * B) * C = productForest (A*B) C` via mul_of'_sum_form.
+  rw [mul_of'_sum_form (of' F₁ * of' F₂) F₃]
+  -- Goal: (F₃.powerset.map (C₁ => op(unop(insertion (of'F₁ * of'F₂) (of'C₁)) *
+  --                                  unop(of'(F₃ - C₁))))).sum = RHS
+  -- Step 2: Expand `of'F₁ * of'F₂` as productForest, then push through
+  --         linearity of insertion (first arg).
+  -- For each C₁, replace `insertion (of'F₁ * of'F₂) (of'C₁)` with a B₁-sum.
+  have hLHS_inner : ∀ C₁ : Forest (Nonplanar α),
+      insertion (R := R) (of' F₁ * of' F₂) (of' C₁) =
+        (F₂.powerset.map fun B₁ =>
+          insertion (R := R)
+            (op (unop (insertion (of' F₁) (of' B₁)) * unop (of' (F₂ - B₁))))
+            (of' C₁)).sum := by
+    intro C₁
+    rw [mul_of'_sum_form (of' F₁) F₂]
+    -- LHS: insertion ((F₂.powerset.map ...).sum) (of' C₁)
+    -- = (F₂.powerset.map (B₁ => insertion (...) (of' C₁))).sum   [by linearity]
+    rw [insertion_sum_left, Multiset.map_map]
+    rfl
   sorry
 
 end GrossmanLarson
