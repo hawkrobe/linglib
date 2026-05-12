@@ -806,6 +806,33 @@ theorem mul_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
             unop (of' (G - G₁)))).sum :=
   product_of'_sum_form X G
 
+/-- LEFT-form distributivity of `*` over `Multiset.sum`:
+    `(of' A) * (Σ s) = Σ ((of' A) * s_i)`. The Grossman-Larson product
+    `*` is bilinear (via `product : GL →ₗ[R] GL →ₗ[R] GL`), so pushing
+    through `Multiset.sum` is straightforward — the `Mul` instance
+    rewires `*` as `product`, and `product (of' A)` is a `LinearMap`.
+
+    Mirror of `insertion_sum_right` but for the GL product. Used in
+    Lemma 2.10's chain to expand `(of' A) * (B * C)` after substituting
+    `B * C` as a sum-form. -/
+theorem of'_mul_sum_form (A : Forest (Nonplanar α))
+    (s : Multiset (GrossmanLarson R α)) :
+    (of' A : GrossmanLarson R α) * s.sum = (s.map (fun X => of' A * X)).sum := by
+  induction s using Multiset.induction with
+  | empty =>
+    rw [Multiset.sum_zero, Multiset.map_zero, Multiset.sum_zero]
+    show product (of' A) (0 : GrossmanLarson R α) = 0
+    exact (product (of' A : GrossmanLarson R α)).map_zero
+  | cons a s ih =>
+    rw [Multiset.sum_cons, Multiset.map_cons, Multiset.sum_cons]
+    show product (of' A) (a + s.sum) = product (of' A) a + (s.map _).sum
+    rw [(product (of' A : GrossmanLarson R α)).map_add]
+    -- Goal: product (of' A) a + product (of' A) s.sum = product (of' A) a + (s.map (fun X => of' A * X)).sum
+    -- IH: (of' A) * s.sum = (s.map ...).sum. (of' A) * s.sum = product (of' A) s.sum by `mul_def`.
+    show (product (of' A : GrossmanLarson R α)) a +
+         ((of' A : GrossmanLarson R α) * s.sum) = _
+    rw [ih]
+
 /-- `insertion` distributes over a `Multiset.sum` in its first argument
     (since the LinearMap on the first arg pushes through Multiset.sum). -/
 theorem insertion_sum_left (s : Multiset (GrossmanLarson R α))
