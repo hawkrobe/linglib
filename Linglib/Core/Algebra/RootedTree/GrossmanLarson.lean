@@ -88,12 +88,12 @@ underlying carrier, different multiplication.
 ## Status
 
 `[UPSTREAM]` candidate. Skeleton API (basis embeddings, single-tree
-insertion, multi-tree `insertion`, GL product, Mul instance). Open
-`sorry`s: three `productForest_*_left` linearity lemmas, `mul_one`,
-`one_mul`, `mul_assoc`, plus the six substrate invariance theorems
-in `MultiGraftNonplanar.lean`. The `Semigroup`/`Monoid` typeclass
-instances for the GL product are NOT registered until the underlying
-proofs land — only the forwarding `theorem`s are stated.
+insertion, multi-tree `insertion`, GL product, Mul instance), with
+`mul_one` and `one_mul` proved and `mul_assoc` reduced (via triple
+`Finsupp.addHom_ext`) to the basis-vector lemma `mul_assoc_basis`,
+which carries the remaining `sorry`. The `Semigroup`/`Monoid`
+typeclass instances for the GL product are NOT registered until
+`mul_assoc_basis` lands — only the forwarding `theorem`s are stated.
 -/
 
 namespace RootedTree
@@ -681,14 +681,176 @@ theorem one_mul (F : GrossmanLarson R α) : (1 : GrossmanLarson R α) * F = F :=
         Finsupp.single G_basis r
     rw [Finsupp.smul_single, smul_eq_mul, _root_.mul_one]
 
-/-- **Associativity**. Proved by induction on the multiset structure of
-    the rightmost argument, using the `productForest` powerset formula
-    and Fubini-style re-indexing of nested sub-multiset choices. Foissy
-    2018 §4.2 establishes this via Guin-Oudom + PBW; we bypass PBW
-    with a direct combinatorial induction. **TODO**: proof. -/
+/-- **Basis-level associativity**. The combinatorial heart of GL
+    associativity: with all three arguments basis vectors, the product
+    formula's nested powersets need a Fubini-style re-indexing to match.
+    Foissy 2018 §4.2 establishes this via Guin-Oudom + PBW; we bypass
+    PBW with a direct combinatorial bijection on `insertionMultiset`.
+    **TODO**: proof. -/
+private theorem mul_assoc_basis (F₁ F₂ F₃ : Forest (Nonplanar α)) :
+    ((of' F₁ : GrossmanLarson R α) * of' F₂) * of' F₃ =
+      of' F₁ * (of' F₂ * of' F₃) := by
+  sorry
+
+/-! ### Bilinearity reduction for `mul_assoc`
+
+The full statement of `mul_assoc` is reduced to the basis-vector case
+`mul_assoc_basis` via three nested `Finsupp.addHom_ext` invocations. Each
+side of `F₁ * F₂ * F₃ = F₁ * (F₂ * F₃)` is presented as an `AddMonoidHom`
+in one of the three variables (the other two held fixed), the two
+`AddMonoidHom`s are shown equal by checking on `Finsupp.single F r`
+basis elements, and the singleton case reduces via scalar pull-out
+(through `LinearMap.map_smul` on `product`) to the basis-vector
+`mul_assoc_basis` statement.
+
+This avoids fighting the `GrossmanLarson R α := ConnesKreimer R (Nonplanar α)`
+def-opacity issues that bite `Finsupp.induction_linear` on GL elements:
+all the heavy lifting happens at the underlying `Finsupp` level. -/
+
+/-- Right multiplication by `y` as an `AddMonoidHom`, additive in `x`.
+    Bilinearity of `product` (which is a LinearMap) gives the additive
+    structure for free. -/
+private noncomputable def mulRightHom (y : GrossmanLarson R α) :
+    GrossmanLarson R α →+ GrossmanLarson R α where
+  toFun x := x * y
+  map_zero' := by
+    show product 0 y = 0
+    rw [product.map_zero, LinearMap.zero_apply]
+  map_add' x₁ x₂ := by
+    show product (x₁ + x₂) y = product x₁ y + product x₂ y
+    rw [product.map_add, LinearMap.add_apply]
+
+/-- Left multiplication by `x` as an `AddMonoidHom`, additive in `y`. -/
+private noncomputable def mulLeftHom (x : GrossmanLarson R α) :
+    GrossmanLarson R α →+ GrossmanLarson R α where
+  toFun y := x * y
+  map_zero' := by
+    show product x 0 = 0
+    exact (product x).map_zero
+  map_add' y₁ y₂ := by
+    show product x (y₁ + y₂) = product x y₁ + product x y₂
+    exact (product x).map_add y₁ y₂
+
+@[simp] private theorem mulRightHom_apply (x y : GrossmanLarson R α) :
+    mulRightHom y x = x * y := rfl
+
+@[simp] private theorem mulLeftHom_apply (x y : GrossmanLarson R α) :
+    mulLeftHom x y = x * y := rfl
+
+/-- Scalar pull-out on the LEFT factor: `(c • x) * y = c • (x * y)`. -/
+private theorem smul_mul_left (c : R) (x y : GrossmanLarson R α) :
+    ((c • x : GrossmanLarson R α) * y) = c • (x * y) := by
+  show product (c • x) y = c • product x y
+  rw [product.map_smul, LinearMap.smul_apply]
+
+/-- Scalar pull-out on the RIGHT factor: `x * (c • y) = c • (x * y)`. -/
+private theorem mul_smul_right (c : R) (x y : GrossmanLarson R α) :
+    (x * (c • y : GrossmanLarson R α)) = c • (x * y) := by
+  show product x (c • y) = c • product x y
+  exact (product x).map_smul c y
+
+/-- AddMonoidHom for `x ↦ x * y * z`, additive in `x`. -/
+private noncomputable def assocLHSHom (y z : GrossmanLarson R α) :
+    GrossmanLarson R α →+ GrossmanLarson R α :=
+  (mulRightHom z).comp (mulRightHom y)
+
+/-- AddMonoidHom for `x ↦ x * (y * z)`, additive in `x`. -/
+private noncomputable def assocRHSHom (y z : GrossmanLarson R α) :
+    GrossmanLarson R α →+ GrossmanLarson R α :=
+  mulRightHom (y * z)
+
+@[simp] private theorem assocLHSHom_apply (x y z : GrossmanLarson R α) :
+    assocLHSHom y z x = x * y * z := rfl
+
+@[simp] private theorem assocRHSHom_apply (x y z : GrossmanLarson R α) :
+    assocRHSHom y z x = x * (y * z) := rfl
+
+/-- AddMonoidHom for `y ↦ x * y * z`, additive in `y` (with `x, z` fixed). -/
+private noncomputable def assocLHSHomY (x z : GrossmanLarson R α) :
+    GrossmanLarson R α →+ GrossmanLarson R α :=
+  (mulRightHom z).comp (mulLeftHom x)
+
+/-- AddMonoidHom for `y ↦ x * (y * z)`, additive in `y` (with `x, z` fixed). -/
+private noncomputable def assocRHSHomY (x z : GrossmanLarson R α) :
+    GrossmanLarson R α →+ GrossmanLarson R α :=
+  (mulLeftHom x).comp (mulRightHom z)
+
+@[simp] private theorem assocLHSHomY_apply (x y z : GrossmanLarson R α) :
+    assocLHSHomY x z y = x * y * z := rfl
+
+@[simp] private theorem assocRHSHomY_apply (x y z : GrossmanLarson R α) :
+    assocRHSHomY x z y = x * (y * z) := by
+  show (mulLeftHom x) ((mulRightHom z) y) = x * (y * z)
+  rfl
+
+/-- AddMonoidHom for `z ↦ x * y * z`, additive in `z` (with `x, y` fixed). -/
+private noncomputable def assocLHSHomZ (x y : GrossmanLarson R α) :
+    GrossmanLarson R α →+ GrossmanLarson R α :=
+  (mulLeftHom (x * y))
+
+/-- AddMonoidHom for `z ↦ x * (y * z)`, additive in `z` (with `x, y` fixed). -/
+private noncomputable def assocRHSHomZ (x y : GrossmanLarson R α) :
+    GrossmanLarson R α →+ GrossmanLarson R α :=
+  (mulLeftHom x).comp (mulLeftHom y)
+
+@[simp] private theorem assocLHSHomZ_apply (x y z : GrossmanLarson R α) :
+    assocLHSHomZ x y z = x * y * z := rfl
+
+@[simp] private theorem assocRHSHomZ_apply (x y z : GrossmanLarson R α) :
+    assocRHSHomZ x y z = x * (y * z) := by
+  show (mulLeftHom x) ((mulLeftHom y) z) = x * (y * z)
+  rfl
+
+/-- **Associativity**. Proved by triple bilinearity reduction
+    (`Finsupp.addHom_ext` thrice) to `mul_assoc_basis`. The combinatorial
+    heart of associativity lives in `mul_assoc_basis`; this proof just
+    handles the linear-extension boilerplate. -/
 theorem mul_assoc (F₁ F₂ F₃ : GrossmanLarson R α) :
     F₁ * F₂ * F₃ = F₁ * (F₂ * F₃) := by
-  sorry
+  -- Reduce F₁ to single via addHom_ext on F₁ (the LHS factor of `(F₁ * F₂) * F₃`).
+  have h₁ : assocLHSHom F₂ F₃ = assocRHSHom F₂ F₃ := by
+    refine Finsupp.addHom_ext fun T₁ a₁ => ?_
+    -- Goal: assocLHSHom F₂ F₃ (single T₁ a₁) = assocRHSHom F₂ F₃ (single T₁ a₁)
+    set s₁ : GrossmanLarson R α := Finsupp.single T₁ a₁ with s₁_def
+    show assocLHSHom F₂ F₃ s₁ = assocRHSHom F₂ F₃ s₁
+    rw [assocLHSHom_apply, assocRHSHom_apply]
+    -- Reduce F₂ to single via addHom_ext on F₂.
+    have h₂ : assocLHSHomY s₁ F₃ = assocRHSHomY s₁ F₃ := by
+      refine Finsupp.addHom_ext fun T₂ a₂ => ?_
+      set s₂ : GrossmanLarson R α := Finsupp.single T₂ a₂ with s₂_def
+      show assocLHSHomY s₁ F₃ s₂ = assocRHSHomY s₁ F₃ s₂
+      rw [assocLHSHomY_apply, assocRHSHomY_apply]
+      -- Reduce F₃ to single via addHom_ext on F₃.
+      have h₃ : assocLHSHomZ s₁ s₂ = assocRHSHomZ s₁ s₂ := by
+        refine Finsupp.addHom_ext fun T₃ a₃ => ?_
+        set s₃ : GrossmanLarson R α := Finsupp.single T₃ a₃ with s₃_def
+        show assocLHSHomZ s₁ s₂ s₃ = assocRHSHomZ s₁ s₂ s₃
+        rw [assocLHSHomZ_apply, assocRHSHomZ_apply]
+        -- Convert each sᵢ from `single Tᵢ aᵢ` to `aᵢ • of' Tᵢ`.
+        rw [show s₁ = a₁ • (of' T₁ : GrossmanLarson R α) from
+              (Finsupp.smul_single_one T₁ a₁).symm,
+            show s₂ = a₂ • (of' T₂ : GrossmanLarson R α) from
+              (Finsupp.smul_single_one T₂ a₂).symm,
+            show s₃ = a₃ • (of' T₃ : GrossmanLarson R α) from
+              (Finsupp.smul_single_one T₃ a₃).symm]
+        -- Pull out scalars from both sides via the bilinearity lemmas. Both
+        -- sides normalize to `a₃ • a₂ • a₁ • (...)` (simp pulls scalars out
+        -- innermost-first). The remaining basis-vector product on each side
+        -- is closed by `mul_assoc_basis`.
+        simp only [smul_mul_left, mul_smul_right]
+        rw [mul_assoc_basis T₁ T₂ T₃]
+      -- Apply h₃ at F₃ to get the F₂-singleton statement.
+      have h₃App := DFunLike.congr_fun h₃ F₃
+      rw [assocLHSHomZ_apply, assocRHSHomZ_apply] at h₃App
+      exact h₃App
+    -- Apply h₂ at F₂ to get the F₁-singleton statement.
+    have h₂App := DFunLike.congr_fun h₂ F₂
+    rw [assocLHSHomY_apply, assocRHSHomY_apply] at h₂App
+    exact h₂App
+  -- Apply h₁ at F₁ to conclude.
+  have h₁App := DFunLike.congr_fun h₁ F₁
+  rw [assocLHSHom_apply, assocRHSHom_apply] at h₁App
+  exact h₁App
 
 end GrossmanLarson
 
