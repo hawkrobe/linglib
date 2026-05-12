@@ -195,17 +195,46 @@ So `host_B = guests_B` in the bridge. -/
 /-- The headline planar identity. Iterated multi-graft equals the
     iterated bucket-sum form.
 
-    **TODO**: Major substrate. Proof structure mirrors
-    `hostBucketSum_eq_insertionForest` but for the iterated grafting.
-    Likely needs:
-    - A 3-bucket triple aggregator (analog to `hostTripleSum`) for the
-      cons-host-A case.
-    - Induction on `host_A` (treating B-grafting as a parameter). -/
+    **TODO**: Major substrate. Proof structure: induction on `host_A`,
+    using a 3-bucket triple aggregator (analog to `hostTripleSum` from
+    InsertionAddHost.lean §3) for the cons case. Each C-guest's
+    γ-position in `insertionForest X guests_C` is split based on whether
+    it lands at an A-original vertex (mapped to filter_t) or a
+    B-grafted vertex (mapped to filter_f, recursing into B's structure).
+
+    The bijection between (β, γ) pairs (LHS) and (α, β', β'') tuples
+    (RHS) is conceptually:
+    - β = LHS B-assignment to host_A's vertices.
+    - γ = LHS C-assignment to vertices of X = host_A-with-B-grafted.
+    - α = RHS C-side decision (filter_t vs filter_f for each C-guest).
+    - β' = RHS C-going-to-B assignment (filter_f-guests into guests_B's vertices).
+    - β'' = RHS combined-forest assignment (X' ++ filter_t into host_A's vertices).
+
+    The proof requires careful case analysis on whether each γ-vertex
+    is in A-original or B-grafted territory. -/
 theorem assocBucketSum_eq_insertionForest_iterated
     (host_A guests_B guests_C : List (Planar α)) :
     (insertionForest host_A guests_B).bind (fun X => insertionForest X guests_C) =
       assocBucketSum host_A guests_B [] [] guests_C := by
   sorry
+
+/-! ## §3: NIM-level lift to `Nonplanar.insertionMultiset_assoc`
+
+Once the planar bridge `assocBucketSum_eq_insertionForest_iterated` lands,
+the NIM-level theorem follows via:
+1. Unfold NIM on both sides.
+2. Apply guest-msform invariance (for the bind X => NIM X C step on LHS,
+   need to show the planar X-list and the NIM-X-toList agree).
+3. Apply host-Perm to align (X' + (C - C₁)).toList.map Q.out with
+   X' ++ (C - C₁).toList.map Q.out.
+4. Apply assocBucketSum bridge to convert iterated grafting to
+   bucket form.
+5. Apply powerset bridge to convert bind-over-assn to bind-over-C.powerset.
+
+The skeleton is parallel to `Nonplanar.insertionMultiset_add_host` (Step 2)
+but with a NESTED bind (NIM B C₁ inside the C.powerset.bind).
+
+Deferred to a follow-up session — depends on the planar bridge above. -/
 
 end Pathed
 
