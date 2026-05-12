@@ -1889,6 +1889,7 @@ import Linglib.Core.Combinatorics.RootedTree.Planar
 import Linglib.Core.Combinatorics.RootedTree.Subtypes
 import Linglib.Core.Combinatorics.RootedTree.PlanarCut
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
+import Linglib.Core.Combinatorics.RootedTree.Nonplanar.Insertion
 import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 import Linglib.Core.Algebra.RootedTree.Coproduct.Defs
 import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
@@ -1896,8 +1897,12 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Algebra.RootedTree.Coproduct.PruningNonplanar
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.PreLie.Algebra
-import Linglib.Core.Algebra.RootedTree.PreLie.Defs
-import Linglib.Core.Algebra.RootedTree.PreLie.Nonplanar
+import Linglib.Core.Algebra.RootedTree.PreLie.Graft
+import Linglib.Core.Algebra.RootedTree.PreLie.Insert
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
+import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
+import Linglib.Core.Algebra.RootedTree.PreLie.Path
+import Linglib.Core.Algebra.RootedTree.PreLie.Vertex
 import Linglib.Core.Algebra.RootedTree.PreLie.VertexBijection
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.Algebra.PreLie.GuinOudom
