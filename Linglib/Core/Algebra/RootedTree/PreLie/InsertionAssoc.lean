@@ -192,15 +192,26 @@ Thus: graft pre_B into guests_B (treated as host) → X' (forest of guests_B wit
 
 So `host_B = guests_B` in the bridge. -/
 
-/-- The headline planar identity. Iterated multi-graft equals the
-    iterated bucket-sum form.
+/-- The headline planar identity AT THE MSFORM LEVEL. Iterated multi-graft
+    equals the iterated bucket-sum form, modulo the multiset-of-multiset
+    wrapping `Multiset.ofList ∘ List.map mk`.
 
-    **TODO**: Major substrate. Proof structure: induction on `host_A`,
-    using a 3-bucket triple aggregator (analog to `hostTripleSum` from
-    InsertionAddHost.lean §3) for the cons case. Each C-guest's
-    γ-position in `insertionForest X guests_C` is split based on whether
-    it lands at an A-original vertex (mapped to filter_t) or a
-    B-grafted vertex (mapped to filter_f, recursing into B's structure).
+    **CRITICAL**: this identity does NOT hold at the planar level (the
+    LIST structure of outputs differs between LHS and RHS — different
+    β-choices in LHS produce different planar arrangements that only
+    coincide at the multiset level after host-Perm). The msform wrapping
+    discards the planar-position information, making the identity hold.
+
+    **TODO**: Major substrate. Two viable proof strategies:
+    (A) **Direct induction on `host_A`** using a 5-bucket aggregator
+        (or nested triple-buckets): {goes-to-T, goes-to-F_A, goes-to-host_B-via-graft}
+        × {staying-as-A-sibling, going-into-B}. Roughly doubles the
+        cons-case algebra vs. Step 2.
+    (B) **Factor through Step 2** (RECOMMENDED): use `hostBucketSum_eq_insertionForest`
+        to convert the inner `insertionForest X guests_C` into a hostBucketSum
+        form on the parts of X that came from host_A vs. those that came from
+        B-grafting. Then reorder bind-quantifiers. Avoids re-proving a full
+        triple-aggregator bridge from scratch.
 
     The bijection between (β, γ) pairs (LHS) and (α, β', β'') tuples
     (RHS) is conceptually:
@@ -208,14 +219,14 @@ So `host_B = guests_B` in the bridge. -/
     - γ = LHS C-assignment to vertices of X = host_A-with-B-grafted.
     - α = RHS C-side decision (filter_t vs filter_f for each C-guest).
     - β' = RHS C-going-to-B assignment (filter_f-guests into guests_B's vertices).
-    - β'' = RHS combined-forest assignment (X' ++ filter_t into host_A's vertices).
-
-    The proof requires careful case analysis on whether each γ-vertex
-    is in A-original or B-grafted territory. -/
-theorem assocBucketSum_eq_insertionForest_iterated
+    - β'' = RHS combined-forest assignment (X' ++ filter_t into host_A's vertices). -/
+theorem assocBucketSum_eq_insertionForest_iterated_msform
     (host_A guests_B guests_C : List (Planar α)) :
-    (insertionForest host_A guests_B).bind (fun X => insertionForest X guests_C) =
-      assocBucketSum host_A guests_B [] [] guests_C := by
+    ((insertionForest host_A guests_B).bind
+        (fun X => insertionForest X guests_C)).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    (assocBucketSum host_A guests_B [] [] guests_C).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
   sorry
 
 /-! ## §3: NIM-level lift to `Nonplanar.insertionMultiset_assoc`
