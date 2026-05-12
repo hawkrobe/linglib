@@ -599,10 +599,135 @@ private theorem listChoices_succ_cons_bind {γ : Type*}
   rw [Multiset.bind_map, Multiset.bind_map]
   rw [← Multiset.bind_add]
 
+/-- **Generalized cross-form**: `hostTripleSum` recasts as a per-guest decision
+    of "T-bucket vs not-T-bucket", with the not-T portion handled by `hostBucketSum
+    F_A host_B` (which itself is a per-not-T-guest 2-way decision F_A vs host_B). -/
+private theorem hostTripleSum_T_split (T : Planar α) (F_A host_B : List (Planar α)) :
+    ∀ (pre_T pre_FA pre_B remaining : List (Planar α)),
+    hostTripleSum T F_A host_B pre_T pre_FA pre_B remaining =
+      (Multiset.ofList (listChoices [true, false] remaining.length)).bind fun α =>
+        (insertion T
+            (pre_T ++ (remaining.zip α).filterMap
+              (fun p => if p.snd then some p.fst else none))).bind fun T' =>
+          (hostBucketSum F_A host_B pre_FA pre_B
+            ((remaining.zip α).filterMap (fun p => if p.snd then none else some p.fst))).map
+              fun L => T' :: L := by
+  intro pre_T pre_FA pre_B remaining
+  induction remaining generalizing pre_T pre_FA pre_B with
+  | nil =>
+    rw [hostTripleSum_nil_remaining, List.length_nil, listChoices_zero]
+    show _ = (Multiset.ofList ([[]] : List (List Bool))).bind _
+    rw [show (Multiset.ofList ([[]] : List (List Bool)) : Multiset (List Bool)) =
+            (([] : List Bool) ::ₘ 0) from rfl]
+    rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    -- Reduce all the `[].zip []` and `List.filterMap _ []` on the RHS
+    simp only [List.zip_nil_right, List.filterMap_nil, List.append_nil]
+    rw [hostBucketSum_nil_remaining, product_map_append_eq_bind_map]
+    refine Multiset.bind_congr fun T' _ => ?_
+    rw [Multiset.map_bind]
+    refine Multiset.bind_congr fun F' _ => ?_
+    rw [Multiset.map_map]
+    rfl
+  | cons g gs ih =>
+    rw [hostTripleSum_cons_remaining]
+    rw [ih (pre_T ++ [g]) pre_FA pre_B,
+        ih pre_T (pre_FA ++ [g]) pre_B,
+        ih pre_T pre_FA (pre_B ++ [g])]
+    rw [show (g :: gs).length = gs.length + 1 from rfl]
+    rw [listChoices_succ_cons_bind]
+    -- LHS now: 3 sums combined; RHS: bind β: F(true :: β) + F(false :: β)
+    -- Combine the LHS binds via ← bind_add (twice), then prove per-β
+    rw [show (∀ (s : Multiset (List Bool)) (f g h : List Bool → Multiset (List (Planar α))),
+          s.bind f + s.bind g + s.bind h = s.bind fun a => f a + g a + h a) from by
+        intros s f g h
+        rw [← Multiset.bind_add, ← Multiset.bind_add]]
+    refine Multiset.bind_congr fun β _ => ?_
+    -- Per-β goal:
+    -- T-add(β) + FA-add(β) + B-add(β) = F(true :: β) + F(false :: β)
+    -- Compute filter_t/f on (g :: gs).zip (true :: β) and (g :: gs).zip (false :: β)
+    show (insertion T ((pre_T ++ [g]) ++ (gs.zip β).filterMap
+              (fun p => if p.snd then some p.fst else none))).bind (fun T' =>
+            ((hostBucketSum F_A host_B pre_FA pre_B
+              ((gs.zip β).filterMap (fun p => if p.snd then none else some p.fst))).map
+                (fun L => T' :: L)))
+        + (insertion T (pre_T ++ (gs.zip β).filterMap
+              (fun p => if p.snd then some p.fst else none))).bind (fun T' =>
+            ((hostBucketSum F_A host_B (pre_FA ++ [g]) pre_B
+              ((gs.zip β).filterMap (fun p => if p.snd then none else some p.fst))).map
+                (fun L => T' :: L)))
+        + (insertion T (pre_T ++ (gs.zip β).filterMap
+              (fun p => if p.snd then some p.fst else none))).bind (fun T' =>
+            ((hostBucketSum F_A host_B pre_FA (pre_B ++ [g])
+              ((gs.zip β).filterMap (fun p => if p.snd then none else some p.fst))).map
+                (fun L => T' :: L)))
+      = (insertion T (pre_T ++ ((g :: gs).zip (true :: β)).filterMap
+              (fun p => if p.snd then some p.fst else none))).bind (fun T' =>
+            ((hostBucketSum F_A host_B pre_FA pre_B
+              (((g :: gs).zip (true :: β)).filterMap (fun p => if p.snd then none else some p.fst))).map
+                (fun L => T' :: L)))
+        + (insertion T (pre_T ++ ((g :: gs).zip (false :: β)).filterMap
+              (fun p => if p.snd then some p.fst else none))).bind (fun T' =>
+            ((hostBucketSum F_A host_B pre_FA pre_B
+              (((g :: gs).zip (false :: β)).filterMap (fun p => if p.snd then none else some p.fst))).map
+                (fun L => T' :: L)))
+    -- Simplify (g :: gs).zip (b :: β) = (g, b) :: gs.zip β
+    rw [show (g :: gs).zip (true :: β) = (g, true) :: gs.zip β from rfl,
+        show (g :: gs).zip (false :: β) = (g, false) :: gs.zip β from rfl]
+    -- filter_t/f on (g, b) :: ...
+    simp only [List.filterMap_cons]
+    show _ = (insertion T (pre_T ++ (g :: (gs.zip β).filterMap
+              (fun p => if p.snd then some p.fst else none)))).bind (fun T' =>
+            ((hostBucketSum F_A host_B pre_FA pre_B
+              ((gs.zip β).filterMap (fun p => if p.snd then none else some p.fst))).map
+                (fun L => T' :: L)))
+        + (insertion T (pre_T ++ ((gs.zip β).filterMap
+              (fun p => if p.snd then some p.fst else none)))).bind (fun T' =>
+            ((hostBucketSum F_A host_B pre_FA pre_B
+              (g :: (gs.zip β).filterMap (fun p => if p.snd then none else some p.fst))).map
+                (fun L => T' :: L)))
+    -- For T-add: (pre_T ++ [g]) ++ ... = pre_T ++ (g :: ...) by List.append_assoc + List.singleton_append
+    rw [show (pre_T ++ [g]) ++ (gs.zip β).filterMap
+              (fun p => if p.snd then some p.fst else none) =
+              pre_T ++ (g :: (gs.zip β).filterMap
+                (fun p => if p.snd then some p.fst else none)) from by
+          rw [List.append_assoc]; rfl]
+    -- For F(false :: β): hostBucketSum F_A host_B pre_FA pre_B (g :: filter_f) =
+    --   hostBucketSum F_A host_B (pre_FA ++ [g]) pre_B filter_f + hostBucketSum F_A host_B pre_FA (pre_B ++ [g]) filter_f
+    rw [show hostBucketSum F_A host_B pre_FA pre_B
+            (g :: (gs.zip β).filterMap (fun p => if p.snd then none else some p.fst)) =
+            hostBucketSum F_A host_B (pre_FA ++ [g]) pre_B
+              ((gs.zip β).filterMap (fun p => if p.snd then none else some p.fst))
+            + hostBucketSum F_A host_B pre_FA (pre_B ++ [g])
+              ((gs.zip β).filterMap (fun p => if p.snd then none else some p.fst)) from by
+          rw [hostBucketSum_cons_remaining]
+          rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
+          rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
+          rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]]
+    -- Distribute (HBS₁ + HBS₂).map (T' :: ·) = HBS₁.map (T' :: ·) + HBS₂.map (T' :: ·)
+    -- and (insertion T x).bind T' => (X + Y).map ... = (insertion T x).bind T' => X.map ... + (insertion T x).bind T' => Y.map ...
+    rw [show ∀ X Y : Multiset (List (Planar α)),
+            (insertion T (pre_T ++ ((gs.zip β).filterMap
+                (fun p => if p.snd then some p.fst else none)))).bind (fun T' =>
+              ((X + Y).map (fun L => T' :: L)))
+            = (insertion T (pre_T ++ ((gs.zip β).filterMap
+                (fun p => if p.snd then some p.fst else none)))).bind (fun T' =>
+                (X.map (fun L => T' :: L)))
+              + (insertion T (pre_T ++ ((gs.zip β).filterMap
+                (fun p => if p.snd then some p.fst else none)))).bind (fun T' =>
+                (Y.map (fun L => T' :: L))) from by
+          intros X Y
+          rw [show (fun T' => ((X + Y).map (fun L => T' :: L))) =
+                  (fun T' => X.map (fun L => T' :: L) + Y.map (fun L => T' :: L)) from by
+                funext T'; rw [Multiset.map_add]]
+          rw [Multiset.bind_add]]
+    -- Now both sides are: T-add + (FA-add + B-add) = F(true :: β) + (FA-add + B-add)
+    -- and they should match.
+    ac_rfl
+
 private theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (Planar α)) :
     hostBucketSum host_A host_B [] [] guests =
       insertionForest (host_A ++ host_B) guests := by
-  induction host_A with
+  induction host_A generalizing guests with
   | nil =>
     rw [List.nil_append]
     exact hostBucketSum_nil_A host_B guests
@@ -617,15 +742,20 @@ private theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (P
     rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
     -- LHS: hostTripleSum T F_A host_B [] [] [] guests (after [].zip [] = [], filter_* on [] = [])
     show hostTripleSum T F_A host_B [] [] [] guests = insertionForest (T :: F_A ++ host_B) guests
-    -- TODO: prove via `hostTripleSum_T_split` (generalized cross-form) + IH on F_A.
-    -- The proof requires: (i) `hostTripleSum_T_split` substrate (~80 LOC inducting on remaining
-    -- with pre's generalized, using `listChoices_succ_cons_bind` + `hostBucketSum_cons_remaining`
-    -- to align T-add/FA-add/B-add with bind-α-cons-prepend over true vs false bit for g);
-    -- (ii) apply `hostTripleSum_T_split` here with empty pre to get
-    --      `bind α: (insertion T (filter_t)).bind T' => (hostBucketSum F_A host_B [] [] (filter_f)).map (T' :: ·)`;
-    -- (iii) rewrite inner via IH `ih` (hostBucketSum F_A host_B = insertionForest (F_A ++ host_B));
-    -- (iv) close via `insertionForest_cons_assignment` in reverse.
-    sorry
+    -- (i) Apply `hostTripleSum_T_split [] [] [] guests`:
+    rw [hostTripleSum_T_split T F_A host_B [] [] [] guests]
+    -- LHS = bind α: (insertion T ([] ++ filter_t)).bind T' => (hostBucketSum F_A host_B [] [] (filter_f)).map (T' :: ·)
+    -- = bind α: (insertion T (filter_t)).bind T' => (hostBucketSum F_A host_B [] [] (filter_f)).map (T' :: ·)
+    simp only [List.nil_append]
+    -- (ii) Rewrite inner via IH `ih` (applied to filter_f result):
+    conv_lhs =>
+      rhs; ext α
+      rhs; ext T'
+      rw [ih]
+    -- LHS = bind α: (insertion T (filter_t)).bind T' => (insertionForest (F_A ++ host_B) (filter_f)).map (T' :: ·)
+    -- (iii) Close via `insertionForest_cons_assignment` (in reverse) for T :: (F_A ++ host_B):
+    rw [show T :: F_A ++ host_B = T :: (F_A ++ host_B) from rfl]
+    rw [insertionForest_cons_assignment]
 
 end Pathed
 
