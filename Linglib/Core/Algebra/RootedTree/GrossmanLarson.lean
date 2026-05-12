@@ -329,6 +329,21 @@ noncomputable def insertion :
     GrossmanLarson R α →ₗ[R] GrossmanLarson R α →ₗ[R] GrossmanLarson R α :=
   (Finsupp.linearCombination R (insertionBasisLin (R := R) (α := α))).flip
 
+/-- Bridge: on basis vectors, `insertion (of' F) (of' G) = insertionBasis F G`.
+    Unfolds the bilinear extension on both basis arguments. -/
+theorem insertion_of'_of' (F G : Forest (Nonplanar α)) :
+    insertion (R := R) (of' F) (of' G) = insertionBasis F G := by
+  show ((insertion (R := R)).flip (of' G)) (of' F) = _
+  show ((Finsupp.linearCombination R (insertionBasisLin (R := R) (α := α)))
+          (of' G)) (of' F) = _
+  show ((Finsupp.linearCombination R (insertionBasisLin (R := R) (α := α)))
+          (Finsupp.single G 1)) (Finsupp.single F 1) = _
+  rw [Finsupp.linearCombination_single, one_smul]
+  show ((Finsupp.linearCombination R
+          (fun F_basis => insertionBasis (R := R) F_basis G))
+        (Finsupp.single F 1)) = _
+  rw [Finsupp.linearCombination_single, one_smul]
+
 /-! ### Grossman-Larson product
 
 The associative product `F ⋆ G` is defined via the Foissy 2021 closed
@@ -450,6 +465,20 @@ noncomputable instance instMul : Mul (GrossmanLarson R α) where
   mul x y := product x y
 
 theorem mul_def (x y : GrossmanLarson R α) : x * y = product x y := rfl
+
+/-- **Basis form** of the GL product: `(of' F) * (of' G) = productForest (of' F) G`.
+    Reduces the `linearCombination`-extended product to the explicit
+    powerset-sum formula. -/
+theorem of'_mul_of' (F G : Forest (Nonplanar α)) :
+    (of' F : GrossmanLarson R α) * of' G = productForest (of' F) G := by
+  show product (of' F) (of' G) = productForest (of' F) G
+  show ((Finsupp.linearCombination R (productForestLin (R := R) (α := α))).flip
+          (of' F)) (of' G) = productForest (of' F) G
+  rw [LinearMap.flip_apply]
+  show ((Finsupp.linearCombination R (productForestLin (R := R) (α := α)))
+          (Finsupp.single G (1 : R))) (of' F) = productForest (of' F) G
+  rw [Finsupp.linearCombination_single, one_smul]
+  rfl
 
 /-! ### Unit lemmas
 
