@@ -1251,6 +1251,104 @@ private theorem filter_f_preserves_planarEquiv
         simp only [if_neg (by decide : (false : Bool) ≠ true)]
         exact List.Forall₂.cons hd_pe (ih assn_rest)
 
+/-- **Forest version of guest-PlanarEquiv invariance**: `Forall₂ PlanarEquiv`
+    on guests preserves `(insertionForest F Ts).map (List.map mk)`.
+    Mirrors `insertionForest_planarEquiv_host` (Insertion.lean §6) but for
+    the guest list. -/
+theorem insertionForest_planarEquiv_guests
+    (F : List (Planar α)) {Ts Ts' : List (Planar α)}
+    (h : List.Forall₂ PlanarEquiv Ts Ts') :
+    (insertionForest F Ts).map (List.map Nonplanar.mk) =
+    (insertionForest F Ts').map (List.map Nonplanar.mk) := by
+  induction F generalizing Ts Ts' with
+  | nil =>
+    cases h with
+    | nil => rfl
+    | cons _ _ =>
+      rw [insertionForest_empty_host_nonempty_guests,
+          insertionForest_empty_host_nonempty_guests]
+  | cons T_h F_h ih_F =>
+    rw [insertionForest_cons_assignment T_h F_h Ts,
+        insertionForest_cons_assignment T_h F_h Ts']
+    have hlen : Ts.length = Ts'.length := List.Forall₂.length_eq h
+    rw [hlen]
+    rw [Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun assn _ => ?_
+    have h_ft := filter_t_preserves_planarEquiv h assn
+    have h_ff := filter_f_preserves_planarEquiv h assn
+    rw [Multiset.map_bind, Multiset.map_bind]
+    simp only [Multiset.map_map, Function.comp, List.map_cons]
+    let f_T : Nonplanar α → Multiset (List (Nonplanar α)) := fun mk_T_ins =>
+      (insertionForest F_h ((Ts.zip assn).filterMap
+          (fun p => if p.snd then none else some p.fst))).map
+        (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
+    let f_T' : Nonplanar α → Multiset (List (Nonplanar α)) := fun mk_T_ins =>
+      (insertionForest F_h ((Ts'.zip assn).filterMap
+          (fun p => if p.snd then none else some p.fst))).map
+        (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
+    change (insertion T_h _).bind (fun T_ins => f_T (Nonplanar.mk T_ins)) =
+           (insertion T_h _).bind (fun T_ins => f_T' (Nonplanar.mk T_ins))
+    rw [← Multiset.bind_map, ← Multiset.bind_map]
+    rw [insertion_planarEquiv_guests T_h h_ft]
+    refine Multiset.bind_congr fun mk_T_ins _ => ?_
+    show (insertionForest F_h ((Ts.zip assn).filterMap
+              (fun p => if p.snd then none else some p.fst))).map
+            (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk) =
+         (insertionForest F_h ((Ts'.zip assn).filterMap
+              (fun p => if p.snd then none else some p.fst))).map
+            (fun F_ins => mk_T_ins :: F_ins.map Nonplanar.mk)
+    rw [show (fun F_ins : List (Planar α) => mk_T_ins :: F_ins.map Nonplanar.mk) =
+            ((fun L : List (Nonplanar α) => mk_T_ins :: L) ∘ List.map Nonplanar.mk) from rfl]
+    rw [← Multiset.map_map, ← Multiset.map_map]
+    rw [ih_F h_ff]
+
+/-- **Combined guest invariance** at the multiset-of-multiset level. -/
+theorem insertionForest_msform_invariance_guests
+    (host : List (Planar α)) {gs1 gs2 : List (Planar α)}
+    (h : (gs1.map Nonplanar.mk).Perm (gs2.map Nonplanar.mk)) :
+    (insertionForest host gs1).map (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    (insertionForest host gs2).map (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  obtain ⟨gs_mid, hperm_planar, hmap_eq⟩ := perm_lift_through_map Nonplanar.mk h
+  have h_forall : List.Forall₂ PlanarEquiv gs_mid gs2 := by
+    have hlen : gs_mid.length = gs2.length := by
+      have := congrArg List.length hmap_eq
+      simpa using this
+    clear hperm_planar h
+    induction gs_mid generalizing gs2 with
+    | nil =>
+      cases gs2 with
+      | nil => exact List.Forall₂.nil
+      | cons _ _ => simp at hlen
+    | cons a gs_mid_rest ih =>
+      cases gs2 with
+      | nil => simp at hlen
+      | cons b gs2_rest =>
+        rw [List.map_cons, List.map_cons] at hmap_eq
+        have h_head : Nonplanar.mk a = Nonplanar.mk b :=
+          (List.cons.injEq _ _ _ _).mp hmap_eq |>.left
+        have h_tail : gs_mid_rest.map Nonplanar.mk = gs2_rest.map Nonplanar.mk :=
+          (List.cons.injEq _ _ _ _).mp hmap_eq |>.right
+        have hlen_rest : gs_mid_rest.length = gs2_rest.length := by simpa using hlen
+        exact List.Forall₂.cons (Nonplanar.mk_eq_mk_iff.mp h_head)
+          (ih h_tail hlen_rest)
+  have step1 : (insertionForest host gs1).map (List.map Nonplanar.mk) =
+               (insertionForest host gs_mid).map (List.map Nonplanar.mk) :=
+    insertionForest_perm_guests host hperm_planar
+  have step2 : (insertionForest host gs_mid).map (List.map Nonplanar.mk) =
+               (insertionForest host gs2).map (List.map Nonplanar.mk) :=
+    insertionForest_planarEquiv_guests host h_forall
+  have h_combined : (insertionForest host gs1).map (List.map Nonplanar.mk) =
+                    (insertionForest host gs2).map (List.map Nonplanar.mk) :=
+    step1.trans step2
+  have hwrap : ∀ (s : Multiset (List (Planar α))),
+      s.map (fun L : List (Planar α) =>
+        (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α))) =
+      (s.map (List.map Nonplanar.mk)).map (fun L : List (Nonplanar α) =>
+        (Multiset.ofList L : Multiset (Nonplanar α))) := by
+    intro s
+    rw [Multiset.map_map]
+    rfl
+  rw [hwrap, hwrap, h_combined]
 
 end Pathed
 
