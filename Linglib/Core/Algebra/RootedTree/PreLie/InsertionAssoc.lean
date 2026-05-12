@@ -42,7 +42,10 @@ powerset bridge (all in InsertionAddHost.lean), gives
 
 ## Status
 
-`[UPSTREAM]` candidate. Substrate scaffold; proofs in flight.
+`[UPSTREAM]` candidate. Substrate scaffold + base/edge cases sorry-free.
+The `assocBucketSum_eq_insertionForest_iterated_msform` theorem has 1 sorry
+remaining: the deepest combinatorial case (`host_A`, `guests_B`, `guests_C`
+all non-empty). Strategy outlined in the theorem's docstring.
 -/
 
 namespace RootedTree
@@ -192,6 +195,133 @@ Thus: graft pre_B into guests_B (treated as host) → X' (forest of guests_B wit
 
 So `host_B = guests_B` in the bridge. -/
 
+/-! ### §2.1 Helper lemmas for the cons case -/
+
+/-- Generalized helper: `assocBucketSum host_A [] pre_A pre_B remaining`.
+    If `pre_B = []`, equals `insertionForest host_A (pre_A ++ remaining)`.
+    If `pre_B ≠ []`, equals `0` (since `insertionForest [] non_empty = 0`).
+
+    The single combined statement is via `pre_B`-case-analysis. We prove it
+    via induction on `remaining`, splitting on `pre_B`'s emptiness at each step. -/
+private theorem assocBucketSum_nil_guests_B_aux
+    (host_A : List (Planar α)) :
+    ∀ (pre_A pre_B remaining : List (Planar α)),
+    assocBucketSum host_A ([] : List (Planar α)) pre_A pre_B remaining =
+      (insertionForest ([] : List (Planar α)) pre_B).bind fun X' =>
+        insertionForest host_A (X' ++ pre_A ++ remaining) := by
+  intro pre_A pre_B remaining
+  induction remaining generalizing pre_A pre_B with
+  | nil =>
+    rw [assocBucketSum_nil_remaining]
+    refine Multiset.bind_congr fun X' _ => ?_
+    rw [List.append_nil]
+  | cons c rest ih =>
+    rw [assocBucketSum_cons_remaining]
+    rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
+    rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
+    rw [ih (pre_A ++ [c]) pre_B, ih pre_A (pre_B ++ [c])]
+    -- LHS = (ifd []) (X' ++ (pre_A ++ [c]) ++ rest)).bind ...
+    --     + (ifd [] (pre_B ++ [c])).bind X' => ifd host_A (X' ++ pre_A ++ rest)
+    -- Goal: prove this equals (ifd [] pre_B).bind X' => ifd host_A (X' ++ pre_A ++ (c :: rest))
+    -- Strategy: case-split on pre_B.
+    cases pre_B with
+    | nil =>
+      -- ifd [] [] = {[]}. (ifd [] (c :: ...)) = 0 if pre_B becomes [c]. Plus the [] case.
+      -- After cases pre_B = [], pre_B ++ [c] = [c], so ifd [] [c] = 0.
+      rw [show (insertionForest ([] : List (Planar α)) ([] ++ [c]) :
+                Multiset (List (Planar α))) = 0 from by
+          show insertionForest [] [c] = 0
+          exact insertionForest_empty_host_nonempty_guests _ _]
+      rw [Multiset.zero_bind, add_zero]
+      rw [show (insertionForest ([] : List (Planar α))
+                ([] : List (Planar α)) : Multiset (List (Planar α))) =
+              (([] : List (Planar α)) ::ₘ 0) from by
+            rw [insertionForest_nil_nil]; rfl]
+      rw [Multiset.cons_bind, Multiset.zero_bind, add_zero,
+          Multiset.cons_bind, Multiset.zero_bind, add_zero]
+      rw [List.nil_append, List.nil_append]
+      rw [show pre_A ++ [c] ++ rest = pre_A ++ (c :: rest) from by
+            simp [List.append_assoc]]
+    | cons b restB =>
+      -- pre_B = b :: restB. ifd [] (b :: restB) = 0 (since pre_B is non-empty).
+      rw [show (insertionForest ([] : List (Planar α)) (b :: restB) :
+                Multiset (List (Planar α))) = 0 from
+            insertionForest_empty_host_nonempty_guests _ _]
+      rw [Multiset.zero_bind]
+      rw [show (insertionForest ([] : List (Planar α)) ((b :: restB) ++ [c]) :
+                Multiset (List (Planar α))) = 0 from
+            insertionForest_empty_host_nonempty_guests _ _]
+      rw [Multiset.zero_bind]
+      rfl
+
+/-- Helper: every element of `insertionForest (T :: F) gs` is non-empty (specifically,
+    is of the form T_ins :: F_ins for some T_ins, F_ins). The proof is by induction on `gs`:
+    base case `insertionForest_cons_host_nil_guests` gives `{T :: F}`, cons case
+    follows from `insertionForest_cons_cons` which constructs `T_ins :: F_ins`. -/
+private theorem insertionForest_cons_host_nonempty_elem
+    (T : Planar α) (F gs : List (Planar α)) :
+    ∀ X ∈ insertionForest (T :: F) gs, X ≠ [] := by
+  induction gs generalizing T F with
+  | nil =>
+    intros X hX
+    rw [insertionForest_cons_host_nil_guests] at hX
+    rw [Multiset.mem_singleton] at hX
+    rw [hX]
+    exact List.cons_ne_nil _ _
+  | cons g gs_rest ih =>
+    intros X hX
+    rw [insertionForest_cons_cons] at hX
+    -- X ∈ bind α: bind T' ∈ insertion T (filter_t): (insertionForest F (filter_f)).map (T' :: ·)
+    rcases Multiset.mem_bind.mp hX with ⟨α, _, hX2⟩
+    rcases Multiset.mem_bind.mp hX2 with ⟨T', _, hX3⟩
+    rcases Multiset.mem_map.mp hX3 with ⟨F', _, hX4⟩
+    -- X = T' :: F'
+    rw [← hX4]
+    exact List.cons_ne_nil _ _
+
+/-- Specialized helper: `assocBucketSum [] guests_B [] [] remaining = 0` when
+    `guests_B ≠ []`. Reasoning: by assignment_rewrite, every assignment α produces
+    `(insertionForest guests_B (filter_f α)).bind X' => insertionForest [] (X' ++ filter_t α)`.
+    Since `guests_B = b :: restB` is non-empty, every X' ∈ insertionForest guests_B (...)
+    has length ≥ 1, hence X' ++ filter_t is non-empty, hence insertionForest [] (...) = 0. -/
+private theorem assocBucketSum_nil_host_nonempty_guests_B_zero
+    (b : Planar α) (restB remaining : List (Planar α)) :
+    assocBucketSum ([] : List (Planar α)) (b :: restB) [] [] remaining = 0 := by
+  -- Generalized helper: assocBucketSum [] (b :: restB) pre_A pre_B remaining = 0.
+  -- The (b :: restB) host produces X' of length ≥ 1 in any insertion.
+  suffices h : ∀ (pre_A pre_B : List (Planar α)),
+      assocBucketSum ([] : List (Planar α)) (b :: restB) pre_A pre_B remaining = 0 by
+    exact h [] []
+  intros pre_A pre_B
+  induction remaining generalizing pre_A pre_B with
+  | nil =>
+    rw [assocBucketSum_nil_remaining]
+    -- (insertionForest (b :: restB) pre_B).bind X' => insertionForest [] (X' ++ pre_A) = 0.
+    -- For each X' ∈ insertionForest (b :: restB) pre_B, X' ≠ [] (by helper above).
+    -- So X' ++ pre_A ≠ [], so insertionForest [] (X' ++ pre_A) = 0.
+    -- Use Multiset.bind_congr to rewrite each X' to 0.
+    rw [show (insertionForest (b :: restB) pre_B).bind
+              (fun X' : List (Planar α) => insertionForest ([] : List (Planar α)) (X' ++ pre_A)) =
+            (insertionForest (b :: restB) pre_B).bind
+              (fun _ : List (Planar α) => (0 : Multiset (List (Planar α)))) from by
+          refine Multiset.bind_congr fun X' hX' => ?_
+          have hX'_ne : X' ≠ [] :=
+            insertionForest_cons_host_nonempty_elem b restB pre_B X' hX'
+          cases X' with
+          | nil => exact absurd rfl hX'_ne
+          | cons head tail =>
+            rw [List.cons_append]
+            exact insertionForest_empty_host_nonempty_guests _ _]
+    rw [Multiset.bind_zero]
+  | cons c rest ih =>
+    rw [assocBucketSum_cons_remaining]
+    rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
+    rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
+    rw [ih (pre_A ++ [c]) pre_B, ih pre_A (pre_B ++ [c])]
+    rfl
+
 /-- The headline planar identity AT THE MSFORM LEVEL. Iterated multi-graft
     equals the iterated bucket-sum form, modulo the multiset-of-multiset
     wrapping `Multiset.ofList ∘ List.map mk`.
@@ -202,16 +332,23 @@ So `host_B = guests_B` in the bridge. -/
     coincide at the multiset level after host-Perm). The msform wrapping
     discards the planar-position information, making the identity hold.
 
-    **TODO**: Major substrate. Two viable proof strategies:
-    (A) **Direct induction on `host_A`** using a 5-bucket aggregator
-        (or nested triple-buckets): {goes-to-T, goes-to-F_A, goes-to-host_B-via-graft}
-        × {staying-as-A-sibling, going-into-B}. Roughly doubles the
-        cons-case algebra vs. Step 2.
-    (B) **Factor through Step 2** (RECOMMENDED): use `hostBucketSum_eq_insertionForest`
-        to convert the inner `insertionForest X guests_C` into a hostBucketSum
-        form on the parts of X that came from host_A vs. those that came from
-        B-grafting. Then reorder bind-quantifiers. Avoids re-proving a full
-        triple-aggregator bridge from scratch.
+    Proof status:
+    - **Base case** `guests_C = []`: sorry-free. Both sides reduce to
+      `(insertionForest host_A guests_B).map msform`.
+    - **Sub-case** `guests_C ≠ []` with `guests_B = []`: sorry-free, via
+      `assocBucketSum_nil_guests_B_aux` (helper proves
+      `assocBucketSum host_A [] [] [] guests_C = insertionForest host_A guests_C`).
+    - **Sub-case** `guests_C ≠ []`, `guests_B ≠ []`, `host_A = []`: sorry-free,
+      via `assocBucketSum_nil_host_nonempty_guests_B_zero` (both sides are 0).
+    - **Deepest case** `guests_C ≠ []`, `guests_B ≠ []`, `host_A ≠ []`:
+      **deferred**. Requires the triple-bucket aggregator
+      `iteratedTripleSum host_A guests_B pre_t pre_f remaining` paralleling
+      `hostTripleSum`, plus bridges:
+        - `iteratedTripleSum_eq_assocBucketSum`: shape parallel to
+          `hostBucketSum_eq_hostTripleSum_aux`.
+        - `iteratedTripleSum_eq_LHS_msform`: NEW bridge requiring host-Perm at
+          msform level + guest-msform invariance.
+      Estimated 200-400 LOC of additional substrate.
 
     The bijection between (β, γ) pairs (LHS) and (α, β', β'') tuples
     (RHS) is conceptually:
@@ -227,7 +364,91 @@ theorem assocBucketSum_eq_insertionForest_iterated_msform
       (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
     (assocBucketSum host_A guests_B [] [] guests_C).map
       (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
-  sorry
+  -- Strategy: handle the easy cases (guests_C = [] OR guests_B = [] OR host_A = [])
+  -- via direct unfolding. The general case is the combinatorial heart and requires
+  -- a triple-bucket aggregator (deferred).
+  cases guests_C with
+  | nil =>
+    -- LHS: bind X => insertionForest X [] = bind X => {X} = identity
+    have hLHS_inner : (fun X : List (Planar α) => insertionForest X []) =
+        (fun X => ({X} : Multiset (List (Planar α)))) := by
+      funext X
+      exact insertionForest_nil_guests X
+    rw [hLHS_inner]
+    rw [show ((insertionForest host_A guests_B).bind
+                  fun X : List (Planar α) => ({X} : Multiset (List (Planar α)))) =
+              insertionForest host_A guests_B from by
+          conv_lhs =>
+            rw [show (fun X : List (Planar α) => ({X} : Multiset (List (Planar α)))) =
+                    (fun X : List (Planar α) => (X ::ₘ 0)) from rfl]
+          rw [show (fun X : List (Planar α) => (X ::ₘ 0 : Multiset (List (Planar α)))) =
+                  (fun X : List (Planar α) => ({id X} : Multiset (List (Planar α)))) from rfl]
+          rw [Multiset.bind_singleton (insertionForest host_A guests_B) id]
+          exact Multiset.map_id _]
+    -- RHS: assocBucketSum host_A guests_B [] [] [] = (insertionForest guests_B []).bind X' => insertionForest host_A (X' ++ [])
+    rw [assocBucketSum_nil_remaining]
+    rw [show (insertionForest guests_B ([] : List (Planar α)) : Multiset (List (Planar α))) =
+            (guests_B ::ₘ 0) from by rw [insertionForest_nil_guests]; rfl]
+    rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    rw [List.append_nil]
+  | cons c rest =>
+    -- General cons case (guests_C = c :: rest). Sub-case on guests_B.
+    cases guests_B with
+    | nil =>
+      -- guests_B = []. LHS = (insertionForest host_A []).bind X => insertionForest X (c::rest)
+      --                  = {host_A}.bind X => insertionForest X (c::rest)
+      --                  = insertionForest host_A (c::rest).
+      -- RHS = (assocBucketSum host_A [] [] [] (c::rest)).map msform.
+      -- By assocBucketSum_nil_guests_B_aux: assocBucketSum host_A [] [] [] (c::rest)
+      --                = (insertionForest [] []).bind X' => insertionForest host_A (X' ++ [] ++ (c::rest))
+      --                = {[]}.bind X' => insertionForest host_A (X' ++ (c::rest))
+      --                = insertionForest host_A (c :: rest). ✓
+      rw [show (insertionForest host_A ([] : List (Planar α)) :
+                Multiset (List (Planar α))) = (host_A ::ₘ 0) from by
+            rw [insertionForest_nil_guests]; rfl]
+      rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
+      rw [assocBucketSum_nil_guests_B_aux host_A [] [] (c :: rest)]
+      rw [show (insertionForest ([] : List (Planar α))
+                ([] : List (Planar α)) : Multiset (List (Planar α))) =
+              (([] : List (Planar α)) ::ₘ 0) from by
+            rw [insertionForest_nil_nil]; rfl]
+      rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
+      rw [List.nil_append, List.nil_append]
+    | cons b restB =>
+      -- guests_B = b :: restB. Sub-case on host_A.
+      cases host_A with
+      | nil =>
+        -- host_A = []. LHS = (insertionForest [] (b :: restB)).bind ... = 0.bind ... = 0.
+        -- RHS = (assocBucketSum [] (b :: restB) [] [] (c :: rest)).map msform = 0.
+        rw [insertionForest_empty_host_nonempty_guests]
+        rw [Multiset.zero_bind, Multiset.map_zero]
+        rw [assocBucketSum_nil_host_nonempty_guests_B_zero b restB (c :: rest)]
+        rw [Multiset.map_zero]
+      | cons T F_A =>
+        -- host_A = T :: F_A, guests_B = b :: restB, guests_C = c :: rest.
+        -- The deepest combinatorial case. The structural sketch:
+        --
+        -- LHS expansion via `insertionForest_cons_assignment`:
+        --   bind α_B (over guests_B): bind T_ins ∈ insertion T (filter_t α_B):
+        --     bind F_ins ∈ insertionForest F_A (filter_f α_B):
+        --       (insertionForest (T_ins :: F_ins) (c :: rest)).map msform
+        --
+        -- Inner `insertionForest (T_ins :: F_ins) (c :: rest)` further expands via
+        -- `insertionForest_cons_assignment` to a γ-bind. Reorganizing all 6 binds:
+        --   bind α_B, γ_C: (T-side: insert-then-insert) × (F_A-side: insertionForest-then-insertionForest)
+        --     -- where the F_A side is captured by IH (via guest-Perm + msform-invariance).
+        --
+        -- RHS via `assocBucketSum_assignment_rewrite` then `insertionForest_cons_assignment`:
+        --   bind α_C: (insertionForest (b :: restB) (filter_f α_C)).bind X' =>
+        --     bind β: (insertion T ((X' ++ α_C.t).filter_t β)).bind T'_R =>
+        --     (insertionForest F_A ((X' ++ α_C.t).filter_f β)).map F'_R => T'_R :: F'_R
+        --
+        -- The X' enumeration in RHS corresponds to the (α_B, T_ins, F_ins)-via-graft
+        -- enumeration in LHS via the bijection described in the docstring.
+        --
+        -- Closing this requires a 5-bucket aggregator (γ_C-going-to-T-A, γ_C-going-to-T-B,
+        -- γ_C-going-to-F_A-A, γ_C-going-to-F_A-B, plus α_B's split). Estimated ~300 LOC.
+        sorry
 
 /-! ## §3: NIM-level lift to `Nonplanar.insertionMultiset_assoc`
 
