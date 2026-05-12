@@ -232,6 +232,28 @@ theorem _root_.Multiset.powerset_partition_swap {β : Type*} [AddCommMonoid β] 
   congr 1
   exact (tsub_tsub_cancel_of_le (Multiset.mem_powerset.mp hs')).symm
 
+/-- **3-piece partition swap (positions 2, 3)**: enumerating triples
+    `(C₁, C₂, C₃)` with `C₁ + C₂ + C₃ = C` (encoded as `C₁ ⊆ C` and
+    `C₂ ⊆ C - C₁`, with `C₃ := C - C₁ - C₂`) is invariant under swapping
+    the second and third pieces.
+
+    Used in Oudom-Guin Lemma 2.10's chain to swap the "going to A
+    directly (sibling of B_(2))" piece with the "going into B_(2)" piece
+    of C. Direct application of `Multiset.powerset_partition_swap` to
+    the inner sum at fixed `C₁`. -/
+theorem _root_.Multiset.powerset_triple_swap_23
+    {β : Type*} [AddCommMonoid β] {T' : Type*} [DecidableEq T']
+    (C : Multiset T') (f : Multiset T' → Multiset T' → Multiset T' → β) :
+    (C.powerset.bind fun C₁ =>
+      (C - C₁).powerset.map fun C₂ => f C₁ C₂ (C - C₁ - C₂)).sum =
+    (C.powerset.bind fun C₁ =>
+      (C - C₁).powerset.map fun C₂ => f C₁ (C - C₁ - C₂) C₂).sum := by
+  rw [Multiset.sum_bind, Multiset.sum_bind]
+  apply congr_arg Multiset.sum
+  apply Multiset.map_congr rfl
+  intros C₁ _
+  exact Multiset.powerset_partition_swap (C - C₁) (fun D E => f C₁ D E)
+
 /-- **Basis-level cocommutativity**: the partition sum is invariant under
     tensor swap. Direct corollary of `Multiset.powerset_partition_swap`. -/
 theorem comulShuffle_comm_multiset [DecidableEq T] (F : Forest T) :
