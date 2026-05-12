@@ -93,6 +93,31 @@ theorem insertionMultiset_zero_left_of_ne_zero (G : Multiset (Nonplanar α))
   · show (Planar.Pathed.insertionForest [] (Quotient.out g :: gs.map Quotient.out)).map _ = 0
     rw [Planar.Pathed.insertionForest_empty_host_nonempty_guests, Multiset.map_zero]
 
+/-! ## §2: toList helpers
+
+Multiset's `toList` returns a non-canonical list representative. Two
+different choices of representative produce `Perm`-equivalent lists.
+Below: a Perm bridge between `(M + N).toList` and `M.toList ++ N.toList`,
+and its `Q.out`-mapped lift to the planar level. Used by
+`insertionMultiset_add_host` to bridge `(A + B).toList.map Q.out` with the
+disjoint-host concatenation `A.toList.map Q.out ++ B.toList.map Q.out`. -/
+
+/-- `(M + N).toList` is `Perm`-equivalent to `M.toList ++ N.toList`. Both
+    have multiset `M + N`; `Perm` follows from `Multiset.coe_eq_coe`. -/
+theorem _root_.Multiset.toList_add_perm {β : Type*} (M N : Multiset β) :
+    (M + N).toList.Perm (M.toList ++ N.toList) := by
+  apply Multiset.coe_eq_coe.mp
+  rw [Multiset.coe_toList, ← Multiset.coe_add, Multiset.coe_toList,
+      Multiset.coe_toList]
+
+/-- `Q.out`-mapped lift of `Multiset.toList_add_perm`: at the Planar level,
+    `(M + N).toList.map Q.out` is Perm to `M.toList.map Q.out ++ N.toList.map Q.out`. -/
+theorem toList_map_Q_out_add_perm (M N : Multiset (Nonplanar α)) :
+    ((M + N).toList.map Quotient.out).Perm
+      (M.toList.map Quotient.out ++ N.toList.map Quotient.out) := by
+  rw [← List.map_append]
+  exact (Multiset.toList_add_perm M N).map _
+
 end Nonplanar
 
 end RootedTree
