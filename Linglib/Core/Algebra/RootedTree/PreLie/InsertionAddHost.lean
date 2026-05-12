@@ -555,6 +555,50 @@ private theorem hostBucketSum_eq_hostTripleSum_aux
     rw [List.filterMap_append, List.filterMap_append, List.filterMap_append, List.filterMap_append,
         h_true_t, h_true_f, h_false_t, h_false_f, List.append_nil, List.append_nil]
 
+/-! ## §4: Connecting `hostTripleSum` with `insertion T` ∘ `hostBucketSum F_A host_B`
+
+Lemma A reduces `hostBucketSum (T :: F_A) host_B [] [] guests` to
+`hostTripleSum T F_A host_B [] [] [] guests`. To complete the bridge, we
+need `hostTripleSum T F_A host_B [] [] [] guests = insertionForest (T :: (F_A ++ host_B)) guests`.
+
+Approach: generalize to `hostTripleSum_T_split`:
+```
+hostTripleSum T F_A host_B pre_T pre_FA pre_B remaining =
+  bind α over remaining.length:
+    (insertion T (pre_T ++ filter_true remaining α)).bind T' =>
+      (hostBucketSum F_A host_B pre_FA pre_B (filter_false remaining α)).map (T' :: ·)
+```
+Then for `pre_T = pre_FA = pre_B = []`, combine with the IH `hostBucketSum F_A host_B = insertionForest (F_A ++ host_B)` to close the bridge.
+
+Requires `listChoices_succ_cons_bind` (the cons-prepending analog of
+`listChoices_succ_append_bind`). -/
+
+/-- Cons-prepending analog of `listChoices_succ_append_bind`. The bit
+    for the cons-front guest goes at the FRONT of α rather than the back. -/
+private theorem listChoices_succ_cons_bind {γ : Type*}
+    (n : Nat) (g : List Bool → Multiset γ) :
+    (Multiset.ofList (listChoices [true, false] (n + 1))).bind g =
+      (Multiset.ofList (listChoices [true, false] n)).bind fun α =>
+        g (true :: α) + g (false :: α) := by
+  rw [listChoices_succ]
+  rw [show (Multiset.ofList ([true, false].flatMap fun v =>
+              (listChoices [true, false] n).map (v :: ·)) :
+            Multiset (List Bool)) =
+          (Multiset.ofList [true, false]).bind fun v =>
+            Multiset.ofList ((listChoices [true, false] n).map (v :: ·))
+          from by rw [← Multiset.coe_bind]]
+  rw [Multiset.bind_assoc]
+  rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
+  rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
+  rw [show (Multiset.ofList ((listChoices [true, false] n).map (true :: ·)) :
+            Multiset (List Bool)) =
+          (Multiset.ofList (listChoices [true, false] n)).map (true :: ·) from rfl]
+  rw [show (Multiset.ofList ((listChoices [true, false] n).map (false :: ·)) :
+            Multiset (List Bool)) =
+          (Multiset.ofList (listChoices [true, false] n)).map (false :: ·) from rfl]
+  rw [Multiset.bind_map, Multiset.bind_map]
+  rw [← Multiset.bind_add]
+
 private theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (Planar α)) :
     hostBucketSum host_A host_B [] [] guests =
       insertionForest (host_A ++ host_B) guests := by
@@ -563,7 +607,24 @@ private theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (P
     rw [List.nil_append]
     exact hostBucketSum_nil_A host_B guests
   | cons T F_A ih =>
-    -- TODO: inductive step.
+    -- Apply Lemma A to reduce LHS to hostTripleSum:
+    rw [hostBucketSum_eq_hostTripleSum_aux T F_A host_B [] [] guests]
+    -- LHS becomes bind over listChoices [t,f] 0 = {[]}: hostTripleSum on (filter_t/f of [].zip [])
+    rw [List.length_nil, listChoices_zero]
+    show (Multiset.ofList ([[]] : List (List Bool))).bind _ = _
+    rw [show (Multiset.ofList ([[]] : List (List Bool)) : Multiset (List Bool)) =
+            (([] : List Bool) ::ₘ 0) from rfl]
+    rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    -- LHS: hostTripleSum T F_A host_B [] [] [] guests (after [].zip [] = [], filter_* on [] = [])
+    show hostTripleSum T F_A host_B [] [] [] guests = insertionForest (T :: F_A ++ host_B) guests
+    -- TODO: prove via `hostTripleSum_T_split` (generalized cross-form) + IH on F_A.
+    -- The proof requires: (i) `hostTripleSum_T_split` substrate (~80 LOC inducting on remaining
+    -- with pre's generalized, using `listChoices_succ_cons_bind` + `hostBucketSum_cons_remaining`
+    -- to align T-add/FA-add/B-add with bind-α-cons-prepend over true vs false bit for g);
+    -- (ii) apply `hostTripleSum_T_split` here with empty pre to get
+    --      `bind α: (insertion T (filter_t)).bind T' => (hostBucketSum F_A host_B [] [] (filter_f)).map (T' :: ·)`;
+    -- (iii) rewrite inner via IH `ih` (hostBucketSum F_A host_B = insertionForest (F_A ++ host_B));
+    -- (iv) close via `insertionForest_cons_assignment` in reverse.
     sorry
 
 end Pathed
