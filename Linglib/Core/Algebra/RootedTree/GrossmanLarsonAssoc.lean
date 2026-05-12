@@ -130,7 +130,8 @@ theorem insertion_mul_distrib (A B C : Forest (Nonplanar α)) :
   -- Helper: bilinearity of `Σ (·) · Σ (·)` over Multiset.product, by induction on M_A.
   clear hM_A
   induction M_A using Multiset.induction with
-  | empty => simp
+  | empty =>
+    simp only [Multiset.zero_product, Multiset.map_zero, Multiset.sum_zero, zero_mul]
   | cons a s ih =>
     simp only [Multiset.cons_product, Multiset.map_add, Multiset.sum_add,
                Multiset.map_map, Function.comp_def, Multiset.map_cons,
@@ -411,7 +412,7 @@ scalar-of-basis) reductions to the basis form. -/
 
     Stated via `product` (the bilinear underlying map of `*`) to avoid
     Finsupp/GrossmanLarson type-alias mismatches in the induction. -/
-private theorem product_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+theorem product_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
     product X (of' G) =
       (letI : DecidableEq (Nonplanar α) := Classical.decEq _
        G.powerset.map fun G₁ =>
@@ -516,7 +517,7 @@ private theorem product_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonp
     rw [smul_mul_assoc]; rfl
 
 /-- Corollary: `mul_of'_sum_form` (the `*` form, given by `mul_def`). -/
-private theorem mul_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
+theorem mul_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplanar α)) :
     X * of' G =
       (letI : DecidableEq (Nonplanar α) := Classical.decEq _
        G.powerset.map fun G₁ =>
@@ -526,7 +527,7 @@ private theorem mul_of'_sum_form (X : GrossmanLarson R α) (G : Forest (Nonplana
 
 /-- `insertion` distributes over a `Multiset.sum` in its first argument
     (since the LinearMap on the first arg pushes through Multiset.sum). -/
-private theorem insertion_sum_left (s : Multiset (GrossmanLarson R α))
+theorem insertion_sum_left (s : Multiset (GrossmanLarson R α))
     (G : GrossmanLarson R α) :
     insertion (R := R) s.sum G = (s.map (fun X => insertion X G)).sum := by
   induction s using Multiset.induction with
@@ -543,7 +544,7 @@ private theorem insertion_sum_left (s : Multiset (GrossmanLarson R α))
     rw [ih]
 
 /-- `insertion` distributes over a `Multiset.sum` in its second argument. -/
-private theorem insertion_sum_right (F : GrossmanLarson R α)
+theorem insertion_sum_right (F : GrossmanLarson R α)
     (s : Multiset (GrossmanLarson R α)) :
     insertion (R := R) F s.sum = (s.map (fun Y => insertion F Y)).sum := by
   induction s using Multiset.induction with
@@ -557,7 +558,7 @@ private theorem insertion_sum_right (F : GrossmanLarson R α)
 /-- Generalized `insertion_mul_distrib`: the bracketed LEFT factor of
     `μ(X, of' Y)` may be any GL element. Reduces by linearity in `X` to
     the basis case `insertion_mul_distrib`. -/
-private theorem insertion_mul_distrib_gen
+theorem insertion_mul_distrib_gen
     (X : GrossmanLarson R α) (Y C : Forest (Nonplanar α)) :
     insertion (R := R) (op (unop X * unop (of' Y))) (of' C) =
       (letI : DecidableEq (Nonplanar α) := Classical.decEq _
@@ -658,7 +659,7 @@ private theorem insertion_mul_distrib_gen
 /-- Generalized `insertion_assoc_shuffled`: the LEFT factor of the outer
     iterated `insertion` may be ANY GL element. Reduces by linearity to
     the basis case. -/
-private theorem insertion_assoc_shuffled_gen
+theorem insertion_assoc_shuffled_gen
     (X : GrossmanLarson R α) (B C : Forest (Nonplanar α)) :
     insertion (R := R) (insertion X (of' B)) (of' C) =
       insertion (R := R) X
@@ -768,26 +769,29 @@ theorem mul_assoc_basis_via_oudom_guin (F₁ F₂ F₃ : Forest (Nonplanar α)) 
     ((of' F₁ : GrossmanLarson R α) * of' F₂) * of' F₃ =
       of' F₁ * (of' F₂ * of' F₃) := by
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
-  -- ## LHS expansion to canonical quadruple-sum form.
-  -- Step 1: `(A * B) * C = productForest (A*B) C` via mul_of'_sum_form.
-  rw [mul_of'_sum_form (of' F₁ * of' F₂) F₃]
-  -- Goal: (F₃.powerset.map (C₁ => op(unop(insertion (of'F₁ * of'F₂) (of'C₁)) *
-  --                                  unop(of'(F₃ - C₁))))).sum = RHS
-  -- Step 2: Expand `of'F₁ * of'F₂` as productForest, then push through
-  --         linearity of insertion (first arg).
-  -- For each C₁, replace `insertion (of'F₁ * of'F₂) (of'C₁)` with a B₁-sum.
-  have hLHS_inner : ∀ C₁ : Forest (Nonplanar α),
-      insertion (R := R) (of' F₁ * of' F₂) (of' C₁) =
-        (F₂.powerset.map fun B₁ =>
-          insertion (R := R)
-            (op (unop (insertion (of' F₁) (of' B₁)) * unop (of' (F₂ - B₁))))
-            (of' C₁)).sum := by
-    intro C₁
-    rw [mul_of'_sum_form (of' F₁) F₂]
-    -- LHS: insertion ((F₂.powerset.map ...).sum) (of' C₁)
-    -- = (F₂.powerset.map (B₁ => insertion (...) (of' C₁))).sum   [by linearity]
-    rw [insertion_sum_left, Multiset.map_map]
-    rfl
+  -- The proof reduces both sides to a common quadruple-`bind` form over
+  -- partitions of F₂ and F₃ and `Nonplanar.insertionMultiset` (NIM) bind
+  -- chains. The bridge between them uses
+  -- `Nonplanar.insertionMultiset_add_host` (host distributivity) and
+  -- `Nonplanar.insertionMultiset_assoc` (NIM-bind associativity), both
+  -- present as substrate sorries lower in this file.
+  --
+  -- LHS structure (after expansions):
+  -- Σ_{B₁ ≤ F₂} Σ_{X ∈ NIM F₁ B₁} Σ_{C₁ ≤ F₃} Σ_{Y ∈ NIM (X + (F₂-B₁)) C₁}
+  --   of' (Y + (F₃ - C₁))
+  --
+  -- RHS structure (after expansions):
+  -- Σ_{C₁' ≤ F₃} Σ_{Z ∈ NIM F₂ C₁'} Σ_{P ≤ Z + (F₃-C₁')} Σ_{W ∈ NIM F₁ P}
+  --   of' (W + (Z + (F₃-C₁') - P))
+  --
+  -- The bijection between LHS and RHS bind structures follows from the
+  -- two NIM identities plus Multiset.powerset_add (the shuffle of a
+  -- disjoint-union forest's powerset).
+  --
+  -- The structured chain is several hundred LOC. For now, the proof is
+  -- deferred. Helpers `mul_of'_sum_form`, `insertion_sum_left/right`,
+  -- `insertion_mul_distrib_gen`, `insertion_assoc_shuffled_gen` (above)
+  -- and `Nonplanar.insertionMultiset_assoc` already provide the substrate.
   sorry
 
 end GrossmanLarson
