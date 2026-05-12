@@ -293,12 +293,6 @@ private theorem product_map_append_eq_bind_map
   rw [Multiset.map_map]
   rfl
 
-/-- `insertion T []` is the singleton `{T}` (multi-graft of no guests is the identity). -/
-private theorem insertion_nil_guests (T : Planar α) :
-    insertion T [] = ({T} : Multiset (Planar α)) := by
-  rw [insertion_def]
-  simp [listChoices_zero, multiGraft_nil]
-
 /-- Uniform decomposition of `insertionForest (T :: F) X` over `[true, false]`-assignments
     of `X`'s elements to the T-bucket or F-bucket. Works for empty X via singleton bind. -/
 private theorem insertionForest_cons_assignment (T : Planar α)
@@ -756,6 +750,177 @@ private theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (P
     -- (iii) Close via `insertionForest_cons_assignment` (in reverse) for T :: (F_A ++ host_B):
     rw [show T :: F_A ++ host_B = T :: (F_A ++ host_B) from rfl]
     rw [insertionForest_cons_assignment]
+
+/-! ## §5: Host-Perm invariance at the multiset-of-multiset level
+
+`insertionForest` is invariant under permutation of host trees, but only at
+the level where output lists are wrapped via `Multiset.ofList ∘ List.map mk`
+(i.e., the level used by `Nonplanar.insertionMultiset`). The list structure
+of inner outputs (which is host-position-correlated) is discarded by this
+outer wrapper, allowing host trees to be permuted without changing the
+multiset-of-multiset image.
+
+The key combinatorial lemma is the swap symmetry of two adjacent host trees,
+which we prove via `hostTripleSum`'s 3-bucket structure: when the F_A bucket
+is a singleton `[T₂]`, swapping the T-bucket with the F_A-bucket gives a
+configuration symmetric in (T₁, T₂) at the multiset level. -/
+
+/-- Helper: `msform L = Multiset.ofList (L.map mk)`. The output level
+    of `Nonplanar.insertionMultiset`'s inner map. Cons distributes:
+    `msform (T :: L) = mk T ::ₘ msform L`. -/
+private theorem msform_cons (T : Planar α) (L : List (Planar α)) :
+    (Multiset.ofList ((T :: L).map Nonplanar.mk) : Multiset (Nonplanar α)) =
+      Nonplanar.mk T ::ₘ Multiset.ofList (L.map Nonplanar.mk) := by
+  rw [List.map_cons]
+  rfl
+
+/-- Symmetry of `hostTripleSum T₁ [T₂] F` under swap of T-bucket and (singleton)
+    F_A-bucket, at the `Multiset.ofList ∘ List.map mk` level.
+
+    Note the pre-arg swap: LHS's `pre_T` (for T₁) corresponds to RHS's `pre_FA`
+    (still for T₁, but T₁ is now in the F_A bucket on the RHS).
+
+    The proof goes by induction on `remaining`:
+    - **nil**: leaf forms reduce via `insertionForest_singleton` (since F_A is a
+      singleton). Then `Multiset.bind_bind` swaps the binds, and `Multiset.cons_swap`
+      handles the output `T₁' :: T₂' :: B` vs `T₂' :: T₁' :: B`.
+    - **cons**: each summand corresponds via IH to the appropriate RHS summand
+      (T₁-bucket on LHS ↔ F_A-bucket on RHS, T₂-bucket on LHS ↔ T-bucket on RHS,
+      F-bucket unchanged). Combination via commutativity of `+`. -/
+private theorem hostTripleSum_singleton_swap_msform
+    (T₁ T₂ : Planar α) (F : List (Planar α)) :
+    ∀ (pre_T pre_FA pre_B remaining : List (Planar α)),
+    (hostTripleSum T₁ [T₂] F pre_T pre_FA pre_B remaining).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    (hostTripleSum T₂ [T₁] F pre_FA pre_T pre_B remaining).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  intro pre_T pre_FA pre_B remaining
+  induction remaining generalizing pre_T pre_FA pre_B with
+  | nil =>
+    rw [hostTripleSum_nil_remaining, hostTripleSum_nil_remaining]
+    rw [insertionForest_singleton T₂ pre_FA, insertionForest_singleton T₁ pre_T]
+    -- Collapse `(s.map f).bind g = s.bind (g ∘ f)` on both sides via conv navigation.
+    conv_lhs => rw [Multiset.map_bind]; rhs; ext T₁'; rw [Multiset.bind_map]
+    conv_rhs => rw [Multiset.map_bind]; rhs; ext T₂'; rw [Multiset.bind_map]
+    -- LHS = bind T₁': bind T₂': (insertionForest F pre_B).map B => msform (T₁' :: [T₂'] ++ B)
+    --     = bind T₁': map msform of (bind T₂': (insertionForest F pre_B).map B => T₁' :: [T₂'] ++ B)
+    -- Wait — after map_bind + bind_map, we still have the outer .map msform at level 2.
+    -- Let me push further.
+    conv_lhs => rhs; ext T₁'; rw [Multiset.map_bind]; rhs; ext T₂'; rw [Multiset.map_map]
+    conv_rhs => rhs; ext T₂'; rw [Multiset.map_bind]; rhs; ext T₁'; rw [Multiset.map_map]
+    -- LHS = bind T₁': bind T₂': (insertionForest F pre_B).map (msform ∘ (T₁' :: [T₂'] ++ ·))
+    -- RHS = bind T₂': bind T₁': (insertionForest F pre_B).map (msform ∘ (T₂' :: [T₁'] ++ ·))
+    -- Swap LHS binds via Multiset.bind_bind.
+    rw [Multiset.bind_bind]
+    -- Now LHS = bind T₂': bind T₁': (insertionForest F pre_B).map (msform ∘ (T₁' :: [T₂'] ++ ·))
+    -- RHS = bind T₂': bind T₁': (insertionForest F pre_B).map (msform ∘ (T₂' :: [T₁'] ++ ·))
+    refine Multiset.bind_congr fun T₂' _ => ?_
+    refine Multiset.bind_congr fun T₁' _ => ?_
+    refine Multiset.map_congr rfl fun B _ => ?_
+    -- Goal: msform (T₁' :: [T₂'] ++ B) = msform (T₂' :: [T₁'] ++ B)
+    show (Multiset.ofList ((T₁' :: [T₂'] ++ B).map Nonplanar.mk) :
+            Multiset (Nonplanar α)) =
+         Multiset.ofList ((T₂' :: [T₁'] ++ B).map Nonplanar.mk)
+    rw [show T₁' :: [T₂'] ++ B = T₁' :: T₂' :: B from rfl]
+    rw [show T₂' :: [T₁'] ++ B = T₂' :: T₁' :: B from rfl]
+    rw [msform_cons, msform_cons, msform_cons, msform_cons]
+    exact Multiset.cons_swap _ _ _
+  | cons x rest ih =>
+    rw [hostTripleSum_cons_remaining, hostTripleSum_cons_remaining]
+    rw [Multiset.map_add, Multiset.map_add, Multiset.map_add, Multiset.map_add]
+    -- LHS_summands:
+    --   1: (triple T₁ [T₂] F (pre_T ++ [x]) pre_FA pre_B rest).map _   -- x → T₁
+    --   2: (triple T₁ [T₂] F pre_T (pre_FA ++ [x]) pre_B rest).map _   -- x → T₂
+    --   3: (triple T₁ [T₂] F pre_T pre_FA (pre_B ++ [x]) rest).map _   -- x → F
+    -- RHS_summands (with pre_T ↔ pre_FA swap):
+    --   1': (triple T₂ [T₁] F (pre_FA ++ [x]) pre_T pre_B rest).map _  -- x → T₂
+    --   2': (triple T₂ [T₁] F pre_FA (pre_T ++ [x]) pre_B rest).map _  -- x → T₁
+    --   3': (triple T₂ [T₁] F pre_FA pre_T (pre_B ++ [x]) rest).map _  -- x → F
+    rw [ih (pre_T ++ [x]) pre_FA pre_B,
+        ih pre_T (pre_FA ++ [x]) pre_B,
+        ih pre_T pre_FA (pre_B ++ [x])]
+    -- Now LHS = (triple T₂ [T₁] F pre_FA (pre_T ++ [x]) pre_B rest).map _   -- = RHS_2'
+    --        + (triple T₂ [T₁] F (pre_FA ++ [x]) pre_T pre_B rest).map _   -- = RHS_1'
+    --        + (triple T₂ [T₁] F pre_FA pre_T (pre_B ++ [x]) rest).map _   -- = RHS_3'
+    --      = RHS_1' + RHS_2' + RHS_3' by commutativity.
+    ac_rfl
+
+/-- **Adjacent host swap**: `insertionForest` is invariant under swapping two
+    adjacent host trees, at the `Multiset.ofList ∘ List.map mk` level.
+
+    The proof: bridge `insertionForest (T₁ :: T₂ :: F) gs` to
+    `hostTripleSum T₁ [T₂] F [] [] [] gs` (via the chain
+    `hostTripleSum_T_split` + `hostBucketSum_eq_insertionForest`), then apply
+    `hostTripleSum_singleton_swap_msform`, then bridge back. -/
+private theorem insertionForest_swap_host_msform
+    (T₁ T₂ : Planar α) (F gs : List (Planar α)) :
+    (insertionForest (T₁ :: T₂ :: F) gs).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    (insertionForest (T₂ :: T₁ :: F) gs).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- Bridge LHS: insertionForest (T₁ :: T₂ :: F) gs = hostTripleSum T₁ [T₂] F [] [] [] gs.
+  have hL : insertionForest (T₁ :: T₂ :: F) gs =
+      hostTripleSum T₁ [T₂] F [] [] [] gs := by
+    rw [hostTripleSum_T_split]
+    simp only [List.nil_append]
+    rw [show T₁ :: T₂ :: F = T₁ :: ([T₂] ++ F) from rfl]
+    rw [insertionForest_cons_assignment]
+    refine Multiset.bind_congr fun α _ => ?_
+    refine Multiset.bind_congr fun T₁' _ => ?_
+    rw [hostBucketSum_eq_insertionForest]
+  have hR : insertionForest (T₂ :: T₁ :: F) gs =
+      hostTripleSum T₂ [T₁] F [] [] [] gs := by
+    rw [hostTripleSum_T_split]
+    simp only [List.nil_append]
+    rw [show T₂ :: T₁ :: F = T₂ :: ([T₁] ++ F) from rfl]
+    rw [insertionForest_cons_assignment]
+    refine Multiset.bind_congr fun α _ => ?_
+    refine Multiset.bind_congr fun T₂' _ => ?_
+    rw [hostBucketSum_eq_insertionForest]
+  rw [hL, hR]
+  exact hostTripleSum_singleton_swap_msform T₁ T₂ F [] [] [] gs
+
+/-- **Host-Perm invariance** at the multiset-of-multiset level: when host
+    trees are permuted, the `(insertionForest host gs).map (Multiset.ofList ∘ List.map mk)`
+    is unchanged.
+
+    This is the key invariance used by `Nonplanar.insertionMultiset_add_host`
+    (and similar Nonplanar-side lifts) to bridge `(A + B).toList.map Q.out`
+    with `A.toList.map Q.out ++ B.toList.map Q.out`. -/
+theorem insertionForest_perm_host_msform
+    {host host' : List (Planar α)} (h : host.Perm host') (gs : List (Planar α)) :
+    (insertionForest host gs).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    (insertionForest host' gs).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  induction h generalizing gs with
+  | nil => rfl
+  | @cons x l l' _ ih =>
+    -- Use insertionForest_cons_assignment to expand both sides.
+    rw [insertionForest_cons_assignment x l gs, insertionForest_cons_assignment x l' gs]
+    -- Push msform through the outer bind / bind / map / map.
+    rw [Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun assn _ => ?_
+    rw [Multiset.map_bind, Multiset.map_bind]
+    refine Multiset.bind_congr fun T' _ => ?_
+    -- Combine the two .map's: .map msform ∘ .map (T' :: ·) = .map (msform ∘ (T' :: ·)).
+    rw [Multiset.map_map, Multiset.map_map]
+    -- Convert (msform ∘ (T' :: ·)) = ((mk T' ::ₘ ·) ∘ msform) via msform_cons.
+    rw [show ((fun L : List (Planar α) =>
+              (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α))) ∘
+                (fun F' : List (Planar α) => T' :: F')) =
+            ((fun M : Multiset (Nonplanar α) => Nonplanar.mk T' ::ₘ M) ∘
+              (fun L : List (Planar α) =>
+                (Multiset.ofList (L.map Nonplanar.mk) : Multiset (Nonplanar α)))) from by
+          funext F'
+          exact msform_cons T' F']
+    -- Now: (insertionForest l filter_f).map ((mk T' ::ₘ ·) ∘ msform)
+    --    = ((insertionForest l filter_f).map msform).map (mk T' ::ₘ ·)
+    rw [← Multiset.map_map, ← Multiset.map_map]
+    rw [ih]
+  | @swap x y l =>
+    exact insertionForest_swap_host_msform y x l gs
+  | @trans l₁ l₂ l₃ _ _ ih₁ ih₂ => exact (ih₁ gs).trans (ih₂ gs)
 
 end Pathed
 

@@ -1637,6 +1637,91 @@ theorem insertionForest_perm_guests
           (forestPairSum_eq_insertionForest _ _).symm]
     exact forestPairSum_perm_remaining_mk T F_tail ih_F [] [] h
 
+/-! ### §8: Singleton-host insertion = single-tree insertion lifted to singleton lists
+
+`insertionForest [T] gs = (insertion T gs).map (fun T' => [T'])` — when the
+host has exactly one tree, the multi-graft is just the single-tree multi-graft
+with each output wrapped in a singleton list. Used downstream to handle
+`hostTripleSum T [T'] F` patterns at the singleton-F_A level. -/
+
+/-- `insertion T []` is the singleton `{T}` — multi-graft of no guests is
+    the identity. Public version of the InsertionAddHost.lean private helper. -/
+theorem insertion_nil_guests (T : Planar α) :
+    insertion T ([] : List (Planar α)) = ({T} : Multiset (Planar α)) := by
+  rw [insertion_def]
+  simp [listChoices_zero, multiGraft_nil]
+
+/-- `forestPairSum [T] pre (a :: pre_F_rest) gs = 0`. With a non-empty `pre_F`
+    accumulator, the inner `insertionForest [] (a :: pre_F_rest ++ ...)` is 0,
+    and the recursion preserves the non-empty invariant. -/
+private theorem forestPairSum_singleton_host_pre_F_nonempty (T : Planar α) (a : Planar α) :
+    ∀ (pre pre_F_rest gs : List (Planar α)),
+    forestPairSum [T] pre (a :: pre_F_rest) gs = 0 := by
+  intro pre pre_F_rest gs
+  induction gs generalizing pre pre_F_rest with
+  | nil =>
+    rw [forestPairSum_cons_F_nil_remaining]
+    rw [insertionForest_empty_host_nonempty_guests]
+    -- Goal: (insertion T pre).bind (fun T' => (0 : Multiset _).map (fun F' => T' :: F')) = 0
+    rw [show (fun T' : Planar α =>
+              ((0 : Multiset (List (Planar α))).map (fun F' => T' :: F'))) =
+            (fun (_ : Planar α) => (0 : Multiset (List (Planar α)))) from by
+          funext T'
+          rw [Multiset.map_zero]]
+    exact Multiset.bind_zero _
+  | cons g rest ih =>
+    rw [forestPairSum_cons_remaining]
+    rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
+    rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
+    rw [ih (pre ++ [g]) pre_F_rest]
+    rw [show (a :: pre_F_rest) ++ [g] = a :: (pre_F_rest ++ [g]) from rfl]
+    rw [ih pre (pre_F_rest ++ [g])]
+    rfl
+
+/-- `forestPairSum [T] pre [] gs = (insertion T (pre ++ gs)).map (fun T' => [T'])`.
+    The single-host `[T]` only allows one bucket assignment (all guests to T);
+    the empty `pre_F` accumulator stays empty. Helper for `insertionForest_singleton`.
+-/
+private theorem forestPairSum_singleton_host_no_pre_F (T : Planar α) :
+    ∀ (pre gs : List (Planar α)),
+    forestPairSum [T] pre [] gs = (insertion T (pre ++ gs)).map (fun T' => [T']) := by
+  intro pre gs
+  induction gs generalizing pre with
+  | nil =>
+    rw [forestPairSum_cons_F_nil_remaining, insertionForest_nil_nil, List.append_nil]
+    -- Goal: (insertion T pre).bind (fun T' => ({[]}).map (fun F' => T' :: F')) =
+    --       (insertion T pre).map (fun T' => [T'])
+    rw [show (fun T' : Planar α =>
+              ({([] : List (Planar α))} : Multiset (List (Planar α))).map (fun F' => T' :: F')) =
+            (fun T' : Planar α => ({[T']} : Multiset (List (Planar α)))) from by
+          funext T'
+          rw [Multiset.map_singleton]]
+    exact Multiset.bind_singleton (s := insertion T pre) (fun T' => [T'])
+  | cons g rest ih =>
+    rw [forestPairSum_cons_remaining]
+    rw [show (Multiset.ofList [true, false] : Multiset Bool) = (true ::ₘ false ::ₘ 0) from rfl]
+    rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
+    rw [ih (pre ++ [g])]
+    rw [show ([] : List (Planar α)) ++ [g] = [g] from rfl]
+    rw [forestPairSum_singleton_host_pre_F_nonempty T g pre [] rest]
+    rw [add_zero]
+    -- (pre ++ [g]) ++ rest = pre ++ (g :: rest)
+    rw [List.append_assoc]
+    rfl
+
+/-- **Singleton-host insertion**: when the host has exactly one tree,
+    `insertionForest` reduces to single-tree `insertion` followed by singleton
+    lift. This lets us match `hostTripleSum T [T_other] F` patterns by
+    converting `(insertionForest [T_other] pre).bind` to `(insertion T_other pre).bind`
+    (via `Multiset.bind_map`). -/
+theorem insertionForest_singleton (T : Planar α) (gs : List (Planar α)) :
+    insertionForest [T] gs = (insertion T gs).map (fun T' => [T']) := by
+  rw [show insertionForest [T] gs = forestPairSum [T] [] [] gs from
+        (forestPairSum_eq_insertionForest _ _).symm]
+  rw [forestPairSum_singleton_host_no_pre_F T [] gs, List.nil_append]
+
 end Pathed
 
 end Planar
