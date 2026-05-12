@@ -150,6 +150,35 @@ theorem assocBucketSum_assignment_rewrite
       rw [List.append_assoc, List.singleton_append]
       rfl
 
+/-- `assocBucketSum` as a `kBucketSum` instance: 2 buckets indexed by `Bool`,
+    iterated-bind leaf (true → A-bucket, false → B-bucket). -/
+theorem assocBucketSum_eq_kBucketSum
+    (host_A host_B pre_A pre_B Ts : List (Planar α)) :
+    assocBucketSum host_A host_B pre_A pre_B Ts =
+      kBucketSum [true, false]
+        (fun pres' =>
+          (insertionForest host_B (pres' false)).bind fun X' =>
+            insertionForest host_A (X' ++ pres' true))
+        (fun b => if b then pre_A else pre_B) Ts := by
+  induction Ts generalizing pre_A pre_B with
+  | nil =>
+    rw [assocBucketSum_nil_remaining, kBucketSum_nil_remaining]
+    simp
+  | cons x rest ih =>
+    rw [assocBucketSum_cons_remaining, kBucketSum_cons_remaining]
+    refine Multiset.bind_congr fun b _ => ?_
+    cases b with
+    | true =>
+      rw [if_pos rfl, ih]
+      congr 1
+      funext c
+      cases c <;> simp [Function.update_self]
+    | false =>
+      rw [if_neg (by decide : (false : Bool) ≠ true), ih]
+      congr 1
+      funext c
+      cases c <;> simp [Function.update_self]
+
 /-! ## §2: Bridge: iterated insertionForest equals assocBucketSum
 
 The headline planar identity:

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
+import Linglib.Core.Algebra.RootedTree.PreLie.KBucketSum
 import Mathlib.Data.Multiset.Powerset
 
 set_option autoImplicit false
@@ -131,6 +132,36 @@ theorem hostBucketSum_assignment_rewrite
       refine Multiset.bind_congr fun α _ => ?_
       rw [List.append_assoc, List.singleton_append]
       rfl
+
+/-- `hostBucketSum` as a `kBucketSum` instance: 2 buckets indexed by `Bool`,
+    parallel cartesian-product leaf. -/
+theorem hostBucketSum_eq_kBucketSum
+    (host_A host_B pre_A pre_B Ts : List (Planar α)) :
+    hostBucketSum host_A host_B pre_A pre_B Ts =
+      kBucketSum [true, false]
+        (fun pres' =>
+          ((insertionForest host_A (pres' true)) ×ˢ
+              (insertionForest host_B (pres' false))).map
+            fun p => p.fst ++ p.snd)
+        (fun b => if b then pre_A else pre_B) Ts := by
+  induction Ts generalizing pre_A pre_B with
+  | nil =>
+    rw [hostBucketSum_nil_remaining, kBucketSum_nil_remaining]
+    simp
+  | cons x rest ih =>
+    rw [hostBucketSum_cons_remaining, kBucketSum_cons_remaining]
+    refine Multiset.bind_congr fun b _ => ?_
+    cases b with
+    | true =>
+      rw [if_pos rfl, ih]
+      congr 1
+      funext c
+      cases c <;> simp [Function.update_self]
+    | false =>
+      rw [if_neg (by decide : (false : Bool) ≠ true), ih]
+      congr 1
+      funext c
+      cases c <;> simp [Function.update_self]
 
 /-! ## §2: Base case — `hostBucketSum [] host_B [] [] guests = insertionForest host_B guests`
 
@@ -280,6 +311,48 @@ private theorem hostTripleSum_cons_remaining
       hostTripleSum T F_A host_B (pre_T ++ [x]) pre_FA pre_B rest
         + hostTripleSum T F_A host_B pre_T (pre_FA ++ [x]) pre_B rest
         + hostTripleSum T F_A host_B pre_T pre_FA (pre_B ++ [x]) rest := rfl
+
+/-- 3-element bucket label for `hostTripleSum`'s `kBucketSum` form:
+    T-bucket, F_A-bucket, host_B-bucket. -/
+private inductive TripleIdx where
+  | t : TripleIdx
+  | fa : TripleIdx
+  | b : TripleIdx
+deriving DecidableEq
+
+/-- `hostTripleSum` as a `kBucketSum` instance: 3 buckets indexed by `TripleIdx`,
+    parallel triple-bind leaf (T-bucket via `insertion T`, F_A-bucket via
+    `insertionForest F_A`, host_B-bucket via `insertionForest host_B`). -/
+private theorem hostTripleSum_eq_kBucketSum
+    (T : Planar α) (F_A host_B pre_T pre_FA pre_B Ts : List (Planar α)) :
+    hostTripleSum T F_A host_B pre_T pre_FA pre_B Ts =
+      kBucketSum [TripleIdx.t, TripleIdx.fa, TripleIdx.b]
+        (fun pres' =>
+          (insertion T (pres' .t)).bind fun T' =>
+            (insertionForest F_A (pres' .fa)).bind fun F' =>
+              (insertionForest host_B (pres' .b)).map fun B => T' :: F' ++ B)
+        (fun
+          | .t => pre_T
+          | .fa => pre_FA
+          | .b => pre_B) Ts := by
+  induction Ts generalizing pre_T pre_FA pre_B with
+  | nil =>
+    rw [hostTripleSum_nil_remaining, kBucketSum_nil_remaining]
+  | cons x rest ih =>
+    rw [hostTripleSum_cons_remaining, kBucketSum_cons_remaining]
+    rw [ih (pre_T ++ [x]) pre_FA pre_B,
+        ih pre_T (pre_FA ++ [x]) pre_B,
+        ih pre_T pre_FA (pre_B ++ [x])]
+    show _ + _ + _ = (Multiset.ofList [TripleIdx.t, TripleIdx.fa, TripleIdx.b]).bind _
+    rw [show (Multiset.ofList [TripleIdx.t, TripleIdx.fa, TripleIdx.b] :
+              Multiset TripleIdx) =
+            TripleIdx.t ::ₘ TripleIdx.fa ::ₘ TripleIdx.b ::ₘ 0 from rfl]
+    rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind,
+        Multiset.zero_bind, add_zero, add_assoc]
+    refine congr_arg₂ HAdd.hAdd ?_ (congr_arg₂ HAdd.hAdd ?_ ?_)
+    · congr 1; funext i; cases i <;> simp [Function.update_self]
+    · congr 1; funext i; cases i <;> simp [Function.update_self]
+    · congr 1; funext i; cases i <;> simp [Function.update_self]
 
 /-- Helper: `(M ×ˢ N).map (uncurry ++) = M.bind fun a => N.map fun b => a ++ b`. -/
 private theorem product_map_append_eq_bind_map
