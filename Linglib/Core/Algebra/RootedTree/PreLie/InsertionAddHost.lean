@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
+import Mathlib.Data.Multiset.Powerset
 
 set_option autoImplicit false
 
@@ -921,6 +922,230 @@ theorem insertionForest_perm_host_msform
   | @swap x y l =>
     exact insertionForest_swap_host_msform y x l gs
   | @trans l₁ l₂ l₃ _ _ ih₁ ih₂ => exact (ih₁ gs).trans (ih₂ gs)
+
+/-! ## §6: Bit-vector ↔ powerset bridge
+
+For a list `l : List β`, bit-vectors of length `|l|` enumerate sublists
+of `l` (the elements where the bit is true). At the multiset level, the
+collection of `(filter_t, filter_f)` pairs over all bit-vectors equals
+the collection of `(s, ↑l - s)` over `s ∈ (↑l).powerset`. Used by
+`Nonplanar.insertionMultiset_add_host` to bridge the
+`hostBucketSum_assignment_rewrite` form (bind over bit-vectors) with
+the `C.powerset.bind` form on the RHS. -/
+
+/-- The complementary `filter_t / filter_f` operations on a bit-vector
+    over a list `l` partition `l` (as multisets) when their lengths match:
+    `↑(filter_t l assn) + ↑(filter_f l assn) = ↑l`. -/
+private theorem filterMap_t_add_filterMap_f_eq_self {β : Type*}
+    (l : List β) (assn : List Bool) (hlen : assn.length = l.length) :
+    ((l.zip assn).filterMap (fun p => if p.snd then some p.fst else none) :
+        Multiset β) +
+    ((l.zip assn).filterMap (fun p => if p.snd then none else some p.fst) :
+        Multiset β) =
+    (↑l : Multiset β) := by
+  induction l generalizing assn with
+  | nil =>
+    have : assn = [] := List.length_eq_zero_iff.mp (by simpa using hlen)
+    subst this
+    simp
+  | cons a l_rest ih =>
+    cases assn with
+    | nil => simp at hlen
+    | cons b assn_rest =>
+      have hlen' : assn_rest.length = l_rest.length := by
+        simpa [List.length_cons] using hlen
+      simp only [List.zip_cons_cons, List.filterMap_cons]
+      cases b with
+      | true =>
+        simp only [if_pos rfl]
+        show (a ::ₘ ((l_rest.zip assn_rest).filterMap
+                (fun p => if p.snd = true then some p.fst else none) :
+                Multiset β)) +
+            ((l_rest.zip assn_rest).filterMap
+              (fun p => if p.snd = true then none else some p.fst) :
+              Multiset β) =
+            (a ::ₘ (↑l_rest : Multiset β))
+        rw [Multiset.cons_add]
+        congr 1
+        exact ih assn_rest hlen'
+      | false =>
+        simp only [if_neg (by decide : (false : Bool) ≠ true)]
+        show ((l_rest.zip assn_rest).filterMap
+                (fun p => if p.snd = true then some p.fst else none) :
+                Multiset β) +
+            (a ::ₘ ((l_rest.zip assn_rest).filterMap
+              (fun p => if p.snd = true then none else some p.fst) :
+              Multiset β)) =
+            (a ::ₘ (↑l_rest : Multiset β))
+        rw [Multiset.add_cons]
+        congr 1
+        exact ih assn_rest hlen'
+
+/-- Corollary: `↑(filter_f l assn) = ↑l - ↑(filter_t l assn)`, given matching length. -/
+private theorem filterMap_f_eq_sub {β : Type*} [DecidableEq β]
+    (l : List β) (assn : List Bool) (hlen : assn.length = l.length) :
+    ((l.zip assn).filterMap (fun p => if p.snd then none else some p.fst) :
+        Multiset β) =
+    (↑l : Multiset β) -
+    ((l.zip assn).filterMap (fun p => if p.snd then some p.fst else none) :
+        Multiset β) := by
+  have h := filterMap_t_add_filterMap_f_eq_self l assn hlen
+  rw [← h, add_tsub_cancel_left]
+
+/-- Length lemma: every element of `listChoices [b₁, b₂] n` has length exactly `n`.
+    A re-export of the existing `mem_listChoices_length` for `[true, false]`. -/
+private theorem mem_listChoices_bool_length :
+    ∀ (n : Nat) (assn : List Bool),
+    assn ∈ listChoices [true, false] n → assn.length = n :=
+  mem_listChoices_length [true, false]
+
+/-- **Bit-vector ↔ powerset bridge (paired form, first-component map only)**:
+    enumerating bit-vectors and mapping to `↑(filter_t)` gives the powerset
+    of `↑l`. (No second component yet — see paired version below.) -/
+private theorem listChoices_bridge_powerset {β : Type*} [DecidableEq β]
+    (l : List β) :
+    (Multiset.ofList (listChoices [true, false] l.length)).map (fun assn =>
+      ((l.zip assn).filterMap (fun p => if p.snd then some p.fst else none) :
+          Multiset β)) =
+    Multiset.powerset (↑l : Multiset β) := by
+  induction l with
+  | nil =>
+    show (Multiset.ofList (listChoices [true, false] 0)).map _ =
+         Multiset.powerset (↑([] : List β) : Multiset β)
+    rw [listChoices_zero]
+    rw [show (Multiset.ofList ([[]] : List (List Bool)) : Multiset (List Bool)) =
+            (([] : List Bool) ::ₘ 0) from rfl]
+    rw [Multiset.map_cons, Multiset.map_zero]
+    rw [show (↑([] : List β) : Multiset β) = (0 : Multiset β) from rfl]
+    rw [Multiset.powerset_zero]
+    rfl
+  | cons a l_rest ih =>
+    -- LHS: bit-vector enumeration over (a :: l_rest).
+    -- RHS: (a ::ₘ ↑l_rest).powerset = ↑l_rest.powerset + (↑l_rest.powerset).map (a ::ₘ ·).
+    rw [show (a :: l_rest).length = l_rest.length + 1 from rfl]
+    rw [listChoices_succ]
+    rw [show ([true, false].flatMap
+              (fun b => (listChoices [true, false] l_rest.length).map (b :: ·)) :
+              List (List Bool)) =
+            (listChoices [true, false] l_rest.length).map (true :: ·) ++
+            (listChoices [true, false] l_rest.length).map (false :: ·) from by
+          show (true :: false :: []).flatMap _ = _
+          rw [List.flatMap_cons, List.flatMap_cons, List.flatMap_nil, List.append_nil]]
+    rw [show (Multiset.ofList ((listChoices [true, false] l_rest.length).map (true :: ·) ++
+              (listChoices [true, false] l_rest.length).map (false :: ·)) :
+              Multiset (List Bool)) =
+            Multiset.ofList ((listChoices [true, false] l_rest.length).map (true :: ·)) +
+            Multiset.ofList ((listChoices [true, false] l_rest.length).map (false :: ·)) from by
+          rw [← Multiset.coe_add]]
+    rw [Multiset.map_add]
+    -- For (true :: ·) branch: filter_t (a :: l_rest) (true :: assn') = a :: filter_t l_rest assn'
+    -- For (false :: ·) branch: filter_t (a :: l_rest) (false :: assn') = filter_t l_rest assn'
+    rw [show (Multiset.ofList ((listChoices [true, false] l_rest.length).map (true :: ·)) :
+              Multiset (List Bool)) =
+            (Multiset.ofList (listChoices [true, false] l_rest.length)).map (true :: ·) from rfl]
+    rw [show (Multiset.ofList ((listChoices [true, false] l_rest.length).map (false :: ·)) :
+              Multiset (List Bool)) =
+            (Multiset.ofList (listChoices [true, false] l_rest.length)).map (false :: ·) from rfl]
+    rw [Multiset.map_map, Multiset.map_map]
+    -- LHS true-branch: ((lc).map ((fun assn => ((a :: l_rest).zip assn).filterMap_t) ∘ (true :: ·)))
+    --             = (lc).map (fun assn' => a :: filter_t l_rest assn')
+    -- LHS false-branch: (lc).map (fun assn' => filter_t l_rest assn')
+    rw [show ((fun assn : List Bool =>
+              (((a :: l_rest).zip assn).filterMap
+                (fun p => if p.snd then some p.fst else none) : Multiset β))
+              ∘ (fun assn => true :: assn)) =
+            (fun assn' : List Bool =>
+              (a ::ₘ (((l_rest.zip assn').filterMap
+                (fun p => if p.snd then some p.fst else none)) : Multiset β))) from by
+          funext assn'
+          show ((((a :: l_rest).zip (true :: assn')).filterMap
+                (fun p => if p.snd then some p.fst else none) : Multiset β)) =
+              a ::ₘ (((l_rest.zip assn').filterMap
+                (fun p => if p.snd then some p.fst else none) : Multiset β))
+          rw [show (a :: l_rest).zip (true :: assn') = (a, true) :: l_rest.zip assn' from rfl]
+          rw [List.filterMap_cons]
+          simp only [if_pos rfl]
+          rfl]
+    rw [show ((fun assn : List Bool =>
+              (((a :: l_rest).zip assn).filterMap
+                (fun p => if p.snd then some p.fst else none) : Multiset β))
+              ∘ (fun assn => false :: assn)) =
+            (fun assn' : List Bool =>
+              (((l_rest.zip assn').filterMap
+                (fun p => if p.snd then some p.fst else none)) : Multiset β)) from by
+          funext assn'
+          show ((((a :: l_rest).zip (false :: assn')).filterMap
+                (fun p => if p.snd then some p.fst else none) : Multiset β)) =
+              (((l_rest.zip assn').filterMap
+                (fun p => if p.snd then some p.fst else none)) : Multiset β)
+          rw [show (a :: l_rest).zip (false :: assn') = (a, false) :: l_rest.zip assn' from rfl]
+          rw [List.filterMap_cons]
+          simp only [if_neg (by decide : (false : Bool) ≠ true)]]
+    -- Now LHS = (lc).map (a ::ₘ filter_t l_rest) + (lc).map (filter_t l_rest)
+    -- RHS: (a ::ₘ ↑l_rest).powerset = ↑l_rest.powerset + (↑l_rest.powerset).map (a ::ₘ ·)
+    --     [by Multiset.powerset_cons]
+    rw [show (↑(a :: l_rest) : Multiset β) = a ::ₘ ↑l_rest from rfl]
+    rw [Multiset.powerset_cons]
+    -- IH: (lc).map (filter_t l_rest) = ↑l_rest.powerset
+    -- LHS_false matches RHS first-summand directly.
+    -- LHS_true = (lc).map (a ::ₘ filter_t l_rest) = ((lc).map (filter_t l_rest)).map (a ::ₘ ·)
+    --         = ↑l_rest.powerset.map (a ::ₘ ·) = RHS second-summand.
+    rw [show (fun assn' : List Bool =>
+              (a ::ₘ (((l_rest.zip assn').filterMap
+                (fun p => if p.snd then some p.fst else none)) : Multiset β))) =
+            ((fun s : Multiset β => a ::ₘ s) ∘
+              (fun assn' : List Bool =>
+                (((l_rest.zip assn').filterMap
+                  (fun p => if p.snd then some p.fst else none)) : Multiset β))) from rfl]
+    rw [← Multiset.map_map]
+    rw [ih]
+    rw [add_comm]
+
+/-- **Bit-vector ↔ powerset bridge (paired form)**: enumerating bit-vectors
+    and pairing `(filter_t, filter_f)` gives the powerset paired with
+    complement `(s, ↑l - s)`. Derived from the single-component version +
+    `filterMap_f_eq_sub`. -/
+private theorem listChoices_bridge_powerset_paired {β : Type*} [DecidableEq β]
+    (l : List β) :
+    (Multiset.ofList (listChoices [true, false] l.length)).map
+      (fun assn : List Bool =>
+        let s_t : Multiset β :=
+          (l.zip assn).filterMap (fun p => if p.snd then some p.fst else none)
+        let s_f : Multiset β :=
+          (l.zip assn).filterMap (fun p => if p.snd then none else some p.fst)
+        (s_t, s_f)) =
+    (Multiset.powerset (↑l : Multiset β)).map
+      (fun s : Multiset β => (s, (↑l : Multiset β) - s)) := by
+  -- LHS: rewrite filter_f via filterMap_f_eq_sub (using assn length matches l length).
+  have h_eq_pair : ∀ assn ∈ Multiset.ofList (listChoices [true, false] l.length),
+      (let s_t : Multiset β :=
+          (l.zip assn).filterMap (fun p => if p.snd then some p.fst else none)
+       let s_f : Multiset β :=
+          (l.zip assn).filterMap (fun p => if p.snd then none else some p.fst)
+       (s_t, s_f)) =
+      (let s_t : Multiset β :=
+          (l.zip assn).filterMap (fun p => if p.snd then some p.fst else none)
+       (s_t, (↑l : Multiset β) - s_t)) := by
+    intros assn h_mem
+    have hlen : assn.length = l.length := by
+      have h_mem' : assn ∈ listChoices [true, false] l.length := by
+        rwa [Multiset.mem_coe] at h_mem
+      exact mem_listChoices_bool_length l.length assn h_mem'
+    simp only
+    rw [filterMap_f_eq_sub l assn hlen]
+  rw [Multiset.map_congr rfl h_eq_pair]
+  -- LHS = (lc).map (fun assn => (filter_t assn, ↑l - filter_t assn))
+  --     = ((lc).map (filter_t)).map (fun s => (s, ↑l - s))
+  rw [show (fun assn : List Bool =>
+            let s_t : Multiset β :=
+              (l.zip assn).filterMap (fun p => if p.snd then some p.fst else none)
+            (s_t, (↑l : Multiset β) - s_t)) =
+          ((fun s : Multiset β => (s, (↑l : Multiset β) - s)) ∘
+            (fun assn : List Bool =>
+              ((l.zip assn).filterMap (fun p => if p.snd then some p.fst else none) :
+                  Multiset β))) from rfl]
+  rw [← Multiset.map_map]
+  rw [listChoices_bridge_powerset]
 
 end Pathed
 
