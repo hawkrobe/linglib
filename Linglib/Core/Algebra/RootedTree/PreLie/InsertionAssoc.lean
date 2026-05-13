@@ -692,7 +692,60 @@ private theorem insertionForest_split_pair {ω : Type*}
         leaf
           ((X'.zip asn).filterMap (fun p => if p.snd then some p.fst else none))
           ((X'.zip asn).filterMap (fun p => if p.snd then none else some p.fst)) := by
-  sorry
+  intro host_B
+  induction host_B with
+  | nil =>
+    intros asn hasn pre_B
+    -- asn = []
+    obtain rfl : asn = [] := by
+      cases asn
+      · rfl
+      · simp at hasn
+    -- Reduce filter_t/f at host_B = [], asn = []: both = []
+    simp only [List.filterMap_nil, List.zip_nil_right, List.zip_nil_left]
+    -- Goal: bind sub_B: (insertionForest [] (filter_t pre_B sub_B)).bind X_T =>
+    --                   (insertionForest [] (filter_f pre_B sub_B)).bind X_F => leaf X_T X_F
+    --     = (insertionForest [] pre_B).bind X' => leaf [] []
+    match pre_B with
+    | [] =>
+      -- pre_B = []: lc 0 = [[]], so sub_B = []; both sides = leaf [] []
+      simp only [List.length_nil, listChoices_zero, List.zip_nil_right, List.filterMap_nil,
+                 insertionForest_nil_nil, Multiset.coe_singleton, Multiset.singleton_bind]
+    | c :: rest_pre =>
+      -- pre_B = c :: rest_pre: insertionForest [] (c :: rest_pre) = 0; both sides = 0
+      rw [insertionForest_empty_host_nonempty_guests, Multiset.zero_bind]
+      -- LHS: each sub_B contributes 0 (sub_B has length ≥ 1, so filter_t or filter_f is non-empty,
+      -- making (insertionForest [] non-empty) = 0).
+      rw [show ((Multiset.ofList (listChoices [true, false] (c :: rest_pre).length)).bind (fun sub_B =>
+                (insertionForest ([] : List (Planar α))
+                    (((c :: rest_pre).zip sub_B).filterMap (fun p => if p.snd then some p.fst else none))).bind fun X_T =>
+                  (insertionForest ([] : List (Planar α))
+                      (((c :: rest_pre).zip sub_B).filterMap (fun p => if p.snd then none else some p.fst))).bind fun X_F =>
+                    leaf X_T X_F)) =
+              (Multiset.ofList (listChoices [true, false] (c :: rest_pre).length)).bind (fun _ => (0 : Multiset ω))
+              from by
+        refine Multiset.bind_congr fun sub_B hsub_B => ?_
+        have hsub_B_len : sub_B.length = (c :: rest_pre).length := mem_listChoices_bool_length _ _ hsub_B
+        cases sub_B with
+        | nil => simp at hsub_B_len
+        | cons b sub_B_rest =>
+          cases b with
+          | true =>
+            simp only [List.zip_cons_cons, List.filterMap_cons, if_true]
+            rw [insertionForest_empty_host_nonempty_guests, Multiset.zero_bind]
+          | false =>
+            simp only [List.zip_cons_cons, List.filterMap_cons,
+                       if_neg (by decide : (false : Bool) ≠ true)]
+            conv_lhs =>
+              rhs; ext X_T
+              rw [insertionForest_empty_host_nonempty_guests, Multiset.zero_bind]
+            rw [Multiset.bind_zero]]
+      rw [Multiset.bind_zero]
+  | cons h rest_h ih =>
+    -- TODO: Cons case requires expanding via insertionForest_cons_assignment on both sides,
+    -- applying IH on rest_h with appropriate leaf', and bridging via split_pair_aux_T (a=true)
+    -- or a yet-to-be-built split_pair_aux_F (a=false). ~150-250 LOC of careful proof.
+    sorry
 
 /-! ### §2.2 A3.2 — RHS bridge `assocBucketSum_eq_iteratedQuadSum_outer`
 
