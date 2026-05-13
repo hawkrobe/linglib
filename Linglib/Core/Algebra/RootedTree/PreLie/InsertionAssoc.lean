@@ -179,6 +179,105 @@ theorem assocBucketSum_eq_kBucketSum
       funext c
       cases c <;> simp [Function.update_self]
 
+/-! ## §1.5: 4-bucket aggregator `iteratedQuadSum`
+
+LHS-side substrate for the deep case of
+`assocBucketSum_eq_insertionForest_iterated_msform`. The LHS form
+`(insertionForest host_A guests_B).bind (fun X => insertionForest X guests_C)`
+in the deep case `host_A = T :: F_A` admits a 4-bucket refinement of
+`guests_C`: each γ_C-guest lands at a vertex of `T_ins :: F_ins` (the
+B-grafted result), which is one of:
+- T's A-original vertices (T_orig bucket — siblings of pre_T_B at T)
+- T's B-grafted vertices (T_graft bucket — inside one of pre_T_B's trees)
+- F_A's A-original vertices (FA_orig bucket — siblings of pre_FA_B in F_A)
+- F_A's B-grafted vertices (FA_graft bucket — inside one of pre_FA_B's trees)
+
+The vertex-provenance comes from `vertices_multiGraft_decomp` (Graft.lean
+§9): T_ins = `multiGraft T (something derived from pre_T_B)` partitions its
+vertex set into preserved (A-original siblings), sourceSelf (A-original
+B-graft targets), and lifted (inside B-trees).
+
+`iteratedQuadSum` is the bucket-sum in this 4-bucket form. The leaf form
+expresses the LHS computation: first insert T_graft-bucket guests into
+pre_T_B (giving modified B-trees pre_T_B'), then insert pre_T_B' ++
+T_orig-bucket guests into T's vertices; symmetrically for F_A.
+
+Bridges:
+- `iteratedQuadSum_eq_assocBucketSum` (A3.2, TODO) — RHS bridge.
+- `iteratedQuadSum_eq_LHS_msform` (A3.3, TODO) — LHS bridge.
+- Combined to close the deep case (A3.4, TODO). -/
+
+/-- 4-bucket index for `iteratedQuadSum`. Each γ_C-guest assigns to one
+    bucket; the leaf computes the corresponding LHS form. -/
+private inductive QuadIdx where
+  | T_orig   : QuadIdx
+  | T_graft  : QuadIdx
+  | FA_orig  : QuadIdx
+  | FA_graft : QuadIdx
+deriving DecidableEq
+
+/-- 4-bucket aggregator: each `remaining` C-guest assigns to one of
+    `T_orig`/`T_graft`/`FA_orig`/`FA_graft`. At the leaf, T_graft-bucket
+    guests are first inserted into `pre_T_B` (giving modified B-trees);
+    then `pre_T_B' ++ pres' T_orig` is inserted into `T`. Symmetric for
+    `F_A` / `pre_FA_B`. -/
+private def iteratedQuadSum (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    (QuadIdx → List (Planar α)) → List (Planar α) →
+      Multiset (List (Planar α))
+  | pres, [] =>
+      (insertionForest pre_T_B (pres .T_graft)).bind fun pre_T_B' =>
+        (insertion T (pre_T_B' ++ pres .T_orig)).bind fun T' =>
+          (insertionForest pre_FA_B (pres .FA_graft)).bind fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++ pres .FA_orig)).map fun F' =>
+              T' :: F'
+  | pres, x :: rest =>
+      (Multiset.ofList [QuadIdx.T_orig, QuadIdx.T_graft,
+                         QuadIdx.FA_orig, QuadIdx.FA_graft]).bind fun t =>
+        iteratedQuadSum T F_A pre_T_B pre_FA_B
+          (Function.update pres t (pres t ++ [x])) rest
+
+private theorem iteratedQuadSum_nil_remaining
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B pres [] =
+      (insertionForest pre_T_B (pres .T_graft)).bind fun pre_T_B' =>
+        (insertion T (pre_T_B' ++ pres .T_orig)).bind fun T' =>
+          (insertionForest pre_FA_B (pres .FA_graft)).bind fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++ pres .FA_orig)).map fun F' =>
+              T' :: F' := rfl
+
+private theorem iteratedQuadSum_cons_remaining
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α))
+    (x : Planar α) (rest : List (Planar α)) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B pres (x :: rest) =
+      (Multiset.ofList [QuadIdx.T_orig, QuadIdx.T_graft,
+                         QuadIdx.FA_orig, QuadIdx.FA_graft]).bind fun t =>
+        iteratedQuadSum T F_A pre_T_B pre_FA_B
+          (Function.update pres t (pres t ++ [x])) rest := rfl
+
+/-- `iteratedQuadSum` as a `kBucketSum` instance: 4 buckets indexed by
+    `QuadIdx`, parallel quad-bind leaf as in the definition. -/
+private theorem iteratedQuadSum_eq_kBucketSum
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) (Ts : List (Planar α)) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B pres Ts =
+      kBucketSum [QuadIdx.T_orig, QuadIdx.T_graft,
+                   QuadIdx.FA_orig, QuadIdx.FA_graft]
+        (fun pres' =>
+          (insertionForest pre_T_B (pres' .T_graft)).bind fun pre_T_B' =>
+            (insertion T (pre_T_B' ++ pres' .T_orig)).bind fun T' =>
+              (insertionForest pre_FA_B (pres' .FA_graft)).bind fun pre_FA_B' =>
+                (insertionForest F_A (pre_FA_B' ++ pres' .FA_orig)).map fun F' =>
+                  T' :: F')
+        pres Ts := by
+  induction Ts generalizing pres with
+  | nil => rw [iteratedQuadSum_nil_remaining, kBucketSum_nil_remaining]
+  | cons x rest ih =>
+    rw [iteratedQuadSum_cons_remaining, kBucketSum_cons_remaining]
+    refine Multiset.bind_congr fun t _ => ?_
+    exact ih (Function.update pres t (pres t ++ [x]))
+
 /-! ## §2: Bridge: iterated insertionForest equals assocBucketSum
 
 The headline planar identity:
