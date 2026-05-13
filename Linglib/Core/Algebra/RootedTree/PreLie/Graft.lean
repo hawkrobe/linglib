@@ -4,11 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.PreLie.Insert
+import Mathlib.Data.Multiset.Basic
+import Mathlib.Data.Multiset.Bind
+import Mathlib.Data.Multiset.Filter
 
 set_option autoImplicit false
 
 /-!
-# Multi-path multi-tree grafting for `Planar α`
+# Multi-path multi-tree grafting and vertex decomposition for `Planar α`
 @cite{foissy-typed-decorated-rooted-trees-2018}
 @cite{foissy-introduction-hopf-algebras-trees}
 
@@ -19,8 +22,35 @@ multiple grafts at the same vertex (preserving pair-list order, which
 matters at the root and at each common host vertex; commutativity at the
 multiset boundary is upstream in `Insertion.lean`).
 
-Sibling to `Insert.lean` (single-vertex insertion). Lives under namespace
-`RootedTree.Planar.Pathed`.
+The headline theorem `vertices_multiGraft_decomp` partitions the path set
+of `multiGraft T pairs` into three classes paralleling `vertices_insertAt_decomp`:
+
+* **preserved**: vertices of `T \ pairSources` transported through the
+  cumulative ancestor-source shifts.
+* **sourceSelf**: vertices of `T ∩ pairSources` (sources of pair grafts),
+  each at its transported original path. Distinct sources contribute
+  multiplicity 1 each — sharing a source does not duplicate the host vertex.
+* **lifted**: for each pair `k = (eₖ, Tₖ)` and each `q ∈ vertices Tₖ`, the
+  path `transport pairs eₖ ++ posₖ :: q`, where `posₖ` is `k`'s position
+  among pairs sharing source `eₖ` (in pair-list order, per Foissy 2021
+  convention).
+
+This decomposition is the substrate behind the deep case of
+`assocBucketSum_eq_insertionForest_iterated_msform` (`InsertionAssoc.lean`),
+the keystone for Oudom-Guin Prop 2.7.v at the basis level.
+
+## Specialization to single-pair
+
+`multiGraft T [(e, T₂)] = insertAt e T₂ T` (`multiGraft_singleton`), and
+under that specialization the helpers reduce:
+
+* `transport [(e, T₂)] = id` on paths disjoint from `e`'s descendants;
+  `e ⊏ f → transport [(e, T₂)] f` shifts `f`'s child index past `e` by `+1`.
+* `preserveMulti [(e, T₂)] = preserve? e`.
+* `liftMulti [(e, T₂)] ⟨0, _⟩ q = lift e q`.
+
+`vertices_multiGraft_decomp` therefore implies `vertices_insertAt_decomp`
+as a corollary (§9).
 
 ## Design
 
@@ -37,17 +67,29 @@ arithmetic on offsets, just direct structural cases.
 
 ## File scope
 
-- §1: `multiGraft` / `multiGraftChildren` mutual definitions + simp lemmas.
-- §2: Nil identity (`multiGraft T [] = T`).
-- §3: Singleton bridge (`multiGraft T [(p, T₂)] = insertAt p T₂ T`).
+- §1: Filter helpers (`rootPrependFilter`, `headChildFilter`, `tailChildFilter`).
+- §2: `multiGraft` / `multiGraftChildren` mutual definitions + simp lemmas.
+- §3: Nil identity (`multiGraft T [] = T`).
+- §4: Singleton bridge (`multiGraft T [(p, T₂)] = insertAt p T₂ T`).
+- §5: `descentToChild`, `rootPrependCount` — pair-list operations mirroring
+  the `multiGraft` recursion.
+- §6: `transport` — total path transformer applying cumulative ancestor shifts.
+- §7: `pairSources`, `preserveMulti` — the preserve-or-drop function.
+- §8: `posInGroup`, `liftMulti` — the lifted-vertex path embedding.
+- §9: `vertices_multiGraft_decomp` — the headline theorem.
+- §10: Single-pair specialization corollaries (depend on §9).
 
-Perm-invariance helpers are deferred to a follow-up session — they
-require a more involved Multiset/Perm setup that doesn't belong in the
-foundational substrate file.
+Sibling files:
+- `Path.lean` — Path / IsValidPath / vertices / verticesAux.
+- `Insert.lean` — single-pair `insertAt` + single-pair vertex decomposition.
 
 ## Status
 
-`[UPSTREAM]` candidate. Sorry-free, no `noncomputable`.
+`[UPSTREAM]` candidate. **All sorry-free** (§1–§10). The headline
+`vertices_multiGraft_decomp` (§9) is closed via the §8.5–§8.9 substrate:
+descent helpers, `liftMulti_at_root` / `liftMulti_at_child_descent`,
+`root_bind_eq` (root-pair bridge), `bind_descent_eq_aux` (descent-pair
+bridge), `bind_finRange_singleton_eq` (validity-based per-`k` decomp).
 -/
 
 namespace RootedTree
@@ -151,7 +193,7 @@ end
       multiGraft c (pairs.filterMap headChildFilter) ::
         multiGraftChildren cs (pairs.filterMap tailChildFilter) := rfl
 
-/-! ## §2: Nil identity -/
+/-! ## §3: Nil identity -/
 
 mutual
 /-- Empty pair list: `multiGraft` is the identity. -/
@@ -169,15 +211,15 @@ theorem multiGraftChildren_nil_pairs : ∀ (cs : List (Planar α)),
     rw [multiGraft_nil c, multiGraftChildren_nil_pairs cs]
 end
 
-/-! ## §3: Singleton bridge to `insertAt`
+/-! ## §4: Singleton bridge to `insertAt`
 
 A single-pair `multiGraft` is exactly `insertAt`. The proof splits into:
 
-- §3.1 `multiGraftChildren cs [([], T₂)] = cs` — the empty path
+- §4.1 `multiGraftChildren cs [([], T₂)] = cs` — the empty path
   contributes only to root prepends, not to the children.
-- §3.2 `multiGraftChildren cs [(j :: rest, T₂)]` agrees with `cs.set j`
+- §4.2 `multiGraftChildren cs [(j :: rest, T₂)]` agrees with `cs.set j`
   when `j < cs.length`, else is the identity.
-- §3.3 Top-level `multiGraft_singleton` combines these. -/
+- §4.3 Top-level `multiGraft_singleton` combines these. -/
 
 private theorem multiGraftChildren_singleton_nilPath :
     ∀ (cs : List (Planar α)) (T₂ : Planar α),
@@ -229,6 +271,1777 @@ private theorem multiGraftChildren_singleton_cons :
     · have hk' : ¬ k + 1 < (c :: cs).length := by simp [List.length_cons]; omega
       simp only [hk, hk', ↓reduceDIte]
 end
+
+/-! ## §5: Pair-list operations mirroring `multiGraft` recursion
+
+`multiGraft` descends pairs into children via `headChildFilter` (paths
+starting with `0`) and `tailChildFilter` (paths starting with `k+1`).
+The combined effect on the i-th child is captured by `descentToChild i`,
+which keeps pairs whose path begins with `i` and strips that index.
+
+Root prepends — pairs with empty path — are counted by `rootPrependCount`,
+which determines the `+N` child-index shift seen by every original-T vertex
+at the current level. -/
+
+/-- Filter the pair list to those whose path begins with `i`, stripping
+    the leading index. The resulting paths address vertices in the
+    `i`-th child. -/
+def descentToChild (i : ℕ) :
+    List (Path × Planar α) → List (Path × Planar α)
+  | []                          => []
+  | ([], _) :: rest             => descentToChild i rest
+  | (j :: rest_p, T) :: rest    =>
+      if i = j then (rest_p, T) :: descentToChild i rest
+      else descentToChild i rest
+
+@[simp] theorem descentToChild_nil (i : ℕ) :
+    descentToChild (α := α) i [] = [] := rfl
+
+@[simp] theorem descentToChild_cons_nilPath (i : ℕ) (T : Planar α)
+    (rest : List (Path × Planar α)) :
+    descentToChild i (([], T) :: rest) = descentToChild i rest := rfl
+
+theorem descentToChild_cons_consPath (i j : ℕ) (rest_p : Path)
+    (T : Planar α) (rest : List (Path × Planar α)) :
+    descentToChild i ((j :: rest_p, T) :: rest) =
+      (if i = j then (rest_p, T) :: descentToChild i rest
+       else descentToChild i rest) := rfl
+
+@[simp] theorem descentToChild_cons_consPath_eq (i : ℕ) (rest_p : Path)
+    (T : Planar α) (rest : List (Path × Planar α)) :
+    descentToChild i ((i :: rest_p, T) :: rest) =
+      (rest_p, T) :: descentToChild i rest := by
+  rw [descentToChild_cons_consPath, if_pos rfl]
+
+theorem descentToChild_cons_consPath_ne (i j : ℕ) (rest_p : Path)
+    (T : Planar α) (rest : List (Path × Planar α)) (h : i ≠ j) :
+    descentToChild i ((j :: rest_p, T) :: rest) =
+      descentToChild i rest := by
+  rw [descentToChild_cons_consPath, if_neg h]
+
+/-- Number of pairs whose path is `[]` — the root-prepend count at the
+    current level. Determines the `+N` shift of every original-T child index. -/
+def rootPrependCount (pairs : List (Path × Planar α)) : ℕ :=
+  (pairs.filter (fun pair => pair.fst = [])).length
+
+@[simp] theorem rootPrependCount_nil :
+    rootPrependCount (α := α) [] = 0 := rfl
+
+@[simp] theorem rootPrependCount_cons_nilPath (T : Planar α)
+    (rest : List (Path × Planar α)) :
+    rootPrependCount (([], T) :: rest) = rootPrependCount rest + 1 := by
+  unfold rootPrependCount
+  simp
+
+@[simp] theorem rootPrependCount_cons_consPath (j : ℕ) (rest_p : Path)
+    (T : Planar α) (rest : List (Path × Planar α)) :
+    rootPrependCount ((j :: rest_p, T) :: rest) = rootPrependCount rest := by
+  unfold rootPrependCount
+  simp
+
+/-! ## §6: `transport` — total path transformer
+
+`transport pairs f` computes the new path of an original-T vertex `f` in
+`multiGraft T pairs`. Pure path arithmetic; works for any `f`, even those
+not in `vertices T` (no validity hypothesis). -/
+
+/-- Recursive path transformer: at each level, shift the child index by
+    the root-prepend count, then descend with the projected pair list. -/
+def transport : List (Path × Planar α) → Path → Path
+  | _, []           => []
+  | pairs, i :: rest =>
+      (i + rootPrependCount pairs) ::
+        transport (descentToChild i pairs) rest
+
+@[simp] theorem transport_nil_path (pairs : List (Path × Planar α)) :
+    transport pairs [] = [] := rfl
+
+@[simp] theorem transport_cons_path (pairs : List (Path × Planar α))
+    (i : ℕ) (rest : Path) :
+    transport pairs (i :: rest) =
+      (i + rootPrependCount pairs) ::
+        transport (descentToChild i pairs) rest := rfl
+
+@[simp] theorem transport_empty_pairs (f : Path) :
+    transport (α := α) [] f = f := by
+  induction f with
+  | nil => rfl
+  | cons i rest ih =>
+    rw [transport_cons_path, rootPrependCount_nil, descentToChild_nil, ih,
+        Nat.add_zero]
+
+/-! ## §7: `pairSources`, `preserveMulti` — the preserve-or-drop function
+
+`pairSources` is the underlying list of pair source paths. `preserveMulti`
+returns `none` on any pair source (excluding it from the preserved class)
+and `some (transport pairs f)` otherwise. -/
+
+/-- The list of pair source paths (in pair-list order; may contain
+    duplicates if multiple pairs share a source). -/
+def pairSources (pairs : List (Path × Planar α)) : List Path :=
+  pairs.map Prod.fst
+
+@[simp] theorem pairSources_nil : pairSources (α := α) [] = [] := rfl
+
+@[simp] theorem pairSources_cons (p : Path) (T : Planar α)
+    (rest : List (Path × Planar α)) :
+    pairSources ((p, T) :: rest) = p :: pairSources rest := rfl
+
+/-- The preserve-or-drop function for the multi-pair case.
+    - `none` if `f` is any pair source (excluded from the preserved class).
+    - `some (transport pairs f)` otherwise (transport applies the
+      cumulative ancestor-source shifts).
+
+    Mirrors `preserve?` for the single-pair case. -/
+def preserveMulti (pairs : List (Path × Planar α)) (f : Path) : Option Path :=
+  if f ∈ pairSources pairs then none else some (transport pairs f)
+
+@[simp] theorem preserveMulti_empty (f : Path) :
+    preserveMulti (α := α) [] f = some f := by
+  unfold preserveMulti
+  simp
+
+/-! ## §8: `posInGroup`, `liftMulti` — lifted-vertex paths
+
+For pair `k = (eₖ, Tₖ)`, vertices `q ∈ vertices Tₖ` lift to
+`transport pairs eₖ ++ posₖ :: q`, where `posₖ` is `k`'s 0-indexed
+position among pairs targeting `eₖ` (in pair-list order). When all pairs
+have distinct sources, every `posₖ = 0`. -/
+
+/-- Position of pair `k` among pairs sharing the same source path
+    (counting only earlier pairs in pair-list order). -/
+def posInGroup (pairs : List (Path × Planar α)) (k : Fin pairs.length) : ℕ :=
+  ((pairs.take k.val).filter (fun pair => pair.fst = pairs[k].fst)).length
+
+/-- The path of vertex `q ∈ vertices (pairs[k].snd)` in `multiGraft T pairs`. -/
+def liftMulti (pairs : List (Path × Planar α)) (k : Fin pairs.length)
+    (q : Path) : Path :=
+  transport pairs pairs[k].fst ++ (posInGroup pairs k :: q)
+
+/-! ## §8.5: Substrate lemmas for the decomposition
+
+Five identities needed by the main proof:
+
+1. `length_filterMap_rootPrependFilter`: the rootPrepends list has length
+   equal to `rootPrependCount pairs`.
+2. `descentToChild_zero`: `descentToChild 0 pairs = pairs.filterMap headChildFilter`.
+3. `descentToChild_succ`: `descentToChild (i+1) pairs = descentToChild i (pairs.filterMap tailChildFilter)`.
+4. `descent_pairSources_iff`: `rest ∈ pairSources (descentToChild i pairs) ↔ (i :: rest) ∈ pairSources pairs`.
+5. `preserveMulti_cons`: `preserveMulti pairs (i :: rest) =
+     (preserveMulti (descentToChild i pairs) rest).map ((i + rootPrependCount pairs) :: ·)`.
+
+These bridge the multiGraft recursion (on filterMap headChildFilter / tailChildFilter)
+to the path-arithmetic operations (descentToChild, rootPrependCount, transport). -/
+
+/-- Length of the root-prepends list equals `rootPrependCount`. -/
+@[simp] theorem length_filterMap_rootPrependFilter : ∀ (pairs : List (Path × Planar α)),
+    (pairs.filterMap rootPrependFilter).length = rootPrependCount pairs
+  | [] => rfl
+  | ([], T) :: rest => by
+    have h : List.filterMap rootPrependFilter ((([], T) :: rest) : List (Path × Planar α))
+             = T :: rest.filterMap rootPrependFilter := rfl
+    rw [h, List.length_cons, length_filterMap_rootPrependFilter rest,
+        rootPrependCount_cons_nilPath]
+  | (i :: rest_p, T) :: rest => by
+    have h : List.filterMap rootPrependFilter (((i :: rest_p, T) :: rest) : List (Path × Planar α))
+             = rest.filterMap rootPrependFilter := rfl
+    rw [h, length_filterMap_rootPrependFilter rest,
+        rootPrependCount_cons_consPath]
+
+/-- `descentToChild 0 pairs` agrees with `pairs.filterMap headChildFilter`. -/
+theorem descentToChild_zero : ∀ (pairs : List (Path × Planar α)),
+    descentToChild 0 pairs = pairs.filterMap headChildFilter
+  | [] => rfl
+  | ([], T) :: rest => by
+    rw [descentToChild_cons_nilPath, descentToChild_zero rest]
+    simp [headChildFilter_of_nil]
+  | (0 :: rest_p, T) :: rest => by
+    rw [descentToChild_cons_consPath_eq 0 rest_p T rest, descentToChild_zero rest]
+    simp [headChildFilter_of_zero_cons]
+  | ((k + 1) :: rest_p, T) :: rest => by
+    rw [descentToChild_cons_consPath_ne 0 (k + 1) rest_p T rest (by omega),
+        descentToChild_zero rest]
+    simp [headChildFilter_of_succ_cons]
+
+/-- `descentToChild (i+1) pairs` agrees with descending into the `i`-th child of
+    `pairs.filterMap tailChildFilter`. The shift `(k+1) :: rest ↦ k :: rest`
+    on tail-child paths exactly cancels the `+1` in the descent index. -/
+theorem descentToChild_succ (i : ℕ) : ∀ (pairs : List (Path × Planar α)),
+    descentToChild (i + 1) pairs = descentToChild i (pairs.filterMap tailChildFilter)
+  | [] => rfl
+  | ([], T) :: rest => by
+    rw [descentToChild_cons_nilPath, descentToChild_succ i rest]
+    simp [tailChildFilter_of_nil]
+  | (0 :: rest_p, T) :: rest => by
+    rw [descentToChild_cons_consPath_ne (i + 1) 0 rest_p T rest (by omega),
+        descentToChild_succ i rest]
+    simp [tailChildFilter_of_zero_cons]
+  | ((k + 1) :: rest_p, T) :: rest => by
+    by_cases h : i = k
+    · subst h
+      rw [descentToChild_cons_consPath_eq (i + 1) rest_p T rest,
+          show ((((i + 1) :: rest_p, T) :: rest : List (Path × Planar α)).filterMap
+                tailChildFilter) = (i :: rest_p, T) :: rest.filterMap tailChildFilter
+            from by simp [tailChildFilter_of_succ_cons],
+          descentToChild_cons_consPath_eq i rest_p T (rest.filterMap tailChildFilter),
+          descentToChild_succ i rest]
+    · have h' : ¬ (i + 1 = k + 1) := fun heq => h (by omega)
+      rw [descentToChild_cons_consPath_ne (i + 1) (k + 1) rest_p T rest h',
+          show ((((k + 1) :: rest_p, T) :: rest : List (Path × Planar α)).filterMap
+                tailChildFilter) = (k :: rest_p, T) :: rest.filterMap tailChildFilter
+            from by simp [tailChildFilter_of_succ_cons],
+          descentToChild_cons_consPath_ne i k rest_p T (rest.filterMap tailChildFilter) h,
+          descentToChild_succ i rest]
+
+/-- A path `rest` is a source of the descended pair list iff `i :: rest` is a
+    source of the original pair list. -/
+theorem descent_pairSources_iff (i : ℕ) (rest : Path) :
+    ∀ (pairs : List (Path × Planar α)),
+    rest ∈ pairSources (descentToChild i pairs) ↔ (i :: rest) ∈ pairSources pairs
+  | [] => by simp
+  | ([], T) :: pairs' => by
+    rw [descentToChild_cons_nilPath, pairSources_cons, List.mem_cons,
+        descent_pairSources_iff i rest pairs']
+    exact ⟨Or.inr, fun h => h.resolve_left (List.cons_ne_nil i rest)⟩
+  | (j :: rest_p, T) :: pairs' => by
+    by_cases h : i = j
+    · subst h
+      rw [descentToChild_cons_consPath_eq i rest_p T pairs', pairSources_cons,
+          pairSources_cons, List.mem_cons, List.mem_cons,
+          descent_pairSources_iff i rest pairs',
+          show ((i :: rest) = (i :: rest_p) ↔ rest = rest_p) from
+            ⟨fun heq => (List.cons.injEq _ _ _ _).mp heq |>.right,
+             fun heq => congr_arg (i :: ·) heq⟩]
+    · rw [descentToChild_cons_consPath_ne i j rest_p T pairs' h,
+          pairSources_cons, List.mem_cons,
+          descent_pairSources_iff i rest pairs']
+      exact ⟨Or.inr, fun hor => hor.resolve_left
+        (fun heq => h ((List.cons.injEq _ _ _ _).mp heq).left)⟩
+
+/-- The decomposition of `preserveMulti` over a `cons` path: descending into
+    child `i` strips the leading `i` and shifts the next index by the
+    `rootPrependCount`. -/
+theorem preserveMulti_cons (pairs : List (Path × Planar α)) (i : ℕ) (rest : Path) :
+    preserveMulti pairs (i :: rest) =
+      (preserveMulti (descentToChild i pairs) rest).map
+        ((i + rootPrependCount pairs) :: ·) := by
+  unfold preserveMulti
+  by_cases h : (i :: rest) ∈ pairSources pairs
+  · rw [if_pos h, if_pos ((descent_pairSources_iff i rest pairs).mpr h)]
+    rfl
+  · rw [if_neg h, if_neg (fun hmem => h ((descent_pairSources_iff i rest pairs).mp hmem))]
+    rw [transport_cons_path]
+    rfl
+
+/-- Membership in `descentToChild i pairs` — a pair `(rest, T)` appears iff
+    the original `(i :: rest, T)` appears in `pairs`. The .snd is preserved
+    under descent; the .fst loses its leading `i`. -/
+theorem mem_descentToChild_iff (i : ℕ) (rest : Path) (T : Planar α) :
+    ∀ (pairs : List (Path × Planar α)),
+    (rest, T) ∈ descentToChild i pairs ↔ (i :: rest, T) ∈ pairs
+  | [] => by simp
+  | ([], T') :: pairs' => by
+    rw [descentToChild_cons_nilPath, mem_descentToChild_iff i rest T pairs',
+        List.mem_cons]
+    refine ⟨Or.inr, ?_⟩
+    rintro (heq | h)
+    · injection heq with hpath _
+      exact absurd hpath (List.cons_ne_nil i rest)
+    · exact h
+  | (j :: rest_p, T') :: pairs' => by
+    by_cases h : i = j
+    · subst h
+      rw [descentToChild_cons_consPath_eq i rest_p T' pairs',
+          List.mem_cons, List.mem_cons,
+          mem_descentToChild_iff i rest T pairs']
+      refine ⟨?_, ?_⟩
+      · rintro (heq | h_mem)
+        · refine Or.inl ?_
+          injection heq with hfs hsn
+          rw [hfs, hsn]
+        · exact Or.inr h_mem
+      · rintro (heq | h_mem)
+        · refine Or.inl ?_
+          injection heq with hfs hsn
+          injection hfs with _ hrest_eq
+          rw [hrest_eq, hsn]
+        · exact Or.inr h_mem
+    · rw [descentToChild_cons_consPath_ne i j rest_p T' pairs' h,
+          List.mem_cons,
+          mem_descentToChild_iff i rest T pairs']
+      refine ⟨Or.inr, ?_⟩
+      rintro (heq | h_mem)
+      · injection heq with hfs _
+        injection hfs with hji _
+        exact (h hji).elim
+      · exact h_mem
+
+/-- Per-child validity: if every pair source is valid in `node a cs`, then
+    every descended pair (under child `i`) has its source valid in `cs[i]`.
+    Used by the main `vertices_multiGraft_decomp` proof to derive the IH
+    hypothesis on each child. -/
+theorem descentToChild_valid_of_node (a : α) (cs : List (Planar α))
+    (pairs : List (Path × Planar α))
+    (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst (Planar.node a cs))
+    (i : Fin cs.length) :
+    ∀ pair ∈ descentToChild i.val pairs, IsValidPath pair.fst cs[i.val] := by
+  intro pair hmem
+  obtain ⟨rest, T_pair⟩ := pair
+  have horig : (i.val :: rest, T_pair) ∈ pairs :=
+    (mem_descentToChild_iff i.val rest T_pair pairs).mp hmem
+  have h_orig_valid := h_valid (i.val :: rest, T_pair) horig
+  obtain ⟨_, h_rest⟩ := (isValidPath_cons i.val rest a cs).mp h_orig_valid
+  exact h_rest
+
+/-! ## §8.6: Children-block companion lemma
+
+The main theorem's structural decomposition needs a companion lemma giving
+the per-child unfolding of `verticesAux N (multiGraftChildren cs pairs)`.
+This is mutually recursive with the main theorem (the companion calls main
+on each `cs[i]`, which is structurally smaller than `node a cs`). -/
+
+/-- Children-block structural unfolding: the verticesAux of multiGraftChildren
+    decomposes as a sum over child indices, each prepended with `(offset + i)`.
+    Pure structural unfolding — does not yet apply the main theorem's 3-class
+    decomposition; the main theorem applies that after unfolding. -/
+private theorem verticesAux_multiGraftChildren_unfold :
+    ∀ (cs : List (Planar α)) (pairs : List (Path × Planar α)) (offset : ℕ),
+    ((verticesAux offset (multiGraftChildren cs pairs) : List Path) : Multiset Path) =
+      (Multiset.ofList (List.finRange cs.length)).bind fun i =>
+        ((vertices (multiGraft cs[i.val] (descentToChild i.val pairs)) : List Path) :
+          Multiset Path).map ((offset + i.val) :: ·)
+  | [], _, _ => by
+    rw [multiGraftChildren_nil_cs, verticesAux_nil]
+    show ((↑([] : List Path)) : Multiset Path) = _
+    simp [List.finRange_zero]
+  | c :: cs', pairs, offset => by
+    -- Step 1: unfold LHS, distribute Multiset coercion over append.
+    rw [multiGraftChildren_cons_cs, verticesAux_cons]
+    rw [show (((vertices (multiGraft c (pairs.filterMap headChildFilter))).map
+                ((offset : ℕ) :: ·) ++
+              verticesAux (offset + 1) (multiGraftChildren cs'
+                (pairs.filterMap tailChildFilter)) : List Path) : Multiset Path) =
+            (((vertices (multiGraft c (pairs.filterMap headChildFilter))).map
+                ((offset : ℕ) :: ·) : List Path) : Multiset Path) +
+            ((verticesAux (offset + 1) (multiGraftChildren cs'
+                (pairs.filterMap tailChildFilter)) : List Path) : Multiset Path)
+        from by rw [← Multiset.coe_add]]
+    -- Step 2: apply IH on cs'.
+    rw [verticesAux_multiGraftChildren_unfold cs' (pairs.filterMap tailChildFilter) (offset + 1)]
+    -- Step 3: bridge via descentToChild_zero (head) + descentToChild_succ (tail).
+    rw [show pairs.filterMap headChildFilter = descentToChild 0 pairs from
+          (descentToChild_zero pairs).symm]
+    -- Inside IH bind: rewrite the `descentToChild j.val (pairs.filterMap tailChildFilter)`
+    -- to `descentToChild (j.val + 1) pairs`, and also normalize the offset arithmetic.
+    rw [show (Multiset.ofList (List.finRange cs'.length)).bind (fun j =>
+              ((vertices (multiGraft cs'[j.val]
+                  (descentToChild j.val (pairs.filterMap tailChildFilter))) : List Path) :
+                Multiset Path).map ((offset + 1 + j.val) :: ·)) =
+            (Multiset.ofList (List.finRange cs'.length)).bind (fun j =>
+              ((vertices (multiGraft cs'[j.val] (descentToChild (j.val + 1) pairs)) :
+                List Path) : Multiset Path).map ((offset + (j.val + 1)) :: ·))
+        from by
+          refine Multiset.bind_congr fun j _ => ?_
+          rw [← descentToChild_succ j.val pairs,
+              show offset + 1 + j.val = offset + (j.val + 1) from by omega]]
+    -- Step 4: expand RHS bind via List.finRange_succ.
+    -- RHS bind is over `Fin (c :: cs').length`. By definitional equality
+    -- `(c :: cs').length = cs'.length + 1`, this is `Fin (cs'.length + 1)`.
+    -- `List.finRange_succ` rewrites `List.finRange (n+1) = 0 :: (finRange n).map Fin.succ`.
+    show _ = (Multiset.ofList (List.finRange (cs'.length + 1))).bind fun i =>
+              ((vertices (multiGraft (c :: cs')[i.val] (descentToChild i.val pairs)) :
+                List Path) : Multiset Path).map ((offset + i.val) :: ·)
+    rw [List.finRange_succ]
+    rw [show ((Multiset.ofList ((0 : Fin (cs'.length + 1)) ::
+              (List.finRange cs'.length).map Fin.succ) : Multiset (Fin (cs'.length + 1))) =
+            (0 : Fin (cs'.length + 1)) ::ₘ
+              Multiset.ofList ((List.finRange cs'.length).map Fin.succ))
+        from rfl,
+        Multiset.cons_bind]
+    -- Reduce the head term.
+    rw [show ((c :: cs') : List (Planar α))[(0 : Fin (cs'.length + 1)).val] = c from rfl,
+        show offset + (0 : Fin (cs'.length + 1)).val = offset from by
+          show offset + 0 = offset; omega]
+    -- Tail bind: convert via Multiset.bind_map.
+    rw [show Multiset.ofList ((List.finRange cs'.length).map Fin.succ) =
+            (Multiset.ofList (List.finRange cs'.length)).map Fin.succ from rfl]
+    rw [Multiset.bind_map]
+    -- Now both sides have shape `head_term + bind (Fin cs'.length) (...)` and should match.
+    refine congr_arg _ ?_
+    refine Multiset.bind_congr fun j _ => ?_
+    rfl
+
+/-! ## §8.7: Helpers for the 3-class decomposition proof
+
+Three helpers needed by the headline proof:
+
+1. `verticesAux_unfold`: the no-graft companion of
+   `verticesAux_multiGraftChildren_unfold` — `verticesAux offset cs` as a
+   bind over child indices. Specializes the multi-graft version with
+   `pairs = []`.
+2. `preserveMulti_cons_post_map`: pointwise bridge identifying
+   `(preserveMulti (descentToChild i pairs) f).map ((i + N) :: ·)`
+   with `preserveMulti pairs (i :: f)`. Uses `preserveMulti_cons`.
+3. `transport_descent_via_cons`: pointwise bridge identifying
+   `transport (descentToChild i pairs) f` (after prepending) with
+   `transport pairs (i :: f)`. Uses `transport_cons_path`.
+-/
+
+/-- No-graft companion of `verticesAux_multiGraftChildren_unfold`: the
+    paths in `verticesAux offset cs` decompose as a bind over child
+    indices, each prepended with `(offset + i)`. Proof is by structural
+    induction on `cs` (no mutual recursion needed). -/
+private theorem verticesAux_unfold :
+    ∀ (cs : List (Planar α)) (offset : ℕ),
+    ((verticesAux offset cs : List Path) : Multiset Path) =
+      (Multiset.ofList (List.finRange cs.length)).bind fun i =>
+        ((vertices cs[i.val] : List Path) : Multiset Path).map ((offset + i.val) :: ·)
+  | [], _ => by
+    rw [verticesAux_nil]
+    show ((↑([] : List Path)) : Multiset Path) = _
+    simp [List.finRange_zero]
+  | c :: cs', offset => by
+    rw [verticesAux_cons]
+    rw [show (((vertices c).map ((offset : ℕ) :: ·) ++
+              verticesAux (offset + 1) cs' : List Path) : Multiset Path) =
+            (((vertices c).map ((offset : ℕ) :: ·) : List Path) : Multiset Path) +
+            ((verticesAux (offset + 1) cs' : List Path) : Multiset Path)
+        from by rw [← Multiset.coe_add]]
+    rw [verticesAux_unfold cs' (offset + 1)]
+    -- RHS: bind over Fin (c :: cs').length = Fin (cs'.length + 1).
+    show _ = (Multiset.ofList (List.finRange (cs'.length + 1))).bind fun i =>
+              ((vertices ((c :: cs') : List (Planar α))[i.val] : List Path) :
+                Multiset Path).map ((offset + i.val) :: ·)
+    rw [List.finRange_succ]
+    rw [show ((Multiset.ofList ((0 : Fin (cs'.length + 1)) ::
+              (List.finRange cs'.length).map Fin.succ) : Multiset (Fin (cs'.length + 1))) =
+            (0 : Fin (cs'.length + 1)) ::ₘ
+              Multiset.ofList ((List.finRange cs'.length).map Fin.succ))
+        from rfl,
+        Multiset.cons_bind]
+    rw [show ((c :: cs') : List (Planar α))[(0 : Fin (cs'.length + 1)).val] = c from rfl,
+        show offset + (0 : Fin (cs'.length + 1)).val = offset from by
+          show offset + 0 = offset; omega]
+    rw [show Multiset.ofList ((List.finRange cs'.length).map Fin.succ) =
+            (Multiset.ofList (List.finRange cs'.length)).map Fin.succ from rfl]
+    rw [Multiset.bind_map]
+    refine congr_arg _ ?_
+    refine Multiset.bind_congr fun j _ => ?_
+    rw [show offset + 1 + j.val = offset + (j.val + 1) from by omega]
+    rfl
+
+/-- Pointwise bridge: `(preserveMulti (descentToChild i pairs) f).map ((N + i) :: ·) =
+    preserveMulti pairs (i :: f)`, where `N = rootPrependCount pairs`. Direct
+    consequence of `preserveMulti_cons` after commuting addition. -/
+private theorem preserveMulti_cons_post_map (pairs : List (Path × Planar α))
+    (i : ℕ) (f : Path) :
+    (preserveMulti (descentToChild i pairs) f).map
+      ((rootPrependCount pairs + i) :: ·) = preserveMulti pairs (i :: f) := by
+  rw [preserveMulti_cons, show rootPrependCount pairs + i = i + rootPrependCount pairs
+      from by omega]
+
+/-- Pointwise bridge: `(N + i) :: transport (descentToChild i pairs) f =
+    transport pairs (i :: f)`, where `N = rootPrependCount pairs`. Direct
+    consequence of `transport_cons_path` after commuting addition. -/
+private theorem transport_cons_descent (pairs : List (Path × Planar α))
+    (i : ℕ) (f : Path) :
+    (rootPrependCount pairs + i) :: transport (descentToChild i pairs) f =
+      transport pairs (i :: f) := by
+  rw [transport_cons_path, show rootPrependCount pairs + i = i + rootPrependCount pairs
+      from by omega]
+
+/-! ## §8.8: Bijection helpers for the lifted bridge (step 8)
+
+The (i, k') ↔ k bijection between descent-indexed pairs and original pairs.
+Built around `descentCount` (a counting form of `descentToChild i pairs`'s length)
+and `descentIdxOf` (the descent-corresponding index function).
+
+Properties needed by step 8:
+- `descentToChild_length_eq`: `(descentToChild i pairs).length = descentCount i pairs`.
+- `descentToChild_take`: walking-the-prefix gives a prefix-of-the-walk.
+- `descentToChild_getElem`: characterizes `(descentToChild i pairs)[k']`.
+- `descentIdxOf_lt`: validity of `descentIdxOf` as a `Fin`-index.
+- `posInGroup_descent_invariance`: posInGroup is preserved under descent.
+
+The bijection is implicit; step 8 uses these properties to re-organize the
+LHS bind to match RHS via `Multiset.bind_congr` after `transport_cons_descent`. -/
+
+/-- Number of pairs in `pairs` whose first index is `i`. Equals
+    `(descentToChild i pairs).length`. -/
+private def descentCount (i : ℕ) (pairs : List (Path × Planar α)) : ℕ :=
+  (pairs.filter (fun pair => pair.fst.head? = some i)).length
+
+@[simp] private theorem descentCount_nil (i : ℕ) :
+    descentCount (α := α) i [] = 0 := rfl
+
+@[simp] private theorem descentCount_cons_nilPath (i : ℕ) (T : Planar α)
+    (rest : List (Path × Planar α)) :
+    descentCount i (([], T) :: rest) = descentCount i rest := by
+  unfold descentCount
+  simp [List.filter_cons]
+
+@[simp] private theorem descentCount_cons_consPath_eq (i : ℕ) (rest_p : Path)
+    (T : Planar α) (rest : List (Path × Planar α)) :
+    descentCount i ((i :: rest_p, T) :: rest) = descentCount i rest + 1 := by
+  unfold descentCount
+  simp [List.filter_cons]
+
+private theorem descentCount_cons_consPath_ne (i j : ℕ) (rest_p : Path)
+    (T : Planar α) (rest : List (Path × Planar α)) (h : i ≠ j) :
+    descentCount i ((j :: rest_p, T) :: rest) = descentCount i rest := by
+  unfold descentCount
+  rw [List.filter_cons]
+  simp [Ne.symm h]
+
+/-- `(descentToChild i pairs).length = descentCount i pairs`. The descent
+    operation matches the count of pairs with the right head. -/
+private theorem descentToChild_length_eq (i : ℕ) :
+    ∀ (pairs : List (Path × Planar α)),
+    (descentToChild i pairs).length = descentCount i pairs
+  | [] => rfl
+  | ([], _) :: rest => by
+    rw [descentToChild_cons_nilPath, descentToChild_length_eq i rest,
+        descentCount_cons_nilPath]
+  | (j :: rest_p, T) :: rest => by
+    by_cases h : i = j
+    · subst h
+      rw [descentToChild_cons_consPath_eq i rest_p T rest, List.length_cons,
+          descentToChild_length_eq i rest, descentCount_cons_consPath_eq]
+    · rw [descentToChild_cons_consPath_ne i j rest_p T rest h,
+          descentToChild_length_eq i rest, descentCount_cons_consPath_ne i j _ T rest h]
+
+/-- `descentToChild` distributes over `++`. -/
+private theorem descentToChild_append (i : ℕ) :
+    ∀ (xs ys : List (Path × Planar α)),
+    descentToChild i (xs ++ ys) = descentToChild i xs ++ descentToChild i ys
+  | [], ys => by simp [descentToChild]
+  | ([], T) :: xs', ys => by
+    rw [List.cons_append, descentToChild_cons_nilPath, descentToChild_cons_nilPath,
+        descentToChild_append i xs' ys]
+  | (j :: rest_p, T) :: xs', ys => by
+    by_cases h : i = j
+    · subst h
+      rw [List.cons_append, descentToChild_cons_consPath_eq, descentToChild_cons_consPath_eq,
+          descentToChild_append i xs' ys, List.cons_append]
+    · rw [List.cons_append, descentToChild_cons_consPath_ne i j rest_p T (xs' ++ ys) h,
+          descentToChild_cons_consPath_ne i j rest_p T xs' h,
+          descentToChild_append i xs' ys]
+
+/-- `descentCount` distributes over `++`. -/
+private theorem descentCount_append (i : ℕ) :
+    ∀ (xs ys : List (Path × Planar α)),
+    descentCount i (xs ++ ys) = descentCount i xs + descentCount i ys
+  | [], _ => by simp
+  | x :: xs', ys => by
+    unfold descentCount
+    rw [List.cons_append, List.filter_cons, List.filter_cons]
+    by_cases h : x.fst.head? = some i
+    · simp [h, descentCount_append i xs' ys, descentCount, Nat.add_right_comm]
+    · simp [h, descentCount_append i xs' ys, descentCount]
+
+/-- The descent-corresponding index. Given `pairs[k].fst.head? = some i`,
+    `descentIdxOf i pairs k` is the position of `k` among the descent-i pairs
+    (0-indexed). -/
+private def descentIdxOf (i : ℕ) (pairs : List (Path × Planar α))
+    (k : Fin pairs.length) : ℕ :=
+  descentCount i (pairs.take k.val)
+
+/-- `descentIdxOf` is bounded by `descentCount` of the full list, when
+    `pairs[k].fst.head? = some i`. -/
+private theorem descentIdxOf_lt (i : ℕ) (pairs : List (Path × Planar α))
+    (k : Fin pairs.length) (h : pairs[k.val].fst.head? = some i) :
+    descentIdxOf i pairs k < descentCount i pairs := by
+  unfold descentIdxOf descentCount
+  -- pairs decomposes around k.
+  have hsplit : pairs = pairs.take k.val ++ pairs[k.val] :: pairs.drop (k.val + 1) := by
+    rw [List.cons_getElem_drop_succ]
+    exact (List.take_append_drop k.val pairs).symm
+  conv_rhs => rw [hsplit]
+  rw [List.filter_append, List.length_append, List.filter_cons]
+  rw [show decide (pairs[k.val].fst.head? = some i) = true from by simp [h]]
+  simp [List.length_cons]
+
+/-- `descentToChild` of the prefix is the prefix of `descentToChild`.
+    Together with `descentToChild_length_eq` this characterizes
+    `descentToChild i pairs` index-by-index. -/
+private theorem descentToChild_take (i : ℕ) (pairs : List (Path × Planar α)) (m : ℕ) :
+    descentToChild i (pairs.take m) =
+      (descentToChild i pairs).take (descentCount i (pairs.take m)) := by
+  -- Decompose pairs as pairs.take m ++ pairs.drop m, apply descentToChild_append.
+  rw [← descentToChild_length_eq]
+  conv_rhs => rw [show descentToChild i pairs =
+                    descentToChild i (pairs.take m ++ pairs.drop m) from by
+                      rw [List.take_append_drop],
+                  descentToChild_append, List.take_left]
+
+/-- The element of `descentToChild i pairs` at index `descentIdxOf i pairs k`
+    (when `pairs[k].fst = i :: rest`) is `(rest, pairs[k].snd)`. -/
+private theorem descentToChild_getElem_at_descentIdxOf (i : ℕ)
+    (pairs : List (Path × Planar α)) (k : Fin pairs.length) (rest : Path)
+    (h : pairs[k.val].fst = i :: rest) :
+    (descentToChild i pairs)[descentIdxOf i pairs k]'(by
+        rw [descentToChild_length_eq]
+        exact descentIdxOf_lt i pairs k (by rw [h]; rfl)) =
+      (rest, pairs[k.val].snd) := by
+  -- Strategy: rewrite the LHS list (descentToChild i pairs) by splitting pairs around k.
+  -- Use that getElem on `xs ++ ys` at index `xs.length + j` is `ys[j]`.
+  -- Avoid rewriting pairs itself (dependent types); instead transform descentToChild i pairs.
+  have hdec : descentToChild i pairs =
+      descentToChild i (pairs.take k.val) ++
+      descentToChild i (pairs[k.val] :: pairs.drop (k.val + 1)) := by
+    rw [← descentToChild_append i (pairs.take k.val)
+        (pairs[k.val] :: pairs.drop (k.val + 1))]
+    congr 1
+    rw [List.cons_getElem_drop_succ]
+    exact (List.take_append_drop k.val pairs).symm
+  have hidx : descentIdxOf i pairs k = (descentToChild i (pairs.take k.val)).length := by
+    unfold descentIdxOf
+    rw [descentToChild_length_eq]
+  -- Apply hdec to the LHS list, fixing the index proof via List.getElem_of_eq.
+  -- Strategy: rebuild the goal so that the index is literally `0` after both
+  -- list rewriting and arithmetic, then close by rfl. We do this in a single
+  -- `show` to avoid the dependent-rewrite trap of `rw [show idx = 0 ...]`.
+  have hpkdec : (pairs[k.val] :: pairs.drop (k.val + 1)) =
+      ((i :: rest, pairs[k.val].snd) :: pairs.drop (k.val + 1)) := by
+    rw [show pairs[k.val] = (i :: rest, pairs[k.val].snd) from by
+          rw [Prod.mk.injEq]; exact ⟨h, rfl⟩]
+  have hdec' : descentToChild i pairs =
+      descentToChild i (pairs.take k.val) ++
+        ((rest, pairs[k.val].snd) :: descentToChild i (pairs.drop (k.val + 1))) := by
+    rw [hdec]
+    congr 1
+    rw [hpkdec]
+    exact descentToChild_cons_consPath_eq i rest pairs[k.val].snd (pairs.drop (k.val + 1))
+  -- Reduce both index and list together. The index `descentIdxOf i pairs k` equals
+  -- `(descentToChild i (pairs.take k.val)).length`, and the corresponding element
+  -- in the appended cons-list is the head, namely `(rest, pairs[k.val].snd)`.
+  rw [List.getElem_of_eq hdec' _]
+  rw [List.getElem_append_right (by omega : (descentToChild i (pairs.take k.val)).length ≤ descentIdxOf i pairs k)]
+  -- The remaining index `descentIdxOf i pairs k - (descentToChild i (pairs.take k.val)).length`
+  -- is `0`, picking the head of the cons-list. Use `List.getElem_cons_zero` after
+  -- rewriting the index via `List.getElem_of_eq` on the index proof, by proving
+  -- the new shape is a cons.
+  have hidx0 : descentIdxOf i pairs k - (descentToChild i (pairs.take k.val)).length = 0 := by
+    rw [hidx]; omega
+  -- Use a non-dependent `congr_arg` on the entire getElem expression. The cleanest
+  -- way is to reduce by hand on the head: getElem on a cons at a specific index.
+  -- Simply transport via the index equality using `Eq.mpr`.
+  refine Eq.trans ?_ rfl
+  -- Convert the goal to using index `0` instead of the difference.
+  -- The list `(rest, pairs[k.val].snd) :: descentToChild i (pairs.drop (k.val+1))`
+  -- at index 0 is `(rest, pairs[k.val].snd)`.
+  conv_lhs => rw [show
+      ((rest, pairs[k.val].snd) :: descentToChild i (pairs.drop (k.val + 1)))[
+        descentIdxOf i pairs k - (descentToChild i (pairs.take k.val)).length]'(by
+          rw [hidx0]; simp) =
+      ((rest, pairs[k.val].snd) :: descentToChild i (pairs.drop (k.val + 1)))[0]'(by simp)
+        from by congr 1 <;> rw [hidx0]]
+  rfl
+
+/-- Position invariance: for `pairs[k].fst = i :: rest`, the descent-corresponding
+    index `descentIdxOf i pairs k` has the same `posInGroup` in `descentToChild i pairs`
+    as `k` does in `pairs`. -/
+private theorem posInGroup_descent_invariance (i : ℕ) (pairs : List (Path × Planar α))
+    (k : Fin pairs.length) (rest : Path) (h : pairs[k.val].fst = i :: rest) :
+    posInGroup (descentToChild i pairs)
+        ⟨descentIdxOf i pairs k, by
+          rw [descentToChild_length_eq]
+          exact descentIdxOf_lt i pairs k (by rw [h]; rfl)⟩ =
+      posInGroup pairs k := by
+  unfold posInGroup
+  -- LHS: ((descentToChild i pairs).take (descentIdxOf i pairs k)).filter (·.fst = (descentToChild i pairs)[descentIdxOf].fst).length
+  -- = (descentToChild i (pairs.take k)).filter (·.fst = rest).length    [via descentToChild_take + getElem]
+  -- RHS: (pairs.take k).filter (·.fst = i :: rest).length
+  -- Both `posInGroup` calls use `Fin` indexing (`pairs[⟨..⟩]`); convert to
+  -- `Nat` indexing via `Fin.getElem_fin`, then rewrite the getElem-fst via
+  -- the substrate getElem characterization. Use `simp only` to dodge the
+  -- `decide`-instance dependency that breaks bare `rw`.
+  simp only [Fin.getElem_fin,
+             descentToChild_getElem_at_descentIdxOf i pairs k rest h, h]
+  rw [show ((descentToChild i pairs).take (descentIdxOf i pairs k)) =
+          descentToChild i (pairs.take k.val) from by
+        rw [descentToChild_take]
+        congr]
+  -- Now: (descentToChild i (pairs.take k)).filter (·.fst = rest).length
+  --    = (pairs.take k).filter (·.fst = i :: rest).length
+  show ((descentToChild i (pairs.take k.val)).filter (fun pair => decide (pair.fst = rest))).length =
+      ((pairs.take k.val).filter (fun pair => decide (pair.fst = i :: rest))).length
+  -- Prove by induction on pairs.take k.
+  induction pairs.take k.val with
+  | nil => simp
+  | cons p ps ih =>
+    rcases p with ⟨pfst, psnd⟩
+    cases pfst with
+    | nil =>
+      rw [descentToChild_cons_nilPath, List.filter_cons]
+      simp [ih]
+    | cons j rest_p =>
+      by_cases hij : i = j
+      · subst hij
+        rw [descentToChild_cons_consPath_eq i rest_p psnd ps,
+            List.filter_cons, List.filter_cons]
+        by_cases hr : rest_p = rest
+        · subst hr
+          simp [ih]
+        · simp [hr, ih]
+      · rw [descentToChild_cons_consPath_ne i j rest_p psnd ps hij,
+            List.filter_cons]
+        have : ¬ ((j :: rest_p : Path) = (i :: rest)) := by
+          intro heq
+          injection heq with heq1 _
+          exact hij heq1.symm
+        simp [this, ih]
+
+/-- `descentIdxOf` past a head pair: the descent count grows by one iff
+    the head pair's source matches `i`, otherwise it's preserved.
+    Subsumes the per-shape versions (nil-head / matching cons / non-matching
+    cons) via the `if`-discriminator. -/
+private theorem descentIdxOf_cons_succ (i : ℕ) (p : Path × Planar α)
+    (rest : List (Path × Planar α)) (k : Fin rest.length) :
+    descentIdxOf i (p :: rest) (Fin.succ k) =
+      descentIdxOf i rest k + (if p.fst.head? = some i then 1 else 0) := by
+  unfold descentIdxOf
+  show descentCount i ((p :: rest).take ((Fin.succ k).val)) =
+       descentCount i (rest.take k.val) + _
+  rw [show (Fin.succ k).val = k.val + 1 from rfl,
+      show (p :: rest).take (k.val + 1) = p :: rest.take k.val from rfl]
+  unfold descentCount
+  rw [List.filter_cons]
+  by_cases h : p.fst.head? = some i
+  · simp [h]
+  · simp [h]
+
+/-- `descentIdxOf` at index zero on any non-empty pair list is zero — no
+    pairs precede the head. -/
+private theorem descentIdxOf_at_zero (i : ℕ) (pairs : List (Path × Planar α))
+    (h0 : 0 < pairs.length) :
+    descentIdxOf i pairs ⟨0, h0⟩ = 0 := by
+  unfold descentIdxOf
+  show descentCount i (pairs.take 0) = 0
+  rw [List.take_zero]
+  rfl
+
+/-! ## §8.9: Step-8 lifted bridge — bijection on bind indices
+
+Step 8 of `vertices_multiGraft_decomp` is a multiset equation between two
+re-indexings of the same family of "lifted" vertex contributions:
+
+  LHS = ↑(verticesAux 0 rootPrepends)
+        + bind_{i : Fin n} (head-shift ∘ bind_{k' : descentToChild i pairs} liftMulti)
+  RHS = bind_{k : Fin pairs.length} liftMulti pairs k ∘ ↑vertices pairs[k].snd
+
+Strategy: split RHS into root-pair and child-pair contributions via
+`Multiset.filter_add_not + add_bind`, then identify each half with the
+corresponding LHS part:
+
+* **Root half.** For `k` with `pairs[k].fst = []`,
+  `liftMulti pairs k q = posInGroup pairs k :: q`. By induction on `pairs`,
+  the root-pair bind equals `↑(verticesAux 0 rootPrepends)`.
+* **Child half.** For `k` with `pairs[k].fst = i :: rest`,
+  `liftMulti pairs k q = (N + i) :: liftMulti (descent i pairs) ⟨descentIdxOf i pairs k, _⟩ q`
+  (via `posInGroup_descent_invariance` + `descentToChild_getElem_at_descentIdxOf`).
+  By induction on `pairs`, the head-`i` slice equals
+  `map ((N+i)::·) (bind_{k'} ...)`. Summing over `i ∈ Fin cs.length`
+  recovers LHS Part 2 under the validity hypothesis. -/
+
+/-- `liftMulti` at a root-pair (`pairs[k].fst = []`): the lifted path is
+    just `posInGroup pairs k :: q`. Direct from `transport_empty_path` +
+    the definition of `liftMulti`. -/
+private theorem liftMulti_at_root (pairs : List (Path × Planar α))
+    (k : Fin pairs.length) (h : pairs[k.val].fst = [])
+    (q : Path) :
+    liftMulti pairs k q = posInGroup pairs k :: q := by
+  show transport pairs pairs[k.val].fst ++ (posInGroup pairs k :: q) =
+       posInGroup pairs k :: q
+  rw [h, transport_nil_path, List.nil_append]
+
+/-- `liftMulti` at a child-pair (`pairs[k].fst = i :: rest`): the lifted
+    path factors as `(N + i) :: (lifted via descent)`, where the descent
+    index is `descentIdxOf i pairs k`. Combines `transport_cons_path`
+    (head shift) with `posInGroup_descent_invariance` + the descent
+    `getElem` characterization. -/
+private theorem liftMulti_at_child_descent (pairs : List (Path × Planar α))
+    (k : Fin pairs.length) (i : ℕ) (rest : Path) (h : pairs[k.val].fst = i :: rest)
+    (q : Path) :
+    liftMulti pairs k q =
+      (rootPrependCount pairs + i) ::
+        liftMulti (descentToChild i pairs)
+          ⟨descentIdxOf i pairs k, by
+            rw [descentToChild_length_eq]
+            exact descentIdxOf_lt i pairs k (by rw [h]; rfl)⟩ q := by
+  have hdesc_lt : descentIdxOf i pairs k < (descentToChild i pairs).length := by
+    rw [descentToChild_length_eq]
+    exact descentIdxOf_lt i pairs k (by rw [h]; rfl)
+  have hpos :
+      posInGroup (descentToChild i pairs) ⟨descentIdxOf i pairs k, hdesc_lt⟩ =
+        posInGroup pairs k :=
+    posInGroup_descent_invariance i pairs k rest h
+  unfold liftMulti
+  simp only [Fin.getElem_fin,
+             descentToChild_getElem_at_descentIdxOf i pairs k rest h, h, hpos,
+             transport_cons_path, List.cons_append]
+  congr 1
+  omega
+
+/-- `posInGroup` recursive characterization at index `0`: the head pair has
+    no earlier same-source pairs, so its position in its group is always `0`. -/
+private theorem posInGroup_cons_zero (p : Path) (T : Planar α)
+    (rest : List (Path × Planar α)) :
+    posInGroup ((p, T) :: rest)
+      ⟨0, Nat.succ_pos _⟩ = 0 := by
+  unfold posInGroup
+  simp
+
+/-- `posInGroup` at a successor index, when the head pair has source `[]`
+    and the indexed pair also has source `[]`: the count grows by one. -/
+private theorem posInGroup_cons_succ_root (T : Planar α)
+    (pairs' : List (Path × Planar α)) (k : Fin pairs'.length)
+    (h : pairs'[k.val].fst = []) :
+    posInGroup (([], T) :: pairs') k.succ = posInGroup pairs' k + 1 := by
+  unfold posInGroup
+  show (((([], T) :: pairs').take (k.succ.val)).filter
+          (fun pair => pair.fst = (([], T) :: pairs')[k.succ.val].fst)).length =
+       ((pairs'.take k.val).filter (fun pair => pair.fst = pairs'[k.val].fst)).length + 1
+  show (((([], T) :: pairs').take (k.val + 1)).filter
+          (fun pair => pair.fst = (([], T) :: pairs')[k.val + 1].fst)).length =
+       ((pairs'.take k.val).filter (fun pair => pair.fst = pairs'[k.val].fst)).length + 1
+  rw [show (([], T) :: pairs').take (k.val + 1) =
+          (([], T) : Path × Planar α) :: pairs'.take k.val from rfl,
+      show (([], T) :: pairs')[k.val + 1] = pairs'[k.val] from rfl,
+      h, List.filter_cons]
+  simp
+
+/-- `posInGroup` at a successor index, when the head pair has source `[]`
+    but the indexed pair has non-`[]` source: the count is unchanged. -/
+private theorem posInGroup_cons_succ_root_of_ne (T : Planar α)
+    (pairs' : List (Path × Planar α)) (k : Fin pairs'.length)
+    (h : pairs'[k.val].fst ≠ []) :
+    posInGroup (([], T) :: pairs') k.succ = posInGroup pairs' k := by
+  unfold posInGroup
+  show (((([], T) :: pairs').take (k.succ.val)).filter
+          (fun pair => pair.fst = (([], T) :: pairs')[k.succ.val].fst)).length =
+       ((pairs'.take k.val).filter (fun pair => pair.fst = pairs'[k.val].fst)).length
+  show (((([], T) :: pairs').take (k.val + 1)).filter
+          (fun pair => pair.fst = (([], T) :: pairs')[k.val + 1].fst)).length =
+       ((pairs'.take k.val).filter (fun pair => pair.fst = pairs'[k.val].fst)).length
+  rw [show (([], T) :: pairs').take (k.val + 1) =
+          (([], T) : Path × Planar α) :: pairs'.take k.val from rfl,
+      show (([], T) :: pairs')[k.val + 1] = pairs'[k.val] from rfl,
+      List.filter_cons]
+  simp [Ne.symm h]
+
+/-- `posInGroup` at a successor index, when the head pair has non-`[]`
+    source: the count is unchanged regardless of the indexed pair's source. -/
+private theorem posInGroup_cons_succ_child (i : ℕ) (rest_p : Path) (T : Planar α)
+    (pairs' : List (Path × Planar α)) (k : Fin pairs'.length) :
+    posInGroup ((i :: rest_p, T) :: pairs') k.succ =
+    posInGroup pairs' k +
+      (if (i :: rest_p : Path) = pairs'[k.val].fst then 1 else 0) := by
+  unfold posInGroup
+  show ((((i :: rest_p, T) :: pairs').take (k.succ.val)).filter
+          (fun pair => pair.fst = ((i :: rest_p, T) :: pairs')[k.succ.val].fst)).length =
+       ((pairs'.take k.val).filter (fun pair => pair.fst = pairs'[k.val].fst)).length +
+         (if (i :: rest_p : Path) = pairs'[k.val].fst then 1 else 0)
+  show ((((i :: rest_p, T) :: pairs').take (k.val + 1)).filter
+          (fun pair => pair.fst = ((i :: rest_p, T) :: pairs')[k.val + 1].fst)).length =
+       ((pairs'.take k.val).filter (fun pair => pair.fst = pairs'[k.val].fst)).length +
+         (if (i :: rest_p : Path) = pairs'[k.val].fst then 1 else 0)
+  rw [show ((i :: rest_p, T) :: pairs').take (k.val + 1) =
+          ((i :: rest_p, T) : Path × Planar α) :: pairs'.take k.val from rfl,
+      show ((i :: rest_p, T) :: pairs')[k.val + 1] = pairs'[k.val] from rfl,
+      List.filter_cons]
+  by_cases h : (i :: rest_p : Path) = pairs'[k.val].fst
+  · simp [h]
+  · simp [h]
+
+/-- `verticesAux` shifts uniformly: `verticesAux (offset+1) cs` equals
+    `verticesAux offset cs` with each path's head index incremented by 1.
+    Stated as a Multiset equality via `verticesAux_unfold`. -/
+private theorem verticesAux_succ (cs : List (Planar α)) (offset : ℕ) :
+    (↑(verticesAux (offset + 1) cs) : Multiset Path) =
+      (↑(verticesAux offset cs) : Multiset Path).map
+        (fun p => match p with | [] => [] | h :: q => (h + 1) :: q) := by
+  rw [verticesAux_unfold cs (offset + 1), verticesAux_unfold cs offset, Multiset.map_bind]
+  refine Multiset.bind_congr fun i _ => ?_
+  rw [Multiset.map_map]
+  refine Multiset.map_congr rfl fun q _ => ?_
+  show (offset + 1 + i.val) :: q =
+       (match ((offset + i.val) :: q : Path) with | [] => [] | h :: q => (h + 1) :: q)
+  show (offset + 1 + i.val) :: q = (offset + i.val + 1) :: q
+  congr 1; omega
+
+/-! ### Root-pair bridge
+
+The conditional bind over `Fin pairs.length`-indices, contributing
+`(vertices pairs[k].snd).map ((offset + posInGroup pairs k) :: ·)` for
+root pairs (and `0` otherwise), equals `↑(verticesAux offset rootPrepends)`.
+Strengthened with `offset` to support induction on `pairs`. -/
+private theorem root_bind_eq : ∀ (pairs : List (Path × Planar α)) (offset : ℕ),
+    ((↑(List.finRange pairs.length) : Multiset (Fin pairs.length)).bind fun k =>
+        if pairs[k.val].fst = [] then
+          ((vertices pairs[k.val].snd : List Path) : Multiset Path).map
+            ((offset + posInGroup pairs k) :: ·)
+        else 0) =
+      (↑(verticesAux offset (pairs.filterMap rootPrependFilter)) : Multiset Path)
+  | [], offset => by
+    show ((↑(List.finRange 0) : Multiset (Fin 0)).bind _) =
+         (↑(verticesAux offset ([] : List (Planar α))) : Multiset Path)
+    rw [List.finRange_zero, verticesAux_nil]
+    show ((0 : Multiset (Fin 0)).bind _) = (↑([] : List Path) : Multiset Path)
+    rw [Multiset.zero_bind]; rfl
+  | (p, T) :: pairs', offset => by
+    -- Decompose Fin (pairs'.length + 1) via List.finRange_succ.
+    have hfin : (↑(List.finRange ((p, T) :: pairs').length) :
+                 Multiset (Fin ((p, T) :: pairs').length)) =
+                (0 : Fin ((p, T) :: pairs').length) ::ₘ
+                  ((↑(List.finRange pairs'.length) : Multiset (Fin pairs'.length)).map
+                    Fin.succ) := by
+      show (↑(List.finRange (pairs'.length + 1)) : Multiset (Fin (pairs'.length + 1))) = _
+      rw [List.finRange_succ, ← Multiset.cons_coe, ← Multiset.map_coe]
+    rw [hfin, Multiset.cons_bind, Multiset.bind_map]
+    -- Head term g ⟨0, _⟩.
+    rw [show (((p, T) :: pairs')[(0 : Fin ((p, T) :: pairs').length).val] = (p, T)) from rfl]
+    -- Tail bind in terms of pairs' indices.
+    -- The tail iterates k' : Fin pairs'.length with index Fin.succ k'.
+    rw [show (fun (k' : Fin pairs'.length) =>
+              (fun (k : Fin ((p, T) :: pairs').length) =>
+                if ((p, T) :: pairs')[k.val].fst = [] then
+                  ((vertices ((p, T) :: pairs')[k.val].snd : List Path) :
+                    Multiset Path).map
+                    ((offset + posInGroup ((p, T) :: pairs') k) :: ·)
+                else 0) (Fin.succ k')) =
+            (fun (k' : Fin pairs'.length) =>
+              if pairs'[k'.val].fst = [] then
+                ((vertices pairs'[k'.val].snd : List Path) : Multiset Path).map
+                  ((offset + posInGroup ((p, T) :: pairs') (Fin.succ k')) :: ·)
+              else 0)
+        from by
+          funext k'
+          show (if ((p, T) :: pairs')[(Fin.succ k').val].fst = [] then _ else 0) = _
+          rw [show ((p, T) :: pairs')[(Fin.succ k').val] = pairs'[k'.val] from rfl]]
+    -- Case-split on p.
+    by_cases hp : p = []
+    · -- Sub-case A: head is a root pair.
+      subst hp
+      -- Head contributes (vertices T).map (offset :: ·).
+      rw [show (if (([], T) : Path × Planar α).fst = [] then
+                  ((vertices T : List Path) : Multiset Path).map
+                    ((offset + posInGroup (([], T) :: pairs') 0) :: ·)
+                else 0) =
+              ((vertices T : List Path) : Multiset Path).map (offset :: ·) from by
+        rw [if_pos rfl,
+            show posInGroup (([], T) :: pairs') (0 : Fin _) = 0
+              from posInGroup_cons_zero ([] : Path) T pairs']
+        simp only [Nat.add_zero]]
+      -- For tail: posInGroup new ⟨k'+1, _⟩ for root k' = posInGroup pairs' ⟨k', _⟩ + 1.
+      rw [show (fun (k' : Fin pairs'.length) =>
+                if pairs'[k'.val].fst = [] then
+                  ((vertices pairs'[k'.val].snd : List Path) : Multiset Path).map
+                    ((offset + posInGroup (([], T) :: pairs') (Fin.succ k')) :: ·)
+                else 0) =
+              (fun (k' : Fin pairs'.length) =>
+                if pairs'[k'.val].fst = [] then
+                  ((vertices pairs'[k'.val].snd : List Path) : Multiset Path).map
+                    (((offset + 1) + posInGroup pairs' k') :: ·)
+                else 0)
+          from by
+            funext k'
+            split_ifs with hk'
+            · refine Multiset.map_congr rfl fun q _ => ?_
+              rw [posInGroup_cons_succ_root T pairs' k' hk']
+              show (offset + (posInGroup pairs' k' + 1)) :: q =
+                   (offset + 1 + posInGroup pairs' k') :: q
+              have : offset + (posInGroup pairs' k' + 1) =
+                     offset + 1 + posInGroup pairs' k' := by omega
+              rw [this]
+            · rfl]
+      -- Apply IH on pairs' with offset+1.
+      rw [root_bind_eq pairs' (offset + 1)]
+      -- Combine: (vertices T).map (offset::·) + ↑(verticesAux (offset+1) (rootPrepends_old))
+      --        = ↑(verticesAux offset (T :: rootPrepends_old))
+      show ((vertices T : List Path) : Multiset Path).map (offset :: ·) +
+           (↑(verticesAux (offset + 1) (pairs'.filterMap rootPrependFilter))
+              : Multiset Path) =
+           (↑(verticesAux offset
+              ((([], T) :: pairs' : List (Path × Planar α)).filterMap rootPrependFilter))
+              : Multiset Path)
+      rw [show (([], T) :: pairs' : List (Path × Planar α)).filterMap rootPrependFilter
+              = T :: pairs'.filterMap rootPrependFilter from rfl,
+          verticesAux_cons]
+      rw [← Multiset.coe_add, ← Multiset.map_coe]
+    · -- Sub-case B: head is a child pair. Head contributes 0.
+      have hp_fst_ne : (p, T).fst ≠ [] := hp
+      rw [show (if ((p, T) : Path × Planar α).fst = [] then _
+                else (0 : Multiset Path)) = 0 from if_neg hp_fst_ne, Multiset.zero_add]
+      -- For tail: posInGroup new ⟨k'+1, _⟩ for root k' = posInGroup pairs' ⟨k', _⟩
+      -- (since p ≠ [] doesn't match []).
+      -- p has the form (i :: rest_p), so we need posInGroup_cons_succ_child applied.
+      obtain ⟨i, rest_p, hp_eq⟩ : ∃ i rest_p, p = i :: rest_p := by
+        cases p with
+        | nil => exact absurd rfl hp
+        | cons i rest_p => exact ⟨i, rest_p, rfl⟩
+      subst hp_eq
+      rw [show (fun (k' : Fin pairs'.length) =>
+                if pairs'[k'.val].fst = [] then
+                  ((vertices pairs'[k'.val].snd : List Path) : Multiset Path).map
+                    ((offset + posInGroup ((i :: rest_p, T) :: pairs') (Fin.succ k')) :: ·)
+                else 0) =
+              (fun (k' : Fin pairs'.length) =>
+                if pairs'[k'.val].fst = [] then
+                  ((vertices pairs'[k'.val].snd : List Path) : Multiset Path).map
+                    ((offset + posInGroup pairs' k') :: ·)
+                else 0)
+          from by
+            funext k'
+            split_ifs with hk'
+            · refine Multiset.map_congr rfl fun q _ => ?_
+              rw [posInGroup_cons_succ_child i rest_p T pairs' k']
+              -- (i :: rest_p) ≠ [] = pairs'[k'].fst, so the if returns 0.
+              have hne : (i :: rest_p : Path) ≠ pairs'[k'.val].fst := by
+                rw [hk']; exact List.cons_ne_nil _ _
+              rw [if_neg hne]
+              show (offset + (posInGroup pairs' k' + 0)) :: q =
+                   (offset + posInGroup pairs' k') :: q
+              have : offset + (posInGroup pairs' k' + 0) =
+                     offset + posInGroup pairs' k' := by omega
+              rw [this]
+            · rfl]
+      -- Apply IH on pairs'.
+      rw [root_bind_eq pairs' offset]
+      -- rootPrepends ((i :: rest_p, T) :: pairs') = rootPrepends pairs' (since (i :: rest_p, T)
+      -- is not a root pair).
+      show (↑(verticesAux offset (pairs'.filterMap rootPrependFilter)) : Multiset Path) =
+           (↑(verticesAux offset
+              (((i :: rest_p, T) :: pairs' : List (Path × Planar α)).filterMap
+                rootPrependFilter)) : Multiset Path)
+      rw [show ((i :: rest_p, T) :: pairs' : List (Path × Planar α)).filterMap
+              rootPrependFilter = pairs'.filterMap rootPrependFilter from rfl]
+
+/-! ### Descent-pair bridge
+
+The conditional bind over `Fin pairs.length`-indices, contributing
+`F ⟨descentIdxOf i pairs k, _⟩` exactly when `pairs[k].fst.head? = some i`,
+equals the bind over `Fin (descentToChild i pairs).length` of the same
+`F`. Parameterized by an external `n` (instead of
+`(descentToChild i pairs).length`) to dodge the dependent-rewrite trap when
+recursing on `pairs`: in sub-case B (`i = j` head), the recursive call
+needs to produce an `F'` of type `Fin n' → Multiset β` for `n' = n - 1`,
+which is impossible if `F`'s type is tied to a `pairs`-dependent
+expression. Threading `n` as an independent parameter and `h_len` as the
+identification lets the recursion in B re-bind `F'` cleanly. The sole
+caller passes `(descentToChild i.val pairs).length` and `rfl`. -/
+private theorem bind_descent_eq_aux (i : ℕ) :
+    ∀ (pairs : List (Path × Planar α)) (n : ℕ)
+      (_h_len : (descentToChild i pairs).length = n)
+      {β : Type*} (F : Fin n → Multiset β),
+    ((↑(List.finRange pairs.length) : Multiset (Fin pairs.length)).bind fun k =>
+      if h : pairs[k.val].fst.head? = some i then
+        F ⟨descentIdxOf i pairs k, by
+              rw [← _h_len, descentToChild_length_eq]
+              exact descentIdxOf_lt i pairs k h⟩
+      else (0 : Multiset β)) =
+    (↑(List.finRange n) : Multiset (Fin n)).bind F
+  | [], n, h_len, _, F => by
+    have hn : n = 0 := by rw [← h_len]; rfl
+    subst hn
+    show ((↑(List.finRange 0) : Multiset (Fin 0)).bind _) =
+         ((↑(List.finRange 0) : Multiset (Fin 0)).bind F)
+    rw [List.finRange_zero]
+    show ((0 : Multiset (Fin 0)).bind _) = ((0 : Multiset (Fin 0)).bind F)
+    rw [Multiset.zero_bind, Multiset.zero_bind]
+  | (p, T) :: pairs', n, h_len, β, F => by
+    -- Decompose Fin (pairs'.length + 1) via List.finRange_succ.
+    have hfin : (↑(List.finRange ((p, T) :: pairs').length) :
+                 Multiset (Fin ((p, T) :: pairs').length)) =
+                (0 : Fin ((p, T) :: pairs').length) ::ₘ
+                  ((↑(List.finRange pairs'.length) : Multiset (Fin pairs'.length)).map
+                    Fin.succ) := by
+      show (↑(List.finRange (pairs'.length + 1)) : Multiset (Fin (pairs'.length + 1))) = _
+      rw [List.finRange_succ, ← Multiset.cons_coe, ← Multiset.map_coe]
+    rw [hfin, Multiset.cons_bind, Multiset.bind_map]
+    cases p with
+    | nil =>
+      -- Sub-case A: head pair is `([], T)`. Head term is 0 (head? = none ≠ some i);
+      -- tail descentIdxOf preserved → IH on pairs' with same n.
+      have h_n_pairs' : (descentToChild i pairs').length = n := h_len
+      have h_head_neg : ¬ ((([], T) :: pairs')[(0 : Fin (([], T) :: pairs').length).val].fst.head?
+                            = some i) := by
+        show ¬ (([] : Path).head? = some i)
+        intro h; cases h
+      rw [dif_neg h_head_neg, Multiset.zero_add]
+      have step : (fun (k' : Fin pairs'.length) =>
+          if h : (([], T) :: pairs')[(Fin.succ k').val].fst.head? = some i then
+            F ⟨descentIdxOf i (([], T) :: pairs') (Fin.succ k'),
+                by rw [← h_len, descentToChild_length_eq]
+                   exact descentIdxOf_lt i _ _ h⟩
+          else (0 : Multiset β)) =
+        (fun (k' : Fin pairs'.length) =>
+          if h : pairs'[k'.val].fst.head? = some i then
+            F ⟨descentIdxOf i pairs' k',
+                by rw [← h_n_pairs', descentToChild_length_eq]
+                   exact descentIdxOf_lt i _ _ h⟩
+          else 0) := by
+        funext k'
+        have h_eq_idx : (([], T) :: pairs')[(Fin.succ k').val] = pairs'[k'.val] := rfl
+        have h_eq_descent :
+            descentIdxOf i (([], T) :: pairs') (Fin.succ k') = descentIdxOf i pairs' k' := by
+          rw [descentIdxOf_cons_succ i ([], T) pairs' k']
+          show descentIdxOf i pairs' k' +
+                 (if (([] : Path).head?) = some i then 1 else 0) = _
+          rw [if_neg (fun h => by cases h), Nat.add_zero]
+        by_cases hh : pairs'[k'.val].fst.head? = some i
+        · have hh' : (([], T) :: pairs')[(Fin.succ k').val].fst.head? = some i := by
+            rw [h_eq_idx]; exact hh
+          rw [dif_pos hh, dif_pos hh']
+          exact congr_arg F (Fin.eq_of_val_eq h_eq_descent)
+        · have hh' : ¬ ((([], T) :: pairs')[(Fin.succ k').val].fst.head? = some i) := by
+            rw [h_eq_idx]; exact hh
+          rw [dif_neg hh, dif_neg hh']
+      rw [step]
+      exact bind_descent_eq_aux i pairs' n h_n_pairs' F
+    | cons j rest_p =>
+      by_cases hij : i = j
+      · -- Sub-case B: i = j. Head k=0 contributes F ⟨0, _⟩; tail descentIdxOf grows by 1
+        -- → IH on pairs' with n - 1, F'.
+        subst hij
+        have h_n_pairs' : (descentToChild i pairs').length + 1 = n := by
+          rw [← h_len, descentToChild_cons_consPath_eq i rest_p T pairs', List.length_cons]
+        obtain ⟨n', rfl⟩ : ∃ n', n = n' + 1 := ⟨_, h_n_pairs'.symm⟩
+        have h_n_pairs'_eq : (descentToChild i pairs').length = n' := by omega
+        let F' : Fin n' → Multiset β := fun k' =>
+          F ⟨k'.val + 1, by show k'.val + 1 < n' + 1; omega⟩
+        -- Head term k=0: dite condition is some i = some i (true).
+        have h_head_pos : ((i :: rest_p, T) :: pairs')[(0 : Fin _).val].fst.head? = some i :=
+          rfl
+        rw [dif_pos h_head_pos]
+        -- Rewrite the tail to use F' via descentIdxOf_cons_succ_consPath_eq.
+        have step : (fun (k' : Fin pairs'.length) =>
+            if h : ((i :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i then
+              F ⟨descentIdxOf i ((i :: rest_p, T) :: pairs') (Fin.succ k'),
+                  by rw [← h_len, descentToChild_length_eq]
+                     exact descentIdxOf_lt i _ _ h⟩
+            else (0 : Multiset β)) =
+          (fun (k' : Fin pairs'.length) =>
+            if h : pairs'[k'.val].fst.head? = some i then
+              F' ⟨descentIdxOf i pairs' k',
+                  by rw [← h_n_pairs'_eq, descentToChild_length_eq]
+                     exact descentIdxOf_lt i _ _ h⟩
+            else 0) := by
+          funext k'
+          have h_eq_idx :
+              ((i :: rest_p, T) :: pairs')[(Fin.succ k').val] = pairs'[k'.val] := rfl
+          have h_eq_descent :
+              descentIdxOf i ((i :: rest_p, T) :: pairs') (Fin.succ k') =
+                descentIdxOf i pairs' k' + 1 := by
+            rw [descentIdxOf_cons_succ i (i :: rest_p, T) pairs' k']
+            show descentIdxOf i pairs' k' +
+                   (if some i = some i then 1 else 0) = _
+            rw [if_pos rfl]
+          by_cases hh : pairs'[k'.val].fst.head? = some i
+          · have hh' : ((i :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i := by
+              rw [h_eq_idx]; exact hh
+            rw [dif_pos hh, dif_pos hh']
+            show F ⟨descentIdxOf i ((i :: rest_p, T) :: pairs') (Fin.succ k'), _⟩ =
+                 F ⟨descentIdxOf i pairs' k' + 1, _⟩
+            congr 1
+            exact Fin.eq_of_val_eq h_eq_descent
+          · have hh' :
+                ¬ (((i :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i) := by
+              rw [h_eq_idx]; exact hh
+            rw [dif_neg hh, dif_neg hh']
+        rw [step]
+        -- LHS now: F ⟨descentIdxOf ... ⟨0, _⟩, _⟩ + bind ... (using F').
+        -- Apply IH to bring tail to bind_{k' : Fin n'} F'.
+        rw [bind_descent_eq_aux i pairs' n' h_n_pairs'_eq F']
+        -- RHS: decompose Fin (n' + 1) via List.finRange_succ; head = F ⟨0, _⟩.
+        have hrhs : (↑(List.finRange (n' + 1)) : Multiset (Fin (n' + 1))) =
+                    (0 : Fin (n' + 1)) ::ₘ
+                      ((↑(List.finRange n') : Multiset (Fin n')).map Fin.succ) := by
+          rw [List.finRange_succ, ← Multiset.cons_coe, ← Multiset.map_coe]
+        rw [hrhs, Multiset.cons_bind, Multiset.bind_map]
+        -- Closes by rfl (Lean 4 defeq with proof irrelevance):
+        --  - Head: `descentIdxOf i ((i :: rest_p, T) :: pairs') ⟨0, _⟩` reduces to
+        --    `descentCount i [] = 0` by computation, matching `(0 : Fin (n' + 1)).val`.
+        --  - Tail: `F' k'` is defined as `F ⟨k'.val + 1, _⟩`, which is `F (Fin.succ k')`
+        --    up to Fin's propositional `isLt` field (proof irrelevance).
+        --  See `descentIdxOf_at_zero` for the head equation in lemma form.
+        rfl
+      · -- Sub-case C: i ≠ j. Head k=0 contributes 0 (head? = some j ≠ some i);
+        -- tail descentIdxOf preserved → IH on pairs' with same n.
+        have h_n_pairs' : (descentToChild i pairs').length = n := by
+          rw [← h_len, descentToChild_cons_consPath_ne i j rest_p T pairs' hij]
+        have h_head_neg :
+            ¬ (((j :: rest_p, T) :: pairs')[(0 : Fin _).val].fst.head? = some i) := by
+          show ¬ ((j :: rest_p : Path).head? = some i)
+          show ¬ (some j = some i)
+          intro heq; injection heq with heq'; exact hij heq'.symm
+        rw [dif_neg h_head_neg, Multiset.zero_add]
+        have step : (fun (k' : Fin pairs'.length) =>
+            if h : ((j :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i then
+              F ⟨descentIdxOf i ((j :: rest_p, T) :: pairs') (Fin.succ k'),
+                  by rw [← h_len, descentToChild_length_eq]
+                     exact descentIdxOf_lt i _ _ h⟩
+            else (0 : Multiset β)) =
+          (fun (k' : Fin pairs'.length) =>
+            if h : pairs'[k'.val].fst.head? = some i then
+              F ⟨descentIdxOf i pairs' k',
+                  by rw [← h_n_pairs', descentToChild_length_eq]
+                     exact descentIdxOf_lt i _ _ h⟩
+            else 0) := by
+          funext k'
+          have h_eq_idx :
+              ((j :: rest_p, T) :: pairs')[(Fin.succ k').val] = pairs'[k'.val] := rfl
+          have h_eq_descent :
+              descentIdxOf i ((j :: rest_p, T) :: pairs') (Fin.succ k') =
+                descentIdxOf i pairs' k' := by
+            rw [descentIdxOf_cons_succ i (j :: rest_p, T) pairs' k']
+            show descentIdxOf i pairs' k' +
+                   (if some j = some i then 1 else 0) = _
+            rw [if_neg (fun h => hij (Option.some.inj h).symm), Nat.add_zero]
+          by_cases hh : pairs'[k'.val].fst.head? = some i
+          · have hh' : ((j :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i := by
+              rw [h_eq_idx]; exact hh
+            rw [dif_pos hh, dif_pos hh']
+            congr 1
+            exact Fin.eq_of_val_eq h_eq_descent
+          · have hh' :
+                ¬ (((j :: rest_p, T) :: pairs')[(Fin.succ k').val].fst.head? = some i) := by
+              rw [h_eq_idx]; exact hh
+            rw [dif_neg hh, dif_neg hh']
+        rw [step]
+        exact bind_descent_eq_aux i pairs' n h_n_pairs' F
+
+/-! ### Indicator-singleton bind helper
+
+Bind over `Fin n` of a value-conditional indicator (matching one specific
+`j < n`) collapses to the value. Used in step 8's per-`k` validity
+decomposition: when a child pair has head `j < cs.length`, exactly one
+`i ∈ Fin cs.length` matches.
+
+`[UPSTREAM]` candidate: this is the `Multiset.bind` analogue of mathlib's
+`Finset.sum_ite_eq` (`Algebra/BigOperators/Group/Finset/Piecewise.lean`).
+The cleaner factoring goes through two missing mathlib lemmas: a generic
+`Multiset.bind_ite` (`s.bind (fun a => if p a then f a else 0)
+= (s.filter p).bind f`) plus
+`(List.finRange n).filter (· = ⟨j, h⟩) = [⟨j, h⟩]`. Both are real gaps. -/
+private theorem bind_finRange_singleton_eq {β : Type*} :
+    ∀ (n : ℕ) (g : Multiset β) (j : ℕ) (_h : j < n),
+    ((↑(List.finRange n) : Multiset (Fin n)).bind fun i =>
+      if j = i.val then g else (0 : Multiset β)) = g := by
+  intro n
+  induction n with
+  | zero => intros _ _ h; omega
+  | succ n' ih =>
+    intro g j hj
+    rw [show (↑(List.finRange (n' + 1)) : Multiset (Fin (n' + 1))) =
+            (0 : Fin (n' + 1)) ::ₘ
+              ((↑(List.finRange n') : Multiset (Fin n')).map Fin.succ)
+        from by rw [List.finRange_succ, ← Multiset.cons_coe, ← Multiset.map_coe]]
+    rw [Multiset.cons_bind, Multiset.bind_map]
+    cases j with
+    | zero =>
+      have h_head_pos : (0 : ℕ) = (0 : Fin (n' + 1)).val := by
+        simp only [Fin.val_zero]
+      rw [if_pos h_head_pos]
+      have step : (fun (k' : Fin n') =>
+          if (0 : ℕ) = (Fin.succ k').val then g else (0 : Multiset β)) =
+          (fun (_ : Fin n') => (0 : Multiset β)) := by
+        funext k'
+        show (if 0 = k'.val + 1 then g else 0) = 0
+        rw [if_neg (by omega)]
+      rw [step, Multiset.bind_zero, Multiset.add_zero]
+    | succ j' =>
+      have h_zero_neg : ¬ (j' + 1 = (0 : Fin (n' + 1)).val) := by
+        simp only [Fin.val_zero]; omega
+      rw [if_neg h_zero_neg, Multiset.zero_add]
+      have step : (fun (k' : Fin n') =>
+          if j' + 1 = (Fin.succ k').val then g else (0 : Multiset β)) =
+          (fun (k' : Fin n') =>
+          if j' = k'.val then g else (0 : Multiset β)) := by
+        funext k'
+        show (if j' + 1 = k'.val + 1 then g else 0) = (if j' = k'.val then g else 0)
+        by_cases hk : j' = k'.val
+        · rw [if_pos (by omega : j' + 1 = k'.val + 1), if_pos hk]
+        · rw [if_neg (by omega : ¬ (j' + 1 = k'.val + 1)), if_neg hk]
+      rw [step]
+      have hj' : j' < n' := by
+        have := hj
+        omega
+      exact ih g j' hj'
+
+
+/-! ## §9: The decomposition theorem
+
+The 3-class decomposition statement. Proof is the headline of A3.0
+phase 2.
+
+The substrate identities (§8.5–§8.8) are sorry-free. The singleton
+corollaries (§10) follow as direct consequences. -/
+
+/-- **Multi-pair decomposition lemma**. Under the validity hypothesis
+    that every pair's source is a valid path in `T`, the vertex multiset
+    of `multiGraft T pairs` partitions into:
+
+    1. **preserved**: `(vertices T).filterMap (preserveMulti pairs)` —
+       non-source T-vertices, each transported.
+    2. **sourceSelf**: source vertices of `T` (those whose path is in
+       `pairSources pairs`), each transported.
+    3. **lifted**: for each pair `k` and each `q ∈ vertices (pairs[k].snd)`,
+       the path `liftMulti pairs k q`.
+
+    Specializes to `vertices_insertAt_decomp` for single-pair lists
+    (corollary in §10). -/
+theorem vertices_multiGraft_decomp :
+    ∀ (T : Planar α) (pairs : List (Path × Planar α))
+      (_h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T),
+    ((vertices (multiGraft T pairs) : List Path) : Multiset Path) =
+      ((vertices T : Multiset Path).filterMap (preserveMulti pairs))
+      + (((vertices T : Multiset Path).filter (· ∈ pairSources pairs)).map
+          (transport pairs))
+      + ((Multiset.ofList (List.finRange pairs.length)).bind
+          (fun k => (vertices (pairs[k].snd) : Multiset Path).map
+            (liftMulti pairs k)))
+  | .node a cs, pairs, h_valid => by
+    set N := rootPrependCount pairs with hN_def
+    -- Step 1: unfold LHS structurally.
+    rw [multiGraft_node, vertices_node, verticesAux_append,
+        length_filterMap_rootPrependFilter]
+    rw [show (([] : Path) ::
+              ((verticesAux 0 (pairs.filterMap rootPrependFilter)) ++
+               (verticesAux (0 + N) (multiGraftChildren cs pairs))) : List Path) =
+            ([([] : Path)] ++ verticesAux 0 (pairs.filterMap rootPrependFilter) ++
+              verticesAux (0 + N) (multiGraftChildren cs pairs)) from rfl,
+        ← Multiset.coe_add, ← Multiset.coe_add]
+    -- Step 2: apply companion to the children block.
+    rw [show (0 + N : ℕ) = N from by omega,
+        verticesAux_multiGraftChildren_unfold cs pairs N]
+    -- Step 3: derive per-child validity via substrate lemma, then apply IH inside bind.
+    have h_valid_child : ∀ (i : Fin cs.length),
+        ∀ pair ∈ descentToChild i.val pairs, IsValidPath pair.fst cs[i.val] :=
+      descentToChild_valid_of_node a cs pairs h_valid
+    -- Apply IH per-child via Multiset.bind_congr. Each i ∈ Fin cs.length yields
+    -- the 3-class decomposition for cs[i.val] with descended pairs.
+    have ih_per_child : ∀ (i : Fin cs.length),
+        ((vertices (multiGraft cs[i.val] (descentToChild i.val pairs)) : List Path) :
+          Multiset Path) =
+        ((vertices cs[i.val] : Multiset Path).filterMap
+            (preserveMulti (descentToChild i.val pairs)))
+        + (((vertices cs[i.val] : Multiset Path).filter
+              (· ∈ pairSources (descentToChild i.val pairs))).map
+            (transport (descentToChild i.val pairs)))
+        + ((Multiset.ofList (List.finRange (descentToChild i.val pairs).length)).bind
+            (fun k' => (vertices ((descentToChild i.val pairs)[k'.val].snd) :
+              Multiset Path).map (liftMulti (descentToChild i.val pairs) k'))) :=
+      fun i => vertices_multiGraft_decomp cs[i.val]
+                 (descentToChild i.val pairs) (h_valid_child i)
+    -- Step 4: apply ih_per_child inside the bind, distributing .map over the 3-class sum.
+    simp_rw [ih_per_child, Multiset.map_add]
+    -- Step 5: distribute bind over the 3-class sum into 3 separate binds.
+    rw [Multiset.bind_add, Multiset.bind_add]
+    -- Unfold N to enable rewrites with helpers that mention rootPrependCount pairs.
+    simp only [hN_def]
+    -- Step 6: bridge per-child preserved bind to (verticesAux 0 cs).filterMap (preserveMulti pairs).
+    -- Push .map inside filterMap, apply preserveMulti_cons_post_map, fold via filterMap_map +
+    -- filterMap_bind + verticesAux_unfold.
+    have step6 : ((↑(List.finRange cs.length) : Multiset (Fin cs.length)).bind fun i =>
+            Multiset.map (fun x => (rootPrependCount pairs + i.val) :: x)
+              (Multiset.filterMap (preserveMulti (descentToChild i.val pairs))
+                (↑(vertices cs[i.val]) : Multiset Path))) =
+        Multiset.filterMap (preserveMulti pairs)
+          (↑(verticesAux 0 cs) : Multiset Path) := by
+      -- Push .map inside filterMap via Multiset.map_filterMap.
+      simp_rw [Multiset.map_filterMap, preserveMulti_cons_post_map]
+      -- Now: bind_i (filterMap (fun f => preserveMulti pairs (i :: f)) ↑(vertices cs[i.val])).
+      -- Convert filterMap (fun f => g (h f)) to filterMap g ∘ map h via Multiset.filterMap_map.
+      rw [show (fun (i : Fin cs.length) =>
+              Multiset.filterMap (fun f => preserveMulti pairs (i.val :: f))
+                (↑(vertices cs[i.val]) : Multiset Path)) =
+            (fun (i : Fin cs.length) =>
+              Multiset.filterMap (preserveMulti pairs)
+                (Multiset.map (i.val :: ·) (↑(vertices cs[i.val]) : Multiset Path)))
+          from by funext i; rw [Multiset.filterMap_map]; rfl]
+      -- Pull filterMap out of bind via Multiset.filterMap_bind.
+      rw [← Multiset.filterMap_bind]
+      -- Inner bind = ↑(verticesAux 0 cs) by verticesAux_unfold.
+      congr 1
+      rw [verticesAux_unfold cs 0]
+      refine Multiset.bind_congr fun i _ => ?_
+      rw [show (0 + i.val : ℕ) = i.val from by omega]
+    rw [step6]
+    -- Step 7: bridge per-child sourceSelf bind to (filter (· ∈ pairSources pairs) ↑(verticesAux 0 cs)).map (transport pairs).
+    -- Compose .map's via Multiset.map_map, apply transport_cons_descent pointwise,
+    -- rewrite filter via descent_pairSources_iff, then fold via map_bind + filter_bind +
+    -- verticesAux_unfold.
+    have step7 : ((↑(List.finRange cs.length) : Multiset (Fin cs.length)).bind fun i =>
+            Multiset.map (fun x => (rootPrependCount pairs + i.val) :: x)
+              (Multiset.map (transport (descentToChild i.val pairs))
+                (Multiset.filter (fun x => x ∈ pairSources (descentToChild i.val pairs))
+                  (↑(vertices cs[i.val]) : Multiset Path)))) =
+        Multiset.map (transport pairs)
+          (Multiset.filter (fun x => x ∈ pairSources pairs)
+            (↑(verticesAux 0 cs) : Multiset Path)) := by
+      -- Compose the two outer .map's via Multiset.map_map.
+      simp_rw [Multiset.map_map]
+      -- Pointwise: (fun x => (N + ↑i) :: ·) ∘ transport (desc ↑i pairs) = transport pairs ∘ (↑i :: ·).
+      rw [show (fun (i : Fin cs.length) =>
+              Multiset.map ((fun x : Path => (rootPrependCount pairs + i.val) :: x) ∘
+                              transport (descentToChild i.val pairs))
+                (Multiset.filter (fun x => x ∈ pairSources (descentToChild i.val pairs))
+                  (↑(vertices cs[i.val]) : Multiset Path))) =
+            (fun (i : Fin cs.length) =>
+              Multiset.map (transport pairs ∘ (i.val :: ·))
+                (Multiset.filter (fun x => x ∈ pairSources (descentToChild i.val pairs))
+                  (↑(vertices cs[i.val]) : Multiset Path)))
+          from by
+            funext i
+            congr 1
+            funext y
+            exact transport_cons_descent pairs i.val y]
+      -- Filter rewrite via descent_pairSources_iff.
+      rw [show (fun (i : Fin cs.length) =>
+              Multiset.map (transport pairs ∘ (i.val :: ·))
+                (Multiset.filter (fun x => x ∈ pairSources (descentToChild i.val pairs))
+                  (↑(vertices cs[i.val]) : Multiset Path))) =
+            (fun (i : Fin cs.length) =>
+              Multiset.map (transport pairs ∘ (i.val :: ·))
+                (Multiset.filter (fun x => (i.val :: x) ∈ pairSources pairs)
+                  (↑(vertices cs[i.val]) : Multiset Path)))
+          from by
+            funext i
+            congr 1
+            refine Multiset.filter_congr fun x _ => ?_
+            exact descent_pairSources_iff i.val x pairs]
+      -- Pull .map of (i.val :: ·) out of filter via Multiset.filter_map (reversed).
+      rw [show (fun (i : Fin cs.length) =>
+              Multiset.map (transport pairs ∘ (i.val :: ·))
+                (Multiset.filter (fun x => (i.val :: x) ∈ pairSources pairs)
+                  (↑(vertices cs[i.val]) : Multiset Path))) =
+            (fun (i : Fin cs.length) =>
+              Multiset.map (transport pairs)
+                (Multiset.filter (fun x => x ∈ pairSources pairs)
+                  (Multiset.map (i.val :: ·) (↑(vertices cs[i.val]) : Multiset Path))))
+          from by
+            funext i
+            rw [← Multiset.map_map, Multiset.filter_map]
+            rfl]
+      -- Pull `map (transport pairs)` out of bind via Multiset.map_bind (reversed).
+      rw [← Multiset.map_bind]
+      congr 1
+      -- Pull `filter (· ∈ pairSources pairs)` out of bind via Multiset.filter_bind (reversed).
+      rw [← Multiset.filter_bind]
+      congr 1
+      -- Inner bind = ↑(verticesAux 0 cs) by verticesAux_unfold.
+      rw [verticesAux_unfold cs 0]
+      refine Multiset.bind_congr fun i _ => ?_
+      rw [show (0 + i.val : ℕ) = i.val from by omega]
+    rw [step7]
+    -- Step 9 (combine [] vertex first): the preserved + sourceSelf classes evaluated at
+    -- vertices T = [] :: verticesAux 0 cs decompose as the verticesAux versions plus
+    -- ↑[[]]. The [] vertex contributes either to preserved (if [] ∉ sources) or to
+    -- sourceSelf (if [] ∈ sources), but never both.
+    have hcoe_singleton : (↑([[]] : List Path) : Multiset Path) =
+        ({([] : Path)} : Multiset Path) := rfl
+    have step9 : Multiset.filterMap (preserveMulti pairs)
+                    (↑(vertices (Planar.node a cs)) : Multiset Path)
+                  + Multiset.map (transport pairs)
+                      (Multiset.filter (fun x => x ∈ pairSources pairs)
+                        (↑(vertices (Planar.node a cs)) : Multiset Path)) =
+        (↑([[]] : List Path) : Multiset Path)
+        + Multiset.filterMap (preserveMulti pairs)
+            (↑(verticesAux 0 cs) : Multiset Path)
+        + Multiset.map (transport pairs)
+            (Multiset.filter (fun x => x ∈ pairSources pairs)
+              (↑(verticesAux 0 cs) : Multiset Path)) := by
+      rw [vertices_node]
+      rw [show (↑(([] : Path) :: verticesAux 0 cs) : Multiset Path) =
+              (([] : Path) ::ₘ (↑(verticesAux 0 cs) : Multiset Path))
+          from by rw [← Multiset.cons_coe]]
+      rw [Multiset.filterMap_cons, Multiset.filter_cons, hcoe_singleton]
+      by_cases h : ([] : Path) ∈ pairSources pairs
+      · -- preserveMulti pairs [] = none → preserved gets 0
+        -- [] ∈ sources → sourceSelf cons gets [], mapped via transport pairs [] = []
+        have hpm : preserveMulti pairs ([] : Path) = none := by
+          unfold preserveMulti; simp [h]
+        rw [hpm, if_pos h]
+        simp only [Option.map_none, Option.getD_none, Multiset.zero_add,
+                   Multiset.map_add, Multiset.map_singleton,
+                   show transport pairs ([] : Path) = [] from rfl]
+        abel
+      · -- preserveMulti pairs [] = some [] → preserved cons gets []
+        -- [] ∉ sources → sourceSelf unaffected
+        have hpm : preserveMulti pairs ([] : Path) = some [] := by
+          unfold preserveMulti
+          rw [if_neg h]
+          rfl
+        rw [hpm, if_neg h]
+        simp only [Option.map_some, Option.getD_some]
+        abel
+    -- Now use step9 to align preserved + sourceSelf parts of LHS and RHS.
+    -- After step9 substitution, both sides differ only in the lifted parts.
+    rw [step9]
+    -- Step 8: lifted bridge — the (i, k') ↔ k bijection.
+    -- Both sides enumerate `Σ k ∈ Fin pairs.length, q ∈ vertices pairs[k].snd`,
+    -- organized differently. Bijection: each k corresponds to one of:
+    --   (a) `pairs[k].fst = []`: rootPrepends m-th, where m = posInGroup pairs k.
+    --   (b) `pairs[k].fst = i :: rest` (i < cs.length by validity): descent
+    --       (i, k') in i-bucket, where k' = descentIdxOf i pairs k.
+    -- See §8.7 (`posInGroup_descent_invariance`,
+    -- `descentToChild_getElem_at_descentIdxOf`) for the substrate.
+    have step8 : (↑(verticesAux 0 (List.filterMap rootPrependFilter pairs))
+                    : Multiset Path)
+                + ((↑(List.finRange cs.length) : Multiset (Fin cs.length)).bind fun i =>
+                    Multiset.map (fun x => (rootPrependCount pairs + i.val) :: x)
+                      ((↑(List.finRange (descentToChild i.val pairs).length)
+                          : Multiset (Fin (descentToChild i.val pairs).length)).bind fun k' =>
+                        Multiset.map (liftMulti (descentToChild i.val pairs) k')
+                          (↑(vertices (descentToChild i.val pairs)[k'.val].snd) :
+                            Multiset Path))) =
+        ((↑(List.finRange pairs.length) : Multiset (Fin pairs.length)).bind fun k =>
+          Multiset.map (liftMulti pairs k) (↑(vertices pairs[k].snd) : Multiset Path)) := by
+      -- Step A: each per-i LHS contribution is a bind over k filtered by
+      -- `pairs[k.val].fst.head? = some i.val`. This uses Multiset.map_bind to
+      -- pull `(N + i.val) :: ·` inside, then bind_descent_eq_aux to translate
+      -- the inner k'-bind to a conditional k-bind, then liftMulti_at_child_descent
+      -- + descentToChild_getElem_at_descentIdxOf to simplify the pos branch.
+      have h_per_i : ∀ (i : Fin cs.length),
+          Multiset.map (fun x => (rootPrependCount pairs + i.val) :: x)
+            ((↑(List.finRange (descentToChild i.val pairs).length) :
+              Multiset (Fin (descentToChild i.val pairs).length)).bind fun k' =>
+              Multiset.map (liftMulti (descentToChild i.val pairs) k')
+                (↑(vertices (descentToChild i.val pairs)[k'.val].snd) : Multiset Path)) =
+          ((↑(List.finRange pairs.length) : Multiset (Fin pairs.length)).bind fun k =>
+            if pairs[k.val].fst.head? = some i.val then
+              Multiset.map (liftMulti pairs k) (↑(vertices pairs[k.val].snd) : Multiset Path)
+            else 0) := by
+        intro i
+        -- A.1. Push (N + i.val) :: · inside via Multiset.map_bind, compose maps.
+        simp_rw [Multiset.map_bind, Multiset.map_map]
+        -- A.3. Apply bind_descent_eq_aux (reverse).
+        rw [(bind_descent_eq_aux i.val pairs (descentToChild i.val pairs).length rfl
+              (fun k' => Multiset.map (((rootPrependCount pairs + i.val) :: ·) ∘
+                            (liftMulti (descentToChild i.val pairs) k'))
+                  (↑(vertices (descentToChild i.val pairs)[k'.val].snd) : Multiset Path))).symm]
+        -- A.4. Per-k: simplify pos branch.
+        refine Multiset.bind_congr fun k _ => ?_
+        by_cases h : pairs[k.val].fst.head? = some i.val
+        · rw [dif_pos h, if_pos h]
+          -- Extract pairs[k.val].fst = i.val :: rest.
+          obtain ⟨rest, h_eq⟩ : ∃ rest, pairs[k.val].fst = i.val :: rest := by
+            generalize hp : pairs[k.val].fst = p at h ⊢
+            cases p with
+            | nil =>
+              simp only [List.head?_nil] at h
+              cases h
+            | cons j rest =>
+              simp only [List.head?_cons, Option.some.injEq] at h
+              subst h
+              exact ⟨rest, rfl⟩
+          -- Pos branch:
+          -- Multiset.map (((N + i.val) :: ·) ∘ liftMulti (desc i.val pairs)
+          --                ⟨descentIdxOf i.val pairs k, _⟩)
+          --   ↑(vertices (desc i.val pairs)[descentIdxOf i.val pairs k]'_).snd
+          -- = Multiset.map (liftMulti pairs k) ↑(vertices pairs[k.val].snd)
+          have h_getElem :=
+            descentToChild_getElem_at_descentIdxOf i.val pairs k rest h_eq
+          -- The vertex source matches:
+          --   (desc i.val pairs)[descentIdxOf i.val pairs k]'_.snd = pairs[k.val].snd
+          have h_snd : ((descentToChild i.val pairs)[descentIdxOf i.val pairs k]'(by
+              rw [descentToChild_length_eq]
+              exact descentIdxOf_lt _ _ _ h)).snd = pairs[k.val].snd := by
+            rw [h_getElem]
+          -- The mapping function matches pointwise:
+          have h_fun : ∀ q, (((rootPrependCount pairs + i.val) :: ·) ∘
+                              liftMulti (descentToChild i.val pairs)
+                                ⟨descentIdxOf i.val pairs k, by
+                                  rw [descentToChild_length_eq]
+                                  exact descentIdxOf_lt _ _ _ h⟩) q
+                            = liftMulti pairs k q := by
+            intro q
+            exact (liftMulti_at_child_descent pairs k i.val rest h_eq q).symm
+          -- Combine via Multiset.map_congr.
+          refine Multiset.map_congr ?_ (fun q _ => h_fun q)
+          rw [h_snd]
+        · rw [dif_neg h, if_neg h]
+      -- Apply Step A.
+      simp_rw [h_per_i]
+      -- Step B: swap binds via Multiset.bind_bind.
+      rw [Multiset.bind_bind]
+      -- Step C: convert ↑(verticesAux 0 rootPrepends) via root_bind_eq + liftMulti_at_root.
+      rw [show (↑(verticesAux 0 (List.filterMap rootPrependFilter pairs)) : Multiset Path) =
+            ((↑(List.finRange pairs.length) : Multiset (Fin pairs.length)).bind fun k =>
+              if pairs[k.val].fst = [] then
+                Multiset.map (liftMulti pairs k) (↑(vertices pairs[k.val].snd) : Multiset Path)
+              else 0)
+          from by
+            rw [← root_bind_eq pairs 0]
+            refine Multiset.bind_congr fun k _ => ?_
+            by_cases h : pairs[k.val].fst = []
+            · rw [if_pos h, if_pos h]
+              refine Multiset.map_congr rfl fun q _ => ?_
+              rw [Nat.zero_add]
+              exact (liftMulti_at_root pairs k h q).symm
+            · rw [if_neg h, if_neg h]]
+      -- Step D: combine via Multiset.bind_add^-1.
+      rw [← Multiset.bind_add]
+      -- Step E: per-k decomposition.
+      refine Multiset.bind_congr fun k _ => ?_
+      by_cases h_root : pairs[k.val].fst = []
+      · -- Root k: first term = fk(k); inner bind = 0.
+        rw [if_pos h_root]
+        have h_zero : ((↑(List.finRange cs.length) : Multiset (Fin cs.length)).bind fun i =>
+            if pairs[k.val].fst.head? = some i.val then
+              Multiset.map (liftMulti pairs k) (↑(vertices pairs[k.val].snd) : Multiset Path)
+            else 0) = 0 := by
+          have step : (fun (i : Fin cs.length) =>
+              if pairs[k.val].fst.head? = some i.val then
+                Multiset.map (liftMulti pairs k) (↑(vertices pairs[k.val].snd) : Multiset Path)
+              else (0 : Multiset Path)) = (fun _ => 0) := by
+            funext i
+            rw [h_root]
+            rw [if_neg (fun h => by cases h)]
+          rw [step, Multiset.bind_zero]
+        rw [h_zero, Multiset.add_zero]
+        -- Bridge `pairs[k.val]` (Nat-indexed; from h_per_i / bind_descent_eq_aux body)
+        -- to `pairs[k]` (Fin-indexed; from the original step 8 statement).
+        simp only [Fin.getElem_fin]
+      · -- Child k: first term = 0; inner bind picks out unique i.
+        rw [if_neg h_root, Multiset.zero_add]
+        obtain ⟨j, rest, h_eq⟩ : ∃ j rest, pairs[k.val].fst = j :: rest := by
+          cases h_path : pairs[k.val].fst with
+          | nil => exact absurd h_path h_root
+          | cons j rest => exact ⟨j, rest, rfl⟩
+        have h_j_lt : j < cs.length := by
+          have h_valid_pair := h_valid pairs[k.val] (List.getElem_mem _)
+          rw [h_eq, isValidPath_cons] at h_valid_pair
+          exact h_valid_pair.fst
+        -- Rewrite predicate: pairs[k].fst.head? = some i.val ↔ j = i.val.
+        have step : (fun (i : Fin cs.length) =>
+            if pairs[k.val].fst.head? = some i.val then
+              Multiset.map (liftMulti pairs k) (↑(vertices pairs[k.val].snd) : Multiset Path)
+            else (0 : Multiset Path)) =
+          (fun (i : Fin cs.length) =>
+            if j = i.val then
+              Multiset.map (liftMulti pairs k) (↑(vertices pairs[k.val].snd) : Multiset Path)
+            else 0) := by
+          funext i
+          rw [h_eq]
+          show (if some j = some i.val then _ else _) = (if j = i.val then _ else _)
+          by_cases hi : j = i.val
+          · rw [if_pos (by rw [hi]), if_pos hi]
+          · rw [if_neg (by intro heq; injection heq with heq'; exact hi heq'), if_neg hi]
+        rw [step]
+        exact bind_finRange_singleton_eq cs.length
+          (Multiset.map (liftMulti pairs k) (↑(vertices pairs[k.val].snd) : Multiset Path))
+          j h_j_lt
+    -- Substitute liftedClass via step 8 (reverse), then close by abel.
+    rw [← step8]
+    abel
+termination_by T _ _ => T.weight
+decreasing_by
+  show cs[i.val].weight < (Planar.node a cs).weight
+  show cs[i.val].weight < 1 + weightList cs
+  -- Generalized helper: any indexed element of cs is bounded by weightList cs.
+  have h_le : ∀ (cs' : List (Planar α)) (j : ℕ) (hj : j < cs'.length),
+      (cs'[j]'hj).weight ≤ weightList cs' := by
+    intro cs' j hj
+    induction cs' generalizing j with
+    | nil => simp at hj
+    | cons c cs'' ih =>
+      cases j with
+      | zero =>
+        show weight c ≤ weight c + weightList cs''
+        omega
+      | succ k =>
+        have hk : k < cs''.length := by
+          simp [List.length_cons] at hj; omega
+        show weight (cs''[k]'hk) ≤ weight c + weightList cs''
+        have := ih k hk
+        omega
+  have := h_le cs i.val i.isLt
+  omega
+
+/-! ## §10: Single-pair specialization corollaries
+
+When `pairs = [(e, T₂)]`, the multi-pair decomposition reduces to
+`vertices_insertAt_decomp`. Validates the API shape against the existing
+substrate. -/
+
+/-- Singleton transport on the source itself: `transport [(e, T₂)] e = e`.
+    The source path is at every level shifted by `0` (the only pair
+    contributes to descent, never to root-prepends, except at the end
+    where it's an empty descent). -/
+theorem transport_singleton_self : ∀ (e : Path) (T₂ : Planar α),
+    transport [(e, T₂)] e = e
+  | [], _ => rfl
+  | i :: rest, T₂ => by
+    show (i + rootPrependCount [(i :: rest, T₂)]) ::
+         transport (descentToChild i [(i :: rest, T₂)]) rest = i :: rest
+    rw [rootPrependCount_cons_consPath, rootPrependCount_nil, Nat.add_zero,
+        descentToChild_cons_consPath_eq i rest T₂ [],
+        descentToChild_nil,
+        transport_singleton_self rest T₂]
+
+/-- Single-pair `transport` agrees with `preserveOf` for `f ≠ e`. The
+    diagonal is captured by `preserveMulti = preserve?` (see
+    `preserveMulti_singleton`). -/
+theorem transport_singleton_of_ne : ∀ (e : Path) (T₂ : Planar α) (f : Path)
+    (_hne : f ≠ e), transport [(e, T₂)] f = preserveOf e f
+  | [],            _,   [],            h => absurd rfl h.symm
+  | [],            T₂,  j :: rest_f,   _ => by
+    show (j + rootPrependCount [(([] : Path), T₂)]) ::
+         transport (descentToChild j [(([] : Path), T₂)]) rest_f =
+         preserveOf [] (j :: rest_f)
+    rw [rootPrependCount_cons_nilPath, rootPrependCount_nil,
+        descentToChild_cons_nilPath, descentToChild_nil,
+        transport_empty_pairs, preserveOf_nil_cons]
+  | _ :: _,        _,   [],            _ => rfl
+  | i :: rest_e,   T₂,  j :: rest_f,   h => by
+    by_cases hij : i = j
+    · -- `subst hij` substitutes the newer var, here `j := i`.
+      subst hij
+      have hrest_ne : rest_f ≠ rest_e := fun heq => h (by rw [heq])
+      show (i + rootPrependCount [(i :: rest_e, T₂)]) ::
+           transport (descentToChild i [(i :: rest_e, T₂)]) rest_f =
+           preserveOf (i :: rest_e) (i :: rest_f)
+      rw [rootPrependCount_cons_consPath, rootPrependCount_nil, Nat.add_zero,
+          descentToChild_cons_consPath_eq i rest_e T₂ [],
+          descentToChild_nil,
+          transport_singleton_of_ne rest_e T₂ rest_f hrest_ne,
+          preserveOf_cons_cons, if_pos rfl]
+    · show (j + rootPrependCount [(i :: rest_e, T₂)]) ::
+           transport (descentToChild j [(i :: rest_e, T₂)]) rest_f =
+           preserveOf (i :: rest_e) (j :: rest_f)
+      rw [rootPrependCount_cons_consPath, rootPrependCount_nil, Nat.add_zero,
+          descentToChild_cons_consPath_ne j i rest_e T₂ [] (Ne.symm hij),
+          descentToChild_nil,
+          transport_empty_pairs,
+          preserveOf_cons_cons, if_neg hij]
+
+/-- `preserveMulti [(e, T₂)] = preserve? e`. Combines
+    `transport_singleton_of_ne` (off-diagonal) with `preserve?_self`
+    (diagonal). -/
+theorem preserveMulti_singleton (e : Path) (T₂ : Planar α) (f : Path) :
+    preserveMulti [(e, T₂)] f = preserve? e f := by
+  show (if f ∈ pairSources [(e, T₂)] then none else some (transport [(e, T₂)] f))
+       = preserve? e f
+  rw [show pairSources [(e, T₂)] = [e] from rfl]
+  by_cases h : f = e
+  · subst h
+    rw [if_pos (List.mem_singleton.mpr rfl), preserve?_self]
+  · rw [if_neg (fun hmem => h (List.mem_singleton.mp hmem)),
+        preserve?_of_ne e f h, transport_singleton_of_ne e T₂ f h]
+
+/-- `liftMulti [(e, T₂)] ⟨0, _⟩ q = lift e q`. The single pair's
+    `posInGroup` is `0` (no earlier same-source pairs) and its
+    `transport`ed source is `e` itself (`transport_singleton_self`). -/
+theorem liftMulti_singleton (e : Path) (T₂ : Planar α) (q : Path) :
+    liftMulti [(e, T₂)] ⟨0, by simp⟩ q = lift e q := by
+  show transport [(e, T₂)] (([(e, T₂)] : List _)[0]'(by simp)).fst ++
+       (posInGroup [(e, T₂)] ⟨0, by simp⟩ :: q) = e ++ 0 :: q
+  rw [show (([(e, T₂)] : List (Path × Planar α))[0]'(by simp)).fst = e from rfl,
+      transport_singleton_self e T₂,
+      show posInGroup [(e, T₂)] ⟨0, by simp⟩ = 0 from by
+        unfold posInGroup; simp]
 
 end Pathed
 
