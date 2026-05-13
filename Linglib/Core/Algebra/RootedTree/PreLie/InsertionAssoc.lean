@@ -450,6 +450,492 @@ private theorem assocBucketSum_nil_host_nonempty_guests_B_zero
     rw [ih (pre_A ++ [c]) pre_B, ih pre_A (pre_B ++ [c])]
     rfl
 
+/-! ### §2.15 Host-routing split substrate (planar)
+
+For a `host_B` partition into `pre_T_B = filter_t asn host_B` and
+`pre_FA_B = filter_f asn host_B`, the multi-graft of `pre_B` into the
+partitioned host (with per-c routing decision `sub_B`) equals the
+multi-graft into the un-partitioned `host_B` (with the resulting X'
+filtered by `asn`).
+
+This is the planar-level "host-routing decomposition" lemma, the heart
+of A3.2's base case. The bijection: given (sub_B, multi-graft into
+pre_T_B for sub_B-true c's, multi-graft into pre_FA_B for sub_B-false
+c's), the unified multi-graft into host_B yields an X' whose
+`asn`-filtered components match (X_T, X_F). Conversely, each X' from
+ifd host_B pre_B has a unique sub_B = (each c → asn-bit-of-tree-it-lands-in)
+and decomposes via filter_t/filter_f asn.
+
+Proof: induction on host_B with asn, pre_B, leaf-continuation
+generalized. The cons step (host_B = h :: rest_h) uses
+ifd_cons_assignment on both sides + IH on the recursive multi-graft into
+rest_h. -/
+
+/-! Helpers: filter_t / filter_f reductions at cons-front positions. -/
+
+/-- `filter_t` at cons-true position prepends `c`. -/
+private lemma filterMap_t_cons_true (c : Planar α) (qs : List (Planar α)) (a : List Bool) :
+    ((c :: qs).zip (true :: a)).filterMap (fun p => if p.snd then some p.fst else none) =
+    c :: (qs.zip a).filterMap (fun p => if p.snd then some p.fst else none) := by
+  simp
+
+/-- `filter_f` at cons-true position is unchanged (c routed to t-bucket). -/
+private lemma filterMap_f_cons_true (c : Planar α) (qs : List (Planar α)) (a : List Bool) :
+    ((c :: qs).zip (true :: a)).filterMap (fun p => if p.snd then none else some p.fst) =
+    (qs.zip a).filterMap (fun p => if p.snd then none else some p.fst) := by
+  simp
+
+/-- `filter_t` at cons-false position is unchanged. -/
+private lemma filterMap_t_cons_false (c : Planar α) (qs : List (Planar α)) (a : List Bool) :
+    ((c :: qs).zip (false :: a)).filterMap (fun p => if p.snd then some p.fst else none) =
+    (qs.zip a).filterMap (fun p => if p.snd then some p.fst else none) := by
+  simp
+
+/-- `filter_f` at cons-false position prepends `c`. -/
+private lemma filterMap_f_cons_false (c : Planar α) (qs : List (Planar α)) (a : List Bool) :
+    ((c :: qs).zip (false :: a)).filterMap (fun p => if p.snd then none else some p.fst) =
+    c :: (qs.zip a).filterMap (fun p => if p.snd then none else some p.fst) := by
+  simp
+
+/-- LHS form of the 3-way partition helper. Encodes (sub_B, γ_T) over `qs`:
+    each c ∈ qs is routed by (sub_B(c), γ_T(c)) into one of 3 K-buckets:
+    (t, t) → bucket 1 (h), (t, f) → bucket 2 (T), (f) → bucket 3 (F). -/
+private def splitPairLHSform {ω : Type*} (qs : List (Planar α))
+    (K : List (Planar α) → List (Planar α) → List (Planar α) → Multiset ω) : Multiset ω :=
+  (Multiset.ofList (listChoices [true, false] qs.length)).bind (fun sub_B =>
+    (Multiset.ofList (listChoices [true, false]
+      ((qs.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none)).length)).bind
+        (fun γ_T =>
+      K ((((qs.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none)).zip γ_T).filterMap
+          (fun p => if p.snd then some p.fst else none))
+        ((((qs.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none)).zip γ_T).filterMap
+          (fun p => if p.snd then none else some p.fst))
+        ((qs.zip sub_B).filterMap (fun p => if p.snd then none else some p.fst))))
+
+/-- RHS form of the 3-way partition helper. Encodes (α', sub_B') over `qs`:
+    each c ∈ qs is routed by (α'(c), sub_B'(c)) into one of 3 K-buckets:
+    (t) → bucket 1 (h), (f, t) → bucket 2 (T), (f, f) → bucket 3 (F). -/
+private def splitPairRHSform {ω : Type*} (qs : List (Planar α))
+    (K : List (Planar α) → List (Planar α) → List (Planar α) → Multiset ω) : Multiset ω :=
+  (Multiset.ofList (listChoices [true, false] qs.length)).bind (fun α' =>
+    (Multiset.ofList (listChoices [true, false]
+      ((qs.zip α').filterMap (fun p => if p.snd then none else some p.fst)).length)).bind
+        (fun sub_B' =>
+      K ((qs.zip α').filterMap (fun p => if p.snd then some p.fst else none))
+        ((((qs.zip α').filterMap (fun p => if p.snd then none else some p.fst)).zip sub_B').filterMap
+          (fun p => if p.snd then some p.fst else none))
+        ((((qs.zip α').filterMap (fun p => if p.snd then none else some p.fst)).zip sub_B').filterMap
+          (fun p => if p.snd then none else some p.fst))))
+
+/-- LHS reduction: `splitPairLHSform (c :: rest) K` decomposes into 3 summands
+    over `rest`, with `c` distributed across the 3 K-buckets. -/
+private theorem splitPairLHSform_cons {ω : Type*} (c : Planar α) (rest : List (Planar α))
+    (K : List (Planar α) → List (Planar α) → List (Planar α) → Multiset ω) :
+    splitPairLHSform (c :: rest) K =
+      splitPairLHSform rest (fun Z1 Z2 Z3 => K (c :: Z1) Z2 Z3) +
+      splitPairLHSform rest (fun Z1 Z2 Z3 => K Z1 (c :: Z2) Z3) +
+      splitPairLHSform rest (fun Z1 Z2 Z3 => K Z1 Z2 (c :: Z3)) := by
+  unfold splitPairLHSform
+  -- Peel outer sub_B via listChoices_succ_cons_bind, then split via bind_add
+  rw [show (c :: rest).length = rest.length + 1 from rfl]
+  rw [listChoices_succ_cons_bind]
+  rw [Multiset.bind_add]
+  -- (true :: sub_B) branch needs inner peel; (false :: sub_B) branch matches K_F by rfl.
+  congr 1
+  -- Reduce filter_t/f at (true :: sub_B) cons positions
+  conv_lhs =>
+    rhs; ext sub_B
+    rw [filterMap_t_cons_true, filterMap_f_cons_true]
+  -- Peel inner γ_T (length is c::F_t rest sub_B|.length = |F_t rest sub_B| + 1)
+  conv_lhs =>
+    rhs; ext sub_B
+    rw [show (c :: ((rest.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none))).length =
+            ((rest.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none)).length + 1 from rfl]
+    rw [listChoices_succ_cons_bind]
+  -- Reduce inner filter at (true/false :: γ_T_rest) cons positions
+  conv_lhs =>
+    rhs; ext sub_B
+    rhs; ext γ_T_rest
+    rw [filterMap_t_cons_true, filterMap_f_cons_true,
+        filterMap_t_cons_false, filterMap_f_cons_false]
+  -- Distribute via bind_add (inner γ_T_rest then outer sub_B)
+  conv_lhs =>
+    rhs; ext sub_B
+    rw [Multiset.bind_add]
+  rw [Multiset.bind_add]
+
+/-- RHS reduction: `splitPairRHSform (c :: rest) K` decomposes into 3 summands
+    over `rest`, with `c` distributed across the 3 K-buckets. -/
+private theorem splitPairRHSform_cons {ω : Type*} (c : Planar α) (rest : List (Planar α))
+    (K : List (Planar α) → List (Planar α) → List (Planar α) → Multiset ω) :
+    splitPairRHSform (c :: rest) K =
+      splitPairRHSform rest (fun Z1 Z2 Z3 => K (c :: Z1) Z2 Z3) +
+      splitPairRHSform rest (fun Z1 Z2 Z3 => K Z1 (c :: Z2) Z3) +
+      splitPairRHSform rest (fun Z1 Z2 Z3 => K Z1 Z2 (c :: Z3)) := by
+  unfold splitPairRHSform
+  rw [show (c :: rest).length = rest.length + 1 from rfl]
+  rw [listChoices_succ_cons_bind]
+  rw [Multiset.bind_add]
+  -- Reassociate so (true :: α') branch matches K_h (rfl), (false :: α') branch matches K_T + K_F
+  rw [add_assoc]
+  congr 1
+  -- Reduce filter_t/f at (false :: α') cons positions
+  conv_lhs =>
+    rhs; ext α'
+    rw [filterMap_t_cons_false, filterMap_f_cons_false]
+  -- Peel inner sub_B' (length is c::F_f rest α'|.length = |F_f rest α'| + 1)
+  conv_lhs =>
+    rhs; ext α'
+    rw [show (c :: ((rest.zip α').filterMap (fun p => if p.snd then none else some p.fst))).length =
+            ((rest.zip α').filterMap (fun p => if p.snd then none else some p.fst)).length + 1 from rfl]
+    rw [listChoices_succ_cons_bind]
+  -- Reduce inner filter at (true/false :: sub_B'_rest) cons positions
+  conv_lhs =>
+    rhs; ext α'
+    rhs; ext sub_B'_rest
+    rw [filterMap_t_cons_true, filterMap_f_cons_true,
+        filterMap_t_cons_false, filterMap_f_cons_false]
+  -- Distribute via bind_add (inner sub_B'_rest then outer α')
+  conv_lhs =>
+    rhs; ext α'
+    rw [Multiset.bind_add]
+  rw [Multiset.bind_add]
+
+/-- 3-way bookkeeping helper (T-direction): the categorization
+    `(sub_B, γ_T over filter_t sub_B pre_B)` ↔ `(α', sub_B' over filter_f α' pre_B)`
+    on `pre_B`, where K takes (h-bucket, T_rest-bucket, F_rest-bucket).
+
+    Each `pre_B`-c falls into one of 3 categories on each side:
+    - LHS: (sub_B(c)=t, γ_T-bit=t) → c ∈ K's 1st arg
+           (sub_B(c)=t, γ_T-bit=f) → c ∈ K's 2nd arg
+           (sub_B(c)=f)             → c ∈ K's 3rd arg
+    - RHS: (α'(c)=t)               → c ∈ K's 1st arg
+           (α'(c)=f, sub_B'-bit=t) → c ∈ K's 2nd arg
+           (α'(c)=f, sub_B'-bit=f) → c ∈ K's 3rd arg
+
+    Proof: induction on `pre_B` via `splitPairLHSform_cons` / `splitPairRHSform_cons`
+    decompositions and 3 IH instances. -/
+private theorem split_pair_aux_T {ω : Type*} :
+    ∀ (pre_B : List (Planar α))
+      (K : List (Planar α) → List (Planar α) → List (Planar α) → Multiset ω),
+    (Multiset.ofList (listChoices [true, false] pre_B.length)).bind (fun sub_B =>
+      (Multiset.ofList (listChoices [true, false]
+        ((pre_B.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none)).length)).bind
+          (fun γ_T =>
+        K ((((pre_B.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none)).zip γ_T).filterMap
+            (fun p => if p.snd then some p.fst else none))
+          ((((pre_B.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none)).zip γ_T).filterMap
+            (fun p => if p.snd then none else some p.fst))
+          ((pre_B.zip sub_B).filterMap (fun p => if p.snd then none else some p.fst))))
+    = (Multiset.ofList (listChoices [true, false] pre_B.length)).bind (fun α' =>
+        (Multiset.ofList (listChoices [true, false]
+          ((pre_B.zip α').filterMap (fun p => if p.snd then none else some p.fst)).length)).bind
+            (fun sub_B' =>
+          K ((pre_B.zip α').filterMap (fun p => if p.snd then some p.fst else none))
+            ((((pre_B.zip α').filterMap (fun p => if p.snd then none else some p.fst)).zip sub_B').filterMap
+              (fun p => if p.snd then some p.fst else none))
+            ((((pre_B.zip α').filterMap (fun p => if p.snd then none else some p.fst)).zip sub_B').filterMap
+              (fun p => if p.snd then none else some p.fst)))) := by
+  intro pre_B
+  -- The inline expressions are definitionally equal to splitPairLHSform / splitPairRHSform.
+  show ∀ K, splitPairLHSform pre_B K = splitPairRHSform pre_B K
+  induction pre_B with
+  | nil =>
+    intro K
+    rfl
+  | cons c rest ih =>
+    intro K
+    have ih_h := ih (fun Z1 Z2 Z3 => K (c :: Z1) Z2 Z3)
+    have ih_T := ih (fun Z1 Z2 Z3 => K Z1 (c :: Z2) Z3)
+    have ih_F := ih (fun Z1 Z2 Z3 => K Z1 Z2 (c :: Z3))
+    rw [splitPairLHSform_cons, ih_h, ih_T, ih_F, ← splitPairRHSform_cons]
+
+/-- **Substrate**: host-routing decomposition at planar level.
+
+    Bridges per-c routing decisions (sub_B) with the partition of multi-grafted
+    output X' by `asn`-bit-of-host_B-position.
+
+    Proof strategy: induction on `host_B` with asn, pre_B, leaf generalized.
+    - Base case (host_B = []): asn = []; both sides reduce. For pre_B = [],
+      both equal `leaf [] []`. For pre_B = c :: rest_pre, both equal `0`
+      (LHS via per-sub_B vacuity, RHS via `insertionForest_empty_host_nonempty_guests`).
+    - Cons case (host_B = h :: rest_h, asn = a :: asn_rest):
+      - For a = true: expand `insertionForest_cons_assignment` on both sides, then
+        the LHS bind structure reduces to `bind sub_B: bind γ_T: K(...)` where K
+        is `(insertion h _).bind T_h => (ifd (filter_t rest_h asn_rest) _).bind F'_T_rest =>
+        (ifd (filter_f rest_h asn_rest) _).bind X_F => leaf (T_h :: F'_T_rest) X_F`.
+        The RHS expands to `bind α': bind T_h: bind F_rest: leaf ...` where applying
+        IH on rest_h transforms `bind F_rest: leaf (filter_t F_rest asn_rest) (filter_f F_rest asn_rest)`
+        into `bind sub_B': bind X_T': bind X_F': leaf X_T' X_F'`. Then
+        `split_pair_aux_T` bridges (sub_B, γ_T) ↔ (α', sub_B') for the same K.
+      - For a = false: symmetric, requires `split_pair_aux_F` (F-direction
+        mirror of split_pair_aux_T) — bool inversion + K-arg permutation
+        relates them.
+
+    Estimated ~250-350 LOC. Deferred — substantial substrate work; closing #1
+    (split_pair_aux_T) provides the LHS/RHS bridge but the surrounding
+    `insertion`/`insertionForest` expansion + IH application + the F-direction
+    mirror still need writing. -/
+private theorem insertionForest_split_pair {ω : Type*}
+    (leaf : List (Planar α) → List (Planar α) → Multiset ω) :
+    ∀ (host_B : List (Planar α)) (asn : List Bool) (_ : asn.length = host_B.length)
+      (pre_B : List (Planar α)),
+    (Multiset.ofList (listChoices [true, false] pre_B.length)).bind (fun sub_B =>
+      (insertionForest
+          ((host_B.zip asn).filterMap (fun p => if p.snd then some p.fst else none))
+          ((pre_B.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none))).bind fun X_T =>
+        (insertionForest
+            ((host_B.zip asn).filterMap (fun p => if p.snd then none else some p.fst))
+            ((pre_B.zip sub_B).filterMap (fun p => if p.snd then none else some p.fst))).bind fun X_F =>
+          leaf X_T X_F)
+    = (insertionForest host_B pre_B).bind fun X' =>
+        leaf
+          ((X'.zip asn).filterMap (fun p => if p.snd then some p.fst else none))
+          ((X'.zip asn).filterMap (fun p => if p.snd then none else some p.fst)) := by
+  sorry
+
+/-! ### §2.2 A3.2 — RHS bridge `assocBucketSum_eq_iteratedQuadSum_outer`
+
+The planar bridge from the 4-bucket `iteratedQuadSum` (with an outer
+`asn`-bind partitioning `host_B` into T-side and F_A-side) to the
+2-bucket `assocBucketSum` form.
+
+Generalized version with `pre_A`, `pre_B` arguments (and corresponding
+`sub_A`, `sub_B` binds on the LHS) is proved by induction on `remaining`.
+The base case (remaining = []) requires the **host-routing split substrate**
+(currently sorry; proves a planar identity bridging
+`bind sub_B: ifd pre_T_B (filter_t sub_B) ×ˢ ifd pre_FA_B (filter_f sub_B)`
+to `(ifd host_B).map (fun X' => (filter_t asn X', filter_f asn X'))`).
+The cons step uses listChoices_succ_append_bind to absorb the c-handling
+into the sub_A/sub_B binds, matching the assocBucketSum_cons branching. -/
+
+/-- Generalized RHS bridge: bind α: bind sub_A: bind sub_B: iteratedQuadSum
+    (with sub-distributed pres) remaining = assocBucketSum (T :: F_A) host_B
+    pre_A pre_B remaining. -/
+private theorem assocBucketSum_eq_iteratedQuadSum_outer_gen
+    (T : Planar α) (F_A host_B : List (Planar α)) :
+    ∀ (pre_A pre_B remaining : List (Planar α)),
+    (Multiset.ofList (listChoices [true, false] host_B.length)).bind (fun asn =>
+      (Multiset.ofList (listChoices [true, false] pre_A.length)).bind fun sub_A =>
+        (Multiset.ofList (listChoices [true, false] pre_B.length)).bind fun sub_B =>
+          iteratedQuadSum T F_A
+            ((host_B.zip asn).filterMap (fun p => if p.snd then some p.fst else none))
+            ((host_B.zip asn).filterMap (fun p => if p.snd then none else some p.fst))
+            (fun
+              | .T_orig   => (pre_A.zip sub_A).filterMap (fun p => if p.snd then some p.fst else none)
+              | .FA_orig  => (pre_A.zip sub_A).filterMap (fun p => if p.snd then none else some p.fst)
+              | .T_graft  => (pre_B.zip sub_B).filterMap (fun p => if p.snd then some p.fst else none)
+              | .FA_graft => (pre_B.zip sub_B).filterMap (fun p => if p.snd then none else some p.fst))
+            remaining)
+    = assocBucketSum (T :: F_A) host_B pre_A pre_B remaining := by
+  intro pre_A pre_B remaining
+  induction remaining generalizing pre_A pre_B with
+  | nil =>
+    -- Base case (remaining = []): the heart of A3.2.
+    -- Strategy: transform both sides to a common `bind X': bind asn: bind sub_A: leaf` form.
+    -- (a) RHS: assocBucketSum_nil → ifd_cons_assignment + δ-split via listChoices_append_bind.
+    -- (b) LHS: iteratedQuadSum_nil + bind_bind for inner reorder + substrate
+    --     `insertionForest_split_pair` to bridge sub_B-multi-grafts with X' ∈ ifd host_B pre_B.
+    -- (c) Match via bind_bind reorderings + zip_append + filterMap_append.
+    --
+    -- This proof requires careful bind manipulation; the substrate
+    -- `insertionForest_split_pair` is the planar-level identity it rests on.
+    -- TODO: complete after substrate is closed.
+    sorry
+  | cons c rest ih =>
+    -- Cons step: branch γ_c on LHS (4 options) ↔ branch β_c on RHS (2 options) ×
+    -- sub-bit absorbed into sub_A or sub_B. Uses listChoices_succ_append_bind.
+    --
+    -- Step 1: Apply assocBucketSum_cons on RHS, then IH on each branch.
+    rw [assocBucketSum_cons_remaining]
+    rw [show (Multiset.ofList ([true, false] : List Bool) : Multiset Bool) =
+            (true ::ₘ false ::ₘ 0) from rfl]
+    rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    rw [if_pos rfl, if_neg (by decide : (false : Bool) ≠ true)]
+    rw [← ih (pre_A ++ [c]) pre_B, ← ih pre_A (pre_B ++ [c])]
+    -- Goal: LHS_gen pre_A pre_B (c :: rest)
+    --     = LHS_gen (pre_A ++ [c]) pre_B rest + LHS_gen pre_A (pre_B ++ [c]) rest
+    --
+    -- Step 2: Pull the asn-bind out via bind_add.
+    rw [← Multiset.bind_add]
+    refine Multiset.bind_congr fun asn _ => ?_
+    -- Goal at this asn: bind sub_A: bind sub_B: iteratedQuadSum (c :: rest)
+    --                 = (bind sub_A' over (pre_A++[c]).length: bind sub_B: iQS rest)
+    --                 + (bind sub_A: bind sub_B' over (pre_B++[c]).length: iQS rest)
+    --
+    -- Step 3: Expand iteratedQuadSum_cons on LHS, distributing the 4 QuadIdx branches.
+    conv_lhs =>
+      rhs; ext sub_A; rhs; ext sub_B
+      rw [iteratedQuadSum_cons_remaining]
+      rw [show (Multiset.ofList [QuadIdx.T_orig, QuadIdx.T_graft,
+                                  QuadIdx.FA_orig, QuadIdx.FA_graft] : Multiset QuadIdx) =
+              QuadIdx.T_orig ::ₘ QuadIdx.T_graft ::ₘ QuadIdx.FA_orig ::ₘ QuadIdx.FA_graft ::ₘ 0
+              from rfl]
+      rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind,
+          Multiset.zero_bind, add_zero]
+    -- LHS = bind sub_A: bind sub_B: T_orig + (T_graft + (FA_orig + FA_graft))
+    -- (right-associated due to cons_bind expansion)
+    --
+    -- Step 4: Reorder summands as (T_orig + FA_orig) + (T_graft + FA_graft) and distribute binds.
+    conv_lhs =>
+      rhs; ext sub_A; rhs; ext sub_B
+      rw [show ∀ (X1 X2 X3 X4 : Multiset (List (Planar α))),
+              X1 + (X2 + (X3 + X4)) = (X1 + X3) + (X2 + X4) from by intros; abel]
+    conv_lhs =>
+      rhs; ext sub_A
+      rw [Multiset.bind_add]
+    rw [Multiset.bind_add]
+    -- LHS = (A-side: bind sub_A: bind sub_B: T_orig + FA_orig)
+    --     + (B-side: bind sub_A: bind sub_B: T_graft + FA_graft)
+    --
+    -- Step 5: Match A-side with extended-pre_A; B-side with extended-pre_B.
+    refine congr_arg₂ (· + ·) ?_ ?_
+    · -- A-side bridge:
+      -- Goal: bind sub_A: bind sub_B: (T_orig_summand + FA_orig_summand)
+      --     = bind sub_A' (over (pre_A++[c]).length): bind sub_B: iQS-with-(sub_A',pre_A++[c],sub_B,pre_B) rest
+      -- Strategy: rewrite (pre_A++[c]).length = pre_A.length + 1, apply
+      -- listChoices_succ_append_bind in reverse, then match each branch.
+      rw [show ((pre_A ++ [c] : List (Planar α)).length : Nat) = pre_A.length + 1 from by simp]
+      rw [listChoices_succ_append_bind pre_A.length]
+      refine Multiset.bind_congr fun sub_A hsub_A => ?_
+      have hsub_A_len : sub_A.length = pre_A.length := mem_listChoices_bool_length _ _ hsub_A
+      rw [Multiset.bind_add]
+      refine congr_arg₂ (· + ·) ?_ ?_
+      · -- T_orig_summand = bind sub_B: iQS-with-(sub_A++[t], pre_A++[c], sub_B, pre_B) rest
+        refine Multiset.bind_congr fun sub_B _ => ?_
+        congr 1
+        funext bucket
+        -- Show pres-update for T_orig matches pres_quad with sub_A++[t], pre_A++[c]
+        cases bucket
+        case T_orig =>
+          simp only [Function.update_self]
+          -- F_t sub_A pre_A ++ [c] = F_t (sub_A ++ [t]) (pre_A ++ [c])
+          rw [show (pre_A ++ [c]).zip (sub_A ++ [true]) = pre_A.zip sub_A ++ [(c, true)] from by
+              rw [List.zip_append (by omega : pre_A.length = sub_A.length)]; rfl]
+          rw [List.filterMap_append]
+          rfl
+        case T_graft =>
+          rw [Function.update_of_ne (by decide : QuadIdx.T_graft ≠ QuadIdx.T_orig)]
+        case FA_orig =>
+          rw [Function.update_of_ne (by decide : QuadIdx.FA_orig ≠ QuadIdx.T_orig)]
+          -- F_f sub_A pre_A = F_f (sub_A ++ [t]) (pre_A ++ [c])
+          rw [show (pre_A ++ [c]).zip (sub_A ++ [true]) = pre_A.zip sub_A ++ [(c, true)] from by
+              rw [List.zip_append (by omega : pre_A.length = sub_A.length)]; rfl]
+          rw [List.filterMap_append]
+          simp
+        case FA_graft =>
+          rw [Function.update_of_ne (by decide : QuadIdx.FA_graft ≠ QuadIdx.T_orig)]
+      · -- FA_orig_summand = bind sub_B: iQS-with-(sub_A++[f], pre_A++[c], sub_B, pre_B) rest
+        refine Multiset.bind_congr fun sub_B _ => ?_
+        congr 1
+        funext bucket
+        cases bucket
+        case T_orig =>
+          rw [Function.update_of_ne (by decide : QuadIdx.T_orig ≠ QuadIdx.FA_orig)]
+          -- F_t sub_A pre_A = F_t (sub_A ++ [f]) (pre_A ++ [c])
+          rw [show (pre_A ++ [c]).zip (sub_A ++ [false]) = pre_A.zip sub_A ++ [(c, false)] from by
+              rw [List.zip_append (by omega : pre_A.length = sub_A.length)]; rfl]
+          rw [List.filterMap_append]
+          simp
+        case T_graft =>
+          rw [Function.update_of_ne (by decide : QuadIdx.T_graft ≠ QuadIdx.FA_orig)]
+        case FA_orig =>
+          simp only [Function.update_self]
+          -- F_f sub_A pre_A ++ [c] = F_f (sub_A ++ [f]) (pre_A ++ [c])
+          rw [show (pre_A ++ [c]).zip (sub_A ++ [false]) = pre_A.zip sub_A ++ [(c, false)] from by
+              rw [List.zip_append (by omega : pre_A.length = sub_A.length)]; rfl]
+          rw [List.filterMap_append]
+          rfl
+        case FA_graft =>
+          rw [Function.update_of_ne (by decide : QuadIdx.FA_graft ≠ QuadIdx.FA_orig)]
+    · -- B-side bridge: symmetric to A-side, with pre_B/sub_B and T_graft/FA_graft.
+      -- Goal: bind sub_A: bind sub_B: (T_graft_summand + FA_graft_summand)
+      --     = bind sub_A: bind sub_B' (over (pre_B++[c]).length): iQS-with-(sub_A,pre_A,sub_B',pre_B++[c]) rest
+      rw [show ((pre_B ++ [c] : List (Planar α)).length : Nat) = pre_B.length + 1 from by simp]
+      refine Multiset.bind_congr fun sub_A hsub_A => ?_
+      have hsub_A_len : sub_A.length = pre_A.length := mem_listChoices_bool_length _ _ hsub_A
+      rw [listChoices_succ_append_bind pre_B.length]
+      simp only [Multiset.bind_add]
+      refine congr_arg₂ (· + ·) ?_ ?_
+      · -- T_graft_summand = bind sub_B: iQS-with-(sub_A, pre_A, sub_B++[t], pre_B++[c]) rest
+        refine Multiset.bind_congr fun sub_B hsub_B => ?_
+        have hsub_B_len : sub_B.length = pre_B.length := mem_listChoices_bool_length _ _ hsub_B
+        congr 1
+        funext bucket
+        cases bucket
+        case T_orig =>
+          rw [Function.update_of_ne (by decide : QuadIdx.T_orig ≠ QuadIdx.T_graft)]
+        case T_graft =>
+          simp only [Function.update_self]
+          -- F_t sub_B pre_B ++ [c] = F_t (sub_B ++ [t]) (pre_B ++ [c])
+          rw [show (pre_B ++ [c]).zip (sub_B ++ [true]) = pre_B.zip sub_B ++ [(c, true)] from by
+              rw [List.zip_append (by omega : pre_B.length = sub_B.length)]; rfl]
+          rw [List.filterMap_append]
+          rfl
+        case FA_orig =>
+          rw [Function.update_of_ne (by decide : QuadIdx.FA_orig ≠ QuadIdx.T_graft)]
+        case FA_graft =>
+          rw [Function.update_of_ne (by decide : QuadIdx.FA_graft ≠ QuadIdx.T_graft)]
+          -- F_f sub_B pre_B = F_f (sub_B ++ [t]) (pre_B ++ [c])
+          rw [show (pre_B ++ [c]).zip (sub_B ++ [true]) = pre_B.zip sub_B ++ [(c, true)] from by
+              rw [List.zip_append (by omega : pre_B.length = sub_B.length)]; rfl]
+          rw [List.filterMap_append]
+          simp
+      · -- FA_graft_summand = bind sub_B: iQS-with-(sub_A, pre_A, sub_B++[f], pre_B++[c]) rest
+        refine Multiset.bind_congr fun sub_B hsub_B => ?_
+        have hsub_B_len : sub_B.length = pre_B.length := mem_listChoices_bool_length _ _ hsub_B
+        congr 1
+        funext bucket
+        cases bucket
+        case T_orig =>
+          rw [Function.update_of_ne (by decide : QuadIdx.T_orig ≠ QuadIdx.FA_graft)]
+        case T_graft =>
+          rw [Function.update_of_ne (by decide : QuadIdx.T_graft ≠ QuadIdx.FA_graft)]
+          -- F_t sub_B pre_B = F_t (sub_B ++ [f]) (pre_B ++ [c])
+          rw [show (pre_B ++ [c]).zip (sub_B ++ [false]) = pre_B.zip sub_B ++ [(c, false)] from by
+              rw [List.zip_append (by omega : pre_B.length = sub_B.length)]; rfl]
+          rw [List.filterMap_append]
+          simp
+        case FA_orig =>
+          rw [Function.update_of_ne (by decide : QuadIdx.FA_orig ≠ QuadIdx.FA_graft)]
+        case FA_graft =>
+          simp only [Function.update_self]
+          -- F_f sub_B pre_B ++ [c] = F_f (sub_B ++ [f]) (pre_B ++ [c])
+          rw [show (pre_B ++ [c]).zip (sub_B ++ [false]) = pre_B.zip sub_B ++ [(c, false)] from by
+              rw [List.zip_append (by omega : pre_B.length = sub_B.length)]; rfl]
+          rw [List.filterMap_append]
+          rfl
+
+/-- A3.2 specialized: `pre_A = pre_B = []` collapses sub_A and sub_B binds. -/
+private theorem assocBucketSum_eq_iteratedQuadSum_outer
+    (T : Planar α) (F_A host_B remaining : List (Planar α)) :
+    (Multiset.ofList (listChoices [true, false] host_B.length)).bind (fun asn =>
+      iteratedQuadSum T F_A
+        ((host_B.zip asn).filterMap (fun p => if p.snd then some p.fst else none))
+        ((host_B.zip asn).filterMap (fun p => if p.snd then none else some p.fst))
+        (fun _ => []) remaining)
+    = assocBucketSum (T :: F_A) host_B [] [] remaining := by
+  have h := assocBucketSum_eq_iteratedQuadSum_outer_gen T F_A host_B [] [] remaining
+  -- LHS of `h` has triple-bind: bind asn: bind sub_A (over []): bind sub_B (over []): leaf.
+  -- For pre_A = pre_B = [], listChoices [t,f] 0 = [[]], so sub_A = sub_B = [].
+  -- The sub_A/sub_B binds collapse to single-element binds, and the pres simplifies to (fun _ => []).
+  -- We need to bridge LHS_specific = LHS_gen [] [] [], then chain via h.
+  rw [← h]
+  refine Multiset.bind_congr fun asn _ => ?_
+  -- LHS at this asn: iteratedQuadSum T F_A pre_T_B pre_FA_B (fun _ => []) remaining
+  -- LHS_gen at this asn: bind sub_A (over []): bind sub_B (over []): iteratedQuadSum (with sub-distributed pres) remaining
+  -- Both reduce since listChoices [t,f] 0 = [[]] and the empty filterMaps give (fun _ => []) for the pres.
+  simp only [List.length_nil, listChoices_zero]
+  rw [show (Multiset.ofList ([[]] : List (List Bool)) : Multiset (List Bool)) =
+          (([] : List Bool) ::ₘ 0) from rfl,
+      Multiset.cons_bind, Multiset.zero_bind, add_zero,
+      Multiset.cons_bind, Multiset.zero_bind, add_zero]
+  -- Now both sides have iteratedQuadSum with possibly-different pres values.
+  -- Show pres is equal: filter_t [] [] = filter_f [] [] = []. So all 4 buckets are [].
+  congr 1
+  funext bucket
+  cases bucket <;> simp
+
 /-- The headline planar identity AT THE MSFORM LEVEL. Iterated multi-graft
     equals the iterated bucket-sum form, modulo the multiset-of-multiset
     wrapping `Multiset.ofList ∘ List.map mk`.
