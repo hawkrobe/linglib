@@ -825,6 +825,32 @@ theorem hostBucketSum_eq_insertionForest (host_A host_B guests : List (Planar α
     rw [show T :: F_A ++ host_B = T :: (F_A ++ host_B) from rfl]
     rw [insertionForest_cons_assignment]
 
+/-- **Generalized assignment-decomposition of `insertionForest`**: for any host
+    forest decomposition `F1 ++ F2`, the multi-graft into the concatenated host
+    equals the sum over `[true, false]`-assignments of `X` into an `F1`-bucket
+    and an `F2`-bucket, with each side multi-grafted independently and the two
+    output forests concatenated.
+
+    Generalizes `insertionForest_cons_assignment` (which handles `T :: F` shape)
+    to arbitrary `F1 ++ F2`. Composes `hostBucketSum_eq_insertionForest` (in
+    reverse), `hostBucketSum_assignment_rewrite`, `hostBucketSum_nil_remaining`,
+    and `product_map_append_eq_bind_map`. -/
+private theorem insertionForest_append
+    (F1 F2 X : List (Planar α)) :
+    insertionForest (F1 ++ F2) X =
+      (Multiset.ofList (listChoices [true, false] X.length)).bind fun α =>
+        (insertionForest F1
+            ((X.zip α).filterMap (fun p => if p.snd then some p.fst else none))).bind
+          fun F1' =>
+            (insertionForest F2
+                ((X.zip α).filterMap (fun p => if p.snd then none else some p.fst))).map
+              fun F2' => F1' ++ F2' := by
+  rw [← hostBucketSum_eq_insertionForest F1 F2 X,
+      hostBucketSum_assignment_rewrite F1 F2 [] [] X]
+  refine Multiset.bind_congr fun α _ => ?_
+  rw [hostBucketSum_nil_remaining, List.nil_append, List.nil_append]
+  exact product_map_append_eq_bind_map _ _
+
 /-! ## §5: Host-Perm invariance at the multiset-of-multiset level
 
 `insertionForest` is invariant under permutation of host trees, but only at
