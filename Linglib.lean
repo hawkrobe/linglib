@@ -1899,7 +1899,7 @@ import Linglib.Core.Algebra.ConnesKreimer.Shuffle
 import Linglib.Core.Algebra.ConnesKreimer.ShuffleBialgebra
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonAssoc
-import Linglib.Core.Algebra.RootedTree.PreLie.Algebra
+import Linglib.Core.Algebra.RootedTree.PreLie.Basic
 import Linglib.Core.Algebra.RootedTree.PreLie.Graft
 import Linglib.Core.Algebra.RootedTree.PreLie.Insert
 import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
@@ -1946,10 +1946,10 @@ import Linglib.Theories.Syntax.WordGrammar.Network
 import Linglib.Theories.Processing.Cost.Profile
 import Linglib.Theories.Processing.CueBasedRetrieval.Basic
 import Linglib.Theories.Processing.LanguageModel.Basic
-import Linglib.Theories.Processing.Memory.Basic
-import Linglib.Theories.Processing.Memory.LossyContext
 import Linglib.Theories.Processing.MemorySurprisal.Basic
 import Linglib.Theories.Processing.MemorySurprisal.InformationalFusion
+import Linglib.Theories.Processing.NoisyChannel.Basic
+import Linglib.Theories.Processing.NoisyChannel.LossyContext
 import Linglib.Theories.Processing.PredictiveUncertainty.Config
 import Linglib.Theories.Processing.PredictiveUncertainty.IAS
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
