@@ -332,6 +332,28 @@ private theorem iteratedQuadSum_eq_alphaBind
   rw [iteratedQuadSum_nil_remaining]
   simp only [List.nil_append]
 
+/-- Pres-generalized flat α-bind form for `iteratedQuadSum`. Each `α : List
+    QuadIdx` of length `C.length` selects per-c which bucket consumes that c;
+    the leaf form prepends `pres t` to the resulting per-bucket slice of `C`.
+
+    Specializes to `iteratedQuadSum_eq_alphaBind` at `pres = (fun _ => [])`.
+    Required for the cons-case of `RHS_eq_canonical_msform`: after
+    `iteratedQuadSum_cons_remaining`, the inner pres is
+    `Function.update (fun _ => []) first [c]`, so the more general form is
+    needed to expose the α-bind on the inner-pres iteratedQuadSum-leaf. -/
+private theorem iteratedQuadSum_eq_alphaBind_general
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) (C : List (Planar α)) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B pres C =
+      (Multiset.ofList (listChoices
+          [QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft]
+          C.length)).bind fun a =>
+        iteratedQuadSum T F_A pre_T_B pre_FA_B
+          (fun t => pres t ++ bucketSlice C a t) [] := by
+  rw [iteratedQuadSum_eq_kBucketSum, kBucketSum_assignment_rewrite]
+  refine Multiset.bind_congr fun a _ => ?_
+  rw [iteratedQuadSum_nil_remaining]
+
 /-! ## §1.7: α-constrained vertex choices (Phase 4.2 substrate, Piece 1)
 
 Per-c choice type for enumerating γ-assignments respecting α. For each
@@ -2110,6 +2132,155 @@ private theorem RHS_eq_canonical_msform_C_nil
         exact (Multiset.bind_singleton (insertionForest F_A pre_FA_B) (T_ins :: ·)).symm]
   -- Step 4: apply LHS_eq_canonical_msform_C_nil.
   exact LHS_eq_canonical_msform_C_nil T F_A pre_T_B pre_FA_B
+
+/-! ### §1.10.1: Head decomposition substrate
+
+Substrate for the cons-case bridge of `RHS_eq_canonical_msform`. The
+`enumGraftingData_succ` (§1.9.6) exposes the per-target structure
+`(allAlphaConstrainedChoiceList).bind first => ...`. To match the LHS's per-α
+structure (where `α : List QuadIdx` selects a bucket per c), we need to factor
+the `first` enumeration by bucket.
+
+The head decomposition lemma `allAlphaConstrainedChoiceList_bind_decompose`
+splits `(allAlphaConstrainedChoiceList).bind H` into a sum of 4 per-bucket
+binds, each ranging over `enumAlphaConstrainedChoice b`. This is the key
+substrate for the cons-case proof. -/
+
+/-- Each bucket's source list (as a Multiset) equals the corresponding
+    `enumAlphaConstrainedChoice` value. T_orig is `rfl`; the indexed buckets
+    use `Multiset.coe_bind` to convert flatMap to bind. -/
+private theorem ofList_T_orig_eq_enumAlpha
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    (Multiset.ofList ((vertices T).map AlphaConstrainedChoice.t_orig) :
+      Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+    enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.T_orig := rfl
+
+private theorem ofList_T_graft_eq_enumAlpha
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    (Multiset.ofList ((List.finRange pre_T_B.length).flatMap fun k =>
+        (vertices pre_T_B[k.val]).map (AlphaConstrainedChoice.t_graft k)) :
+      Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+    enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.T_graft := by
+  unfold enumAlphaConstrainedChoice
+  rw [← Multiset.coe_bind]
+
+private theorem ofList_FA_orig_eq_enumAlpha
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    (Multiset.ofList ((List.finRange F_A.length).flatMap fun i =>
+        (vertices F_A[i.val]).map (AlphaConstrainedChoice.fa_orig i)) :
+      Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+    enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.FA_orig := by
+  unfold enumAlphaConstrainedChoice
+  rw [← Multiset.coe_bind]
+
+private theorem ofList_FA_graft_eq_enumAlpha
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    (Multiset.ofList ((List.finRange pre_FA_B.length).flatMap fun k =>
+        (vertices pre_FA_B[k.val]).map (AlphaConstrainedChoice.fa_graft k)) :
+      Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+    enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.FA_graft := by
+  unfold enumAlphaConstrainedChoice
+  rw [← Multiset.coe_bind]
+
+/-- The Multiset-of-allAlphaConstrainedChoiceList equals the sum of 4 per-bucket
+    `enumAlphaConstrainedChoice`. Helper for the head decomposition. -/
+private theorem allAlphaConstrainedChoiceList_eq_sum
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    (Multiset.ofList (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) :
+      Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+    enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.T_orig +
+    enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.T_graft +
+    enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.FA_orig +
+    enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.FA_graft := by
+  -- LHS: Multiset.ofList of (a ++ b ++ c ++ d) where each is per-bucket source list.
+  -- Distribute Multiset.ofList over ++ via ← Multiset.coe_add (3 times).
+  -- Then convert each ofList to enumAlpha via the bucket-equalities.
+  show (Multiset.ofList (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) :
+        Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) = _
+  unfold allAlphaConstrainedChoiceList
+  rw [← Multiset.coe_add, ← Multiset.coe_add, ← Multiset.coe_add]
+  rw [ofList_T_orig_eq_enumAlpha, ofList_T_graft_eq_enumAlpha,
+      ofList_FA_orig_eq_enumAlpha, ofList_FA_graft_eq_enumAlpha]
+
+/-- **Head decomposition** for `allAlphaConstrainedChoiceList`. The bind over
+    the full source list factors as the sum of 4 per-bucket binds, each over
+    the corresponding `enumAlphaConstrainedChoice` value. Sorry-free composition
+    of `allAlphaConstrainedChoiceList_eq_sum` + `Multiset.add_bind`. -/
+private theorem allAlphaConstrainedChoiceList_bind_decompose
+    {γ : Type*}
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (H : AlphaConstrainedChoice F_A pre_T_B pre_FA_B → Multiset γ) :
+    (Multiset.ofList (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B)).bind H =
+      (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.T_orig).bind H +
+      (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.T_graft).bind H +
+      (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.FA_orig).bind H +
+      (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.FA_graft).bind H := by
+  rw [allAlphaConstrainedChoiceList_eq_sum]
+  rw [Multiset.add_bind, Multiset.add_bind, Multiset.add_bind]
+
+/-- Variant of `allAlphaConstrainedChoiceList_bind_decompose` in the
+    `[4 buckets].bind` form. The outer bind ranges over QuadIdx (the bucket
+    sequence), and the inner bind ranges over per-bucket valid targets.
+
+    This form aligns directly with the LHS's α-bind structure in the cons
+    case: LHS's `(listChoices [4 buckets] (n+1)).bind α => ...` factors via
+    `listChoices_succ` into `[4 buckets].bind first_b => (listChoices [4 buckets] n).bind rest_α => ...`,
+    whose first-level bind matches RHS's `[4 buckets].bind first_b => ...`. -/
+private theorem allAlphaConstrainedChoiceList_bind_eq_bucketList_bind
+    {γ : Type*}
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (H : AlphaConstrainedChoice F_A pre_T_B pre_FA_B → Multiset γ) :
+    (Multiset.ofList (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B)).bind H =
+      (([QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] :
+          Multiset QuadIdx).bind fun b =>
+        (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B b).bind H) := by
+  rw [allAlphaConstrainedChoiceList_bind_decompose]
+  -- RHS: (T_orig ::ₘ T_graft ::ₘ FA_orig ::ₘ FA_graft ::ₘ 0).bind G
+  -- = G T_orig + (G T_graft + (G FA_orig + (G FA_graft + 0)))
+  rw [show ([QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] :
+            Multiset QuadIdx) =
+        QuadIdx.T_orig ::ₘ QuadIdx.T_graft ::ₘ QuadIdx.FA_orig ::ₘ QuadIdx.FA_graft ::ₘ 0 from rfl]
+  rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind,
+      Multiset.zero_bind, add_zero]
+  -- Both sides: (enum T_orig).bind H + (enum T_graft).bind H + ... + (enum FA_graft).bind H
+  -- LHS is left-assoc; RHS after cons_bind is right-assoc. Use add_assoc.
+  rw [add_assoc, add_assoc]
+
+/-- **Factored cons-case decomposition** for `enumGraftingData`. Combines
+    `enumGraftingData_succ` with `allAlphaConstrainedChoiceList_bind_eq_bucketList_bind`
+    to expose the `[4 buckets].bind` structure on the `first` enumeration.
+
+    This form aligns with the LHS's `(listChoices [4 buckets] (n+1)).bind` form
+    after `listChoices_succ`. The cons-case bridge proof case-splits on the
+    first bucket, then per first_b matches LHS leaf with RHS leaf. -/
+private theorem enumGraftingData_succ_factored
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (n : Nat) :
+    enumGraftingData T F_A pre_T_B pre_FA_B (n + 1) =
+      (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+        (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+          (([QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] :
+              Multiset QuadIdx).bind fun first_b =>
+            (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B first_b).bind fun first_target =>
+              (Multiset.ofList
+                (listChoices (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) n)).map
+                fun rest_targets =>
+                  ({ pre_T_B_choice := choice_T
+                     pre_FA_B_choice := fdata
+                     C_targets := first_target :: rest_targets }
+                   : GraftingData F_A pre_T_B pre_FA_B)) := by
+  rw [enumGraftingData_succ]
+  -- Convert nested flatMaps to nested binds via ← Multiset.coe_bind, interleaved
+  -- with bind_congr to enter binder bodies (rw doesn't recurse into lambdas).
+  rw [← Multiset.coe_bind]
+  refine Multiset.bind_congr fun choice_T _ => ?_
+  rw [← Multiset.coe_bind]
+  refine Multiset.bind_congr fun fdata _ => ?_
+  rw [← Multiset.coe_bind]
+  -- Apply head decomp on the inner `(Multiset.ofList allAlpha).bind first => ...`.
+  rw [allAlphaConstrainedChoiceList_bind_eq_bucketList_bind]
+  -- The remaining goal differs only in `↑(List.map f xs)` vs `Multiset.map f ↑xs`,
+  -- which are defeq via Multiset.map's definition on coerced lists.
+  rfl
 
 /-! ### §1.9.5: Future bridges (full C : List)
 
