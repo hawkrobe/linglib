@@ -4397,10 +4397,33 @@ private theorem RHS_eq_canonical_msform_pres
             (fun agd : AugGraftingData F_A pre_T_B pre_FA_B pres =>
               Multiset.ofList ((augInterpret T agd []).map Nonplanar.mk))
         from rfl]
-    -- TODO (Phase 2 substantive): expand each LHS layer via insertion_def
-    -- + insertionForest_eq_explicit, split combined choices via
-    -- listChoices_split_bind, reorder via Multiset.bind_bind, equate
-    -- the closed-form leaves. ~200-300 LOC remaining.
+    -- LHS expansion Step 1: expand outer insertionForest pre_T_B (pres .T_graft)
+    -- via insertionForest_eq_explicit, then convert .map.bind via Multiset.bind_map.
+    -- Push outer .map msform inside via Multiset.map_bind.
+    rw [insertionForest_eq_explicit pre_T_B (pres .T_graft),
+        show enumFChoices pre_T_B (pres .T_graft) =
+            Multiset.ofList (listChoices (perKFChoice pre_T_B) (pres .T_graft).length)
+          from rfl,
+        Multiset.bind_map, Multiset.map_bind]
+    -- LHS expansion Step 2: push msform further inside the bind chain.
+    simp_rw [Multiset.map_bind]
+    -- LHS now: bind pTG => bind T' => bind pre_FA_B' => map F' => msform (T' :: F').
+    -- LHS expansion Step 3: expand third layer insertionForest pre_FA_B (pres .FA_graft)
+    -- via insertionForest_eq_explicit. Use simp_rw to enter the binders.
+    simp_rw [insertionForest_eq_explicit pre_FA_B (pres .FA_graft),
+             show enumFChoices pre_FA_B (pres .FA_graft) =
+                 Multiset.ofList (listChoices (perKFChoice pre_FA_B) (pres .FA_graft).length)
+               from rfl,
+             Multiset.bind_map]
+    --
+    -- TODO (Phase 2 substantive): expand inner insertion T (pre_T_B' ++ pres .T_orig)
+    -- via insertion_def (note: simp_rw [insertion_def T] may not match through binders;
+    -- use conv_lhs to focus). Then expand inner insertionForest F_A (pre_FA_B' ++ pres
+    -- .FA_orig) similarly. Split combined choices for both T and FA sides via
+    -- listChoices_split_bind into (choice_T, pTO) and (fdata, pFO) per-bucket halves.
+    -- Reorder all 6 binds via Multiset.bind_bind to match RHS variable order
+    -- (choice_T, fdata, pTO, pTG, pFO, pFG). Each leaf equates via List.zip_append +
+    -- multiGraft pair-list match. ~100-180 LOC remaining.
     sorry
   | cons c rest ih =>
     -- CONS CASE: see §1.11.6 docstring for proof plan.
