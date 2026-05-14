@@ -369,7 +369,7 @@ private theorem product_map_append_eq_bind_map
 
 /-- Uniform decomposition of `insertionForest (T :: F) X` over `[true, false]`-assignments
     of `X`'s elements to the T-bucket or F-bucket. Works for empty X via singleton bind. -/
-private theorem insertionForest_cons_assignment (T : Planar α)
+theorem insertionForest_cons_assignment (T : Planar α)
     (F : List (Planar α)) (X : List (Planar α)) :
     insertionForest (T :: F) X =
       (Multiset.ofList (listChoices [true, false] X.length)).bind fun α =>
@@ -393,7 +393,7 @@ private theorem insertionForest_cons_assignment (T : Planar α)
 /-- **Lemma X (listChoices append-decomposition)**: enumerating length-`(n+1)`
     bit vectors and applying `g` equals enumerating length-`n` bit vectors and
     summing `g (α ++ [true]) + g (α ++ [false])`. Multiset-level, NOT list-level. -/
-private theorem listChoices_succ_append_bind {γ : Type*}
+theorem listChoices_succ_append_bind {γ : Type*}
     (n : Nat) (g : List Bool → Multiset γ) :
     (Multiset.ofList (listChoices [true, false] (n + 1))).bind g =
       (Multiset.ofList (listChoices [true, false] n)).bind fun a =>
@@ -484,10 +484,54 @@ private theorem listChoices_succ_append_bind {γ : Type*}
     -- Goal: g (v :: (a ++ [true])) + g (v :: (a ++ [false])) = g ((v :: a) ++ [true]) + g ((v :: a) ++ [false])
     rfl
 
+/-- **Length-additive splitting**: a bind over length-`(m+n)` bit vectors equals a
+    nested bind: outer over length-`m`, inner over length-`n`, with the leaf
+    function applied to the concatenation.
+
+    Companion to `listChoices_succ_append_bind` (which splits off a single bit
+    from the end). Used in `assocBucketSum_eq_iteratedQuadSum_outer_gen`
+    (`InsertionAssoc.lean`) to align the `host_B.length + pre_A.length`-sized
+    `listChoices` enumeration with separate bit vectors for each segment.
+
+    Proof: induction on `n`. Base `n = 0` reduces via `List.append_nil`; step
+    `n + 1` peels off one bit via `listChoices_succ_append_bind` on both sides
+    and rebinds via `List.append_assoc`. -/
+theorem listChoices_append_bind {γ : Type*}
+    (m n : Nat) (g : List Bool → Multiset γ) :
+    (Multiset.ofList (listChoices [true, false] (m + n))).bind g =
+      (Multiset.ofList (listChoices [true, false] m)).bind fun a =>
+        (Multiset.ofList (listChoices [true, false] n)).bind fun b =>
+          g (a ++ b) := by
+  induction n generalizing g with
+  | zero =>
+    -- m + 0 = m. Inner bind over length-0 = singleton {[]}, so g (a ++ []) = g a.
+    show (Multiset.ofList (listChoices [true, false] m)).bind g =
+         (Multiset.ofList (listChoices [true, false] m)).bind fun a =>
+           (Multiset.ofList (listChoices [true, false] 0)).bind fun b => g (a ++ b)
+    refine Multiset.bind_congr fun a _ => ?_
+    rw [listChoices_zero]
+    show g a =
+         (Multiset.ofList ([[]] : List (List Bool))).bind fun b => g (a ++ b)
+    rw [show (Multiset.ofList ([[]] : List (List Bool)) : Multiset (List Bool)) =
+            (([] : List Bool) ::ₘ 0) from rfl]
+    rw [Multiset.cons_bind, Multiset.zero_bind, add_zero, List.append_nil]
+  | succ n ih =>
+    -- m + (n+1) = (m + n) + 1. Apply listChoices_succ_append_bind on LHS to peel
+    -- the last bit, then IH, then re-pack via listChoices_succ_append_bind on the
+    -- RHS inner bind (in reverse).
+    rw [show m + (n + 1) = (m + n) + 1 from by omega]
+    rw [listChoices_succ_append_bind (m + n) g]
+    rw [ih (fun a => g (a ++ [true]) + g (a ++ [false]))]
+    refine Multiset.bind_congr fun a _ => ?_
+    rw [listChoices_succ_append_bind n (fun b => g (a ++ b))]
+    refine Multiset.bind_congr fun b _ => ?_
+    -- Goal: g (a ++ b ++ [t]) + g (a ++ b ++ [f]) = g (a ++ (b ++ [t])) + g (a ++ (b ++ [f]))
+    rw [List.append_assoc, List.append_assoc]
+
 /-- Length lemma: every element of `listChoices xs n` has length exactly `n`.
     Used in the cons case of `hostBucketSum_eq_hostTripleSum_aux` to invoke
     `List.zip_append`. -/
-private theorem mem_listChoices_length {β : Type*} (xs : List β) :
+theorem mem_listChoices_length {β : Type*} (xs : List β) :
     ∀ (n : Nat) (α : List β), α ∈ listChoices xs n → α.length = n := by
   intro n
   induction n with
@@ -643,7 +687,7 @@ Requires `listChoices_succ_cons_bind` (the cons-prepending analog of
 
 /-- Cons-prepending analog of `listChoices_succ_append_bind`. The bit
     for the cons-front guest goes at the FRONT of α rather than the back. -/
-private theorem listChoices_succ_cons_bind {γ : Type*}
+theorem listChoices_succ_cons_bind {γ : Type*}
     (n : Nat) (g : List Bool → Multiset γ) :
     (Multiset.ofList (listChoices [true, false] (n + 1))).bind g =
       (Multiset.ofList (listChoices [true, false] n)).bind fun α =>

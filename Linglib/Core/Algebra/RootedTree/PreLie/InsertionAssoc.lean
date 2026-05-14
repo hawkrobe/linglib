@@ -508,6 +508,19 @@ private def enumFChoices (F_A pre_FA_B : List (Planar α)) :
     Multiset (List (Fin F_A.length × Path)) :=
   Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)
 
+/-- `perKFChoice` for an empty F_A is empty (no F_A-trees to pick a vertex from). -/
+@[simp] private theorem perKFChoice_nil :
+    perKFChoice ([] : List (Planar α)) = [] := rfl
+
+/-- `enumFChoices F_A []` is the singleton `{[]}` (only the empty choice).
+    Holds for any F_A since `listChoices xs 0 = [[]]`. -/
+@[simp] private theorem enumFChoices_nil_pre_FA_B (F_A : List (Planar α)) :
+    enumFChoices F_A ([] : List (Planar α)) =
+      ({[]} : Multiset (List (Fin F_A.length × Path))) := by
+  unfold enumFChoices
+  rw [List.length_nil, listChoices_zero]
+  rfl
+
 /-- F-side explicit-choice bridge: `insertionForest F_A pre_FA_B` in standard
     form equals the explicit-choice enumeration `(enumFChoices F_A pre_FA_B).map
     (buildFIns F_A pre_FA_B)`. The bijection sends each `[true, false]`-tagged
@@ -545,7 +558,11 @@ private theorem insertionForest_eq_explicit
     | nil =>
       -- pre_FA_B = []. LHS = {[]}. RHS = {[]}.map buildFIns ... = {buildFIns [] [] []} = {[]}.
       rw [insertionForest_nil_nil, enumFChoices_nil_pre_FA_B,
-          Multiset.map_singleton, buildFIns_nil_FA]
+          Multiset.map_singleton]
+      -- buildFIns [] [] [] = (List.finRange 0).map _ = [], inlined here
+      -- because the named lemma `buildFIns_nil_FA` is defined later in §1.8.1.
+      unfold buildFIns
+      rfl
     | cons g gs =>
       -- pre_FA_B = g :: gs. LHS = 0. RHS = 0.
       rw [insertionForest_empty_host_nonempty_guests]
@@ -598,20 +615,6 @@ for downstream consumers. -/
       simp only [List.zip_nil_left, List.filterMap_nil, multiGraft_nil]]
   -- (List.finRange n).map (fun i => F_A[i.val]) = F_A
   exact List.map_getElem_finRange F_A
-
-/-- `perKFChoice` for an empty F_A is empty. -/
-@[simp] theorem perKFChoice_nil :
-    perKFChoice ([] : List (Planar α)) = [] := by
-  unfold perKFChoice
-  rfl
-
-/-- `enumFChoices F_A []` is the singleton `{[]}` (only the empty choice). -/
-@[simp] theorem enumFChoices_nil_pre_FA_B (F_A : List (Planar α)) :
-    enumFChoices F_A ([] : List (Planar α)) =
-      ({[]} : Multiset (List (Fin F_A.length × Path))) := by
-  unfold enumFChoices
-  simp only [List.length_nil, listChoices_zero]
-  rfl
 
 /-! ## §1.9: `LHS_per_alpha_raw` (Phase 4.2 substrate, Piece 2 — DEFERRED)
 
