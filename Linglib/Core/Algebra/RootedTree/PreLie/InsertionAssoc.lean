@@ -2330,6 +2330,160 @@ private theorem buildFIns_append_singleton
   refine List.map_congr_left fun i' _ => ?_
   rw [perTreePairsFromFChoice_append_singleton F_A pre_FA_B fdata i₀ v c hlen i']
 
+/-! ### §1.10.1.2: Single-guest forest insertion decomposition
+
+Decomposes `insertionForest pre_T_B [c]` (forest-side single-guest insertion)
+into a sum over `(k, q)` where `k : Fin pre_T_B.length` selects which tree
+in the forest receives `c` and `q ∈ vertices pre_T_B[k.val]` selects where
+in that tree.
+
+Used by `RHS_eq_canonical_msform_singleton_T_graft` and `_FA_graft` to bridge
+the LHS forest-insertion form with the canonical-RHS per-(k, q) form. -/
+
+/-- `insertion T []` is `{T}` (multi-graft with no pairs is the identity). -/
+private theorem insertion_nil (T : Planar α) : insertion T [] = ({T} : Multiset _) := by
+  rw [insertion_def]
+  show Multiset.ofList ((listChoices (vertices T) 0).map fun choice =>
+        multiGraft T (choice.zip [])) = _
+  rw [listChoices_zero]
+  show Multiset.ofList [multiGraft T (([] : List Path).zip [])] = _
+  rw [show (([] : List Path).zip ([] : List (Planar α))) = [] from rfl,
+      multiGraft_nil]
+  rfl
+
+/-- `insertion T [c]` enumerates over vertices of `T`. -/
+private theorem insertion_singleton (T : Planar α) (c : Planar α) :
+    insertion T [c] =
+      (Multiset.ofList (vertices T)).map fun v => multiGraft T [(v, c)] := by
+  rw [insertion_def]
+  rw [show ([c] : List (Planar α)).length = 1 from rfl]
+  rw [show listChoices (vertices T) 1 = (vertices T).map (fun v => [v]) from by
+    show (vertices T).flatMap (fun v => (listChoices (vertices T) 0).map (v :: ·)) = _
+    rw [listChoices_zero]
+    induction vertices T with
+    | nil => rfl
+    | cons _ _ ih => rw [List.flatMap_cons]; rw [ih]; rfl]
+  rw [List.map_map]
+  rfl
+
+/-- Cons-case decomposition: `insertionForest (T :: F) [c]` splits into the
+    "[c] goes to T" case (giving `multiGraft T [(v, c)] :: F` for each
+    `v ∈ vertices T`) and the "[c] goes to F" case (giving `T :: F'` for each
+    `F' ∈ insertionForest F [c]`). -/
+private theorem insertionForest_cons_singleton
+    (T : Planar α) (F : List (Planar α)) (c : Planar α) :
+    insertionForest (T :: F) [c] =
+      (insertion T [c]).map (fun T' => T' :: F) +
+      (insertionForest F [c]).map (fun F' => T :: F') := by
+  rw [insertionForest_cons_cons]
+  rw [show ([c] : List (Planar α)).length = 1 from rfl]
+  rw [show (Multiset.ofList (listChoices [true, false] 1) : Multiset (List Bool)) =
+        ([true] ::ₘ [false] ::ₘ 0) from rfl]
+  rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.zero_bind, add_zero]
+  congr 1
+  · -- True case: assignment = [true]; filter_t = [c], filter_f = []
+    show (insertion T [c]).bind (fun T' => (insertionForest F []).map fun F' => T' :: F') = _
+    rw [insertionForest_nil_guests]
+    conv_lhs =>
+      rhs; ext T'
+      rw [show (({F} : Multiset (List (Planar α))).map (fun F' => T' :: F')) =
+            ({(T' :: F)} : Multiset (List (Planar α))) from rfl]
+    rw [Multiset.bind_singleton]
+  · -- False case: assignment = [false]; filter_t = [], filter_f = [c]
+    show (insertion T []).bind (fun T' => (insertionForest F [c]).map fun F' => T' :: F') = _
+    rw [insertion_nil]
+    rw [Multiset.singleton_bind]
+
+/-- Single-guest forest insertion decomposes into the per-(k, q) form. The
+    output `pre_T_B'` differs from `pre_T_B` exactly at index `k`, where it is
+    `multiGraft pre_T_B[k] [(q, c)]`. The if/then/else form matches the
+    canonical RHS produced by `interpret`'s T_graft (resp. FA_graft) bucket.
+
+    Proof outline:
+    - Base case `pre_T_B = []`: both sides are `0`.
+    - Cons case `pre_T_B = T :: F`: LHS decomposes via `insertionForest_cons_singleton`
+      into a head case (`[c]` goes to `T`) and tail case (`[c]` goes to `F`); RHS
+      decomposes via `List.finRange_succ` into `k = 0` head and `k = Fin.succ k_F`
+      tail. Match head-to-head and tail-to-tail by IH. -/
+private theorem insertionForest_singleton_decomp
+    (pre_T_B : List (Planar α)) (c : Planar α) :
+    insertionForest pre_T_B [c] =
+      (Multiset.ofList (List.finRange pre_T_B.length)).bind fun k =>
+        (Multiset.ofList (vertices pre_T_B[k.val])).map fun q =>
+          (List.finRange pre_T_B.length).map fun k' =>
+            if k' = k then multiGraft pre_T_B[k.val] [(q, c)]
+            else pre_T_B[k'.val] := by
+  induction pre_T_B with
+  | nil =>
+    rw [insertionForest_empty_host_nonempty_guests]
+    rfl
+  | cons T F ih =>
+    rw [insertionForest_cons_singleton, insertion_singleton, ih]
+    change _ = (Multiset.ofList (List.finRange (F.length + 1))).bind fun k =>
+        (Multiset.ofList (vertices ((T :: F)[k.val]))).map fun q =>
+          (List.finRange (F.length + 1)).map fun k' =>
+            if k' = k then multiGraft ((T :: F)[k.val]) [(q, c)]
+            else (T :: F)[k'.val]
+    rw [show List.finRange (F.length + 1) =
+            (0 : Fin (F.length + 1)) :: (List.finRange F.length).map Fin.succ
+        from List.finRange_succ]
+    rw [show (Multiset.ofList ((0 : Fin (F.length + 1)) ::
+              (List.finRange F.length).map Fin.succ) : Multiset _) =
+          (0 : Fin (F.length + 1)) ::ₘ
+            Multiset.ofList ((List.finRange F.length).map Fin.succ)
+        from rfl]
+    rw [Multiset.cons_bind]
+    rw [← Multiset.map_coe (l := List.finRange F.length) (f := Fin.succ)]
+    rw [Multiset.bind_map]
+    congr 1
+    · -- HEAD CASE k = 0
+      rw [Multiset.map_map]
+      have h0 : ((T :: F) : List (Planar α))[(0 : Fin (F.length + 1)).val] = T := rfl
+      conv_rhs => rw [h0]
+      refine Multiset.map_congr rfl fun v _ => ?_
+      show multiGraft T [(v, c)] :: F = _
+      rw [List.map_cons, if_pos rfl]
+      congr 1
+      rw [List.map_map]
+      symm
+      have hcomp : ((fun k' : Fin (F.length + 1) =>
+                       if k' = (0 : Fin (F.length + 1)) then
+                         multiGraft T [(v, c)] else (T :: F)[k'.val]) ∘ Fin.succ) =
+                   (fun k_F : Fin F.length => F[k_F.val]) := by
+        funext k_F
+        simp only [Function.comp_apply]
+        rw [if_neg (Fin.succ_ne_zero k_F)]
+        exact List.getElem_cons_succ _ _ _ _
+      rw [hcomp]
+      exact List.map_getElem_finRange F
+    · -- TAIL CASE
+      rw [Multiset.map_bind]
+      refine Multiset.bind_congr fun k_F _ => ?_
+      have hkF : ((T :: F) : List (Planar α))[(Fin.succ k_F).val] = F[k_F.val] :=
+        List.getElem_cons_succ _ _ _ _
+      conv_rhs => rw [hkF]
+      rw [Multiset.map_map]
+      refine Multiset.map_congr rfl fun q _ => ?_
+      show T :: ((List.finRange F.length).map fun k' =>
+               if k' = k_F then multiGraft F[k_F.val] [(q, c)] else F[k'.val]) = _
+      rw [List.map_cons]
+      rw [if_neg (by exact (Fin.succ_ne_zero k_F).symm :
+                      (0 : Fin (F.length + 1)) ≠ k_F.succ)]
+      show T :: _ = T :: _
+      congr 1
+      rw [List.map_map]
+      refine List.map_congr_left fun k_F' _ => ?_
+      simp only [Function.comp_apply]
+      by_cases h : k_F' = k_F
+      · rw [if_pos h, h, if_pos rfl]
+      · rw [if_neg h]
+        have hsucc : k_F'.succ ≠ k_F.succ := fun heq => h (by
+          have := Fin.val_eq_of_eq heq
+          simp [Fin.val_succ] at this
+          exact Fin.ext this)
+        rw [if_neg hsucc]
+        exact (List.getElem_cons_succ _ _ _ _).symm
+
 /-! ### §1.10.2: Singleton-case sub-lemmas for the RHS bridge
 
 Per-`first_b` sub-cases for the singleton case (`C = [c]`) of
@@ -2586,6 +2740,280 @@ private theorem RHS_eq_canonical_msform_singleton_FA_orig
   -- whole goal because LHS's `bind v => {...}` and RHS's `map v => ...` reduce
   -- to the same normal form via Multiset.bind_singleton (which simp_rw applied
   -- in reverse direction to RHS during the rewrite chain).
+
+/-- **Singleton T_graft case**: bridges the LHS form (T_graft-bucket pres = [c],
+    others = []) with the RHS canonical-form sub-bucket where
+    `first_target = .t_graft k q`. The proof:
+    1. Reduce LHS via `insertionForest_nil_guests` and `Multiset.singleton_bind`
+       (the empty FA buckets collapse).
+    2. Push `.map msform` inside two layers of bind via `Multiset.map_bind` and
+       collapse the inner double-map via `Multiset.map_map`.
+    3. Apply `insertionForest_singleton_decomp` to expand `insertionForest pre_T_B [c]`
+       into the per-(k, q) form.
+    4. Apply `Multiset.bind_assoc` + `Multiset.bind_map` to lift the (k, q) bind
+       outside `pre_T_B'` and absorb the `q` map into a bind.
+    5. Apply `insertion_def` (with `pre_T_B'.length = pre_T_B.length` from
+       the substrate's `(List.finRange pre_T_B.length).map ...` shape) and convert
+       `Multiset.ofList ((listChoices ...).map ...) = (Multiset.ofList listChoices).bind`
+       via `← Multiset.map_coe + Multiset.bind_map`.
+    6. Apply `insertionForest_eq_explicit` to the F-side (`insertionForest F_A pre_FA_B`)
+       and collapse the chain via `Multiset.map_map`.
+    7. Push `.map msform` through to the inner cons-form.
+    8. Reorder binds via `Multiset.bind_bind` (twice, to swap k-bind and q-bind
+       outside choice_T-bind) and `Multiset.bind_map_comm` (to swap q-bind with
+       fdata-map). -/
+private theorem RHS_eq_canonical_msform_singleton_T_graft
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (c : Planar α) :
+    ((insertionForest pre_T_B [c]).bind fun pre_T_B' =>
+        (insertion T (pre_T_B' ++ [])).bind fun T' =>
+          (insertionForest pre_FA_B ([] : List (Planar α))).bind fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++ [])).map fun F' =>
+              T' :: F').map (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+      (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+        (Multiset.ofList (List.finRange pre_T_B.length)).bind fun k =>
+          (Multiset.ofList (vertices pre_T_B[k.val])).map fun q =>
+            multiGraft T (choice_T.zip ((List.finRange pre_T_B.length).map fun k' =>
+              if k' = k then multiGraft pre_T_B[k.val] [(q, c)]
+              else pre_T_B[k'.val])) ::
+              buildFIns F_A pre_FA_B fdata).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- Step 1: collapse the empty FA bucket binds + append-nil simplifications.
+  simp only [insertionForest_nil_guests, List.append_nil, Multiset.singleton_bind]
+  -- LHS: ((insertionForest pre_T_B [c]).bind fun pre_T_B' =>
+  --        (insertion T pre_T_B').bind fun T' =>
+  --          (insertionForest F_A pre_FA_B).map fun F' =>
+  --            T' :: F').map msform
+  -- Step 2: push .map msform inside two layers of bind, collapse inner double-map.
+  rw [Multiset.map_bind]
+  conv_lhs =>
+    rhs; ext pre_T_B'
+    rw [Multiset.map_bind]
+  conv_lhs =>
+    rhs; ext pre_T_B'
+    rhs; ext T'
+    rw [Multiset.map_map]
+  -- LHS: (insertionForest pre_T_B [c]).bind fun pre_T_B' =>
+  --        (insertion T pre_T_B').bind fun T' =>
+  --          (insertionForest F_A pre_FA_B).map fun F' =>
+  --            msform (T' :: F')
+  -- Step 3: apply insertionForest_singleton_decomp.
+  rw [insertionForest_singleton_decomp]
+  -- Step 4: lift outer (k, q) bind/map outside pre_T_B' bind.
+  rw [Multiset.bind_assoc]
+  conv_lhs =>
+    rhs; ext k
+    rw [Multiset.bind_map]
+  -- LHS: (Multiset.ofList (List.finRange pre_T_B.length)).bind fun k =>
+  --        (Multiset.ofList (vertices pre_T_B[k.val])).bind fun q =>
+  --          (insertion T pre_T_B'_kq).bind fun T' =>
+  --            (insertionForest F_A pre_FA_B).map fun F' =>
+  --              msform (T' :: F')
+  -- where pre_T_B'_kq = (List.finRange pre_T_B.length).map fun k' =>
+  --   if k' = k then multiGraft pre_T_B[k.val] [(q, c)] else pre_T_B[k'.val].
+  -- Step 5: apply insertion_def. pre_T_B'_kq.length = pre_T_B.length.
+  conv_lhs =>
+    rhs; ext k
+    rhs; ext q
+    rw [insertion_def]
+    rw [show ((List.finRange pre_T_B.length).map fun k' : Fin pre_T_B.length =>
+              if k' = k then multiGraft pre_T_B[k.val] [(q, c)]
+              else pre_T_B[k'.val]).length = pre_T_B.length from by
+        rw [List.length_map, List.length_finRange]]
+    rw [← Multiset.map_coe, Multiset.bind_map]
+  -- Step 6: apply insertionForest_eq_explicit on F-side.
+  conv_lhs =>
+    rhs; ext k
+    rhs; ext q
+    rhs; ext choice_T
+    rw [insertionForest_eq_explicit]
+    rw [show enumFChoices F_A pre_FA_B =
+            Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length) from rfl]
+    rw [Multiset.map_map]
+  -- LHS: (Multiset.ofList (List.finRange pre_T_B.length)).bind fun k =>
+  --        (Multiset.ofList (vertices pre_T_B[k.val])).bind fun q =>
+  --          (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+  --            (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).map fun fdata =>
+  --              msform (multiGraft T (choice_T.zip pre_T_B'_kq) ::
+  --                       buildFIns F_A pre_FA_B fdata)
+  -- Step 7: reorder binds. Current: k → q → choice_T → fdata (with fdata as map).
+  -- Target: choice_T → fdata → k → q (with q as map).
+  -- Inner reordering: swap (q bind, fdata map) → (fdata bind, q map) via bind_map_comm.
+  -- Outer reordering: swap (k bind, q bind) with (choice_T bind, fdata bind) via bind_bind.
+  -- Step 7a: swap q bind with choice_T bind via bind_bind.
+  conv_lhs =>
+    rhs; ext k
+    rw [Multiset.bind_bind]
+  -- LHS: (List.finRange ...).bind fun k =>
+  --        (listChoices (vertices T) ...).bind fun choice_T =>
+  --          (vertices pre_T_B[k.val]).bind fun q =>
+  --            (listChoices (perKFChoice F_A) ...).map fun fdata => ...
+  -- Step 7b: swap k bind with choice_T bind via bind_bind.
+  rw [Multiset.bind_bind]
+  -- LHS: (listChoices (vertices T) ...).bind fun choice_T =>
+  --        (List.finRange ...).bind fun k =>
+  --          (vertices pre_T_B[k.val]).bind fun q =>
+  --            (listChoices (perKFChoice F_A) ...).map fun fdata => ...
+  -- Step 7c: inside choice_T bind, swap (q bind, fdata map) → (fdata bind, q map).
+  conv_lhs =>
+    rhs; ext choice_T
+    rhs; ext k
+    rw [Multiset.bind_map_comm]
+  -- LHS: (listChoices (vertices T) ...).bind fun choice_T =>
+  --        (List.finRange ...).bind fun k =>
+  --          (listChoices (perKFChoice F_A) ...).bind fun fdata =>
+  --            (vertices pre_T_B[k.val]).map fun q => ...
+  -- Step 7d: swap k bind with fdata bind via bind_bind.
+  conv_lhs =>
+    rhs; ext choice_T
+    rw [Multiset.bind_bind]
+  -- LHS: (listChoices (vertices T) ...).bind fun choice_T =>
+  --        (listChoices (perKFChoice F_A) ...).bind fun fdata =>
+  --          (List.finRange ...).bind fun k =>
+  --            (vertices pre_T_B[k.val]).map fun q => ...
+  -- Step 8: push RHS .map msform through. RHS has the same outer structure
+  -- (choice_T → fdata → k → q with q as map).
+  conv_rhs => rw [Multiset.map_bind]
+  conv_rhs =>
+    rhs; ext choice_T
+    rw [Multiset.map_bind]
+  conv_rhs =>
+    rhs; ext choice_T
+    rhs; ext fdata
+    rw [Multiset.map_bind]
+  conv_rhs =>
+    rhs; ext choice_T
+    rhs; ext fdata
+    rhs; ext k
+    rw [Multiset.map_map]
+  -- Both sides now have: choice_T → fdata → k → q.map (msform of result).
+  -- Step 9: close by rfl (α-equivalent up to bound variable names).
+  rfl
+
+/-- **Singleton FA_graft case**: bridges the LHS form (FA_graft-bucket pres = [c],
+    others = []) with the RHS canonical-form sub-bucket where
+    `first_target = .fa_graft k q`. The proof structurally mirrors `_T_graft`
+    but on the F-side: the substrate `insertionForest_singleton_decomp` is
+    applied to `insertionForest pre_FA_B [c]` (forest insertion of [c] into
+    the F-side bucket), and `insertionForest_eq_explicit` is applied to the
+    F_A-grafting step with the modified `pre_FA_B'_kq` as the second arg. -/
+private theorem RHS_eq_canonical_msform_singleton_FA_graft
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (c : Planar α) :
+    ((insertionForest pre_T_B ([] : List (Planar α))).bind fun pre_T_B' =>
+        (insertion T (pre_T_B' ++ [])).bind fun T' =>
+          (insertionForest pre_FA_B [c]).bind fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++ [])).map fun F' =>
+              T' :: F').map (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+      (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+        (Multiset.ofList (List.finRange pre_FA_B.length)).bind fun k =>
+          (Multiset.ofList (vertices pre_FA_B[k.val])).map fun q =>
+            multiGraft T (choice_T.zip pre_T_B) ::
+              buildFIns F_A
+                ((List.finRange pre_FA_B.length).map fun k' =>
+                  if k' = k then multiGraft pre_FA_B[k.val] [(q, c)]
+                  else pre_FA_B[k'.val])
+                fdata).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- Step 1: collapse the empty T_graft bucket binds + append-nil simplifications.
+  simp only [insertionForest_nil_guests, List.append_nil, Multiset.singleton_bind]
+  -- LHS: ((insertion T pre_T_B).bind fun T' =>
+  --        (insertionForest pre_FA_B [c]).bind fun pre_FA_B' =>
+  --          (insertionForest F_A pre_FA_B').map fun F' =>
+  --            T' :: F').map msform
+  -- Step 2: push .map msform inside two layers of bind, collapse inner double-map.
+  rw [Multiset.map_bind]
+  conv_lhs =>
+    rhs; ext T'
+    rw [Multiset.map_bind]
+  conv_lhs =>
+    rhs; ext T'
+    rhs; ext pre_FA_B'
+    rw [Multiset.map_map]
+  -- LHS: (insertion T pre_T_B).bind fun T' =>
+  --        (insertionForest pre_FA_B [c]).bind fun pre_FA_B' =>
+  --          (insertionForest F_A pre_FA_B').map fun F' =>
+  --            msform (T' :: F')
+  -- Step 3: apply insertionForest_singleton_decomp to F-side guest-insertion.
+  conv_lhs =>
+    rhs; ext T'
+    rw [insertionForest_singleton_decomp]
+  -- Step 4: lift outer (k, q) bind/map outside pre_FA_B' bind.
+  conv_lhs =>
+    rhs; ext T'
+    rw [Multiset.bind_assoc]
+  conv_lhs =>
+    rhs; ext T'
+    rhs; ext k
+    rw [Multiset.bind_map]
+  -- LHS: (insertion T pre_T_B).bind fun T' =>
+  --        (Multiset.ofList (List.finRange pre_FA_B.length)).bind fun k =>
+  --          (Multiset.ofList (vertices pre_FA_B[k.val])).bind fun q =>
+  --            (insertionForest F_A pre_FA_B'_kq).map fun F' =>
+  --              msform (T' :: F')
+  -- Step 5: apply insertion_def to T-side, convert ofList-map to bind.
+  rw [insertion_def]
+  rw [← Multiset.map_coe, Multiset.bind_map]
+  -- LHS: (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+  --        (Multiset.ofList (List.finRange pre_FA_B.length)).bind fun k =>
+  --          (Multiset.ofList (vertices pre_FA_B[k.val])).bind fun q =>
+  --            (insertionForest F_A pre_FA_B'_kq).map fun F' =>
+  --              msform (multiGraft T (choice_T.zip pre_T_B) :: F')
+  -- Step 6: apply insertionForest_eq_explicit on F_A-side with pre_FA_B'_kq.
+  -- Length: pre_FA_B'_kq.length = pre_FA_B.length.
+  conv_lhs =>
+    rhs; ext choice_T
+    rhs; ext k
+    rhs; ext q
+    rw [insertionForest_eq_explicit]
+    rw [show enumFChoices F_A
+            ((List.finRange pre_FA_B.length).map fun k' : Fin pre_FA_B.length =>
+              if k' = k then multiGraft pre_FA_B[k.val] [(q, c)]
+              else pre_FA_B[k'.val]) =
+          Multiset.ofList (listChoices (perKFChoice F_A)
+            ((List.finRange pre_FA_B.length).map fun k' : Fin pre_FA_B.length =>
+              if k' = k then multiGraft pre_FA_B[k.val] [(q, c)]
+              else pre_FA_B[k'.val]).length) from rfl]
+    rw [show ((List.finRange pre_FA_B.length).map fun k' : Fin pre_FA_B.length =>
+              if k' = k then multiGraft pre_FA_B[k.val] [(q, c)]
+              else pre_FA_B[k'.val]).length = pre_FA_B.length from by
+        rw [List.length_map, List.length_finRange]]
+    rw [Multiset.map_map]
+  -- LHS: (listChoices (vertices T) ...).bind fun choice_T =>
+  --        (List.finRange pre_FA_B.length).bind fun k =>
+  --          (vertices pre_FA_B[k.val]).bind fun q =>
+  --            (listChoices (perKFChoice F_A) pre_FA_B.length).map fun fdata =>
+  --              msform (multiGraft T (...) :: buildFIns F_A pre_FA_B'_kq fdata)
+  -- Step 7: reorder binds. Current: choice_T → k → q → fdata.map.
+  -- Target: choice_T → fdata → k → q.map.
+  -- Step 7a: swap (q bind, fdata map) → (fdata bind, q map) via bind_map_comm.
+  conv_lhs =>
+    rhs; ext choice_T
+    rhs; ext k
+    rw [Multiset.bind_map_comm]
+  -- LHS: choice_T → k → fdata → q.map
+  -- Step 7b: swap k and fdata via bind_bind.
+  conv_lhs =>
+    rhs; ext choice_T
+    rw [Multiset.bind_bind]
+  -- LHS: choice_T → fdata → k → q.map
+  -- Step 8: push RHS .map msform inside.
+  conv_rhs => rw [Multiset.map_bind]
+  conv_rhs =>
+    rhs; ext choice_T
+    rw [Multiset.map_bind]
+  conv_rhs =>
+    rhs; ext choice_T
+    rhs; ext fdata
+    rw [Multiset.map_bind]
+  conv_rhs =>
+    rhs; ext choice_T
+    rhs; ext fdata
+    rhs; ext k
+    rw [Multiset.map_map]
+  -- Both sides now have: choice_T → fdata → k → q.map (msform of result).
+  -- Step 9: close by rfl (α-equivalent up to bound variable names).
+  rfl
 
 /-! ### §1.9.5: Future bridges (full C : List)
 
