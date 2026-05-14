@@ -3015,6 +3015,673 @@ private theorem RHS_eq_canonical_msform_singleton_FA_graft
   -- Step 9: close by rfl (α-equivalent up to bound variable names).
   rfl
 
+/-! ### §1.10.3: Per-bucket interpret reductions (singleton C-targets)
+
+Per-bucket reductions of `interpret T ⟨choice_T, fdata, [first_target]⟩ [c]`
+into closed form. Each lemma covers one bucket of `first_target`'s
+constructor. Used by `RHS_eq_canonical_msform_singleton` to bridge the
+RHS canonical form to the per-bucket sub-lemma RHS forms. -/
+
+/-- **T_orig interpret reduction**: when `first_target = .t_orig v` and
+    `C = [c]`, interpret produces:
+    - T-side: `multiGraft T (choice_T.zip pre_T_B ++ [(v, c)])` — the only
+      modification is the appended `(v, c)` graft pair; no T_graft pairs
+      modify pre_T_B.
+    - F-side: `buildFIns F_A pre_FA_B fdata` — no FA_orig or FA_graft pairs
+      modify the F-side.
+
+    Proof outline:
+    1. `unfold interpret` exposes the let-binding structure.
+    2. C_paired = [(.t_orig v, c)]; reduce extractors via `_cons_t_orig` lemmas:
+       T_orig_pairs = [(v, c)]; T_graft/FA_orig/FA_graft pairs = [].
+    3. pre_T_B' = (finRange).map (multiGraft pre_T_B[k.val] []) = pre_T_B
+       via multiGraft_nil + List.map_getElem_finRange.
+    4. F-side similar reduction. -/
+private theorem interpret_singleton_t_orig
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_T : List Path) (fdata : List (Fin F_A.length × Path))
+    (v : Path) (c : Planar α) :
+    interpret T
+      ({ pre_T_B_choice := choice_T
+         pre_FA_B_choice := fdata
+         C_targets := [AlphaConstrainedChoice.t_orig v
+            (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B)] }
+       : GraftingData F_A pre_T_B pre_FA_B) [c] =
+      multiGraft T (choice_T.zip pre_T_B ++ [(v, c)]) ::
+        buildFIns F_A pre_FA_B fdata := by
+  -- Helper: under T_orig context, pre_T_B' = pre_T_B (no T_graft modifications).
+  have hpre_T_B' :
+      ((List.finRange pre_T_B.length).map fun k =>
+        multiGraft pre_T_B[k.val]
+          (extractTGraftPairsAt
+            [(AlphaConstrainedChoice.t_orig
+                (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) v, c)] k)) =
+      pre_T_B := by
+    have h : ((List.finRange pre_T_B.length).map fun k =>
+        multiGraft pre_T_B[k.val]
+          (extractTGraftPairsAt
+            [(AlphaConstrainedChoice.t_orig
+                (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) v, c)] k)) =
+        (List.finRange pre_T_B.length).map (fun k => pre_T_B[k.val]) := by
+      apply List.map_congr_left
+      intro k _
+      rw [extractTGraftPairsAt_cons_t_orig]
+      exact multiGraft_nil _
+    rw [h, List.map_getElem_finRange]
+  -- Helper: under T_orig context, pre_FA_B' = pre_FA_B (no FA_graft modifications).
+  have hpre_FA_B' :
+      ((List.finRange pre_FA_B.length).map fun k =>
+        multiGraft pre_FA_B[k.val]
+          (extractFAGraftPairsAt
+            [(AlphaConstrainedChoice.t_orig
+                (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) v, c)] k)) =
+      pre_FA_B := by
+    have h : ((List.finRange pre_FA_B.length).map fun k =>
+        multiGraft pre_FA_B[k.val]
+          (extractFAGraftPairsAt
+            [(AlphaConstrainedChoice.t_orig
+                (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) v, c)] k)) =
+        (List.finRange pre_FA_B.length).map (fun k => pre_FA_B[k.val]) := by
+      apply List.map_congr_left
+      intro k _
+      rw [extractFAGraftPairsAt_cons_t_orig]
+      exact multiGraft_nil _
+    rw [h, List.map_getElem_finRange]
+  -- Now unfold interpret and substitute the helpers.
+  unfold interpret
+  simp only [List.zip_cons_cons, List.zip_nil_left]
+  rw [hpre_T_B', hpre_FA_B']
+  -- T_orig_pairs = [(v, c)]; F_orig_pairs at i = [].
+  rw [show extractTOrigPairs
+        [(AlphaConstrainedChoice.t_orig
+            (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) v, c)] = [(v, c)] from rfl]
+  congr 1
+  -- F-side
+  apply List.map_congr_left
+  intro i _
+  congr 1
+  -- perTreePairsFromFChoice ... i ++ [] = perTreePairsFromFChoice ... i
+  rw [show extractFAOrigPairsAt
+        [(AlphaConstrainedChoice.t_orig
+            (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) v, c)] i =
+        ([] : List (Path × Planar α)) from rfl]
+  rw [List.append_nil]
+  rfl
+
+/-- **T_graft interpret reduction**: when `first_target = .t_graft k q` and
+    `C = [c]`, interpret produces:
+    - T-side: `multiGraft T (choice_T.zip pre_T_B'_kq)` where `pre_T_B'_kq`
+      modifies pre_T_B at index k by `multiGraft pre_T_B[k.val] [(q, c)]`.
+    - F-side: `buildFIns F_A pre_FA_B fdata` — no F-side changes.
+
+    The T_graft sub-lemma's RHS uses `if k' = k then multiGraft pre_T_B[k.val]
+    [(q, c)] else pre_T_B[k'.val]` for the per-`k'` modification; interpret
+    naturally produces `multiGraft pre_T_B[k'.val] (if k' = k then [(q, c)]
+    else [])`. These match because (a) k' = k makes k'.val = k.val, and
+    (b) `multiGraft x [] = x` (multiGraft_nil). -/
+private theorem interpret_singleton_t_graft
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_T : List Path) (fdata : List (Fin F_A.length × Path))
+    (k : Fin pre_T_B.length) (q : Path) (c : Planar α) :
+    interpret T
+      ({ pre_T_B_choice := choice_T
+         pre_FA_B_choice := fdata
+         C_targets := [AlphaConstrainedChoice.t_graft
+            (F_A := F_A) (pre_FA_B := pre_FA_B) k q] }
+       : GraftingData F_A pre_T_B pre_FA_B) [c] =
+      multiGraft T (choice_T.zip ((List.finRange pre_T_B.length).map fun k' =>
+        if k' = k then multiGraft pre_T_B[k.val] [(q, c)]
+        else pre_T_B[k'.val])) ::
+        buildFIns F_A pre_FA_B fdata := by
+  -- Helper: under T_graft k q context, pre_T_B' equals the if-then-else form.
+  have hpre_T_B' :
+      ((List.finRange pre_T_B.length).map fun k' =>
+        multiGraft pre_T_B[k'.val]
+          (extractTGraftPairsAt
+            [(AlphaConstrainedChoice.t_graft
+                (F_A := F_A) (pre_FA_B := pre_FA_B) k q, c)] k')) =
+      ((List.finRange pre_T_B.length).map fun k' =>
+        if k' = k then multiGraft pre_T_B[k.val] [(q, c)]
+        else pre_T_B[k'.val]) := by
+    apply List.map_congr_left
+    intro k' _
+    by_cases h : k' = k
+    · -- h : k' = k. Lemma's k' is constructor index = my `k`; lemma's k = query = my `k'`.
+      -- So lemma's h : k' = k → my_k = my_k', i.e., h.symm.
+      rw [extractTGraftPairsAt_cons_t_graft_eq (k := k') (k' := k) (q := q) (c := c)
+            (rest_paired := []) (h := h.symm)]
+      rw [show extractTGraftPairsAt
+            ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) k' =
+            ([] : List (Path × Planar α)) from rfl]
+      rw [if_pos h]
+      congr 2
+      exact Fin.val_eq_of_eq h
+    · -- h : k' ≠ k. Lemma's h : k' ≠ k → my_k ≠ my_k', i.e., Ne.symm h.
+      rw [extractTGraftPairsAt_cons_t_graft_neq (k := k') (k' := k) (q := q) (c := c)
+            (rest_paired := []) (h := Ne.symm h)]
+      rw [show extractTGraftPairsAt
+            ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) k' =
+            ([] : List (Path × Planar α)) from rfl]
+      rw [if_neg h, multiGraft_nil]
+  -- Helper: under T_graft context, pre_FA_B' = pre_FA_B (no FA_graft pairs).
+  have hpre_FA_B' :
+      ((List.finRange pre_FA_B.length).map fun k' =>
+        multiGraft pre_FA_B[k'.val]
+          (extractFAGraftPairsAt
+            [(AlphaConstrainedChoice.t_graft
+                (F_A := F_A) (pre_FA_B := pre_FA_B) k q, c)] k')) =
+      pre_FA_B := by
+    have h : ((List.finRange pre_FA_B.length).map fun k' =>
+        multiGraft pre_FA_B[k'.val]
+          (extractFAGraftPairsAt
+            [(AlphaConstrainedChoice.t_graft
+                (F_A := F_A) (pre_FA_B := pre_FA_B) k q, c)] k')) =
+        (List.finRange pre_FA_B.length).map (fun k' => pre_FA_B[k'.val]) := by
+      apply List.map_congr_left
+      intro k' _
+      rw [extractFAGraftPairsAt_cons_t_graft]
+      exact multiGraft_nil _
+    rw [h, List.map_getElem_finRange]
+  -- Now unfold interpret and substitute the helpers.
+  unfold interpret
+  simp only [List.zip_cons_cons, List.zip_nil_left]
+  rw [hpre_T_B', hpre_FA_B']
+  -- T_orig_pairs = []; FA_orig_pairs at i = []; the multiGraft T arg becomes
+  -- choice_T.zip pre_T_B'_kq ++ [] = choice_T.zip pre_T_B'_kq.
+  rw [show extractTOrigPairs
+        [(AlphaConstrainedChoice.t_graft
+            (F_A := F_A) (pre_FA_B := pre_FA_B) k q, c)] =
+        ([] : List (Path × Planar α)) from rfl]
+  rw [List.append_nil]
+  congr 1
+  -- F-side
+  apply List.map_congr_left
+  intro i _
+  congr 1
+  rw [show extractFAOrigPairsAt
+        [(AlphaConstrainedChoice.t_graft
+            (F_A := F_A) (pre_FA_B := pre_FA_B) k q, c)] i =
+        ([] : List (Path × Planar α)) from rfl]
+  rw [List.append_nil]
+  rfl
+
+/-- **FA_orig interpret reduction**: when `first_target = .fa_orig i v` and
+    `C = [c]`, interpret produces:
+    - T-side: `multiGraft T (choice_T.zip pre_T_B)` — no T-side changes.
+    - F-side: per-`i'` modified, with `[(v, c)]` appended at index `i' = i`.
+
+    Matches the FA_orig sub-lemma's RHS structure with the `if i = i'` branch. -/
+private theorem interpret_singleton_fa_orig
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_T : List Path) (fdata : List (Fin F_A.length × Path))
+    (i : Fin F_A.length) (v : Path) (c : Planar α) :
+    interpret T
+      ({ pre_T_B_choice := choice_T
+         pre_FA_B_choice := fdata
+         C_targets := [AlphaConstrainedChoice.fa_orig
+            (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v] }
+       : GraftingData F_A pre_T_B pre_FA_B) [c] =
+      multiGraft T (choice_T.zip pre_T_B) ::
+        (List.finRange F_A.length).map fun i' =>
+          multiGraft F_A[i'.val]
+            (perTreePairsFromFChoice F_A pre_FA_B fdata i' ++
+             (if i = i' then [(v, c)] else [])) := by
+  -- Helper: pre_T_B' = pre_T_B (no T_graft pairs).
+  have hpre_T_B' :
+      ((List.finRange pre_T_B.length).map fun k =>
+        multiGraft pre_T_B[k.val]
+          (extractTGraftPairsAt
+            [(AlphaConstrainedChoice.fa_orig
+                (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v, c)] k)) =
+      pre_T_B := by
+    have h : ((List.finRange pre_T_B.length).map fun k =>
+        multiGraft pre_T_B[k.val]
+          (extractTGraftPairsAt
+            [(AlphaConstrainedChoice.fa_orig
+                (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v, c)] k)) =
+        (List.finRange pre_T_B.length).map (fun k => pre_T_B[k.val]) := by
+      apply List.map_congr_left
+      intro k _
+      rw [extractTGraftPairsAt_cons_fa_orig]
+      exact multiGraft_nil _
+    rw [h, List.map_getElem_finRange]
+  -- Helper: pre_FA_B' = pre_FA_B (no FA_graft pairs).
+  have hpre_FA_B' :
+      ((List.finRange pre_FA_B.length).map fun k =>
+        multiGraft pre_FA_B[k.val]
+          (extractFAGraftPairsAt
+            [(AlphaConstrainedChoice.fa_orig
+                (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v, c)] k)) =
+      pre_FA_B := by
+    have h : ((List.finRange pre_FA_B.length).map fun k =>
+        multiGraft pre_FA_B[k.val]
+          (extractFAGraftPairsAt
+            [(AlphaConstrainedChoice.fa_orig
+                (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v, c)] k)) =
+        (List.finRange pre_FA_B.length).map (fun k => pre_FA_B[k.val]) := by
+      apply List.map_congr_left
+      intro k _
+      rw [extractFAGraftPairsAt_cons_fa_orig]
+      exact multiGraft_nil _
+    rw [h, List.map_getElem_finRange]
+  -- Unfold interpret and substitute helpers.
+  unfold interpret
+  simp only [List.zip_cons_cons, List.zip_nil_left]
+  rw [hpre_T_B', hpre_FA_B']
+  -- T_orig_pairs = []; multiGraft T (choice_T.zip pre_T_B ++ []) = multiGraft T (choice_T.zip pre_T_B).
+  rw [show extractTOrigPairs
+        [(AlphaConstrainedChoice.fa_orig
+            (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v, c)] =
+        ([] : List (Path × Planar α)) from rfl]
+  rw [List.append_nil]
+  congr 1
+  -- F-side: per-i' modified at i' = i.
+  apply List.map_congr_left
+  intro i' _
+  congr 1
+  by_cases h : i = i'
+  · -- h : i = i'. Lemma's i is query = my `i'`; lemma's i' = constructor = my `i`.
+    -- Lemma's h : i' = i → my_i = my_i' = h.
+    rw [extractFAOrigPairsAt_cons_fa_orig_eq (i := i') (i' := i) (v := v) (c := c)
+          (rest_paired := []) (h := h)]
+    rw [show extractFAOrigPairsAt
+          ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) i' =
+          ([] : List (Path × Planar α)) from rfl]
+    rw [if_pos h]
+    rfl
+  · rw [extractFAOrigPairsAt_cons_fa_orig_neq (i := i') (i' := i) (v := v) (c := c)
+          (rest_paired := []) (h := h)]
+    rw [show extractFAOrigPairsAt
+          ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) i' =
+          ([] : List (Path × Planar α)) from rfl]
+    rw [if_neg h]
+    simp only [List.append_nil]
+    rfl
+
+/-- **FA_graft interpret reduction**: when `first_target = .fa_graft k q` and
+    `C = [c]`, interpret produces:
+    - T-side: `multiGraft T (choice_T.zip pre_T_B)` — no T-side changes.
+    - F-side: `buildFIns F_A pre_FA_B'_kq fdata` where `pre_FA_B'_kq` modifies
+      pre_FA_B at index k by `multiGraft pre_FA_B[k.val] [(q, c)]`.
+
+    Matches the FA_graft sub-lemma's RHS structure. -/
+private theorem interpret_singleton_fa_graft
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_T : List Path) (fdata : List (Fin F_A.length × Path))
+    (k : Fin pre_FA_B.length) (q : Path) (c : Planar α) :
+    interpret T
+      ({ pre_T_B_choice := choice_T
+         pre_FA_B_choice := fdata
+         C_targets := [AlphaConstrainedChoice.fa_graft
+            (F_A := F_A) (pre_T_B := pre_T_B) k q] }
+       : GraftingData F_A pre_T_B pre_FA_B) [c] =
+      multiGraft T (choice_T.zip pre_T_B) ::
+        buildFIns F_A
+          ((List.finRange pre_FA_B.length).map fun k' =>
+            if k' = k then multiGraft pre_FA_B[k.val] [(q, c)]
+            else pre_FA_B[k'.val])
+          fdata := by
+  -- Helper: pre_T_B' = pre_T_B (no T_graft pairs).
+  have hpre_T_B' :
+      ((List.finRange pre_T_B.length).map fun k' =>
+        multiGraft pre_T_B[k'.val]
+          (extractTGraftPairsAt
+            [(AlphaConstrainedChoice.fa_graft
+                (F_A := F_A) (pre_T_B := pre_T_B) k q, c)] k')) =
+      pre_T_B := by
+    have h : ((List.finRange pre_T_B.length).map fun k' =>
+        multiGraft pre_T_B[k'.val]
+          (extractTGraftPairsAt
+            [(AlphaConstrainedChoice.fa_graft
+                (F_A := F_A) (pre_T_B := pre_T_B) k q, c)] k')) =
+        (List.finRange pre_T_B.length).map (fun k' => pre_T_B[k'.val]) := by
+      apply List.map_congr_left
+      intro k' _
+      rw [extractTGraftPairsAt_cons_fa_graft]
+      exact multiGraft_nil _
+    rw [h, List.map_getElem_finRange]
+  -- Helper: pre_FA_B' = the if-then-else form.
+  have hpre_FA_B' :
+      ((List.finRange pre_FA_B.length).map fun k' =>
+        multiGraft pre_FA_B[k'.val]
+          (extractFAGraftPairsAt
+            [(AlphaConstrainedChoice.fa_graft
+                (F_A := F_A) (pre_T_B := pre_T_B) k q, c)] k')) =
+      ((List.finRange pre_FA_B.length).map fun k' =>
+        if k' = k then multiGraft pre_FA_B[k.val] [(q, c)]
+        else pre_FA_B[k'.val]) := by
+    apply List.map_congr_left
+    intro k' _
+    by_cases h : k' = k
+    · rw [extractFAGraftPairsAt_cons_fa_graft_eq (k := k') (k' := k) (q := q) (c := c)
+            (rest_paired := []) (h := h.symm)]
+      rw [show extractFAGraftPairsAt
+            ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) k' =
+            ([] : List (Path × Planar α)) from rfl]
+      rw [if_pos h]
+      congr 2
+      exact Fin.val_eq_of_eq h
+    · rw [extractFAGraftPairsAt_cons_fa_graft_neq (k := k') (k' := k) (q := q) (c := c)
+            (rest_paired := []) (h := Ne.symm h)]
+      rw [show extractFAGraftPairsAt
+            ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) k' =
+            ([] : List (Path × Planar α)) from rfl]
+      rw [if_neg h, multiGraft_nil]
+  -- Unfold interpret and substitute helpers.
+  unfold interpret
+  simp only [List.zip_cons_cons, List.zip_nil_left]
+  rw [hpre_T_B', hpre_FA_B']
+  -- T_orig_pairs = []; multiGraft T (choice_T.zip pre_T_B ++ []) = multiGraft T (choice_T.zip pre_T_B).
+  rw [show extractTOrigPairs
+        [(AlphaConstrainedChoice.fa_graft
+            (F_A := F_A) (pre_T_B := pre_T_B) k q, c)] =
+        ([] : List (Path × Planar α)) from rfl]
+  rw [List.append_nil]
+  congr 1
+  -- F-side: per-i, the inner uses the modified pre_FA_B'_kq.
+  apply List.map_congr_left
+  intro i _
+  congr 1
+  rw [show extractFAOrigPairsAt
+        [(AlphaConstrainedChoice.fa_graft
+            (F_A := F_A) (pre_T_B := pre_T_B) k q, c)] i =
+        ([] : List (Path × Planar α)) from rfl]
+  rw [List.append_nil]
+  rfl
+
+/-! ### §1.10.4 prelude: per-bucket iteratedQuadSum-leaf reductions
+
+For the singleton `α = [b]` case, the iteratedQuadSum-leaf with
+`pres = (fun t => bucketSlice [c] [b] t)` reduces to a closed form where
+only the `b`-bucket has `[c]` as its accumulated guests, and all other
+buckets are empty. These per-bucket reductions match the LHS forms of
+the singleton sub-lemmas (§1.10.2). -/
+
+private theorem iteratedQuadSum_singleton_T_orig
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (c : Planar α) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B
+      (fun t => bucketSlice [c] [QuadIdx.T_orig] t) [] =
+    (insertionForest pre_T_B ([] : List (Planar α))).bind fun pre_T_B' =>
+      (insertion T (pre_T_B' ++ [c])).bind fun T' =>
+        (insertionForest pre_FA_B ([] : List (Planar α))).bind fun pre_FA_B' =>
+          (insertionForest F_A (pre_FA_B' ++ ([] : List (Planar α)))).map fun F' =>
+            T' :: F' := by
+  rw [iteratedQuadSum_nil_remaining]
+  -- bucketSlice [c] [T_orig] T_graft = []; bucketSlice [c] [T_orig] T_orig = [c]; etc.
+  rfl
+
+private theorem iteratedQuadSum_singleton_T_graft
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (c : Planar α) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B
+      (fun t => bucketSlice [c] [QuadIdx.T_graft] t) [] =
+    (insertionForest pre_T_B [c]).bind fun pre_T_B' =>
+      (insertion T (pre_T_B' ++ ([] : List (Planar α)))).bind fun T' =>
+        (insertionForest pre_FA_B ([] : List (Planar α))).bind fun pre_FA_B' =>
+          (insertionForest F_A (pre_FA_B' ++ ([] : List (Planar α)))).map fun F' =>
+            T' :: F' := by
+  rw [iteratedQuadSum_nil_remaining]
+  rfl
+
+private theorem iteratedQuadSum_singleton_FA_orig
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (c : Planar α) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B
+      (fun t => bucketSlice [c] [QuadIdx.FA_orig] t) [] =
+    (insertionForest pre_T_B ([] : List (Planar α))).bind fun pre_T_B' =>
+      (insertion T (pre_T_B' ++ ([] : List (Planar α)))).bind fun T' =>
+        (insertionForest pre_FA_B ([] : List (Planar α))).bind fun pre_FA_B' =>
+          (insertionForest F_A (pre_FA_B' ++ [c])).map fun F' =>
+            T' :: F' := by
+  rw [iteratedQuadSum_nil_remaining]
+  rfl
+
+private theorem iteratedQuadSum_singleton_FA_graft
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (c : Planar α) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B
+      (fun t => bucketSlice [c] [QuadIdx.FA_graft] t) [] =
+    (insertionForest pre_T_B ([] : List (Planar α))).bind fun pre_T_B' =>
+      (insertion T (pre_T_B' ++ ([] : List (Planar α)))).bind fun T' =>
+        (insertionForest pre_FA_B [c]).bind fun pre_FA_B' =>
+          (insertionForest F_A (pre_FA_B' ++ ([] : List (Planar α)))).map fun F' =>
+            T' :: F' := by
+  rw [iteratedQuadSum_nil_remaining]
+  rfl
+
+/-! ### §1.10.4: `RHS_eq_canonical_msform_singleton` — composition
+
+The full singleton case `C = [c]` of `RHS_eq_canonical_msform`. Composes the
+4 per-bucket sub-lemmas (§1.10.2) with the per-bucket interpret reductions
+(§1.10.3) to bridge the LHS form (with `α : List QuadIdx` of length 1) to
+the canonical form (`enumGraftingData ... 1`). -/
+
+/-- **Singleton case** of `RHS_eq_canonical_msform`. The α-bind on the LHS
+    has length 1 (single QuadIdx), so it decomposes into 4 separate cases,
+    one per bucket. Each case matches the corresponding sub-lemma's LHS form,
+    which equals the sub-lemma's RHS canonical form. The sub-lemma RHS
+    canonical form equals the per-bucket interpret-reduced form via the
+    `interpret_singleton_<bucket>` reductions. -/
+private theorem RHS_eq_canonical_msform_singleton
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (c : Planar α) :
+    ((Multiset.ofList (listChoices
+        [QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] 1)).bind
+      fun a =>
+        iteratedQuadSum T F_A pre_T_B pre_FA_B
+          (fun t => bucketSlice [c] a t) []).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((enumGraftingData T F_A pre_T_B pre_FA_B 1).map
+        (fun gd => interpret T gd [c])).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- ## LHS: decompose listChoices [4 buckets] 1 → 4 explicit summands
+  rw [show (Multiset.ofList (listChoices
+            [QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] 1) :
+            Multiset (List QuadIdx)) =
+          [QuadIdx.T_orig] ::ₘ [QuadIdx.T_graft] ::ₘ [QuadIdx.FA_orig] ::ₘ [QuadIdx.FA_graft] ::ₘ 0
+        from rfl]
+  rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind,
+      Multiset.zero_bind, add_zero]
+  rw [Multiset.map_add, Multiset.map_add, Multiset.map_add]
+  -- LHS now: 4 summands
+  -- (iQS T_orig).map msform + (iQS T_graft).map msform + (iQS FA_orig).map msform + (iQS FA_graft).map msform
+  -- Where iQS b = iteratedQuadSum T F_A pre_T_B pre_FA_B (fun t => bucketSlice [c] [b] t) [].
+
+  -- Reduce each iQS-leaf via the per-bucket helper lemmas (§1.10.4 prelude).
+  rw [iteratedQuadSum_singleton_T_orig, iteratedQuadSum_singleton_T_graft,
+      iteratedQuadSum_singleton_FA_orig, iteratedQuadSum_singleton_FA_graft]
+  -- Now LHS has 4 summands matching the LHS of the 4 per-bucket sub-lemmas.
+  -- Apply each sub-lemma to convert to canonical form.
+  rw [show (((insertionForest pre_T_B ([] : List (Planar α))).bind fun pre_T_B' =>
+              (insertion T (pre_T_B' ++ [c])).bind fun T' =>
+                (insertionForest pre_FA_B ([] : List (Planar α))).bind fun pre_FA_B' =>
+                  (insertionForest F_A (pre_FA_B' ++ ([] : List (Planar α)))).map fun F' =>
+                    T' :: F').map (fun L => Multiset.ofList (L.map Nonplanar.mk))) =
+          ((Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+            (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+              (Multiset.ofList (vertices T)).map fun v =>
+                multiGraft T (choice_T.zip pre_T_B ++ [(v, c)]) ::
+                  buildFIns F_A pre_FA_B fdata).map
+            (fun L => Multiset.ofList (L.map Nonplanar.mk)) from
+        RHS_eq_canonical_msform_singleton_T_orig T F_A pre_T_B pre_FA_B c]
+  rw [show (((insertionForest pre_T_B [c]).bind fun pre_T_B' =>
+              (insertion T (pre_T_B' ++ ([] : List (Planar α)))).bind fun T' =>
+                (insertionForest pre_FA_B ([] : List (Planar α))).bind fun pre_FA_B' =>
+                  (insertionForest F_A (pre_FA_B' ++ ([] : List (Planar α)))).map fun F' =>
+                    T' :: F').map (fun L => Multiset.ofList (L.map Nonplanar.mk))) =
+          ((Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+            (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+              (Multiset.ofList (List.finRange pre_T_B.length)).bind fun k =>
+                (Multiset.ofList (vertices pre_T_B[k.val])).map fun q =>
+                  multiGraft T (choice_T.zip ((List.finRange pre_T_B.length).map fun k' =>
+                    if k' = k then multiGraft pre_T_B[k.val] [(q, c)]
+                    else pre_T_B[k'.val])) ::
+                    buildFIns F_A pre_FA_B fdata).map
+            (fun L => Multiset.ofList (L.map Nonplanar.mk)) from
+        RHS_eq_canonical_msform_singleton_T_graft T F_A pre_T_B pre_FA_B c]
+  rw [show (((insertionForest pre_T_B ([] : List (Planar α))).bind fun pre_T_B' =>
+              (insertion T (pre_T_B' ++ ([] : List (Planar α)))).bind fun T' =>
+                (insertionForest pre_FA_B ([] : List (Planar α))).bind fun pre_FA_B' =>
+                  (insertionForest F_A (pre_FA_B' ++ [c])).map fun F' =>
+                    T' :: F').map (fun L => Multiset.ofList (L.map Nonplanar.mk))) =
+          ((Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+            (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+              (Multiset.ofList (List.finRange F_A.length)).bind fun i =>
+                (Multiset.ofList (vertices F_A[i.val])).map fun v =>
+                  multiGraft T (choice_T.zip pre_T_B) ::
+                    (List.finRange F_A.length).map fun i' =>
+                      multiGraft F_A[i'.val]
+                        (perTreePairsFromFChoice F_A pre_FA_B fdata i' ++
+                         (if i = i' then [(v, c)] else []))).map
+            (fun L => Multiset.ofList (L.map Nonplanar.mk)) from
+        RHS_eq_canonical_msform_singleton_FA_orig T F_A pre_T_B pre_FA_B c]
+  rw [show (((insertionForest pre_T_B ([] : List (Planar α))).bind fun pre_T_B' =>
+              (insertion T (pre_T_B' ++ ([] : List (Planar α)))).bind fun T' =>
+                (insertionForest pre_FA_B [c]).bind fun pre_FA_B' =>
+                  (insertionForest F_A (pre_FA_B' ++ ([] : List (Planar α)))).map fun F' =>
+                    T' :: F').map (fun L => Multiset.ofList (L.map Nonplanar.mk))) =
+          ((Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+            (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+              (Multiset.ofList (List.finRange pre_FA_B.length)).bind fun k =>
+                (Multiset.ofList (vertices pre_FA_B[k.val])).map fun q =>
+                  multiGraft T (choice_T.zip pre_T_B) ::
+                    buildFIns F_A
+                      ((List.finRange pre_FA_B.length).map fun k' =>
+                        if k' = k then multiGraft pre_FA_B[k.val] [(q, c)]
+                        else pre_FA_B[k'.val])
+                      fdata).map
+            (fun L => Multiset.ofList (L.map Nonplanar.mk)) from
+        RHS_eq_canonical_msform_singleton_FA_graft T F_A pre_T_B pre_FA_B c]
+  -- Now LHS is the sum of 4 canonical RHS forms.
+
+  -- ## RHS: apply enumGraftingData_succ_factored, decompose [4 buckets].
+  -- Key: keep `.map msform` outside throughout; only push when handling per-bucket inner.
+  rw [show (1 : Nat) = 0 + 1 from rfl, enumGraftingData_succ_factored]
+
+  -- Reduce inner listChoices ... 0 = {[]}, simplify the map-singleton.
+  -- This collapses `(listChoices ... 0).map (...)` to a singleton multiset.
+  rw [show (fun choice_T : List Path =>
+              (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind
+                fun fdata =>
+                  (([QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] :
+                      Multiset QuadIdx).bind fun first_b =>
+                    (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B first_b).bind
+                      fun first_target =>
+                        (Multiset.ofList
+                          (listChoices (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) 0)).map
+                        fun rest_targets =>
+                          ({ pre_T_B_choice := choice_T
+                             pre_FA_B_choice := fdata
+                             C_targets := first_target :: rest_targets }
+                           : GraftingData F_A pre_T_B pre_FA_B))) =
+            (fun choice_T : List Path =>
+              (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind
+                fun fdata =>
+                  (([QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] :
+                      Multiset QuadIdx).bind fun first_b =>
+                    (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B first_b).map
+                      fun first_target =>
+                        ({ pre_T_B_choice := choice_T
+                           pre_FA_B_choice := fdata
+                           C_targets := [first_target] }
+                         : GraftingData F_A pre_T_B pre_FA_B))) from by
+        funext choice_T
+        refine Multiset.bind_congr fun fdata _ => ?_
+        refine Multiset.bind_congr fun first_b _ => ?_
+        rw [show (Multiset.ofList
+                    (listChoices (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) 0) :
+                    Multiset (List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))) =
+                  ({[]} : Multiset (List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))) from by
+              rw [listChoices_zero]; rfl]
+        simp_rw [Multiset.map_singleton]
+        rw [← Multiset.bind_singleton]]
+
+  -- Decompose [4 buckets] inside via simp_rw with cons + bind_add.
+  simp_rw [show ([QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] :
+            Multiset QuadIdx) =
+          QuadIdx.T_orig ::ₘ QuadIdx.T_graft ::ₘ QuadIdx.FA_orig ::ₘ QuadIdx.FA_graft ::ₘ 0
+        from rfl,
+        Multiset.cons_bind, Multiset.zero_bind, add_zero, Multiset.bind_add]
+
+  -- Push outer .map (interpret T · [c]).map msform across the additions.
+  rw [Multiset.map_add, Multiset.map_add, Multiset.map_add,
+      Multiset.map_add, Multiset.map_add, Multiset.map_add]
+
+  -- Now both sides have 4 right-associated summands:
+  -- S1 + (S2 + (S3 + S4)).
+  -- Apply congr 1 (3 times) — each split gives [S_i = S_i', rest = rest'].
+  congr 1
+  · -- T_orig case: S1 = S1'
+    -- LHS: (canonical T_orig).map msform
+    -- RHS: ((factored T_orig).map (interpret · [c])).map msform
+    congr 1
+    simp_rw [Multiset.map_bind, Multiset.map_map]
+    refine Multiset.bind_congr fun choice_T _ => ?_
+    refine Multiset.bind_congr fun fdata _ => ?_
+    unfold enumAlphaConstrainedChoice
+    dsimp only
+    rw [show (Multiset.ofList ((vertices T).map (AlphaConstrainedChoice.t_orig
+              (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B))) :
+              Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+            (Multiset.ofList (vertices T)).map (AlphaConstrainedChoice.t_orig
+              (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B)) from rfl]
+    rw [Multiset.map_map]
+    refine Multiset.map_congr rfl fun v _ => ?_
+    simp only [Function.comp_apply]
+    rw [interpret_singleton_t_orig]
+  · congr 1
+    · -- T_graft case: S2 = S2'
+      congr 1
+      simp_rw [Multiset.map_bind, Multiset.map_map]
+      refine Multiset.bind_congr fun choice_T _ => ?_
+      refine Multiset.bind_congr fun fdata _ => ?_
+      unfold enumAlphaConstrainedChoice
+      dsimp only
+      rw [Multiset.map_bind]
+      refine Multiset.bind_congr fun k _ => ?_
+      rw [show (Multiset.ofList ((vertices pre_T_B[k.val]).map (AlphaConstrainedChoice.t_graft
+                (F_A := F_A) (pre_FA_B := pre_FA_B) k)) :
+                Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+              (Multiset.ofList (vertices pre_T_B[k.val])).map (AlphaConstrainedChoice.t_graft
+                (F_A := F_A) (pre_FA_B := pre_FA_B) k) from rfl]
+      rw [Multiset.map_map]
+      refine Multiset.map_congr rfl fun q _ => ?_
+      simp only [Function.comp_apply]
+      rw [interpret_singleton_t_graft]
+    · congr 1
+      · -- FA_orig case: S3 = S3'
+        congr 1
+        simp_rw [Multiset.map_bind, Multiset.map_map]
+        refine Multiset.bind_congr fun choice_T _ => ?_
+        refine Multiset.bind_congr fun fdata _ => ?_
+        unfold enumAlphaConstrainedChoice
+        dsimp only
+        rw [Multiset.map_bind]
+        refine Multiset.bind_congr fun i _ => ?_
+        rw [show (Multiset.ofList ((vertices F_A[i.val]).map (AlphaConstrainedChoice.fa_orig
+                  (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i)) :
+                  Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+                (Multiset.ofList (vertices F_A[i.val])).map (AlphaConstrainedChoice.fa_orig
+                  (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i) from rfl]
+        rw [Multiset.map_map]
+        refine Multiset.map_congr rfl fun v _ => ?_
+        simp only [Function.comp_apply]
+        rw [interpret_singleton_fa_orig]
+      · -- FA_graft case: S4 = S4'
+        congr 1
+        simp_rw [Multiset.map_bind, Multiset.map_map]
+        refine Multiset.bind_congr fun choice_T _ => ?_
+        refine Multiset.bind_congr fun fdata _ => ?_
+        unfold enumAlphaConstrainedChoice
+        dsimp only
+        rw [Multiset.map_bind]
+        refine Multiset.bind_congr fun k _ => ?_
+        rw [show (Multiset.ofList ((vertices pre_FA_B[k.val]).map (AlphaConstrainedChoice.fa_graft
+                  (F_A := F_A) (pre_T_B := pre_T_B) k)) :
+                  Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+                (Multiset.ofList (vertices pre_FA_B[k.val])).map (AlphaConstrainedChoice.fa_graft
+                  (F_A := F_A) (pre_T_B := pre_T_B) k) from rfl]
+        rw [Multiset.map_map]
+        refine Multiset.map_congr rfl fun q _ => ?_
+        simp only [Function.comp_apply]
+        rw [interpret_singleton_fa_graft]
+
 /-! ### §1.9.5: Future bridges (full C : List)
 
 The two theorems below are the targets for the next session. Both are stated
