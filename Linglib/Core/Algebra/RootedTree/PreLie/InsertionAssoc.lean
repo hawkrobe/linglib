@@ -3999,6 +3999,59 @@ private theorem iteratedQuadSum_cons_FA_graft_first
              if_neg (by decide : QuadIdx.FA_graft ≠ QuadIdx.FA_orig),
              if_true]
 
+/-! ### §1.10.6.5: Insertion-split-middle-pair substrate
+
+Bridges `(insertion T (X ++ [c] ++ Y)).bind Q` to a 3-level bind structure
+where the middle vertex choice `v` is exposed. Used by per-bucket cons
+sub-lemmas to extract the head c-graft as a `(v, c)` pair. -/
+
+private theorem insertion_split_middle_pair_bind {γ : Type*}
+    (T : Planar α) (X Y : List (Planar α)) (c : Planar α)
+    (Q : Planar α → Multiset γ) :
+    (insertion T (X ++ ([c] ++ Y))).bind Q =
+    (Multiset.ofList (listChoices (vertices T) X.length)).bind fun cX =>
+      (Multiset.ofList (vertices T)).bind fun v =>
+        (Multiset.ofList (listChoices (vertices T) Y.length)).bind fun cY =>
+          Q (multiGraft T (cX.zip X ++ [(v, c)] ++ cY.zip Y)) := by
+  rw [insertion_def]
+  rw [show (X ++ ([c] ++ Y)).length = X.length + (1 + Y.length) from by
+        rw [List.length_append, List.length_append, List.length_singleton]]
+  rw [← Multiset.map_coe, Multiset.bind_map]
+  -- Apply listChoices_split_bind: total = X.length + (1 + Y.length).
+  rw [listChoices_split_bind (vertices T) X.length (1 + Y.length)]
+  refine Multiset.bind_congr fun cX hcX => ?_
+  rw [Multiset.mem_coe] at hcX
+  have hX_len : cX.length = X.length := mem_listChoices_length _ _ _ hcX
+  -- Inner: split (1 + Y.length).
+  rw [listChoices_split_bind (vertices T) 1 Y.length]
+  -- Reduce listChoices V(T) 1 to (ofList V(T)).bind v => {[v]}-form.
+  rw [show (Multiset.ofList (listChoices (vertices T) 1) : Multiset (List Path)) =
+        ↑((vertices T).flatMap (fun v => [[v]])) from by
+      rw [show listChoices (vertices T) 1 =
+              (vertices T).flatMap (fun v => (listChoices (vertices T) 0).map (v :: ·))
+            from rfl, listChoices_zero]
+      rfl]
+  rw [show (↑((vertices T).flatMap (fun v => [[v]])) : Multiset (List Path)) =
+        (Multiset.ofList (vertices T)).bind (fun v => ({[v]} : Multiset (List Path))) from by
+      rw [← Multiset.coe_bind]; rfl]
+  simp only [Multiset.bind_assoc, Multiset.singleton_bind]
+  refine Multiset.bind_congr fun v _ => ?_
+  refine Multiset.bind_congr fun cY hcY => ?_
+  rw [Multiset.mem_coe] at hcY
+  have hY_len : cY.length = Y.length := mem_listChoices_length _ _ _ hcY
+  -- Goal: Q (multiGraft T ((cX ++ ([v] ++ cY)).zip (X ++ ([c] ++ Y))))
+  --     = Q (multiGraft T (cX.zip X ++ [(v, c)] ++ cY.zip Y))
+  congr 2
+  rw [List.zip_append hX_len]
+  -- LHS now: cX.zip X ++ ([v] ++ cY).zip ([c] ++ Y)
+  -- RHS: cX.zip X ++ [(v, c)] ++ cY.zip Y (left-grouped)
+  -- Normalize RHS associativity to right-grouped via List.append_assoc.
+  rw [List.append_assoc (cX.zip X) [(v, c)] (cY.zip Y)]
+  -- Now: cX.zip X ++ ([v] ++ cY).zip ([c] ++ Y) = cX.zip X ++ ([(v, c)] ++ cY.zip Y)
+  -- Both sides are definitionally equal at this point; congr 1 closes via rfl.
+  congr 1
+
+
 /-! ### §1.9.5: Future bridges (full C : List)
 
 The two theorems below are the targets for the next session. Both are stated
