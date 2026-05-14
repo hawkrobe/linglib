@@ -130,6 +130,33 @@ theorem _root_.Multiset.powerset_add (F G : Multiset T) :
       rw [Multiset.cons_add]
     rw [h₂, ih]
 
+/-- **Δ-multiplicativity at the antidiagonal level**: the antidiagonal of a
+    sum decomposes as the bind/map product of the per-summand antidiagonals.
+
+    In Oudom-Guin §2 / Sweedler notation this is the multiplicativity
+    `Δ(FG) = Δ(F) · Δ(G)` for the symmetric algebra Hopf coproduct (the
+    symmetric-algebra special case of Prop 2.7.iii / Prop 2.8.iii).
+
+    Proven by transport from `powerset_add` through `antidiagonal_eq_map_powerset`,
+    closed by the multiset identity `(F + G) - (F₁ + G₁) = (F - F₁) + (G - G₁)`
+    (`tsub_add_tsub_comm`) for `F₁ ≤ F, G₁ ≤ G`.
+
+    `[UPSTREAM]` candidate for `Mathlib.Data.Multiset.Antidiagonal`. Mathlib
+    has the `cons` form (`antidiagonal_cons`) but not this `+` form. -/
+theorem _root_.Multiset.antidiagonal_add {α : Type*} [DecidableEq α] (F G : Multiset α) :
+    (F + G).antidiagonal =
+      F.antidiagonal.bind (fun p =>
+        G.antidiagonal.map (fun q => (p.1 + q.1, p.2 + q.2))) := by
+  rw [Multiset.antidiagonal_eq_map_powerset, Multiset.powerset_add, Multiset.map_bind,
+      Multiset.antidiagonal_eq_map_powerset, Multiset.bind_map]
+  refine Multiset.bind_congr fun F₁ hF₁ => ?_
+  have hF₁_le : F₁ ≤ F := Multiset.mem_powerset.mp hF₁
+  rw [Multiset.map_map, Multiset.antidiagonal_eq_map_powerset, Multiset.map_map]
+  refine Multiset.map_congr rfl fun G₁ hG₁ => ?_
+  have hG₁_le : G₁ ≤ G := Multiset.mem_powerset.mp hG₁
+  show ((F + G) - (F₁ + G₁), F₁ + G₁) = ((F - F₁) + (G - G₁), F₁ + G₁)
+  rw [tsub_add_tsub_comm hF₁_le hG₁_le]
+
 /-- **Basis form** of the algebra-hom property:
     `Δ(of' F · of' G) = Δ(of' F) · Δ(of' G)`.
 
@@ -192,7 +219,7 @@ private noncomputable def comulShuffleMulRHom [DecidableEq T] (G : ConnesKreimer
     `Δ(F · G) = Δ(F) · Δ(G)` in the tensor algebra
     `ConnesKreimer R T ⊗[R] ConnesKreimer R T`. Bilinear lift of
     `comulShuffle_mul_of'` via two nested `Finsupp.addHom_ext` reductions to
-    basis singletons (mirrors `assoc_symm` in `PreLie/Algebra.lean`). -/
+    basis singletons (mirrors `assoc_symm` in `PreLie/Basic.lean`). -/
 theorem comulShuffle_mul [DecidableEq T] (F G : ConnesKreimer R T) :
     comulShuffle (R := R) (F * G) =
       comulShuffle (R := R) F * comulShuffle (R := R) G := by
@@ -229,75 +256,62 @@ The shuffle Δ is cocommutative: swapping the two tensor factors leaves
 Δ unchanged. This follows from the involution `F₁ ↦ F - F₁` on
 `F.powerset`. -/
 
-/-- `s.powerset` is invariant under the complement map `s' ↦ s - s'`.
-    Standard mathlib-style helper; an involution on `s.powerset`.
+/-- **Δ-cocommutativity at the antidiagonal level**: `s.antidiagonal` is
+    invariant under `Prod.swap`. Pairs `(s₁, s₂)` with `s₁ + s₂ = s` map
+    bijectively to `(s₂, s₁)` with the same constraint, since `+` is
+    commutative.
 
-    `[UPSTREAM]` candidate. -/
-theorem _root_.Multiset.powerset_map_sub_self {β : Type*} [DecidableEq β]
-    (s : Multiset β) :
-    s.powerset.map (fun s' => s - s') = s.powerset := by
-  induction s using Multiset.induction with
+    In Oudom-Guin §2 / Sweedler notation this is the cocommutativity
+    `(swap ∘ Δ) = Δ` for the symmetric algebra coproduct.
+
+    Mathlib has the analogue `Multiset.Nat.antidiagonal_map_swap` for
+    `Nat` antidiagonal but not (as of mathlib 4.30) for the general
+    `Multiset.antidiagonal`. `[UPSTREAM]` candidate for
+    `Mathlib.Data.Multiset.Antidiagonal`. -/
+theorem _root_.Multiset.antidiagonal_swap {α : Type*} (s : Multiset α) :
+    s.antidiagonal.map Prod.swap = s.antidiagonal := by
+  induction s using Multiset.induction_on with
   | empty => rfl
   | cons a t ih =>
-    rw [Multiset.powerset_cons, Multiset.map_add]
-    have h1 : t.powerset.map (fun s' => (a ::ₘ t) - s') =
-        t.powerset.map (fun s' => a ::ₘ (t - s')) :=
-      Multiset.map_congr rfl fun C₁ hC₁ =>
-        Multiset.cons_sub_of_le a (Multiset.mem_powerset.mp hC₁)
-    have h2 : (t.powerset.map (Multiset.cons a)).map (fun s' => (a ::ₘ t) - s') =
-        t.powerset.map (fun s' => t - s') := by
-      rw [Multiset.map_map]
-      apply Multiset.map_congr rfl
-      intros C₁ _
-      show (a ::ₘ t) - (a ::ₘ C₁) = t - C₁
-      rw [Multiset.sub_cons, Multiset.erase_cons_head]
-    rw [h1, h2, ih]
-    rw [show (fun s' => a ::ₘ (t - s')) = (Multiset.cons a) ∘ (fun s' => t - s') from
-        funext (fun _ => rfl), ← Multiset.map_map, ih]
-    exact Multiset.add_comm _ _
+    rw [Multiset.antidiagonal_cons, Multiset.map_add, Multiset.map_map, Multiset.map_map]
+    -- Each summand has shape `(antidiagonal t).map (Prod.swap ∘ Prod.map _ _)`.
+    -- Pull `Prod.swap` to the right via the funext identities below, then
+    -- apply `ih` to absorb it. The two summands then swap roles, recovered by `add_comm`.
+    rw [show (Prod.swap ∘ Prod.map (id : Multiset α → Multiset α) (Multiset.cons a)) =
+            ((Prod.map (Multiset.cons a) id) ∘ Prod.swap) from funext fun _ => rfl]
+    rw [show (Prod.swap ∘ Prod.map (Multiset.cons a) (id : Multiset α → Multiset α)) =
+            ((Prod.map id (Multiset.cons a)) ∘ Prod.swap) from funext fun _ => rfl]
+    rw [← Multiset.map_map _ Prod.swap, ← Multiset.map_map _ Prod.swap, ih]
+    exact add_comm _ _
 
-/-- Reindex a partition-sum over `C.powerset` using the involution `C₁ ↦ C - C₁`.
+/-- Reindex a partition-sum over `C.powerset` using the involution
+    `C₁ ↦ C - C₁`. Specialisation of `antidiagonal_swap` to a
+    `(C₁, C - C₁)` parametrisation: summing `f C₁ (C - C₁)` over partitions
+    equals summing `f (C - C₁) C₁`.
 
-    For any `f : Multiset T → Multiset T → β` (β an additive comm monoid),
-    summing `f C₁ (C - C₁)` over partitions equals summing `f (C - C₁) C₁`.
-
-    Used in cocommutativity proofs and in Oudom-Guin Lemma 2.10's chain. -/
+    In Oudom-Guin terms: this is the basis-level statement that the symmetric
+    Hopf coproduct's tensor-flip leaves a sum-with-`f` invariant. Used in
+    cocommutativity proofs and Oudom-Guin Lemma 2.10's chain. -/
 theorem _root_.Multiset.powerset_partition_swap {β : Type*} [AddCommMonoid β] {T' : Type*}
     [DecidableEq T'] (C : Multiset T') (f : Multiset T' → Multiset T' → β) :
     (C.powerset.map fun C₁ => f C₁ (C - C₁)).sum =
       (C.powerset.map fun C₁ => f (C - C₁) C₁).sum := by
-  conv_rhs =>
-    rw [show C.powerset = C.powerset.map (fun s' => C - s') from
-        (Multiset.powerset_map_sub_self C).symm]
-  rw [Multiset.map_map]
-  congr 1
-  apply Multiset.map_congr rfl
-  intros s' hs'
-  show f s' (C - s') = f (C - (C - s')) (C - s')
-  congr 1
-  exact (tsub_tsub_cancel_of_le (Multiset.mem_powerset.mp hs')).symm
-
-/-- **3-piece partition swap (positions 2, 3)**: enumerating triples
-    `(C₁, C₂, C₃)` with `C₁ + C₂ + C₃ = C` (encoded as `C₁ ⊆ C` and
-    `C₂ ⊆ C - C₁`, with `C₃ := C - C₁ - C₂`) is invariant under swapping
-    the second and third pieces.
-
-    Used in Oudom-Guin Lemma 2.10's chain to swap the "going to A
-    directly (sibling of B_(2))" piece with the "going into B_(2)" piece
-    of C. Direct application of `Multiset.powerset_partition_swap` to
-    the inner sum at fixed `C₁`. -/
-theorem _root_.Multiset.powerset_triple_swap_23
-    {β : Type*} [AddCommMonoid β] {T' : Type*} [DecidableEq T']
-    (C : Multiset T') (f : Multiset T' → Multiset T' → Multiset T' → β) :
-    (C.powerset.bind fun C₁ =>
-      (C - C₁).powerset.map fun C₂ => f C₁ C₂ (C - C₁ - C₂)).sum =
-    (C.powerset.bind fun C₁ =>
-      (C - C₁).powerset.map fun C₂ => f C₁ (C - C₁ - C₂) C₂).sum := by
-  rw [Multiset.sum_bind, Multiset.sum_bind]
-  apply congr_arg Multiset.sum
-  apply Multiset.map_congr rfl
-  intros C₁ _
-  exact Multiset.powerset_partition_swap (C - C₁) (fun D E => f C₁ D E)
+  -- Mathlib's convention: `s.antidiagonal = s.powerset.map (fun t => (s - t, t))`
+  -- (complement first, subset second). So a powerset sum of `f C₁ (C - C₁)` lifts
+  -- to an antidiagonal sum of `f p.2 p.1` (subset = p.2, complement = p.1).
+  have h_lift_lhs : (C.powerset.map fun C₁ => f C₁ (C - C₁)).sum =
+      (C.antidiagonal.map fun p => f p.2 p.1).sum := by
+    rw [Multiset.antidiagonal_eq_map_powerset, Multiset.map_map]; rfl
+  have h_lift_rhs : (C.powerset.map fun C₁ => f (C - C₁) C₁).sum =
+      (C.antidiagonal.map fun p => f p.1 p.2).sum := by
+    rw [Multiset.antidiagonal_eq_map_powerset, Multiset.map_map]; rfl
+  -- The two antidiagonal forms agree by `antidiagonal_swap`.
+  have h_swap : (C.antidiagonal.map fun p => f p.2 p.1).sum =
+      (C.antidiagonal.map fun p => f p.1 p.2).sum := by
+    conv_lhs => rw [show (fun p : Multiset T' × Multiset T' => f p.2 p.1) =
+                      ((fun p => f p.1 p.2) ∘ Prod.swap) from funext fun _ => rfl,
+                    ← Multiset.map_map _ Prod.swap, Multiset.antidiagonal_swap]
+  rw [h_lift_lhs, h_swap, ← h_lift_rhs]
 
 /-- **Basis-level cocommutativity**: the partition sum is invariant under
     tensor swap. Direct corollary of `Multiset.powerset_partition_swap`. -/
