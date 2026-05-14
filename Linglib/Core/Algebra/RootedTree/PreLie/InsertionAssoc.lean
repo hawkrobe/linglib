@@ -1758,6 +1758,305 @@ private theorem LHS_eq_canonical_C_nil
   refine Multiset.map_congr rfl fun fdata _ => ?_
   rfl
 
+/-! ### §1.9.4.1: msform-wrapped C-nil base case
+
+Trivial corollary of `LHS_eq_canonical_C_nil` (planar-level): wrapping both
+sides in `(·).map (fun L => Multiset.ofList (L.map Nonplanar.mk))` preserves
+the equality. This is the genuine base case for the `LHS_eq_canonical_msform`
+induction (the planar-level base case `LHS_eq_canonical_C_nil` does not
+directly suffice because the cons-case bridge requires msform absorption). -/
+
+/-- The msform-wrapped form of `LHS_eq_canonical_C_nil`. Direct corollary via
+    `congrArg (·.map _)`; the C = [] case has no T_orig-c's competing with
+    pre_T_B grafts, so msform is not strictly needed but is included for
+    uniformity with the cons-case statement. -/
+private theorem LHS_eq_canonical_msform_C_nil
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    ((insertion T pre_T_B).bind fun T_ins =>
+        (insertionForest F_A pre_FA_B).bind fun F_ins =>
+          insertionForest (T_ins :: F_ins) ([] : List (Planar α))).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((enumGraftingData T F_A pre_T_B pre_FA_B 0).map
+        (fun gd => interpret T gd ([] : List (Planar α)))).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) :=
+  congrArg (Multiset.map _) (LHS_eq_canonical_C_nil T F_A pre_T_B pre_FA_B)
+
+/-! ### §1.9.6: Cons-case structural decomposition of `enumGraftingData`
+
+Structural lemma exposing the cons-of-C_targets pattern in `enumGraftingData`.
+Peels one element off the front of the C_targets enumeration, leaving the
+`(choice_T, fdata)` outer enumeration intact.
+
+This is a building block for any future cons-case proof of
+`LHS_eq_canonical_msform` or `RHS_eq_canonical_msform`: it converts an
+induction on C-length into an induction with a clean `bind first :
+allAlphaChoiceList: ...` outer pattern. The inner enumeration is `enumGraftingData
+T F_A pre_T_B pre_FA_B n` (one length less), with the resulting C_targets
+prepended by `first`.
+
+Proof: unfolds both sides to a list-flatMap form, applies `listChoices_succ`
+on the inner C_targets enumeration, and aligns via `List.map_flatMap` /
+`List.map_map`. Sorry-free, ~30 LOC. -/
+
+/-- Cons-case decomposition of `enumGraftingData` (peels one C_target off the
+    front). The outer `(choice_T, fdata)` enumeration is preserved; the inner
+    C_targets enumeration `(listChoices ... (n+1))` is decomposed via
+    `listChoices_succ` into `flatMap first => map (first :: ·)`. -/
+private theorem enumGraftingData_succ
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (n : Nat) :
+    enumGraftingData T F_A pre_T_B pre_FA_B (n + 1) =
+      (Multiset.ofList
+        ((listChoices (vertices T) pre_T_B.length).flatMap fun choice_T =>
+          (listChoices (perKFChoice F_A) pre_FA_B.length).flatMap fun fdata =>
+            (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B).flatMap fun first =>
+              (listChoices (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) n).map
+                fun rest_targets =>
+                  ({ pre_T_B_choice := choice_T
+                     pre_FA_B_choice := fdata
+                     C_targets := first :: rest_targets }
+                   : GraftingData F_A pre_T_B pre_FA_B)) :
+        Multiset (GraftingData F_A pre_T_B pre_FA_B)) := by
+  unfold enumGraftingData
+  congr 1
+  apply List.flatMap_congr
+  intro choice_T _
+  apply List.flatMap_congr
+  intro fdata _
+  -- Inner: (listChoices allAlpha (n + 1)).map (fun t => ⟨choice_T, fdata, t⟩)
+  --        = allAlpha.flatMap fun first => (listChoices allAlpha n).map fun r => ⟨choice_T, fdata, first :: r⟩
+  rw [listChoices_succ, List.map_flatMap]
+  apply List.flatMap_congr
+  intro first _
+  rw [List.map_map]
+  rfl
+
+/-! ### §1.9.7: Per-bucket extractor cons-decomposition
+
+The four `extract{Bucket}Pairs{At?}` extractors all have a common structural
+pattern: each is a `List.filterMap` selecting pairs whose `fst` matches the
+target bucket constructor (with index in the indexed cases). Their cons
+behavior on `(first, c) :: rest_paired` reduces to:
+
+- **Head matches**: prepend `(path, c)` and recurse.
+- **Head does not match**: drop and recurse.
+
+These 8 lemmas (4 buckets × 2 outcomes) are direct `rfl` reductions, useful
+for any cons-case bridge proof. -/
+
+@[simp] private theorem extractTOrigPairs_cons_t_orig
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (v : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    extractTOrigPairs
+        (((AlphaConstrainedChoice.t_orig v
+            (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B)), c)
+          :: rest_paired) =
+      (v, c) :: extractTOrigPairs rest_paired := rfl
+
+@[simp] private theorem extractTOrigPairs_cons_t_graft
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k : Fin pre_T_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    extractTOrigPairs
+        (((AlphaConstrainedChoice.t_graft (F_A := F_A) (pre_FA_B := pre_FA_B) k q), c)
+          :: rest_paired) =
+      extractTOrigPairs rest_paired := rfl
+
+@[simp] private theorem extractTOrigPairs_cons_fa_orig
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (i : Fin F_A.length) (v : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    extractTOrigPairs
+        (((AlphaConstrainedChoice.fa_orig (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v), c)
+          :: rest_paired) =
+      extractTOrigPairs rest_paired := rfl
+
+@[simp] private theorem extractTOrigPairs_cons_fa_graft
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k : Fin pre_FA_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    extractTOrigPairs
+        (((AlphaConstrainedChoice.fa_graft (F_A := F_A) (pre_T_B := pre_T_B) k q), c)
+          :: rest_paired) =
+      extractTOrigPairs rest_paired := rfl
+
+@[simp] private theorem extractTGraftPairsAt_cons_t_orig
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (v : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (k : Fin pre_T_B.length) :
+    extractTGraftPairsAt
+        (((AlphaConstrainedChoice.t_orig v
+            (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B)), c)
+          :: rest_paired) k =
+      extractTGraftPairsAt rest_paired k := rfl
+
+private theorem extractTGraftPairsAt_cons_t_graft_eq
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k k' : Fin pre_T_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (h : k' = k) :
+    extractTGraftPairsAt
+        (((AlphaConstrainedChoice.t_graft (F_A := F_A) (pre_FA_B := pre_FA_B) k' q), c)
+          :: rest_paired) k =
+      (q, c) :: extractTGraftPairsAt rest_paired k := by
+  unfold extractTGraftPairsAt
+  rw [List.filterMap_cons]
+  dsimp only
+  rw [if_pos h]
+
+private theorem extractTGraftPairsAt_cons_t_graft_neq
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k k' : Fin pre_T_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (h : k' ≠ k) :
+    extractTGraftPairsAt
+        (((AlphaConstrainedChoice.t_graft (F_A := F_A) (pre_FA_B := pre_FA_B) k' q), c)
+          :: rest_paired) k =
+      extractTGraftPairsAt rest_paired k := by
+  unfold extractTGraftPairsAt
+  rw [List.filterMap_cons]
+  dsimp only
+  rw [if_neg h]
+
+@[simp] private theorem extractTGraftPairsAt_cons_fa_orig
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (i : Fin F_A.length) (v : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (k : Fin pre_T_B.length) :
+    extractTGraftPairsAt
+        (((AlphaConstrainedChoice.fa_orig (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v), c)
+          :: rest_paired) k =
+      extractTGraftPairsAt rest_paired k := rfl
+
+@[simp] private theorem extractTGraftPairsAt_cons_fa_graft
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k' : Fin pre_FA_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (k : Fin pre_T_B.length) :
+    extractTGraftPairsAt
+        (((AlphaConstrainedChoice.fa_graft (F_A := F_A) (pre_T_B := pre_T_B) k' q), c)
+          :: rest_paired) k =
+      extractTGraftPairsAt rest_paired k := rfl
+
+@[simp] private theorem extractFAOrigPairsAt_cons_t_orig
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (v : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (i : Fin F_A.length) :
+    extractFAOrigPairsAt
+        (((AlphaConstrainedChoice.t_orig v
+            (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B)), c)
+          :: rest_paired) i =
+      extractFAOrigPairsAt rest_paired i := rfl
+
+@[simp] private theorem extractFAOrigPairsAt_cons_t_graft
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k : Fin pre_T_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (i : Fin F_A.length) :
+    extractFAOrigPairsAt
+        (((AlphaConstrainedChoice.t_graft (F_A := F_A) (pre_FA_B := pre_FA_B) k q), c)
+          :: rest_paired) i =
+      extractFAOrigPairsAt rest_paired i := rfl
+
+private theorem extractFAOrigPairsAt_cons_fa_orig_eq
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (i i' : Fin F_A.length) (v : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (h : i' = i) :
+    extractFAOrigPairsAt
+        (((AlphaConstrainedChoice.fa_orig (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i' v), c)
+          :: rest_paired) i =
+      (v, c) :: extractFAOrigPairsAt rest_paired i := by
+  unfold extractFAOrigPairsAt
+  rw [List.filterMap_cons]
+  dsimp only
+  rw [if_pos h]
+
+private theorem extractFAOrigPairsAt_cons_fa_orig_neq
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (i i' : Fin F_A.length) (v : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (h : i' ≠ i) :
+    extractFAOrigPairsAt
+        (((AlphaConstrainedChoice.fa_orig (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i' v), c)
+          :: rest_paired) i =
+      extractFAOrigPairsAt rest_paired i := by
+  unfold extractFAOrigPairsAt
+  rw [List.filterMap_cons]
+  dsimp only
+  rw [if_neg h]
+
+@[simp] private theorem extractFAOrigPairsAt_cons_fa_graft
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k : Fin pre_FA_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (i : Fin F_A.length) :
+    extractFAOrigPairsAt
+        (((AlphaConstrainedChoice.fa_graft (F_A := F_A) (pre_T_B := pre_T_B) k q), c)
+          :: rest_paired) i =
+      extractFAOrigPairsAt rest_paired i := rfl
+
+@[simp] private theorem extractFAGraftPairsAt_cons_t_orig
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (v : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (k : Fin pre_FA_B.length) :
+    extractFAGraftPairsAt
+        (((AlphaConstrainedChoice.t_orig v
+            (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B)), c)
+          :: rest_paired) k =
+      extractFAGraftPairsAt rest_paired k := rfl
+
+@[simp] private theorem extractFAGraftPairsAt_cons_t_graft
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k' : Fin pre_T_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (k : Fin pre_FA_B.length) :
+    extractFAGraftPairsAt
+        (((AlphaConstrainedChoice.t_graft (F_A := F_A) (pre_FA_B := pre_FA_B) k' q), c)
+          :: rest_paired) k =
+      extractFAGraftPairsAt rest_paired k := rfl
+
+@[simp] private theorem extractFAGraftPairsAt_cons_fa_orig
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (i : Fin F_A.length) (v : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (k : Fin pre_FA_B.length) :
+    extractFAGraftPairsAt
+        (((AlphaConstrainedChoice.fa_orig (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v), c)
+          :: rest_paired) k =
+      extractFAGraftPairsAt rest_paired k := rfl
+
+private theorem extractFAGraftPairsAt_cons_fa_graft_eq
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k k' : Fin pre_FA_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (h : k' = k) :
+    extractFAGraftPairsAt
+        (((AlphaConstrainedChoice.fa_graft (F_A := F_A) (pre_T_B := pre_T_B) k' q), c)
+          :: rest_paired) k =
+      (q, c) :: extractFAGraftPairsAt rest_paired k := by
+  unfold extractFAGraftPairsAt
+  rw [List.filterMap_cons]
+  dsimp only
+  rw [if_pos h]
+
+private theorem extractFAGraftPairsAt_cons_fa_graft_neq
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (k k' : Fin pre_FA_B.length) (q : Path) (c : Planar α)
+    (rest_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (h : k' ≠ k) :
+    extractFAGraftPairsAt
+        (((AlphaConstrainedChoice.fa_graft (F_A := F_A) (pre_T_B := pre_T_B) k' q), c)
+          :: rest_paired) k =
+      extractFAGraftPairsAt rest_paired k := by
+  unfold extractFAGraftPairsAt
+  rw [List.filterMap_cons]
+  dsimp only
+  rw [if_neg h]
+
 /-! ### §1.9.5: Future bridges (full C : List)
 
 The two theorems below are the targets for the next session. Both are stated
