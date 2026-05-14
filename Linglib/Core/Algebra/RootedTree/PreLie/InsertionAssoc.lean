@@ -2282,6 +2282,311 @@ private theorem enumGraftingData_succ_factored
   -- which are defeq via Multiset.map's definition on coerced lists.
   rfl
 
+/-! ### §1.10.1.1: F-side append-singleton substrate
+
+Substrate for the singleton FA_orig case bridge: relates
+`buildFIns F_A (pre_FA_B ++ [c]) (fdata ++ [(i₀, v)])` (which arises from
+applying `insertionForest_eq_explicit` to `insertionForest F_A (pre_FA_B ++ [c])`
+followed by `listChoices_split_bind`) to the per-`i'` modified form (which
+arises from the canonical-form RHS via `interpret`'s F-side computation).
+
+Used by `RHS_eq_canonical_msform_singleton_FA_orig`. -/
+
+/-- `perTreePairsFromFChoice` splits over an append-singleton on the data and
+    pre_FA_B sides, with the singleton contributing `[(v, c)]` only when its
+    bucket index `i₀` matches the queried index `i'`. -/
+private theorem perTreePairsFromFChoice_append_singleton
+    (F_A pre_FA_B : List (Planar α))
+    (fdata : List (Fin F_A.length × Path)) (i₀ : Fin F_A.length) (v : Path)
+    (c : Planar α) (hlen : fdata.length = pre_FA_B.length)
+    (i' : Fin F_A.length) :
+    perTreePairsFromFChoice F_A (pre_FA_B ++ [c]) (fdata ++ [(i₀, v)]) i' =
+      perTreePairsFromFChoice F_A pre_FA_B fdata i' ++
+        (if i₀ = i' then [(v, c)] else []) := by
+  unfold perTreePairsFromFChoice
+  rw [List.zip_append hlen, List.filterMap_append]
+  congr 1
+  show (List.filterMap _ ([((i₀, v), c)] :
+          List ((Fin F_A.length × Path) × Planar α))) = _
+  rw [List.filterMap_cons, List.filterMap_nil]
+  by_cases h : i₀ = i'
+  · rw [if_pos h, if_pos h]
+  · rw [if_neg h, if_neg h]
+
+/-- Companion to `perTreePairsFromFChoice_append_singleton`: `buildFIns` over
+    append-singleton equals the per-`i'` modified form, where each F_A[i'] is
+    multi-grafted with the original per-tree pairs plus the singleton's
+    `(v, c)` contribution at the matching index. -/
+private theorem buildFIns_append_singleton
+    (F_A pre_FA_B : List (Planar α))
+    (fdata : List (Fin F_A.length × Path)) (i₀ : Fin F_A.length) (v : Path)
+    (c : Planar α) (hlen : fdata.length = pre_FA_B.length) :
+    buildFIns F_A (pre_FA_B ++ [c]) (fdata ++ [(i₀, v)]) =
+      (List.finRange F_A.length).map fun i' =>
+        multiGraft F_A[i'.val]
+          (perTreePairsFromFChoice F_A pre_FA_B fdata i' ++
+           (if i₀ = i' then [(v, c)] else [])) := by
+  unfold buildFIns
+  refine List.map_congr_left fun i' _ => ?_
+  rw [perTreePairsFromFChoice_append_singleton F_A pre_FA_B fdata i₀ v c hlen i']
+
+/-! ### §1.10.2: Singleton-case sub-lemmas for the RHS bridge
+
+Per-`first_b` sub-cases for the singleton case (`C = [c]`) of
+`RHS_eq_canonical_msform`. Each lemma bridges:
+
+- LHS: the iteratedQuadSum-leaf with `pres = (fun t => if t = first_b then [c] else [])`
+- RHS: the canonical-form RHS evaluated at the `first_b` sub-bucket of
+  `enumGraftingData T F_A pre_T_B pre_FA_B 1`.
+
+These compose into `RHS_eq_canonical_msform_singleton` (the full singleton case),
+which serves as the structural test of substrate (without IH-recursion). -/
+
+/-- **Singleton T_orig case**: bridges the LHS form (T_orig-bucket pres = [c],
+    others = []) with the RHS canonical-form sub-bucket where
+    `first_target = .t_orig v`. The proof:
+    1. Reduce LHS via `insertionForest_nil_guests` and `Multiset.singleton_bind`
+       (B-grafted forests collapse to singletons, append-nil simplifies).
+    2. Push `.map msform` inside via `Multiset.map_bind`, then unfold `insertion_def`
+       and convert `Multiset.ofList (xs.map f)` to `(Multiset.ofList xs).bind` via
+       `← Multiset.map_coe` + `Multiset.bind_map`.
+    3. Apply `listChoices_split_bind` to split the length-`(n+1)` choice list into
+       (choice_T, choice_v) with `choice_v.length = 1`.
+    4. Reduce `Multiset.ofList (listChoices xs 1)` to `(Multiset.ofList xs).bind
+       (fun v => {[v]})` then absorb the singleton-bind via `Multiset.bind_assoc`
+       + `Multiset.singleton_bind`.
+    5. Push RHS's `.map msform` inside via two `Multiset.map_bind` rewrites and
+       collapse the inner double-map via `Multiset.map_map`.
+    6. Enter the choice_T bind via `Multiset.bind_congr`; derive
+       `choice_T.length = pre_T_B.length` from `mem_listChoices_length`; rewrite
+       `(choice_T ++ [v]).zip (pre_T_B ++ [c]) = choice_T.zip pre_T_B ++ [(v, c)]`
+       via `List.zip_append`.
+    7. Apply `insertionForest_eq_explicit` (F-side explicit choice structure),
+       collapse `.map.map` chain via `Multiset.map_map` (two layers).
+    8. Close via `Multiset.bind_map_comm` which swaps `(vertices T).bind v` with
+       `(perKFChoice F_A) listChoices.map fdata` to match the RHS bind order. -/
+private theorem RHS_eq_canonical_msform_singleton_T_orig
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (c : Planar α) :
+    ((insertionForest pre_T_B ([] : List (Planar α))).bind fun pre_T_B' =>
+        (insertion T (pre_T_B' ++ [c])).bind fun T' =>
+          (insertionForest pre_FA_B ([] : List (Planar α))).bind fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++ [])).map fun F' =>
+              T' :: F').map (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+      (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+        (Multiset.ofList (vertices T)).map fun v =>
+          multiGraft T (choice_T.zip pre_T_B ++ [(v, c)]) ::
+            buildFIns F_A pre_FA_B fdata).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- Step 1: collapse the insertionForest_nil_guests singletons.
+  simp only [insertionForest_nil_guests, List.append_nil, Multiset.singleton_bind]
+  -- LHS: ((insertion T (pre_T_B ++ [c])).bind fun T' =>
+  --        (insertionForest F_A pre_FA_B).map fun F' => T' :: F').map msform
+  -- Step 2: push outer .map msform inside the insertion-bind via Multiset.map_bind,
+  -- and Multiset.map_map collapses the inner double map.
+  rw [Multiset.map_bind]
+  -- LHS: (insertion T (pre_T_B ++ [c])).bind fun T' =>
+  --        ((insertionForest F_A pre_FA_B).map fun F' => T' :: F').map msform
+  -- Step 3: unfold insertion_def + convert ofList-map to bind via Multiset.bind_map.
+  rw [insertion_def]
+  rw [show (pre_T_B ++ [c]).length = pre_T_B.length + 1 from by
+        rw [List.length_append, List.length_singleton]]
+  rw [← Multiset.map_coe, Multiset.bind_map]
+  -- LHS: (Multiset.ofList (listChoices (vertices T) (pre_T_B.length + 1))).bind fun choice =>
+  --        ((insertionForest F_A pre_FA_B).map fun F' =>
+  --          multiGraft T (choice.zip (pre_T_B ++ [c])) :: F').map msform
+  -- Step 4: split choice via listChoices_split_bind.
+  rw [listChoices_split_bind (vertices T) pre_T_B.length 1]
+  -- LHS: (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+  --        (Multiset.ofList (listChoices (vertices T) 1)).bind fun choice_v =>
+  --          ((insertionForest F_A pre_FA_B).map fun F' =>
+  --            multiGraft T ((choice_T ++ choice_v).zip (pre_T_B ++ [c])) :: F').map msform
+  -- Step 5: reduce listChoices xs 1 to bind over xs giving singleton [v].
+  rw [show (Multiset.ofList (listChoices (vertices T) 1) : Multiset (List Path)) =
+        ↑((vertices T).flatMap (fun v => [[v]])) from by
+      rw [show listChoices (vertices T) 1 =
+              (vertices T).flatMap (fun v => (listChoices (vertices T) 0).map (v :: ·))
+            from rfl, listChoices_zero]
+      rfl]
+  -- Convert flatMap to bind on multisets.
+  rw [show (↑((vertices T).flatMap (fun v => [[v]])) : Multiset (List Path)) =
+        (Multiset.ofList (vertices T)).bind (fun v => ({[v]} : Multiset (List Path))) from by
+      rw [← Multiset.coe_bind]; rfl]
+  -- Step 6: Use Multiset.bind_assoc + Multiset.singleton_bind to absorb the singleton.
+  -- Pattern: ((M.bind f).bind g) = M.bind (fun x => (f x).bind g),
+  -- and ({[v]}.bind g) = g [v].
+  simp only [Multiset.bind_assoc, Multiset.singleton_bind]
+  -- LHS: (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+  --        (Multiset.ofList (vertices T)).bind fun v =>
+  --          ((insertionForest F_A pre_FA_B).map fun F' =>
+  --            multiGraft T ((choice_T ++ [v]).zip (pre_T_B ++ [c])) :: F').map msform
+  -- RHS-side: push outer .map msform inside via Multiset.map_bind (twice), then
+  -- the inner .map (Multiset.ofList ...) collapses via Multiset.map_map.
+  conv_rhs => rw [Multiset.map_bind]
+  conv_rhs =>
+    rhs; ext choice_T
+    rw [Multiset.map_bind]
+  conv_rhs =>
+    rhs; ext choice_T
+    rhs; ext fdata
+    rw [Multiset.map_map]
+  -- RHS: (...).bind choice_T => (...).bind fdata => (...).map fun v =>
+  --        msform (multiGraft T (...) :: buildFIns ... fdata)
+  -- LHS-side: enter choice_T bind, simplify zip via length hypothesis, then enter
+  -- v bind, apply insertionForest_eq_explicit, push msform inside, combine .map.map
+  -- via Multiset.map_map, then swap binds via Multiset.bind_bind.
+  refine Multiset.bind_congr fun choice_T hChoice_T => ?_
+  -- Get length: choice_T ∈ listChoices (vertices T) pre_T_B.length ⇒ choice_T.length = pre_T_B.length.
+  rw [Multiset.mem_coe] at hChoice_T
+  have hlen : choice_T.length = pre_T_B.length := mem_listChoices_length _ _ _ hChoice_T
+  -- Rewrite (choice_T ++ [v]).zip (pre_T_B ++ [c]) = choice_T.zip pre_T_B ++ [(v, c)].
+  have hzip : ∀ v : Path, (choice_T ++ [v]).zip (pre_T_B ++ [c]) =
+                choice_T.zip pre_T_B ++ [(v, c)] := by
+    intro v
+    rw [List.zip_append hlen]
+    rfl
+  -- Inside the choice_T bind, transform LHS step-by-step to match RHS shape.
+  -- Step 8a: rewrite zip inside the v-bind body using simp_rw (recurses into binders).
+  simp_rw [hzip]
+  -- Step 8b: apply insertionForest_eq_explicit to expose F-side choice structure.
+  rw [insertionForest_eq_explicit]
+  unfold enumFChoices
+  -- Step 8c: collapse the inner (.map (buildFIns)).map (multiGraft :: ·) via
+  -- Multiset.map_map (twice) — once for the buildFIns/cons combination, once for
+  -- pushing msform into the resulting fdata-form. Uses simp_rw to recurse into
+  -- the v-bind body.
+  simp_rw [Multiset.map_map]
+  -- Step 8d: now LHS inside choice_T bind:
+  -- (Multiset.ofList (vertices T)).bind fun v =>
+  --   (Multiset.ofList listChoices').map fun fdata =>
+  --     msform (multiGraft T (choice_T.zip pre_T_B ++ [(v, c)]) ::
+  --              buildFIns F_A pre_FA_B fdata)
+  -- RHS inside choice_T bind:
+  -- (Multiset.ofList listChoices').bind fun fdata =>
+  --   (Multiset.ofList (vertices T)).map fun v =>
+  --     msform (multiGraft T (choice_T.zip pre_T_B ++ [(v, c)]) ::
+  --              buildFIns F_A pre_FA_B fdata)
+  -- Step 9: swap bind v ↔ bind fdata via Multiset.bind_map_comm.
+  exact Multiset.bind_map_comm (Multiset.ofList (vertices T))
+    (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length))
+
+/-- **Singleton FA_orig case**: bridges the LHS form (FA_orig-bucket pres = [c],
+    others = []) with the RHS canonical-form sub-bucket where
+    `first_target = .fa_orig i v`. The proof:
+    1. Reduce LHS via `insertionForest_nil_guests` and `Multiset.singleton_bind`.
+    2. Push `.map msform` inside via `Multiset.map_bind`, unfold `insertion_def`.
+    3. Apply `insertionForest_eq_explicit` to F-side `(pre_FA_B ++ [c])`,
+       collapse the chain via `Multiset.map_map`.
+    4. Convert `.map (buildFIns ...)` to `.bind (· => {buildFIns ...})` so we
+       can apply `listChoices_split_bind` (which requires bind form).
+    5. Apply `listChoices_split_bind` (m = pre_FA_B.length, n = 1) to split the
+       choice into (fdata, iv_list).
+    6. Reduce `listChoices xs 1` to bind over xs giving singleton `[(i, v)]`.
+    7. Apply `buildFIns_append_singleton` to expose the per-`i'` modified form
+       (uses `mem_listChoices_length` for length hypothesis).
+    8. Match RHS structure: the LHS's `(perKFChoice F_A).bind` aligns with RHS's
+       `(List.finRange F_A.length).bind fun i => (vertices F_A[i.val]).map fun v`
+       via the perKFChoice unfolding. -/
+private theorem RHS_eq_canonical_msform_singleton_FA_orig
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (c : Planar α) :
+    ((insertionForest pre_T_B ([] : List (Planar α))).bind fun pre_T_B' =>
+        (insertion T (pre_T_B' ++ [])).bind fun T' =>
+          (insertionForest pre_FA_B ([] : List (Planar α))).bind fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++ [c])).map fun F' =>
+              T' :: F').map (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+      (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+        (Multiset.ofList (List.finRange F_A.length)).bind fun i =>
+          (Multiset.ofList (vertices F_A[i.val])).map fun v =>
+            multiGraft T (choice_T.zip pre_T_B) ::
+              (List.finRange F_A.length).map fun i' =>
+                multiGraft F_A[i'.val]
+                  (perTreePairsFromFChoice F_A pre_FA_B fdata i' ++
+                   (if i = i' then [(v, c)] else []))).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- Step 1: collapse insertionForest_nil_guests singletons + List.append_nil.
+  simp only [insertionForest_nil_guests, List.append_nil, Multiset.singleton_bind]
+  -- LHS: ((insertion T pre_T_B).bind fun T' =>
+  --        (insertionForest F_A (pre_FA_B ++ [c])).map fun F' => T' :: F').map msform
+  -- Step 2: push .map msform inside via Multiset.map_bind.
+  rw [Multiset.map_bind]
+  -- Step 3: unfold insertion_def + convert ofList-map to bind.
+  rw [insertion_def, ← Multiset.map_coe, Multiset.bind_map]
+  -- LHS: (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+  --        ((insertionForest F_A (pre_FA_B ++ [c])).map fun F' =>
+  --          multiGraft T (choice_T.zip pre_T_B) :: F').map msform
+  -- Step 4: apply insertionForest_eq_explicit, then collapse map chain via Multiset.map_map.
+  simp_rw [insertionForest_eq_explicit, Multiset.map_map]
+  unfold enumFChoices
+  -- Step 5: normalize (pre_FA_B ++ [c]).length = pre_FA_B.length + 1.
+  rw [show (pre_FA_B ++ [c]).length = pre_FA_B.length + 1 from by
+        rw [List.length_append, List.length_singleton]]
+  -- LHS: (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+  --        (Multiset.ofList (listChoices (perKFChoice F_A) (pre_FA_B.length + 1))).map
+  --          fun fdata =>
+  --            msform (multiGraft T (choice_T.zip pre_T_B) ::
+  --                    buildFIns F_A (pre_FA_B ++ [c]) fdata)
+  -- Step 6: convert .map to .bind {singleton}, apply listChoices_split_bind, convert back.
+  simp_rw [← Multiset.bind_singleton, listChoices_split_bind]
+  -- After listChoices_split_bind:
+  -- LHS: ... bind choice_T => bind fdata over (perKFChoice (pre_FA_B.length)) =>
+  --         bind iv_list over (perKFChoice 1) => {msform (... buildFIns ... (fdata ++ iv_list))}
+  -- Step 7: reduce listChoices xs 1 to bind over xs giving singleton [(i, v)].
+  rw [show (Multiset.ofList (listChoices (perKFChoice F_A) 1) :
+            Multiset (List (Fin F_A.length × Path))) =
+        ↑((perKFChoice F_A).flatMap (fun iv => [[iv]])) from by
+      rw [show listChoices (perKFChoice F_A) 1 =
+              (perKFChoice F_A).flatMap (fun iv =>
+                (listChoices (perKFChoice F_A) 0).map (iv :: ·)) from rfl,
+          listChoices_zero]
+      rfl]
+  rw [show (↑((perKFChoice F_A).flatMap (fun iv => [[iv]])) :
+            Multiset (List (Fin F_A.length × Path))) =
+        (Multiset.ofList (perKFChoice F_A)).bind
+          (fun iv => ({[iv]} : Multiset (List (Fin F_A.length × Path)))) from by
+      rw [← Multiset.coe_bind]; rfl]
+  -- Step 8: absorb the singleton-bind via Multiset.bind_assoc + Multiset.singleton_bind.
+  simp only [Multiset.bind_assoc, Multiset.singleton_bind]
+  -- LHS: bind choice_T => bind fdata => bind iv => {msform (multiGraft T (choice_T.zip pre_T_B)
+  --        :: buildFIns F_A (pre_FA_B ++ [c]) (fdata ++ [iv]))}
+  -- Step 9: enter binds, apply buildFIns_append_singleton with length hypothesis.
+  refine Multiset.bind_congr fun choice_T _ => ?_
+  refine Multiset.bind_congr fun fdata hFdata => ?_
+  rw [Multiset.mem_coe] at hFdata
+  have hflen : fdata.length = pre_FA_B.length :=
+    mem_listChoices_length _ _ _ hFdata
+  -- Step 10: unfold the function composition so buildFIns is directly visible,
+  -- then rewrite via append-singleton substrate (uses length hyp).
+  simp_rw [Function.comp_apply]
+  conv_lhs =>
+    rhs; ext iv
+    rw [show iv = (iv.fst, iv.snd) from rfl,
+        buildFIns_append_singleton F_A pre_FA_B fdata iv.fst iv.snd c hflen]
+  -- LHS now:
+  -- (Multiset.ofList (perKFChoice F_A)).bind fun iv =>
+  --   {msform (multiGraft T (choice_T.zip pre_T_B) ::
+  --      (List.finRange F_A.length).map fun i' =>
+  --        multiGraft F_A[i'.val] (perTreePairs F_A pre_FA_B fdata i' ++
+  --                                (if iv.fst = i' then [(iv.snd, c)] else [])))}
+  -- Step 11: expand (perKFChoice F_A) via its definition into nested bind/map.
+  -- perKFChoice F_A = (finRange F_A.length).flatMap fun i => (vertices F_A[i.val]).map fun v => (i, v)
+  rw [show (Multiset.ofList (perKFChoice F_A) : Multiset (Fin F_A.length × Path)) =
+        (Multiset.ofList (List.finRange F_A.length)).bind fun i =>
+          (Multiset.ofList (vertices F_A[i.val])).map fun v => (i, v) from by
+      unfold perKFChoice
+      rw [← Multiset.coe_bind]
+      refine Multiset.bind_congr fun i _ => ?_
+      rw [← Multiset.map_coe]]
+  -- LHS: ((finRange).bind fun i => (vertices).map fun v => (i, v)).bind G
+  --    = (finRange).bind fun i => ((vertices).map fun v => (i, v)).bind G  -- bind_assoc
+  --    = (finRange).bind fun i => (vertices).bind fun v => G (i, v)         -- bind_map
+  rw [Multiset.bind_assoc]
+  simp_rw [Multiset.bind_map]
+  -- After simp_rw [Multiset.bind_map], simp's reflexivity step often closes the
+  -- whole goal because LHS's `bind v => {...}` and RHS's `map v => ...` reduce
+  -- to the same normal form via Multiset.bind_singleton (which simp_rw applied
+  -- in reverse direction to RHS during the rewrite chain).
+
 /-! ### §1.9.5: Future bridges (full C : List)
 
 The two theorems below are the targets for the next session. Both are stated
