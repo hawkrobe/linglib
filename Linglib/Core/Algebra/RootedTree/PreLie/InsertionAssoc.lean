@@ -4438,11 +4438,28 @@ private theorem RHS_eq_canonical_msform_pres
     -- T-side splits into choice_T (pre_T_B.length) + pTO ((pres .T_orig).length).
     -- FA-side splits into fdata (pre_FA_B.length) + pFO ((pres .FA_orig).length).
     simp_rw [listChoices_split_bind]
+    -- LHS expansion Step 9: reorder binds via Multiset.bind_bind swaps.
+    -- LHS order: (pTG, choice_T, pTO, pFG, fdata, pFO).
+    -- RHS order: (choice_T, fdata, pTO, pTG, pFO, pFG).
+    -- First swap: pTG ↔ choice_T (outermost).
+    rw [Multiset.bind_bind]
+    -- Now LHS: (choice_T, pTG, pTO, pFG, fdata, pFO).
+    -- Swap pTG ↔ pTO at depth 2.
+    conv_lhs => rhs; ext choice_T; rw [Multiset.bind_bind]
+    -- Now: (choice_T, pTO, pTG, pFG, fdata, pFO)
+    -- Swap pTG ↔ pFG at depth 3.
+    conv_lhs => rhs; ext choice_T; rhs; ext pTO; rw [Multiset.bind_bind]
+    -- Now: (choice_T, pTO, pFG, pTG, fdata_combined)
+    -- The FA-side enumeration ends in `.map fdata_combined` (not `.bind`), so
+    -- listChoices_split_bind didn't split it. The combined length is
+    -- pre_FA_B.length + (pres .FA_orig).length, but we need it split into
+    -- fdata (pre_FA_B.length) + pFO ((pres .FA_orig).length).
     --
-    -- LHS now: 6-deep bind with separated per-bucket choices.
-    -- TODO (Phase 2 substantive): reorder 6 binds via Multiset.bind_bind to match RHS
-    -- order (choice_T, fdata, pTO, pTG, pFO, pFG). Each leaf equates via List.zip_append
-    -- and multiGraft pair-list match. ~30-100 LOC remaining.
+    -- TODO (Phase 2 substantive): split the FA-side `.map` into `.bind .map`
+    -- via `← Multiset.bind_singleton + listChoices_split_bind + Multiset.bind_singleton`.
+    -- Then continue bind reorderings (4 more swaps to reach RHS order
+    -- (choice_T, fdata, pTO, pTG, pFO, pFG)) + leaf equality
+    -- via List.zip_append + multiGraft pair-list match. ~50-100 LOC remaining.
     sorry
   | cons c rest ih =>
     -- CONS CASE: see §1.11.6 docstring for proof plan.
