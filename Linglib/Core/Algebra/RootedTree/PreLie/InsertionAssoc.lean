@@ -4381,10 +4381,26 @@ private theorem RHS_eq_canonical_msform_pres
     ((enumAugGraftingData T F_A pre_T_B pre_FA_B pres C.length).map
         (fun agd => augInterpret T agd C)).map
       (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
-  -- TODO: see §1.11.6 docstring for proof plan.
-  -- Base: expand insertion/insertionForest substrate + bind-reorder.
-  -- Cons: IH at update pres + per-bucket bijection.
-  sorry
+  induction C generalizing pres with
+  | nil =>
+    -- BASE CASE: C = []. The LHS via `iteratedQuadSum_nil_remaining` is a
+    -- 4-deep bind over insertion/insertionForest layers. The RHS via
+    -- `enumAugGraftingData_zero` + `augInterpret_C_nil` is a 6-deep
+    -- enumeration with a closed-form leaf.
+    --
+    -- TODO (Phase 2): expand each LHS layer to its listChoices form, split
+    -- combined choices via listChoices_split_bind, reorder to match RHS
+    -- via Multiset.bind_bind, close with Multiset.bind/map_congr.
+    -- ~250-400 LOC.
+    sorry
+  | cons c rest ih =>
+    -- CONS CASE: see §1.11.6 docstring for proof plan.
+    -- 1. iteratedQuadSum_cons_remaining gives 4-bucket outer bind on LHS.
+    -- 2. Apply IH at pres' = update pres first_b (pres first_b ++ [c]) for each bucket.
+    -- 3. Bridge via per-bucket bijection: each AlphaConstrainedChoice.t_orig v
+    --    on the C_targets[0] side ↔ pres'_T_orig_choice = pres_T_orig_choice ++ [v].
+    -- ~250-500 LOC.
+    sorry
 
 /-! ### §1.11.7: `RHS_eq_canonical_msform` derived from strong-IH
 
@@ -4432,10 +4448,9 @@ private theorem augInterpret_at_empty_pres
     (agd : AugGraftingData F_A pre_T_B pre_FA_B (fun _ => []))
     (C : List (Planar α)) :
     augInterpret T agd C = interpret T (agdToGd agd) C := by
-  -- TODO: dsimp [augInterpret, interpret, agdToGd] then simp with
-  -- List.zip_nil_right, List.filterMap_nil, List.nil_append, List.append_nil.
-  -- May require explicit `show` of let-binding-resolved form first.
-  sorry
+  simp only [augInterpret, interpret, agdToGd,
+             List.zip_nil_right, List.filterMap_nil,
+             List.nil_append, List.append_nil]
 
 /-- At empty pres, `enumAugGraftingData` is the image of `enumGraftingData`
     under `gdToAgdEmpty`. The four inner flatMaps over `listChoices _ 0 = [[]]`
@@ -4449,12 +4464,25 @@ private theorem enumAugGraftingData_at_empty_pres
     (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (n : Nat) :
     enumAugGraftingData T F_A pre_T_B pre_FA_B (fun _ => []) n =
       (enumGraftingData T F_A pre_T_B pre_FA_B n).map gdToAgdEmpty := by
-  -- TODO: unfold both, simp_rw [List.map_flatMap, List.map_map] to push
-  -- gdToAgdEmpty inside; then per-targets reduce 4 inner [[]]-flatMaps to
-  -- singleton via List.length_nil + listChoices_zero + List.flatMap_cons +
-  -- List.flatMap_nil. The remaining `flatMap (fun targets => [...])
-  -- = .map ...` collapse uses `List.flatMap_singleton'` or similar.
-  sorry
+  unfold enumAugGraftingData enumGraftingData
+  -- Push the outer .map gdToAgdEmpty through Multiset.ofList.
+  rw [Multiset.map_coe]
+  -- Reduce both sides to List equality.
+  congr 1
+  -- (fun _ => []) X = []; (pres .X).length = 0; collapse 4 inner [[]] flatMaps.
+  -- After collapse, LHS inner singleton and RHS .map should match.
+  simp_rw [List.map_flatMap, List.map_map]
+  apply List.flatMap_congr; intro choice_T _
+  apply List.flatMap_congr; intro fdata _
+  -- LHS: (listChoices alphaConstr n).flatMap fun targets =>
+  --        [[]].flatMap fun pTO => [[]].flatMap fun pTG =>
+  --          [[]].flatMap fun pFO => [[]].map fun pFG => agd
+  -- RHS: (listChoices alphaConstr n).map fun targets =>
+  --        gdToAgdEmpty {pre_T_B_choice := choice_T, ..., C_targets := targets}
+  rw [List.map_eq_flatMap]
+  apply List.flatMap_congr; intro targets _
+  -- Each [[]].flatMap g reduces to g [], [[]].map f reduces to [f []].
+  rfl
 
 /-- The standard `RHS_eq_canonical_msform`, derived from the strong-IH
     `RHS_eq_canonical_msform_pres` at `pres = (fun _ => [])`. The chain of
