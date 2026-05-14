@@ -2057,6 +2057,60 @@ private theorem extractFAGraftPairsAt_cons_fa_graft_neq
   dsimp only
   rw [if_neg h]
 
+/-! ### §1.10: msform-wrapped C-nil base case for the RHS bridge
+
+The C = [] base case of `RHS_eq_canonical_msform`. With α = [] (the only
+length-0 QuadIdx-list), the iteratedQuadSum-leaf collapses (all `bucketSlice [] []`
+buckets are empty) to `(insertion T pre_T_B).bind T' => (insertionForest F_A pre_FA_B).map (T' :: ·)`.
+This matches the LHS of `LHS_eq_canonical_msform_C_nil` after `bind`-ing back to
+`insertionForest (T_ins :: F_ins) []`. -/
+
+/-- **C-nil base case** for `RHS_eq_canonical_msform`. The α-bind on the LHS
+    collapses to a singleton (only α = [] has length 0); the iteratedQuadSum-leaf
+    with empty pres reduces via `singleton_bind`s to
+    `(insertion T pre_T_B).bind T' => (insertionForest F_A pre_FA_B).map (T' :: ·)`.
+    Bridged to the canonical-form RHS via `LHS_eq_canonical_msform_C_nil` after
+    re-binding the inner `.map (T' :: ·)` to `.bind F_ins => insertionForest
+    (T' :: F_ins) []`. -/
+private theorem RHS_eq_canonical_msform_C_nil
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    ((Multiset.ofList (listChoices
+        [QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] 0)).bind
+      fun a =>
+        iteratedQuadSum T F_A pre_T_B pre_FA_B
+          (fun t => bucketSlice ([] : List (Planar α)) a t) []).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((enumGraftingData T F_A pre_T_B pre_FA_B 0).map
+        (fun gd => interpret T gd ([] : List (Planar α)))).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- Step 1: collapse listChoices [...] 0 to {[]} and singleton-bind to the leaf.
+  rw [show listChoices [QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] 0 =
+          [[]] from rfl]
+  rw [show (Multiset.ofList ([[]] : List (List QuadIdx)) : Multiset _) =
+          ({([] : List QuadIdx)} : Multiset _) from rfl]
+  rw [Multiset.singleton_bind]
+  -- Step 2: reduce iteratedQuadSum-leaf with α = []. All bucketSlice [] [] _ = [].
+  rw [iteratedQuadSum_nil_remaining]
+  simp only [bucketSlice_nil_left, insertionForest_nil_guests, List.append_nil,
+             Multiset.singleton_bind]
+  -- LHS now: ((insertion T pre_T_B).bind T' => (insertionForest F_A pre_FA_B).map (T' :: ·)).map msform
+  -- Step 3: convert inner .map (T' :: ·) to .bind F_ins => insertionForest (T' :: F_ins) [].
+  rw [show ((insertion T pre_T_B).bind fun T' : Planar α =>
+              (insertionForest F_A pre_FA_B).map (fun F' : List (Planar α) => T' :: F')) =
+          ((insertion T pre_T_B).bind fun T_ins : Planar α =>
+              (insertionForest F_A pre_FA_B).bind fun F_ins : List (Planar α) =>
+                insertionForest (T_ins :: F_ins) ([] : List (Planar α))) from by
+        refine Multiset.bind_congr fun T_ins _ => ?_
+        rw [show (fun F_ins : List (Planar α) =>
+                    insertionForest (T_ins :: F_ins) ([] : List (Planar α))) =
+                (fun F_ins : List (Planar α) =>
+                  ({T_ins :: F_ins} : Multiset (List (Planar α)))) from by
+              funext F_ins
+              exact insertionForest_cons_host_nil_guests T_ins F_ins]
+        exact (Multiset.bind_singleton (insertionForest F_A pre_FA_B) (T_ins :: ·)).symm]
+  -- Step 4: apply LHS_eq_canonical_msform_C_nil.
+  exact LHS_eq_canonical_msform_C_nil T F_A pre_T_B pre_FA_B
+
 /-! ### §1.9.5: Future bridges (full C : List)
 
 The two theorems below are the targets for the next session. Both are stated

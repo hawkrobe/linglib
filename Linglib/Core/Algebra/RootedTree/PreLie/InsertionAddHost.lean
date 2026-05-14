@@ -528,6 +528,77 @@ theorem listChoices_append_bind {γ : Type*}
     -- Goal: g (a ++ b ++ [t]) + g (a ++ b ++ [f]) = g (a ++ (b ++ [t])) + g (a ++ (b ++ [f]))
     rw [List.append_assoc, List.append_assoc]
 
+/-- **Polymorphic length-additive splitting**: a bind over length-`(m+n)`
+    enumerations equals a nested bind, outer over length-`m` and inner over
+    length-`n`, with the leaf function applied to the concatenation.
+
+    Generalizes `listChoices_append_bind` (the Bool case) to arbitrary
+    `xs : List β`. The proof inducts on `m`, peeling one element off the
+    front via `listChoices_succ` (rather than the back, as in the Bool
+    version which uses `listChoices_succ_append_bind`).
+
+    Used by `RHS_eq_canonical_msform` to split a length-`(pre_T_B.length +
+    T_orig-count)` choice into a `pre_T_B.length` prefix (`choice_T`) and
+    a `T_orig-count` suffix (`choice_T_orig`). -/
+theorem listChoices_split_bind {β γ : Type*} (xs : List β) :
+    ∀ (m n : Nat) (g : List β → Multiset γ),
+    (Multiset.ofList (listChoices xs (m + n))).bind g =
+      (Multiset.ofList (listChoices xs m)).bind fun a =>
+        (Multiset.ofList (listChoices xs n)).bind fun b =>
+          g (a ++ b) := by
+  intro m
+  induction m with
+  | zero =>
+    intro n g
+    -- 0 + n = n. Outer bind over length-0 collapses to {[]}.
+    rw [Nat.zero_add]
+    rw [show listChoices xs 0 = [[]] from rfl]
+    rw [show (Multiset.ofList ([[]] : List (List β)) : Multiset _) = ({[]} : Multiset _) from rfl]
+    rw [Multiset.singleton_bind]
+    refine Multiset.bind_congr fun b _ => ?_
+    rw [List.nil_append]
+  | succ k ih =>
+    intro n g
+    -- (k+1) + n = (k+n) + 1. Peel front via listChoices_succ.
+    rw [show k + 1 + n = (k + n) + 1 from by omega]
+    rw [listChoices_succ]
+    rw [show (Multiset.ofList (xs.flatMap fun v => (listChoices xs (k + n)).map (v :: ·)) :
+              Multiset (List β)) =
+            (Multiset.ofList xs).bind fun v =>
+              Multiset.ofList ((listChoices xs (k + n)).map (v :: ·))
+            from by rw [← Multiset.coe_bind]]
+    rw [Multiset.bind_assoc]
+    conv_lhs =>
+      rhs; ext v
+      rw [show (Multiset.ofList ((listChoices xs (k + n)).map (v :: ·)) : Multiset (List β)) =
+              (Multiset.ofList (listChoices xs (k + n))).map (v :: ·) from rfl]
+      rw [Multiset.bind_map]
+    -- LHS: bind v: bind a: g (v :: a) (where a is length-(k+n)).
+    -- Apply IH with substituted g(v ::·).
+    conv_lhs =>
+      rhs; ext v
+      rw [ih n (fun a => g (v :: a))]
+    -- RHS: rewrite (k+1) via listChoices_succ.
+    rw [show listChoices xs (k + 1) =
+            xs.flatMap fun v => (listChoices xs k).map (v :: ·) from rfl]
+    rw [show (Multiset.ofList (xs.flatMap fun v => (listChoices xs k).map (v :: ·)) :
+              Multiset (List β)) =
+            (Multiset.ofList xs).bind fun v =>
+              Multiset.ofList ((listChoices xs k).map (v :: ·))
+            from by rw [← Multiset.coe_bind]]
+    rw [Multiset.bind_assoc]
+    conv_rhs =>
+      rhs; ext v
+      rw [show (Multiset.ofList ((listChoices xs k).map (v :: ·)) : Multiset (List β)) =
+              (Multiset.ofList (listChoices xs k)).map (v :: ·) from rfl]
+      rw [Multiset.bind_map]
+    -- Both sides now: bind v: bind a': bind b: g(v :: (a' ++ b)) vs g((v :: a') ++ b)
+    -- These match by List.cons_append.
+    refine Multiset.bind_congr fun v _ => ?_
+    refine Multiset.bind_congr fun a' _ => ?_
+    refine Multiset.bind_congr fun b _ => ?_
+    rw [List.cons_append]
+
 /-- Length lemma: every element of `listChoices xs n` has length exactly `n`.
     Used in the cons case of `hostBucketSum_eq_hostTripleSum_aux` to invoke
     `List.zip_append`. -/
