@@ -4415,15 +4415,34 @@ private theorem RHS_eq_canonical_msform_pres
                  Multiset.ofList (listChoices (perKFChoice pre_FA_B) (pres .FA_graft).length)
                from rfl,
              Multiset.bind_map]
+    -- LHS expansion Step 4: expand inner insertion T (...) via insertion_def.
+    -- Convert Multiset.ofList (l.map f) to (Multiset.ofList l).map f via ← map_coe,
+    -- then Multiset.bind_map for the bind ∘ map. Pattern from line 2668.
+    simp_rw [insertion_def, ← Multiset.map_coe, Multiset.bind_map]
+    -- LHS expansion Step 5: expand inner insertionForest F_A (... ++ pres .FA_orig)
+    -- via insertionForest_eq_explicit. Use enumFChoices unfolding.
+    simp_rw [insertionForest_eq_explicit F_A,
+             show ∀ pre_FA_B' : List (Planar α),
+                 enumFChoices F_A (pre_FA_B' ++ pres .FA_orig) =
+                 Multiset.ofList (listChoices (perKFChoice F_A)
+                   (pre_FA_B' ++ pres .FA_orig).length)
+               from fun _ => rfl]
+    -- LHS expansion Step 6: collapse FA-side (Multiset.ofList .map buildFIns).map (T' :: ·)
+    -- via Multiset.map_map.
+    simp_rw [Multiset.map_map]
+    -- LHS expansion Step 7: expand the combined-list lengths in listChoices arguments.
+    -- (buildFIns F (pres .T_graft) pTG ++ pres .T_orig).length = pre_T_B.length + (pres .T_orig).length
+    -- (buildFIns pre_FA_B (pres .FA_graft) pFG ++ pres .FA_orig).length = pre_FA_B.length + (pres .FA_orig).length
+    simp_rw [List.length_append, buildFIns, List.length_map, List.length_finRange]
+    -- LHS expansion Step 8: split combined choices via listChoices_split_bind.
+    -- T-side splits into choice_T (pre_T_B.length) + pTO ((pres .T_orig).length).
+    -- FA-side splits into fdata (pre_FA_B.length) + pFO ((pres .FA_orig).length).
+    simp_rw [listChoices_split_bind]
     --
-    -- TODO (Phase 2 substantive): expand inner insertion T (pre_T_B' ++ pres .T_orig)
-    -- via insertion_def (note: simp_rw [insertion_def T] may not match through binders;
-    -- use conv_lhs to focus). Then expand inner insertionForest F_A (pre_FA_B' ++ pres
-    -- .FA_orig) similarly. Split combined choices for both T and FA sides via
-    -- listChoices_split_bind into (choice_T, pTO) and (fdata, pFO) per-bucket halves.
-    -- Reorder all 6 binds via Multiset.bind_bind to match RHS variable order
-    -- (choice_T, fdata, pTO, pTG, pFO, pFG). Each leaf equates via List.zip_append +
-    -- multiGraft pair-list match. ~100-180 LOC remaining.
+    -- LHS now: 6-deep bind with separated per-bucket choices.
+    -- TODO (Phase 2 substantive): reorder 6 binds via Multiset.bind_bind to match RHS
+    -- order (choice_T, fdata, pTO, pTG, pFO, pFG). Each leaf equates via List.zip_append
+    -- and multiGraft pair-list match. ~30-100 LOC remaining.
     sorry
   | cons c rest ih =>
     -- CONS CASE: see §1.11.6 docstring for proof plan.
