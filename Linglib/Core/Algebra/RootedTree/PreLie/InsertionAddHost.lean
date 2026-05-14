@@ -599,6 +599,23 @@ theorem listChoices_split_bind {β γ : Type*} (xs : List β) :
     refine Multiset.bind_congr fun b _ => ?_
     rw [List.cons_append]
 
+/-- `.map`-variant of `listChoices_split_bind`. When the consumer is `.map g`
+    instead of `.bind g`, the same length-additive splitting holds, with the
+    inner `.bind` becoming a `.map`. Derived from `listChoices_split_bind` by
+    rewriting the outer `.map` as `.bind` over a singleton multiset and
+    converting back. -/
+theorem listChoices_split_map {β γ : Type*} (xs : List β)
+    (m n : Nat) (g : List β → γ) :
+    (Multiset.ofList (listChoices xs (m + n))).map g =
+      (Multiset.ofList (listChoices xs m)).bind fun a =>
+        (Multiset.ofList (listChoices xs n)).map fun b => g (a ++ b) := by
+  rw [show ((Multiset.ofList (listChoices xs (m + n))).map g) =
+        (Multiset.ofList (listChoices xs (m + n))).bind (fun x => ({g x} : Multiset γ)) from
+      (Multiset.bind_singleton _ g).symm,
+      listChoices_split_bind xs m n]
+  refine Multiset.bind_congr fun a _ => ?_
+  rw [Multiset.bind_singleton]
+
 /-- Length lemma: every element of `listChoices xs n` has length exactly `n`.
     Used in the cons case of `hostBucketSum_eq_hostTripleSum_aux` to invoke
     `List.zip_append`. -/
