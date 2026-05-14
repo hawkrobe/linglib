@@ -4453,11 +4453,13 @@ private theorem RHS_eq_canonical_msform_pres
     conv_lhs => rhs; ext choice_T; rhs; ext fdata; rhs; ext pTO; rw [Multiset.bind_bind]  -- swap 7
     conv_lhs => rhs; ext choice_T; rhs; ext fdata; rhs; ext pTO; rhs; ext pTG; rw [Multiset.bind_bind]  -- swap 8
     -- Now LHS order: (choice_T, fdata, pTO, pTG, pFO, pFG) ✓
+    -- Convert RHS Multiset.ofList of List.flatMap to nested Multiset.bind.
+    simp_rw [← Multiset.coe_bind]
+    -- The innermost RHS has Multiset.ofList (List.map ...). Convert via ← map_coe.
+    simp_rw [← Multiset.map_coe]
     --
-    -- TODO (Phase 2 substantive): also reduce RHS to same 6-bind-of-Multiset form
-    -- (currently RHS is Multiset.ofList of List.flatMap chain). Convert via
-    -- Multiset.coe_bind. Then equate leaves via List.zip_append + multiGraft.
-    -- ~50-80 LOC remaining.
+    -- Both sides now should have 6-deep .bind structure with similar leaves.
+    -- TODO: equate leaves via List.zip_append + multiGraft pair-list match.
     sorry
   | cons c rest ih =>
     -- CONS CASE: see §1.11.6 docstring for proof plan.
