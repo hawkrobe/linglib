@@ -3682,6 +3682,323 @@ private theorem RHS_eq_canonical_msform_singleton
         simp only [Function.comp_apply]
         rw [interpret_singleton_fa_graft]
 
+/-! ### §1.10.5: Per-bucket interpret cons-head reductions
+
+For the cons case `C = c :: rest` with `C_targets = first_target :: rest_targets`,
+`interpret` decomposes into a "head contribution" from `(first_target, c)` plus
+a "tail computation" using `(rest_targets.zip rest)`. The four lemmas below
+(one per bucket) compute the head contribution explicitly, exposing the
+T-side / F-side multiGraft structure with the head's `(v, c)` (or `(q, c)`)
+pair injected at the appropriate position.
+
+These generalize the `interpret_singleton_<bucket>` lemmas (§1.10.3, where
+`rest_targets = []` and `rest = []`) to non-empty `rest_targets` and `rest`.
+Useful for any future cons-case bridge proof of `RHS_eq_canonical_msform`. -/
+
+/-- **T_orig interpret cons-head reduction**: when `C_targets = .t_orig v :: rest_targets`
+    and `C = c :: rest`, interpret produces:
+    - T-side: `multiGraft T (choice_T.zip pre_T_B'_rest ++ ((v, c) :: T_orig_rest))`
+      where `pre_T_B'_rest` and `T_orig_rest` are computed from `rest_targets.zip rest`
+      (no contribution from the head `.t_orig v` to `pre_T_B'`).
+    - F-side: per-`i'` `multiGraft F_A[i'.val]` with pre_FA_B' and FA_orig pairs
+      both computed from `rest_targets.zip rest`.
+
+    Proof: definitional equality. The head `(.t_orig v, c)` matches T_orig
+    extractor (gives `(v, c)` prepended) and gives `none` for T_graft, FA_orig,
+    FA_graft extractors (constructor mismatch). All extractor reductions are
+    `rfl`-equal via the `extract*_cons_t_orig` simp lemmas. -/
+private theorem interpret_cons_t_orig
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_T : List Path) (fdata : List (Fin F_A.length × Path))
+    (v : Path) (rest_targets : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+    (c : Planar α) (rest : List (Planar α)) :
+    interpret T
+      ({ pre_T_B_choice := choice_T
+         pre_FA_B_choice := fdata
+         C_targets := AlphaConstrainedChoice.t_orig v
+            (F_A := F_A) (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) :: rest_targets }
+       : GraftingData F_A pre_T_B pre_FA_B) (c :: rest) =
+    multiGraft T
+      (choice_T.zip
+        ((List.finRange pre_T_B.length).map fun k =>
+          multiGraft pre_T_B[k.val] (extractTGraftPairsAt (rest_targets.zip rest) k)) ++
+       ((v, c) :: extractTOrigPairs (rest_targets.zip rest))) ::
+    (List.finRange F_A.length).map fun i =>
+      multiGraft F_A[i.val]
+        ((fdata.zip
+          ((List.finRange pre_FA_B.length).map fun k =>
+            multiGraft pre_FA_B[k.val] (extractFAGraftPairsAt (rest_targets.zip rest) k))).filterMap
+          (fun p => if p.fst.fst = i then some (p.fst.snd, p.snd) else none) ++
+         extractFAOrigPairsAt (rest_targets.zip rest) i) := rfl
+
+/-- **T_graft interpret cons-head reduction**: when `C_targets = .t_graft k q :: rest_targets`
+    and `C = c :: rest`, interpret produces:
+    - T-side: `multiGraft T (choice_T.zip pre_T_B'_kq_rest)` where
+      `pre_T_B'_kq_rest[k']` modifies pre_T_B[k.val] by `multiGraft pre_T_B[k.val]
+      ((q, c) :: extractTGraftPairsAt(rest_targets.zip rest) k)` and other indices
+      use `extractTGraftPairsAt(rest_targets.zip rest)`.
+    - T-side T_orig pairs: `extractTOrigPairs(rest_targets.zip rest)` (no
+      contribution from `.t_graft k q`).
+    - F-side: same as for `(rest_targets, rest)` (no F-side contribution).
+
+    Proof: definitional reduction via `extract*_cons_t_graft_*` lemmas.
+    The k = k' case requires explicit `if_pos`. -/
+private theorem interpret_cons_t_graft
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_T : List Path) (fdata : List (Fin F_A.length × Path))
+    (k : Fin pre_T_B.length) (q : Path)
+    (rest_targets : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+    (c : Planar α) (rest : List (Planar α)) :
+    interpret T
+      ({ pre_T_B_choice := choice_T
+         pre_FA_B_choice := fdata
+         C_targets := AlphaConstrainedChoice.t_graft
+            (F_A := F_A) (pre_FA_B := pre_FA_B) k q :: rest_targets }
+       : GraftingData F_A pre_T_B pre_FA_B) (c :: rest) =
+    multiGraft T
+      (choice_T.zip
+        ((List.finRange pre_T_B.length).map fun k' =>
+          if k' = k then
+            multiGraft pre_T_B[k.val]
+              ((q, c) :: extractTGraftPairsAt (rest_targets.zip rest) k')
+          else
+            multiGraft pre_T_B[k'.val]
+              (extractTGraftPairsAt (rest_targets.zip rest) k')) ++
+       extractTOrigPairs (rest_targets.zip rest)) ::
+    (List.finRange F_A.length).map fun i =>
+      multiGraft F_A[i.val]
+        ((fdata.zip
+          ((List.finRange pre_FA_B.length).map fun k' =>
+            multiGraft pre_FA_B[k'.val]
+              (extractFAGraftPairsAt (rest_targets.zip rest) k'))).filterMap
+          (fun p => if p.fst.fst = i then some (p.fst.snd, p.snd) else none) ++
+         extractFAOrigPairsAt (rest_targets.zip rest) i) := by
+  unfold interpret
+  simp only [List.zip_cons_cons]
+  -- Peel: outer T' :: F'.
+  congr 1
+  · -- T-side: multiGraft T (...) = multiGraft T (...)
+    congr 1  -- multiGraft T _
+    -- Goal: choice_T.zip pre_T_B'_LHS ++ extractTOrigPairs ... = choice_T.zip pre_T_B'_RHS ++ extractTOrig...
+    -- The extractTOrigPairs of both sides is equal (extractTOrigPairs ((.t_graft k q, c) :: ...) =
+    --   extractTOrigPairs ...) via extractTOrigPairs_cons_t_graft (rfl simp lemma).
+    -- Use `simp only` with the simp lemma to reduce the LHS extractor.
+    simp only [extractTOrigPairs_cons_t_graft]
+    congr 1  -- _ ++ extractTOrig (now equal on both sides)
+    -- Goal: choice_T.zip pre_T_B'_LHS = choice_T.zip pre_T_B'_RHS
+    congr 1  -- choice_T.zip _
+    -- Goal: pre_T_B'_LHS = pre_T_B'_RHS (both are .map over finRange)
+    apply List.map_congr_left
+    intro k' _
+    by_cases h : k' = k
+    · rw [extractTGraftPairsAt_cons_t_graft_eq (k := k') (k' := k) (q := q) (c := c)
+            (rest_paired := rest_targets.zip rest) (h := h.symm)]
+      rw [if_pos h]
+      congr 2
+      exact Fin.val_eq_of_eq h
+    · rw [extractTGraftPairsAt_cons_t_graft_neq (k := k') (k' := k) (q := q) (c := c)
+            (rest_paired := rest_targets.zip rest) (h := Ne.symm h)]
+      rw [if_neg h]
+
+/-- **FA_orig interpret cons-head reduction**: when `C_targets = .fa_orig i v :: rest_targets`
+    and `C = c :: rest`, interpret produces:
+    - T-side: same as for `(rest_targets, rest)` (no T-side contribution).
+    - F-side: per-`i'`, the `multiGraft F_A[i'.val]` includes `(v, c)` as an
+      additional FA_orig pair when `i' = i`.
+
+    Proof: definitional reduction via `extract*_cons_fa_orig_*` lemmas. -/
+private theorem interpret_cons_fa_orig
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_T : List Path) (fdata : List (Fin F_A.length × Path))
+    (i : Fin F_A.length) (v : Path)
+    (rest_targets : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+    (c : Planar α) (rest : List (Planar α)) :
+    interpret T
+      ({ pre_T_B_choice := choice_T
+         pre_FA_B_choice := fdata
+         C_targets := AlphaConstrainedChoice.fa_orig
+            (pre_T_B := pre_T_B) (pre_FA_B := pre_FA_B) i v :: rest_targets }
+       : GraftingData F_A pre_T_B pre_FA_B) (c :: rest) =
+    multiGraft T
+      (choice_T.zip
+        ((List.finRange pre_T_B.length).map fun k =>
+          multiGraft pre_T_B[k.val] (extractTGraftPairsAt (rest_targets.zip rest) k)) ++
+       extractTOrigPairs (rest_targets.zip rest)) ::
+    (List.finRange F_A.length).map fun i' =>
+      multiGraft F_A[i'.val]
+        ((fdata.zip
+          ((List.finRange pre_FA_B.length).map fun k =>
+            multiGraft pre_FA_B[k.val] (extractFAGraftPairsAt (rest_targets.zip rest) k))).filterMap
+          (fun p => if p.fst.fst = i' then some (p.fst.snd, p.snd) else none) ++
+         (if i = i' then (v, c) :: extractFAOrigPairsAt (rest_targets.zip rest) i'
+          else extractFAOrigPairsAt (rest_targets.zip rest) i')) := by
+  unfold interpret
+  simp only [List.zip_cons_cons]
+  congr 1
+  -- F-side: per-i' case on i = i'.
+  apply List.map_congr_left
+  intro i' _
+  congr 1
+  congr 1
+  by_cases h : i = i'
+  · rw [extractFAOrigPairsAt_cons_fa_orig_eq (i := i') (i' := i) (v := v) (c := c)
+          (rest_paired := rest_targets.zip rest) (h := h)]
+    rw [if_pos h]
+  · rw [extractFAOrigPairsAt_cons_fa_orig_neq (i := i') (i' := i) (v := v) (c := c)
+          (rest_paired := rest_targets.zip rest) (h := h)]
+    rw [if_neg h]
+
+/-- **FA_graft interpret cons-head reduction**: when `C_targets = .fa_graft k q :: rest_targets`
+    and `C = c :: rest`, interpret produces:
+    - T-side: same as for `(rest_targets, rest)` (no T-side contribution).
+    - F-side: per-i', includes `pre_FA_B'_kq_rest` where `pre_FA_B'_kq_rest[k']`
+      modifies pre_FA_B[k.val] by adding `(q, c)` to its FA_graft pairs.
+
+    Proof: definitional reduction via `extract*_cons_fa_graft_*` lemmas.
+    The k = k' case requires explicit `if_pos`. -/
+private theorem interpret_cons_fa_graft
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_T : List Path) (fdata : List (Fin F_A.length × Path))
+    (k : Fin pre_FA_B.length) (q : Path)
+    (rest_targets : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+    (c : Planar α) (rest : List (Planar α)) :
+    interpret T
+      ({ pre_T_B_choice := choice_T
+         pre_FA_B_choice := fdata
+         C_targets := AlphaConstrainedChoice.fa_graft
+            (F_A := F_A) (pre_T_B := pre_T_B) k q :: rest_targets }
+       : GraftingData F_A pre_T_B pre_FA_B) (c :: rest) =
+    multiGraft T
+      (choice_T.zip
+        ((List.finRange pre_T_B.length).map fun k' =>
+          multiGraft pre_T_B[k'.val] (extractTGraftPairsAt (rest_targets.zip rest) k')) ++
+       extractTOrigPairs (rest_targets.zip rest)) ::
+    (List.finRange F_A.length).map fun i =>
+      multiGraft F_A[i.val]
+        ((fdata.zip
+          ((List.finRange pre_FA_B.length).map fun k' =>
+            if k' = k then
+              multiGraft pre_FA_B[k.val]
+                ((q, c) :: extractFAGraftPairsAt (rest_targets.zip rest) k')
+            else
+              multiGraft pre_FA_B[k'.val]
+                (extractFAGraftPairsAt (rest_targets.zip rest) k'))).filterMap
+          (fun p => if p.fst.fst = i then some (p.fst.snd, p.snd) else none) ++
+         extractFAOrigPairsAt (rest_targets.zip rest) i) := by
+  unfold interpret
+  -- All T-side extractors reduce rfl via cons_fa_graft simp lemmas.
+  -- F-side FA_graft needs case analysis on k = k'.
+  simp only [List.zip_cons_cons,
+             extractTOrigPairs_cons_fa_graft, extractTGraftPairsAt_cons_fa_graft,
+             extractFAOrigPairsAt_cons_fa_graft]
+  -- Goal: T' :: F' = T'_RHS :: F'_RHS; T-side is rfl-equal post simp.
+  refine congr_arg₂ _ rfl ?_
+  -- F-side .map equality: peel per-i, then per-multiGraft, then per-++, then per-filterMap,
+  -- then per-fdata.zip, finally to the .map equality and per-k' case analysis.
+  refine List.map_congr_left fun i _ => ?_
+  -- multiGraft F_A[i.val] (lhs ++ rhs) = multiGraft F_A[i.val] (lhs' ++ rhs)
+  congr 1  -- peels multiGraft → arg list equality
+  congr 1  -- peels ++ → first arg equality (extractFAOrig already equal post simp)
+  congr 1  -- peels filterMap → list equality (filter fn already equal)
+  congr 1  -- peels fdata.zip → second arg equality (fdata already equal)
+  -- Now: LHS .map = RHS .map
+  refine List.map_congr_left fun k' _ => ?_
+  by_cases h : k' = k
+  · rw [extractFAGraftPairsAt_cons_fa_graft_eq (k := k') (k' := k) (q := q) (c := c)
+          (rest_paired := rest_targets.zip rest) (h := h.symm)]
+    rw [if_pos h]
+    congr 2
+    exact Fin.val_eq_of_eq h
+  · rw [extractFAGraftPairsAt_cons_fa_graft_neq (k := k') (k' := k) (q := q) (c := c)
+          (rest_paired := rest_targets.zip rest) (h := Ne.symm h)]
+    rw [if_neg h]
+
+/-! ### §1.10.6: Per-bucket iteratedQuadSum-leaf cons-head reductions
+
+For each `first_b ∈ {T_orig, T_graft, FA_orig, FA_graft}`, the
+`iteratedQuadSum`-leaf with `pres = (fun t => bucketSlice (c :: rest) (first_b :: rest_α) t)`
+reduces to a closed form where the first_b bucket has `[c]` prepended to its
+`bucketSlice rest rest_α first_b` value, and other buckets have `bucketSlice
+rest rest_α` directly. These generalize `iteratedQuadSum_singleton_<bucket>`
+(§1.10.4 prelude, where rest_α = [] and rest = []) to non-empty rest.
+
+Useful for any future cons-case bridge proof; pairs with the
+`interpret_cons_<bucket>` lemmas in §1.10.5 to align the LHS iQS-leaf with
+the RHS interpret form per first_b. -/
+
+private theorem iteratedQuadSum_cons_T_orig_first
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (c : Planar α) (rest : List (Planar α)) (rest_α : List QuadIdx) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B
+      (fun t => bucketSlice (c :: rest) (QuadIdx.T_orig :: rest_α) t) [] =
+    (insertionForest pre_T_B (bucketSlice rest rest_α QuadIdx.T_graft)).bind fun pre_T_B' =>
+      (insertion T (pre_T_B' ++ ([c] ++ bucketSlice rest rest_α QuadIdx.T_orig))).bind fun T' =>
+        (insertionForest pre_FA_B (bucketSlice rest rest_α QuadIdx.FA_graft)).bind fun pre_FA_B' =>
+          (insertionForest F_A (pre_FA_B' ++ bucketSlice rest rest_α QuadIdx.FA_orig)).map fun F' =>
+            T' :: F' := by
+  rw [iteratedQuadSum_nil_remaining]
+  simp only [bucketSlice_cons_cons, List.nil_append, ite_self,
+             if_pos (rfl : QuadIdx.T_orig = QuadIdx.T_orig),
+             if_neg (by decide : QuadIdx.T_orig ≠ QuadIdx.T_graft),
+             if_neg (by decide : QuadIdx.T_orig ≠ QuadIdx.FA_orig),
+             if_neg (by decide : QuadIdx.T_orig ≠ QuadIdx.FA_graft),
+             if_true]
+
+private theorem iteratedQuadSum_cons_T_graft_first
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (c : Planar α) (rest : List (Planar α)) (rest_α : List QuadIdx) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B
+      (fun t => bucketSlice (c :: rest) (QuadIdx.T_graft :: rest_α) t) [] =
+    (insertionForest pre_T_B ([c] ++ bucketSlice rest rest_α QuadIdx.T_graft)).bind fun pre_T_B' =>
+      (insertion T (pre_T_B' ++ bucketSlice rest rest_α QuadIdx.T_orig)).bind fun T' =>
+        (insertionForest pre_FA_B (bucketSlice rest rest_α QuadIdx.FA_graft)).bind fun pre_FA_B' =>
+          (insertionForest F_A (pre_FA_B' ++ bucketSlice rest rest_α QuadIdx.FA_orig)).map fun F' =>
+            T' :: F' := by
+  rw [iteratedQuadSum_nil_remaining]
+  simp only [bucketSlice_cons_cons, List.nil_append, ite_self,
+             if_pos (rfl : QuadIdx.T_graft = QuadIdx.T_graft),
+             if_neg (by decide : QuadIdx.T_graft ≠ QuadIdx.T_orig),
+             if_neg (by decide : QuadIdx.T_graft ≠ QuadIdx.FA_orig),
+             if_neg (by decide : QuadIdx.T_graft ≠ QuadIdx.FA_graft),
+             if_true]
+
+private theorem iteratedQuadSum_cons_FA_orig_first
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (c : Planar α) (rest : List (Planar α)) (rest_α : List QuadIdx) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B
+      (fun t => bucketSlice (c :: rest) (QuadIdx.FA_orig :: rest_α) t) [] =
+    (insertionForest pre_T_B (bucketSlice rest rest_α QuadIdx.T_graft)).bind fun pre_T_B' =>
+      (insertion T (pre_T_B' ++ bucketSlice rest rest_α QuadIdx.T_orig)).bind fun T' =>
+        (insertionForest pre_FA_B (bucketSlice rest rest_α QuadIdx.FA_graft)).bind fun pre_FA_B' =>
+          (insertionForest F_A (pre_FA_B' ++ ([c] ++ bucketSlice rest rest_α QuadIdx.FA_orig))).map
+            fun F' => T' :: F' := by
+  rw [iteratedQuadSum_nil_remaining]
+  simp only [bucketSlice_cons_cons, List.nil_append, ite_self,
+             if_pos (rfl : QuadIdx.FA_orig = QuadIdx.FA_orig),
+             if_neg (by decide : QuadIdx.FA_orig ≠ QuadIdx.T_orig),
+             if_neg (by decide : QuadIdx.FA_orig ≠ QuadIdx.T_graft),
+             if_neg (by decide : QuadIdx.FA_orig ≠ QuadIdx.FA_graft),
+             if_true]
+
+private theorem iteratedQuadSum_cons_FA_graft_first
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (c : Planar α) (rest : List (Planar α)) (rest_α : List QuadIdx) :
+    iteratedQuadSum T F_A pre_T_B pre_FA_B
+      (fun t => bucketSlice (c :: rest) (QuadIdx.FA_graft :: rest_α) t) [] =
+    (insertionForest pre_T_B (bucketSlice rest rest_α QuadIdx.T_graft)).bind fun pre_T_B' =>
+      (insertion T (pre_T_B' ++ bucketSlice rest rest_α QuadIdx.T_orig)).bind fun T' =>
+        (insertionForest pre_FA_B ([c] ++ bucketSlice rest rest_α QuadIdx.FA_graft)).bind
+          fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++ bucketSlice rest rest_α QuadIdx.FA_orig)).map
+              fun F' => T' :: F' := by
+  rw [iteratedQuadSum_nil_remaining]
+  simp only [bucketSlice_cons_cons, List.nil_append, ite_self,
+             if_pos (rfl : QuadIdx.FA_graft = QuadIdx.FA_graft),
+             if_neg (by decide : QuadIdx.FA_graft ≠ QuadIdx.T_orig),
+             if_neg (by decide : QuadIdx.FA_graft ≠ QuadIdx.T_graft),
+             if_neg (by decide : QuadIdx.FA_graft ≠ QuadIdx.FA_orig),
+             if_true]
+
 /-! ### §1.9.5: Future bridges (full C : List)
 
 The two theorems below are the targets for the next session. Both are stated
