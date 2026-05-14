@@ -4458,8 +4458,12 @@ private theorem RHS_eq_canonical_msform_pres
     -- The innermost RHS has Multiset.ofList (List.map ...). Convert via ← map_coe.
     simp_rw [← Multiset.map_coe]
     --
-    -- Both sides now should have 6-deep .bind structure with similar leaves.
-    -- TODO: equate leaves via List.zip_append + multiGraft pair-list match.
+    -- TODO (Phase 2 substantive): the RHS has 5 outer binds, then a `.map .bind`
+    -- structure at the innermost (from listChoices.map (fun pFG => agd)
+    -- followed by .bind for augInterpret). The LHS has 6 outer binds with a
+    -- singleton multiset at the leaf. Need to unify these structures and
+    -- equate per-leaf via List.zip_append + multiGraft pair-list congruence.
+    -- ~50-80 LOC remaining.
     sorry
   | cons c rest ih =>
     -- CONS CASE: see §1.11.6 docstring for proof plan.
