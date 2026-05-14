@@ -1349,42 +1349,257 @@ for downstream consumers. -/
   -- (List.finRange n).map (fun i => F_A[i.val]) = F_A
   exact List.map_getElem_finRange F_A
 
-/-! ## §1.9: `LHS_per_alpha_raw` (Phase 4.2 substrate, Piece 2 — DEFERRED)
+/-! ## §1.9: Canonical labeled grafting form (mathlib-style architecture)
 
-The per-α LHS-side slice. Operationally enumerates over (T-side choice, F-side
-choice, α-respecting γ) tuples and computes the multi-graft of C into T_ins ::
-F_ins. Defined so that:
+The architectural pivot for closing `LHS_eq_iteratedQuadSum_msform_cons_alphaBind`.
+Both sides of the bijection enumerate the same `GraftingData` objects with
+different organizations; each bridging proof becomes a *structural unfolding*
+rather than an *iterated bijection*.
 
-1. `LHS = bind α : LHS_per_alpha_raw α C` (Piece 3, sorry-fenced).
-2. `(LHS_per_alpha_raw α C).map msform = (iteratedQuadSum-leaf α-pres).map msform`
-   (Piece 4, sorry-fenced).
+### Why this organization
 
-The two together (composed via Piece 5) close the headline cons-case
-`LHS_eq_iteratedQuadSum_msform_cons_alphaBind`.
+The original Piece 3/4 plan (`scratch/a33_phase4_2_plan.md`) defines a partial
+LHS-side form (`LHS_per_alpha_raw α`) and bridges it to both sides. The bridge
+to RHS (Piece 4) hits a **path-shift compositional issue**: iterating
+`multiGraft_split_lifted_aux` for multiple T_graft-bucket c's targeting the same
+`pre_T_B[k]` requires path-arithmetic across modified subtrees.
 
-**Why deferred this session.** A full operational definition requires bridging
-the C-side γ enumeration (4-bucket V(T_ins :: F_ins) partition) to the explicit
-T-side and F-side choice data. The bridging requires:
+The mathlib idiom: define a *canonical form* (`GraftingData`) that records
+EVERYTHING in terms of the ORIGINAL trees (T, pre_T_B, F_A, pre_FA_B), and a
+*single-pass* `interpret` function that does all grafting in closed form. The
+path-arithmetic is then localized in `interpret` (computed once per
+`GraftingData`), not iterated across bridge proofs.
 
-* T-side: `liftMulti (choice_T.zip pre_T_B) k q` for T_graft entries, with the
-  Fin-indexing across `pre_T_B.length` vs `(choice_T.zip pre_T_B).length` requiring
-  careful coercions.
-* F-side: `liftMulti (perTreePairsFromFChoice F_A pre_FA_B fdata i) k' q'` for
-  FA_graft entries, with `k'` derived from the source pre_FA_B[k]'s tree assignment.
-* Forest-multi-graft helper: `multiGraftForest (T_ins :: F_ins) pairs` with
-  tree-index-prefixed paths.
+### Architecture
 
-Each of these introduces ~50-100 LOC of helpers. The full definition + base
-lemmas (`LHS_per_alpha_raw_nil_C`, `LHS_per_alpha_raw_cons_C`,
-`LHS_per_alpha_raw_length`) is estimated ~80-120 LOC per the plan, but the
-underlying helpers add another ~150-250 LOC.
+* **`GraftingData F_A pre_T_B pre_FA_B`** — one canonical labeled grafting:
+  - `pre_T_B_choice : List Path` (per-pre_T_B[k] graft position in V(T))
+  - `pre_FA_B_choice : List (Fin F_A.length × Path)` (per-pre_FA_B[k]: which
+    F_A tree, vertex within)
+  - `C_targets : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)`
+    (per-c bucket-classified target — reuses the §1.7 inductive)
 
-**Recommended next-session attack**: design the helpers (forest multi-graft,
-unified-Fin coercion, AlphaConstrainedChoice.toPath) before committing to the
-LHS_per_alpha_raw form. The helpers should be substrate-quality (mathlib
-candidates) so they're worth the LOC investment.
+* **`interpret T gd C : List (Planar α)`** — produces the resulting forest by
+  combining all grafts in a single pass:
+  - Builds `pre_T_B'` = pre_T_B with T_graft-bucket c's inserted per-tree.
+  - Builds `T'` = `multiGraft T (choice_T.zip pre_T_B' ++ T_orig_pairs)`.
+  - Symmetrically for F-side.
 
-See `scratch/a33_phase4_2_plan.md` Piece 2 for the full design discussion. -/
+* **`enumGraftingData T F_A pre_T_B pre_FA_B C_length`** — enumerates all
+  valid `GraftingData` with appropriate lengths.
+
+### The two bridge proofs (future sessions)
+
+After this skeleton lands:
+
+1. **`LHS_eq_canonical`** (Piece 3 analog, ~150-200 LOC):
+   ```
+   LHS = (enumGraftingData T F_A pre_T_B pre_FA_B C.length).map (interpret T · C)
+   ```
+   Proof: unfold LHS via `insertion_def`, `insertionForest_eq_explicit`,
+   `insertionForest_cons_assignment`; use `vertices_forest_eq_partition` to
+   decompose γ into bucket-classified targets.
+
+2. **`RHS_eq_canonical_msform`** (Piece 4 analog, ~100-150 LOC):
+   ```
+   bind α : iteratedQuadSum-leaf α-pres
+     = (enumGraftingData T F_A pre_T_B pre_FA_B C.length).map (interpret T · C) (modulo msform)
+   ```
+   Proof: unfold `iteratedQuadSum-leaf`; absorb per-bucket grafts into the
+   canonical form via `multiGraft_perm_pair` (msform absorbs planar order
+   differences across bucket layouts).
+
+### Substrate placement
+
+This entire section is `private` and scoped to the A3.3 cons-case proof. If
+future work needs the canonical form for related theorems (Δ^c coassoc, GL
+mul_assoc), promote to a top-level `[UPSTREAM]` substrate. -/
+
+/-- Per-bucket vertex source list (one entry per (bucket, valid vertex)).
+    Concrete enumeration of `AlphaConstrainedChoice` values: V(T) for T_orig,
+    `Σ k, V(pre_T_B[k])` for T_graft, etc. Used as the source alphabet for
+    `C_targets` enumeration via `listChoices`. -/
+private def allAlphaConstrainedChoiceList
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B) :=
+  ((vertices T).map AlphaConstrainedChoice.t_orig) ++
+  ((List.finRange pre_T_B.length).flatMap fun k =>
+    (vertices pre_T_B[k.val]).map (AlphaConstrainedChoice.t_graft k)) ++
+  ((List.finRange F_A.length).flatMap fun i =>
+    (vertices F_A[i.val]).map (AlphaConstrainedChoice.fa_orig i)) ++
+  ((List.finRange pre_FA_B.length).flatMap fun k =>
+    (vertices pre_FA_B[k.val]).map (AlphaConstrainedChoice.fa_graft k))
+
+/-- Canonical labeled grafting data. One `GraftingData` corresponds to a
+    completely-determined choice of:
+
+    - per-pre_T_B[k] graft position in `V(T)` (`pre_T_B_choice`),
+    - per-pre_FA_B[k] graft position (which F_A tree + vertex within)
+      (`pre_FA_B_choice`),
+    - per-c target classified by `QuadIdx` bucket (`C_targets`).
+
+    Length validity is enforced by the enumerator (`enumGraftingData`) rather
+    than the structure itself, keeping the type definition simple. -/
+private structure GraftingData (F_A pre_T_B pre_FA_B : List (Planar α)) where
+  /-- Per-pre_T_B[k] graft position in V(T). Expected length `pre_T_B.length`. -/
+  pre_T_B_choice  : List Path
+  /-- Per-pre_FA_B[k] graft position: which F_A tree + vertex within.
+      Expected length `pre_FA_B.length`. -/
+  pre_FA_B_choice : List (Fin F_A.length × Path)
+  /-- Per-c bucket-classified target. Expected length matches consumer's `C.length`. -/
+  C_targets       : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)
+
+/-! ### §1.9.1: Per-bucket extractor helpers
+
+These helpers extract per-bucket `(Path, Planar α)` pairs from a list of
+`(AlphaConstrainedChoice, Planar α)` pairs. Used by `interpret` to compute the
+grafting pairs per bucket. Sorry-free by structure. -/
+
+/-- Extract `(vertex, c)` pairs from C_paired where the choice is `t_orig`. -/
+private def extractTOrigPairs
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (C_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    List (Path × Planar α) :=
+  C_paired.filterMap fun p =>
+    match p.fst with
+    | .t_orig v => some (v, p.snd)
+    | _ => none
+
+/-- Extract `(vertex, c)` pairs from C_paired where the choice is `t_graft k _`
+    for the given `k`. -/
+private def extractTGraftPairsAt
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (C_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (k : Fin pre_T_B.length) : List (Path × Planar α) :=
+  C_paired.filterMap fun p =>
+    match p.fst with
+    | .t_graft k' q => if k' = k then some (q, p.snd) else none
+    | _ => none
+
+/-- Extract `(vertex, c)` pairs from C_paired where the choice is `fa_orig i _`
+    for the given `i`. -/
+private def extractFAOrigPairsAt
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (C_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (i : Fin F_A.length) : List (Path × Planar α) :=
+  C_paired.filterMap fun p =>
+    match p.fst with
+    | .fa_orig i' v => if i' = i then some (v, p.snd) else none
+    | _ => none
+
+/-- Extract `(vertex, c)` pairs from C_paired where the choice is `fa_graft k _`
+    for the given `k`. -/
+private def extractFAGraftPairsAt
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (C_paired : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (k : Fin pre_FA_B.length) : List (Path × Planar α) :=
+  C_paired.filterMap fun p =>
+    match p.fst with
+    | .fa_graft k' q => if k' = k then some (q, p.snd) else none
+    | _ => none
+
+/-! ### §1.9.2: `interpret` — single-pass grafting from `GraftingData`
+
+The path-arithmetic-heavy function. Combines all per-bucket grafts in one pass:
+
+1. T-side: build `pre_T_B'[k] = multiGraft pre_T_B[k] (T_graft pairs at k)`.
+2. T-side: combine `T_orig` pairs and `pre_T_B'` grafts into `T_pairs`, compute
+   `T' = multiGraft T T_pairs`.
+3. F-side: build `pre_FA_B'[k] = multiGraft pre_FA_B[k] (FA_graft pairs at k)`.
+4. F-side: per F_A[i], combine `pre_FA_B'` grafts targeting i with `FA_orig`
+   pairs at i, compute `F'[i] = multiGraft F_A[i] (combined pairs)`.
+5. Result: `T' :: F'`.
+
+No iteration of `multiGraft_split_lifted_aux`. All grafts done relative to
+ORIGINAL trees with closed-form pair lists. -/
+
+/-- Single-pass interpretation of a `GraftingData` into the resulting forest.
+
+    Semantically: `interpret T gd C` is the planar-list result obtained by
+    grafting `pre_T_B`, `pre_FA_B`, and `C` (per `gd`'s choices) into
+    `T :: F_A` in a SINGLE multi-graft per host tree.
+
+    Path-arithmetic localized here. Bridge proofs (LHS_eq_canonical,
+    RHS_eq_canonical_msform) consume this without inducting on `gd`'s C_targets. -/
+private def interpret
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (gd : GraftingData F_A pre_T_B pre_FA_B)
+    (C : List (Planar α)) : List (Planar α) :=
+  let C_paired := gd.C_targets.zip C
+  let T_orig_pairs := extractTOrigPairs C_paired
+  let pre_T_B' : List (Planar α) :=
+    (List.finRange pre_T_B.length).map fun k =>
+      multiGraft pre_T_B[k.val] (extractTGraftPairsAt C_paired k)
+  let T' : Planar α :=
+    multiGraft T (gd.pre_T_B_choice.zip pre_T_B' ++ T_orig_pairs)
+  let pre_FA_B' : List (Planar α) :=
+    (List.finRange pre_FA_B.length).map fun k =>
+      multiGraft pre_FA_B[k.val] (extractFAGraftPairsAt C_paired k)
+  let F' : List (Planar α) :=
+    (List.finRange F_A.length).map fun i =>
+      let pre_FA_B'_for_i : List (Path × Planar α) :=
+        (gd.pre_FA_B_choice.zip pre_FA_B').filterMap fun p =>
+          if p.fst.fst = i then some (p.fst.snd, p.snd) else none
+      multiGraft F_A[i.val] (pre_FA_B'_for_i ++ extractFAOrigPairsAt C_paired i)
+  T' :: F'
+
+/-! ### §1.9.3: `enumGraftingData` — canonical enumeration
+
+Enumerates all `GraftingData` with appropriate lengths matching `pre_T_B`,
+`pre_FA_B`, and the consumer-supplied `C_length`. Uses `listChoices` for the
+three nested enumerations. -/
+
+/-- Multiset of all valid `GraftingData` for given `T`, `F_A`, `pre_T_B`,
+    `pre_FA_B`, and target `C_length`.
+
+    Each entry has:
+    - `pre_T_B_choice.length = pre_T_B.length`
+    - `pre_FA_B_choice.length = pre_FA_B.length`
+    - `C_targets.length = C_length`
+
+    These length invariants follow from `listChoices`'s length lemma at
+    consumption sites. -/
+private def enumGraftingData
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (C_length : Nat) : Multiset (GraftingData F_A pre_T_B pre_FA_B) :=
+  Multiset.ofList <|
+    (listChoices (vertices T) pre_T_B.length).flatMap fun choice_T =>
+      (listChoices (perKFChoice F_A) pre_FA_B.length).flatMap fun fdata =>
+        (listChoices (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) C_length).map
+          fun targets =>
+            { pre_T_B_choice := choice_T
+              pre_FA_B_choice := fdata
+              C_targets := targets }
+
+/-! ### §1.9.4: Future bridges
+
+The two theorems below are the targets for the next session. Both are stated
+here as documentation; their proofs go in §1.10 (LHS bridge) and §1.11 (RHS
+bridge). After both land, `LHS_eq_iteratedQuadSum_msform_cons_alphaBind` closes
+in ~10-30 LOC by chaining them.
+
+**`LHS_eq_canonical`** (target):
+```lean
+private theorem LHS_eq_canonical
+    (T : Planar α) (F_A pre_T_B pre_FA_B C : List (Planar α)) :
+  ((insertion T pre_T_B).bind fun T_ins =>
+      (insertionForest F_A pre_FA_B).bind fun F_ins =>
+        insertionForest (T_ins :: F_ins) C) =
+  (enumGraftingData T F_A pre_T_B pre_FA_B C.length).map (interpret T · C)
+```
+
+**`RHS_eq_canonical_msform`** (target):
+```lean
+private theorem RHS_eq_canonical_msform
+    (T : Planar α) (F_A pre_T_B pre_FA_B C : List (Planar α)) :
+  ((Multiset.ofList (listChoices QuadIdx_list C.length)).bind fun a =>
+      iteratedQuadSum T F_A pre_T_B pre_FA_B
+        (fun t => bucketSlice C a t) []).map msform =
+  ((enumGraftingData T F_A pre_T_B pre_FA_B C.length).map (interpret T · C)).map msform
+```
+
+After both: the cons-case sorry-fence collapses by composing them with `map_eq_map`
+on the LHS (which doesn't need msform). -/
 
 /-! ## §2: Bridge: iterated insertionForest equals assocBucketSum
 
