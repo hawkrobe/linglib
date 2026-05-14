@@ -521,6 +521,632 @@ private def enumFChoices (F_A pre_FA_B : List (Planar α)) :
   rw [List.length_nil, listChoices_zero]
   rfl
 
+/-! ### §1.8.0 mergeData + decomposition substrate (cons-case scaffolding)
+
+Substrate for the cons case of `insertionForest_eq_explicit`. Given a Boolean
+assignment `α` of length `pre_FA_B.length` (`true` = goes to T, `false` = goes
+to F_rest), a per-T-position choice list `c_T : List Path`, and a per-F_rest-
+position choice list `fdata : List (Fin F_rest.length × Path)`, we interleave
+to a single `data : List (Fin (F_rest.length + 1) × Path)` of the same length
+as `α`. -/
+
+/-- Interleave a Boolean assignment with per-bucket data. Walks `α` left-to-
+    right; consumes one entry of `c_T` per `true` bit (emitting `(0, v)`) and
+    one entry of `fdata` per `false` bit (emitting `(j.succ, v)`). Truncates
+    if a list runs out (defensive). -/
+private def mergeData {n : Nat} :
+    List Bool → List Path → List (Fin n × Path) → List (Fin (n + 1) × Path)
+  | [], _, _ => []
+  | true :: α', c_T, fdata =>
+      match c_T with
+      | [] => []
+      | v :: c_T' => ((0 : Fin (n + 1)), v) :: mergeData α' c_T' fdata
+  | false :: α', c_T, fdata =>
+      match fdata with
+      | [] => []
+      | p :: fdata' => (p.fst.succ, p.snd) :: mergeData α' c_T fdata'
+
+@[simp] private theorem mergeData_nil {n : Nat}
+    (c_T : List Path) (fdata : List (Fin n × Path)) :
+    mergeData [] c_T fdata = [] := rfl
+
+@[simp] private theorem mergeData_true_cons_nil {n : Nat}
+    (α' : List Bool) (fdata : List (Fin n × Path)) :
+    mergeData (true :: α') [] fdata = [] := rfl
+
+@[simp] private theorem mergeData_true_cons_cons {n : Nat}
+    (α' : List Bool) (v : Path) (c_T' : List Path)
+    (fdata : List (Fin n × Path)) :
+    mergeData (true :: α') (v :: c_T') fdata =
+      ((0 : Fin (n + 1)), v) :: mergeData α' c_T' fdata := rfl
+
+@[simp] private theorem mergeData_false_cons_nil {n : Nat}
+    (α' : List Bool) (c_T : List Path) :
+    mergeData (n := n) (false :: α') c_T [] = [] := rfl
+
+@[simp] private theorem mergeData_false_cons_cons {n : Nat}
+    (α' : List Bool) (c_T : List Path)
+    (p : Fin n × Path) (fdata' : List (Fin n × Path)) :
+    mergeData (false :: α') c_T (p :: fdata') =
+      (p.fst.succ, p.snd) :: mergeData α' c_T fdata' := rfl
+
+/-- Length lemma: `filter_t pre_FA_B α` has length `α.count true` (when lengths match). -/
+private theorem filter_t_length (pre_FA_B : List (Planar α)) (α_assn : List Bool)
+    (h : pre_FA_B.length = α_assn.length) :
+    ((pre_FA_B.zip α_assn).filterMap (fun p => if p.snd then some p.fst else none)).length =
+      α_assn.count true := by
+  induction α_assn generalizing pre_FA_B with
+  | nil =>
+    have hpf : pre_FA_B = [] := List.length_eq_zero_iff.mp (by rw [h]; rfl)
+    subst hpf; rfl
+  | cons a α' ih =>
+    cases pre_FA_B with
+    | nil => simp at h
+    | cons g rest =>
+      have hrest : rest.length = α'.length := by
+        rw [List.length_cons, List.length_cons] at h; omega
+      rw [List.zip_cons_cons, List.filterMap_cons]
+      cases a with
+      | true =>
+        rw [if_pos rfl, List.length_cons, ih rest hrest, List.count_cons_self]
+      | false =>
+        rw [if_neg (by decide : ¬ (false : Bool) = true), ih rest hrest,
+            show (false :: α').count true = α'.count true from by
+              simp only [List.count_cons]; rfl]
+
+/-- Length lemma: `filter_f pre_FA_B α` has length `α.count false` (when lengths match). -/
+private theorem filter_f_length (pre_FA_B : List (Planar α)) (α_assn : List Bool)
+    (h : pre_FA_B.length = α_assn.length) :
+    ((pre_FA_B.zip α_assn).filterMap (fun p => if p.snd then none else some p.fst)).length =
+      α_assn.count false := by
+  induction α_assn generalizing pre_FA_B with
+  | nil =>
+    have hpf : pre_FA_B = [] := List.length_eq_zero_iff.mp (by rw [h]; rfl)
+    subst hpf; rfl
+  | cons a α' ih =>
+    cases pre_FA_B with
+    | nil => simp at h
+    | cons g rest =>
+      have hrest : rest.length = α'.length := by
+        rw [List.length_cons, List.length_cons] at h; omega
+      rw [List.zip_cons_cons, List.filterMap_cons]
+      cases a with
+      | true =>
+        rw [if_pos rfl, ih rest hrest,
+            show (true :: α').count false = α'.count false from by
+              simp only [List.count_cons]; rfl]
+      | false =>
+        rw [if_neg (by decide : ¬ (false : Bool) = true), List.length_cons,
+            ih rest hrest, List.count_cons_self]
+
+/-- Atomic reduction: `perTreePairsFromFChoice` on `(0, v) :: data` at index `0`
+    extracts `(v, g)` then recurses. -/
+private theorem perTreePairsFromFChoice_cons_zero_at_zero
+    (T : Planar α) (F_rest : List (Planar α))
+    (data : List (Fin (F_rest.length + 1) × Path)) (g : Planar α)
+    (pre_FA_B : List (Planar α)) (v : Path) :
+    perTreePairsFromFChoice (T :: F_rest) (g :: pre_FA_B)
+        (((0 : Fin (F_rest.length + 1)), v) :: data)
+        (0 : Fin (F_rest.length + 1)) =
+      (v, g) :: perTreePairsFromFChoice (T :: F_rest) pre_FA_B data
+        (0 : Fin (F_rest.length + 1)) := by
+  unfold perTreePairsFromFChoice
+  rw [List.zip_cons_cons, List.filterMap_cons]
+  dsimp only
+  rw [if_pos rfl]
+
+/-- Atomic reduction: `perTreePairsFromFChoice` on `(0, v) :: data` at index `j.succ`
+    drops the head (since `0 ≠ j.succ`). -/
+private theorem perTreePairsFromFChoice_cons_zero_at_succ
+    (T : Planar α) (F_rest : List (Planar α))
+    (data : List (Fin (F_rest.length + 1) × Path)) (g : Planar α)
+    (pre_FA_B : List (Planar α)) (v : Path) (j : Fin F_rest.length) :
+    perTreePairsFromFChoice (T :: F_rest) (g :: pre_FA_B)
+        (((0 : Fin (F_rest.length + 1)), v) :: data) j.succ =
+      perTreePairsFromFChoice (T :: F_rest) pre_FA_B data j.succ := by
+  unfold perTreePairsFromFChoice
+  rw [List.zip_cons_cons, List.filterMap_cons]
+  dsimp only
+  rw [if_neg (fun h => Fin.succ_ne_zero j h.symm)]
+
+/-- Atomic reduction: `perTreePairsFromFChoice` on `(p.fst.succ, p.snd) :: data` at
+    index `0` drops the head (since `p.fst.succ ≠ 0`). -/
+private theorem perTreePairsFromFChoice_cons_succ_at_zero
+    (T : Planar α) (F_rest : List (Planar α))
+    (data : List (Fin (F_rest.length + 1) × Path)) (g : Planar α)
+    (pre_FA_B : List (Planar α)) (p : Fin F_rest.length × Path) :
+    perTreePairsFromFChoice (T :: F_rest) (g :: pre_FA_B)
+        ((p.fst.succ, p.snd) :: data)
+        (0 : Fin (F_rest.length + 1)) =
+      perTreePairsFromFChoice (T :: F_rest) pre_FA_B data
+        (0 : Fin (F_rest.length + 1)) := by
+  unfold perTreePairsFromFChoice
+  rw [List.zip_cons_cons, List.filterMap_cons]
+  dsimp only
+  rw [if_neg (Fin.succ_ne_zero p.fst)]
+
+/-- Atomic reduction (matching case): `perTreePairsFromFChoice` on `(p.fst.succ,
+    p.snd) :: data` at `j.succ` when `p.fst = j` extracts `(p.snd, g)` and recurses. -/
+private theorem perTreePairsFromFChoice_cons_succ_at_succ_eq
+    (T : Planar α) (F_rest : List (Planar α))
+    (data : List (Fin (F_rest.length + 1) × Path)) (g : Planar α)
+    (pre_FA_B : List (Planar α)) (p : Fin F_rest.length × Path)
+    (j : Fin F_rest.length) (hpj : p.fst = j) :
+    perTreePairsFromFChoice (T :: F_rest) (g :: pre_FA_B)
+        ((p.fst.succ, p.snd) :: data) j.succ =
+      (p.snd, g) :: perTreePairsFromFChoice (T :: F_rest) pre_FA_B data j.succ := by
+  unfold perTreePairsFromFChoice
+  rw [List.zip_cons_cons, List.filterMap_cons]
+  dsimp only
+  rw [if_pos (show p.fst.succ = j.succ from by rw [hpj])]
+
+/-- Atomic reduction (non-matching case): drops the head when `p.fst ≠ j`. -/
+private theorem perTreePairsFromFChoice_cons_succ_at_succ_neq
+    (T : Planar α) (F_rest : List (Planar α))
+    (data : List (Fin (F_rest.length + 1) × Path)) (g : Planar α)
+    (pre_FA_B : List (Planar α)) (p : Fin F_rest.length × Path)
+    (j : Fin F_rest.length) (hpj : p.fst ≠ j) :
+    perTreePairsFromFChoice (T :: F_rest) (g :: pre_FA_B)
+        ((p.fst.succ, p.snd) :: data) j.succ =
+      perTreePairsFromFChoice (T :: F_rest) pre_FA_B data j.succ := by
+  unfold perTreePairsFromFChoice
+  rw [List.zip_cons_cons, List.filterMap_cons]
+  dsimp only
+  rw [if_neg (fun h => hpj (by
+    have hval : p.fst.succ.val = j.succ.val := congrArg Fin.val h
+    simp only [Fin.val_succ] at hval
+    exact Fin.ext (Nat.succ_inj.mp hval)))]
+
+/-- Atomic reduction (matching case): per-F_rest pair extraction on `p :: pf_data`
+    at index `j` when `p.fst = j` extracts `(p.snd, g)` and recurses. -/
+private theorem perTreePairsFromFChoice_F_cons_eq
+    (F_rest : List (Planar α))
+    (data : List (Fin F_rest.length × Path)) (g : Planar α)
+    (pre_FA_B : List (Planar α)) (p : Fin F_rest.length × Path)
+    (j : Fin F_rest.length) (hpj : p.fst = j) :
+    perTreePairsFromFChoice F_rest (g :: pre_FA_B) (p :: data) j =
+      (p.snd, g) :: perTreePairsFromFChoice F_rest pre_FA_B data j := by
+  unfold perTreePairsFromFChoice
+  rw [List.zip_cons_cons, List.filterMap_cons]
+  dsimp only
+  rw [if_pos hpj]
+
+/-- Atomic reduction (non-matching case): drops the head when `p.fst ≠ j`. -/
+private theorem perTreePairsFromFChoice_F_cons_neq
+    (F_rest : List (Planar α))
+    (data : List (Fin F_rest.length × Path)) (g : Planar α)
+    (pre_FA_B : List (Planar α)) (p : Fin F_rest.length × Path)
+    (j : Fin F_rest.length) (hpj : p.fst ≠ j) :
+    perTreePairsFromFChoice F_rest (g :: pre_FA_B) (p :: data) j =
+      perTreePairsFromFChoice F_rest pre_FA_B data j := by
+  unfold perTreePairsFromFChoice
+  rw [List.zip_cons_cons, List.filterMap_cons]
+  dsimp only
+  rw [if_neg hpj]
+
+/-- For pairs targeting `T = (T :: F_rest)[0]`: the per-tree pairs extracted from
+    `mergeData α c_T fdata` reduce to `c_T.zip (filter_t pre_FA_B α)`. -/
+private theorem perTreePairsFromFChoice_mergeData_zero
+    (T : Planar α) (F_rest : List (Planar α)) (pre_FA_B : List (Planar α))
+    (α_assn : List Bool) (c_T : List Path)
+    (fdata : List (Fin F_rest.length × Path))
+    (hpf : pre_FA_B.length = α_assn.length)
+    (hc : c_T.length = α_assn.count true)
+    (hf : fdata.length = α_assn.count false) :
+    perTreePairsFromFChoice (T :: F_rest) pre_FA_B
+        (mergeData α_assn c_T fdata) (0 : Fin (F_rest.length + 1)) =
+      c_T.zip ((pre_FA_B.zip α_assn).filterMap
+        (fun p => if p.snd then some p.fst else none)) := by
+  induction α_assn generalizing pre_FA_B c_T fdata with
+  | nil =>
+    have hc_zero : c_T = [] := by
+      apply List.length_eq_zero_iff.mp
+      have : ([] : List Bool).count true = 0 := rfl
+      omega
+    have hpf_nil : pre_FA_B = [] := by
+      apply List.length_eq_zero_iff.mp
+      omega
+    subst hc_zero; subst hpf_nil
+    rfl
+  | cons a α' ih =>
+    cases pre_FA_B with
+    | nil => simp at hpf
+    | cons g rest =>
+      have hrest_len : rest.length = α'.length := by
+        simp only [List.length_cons] at hpf; omega
+      cases a with
+      | true =>
+        have hc_pos : c_T.length = α'.count true + 1 := by
+          rw [hc, List.count_cons_self]
+        cases c_T with
+        | nil => simp at hc_pos
+        | cons v c_T' =>
+          rw [mergeData_true_cons_cons]
+          rw [perTreePairsFromFChoice_cons_zero_at_zero]
+          have hc' : c_T'.length = α'.count true := by
+            simp only [List.length_cons] at hc_pos; omega
+          have hf' : fdata.length = α'.count false := by
+            rw [hf]; simp only [List.count_cons]; rfl
+          have ih_eq := ih rest c_T' fdata hrest_len hc' hf'
+          -- Goal: (v, g) :: perTreePairsFromFChoice ... rest (mergeData α' c_T' fdata) 0
+          --     = (v :: c_T').zip ((g :: rest).zip (true :: α').filterMap ...)
+          -- RHS: (g :: rest).zip (true :: α') = (g, true) :: rest.zip α'
+          --     filterMap of (g, true) :: ... = g :: filterMap rest
+          --     (v :: c_T').zip (g :: filter_t rest α') = (v, g) :: c_T'.zip (filter_t rest α')
+          rw [List.zip_cons_cons, List.filterMap_cons]
+          dsimp only
+          rw [if_pos rfl]
+          rw [List.zip_cons_cons]
+          rw [ih_eq]
+      | false =>
+        have hf_pos : fdata.length = α'.count false + 1 := by
+          rw [hf, List.count_cons_self]
+        cases fdata with
+        | nil => simp at hf_pos
+        | cons p fdata' =>
+          rw [mergeData_false_cons_cons]
+          rw [perTreePairsFromFChoice_cons_succ_at_zero]
+          have hc' : c_T.length = α'.count true := by
+            rw [hc]; simp only [List.count_cons]; rfl
+          have hf' : fdata'.length = α'.count false := by
+            simp only [List.length_cons] at hf_pos; omega
+          have ih_eq := ih rest c_T fdata' hrest_len hc' hf'
+          -- Goal: perTreePairsFromFChoice ... rest (mergeData α' c_T fdata') 0
+          --     = c_T.zip ((g :: rest).zip (false :: α').filterMap ...)
+          -- RHS: (g :: rest).zip (false :: α') = (g, false) :: rest.zip α'
+          --     filterMap drops (g, false) → none. Result: filter_t rest α'.
+          rw [List.zip_cons_cons, List.filterMap_cons]
+          dsimp only
+          rw [if_neg (by decide : ¬ (false : Bool) = true)]
+          exact ih_eq
+
+/-- For pairs targeting `F_rest[j] = (T :: F_rest)[j.succ.val]`. -/
+private theorem perTreePairsFromFChoice_mergeData_succ
+    (T : Planar α) (F_rest : List (Planar α)) (pre_FA_B : List (Planar α))
+    (α_assn : List Bool) (c_T : List Path)
+    (fdata : List (Fin F_rest.length × Path)) (j : Fin F_rest.length)
+    (hpf : pre_FA_B.length = α_assn.length)
+    (hc : c_T.length = α_assn.count true)
+    (hf : fdata.length = α_assn.count false) :
+    perTreePairsFromFChoice (T :: F_rest) pre_FA_B
+        (mergeData α_assn c_T fdata) j.succ =
+      perTreePairsFromFChoice F_rest
+        ((pre_FA_B.zip α_assn).filterMap
+          (fun p => if p.snd then none else some p.fst)) fdata j := by
+  induction α_assn generalizing pre_FA_B c_T fdata with
+  | nil =>
+    have hf_zero : fdata = [] := by
+      apply List.length_eq_zero_iff.mp
+      have : ([] : List Bool).count false = 0 := rfl
+      omega
+    have hpf_nil : pre_FA_B = [] := by
+      apply List.length_eq_zero_iff.mp
+      omega
+    subst hf_zero; subst hpf_nil
+    rfl
+  | cons a α' ih =>
+    cases pre_FA_B with
+    | nil => simp at hpf
+    | cons g rest =>
+      have hrest_len : rest.length = α'.length := by
+        simp only [List.length_cons] at hpf; omega
+      cases a with
+      | true =>
+        have hc_pos : c_T.length = α'.count true + 1 := by
+          rw [hc, List.count_cons_self]
+        cases c_T with
+        | nil => simp at hc_pos
+        | cons v c_T' =>
+          rw [mergeData_true_cons_cons]
+          rw [perTreePairsFromFChoice_cons_zero_at_succ]
+          have hc' : c_T'.length = α'.count true := by
+            simp only [List.length_cons] at hc_pos; omega
+          have hf' : fdata.length = α'.count false := by
+            rw [hf]; simp only [List.count_cons]; rfl
+          have ih_eq := ih rest c_T' fdata hrest_len hc' hf'
+          rw [List.zip_cons_cons, List.filterMap_cons]
+          dsimp only
+          rw [if_pos rfl]
+          exact ih_eq
+      | false =>
+        have hf_pos : fdata.length = α'.count false + 1 := by
+          rw [hf, List.count_cons_self]
+        cases fdata with
+        | nil => simp at hf_pos
+        | cons p fdata' =>
+          rw [mergeData_false_cons_cons]
+          have hc' : c_T.length = α'.count true := by
+            rw [hc]; simp only [List.count_cons]; rfl
+          have hf' : fdata'.length = α'.count false := by
+            simp only [List.length_cons] at hf_pos; omega
+          have ih_eq := ih rest c_T fdata' hrest_len hc' hf'
+          rw [List.zip_cons_cons, List.filterMap_cons]
+          dsimp only
+          rw [if_neg (by decide : ¬ (false : Bool) = true)]
+          by_cases hpj : p.fst = j
+          · rw [perTreePairsFromFChoice_cons_succ_at_succ_eq T F_rest _ g rest p j hpj]
+            rw [perTreePairsFromFChoice_F_cons_eq F_rest fdata' g _ p j hpj]
+            rw [ih_eq]
+          · rw [perTreePairsFromFChoice_cons_succ_at_succ_neq T F_rest _ g rest p j hpj]
+            rw [perTreePairsFromFChoice_F_cons_neq F_rest fdata' g _ p j hpj]
+            exact ih_eq
+
+/-- The cons-case decomposition of `buildFIns`: builds the (T :: F_rest) output from
+    the (α, c_T, fdata) triple as `multiGraft T (c_T.zip (filter_t pre_FA_B α)) ::
+    buildFIns F_rest (filter_f pre_FA_B α) fdata`. Composes the two
+    `perTreePairsFromFChoice_mergeData_*` lemmas. -/
+private theorem buildFIns_cons_decompose
+    (T : Planar α) (F_rest : List (Planar α)) (pre_FA_B : List (Planar α))
+    (α_assn : List Bool) (c_T : List Path)
+    (fdata : List (Fin F_rest.length × Path))
+    (hpf : pre_FA_B.length = α_assn.length)
+    (hc : c_T.length = α_assn.count true)
+    (hf : fdata.length = α_assn.count false) :
+    buildFIns (T :: F_rest) pre_FA_B (mergeData α_assn c_T fdata) =
+      multiGraft T
+        (c_T.zip ((pre_FA_B.zip α_assn).filterMap
+          (fun p => if p.snd then some p.fst else none))) ::
+      buildFIns F_rest
+        ((pre_FA_B.zip α_assn).filterMap
+          (fun p => if p.snd then none else some p.fst)) fdata := by
+  show (List.finRange (F_rest.length + 1)).map
+        (fun i : Fin (F_rest.length + 1) =>
+          multiGraft ((T :: F_rest)[i.val])
+            (perTreePairsFromFChoice (T :: F_rest) pre_FA_B
+              (mergeData α_assn c_T fdata) i)) = _
+  rw [List.finRange_succ, List.map_cons]
+  -- Head: index 0. (T :: F_rest)[0] = T.
+  -- Tail: ((List.finRange F_rest.length).map Fin.succ).map (...)
+  congr 1
+  · -- Head case: multiGraft T (perTreePairsFromFChoice ... 0) = multiGraft T (c_T.zip ...)
+    show multiGraft T (perTreePairsFromFChoice (T :: F_rest) pre_FA_B
+            (mergeData α_assn c_T fdata) (0 : Fin (F_rest.length + 1))) = _
+    rw [perTreePairsFromFChoice_mergeData_zero T F_rest pre_FA_B α_assn c_T fdata
+        hpf hc hf]
+  · -- Tail case
+    show ((List.finRange F_rest.length).map Fin.succ).map
+          (fun i : Fin (F_rest.length + 1) =>
+            multiGraft ((T :: F_rest)[i.val])
+              (perTreePairsFromFChoice (T :: F_rest) pre_FA_B
+                (mergeData α_assn c_T fdata) i)) =
+        (List.finRange F_rest.length).map (fun j : Fin F_rest.length =>
+          multiGraft F_rest[j.val]
+            (perTreePairsFromFChoice F_rest
+              ((pre_FA_B.zip α_assn).filterMap
+                (fun p => if p.snd then none else some p.fst))
+              fdata j))
+    rw [List.map_map]
+    refine List.map_congr_left fun j _ => ?_
+    show multiGraft (F_rest[j.val])
+          (perTreePairsFromFChoice (T :: F_rest) pre_FA_B
+            (mergeData α_assn c_T fdata) j.succ) = _
+    rw [perTreePairsFromFChoice_mergeData_succ T F_rest pre_FA_B α_assn c_T fdata
+        j hpf hc hf]
+
+/-- Alphabet decomposition: per-vertex choice for a `T :: F_rest` forest splits
+    into the T's vertices (paired with index `0`) and the F_rest forest's own
+    choice (lifted via `Fin.succ`). -/
+private theorem perKFChoice_cons (T : Planar α) (F_rest : List (Planar α)) :
+    perKFChoice (T :: F_rest) =
+      (vertices T).map (fun v => ((0 : Fin (F_rest.length + 1)), v)) ++
+      (perKFChoice F_rest).map (fun p => (p.fst.succ, p.snd)) := by
+  show (List.finRange (F_rest.length + 1)).flatMap
+        (fun i : Fin (F_rest.length + 1) =>
+          (vertices ((T :: F_rest)[i.val])).map (fun v => (i, v))) = _
+  rw [List.finRange_succ, List.flatMap_cons]
+  show ((vertices T).map (fun v => ((0 : Fin (F_rest.length + 1)), v))) ++
+        ((List.finRange F_rest.length).map Fin.succ).flatMap
+          (fun i : Fin (F_rest.length + 1) =>
+            (vertices ((T :: F_rest)[i.val])).map (fun v => (i, v))) =
+      (vertices T).map (fun v => ((0 : Fin (F_rest.length + 1)), v)) ++
+      (perKFChoice F_rest).map (fun p => (p.fst.succ, p.snd))
+  congr 1
+  rw [List.flatMap_map]
+  show (List.finRange F_rest.length).flatMap
+        (fun j : Fin F_rest.length =>
+          (vertices F_rest[j.val]).map (fun v => (Fin.succ j, v))) = _
+  unfold perKFChoice
+  rw [List.map_flatMap]
+  refine List.flatMap_congr fun j _ => ?_
+  rw [List.map_map]
+  rfl
+
+/-- Multiset-level decomposition of `listChoices (perKFChoice (T :: F_rest)) n`
+    into a nested bind over (α : Bool^n, c_T : T-vertices^(α.count true), fdata :
+    perKFChoice F_rest^(α.count false)) via `mergeData`.
+
+    Proof by induction on `n`. Base case `n = 0`: both sides are `{[]}`. Step
+    case: peel one element on both sides; on LHS use `perKFChoice_cons`, on RHS
+    use `listChoices_succ` for the `[true, false]` bind; match per-bit using IH. -/
+private theorem listChoices_perKFChoice_cons_decompose
+    (T : Planar α) (F_rest : List (Planar α)) (n : Nat) :
+    Multiset.ofList (listChoices (perKFChoice (T :: F_rest)) n) =
+      (Multiset.ofList (listChoices [true, false] n)).bind fun α_assn =>
+        (Multiset.ofList (listChoices (vertices T) (α_assn.count true))).bind fun c_T =>
+          (Multiset.ofList
+              (listChoices (perKFChoice F_rest) (α_assn.count false))).map fun fdata =>
+            mergeData α_assn c_T fdata := by
+  induction n with
+  | zero =>
+    -- LHS = ofList [[]]. RHS = singleton-bind chain reduces to {[]}.
+    rw [listChoices_zero]
+    show (Multiset.ofList ([[]] : List (List (Fin (F_rest.length + 1) × Path))) :
+            Multiset _) = _
+    rw [show (Multiset.ofList ([[]] :
+            List (List (Fin (F_rest.length + 1) × Path))) : Multiset _) =
+          (([] : List (Fin (F_rest.length + 1) × Path)) ::ₘ 0) from rfl]
+    rw [show Multiset.ofList (listChoices [true, false] 0) =
+          (([] : List Bool) ::ₘ 0) from by rw [listChoices_zero]; rfl]
+    rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    rw [show ([] : List Bool).count true = 0 from rfl]
+    rw [show Multiset.ofList (listChoices (vertices T) 0) =
+          (([] : List Path) ::ₘ 0) from by rw [listChoices_zero]; rfl]
+    rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
+    rw [show ([] : List Bool).count false = 0 from rfl]
+    rw [show Multiset.ofList (listChoices (perKFChoice F_rest) 0) =
+          (([] : List (Fin F_rest.length × Path)) ::ₘ 0) from by
+          rw [listChoices_zero]; rfl]
+    rw [Multiset.map_cons, Multiset.map_zero]
+    rfl
+  | succ k ih =>
+    -- Convert LHS via listChoices_succ into bind, then apply IH inside.
+    have lhs_rw :
+        Multiset.ofList (listChoices (perKFChoice (T :: F_rest)) (k + 1)) =
+          (Multiset.ofList (perKFChoice (T :: F_rest))).bind fun v =>
+            (Multiset.ofList (listChoices (perKFChoice (T :: F_rest)) k)).map (v :: ·) := by
+      rw [listChoices_succ, ← Multiset.coe_bind]
+      rfl
+    rw [lhs_rw]
+    conv_lhs => rhs; ext v; rw [ih]
+    rw [perKFChoice_cons T F_rest]
+    rw [show (Multiset.ofList (((vertices T).map fun v => ((0 : Fin (F_rest.length + 1)), v)) ++
+              (perKFChoice F_rest).map fun p => (p.fst.succ, p.snd)) : Multiset _) =
+          (Multiset.ofList ((vertices T).map fun v => ((0 : Fin (F_rest.length + 1)), v))) +
+          (Multiset.ofList ((perKFChoice F_rest).map fun p => (p.fst.succ, p.snd)))
+        from by rw [← Multiset.coe_add]]
+    rw [Multiset.add_bind]
+    rw [show (Multiset.ofList ((vertices T).map fun v =>
+              ((0 : Fin (F_rest.length + 1)), v)) : Multiset _) =
+          (Multiset.ofList (vertices T)).map (fun v => ((0 : Fin (F_rest.length + 1)), v))
+        from rfl]
+    rw [show (Multiset.ofList ((perKFChoice F_rest).map fun p =>
+              (p.fst.succ, p.snd)) : Multiset _) =
+          (Multiset.ofList (perKFChoice F_rest)).map (fun p => (p.fst.succ, p.snd))
+        from rfl]
+    rw [Multiset.bind_map, Multiset.bind_map]
+    -- LHS = bind v_T : vertices T: (RHS_for_k).map ((0, v_T) :: ·)
+    --     + bind p : perKFChoice F_rest: (RHS_for_k).map ((p.fst.succ, p.snd) :: ·)
+    -- Where RHS_for_k = bind α'' [t,f]^k: bind c_T (α''.count true): map fdata: mergeData α'' c_T fdata.
+    -- Decompose RHS via listChoices_succ on [t,f]:
+    have rhs_rw :
+        (Multiset.ofList (listChoices [true, false] (k + 1))).bind (fun α_assn =>
+          (Multiset.ofList (listChoices (vertices T) (α_assn.count true))).bind fun c_T =>
+            (Multiset.ofList (listChoices (perKFChoice F_rest) (α_assn.count false))).map
+              fun fdata => mergeData α_assn c_T fdata) =
+          (Multiset.ofList (listChoices [true, false] k)).bind (fun α'' =>
+            (Multiset.ofList (listChoices (vertices T) ((true :: α'').count true))).bind fun c_T =>
+              (Multiset.ofList (listChoices (perKFChoice F_rest) ((true :: α'').count false))).map
+                fun fdata => mergeData (true :: α'') c_T fdata) +
+          (Multiset.ofList (listChoices [true, false] k)).bind (fun α'' =>
+            (Multiset.ofList (listChoices (vertices T) ((false :: α'').count true))).bind fun c_T =>
+              (Multiset.ofList (listChoices (perKFChoice F_rest) ((false :: α'').count false))).map
+                fun fdata => mergeData (false :: α'') c_T fdata) := by
+      rw [listChoices_succ]
+      rw [show ([true, false].flatMap fun v => (listChoices [true, false] k).map (v :: ·)) =
+            (listChoices [true, false] k).map (true :: ·) ++
+            (listChoices [true, false] k).map (false :: ·)
+          from by simp [List.flatMap_cons, List.flatMap_nil]]
+      rw [show (Multiset.ofList ((listChoices [true, false] k).map (true :: ·) ++
+                (listChoices [true, false] k).map (false :: ·)) : Multiset _) =
+            Multiset.ofList ((listChoices [true, false] k).map (true :: ·)) +
+            Multiset.ofList ((listChoices [true, false] k).map (false :: ·))
+          from by rw [← Multiset.coe_add]]
+      rw [Multiset.add_bind]
+      rw [show (Multiset.ofList ((listChoices [true, false] k).map (true :: ·)) :
+                Multiset (List Bool)) =
+            (Multiset.ofList (listChoices [true, false] k)).map (true :: ·) from rfl]
+      rw [show (Multiset.ofList ((listChoices [true, false] k).map (false :: ·)) :
+                Multiset (List Bool)) =
+            (Multiset.ofList (listChoices [true, false] k)).map (false :: ·) from rfl]
+      rw [Multiset.bind_map, Multiset.bind_map]
+    rw [rhs_rw]
+    congr 1
+    · -- True-bit piece: LHS_T = RHS_true.
+      -- LHS_T: bind v_T : vertices T: (RHS_for_k).map ((0, v_T) :: ·)
+      -- RHS_true: bind α'': bind c_T (α''.count true + 1): map fdata: mergeData (true :: α'') c_T fdata
+      -- Strategy: rewrite RHS_true to match LHS_T using bind algebra.
+      conv_rhs =>
+        rhs; ext α''
+        rw [show (true :: α'').count true = α''.count true + 1 from
+              List.count_cons_self]
+        rw [show (true :: α'').count false = α''.count false from by
+              simp only [List.count_cons]; rfl]
+        rw [show (Multiset.ofList (listChoices (vertices T) (α''.count true + 1)) :
+              Multiset _) =
+              (Multiset.ofList (vertices T)).bind fun v =>
+                (Multiset.ofList (listChoices (vertices T) (α''.count true))).map (v :: ·)
+            from by rw [listChoices_succ, ← Multiset.coe_bind]; rfl]
+        rw [Multiset.bind_assoc]
+        rhs; ext v_T
+        rw [Multiset.bind_map]
+        rhs; ext c_T'
+        rw [show mergeData (true :: α'') (v_T :: c_T') = fun fdata =>
+              ((0 : Fin (F_rest.length + 1)), v_T) :: mergeData α'' c_T' fdata
+            from rfl]
+        rw [show ((Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false))).map
+              (fun fdata => ((0 : Fin (F_rest.length + 1)), v_T) :: mergeData α'' c_T' fdata)) =
+              ((Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false))).map
+                (mergeData α'' c_T')).map (((0 : Fin (F_rest.length + 1)), v_T) :: ·)
+            from by rw [Multiset.map_map]; rfl]
+      -- Goal RHS now: bind α'': bind v_T: bind c_T': ((map fdata: mergeData α'' c_T' fdata)).map ((0, v_T) :: ·)
+      -- Swap α'' and v_T binds via Multiset.bind_bind.
+      rw [Multiset.bind_bind]
+      -- Now: bind v_T: bind α'': bind c_T': ((map ...).map ((0, v_T) :: ·))
+      refine Multiset.bind_congr fun v_T _ => ?_
+      -- Pull .map outside the bind α''/c_T' structure.
+      rw [show ((Multiset.ofList (listChoices [true, false] k)).bind fun α'' =>
+              (Multiset.ofList (listChoices (vertices T) (α''.count true))).bind fun c_T' =>
+                ((Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false))).map
+                  (mergeData α'' c_T')).map (((0 : Fin (F_rest.length + 1)), v_T) :: ·)) =
+            ((Multiset.ofList (listChoices [true, false] k)).bind fun α'' =>
+              (Multiset.ofList (listChoices (vertices T) (α''.count true))).bind fun c_T' =>
+                (Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false))).map
+                  (mergeData α'' c_T')).map (((0 : Fin (F_rest.length + 1)), v_T) :: ·)
+          from by
+            rw [Multiset.map_bind]
+            refine Multiset.bind_congr fun α'' _ => ?_
+            rw [Multiset.map_bind]]
+      rfl
+    · -- False-bit piece: LHS_F = RHS_false. Symmetric.
+      conv_rhs =>
+        rhs; ext α''
+        rw [show (false :: α'').count true = α''.count true from by
+              simp only [List.count_cons]; rfl]
+        rw [show (false :: α'').count false = α''.count false + 1 from
+              List.count_cons_self]
+        rhs; ext c_T
+        rw [show (Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false + 1)) :
+              Multiset _) =
+              (Multiset.ofList (perKFChoice F_rest)).bind fun p =>
+                (Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false))).map
+                  (p :: ·)
+            from by rw [listChoices_succ, ← Multiset.coe_bind]; rfl]
+        -- Now: Multiset.map (mergeData (false :: α'') c_T) ((perKFChoice F_rest).bind ...)
+        -- Push the outer Multiset.map inside via Multiset.map_bind:
+        rw [Multiset.map_bind]
+        rhs; ext p
+        rw [Multiset.map_map]
+        rw [show ((fun fdata => mergeData (false :: α'') c_T fdata) ∘ fun x => p :: x) =
+              fun fdata' => (p.fst.succ, p.snd) :: mergeData α'' c_T fdata'
+            from rfl]
+        rw [show ((Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false))).map
+              (fun fdata' => (p.fst.succ, p.snd) :: mergeData α'' c_T fdata')) =
+              ((Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false))).map
+                (mergeData α'' c_T)).map ((p.fst.succ, p.snd) :: ·)
+            from by rw [Multiset.map_map]; rfl]
+      -- Goal RHS: bind α'': bind c_T: bind p: ((map fdata': mergeData α'' c_T fdata').map ((p.fst.succ, p.snd) :: ·))
+      -- Pull p out: swap c_T and p (innermost), then swap α'' and p (outermost).
+      conv_rhs =>
+        rhs; ext α''
+        rw [Multiset.bind_bind]
+      rw [Multiset.bind_bind]
+      refine Multiset.bind_congr fun p _ => ?_
+      -- Inner: bind α'': bind c_T: ((map fdata': mergeData α'' c_T fdata').map ((p.fst.succ, p.snd) :: ·))
+      -- = (bind α'': bind c_T: map fdata': mergeData α'' c_T fdata').map ((p.fst.succ, p.snd) :: ·)
+      rw [show ((Multiset.ofList (listChoices [true, false] k)).bind fun α'' =>
+              (Multiset.ofList (listChoices (vertices T) (α''.count true))).bind fun c_T =>
+                ((Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false))).map
+                  (mergeData α'' c_T)).map ((p.fst.succ, p.snd) :: ·)) =
+            ((Multiset.ofList (listChoices [true, false] k)).bind fun α'' =>
+              (Multiset.ofList (listChoices (vertices T) (α''.count true))).bind fun c_T =>
+                (Multiset.ofList (listChoices (perKFChoice F_rest) (α''.count false))).map
+                  (mergeData α'' c_T)).map ((p.fst.succ, p.snd) :: ·)
+          from by
+            rw [Multiset.map_bind]
+            refine Multiset.bind_congr fun α'' _ => ?_
+            rw [Multiset.map_bind]]
+      rfl
+
 /-- F-side explicit-choice bridge: `insertionForest F_A pre_FA_B` in standard
     form equals the explicit-choice enumeration `(enumFChoices F_A pre_FA_B).map
     (buildFIns F_A pre_FA_B)`. The bijection sends each `[true, false]`-tagged
@@ -546,7 +1172,7 @@ private theorem insertionForest_eq_explicit
     (F_A pre_FA_B : List (Planar α)) :
     insertionForest F_A pre_FA_B =
       (enumFChoices F_A pre_FA_B).map (buildFIns F_A pre_FA_B) := by
-  induction F_A with
+  induction F_A generalizing pre_FA_B with
   | nil =>
     -- F_A = []. Both sides depend on pre_FA_B emptiness.
     -- LHS: insertionForest [] pre_FA_B = if pre_FA_B = [] then {[]} else 0.
@@ -576,10 +1202,117 @@ private theorem insertionForest_eq_explicit
         rfl]
       rfl
   | cons T F_rest ih =>
-    -- TODO: Piece 2 prerequisite cons case. The (α, choice_T, fdata_rest) ↔ data
-    -- bijection requires bridging insertionForest_cons_assignment + insertion_def
-    -- + IH to the explicit form. ~80-130 LOC.
-    sorry
+    -- LHS: insertionForest (T :: F_rest) pre_FA_B
+    -- Step A: unfold via insertionForest_cons_assignment.
+    rw [insertionForest_cons_assignment T F_rest pre_FA_B]
+    -- LHS = bind α : ofList (listChoices [t,f] |pre_FA_B|):
+    --         bind T' : insertion T (filter_t pre_FA_B α):
+    --           map F' : insertionForest F_rest (filter_f pre_FA_B α): T' :: F'
+    -- Step B: apply insertion_def to inner insertion T (filter_t α).
+    -- Step C: apply IH to inner insertionForest F_rest (filter_f α).
+    -- Step D: simplify each leaf via buildFIns_cons_decompose.
+    -- Step E: bridge via listChoices_perKFChoice_cons_decompose to RHS form.
+    -- RHS: (enumFChoices (T :: F_rest) pre_FA_B).map (buildFIns (T :: F_rest) pre_FA_B)
+    -- Unfold RHS:
+    show ((Multiset.ofList (listChoices [true, false] pre_FA_B.length)).bind fun α =>
+            (insertion T ((pre_FA_B.zip α).filterMap
+              (fun p => if p.snd then some p.fst else none))).bind fun T' =>
+              (insertionForest F_rest ((pre_FA_B.zip α).filterMap
+                (fun p => if p.snd then none else some p.fst))).map fun F' => T' :: F') =
+        (enumFChoices (T :: F_rest) pre_FA_B).map (buildFIns (T :: F_rest) pre_FA_B)
+    -- Apply IH to inner insertionForest F_rest, insertion_def to inner insertion T.
+    conv_lhs =>
+      rhs; ext α
+      rw [insertion_def T]
+      rhs; ext T'
+      rw [ih]
+    -- LHS now: bind α: bind T' : ofList ((listChoices (vertices T) ...).map ...):
+    --           map F' : (enumFChoices F_rest (filter_f α)).map (buildFIns F_rest (filter_f α)): T' :: F'
+    -- Push the .map outside the ofList wrapper:
+    conv_lhs =>
+      rhs; ext α
+      rw [show (Multiset.ofList ((listChoices (vertices T)
+              (((pre_FA_B.zip α).filterMap (fun p => if p.snd then some p.fst else none)).length)).map
+              fun choice => multiGraft T (choice.zip
+                ((pre_FA_B.zip α).filterMap (fun p => if p.snd then some p.fst else none)))) :
+              Multiset _) =
+            (Multiset.ofList (listChoices (vertices T)
+              (((pre_FA_B.zip α).filterMap (fun p => if p.snd then some p.fst else none)).length))).map
+              fun choice => multiGraft T (choice.zip
+                ((pre_FA_B.zip α).filterMap (fun p => if p.snd then some p.fst else none)))
+          from rfl]
+      rw [Multiset.bind_map]
+      -- Now: bind c_T : ofList (listChoices (vertices T) ...): map F' : (enumFChoices F_rest (filter_f α)).map ...: ...
+      rhs; ext c_T
+      rw [Multiset.map_map]
+      -- Goal: ofList (enumFChoices F_rest (filter_f α)).map (buildFIns F_rest (filter_f α) ∘ ((multiGraft T (c_T.zip (filter_t α))) :: ·))
+    -- LHS now: bind α: bind c_T : ofList (listChoices (vertices T) (filter_t α).length):
+    --           (enumFChoices F_rest (filter_f α)).map ((·) ∘ ...) where (·) builds the cons.
+    -- Need to align α-driven choices with RHS's enumFChoices (T :: F_rest).
+    -- Use buildFIns_cons_decompose: each leaf builds the cons form.
+    -- Then use listChoices_perKFChoice_cons_decompose.
+    --
+    -- RHS unfolding: (enumFChoices (T :: F_rest) pre_FA_B).map (buildFIns (T :: F_rest) pre_FA_B)
+    -- = (ofList (listChoices (perKFChoice (T :: F_rest)) pre_FA_B.length)).map (buildFIns (T :: F_rest) pre_FA_B)
+    -- By listChoices_perKFChoice_cons_decompose:
+    -- = (bind α: bind c_T (α.count true): map fdata (α.count false): mergeData α c_T fdata).map (buildFIns ...)
+    -- = bind α: bind c_T: map fdata: buildFIns (T :: F_rest) pre_FA_B (mergeData α c_T fdata)
+    -- By buildFIns_cons_decompose: each leaf = multiGraft T (c_T.zip (filter_t α)) :: buildFIns F_rest (filter_f α) fdata
+    rw [show (enumFChoices (T :: F_rest) pre_FA_B) =
+          Multiset.ofList (listChoices (perKFChoice (T :: F_rest)) pre_FA_B.length)
+        from rfl]
+    rw [listChoices_perKFChoice_cons_decompose T F_rest pre_FA_B.length]
+    rw [Multiset.map_bind]
+    -- RHS = bind α : ofList (listChoices [t,f] pre_FA_B.length):
+    --         (bind c_T (α.count true): map fdata (α.count false): mergeData α c_T fdata).map (buildFIns (T :: F_rest) pre_FA_B)
+    refine Multiset.bind_congr fun α hα => ?_
+    -- Get lengths.
+    have hα_len : α.length = pre_FA_B.length :=
+      (mem_listChoices_length [true, false] _ _ (Multiset.mem_coe.mp hα))
+    have hpf : pre_FA_B.length = α.length := hα_len.symm
+    have hft : ((pre_FA_B.zip α).filterMap (fun p => if p.snd then some p.fst else none)).length =
+        α.count true := filter_t_length pre_FA_B α hpf
+    have hff : ((pre_FA_B.zip α).filterMap (fun p => if p.snd then none else some p.fst)).length =
+        α.count false := filter_f_length pre_FA_B α hpf
+    -- Rewrite both sides' inner length-conditions to use α.count true/false.
+    rw [hft]
+    rw [Multiset.map_bind]
+    refine Multiset.bind_congr fun c_T hc_T => ?_
+    have hc_len : c_T.length = α.count true := by
+      have := mem_listChoices_length (vertices T) (α.count true) c_T
+        (Multiset.mem_coe.mp hc_T)
+      exact this
+    -- Now goal: (enumFChoices F_rest (filter_f α)).map ((multiGraft T (c_T.zip (filter_t α)) :: ·) ∘ buildFIns F_rest (filter_f α))
+    --        = (ofList (listChoices (perKFChoice F_rest) (α.count false))).map
+    --            ((buildFIns (T :: F_rest) pre_FA_B) ∘ mergeData α c_T)
+    -- Rewrite enumFChoices and buildFIns_cons_decompose application.
+    rw [show enumFChoices F_rest ((pre_FA_B.zip α).filterMap
+            (fun p => if p.snd then none else some p.fst)) =
+          Multiset.ofList (listChoices (perKFChoice F_rest)
+            (((pre_FA_B.zip α).filterMap (fun p => if p.snd then none else some p.fst)).length))
+        from rfl]
+    rw [hff]
+    -- LHS is map over (ofList (listChoices ... (α.count false))).
+    -- RHS has nested map: map (buildFIns ...) (map (mergeData ...) (ofList ...)). Merge via map_map.
+    rw [Multiset.map_map]
+    -- Both sides are .map over Multiset.ofList (listChoices (perKFChoice F_rest) (α.count false)).
+    refine Multiset.map_congr rfl fun fdata hfdata => ?_
+    have hf_len : fdata.length = α.count false := by
+      have := mem_listChoices_length (perKFChoice F_rest) (α.count false) fdata
+        (Multiset.mem_coe.mp hfdata)
+      exact this
+    -- Goal: ((multiGraft T (c_T.zip (filter_t α)) :: ·) ∘ buildFIns F_rest (filter_f α)) fdata
+    --     = ((buildFIns (T :: F_rest) pre_FA_B) ∘ mergeData α c_T) fdata
+    -- After unfolding the composition:
+    -- LHS: multiGraft T (c_T.zip (filter_t α)) :: buildFIns F_rest (filter_f α) fdata
+    -- RHS: buildFIns (T :: F_rest) pre_FA_B (mergeData α c_T fdata)
+    -- This is exactly buildFIns_cons_decompose, used in reverse.
+    show multiGraft T (c_T.zip ((pre_FA_B.zip α).filterMap
+            (fun p => if p.snd then some p.fst else none))) ::
+        buildFIns F_rest ((pre_FA_B.zip α).filterMap
+            (fun p => if p.snd then none else some p.fst)) fdata =
+        buildFIns (T :: F_rest) pre_FA_B (mergeData α c_T fdata)
+    exact (buildFIns_cons_decompose T F_rest pre_FA_B α c_T fdata hpf hc_len hf_len).symm
 
 /-! ### §1.8.1 buildFIns base properties
 
