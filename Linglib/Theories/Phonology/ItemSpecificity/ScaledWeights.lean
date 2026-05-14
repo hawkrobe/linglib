@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.LexicalFrequency.Defs
+import Linglib.Theories.Phonology.ItemSpecificity.Defs
 import Linglib.Core.Constraint.OT.Basic
 
 /-!
@@ -37,9 +37,9 @@ theory needs separate slopes per constraint — which it has, and so
 remains a viable account.
 -/
 
-namespace Phonology.LexicalFrequency.Scaled
+namespace Phonology.ItemSpecificity.Scaled
 
-open Phonology.LexicalFrequency
+open Phonology.ItemSpecificity
 open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
@@ -91,4 +91,4 @@ theorem scaledWeight_monotone_in_freq
   unfold scaledWeight
   exact (add_le_add_iff_left baseWeight).mpr (mul_le_mul_of_nonneg_left hab h)
 
-end Phonology.LexicalFrequency.Scaled
+end Phonology.ItemSpecificity.Scaled

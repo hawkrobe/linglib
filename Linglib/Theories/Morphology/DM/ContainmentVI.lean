@@ -381,57 +381,9 @@ theorem csg_part2_vi (rules : List LocalVIRule) (defaultForm : Nat)
 /-- VI-generated root suppletion patterns are AAA or ABB only. *ABA is
     excluded by contiguity; *AAB and ABC (for root suppletion) are
     excluded by VI locality (CMPR cell = SPRL cell). -/
-theorem vi_pattern_abb_or_aaa (rules : List LocalVIRule) (defaultForm : Nat) :
+theorem vi_cmpr_eq_sprl_corollary (rules : List LocalVIRule) (defaultForm : Nat) :
     (viPattern rules defaultForm).cmpr = (viPattern rules defaultForm).sprl :=
   vi_cmpr_eq_sprl rules defaultForm
-
--- ============================================================================
--- § 9: Domain-Aware Framing
--- ============================================================================
-
-/-! `vi_cmpr_eq_sprl` is implicitly an "all-positions-same-domain"
-theorem: under @cite{bobaljik-2012}'s strong-locality assumption
-(now expressed as the subtype refinement `LocalVIRule := { r // r.contextLevel ≤ cmprLevel }`),
-positions 1 (CMPR) and 2 (SPRL) are forced to share a winning rule
-because no rule sees beyond CMPR. This is a degenerate case of
-@cite{moskal-2015a-dissertation}'s domain-based locality where the
-trivial partition (every position in one domain) makes the
-domain-aware constraint vacuous and the structural-locality
-constraint the only operative one.
-
-The corollary below makes the domain-aware framing parametric: future
-consumers (e.g., `Phenomena/Allomorphy/Studies/SmithMoskalEtAl2019`
-§4 wiring case + number partitions) can thread a `DomainPartition`
-explicitly. The `SameDomain π 1 2` hypothesis is unused in the proof
-because the original theorem holds unconditionally — the parametric
-form is a future-proofing shim, not a structural strengthening.
-
-A real domain-relativized variant (where the cap is replaced by a
-partition-aware bound, and the theorem becomes "under domain locality,
-CMPR = SPRL only when in same domain") requires the cap-refinement to
-itself be partition-aware. Deferred until a consumer requires it. -/
-
-open Morphology.DomainLocality
-
-/-- Domain-aware framing of `vi_cmpr_eq_sprl`: under any partition
-    where positions 1 and 2 are in the same domain, VI selects the
-    same root form at CMPR and SPRL. The proof discharges the
-    `SameDomain` hypothesis as unused — the structural-locality
-    refinement on `LocalVIRule` already forces the equality
-    unconditionally. -/
-theorem vi_cmpr_eq_sprl_under_domain
-    {Tag : Type*} [DecidableEq Tag] (π : DomainPartition Tag)
-    (rules : List LocalVIRule) (defaultForm : Nat)
-    (_h : SameDomain π 1 2) :
-    (viPattern rules defaultForm).cmpr = (viPattern rules defaultForm).sprl :=
-  vi_cmpr_eq_sprl rules defaultForm
-
-/-- Trivial-partition recovery: under `DomainPartition.trivial`, the
-    `SameDomain` hypothesis is `rfl`, so `vi_cmpr_eq_sprl_under_domain`
-    reduces to the original `vi_cmpr_eq_sprl`. -/
-theorem vi_cmpr_eq_sprl_trivial (rules : List LocalVIRule) (defaultForm : Nat) :
-    (viPattern rules defaultForm).cmpr = (viPattern rules defaultForm).sprl :=
-  vi_cmpr_eq_sprl_under_domain DomainPartition.trivial rules defaultForm rfl
 
 end Degree
 

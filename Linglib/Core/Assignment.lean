@@ -121,6 +121,19 @@ def valued (g : PartialAssign D) (n : Nat) : Bool :=
 @[simp] theorem update_ne (g : PartialAssign D) {n m : Nat} (d : D)
     (h : m ≠ n) : (g.update n d) m = g m := by simp [update, h]
 
+/-- Updating a partial assignment at `n` to its existing value is a no-op:
+`g.update n a = g` whenever `g n = some a`. The partial-assignment analogue
+of `Assignment.update_self` for total assignments above; needed by formalisations
+that recover the witness as `g(x).get` (e.g., Mandelkern's bounded theory
+§5.6 atomic bound-equivalence proofs). -/
+theorem update_self {g : PartialAssign D} {n : Nat} {a : D}
+    (h : g n = some a) : g.update n a = g := by
+  funext m
+  show (if m = n then some a else g m) = g m
+  by_cases hm : m = n
+  · rw [if_pos hm, hm, h]
+  · rw [if_neg hm]
+
 @[simp] theorem valued_update_at (g : PartialAssign D) (n : Nat) (d : D) :
     (g.update n d).valued n = true := by simp [update, valued]
 

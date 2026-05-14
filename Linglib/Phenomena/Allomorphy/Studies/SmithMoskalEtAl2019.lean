@@ -1,5 +1,6 @@
 import Linglib.Core.Morphology.DegreeContainment
 import Linglib.Core.Case.Allomorphy
+import Linglib.Core.Case.Order
 import Linglib.Theories.Morphology.DM.ContainmentVI
 
 /-!
@@ -296,11 +297,24 @@ What this section ships:
 
 open Morphology.DomainLocality
 
-/-- Case partition: ABS (position 0) + ERG (position 1) in domain
-    `false` (non-oblique); DAT (position 2) in domain `true` (oblique).
-    The boundary corresponds to @cite{caha-2009}'s
-    Unmarked-Dependent vs Oblique split. -/
-def caseDomainPartition : DomainPartition Bool := λ i => i ≥ 2
+/-- The 3-cell ergative case paradigm SMSE 2019 analyses: position 0 is
+    ABS, position 1 is ERG, position 2 is DAT. Positions outside this
+    range have no case interpretation (`none`); they default to the
+    non-oblique domain in `caseDomainPartition`. -/
+def caseAtPos : Nat → Option Core.Case
+  | 0 => some .abs
+  | 1 => some .erg
+  | 2 => some .dat
+  | _ => none
+
+/-- Case partition: derived from `Core.Case.IsOblique` via `caseAtPos`.
+    ABS and ERG are off-hierarchy in `containmentRank` (`IsOblique` is
+    `False` for them); DAT contains GEN's representation in the Caha
+    order so `IsOblique .dat` is `True`. The boundary thus corresponds
+    to @cite{caha-2009}'s Unmarked-Dependent vs Oblique split — *as a
+    consequence* of the order substrate, not as a stipulated threshold. -/
+def caseDomainPartition : DomainPartition Bool := λ i =>
+  (caseAtPos i).elim false (λ c => decide (Core.Case.IsOblique c))
 
 /-- Number partition: SG (position 0) + PL (position 1) in domain
     `false` (non-dual); DL (position 2) in domain `true` (dual).
@@ -340,12 +354,10 @@ converse-direction theorem — "under the case partition, there exist
 domain-aware VI rule lists generating Wardaman 3SG-shape patterns"
 — requires `Theories.Morphology.DM.ContainmentVI.Degree.LocalVIRule` to
 be extended with a domain field so its locality bound becomes
-partition-relativized. The current `LocalVIRule.locality` field
-is structurally Bobaljik-style (`condGrade.rank ≤ cmpr.rank`,
-unconditional) and forces `vi_cmpr_eq_sprl` regardless of partition
-— see `Theories.Morphology.DM.ContainmentVI.Degree.vi_cmpr_eq_sprl_under_domain`
-for the domain-aware framing that proves the same result with an
-unused `SameDomain` hypothesis.
+partition-relativized. The current `LocalVIRule.locality` field is structurally Bobaljik-style
+(`condGrade.rank ≤ cmpr.rank`, unconditional) and forces `vi_cmpr_eq_sprl`
+regardless of partition. A domain-aware variant requires a
+partition-aware cap-refinement on the rule type itself, sketched below.
 
 A concrete `DomainLocalVIRule` shape for that follow-up:
 

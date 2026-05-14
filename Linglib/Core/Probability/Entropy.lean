@@ -1,5 +1,6 @@
 import Linglib.Core.Probability.Finite
 import Linglib.Core.Probability.Posterior
+import Linglib.Core.Probability.Constructions
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 import Mathlib.InformationTheory.KullbackLeibler.Basic
@@ -68,87 +69,8 @@ variable {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
 open scoped ENNReal
 
 -- ============================================================================
--- §1: ENNReal-to-Real coercion + sum-to-1 lemma
--- ============================================================================
-
-/-- Coerce a `PMF α`'s mass function from `ℝ≥0∞` to `ℝ`. -/
-noncomputable def toRealFn (p : PMF α) : α → ℝ := fun a => (p a).toReal
-
-theorem toRealFn_nonneg {α : Type*} (p : PMF α) (a : α) : 0 ≤ p.toRealFn a :=
-  ENNReal.toReal_nonneg
-
-theorem toRealFn_le_one {α : Type*} (p : PMF α) (a : α) : p.toRealFn a ≤ 1 := by
-  have h := p.coe_le_one a
-  unfold toRealFn
-  exact ENNReal.toReal_le_of_le_ofReal zero_le_one (by simpa using h)
-
-/-- For a `[Fintype α]` PMF, the sum of `toReal`-coerced masses is 1. -/
-theorem sum_toRealFn_eq_one (p : PMF α) :
-    ∑ a, p.toRealFn a = 1 := by
-  -- Step 1: ∑ a, p a = 1 in ℝ≥0∞ (use the pattern from Finite.lean line 73)
-  have h_sum_ennreal : ∑ a : α, p a = 1 :=
-    (PMF.tsum_coe p ▸ tsum_eq_sum (fun a (h : a ∉ Finset.univ) =>
-      absurd (Finset.mem_univ a) h)).symm
-  -- Step 2: convert to ℝ via toReal_sum (each summand is finite)
-  unfold toRealFn
-  rw [show (∑ a, (p a).toReal) = ((∑ a : α, p a) : ℝ≥0∞).toReal from
-      (ENNReal.toReal_sum (fun a _ => p.apply_ne_top a)).symm]
-  rw [h_sum_ennreal, ENNReal.toReal_one]
-
--- ============================================================================
--- §1.5: PMF construction from real-valued weight functions
--- ============================================================================
-
-/-! ### Constructing PMFs from `α → ℝ` weight functions
-
-The bridge consumers use to convert their `(α → ℝ)`-shape data
-(non-negative weights with a positive sum) into the canonical `PMF α`.
-Wraps mathlib's `PMF.normalize` with the ENNReal coercion.
-
-Anti-drift: grounded in `PMF.normalize` (mathlib). -/
-
-/-- Construct a `PMF α` from a non-negative real-valued weight function with
-    at least one positive entry. Normalizes to sum to 1.
-
-    Use this for consumers migrating from the (deprecated)
-    `Core.InformationTheory.entropy Finset.univ p`-style API: the new shape
-    is `(PMF.ofRealWeightFn p hp_nn ⟨a, ha⟩).entropy`. -/
-noncomputable def ofRealWeightFn {α : Type*} [Fintype α]
-    (f : α → ℝ) (_h_nonneg : ∀ a, 0 ≤ f a)
-    (h_pos : ∃ a, 0 < f a) : PMF α :=
-  let g : α → ℝ≥0∞ := fun a => ENNReal.ofReal (f a)
-  PMF.normalizeOfFintype g (Classical.choose h_pos)
-    (by
-      simp only [g, ne_eq, ENNReal.ofReal_eq_zero, not_le]
-      exact Classical.choose_spec h_pos)
-    (fun _ => ENNReal.ofReal_ne_top)
-
-/-- **Round-trip**: when `f` is already normalized (sums to 1 in ℝ),
-    `ofRealWeightFn`'s normalization divides by 1, so the resulting PMF's
-    `toRealFn` recovers `f` exactly.
-
-    Bridge for ℝ-native consumers: any `(p : α → ℝ)` already satisfying
-    PMF axioms (`hp_nn`, `hp_sum_one`, plus a positivity witness for
-    `ofRealWeightFn`) round-trips losslessly through `PMF.ofRealWeightFn`. -/
-theorem ofRealWeightFn_toRealFn_eq {α : Type*} [Fintype α]
-    (f : α → ℝ) (h_nonneg : ∀ a, 0 ≤ f a) (h_pos : ∃ a, 0 < f a)
-    (h_sum_one : ∑ a, f a = 1) :
-    (PMF.ofRealWeightFn f h_nonneg h_pos).toRealFn = f := by
-  funext a
-  -- The unnormalized ENNReal weights sum to 1.
-  have h_tsum :
-      (∑' x : α, ENNReal.ofReal (f x)) = 1 := by
-    rw [tsum_eq_sum (fun x (h : x ∉ Finset.univ) =>
-          absurd (Finset.mem_univ x) h),
-        ← ENNReal.ofReal_sum_of_nonneg (fun x _ => h_nonneg x),
-        h_sum_one, ENNReal.ofReal_one]
-  -- Reduce `ofRealWeightFn` to the underlying `PMF.normalize` and compute.
-  unfold ofRealWeightFn PMF.normalizeOfFintype toRealFn
-  rw [PMF.normalize_apply, h_tsum, inv_one, mul_one,
-      ENNReal.toReal_ofReal (h_nonneg a)]
-
--- ============================================================================
--- §2: Entropy
+-- §1: Entropy
+-- (ENNReal-to-Real coercion + PMF constructors live in `Constructions.lean`)
 -- ============================================================================
 
 /-- Shannon entropy of `p` (in nats): `H(p) = -∑ p log p = ∑ negMulLog p`.

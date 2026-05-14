@@ -155,6 +155,30 @@ def IsNonnominative (c : Case) : Prop := (.acc : Case) ≤ c
 instance (c : Case) : Decidable (IsNonnominative c) :=
   inferInstanceAs (Decidable ((.acc : Case) ≤ c))
 
+/-- A case is **oblique** iff its representation contains GEN's, i.e.
+    `(.gen : Case) ≤ c` in the Caha order. Per @cite{caha-2009}'s
+    Unmarked-Dependent vs Oblique split, NOM/ACC are unmarked-dependent
+    and GEN/DAT/LOC/INS/COM/etc. are oblique. Ergative-aligned ABS/ERG
+    are off-hierarchy in `containmentRank` and so satisfy `¬ IsOblique`
+    (consistent with their parallel-to-NOM/ACC structural status). -/
+def IsOblique (c : Case) : Prop := (.gen : Case) ≤ c
+
+instance (c : Case) : Decidable (IsOblique c) :=
+  inferInstanceAs (Decidable ((.gen : Case) ≤ c))
+
+/-- The four core McFadden-hierarchy cases stratify cleanly between
+    non-oblique (NOM, ACC) and oblique (GEN, DAT). -/
+theorem isOblique_split_core :
+    ¬ IsOblique .nom ∧ ¬ IsOblique .acc ∧ IsOblique .gen ∧ IsOblique .dat := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+
+/-- Ergative-aligned ABS/ERG are not oblique under the Caha hierarchy
+    (off-hierarchy → incomparable with GEN). This makes the predicate
+    usable for SMSE 2019-style ergative paradigms (Wardaman, Khinalugh). -/
+theorem isOblique_erg_abs_false :
+    ¬ IsOblique .erg ∧ ¬ IsOblique .abs := by
+  refine ⟨?_, ?_⟩ <;> decide
+
 -- ============================================================================
 -- § Sanity Chain: NOM < ACC < GEN < DAT < LOC
 -- ============================================================================

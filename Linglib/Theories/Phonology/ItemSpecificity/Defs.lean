@@ -6,11 +6,10 @@ import Mathlib.Data.Real.Basic
 
 A *frequency channel* on a lexicon is an attachment of a per-item
 log-frequency to lexical entries. Once a lexicon carries one, downstream
-phonology can be conditioned on it: indexed constraints
-(@cite{pater-2010}), frequency-scaled weights (@cite{coetzee-pater-2008},
-@cite{coetzee-kawahara-2013}), gradient/listed representations
-(@cite{moore-cantwell-2021}, @cite{smolensky-goldrick-2016}), or
-whole-word retrieval (@cite{zuraw-2000}).
+phonology can be conditioned on it; the sibling files
+(`IndexedConstraints`, `ScaledWeights`, `UseListed`,
+`RepresentationStrength`) each formalize one such conditioning theory
+and carry their own foundational citations.
 
 This file is `Defs.lean` in the mathlib sense: a thin typeclass layer
 that diverse `Fragments/{Lang}/` lexical-entry types can implement
@@ -24,19 +23,15 @@ Each `Fragments/{Lang}/Prosody.lean` defines its own lexical-entry
 record (`JLexicalEntry`, `ELexicalEntry`, ...). A bundled
 `FrequencyAnnotated` super-record would force every fragment into a
 single inheritance hierarchy. Instead, fragments **implement**
-`HasTokenFreq` (and optionally `HasTypeFreq`) on their own types,
-mirroring mathlib's `HasAdd`, `Mul`, `One`. Same logic as the project's
-existing typeclass discipline (e.g., `HasAltList`, `IsBoundaryVacuous`).
+`HasTokenFreq` on their own types, mirroring mathlib's `HasAdd`,
+`Mul`, `One`. Same logic as the project's existing typeclass
+discipline (e.g., `HasAltList`, `IsBoundaryVacuous`).
 
-## Token vs. type frequency
-
-The two are conceptually orthogonal. Token frequency counts every
-occurrence in a corpus (the central conditioning variable in usage-based
-phonology); type frequency counts distinct lexical items in a pattern
-(the central conditioning variable in productivity / wug-test
-predictions). They sometimes correlate but theories diverge over which
-matters for which alternation. Two separate classes keeps the
-distinction explicit at the type level.
+A type-frequency analogue (`HasTypeFreq`) would be the natural
+sibling typeclass for productivity / wug-test predictions
+(@cite{albright-hayes-2003}); it is not declared here because no
+current theory in the directory consumes it. Add it when the first
+such consumer lands.
 
 ## Log scale
 
@@ -47,7 +42,7 @@ empirically standard predictor and (b) frequency-scaled-weight theories
 want raw counts can `Real.exp ∘ tokenLogFreq`.
 -/
 
-namespace Phonology.LexicalFrequency
+namespace Phonology.ItemSpecificity
 
 -- ============================================================================
 -- § 1: Frequency channels
@@ -63,14 +58,7 @@ abbrev LogFreq : Type := ℝ
 class HasTokenFreq (α : Type) where
   tokenLogFreq : α → LogFreq
 
-/-- A type whose values carry a type log-frequency annotation. Distinct
-    from `HasTokenFreq`: type frequency counts wordforms exemplifying a
-    pattern; token frequency counts running corpus occurrences. -/
-class HasTypeFreq (α : Type) where
-  typeLogFreq : α → LogFreq
-
 export HasTokenFreq (tokenLogFreq)
-export HasTypeFreq  (typeLogFreq)
 
 -- ============================================================================
 -- § 2: Trivial / null channels
@@ -84,7 +72,27 @@ export HasTypeFreq  (typeLogFreq)
     no-information prior. -/
 @[reducible] def trivialTokenFreq (α : Type) : HasTokenFreq α := ⟨fun _ => (0 : ℝ)⟩
 
-/-- The all-zero type-frequency analogue of `trivialTokenFreq`. -/
-@[reducible] def trivialTypeFreq (α : Type) : HasTypeFreq α := ⟨fun _ => (0 : ℝ)⟩
+-- ============================================================================
+-- § 3: Threshold predicate (shared by Indexed and UseListed)
+-- ============================================================================
 
-end Phonology.LexicalFrequency
+/-- An item is *above threshold* iff its token log-frequency reaches
+    `threshold`. The shared primitive used by `Indexed.isCore` (stratum
+    membership for indexed-constraint theories) and `UseListed.isListed`
+    (storage gate for whole-word retrieval theories).
+
+    Declared `abbrev` (= `@[reducible] def`) so that consumer proofs
+    can `show (n : ℝ) ≥ threshold` directly without an explicit
+    unfold step. -/
+abbrev isAboveThreshold {α : Type} [HasTokenFreq α] (threshold : ℝ) (a : α) : Prop :=
+  tokenLogFreq a ≥ threshold
+
+/-- Classical decidability for `isAboveThreshold`. `Real`'s order is
+    decidable only via `Classical.dec`, so all consumers downstream
+    become `noncomputable`. Acceptable for theory specifications;
+    concrete fitting routines operate over rationals or use a
+    thresholded comparison directly. -/
+noncomputable instance {α : Type} [HasTokenFreq α] (threshold : ℝ) :
+    DecidablePred (isAboveThreshold (α := α) threshold) := fun _ => Classical.dec _
+
+end Phonology.ItemSpecificity

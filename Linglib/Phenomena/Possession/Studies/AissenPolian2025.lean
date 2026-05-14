@@ -32,24 +32,64 @@ Together these derive:
   through nominal, no D-layer shields), then Ā-moves from external position
 - Pied-piping: whole DP moves to Spec,CP (DP is visible to wh-probe as a
   unit; subextraction from within is blocked by selective opacity)
-- Why extracted possessors are ALWAYS external (claim (3)): follows from
-  selective opacity — not stipulated
+- Why extracted possessors are ALWAYS external (claim (3) on p. 65):
+  follows from selective opacity — not stipulated
 
 Stranding is further constrained by intervention: an A-positioned DP
 (agent or S_A) between the possessor and T°'s [EPP:D] probe blocks
 possessor raising via Attract Closest.
 
-The paper also identifies three ψ-subject constructions (categorical
-judgment subjects in Spec,TP, @cite{kuroda-1972}): predicative possession,
-experiential collocations, and lexical unaccusatives.
+## ψ-Subject Constructions
+
+A&P identify a family of constructions in which a possessor is interpreted
+as ψ-subject (categorical-judgment subject in Spec,TP, @cite{kuroda-1972}).
+§5 focuses on three **intransitive unaccusative** cases:
+predicative possession (§5.2), experiential collocations (§5.3), and
+ordinary lexical unaccusatives (§5.4). §6.2 extends the analysis to
+configurations where the ψ-subject possessor originates inside a PP:
+path verbs (§6.2.1), locative existentials (§6.2.2), and two-argument
+experiential collocations (§6.2.3). §7.1 further notes that even Psr-A
+can serve as ψ-subject in broad-predicate expressions like *x's fleas
+landed on me*. The `ψConstruction` enumeration below covers the §5
+intransitive subset; §6.2 / §7.1 cases are noted but not enumerated.
+
+## Predecessor Accounts and Comparative Engagement
+
+A&P §4 contests **@cite{little-2020a} / @cite{little-2020b}**, the
+proximate Ch'ol analysis that derives possessor-extraction asymmetries
+from a Diesing-style specificity restriction combined with the Freezing
+Principle (Object Shift of specific objects → frozen for Ā-subextraction).
+A&P argue Little's account fails to extend to non-specific cases:
+Ā-subextraction is blocked from non-specifics as well, so a blanket
+nominal-opacity ban (selective opacity) is needed instead.
+
+The escape-hatch view of @cite{gavruseva-2000} (Spec,DP as left-edge
+position parallel to Spec,CP) is the older predecessor view A&P reject:
+their analysis derives extraction without any DP-internal subextraction
+step. @cite{aissen-1996} is the earlier Tsotsil pied-piping analysis;
+@cite{aissen-1999a} establishes that Tseltalan A's extract freely
+(used in §6.2 to motivate why intervention is by A-position not
+Ā-extraction). @cite{coon-baier-levin-2021} on Mayan agent focus is
+contested in §6.1 (the file currently does not formalize this).
+
+@cite{coon-henderson-2011} and @cite{aissen-1987} are the two competing
+analyses of the Tseltalan possessive applicative (control vs raising);
+A&P adopt the raising analysis, which the file's `DProbeHead.appl` slot
+implicitly assumes.
+
+@cite{heycock-doron-2003} on Hebrew broad subjects is A&P's primary
+cross-linguistic typological precedent for ψ-subjects (cited p. 86 fn 22
+alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 
 ## Integration Points
 
 - `NominalPosition` / `PossessionType` from `NominalStructure.lean`
 - `SpecificityCondition` from `Core/SpecificityCondition.lean`
 - `JudgmentType` from `Core/Discourse/InformationStructure.lean`
-- `GramFunction` from `Fragments/Mayan/Tseltalan.lean`
+- `GramFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
 - `ABSPosition` from `Fragments/Mayan/Params.lean`
+- `ProbeProfile`, `closestGoalB`, `behindHorizonB`, `liftFM` from
+  `Theories/Syntax/Minimalist/{Agree, Basic}.lean`
 -/
 
 namespace AissenPolian2025
@@ -125,13 +165,10 @@ def ArgumentStructureClass.HasVP : ArgumentStructureClass → Prop
 instance : DecidablePred ArgumentStructureClass.HasVP := fun c => by
   cases c <;> unfold ArgumentStructureClass.HasVP <;> infer_instance
 
-/-- Unaccusatives lack a vP layer. -/
+/-- Unaccusatives lack a vP layer; transitives and unergatives have one.
+    The positive directions are immediate from the def; this lemma names
+    the negative direction for stranding-intervention proofs to consume. -/
 theorem unaccusative_no_vP : ¬ ArgumentStructureClass.unaccusative.HasVP := id
-
-/-- Transitives and unergatives both project vP. -/
-theorem vp_distribution :
-    ArgumentStructureClass.transitive.HasVP ∧
-    ArgumentStructureClass.unergative.HasVP := ⟨trivial, trivial⟩
 
 -- ============================================================================
 -- § 3: Probe Types and Selective Opacity
@@ -168,16 +205,18 @@ instance : DecidablePred SelectivelyOpaque := fun p => by
 theorem wh_probes_blocked : SelectivelyOpaque .whProbe := trivial
 theorem d_probes_pass : ¬ SelectivelyOpaque .dProbe := id
 
-/-- Ā-subextraction from within any nominal is impossible. Derived
-    from selective opacity: wh-probes cannot see into nominals. -/
-def CanĀSubextract (_size : NominalSize) : Prop :=
+/-- Ā-subextraction from within a nominal is impossible. Derived from
+    selective opacity: wh-probes cannot see into nominals, regardless of
+    nominal size. The proposition does not depend on `NominalSize` —
+    @cite{aissen-polian-2025} (33) is the universal nominal-opacity ban
+    A&P argue against the size-relative Diesing/Freezing predecessor of
+    @cite{little-2020a} / @cite{little-2020b}. -/
+def CanĀSubextract : Prop :=
   ¬ SelectivelyOpaque .whProbe
 
-instance : DecidablePred CanĀSubextract := fun s => by
-  unfold CanĀSubextract; infer_instance
+instance : Decidable CanĀSubextract := by unfold CanĀSubextract; infer_instance
 
-theorem subextraction_impossible (size : NominalSize) :
-    ¬ CanĀSubextract size := fun h => h trivial
+theorem subextraction_impossible : ¬ CanĀSubextract := fun h => h trivial
 
 -- ────────────────────────────────────────────────────────────────
 -- ProbeType ↔ ProbeProfile bridge
@@ -309,7 +348,8 @@ theorem extraction_complementary (size : NominalSize) :
     ExtractionAvailable .piedPiping size ↔
     ¬ ExtractionAvailable .stranding size := by
   cases size <;>
-    simp [ExtractionAvailable, DLayerShields, NominalSize.IsSpecific]
+    simp only [ExtractionAvailable, DLayerShields, NominalSize.IsSpecific,
+      not_not, not_true_eq_false, not_false_eq_true]
 
 -- ============================================================================
 -- § 6: External Possession (Derived from Selective Opacity)
@@ -326,11 +366,8 @@ theorem extraction_complementary (size : NominalSize) :
     In both cases, the extracted possessor is external at the point
     of Ā-movement. This is A&P's claim (3): "An extracted possessor
     in Tseltalan is always an external possessor." -/
-theorem extracted_always_external :
-    ¬ CanĀSubextract .dp ∧
-    ¬ CanĀSubextract .possP ∧
-    ¬ CanĀSubextract .nP :=
-  ⟨fun h => h trivial, fun h => h trivial, fun h => h trivial⟩
+theorem extracted_always_external : ¬ CanĀSubextract :=
+  subextraction_impossible
 
 -- ============================================================================
 -- § 7: Bridge to NominalStructure
@@ -441,27 +478,65 @@ theorem nonspecific_cannot_be_ψSubject_nP :
 -- § 10: ψ-Subject Constructions
 -- ============================================================================
 
-/-- The three construction types that exhibit ψ-subjects in Tseltalan.
-    @cite{aissen-polian-2025} §5. -/
+/-- The three intransitive-unaccusative ψ-subject constructions of
+    @cite{aissen-polian-2025} §5. **Not exhaustive**: §6.2 adds path
+    verbs, locative existentials, and two-argument experiential
+    collocations (where the ψ-subject possessor originates inside a
+    PP — see `ψPPConstruction` below); §7.1 admits Psr-A as ψ-subject
+    in broad-predicate expressions like *x's fleas landed on me* (not
+    enumerated here, as those are transitive). p. 91 fn 29 / p. 102
+    fn 34 also note transitive/causative versions of experiential
+    collocations where the possessor externalizes to Spec,ApplP rather
+    than Spec,TP — by definition not ψ-subject constructions. -/
 inductive ψConstruction where
   /-- Predicative possession: 'X has Y' via existential construction
-      (Tsotsil *oy*, Tseltal *ay*). ψ-subject = possessor. -/
+      (Tsotsil *oy*, Tseltal *ay*). ψ-subject = possessor of pivot.
+      Structure (44): [TP T° [VP V° PossP]] — V° is the existential. -/
   | predicativePossession
-  /-- Experiential collocation: 'X is angry' (lit: 'x's head gets
-      mixed up'). ψ-subject = experiencer-possessor. -/
+  /-- Experiential collocation (intransitive, §5.3): 'X is angry'
+      (lit: 'x's head gets mixed up'). ψ-subject = experiencer-possessor.
+      Structure (52): [TP T° [VP V° PossP]]. -/
   | experientialCollocation
-  /-- Lexical unaccusative: 'X's money was lost.'
-      ψ-subject = possessor of theme (S_O). -/
+  /-- Lexical unaccusative (§5.4): 'X's money was lost.'
+      ψ-subject = possessor of theme (S_O), present only on the
+      non-specific reading where PossP remains. -/
   | lexicalUnaccusative
   deriving DecidableEq, Repr
 
-/-- The clause type associated with each ψ-subject construction.
-    All three are structurally unaccusative: no vP layer, the sole
-    argument is complement of V. -/
-def ψConstruction.clauseType : ψConstruction → ArgumentStructureClass
-  | .predicativePossession   => .unaccusative
-  | .experientialCollocation  => .unaccusative
-  | .lexicalUnaccusative     => .unaccusative
+/-- Additional ψ-subject configurations from @cite{aissen-polian-2025}
+    §6.2 in which the ψ-subject possessor originates as the object of
+    an internal PP (Psr-OP) rather than as a possessor of the verb's
+    direct internal argument. The clauses are still unaccusative (no vP),
+    but the ψ-subject reaches Spec,TP via raising from inside a PP rather
+    than a PossP. These are ψ-subjects in the same sense as `ψConstruction`
+    above; they are kept in a separate enumeration only because the
+    geometry of extraction (PP-internal origin, locative co-argument)
+    differs from the simple V° + PossP cases of §5. -/
+inductive ψPPConstruction where
+  /-- Path verb (§6.2.1): intransitive motion verb (V° + Theme + PP_loc),
+      e.g. (75a) *Mach'a och wakax [ta s-na]?* 'Who had a cow enter
+      his house?' — ψ-subject = possessor of locative PP, raised over
+      non-specific Theme. -/
+  | pathVerb
+  /-- Locative existential (§6.2.2): same predicative *oy*/*ay* as
+      predicative possession but with PP rather than PossP, e.g. (77b)
+      *Much'u oy ixim [ta s-na]?* 'Who has corn in his/her house?' —
+      ψ-subject = possessor of locative PP, Theme is non-specific. -/
+  | locativeExistential
+  /-- Two-argument experiential collocation (§6.2.3): experiencer
+      introduced in PP whose object is the experiential PossP, e.g.
+      (81) *Mach'u k'ux-at [ta y-o'tan]?* 'Who loves you?' (lit. 'who
+      are you painful in their heart?') — ψ-subject = possessor of
+      PP-experiencer, can extract regardless of Theme specificity. -/
+  | twoArgExperiential
+  deriving DecidableEq, Repr
+
+/-- The clause type for every §5 ψ-construction is unaccusative
+    (@cite{aissen-polian-2025} p. 83 verbatim: "three unaccusative
+    constructions"). The function is constant over its domain — the
+    constraint is intrinsic to membership in `ψConstruction`. -/
+def ψConstruction.clauseType (_ : ψConstruction) : ArgumentStructureClass :=
+  .unaccusative
 
 /-- Whether pied-piping is possible for a given ψ-construction.
 
@@ -487,33 +562,52 @@ theorem exp_coll_no_piedpiping :
 theorem lex_unacc_piedpiping_ok :
     ψConstruction.lexicalUnaccusative.PiedPipingPossible := trivial
 
-/-- All ψ-subject constructions are structurally unaccusative. -/
+/-- Every §5 ψ-construction is structurally unaccusative (true by
+    the type signature of `clauseType`). -/
 theorem ψ_constructions_unaccusative (c : ψConstruction) :
-    c.clauseType = .unaccusative := by cases c <;> rfl
+    c.clauseType = .unaccusative := rfl
 
-/-- All ψ-subject constructions lack a vP layer. -/
+/-- Every §5 ψ-construction lacks a vP layer. Derived from
+    `ψ_constructions_unaccusative` and `unaccusative_no_vP`. -/
 theorem ψ_constructions_no_vP (c : ψConstruction) :
-    ¬ c.clauseType.HasVP := by cases c <;> exact id
+    ¬ c.clauseType.HasVP := id
 
-/-- The grammatical function of the ψ-subject in each construction.
-    All three involve an unaccusative S_O that raises to Spec,TP.
-    @cite{aissen-polian-2025} §5:
-    - Predicative possession: possessor of the existential pivot
-    - Experiential collocation: experiencer-possessor
-    - Lexical unaccusative: possessor of the unaccusative theme -/
-def ψConstruction.ψSubjectFunction : ψConstruction → GramFunction
-  | .predicativePossession  => .S_O
-  | .experientialCollocation => .S_O
-  | .lexicalUnaccusative    => .S_O
+/-- The ψ-subject grammatical function in every §5 construction is S_O
+    (@cite{aissen-polian-2025} §5: in all three, the ψ-subject raises
+    from an unaccusative-internal-argument position). -/
+def ψConstruction.ψSubjectFunction (_ : ψConstruction) : GramFunction :=
+  .S_O
 
-/-- All ψ-subject constructions assign S_O to the ψ-subject. -/
+/-- Every §5 ψ-construction assigns S_O to its ψ-subject. -/
 theorem ψ_constructions_all_S_O (c : ψConstruction) :
-    c.ψSubjectFunction = .S_O := by cases c <;> rfl
+    c.ψSubjectFunction = .S_O := rfl
 
-/-- ψ-subject agreement in each construction is Set B, derived from
+/-- ψ-subject agreement in every §5 construction is Set B, derived from
     the S_O grammatical function via the shared Tseltalan paradigm. -/
 theorem ψ_constructions_setB (c : ψConstruction) :
-    c.ψSubjectFunction.markerSet = .setB := by cases c <;> rfl
+    c.ψSubjectFunction.markerSet = .setB := rfl
+
+/-! ### §6.2 PP-internal ψ-subjects -/
+
+/-- §6.2 PP-internal ψ-constructions are all unaccusative as well: path
+    verbs, locative existentials, and two-arg experiential collocations
+    project no vP layer (the Theme/co-argument may sit in VP but the
+    ψ-subject possessor raises from inside a PP). -/
+def ψPPConstruction.clauseType (_ : ψPPConstruction) : ArgumentStructureClass :=
+  .unaccusative
+
+/-- For PP-internal ψ-subjects the extracted possessor is Psr-OP
+    (possessor of object of preposition). The §6.2 cases differ from §5
+    in that the ψ-subject originates inside a PP rather than a PossP,
+    but the grammatical function on the verb tracks the Theme not the
+    extracted possessor. We do not assign a `GramFunction` here for the
+    extracted Psr-OP because Psr-OP has no per-verb agreement slot in
+    the Tseltalan paradigm. -/
+theorem ψ_pp_constructions_unaccusative (c : ψPPConstruction) :
+    c.clauseType = .unaccusative := rfl
+
+theorem ψ_pp_constructions_no_vP (c : ψPPConstruction) :
+    ¬ c.clauseType.HasVP := id
 
 -- ============================================================================
 -- § 11: Intervention Effects (Table 4)
@@ -566,8 +660,18 @@ structure InterventionDatum where
   blocked : Bool
   deriving DecidableEq, Repr
 
-/-- Table 4 of @cite{aissen-polian-2025} (p. 103): intervention effects
-    on possessor extraction. Expanded to include Appl° probe cases.
+/-- A re-tabulation of @cite{aissen-polian-2025} Table 4 (p. 103) along a
+    different axis. A&P's Table 4 has 10 rows indexed by `(Probe, A-Intervener,
+    Clause Type, Intended Goal)` with a yes/no/yes-no `Ā-movement?` column;
+    it covers Psr-S_O, Psr-O, and Psr-OP goals. Our table re-indexes by
+    `(Probe, Clause Type, Mode, ThematicAppl)` and tracks `blocked` per
+    extraction mode. Only the `Probe × Clause Type × ThematicAppl` rows
+    that fall out of `InterventionBlocks` are captured here; the Psr-OP /
+    locative-PP rows from A&P's Table 4 (rows for path verbs (75), locative
+    existentials (77b/78), PP-island (67-69)) are not yet modelled because
+    the file currently formalizes only PossP-internal possessors as goals.
+    The `ψPPConstruction` enumeration above marks the §6.2 cases as a
+    deferred extension target.
 
     | Probe  | Clause Type    | Thematic Appl | Pied-piping | Stranding |
     |--------|----------------|---------------|-------------|-----------|
@@ -607,37 +711,31 @@ theorem piedPiping_never_blocked (head : DProbeHead) (ct : ArgumentStructureClas
 theorem t_stranding_blocked_iff_vP (ct : ArgumentStructureClass) :
     InterventionBlocks .t ct .stranding ↔ ct.HasVP := by
   cases ct <;>
-    simp [InterventionBlocks, HasIntervener, ArgumentStructureClass.HasVP]
+    simp only [InterventionBlocks, HasIntervener, ArgumentStructureClass.HasVP]
 
 /-- For Appl° probes, stranding is blocked iff Spec,ApplP is filled
     by a thematic applied argument. -/
 theorem appl_stranding_blocked_iff_thematic (ct : ArgumentStructureClass) (ta : Bool) :
     InterventionBlocks .appl ct .stranding ta ↔ ta = true := by
-  cases ta <;> simp [InterventionBlocks, HasIntervener]
+  cases ta <;> simp only [InterventionBlocks, HasIntervener]
 
 -- ============================================================================
--- § 12: Specifier Directionality
+-- § 12: Full Extraction Availability
 -- ============================================================================
 
-/-- Specifier directionality parameter for functional heads.
-    @cite{aissen-polian-2025} §3.1, (10): the default is leftside
-    specifiers, but T°, Appl°, and possibly Poss° take rightside
-    specifiers in Tseltalan. This yields post-verbal ψ-subjects
-    and post-verbal external possessors. -/
-inductive SpecDirection where
-  | left   -- specifier precedes head (e.g., English Spec,TP)
-  | right  -- specifier follows head (Tseltalan Spec,TP, Spec,ApplP)
-  deriving DecidableEq, Repr
+/-! ### Specifier directionality (deferred)
 
-/-- Tseltalan T° takes a right-side specifier. -/
-def tseltalanTSpec : SpecDirection := .right
+@cite{aissen-polian-2025} §3.1, (10) parameterizes specifier direction
+per functional head: the Tseltalan default is leftside, but T°, Appl°,
+and possibly Poss° take rightside specifiers (yielding post-verbal
+ψ-subjects and external possessors). The previous version of this file
+defined `inductive SpecDirection` + `tseltalanTSpec` / `tseltalanApplSpec`
+inline, but these were unused and constituted Fragment-style typological
+data outside `Fragments/`. When a downstream consumer needs them, they
+should land in `Fragments/Mayan/Tseltalan.lean` (subgroup-shared) or
+in `Core/Word.lean` next to `HeadDirection` (the analogous head-vs-
+complement axis), not here. -/
 
-/-- Tseltalan Appl° takes a right-side specifier. -/
-def tseltalanApplSpec : SpecDirection := .right
-
--- ============================================================================
--- § 13: Full Extraction Availability
--- ============================================================================
 
 /-- Combining extraction mode availability (§4) with intervention
     effects (§10): is possessor extraction ultimately possible for
@@ -682,7 +780,7 @@ theorem ψ_constructions_permit_both_modes (c : ψConstruction) :
   cases c <;> decide
 
 -- ============================================================================
--- § 14: Table 2 — Psr-S_O vs Psr-O Extraction Asymmetry
+-- § 13: Table 2 — Psr-S_O vs Psr-O Extraction Asymmetry
 -- ============================================================================
 
 /-- Table 2 of @cite{aissen-polian-2025} (p. 77): possessor extraction
@@ -712,20 +810,27 @@ theorem stranding_asymmetry_is_vP :
     ¬ CanExtractPossessor .possP .t .transitive .stranding := by decide
 
 -- ============================================================================
--- § 15: Bridge to Ergativity
+-- § 14: Bridge to Ergativity
 -- ============================================================================
 
 /-- Tseltalan is LOW-ABS: absolutive agreement follows the verb stem.
-    @cite{aissen-polian-2025} p. 97: in Tseltalan, "A's extract freely"
-    — there are no syntactic ergativity effects. This is consistent with
-    Tada's generalization: LOW-ABS languages lack extraction asymmetries.
+    @cite{aissen-polian-2025} p. 97 quotes @cite{aissen-1999a} and
+    @cite{polian-2013} p. 272: "A's extract freely" — there are no
+    syntactic ergativity effects in Tseltalan. The LOW-ABS / HIGH-ABS
+    parameterization (whether Infl° or v° licenses absolutive case) is
+    associated with a robust extraction-asymmetry generalization in the
+    Mayan literature: HIGH-ABS languages exhibit syntactic ergativity
+    (cf. @cite{coon-mateo-pedro-preminger-2014}); LOW-ABS languages do
+    not. The shared `Fragments.Mayan.Tseltalan.absPosition` constant is
+    the per-subgroup source of truth, definitionally equal to the
+    Tsotsil and Tseltal per-language values.
 
     The intervention effects in Table 4 are NOT about Ā-movement being
     blocked by A-positioned DPs (as in HIGH-ABS/syntactically ergative
     languages). Rather, they are about A-movement (possessor raising)
     being blocked by a closer A-positioned DP, preventing the possessor
     from reaching an external position from which it could Ā-extract. -/
-def tseltalanABSPosition : ABSPosition := .low
+abbrev tseltalanABSPosition : ABSPosition := Fragments.Mayan.Tseltalan.absPosition
 
 theorem tseltalan_is_low_abs :
     tseltalanABSPosition = .low := rfl
@@ -737,7 +842,7 @@ theorem tseltalan_case_locus :
     Fragments.Mayan.CaseLocus.absDef := rfl
 
 -- ============================================================================
--- § 16: Tree-Geometric Derivation (Attract Closest)
+-- § 15: Tree-Geometric Derivation (Attract Closest)
 -- ============================================================================
 
 section AttractClosest
@@ -769,8 +874,9 @@ geometry and which nodes carry D features:
     Matching criterion for T°'s [EPP:D] probe: D-bearing elements
     (possessor DPs, D° heads, agent DPs) are potential goals.
 
-    Phase 1.0 substrate: lifted through `FreeCommMagma.lift`. Only
-    leaf SOs can carry features; .mul cases are universally false. -/
+    Lifted to `SyntacticObject` via `Minimalist.liftFM`. Only leaf SOs
+    can carry features; `.mul` cases are universally false (no
+    structural-position-dependent feature lookup is needed). -/
 private def hasDFeaturesAux : FreeMagma (LIToken ⊕ Nat) → Bool
   | .of (.inl tok) => tok.item.outerCat == .D
   | .of (.inr _) => false  -- traces are not D-bearing
@@ -778,13 +884,10 @@ private def hasDFeaturesAux : FreeMagma (LIToken ⊕ Nat) → Bool
 
 private theorem hasDFeaturesAux_respects (a b : FreeMagma (LIToken ⊕ Nat))
     (h : FreeMagma.CommRel a b) : hasDFeaturesAux a = hasDFeaturesAux b := by
-  induction h with
-  | swap _ _ => rfl
-  | mul_left _ _ _ => rfl
-  | mul_right _ _ _ => rfl
+  induction h <;> rfl
 
 private def hasDFeatures : SyntacticObject → Bool :=
-  FreeCommMagma.lift hasDFeaturesAux hasDFeaturesAux_respects
+  Minimalist.liftFM hasDFeaturesAux hasDFeaturesAux_respects
 
 /-! ### Leaf Nodes -/
 
@@ -902,7 +1005,7 @@ theorem bridge_no_intervention_unacc :
     ¬ HasIntervener .t .unaccusative false := ⟨by decide, id⟩
 
 -- ============================================================================
--- § 17: Selective Opacity from Tree Geometry (N-Horizons)
+-- § 16: Selective Opacity from Tree Geometry (N-Horizons)
 -- ============================================================================
 
 /-! ### Selective Opacity as a Tree Constraint
@@ -918,10 +1021,10 @@ so N° c-commands Psr. This makes Psr invisible to any probe for
 which N° is a horizon. But D° (sister of PossP, NOT c-commanded by
 N°) remains visible — which is why pied-piping works.
 
-Together with § 16 (Attract Closest), both pillars of A&P's analysis
+Together with § 15 (Attract Closest), both pillars of A&P's analysis
 are now derived from tree geometry:
-- **D-layer shielding / intervention** → `closestGoalB` (§ 16)
-- **Selective opacity** → `behindHorizonB` (§ 17)
+- **D-layer shielding / intervention** → `closestGoalB` (§ 15)
+- **Selective opacity** → `behindHorizonB` (§ 16)
 -/
 
 private def C₀ := mkLeaf .C [] 8
@@ -968,13 +1071,12 @@ theorem horizon_present_but_dprobe_ignores :
 
 /-- Selective opacity from tree geometry: the N-horizon blocks
     wh-subextraction of Psr from both DP and PossP nominals,
-    agreeing with `CanĀSubextract`. -/
+    agreeing with `CanĀSubextract` (which is size-independent). -/
 theorem bridge_selective_opacity :
     behindHorizonB treeCPUnaccDP C₀ Psr .N = true ∧
     behindHorizonB treeCPUnaccPossP C₀ Psr .N = true ∧
-    ¬ CanĀSubextract .dp ∧
-    ¬ CanĀSubextract .possP :=
-  ⟨by decide, by decide, fun h => h trivial, fun h => h trivial⟩
+    ¬ CanĀSubextract :=
+  ⟨by decide, by decide, subextraction_impossible⟩
 
 /-- D° visible despite N-horizon: pied-piping is available because
     D° is outside N°'s c-command domain. Agrees with

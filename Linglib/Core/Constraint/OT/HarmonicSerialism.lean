@@ -26,7 +26,7 @@ motivating positive case for the directional variant of HS
 (@cite{lamont-2022b}). For counterfeeding cases linglib offers
 `Theories/Phonology/Process/LocalRewrite.lean` (extrinsic ordering of
 local rewrite rules; subregular-grounded per @cite{chandlee-heinz-2018})
-and `Theories/Phonology/OptimalityTheory/StratalOT.lean` (cyclic ranking)
+and `Theories/Phonology/OptimalityTheory/Stratal.lean` (cyclic ranking)
 as architecturally-distinct alternatives.
 
 ## Sibling architectures
@@ -37,7 +37,7 @@ the parallel-OT primitives in `Basic.lean`:
 | Theory                        | Ranking across calls | Candidate across calls |
 |-------------------------------|----------------------|------------------------|
 | Parallel OT (`Basic.lean`)    | n/a (single call)    | n/a                    |
-| Stratal OT (`StratalOT.lean`) | varies per stratum   | chained via `bridge`   |
+| Stratal OT (`Stratal.lean`) | varies per stratum   | chained via `bridge`   |
 | HS (this file)                | **durable**          | iterated via `gen`     |
 | Stratal HS (not yet)          | varies per stratum   | iterated within stratum |
 

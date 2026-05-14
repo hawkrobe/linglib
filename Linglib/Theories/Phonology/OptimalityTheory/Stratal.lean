@@ -59,7 +59,7 @@ Phrase strata derives the *-am*/*-āni* alternation from a single
 underlying form.
 -/
 
-namespace Phonology.StratalOT
+namespace Phonology.Stratal
 
 open Core.Constraint.OT (NamedConstraint ConstraintFamily mkTableau)
 open Core.Constraint.Evaluation
@@ -105,7 +105,7 @@ instance : LinearOrder Stratum :=
 
     Thin wrapper around `mkTableau` + `optimal` that labels the
     evaluation with its stratum. -/
-def evalStratum {C : Type} [DecidableEq C]
+def evalStratum {C : Type*} [DecidableEq C]
     (_stratum : Stratum)
     (candidates : List C)
     (ranking : List (NamedConstraint C))
@@ -120,7 +120,7 @@ def evalStratum {C : Type} [DecidableEq C]
     material from the next layer (e.g., inflectional suffixes at the Word
     level, postpositions at the Phrase level) and generates candidate
     representations. -/
-def chainEval {C₁ C₂ : Type} [DecidableEq C₂]
+def chainEval {C₁ C₂ : Type*} [DecidableEq C₂]
     (_stratum : Stratum)
     (s₁Output : C₁)
     (bridge : C₁ → List C₂)
@@ -143,7 +143,7 @@ def chainEval {C₁ C₂ : Type} [DecidableEq C₂]
     Candidate types differ across strata because GEN produces different
     representations at each level (e.g., metrical parses at Stem level,
     segmental modifications at Word level). -/
-structure StratalDerivation (S W P : Type) where
+structure StratalDerivation (S W P : Type*) where
   /-- Underlying representation (input to the Stem stratum). -/
   underlyingForm : S
   /-- Optimal output of the Stem stratum. -/
@@ -154,7 +154,7 @@ structure StratalDerivation (S W P : Type) where
   phraseOutput : P
 
 /-- The surface form is the output of the final (Phrase) stratum. -/
-def StratalDerivation.surface {S W P : Type}
+def StratalDerivation.surface {S W P : Type*}
     (d : StratalDerivation S W P) : P :=
   d.phraseOutput
 
@@ -175,13 +175,13 @@ structure ConstraintId where
   deriving DecidableEq, Repr
 
 /-- Extract the identity from a named constraint. -/
-def NamedConstraint.toId {C : Type} (nc : NamedConstraint C) : ConstraintId :=
+def NamedConstraint.toId {C : Type*} (nc : NamedConstraint C) : ConstraintId :=
   ⟨nc.name, nc.family⟩
 
 /-- Find the rank (position) of a constraint by name within a ranking.
     Position 0 = highest-ranked. Returns `none` if the constraint
     is not active at this stratum. -/
-def findRank {C : Type} (name : String)
+def findRank {C : Type*} (name : String)
     (ranking : List (NamedConstraint C)) : Option Nat :=
   go ranking 0
 where
@@ -195,13 +195,13 @@ where
     Example: ONSET is promoted from Word to Phrase level in Telugu
     (@cite{aitha-2026} §5.3), switching from below IDENT-STRESS to
     above it. -/
-def isPromoted {C : Type} (name : String)
+def isPromoted {C : Type*} (name : String)
     (r₁ r₂ : List (NamedConstraint C)) : Prop :=
   match findRank name r₁, findRank name r₂ with
   | some p₁, some p₂ => p₁ < p₂
   | _, _ => False
 
-instance {C : Type} (name : String) (r₁ r₂ : List (NamedConstraint C)) :
+instance {C : Type*} (name : String) (r₁ r₂ : List (NamedConstraint C)) :
     Decidable (isPromoted name r₁ r₂) := by
   unfold isPromoted; split <;> infer_instance
 
@@ -211,13 +211,49 @@ instance {C : Type} (name : String) (r₁ r₂ : List (NamedConstraint C)) :
     Example: *DIST-0 is demoted from Word to Phrase level in Telugu
     (@cite{aitha-2026} §5.3), allowing consonant retention at phrase
     boundaries. -/
-def isDemoted {C : Type} (name : String)
+def isDemoted {C : Type*} (name : String)
     (r₁ r₂ : List (NamedConstraint C)) : Prop :=
   isPromoted name r₂ r₁
 
-instance {C : Type} (name : String) (r₁ r₂ : List (NamedConstraint C)) :
+instance {C : Type*} (name : String) (r₁ r₂ : List (NamedConstraint C)) :
     Decidable (isDemoted name r₁ r₂) := by
   unfold isDemoted; infer_instance
+
+/-- Cross-stratum promotion: `name` is ranked higher (closer to 0) in
+    `r₁ : List (NamedConstraint C₁)` than in `r₂ : List (NamedConstraint C₂)`.
+    Generalises `isPromoted` to permit different candidate types between
+    strata, which is the typical case in Stratal OT — e.g. Word-stratum
+    candidates carry segmental modifications while Phrase-stratum
+    candidates carry boundary-prosody modifications. The constraint
+    inventory is shared by *name*, not by candidate type.
+
+    Example: ONSET is promoted from Word to Phrase level in Telugu
+    (@cite{aitha-2026} §5.3), even though the Word and Phrase strata
+    score different candidate types. -/
+def isPromotedAcross {C₁ C₂ : Type*} (name : String)
+    (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) : Prop :=
+  match findRank name r₁, findRank name r₂ with
+  | some p₁, some p₂ => p₁ < p₂
+  | _, _ => False
+
+instance {C₁ C₂ : Type*} (name : String)
+    (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) :
+    Decidable (isPromotedAcross name r₁ r₂) := by
+  unfold isPromotedAcross; split <;> infer_instance
+
+/-- Cross-stratum demotion. Dual of `isPromotedAcross`.
+
+    Example: `*DIST-0` is demoted from Word to Phrase level in Telugu
+    (@cite{aitha-2026} §5.3), permitting consonant retention at phrase
+    boundaries that would otherwise trigger compensatory lengthening. -/
+def isDemotedAcross {C₁ C₂ : Type*} (name : String)
+    (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) : Prop :=
+  isPromotedAcross name r₂ r₁
+
+instance {C₁ C₂ : Type*} (name : String)
+    (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) :
+    Decidable (isDemotedAcross name r₁ r₂) := by
+  unfold isDemotedAcross; infer_instance
 
 -- ============================================================================
 -- § 5: Ranking Specification
@@ -296,4 +332,4 @@ theorem stem_feeds_word : isOutputFeeding .stem .word := rfl
 theorem word_feeds_phrase : isOutputFeeding .word .phrase := rfl
 theorem stem_not_feeds_phrase : ¬ isOutputFeeding .stem .phrase := by decide
 
-end Phonology.StratalOT
+end Phonology.Stratal

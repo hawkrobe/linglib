@@ -1,4 +1,5 @@
 import Linglib.Paradigms.AcceptabilityJudgment
+import Linglib.Phenomena.Islands.Basic
 
 open Paradigms.AcceptabilityJudgment
 
@@ -15,57 +16,16 @@ and subject constraint.
 
 ## Vocabulary types
 
-The descriptive vocabulary for island constraints is defined here at its
-point of origin. Source and strength classifications are NOT stipulated —
-each study derives its own from its theoretical commitments. See:
+The descriptive `ConstraintType` / `ConstraintStrength` / `IslandSource`
+enums live in `Phenomena/Islands/Basic.lean` (cross-paper substrate),
+re-exported transitively for any consumer that already imports this file.
+Source and strength classifications are NOT stipulated globally — each
+study derives its own from its theoretical commitments. See:
 - `MannerOfSpeaking.lean`: `mosIslandSources`, `mosIslandStrength`
 - `ShenHuang2026.lean`: `definiteNominalSources`, `definiteNominalStrength`
-- `Adger2025.lean`: `alDerivedSource`, `subjectIslandStrength`
+- `Adger2025.lean`: `adgerSubjectIslandSource`, `adgerDefiniteNominalSources`
 - `CartnerEtAl2026.lean`: `subjectIslandSource`
 -/
-
--- ============================================================================
--- Island Constraint Vocabulary
--- ============================================================================
-
-/-- Types of island constraints (descriptive labels) -/
-inductive ConstraintType where
-  | embeddedQuestion  -- Wh-word blocks further wh-dependency
-  | complexNP         -- Complex NP blocks dependency
-  | adjunct           -- Adjunct clause blocks dependency
-  | coordinate        -- Coordination blocks asymmetric dependency
-  | subject           -- Subject position blocks dependency
-  | sententialSubject -- Sentential subject blocks dependency
-  | mannerOfSpeaking  -- MoS verb complement backgrounds content (@cite{lu-pan-degen-2025})
-  | definiteNominal   -- Definite/specific DP blocks dependency
-                       -- (@cite{chomsky-1973}, @cite{shen-huang-2026})
-  deriving Repr, DecidableEq
-
-/-- Constraint strength classification -/
-inductive ConstraintStrength where
-  | strong  -- Consistently blocks the dependency
-  | weak    -- Ameliorated in some contexts (e.g., D-linked wh-phrases)
-  deriving Repr, DecidableEq
-
-/-- Source of an island constraint: what mechanism produces it.
-Distinguishes structural accounts (subjacency), processing accounts
-(memory load), semantic accounts (binding restrictions), and discourse
-accounts (information structure).
-
-These are descriptive labels for the mechanism — the classification of
-which source applies to which island type is a theoretical claim, derived
-in individual study files from their theoretical commitments. -/
-inductive IslandSource where
-  /-- Syntactic: island follows from structural configuration (PIC, subjacency) -/
-  | syntactic
-  /-- Semantic: island follows from a binding restriction (Specificity Condition) -/
-  | semantic
-  /-- Processing: island is an artifact of memory/retrieval difficulty -/
-  | processing
-  /-- Discourse: island arises from information-structural backgroundedness (@cite{goldberg-2006}, 2013;
-  @cite{lu-pan-degen-2025}) -/
-  | discourse
-  deriving Repr, DecidableEq
 
 namespace Ross1967
 

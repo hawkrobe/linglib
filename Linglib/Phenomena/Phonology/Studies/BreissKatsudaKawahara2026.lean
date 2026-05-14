@@ -1,9 +1,9 @@
 import Linglib.Fragments.Japanese.Prosody
-import Linglib.Theories.Phonology.LexicalFrequency.Defs
-import Linglib.Theories.Phonology.LexicalFrequency.ScaledWeights
-import Linglib.Theories.Phonology.LexicalFrequency.RepresentationStrength
-import Linglib.Theories.Phonology.LexicalFrequency.IndexedConstraints
-import Linglib.Theories.Phonology.LexicalFrequency.UseListed
+import Linglib.Theories.Phonology.ItemSpecificity.Defs
+import Linglib.Theories.Phonology.ItemSpecificity.ScaledWeights
+import Linglib.Theories.Phonology.ItemSpecificity.RepresentationStrength
+import Linglib.Theories.Phonology.ItemSpecificity.IndexedConstraints
+import Linglib.Theories.Phonology.ItemSpecificity.UseListed
 import Linglib.Theories.Phonology.ParadigmUniformity.Defs
 import Linglib.Theories.Phonology.ParadigmUniformity.LexicalConservatism
 import Linglib.Theories.Phonology.ParadigmUniformity.OptimalParadigms
@@ -67,7 +67,7 @@ This puts the paper at the intersection of:
   `ParadigmUniformity/LexicalConservatism.lean`).
 - @cite{coetzee-pater-2008} *Frequency-scaled weights* (the modulation
   channel — token-frequency drives a continuous weight; see
-  `LexicalFrequency/ScaledWeights.lean`).
+  `ItemSpecificity/ScaledWeights.lean`).
 
 The previous constraint-based account of @cite{ito-mester-1996} /
 @cite{ito-mester-2003} treats nasalisation as the result of a
@@ -77,13 +77,13 @@ alternation. BKK 2026's contribution is the **sign of the two
 frequency channels** and the **architectural commitment** that the
 two-direction story collapses to one direction in the bound case.
 
-## Connection to LexicalFrequency theories
+## Connection to ItemSpecificity theories
 
 The companion modelling paper (Breiss, Katsuda & Kawahara,
 lingbuzz/009508) fits a MaxEnt grammar with @cite{steriade-2000}'s
 Lexical Conservatism. We do not formalise the fitting routine here.
 The discrimination this study makes against the four siblings in
-`Theories/Phonology/LexicalFrequency/`:
+`Theories/Phonology/ItemSpecificity/`:
 
 - **ScaledWeights** (@cite{coetzee-pater-2008}): consistent with the
   data, with separate slopes per channel (positive on cpd freq,
@@ -119,8 +119,8 @@ favouring a paradigm-anchored account.
 namespace Phenomena.Phonology.Studies.BreissKatsudaKawahara2026
 
 open Fragments.Japanese.Prosody
-open Phonology.LexicalFrequency
-open Phonology.LexicalFrequency.Scaled (scaledWeight)
+open Phonology.ItemSpecificity
+open Phonology.ItemSpecificity.Scaled (scaledWeight)
 open Phonology.ParadigmUniformity (liftPairwise lcParadigm mkLCFaith lc_unanchored_zero)
 open Paradigms.WugTest (Attestation HasFactor HasAttestation HasFrequency Rate
   NovelShowsFreqGradient NovelInvariantInFrequency

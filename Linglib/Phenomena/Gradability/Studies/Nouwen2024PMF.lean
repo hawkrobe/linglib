@@ -142,15 +142,16 @@ theorem heightPriorENN_pos (h : Height) : heightPriorENN h ≠ 0 := by
 theorem heightPriorENN_finite (h : Height) : heightPriorENN h ≠ ∞ :=
   ENNReal.ofReal_ne_top
 
-/-- The height prior as a normalized `PMF Height`. Uses
-`PMF.normalizeOfFintype` (the Fintype-specialised constructor that reduces
-tsum positivity/finiteness to per-element checks) instead of the more
-verbose `PMF.normalize` + tsum-discharge pattern. -/
+/-- The height prior as a normalized `PMF Height`. Built directly from
+mathlib's `PMF.normalize` with the Fintype-shape tsum discharges:
+`tsum_ne_zero_iff` (witness form) and `tsum_ne_top_of_fintype`. -/
 noncomputable def heightPriorPMF : PMF Height :=
-  PMF.normalizeOfFintype heightPriorENN (deg 3) (heightPriorENN_pos _) heightPriorENN_finite
+  PMF.normalize heightPriorENN
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨deg 3, heightPriorENN_pos _⟩)
+    (ENNReal.tsum_ne_top_of_fintype heightPriorENN_finite)
 
 theorem heightPriorPMF_pos (h : Height) : heightPriorPMF h ≠ 0 := by
-  unfold heightPriorPMF PMF.normalizeOfFintype
+  unfold heightPriorPMF
   rw [PMF.normalize_apply]
   exact mul_ne_zero (heightPriorENN_pos h)
     (ENNReal.inv_ne_zero.mpr (ENNReal.tsum_ne_top_of_fintype heightPriorENN_finite))

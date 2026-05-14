@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.MaxEnt
 import Linglib.Core.Constraint.System
-import Linglib.Core.Constraint.Variation
+import Linglib.Core.Constraint.Weighted
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Fragments.Farsi.Phonology
 
@@ -253,8 +253,8 @@ theorem stormeSystem_epenthesis_gt_deleteV1 :
     (stormeSystem .ae_ah).predict HiatusOutput.epenthesis :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
-    (harmonyScoreR_lt_of_moreProbable (by native_decide :
-      moreProbable classicalConstraints (.ae_ah, .epenthesis) (.ae_ah, .deleteV1)))
+    (harmonyScoreR_lt_of_dominates (by native_decide :
+      harmonyDominates classicalConstraints (.ae_ah, .epenthesis) (.ae_ah, .deleteV1)))
 
 /-- The classical Persian system at /æ.ɑ/ is a probability distribution
     over `HiatusOutput`. Follows from the generic `softmaxDecoder_isProb`. -/

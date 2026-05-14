@@ -159,6 +159,53 @@ theorem wh_is_Ā : keineWhLicensing.isĀProbe = true := by decide
 theorem ābar_is_Ā : keineĀProbe.isĀProbe = true := by decide
 
 -- ============================================================================
+-- § 4b: Ā-Dependency Subtype (@cite{deal-2026})
+-- ============================================================================
+
+/-! ### Ā-dependency as Probe-subtype
+
+@cite{deal-2026} argues that Nez Perce relative-embedding (RE) clauses contain
+an internal Ā-dependency *from a high functional projection above TP*. The
+unification target — Deal's "Ā-dependency" — is realised here as a subtype
+of `ProbeProfile` rather than as a parallel new structure: any Probe with
+`isĀProbe = true` IS an Ā-dependency primitive in Deal's sense.
+
+This avoids cascade: existing consumers of `ProbeProfile` (wh-licensing in
+`Questions.lean`, the keine probes here, language-specific configurations)
+remain unchanged, and `AbarDep` is a thin wrapper providing only the predicate
+`isĀProbe = true` as a proof-relevant invariant. -/
+
+/-- An Ā-probe: a `ProbeProfile` carrying a proof that it is Ā-positioned
+    (probeHead at or above C, fValue ≥ 6).
+
+    @cite{deal-2026} consumes this to express the Nez Perce RE structure:
+    each RE-taker selects a CP whose internal probe is an `AbarDep`. By
+    contrast, simplex-embedding verbs (Nez Perce *neki* 'think', *hi* 'say',
+    *cuukwe* 'know') select bare CPs with no internal `AbarDep`. -/
+def AbarDep := { p : ProbeProfile // p.isĀProbe = true }
+
+/-- An `AbarDep` projects back to its underlying probe. -/
+def AbarDep.toProbe (a : AbarDep) : ProbeProfile := a.val
+
+/-- The keine Ā-probe is an `AbarDep` (lifted from `ābar_is_Ā`). -/
+def keineĀDep : AbarDep := ⟨keineĀProbe, ābar_is_Ā⟩
+
+/-- The wh-licensing probe is also an `AbarDep` (sits on C, fValue 6). -/
+def keineWhDep : AbarDep := ⟨keineWhLicensing, wh_is_Ā⟩
+
+/-- An Ā-dependency originates "above TP" iff its probe head's fValue exceeds
+    that of T. This is @cite{deal-2026} §5's "high functional projection"
+    structural diagnostic. -/
+def AbarDep.isHigh (a : AbarDep) : Bool :=
+  fValue a.val.probeHead > fValue .T
+
+/-- The keine Ā-probe is high (sits on C, fValue 6 > T's fValue 2). -/
+theorem keineĀDep_isHigh : keineĀDep.isHigh = true := by decide
+
+/-- The wh-licensing dependency is high. -/
+theorem keineWhDep_isHigh : keineWhDep.isHigh = true := by decide
+
+-- ============================================================================
 -- § 5: Language-Parameterized Probe Configs (@cite{keine-2020})
 -- ============================================================================
 

@@ -5,7 +5,7 @@ import Linglib.Core.Case.Allomorphy
 import Linglib.Core.Constraint.System
 import Linglib.Theories.Phonology.Prosodic.Syllable.Foot
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
+import Linglib.Theories.Phonology.OptimalityTheory.Stratal
 import Linglib.Theories.Phonology.Prosodic.Word
 import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Phonology.Prosodic.Moraic.CompensatoryLengthening
@@ -79,12 +79,19 @@ def TeluguCase.toCore : TeluguCase → Core.Case
   | .dat => .dat
   | .loc => .loc
 
-/-- Does this Telugu case bear the ACC feature (nonnominative)?
-    Under @cite{mcfadden-2018}'s containment analysis, all
-    nonnominative cases include ACC in their representation. -/
-def TeluguCase.hasACC : TeluguCase → Bool
-  | .nom => false
-  | .acc | .gen | .dat | .loc => true
+/-- Is this Telugu case nonnominative? Derived from
+    `Core.Case.IsNonnominative`, which is `(.acc : Case) ≤ c` under the
+    @cite{caha-2009}/@cite{mcfadden-2018} containment ordering. The full
+    containment hierarchy lives at `Core.Case.Order` (`containmentRank`,
+    `cahaLE`); Aitha's *n*-head VI rules condition on this binary
+    projection of the hierarchy down to a NOM-vs-oblique contrast at
+    the *n* head — the layered hierarchy is the substrate, the binary
+    split is the Telugu-*n*-specific reduction. -/
+def TeluguCase.IsNonnom (c : TeluguCase) : Prop :=
+  Core.Case.IsNonnominative c.toCore
+
+instance (c : TeluguCase) : Decidable (TeluguCase.IsNonnom c) :=
+  inferInstanceAs (Decidable (Core.Case.IsNonnominative c.toCore))
 
 -- ────────────────────────────────────────────────────────────────────
 -- Strong noun paradigm: *illu* 'house'
@@ -121,7 +128,7 @@ def uIParadigm : StrongParadigm := ⟨"u", "i"⟩
 
 /-- Surface form of *n* given a strong paradigm and case. -/
 def strongSurface (p : StrongParadigm) (c : TeluguCase) : String :=
-  if c.hasACC then p.oblForm else p.nomForm
+  if c.IsNonnom then p.oblForm else p.nomForm
 
 -- ────────────────────────────────────────────────────────────────────
 -- Weak noun paradigm: *samudram* 'ocean'
@@ -147,24 +154,27 @@ def weakParadigm : TeluguCase → WeakStemForm
 -- ============================================================================
 
 /-- Morphosyntactic context for VI at the *n* head in Telugu.
-    A context consists of a root class and case features. -/
+    Carries the root class and the Telugu case directly; nonnominativity
+    is derived from `case.IsNonnom` rather than stored as a Bool — so
+    the McFadden 2018 / Caha 2009 containment substrate is the source of
+    truth at every VI use site. -/
 structure NContext where
   rootClass : StrongClass
-  hasAccFeature : Bool
+  case : TeluguCase
   deriving DecidableEq, Repr
 
 /-- VI rule for NOM *n* of the -lu∼-ṭi class.
-    No ACC feature required → this is the elsewhere/default rule. -/
+    No nonnominative requirement → this is the elsewhere/default rule. -/
 def viLuNom : VocabItem NContext Unit :=
   { exponent := "lu"
   , contextMatch := λ ctx => ctx.rootClass == .luTi
   , specificity := 1 }
 
 /-- VI rule for oblique *n* of the -lu∼-ṭi class.
-    Requires ACC → more specific, wins over `viLuNom` in non-NOM. -/
+    Requires `case.IsNonnom` → more specific, wins over `viLuNom` in non-NOM. -/
 def viLuObl : VocabItem NContext Unit :=
   { exponent := "ṭi"
-  , contextMatch := λ ctx => ctx.rootClass == .luTi && ctx.hasAccFeature
+  , contextMatch := λ ctx => ctx.rootClass == .luTi && decide ctx.case.IsNonnom
   , specificity := 2 }
 
 /-- VI rule for NOM *n* of the -u∼-i class. -/
@@ -176,7 +186,7 @@ def viUNom : VocabItem NContext Unit :=
 /-- VI rule for oblique *n* of the -u∼-i class. -/
 def viUObl : VocabItem NContext Unit :=
   { exponent := "i"
-  , contextMatch := λ ctx => ctx.rootClass == .uI && ctx.hasAccFeature
+  , contextMatch := λ ctx => ctx.rootClass == .uI && decide ctx.case.IsNonnom
   , specificity := 2 }
 
 /-- All VI rules for strong noun *n*-exponents. -/
@@ -185,7 +195,7 @@ def strongVIRules : List (VocabItem NContext Unit) :=
 
 /-- Build the morphosyntactic context for VI from Telugu case + root class. -/
 def mkNContext (rc : StrongClass) (c : TeluguCase) : NContext :=
-  ⟨rc, c.hasACC⟩
+  ⟨rc, c⟩
 
 -- Elsewhere Condition: oblique rules override default in non-NOM contexts
 
@@ -488,7 +498,7 @@ theorem stem_optimal :
 
 section WordLevel
 
-open Phonology.StratalOT
+open Phonology.Stratal
 open Phonology.ProsodicWord
 open Morphology.DM.RichRepresentation
 
@@ -644,6 +654,169 @@ theorem dat_produces_long : WordCandDat.compLengthen.toStemForm = .long := rfl
 end WordLevel
 
 -- ============================================================================
+-- § 5b: Phrase-Level Phonology — Postpositional Case
+-- ============================================================================
+
+/-! Paper §5.3 develops the Phrase-level stratum, where constraint
+ranking is *re*ranked relative to the Word level. This is the empirical
+core of the "Stratal" claim: the same constraint inventory (`*DIST-0`,
+`MAX`, `IDENT-STRESS`, ...) is *demoted* or *promoted* across the
+Word→Phrase boundary, producing different optimal outputs for the
+same segmental configuration.
+
+Key reranking from paper §5.3: `*DIST-0` is **demoted** from above `MAX`
+at the Word level (deriving m-deletion before singular *-ni*) to below
+`MAX` at the Phrase level (tolerating m-n contact across postposition
+boundary). This subsection encodes paper tableau (66) for `samudram nunci`
+'from ocean': the Phrase-level grammar tolerates the m-n contact
+across the postposition boundary that the Word-level grammar would have
+repaired by compensatory lengthening. -/
+
+section PhraseLevel
+
+open Phonology.Stratal
+
+/-- Phrase-level candidates for the postpositional input
+    `('sa.mu).('dram).('nun).('ci)` ('ocean-from'), the Word-level
+    output of the NOM stratum concatenated with the postposition
+    *-nunci* 'from'. -/
+inductive PhraseCandPostp where
+  /-- (ˈsa.mu).(ˌdrā).(ˌnun).(ˌci) — /m/ deleted, /a/ → /ā/ via CL. -/
+  | compLengthen
+  /-- (ˈsa.mu).(ˌdra).(ˌnun).(ˌci) — /m/ deleted, no CL. -/
+  | deleteM
+  /-- (ˈsa.mu).(ˌdram).(ˌun).(ˌci) — /n/ of postposition deleted. -/
+  | deleteN
+  /-- ☞ (ˈsa.mu).(ˌdram).(ˌnun).(ˌci) — faithful; m-n contact retained. -/
+  | faithful
+  deriving DecidableEq, Repr
+
+/-- Phrase-level ranking for postposition contexts.
+
+    Crucially, `*DIST-0` is now *below* `MAX` — the reverse of the Word
+    stratum (file:584). This is the headline cross-stratum reranking of
+    paper §5.3.
+
+    | Candidate     | IDENT-STRESS | MAX | *DIST-0 | AL-R |
+    |---------------|--------------|-----|---------|------|
+    | compLengthen  |              | 1*  |         | 1    |
+    | deleteM       |              | 1   |         | 1    |
+    | deleteN       |              | 1   |         |      |
+    | ☞ faithful    |              |     | 1       |      | -/
+def phrasePostpRanking : List (NamedConstraint PhraseCandPostp) :=
+  [ { name := "IDENT-STRESS", family := .faithfulness
+    , eval := λ _ => 0 }
+  , { name := "MAX", family := .faithfulness
+    , eval := λ | .compLengthen => 1 | .deleteM => 1 | .deleteN => 1 | _ => 0 }
+  , { name := "*DIST-0", family := .markedness
+    , eval := λ | .faithful => 1 | _ => 0 }
+  , { name := "ALIGN-RIGHT(Stem,σ)", family := .markedness
+    , eval := λ | .compLengthen => 1 | .deleteM => 1 | _ => 0 } ]
+
+def phrasePostpCands : List PhraseCandPostp :=
+  [.compLengthen, .deleteM, .deleteN, .faithful]
+
+theorem phrasePostpCands_ne : phrasePostpCands ≠ [] := by decide
+
+/-- Phrase level: postposition `nunci` 'from'. The faithful output wins —
+    `*DIST-0` is demoted below MAX at Phrase level, so m-n contact
+    is tolerated rather than repaired. Surface: *samudram nunci*. -/
+theorem phrasePostp_optimal :
+    (mkTableau phrasePostpCands phrasePostpRanking phrasePostpCands_ne).optimal
+      = {.faithful} := by native_decide
+
+end PhraseLevel
+
+-- ============================================================================
+-- § 5c: Stratal Derivation Records
+-- ============================================================================
+
+/-! Wires the existing per-stratum tableaux into `StratalDerivation`
+records — making the file's "Stratal OT" claim explicit at the type
+level. Each derivation records the optimal output at each cycle; the
+candidate types differ across strata because GEN produces different
+representations at each level. -/
+
+section StratalRecords
+
+open Phonology.Stratal
+
+/-- The Stratal-OT derivation of NOM `samudram` 'ocean-NOM'.
+
+    - **Stem**: input `/samudr-am/`, optimal parse `(ˈsa.mu).(ˌdram)` (= `.ll_H`).
+    - **Word**: stem output combined with prosodified `-ni` singular suffix
+      and a null NOM exponent; PrWd-final stressed `-ni` is deleted; output
+      `samudram` (= `.deleteNi`).
+    - **Phrase**: no overt postposition follows, so no Phrase-level repairs
+      are required. Surface = Word output. -/
+def nomDerivation : StratalDerivation StemCandidate WordCandNom WordCandNom where
+  underlyingForm := .ll_H
+  stemOutput     := .ll_H
+  wordOutput     := .deleteNi
+  phraseOutput   := .deleteNi
+
+/-- DAT derivation `samudrāniki` — Word-level CL produces the long form
+    via m-deletion + /a/ → /ā/. -/
+def datDerivation : StratalDerivation StemCandidate WordCandDat WordCandDat where
+  underlyingForm := .ll_H
+  stemOutput     := .ll_H
+  wordOutput     := .compLengthen
+  phraseOutput   := .compLengthen
+
+/-- Postpositional derivation `samudram nunci` — Phrase-level reranking
+    blocks the Word-level CL repair. Same input segmental shape as DAT
+    at the m-n contact, different output because `*DIST-0` is demoted
+    at Phrase. -/
+def postpDerivation : StratalDerivation StemCandidate WordCandNom PhraseCandPostp where
+  underlyingForm := .ll_H
+  stemOutput     := .ll_H
+  wordOutput     := .deleteNi
+  phraseOutput   := .faithful
+
+/-- The three derivations agree at the stem stratum (same input shape)
+    but diverge at later strata depending on what follows the noun. -/
+theorem derivations_share_stem :
+    nomDerivation.stemOutput = datDerivation.stemOutput ∧
+    nomDerivation.stemOutput = postpDerivation.stemOutput := by
+  exact ⟨rfl, rfl⟩
+
+end StratalRecords
+
+-- ============================================================================
+-- § 5d: Cross-Stratum Reranking
+-- ============================================================================
+
+/-! Paper §5.3 (p. 31) makes the headline Stratal-OT claim that `*DIST-0`
+is **demoted** going from the Word stratum to the Phrase stratum. The
+substrate's `isPromotedAcross` / `isDemotedAcross` operate on constraint
+*names* — necessary here because `wordDatRanking` and `phrasePostpRanking`
+have different candidate types (`WordCandDat` vs `PhraseCandPostp`),
+so the same-`C` `isPromoted`/`isDemoted` would not typecheck. -/
+
+section CrossStratumReranking
+
+open Phonology.Stratal
+
+/-- `*DIST-0` is at the *highest* rank in the Word DAT ranking
+    (`wordDatRanking`, position 0) and at a *lower* rank in the Phrase
+    postpositional ranking (`phrasePostpRanking`, position 2). This is
+    the demotion across the Word→Phrase boundary that the paper's §5.3
+    central reranking claim makes — and it is precisely what derives
+    m-retention at phrase boundaries vs m-deletion + CL inside
+    the prosodic word. -/
+theorem dist0_demoted_phrase_relative_to_word :
+    Phonology.Stratal.isDemotedAcross "*DIST-0" phrasePostpRanking wordDatRanking := by
+  decide
+
+/-- Conversely, `MAX` is **promoted** going Word → Phrase. Dual aspect
+    of the same reranking. -/
+theorem max_promoted_phrase_relative_to_word :
+    Phonology.Stratal.isPromotedAcross "MAX" phrasePostpRanking wordDatRanking := by
+  decide
+
+end CrossStratumReranking
+
+-- ============================================================================
 -- § 6: PrWd-Based Surface Form Prediction
 -- ============================================================================
 
@@ -744,13 +917,6 @@ theorem weak_is_outward_sensitive :
 -- ============================================================================
 -- § 8: Integration with Core Infrastructure
 -- ============================================================================
-
-/-- Telugu's `hasACC` exactly mirrors `Core.Case.IsNonnominative` via `toCore`.
-    This confirms the study's case-feature assignments are consistent with
-    the containment hierarchy infrastructure. -/
-theorem hasACC_eq_isNonnom (c : TeluguCase) :
-    c.hasACC = decide (Core.Case.IsNonnominative c.toCore) := by
-  cases c <;> rfl
 
 -- The Telugu 5-case inventory is contiguous on Blake's typological
 -- hierarchy (@cite{blake-1994}).

@@ -126,17 +126,22 @@ private lemma entropy_le_log_card {ι : Type*} [Fintype ι] (q : ι → ℝ)
     -- q has at least one positive mass (else its sum would be 0, contradicting hq_sum = 1).
     have hq_exists_pos : ∃ i, 0 < q i := by
       by_contra h_no_pos
-      have h_all_le : ∀ i, q i ≤ 0 := fun i =>
-        le_of_not_gt (fun hgt => h_no_pos ⟨i, hgt⟩)
+      push_neg at h_no_pos
       have hsum_zero : ∑ i, q i = 0 := Finset.sum_eq_zero (fun i _ =>
-        le_antisymm (h_all_le i) (hq_nonneg i))
+        le_antisymm (h_no_pos i) (hq_nonneg i))
       linarith
+    let i₀ := hq_exists_pos.choose
+    have hq_pos_i₀ : 0 < q i₀ := hq_exists_pos.choose_spec
     -- Construct PMFs from q and u. Both round-trip losslessly (already normalized).
-    let q_pmf := PMF.ofRealWeightFn q hq_nonneg hq_exists_pos
+    let i_u : ι := Classical.arbitrary ι
+    let q_pmf := PMF.ofRealWeightFn q hq_nonneg i₀ hq_pos_i₀
     let u_pmf := PMF.ofRealWeightFn u (fun i => le_of_lt (hu_pos i))
-                   ⟨Classical.arbitrary ι, hu_pos (Classical.arbitrary ι)⟩
-    have hq_eq : q_pmf.toRealFn = q := PMF.ofRealWeightFn_toRealFn_eq q _ _ hq_sum
-    have hu_eq : u_pmf.toRealFn = u := PMF.ofRealWeightFn_toRealFn_eq u _ _ hu_sum
+                   i_u (hu_pos i_u)
+    have hq_eq : q_pmf.toRealFn = q :=
+      PMF.ofRealWeightFn_toRealFn_eq q hq_nonneg i₀ hq_pos_i₀ hq_sum
+    have hu_eq : u_pmf.toRealFn = u :=
+      PMF.ofRealWeightFn_toRealFn_eq u (fun i => le_of_lt (hu_pos i))
+        i_u (hu_pos i_u) hu_sum
     -- Gibbs' inequality: KL ≥ 0 by type. Discrete sum form via PMF bridge.
     have hkl_nn : 0 ≤ (q_pmf.klDiv u_pmf).toReal := ENNReal.toReal_nonneg
     rw [PMF.toReal_klDiv_eq_sum_log_div q_pmf u_pmf (hu_eq ▸ hu_pos)] at hkl_nn

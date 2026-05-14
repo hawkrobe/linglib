@@ -139,7 +139,7 @@ end PYPSlot
 negative `b` for `a > 0`. We restrict to `0 < b` to (a) match the book's
 hyperparameter choice and (b) guarantee the new-table PYP weight
 `K·a + b` is strictly positive at `K = 0` — needed as a positivity
-witness for `PMF.normalizeOfFintype`. The boundary case can be added
+witness for `PMF.normalize` via `tsum_ne_zero_iff`. The boundary case can be added
 as a separate variant if a consumer needs it. -/
 structure PYPHyper where
   discount : ℝ
@@ -381,7 +381,9 @@ noncomputable def pypDraw {α D : Type} [DecidableEq α] [Inhabited D]
     -- Both branches of weight produce `ENNReal.ofReal _`, which is always finite.
     show (if i.val < K then _ else _) ≠ ⊤
     split <;> exact ENNReal.ofReal_ne_top
-  let choice ← PYM.liftBase (PMF.normalizeOfFintype weight new_idx h_pos h_finite)
+  let choice ← PYM.liftBase (PMF.normalize weight
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨new_idx, h_pos⟩)
+    (ENNReal.tsum_ne_top_of_fintype h_finite))
   if hi : choice.val < K then
     -- Existing table: read the dish at this index, seat one more customer there.
     let dish := slot.dishes.getD choice.val default
@@ -590,7 +592,7 @@ the do-block: `pypDraw` is a chain of binds, and the support of a bind
 is `{b | ∃ a ∈ p.support, b ∈ (f a).support}` (`PMF.mem_support_bind_iff`).
 Proving the result via this chain is mechanical (~50-100 LOC) but
 requires patient manipulation of `PMF.support_pure`, `support_bind`,
-support of `PMF.normalizeOfFintype`, etc. -/
+support of `PMF.normalize`, etc. -/
 theorem pypDraw_preserves_wellFormed {α D : Type} [DecidableEq α] [Inhabited D]
     (base : α → PYM α D D) (x : α) (init : PYPState α D)
     (h_init : init.WellFormed)

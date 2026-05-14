@@ -1,0 +1,35 @@
+{{- define "main" }}
+
+<section class="ll-hero">
+  <h1 class="ll-hero-title">Linglib</h1>
+  <p class="ll-hero-mission">
+    A community library for formal linguistics in Lean 4. Built so theories
+    of meaning, structure, sound, and use can be stated precisely, compared
+    rigorously, and held accountable to data.
+  </p>
+  <p class="ll-hero-ctas">
+    <a class="ll-cta ll-cta-primary" href="#contribute">Contribute</a>
+    <a class="ll-cta ll-cta-secondary" href="https://github.com/hawkrobe/linglib">View on GitHub</a>
+  </p>
+</section>
+
+{{- if .Content }}
+<div class="ll-content">
+  {{ .Content }}
+</div>
+{{- end }}
+
+<section class="ll-resources">
+  <h2 id="resources">Resources</h2>
+  <ul class="ll-resource-list">
+    <li><a href="{{ "wishlist/" | relURL }}">Wishlist</a> — theorems, papers, languages, and tools we'd love help with.</li>
+    <li><a href="{{ "posts/" | relURL }}">Blog</a> — development notes and essays.</li>
+    <li><a href="{{ "map/" | relURL }}">Map</a> — interactive dependency graph of the mathematical foundations.</li>
+    <li><a href="{{ "bibliography/" | relURL }}">Bibliography</a> — every paper cited in the formalization, with reverse index.</li>
+    <li><a href="{{ "roadmap/" | relURL }}">Roadmap</a> — north stars, key conjectures, and short-term work.</li>
+    <li><a href="{{ "docs/" | relURL }}">API documentation</a> — generated reference for every declaration.</li>
+    <li><a href="https://github.com/hawkrobe/linglib">GitHub</a> — source, issues, and pull requests.</li>
+  </ul>
+</section>
+
+{{- end }}{{- /* end main */ -}}

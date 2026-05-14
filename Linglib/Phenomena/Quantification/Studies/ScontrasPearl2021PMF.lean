@@ -47,7 +47,8 @@ paper-faithful claims.
 * S1 is `(QUD-projected L0 sum)^α` (rpow, not softmax-of-log)
 * L1 is `PMF.posterior` of `marginalSpeaker = latentPrior.bind S1g`
 * S2 is `PMF.normalize` over u of `L1At u w` for each fixed w
-* All construction goes through `PMF.normalizeOfFintype` (Core helper)
+* All construction goes through mathlib's `PMF.normalize` with the
+  Fintype-shape `tsum_ne_zero_iff` + `tsum_ne_top_of_fintype` discharges
 * Real-valued parameters with explicit `0 < · < 1` hypotheses,
   cf. mathlib's `PMF.binomial` `unitInterval` pattern
 
@@ -633,14 +634,15 @@ findings are thus at the SIMPLIFIED uniform world prior, not the paper's.
 
 This section follows mathlib's pattern for parameterized PMF families: real-
 valued parameters with explicit `0 < · < 1` hypotheses (cf. `PMF.binomial`'s
-`unitInterval`-typed parameter). All construction goes through
-`PMF.normalizeOfFintype` (the recently-added Core helper). -/
+`unitInterval`-typed parameter). All construction goes through mathlib's
+`PMF.normalize` with the Fintype-shape `tsum_ne_zero_iff` (witness form)
+and `tsum_ne_top_of_fintype` discharges. -/
 
 /-! ### §8.1 World prior — binomial in `b_suc` (via mathlib `PMF.binomial`)
 
 **Refactored 0.230.439** to use mathlib's `PMF.binomial` (per "check mathlib first"
 discipline; see `project_pmf_check_mathlib_first.md`). The previous version
-hand-rolled a 3-case `worldPriorENN` + `normalizeOfFintype` construction,
+hand-rolled a 3-case `worldPriorENN` + `PMF.normalize` construction,
 duplicating mathlib's `Mathlib.Probability.ProbabilityMassFunction.Binomial`. -/
 
 /-- Identification of `JumpOutcome` with `Fin 3` (number of horses succeeding,
@@ -690,9 +692,9 @@ proof (the unfavored components use `(1 - p_all)/2` but their positivity
 isn't required for this construction — only the witness `.all_` is). -/
 noncomputable def qudPriorAt (p_all : ℝ) (h_lo : 0 < p_all) :
     PMF QUD :=
-  PMF.normalizeOfFintype (qudPriorENN p_all) .all_
-    (qudPriorENN_all_pos h_lo)
-    (qudPriorENN_finite p_all)
+  PMF.normalize (qudPriorENN p_all)
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.all_, qudPriorENN_all_pos h_lo⟩)
+    (ENNReal.tsum_ne_top_of_fintype (qudPriorENN_finite p_all))
 
 /-! ### §8.3 Scope prior — `p_inv` favors inverse, `1 - p_inv` favors surface -/
 
@@ -715,9 +717,9 @@ Only `0 < p_inv` is needed for positivity (witness `.inverse`); `p_inv ≤ 1`
 unused in this construction. -/
 noncomputable def scopePriorAt (p_inv : ℝ) (h_lo : 0 < p_inv) :
     PMF ScopeReading :=
-  PMF.normalizeOfFintype (scopePriorENN p_inv) .inverse
-    (scopePriorENN_inverse_pos h_lo)
-    (scopePriorENN_finite p_inv)
+  PMF.normalize (scopePriorENN p_inv)
+    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨.inverse, scopePriorENN_inverse_pos h_lo⟩)
+    (ENNReal.tsum_ne_top_of_fintype (scopePriorENN_finite p_inv))
 
 /-! ### §8.4 Latent prior — independent product `scopePrior × qudPrior` -/
 
@@ -746,9 +748,10 @@ bounds (`h_inv_lo`, `h_all_lo`) are needed (witness `.invAll`); upper bounds
 unused. -/
 noncomputable def latentPriorAt (p_inv p_all : ℝ)
     (h_inv_lo : 0 < p_inv) (h_all_lo : 0 < p_all) : PMF Latent :=
-  PMF.normalizeOfFintype (latentPriorENN p_inv p_all) .invAll
-    (latentPriorENN_invAll_pos h_inv_lo h_all_lo)
-    (latentPriorENN_finite p_inv p_all)
+  PMF.normalize (latentPriorENN p_inv p_all)
+    (ENNReal.summable.tsum_ne_zero_iff.mpr
+      ⟨.invAll, latentPriorENN_invAll_pos h_inv_lo h_all_lo⟩)
+    (ENNReal.tsum_ne_top_of_fintype (latentPriorENN_finite p_inv p_all))
 
 /-! ### §8.5 L1 — paper-faithful Bayesian inversion (parameterized prior)
 

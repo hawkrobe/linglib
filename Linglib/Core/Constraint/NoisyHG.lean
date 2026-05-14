@@ -40,14 +40,14 @@ open Core Real
 
 /-- Sum of squared violation differences between two candidates.
     This determines the NHG noise variance: σ_d² = σ² · violationDiffSqSum. -/
-noncomputable def violationDiffSqSum {C : Type}
+noncomputable def violationDiffSqSum {C : Type*}
     (constraints : List (WeightedConstraint C)) (a b : C) : ℝ :=
   constraints.foldl (λ acc con =>
     acc + ((con.eval a : ℝ) - (con.eval b : ℝ)) ^ 2) 0
 
 /-- Sum of squared violation differences (ℚ, computable).
     Use this for concrete examples with `native_decide`. -/
-def violationDiffSqSumQ {C : Type}
+def violationDiffSqSumQ {C : Type*}
     (constraints : List (WeightedConstraint C)) (a b : C) : ℚ :=
   constraints.foldl (λ acc con =>
     acc + ((con.eval a : ℚ) - (con.eval b : ℚ)) ^ 2) 0
@@ -57,7 +57,7 @@ def violationDiffSqSumQ {C : Type}
 
     The noise is **context-dependent**: it scales with the violation
     difference profile, not just the per-weight noise σ. -/
-noncomputable def nhgSigmaD {C : Type}
+noncomputable def nhgSigmaD {C : Type*}
     (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) : ℝ :=
   sigma * Real.sqrt (violationDiffSqSum constraints a b)
 
@@ -73,7 +73,7 @@ noncomputable def nhgSigmaD {C : Type}
 
     Requires non-zero violation differences (otherwise σ_d = 0 and
     the choice is deterministic). -/
-noncomputable def nhgAsThurstoneV {C : Type}
+noncomputable def nhgAsThurstoneV {C : Type*}
     (constraints : List (WeightedConstraint C)) (sigma : ℝ) (hsigma : 0 < sigma)
     (a b : C) (h_diff : 0 < violationDiffSqSum constraints a b) :
     ThurstoneCaseV (Fin 2) where
@@ -88,7 +88,7 @@ noncomputable def nhgAsThurstoneV {C : Type}
 
     The Thurstone σ is set to `σ_d / √2` so that Thurstone's
     `Φ(d / (σ_T · √2))` reduces to `Φ(d / σ_d)`. -/
-theorem nhg_choiceProb_eq {C : Type}
+theorem nhg_choiceProb_eq {C : Type*}
     (constraints : List (WeightedConstraint C)) (sigma : ℝ) (hsigma : 0 < sigma)
     (a b : C) (h_diff : 0 < violationDiffSqSum constraints a b) :
     (nhgAsThurstoneV constraints sigma hsigma a b h_diff).choiceProb 0 1 =
@@ -117,7 +117,7 @@ noncomputable def normalMaxEntSigmaD (epsilon : ℝ) : ℝ :=
 /-- Normal MaxEnt binary choice as a Thurstone Case V model.
 
     Same as NHG but with constant σ_d = ε√2, so Thurstone σ = ε. -/
-noncomputable def normalMaxEntAsThurstoneV {C : Type}
+noncomputable def normalMaxEntAsThurstoneV {C : Type*}
     (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (heps : 0 < epsilon)
     (a b : C) : ThurstoneCaseV (Fin 2) where
   scale i := if i = 0 then harmonyScoreR constraints a
@@ -130,7 +130,7 @@ noncomputable def normalMaxEntAsThurstoneV {C : Type}
 
     Since the Thurstone σ is ε and `normalMaxEntSigmaD ε = ε√2`,
     Thurstone's `Φ(d / (ε · √2))` directly gives the Normal MaxEnt formula. -/
-theorem normalMaxEnt_choiceProb_eq {C : Type}
+theorem normalMaxEnt_choiceProb_eq {C : Type*}
     (constraints : List (WeightedConstraint C)) (epsilon : ℝ) (heps : 0 < epsilon)
     (a b : C) :
     (normalMaxEntAsThurstoneV constraints epsilon heps a b).choiceProb 0 1 =
@@ -156,7 +156,7 @@ theorem normalMaxEnt_choiceProb_eq {C : Type}
     See also `maxent_logit_as_finsum` (Separability.lean) for the
     Fin-indexed decomposition, and `me_predicts_hz` for the consequence
     that independent violation differences yield HZ's generalization. -/
-theorem logit_uniformity {ι : Type} [Fintype ι] [Nonempty ι]
+theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
     (s : ι → ℝ) (a b : ι) :
     log (softmax s 1 a / softmax s 1 b) = s a - s b := by
   rw [log_softmax_odds]; ring
@@ -167,7 +167,7 @@ theorem logit_uniformity {ι : Type} [Fintype ι] [Nonempty ι]
     `log(P(a)/P(b)) = H(a) − H(b)`
 
     Instantiation of `logit_uniformity` with harmony scores. -/
-theorem maxent_logit_harmony {C : Type} [Fintype C] [Nonempty C]
+theorem maxent_logit_harmony {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
     log (softmax (harmonyScoreR constraints) 1 a /
          softmax (harmonyScoreR constraints) 1 b) =
@@ -181,7 +181,7 @@ theorem maxent_logit_harmony {C : Type} [Fintype C] [Nonempty C]
 
     Adding or removing other candidates from the competition doesn't
     change the ratio. Corollary of `softmax_odds` with α = 1. -/
-theorem maxent_iia {C : Type} [Fintype C] [Nonempty C]
+theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
     softmax (harmonyScoreR constraints) 1 a /
     softmax (harmonyScoreR constraints) 1 b =
@@ -193,7 +193,7 @@ theorem maxent_iia {C : Type} [Fintype C] [Nonempty C]
 -- ============================================================================
 
 /-- Helper: foldl with subtraction equals initial value minus the sum. -/
-private lemma foldl_sub_eq_init_sub_sum {α : Type} (f : α → ℚ)
+private lemma foldl_sub_eq_init_sub_sum {α : Type*} (f : α → ℚ)
     (l : List α) (init : ℚ) :
     l.foldl (fun acc x => acc - f x) init = init - (l.map f).sum := by
   induction l generalizing init with
@@ -207,7 +207,7 @@ private lemma foldl_sub_eq_init_sub_sum {α : Type} (f : α → ℚ)
 
     This is the bridge between abstract harmony scores and the constraint
     violation patterns used in empirical analyses (e.g., French schwa). -/
-theorem harmonyScore_diff {C : Type}
+theorem harmonyScore_diff {C : Type*}
     (constraints : List (WeightedConstraint C)) (a b : C) :
     harmonyScore constraints a - harmonyScore constraints b =
     -(constraints.map (fun con =>
@@ -224,7 +224,7 @@ theorem harmonyScore_diff {C : Type}
   linarith [h_sum constraints]
 
 /-- Harmony difference decomposition in ℝ. -/
-theorem harmonyScoreR_diff {C : Type}
+theorem harmonyScoreR_diff {C : Type*}
     (constraints : List (WeightedConstraint C)) (a b : C) :
     harmonyScoreR constraints a - harmonyScoreR constraints b =
     -((constraints.map (fun con =>
@@ -280,14 +280,14 @@ theorem censored_nhg_weight_sensitivity (w₁ w₂ : ℝ) (hw : w₁ < w₂) :
     non-diagonal covariance — not reducible to independent binary
     comparisons. This is why NHG violates IIA for 3+ candidates
     (@cite{flemming-2021} §9). -/
-noncomputable def nhgCovariance {C : Type}
+noncomputable def nhgCovariance {C : Type*}
     (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b c : C) : ℝ :=
   sigma ^ 2 * constraints.foldl (λ acc con =>
     acc + ((con.eval b : ℝ) - (con.eval a : ℝ)) *
           ((con.eval c : ℝ) - (con.eval a : ℝ))) 0
 
 /-- NHG covariance (ℚ, computable). -/
-def nhgCovarianceQ {C : Type}
+def nhgCovarianceQ {C : Type*}
     (constraints : List (WeightedConstraint C)) (a b c : C) : ℚ :=
   constraints.foldl (λ acc con =>
     acc + ((con.eval b : ℚ) - (con.eval a : ℚ)) *
@@ -295,7 +295,7 @@ def nhgCovarianceQ {C : Type}
 
 /-- The NHG self-covariance `Cov(ε_b − ε_a, ε_b − ε_a)` equals
     the variance `σ² · violationDiffSqSum`, recovering the binary case. -/
-theorem nhgCovariance_self {C : Type}
+theorem nhgCovariance_self {C : Type*}
     (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) :
     nhgCovariance constraints sigma a b b =
     sigma ^ 2 * violationDiffSqSum constraints b a := by

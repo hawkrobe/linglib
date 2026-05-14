@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.Dequantization.OTLimit
 import Linglib.Core.Constraint.System
-import Linglib.Core.Constraint.Variation
+import Linglib.Core.Constraint.Weighted
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Phonology.Process.LocalRewrite
 import Linglib.Fragments.English.Phonology
@@ -195,7 +195,7 @@ theorem predict_k_gt_ŋ :
     onsetSystem.predict [ŋ] < onsetSystem.predict [k] :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (by decide) (by decide)
-    (harmonyScoreR_lt_of_moreProbable attested_higher_harmony_k_ŋ)
+    (harmonyScoreR_lt_of_dominates attested_higher_harmony_k_ŋ)
 
 /-- The system also predicts a higher MaxEnt probability for *[ŋ] than
     for *[rk] — gradient well-formedness among unattested forms. -/
@@ -203,8 +203,8 @@ theorem predict_ŋ_gt_rk :
     onsetSystem.predict [r, k] < onsetSystem.predict [ŋ] :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (by decide) (by decide)
-    (harmonyScoreR_lt_of_moreProbable (by native_decide :
-      moreProbable onsetGrammar [ŋ] [r, k]))
+    (harmonyScoreR_lt_of_dominates (by native_decide :
+      harmonyDominates onsetGrammar [ŋ] [r, k]))
 
 /-- The MaxEnt softmax decoder is a probability decoder, so the system's
     predictions are non-negative and sum to 1 over the candidate set.

@@ -85,12 +85,13 @@ Sibling files:
 
 ## Status
 
-`[UPSTREAM]` candidate. §1–§10.5 sorry-free; §10.6 has 1 sorry (the
-descent case of `multiGraft_split_lifted_aux`). The headline
-`vertices_multiGraft_decomp` (§9) is closed via the §8.5–§8.9 substrate:
-descent helpers, `liftMulti_at_root` / `liftMulti_at_child_descent`,
-`root_bind_eq` (root-pair bridge), `bind_descent_eq_aux` (descent-pair
-bridge), `bind_finRange_singleton_eq` (validity-based per-`k` decomp).
+`[UPSTREAM]` candidate. Sorry-free through §10.6, including the descent
+case of `multiGraft_split_lifted_aux` (path-arithmetic substrate for
+A3.3 cons-case Phase 4.2). The headline `vertices_multiGraft_decomp`
+(§9) is closed via the §8.5–§8.9 substrate: descent helpers,
+`liftMulti_at_root` / `liftMulti_at_child_descent`, `root_bind_eq`
+(root-pair bridge), `bind_descent_eq_aux` (descent-pair bridge),
+`bind_finRange_singleton_eq` (validity-based per-`k` decomp).
 -/
 
 namespace RootedTree
@@ -2216,14 +2217,14 @@ private theorem posInGroup_lt_rootPrependCount
     exact List.length_pos_of_mem h_mem
   omega
 
-/-! ### §10.6.2 Helpers for the root case (sorry-fenced; closure in follow-up)
+/-! ### §10.6.2 Helpers for the root case
 
 The next two helpers (`rootPrepends_at_posInGroup_eq_snd` and
 `filterMap_rootPrepend_set_root`) both reduce to structural induction on
 `pairs` with case analysis on `p.fst` and `k_val`. The arithmetic is
 straightforward but the proofs require care with dependent-type rewrites
 (the goal has `arr[posInGroup ...]'h` where the proof `h` depends on
-`posInGroup`). Sorry-fenced for clean substrate handoff. -/
+`posInGroup`). -/
 
 /-- When `pairs[k].fst = []`, the `posInGroup`-th rootPrepend equals `pairs[k].snd`.
 
@@ -2469,7 +2470,205 @@ private theorem multiGraftChildren_getElem?
       rw [← descentToChild_succ]
       rfl
 
-/-! ### §10.6.4 Main statement -/
+/-! ### §10.6.4 Helpers for the descent-case set commutation -/
+
+/-- Setting `pairs[k]` to `(j :: rest_path, X)` (preserving its first index `j`)
+    and descending into child `j` equals first descending then setting the
+    descent-corresponding index. -/
+private theorem descentToChild_set_same_head_eq (j : ℕ) (pairs : List (Path × Planar α))
+    (k : Fin pairs.length) (rest_path : Path) (h : pairs[k.val].fst = j :: rest_path)
+    (X : Planar α) :
+    descentToChild j (pairs.set k.val (j :: rest_path, X)) =
+      (descentToChild j pairs).set (descentIdxOf j pairs k) (rest_path, X) := by
+  induction pairs with
+  | nil => exact absurd k.isLt (by simp)
+  | cons p rest ih =>
+    obtain ⟨k_val, hk_lt⟩ := k
+    obtain ⟨p_fst, p_snd⟩ := p
+    cases k_val with
+    | zero =>
+      have h_p_fst : p_fst = j :: rest_path := h
+      subst h_p_fst
+      show descentToChild j (((j :: rest_path, X) :: rest) : List (Path × Planar α)) =
+          (descentToChild j (((j :: rest_path, p_snd) :: rest) :
+              List (Path × Planar α))).set
+            (descentIdxOf j (((j :: rest_path, p_snd) :: rest) :
+              List (Path × Planar α)) ⟨0, hk_lt⟩) (rest_path, X)
+      rw [descentToChild_cons_consPath_eq, descentToChild_cons_consPath_eq,
+          descentIdxOf_at_zero]
+      rfl
+    | succ k_pred =>
+      have hk_lt' : k_pred < rest.length := by
+        simp only [List.length_cons] at hk_lt; omega
+      have h_idx_eq :
+          (((p_fst, p_snd) :: rest) : List (Path × Planar α))[k_pred + 1] = rest[k_pred] :=
+        List.getElem_cons_succ ..
+      have h_rest_fst : rest[k_pred].fst = j :: rest_path := by
+        rw [← h_idx_eq]; exact h
+      have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst
+      show descentToChild j ((((p_fst, p_snd) :: rest.set k_pred (j :: rest_path, X)) :
+            List (Path × Planar α))) =
+          (descentToChild j (((p_fst, p_snd) :: rest) : List (Path × Planar α))).set
+            (descentIdxOf j (((p_fst, p_snd) :: rest) : List (Path × Planar α))
+              ⟨k_pred + 1, hk_lt⟩) (rest_path, X)
+      have h_fin_eq : (⟨k_pred + 1, hk_lt⟩ : Fin (((p_fst, p_snd) :: rest).length)) =
+          Fin.succ ⟨k_pred, hk_lt'⟩ := rfl
+      rw [h_fin_eq, descentIdxOf_cons_succ j (p_fst, p_snd) rest ⟨k_pred, hk_lt'⟩]
+      cases p_fst with
+      | nil =>
+        rw [descentToChild_cons_nilPath, descentToChild_cons_nilPath, ih_applied]
+        simp
+      | cons p_h p_rest =>
+        by_cases hjh : j = p_h
+        · subst hjh
+          rw [descentToChild_cons_consPath_eq j p_rest p_snd
+                (rest.set k_pred (j :: rest_path, X)),
+              descentToChild_cons_consPath_eq j p_rest p_snd rest, ih_applied]
+          rw [show ((j :: p_rest, p_snd) : Path × Planar α).fst.head? = some j from rfl,
+              if_pos rfl]
+          exact List.set_cons_succ.symm
+        · rw [descentToChild_cons_consPath_ne j p_h p_rest p_snd
+                (rest.set k_pred (j :: rest_path, X)) hjh,
+              descentToChild_cons_consPath_ne j p_h p_rest p_snd rest hjh, ih_applied]
+          rw [show ((p_h :: p_rest, p_snd) : Path × Planar α).fst.head? = some p_h from rfl]
+          rw [if_neg (by intro heq; injection heq with h1; exact hjh h1.symm)]
+          simp
+
+/-- Setting `pairs[k]` to a pair with first index `j` leaves `descentToChild j' pairs`
+    unchanged for any `j' ≠ j` — descents into other children don't see the modified
+    pair. -/
+private theorem descentToChild_set_same_head_ne (j j' : ℕ) (h_jj : j ≠ j')
+    (pairs : List (Path × Planar α)) (k : Fin pairs.length) (rest_path : Path)
+    (h : pairs[k.val].fst = j :: rest_path) (X : Planar α) :
+    descentToChild j' (pairs.set k.val (j :: rest_path, X)) = descentToChild j' pairs := by
+  induction pairs with
+  | nil => exact absurd k.isLt (by simp)
+  | cons p rest ih =>
+    obtain ⟨k_val, hk_lt⟩ := k
+    obtain ⟨p_fst, p_snd⟩ := p
+    cases k_val with
+    | zero =>
+      have h_p_fst : p_fst = j :: rest_path := h
+      subst h_p_fst
+      show descentToChild j' (((j :: rest_path, X) :: rest) : List (Path × Planar α)) =
+          descentToChild j' (((j :: rest_path, p_snd) :: rest) : List (Path × Planar α))
+      rw [descentToChild_cons_consPath_ne j' j rest_path X rest (Ne.symm h_jj),
+          descentToChild_cons_consPath_ne j' j rest_path p_snd rest (Ne.symm h_jj)]
+    | succ k_pred =>
+      have hk_lt' : k_pred < rest.length := by
+        simp only [List.length_cons] at hk_lt; omega
+      have h_idx_eq :
+          (((p_fst, p_snd) :: rest) : List (Path × Planar α))[k_pred + 1] = rest[k_pred] :=
+        List.getElem_cons_succ ..
+      have h_rest_fst : rest[k_pred].fst = j :: rest_path := by
+        rw [← h_idx_eq]; exact h
+      have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst
+      show descentToChild j' ((((p_fst, p_snd) :: rest.set k_pred (j :: rest_path, X)) :
+            List (Path × Planar α))) =
+          descentToChild j' (((p_fst, p_snd) :: rest) : List (Path × Planar α))
+      cases p_fst with
+      | nil =>
+        rw [descentToChild_cons_nilPath, descentToChild_cons_nilPath]
+        exact ih_applied
+      | cons p_h p_rest =>
+        by_cases hjh' : j' = p_h
+        · subst hjh'
+          rw [descentToChild_cons_consPath_eq j' p_rest p_snd
+                (rest.set k_pred (j :: rest_path, X)),
+              descentToChild_cons_consPath_eq j' p_rest p_snd rest, ih_applied]
+        · rw [descentToChild_cons_consPath_ne j' p_h p_rest p_snd
+                (rest.set k_pred (j :: rest_path, X)) hjh',
+              descentToChild_cons_consPath_ne j' p_h p_rest p_snd rest hjh']
+          exact ih_applied
+
+/-- When `pairs[k].fst = j :: rest_path` (so the pair targets child `j`) and we
+    set its `snd` to `X` while keeping the same first index, `multiGraftChildren cs`
+    changes only at the `j`-th position (when `j < cs.length`): the new value is
+    `multiGraft cs[j]` of the descented pair list with the corresponding descent
+    index updated. -/
+private theorem multiGraftChildren_set_same_head (cs : List (Planar α))
+    (pairs : List (Path × Planar α)) (k : Fin pairs.length) (j : ℕ) (rest_path : Path)
+    (h : pairs[k.val].fst = j :: rest_path) (X : Planar α) (h_j_lt : j < cs.length) :
+    multiGraftChildren cs (pairs.set k.val (j :: rest_path, X)) =
+    (multiGraftChildren cs pairs).set j
+      (multiGraft (cs[j]'h_j_lt)
+        ((descentToChild j pairs).set (descentIdxOf j pairs k) (rest_path, X))) := by
+  apply List.ext_getElem?
+  intro i
+  by_cases h_i_lt : i < cs.length
+  · rw [multiGraftChildren_getElem? cs (pairs.set k.val (j :: rest_path, X)) i h_i_lt]
+    rw [List.getElem?_set]
+    by_cases h_ij : j = i
+    · subst h_ij
+      rw [if_pos rfl, if_pos (by rw [multiGraftChildren_length]; exact h_i_lt),
+          descentToChild_set_same_head_eq j pairs k rest_path h X]
+    · rw [if_neg h_ij,
+          multiGraftChildren_getElem? cs pairs i h_i_lt,
+          descentToChild_set_same_head_ne j i h_ij pairs k rest_path h X]
+  · push Not at h_i_lt
+    rw [List.getElem?_eq_none (by rw [multiGraftChildren_length]; exact h_i_lt),
+        List.getElem?_eq_none (by
+          rw [List.length_set, multiGraftChildren_length]; exact h_i_lt)]
+
+/-- When `pairs[k].fst = j :: rest_path` with `j ≥ cs.length` (the pair targets a
+    non-existent child of `cs`), setting `pairs[k]` while preserving the first
+    index leaves `multiGraftChildren cs` unchanged: the modified pair is only
+    visible to descents into out-of-range children. -/
+private theorem multiGraftChildren_set_invalid_head (cs : List (Planar α))
+    (pairs : List (Path × Planar α)) (k : Fin pairs.length) (j : ℕ) (rest_path : Path)
+    (h : pairs[k.val].fst = j :: rest_path) (X : Planar α) (h_j_ge : cs.length ≤ j) :
+    multiGraftChildren cs (pairs.set k.val (j :: rest_path, X)) =
+    multiGraftChildren cs pairs := by
+  apply List.ext_getElem?
+  intro i
+  by_cases h_i_lt : i < cs.length
+  · rw [multiGraftChildren_getElem? cs (pairs.set k.val (j :: rest_path, X)) i h_i_lt,
+        multiGraftChildren_getElem? cs pairs i h_i_lt]
+    have h_ij : j ≠ i := fun heq => Nat.not_lt.mpr h_j_ge (heq ▸ h_i_lt)
+    rw [descentToChild_set_same_head_ne j i h_ij pairs k rest_path h X]
+  · push Not at h_i_lt
+    rw [List.getElem?_eq_none (by rw [multiGraftChildren_length]; exact h_i_lt),
+        List.getElem?_eq_none (by rw [multiGraftChildren_length]; exact h_i_lt)]
+
+/-- When `pairs[k].fst ≠ []`, the new pair (with the same first index) is also
+    excluded by `rootPrependFilter`, so the root-prepend filterMap is unchanged. -/
+private theorem filterMap_rootPrepend_set_nonRoot
+    (pairs : List (Path × Planar α)) (k : Fin pairs.length)
+    (newPair : Path × Planar α) (h_old : pairs[k.val].fst ≠ [])
+    (h_new : newPair.fst ≠ []) :
+    (pairs.set k.val newPair).filterMap rootPrependFilter =
+    pairs.filterMap rootPrependFilter := by
+  induction pairs with
+  | nil => exact absurd k.isLt (by simp)
+  | cons p rest ih =>
+    obtain ⟨k_val, hk_lt⟩ := k
+    obtain ⟨p_fst, p_snd⟩ := p
+    cases k_val with
+    | zero =>
+      have h_p_fst_ne : p_fst ≠ [] := h_old
+      cases h_pf : p_fst with
+      | nil => exact absurd h_pf h_p_fst_ne
+      | cons p_h p_rest =>
+        obtain ⟨npfst, npsnd⟩ := newPair
+        cases h_npf : npfst with
+        | nil => exact absurd h_npf h_new
+        | cons npf_h npf_rest =>
+          rfl
+    | succ k_pred =>
+      have hk_lt' : k_pred < rest.length := by
+        simp only [List.length_cons] at hk_lt; omega
+      have h_idx_eq :
+          (((p_fst, p_snd) :: rest) : List (Path × Planar α))[k_pred + 1] = rest[k_pred] :=
+        List.getElem_cons_succ ..
+      have h_rest_fst_ne : rest[k_pred].fst ≠ [] := by rw [← h_idx_eq]; exact h_old
+      have ih_applied := ih ⟨k_pred, hk_lt'⟩ h_rest_fst_ne
+      show ((((p_fst, p_snd) :: rest.set k_pred newPair) :
+            List (Path × Planar α)).filterMap rootPrependFilter) =
+          (((p_fst, p_snd) :: rest) : List (Path × Planar α)).filterMap rootPrependFilter
+      rw [List.filterMap_cons, List.filterMap_cons]
+      rw [ih_applied]
+
+/-! ### §10.6.5 Main statement -/
 
 /-- Single-graft baby version of `multiGraft` composition: grafting `c` at a
     lifted-vertex path of `multiGraft T pairs` equals multi-grafting `T` with
@@ -2480,11 +2679,16 @@ private theorem multiGraftChildren_getElem?
     iterate this via the `q`-relative-to-modified-subtree update.
 
     Proof: structural induction on `T = Planar.node a cs`.
-    - Case (a) `pairs[k.val].fst = []`: liftMulti = posInGroup k :: q.
-      Both sides land at the (posInGroup k)-th rootPrepend, modified to
+    - Case (a) `pairs[k.val].fst = []`: `liftMulti = posInGroup k :: q`.
+      Both sides land at the `posInGroup k`-th rootPrepend, modified to
       `insertAt q c pairs[k.val].snd`.
-    - Case (b) `pairs[k.val].fst = j :: rest`: descent into cs[j] via IH.
-      DEFERRED — see sorry-fence inside; needs `descentToChild_set_eq` substrate. -/
+    - Case (b) `pairs[k.val].fst = j :: rest`: by `liftMulti_at_child_descent`
+      the lifted path is `(rootPrependCount pairs + j) :: liftMulti (descentToChild j pairs) k' q`.
+      The LHS descends past root-prepends into the `j`-th element of
+      `multiGraftChildren cs pairs` (= `multiGraft cs[j] (descentToChild j pairs)`)
+      and applies the IH on `cs[j]`. The RHS is reassembled via
+      `multiGraftChildren_set_same_head` (or `_invalid_head` when `j ≥ cs.length`,
+      where both sides are no-ops). -/
 theorem multiGraft_split_lifted_aux :
     ∀ (T : Planar α) (pairs : List (Path × Planar α))
     (k : Fin pairs.length) (q : Path) (c : Planar α),
@@ -2530,23 +2734,91 @@ theorem multiGraft_split_lifted_aux :
       rw [filterMap_rootPrepend_set_root pairs k h_fst (insertAt q c pairs[k.val].snd)]
       rw [multiGraftChildren_set_root_unchanged cs pairs k h_fst (insertAt q c pairs[k.val].snd)]
     · -- Case (b): pairs[k.val].fst ≠ [], so it's of form (j :: rest_path).
-      -- liftMulti pairs k q = (j + N) :: (transport (descentToChild j pairs) rest_path
-      --                                  ++ (posInGroup pairs k :: q))
-      -- LHS: insertAt at (j + N) :: ... in (.node a (rootPrepends ++ multiGraftChildren cs pairs)).
-      --   Need j + N < |rootPrepends ++ multiGraftChildren cs pairs| = N + cs.length
-      --   ⇔ j < cs.length (i.e. pair k's path is valid in T).
-      -- The path descends to (rootPrepends ++ multiGraftChildren cs pairs)[j + N]
-      --   = (multiGraftChildren cs pairs)[j] (by getElem_append_right)
-      --   = multiGraft cs[j] (descentToChild j pairs) (by multiGraftChildren_getElem?).
-      -- Apply IH to T = cs[j], pairs = descentToChild j pairs, k' = ?, q = q.
-      -- Where k' is the position of pair k in (descentToChild j pairs), preserving
-      -- posInGroup. RHS: multiGraft (.node a cs) (pairs.set k.val (j :: rest_path,
-      --   insertAt q c pairs[k].snd)). Need bookkeeping that descentToChild commutes
-      -- with List.set when the modified pair has the same first index.
-      --
-      -- DEFERRED — substantive substrate (descentToChild_set + posInGroup_descent
-      -- + per-child commutation). ~150 LOC of further substrate work.
-      sorry
+      obtain ⟨j, rest_path, h_fst_eq⟩ :
+          ∃ j rest_path, pairs[k.val].fst = j :: rest_path := by
+        cases h_pf : pairs[k.val].fst with
+        | nil => exact absurd h_pf h_fst
+        | cons jh jt => exact ⟨jh, jt, rfl⟩
+      have h_old_ne : pairs[k.val].fst ≠ [] := by rw [h_fst_eq]; simp
+      have h_new_ne :
+          ((j :: rest_path, insertAt q c pairs[k.val].snd) : Path × Planar α).fst ≠ [] := by simp
+      have h_pair_subst :
+          (pairs[k.val].fst, insertAt q c pairs[k.val].snd) =
+            (j :: rest_path, insertAt q c pairs[k.val].snd) := by rw [h_fst_eq]
+      rw [liftMulti_at_child_descent pairs k j rest_path h_fst_eq q, multiGraft_node]
+      set rootPrepends := pairs.filterMap rootPrependFilter with hRP_def
+      set children := multiGraftChildren cs pairs with hC_def
+      have h_rp_len : rootPrepends.length = rootPrependCount pairs := by
+        rw [hRP_def, length_filterMap_rootPrependFilter]
+      have h_ch_len : children.length = cs.length := by
+        rw [hC_def, multiGraftChildren_length]
+      by_cases h_j_lt : j < cs.length
+      · -- Valid descent.
+        have h_idx_lt :
+            rootPrependCount pairs + j < (rootPrepends ++ children).length := by
+          rw [List.length_append, h_rp_len, h_ch_len]; omega
+        rw [insertAt_cons_of_lt _ _ _ _ _ h_idx_lt]
+        have h_N_le : rootPrepends.length ≤ rootPrependCount pairs + j := by
+          rw [h_rp_len]; omega
+        -- Compute the indexed value (avoids proof-dependent rewrite chain).
+        have h_val :
+            (rootPrepends ++ children)[rootPrependCount pairs + j]'h_idx_lt =
+              multiGraft (cs[j]'h_j_lt) (descentToChild j pairs) := by
+          have h_some :
+              (rootPrepends ++ children)[rootPrependCount pairs + j]? =
+                some (multiGraft (cs[j]'h_j_lt) (descentToChild j pairs)) := by
+            rw [List.getElem?_append_right h_N_le]
+            rw [show rootPrependCount pairs + j - rootPrepends.length = j from by
+                  rw [h_rp_len]; omega]
+            rw [hC_def]
+            exact multiGraftChildren_getElem? cs pairs j h_j_lt
+          rw [List.getElem?_eq_some_iff] at h_some
+          obtain ⟨_, h_eq⟩ := h_some
+          exact h_eq
+        rw [h_val]
+        rw [List.set_append_right _ _ h_N_le]
+        rw [show rootPrependCount pairs + j - rootPrepends.length = j from by
+              rw [h_rp_len]; omega]
+        have ih :=
+          multiGraft_split_lifted_aux (cs[j]'h_j_lt) (descentToChild j pairs)
+            ⟨descentIdxOf j pairs k, by
+              rw [descentToChild_length_eq]
+              exact descentIdxOf_lt j pairs k (by rw [h_fst_eq]; rfl)⟩ q c
+        rw [ih, descentToChild_getElem_at_descentIdxOf j pairs k rest_path h_fst_eq]
+        rw [h_pair_subst, multiGraft_node]
+        rw [filterMap_rootPrepend_set_nonRoot pairs k _ h_old_ne h_new_ne]
+        rw [multiGraftChildren_set_same_head cs pairs k j rest_path h_fst_eq
+              (insertAt q c pairs[k.val].snd) h_j_lt]
+      · -- Invalid descent: j ≥ cs.length, both sides no-op.
+        push Not at h_j_lt
+        have h_idx_ge : ¬ (rootPrependCount pairs + j < (rootPrepends ++ children).length) := by
+          rw [List.length_append, h_rp_len, h_ch_len]; omega
+        rw [insertAt_cons_of_not_lt _ _ _ _ _ h_idx_ge]
+        rw [h_pair_subst, multiGraft_node]
+        rw [filterMap_rootPrepend_set_nonRoot pairs k _ h_old_ne h_new_ne]
+        rw [multiGraftChildren_set_invalid_head cs pairs k j rest_path h_fst_eq
+              (insertAt q c pairs[k.val].snd) h_j_lt]
+termination_by T _ _ _ _ => T.weight
+decreasing_by
+  show (cs[j]'h_j_lt).weight < (Planar.node a cs).weight
+  show (cs[j]'h_j_lt).weight < 1 + weightList cs
+  have h_le : ∀ (cs' : List (Planar α)) (n : ℕ) (hn : n < cs'.length),
+      (cs'[n]'hn).weight ≤ weightList cs' := by
+    intro cs' n hn
+    induction cs' generalizing n with
+    | nil => simp at hn
+    | cons c cs'' ih =>
+      cases n with
+      | zero =>
+        show weight c ≤ weight c + weightList cs''
+        omega
+      | succ m =>
+        have hm : m < cs''.length := by simp [List.length_cons] at hn; omega
+        show weight (cs''[m]'hm) ≤ weight c + weightList cs''
+        have := ih m hm
+        omega
+  have := h_le cs j h_j_lt
+  omega
 
 end Pathed
 

@@ -1,10 +1,15 @@
 baseURL = "https://linglib.io/"
 languageCode = "en-us"
-title = "lingliblog"
+title = "Linglib"
 theme = "PaperMod"
 
+# Most files under data/ are not Hugo data sources — references.bib is consumed
+# by scripts/gen_bibliography.py, the audit notes are workflow artifacts, and
+# zotero.py is tooling. Hugo only needs the .toml files.
+ignoreFiles = ['\.py~?$', '\.bib$', '/data/audit.*\.md$', '/data/AUDIT_.*\.md$']
+
 [params]
-  description = "Development log for Linglib, a Lean 4 library for formal linguistics"
+  description = "A community library for formal linguistics in Lean 4."
   author = "Robert Hawkins"
   ShowReadingTime = false
   ShowPostNavLinks = true
@@ -12,27 +17,31 @@ theme = "PaperMod"
   ShowCodeCopyButtons = true
   defaultTheme = "auto"
 
-[params.homeInfoParams]
-  Title = "lingliblog"
-  Content = "Development notes from Linglib."
-
 [[params.socialIcons]]
   name = "github"
   url = "https://github.com/hawkrobe/linglib"
 
 [menu]
   [[menu.main]]
-    name = "Posts"
+    name = "Blog"
     url = "/posts/"
     weight = 10
   [[menu.main]]
     name = "Map"
     url = "/map/"
     weight = 15
-[[menu.main]]
+  [[menu.main]]
+    name = "Wishlist"
+    url = "/wishlist/"
+    weight = 18
+  [[menu.main]]
+    name = "Roadmap"
+    url = "/roadmap/"
+    weight = 20
+  [[menu.main]]
     name = "Bibliography"
     url = "/bibliography/"
-    weight = 35
+    weight = 30
   [[menu.main]]
     name = "API Docs"
     url = "/docs/"

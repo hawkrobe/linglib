@@ -1,18 +1,19 @@
-import Linglib.Theories.Phonology.LexicalFrequency.IndexedConstraints
-import Linglib.Theories.Phonology.LexicalFrequency.ScaledWeights
-import Linglib.Theories.Phonology.LexicalFrequency.UseListed
-import Linglib.Theories.Phonology.LexicalFrequency.RepresentationStrength
+import Linglib.Theories.Phonology.ItemSpecificity.IndexedConstraints
+import Linglib.Theories.Phonology.ItemSpecificity.ScaledWeights
+import Linglib.Theories.Phonology.ItemSpecificity.UseListed
+import Linglib.Theories.Phonology.ItemSpecificity.RepresentationStrength
 
 /-!
-# Separation theorems for lexical-frequency theories
+# Separation theorems for item-specificity theories
 
-The four sibling files in `Theories/Phonology/LexicalFrequency/` —
+The four sibling files in `Theories/Phonology/ItemSpecificity/` —
 `IndexedConstraints` (@cite{pater-2010}), `ScaledWeights`
 (@cite{coetzee-pater-2008}), `UseListed` (@cite{zuraw-2000}), and
-`RepresentationStrength` (@cite{moore-cantwell-2021},
-@cite{smolensky-goldrick-2016}) — agree that **frequency conditions
-phonological alternation** but disagree on **the channel through which
-it does so**.
+`RepresentationStrength` (@cite{smolensky-goldrick-2016},
+@cite{pierrehumbert-2001}, @cite{todd-pierrehumbert-hay-2019}) — agree
+that **lexical-item identity conditions phonological alternation**
+(typically through token frequency) but disagree on **the channel
+through which it does so**.
 
 This file makes the disagreement Lean-provable. For each pair of
 theories, we construct a tiny concrete witness in which the two
@@ -59,13 +60,13 @@ have observable consequences.
   nasalisation; this file stays abstract.
 -/
 
-namespace Phonology.LexicalFrequency.Separation
+namespace Phonology.ItemSpecificity.Separation
 
-open Phonology.LexicalFrequency
-open Phonology.LexicalFrequency.Indexed
-open Phonology.LexicalFrequency.Scaled
-open Phonology.LexicalFrequency.UseListed
-open Phonology.LexicalFrequency.RepStrength
+open Phonology.ItemSpecificity
+open Phonology.ItemSpecificity.Indexed
+open Phonology.ItemSpecificity.Scaled
+open Phonology.ItemSpecificity.UseListed
+open Phonology.ItemSpecificity.RepStrength
 open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
@@ -261,4 +262,79 @@ theorem sep_indexed_vs_uselisted_routing :
       show (10 : ℝ) ≥ 3; norm_num
     simp [h_listed]
 
-end Phonology.LexicalFrequency.Separation
+-- ============================================================================
+-- § 6: RepresentationStrength vs. UseListed — gradient vs. step in the lexicon
+-- ============================================================================
+
+/-- **Separation (RepStrength vs. UseListed).** Two items both below
+    the listing threshold ("novel" from UseListed's perspective):
+
+    - RepStrength: assigns them distinct activations as a continuous
+      function of log-frequency.
+    - UseListed: dispatches both to the grammar, which (under any
+      frequency-blind grammar function) returns the same value.
+
+    This is the mirror of `sep_uselisted_vs_scaled_on_novel_pair`
+    (§3) for the lexicon-side gradient theory: UseListed's storage
+    gate is binary, while RepStrength's activation channel is
+    continuous in log-frequency even within a single stratum.
+
+    Empirical content: with novel stimuli at varying log-frequencies,
+    RepStrength predicts gradient lexical-strength effects; UseListed
+    predicts no frequency gradient on novel items. -/
+theorem sep_repstrength_vs_uselisted_subthreshold :
+    let lo : ToyItem := ⟨0.5⟩
+    let hi : ToyItem := ⟨2.5⟩
+    -- RepStrength: distinct activations even sub-threshold
+    activation (sigmoid := id) lo ≠ activation (sigmoid := id) hi
+    ∧
+    -- UseListed: both novel → grammar dispatch, frequency-blind
+    dispatch (threshold := 3) (listedForm := fun _ : ToyItem => (99 : Nat))
+        (grammarForm := fun _ : ToyItem => (7 : Nat)) lo
+      = dispatch (threshold := 3) (listedForm := fun _ : ToyItem => (99 : Nat))
+        (grammarForm := fun _ : ToyItem => (7 : Nat)) hi := by
+  refine ⟨?_, ?_⟩
+  · unfold activation
+    show (0.5 : ℝ) ≠ 2.5
+    norm_num
+  · rw [dispatch_novel_eq_grammar (α := ToyItem) (β := Nat) 3
+          (fun _ => 99) (fun _ => 7) ⟨0.5⟩ (by show (0.5 : ℝ) < 3; norm_num),
+        dispatch_novel_eq_grammar (α := ToyItem) (β := Nat) 3
+          (fun _ => 99) (fun _ => 7) ⟨2.5⟩ (by show (2.5 : ℝ) < 3; norm_num)]
+
+-- ============================================================================
+-- § 7: RepresentationStrength vs. Indexed — gradient vs. step (lexicon-side)
+-- ============================================================================
+
+/-- **Separation (RepStrength vs. Indexed).** Two items in the same
+    Indexed stratum ("core") with different log-frequencies:
+
+    - RepStrength: assigns them distinct activations.
+    - Indexed: assigns them the same effective violation count
+      (the stratum determines everything within).
+
+    This is the lexicon-side mirror of `sep_indexed_vs_scaled` (§2):
+    both Indexed and (Indexed-vs-Scaled) RepStrength take the same
+    contrast, but route it through different cells of the directory's
+    discrete/continuous × grammar/lexicon grid. RepStrength's
+    continuity *within a stratum* is the discriminating feature. -/
+theorem sep_repstrength_vs_indexed_within_stratum :
+    let lo : ToyItem := ⟨5⟩
+    let hi : ToyItem := ⟨10⟩
+    -- RepStrength: distinct activations within stratum
+    activation (sigmoid := id) lo ≠ activation (sigmoid := id) hi
+    ∧
+    -- Indexed: equal violation counts within the same stratum
+    (mkCoreOnly (cutoff := 3) baseOne).eval lo
+      = (mkCoreOnly (cutoff := 3) baseOne).eval hi := by
+  refine ⟨?_, ?_⟩
+  · unfold activation
+    show (5 : ℝ) ≠ 10
+    norm_num
+  · have h_lo : isCore (α := ToyItem) 3 ⟨5⟩ := by
+      show (5 : ℝ) ≥ 3; norm_num
+    have h_hi : isCore (α := ToyItem) 3 ⟨10⟩ := by
+      show (10 : ℝ) ≥ 3; norm_num
+    simp [mkCoreOnly, h_lo, h_hi, baseOne]
+
+end Phonology.ItemSpecificity.Separation

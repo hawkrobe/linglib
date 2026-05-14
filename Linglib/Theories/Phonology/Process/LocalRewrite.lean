@@ -45,7 +45,7 @@ careful handling of word-boundary contexts via the augmented alphabet
 | Tier-based alternation | `Process/Alternation.lean` | `TierRule` (Belth 2026); a single tier-adjacent context `LocalRewrite.Rule` is subsumed by `TierRule` (subsumption bridge deferred). |
 | Optimality Theory | `OptimalityTheory/` | Constraint-ranking (parallel evaluation); SPE-vs-OT is the central theoretical fault line of late-20th-century phonology. |
 | Harmonic Serialism | `Core/Constraint/OT/HarmonicSerialism.lean` | Iterative constraint-based; named in HS docstring as architecturally-distinct alternative for counterfeeding. |
-| Stratal OT | `OptimalityTheory/StratalOT.lean` | Constraint-ranking *within* strata, with extrinsic strata ordering — keeps SPE-style derivationality at the stratum boundary. |
+| Stratal OT | `OptimalityTheory/Stratal.lean` | Constraint-ranking *within* strata, with extrinsic strata ordering — keeps SPE-style derivationality at the stratum boundary. |
 | Output-driven (OSL/WD) | `Core/Computability/Subregular/Function/{OSL,Hierarchy}.lean` | Iterative spreading and bidirectional harmony — strictly above the ISL class that LocalRewrite occupies. |
 
 ## What this file does NOT cover
@@ -64,7 +64,7 @@ careful handling of word-boundary contexts via the augmented alphabet
   Output Strictly Local class (`Function/OSL.lean`), which is strictly
   above ISL.
 * **Cyclic / stratal application** — handled in
-  `OptimalityTheory/StratalOT.lean`.
+  `OptimalityTheory/Stratal.lean`.
 * **Tone, autosegmental representations** — Jardine 2016 shows tone
   phenomena are non-subsequential; out of scope for any subregular
   function class. See `Theories/Phonology/Autosegmental/`.

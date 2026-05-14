@@ -77,7 +77,21 @@ theorem abs_uniform :
     GramFunction.G.markerSet = .setB := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 3: Projection to Canonical ArgumentRole
+-- § 3: Absolutive Position (LOW-ABS)
+-- ============================================================================
+
+/-- Tseltalan absolutive morphemes appear in low (post-stem) position.
+    Both Tsotsil and Tseltal share this LOW-ABS classification — see
+    `Fragments.Mayan.Tsotsil.absPosition` and `Fragments.Mayan.Tseltal.absPosition`
+    for the per-language definitions, which are definitionally equal to this
+    subgroup-level constant. The LOW-ABS classification refers to the
+    structural position of the licensing head, not the linear position
+    of every Set B exponent (which varies by language and context).
+    @cite{aissen-polian-2025} p. 97; @cite{polian-2013}. -/
+def absPosition : Fragments.Mayan.ABSPosition := .low
+
+-- ============================================================================
+-- § 4: Projection to Canonical ArgumentRole
 -- ============================================================================
 
 /-- Project the Tseltalan-specific Split-S grammatical function down to

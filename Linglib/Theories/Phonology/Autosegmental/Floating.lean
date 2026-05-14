@@ -2,7 +2,6 @@ import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 import Mathlib.Data.Finset.Insert
 import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Sort
 import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Finset.Image
 
@@ -45,8 +44,8 @@ references it.
 - `deleteLink k i` — paper (6b): remove link `(k, i)` from surfaceLinks
 
 The paper's GEN also includes (6d) insert+associate a new tone and (6e)
-shift a tone; both omitted here as they don't appear in the fig. 3
-derivation.
+shift a tone (the latter credited to Gietz et al. 2023 in the paper);
+both omitted here as they don't appear in the fig. 3 derivation.
 
 ## Tautomorphic vs heteromorphic links
 
@@ -70,8 +69,18 @@ abbrev ToneIdx := Nat
 /-- Index into `segs`. -/
 abbrev SegIdx := Nat
 
-/-- Identifier for a morpheme. Concrete IDs are fragment-specific. -/
-abbrev MorphemeId := Nat
+/-- Identifier for a morpheme. Concrete IDs are fragment-specific.
+    Opaque (`def`, not `abbrev`) so that arithmetic on Nat doesn't
+    silently leak through — only the operations declared below
+    (DecidableEq, Repr, OfNat literals) are exposed to consumers. -/
+def MorphemeId : Type := Nat
+
+namespace MorphemeId
+instance : DecidableEq MorphemeId := inferInstanceAs (DecidableEq Nat)
+instance : Repr MorphemeId := inferInstanceAs (Repr Nat)
+instance : ToString MorphemeId := inferInstanceAs (ToString Nat)
+instance (n : Nat) : OfNat MorphemeId n := inferInstanceAs (OfNat Nat n)
+end MorphemeId
 
 /-- An autosegmental link: tone `fst` is associated to TBU `snd`. -/
 abbrev Link := ToneIdx × SegIdx
@@ -89,10 +98,11 @@ structure SegSpec (S : Type) where
   morpheme : MorphemeId
   deriving Repr
 
-instance {S : Type} [DecidableEq S] : DecidableEq (SegSpec S) := fun a b => by
+instance {S : Type} [DecidableEq S] : DecidableEq (SegSpec S) := λ a b => by
   rcases a with ⟨s1, m1⟩
   rcases b with ⟨s2, m2⟩
-  exact decidable_of_iff (s1 = s2 ∧ m1 = m2) (by constructor <;> (intro h; cases h; simp_all))
+  exact decidable_of_iff (s1 = s2 ∧ m1 = m2)
+    ⟨λ ⟨rfl, rfl⟩ => rfl, λ h => by cases h; exact ⟨rfl, rfl⟩⟩
 
 -- ============================================================================
 -- § 2: FloatingForm
@@ -114,15 +124,16 @@ structure FloatingForm (S : Type) where
 
 /-- Repr drops Finset fields (mathlib's Finset.Repr is unsafe). Shows
     only segs and ulTones for debugging. -/
-instance {S : Type} [Repr S] : Repr (FloatingForm S) := ⟨fun f _ =>
+instance {S : Type} [Repr S] : Repr (FloatingForm S) := ⟨λ f _ =>
   s!"⟨segs={repr (f.segs.map SegSpec.seg)}, ulTones={repr f.ulTones}⟩"⟩
 
-instance {S : Type} [DecidableEq S] : DecidableEq (FloatingForm S) := fun a b => by
+instance {S : Type} [DecidableEq S] : DecidableEq (FloatingForm S) := λ a b => by
   rcases a with ⟨a1, a2, a3, a4, a5⟩
   rcases b with ⟨b1, b2, b3, b4, b5⟩
   exact decidable_of_iff
     (a1 = b1 ∧ a2 = b2 ∧ a3 = b3 ∧ a4 = b4 ∧ a5 = b5)
-    (by constructor <;> (intro h; cases h; simp_all))
+    ⟨λ ⟨rfl, rfl, rfl, rfl, rfl⟩ => rfl,
+     λ h => by cases h; exact ⟨rfl, rfl, rfl, rfl, rfl⟩⟩
 
 namespace FloatingForm
 
@@ -146,17 +157,15 @@ def mkInput (segs : List (SegSpec S)) (ulTones : List ToneSpec)
 -- § 4: Predicates on Tones
 -- ============================================================================
 
-/-- The tone at index `k` is deleted. -/
-def IsDeleted (f : FloatingForm S) (k : ToneIdx) : Prop := k ∈ f.deletedTones
-
-instance (f : FloatingForm S) (k : ToneIdx) : Decidable (f.IsDeleted k) :=
-  inferInstanceAs (Decidable (k ∈ f.deletedTones))
-
-/-- The tone at index `k` is alive (not deleted). -/
+/-- The tone at index `k` is alive (not deleted). The structural
+    primitive; `IsDeleted` is its negation. -/
 def IsAlive (f : FloatingForm S) (k : ToneIdx) : Prop := k ∉ f.deletedTones
 
 instance (f : FloatingForm S) (k : ToneIdx) : Decidable (f.IsAlive k) :=
   inferInstanceAs (Decidable (k ∉ f.deletedTones))
+
+/-- The tone at index `k` is deleted. Sugar for `¬ IsAlive`. -/
+abbrev IsDeleted (f : FloatingForm S) (k : ToneIdx) : Prop := ¬ f.IsAlive k
 
 /-- The tone at index `k` is linked to some TBU on the surface. -/
 def IsLinked (f : FloatingForm S) (k : ToneIdx) : Prop :=
@@ -172,6 +181,18 @@ def IsFloating (f : FloatingForm S) (k : ToneIdx) : Prop :=
 instance (f : FloatingForm S) (k : ToneIdx) : Decidable (f.IsFloating k) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
+/-- A surface link `(k, i)` is **tautomorphic** iff its tone and TBU
+    share a morpheme. Out-of-range indices on either side make this
+    false. Used by *TAUTDOCK (paper, eq. 15) and the tautomorphic vs
+    heteromorphic distinction discussed in the module docstring. -/
+def IsTautomorphic (f : FloatingForm S) (l : Link) : Prop :=
+  (f.ulTones[l.fst]?).map ToneSpec.morpheme =
+    (f.segs[l.snd]?).map SegSpec.morpheme ∧
+  (f.ulTones[l.fst]?).isSome
+
+instance (f : FloatingForm S) (l : Link) : Decidable (f.IsTautomorphic l) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
 -- ============================================================================
 -- § 5: Atomic Operations (paper, eq. 6 subset)
 -- ============================================================================
@@ -181,7 +202,7 @@ instance (f : FloatingForm S) (k : ToneIdx) : Decidable (f.IsFloating k) :=
 def deleteTone (f : FloatingForm S) (k : ToneIdx) : FloatingForm S :=
   { f with
     deletedTones := insert k f.deletedTones
-    surfaceLinks := f.surfaceLinks.filter (fun l => l.fst ≠ k) }
+    surfaceLinks := f.surfaceLinks.filter (λ l => l.fst ≠ k) }
 
 /-- (6a) Insert a surface link `(k, i)`. -/
 def insertLink (f : FloatingForm S) (k : ToneIdx) (i : SegIdx) : FloatingForm S :=
@@ -221,12 +242,12 @@ instance (f : FloatingForm S) (k : ToneIdx) (i : SegIdx) :
     could dock across an intervening linked tone, which the paper's
     GEN implicitly forbids. -/
 def gen (f : FloatingForm S) : Finset (FloatingForm S) :=
-  let aliveIdxs := (Finset.range f.ulTones.length).filter (fun k => f.IsAlive k)
-  let floatIdxs := aliveIdxs.filter (fun k => ¬ f.IsLinked k)
+  let aliveIdxs := (Finset.range f.ulTones.length).filter (λ k => f.IsAlive k)
+  let floatIdxs := aliveIdxs.filter (λ k => ¬ f.IsLinked k)
   let segIdxs := Finset.range f.segs.length
-  let deleteOps := aliveIdxs.image (fun k => f.deleteTone k)
+  let deleteOps := aliveIdxs.image (λ k => f.deleteTone k)
   let insertOps := ((floatIdxs ×ˢ segIdxs).filter
-    (fun ⟨k, i⟩ => ¬ f.Crosses k i)).image (fun ⟨k, i⟩ => f.insertLink k i)
+    (λ ⟨k, i⟩ => ¬ f.Crosses k i)).image (λ ⟨k, i⟩ => f.insertLink k i)
   insert f (deleteOps ∪ insertOps)
 
 -- ============================================================================
@@ -238,7 +259,7 @@ def gen (f : FloatingForm S) : Finset (FloatingForm S) :=
     currently floating, else `0`. Used by directional `*FLOAT`
     (paper, eq. 16). -/
 def floatIndicator (f : FloatingForm S) : List Nat :=
-  (List.range f.ulTones.length).map fun k => if f.IsFloating k then 1 else 0
+  (List.range f.ulTones.length).map λ k => if f.IsFloating k then 1 else 0
 
 /-- Surface tones linked to TBU `i`, returned in tier order (smallest
     tone index first). Used by *FALL and *CROWD. We iterate over
@@ -246,11 +267,27 @@ def floatIndicator (f : FloatingForm S) : List Nat :=
     and reduces well via kernel `decide` (avoiding `Finset.sort`,
     which doesn't unfold structurally). -/
 def linksTo (f : FloatingForm S) (i : SegIdx) : List ToneIdx :=
-  (List.range f.ulTones.length).filter fun k => (k, i) ∈ f.surfaceLinks
+  (List.range f.ulTones.length).filter λ k => (k, i) ∈ f.surfaceLinks
 
 /-- Sequence of tone values linked to TBU `i`, in tier order. -/
 def toneSequence (f : FloatingForm S) (i : SegIdx) : List TRN :=
-  (f.linksTo i).filterMap fun k => f.ulTones[k]?.map ToneSpec.tone
+  (f.linksTo i).filterMap λ k => f.ulTones[k]?.map ToneSpec.tone
+
+-- ============================================================================
+-- § 9: Tier and Morpheme Subsequences
+-- ============================================================================
+
+/-- Indices of alive (non-deleted) underlying tones, in tier order.
+    Iterates `List.range f.ulTones.length` so the result is naturally
+    sorted and reduces well via kernel `decide`. -/
+def aliveTones (f : FloatingForm S) : List ToneIdx :=
+  (List.range f.ulTones.length).filter (λ k => decide (f.IsAlive k))
+
+/-- Segment indices belonging to morpheme `m`, in segmental order.
+    Out-of-range indices are excluded by construction. -/
+def segsOfMorpheme (f : FloatingForm S) (m : MorphemeId) : List SegIdx :=
+  (List.range f.segs.length).filter (λ i =>
+    decide ((f.segs[i]?).map SegSpec.morpheme = some m))
 
 end FloatingForm
 

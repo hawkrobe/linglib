@@ -1,6 +1,6 @@
 import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 import Linglib.Theories.Phonology.OptimalityTheory.TCT
-import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
+import Linglib.Theories.Phonology.OptimalityTheory.Stratal
 import Linglib.Theories.Phonology.OptimalityTheory.StratalCorr
 import Linglib.Theories.Phonology.ParadigmUniformity.Transderivational
 import Linglib.Core.Constraint.OT.Basic
@@ -42,7 +42,7 @@ markedness constraint M₂ is satisfied or violated by the base output.
 ## What's not here
 
 - English affix classhood (Benua's third case study) — large, deferred.
-- Head-to-head bridge against `StratalOT.lean`. The polemic of Benua's
+- Head-to-head bridge against `Stratal.lean`. The polemic of Benua's
   thesis is that parallel TCT subsumes stratal predictions; the bridge
   theorem (or counterexample) is left for follow-up work.
 
@@ -423,7 +423,7 @@ the architecturally-distinct derivations producing identical phraseOutput.
 
 namespace StratalComparison
 
-open Phonology.StratalOT (StratalDerivation StratalRole stratalDerivToCorr)
+open Phonology.Stratal (StratalDerivation StratalRole stratalDerivToCorr)
 open Phonology.StratalToTCT (project project_preserves_phrase_as_derivative
                              project_preserves_stem_as_base
                              project_preserves_underlying_as_input
@@ -502,7 +502,7 @@ theorem stratal_stem_is_tct_base :
     `(.base, .derivative)` correspondence. -/
 theorem stratal_chain_collapses_to_oo_edge :
     sundaneseStratalAsTCT.edge .base .derivative =
-      Phonology.StratalOT.parallelEdge Sundanese.baseOutput
+      Phonology.Stratal.parallelEdge Sundanese.baseOutput
         Sundanese.derivOutputOverapplied :=
   project_oo_edge_eq_parallel _ _ _ _
 
@@ -515,7 +515,7 @@ the same surface predictions — is a meta-theoretical statement
 requiring:
 
 1. A model of stratal grammars as functions `Input → Output` derived
-   from stratum-specific constraint rankings (`StratalOT.evalStratum`
+   from stratum-specific constraint rankings (`Stratal.evalStratum`
    chained via `chainEval`).
 2. A model of TCT grammars as `TCTGrammar` instances (already exists
    in `TCT.lean`).

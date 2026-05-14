@@ -253,7 +253,7 @@ def CoupledSoftmax.genuinelyCoupled
     the general coupled evaluation pattern. The `marginal_eq_classical_when_no_systemic`
     theorem in `MaxEnt.lean` is a corollary of `marginal_eq_independent_when_uncoupled`. -/
 noncomputable def coupledSoftmaxOfMaxEnt
-    {n : Nat} {I O : Type} [Fintype O] [DecidableEq O]
+    {n : Nat} {I O : Type*} [Fintype O] [DecidableEq O]
     (inputs : Fin n → I)
     (classicalScore : I × O → ℝ)
     (systemicScore : (Fin n → O) → ℝ) :

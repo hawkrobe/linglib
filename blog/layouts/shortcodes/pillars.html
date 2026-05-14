@@ -1,0 +1,20 @@
+{{- $stats := site.Data.stats -}}
+<section class="ll-whats-here">
+  <h2 id="whats-here">What's here</h2>
+  <p class="ll-stats">
+    <strong>{{ $stats.totals.files }}</strong> Lean files ·
+    <strong>{{ $stats.totals.phenomena }}</strong> phenomena ·
+    <strong>{{ $stats.totals.languages }}</strong> languages ·
+    <strong>{{ $stats.totals.theories }}</strong> theory files ·
+    <strong>{{ $stats.totals.studies }}</strong> study files
+  </p>
+  <div class="ll-pillar-grid">
+    {{- range $stats.areas }}
+    <a class="ll-pillar" href="/linglib/docs/Linglib/Theories/{{ .name }}/">
+      <div class="ll-pillar-name">{{ .name }}</div>
+      <div class="ll-pillar-count">{{ .files }} files</div>
+      <div class="ll-pillar-blurb">{{ .blurb }}</div>
+    </a>
+    {{- end }}
+  </div>
+</section>

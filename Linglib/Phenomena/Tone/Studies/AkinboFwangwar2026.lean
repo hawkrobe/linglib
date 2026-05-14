@@ -200,16 +200,11 @@ end SingleRoot
 
 section PerRoot
 
-/-- TBU indices belonging to root morpheme `rm`. -/
-def rootTbus (rm : MorphemeId) (f : MwaghavulForm) : List SegIdx :=
-  (List.range f.segs.length).filter fun i =>
-    (f.segs[i]?).any (fun sp => decide (sp.morpheme = rm))
-
 /-- A gram-`t`-from-`m` tone is realised on root `rm` iff some TBU of
     `rm` bears one. -/
 def isRealisedOnRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
     (f : MwaghavulForm) : Bool :=
-  (rootTbus rm f).any (isGramTbu t m f)
+  (f.segsOfMorpheme rm).any (isGramTbu t m f)
 
 /-- L-ANCHOR scoped to root `rm`. 0 if `t`-from-`m` not realised on
     `rm` (per paper p. 28: "no violation to the other root morpheme");
@@ -217,7 +212,7 @@ def isRealisedOnRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
 def lAnchTonePerRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
     (f : MwaghavulForm) : Nat :=
   if isRealisedOnRoot t m rm f then
-    match (rootTbus rm f).findIdx? (isGramTbu t m f) with
+    match (f.segsOfMorpheme rm).findIdx? (isGramTbu t m f) with
     | some i => i
     | none   => 0
   else 0
@@ -226,7 +221,7 @@ def lAnchTonePerRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
 def rAnchTonePerRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
     (f : MwaghavulForm) : Nat :=
   if isRealisedOnRoot t m rm f then
-    match (rootTbus rm f).reverse.findIdx? (isGramTbu t m f) with
+    match (f.segsOfMorpheme rm).reverse.findIdx? (isGramTbu t m f) with
     | some i => i
     | none   => 0
   else 0
@@ -239,7 +234,7 @@ def lAnchToneAcrossRoots (t : TRN) (m : MorphemeId) (rms : List MorphemeId)
   if rms.any (fun rm => isRealisedOnRoot t m rm f) then
     rms.foldl (fun acc rm => acc + lAnchTonePerRoot t m rm f) 0
   else
-    rms.foldl (fun acc rm => acc + (rootTbus rm f).length) 0
+    rms.foldl (fun acc rm => acc + (f.segsOfMorpheme rm).length) 0
 
 /-- R-ANCHOR summed across a list of root morphemes. -/
 def rAnchToneAcrossRoots (t : TRN) (m : MorphemeId) (rms : List MorphemeId)
@@ -247,7 +242,7 @@ def rAnchToneAcrossRoots (t : TRN) (m : MorphemeId) (rms : List MorphemeId)
   if rms.any (fun rm => isRealisedOnRoot t m rm f) then
     rms.foldl (fun acc rm => acc + rAnchTonePerRoot t m rm f) 0
   else
-    rms.foldl (fun acc rm => acc + (rootTbus rm f).length) 0
+    rms.foldl (fun acc rm => acc + (f.segsOfMorpheme rm).length) 0
 
 /-- L-ANCHOR-`t`-from-`m`-across-roots as a `DirectionalConstraint`. -/
 def lAnchToneCAcross (t : TRN) (m : MorphemeId) (rms : List MorphemeId) :

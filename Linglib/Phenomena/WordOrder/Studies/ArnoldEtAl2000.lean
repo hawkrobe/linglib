@@ -1,5 +1,5 @@
 import Linglib.Core.Constraint.MaxEnt
-import Linglib.Core.Constraint.Variation
+import Linglib.Core.Constraint.Weighted
 import Linglib.Features.Givenness
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 
@@ -246,7 +246,7 @@ lemma newDiff_pos_iff {p : Pair} :
     is non-zero, its sign determines which order wins. -/
 theorem heaviness_independently_predicts {p : Pair} {wH : ℚ}
     (hH : 0 < wH) (h : 0 < heavyDiff p) :
-    moreProbable (grammar wH 0) (p, .themeLast) (p, .goalLast) := by
+    harmonyDominates (grammar wH 0) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH 0 p
   show harmonyScore _ _ > harmonyScore _ _
   have : 0 < wH * heavyDiff p := mul_pos hH h
@@ -257,7 +257,7 @@ theorem heaviness_independently_predicts {p : Pair} {wH : ℚ}
     the order placing the new constituent last strictly more probable. -/
 theorem newness_independently_predicts {p : Pair} {wN : ℚ}
     (hN : 0 < wN) (h : 0 < newDiff p) :
-    moreProbable (grammar 0 wN) (p, .themeLast) (p, .goalLast) := by
+    harmonyDominates (grammar 0 wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components 0 wN p
   show harmonyScore _ _ > harmonyScore _ _
   have : 0 < wN * newDiff p := mul_pos hN h
@@ -274,7 +274,7 @@ theorem both_factors_compose {p : Pair} {wH wN : ℚ}
     (hH : 0 ≤ wH) (hN : 0 ≤ wN)
     (hHeavy : 0 ≤ heavyDiff p) (hNew : 0 ≤ newDiff p)
     (hStrict : 0 < wH * heavyDiff p ∨ 0 < wN * newDiff p) :
-    moreProbable (grammar wH wN) (p, .themeLast) (p, .goalLast) := by
+    harmonyDominates (grammar wH wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH wN p
   show harmonyScore _ _ > harmonyScore _ _
   have h1 : 0 ≤ wH * heavyDiff p := mul_nonneg hH hHeavy
@@ -288,7 +288,7 @@ theorem both_factors_compose {p : Pair} {wH wN : ℚ}
     argue for in §5. -/
 theorem tradeoff_resolved_by_weights {p : Pair} {wH wN : ℚ}
     (h : 0 < wH * heavyDiff p + wN * newDiff p) :
-    moreProbable (grammar wH wN) (p, .themeLast) (p, .goalLast) := by
+    harmonyDominates (grammar wH wN) (p, .themeLast) (p, .goalLast) := by
   have hdiff := score_diff_eq_components wH wN p
   show harmonyScore _ _ > harmonyScore _ _
   linarith
@@ -389,7 +389,7 @@ theorem heaviness_and_newness_genuinely_independent :
     the goal is heavier than the theme. Direct application of the
     `heavyDiff`-symmetric independence theorem on the swapped pair. -/
 theorem heavy_goal_predicts_goalLast :
-    moreProbable (grammar 1 0)
+    harmonyDominates (grammar 1 0)
       (heavyGoalContrast, .goalLast) (heavyGoalContrast, .themeLast) := by
   have hdiff := score_diff_eq_components 1 0 heavyGoalContrast
   show harmonyScore _ _ > harmonyScore _ _
@@ -399,7 +399,7 @@ theorem heavy_goal_predicts_goalLast :
 /-- Pure-newness MaxEnt grammar predicts theme-last (given-first) when
     the theme is new and the goal is given. -/
 theorem new_theme_predicts_themeLast :
-    moreProbable (grammar 0 1)
+    harmonyDominates (grammar 0 1)
       (newThemeContrast, .themeLast) (newThemeContrast, .goalLast) :=
   newness_independently_predicts (by norm_num) (by rw [newDiff_newThemeContrast]; norm_num)
 

@@ -497,7 +497,11 @@ Structure:
                                                         P (6) ──2──▶ wh (9)
 -/
 
-private def g_definite_island := mkGraph 10
+/-- Definite-nominal island configuration (@cite{adger-2025}, Ch 6 §6.3.2).
+    `D (5) ──2──▶ Det (8)` represents Det subjunction filling D's 2-part;
+    extracting `wh (9)` to matrix `C (0)` traverses cross-dimensional path.
+    Public (consumed by `Phenomena/Islands/Studies/Adger2025.lean`). -/
+def g_definite_island := mkGraph 10
   -- 1-part edges: C─T─v─V, D─P─N
   [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
    (⟨2, by omega⟩, ⟨3, by omega⟩), (⟨5, by omega⟩, ⟨6, by omega⟩),
@@ -567,7 +571,11 @@ any node in C's 1-part chain [T, v, V].
 Crucially, the SUBJECT DP ITSELF can extract (it is T's 2-part):
 this correctly predicts "Who [t arrived]?" is grammatical. -/
 
-private def g_subject_island := mkGraph 9
+/-- Subject-island configuration (@cite{adger-2025}, Ch 7 §7.7).
+    Sub-extraction of `N_who (8)` from within subject `DP_subj (4)` traverses
+    `N_who <₁ PP <₂ NP <₁ DP <₂ T`, crossing dimensions twice.
+    Public (consumed by `Phenomena/Islands/Studies/Adger2025.lean`). -/
+def g_subject_island := mkGraph 9
   -- 1-parts: C─T─v─V, DP─NP─N_friend, PP─N_who
   [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
    (⟨2, by omega⟩, ⟨3, by omega⟩), (⟨4, by omega⟩, ⟨5, by omega⟩),
@@ -606,7 +614,12 @@ The path NP_wh(7) <₁ PP(6) <₁ AdvP(5) <₂ v(2) crosses dimensions
 at the AdvP-to-v boundary. Within v's 2-part chain: AdvP is there,
 but NP_wh is not (NP_wh is in AdvP's 1-part chain, not its 2-part chain). -/
 
-private def g_adjunct_island := mkGraph 8
+/-- Adjunct-island configuration: a graph-level instantiation of the Ch 4
+    cross-dimensional mechanism applied to an `AdvP` 2-part of `v`. Adger's
+    Ch 8 admits adjunct islands receive only a sketch (book p. 225) and the
+    full Mod-headed Geis/Haegeman analysis is not formalised here.
+    Public (consumed by `Phenomena/Islands/Studies/Adger2025.lean`). -/
+def g_adjunct_island := mkGraph 8
   -- 1-parts: C─T─v─V, AdvP─PP─NP_wh
   [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
    (⟨2, by omega⟩, ⟨3, by omega⟩), (⟨5, by omega⟩, ⟨6, by omega⟩),

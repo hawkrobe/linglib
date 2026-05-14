@@ -76,7 +76,7 @@ theorem rank_injective : Function.Injective SonorityRank.rank :=
 /-- Linear order on sonority ranks, lifted from the numeric ranking.
     Enables `<`, `≤`, `max`, `min` on `SonorityRank` directly — used by
     SONCON and other sonority-sensitive constraints. Follows the same
-    pattern as `Stratum` in `StratalOT.lean`. -/
+    pattern as `Stratum` in `Stratal.lean`. -/
 instance : LinearOrder SonorityRank :=
   LinearOrder.lift' SonorityRank.rank rank_injective
 

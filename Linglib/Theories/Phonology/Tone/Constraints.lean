@@ -47,16 +47,6 @@ variable {S : Type} [DecidableEq S]
 -- § 1: Predicate Helpers
 -- ============================================================================
 
-/-- The link `(k, i)` is tautomorphic: its tone and TBU share a morpheme.
-    Both indices must resolve to options (out-of-range = no match). -/
-def IsTautomorphic (f : FloatingForm S) (l : Link) : Prop :=
-  (f.ulTones[l.fst]?).map ToneSpec.morpheme =
-    (f.segs[l.snd]?).map SegSpec.morpheme ∧
-  (f.ulTones[l.fst]?).isSome
-
-instance (f : FloatingForm S) (l : Link) : Decidable (IsTautomorphic f l) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
 /-- The link `(k, i)` was inserted by GEN (in surface but not in underlying). -/
 def IsInsertedLink (f : FloatingForm S) (l : Link) : Prop :=
   l ∈ f.surfaceLinks ∧ l ∉ f.ulLinks
@@ -126,7 +116,7 @@ def starTautDock : DirectionalConstraint (FloatingForm S) where
   name := "*TAUTDOCK"
   family := .markedness
   eval := fun f =>
-    [(f.surfaceLinks.filter (fun l => IsInsertedLink f l ∧ IsTautomorphic f l)).card]
+    [(f.surfaceLinks.filter (fun l => IsInsertedLink f l ∧ f.IsTautomorphic l)).card]
 
 -- ============================================================================
 -- § 4: *CROWD (per-morpheme tone count)
@@ -238,8 +228,7 @@ def starMlessL : DirectionalConstraint (FloatingForm S) where
   family := .markedness
   eval := fun f =>
     let aliveValues : List TRN :=
-      (List.range f.ulTones.length).filterMap fun k =>
-        if f.IsAlive k then (f.ulTones[k]?).map ToneSpec.tone else none
+      f.aliveTones.filterMap fun k => (f.ulTones[k]?).map ToneSpec.tone
     [aliveValues.zip aliveValues.tail
       |>.countP fun p => decide (p.1 = TRN.M ∧ p.2 = TRN.L)]
 

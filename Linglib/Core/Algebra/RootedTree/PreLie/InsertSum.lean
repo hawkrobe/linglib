@@ -3,13 +3,11 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Algebra.RootedTree.PreLie.Vertex
+import Linglib.Core.Algebra.RootedTree.PreLie.Insert
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Mathlib.Data.Multiset.Basic
-import Mathlib.Data.Multiset.AddSub
 import Mathlib.Data.Multiset.MapFold
 import Mathlib.Data.Multiset.ZeroCons
-import Mathlib.Algebra.Order.Group.Multiset
 import Mathlib.Tactic.Abel
 
 set_option autoImplicit false
@@ -68,14 +66,12 @@ instance for MCB §1.7.
 - §12: Sanity tests.
 
 Sibling files:
-- `Vertex.lean` — vertex machinery (`Vertex`, `insertAt`, `vertices`).
+- `Path.lean` / `Insert.lean` — path-based vertex enumeration + grafting
+  (`Pathed.vertices`, `Pathed.insertAt`).
 - `Insertion.lean` — multi-tree multi-vertex grafting (Foissy 2021).
 - `VertexBijection.lean` — vertex classification + commutativity.
 - `Algebra.lean` — `RightPreLieAlgebra ℤ` instance.
 
-## Status
-
-`[UPSTREAM]` candidate. Sorry-free.
 -/
 
 namespace RootedTree
@@ -84,7 +80,7 @@ namespace Planar
 
 variable {α : Type*}
 
-/-! ## §1: `insertSum` — the vertex-grafting product
+/-! ### `insertSum` — the vertex-grafting product
 
 Mutually recursive on `(Planar, List Planar)` mirroring `weight` /
 `weightList` etc. Each summand of `insertSum T₁ T₂` corresponds to a
@@ -137,11 +133,12 @@ scoped infixl:65 " ◁ " => insertSum
 @[simp] theorem insertSum_leaf (a : α) (T₂ : Planar α) :
     Planar.leaf a ◁ T₂ =
       ({Planar.node a [T₂]} : Multiset (Planar α)) := by
-  show insertSum (Planar.node a []) T₂ = _
-  rw [insertSum_node, insertSumList_nil]
-  simp
+  show insertSum (Planar.node a []) T₂ =
+       ({Planar.node a [T₂]} : Multiset (Planar α))
+  rw [insertSum_node, insertSumList_nil, Multiset.map_zero]
+  rfl
 
-/-! ## §2: Cardinality — `card (T₁ ◁ T₂) = T₁.weight`
+/-! ### Cardinality — `card (T₁ ◁ T₂) = T₁.weight`
 
 Each vertex of `T₁` contributes one summand. Proved by mutual
 structural induction mirroring the definition. -/
@@ -173,52 +170,85 @@ theorem card_insertSumList_eq_weightList : ∀ (cs : List (Planar α))
     rfl
 end
 
-/-! ## §3: Decomposition — `insertSum` via `vertices` + `insertAt`
+/-! ### Decomposition — `insertSum` via `Pathed.vertices` + `Pathed.insertAt`
 
 Bridge lemma between the recursive (Multiset) formulation of `insertSum`
-in §1 and the per-vertex (List) formulation in `Vertex.lean`. The
-lemma is the basis for the pre-Lie identity proof in `Algebra.lean`:
-each summand of `insertSum T₁ T₂` is uniquely identified by a vertex
-of `T₁`. -/
+in §1 and the per-path (List) formulation in `Path.lean` / `Insert.lean`.
+The lemma is the basis for the pre-Lie identity proof in `Algebra.lean`:
+each summand of `insertSum T₁ T₂` is uniquely identified by a path
+into `T₁`. -/
+
+/-- Path-offset helper: at offset `pre.length`, the path-based
+    insertion descends into the head of `c :: cs'` (sitting after the
+    `pre` prefix). Witnesses the decisive identification of "the path
+    `pre.length :: q` in `pre ++ (c :: cs')`" with "the path `q` in
+    `c`, lifted through the `pre`-prefixed children-list set". -/
+private theorem pathInsertAt_at_pre_length (a : α)
+    (pre cs' : List (Planar α)) (c : Planar α) (q : Pathed.Path)
+    (T₂ : Planar α) :
+    Pathed.insertAt (pre.length :: q) T₂ (Planar.node a (pre ++ (c :: cs')))
+      = Planar.node a (pre ++ (Pathed.insertAt q T₂ c :: cs')) := by
+  have hpre_lt : pre.length < (pre ++ (c :: cs')).length := by
+    rw [List.length_append, List.length_cons]; omega
+  rw [Pathed.insertAt_cons_of_lt _ _ _ _ _ hpre_lt]
+  congr 1
+  rw [List.getElem_append_right (le_refl _),
+      List.set_append_right _ _ (le_refl _)]
+  simp only [Nat.sub_self, List.getElem_cons_zero, List.set_cons_zero]
 
 mutual
 /-- **Decomposition lemma**: `T₁ ◁ T₂` equals the multiset of
-    `insertAt v T₂` for `v` ranging over `vertices T₁`. -/
+    `Pathed.insertAt p T₂ T₁` for `p` ranging over `Pathed.vertices T₁`. -/
 theorem insertSum_eq_coe_map_insertAt : ∀ (T₁ T₂ : Planar α),
     T₁ ◁ T₂ =
-      ((vertices T₁).map (fun v => insertAt v T₂) : Multiset (Planar α))
+      ((Pathed.vertices T₁).map (fun p => Pathed.insertAt p T₂ T₁)
+        : Multiset (Planar α))
   | .node a cs, T₂ => by
-    rw [insertSum_node, vertices_node,
-        insertSumList_eq_coe_map_insertAtList cs T₂]
-    simp only [Multiset.map_coe, List.map_cons, List.map_map,
-               Function.comp_def, insertAt_root, insertAt_inChild,
-               ← Multiset.cons_coe]
-/-- `insertSumList cs T₂` equals the multiset of `insertAtList vl T₂`
-    for `vl` ranging over `verticesList cs`. -/
-theorem insertSumList_eq_coe_map_insertAtList :
-    ∀ (cs : List (Planar α)) (T₂ : Planar α),
-    insertSumList cs T₂ =
-      ((verticesList cs).map (fun vl => insertAtList vl T₂)
-          : Multiset (List (Planar α)))
-  | [], _ => by
-    rw [insertSumList_nil, verticesList_nil]
+    rw [insertSum_node, Pathed.vertices_node]
+    have aux := insertSumList_eq_coe_map_pathInsertAt_aux a [] cs T₂
+    simp only [List.nil_append, List.length_nil] at aux
+    rw [aux, List.map_cons, ← Multiset.cons_coe, Pathed.insertAt_nil]
+/-- Auxiliary: with `pre` siblings before the cs-tail being grafted in,
+    children-list grafting through `pre`-prefixed `Planar.node a`
+    equals the path-based insertions at offset `pre.length` into the
+    original host `Planar.node a (pre ++ cs)`. -/
+theorem insertSumList_eq_coe_map_pathInsertAt_aux :
+    ∀ (a : α) (pre cs : List (Planar α)) (T₂ : Planar α),
+    (insertSumList cs T₂).map (fun cs' => Planar.node a (pre ++ cs'))
+      = ((Pathed.verticesAux pre.length cs).map
+          (fun p => Pathed.insertAt p T₂ (Planar.node a (pre ++ cs)))
+          : Multiset _)
+  | _, _, [], _ => by
+    rw [insertSumList_nil, Pathed.verticesAux_nil]
     rfl
-  | c :: cs, T₂ => by
-    rw [insertSumList_cons, verticesList_cons,
-        insertSum_eq_coe_map_insertAt c T₂,
-        insertSumList_eq_coe_map_insertAtList cs T₂]
-    simp only [Multiset.map_coe, List.map_append, List.map_map,
-               Function.comp_def, insertAtList_head, insertAtList_tail,
-               ← Multiset.coe_add]
+  | a, pre, c :: cs', T₂ => by
+    rw [insertSumList_cons, Pathed.verticesAux_cons,
+        Multiset.map_add, Multiset.map_map, Multiset.map_map,
+        List.map_append, ← Multiset.coe_add]
+    simp only [Function.comp_def]
+    congr 1
+    · rw [insertSum_eq_coe_map_insertAt c T₂, Multiset.map_coe,
+          List.map_map, List.map_map]
+      simp only [Function.comp_def]
+      apply congrArg Multiset.ofList
+      apply List.map_congr_left
+      intro q _
+      exact (pathInsertAt_at_pre_length a pre cs' c q T₂).symm
+    · have ih_aux :=
+        insertSumList_eq_coe_map_pathInsertAt_aux a (pre ++ [c]) cs' T₂
+      simp only [List.length_append, List.length_singleton,
+                 List.append_assoc, List.singleton_append] at ih_aux
+      exact ih_aux
 end
 
-/-! ## §4: Cardinality consistency
+/-! ### Cardinality consistency
 
-The two cardinality computations agree: `(T₁ ◁ T₂).card = (vertices T₁).length`. -/
+The two cardinality computations agree:
+`(T₁ ◁ T₂).card = (Pathed.vertices T₁).length`. -/
 
 theorem card_insertSum_eq_length_vertices (T₁ T₂ : Planar α) :
-    Multiset.card (T₁ ◁ T₂) = (vertices T₁).length := by
-  rw [card_insertSum_eq_weight, length_vertices_eq_weight]
+    Multiset.card (T₁ ◁ T₂) = (Pathed.vertices T₁).length := by
+  rw [card_insertSum_eq_weight, Pathed.length_vertices_eq_weight]
 
 end Planar
 
@@ -234,7 +264,7 @@ variable {α : Type*}
 
 open scoped RootedTree.Planar
 
-/-! ## §5: Cons-decomposition of `insertSumList`-projection
+/-! ### Cons-decomposition of `insertSumList`-projection
 
 Helper lemma used by both §6 right-invariance and §7 list permutation
 proofs. The cons case of `insertSumList cs T₂` splits into a per-head
@@ -316,7 +346,7 @@ private theorem map_node_sibling_cons_via_mk (a : α) (p : Planar α)
     rw [← hform]; exact hbase
   exact Planar.planarEquiv_cons_lift p hbase'
 
-/-! ## §6: Right invariance — `T₂ → T₂'`
+/-! ### Right invariance — `T₂ → T₂'`
 
 If `T₂ ≡ T₂'` (PlanarEquiv), then `(T₁ ◁ T₂).map mk = (T₁ ◁ T₂').map mk`
 for any T₁. Mutually inducted with the children-list version
@@ -361,7 +391,7 @@ theorem insertSum_planarEquiv_right (T₁ : Planar α) {T₂ T₂' : Planar α}
       (Planar.insertSum T₁ T₂').map Nonplanar.mk :=
   insertSum_planarEquiv_right_aux T₁ T₂ T₂' h
 
-/-! ## §7: List-side `mk`-projection of `insertSumList`
+/-! ### List-side `mk`-projection of `insertSumList`
 
 Two key properties of `(insertSumList cs T₂).map (mk ∘ .node a)`:
 Perm-invariance in `cs` and componentwise PlanarEquiv-invariance. -/
@@ -461,7 +491,7 @@ private theorem insertSumList_proj_perm_aux (a : α) (T₂ : Planar α) :
     abel
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ## §8: Left invariance — `T₁ → T₁'` via PlanarStep induction -/
+/-! ### Left invariance — `T₁ → T₁'` via PlanarStep induction -/
 
 private theorem insertSumList_planarStep_at_aux : ∀ (a : α) (T₂ : Planar α)
     (pre : List (Planar α)) (post : List (Planar α)) (old new : Planar α),
@@ -529,7 +559,7 @@ theorem insertSum_planarStep_left {T₁ T₁' : Planar α}
       exact Planar.PlanarEquiv.of_step hsub
     · exact insertSumList_planarStep_at_aux a T₂ pre post old new ih h_mk
 
-/-! ## §9: EqvGen lift to `PlanarEquiv` -/
+/-! ### EqvGen lift to `PlanarEquiv` -/
 
 /-- Left invariance under `PlanarEquiv` on T₁. Standard `EqvGen` recipe. -/
 theorem insertSum_planarEquiv_left {T₁ T₁' : Planar α}
@@ -542,7 +572,7 @@ theorem insertSum_planarEquiv_left {T₁ T₁' : Planar α}
   | symm _ _ _ ih => exact ih.symm
   | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
-/-! ## §10: Native `Nonplanar.insertSum` via `Quotient.lift₂` -/
+/-! ### Native `Nonplanar.insertSum` via `Quotient.lift₂` -/
 
 /-- The **vertex-grafting pre-Lie product on `Nonplanar α`**: lifted from
     the planar `Planar.insertSum` via `Quotient.lift₂`, using the
@@ -563,7 +593,7 @@ def insertSum : Nonplanar α → Nonplanar α → Multiset (Nonplanar α) :=
     `Nonplanar` namespace to coexist with the planar `◁`. -/
 scoped infixl:65 " ◁ " => Nonplanar.insertSum
 
-/-! ## §11: Quotient-unfolding lemma + Nonplanar cardinality -/
+/-! ### Quotient-unfolding lemma + Nonplanar cardinality -/
 
 /-- Quotient unfolding: `Nonplanar.insertSum (mk t₁) (mk t₂)` is the
     multiset of nonplanar grafting summands obtained by projecting the
@@ -584,7 +614,7 @@ theorem card_insertSum_eq_weight (T₁ T₂ : Nonplanar α) :
 
 end Nonplanar
 
-/-! ## §12: Sanity tests at compile time -/
+/-! ### Sanity tests at compile time -/
 
 namespace Planar
 
@@ -602,9 +632,9 @@ example : Multiset.card
   show (Planar.binary 1 (Planar.leaf 2) (Planar.leaf 3) : Planar Nat).weight = 3
   unfold Planar.binary Planar.leaf weight weightList; rfl
 
-/-- The grafting decomposition: each summand corresponds to a vertex. -/
+/-- The grafting decomposition: each summand corresponds to a path. -/
 example (T₁ T₂ : Planar Nat) :
-    Multiset.card (T₁ ◁ T₂) = (vertices T₁).length :=
+    Multiset.card (T₁ ◁ T₂) = (Pathed.vertices T₁).length :=
   card_insertSum_eq_length_vertices T₁ T₂
 
 end Tests

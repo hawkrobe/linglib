@@ -1811,6 +1811,7 @@ import Linglib.Phenomena.Phonology.Studies.CoetzeePater2011
 import Linglib.Phenomena.Phonology.Studies.Flemming2021
 import Linglib.Phenomena.Phonology.Studies.FaustLampitelli2026
 import Linglib.Phenomena.Phonology.Studies.FrischPierrehumbertBroe2004
+import Linglib.Phenomena.Phonology.Studies.GahlBaayen2024
 import Linglib.Phenomena.Phonology.Studies.GoldwaterJohnson2003
 import Linglib.Phenomena.Phonology.Studies.Hansson2010
 import Linglib.Phenomena.Phonology.Studies.Jaeger2007
@@ -1820,6 +1821,7 @@ import Linglib.Phenomena.Phonology.Studies.MarcoRasin2026
 import Linglib.Phenomena.Phonology.Studies.MeinhardtEtAl2024
 import Linglib.Phenomena.Phonology.Studies.RoseWalker2004
 import Linglib.Phenomena.Phonology.Studies.Sagey1986
+import Linglib.Phenomena.Phonology.Studies.Saito2025
 import Linglib.Phenomena.Phonology.Studies.SandeClemDabkowski2026
 import Linglib.Phenomena.Phonology.Studies.SPEDerivations
 import Linglib.Phenomena.Phonology.Studies.Storme2026
@@ -1833,6 +1835,8 @@ import Linglib.Phenomena.Tone.Studies.Hyman2006
 import Linglib.Phenomena.Tone.Studies.Lionnet2025
 import Linglib.Phenomena.Tone.Studies.AkinboFwangwar2026
 import Linglib.Phenomena.Tone.Studies.McPhersonLamont2026
+import Linglib.Phenomena.Tone.Studies.ChuangEtAl2026
+import Linglib.Phenomena.Tone.Studies.LuChuangBaayen2026
 import Linglib.Phenomena.CompensatoryLengthening.Studies.Hayes1989
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
@@ -1945,6 +1949,11 @@ import Linglib.Theories.Syntax.WordGrammar.LexicalRules
 import Linglib.Theories.Syntax.WordGrammar.Network
 import Linglib.Theories.Processing.Cost.Profile
 import Linglib.Theories.Processing.CueBasedRetrieval.Basic
+import Linglib.Theories.Processing.Lexical.Discriminative.Defs
+import Linglib.Theories.Processing.Lexical.Discriminative.RescalingInvariance
+import Linglib.Theories.Processing.Lexical.Discriminative.Measures
+import Linglib.Theories.Processing.Lexical.Discriminative.Normed
+import Linglib.Theories.Processing.Lexical.Discriminative.Training
 import Linglib.Theories.Processing.LanguageModel.Basic
 import Linglib.Theories.Processing.MemorySurprisal.Basic
 import Linglib.Theories.Processing.MemorySurprisal.InformationalFusion
@@ -2730,12 +2739,12 @@ import Linglib.Theories.Phonology.Subregular.OCP
 import Linglib.Theories.Phonology.Subregular.Agree
 import Linglib.Theories.Phonology.Subregular.OTBound
 import Linglib.Theories.Phonology.SibilantTier
-import Linglib.Theories.Phonology.LexicalFrequency.Defs
-import Linglib.Theories.Phonology.LexicalFrequency.IndexedConstraints
-import Linglib.Theories.Phonology.LexicalFrequency.RepresentationStrength
-import Linglib.Theories.Phonology.LexicalFrequency.ScaledWeights
-import Linglib.Theories.Phonology.LexicalFrequency.Separation
-import Linglib.Theories.Phonology.LexicalFrequency.UseListed
+import Linglib.Theories.Phonology.ItemSpecificity.Defs
+import Linglib.Theories.Phonology.ItemSpecificity.IndexedConstraints
+import Linglib.Theories.Phonology.ItemSpecificity.RepresentationStrength
+import Linglib.Theories.Phonology.ItemSpecificity.ScaledWeights
+import Linglib.Theories.Phonology.ItemSpecificity.Separation
+import Linglib.Theories.Phonology.ItemSpecificity.UseListed
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM

@@ -1,0 +1,47 @@
+# Snapshot of library scope. Updated manually; see scripts/gen_landing_stats.py
+# (TODO) for an automated version.
+# Updated: 2026-05-12
+
+[totals]
+files = 2940
+phenomena = 83
+languages = 123
+theories = 732
+studies = 860
+core = 335
+
+[[areas]]
+slug = "semantics"
+name = "Semantics"
+blurb = "Compositional, dynamic, intensional, probabilistic — Montague through RSA."
+files = 392
+
+[[areas]]
+slug = "syntax"
+name = "Syntax"
+blurb = "Minimalism, HPSG, CCG, dependency grammar, formal language theory."
+files = 127
+
+[[areas]]
+slug = "pragmatics"
+name = "Pragmatics"
+blurb = "Implicature, speech acts, Gricean and rational speech-act models."
+files = 61
+
+[[areas]]
+slug = "phonology"
+name = "Phonology"
+blurb = "Optimality theory, harmonic grammar, autosegmental, stratal, tier-based locality."
+files = 53
+
+[[areas]]
+slug = "morphology"
+name = "Morphology"
+blurb = "Distributed Morphology, vocabulary insertion, allomorphy, paradigm structure."
+files = 26
+
+[[areas]]
+slug = "processing"
+name = "Processing"
+blurb = "Surprisal, dependency locality, memory-based parsing, cue-based retrieval."
+files = 9

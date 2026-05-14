@@ -1,0 +1,177 @@
+/* Linglib landing page — overrides for the home view only.
+   Loaded via layouts/partials/extend_head.html when .IsHome. */
+
+.ll-hero {
+  margin: 2.5rem 0 3rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.ll-hero-title {
+  font-size: 3rem;
+  margin: 0 0 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ll-hero-mission {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  max-width: 38rem;
+  margin: 0 auto 2rem;
+  color: var(--secondary);
+}
+
+.ll-hero-ctas {
+  margin: 1.5rem 0 0;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ll-cta {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.ll-cta:hover { opacity: 0.85; }
+
+.ll-cta-primary {
+  background: var(--primary);
+  color: var(--theme);
+}
+
+.ll-cta-secondary {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--border);
+}
+
+/* Content sections (rendered from _index.md body) */
+
+.ll-content {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.ll-content h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+}
+
+.ll-content p {
+  line-height: 1.7;
+  margin: 0 0 1rem;
+}
+
+/* "What's here" — stats line + pillar grid */
+
+.ll-whats-here {
+  max-width: 56rem;
+  margin: 3rem auto;
+}
+
+.ll-whats-here h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+}
+
+.ll-stats {
+  font-size: 0.95rem;
+  color: var(--secondary);
+  margin-bottom: 1.5rem;
+}
+
+.ll-stats strong { color: var(--primary); }
+
+.ll-pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.ll-pillar {
+  display: block;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--primary);
+  background: var(--entry);
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.ll-pillar:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.ll-pillar-name {
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.15rem;
+}
+
+.ll-pillar-count {
+  font-size: 0.8rem;
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
+}
+
+.ll-pillar-blurb {
+  font-size: 0.88rem;
+  color: var(--secondary);
+  line-height: 1.45;
+}
+
+/* Resources strip */
+
+.ll-resources {
+  max-width: 42rem;
+  margin: 3rem auto 2rem;
+}
+
+.ll-resources h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+}
+
+.ll-resource-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ll-resource-list li {
+  padding: 0.45rem 0;
+  font-size: 0.95rem;
+  color: var(--secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.ll-resource-list li:last-child { border-bottom: none; }
+
+.ll-resource-list a {
+  font-weight: 500;
+  color: var(--primary);
+}
+
+/* Mobile tightening */
+@media (max-width: 480px) {
+  .ll-hero-title { font-size: 2.2rem; }
+  .ll-hero-mission { font-size: 1rem; }
+  .ll-cta { padding: 0.5rem 1rem; font-size: 0.95rem; }
+}

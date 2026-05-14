@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.LexicalFrequency.Defs
+import Linglib.Theories.Phonology.ItemSpecificity.Defs
 import Linglib.Core.Constraint.OT.Basic
 
 /-!
@@ -11,7 +11,7 @@ lexicon into fixed sublexica (typically two: a high-frequency or
 "core" stratum and a low-frequency or "peripheral" stratum) with their
 own constraint rankings.
 
-The interface to `LexicalFrequency.HasTokenFreq` is *one bit per item*:
+The interface to `ItemSpecificity.HasTokenFreq` is *one bit per item*:
 `isCore` thresholds log-frequency at a fixed cutoff. Within a stratum,
 no further frequency dependence — the strongest contrast with
 `ScaledWeights`, where every log-frequency unit shifts the weight
@@ -28,9 +28,9 @@ theory under-fits relative to `ScaledWeights` /
 `RepresentationStrength`.
 -/
 
-namespace Phonology.LexicalFrequency.Indexed
+namespace Phonology.ItemSpecificity.Indexed
 
-open Phonology.LexicalFrequency
+open Phonology.ItemSpecificity
 open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
@@ -38,16 +38,13 @@ open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 -- ============================================================================
 
 /-- A two-stratum lexical partition: an item is "core" iff its
-    log-frequency exceeds `cutoff`. Discrete by construction. -/
-def isCore {α : Type} [HasTokenFreq α] (cutoff : ℝ) (a : α) : Prop :=
-  tokenLogFreq a ≥ cutoff
+    log-frequency reaches `cutoff`. Discrete by construction.
 
-/-- Classical decidability — `Real`'s order is decidable only via
-    `Classical.dec`, so all consumers downstream become `noncomputable`.
-    Acceptable for theory specifications; concrete fitting routines
-    work over rationals or use a thresholded comparison directly. -/
-noncomputable instance {α : Type} [HasTokenFreq α] (cutoff : ℝ) :
-    DecidablePred (isCore (α := α) cutoff) := fun _ => Classical.dec _
+    Implemented as an alias of `ItemSpecificity.isAboveThreshold` so the
+    shared decidability instance carries through; the `abbrev` form
+    means `unfold isCore` reduces directly to the inequality. -/
+abbrev isCore {α : Type} [HasTokenFreq α] (cutoff : ℝ) (a : α) : Prop :=
+  isAboveThreshold cutoff a
 
 -- ============================================================================
 -- § 2: Constraint indexing
@@ -88,4 +85,4 @@ theorem mkCoreOnly_constant_within_stratum
     (mkCoreOnly cutoff base).eval c1 = (mkCoreOnly cutoff base).eval c2 := by
   simp [mkCoreOnly, h1, h2, hbase]
 
-end Phonology.LexicalFrequency.Indexed
+end Phonology.ItemSpecificity.Indexed

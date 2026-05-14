@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.LexicalFrequency.Defs
+import Linglib.Theories.Phonology.ItemSpecificity.Defs
 
 /-!
 # UseListed
@@ -9,7 +9,7 @@ be **stored as a fully-formed surface representation**, bypassing the
 generative grammar entirely. The grammar is only consulted for items
 below a frequency threshold.
 
-The interface to `LexicalFrequency.HasTokenFreq` is the same as
+The interface to `ItemSpecificity.HasTokenFreq` is the same as
 `IndexedConstraints` — a single threshold partitions the lexicon — but
 the *interpretation* differs sharply:
 
@@ -32,21 +32,22 @@ compounds show the same compound-frequency-conditioned nasalisation
 gradient as familiar compounds, contra UseListed.
 -/
 
-namespace Phonology.LexicalFrequency.UseListed
+namespace Phonology.ItemSpecificity.UseListed
 
-open Phonology.LexicalFrequency
+open Phonology.ItemSpecificity
 
 -- ============================================================================
 -- § 1: Listed-vs-computed gate
 -- ============================================================================
 
-/-- An item is "listed" iff its log-frequency exceeds the threshold.
-    Listed items bypass the grammar; computed items go through it. -/
-def isListed {α : Type} [HasTokenFreq α] (threshold : ℝ) (a : α) : Prop :=
-  tokenLogFreq a ≥ threshold
+/-- An item is "listed" iff its log-frequency reaches the threshold.
+    Listed items bypass the grammar; computed items go through it.
 
-noncomputable instance {α : Type} [HasTokenFreq α] (threshold : ℝ) :
-    DecidablePred (isListed (α := α) threshold) := fun _ => Classical.dec _
+    Implemented as an alias of `ItemSpecificity.isAboveThreshold`, the
+    shared threshold predicate also used by `Indexed.isCore`; the two
+    differ only in semantics (storage gate vs. stratum membership). -/
+abbrev isListed {α : Type} [HasTokenFreq α] (threshold : ℝ) (a : α) : Prop :=
+  isAboveThreshold threshold a
 
 /-- The UseListed dispatch: returns the listed surface form for items
     above threshold, otherwise the grammar's output. Parametric in both
@@ -76,4 +77,4 @@ theorem dispatch_novel_eq_grammar
   unfold dispatch
   simp [not_le.mpr hnovel]
 
-end Phonology.LexicalFrequency.UseListed
+end Phonology.ItemSpecificity.UseListed

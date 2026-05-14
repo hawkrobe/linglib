@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Phenomena.Islands.Studies.Adger2025
 import Linglib.Theories.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Definiteness
 import Linglib.Features.Aktionsart
@@ -712,5 +713,37 @@ theorem incorporation_determines_syntactic_source (dHead : SyntacticObject)
     (h_phase : isPhaseHeadOf .D dHead = true) (inc : Bool) :
     (DPPhaseStatus.mk dHead (isPhaseHeadOf .D dHead) inc).isActivePhase = !inc := by
   cases inc <;> simp [DPPhaseStatus.isActivePhase, h_phase]
+
+-- ============================================================================
+-- §X. Cross-framework divergence from @cite{adger-2025}
+-- ============================================================================
+
+/-! Shen & Huang's PIC + Specificity composite source list and Adger's
+Angular Locality single-source classification disagree about the source
+architecture of definite-nominal islands.
+
+- **Adger AL**: `Adger2025.adgerDefiniteNominalSources = [.syntactic]`.
+  The Det-subjunction-fills-D mechanism (Ch 6 §6.3.2) is itself
+  structural — once D's 2-part is filled, the cross-dimensional path
+  blocks extraction (`SynGraph.nominal_island_definite_blocks`). No
+  separate semantic mechanism is invoked.
+- **Shen & Huang**: `definiteNominalSources = [.syntactic, .semantic]`.
+  The English VOC effects (Experiments 1 & 2: incorporation removes the
+  PIC barrier) plus the Mandarin wh-in-situ data (Experiment 3:
+  specificity restricts binding) require two independent sources.
+
+The disagreement is type-visible by `decide`. It is empirically
+adjudicable: the English VOC contrast (DD ≈ 0.23 for VOC verbs vs ≈ 0.56
+for non-VOC verbs) is the crucial wedge — Shen & Huang interpret it as
+syntactic source neutralization (PIC removed by N/D-incorporation),
+while Adger's account would have to attribute it to something other than
+the AL graph. -/
+
+/-- **Divergence from @cite{adger-2025}**: Shen & Huang argue
+    definite-nominal islands have two independent sources (syntactic PIC
+    + semantic Specificity); Adger's AL collapses to a single syntactic
+    source. -/
+theorem definite_nominal_source_diverges_from_adger :
+    definiteNominalSources ≠ Adger2025.adgerDefiniteNominalSources := by decide
 
 end ShenHuang2026

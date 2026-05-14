@@ -32,15 +32,16 @@ The combinators here capture the *symmetric, anchorless* lift shared by
 OP and (sans anchor) LC; they do **not** themselves encode the recursive
 or polarity-flipped variants.
 
-## Connection to lexical-frequency theories
+## Connection to item-specificity theories
 
-Once a `Theories/Phonology/LexicalFrequency` interface exists, paradigm
-uniformity becomes one input to a frequency-conditioned grammar (the
-other being `IndexedConstraints`/`ScaledWeights`/`UseListed`). PU and
-frequency are orthogonal and frequently combined; the Breiss-Katsuda-
-Kawahara compound study (@cite{breiss-katsuda-kawahara-2026}) is a
-test case discriminating which pairing best fits Japanese velar
-nasalisation.
+The `Theories/Phonology/ItemSpecificity/` interface (`HasTokenFreq`)
+provides per-item frequency annotations; paradigm uniformity becomes
+one input to a frequency-conditioned grammar (the other being
+`IndexedConstraints`/`ScaledWeights`/`UseListed`/`RepresentationStrength`).
+PU and item-specificity are orthogonal and frequently combined; the
+Breiss-Katsuda-Kawahara compound study
+(@cite{breiss-katsuda-kawahara-2026}) is a test case discriminating
+which pairing best fits Japanese velar nasalisation.
 -/
 
 namespace Phonology.ParadigmUniformity

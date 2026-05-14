@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DM.Categorizer
+import Mathlib.Tactic.TypeStar
 
 /-!
 # Vocabulary Insertion (Distributed Morphology)
@@ -57,7 +57,7 @@ namespace Morphology.DM.VI
     practice, specificity equals the number of features the context
     checks — a rule conditioned on [ACC, +animate] (specificity 2) beats
     a default rule with no feature requirements (specificity 0). -/
-structure VocabItem (Ctx Root : Type) where
+structure VocabItem (Ctx Root : Type*) where
   /-- The phonological exponent inserted at the terminal. -/
   exponent : String
   /-- Context check: does the terminal's feature bundle match? -/
@@ -76,7 +76,7 @@ structure VocabItem (Ctx Root : Type) where
 
 /-- Does a Vocabulary Item match at a given terminal node?
     Checks both the morphosyntactic context and the root restriction. -/
-def VocabItem.matches {Ctx Root : Type}
+def VocabItem.matches {Ctx Root : Type*}
     (vi : VocabItem Ctx Root) (ctx : Ctx) (root : Root) : Bool :=
   vi.contextMatch ctx &&
   match vi.rootMatch with
@@ -90,7 +90,7 @@ def VocabItem.matches {Ctx Root : Type}
     This implements the **Subset Principle** / **Elsewhere Condition**
     (@cite{halle-marantz-1993}): among all matching rules, the most
     specific one wins. -/
-def vocabularyInsert {Ctx Root : Type}
+def vocabularyInsert {Ctx Root : Type*}
     (rules : List (VocabItem Ctx Root))
     (ctx : Ctx) (root : Root) : Option String :=
   let sorted := rules.mergeSort (λ a b => a.specificity ≥ b.specificity)
@@ -98,7 +98,7 @@ def vocabularyInsert {Ctx Root : Type}
     if vi.matches ctx root then some vi.exponent else none
 
 /-- Simplified insertion when rules are not root-specific. -/
-def vocabularyInsertSimple {Ctx : Type}
+def vocabularyInsertSimple {Ctx : Type*}
     (rules : List (VocabItem Ctx Unit))
     (ctx : Ctx) : Option String :=
   vocabularyInsert rules ctx ()
@@ -109,13 +109,13 @@ def vocabularyInsertSimple {Ctx : Type}
 
 /-- A rule set has a **default** (elsewhere) rule if some rule matches
     every context. -/
-def hasDefault {Ctx Root : Type}
+def hasDefault {Ctx Root : Type*}
     (rules : List (VocabItem Ctx Root)) : Prop :=
   ∃ vi ∈ rules, ∀ (ctx : Ctx) (root : Root), vi.matches ctx root = true
 
 /-- A rule **overrides** another: both match the same context, but the
     first has strictly higher specificity. -/
-def overrides {Ctx Root : Type}
+def overrides {Ctx Root : Type*}
     (vi₁ vi₂ : VocabItem Ctx Root) (ctx : Ctx) (root : Root) : Prop :=
   vi₁.matches ctx root = true ∧
   vi₂.matches ctx root = true ∧
@@ -192,7 +192,7 @@ theorem outer_cannot_condition_inner :
     Used when VI is purely determined by feature-subset matching
     (e.g., gender agreement class selection in
     @cite{adamson-anagnostopoulou-2025}). -/
-structure FeatureVI (F E : Type) where
+structure FeatureVI (F E : Type*) where
   features : List F
   exponent : E
   deriving DecidableEq, Repr
@@ -204,7 +204,7 @@ structure FeatureVI (F E : Type) where
     Returns `none` only if `items` is empty. When items include an
     elsewhere entry (empty feature list), `subsetPrinciple` always
     succeeds — the elsewhere item matches any target. -/
-def subsetPrinciple {F E : Type} [BEq F]
+def subsetPrinciple {F E : Type*} [BEq F]
     (items : List (FeatureVI F E)) (target : List F) : Option E :=
   let matching := items.filter (·.features.all (target.contains ·))
   (matching.foldl (init := none) fun acc item =>
@@ -217,7 +217,7 @@ def subsetPrinciple {F E : Type} [BEq F]
   ).map (·.exponent)
 
 /-- An elsewhere item (empty features) matches any target. -/
-theorem elsewhere_always_matches {F E : Type} [BEq F]
+theorem elsewhere_always_matches {F E : Type*} [BEq F]
     (e : E) (target : List F) :
     (FeatureVI.mk ([] : List F) e).features.all (target.contains ·) = true := by
   simp [List.all_nil]

@@ -1,4 +1,4 @@
-import Linglib.Core.Constraint.Variation
+import Linglib.Core.Constraint.Weighted
 import Linglib.Core.Constraint.System
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Phonology.Prosodic.Syllable.NaturalClass
@@ -147,26 +147,26 @@ def tarifitConstraints : List (WeightedConstraint TarifitCandidate) :=
 /-- /qrəβ/ (VLS–liquid, rise=5): intrusive > faithful > vowelless.
     Table 9 "almost exclusively" C1ǎC2 (@cite{afkir-zellou-2025}). -/
 theorem qreb_intrusive_gt_faithful :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_qreb .intrusive) (mkCandidate w_qreb .faithful) := by
   native_decide
 
 theorem qreb_faithful_gt_vowelless :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_qreb .faithful) (mkCandidate w_qreb .vowelless) := by
   native_decide
 
 /-- /qməʕ/ (VLS–nasal, rise=4): intrusive > faithful.
     Table 9 "variably" C1ǎC2 (@cite{afkir-zellou-2025}). -/
 theorem qmes_intrusive_gt_faithful :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_qmes .intrusive) (mkCandidate w_qmes .faithful) := by
   native_decide
 
 /-- /srəm/ (VLF–liquid, rise=3): intrusive > faithful.
     Table 9 "almost exclusively" C1ǎC2 (@cite{afkir-zellou-2025}). -/
 theorem srem_intrusive_gt_faithful :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_srem .intrusive) (mkCandidate w_srem .faithful) := by
   native_decide
 
@@ -178,12 +178,12 @@ theorem srem_intrusive_gt_faithful :
     Table 9 "never" C1ǎC2, Table 7 "often vowelless"
     (@cite{afkir-zellou-2025}). -/
 theorem ntef_faithful_gt_vowelless :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_ntef .faithful) (mkCandidate w_ntef .vowelless) := by
   native_decide
 
 theorem ntef_vowelless_gt_intrusive :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_ntef .vowelless) (mkCandidate w_ntef .intrusive) := by
   native_decide
 
@@ -191,7 +191,7 @@ theorem ntef_vowelless_gt_intrusive :
     Table 9 "variably" C1ǎC2 — one of the few exceptions to the
     falling=never pattern (@cite{afkir-zellou-2025} Table 9 note). -/
 theorem nqeb_faithful_gt_vowelless :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_nqeb .faithful) (mkCandidate w_nqeb .vowelless) := by
   native_decide
 
@@ -201,12 +201,12 @@ theorem nqeb_faithful_gt_vowelless :
     as winner but overpenalizes vowelless via *SONO-CC (C3=nasal, son=5);
     empirically vowelless > intrusive, noted as idiosyncratic in Table 7. -/
 theorem hkem_faithful_gt_intrusive :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_hkem .faithful) (mkCandidate w_hkem .intrusive) := by
   native_decide
 
 theorem hkem_faithful_gt_vowelless :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_hkem .faithful) (mkCandidate w_hkem .vowelless) := by
   native_decide
 
@@ -220,12 +220,12 @@ theorem hkem_faithful_gt_vowelless :
     intrusive but overpenalizes vowelless; empirically this is one of the
     most frequently vowelless words. -/
 theorem skhef_faithful_gt_intrusive :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_skhef .faithful) (mkCandidate w_skhef .intrusive) := by
   native_decide
 
 theorem skhef_faithful_gt_vowelless :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_skhef .faithful) (mkCandidate w_skhef .vowelless) := by
   native_decide
 
@@ -233,12 +233,12 @@ theorem skhef_faithful_gt_vowelless :
     Table 9 "never" C1ǎC2 (@cite{afkir-zellou-2025}).
     Unlike /sχəf/, /sfən/ is not listed as frequently vowelless. -/
 theorem sfen_faithful_gt_intrusive :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_sfen .faithful) (mkCandidate w_sfen .intrusive) := by
   native_decide
 
 theorem sfen_faithful_gt_vowelless :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_sfen .faithful) (mkCandidate w_sfen .vowelless) := by
   native_decide
 
@@ -254,7 +254,7 @@ theorem sfen_faithful_gt_vowelless :
     that lower C2/C3 sonority predicts more vowelless production
     (@cite{afkir-zellou-2025} Figure 19). -/
 theorem vowelless_more_accessible_low_sonority :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_ntef .vowelless) (mkCandidate w_qreb .vowelless) := by
   native_decide
 
@@ -262,14 +262,14 @@ theorem vowelless_more_accessible_low_sonority :
     harmony (least penalized). Consistent with Table 7: /sχəf/ and /skəf/
     are the most frequently vowelless words (@cite{afkir-zellou-2025}). -/
 theorem vowelless_obstruent_gt_sonorant :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_skhef .vowelless) (mkCandidate w_srem .vowelless) := by
   native_decide
 
 /-- /sχəf/ (all VLF) has higher vowelless harmony than /sfən/ (VLF–VLF–N),
     because C3=nasal(5) is more sonorous than C3=VLF(3). -/
 theorem vowelless_all_obstruent_gt_mixed :
-    moreProbable tarifitConstraints
+    harmonyDominates tarifitConstraints
       (mkCandidate w_skhef .vowelless) (mkCandidate w_sfen .vowelless) := by
   native_decide
 
@@ -372,7 +372,7 @@ theorem tarifitSystem_qreb_intrusive_gt_faithful :
     (tarifitSystem w_qreb).predict SurfaceForm.intrusive :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
-    (harmonyScoreR_lt_of_moreProbable qreb_intrusive_gt_faithful)
+    (harmonyScoreR_lt_of_dominates qreb_intrusive_gt_faithful)
 
 /-- Falling onset /ntəf/: faithful is softmax-preferred over intrusive,
     because *SONO-PEAK heavily penalises a schwa between a more-sonorous
@@ -382,8 +382,8 @@ theorem tarifitSystem_ntef_faithful_gt_intrusive :
     (tarifitSystem w_ntef).predict SurfaceForm.faithful :=
   ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
     (Finset.mem_univ _) (Finset.mem_univ _)
-    (harmonyScoreR_lt_of_moreProbable (by native_decide :
-      moreProbable tarifitConstraints
+    (harmonyScoreR_lt_of_dominates (by native_decide :
+      harmonyDominates tarifitConstraints
         (mkCandidate w_ntef SurfaceForm.faithful)
         (mkCandidate w_ntef SurfaceForm.intrusive)))
 

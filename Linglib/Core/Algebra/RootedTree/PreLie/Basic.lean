@@ -1,6 +1,5 @@
-import Linglib.Core.Algebra.RootedTree.PreLie.Defs
-import Linglib.Core.Algebra.RootedTree.PreLie.VertexBijection
-import Linglib.Core.Algebra.RootedTree.PreLie.Nonplanar
+import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
+import Linglib.Core.Algebra.RootedTree.PreLie.Insert
 import Mathlib.Algebra.MonoidAlgebra.Defs
 import Mathlib.Algebra.NonAssoc.PreLie.Basic
 import Mathlib.LinearAlgebra.Finsupp.SumProd
@@ -8,7 +7,6 @@ import Mathlib.Data.Multiset.Bind
 import Mathlib.Data.Finsupp.SMul
 import Mathlib.LinearAlgebra.Finsupp.LSum
 import Mathlib.Tactic.Abel
-import Mathlib.Tactic.LinearCombination
 
 set_option autoImplicit false
 
@@ -87,38 +85,27 @@ The pattern matches mathlib's `LieAlgebra.UniversalEnveloping` and
 `TensorProduct`: noncomputable for "abstract algebraic structure where
 evaluation isn't the point."
 
-## Status
+## Main definitions
 
-`[UPSTREAM]` candidate. **In progress** — Phase A wrapper landing now.
+- `InsertionAlgebra α` — the carrier `Nonplanar α →₀ ℤ` with custom `Mul`.
+- `ofTree` / `ofMultiset` — smart constructors for basis vectors.
+- `instMul` — bilinear extension of `Nonplanar.insertSum`.
 
-## File scope (R.3d)
+## Main theorems
 
-This file (`PreLie/Algebra.lean`) carries:
-- §1: `InsertionAlgebra` carrier + `AddCommGroup` / `Module ℤ` (Phase A)
-- §2: `multisetToFinsupp` + custom `Mul` (Phase A)
-- §3: Bilinearity lemmas + `NonUnitalNonAssocRing` (Phase B)
-- §4: Singleton-reduction lemma (Phase C, prep)
-- §5: Pre-Lie identity proof (Phase C, the meat)
-- §6: `RightPreLieRing` instance (Phase D)
-- §7: `RightPreLieAlgebra ℤ` instance (Phase E)
-- §8: Sanity tests
+- `assoc_symm` — the pre-Lie identity (associator symmetry on the right).
+- `instRightPreLieRing` / `instRightPreLieAlgebra` — typeclass instances.
 -/
 
 namespace RootedTree
 
-namespace InsertionAlgebra
-
-variable {α : Type*}
-
-end InsertionAlgebra
-
-/-! ## §1: Carrier + module instances (Phase A) -/
+/-! ### Carrier + module instances -/
 
 /-- The **insertion algebra** on `Nonplanar α`: the free ℤ-module on
     `Nonplanar α` with multiplication given by the bilinear extension of
     `Nonplanar.insertSum`. Defined as a type alias of `Nonplanar α →₀ ℤ`
     (the `MonoidAlgebra` pattern) so that we can attach a custom `Mul`. -/
-def InsertionAlgebra (α : Type*) : Type _ := Nonplanar α →₀ ℤ
+def InsertionAlgebra (α : Type*) := Nonplanar α →₀ ℤ
 
 namespace InsertionAlgebra
 
@@ -130,13 +117,13 @@ noncomputable instance instAddCommGroup : AddCommGroup (InsertionAlgebra α) :=
 noncomputable instance instModule : Module ℤ (InsertionAlgebra α) :=
   inferInstanceAs (Module ℤ (Nonplanar α →₀ ℤ))
 
-noncomputable instance instInhabited : Inhabited (InsertionAlgebra α) :=
+instance instInhabited : Inhabited (InsertionAlgebra α) :=
   inferInstanceAs (Inhabited (Nonplanar α →₀ ℤ))
 
 instance instFunLike : FunLike (InsertionAlgebra α) (Nonplanar α) ℤ :=
   inferInstanceAs (FunLike (Nonplanar α →₀ ℤ) (Nonplanar α) ℤ)
 
-/-! ## §2: Smart constructor + custom Mul
+/-! ### Smart constructor + custom Mul
 
 `ofTree t` is the basis vector `Finsupp.single t 1`. The custom Mul is
 the bilinear extension of `Nonplanar.insertSum`, computed via
@@ -146,7 +133,7 @@ the bilinear extension of `Nonplanar.insertSum`, computed via
 noncomputable def ofTree (t : Nonplanar α) : InsertionAlgebra α :=
   Finsupp.single t 1
 
-@[simp] theorem ofTree_apply (t : Nonplanar α) :
+theorem ofTree_apply (t : Nonplanar α) :
     (ofTree t : InsertionAlgebra α) = Finsupp.single t 1 := rfl
 
 /-- Convert a `Multiset (Nonplanar α)` to an `InsertionAlgebra α` by
@@ -222,7 +209,7 @@ theorem mul_def (x y : InsertionAlgebra α) :
     exact Finsupp.sum_fun_zero (f := Finsupp.single s (1 : ℤ))
                                 (N := InsertionAlgebra α)
 
-/-! ## §3: Bilinearity + `NonUnitalNonAssocRing` (Phase B)
+/-! ### Bilinearity + `NonUnitalNonAssocRing`
 
 The custom `Mul` is bilinear by construction (built from `Finsupp.sum`).
 Standard lemmas: `zero_mul`, `mul_zero`, `left_distrib`, `right_distrib`.
@@ -328,67 +315,80 @@ noncomputable instance instNonUnitalNonAssocRing :
     NonUnitalNonAssocRing (InsertionAlgebra α) :=
   { instAddCommGroup, instNonUnitalNonAssocSemiring with }
 
-/-! ## §4-prep: source-self swap PlanarEquiv (R.3d Part 2)
+/-! ### Source-self swap `PlanarEquiv`
 
 The pre-Lie identity reduces, after the lifted/preserved cancellations,
 to a `mk`-equality between two singleton trees that differ by a
-children-list swap at the source vertex `v`. Realized by mutual
-structural induction on `Vertex` / `VertexList`, with a `swapAtRoot`
-`PlanarStep` at the root case and `recurse_lift` / `cons_lift` at the
-inductive cases. This is the only Nonplanar-specific cancellation in
-the pre-Lie identity proof; everything else holds at the planar level. -/
+children-list swap at the source vertex `e`. Realized by structural
+induction on `e : Path` + `t₁ : Planar α`: a `swapAtRoot` `PlanarStep`
+at the root-path case, `recurse_lift` at the in-child cases. This is
+the only Nonplanar-specific cancellation in the pre-Lie identity
+proof; everything else holds at the planar level. -/
 
-mutual
-/-- Inserting `T₂` at `sourceSelf v T₂` then `T₃`, vs inserting `T₃` at
-    `sourceSelf v T₃` then `T₂`, produces planar trees related by a
-    `PlanarEquiv` (children-list swap at vertex `v`). -/
+/-- Inserting `T₂` then `T₃` at path `e`, vs inserting `T₃` then `T₂` at
+    path `e`, produces planar trees related by a `PlanarEquiv`
+    (children-list swap at the source vertex `e`).
+
+    Path form of `mk_insertAt_sourceSelf_swap_planarEquiv`: since
+    `Pathed.sourceSelf e = e` (the source vertex's path doesn't shift),
+    the LHS/RHS shape just inserts twice at the same path with the two
+    grafts in opposite orders. -/
 private theorem mk_insertAt_sourceSelf_swap_planarEquiv :
-    ∀ {T : Planar α} (v : Planar.Vertex T) (T₂ T₃ : Planar α),
-    Planar.PlanarEquiv (Planar.insertAt (Planar.Vertex.sourceSelf v T₂) T₃)
-                       (Planar.insertAt (Planar.Vertex.sourceSelf v T₃) T₂)
-  | _, .root a cs, T₂, T₃ => by
-    -- LHS = node a (T₃ :: T₂ :: cs); RHS = node a (T₂ :: T₃ :: cs).
-    -- Single swapAtRoot at position 0.
-    apply Planar.PlanarEquiv.of_step
-    show Planar.PlanarStep (Planar.node a ([] ++ T₃ :: T₂ :: cs))
-                           (Planar.node a ([] ++ T₂ :: T₃ :: cs))
-    exact .swapAtRoot
-  | _, .inChild a cs vl, T₂, T₃ => by
-    -- LHS = node a (insertAtList (sourceSelf vl T₂) T₃);
-    -- RHS = node a (insertAtList (sourceSelf vl T₃) T₂).
-    -- Push the swap inside via the list-version IH.
-    exact mk_insertAtList_sourceSelf_swap_planarEquiv a vl T₂ T₃
-/-- Sibling on `VertexList`: same swap, with the swap site somewhere
-    inside the children list, lifted through `node a` via the appropriate
-    `PlanarEquiv` lift. -/
-private theorem mk_insertAtList_sourceSelf_swap_planarEquiv :
-    ∀ (a : α) {cs : List (Planar α)} (vl : Planar.VertexList cs) (T₂ T₃ : Planar α),
+    ∀ (e : Planar.Pathed.Path) (t₁ T₂ T₃ : Planar α),
     Planar.PlanarEquiv
-      (Planar.node a (Planar.insertAtList (Planar.VertexList.sourceSelf vl T₂) T₃))
-      (Planar.node a (Planar.insertAtList (Planar.VertexList.sourceSelf vl T₃) T₂))
-  | a, _, .head c cs v, T₂, T₃ => by
-    -- LHS = node a (insertAt (sourceSelf v T₂) T₃ :: cs);
-    -- RHS = node a (insertAt (sourceSelf v T₃) T₂ :: cs).
-    -- Lift the inner Vertex equivalence via recurse_lift at position 0.
-    exact Planar.planarEquiv_recurse_lift [] cs
-      (mk_insertAt_sourceSelf_swap_planarEquiv v T₂ T₃)
-  | a, _, .tail c cs vl, T₂, T₃ => by
-    -- LHS = node a (c :: insertAtList (sourceSelf vl T₂) T₃);
-    -- RHS = node a (c :: insertAtList (sourceSelf vl T₃) T₂).
-    -- Lift the inner VertexList equivalence via cons_lift.
-    exact Planar.planarEquiv_cons_lift c
-      (mk_insertAtList_sourceSelf_swap_planarEquiv a vl T₂ T₃)
-end
+      (Planar.Pathed.insertAt e T₃ (Planar.Pathed.insertAt e T₂ t₁))
+      (Planar.Pathed.insertAt e T₂ (Planar.Pathed.insertAt e T₃ t₁))
+  | [], .node a cs, T₂, T₃ => by
+    -- Root case: both nested grafts produce `node a (... :: ... :: cs)`
+    -- differing only in the order of the first two children.
+    -- A single `swapAtRoot` step suffices.
+    rw [Planar.Pathed.insertAt_nil, Planar.Pathed.insertAt_nil,
+        Planar.Pathed.insertAt_nil, Planar.Pathed.insertAt_nil]
+    exact Planar.PlanarEquiv.of_step
+      (Planar.PlanarStep.swapAtRoot (a := a) (l := T₃) (r := T₂)
+        (pre := []) (post := cs))
+  | i :: rest, .node a cs, T₂, T₃ => by
+    by_cases hi : i < cs.length
+    · -- In-bounds: collapse the nested sets via `List.set_set` + `getElem_set_self`,
+      -- apply IH on `rest, cs[i]`, then lift through `node a (cs.set i ·)` via
+      -- `planarEquiv_recurse_lift (pre := cs.take i) (post := cs.drop (i+1))`.
+      have ih := mk_insertAt_sourceSelf_swap_planarEquiv rest (cs[i]'hi) T₂ T₃
+      have hlen_T2 : i < (cs.set i (Planar.Pathed.insertAt rest T₂ (cs[i]'hi))).length := by
+        rw [List.length_set]; exact hi
+      have hlen_T3 : i < (cs.set i (Planar.Pathed.insertAt rest T₃ (cs[i]'hi))).length := by
+        rw [List.length_set]; exact hi
+      rw [Planar.Pathed.insertAt_cons_of_lt _ _ _ _ _ hi,
+          Planar.Pathed.insertAt_cons_of_lt _ _ _ _ _ hi,
+          Planar.Pathed.insertAt_cons_of_lt _ _ _ _ _ hlen_T2,
+          Planar.Pathed.insertAt_cons_of_lt _ _ _ _ _ hlen_T3,
+          List.getElem_set_self, List.getElem_set_self,
+          List.set_set, List.set_set,
+          show cs.set i (Planar.Pathed.insertAt rest T₃
+                (Planar.Pathed.insertAt rest T₂ (cs[i]'hi)))
+              = cs.take i ++ Planar.Pathed.insertAt rest T₃
+                  (Planar.Pathed.insertAt rest T₂ (cs[i]'hi))
+                  :: cs.drop (i + 1) from by
+            rw [List.set_eq_take_append_cons_drop, if_pos hi],
+          show cs.set i (Planar.Pathed.insertAt rest T₂
+                (Planar.Pathed.insertAt rest T₃ (cs[i]'hi)))
+              = cs.take i ++ Planar.Pathed.insertAt rest T₂
+                  (Planar.Pathed.insertAt rest T₃ (cs[i]'hi))
+                  :: cs.drop (i + 1) from by
+            rw [List.set_eq_take_append_cons_drop, if_pos hi]]
+      exact Planar.planarEquiv_recurse_lift (cs.take i) (cs.drop (i + 1)) ih
+    · -- Out-of-bounds: both `insertAt` calls are no-ops.
+      simp only [Planar.Pathed.insertAt_cons_of_not_lt _ _ _ _ _ hi]
+      exact Planar.PlanarEquiv.refl _
 
 /-- Source-self swap as a `Nonplanar` equality. The form needed when the
     pre-Lie identity's source-self class is contracted. -/
-private theorem mk_insertAt_sourceSelf_swap {T : Planar α}
-    (v : Planar.Vertex T) (T₂ T₃ : Planar α) :
-    Nonplanar.mk (Planar.insertAt (Planar.Vertex.sourceSelf v T₂) T₃) =
-    Nonplanar.mk (Planar.insertAt (Planar.Vertex.sourceSelf v T₃) T₂) :=
-  Nonplanar.mk_eq_mk_iff.mpr (mk_insertAt_sourceSelf_swap_planarEquiv v T₂ T₃)
+private theorem mk_insertAt_sourceSelf_swap
+    (e : Planar.Pathed.Path) (t₁ T₂ T₃ : Planar α) :
+    Nonplanar.mk (Planar.Pathed.insertAt e T₃ (Planar.Pathed.insertAt e T₂ t₁)) =
+    Nonplanar.mk (Planar.Pathed.insertAt e T₂ (Planar.Pathed.insertAt e T₃ t₁)) :=
+  Nonplanar.mk_eq_mk_iff.mpr (mk_insertAt_sourceSelf_swap_planarEquiv e t₁ T₂ T₃)
 
-/-! ## §4-prep: Multiset bilinearity helpers (R.3d Part 2)
+/-! ### Multiset bilinearity helpers
 
 The custom `Mul` is bilinear, so multiplying an `ofMultiset` against a
 single basis vector (or vice versa) yields an `ofMultiset` of a `bind`
@@ -419,7 +419,7 @@ private theorem ofTree_mul_ofMultiset (T : Nonplanar α) (M : Multiset (Nonplana
     rw [ofMultiset_cons, mul_add, ih, ofTree_mul_ofTree,
         Multiset.cons_bind, ofMultiset_add]
 
-/-! ## §4-prep: Triple-product unfolding (R.3d Part 2 Step 1)
+/-! ### Triple-product unfolding
 
 Two glue lemmas reducing `ofTree T₁ * ofTree T₂ * ofTree T₃` (and the
 right-associated form) to `ofMultiset` of a Multiset.bind chain. These
@@ -445,56 +445,60 @@ private theorem ofTree_triple_right (T₁ T₂ T₃ : Nonplanar α) :
         (fun S => Nonplanar.insertSum T₁ S)) := by
   rw [ofTree_mul_ofTree, ofTree_mul_ofMultiset]
 
-/-! ## §4-prep: Vertex-indexed bind reformulation (R.3d Part 2 Step 2 substrate)
+/-! ### Path-indexed bind reformulation
 
 Two reformulation lemmas that convert `(t₁ ◁ t₂).bind (T ↦ T ◁ t₃)` and
-`(vertices t₁).bind (fun v => map (insertAt (lift v t₂ g) t₃)` to the
-clean vertex-indexed and cross-term forms used by `assoc_symm_planar`. -/
+`(Pathed.vertices t₁).bind (fun e => map (insertAt (lift e q) t₃)` to
+the clean path-indexed and cross-term forms used by `assoc_symm_planar`. -/
 
 /-- Step A reformulation: the outer-then-inner double-`insertSum` rewrites
-    as a `vertices`-indexed `bind`. Pure mathlib `bind_map`. -/
+    as a `Pathed.vertices`-indexed `bind`. Pure mathlib `bind_map`. -/
 private theorem insertSum_bind_insertSum_eq_bind_vertices
     (t₁ t₂ t₃ : Planar α) :
     (Planar.insertSum t₁ t₂).bind (fun T => Planar.insertSum T t₃)
-      = ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
-          (fun v => Planar.insertSum (Planar.insertAt v t₂) t₃)) := by
+      = ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+          (fun e => Planar.insertSum (Planar.Pathed.insertAt e t₂ t₁) t₃)) := by
   rw [Planar.insertSum_eq_coe_map_insertAt t₁ t₂, ← Multiset.map_coe,
       Multiset.bind_map]
 
-/-- Step C reformulation: the lifted class summed over `vertices t₁`
+/-- Step C reformulation: the lifted class summed over `Pathed.vertices t₁`
     coincides with the cross term `(t₂ ◁ t₃).bind (t₁ ◁ ·)`. The proof
-    chains `insertAt_lift_eq_nested` + Fubini swap (`Multiset.bind_bind`-style)
+    chains `Pathed.insertAt_lift_eq_nested` + Fubini swap (`Multiset.bind_bind`-style)
     + backward `insertSum_eq_coe_map_insertAt` twice. -/
 private theorem lifted_class_eq_cross (t₁ t₂ t₃ : Planar α) :
-    ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind (fun v =>
-        ((↑(Planar.vertices t₂) : Multiset (Planar.Vertex t₂)).map
-          (fun g => Planar.insertAt (Planar.Vertex.lift v t₂ g) t₃))))
+    ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind (fun e =>
+        ((↑(Planar.Pathed.vertices t₂) : Multiset Planar.Pathed.Path).map
+          (fun q => Planar.Pathed.insertAt (Planar.Pathed.lift e q) t₃
+                      (Planar.Pathed.insertAt e t₂ t₁)))))
       = (Planar.insertSum t₂ t₃).bind (fun S => Planar.insertSum t₁ S) := by
   -- Step C.1: rewrite each summand via insertAt_lift_eq_nested.
-  simp_rw [Planar.insertAt_lift_eq_nested]
-  -- Goal: (vertices t₁).bind (fun v =>
-  --        (vertices t₂).map (fun g => insertAt v (insertAt g t₃))) =
+  simp_rw [Planar.Pathed.insertAt_lift_eq_nested]
+  -- Goal: (vertices t₁).bind (fun e =>
+  --        (vertices t₂).map (fun q => insertAt e (insertAt q t₃ t₂) t₁)) =
   --       (insertSum t₂ t₃).bind (fun S => insertSum t₁ S)
-  -- Step C.2: swap the two binds (Fubini) so v is inner and g is outer.
+  -- Step C.2: swap the two binds (Fubini) so e is inner and q is outer.
   rw [Multiset.bind_map_comm]
-  -- Goal: (vertices t₂).bind (fun g =>
-  --        (vertices t₁).map (fun v => insertAt v (insertAt g t₃))) = ...
-  -- Step C.3: recognize inner map as `t₁ ◁ (insertAt g t₃)` via Multiset.map_coe
+  -- Goal: (vertices t₂).bind (fun q =>
+  --        (vertices t₁).map (fun e => insertAt e (insertAt q t₃ t₂) t₁)) = ...
+  -- Step C.3: recognize inner map as `t₁ ◁ (insertAt q t₃ t₂)` via Multiset.map_coe
   -- (forward) followed by backward insertSum_eq_coe_map_insertAt.
-  rw [show (fun g : Planar.Vertex t₂ =>
-            Multiset.map (fun v => Planar.insertAt v (Planar.insertAt g t₃))
-              (↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁))) =
-          (fun g => Planar.insertSum t₁ (Planar.insertAt g t₃)) from
-        funext fun g => by
+  rw [show (fun q : Planar.Pathed.Path =>
+            Multiset.map (fun e => Planar.Pathed.insertAt e
+                            (Planar.Pathed.insertAt q t₃ t₂) t₁)
+              (↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path)) =
+          (fun q => Planar.insertSum t₁
+                      (Planar.Pathed.insertAt q t₃ t₂)) from
+        funext fun q => by
           rw [Multiset.map_coe,
-              ← Planar.insertSum_eq_coe_map_insertAt t₁ (Planar.insertAt g t₃)]]
-  -- Goal: (vertices t₂).bind (fun g => insertSum t₁ (insertAt g t₃)) =
+              ← Planar.insertSum_eq_coe_map_insertAt t₁
+                  (Planar.Pathed.insertAt q t₃ t₂)]]
+  -- Goal: (vertices t₂).bind (fun q => insertSum t₁ (insertAt q t₃ t₂)) =
   --       (insertSum t₂ t₃).bind (fun S => insertSum t₁ S)
   -- Step C.4: recognize outer bind as bind over (insertSum t₂ t₃).
   rw [Planar.insertSum_eq_coe_map_insertAt t₂ t₃, ← Multiset.map_coe,
       Multiset.bind_map]
 
-/-! ## §4: Planar 3-class identity (R.3d Part 2 Step 2)
+/-! ### Planar 3-class identity
 
 The planar Multiset (Nonplanar α) equality at the heart of the pre-Lie
 identity. After `Quotient.inductionOn₃` reduces to planar `t₁ t₂ t₃`,
@@ -512,7 +516,14 @@ into preserved + sourceSelf + lifted classes:
 /-- The planar Multiset (Nonplanar α) identity: combining the four
     bind-of-insertSum chains for `t₁, t₂, t₃` (and their t₂↔t₃ swap)
     gives equal sums after `.map mk`. This is the substance of the
-    pre-Lie identity, modulo the bilinear extension to InsertionAlgebra. -/
+    pre-Lie identity, modulo the bilinear extension to InsertionAlgebra.
+
+    Proof: decompose each `(insertAt e t₂) ◁ t₃` into preserved + sourceSelf
+    + lifted classes via `vertices_insertAt_decomp` (path-form, with validity
+    discharged by `forall_isValidPath`). The preserved class matches across
+    LHS/RHS via `bind_filterMap_preserve?_swap`. SourceSelf matches via
+    `mk_insertAt_sourceSelf_swap` (Nonplanar level). Lifted matches LHS₂/RHS₂
+    via `lifted_class_eq_cross`. -/
 private theorem assoc_symm_planar (t₁ t₂ t₃ : Planar α) :
     (((Planar.insertSum t₁ t₂).bind (fun T => Planar.insertSum T t₃)).map
         Nonplanar.mk : Multiset (Nonplanar α))
@@ -522,140 +533,164 @@ private theorem assoc_symm_planar (t₁ t₂ t₃ : Planar α) :
         Nonplanar.mk : Multiset (Nonplanar α))
       + (((Planar.insertSum t₂ t₃).bind (fun S => Planar.insertSum t₁ S)).map
           Nonplanar.mk : Multiset (Nonplanar α)) := by
-  -- Strategy: decompose LHS₁ and RHS₁ via vertices_insertAt_decomp into
-  -- (preserved + sourceSelf + lifted)-mk classes. Identify
-  --   * preserved_mk LHS = RHS via S1 (planar swap, after .map mk congr).
-  --   * sourceSelf_mk LHS = RHS via mk_insertAt_sourceSelf_swap pointwise.
-  --   * lifted_mk LHS = RHS₂_mk via S2.
-  --   * lifted_mk RHS = LHS₂_mk via S2 (with t₂ ↔ t₃).
-  -- Add and conclude.
-  --
-  -- Step 1: Reduce each "(t ◁ s) ◁ u" into a vertex-indexed form via S3.
+  -- Step 1: Reduce each "(t ◁ s) ◁ u" to a path-indexed bind.
   rw [insertSum_bind_insertSum_eq_bind_vertices t₁ t₂ t₃,
       insertSum_bind_insertSum_eq_bind_vertices t₁ t₃ t₂]
-  -- Step 2: Inside each outer bind, expand `(insertAt v _) ◁ _` via
-  -- insertSum_eq_coe_map_insertAt + vertices_insertAt_decomp.
-  -- Use Multiset.map_bind to push .map mk inside the bind.
   simp_rw [Multiset.map_bind]
-  conv_lhs =>
-    enter [1, 2]; ext v
-    rw [Planar.insertSum_eq_coe_map_insertAt (Planar.insertAt v t₂) t₃,
-        ← Multiset.map_coe, Planar.vertices_insertAt_decomp v t₂,
-        Multiset.map_add, Multiset.map_add,
-        Multiset.map_add, Multiset.map_add,
-        Multiset.map_map, Multiset.map_map, Multiset.map_map]
-  conv_rhs =>
-    enter [1, 2]; ext v
-    rw [Planar.insertSum_eq_coe_map_insertAt (Planar.insertAt v t₃) t₂,
-        ← Multiset.map_coe, Planar.vertices_insertAt_decomp v t₃,
-        Multiset.map_add, Multiset.map_add,
-        Multiset.map_add, Multiset.map_add,
-        Multiset.map_map, Multiset.map_map, Multiset.map_map]
-  -- Normalize composition `mk ∘ (insertAt · t)` to lambda form for matching.
-  simp only [Function.comp_def]
-  -- Now each outer bind has `fun v => preserved_v_mk + sourceSelf_v_mk +
-  -- lifted_v_mk` inside. Distribute bind over the +'s via Multiset.bind_add.
+  -- Step 2: Apply the 3-class decomposition inside each outer bind.
+  -- The target form mirrors what `simp_rw` produces (filterMap-Option.map +
+  -- evaluated singleton + Multiset.map with composed function).
+  have hdecomp_lhs : ∀ e ∈ (↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path),
+      Multiset.map Nonplanar.mk
+          (Planar.insertSum (Planar.Pathed.insertAt e t₂ t₁) t₃) =
+        Multiset.filterMap
+            (fun a => Option.map
+              (fun p => Nonplanar.mk
+                (Planar.Pathed.insertAt p t₃ (Planar.Pathed.insertAt e t₂ t₁)))
+              (Planar.Pathed.preserve? e a))
+            (↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path)
+          + ({Nonplanar.mk
+              (Planar.Pathed.insertAt (Planar.Pathed.sourceSelf e) t₃
+                (Planar.Pathed.insertAt e t₂ t₁))} : Multiset (Nonplanar α))
+          + Multiset.map
+              (fun q => Nonplanar.mk
+                (Planar.Pathed.insertAt (Planar.Pathed.lift e q) t₃
+                  (Planar.Pathed.insertAt e t₂ t₁)))
+              (↑(Planar.Pathed.vertices t₂) : Multiset Planar.Pathed.Path) := by
+    intros e he
+    have hv : Planar.Pathed.IsValidPath e t₁ :=
+      Planar.Pathed.forall_isValidPath t₁ (by simpa using he)
+    rw [Planar.insertSum_eq_coe_map_insertAt (Planar.Pathed.insertAt e t₂ t₁) t₃,
+        ← Multiset.map_coe,
+        Planar.Pathed.vertices_insertAt_decomp e t₁ t₂ hv]
+    simp_rw [Multiset.map_add, Multiset.map_map, Multiset.map_filterMap,
+             Multiset.map_singleton, Function.comp_def]
+  have hdecomp_rhs : ∀ e ∈ (↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path),
+      Multiset.map Nonplanar.mk
+          (Planar.insertSum (Planar.Pathed.insertAt e t₃ t₁) t₂) =
+        Multiset.filterMap
+            (fun a => Option.map
+              (fun p => Nonplanar.mk
+                (Planar.Pathed.insertAt p t₂ (Planar.Pathed.insertAt e t₃ t₁)))
+              (Planar.Pathed.preserve? e a))
+            (↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path)
+          + ({Nonplanar.mk
+              (Planar.Pathed.insertAt (Planar.Pathed.sourceSelf e) t₂
+                (Planar.Pathed.insertAt e t₃ t₁))} : Multiset (Nonplanar α))
+          + Multiset.map
+              (fun q => Nonplanar.mk
+                (Planar.Pathed.insertAt (Planar.Pathed.lift e q) t₂
+                  (Planar.Pathed.insertAt e t₃ t₁)))
+              (↑(Planar.Pathed.vertices t₃) : Multiset Planar.Pathed.Path) := by
+    intros e he
+    have hv : Planar.Pathed.IsValidPath e t₁ :=
+      Planar.Pathed.forall_isValidPath t₁ (by simpa using he)
+    rw [Planar.insertSum_eq_coe_map_insertAt (Planar.Pathed.insertAt e t₃ t₁) t₂,
+        ← Multiset.map_coe,
+        Planar.Pathed.vertices_insertAt_decomp e t₁ t₃ hv]
+    simp_rw [Multiset.map_add, Multiset.map_map, Multiset.map_filterMap,
+             Multiset.map_singleton, Function.comp_def]
+  rw [Multiset.bind_congr hdecomp_lhs, Multiset.bind_congr hdecomp_rhs]
   simp_rw [Multiset.bind_add]
-  -- Goal:
-  --   (LHS₁_pres_mk + LHS₁_self_mk + LHS₁_lift_mk) + LHS₂_mk
-  --   = (RHS₁_pres_mk + RHS₁_self_mk + RHS₁_lift_mk) + RHS₂_mk
-  -- Now identify each piece.
-  -- Preserved-mk equality (S1 + map_mk congr):
-  have hpres : ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
-                  (fun v => ((↑(Planar.vertices t₁) :
-                      Multiset (Planar.Vertex t₁)).filterMap
-                        (fun w => Planar.Vertex.preserve? v w t₂)).map
-                      (fun w => Nonplanar.mk (Planar.insertAt w t₃))))
-              = ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
-                  (fun v => ((↑(Planar.vertices t₁) :
-                      Multiset (Planar.Vertex t₁)).filterMap
-                        (fun w => Planar.Vertex.preserve? v w t₃)).map
-                      (fun w => Nonplanar.mk (Planar.insertAt w t₂)))) := by
-    -- Pull mk inside the filterMap via Multiset.map_filterMap, then apply S1
-    -- with `mk ∘ insertAt · t₃` and `mk ∘ insertAt · t₂` mapping over the
-    -- Option from preserve?. The pointwise relation is the same as in S1
-    -- (mk preserves equality).
-    simp_rw [Multiset.map_filterMap]
-    -- New form: bind v: filterMap w: (preserve? v w t).map (mk ∘ insertAt · u)
-    -- We want to replace `(preserve? v w t₂).map (mk ∘ insertAt · t₃)` by
-    -- `(preserve? w v t₃).map (mk ∘ insertAt · t₂)` (after swap).
-    -- Use S1 in conjunction with map_mk. Specifically, S1 is at the planar
-    -- level; we lift to Nonplanar via Multiset.map Nonplanar.mk.
-    have key := Planar.bind_filterMap_preserve?_swap t₁ t₂ t₃
-    -- key : LHS_planar = RHS_planar where map's apply (insertAt · t).
-    -- Apply Multiset.map Nonplanar.mk to both sides. We need LHS' and RHS'
-    -- to differ from key by replacing `(insertAt · t)` with `mk ∘ (insertAt · t)`.
-    -- This is achieved by Multiset.map_filterMap on each side of key.map mk.
+  -- Step 3: Identify the three classes.
+  -- Preserved class match: `bind_filterMap_preserve?_swap` composed with `mk`.
+  have hpres : ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+                  (fun e => Multiset.filterMap
+                    (fun a => Option.map
+                      (fun p => Nonplanar.mk
+                        (Planar.Pathed.insertAt p t₃ (Planar.Pathed.insertAt e t₂ t₁)))
+                      (Planar.Pathed.preserve? e a))
+                    (↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path)))
+              = ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+                  (fun e => Multiset.filterMap
+                    (fun a => Option.map
+                      (fun p => Nonplanar.mk
+                        (Planar.Pathed.insertAt p t₂ (Planar.Pathed.insertAt e t₃ t₁)))
+                      (Planar.Pathed.preserve? e a))
+                    (↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path))) := by
     have hkey : Multiset.map Nonplanar.mk
-                  ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
-                    (fun v => ((↑(Planar.vertices t₁) :
-                        Multiset (Planar.Vertex t₁)).filterMap
-                          (fun w => (Planar.Vertex.preserve? v w t₂).map
-                            (fun pos => Planar.insertAt pos t₃)))))
-              = Multiset.map Nonplanar.mk
-                  ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
-                    (fun v => ((↑(Planar.vertices t₁) :
-                        Multiset (Planar.Vertex t₁)).filterMap
-                          (fun w => (Planar.Vertex.preserve? v w t₃).map
-                            (fun pos => Planar.insertAt pos t₂))))) := by
-      rw [key]
-    -- Convert each side of hkey via map_bind / map_filterMap to match our goal.
+            ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+              (fun e => Multiset.filterMap
+                (fun f => (Planar.Pathed.preserve? e f).map
+                  (fun pos => Planar.Pathed.insertAt pos t₃
+                    (Planar.Pathed.insertAt e t₂ t₁)))
+                (↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path)))
+          = Multiset.map Nonplanar.mk
+              ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+                (fun e => Multiset.filterMap
+                  (fun f => (Planar.Pathed.preserve? e f).map
+                    (fun pos => Planar.Pathed.insertAt pos t₂
+                      (Planar.Pathed.insertAt e t₃ t₁)))
+                  (↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path))) :=
+      congrArg (Multiset.map Nonplanar.mk)
+        (Planar.Pathed.bind_filterMap_preserve?_swap t₁ t₂ t₃)
     rw [Multiset.map_bind, Multiset.map_bind] at hkey
     simp_rw [Multiset.map_filterMap, Option.map_map, Function.comp_def] at hkey
-    -- After the conversion, hkey matches the goal directly.
     exact hkey
-  -- SourceSelf-mk equality (pointwise mk_insertAt_sourceSelf_swap):
-  have hself : ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
-                  (fun v => ({Planar.Vertex.sourceSelf v t₂} :
-                      Multiset (Planar.Vertex (Planar.insertAt v t₂))).map
-                      (fun w => Nonplanar.mk (Planar.insertAt w t₃))))
-              = ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
-                  (fun v => ({Planar.Vertex.sourceSelf v t₃} :
-                      Multiset (Planar.Vertex (Planar.insertAt v t₃))).map
-                      (fun w => Nonplanar.mk (Planar.insertAt w t₂)))) := by
+  -- SourceSelf class match: `mk_insertAt_sourceSelf_swap` pointwise.
+  have hself : ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+                  (fun e => ({Nonplanar.mk
+                      (Planar.Pathed.insertAt (Planar.Pathed.sourceSelf e) t₃
+                        (Planar.Pathed.insertAt e t₂ t₁))} : Multiset (Nonplanar α))))
+              = ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+                  (fun e => ({Nonplanar.mk
+                      (Planar.Pathed.insertAt (Planar.Pathed.sourceSelf e) t₂
+                        (Planar.Pathed.insertAt e t₃ t₁))} : Multiset (Nonplanar α)))) := by
     apply Multiset.bind_congr
-    intros v _
-    show ({Nonplanar.mk (Planar.insertAt (Planar.Vertex.sourceSelf v t₂) t₃)} :
-            Multiset (Nonplanar α))
-        = ({Nonplanar.mk (Planar.insertAt (Planar.Vertex.sourceSelf v t₃) t₂)} :
-            Multiset (Nonplanar α))
-    rw [mk_insertAt_sourceSelf_swap v t₂ t₃]
-  -- Lifted-mk identity for LHS₁: lifted_LHS_mk = RHS₂_mk (distributed form
-  -- post simp_rw [Multiset.map_bind]) via S2.
-  have hlift_lhs : ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
-                      (fun v => ((↑(Planar.vertices t₂) :
-                          Multiset (Planar.Vertex t₂)).map
-                            (Planar.Vertex.lift v t₂)).map
-                          (fun w => Nonplanar.mk (Planar.insertAt w t₃))))
+    intros e _
+    simp only [Planar.Pathed.sourceSelf]
+    rw [mk_insertAt_sourceSelf_swap e t₁ t₂ t₃]
+  -- Lifted class for LHS₁: lifted_LHS_mk = RHS₂_mk via lifted_class_eq_cross.
+  have hlift_lhs : ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+                    (fun e => Multiset.map
+                      (fun q => Nonplanar.mk
+                        (Planar.Pathed.insertAt (Planar.Pathed.lift e q) t₃
+                          (Planar.Pathed.insertAt e t₂ t₁)))
+                      (↑(Planar.Pathed.vertices t₂) : Multiset Planar.Pathed.Path)))
                   = (Planar.insertSum t₂ t₃).bind
                       (fun S => Multiset.map Nonplanar.mk
                           (Planar.insertSum t₁ S)) := by
-    rw [← Multiset.map_bind, ← lifted_class_eq_cross t₁ t₂ t₃,
-        Multiset.map_bind]
-    apply Multiset.bind_congr; intros v _
-    simp only [Multiset.map_map, Function.comp_def]
-  -- Lifted-mk identity for RHS₁: lifted_RHS_mk = LHS₂_mk (distributed form).
-  have hlift_rhs : ((↑(Planar.vertices t₁) : Multiset (Planar.Vertex t₁)).bind
-                      (fun v => ((↑(Planar.vertices t₃) :
-                          Multiset (Planar.Vertex t₃)).map
-                            (Planar.Vertex.lift v t₃)).map
-                          (fun w => Nonplanar.mk (Planar.insertAt w t₂))))
+    have hkey : Multiset.map Nonplanar.mk
+                  ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+                    (fun e => Multiset.map
+                      (fun q => Planar.Pathed.insertAt (Planar.Pathed.lift e q) t₃
+                                  (Planar.Pathed.insertAt e t₂ t₁))
+                      (↑(Planar.Pathed.vertices t₂) : Multiset Planar.Pathed.Path)))
+              = Multiset.map Nonplanar.mk
+                  ((Planar.insertSum t₂ t₃).bind
+                    (fun S => Planar.insertSum t₁ S)) :=
+      congrArg (Multiset.map Nonplanar.mk) (lifted_class_eq_cross t₁ t₂ t₃)
+    rw [Multiset.map_bind, Multiset.map_bind] at hkey
+    simp_rw [Multiset.map_map, Function.comp_def] at hkey
+    exact hkey
+  -- Lifted class for RHS₁: lifted_RHS_mk = LHS₂_mk (with t₂ ↔ t₃).
+  have hlift_rhs : ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+                    (fun e => Multiset.map
+                      (fun q => Nonplanar.mk
+                        (Planar.Pathed.insertAt (Planar.Pathed.lift e q) t₂
+                          (Planar.Pathed.insertAt e t₃ t₁)))
+                      (↑(Planar.Pathed.vertices t₃) : Multiset Planar.Pathed.Path)))
                   = (Planar.insertSum t₃ t₂).bind
                       (fun S => Multiset.map Nonplanar.mk
                           (Planar.insertSum t₁ S)) := by
-    rw [← Multiset.map_bind, ← lifted_class_eq_cross t₁ t₃ t₂,
-        Multiset.map_bind]
-    apply Multiset.bind_congr; intros v _
-    simp only [Multiset.map_map, Function.comp_def]
-  -- Combine: rewrite hpres, hself, hlift_lhs, hlift_rhs into the goal.
+    have hkey : Multiset.map Nonplanar.mk
+                  ((↑(Planar.Pathed.vertices t₁) : Multiset Planar.Pathed.Path).bind
+                    (fun e => Multiset.map
+                      (fun q => Planar.Pathed.insertAt (Planar.Pathed.lift e q) t₂
+                                  (Planar.Pathed.insertAt e t₃ t₁))
+                      (↑(Planar.Pathed.vertices t₃) : Multiset Planar.Pathed.Path)))
+              = Multiset.map Nonplanar.mk
+                  ((Planar.insertSum t₃ t₂).bind
+                    (fun S => Planar.insertSum t₁ S)) :=
+      congrArg (Multiset.map Nonplanar.mk) (lifted_class_eq_cross t₁ t₃ t₂)
+    rw [Multiset.map_bind, Multiset.map_bind] at hkey
+    simp_rw [Multiset.map_map, Function.comp_def] at hkey
+    exact hkey
   rw [hpres, hself, hlift_lhs, hlift_rhs]
-  -- Goal: (RHS₁_pres_mk + RHS₁_self_mk + RHS₂_mk) + LHS₂_mk
-  --       = (RHS₁_pres_mk + RHS₁_self_mk + RHS₁_lift_mk) + RHS₂_mk
-  -- where RHS₁_lift_mk has been rewritten to LHS₂_mk on RHS, and LHS₁_lift_mk
-  -- has been rewritten to RHS₂_mk on LHS. Now arithmetic:
   abel
 
-/-! ## §5: Singleton-reduction lemma (Phase C, prep)
+
+/-! ### Singleton-reduction lemma
 
 The pre-Lie identity `(x*y)*z - x*(y*z) = (x*z)*y - x*(z*y)` is bilinear
 in each of x, y, z. By bilinearity, it suffices to prove on singletons
@@ -733,7 +768,7 @@ theorem assoc_symm_singleton (T₁ T₂ T₃ : Nonplanar α) :
   congr 1
   exact assoc_symm_planar t₁ t₂ t₃
 
-/-! ## §5-prep: Scalar pull-out for the custom Mul (R.3d Part 2 Step 4)
+/-! ### Scalar pull-out for the custom `Mul`
 
 The custom `Mul` is bilinear in the ℤ-coefficients: `(c • x) * y = c • (x * y)`
 and `x * (c • y) = c • (x * y)`. Proved by direct unfolding of `mul_def` +
@@ -826,7 +861,7 @@ private theorem mul_smul_right (x : InsertionAlgebra α) (c : ℤ) (y : Insertio
     (x * (c • y : InsertionAlgebra α)) = c • (x * y) :=
   (mulLeftHom x).map_zsmul y c
 
-/-! ## §5: Pre-Lie identity (Phase C, the meat)
+/-! ### Pre-Lie identity
 
 The headline. By bilinearity, reduces to `assoc_symm_singleton`. -/
 
@@ -879,14 +914,14 @@ private noncomputable def assocRHSHom (y z : InsertionAlgebra α) :
   (mulRightHom y).comp (mulRightHom z) - mulRightHom (z * y)
 
 /-- `assocLHSHom y z x = x * y * z - x * (y * z)`. -/
-@[simp] private theorem assocLHSHom_apply (x y z : InsertionAlgebra α) :
+private theorem assocLHSHom_apply (x y z : InsertionAlgebra α) :
     assocLHSHom y z x = x * y * z - x * (y * z) := by
   show (mulRightHom z) ((mulRightHom y) x) - (mulRightHom (y * z)) x =
        x * y * z - x * (y * z)
   rfl
 
 /-- `assocRHSHom y z x = x * z * y - x * (z * y)`. -/
-@[simp] private theorem assocRHSHom_apply (x y z : InsertionAlgebra α) :
+private theorem assocRHSHom_apply (x y z : InsertionAlgebra α) :
     assocRHSHom y z x = x * z * y - x * (z * y) := by
   show (mulRightHom y) ((mulRightHom z) x) - (mulRightHom (z * y)) x =
        x * z * y - x * (z * y)
@@ -906,14 +941,14 @@ private noncomputable def assocRHSHomY (x z : InsertionAlgebra α) :
   (mulLeftHom (x * z)) - (mulLeftHom x).comp (mulLeftHom z)
 
 /-- `assocLHSHomY x z y = x * y * z - x * (y * z)`. -/
-@[simp] private theorem assocLHSHomY_apply (x y z : InsertionAlgebra α) :
+private theorem assocLHSHomY_apply (x y z : InsertionAlgebra α) :
     assocLHSHomY x z y = x * y * z - x * (y * z) := by
   show (mulRightHom z) ((mulLeftHom x) y) - (mulLeftHom x) ((mulRightHom z) y) =
        x * y * z - x * (y * z)
   rfl
 
 /-- `assocRHSHomY x z y = x * z * y - x * (z * y)`. -/
-@[simp] private theorem assocRHSHomY_apply (x y z : InsertionAlgebra α) :
+private theorem assocRHSHomY_apply (x y z : InsertionAlgebra α) :
     assocRHSHomY x z y = x * z * y - x * (z * y) := by
   show (mulLeftHom (x * z)) y - (mulLeftHom x) ((mulLeftHom z) y) =
        x * z * y - x * (z * y)
@@ -933,14 +968,14 @@ private noncomputable def assocRHSHomZ (x y : InsertionAlgebra α) :
     (mulLeftHom x).comp (mulRightHom y)
 
 /-- `assocLHSHomZ x y z = x * y * z - x * (y * z)`. -/
-@[simp] private theorem assocLHSHomZ_apply (x y z : InsertionAlgebra α) :
+private theorem assocLHSHomZ_apply (x y z : InsertionAlgebra α) :
     assocLHSHomZ x y z = x * y * z - x * (y * z) := by
   show (mulLeftHom (x * y)) z - (mulLeftHom x) ((mulLeftHom y) z) =
        x * y * z - x * (y * z)
   rfl
 
 /-- `assocRHSHomZ x y z = x * z * y - x * (z * y)`. -/
-@[simp] private theorem assocRHSHomZ_apply (x y z : InsertionAlgebra α) :
+private theorem assocRHSHomZ_apply (x y z : InsertionAlgebra α) :
     assocRHSHomZ x y z = x * z * y - x * (z * y) := by
   show (mulRightHom y) ((mulLeftHom x) z) - (mulLeftHom x) ((mulRightHom y) z) =
        x * z * y - x * (z * y)
@@ -988,7 +1023,7 @@ theorem assoc_symm (x y z : InsertionAlgebra α) :
   rw [assocLHSHom_apply, assocRHSHom_apply] at hxApp
   exact hxApp
 
-/-! ## §6: `RightPreLieRing` instance (Phase D) -/
+/-! ### `RightPreLieRing` instance -/
 
 /-- The headline algebraic structure: `InsertionAlgebra α` is a right
     pre-Lie ring, with the `Vertex.classifyEquiv`-driven pre-Lie identity
@@ -1001,7 +1036,7 @@ noncomputable instance instRightPreLieRing :
       unfold associator
       exact assoc_symm x y z }
 
-/-! ## §7: `RightPreLieAlgebra ℤ` instance (Phase E)
+/-! ### `RightPreLieAlgebra ℤ` instance
 
 `InsertionAlgebra α` is a `RightPreLieAlgebra` over `ℤ`: the ℤ-module
 structure plus scalar-tower / smul-comm-class follows from the

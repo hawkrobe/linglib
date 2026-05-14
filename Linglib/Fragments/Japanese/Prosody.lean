@@ -1,6 +1,6 @@
 import Linglib.Features.Prosody
 import Linglib.Theories.Phonology.Prosodic.Accent
-import Linglib.Theories.Phonology.LexicalFrequency.Defs
+import Linglib.Theories.Phonology.ItemSpecificity.Defs
 import Linglib.Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
 
 /-!
@@ -112,7 +112,7 @@ def ame : JProsodicEntry :=
     are kept on a thin extension structure rather than added to
     `JProsodicEntry`, so existing accent-only consumers are unaffected.
     The `HasTokenFreq` typeclass instance below makes this entry
-    consumable by any module under `Theories/Phonology/LexicalFrequency/`. -/
+    consumable by any module under `Theories/Phonology/ItemSpecificity/`. -/
 structure JLexicalEntry extends JProsodicEntry where
   /-- Token log-frequency in a reference corpus (e.g., BCCWJ). `0`
       conventionally means "log of 1 occurrence" — used as the no-info
@@ -128,11 +128,11 @@ structure JLexicalEntry extends JProsodicEntry where
 
 /-- `HasTokenFreq` instance routing `tokenLogFreq` through the
     fragment-level `ℚ` field into the abstract `LogFreq := ℝ` interface
-    used by `Theories/Phonology/LexicalFrequency/`. `Rat.cast` is the
+    used by `Theories/Phonology/ItemSpecificity/`. `Rat.cast` is the
     standard mathlib coercion. The instance is `noncomputable` because
     `ℝ` is noncomputable; the `ℚ` field itself remains computable for
     `decide`-style proofs. -/
-noncomputable instance : Phonology.LexicalFrequency.HasTokenFreq JLexicalEntry where
+noncomputable instance : Phonology.ItemSpecificity.HasTokenFreq JLexicalEntry where
   tokenLogFreq e := (e.tokenLogFreq : ℝ)
 
 -- ============================================================================

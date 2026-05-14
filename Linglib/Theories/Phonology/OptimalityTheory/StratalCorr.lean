@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
-import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
+import Linglib.Theories.Phonology.OptimalityTheory.Stratal
 import Linglib.Theories.Phonology.OptimalityTheory.TCT
 
 /-!
@@ -58,7 +58,7 @@ the grammar bridge in shared types — currently `StratalDerivation` and
 `Corr TCT.Role α` live in non-communicating namespaces.
 -/
 
-namespace Phonology.StratalOT
+namespace Phonology.Stratal
 
 open Phonology.Correspondence (Corr Side)
 
@@ -165,7 +165,7 @@ def stratalDerivToCorr {α : Type}
     (input stemOut wordOut phraseOut : List α) :
     (stratalDerivToCorr input stemOut wordOut phraseOut).form .pOut = phraseOut := rfl
 
-end Phonology.StratalOT
+end Phonology.Stratal
 
 -- ============================================================================
 -- § 4: StratalRole → TCT.Role projection
@@ -174,7 +174,7 @@ end Phonology.StratalOT
 namespace Phonology.StratalToTCT
 
 open Phonology.Correspondence (Corr)
-open Phonology.StratalOT (StratalRole stratalDerivToCorr parallelEdge parallelEdge_wf)
+open Phonology.Stratal (StratalRole stratalDerivToCorr parallelEdge parallelEdge_wf)
 open Phonology.TCT (Role)
 
 /-- The canonical projection from stratal roles to TCT roles, encoding

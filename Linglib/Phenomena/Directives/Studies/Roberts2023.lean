@@ -247,53 +247,54 @@ theorem disagrees_with_ruytenbeek_imperative_flavor :
     some robertsImperativeFlavor ≠
     RuytenbeekEtAl2017.SentType.imperative.modalFlavor := by decide
 
-/-- **Cross-paper disagreement** — Roberts's flavor for the imperative
-    prejacent fails @cite{ruytenbeek-etal-2017}'s mechanism-1
-    `directiveCompatible` test (which checks deontic flavor only).
-    Under Roberts, an imperative is directive *despite* not having
-    deontic flavor in its prejacent — the directive force comes from
-    the `POSW.star` update on the addressee's preference structure
-    (see `pragmatic_deontic_routing`), not from the prejacent's
-    flavor matching the imperative's. -/
-theorem roberts_fails_ruytenbeek_mechanism_one :
-    ¬ RuytenbeekEtAl2017.directiveCompatible robertsImperativeFlavor := by decide
-
 /-- @cite{kaufmann-2012}'s position is exposed in
     `Theories/Semantics/Modality/Assert.lean` as
-    `primaryFlavor .imperative = .deontic`. Roberts disagrees. -/
+    `primaryFlavor .imperative = .deontic`. Roberts disagrees.
+
+    This subsumes a previous `roberts_fails_ruytenbeek_mechanism_one`
+    theorem (deleted after Ruytenbeek's `directiveCompatible` wrapper
+    was inlined): under Roberts, an imperative is directive *despite*
+    not having deontic flavor in its prejacent — the directive force
+    comes from the `POSW.star` update on the addressee's preference
+    structure (see `pragmatic_deontic_routing`), not from the
+    prejacent's flavor matching the imperative's. -/
 theorem disagrees_with_assert :
     robertsImperativeFlavor ≠
     Semantics.Modality.Assert.primaryFlavor .imperative := by decide
 
-/-- **Empirical wedge** — `possibleDecl` ("Il est possible de VP") is
-    the construction where Roberts and Ruytenbeek/Kaufmann's mechanism 1
-    make opposite predictions. `RuytenbeekEtAl2017.lean` encodes its
-    flavor as `.circumstantial`; under Roberts the imperative prejacent
-    is *also* `.circumstantial`, so Roberts groups them together by
-    prejacent flavor while Ruytenbeek's mechanism 1 (`directiveCompatible
-    flavor ↔ flavor = .deontic`) does not.
+/-- **Mechanism wedge** (post-2026-05-13: empirical wedge collapsed).
+    `possibleDecl` ("Il est possible de VP") was previously the lone
+    construction where Roberts and Ruytenbeek made *opposite predictions*
+    about directive force: Roberts predicted directive (prejacent flavor
+    matches imperative under teleological account), while
+    `RuytenbeekEtAl2017.lean`'s mechanisms 1 and 2 alone did not fire on
+    `possibleDecl`. The 2026-05-13 PDF re-audit found the paper's §4
+    General Discussion (p. 61) explicitly groups all four
+    ability/possibility constructions — including *Il est possible de
+    VP* — as encoding force-dynamic enablement (Talmy 2000, Sweetser
+    1990, Johnson 1987), and the corresponding Fig. 6 shows
+    `possibleDecl` does receive directive interpretations. Ruytenbeek
+    now formalises this as mechanism 3 (`enablementEncoded`), which
+    fires on `possibleDecl`.
 
-    `canDeclarative` was originally part of this wedge but was removed
-    after the 2026-04-24 audit ground-truthed Ruytenbeek p.58 Discussion:
-    *Vous pouvez VP*'s most salient reading is permission (deontic
-    possibility), not ability (circumstantial). With that fix the two
-    accounts now agree that `canDeclarative` is mechanism-1-licensed
-    (Ruytenbeek) / not-flavor-shared-with-imperative (Roberts), so the
-    wedge collapses for that construction.
+    The two accounts therefore *agree* on the prediction (`possibleDecl`
+    is directive) but route through different mechanisms: Roberts via
+    prejacent-flavor matching (teleological), Ruytenbeek via mechanism
+    3 (force-dynamic enablement).
 
-    The `canYouInterrog` and `possibleInterrog` findings (Study 1) do
-    not discriminate the accounts either: Ruytenbeek's mechanism 2
-    (preparatory-condition questioning) handles them, and Roberts would
-    derive the same pattern from pragmatic-deontic routing on the
-    addressee's preference structure. Only `possibleDecl` — a
-    declarative with no preparatory-condition queried and no
-    flavor-share-with-imperative under Ruytenbeek — remains as a
-    discriminating case. -/
+    The conjuncts below remain literally true and document the
+    mechanism difference: under Ruytenbeek's *original two* mechanisms
+    (1 = deontic match, 2 = preparatory-condition questioning) — the
+    only ones the chronologically-prior @cite{kaufmann-2012} and
+    @cite{clark-1979} sources support — `possibleDecl` would not be
+    licensed. The substantive Roberts-vs-Ruytenbeek wedge has migrated
+    to the imperative's prejacent flavor (see
+    `disagrees_with_ruytenbeek_imperative_flavor` above). -/
 theorem empirical_wedge_possible_declarative :
     RuytenbeekEtAl2017.SentType.possibleDecl.modalFlavor =
       some robertsImperativeFlavor ∧
-    ¬ RuytenbeekEtAl2017.SentType.possibleDecl.directiveCompatibleMech1 ∧
-    ¬ RuytenbeekEtAl2017.SentType.possibleDecl.directiveCompatibleMech2 :=
+    ¬ RuytenbeekEtAl2017.SentType.possibleDecl.deonticMatch ∧
+    ¬ RuytenbeekEtAl2017.SentType.possibleDecl.prepConditionQueried :=
   ⟨rfl, by decide, by decide⟩
 
 /-! ## Worked Examples

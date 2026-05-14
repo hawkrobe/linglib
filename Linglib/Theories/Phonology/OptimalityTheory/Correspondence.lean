@@ -61,7 +61,7 @@ theories supply their own `Role` enums — see `TCT.lean`,
   a category — there is no composition law to formalize here.
 - *Path-based evaluation* (stratal cycles, candidate chains). When needed,
   derive via `Mathlib.Combinatorics.Quiver.Path` over the role quiver
-  — see `StratalOT.lean` and `TCT.lean`.
+  — see `Stratal.lean` and `TCT.lean`.
 -/
 
 namespace Phonology.Correspondence

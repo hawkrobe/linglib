@@ -71,7 +71,7 @@ open Core Real Finset
     dimensions (e.g., prefix identity × stem-initial obstruent quality).
 
     `Row` and `Col` are the two binary factors. -/
-structure Square (X : Type) where
+structure Square (X : Type*) where
   /-- Top-left form (e.g., /maŋ+b/). -/
   tl : X
   /-- Top-right form (e.g., /maŋ+k/). -/
@@ -88,13 +88,13 @@ structure Square (X : Type) where
 /-- A constraint `C` is **insensitive to the row dimension** of a square:
     it assigns the same violation count to forms that share a column.
     Cf. Figure 4a. -/
-def InsensitiveToRow {X : Type} (C : X → ℕ) (sq : Square X) : Prop :=
+def InsensitiveToRow {X : Type*} (C : X → ℕ) (sq : Square X) : Prop :=
   C sq.tl = C sq.bl ∧ C sq.tr = C sq.br
 
 /-- A constraint `C` is **insensitive to the column dimension** of a square:
     it assigns the same violation count to forms that share a row.
     Cf. Figure 4b. -/
-def InsensitiveToCol {X : Type} (C : X → ℕ) (sq : Square X) : Prop :=
+def InsensitiveToCol {X : Type*} (C : X → ℕ) (sq : Square X) : Prop :=
   C sq.tl = C sq.tr ∧ C sq.bl = C sq.br
 
 /-- **Constraint independence** (§2.4): the rows and
@@ -102,7 +102,7 @@ def InsensitiveToCol {X : Type} (C : X → ℕ) (sq : Square X) : Prop :=
     constraint set — each constraint is insensitive to at least one
     dimension (row or column). No constraint can encode an interaction
     between the two dimensions. -/
-def ConstraintIndependence {n : ℕ} {X : Type}
+def ConstraintIndependence {n : ℕ} {X : Type*}
     (constraints : Fin n → X → ℕ) (sq : Square X) : Prop :=
   ∀ k : Fin n,
     InsensitiveToRow (constraints k) sq ∨ InsensitiveToCol (constraints k) sq
@@ -117,7 +117,7 @@ def ConstraintIndependence {n : ℕ} {X : Type}
 
     Equivalently: for a function `LR` giving logit rates,
     `LR(x^TL) − LR(x^TR) = LR(x^BL) − LR(x^BR)`. -/
-def ConstantLogitDiff {X : Type} (LR : X → ℝ) (sq : Square X) : Prop :=
+def ConstantLogitDiff {X : Type*} (LR : X → ℝ) (sq : Square X) : Prop :=
   LR sq.tl - LR sq.tr = LR sq.bl - LR sq.br
 
 -- ============================================================================
@@ -130,7 +130,7 @@ def ConstantLogitDiff {X : Type} (LR : X → ℝ) (sq : Square X) : Prop :=
     The violation difference `Δₖ(x) = Cₖ(x, NO) − Cₖ(x, YES)` inherits
     insensitivity from the raw constraint, because both YES and NO get
     the same violation count for forms in the same row (or column). -/
-def ViolDiffIndependence {n : ℕ} {X : Type}
+def ViolDiffIndependence {n : ℕ} {X : Type*}
     (Δ : Fin n → X → ℝ) (sq : Square X) : Prop :=
   ∀ k : Fin n,
     -- Either Δₖ is row-insensitive: same along each column
@@ -147,7 +147,7 @@ def ViolDiffIndependence {n : ℕ} {X : Type}
     The proof follows eq. (18): split the sum by constraint, and for
     each k, independence ensures the k-th term contributes equally to
     both sides of the identity. -/
-theorem me_predicts_hz {n : ℕ} {X : Type}
+theorem me_predicts_hz {n : ℕ} {X : Type*}
     (w : Fin n → ℝ) (Δ : Fin n → X → ℝ)
     (sq : Square X) (hind : ViolDiffIndependence Δ sq) :
     ConstantLogitDiff (fun x => ∑ k : Fin n, w k * Δ k x) sq := by
@@ -310,7 +310,7 @@ theorem separable_eq_me_rescaled {n : ℕ} (H : SeparableHarmony n)
 
     Since `log(exp(a)/exp(b)) = a − b`, the logit rate is a weighted sum
     of rescaled violation differences, and `me_predicts_hz` applies. -/
-theorem separable_predicts_hz {n : ℕ} {X : Type}
+theorem separable_predicts_hz {n : ℕ} {X : Type*}
     (H : SeparableHarmony n)
     (C_yes C_no : Fin n → X → ℕ)
     (sq : Square X)
@@ -413,7 +413,7 @@ theorem inverse_not_always_hz :
 -- connection formal, enabling separability results (independence → HZ,
 -- constraint rescaling) to be applied to any `WeightedConstraint` list.
 
-private lemma foldl_sub_eq' {α : Type} (l : List α) (f : α → ℚ) (init : ℚ) :
+private lemma foldl_sub_eq' {α : Type*} (l : List α) (f : α → ℚ) (init : ℚ) :
     l.foldl (fun acc x => acc - f x) init = init - (l.map f).sum := by
   induction l generalizing init with
   | nil => simp
@@ -421,7 +421,7 @@ private lemma foldl_sub_eq' {α : Type} (l : List α) (f : α → ℚ) (init : �
     simp only [List.foldl_cons, List.map_cons, List.sum_cons]
     rw [ih]; ring
 
-private lemma list_map_sum_eq_finsum {α : Type} (l : List α) (f : α → ℚ) :
+private lemma list_map_sum_eq_finsum {α : Type*} (l : List α) (f : α → ℚ) :
     (l.map f).sum = ∑ i : Fin l.length, f (l.get i) := by
   induction l with
   | nil => simp
@@ -438,7 +438,7 @@ private lemma list_map_sum_eq_finsum {α : Type} (l : List α) (f : α → ℚ) 
 
     This is the key List→Fin conversion for applying separability
     theory to concrete `WeightedConstraint` lists. -/
-theorem harmonyScoreR_as_finsum {C : Type}
+theorem harmonyScoreR_as_finsum {C : Type*}
     (constraints : List (WeightedConstraint C)) (c : C) :
     harmonyScoreR constraints c =
     -(∑ i : Fin constraints.length,
@@ -461,7 +461,7 @@ theorem harmonyScoreR_as_finsum {C : Type}
     (`separable_predicts_hz`), constraint rescaling
     (`separable_eq_me_rescaled`) — directly applicable to any
     `WeightedConstraint` list. -/
-theorem exp_harmonyScoreR_eq_me_separable {C : Type}
+theorem exp_harmonyScoreR_eq_me_separable {C : Type*}
     (constraints : List (WeightedConstraint C)) (c : C) :
     exp (harmonyScoreR constraints c) =
     (meSeparable constraints.length
@@ -478,7 +478,7 @@ theorem exp_harmonyScoreR_eq_me_separable {C : Type}
     violation differences satisfy `ViolDiffIndependence`.
 
     Composition: `logit_uniformity` → `harmonyScoreR_as_finsum` → algebra. -/
-theorem maxent_logit_as_finsum {C : Type} [Fintype C] [Nonempty C]
+theorem maxent_logit_as_finsum {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
     log (softmax (harmonyScoreR constraints) 1 a /
          softmax (harmonyScoreR constraints) 1 b) =
@@ -505,7 +505,7 @@ theorem maxent_logit_as_finsum {C : Type} [Fintype C] [Nonempty C]
     preserves the "across-the-board" ordering pattern. Differences
     may compress at floor and ceiling (producing sigmoids rather than
     claws), but they never change sign. -/
-theorem constantLogitDiff_mono_consistent {X : Type} (d : X → ℝ) (f : ℝ → ℝ)
+theorem constantLogitDiff_mono_consistent {X : Type*} (d : X → ℝ) (f : ℝ → ℝ)
     (hf : StrictMono f) (sq : Square X)
     (hcld : ConstantLogitDiff d sq)
     (hne : d sq.tl ≠ d sq.bl) :

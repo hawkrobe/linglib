@@ -1,7 +1,5 @@
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Linglib.Core.Probability.Constructions
 import Mathlib.Probability.Distributions.Uniform
-import Mathlib.Data.ENNReal.Operations
-import Mathlib.Data.ENNReal.Inv
 
 /-!
 # Bayesian Posterior on PMF
@@ -64,19 +62,6 @@ set_option autoImplicit false
 
 open scoped ENNReal
 
-namespace ENNReal
-
-/-- On a finite type, an ENNReal `tsum` is finite iff every term is.
-Convenience composition of `tsum_fintype` + `ENNReal.sum_ne_top` — the
-combined form is the natural hypothesis shape for `PMF.normalize` /
-`PMF.posterior` consumers. -/
-theorem tsum_ne_top_of_fintype {α : Type*} [Fintype α] {f : α → ℝ≥0∞}
-    (h : ∀ a, f a ≠ ∞) : ∑' a, f a ≠ ∞ := by
-  rw [tsum_fintype]
-  exact ENNReal.sum_ne_top.mpr fun a _ => h a
-
-end ENNReal
-
 namespace PMF
 
 variable {α β : Type*}
@@ -112,22 +97,6 @@ no listener prior over `α` to multiply against. -/
 theorem tsum_apply_ne_zero (κ : α → PMF β) {a : α} {b : β} (h : κ a b ≠ 0) :
     ∑' a', κ a' b ≠ 0 :=
   ENNReal.summable.tsum_ne_zero_iff.mpr ⟨a, h⟩
-
-/-- Construct a `PMF` over a `Fintype` from a positive-finite weight
-function, without requiring the user to verify `∑ a, f a = 1`. Mathlib's
-`PMF.ofFintype` needs a normalisation equation; this variant accepts an
-unnormalised function and renormalises, requiring only per-element
-positivity (with at least one witness `a`) and per-element finiteness —
-both reduced to per-element checks under the `Fintype` instance.
-
-Closes the gap between `PMF.normalize` (general but requires `tsum`
-discharges) and `PMF.ofFintype` (Finset-sum but requires `∑ = 1`). The
-natural shape for prior construction from `ℚ`-valued probabilistic models. -/
-noncomputable def normalizeOfFintype {α : Type*} [Fintype α] (f : α → ℝ≥0∞)
-    (a : α) (h_pos : f a ≠ 0) (h_finite : ∀ a, f a ≠ ⊤) : PMF α :=
-  PMF.normalize f
-    (ENNReal.summable.tsum_ne_zero_iff.mpr ⟨a, h_pos⟩)
-    (ENNReal.tsum_ne_top_of_fintype h_finite)
 
 theorem marginal_le_one (κ : α → PMF β) (μ : PMF α) (b : β) :
     marginal κ μ b ≤ 1 :=

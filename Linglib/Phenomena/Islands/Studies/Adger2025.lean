@@ -1,196 +1,212 @@
+import Linglib.Phenomena.Islands.Basic
 import Linglib.Theories.Syntax.SynGraph
-import Linglib.Phenomena.Islands.Studies.Ross1967
 import Linglib.Theories.Syntax.Minimalist.Merge.MinimalYield
-import Linglib.Theories.Syntax.Minimalist.Merge.NoComplexityLoss
 
 set_option autoImplicit false
 
 /-!
-# Mereological Syntax Account of Islands
+# Mereological Syntax: Angular Locality and Islands
 @cite{adger-2025}
 
-@cite{adger-2025} derives island constraints from Angular Locality (AL)
-and Dimensionality, without stipulating phases, barriers, or subjacency.
-The key insight: transitivity of parthood does NOT cross dimensions.
-When an element's path to the target traverses both 1-part and 2-part
-edges, AL blocks movement.
+@cite{adger-2025} (Linguistic Inquiry Monograph 90, MIT Press) develops a
+mereological alternative to set-theoretic Bare Phrase Structure: syntactic
+objects are *parts* of one another (rather than members of sets), and the
+operation `Subjoin` makes one object a 1-part or 2-part of another. The
+book derives a range of locality phenomena from **Angular Locality** (AL):
+a structural condition on subjunction paths that fails when the path
+crosses dimensions (mixed 1-part/2-part transitivity).
 
-## Island derivations
+## Coverage of this file
 
-- **Subject islands**: The subject is a 2-part of T. Elements inside the
-  subject reach it via 1-part edges, but the subject-to-T edge is a
-  2-part edge — cross-dimensional. So elements inside the subject cannot
-  be within-dimension transitive parts of any node in C's 1-part chain.
-  But the subject DP *itself* can extract (it is T's direct 2-part).
+This is a thin study layer that re-exports the AL substrate derivations
+from `Theories/Syntax/SynGraph.lean` (§10) and frames cross-framework
+engagement. The substrate covers:
 
-- **Adjunct islands**: Same mechanism. The adjunct is a 2-part of v.
-  Elements inside the adjunct traverse 1-part edges to reach the adjunct,
-  then a 2-part edge to v — cross-dimensional.
+- **Subject islands** (Ch 7 §7.7, book pp. 216–223): cross-dimensional path
+  blocks sub-extraction; the subject DP itself, as T's direct 2-part, is
+  reachable. *Caveat:* Adger's full §7.7 derivation depends on a [Fam]/[uFam]
+  T feature triggering D-subjunction (which fills D's 2-part and produces
+  the cross-dimensional path). The substrate models the blocked endpoint,
+  not the [Fam] machinery that triggers it. Ch §7.8 emphasises that subject
+  islands are "not consistent islands" — strength varies with definiteness/
+  topicality of the subject.
 
-- **Definite nominal islands**: When D has a filled 2-part (Det/Dem),
-  elements inside the DP cannot subjoin to D (Dimensionality blocks it)
-  AND cannot reach above D (the path crosses dimensions). Indefinite DPs
-  (D with a free 2-part) are transparent.
+- **Definite nominal islands** (Ch 6 §6.3.2, book pp. 153–157): when
+  Det/Dem/Poss subjoins to D, D's 2-part is "used up", blocking extraction
+  through D. Indefinite DPs (D with a free 2-part) are transparent.
 
-- **Successive cyclicity**: Cross-clausal movement requires intermediate
-  stops. An embedded wh must first stop at embedded C (within its EP),
-  then reach matrix C (now in the right dimension chain).
+- **Successive cyclicity** (Ch 4 §4.3): wh requires intermediate stops at
+  embedded C edges to traverse the right dimension chain at each step.
 
-## Connection to island typology
+- **Anti-locality, lowering, parallel merge, sideward subjunction** (Ch 4
+  consequences (35a–e)): all blocked by AL.
 
-This file cross-references the `SynGraph` derivations with the island
-constraint categories from `Data.lean`. The key prediction: subject,
-adjunct, and CNPC islands all follow from the SAME mechanism (cross-
-dimensional transitivity), not from separate constraints.
+## Out of scope
+
+- **Wh-Islands** (entire Ch 5, book pp. 117–142), including the **WIRE
+  Effect** (Wh-Island Re-Emergence, book p. 125) — Adger's most novel
+  cross-linguistic prediction. Formalising WIRE as a graph-decidable
+  predicate over Wh-pair clausemate configurations is the most natural
+  empirical extension.
+- **Adjunct islands beyond Ch 4 graph instantiation.** Adger explicitly
+  admits at the start of Ch 8 (book p. 225): "I owe at least a sketch of
+  how these islands might be tackled." The substrate's
+  `adjunct_island_blocks` exhibits the Ch 4 cross-dimensional mechanism on
+  an `AdvP` 2-part of `v`; the Ch 8 Mod-headed Geis/Haegeman analysis is
+  not formalised here.
+- **Concrete (§6.3.1) vs Relational (§6.3.2) nominal split.**
+- **Articleless-language typology** for nominal islands (§6.4):
+  Mandarin/Persian/Japanese contrasts predicted by D-Interpretation.
+- **The [Fam]/[uFam] T-feature machinery** (Ch 7 §7.7) driving subject-
+  island gradience — substrate models the structural endpoint only.
+
+## Cross-framework engagement
+
+§3 of this file articulates AL's relationship to one rival framework
+(@cite{marcolli-chomsky-berwick-2025} §1.6 algebraic Merge): both reach
+a `false` verdict on Sideward Merge from incompatible primitives.
+
+The classification handles `adgerSubjectIslandSource` and
+`adgerDefiniteNominalSources` are exposed for use by *later* paper-anchored
+Studies files. Newer rivals make convergence/divergence claims against
+Adger's classification:
+- @cite{cartner-et-al-2026} (`Studies/CartnerEtAl2026.lean`) converges with
+  Adger on `IslandSource.syntactic` for subject islands, from cross-
+  constructional invariance data.
+- @cite{shen-huang-2026} (`Studies/ShenHuang2026.lean`) diverges from
+  Adger on definite-nominal sources, arguing for a `[.syntactic, .semantic]`
+  composite from English VOC effects + Mandarin wh-in-situ data.
+
+Phase Theory (`Theories/Syntax/Minimalist/Phase.lean`,
+@cite{chomsky-2000}, @cite{chomsky-2008}) is the immediate theoretical
+rival — Adger's framing is to derive island effects "without stipulating
+phases, barriers, or subjacency." No formal cross-translation is provided
+here: AL operates on graph-theoretic parthood across dimensions; Phase
+Theory on PIC over derivational phases. The frameworks share no
+structural lemma; identifying a configuration where AL blocks but PIC
+permits (or vice versa) is left as a future critical experiment.
 
 -/
 
 namespace Adger2025
 
--- ════════════════════════════════════════════════════
--- § 1. Re-export key SynGraph theorems
--- ════════════════════════════════════════════════════
+open Phenomena.Islands
 
-/-! The core AL derivations are verified in `SynGraph.lean` (§ 10):
+-- §1. Substrate re-export
 
-- `al_blocks_superlocal`: antilocality (35a)
-- `al_blocks_sideward`: no sideward movement (35c)
-- `al_blocks_lowering`: no lowering (35b)
-- `al_blocks_parallel`: no parallel merge (35d)
-- `al_blocks_cross_dim` / `al_allows_within_dim`: cross-dimensional
-  transitivity restriction (35e)
-- `al_allows_rollup_2part` / `al_allows_rollup_1part`: roll-up movement
-- `succ_cyc_blocked_cross_clause` / `succ_cyc_wh_reaches_C1_after_stop`:
-  successive cyclicity
-- `subject_island_blocks` / `subject_itself_can_extract`: subject islands
-- `adjunct_island_blocks` / `adjunct_itself_can_extract`: adjunct islands
-- `nominal_island_definite_blocks` / `nominal_island_indefinite_allows`:
-  definite nominal islands / Specificity Condition
-- `antilocality_sub1` / `antilocality_sub12`: general antilocality -/
+/-! Core AL derivations live in `Theories/Syntax/SynGraph.lean` (§10):
 
--- ════════════════════════════════════════════════════
--- § 2. Unifying mechanism
--- ════════════════════════════════════════════════════
+| Theorem | Phenomenon |
+|---|---|
+| `al_blocks_superlocal` | antilocality (35a) |
+| `al_blocks_lowering` | no lowering (35b) |
+| `al_blocks_sideward` | no sideward subjunction (35c) |
+| `al_blocks_parallel` | no parallel merge (35d) |
+| `al_blocks_cross_dim` / `al_allows_within_dim` | cross-dim transitivity (35e) |
+| `al_allows_rollup_2part` / `al_allows_rollup_1part` | roll-up movement |
+| `succ_cyc_blocked_cross_clause` | cross-clausal succ-cyc requires stops |
+| `succ_cyc_wh_reaches_C1_after_stop` | with stops, succ-cyc allowed |
+| `subject_island_blocks` / `subject_itself_can_extract` | subject islands |
+| `adjunct_island_blocks` / `adjunct_itself_can_extract` | adjunct islands |
+| `nominal_island_definite_blocks` / `nominal_island_indefinite_allows` | nominal islands |
+| `antilocality_sub1` / `antilocality_sub12` | general antilocality |
 
-/-- All three strong island types (subject, adjunct, CNPC) are derived
-    from the same mechanism: cross-dimensional transitivity failure.
-    This contrasts with accounts that stipulate separate constraints
-    for each island type.
+The graphs `g_subject_island`, `g_adjunct_island`, `g_definite_island`,
+`g_sideward` are also public for downstream consumers. -/
 
-    We verify that AL blocks extraction from within each type using
-    the same `satisfiesAL` predicate. -/
-theorem uniform_island_mechanism :
-    -- Subject island: blocked
-    (SynGraph.satisfiesAL
-      (mkGraph 9
-        [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
-         (⟨2, by omega⟩, ⟨3, by omega⟩), (⟨4, by omega⟩, ⟨5, by omega⟩),
-         (⟨5, by omega⟩, ⟨6, by omega⟩), (⟨7, by omega⟩, ⟨8, by omega⟩)]
-        [(⟨1, by omega⟩, ⟨4, by omega⟩), (⟨5, by omega⟩, ⟨7, by omega⟩)])
-      ⟨8, by decide⟩ ⟨0, by decide⟩ = false) ∧
-    -- Adjunct island: blocked
-    (SynGraph.satisfiesAL
-      (mkGraph 8
-        [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
-         (⟨2, by omega⟩, ⟨3, by omega⟩), (⟨5, by omega⟩, ⟨6, by omega⟩),
-         (⟨6, by omega⟩, ⟨7, by omega⟩)]
-        [(⟨1, by omega⟩, ⟨4, by omega⟩), (⟨2, by omega⟩, ⟨5, by omega⟩)])
-      ⟨7, by decide⟩ ⟨0, by decide⟩ = false) ∧
-    -- Definite nominal island: blocked
-    (SynGraph.satisfiesAL
-      (mkGraph 10
-        [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
-         (⟨2, by omega⟩, ⟨3, by omega⟩), (⟨5, by omega⟩, ⟨6, by omega⟩),
-         (⟨6, by omega⟩, ⟨7, by omega⟩)]
-        [(⟨1, by omega⟩, ⟨4, by omega⟩), (⟨2, by omega⟩, ⟨5, by omega⟩),
-         (⟨5, by omega⟩, ⟨8, by omega⟩), (⟨6, by omega⟩, ⟨9, by omega⟩)])
-      ⟨9, by decide⟩ ⟨0, by decide⟩ = false) :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
+-- §2. AL blocks three island configurations from one mechanism
 
--- ════════════════════════════════════════════════════
--- § 3. Island source classification
--- ════════════════════════════════════════════════════
+/-- The same `satisfiesAL` predicate fires `false` on three distinct
+    configurations: subject (Ch 7 §7.7), adjunct (Ch 4 mechanism on AdvP),
+    definite nominal (Ch 6 §6.3.2). The conjunction *composes* the
+    substrate theorems rather than re-running `native_decide` on inlined
+    copies of the same graphs.
 
-/-- Angular Locality is a structural (syntactic) mechanism: it derives
-    island effects from the graph-theoretic properties of parthood
-    (cross-dimensional transitivity failure). All island types that AL
-    derives therefore have a syntactic source. -/
-def alDerivedSource : IslandSource := .syntactic
+    The "same mechanism" claim is internal to Adger's account — all three
+    blockings route through cross-dimensional path failure on the AL
+    substrate. It is *not* a unification claim across all of CED:
+    - Adjunct islands receive only a Ch 8 sketch (book p. 225); the
+      substrate graph instantiates the Ch 4 mechanism, not Ch 8's
+      Mod-headed Geis/Haegeman analysis.
+    - Subject islands themselves are non-uniform per §7.8 — strength
+      varies with definiteness/topicality of the subject.
+    - The definite-nominal case requires the Det-subjunction-fills-D
+      machinery (book pp. 154–157), not just AL alone. -/
+theorem al_blocks_three_island_configurations :
+    g_subject_island.satisfiesAL ⟨8, by decide⟩ ⟨0, by decide⟩ = false ∧
+    g_adjunct_island.satisfiesAL ⟨7, by decide⟩ ⟨0, by decide⟩ = false ∧
+    g_definite_island.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = false :=
+  ⟨subject_island_blocks, adjunct_island_blocks, nominal_island_definite_blocks⟩
 
-/-- All three island types that @cite{adger-2025} derives share the same
-    source: syntactic, via cross-dimensional transitivity (§2). -/
-theorem adger_uniform_source :
-    alDerivedSource = .syntactic := rfl
+-- §3. Per-phenomenon classifications
 
-/-- Subject islands are weak under AL: the subject *itself* can always
-    extract (it is T's direct 2-part), only sub-extraction is blocked
-    (cross-dimensional transitivity failure). Derived from
-    `subject_itself_can_extract` vs `subject_island_blocks` in SynGraph. -/
-def subjectIslandStrength : ConstraintStrength := .weak
+/-- Adger's AL classifies subject islands as syntactically sourced — they
+    arise from the structural cross-dimensional path failure on a graph
+    (`subject_island_blocks`), not from binding (semantic), memory load
+    (processing), or information-structural backgroundedness (discourse).
 
-/-- Adjunct islands are strong under AL: the adjunct is a 2-part of v,
-    and cross-dimensional transitivity always fails for elements deeper
-    than the adjunct itself — no amelioration mechanism is available.
-    Derived from `adjunct_island_blocks` in SynGraph. -/
-def adjunctIslandStrength : ConstraintStrength := .strong
+    The classification is editorial in the sense that `IslandSource.syntactic`
+    is the natural bin for any structural-configurational mechanism;
+    `subject_island_blocks` is the structural fact this classification
+    summarises. Exposed as a handle for cross-framework theorems in newer
+    Studies files (e.g., `CartnerEtAl2026.subjectIslandSource`). -/
+def adgerSubjectIslandSource : IslandSource := .syntactic
 
--- ════════════════════════════════════════════════════
--- § 4. Cross-framework convergence: Adger AL ↔ MCB §1.6 on Sideward
--- ════════════════════════════════════════════════════
+/-- Adger's AL classifies definite-nominal islands as single-source
+    syntactic: the Det-subjunction-fills-D mechanism (Ch 6 §6.3.2) is
+    itself structural — Det subjoins to D filling its 2-part, blocking
+    extraction across the resulting cross-dimensional path
+    (`nominal_island_definite_blocks`). No separate semantic mechanism
+    is invoked.
 
-/-! ## Cross-framework convergence
+    @cite{shen-huang-2026} (`Studies/ShenHuang2026.lean`) argues from
+    English VOC effects + Mandarin wh-in-situ data that this should be a
+    `[.syntactic, .semantic]` composite — the divergence is recorded in
+    that file's theorems. -/
+def adgerDefiniteNominalSources : List IslandSource := [.syntactic]
 
-@cite{adger-2025} (mereological Merge, this file) and
-@cite{marcolli-chomsky-berwick-2025} §1.6 (algebraic Merge) reach the
-SAME verdict on Sideward Merge from incompatible structural primitives:
+-- §4. Cross-framework convergence: Adger AL ↔ MCB §1.6 on Sideward
+
+/-! Both @cite{adger-2025} (mereological Merge, this file) and
+@cite{marcolli-chomsky-berwick-2025} §1.6 (algebraic Merge) reach a
+`false` verdict on Sideward Merge from incompatible structural primitives:
 
 - **Adger**: Sideward subjunction (sibling subjoin) violates Angular
   Locality — the would-be mover and target are both 1-parts of the same
   parent vertex, so the candidate-α set is empty (no within-dimension
-  chain reaches the target). See `al_blocks_sideward` in `SynGraph.lean:300`.
+  chain reaches the target). See `al_blocks_sideward` in `SynGraph.lean`,
+  on the canonical `g_sideward` configuration. The book's own (35c) lists
+  this as "Sidewards subjunction (to a 2-part / 'specifier')," book p. 91
+  (PDF p. 103); the substrate's `g_sideward` is a graph-level
+  representation of (30) on book p. 91.
 
 - **MCB**: Sideward operations 2(b), 3(a), 3(b) violate either
   `MinimalYieldWeak` (Δb₀ > 0 — workspace components increase) or
   `InducedMapNCL` (the canonical induced map decreases `leafCount`).
   See `Theories/Syntax/Minimalist/Merge/MinimalYield.lean` and
-  `NoComplexityLoss.lean` (`sideward_3a/3b_violates_noDivergence{,Weak}`,
-  `sideward_2b/3a/3b_violatesInducedMapNCL`).
+  `NoComplexityLoss.lean`.
 
 The two frameworks share NO structural lemma. AL reasons about
 graph-theoretic parthood across dimensions; MCB reasons about Hopf-
 algebra coproduct counting and induced component maps. The shared
 verdict is convergent evidence from incompatible foundations — exactly
-the kind of theoretical incompatibility linglib is designed to make
-visible (CLAUDE.md: "high interconnection density: incompatibilities
-between theories ... become visible across the codebase").
+the kind of theoretical cross-checking linglib is designed to make
+visible (CLAUDE.md: "high interconnection density … incompatibilities
+between theories … become visible across the codebase").
 
-Each framework's elimination of Sideward is **fully internal** to its
-own primitives. Neither argument transfers directly to the other; the
-convergence is a *post-hoc agreement on verdicts*, not a derivation of
-one framework from the other.
+The bundled theorem below is *honestly* a verdict-comparison: a
+conjunction of two unrelated propositions about different structural
+objects, both true. A genuine reduction would require a translation
+`SynGraph → TraceForest` lifting `satisfiesAL ↔ MinimalYieldWeak`;
+no such bridge is in scope here. -/
 
-## Linguistic data convergence
-
-Both frameworks correctly predict the cross-linguistic absence of
-Sideward Merge as a productive grammatical operation: every alleged
-Sideward analysis (parasitic gaps, ATB extraction, certain Japanese
-clefts) has alternative analyses that fit within EM/IM. AL and MCB
-provide *different reasons* why this is so. -/
-
-/-- **Convergence theorem**: both frameworks reject Sideward Merge.
-
-    The MCB clause: any candidate Sideward 3(a) workspace transformation
-    violates `MinimalYieldWeak.noDivergence` (Δb₀ = +1 strictly increases
-    workspace components — `sideward_3a_violates_noDivergenceWeak`).
-
-    The Adger clause: the canonical Sideward subjunction graph
-    `g_sideward` (parent c with both candidate sibling daughters) fails
-    `satisfiesAL` (`al_blocks_sideward`).
-
-    Bundled to make the convergence visible at the type level. The two
-    sides share no Lean term — they're different propositions about
-    different structural objects, both true. -/
-theorem sideward_eliminated_by_both_frameworks
+/-- Verdict comparison: the canonical Sideward configuration is rejected
+    by both frameworks. Two propositions about different structural
+    objects, conjoined to make the cross-framework agreement visible at
+    the type level. The Adger conjunct does not depend on the MCB
+    parameters `T_i Tnode T_iq`; the MCB conjunct does not reference the
+    AL graph. The bundling is documentation, not a reduction. -/
+theorem adger_and_mcb_both_reject_sideward
     (T_i Tnode T_iq : ConnesKreimer.TraceTree Minimalist.LIToken Unit) :
     -- MCB: Sideward 3(a)-shape transformation violates MinimalYieldWeak
     (¬ Minimalist.Merge.MinimalYieldWeak
@@ -201,15 +217,5 @@ theorem sideward_eliminated_by_both_frameworks
     (g_sideward.satisfiesAL ⟨2, by decide⟩ ⟨1, by decide⟩ = false) :=
   ⟨Minimalist.Merge.sideward_3a_violates_noDivergenceWeak T_i Tnode T_iq,
    al_blocks_sideward⟩
-
-/-- Sub-claim of the convergence theorem extracted as `Bool`-decidable
-    sentinel: the AL framework explicitly returns `false` on the canonical
-    Sideward configuration. This is `decide`-checked at compile time
-    via `al_blocks_sideward`'s `native_decide`. -/
-def adgerRejectsSidewardConfiguration : Bool :=
-  g_sideward.satisfiesAL ⟨2, by decide⟩ ⟨1, by decide⟩
-
-@[simp] theorem adgerRejectsSidewardConfiguration_eq_false :
-    adgerRejectsSidewardConfiguration = false := al_blocks_sideward
 
 end Adger2025
