@@ -4383,15 +4383,24 @@ private theorem RHS_eq_canonical_msform_pres
       (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
   induction C generalizing pres with
   | nil =>
-    -- BASE CASE: C = []. The LHS via `iteratedQuadSum_nil_remaining` is a
-    -- 4-deep bind over insertion/insertionForest layers. The RHS via
-    -- `enumAugGraftingData_zero` + `augInterpret_C_nil` is a 6-deep
-    -- enumeration with a closed-form leaf.
-    --
-    -- TODO (Phase 2): expand each LHS layer to its listChoices form, split
-    -- combined choices via listChoices_split_bind, reorder to match RHS
-    -- via Multiset.bind_bind, close with Multiset.bind/map_congr.
-    -- ~250-400 LOC.
+    -- BASE CASE: C = []. Apply iteratedQuadSum_nil_remaining on LHS,
+    -- enumAugGraftingData_zero on RHS (after reducing [].length), then
+    -- Multiset.map_map collapses outer maps; reduce RHS leaf via
+    -- augInterpret_C_nil.
+    simp only [List.length_nil]
+    rw [iteratedQuadSum_nil_remaining, enumAugGraftingData_zero,
+        Multiset.map_map]
+    -- Push augInterpret_C_nil into RHS leaf via funext + rfl.
+    rw [show ((fun L => Multiset.ofList (L.map Nonplanar.mk)) ∘
+              (fun agd : AugGraftingData F_A pre_T_B pre_FA_B pres =>
+                augInterpret T agd ([] : List (Planar α)))) =
+            (fun agd : AugGraftingData F_A pre_T_B pre_FA_B pres =>
+              Multiset.ofList ((augInterpret T agd []).map Nonplanar.mk))
+        from rfl]
+    -- TODO (Phase 2 substantive): expand each LHS layer via insertion_def
+    -- + insertionForest_eq_explicit, split combined choices via
+    -- listChoices_split_bind, reorder via Multiset.bind_bind, equate
+    -- the closed-form leaves. ~200-300 LOC remaining.
     sorry
   | cons c rest ih =>
     -- CONS CASE: see §1.11.6 docstring for proof plan.
