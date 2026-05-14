@@ -49,7 +49,8 @@ the substantive A3.3 bijection (`LHS_eq_iteratedQuadSum_msform`):
 - **Closed** (sorry-free): all base/edge cases of the headline; A3.1
   `insertionForest_split_pair`; A3.2 `assocBucketSum_eq_iteratedQuadSum_outer`
   (specialized + generalized); A3.4 deep case (reduced to A3.3); base case
-  (C = []) of A3.3.
+  (C = []) of A3.3; canonical-form skeleton (§1.9) including its C = []
+  base case (`interpret_C_nil`, `enumGraftingData_zero`, `LHS_eq_canonical_C_nil`).
 - **Open** (1 sorry): the cons case of A3.3 — substantive per-c bijection at
   msform level that requires path-level substrate (`vertices_multiGraft_decomp`
   + `multiGraft_perm_pair`-style argument). ~300-500 LOC of
@@ -1571,7 +1572,193 @@ private def enumGraftingData
               pre_FA_B_choice := fdata
               C_targets := targets }
 
-/-! ### §1.9.4: Future bridges
+/-! ### §1.9.4: Base-case lemmas (C = [])
+
+Sorry-free reductions for the C = [] subcase of the bridge theorems. These
+serve two purposes:
+
+1. **Sanity check** for the canonical-form approach: confirm that `interpret`
+   and `enumGraftingData` reduce correctly when `C = []`, before tackling the
+   recursive cons case.
+2. **Substrate** for the eventual full bridge proofs (§1.9.5 future work):
+   the base case can be cited via `interpret_C_nil` + `enumGraftingData_zero`
+   + `LHS_eq_canonical_C_nil` instead of re-derived inline.
+
+These do NOT close `LHS_eq_iteratedQuadSum_msform_cons_alphaBind` (which is a
+cons-case theorem, never invoked at C = []). They just verify that §1.9.1-3
+substrate is well-founded. -/
+
+/-- Reducing `interpret T gd []` (the C = [] case) to a closed form: the T-side
+    becomes `multiGraft T (gd.pre_T_B_choice.zip pre_T_B)` (no T_orig grafts,
+    pre_T_B' = pre_T_B), and the F-side becomes `buildFIns F_A pre_FA_B
+    gd.pre_FA_B_choice` (no FA_graft pairs reduce pre_FA_B' to pre_FA_B; no
+    FA_orig grafts; per-tree pairs match `perTreePairsFromFChoice`).
+
+    Sanity check for `LHS_eq_canonical_C_nil` and the eventual full bridge. -/
+private theorem interpret_C_nil
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (gd : GraftingData F_A pre_T_B pre_FA_B) :
+    interpret T gd ([] : List (Planar α)) =
+      multiGraft T (gd.pre_T_B_choice.zip pre_T_B) ::
+        buildFIns F_A pre_FA_B gd.pre_FA_B_choice := by
+  -- Reduce `interpret` and `buildFIns` while inlining the let-bindings via
+  -- `simp only`. The extractors on `[]` are `rfl`-equal to `[]`; multiGraft on
+  -- `[]` is identity; the `(finRange l.length).map (l[·.val])` reduces to `l`.
+  simp only [interpret, buildFIns,
+             show gd.C_targets.zip ([] : List (Planar α)) = [] from
+               List.zip_nil_right (l := gd.C_targets),
+             extractTOrigPairs, extractTGraftPairsAt,
+             extractFAOrigPairsAt, extractFAGraftPairsAt,
+             List.filterMap_nil, multiGraft_nil, List.append_nil,
+             perTreePairsFromFChoice]
+  -- After simp: both sides differ only in the inner `(finRange _).map _`
+  -- needing `List.map_getElem_finRange` to collapse to the original list.
+  congr 1
+  · -- T-side: gd.pre_T_B_choice.zip ((finRange _).map (pre_T_B[·.val])) = gd.pre_T_B_choice.zip pre_T_B
+    rw [List.map_getElem_finRange]
+  · -- F-side: per-i, the (gd.pre_FA_B_choice.zip ((finRange _).map (pre_FA_B[·.val])))
+    --   reduces to (gd.pre_FA_B_choice.zip pre_FA_B).
+    apply List.map_congr_left
+    intro i _
+    congr 1
+    rw [List.map_getElem_finRange]
+
+/-- The C_length = 0 specialization of `enumGraftingData`: the per-c targets
+    enumeration `listChoices _ 0 = [[]]` collapses, leaving a flat enumeration
+    over `(choice_T, fdata)` with `C_targets = []`. -/
+private theorem enumGraftingData_zero
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    enumGraftingData T F_A pre_T_B pre_FA_B 0 =
+      (Multiset.ofList
+        ((listChoices (vertices T) pre_T_B.length).flatMap fun choice_T =>
+          (listChoices (perKFChoice F_A) pre_FA_B.length).map fun fdata =>
+            ({ pre_T_B_choice := choice_T
+               pre_FA_B_choice := fdata
+               C_targets := ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+             } : GraftingData F_A pre_T_B pre_FA_B))) := by
+  unfold enumGraftingData
+  congr 1
+  apply List.flatMap_congr
+  intro choice_T _
+  -- Inner per-fdata: (listChoices ... 0).map (fun targets => ⟨..., targets⟩)
+  -- = [[]].map ... = [⟨..., []⟩] (singleton list).
+  -- Then outer flatMap over fdata of this singleton matches `← map_eq_flatMap`.
+  rw [show listChoices (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) 0 =
+            ([[]] : List (List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))) from
+        listChoices_zero _]
+  simp only [List.map_singleton, ← List.map_eq_flatMap]
+
+/-- LHS-side base case: when `C = []`, the iterated grafting LHS form equals
+    the canonical-form RHS. The bind chain
+    `(insertion T pre_T_B).bind T_ins => (insertionForest F_A pre_FA_B).bind F_ins =>
+       insertionForest (T_ins :: F_ins) []`
+    collapses to `(insertion T pre_T_B).bind T_ins => (insertionForest F_A pre_FA_B).map (T_ins :: ·)`,
+    which after unfolding via `insertion_def` and `insertionForest_eq_explicit` matches
+    the canonical-form `(enumGraftingData T F_A pre_T_B pre_FA_B 0).map (interpret T · [])`. -/
+private theorem LHS_eq_canonical_C_nil
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) :
+    ((insertion T pre_T_B).bind fun T_ins =>
+        (insertionForest F_A pre_FA_B).bind fun F_ins =>
+          insertionForest (T_ins :: F_ins) ([] : List (Planar α))) =
+      (enumGraftingData T F_A pre_T_B pre_FA_B 0).map
+        (fun gd => interpret T gd ([] : List (Planar α))) := by
+  -- Step 0: rewrite RHS interpret to its explicit C-nil form via interpret_C_nil.
+  rw [show (fun gd : GraftingData F_A pre_T_B pre_FA_B =>
+            interpret T gd ([] : List (Planar α))) =
+          (fun gd : GraftingData F_A pre_T_B pre_FA_B =>
+            multiGraft T (gd.pre_T_B_choice.zip pre_T_B) ::
+              buildFIns F_A pre_FA_B gd.pre_FA_B_choice) from by
+        funext gd; exact interpret_C_nil T gd]
+  -- Step 1: rewrite enumGraftingData_zero to expose flatMap structure.
+  rw [enumGraftingData_zero]
+  -- Step 2: collapse insertionForest (T_ins :: F_ins) [] = {T_ins :: F_ins}.
+  conv_lhs =>
+    rhs; ext T_ins
+    rhs; ext F_ins
+    rw [insertionForest_cons_host_nil_guests]
+  -- Step 3: pull singleton bind through to map via Multiset.bind_singleton.
+  simp only [Multiset.bind_singleton]
+  -- Step 4: Unfold insertion T pre_T_B and insertionForest F_A pre_FA_B explicitly.
+  rw [insertion_def T]
+  rw [show (insertionForest F_A pre_FA_B) =
+          (enumFChoices F_A pre_FA_B).map (buildFIns F_A pre_FA_B) from
+        insertionForest_eq_explicit F_A pre_FA_B]
+  -- Step 5: push the List.map → Multiset.ofList through bind/map structure.
+  -- LHS: (↑(listChoices vT pre_T_B.length).map (multiGraft T · pre_T_B)).bind
+  --        fun T_ins => ↑((enumFChoices F_A pre_FA_B).map (buildFIns ...)).map (T_ins :: ·)
+  -- RHS: ↑((listChoices vT pre_T_B.length).flatMap fun choice_T =>
+  --        (listChoices (perKFChoice F_A) pre_FA_B.length).map fun fdata =>
+  --          ⟨choice_T, fdata, []⟩) .map (fun gd => multiGraft T (gd.1.zip pre_T_B) :: buildFIns _ _ gd.2)
+  -- Convert both sides to the same flat coerced form.
+  show ((Multiset.ofList
+            ((listChoices (vertices T) pre_T_B.length).map
+              fun choice => multiGraft T (choice.zip pre_T_B))).bind
+          fun T_ins =>
+            ((Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).map
+              (buildFIns F_A pre_FA_B)).map (T_ins :: ·)) =
+        (Multiset.ofList
+          ((listChoices (vertices T) pre_T_B.length).flatMap fun choice_T =>
+            (listChoices (perKFChoice F_A) pre_FA_B.length).map fun fdata =>
+              ({ pre_T_B_choice := choice_T
+                 pre_FA_B_choice := fdata
+                 C_targets := ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+               } : GraftingData F_A pre_T_B pre_FA_B))).map
+          fun gd => multiGraft T (gd.pre_T_B_choice.zip pre_T_B) ::
+            buildFIns F_A pre_FA_B gd.pre_FA_B_choice
+  -- Convert LHS: ↑listmap.bind → ↑list.bind (g ∘ multiGraft); ↑listmap → ↑(list.map g) → ...
+  rw [show (Multiset.ofList
+            ((listChoices (vertices T) pre_T_B.length).map
+              fun choice => multiGraft T (choice.zip pre_T_B)) :
+              Multiset (Planar α)) =
+          (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).map
+            (fun choice => multiGraft T (choice.zip pre_T_B)) from rfl]
+  rw [Multiset.bind_map]  -- ((m.map f).bind g) = m.bind (g ∘ f)
+  -- LHS now: (↑listChoices vT _).bind fun choice_T =>
+  --            ((↑listChoices (perKFChoice F_A) _).map (buildFIns _ _)).map (multiGraft T (choice_T.zip pre_T_B) :: ·)
+  -- Push inner .map through .map (Multiset.map_map).
+  conv_lhs =>
+    rhs; ext choice_T
+    rw [Multiset.map_map]
+  -- Convert RHS: ↑(list.flatMap _).map _ → (↑list).bind (Multiset.ofList ∘ _)
+  rw [show Multiset.ofList ((listChoices (vertices T) pre_T_B.length).flatMap fun choice_T =>
+            (listChoices (perKFChoice F_A) pre_FA_B.length).map fun fdata =>
+              ({ pre_T_B_choice := choice_T
+                 pre_FA_B_choice := fdata
+                 C_targets := ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+               } : GraftingData F_A pre_T_B pre_FA_B)) =
+          (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+            Multiset.ofList ((listChoices (perKFChoice F_A) pre_FA_B.length).map fun fdata =>
+              ({ pre_T_B_choice := choice_T
+                 pre_FA_B_choice := fdata
+                 C_targets := ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+               } : GraftingData F_A pre_T_B pre_FA_B)) from by
+        rw [← Multiset.coe_bind]]
+  rw [Multiset.map_bind]
+  -- Both sides now: (↑listChoices vT _).bind fun choice_T => ... .
+  refine Multiset.bind_congr fun choice_T _ => ?_
+  -- Per-choice_T: align the inner map.
+  -- LHS inner: ((↑listChoices (perKFChoice _) _).map (buildFIns _ _)).map
+  --              (fun fdata => multiGraft T (choice_T.zip pre_T_B) :: buildFIns _ _ fdata)
+  --   wait, after Multiset.map_map: (↑listChoices ...).map ((multiGraft T (choice_T.zip pre_T_B) :: ·) ∘ buildFIns _ _)
+  -- RHS inner: (↑((listChoices ...).map (fun fdata => ⟨choice_T, fdata, []⟩))).map
+  --              (fun gd => multiGraft T (gd.1.zip pre_T_B) :: buildFIns _ _ gd.2)
+  rw [show (Multiset.ofList ((listChoices (perKFChoice F_A) pre_FA_B.length).map
+            fun fdata => ({ pre_T_B_choice := choice_T
+                            pre_FA_B_choice := fdata
+                            C_targets := ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+                          } : GraftingData F_A pre_T_B pre_FA_B)) :
+            Multiset (GraftingData F_A pre_T_B pre_FA_B)) =
+          (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).map
+            fun fdata => ({ pre_T_B_choice := choice_T
+                            pre_FA_B_choice := fdata
+                            C_targets := ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+                          } : GraftingData F_A pre_T_B pre_FA_B) from rfl]
+  rw [Multiset.map_map]
+  -- Now both sides are .map over the same multiset; close via map_congr + rfl.
+  refine Multiset.map_congr rfl fun fdata _ => ?_
+  rfl
+
+/-! ### §1.9.5: Future bridges (full C : List)
 
 The two theorems below are the targets for the next session. Both are stated
 here as documentation; their proofs go in §1.10 (LHS bridge) and §1.11 (RHS
@@ -1598,8 +1785,20 @@ private theorem RHS_eq_canonical_msform
   ((enumGraftingData T F_A pre_T_B pre_FA_B C.length).map (interpret T · C)).map msform
 ```
 
-After both: the cons-case sorry-fence collapses by composing them with `map_eq_map`
-on the LHS (which doesn't need msform). -/
+**Caveat (correction to prior session prompt)**: `LHS_eq_canonical` likely
+needs msform absorption on both sides too, NOT just the RHS bridge. Reason:
+`interpret`'s T-side does ONE multi-graft pass
+(`multiGraft T (choice_T.zip pre_T_B' ++ T_orig_pairs)`) while the LHS form
+does TWO passes (first pre_T_B into T → T_ins, then T_orig-c's into T_ins).
+At any vertex `v ∈ pairSources (choice_T.zip pre_T_B)` that ALSO receives a
+T_orig-bucket c (via `.t_orig v`), the planar order of children differs
+between the two forms (in interpret's pair list, T_orig comes after pre_T_B;
+in the LHS, T_orig grafts on top of T_ins which already has pre_T_B grafted
+as its first children at that vertex). The msform-level absorption uses
+`multiGraft_perm_pair` to eliminate this planar-order difference.
+
+After both: the cons-case sorry-fence collapses by composing them with
+`Multiset.map_congr` (both sides msform-wrapped). -/
 
 /-! ## §2: Bridge: iterated insertionForest equals assocBucketSum
 
