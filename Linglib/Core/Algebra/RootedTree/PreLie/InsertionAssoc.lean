@@ -4440,9 +4440,24 @@ private theorem RHS_eq_canonical_msform_pres
     -- FA-side: fdata (pre_FA_B.length) + pFO ((pres .FA_orig).length).
     simp_rw [listChoices_split_bind, listChoices_split_map]
     -- LHS now has 5 binds + 1 map: (pTG, choice_T, pTO, pFG, fdata, pFO).
-    -- TODO (Phase 2 substantive): convert final .map to .bind, apply 8 bind
-    -- swaps to reach RHS order (choice_T, fdata, pTO, pTG, pFO, pFG), convert
-    -- back to .map, leaf equality via List.zip_append. ~80-130 LOC remaining.
+    -- Convert final .map to .bind via ← Multiset.bind_singleton.
+    simp_rw [← Multiset.bind_singleton]
+    -- Now LHS has 6 binds. Apply Multiset.bind_bind swaps to reach RHS order
+    -- (choice_T, fdata, pTO, pTG, pFO, pFG). 8 swaps total.
+    rw [Multiset.bind_bind]  -- swap 1: pTG↔choice_T
+    conv_lhs => rhs; ext choice_T; rw [Multiset.bind_bind]  -- swap 2: pTG↔pTO
+    conv_lhs => rhs; ext choice_T; rhs; ext pTO; rw [Multiset.bind_bind]  -- swap 3
+    conv_lhs => rhs; ext choice_T; rhs; ext pTO; rhs; ext pFG; rw [Multiset.bind_bind]  -- swap 4
+    conv_lhs => rhs; ext choice_T; rhs; ext pTO; rw [Multiset.bind_bind]  -- swap 5
+    conv_lhs => rhs; ext choice_T; rw [Multiset.bind_bind]  -- swap 6
+    conv_lhs => rhs; ext choice_T; rhs; ext fdata; rhs; ext pTO; rw [Multiset.bind_bind]  -- swap 7
+    conv_lhs => rhs; ext choice_T; rhs; ext fdata; rhs; ext pTO; rhs; ext pTG; rw [Multiset.bind_bind]  -- swap 8
+    -- Now LHS order: (choice_T, fdata, pTO, pTG, pFO, pFG) ✓
+    --
+    -- TODO (Phase 2 substantive): also reduce RHS to same 6-bind-of-Multiset form
+    -- (currently RHS is Multiset.ofList of List.flatMap chain). Convert via
+    -- Multiset.coe_bind. Then equate leaves via List.zip_append + multiGraft.
+    -- ~50-80 LOC remaining.
     sorry
   | cons c rest ih =>
     -- CONS CASE: see §1.11.6 docstring for proof plan.
