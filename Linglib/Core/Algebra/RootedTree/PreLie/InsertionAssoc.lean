@@ -4051,6 +4051,447 @@ private theorem insertion_split_middle_pair_bind {γ : Type*}
   -- Both sides are definitionally equal at this point; congr 1 closes via rfl.
   congr 1
 
+/-! ### §1.11: Strong-IH substrate — augmented grafting data with `pres`
+
+To prove the cons case of `RHS_eq_canonical_msform`, the standard IH bridges
+`LHS-rest = RHS-rest` at msform level — but the per-bucket cons sub-lemmas need
+the equality to hold AFTER injecting `(v_first, c)` into `multiGraft T`'s pair
+list. This injection isn't a function of the msform output (msform
+`= Multiset.ofList ∘ List.map Nonplanar.mk` loses the pair-list structure).
+
+The strong-IH bypasses this by parameterizing the canonical form over
+`pres : QuadIdx → List (Planar α)`, so the IH can be applied with augmented
+pres and the result tracks the additional graft pairs explicitly.
+
+`AugGraftingData F_A pre_T_B pre_FA_B pres` extends the standard `GraftingData`
+with one choice list per pres bucket:
+
+| Bucket   | Field                     | Element type                  | Length                    |
+|----------|---------------------------|-------------------------------|---------------------------|
+| T_orig   | `pres_T_orig_choice`      | `Path`                        | `(pres .T_orig).length`   |
+| T_graft  | `pres_T_graft_choice`     | `Fin pre_T_B.length × Path`   | `(pres .T_graft).length`  |
+| FA_orig  | `pres_FA_orig_choice`     | `Fin F_A.length × Path`       | `(pres .FA_orig).length`  |
+| FA_graft | `pres_FA_graft_choice`    | `Fin pre_FA_B.length × Path`  | `(pres .FA_graft).length` |
+
+`augInterpret` is the analog of `interpret` extended with these pres pairs:
+each pres entry contributes a graft pair PRE-PENDED to the corresponding
+bucket's pair list (pres pairs first, C-derived pairs second). At
+`pres = (fun _ => [])` the four `pres_*_choice` fields are `[]`, making
+`augInterpret` reduce to `interpret` (modulo Multiset structure).
+
+`enumAugGraftingData` enumerates all valid `AugGraftingData` whose four
+`pres_*_choice` lists have the matching lengths. -/
+
+/-- Canonical labeled grafting data, augmented with per-pres-element vertex
+    choices. Generalizes `GraftingData` by adding 4 more choice lists, one per
+    pres bucket. The standard `GraftingData` is the specialization at
+    `pres = (fun _ => [])`. -/
+private structure AugGraftingData (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) where
+  /-- Per-pre_T_B[k] graft position in V(T). Expected length `pre_T_B.length`. -/
+  pre_T_B_choice  : List Path
+  /-- Per-pre_FA_B[k] graft position: which F_A tree + vertex within.
+      Expected length `pre_FA_B.length`. -/
+  pre_FA_B_choice : List (Fin F_A.length × Path)
+  /-- Per-c bucket-classified target. Expected length matches consumer's `C.length`. -/
+  C_targets       : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)
+  /-- Per-(pres .T_orig)[i] graft position in V(T).
+      Expected length `(pres .T_orig).length`. -/
+  pres_T_orig_choice  : List Path
+  /-- Per-(pres .T_graft)[i] graft position: which pre_T_B tree + vertex within.
+      Expected length `(pres .T_graft).length`. -/
+  pres_T_graft_choice : List (Fin pre_T_B.length × Path)
+  /-- Per-(pres .FA_orig)[i] graft position: which F_A tree + vertex within.
+      Expected length `(pres .FA_orig).length`. -/
+  pres_FA_orig_choice : List (Fin F_A.length × Path)
+  /-- Per-(pres .FA_graft)[i] graft position: which pre_FA_B tree + vertex within.
+      Expected length `(pres .FA_graft).length`. -/
+  pres_FA_graft_choice : List (Fin pre_FA_B.length × Path)
+
+/-! ### §1.11.1: `augInterpret` — single-pass grafting with `pres` -/
+
+/-- Single-pass interpretation of `AugGraftingData` plus `C` into the resulting
+    forest. Like `interpret` but with the per-bucket pair lists augmented by
+    pres-derived pairs (pres pairs FIRST, then C-derived pairs).
+
+    Specifically, for each bucket b, the augmented pair list is
+    `pres-pairs-at-b ++ C-pairs-at-b`. The pres-pairs come from zipping
+    `agd.pres_b_choice` with `pres b`; the C-pairs come from `extract_b
+    (agd.C_targets.zip C)` as in standard `interpret`. -/
+private def augInterpret
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    {pres : QuadIdx → List (Planar α)}
+    (agd : AugGraftingData F_A pre_T_B pre_FA_B pres)
+    (C : List (Planar α)) : List (Planar α) :=
+  let C_paired := agd.C_targets.zip C
+  let pres_T_orig_pairs : List (Path × Planar α) :=
+    agd.pres_T_orig_choice.zip (pres .T_orig)
+  let pres_T_graft_pairs_at (k : Fin pre_T_B.length) : List (Path × Planar α) :=
+    (agd.pres_T_graft_choice.zip (pres .T_graft)).filterMap fun p =>
+      if p.fst.fst = k then some (p.fst.snd, p.snd) else none
+  let pres_FA_orig_pairs_at (i : Fin F_A.length) : List (Path × Planar α) :=
+    (agd.pres_FA_orig_choice.zip (pres .FA_orig)).filterMap fun p =>
+      if p.fst.fst = i then some (p.fst.snd, p.snd) else none
+  let pres_FA_graft_pairs_at (k : Fin pre_FA_B.length) : List (Path × Planar α) :=
+    (agd.pres_FA_graft_choice.zip (pres .FA_graft)).filterMap fun p =>
+      if p.fst.fst = k then some (p.fst.snd, p.snd) else none
+  let pre_T_B' : List (Planar α) :=
+    (List.finRange pre_T_B.length).map fun k =>
+      multiGraft pre_T_B[k.val]
+        (pres_T_graft_pairs_at k ++ extractTGraftPairsAt C_paired k)
+  let T' : Planar α :=
+    multiGraft T (agd.pre_T_B_choice.zip pre_T_B' ++
+                  pres_T_orig_pairs ++ extractTOrigPairs C_paired)
+  let pre_FA_B' : List (Planar α) :=
+    (List.finRange pre_FA_B.length).map fun k =>
+      multiGraft pre_FA_B[k.val]
+        (pres_FA_graft_pairs_at k ++ extractFAGraftPairsAt C_paired k)
+  let F' : List (Planar α) :=
+    (List.finRange F_A.length).map fun i =>
+      let pre_FA_B'_for_i : List (Path × Planar α) :=
+        (agd.pre_FA_B_choice.zip pre_FA_B').filterMap fun p =>
+          if p.fst.fst = i then some (p.fst.snd, p.snd) else none
+      multiGraft F_A[i.val]
+        (pre_FA_B'_for_i ++ pres_FA_orig_pairs_at i ++
+         extractFAOrigPairsAt C_paired i)
+  T' :: F'
+
+/-! ### §1.11.2: `enumAugGraftingData` — canonical enumeration -/
+
+/-- Multiset of all valid `AugGraftingData` for given `T`, `F_A`, `pre_T_B`,
+    `pre_FA_B`, `pres`, and target `C_length`.
+
+    Each entry has:
+    - `pre_T_B_choice.length = pre_T_B.length`
+    - `pre_FA_B_choice.length = pre_FA_B.length`
+    - `C_targets.length = C_length`
+    - `pres_T_orig_choice.length = (pres .T_orig).length`
+    - `pres_T_graft_choice.length = (pres .T_graft).length`
+    - `pres_FA_orig_choice.length = (pres .FA_orig).length`
+    - `pres_FA_graft_choice.length = (pres .FA_graft).length`
+
+    These length invariants follow from `listChoices`'s length lemma at
+    consumption sites. -/
+private def enumAugGraftingData
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α))
+    (C_length : Nat) : Multiset (AugGraftingData F_A pre_T_B pre_FA_B pres) :=
+  Multiset.ofList <|
+    (listChoices (vertices T) pre_T_B.length).flatMap fun choice_T =>
+      (listChoices (perKFChoice F_A) pre_FA_B.length).flatMap fun fdata =>
+        (listChoices
+            (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) C_length).flatMap
+          fun targets =>
+            (listChoices (vertices T) (pres .T_orig).length).flatMap fun pTO =>
+              (listChoices (perKFChoice pre_T_B) (pres .T_graft).length).flatMap
+                fun pTG =>
+                  (listChoices (perKFChoice F_A) (pres .FA_orig).length).flatMap
+                    fun pFO =>
+                      (listChoices
+                        (perKFChoice pre_FA_B) (pres .FA_graft).length).map
+                        fun pFG =>
+                          { pre_T_B_choice := choice_T
+                            pre_FA_B_choice := fdata
+                            C_targets := targets
+                            pres_T_orig_choice := pTO
+                            pres_T_graft_choice := pTG
+                            pres_FA_orig_choice := pFO
+                            pres_FA_graft_choice := pFG }
+
+/-! ### §1.11.3: F-side append substrate (multi-element generalization)
+
+`buildFIns F_A (X ++ Y) (xdata ++ ydata)` decomposes as the per-`i'` sum of the
+per-tree pairs from `(X, xdata)` and `(Y, ydata)`. Generalization of
+`buildFIns_append_singleton` (§1.10.1.1) to non-singleton appends. -/
+
+/-- `perTreePairsFromFChoice` distributes over append on the data and pre_FA_B
+    sides, when the data lengths match the pre_FA_B halves. Multi-element
+    generalization of `perTreePairsFromFChoice_append_singleton`. -/
+private theorem perTreePairsFromFChoice_append
+    (F_A X Y : List (Planar α))
+    (xdata : List (Fin F_A.length × Path)) (ydata : List (Fin F_A.length × Path))
+    (hxdata : xdata.length = X.length) (i' : Fin F_A.length) :
+    perTreePairsFromFChoice F_A (X ++ Y) (xdata ++ ydata) i' =
+      perTreePairsFromFChoice F_A X xdata i' ++
+      perTreePairsFromFChoice F_A Y ydata i' := by
+  unfold perTreePairsFromFChoice
+  rw [List.zip_append hxdata, List.filterMap_append]
+
+/-- `buildFIns` distributes over append on the data and pre_FA_B sides, when
+    the data lengths match the pre_FA_B halves. Multi-element generalization of
+    `buildFIns_append_singleton`. -/
+private theorem buildFIns_append
+    (F_A X Y : List (Planar α))
+    (xdata : List (Fin F_A.length × Path)) (ydata : List (Fin F_A.length × Path))
+    (hxdata : xdata.length = X.length) :
+    buildFIns F_A (X ++ Y) (xdata ++ ydata) =
+      (List.finRange F_A.length).map fun i' =>
+        multiGraft F_A[i'.val]
+          (perTreePairsFromFChoice F_A X xdata i' ++
+           perTreePairsFromFChoice F_A Y ydata i') := by
+  unfold buildFIns
+  refine List.map_congr_left fun i' _ => ?_
+  rw [perTreePairsFromFChoice_append F_A X Y xdata ydata hxdata i']
+
+/-! ### §1.11.4: `augInterpret_C_nil` — C = [] reduction
+
+When `C = []`, `augInterpret` reduces to a pres-only computation: each pres
+bucket's pairs are zipped/filterMapped from the corresponding `pres_*_choice`
+field, with no contribution from `extract*_pairs` (which all reduce to `[]`
+on empty `C_paired`). The closed form mirrors the iterated-grafting LHS:
+- T-side: `multiGraft T (pre_T_B_choice.zip pre_T_B' ++ pres_T_orig_pairs)`
+  where `pre_T_B'[k] = multiGraft pre_T_B[k] pres_T_graft_pairs_at k`.
+- F-side: per-`i'`, `multiGraft F_A[i'] (perTree pre_FA_B' i' ++ pres_FA_orig_pairs_at i')`.
+-/
+
+/-- Reducing `augInterpret T agd []` (the C = []) case to a closed form.
+
+    The T-side becomes `multiGraft T (pre_T_B_choice.zip pre_T_B' ++ pres_T_orig_pairs)`
+    where `pre_T_B'[k] = multiGraft pre_T_B[k] (pres_T_graft_pairs_at k)`.
+    The F-side becomes per-`i'` multiGraft of `F_A[i'.val]` with the
+    `pre_FA_B'`-derived pairs and `pres_FA_orig_pairs_at i'` appended. -/
+private theorem augInterpret_C_nil
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    {pres : QuadIdx → List (Planar α)}
+    (agd : AugGraftingData F_A pre_T_B pre_FA_B pres) :
+    augInterpret T agd ([] : List (Planar α)) =
+      multiGraft T
+        (agd.pre_T_B_choice.zip
+          ((List.finRange pre_T_B.length).map fun k =>
+            multiGraft pre_T_B[k.val]
+              ((agd.pres_T_graft_choice.zip (pres .T_graft)).filterMap fun p =>
+                if p.fst.fst = k then some (p.fst.snd, p.snd) else none)) ++
+         agd.pres_T_orig_choice.zip (pres .T_orig)) ::
+      (List.finRange F_A.length).map fun i =>
+        multiGraft F_A[i.val]
+          ((agd.pre_FA_B_choice.zip
+              ((List.finRange pre_FA_B.length).map fun k =>
+                multiGraft pre_FA_B[k.val]
+                  ((agd.pres_FA_graft_choice.zip (pres .FA_graft)).filterMap fun p =>
+                    if p.fst.fst = k then some (p.fst.snd, p.snd) else none))).filterMap
+            (fun p => if p.fst.fst = i then some (p.fst.snd, p.snd) else none) ++
+           (agd.pres_FA_orig_choice.zip (pres .FA_orig)).filterMap fun p =>
+              if p.fst.fst = i then some (p.fst.snd, p.snd) else none) := by
+  -- Unfold augInterpret and reduce the C-paired zips to nil.
+  simp only [augInterpret,
+             show agd.C_targets.zip ([] : List (Planar α)) = [] from
+               List.zip_nil_right (l := agd.C_targets),
+             extractTOrigPairs, extractTGraftPairsAt,
+             extractFAOrigPairsAt, extractFAGraftPairsAt,
+             List.filterMap_nil, List.append_nil]
+
+/-! ### §1.11.5: `enumAugGraftingData_zero` — C_length = 0 collapse -/
+
+/-- The C_length = 0 specialization of `enumAugGraftingData`: the C_targets
+    enumeration `listChoices _ 0 = [[]]` collapses, leaving a flat enumeration
+    over the 6 remaining choice lists with `C_targets = []`. -/
+private theorem enumAugGraftingData_zero
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) :
+    enumAugGraftingData T F_A pre_T_B pre_FA_B pres 0 =
+      (Multiset.ofList
+        ((listChoices (vertices T) pre_T_B.length).flatMap fun choice_T =>
+          (listChoices (perKFChoice F_A) pre_FA_B.length).flatMap fun fdata =>
+            (listChoices (vertices T) (pres .T_orig).length).flatMap fun pTO =>
+              (listChoices (perKFChoice pre_T_B) (pres .T_graft).length).flatMap
+                fun pTG =>
+                  (listChoices (perKFChoice F_A) (pres .FA_orig).length).flatMap
+                    fun pFO =>
+                      (listChoices
+                        (perKFChoice pre_FA_B) (pres .FA_graft).length).map
+                        fun pFG =>
+                          ({ pre_T_B_choice := choice_T
+                             pre_FA_B_choice := fdata
+                             C_targets := ([] :
+                               List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+                             pres_T_orig_choice := pTO
+                             pres_T_graft_choice := pTG
+                             pres_FA_orig_choice := pFO
+                             pres_FA_graft_choice := pFG }
+                           : AugGraftingData F_A pre_T_B pre_FA_B pres))) := by
+  unfold enumAugGraftingData
+  congr 1
+  apply List.flatMap_congr
+  intro choice_T _
+  apply List.flatMap_congr
+  intro fdata _
+  -- listChoices allAlpha 0 = [[]]; flatMap of singleton [[]] applies the inner
+  -- function once with targets = [].
+  rw [show listChoices (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) 0 =
+        ([[]] : List (List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))) from
+      listChoices_zero _]
+  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
+
+/-! ### §1.11.6: Strong-IH headline theorem (sorry-fenced)
+
+The pres-parameterized analog of `RHS_eq_canonical_msform`. Generalizes the
+standard form to track per-bucket pres data via `AugGraftingData`'s four
+`pres_*_choice` fields.
+
+**Structural plan for the proof** (multi-session work, ~500-900 LOC total):
+
+* **Base case** `C = []`. After `iteratedQuadSum_nil_remaining`, the LHS is a
+  4-deep bind over `(insertionForest pre_T_B (pres .T_graft))`,
+  `(insertion T (... ++ pres .T_orig))`, `(insertionForest pre_FA_B (pres .FA_graft))`,
+  `(insertionForest F_A (... ++ pres .FA_orig))`. Each layer expands via
+  `insertionForest_eq_explicit` / `insertion_def`, then `listChoices_split_bind`
+  splits the combined choice (e.g., for `(pre_T_B' ++ pres .T_orig).length`)
+  into per-bucket choices `(choice_T, pTO)` aligning with `AugGraftingData`
+  fields. After expansion + bind-reorderings, both sides reduce to the same
+  6-deep multiset enumeration with `augInterpret`-style leaf — closeable via
+  `enumAugGraftingData_zero` + `augInterpret_C_nil` + bind-congruence.
+  Estimated: ~250-400 LOC.
+
+* **Cons case** `C = c :: rest`. After `iteratedQuadSum_cons_remaining`, the
+  LHS is `[4 buckets].bind first_b => iQS pres' rest .map msform` where
+  `pres' = Function.update pres first_b (pres first_b ++ [c])`. Apply IH at
+  `pres'` and `rest`. The RHS becomes
+  `[4 buckets].bind first_b => (enumAugGraftingData ... pres' rest.length).map (augInterpret pres' · rest) .map msform`.
+  Bridge to `(enumAugGraftingData ... pres (rest.length + 1)).map (augInterpret pres · (c :: rest)) .map msform`
+  via the bijection: each `AlphaConstrainedChoice.t_orig v` (T_orig case) on
+  the RHS-side `C_targets[0]` corresponds to `(first_b = T_orig, pres'_T_orig_choice = pres_T_orig_choice ++ [v])`
+  on the strong-IH side. Symmetric for other 3 buckets. The augInterpret outputs
+  match because pres pairs and C-derived pairs concatenate in the same order
+  (pres first, then C). Estimated: ~250-500 LOC.
+
+The cons case avoids the structural blocker of the standard cons-case attack
+(per session 10's analysis): the per-bucket case-split happens at the
+`AugGraftingData` enumeration level (before msform), not inside the
+multiGraft pair-list (after msform). Each bucket's bijection is uniform —
+"shift one entry from C_targets to pres_*_choice".
+
+Closing both base + cons cases unblocks `RHS_eq_canonical_msform` (Phase C),
+which together with `LHS_eq_canonical_msform` (Phase D) closes
+`LHS_eq_iteratedQuadSum_msform_cons_alphaBind` (the A3.3 sorry-fence). -/
+
+/-- **Strong-IH theorem** (sorry-fenced): the pres-parameterized canonical-form
+    bridge for `iteratedQuadSum`. Specializes to `RHS_eq_canonical_msform` at
+    `pres = (fun _ => [])`.
+
+    Proof strategy: induction on `C`. Base case via expansion of all four
+    insertionForest/insertion layers + bind reordering to match
+    `enumAugGraftingData`. Cons case via IH at `pres' = update pres first_b
+    (pres first_b ++ [c])` + per-bucket bijection moving the head choice
+    between `pres_*_choice` and `C_targets[0]`. -/
+private theorem RHS_eq_canonical_msform_pres
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) (C : List (Planar α)) :
+    (iteratedQuadSum T F_A pre_T_B pre_FA_B pres C).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((enumAugGraftingData T F_A pre_T_B pre_FA_B pres C.length).map
+        (fun agd => augInterpret T agd C)).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- TODO: see §1.11.6 docstring for proof plan.
+  -- Base: expand insertion/insertionForest substrate + bind-reorder.
+  -- Cons: IH at update pres + per-bucket bijection.
+  sorry
+
+/-! ### §1.11.7: `RHS_eq_canonical_msform` derived from strong-IH
+
+The standard form follows from `RHS_eq_canonical_msform_pres` at
+`pres = (fun _ => [])`. At empty pres, the four `pres_*_choice` fields all
+have length 0 (forced to `[]` by the `listChoices ... 0 = [[]]` collapse in
+`enumAugGraftingData`), and `augInterpret T agd C` reduces to `interpret T
+(agd-projected-to-GraftingData) C` (the pres pairs all become empty zips). -/
+
+/-- Project an `AugGraftingData` at empty pres down to a standard `GraftingData`
+    (forgetting the four `pres_*_choice` fields, which are all `[]` by length). -/
+private def agdToGd
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (agd : AugGraftingData F_A pre_T_B pre_FA_B (fun _ => [])) :
+    GraftingData F_A pre_T_B pre_FA_B :=
+  { pre_T_B_choice := agd.pre_T_B_choice
+    pre_FA_B_choice := agd.pre_FA_B_choice
+    C_targets := agd.C_targets }
+
+/-- Inject a `GraftingData` to an `AugGraftingData` at empty pres (with all
+    four `pres_*_choice` fields set to `[]`, matching `(fun _ => []) bucket`'s
+    length 0). -/
+private def gdToAgdEmpty
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (gd : GraftingData F_A pre_T_B pre_FA_B) :
+    AugGraftingData F_A pre_T_B pre_FA_B (fun _ => []) :=
+  { pre_T_B_choice := gd.pre_T_B_choice
+    pre_FA_B_choice := gd.pre_FA_B_choice
+    C_targets := gd.C_targets
+    pres_T_orig_choice := []
+    pres_T_graft_choice := []
+    pres_FA_orig_choice := []
+    pres_FA_graft_choice := [] }
+
+/-- At `pres = (fun _ => [])`, `augInterpret` reduces to `interpret`: every
+    `pres_*_pairs` contribution vanishes because `(fun _ => []) bucket = []`,
+    so the per-bucket `.zip []` and `.zip [].filterMap` evaluate to `[]`.
+
+    Sorry-fenced: requires careful let-binding reduction (4 pres pair-bindings
+    collapse to `[]`, then `_ ++ []` cleanup). The reduction is conceptually
+    straightforward but Lean's `simp`/`dsimp` interaction with let-bindings
+    inside `def` bodies needs precise handling. -/
+private theorem augInterpret_at_empty_pres
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (agd : AugGraftingData F_A pre_T_B pre_FA_B (fun _ => []))
+    (C : List (Planar α)) :
+    augInterpret T agd C = interpret T (agdToGd agd) C := by
+  -- TODO: dsimp [augInterpret, interpret, agdToGd] then simp with
+  -- List.zip_nil_right, List.filterMap_nil, List.nil_append, List.append_nil.
+  -- May require explicit `show` of let-binding-resolved form first.
+  sorry
+
+/-- At empty pres, `enumAugGraftingData` is the image of `enumGraftingData`
+    under `gdToAgdEmpty`. The four inner flatMaps over `listChoices _ 0 = [[]]`
+    each iterate once with the empty choice, collapsing the augmented enumeration
+    to the standard one.
+
+    Sorry-fenced: requires reducing 4 inner `listChoices xs 0 = [[]]` flatMaps
+    to single iterations + collapsing `flatMap (fun x => [f x]) ↔ map f`.
+    Provable structurally; proof scaffolding present (commented above). -/
+private theorem enumAugGraftingData_at_empty_pres
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α)) (n : Nat) :
+    enumAugGraftingData T F_A pre_T_B pre_FA_B (fun _ => []) n =
+      (enumGraftingData T F_A pre_T_B pre_FA_B n).map gdToAgdEmpty := by
+  -- TODO: unfold both, simp_rw [List.map_flatMap, List.map_map] to push
+  -- gdToAgdEmpty inside; then per-targets reduce 4 inner [[]]-flatMaps to
+  -- singleton via List.length_nil + listChoices_zero + List.flatMap_cons +
+  -- List.flatMap_nil. The remaining `flatMap (fun targets => [...])
+  -- = .map ...` collapse uses `List.flatMap_singleton'` or similar.
+  sorry
+
+/-- The standard `RHS_eq_canonical_msform`, derived from the strong-IH
+    `RHS_eq_canonical_msform_pres` at `pres = (fun _ => [])`. The chain of
+    sorries is (1) the strong-IH itself (§1.11.6), (2) the empty-pres bridges
+    `augInterpret_at_empty_pres` and `enumAugGraftingData_at_empty_pres`. -/
+private theorem RHS_eq_canonical_msform
+    (T : Planar α) (F_A pre_T_B pre_FA_B C : List (Planar α)) :
+    ((Multiset.ofList (listChoices
+        [QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft]
+        C.length)).bind fun a =>
+      iteratedQuadSum T F_A pre_T_B pre_FA_B
+        (fun t => bucketSlice C a t) []).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((enumGraftingData T F_A pre_T_B pre_FA_B C.length).map
+        (fun gd => interpret T gd C)).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- LHS: rewrite via iteratedQuadSum_eq_alphaBind in reverse to expose
+  -- iQS at pres = (fun _ => []) on the full C.
+  rw [← iteratedQuadSum_eq_alphaBind]
+  -- LHS now: (iteratedQuadSum T F_A pre_T_B pre_FA_B (fun _ => []) C).map msform
+  -- Apply strong-IH at pres = (fun _ => []).
+  rw [RHS_eq_canonical_msform_pres T F_A pre_T_B pre_FA_B (fun _ => []) C]
+  -- Bridge enumAug at empty pres → enumGrafting via gdToAgdEmpty, then
+  -- augInterpret at empty pres → interpret via agdToGd.
+  congr 1
+  rw [enumAugGraftingData_at_empty_pres T F_A pre_T_B pre_FA_B C.length,
+      Multiset.map_map]
+  -- Goal: (enumGraftingData T F_A pre_T_B pre_FA_B C.length).map
+  --         (augInterpret T · C ∘ gdToAgdEmpty) = ... .map (interpret T · C)
+  refine Multiset.map_congr rfl fun gd _ => ?_
+  -- Per gd, augInterpret T (gdToAgdEmpty gd) C = interpret T gd C
+  -- via augInterpret_at_empty_pres (LHS reduces to interpret T (agdToGd
+  -- (gdToAgdEmpty gd)) C, and agdToGd (gdToAgdEmpty gd) = gd).
+  rw [Function.comp_apply, augInterpret_at_empty_pres]
+  -- agdToGd (gdToAgdEmpty gd) = gd by struct-equality (both copy the same 3 fields).
+  show interpret T (agdToGd (gdToAgdEmpty gd)) C = interpret T gd C
+  rfl
 
 /-! ### §1.9.5: Future bridges (full C : List)
 
