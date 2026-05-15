@@ -5370,7 +5370,101 @@ as its first children at that vertex). The msform-level absorption uses
 After both: the cons-case sorry-fence collapses by composing them with
 `Multiset.map_congr` (both sides msform-wrapped). -/
 
-/-! ### §1.12: LHS-side strong-IH (sorry-fenced cons case)
+/-! ### §1.11.8: `LHS_form_cons_decompose` — substantive 4-bucket peel for LHS
+
+The LHS-side analog of `iteratedQuadSum_cons_remaining` at msform level:
+peeling `c` off `insertionForest (T' :: F') (c :: rest)` decomposes the LHS
+into a 4-bucket bind matching the four `QuadIdx` cases, with `c` absorbed
+into the corresponding `pres` bucket per case.
+
+**Why msform.** At the planar level, the c-graft and the pre_T_B/pre_FA_B
+multi-grafts produce different planar arrangements depending on the order
+of operations. At msform level (after `Multiset.ofList ∘ List.map
+Nonplanar.mk`), the planar order is forgotten and the per-bucket
+contributions match.
+
+**Bucket semantics.** For `c` landing at a vertex of `T' :: F'`:
+- `T_orig`: `c` lands at a preserved vertex of `T` (i.e., transported
+  through the pre_T_B' multi-graft of T → T'). Equivalent to
+  appending `c` to `pres .T_orig`.
+- `T_graft`: `c` lands at a lifted vertex of `pre_T_B[k]` (lifted via
+  the pre_T_B' multi-graft into T'). Equivalent to appending `c` to
+  `pres .T_graft` (which becomes a guest of pre_T_B before grafting).
+- `FA_orig`: symmetric to `T_orig` for the F-side.
+- `FA_graft`: symmetric to `T_graft` for the F-side.
+
+**Peel-form caveat (correction to prior session prompt's Strategy 3).**
+A naïve "peel-c-then-rest" lemma of the form
+```
+(insertionForest F (c :: rest)).map msform =
+  ((insertionForest F [c]).bind X' => insertionForest X' rest).map msform
+```
+is FALSE: the RHS allows `rest`-guests to land at vertices INSIDE the
+grafted `c` (since X' has more vertices than F), while the LHS only allows
+them at vertices of the original F. The correct formulation must keep the
+`pres` parameter to pre-distribute `c` into the abstract structure of
+`(T' :: F')` BEFORE the multi-graft is realized — which is exactly the
+4-bucket decomposition below. The IH at `pres'` then closes `rest`
+correctly because `pres'` carries the `[c]` in the appropriate bucket.
+
+**Status (sorry-fenced).** Proof estimated at ~300-500 LOC requiring:
+1. Apply `insertionForest_cons_cons` to expose the bool-assignment of
+   `(c :: rest)`; the first bool determines T-side vs F-side.
+2. Within each side, decompose c's vertex choice via
+   `vertices_multiGraft_decomp` (T-side) / `vertices_forest_eq_partition`
+   (F-side) into preserved-vs-lifted classes, giving the 4 buckets.
+3. For each bucket, absorb the `(v, c)` pair into the corresponding
+   `pres` bucket via a "preserved/lifted insertAt = multiGraft-extend"
+   lemma. The lifted case has substrate (`multiGraft_split_lifted_aux`,
+   Graft.lean §10.6); the preserved case requires a parallel lemma to
+   be developed.
+4. Use `multiGraft_perm_pair` to absorb planar-order differences at
+   msform level.
+
+After this helper closes, `LHS_eq_canonical_msform_pres`'s cons case
+becomes mechanical (~10-20 LOC chaining via IH +
+`RHS_eq_canonical_msform_pres` + `iteratedQuadSum_cons_remaining`). -/
+
+/-- **LHS 4-bucket peel** (sorry-fenced): decomposes the LHS form at
+    `(c :: rest)` into a `[QuadIdx]`-bind, with `c` absorbed into each
+    bucket's `pres` slot per case. The substantial content of the LHS
+    side of A3.3.
+
+    The msform `.map` is essential: the planar-order difference between
+    "graft pre_T_B then graft c at T-side" vs "graft (pre_T_B ++ [c-pair])
+    in one shot" only collapses under `Nonplanar.mk` (PlanarEquiv quotient).
+
+    **Caveat**: a naïve peel-c-then-rest lemma at msform is FALSE (rest
+    can land inside grafted c in the peel form but not in the one-shot
+    form); see §1.11.8 docstring for the proper formulation. -/
+private theorem LHS_form_cons_decompose
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) (c : Planar α) (rest : List (Planar α)) :
+    ((insertionForest pre_T_B (pres .T_graft)).bind fun pre_T_B' =>
+        (insertion T (pre_T_B' ++ pres .T_orig)).bind fun T' =>
+          (insertionForest pre_FA_B (pres .FA_graft)).bind fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++ pres .FA_orig)).bind fun F' =>
+              insertionForest (T' :: F') (c :: rest)).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    (([QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] :
+        Multiset QuadIdx).bind fun b =>
+      ((insertionForest pre_T_B
+            ((Function.update pres b (pres b ++ [c])) .T_graft)).bind fun pre_T_B' =>
+        (insertion T (pre_T_B' ++
+            (Function.update pres b (pres b ++ [c])) .T_orig)).bind fun T' =>
+          (insertionForest pre_FA_B
+              ((Function.update pres b (pres b ++ [c])) .FA_graft)).bind fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++
+                (Function.update pres b (pres b ++ [c])) .FA_orig)).bind fun F' =>
+              insertionForest (T' :: F') rest).map
+        (fun L => Multiset.ofList (L.map Nonplanar.mk))) := by
+  -- Substantial substrate; see §1.11.8 docstring for the proof plan.
+  -- Briefly: peel via `insertionForest_cons_cons` + per-bucket vertex
+  -- decomposition (`vertices_multiGraft_decomp` / `vertices_forest_eq_partition`)
+  -- + msform-level absorption via `multiGraft_perm_pair`.
+  sorry
+
+/-! ### §1.12: LHS-side strong-IH (sorry-free given §1.11.8 helper)
 
 Mirrors §1.11.6's `RHS_eq_canonical_msform_pres` for the LHS side. The
 `LHS_form pres C` shape is the iteratedQuadSum-leaf shape with
@@ -5392,20 +5486,16 @@ LHS_form pres C =
   (the leaf form). The strong-IH then reduces to `RHS_eq_canonical_msform_pres`
   at `C = []`, which is sorry-free.
 
-The cons case (sorry-fenced) requires:
-1. Peel `c` off the inner `insertionForest (T' :: F') (c :: rest)`.
-2. Use `vertices_forest_eq_partition` (`Graft.lean §10.5`) to decompose c's
-   vertex choice into 4 buckets matching `QuadIdx`.
-3. For each bucket, the c-graft into (T' :: F') equals augmenting the
-   corresponding `pres` bucket with `[c]` modulo `multiGraft_perm_pair`.
-4. Apply IH at `pres'` and rest.
-5. Bridge to canonical-form RHS via `enumAugGraftingData_succ_factored` and
-   the 4 leaf bridges (parallel to RHS strong-IH cons case from session 13).
+**Cons case** now closes mechanically given §1.11.8's `LHS_form_cons_decompose`:
+1. Apply `LHS_form_cons_decompose` to expose the 4-bucket bind on LHS.
+2. Apply IH per-bucket (LHS_form @ pres' @ rest = canonical @ pres' @ rest).
+3. Chain backwards on RHS via `RHS_eq_canonical_msform_pres` +
+   `iteratedQuadSum_cons_remaining` to expose the same 4-bucket bind.
+4. Reduce per-b via `Multiset.bind_congr` to
+   `RHS_eq_canonical_msform_pres @ pres' @ rest` (sorry-free). -/
 
-Estimated cons case proof: ~400-700 LOC, deferred to next session. -/
-
-/-- **LHS strong-IH** (sorry-fenced cons case): pres-parameterized canonical-form
-    bridge for the LHS side. Mirrors `RHS_eq_canonical_msform_pres`.
+/-- **LHS strong-IH** (sorry-free given §1.11.8 helper): pres-parameterized
+    canonical-form bridge for the LHS side. Mirrors `RHS_eq_canonical_msform_pres`.
 
     Specializes to `LHS_eq_canonical_msform` at `pres = (fun _ => [])`. -/
 private theorem LHS_eq_canonical_msform_pres
@@ -5438,16 +5528,24 @@ private theorem LHS_eq_canonical_msform_pres
         from (iteratedQuadSum_nil_remaining T F_A pre_T_B pre_FA_B pres).symm]
     exact RHS_eq_canonical_msform_pres T F_A pre_T_B pre_FA_B pres []
   | cons c rest ih =>
-    -- TODO: cons case. ~400-700 LOC. Strategy:
-    -- 1. Peel c off via `insertionForest_cons_host_nonempty_elem` (or analog)
-    --    on the innermost `insertionForest (T' :: F') (c :: rest)`.
-    -- 2. Decompose c-vertex choice via `vertices_forest_eq_partition` into 4
-    --    α-bucket cases.
-    -- 3. For each bucket, absorb c into pres bucket modulo `multiGraft_perm_pair`.
-    -- 4. Apply IH at pres' = update pres first_b (pres first_b ++ [c]) and rest.
-    -- 5. Bridge to canonical via `enumAugGraftingData_succ_factored` + 4 leaf
-    --    bridges (parallel to RHS strong-IH cons case).
-    sorry
+    -- Step 1: Decompose LHS to 4-bucket form via §1.11.8 helper.
+    rw [LHS_form_cons_decompose T F_A pre_T_B pre_FA_B pres c rest]
+    -- LHS now: [4 buckets].bind b => LHS_form @ pres' @ rest .map msform
+    -- where pres' = Function.update pres b (pres b ++ [c]).
+    -- Step 2: Bridge RHS via RHS_eq_canonical_msform_pres + iteratedQuadSum_cons_remaining.
+    rw [← RHS_eq_canonical_msform_pres T F_A pre_T_B pre_FA_B pres (c :: rest)]
+    -- RHS now: iteratedQuadSum @ pres @ (c :: rest) .map msform
+    rw [iteratedQuadSum_cons_remaining]
+    -- RHS now: ([4 buckets].bind b => iteratedQuadSum @ pres' @ rest) .map msform
+    rw [Multiset.map_bind]
+    -- RHS now: [4 buckets].bind b => iteratedQuadSum @ pres' @ rest .map msform
+    -- Step 3: Both sides are [4 buckets].bind b => something. Apply per-b.
+    refine Multiset.bind_congr fun b _ => ?_
+    -- Goal: LHS_form @ pres' @ rest .map msform = iteratedQuadSum @ pres' @ rest .map msform
+    -- Apply IH (LHS_form = canonical) and RHS_eq_canonical_msform_pres (iteratedQuadSum = canonical):
+    rw [ih (Function.update pres b (pres b ++ [c]))]
+    exact (RHS_eq_canonical_msform_pres T F_A pre_T_B pre_FA_B
+            (Function.update pres b (pres b ++ [c])) rest).symm
 
 /-! ### §1.13: `LHS_eq_canonical_msform` derived from strong-IH
 
