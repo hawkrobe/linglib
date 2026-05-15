@@ -5538,13 +5538,105 @@ private theorem LHS_TRUE_eq_T_buckets
               Multiset.map (fun x => Multiset.ofList (List.map Nonplanar.mk x))
                 (Multiset.map (fun x => buildFIns (T' :: F') rest x)
                   (Multiset.ofList (listChoices (perKFChoice (T' :: F')) rest.length)))) := by
-  -- TODO: Substantive bridge. Substrate: `vertices_multiGraft_decomp` on T' =
-  -- multiGraft T (choice.zip (pre_T_B' ++ pres .T_orig)) partitions v_c into
-  -- preserved/sourceSelf class (→ T_orig via multiGraft_cons_pair +
-  -- multiGraft_perm_pair) vs lifted class (→ T_graft via
-  -- multiGraft_split_lifted_aux). The bool a_3 routing of rest into
-  -- (filter_t, filter_f) corresponds to perKFChoice (T' :: F') routing on
-  -- the RHS via the standard bool↔(i, v)-position bijection.
+  -- **Phase 1 (setup)**: refold the inner v_c flatMap to expose `(c :: filter_t).length`,
+  -- then convert to `(Multiset.ofList vertices T').bind` form via `← Multiset.coe_bind`,
+  -- mirroring the pattern in `pairSum_cons_pre_eq_bind_with_pair` (Insertion.lean §5).
+  -- After this rewrite, vertex partition via `vertices_multiGraft_decomp` becomes applicable.
+  --
+  -- Step 1.1: refold `List.flatMap (fun v_c => List.map (v_c :: ·) (lC (vT') n)) (vT')`
+  -- back to `listChoices (vT') (n + 1)` via `← listChoices_succ`. NOTE: this is the
+  -- inverse of Phase C.2 in the parent theorem `LHS_form_cons_decompose`. Then collapse
+  -- `n + 1 = (c :: filter_t).length` via `← List.length_cons`.
+  --
+  -- Step 1.2: apply `← List.map_flatMap` to combine the outer List.map with the
+  -- inner List.flatMap, then `← Multiset.coe_bind` to get `(Multiset.ofList vertices).bind`
+  -- form. The inner body becomes a `(Multiset.ofList (lC vertices T') filter_t.length).map`
+  -- form parameterized by v_c.
+  --
+  -- Both steps are mechanical; substantive content is in Phase 2-4 below.
+  --
+  -- **Substrate bridge** (sorry-fenced; see TODO breakdown below).
+  --
+  -- The substantive content decomposes into 3 phases, each ~100-200 LOC:
+  --
+  -- **Phase 1: v_c partition setup (~50-80 LOC).** Convert the inner
+  --   `Multiset.ofList (List.map ... (List.flatMap (fun v_c => ...) (vertices T')))`
+  --   form into an equivalent `(Multiset.ofList (vertices T')).bind fun v_c => ...`
+  --   form. The conversion uses `Multiset.coe_flatMap` (← form) and
+  --   `Multiset.bind_map`. Validity hypothesis for `vertices_multiGraft_decomp`:
+  --   each pair.fst in `outer_choice.zip pairs` is a vertex of T (since
+  --   `outer_choice ∈ listChoices (vertices T) ...`), discharged via
+  --   `forall_isValidPath`.
+  --
+  -- **Phase 2: vertex_multiGraft_decomp application (~100-150 LOC).** Apply
+  --   `vertices_multiGraft_decomp` on T' = `multiGraft T (outer_choice.zip pairs)`
+  --   to split `Multiset.ofList (vertices T')` into 3 parts (preserved + sourceSelf
+  --   + lifted). Distribute the v_c bind via `Multiset.add_bind` (twice) into 3
+  --   sub-binds. Combine preserved + sourceSelf into one sub-bind via
+  --   `← Multiset.add_bind` (these together form the T_orig case).
+  --
+  -- **Phase 3: per-class absorption (~150-300 LOC).** For each class:
+  --   - **preserved/sourceSelf**: v_c = transport pairs v for v ∈ vertices T.
+  --     T'' = mG T' ((v_c, c) :: rest_choice.zip filter_t) requires nested
+  --     multi-graft handling — apply `multiGraft_cons_pair` to rewrite as
+  --     `insertAt v_c c (mG T' (rest_choice.zip filter_t))`, then handle nested
+  --     mG. WITHOUT `multiGraft_compose` substrate (Route B in Graft.lean §10.6,
+  --     ~600+ LOC), this nested handling is the hardest piece.
+  --   - **lifted**: v_c = liftMulti pairs k q for q ∈ vertices pairs[k].snd.
+  --     T'' rewrites via `multiGraft_split_lifted_aux` to mG T (pairs.set k ...).
+  --     The "set k" operation lifts to `pre_T_B' = buildFIns ...` extension on
+  --     the outer bind, matching T_graft summand's outer structure.
+  --
+  -- **Phase 4: bool a_3 ↔ perKFChoice bridge (~50-100 LOC).** The LHS bool a_3
+  --   routing of rest into (filter_t, filter_f) on the RHS becomes perKFChoice
+  --   (T' :: F') routing via the bijection: bool=true ↔ i=0; bool=false ↔ i>0.
+  --   This bridge is itself a substrate-level lemma worth extracting separately.
+  --
+  -- **Phase 1 attempt** (refold v_c flatMap to insertion-form): the inner
+  -- `List.flatMap (fun v_c => List.map (v_c :: ·) (lC (vT') filter_t.length)) (vT')`
+  -- equals `listChoices (vT') (filter_t.length + 1)` by `← listChoices_succ`.
+  -- Combined with `← List.length_cons`, the inner becomes
+  -- `Multiset.ofList ((lC (vT') (c :: filter_t).length).map (fun choice =>
+  --   mG T' (choice.zip (c :: filter_t)))) = insertion T' (c :: filter_t)` by
+  -- `← insertion_def`. After this refold, the LHS becomes the TRUE-bool
+  -- component of `insertionForest_cons_cons` applied to (T' :: F') (c :: rest).
+  -- Phase 2-4 then apply existing T-side absorption substrate.
+  --
+  -- Concrete Phase 1 tactic chain (refolds inner v_c flatMap to insertion-form):
+  simp_rw [← listChoices_succ,
+    show ∀ (l : List (Planar α)), l.length + 1 = (c :: l).length from fun _ => rfl,
+    ← insertion_def]
+  -- After refold: TRUE_BRANCH inner becomes `(insertion T' (c :: filter_t)).bind ...`
+  -- which is the head=true component of `insertionForest (T' :: F') (c :: rest)`
+  -- via `insertionForest_cons_cons`. The remaining bridge then connects the
+  -- bool-routing structure to the perKFChoice-routing on the RHS.
+  --
+  -- Refold the outer Multiset.map(buildFIns)-of-listChoices-perKFChoice patterns
+  -- back to `insertionForest` via the enumFChoices bridge. This cleans up the
+  -- goal state and exposes the substantive bridge as
+  -- `outer-with-insertionForest → "head=true portion" = T_orig + T_graft`.
+  simp_rw [show ∀ (F G : List (Planar α)),
+            (Multiset.map (fun x => buildFIns F G x)
+              (Multiset.ofList (listChoices (perKFChoice F) G.length)) :
+                Multiset (List (Planar α))) =
+              insertionForest F G from fun F G => by
+                rw [insertionForest_eq_explicit]
+                show Multiset.map (fun x => buildFIns F G x)
+                      (Multiset.ofList (listChoices (perKFChoice F) G.length)) =
+                    (enumFChoices F G).map (buildFIns F G)
+                rfl]
+  -- After Phase 1 refolds, the goal is in clean `insertionForest` / `insertion` form:
+  --   LHS: outer_4 → bool-a_3 → (insertion T' (c :: filter_t)).bind T'' =>
+  --        (insertionForest F' filter_f).map (msform ∘ (T'' :: ·))
+  --   RHS: T_orig (outer with `pres .T_orig ++ [c]` for T) + T_graft (outer with
+  --        `pres .T_graft ++ [c]` for pre_T_B), each → insertionForest (T' :: F') rest .map msform
+  --
+  -- The substantive bridge (Phase 2-4) remains: TRUE-side absorption of c
+  -- (head=true component of `insertionForest (T' :: F') (c :: rest)`) decomposes
+  -- via vertex partition into T_orig (preserved/sourceSelf) + T_graft (lifted).
+  -- This requires `vertices_multiGraft_decomp` + `multiGraft_cons_pair` (preserved
+  -- with msform planar-order absorption via `multiGraft_perm_pair`) +
+  -- `multiGraft_split_lifted_aux` (lifted). Estimated ~300-500 LOC remaining.
   sorry
 
 /-- **FALSE-side bridge** (sorry-fenced): the FALSE_BRANCH (c routes to F-side
