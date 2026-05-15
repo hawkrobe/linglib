@@ -4322,6 +4322,87 @@ private theorem enumAugGraftingData_zero
       listChoices_zero _]
   simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
 
+/-! ### §1.11.5b: `enumAugGraftingData_succ_factored` — head decomposition
+
+Cons-case factored form for `enumAugGraftingData`: peels one `C_target` off
+the front and decomposes its enumeration into a 4-bucket bind. The standard
+form analog `enumGraftingData_succ_factored` (§1.10.1) is the
+`pres = (fun _ => [])` specialization. -/
+
+/-- **Factored cons-case decomposition** for `enumAugGraftingData`. Peels
+    one `C_target` off the front (via `listChoices_succ`) and decomposes
+    the per-target enumeration into a 4-bucket bind (via
+    `allAlphaConstrainedChoiceList_bind_eq_bucketList_bind`).
+
+    Analog of `enumGraftingData_succ_factored` (§1.10.1) with 4 additional
+    `pres_*_choice` enumeration layers preserved at the inner positions. -/
+private theorem enumAugGraftingData_succ_factored
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) (n : Nat) :
+    enumAugGraftingData T F_A pre_T_B pre_FA_B pres (n + 1) =
+      (Multiset.ofList (listChoices (vertices T) pre_T_B.length)).bind fun choice_T =>
+        (Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)).bind fun fdata =>
+          (([QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] :
+              Multiset QuadIdx).bind fun first_b =>
+            (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B first_b).bind fun first_target =>
+              (Multiset.ofList
+                (listChoices (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) n)).bind
+                fun rest_targets =>
+                  (Multiset.ofList
+                      (listChoices (vertices T) (pres .T_orig).length)).bind fun pTO =>
+                    (Multiset.ofList
+                        (listChoices (perKFChoice pre_T_B) (pres .T_graft).length)).bind
+                      fun pTG =>
+                        (Multiset.ofList
+                            (listChoices (perKFChoice F_A) (pres .FA_orig).length)).bind
+                          fun pFO =>
+                            (Multiset.ofList
+                                (listChoices (perKFChoice pre_FA_B)
+                                  (pres .FA_graft).length)).map fun pFG =>
+                              ({ pre_T_B_choice := choice_T
+                                 pre_FA_B_choice := fdata
+                                 C_targets := first_target :: rest_targets
+                                 pres_T_orig_choice := pTO
+                                 pres_T_graft_choice := pTG
+                                 pres_FA_orig_choice := pFO
+                                 pres_FA_graft_choice := pFG }
+                               : AugGraftingData F_A pre_T_B pre_FA_B pres)) := by
+  unfold enumAugGraftingData
+  -- Convert outer ofList of nested flatMaps to nested Multiset.bind via
+  -- ← Multiset.coe_bind, entering each binder via bind_congr.
+  rw [← Multiset.coe_bind]
+  refine Multiset.bind_congr fun choice_T _ => ?_
+  rw [← Multiset.coe_bind]
+  refine Multiset.bind_congr fun fdata _ => ?_
+  -- Peel the targets via listChoices_succ.
+  rw [listChoices_succ]
+  -- Push outer flatMap over allAlpha into the result via flatMap_assoc.
+  rw [List.flatMap_assoc]
+  -- Now: ofList (allAlpha.flatMap fun first =>
+  --        ((listChoices allAlpha n).map fun rest => first :: rest).flatMap fun targets => INNER)
+  -- Convert outer ofList over allAlpha.flatMap to Multiset.bind, then apply
+  -- bucket-list factoring at the first level.
+  rw [← Multiset.coe_bind]
+  rw [allAlphaConstrainedChoiceList_bind_eq_bucketList_bind]
+  -- Both sides now have [4 buckets].bind first_b => (enumAlpha first_b).bind first_target => INNER.
+  refine Multiset.bind_congr fun first_b _ => ?_
+  refine Multiset.bind_congr fun first_target _ => ?_
+  -- Inner: ofList (((listChoices allAlpha n).map (fun a => first_target :: a)).flatMap (fun targets => INNER))
+  -- Apply List.flatMap_map to combine (l.map f).flatMap g into l.flatMap (g ∘ f).
+  rw [List.flatMap_map]
+  -- Now: ofList ((listChoices allAlpha n).flatMap (fun a => INNER (first_target :: a)))
+  rw [← Multiset.coe_bind]
+  refine Multiset.bind_congr fun rest_targets _ => ?_
+  -- Now 4 layers of pres_*_choice flatMap with .map at innermost.
+  rw [← Multiset.coe_bind]
+  refine Multiset.bind_congr fun pTO _ => ?_
+  rw [← Multiset.coe_bind]
+  refine Multiset.bind_congr fun pTG _ => ?_
+  rw [← Multiset.coe_bind]
+  refine Multiset.bind_congr fun pFO _ => ?_
+  -- Innermost is ofList (l.map f) which is defeq to (ofList l).map f.
+  rfl
+
 /-! ### §1.11.6: Strong-IH headline theorem (sorry-fenced)
 
 The pres-parameterized analog of `RHS_eq_canonical_msform`. Generalizes the
