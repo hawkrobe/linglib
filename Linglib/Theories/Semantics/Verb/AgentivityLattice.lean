@@ -940,44 +940,7 @@ theorem sentientNonInstigator_in_dative :
     sentientNonInstigatorNode.toCaseRegion = .dative := rfl
 
 -- ════════════════════════════════════════════════════
--- § 15. Russian Genitive/Accusative Alternation (§5.2)
--- ════════════════════════════════════════════════════
-
-/-- The Russian genitive/accusative alternation arises when the object
-    of an intensional verb (want, seek, await) falls in a region covered
-    by two cases. The accusative covers existential persistence (beginning);
-    the genitive covers total non-persistence (Fig. 8).
-
-    - Accusative (specific reading): the object is referential → exists
-      → existential persistence (beginning) → ACC region.
-    - Genitive (non-specific reading): the object need not exist →
-      total non-persistence → GEN region.
-
-    The alternation is limited to verbs whose objects have no persistence
-    entailments — only intensional verbs like *want*, *seek*, *await*
-    license the genitive (p.541). -/
-structure GenAccAlternation where
-  /-- The object node under the specific/referential reading. -/
-  specificReading : GrimmNode
-  /-- The object node under the non-specific reading. -/
-  nonSpecificReading : GrimmNode
-  /-- The specific reading has more persistence features. -/
-  specific_more_persistent :
-    nonSpecificReading.persistence ≤ specificReading.persistence
-
-/-- The canonical Russian gen/acc alternation for intensional verbs:
-    ACC (specific) ↔ GEN (non-specific). -/
-def russianGenAcc : GenAccAlternation :=
-  { specificReading := ⟨⊥, .exPersBeginning⟩
-    nonSpecificReading := ⟨⊥, .totalNonPersistence⟩
-    specific_more_persistent := bot_le }
-
-/-- The specific reading maps to the ACC/ABS region. -/
-theorem genAcc_specific_is_acc :
-    russianGenAcc.specificReading.toCaseRegion = .accAbs := by decide
-
--- ════════════════════════════════════════════════════
--- § 16. Upward/Downward Closure (§2.3, p.528)
+-- § 15. Upward/Downward Closure (§2.3, p.528)
 -- ════════════════════════════════════════════════════
 
 /-- Agents are **upwards closed** in the agentivity dimension
@@ -1007,30 +970,7 @@ theorem patient_downward_closed (maxPers p q : PersistenceLevel)
   le_trans hqp hp
 
 -- ════════════════════════════════════════════════════
--- § 17. Semantic Opposition (§3, p.530)
--- ════════════════════════════════════════════════════
-
-/-- Semantic opposition between two GrimmNodes. Transitivity increases
-    with the distance between agent and patient on the lattice. We measure
-    this as the difference in total feature counts — higher opposition
-    means more prototypically transitive. -/
-def semanticOpposition (agent patient : GrimmNode) : Int :=
-  (agent.featureCount : Int) - (patient.featureCount : Int)
-
-/-- Maximal agent vs maximal patient has the highest opposition (8 - 2 = 6). -/
-theorem maximal_opposition :
-    semanticOpposition maximalAgent maximalPatient = 6 := by decide
-
-/-- Class I (break) has more opposition than Class II (shoot):
-    the patient is more affected (fewer persistence features). -/
-theorem classI_more_opposition_than_classII :
-    semanticOpposition effectorAgent
-      (TransitivityClass.resultativeEffective.patientNode) >
-    semanticOpposition effectorAgent
-      (TransitivityClass.contact.patientNode) := by decide
-
--- ════════════════════════════════════════════════════
--- § 18. End-to-End: EntailmentProfile → Case
+-- § 16. End-to-End: EntailmentProfile → Case
 -- ════════════════════════════════════════════════════
 
 /-- Full pipeline: kick subject → GrimmNode → NOM/ERG → NOM (accusative). -/
@@ -1076,47 +1016,7 @@ theorem die_subject_to_abs :
     = .abs := by decide
 
 -- ════════════════════════════════════════════════════
--- § 19. Canonical Verb-Agentivity Chain (§2.2, p.523–524)
--- ════════════════════════════════════════════════════
-
-/-! illustrates the agentivity lattice with a chain of
-    canonical verbs, each adding one feature. This demonstrates that the
-    lattice directly formalizes "degree of agentivity" — higher on the
-    lattice means more agentive. -/
-
-/-- sit/stand subject: ⊥ (no agentivity). p.523. -/
-def sitAgentivity : AgentivityNode := ⊥
-
-/-- know/see subject: sentience only. p.524. -/
-def knowAgentivity : AgentivityNode := ⟨false, true, false, false⟩
-
-/-- discover subject: sentience + instigation. p.524. -/
-def discoverAgentivity : AgentivityNode := ⟨false, true, true, false⟩
-
-/-- look at subject: sentience + instigation + motion. p.524. -/
-def lookAtAgentivity : AgentivityNode := ⟨false, true, true, true⟩
-
-/-- assassinate subject: all four features. p.524. -/
-def assassinateAgentivity : AgentivityNode := ⊤
-
-/-- The canonical verb chain is totally ordered and forms a maximal
-    chain from ⊥ to ⊤ in the agentivity lattice. -/
-theorem canonical_verb_chain :
-    sitAgentivity < knowAgentivity ∧
-    knowAgentivity < discoverAgentivity ∧
-    discoverAgentivity < lookAtAgentivity ∧
-    lookAtAgentivity < assassinateAgentivity := by
-  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
-
-/-- All canonical verb positions satisfy volition → sentience. -/
-theorem canonical_verbs_valid :
-    sitAgentivity.Valid ∧ knowAgentivity.Valid ∧
-    discoverAgentivity.Valid ∧ lookAtAgentivity.Valid ∧
-    assassinateAgentivity.Valid :=
-  ⟨by decide, by decide, by decide, by decide, by decide⟩
-
--- ════════════════════════════════════════════════════
--- § 20. Persistence Covering Relations (Fig. 2)
+-- § 17. Persistence Covering Relations (Fig. 2)
 -- ════════════════════════════════════════════════════
 
 /-- exPersEnd and quPersBeginning are incomparable (neither ≤ the other).
@@ -1138,7 +1038,7 @@ theorem persistence_chain :
   decide
 
 -- ════════════════════════════════════════════════════
--- § 21. DOM and the Agentivity Lattice (§4)
+-- § 18. DOM and the Agentivity Lattice (§4)
 -- ════════════════════════════════════════════════════
 
 /-! (p.534): "it is a combination of verbal and nominal
@@ -1353,154 +1253,5 @@ theorem dom_monotone_animate_human (p : PersistenceLevel) :
 theorem totalPersistence_all_outside_accAbs (a : AnimacyLevel) :
     (objectNodeWithAnimacy a .totalPersistence).toCaseRegion ≠ .accAbs := by
   cases a <;> decide
-
--- ════════════════════════════════════════════════════
--- § 22. Projection Kernel Theorems
--- ════════════════════════════════════════════════════
-
-/-- **AgentivityNode kernel**: two profiles map to the same agentivity node
-    iff they agree on {V, S, C, M}. The 5th P-Agent feature (IE) and all
-    5 P-Patient features are irrelevant — they are dropped by the projection.
-
-    This formally characterizes the information loss: `fromEntailmentProfile`
-    is a surjection whose fibers are the equivalence classes of profiles
-    agreeing on {V, S, C, M}. -/
-theorem fromEntailmentProfile_eq_iff (p q : EntailmentProfile) :
-    AgentivityNode.fromEntailmentProfile p =
-    AgentivityNode.fromEntailmentProfile q ↔
-    p.volition = q.volition ∧ p.sentience = q.sentience ∧
-    p.causation = q.causation ∧ p.movement = q.movement := by
-  simp [AgentivityNode.fromEntailmentProfile, AgentivityNode.mk.injEq]
-
-/-- Independent existence is lost by the agentivity projection.
-    Two profiles differing only in IE map to the same node.
-    Concrete witness: full agent (IE=true) and agent-without-IE. -/
-theorem fromEntailmentProfile_drops_IE :
-    AgentivityNode.fromEntailmentProfile
-      ⟨true, true, true, true, true, false, false, false, false, false⟩ =
-    AgentivityNode.fromEntailmentProfile
-      ⟨true, true, true, true, false, false, false, false, false, false⟩ := rfl
-
-/-- All P-Patient features are lost by the agentivity projection.
-    A profile with 5 P-Patient features maps to the same node as one with 0. -/
-theorem fromEntailmentProfile_drops_patient :
-    AgentivityNode.fromEntailmentProfile
-      ⟨true, true, true, true, true, true, true, true, true, true⟩ =
-    AgentivityNode.fromEntailmentProfile
-      ⟨true, true, true, true, true, false, false, false, false, false⟩ := rfl
-
--- ════════════════════════════════════════════════════
--- § 23. wellFormedPair Non-Preservation
--- ════════════════════════════════════════════════════
-
-/-- **wellFormedPair is not preserved by the Grimm projection.**
-
-    @cite{dowty-1991}'s `wellFormedPair` constrains inter-argument entailment
-    pairings: causation→CoS, movement→stationary, IE→DE. These are
-    *relational* constraints between two profiles.
-
-    system replaces them with a single persistence
-    dimension on the patient side. The IE feature is dropped entirely
-    from the agentivity projection, so the IE→DE constraint becomes
-    invisible.
-
-    Witness: s₁ = {C} and s₂ = {C, IE} map to the same AgentivityNode
-    (both have instigation only). With o = {CoS}, wellFormedPair holds
-    for s₁ (IE=false, so IE→DE vacuously satisfied) but fails for s₂
-    (IE=true but DE=false). The Grimm system cannot detect this. -/
-theorem wellFormedPair_not_preserved_by_grimm :
-    ∃ s₁ o₁ s₂ o₂ : EntailmentProfile,
-    WellFormedPair s₁ o₁ ∧ ¬ WellFormedPair s₂ o₂ ∧
-    GrimmNode.fromSubjectProfile s₁ = GrimmNode.fromSubjectProfile s₂ ∧
-    GrimmNode.fromObjectProfile o₁ = GrimmNode.fromObjectProfile o₂ :=
-  ⟨⟨false, false, true, false, false, false, false, false, false, false⟩,
-   ⟨false, false, false, false, false, true, false, false, false, false⟩,
-   ⟨false, false, true, false, true, false, false, false, false, false⟩,
-   ⟨false, false, false, false, false, true, false, false, false, false⟩,
-   by decide, by decide, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 24. ArgTemplate → GrimmNode Bridge
--- ════════════════════════════════════════════════════
-
-open Features.LevinClassProfiles
-open Features.Affectedness
-
-/-- Project an ArgTemplate's subject profile to a GrimmNode. -/
-def _root_.Features.LevinClassProfiles.ArgTemplate.subjectGrimm
-    (t : ArgTemplate) : GrimmNode :=
-  GrimmNode.fromSubjectProfile t.subjectProfile
-
-/-- Project an ArgTemplate's object profile (if any) to a GrimmNode. -/
-def _root_.Features.LevinClassProfiles.ArgTemplate.objectGrimm
-    (t : ArgTemplate) : Option GrimmNode :=
-  t.objectProfile.map GrimmNode.fromObjectProfile
-
-/-- Project an ArgTemplate's object to its affectedness degree. -/
-def _root_.Features.LevinClassProfiles.ArgTemplate.objectAffectedness
-    (t : ArgTemplate) : Option AffectednessDegree :=
-  t.objectProfile.map profileToDegree
-
--- ── Per-template GrimmNode verification ──
-
-/-- Manner-contact subject → full agent on the Grimm lattice. -/
-theorem mannerContact_subject_grimm :
-    mannerContact.subjectGrimm.agentivity = ⊤ := by decide
-
-/-- Manner-contact object → potential affectedness (no CoS entailed). -/
-theorem mannerContact_object_affectedness :
-    mannerContact.objectAffectedness = some AffectednessDegree.potential := rfl
-
-/-- Result-change object → nonquantized affectedness (CoS, no IT). -/
-theorem resultChange_object_affectedness :
-    resultChange.objectAffectedness = some AffectednessDegree.nonquantized := rfl
-
-/-- Creation object → quantized affectedness (CoS + IT). -/
-theorem creation_object_affectedness :
-    creation.objectAffectedness = some AffectednessDegree.quantized := rfl
-
-/-- Consumption object → quantized affectedness (CoS + IT). -/
-theorem consumption_object_affectedness :
-    consumption.objectAffectedness = some AffectednessDegree.quantized := rfl
-
-/-- Self-motion (intransitive) → no object affectedness. -/
-theorem selfMotion_no_object :
-    selfMotion.objectAffectedness = none := rfl
-
-/-- **Affectedness ordering across templates**: the named templates
-    are ordered by truth-conditional strength on the object side,
-    reproducing @cite{beavers-2010}'s hierarchy:
-    creation/consumption (quantized) > resultChange (nonquantized)
-    > mannerContact (potential) > perception (unspecified). -/
-theorem template_affectedness_hierarchy :
-    AffectednessDegree.nonquantized ≤ .quantized ∧
-    AffectednessDegree.potential ≤ .nonquantized ∧
-    creation.objectAffectedness = some AffectednessDegree.quantized ∧
-    resultChange.objectAffectedness = some AffectednessDegree.nonquantized ∧
-    mannerContact.objectAffectedness = some AffectednessDegree.potential ∧
-    perception.objectAffectedness = some AffectednessDegree.unspecified :=
-  ⟨by decide, by decide, rfl, rfl, rfl, rfl⟩
-
--- ── Cross-projection consistency: affectedness vs. persistence ──
-
-/-- The affectedness and persistence projections are consistent for
-    manner-contact objects: potential affectedness ↔ totalPersistence
-    (the object may change but the verb doesn't entail it). -/
-theorem mannerContact_cross_projection :
-    mannerContact.objectAffectedness = some AffectednessDegree.potential ∧
-    mannerContact.objectProfile.map PersistenceLevel.fromPatientProfile =
-      some .totalPersistence := ⟨rfl, by decide⟩
-
-/-- Result-change: nonquantized ↔ quPersBeginning (changed but persists). -/
-theorem resultChange_cross_projection :
-    resultChange.objectAffectedness = some AffectednessDegree.nonquantized ∧
-    resultChange.objectProfile.map PersistenceLevel.fromPatientProfile =
-      some .quPersBeginning := ⟨rfl, by decide⟩
-
-/-- Creation: quantized ↔ exPersEnd (entity comes into existence). -/
-theorem creation_cross_projection :
-    creation.objectAffectedness = some AffectednessDegree.quantized ∧
-    creation.objectProfile.map PersistenceLevel.fromPatientProfile =
-      some .exPersEnd := ⟨rfl, by decide⟩
 
 end Features.AgentivityLattice

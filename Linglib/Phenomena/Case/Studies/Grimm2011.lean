@@ -391,4 +391,168 @@ theorem instigation_is_the_feature :
     arriveSubjectProfile.causation = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
+-- ════════════════════════════════════════════════════
+-- § 8. Russian Genitive/Accusative Alternation (@cite{grimm-2011} §5.2)
+-- ════════════════════════════════════════════════════
+
+/-- The Russian genitive/accusative alternation arises when the object
+    of an intensional verb (want, seek, await) falls in a region covered
+    by two cases. The accusative covers existential persistence (beginning);
+    the genitive covers total non-persistence (Fig. 8).
+
+    - Accusative (specific reading): the object is referential → exists
+      → existential persistence (beginning) → ACC region.
+    - Genitive (non-specific reading): the object need not exist →
+      total non-persistence → GEN region.
+
+    The alternation is limited to verbs whose objects have no persistence
+    entailments — only intensional verbs like *want*, *seek*, *await*
+    license the genitive (p.541). -/
+structure GenAccAlternation where
+  /-- The object node under the specific/referential reading. -/
+  specificReading : GrimmNode
+  /-- The object node under the non-specific reading. -/
+  nonSpecificReading : GrimmNode
+  /-- The specific reading has more persistence features. -/
+  specific_more_persistent :
+    nonSpecificReading.persistence ≤ specificReading.persistence
+
+/-- The canonical Russian gen/acc alternation for intensional verbs:
+    ACC (specific) ↔ GEN (non-specific). -/
+def russianGenAcc : GenAccAlternation :=
+  { specificReading := ⟨⊥, .exPersBeginning⟩
+    nonSpecificReading := ⟨⊥, .totalNonPersistence⟩
+    specific_more_persistent := bot_le }
+
+/-- The specific reading maps to the ACC/ABS region. -/
+theorem genAcc_specific_is_acc :
+    russianGenAcc.specificReading.toCaseRegion = .accAbs := by decide
+
+-- ════════════════════════════════════════════════════
+-- § 9. Semantic Opposition (@cite{grimm-2011} §3, p.530)
+-- ════════════════════════════════════════════════════
+
+/-- Semantic opposition between two GrimmNodes. Transitivity increases
+    with the distance between agent and patient on the lattice. We measure
+    this as the difference in total feature counts — higher opposition
+    means more prototypically transitive. -/
+def semanticOpposition (agent patient : GrimmNode) : Int :=
+  (agent.featureCount : Int) - (patient.featureCount : Int)
+
+/-- Maximal agent vs maximal patient has the highest opposition (8 - 2 = 6). -/
+theorem maximal_opposition :
+    semanticOpposition maximalAgent maximalPatient = 6 := by decide
+
+/-- Class I (break) has more opposition than Class II (shoot):
+    the patient is more affected (fewer persistence features). -/
+theorem classI_more_opposition_than_classII :
+    semanticOpposition effectorAgent
+      (TransitivityClass.resultativeEffective.patientNode) >
+    semanticOpposition effectorAgent
+      (TransitivityClass.contact.patientNode) := by decide
+
+-- ════════════════════════════════════════════════════
+-- § 10. Canonical Verb-Agentivity Chain (@cite{grimm-2011} §2.2, p.523–524)
+-- ════════════════════════════════════════════════════
+
+/-! Illustrates the agentivity lattice with a chain of canonical verbs,
+    each adding one feature. Demonstrates that the lattice directly
+    formalises "degree of agentivity" — higher on the lattice means
+    more agentive. -/
+
+/-- sit/stand subject: ⊥ (no agentivity). p.523. -/
+def sitAgentivity : AgentivityNode := ⊥
+
+/-- know/see subject: sentience only. p.524. -/
+def knowAgentivity : AgentivityNode := ⟨false, true, false, false⟩
+
+/-- discover subject: sentience + instigation. p.524. -/
+def discoverAgentivity : AgentivityNode := ⟨false, true, true, false⟩
+
+/-- look at subject: sentience + instigation + motion. p.524. -/
+def lookAtAgentivity : AgentivityNode := ⟨false, true, true, true⟩
+
+/-- assassinate subject: all four features. p.524. -/
+def assassinateAgentivity : AgentivityNode := ⊤
+
+/-- The canonical verb chain is totally ordered and forms a maximal
+    chain from ⊥ to ⊤ in the agentivity lattice. -/
+theorem canonical_verb_chain :
+    sitAgentivity < knowAgentivity ∧
+    knowAgentivity < discoverAgentivity ∧
+    discoverAgentivity < lookAtAgentivity ∧
+    lookAtAgentivity < assassinateAgentivity := by
+  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
+
+/-- All canonical verb positions satisfy volition → sentience. -/
+theorem canonical_verbs_valid :
+    sitAgentivity.Valid ∧ knowAgentivity.Valid ∧
+    discoverAgentivity.Valid ∧ lookAtAgentivity.Valid ∧
+    assassinateAgentivity.Valid :=
+  ⟨by decide, by decide, by decide, by decide, by decide⟩
+
+-- ════════════════════════════════════════════════════
+-- § 11. Projection Kernel Theorems
+-- ════════════════════════════════════════════════════
+
+/-- **AgentivityNode kernel**: two profiles map to the same agentivity node
+    iff they agree on {V, S, C, M}. The 5th P-Agent feature (IE) and all
+    5 P-Patient features are irrelevant — they are dropped by the projection.
+
+    This formally characterizes the information loss: `fromEntailmentProfile`
+    is a surjection whose fibers are the equivalence classes of profiles
+    agreeing on {V, S, C, M}. -/
+theorem fromEntailmentProfile_eq_iff (p q : EntailmentProfile) :
+    AgentivityNode.fromEntailmentProfile p =
+    AgentivityNode.fromEntailmentProfile q ↔
+    p.volition = q.volition ∧ p.sentience = q.sentience ∧
+    p.causation = q.causation ∧ p.movement = q.movement := by
+  simp [AgentivityNode.fromEntailmentProfile, AgentivityNode.mk.injEq]
+
+/-- Independent existence is lost by the agentivity projection.
+    Two profiles differing only in IE map to the same node.
+    Concrete witness: full agent (IE=true) and agent-without-IE. -/
+theorem fromEntailmentProfile_drops_IE :
+    AgentivityNode.fromEntailmentProfile
+      ⟨true, true, true, true, true, false, false, false, false, false⟩ =
+    AgentivityNode.fromEntailmentProfile
+      ⟨true, true, true, true, false, false, false, false, false, false⟩ := rfl
+
+/-- All P-Patient features are lost by the agentivity projection.
+    A profile with 5 P-Patient features maps to the same node as one with 0. -/
+theorem fromEntailmentProfile_drops_patient :
+    AgentivityNode.fromEntailmentProfile
+      ⟨true, true, true, true, true, true, true, true, true, true⟩ =
+    AgentivityNode.fromEntailmentProfile
+      ⟨true, true, true, true, true, false, false, false, false, false⟩ := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 12. wellFormedPair Non-Preservation (Grimm vs Dowty)
+-- ════════════════════════════════════════════════════
+
+/-- **wellFormedPair is not preserved by the Grimm projection.**
+
+    @cite{dowty-1991}'s `wellFormedPair` constrains inter-argument entailment
+    pairings: causation→CoS, movement→stationary, IE→DE. These are
+    *relational* constraints between two profiles.
+
+    Grimm's system replaces them with a single persistence dimension on the
+    patient side. The IE feature is dropped entirely from the agentivity
+    projection, so the IE→DE constraint becomes invisible.
+
+    Witness: s₁ = {C} and s₂ = {C, IE} map to the same AgentivityNode
+    (both have instigation only). With o = {CoS}, wellFormedPair holds
+    for s₁ (IE=false, so IE→DE vacuously satisfied) but fails for s₂
+    (IE=true but DE=false). The Grimm system cannot detect this. -/
+theorem wellFormedPair_not_preserved_by_grimm :
+    ∃ s₁ o₁ s₂ o₂ : EntailmentProfile,
+    WellFormedPair s₁ o₁ ∧ ¬ WellFormedPair s₂ o₂ ∧
+    GrimmNode.fromSubjectProfile s₁ = GrimmNode.fromSubjectProfile s₂ ∧
+    GrimmNode.fromObjectProfile o₁ = GrimmNode.fromObjectProfile o₂ :=
+  ⟨⟨false, false, true, false, false, false, false, false, false, false⟩,
+   ⟨false, false, false, false, false, true, false, false, false, false⟩,
+   ⟨false, false, true, false, true, false, false, false, false, false⟩,
+   ⟨false, false, false, false, false, true, false, false, false, false⟩,
+   by decide, by decide, rfl, rfl⟩
+
 end Grimm2011

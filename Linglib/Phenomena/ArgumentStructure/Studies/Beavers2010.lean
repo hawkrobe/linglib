@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
+import Linglib.Theories.Semantics.Verb.LevinClassProfiles
 import Linglib.Theories.Semantics.Verb.DiathesisAlternation
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
@@ -481,5 +482,94 @@ theorem grimm_beavers_monotone_canonical :
     profileToDegree seeSubjectProfile = .unspecified ∧
     PersistenceLevel.fromPatientProfile seeSubjectProfile = .totalNonPersistence :=
   ⟨rfl, by native_decide, rfl, by native_decide, rfl, by native_decide⟩
+
+-- ════════════════════════════════════════════════════
+-- § 11. ArgTemplate → GrimmNode Bridge
+-- ════════════════════════════════════════════════════
+
+/-! Cross-framework bridge from Levin/RHL `ArgTemplate` (event-template
+    decomposition) to Grimm's `GrimmNode` (privative agentivity lattice) and
+    Beavers' affectedness degree. Each canonical template is verified to
+    project into the predicted positions in both systems, and the consistency
+    of affectedness ↔ persistence is checked. -/
+
+open Features.LevinClassProfiles
+
+/-- Project an ArgTemplate's subject profile to a GrimmNode. -/
+def _root_.Features.LevinClassProfiles.ArgTemplate.subjectGrimm
+    (t : ArgTemplate) : GrimmNode :=
+  GrimmNode.fromSubjectProfile t.subjectProfile
+
+/-- Project an ArgTemplate's object profile (if any) to a GrimmNode. -/
+def _root_.Features.LevinClassProfiles.ArgTemplate.objectGrimm
+    (t : ArgTemplate) : Option GrimmNode :=
+  t.objectProfile.map GrimmNode.fromObjectProfile
+
+/-- Project an ArgTemplate's object to its affectedness degree. -/
+def _root_.Features.LevinClassProfiles.ArgTemplate.objectAffectedness
+    (t : ArgTemplate) : Option AffectednessDegree :=
+  t.objectProfile.map profileToDegree
+
+-- ── Per-template GrimmNode verification ──
+
+/-- Manner-contact subject → full agent on the Grimm lattice. -/
+theorem mannerContact_subject_grimm :
+    mannerContact.subjectGrimm.agentivity = ⊤ := by decide
+
+/-- Manner-contact object → potential affectedness (no CoS entailed). -/
+theorem mannerContact_object_affectedness :
+    mannerContact.objectAffectedness = some AffectednessDegree.potential := rfl
+
+/-- Result-change object → nonquantized affectedness (CoS, no IT). -/
+theorem resultChange_object_affectedness :
+    resultChange.objectAffectedness = some AffectednessDegree.nonquantized := rfl
+
+/-- Creation object → quantized affectedness (CoS + IT). -/
+theorem creation_object_affectedness :
+    creation.objectAffectedness = some AffectednessDegree.quantized := rfl
+
+/-- Consumption object → quantized affectedness (CoS + IT). -/
+theorem consumption_object_affectedness :
+    consumption.objectAffectedness = some AffectednessDegree.quantized := rfl
+
+/-- Self-motion (intransitive) → no object affectedness. -/
+theorem selfMotion_no_object :
+    selfMotion.objectAffectedness = none := rfl
+
+/-- **Affectedness ordering across templates**: the named templates are
+    ordered by truth-conditional strength on the object side, reproducing
+    @cite{beavers-2010}'s hierarchy: creation/consumption (quantized) >
+    resultChange (nonquantized) > mannerContact (potential) > perception
+    (unspecified). -/
+theorem template_affectedness_hierarchy :
+    AffectednessDegree.nonquantized ≤ .quantized ∧
+    AffectednessDegree.potential ≤ .nonquantized ∧
+    creation.objectAffectedness = some AffectednessDegree.quantized ∧
+    resultChange.objectAffectedness = some AffectednessDegree.nonquantized ∧
+    mannerContact.objectAffectedness = some AffectednessDegree.potential ∧
+    perception.objectAffectedness = some AffectednessDegree.unspecified :=
+  ⟨by decide, by decide, rfl, rfl, rfl, rfl⟩
+
+-- ── Cross-projection consistency: affectedness vs. persistence ──
+
+/-- The affectedness and persistence projections are consistent for
+    manner-contact objects: potential affectedness ↔ totalPersistence
+    (the object may change but the verb doesn't entail it). -/
+theorem mannerContact_cross_projection :
+    mannerContact.objectAffectedness = some AffectednessDegree.potential ∧
+    mannerContact.objectProfile.map PersistenceLevel.fromPatientProfile =
+      some .totalPersistence := ⟨rfl, by decide⟩
+
+/-- Result-change: nonquantized ↔ quPersBeginning (changed but persists). -/
+theorem resultChange_cross_projection :
+    resultChange.objectAffectedness = some AffectednessDegree.nonquantized ∧
+    resultChange.objectProfile.map PersistenceLevel.fromPatientProfile =
+      some .quPersBeginning := ⟨rfl, by decide⟩
+
+/-- Creation: quantized ↔ exPersEnd (entity comes into existence). -/
+theorem creation_cross_projection :
+    creation.objectAffectedness = some AffectednessDegree.quantized ∧
+    creation.objectProfile.map PersistenceLevel.fromPatientProfile =
+      some .exPersEnd := ⟨rfl, by decide⟩
 
 end Beavers2010
