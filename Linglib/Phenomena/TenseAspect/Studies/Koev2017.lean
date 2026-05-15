@@ -43,7 +43,7 @@ committed to the proposition (non-modal analysis, contra
 
 namespace Koev2017
 
--- ## § 1. Spatiotemporal Overlap Types
+/-! ### Spatiotemporal Overlap Types -/
 
 /-- Whether the described event and the learning event overlap in time. -/
 inductive TemporalOverlap where
@@ -57,7 +57,7 @@ inductive SpatialRelation where
   | differentPlace  -- loc(e) ≠ loc(e')
   deriving DecidableEq, Repr
 
--- ## § 2. Evidential Datum Structure
+/-! ### Evidential Datum Structure -/
 
 /-- An evidential felicity datum from @cite{koev-2017}.
     Each records the spatiotemporal configuration of the described event
@@ -73,7 +73,7 @@ structure EvidentialDatum where
   exampleNum : String
   deriving Repr, BEq
 
--- ## § 3. Core △ Data (@cite{koev-2017}, §4)
+/-! ### Core △ Data (@cite{koev-2017}, §4) -/
 
 /-- (3)/(25a): Standard indirect evidence — speaker was not present when
     the event occurred. Non-overlapping in time, same place. Felicitous. -/
@@ -100,7 +100,7 @@ def smokeFromChimney : EvidentialDatum where
   evidentialFelicitous := true
   exampleNum := "25b"
 
--- ## § 4. Commitment and Projection Data
+/-! ### Commitment and Projection Data -/
 
 /-- The evidential does not weaken commitment: "EV(p) and I know
     because I was there" is not contradictory (unlike a modal which
@@ -112,7 +112,7 @@ def commitmentDatum : Bool := true
     the proposition. @cite{koev-2017}, §5. -/
 def projectionDatum : Bool := true
 
--- ## § 5. △ Felicity Generalization
+/-! ### △ Felicity Generalization -/
 
 /-- △ predicts felicity: the evidential is felicitous iff the described
     event and the learning event are spatiotemporally distant (temporally
@@ -127,7 +127,7 @@ def trianglePredicts (d : EvidentialDatum) : Bool :=
 def coreData : List EvidentialDatum :=
   [indirectEvidence, directWitness, smokeFromChimney]
 
--- ## § 6. Data Verification
+/-! ### Data Verification -/
 
 /-- There are 3 core data points. -/
 theorem core_count : coreData.length = 3 := rfl
@@ -136,7 +136,7 @@ theorem core_count : coreData.length = 3 := rfl
 theorem triangle_predicts_all :
     coreData.all (fun d => d.evidentialFelicitous == trianglePredicts d) = true := rfl
 
--- ## Bridge: Connecting to Linglib Infrastructure
+/-! ### Bridge: Connecting to Linglib Infrastructure -/
 
 /-! Bridge theorems connecting @cite{koev-2017}'s spatiotemporal distance analysis
 to existing linglib infrastructure, organized around the paper's four
@@ -171,7 +171,7 @@ open Semantics.Events
 open Semantics.Tense.Evidential
 open Fragments.Slavic.Bulgarian.Evidentials
 
--- ## § 0. Spatiotemporal distance △ substrate (inlined)
+/-! ### Spatiotemporal distance △ substrate (inlined) -/
 
 /-! @cite{koev-2017} Definition 24: two events satisfy △ when either
     their temporal traces don't overlap (standard indirect evidence) or
@@ -239,7 +239,7 @@ theorem spatiotemporallyDistant_of_temporallyDisjoint
     (h : temporallyDisjoint e₁ e₂) : spatiotemporallyDistant loc e₁ e₂ :=
   Or.inl h
 
--- ## § 1. Learning Scenarios (@cite{koev-2017}, §4)
+/-! ### Learning Scenarios (@cite{koev-2017}, §4) -/
 
 /-- A learning scenario: the evidential introduces a
     learning event e_l — the event through which the speaker acquired
@@ -343,7 +343,7 @@ def LearningScenario.toEvidentialProp (s : LearningScenario ℤ)
   presup := fun _ => s.triangleTemporalB
   assertion := p
 
--- ## § 2. Concrete Scenarios
+/-! ### Concrete Scenarios -/
 
 /-- Described event: interval [0, 5]. -/
 def describedEvent : Event ℤ := ⟨⟨0, 5, by omega⟩, .action⟩
@@ -369,7 +369,7 @@ def smokeScenario : LearningScenario ℤ where
   described := describedEvent
   learning := learningEventSpatial
 
--- ## § 3. Property (i): Spatiotemporal Meaning — △
+/-! ### Property (i): Spatiotemporal Meaning — △ -/
 
 /-- Indirect evidence: described and learning events are temporally
     disjoint — described event [0,5] finished before learning event
@@ -407,7 +407,7 @@ theorem smoke_spatiotemporallyDistant
     spatiotemporallyDistant loc smokeScenario.described smokeScenario.learning :=
   Or.inr hdiff
 
--- ## § 4. △ vs. Temporal Ordering (Independent Constraints)
+/-! ### △ vs. Temporal Ordering (Independent Constraints) -/
 
 /-! The paper separates two constraints in (74b):
     - `e △ e_l` : spatiotemporal distance (the **evidential's** contribution)
@@ -435,7 +435,7 @@ theorem smoke_no_tense_ordering :
   simp only [Event.τ]
   omega
 
--- ## § 5. The Four Properties (Derived from toEvidentialProp)
+/-! ### The Four Properties (Derived from toEvidentialProp) -/
 
 /-! All four properties (property 6) follow from `toEvidentialProp`:
 
@@ -504,7 +504,7 @@ theorem projection_past_negation (s : LearningScenario ℤ) {W : Type*} (p : W �
     (PrProp.neg (s.toEvidentialProp p)).presup = (s.toEvidentialProp p).presup :=
   PrProp.neg_presup _
 
--- ## § 7. Bridge to @cite{cumming-2026}: △ → T ≤ A
+/-! ### Bridge to @cite{cumming-2026}: △ → T ≤ A -/
 
 /-- For the indirect evidence case, temporal disjointness + ordering
     gives isBefore: τ(e).finish ≤ τ(e_l).start. -/
@@ -531,7 +531,7 @@ theorem indirect_downstream : downstreamEvidence indirectFrame := by
   simp only [Event.τ]
   omega
 
--- ## § 8. Bridge to Existing Fragment
+/-! ### Bridge to Existing Fragment -/
 
 /-- The existing Bulgarian nfutL entry has EP = downstream (T ≤ A),
     which is the temporal special case of Koev's △: when spatial distance

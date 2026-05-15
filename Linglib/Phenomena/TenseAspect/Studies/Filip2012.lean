@@ -54,7 +54,7 @@ open Semantics.Events.ThematicRoleProperties
 open Semantics.Events.Incrementality
 open Semantics.Events.CumulativityPropagation
 
--- ## § 1. Three-way exhaustiveness (Filip's distinctive observation)
+/-! ### Three-way exhaustiveness (Filip's distinctive observation) -/
 
 /-- The three classes are exhaustive: every predicate falls into
     exactly one of CUM, QUA, or ¬CUM ∧ ¬QUA. Conceptually important:
@@ -69,7 +69,7 @@ theorem three_way_exhaustive {α : Type*} [SemilatticeSup α]
     · exact .inr (.inl hq)
     · exact .inr (.inr ⟨hc, hq⟩)
 
--- ## § 2. Propagation gap substrate (inlined)
+/-! ### Propagation gap substrate (inlined) -/
 
 /-! When OBJ is neither CUM nor QUA, neither `cum_propagation` nor
     `qua_propagation` fires. Under SINC + UP + CumTheta verbs the

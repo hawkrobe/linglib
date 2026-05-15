@@ -79,7 +79,7 @@ open Core.Scale (MereoTag)
 open Phenomena.TenseAspect.Diagnostics
   (forXPrediction inXPrediction DiagnosticResult)
 
--- ## § 0. K89 measure-phrase substrate (inlined from Events/MeasurePhrases.lean in 0.231.55)
+/-! ### K89 measure-phrase substrate (inlined from Events/MeasurePhrases.lean in 0.231.55) -/
 
 /-- QMOD produces QUA predicates when μ is extensive and n > 0.
     @cite{krifka-1989} §2: "three kilos of rice" is QUA because no
@@ -115,7 +115,7 @@ theorem measure_phrase_makes_qua {α β : Type*}
     QUA (VP θ (QMOD R μ n)) :=
   qua_propagation (qmod_of_cum_is_qua hCum hn)
 
--- ## § 1. Nominal Reference Classification (K89 §3)
+/-! ### Nominal Reference Classification (K89 §3) -/
 
 /-- Why an NP has the reference type it does, per @cite{krifka-1989} §3.
     Each constructor names the structural source of CUM or QUA reference.
@@ -227,7 +227,7 @@ theorem all_nps_consistent_with_source :
     k89NPData.all (fun d => d.source.expectedRef == d.refType) = true := by
   decide
 
--- ## § 2. Grounding in K89 Theory's propositional predicates
+/-! ### Grounding in K89 Theory's propositional predicates -/
 
 /-! These theorems exercise the K89 theory file's propositional
     predicates on abstract domains, providing the bridge from the
@@ -260,7 +260,7 @@ theorem countNoun_grounded [PartialOrder α] {P : α → Prop} (h : QUA P) :
 
 end Grounding
 
--- ## § 3. Measure phrases — exercise qmod / measure_phrase_makes_qua
+/-! ### Measure phrases — exercise qmod / measure_phrase_makes_qua -/
 
 /-! K89 §3 derives that measure phrases like *three kilos of rice* are
     quantized via D28 (QMOD, §3 p. 82) and the upstream T6 (extensive
@@ -296,7 +296,7 @@ theorem eatThreeKilosRice_qua_vp [SemilatticeSup β]
 
 end MeasurePhrases
 
--- ## § 4. K89 §4 thematic-relation features (eq. 14, p. 96)
+/-! ### K89 §4 thematic-relation features (eq. 14, p. 96) -/
 
 /-! K89 §4 (eq. 14, p. 96) classifies thematic relations by a feature
     profile {SUM, UNI-O, UNI-E, MAP-O, MAP-E}, with GRAD = UNI-O ∧ MAP-O
@@ -478,7 +478,7 @@ theorem k89Table14_refines_k98_consistently :
       (d.thematicClass.toVerbIncClass = .cumOnly)) = true := by
   decide
 
--- ## § 5. Atomicity ≠ Quantization (K89 §5 eq. 19; K89 T4)
+/-! ### Atomicity ≠ Quantization (K89 §5 eq. 19; K89 T4) -/
 
 /-! K89 §5 (around eq. 19, *Ann drank wine in 0.43 seconds*) makes a
     crucial point that a surface QUA → in-X / CUM → for-X classification
@@ -552,7 +552,7 @@ theorem ann_drank_wine_object_is_cum :
 theorem aGlassOfWine_is_qua :
     aGlassOfWineNP.refType = .qua := rfl
 
--- ## § 6. Quantification (K89 §7)
+/-! ### Quantification (K89 §7) -/
 
 /-! K89 §7 introduces:
 
@@ -611,7 +611,7 @@ def twoGirlsAteSevenApplesEach : K89QuantDatum :=
 def k89Section7Data : List K89QuantDatum :=
   [mostGirlsSang, lessThanThreeGirlsSang, twoGirlsAteSevenApples, twoGirlsAteSevenApplesEach]
 
--- ## § 7. Scope: predicate-level QUA/CUM ≠ carrier-level boundedness
+/-! ### Scope: predicate-level QUA/CUM ≠ carrier-level boundedness -/
 
 /-! @cite{krifka-1989} defines `QUA` and `CUM` (D 14, D 12, p. 78) as
     properties of *predicates* over a structured carrier — a complete

@@ -63,7 +63,7 @@ open Semantics.Spatial.Path (PathShape)
 open Core.Scale (LicensingPipeline)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 
--- ## § 1. Per-verb path specification (K98 §4.5 eq. 73)
+/-! ### Per-verb path specification (K98 §4.5 eq. 73) -/
 
 /-- "arrive" is inherently directed motion (K98 §4.7 eq. 78). -/
 theorem arrive_levinClass :
@@ -104,7 +104,7 @@ theorem arrive_vendlerClass_achievement :
 theorem sleep_vendlerClass_state :
     sleep.toVerbCore.vendlerClass = some .state := rfl
 
--- ## § 2. PathShape → Telicity → Licensing (K98 §4 MR eq. 71)
+/-! ### PathShape → Telicity → Licensing (K98 §4 MR eq. 71) -/
 
 /-- Bounded path → telic → licensed. K98 §4 eq. 74 *walked from X to Y*. -/
 theorem bounded_pipeline :
@@ -121,7 +121,7 @@ theorem unbounded_pipeline :
     pathShapeToTelicity .unbounded = .atelic ∧
     LicensingPipeline.isLicensed PathShape.unbounded = false := ⟨rfl, rfl⟩
 
--- ## § 3. Motion VP data (K98 §4.5 eq. 74-75)
+/-! ### Motion VP data (K98 §4.5 eq. 74-75) -/
 
 /-- A motion VP datum: verb + PP + path shape + expected telicity. -/
 structure MotionVPDatum where
@@ -161,7 +161,7 @@ theorem all_motion_data_correct :
       pathShapeToTelicity d.pathShape == d.expectedTelicity) = true := by
   decide
 
--- ## § 4. §3 ↔ §4 diagnostic bridge (K98 §3 in/for)
+/-! ### §3 ↔ §4 diagnostic bridge (K98 §3 in/for) -/
 
 /-- "arrive" (achievement, bounded path) licenses "in X". -/
 theorem arrive_inX :
@@ -189,7 +189,7 @@ theorem motion_vendler_path_coherence :
       LevinClass.mannerOfMotion.pathSpec = none) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
--- ## § 5. K98 §4 propositional substrate
+/-! ### K98 §4 propositional substrate -/
 
 section K98PropositionalSubstrate
 
@@ -264,7 +264,7 @@ theorem mr_of_smr {α β : Type*} [PartialOrder α] [PartialOrder β]
 
 end K98PropositionalSubstrate
 
--- ## § 6. σ-pullback invocations (bounded/unbounded path → telic/atelic VP)
+/-! ### σ-pullback invocations (bounded/unbounded path → telic/atelic VP) -/
 
 section SpatialTracePullback
 
@@ -293,7 +293,7 @@ theorem walked_towards_atelic_propositional
 
 end SpatialTracePullback
 
--- ## § 7. EXP / SEINC instances on `Event Time` (K98 §4.1)
+/-! ### EXP / SEINC instances on `Event Time` (K98 §4.1) -/
 
 section Expansiveness
 
@@ -314,7 +314,7 @@ abbrev seincEv [EventCEM Time] (θ : α → Event Time → Prop) : Prop :=
 
 end Expansiveness
 
--- ## § 8. SMR / MR instances on `Path Loc → Event Time → Prop` (K98 §4.2-4.3)
+/-! ### SMR / MR instances on `Path Loc → Event Time → Prop` (K98 §4.2-4.3) -/
 
 section MovementInstances
 
