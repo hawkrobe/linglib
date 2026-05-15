@@ -5370,6 +5370,126 @@ as its first children at that vertex). The msform-level absorption uses
 After both: the cons-case sorry-fence collapses by composing them with
 `Multiset.map_congr` (both sides msform-wrapped). -/
 
+/-! ### §1.12: LHS-side strong-IH (sorry-fenced cons case)
+
+Mirrors §1.11.6's `RHS_eq_canonical_msform_pres` for the LHS side. The
+`LHS_form pres C` shape is the iteratedQuadSum-leaf shape with
+`insertionForest (T' :: F') C` at the innermost (instead of `T' :: F'`):
+
+```
+LHS_form pres C =
+  (insertionForest pre_T_B (pres .T_graft)).bind pre_T_B' =>
+    (insertion T (pre_T_B' ++ pres .T_orig)).bind T' =>
+      (insertionForest pre_FA_B (pres .FA_graft)).bind pre_FA_B' =>
+        (insertionForest F_A (pre_FA_B' ++ pres .FA_orig)).bind F' =>
+          insertionForest (T' :: F') C
+```
+
+* At `pres = (fun _ => [])`: `LHS_form` reduces to the standard LHS via
+  `insertionForest_nil_guests` + `Multiset.singleton_bind` + `List.append_nil`.
+* At `C = []`: `insertionForest (T' :: F') []` collapses to `{T' :: F'}`,
+  reducing `LHS_form pres []` to `iteratedQuadSum T F_A pre_T_B pre_FA_B pres []`
+  (the leaf form). The strong-IH then reduces to `RHS_eq_canonical_msform_pres`
+  at `C = []`, which is sorry-free.
+
+The cons case (sorry-fenced) requires:
+1. Peel `c` off the inner `insertionForest (T' :: F') (c :: rest)`.
+2. Use `vertices_forest_eq_partition` (`Graft.lean §10.5`) to decompose c's
+   vertex choice into 4 buckets matching `QuadIdx`.
+3. For each bucket, the c-graft into (T' :: F') equals augmenting the
+   corresponding `pres` bucket with `[c]` modulo `multiGraft_perm_pair`.
+4. Apply IH at `pres'` and rest.
+5. Bridge to canonical-form RHS via `enumAugGraftingData_succ_factored` and
+   the 4 leaf bridges (parallel to RHS strong-IH cons case from session 13).
+
+Estimated cons case proof: ~400-700 LOC, deferred to next session. -/
+
+/-- **LHS strong-IH** (sorry-fenced cons case): pres-parameterized canonical-form
+    bridge for the LHS side. Mirrors `RHS_eq_canonical_msform_pres`.
+
+    Specializes to `LHS_eq_canonical_msform` at `pres = (fun _ => [])`. -/
+private theorem LHS_eq_canonical_msform_pres
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) (C : List (Planar α)) :
+    ((insertionForest pre_T_B (pres .T_graft)).bind fun pre_T_B' =>
+        (insertion T (pre_T_B' ++ pres .T_orig)).bind fun T' =>
+          (insertionForest pre_FA_B (pres .FA_graft)).bind fun pre_FA_B' =>
+            (insertionForest F_A (pre_FA_B' ++ pres .FA_orig)).bind fun F' =>
+              insertionForest (T' :: F') C).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((enumAugGraftingData T F_A pre_T_B pre_FA_B pres C.length).map
+        (fun agd => augInterpret T agd C)).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  induction C generalizing pres with
+  | nil =>
+    -- LHS at C = []: insertionForest (T' :: F') [] = {T' :: F'}, so the inner
+    -- .bind F' collapses to .map F' via Multiset.bind_singleton, reducing to
+    -- iteratedQuadSum's nil leaf form. Then RHS_eq_canonical_msform_pres at
+    -- C = [] (sorry-free) closes.
+    simp only [insertionForest_cons_host_nil_guests, Multiset.bind_singleton]
+    -- LHS now matches `iteratedQuadSum T F_A pre_T_B pre_FA_B pres []` (by
+    -- iteratedQuadSum_nil_remaining, in reverse).
+    rw [show ((insertionForest pre_T_B (pres QuadIdx.T_graft)).bind fun pre_T_B' =>
+              (insertion T (pre_T_B' ++ pres QuadIdx.T_orig)).bind fun T' =>
+                (insertionForest pre_FA_B (pres QuadIdx.FA_graft)).bind fun pre_FA_B' =>
+                  (insertionForest F_A (pre_FA_B' ++ pres QuadIdx.FA_orig)).map fun F' =>
+                    T' :: F') =
+            iteratedQuadSum T F_A pre_T_B pre_FA_B pres []
+        from (iteratedQuadSum_nil_remaining T F_A pre_T_B pre_FA_B pres).symm]
+    exact RHS_eq_canonical_msform_pres T F_A pre_T_B pre_FA_B pres []
+  | cons c rest ih =>
+    -- TODO: cons case. ~400-700 LOC. Strategy:
+    -- 1. Peel c off via `insertionForest_cons_host_nonempty_elem` (or analog)
+    --    on the innermost `insertionForest (T' :: F') (c :: rest)`.
+    -- 2. Decompose c-vertex choice via `vertices_forest_eq_partition` into 4
+    --    α-bucket cases.
+    -- 3. For each bucket, absorb c into pres bucket modulo `multiGraft_perm_pair`.
+    -- 4. Apply IH at pres' = update pres first_b (pres first_b ++ [c]) and rest.
+    -- 5. Bridge to canonical via `enumAugGraftingData_succ_factored` + 4 leaf
+    --    bridges (parallel to RHS strong-IH cons case).
+    sorry
+
+/-! ### §1.13: `LHS_eq_canonical_msform` derived from strong-IH
+
+The standard form follows from `LHS_eq_canonical_msform_pres` at
+`pres = (fun _ => [])`. The LHS_form @ empty reduces to the standard LHS
+via `insertionForest_nil_guests` (collapses pres .T_graft and pres .FA_graft
+inserts to singletons) + `List.append_nil` (cleans up `_ ++ pres .T_orig`
+and `_ ++ pres .FA_orig` appends) + `Multiset.singleton_bind` (collapses
+the pre_T_B'/pre_FA_B' singleton binds). The canonical RHS reduces via
+the same `enumAugGraftingData_at_empty_pres` + `augInterpret_at_empty_pres`
+chain as `RHS_eq_canonical_msform`. -/
+
+/-- The standard `LHS_eq_canonical_msform`, derived from the strong-IH
+    `LHS_eq_canonical_msform_pres` at `pres = (fun _ => [])`. Mirrors
+    `RHS_eq_canonical_msform`'s derivation pattern. -/
+private theorem LHS_eq_canonical_msform
+    (T : Planar α) (F_A pre_T_B pre_FA_B C : List (Planar α)) :
+    ((insertion T pre_T_B).bind fun T_ins =>
+        (insertionForest F_A pre_FA_B).bind fun F_ins =>
+          insertionForest (T_ins :: F_ins) C).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((enumGraftingData T F_A pre_T_B pre_FA_B C.length).map
+        (fun gd => interpret T gd C)).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- Specialize LHS_eq_canonical_msform_pres at pres = (fun _ => []).
+  have h := LHS_eq_canonical_msform_pres T F_A pre_T_B pre_FA_B (fun _ => []) C
+  -- Reduce LHS_form @ empty to standard LHS:
+  --   - insertionForest pre_T_B [] = {pre_T_B} (then singleton_bind substitutes).
+  --   - pre_T_B' ++ [] = pre_T_B' (List.append_nil cleans up pres .T_orig zero append).
+  --   - Same for FA-side.
+  simp only [insertionForest_nil_guests, List.append_nil, Multiset.singleton_bind] at h
+  rw [h]
+  -- Bridge canonical (augInterpret + enumAugGraftingData at empty pres) to
+  -- standard interpret + enumGraftingData via the empty-pres bridges (same
+  -- pattern as `RHS_eq_canonical_msform`'s closing block).
+  congr 1
+  rw [enumAugGraftingData_at_empty_pres T F_A pre_T_B pre_FA_B C.length, Multiset.map_map]
+  refine Multiset.map_congr rfl fun gd _ => ?_
+  rw [Function.comp_apply, augInterpret_at_empty_pres]
+  show interpret T (agdToGd (gdToAgdEmpty gd)) C = interpret T gd C
+  rfl
+
 /-! ## §2: Bridge: iterated insertionForest equals assocBucketSum
 
 The headline planar identity:
@@ -6636,24 +6756,15 @@ This is mathlib-quality work (~300-500 LOC of path-level substrate).
 Unblocking it closes `assocBucketSum_eq_insertionForest_iterated_msform`
 and downstream `Nonplanar.insertionMultiset_assoc`. -/
 
-/-- A3.3 cons-case sorry-fence (Phase 4.2 of `scratch/a33_phase5_design.md`).
-    States the LHS form equals the bind-α form of `iteratedQuadSum`-leaves
-    (modulo msform). After this lemma, the headline `LHS_eq_iteratedQuadSum_msform`
-    cons-case closes via a single `rw [iteratedQuadSum_eq_alphaBind]` (Phase 2.1)
-    + `exact`. The proof of THIS sorry-fence is the substantive bijection
-    (~280 LOC, Phases 5.1.A + 5.1.B + 4.2 from the design plan).
+/-- A3.3 cons-case sorry-fence — closes via composition of two canonical-form
+    bridges:
+    1. `LHS_eq_canonical_msform` (§1.13): LHS = canonical, derived from
+       strong-IH `LHS_eq_canonical_msform_pres` (§1.12, sorry-fenced cons case).
+    2. `RHS_eq_canonical_msform` (§1.11.7): canonical = RHS_alphaBind form,
+       derived from sorry-free strong-IH `RHS_eq_canonical_msform_pres`.
 
-    Why this articulation? The original cons-case sorry was a single deeply-buried
-    statement mixing bind reordering, vertex-class identification, and planar-equiv
-    reasoning. This helper isolates the bind-α form alignment, with the per-α leaf
-    bridge being the only remaining substrate gap. RHS-bind structure now matches
-    Phase 2.1's `iteratedQuadSum_eq_alphaBind`, so consumers can rewrite once to
-    expose the per-α structure on both sides.
-
-    Substantive substrate gap: the LHS-side bind-α form (`LHS_split_by_alpha` in
-    the design plan) requires `vertices_forest_eq_partition` (Phase 3.2,
-    sorry-free) + path-level substrate `multiGraft_split_lifted_aux` (~60-80 LOC,
-    optional baby compose lemma). -/
+    The substantive content is now ENTIRELY in the cons case of
+    `LHS_eq_canonical_msform_pres` (§1.12). -/
 private theorem LHS_eq_iteratedQuadSum_msform_cons_alphaBind
     (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
     (c : Planar α) (rest : List (Planar α)) :
@@ -6667,11 +6778,8 @@ private theorem LHS_eq_iteratedQuadSum_msform_cons_alphaBind
       iteratedQuadSum T F_A pre_T_B pre_FA_B
         (fun t => bucketSlice (c :: rest) a t) []).map
       (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
-  -- TODO (Phase 4.2 substantive): see scratch/a33_phase5_design.md.
-  -- Strategy: unfold LHS via verticesAux_cons + vertices_forest_eq_partition
-  -- to expose bind-α structure, then bind_congr per α + per-α leaf bijection
-  -- using multiGraft_perm_pair + insertion_planarEquiv_guests.
-  sorry
+  rw [LHS_eq_canonical_msform T F_A pre_T_B pre_FA_B (c :: rest),
+      ← RHS_eq_canonical_msform T F_A pre_T_B pre_FA_B (c :: rest)]
 
 /-- A3.3: LHS-iteratedQuadSum bridge at msform level (per-asn1).
     Substantive bijection; the cons case closes via the sorry-fenced helper
