@@ -8,12 +8,12 @@ three specializations linglib uses.
 
 ## Main definitions
 
-* `SR` — Champollion's unified `SR_{d,γ}` (Ch 5; binary-γ form)
+* `SR` — Champollion's unified `SR_{d,γ}` (defined Ch 4 §4.6, motivated Ch 5)
 * `SR_univ` — universal closure: `∀x, P x → SR d γ P x`
-* `SDR` / `SDR_univ` — Stratified Distributive Reference (Ch 6 distributivity):
-  `d = θ`, `γ = Atom`.
-* `SSR` / `SSR_univ` — Stratified Subinterval Reference (Ch 5 §5.4 atelicity):
-  `d = τ`, `γ = proper subinterval`.
+* `SDR` / `SDR_univ` — Stratified Distributive Reference (Ch 4 §4.6
+  distributivity-via-θ; Ch 6 atelicity reuse): `d = θ`, `γ = Atom`.
+* `SSR` / `SSR_univ` — Stratified Subinterval Reference (Ch 4 §4.6
+  atelicity-via-τ; Ch 5 §5.4 motivation): `d = τ`, `γ = proper subinterval`.
 * `SMR` / `SMR_univ` — *linglib coinage*; `d = μ`, `γ = strict less-than`
   (Ch 7 §7.4 measurement of substance pseudopartitives: *thirty liters of
   water*, *five feet of snow*).
@@ -206,7 +206,8 @@ def SMR_univ {α β : Type*} [SemilatticeSup α] [Preorder β]
 
 /-! ### Distributivity Constraint -/
 
-/-- @cite{champollion-2017} Ch 7 eq. (13) **Distributivity Constraint**:
+/-- @cite{champollion-2017} Ch 4 §4.6 **Distributivity Constraint**
+    (restated in Ch 7 §7.4 for the measurement chapter):
     a distributive construction with Share `S`, Map `M`, granularity `γ`
     describing entity `x` is acceptable iff `SR_{M,γ}(S)(x)`. The same
     constraint underlies adverbial-*each*, *for*-adverbials, and
@@ -332,10 +333,10 @@ class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
   /-- "kill" has SDR along the theme role. -/
   kill_theme_sdr : SDR_univ themeOf kill
   /-- "kill" does NOT have SDR along the agent role (collective causation).
-      §6.3: group agents can collectively cause death. -/
+      Ch 4 §4.5.1: group agents can collectively cause death. -/
   kill_agent_not_sdr : ¬ SDR_univ agentOf kill
   /-- "meet" does NOT have SDR along the agent role (inherently collective).
-      §6.3: meeting requires multiple participants. -/
+      Ch 4 §4.5.1: meeting requires multiple participants. -/
   meet_agent_not_sdr : ¬ SDR_univ agentOf meet
 
 /-! ### Aspect Bridge (SSR ↔ atelicity) -/

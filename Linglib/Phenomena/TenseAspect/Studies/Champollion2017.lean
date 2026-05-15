@@ -4,39 +4,129 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
-# Stratified Reference: Distributivity → Fragment Verbs
-@cite{champollion-2017}
+# @cite{champollion-2017}: Distributivity as a bridge between aspect and measurement
 
-Eponymous study file connecting strata theory to concrete English
-verb entries and empirical distributivity/atelicity data. Targets the
-two SR specializations on which this file's data bears:
+Paper-anchored study for *Parts of a Whole*. The book unifies four
+ostensibly disjoint phenomena — predicative distributivity (Ch 4),
+atelicity (Ch 5–6), and pseudopartitive measurement (Ch 7) — under one
+higher-order property, *stratified reference* (`SR`, Ch 4 §4.6). A
+distributive construction with Share `S`, Map `M`, granularity `g`
+describing entity `x` is acceptable iff `SR_{M,g}(S)(x)` (Distributivity
+Constraint, Ch 4 §4.6).
 
-- `SSR_univ` — for-adverbial diagnostic, dim = τ runtime (atelicity)
-- `SDR_univ` — adverbial-each, dim = θ role (role-distributivity)
+Substrate types `SR`, `SDR`, `SSR`, `SMR` and the construction
+abbreviations live in `Theories/Semantics/Events/Aspect/Stratified.lean`.
+This file consumes them against English Fragment verbs and stages the
+empirical data the book argues over.
 
-@cite{champollion-2017} §1.2 catalogues four oppositions
-(atelic/telic, stative/non-stative, distributive/collective, mass/count)
-under one SR umbrella, but only the two above are exercised in the
-present substrate; `SMR_univ` (mass) has no current consumer, and the
-τ-dimension stativity primitive in linglib is the witness-universal
-form `HasSubintervalProp` in `Tense/Aspect/SubintervalProperty.lean`,
-not an SR-decomposition form.
+## Main definitions
 
-The Fragment-side `agentSDR`/`themeSDR` Bool fields below are per-verb
-typology tags; the substrate-side proof obligation `SDR_univ agentOf
-seePred` requires a verb predicate denotation `Event Time → Prop`,
-which Fragment files don't currently provide. Bridging tags to
-substrate predicates is theory-hub denotation discipline (CLAUDE.md)
-and is follow-up work; this file demonstrates the API at the *naming*
-level.
+* `DistProfile` — per-verb agent/theme distributivity tag bundle;
+  Fragment-level metadata indexed against the substrate
+  `VerbDistributivity` postulate class.
+* `DistDatum` — empirical collective/distributive judgment record.
+* `predictsSSR` — typological convenience function predicting `SSR`
+  from a Vendler class. *Not* Champollion's own diagnostic — see
+  Caveats.
 
-## Structure
+## Caveats
 
-1. **Distributivity profiles** — per-verb agent/theme distributivity tags
-2. **Distributivity data** — empirical collective/distributive judgments
-3. **Profile → data alignment** — profiles predict empirical data
-4. **VerbDistributivity postulate alignment** — tags match `SDR_univ` postulates
-5. **`SSR_univ` ↔ Vendler bridge** — atelicity predictions per verb class
+* **Vendler classes are not Champollion primitives.** Champollion Ch 6
+  explicitly disclaims Vendler classes ("Vendler classes do not appear
+  as primitives in this book"). `predictsSSR` is a convenience bridge
+  from linglib's Fragment Vendler tags to expected `SSR` behaviour;
+  the underlying Champollion prediction is the cover/granularity-
+  theoretic SR test.
+* **Lexical cumulativity is assumed throughout.** Per @cite{champollion-2017}
+  §2.7.2, every verb's denotation is cumulative (`*[[V]] = [[V]]`).
+  This is why `SSR_univ → CUM` does not hold and the Krifka-CUM contrast
+  cannot be recast as an SR-vs-CUM contrast — see
+  `Aspect/Stratified.lean` module docstring "Relation to Krifka's CUM/QUA".
+
+## TODO
+
+* **Push carts contrast (Ch 6 §6.4)** — the book's headline empirical
+  case where SR predicts acceptable and Krifka 1998 predicts
+  presupposition failure: *John pushed carts all the way to the store
+  for fifty minutes* (Champollion's BACK-AND-FORTH scenario, Ch 6
+  §6.4.1). Sketch ~80 LOC: scenario record, acceptability data,
+  `SSR`-derived prediction, Krifka-divisive-reference-derived prediction
+  (requires a `divisiveReference` substrate stub in or referenceable
+  from `Studies/Krifka1998.lean`), divergence theorem.
+
+* **Spatial SR / `SR_σ` (Ch 6)** — Champollion treats `SR_σ` (dimension
+  = location trace) symmetrically with `SR_τ`; *for fifty meters* uses
+  `SR_σ`. Substrate currently exposes only `SSR` (temporal). Add
+  `SR_σ` in `Aspect/Stratified.lean` (~30 LOC), then exercise here on
+  *the road meanders for a mile* / *the road ends in a mile* (~30 LOC).
+
+* **SMR consumers (Ch 7 §7.4)** — substrate `SMR_univ` has no consumer.
+  Stage Champollion's Ch 7 measurement-substance contrasts:
+  predicted-acceptable *thirty liters of water*, *five feet of snow*,
+  *two degrees Celsius of global warming*, *cool for five degrees*; and
+  predicted-failures *thirty degrees Celsius of water*, *five pounds
+  of book*. ~60 LOC. The *book* rejection is via at-issue-meaning +
+  count-noun quantization, *not* SR — make the distinction explicit.
+
+* **Distributivity Constraint as unification (Ch 4 §4.6)** — headline
+  theorem: `eachConstr`, `forConstr`, `pseudopartConstr` all reduce to
+  `DistConstr`. Substrate already supports this; state the three
+  reductions (~5 LOC `rfl` per construction) plus a packaging corollary.
+  ~25 LOC.
+
+* **Lexical cumulativity assumption (§2.7.2)** — express as a
+  `class LexicallyCumulativeFragment` carrying
+  `verbIsCumulative : ∀ V ∈ verbs, AlgClosure V = V`, with English
+  Fragment supplying the instance. Required for soundness of any
+  theorem that imports the book's *for*-adverbial entry. ~20 LOC.
+
+* **Granularity rescue of *waltz* (Ch 5 §5.4)** — concrete meaning
+  postulate showing *waltz* has SR_{τ, λt[seconds(t)≤3]}, the only
+  place in the book Champollion uses a numerical threshold. Couple
+  with linglib `Time.seconds` measure. ~20 LOC.
+
+* **Cover / SR equivalence (Ch 5 §5.4)** — substrate-bridge theorem
+  `*λy[C(y)] x ↔ ∃C' ⊆ C [Cov(C', x)]`. Connects Champollion's SR to
+  @cite{schwarzschild-1996} cover semantics. Lives in
+  `Aspect/Stratified.lean` as a property of `AlgClosure`; consumed
+  here only if needed for Ch 6 push-carts proof. Substrate ~40 LOC.
+
+* **`regular` predicate in *for*-adverbial entry (Ch 4)** — Champollion's
+  lexical entry includes `... ∧ regular(M(e))` — a condition currently
+  invisible in linglib's `forAdverbialMeaning`. Either define
+  `regular : Interval Time → Prop` (~10 LOC substrate) or document
+  why linglib drops it.
+
+* **Theorem subjects via substrate predicates** — per CLAUDE.md
+  theory-hub denotation discipline: replace `seeProfile.agentSDR = true`
+  (Bool tag) with statements about `SDR_univ agentOf seePred` where
+  `seePred : Event Time → Prop` is derived from Fragment `see.semantics`.
+  Requires Fragment verbs to expose an `Event Time → Prop` denotation.
+
+* **Convert `Bool` fields to `Prop` + `[Decidable]`** per CLAUDE.md
+  "no `Bool` for predicate-shape data" — affects `DistProfile`,
+  `DistDatum`, `predictsSSR`. ~15 LOC mechanical.
+
+## What this file is NOT
+
+* Not a re-statement of substrate primitives. `SR`, `SDR`, `SSR`, `SMR`
+  live in `Aspect/Stratified.lean`; this file only consumes them.
+* Not a Krifka 1998 vs SR proof harness. The empirical contrast lives
+  in `Studies/Krifka1998.lean` (sister); the push-carts §6 will live
+  there or be split across both.
+* Not a Vendler-class theory anchor. Ch 6 explicitly disclaims Vendler
+  classes; `predictsSSR` is a Fragment-tagging convenience.
+
+## References
+
+* @cite{champollion-2017} (primary; SR machinery + Ch 4–7 empirical
+  cases + §2.7.2 lexical cumulativity stance + Ch 6 vs-Krifka argument)
+* @cite{krifka-1998} (the divisive-reference target Champollion argues
+  against in Ch 6; sister: `Studies/Krifka1998.lean`)
+* @cite{schwarzschild-2006} (the monotonic-measure-function predicate
+  Champollion's `SMR` translates and weakens, Ch 7 §7.3)
+* @cite{link-1983} (the algebraic-closure `*` operator SR builds on)
+* @cite{dowty-1979} (the subinterval property SR generalizes, Ch 5)
 -/
 
 namespace Champollion2017
@@ -46,9 +136,7 @@ open Semantics.Verb
 open Features
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 
--- ════════════════════════════════════════════════════
--- § 1. Distributivity Profiles
--- ════════════════════════════════════════════════════
+/-! ### Distributivity Profiles -/
 
 /-- Per-verb distributivity profile: whether the verb distributes
     over atomic agents and/or themes. Mirrors the postulates in
@@ -82,9 +170,7 @@ def eatProfile : DistProfile :=
 def distProfiles : List DistProfile :=
   [seeProfile, killProfile, meetProfile, eatProfile]
 
--- ════════════════════════════════════════════════════
--- § 2. Distributivity Data
--- ════════════════════════════════════════════════════
+/-! ### Distributivity Data -/
 
 /-- Empirical collective/distributive ambiguity judgments. -/
 structure DistDatum where
@@ -112,9 +198,7 @@ def eatDistDatum : DistDatum :=
 def distData : List DistDatum :=
   [seeDistDatum, killDistDatum, meetDistDatum, eatDistDatum]
 
--- ════════════════════════════════════════════════════
--- § 3. Profile → Data Alignment
--- ════════════════════════════════════════════════════
+/-! ### Profile → Data Alignment -/
 
 /-! Verify that the distributivity profiles predict the empirical data:
     agentSDR = true ↔ distributive reading available. -/
@@ -128,11 +212,9 @@ theorem profiles_predict_data :
 
 /-- All data consistently shows collective reading is available. -/
 theorem all_collective_ok :
-    distData.all (λ d => d.collectiveOK) = true := by native_decide
+    distData.all (λ d => d.collectiveOK) = true := by decide
 
--- ════════════════════════════════════════════════════
--- § 4. VerbDistributivity Postulate Alignment
--- ════════════════════════════════════════════════════
+/-! ### VerbDistributivity Postulate Alignment -/
 
 /-! The `VerbDistributivity` class from `Events/Aspect/Stratified.lean`
     axiomatizes `SDR_univ` for specific verbs.
@@ -161,9 +243,7 @@ theorem verb_vendler_for_sdr :
     eat.toVerbCore.vendlerClass = some .accomplishment :=
   ⟨rfl, rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 5. `SSR_univ` ↔ Vendler Bridge
--- ════════════════════════════════════════════════════
+/-! ### `SSR_univ` ↔ Vendler Bridge -/
 
 /-! `SSR_univ` connects to Vendlerian atelicity via
     `qua_incompatible_with_ssr` and `forAdverbial_requires_ssr`:
