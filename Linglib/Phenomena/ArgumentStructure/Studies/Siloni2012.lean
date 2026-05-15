@@ -31,7 +31,7 @@ embedding.
 - `RecipFormation` from `Typology.lean` — extended with nine predicted
   properties and per-language verification
 - `EntailmentProfile` — used to define θ-role bundling
-- `VerbDistributivity` in `Events/StratifiedReference.lean` — the
+- `VerbDistributivity` in `Events/Aspect/Stratified.lean` — the
   `meet_agent_not_sdr` axiom captures the same property: symmetric
   verbs denote singular events that do not distribute over atomic agents
 -/
@@ -186,7 +186,7 @@ theorem properties_complementary :
     are symmetric — "John and Mary kissed" denotes one event of
     mutual kissing, not two directional sub-events.
 
-    The `VerbDistributivity` class in `Events/StratifiedReference.lean`
+    The `VerbDistributivity` class in `Events/Aspect/Stratified.lean`
     axiomatizes the same property: *meet* has `¬ SDR_univ agentOf meet`
     — it does not distribute over atomic agents, because the event is
     necessarily collective/atomic. -/

@@ -34,16 +34,6 @@ All three use the same QUA/CUM pullback mechanism via `MereoDim`.
 - **Unbounded path → atelic VP** (§4): CUM path predicates pull back through σ
   to yield CUM (atelic) VP predicates. "Walk towards the store" is atelic
   because "towards the store" denotes a CUM set of paths.
-
-## Sections
-
-1. SpatialTrace Class
-2. IsSumHom Instance for σ
-3. MereoDim for σ
-4. Telicity Transfer Through σ
-5. PathShape → Telicity Bridge
-6. Motion Verb Path Annotations
-
 -/
 
 open Semantics.Events
@@ -53,9 +43,7 @@ open Features
 open Semantics.Verb
 open _root_.Mereology
 
--- ════════════════════════════════════════════════════
--- § 1. SpatialTrace Class
--- ════════════════════════════════════════════════════
+/-! ### SpatialTrace Class -/
 
 namespace Semantics.Events
 
@@ -80,9 +68,7 @@ end Semantics.Events
 
 namespace Semantics.Events.SpatialTrace
 
--- ════════════════════════════════════════════════════
--- § 2. IsSumHom Instance for σ
--- ════════════════════════════════════════════════════
+/-! ### IsSumHom Instance for σ -/
 
 /-- σ as an `IsSumHom` instance, derived from `SpatialTrace.σ_map_sup`.
     Enables `cum_pullback` to work automatically for σ.
@@ -94,9 +80,7 @@ noncomputable instance instIsSumHomσ (Loc Time : Type*) [LinearOrder Time]
   @IsSumHom.mk _ _ cem.evSemilatticeSup _
     st.σ (fun e₁ e₂ => st.σ_map_sup e₁ e₂)
 
--- ════════════════════════════════════════════════════
--- § 3. MereoDim for σ
--- ════════════════════════════════════════════════════
+/-! ### MereoDim for σ -/
 
 /-- σ with injectivity is a MereoDim: the spatial dimension is a
     mereological morphism, enabling QUA pullback through spatial paths.
@@ -110,9 +94,7 @@ def σ_mereoDim {Loc Time : Type*} [LinearOrder Time]
   @MereoDim.ofInjSumHom _ _ cem.evSemilatticeSup _
     (f := st.σ) (instIsSumHomσ Loc Time) hinj
 
--- ════════════════════════════════════════════════════
--- § 4. Telicity Transfer Through σ
--- ════════════════════════════════════════════════════
+/-! ### Telicity Transfer Through σ -/
 
 /-- Bounded path predicate → telic VP.
     "Walk to the store" is telic because "to the store" is QUA
@@ -140,9 +122,7 @@ theorem unbounded_path_atelic {Loc Time : Type*} [LinearOrder Time]
     @CUM _ cem.evSemilatticeSup (P ∘ st.σ) :=
   @cum_pullback _ _ cem.evSemilatticeSup _ st.σ (instIsSumHomσ Loc Time) _ hP
 
--- ════════════════════════════════════════════════════
--- § 5. PathShape → Telicity Bridge
--- ════════════════════════════════════════════════════
+/-! ### PathShape → Telicity Bridge -/
 
 /-- Map PathShape to Telicity: bounded/source → telic, unbounded → atelic.
     @cite{zwarts-2005}: the boundedness of a directional PP determines
@@ -150,7 +130,7 @@ theorem unbounded_path_atelic {Loc Time : Type*} [LinearOrder Time]
 
     This is the spatial analog of the QUA/CUM ↔ telic/atelic correspondence
     from `vendlerClass_telic_cases` / `vendlerClass_atelic_cases`
-    in `Events/Mereology.lean`. -/
+    in `Events/CEM.lean`. -/
 def pathShapeToTelicity : PathShape → Telicity
   | .bounded => .telic
   | .source => .telic
@@ -181,9 +161,7 @@ instance : Core.Scale.LicensingPipeline PathShape where
 
 end Semantics.Events.SpatialTrace
 
--- ════════════════════════════════════════════════════
--- § 6. Motion Verb Path Annotations
--- ════════════════════════════════════════════════════
+/-! ### Motion Verb Path Annotations -/
 
 namespace Semantics.Verb
 

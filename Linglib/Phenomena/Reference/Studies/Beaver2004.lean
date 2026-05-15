@@ -115,7 +115,7 @@ structure Candidate (E : Type) (R : Type) where
   agreementOK : Bool
   /-- DISJOINT: co-arguments of any predicate are distinct entities?
       (Substrate gap: Utterance E R lacks predicate-argument structure.
-      `Linglib/Theories/Semantics/Events/ThematicRoles.lean` provides
+      `Linglib/Theories/Semantics/Events/ThematicRole/Defs.lean` provides
       `ThematicFrame` which could carry this info; integration queued.) -/
   argDisjointOK : Bool
   /-- FAM-DEF: every definite NP is familiar (has antecedent in prev)?

@@ -32,27 +32,11 @@ Topic-named (not paper-named): SINC originates in @cite{krifka-1998}
 @cite{tenny-1994}'s aspectual roles, @cite{dowty-1991}'s proto-roles,
 and any modern incremental-theme account.
 
-## Sections
+## References
 
-1. SINC structure (K98 eq. 51) + derived monotonicity properties
-2. INC: IncClosure inductive + INC definition + inc_of_sinc (K98 eq. 59)
-3. VerbIncClass enum (K98 §3.6 sinc / inc / cumOnly)
-4. Verb-class typeclass hierarchy: IsIncVerb extends IsCumThetaVerb;
-   IsSincVerb extends IsIncVerb; smart constructor `IsSincVerb.mk'`
-
-## File-merge history
-
-This file consolidates what 0.230.397–0.230.402 had spread across
-`StrictIncrementality.lean` (SINC + IsSincVerb) and
-`GeneralIncrementality.lean` (INC + IsIncVerb). The split was
-justified when each file had its own clean typeclass; once mathlib's
-`extends` chain forces both classes into one file (cycle: `IsSincVerb
-extends IsIncVerb` requires `IsIncVerb` in scope, which requires
-`INC`, which uses `SINC`), the predicate split became structural noise.
-Mathlib precedent: the `Semigroup → Monoid → Group → CommGroup` chain
-all lives in `Algebra/Group/Defs.lean`, not split across one file per
-property strength.
-
+* @cite{krifka-1998} §3.2 (SINC eq. 51), §3.6 (INC eq. 59)
+* @cite{tenny-1994} (aspectual roles)
+* @cite{dowty-1991} (proto-roles)
 -/
 
 namespace Semantics.Events.Incrementality
@@ -61,9 +45,7 @@ open Semantics.Events.ThematicRoleProperties
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
--- ════════════════════════════════════════════════════
--- § 1. Strict Incrementality (K98 §3.2 eq. 51)
--- ════════════════════════════════════════════════════
+/-! ### Strict Incrementality (K98 §3.2 eq. 51) -/
 
 /-- Strict Incrementality (SINC): the conjunction of MSO, UO, MSE, UE
     plus a non-degeneracy condition requiring extended entities.
@@ -138,9 +120,7 @@ theorem mo_of_sinc {θ : α → β → Prop} (h : SINC θ) : MO θ :=
 -- CumTheta as a separate hypothesis where needed (see `cum_propagation`
 -- in `CumulativityPropagation.lean`).
 
--- ════════════════════════════════════════════════════
--- § 2. General Incrementality (K98 §3.6 eq. 59)
--- ════════════════════════════════════════════════════
+/-! ### General Incrementality (K98 §3.6 eq. 59) -/
 
 /-- General Incrementality (INC): θ is the closure of some strictly
     incremental θ' under sum formation.
@@ -168,9 +148,7 @@ theorem inc_of_sinc {θ : α → β → Prop} (h : SINC θ) (hCum : CumTheta θ)
     fun hcl => Semantics.Events.PrecedenceClosure.closure_subset
       (fun _ _ h => h) (fun x₁ x₂ e₁ e₂ h₁ h₂ _ => hCum _ _ _ _ h₁ h₂) hcl⟩⟩
 
--- ════════════════════════════════════════════════════
--- § 3. VerbIncClass — Verb Incrementality Classification (K98 §3.6)
--- ════════════════════════════════════════════════════
+/-! ### VerbIncClass — Verb Incrementality Classification (K98 §3.6) -/
 
 /-- Incrementality annotations for verbs.
     @cite{krifka-1998} §3.2-3.7: verbs differ in which thematic role
@@ -190,9 +168,7 @@ inductive VerbIncClass where
   | cumOnly
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 4. Verb-Class Typeclass Hierarchy
--- ════════════════════════════════════════════════════
+/-! ### Verb-Class Typeclass Hierarchy -/
 
 /-! Mathlib-style `extends` chain. The empirical K98 verb classes
     correspond to *partition* membership; the typeclass chain encodes
@@ -279,9 +255,7 @@ def IsSincVerb.mk' {θ : α → β → Prop}
   sinc := sinc
   up := up
 
--- ════════════════════════════════════════════════════
--- § 5. Bridge: K98 SINC → Beavers Quantized
--- ════════════════════════════════════════════════════
+/-! ### Bridge: K98 SINC → Beavers Quantized -/
 
 /-! K98 SINC and Beavers Quantized are related but DIFFERENT formal
     commitments:

@@ -305,7 +305,7 @@ theorem warm_pipeline_converge :
 /-! K&L 2008's measure-of-change function `m_Δ` (eq. 25), formalised in
     `Theories/Semantics/Degree/MeasureFunction.lean`, plugs directly
     into Beavers' affectedness typeclass chain
-    (`Theories/Semantics/Events/AffectednessHierarchy.lean`).
+    (`Theories/Semantics/Events/Scalar/Affectedness.lean`).
 
     This section provides the **first production `[HasMeasureFunction]`
     instances in linglib** — toy domains for *straighten* (closed

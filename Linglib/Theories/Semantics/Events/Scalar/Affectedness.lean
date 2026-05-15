@@ -38,25 +38,13 @@ but is not a typeclass).
     to existential closure.
 - Smart constructor `IsQuantizedAffected.mk'` that takes `(g_φ, h)` and
   derives the parent fields via the `ScalarResult` implication chain.
-
-## Sections
-
-1. `AffectednessDegree` enum + manual `LE`/`LT`/`Decidable` instances
-   via a `strength : AffectednessDegree → Nat` projection (the enum
-   was moved here from `Verb/Affectedness.lean` during the Phase 1b
-   refactor; full `LinearOrder` deferred until a consumer needs it)
-2. Typeclass extends chain (`IsPotentialAffected → IsNonQuantizedAffected → IsQuantizedAffected`)
-3. Smart constructors
-
 -/
 
 namespace Semantics.Events.AffectednessHierarchy
 
 open Semantics.Events.ScalarResult
 
--- ════════════════════════════════════════════════════
--- § 1. AffectednessDegree enum (Beavers 4-level scale)
--- ════════════════════════════════════════════════════
+/-! ### AffectednessDegree enum (Beavers 4-level scale) -/
 
 /-- @cite{beavers-2011} eq. (62) — *The Affectedness Hierarchy*: four
     degrees of affectedness, defined by increasingly weaker truth
@@ -107,9 +95,7 @@ instance (a b : AffectednessDegree) : Decidable (a < b) :=
 
 end AffectednessDegree
 
--- ════════════════════════════════════════════════════
--- § 2. Typeclass extends chain (Beavers eq. 62)
--- ════════════════════════════════════════════════════
+/-! ### Typeclass extends chain (Beavers eq. 62) -/
 
 /-- @cite{beavers-2011} eq. (60c) **Potential affectedness**: the
     bottom of the typeclass chain. Patient is a force-recipient at
@@ -163,7 +149,7 @@ class IsNonQuantizedAffected {α β δ : Type*}
     structurally stronger class — bijective sub-event ↔ sub-object
     correspondence — that ENTAILS Quantized given a `HasScalarResult`
     instance, but Quantized does not entail SINC. See
-    `Theories/Semantics/Events/Incrementality.lean` for the bridge
+    `Theories/Semantics/Events/Aspect/Incremental.lean` for the bridge
     smart constructor. -/
 class IsQuantizedAffected {α β δ : Type*}
     [HasScalarResult α δ β] [HasLatentScale α β]
@@ -173,9 +159,7 @@ class IsQuantizedAffected {α β δ : Type*}
   /-- Witness that θ entails patient ends event with this degree. -/
   isQuantized : Quantized θ finalDegree
 
--- ════════════════════════════════════════════════════
--- § 3. Smart constructors
--- ════════════════════════════════════════════════════
+/-! ### Smart constructors -/
 
 /-! Smart constructors that take only the level-specific witnesses and
     derive the inherited fields automatically via the `ScalarResult`

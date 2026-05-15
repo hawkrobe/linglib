@@ -23,13 +23,13 @@ Slavic aspectology (Comrie 1976 *Aspect*, not in `references.bib`).
 `Telicity.toMereoTag` projects this file's binary `Telicity` onto
 `Core.Scales.Scale.MereoTag`, the canonical cumulative/quantized tag.
 The CUM/QUA/DIV algebra over event predicates lives in
-`Theories/Semantics/Events/Mereology.lean` — that is the substrate; the
+`Theories/Semantics/Events/CEM.lean` — that is the substrate; the
 `Telicity` here is the Smith-flavored derived label.
 
 Sibling formalizations of competitor lexical-aspect frameworks:
 @cite{bach-1986} `EventSort` in `Theories/Semantics/Events/Basic.lean`;
 @cite{krifka-1989}/@cite{krifka-1998} CUM/QUA/DIV in
-`Theories/Semantics/Events/Mereology.lean`; @cite{dowty-1979} SIP in
+`Theories/Semantics/Events/CEM.lean`; @cite{dowty-1979} SIP in
 `Theories/Semantics/Tense/Aspect/SubintervalProperty.lean`;
 @cite{filip-2012} three-way refutation of binary telicity in
 `Phenomena/TenseAspect/Studies/Filip2012.lean`.

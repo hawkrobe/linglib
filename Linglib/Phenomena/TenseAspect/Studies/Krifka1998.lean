@@ -27,7 +27,7 @@ K98's two distinctive contributions, formalized end-to-end:
 The substrate predicates (SUM, UO, UE, MO, MSO, MSE, GUE, SINC, INC,
 CumTheta — K98 §3.2 eq. 43-52, eq. 59) live in
 `Theories/Semantics/Events/{Incrementality,ThematicRoleProperties}.lean`;
-the σ-trace pullback machinery in `Theories/Semantics/Events/SpatialTrace.lean`.
+the σ-trace pullback machinery in `Theories/Semantics/Events/Spatial/Trace.lean`.
 This file exercises both on the English fragment and inlines the §4
 movement-relation predicates (formerly in
 `Theories/Semantics/Events/MovementRelations.lean`).
@@ -97,6 +97,7 @@ namespace Krifka1998
 open Fragments.English.Predicates.Verbal
 open Features
 open Semantics.Verb
+open _root_.Mereology
 open Semantics.Events.ThematicRoleProperties (UP CumTheta IsCumThetaVerb)
 open Semantics.Events.Incrementality (SINC VerbIncClass IsSincVerb IsIncVerb)
 open Semantics.Events.CumulativityPropagation (VP cum_propagation qua_propagation)
@@ -282,7 +283,6 @@ theorem write_a_letter_telic :
 section PropositionalPropagation
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
-open _root_.Mereology
 
 /-- *eat apples* propositional: K98 §3.3 CUM propagation. Given any
     `[IsCumThetaVerb θ]` (eat's role — and any of the K98 verb classes
@@ -593,8 +593,6 @@ theorem read_refinement_chain :
 
 section ToyEatInstance
 
-open Mereology (CUM QUA)
-
 /-- Toy 3-apple universe. `Finset (Fin 3)` carries `SemilatticeSup`
     automatically (join is `Finset.union`); `≤`/`<` are `⊆`/`⊊`. -/
 abbrev Apple : Type := Finset (Fin 3)
@@ -845,7 +843,6 @@ theorem motion_vendler_path_coherence :
 section K98PropositionalSubstrate
 
 open Semantics.Events.ThematicRoleProperties (MO)
-open _root_.Mereology
 
 /-- K98 §4.1 eq. 63 EXP: expansion. If x is θ-related to e and y to a
     temporally-following e', then x and y do not overlap. -/
@@ -916,7 +913,6 @@ section SpatialTracePullback
 open Semantics.Events
 open Semantics.Events.CEM
 open Semantics.Spatial.Path
-open _root_.Mereology
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [cem : EventCEM Time] [SemilatticeSup (Path Loc)]

@@ -29,20 +29,11 @@ tag; the typeclass chain bottoms at `IsPotentialAffected`.
 (per-verb structural commitments — patient type, dimension type, event
 type). The three Beavers Props are plain definitions, used as
 typeclass content one layer up in
-`Theories/Semantics/Events/AffectednessHierarchy.lean`.
+`Theories/Semantics/Events/Scalar/Affectedness.lean`.
 
 Mathlib pattern: cf. `MeasurableSpace α` (structure) +
 `MeasurableSet s` (Prop using the structure) +
 `IsFiniteMeasure μ` (Prop using both).
-
-## Sections
-
-1. `HasScalarResult` typeclass — result-state-at-final-degree predicate
-2. `HasLatentScale` typeclass — latent-scale / force-recipient predicate
-3. Beavers Props (60a-c) on `θ : α → β → Prop`
-4. Implication chain (Beavers eq. 62) — Quantized → NonQuantized;
-   NonQuantized → Potential under a forgetful link
-
 ## Why `Unspecified` is not formalised
 
 @cite{beavers-2011} (60d): `φ → ∃e∃θ'[θ'(x, e)]` — mere participation.
@@ -60,9 +51,7 @@ typeclasses (only `T0/T1/T2/...` are typeclasses; "non-T0" isn't).
 
 namespace Semantics.Events.ScalarResult
 
--- ════════════════════════════════════════════════════
--- § 1. HasScalarResult — result-state typeclass
--- ════════════════════════════════════════════════════
+/-! ### HasScalarResult — result-state typeclass -/
 
 /-- `HasScalarResult α δ β` provides the predicate
     `resultAt x g e`: "patient `x : α` ends event `e : β` holding
@@ -86,9 +75,7 @@ class HasScalarResult (α : Type*) (δ : Type*) (β : Type*) where
   /-- Patient x ends event e holding degree g on dimension δ. -/
   resultAt : α → δ → β → Prop
 
--- ════════════════════════════════════════════════════
--- § 2. HasLatentScale — force-recipient typeclass
--- ════════════════════════════════════════════════════
+/-! ### HasLatentScale — force-recipient typeclass -/
 
 /-- `HasLatentScale α β` provides the predicate `latentScale x e`:
     "patient `x : α` is a force-recipient at event `e : β`, related
@@ -110,9 +97,7 @@ class HasLatentScale (α : Type*) (β : Type*) where
   /-- Patient x is a force-recipient at event e (latent scale relation). -/
   latentScale : α → β → Prop
 
--- ════════════════════════════════════════════════════
--- § 3. Beavers (60a-c) Affectedness Props
--- ════════════════════════════════════════════════════
+/-! ### Beavers (60a-c) Affectedness Props -/
 
 /-- @cite{beavers-2011} eq. (60a) **Quantized**: `θ` entails patient
     `x` ends event `e` holding the SPECIFIC degree `g_φ`.
@@ -158,9 +143,7 @@ def Potential {α β : Type*} [HasLatentScale α β]
     (θ : α → β → Prop) : Prop :=
   ∀ x e, θ x e → HasLatentScale.latentScale x e
 
--- ════════════════════════════════════════════════════
--- § 4. Implication Chain (Beavers eq. 62)
--- ════════════════════════════════════════════════════
+/-! ### Implication Chain (Beavers eq. 62) -/
 
 /-! @cite{beavers-2011} eq. (62) — *The Affectedness Hierarchy*:
     `quantized → non-quantized → potential`. Each level entails the

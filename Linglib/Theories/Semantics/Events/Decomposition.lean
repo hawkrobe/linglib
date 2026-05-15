@@ -48,9 +48,7 @@ namespace Semantics.Events
 open Core.Time
 open Features
 
--- ════════════════════════════════════════════════════
--- § 1. Subevent Phases
--- ════════════════════════════════════════════════════
+/-! ### Subevent Phases -/
 
 /-- The two temporal phases of a complex event (accomplishment/achievement):
     an activity trace (the process) and a result trace (the outcome state).
@@ -63,9 +61,7 @@ structure SubeventPhases (Time : Type*) [LinearOrder Time] where
   /-- Activity precedes or meets result: activity ends ≤ result starts -/
   activity_precedes_result : activityTrace.finish ≤ resultTrace.start
 
--- ════════════════════════════════════════════════════
--- § 2. Temporal Decomposition
--- ════════════════════════════════════════════════════
+/-! ### Temporal Decomposition -/
 
 /-- Temporal decomposition of an event: either simple (single runtime) or
     complex (runtime with internal activity + result phases).
@@ -112,9 +108,7 @@ instance : DecidablePred (@isComplex Time _) :=
 
 end TemporalDecomposition
 
--- ════════════════════════════════════════════════════
--- § 3. VendlerClass ↔ Complexity Bridge
--- ════════════════════════════════════════════════════
+/-! ### VendlerClass ↔ Complexity Bridge -/
 
 /-- Telic Vendler classes (accomplishment, achievement) have complex temporal
     structure with distinguishable activity and result phases. Atelic classes
@@ -134,9 +128,7 @@ theorem hasComplexDecomposition_iff_telic (c : VendlerClass) :
     HasComplexDecomposition c ↔ c.telicity = .telic := by
   cases c <;> simp [HasComplexDecomposition, VendlerClass.telicity]
 
--- ════════════════════════════════════════════════════
--- § 4. Event with Decomposition
--- ════════════════════════════════════════════════════
+/-! ### Event with Decomposition -/
 
 /-- An event enriched with temporal decomposition information.
     Extends `Event` (which has runtime + sort) with subevent phase structure. -/
@@ -164,9 +156,7 @@ def Event.withComplexDecomposition {Time : Type*} [LinearOrder Time]
   decomposition := .complex e.runtime phases h_act h_res
   runtime_consistent := rfl
 
--- ════════════════════════════════════════════════════
--- § 5. Structural Theorems
--- ════════════════════════════════════════════════════
+/-! ### Structural Theorems -/
 
 /-- Activity precedes result in any SubeventPhases (direct accessor). -/
 theorem SubeventPhases.ordering {Time : Type*} [LinearOrder Time]
@@ -193,9 +183,7 @@ theorem simple_no_activity {Time : Type*} [LinearOrder Time]
     (r : Interval Time) :
     (TemporalDecomposition.simple r).activityPhase = none := rfl
 
--- ════════════════════════════════════════════════════
--- § 6. Phase Event Predicates
--- ════════════════════════════════════════════════════
+/-! ### Phase Event Predicates -/
 
 open Semantics.Events
 open Semantics.Tense.Aspect.Core
@@ -232,9 +220,7 @@ theorem prfv_phasePred {Time : Type*} [LinearOrder Time]
   · rintro ⟨e, hSub, rfl⟩; exact hSub
   · intro h; exact ⟨⟨phase, .action⟩, h, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 7. ViewpointAspect ↔ Decomposition Bridge
--- ════════════════════════════════════════════════════
+/-! ### ViewpointAspect ↔ Decomposition Bridge -/
 
 /-- The imperfective paradox via temporal decomposition: IMPF on the
     activity phase can hold at reference times entirely before the result
@@ -324,9 +310,7 @@ theorem impf_activity_prfv_full_incompatible {Time : Type*} [LinearOrder Time]
   | inl h => exact absurd heq_s (ne_of_lt h)
   | inr h => exact absurd heq_f (ne_of_lt h)
 
--- ════════════════════════════════════════════════════
--- § 8. @cite{moens-steedman-1988} Event Types
--- ════════════════════════════════════════════════════
+/-! ### @cite{moens-steedman-1988} Event Types -/
 
 /-- @cite{moens-steedman-1988} aspectual profile. Extends Vendler's
     three-feature `AspectualProfile` with ±consequent state, so the
@@ -404,9 +388,7 @@ theorem isAtomic_iff_punctual (c : MoensSteedmanClass) (h : c ≠ .state) :
 
 end MoensSteedmanClass
 
--- ════════════════════════════════════════════════════
--- § 9. Unified When-Clause Semantics (@cite{moens-steedman-1988})
--- ════════════════════════════════════════════════════
+/-! ### Unified When-Clause Semantics (@cite{moens-steedman-1988}) -/
 
 /-- What *when* accesses in each event type. M&S's key claim: *when* has
     a single meaning (locate the main clause at the culmination), with
@@ -433,9 +415,7 @@ theorem MoensSteedmanClass.when_needs_coercion_iff (c : MoensSteedmanClass) :
     (c = .culminatedProcess ∨ c = .process) := by
   cases c <;> simp [MoensSteedmanClass.whenTarget]
 
--- ════════════════════════════════════════════════════
--- § 10. The Nucleus (Tripartite Event Structure)
--- ════════════════════════════════════════════════════
+/-! ### The Nucleus (Tripartite Event Structure) -/
 
 /-- The @cite{moens-steedman-1988} nucleus: tripartite event structure for
     events with a culmination point. Makes the culmination explicit —

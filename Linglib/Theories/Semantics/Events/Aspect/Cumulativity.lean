@@ -23,13 +23,6 @@ The public API is the typeclass-form `cum_propagation` and
 The explicit-witness variants (`cum_propagation_of_cumTheta`,
 `qua_propagation_of_mso`, `qua_propagation_of_sinc`) are `private`
 proof-factoring helpers, not part of the public API — mathlib pattern.
-
-## Sections
-
-1. VP formation (K98 §3.3 eq. 53)
-2. CUM propagation: explicit + typeclass forms
-3. QUA propagation: explicit (MSO and SINC) + typeclass forms
-
 -/
 
 namespace Semantics.Events.CumulativityPropagation
@@ -41,9 +34,7 @@ open Semantics.Events.Incrementality
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
--- ════════════════════════════════════════════════════
--- § 1. VP Formation (K98 §3.3 eq. 53)
--- ════════════════════════════════════════════════════
+/-! ### VP Formation (K98 §3.3 eq. 53) -/
 
 /-- VP predicate formed by existential closure over the object argument.
     @cite{krifka-1998} eq. 53: `VP_θ,OBJ = λe.∃y[OBJ(y) ∧ θ(y,e)]`.
@@ -51,9 +42,7 @@ variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 def VP (θ : α → β → Prop) (OBJ : α → Prop) : β → Prop :=
   fun e => ∃ y, OBJ y ∧ θ y e
 
--- ════════════════════════════════════════════════════
--- § 2. CUM Propagation (K98 §3.3)
--- ════════════════════════════════════════════════════
+/-! ### CUM Propagation (K98 §3.3) -/
 
 /-- **CUM propagation** (explicit-witness smart constructor): cumulative θ
     transmits CUM from NP to VP. @cite{krifka-1998} §3.3:
@@ -78,9 +67,7 @@ private theorem cum_propagation_of_cumTheta {θ : α → β → Prop} {OBJ : α 
   intro e₁ e₂ ⟨y₁, hobj₁, hθ₁⟩ ⟨y₂, hobj₂, hθ₂⟩
   exact ⟨y₁ ⊔ y₂, hObj y₁ y₂ hobj₁ hobj₂, hCum y₁ y₂ e₁ e₂ hθ₁ hθ₂⟩
 
--- ════════════════════════════════════════════════════
--- § 3. QUA Propagation (K98 §3.3)
--- ════════════════════════════════════════════════════
+/-! ### QUA Propagation (K98 §3.3) -/
 
 /-- **QUA propagation**: UP + MSO transmit QUA from NP to VP.
     @cite{krifka-1998} §3.3: UP(θ) ∧ MSO(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ).
@@ -122,9 +109,7 @@ private theorem qua_propagation_of_sinc {θ : α → β → Prop} {OBJ : α → 
     QUA (VP θ OBJ) :=
   qua_propagation_of_mso hUP hSinc.mso hQua
 
--- ════════════════════════════════════════════════════
--- § 4. Public typeclass-form API (mathlib discipline)
--- ════════════════════════════════════════════════════
+/-! ### Public typeclass-form API (mathlib discipline) -/
 
 /-! The canonical public API: typeclass-form propagation theorems
     that consumers should prefer over the `_of_*` smart constructors
@@ -134,8 +119,8 @@ private theorem qua_propagation_of_sinc {θ : α → β → Prop} {OBJ : α → 
 
 /-- **CUM propagation** (canonical typeclass form). Fires on any
     verb θ with `[IsCumThetaVerb θ]` — including SINC and INC verbs
-    via the upward instances in `StrictIncrementality.lean` /
-    `GeneralIncrementality.lean`. -/
+    via the upward instances in `Aspect/Incremental.lean` /
+    `Aspect/Incremental.lean`. -/
 theorem cum_propagation {θ : α → β → Prop} [IsCumThetaVerb θ]
     {OBJ : α → Prop} (hObj : CUM OBJ) :
     CUM (VP θ OBJ) :=

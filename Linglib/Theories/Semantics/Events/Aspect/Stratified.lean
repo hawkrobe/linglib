@@ -1,56 +1,43 @@
-/-
+import Linglib.Theories.Semantics.Events.CEM
+
+/-!
 # Stratified Reference @cite{champollion-2017}
 
 Champollion's unified Stratified Reference property `SR_{d,γ}` and the
-three specializations linglib uses:
+three specializations linglib uses.
 
-- **SDR** (Stratified Distributive Reference, @cite{champollion-2017} eq. 24):
-  dimension = thematic role, granularity = `Atom` (inner is an atom in β).
-  Models *distributivity*.
-- **SSR** (Stratified Subinterval Reference, @cite{champollion-2017} eq. 38):
-  dimension = τ (runtime), granularity = proper subinterval (inner < outer).
-  Models *atelicity* (for-adverbial diagnostic).
-- **SMR** — *linglib coinage* (Champollion does not name this specialization).
-  Dimension = measure function μ, granularity = strict less-than on the scale.
-  Champollion writes it directly as `SR_{μ, λd.d<μ(x)}` in @cite{champollion-2017}
-  Ch 7 eqs. (18-26) for measurement of substance pseudopartitives ("three liters
-  of water", "five feet of snow"). The "Stratified Measurement Reference" name
-  is local to linglib.
+## Main definitions
+
+* `SR` — Champollion's unified `SR_{d,γ}` (eq. 16/17, binary-γ form)
+* `SR_univ` — universal closure: `∀x, P x → SR d γ P x`
+* `SDR` / `SDR_univ` — Stratified Distributive Reference
+  (@cite{champollion-2017} eq. 24): `d = θ`, `γ = Atom`. Distributivity.
+* `SSR` / `SSR_univ` — Stratified Subinterval Reference
+  (@cite{champollion-2017} eq. 38): `d = τ`, `γ = proper subinterval`. Atelicity.
+* `SMR` / `SMR_univ` — *linglib coinage*; `d = μ`, `γ = strict less-than`.
+  Champollion writes this directly as `SR_{μ, λd.d<μ(x)}` (Ch 7 eqs. 18-26).
 
 ## Granularity signature: binary, not unary
 
-Champollion's eq. (16) gives `SR_{d,g}` with `g : β → Prop` (unary).
-The next equation (eq. 17, the `[[of]]` lexical entry) constructs `g` via a
-higher-order helper `γ(M, x) := λd. d < M(x)` — closing over the OUTER entity
-`x`. Linglib uncurries this: `SR` takes `γ : β → β → Prop` directly with the
-inner-then-outer convention, so `SR d γ P x := *λy(P(y) ∧ γ (d y) (d x))`.
-Equivalent to Champollion's eq. (16) post-closure-elimination, but lets all
-three specializations (SDR/SSR/SMR) be genuine instances of `SR` rather than
-bypass it via per-specialization closures.
+Champollion's eq. (16) has `g : β → Prop`; eq. (17)'s `[[of]]` constructs
+`g` via `γ(M, x) := λd. d < M(x)` (closing over the outer entity). Linglib
+uncurries: `SR` takes `γ : β → β → Prop` directly with inner-then-outer
+convention. Equivalent to Champollion's eq. (16) post-closure-elimination
+but lets all three specializations be genuine instances of `SR`.
 
-## Layered grounding
+## TODO
 
-Built directly on `Mereology.AlgClosure` (= Champollion's `*` operator,
-@cite{link-1983}). No new closure operator is introduced; SR is a
-predicate-transformer over the existing one.
+* The stativity opposition along τ (the fourth Champollion opposition,
+  @cite{champollion-2017} §1.2) is realized in linglib by
+  `HasSubintervalProp` in `Tense/Aspect/SubintervalProperty.lean` rather
+  than as an SR-decomposition form. The SR form at `(τ,
+  point-granularity)` has no current consumer.
 
-## Four oppositions (@cite{champollion-2017} §1.2)
+## References
 
-Champollion's exposition catalogues four oppositions
-(atelic/telic, stative/non-stative, distributive/collective, mass/count)
-under one SR umbrella. In the linglib substrate only those with
-consumers are exposed as named primitives: `SDR_univ` (distributivity),
-`SSR_univ` (atelicity), `SMR_univ` (mass) — each a genuine instance of
-`SR_univ`. The stativity opposition along τ is realized in linglib by
-the witness-universal `HasSubintervalProp` in
-`Tense/Aspect/SubintervalProperty.lean` rather than an SR-decomposition
-form: ∀-projection over hypothetical witness events is the structure
-the existing IMPF/PRFV theorems require, and the SR-decomposition form
-at (τ, point-granularity) has no current consumer.
-
+* @cite{champollion-2017} (primary, all SR primitives)
+* @cite{link-1983} (the `*` algebraic-closure operator SR builds on)
 -/
-
-import Linglib.Theories.Semantics.Events.CEM
 
 namespace Semantics.Events.StratifiedReference
 
@@ -60,9 +47,7 @@ open _root_.Mereology
 open Core.Time
 open Features
 
--- ════════════════════════════════════════════════════
--- § 1. Stratified Reference (@cite{champollion-2017} eq. 16/17)
--- ════════════════════════════════════════════════════
+/-! ### Stratified Reference (@cite{champollion-2017} eq. 16/17) -/
 
 /-- Stratified Reference: the core unified property from
     @cite{champollion-2017} eq. (16), with the binary-granularity
@@ -83,9 +68,7 @@ def SR {α β : Type*} [SemilatticeSup α]
     (d : α → β) (γ : β → β → Prop) (P : α → Prop) (x : α) : Prop :=
   AlgClosure (λ y => P y ∧ γ (d y) (d x)) x
 
--- ════════════════════════════════════════════════════
--- § 2. Universal Stratified Reference
--- ════════════════════════════════════════════════════
+/-! ### Universal Stratified Reference -/
 
 /-- Universal Stratified Reference: every `P`-entity has SR.
     `SR_univ d γ P := ∀ x, P x → SR d γ P x`. When this holds, `P` is
@@ -94,9 +77,7 @@ def SR_univ {α β : Type*} [SemilatticeSup α]
     (d : α → β) (γ : β → β → Prop) (P : α → Prop) : Prop :=
   ∀ x, P x → SR d γ P x
 
--- ════════════════════════════════════════════════════
--- § 2.5. Atomic granularity (shared γ)
--- ════════════════════════════════════════════════════
+/-! ### Atomic granularity (shared γ) -/
 
 /-- Atomic granularity for dimensions where `[PartialOrder β]` is
     available: the inner d-image is an `Atom` in β. Used by `SDR`
@@ -112,9 +93,7 @@ def SR_univ {α β : Type*} [SemilatticeSup α]
 def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
   fun inner _outer => Atom inner
 
--- ════════════════════════════════════════════════════
--- § 3. SDR — Stratified Distributive Reference (@cite{champollion-2017} eq. 24)
--- ════════════════════════════════════════════════════
+/-! ### SDR — Stratified Distributive Reference (@cite{champollion-2017} eq. 24) -/
 
 /-- Stratified Distributive Reference: dimension is a thematic role θ,
     granularity is `Atom` on the inner image (the outer is unused —
@@ -133,9 +112,7 @@ def SDR_univ {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (P : α → Prop) : Prop :=
   ∀ x, P x → SDR θ P x
 
--- ════════════════════════════════════════════════════
--- § 4. SSR — Stratified Subinterval Reference (@cite{champollion-2017} eq. 38)
--- ════════════════════════════════════════════════════
+/-! ### SSR — Stratified Subinterval Reference (@cite{champollion-2017} eq. 38) -/
 
 /-- Proper-subinterval granularity: inner runtime is a proper subinterval
     of outer runtime. The binary `γ` for SSR. -/
@@ -161,9 +138,7 @@ def SSR_univ {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
     (P : Event Time → Prop) : Prop :=
   ∀ e, P e → SSR P e
 
--- ════════════════════════════════════════════════════
--- § 5. SMR — Stratified Measurement Reference
--- ════════════════════════════════════════════════════
+/-! ### SMR — Stratified Measurement Reference -/
 
 /-! **Naming caveat.** "SMR" is linglib's name for the measurement
     specialization of SR. @cite{champollion-2017} does not give this
@@ -194,9 +169,7 @@ def SMR_univ {α β : Type*} [SemilatticeSup α] [Preorder β]
     (μ : α → β) (P : α → Prop) : Prop :=
   ∀ x, P x → SMR μ P x
 
--- ════════════════════════════════════════════════════
--- § 6. Distributivity Constraint
--- ════════════════════════════════════════════════════
+/-! ### Distributivity Constraint -/
 
 /-- @cite{champollion-2017} Ch 7 eq. (13) **Distributivity Constraint**:
     a distributive construction with Share `S`, Map `M`, granularity `γ`
@@ -207,9 +180,7 @@ abbrev DistConstr {α β : Type*} [SemilatticeSup α]
     (Map : α → β) (gran : β → β → Prop) (Share : α → Prop) (x : α) : Prop :=
   SR Map gran Share x
 
--- ════════════════════════════════════════════════════
--- § 7. Construction Instances
--- ════════════════════════════════════════════════════
+/-! ### Construction Instances -/
 
 /-- "each" distributes over atomic θ-fillers.
     Map = θ (thematic role), granularity = Atom (inner only). -/
@@ -224,9 +195,7 @@ abbrev forConstr {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
     (Share : Event Time → Prop) (e : Event Time) : Prop :=
   SSR Share e
 
--- ════════════════════════════════════════════════════
--- § 8. Key Theorems
--- ════════════════════════════════════════════════════
+/-! ### Key Theorems -/
 
 /-- SR_univ entails SR for any specific element (instantiation). -/
 theorem sr_univ_entails_restricted {α β : Type*} [SemilatticeSup α]
@@ -275,7 +244,7 @@ theorem sr_of_refl_gran {α β : Type*} [SemilatticeSup α]
     and (ii) the granularity is monotone in the outer position with
     respect to `≤` on β. The substrate validation that the trace-function
     abstraction (`[IsSumHom d]`, applicable uniformly to τ, σ, agentOf,
-    patientOf, themeOf via the instances in `Events/Mereology.lean`)
+    patientOf, themeOf via the instances in `Events/CEM.lean`)
     composes correctly with stratified reference.
 
     The IsSumHom assumption ensures `d (x ⊔ y) = d x ⊔ d y`; the
@@ -303,9 +272,7 @@ theorem sr_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
   rw [hHom.map_sup]
   exact hxy
 
--- ════════════════════════════════════════════════════
--- § 9. Meaning Postulates (per-verb distributivity)
--- ════════════════════════════════════════════════════
+/-! ### Meaning Postulates (per-verb distributivity) -/
 
 /-- Meaning postulates for verb distributivity (§6.2–6.3).
     These encode which verbs have SDR along which roles.
@@ -336,9 +303,7 @@ class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
       §6.3: meeting requires multiple participants. -/
   meet_agent_not_sdr : ¬ SDR_univ agentOf meet
 
--- ════════════════════════════════════════════════════
--- § 10. Aspect Bridge (SSR ↔ atelicity)
--- ════════════════════════════════════════════════════
+/-! ### Aspect Bridge (SSR ↔ atelicity) -/
 
 /-- for-adverbials require SSR (§5.3, eq. 39/66).
     "John ran for an hour" is felicitous because "run" has SSR.
@@ -372,9 +337,7 @@ theorem qua_incompatible_with_ssr
     exact Interval.properSubinterval_irrefl _ hGran
   exact hQua e a he (lt_of_le_of_ne hle hne) hPa
 
--- ════════════════════════════════════════════════════
--- § 11. for-Adverbial Compatibility
--- ════════════════════════════════════════════════════
+/-! ### for-Adverbial Compatibility -/
 
 /-- The "for"-adverbial adds a duration constraint on the event runtime
     and requires the predicate to have SSR (eq. 39).

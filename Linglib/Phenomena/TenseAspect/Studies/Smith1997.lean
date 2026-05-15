@@ -495,7 +495,7 @@ theorem external_override_is_final (v : AspectualProfile) (np : MassCount)
 /-- The count/mass distinction in NPs tracks cumulativity/quantization:
     count NPs are quantized (QUA), mass NPs are cumulative (CUM).
     This connects Smith's compositional rules to Krifka's mereological
-    telicity theory via the bridge in `Events/Mereology.lean`.
+    telicity theory via the bridge in `Events/CEM.lean`.
 
     - V[+Telic] + NP[+Count/QUA] → VCon[+Telic] (telic preserved)
     - V[+Telic] + NP[-Count/CUM] → VCon[-Telic] (atelicized)

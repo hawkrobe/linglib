@@ -52,7 +52,7 @@ open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 
 /-- Per-verb distributivity profile: whether the verb distributes
     over atomic agents and/or themes. Mirrors the postulates in
-    `VerbDistributivity` from `Events/StratifiedReference.lean`. -/
+    `VerbDistributivity` from `Events/Aspect/Stratified.lean`. -/
 structure DistProfile where
   verb : String
   agentSDR : Bool   -- distributes over atomic agents?
@@ -134,7 +134,7 @@ theorem all_collective_ok :
 -- § 4. VerbDistributivity Postulate Alignment
 -- ════════════════════════════════════════════════════
 
-/-! The `VerbDistributivity` class from `Events/StratifiedReference.lean`
+/-! The `VerbDistributivity` class from `Events/Aspect/Stratified.lean`
     axiomatizes `SDR_univ` for specific verbs.
     Verify our profiles match:
     - `see_agent_sdr`, `see_theme_sdr` ↔ seeProfile = (true, true)

@@ -11,7 +11,7 @@ inter-event constraint `cond : β → β → Prop`. Two specializations:
 
 * **Unconditional** (`cond = fun _ _ ↦ True`): @cite{krifka-1998} §3.6
   eq. 59 incremental-theme closure (`IncClosure` in
-  `Events/Incrementality.lean`). Permits arbitrary sum formation —
+  `Events/Aspect/Incremental.lean`). Permits arbitrary sum formation —
   models *read the article* (re-reading allowed).
 * **Precedence-respecting** (`cond := precedes`): @cite{krifka-1998}
   §4.3 eq. 71 movement-relation closure (`MovementClosure` in

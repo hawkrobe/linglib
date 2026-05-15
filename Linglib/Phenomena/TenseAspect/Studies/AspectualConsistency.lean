@@ -546,10 +546,10 @@ theorem k89_read_refines_k98_matches_fragment :
     → MereoTag → Boundedness → for/in licensing). This section
     verifies the **propositional** propagation chain at the typeclass
     level: given `[IsSincVerb θ]` (which bundles SINC + UP + CumTheta;
-    declared in `Theories/Semantics/Events/StrictIncrementality.lean`),
+    declared in `Theories/Semantics/Events/Aspect/Incremental.lean`),
     QUA and CUM propagate through the verb's incremental theme to the
     VP via substrate's typeclass-form `qua_propagation` and
-    `cum_propagation` (`Theories/Semantics/Events/CumulativityPropagation.lean`).
+    `cum_propagation` (`Theories/Semantics/Events/Aspect/Cumulativity.lean`).
 
     These are propositional cousins of §3's full-pipeline tests — same
     K89 → K98 chain, but at the substrate level rather than the
@@ -582,7 +582,7 @@ theorem sinc_verb_qua_object_yields_qua_vp
 /-- For any verb θ with CumTheta — including cumOnly classes
     (*push*, *carry*) and the strictly stronger SINC/INC classes
     (which auto-derive `[IsCumThetaVerb θ]` via the upward instances
-    in `StrictIncrementality.lean` / `GeneralIncrementality.lean`) —
+    in `Aspect/Incremental.lean` / `Aspect/Incremental.lean`) —
     a CUM object yields a CUM VP. K98 §3.3 cum-propagation at maximal
     typeclass generality; subsumes the SINC-only case. Direct
     invocation of substrate's typeclass-form `cum_propagation`. -/

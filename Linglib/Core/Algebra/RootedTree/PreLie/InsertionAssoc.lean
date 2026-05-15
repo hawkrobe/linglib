@@ -5525,6 +5525,44 @@ private theorem LHS_form_cons_decompose
   -- 4. Alternatively, refactor Phase B/C.1 to avoid simp_rw saturation by using
   --    more conservative `rw [theorem_name]` at specific positions.
   --
+  -- Step C.2: Distribute the (M_true + M_false).bind over add via Multiset.add_bind,
+  -- then apply Multiset.bind_map to push the (true :: ·) / (false :: ·) substitution
+  -- into the binder body. This exposes a_3 = (true :: rest_assn) explicitly in
+  -- the TRUE branch and a_3 = (false :: rest_assn) in the FALSE branch.
+  simp_rw [Multiset.add_bind, Multiset.bind_map]
+  -- Now the t-filter and f-filter expressions have explicit form:
+  -- TRUE branch t-filter = ((c, true) :: rest.zip rest_assn).filterMap (...) which reduces
+  -- via List.zip_cons_cons + List.filterMap_cons + if-true → some.
+  simp_rw [List.zip_cons_cons, List.filterMap_cons]
+  -- The if-conditions reduce: `if True then some c else none = some c`,
+  -- `if false = true then some c else none = none`. Use ↓reduceIte tag.
+  -- Bool.false_eq_true converts `false = true` to `False` so the if reduces.
+  simp only [↓reduceIte, Bool.false_eq_true]
+  -- Now t-filter and f-filter are clean:
+  -- TRUE branch:  t-filter = c :: filterMap ..., f-filter = filterMap ... (no c)
+  -- FALSE branch: t-filter = filterMap ... (no c), f-filter = c :: filterMap ...
+  --
+  -- Phase C.2 (TRUE branch v_c exposure): apply List.length_cons + listChoices_succ
+  -- to expose `(c :: ...).length = ... + 1` and `listChoices (vertices a) (... + 1) =
+  -- (vertices a).flatMap fun v_c => (listChoices (vertices a) ...).map (v_c :: ·)`.
+  -- This separates v_c (c-vertex choice in T') from the rest-vertex choices.
+  -- NOTE: List.length_cons fires on the t-filter `(c :: filterMap ...).length = ... + 1`
+  -- in TRUE branch. listChoices_succ then exposes v_c as a List.flatMap.
+  -- FALSE branch is untouched here (no `c :: ...` in t-filter; c is in f-filter inside
+  -- `insertionForest a_2 (c :: ...)` which requires `insertionForest_eq_explicit` to
+  -- expose perKFChoice — Phase C.3 below).
+  simp_rw [List.length_cons, listChoices_succ]
+  -- Phase C.3 (FALSE branch (i,v) exposure on F-side): apply `insertionForest_eq_explicit`
+  -- to convert `insertionForest a_2 (c :: filterMap_rest)` into a perKFChoice-bind form.
+  -- Note this rewrite also affects the OUTER `insertionForest F_A (a_1 ++ pres .FA_orig)`
+  -- and `insertionForest pre_T_B (pres .T_graft)` etc. — they all become enumFChoices forms.
+  -- After this, the FALSE branch's inner has `(listChoices (perKFChoice a_2) (c :: ...).length)`
+  -- which exposes the (i, v) head choice via listChoices_succ (next step).
+  simp_rw [insertionForest_eq_explicit]
+  -- Apply length_cons + listChoices_succ once more to expose (i, v) for FALSE branch's c.
+  -- This time the listChoices is over perKFChoice (not vertices), and the head element
+  -- of the choice list is the (i, v) for c.
+  simp_rw [List.length_cons, listChoices_succ]
   -- Substantive content remaining (~400-700 LOC across 2 sessions):
   -- - Phase D.T_orig: c-vertex choice → preserved/sourceSelf class of T (via
   --   `vertices_multiGraft_decomp` on T'). Per Phase A's `multiGraft_cons_pair`,

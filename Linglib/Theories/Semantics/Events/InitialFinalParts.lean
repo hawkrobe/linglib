@@ -7,7 +7,7 @@ import Mathlib.Order.Basic
 A part `e'` of a whole `e` is INITIAL iff no other part precedes `e'`,
 FINAL iff no other part follows `e'`. Generic over a partial order
 and a precedence relation; specialize with `Event.precedes` for events
-(`Theories/Semantics/Events/EventAdjacency.lean`).
+(`Theories/Semantics/Events/Adjacency.lean`).
 
 These are the substrate predicates for the planned propositional `TEL`
 predicate that captures K98 §2.5 eq. 37 (*every part of a P-event that
@@ -15,14 +15,6 @@ is also P is both initial and final*), which is strictly weaker than
 `QUA`. (Previously also for K98 §4.5 SOURCE/GOAL — those were dropped
 during the MovementRelations cleanup since K98 states them as
 necessary conditions on movement relations, not as definitions.)
-
-## Sections
-
-1. `IsInitialPart` (K98 §2.5 eq. 36 INI)
-2. `IsFinalPart` (K98 §2.5 eq. 36 FIN)
-3. Self-as-initial / self-as-final corner cases
-4. `IsTelic` — K98 §2.5 eq. 37 propositional telicity
-
 -/
 
 namespace Semantics.Events.InitialFinalParts

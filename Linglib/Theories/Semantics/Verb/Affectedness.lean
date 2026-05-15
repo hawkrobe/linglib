@@ -15,7 +15,7 @@ conditions about change in the affected argument.
 The `AffectednessDegree` enum and the typeclass `extends` chain
 (`IsUnspecifiedAffected → IsPotentialAffected → IsNonQuantizedAffected →
 IsQuantizedAffected`) live in
-`Theories/Semantics/Events/AffectednessHierarchy.lean` (substrate-level,
+`Theories/Semantics/Events/Scalar/Affectedness.lean` (substrate-level,
 referenceable by K98 verb-class typeclasses). This file's role: project
 Dowty's `EntailmentProfile` to `AffectednessDegree` and verify the
 projection on canonical verb profiles. **The enum, `strength`, and `LE`
@@ -78,7 +78,7 @@ open Features.EntailmentProfile
 -- ════════════════════════════════════════════════════
 
 /-! The 4-level Beavers affectedness enum, declared in
-    `Theories/Semantics/Events/AffectednessHierarchy.lean` and
+    `Theories/Semantics/Events/Scalar/Affectedness.lean` and
     re-exported here for backward compatibility with consumers
     (`Beavers2010`, `BeaversUdayana2022`, `StapsRooryck2024`,
     `AgentivityLattice`). -/

@@ -16,13 +16,6 @@ are consumed by:
 - `InitialFinalParts.lean` (initial/final parts via precedence)
 - `MeasureAdverbialDerivation.lean` (planned, K98 §3.5 cτ minimal-
   convex-time derivation)
-
-## Sections
-
-1. `Event.adjacent` — event adjacency via runtime-meet
-2. `Event.precedes` — event temporal precedence via `Interval.isBefore`
-3. `Event.adjacent_symm` — adjacency is symmetric
-
 -/
 
 namespace Semantics.Events

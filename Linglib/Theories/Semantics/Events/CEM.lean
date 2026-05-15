@@ -14,15 +14,6 @@ Vendler class bridges.
 
 Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
 `IsSumHom`, `Overlap`, `ExtMeasure`, `QMOD`) live in `Core.Mereology`.
-
-## Sections
-
-1. Event CEM (Classical Extensional Mereology enrichment)
-2. Lexical Cumulativity
-3. Role Homomorphism (θ preserves ⊕)
-4. τ Homomorphism (runtime preserves ⊕)
-5. Bridges to existing types
-
 -/
 
 namespace Semantics.Events.CEM
@@ -37,9 +28,7 @@ open _root_.Mereology
 -- `Core.Scales.MereoDim`. Consumers do `open Mereology` to bring it
 -- into scope rather than relying on re-exports here.
 
--- ════════════════════════════════════════════════════
--- § 1. Event CEM (Classical Extensional Mereology)
--- ════════════════════════════════════════════════════
+/-! ### Event CEM (Classical Extensional Mereology) -/
 
 /-- Classical Extensional Mereology for events: enriches `EventMereology`
     with binary sum (⊔) via `SemilatticeSup (Event Time)`.
@@ -64,9 +53,7 @@ noncomputable instance eventCEMSemilatticeSup (Time : Type*) [LinearOrder Time]
     [cem : EventCEM Time] : SemilatticeSup (Event Time) :=
   cem.evSemilatticeSup
 
--- ════════════════════════════════════════════════════
--- § 2. Lexical Cumulativity
--- ════════════════════════════════════════════════════
+/-! ### Lexical Cumulativity -/
 
 /-- Lexical cumulativity for event predicates: the event-specific
     instantiation of CUM. A verb predicate V is lexically cumulative
@@ -86,9 +73,7 @@ theorem cum_iff_lexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
   · intro h e₁ e₂ h₁ h₂; exact h e₁ e₂ h₁ h₂
   · intro h x y hx hy; exact h x y hx hy
 
--- ════════════════════════════════════════════════════
--- § 3. Role Homomorphism (θ preserves ⊕)
--- ════════════════════════════════════════════════════
+/-! ### Role Homomorphism (θ preserves ⊕) -/
 
 /-- A thematic-role sum homomorphism: the function mapping each event
     to its θ-role filler preserves ⊕.
@@ -111,9 +96,7 @@ class RoleHom (Entity Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
   /-- Theme extraction preserves ⊕. -/
   theme_hom : @IsSumHom _ _ cem.evSemilatticeSup _ themeOf
 
--- ════════════════════════════════════════════════════
--- § 4. Trace Functions: τ, σ, θ as IsSumHom (@cite{champollion-2017} §2.5)
--- ════════════════════════════════════════════════════
+/-! ### Trace Functions: τ, σ, θ as IsSumHom (@cite{champollion-2017} §2.5) -/
 
 /-! ### Trace functions = sum-homomorphisms on `Event T`
 
@@ -177,9 +160,7 @@ instance instIsSumHomTheme (Entity Time : Type*) [LinearOrder Time]
     @IsSumHom _ _ cem.evSemilatticeSup _ rh.themeOf :=
   rh.theme_hom
 
--- ════════════════════════════════════════════════════
--- § 5. Bridges to Existing Types
--- ════════════════════════════════════════════════════
+/-! ### Bridges to Existing Types -/
 
 /-- Atelic Vendler classes are exactly states, activities, and semelfactives. -/
 theorem vendlerClass_atelic_cases

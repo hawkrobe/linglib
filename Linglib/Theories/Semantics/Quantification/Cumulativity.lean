@@ -17,7 +17,7 @@ and (until this file) never spoke to each other:
 |---|---|---|
 | Tower continuations | Higher-order dynamic GQ via `Cont` monad | `Phenomena/Plurals/Studies/Charlow2021/HigherOrder.lean` |
 | Beck-Sauerland `**` | Pluralization operator on relations between Finsets | `Theories/Semantics/Plurality/Cumulativity.lean` |
-| Champollion `*` | Cumulative-closure on event predicates | `Theories/Semantics/Events/CumulativityPropagation.lean` |
+| Champollion `*` | Cumulative-closure on event predicates | `Theories/Semantics/Events/Aspect/Cumulativity.lean` |
 
 Linglib's stated thesis: theoretical incompatibilities should be made visible.
 Three accounts of the same phenomenon, formalized side-by-side without bridge

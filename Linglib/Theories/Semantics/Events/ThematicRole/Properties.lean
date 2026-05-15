@@ -17,17 +17,6 @@ that @cite{dowty-1991} proto-roles, @cite{tenny-1994} aspectual roles,
 @cite{carlson-1984} thematic-role-as-relation theory, and any modern
 incremental-theme account uses. Specific paper replications import
 this file and instantiate the predicates on paper-specific data.
-
-## Sections
-
-1. UP (uniqueness of participants, eq. 43)
-2. CumTheta (cumulativity for θ, eq. 44)
-3. ME / MSE (mapping to events / strict subevents, eq. 45/46)
-4. UE (uniqueness of events, eq. 47)
-5. MO / MSO (mapping to objects / strict subobjects, eq. 48/49)
-6. UO (uniqueness of objects, eq. 50)
-7. GUE (general uniqueness of events, eq. 52)
-
 -/
 
 namespace Semantics.Events.ThematicRoleProperties
@@ -97,9 +86,7 @@ theorem roleHom_implies_cumTheta
   rw [← hx, ← hy]
   exact hf.map_sup e e'
 
--- ════════════════════════════════════════════════════
--- § 8. IsCumThetaVerb — typeclass for cumulative-θ verbs
--- ════════════════════════════════════════════════════
+/-! ### IsCumThetaVerb — typeclass for cumulative-θ verbs -/
 
 /-- A thematic relation θ has *cumulative theta* (mathlib-discipline
     typeclass form of `CumTheta` for synthesis).
@@ -107,8 +94,8 @@ theorem roleHom_implies_cumTheta
     The weakest verb-class typeclass: every K98 verb class
     (strictly incremental, incremental, cumulative-only) satisfies
     `CumTheta` and hence `IsCumThetaVerb`. The stronger classes
-    (`IsSincVerb` in `StrictIncrementality.lean`, `IsIncVerb` in
-    `GeneralIncrementality.lean`) register upward instances providing
+    (`IsSincVerb` in `Aspect/Incremental.lean`, `IsIncVerb` in
+    `Aspect/Incremental.lean`) register upward instances providing
     `IsCumThetaVerb` automatically.
 
     Note: this typeclass is content-driven — its only field is
