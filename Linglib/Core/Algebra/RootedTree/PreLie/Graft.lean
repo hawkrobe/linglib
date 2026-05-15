@@ -2985,6 +2985,122 @@ decreasing_by
   have := h_le cs j h_j_lt
   omega
 
+/-! ## §11: `multiGraft_compose` — full nested multi-graft composition
+
+**Status (2026-05-15, 0.231.79):** plan landed; substrate not yet built.
+See `scratch/multigraft_compose_plan.md` for full specification.
+
+**Statement:**
+```
+theorem multiGraft_compose (T : Planar α)
+    (outer_pairs : List (Path × Planar α))
+    (inner_pairs : List (Path × Planar α))
+    (h_outer_valid : ∀ p ∈ outer_pairs, IsValidPath p.fst T)
+    (h_inner_valid : ∀ p ∈ inner_pairs, IsValidPath p.fst (multiGraft T outer_pairs)) :
+    multiGraft (multiGraft T outer_pairs) inner_pairs =
+    multiGraft T (composePairs outer_pairs inner_pairs)
+```
+
+**Why needed**: Closes A3.3 helpers `LHS_TRUE_eq_T_buckets` /
+`LHS_FALSE_eq_FA_buckets` (substantive Phase 2-4 of each). The LHS contains
+nested multi-grafts `mG T' (...)` where `T' = mG T outer_pairs`; collapsing
+to a single multi-graft `mG T composed_pairs` enables matching the RHS
+T_orig / T_graft / FA_orig / FA_graft summands.
+
+**`composePairs` semantics**: for each inner pair `(p, c)` at position
+`p ∈ vertices (mG T outer_pairs)`:
+- **preserved/sourceSelf** (p = `transport outer_pairs v` for v ∈ vertices T):
+  add `(v, c)` to outer_pairs.
+- **lifted** (p = `liftMulti outer_pairs k q`): modify `outer_pairs[k].snd`
+  to `insertAt q c outer_pairs[k].snd`.
+
+These three classes are exhaustive by `vertices_multiGraft_decomp` (§9).
+
+**Proof structure** (~600 LOC across 3-4 sessions):
+- **Phase A** (~150 LOC): `composePairs` definition (operational via
+  `decodePath` decoder) + theorem statement.
+- **Phase B** (~150 LOC): inner_pairs = [] base case + cons-step setup
+  via `multiGraft_cons_pair`.
+- **Phase C** (~200 LOC): per-class handling in cons step
+  (preserved/sourceSelf via `multiGraft_cons_pair`; lifted via
+  `multiGraft_split_lifted_aux`).
+- **Phase D** (~100 LOC): termination (decreasing weight argument).
+
+**Substrate consumed**: `vertices_multiGraft_decomp` (§9),
+`multiGraft_cons_pair` (§10.7), `multiGraft_split_lifted_aux` (§10.6),
+`transport` / `liftMulti` / `pairSources` / `preserveMulti` (§7-8). -/
+
+/-! ### §11.1: `absorbInnerPair` — single inner-pair absorption (sorry-fenced)
+
+For an inner pair `(p, c)` where `p ∈ vertices (mG T outer)`, returns the
+modified outer pair list whose multi-graft of T equals `insertAt p c (mG T outer)`.
+
+**Three-class semantics** (by `vertices_multiGraft_decomp`):
+- preserved (p = `transport outer v`, v ∉ pairSources): outer ++ [(v, c)]
+- sourceSelf (p = `transport outer v`, v ∈ pairSources): outer ++ [(v, c)]
+- lifted (p = `liftMulti outer k q`): outer.set k.val (...,insertAt q c outer[k].snd)
+
+**Implementation strategy** (Phase B): recursive descent on p's structure
+relative to `rootPrependCount outer`:
+- If `p[0] < rootPrependCount outer`: p starts in a root-prepend → lifted class
+- Else: p[0] - rootPrependCount outer is a child index → recurse on
+  `descentToChild` for the child + tail of p
+
+Returns the original outer unchanged on invalid inputs (defensive). -/
+
+noncomputable def absorbInnerPair (_outer : List (Path × Planar α))
+    (_p : Path) (_c : Planar α) : List (Path × Planar α) :=
+  -- TODO Phase B: implement via decodePath decoder + 3-class case split.
+  -- Sorry-fenced: returning a stub here would make `multiGraft_compose`
+  -- provably false, so we leave the body undefined.
+  sorry
+
+/-! ### §11.2: `composePairs` — full inner-list composition
+
+Iterates `absorbInnerPair` over inner pairs. Each iteration may modify
+outer (via append for preserved/sourceSelf, or via set for lifted) so the
+next inner pair is absorbed against the updated outer. -/
+
+noncomputable def composePairs (outer : List (Path × Planar α))
+    (inner : List (Path × Planar α)) : List (Path × Planar α) :=
+  inner.foldl (fun acc (p, c) => absorbInnerPair acc p c) outer
+
+/-! ### §11.3: `multiGraft_compose` — main theorem (sorry-fenced) -/
+
+/-- **Nested multi-graft composition** (sorry-fenced; Phase B-D). Collapses
+    a multi-graft of a multi-graft into a single multi-graft of the original
+    host with composed pairs. Required for closing A3.3 helpers. -/
+theorem multiGraft_compose
+    (T : Planar α) (outer_pairs : List (Path × Planar α))
+    (inner_pairs : List (Path × Planar α))
+    (_h_outer_valid : ∀ p ∈ outer_pairs, IsValidPath p.fst T)
+    (_h_inner_valid : ∀ p ∈ inner_pairs,
+        IsValidPath p.fst (multiGraft T outer_pairs)) :
+    multiGraft (multiGraft T outer_pairs) inner_pairs =
+      multiGraft T (composePairs outer_pairs inner_pairs) := by
+  -- Phase B: induction on inner_pairs.
+  induction inner_pairs with
+  | nil =>
+    -- nil base: composePairs outer [] = outer (trivial foldl), and mG (mG T outer) [] = mG T outer
+    show multiGraft (multiGraft T outer_pairs) [] =
+         multiGraft T (composePairs outer_pairs [])
+    rw [multiGraft_nil]
+    rfl
+  | cons head tail _ih =>
+    -- cons case (TODO Phase B-C-D): per-class bridge in cons step
+    -- For (p, c) :: rest: by multiGraft_cons_pair on (mG T outer):
+    --   LHS = insertAt (transport rest p) c (mG (mG T outer) rest)
+    -- With composePairs cons step: composePairs outer ((p, c) :: rest) =
+    --   composePairs (absorbInnerPair outer p c) rest
+    -- So RHS = mG T (composePairs (absorbInnerPair outer p c) rest)
+    -- By IH at outer' = absorbInnerPair outer p c:
+    --   mG (mG T outer') rest = mG T (composePairs outer' rest) = RHS
+    -- Reduces to: insertAt (transport rest p) c (mG (mG T outer) rest)
+    --           = mG (mG T outer') rest (where outer' = absorbInnerPair outer p c)
+    -- This is the per-class bridge (preserved/sourceSelf via multiGraft_cons_pair
+    -- on T; lifted via multiGraft_split_lifted_aux).
+    sorry
+
 end Pathed
 
 end Planar
