@@ -4483,6 +4483,204 @@ private theorem augInterpret_T_orig_succ_bridge
              extractTOrigPairs_cons_t_orig, extractTGraftPairsAt_cons_t_orig,
              extractFAOrigPairsAt_cons_t_orig, extractFAGraftPairsAt_cons_t_orig]
 
+/-- Leaf equality for the T_graft bucket case of the cons step. -/
+private theorem augInterpret_T_graft_succ_bridge
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (pres : QuadIdx → List (Planar α)) (c : Planar α) (rest : List (Planar α))
+    (pre_T_B_choice : List Path) (pre_FA_B_choice : List (Fin F_A.length × Path))
+    (targets : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+    (pTO : List Path)
+    (pTG : List (Fin pre_T_B.length × Path))
+    (k : Fin pre_T_B.length) (q : Path)
+    (pFO : List (Fin F_A.length × Path))
+    (pFG : List (Fin pre_FA_B.length × Path))
+    (hPTGlen : pTG.length = (pres QuadIdx.T_graft).length) :
+    augInterpret T
+      ({ pre_T_B_choice := pre_T_B_choice
+         pre_FA_B_choice := pre_FA_B_choice
+         C_targets := targets
+         pres_T_orig_choice := pTO
+         pres_T_graft_choice := pTG ++ [(k, q)]
+         pres_FA_orig_choice := pFO
+         pres_FA_graft_choice := pFG }
+       : AugGraftingData F_A pre_T_B pre_FA_B
+           (Function.update pres QuadIdx.T_graft (pres QuadIdx.T_graft ++ [c]))) rest =
+    augInterpret T
+      ({ pre_T_B_choice := pre_T_B_choice
+         pre_FA_B_choice := pre_FA_B_choice
+         C_targets := AlphaConstrainedChoice.t_graft k q :: targets
+         pres_T_orig_choice := pTO
+         pres_T_graft_choice := pTG
+         pres_FA_orig_choice := pFO
+         pres_FA_graft_choice := pFG }
+       : AugGraftingData F_A pre_T_B pre_FA_B pres) (c :: rest) := by
+  unfold augInterpret
+  -- Reduce Function.update: T_graft → +[c]; others → unchanged.
+  have hT : (Function.update pres QuadIdx.T_graft (pres QuadIdx.T_graft ++ [c]))
+              QuadIdx.T_orig = pres QuadIdx.T_orig :=
+    Function.update_of_ne (by decide) _ _
+  have hG : (Function.update pres QuadIdx.T_graft (pres QuadIdx.T_graft ++ [c]))
+              QuadIdx.T_graft = pres QuadIdx.T_graft ++ [c] :=
+    Function.update_self _ _ _
+  have hO : (Function.update pres QuadIdx.T_graft (pres QuadIdx.T_graft ++ [c]))
+              QuadIdx.FA_orig = pres QuadIdx.FA_orig :=
+    Function.update_of_ne (by decide) _ _
+  have hF : (Function.update pres QuadIdx.T_graft (pres QuadIdx.T_graft ++ [c]))
+              QuadIdx.FA_graft = pres QuadIdx.FA_graft :=
+    Function.update_of_ne (by decide) _ _
+  rw [hT, hG, hO, hF]
+  -- Reduce LHS's (pTG ++ [(k, q)]).zip(pres T_graft ++ [c]) and RHS's
+  -- (.t_graft k q :: targets).zip (c :: rest) to cons forms.
+  rw [show (pTG ++ [(k, q)]).zip (pres QuadIdx.T_graft ++ [c]) =
+        pTG.zip (pres QuadIdx.T_graft) ++ [((k, q), c)] from by
+        rw [List.zip_append hPTGlen]; rfl,
+      show (AlphaConstrainedChoice.t_graft k q :: targets).zip (c :: rest) =
+        (AlphaConstrainedChoice.t_graft k q, c) :: targets.zip rest from rfl]
+  -- Unify both sides via `List.filterMap_append` on LHS singleton + `extract*_cons_*`.
+  simp only [List.filterMap_append, List.filterMap_cons, List.filterMap_nil,
+             List.append_nil, extractTOrigPairs, extractTGraftPairsAt,
+             extractFAOrigPairsAt, extractFAGraftPairsAt]
+  -- Now both sides have explicit filterMap structures. The leaf differs only in
+  -- the T-graft contribution (per-k_idx, controlled by `if k = k_idx`).
+  -- After the simp, F-side is auto-rfl; only T-side remains.
+  -- T-side: descend to pre_T_B'[k_idx]'s function via congr, then funext.
+  congr 6
+  funext k_idx
+  congr 1
+  split_ifs with h
+  · simp [List.append_assoc]
+  · simp
+
+/-- Leaf equality for the FA_orig bucket case of the cons step. -/
+private theorem augInterpret_FA_orig_succ_bridge
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (pres : QuadIdx → List (Planar α)) (c : Planar α) (rest : List (Planar α))
+    (pre_T_B_choice : List Path) (pre_FA_B_choice : List (Fin F_A.length × Path))
+    (targets : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+    (pTO : List Path)
+    (pTG : List (Fin pre_T_B.length × Path))
+    (pFO : List (Fin F_A.length × Path))
+    (i : Fin F_A.length) (v : Path)
+    (pFG : List (Fin pre_FA_B.length × Path))
+    (hPFOlen : pFO.length = (pres QuadIdx.FA_orig).length) :
+    augInterpret T
+      ({ pre_T_B_choice := pre_T_B_choice
+         pre_FA_B_choice := pre_FA_B_choice
+         C_targets := targets
+         pres_T_orig_choice := pTO
+         pres_T_graft_choice := pTG
+         pres_FA_orig_choice := pFO ++ [(i, v)]
+         pres_FA_graft_choice := pFG }
+       : AugGraftingData F_A pre_T_B pre_FA_B
+           (Function.update pres QuadIdx.FA_orig (pres QuadIdx.FA_orig ++ [c]))) rest =
+    augInterpret T
+      ({ pre_T_B_choice := pre_T_B_choice
+         pre_FA_B_choice := pre_FA_B_choice
+         C_targets := AlphaConstrainedChoice.fa_orig i v :: targets
+         pres_T_orig_choice := pTO
+         pres_T_graft_choice := pTG
+         pres_FA_orig_choice := pFO
+         pres_FA_graft_choice := pFG }
+       : AugGraftingData F_A pre_T_B pre_FA_B pres) (c :: rest) := by
+  unfold augInterpret
+  have hT : (Function.update pres QuadIdx.FA_orig (pres QuadIdx.FA_orig ++ [c]))
+              QuadIdx.T_orig = pres QuadIdx.T_orig :=
+    Function.update_of_ne (by decide) _ _
+  have hG : (Function.update pres QuadIdx.FA_orig (pres QuadIdx.FA_orig ++ [c]))
+              QuadIdx.T_graft = pres QuadIdx.T_graft :=
+    Function.update_of_ne (by decide) _ _
+  have hO : (Function.update pres QuadIdx.FA_orig (pres QuadIdx.FA_orig ++ [c]))
+              QuadIdx.FA_orig = pres QuadIdx.FA_orig ++ [c] :=
+    Function.update_self _ _ _
+  have hF : (Function.update pres QuadIdx.FA_orig (pres QuadIdx.FA_orig ++ [c]))
+              QuadIdx.FA_graft = pres QuadIdx.FA_graft :=
+    Function.update_of_ne (by decide) _ _
+  rw [hT, hG, hO, hF]
+  -- Reduce LHS's (pFO ++ [(i, v)]).zip and RHS's (.fa_orig i v :: targets).zip to cons forms.
+  rw [show (pFO ++ [(i, v)]).zip (pres QuadIdx.FA_orig ++ [c]) =
+        pFO.zip (pres QuadIdx.FA_orig) ++ [((i, v), c)] from by
+        rw [List.zip_append hPFOlen]; rfl,
+      show (AlphaConstrainedChoice.fa_orig i v :: targets).zip (c :: rest) =
+        (AlphaConstrainedChoice.fa_orig i v, c) :: targets.zip rest from rfl]
+  simp only [List.filterMap_append, List.filterMap_cons, List.filterMap_nil,
+             List.append_nil, extractTOrigPairs, extractTGraftPairsAt, extractFAOrigPairsAt,
+             extractFAGraftPairsAt]
+  -- F-side substantive (per-i_idx); other parts auto-rfl after simp.
+  congr 6
+  funext i_idx
+  congr 1
+  split_ifs with h
+  · simp [List.append_assoc]
+  · simp
+
+/-- Leaf equality for the FA_graft bucket case of the cons step. -/
+private theorem augInterpret_FA_graft_succ_bridge
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (pres : QuadIdx → List (Planar α)) (c : Planar α) (rest : List (Planar α))
+    (pre_T_B_choice : List Path) (pre_FA_B_choice : List (Fin F_A.length × Path))
+    (targets : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+    (pTO : List Path)
+    (pTG : List (Fin pre_T_B.length × Path))
+    (pFO : List (Fin F_A.length × Path))
+    (pFG : List (Fin pre_FA_B.length × Path))
+    (k : Fin pre_FA_B.length) (q : Path)
+    (hPFGlen : pFG.length = (pres QuadIdx.FA_graft).length) :
+    augInterpret T
+      ({ pre_T_B_choice := pre_T_B_choice
+         pre_FA_B_choice := pre_FA_B_choice
+         C_targets := targets
+         pres_T_orig_choice := pTO
+         pres_T_graft_choice := pTG
+         pres_FA_orig_choice := pFO
+         pres_FA_graft_choice := pFG ++ [(k, q)] }
+       : AugGraftingData F_A pre_T_B pre_FA_B
+           (Function.update pres QuadIdx.FA_graft (pres QuadIdx.FA_graft ++ [c]))) rest =
+    augInterpret T
+      ({ pre_T_B_choice := pre_T_B_choice
+         pre_FA_B_choice := pre_FA_B_choice
+         C_targets := AlphaConstrainedChoice.fa_graft k q :: targets
+         pres_T_orig_choice := pTO
+         pres_T_graft_choice := pTG
+         pres_FA_orig_choice := pFO
+         pres_FA_graft_choice := pFG }
+       : AugGraftingData F_A pre_T_B pre_FA_B pres) (c :: rest) := by
+  unfold augInterpret
+  have hT : (Function.update pres QuadIdx.FA_graft (pres QuadIdx.FA_graft ++ [c]))
+              QuadIdx.T_orig = pres QuadIdx.T_orig :=
+    Function.update_of_ne (by decide) _ _
+  have hG : (Function.update pres QuadIdx.FA_graft (pres QuadIdx.FA_graft ++ [c]))
+              QuadIdx.T_graft = pres QuadIdx.T_graft :=
+    Function.update_of_ne (by decide) _ _
+  have hO : (Function.update pres QuadIdx.FA_graft (pres QuadIdx.FA_graft ++ [c]))
+              QuadIdx.FA_orig = pres QuadIdx.FA_orig :=
+    Function.update_of_ne (by decide) _ _
+  have hF : (Function.update pres QuadIdx.FA_graft (pres QuadIdx.FA_graft ++ [c]))
+              QuadIdx.FA_graft = pres QuadIdx.FA_graft ++ [c] :=
+    Function.update_self _ _ _
+  rw [hT, hG, hO, hF]
+  -- Reduce LHS's (pFG ++ [(k, q)]).zip and RHS's (.fa_graft k q :: targets).zip to cons forms.
+  rw [show (pFG ++ [(k, q)]).zip (pres QuadIdx.FA_graft ++ [c]) =
+        pFG.zip (pres QuadIdx.FA_graft) ++ [((k, q), c)] from by
+        rw [List.zip_append hPFGlen]; rfl,
+      show (AlphaConstrainedChoice.fa_graft k q :: targets).zip (c :: rest) =
+        (AlphaConstrainedChoice.fa_graft k q, c) :: targets.zip rest from rfl]
+  simp only [List.filterMap_append, List.filterMap_cons, List.filterMap_nil,
+             List.append_nil, extractTOrigPairs, extractTGraftPairsAt, extractFAOrigPairsAt,
+             extractFAGraftPairsAt]
+  -- F-side substantive: pre_FA_B'[k_idx] differs (per-k_idx), then the i-loop uses it.
+  -- The pre_FA_B' (List.map fun k_idx ...) is used in pre_FA_B_choice.zip pre_FA_B' for F.
+  -- T-side: T' has no FA_graft contribution (extract*_cons_fa_graft drops on T_orig/T_graft).
+  -- T-side auto-rfl after simp; only F-side remains.
+  -- F-side: descend per-i, then per-k_idx (pre_FA_B'[k_idx] differs).
+  congr 1
+  refine List.map_congr_left fun i _ => ?_
+  congr 5
+  refine List.map_congr_left fun k_idx _ => ?_
+  congr 1
+  split_ifs with h
+  · simp [List.append_assoc]
+  · simp
+
 /-! ### §1.11.6: Strong-IH headline theorem (sorry-fenced)
 
 The pres-parameterized analog of `RHS_eq_canonical_msform`. Generalizes the
