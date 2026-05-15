@@ -5595,7 +5595,17 @@ private theorem LHS_TRUE_substrate_split
     rfl
 
 /-- **Session 5 sub-target (preserved branch → T_orig)**: the preserved+sourceSelf
-    branch equals the T_orig_summand. Bridges:
+    branch equals the T_orig_summand.
+
+    **WARNING (0.231.91, Session 5 finding):** this statement is **FALSE for
+    non-empty `pres .T_orig`** (the lifted-into-`pres .T_orig[j]` case from
+    LHS produces trees no T_orig configuration captures). See memory note
+    `feedback_lhs_form_cons_decompose_false_for_nonempty_pres.md` for the
+    explicit counterexample (`T = leaf, pres .T_orig = [G]` gives
+    `LHS.card = 2` vs `RHS.card = 1`). **Specialization at `pres = const empty`
+    might be true** — that's the form needed for Strategy A's headline.
+
+    Original bridge plan (preserved at any pres, broken in general):
     1. `multiGraft_compose_cons_pair_at_choice` (Session 1) collapses
        `mG (mG T pairs) ((v_c, c) :: ch.zip filter_t)` to `mG T (composePairs ...)`.
     2. The composed pair list, with `v_c = transport pairs v_T` for `v_T ∈ vertices T`,
@@ -5621,7 +5631,16 @@ private theorem LHS_TRUE_preserved_branch_eq_T_orig
   sorry
 
 /-- **Session 5 sub-target (lifted branch → T_graft)**: the lifted branch equals
-    the T_graft_summand. Bridges:
+    the T_graft_summand.
+
+    **WARNING (0.231.91, Session 5 finding):** this statement is **FALSE for
+    non-empty `pres .T_orig`** — the lifted case for `k ≥ pre_T_B'.length`
+    (c inside `pres .T_orig[j]`) doesn't fit T_graft's "c into pre_T_B" pattern.
+    See `LHS_TRUE_preserved_branch_eq_T_orig` docstring for the counterexample.
+    **Specialization at `pres = const empty` might be true** (only `k <
+    pre_T_B'.length` cases fire there, matching T_graft cleanly).
+
+    Original bridge plan (broken in general):
     1. `multiGraft_split_lifted_aux` (Graft.lean §10.6) rewrites the nested
        `mG (mG T pairs) ((liftMulti pairs k q, c) :: ...)` as
        `mG T (pairs.set k (pairs[k].fst, insertAt q c pairs[k].snd))`.
@@ -6297,10 +6316,93 @@ LHS_form pres C =
 4. Reduce per-b via `Multiset.bind_congr` to
    `RHS_eq_canonical_msform_pres @ pres' @ rest` (sorry-free). -/
 
-/-- **LHS strong-IH** (sorry-free given §1.11.8 helper): pres-parameterized
-    canonical-form bridge for the LHS side. Mirrors `RHS_eq_canonical_msform_pres`.
+/-! ### §1.11.9: Strategy A pivot — direct bijection at empty pres
 
-    Specializes to `LHS_eq_canonical_msform` at `pres = (fun _ => [])`. -/
+**0.231.91 (Session 5) finding:** the strong-IH `LHS_eq_canonical_msform_pres`
+below, and its dependency `LHS_form_cons_decompose`, are **FALSE for non-empty
+`pres .T_orig`** (or other pres slots). The lifted-into-`pres .T_orig[j]` case
+from the substrate split (Session 2) produces trees no T_orig / T_graft bucket
+captures; `allAlphaConstrainedChoiceList` similarly omits "inside pres element"
+slots in the canonical formulation. Counterexample: `T = leaf, pres .T_orig =
+[G]` gives `LHS.card = 2` vs `RHS.card = 1` (verified via `#eval` 2026-05-15).
+
+See memory note `feedback_lhs_form_cons_decompose_false_for_nonempty_pres.md`.
+
+**Pivot to Strategy A (direct bijection at `pres = const empty`):** the
+top-level headline `LHS_eq_canonical_msform` only needs `pres = const empty`;
+at this specialization, `vertices T_ins` partitions into T-vertices and
+inside-`pre_T_B`-grafts (no inside-pres slot fires), and the bijection
+`perKFChoice (T_ins :: F_ins) ↔ AlphaConstrainedChoice` is well-defined and
+covers all positions. Key bijection components:
+- `(0, T-vertex of T_ins) ↔ t_orig (vertex of T)` via `transport (choice_pre_T_B.zip pre_T_B)`.
+- `(0, inside-pre_T_B[k]-graft of T_ins) ↔ t_graft (k, vertex of pre_T_B[k])` via `liftMulti`.
+- `(i+1, F_A[i]-vertex of F_ins[i]) ↔ fa_orig (i, vertex of F_A[i])` via `transport`.
+- `(i+1, inside-pre_FA_B[k]-graft of F_ins[i]) ↔ fa_graft (k, vertex of pre_FA_B[k])` via `liftMulti`.
+
+Tree-preservation uses Session 1's `multiGraft_compose_cons_pair_at_choice`
+(for the `(insertion T pre_T_B).bind ∘ insertionForest [T_ins] [c]` →
+`mG T (pre_T_B_pairs ++ [(v_T, c)])` collapse) and Session 2's
+`multiGraft_split_lifted_aux` (for the lifted-into-pre_T_B case).
+
+The strong-IH `LHS_eq_canonical_msform_pres` below is **deprecated** — it
+remains as a sorry-fenced placeholder for compatibility with the existing
+`LHS_eq_canonical_msform` derivation, but should be replaced by Strategy A's
+direct theorem `LHS_eq_canonical_msform_via_bijection` (Session 6+).
+
+Sessions 1-4 substrate that REMAINS USEFUL for Strategy A:
+- Session 1: `multiGraft_compose_cons_pair_at_choice` (Insertion.lean §5.5).
+- Session 2: `vertices_multiGraft_decomp` (vertex partition for T_ins).
+- Session 3: `insertion_outer_bind_at_choice_eq` (outer-2nd unfold).
+- Session 4: `LHS_TRUE_substrate_split` (substrate-split lemma, true at any pres).
+
+Session 4 sub-lemmas marked WARNING (above) are unprovable in general but
+their `pres = const empty` specializations might still be true; whether to
+use them is a Session 6 design decision. -/
+
+/-- **Strategy A scaffold (Session 5, sorry-fenced)**: the headline
+    `LHS_eq_canonical_msform` at `pres = const empty`, proved DIRECTLY via
+    a structural bijection between LHS sequential-insertion paths and
+    RHS canonical AGDs. Bypasses the broken strong-IH chain.
+
+    Future sessions implement the bijection's tree-preservation and
+    multiset equality. -/
+private theorem LHS_eq_canonical_msform_via_bijection
+    (T : Planar α) (F_A pre_T_B pre_FA_B C : List (Planar α)) :
+    ((insertion T pre_T_B).bind fun T_ins =>
+        (insertionForest F_A pre_FA_B).bind fun F_ins =>
+          insertionForest (T_ins :: F_ins) C).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) =
+    ((enumGraftingData T F_A pre_T_B pre_FA_B C.length).map
+        (fun gd => interpret T gd C)).map
+      (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
+  -- TODO Session 6+: prove via direct bijection. Plan:
+  --
+  -- 1. Apply `insertion_outer_bind_at_choice_eq T pre_T_B` to expose
+  --    `choice_pre_T_B ∈ lC vT pre_T_B.length`.
+  -- 2. Apply `insertionForest_eq_explicit F_A pre_FA_B` to expose
+  --    `choice_pre_FA_B ∈ lC perKFChoice F_A pre_FA_B.length`.
+  -- 3. Apply `insertionForest_eq_explicit (T_ins :: F_ins) C` to expose
+  --    `choice_C ∈ lC perKFChoice (T_ins :: F_ins) C.length`.
+  -- 4. perKFChoice (T_ins :: F_ins) for T_ins = mG T (choice_pre_T_B.zip pre_T_B)
+  --    decomposes via `vertices_multiGraft_decomp` (Session 2 substrate) into
+  --    T-vertex + inside-pre_T_B-graft positions; the bijection to
+  --    AlphaConstrainedChoice classifies each position.
+  -- 5. After the bijection, listChoices on perKFChoice maps to listChoices on
+  --    allAlphaConstrainedChoiceList (= C_targets in AGD).
+  -- 6. buildFIns evaluation matches `interpret`'s pre_T_B' + T' + F'
+  --    construction via tree-preservation lemmas (Session 1 substrate).
+  --
+  -- Estimated scope: ~500-1000 LOC across 2-4 sessions.
+  sorry
+
+/-- **LHS strong-IH** (DEPRECATED 0.231.91 — false for non-empty pres).
+    Pres-parameterized canonical-form bridge for the LHS side. Mirrors
+    `RHS_eq_canonical_msform_pres` in shape, but unlike RHS-side, the LHS-side
+    statement is broken in general (per Session 5 finding). Specialization at
+    `pres = (fun _ => [])` may still hold; that's the form needed for the
+    `LHS_eq_canonical_msform` derivation in §1.13.
+
+    Replaced by `LHS_eq_canonical_msform_via_bijection` (Strategy A, Session 5+). -/
 private theorem LHS_eq_canonical_msform_pres
     (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
     (pres : QuadIdx → List (Planar α)) (C : List (Planar α)) :
