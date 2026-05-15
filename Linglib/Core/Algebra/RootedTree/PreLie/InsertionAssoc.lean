@@ -4403,6 +4403,86 @@ private theorem enumAugGraftingData_succ_factored
   -- Innermost is ofList (l.map f) which is defeq to (ofList l).map f.
   rfl
 
+/-! ### §1.11.5c: per-bucket leaf-equality helpers for cons case
+
+For each first_b ∈ {T_orig, T_graft, FA_orig, FA_graft}, the leaf-level
+equality between `augInterpret T agd' rest` (with `pres' = update pres
+first_b (pres first_b ++ [c])` and `agd'.pres_first_b_choice = pTO ++ [v]`)
+and `augInterpret T agd (c :: rest)` (with `agd.C_targets = first_target_b ::
+targets` and `agd.pres_first_b_choice = pTO`). Both sides produce the same
+forest because (a) for T_orig, the `(v, c)` pair appears in T-side pres
+pairs on LHS but in T-side C-extracted pairs on RHS, equal by `++ assoc`;
+(b) symmetric for T_graft (pre_T_B' computation), FA_orig (F'
+computation), FA_graft (pre_FA_B' computation). -/
+
+/-- Leaf equality for the T_orig bucket case of the cons step. -/
+private theorem augInterpret_T_orig_succ_bridge
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (pres : QuadIdx → List (Planar α)) (c : Planar α) (rest : List (Planar α))
+    (pre_T_B_choice : List Path) (pre_FA_B_choice : List (Fin F_A.length × Path))
+    (targets : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B))
+    (pTO : List Path) (v : Path)
+    (pTG : List (Fin pre_T_B.length × Path))
+    (pFO : List (Fin F_A.length × Path))
+    (pFG : List (Fin pre_FA_B.length × Path))
+    (hPTOlen : pTO.length = (pres QuadIdx.T_orig).length) :
+    augInterpret T
+      ({ pre_T_B_choice := pre_T_B_choice
+         pre_FA_B_choice := pre_FA_B_choice
+         C_targets := targets
+         pres_T_orig_choice := pTO ++ [v]
+         pres_T_graft_choice := pTG
+         pres_FA_orig_choice := pFO
+         pres_FA_graft_choice := pFG }
+       : AugGraftingData F_A pre_T_B pre_FA_B
+           (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))) rest =
+    augInterpret T
+      ({ pre_T_B_choice := pre_T_B_choice
+         pre_FA_B_choice := pre_FA_B_choice
+         C_targets := AlphaConstrainedChoice.t_orig v :: targets
+         pres_T_orig_choice := pTO
+         pres_T_graft_choice := pTG
+         pres_FA_orig_choice := pFO
+         pres_FA_graft_choice := pFG }
+       : AugGraftingData F_A pre_T_B pre_FA_B pres) (c :: rest) := by
+  -- Both sides produce the same `T' :: F'` forest. The `.t_orig v` on RHS
+  -- C_targets contributes `(v, c)` to extractTOrigPairs (T-side); the `(v, c)`
+  -- appended to LHS's pres_T_orig_choice contributes to pres_T_orig_pairs
+  -- (also T-side). These land in the same T' input position (right after
+  -- pre_T_B'-derived pairs); the F-side and T-side pre_T_B' computations are
+  -- unaffected (extractTGraft/FAOrig/FAGraft on `.t_orig` reduces to dropping it).
+  unfold augInterpret
+  -- Reduce Function.update on LHS: T_orig → pres T_orig ++ [c]; others → pres .
+  have hT : (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))
+              QuadIdx.T_orig = pres QuadIdx.T_orig ++ [c] := Function.update_self _ _ _
+  have hG : (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))
+              QuadIdx.T_graft = pres QuadIdx.T_graft :=
+    Function.update_of_ne (by decide) _ _
+  have hO : (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))
+              QuadIdx.FA_orig = pres QuadIdx.FA_orig :=
+    Function.update_of_ne (by decide) _ _
+  have hF : (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))
+              QuadIdx.FA_graft = pres QuadIdx.FA_graft :=
+    Function.update_of_ne (by decide) _ _
+  rw [hT, hG, hO, hF]
+  -- After hT/hG/hO/hF, both pres-applications are computed.
+  -- T-side T' input list: differs only in placement of `(v, c)`.
+  --   LHS: ... ++ (pTO ++ [v]).zip (pres T_orig ++ [c]) ++ extractTOrig(targets.zip rest)
+  --   RHS: ... ++ pTO.zip (pres T_orig) ++ extractTOrig((.t_orig v :: targets).zip (c :: rest))
+  -- The RHS extractTOrig reduces by `rfl` (filterMap on .t_orig matches),
+  -- yielding `(v, c) :: extractTOrig(targets.zip rest)`.
+  -- The LHS zip splits via List.zip_append hPTOlen, yielding pTO.zip ++ [(v, c)] ++ ...
+  -- F-side: extractFA{Orig,Graft} on .t_orig prefix definitionally drops it
+  -- (the catch-all match clause). pre_T_B' computation similar.
+  rw [List.zip_append hPTOlen]
+  -- Reduce: [v].zip [c] → [(v, c)]; [].zip [] → []; nil_append; extractTOrig on
+  -- (.t_orig v, c) :: rest → (v, c) :: extractTOrig rest; extract*Pairs on
+  -- (.t_orig v, c) :: rest for non-T_orig buckets → unchanged.
+  simp only [List.zip_cons_cons, List.zip_nil_right, List.zip_nil_left,
+             List.nil_append, List.cons_append, List.append_assoc,
+             extractTOrigPairs_cons_t_orig, extractTGraftPairsAt_cons_t_orig,
+             extractFAOrigPairsAt_cons_t_orig, extractFAGraftPairsAt_cons_t_orig]
+
 /-! ### §1.11.6: Strong-IH headline theorem (sorry-fenced)
 
 The pres-parameterized analog of `RHS_eq_canonical_msform`. Generalizes the
@@ -4615,8 +4695,14 @@ private theorem RHS_eq_canonical_msform_pres
     refine Multiset.bind_congr fun first_b _ => ?_
     -- Per-bucket bridge: case-split on first_b.
     cases first_b
-    -- Case T_orig
-    · sorry
+    -- Case T_orig: pres' .T_orig = pres .T_orig ++ [c]; LHS-side has pTO_ext
+    -- of length (pres .T_orig).length + 1; RHS-side first_target = .t_orig v
+    -- with (vertices T).map .t_orig as its enumeration.
+    · -- Step T_orig.1: Expand LHS's enumAugGraftingData and push outer maps inside.
+      unfold enumAugGraftingData
+      -- LHS: ((Multiset.ofList <flatMap chain>).map (augInterpret · rest)).map msform
+      rw [Multiset.map_map]  -- collapse to single .map (msform ∘ augInterpret · rest)
+      sorry
     -- Case T_graft
     · sorry
     -- Case FA_orig
