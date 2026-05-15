@@ -4698,10 +4698,41 @@ private theorem RHS_eq_canonical_msform_pres
     -- Case T_orig: pres' .T_orig = pres .T_orig ++ [c]; LHS-side has pTO_ext
     -- of length (pres .T_orig).length + 1; RHS-side first_target = .t_orig v
     -- with (vertices T).map .t_orig as its enumeration.
-    · -- Step T_orig.1: Expand LHS's enumAugGraftingData and push outer maps inside.
+    · -- LHS-side: 7-level enumeration with pTO_ext (length (pres T_orig).length + 1).
+      -- RHS-side: choice_T, fdata, first_target ∈ enumAlpha T_orig, rest_targets,
+      --           pTO (length (pres T_orig).length), pTG, pFO, pFG.
+      -- Bridge: pTO_ext ↔ (pTO, v) via listChoices_split_bind; v becomes the first_target.
+      -- Step T_orig.1: Expand LHS via unfold + collapse outer maps + flatMap-map.
       unfold enumAugGraftingData
-      -- LHS: ((Multiset.ofList <flatMap chain>).map (augInterpret · rest)).map msform
-      rw [Multiset.map_map]  -- collapse to single .map (msform ∘ augInterpret · rest)
+      rw [Multiset.map_map]
+      rw [Multiset.map_coe]
+      simp_rw [List.map_flatMap, List.map_map]
+      -- Now the LHS leaf is .map fun pFG => msform(augInterpret AGD' rest).
+      -- Step T_orig.2: Convert outer ofList of flatMap chain to nested Multiset.bind.
+      rw [← Multiset.coe_bind]
+      refine Multiset.bind_congr fun choice_T _ => ?_
+      rw [← Multiset.coe_bind]
+      refine Multiset.bind_congr fun fdata _ => ?_
+      -- Step T_orig.3: Convert remaining LHS flatMap chain to bind chain.
+      rw [← Multiset.coe_bind]
+      -- Step T_orig.4: Reduce Function.update applications for the pres' buckets.
+      -- (pres' T_orig).length = (pres T_orig).length + 1; others equal pres bucket.
+      simp only [show (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))
+                        QuadIdx.T_orig = pres QuadIdx.T_orig ++ [c]
+                  from Function.update_self _ _ _,
+                 show (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))
+                        QuadIdx.T_graft = pres QuadIdx.T_graft
+                  from Function.update_of_ne (by decide) _ _,
+                 show (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))
+                        QuadIdx.FA_orig = pres QuadIdx.FA_orig
+                  from Function.update_of_ne (by decide) _ _,
+                 show (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))
+                        QuadIdx.FA_graft = pres QuadIdx.FA_graft
+                  from Function.update_of_ne (by decide) _ _,
+                 List.length_append, List.length_singleton]
+      -- Step T_orig.5: LHS now has pTO layer of length (pres T_orig).length + 1.
+      -- Apply listChoices_split_bind to peel one entry. NB: the pTO layer is
+      -- INSIDE the targets bind, so we need conv to navigate.
       sorry
     -- Case T_graft
     · sorry
