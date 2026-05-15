@@ -105,9 +105,7 @@ open Semantics.Spatial.Path (PathShape)
 open Core.Scale (LicensingPipeline)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction DiagnosticResult)
 
--- ════════════════════════════════════════════════════
--- § 1. Per-Verb Incrementality Verification
--- ════════════════════════════════════════════════════
+/-! ### Per-Verb Incrementality Verification -/
 
 /-! Each verb's `verbIncClass` annotation is verified by `rfl`. Changing
     any annotation breaks exactly one theorem here. These earn their
@@ -152,9 +150,7 @@ theorem arrive_no_inc : arrive.toVerbCore.verbIncClass = none := rfl
 /-- Contact verbs have no incremental theme. -/
 theorem kick_no_inc : kick.toVerbCore.verbIncClass = none := rfl
 
--- ════════════════════════════════════════════════════
--- § 2. Per-Verb Vendler Class Verification
--- ════════════════════════════════════════════════════
+/-! ### Per-Verb Vendler Class Verification -/
 
 /-- "sleep" is a state. -/
 theorem sleep_state : sleep.toVerbCore.vendlerClass = some .state := rfl
@@ -192,9 +188,7 @@ theorem push_activity : push.toVerbCore.vendlerClass = some .activity := rfl
 /-- "love" is a state. -/
 theorem love_state : love.toVerbCore.vendlerClass = some .state := rfl
 
--- ════════════════════════════════════════════════════
--- § 3. VendlerClass → MereoTag Bridge
--- ════════════════════════════════════════════════════
+/-! ### VendlerClass → MereoTag Bridge -/
 
 /-! These connect the Vendler classification to K89's CUM/QUA distinction
     via `Telicity.toMereoTag`. The chain is:
@@ -228,9 +222,7 @@ theorem activity_is_cum :
 theorem state_is_cum :
     VendlerClass.state.telicity.toMereoTag = .cum := rfl
 
--- ════════════════════════════════════════════════════
--- § 4. Compositional Telicity (VP = verb + NP)
--- ════════════════════════════════════════════════════
+/-! ### Compositional Telicity (VP = verb + NP) -/
 
 /-! The payoff: verb incrementality + NP reference property → VP telicity.
     These instantiate K98 §3.3 (eq. 53-54) for concrete verb entries.
@@ -312,9 +304,7 @@ theorem eat_two_apples_qua_propositional
 
 end PropositionalPropagation
 
--- ════════════════════════════════════════════════════
--- § 5. Diagnostic Bridge
--- ════════════════════════════════════════════════════
+/-! ### Diagnostic Bridge -/
 
 /-! Connect CUM/QUA → for/in diagnostic compatibility.
     Atelic (CUM) VPs accept "for X"; telic (QUA) VPs accept "in X".
@@ -339,9 +329,7 @@ theorem durative_atelic_licenses_forX (c : VendlerClass)
     forXPrediction c = .accept := by
   cases c <;> simp_all [VendlerClass.telicity, VendlerClass.duration, forXPrediction]
 
--- ════════════════════════════════════════════════════
--- § 6. Cross-Verification: Incrementality × Vendler
--- ════════════════════════════════════════════════════
+/-! ### Cross-Verification: Incrementality × Vendler -/
 
 /-! Verify that incrementality annotations are consistent with Vendler
     classes: only accomplishments can have non-none verbIncClass. -/
@@ -364,9 +352,7 @@ theorem cumOnly_verbs_are_activities :
     carry.toVerbCore.vendlerClass = some .activity ∧
     drag.toVerbCore.vendlerClass = some .activity := ⟨rfl, rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- Part II: Gradual Change (GRAD) Predictions
--- ════════════════════════════════════════════════════
+/-! ## Gradual Change (GRAD) Predictions -/
 
 /-! Connects GRAD theory to concrete verb entries.
 
@@ -447,7 +433,7 @@ def gradData : List GRADDatum :=
 /-- Whether a verb's incrementality class predicts GRAD.
 
     This is a Bool projection of K98 theory's propositional `GRAD`
-    predicate (`Theories/Semantics/Events/Krifka1998.lean:256`); the
+    predicate; the
     propositional version is what `grad_of_sinc` proves. Keeping the
     Bool-tag projection here as a quick-check; consumers needing the
     propositional content should use `grad_of_sinc` directly on
@@ -480,9 +466,7 @@ theorem all_grad_data_matches :
     gradData.all (fun d => predictsGRAD d.verb.expectedIncClass == d.expectsGRAD) = true := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 7. K98 §3.5 Eq. 58: Mary ate peanuts in 0.43 seconds
--- ════════════════════════════════════════════════════
+/-! ### K98 §3.5 Eq. 58: Mary ate peanuts in 0.43 seconds -/
 
 /-! K98 §3.5 (page 18, eq. 58) introduces *Mary is an incredibly fast
     eater. Yesterday she ate peanuts in 0.43 seconds!* — K98's own
@@ -541,13 +525,11 @@ theorem k98_eq58_cum_object_accepts_inX :
     maryAtePeanutsIn043Sec.objectRef = Core.Scale.MereoTag.cum ∧
     maryAtePeanutsIn043Sec.inXAcceptance = DiagnosticResult.accept := ⟨rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 8. K89 ↔ K98 Sister-Paper Bridge
--- ════════════════════════════════════════════════════
+/-! ### K89 ↔ K98 Sister-Paper Bridge -/
 
 /-! K89 (1989) and K98 (1998) are the same author refining the same
     theory at two stages. K89 study now defines
-    `K89ThematicClass.toVerbIncClass` (`Studies/Krifka1989.lean:457`)
+    `K89ThematicClass.toVerbIncClass` in `Studies/Krifka1989.lean`,
     mapping K89's table-14 thematic-relation classes to K98's
     `VerbIncClass`. This section provides the K98-side acknowledgement
     of the bridge: every K89 thematic class corresponds to exactly one
@@ -585,9 +567,7 @@ theorem read_refinement_chain :
     Krifka1989.readALetter.thematicClass.toVerbIncClass = .inc ∧
     read.toVerbCore.verbIncClass = some .inc := ⟨rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 9. Concrete `IsSincVerb` Toy + Applied Propagation
--- ════════════════════════════════════════════════════
+/-! ### Concrete `IsSincVerb` Toy + Applied Propagation -/
 
 /-! §4.5's `eat_apples_cum_propositional` and `eat_two_apples_qua_propositional`
     are parametric over an abstract θ. This section provides a
@@ -692,9 +672,7 @@ example : IsIncVerb eatThemeToy := inferInstance
     from the `IsSincVerb` instance via the `extends` chain transitively. -/
 example : IsCumThetaVerb eatThemeToy := inferInstance
 
--- ────────────────────────────────────────────────────
--- §9.1 Concrete OBJ predicates
--- ────────────────────────────────────────────────────
+/-! #### Concrete OBJ predicates -/
 
 /-- "two specific apples" — the singleton predicate `λ a, a = {0, 1}`.
     QUA: no proper subset of `{0, 1}` is also `{0, 1}`. -/
@@ -720,9 +698,7 @@ theorem someApples_cum : CUM someApples := by
   -- hx : x.Nonempty ⇒ x ⊔ y = x ∪ y is nonempty
   exact hx.mono (by intro a ha; exact Finset.mem_union.mpr (Or.inl ha))
 
--- ────────────────────────────────────────────────────
--- §9.2 K98 §3.3 propagation theorems fire on the toy
--- ────────────────────────────────────────────────────
+/-! #### K98 §3.3 propagation theorems fire on the toy -/
 
 /-- *eat two apples* on the toy: SINC + UP verb + QUA object → QUA VP.
     Direct invocation of substrate's typeclass-canonical
