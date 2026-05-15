@@ -2362,6 +2362,7 @@ import Linglib.Theories.Semantics.Verb.SelectionalPreferences
 -- Theories: Semantics.Iconic (Iconological Semantics for sign language)
 import Linglib.Theories.Semantics.Iconic.Basic
 -- Theories: Semantics.Events (neo-Davidsonian)
+import Linglib.Theories.Semantics.Events.Defs
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Events.CEM
