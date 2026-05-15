@@ -50,12 +50,12 @@ at (τ, point-granularity) has no current consumer.
 
 -/
 
-import Linglib.Theories.Semantics.Events.Mereology
+import Linglib.Theories.Semantics.Events.CEM
 
 namespace Semantics.Events.StratifiedReference
 
 open Semantics.Events
-open Semantics.Events.Mereology
+open Semantics.Events.CEM
 open _root_.Mereology
 open Core.Time
 open Features

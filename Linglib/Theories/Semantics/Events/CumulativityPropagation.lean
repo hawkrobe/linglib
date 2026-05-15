@@ -35,7 +35,7 @@ proof-factoring helpers, not part of the public API — mathlib pattern.
 namespace Semantics.Events.CumulativityPropagation
 
 open _root_.Mereology
-open Semantics.Events.Mereology
+open Semantics.Events.CEM
 open Semantics.Events.ThematicRoleProperties
 open Semantics.Events.Incrementality
 

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.StratifiedReference
-import Linglib.Theories.Semantics.Events.Mereology
+import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
 

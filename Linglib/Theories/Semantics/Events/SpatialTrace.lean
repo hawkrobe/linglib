@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.Mereology
+import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Spatial.Path
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
@@ -47,7 +47,7 @@ All three use the same QUA/CUM pullback mechanism via `MereoDim`.
 -/
 
 open Semantics.Events
-open Semantics.Events.Mereology
+open Semantics.Events.CEM
 open Semantics.Spatial.Path
 open Features
 open Semantics.Verb

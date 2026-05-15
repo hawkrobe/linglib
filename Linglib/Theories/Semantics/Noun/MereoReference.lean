@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.Mereology
+import Linglib.Theories.Semantics.Events.CEM
 
 /-!
 # Nominal Reference Predicates (Mass / Count / Bare Plural)
@@ -27,7 +27,7 @@ this file and instantiate the predicates on paper-specific data.
 namespace Semantics.Noun.MereoReference
 
 open _root_.Mereology
-open Semantics.Events.Mereology
+open Semantics.Events.CEM
 
 /-- Mass nouns have cumulative reference: water ⊕ water = water.
     @cite{krifka-1989} §2: mass nouns denote predicates satisfying CUM. -/

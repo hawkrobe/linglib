@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Noun.MereoReference
-import Linglib.Theories.Semantics.Events.Mereology
+import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Events.CumulativityPropagation
@@ -70,7 +70,7 @@ on abstract domains.
 namespace Krifka1989
 
 open _root_.Mereology
-open Semantics.Events.Mereology
+open Semantics.Events.CEM
 open Semantics.Noun.MereoReference (MassNoun CountNoun BarePlural barePlural_cum)
 open Semantics.Events.ThematicRoleProperties (UP)
 open Semantics.Events.Incrementality (SINC VerbIncClass IsSincVerb)

@@ -264,7 +264,7 @@ end K98PropositionalSubstrate
 section SpatialTracePullback
 
 open Semantics.Events
-open Semantics.Events.Mereology
+open Semantics.Events.CEM
 open Semantics.Spatial.Path
 open _root_.Mereology
 
@@ -294,7 +294,7 @@ end SpatialTracePullback
 section Expansiveness
 
 open Semantics.Events
-open Semantics.Events.Mereology
+open Semantics.Events.CEM
 
 variable {α : Type*} [SemilatticeSup α]
 variable {Time : Type*} [LinearOrder Time]
@@ -315,7 +315,7 @@ end Expansiveness
 section MovementInstances
 
 open Semantics.Events
-open Semantics.Events.Mereology
+open Semantics.Events.CEM
 open Semantics.Spatial.Path
 
 variable {Loc Time : Type*} [LinearOrder Time]

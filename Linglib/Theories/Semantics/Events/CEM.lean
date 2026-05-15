@@ -25,7 +25,7 @@ Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
 
 -/
 
-namespace Semantics.Events.Mereology
+namespace Semantics.Events.CEM
 
 open Semantics.Events
 open Core.Time
@@ -198,4 +198,4 @@ theorem vendlerClass_telic_cases
   · exact Or.inl rfl
   · exact Or.inr rfl
 
-end Semantics.Events.Mereology
+end Semantics.Events.CEM

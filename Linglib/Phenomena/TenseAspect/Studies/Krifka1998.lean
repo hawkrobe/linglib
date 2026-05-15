@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Events.CumulativityPropagation
-import Linglib.Theories.Semantics.Events.Mereology
+import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
