@@ -4586,12 +4586,43 @@ private theorem RHS_eq_canonical_msform_pres
     simp only [List.filterMap_append]
   | cons c rest ih =>
     -- CONS CASE: see §1.11.6 docstring for proof plan.
-    -- 1. iteratedQuadSum_cons_remaining gives 4-bucket outer bind on LHS.
-    -- 2. Apply IH at pres' = update pres first_b (pres first_b ++ [c]) for each bucket.
-    -- 3. Bridge via per-bucket bijection: each AlphaConstrainedChoice.t_orig v
-    --    on the C_targets[0] side ↔ pres'_T_orig_choice = pres_T_orig_choice ++ [v].
-    -- ~250-500 LOC.
-    sorry
+    -- Step 1: iteratedQuadSum_cons_remaining gives 4-bucket outer bind on LHS.
+    -- Then push outer .map msform through bind via Multiset.map_bind.
+    rw [iteratedQuadSum_cons_remaining, Multiset.map_bind]
+    -- LHS: ([4 buckets]).bind first_b => (iteratedQuadSum ... pres' rest).map msform
+    -- where pres' = update pres first_b (pres first_b ++ [c]).
+    -- Step 2: Apply IH per first_b.
+    conv_lhs =>
+      rhs; ext first_b
+      rw [ih (Function.update pres first_b (pres first_b ++ [c]))]
+    -- LHS: ([4 buckets]).bind first_b =>
+    --        ((enumAugGraftingData ... pres' rest.length).map (augInterpret · rest)).map msform
+    -- Step 3: Apply enumAugGraftingData_succ_factored to RHS.
+    rw [show (c :: rest).length = rest.length + 1 from rfl, enumAugGraftingData_succ_factored]
+    -- Step 4: Push outer .map msform inside RHS via Multiset.map_map +
+    -- Multiset.map_bind. RHS becomes nested bind chain ending with leaf
+    -- msform (augInterpret AGD (c :: rest)).
+    rw [Multiset.map_map]
+    simp_rw [Multiset.map_bind]
+    -- Step 5: RHS structure now is:
+    --   choice_T.bind => fdata.bind => [4 buckets].bind first_b =>
+    --     first_target.bind => rest_targets.bind => pTO.bind => pTG.bind => pFO.bind => pFG.map => leaf
+    -- LHS has [4 buckets] outermost; need to swap on RHS via Multiset.bind_bind
+    -- to bring [4 buckets] outside of fdata, then outside of choice_T.
+    conv_rhs => rhs; ext choice_T; rw [Multiset.bind_bind]  -- swap (fdata, [4 buckets])
+    rw [Multiset.bind_bind]  -- swap (choice_T, [4 buckets])
+    -- Step 6: Both sides now have ([4 buckets]).bind first_b => INNER.
+    refine Multiset.bind_congr fun first_b _ => ?_
+    -- Per-bucket bridge: case-split on first_b.
+    cases first_b
+    -- Case T_orig
+    · sorry
+    -- Case T_graft
+    · sorry
+    -- Case FA_orig
+    · sorry
+    -- Case FA_graft
+    · sorry
 
 /-! ### §1.11.7: `RHS_eq_canonical_msform` derived from strong-IH
 
