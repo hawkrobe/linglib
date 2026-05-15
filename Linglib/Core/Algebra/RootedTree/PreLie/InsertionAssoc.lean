@@ -4971,8 +4971,76 @@ private theorem RHS_eq_canonical_msform_pres
       simp only [Function.comp_apply]
       exact congrArg _ (augInterpret_T_orig_succ_bridge T pres c rest choice_T fdata
         rest_targets pTO v pTG pFO pFG hPTOlen ▸ rfl)
-    -- Case T_graft
-    · sorry
+    -- Case T_graft: pres' .T_graft = pres .T_graft ++ [c]; LHS-side has pTG_ext
+    -- of length (pres .T_graft).length + 1; RHS-side first_target = .t_graft k q
+    -- with enumeration via (perKFChoice pre_T_B).map (fun p => .t_graft p.fst p.snd).
+    · unfold enumAugGraftingData
+      rw [Multiset.map_map, Multiset.map_coe]
+      simp_rw [List.map_flatMap, List.map_map]
+      simp_rw [← Multiset.coe_bind]
+      simp only [show (Function.update pres QuadIdx.T_graft (pres QuadIdx.T_graft ++ [c]))
+                        QuadIdx.T_orig = pres QuadIdx.T_orig
+                  from Function.update_of_ne (by decide) _ _,
+                 show (Function.update pres QuadIdx.T_graft (pres QuadIdx.T_graft ++ [c]))
+                        QuadIdx.T_graft = pres QuadIdx.T_graft ++ [c]
+                  from Function.update_self _ _ _,
+                 show (Function.update pres QuadIdx.T_graft (pres QuadIdx.T_graft ++ [c]))
+                        QuadIdx.FA_orig = pres QuadIdx.FA_orig
+                  from Function.update_of_ne (by decide) _ _,
+                 show (Function.update pres QuadIdx.T_graft (pres QuadIdx.T_graft ++ [c]))
+                        QuadIdx.FA_graft = pres QuadIdx.FA_graft
+                  from Function.update_of_ne (by decide) _ _,
+                 List.length_append, List.length_singleton]
+      conv_rhs =>
+        rw [show (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.T_graft :
+                Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+              (Multiset.ofList (perKFChoice pre_T_B)).map
+                (fun p => AlphaConstrainedChoice.t_graft p.fst p.snd) from by
+              rw [← ofList_T_graft_eq_enumAlpha]
+              rw [show (List.finRange pre_T_B.length).flatMap (fun k =>
+                          (vertices pre_T_B[k.val]).map (AlphaConstrainedChoice.t_graft k)) =
+                       (perKFChoice pre_T_B).map
+                         (fun p => AlphaConstrainedChoice.t_graft p.fst p.snd) from by
+                    unfold perKFChoice
+                    rw [List.map_flatMap]
+                    apply List.flatMap_congr
+                    intro k _
+                    rw [List.map_map]
+                    rfl]
+              rw [← Multiset.map_coe]]
+      simp_rw [Multiset.bind_map]
+      simp_rw [listChoices_split_bind (perKFChoice pre_T_B) (pres QuadIdx.T_graft).length 1]
+      rw [show (listChoices (perKFChoice pre_T_B) 1 :
+                List (List (Fin pre_T_B.length × Path))) =
+            (perKFChoice pre_T_B).map (fun p => [p]) from by
+            rw [show (1 : Nat) = 0 + 1 from rfl, listChoices_succ]
+            simp only [listChoices_zero, List.map_singleton]
+            rw [List.map_eq_flatMap]]
+      simp_rw [← Multiset.map_coe, Multiset.bind_map]
+      -- Reorder LHS: bring (k, q) outside.
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets; rhs; ext pTO
+        rw [Multiset.bind_bind]
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets
+        rw [Multiset.bind_bind]
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata
+        rw [Multiset.bind_bind]
+      refine Multiset.bind_congr fun choice_T _ => ?_
+      refine Multiset.bind_congr fun fdata _ => ?_
+      refine Multiset.bind_congr fun kq _ => ?_
+      refine Multiset.bind_congr fun rest_targets _ => ?_
+      refine Multiset.bind_congr fun pTO _ => ?_
+      refine Multiset.bind_congr fun pTG h_pTG => ?_
+      refine Multiset.bind_congr fun pFO _ => ?_
+      have hPTGlen : pTG.length = (pres QuadIdx.T_graft).length :=
+        mem_listChoices_length _ _ _ (Multiset.mem_coe.mp h_pTG)
+      rw [Multiset.map_map]
+      refine Multiset.map_congr rfl fun pFG _ => ?_
+      simp only [Function.comp_apply]
+      exact congrArg _ (augInterpret_T_graft_succ_bridge T pres c rest choice_T fdata
+        rest_targets pTO pTG kq.fst kq.snd pFO pFG hPTGlen ▸ rfl)
     -- Case FA_orig
     · sorry
     -- Case FA_graft
