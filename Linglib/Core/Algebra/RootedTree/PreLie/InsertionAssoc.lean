@@ -5505,17 +5505,36 @@ private theorem LHS_form_cons_decompose
   -- gets rewritten too, but this is fine since later steps re-fold.
   simp_rw [insertion_def]
   -- LHS now: ofList of listChoices.map at multiple depths. The inner `insertion T'`
-  -- is now `Multiset.ofList ((listChoices (vertices T') (t-filter.length).map ...)`.
+  -- (in TRUE case only — FALSE case still has insertion T' applied to f-filter
+  -- which doesn't contain c) is now `Multiset.ofList ((listChoices (vertices T')
+  -- (t-filter.length)).map ...)`.
   --
-  -- Substantive content (~400-700 LOC across 2 sessions remaining):
-  -- - Phase C.2: Expose c-vertex choice via listChoices_succ on the inner T-side
-  --   listChoices for TRUE case (c at head of t-filter); apply `vertices_multiGraft_decomp`
-  --   to T' = multiGraft T (...) to partition v_c into preserved/lifted classes.
-  -- - Phase C.3: For FALSE case (c → F-side), use `insertionForest_eq_explicit` to
-  --   expose F'-vertices via `vertices_forest_eq_partition`.
-  -- - Phase D: Per-bucket absorption via `multiGraft_cons_pair` (preserved) and
-  --   `multiGraft_split_lifted_aux` (lifted), with `multiGraft_perm_pair` for msform absorption.
-  -- - Final reassembly into the RHS 4-bucket form.
+  -- Step C.2/C.3 (deferred — simp_rw approach saturates):
+  -- After Phase C.1's `simp_rw [insertion_def]`, the goal structure is heavily
+  -- nested with `Multiset.ofList ((listChoices ...).map ...)` at multiple depths.
+  -- Standard simp_rw rewrites (List.zip_cons_cons, List.filterMap_cons,
+  -- listChoices_succ, Multiset.bind_map) all fail with "no progress" — Lean
+  -- has either auto-reduced these forms or the structure is not what naïve
+  -- pattern-matching expects.
+  --
+  -- Approach for next session:
+  -- 1. Insert a `change` or `show` tactic to print the goal structure explicitly.
+  -- 2. Identify exactly which definitional reductions Lean has applied.
+  -- 3. Use `conv_lhs => ...` with explicit `lhs/rhs/ext` navigation to enter
+  --    the deeply-nested structure and apply targeted rewrites.
+  -- 4. Alternatively, refactor Phase B/C.1 to avoid simp_rw saturation by using
+  --    more conservative `rw [theorem_name]` at specific positions.
+  --
+  -- Substantive content remaining (~400-700 LOC across 2 sessions):
+  -- - Phase D.T_orig: c-vertex choice → preserved/sourceSelf class of T (via
+  --   `vertices_multiGraft_decomp` on T'). Per Phase A's `multiGraft_cons_pair`,
+  --   absorb (v, c) into the multiGraft pair list ↔ extending pres .T_orig.
+  -- - Phase D.T_graft: c-vertex choice → lifted class (vertex inside pre_T_B[k]).
+  --   Per `multiGraft_split_lifted_aux`, absorb into pre_T_B[k]'s subtree ↔
+  --   extending pres .T_graft for tree k.
+  -- - Phase D.FA_orig / FA_graft: F-side analogs via `vertices_forest_eq_partition`.
+  -- - Phase E: reassemble 4 buckets into RHS form via Multiset.cons_bind.
+  -- - msform absorption via `multiGraft_perm_pair` per bucket.
   --
   -- See `scratch/a33_phase4_2_session_prompt_16.md` for the detailed plan.
   sorry
