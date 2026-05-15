@@ -56,7 +56,7 @@ mereological structure enables monotonic measurement by `much`.
 
 namespace Semantics.Measurement
 
-open Mereology
+open _root_.Mereology
 open Features
 open Features
 open Semantics.Noun.Kind.Dayal2004 (NumberFeature)

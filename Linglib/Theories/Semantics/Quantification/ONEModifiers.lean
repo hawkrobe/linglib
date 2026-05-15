@@ -22,7 +22,7 @@ is ungrammatical: intervals are not atoms, so ONE_AT fails.
 
 namespace Semantics.Quantification.ONEModifiers
 
-open Mereology
+open _root_.Mereology
 open Semantics.Quantification.UnifiedUniversal
 
 -- ════════════════════════════════════════════════════

@@ -25,7 +25,7 @@ namespace Phenomena.Plurals.Studies.Charlow2021.HigherOrder
 open Semantics.Dynamic.Core
 open Phenomena.Plurals.Studies.Charlow2021.Basic
 open Semantics.Composition.Continuation
-open Mereology
+open _root_.Mereology
 
 variable {S E : Type*}
 

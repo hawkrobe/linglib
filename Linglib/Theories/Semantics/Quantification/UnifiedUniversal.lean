@@ -35,7 +35,7 @@ established via bridge theorems, not by replacement.
 
 namespace Semantics.Quantification.UnifiedUniversal
 
-open Mereology
+open _root_.Mereology
 
 -- ════════════════════════════════════════════════════
 -- § 1. Maximal Non-Overlapping Elements

@@ -32,7 +32,7 @@ this file and instantiate the predicates on paper-specific data.
 
 namespace Semantics.Events.ThematicRoleProperties
 
-open Mereology
+open _root_.Mereology
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 

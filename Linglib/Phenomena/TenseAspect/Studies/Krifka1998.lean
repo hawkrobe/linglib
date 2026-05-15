@@ -293,7 +293,7 @@ theorem write_a_letter_telic :
 section PropositionalPropagation
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
-open Mereology
+open _root_.Mereology
 
 /-- *eat apples* propositional: K98 §3.3 CUM propagation. Given any
     `[IsCumThetaVerb θ]` (eat's role — and any of the K98 verb classes

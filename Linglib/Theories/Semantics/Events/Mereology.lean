@@ -32,32 +32,10 @@ open Core.Time
 open Features
 open _root_.Mereology
 
--- Re-export Core.Mereology definitions in this namespace so that
--- existing `open Semantics.Events.Mereology` continues to work.
--- §1–12 from Core/Mereology.lean (base algebra + pullback + bridges):
-export _root_.Mereology (AlgClosure CUM DIV QUA Atom
-  algClosure_cum subset_algClosure qua_cum_incompatible atom_qua
-  div_closed_under_le cum_qua_disjoint algClosure_of_mem
-  algClosure_mono algClosure_idempotent
-  IsSumHom Overlap ExtMeasure extMeasure_qua
-  QMOD qmod_sub
-  qua_pullback cum_pullback extMeasure_strictMono singleton_qua
-  extMeasure_qua' qua_pullback_comp
-  IsSumHom.strictMono_of_injective qua_of_injective_sumHom
-  cum_qua_dimension_disjoint
-  -- §1–4 from Core/MereoDim.lean (Mereology ↔ MeasurementScale bridge):
-  quaBoundedness cumBoundedness
-  qua_boundedness_licensed cum_boundedness_blocked
-  extMeasure_kennedy extMeasure_rouillard
-  cum_sum_exceeds cum_sum_exceeds_both
-  -- §5–8 from Core/MereoDim.lean (MereoDim typeclass):
-  MereoDim instMereoDimOfExtMeasure MereoDim.ofInjSumHom MereoDim.comp
-  qua_pullback_mereoDim qua_pullback_mereoDim_comp
-  -- §9–10 from Core/MereoDim.lean (MeasureProportional + LaxMeasureSquare):
-  MeasureProportional LaxMeasureSquare
-  LaxMeasureSquare.laxCommutativity
-  LaxMeasureSquare.mereoDim₁ LaxMeasureSquare.mereoDim₂
-  LaxMeasureSquare.qua_pullback₂)
+-- Generic mereological vocabulary (CUM/QUA/AlgClosure/QMOD/ExtMeasure
+-- /MereoDim/LaxMeasureSquare/...) lives in `Core.Mereology` and
+-- `Core.Scales.MereoDim`. Consumers do `open Mereology` to bring it
+-- into scope rather than relying on re-exports here.
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event CEM (Classical Extensional Mereology)

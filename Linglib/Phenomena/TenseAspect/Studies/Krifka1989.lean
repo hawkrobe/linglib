@@ -69,7 +69,7 @@ on abstract domains.
 
 namespace Krifka1989
 
-open Mereology
+open _root_.Mereology
 open Semantics.Events.Mereology
 open Semantics.Noun.MereoReference (MassNoun CountNoun BarePlural barePlural_cum)
 open Semantics.Events.ThematicRoleProperties (UP)

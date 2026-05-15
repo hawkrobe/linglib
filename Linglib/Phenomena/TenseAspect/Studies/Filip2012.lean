@@ -48,7 +48,7 @@ The third class's compositional behavior:
 
 namespace Filip2012
 
-open Mereology
+open _root_.Mereology
 open Semantics.Events.Mereology
 open Semantics.Events.ThematicRoleProperties
 open Semantics.Events.Incrementality

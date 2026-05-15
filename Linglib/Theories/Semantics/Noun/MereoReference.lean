@@ -26,7 +26,7 @@ this file and instantiate the predicates on paper-specific data.
 
 namespace Semantics.Noun.MereoReference
 
-open Mereology
+open _root_.Mereology
 open Semantics.Events.Mereology
 
 /-- Mass nouns have cumulative reference: water ⊕ water = water.

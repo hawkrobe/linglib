@@ -50,7 +50,7 @@ This module composes existing pieces:
 
 namespace Semantics.Classifier
 
-open Mereology
+open _root_.Mereology
 open Typology (ClassifierStrategy)
 
 -- ============================================================================

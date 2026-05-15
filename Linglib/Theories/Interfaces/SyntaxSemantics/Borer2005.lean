@@ -54,7 +54,7 @@ consistent with compositional semantics:
 
 namespace Interfaces.SyntaxSemantics.Borer2005
 
-open Mereology
+open _root_.Mereology
 
 -- ════════════════════════════════════════════════════
 -- § 1. Individuation Operator

@@ -24,7 +24,7 @@ produces cumulative readings automatically.
 namespace Phenomena.Plurals.Studies.Charlow2021.UpdateTheoretic
 
 open Semantics.Dynamic.Core
-open Mereology
+open _root_.Mereology
 
 variable {W E : Type*}
 

@@ -51,7 +51,7 @@ which the other four are measured.
 namespace Phenomena.Plurals.Studies.Charlow2021.Basic
 
 open Semantics.Dynamic.Core
-open Mereology
+open _root_.Mereology
 
 variable {S E : Type*}
 

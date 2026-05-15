@@ -45,7 +45,7 @@ namespace HaslingerHienEtAl2025
 open Semantics.Quantification.UnifiedUniversal
 open Semantics.Quantification.ONEModifiers
 open Semantics.Plurality.Distributivity
-open Mereology
+open _root_.Mereology
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Linguistic Typology

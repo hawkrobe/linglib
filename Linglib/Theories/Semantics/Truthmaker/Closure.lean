@@ -35,7 +35,7 @@ witnesses; for infinitary closure use `LowerSet`-style packaging.
 
 namespace Semantics.Truthmaker
 
-open Mereology
+open _root_.Mereology
 
 -- ════════════════════════════════════════════════════
 -- § 1. Closed propositions (Jago's `P^⊔`)

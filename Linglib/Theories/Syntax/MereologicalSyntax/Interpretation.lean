@@ -45,7 +45,7 @@ def individuates (d : SynObj) : Bool :=
 
 section Semantics
 
-open Mereology
+open _root_.Mereology
 open Interfaces.SyntaxSemantics.Borer2005
 
 variable {α : Type*} [SemilatticeSup α]

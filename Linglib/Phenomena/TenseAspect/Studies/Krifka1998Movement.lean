@@ -195,7 +195,7 @@ theorem motion_vendler_path_coherence :
 section K98PropositionalSubstrate
 
 open Semantics.Events.ThematicRoleProperties (MO)
-open Mereology
+open _root_.Mereology
 
 /-- K98 §4.1 eq. 63 EXP: expansion. If x is θ-related to e and y to a
     temporally-following e', then x and y do not overlap. -/
@@ -264,8 +264,9 @@ end K98PropositionalSubstrate
 section SpatialTracePullback
 
 open Semantics.Events
+open Semantics.Events.Mereology
 open Semantics.Spatial.Path
-open Mereology
+open _root_.Mereology
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
