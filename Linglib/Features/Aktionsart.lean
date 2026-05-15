@@ -118,6 +118,17 @@ def dynamicity : VendlerClass → Dynamicity
 
 end VendlerClass
 
+-- LicensingPipeline instances: per the convention noted in
+-- `Core/Scales/Defs.lean` (LicensingPipeline class docstring), instances
+-- live with the type they classify. Both compose via
+-- `t.toMereoTag.toBoundedness`.
+
+instance : Core.Scale.LicensingPipeline Telicity where
+  toBoundedness t := t.toMereoTag.toBoundedness
+
+instance : Core.Scale.LicensingPipeline VendlerClass where
+  toBoundedness v := v.telicity.toMereoTag.toBoundedness
+
 /-- States are stative. -/
 theorem state_is_stative : VendlerClass.state.dynamicity = .stative := rfl
 

@@ -173,6 +173,12 @@ theorem telicity_boundedness_agree (s : PathShape) :
   cases s <;> simp [pathShapeToTelicity, PathShape.toBoundedness,
     Core.Scale.Boundedness.isLicensed]
 
+/-- LicensingPipeline instance for PathShape via the `pathShapeToTelicity`
+    bridge. Co-located with the bridge per the convention noted in
+    `Core/Scales/Defs.lean` (instances live with their type). -/
+instance : Core.Scale.LicensingPipeline PathShape where
+  toBoundedness p := (pathShapeToTelicity p).toMereoTag.toBoundedness
+
 end Semantics.Events.SpatialTrace
 
 -- ════════════════════════════════════════════════════

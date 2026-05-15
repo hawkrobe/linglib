@@ -9,8 +9,7 @@ Category with partially ordered types as objects and strictly monotone
 from Mathlib provide the categorical identity and composition.
 
 The `DimensionChain.toMereoMor` bridge connects the existing dimension
-chain infrastructure to categorical morphisms, enabling the coherence
-results in `Events/DimensionCoherence.lean`.
+chain infrastructure to categorical morphisms.
 -/
 
 universe u

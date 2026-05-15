@@ -4,7 +4,6 @@ import Linglib.Theories.Semantics.Entailment.Extremum
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Aspect.SubintervalProperty
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Fragments.English.TemporalExpressions
 
 /-!
@@ -342,7 +341,7 @@ theorem no_smallest_open_PTS_geometric [DenselyOrdered Time]
     empirical predictions in § 13. The chain
     `VendlerClass →.telicity Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness`
     is definitional, with `LicensingPipeline VendlerClass` registered in
-    `Theories/Semantics/Events/DimensionBridge.lean`. -/
+    `Features/Aktionsart.lean`. -/
 
 /-- Telic VPs route through `LicensingPipeline` to the licensed (closed)
     boundedness tag. -/

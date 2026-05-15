@@ -1753,7 +1753,6 @@ import Linglib.Phenomena.TenseAspect.Studies.Klecha2016
 import Linglib.Phenomena.TenseAspect.Studies.Filip2012
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998Movement
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
-import Linglib.Phenomena.TenseAspect.Studies.DimensionCoherence
 import Linglib.Phenomena.TenseAspect.Studies.AspectualConsistency
 import Linglib.Phenomena.TenseAspect.Studies.KennedyLevin2008
 import Linglib.Phenomena.TenseAspect.Studies.HayKennedyLevin1999
@@ -2391,7 +2390,6 @@ import Linglib.Theories.Morphology.TheorySpace
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.EventAdjacency
 import Linglib.Theories.Semantics.Events.InitialFinalParts
-import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 import Linglib.Theories.Semantics.Attitudes.BuilderProperties
 import Linglib.Theories.Semantics.Attitudes.CDistributivity

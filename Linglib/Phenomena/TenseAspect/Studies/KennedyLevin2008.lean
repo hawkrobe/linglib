@@ -4,7 +4,6 @@ import Linglib.Theories.Semantics.Events.AffectednessHierarchy
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Phenomena.TenseAspect.Diagnostics
-import Linglib.Theories.Semantics.Events.DimensionBridge
 import Mathlib.Data.Rat.Defs
 
 /-!

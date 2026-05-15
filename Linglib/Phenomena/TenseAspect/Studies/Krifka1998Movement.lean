@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Events.SpatialTrace
-import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.EventAdjacency
 import Linglib.Fragments.English.Predicates.Verbal
@@ -137,8 +136,7 @@ theorem run_pathSpec :
     yields a telic predicate (eq. 71 MR + the SMR theorem on page 24).
     The full chain from PathShape through Telicity to licensing is
     verified for all three shapes here. The `LicensingPipeline`
-    instance for `PathShape` is in `DimensionBridge.lean`, which also
-    cites K98 explicitly. -/
+    instance for `PathShape` lives in `SpatialTrace.lean`. -/
 
 /-- Bounded path → telic → QUA → closed → licensed.
     K98 §4 eq. 74 (*walked from X to Y*) — full path with both SOURCE
@@ -214,8 +212,7 @@ theorem all_motion_data_correct :
     Diagnostics are defined on `VendlerClass`; we bridge through the
     Vendler classification of motion verbs. This is the §3 ↔ §4
     convergence: both routes through `LicensingPipeline` end at the
-    same in/for diagnostic prediction (cf. `DimensionBridge.lean`'s
-    universal pipeline-agreement theorem). -/
+    same in/for diagnostic prediction. -/
 
 /-- "arrive" (achievement, bounded path) licenses "in X". -/
 theorem arrive_inX :

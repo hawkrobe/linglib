@@ -7,7 +7,6 @@ import Linglib.Phenomena.Gradability.Studies.Sassoon2013
 import Linglib.Phenomena.Gradability.Studies.Solt2018Multidim
 import Linglib.Phenomena.ArgumentStructure.Studies.BeaversKoontzGarboden2020
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Events.DimensionBridge
 
 /-!
 # @cite{tham-2025}

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.DimensionBridge
+import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Gradability.Basic
 import Linglib.Theories.Semantics.Gradability.MaximalInformativity
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
@@ -60,7 +60,6 @@ open Core.Scale
 open Core.Time
 open Semantics.Gradability
 open Features
-open Semantics.Verb
 open Fragments.English.Predicates.Adjectival
 
 -- ════════════════════════════════════════════════════
