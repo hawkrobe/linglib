@@ -5041,10 +5041,173 @@ private theorem RHS_eq_canonical_msform_pres
       simp only [Function.comp_apply]
       exact congrArg _ (augInterpret_T_graft_succ_bridge T pres c rest choice_T fdata
         rest_targets pTO pTG kq.fst kq.snd pFO pFG hPTGlen ▸ rfl)
-    -- Case FA_orig
-    · sorry
-    -- Case FA_graft
-    · sorry
+    -- Case FA_orig: pres' .FA_orig = pres .FA_orig ++ [c]; LHS-side has pFO_ext
+    -- of length (pres .FA_orig).length + 1; RHS-side first_target = .fa_orig i v
+    -- with enumeration via (perKFChoice F_A).map (fun p => .fa_orig p.fst p.snd).
+    · unfold enumAugGraftingData
+      rw [Multiset.map_map, Multiset.map_coe]
+      simp_rw [List.map_flatMap, List.map_map]
+      simp_rw [← Multiset.coe_bind]
+      simp only [show (Function.update pres QuadIdx.FA_orig (pres QuadIdx.FA_orig ++ [c]))
+                        QuadIdx.T_orig = pres QuadIdx.T_orig
+                  from Function.update_of_ne (by decide) _ _,
+                 show (Function.update pres QuadIdx.FA_orig (pres QuadIdx.FA_orig ++ [c]))
+                        QuadIdx.T_graft = pres QuadIdx.T_graft
+                  from Function.update_of_ne (by decide) _ _,
+                 show (Function.update pres QuadIdx.FA_orig (pres QuadIdx.FA_orig ++ [c]))
+                        QuadIdx.FA_orig = pres QuadIdx.FA_orig ++ [c]
+                  from Function.update_self _ _ _,
+                 show (Function.update pres QuadIdx.FA_orig (pres QuadIdx.FA_orig ++ [c]))
+                        QuadIdx.FA_graft = pres QuadIdx.FA_graft
+                  from Function.update_of_ne (by decide) _ _,
+                 List.length_append, List.length_singleton]
+      conv_rhs =>
+        rw [show (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.FA_orig :
+                Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+              (Multiset.ofList (perKFChoice F_A)).map
+                (fun p => AlphaConstrainedChoice.fa_orig p.fst p.snd) from by
+              rw [← ofList_FA_orig_eq_enumAlpha]
+              rw [show (List.finRange F_A.length).flatMap (fun i =>
+                          (vertices F_A[i.val]).map (AlphaConstrainedChoice.fa_orig i)) =
+                       (perKFChoice F_A).map
+                         (fun p => AlphaConstrainedChoice.fa_orig p.fst p.snd) from by
+                    unfold perKFChoice
+                    rw [List.map_flatMap]
+                    apply List.flatMap_congr
+                    intro i _
+                    rw [List.map_map]
+                    rfl]
+              rw [← Multiset.map_coe]]
+      simp_rw [Multiset.bind_map]
+      simp_rw [listChoices_split_bind (perKFChoice F_A) (pres QuadIdx.FA_orig).length 1]
+      rw [show (listChoices (perKFChoice F_A) 1 :
+                List (List (Fin F_A.length × Path))) =
+            (perKFChoice F_A).map (fun p => [p]) from by
+            rw [show (1 : Nat) = 0 + 1 from rfl, listChoices_succ]
+            simp only [listChoices_zero, List.map_singleton]
+            rw [List.map_eq_flatMap]]
+      simp_rw [← Multiset.map_coe, Multiset.bind_map]
+      -- Reorder LHS: bring (i, v) outside past pTO, pTG, targets.
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets; rhs; ext pTO; rhs; ext pTG
+        rw [Multiset.bind_bind]
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets; rhs; ext pTO
+        rw [Multiset.bind_bind]
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets
+        rw [Multiset.bind_bind]
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata
+        rw [Multiset.bind_bind]
+      refine Multiset.bind_congr fun choice_T _ => ?_
+      refine Multiset.bind_congr fun fdata _ => ?_
+      refine Multiset.bind_congr fun iv _ => ?_
+      refine Multiset.bind_congr fun rest_targets _ => ?_
+      refine Multiset.bind_congr fun pTO _ => ?_
+      refine Multiset.bind_congr fun pTG _ => ?_
+      refine Multiset.bind_congr fun pFO h_pFO => ?_
+      have hPFOlen : pFO.length = (pres QuadIdx.FA_orig).length :=
+        mem_listChoices_length _ _ _ (Multiset.mem_coe.mp h_pFO)
+      rw [Multiset.map_map]
+      refine Multiset.map_congr rfl fun pFG _ => ?_
+      simp only [Function.comp_apply]
+      exact congrArg _ (augInterpret_FA_orig_succ_bridge T pres c rest choice_T fdata
+        rest_targets pTO pTG pFO iv.fst iv.snd pFG hPFOlen ▸ rfl)
+    -- Case FA_graft: pres' .FA_graft = pres .FA_graft ++ [c]; LHS-side has pFG_ext
+    -- of length (pres .FA_graft).length + 1; RHS-side first_target = .fa_graft k q
+    -- with enumeration via (perKFChoice pre_FA_B).map (fun p => .fa_graft p.fst p.snd).
+    · unfold enumAugGraftingData
+      rw [Multiset.map_map, Multiset.map_coe]
+      simp_rw [List.map_flatMap, List.map_map]
+      simp_rw [← Multiset.coe_bind]
+      simp only [show (Function.update pres QuadIdx.FA_graft (pres QuadIdx.FA_graft ++ [c]))
+                        QuadIdx.T_orig = pres QuadIdx.T_orig
+                  from Function.update_of_ne (by decide) _ _,
+                 show (Function.update pres QuadIdx.FA_graft (pres QuadIdx.FA_graft ++ [c]))
+                        QuadIdx.T_graft = pres QuadIdx.T_graft
+                  from Function.update_of_ne (by decide) _ _,
+                 show (Function.update pres QuadIdx.FA_graft (pres QuadIdx.FA_graft ++ [c]))
+                        QuadIdx.FA_orig = pres QuadIdx.FA_orig
+                  from Function.update_of_ne (by decide) _ _,
+                 show (Function.update pres QuadIdx.FA_graft (pres QuadIdx.FA_graft ++ [c]))
+                        QuadIdx.FA_graft = pres QuadIdx.FA_graft ++ [c]
+                  from Function.update_self _ _ _,
+                 List.length_append, List.length_singleton]
+      conv_rhs =>
+        rw [show (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.FA_graft :
+                Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+              (Multiset.ofList (perKFChoice pre_FA_B)).map
+                (fun p => AlphaConstrainedChoice.fa_graft p.fst p.snd) from by
+              rw [← ofList_FA_graft_eq_enumAlpha]
+              rw [show (List.finRange pre_FA_B.length).flatMap (fun k =>
+                          (vertices pre_FA_B[k.val]).map (AlphaConstrainedChoice.fa_graft k)) =
+                       (perKFChoice pre_FA_B).map
+                         (fun p => AlphaConstrainedChoice.fa_graft p.fst p.snd) from by
+                    unfold perKFChoice
+                    rw [List.map_flatMap]
+                    apply List.flatMap_congr
+                    intro k _
+                    rw [List.map_map]
+                    rfl]
+              rw [← Multiset.map_coe]]
+      simp_rw [Multiset.bind_map]
+      -- Convert innermost `↑(List.map G L)` to `(↑L).map G` so listChoices_split_map matches.
+      simp_rw [← Multiset.map_coe]
+      simp_rw [listChoices_split_map (perKFChoice pre_FA_B) (pres QuadIdx.FA_graft).length 1]
+      rw [show (listChoices (perKFChoice pre_FA_B) 1 :
+                List (List (Fin pre_FA_B.length × Path))) =
+            (perKFChoice pre_FA_B).map (fun p => [p]) from by
+            rw [show (1 : Nat) = 0 + 1 from rfl, listChoices_succ]
+            simp only [listChoices_zero, List.map_singleton]
+            rw [List.map_eq_flatMap]]
+      simp_rw [← Multiset.map_coe, Multiset.map_map]
+      -- Convert LHS innermost .map (over perKFChoice) to .bind over singleton,
+      -- so it matches RHS's bind structure for first_target.
+      simp_rw [← Multiset.bind_singleton]
+      -- Reorder LHS: bring p (innermost) outside past pFG_part1, pFO, pTG, pTO, targets.
+      -- Total 5 swaps to bring p from position 8 to position 3.
+      -- Reorder LHS: bring p (currently innermost, depth 8) to position 3.
+      -- Each swap moves p past one outer layer. Total: 5 swaps to go from
+      -- position 8 → 7 → 6 → 5 → 4 → 3.
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets; rhs; ext pTO
+        rhs; ext pTG; rhs; ext pFO
+        rw [Multiset.bind_bind]
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets; rhs; ext pTO; rhs; ext pTG
+        rw [Multiset.bind_bind]
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets; rhs; ext pTO
+        rw [Multiset.bind_bind]
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets
+        rw [Multiset.bind_bind]
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata
+        rw [Multiset.bind_bind]
+      -- RHS innermost was already converted to .bind by global simp_rw [← bind_singleton].
+      refine Multiset.bind_congr fun choice_T _ => ?_
+      refine Multiset.bind_congr fun fdata _ => ?_
+      refine Multiset.bind_congr fun kq _ => ?_
+      refine Multiset.bind_congr fun rest_targets _ => ?_
+      refine Multiset.bind_congr fun pTO _ => ?_
+      refine Multiset.bind_congr fun pTG _ => ?_
+      refine Multiset.bind_congr fun pFO _ => ?_
+      refine Multiset.bind_congr fun pFG h_pFG => ?_
+      have hPFGlen : pFG.length = (pres QuadIdx.FA_graft).length :=
+        mem_listChoices_length _ _ _ (Multiset.mem_coe.mp h_pFG)
+      -- Both sides are now singletons. Equate via leaf helper wrapped in singleton+map.
+      simp only [Function.comp_apply]
+      have h := augInterpret_FA_graft_succ_bridge T pres c rest choice_T fdata
+        rest_targets pTO pTG pFO pFG kq.fst kq.snd hPFGlen
+      -- Replace `(kq.1, kq.2)` with `kq` in `pFG ++ [(kq.1, kq.2)]` via Prod eta.
+      have hkq : pFG ++ [(kq.fst, kq.snd)] = pFG ++ [kq] := by rfl
+      rw [hkq] at h
+      exact congrArg
+        (fun (M : Multiset (Planar α)) =>
+          ({M.bind fun x => ({Nonplanar.mk x} : Multiset _)} : Multiset _))
+        (congrArg Multiset.ofList h)
 
 /-! ### §1.11.7: `RHS_eq_canonical_msform` derived from strong-IH
 
