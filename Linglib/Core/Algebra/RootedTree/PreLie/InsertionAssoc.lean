@@ -4457,14 +4457,52 @@ private theorem RHS_eq_canonical_msform_pres
     simp_rw [← Multiset.coe_bind]
     -- The innermost RHS has Multiset.ofList (List.map ...). Convert via ← map_coe.
     simp_rw [← Multiset.map_coe]
-    --
-    -- TODO (Phase 2 substantive): the RHS has 5 outer binds, then a `.map .bind`
-    -- structure at the innermost (from listChoices.map (fun pFG => agd)
-    -- followed by .bind for augInterpret). The LHS has 6 outer binds with a
-    -- singleton multiset at the leaf. Need to unify these structures and
-    -- equate per-leaf via List.zip_append + multiGraft pair-list congruence.
-    -- ~50-80 LOC remaining.
-    sorry
+    -- RHS has structure ((5 binds).Multiset.map _ M_6).bind (fun x => {leaf' x}).
+    -- Apply Multiset.bind_assoc to push outer .bind through 5 inner binds.
+    simp_rw [Multiset.bind_assoc]
+    -- Now the OUTER structure is M_1.bind ... .M_5.bind (fun b5 => (M_6.map _).bind G).
+    -- Combine the inner .map .bind via Multiset.bind_map.
+    simp_rw [Multiset.bind_map]
+    -- Now both sides are 6-deep .bind. Use Multiset.bind_congr per layer,
+    -- capturing membership for length hypotheses.
+    refine Multiset.bind_congr fun choice_T h_choice_T => ?_
+    refine Multiset.bind_congr fun fdata h_fdata => ?_
+    refine Multiset.bind_congr fun pTO _ => ?_
+    refine Multiset.bind_congr fun pTG _ => ?_
+    refine Multiset.bind_congr fun pFO _ => ?_
+    refine Multiset.bind_congr fun pFG _ => ?_
+    -- Length hypotheses for List.zip_append.
+    have hcT : choice_T.length = pre_T_B.length :=
+      mem_listChoices_length _ _ _ (Multiset.mem_coe.mp h_choice_T)
+    have hfd : fdata.length = pre_FA_B.length :=
+      mem_listChoices_length _ _ _ (Multiset.mem_coe.mp h_fdata)
+    -- Equate the singleton multisets via underlying list equality.
+    congr 1
+    congr 1
+    -- Now: list equality.
+    -- Apply augInterpret_C_nil to RHS, unfold function compositions on LHS,
+    -- and use List.zip_append + List.filterMap_append for the splits.
+    rw [augInterpret_C_nil T]
+    -- Reduce composition on LHS.
+    simp only [Function.comp_apply, perTreePairsFromFChoice]
+    -- Apply List.zip_append on T-side and F-side splits.
+    have h_lhs_pre_T_B'_len :
+        (List.map (fun i : Fin pre_T_B.length => multiGraft pre_T_B[i.val]
+            ((pTG.zip (pres .T_graft)).filterMap fun p =>
+              if p.fst.fst = i then some (p.fst.snd, p.snd) else none))
+          (List.finRange pre_T_B.length)).length = choice_T.length := by
+      rw [List.length_map, List.length_finRange, hcT]
+    have h_lhs_pre_FA_B'_len :
+        (List.map (fun i : Fin pre_FA_B.length => multiGraft pre_FA_B[i.val]
+            ((pFG.zip (pres .FA_graft)).filterMap fun p =>
+              if p.fst.fst = i then some (p.fst.snd, p.snd) else none))
+          (List.finRange pre_FA_B.length)).length = fdata.length := by
+      rw [List.length_map, List.length_finRange, hfd]
+    rw [List.zip_append h_lhs_pre_T_B'_len.symm,
+        List.zip_append h_lhs_pre_FA_B'_len.symm]
+    -- Push filterMap through the resulting append in F-side. This closes the
+    -- goal: both sides reduce to the same list expression.
+    simp only [List.filterMap_append]
   | cons c rest ih =>
     -- CONS CASE: see §1.11.6 docstring for proof plan.
     -- 1. iteratedQuadSum_cons_remaining gives 4-bucket outer bind on LHS.
