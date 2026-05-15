@@ -5737,11 +5737,37 @@ private theorem LHS_FALSE_eq_FA_buckets
               Multiset.map (fun x => Multiset.ofList (List.map Nonplanar.mk x))
                 (Multiset.map (fun x => buildFIns (T' :: F') rest x)
                   (Multiset.ofList (listChoices (perKFChoice (T' :: F')) rest.length)))) := by
-  -- TODO: Substantive bridge. Substrate: `vertices_forest_eq_partition` on
-  -- F' = (List.finRange F_A.length).map (fun i => multiGraft F_A[i] (pairs i))
-  -- partitions (i, v) into preserved/sourceSelf class at F_A[i] (→ FA_orig)
-  -- vs lifted class at pre_FA_B[k] (→ FA_graft via
-  -- multiGraft_split_lifted_aux). F-side analog of LHS_TRUE_eq_T_buckets.
+  -- **Phase 1 (setup)** — F-side analog of LHS_TRUE_eq_T_buckets Phase 1.
+  -- Refolds the inner (i, v) flatMap on perKFChoice F' back to listChoices form,
+  -- collapses `+ 1` to `(c :: filter_f).length`, then refolds the
+  -- `Multiset.map (buildFIns F' (c :: filter_f)) ↑(...)` to `insertionForest F' (c :: filter_f)`
+  -- via `insertionForest_eq_explicit + enumFChoices` (analogous to `← insertion_def`
+  -- on the TRUE side but for forests).
+  simp_rw [← listChoices_succ,
+    show ∀ (l : List (Planar α)), l.length + 1 = (c :: l).length from fun _ => rfl]
+  simp_rw [show ∀ (F G : List (Planar α)),
+            (Multiset.map (fun x => buildFIns F G x)
+              (Multiset.ofList (listChoices (perKFChoice F) G.length)) :
+                Multiset (List (Planar α))) =
+              insertionForest F G from fun F G => by
+                rw [insertionForest_eq_explicit]
+                show Multiset.map (fun x => buildFIns F G x)
+                      (Multiset.ofList (listChoices (perKFChoice F) G.length)) =
+                    (enumFChoices F G).map (buildFIns F G)
+                rfl]
+  -- Also refold the inner T' insertion (no c) and outer T (no c) back to insertion form:
+  simp_rw [← insertion_def]
+  -- After Phase 1: goal is in clean insertionForest/insertion API form, mirroring
+  -- LHS_TRUE_eq_T_buckets post-Phase-1. The substantive Phase 2-4 (vertex partition
+  -- via `vertices_forest_eq_partition`, per-class absorption via
+  -- `multiGraft_split_lifted_aux` for lifted, plus FA_orig analog of preserved
+  -- class, and bool↔perKFChoice routing bridge) remains: ~300-500 LOC.
+  --
+  -- F-side note: the partition is over perKFChoice F' (not vertices T'). For (i, v):
+  --   - i < F_A.length, v ∈ vertices F_A[i] (preserved/sourceSelf) → FA_orig case
+  --     (c at vertex of F_A[i], absorbed into pres .FA_orig ++ [c])
+  --   - i indexes a lifted vertex of pre_FA_B[k] for some k → FA_graft case
+  --     (c inside pre_FA_B[k], absorbed into pres .FA_graft ++ [c])
   sorry
 
 /-- **LHS 4-bucket peel** (sorry-fenced via 2 helpers): decomposes the LHS form at
