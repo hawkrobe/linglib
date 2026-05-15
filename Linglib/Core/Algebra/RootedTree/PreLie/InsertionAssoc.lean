@@ -5559,9 +5559,13 @@ private theorem LHS_form_cons_decompose
   -- After this, the FALSE branch's inner has `(listChoices (perKFChoice a_2) (c :: ...).length)`
   -- which exposes the (i, v) head choice via listChoices_succ (next step).
   simp_rw [insertionForest_eq_explicit]
-  -- Apply length_cons + listChoices_succ once more to expose (i, v) for FALSE branch's c.
-  -- This time the listChoices is over perKFChoice (not vertices), and the head element
-  -- of the choice list is the (i, v) for c.
+  -- Unfold enumFChoices to expose the listChoices form, then apply length_cons +
+  -- listChoices_succ once more to expose (i, v) for FALSE branch's c on F-side.
+  -- The unfold shows enumFChoices = Multiset.ofList (listChoices (perKFChoice F) length).
+  simp_rw [show ∀ (F G : List (Planar α)), enumFChoices F G =
+                Multiset.ofList (listChoices (perKFChoice F) G.length) from fun _ _ => rfl]
+  -- Now `enumFChoices a_2 (c :: filterMap_rest)` = `Multiset.ofList (listChoices (perKFChoice a_2)
+  -- (c :: filterMap_rest).length)`. The `.length` reduces, listChoices_succ exposes (i, v).
   simp_rw [List.length_cons, listChoices_succ]
   -- Substantive content remaining (~400-700 LOC across 2 sessions):
   -- - Phase D.T_orig: c-vertex choice → preserved/sourceSelf class of T (via
