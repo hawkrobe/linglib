@@ -415,6 +415,182 @@ theorem insertion_planarEquiv_guests (t : Planar α)
   -- via List.Forall₂ for the pair (fst eq, snd planarEquiv)
   exact multiGraft_planarEquiv_pair_Forall₂ t (zip_pair_Forall₂ choice h)
 
+/-! ## §5.5: A3.3 substrate — validity discharge and `multiGraft_compose`
+        specializations
+
+The A3.3 helpers (`LHS_TRUE_eq_T_buckets`, `LHS_FALSE_eq_FA_buckets` in
+`InsertionAssoc.lean`) need to apply `multiGraft_compose` (Graft.lean §11.4)
+to collapse nested-graft forms of the shape
+```
+multiGraft (multiGraft T (choice_o.zip outer_Ts)) (choice_i.zip inner_Ts)
+```
+into a single `multiGraft T (composePairs ...)`. The validity hypotheses
+of `multiGraft_compose` (every pair's `.fst` is a valid path in the host)
+are discharged here by lifting `mem ∈ listChoices (vertices T) n` to
+`IsValidPath` via the existing `forall_isValidPath`.
+
+These specializations are consumed downstream by the per-class bridge
+lemmas (Session 2 onwards) of the A3.3 helpers.
+
+Why this lives here and not in `Graft.lean`: `listChoices` is defined in
+`Insertion.lean` §1, but `multiGraft_compose` is defined in `Graft.lean`
+§11. The validity bridge crossing between them belongs here. -/
+
+/-- Every element of a `choice ∈ listChoices xs n` is a member of `xs`.
+    Lifts membership-in-an-enumerated-choice to membership-in-the-alphabet. -/
+theorem mem_of_mem_listChoices {β : Type*}
+    (xs : List β) (n : Nat) (choice : List β) (h_choice : choice ∈ listChoices xs n)
+    (v : β) (h_v : v ∈ choice) : v ∈ xs := by
+  induction n generalizing choice with
+  | zero =>
+    rw [listChoices_zero, List.mem_singleton] at h_choice
+    subst h_choice
+    cases h_v
+  | succ k ih =>
+    rw [listChoices_succ, List.mem_flatMap] at h_choice
+    obtain ⟨w, hw_mem, h_choice⟩ := h_choice
+    rw [List.mem_map] at h_choice
+    obtain ⟨rest, hrest_mem, rfl⟩ := h_choice
+    rw [List.mem_cons] at h_v
+    rcases h_v with rfl | h_v
+    · exact hw_mem
+    · exact ih rest hrest_mem h_v
+
+/-- Every path in a `choice.zip Ts` pair list is a valid path in `T`, when
+    `choice ∈ listChoices (vertices T) Ts.length`. Discharges the
+    `h_outer_valid` hypothesis of `multiGraft_compose` for the canonical
+    A3.3 outer pair shape. -/
+theorem forall_zip_isValidPath_of_listChoices
+    (T : Planar α) (Ts : List (Planar α))
+    (choice : List Path)
+    (h_choice : choice ∈ listChoices (vertices T) Ts.length)
+    (pair : Path × Planar α) (h_pair : pair ∈ choice.zip Ts) :
+    IsValidPath pair.fst T := by
+  have h_fst_mem : pair.fst ∈ choice := (List.of_mem_zip h_pair).1
+  exact forall_isValidPath T (mem_of_mem_listChoices (vertices T) Ts.length
+    choice h_choice pair.fst h_fst_mem)
+
+/-- Auto-discharge variant of `multiGraft_compose` for the canonical A3.3
+    outer-pair shape `choice_o.zip outer_Ts` with `choice_o ∈ listChoices
+    (vertices T) outer_Ts.length`. The inner pair list's validity is
+    passed as a hypothesis. -/
+theorem multiGraft_compose_at_choice
+    (T : Planar α) (outer_Ts : List (Planar α))
+    (choice_o : List Path)
+    (h_choice_o : choice_o ∈ listChoices (vertices T) outer_Ts.length)
+    (inner_pairs : List (Path × Planar α))
+    (h_inner_valid : ∀ p ∈ inner_pairs,
+        IsValidPath p.fst (multiGraft T (choice_o.zip outer_Ts))) :
+    multiGraft (multiGraft T (choice_o.zip outer_Ts)) inner_pairs =
+      multiGraft T (composePairs (choice_o.zip outer_Ts) inner_pairs) := by
+  apply multiGraft_compose T (choice_o.zip outer_Ts) inner_pairs
+  · intro pair h_pair
+    exact forall_zip_isValidPath_of_listChoices T outer_Ts choice_o h_choice_o pair h_pair
+  · exact h_inner_valid
+
+/-- Doubly auto-discharged variant: both outer and inner choices come from
+    `listChoices`-derived enumerations. Specifically for the A3.3 TRUE-side
+    shape where `inner = (v_c :: ch).zip (c :: filter_t)` with `v_c ∈
+    vertices T'` and `ch ∈ listChoices (vertices T') filter_t.length`. -/
+theorem multiGraft_compose_at_choice_inner_zip
+    (T : Planar α) (outer_Ts : List (Planar α))
+    (choice_o : List Path)
+    (h_choice_o : choice_o ∈ listChoices (vertices T) outer_Ts.length)
+    (inner_Ts : List (Planar α))
+    (choice_i : List Path)
+    (h_choice_i : choice_i ∈ listChoices
+        (vertices (multiGraft T (choice_o.zip outer_Ts))) inner_Ts.length) :
+    multiGraft (multiGraft T (choice_o.zip outer_Ts)) (choice_i.zip inner_Ts) =
+      multiGraft T (composePairs (choice_o.zip outer_Ts) (choice_i.zip inner_Ts)) := by
+  apply multiGraft_compose_at_choice T outer_Ts choice_o h_choice_o
+  intro pair h_pair
+  have h_fst_mem : pair.fst ∈ choice_i := (List.of_mem_zip h_pair).1
+  exact forall_isValidPath _
+    (mem_of_mem_listChoices _ inner_Ts.length choice_i h_choice_i pair.fst h_fst_mem)
+
+/-- Cons-form specialization for the A3.3 TRUE-side pattern: the inner
+    pair list has shape `(v_c, c) :: ch.zip filter_t` where `v_c ∈ vertices T'`
+    and `ch ∈ listChoices (vertices T') filter_t.length`. The output of
+    `multiGraft_compose_at_choice` becomes a single `multiGraft T` with
+    `composePairs` building the combined pair list. -/
+theorem multiGraft_compose_cons_pair_at_choice
+    (T : Planar α) (outer_Ts : List (Planar α))
+    (choice_o : List Path)
+    (h_choice_o : choice_o ∈ listChoices (vertices T) outer_Ts.length)
+    (filter_t : List (Planar α)) (c : Planar α)
+    (v_c : Path)
+    (h_v_c : v_c ∈ vertices (multiGraft T (choice_o.zip outer_Ts)))
+    (ch : List Path)
+    (h_ch : ch ∈ listChoices
+        (vertices (multiGraft T (choice_o.zip outer_Ts))) filter_t.length) :
+    multiGraft (multiGraft T (choice_o.zip outer_Ts))
+        ((v_c, c) :: ch.zip filter_t) =
+      multiGraft T (composePairs (choice_o.zip outer_Ts)
+        ((v_c, c) :: ch.zip filter_t)) := by
+  apply multiGraft_compose_at_choice T outer_Ts choice_o h_choice_o
+  intro pair h_pair
+  rcases List.mem_cons.mp h_pair with rfl | h_pair
+  · exact forall_isValidPath _ h_v_c
+  · have h_fst_mem : pair.fst ∈ ch := (List.of_mem_zip h_pair).1
+    exact forall_isValidPath _
+      (mem_of_mem_listChoices _ filter_t.length ch h_ch pair.fst h_fst_mem)
+
+/-- Distribute `vertices_multiGraft_decomp`'s 3-class partition through a
+    bind over `Multiset.ofList (vertices (multiGraft T pairs))`. The v_c
+    bind in the A3.3 TRUE-side helper has exactly this shape; after this
+    rewrite, the bind splits into 3 binds (one per class), each ready for
+    per-class absorption (Sessions 2-3 substrate). -/
+theorem vc_partition_via_bind
+    {γ : Type*}
+    (T : Planar α) (pairs : List (Path × Planar α))
+    (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T)
+    (f : Path → Multiset γ) :
+    (((vertices (multiGraft T pairs) : List Path) : Multiset Path)).bind f =
+      ((vertices T : Multiset Path).filterMap (preserveMulti pairs)).bind f +
+      (((vertices T : Multiset Path).filter
+          (· ∈ pairSources pairs)).map (transport pairs)).bind f +
+      ((Multiset.ofList (List.finRange pairs.length)).bind
+          (fun k => (vertices pairs[k].snd : Multiset Path).map
+            (liftMulti pairs k))).bind f := by
+  rw [vertices_multiGraft_decomp T pairs h_valid]
+  rw [Multiset.add_bind, Multiset.add_bind]
+
+/-- F-side analog: distribute `vertices_forest_eq_partition`'s per-tree
+    3-class partition through a bind over `Multiset.ofList (verticesAux 0
+    (forest as constructed))`. Specifically the A3.3 FALSE-side helper
+    binds over the F'-side vertex enumeration, which has this shape with
+    `cs = F_A` (preserved + sourceSelf) and per-tree lifted into pre_FA_B.
+
+    NOTE: the FALSE side of A3.3 actually binds over `perKFChoice F'` not
+    raw vertices of F'; see `perKFChoice_eq_forest_bind` (Session 4
+    substrate) for the bridge from `perKFChoice` enumeration to vertex
+    enumeration with per-tree (i, v) pairs. This lemma is the raw vertex
+    form; pair with the forthcoming bridge to get the `perKFChoice` form. -/
+theorem vc_partition_forest_via_bind
+    {γ : Type*}
+    (cs : List (Planar α))
+    (per_tree_pairs : Fin cs.length → List (Path × Planar α))
+    (h_valid : ∀ (i : Fin cs.length),
+        ∀ pair ∈ per_tree_pairs i, IsValidPath pair.fst cs[i.val])
+    (offset : ℕ)
+    (f : Path → Multiset γ) :
+    (((verticesAux offset
+        ((List.finRange cs.length).map fun i =>
+          multiGraft cs[i.val] (per_tree_pairs i)) : List Path) :
+          Multiset Path)).bind f =
+      (Multiset.ofList (List.finRange cs.length)).bind fun i =>
+        ((((vertices cs[i.val] : Multiset Path).filterMap
+              (preserveMulti (per_tree_pairs i)))
+          + (((vertices cs[i.val] : Multiset Path).filter
+                (· ∈ pairSources (per_tree_pairs i))).map
+              (transport (per_tree_pairs i)))
+          + ((Multiset.ofList (List.finRange (per_tree_pairs i).length)).bind
+              (fun k => (vertices ((per_tree_pairs i)[k.val].snd) :
+                Multiset Path).map (liftMulti (per_tree_pairs i) k)))
+        ).map ((offset + i.val) :: ·)).bind f := by
+  rw [vertices_forest_eq_partition cs per_tree_pairs h_valid offset]
+  rw [Multiset.bind_assoc]
+
 /-! ## §6: Host invariance via path-swap bijection
 
 `insertion T Ts` is `mk`-invariant under `PlanarEquiv` of the host: the
