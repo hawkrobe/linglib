@@ -3030,21 +3030,31 @@ These three classes are exhaustive by `vertices_multiGraft_decomp` (§9).
 `multiGraft_cons_pair` (§10.7), `multiGraft_split_lifted_aux` (§10.6),
 `transport` / `liftMulti` / `pairSources` / `preserveMulti` (§7-8). -/
 
-/-! ### §11.1: `absorbInnerPair` — single inner-pair absorption (sorry-fenced)
+/-! ### §11.1: `absorbInnerPair` — single inner-pair absorption
 
 For an inner pair `(p, c)` where `p ∈ vertices (mG T outer)`, returns the
 modified outer pair list whose multi-graft of T equals `insertAt p c (mG T outer)`.
 
 **Three-class semantics** (by `vertices_multiGraft_decomp`):
-- preserved (p = `transport outer v`, v ∉ pairSources): outer ++ [(v, c)]
-- sourceSelf (p = `transport outer v`, v ∈ pairSources): outer ++ [(v, c)]
-- lifted (p = `liftMulti outer k q`): outer.set k.val (...,insertAt q c outer[k].snd)
+- preserved (p = `transport outer v`, v ∉ pairSources): `(v, c) :: outer` (PREPEND)
+- sourceSelf (p = `transport outer v`, v ∈ pairSources): `(v, c) :: outer` (PREPEND)
+- lifted (p = `liftMulti outer k q`): `outer.set k.val (..., insertAt q c outer[k].snd)`
 
-**Implementation strategy** (Phase B): recursive descent on p's structure
-relative to `rootPrependCount outer`:
-- If `p[0] < rootPrependCount outer`: p starts in a root-prepend → lifted class
-- Else: p[0] - rootPrependCount outer is a child index → recurse on
-  `descentToChild` for the child + tail of p
+**PREPEND, not APPEND** (subtle planar-order issue): the LHS `mG (mG T outer) inner`
+puts inner root prepends FIRST in the result tree's children (followed by outer's
+children). For the RHS to match planar-equally, `cp.filterMap rootPrependFilter` must
+be `inner_root_prepends ++ outer_root_prepends`, i.e., NEW pairs go to the FRONT of
+the pair list. APPEND would give `outer_root_prepends ++ inner_root_prepends` (wrong
+order, planar-FALSE). See `[[feedback_multigraft_compose_prepend_foldr]]`.
+
+**Implementation strategy** (recursive descent on p's structure relative to
+`rootPrependCount outer`):
+- If `p = []`: PREPEND `([], c)` to outer.
+- If `p = i :: rest, i < rootPrependCount outer`: lifted in outer's i-th
+  root prepend → modify outer.set k where k = rootPrependPairIdx outer i.
+- If `p = i :: rest, i ≥ rootPrependCount outer`: descend into T's
+  (i - rootPrependCount outer)-th child; recurse on descented outer pairs;
+  lift back via `liftBackToOuter`.
 
 Returns the original outer unchanged on invalid inputs (defensive). -/
 
@@ -3056,33 +3066,40 @@ def rootPrependPairIdx (outer : List (Path × Planar α)) (i : ℕ) :
   ((List.finRange outer.length).filter (fun k => outer[k.val].fst = []))[i]?
 
 /-- Lift a modification of `descented_outer = descentToChild i outer` back to
-    a modification of `outer`. Sorry-fenced; future Phase B work.
-    Two cases for `modified`:
-    - `descented_outer ++ [(v, c)]`: append-modification → `outer ++ [(i :: v, c)]`
-    - `descented_outer.set k' (...)`: set-modification on descended pair k' →
-      `outer.set k_orig (...)` where k_orig is the outer index that descented to k'. -/
+    a modification of `outer`. Sorry-fenced; future work.
+    Two cases for `modified` (detectable by length):
+    - `modified.length = descented.length + 1`: PREPEND case at descented level.
+      `modified = (q', c') :: descented` for some `(q', c')`. Lift back:
+      prepend `(i :: q', c')` to outer.
+    - `modified.length = descented.length`: SET case at descented level.
+      `modified = descented.set k' (descented[k'].fst, T')` for some `k', T'`.
+      Lift back: `outer.set k_orig (outer[k_orig].fst, T')` where `k_orig` is
+      the outer index that descented to `k'` (= `descentInverse outer i k'`). -/
 noncomputable def liftBackToOuter (_descented_outer _modified : List (Path × Planar α))
     (_i : ℕ) (_outer : List (Path × Planar α)) : List (Path × Planar α) :=
-  -- TODO Phase B: implement via case analysis on (descented_outer, modified) shape.
-  -- Sorry-fenced: a placeholder stub here would make `multiGraft_compose`
-  -- provably false on the cons case, so we leave the body undefined.
+  -- TODO: implement via length-based case detection (PREPEND vs SET).
+  -- SET case requires `descentInverse` to map descented k' → outer k_orig.
+  -- The implementation requires DecidableEq on Planar (for `find?` over differing
+  -- positions) OR a richer return type from `absorbInnerPair` (passing case info
+  -- through the recursion). Both designs need care; deferred to next session.
   sorry
 
 /-- Absorb a single inner pair `(p, c)` into outer, returning the modified
     pair list. Recursive on path structure:
-    - p = []: root vertex (preserved/sourceSelf class, v = []). Append ([], c).
+    - p = []: root vertex (preserved/sourceSelf class, v = []). PREPEND `([], c)` to outer.
     - p = i :: rest, i < rootPrependCount outer: lifted at pair k. Modify outer[k]
       to insert c at rest in outer[k].snd.
     - p = i :: rest, i ≥ rootPrependCount outer: descend into T's child at index
       (i - rootPrependCount outer). Recurse on the descended outer pairs, then
-      lift back. -/
+      lift back via `liftBackToOuter`. -/
 noncomputable def absorbInnerPair (outer : List (Path × Planar α))
     (p : Path) (c : Planar α) : List (Path × Planar α) :=
   match p with
   | [] =>
     -- Root vertex: preserved (or sourceSelf if [] ∈ pairSources outer).
-    -- Either way, appending ([], c) is the correct action.
-    outer ++ [([], c)]
+    -- PREPEND ([], c) so that c becomes the FIRST root prepend in mG T outer'
+    -- (matching insertAt [] c's prepend semantics — see multiGraft_cons_pair).
+    ([], c) :: outer
   | i :: rest =>
     let N := rootPrependCount outer
     if i < N then
@@ -3100,49 +3117,128 @@ termination_by p
 
 /-! ### §11.2: `composePairs` — full inner-list composition
 
-Iterates `absorbInnerPair` over inner pairs. Each iteration may modify
-outer (via append for preserved/sourceSelf, or via set for lifted) so the
-next inner pair is absorbed against the updated outer. -/
+Composes inner pairs into outer via right-fold (foldr) with transport-based
+path re-addressing. Each inner pair `(p, c)` has `p` as a vertex of the original
+`mG T outer`; after composing the rest, the position of `p` in
+`mG T (composePairs outer rest) = mG (mG T outer) rest` is `transport rest p`.
+The re-addressing is essential for the cons-case proof of `multiGraft_compose`.
 
-noncomputable def composePairs (outer : List (Path × Planar α))
-    (inner : List (Path × Planar α)) : List (Path × Planar α) :=
-  inner.foldl (fun acc (p, c) => absorbInnerPair acc p c) outer
+**Why foldr (not foldl)**: The leftmost inner pair must be absorbed LAST (so that
+its empty-path PREPEND ends up FIRST in the result list — matching the planar
+order of root prepends in the LHS `mG (mG T outer) inner`). foldl + PREPEND would
+reverse inner-order; foldr + PREPEND preserves it. -/
 
-/-! ### §11.3: `multiGraft_compose` — main theorem (sorry-fenced) -/
+noncomputable def composePairs : List (Path × Planar α) →
+    List (Path × Planar α) → List (Path × Planar α)
+  | outer, []           => outer
+  | outer, (p, c) :: rest =>
+      -- Compose rest first (recursive), then absorb (p, c) with re-addressed path.
+      -- The re-addressing `transport rest p` accounts for the position shift of p
+      -- when rest is applied to mG T outer (yielding mG T (composePairs outer rest)).
+      absorbInnerPair (composePairs outer rest) (transport rest p) c
 
-/-- **Nested multi-graft composition** (sorry-fenced; Phase B-D). Collapses
-    a multi-graft of a multi-graft into a single multi-graft of the original
-    host with composed pairs. Required for closing A3.3 helpers. -/
+@[simp] theorem composePairs_nil (outer : List (Path × Planar α)) :
+    composePairs outer [] = outer := rfl
+
+@[simp] theorem composePairs_cons (outer : List (Path × Planar α))
+    (p : Path) (c : Planar α) (rest : List (Path × Planar α)) :
+    composePairs outer ((p, c) :: rest) =
+      absorbInnerPair (composePairs outer rest) (transport rest p) c := rfl
+
+/-! ### §11.3: `absorbInnerPair_eq_insertAt` — singleton case (sorry-fenced)
+
+The singleton case of `multiGraft_compose`: absorbing one inner pair into outer
+gives the same result as inserting at the corresponding position.
+
+```
+mG T (absorbInnerPair outer p c) = insertAt p c (mG T outer)
+```
+
+This holds (as PLANAR equality, given validity) by case analysis on `p`:
+- p = []: by `multiGraft_cons_pair` at (T, outer, [], c) — both sides reduce to
+  `insertAt [] c (mG T outer)`.
+- p = i :: rest, i < N: by `multiGraft_split_lifted_aux` plus the identity
+  `liftMulti outer k rest = i :: rest` (which holds via `liftMulti_at_root` +
+  `posInGroup_of_rootPrependPairIdx` — a small bridge lemma).
+- p = i :: rest, i ≥ N: by recursion via `liftBackToOuter` (currently sorry'd).
+
+The empty-path case is trivially `multiGraft_cons_pair`. The lifted-at-root case
+needs `posInGroup outer k = i` when `k = rootPrependPairIdx outer i`. The descent
+case requires `liftBackToOuter` to be implemented + correctness lemma. -/
+
+/-- Equation lemma: empty-path case of `absorbInnerPair`. -/
+@[simp] theorem absorbInnerPair_nil_path (outer : List (Path × Planar α))
+    (c : Planar α) :
+    absorbInnerPair outer [] c = ([], c) :: outer := by
+  unfold absorbInnerPair
+  rfl
+
+/-- The singleton case of `multiGraft_compose`. Stated unconditionally
+    (no validity hypothesis); the empty-path case holds without validity, and the
+    other cases (currently sorry'd) are designed to handle invalid paths as
+    no-ops (matching `insertAt`'s out-of-bounds no-op semantics).
+
+    For full closure, a validity hypothesis may need to be added. -/
+theorem absorbInnerPair_eq_insertAt
+    (T : Planar α) (outer : List (Path × Planar α)) (p : Path) (c : Planar α) :
+    multiGraft T (absorbInnerPair outer p c) =
+      insertAt p c (multiGraft T outer) := by
+  match p with
+  | [] =>
+    -- Empty-path case: by multiGraft_cons_pair + transport_nil_path.
+    rw [absorbInnerPair_nil_path, multiGraft_cons_pair, transport_nil_path]
+  | _i :: _rest =>
+    -- Two subcases: lifted-at-root (i < N) and descent (i ≥ N).
+    -- Lifted-at-root: needs `posInGroup_of_rootPrependPairIdx` bridge to show
+    --   `liftMulti outer k rest = i :: rest` when `k = rootPrependPairIdx outer i`.
+    -- Descent: needs `liftBackToOuter` correctness lemma + recursion on path size.
+    sorry
+
+/-! ### §11.4: `multiGraft_compose` — main theorem -/
+
+/-- **Nested multi-graft composition**. Collapses a multi-graft of a multi-graft
+    into a single multi-graft of the original host with composed pairs.
+
+    Proof structure: induction on `inner_pairs`. Cons case uses
+    `multiGraft_cons_pair` to peel the head, IH to convert the inner mG of T,
+    `composePairs_cons` to unfold the RHS, then `absorbInnerPair_eq_insertAt`
+    to close.
+
+    Currently depends on `absorbInnerPair_eq_insertAt` (§11.3) being closed. -/
 theorem multiGraft_compose
     (T : Planar α) (outer_pairs : List (Path × Planar α))
     (inner_pairs : List (Path × Planar α))
     (_h_outer_valid : ∀ p ∈ outer_pairs, IsValidPath p.fst T)
-    (_h_inner_valid : ∀ p ∈ inner_pairs,
+    (h_inner_valid : ∀ p ∈ inner_pairs,
         IsValidPath p.fst (multiGraft T outer_pairs)) :
     multiGraft (multiGraft T outer_pairs) inner_pairs =
       multiGraft T (composePairs outer_pairs inner_pairs) := by
-  -- Phase B: induction on inner_pairs.
   induction inner_pairs with
   | nil =>
-    -- nil base: composePairs outer [] = outer (trivial foldl), and mG (mG T outer) [] = mG T outer
-    show multiGraft (multiGraft T outer_pairs) [] =
-         multiGraft T (composePairs outer_pairs [])
-    rw [multiGraft_nil]
-    rfl
-  | cons head tail _ih =>
-    -- cons case (TODO Phase B-C-D): per-class bridge in cons step
-    -- For (p, c) :: rest: by multiGraft_cons_pair on (mG T outer):
-    --   LHS = insertAt (transport rest p) c (mG (mG T outer) rest)
-    -- With composePairs cons step: composePairs outer ((p, c) :: rest) =
-    --   composePairs (absorbInnerPair outer p c) rest
-    -- So RHS = mG T (composePairs (absorbInnerPair outer p c) rest)
-    -- By IH at outer' = absorbInnerPair outer p c:
-    --   mG (mG T outer') rest = mG T (composePairs outer' rest) = RHS
-    -- Reduces to: insertAt (transport rest p) c (mG (mG T outer) rest)
-    --           = mG (mG T outer') rest (where outer' = absorbInnerPair outer p c)
-    -- This is the per-class bridge (preserved/sourceSelf via multiGraft_cons_pair
-    -- on T; lifted via multiGraft_split_lifted_aux).
-    sorry
+    rw [multiGraft_nil, composePairs_nil]
+  | cons head tail ih =>
+    obtain ⟨p, c⟩ := head
+    -- Validity hypothesis for IH: tail's pairs are valid in mG T outer_pairs.
+    have h_tail_valid : ∀ q ∈ tail, IsValidPath q.fst (multiGraft T outer_pairs) :=
+      fun q hq => h_inner_valid q (List.mem_cons_of_mem _ hq)
+    -- IH gives us the rest-collapsed equality.
+    have h_ih : multiGraft (multiGraft T outer_pairs) tail =
+                multiGraft T (composePairs outer_pairs tail) :=
+      ih h_tail_valid
+    -- Step 1: peel (p, c) from the inner via multiGraft_cons_pair.
+    rw [multiGraft_cons_pair (multiGraft T outer_pairs) tail p c]
+    -- Step 2: substitute IH into the LHS.
+    rw [h_ih]
+    -- Step 3: unfold composePairs cons on the RHS.
+    rw [composePairs_cons]
+    -- Step 4: close via absorbInnerPair_eq_insertAt.
+    -- We need: insertAt (transport tail p) c (mG T cp_rest)
+    --        = mG T (absorbInnerPair cp_rest (transport tail p) c)
+    -- where cp_rest = composePairs outer_pairs tail.
+    -- absorbInnerPair_eq_insertAt gives: mG T (absorbInnerPair _ _ _) = insertAt _ _ _
+    -- so we use .symm.
+    exact (absorbInnerPair_eq_insertAt T (composePairs outer_pairs tail)
+              (transport tail p) c).symm
 
 end Pathed
 
