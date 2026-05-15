@@ -2370,6 +2370,7 @@ import Linglib.Theories.Semantics.Events.StratifiedReference
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.ScalarResult
 import Linglib.Theories.Semantics.Events.AffectednessHierarchy
+import Linglib.Theories.Semantics.Events.PrecedenceClosure
 import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Events.CumulativityPropagation
 import Linglib.Theories.Semantics.Events.ArgumentRealization

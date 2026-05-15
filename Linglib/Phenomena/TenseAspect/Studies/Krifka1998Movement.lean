@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.EventAdjacency
+import Linglib.Theories.Semantics.Events.PrecedenceClosure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
@@ -227,15 +228,11 @@ def SMR {α β : Type*} [PartialOrder α] [PartialOrder β]
 
 /-- K98 §4.3 eq. 71 closure: smallest relation containing θ' and closed
     under precedence-respecting sums. K98's TANG_H clause (eq. 17) is
-    OMITTED — see module TODO. -/
-inductive MovementClosure {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
-    (precedes : β → β → Prop) (θ' : α → β → Prop) : α → β → Prop where
-  | base {x : α} {e : β} : θ' x e → MovementClosure precedes θ' x e
-  | sum {x1 x2 : α} {e1 e2 : β} :
-      MovementClosure precedes θ' x1 e1 →
-      MovementClosure precedes θ' x2 e2 →
-      precedes e1 e2 →
-      MovementClosure precedes θ' (x1 ⊔ x2) (e1 ⊔ e2)
+    OMITTED — see module TODO. Specialization of
+    `Semantics.Events.PrecedenceClosure` with `cond := precedes`. -/
+abbrev MovementClosure {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    (precedes : β → β → Prop) (θ' : α → β → Prop) : α → β → Prop :=
+  Semantics.Events.PrecedenceClosure precedes θ'
 
 /-- K98 §4.3 eq. 71 MR (TANG_H-free): θ is a movement relation iff
     there exists an SMR θ' such that θ is the `MovementClosure` of θ'. -/
@@ -255,12 +252,10 @@ theorem mr_of_smr {α β : Type*} [PartialOrder α] [PartialOrder β]
     (h : SMR adjα adjβ isPath θ)
     (hClosed : ∀ x1 x2 e1 e2, θ x1 e1 → θ x2 e2 → precedes e1 e2 →
                θ (x1 ⊔ x2) (e1 ⊔ e2)) :
-    MR adjα adjβ precedes isPath θ := by
-  refine ⟨θ, h, fun x e => ⟨MovementClosure.base, ?_⟩⟩
-  intro hcl
-  induction hcl with
-  | base h => exact h
-  | sum _ _ hprec ih1 ih2 => exact hClosed _ _ _ _ ih1 ih2 hprec
+    MR adjα adjβ precedes isPath θ :=
+  ⟨θ, h, fun x e => ⟨Semantics.Events.PrecedenceClosure.base,
+    fun hcl => Semantics.Events.PrecedenceClosure.closure_subset
+      (fun _ _ h => h) hClosed hcl⟩⟩
 
 end K98PropositionalSubstrate
 

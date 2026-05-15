@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.AffectednessHierarchy
+import Linglib.Theories.Semantics.Events.PrecedenceClosure
 
 /-!
 # Incrementality (SINC, INC) and Verb-Class Typeclass Hierarchy
@@ -150,15 +151,10 @@ theorem mo_of_sinc {θ : α → β → Prop} (h : SINC θ) : MO θ :=
     strictly incremental reading-parts that can overlap in their
     object coverage.
 
-    Formulated inductively: the smallest relation containing θ' and
-    closed under componentwise sum. -/
-inductive IncClosure (θ' : α → β → Prop) : α → β → Prop where
-  /-- Base: anything in θ' is in the closure. -/
-  | base {x : α} {e : β} : θ' x e → IncClosure θ' x e
-  /-- Sum: if (x₁,e₁) and (x₂,e₂) are in the closure, so is (x₁⊔x₂, e₁⊔e₂). -/
-  | sum {x₁ x₂ : α} {e₁ e₂ : β} :
-      IncClosure θ' x₁ e₁ → IncClosure θ' x₂ e₂ →
-      IncClosure θ' (x₁ ⊔ x₂) (e₁ ⊔ e₂)
+    Specialization of `Semantics.Events.PrecedenceClosure` with the
+    trivial precedence condition: arbitrary sums are admitted. -/
+abbrev IncClosure (θ' : α → β → Prop) : α → β → Prop :=
+  Semantics.Events.PrecedenceClosure (fun _ _ ↦ True) θ'
 
 /-- General Incrementality: θ is the IncClosure of some SINC θ'. -/
 def INC (θ : α → β → Prop) : Prop :=
@@ -167,12 +163,10 @@ def INC (θ : α → β → Prop) : Prop :=
 /-- SINC + CumTheta implies INC: a strictly incremental θ that is
     cumulative is trivially its own closure. CumTheta ensures the
     reverse direction: `IncClosure θ ⊆ θ`. -/
-theorem inc_of_sinc {θ : α → β → Prop} (h : SINC θ) (hCum : CumTheta θ) : INC θ := by
-  exact ⟨θ, h, fun x e => ⟨fun hθ => IncClosure.base hθ, by
-    intro hcl
-    induction hcl with
-    | base h => exact h
-    | sum _ _ ih₁ ih₂ => exact hCum _ _ _ _ ih₁ ih₂⟩⟩
+theorem inc_of_sinc {θ : α → β → Prop} (h : SINC θ) (hCum : CumTheta θ) : INC θ :=
+  ⟨θ, h, fun x e => ⟨fun hθ => Semantics.Events.PrecedenceClosure.base hθ,
+    fun hcl => Semantics.Events.PrecedenceClosure.closure_subset
+      (fun _ _ h => h) (fun x₁ x₂ e₁ e₂ h₁ h₂ _ => hCum _ _ _ _ h₁ h₂) hcl⟩⟩
 
 -- ════════════════════════════════════════════════════
 -- § 3. VerbIncClass — Verb Incrementality Classification (K98 §3.6)
