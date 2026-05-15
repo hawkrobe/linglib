@@ -6359,7 +6359,7 @@ Session 4 sub-lemmas marked WARNING (above) are unprovable in general but
 their `pres = const empty` specializations might still be true; whether to
 use them is a Session 6 design decision. -/
 
-/-- **Strategy A scaffold (Session 5, sorry-fenced)**: the headline
+/-- **Strategy A scaffold (Session 5+, sorry-fenced)**: the headline
     `LHS_eq_canonical_msform` at `pres = const empty`, proved DIRECTLY via
     a structural bijection between LHS sequential-insertion paths and
     RHS canonical AGDs. Bypasses the broken strong-IH chain.
@@ -6375,24 +6375,57 @@ private theorem LHS_eq_canonical_msform_via_bijection
     ((enumGraftingData T F_A pre_T_B pre_FA_B C.length).map
         (fun gd => interpret T gd C)).map
       (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
-  -- TODO Session 6+: prove via direct bijection. Plan:
+  -- **Session 6 (0.231.92)**: 3 mechanical steps of the bijection proof:
+  --   (a) Apply Session 3's outer-bind unfold (`insertion_outer_bind_at_choice_eq`)
+  --       to expose `choice_pre_T_B` as the outer-1st bind variable.
+  --   (b) Push `.map msform` through the bind chain via `Multiset.map_bind`.
+  --   (c) Apply `insertionForest_eq_explicit F_A pre_FA_B` to unfold the F-side
+  --       outer bind into `enumFChoices F_A pre_FA_B` (= `Mset.ofList (lC pKF F_A
+  --       pre_FA_B.length)`) mapped via `buildFIns F_A pre_FA_B`. Combined with
+  --       `Multiset.bind_map` to expose `choice_pre_FA_B` as a bind variable.
+  rw [insertion_outer_bind_at_choice_eq T pre_T_B]
+  rw [Multiset.map_bind]
+  simp_rw [Multiset.map_bind]
+  simp_rw [insertionForest_eq_explicit F_A pre_FA_B,
+           show enumFChoices F_A pre_FA_B =
+             Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)
+             from rfl,
+           Multiset.bind_map]
+  -- After Session 6: LHS is
+  --   `(Mset.ofList (lC vT pre_T_B.length)).bind fun choice_pre_T_B =>
+  --     (Mset.ofList (lC pKF F_A pre_FA_B.length)).bind fun choice_pre_FA_B =>
+  --       (insertionForest (mG T (choice_pre_T_B.zip pre_T_B) ::
+  --         buildFIns F_A pre_FA_B choice_pre_FA_B) C).map msform`
+  -- with both T_ins and F_ins substituted via their explicit constructions.
   --
-  -- 1. Apply `insertion_outer_bind_at_choice_eq T pre_T_B` to expose
-  --    `choice_pre_T_B ∈ lC vT pre_T_B.length`.
-  -- 2. Apply `insertionForest_eq_explicit F_A pre_FA_B` to expose
-  --    `choice_pre_FA_B ∈ lC perKFChoice F_A pre_FA_B.length`.
+  -- TODO Sessions 7+: continue the bijection proof. Plan:
+  --
+  -- 1. (DONE Session 6) Apply `insertion_outer_bind_at_choice_eq T pre_T_B`
+  --    to expose `choice_pre_T_B ∈ lC vT pre_T_B.length`. T_ins is now
+  --    `mG T (choice_pre_T_B.zip pre_T_B)` everywhere in the inner.
+  -- 2. Apply `insertionForest_eq_explicit F_A pre_FA_B` (specialized) to
+  --    expose `choice_pre_FA_B ∈ lC perKFChoice F_A pre_FA_B.length`.
+  --    F_ins becomes `(List.finRange F_A.length).map (fun i => mG F_A[i]
+  --    (perTreePairsFromFChoice ...))`.
   -- 3. Apply `insertionForest_eq_explicit (T_ins :: F_ins) C` to expose
-  --    `choice_C ∈ lC perKFChoice (T_ins :: F_ins) C.length`.
-  -- 4. perKFChoice (T_ins :: F_ins) for T_ins = mG T (choice_pre_T_B.zip pre_T_B)
-  --    decomposes via `vertices_multiGraft_decomp` (Session 2 substrate) into
-  --    T-vertex + inside-pre_T_B-graft positions; the bijection to
-  --    AlphaConstrainedChoice classifies each position.
-  -- 5. After the bijection, listChoices on perKFChoice maps to listChoices on
-  --    allAlphaConstrainedChoiceList (= C_targets in AGD).
-  -- 6. buildFIns evaluation matches `interpret`'s pre_T_B' + T' + F'
-  --    construction via tree-preservation lemmas (Session 1 substrate).
+  --    `choice_C ∈ lC perKFChoice (T_ins :: F_ins) C.length`. The leaf
+  --    becomes `msform (buildFIns (T_ins :: F_ins) C choice_C)`.
+  -- 4. Unfold RHS via `enumGraftingData` definition + `← Multiset.coe_bind`.
+  --    Both sides now have `bind choice_pre_T_B => bind choice_pre_FA_B =>
+  --    bind/map inner_choice => msform leaf` structure.
+  -- 5. Establish bijection: `acc_to_pkfc` (per `choice_pre_T_B`,
+  --    `choice_pre_FA_B`) maps each `AlphaConstrainedChoice` to a perKFChoice
+  --    position. Bijection key: `vertices_multiGraft_decomp` partitions
+  --    vertices T_ins into T-vertices (mapped via `transport`) and
+  --    inside-pre_T_B-grafts (mapped via `liftMulti`). Symmetric F-side.
+  -- 6. Tree-preservation: `buildFIns` at `choice_C = targets.map acc_to_pkfc`
+  --    produces a forest msform-equivalent to `interpret T ⟨choice_pre_T_B,
+  --    choice_pre_FA_B, targets⟩ C`. Uses Session 1's
+  --    `multiGraft_compose_cons_pair_at_choice` for the per-c bridge.
+  -- 7. Combine via `Multiset.bind_congr` chain through outer 2 binds, then
+  --    inner enumeration equality (via the bijection + tree-preservation).
   --
-  -- Estimated scope: ~500-1000 LOC across 2-4 sessions.
+  -- Estimated remaining scope: ~400-800 LOC across 3-5 sessions.
   sorry
 
 /-- **LHS strong-IH** (DEPRECATED 0.231.91 — false for non-empty pres).
