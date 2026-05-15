@@ -8,34 +8,68 @@ three specializations linglib uses.
 
 ## Main definitions
 
-* `SR` — Champollion's unified `SR_{d,γ}` (eq. 16/17, binary-γ form)
+* `SR` — Champollion's unified `SR_{d,γ}` (Ch 5; binary-γ form)
 * `SR_univ` — universal closure: `∀x, P x → SR d γ P x`
-* `SDR` / `SDR_univ` — Stratified Distributive Reference
-  (@cite{champollion-2017} eq. 24): `d = θ`, `γ = Atom`. Distributivity.
-* `SSR` / `SSR_univ` — Stratified Subinterval Reference
-  (@cite{champollion-2017} eq. 38): `d = τ`, `γ = proper subinterval`. Atelicity.
-* `SMR` / `SMR_univ` — *linglib coinage*; `d = μ`, `γ = strict less-than`.
-  Champollion writes this directly as `SR_{μ, λd.d<μ(x)}` (Ch 7 eqs. 18-26).
+* `SDR` / `SDR_univ` — Stratified Distributive Reference (Ch 6 distributivity):
+  `d = θ`, `γ = Atom`.
+* `SSR` / `SSR_univ` — Stratified Subinterval Reference (Ch 5 §5.4 atelicity):
+  `d = τ`, `γ = proper subinterval`.
+* `SMR` / `SMR_univ` — *linglib coinage*; `d = μ`, `γ = strict less-than`
+  (Ch 7 §7.4 measurement of substance pseudopartitives: *thirty liters of
+  water*, *five feet of snow*).
 
 ## Granularity signature: binary, not unary
 
-Champollion's eq. (16) has `g : β → Prop`; eq. (17)'s `[[of]]` constructs
-`g` via `γ(M, x) := λd. d < M(x)` (closing over the outer entity). Linglib
-uncurries: `SR` takes `γ : β → β → Prop` directly with inner-then-outer
-convention. Equivalent to Champollion's eq. (16) post-closure-elimination
-but lets all three specializations be genuine instances of `SR`.
+Champollion's primary `SR` schema has `g : β → Prop` (unary); his
+`[[of]]` lexical entry constructs `g` via `γ(M, x) := λd. d < M(x)`,
+closing over the outer entity. Linglib uncurries: `SR` takes
+`γ : β → β → Prop` directly with inner-then-outer convention.
+Equivalent post-closure-elimination but lets all three specializations
+be genuine instances of `SR`.
+
+## Relation to Krifka's CUM/QUA (Champollion §2.7.2)
+
+The naive bridge `SSR_univ τ P ↔ CUM P` does **not** hold, in either
+direction, by Champollion's own design:
+
+* **`CUM P → SSR_univ τ P` is false**. Champollion §2.7.2 adopts
+  *lexical cumulativity* as a foundational assumption: every verb is
+  cumulative (`[[V]] = *[[V]]`). Counterexample: *reach the summit* is
+  telic but cumulative; lacks SSR along τ.
+* **`SSR_univ τ P → CUM P` is false**. SSR is about subdividing into
+  τ-smaller `P`-parts — it does not entail closure under sum.
+  Counterexample (linglib): `P := λe. e.runtime.length ≤ 1` over dense
+  time has SSR (split each event in halves) but fails CUM (two unit-
+  length disjoint events sum to length 2).
+
+The contrast with Krifka @cite{krifka-1998} that Champollion makes in
+Ch 6 is **SR vs. divisive-reference**, not SR vs. CUM. Champollion
+retains CUM as a baseline holding of all VPs and replaces Krifka's
+`≤_τ`-divisiveness diagnostic with the strictly weaker SR diagnostic.
+This makes `Aspect/Stratified.lean` (this file) and
+`Aspect/Cumulativity.lean` (sibling) genuinely independent: SR is the
+atelicity diagnostic; CUM is the NP→VP propagation property.
 
 ## TODO
 
-* The stativity opposition along τ (the fourth Champollion opposition,
-  @cite{champollion-2017} §1.2) is realized in linglib by
-  `HasSubintervalProp` in `Tense/Aspect/SubintervalProperty.lean` rather
-  than as an SR-decomposition form. The SR form at `(τ,
-  point-granularity)` has no current consumer.
+* The stativity opposition along τ (Champollion's fourth opposition) is
+  realized in linglib by `HasSubintervalProp` in
+  `Tense/Aspect/SubintervalProperty.lean` rather than as an
+  SR-decomposition form. The SR form at `(τ, point-granularity)` has
+  no current consumer.
+* Champollion's *push carts all the way to the store for fifty minutes*
+  contrast (Ch 6) is the single empirical case where SR and Krifka's
+  divisive-reference diagnostic make divergent predictions. A
+  `Studies/Champollion2017.lean` formalizing this contrast (with both
+  theories applied to the same event structure) would be the natural
+  paper-anchored consumer for this substrate.
 
 ## References
 
-* @cite{champollion-2017} (primary, all SR primitives)
+* @cite{champollion-2017} (primary, all SR primitives + §2.7.2 lexical
+  cumulativity stance + Ch 6 vs-Krifka argument)
+* @cite{krifka-1998} (the divisive-reference atelicity diagnostic SR
+  replaces, per Champollion Ch 6)
 * @cite{link-1983} (the `*` algebraic-closure operator SR builds on)
 -/
 
@@ -305,7 +339,7 @@ class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
 
 /-! ### Aspect Bridge (SSR ↔ atelicity) -/
 
-/-- for-adverbials require SSR (§5.3, eq. 39/66).
+/-- for-adverbials require SSR (Champollion Ch 5 §5.4).
     "John ran for an hour" is felicitous because "run" has SSR.
     "* John arrived for an hour" is infelicitous because "arrive" lacks SSR. -/
 theorem forAdverbial_requires_ssr
@@ -321,10 +355,10 @@ theorem forAdverbial_requires_ssr
     (from the join structure) and a ≠ e (properSubinterval is irreflexive),
     we get a < e, contradicting QUA.
 
-    This is strictly stronger than the route through CUM
-    (§4.4), which would require additional
-    mereological axioms (SSR_univ → CUM is false in general: P = "events
-    with runtime length ≤ 1" has SSR_univ but not CUM over dense time). -/
+    Direct, not routed through CUM: the would-be route `SSR_univ → CUM
+    → ¬QUA` fails at the first step. `SSR_univ → CUM` is false in
+    general (counterexample: `P := λe. e.runtime.length ≤ 1` over
+    dense time). See module docstring "Relation to Krifka's CUM/QUA". -/
 theorem qua_incompatible_with_ssr
     {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
     {P : Event Time → Prop}
@@ -348,8 +382,8 @@ def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
   V e ∧ e.runtime = duration ∧ SSR V e
 
 /-- "in"-adverbials are incompatible with SSR (they require telicity).
-    §5.4: "V in δ" requires QUA, which is incompatible
-    with SSR. Any P-event with SSR has a strict P-part, contradicting QUA. -/
+    "V in δ" requires QUA, which is incompatible with SSR. Any P-event
+    with SSR has a strict P-part, contradicting QUA. -/
 theorem in_adverbial_incompatible_with_ssr
     {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
     {P : Event Time → Prop}
