@@ -3168,24 +3168,41 @@ private theorem posInGroup_of_rootPrependPairIdx :
           exact List.cons_ne_nil _ _ heq)]
         omega
 
-/-- Lift a modification of `descented_outer = descentToChild i outer` back to
-    a modification of `outer`. Sorry-fenced; future work.
-    Two cases for `modified` (detectable by length):
+/-- Walk through `outer`, substituting j-headed pair positions with the
+    corresponding `modified` position (counted by `k'`), prefixed with `j`.
+    Non-j-headed pairs are kept unchanged. Used by `liftBackToOuter` for
+    the SET case.
+
+    Substitutes the entire pair (with `j` prefix on `modified[k'].fst`) rather
+    than just `.snd`, so that `descentToChild j (walkAndReplace ...) = modified`
+    holds without needing a fst-preserve precondition. -/
+private def walkAndReplace (j : ℕ) :
+    List (Path × Planar α) → List (Path × Planar α) → ℕ → List (Path × Planar α)
+  | [], _, _ => []
+  | (p, T) :: rest, modified, k' =>
+    if p.head? = some j then
+      match modified[k']? with
+      | some (q, T') => (j :: q, T') :: walkAndReplace j rest modified (k' + 1)
+      | none => (p, T) :: walkAndReplace j rest modified (k' + 1)
+    else
+      (p, T) :: walkAndReplace j rest modified k'
+
+/-- Lift a modification of `descented = descentToChild j outer` back to a
+    modification of `outer`. Two cases by length:
     - `modified.length = descented.length + 1`: PREPEND case at descented level.
-      `modified = (q', c') :: descented` for some `(q', c')`. Lift back:
-      prepend `(i :: q', c')` to outer.
+      `modified = (q, T) :: descented` for some `(q, T)`. Lift back: prepend
+      `(j :: q, T)` to outer.
     - `modified.length = descented.length`: SET case at descented level.
-      `modified = descented.set k' (descented[k'].fst, T')` for some `k', T'`.
-      Lift back: `outer.set k_orig (outer[k_orig].fst, T')` where `k_orig` is
-      the outer index that descented to `k'` (= `descentInverse outer i k'`). -/
-noncomputable def liftBackToOuter (_descented_outer _modified : List (Path × Planar α))
-    (_i : ℕ) (_outer : List (Path × Planar α)) : List (Path × Planar α) :=
-  -- TODO: implement via length-based case detection (PREPEND vs SET).
-  -- SET case requires `descentInverse` to map descented k' → outer k_orig.
-  -- The implementation requires DecidableEq on Planar (for `find?` over differing
-  -- positions) OR a richer return type from `absorbInnerPair` (passing case info
-  -- through the recursion). Both designs need care; deferred to next session.
-  sorry
+      Walk through `outer`, substituting `.snd` at j-headed pair positions with
+      corresponding modified positions (no-op at non-modified positions). -/
+def liftBackToOuter (descented modified : List (Path × Planar α))
+    (j : ℕ) (outer : List (Path × Planar α)) : List (Path × Planar α) :=
+  if modified.length = descented.length + 1 then
+    match modified with
+    | (q, T) :: _ => (j :: q, T) :: outer
+    | [] => outer
+  else
+    walkAndReplace j outer modified 0
 
 /-- Absorb a single inner pair `(p, c)` into outer, returning the modified
     pair list. Recursive on path structure:
@@ -3195,7 +3212,7 @@ noncomputable def liftBackToOuter (_descented_outer _modified : List (Path × Pl
     - p = i :: rest, i ≥ rootPrependCount outer: descend into T's child at index
       (i - rootPrependCount outer). Recurse on the descended outer pairs, then
       lift back via `liftBackToOuter`. -/
-noncomputable def absorbInnerPair (outer : List (Path × Planar α))
+def absorbInnerPair (outer : List (Path × Planar α))
     (p : Path) (c : Planar α) : List (Path × Planar α) :=
   match p with
   | [] =>
@@ -3218,6 +3235,106 @@ noncomputable def absorbInnerPair (outer : List (Path × Planar α))
       liftBackToOuter descented modified (i - N) outer
 termination_by p
 
+/-! ### §11.1.6: `walkAndReplace` and `liftBackToOuter` substrate
+
+Properties used in the descent case of `absorbInnerPair_eq_insertAt`. -/
+
+@[simp] private theorem walkAndReplace_length (j : ℕ) :
+    ∀ (outer modified : List (Path × Planar α)) (k' : ℕ),
+    (walkAndReplace j outer modified k').length = outer.length
+  | [], _, _ => rfl
+  | (p, T) :: rest, modified, k' => by
+    show (walkAndReplace j ((p, T) :: rest) modified k').length = rest.length + 1
+    unfold walkAndReplace
+    by_cases h_p : p.head? = some j
+    · rw [if_pos h_p]
+      cases h_inner : modified[k']? with
+      | none =>
+        rw [List.length_cons, walkAndReplace_length j rest modified (k' + 1)]
+      | some pair =>
+        obtain ⟨q, T'⟩ := pair
+        rw [List.length_cons, walkAndReplace_length j rest modified (k' + 1)]
+    · rw [if_neg h_p, List.length_cons, walkAndReplace_length j rest modified k']
+
+/-! ### §11.1.7: `absorbInnerPair` equation lemmas + length dichotomy
+
+Equation lemmas for the SET-at-root and descent cases of `absorbInnerPair`,
+plus the length dichotomy: result length is `X.length` or `X.length + 1`.
+
+`walkAndReplace`'s descent-correctness, `liftBackToOuter`'s structural
+properties (descentToChild_self/other, filterMap_rootPrepend), and the
+descent case of `absorbInnerPair_eq_insertAt` are deferred — see the sorry
+in §11.3 for the path forward. -/
+
+private theorem absorbInnerPair_lifted_at_root_eq (outer : List (Path × Planar α))
+    (i : ℕ) (rest : Path) (c : Planar α) (h_lt : i < rootPrependCount outer) :
+    absorbInnerPair outer (i :: rest) c =
+      (match rootPrependPairIdx outer i with
+       | some k => outer.set k.val (outer[k.val].fst, insertAt rest c outer[k.val].snd)
+       | none => outer) := by
+  conv_lhs => unfold absorbInnerPair
+  simp only [if_pos h_lt]
+
+private theorem absorbInnerPair_descent_eq (outer : List (Path × Planar α))
+    (i : ℕ) (rest : Path) (c : Planar α) (h_ge : ¬ i < rootPrependCount outer) :
+    absorbInnerPair outer (i :: rest) c =
+      liftBackToOuter (descentToChild (i - rootPrependCount outer) outer)
+                      (absorbInnerPair (descentToChild (i - rootPrependCount outer) outer) rest c)
+                      (i - rootPrependCount outer) outer := by
+  conv_lhs => unfold absorbInnerPair
+  simp only [if_neg h_ge]
+
+private theorem liftBackToOuter_length (descented modified : List (Path × Planar α))
+    (j : ℕ) (outer : List (Path × Planar α)) :
+    (liftBackToOuter descented modified j outer).length =
+    (if modified.length = descented.length + 1 then outer.length + 1 else outer.length) := by
+  unfold liftBackToOuter
+  by_cases h_len : modified.length = descented.length + 1
+  · rw [if_pos h_len, if_pos h_len]
+    cases h_modified : modified with
+    | nil =>
+      exfalso
+      rw [h_modified] at h_len
+      simp at h_len
+    | cons head_pair tail =>
+      obtain ⟨q, T⟩ := head_pair
+      rfl
+  · rw [if_neg h_len, if_neg h_len]
+    exact walkAndReplace_length j outer modified 0
+
+private theorem absorbInnerPair_nil_eq (X : List (Path × Planar α)) (c : Planar α) :
+    absorbInnerPair X [] c = ([], c) :: X := by
+  unfold absorbInnerPair
+  rfl
+
+private theorem absorbInnerPair_length_dichotomy :
+    ∀ (X : List (Path × Planar α)) (p : Path) (c : Planar α),
+    (absorbInnerPair X p c).length = X.length ∨
+    (absorbInnerPair X p c).length = X.length + 1
+  | X, [], c => by
+    right
+    rw [absorbInnerPair_nil_eq]
+    rfl
+  | X, i :: rest, c => by
+    by_cases h_lt : i < rootPrependCount X
+    · -- SET case
+      left
+      rw [absorbInnerPair_lifted_at_root_eq X i rest c h_lt]
+      cases h_idx : rootPrependPairIdx X i with
+      | none => rfl
+      | some k => rw [List.length_set]
+    · -- Descent case
+      have ih := absorbInnerPair_length_dichotomy
+                  (descentToChild (i - rootPrependCount X) X) rest c
+      rw [absorbInnerPair_descent_eq X i rest c h_lt]
+      rw [liftBackToOuter_length]
+      rcases ih with h_eq | h_eq_succ
+      · left
+        rw [if_neg (by rw [h_eq]; omega)]
+      · right
+        rw [if_pos h_eq_succ]
+termination_by _ p _ => p
+
 /-! ### §11.2: `composePairs` — full inner-list composition
 
 Composes inner pairs into outer via right-fold (foldr) with transport-based
@@ -3231,7 +3348,7 @@ its empty-path PREPEND ends up FIRST in the result list — matching the planar
 order of root prepends in the LHS `mG (mG T outer) inner`). foldl + PREPEND would
 reverse inner-order; foldr + PREPEND preserves it. -/
 
-noncomputable def composePairs : List (Path × Planar α) →
+def composePairs : List (Path × Planar α) →
     List (Path × Planar α) → List (Path × Planar α)
   | outer, []           => outer
   | outer, (p, c) :: rest =>
