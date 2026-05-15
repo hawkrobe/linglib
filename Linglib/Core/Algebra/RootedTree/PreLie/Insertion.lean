@@ -591,6 +591,61 @@ theorem vc_partition_forest_via_bind
   rw [vertices_forest_eq_partition cs per_tree_pairs h_valid offset]
   rw [Multiset.bind_assoc]
 
+/-- Decompose `insertion T (c :: filter_t)` by extracting the leading vertex
+    `v_c` as a bind variable. The first vertex choice routes `c`; the
+    remaining `filter_t.length` choices route the rest of the guests. -/
+theorem insertion_cons_pair_eq_bind
+    (T : Planar α) (c : Planar α) (filter_t : List (Planar α)) :
+    insertion T (c :: filter_t) =
+      ((vertices T : List Path) : Multiset Path).bind (fun v_c =>
+        Multiset.ofList ((listChoices (vertices T) filter_t.length).map (fun ch =>
+          multiGraft T ((v_c, c) :: ch.zip filter_t)))) := by
+  rw [insertion_def]
+  show Multiset.ofList ((listChoices (vertices T) (c :: filter_t).length).map
+        (fun choice => multiGraft T (choice.zip (c :: filter_t)))) = _
+  rw [show (c :: filter_t).length = filter_t.length + 1 from rfl, listChoices_succ,
+      List.map_flatMap]
+  rw [show ((vertices T : List Path) : Multiset Path) =
+        Multiset.ofList (vertices T) from rfl, ← Multiset.coe_bind]
+  refine Multiset.bind_congr fun v_c _ => ?_
+  rw [show (List.map (v_c :: ·) (listChoices (vertices T) filter_t.length)).map
+            (fun choice => multiGraft T (choice.zip (c :: filter_t))) =
+          (listChoices (vertices T) filter_t.length).map (fun ch =>
+            multiGraft T ((v_c, c) :: ch.zip filter_t)) from by
+    rw [List.map_map]
+    rfl]
+
+/-- Combined form for `insertion (multiGraft T pairs) (c :: filter_t)` binding
+    into a function `K`: the v_c bind splits into preserved + sourceSelf + lifted
+    via `vc_partition_via_bind`, with each class producing a sub-bind over
+    `ch ∈ listChoices (vertices (multiGraft T pairs)) filter_t.length`. -/
+theorem insertion_cons_pair_at_multiGraft_bind
+    {γ : Type*}
+    (T : Planar α) (pairs : List (Path × Planar α))
+    (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T)
+    (c : Planar α) (filter_t : List (Planar α))
+    (K : Planar α → Multiset γ) :
+    (insertion (multiGraft T pairs) (c :: filter_t)).bind K =
+    -- preserved + sourceSelf class (v_c originates from T via transport pairs)
+    (((vertices T : List Path) : Multiset Path).map (transport pairs)).bind (fun v_c =>
+      (Multiset.ofList ((listChoices (vertices (multiGraft T pairs)) filter_t.length).map
+          (fun ch =>
+            multiGraft (multiGraft T pairs) ((v_c, c) :: ch.zip filter_t)))).bind K)
+    +
+    -- lifted class (v_c originates from pairs[k].snd via liftMulti pairs k)
+    ((Multiset.ofList (List.finRange pairs.length)).bind
+        (fun k => (vertices pairs[k].snd : Multiset Path).map
+          (liftMulti pairs k))).bind (fun v_c =>
+      (Multiset.ofList ((listChoices (vertices (multiGraft T pairs)) filter_t.length).map
+          (fun ch =>
+            multiGraft (multiGraft T pairs) ((v_c, c) :: ch.zip filter_t)))).bind K) := by
+  rw [insertion_cons_pair_eq_bind]
+  rw [Multiset.bind_assoc]
+  rw [vc_partition_via_bind T pairs h_valid]
+  rw [← preserved_add_sourceSelf_eq_vertices_map_transport pairs
+        ((vertices T : List Path) : Multiset Path)]
+  rw [Multiset.add_bind]
+
 /-! ## §6: Host invariance via path-swap bijection
 
 `insertion T Ts` is `mk`-invariant under `PlanarEquiv` of the host: the

@@ -403,6 +403,49 @@ def preserveMulti (pairs : List (Path × Planar α)) (f : Path) : Option Path :=
   unfold preserveMulti
   simp
 
+/-! ## §7.5: A3.3 substrate — `preserved + sourceSelf = vertices.map transport`
+
+The preserved-class `filterMap (preserveMulti pairs)` and the sourceSelf-class
+`filter (∈ pairSources) .map (transport pairs)` partition `vertices T` by
+membership in `pairSources pairs`. Combined, they cover all of `vertices T`,
+each mapped under `transport pairs`. -/
+
+/-- `filterMap (preserveMulti pairs)` decomposes as `filter (∉ pairSources)`
+    composed with `map (transport pairs)`. Direct from the `if-none-else-some`
+    shape of `preserveMulti`. -/
+theorem filterMap_preserveMulti_eq_filter_map_transport
+    (pairs : List (Path × Planar α)) (vs : Multiset Path) :
+    vs.filterMap (preserveMulti pairs) =
+      (vs.filter (· ∉ pairSources pairs)).map (transport pairs) := by
+  refine Multiset.induction_on vs (by simp) (fun a s ih => ?_)
+  by_cases h : a ∈ pairSources pairs
+  · have h_none : preserveMulti pairs a = none := by
+      unfold preserveMulti; simp [h]
+    rw [Multiset.filterMap_cons_none _ _ h_none, ih]
+    have h_filter : Multiset.filter (fun x => x ∉ pairSources pairs) (a ::ₘ s) =
+        Multiset.filter (fun x => x ∉ pairSources pairs) s :=
+      Multiset.filter_cons_of_neg _ (fun hp => hp h)
+    rw [h_filter]
+  · have h_some : preserveMulti pairs a = some (transport pairs a) := by
+      unfold preserveMulti; simp [h]
+    rw [Multiset.filterMap_cons_some _ _ _ h_some, ih]
+    have h_filter : Multiset.filter (fun x => x ∉ pairSources pairs) (a ::ₘ s) =
+        a ::ₘ Multiset.filter (fun x => x ∉ pairSources pairs) s :=
+      Multiset.filter_cons_of_pos _ h
+    rw [h_filter, Multiset.map_cons]
+
+/-- The preserved + sourceSelf classes of `vertices (multiGraft T pairs)`
+    together equal `vertices T` mapped under `transport pairs`. -/
+theorem preserved_add_sourceSelf_eq_vertices_map_transport
+    (pairs : List (Path × Planar α)) (vs : Multiset Path) :
+    vs.filterMap (preserveMulti pairs) +
+      (vs.filter (· ∈ pairSources pairs)).map (transport pairs) =
+    vs.map (transport pairs) := by
+  rw [filterMap_preserveMulti_eq_filter_map_transport, ← Multiset.map_add]
+  congr 1
+  rw [add_comm]
+  exact Multiset.filter_add_not _ _
+
 /-! ## §8: `posInGroup`, `liftMulti` — lifted-vertex paths
 
 For pair `k = (eₖ, Tₖ)`, vertices `q ∈ vertices Tₖ` lift to
@@ -1961,6 +2004,29 @@ decreasing_by
         omega
   have := h_le cs i.val i.isLt
   omega
+
+/-! ## §9.5: Corollary — `transport pairs v_T ∈ vertices (multiGraft T pairs)`
+
+Direct consequence of `vertices_multiGraft_decomp` + the §7.5 identity that
+the preserved + sourceSelf classes equal `vertices T` mapped under
+`transport pairs`. Consumed by A3.3 substrate `multiGraft_compose_cons_pair_at_choice`
+to discharge the `v_c ∈ vertices T'` hypothesis when `v_c` is a transported
+T-vertex. -/
+
+/-- For any vertex `v_T ∈ vertices T`, the transported path `transport pairs v_T`
+    is a vertex of `multiGraft T pairs`. -/
+theorem transport_mem_vertices_multiGraft
+    (T : Planar α) (pairs : List (Path × Planar α))
+    (h_valid : ∀ pair ∈ pairs, IsValidPath pair.fst T)
+    (v_T : Path) (h_v_T : v_T ∈ vertices T) :
+    transport pairs v_T ∈ vertices (multiGraft T pairs) := by
+  have h_mem_map :
+      transport pairs v_T ∈ ((vertices T : Multiset Path).map (transport pairs)) :=
+    Multiset.mem_map.mpr ⟨v_T, h_v_T, rfl⟩
+  rw [← preserved_add_sourceSelf_eq_vertices_map_transport pairs
+        ((vertices T : List Path) : Multiset Path)] at h_mem_map
+  rw [← Multiset.mem_coe, vertices_multiGraft_decomp T pairs h_valid]
+  exact Multiset.mem_add.mpr (Or.inl h_mem_map)
 
 /-! ## §10: Single-pair specialization corollaries
 
