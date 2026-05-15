@@ -57,12 +57,13 @@ atelicity diagnostic; CUM is the NP→VP propagation property.
   `Tense/Aspect/SubintervalProperty.lean` rather than as an
   SR-decomposition form. The SR form at `(τ, point-granularity)` has
   no current consumer.
-* Champollion's *push carts all the way to the store for fifty minutes*
-  contrast (Ch 6) is the single empirical case where SR and Krifka's
-  divisive-reference diagnostic make divergent predictions. A
-  `Studies/Champollion2017.lean` formalizing this contrast (with both
-  theories applied to the same event structure) would be the natural
-  paper-anchored consumer for this substrate.
+* `Phenomena/Plurals/Studies/Champollion2017.lean` covers distributivity
+  (Ch 6 SDR) + a basic SSR↔Vendler atelicity bridge (§ 5), but does NOT
+  yet formalize Champollion's distinctive Ch 6 *push carts all the way
+  to the store for fifty minutes* contrast — the empirical case where
+  SR and Krifka's divisive-reference diagnostic make divergent predictions.
+  Adding it as a § 6 there (or a TenseAspect-side companion study file)
+  would be the highest-value Champollion vs Krifka empirical engagement.
 
 ## References
 
