@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Noun.MereoReference
-import Linglib.Theories.Semantics.Events.MeasurePhrases
+import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
 import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Events.CumulativityPropagation
@@ -104,14 +104,62 @@ fixes (T6 is §2 not §3; the K98 substrate predicates are K89 D29-D35).
 namespace Krifka1989
 
 open Mereology
+open Semantics.Events.Mereology
 open Semantics.Noun.MereoReference (MassNoun CountNoun BarePlural barePlural_cum)
-open Semantics.Events.MeasurePhrases (qmod_of_cum_is_qua measure_phrase_makes_qua)
 open Semantics.Events.ThematicRoleProperties (UP)
 open Semantics.Events.Incrementality (SINC VerbIncClass IsSincVerb)
-open Semantics.Events.CumulativityPropagation (VP)
+open Semantics.Events.CumulativityPropagation (VP qua_propagation)
 open Core.Scale (MereoTag)
 open Phenomena.TenseAspect.Diagnostics
   (forXPrediction inXPrediction DiagnosticResult)
+
+-- ════════════════════════════════════════════════════
+-- § 0. K89 measure-phrase substrate (inlined)
+-- ════════════════════════════════════════════════════
+
+/-! K89 §2 (T6: extensive measure → quantized) and §3 (D28: QMOD)
+    propositional substrate, inlined from former
+    `Theories/Semantics/Events/MeasurePhrases.lean` — single-consumer
+    (this file) substrate after `GradualChange.lean` was deleted.
+    Dropped as dead: `durationMeasure`, `forAdverbial_subsumes_qmod`
+    (zero consumers; only GradualChange used them).
+
+    The Scontras `MeasureFn` bridge that previously sat alongside this
+    substrate has already been migrated to
+    `Theories/Semantics/Measurement/Basic.lean` § 8. -/
+
+/-- QMOD produces QUA predicates when μ is extensive and n > 0.
+    K89 §2: "three kilos of rice" is QUA because no proper part of a
+    3kg entity also weighs 3kg (extensivity of weight). -/
+theorem qmod_qua {α : Type*} [SemilatticeSup α]
+    {R : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure α μ]
+    {n : ℚ} (hn : 0 < n) :
+    QUA (QMOD R μ n) := by
+  intro x y ⟨_, hx_eq⟩ hlt ⟨_, hy_eq⟩
+  have hμ_qua := extMeasure_qua (μ := μ) n hn
+  exact hμ_qua x y hx_eq hlt hy_eq
+
+/-- A CUM mass noun combined with QMOD (via an extensive measure)
+    yields a QUA measure phrase. K89 §3 D28. -/
+theorem qmod_of_cum_is_qua {α : Type*} [SemilatticeSup α]
+    {R : α → Prop} (_hCum : CUM R)
+    {μ : α → ℚ} [ExtMeasure α μ]
+    {n : ℚ} (hn : 0 < n) :
+    QUA (QMOD R μ n) :=
+  qmod_qua hn
+
+/-- **K89 measure-phrase chain**: QMOD(mass_noun, extensive_μ, n) +
+    `[IsSincVerb θ]` → QUA VP (telic). Central K89 result: measure
+    phrases turn mass nouns into quantized predicates, and quantization
+    propagates through strictly incremental verbs to yield telic VPs. -/
+theorem measure_phrase_makes_qua {α β : Type*}
+    [SemilatticeSup α] [SemilatticeSup β]
+    {R : α → Prop} (hCum : CUM R)
+    {μ : α → ℚ} [ExtMeasure α μ]
+    {n : ℚ} (hn : 0 < n)
+    {θ : α → β → Prop} [IsSincVerb θ] :
+    QUA (VP θ (QMOD R μ n)) :=
+  qua_propagation (qmod_of_cum_is_qua hCum hn)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Nominal Reference Classification (K89 §3)

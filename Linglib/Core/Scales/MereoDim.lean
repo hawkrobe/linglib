@@ -33,8 +33,7 @@ Events →τ Times →dur ℚ (temporal dimension)
 These form a square that commutes *laxly*: the two paths Events → ℚ need not
 agree pointwise, but they are related by a proportionality constant (the "rate"
 of gradual change). This is captured by `MeasureProportional` (§9) and
-`LaxMeasureSquare` (§10) below. The SINC-specific extension `GRADSquare`
-lives in `Events/Krifka1998.lean`.
+`LaxMeasureSquare` (§10) below.
 
 -/
 
@@ -308,8 +307,7 @@ structure MeasureProportional {α β : Type*} [SemilatticeSup α] [SemilatticeSu
     Both paths are required to be extensive measures (`ExtMeasure`),
     making them `MereoDim` morphisms that support QUA pullback.
 
-    This is the general mereological square; `GRADSquare` in Krifka1998
-    extends it with strict incrementality (SINC) to derive GRAD. -/
+    This is the general mereological square. -/
 structure LaxMeasureSquare {α β γ : Type*}
     [SemilatticeSup α] [SemilatticeSup γ]
     (R : α → γ → Prop) (μ₁ : α → ℚ)

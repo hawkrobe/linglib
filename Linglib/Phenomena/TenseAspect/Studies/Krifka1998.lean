@@ -371,8 +371,7 @@ theorem cumOnly_verbs_are_activities :
 -- Part II: Gradual Change (GRAD) Predictions
 -- ════════════════════════════════════════════════════
 
-/-! Connects GRAD/GRADSquare theory from `Events/Krifka1998.lean` and
-    `Events/Krifka1989.lean` to concrete verb entries.
+/-! Connects GRAD theory to concrete verb entries.
 
     Round-1 audit fixes: `GRADDatum.verb : String` and
     `GRADDatum.objectMeasure : String` were the round-2-K89 String-field

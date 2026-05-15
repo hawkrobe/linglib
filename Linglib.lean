@@ -2365,7 +2365,6 @@ import Linglib.Theories.Semantics.Verb.SelectionalPreferences
 import Linglib.Theories.Semantics.Iconic.Basic
 -- Theories: Semantics.Events (neo-Davidsonian)
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Semantics.Events.DegreeEvents
 import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Events.EventRelations
 import Linglib.Theories.Semantics.Events.Mereology
@@ -2375,9 +2374,6 @@ import Linglib.Theories.Semantics.Events.ScalarResult
 import Linglib.Theories.Semantics.Events.AffectednessHierarchy
 import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Events.CumulativityPropagation
-import Linglib.Theories.Semantics.Events.GradualChange
-import Linglib.Theories.Semantics.Events.PropagationGap
-import Linglib.Theories.Semantics.Events.MeasurePhrases
 import Linglib.Theories.Semantics.Events.ArgumentRealization
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
@@ -2396,10 +2392,8 @@ import Linglib.Theories.Morphology.TheorySpace
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.EventAdjacency
 import Linglib.Theories.Semantics.Events.InitialFinalParts
-import Linglib.Theories.Semantics.Events.MovementRelations
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
-import Linglib.Theories.Semantics.Events.SpatiotemporalDistance
 import Linglib.Theories.Semantics.Attitudes.BuilderProperties
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Attitudes.ClauseDenotation.Content

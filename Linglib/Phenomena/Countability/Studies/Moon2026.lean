@@ -2,7 +2,7 @@ import Linglib.Core.Mereotopology
 import Linglib.Core.Mereology
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Semantics.Events.Incrementality
-import Linglib.Theories.Semantics.Events.PropagationGap
+import Linglib.Phenomena.TenseAspect.Studies.Filip2012
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
@@ -27,13 +27,12 @@ QUA (telic). The topological non-cumulativity proved here
 (`mixedDrink_not_qua`) jointly witness Filip's middle ground at the
 NP level. The propositional substrate for the gap propagating to VPs
 under SINC + UP + CumTheta verbs lives in
-`Theories/Semantics/Events/PropagationGap.lean` as the typeclass-form
+`Phenomena/TenseAspect/Studies/Filip2012.lean` as the typeclass-form
 public API `not_cum_vp_of_witnesses` and `middle_ground_stable`
 (both `[IsSincVerb θ]`-parametric per mathlib discipline); the bridge
 in §12 below invokes them directly. Moon's mixed-drink case is the
 *concrete topological witness* that Filip's *algebraic propagation*
-machinery is designed to consume; cf. `Filip2012.lean`'s docstring
-which names mixed drinks as the canonical instance of the gap.
+machinery is designed to consume.
 
 ## Core Proposal (formula 28)
 
@@ -630,21 +629,19 @@ theorem mixedDrink_middle_ground {n : ℕ}
 
 Sections 4 and 10–11 establish that mixed-drink predicates occupy the
 NP-level ¬CUM ∧ ¬QUA middle ground that @cite{filip-2012} identifies.
-@cite{krifka-1998} §10 (formalised in
-`Theories/Semantics/Events/PropagationGap.lean`'s
+@cite{krifka-1998} §10 (formalised in `Studies/Filip2012.lean`'s
 `middle_ground_stable`) shows the gap propagates to VPs under
 SINC + UP + CumTheta verbs.
 
-The bridge below directly invokes substrate's typeclass-form
+The bridge below directly invokes Filip2012's typeclass-form
 `middle_ground_stable` on mixed-drink denotations. The ¬CUM and ¬QUA
 witnesses on `OBJ` are exactly what `not_cum_of_disconnected` and
 `mixedDrink_not_qua` produce in this file — Moon's empirical
-contribution feeds Filip's algebraic machinery in a single Lean term,
-with `Filip2012.lean` providing the linguistic framing in prose. -/
+contribution feeds Filip's algebraic machinery in a single Lean term. -/
 
 open Semantics.Events.Incrementality (IsSincVerb)
 open Semantics.Events.CumulativityPropagation (VP)
-open Semantics.Events.PropagationGap (middle_ground_stable)
+open Filip2012 (middle_ground_stable)
 
 section MoonFilipBridge
 

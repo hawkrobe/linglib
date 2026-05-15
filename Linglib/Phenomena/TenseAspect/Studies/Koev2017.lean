@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.SpatiotemporalDistance
+import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
@@ -161,9 +161,78 @@ while the assertion commits the speaker to p via DECL (72).
 open Core.Time
 open Core.Presupposition
 open Semantics.Events
-open Semantics.Events.SpatiotemporalDistance
 open Semantics.Tense.Evidential
 open Fragments.Slavic.Bulgarian.Evidentials
+
+-- ════════════════════════════════════════════════════
+-- § 0. Spatiotemporal distance △ substrate (inlined)
+-- ════════════════════════════════════════════════════
+
+/-! @cite{koev-2017} Definition 24: two events satisfy △ when either
+    their temporal traces don't overlap (standard indirect evidence) or
+    they occur at different locations (smoke-from-chimney scenario).
+    Inlined from former `Theories/Semantics/Events/SpatiotemporalDistance.lean`
+    — single-consumer (this file) substrate, paper-anchored entirely on
+    Koev 2017. Architectural note: `Event Time` lacks a built-in location
+    field, so △ is parameterized by an external `loc : Event Time → L`. -/
+
+/-- Two events are temporally disjoint when their temporal traces do not
+    overlap (Koev 2017, first disjunct of Def. 24). -/
+def temporallyDisjoint {Time : Type*} [LinearOrder Time]
+    (e₁ e₂ : Event Time) : Prop :=
+  ¬ (e₁.τ.overlaps e₂.τ)
+
+/-- Spatiotemporal distance △ (Koev 2017, Def. 24). Two events are
+    spatiotemporally distant if either their temporal traces don't
+    overlap or they occur at different locations. -/
+def spatiotemporallyDistant {Time : Type*} [LinearOrder Time]
+    {L : Type*} [DecidableEq L]
+    (loc : Event Time → L) (e₁ e₂ : Event Time) : Prop :=
+  temporallyDisjoint e₁ e₂ ∨ loc e₁ ≠ loc e₂
+
+/-- If e₁ temporally precedes e₂, they are temporally disjoint
+    (standard indirect evidence: described event finished before
+    learning event started). -/
+theorem temporallyDisjoint_of_precedes {Time : Type*} [LinearOrder Time]
+    (e₁ e₂ : Event Time)
+    (h : e₁.τ.precedes e₂.τ) : temporallyDisjoint e₁ e₂ := by
+  unfold temporallyDisjoint Interval.overlaps Interval.precedes at *
+  simp only [Event.τ] at *
+  exact fun ⟨_, h2⟩ => absurd h2 (not_le.mpr h)
+
+/-- If two events are temporally disjoint and the first starts no later
+    than the second, then the first is temporally before the second:
+    bridges Koev's event-based △ to Cumming's point-based T ≤ A. -/
+theorem disjoint_earlier_implies_isBefore {Time : Type*} [LinearOrder Time]
+    (e₁ e₂ : Event Time)
+    (hd : temporallyDisjoint e₁ e₂)
+    (hearlier : e₁.τ.start ≤ e₂.τ.start) : e₁.τ.isBefore e₂.τ := by
+  unfold temporallyDisjoint Interval.overlaps at hd
+  unfold Interval.isBefore
+  simp only [Event.τ] at *
+  by_contra h
+  push_neg at h
+  exact hd ⟨le_trans hearlier e₂.runtime.valid, le_of_lt h⟩
+
+/-- Overlapping runtimes are incompatible with temporal distance. -/
+theorem overlapping_not_disjoint {Time : Type*} [LinearOrder Time]
+    (e₁ e₂ : Event Time)
+    (h : e₁.τ.overlaps e₂.τ) : ¬ temporallyDisjoint e₁ e₂ :=
+  fun hd => hd h
+
+/-- Spatial distance alone suffices for △ (Koev 2017, ex. 25b). -/
+theorem spatiotemporallyDistant_of_different_location
+    {Time : Type*} [LinearOrder Time] {L : Type*} [DecidableEq L]
+    (loc : Event Time → L) (e₁ e₂ : Event Time)
+    (h : loc e₁ ≠ loc e₂) : spatiotemporallyDistant loc e₁ e₂ :=
+  Or.inr h
+
+/-- Temporal disjointness alone suffices for △. -/
+theorem spatiotemporallyDistant_of_temporallyDisjoint
+    {Time : Type*} [LinearOrder Time] {L : Type*} [DecidableEq L]
+    (loc : Event Time → L) (e₁ e₂ : Event Time)
+    (h : temporallyDisjoint e₁ e₂) : spatiotemporallyDistant loc e₁ e₂ :=
+  Or.inl h
 
 -- ════════════════════════════════════════════════════
 -- § 1. Learning Scenarios (@cite{koev-2017}, §4)
