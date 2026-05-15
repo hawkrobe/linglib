@@ -11,7 +11,8 @@ other's. These primitives are event-general — they're not specific
 to movement relations or any particular thematic-role analysis — and
 are consumed by:
 
-- `MovementRelations.lean` for adjacency-respecting θ relations
+- `Phenomena/TenseAspect/Studies/Krifka1998Movement.lean` for K98 §4
+  adjacency-respecting θ relations (ADJ/SMR/MR)
 - `InitialFinalParts.lean` (initial/final parts via precedence)
 - `MeasureAdverbialDerivation.lean` (planned, K98 §3.5 cτ minimal-
   convex-time derivation)

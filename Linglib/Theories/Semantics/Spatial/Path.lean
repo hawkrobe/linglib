@@ -103,9 +103,9 @@ set_option linter.dupNamespace false in
     source. The general adjacency primitive (@cite{krifka-1998} §2.3
     eq. 14) is axiomatized abstractly on a part structure; for the
     concrete `Path Loc` the share-an-endpoint definition is the
-    intended instance. Used by movement-relation definitions
-    (`Theories/Semantics/Events/MovementRelations.lean`) to relate
-    spatial adjacency on paths to temporal adjacency on events. -/
+    intended instance. Used by K98 §4 movement-relation definitions
+    (inlined in `Phenomena/TenseAspect/Studies/Krifka1998Movement.lean`)
+    to relate spatial adjacency on paths to temporal adjacency on events. -/
 def Path.adjacent {Loc : Type*} (p1 p2 : Path Loc) : Prop :=
   p1.goal = p2.source ∨ p2.goal = p1.source
 

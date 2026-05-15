@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.DimensionBridge
-import Linglib.Theories.Semantics.Events.MovementRelations
+import Linglib.Theories.Semantics.Events.ThematicRoleProperties
+import Linglib.Theories.Semantics.Events.EventAdjacency
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
@@ -15,41 +16,57 @@ in `Studies/Krifka1998.lean`), §4 derives telicity from spatial and
 dimensional **paths**: a movement event is telic iff its path is
 bounded.
 
-## What this file is
+## Two layers of K98 §4 content
 
-A paper-replication of K98 §4 anchored on the existing
-`Theories/Semantics/Events/SpatialTrace.lean` substrate (which already
-cites `@cite{krifka-1998}` in its header). The σ trace function and
-`PathShape → Telicity` bridge are the linglib home for K98 §4's
-movement-relation (MR) machinery — they instantiate the Bool-tag
-projection of ADJ (eq. 68), SMR (eq. 69, strict movement relation),
-MR (eq. 71, general movement), KM' (eq. 72, derived movement-event
-measure), SOURCE/GOAL (eq. 73), and the *walked from X to Y* /
-*towards Y* analyses (eq. 74-75).
+**Bool-tag projection (§§ 1–4 below)**: the σ trace function and
+`PathShape → Telicity` bridge in `Theories/Semantics/Events/SpatialTrace.lean`
+provide the engineering surface — `LevinClass.pathSpec` per-verb
+annotations, `LicensingPipeline PathShape` for the in/for diagnostic.
+
+**Propositional K98 §4 substrate (§§ 5–8 below)**: the predicates
+EXP (eq. 63), SEINC (eq. 65), ADJ (eq. 68), SMR (eq. 69),
+MovementClosure + MR (eq. 71 modulo TANG_H) on abstract θ
+instances. Inlined here from the former
+`Theories/Semantics/Events/MovementRelations.lean` — that file was a
+single-consumer (this file) substrate and an audit against the K98
+manuscript found that several of its declarations were misattributed:
+
+- `km'` (claimed K98 eq. 72) was actually a Zwarts/Gawron σ-pullback,
+  not K98's per-piece inductive KM'. Dropped.
+- `SOURCE`/`GOAL` (claimed K98 eq. 73) were stated as definitions but
+  K98 states them as necessary conditions on movement relations. Dropped.
+- `k98_movement_telic_via_spatial_trace` /
+  `k98_unbounded_movement_atelic_via_spatial_trace` were one-line
+  delegates to `SpatialTrace.bounded_path_telic` /
+  `SpatialTrace.unbounded_path_atelic` mislabeled as K98 §4 results.
+  K98 §4 derives walk-a-kilometer telicity via KM' extensivity +
+  tangentiality, not via σ-pullback. The σ-pullback delegates are
+  now invoked directly (§ 6 below), without the K98-attribution.
+
+Honestly weakened content retained:
+
+- **TANG_H tangentiality** (K98 eq. 17) on directed paths is omitted
+  in `MovementClosure`; the resulting `MR` admits stop-and-go (K98
+  70.b), Alcatraz (70.e), and Echternach (70.d) movements (which K98
+  also admits) plus telekinetic non-meeting concatenations (which K98
+  rules out via TANG_H, eq. 70.c — the discriminating example).
 
 Per K98 §4.6 quality changes (heat, bake, whip — eq. 76-77),
-dimensional movements are structurally identical to spatial ones:
-movement in a temperature dimension toward a goal is telic; movement
-in a temperature dimension by a measured amount (without specified
-goal) is also telic. K98 §4.7 instantaneous movements (eq. 78,
-*Mary arrived in London*) reduce to the bounded-path case at the
-limit of granularity.
-
-## What it exercises
-
-- `pathShapeToTelicity` (PathShape → Telicity) — the K98 §4 "movement
-  has telic predicate iff path is bounded" rule (eq. 71-74)
-- `LevinClass.pathSpec` (verb → path specification) — the K98 §4.5
-  source/goal/towards typology
-- `LicensingPipeline PathShape` — bounded → licensed (telic), unbounded
-  → blocked (atelic), the K98 §4 in/for diagnostic chain
+dimensional movements are structurally identical to spatial ones, but
+require a `DirectedPath` generalization not formalized here.
+K98 §4.7 instantaneous movements (eq. 78, *Mary arrived in London*)
+reduce to the bounded-path case at the limit of granularity.
 
 ## Structure
 
-1. **§4.5 Source/Goal/Path-Spec verbs** — per-verb path specification (eq. 73)
-2. **§4 Path → Telicity → Licensing pipeline** — full chain (eq. 74-75)
-3. **§4 Motion VP data** — verb + PP pairs with path shapes (eq. 74-75)
+1. **§4.5 Source/Goal/Path-Spec verbs** — per-verb path specification
+2. **§4 Path → Telicity → Licensing pipeline** — full chain
+3. **§4 Motion VP data** — verb + PP pairs with path shapes
 4. **§3 ↔ §4 diagnostic bridge** — connect path telicity to for/in licensing
+5. **K98 §4 propositional substrate** — EXP/SEINC/ADJ/SMR/MovementClosure/MR
+6. **σ-pullback invocations** — bounded/unbounded path → telic/atelic VP
+7. **EXP/SEINC instances on `Event Time`**
+8. **SMR/MR instances on `Path Loc → Event Time → Prop`**
 
 ## Sister files
 
@@ -60,27 +77,6 @@ limit of granularity.
 - `Studies/KennedyLevin2008.lean` — degree achievements (heat, cool,
   dry); K98 §4.6 quality-change movements are the K98-substrate version
   of K&L's degree-of-change account, related but with different primitives
-
-## History
-
-This file was previously named `Studies/SpatialTrace.lean` with namespace
-`SpatialTrace` and no author-year anchor. The round-1 cross-framework
-audit (of `Studies/Krifka1998.lean` §3 content) flagged it as
-"anonymous, no author-year anchor" while documenting that
-`Theories/Semantics/Events/SpatialTrace.lean` cites K98 explicitly. The
-rename + namespace change makes the K98 §4 paper-replication anchor
-visible at the file level, satisfying CLAUDE.md's three-anchor rule
-(paper / typology / framework — this is "paper"). The σ trace machinery
-itself stays in `Theories/Semantics/Events/SpatialTrace.lean`
-(theory-level substrate, framework-anchored).
-
-The K98 §4 substrate predicates ADJ/EXP/SEINC/SMR/MR/KM' as defined in
-the paper (eq. 63-72) are NOT yet propositionally formalized in
-linglib's K98 theory file — only their Bool-tag projections via
-`PathShape`/`pathShapeToTelicity` exist. A future deepening would add
-the propositional substrate to `Theories/Semantics/Events/Krifka1998.lean`
-and have this file invoke them on abstract `θ` instances, paralleling
-what K89 study §3 now does for `qmod_of_cum_is_qua`.
 
 -/
 
@@ -249,39 +245,115 @@ theorem motion_vendler_path_coherence :
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
 -- ════════════════════════════════════════════════════
--- § 5. Part II — Propositional invocations of K98 §4 substrate
+-- § 5. K98 §4 propositional substrate
 -- ════════════════════════════════════════════════════
 
-/-! ### Substrate-honest §4 invocations
+/-! Predicates classifying thematic relations θ : α → β → Prop by
+    adjacency, precedence, and sub-event/sub-path correspondence.
+    Inlined from the former `Theories/Semantics/Events/MovementRelations.lean`
+    (single-consumer substrate; K98 misattributions on km'/SOURCE/GOAL/
+    bridges dropped — see module docstring).
 
-    The previous sections (§1-§4) work at the Bool-tag level
-    (`pathShapeToTelicity` mapping `PathShape` to `Telicity`). The
-    section below INVOKES the propositional K98 §4 substrate from
-    `Theories/Semantics/Events/MovementRelations.lean` on abstract
-    θ + Path Loc + Event Time instances — paralleling K89 study §3's
-    invocations of `qmod_of_cum_is_qua`/`measure_phrase_makes_qua`.
-
-    The big propositional theorems for K98 §4's central result
-    (bounded path → telic VP, unbounded path → atelic VP) are
-    delegated to the existing σ-pullback infrastructure in
-    `Theories/Semantics/Events/SpatialTrace.lean`; the K98 §4
-    LABEL for these theorems lives in `MovementRelations.lean` as
-    `k98_movement_telic_via_spatial_trace` and
-    `k98_unbounded_movement_atelic_via_spatial_trace`.
-
-    The K98 §4 substrate predicates EXP, SEINC, ADJ, SMR, MR,
-    SOURCE, GOAL, KM' are exercised below on Path Loc + Event Time.
-
-    Deferred (require new substrate per `MovementRelations.lean`'s
-    architectural notes): TANG_H tangentiality (eq. 17), full ADJ
-    axioms on the adjacency primitive, cross-dimensional movements
-    (K98 §4.6 heat/bake/whip).
+    Faithful K98 §4 content:
+    - **EXP** (eq. 63): temporally-following sub-events ↦ non-overlapping objects
+    - **SEINC** (eq. 65): EXP ∧ MO
+    - **ADJ** (eq. 68 — modulo an extra `z ≤ x` premise vs the printed
+      equation): sub-event temporal adjacency ↔ sub-path spatial adjacency
+    - **SMR** (eq. 69): ADJ ∧ MO ∧ path-only first-arg
+    - **MovementClosure** + **MR** (eq. 71 modulo TANG_H): inductive
+      closure under precedence-respecting sums
 -/
 
-section PropositionalMovement
+section K98PropositionalSubstrate
+
+open Semantics.Events.ThematicRoleProperties (MO)
+open Mereology
+
+/-- K98 §4.1 eq. 63 EXP: expansion. If x is θ-related to e and y to a
+    temporally-following e', then x and y do not overlap. -/
+def EXP {α β : Type*} [SemilatticeSup α]
+    (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
+  ∀ (x y : α) (e e' : β),
+    θ x e → θ y e' → precedes e e' → ¬ Overlap x y
+
+/-- K98 §4.1 eq. 65 SEINC: strictly expansive incremental. EXP ∧ MO. -/
+def SEINC {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    (precedes : β → β → Prop) (θ : α → β → Prop) : Prop :=
+  EXP precedes θ ∧ MO θ
+
+/-- K98 §4.2 eq. 68 ADJ: adjacency property. Whenever two sub-events
+    of a movement event are temporally adjacent, their corresponding
+    sub-paths are spatially adjacent, and vice versa. -/
+def ADJ {α β : Type*} [PartialOrder α] [PartialOrder β]
+    (adjα : α → α → Prop) (adjβ : β → β → Prop)
+    (θ : α → β → Prop) : Prop :=
+  ∀ (x : α) (e : β) (y z : α) (e' e'' : β),
+    θ x e → e' ≤ e → e'' ≤ e → y ≤ x → z ≤ x →
+    θ y e' → θ z e'' → (adjβ e' e'' ↔ adjα y z)
+
+/-- K98 §4.2 eq. 69 SMR: ADJ + MO + first-arg constrained to paths. -/
+def SMR {α β : Type*} [PartialOrder α] [PartialOrder β]
+    [SemilatticeSup α] [SemilatticeSup β]
+    (adjα : α → α → Prop) (adjβ : β → β → Prop)
+    (isPath : α → Prop) (θ : α → β → Prop) : Prop :=
+  ADJ adjα adjβ θ ∧ MO θ ∧ ∀ x e, θ x e → isPath x
+
+/-- K98 §4.3 eq. 71 closure: smallest relation containing θ' and closed
+    under precedence-respecting sums. K98's TANG_H tangentiality clause
+    (eq. 17) is OMITTED here — admits stop-and-go, Alcatraz, and
+    Echternach movements (also admitted by K98) plus telekinetic
+    non-meeting concatenations (which K98 rules out via TANG_H,
+    eq. 70.c). Adding TANG_H requires a directed-path substrate. -/
+inductive MovementClosure {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
+    (precedes : β → β → Prop) (θ' : α → β → Prop) : α → β → Prop where
+  | base {x : α} {e : β} : θ' x e → MovementClosure precedes θ' x e
+  | sum {x1 x2 : α} {e1 e2 : β} :
+      MovementClosure precedes θ' x1 e1 →
+      MovementClosure precedes θ' x2 e2 →
+      precedes e1 e2 →
+      MovementClosure precedes θ' (x1 ⊔ x2) (e1 ⊔ e2)
+
+/-- K98 §4.3 eq. 71 MR (TANG_H-free): θ is a movement relation iff
+    there exists an SMR θ' such that θ is the `MovementClosure` of θ'. -/
+def MR {α β : Type*} [PartialOrder α] [PartialOrder β]
+    [SemilatticeSup α] [SemilatticeSup β]
+    (adjα : α → α → Prop) (adjβ : β → β → Prop) (precedes : β → β → Prop)
+    (isPath : α → Prop) (θ : α → β → Prop) : Prop :=
+  ∃ θ' : α → β → Prop,
+    SMR adjα adjβ isPath θ' ∧
+    ∀ x e, θ x e ↔ MovementClosure precedes θ' x e
+
+/-- Every SMR is itself an MR, given closure under precedence-respecting sums. -/
+theorem mr_of_smr {α β : Type*} [PartialOrder α] [PartialOrder β]
+    [SemilatticeSup α] [SemilatticeSup β]
+    {adjα : α → α → Prop} {adjβ : β → β → Prop} {precedes : β → β → Prop}
+    {isPath : α → Prop} {θ : α → β → Prop}
+    (h : SMR adjα adjβ isPath θ)
+    (hClosed : ∀ x1 x2 e1 e2, θ x1 e1 → θ x2 e2 → precedes e1 e2 →
+               θ (x1 ⊔ x2) (e1 ⊔ e2)) :
+    MR adjα adjβ precedes isPath θ := by
+  refine ⟨θ, h, fun x e => ⟨MovementClosure.base, ?_⟩⟩
+  intro hcl
+  induction hcl with
+  | base h => exact h
+  | sum _ _ hprec ih1 ih2 => exact hClosed _ _ _ _ ih1 ih2 hprec
+
+end K98PropositionalSubstrate
+
+-- ════════════════════════════════════════════════════
+-- § 6. σ-pullback invocations (bounded/unbounded path → telic/atelic VP)
+-- ════════════════════════════════════════════════════
+
+/-! Invokes `SpatialTrace.bounded_path_telic` / `unbounded_path_atelic`
+    on abstract θ + Path Loc + Event Time instances. These are the
+    σ-pullback theorems; K98 §4 derives walk-a-kilometer telicity
+    differently (via KM' extensivity + tangentiality), so the
+    K98-flavored attribution that the former
+    `MovementRelations.lean` placed on these calls has been removed. -/
+
+section SpatialTracePullback
 
 open Semantics.Events
-open Semantics.Events.MovementRelations
 open Semantics.Spatial.Path
 open Mereology
 
@@ -289,41 +361,38 @@ variable {Loc Time : Type*} [LinearOrder Time]
 variable [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
 variable [st : SpatialTrace Loc Time]
 
-/-- *Mary walked from the university to the capitol* propositional
-    (K98 §4.5 eq. 74): a SOURCE+GOAL-bounded path predicate is QUA,
-    so the VP is telic. Direct invocation of K98 §4 substrate via
-    the σ-pullback. -/
+/-- Bounded path predicate (QUA) ↦ telic VP (QUA on events) via the
+    σ-pullback. Used to back the K98 §4.5 *walked from X to Y* analysis
+    at the Bool-tag level (§ 2). -/
 theorem walked_from_to_telic_propositional
     (hinj : Function.Injective st.σ)
     {P : Path Loc → Prop} (hP : QUA P) :
     @QUA _ cem.evSemilatticeSup.toPartialOrder (P ∘ st.σ) :=
-  k98_movement_telic_via_spatial_trace hinj hP
+  SpatialTrace.bounded_path_telic hinj hP
 
-/-- *Mary walked towards the capitol* propositional (K98 §4.5 eq. 75):
-    SOURCE-but-no-GOAL path predicate is CUM, so the VP is atelic.
-    Direct invocation. -/
+/-- Unbounded path predicate (CUM) ↦ atelic VP (CUM on events) via the
+    σ-pullback. Used to back the K98 §4.5 *walked towards X* analysis
+    at the Bool-tag level (§ 2). -/
 theorem walked_towards_atelic_propositional
     {P : Path Loc → Prop} (hP : CUM P) :
     @CUM _ cem.evSemilatticeSup (P ∘ st.σ) :=
-  k98_unbounded_movement_atelic_via_spatial_trace hP
+  SpatialTrace.unbounded_path_atelic hP
 
-end PropositionalMovement
+end SpatialTracePullback
 
 -- ════════════════════════════════════════════════════
--- § 6. K98 §4.1 EXP / SEINC instances
+-- § 7. K98 §4.1 EXP / SEINC instances on `Event Time`
 -- ════════════════════════════════════════════════════
 
-/-! K98 §4.1 EXP (eq. 63) and SEINC (eq. 65) on `Event Time`. The
-    precedence relation is `Event.precedes` (one event's runtime is
-    entirely before the other's). These abbreviations show that the
-    K98 §4 EXP/SEINC predicates are well-formed on `Event Time` and
-    can be reasoned about given concrete θ instances. -/
+/-! K98 §4.1 EXP (eq. 63) and SEINC (eq. 65) instantiated on `Event Time`
+    via `Event.precedes`. These abbreviations show that the K98 §4
+    EXP/SEINC predicates are well-formed on `Event Time` and can be
+    reasoned about given concrete θ instances. -/
 
 section Expansiveness
 
 open Semantics.Events
 open Semantics.Events.Mereology
-open Semantics.Events.MovementRelations
 
 variable {α : Type*} [SemilatticeSup α]
 variable {Time : Type*} [LinearOrder Time]
@@ -340,19 +409,18 @@ abbrev seincEv [EventCEM Time] (θ : α → Event Time → Prop) : Prop :=
 end Expansiveness
 
 -- ════════════════════════════════════════════════════
--- § 7. K98 §4.2 SMR / §4.3 MR instances
+-- § 8. K98 §4.2 SMR / §4.3 MR instances on `Path Loc → Event Time → Prop`
 -- ════════════════════════════════════════════════════
 
-/-! K98 §4.2 SMR (eq. 69) and §4.3 MR (eq. 71) on `Path Loc → Event Time → Prop`.
-    The path-adjacency relation is `Path.adjacent` (share an endpoint);
-    event-adjacency is `Event.adjacent` (runtime intervals meet);
+/-! K98 §4.2 SMR (eq. 69) and §4.3 MR (eq. 71) instantiated with concrete
+    adjacency. The path-adjacency relation is `Path.adjacent` (share an
+    endpoint); event-adjacency is `Event.adjacent` (runtime intervals meet);
     `isPath := fun _ => True` since the source type is already `Path Loc`. -/
 
 section MovementInstances
 
 open Semantics.Events
 open Semantics.Events.Mereology
-open Semantics.Events.MovementRelations
 open Semantics.Spatial.Path
 
 variable {Loc Time : Type*} [LinearOrder Time]
