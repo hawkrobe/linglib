@@ -15,7 +15,7 @@ inter-event constraint `cond : β → β → Prop`. Two specializations:
   models *read the article* (re-reading allowed).
 * **Precedence-respecting** (`cond := precedes`): @cite{krifka-1998}
   §4.3 eq. 71 movement-relation closure (`MovementClosure` in
-  `Studies/Krifka1998Movement.lean`). Only events in precedence order
+  `Studies/Krifka1998.lean` Part II). Only events in precedence order
   combine — prevents telekinetic concatenations.
 
 ## Main definitions

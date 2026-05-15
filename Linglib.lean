@@ -1751,7 +1751,6 @@ import Linglib.Phenomena.TenseAspect.Studies.Schlenker2004
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
 import Linglib.Phenomena.TenseAspect.Studies.Klecha2016
 import Linglib.Phenomena.TenseAspect.Studies.Filip2012
-import Linglib.Phenomena.TenseAspect.Studies.Krifka1998Movement
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
 import Linglib.Phenomena.TenseAspect.Studies.AspectualConsistency
 import Linglib.Phenomena.TenseAspect.Studies.KennedyLevin2008

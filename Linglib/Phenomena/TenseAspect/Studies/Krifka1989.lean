@@ -62,8 +62,8 @@ on abstract domains.
 ## References
 
 * @cite{krifka-1989} (primary, anchor for this file)
-* Sister: `Studies/Krifka1998.lean` (K98 §3, same-author 9-years-later
-  refinement); `Studies/Krifka1998Movement.lean` (K98 §4 motion);
+* Sister: `Studies/Krifka1998.lean` (K98, same-author 9-years-later
+  refinement; covers both §3 incrementality and §4 motion);
   `Studies/Filip2012.lean` (three-way classification critique).
 -/
 
