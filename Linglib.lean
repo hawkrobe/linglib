@@ -2366,7 +2366,6 @@ import Linglib.Theories.Semantics.Iconic.Basic
 -- Theories: Semantics.Events (neo-Davidsonian)
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Events.ThematicRoles
-import Linglib.Theories.Semantics.Events.EventRelations
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Events.StratifiedReference
 import Linglib.Theories.Semantics.Events.ThematicRoleProperties
