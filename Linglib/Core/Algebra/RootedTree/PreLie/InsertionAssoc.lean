@@ -5425,7 +5425,234 @@ After this helper closes, `LHS_eq_canonical_msform_pres`'s cons case
 becomes mechanical (~10-20 LOC chaining via IH +
 `RHS_eq_canonical_msform_pres` + `iteratedQuadSum_cons_remaining`). -/
 
-/-- **LHS 4-bucket peel** (sorry-fenced): decomposes the LHS form at
+/-! ### §1.11.8.A: Helper-first decomposition of `LHS_form_cons_decompose`
+
+The substantive 4-bucket peel splits along the boolean assignment of `c`
+into TRUE-side (c routes to T-side) and FALSE-side (c routes to F-side):
+- TRUE_BRANCH ↔ `T_orig_summand + T_graft_summand`
+- FALSE_BRANCH ↔ `FA_orig_summand + FA_graft_summand`
+
+Each helper captures the post-Phase-D.0.1 goal-state slice for one side.
+Sorry-fenced; future sessions close each bucket via the substrate
+`vertices_multiGraft_decomp` (T-side preserved/sourceSelf vs lifted),
+`vertices_forest_eq_partition` (F-side analog), `multiGraft_cons_pair` +
+`multiGraft_perm_pair` (preserved/sourceSelf absorption with msform
+planar-order absorption), and `multiGraft_split_lifted_aux` (lifted
+absorption into pre_T_B[k] / pre_FA_B[k] subtree). -/
+
+/-- **TRUE-side bridge** (sorry-fenced): the TRUE_BRANCH (c routes to T-side
+    via vertex partition + filter_t/filter_f bool routing) decomposes into
+    `T_orig_summand + T_graft_summand`. Substrate: `vertices_multiGraft_decomp`
+    on T' = `multiGraft T (choice.zip (pre_T_B' ++ pres .T_orig))` partitions
+    v_c into preserved/sourceSelf (→ T_orig: c at end of T's pair list via
+    `multiGraft_cons_pair` + `multiGraft_perm_pair`) vs lifted (→ T_graft:
+    c at vertex of pre_T_B[k] via `multiGraft_split_lifted_aux`). -/
+private theorem LHS_TRUE_eq_T_buckets
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) (c : Planar α) (rest : List (Planar α)) :
+    ((Multiset.map (fun x => buildFIns pre_T_B (pres QuadIdx.T_graft) x)
+            (Multiset.ofList (listChoices (perKFChoice pre_T_B)
+                (pres QuadIdx.T_graft).length))).bind
+        fun pre_T_B' =>
+        (Multiset.ofList (List.map
+                (fun (choice : List Path) =>
+                  multiGraft T (choice.zip (pre_T_B' ++ pres QuadIdx.T_orig)))
+                (listChoices (vertices T) (pre_T_B' ++ pres QuadIdx.T_orig).length))).bind
+          fun T' =>
+          (Multiset.map (fun x => buildFIns pre_FA_B (pres QuadIdx.FA_graft) x)
+                (Multiset.ofList (listChoices (perKFChoice pre_FA_B)
+                    (pres QuadIdx.FA_graft).length))).bind
+            fun pre_FA_B' =>
+            (Multiset.map (fun x => buildFIns F_A (pre_FA_B' ++ pres QuadIdx.FA_orig) x)
+                  (Multiset.ofList (listChoices (perKFChoice F_A)
+                      (pre_FA_B' ++ pres QuadIdx.FA_orig).length))).bind
+              fun F' =>
+              ((Multiset.ofList (listChoices [true, false] rest.length)).bind fun a_3 =>
+                (Multiset.ofList (List.map
+                        (fun (choice : List Path) =>
+                          multiGraft T'
+                            (choice.zip
+                              (c :: List.filterMap (fun p => if p.2 = true then some p.1 else none)
+                                  (rest.zip a_3))))
+                        (List.flatMap
+                          (fun v =>
+                            List.map (fun x => v :: x)
+                              (listChoices (vertices T')
+                                (List.filterMap
+                                    (fun p => if p.2 = true then some p.1 else none)
+                                    (rest.zip a_3)).length))
+                          (vertices T')))).bind
+                  fun T'' =>
+                  Multiset.map
+                    (fun x =>
+                      ((fun x => Multiset.ofList (List.map Nonplanar.mk x)) ∘
+                          fun F'' => T'' :: F'') x)
+                    (Multiset.map
+                      (fun x =>
+                        buildFIns F'
+                          (List.filterMap (fun p => if p.2 = true then none else some p.1)
+                              (rest.zip a_3)) x)
+                      (Multiset.ofList (listChoices (perKFChoice F')
+                          (List.filterMap (fun p => if p.2 = true then none else some p.1)
+                              (rest.zip a_3)).length))))) =
+    -- T_orig_summand: c absorbed into pres .T_orig (++ [c])
+    ((Multiset.map (fun x => buildFIns pre_T_B (pres QuadIdx.T_graft) x)
+            (Multiset.ofList (listChoices (perKFChoice pre_T_B)
+                (pres QuadIdx.T_graft).length))).bind
+        fun pre_T_B' =>
+        (Multiset.ofList (List.map
+                (fun (choice : List Path) =>
+                  multiGraft T (choice.zip (pre_T_B' ++ (pres QuadIdx.T_orig ++ [c]))))
+                (listChoices (vertices T)
+                    (pre_T_B' ++ (pres QuadIdx.T_orig ++ [c])).length))).bind
+          fun T' =>
+          (Multiset.map (fun x => buildFIns pre_FA_B (pres QuadIdx.FA_graft) x)
+                (Multiset.ofList (listChoices (perKFChoice pre_FA_B)
+                    (pres QuadIdx.FA_graft).length))).bind
+            fun pre_FA_B' =>
+            (Multiset.map (fun x => buildFIns F_A (pre_FA_B' ++ pres QuadIdx.FA_orig) x)
+                  (Multiset.ofList (listChoices (perKFChoice F_A)
+                      (pre_FA_B' ++ pres QuadIdx.FA_orig).length))).bind
+              fun F' =>
+              Multiset.map (fun x => Multiset.ofList (List.map Nonplanar.mk x))
+                (Multiset.map (fun x => buildFIns (T' :: F') rest x)
+                  (Multiset.ofList (listChoices (perKFChoice (T' :: F')) rest.length)))) +
+    -- T_graft_summand: c absorbed into pres .T_graft (++ [c])
+    ((Multiset.map (fun x => buildFIns pre_T_B (pres QuadIdx.T_graft ++ [c]) x)
+            (Multiset.ofList (listChoices (perKFChoice pre_T_B)
+                (pres QuadIdx.T_graft ++ [c]).length))).bind
+        fun pre_T_B' =>
+        (Multiset.ofList (List.map
+                (fun (choice : List Path) =>
+                  multiGraft T (choice.zip (pre_T_B' ++ pres QuadIdx.T_orig)))
+                (listChoices (vertices T) (pre_T_B' ++ pres QuadIdx.T_orig).length))).bind
+          fun T' =>
+          (Multiset.map (fun x => buildFIns pre_FA_B (pres QuadIdx.FA_graft) x)
+                (Multiset.ofList (listChoices (perKFChoice pre_FA_B)
+                    (pres QuadIdx.FA_graft).length))).bind
+            fun pre_FA_B' =>
+            (Multiset.map (fun x => buildFIns F_A (pre_FA_B' ++ pres QuadIdx.FA_orig) x)
+                  (Multiset.ofList (listChoices (perKFChoice F_A)
+                      (pre_FA_B' ++ pres QuadIdx.FA_orig).length))).bind
+              fun F' =>
+              Multiset.map (fun x => Multiset.ofList (List.map Nonplanar.mk x))
+                (Multiset.map (fun x => buildFIns (T' :: F') rest x)
+                  (Multiset.ofList (listChoices (perKFChoice (T' :: F')) rest.length)))) := by
+  -- TODO: Substantive bridge. Substrate: `vertices_multiGraft_decomp` on T' =
+  -- multiGraft T (choice.zip (pre_T_B' ++ pres .T_orig)) partitions v_c into
+  -- preserved/sourceSelf class (→ T_orig via multiGraft_cons_pair +
+  -- multiGraft_perm_pair) vs lifted class (→ T_graft via
+  -- multiGraft_split_lifted_aux). The bool a_3 routing of rest into
+  -- (filter_t, filter_f) corresponds to perKFChoice (T' :: F') routing on
+  -- the RHS via the standard bool↔(i, v)-position bijection.
+  sorry
+
+/-- **FALSE-side bridge** (sorry-fenced): the FALSE_BRANCH (c routes to F-side
+    via (i, v) ∈ perKFChoice F' choice + filter_t/filter_f bool routing)
+    decomposes into `FA_orig_summand + FA_graft_summand`. Substrate:
+    `vertices_forest_eq_partition` on F' partitions (i, v) into
+    preserved/sourceSelf class at F_A[i] (→ FA_orig) vs lifted class at
+    pre_FA_B[k] (→ FA_graft via `multiGraft_split_lifted_aux`). F-side analog
+    of `LHS_TRUE_eq_T_buckets`. -/
+private theorem LHS_FALSE_eq_FA_buckets
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (pres : QuadIdx → List (Planar α)) (c : Planar α) (rest : List (Planar α)) :
+    ((Multiset.map (fun x => buildFIns pre_T_B (pres QuadIdx.T_graft) x)
+            (Multiset.ofList (listChoices (perKFChoice pre_T_B)
+                (pres QuadIdx.T_graft).length))).bind
+        fun pre_T_B' =>
+        (Multiset.ofList (List.map
+                (fun (choice : List Path) =>
+                  multiGraft T (choice.zip (pre_T_B' ++ pres QuadIdx.T_orig)))
+                (listChoices (vertices T) (pre_T_B' ++ pres QuadIdx.T_orig).length))).bind
+          fun T' =>
+          (Multiset.map (fun x => buildFIns pre_FA_B (pres QuadIdx.FA_graft) x)
+                (Multiset.ofList (listChoices (perKFChoice pre_FA_B)
+                    (pres QuadIdx.FA_graft).length))).bind
+            fun pre_FA_B' =>
+            (Multiset.map (fun x => buildFIns F_A (pre_FA_B' ++ pres QuadIdx.FA_orig) x)
+                  (Multiset.ofList (listChoices (perKFChoice F_A)
+                      (pre_FA_B' ++ pres QuadIdx.FA_orig).length))).bind
+              fun F' =>
+              ((Multiset.ofList (listChoices [true, false] rest.length)).bind fun a_3 =>
+                (Multiset.ofList (List.map
+                        (fun (choice : List Path) =>
+                          multiGraft T'
+                            (choice.zip
+                              (List.filterMap (fun p => if p.2 = true then some p.1 else none)
+                                  (rest.zip a_3))))
+                        (listChoices (vertices T')
+                          (List.filterMap (fun p => if p.2 = true then some p.1 else none)
+                              (rest.zip a_3)).length))).bind
+                  fun T'' =>
+                  Multiset.map
+                    (fun x =>
+                      ((fun x => Multiset.ofList (List.map Nonplanar.mk x)) ∘
+                          fun F'' => T'' :: F'') x)
+                    (Multiset.map
+                      (fun x =>
+                        buildFIns F'
+                          (c :: List.filterMap (fun p => if p.2 = true then none else some p.1)
+                              (rest.zip a_3)) x)
+                      (Multiset.ofList (List.flatMap
+                          (fun v =>
+                            List.map (fun x => v :: x)
+                              (listChoices (perKFChoice F')
+                                (List.filterMap
+                                    (fun p => if p.2 = true then none else some p.1)
+                                    (rest.zip a_3)).length))
+                          (perKFChoice F')))))) =
+    -- FA_orig_summand: c absorbed into pres .FA_orig (++ [c])
+    ((Multiset.map (fun x => buildFIns pre_T_B (pres QuadIdx.T_graft) x)
+            (Multiset.ofList (listChoices (perKFChoice pre_T_B)
+                (pres QuadIdx.T_graft).length))).bind
+        fun pre_T_B' =>
+        (Multiset.ofList (List.map
+                (fun (choice : List Path) =>
+                  multiGraft T (choice.zip (pre_T_B' ++ pres QuadIdx.T_orig)))
+                (listChoices (vertices T) (pre_T_B' ++ pres QuadIdx.T_orig).length))).bind
+          fun T' =>
+          (Multiset.map (fun x => buildFIns pre_FA_B (pres QuadIdx.FA_graft) x)
+                (Multiset.ofList (listChoices (perKFChoice pre_FA_B)
+                    (pres QuadIdx.FA_graft).length))).bind
+            fun pre_FA_B' =>
+            (Multiset.map
+                  (fun x => buildFIns F_A (pre_FA_B' ++ (pres QuadIdx.FA_orig ++ [c])) x)
+                  (Multiset.ofList (listChoices (perKFChoice F_A)
+                      (pre_FA_B' ++ (pres QuadIdx.FA_orig ++ [c])).length))).bind
+              fun F' =>
+              Multiset.map (fun x => Multiset.ofList (List.map Nonplanar.mk x))
+                (Multiset.map (fun x => buildFIns (T' :: F') rest x)
+                  (Multiset.ofList (listChoices (perKFChoice (T' :: F')) rest.length)))) +
+    -- FA_graft_summand: c absorbed into pres .FA_graft (++ [c])
+    ((Multiset.map (fun x => buildFIns pre_T_B (pres QuadIdx.T_graft) x)
+            (Multiset.ofList (listChoices (perKFChoice pre_T_B)
+                (pres QuadIdx.T_graft).length))).bind
+        fun pre_T_B' =>
+        (Multiset.ofList (List.map
+                (fun (choice : List Path) =>
+                  multiGraft T (choice.zip (pre_T_B' ++ pres QuadIdx.T_orig)))
+                (listChoices (vertices T) (pre_T_B' ++ pres QuadIdx.T_orig).length))).bind
+          fun T' =>
+          (Multiset.map (fun x => buildFIns pre_FA_B (pres QuadIdx.FA_graft ++ [c]) x)
+                (Multiset.ofList (listChoices (perKFChoice pre_FA_B)
+                    (pres QuadIdx.FA_graft ++ [c]).length))).bind
+            fun pre_FA_B' =>
+            (Multiset.map (fun x => buildFIns F_A (pre_FA_B' ++ pres QuadIdx.FA_orig) x)
+                  (Multiset.ofList (listChoices (perKFChoice F_A)
+                      (pre_FA_B' ++ pres QuadIdx.FA_orig).length))).bind
+              fun F' =>
+              Multiset.map (fun x => Multiset.ofList (List.map Nonplanar.mk x))
+                (Multiset.map (fun x => buildFIns (T' :: F') rest x)
+                  (Multiset.ofList (listChoices (perKFChoice (T' :: F')) rest.length)))) := by
+  -- TODO: Substantive bridge. Substrate: `vertices_forest_eq_partition` on
+  -- F' = (List.finRange F_A.length).map (fun i => multiGraft F_A[i] (pairs i))
+  -- partitions (i, v) into preserved/sourceSelf class at F_A[i] (→ FA_orig)
+  -- vs lifted class at pre_FA_B[k] (→ FA_graft via
+  -- multiGraft_split_lifted_aux). F-side analog of LHS_TRUE_eq_T_buckets.
+  sorry
+
+/-- **LHS 4-bucket peel** (sorry-fenced via 2 helpers): decomposes the LHS form at
     `(c :: rest)` into a `[QuadIdx]`-bind, with `c` absorbed into each
     bucket's `pres` slot per case. The substantial content of the LHS
     side of A3.3.
@@ -5433,6 +5660,14 @@ becomes mechanical (~10-20 LOC chaining via IH +
     The msform `.map` is essential: the planar-order difference between
     "graft pre_T_B then graft c at T-side" vs "graft (pre_T_B ++ [c-pair])
     in one shot" only collapses under `Nonplanar.mk` (PlanarEquiv quotient).
+
+    **Architecture (Phase D split into 2 helpers + composition).** After
+    Phase B-D.0.1 setup, the goal becomes
+    `outer_4 → (TRUE_BRANCH + FALSE_BRANCH) =
+     T_orig_summand + (T_graft_summand + (FA_orig_summand + FA_graft_summand))`.
+    Distribute add through the outer 4 binds via `Multiset.bind_add` (4×),
+    then apply `LHS_TRUE_eq_T_buckets` (closes T-side) and
+    `LHS_FALSE_eq_FA_buckets` (closes F-side), then reassemble via `add_assoc`.
 
     **Caveat**: a naïve peel-c-then-rest lemma at msform is FALSE (rest
     can land inside grafted c in the peel form but not in the one-shot
@@ -5637,27 +5872,20 @@ private theorem LHS_form_cons_decompose
                 pres' QuadIdx.FA_graft ++ [c] from fun _ => Function.update_self _ _ _]
   -- RHS now: 4 summands with explicit per-bucket pres slot updated to (pres slot ++ [c]).
   --
-  -- Substantive content remaining for Phase D.1-D.4 (~400-700 LOC across 2 sessions):
-  -- - Phase D.T_orig: TRUE branch with v_c at preserved/sourceSelf class of T
-  --   matches the T_orig summand. Use `vertices_multiGraft_decomp` on
-  --   `T' = multiGraft T (choice.zip (pre_T_B' ++ pres .T_orig))` to partition
-  --   v_c, then `multiGraft_cons_pair` to absorb (v_c, c) into the pair list at
-  --   the prepend position (or via PlanarEquiv to append into pres .T_orig).
-  -- - Phase D.T_graft: TRUE branch with v_c at lifted class of T matches the
-  --   T_graft summand. Use `multiGraft_split_lifted_aux` to absorb (q, c) into
-  --   pre_T_B[k]'s subtree, lifting it into the pres .T_graft pair list.
-  -- - Phase D.FA_orig: FALSE branch with (i,v) at preserved/sourceSelf class of
-  --   F'[i] matches the FA_orig summand. F-side analog via
-  --   `vertices_forest_eq_partition`.
-  -- - Phase D.FA_graft: FALSE branch with (i,v) at lifted class of F'[i]
-  --   matches the FA_graft summand. F-side analog via
-  --   `multiGraft_split_lifted_aux`.
-  -- - Phase D.4: msform absorption via `multiGraft_perm_pair` /
-  --   `insertion_planarEquiv_guests` per bucket (planar-order differences
-  --   between prepend and append at the c-pair position).
-  --
-  -- See `scratch/a33_phase4_2_session_prompt_17.md` for the detailed plan.
-  sorry
+  -- Phase D.1: Distribute (TRUE + FALSE) addition out through the 4 outer binds.
+  -- After this, LHS becomes (outer_4 → TRUE) + (outer_4 → FALSE).
+  -- Multiset.bind_add: m.bind (fun a => f a + g a) = m.bind (fun a => f a) + m.bind (fun a => g a).
+  -- simp_rw with Multiset.bind_add fires through all 4 outer binders simultaneously.
+  simp_rw [Multiset.bind_add]
+  -- Phase D.2: Apply the per-side helper bridges.
+  --   LHS_TRUE_eq_T_buckets:  (outer_4 → TRUE)  = T_orig_summand + T_graft_summand
+  --   LHS_FALSE_eq_FA_buckets: (outer_4 → FALSE) = FA_orig_summand + FA_graft_summand
+  rw [LHS_TRUE_eq_T_buckets T F_A pre_T_B pre_FA_B pres c rest,
+      LHS_FALSE_eq_FA_buckets T F_A pre_T_B pre_FA_B pres c rest]
+  -- Phase D.3: Reassemble via additive associativity to match the RHS shape.
+  -- Goal: (T_orig + T_graft) + (FA_orig + FA_graft)
+  --     = T_orig + (T_graft + (FA_orig + FA_graft))
+  abel
 
 /-! ### §1.12: LHS-side strong-IH (sorry-free given §1.11.8 helper)
 
