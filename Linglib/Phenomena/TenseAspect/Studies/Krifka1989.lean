@@ -8,98 +8,63 @@ import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
 # @cite{krifka-1989} "Nominal Reference, Temporal Constitution and Quantification"
-@cite{krifka-1989}
 
 K89's algebraic semantics tying nominal-reference properties (CUM/QUA
-via §3 mass/count/bare-plural) to verbal aspect (CUM/QUA on VPs via
-§4 thematic-relation properties + §5 temporal-trace homomorphisms).
+via §3 mass/count/bare-plural) to verbal aspect (CUM/QUA on VPs via §4
+thematic-relation properties + §5 temporal-trace homomorphisms). A
+schema-level study: each section either records data (NP/verb/reading
+items with enumerated source kinds) or calls a propositional theorem
+on abstract domains.
 
-## What this file is
+## Main definitions
 
-A schema-level study replicating K89's central data and connecting it
-to the propositional substrate already shipped in
-`Theories/Semantics/Events/Krifka1989.lean`. Each section either:
+* `NPDatum` + `k89NPData` — 15 NPs from K89 §3 (mass/count/measure/definite)
+* `qmod_qua` / `qmod_of_cum_is_qua` / `measure_phrase_makes_qua` — K89 §2-§3
+  measure-phrase substrate (T6 + D28; inlined from former
+  `Events/MeasurePhrases.lean`)
+* `K89ThematicClass` + `K89ThematicDatum` + `k89Table14` — K89 §4 eq. 14 verbs
+  (write/eat/read/touch/see) with feature profiles {SUM, GRAD, UNI-E}
+* `ATM` + `qua_implies_atm` — K89 D17/D18/T4 atomicity (§5 *in*-X licensing)
+* `K89ThematicClass.toVerbIncClass` — K89 → K98 refinement bridge
+* `K89QuantDatum` + `k89Section7Data` — K89 §7 quantification data items
 
-1. **Records data** as `NPDatum` / `K89ThematicDatum` / `K89QuantDatum`
-   structures with enumerated source/verb/reading kinds (no free-form
-   `String` fields for analytical content), or
-2. **Calls** a K89 theory theorem (`barePlural_cum`, `qmod_of_cum_is_qua`,
-   `measure_phrase_makes_qua`) on abstract domains, exercising the
-   substrate that the file imports rather than restating its conclusion.
+## TODO
 
-## Faithfulness scope
-
-- **§1 Nominal reference**: 14 NPs spanning K89 §3 (mass/count/bare
-  plural/measure phrase/definite). The two proportional-quantifier NPs
-  (`mostGirls`, `lessThanThreeGirls`) are intentionally NOT in `NPDatum`
-  — K89 §7 gives them maximal-event semantics (D44 MXT, D45 MXE,
-  D46 max), not §3 CUM/QUA classification. They are referenced only in
-  §6 below as `K89QuantDatum` sentence-level data.
-- **§2 Grounding**: cites `barePlural_cum` and the `MassNoun`/`CountNoun`
-  abbrevs from K89 theory; no stipulated `rfl`-tautologies.
-- **§3 Measure phrases**: actually invokes `qmod_of_cum_is_qua` and
-  `measure_phrase_makes_qua` on a `variable`-abstract domain. K89 D28
-  (QMOD) is in §3, p. 82; the underlying T6 (extensive measure → quantized)
-  is in §2, p. 80.
-- **§4 Thematic-relation features**: instantiates K89's table 14
-  (eq. 14, p. 96): write/eat (X X X), read (X X −), touch/see (X − −).
-  Stated as Bool feature profiles; the corresponding K98-substrate
-  predicates (SUM, UO, UE, MO, MSO, MSE, GUE) are K89 D29-D35 (§4,
-  pp. 92-96) and live in `Theories/Semantics/Events/Krifka1998.lean`
-  for organizational reasons. Includes a `toVerbIncClass` refinement
-  function connecting K89's table-14 classes to K98's `VerbIncClass`
-  (sinc/inc/cumOnly) — making the same-author-9-years-later relation
-  visible at the type level.
-- **§5 Atomicity ≠ quantization**: documents K89 §5 eq. 19 (*Ann drank
-  wine in 0.43 seconds*) and now formalizes ATM as a propositional
-  predicate alongside `qua_implies_atm` (K89 T4, §2 p. 78). The
-  *in*-X licensing condition is atomicity, not quantization, with QUA
-  being the typical-but-not-only route to ATM.
-- **§6 Quantification (K89 §7)**: registers data items (most/less than
-  three girls; cumulative two-girls-ate-seven-apples; distributive
-  reading sketch). Full formalization of MXT/MXE/max and full
-  cumulative-distributive derivations is left to a successor file.
+* **K89 GRAD propositional chain**: `SINC + ExtMeasure + MeasureProportional →
+  GRAD` was deleted in 0.231.55 (formerly in `Events/GradualChange.lean`,
+  zero-consumer). Bool-tag proxy `predictsGRAD` survives in
+  `Studies/Krifka1998.lean` § 7. Future K89 §4 propositional-faithfulness
+  pass needs to rebuild.
+* **K89↔Champollion `forAdverbial_subsumes_qmod` bridge**: also dropped in
+  0.231.55 as dead. ~5 LOC over `forAdverbialMeaning` + `QMOD` to
+  re-derive when a Champollion replication wants the cross-framework bridge.
+* **K89 §7 quantification** (max/MXE/MXT/cumulative-distributive
+  derivations): registered as data here; full formalization left to a
+  successor file naturally clustering with Plurals/Quantification.
+* **GRAD collapse caveat (§ 4)**: `ThematicProfile` collapses K89's
+  5-tuple {SUM, UNI-O, UNI-E, MAP-O, MAP-E} to 3-tuple {SUM, GRAD,
+  UNI-E}. K89 D35 has GRAD ↔ UNI-O ∧ MAP-O ∧ MAP-E. K89 T11/T12 use
+  UNI-O and MAP-O *individually*; the unbundled form is needed there.
+* **Atomicity-without-quantization witness**: § 5 explains that *Ann drank
+  wine in 0.43 seconds* is ATM-but-not-QUA, but the substrate witness
+  requires event-CEM atom infrastructure beyond this file's scope.
 
 ## What this file is NOT
 
-- Not a verb-classification study — that's `Studies/Krifka1998.lean`,
-  which formalizes `VerbIncClass` (sinc/inc/cumOnly) and per-fragment-
-  verb cross-references. K89 (1989) does not use that classification;
-  the thematic-feature analysis in §4 below is K89's own taxonomy. The
-  `K89ThematicClass.toVerbIncClass` bridge in §4 makes the connection
-  explicit.
-- Not a *for*-X and *in*-X diagnostic study — that's
-  `Phenomena/TenseAspect/Diagnostics.lean`, which formalizes the
-  Vendler/Dowty test battery. We import it for the §5 atomicity remark
-  but do not duplicate its content.
-- Not a critique of K89's binary CUM/QUA classification — that's
-  `Studies/Filip2012.lean`, which proves Filip's three-way classification
-  (CUM, QUA, ¬CUM ∧ ¬QUA) and shows the middle ground propagates via
-  `propagation_gap_lifts`. The K89 study takes K89's binary framework
-  on its own terms; Filip is the canonical handbook successor critique.
+* Not a verb-classification study (that's `Studies/Krifka1998.lean`'s
+  `VerbIncClass`; the K89 → K98 refinement bridge in § 4 makes the
+  connection explicit).
+* Not a *for*-X / *in*-X diagnostic study (that's
+  `Phenomena/TenseAspect/Diagnostics.lean`).
+* Not a critique of K89's binary CUM/QUA (that's `Studies/Filip2012.lean`,
+  which proves the three-way classification's middle ground stable).
 
-## History
+## References
 
-An earlier version of this file collapsed K89's mereological apparatus
-into a binary `NomRef = cum | qua` enum + a 3-row `composedRef` table
-typed `VerbIncClass → NomRef → NomRef`. That version stipulated rather
-than derived the K89 chain, used `VerbIncClass` from K98 (anachronistic
-for a 1989 study), and proved its `composedRef` theorems by `rfl` over
-fields it had typed in. This rewrite uses `MereoTag` from
-`Core.Scales.Scale` (the canonical CUM/QUA tag), exercises K89 theory
-theorems directly, and adds K89's central exemplars that the previous
-version omitted (write/eat/read/touch/see from §4 eq. 14; *Ann drank
-wine in 0.43 seconds* from §5; cumulative *two girls ate seven apples*
-from §7). The Bool-shadow gap argument moved to `Studies/Filip2012.lean`
-where it now invokes the propositional `middle_ground_stable`,
-itself built from K98's CUM/QUA propagation machinery (K98 §3.3).
-A round-2 audit of the round-1 rewrite added: the
-`toVerbIncClass` K89↔K98 refinement bridge, ATM as a propositional
-predicate with `qua_implies_atm` (K89 T4), enumerated `K89Verb` and
-`K89Reading` kinds replacing `String` fields, removal of misclassified
-proportional-quantifier NPs from `NPDatum`, and equation-citation
-fixes (T6 is §2 not §3; the K98 substrate predicates are K89 D29-D35).
-
+* @cite{krifka-1989} (primary, anchor for this file)
+* Sister: `Studies/Krifka1998.lean` (K98 §3, same-author 9-years-later
+  refinement); `Studies/Krifka1998Movement.lean` (K98 §4 motion);
+  `Studies/Filip2012.lean` (three-way classification critique).
 -/
 
 namespace Krifka1989
@@ -114,34 +79,7 @@ open Core.Scale (MereoTag)
 open Phenomena.TenseAspect.Diagnostics
   (forXPrediction inXPrediction DiagnosticResult)
 
--- ════════════════════════════════════════════════════
--- § 0. K89 measure-phrase substrate (inlined)
--- ════════════════════════════════════════════════════
-
-/-! @cite{krifka-1989} §2 (T6: extensive measure → quantized) and §3
-    (D28: QMOD) propositional substrate, inlined from former
-    `Theories/Semantics/Events/MeasurePhrases.lean` — single-consumer
-    (this file) substrate after `GradualChange.lean` was deleted.
-    Dropped as dead: `durationMeasure`, `forAdverbial_subsumes_qmod`
-    (zero consumers; only GradualChange used them).
-
-    The Scontras `MeasureFn` bridge that previously sat alongside this
-    substrate has already been migrated to
-    `Theories/Semantics/Measurement/Basic.lean` § 8.
-
-    **Substrate dropped (TODOs for future faithfulness passes)**:
-    - The K89 GRAD propositional chain (`SINC + ExtMeasure +
-      MeasureProportional → GRAD`, formerly in
-      `Theories/Semantics/Events/GradualChange.lean`) was deleted in
-      0.231.55 as zero-consumer. The Bool-tag proxy `predictsGRAD`
-      survives in `Studies/Krifka1998.lean` § 7. A future K89 §4
-      propositional-faithfulness pass will need to rebuild the chain.
-    - The `forAdverbial_subsumes_qmod` bridge (Champollion's
-      `forAdverbialMeaning` ↔ K89's `QMOD` via duration measure) was
-      also dropped in 0.231.55 as dead. A future Champollion replication
-      that wants the cross-framework bridge will need to re-derive it
-      (~5 LOC over `forAdverbialMeaning` + `QMOD`).
-    -/
+-- ## § 0. K89 measure-phrase substrate (inlined from Events/MeasurePhrases.lean in 0.231.55)
 
 /-- QMOD produces QUA predicates when μ is extensive and n > 0.
     @cite{krifka-1989} §2: "three kilos of rice" is QUA because no
@@ -177,9 +115,7 @@ theorem measure_phrase_makes_qua {α β : Type*}
     QUA (VP θ (QMOD R μ n)) :=
   qua_propagation (qmod_of_cum_is_qua hCum hn)
 
--- ════════════════════════════════════════════════════
--- § 1. Nominal Reference Classification (K89 §3)
--- ════════════════════════════════════════════════════
+-- ## § 1. Nominal Reference Classification (K89 §3)
 
 /-- Why an NP has the reference type it does, per @cite{krifka-1989} §3.
     Each constructor names the structural source of CUM or QUA reference.
@@ -291,9 +227,7 @@ theorem all_nps_consistent_with_source :
     k89NPData.all (fun d => d.source.expectedRef == d.refType) = true := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 2. Grounding in K89 Theory's propositional predicates
--- ════════════════════════════════════════════════════
+-- ## § 2. Grounding in K89 Theory's propositional predicates
 
 /-! These theorems exercise the K89 theory file's propositional
     predicates on abstract domains, providing the bridge from the
@@ -326,9 +260,7 @@ theorem countNoun_grounded [PartialOrder α] {P : α → Prop} (h : QUA P) :
 
 end Grounding
 
--- ════════════════════════════════════════════════════
--- § 3. Measure phrases — exercise qmod / measure_phrase_makes_qua
--- ════════════════════════════════════════════════════
+-- ## § 3. Measure phrases — exercise qmod / measure_phrase_makes_qua
 
 /-! K89 §3 derives that measure phrases like *three kilos of rice* are
     quantized via D28 (QMOD, §3 p. 82) and the upstream T6 (extensive
@@ -364,9 +296,7 @@ theorem eatThreeKilosRice_qua_vp [SemilatticeSup β]
 
 end MeasurePhrases
 
--- ════════════════════════════════════════════════════
--- § 4. K89 §4 thematic-relation features (eq. 14, p. 96)
--- ════════════════════════════════════════════════════
+-- ## § 4. K89 §4 thematic-relation features (eq. 14, p. 96)
 
 /-! K89 §4 (eq. 14, p. 96) classifies thematic relations by a feature
     profile {SUM, UNI-O, UNI-E, MAP-O, MAP-E}, with GRAD = UNI-O ∧ MAP-O
@@ -548,9 +478,7 @@ theorem k89Table14_refines_k98_consistently :
       (d.thematicClass.toVerbIncClass = .cumOnly)) = true := by
   decide
 
--- ════════════════════════════════════════════════════
--- § 5. Atomicity ≠ Quantization (K89 §5 eq. 19; K89 T4)
--- ════════════════════════════════════════════════════
+-- ## § 5. Atomicity ≠ Quantization (K89 §5 eq. 19; K89 T4)
 
 /-! K89 §5 (around eq. 19, *Ann drank wine in 0.43 seconds*) makes a
     crucial point that a surface QUA → in-X / CUM → for-X classification
@@ -624,9 +552,7 @@ theorem ann_drank_wine_object_is_cum :
 theorem aGlassOfWine_is_qua :
     aGlassOfWineNP.refType = .qua := rfl
 
--- ════════════════════════════════════════════════════
--- § 6. Quantification (K89 §7)
--- ════════════════════════════════════════════════════
+-- ## § 6. Quantification (K89 §7)
 
 /-! K89 §7 introduces:
 
@@ -685,9 +611,7 @@ def twoGirlsAteSevenApplesEach : K89QuantDatum :=
 def k89Section7Data : List K89QuantDatum :=
   [mostGirlsSang, lessThanThreeGirlsSang, twoGirlsAteSevenApples, twoGirlsAteSevenApplesEach]
 
--- ════════════════════════════════════════════════════
--- § 7. Scope: predicate-level QUA/CUM ≠ carrier-level boundedness
--- ════════════════════════════════════════════════════
+-- ## § 7. Scope: predicate-level QUA/CUM ≠ carrier-level boundedness
 
 /-! @cite{krifka-1989} defines `QUA` and `CUM` (D 14, D 12, p. 78) as
     properties of *predicates* over a structured carrier — a complete

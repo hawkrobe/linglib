@@ -4,42 +4,46 @@ import Linglib.Theories.Semantics.Events.Incrementality
 import Linglib.Theories.Semantics.Events.CumulativityPropagation
 
 /-!
-# @cite{filip-2012} "Lexical Aspect"
-@cite{filip-2012} @cite{krifka-1998} @cite{krifka-1989} @cite{moon-2026}
+# @cite{filip-2012}: "Lexical Aspect"
 
-Filip's handbook chapter (Binnick ed., OUP) synthesizes the
-mereological approach to lexical aspect and identifies a
-**three-way classification** of verb predicates:
+Filip's handbook chapter (Binnick ed., OUP) identifies a **three-way
+classification** of verb predicates beyond K89/K98's binary CUM/QUA:
 
 1. **Telic / quantized** (QUA): *recover*, *arrive*
 2. **Atelic / cumulative** (CUM): *run*, *push*
-3. **Neither** (¬CUM ∧ ¬QUA): *build*, *eat*, *write* (incremental verbs)
+3. **Neither** (¬CUM ∧ ¬QUA): *build*, *eat*, *write* — verbs whose
+   telicity is underspecified at the verb level and determined
+   compositionally by the object NP
 
-The third class is "neither quantized (telic) nor cumulative (atelic)".
-Their telicity is **underspecified at the verb level** and determined
-compositionally by the object NP:
+The third class's compositional behavior:
+* QUA object → QUA VP: "eat two apples" (telic)
+* CUM object → CUM VP: "eat apples" (atelic)
+* ¬CUM ∧ ¬QUA object → ¬CUM ∧ ¬QUA VP: "drink margarita" (Moon's case)
 
-- QUA object → QUA VP (telic): "eat two apples"
-- CUM object → CUM VP (atelic): "eat apples"
-- ¬CUM ∧ ¬QUA object → indeterminate: "drink margarita"
+## Main definitions
 
-## Sections
+* `three_way_exhaustive` — Filip's distinctive observation: every
+  predicate is CUM, QUA, or ¬CUM ∧ ¬QUA
+* `not_cum_vp_of_witnesses` — ¬CUM lifts to VP under `[IsSincVerb θ]`
+* `middle_ground_stable` — ¬CUM ∧ ¬QUA lifts to VP under `[IsSincVerb θ]`
+  (the propagation-gap stability result; canonical typeclass-form
+  public API consumed by `Studies/Moon2026.lean`)
 
-1. **Three-way exhaustiveness** (Filip's distinctive logical observation).
-2. **Propagation gap substrate** — the propositional theorems showing
-   ¬CUM and ¬CUM ∧ ¬QUA both lift to VP under SINC + UP + CumTheta
-   verbs. Inlined from former `Theories/Semantics/Events/PropagationGap.lean`
-   (single-consumer substrate; only `Moon2026` actually used it).
+## TODO
 
-## Connection to @cite{moon-2026}
+* The propagation-gap substrate (§ 2 below) was inlined from former
+  `Theories/Semantics/Events/PropagationGap.lean` in 0.231.55 as
+  single-consumer substrate. If a second paper-anchored Studies file
+  consumes `middle_ground_stable`, lift back to substrate per CLAUDE.md
+  Theories/ ≥ 2 consumers rule.
 
-Moon's mixed drink nouns provide a concrete instantiation of the
-¬CUM ∧ ¬QUA middle ground. The topological source of non-cumulativity
-(`connectivity_breaks_cum`) is orthogonal to the algebraic source
-(QUA / atomicity), creating a category invisible to @cite{krifka-1998}'s
-two propagation theorems but stable under VP formation per
-`middle_ground_stable` below.
+## References
 
+* @cite{filip-2012} (primary)
+* @cite{krifka-1998} §3.3 (CUM/QUA propagation machinery the gap rests on)
+* @cite{krifka-1989} (the binary CUM/QUA antecedent Filip critiques)
+* @cite{moon-2026} (canonical instance: mixed-drink nouns as concrete
+  witness of the topological-source ¬CUM ∧ ¬QUA middle ground)
 -/
 
 namespace Filip2012
@@ -50,9 +54,7 @@ open Semantics.Events.ThematicRoleProperties
 open Semantics.Events.Incrementality
 open Semantics.Events.CumulativityPropagation
 
--- ════════════════════════════════════════════════════
--- § 1. Three-way exhaustiveness (Filip's distinctive observation)
--- ════════════════════════════════════════════════════
+-- ## § 1. Three-way exhaustiveness (Filip's distinctive observation)
 
 /-- The three classes are exhaustive: every predicate falls into
     exactly one of CUM, QUA, or ¬CUM ∧ ¬QUA. Conceptually important:
@@ -67,9 +69,7 @@ theorem three_way_exhaustive {α : Type*} [SemilatticeSup α]
     · exact .inr (.inl hq)
     · exact .inr (.inr ⟨hc, hq⟩)
 
--- ════════════════════════════════════════════════════
--- § 2. Propagation gap substrate (inlined)
--- ════════════════════════════════════════════════════
+-- ## § 2. Propagation gap substrate (inlined)
 
 /-! When OBJ is neither CUM nor QUA, neither `cum_propagation` nor
     `qua_propagation` fires. Under SINC + UP + CumTheta verbs the
