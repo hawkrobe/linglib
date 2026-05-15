@@ -5625,58 +5625,69 @@ private theorem LHS_TRUE_eq_T_buckets
                       (Multiset.ofList (listChoices (perKFChoice F) G.length)) =
                     (enumFChoices F G).map (buildFIns F G)
                 rfl]
-  -- After Phase 1 refolds, the goal is in clean `insertionForest` / `insertion` form:
-  --   LHS: outer_4 → bool-a_3 → (insertion T' (c :: filter_t)).bind T'' =>
-  --        (insertionForest F' filter_f).map (msform ∘ (T'' :: ·))
-  --   RHS: T_orig (outer with `pres .T_orig ++ [c]` for T) + T_graft (outer with
-  --        `pres .T_graft ++ [c]` for pre_T_B), each → insertionForest (T' :: F') rest .map msform
+  -- **Session 3 (0.231.89)**: outer-2nd bind has form `(insertion T Ts).bind T'`
+  -- after Phase 1's `← insertion_def` folding. To apply the substrate
+  -- `insertion_cons_pair_at_multiGraft_bind_at_choice` (Insertion.lean §5.6),
+  -- the inner needs T' exposed as `mG T (choice.zip Ts)` for some `choice ∈
+  -- listChoices (vT) Ts.length`. Achieved via the targeted rewrite
+  -- `insertion_outer_bind_at_choice_eq` (Insertion.lean §5.6) which converts
+  -- `(insertion T Ts).bind K` to `(Mset.ofList (lC vT Ts.length)).bind (fun
+  -- choice => K (mG T (choice.zip Ts)))`. Targeting `T` explicitly limits the
+  -- rewrite to outer 2nd (where the host is `T`, the global parameter); the
+  -- inner `(insertion T' (c :: filter_t)).bind T''` (where T' is a bound var)
+  -- is not matched.
+  simp_rw [insertion_outer_bind_at_choice_eq T]
+  -- After Phase 1 refolds + Session 3's outer-2nd unfolding, the goal is:
+  --   LHS: outer 1st (insertionForest pre_T_B (pres .T_graft)).bind pre_T_B' →
+  --        outer 2nd (Mset.ofList (lC vT (pre_T_B' ++ pres .T_orig).length)).bind choice →
+  --        outer 3rd (insertionForest pre_FA_B (pres .FA_graft)).bind pre_FA_B' →
+  --        outer 4th (insertionForest F_A (pre_FA_B' ++ pres .FA_orig)).bind F' →
+  --        bool_a_3 (Mset.ofList (lC [t,f] rest.length)).bind a_3 →
+  --        (insertion (mG T (choice.zip (pre_T_B' ++ pres .T_orig))) (c :: filter_t)).bind T'' →
+  --        msform/buildFIns(F', filter_f) wrap
+  --   RHS T_orig: same outer 1st, outer 2nd extended `(pre_T_B' ++ pres .T_orig ++ [c]).length`,
+  --        outer 3rd/4th same, then `(insertionForest (T' :: F') rest).map msform`.
+  --   RHS T_graft: outer 1st extended `(pres .T_graft ++ [c])`, outer 2nd same length,
+  --        outer 3rd/4th same, then `(insertionForest (T' :: F') rest).map msform`.
   --
-  -- **Phase 2 substrate (Session 2, 0.231.88, landed)**: the inner
-  -- `(insertion T' (c :: filter_t)).bind K` (with T' = mG T pairs, pairs =
-  -- choice.zip (pre_T_B' ++ pres .T_orig)) splits into a 2-class sum via
-  -- `insertion_cons_pair_at_multiGraft_bind` (Insertion.lean §5.5):
+  -- **Substrate-applied form (Session 2's `insertion_cons_pair_at_multiGraft_bind`)**:
+  -- The inner `(insertion (mG T pairs) (c :: filter_t)).bind K` decomposes into
+  -- `preserved+sourceSelf_part + lifted_part` (with pairs = choice.zip Ts).
+  -- The auto-discharge variant `insertion_cons_pair_at_multiGraft_bind_at_choice`
+  -- (Insertion.lean §5.6, Session 3) supplies validity from `choice ∈ lC`.
   --
-  --   (insertion (mG T pairs) (c :: filter_t)).bind K
-  --     = preserved+sourceSelf_part + lifted_part
+  -- **Sessions 4-5 (remaining work)**:
   --
-  -- where `preserved+sourceSelf_part = ((vertices T : Multiset Path).map
-  -- (transport pairs)).bind (fun v_c => (Multiset.ofList ((listChoices (vertices
-  -- (mG T pairs)) filter_t.length).map (fun ch => mG (mG T pairs) ((v_c, c) ::
-  -- ch.zip filter_t)))).bind K)`, and lifted_part is the analogous bind over
-  -- `(Multiset.ofList (List.finRange pairs.length)).bind (fun k =>
-  -- (vertices pairs[k].snd : Multiset Path).map (liftMulti pairs k))`.
+  -- **Session 4 (~300-500 LOC)**: substantive bridge — apply the substrate split
+  -- via Multiset.bind_congr peeling (5 levels: pre_T_B', choice, pre_FA_B', F',
+  -- a_3), distribute the resulting `+` outward via `Multiset.bind_add` (5×),
+  -- and match each side to T_orig / T_graft. The substantive work is:
+  --   (a) For preserved branch: apply `multiGraft_compose_cons_pair_at_choice`
+  --       (Session 1) to collapse `mG (mG T pairs) ((v_c, c) :: ch.zip filter_t)`
+  --       into `mG T (composePairs pairs ((v_c, c) :: ch.zip filter_t))`. Then
+  --       bridge to T_orig_summand shape `mG T (choice'.zip (pre_T_B' ++
+  --       pres .T_orig ++ [c]))` via planar-permutation absorption at msform.
+  --   (b) For lifted branch: apply `multiGraft_split_lifted_aux` (Graft.lean
+  --       §10.6) to rewrite as `mG T (pairs.set k.val ...)`. Then bridge to
+  --       T_graft_summand shape via outer-1st extension.
   --
-  -- This substrate consumes:
-  --   * Insertion.lean §5.5: `insertion_cons_pair_eq_bind`,
+  -- **Session 5 (~150-300 LOC)**: bool a_3 ↔ perKFChoice bridge — LHS's
+  -- inner `bool a_3` routing of `rest` becomes RHS's `perKFChoice (T' :: F')`
+  -- routing. Stand-alone substrate-level lemma.
+  --
+  -- Substrate inventory (post-Session 3):
+  --   * Insertion.lean §5.5 (Sessions 1-2): `insertion_cons_pair_eq_bind`,
   --     `insertion_cons_pair_at_multiGraft_bind`, `vc_partition_via_bind`,
-  --     `multiGraft_compose_cons_pair_at_choice` (Session 1).
-  --   * Graft.lean §7.5: `filterMap_preserveMulti_eq_filter_map_transport`,
-  --     `preserved_add_sourceSelf_eq_vertices_map_transport` (Session 2).
-  --   * Graft.lean §9.5: `transport_mem_vertices_multiGraft` (Session 2).
-  --
-  -- **Sessions 3-5 (remaining work)**:
-  --
-  -- **Session 3 (~300-500 LOC)**: T_orig bridge for preserved+sourceSelf class.
-  -- For each v_c = transport pairs v_T, apply `multiGraft_compose_cons_pair_at_choice`
-  -- to collapse `mG (mG T pairs) ((v_c, c) :: ch.zip filter_t)` into
-  -- `mG T (composePairs pairs ((v_c, c) :: ch.zip filter_t))`. Then use
-  -- `composePairs_cons` + the absorbed planar permutation (via `multiGraft_perm_pair`
-  -- lifted to Nonplanar.mk at the msform wrapper) to bridge to the
-  -- T_orig_summand shape `mG T (choice'.zip (pre_T_B' ++ pres .T_orig ++ [c]))`.
-  --
-  -- **Session 4 (~200-300 LOC)**: T_graft bridge for lifted class. For each
-  -- v_c = liftMulti pairs k q, apply `multiGraft_split_lifted_aux` to rewrite
-  -- the nested mG as `mG T (pairs.set k.val (pairs[k].fst, insertAt q c pairs[k].snd))`.
-  -- Then bridge to T_graft_summand shape where `pres .T_graft ++ [c]` extends
-  -- pre_T_B (one pair's tree gains a guest).
-  --
-  -- **Session 5 (~100-200 LOC)**: bool a_3 ↔ perKFChoice bridge. The LHS's
-  -- inner `bool a_3` routing of `rest` (after c is absorbed into T_orig or
-  -- T_graft) becomes the RHS's `perKFChoice (T' :: F')` routing of `rest`
-  -- (after the relevant outer is extended).
-  --
-  -- Each session adds substrate to Insertion.lean §5.5 / Graft.lean as needed.
-  -- TODO: close in Session 3+.
+  --     `multiGraft_compose_cons_pair_at_choice`.
+  --   * Insertion.lean §5.6 (Session 3): `insertion_cons_pair_at_multiGraft_bind_at_choice`,
+  --     `insertion_outer_bind_at_choice_eq` (used above).
+  --   * Graft.lean §7.5 (Session 2): `filterMap_preserveMulti_eq_filter_map_transport`,
+  --     `preserved_add_sourceSelf_eq_vertices_map_transport`.
+  --   * Graft.lean §9.5 (Session 2): `transport_mem_vertices_multiGraft`.
+  --   * Graft.lean §11 (substrate): `multiGraft_compose`, `composePairs`,
+  --     `absorbInnerPair_eq_insertAt`, `multiGraft_cons_pair`,
+  --     `multiGraft_split_lifted_aux`, `vertices_multiGraft_decomp`.
+  -- TODO: close in Sessions 4-5.
   sorry
 
 /-- **FALSE-side bridge** (sorry-fenced): the FALSE_BRANCH (c routes to F-side

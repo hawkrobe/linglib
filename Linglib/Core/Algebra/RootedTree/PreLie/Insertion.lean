@@ -646,6 +646,103 @@ theorem insertion_cons_pair_at_multiGraft_bind
         ((vertices T : List Path) : Multiset Path)]
   rw [Multiset.add_bind]
 
+/-! ## §5.6: A3.3 substrate — Session 3 auto-discharge specializations
+
+Specializations of `insertion_cons_pair_at_multiGraft_bind` for the canonical
+A3.3 outer-pair shape `pairs = choice.zip Ts` with
+`choice ∈ listChoices (vertices T) Ts.length`. The validity hypothesis is
+auto-discharged via `forall_zip_isValidPath_of_listChoices`.
+
+Used by `LHS_TRUE_eq_T_buckets` (and Session 4's analog) to split the inner
+`(insertion T' (c :: filter_t)).bind K` into preserved+sourceSelf and lifted
+classes WITHOUT requiring the proof to discharge validity inline. -/
+
+/-- Auto-discharge specialization of `insertion_cons_pair_at_multiGraft_bind`
+    for the canonical A3.3 shape `pairs = choice.zip Ts`. The validity
+    hypothesis is supplied internally via `forall_zip_isValidPath_of_listChoices`. -/
+theorem insertion_cons_pair_at_multiGraft_bind_at_choice
+    {γ : Type*}
+    (T : Planar α) (Ts : List (Planar α))
+    (choice : List Path)
+    (h_choice : choice ∈ listChoices (vertices T) Ts.length)
+    (c : Planar α) (filter_t : List (Planar α))
+    (K : Planar α → Multiset γ) :
+    (insertion (multiGraft T (choice.zip Ts)) (c :: filter_t)).bind K =
+    -- preserved + sourceSelf class (v_c originates from T via transport (choice.zip Ts))
+    (((vertices T : List Path) : Multiset Path).map (transport (choice.zip Ts))).bind
+        (fun v_c =>
+      (Multiset.ofList ((listChoices (vertices (multiGraft T (choice.zip Ts)))
+              filter_t.length).map (fun ch =>
+            multiGraft (multiGraft T (choice.zip Ts))
+              ((v_c, c) :: ch.zip filter_t)))).bind K)
+    +
+    -- lifted class (v_c originates from (choice.zip Ts)[k].snd via liftMulti)
+    ((Multiset.ofList (List.finRange (choice.zip Ts).length)).bind
+        (fun k => (vertices (choice.zip Ts)[k].snd : Multiset Path).map
+          (liftMulti (choice.zip Ts) k))).bind (fun v_c =>
+      (Multiset.ofList ((listChoices (vertices (multiGraft T (choice.zip Ts)))
+              filter_t.length).map (fun ch =>
+            multiGraft (multiGraft T (choice.zip Ts))
+              ((v_c, c) :: ch.zip filter_t)))).bind K) := by
+  apply insertion_cons_pair_at_multiGraft_bind T (choice.zip Ts) _ c filter_t K
+  intro pair h_pair
+  exact forall_zip_isValidPath_of_listChoices T Ts choice h_choice pair h_pair
+
+/-- Unfold `(insertion T Ts).bind K` to its choice-bind form, exposing the
+    `choice ∈ listChoices (vertices T) Ts.length` bind variable so that
+    `mG T (choice.zip Ts)` is substituted into K. Bridge from the abstract
+    `insertion T Ts` form to the concrete pair-list-choice form needed for
+    `insertion_cons_pair_at_multiGraft_bind_at_choice`.
+
+    Proof: unfold `insertion_def`, then `← Multiset.map_coe + Multiset.bind_map`
+    to expose choice as the bind variable. -/
+theorem insertion_outer_bind_at_choice_eq
+    {γ : Type*}
+    (T : Planar α) (Ts : List (Planar α)) (K : Planar α → Multiset γ) :
+    (insertion T Ts).bind K =
+      (Multiset.ofList (listChoices (vertices T) Ts.length)).bind
+        (fun choice => K (multiGraft T (choice.zip Ts))) := by
+  rw [insertion_def, ← Multiset.map_coe, Multiset.bind_map]
+
+/-- Bundled substrate for Session 4: the bind-over-listChoices composed with
+    the inner cons-pair split. Discharges `h_choice` internally via
+    `Multiset.mem_coe`. The `K` parameter is universally quantified over the
+    choice (so it can carry context from outer binds in the calling proof).
+
+    Use this when the goal has form `(Mset.ofList (lC vT Ts.length)).bind
+    (fun choice => (insertion (mG T (choice.zip Ts)) (c :: filter_t)).bind
+    (K choice))` and you want to split the inner bind into preserved+lifted
+    classes without manually peeling the choice-bind via `Multiset.bind_congr`. -/
+theorem listChoices_bind_insertion_inner_split
+    {γ : Type*}
+    (T : Planar α) (Ts : List (Planar α))
+    (c : Planar α) (filter_t : List (Planar α))
+    (K : List Path → Planar α → Multiset γ) :
+    (Multiset.ofList (listChoices (vertices T) Ts.length)).bind (fun choice =>
+      (insertion (multiGraft T (choice.zip Ts)) (c :: filter_t)).bind (K choice)) =
+    -- preserved + sourceSelf class (per choice)
+    (Multiset.ofList (listChoices (vertices T) Ts.length)).bind (fun choice =>
+      (((vertices T : List Path) : Multiset Path).map (transport (choice.zip Ts))).bind
+          (fun v_c =>
+        (Multiset.ofList ((listChoices (vertices (multiGraft T (choice.zip Ts)))
+                filter_t.length).map (fun ch =>
+              multiGraft (multiGraft T (choice.zip Ts))
+                ((v_c, c) :: ch.zip filter_t)))).bind (K choice)))
+    +
+    -- lifted class (per choice)
+    (Multiset.ofList (listChoices (vertices T) Ts.length)).bind (fun choice =>
+      ((Multiset.ofList (List.finRange (choice.zip Ts).length)).bind
+          (fun k => (vertices (choice.zip Ts)[k].snd : Multiset Path).map
+            (liftMulti (choice.zip Ts) k))).bind (fun v_c =>
+        (Multiset.ofList ((listChoices (vertices (multiGraft T (choice.zip Ts)))
+                filter_t.length).map (fun ch =>
+              multiGraft (multiGraft T (choice.zip Ts))
+                ((v_c, c) :: ch.zip filter_t)))).bind (K choice))) := by
+  rw [← Multiset.bind_add]
+  refine Multiset.bind_congr fun choice h_choice => ?_
+  exact insertion_cons_pair_at_multiGraft_bind_at_choice T Ts choice
+    (Multiset.mem_coe.mp h_choice) c filter_t (K choice)
+
 /-! ## §6: Host invariance via path-swap bijection
 
 `insertion T Ts` is `mk`-invariant under `PlanarEquiv` of the host: the
