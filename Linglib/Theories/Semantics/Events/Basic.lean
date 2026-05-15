@@ -26,12 +26,20 @@ open Features
 /-! ### Sort predicates -/
 
 /-- Is this event an action (dynamic event)? -/
-def Event.isAction {Time : Type*} [LinearOrder Time] (e : Event Time) : Bool :=
-  e.sort == .action
+def Event.isAction {Time : Type*} [LinearOrder Time] (e : Event Time) : Prop :=
+  e.sort = .action
 
 /-- Is this event a state (stative event)? -/
-def Event.isState {Time : Type*} [LinearOrder Time] (e : Event Time) : Bool :=
-  e.sort == .state
+def Event.isState {Time : Type*} [LinearOrder Time] (e : Event Time) : Prop :=
+  e.sort = .state
+
+instance {Time : Type*} [LinearOrder Time] :
+    DecidablePred (Event.isAction (Time := Time)) :=
+  fun e => decEq e.sort .action
+
+instance {Time : Type*} [LinearOrder Time] :
+    DecidablePred (Event.isState (Time := Time)) :=
+  fun e => decEq e.sort .state
 
 /-- Every event is either an action or a state (exhaustivity). -/
 theorem sort_exhaustive (s : EventSort) : s = .action ∨ s = .state := by
@@ -43,13 +51,13 @@ theorem sort_exclusive : EventSort.action ≠ EventSort.state := by
 
 /-- `isAction` and `isState` are complementary. -/
 theorem isAction_iff_not_isState {Time : Type*} [LinearOrder Time] (e : Event Time) :
-    e.isAction = true ↔ e.isState = false := by
+    e.isAction ↔ ¬ e.isState := by
   simp only [Event.isAction, Event.isState]
   cases e.sort <;> decide
 
 /-- `isState` and `isAction` are complementary. -/
 theorem isState_iff_not_isAction {Time : Type*} [LinearOrder Time] (e : Event Time) :
-    e.isState = true ↔ e.isAction = false := by
+    e.isState ↔ ¬ e.isAction := by
   simp only [Event.isAction, Event.isState]
   cases e.sort <;> decide
 
@@ -94,16 +102,16 @@ def exampleKnow : Event ℤ :=
   ⟨⟨0, 10, by omega⟩, .state⟩
 
 /-- The run event is an action. -/
-theorem exampleRun_isAction : exampleRun.isAction = true := rfl
+theorem exampleRun_isAction : exampleRun.isAction := rfl
 
 /-- The know event is a state. -/
-theorem exampleKnow_isState : exampleKnow.isState = true := rfl
+theorem exampleKnow_isState : exampleKnow.isState := rfl
 
 /-- The run event is not a state. -/
-theorem exampleRun_not_state : exampleRun.isState = false := rfl
+theorem exampleRun_not_state : ¬ exampleRun.isState := by decide
 
 /-- The know event is not an action. -/
-theorem exampleKnow_not_action : exampleKnow.isAction = false := rfl
+theorem exampleKnow_not_action : ¬ exampleKnow.isAction := by decide
 
 /-- The run event starts at 1. -/
 theorem exampleRun_start : exampleRun.τ.start = 1 := rfl

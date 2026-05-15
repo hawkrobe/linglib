@@ -2373,7 +2373,7 @@ import Linglib.Theories.Semantics.Events.Scalar.Affectedness
 import Linglib.Theories.Semantics.Events.Aspect.PrecedenceClosure
 import Linglib.Theories.Semantics.Events.Aspect.Incremental
 import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
-import Linglib.Theories.Semantics.Events.ThematicRole.Realization
+import Linglib.Theories.Semantics.Events.ArgumentRealization
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness

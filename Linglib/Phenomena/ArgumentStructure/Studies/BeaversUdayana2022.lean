@@ -1,7 +1,7 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Phenomena.ArgumentStructure.Studies.Beavers2010
 import Linglib.Theories.Semantics.Verb.DiathesisAlternation
-import Linglib.Theories.Semantics.Events.ThematicRole.Realization
+import Linglib.Theories.Semantics.Events.ArgumentRealization
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 
 /-!
@@ -151,18 +151,18 @@ def incorporationReflexive : MiddleType :=
     This is now also derived compositionally from `suppressArg` in § 5
     above: the Montague type of the VP after FA vs. incorporation
     determines which argument remains for the surface subject. -/
-def agentSurfaces (m : MiddleType) : Bool := m.agentSurfaces
+abbrev agentSurfaces (m : MiddleType) : Prop := m.agentSurfaces
 
 /-- Incorporation middles have the agent as surface subject. -/
 theorem incorporation_agent_surfaces :
-    agentSurfaces incorporationMiddle = true := rfl
+    agentSurfaces incorporationMiddle := rfl
 
 /-- Non-incorporation middles have the patient as surface subject. -/
 theorem noIncorporation_patient_surfaces :
-    agentSurfaces dispositionalMiddle = false := rfl
+    ¬ agentSurfaces dispositionalMiddle := by decide
 
 theorem noIncorporation_reflexive_patient :
-    agentSurfaces reflexiveMiddle = false := rfl
+    ¬ agentSurfaces reflexiveMiddle := by decide
 
 /-- Agent surfacing depends ONLY on object realization, not on
     suppressed variable interpretation. This captures the paper's
@@ -170,8 +170,8 @@ theorem noIncorporation_reflexive_patient :
     argument structures through independent object realization. -/
 theorem agent_surfacing_independent_of_reading
     (r₁ r₂ : SuppressedVarReading) :
-    agentSurfaces ⟨.incorporation, r₁⟩ =
-    agentSurfaces ⟨.incorporation, r₂⟩ := rfl
+    agentSurfaces ⟨.incorporation, r₁⟩ ↔
+    agentSurfaces ⟨.incorporation, r₂⟩ := Iff.rfl
 
 -- ============================================================================
 -- § 4: Diagnostic Properties

@@ -54,9 +54,10 @@ structure MiddleType where
 
     This connects the `MiddleType` typology to the voice system's
     `PivotTarget` (@cite{beavers-udayana-2022}, (32d)). -/
-def MiddleType.agentSurfaces (m : MiddleType) : Bool :=
-  match m.objRealization with
-  | .incorporation => true
-  | .noIncorporation => false
+def MiddleType.agentSurfaces (m : MiddleType) : Prop :=
+  m.objRealization = .incorporation
+
+instance : DecidablePred MiddleType.agentSurfaces :=
+  fun m => decEq m.objRealization .incorporation
 
 end Semantics.Events.ArgumentRealization
