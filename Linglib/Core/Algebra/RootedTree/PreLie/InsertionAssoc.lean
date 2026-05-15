@@ -5497,10 +5497,27 @@ private theorem LHS_form_cons_decompose
   simp_rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
   -- LHS now: outer 4 binds → (TRUE_case + FALSE_case)
   -- Where TRUE_case has c in t-filter (a₀ = true) and FALSE_case has c in f-filter (a₀ = false).
-  -- Step C-D: per-side vertex decomposition + per-bucket absorption via
-  --   `vertices_multiGraft_decomp` + `multiGraft_cons_pair` (Phase A, sorry-free) /
-  --   `multiGraft_split_lifted_aux` + `multiGraft_perm_pair`. Substantive content
-  --   (~600-1000 LOC across 2-3 sessions); see `scratch/a33_phase4_2_session_prompt_16.md`.
+  --
+  -- Phase C: per-side vertex decomposition.
+  -- Step C.1: Apply `insertion_def` inside both TRUE and FALSE cases to expose the
+  -- inner `insertion T'` as a listChoices-bind. simp_rw enters binders and rewrites
+  -- BOTH `insertion T (...)` (outer) and `insertion T' (...)` (inner). The outer one
+  -- gets rewritten too, but this is fine since later steps re-fold.
+  simp_rw [insertion_def]
+  -- LHS now: ofList of listChoices.map at multiple depths. The inner `insertion T'`
+  -- is now `Multiset.ofList ((listChoices (vertices T') (t-filter.length).map ...)`.
+  --
+  -- Substantive content (~400-700 LOC across 2 sessions remaining):
+  -- - Phase C.2: Expose c-vertex choice via listChoices_succ on the inner T-side
+  --   listChoices for TRUE case (c at head of t-filter); apply `vertices_multiGraft_decomp`
+  --   to T' = multiGraft T (...) to partition v_c into preserved/lifted classes.
+  -- - Phase C.3: For FALSE case (c → F-side), use `insertionForest_eq_explicit` to
+  --   expose F'-vertices via `vertices_forest_eq_partition`.
+  -- - Phase D: Per-bucket absorption via `multiGraft_cons_pair` (preserved) and
+  --   `multiGraft_split_lifted_aux` (lifted), with `multiGraft_perm_pair` for msform absorption.
+  -- - Final reassembly into the RHS 4-bucket form.
+  --
+  -- See `scratch/a33_phase4_2_session_prompt_16.md` for the detailed plan.
   sorry
 
 /-! ### §1.12: LHS-side strong-IH (sorry-free given §1.11.8 helper)
