@@ -91,8 +91,9 @@ theorems directly, and adds K89's central exemplars that the previous
 version omitted (write/eat/read/touch/see from §4 eq. 14; *Ann drank
 wine in 0.43 seconds* from §5; cumulative *two girls ate seven apples*
 from §7). The Bool-shadow gap argument moved to `Studies/Filip2012.lean`
-where it now invokes the propositional `middle_ground_stable` from
-K98 theory §10. A round-2 audit of the round-1 rewrite added: the
+where it now invokes the propositional `middle_ground_stable`,
+itself built from K98's CUM/QUA propagation machinery (K98 §3.3).
+A round-2 audit of the round-1 rewrite added: the
 `toVerbIncClass` K89↔K98 refinement bridge, ATM as a propositional
 predicate with `qua_implies_atm` (K89 T4), enumerated `K89Verb` and
 `K89Reading` kinds replacing `String` fields, removal of misclassified
@@ -117,8 +118,8 @@ open Phenomena.TenseAspect.Diagnostics
 -- § 0. K89 measure-phrase substrate (inlined)
 -- ════════════════════════════════════════════════════
 
-/-! K89 §2 (T6: extensive measure → quantized) and §3 (D28: QMOD)
-    propositional substrate, inlined from former
+/-! @cite{krifka-1989} §2 (T6: extensive measure → quantized) and §3
+    (D28: QMOD) propositional substrate, inlined from former
     `Theories/Semantics/Events/MeasurePhrases.lean` — single-consumer
     (this file) substrate after `GradualChange.lean` was deleted.
     Dropped as dead: `durationMeasure`, `forAdverbial_subsumes_qmod`
@@ -126,11 +127,26 @@ open Phenomena.TenseAspect.Diagnostics
 
     The Scontras `MeasureFn` bridge that previously sat alongside this
     substrate has already been migrated to
-    `Theories/Semantics/Measurement/Basic.lean` § 8. -/
+    `Theories/Semantics/Measurement/Basic.lean` § 8.
+
+    **Substrate dropped (TODOs for future faithfulness passes)**:
+    - The K89 GRAD propositional chain (`SINC + ExtMeasure +
+      MeasureProportional → GRAD`, formerly in
+      `Theories/Semantics/Events/GradualChange.lean`) was deleted in
+      0.231.55 as zero-consumer. The Bool-tag proxy `predictsGRAD`
+      survives in `Studies/Krifka1998.lean` § 7. A future K89 §4
+      propositional-faithfulness pass will need to rebuild the chain.
+    - The `forAdverbial_subsumes_qmod` bridge (Champollion's
+      `forAdverbialMeaning` ↔ K89's `QMOD` via duration measure) was
+      also dropped in 0.231.55 as dead. A future Champollion replication
+      that wants the cross-framework bridge will need to re-derive it
+      (~5 LOC over `forAdverbialMeaning` + `QMOD`).
+    -/
 
 /-- QMOD produces QUA predicates when μ is extensive and n > 0.
-    K89 §2: "three kilos of rice" is QUA because no proper part of a
-    3kg entity also weighs 3kg (extensivity of weight). -/
+    @cite{krifka-1989} §2: "three kilos of rice" is QUA because no
+    proper part of a 3kg entity also weighs 3kg (extensivity of
+    weight). -/
 theorem qmod_qua {α : Type*} [SemilatticeSup α]
     {R : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure α μ]
     {n : ℚ} (hn : 0 < n) :
@@ -140,7 +156,7 @@ theorem qmod_qua {α : Type*} [SemilatticeSup α]
   exact hμ_qua x y hx_eq hlt hy_eq
 
 /-- A CUM mass noun combined with QMOD (via an extensive measure)
-    yields a QUA measure phrase. K89 §3 D28. -/
+    yields a QUA measure phrase. @cite{krifka-1989} §3 D28. -/
 theorem qmod_of_cum_is_qua {α : Type*} [SemilatticeSup α]
     {R : α → Prop} (_hCum : CUM R)
     {μ : α → ℚ} [ExtMeasure α μ]

@@ -91,7 +91,7 @@ K98's own writing.
   (§4) cover the paper.
 - Not a critique of K98's classification — that's `Studies/Filip2012.lean`,
   which proves Filip's three-way (CUM, QUA, ¬CUM ∧ ¬QUA) classification
-  via K98 theory §10's propagation gap.
+  via K98's CUM/QUA propagation theorems (K98 §3.3).
 - Not a fragment-only verb-annotation file — the fragment annotations
   in `Fragments/English/Predicates/Verbal.lean` are tested per-verb
   here as a tripwire layer.

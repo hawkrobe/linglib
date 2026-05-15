@@ -629,9 +629,9 @@ theorem mixedDrink_middle_ground {n : ℕ}
 
 Sections 4 and 10–11 establish that mixed-drink predicates occupy the
 NP-level ¬CUM ∧ ¬QUA middle ground that @cite{filip-2012} identifies.
-@cite{krifka-1998} §10 (formalised in `Studies/Filip2012.lean`'s
-`middle_ground_stable`) shows the gap propagates to VPs under
-SINC + UP + CumTheta verbs.
+@cite{krifka-1998}'s CUM/QUA propagation machinery (§3.3, formalised in
+`Studies/Filip2012.lean`'s `middle_ground_stable`) shows the gap
+propagates to VPs under SINC + UP + CumTheta verbs.
 
 The bridge below directly invokes Filip2012's typeclass-form
 `middle_ground_stable` on mixed-drink denotations. The ¬CUM and ¬QUA

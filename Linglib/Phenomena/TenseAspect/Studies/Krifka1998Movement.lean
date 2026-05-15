@@ -128,6 +128,25 @@ theorem run_levinClass :
 theorem run_pathSpec :
     LevinClass.mannerOfMotion.pathSpec = none := rfl
 
+/-! Fragment-grounding drift sentries: changing a fragment annotation
+    in `Fragments/English/Predicates/Verbal.lean` breaks exactly one
+    theorem here. Salvaged from the deleted `Studies/DimensionCoherence.lean`
+    (the 4 `*_grounded` theorems were the genuine fragment-anchoring
+    drift sentries; the convergence-rfl theorems alongside them were
+    correctly deleted as editorial synthesis). -/
+
+/-- *eat* is annotated as SINC verb-incrementality class. -/
+theorem eat_verbIncClass_sinc :
+    eat.toVerbCore.verbIncClass = some .sinc := rfl
+
+/-- *arrive* is annotated as an achievement Vendler class. -/
+theorem arrive_vendlerClass_achievement :
+    arrive.toVerbCore.vendlerClass = some .achievement := rfl
+
+/-- *sleep* is annotated as a state Vendler class. -/
+theorem sleep_vendlerClass_state :
+    sleep.toVerbCore.vendlerClass = some .state := rfl
+
 -- ════════════════════════════════════════════════════
 -- § 2. PathShape → Telicity → Licensing (K98 §4 MR eq. 71)
 -- ════════════════════════════════════════════════════
@@ -254,7 +273,7 @@ theorem motion_vendler_path_coherence :
     Faithful K98 §4 content:
     - **EXP** (eq. 63): temporally-following sub-events ↦ non-overlapping objects
     - **SEINC** (eq. 65): EXP ∧ MO
-    - **ADJ** (eq. 68 — modulo an extra `z ≤ x` premise vs the printed
+    - **ADJ** (eq. 68 — modulo extra `z ≤ x` and `e'' ≤ e` premises vs the printed
       equation): sub-event temporal adjacency ↔ sub-path spatial adjacency
     - **SMR** (eq. 69): ADJ ∧ MO ∧ path-only first-arg
     - **MovementClosure** + **MR** (eq. 71 modulo TANG_H): inductive
