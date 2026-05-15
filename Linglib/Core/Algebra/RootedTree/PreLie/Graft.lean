@@ -3055,13 +3055,27 @@ def rootPrependPairIdx (outer : List (Path × Planar α)) (i : ℕ) :
     Option (Fin outer.length) :=
   ((List.finRange outer.length).filter (fun k => outer[k.val].fst = []))[i]?
 
+/-- Lift a modification of `descented_outer = descentToChild i outer` back to
+    a modification of `outer`. Sorry-fenced; future Phase B work.
+    Two cases for `modified`:
+    - `descented_outer ++ [(v, c)]`: append-modification → `outer ++ [(i :: v, c)]`
+    - `descented_outer.set k' (...)`: set-modification on descended pair k' →
+      `outer.set k_orig (...)` where k_orig is the outer index that descented to k'. -/
+noncomputable def liftBackToOuter (_descented_outer _modified : List (Path × Planar α))
+    (_i : ℕ) (_outer : List (Path × Planar α)) : List (Path × Planar α) :=
+  -- TODO Phase B: implement via case analysis on (descented_outer, modified) shape.
+  -- Sorry-fenced: a placeholder stub here would make `multiGraft_compose`
+  -- provably false on the cons case, so we leave the body undefined.
+  sorry
+
 /-- Absorb a single inner pair `(p, c)` into outer, returning the modified
     pair list. Recursive on path structure:
     - p = []: root vertex (preserved/sourceSelf class, v = []). Append ([], c).
     - p = i :: rest, i < rootPrependCount outer: lifted at pair k. Modify outer[k]
       to insert c at rest in outer[k].snd.
     - p = i :: rest, i ≥ rootPrependCount outer: descend into T's child at index
-      (i - rootPrependCount outer). Recurse on the descended outer pairs. -/
+      (i - rootPrependCount outer). Recurse on the descended outer pairs, then
+      lift back. -/
 noncomputable def absorbInnerPair (outer : List (Path × Planar α))
     (p : Path) (c : Planar α) : List (Path × Planar α) :=
   match p with
@@ -3079,11 +3093,10 @@ noncomputable def absorbInnerPair (outer : List (Path × Planar α))
       | none => outer  -- defensive: should be unreachable since i < N
     else
       -- Child: (i - N) is a child index of T's root children.
-      -- The descended outer for this child: descentToChild (i - N) outer.
-      -- We need to recursively absorb (rest, c) into the descended outer,
-      -- then "lift back" to the original outer with a modified pair structure.
-      -- TODO Phase B: full lift-back logic; for now sorry.
-      sorry
+      let descented := descentToChild (i - N) outer
+      let modified := absorbInnerPair descented rest c
+      liftBackToOuter descented modified (i - N) outer
+termination_by p
 
 /-! ### §11.2: `composePairs` — full inner-list composition
 
