@@ -4704,19 +4704,11 @@ private theorem RHS_eq_canonical_msform_pres
       -- Bridge: pTO_ext ↔ (pTO, v) via listChoices_split_bind; v becomes the first_target.
       -- Step T_orig.1: Expand LHS via unfold + collapse outer maps + flatMap-map.
       unfold enumAugGraftingData
-      rw [Multiset.map_map]
-      rw [Multiset.map_coe]
+      rw [Multiset.map_map, Multiset.map_coe]
       simp_rw [List.map_flatMap, List.map_map]
-      -- Now the LHS leaf is .map fun pFG => msform(augInterpret AGD' rest).
-      -- Step T_orig.2: Convert outer ofList of flatMap chain to nested Multiset.bind.
-      rw [← Multiset.coe_bind]
-      refine Multiset.bind_congr fun choice_T _ => ?_
-      rw [← Multiset.coe_bind]
-      refine Multiset.bind_congr fun fdata _ => ?_
-      -- Step T_orig.3: Convert remaining LHS flatMap chain to bind chain.
-      rw [← Multiset.coe_bind]
-      -- Step T_orig.4: Reduce Function.update applications for the pres' buckets.
-      -- (pres' T_orig).length = (pres T_orig).length + 1; others equal pres bucket.
+      -- Step T_orig.2: Convert all LHS flatMap layers to Multiset.bind chain.
+      simp_rw [← Multiset.coe_bind]
+      -- Step T_orig.3: Reduce Function.update for pres' buckets and length sums.
       simp only [show (Function.update pres QuadIdx.T_orig (pres QuadIdx.T_orig ++ [c]))
                         QuadIdx.T_orig = pres QuadIdx.T_orig ++ [c]
                   from Function.update_self _ _ _,
@@ -4730,10 +4722,57 @@ private theorem RHS_eq_canonical_msform_pres
                         QuadIdx.FA_graft = pres QuadIdx.FA_graft
                   from Function.update_of_ne (by decide) _ _,
                  List.length_append, List.length_singleton]
-      -- Step T_orig.5: LHS now has pTO layer of length (pres T_orig).length + 1.
-      -- Apply listChoices_split_bind to peel one entry. NB: the pTO layer is
-      -- INSIDE the targets bind, so we need conv to navigate.
-      sorry
+      -- Step T_orig.4: Reduce RHS enumAlpha T_orig to (ofList vert).map .t_orig,
+      -- then convert (.map .t_orig).bind to (ofList vert).bind ∘ .t_orig via Multiset.bind_map.
+      conv_rhs =>
+        rw [show (enumAlphaConstrainedChoice T F_A pre_T_B pre_FA_B QuadIdx.T_orig :
+                Multiset (AlphaConstrainedChoice F_A pre_T_B pre_FA_B)) =
+              (Multiset.ofList (vertices T)).map AlphaConstrainedChoice.t_orig from by
+              show (Multiset.ofList ((vertices T).map AlphaConstrainedChoice.t_orig) :
+                    Multiset _) = (Multiset.ofList (vertices T)).map AlphaConstrainedChoice.t_orig
+              rw [← Multiset.map_coe]]
+      simp_rw [Multiset.bind_map]
+      -- Step T_orig.5: Apply listChoices_split_bind on LHS pTO_ext layer.
+      simp_rw [listChoices_split_bind (vertices T) (pres QuadIdx.T_orig).length 1]
+      -- Step T_orig.6: Reduce listChoices vert 1 = vert.map (fun v => [v]) and
+      -- combine the .map with .bind via Multiset.bind_map.
+      rw [show (listChoices (vertices T) 1 : List (List Path)) =
+            (vertices T).map (fun v => [v]) from by
+            rw [show (1 : Nat) = 0 + 1 from rfl, listChoices_succ]
+            simp only [listChoices_zero, List.map_singleton]
+            rw [List.map_eq_flatMap]]
+      simp_rw [← Multiset.map_coe, Multiset.bind_map]
+      -- Step T_orig.7: Reorder LHS to bring v outside (matching RHS position).
+      -- Current LHS: choice_T.bind => fdata.bind => targets.bind => pTO.bind => v.bind => INNER
+      -- Want LHS:    choice_T.bind => fdata.bind => v.bind => targets.bind => pTO.bind => INNER
+      -- Swap (pTO, v):
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata; rhs; ext targets
+        rw [Multiset.bind_bind]
+      -- Swap (targets, v):
+      conv_lhs =>
+        rhs; ext choice_T; rhs; ext fdata
+        rw [Multiset.bind_bind]
+      -- Step T_orig.8: Apply bind_congr through 8 layers, then leaf via the helper.
+      refine Multiset.bind_congr fun choice_T h_choice_T => ?_
+      refine Multiset.bind_congr fun fdata h_fdata => ?_
+      refine Multiset.bind_congr fun v _ => ?_
+      refine Multiset.bind_congr fun rest_targets _ => ?_
+      refine Multiset.bind_congr fun pTO h_pTO => ?_
+      refine Multiset.bind_congr fun pTG _ => ?_
+      refine Multiset.bind_congr fun pFO _ => ?_
+      -- Leaf: .map fun pFG => msform(augInterpret AGD' rest)
+      --     = .map fun pFG => msform(augInterpret AGD (c :: rest))
+      -- RHS still has nested .map (from Multiset.map_bind on enumAlpha), collapse
+      -- to single .map via Multiset.map_map. Then equate functions per-pFG via
+      -- the leaf helper.
+      have hPTOlen : pTO.length = (pres QuadIdx.T_orig).length :=
+        mem_listChoices_length _ _ _ (Multiset.mem_coe.mp h_pTO)
+      rw [Multiset.map_map]
+      refine Multiset.map_congr rfl fun pFG _ => ?_
+      simp only [Function.comp_apply]
+      exact congrArg _ (augInterpret_T_orig_succ_bridge T pres c rest choice_T fdata
+        rest_targets pTO v pTG pFO pFG hPTOlen ▸ rfl)
     -- Case T_graft
     · sorry
     -- Case FA_orig
