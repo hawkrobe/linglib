@@ -3259,12 +3259,7 @@ Properties used in the descent case of `absorbInnerPair_eq_insertAt`. -/
 /-! ### §11.1.7: `absorbInnerPair` equation lemmas + length dichotomy
 
 Equation lemmas for the SET-at-root and descent cases of `absorbInnerPair`,
-plus the length dichotomy: result length is `X.length` or `X.length + 1`.
-
-`walkAndReplace`'s descent-correctness, `liftBackToOuter`'s structural
-properties (descentToChild_self/other, filterMap_rootPrepend), and the
-descent case of `absorbInnerPair_eq_insertAt` are deferred — see the sorry
-in §11.3 for the path forward. -/
+plus the length dichotomy: result length is `X.length` or `X.length + 1`. -/
 
 private theorem absorbInnerPair_lifted_at_root_eq (outer : List (Path × Planar α))
     (i : ℕ) (rest : Path) (c : Planar α) (h_lt : i < rootPrependCount outer) :
@@ -3335,6 +3330,315 @@ private theorem absorbInnerPair_length_dichotomy :
         rw [if_pos h_eq_succ]
 termination_by _ p _ => p
 
+/-! ### §11.1.8: `walkAndReplace` and `liftBackToOuter` correctness lemmas -/
+
+/-- Helper: head-test fails for cons whose head ≠ j. -/
+private lemma cons_head_ne (p_h j : ℕ) (p_tail : Path) (h : p_h ≠ j) :
+    ¬ ((p_h :: p_tail : Path).head? = some j) := by
+  intro heq
+  apply h
+  simp at heq
+  exact heq
+
+/-- `walkAndReplace_descentToChild_self_aux`: descent-to-j of the walked outer
+    equals `modified.drop k'`, under the length precondition. -/
+private theorem walkAndReplace_descentToChild_self_aux (j : ℕ) :
+    ∀ (outer modified : List (Path × Planar α)) (k' : ℕ),
+    modified.length = k' + (descentToChild j outer).length →
+    descentToChild j (walkAndReplace j outer modified k') = modified.drop k'
+  | [], modified, k', h => by
+    show descentToChild j (walkAndReplace j [] modified k') = modified.drop k'
+    show descentToChild j [] = modified.drop k'
+    rw [descentToChild_nil]
+    have h_eq : modified.length = k' := by
+      simp only [descentToChild_nil, List.length_nil, Nat.add_zero] at h
+      exact h
+    exact (List.drop_eq_nil_iff.mpr (le_of_eq h_eq)).symm
+  | (p, T) :: rest, modified, k', h => by
+    show descentToChild j (walkAndReplace j ((p, T) :: rest) modified k') = modified.drop k'
+    unfold walkAndReplace
+    by_cases h_p : p.head? = some j
+    · -- if branch: p.head? = some j, so p has form j :: p_tail
+      rw [if_pos h_p]
+      have h_p_form : ∃ p_tail, p = j :: p_tail := by
+        cases p with
+        | nil => exact absurd h_p (by simp)
+        | cons p_h p_tail =>
+          have : p_h = j := by simp at h_p; exact h_p
+          exact ⟨p_tail, by rw [this]⟩
+      obtain ⟨p_tail, h_p_eq⟩ := h_p_form
+      subst h_p_eq
+      have h_dC_unfold : descentToChild j (((j :: p_tail, T) :: rest) :
+                          List (Path × Planar α)) =
+                         (p_tail, T) :: descentToChild j rest :=
+        descentToChild_cons_consPath_eq j p_tail T rest
+      rw [h_dC_unfold] at h
+      have h_modified_pos : k' < modified.length := by
+        rw [h]; simp
+      cases h_inner : modified[k']? with
+      | none =>
+        exfalso
+        have := List.getElem?_eq_none_iff.mp h_inner
+        omega
+      | some pair =>
+        obtain ⟨q, T'⟩ := pair
+        rw [descentToChild_cons_consPath_eq j q T'
+            (walkAndReplace j rest modified (k' + 1))]
+        rw [walkAndReplace_descentToChild_self_aux j rest modified (k' + 1)
+            (by rw [h, List.length_cons]; omega)]
+        have h_get : modified[k']'h_modified_pos = (q, T') := by
+          have h_some_eq := List.getElem?_eq_some_iff.mp h_inner
+          obtain ⟨_, h_eq_get⟩ := h_some_eq
+          exact h_eq_get
+        rw [List.drop_eq_getElem_cons h_modified_pos]
+        rw [h_get]
+    · -- else branch: ¬ p.head? = some j
+      rw [if_neg h_p]
+      have h_dC_drop : descentToChild j (((p, T) :: walkAndReplace j rest modified k') :
+                        List (Path × Planar α)) =
+                       descentToChild j (walkAndReplace j rest modified k') := by
+        cases p with
+        | nil => exact descentToChild_cons_nilPath j T (walkAndReplace j rest modified k')
+        | cons p_h p_tail =>
+          have h_ph_ne : p_h ≠ j := by
+            intro h_eq
+            apply h_p
+            simp [h_eq]
+          exact descentToChild_cons_consPath_ne j p_h p_tail T
+                  (walkAndReplace j rest modified k') (Ne.symm h_ph_ne)
+      rw [h_dC_drop]
+      have h_dC_drop_orig : descentToChild j (((p, T) :: rest) :
+                              List (Path × Planar α)) = descentToChild j rest := by
+        cases p with
+        | nil => exact descentToChild_cons_nilPath j T rest
+        | cons p_h p_tail =>
+          have h_ph_ne : p_h ≠ j := by
+            intro h_eq
+            apply h_p
+            simp [h_eq]
+          exact descentToChild_cons_consPath_ne j p_h p_tail T rest (Ne.symm h_ph_ne)
+      rw [h_dC_drop_orig] at h
+      exact walkAndReplace_descentToChild_self_aux j rest modified k' h
+
+private theorem walkAndReplace_descentToChild_self (j : ℕ)
+    (outer modified : List (Path × Planar α))
+    (h : modified.length = (descentToChild j outer).length) :
+    descentToChild j (walkAndReplace j outer modified 0) = modified := by
+  have := walkAndReplace_descentToChild_self_aux j outer modified 0 (by simp; exact h)
+  simpa using this
+
+/-- For `i ≠ j`, descent-to-i of the walked outer equals descent-to-i of original outer. -/
+private theorem walkAndReplace_descentToChild_other (i j : ℕ) (h_ij : i ≠ j) :
+    ∀ (outer modified : List (Path × Planar α)) (k' : ℕ),
+    descentToChild i (walkAndReplace j outer modified k') = descentToChild i outer
+  | [], _, _ => rfl
+  | (p, T) :: rest, modified, k' => by
+    show descentToChild i (walkAndReplace j ((p, T) :: rest) modified k') =
+         descentToChild i (((p, T) :: rest) : List (Path × Planar α))
+    unfold walkAndReplace
+    by_cases h_p : p.head? = some j
+    · -- p has form j :: p_tail
+      rw [if_pos h_p]
+      have h_p_form : ∃ p_tail, p = j :: p_tail := by
+        cases p with
+        | nil => exact absurd h_p (by simp)
+        | cons p_h p_tail =>
+          have : p_h = j := by simp at h_p; exact h_p
+          exact ⟨p_tail, by rw [this]⟩
+      obtain ⟨p_tail, h_p_eq⟩ := h_p_form
+      subst h_p_eq
+      cases h_inner : modified[k']? with
+      | none =>
+        show descentToChild i ((((j :: p_tail, T) :: walkAndReplace j rest modified (k' + 1)) :
+              List (Path × Planar α))) =
+             descentToChild i (((j :: p_tail, T) :: rest) : List (Path × Planar α))
+        rw [descentToChild_cons_consPath_ne i j p_tail T _ h_ij,
+            descentToChild_cons_consPath_ne i j p_tail T rest h_ij]
+        exact walkAndReplace_descentToChild_other i j h_ij rest modified (k' + 1)
+      | some pair =>
+        obtain ⟨q, T'⟩ := pair
+        show descentToChild i ((((j :: q, T') :: walkAndReplace j rest modified (k' + 1)) :
+              List (Path × Planar α))) =
+             descentToChild i (((j :: p_tail, T) :: rest) : List (Path × Planar α))
+        rw [descentToChild_cons_consPath_ne i j q T' _ h_ij,
+            descentToChild_cons_consPath_ne i j p_tail T rest h_ij]
+        exact walkAndReplace_descentToChild_other i j h_ij rest modified (k' + 1)
+    · -- p.head? ≠ some j
+      rw [if_neg h_p]
+      cases p with
+      | nil =>
+        rw [descentToChild_cons_nilPath, descentToChild_cons_nilPath]
+        exact walkAndReplace_descentToChild_other i j h_ij rest modified k'
+      | cons p_h p_tail =>
+        have h_ph_ne_j : p_h ≠ j := by
+          intro h_eq
+          apply h_p
+          simp [h_eq]
+        by_cases h_ih : i = p_h
+        · subst h_ih
+          rw [descentToChild_cons_consPath_eq, descentToChild_cons_consPath_eq]
+          congr 1
+          exact walkAndReplace_descentToChild_other i j h_ij rest modified k'
+        · rw [descentToChild_cons_consPath_ne i p_h p_tail T _ h_ih,
+              descentToChild_cons_consPath_ne i p_h p_tail T rest h_ih]
+          exact walkAndReplace_descentToChild_other i j h_ij rest modified k'
+
+/-- `walkAndReplace` preserves filterMap rootPrependFilter (no empty-fst pairs added). -/
+private theorem walkAndReplace_filterMap_rootPrepend (j : ℕ) :
+    ∀ (outer modified : List (Path × Planar α)) (k' : ℕ),
+    (walkAndReplace j outer modified k').filterMap rootPrependFilter =
+    outer.filterMap rootPrependFilter
+  | [], _, _ => rfl
+  | (p, T) :: rest, modified, k' => by
+    show (walkAndReplace j ((p, T) :: rest) modified k').filterMap rootPrependFilter =
+         (((p, T) :: rest) : List (Path × Planar α)).filterMap rootPrependFilter
+    unfold walkAndReplace
+    by_cases h_p : p.head? = some j
+    · rw [if_pos h_p]
+      have h_p_form : ∃ p_tail, p = j :: p_tail := by
+        cases p with
+        | nil => exact absurd h_p (by simp)
+        | cons p_h p_tail =>
+          have : p_h = j := by simp at h_p; exact h_p
+          exact ⟨p_tail, by rw [this]⟩
+      obtain ⟨p_tail, h_p_eq⟩ := h_p_form
+      subst h_p_eq
+      cases h_inner : modified[k']? with
+      | none =>
+        show ((((j :: p_tail, T) :: walkAndReplace j rest modified (k' + 1)) :
+              List (Path × Planar α)).filterMap rootPrependFilter) =
+             (((j :: p_tail, T) :: rest) : List (Path × Planar α)).filterMap rootPrependFilter
+        show ((walkAndReplace j rest modified (k' + 1)).filterMap rootPrependFilter) =
+             (rest.filterMap rootPrependFilter)
+        exact walkAndReplace_filterMap_rootPrepend j rest modified (k' + 1)
+      | some pair =>
+        obtain ⟨q, T'⟩ := pair
+        show ((((j :: q, T') :: walkAndReplace j rest modified (k' + 1)) :
+              List (Path × Planar α)).filterMap rootPrependFilter) =
+             (((j :: p_tail, T) :: rest) : List (Path × Planar α)).filterMap rootPrependFilter
+        show ((walkAndReplace j rest modified (k' + 1)).filterMap rootPrependFilter) =
+             (rest.filterMap rootPrependFilter)
+        exact walkAndReplace_filterMap_rootPrepend j rest modified (k' + 1)
+    · rw [if_neg h_p]
+      cases p with
+      | nil =>
+        show ((((([], T) :: walkAndReplace j rest modified k') :
+              List (Path × Planar α)).filterMap rootPrependFilter) =
+             ((([], T) :: rest) : List (Path × Planar α)).filterMap rootPrependFilter)
+        show (T :: (walkAndReplace j rest modified k').filterMap rootPrependFilter) =
+             (T :: rest.filterMap rootPrependFilter)
+        rw [walkAndReplace_filterMap_rootPrepend j rest modified k']
+      | cons p_h p_tail =>
+        show ((((p_h :: p_tail, T) :: walkAndReplace j rest modified k') :
+              List (Path × Planar α)).filterMap rootPrependFilter) =
+             (((p_h :: p_tail, T) :: rest) : List (Path × Planar α)).filterMap rootPrependFilter
+        show ((walkAndReplace j rest modified k').filterMap rootPrependFilter) =
+             (rest.filterMap rootPrependFilter)
+        exact walkAndReplace_filterMap_rootPrepend j rest modified k'
+
+/-! ### §11.1.9: `liftBackToOuter` structural properties -/
+
+private theorem liftBackToOuter_filterMap_rootPrepend
+    (descented modified : List (Path × Planar α))
+    (j : ℕ) (outer : List (Path × Planar α)) :
+    (liftBackToOuter descented modified j outer).filterMap rootPrependFilter =
+    outer.filterMap rootPrependFilter := by
+  unfold liftBackToOuter
+  by_cases h_len : modified.length = descented.length + 1
+  · rw [if_pos h_len]
+    cases h_modified : modified with
+    | nil => rfl
+    | cons head_pair tail =>
+      obtain ⟨q, T⟩ := head_pair
+      show ((((j :: q, T) :: outer) : List (Path × Planar α)).filterMap rootPrependFilter) =
+           outer.filterMap rootPrependFilter
+      rfl
+  · rw [if_neg h_len]
+    exact walkAndReplace_filterMap_rootPrepend j outer modified 0
+
+private theorem liftBackToOuter_descentToChild_other (i : ℕ)
+    (descented modified : List (Path × Planar α))
+    (j : ℕ) (outer : List (Path × Planar α)) (h_ij : i ≠ j) :
+    descentToChild i (liftBackToOuter descented modified j outer) =
+    descentToChild i outer := by
+  unfold liftBackToOuter
+  by_cases h_len : modified.length = descented.length + 1
+  · rw [if_pos h_len]
+    cases h_modified : modified with
+    | nil => rfl
+    | cons head_pair tail =>
+      obtain ⟨q, T⟩ := head_pair
+      show descentToChild i ((((j :: q, T) :: outer) : List (Path × Planar α))) =
+           descentToChild i outer
+      rw [descentToChild_cons_consPath_ne i j q T outer h_ij]
+  · rw [if_neg h_len]
+    exact walkAndReplace_descentToChild_other i j h_ij outer modified 0
+
+/-- `absorbInnerPair_prepend_structure`: when length increases by 1 (PREPEND case),
+    the result is `head_pair :: X` (some new pair prepended to outer X). -/
+private theorem absorbInnerPair_prepend_structure :
+    ∀ (X : List (Path × Planar α)) (p : Path) (c : Planar α),
+    (absorbInnerPair X p c).length = X.length + 1 →
+    ∃ q T, absorbInnerPair X p c = (q, T) :: X
+  | X, [], c, _ => ⟨[], c, absorbInnerPair_nil_eq X c⟩
+  | X, i :: rest, c, h => by
+    by_cases h_lt : i < rootPrependCount X
+    · exfalso
+      rw [absorbInnerPair_lifted_at_root_eq X i rest c h_lt] at h
+      cases h_idx : rootPrependPairIdx X i with
+      | none => rw [h_idx] at h; simp at h
+      | some k => rw [h_idx] at h; rw [List.length_set] at h; omega
+    · -- Descent case
+      have ih := absorbInnerPair_length_dichotomy
+                  (descentToChild (i - rootPrependCount X) X) rest c
+      rw [absorbInnerPair_descent_eq X i rest c h_lt]
+      rw [absorbInnerPair_descent_eq X i rest c h_lt] at h
+      rcases ih with h_set | h_prepend
+      · -- Inner SET → outer SET → length contradiction
+        exfalso
+        rw [liftBackToOuter_length] at h
+        rw [if_neg (by rw [h_set]; omega)] at h
+        omega
+      · -- Inner PREPEND → outer PREPEND
+        unfold liftBackToOuter
+        rw [if_pos h_prepend]
+        cases h_modified : absorbInnerPair (descentToChild (i - rootPrependCount X) X) rest c with
+        | nil =>
+          exfalso
+          rw [h_modified] at h_prepend
+          simp at h_prepend
+        | cons head_pair tail =>
+          obtain ⟨q, T⟩ := head_pair
+          exact ⟨(i - rootPrependCount X) :: q, T, rfl⟩
+termination_by _ p _ _ => p
+
+/-- The key lemma: descent-to-j of `liftBackToOuter` equals `modified`. -/
+private theorem liftBackToOuter_descentToChild_self
+    (descented modified : List (Path × Planar α))
+    (j : ℕ) (outer : List (Path × Planar α))
+    (h_descented_eq : descented = descentToChild j outer)
+    (h_modified_struct : modified.length = descented.length + 1 ∨
+                         modified.length = descented.length)
+    (h_modified_prepend : modified.length = descented.length + 1 →
+                          ∃ q T, modified = (q, T) :: descented) :
+    descentToChild j (liftBackToOuter descented modified j outer) = modified := by
+  unfold liftBackToOuter
+  by_cases h_len : modified.length = descented.length + 1
+  · -- PREPEND case
+    rw [if_pos h_len]
+    obtain ⟨q, T, h_modif⟩ := h_modified_prepend h_len
+    rw [h_modif]
+    show descentToChild j ((((j :: q, T) :: outer) : List (Path × Planar α))) =
+         (q, T) :: descented
+    rw [descentToChild_cons_consPath_eq j q T outer]
+    rw [h_descented_eq]
+  · -- SET case
+    rw [if_neg h_len]
+    rcases h_modified_struct with h_succ | h_eq
+    · exact absurd h_succ h_len
+    · rw [h_descented_eq] at h_eq
+      exact walkAndReplace_descentToChild_self j outer modified h_eq
+
 /-! ### §11.2: `composePairs` — full inner-list composition
 
 Composes inner pairs into outer via right-fold (foldr) with transport-based
@@ -3365,7 +3669,7 @@ def composePairs : List (Path × Planar α) →
     composePairs outer ((p, c) :: rest) =
       absorbInnerPair (composePairs outer rest) (transport rest p) c := rfl
 
-/-! ### §11.3: `absorbInnerPair_eq_insertAt` — singleton case (sorry-fenced)
+/-! ### §11.3: `absorbInnerPair_eq_insertAt` — singleton case
 
 The singleton case of `multiGraft_compose`: absorbing one inner pair into outer
 gives the same result as inserting at the corresponding position.
@@ -3374,17 +3678,17 @@ gives the same result as inserting at the corresponding position.
 mG T (absorbInnerPair outer p c) = insertAt p c (mG T outer)
 ```
 
-This holds (as PLANAR equality, given validity) by case analysis on `p`:
+This holds (as PLANAR equality, no validity hypothesis) by case analysis on `p`:
 - p = []: by `multiGraft_cons_pair` at (T, outer, [], c) — both sides reduce to
   `insertAt [] c (mG T outer)`.
 - p = i :: rest, i < N: by `multiGraft_split_lifted_aux` plus the identity
   `liftMulti outer k rest = i :: rest` (which holds via `liftMulti_at_root` +
-  `posInGroup_of_rootPrependPairIdx` — a small bridge lemma).
-- p = i :: rest, i ≥ N: by recursion via `liftBackToOuter` (currently sorry'd).
-
-The empty-path case is trivially `multiGraft_cons_pair`. The lifted-at-root case
-needs `posInGroup outer k = i` when `k = rootPrependPairIdx outer i`. The descent
-case requires `liftBackToOuter` to be implemented + correctness lemma. -/
+  `posInGroup_of_rootPrependPairIdx` bridge).
+- p = i :: rest, i ≥ N (descent): by recursion on `rest` (smaller path), with
+  `liftBackToOuter`'s structural properties (`_filterMap_rootPrepend`,
+  `_descentToChild_self`, `_descentToChild_other`) bridging the modified outer
+  back to the multiGraft of the original. Invalid descent (j ≥ cs.length) is a
+  no-op on both sides. -/
 
 /-- Equation lemma: empty-path case of `absorbInnerPair`. -/
 @[simp] theorem absorbInnerPair_nil_path (outer : List (Path × Planar α))
@@ -3409,18 +3713,15 @@ private theorem absorbInnerPair_lifted_at_root (outer : List (Path × Planar α)
 /-- The singleton case of `multiGraft_compose`. Stated unconditionally
     (no validity hypothesis); the empty-path case holds without validity, the
     lifted-at-root case via `multiGraft_split_lifted_aux` + the bridge
-    `posInGroup_of_rootPrependPairIdx`, and the descent case (currently sorry'd)
-    is designed to handle invalid paths as no-ops (matching `insertAt`'s
-    out-of-bounds no-op semantics). -/
-theorem absorbInnerPair_eq_insertAt
-    (T : Planar α) (outer : List (Path × Planar α)) (p : Path) (c : Planar α) :
-    multiGraft T (absorbInnerPair outer p c) =
-      insertAt p c (multiGraft T outer) := by
-  match p with
-  | [] =>
+    `posInGroup_of_rootPrependPairIdx`, and the descent case via IH on rest +
+    `liftBackToOuter` correctness (descentToChild_self/other, filterMap_rootPrepend). -/
+theorem absorbInnerPair_eq_insertAt :
+    ∀ (T : Planar α) (outer : List (Path × Planar α)) (p : Path) (c : Planar α),
+    multiGraft T (absorbInnerPair outer p c) = insertAt p c (multiGraft T outer)
+  | T, outer, [], c => by
     -- Empty-path case: by multiGraft_cons_pair + transport_nil_path.
     rw [absorbInnerPair_nil_path, multiGraft_cons_pair, transport_nil_path]
-  | i :: rest =>
+  | T, outer, i :: rest, c => by
     by_cases h_lt : i < rootPrependCount outer
     · -- Lifted-at-root: use rootPrependPairIdx + bridge lemma.
       cases h_idx : rootPrependPairIdx outer i with
@@ -3431,9 +3732,116 @@ theorem absorbInnerPair_eq_insertAt
         obtain ⟨h_fst, h_pos⟩ := posInGroup_of_rootPrependPairIdx outer i k h_idx
         rw [← multiGraft_split_lifted_aux T outer k rest c]
         rw [liftMulti_at_root outer k h_fst, h_pos]
-    · -- Descent: i ≥ rootPrependCount outer. Requires `liftBackToOuter`
-      -- correctness lemma + recursion on path size; deferred to next session.
-      sorry
+    · -- Descent: i ≥ rootPrependCount outer.
+      rw [absorbInnerPair_descent_eq outer i rest c h_lt]
+      cases T with
+      | node a cs =>
+        rw [multiGraft_node a cs outer]
+        rw [multiGraft_node a cs (liftBackToOuter (descentToChild (i - rootPrependCount outer) outer)
+              (absorbInnerPair (descentToChild (i - rootPrependCount outer) outer) rest c)
+              (i - rootPrependCount outer) outer)]
+        set N := rootPrependCount outer with hN_def
+        set j := i - N with hj_def
+        set descented := descentToChild j outer with hdesc_def
+        set modified := absorbInnerPair descented rest c with hmod_def
+        set lifted := liftBackToOuter descented modified j outer with hlifted_def
+        set rootPrepends := outer.filterMap rootPrependFilter with hRP_def
+        have h_rp_eq : lifted.filterMap rootPrependFilter = rootPrepends :=
+          liftBackToOuter_filterMap_rootPrepend descented modified j outer
+        rw [h_rp_eq]
+        have h_rp_len : rootPrepends.length = N := by
+          rw [hRP_def, length_filterMap_rootPrependFilter]
+        have h_ch_len : ∀ (xs : List (Path × Planar α)),
+            (multiGraftChildren cs xs).length = cs.length := fun xs =>
+          multiGraftChildren_length cs xs
+        have h_N_le_i : N ≤ i := Nat.le_of_not_lt h_lt
+        have h_i_eq_jN : i = j + N := by rw [hj_def]; omega
+        by_cases h_j_lt : j < cs.length
+        · -- Valid descent: j < cs.length
+          have ih := absorbInnerPair_eq_insertAt (cs[j]'h_j_lt) descented rest c
+          -- Show: multiGraftChildren cs lifted = (multiGraftChildren cs outer).set j (multiGraft cs[j] modified)
+          have h_mGC : multiGraftChildren cs lifted =
+              (multiGraftChildren cs outer).set j (multiGraft (cs[j]'h_j_lt) modified) := by
+            apply List.ext_getElem?
+            intro idx
+            by_cases h_idx_lt : idx < cs.length
+            · rw [multiGraftChildren_getElem? cs lifted idx h_idx_lt]
+              rw [List.getElem?_set]
+              by_cases h_jeq : j = idx
+              · subst h_jeq
+                rw [if_pos rfl, if_pos (by rw [h_ch_len]; exact h_idx_lt)]
+                have h_dC_self :
+                    descentToChild j lifted = modified := by
+                  rw [hlifted_def]
+                  exact liftBackToOuter_descentToChild_self descented modified j outer hdesc_def
+                    (Or.symm (absorbInnerPair_length_dichotomy descented rest c))
+                    (fun h_len => absorbInnerPair_prepend_structure descented rest c h_len)
+                rw [h_dC_self]
+              · rw [if_neg h_jeq, multiGraftChildren_getElem? cs outer idx h_idx_lt]
+                congr 2
+                rw [hlifted_def]
+                exact liftBackToOuter_descentToChild_other idx descented modified j outer
+                  (Ne.symm h_jeq)
+            · push Not at h_idx_lt
+              rw [List.getElem?_eq_none (by rw [h_ch_len]; exact h_idx_lt)]
+              rw [List.getElem?_eq_none (by rw [List.length_set, h_ch_len]; exact h_idx_lt)]
+          rw [h_mGC]
+          -- Now RHS: insertAt (i :: rest) c (node a (rootPrepends ++ multiGraftChildren cs outer))
+          have h_i_lt_total : i < (rootPrepends ++ multiGraftChildren cs outer).length := by
+            rw [List.length_append, h_rp_len, h_ch_len]; omega
+          rw [insertAt_cons_of_lt i rest c a (rootPrepends ++ multiGraftChildren cs outer)
+                h_i_lt_total]
+          have h_N_le_rp : rootPrepends.length ≤ i := by rw [h_rp_len]; exact h_N_le_i
+          have h_val :
+              (rootPrepends ++ multiGraftChildren cs outer)[i]'h_i_lt_total =
+                (multiGraftChildren cs outer)[j]'(by rw [h_ch_len]; exact h_j_lt) := by
+            have h_idx_eq : i - rootPrepends.length = j := by
+              rw [h_rp_len, hj_def]
+            have h_some :
+                (rootPrepends ++ multiGraftChildren cs outer)[i]? =
+                  some (multiGraft (cs[j]'h_j_lt) descented) := by
+              rw [List.getElem?_append_right h_N_le_rp, h_idx_eq]
+              exact multiGraftChildren_getElem? cs outer j h_j_lt
+            have h_some' :
+                (multiGraftChildren cs outer)[j]? = some (multiGraft (cs[j]'h_j_lt) descented) :=
+              multiGraftChildren_getElem? cs outer j h_j_lt
+            rw [List.getElem?_eq_some_iff] at h_some h_some'
+            obtain ⟨_, h_eq⟩ := h_some
+            obtain ⟨_, h_eq'⟩ := h_some'
+            rw [h_eq, h_eq']
+          rw [h_val]
+          have h_idx_eq2 : i - rootPrepends.length = j := by
+            rw [h_rp_len, hj_def]
+          rw [List.set_append_right _ _ h_N_le_rp, h_idx_eq2]
+          have h_ch_get :
+              (multiGraftChildren cs outer)[j]'(by rw [h_ch_len]; exact h_j_lt) =
+                multiGraft (cs[j]'h_j_lt) descented := by
+            have h_some := multiGraftChildren_getElem? cs outer j h_j_lt
+            rw [List.getElem?_eq_some_iff] at h_some
+            obtain ⟨_, h_eq⟩ := h_some
+            exact h_eq
+          rw [h_ch_get]
+          rw [ih]
+        · -- Invalid descent: j ≥ cs.length, both sides no-op
+          push Not at h_j_lt
+          have h_mGC : multiGraftChildren cs lifted = multiGraftChildren cs outer := by
+            apply List.ext_getElem?
+            intro idx
+            by_cases h_idx_lt : idx < cs.length
+            · rw [multiGraftChildren_getElem? cs lifted idx h_idx_lt,
+                  multiGraftChildren_getElem? cs outer idx h_idx_lt]
+              congr 2
+              rw [hlifted_def]
+              have h_idx_ne_j : idx ≠ j := fun heq => Nat.not_lt.mpr h_j_lt (heq ▸ h_idx_lt)
+              exact liftBackToOuter_descentToChild_other idx descented modified j outer h_idx_ne_j
+            · push Not at h_idx_lt
+              rw [List.getElem?_eq_none (by rw [h_ch_len]; exact h_idx_lt)]
+              rw [List.getElem?_eq_none (by rw [h_ch_len]; exact h_idx_lt)]
+          rw [h_mGC]
+          have h_i_ge : ¬ i < (rootPrepends ++ multiGraftChildren cs outer).length := by
+            rw [List.length_append, h_rp_len, h_ch_len]; omega
+          rw [insertAt_cons_of_not_lt i rest c a (rootPrepends ++ multiGraftChildren cs outer) h_i_ge]
+termination_by _ _ p _ => p
 
 /-! ### §11.4: `multiGraft_compose` — main theorem -/
 
