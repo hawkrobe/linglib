@@ -555,4 +555,170 @@ theorem wellFormedPair_not_preserved_by_grimm :
    ⟨false, false, false, false, false, true, false, false, false, false⟩,
    by decide, by decide, rfl, rfl⟩
 
+-- ════════════════════════════════════════════════════
+-- § 13. Tsunoda Hierarchy Membership (@cite{grimm-2011} §3)
+-- ════════════════════════════════════════════════════
+
+/-- Class I patients (break) are in the transitivity region. -/
+theorem classI_patient_in_region :
+    (TransitivityClass.resultativeEffective.patientNode).InTransitiveRegion :=
+  by decide
+
+/-- Class II patients (shoot) are in the transitivity region. -/
+theorem classII_patient_in_region :
+    (TransitivityClass.contact.patientNode).InTransitiveRegion :=
+  by decide
+
+/-- Class III patients (search) are OUTSIDE the transitivity region.
+    This captures Tsunoda's observation that pursuit verbs deviate most
+    strongly from the prototypical transitive paradigm. -/
+theorem classIII_patient_outside_region :
+    ¬ (TransitivityClass.pursuit.patientNode).InTransitiveRegion :=
+  by decide
+
+/-- Class I patient (break: exPersBeginning) has lower persistence than
+    Class II patient (shoot: quPersBeginning). The Class I object is
+    more affected — it ceases to exist. -/
+theorem classI_patient_lower_persistence :
+    (TransitivityClass.resultativeEffective.patientNode).persistence.featureCount <
+    (TransitivityClass.contact.patientNode).persistence.featureCount := by
+  decide
+
+/-- Class I patient ≤ Class II patient on the lattice
+    (exPersBeginning ≤ quPersBeginning). -/
+theorem classI_patient_le_classII :
+    TransitivityClass.resultativeEffective.patientNode ≤
+    TransitivityClass.contact.patientNode := by decide
+
+/-- Class III patient ≤ Class I patient
+    (totalNonPersistence ≤ exPersBeginning). -/
+theorem classIII_patient_le_classI :
+    TransitivityClass.pursuit.patientNode ≤
+    TransitivityClass.resultativeEffective.patientNode := by decide
+
+-- ════════════════════════════════════════════════════
+-- § 14. Named Participants & Alignment (@cite{grimm-2011} §4)
+-- ════════════════════════════════════════════════════
+
+/-- Maximal agent maps to NOM/ERG region. -/
+theorem maximalAgent_nomErg :
+    maximalAgent.toCaseRegion = .nomErg := by decide
+
+/-- Maximal patient maps to ACC/ABS region. -/
+theorem maximalPatient_accAbs :
+    maximalPatient.toCaseRegion = .accAbs := by decide
+
+/-- The effector agent (instigation + motion, total persistence) maps to
+    NOM/ERG. This is the agent of break/kill (Fig. 5, Ia). -/
+theorem effectorAgent_nomErg :
+    effectorAgent.toCaseRegion = .nomErg := by decide
+
+/-- Class I patient (break object: destroyed) maps to ACC/ABS. -/
+theorem classI_patient_accAbs :
+    (TransitivityClass.resultativeEffective.patientNode).toCaseRegion
+    = .accAbs := by decide
+
+/-- Class II patient (shoot object: affected but persists) maps to ACC/ABS. -/
+theorem classII_patient_accAbs :
+    (TransitivityClass.contact.patientNode).toCaseRegion
+    = .accAbs := by decide
+
+/-- Accusative alignment: maximal agent → NOM, maximal patient → ACC. -/
+theorem accusative_alignment :
+    maximalAgent.toCaseRegion.toAccusativeCase = .nom ∧
+    maximalPatient.toCaseRegion.toAccusativeCase = .acc := ⟨rfl, rfl⟩
+
+/-- Ergative alignment: maximal agent → ERG, maximal patient → ABS. -/
+theorem ergative_alignment :
+    maximalAgent.toCaseRegion.toErgativeCase = .erg ∧
+    maximalPatient.toCaseRegion.toErgativeCase = .abs := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 15. Verb-Profile Bridge Verification
+-- ════════════════════════════════════════════════════
+
+/-- kick subject → agentivity {V,S,I,M} (full agent). -/
+theorem kick_subject_agentivity :
+    AgentivityNode.fromEntailmentProfile kickSubjectProfile
+    = ⟨true, true, true, true⟩ := rfl
+
+/-- run subject → agentivity {V,S,M} (no instigation). -/
+theorem run_subject_agentivity :
+    AgentivityNode.fromEntailmentProfile runSubjectProfile
+    = ⟨true, true, false, true⟩ := rfl
+
+/-- arrive subject → agentivity {M} (motion only). -/
+theorem arrive_subject_agentivity :
+    AgentivityNode.fromEntailmentProfile arriveSubjectProfile
+    = ⟨false, false, false, true⟩ := rfl
+
+/-- see subject → agentivity {S} (sentience only). -/
+theorem see_subject_agentivity :
+    AgentivityNode.fromEntailmentProfile seeSubjectProfile
+    = ⟨false, true, false, false⟩ := rfl
+
+/-- sweep basic subject → agentivity {M} (motion only, variable agentivity). -/
+theorem sweep_basic_agentivity :
+    AgentivityNode.fromEntailmentProfile sweepBasicSubjectProfile
+    = ⟨false, false, false, true⟩ := rfl
+
+/-- sweep broom subject → agentivity {V,S,I,M} (instrument lexicalization
+    adds full agentivity, @cite{rappaport-hovav-levin-2024}). -/
+theorem sweep_broom_agentivity :
+    AgentivityNode.fromEntailmentProfile sweepBroomSubjectProfile
+    = ⟨true, true, true, true⟩ := rfl
+
+/-- Instrument lexicalization strictly increases agentivity on the lattice:
+    sweep basic {M} < sweep broom {V,S,I,M}. -/
+theorem sweep_lexicalization_increases :
+    AgentivityNode.fromEntailmentProfile sweepBasicSubjectProfile <
+    AgentivityNode.fromEntailmentProfile sweepBroomSubjectProfile := by
+  constructor <;> decide
+
+-- ════════════════════════════════════════════════════
+-- § 16. End-to-End Pipelines: EntailmentProfile → Case
+-- ════════════════════════════════════════════════════
+
+/-- Full pipeline: kick subject → GrimmNode → NOM/ERG → NOM (accusative). -/
+theorem kick_subject_to_nom :
+    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase
+    = .nom := by decide
+
+/-- Full pipeline: kick object → GrimmNode → ACC/ABS → ACC (accusative). -/
+theorem kick_object_to_acc :
+    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase
+    = .acc := by decide
+
+/-- Build subject → NOM (full agent, total persistence). -/
+theorem build_subject_to_nom :
+    (GrimmNode.fromSubjectProfile buildSubjectProfile).toCaseRegion.toAccusativeCase
+    = .nom := by decide
+
+/-- Build object → OBLIQUE (not ACC). The object of *build* maps to
+    exPersEnd (entity comes into existence), which falls OUTSIDE the
+    transitivity region (p.529–530). Creation verbs are
+    non-prototypically transitive — the object does not exist at the
+    beginning of the event to "undergo its effects." This is a correct
+    prediction: creation verb objects cross-linguistically show atypical
+    case marking (e.g., pseudo-cleft asymmetry). -/
+theorem build_object_outside_acc :
+    (GrimmNode.fromObjectProfile buildObjectProfile).toCaseRegion ≠ .accAbs := by
+  decide
+
+/-- Full pipeline: see subject → OBLIQUE (not NOM/ERG).
+    The see-subject has sentience but no instigation, so it falls outside
+    the NOM/ERG region. Grimm's system predicts non-canonical case for
+    perception verb subjects cross-linguistically. -/
+theorem see_subject_not_nomErg :
+    (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion ≠ .nomErg := by
+  decide
+
+/-- Full pipeline: die subject (unaccusative) → ACC/ABS.
+    The sole argument of *die* maps to the patient region (no agentivity,
+    exPersBeginning). In an ergative system this → ABS (= intransitive
+    subject). -/
+theorem die_subject_to_abs :
+    (GrimmNode.fromObjectProfile dieSubjectProfile).toCaseRegion.toErgativeCase
+    = .abs := by decide
+
 end Grimm2011

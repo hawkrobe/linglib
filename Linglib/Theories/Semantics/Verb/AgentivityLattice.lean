@@ -736,153 +736,7 @@ theorem maximalPatient_in_transitiveRegion :
     maximalPatient.InTransitiveRegion := by decide
 
 -- ════════════════════════════════════════════════════
--- § 10. Transitivity Hierarchy Verification (§3)
--- ════════════════════════════════════════════════════
-
-/-- Class I patients (break) are in the transitivity region. -/
-theorem classI_patient_in_region :
-    (TransitivityClass.resultativeEffective.patientNode).InTransitiveRegion :=
-  by decide
-
-/-- Class II patients (shoot) are in the transitivity region. -/
-theorem classII_patient_in_region :
-    (TransitivityClass.contact.patientNode).InTransitiveRegion :=
-  by decide
-
-/-- Class III patients (search) are OUTSIDE the transitivity region.
-    This captures Tsunoda's observation that pursuit verbs deviate most
-    strongly from the prototypical transitive paradigm. -/
-theorem classIII_patient_outside_region :
-    ¬ (TransitivityClass.pursuit.patientNode).InTransitiveRegion :=
-  by decide
-
-/-- Class I patient (break: exPersBeginning) has lower persistence than
-    Class II patient (shoot: quPersBeginning). The Class I object is
-    more affected — it ceases to exist. -/
-theorem classI_patient_lower_persistence :
-    (TransitivityClass.resultativeEffective.patientNode).persistence.featureCount <
-    (TransitivityClass.contact.patientNode).persistence.featureCount := by
-  decide
-
-/-- Class I patient ≤ Class II patient on the lattice
-    (exPersBeginning ≤ quPersBeginning). -/
-theorem classI_patient_le_classII :
-    TransitivityClass.resultativeEffective.patientNode ≤
-    TransitivityClass.contact.patientNode := by decide
-
-/-- Class III patient ≤ Class I patient
-    (totalNonPersistence ≤ exPersBeginning). -/
-theorem classIII_patient_le_classI :
-    TransitivityClass.pursuit.patientNode ≤
-    TransitivityClass.resultativeEffective.patientNode := by decide
-
--- ════════════════════════════════════════════════════
--- § 11. Case Region Verification (§4)
--- ════════════════════════════════════════════════════
-
-/-- Maximal agent maps to NOM/ERG region. -/
-theorem maximalAgent_nomErg :
-    maximalAgent.toCaseRegion = .nomErg := by decide
-
-/-- Maximal patient maps to ACC/ABS region. -/
-theorem maximalPatient_accAbs :
-    maximalPatient.toCaseRegion = .accAbs := by decide
-
-/-- The effector agent (instigation + motion, total persistence) maps to
-    NOM/ERG. This is the agent of break/kill (Fig. 5, Ia). -/
-theorem effectorAgent_nomErg :
-    effectorAgent.toCaseRegion = .nomErg := by decide
-
-/-- The experiencer/recipient maps to the dative region
-    (§5.1, Fig. 7). -/
-theorem experiencer_dative :
-    experiencerNode.toCaseRegion = .dative := by decide
-
-/-- The recipient maps to the dative region. -/
-theorem recipient_dative :
-    recipientNode.toCaseRegion = .dative := by decide
-
-/-- Class I patient (break object: destroyed) maps to ACC/ABS. -/
-theorem classI_patient_accAbs :
-    (TransitivityClass.resultativeEffective.patientNode).toCaseRegion
-    = .accAbs := by decide
-
-/-- Class II patient (shoot object: affected but persists) maps to ACC/ABS. -/
-theorem classII_patient_accAbs :
-    (TransitivityClass.contact.patientNode).toCaseRegion
-    = .accAbs := by decide
-
-/-- Accusative alignment: maximal agent → NOM, maximal patient → ACC. -/
-theorem accusative_alignment :
-    maximalAgent.toCaseRegion.toAccusativeCase = .nom ∧
-    maximalPatient.toCaseRegion.toAccusativeCase = .acc := ⟨rfl, rfl⟩
-
-/-- Ergative alignment: maximal agent → ERG, maximal patient → ABS. -/
-theorem ergative_alignment :
-    maximalAgent.toCaseRegion.toErgativeCase = .erg ∧
-    maximalPatient.toCaseRegion.toErgativeCase = .abs := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 12. Bridge Verification: EntailmentProfile → GrimmNode
--- ════════════════════════════════════════════════════
-
-/-- kick subject → agentivity {V,S,I,M} (full agent). -/
-theorem kick_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile kickSubjectProfile
-    = ⟨true, true, true, true⟩ := rfl
-
-/-- kick object → persistence quPersBeginning (affected but persists).
-    CoS=true, IT=false, DE=false → qualitatively changed. -/
-theorem kick_object_persistence :
-    PersistenceLevel.fromPatientProfile kickObjectProfile
-    = .quPersBeginning := by decide
-
-/-- build object → persistence exPersEnd (entity created). -/
-theorem build_object_persistence :
-    PersistenceLevel.fromPatientProfile buildObjectProfile
-    = .exPersEnd := by decide
-
-/-- die subject → persistence exPersBeginning (entity ceases to exist).
-    DE=true, IT=false → entity is destroyed. -/
-theorem die_subject_persistence :
-    PersistenceLevel.fromPatientProfile dieSubjectProfile
-    = .exPersBeginning := by decide
-
-/-- run subject → agentivity {V,S,M} (no instigation). -/
-theorem run_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile runSubjectProfile
-    = ⟨true, true, false, true⟩ := rfl
-
-/-- arrive subject → agentivity {M} (motion only). -/
-theorem arrive_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile arriveSubjectProfile
-    = ⟨false, false, false, true⟩ := rfl
-
-/-- see subject → agentivity {S} (sentience only). -/
-theorem see_subject_agentivity :
-    AgentivityNode.fromEntailmentProfile seeSubjectProfile
-    = ⟨false, true, false, false⟩ := rfl
-
-/-- sweep basic subject → agentivity {M} (motion only, variable agentivity). -/
-theorem sweep_basic_agentivity :
-    AgentivityNode.fromEntailmentProfile sweepBasicSubjectProfile
-    = ⟨false, false, false, true⟩ := rfl
-
-/-- sweep broom subject → agentivity {V,S,I,M} (instrument lexicalization
-    adds full agentivity, @cite{rappaport-hovav-levin-2024}). -/
-theorem sweep_broom_agentivity :
-    AgentivityNode.fromEntailmentProfile sweepBroomSubjectProfile
-    = ⟨true, true, true, true⟩ := rfl
-
-/-- Instrument lexicalization strictly increases agentivity on the lattice:
-    sweep basic {M} < sweep broom {V,S,I,M}. -/
-theorem sweep_lexicalization_increases :
-    AgentivityNode.fromEntailmentProfile sweepBasicSubjectProfile <
-    AgentivityNode.fromEntailmentProfile sweepBroomSubjectProfile := by
-  constructor <;> decide
-
--- ════════════════════════════════════════════════════
--- § 13. Grimm ↔ Dowty ASP Consistency
+-- § 10. Grimm ↔ Dowty ASP Consistency
 -- ════════════════════════════════════════════════════
 
 /-- Grimm's agentivity lattice ordering is consistent with Dowty's
@@ -924,7 +778,7 @@ theorem fromEntailmentProfile_monotone
   exact ⟨⟨⟨bImpl _ _ hv, bImpl _ _ hs⟩, bImpl _ _ hc⟩, bImpl _ _ hm⟩
 
 -- ════════════════════════════════════════════════════
--- § 14. Dative Polysemy (§5.1)
+-- § 11. Dative Polysemy (§5.1)
 -- ════════════════════════════════════════════════════
 
 /-- The dative region unifies recipients, experiencers, and second
@@ -940,7 +794,7 @@ theorem sentientNonInstigator_in_dative :
     sentientNonInstigatorNode.toCaseRegion = .dative := rfl
 
 -- ════════════════════════════════════════════════════
--- § 15. Upward/Downward Closure (§2.3, p.528)
+-- § 12. Upward/Downward Closure (§2.3, p.528)
 -- ════════════════════════════════════════════════════
 
 /-- Agents are **upwards closed** in the agentivity dimension
@@ -970,53 +824,7 @@ theorem patient_downward_closed (maxPers p q : PersistenceLevel)
   le_trans hqp hp
 
 -- ════════════════════════════════════════════════════
--- § 16. End-to-End: EntailmentProfile → Case
--- ════════════════════════════════════════════════════
-
-/-- Full pipeline: kick subject → GrimmNode → NOM/ERG → NOM (accusative). -/
-theorem kick_subject_to_nom :
-    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase
-    = .nom := by decide
-
-/-- Full pipeline: kick object → GrimmNode → ACC/ABS → ACC (accusative). -/
-theorem kick_object_to_acc :
-    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase
-    = .acc := by decide
-
-/-- Build subject → NOM (full agent, total persistence). -/
-theorem build_subject_to_nom :
-    (GrimmNode.fromSubjectProfile buildSubjectProfile).toCaseRegion.toAccusativeCase
-    = .nom := by decide
-
-/-- Build object → OBLIQUE (not ACC). The object of *build* maps to
-    exPersEnd (entity comes into existence), which falls OUTSIDE the
-    transitivity region (p.529–530). Creation verbs
-    are non-prototypically transitive — the object does not exist at
-    the beginning of the event to "undergo its effects."
-    This is a correct prediction: creation verb objects cross-linguistically
-    show atypical case marking (e.g., pseudo-cleft asymmetry). -/
-theorem build_object_outside_acc :
-    (GrimmNode.fromObjectProfile buildObjectProfile).toCaseRegion ≠ .accAbs := by
-  decide
-
-/-- Full pipeline: see subject → OBLIQUE (not NOM/ERG).
-    The see-subject has sentience but no instigation, so it falls
-    outside the NOM/ERG region. Grimm's system predicts non-canonical
-    case for perception verb subjects cross-linguistically. -/
-theorem see_subject_not_nomErg :
-    (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion ≠ .nomErg := by
-  decide
-
-/-- Full pipeline: die subject (unaccusative) → ACC/ABS.
-    The sole argument of *die* maps to the patient region (no agentivity,
-    exPersBeginning). In an ergative system this → ABS (= intransitive
-    subject). -/
-theorem die_subject_to_abs :
-    (GrimmNode.fromObjectProfile dieSubjectProfile).toCaseRegion.toErgativeCase
-    = .abs := by decide
-
--- ════════════════════════════════════════════════════
--- § 17. Persistence Covering Relations (Fig. 2)
+-- § 13. Persistence Covering Relations (Fig. 2)
 -- ════════════════════════════════════════════════════
 
 /-- exPersEnd and quPersBeginning are incomparable (neither ≤ the other).
@@ -1038,7 +846,7 @@ theorem persistence_chain :
   decide
 
 -- ════════════════════════════════════════════════════
--- § 18. DOM and the Agentivity Lattice (§4)
+-- § 14. DOM and the Agentivity Lattice (§4)
 -- ════════════════════════════════════════════════════
 
 /-! (p.534): "it is a combination of verbal and nominal
