@@ -2820,6 +2820,171 @@ decreasing_by
   have := h_le cs j h_j_lt
   omega
 
+/-! ## §10.7: `multiGraft_cons_pair` — preserved-vertex multiGraft-extend
+
+Prepending a new pair `(v, c)` to the pair list equals inserting `c` at
+the transported path of `v` in `multiGraft T pairs`. The "preserved" analog
+of `multiGraft_split_lifted_aux` (§10.6), but in PREPEND form rather than
+APPEND form — this avoids the planar-order mismatch at the root (where
+`insertAt [] c` puts `c` first in children but `multiGraft T (pairs ++ [([], c)])`
+puts `c` last in root-prepends).
+
+**Why prepend form works without a validity hypothesis.**
+- `v = []` case: both sides yield `node a (c :: rootPrepends ++ multiGraftChildren)`;
+  the new `([], c)` pair is the *first* root-prepend, matching `insertAt [] c`'s
+  prepend-to-children semantics.
+- `v = j :: rest, j < cs.length` case: descend into the `j`-th child via the
+  IH (decreasing on the child's weight); the `(rest, c)` descented pair is the
+  first in the child's pair list.
+- `v = j :: rest, j ≥ cs.length` case: both sides are no-ops (multiGraftChildren
+  ignores the new pair since no valid descent target; insertAt is a no-op past
+  the children-list bound).
+
+The APPEND form `multiGraft T (pairs ++ [(v, c)])` follows from this lemma
+plus `multiGraft_perm_pair` (only at PlanarEquiv level, since planar-order
+differs between prepend and append at root).
+
+This is the substrate for Phase D (T_orig and FA_orig buckets) of A3.3's
+cons-case proof (`scratch/a33_phase4_2_session_prompt_16.md`). -/
+
+/-- Helper: prepending an empty-path pair leaves `multiGraftChildren` unchanged
+    (the new pair has empty path, so both `headChildFilter` and `tailChildFilter`
+    drop it). Used in the `v = []` case of `multiGraft_cons_pair`. -/
+private theorem multiGraftChildren_cons_nilPath_pair
+    (cs : List (Planar α)) (pairs : List (Path × Planar α)) (c : Planar α) :
+    multiGraftChildren cs (([], c) :: pairs) = multiGraftChildren cs pairs := by
+  induction cs generalizing pairs with
+  | nil => rfl
+  | cons c' cs' ih =>
+    show multiGraft c' (pairs.filterMap headChildFilter) ::
+            multiGraftChildren cs' (pairs.filterMap tailChildFilter) =
+         multiGraft c' (pairs.filterMap headChildFilter) ::
+            multiGraftChildren cs' (pairs.filterMap tailChildFilter)
+    rfl
+
+/-- Prepend form: prepending `(v, c)` to the pair list equals inserting `c`
+    at the transported path of `v` in `multiGraft T pairs`. No validity
+    hypothesis on `v`: out-of-bounds case is a mutual no-op.
+
+    The "preserved" analog of `multiGraft_split_lifted_aux` (§10.6). Phase A
+    substrate for A3.3's cons-case proof
+    (`scratch/a33_phase4_2_session_prompt_16.md`). -/
+theorem multiGraft_cons_pair :
+    ∀ (T : Planar α) (pairs : List (Path × Planar α))
+      (v : Path) (c : Planar α),
+    multiGraft T ((v, c) :: pairs) =
+      insertAt (transport pairs v) c (multiGraft T pairs)
+  | .node a cs, pairs, [], c => by
+    -- Case v = []: new pair is a root prepend at position 0.
+    rw [transport_nil_path, multiGraft_node, multiGraft_node]
+    show Planar.node a (c :: pairs.filterMap rootPrependFilter ++
+                          multiGraftChildren cs (([], c) :: pairs)) = _
+    rw [multiGraftChildren_cons_nilPath_pair, insertAt_nil]
+    rfl
+  | .node a cs, pairs, j :: rest, c => by
+    -- Case v = j :: rest. Recurse into the j-th child if j < cs.length.
+    rw [transport_cons_path, multiGraft_node, multiGraft_node]
+    show Planar.node a (pairs.filterMap rootPrependFilter ++
+                          multiGraftChildren cs ((j :: rest, c) :: pairs)) = _
+    set N := rootPrependCount pairs with hN_def
+    set rootPrepends := pairs.filterMap rootPrependFilter with hRP_def
+    set children := multiGraftChildren cs pairs with hC_def
+    have h_rp_len : rootPrepends.length = N := by
+      rw [hRP_def, length_filterMap_rootPrependFilter]
+    have h_ch_len : children.length = cs.length := by
+      rw [hC_def, multiGraftChildren_length]
+    by_cases h_j_lt : j < cs.length
+    · -- Valid descent: j + N is a valid index past the rootPrepends.
+      have h_idx_lt : j + N < (rootPrepends ++ children).length := by
+        rw [List.length_append, h_rp_len, h_ch_len]; omega
+      rw [insertAt_cons_of_lt _ _ _ _ _ h_idx_lt]
+      have h_N_le : rootPrepends.length ≤ j + N := by
+        rw [h_rp_len]; omega
+      have h_val :
+          (rootPrepends ++ children)[j + N]'h_idx_lt =
+            multiGraft (cs[j]'h_j_lt) (descentToChild j pairs) := by
+        have h_some :
+            (rootPrepends ++ children)[j + N]? =
+              some (multiGraft (cs[j]'h_j_lt) (descentToChild j pairs)) := by
+          rw [List.getElem?_append_right h_N_le]
+          rw [show j + N - rootPrepends.length = j from by rw [h_rp_len]; omega]
+          rw [hC_def]
+          exact multiGraftChildren_getElem? cs pairs j h_j_lt
+        rw [List.getElem?_eq_some_iff] at h_some
+        obtain ⟨_, h_eq⟩ := h_some
+        exact h_eq
+      rw [h_val]
+      rw [List.set_append_right _ _ h_N_le]
+      rw [show j + N - rootPrepends.length = j from by rw [h_rp_len]; omega]
+      -- Apply IH at cs[j], descentToChild j pairs, rest, c.
+      have ih := multiGraft_cons_pair (cs[j]'h_j_lt) (descentToChild j pairs) rest c
+      -- Show LHS-children = children.set j (...) using IH on the j-th component.
+      rw [show multiGraftChildren cs ((j :: rest, c) :: pairs) =
+              children.set j (multiGraft (cs[j]'h_j_lt)
+                ((rest, c) :: descentToChild j pairs))
+          from by
+            apply List.ext_getElem?
+            intro i
+            by_cases h_i_lt : i < cs.length
+            · rw [multiGraftChildren_getElem? cs ((j :: rest, c) :: pairs) i h_i_lt,
+                  List.getElem?_set]
+              by_cases h_ij : j = i
+              · subst h_ij
+                rw [if_pos rfl,
+                    if_pos (by rw [hC_def, multiGraftChildren_length]; exact h_i_lt)]
+                rw [descentToChild_cons_consPath_eq]
+              · rw [if_neg h_ij, hC_def,
+                    multiGraftChildren_getElem? cs pairs i h_i_lt,
+                    descentToChild_cons_consPath_ne i j rest c pairs (Ne.symm h_ij)]
+            · push Not at h_i_lt
+              rw [List.getElem?_eq_none
+                  (by rw [multiGraftChildren_length]; exact h_i_lt)]
+              rw [List.getElem?_eq_none
+                  (by rw [List.length_set, hC_def, multiGraftChildren_length];
+                      exact h_i_lt)]]
+      rw [ih]
+    · -- Invalid descent: j ≥ cs.length, both sides no-op at children level.
+      push Not at h_j_lt
+      have h_idx_ge : ¬ (j + N < (rootPrepends ++ children).length) := by
+        rw [List.length_append, h_rp_len, h_ch_len]; omega
+      rw [insertAt_cons_of_not_lt _ _ _ _ _ h_idx_ge]
+      rw [show multiGraftChildren cs ((j :: rest, c) :: pairs) = children
+          from by
+            apply List.ext_getElem?
+            intro i
+            by_cases h_i_lt : i < cs.length
+            · rw [multiGraftChildren_getElem? cs ((j :: rest, c) :: pairs) i h_i_lt,
+                  hC_def, multiGraftChildren_getElem? cs pairs i h_i_lt]
+              have h_ij : i ≠ j := fun heq =>
+                Nat.not_lt.mpr h_j_lt (heq ▸ h_i_lt)
+              rw [descentToChild_cons_consPath_ne i j rest c pairs h_ij]
+            · push Not at h_i_lt
+              rw [List.getElem?_eq_none
+                  (by rw [multiGraftChildren_length]; exact h_i_lt)]
+              rw [hC_def, List.getElem?_eq_none
+                  (by rw [multiGraftChildren_length]; exact h_i_lt)]]
+termination_by T _ _ _ => T.weight
+decreasing_by
+  show (cs[j]'h_j_lt).weight < (Planar.node a cs).weight
+  show (cs[j]'h_j_lt).weight < 1 + weightList cs
+  have h_le : ∀ (cs' : List (Planar α)) (n : ℕ) (hn : n < cs'.length),
+      (cs'[n]'hn).weight ≤ weightList cs' := by
+    intro cs' n hn
+    induction cs' generalizing n with
+    | nil => simp at hn
+    | cons c cs'' ih =>
+      cases n with
+      | zero =>
+        show weight c ≤ weight c + weightList cs''
+        omega
+      | succ m =>
+        have hm : m < cs''.length := by simp [List.length_cons] at hn; omega
+        show weight (cs''[m]'hm) ≤ weight c + weightList cs''
+        have := ih m hm
+        omega
+  have := h_le cs j h_j_lt
+  omega
+
 end Pathed
 
 end Planar
