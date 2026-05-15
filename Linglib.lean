@@ -1563,7 +1563,7 @@ import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025
 import Linglib.Phenomena.Plurals.Studies.HaslingerHienEtAl2025
 import Linglib.Phenomena.Questions.Studies.QingEtAl2025
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Compare
-import Linglib.Phenomena.Plurals.Studies.Champollion2017
+import Linglib.Phenomena.TenseAspect.Studies.Champollion2017
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Phenomena.Plurals.Studies.TieuEtAl2020
 import Linglib.Phenomena.Plurals.Studies.TieuKrizChemla2019

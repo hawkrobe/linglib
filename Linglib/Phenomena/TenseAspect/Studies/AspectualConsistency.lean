@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Verb.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
-import Linglib.Phenomena.Plurals.Studies.Champollion2017
+import Linglib.Phenomena.TenseAspect.Studies.Champollion2017
 
 /-!
 # Cross-Bridge Consistency Tests
