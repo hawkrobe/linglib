@@ -33,6 +33,16 @@ open Core.Time
 abbrev ThematicRel (Entity Time : Type*) [LinearOrder Time] :=
   Entity → Event Time → Prop
 
+/-- A relation between an event and an argument of arbitrary sort.
+    Generalizes `ThematicRel` past the entity-first restriction:
+    arguments may be propositions, questions, performances, content
+    individuals, or any other ontological category. The argument
+    order is *event-first* (vs. ThematicRel's entity-first), reflecting
+    the neo-Davidsonian convention for thematic roles vs. the more
+    general event-relation pattern used by content/reenactment relations
+    (@cite{rudin-2025b}, §4.4–4.7). -/
+abbrev EventRel (Time α : Type*) [LinearOrder Time] := Event Time → α → Prop
+
 -- ════════════════════════════════════════════════════
 -- § 2. ThematicFrame
 -- ════════════════════════════════════════════════════

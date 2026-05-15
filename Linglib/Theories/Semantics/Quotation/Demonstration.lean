@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Events.Basic
+import Linglib.Theories.Semantics.Events.ThematicRoles
 
 /-!
 # Demonstration Semantics for Quotative Complements
@@ -89,21 +90,10 @@ ontologies (e.g., a Farkas-Bruce-derived discourse adapter) can supply
 their own performance type.
 -/
 
-namespace Semantics.Events
-
-/-- A relation between an event and an argument of arbitrary sort.
-    Generalizes `ThematicRel` past the entity-first restriction:
-    arguments may be propositions, questions, performances, content
-    individuals, or any other ontological category that the analysis
-    requires. Used here for `CONTENT : EventRel Time SemObj` and
-    `REENACT : EventRel Time Perf` (@cite{rudin-2025b}, §4.4–4.7). -/
-abbrev EventRel (Time α : Type*) [LinearOrder Time] := Event Time → α → Prop
-
-end Semantics.Events
-
 namespace Semantics.Quotation.Demonstration
 
 open Semantics.Events
+open Semantics.Events.ThematicRoles (EventRel)
 open Core.Time
 
 -- ════════════════════════════════════════════════════
