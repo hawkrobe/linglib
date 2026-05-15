@@ -218,11 +218,11 @@ instance : DecidableRel (α := PersistenceLevel) (· ≤ ·) := fun a b =>
 
 instance : OrderBot PersistenceLevel where
   bot := .totalNonPersistence
-  bot_le := by native_decide
+  bot_le := by decide
 
 instance : OrderTop PersistenceLevel where
   top := .totalPersistence
-  le_top := by native_decide
+  le_top := by decide
 
 /-- Join on persistence levels. The 5 valid levels do not form a sublattice
     of the powerset on {ExPB, ExPE, QuPB, QuPE} — the join is the smallest
@@ -260,12 +260,12 @@ def PersistenceLevel.inf' (a b : PersistenceLevel) : PersistenceLevel :=
 instance : Lattice PersistenceLevel where
   sup := PersistenceLevel.sup'
   inf := PersistenceLevel.inf'
-  le_sup_left := by native_decide
-  le_sup_right := by native_decide
-  sup_le := by native_decide
-  inf_le_left := by native_decide
-  inf_le_right := by native_decide
-  le_inf := by native_decide
+  le_sup_left := by decide
+  le_sup_right := by decide
+  sup_le := by decide
+  inf_le_left := by decide
+  inf_le_right := by decide
+  le_inf := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Combined Agentivity Lattice Node (Fig. 3)
@@ -343,6 +343,17 @@ instance : OrderTop GrimmNode where
   top := ⟨⊤, ⊤⟩
   le_top _ := ⟨le_top, le_top⟩
 
+/-- Componentwise lattice: meet/join on each axis independently. -/
+instance : Lattice GrimmNode where
+  sup a b := ⟨a.agentivity ⊔ b.agentivity, a.persistence ⊔ b.persistence⟩
+  inf a b := ⟨a.agentivity ⊓ b.agentivity, a.persistence ⊓ b.persistence⟩
+  le_sup_left _ _ := ⟨le_sup_left, le_sup_left⟩
+  le_sup_right _ _ := ⟨le_sup_right, le_sup_right⟩
+  sup_le _ _ _ h1 h2 := ⟨sup_le h1.1 h2.1, sup_le h1.2 h2.2⟩
+  inf_le_left _ _ := ⟨inf_le_left, inf_le_left⟩
+  inf_le_right _ _ := ⟨inf_le_right, inf_le_right⟩
+  le_inf _ _ _ h1 h2 := ⟨le_inf h1.1 h2.1, le_inf h1.2 h2.2⟩
+
 -- ════════════════════════════════════════════════════
 -- § 4. Named Participant Types
 -- ════════════════════════════════════════════════════
@@ -364,15 +375,20 @@ def maximalPatient : GrimmNode :=
 def effectorAgent : GrimmNode :=
   ⟨⟨false, false, true, true⟩, .totalPersistence⟩
 
-/-- Experiencer: sentience only, qualitative persistence (beginning).
-    The dative experiencer of psych verbs (§5.1.1). -/
-def experiencerNode : GrimmNode :=
+/-- The lattice position {sentience} × qualitative persistence (beginning).
+    Per Grimm 2011 §5.1, diverse uses of the dative converge on this single
+    region — recipients, experiencers, and benefactives are aliases below. -/
+def sentientNonInstigatorNode : GrimmNode :=
   ⟨⟨false, true, false, false⟩, .quPersBeginning⟩
 
-/-- Recipient: sentience, qualitative persistence (beginning).
-    The canonical dative recipient (Fig. 7). -/
-def recipientNode : GrimmNode :=
-  ⟨⟨false, true, false, false⟩, .quPersBeginning⟩
+/-- Dative experiencer of psych verbs (§5.1.1). Alias of
+    `sentientNonInstigatorNode` — the convergence with `recipientNode` is by
+    construction, not a theorem. -/
+abbrev experiencerNode : GrimmNode := sentientNonInstigatorNode
+
+/-- Canonical dative recipient (Fig. 7). Alias of `sentientNonInstigatorNode`
+    — see the docstring there for the unified treatment. -/
+abbrev recipientNode : GrimmNode := sentientNonInstigatorNode
 
 -- ════════════════════════════════════════════════════
 -- § 5. Transitivity Region (§3, Fig. 4)
@@ -409,14 +425,10 @@ inductive TransitivityClass where
   | pursuit
   deriving DecidableEq, Repr
 
-/-- The canonical agent position for each transitivity class.
-    All classes share the same agent type: instigation + motion,
-    total persistence (Fig. 5, labeled Ia/IIa). -/
-def TransitivityClass.agentNode : TransitivityClass → GrimmNode
-  | _ => effectorAgent
-
 /-- The canonical patient position for each transitivity class
-    (Fig. 5). -/
+    (Fig. 5). The agent position for all three classes is `effectorAgent`
+    (Fig. 5, Ia/IIa share the same agent node; Grimm doesn't separately
+    label IIIa). -/
 def TransitivityClass.patientNode : TransitivityClass → GrimmNode
   | .resultativeEffective => ⟨⊥, .exPersBeginning⟩     -- Ip
   | .contact              => ⟨⊥, .quPersBeginning⟩     -- IIp
@@ -426,8 +438,11 @@ def TransitivityClass.patientNode : TransitivityClass → GrimmNode
 -- § 6. Case Regions (§4, Figs. 6–7)
 -- ════════════════════════════════════════════════════
 
-/-- Case regions on the agentivity lattice. A case marker corresponds
-    to a **connected region** of the lattice (§4). -/
+/-- Case regions on the agentivity lattice. Per Grimm 2011 (abstract,
+    §2.3, §4), a core case marker corresponds to a **connected region** of
+    the lattice; the three core regions (`nomErg`, `accAbs`, `dative`) are
+    proved order-convex (`IsOrderConvex`) below. `oblique` is the residual
+    "middle region" (Grimm p.533) — not claimed to be connected. -/
 inductive CaseRegion where
   /-- Nominative (accusative systems) / Ergative (ergative systems):
       the region spreading from maximal agent. Marks subjects. -/
@@ -480,6 +495,129 @@ def CaseRegion.toErgativeCase : CaseRegion → Case
   | .accAbs  => .abs
   | .dative  => .dat
   | .oblique => .inst
+
+-- ── Connectedness of core case regions (Grimm 2011 abstract + §4) ──
+
+/-- A predicate on a partial order is **order-convex** if it is closed
+    under intervals: whenever `P a` and `P b` and `a ≤ x ≤ b`, also `P x`.
+    This is the standard order-theoretic capture of "connected region" in
+    a finite lattice. -/
+def IsOrderConvex {α : Type*} [LE α] (P : α → Prop) : Prop :=
+  ∀ ⦃a b x : α⦄, P a → P b → a ≤ x → x ≤ b → P x
+
+-- Characterisation lemmas (single `decide` over 80 GrimmNode elements each)
+
+private theorem GrimmNode.toCaseRegion_eq_nomErg_iff (n : GrimmNode) :
+    n.toCaseRegion = .nomErg ↔
+    n.agentivity.instigation = true ∧ n.persistence = .totalPersistence := by
+  rcases n with ⟨⟨v, s, i, m⟩, p⟩
+  cases v <;> cases s <;> cases i <;> cases m <;> cases p <;> decide
+
+private theorem GrimmNode.toCaseRegion_eq_accAbs_iff (n : GrimmNode) :
+    n.toCaseRegion = .accAbs ↔
+    n.agentivity = ⊥ ∧
+    (n.persistence = .exPersBeginning ∨ n.persistence = .quPersBeginning) := by
+  rcases n with ⟨⟨v, s, i, m⟩, p⟩
+  cases v <;> cases s <;> cases i <;> cases m <;> cases p <;> decide
+
+private theorem GrimmNode.toCaseRegion_eq_dative_iff (n : GrimmNode) :
+    n.toCaseRegion = .dative ↔
+    n.agentivity.sentience = true ∧ n.agentivity.instigation = false ∧
+    n.persistence = .quPersBeginning := by
+  rcases n with ⟨⟨v, s, i, m⟩, p⟩
+  cases v <;> cases s <;> cases i <;> cases m <;> cases p <;> decide
+
+-- Componentwise Bool monotonicity for AgentivityNode (extracted from leBool)
+
+private theorem AgentivityNode.le_instigation_mono {a b : AgentivityNode}
+    (hab : a ≤ b) (h : a.instigation = true) : b.instigation = true := by
+  have hbool : a.leBool b = true := hab
+  cases hi : b.instigation
+  · simp [AgentivityNode.leBool, h, hi] at hbool
+  · rfl
+
+private theorem AgentivityNode.le_sentience_mono {a b : AgentivityNode}
+    (hab : a ≤ b) (h : a.sentience = true) : b.sentience = true := by
+  have hbool : a.leBool b = true := hab
+  cases hi : b.sentience
+  · simp [AgentivityNode.leBool, h, hi] at hbool
+  · rfl
+
+private theorem AgentivityNode.ge_instigation_mono {a b : AgentivityNode}
+    (hab : a ≤ b) (h : b.instigation = false) : a.instigation = false := by
+  have hbool : a.leBool b = true := hab
+  cases hi : a.instigation
+  · rfl
+  · simp [AgentivityNode.leBool, hi, h] at hbool
+
+private theorem AgentivityNode.le_bot {a : AgentivityNode} (h : a ≤ ⊥) : a = ⊥ := by
+  have hbool : a.leBool ⊥ = true := h
+  rcases a with ⟨v, s, i, m⟩
+  cases v <;> cases s <;> cases i <;> cases m <;>
+    first | rfl | (simp [AgentivityNode.leBool] at hbool)
+
+/-- The `nomErg` region is order-convex: any node between two nomErg nodes
+    is itself nomErg. The region equals `{n | n.agentivity.instigation = true
+    ∧ n.persistence = .totalPersistence}`, the intersection of an upper set
+    (instigation = true) with the singleton at top persistence. -/
+theorem nomErg_orderConvex :
+    IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .nomErg) := by
+  intro a b x ha hb hax hxb
+  rw [GrimmNode.toCaseRegion_eq_nomErg_iff] at *
+  refine ⟨AgentivityNode.le_instigation_mono hax.1 ha.1, ?_⟩
+  have hpers : (.totalPersistence : PersistenceLevel) ≤ x.persistence := ha.2 ▸ hax.2
+  exact le_antisymm le_top hpers
+
+/-- The `accAbs` region is order-convex. It equals
+    `{n | n.agentivity = ⊥ ∧ n.persistence ∈ {.exPersBeginning, .quPersBeginning}}`
+    — the singleton at bottom agentivity intersected with the persistence
+    interval `[.exPersBeginning, .quPersBeginning]`. -/
+theorem accAbs_orderConvex :
+    IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .accAbs) := by
+  intro a b x ha hb hax hxb
+  rw [GrimmNode.toCaseRegion_eq_accAbs_iff] at *
+  refine ⟨AgentivityNode.le_bot (hb.1 ▸ hxb.1), ?_⟩
+  -- x.persistence is in [a.persistence, b.persistence]; both endpoints in {exPB, qPB}.
+  -- Case-split on x.persistence (5 cases) using the bounds to rule out the other 3.
+  have hax_p : a.persistence ≤ x.persistence := hax.2
+  have hxb_p : x.persistence ≤ b.persistence := hxb.2
+  rcases ha.2 with hap | hap <;> rcases hb.2 with hbp | hbp <;>
+    rw [hap] at hax_p <;> rw [hbp] at hxb_p <;>
+    (try exact absurd (hax_p.trans hxb_p) (by decide)) <;>
+    (cases hxp : x.persistence <;> rw [hxp] at hax_p hxb_p <;>
+      first | (left; rfl) | (right; rfl) | exact absurd hax_p (by decide) |
+              exact absurd hxb_p (by decide))
+
+/-- The `dative` region is order-convex. It equals
+    `{n | n.agentivity.sentience = true ∧ n.agentivity.instigation = false
+    ∧ n.persistence = .quPersBeginning}` — sentience upper set ∩ instigation
+    lower set ∩ persistence singleton. -/
+theorem dative_orderConvex :
+    IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .dative) := by
+  intro a b x ha hb hax hxb
+  rw [GrimmNode.toCaseRegion_eq_dative_iff] at *
+  refine ⟨AgentivityNode.le_sentience_mono hax.1 ha.1,
+          AgentivityNode.ge_instigation_mono hxb.1 hb.2.1, ?_⟩
+  have h1 : x.persistence ≤ b.persistence := hxb.2
+  have h2 : a.persistence ≤ x.persistence := hax.2
+  rw [hb.2.2] at h1
+  rw [ha.2.2] at h2
+  exact le_antisymm h1 h2
+
+/-- Counterexample showing `oblique` is NOT order-convex. With
+    `a = ⟨{motion}, .quPersBeginning⟩` and `b = ⟨{motion, sentience, instigation},
+    .quPersBeginning⟩`, both oblique, the in-between node
+    `⟨{motion, sentience}, .quPersBeginning⟩` is dative. This is consistent with
+    Grimm (p.533): oblique is the residual region between maximal agent and
+    maximal patient, not a positively-characterised connected case. -/
+theorem oblique_not_orderConvex :
+    ¬ IsOrderConvex (fun n : GrimmNode => n.toCaseRegion = .oblique) := by
+  intro h
+  have habs := h (a := ⟨⟨false, false, false, true⟩, .quPersBeginning⟩)
+                 (b := ⟨⟨false, true, true, true⟩, .quPersBeginning⟩)
+                 (x := ⟨⟨false, true, false, true⟩, .quPersBeginning⟩)
+                 (by decide) (by decide) (by decide) (by decide)
+  exact absurd habs (by decide)
 
 -- ════════════════════════════════════════════════════
 -- § 7. Bridge to EntailmentProfile (@cite{dowty-1991})
@@ -553,15 +691,16 @@ theorem exPersEnd_incomparable_exPersBeginning :
 /-- Their join is ⊤ (totalPersistence). -/
 theorem exPersEnd_sup_exPersBeginning :
     PersistenceLevel.exPersEnd ⊔ PersistenceLevel.exPersBeginning = ⊤ := by
-  native_decide
+  decide
 
 /-- Their meet is ⊥ (totalNonPersistence). -/
 theorem exPersEnd_inf_exPersBeginning :
     PersistenceLevel.exPersEnd ⊓ PersistenceLevel.exPersBeginning = ⊥ := by
-  native_decide
+  decide
 
 /-- Maximal agent is ⊤ on the combined lattice. -/
-theorem maximalAgent_eq_top : maximalAgent = ⊤ := by native_decide
+@[simp]
+theorem maximalAgent_eq_top : maximalAgent = ⊤ := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 9. Named Participant Verification
@@ -577,10 +716,10 @@ theorem experiencerNode_valid : experiencerNode.Valid := by decide
 -- Maximal agent is at the top, maximal patient is lower
 
 theorem maximalAgent_featureCount :
-    maximalAgent.featureCount = 8 := by native_decide
+    maximalAgent.featureCount = 8 := by decide
 
 theorem maximalPatient_featureCount :
-    maximalPatient.featureCount = 2 := by native_decide
+    maximalPatient.featureCount = 2 := by decide
 
 theorem maximalPatient_le_maximalAgent :
     maximalPatient ≤ maximalAgent := by decide
@@ -623,7 +762,7 @@ theorem classIII_patient_outside_region :
 theorem classI_patient_lower_persistence :
     (TransitivityClass.resultativeEffective.patientNode).persistence.featureCount <
     (TransitivityClass.contact.patientNode).persistence.featureCount := by
-  native_decide
+  decide
 
 /-- Class I patient ≤ Class II patient on the lattice
     (exPersBeginning ≤ quPersBeginning). -/
@@ -643,35 +782,35 @@ theorem classIII_patient_le_classI :
 
 /-- Maximal agent maps to NOM/ERG region. -/
 theorem maximalAgent_nomErg :
-    maximalAgent.toCaseRegion = .nomErg := by native_decide
+    maximalAgent.toCaseRegion = .nomErg := by decide
 
 /-- Maximal patient maps to ACC/ABS region. -/
 theorem maximalPatient_accAbs :
-    maximalPatient.toCaseRegion = .accAbs := by native_decide
+    maximalPatient.toCaseRegion = .accAbs := by decide
 
 /-- The effector agent (instigation + motion, total persistence) maps to
     NOM/ERG. This is the agent of break/kill (Fig. 5, Ia). -/
 theorem effectorAgent_nomErg :
-    effectorAgent.toCaseRegion = .nomErg := by native_decide
+    effectorAgent.toCaseRegion = .nomErg := by decide
 
 /-- The experiencer/recipient maps to the dative region
     (§5.1, Fig. 7). -/
 theorem experiencer_dative :
-    experiencerNode.toCaseRegion = .dative := by native_decide
+    experiencerNode.toCaseRegion = .dative := by decide
 
 /-- The recipient maps to the dative region. -/
 theorem recipient_dative :
-    recipientNode.toCaseRegion = .dative := by native_decide
+    recipientNode.toCaseRegion = .dative := by decide
 
 /-- Class I patient (break object: destroyed) maps to ACC/ABS. -/
 theorem classI_patient_accAbs :
     (TransitivityClass.resultativeEffective.patientNode).toCaseRegion
-    = .accAbs := by native_decide
+    = .accAbs := by decide
 
 /-- Class II patient (shoot object: affected but persists) maps to ACC/ABS. -/
 theorem classII_patient_accAbs :
     (TransitivityClass.contact.patientNode).toCaseRegion
-    = .accAbs := by native_decide
+    = .accAbs := by decide
 
 /-- Accusative alignment: maximal agent → NOM, maximal patient → ACC. -/
 theorem accusative_alignment :
@@ -696,18 +835,18 @@ theorem kick_subject_agentivity :
     CoS=true, IT=false, DE=false → qualitatively changed. -/
 theorem kick_object_persistence :
     PersistenceLevel.fromPatientProfile kickObjectProfile
-    = .quPersBeginning := by native_decide
+    = .quPersBeginning := by decide
 
 /-- build object → persistence exPersEnd (entity created). -/
 theorem build_object_persistence :
     PersistenceLevel.fromPatientProfile buildObjectProfile
-    = .exPersEnd := by native_decide
+    = .exPersEnd := by decide
 
 /-- die subject → persistence exPersBeginning (entity ceases to exist).
     DE=true, IT=false → entity is destroyed. -/
 theorem die_subject_persistence :
     PersistenceLevel.fromPatientProfile dieSubjectProfile
-    = .exPersBeginning := by native_decide
+    = .exPersBeginning := by decide
 
 /-- run subject → agentivity {V,S,M} (no instigation). -/
 theorem run_subject_agentivity :
@@ -793,18 +932,12 @@ theorem fromEntailmentProfile_monotone
     semantic properties of **sentience** and **qualitative persistence
     (beginning)** (Fig. 7, p.536).
 
-    This explains dative "polysemy": the diverse uses of the dative
-    share a connected region on the lattice, not a single function. -/
-theorem dative_unifies_recipient_experiencer :
-    recipientNode.toCaseRegion = .dative ∧
-    experiencerNode.toCaseRegion = .dative := ⟨rfl, rfl⟩
-
-/-- The dative experiencer subject (§5.1.1) has the
-    same lattice position as the dative recipient — sentience +
-    qualitative persistence. This explains why languages cross-linguistically
-    use the same case (dative) for both. -/
-theorem dative_experiencer_eq_recipient :
-    experiencerNode = recipientNode := rfl
+    Because `recipientNode` and `experiencerNode` are abbrevs of
+    `sentientNonInstigatorNode`, the convergence is by construction; the
+    theorem below asserts only that this single lattice position falls in
+    the dative case region. -/
+theorem sentientNonInstigator_in_dative :
+    sentientNonInstigatorNode.toCaseRegion = .dative := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 15. Russian Genitive/Accusative Alternation (§5.2)
@@ -841,7 +974,7 @@ def russianGenAcc : GenAccAlternation :=
 
 /-- The specific reading maps to the ACC/ABS region. -/
 theorem genAcc_specific_is_acc :
-    russianGenAcc.specificReading.toCaseRegion = .accAbs := by native_decide
+    russianGenAcc.specificReading.toCaseRegion = .accAbs := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 16. Upward/Downward Closure (§2.3, p.528)
@@ -886,7 +1019,7 @@ def semanticOpposition (agent patient : GrimmNode) : Int :=
 
 /-- Maximal agent vs maximal patient has the highest opposition (8 - 2 = 6). -/
 theorem maximal_opposition :
-    semanticOpposition maximalAgent maximalPatient = 6 := by native_decide
+    semanticOpposition maximalAgent maximalPatient = 6 := by decide
 
 /-- Class I (break) has more opposition than Class II (shoot):
     the patient is more affected (fewer persistence features). -/
@@ -894,7 +1027,7 @@ theorem classI_more_opposition_than_classII :
     semanticOpposition effectorAgent
       (TransitivityClass.resultativeEffective.patientNode) >
     semanticOpposition effectorAgent
-      (TransitivityClass.contact.patientNode) := by native_decide
+      (TransitivityClass.contact.patientNode) := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 18. End-to-End: EntailmentProfile → Case
@@ -903,17 +1036,17 @@ theorem classI_more_opposition_than_classII :
 /-- Full pipeline: kick subject → GrimmNode → NOM/ERG → NOM (accusative). -/
 theorem kick_subject_to_nom :
     (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase
-    = .nom := by native_decide
+    = .nom := by decide
 
 /-- Full pipeline: kick object → GrimmNode → ACC/ABS → ACC (accusative). -/
 theorem kick_object_to_acc :
     (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase
-    = .acc := by native_decide
+    = .acc := by decide
 
 /-- Build subject → NOM (full agent, total persistence). -/
 theorem build_subject_to_nom :
     (GrimmNode.fromSubjectProfile buildSubjectProfile).toCaseRegion.toAccusativeCase
-    = .nom := by native_decide
+    = .nom := by decide
 
 /-- Build object → OBLIQUE (not ACC). The object of *build* maps to
     exPersEnd (entity comes into existence), which falls OUTSIDE the
@@ -924,7 +1057,7 @@ theorem build_subject_to_nom :
     show atypical case marking (e.g., pseudo-cleft asymmetry). -/
 theorem build_object_outside_acc :
     (GrimmNode.fromObjectProfile buildObjectProfile).toCaseRegion ≠ .accAbs := by
-  native_decide
+  decide
 
 /-- Full pipeline: see subject → OBLIQUE (not NOM/ERG).
     The see-subject has sentience but no instigation, so it falls
@@ -932,7 +1065,7 @@ theorem build_object_outside_acc :
     case for perception verb subjects cross-linguistically. -/
 theorem see_subject_not_nomErg :
     (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion ≠ .nomErg := by
-  native_decide
+  decide
 
 /-- Full pipeline: die subject (unaccusative) → ACC/ABS.
     The sole argument of *die* maps to the patient region (no agentivity,
@@ -940,7 +1073,7 @@ theorem see_subject_not_nomErg :
     subject). -/
 theorem die_subject_to_abs :
     (GrimmNode.fromObjectProfile dieSubjectProfile).toCaseRegion.toErgativeCase
-    = .abs := by native_decide
+    = .abs := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 19. Canonical Verb-Agentivity Chain (§2.2, p.523–524)
@@ -1088,15 +1221,15 @@ def objectNodeWithAnimacy (animacy : AnimacyLevel)
     animate/human objects (dative) is the lattice's genuine prediction. -/
 theorem inanimate_object_in_accAbs :
     (objectNodeWithAnimacy .inanimate .quPersBeginning).toCaseRegion
-    = .accAbs := by native_decide
+    = .accAbs := by decide
 
 theorem animate_object_in_dative :
     (objectNodeWithAnimacy .animate .quPersBeginning).toCaseRegion
-    = .dative := by native_decide
+    = .dative := by decide
 
 theorem human_object_in_dative :
     (objectNodeWithAnimacy .human .quPersBeginning).toCaseRegion
-    = .dative := by native_decide
+    = .dative := by decide
 
 -- ── §21.3 DOM predicted when object leaves ACC/ABS ──
 
@@ -1219,7 +1352,7 @@ theorem dom_monotone_animate_human (p : PersistenceLevel) :
     (quPersBeginning) and resultative effective (exPersBeginning) verbs. -/
 theorem totalPersistence_all_outside_accAbs (a : AnimacyLevel) :
     (objectNodeWithAnimacy a .totalPersistence).toCaseRegion ≠ .accAbs := by
-  cases a <;> native_decide
+  cases a <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 22. Projection Kernel Theorems
@@ -1312,7 +1445,7 @@ def _root_.Features.LevinClassProfiles.ArgTemplate.objectAffectedness
 
 /-- Manner-contact subject → full agent on the Grimm lattice. -/
 theorem mannerContact_subject_grimm :
-    mannerContact.subjectGrimm.agentivity = ⊤ := by native_decide
+    mannerContact.subjectGrimm.agentivity = ⊤ := by decide
 
 /-- Manner-contact object → potential affectedness (no CoS entailed). -/
 theorem mannerContact_object_affectedness :
@@ -1356,18 +1489,18 @@ theorem template_affectedness_hierarchy :
 theorem mannerContact_cross_projection :
     mannerContact.objectAffectedness = some AffectednessDegree.potential ∧
     mannerContact.objectProfile.map PersistenceLevel.fromPatientProfile =
-      some .totalPersistence := ⟨rfl, by native_decide⟩
+      some .totalPersistence := ⟨rfl, by decide⟩
 
 /-- Result-change: nonquantized ↔ quPersBeginning (changed but persists). -/
 theorem resultChange_cross_projection :
     resultChange.objectAffectedness = some AffectednessDegree.nonquantized ∧
     resultChange.objectProfile.map PersistenceLevel.fromPatientProfile =
-      some .quPersBeginning := ⟨rfl, by native_decide⟩
+      some .quPersBeginning := ⟨rfl, by decide⟩
 
 /-- Creation: quantized ↔ exPersEnd (entity comes into existence). -/
 theorem creation_cross_projection :
     creation.objectAffectedness = some AffectednessDegree.quantized ∧
     creation.objectProfile.map PersistenceLevel.fromPatientProfile =
-      some .exPersEnd := ⟨rfl, by native_decide⟩
+      some .exPersEnd := ⟨rfl, by decide⟩
 
 end Features.AgentivityLattice
