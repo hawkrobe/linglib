@@ -3048,12 +3048,42 @@ relative to `rootPrependCount outer`:
 
 Returns the original outer unchanged on invalid inputs (defensive). -/
 
-noncomputable def absorbInnerPair (_outer : List (Path × Planar α))
-    (_p : Path) (_c : Planar α) : List (Path × Planar α) :=
-  -- TODO Phase B: implement via decodePath decoder + 3-class case split.
-  -- Sorry-fenced: returning a stub here would make `multiGraft_compose`
-  -- provably false, so we leave the body undefined.
-  sorry
+/-- Find the pair-list index `k` whose pair contributes the `i`-th
+    root-prepend (i.e., the (i+1)-th pair in pair-list order with `.fst = []`).
+    Returns `none` if `i ≥ rootPrependCount outer`. -/
+def rootPrependPairIdx (outer : List (Path × Planar α)) (i : ℕ) :
+    Option (Fin outer.length) :=
+  ((List.finRange outer.length).filter (fun k => outer[k.val].fst = []))[i]?
+
+/-- Absorb a single inner pair `(p, c)` into outer, returning the modified
+    pair list. Recursive on path structure:
+    - p = []: root vertex (preserved/sourceSelf class, v = []). Append ([], c).
+    - p = i :: rest, i < rootPrependCount outer: lifted at pair k. Modify outer[k]
+      to insert c at rest in outer[k].snd.
+    - p = i :: rest, i ≥ rootPrependCount outer: descend into T's child at index
+      (i - rootPrependCount outer). Recurse on the descended outer pairs. -/
+noncomputable def absorbInnerPair (outer : List (Path × Planar α))
+    (p : Path) (c : Planar α) : List (Path × Planar α) :=
+  match p with
+  | [] =>
+    -- Root vertex: preserved (or sourceSelf if [] ∈ pairSources outer).
+    -- Either way, appending ([], c) is the correct action.
+    outer ++ [([], c)]
+  | i :: rest =>
+    let N := rootPrependCount outer
+    if i < N then
+      -- Lifted: i indexes a rootPrepended subtree. Find pair k via rootPrependPairIdx.
+      match rootPrependPairIdx outer i with
+      | some k =>
+        outer.set k.val (outer[k.val].fst, insertAt rest c outer[k.val].snd)
+      | none => outer  -- defensive: should be unreachable since i < N
+    else
+      -- Child: (i - N) is a child index of T's root children.
+      -- The descended outer for this child: descentToChild (i - N) outer.
+      -- We need to recursively absorb (rest, c) into the descended outer,
+      -- then "lift back" to the original outer with a modified pair structure.
+      -- TODO Phase B: full lift-back logic; for now sorry.
+      sorry
 
 /-! ### §11.2: `composePairs` — full inner-list composition
 
