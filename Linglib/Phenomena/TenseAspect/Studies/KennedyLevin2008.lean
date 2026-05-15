@@ -329,8 +329,8 @@ theorem warm_pipeline_converge :
     independent of this substrate work. -/
 
 open Semantics.Events
-open Semantics.Events.ScalarResult
-open Semantics.Events.AffectednessHierarchy
+open Semantics.Events.Scalar
+open Semantics.Events.Scalar.Affectedness
 open Semantics.Degree.MeasureFunction
 
 /-- Toy time type for the substrate demonstration. -/

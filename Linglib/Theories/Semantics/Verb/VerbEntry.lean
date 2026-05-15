@@ -61,7 +61,7 @@ open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)
 open Features.EntailmentProfile (EntailmentProfile)
 open Features.DegreeAchievement (DegreeAchievementScale)
-open Semantics.Events.Incrementality (VerbIncClass)
+open Semantics.Events.Aspect.Incremental (VerbIncClass)
 open Features.LevinClassProfiles
 
 /-- Framework-neutral voice type for deriving argument structure properties.

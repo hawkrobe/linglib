@@ -639,8 +639,8 @@ witnesses on `OBJ` are exactly what `not_cum_of_disconnected` and
 `mixedDrink_not_qua` produce in this file — Moon's empirical
 contribution feeds Filip's algebraic machinery in a single Lean term. -/
 
-open Semantics.Events.Incrementality (IsSincVerb)
-open Semantics.Events.CumulativityPropagation (VP)
+open Semantics.Events.Aspect.Incremental (IsSincVerb)
+open Semantics.Events.Aspect.Cumulativity (VP)
 open Filip2012 (middle_ground_stable)
 
 section MoonFilipBridge

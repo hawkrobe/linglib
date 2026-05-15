@@ -50,9 +50,9 @@ namespace Filip2012
 
 open _root_.Mereology
 open Semantics.Events.CEM
-open Semantics.Events.ThematicRoleProperties
-open Semantics.Events.Incrementality
-open Semantics.Events.CumulativityPropagation
+open Semantics.Events.ThematicRole.Properties
+open Semantics.Events.Aspect.Incremental
+open Semantics.Events.Aspect.Cumulativity
 
 /-! ### Three-way exhaustiveness (Filip's distinctive observation) -/
 

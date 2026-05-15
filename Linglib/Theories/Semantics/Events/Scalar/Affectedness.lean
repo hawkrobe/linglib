@@ -40,9 +40,9 @@ but is not a typeclass).
   derives the parent fields via the `ScalarResult` implication chain.
 -/
 
-namespace Semantics.Events.AffectednessHierarchy
+namespace Semantics.Events.Scalar.Affectedness
 
-open Semantics.Events.ScalarResult
+open Semantics.Events.Scalar
 
 /-! ### AffectednessDegree enum (Beavers 4-level scale) -/
 
@@ -205,4 +205,4 @@ def IsQuantizedAffected.mk' {α β δ : Type*}
   finalDegree := g_φ
   isQuantized := h
 
-end Semantics.Events.AffectednessHierarchy
+end Semantics.Events.Scalar.Affectedness

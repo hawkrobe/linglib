@@ -62,7 +62,7 @@ quantify over the scale's maximum (or its absence).
 namespace Semantics.Degree.MeasureFunction
 
 open Semantics.Events
-open Semantics.Events.ScalarResult
+open Semantics.Events.Scalar
 
 -- ════════════════════════════════════════════════════
 -- § 1. MeasureFunction (K&L 2008 footnote 9)

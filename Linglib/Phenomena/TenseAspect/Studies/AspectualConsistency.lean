@@ -34,7 +34,7 @@ namespace AspectualConsistency
 open Semantics.Verb
 open Features
 open Fragments.English.Predicates.Verbal
-open Semantics.Events.Incrementality (VerbIncClass)
+open Semantics.Events.Aspect.Incremental (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 open Krifka1998 (predictsGRAD)
@@ -560,9 +560,9 @@ theorem k89_read_refines_k98_matches_fragment :
 
 section PropositionalConsistency
 
-open Semantics.Events.ThematicRoleProperties (UP CumTheta IsCumThetaVerb)
-open Semantics.Events.Incrementality (SINC IsSincVerb)
-open Semantics.Events.CumulativityPropagation
+open Semantics.Events.ThematicRole.Properties (UP CumTheta IsCumThetaVerb)
+open Semantics.Events.Aspect.Incremental (SINC IsSincVerb)
+open Semantics.Events.Aspect.Cumulativity
   (VP cum_propagation qua_propagation)
 open Mereology (CUM QUA)
 

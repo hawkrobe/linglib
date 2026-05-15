@@ -39,9 +39,9 @@ and any modern incremental-theme account.
 * @cite{dowty-1991} (proto-roles)
 -/
 
-namespace Semantics.Events.Incrementality
+namespace Semantics.Events.Aspect.Incremental
 
-open Semantics.Events.ThematicRoleProperties
+open Semantics.Events.ThematicRole.Properties
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
@@ -276,8 +276,8 @@ def IsSincVerb.mk' {θ : α → β → Prop}
     final degree is verb-specific lexical content that cannot be
     derived from SINC alone. -/
 
-open Semantics.Events.AffectednessHierarchy
-open Semantics.Events.ScalarResult
+open Semantics.Events.Scalar.Affectedness
+open Semantics.Events.Scalar
 
 /-- Bridge: a K98 SINC verb θ with an explicit final-degree witness
     becomes a Beavers `IsQuantizedAffected` instance. The `forget`
@@ -302,4 +302,4 @@ def IsQuantizedAffected.ofIsSincVerb {α β δ : Type*}
     IsQuantizedAffected (δ := δ) θ :=
   IsQuantizedAffected.mk' forget g_φ h_quantized
 
-end Semantics.Events.Incrementality
+end Semantics.Events.Aspect.Incremental

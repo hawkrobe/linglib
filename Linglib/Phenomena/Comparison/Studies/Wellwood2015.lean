@@ -806,9 +806,9 @@ The bridge theorems below connect Krifka's formal CUM/QUA predicates
 and `statusPredictsFelicitous`.
 -/
 
-open Semantics.Events.ThematicRoleProperties (IsCumThetaVerb)
-open Semantics.Events.Incrementality (IsSincVerb)
-open Semantics.Events.CumulativityPropagation (VP cum_propagation qua_propagation)
+open Semantics.Events.ThematicRole.Properties (IsCumThetaVerb)
+open Semantics.Events.Aspect.Incremental (IsSincVerb)
+open Semantics.Events.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 
 /-- CUM(VP) → VP is measurable by `much` (cumulative status).
 

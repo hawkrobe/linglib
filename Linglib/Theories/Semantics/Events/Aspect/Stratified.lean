@@ -39,7 +39,7 @@ but lets all three specializations be genuine instances of `SR`.
 * @cite{link-1983} (the `*` algebraic-closure operator SR builds on)
 -/
 
-namespace Semantics.Events.StratifiedReference
+namespace Semantics.Events.Aspect.Stratified
 
 open Semantics.Events
 open Semantics.Events.CEM
@@ -359,4 +359,4 @@ theorem in_adverbial_incompatible_with_ssr
   intro hSSR
   exact qua_incompatible_with_ssr hQua he₁ (hSSR e₁ he₁)
 
-end Semantics.Events.StratifiedReference
+end Semantics.Events.Aspect.Stratified

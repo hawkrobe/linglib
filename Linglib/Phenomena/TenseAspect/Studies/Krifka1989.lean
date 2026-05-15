@@ -72,9 +72,9 @@ namespace Krifka1989
 open _root_.Mereology
 open Semantics.Events.CEM
 open Semantics.Noun.MereoReference (MassNoun CountNoun BarePlural barePlural_cum)
-open Semantics.Events.ThematicRoleProperties (UP)
-open Semantics.Events.Incrementality (SINC VerbIncClass IsSincVerb)
-open Semantics.Events.CumulativityPropagation (VP qua_propagation)
+open Semantics.Events.ThematicRole.Properties (UP)
+open Semantics.Events.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
+open Semantics.Events.Aspect.Cumulativity (VP qua_propagation)
 open Core.Scale (MereoTag)
 open Phenomena.TenseAspect.Diagnostics
   (forXPrediction inXPrediction DiagnosticResult)
