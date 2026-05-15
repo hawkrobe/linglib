@@ -5567,18 +5567,96 @@ private theorem LHS_form_cons_decompose
   -- Now `enumFChoices a_2 (c :: filterMap_rest)` = `Multiset.ofList (listChoices (perKFChoice a_2)
   -- (c :: filterMap_rest).length)`. The `.length` reduces, listChoices_succ exposes (i, v).
   simp_rw [List.length_cons, listChoices_succ]
-  -- Substantive content remaining (~400-700 LOC across 2 sessions):
-  -- - Phase D.T_orig: c-vertex choice → preserved/sourceSelf class of T (via
-  --   `vertices_multiGraft_decomp` on T'). Per Phase A's `multiGraft_cons_pair`,
-  --   absorb (v, c) into the multiGraft pair list ↔ extending pres .T_orig.
-  -- - Phase D.T_graft: c-vertex choice → lifted class (vertex inside pre_T_B[k]).
-  --   Per `multiGraft_split_lifted_aux`, absorb into pre_T_B[k]'s subtree ↔
-  --   extending pres .T_graft for tree k.
-  -- - Phase D.FA_orig / FA_graft: F-side analogs via `vertices_forest_eq_partition`.
-  -- - Phase E: reassemble 4 buckets into RHS form via Multiset.cons_bind.
-  -- - msform absorption via `multiGraft_perm_pair` per bucket.
+  -- Phase D.0: Decompose RHS [4 buckets] into 4 explicit summands via Multiset.cons_bind.
+  -- Each summand specializes the Function.update pres b (pres b ++ [c]) for one bucket b.
+  rw [show ([QuadIdx.T_orig, QuadIdx.T_graft, QuadIdx.FA_orig, QuadIdx.FA_graft] :
+            Multiset QuadIdx) =
+        QuadIdx.T_orig ::ₘ QuadIdx.T_graft ::ₘ QuadIdx.FA_orig ::ₘ QuadIdx.FA_graft ::ₘ 0
+      from rfl]
+  rw [Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind, Multiset.cons_bind,
+      Multiset.zero_bind, add_zero]
+  -- RHS now: T_orig_summand + T_graft_summand + FA_orig_summand + FA_graft_summand
+  -- Phase D.0 done; the 4 summand structure is now explicit.
   --
-  -- See `scratch/a33_phase4_2_session_prompt_16.md` for the detailed plan.
+  -- Phase D.0.1: Apply Function.update reductions per bucket. Each summand's
+  -- pres' = update pres b (pres b ++ [c]) reduces to pointwise per-Y identities:
+  -- update-pres b (pres b ++ [c]) Y = if Y = b then pres b ++ [c] else pres Y.
+  -- We pre-compute these per-summand to expose which pres-slot c is absorbed into.
+  --
+  -- For T_orig: only .T_orig changes (gets ++ [c]); .T_graft, .FA_orig, .FA_graft unchanged.
+  -- For T_graft: only .T_graft changes; others unchanged.
+  -- For FA_orig: only .FA_orig changes; others unchanged.
+  -- For FA_graft: only .FA_graft changes; others unchanged.
+  simp only [show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.T_orig (pres' QuadIdx.T_orig ++ [c]) QuadIdx.T_orig =
+                pres' QuadIdx.T_orig ++ [c] from fun _ => Function.update_self _ _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.T_orig (pres' QuadIdx.T_orig ++ [c]) QuadIdx.T_graft =
+                pres' QuadIdx.T_graft from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.T_orig (pres' QuadIdx.T_orig ++ [c]) QuadIdx.FA_orig =
+                pres' QuadIdx.FA_orig from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.T_orig (pres' QuadIdx.T_orig ++ [c]) QuadIdx.FA_graft =
+                pres' QuadIdx.FA_graft from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.T_graft (pres' QuadIdx.T_graft ++ [c]) QuadIdx.T_orig =
+                pres' QuadIdx.T_orig from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.T_graft (pres' QuadIdx.T_graft ++ [c]) QuadIdx.T_graft =
+                pres' QuadIdx.T_graft ++ [c] from fun _ => Function.update_self _ _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.T_graft (pres' QuadIdx.T_graft ++ [c]) QuadIdx.FA_orig =
+                pres' QuadIdx.FA_orig from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.T_graft (pres' QuadIdx.T_graft ++ [c]) QuadIdx.FA_graft =
+                pres' QuadIdx.FA_graft from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.FA_orig (pres' QuadIdx.FA_orig ++ [c]) QuadIdx.T_orig =
+                pres' QuadIdx.T_orig from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.FA_orig (pres' QuadIdx.FA_orig ++ [c]) QuadIdx.T_graft =
+                pres' QuadIdx.T_graft from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.FA_orig (pres' QuadIdx.FA_orig ++ [c]) QuadIdx.FA_orig =
+                pres' QuadIdx.FA_orig ++ [c] from fun _ => Function.update_self _ _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.FA_orig (pres' QuadIdx.FA_orig ++ [c]) QuadIdx.FA_graft =
+                pres' QuadIdx.FA_graft from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.FA_graft (pres' QuadIdx.FA_graft ++ [c]) QuadIdx.T_orig =
+                pres' QuadIdx.T_orig from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.FA_graft (pres' QuadIdx.FA_graft ++ [c]) QuadIdx.T_graft =
+                pres' QuadIdx.T_graft from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.FA_graft (pres' QuadIdx.FA_graft ++ [c]) QuadIdx.FA_orig =
+                pres' QuadIdx.FA_orig from fun _ => Function.update_of_ne (by decide) _ _,
+             show ∀ pres' : QuadIdx → List (Planar α),
+                Function.update pres' QuadIdx.FA_graft (pres' QuadIdx.FA_graft ++ [c]) QuadIdx.FA_graft =
+                pres' QuadIdx.FA_graft ++ [c] from fun _ => Function.update_self _ _ _]
+  -- RHS now: 4 summands with explicit per-bucket pres slot updated to (pres slot ++ [c]).
+  --
+  -- Substantive content remaining for Phase D.1-D.4 (~400-700 LOC across 2 sessions):
+  -- - Phase D.T_orig: TRUE branch with v_c at preserved/sourceSelf class of T
+  --   matches the T_orig summand. Use `vertices_multiGraft_decomp` on
+  --   `T' = multiGraft T (choice.zip (pre_T_B' ++ pres .T_orig))` to partition
+  --   v_c, then `multiGraft_cons_pair` to absorb (v_c, c) into the pair list at
+  --   the prepend position (or via PlanarEquiv to append into pres .T_orig).
+  -- - Phase D.T_graft: TRUE branch with v_c at lifted class of T matches the
+  --   T_graft summand. Use `multiGraft_split_lifted_aux` to absorb (q, c) into
+  --   pre_T_B[k]'s subtree, lifting it into the pres .T_graft pair list.
+  -- - Phase D.FA_orig: FALSE branch with (i,v) at preserved/sourceSelf class of
+  --   F'[i] matches the FA_orig summand. F-side analog via
+  --   `vertices_forest_eq_partition`.
+  -- - Phase D.FA_graft: FALSE branch with (i,v) at lifted class of F'[i]
+  --   matches the FA_graft summand. F-side analog via
+  --   `multiGraft_split_lifted_aux`.
+  -- - Phase D.4: msform absorption via `multiGraft_perm_pair` /
+  --   `insertion_planarEquiv_guests` per bucket (planar-order differences
+  --   between prepend and append at the c-pair position).
+  --
+  -- See `scratch/a33_phase4_2_session_prompt_17.md` for the detailed plan.
   sorry
 
 /-! ### §1.12: LHS-side strong-IH (sorry-free given §1.11.8 helper)
