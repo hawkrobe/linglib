@@ -5458,10 +5458,49 @@ private theorem LHS_form_cons_decompose
                 (Function.update pres b (pres b ++ [c])) .FA_orig)).bind fun F' =>
               insertionForest (T' :: F') rest).map
         (fun L => Multiset.ofList (L.map Nonplanar.mk))) := by
-  -- Substantial substrate; see §1.11.8 docstring for the proof plan.
-  -- Briefly: peel via `insertionForest_cons_cons` + per-bucket vertex
-  -- decomposition (`vertices_multiGraft_decomp` / `vertices_forest_eq_partition`)
-  -- + msform-level absorption via `multiGraft_perm_pair`.
+  -- Phase B: Apply `insertionForest_cons_cons` to expose the bool-assignment for
+  -- (c :: rest) inside the inner `insertionForest (T' :: F') (c :: rest)`.
+  -- The first bool determines T-side vs F-side for c; subsequent bools determine
+  -- t/f-side for rest-guests.
+  --
+  -- Step B.1: rewrite innermost via `insertionForest_cons_cons`. simp_rw enters binders.
+  simp_rw [insertionForest_cons_cons]
+  -- LHS now: 4 outer binds + inner (listChoices [true, false] (c :: rest).length).bind assignment ...
+  -- + .map msform on the outermost.
+  --
+  -- Step B.2: Push .map msform inside all 4 outer binds + inner assignment-bind.
+  -- After 5 layers of Multiset.map_bind, msform reaches the innermost map's argument.
+  rw [Multiset.map_bind]
+  simp_rw [Multiset.map_bind]
+  -- Step B.3: Push msform into the innermost .map (insertionForest F' .map F'' => T'' :: F'')
+  -- via Multiset.map_map; collapses (.map F'' => T'' :: F'').map msform =
+  -- .map (msform ∘ (T'' :: ·)) = .map fun F'' => msform (T'' :: F'')
+  simp_rw [Multiset.map_map]
+  -- LHS now: outer 4 binds → assignment.bind → T''.bind → F''.map => msform (T'' :: F'')
+  --
+  -- Step B.4: Split (c :: rest).length = rest.length + 1 and apply listChoices_succ.
+  -- This exposes the head bool a₀ and rest_assn separately.
+  rw [show ∀ (l : List (Planar α)), (c :: l).length = l.length + 1 from fun _ => rfl]
+  -- Apply listChoices_succ to expose `[true, false].flatMap fun a₀ =>
+  --   (listChoices [true, false] rest.length).map (a₀ :: ·)` and convert to
+  -- the Multiset.bind form via ← Multiset.coe_bind.
+  simp_rw [show (Multiset.ofList (listChoices [true, false] (rest.length + 1)) :
+              Multiset (List Bool)) =
+            (Multiset.ofList ([true, false] : List Bool)).bind fun a₀ =>
+              (Multiset.ofList (listChoices [true, false] rest.length)).map (a₀ :: ·)
+          from by rw [listChoices_succ, ← Multiset.coe_bind]; rfl]
+  -- LHS now: outer 4 binds → ([true, false]).bind a₀ => (listChoices [...]).map => ...
+  -- Step B.5: split [true, false] into True/False sub-binds via Multiset.cons_bind.
+  -- ofList [true, false] = true ::ₘ false ::ₘ 0; cons_bind exposes both cases.
+  simp_rw [show ((Multiset.ofList ([true, false] : List Bool)) : Multiset Bool) =
+            (true : Bool) ::ₘ (false : Bool) ::ₘ 0 from rfl]
+  simp_rw [Multiset.cons_bind, Multiset.zero_bind, add_zero]
+  -- LHS now: outer 4 binds → (TRUE_case + FALSE_case)
+  -- Where TRUE_case has c in t-filter (a₀ = true) and FALSE_case has c in f-filter (a₀ = false).
+  -- Step C-D: per-side vertex decomposition + per-bucket absorption via
+  --   `vertices_multiGraft_decomp` + `multiGraft_cons_pair` (Phase A, sorry-free) /
+  --   `multiGraft_split_lifted_aux` + `multiGraft_perm_pair`. Substantive content
+  --   (~600-1000 LOC across 2-3 sessions); see `scratch/a33_phase4_2_session_prompt_16.md`.
   sorry
 
 /-! ### §1.12: LHS-side strong-IH (sorry-free given §1.11.8 helper)
