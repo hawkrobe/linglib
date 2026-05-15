@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.StratifiedReference
+import Linglib.Theories.Semantics.Events.Aspect.Stratified
 import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics

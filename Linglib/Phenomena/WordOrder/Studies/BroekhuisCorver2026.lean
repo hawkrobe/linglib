@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Typology.Adposition
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
-import Linglib.Theories.Semantics.Events.SpatialTrace
+import Linglib.Theories.Semantics.Events.Spatial.Trace
 
 /-!
 # Broekhuis & Corver (2026): Adpositions in Dutch

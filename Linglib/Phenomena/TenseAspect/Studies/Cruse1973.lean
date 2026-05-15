@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.ThematicRoles
+import Linglib.Theories.Semantics.Events.ThematicRole.Defs
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Phenomena.TenseAspect.Diagnostics

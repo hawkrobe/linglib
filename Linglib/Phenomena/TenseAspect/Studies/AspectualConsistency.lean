@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Semantics.Events.SpatialTrace
-import Linglib.Theories.Semantics.Events.CumulativityPropagation
+import Linglib.Theories.Semantics.Events.Spatial.Trace
+import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Verb.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989

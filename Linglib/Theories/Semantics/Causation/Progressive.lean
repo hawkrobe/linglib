@@ -1,6 +1,6 @@
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Theories.Semantics.Events.TemporalDecomposition
+import Linglib.Theories.Semantics.Events.Decomposition
 
 /-!
 # Progressive Aspect and Causal Structure

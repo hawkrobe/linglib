@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.TemporalDecomposition
+import Linglib.Theories.Semantics.Events.Decomposition
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Core.Time.Reichenbach

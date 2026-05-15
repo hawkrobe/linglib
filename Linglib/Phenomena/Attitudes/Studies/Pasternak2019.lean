@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Gradability.StatesBased
 import Linglib.Theories.Semantics.Attitudes.Confidence
-import Linglib.Theories.Semantics.Events.ThematicRoles
+import Linglib.Theories.Semantics.Events.ThematicRole.Defs
 import Linglib.Phenomena.Comparison.Studies.Wellwood2015
 import Linglib.Core.Mereology
 import Linglib.Fragments.English.Predicates.Verbal

@@ -18,7 +18,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Verb.DegreeAchievement
-import Linglib.Theories.Semantics.Events.Incrementality
+import Linglib.Theories.Semantics.Events.Aspect.Incremental
 import Linglib.Theories.Semantics.Verb.LevinClassProfiles
 
 /-! # Cross-Linguistic Verb Infrastructure

@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Events.ThematicRoleProperties
-import Linglib.Theories.Semantics.Events.AffectednessHierarchy
-import Linglib.Theories.Semantics.Events.PrecedenceClosure
+import Linglib.Theories.Semantics.Events.ThematicRole.Properties
+import Linglib.Theories.Semantics.Events.Scalar.Affectedness
+import Linglib.Theories.Semantics.Events.Aspect.PrecedenceClosure
 
 /-!
 # Incrementality (SINC, INC) and Verb-Class Typeclass Hierarchy

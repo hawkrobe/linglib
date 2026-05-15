@@ -1,5 +1,5 @@
 import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
-import Linglib.Theories.Semantics.Events.TemporalDecomposition
+import Linglib.Theories.Semantics.Events.Decomposition
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 

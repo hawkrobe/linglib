@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.CEM
-import Linglib.Theories.Semantics.Events.ThematicRoleProperties
-import Linglib.Theories.Semantics.Events.Incrementality
-import Linglib.Theories.Semantics.Events.CumulativityPropagation
+import Linglib.Theories.Semantics.Events.ThematicRole.Properties
+import Linglib.Theories.Semantics.Events.Aspect.Incremental
+import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
 
 /-!
 # @cite{filip-2012}: "Lexical Aspect"

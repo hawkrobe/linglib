@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.ScalarResult
+import Linglib.Theories.Semantics.Events.Scalar.Defs
 import Mathlib.Order.Basic
 
 /-!

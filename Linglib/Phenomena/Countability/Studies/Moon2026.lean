@@ -1,7 +1,7 @@
 import Linglib.Core.Mereotopology
 import Linglib.Core.Mereology
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
-import Linglib.Theories.Semantics.Events.Incrementality
+import Linglib.Theories.Semantics.Events.Aspect.Incremental
 import Linglib.Phenomena.TenseAspect.Studies.Filip2012
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum

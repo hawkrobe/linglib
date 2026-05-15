@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Verb.VerbEntry
-import Linglib.Theories.Semantics.Events.ArgumentRealization
+import Linglib.Theories.Semantics.Events.ThematicRole.Realization
 import Linglib.Fragments.Indonesian.Morphophonology
 
 /-!

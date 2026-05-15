@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Semantics.Events.ThematicRoles
+import Linglib.Theories.Semantics.Events.ThematicRole.Defs
 
 /-!
 # Demonstration Semantics for Quotative Complements

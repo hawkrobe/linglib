@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
-import Linglib.Theories.Semantics.Events.AffectednessHierarchy
-import Linglib.Theories.Semantics.Events.ScalarResult
+import Linglib.Theories.Semantics.Events.Scalar.Affectedness
+import Linglib.Theories.Semantics.Events.Scalar.Defs
 
 /-!
 # Affectedness Hierarchy: EntailmentProfile Projection

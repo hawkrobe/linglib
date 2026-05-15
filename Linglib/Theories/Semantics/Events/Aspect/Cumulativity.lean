@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Events.ThematicRoleProperties
-import Linglib.Theories.Semantics.Events.Incrementality
+import Linglib.Theories.Semantics.Events.ThematicRole.Properties
+import Linglib.Theories.Semantics.Events.Aspect.Incremental
 
 /-!
 # Cumulativity and Quantization Propagation

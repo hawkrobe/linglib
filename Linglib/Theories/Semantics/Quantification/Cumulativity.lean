@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Plurality.Cumulativity
-import Linglib.Theories.Semantics.Events.CumulativityPropagation
+import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.HigherOrder
 
 /-!

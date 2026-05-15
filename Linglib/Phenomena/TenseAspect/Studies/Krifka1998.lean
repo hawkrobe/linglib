@@ -1,10 +1,10 @@
-import Linglib.Theories.Semantics.Events.ThematicRoleProperties
-import Linglib.Theories.Semantics.Events.Incrementality
-import Linglib.Theories.Semantics.Events.CumulativityPropagation
+import Linglib.Theories.Semantics.Events.ThematicRole.Properties
+import Linglib.Theories.Semantics.Events.Aspect.Incremental
+import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Events.CEM
-import Linglib.Theories.Semantics.Events.SpatialTrace
-import Linglib.Theories.Semantics.Events.EventAdjacency
-import Linglib.Theories.Semantics.Events.PrecedenceClosure
+import Linglib.Theories.Semantics.Events.Spatial.Trace
+import Linglib.Theories.Semantics.Events.Adjacency
+import Linglib.Theories.Semantics.Events.Aspect.PrecedenceClosure
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics

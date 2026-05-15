@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Measurement
-import Linglib.Theories.Semantics.Events.ThematicRoles
-import Linglib.Theories.Semantics.Events.ThematicRoleProperties
-import Linglib.Theories.Semantics.Events.Incrementality
-import Linglib.Theories.Semantics.Events.CumulativityPropagation
+import Linglib.Theories.Semantics.Events.ThematicRole.Defs
+import Linglib.Theories.Semantics.Events.ThematicRole.Properties
+import Linglib.Theories.Semantics.Events.Aspect.Incremental
+import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Phenomena.Comparison.Studies.Bresnan1973
 
