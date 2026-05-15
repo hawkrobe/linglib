@@ -3060,10 +3060,113 @@ Returns the original outer unchanged on invalid inputs (defensive). -/
 
 /-- Find the pair-list index `k` whose pair contributes the `i`-th
     root-prepend (i.e., the (i+1)-th pair in pair-list order with `.fst = []`).
-    Returns `none` if `i ≥ rootPrependCount outer`. -/
-def rootPrependPairIdx (outer : List (Path × Planar α)) (i : ℕ) :
-    Option (Fin outer.length) :=
-  ((List.finRange outer.length).filter (fun k => outer[k.val].fst = []))[i]?
+    Returns `none` if `i ≥ rootPrependCount outer`.
+
+    Recursive on the outer list (as opposed to a filter over `List.finRange`):
+    avoids dependent-type issues when proving recursive equation lemmas. -/
+def rootPrependPairIdx : (outer : List (Path × Planar α)) → ℕ → Option (Fin outer.length)
+  | [], _ => none
+  | ([], _) :: rest, 0 => some (0 : Fin (rest.length + 1))
+  | ([], _) :: rest, i + 1 => (rootPrependPairIdx rest i).map Fin.succ
+  | (_ :: _, _) :: rest, i => (rootPrependPairIdx rest i).map Fin.succ
+
+/-! ### §11.1.5: `rootPrependPairIdx` totality + bridge lemma
+
+`rootPrependPairIdx_ne_none_of_lt` gives totality: when `i < rootPrependCount outer`,
+the result is `some _`. The bridge lemma `posInGroup_of_rootPrependPairIdx`
+relates the returned `Fin` index to `posInGroup`, used in the lifted-at-root
+subcase of `absorbInnerPair_eq_insertAt`. -/
+
+private theorem rootPrependPairIdx_ne_none_of_lt :
+    ∀ (outer : List (Path × Planar α)) (i : ℕ),
+    i < rootPrependCount outer → rootPrependPairIdx outer i ≠ none
+  | [], i, h => absurd h (by simp)
+  | ([], T) :: rest, 0, _ => by simp [rootPrependPairIdx]
+  | ([], T) :: rest, i + 1, h => by
+    rw [rootPrependCount_cons_nilPath] at h
+    have h_rest : i < rootPrependCount rest := by omega
+    have ih := rootPrependPairIdx_ne_none_of_lt rest i h_rest
+    show (rootPrependPairIdx rest i).map Fin.succ ≠ none
+    intro h_eq
+    apply ih
+    cases h_inner : rootPrependPairIdx rest i with
+    | none => rfl
+    | some k' => rw [h_inner] at h_eq; simp at h_eq
+  | (j :: rp, T) :: rest, i, h => by
+    rw [rootPrependCount_cons_consPath] at h
+    have ih := rootPrependPairIdx_ne_none_of_lt rest i h
+    show (rootPrependPairIdx rest i).map Fin.succ ≠ none
+    intro h_eq
+    apply ih
+    cases h_inner : rootPrependPairIdx rest i with
+    | none => rfl
+    | some k' => rw [h_inner] at h_eq; simp at h_eq
+
+/-- The bridge lemma: when `rootPrependPairIdx outer i = some k`, `k` indexes
+    a root-prepend pair (`outer[k].fst = []`) and its position among
+    root-prepend pairs is `i` (`posInGroup outer k = i`). Used in the lifted-at-root
+    subcase of `absorbInnerPair_eq_insertAt` to bridge through
+    `multiGraft_split_lifted_aux` + `liftMulti_at_root`. -/
+private theorem posInGroup_of_rootPrependPairIdx :
+    ∀ (outer : List (Path × Planar α)) (i : ℕ) (k : Fin outer.length),
+    rootPrependPairIdx outer i = some k →
+    outer[k.val].fst = [] ∧ posInGroup outer k = i
+  | [], _, k, _ => absurd k.isLt (by simp)
+  | ([], T) :: rest, 0, k, h => by
+    -- rootPrependPairIdx (([], T) :: rest) 0 = some 0 by def
+    show ((([], T) :: rest) : List (Path × Planar α))[k.val].fst = [] ∧
+         posInGroup (([], T) :: rest) k = 0
+    have h_def : rootPrependPairIdx (([], T) :: rest) 0 =
+                 some (0 : Fin (rest.length + 1)) := rfl
+    rw [h_def, Option.some_inj] at h
+    subst h
+    exact ⟨rfl, rfl⟩
+  | ([], T) :: rest, i + 1, k, h => by
+    have h_def : rootPrependPairIdx (([], T) :: rest) (i + 1) =
+                 (rootPrependPairIdx rest i).map Fin.succ := rfl
+    rw [h_def] at h
+    cases h_inner : rootPrependPairIdx rest i with
+    | none =>
+      rw [h_inner] at h
+      exact absurd h (by simp)
+    | some k' =>
+      rw [h_inner] at h
+      rw [Option.map_some, Option.some_inj] at h
+      subst h
+      obtain ⟨h_fst', h_pos'⟩ :=
+        posInGroup_of_rootPrependPairIdx rest i k' h_inner
+      refine ⟨?_, ?_⟩
+      · show ((([], T) :: rest) : List (Path × Planar α))[(Fin.succ k').val].fst = []
+        show ((([], T) :: rest) : List (Path × Planar α))[k'.val + 1].fst = []
+        rw [List.getElem_cons_succ]
+        exact h_fst'
+      · rw [posInGroup_cons_succ_root T rest k' h_fst']
+        omega
+  | (j :: rp, T) :: rest, i, k, h => by
+    have h_def : rootPrependPairIdx ((j :: rp, T) :: rest) i =
+                 (rootPrependPairIdx rest i).map Fin.succ := rfl
+    rw [h_def] at h
+    cases h_inner : rootPrependPairIdx rest i with
+    | none =>
+      rw [h_inner] at h
+      exact absurd h (by simp)
+    | some k' =>
+      rw [h_inner] at h
+      rw [Option.map_some, Option.some_inj] at h
+      subst h
+      obtain ⟨h_fst', h_pos'⟩ :=
+        posInGroup_of_rootPrependPairIdx rest i k' h_inner
+      refine ⟨?_, ?_⟩
+      · show (((j :: rp, T) :: rest) : List (Path × Planar α))[(Fin.succ k').val].fst = []
+        show (((j :: rp, T) :: rest) : List (Path × Planar α))[k'.val + 1].fst = []
+        rw [List.getElem_cons_succ]
+        exact h_fst'
+      · rw [posInGroup_cons_succ_child j rp T rest k']
+        rw [if_neg (by
+          intro heq
+          rw [h_fst'] at heq
+          exact List.cons_ne_nil _ _ heq)]
+        omega
 
 /-- Lift a modification of `descented_outer = descentToChild i outer` back to
     a modification of `outer`. Sorry-fenced; future work.
@@ -3173,12 +3276,25 @@ case requires `liftBackToOuter` to be implemented + correctness lemma. -/
   unfold absorbInnerPair
   rfl
 
-/-- The singleton case of `multiGraft_compose`. Stated unconditionally
-    (no validity hypothesis); the empty-path case holds without validity, and the
-    other cases (currently sorry'd) are designed to handle invalid paths as
-    no-ops (matching `insertAt`'s out-of-bounds no-op semantics).
+/-- Equation lemma: lifted-at-root case of `absorbInnerPair`. When
+    `i < rootPrependCount outer` and `rootPrependPairIdx outer i = some k`,
+    the absorb operation modifies `outer[k]` by inserting `c` at `rest` in
+    its tree component. -/
+private theorem absorbInnerPair_lifted_at_root (outer : List (Path × Planar α))
+    (i : ℕ) (rest : Path) (c : Planar α) (k : Fin outer.length)
+    (h_lt : i < rootPrependCount outer)
+    (h_idx : rootPrependPairIdx outer i = some k) :
+    absorbInnerPair outer (i :: rest) c =
+      outer.set k.val (outer[k.val].fst, insertAt rest c outer[k.val].snd) := by
+  unfold absorbInnerPair
+  simp only [if_pos h_lt, h_idx]
 
-    For full closure, a validity hypothesis may need to be added. -/
+/-- The singleton case of `multiGraft_compose`. Stated unconditionally
+    (no validity hypothesis); the empty-path case holds without validity, the
+    lifted-at-root case via `multiGraft_split_lifted_aux` + the bridge
+    `posInGroup_of_rootPrependPairIdx`, and the descent case (currently sorry'd)
+    is designed to handle invalid paths as no-ops (matching `insertAt`'s
+    out-of-bounds no-op semantics). -/
 theorem absorbInnerPair_eq_insertAt
     (T : Planar α) (outer : List (Path × Planar α)) (p : Path) (c : Planar α) :
     multiGraft T (absorbInnerPair outer p c) =
@@ -3187,12 +3303,20 @@ theorem absorbInnerPair_eq_insertAt
   | [] =>
     -- Empty-path case: by multiGraft_cons_pair + transport_nil_path.
     rw [absorbInnerPair_nil_path, multiGraft_cons_pair, transport_nil_path]
-  | _i :: _rest =>
-    -- Two subcases: lifted-at-root (i < N) and descent (i ≥ N).
-    -- Lifted-at-root: needs `posInGroup_of_rootPrependPairIdx` bridge to show
-    --   `liftMulti outer k rest = i :: rest` when `k = rootPrependPairIdx outer i`.
-    -- Descent: needs `liftBackToOuter` correctness lemma + recursion on path size.
-    sorry
+  | i :: rest =>
+    by_cases h_lt : i < rootPrependCount outer
+    · -- Lifted-at-root: use rootPrependPairIdx + bridge lemma.
+      cases h_idx : rootPrependPairIdx outer i with
+      | none =>
+        exact absurd h_idx (rootPrependPairIdx_ne_none_of_lt outer i h_lt)
+      | some k =>
+        rw [absorbInnerPair_lifted_at_root outer i rest c k h_lt h_idx]
+        obtain ⟨h_fst, h_pos⟩ := posInGroup_of_rootPrependPairIdx outer i k h_idx
+        rw [← multiGraft_split_lifted_aux T outer k rest c]
+        rw [liftMulti_at_root outer k h_fst, h_pos]
+    · -- Descent: i ≥ rootPrependCount outer. Requires `liftBackToOuter`
+      -- correctness lemma + recursion on path size; deferred to next session.
+      sorry
 
 /-! ### §11.4: `multiGraft_compose` — main theorem -/
 
