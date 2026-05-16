@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.CEM
+import Linglib.Theories.Semantics.Mereology.CEM
 
 /-!
 # Stratified Reference @cite{champollion-2017}
@@ -77,7 +77,7 @@ atelicity diagnostic; CUM is the NP→VP propagation property.
 namespace Semantics.Aspect.Stratified
 
 open Semantics.Events
-open Semantics.Events.CEM
+open Semantics.Mereology.CEM
 open _root_.Mereology
 open Core.Time
 open Features

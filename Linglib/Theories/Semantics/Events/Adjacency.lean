@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.CEM
+import Linglib.Theories.Semantics.Mereology.CEM
 
 /-!
 # Event Adjacency and Temporal Precedence

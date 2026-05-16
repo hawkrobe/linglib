@@ -2365,7 +2365,7 @@ import Linglib.Theories.Semantics.Iconic.Basic
 import Linglib.Theories.Semantics.Events.Defs
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Events.ThematicRole.Defs
-import Linglib.Theories.Semantics.Events.CEM
+import Linglib.Theories.Semantics.Mereology.CEM
 import Linglib.Theories.Semantics.Aspect.Stratified
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
 import Linglib.Theories.Semantics.Events.Scalar.Defs

@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
-import Linglib.Theories.Semantics.Events.CEM
+import Linglib.Theories.Semantics.Mereology.CEM
 import Linglib.Theories.Semantics.Events.Spatial.Trace
 import Linglib.Theories.Semantics.Events.Adjacency
 import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
@@ -911,7 +911,7 @@ end K98PropositionalSubstrate
 section SpatialTracePullback
 
 open Semantics.Events
-open Semantics.Events.CEM
+open Semantics.Mereology.CEM
 open Semantics.Spatial.Path
 
 variable {Loc Time : Type*} [LinearOrder Time]
@@ -940,7 +940,7 @@ end SpatialTracePullback
 section Expansiveness
 
 open Semantics.Events
-open Semantics.Events.CEM
+open Semantics.Mereology.CEM
 
 variable {α : Type*} [SemilatticeSup α]
 variable {Time : Type*} [LinearOrder Time]
@@ -961,7 +961,7 @@ end Expansiveness
 section MovementInstances
 
 open Semantics.Events
-open Semantics.Events.CEM
+open Semantics.Mereology.CEM
 open Semantics.Spatial.Path
 
 variable {Loc Time : Type*} [LinearOrder Time]

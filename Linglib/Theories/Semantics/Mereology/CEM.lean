@@ -16,7 +16,7 @@ Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
 `IsSumHom`, `Overlap`, `ExtMeasure`, `QMOD`) live in `Core.Mereology`.
 -/
 
-namespace Semantics.Events.CEM
+namespace Semantics.Mereology.CEM
 
 open Semantics.Events
 open Core.Time
@@ -179,4 +179,4 @@ theorem vendlerClass_telic_cases
   · exact Or.inl rfl
   · exact Or.inr rfl
 
-end Semantics.Events.CEM
+end Semantics.Mereology.CEM
