@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Events.Spatial.Trace
+import Linglib.Theories.Semantics.Verb.LevinClass
 import Linglib.Theories.Semantics.Events.Adjacency
 import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 import Linglib.Features.Aktionsart

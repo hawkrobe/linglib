@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Verb.MeaningComponents
+import Linglib.Theories.Semantics.Spatial.Path
 
 /-!
 # Semantics.Verb.LevinClass
@@ -421,6 +422,19 @@ def isVerbOfCreation : LevinClass → Bool
   | .performance   => true
   | .cooking       => true
   | _              => false
+
+/-- Whether a verb class inherently specifies a path shape.
+    Inherently directed motion verbs (Levin 51.1: arrive, come, go)
+    lexicalize a bounded path. Manner-of-motion verbs (51.3: run, walk)
+    are path-neutral — the path comes from a PP complement.
+    @cite{talmy-2000}: verb-framed vs. satellite-framed distinction. -/
+def pathSpec : LevinClass → Option Semantics.Spatial.Path.PathShape
+  | .inherentlyDirectedMotion => some .bounded
+  | .leave => some .source
+  | .mannerOfMotion => none    -- path from PP
+  | .vehicleMotion => none     -- path from PP/context
+  | .chase => none             -- path from complement
+  | _ => none                  -- non-motion verbs
 
 end LevinClass
 

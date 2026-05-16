@@ -1,5 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Events.Spatial.Trace
+import Linglib.Theories.Semantics.Verb.LevinClass
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.Diagnostics

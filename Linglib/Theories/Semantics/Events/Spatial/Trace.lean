@@ -1,10 +1,6 @@
 import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Spatial.Path
 import Linglib.Features.Aktionsart
-import Linglib.Features.Attitudes
-import Linglib.Features.Causation
-import Linglib.Theories.Semantics.Verb.LevinClass
-import Linglib.Theories.Semantics.Verb.MeaningComponents
 
 /-!
 # Spatial Trace Function σ
@@ -40,7 +36,6 @@ open Semantics.Events
 open Semantics.Events.CEM
 open Semantics.Spatial.Path
 open Features
-open Semantics.Verb
 open _root_.Mereology
 
 /-! ### SpatialTrace Class -/
@@ -160,34 +155,3 @@ instance : Core.Scale.LicensingPipeline PathShape where
   toBoundedness p := (pathShapeToTelicity p).toMereoTag.toBoundedness
 
 end Semantics.Events.SpatialTrace
-
-/-! ### Motion Verb Path Annotations -/
-
-namespace Semantics.Verb
-
-/-- Whether a verb class inherently specifies a path shape.
-    Inherently directed motion verbs (Levin 51.1: arrive, come, go)
-    lexicalize a bounded path. Manner-of-motion verbs (51.3: run, walk)
-    are path-neutral — the path comes from a PP complement.
-    @cite{talmy-2000}: verb-framed vs. satellite-framed distinction. -/
-def LevinClass.pathSpec : LevinClass → Option Semantics.Spatial.Path.PathShape
-  | .inherentlyDirectedMotion => some .bounded
-  | .leave => some .source
-  | .mannerOfMotion => none    -- path from PP
-  | .vehicleMotion => none     -- path from PP/context
-  | .chase => none             -- path from complement
-  | _ => none                  -- non-motion verbs
-
-/-- Inherently directed motion verbs lexicalize a bounded path. -/
-theorem inherentlyDirected_bounded :
-    LevinClass.inherentlyDirectedMotion.pathSpec = some .bounded := rfl
-
-/-- Leave verbs lexicalize a source path. -/
-theorem leave_source :
-    LevinClass.leave.pathSpec = some .source := rfl
-
-/-- Manner-of-motion verbs are path-neutral. -/
-theorem mannerOfMotion_neutral :
-    LevinClass.mannerOfMotion.pathSpec = none := rfl
-
-end Semantics.Verb
