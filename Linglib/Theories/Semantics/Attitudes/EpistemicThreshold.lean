@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Scales.EpistemicScale
 import Linglib.Core.Agent.BToM
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 import Linglib.Theories.Semantics.Attitudes.Confidence
 import Mathlib.Tactic.NormNum
 
@@ -39,7 +39,7 @@ against a threshold (Table 1(a)):
 The threshold semantics is structurally identical to the positive form of
 gradable adjectives:
 
-    ⟦tall⟧(x) = height(x) ≥ θ_tall (Degree/Core.positiveSem)
+    ⟦tall⟧(x) = height(x) ≥ θ_tall (Degree/Basic.positiveSem)
     ⟦believes⟧(A, φ) = Pr(A, φ) ≥ θ_bel (meetsThreshold)
 
 Both are instances of the same degree-threshold architecture: a measure
@@ -234,7 +234,7 @@ def uncertainIf (cr : AgentCredence E W) (a : E) (φ ψ : (W → Bool)) : Prop :
 /-- Comparative credence: `more(P, φ, ψ)` = cr(A, φ) > cr(A, ψ).
 
     The agent's credence in φ strictly exceeds credence in ψ. Mirrors the
-    comparative from `Confidence.lean` and from `Degree/Core.lean`. -/
+    comparative from `Confidence.lean` and from `Degree/Basic.lean`. -/
 def moreCredent (cr : AgentCredence E W)
     (a : E) (φ ψ : (W → Bool)) : Prop :=
   cr a ψ < cr a φ

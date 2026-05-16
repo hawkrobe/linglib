@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 import Linglib.Theories.Semantics.Genericity.Generics
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Theories.Semantics.Plurality.Cumulativity

@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Gradability.Basic
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
+import Linglib.Theories.Semantics.Degree.Kennedy
 import Linglib.Core.Scales.Scale
 
 /-!

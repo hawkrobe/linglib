@@ -42,7 +42,7 @@ partition are disjoint) is derived there.
 
 -/
 
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 
 namespace Semantics.Kinds.MeaningPreservation
 

@@ -4,7 +4,7 @@ import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
 import Linglib.Theories.Semantics.Kinds.MeaningPreservation
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Classifier.Basic
 import Linglib.Fragments.English.Definiteness

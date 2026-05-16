@@ -454,7 +454,7 @@ def utterancePolarity : Utterance → Option Polarity
   | .null     => none
 
 /-- Construction labels for each simulation, connecting to the
-    `AdjectivalConstruction` type from `Degree.Core`. -/
+    `AdjectivalConstruction` type from `Degree.Defs`. -/
 abbrev posConstruction  : AdjectivalConstruction := .positive
 abbrev eqConstruction   : AdjectivalConstruction := .equative
 abbrev compConstruction : AdjectivalConstruction := .comparative

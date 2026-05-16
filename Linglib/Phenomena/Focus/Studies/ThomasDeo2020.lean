@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Degree.Granularity
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 import Linglib.Phenomena.Focus.Exclusives
 
 /-!

@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 
 /-!
 # Dutch Noun Lexicon Fragment

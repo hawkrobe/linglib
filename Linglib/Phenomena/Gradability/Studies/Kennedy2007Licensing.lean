@@ -1,3 +1,4 @@
+import Linglib.Theories.Semantics.Degree.Kennedy
 import Linglib.Theories.Semantics.Gradability.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
@@ -523,29 +524,29 @@ open Semantics.Degree (interpretiveEconomy PositiveStandard)
 
 /-- "tall": both paths predict CC-dependence. -/
 theorem tall_cc_convergence :
-    (interpretiveEconomy tall.scaleType).requiresComparisonClass = true ∧
+    (interpretiveEconomy tall.scaleType).RequiresComparisonClass ∧
     tall.dimension.domain.requiresComparisonClass = true :=
-  ⟨rfl, rfl⟩
+  ⟨trivial, rfl⟩
 
 /-- "full": both paths predict CC-independence. -/
 theorem full_no_cc_convergence :
-    (interpretiveEconomy full.scaleType).requiresComparisonClass = false ∧
+    ¬ (interpretiveEconomy full.scaleType).RequiresComparisonClass ∧
     full.dimension.domain.requiresComparisonClass = false :=
-  ⟨rfl, rfl⟩
+  ⟨id, rfl⟩
 
 /-- "wet": both paths predict CC-independence
     (lower-bounded → endpoint standard; state domain). -/
 theorem wet_no_cc_convergence :
-    (interpretiveEconomy wet.scaleType).requiresComparisonClass = false ∧
+    ¬ (interpretiveEconomy wet.scaleType).RequiresComparisonClass ∧
     wet.dimension.domain.requiresComparisonClass = false :=
-  ⟨rfl, rfl⟩
+  ⟨id, rfl⟩
 
 /-- "dry": both paths predict CC-independence
     (upper-bounded → endpoint standard; state domain). -/
 theorem dry_no_cc_convergence :
-    (interpretiveEconomy dry.scaleType).requiresComparisonClass = false ∧
+    ¬ (interpretiveEconomy dry.scaleType).RequiresComparisonClass ∧
     dry.dimension.domain.requiresComparisonClass = false :=
-  ⟨rfl, rfl⟩
+  ⟨id, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. MPA Licensing (@cite{beltrama-2025})
@@ -571,9 +572,9 @@ theorem mpa_good_same_licensing :
     to Interpretive Economy, distinct from *good*'s exception. -/
 theorem mpa_ie_exception :
     (interpretiveEconomy decent.scaleType) = .minEndpoint ∧
-    (interpretiveEconomy decent.scaleType).requiresComparisonClass = false ∧
+    ¬ (interpretiveEconomy decent.scaleType).RequiresComparisonClass ∧
     -- But MPAs ARE context-sensitive (purpose-relative)
-    decent.dimension.domain.requiresComparisonClass = true := ⟨rfl, rfl, rfl⟩
+    decent.dimension.domain.requiresComparisonClass = true := ⟨rfl, id, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Modifier-class matrix consistency (Kennedy 2007 eq 61)

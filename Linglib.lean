@@ -1909,6 +1909,7 @@ import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.Algebra.PreLie.GuinOudom
+import Linglib.Core.Algebra.PreLie.OudomGuinCirc
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
@@ -2199,15 +2200,15 @@ import Linglib.Theories.Syntax.SynGraph
 -- Theories: Semantics.Degree (degree semantics frameworks)
 import Linglib.Theories.Semantics.Degree.Abstraction
 import Linglib.Theories.Semantics.Gradability.Aggregation
+import Linglib.Theories.Semantics.Degree.Basic
 import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Defs
 import Linglib.Theories.Semantics.Degree.Differential
-import Linglib.Theories.Semantics.Degree.Equative
 import Linglib.Theories.Semantics.Degree.Granularity
-import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Theories.Semantics.Degree.Intervals
+import Linglib.Theories.Semantics.Degree.Kennedy
+import Linglib.Theories.Semantics.Degree.Little
 import Linglib.Theories.Semantics.Degree.MeasureFunction
-import Linglib.Theories.Semantics.Degree.Question
 import Linglib.Theories.Semantics.Degree.Superlative
 import Linglib.Theories.Semantics.Degree.ThanClause
 import Linglib.Theories.Semantics.Gradability.Delineation
@@ -2296,7 +2297,7 @@ import Linglib.Theories.Semantics.Classifier.TypeN
 import Linglib.Theories.Semantics.Gradability.GradableNouns
 import Linglib.Theories.Semantics.Kinds.Anaphora
 import Linglib.Theories.Semantics.Kinds.SortedOntology
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 import Linglib.Theories.Semantics.Kinds.MeaningPreservation
 import Linglib.Theories.Semantics.Genericity.Generics
 import Linglib.Theories.Semantics.Genericity.GenericsDynamic

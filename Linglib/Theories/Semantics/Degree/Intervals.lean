@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Extent
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 
 /-!
 # Schwarzschild's Interval Semantics

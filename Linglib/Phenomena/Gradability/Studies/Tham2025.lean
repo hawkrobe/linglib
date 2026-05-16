@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Gradability.Aggregation
 import Linglib.Theories.Semantics.Aspect.DegreeAchievement
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Gradability.Studies.Sassoon2013

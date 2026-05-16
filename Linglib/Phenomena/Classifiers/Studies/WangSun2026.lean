@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
-import Linglib.Phenomena.Classifiers.Studies.NMP
+import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 
 /-!
 # Wang & Sun (2026): Detaching Mandarin Classifiers from Nouns

@@ -120,7 +120,7 @@ theorem open_notLicensed : Boundedness.open_.isLicensed = false := rfl
 Five degree properties covering all comparison relations, parameterized by
 a measure function `μ : W → α`. These are the building blocks for the named
 numeral meanings (`Semantics.Numerals.atLeastMeaning` etc.) and degree
-questions (`Theories/Semantics/Degree/Question.lean`).
+question semantics.
 
 - `atLeastDeg`: closed `≥`, always has max⊨
 - `moreThanDeg`: open `>`, fails on dense scales

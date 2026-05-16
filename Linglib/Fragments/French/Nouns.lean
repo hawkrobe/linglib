@@ -1,6 +1,6 @@
 import Linglib.Features.Gender
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 
 /-! # French Noun Lexicon Fragment
 

@@ -2,7 +2,7 @@ import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 
 /-!
 # @cite{downing-1996} — Numeral Classifier Systems: The Case of Japanese

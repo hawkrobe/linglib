@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.Limits

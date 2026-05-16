@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Extent
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 
 /-!
@@ -231,50 +231,55 @@ theorem comparative_iff_negExt_ssubset {Entity D : Type*} [LinearOrder D]
       Core.Scale.negExt μ a ⊂ Core.Scale.negExt μ b := by
   rw [comparative_iff_posExt_ssubset, Core.Scale.antonymy_biconditional]
 
--- ════════════════════════════════════════════════════
--- § 9. LITTLE: Degree Negation
--- ════════════════════════════════════════════════════
+/-! ### Strengthened, negated, and extent-theoretic equatives
+@cite{kennedy-2007} @cite{rett-2020} @cite{schwarzschild-2008} @cite{thomas-deo-2020}
 
-/-- LITTLE: the degree negation operator (@cite{heim-2006}).
-    short = LITTLE tall, less = LITTLE -er, fewer = LITTLE many.
+The literal semantics of the equative is "at least as" (`equativeSem`
+with `.positive`). The "exactly as" reading is derived by scalar
+implicature: choosing *as tall as* over the stronger *taller than*
+implicates that the comparative is false, yielding equality. A
+granularity-based alternative is in `Degree.Granularity`. -/
 
-    Semantically, LITTLE complements a degree predicate:
-    ⟦LITTLE⟧(P)(d) = ¬P(d). On extents, this maps `posExt` to
-    `negExt`: the degrees an entity "has" become the degrees it
-    "lacks", reversing the comparison direction.
+section Equative
 
-    @cite{buring-2007} uses LITTLE to analyze cross-polar nomalies:
-    "the ladder was shorter than the house was high" works because
-    MORE [LITTLE long] -er can be reinterpreted as LITTLE-er long
-    (the "more-to-less metamorphosis"). -/
-def littlePred {D : Type*} (P : D → Prop) : D → Prop :=
-  fun d => ¬ P d
+variable {Entity D : Type*}
 
-/-- LITTLE maps the positive extent to the negative extent:
-    LITTLE({d | d ≤ μ(x)}) = {d | μ(x) < d}.
+/-- Equative strengthened semantics: "A is as tall as B" iff `μ(A) = μ(B)`.
+The "exactly as" reading, derived by implicature. -/
+def equativeStrengthened [Preorder D] (μ : Entity → D) (a b : Entity) : Prop :=
+  μ a = μ b
 
-    This is the formal content of "short = LITTLE tall":
-    the degree predicate for 'short' is the complement of the
-    degree predicate for 'tall', which is exactly the relationship
-    between `posExt` and `negExt` from @cite{kennedy-1999}. -/
-theorem little_posExt_eq_negExt {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (x : Entity) (d : D) :
-    littlePred (· ∈ Core.Scale.posExt μ x) d ↔
-      d ∈ Core.Scale.negExt μ x := by
-  simp [littlePred, Core.Scale.posExt, Core.Scale.negExt]
+/-- The strengthened reading entails the literal `≥` reading. -/
+theorem equativeStrengthened_entails_sem [LinearOrder D] (μ : Entity → D) (a b : Entity)
+    (h : equativeStrengthened μ a b) : equativeSem μ a b .positive :=
+  le_of_eq h.symm
 
-/-- LITTLE is an involution: LITTLE(LITTLE(P)) = P.
-    Double degree negation cancels out. -/
-theorem little_involution {D : Type*} (P : D → Prop) (d : D) :
-    littlePred (littlePred P) d ↔ P d := by
-  simp [littlePred]
+/-- Negated equative: "A is not as tall as B" iff `μ(A) < μ(B)`. -/
+def negatedEquative [LinearOrder D] (μ : Entity → D) (a b : Entity) : Prop :=
+  μ a < μ b
 
-/-- LITTLE reverses the comparison direction:
-    "A is LITTLE-er tall than B" ↔ "B is taller than A".
-    Delegates to `taller_shorter_antonymy`. -/
-theorem little_reverses_comparison {Entity : Type*} {α : Type*} [LinearOrder α]
-    (μ : Entity → α) (a b : Entity) :
-    comparativeSem μ a b .positive ↔ comparativeSem μ b a .negative :=
-  taller_shorter_antonymy μ a b
+/-- Negated equative is the negation of the literal equative. -/
+theorem negatedEquative_iff_not_sem [LinearOrder D] (μ : Entity → D) (a b : Entity) :
+    negatedEquative μ a b ↔ ¬ equativeSem μ a b .positive := by
+  simp [negatedEquative, equativeSem, not_le]
+
+open Core.Scale (posExt posExt_subset_iff posExt_ssubset_iff)
+
+/-- Equative as positive extent inclusion (@cite{kennedy-1999}):
+"A is as tall as B" iff `posExt(B) ⊆ posExt(A)` — every degree
+B has, A also has. -/
+theorem equativeSem_iff_posExt_subset [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    equativeSem μ a b .positive ↔ posExt μ b ⊆ posExt μ a :=
+  (posExt_subset_iff μ b a).symm
+
+/-- Negated equative as strict extent inclusion: B has strictly more
+degrees than A. -/
+theorem negatedEquative_iff_posExt_ssubset [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    negatedEquative μ a b ↔ posExt μ a ⊂ posExt μ b :=
+  (posExt_ssubset_iff μ a b).symm
+
+end Equative
 
 end Semantics.Degree.Comparative

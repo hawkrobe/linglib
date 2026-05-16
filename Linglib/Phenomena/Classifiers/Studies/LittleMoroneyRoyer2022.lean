@@ -2,7 +2,7 @@ import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Mereology
 import Linglib.Core.Tree
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
-import Linglib.Phenomena.Classifiers.Studies.NMP
+import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 import Linglib.Phenomena.Classifiers.Studies.Sudo2016
 import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Shan.Classifiers

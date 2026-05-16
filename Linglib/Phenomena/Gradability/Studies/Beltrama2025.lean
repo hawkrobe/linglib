@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
+import Linglib.Theories.Semantics.Degree.Kennedy
 import Linglib.Theories.Semantics.Gradability.Basic
 import Linglib.Theories.Semantics.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
@@ -141,9 +142,9 @@ theorem three_standards_distinct :
 /-- MPAs and *good* both require comparison classes (context-sensitive),
     unlike MinSAAs. -/
 theorem mpa_good_both_cc_sensitive :
-    mpaStandard.requiresComparisonClass = true ∧
-    goodStandard.requiresComparisonClass = true ∧
-    minsaaStandard.requiresComparisonClass = false := ⟨rfl, rfl, rfl⟩
+    mpaStandard.RequiresComparisonClass ∧
+    goodStandard.RequiresComparisonClass ∧
+    ¬ minsaaStandard.RequiresComparisonClass := ⟨trivial, trivial, id⟩
 
 -- ============================================================================
 -- § 4. MinSAA Rejection (@cite{beltrama-2025} §4)

@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Theories.Semantics.Degree.Core
-import Linglib.Theories.Semantics.Degree.Equative
+import Linglib.Theories.Semantics.Degree.Basic
 
 /-!
 # Kennedy 1999: Projecting the Adjective
@@ -62,9 +61,9 @@ distribution), @cite{bhatt-pancheva-2004} and @cite{lechner-2004}
 
 namespace Kennedy1999
 
-open Semantics.Degree.Comparative (comparativeSem
-  comparative_iff_posExt_ssubset comparative_iff_negExt_ssubset)
-open Semantics.Degree.Equative (equativeLiteral equative_iff_posExt_subset)
+open Semantics.Degree.Comparative (comparativeSem equativeSem
+  comparative_iff_posExt_ssubset comparative_iff_negExt_ssubset
+  equativeSem_iff_posExt_subset)
 open Core.Scale (posExt negExt crossExtentInclusion crossExtent_always_false
   posExt_subset_iff negExt_subset_iff extent_galois_antitone)
 
@@ -134,8 +133,8 @@ theorem crossPolar_predicted {Entity D : Type*} [LinearOrder D]
     This reduces to μ(subject) ≥ μ(standard). -/
 theorem samePolar_equative_welldefined {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
-    equativeLiteral μ a b ↔ posExt μ b ⊆ posExt μ a :=
-  equative_iff_posExt_subset μ a b
+    equativeSem μ a b .positive ↔ posExt μ b ⊆ posExt μ a :=
+  equativeSem_iff_posExt_subset μ a b
 
 -- ════════════════════════════════════════════════════
 -- § 4. Comparative = Strict Extent Inclusion
@@ -174,8 +173,8 @@ theorem antonymy_derived {Entity D : Type*} [LinearOrder D]
     Follows from the Galois connection on extents (Extent.lean § 7). -/
 theorem equative_antonymy_extent {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
-    equativeLiteral μ a b ↔ negExt μ a ⊆ negExt μ b := by
-  rw [equative_iff_posExt_subset, extent_galois_antitone]
+    equativeSem μ a b .positive ↔ negExt μ a ⊆ negExt μ b := by
+  rw [equativeSem_iff_posExt_subset, extent_galois_antitone]
 
 -- ════════════════════════════════════════════════════
 -- § 6. Historical: DegP Projection
@@ -191,7 +190,7 @@ theorem equative_antonymy_extent {Entity D : Type*} [LinearOrder D]
     Both agree that degree binding is syntactic.
 
     Note: the degree head inventory matches `Semantics.Degree.DegPType`
-    from `Degree/Core.lean`, which is the current consensus enumeration.
+    from `Degree/Defs.lean`, which is the current consensus enumeration.
     This historical structure records Kennedy's specific proposal that
     these heads project a full DegP phrase. -/
 structure HistoricalDegP where

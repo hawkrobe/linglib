@@ -1,6 +1,6 @@
 import Linglib.Core.Word
 import Linglib.Core.Morphology.Exponence
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 
 /-! # English Noun Lexicon Fragment
 

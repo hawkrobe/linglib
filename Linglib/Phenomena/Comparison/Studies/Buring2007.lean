@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Intervals
-import Linglib.Theories.Semantics.Degree.Intensional
+import Linglib.Theories.Semantics.Degree.Little
 import Linglib.Phenomena.Comparison.Studies.VonStechow1984
 
 /-!
@@ -64,9 +64,9 @@ disambiguate the two, favoring Analysis 1.
 
 namespace Buring2007
 
-open Semantics.Degree.Comparative (comparativeSem ScaleDirection littlePred
-  little_posExt_eq_negExt little_involution little_reverses_comparison
-  taller_shorter_antonymy)
+open Semantics.Degree.Comparative (comparativeSem ScaleDirection taller_shorter_antonymy)
+open Semantics.Degree.Little (littlePred little_posExt_eq_negExt little_involution
+  little_reverses_comparison)
 open Semantics.Degree.Intervals (subcomparative negativeInterval)
 open Core.Scale (posExt negExt crossExtentInclusion crossExtent_always_false)
 
@@ -74,10 +74,10 @@ open Core.Scale (posExt negExt crossExtentInclusion crossExtent_always_false)
 -- § 1. LITTLE: Degree Negation on Extents
 -- ════════════════════════════════════════════════════
 
--- LITTLE is now in the theory layer (Theories/Semantics/Degree/Comparative.lean):
+-- LITTLE is in the theory layer at `Theories/Semantics/Degree/Little.lean`:
 --   littlePred, little_posExt_eq_negExt, little_involution,
 --   little_reverses_comparison.
--- This section re-exports the key results and adds Büring-specific bridges.
+-- This section adds Büring-specific bridges.
 
 /-- LITTLE maps positive intervals to negative intervals
     (@cite{buring-2007} §4, def. 22): the positive interval [⊥, μ(x)]

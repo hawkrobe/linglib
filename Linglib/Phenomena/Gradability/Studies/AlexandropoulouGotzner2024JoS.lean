@@ -45,7 +45,7 @@ Glossa paper builds on the JoS findings as established results.
 - `Theories/Semantics/Gradability/AntonymPrediction.lean` —
   `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot`,
   `predictionForAntonymy`, `predictionForEntry`, anchor theorems.
-- `Theories/Semantics/Degree/Core.lean` — `antonymMeaning`.
+- `Theories/Semantics/Degree/Basic.lean` — `antonymMeaning`.
 - `Features/Antonymy.lean` — `NegationType`, `Asymmetry`.
 - `Fragments/English/Predicates/Adjectival.lean` — lexical entries
   (transitively, via the Glossa companion file).

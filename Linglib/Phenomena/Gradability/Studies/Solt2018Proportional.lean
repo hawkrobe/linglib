@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Gradability.Aggregation
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 import Linglib.Theories.Semantics.Kinds.SortedOntology
 import Linglib.Core.Scales.Scale
 import Mathlib.Algebra.Order.Ring.Rat

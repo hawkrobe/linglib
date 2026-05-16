@@ -15,7 +15,7 @@ Types and operations for gradable adjective semantics (tall, happy, expensive).
 
 Core degree types (`Degree`, `Threshold`) live in `Core.MeasurementScale`.
 The canonical threshold semantics (`positiveMeaning`, `negativeMeaning`) live
-in `Theories/Semantics/Degree/Core.lean`. This module adds adjective-specific
+in `Theories/Semantics/Degree/Basic.lean`. This module adds adjective-specific
 infrastructure on top: antonymy, two-threshold models, and lexical entries.
 
 For the adjective classification hierarchy (intersective, subsective, privative,
@@ -27,7 +27,7 @@ import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Theories.Semantics.Gradability.MLScale
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 
 namespace Semantics.Gradability
 

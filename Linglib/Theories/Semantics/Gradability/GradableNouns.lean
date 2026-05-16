@@ -45,7 +45,7 @@ structure GradableNoun (Entity : Type) where
 
 /-- Apply POS to a gradable noun: λx. standard(g) < g(x).
 
-Uses strict inequality, matching `positiveMeaning` in `Degree.Core`:
+Uses strict inequality, matching `positiveMeaning` in `Degree.Basic`:
 an entity satisfies POS(N) iff its degree *exceeds* the standard
 (@cite{kennedy-2007}). -/
 def GradableNoun.pos {E : Type} (n : GradableNoun E) : E → Bool :=

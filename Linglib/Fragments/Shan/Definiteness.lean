@@ -3,7 +3,7 @@ import Linglib.Core.Deixis.Feature
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 import Linglib.Theories.Semantics.Kinds.MeaningPreservation
 
 /-!

@@ -101,7 +101,7 @@ theorem compl_posExt [LinearOrder D] (μ : Entity → D) (x : Entity) :
 /-- Order-reversing equivalence between `posExt`- and `negExt`-inclusions.
     The Galois-antitone framing is `compl_subset_compl` specialized at
     `Iic`/`Ioi` via `compl_posExt`. Linglib's
-    `Theories.Semantics.Degree.Comparative.littlePred` defines
+    `Theories.Semantics.Degree.Little.littlePred` defines
     @cite{heim-2006}'s LITTLE as predicate complement; LITTLE is *not*
     this map (it operates on type ⟨d,t⟩, not the powerset lattice),
     but the algebraic shadow of LITTLE *is* this antitone identity. -/

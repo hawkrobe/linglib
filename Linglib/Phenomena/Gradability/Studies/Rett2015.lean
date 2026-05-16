@@ -12,7 +12,7 @@ are evaluative, comparatives are not, equatives show asymmetry.
 
 `EvaluativityStatus`, `EvaluativityDatum`, `EvaluativityPrediction`
 
-`AdjectivalConstruction` is defined in `Theories.Semantics.Degree.Core`.
+`AdjectivalConstruction` is defined in `Theories.Semantics.Degree.Defs`.
 
 -/
 

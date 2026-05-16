@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Gradability.Basic
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 
 /-!
 # Antonymy: Contradictory vs. Contrary Negation

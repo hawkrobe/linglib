@@ -31,7 +31,7 @@ theorem (lexical commitment ↔ output of pragmatic strengthening) lives there.
 
 ## Substrate consumed
 
-- `Theories/Semantics/Degree/Core.lean` — `positiveMeaning`, `antonymMeaning`,
+- `Theories/Semantics/Degree/Basic.lean` — `positiveMeaning`, `antonymMeaning`,
   `positiveMeaning_monotone` (all `Prop`-valued, decidable).
 - `Theories/Semantics/Gradability/Theory.lean` — `ThresholdPair`,
   `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`,

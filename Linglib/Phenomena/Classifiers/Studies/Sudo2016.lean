@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Classifier.TypeN
 import Linglib.Theories.Semantics.Classifier.Composition
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
-import Linglib.Phenomena.Classifiers.Studies.NMP
+import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 
 /-!
 # Sudo (2016) — The Semantic Role of Classifiers in Japanese

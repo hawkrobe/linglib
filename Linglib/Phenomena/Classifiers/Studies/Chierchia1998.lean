@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.Mandarin.Nouns

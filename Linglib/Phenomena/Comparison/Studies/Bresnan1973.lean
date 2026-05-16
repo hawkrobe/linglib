@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 import Linglib.Theories.Semantics.Degree.ThanClause
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Differential

@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
+import Linglib.Theories.Semantics.Degree.Kennedy
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Phenomena.Gradability.ComparisonClass
@@ -595,15 +596,13 @@ the CC is pragmatic/contextual, not a constituent of the logical form.
 
 The chain connects three independent modules:
 1. `Semantics.Degree.interpretiveEconomy` (Theory: scale → standard type)
-2. `Semantics.Degree.PositiveStandard.requiresComparisonClass` (Theory: standard → domain-dependent?)
+2. `Semantics.Degree.PositiveStandard.RequiresComparisonClass` (Theory: standard → domain-dependent?)
 3. `RSAConfig.L1_latent` with `Latent = ComparisonClass` (this file: infer CC) -/
 
-open Semantics.Degree (interpretiveEconomy PositiveStandard
-  scale_determines_cc_sensitivity isClassA)
+open Semantics.Degree (interpretiveEconomy PositiveStandard IsClassA)
 
 /-- Height is an open-scale dimension: "tall" is relative (Class A). -/
-theorem height_is_classA :
-    isClassA Core.Scale.Boundedness.open_ = true := rfl
+theorem height_is_classA : IsClassA Core.Scale.Boundedness.open_ := trivial
 
 /-- Open scale → contextual domain inference applies (the full chain).
     This is a three-step argument:
@@ -615,20 +614,13 @@ theorem height_is_classA :
     This is compatible with Kennedy's view: the CC is pragmatic/contextual
     (inferred by L1), not a semantic argument of *pos*. -/
 theorem open_scale_requires_cc_inference :
-    (interpretiveEconomy .open_).requiresComparisonClass = true := rfl
+    (interpretiveEconomy .open_).RequiresComparisonClass := trivial
 
 /-- Closed scale → contextual domain inference is irrelevant.
     "Full" has an endpoint standard via Interpretive Economy; the threshold
     is the scale maximum regardless of context. No domain to infer. -/
 theorem closed_scale_no_cc_inference :
-    (interpretiveEconomy .closed).requiresComparisonClass = false := rfl
-
-/-- The applicability criterion: scale structure determines whether this
-    model's `ComparisonClass` latent is informative. The `isClassA` predicate
-    exactly characterizes the adjectives for which CC inference is needed. -/
-theorem model_applicability (b : Core.Scale.Boundedness) :
-    isClassA b = (interpretiveEconomy b).requiresComparisonClass :=
-  scale_determines_cc_sensitivity b
+    ¬ (interpretiveEconomy .closed).RequiresComparisonClass := id
 
 -- ============================================================================
 -- § 13. Connection to Generic Language (@cite{tessler-goodman-2019})

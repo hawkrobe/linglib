@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Basic
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -34,16 +34,21 @@ namespace Semantics.Degree.Differential
     Requires a type with subtraction (ring-like structure), not just
     ordering. This is what makes measure phrase differentials more
     restrictive than bare comparatives. -/
-def differentialComparative {Entity : Type*}
-    (μ : Entity → ℚ) (a b : Entity) (diff : ℚ) : Prop :=
+def differentialComparative {Entity D : Type*} [Sub D]
+    (μ : Entity → D) (a b : Entity) (diff : D) : Prop :=
   μ a - μ b = diff
 
-/-- The differential is positive iff the comparative holds. -/
+/-- The differential is positive iff the comparative holds. Stated on ℚ;
+generalizing requires ordered-group machinery (`[AddCommGroup D] [LinearOrder D]
+[IsStrictOrderedAddMonoid D]`) that mathlib's current taxonomy splits across
+multiple unbundled classes — see e.g. `Mathlib/Algebra/Order/Field/Defs.lean`
+for the analogous LinearOrderedField → Field + LinearOrder + IsStrictOrderedRing
+migration. Consumers (Intensional, VonStechow1984) instantiate at ℚ. -/
 theorem differential_positive_iff {Entity : Type*}
-    (μ : Entity → ℚ) (a b : Entity) (diff : ℚ) (hdiff : diff > 0) :
-    differentialComparative μ a b diff → μ a > μ b := by
+    (μ : Entity → ℚ) (a b : Entity) (diff : ℚ) (hdiff : 0 < diff) :
+    differentialComparative μ a b diff → μ b < μ a := by
   intro h
-  simp [differentialComparative] at h
+  simp only [differentialComparative] at h
   linarith
 
 -- ════════════════════════════════════════════════════
@@ -77,8 +82,8 @@ def admitsFactorPhrase : MeasurementLevel → Bool
 
 /-- Factor phrase equative: "A is n times as tall as B" iff μ(A) = n × μ(B).
     Requires ratio scale: a meaningful zero point. -/
-def factorEquative {Entity : Type*}
-    (μ : Entity → ℚ) (a b : Entity) (factor : ℚ) : Prop :=
+def factorEquative {Entity D : Type*} [Mul D]
+    (μ : Entity → D) (a b : Entity) (factor : D) : Prop :=
   μ a = factor * μ b
 
 -- ════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 import Linglib.Theories.Semantics.Dynamic.DiscourseRef
 import Linglib.Theories.Semantics.Dynamic.Connectives.Defs
 import Linglib.Core.Assignment
