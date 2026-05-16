@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.Affectedness.Defs
+import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Defs
 import Linglib.Theories.Semantics.Events.Basic
 import Mathlib.Order.Defs.LinearOrder
 
@@ -62,7 +62,7 @@ quantify over the scale's maximum (or its absence).
 namespace Semantics.Degree.MeasureFunction
 
 open Semantics.Events
-open Semantics.Verb.Affectedness
+open Semantics.ArgumentStructure.Affectedness
 
 -- ════════════════════════════════════════════════════
 -- § 1. MeasureFunction (K&L 2008 footnote 9)

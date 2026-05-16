@@ -1,6 +1,6 @@
 import Linglib.Features.EntailmentProfile
-import Linglib.Theories.Semantics.Verb.Affectedness.Hierarchy
-import Linglib.Theories.Semantics.Verb.Affectedness.Defs
+import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Hierarchy
+import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Defs
 
 /-!
 # Affectedness Hierarchy: EntailmentProfile Projection
@@ -69,7 +69,7 @@ projection here operates on the proto-role level, which is the final
 composed meaning — not the root-level or surface-diagnostic level.
 -/
 
-namespace Semantics.Verb.Affectedness.Profile
+namespace Semantics.ArgumentStructure.Affectedness.Profile
 
 open Features.EntailmentProfile
 
@@ -82,10 +82,10 @@ open Features.EntailmentProfile
     re-exported here for backward compatibility with consumers
     (`Beavers2010`, `BeaversUdayana2022`, `StapsRooryck2024`,
     `AgentivityLattice`). -/
-export Semantics.Verb.Affectedness.Hierarchy (AffectednessDegree)
+export Semantics.ArgumentStructure.Affectedness.Hierarchy (AffectednessDegree)
 
 namespace AffectednessDegree
-export Semantics.Verb.Affectedness.Hierarchy.AffectednessDegree
+export Semantics.ArgumentStructure.Affectedness.Hierarchy.AffectednessDegree
   (unspecified potential nonquantized quantized strength)
 end AffectednessDegree
 
@@ -221,8 +221,8 @@ theorem die_nonquantized :
     doesn't carry, expose an explicit-witness smart constructor (cf. mathlib's
     `MetricSpace.ofDistTopology` and similar). -/
 
-open Semantics.Verb.Affectedness.Hierarchy
-open Semantics.Verb.Affectedness
+open Semantics.ArgumentStructure.Affectedness.Hierarchy
+open Semantics.ArgumentStructure.Affectedness
 
 /-- Joint consistency smart constructor: given a profile that projects to
     `.quantized` AND a scalar witness for some θ on a dimension δ,
@@ -246,4 +246,4 @@ def IsQuantizedAffected.ofProfileAndWitness {α β δ : Type*}
     IsQuantizedAffected (δ := δ) θ :=
   IsQuantizedAffected.mk' forget g_φ h_quantized
 
-end Semantics.Verb.Affectedness.Profile
+end Semantics.ArgumentStructure.Affectedness.Profile

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.Affectedness.Defs
+import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Defs
 import Mathlib.Order.Basic
 
 /-!
@@ -40,9 +40,9 @@ but is not a typeclass).
   derives the parent fields via the `ScalarResult` implication chain.
 -/
 
-namespace Semantics.Verb.Affectedness.Hierarchy
+namespace Semantics.ArgumentStructure.Affectedness.Hierarchy
 
-open Semantics.Verb.Affectedness
+open Semantics.ArgumentStructure.Affectedness
 
 /-! ### AffectednessDegree enum (Beavers 4-level scale) -/
 
@@ -205,4 +205,4 @@ def IsQuantizedAffected.mk' {α β δ : Type*}
   finalDegree := g_φ
   isQuantized := h
 
-end Semantics.Verb.Affectedness.Hierarchy
+end Semantics.ArgumentStructure.Affectedness.Hierarchy

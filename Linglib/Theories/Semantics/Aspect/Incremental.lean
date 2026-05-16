@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.ArgumentStructure.Properties
-import Linglib.Theories.Semantics.Verb.Affectedness.Hierarchy
+import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Hierarchy
 import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 
 /-!
@@ -276,8 +276,8 @@ def IsSincVerb.mk' {θ : α → β → Prop}
     final degree is verb-specific lexical content that cannot be
     derived from SINC alone. -/
 
-open Semantics.Verb.Affectedness.Hierarchy
-open Semantics.Verb.Affectedness
+open Semantics.ArgumentStructure.Affectedness.Hierarchy
+open Semantics.ArgumentStructure.Affectedness
 
 /-- Bridge: a K98 SINC verb θ with an explicit final-degree witness
     becomes a Beavers `IsQuantizedAffected` instance. The `forget`

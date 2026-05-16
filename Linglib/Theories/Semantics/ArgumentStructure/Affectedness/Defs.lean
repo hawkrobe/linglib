@@ -49,7 +49,7 @@ typeclasses (only `T0/T1/T2/...` are typeclasses; "non-T0" isn't).
 
 -/
 
-namespace Semantics.Verb.Affectedness
+namespace Semantics.ArgumentStructure.Affectedness
 
 /-! ### HasScalarResult — result-state typeclass -/
 
@@ -179,4 +179,4 @@ theorem potential_of_nonQuantized {α δ β : Type*}
     (h : NonQuantized (δ := δ) θ) : Potential θ :=
   fun x e hxe => forget x e (h x e hxe)
 
-end Semantics.Verb.Affectedness
+end Semantics.ArgumentStructure.Affectedness

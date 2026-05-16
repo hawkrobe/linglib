@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Fragments.French.Predicates
-import Linglib.Theories.Semantics.Verb.Affectedness.Profile
+import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Features.Aktionsart
 import Linglib.Theories.Syntax.Minimalist.Voice
 
@@ -58,7 +58,7 @@ open Core (WorldTimeIndex)
 open Core.Presupposition
 open Fragments.French.Predicates
 open Features.EntailmentProfile
-open Semantics.Verb.Affectedness.Profile
+open Semantics.ArgumentStructure.Affectedness.Profile
 open Features
 open Semantics.Verb
 open Semantics.Lexical
