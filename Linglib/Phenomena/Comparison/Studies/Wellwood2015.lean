@@ -806,7 +806,7 @@ The bridge theorems below connect Krifka's formal CUM/QUA predicates
 and `statusPredictsFelicitous`.
 -/
 
-open Semantics.ArgumentStructure.Properties (IsCumThetaVerb)
+open Semantics.ArgumentStructure (IsCumThetaVerb)
 open Semantics.Aspect.Incremental (IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 

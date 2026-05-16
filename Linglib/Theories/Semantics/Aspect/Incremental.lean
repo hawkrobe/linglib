@@ -41,7 +41,7 @@ and any modern incremental-theme account.
 
 namespace Semantics.Aspect.Incremental
 
-open Semantics.ArgumentStructure.Properties
+open Semantics.ArgumentStructure
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 

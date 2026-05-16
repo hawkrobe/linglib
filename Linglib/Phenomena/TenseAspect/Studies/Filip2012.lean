@@ -50,7 +50,7 @@ namespace Filip2012
 
 open _root_.Mereology
 open Semantics.Events.CEM
-open Semantics.ArgumentStructure.Properties
+open Semantics.ArgumentStructure
 open Semantics.Aspect.Incremental
 open Semantics.Aspect.Cumulativity
 

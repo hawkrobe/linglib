@@ -29,7 +29,7 @@ namespace Semantics.Aspect.Cumulativity
 
 open _root_.Mereology
 open Semantics.Events.CEM
-open Semantics.ArgumentStructure.Properties
+open Semantics.ArgumentStructure
 open Semantics.Aspect.Incremental
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]

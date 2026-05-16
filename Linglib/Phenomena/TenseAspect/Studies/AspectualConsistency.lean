@@ -561,7 +561,7 @@ theorem k89_read_refines_k98_matches_fragment :
 
 section PropositionalConsistency
 
-open Semantics.ArgumentStructure.Properties (UP CumTheta IsCumThetaVerb)
+open Semantics.ArgumentStructure (UP CumTheta IsCumThetaVerb)
 open Semantics.Aspect.Incremental (SINC IsSincVerb)
 open Semantics.Aspect.Cumulativity
   (VP cum_propagation qua_propagation)

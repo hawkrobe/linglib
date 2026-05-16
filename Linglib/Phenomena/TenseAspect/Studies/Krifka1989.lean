@@ -72,7 +72,7 @@ namespace Krifka1989
 open _root_.Mereology
 open Semantics.Events.CEM
 open Semantics.Plurality.MassCount (MassNoun CountNoun BarePlural barePlural_cum)
-open Semantics.ArgumentStructure.Properties (UP)
+open Semantics.ArgumentStructure (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP qua_propagation)
 open Core.Scale (MereoTag)

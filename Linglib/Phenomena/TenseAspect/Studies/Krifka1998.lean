@@ -99,7 +99,7 @@ open Fragments.English.Predicates.Verbal
 open Features
 open Semantics.Verb
 open _root_.Mereology
-open Semantics.ArgumentStructure.Properties (UP CumTheta IsCumThetaVerb)
+open Semantics.ArgumentStructure (UP CumTheta IsCumThetaVerb)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb IsIncVerb)
 open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 open Semantics.Spatial (SpatialTrace)
@@ -844,7 +844,7 @@ theorem motion_vendler_path_coherence :
 
 section K98PropositionalSubstrate
 
-open Semantics.ArgumentStructure.Properties (MO)
+open Semantics.ArgumentStructure (MO)
 
 /-- K98 §4.1 eq. 63 EXP: expansion. If x is θ-related to e and y to a
     temporally-following e', then x and y do not overlap. -/
