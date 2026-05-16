@@ -1,7 +1,7 @@
 import Linglib.Core.Mereotopology
 import Linglib.Core.Mereology
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
-import Linglib.Theories.Semantics.Events.Aspect.Incremental
+import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Phenomena.TenseAspect.Studies.Filip2012
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
@@ -639,8 +639,8 @@ witnesses on `OBJ` are exactly what `not_cum_of_disconnected` and
 `mixedDrink_not_qua` produce in this file — Moon's empirical
 contribution feeds Filip's algebraic machinery in a single Lean term. -/
 
-open Semantics.Events.Aspect.Incremental (IsSincVerb)
-open Semantics.Events.Aspect.Cumulativity (VP)
+open Semantics.Aspect.Incremental (IsSincVerb)
+open Semantics.Aspect.Cumulativity (VP)
 open Filip2012 (middle_ground_stable)
 
 section MoonFilipBridge

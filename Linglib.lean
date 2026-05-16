@@ -2351,12 +2351,12 @@ import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.SequenceOfTense
 import Linglib.Theories.Semantics.Tense.TOChain
 import Linglib.Theories.Semantics.Tense.ConditionalShift
-import Linglib.Theories.Semantics.Tense.Aspect.Core
-import Linglib.Theories.Semantics.Tense.Aspect.Composition
-import Linglib.Theories.Semantics.Tense.Aspect.SubintervalProperty
+import Linglib.Theories.Semantics.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Composition
+import Linglib.Theories.Semantics.Aspect.SubintervalProperty
 import Linglib.Theories.Semantics.Tense.PTS
-import Linglib.Theories.Semantics.Verb.DegreeAchievement
-import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Aspect.DegreeAchievement
+import Linglib.Theories.Semantics.Aspect.ChangeOfState
 import Linglib.Theories.Semantics.Verb.Habituals
 import Linglib.Theories.Semantics.Verb.SelectionalPreferences
 -- Theories: Semantics.Iconic (Iconological Semantics for sign language)
@@ -2366,13 +2366,13 @@ import Linglib.Theories.Semantics.Events.Defs
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Events.ThematicRole.Defs
 import Linglib.Theories.Semantics.Events.CEM
-import Linglib.Theories.Semantics.Events.Aspect.Stratified
+import Linglib.Theories.Semantics.Aspect.Stratified
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
 import Linglib.Theories.Semantics.Events.Scalar.Defs
 import Linglib.Theories.Semantics.Events.Scalar.Affectedness
-import Linglib.Theories.Semantics.Events.Aspect.PrecedenceClosure
-import Linglib.Theories.Semantics.Events.Aspect.Incremental
-import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
+import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
+import Linglib.Theories.Semantics.Aspect.Incremental
+import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Events.ArgumentRealization
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
 import Linglib.Theories.Semantics.Verb.EntailmentProfile

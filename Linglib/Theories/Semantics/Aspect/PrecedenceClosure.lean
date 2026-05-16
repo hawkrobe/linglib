@@ -31,7 +31,7 @@ inter-event constraint `cond : β → β → Prop`. Two specializations:
 * @cite{krifka-1998} §4.3 eq. 71 (movement-relation closure, modulo TANG_H)
 -/
 
-namespace Semantics.Events
+namespace Semantics.Aspect
 
 /-- Smallest `α → β → Prop` relation containing `θ'` and closed under
     componentwise sum, when the summed events satisfy `cond`. Taking
@@ -64,4 +64,4 @@ theorem PrecedenceClosure.closure_subset {α β : Type*}
   | base h => exact hBase _ _ h
   | sum _ _ hC ih₁ ih₂ => exact hClosed _ _ _ _ ih₁ ih₂ hC
 
-end Semantics.Events
+end Semantics.Aspect

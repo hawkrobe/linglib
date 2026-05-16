@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Core
 
 /-!
 # The Subinterval Property
@@ -22,11 +22,11 @@ because it is a general property of event predicates, not specific to any
 particular analysis.
 -/
 
-namespace Semantics.Tense.Aspect.SubintervalProperty
+namespace Semantics.Aspect.SubintervalProperty
 
 open Core.Time
 open Semantics.Events
-open Semantics.Tense.Aspect.Core
+open Semantics.Aspect.Core
 
 variable {W Time : Type*} [LinearOrder Time]
 
@@ -229,4 +229,4 @@ theorem csip_necessary_for_impf_prfv :
     simp only [Event.τ, Interval.mk.injEq]
     exact ⟨le_antisymm b1 a1, le_antisymm a2 b2⟩
 
-end Semantics.Tense.Aspect.SubintervalProperty
+end Semantics.Aspect.SubintervalProperty

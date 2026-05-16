@@ -2,7 +2,7 @@ import Linglib.Core.Modality.TemporalAxes
 import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.Temporal
 import Mathlib.Data.List.Defs
-import Linglib.Theories.Semantics.Tense.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Core
 import Linglib.Theories.Semantics.Modality.ActualityEntailments
 import Linglib.Phenomena.Modality.Studies.Condoravdi2002
 
@@ -296,7 +296,7 @@ complement, while those with **imperfective** aspect do not.
 
 namespace Phenomena.Modality.ActualityInferencesBridge
 
-open Semantics.Tense.Aspect.Core (ViewpointAspectB)
+open Semantics.Aspect.Core (ViewpointAspectB)
 
 /-- A single cross-linguistic data point for actuality inferences. -/
 structure ActualityDatum where

@@ -165,7 +165,7 @@ discourse-salient temporal antecedent. This explains the striking contrast:
 
 open Semantics.Tense.TenseAspectComposition
 open Semantics.Events
-open Semantics.Tense.Aspect.Core
+open Semantics.Aspect.Core
 
 /-- Kratzer's English simple past = PRESENT tense + PERFECT aspect.
     The tense head is PRESENT (indexical-compatible), so the surface form

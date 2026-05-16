@@ -1,6 +1,6 @@
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Tense.Aspect.Core
-import Linglib.Theories.Semantics.Tense.Aspect.Composition
+import Linglib.Theories.Semantics.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Composition
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Fragments.English.TenseAspect
 import Linglib.Fragments.French.TenseAspect
@@ -38,8 +38,8 @@ namespace Smith1997
 open Core (WorldTimeIndex)
 
 open Features
-open Semantics.Tense.Aspect.Core (ViewpointType)
-open Semantics.Tense.Aspect.Composition
+open Semantics.Aspect.Core (ViewpointType)
+open Semantics.Aspect.Composition
 open Phenomena.TenseAspect.Diagnostics (DiagnosticResult)
 
 -- ════════════════════════════════════════════════════

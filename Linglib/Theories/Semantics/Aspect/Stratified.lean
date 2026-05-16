@@ -74,7 +74,7 @@ atelicity diagnostic; CUM is the NP→VP propagation property.
 * @cite{link-1983} (the `*` algebraic-closure operator SR builds on)
 -/
 
-namespace Semantics.Events.Aspect.Stratified
+namespace Semantics.Aspect.Stratified
 
 open Semantics.Events
 open Semantics.Events.CEM
@@ -395,4 +395,4 @@ theorem in_adverbial_incompatible_with_ssr
   intro hSSR
   exact qua_incompatible_with_ssr hQua he₁ (hSSR e₁ he₁)
 
-end Semantics.Events.Aspect.Stratified
+end Semantics.Aspect.Stratified

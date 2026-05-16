@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
-import Linglib.Theories.Semantics.Events.Aspect.Incremental
+import Linglib.Theories.Semantics.Aspect.Incremental
 
 /-!
 # Cumulativity and Quantization Propagation
@@ -25,12 +25,12 @@ The explicit-witness variants (`cum_propagation_of_cumTheta`,
 proof-factoring helpers, not part of the public API — mathlib pattern.
 -/
 
-namespace Semantics.Events.Aspect.Cumulativity
+namespace Semantics.Aspect.Cumulativity
 
 open _root_.Mereology
 open Semantics.Events.CEM
 open Semantics.Events.ThematicRole.Properties
-open Semantics.Events.Aspect.Incremental
+open Semantics.Aspect.Incremental
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
@@ -134,4 +134,4 @@ theorem qua_propagation {θ : α → β → Prop} [IsSincVerb θ]
     QUA (VP θ OBJ) :=
   qua_propagation_of_sinc IsSincVerb.up IsSincVerb.sinc hQua
 
-end Semantics.Events.Aspect.Cumulativity
+end Semantics.Aspect.Cumulativity

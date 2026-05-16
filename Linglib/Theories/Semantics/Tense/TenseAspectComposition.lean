@@ -33,7 +33,7 @@ The eval* operators instantiate the situation (fixing world and time).
 
 -/
 
-import Linglib.Theories.Semantics.Tense.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Compositional
 
 namespace Semantics.Tense.TenseAspectComposition
@@ -42,7 +42,7 @@ open Core (WorldTimeIndex)
 
 open Core.Time
 open Semantics.Events
-open Semantics.Tense.Aspect.Core
+open Semantics.Aspect.Core
 
 variable {W Time : Type*} [LinearOrder Time]
 

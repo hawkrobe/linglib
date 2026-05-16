@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
 import Linglib.Theories.Semantics.Tense.PerfectPolysemy
-import Linglib.Theories.Semantics.Tense.Aspect.SubintervalProperty
+import Linglib.Theories.Semantics.Aspect.SubintervalProperty
 
 /-!
 # Perfect Time Span / Until Time Span — Unified Framework
@@ -49,8 +49,8 @@ namespace Semantics.Tense.PTS
 
 open Core.Time
 open Semantics.Events
-open Semantics.Tense.Aspect.Core
-open Semantics.Tense.Aspect.SubintervalProperty
+open Semantics.Aspect.Core
+open Semantics.Aspect.SubintervalProperty
 open Semantics.Tense.TemporalAdverbials (PTSConstraint AdverbialType)
 open Semantics.Tense.PerfectPolysemy (PerfectReading)
 

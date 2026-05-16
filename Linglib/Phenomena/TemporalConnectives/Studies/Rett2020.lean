@@ -1,6 +1,6 @@
 import Linglib.Phenomena.TemporalConnectives.Studies.Anscombe1964
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Aspect.ChangeOfState
 import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
 import Linglib.Fragments.English.TemporalExpressions
 

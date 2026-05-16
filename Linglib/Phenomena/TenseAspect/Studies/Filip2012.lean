@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
-import Linglib.Theories.Semantics.Events.Aspect.Incremental
-import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
+import Linglib.Theories.Semantics.Aspect.Incremental
+import Linglib.Theories.Semantics.Aspect.Cumulativity
 
 /-!
 # @cite{filip-2012}: "Lexical Aspect"
@@ -51,8 +51,8 @@ namespace Filip2012
 open _root_.Mereology
 open Semantics.Events.CEM
 open Semantics.Events.ThematicRole.Properties
-open Semantics.Events.Aspect.Incremental
-open Semantics.Events.Aspect.Cumulativity
+open Semantics.Aspect.Incremental
+open Semantics.Aspect.Cumulativity
 
 /-! ### Three-way exhaustiveness (Filip's distinctive observation) -/
 

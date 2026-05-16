@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Core
 import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Semantics.Verb.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Params
@@ -41,7 +41,7 @@ S marked like A (accusative).
 
 namespace Fragments.Mayan.Yukatek
 
-open Semantics.Tense.Aspect.Core (ViewpointAspectB)
+open Semantics.Aspect.Core (ViewpointAspectB)
 open Features.EventStructure (EventType CausationType)
 open Fragments.Mayan (MarkerSet)
 

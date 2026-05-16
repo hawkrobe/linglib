@@ -33,7 +33,7 @@ namespace Semantics.Tense.TemporalAdverbials
 
 open Core.Time
 open Semantics.Events
-open Semantics.Tense.Aspect.Core
+open Semantics.Aspect.Core
 open Semantics.Tense.TenseAspectComposition
 
 variable {W Time : Type*} [LinearOrder Time]

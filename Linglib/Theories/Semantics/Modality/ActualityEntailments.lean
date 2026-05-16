@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
-import Linglib.Theories.Semantics.Tense.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Core
 
 /-!
 # Actuality Entailments: Position × Aspect
@@ -50,7 +50,7 @@ study files and `Semantics/Causation/`.
 namespace Semantics.Modality.ActualityEntailments
 
 open Semantics.Modality.EventRelativity
-open Semantics.Tense.Aspect.Core (ViewpointAspectB)
+open Semantics.Aspect.Core (ViewpointAspectB)
 
 
 -- ════════════════════════════════════════════════════

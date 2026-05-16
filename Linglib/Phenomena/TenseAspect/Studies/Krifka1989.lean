@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Noun.MereoReference
 import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
-import Linglib.Theories.Semantics.Events.Aspect.Incremental
-import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
+import Linglib.Theories.Semantics.Aspect.Incremental
+import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Core.Scales.Scale
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
@@ -73,8 +73,8 @@ open _root_.Mereology
 open Semantics.Events.CEM
 open Semantics.Noun.MereoReference (MassNoun CountNoun BarePlural barePlural_cum)
 open Semantics.Events.ThematicRole.Properties (UP)
-open Semantics.Events.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
-open Semantics.Events.Aspect.Cumulativity (VP qua_propagation)
+open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
+open Semantics.Aspect.Cumulativity (VP qua_propagation)
 open Core.Scale (MereoTag)
 open Phenomena.TenseAspect.Diagnostics
   (forXPrediction inXPrediction DiagnosticResult)

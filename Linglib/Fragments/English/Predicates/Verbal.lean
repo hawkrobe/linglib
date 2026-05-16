@@ -25,7 +25,7 @@ open Features
 open Semantics.Verb
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
-open Semantics.Events.Aspect.Incremental (VerbIncClass)
+open Semantics.Aspect.Incremental (VerbIncClass)
 open Features.EntailmentProfile (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════

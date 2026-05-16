@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Verb.EventStructure
-import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Aspect.ChangeOfState
 import Linglib.Theories.Semantics.Verb.LevinTheory
 
 open Semantics.Verb

@@ -2,7 +2,7 @@ import Linglib.Phenomena.TemporalConnectives.Studies.Anscombe1964
 import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
 import Linglib.Phenomena.TemporalConnectives.Studies.BeaverCondoravdi2003
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.EventBridge
-import Linglib.Theories.Semantics.Tense.Aspect.SubintervalProperty
+import Linglib.Theories.Semantics.Aspect.SubintervalProperty
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Core.Semantics.Presupposition
@@ -670,8 +670,8 @@ theorem japanese_ato_matches_datum :
     sits inside the event's runtime in the actual world, while alternatives
     contain worlds where the continuation reaches a target. -/
 
-open Semantics.Tense.Aspect.Core
-open Semantics.Tense.Aspect.SubintervalProperty
+open Semantics.Aspect.Core
+open Semantics.Aspect.SubintervalProperty
 
 /-! **Imperfective paradox ↔ before non-veridicality: shared vacuous-∀ structure.**
 

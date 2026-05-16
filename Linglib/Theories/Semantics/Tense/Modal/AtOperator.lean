@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Core
 
 /-!
 # The AT Relation
@@ -28,7 +28,7 @@ namespace Semantics.Tense.Modal.AtOperator
 open Core.Time
 open Features (Dynamicity)
 open Semantics.Events
-open Semantics.Tense.Aspect.Core
+open Semantics.Aspect.Core
 
 variable {W Time : Type*} [LinearOrder Time]
 

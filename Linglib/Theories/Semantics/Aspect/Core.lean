@@ -55,7 +55,7 @@ import Linglib.Theories.Semantics.Events.Basic
 -- § Main Module
 -- ════════════════════════════════════════════════════
 
-namespace Semantics.Tense.Aspect.Core
+namespace Semantics.Aspect.Core
 
 open _root_.Core (WorldTimeIndex)
 open Core.Time
@@ -422,4 +422,4 @@ theorem perf_prog_entails_universal_at_point (P : EventPred W Time) (w : W) (t :
 def IntervalPred.atPoint (p : IntervalPred W Time) : PointPred W Time :=
   λ s => p s.world (Interval.point s.time)
 
-end Semantics.Tense.Aspect.Core
+end Semantics.Aspect.Core

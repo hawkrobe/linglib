@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.DegreeAchievement
+import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Theories.Semantics.Degree.MeasureFunction
 import Linglib.Theories.Semantics.Events.Scalar.Affectedness
 import Linglib.Fragments.English.Predicates.Verbal

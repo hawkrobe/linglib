@@ -1,7 +1,7 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Events.Spatial.Trace
-import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
-import Linglib.Theories.Semantics.Verb.DegreeAchievement
+import Linglib.Theories.Semantics.Aspect.Cumulativity
+import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
@@ -34,7 +34,7 @@ namespace AspectualConsistency
 open Semantics.Verb
 open Features
 open Fragments.English.Predicates.Verbal
-open Semantics.Events.Aspect.Incremental (VerbIncClass)
+open Semantics.Aspect.Incremental (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 open Krifka1998 (predictsGRAD)
@@ -561,8 +561,8 @@ theorem k89_read_refines_k98_matches_fragment :
 section PropositionalConsistency
 
 open Semantics.Events.ThematicRole.Properties (UP CumTheta IsCumThetaVerb)
-open Semantics.Events.Aspect.Incremental (SINC IsSincVerb)
-open Semantics.Events.Aspect.Cumulativity
+open Semantics.Aspect.Incremental (SINC IsSincVerb)
+open Semantics.Aspect.Cumulativity
   (VP cum_propagation qua_propagation)
 open Mereology (CUM QUA)
 

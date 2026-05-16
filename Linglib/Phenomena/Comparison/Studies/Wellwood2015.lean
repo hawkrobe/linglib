@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Measurement
 import Linglib.Theories.Semantics.Events.ThematicRole.Defs
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
-import Linglib.Theories.Semantics.Events.Aspect.Incremental
-import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
+import Linglib.Theories.Semantics.Aspect.Incremental
+import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Phenomena.Comparison.Studies.Bresnan1973
 
@@ -807,8 +807,8 @@ and `statusPredictsFelicitous`.
 -/
 
 open Semantics.Events.ThematicRole.Properties (IsCumThetaVerb)
-open Semantics.Events.Aspect.Incremental (IsSincVerb)
-open Semantics.Events.Aspect.Cumulativity (VP cum_propagation qua_propagation)
+open Semantics.Aspect.Incremental (IsSincVerb)
+open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 
 /-- CUM(VP) → VP is measurable by `much` (cumulative status).
 

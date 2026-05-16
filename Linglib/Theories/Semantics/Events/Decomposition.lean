@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Semantics.Tense.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Core
 
 /-!
 # Temporal Decomposition of Events
@@ -186,7 +186,7 @@ theorem simple_no_activity {Time : Type*} [LinearOrder Time]
 /-! ### Phase Event Predicates -/
 
 open Semantics.Events
-open Semantics.Tense.Aspect.Core
+open Semantics.Aspect.Core
 
 /-- Event predicate localized to an interval: holds of eventualities whose
     runtime equals the given interval. Converts temporal phases of a

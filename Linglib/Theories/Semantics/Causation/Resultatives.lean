@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Theories.Semantics.Causation.CCSelection
-import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Aspect.ChangeOfState
 import Linglib.Theories.Semantics.Causation.ProductionDependence
 
 /-!

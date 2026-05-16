@@ -7,7 +7,7 @@ import Linglib.Features.Causation
 import Linglib.Theories.Semantics.Verb.LevinClass
 import Linglib.Theories.Semantics.Verb.MeaningComponents
 import Linglib.Core.Logic.NaturalLogic
-import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Aspect.ChangeOfState
 import Linglib.Features.Dimension
 import Linglib.Theories.Semantics.Measurement.Basic
 import Linglib.Theories.Semantics.Attitudes.Doxastic
@@ -17,8 +17,8 @@ import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Verb.DegreeAchievement
-import Linglib.Theories.Semantics.Events.Aspect.Incremental
+import Linglib.Theories.Semantics.Aspect.DegreeAchievement
+import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Verb.LevinClassProfiles
 
 /-! # Cross-Linguistic Verb Infrastructure
@@ -61,7 +61,7 @@ open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)
 open Features.EntailmentProfile (EntailmentProfile)
 open Features.DegreeAchievement (DegreeAchievementScale)
-open Semantics.Events.Aspect.Incremental (VerbIncClass)
+open Semantics.Aspect.Incremental (VerbIncClass)
 open Features.LevinClassProfiles
 
 /-- Framework-neutral voice type for deriving argument structure properties.

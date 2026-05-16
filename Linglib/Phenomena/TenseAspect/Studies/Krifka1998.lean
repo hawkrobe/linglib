@@ -1,10 +1,10 @@
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
-import Linglib.Theories.Semantics.Events.Aspect.Incremental
-import Linglib.Theories.Semantics.Events.Aspect.Cumulativity
+import Linglib.Theories.Semantics.Aspect.Incremental
+import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Events.Spatial.Trace
 import Linglib.Theories.Semantics.Events.Adjacency
-import Linglib.Theories.Semantics.Events.Aspect.PrecedenceClosure
+import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
@@ -99,8 +99,8 @@ open Features
 open Semantics.Verb
 open _root_.Mereology
 open Semantics.Events.ThematicRole.Properties (UP CumTheta IsCumThetaVerb)
-open Semantics.Events.Aspect.Incremental (SINC VerbIncClass IsSincVerb IsIncVerb)
-open Semantics.Events.Aspect.Cumulativity (VP cum_propagation qua_propagation)
+open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb IsIncVerb)
+open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
 open Semantics.Spatial.Path (PathShape)
 open Core.Scale (LicensingPipeline)
@@ -876,10 +876,10 @@ def SMR {α β : Type*} [PartialOrder α] [PartialOrder β]
 /-- K98 §4.3 eq. 71 closure: smallest relation containing θ' and closed
     under precedence-respecting sums. K98's TANG_H clause (eq. 17) is
     OMITTED — see module TODO. Specialization of
-    `Semantics.Events.PrecedenceClosure` with `cond := precedes`. -/
+    `Semantics.Aspect.PrecedenceClosure` with `cond := precedes`. -/
 abbrev MovementClosure {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (precedes : β → β → Prop) (θ' : α → β → Prop) : α → β → Prop :=
-  Semantics.Events.PrecedenceClosure precedes θ'
+  Semantics.Aspect.PrecedenceClosure precedes θ'
 
 /-- K98 §4.3 eq. 71 MR (TANG_H-free): θ is a movement relation iff
     there exists an SMR θ' such that θ is the `MovementClosure` of θ'. -/
@@ -900,8 +900,8 @@ theorem mr_of_smr {α β : Type*} [PartialOrder α] [PartialOrder β]
     (hClosed : ∀ x1 x2 e1 e2, θ x1 e1 → θ x2 e2 → precedes e1 e2 →
                θ (x1 ⊔ x2) (e1 ⊔ e2)) :
     MR adjα adjβ precedes isPath θ :=
-  ⟨θ, h, fun x e => ⟨Semantics.Events.PrecedenceClosure.base,
-    fun hcl => Semantics.Events.PrecedenceClosure.closure_subset
+  ⟨θ, h, fun x e => ⟨Semantics.Aspect.PrecedenceClosure.base,
+    fun hcl => Semantics.Aspect.PrecedenceClosure.closure_subset
       (fun _ _ h => h) hClosed hcl⟩⟩
 
 end K98PropositionalSubstrate

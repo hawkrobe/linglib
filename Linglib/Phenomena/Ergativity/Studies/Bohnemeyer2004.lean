@@ -41,7 +41,7 @@ linking-relevant property. Two classes of counterevidence:
 namespace Bohnemeyer2004
 
 open Features.EventStructure (EventType CausationType Template)
-open Semantics.Tense.Aspect.Core (ViewpointAspectB)
+open Semantics.Aspect.Core (ViewpointAspectB)
 open Fragments.Mayan (MarkerSet)
 open Fragments.Mayan.Yukatek
 
