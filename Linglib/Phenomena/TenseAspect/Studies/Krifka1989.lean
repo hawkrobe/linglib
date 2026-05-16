@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Events.CEM
+import Linglib.Theories.Semantics.Plurality.MassCount
 import Linglib.Theories.Semantics.ArgumentStructure.Properties
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
@@ -70,33 +71,13 @@ namespace Krifka1989
 
 open _root_.Mereology
 open Semantics.Events.CEM
+open Semantics.Plurality.MassCount (MassNoun CountNoun BarePlural barePlural_cum)
 open Semantics.ArgumentStructure.Properties (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP qua_propagation)
 open Core.Scale (MereoTag)
 open Phenomena.TenseAspect.Diagnostics
   (forXPrediction inXPrediction DiagnosticResult)
-
-/-! ### K89 §3 nominal-reference predicates (inlined from Noun/MereoReference.lean) -/
-
-/-- Mass nouns have cumulative reference: water ⊕ water = water.
-    @cite{krifka-1989} §2: mass nouns denote predicates satisfying CUM. -/
-abbrev MassNoun {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop := CUM P
-
-/-- Count nouns have quantized reference: no proper part of a cat is a cat.
-    @cite{krifka-1989} §2: count nouns denote predicates satisfying QUA. -/
-abbrev CountNoun {α : Type*} [PartialOrder α] (P : α → Prop) : Prop := QUA P
-
-/-- Bare plurals are algebraic closures: *CAT = the closure of CAT under ⊕.
-    @cite{krifka-1989} §2: bare plurals denote *P, the smallest superset of P
-    closed under sum formation. -/
-abbrev BarePlural {α : Type*} [SemilatticeSup α] (P : α → Prop) : α → Prop :=
-  AlgClosure P
-
-/-- Bare plurals are cumulative (reuses `algClosure_cum` from `Core/Mereology.lean`). -/
-theorem barePlural_cum {α : Type*} [SemilatticeSup α] {P : α → Prop} :
-    CUM (BarePlural P) :=
-  algClosure_cum
 
 /-! ### K89 measure-phrase substrate (inlined from Events/MeasurePhrases.lean in 0.231.55) -/
 
