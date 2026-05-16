@@ -6386,6 +6386,16 @@ private def rankWithinFilter {F_A_len : ℕ}
     (k : ℕ) (i : Fin F_A_len) : ℕ :=
   ((choice_pre_FA_B.take k).filter (fun p => p.fst = i)).length
 
+/-- Bind over `Mset.ofList (finRange m)` equals bind over `Mset.ofList (finRange n)`
+    composed with `Fin.cast` when `n = m`. Used to bridge dependent Fin types in
+    the T-side proof. -/
+private theorem Multiset_bind_finRange_cast {γ : Type*} {n m : ℕ}
+    (h : n = m) (f : Fin m → Multiset γ) :
+    (Multiset.ofList (List.finRange m)).bind f =
+    (Multiset.ofList (List.finRange n)).bind (fun k => f (Fin.cast h k)) := by
+  subst h
+  rfl
+
 /-- Filter-on-zip equals filter-on-first when lengths match. The filter checks
     only the first projection's first component, which equals the original list's
     elements (modulo zip pairing). -/
@@ -6552,10 +6562,70 @@ private theorem acc_to_pkfc_T_side_eq
   rw [Multiset.map_add]
   -- Step 5: Convert .map (transport).map (fun v => (0, v)) to .map (fun v => (0, transport v)) via Multiset.map_map.
   rw [Multiset.map_map]
-  -- TODO Session 15+: continue with:
-  --   - Match (vertices T).map (fun v => (0, transport pairs v)) = T_orig section image.
-  --   - Match the lifted section to T_graft section image (Fin coercion across pairs.length = pre_T_B.length).
-  sorry
+  -- Step 6 (Session 15): Convert LHS T_orig section `Mset.ofList ((vertices T).map ...)`
+  -- to `(Mset.ofList (vertices T)).map ...` via ← Multiset.map_coe. Same for T_graft section.
+  rw [← Multiset.map_coe (fun v : Path => ((0 : ℕ), transport pairs v)) (vertices T)]
+  -- Step 7 (Session 15): Convert LHS T_graft `Mset.ofList (l.flatMap f)` to
+  -- `(Mset.ofList l).bind (Mset.ofList ∘ f)` via ← Multiset.coe_bind.
+  rw [show Multiset.ofList ((List.finRange pre_T_B.length).flatMap fun k =>
+            (vertices pre_T_B[k.val]).map fun q =>
+              ((0 : ℕ), liftMulti pairs ⟨k.val, by
+                rw [List.length_zip, h_T_len, min_self]; exact k.isLt⟩ q)) =
+          (Multiset.ofList (List.finRange pre_T_B.length)).bind fun k =>
+            Multiset.ofList ((vertices pre_T_B[k.val]).map fun q =>
+              ((0 : ℕ), liftMulti pairs ⟨k.val, by
+                rw [List.length_zip, h_T_len, min_self]; exact k.isLt⟩ q))
+        from by rw [← Multiset.coe_bind]]
+  -- Step 8 (Session 15): Push .map (fun v => (0, v)) inside RHS bind via Multiset.map_bind.
+  rw [Multiset.map_bind]
+  -- Step 9 (Session 15): Multiset.map_map on RHS inner.
+  simp_rw [Multiset.map_map]
+  -- Step 10: Split via `congr 1` — first parts (T_orig sections) match by rfl;
+  -- second parts (T_graft sections) need Fin coercion.
+  congr 1
+  -- Goal: T_graft sections match.
+  -- LHS: (Mset.ofList (finRange pre_T_B.length)).bind (fun k =>
+  --   (vertices pre_T_B[k.val] : Mset Path).map (fun q =>
+  --     ((0 : ℕ), liftMulti pairs ⟨k.val, _⟩ q)))
+  -- RHS: (Mset.ofList (finRange pairs.length)).bind (fun k =>
+  --   (vertices pairs[k.val].snd : Mset Path).map (fun q =>
+  --     ((0 : ℕ), liftMulti pairs k q)))
+  --
+  -- Key observation: pairs.length = pre_T_B.length, pairs[k.val].snd = pre_T_B[k.val].
+  -- Need to bridge the Fin types via casting.
+  have h_pairs_len : pairs.length = pre_T_B.length := by
+    show (choice_pre_T_B.zip pre_T_B).length = pre_T_B.length
+    rw [List.length_zip, h_T_len, min_self]
+  -- Step 11: Use the `Multiset_bind_finRange_cast` helper to bridge Fin types.
+  -- `simp_rw` handles alpha-equivalence + meta-variables for `f`.
+  simp_rw [Multiset_bind_finRange_cast (h := h_pairs_len.symm)]
+  -- Step 12: Apply Multiset.bind_congr to peel.
+  refine Multiset.bind_congr fun k _ => ?_
+  -- Step 13: Inner equality at fixed k : Fin pre_T_B.length.
+  -- LHS: Mset.ofList ((vertices pre_T_B[k.val]).map (fun q => (0, liftMulti pairs ⟨k.val, _⟩ q)))
+  -- RHS: Mset.map ((fun v => (0, v)) ∘ liftMulti pairs (Fin.cast _ k))
+  --        (↑(vertices pairs[(Fin.cast _ k).val].snd))
+  -- Bridge: (Fin.cast h k).val = k.val, pairs[k.val].snd = pre_T_B[k.val].
+  rw [← Multiset.map_coe (fun q : Path =>
+        ((0 : ℕ), liftMulti pairs ⟨k.val, by
+          rw [List.length_zip, h_T_len, min_self]; exact k.isLt⟩ q))
+       (vertices pre_T_B[k.val])]
+  -- Show `pairs[k.val].snd = pre_T_B[k.val]`.
+  have h_zip_snd :
+      ((choice_pre_T_B.zip pre_T_B)[(Fin.cast h_pairs_len.symm k).val]'
+          (Fin.cast h_pairs_len.symm k).isLt).snd =
+      pre_T_B[k.val]'k.isLt := by
+    show (choice_pre_T_B.zip pre_T_B)[k.val].snd = _
+    rw [List.getElem_zip]
+  -- Show Fin equality.
+  have h_fin_eq :
+      (⟨k.val, by rw [List.length_zip, h_T_len, min_self]; exact k.isLt⟩ :
+          Fin pairs.length) = Fin.cast h_pairs_len.symm k :=
+    Fin.ext rfl
+  -- Rewrite the source via h_zip_snd, then close via congr 1
+  -- (function equality auto-closed by Fin.cast preserving val).
+  rw [← h_zip_snd]
+  congr 1
 
 /-- **Multiset bijection (Session 13, sorry-fenced)**: `acc_to_pkfc` lifted
     to multisets is a bijection between `allAlphaConstrainedChoiceList` and
