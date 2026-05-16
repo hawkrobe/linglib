@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Typology.Adposition
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
-import Linglib.Theories.Semantics.Events.Spatial.Trace
+import Linglib.Theories.Semantics.Spatial.Trace
 
 /-!
 # Broekhuis & Corver (2026): Adpositions in Dutch
@@ -38,7 +38,7 @@ not whether F is overt. See `MovedConstituent`.
 - `Fragments.Dutch.Adpositions`: lexical inventory
 - `Minimalist.Formal.ExtendedProjection`: Place/Path in EP
 - `Semantics.Spatial.Path.PathShape`: bounded/unbounded/source classification
-- `Theories.Semantics.Events.SpatialTrace`: PathShape → telicity
+- `Theories.Semantics.Spatial.SpatialTrace`: PathShape → telicity
 - `Phenomena.AuxiliaryVerbs.Selection`: Dutch *zijn*/*hebben* split
 - `Dendikken1995`: particles as P heads
 - `Data.WALS.Features.F85A`: cross-linguistic adposition order
@@ -190,7 +190,7 @@ theorem place_path_family :
     This connects through `PathShape → telicity → unaccusativity →
     auxiliary selection`. -/
 
-open Semantics.Events.SpatialTrace (pathShapeToTelicity)
+open Semantics.Spatial.SpatialTrace (pathShapeToTelicity)
 open Phenomena.AuxiliaryVerbs.Selection
 
 /-- All directional adpositions in the inventory carry a PathShape. -/

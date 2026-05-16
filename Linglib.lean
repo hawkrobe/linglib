@@ -2387,7 +2387,7 @@ import Linglib.Theories.Semantics.Verb.Roots.Closure
 import Linglib.Theories.Semantics.Verb.Roots.SalienceClass
 import Linglib.Theories.Morphology.RootTypology
 import Linglib.Theories.Morphology.TheorySpace
-import Linglib.Theories.Semantics.Events.Spatial.Trace
+import Linglib.Theories.Semantics.Spatial.Trace
 import Linglib.Theories.Semantics.Events.Adjacency
 import Linglib.Theories.Semantics.Events.InitialFinalParts
 import Linglib.Theories.Semantics.Events.Decomposition

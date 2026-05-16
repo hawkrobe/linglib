@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Events.ThematicRole.Properties
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Events.CEM
-import Linglib.Theories.Semantics.Events.Spatial.Trace
+import Linglib.Theories.Semantics.Spatial.Trace
 import Linglib.Theories.Semantics.Verb.LevinClass
 import Linglib.Theories.Semantics.Events.Adjacency
 import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
@@ -28,7 +28,7 @@ K98's two distinctive contributions, formalized end-to-end:
 The substrate predicates (SUM, UO, UE, MO, MSO, MSE, GUE, SINC, INC,
 CumTheta — K98 §3.2 eq. 43-52, eq. 59) live in
 `Theories/Semantics/Events/{Incrementality,ThematicRoleProperties}.lean`;
-the σ-trace pullback machinery in `Theories/Semantics/Events/Spatial/Trace.lean`.
+the σ-trace pullback machinery in `Theories/Semantics/Spatial/Trace.lean`.
 This file exercises both on the English fragment and inlines the §4
 movement-relation predicates (formerly in
 `Theories/Semantics/Events/MovementRelations.lean`).
@@ -102,7 +102,8 @@ open _root_.Mereology
 open Semantics.Events.ThematicRole.Properties (UP CumTheta IsCumThetaVerb)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb IsIncVerb)
 open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
-open Semantics.Events.SpatialTrace (pathShapeToTelicity)
+open Semantics.Spatial (SpatialTrace)
+open Semantics.Spatial.SpatialTrace (pathShapeToTelicity)
 open Semantics.Spatial.Path (PathShape)
 open Core.Scale (LicensingPipeline)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction DiagnosticResult)

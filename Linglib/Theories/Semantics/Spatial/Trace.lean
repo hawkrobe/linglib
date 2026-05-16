@@ -40,7 +40,7 @@ open _root_.Mereology
 
 /-! ### SpatialTrace Class -/
 
-namespace Semantics.Events
+namespace Semantics.Spatial
 
 /-- Spatial trace: maps events to their spatial trajectories.
     @cite{zwarts-2005}, @cite{gawron-2009}: σ(e) is the path traversed in event e.
@@ -59,9 +59,9 @@ class SpatialTrace (Loc Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
     σ (@SemilatticeSup.sup _ cem.evSemilatticeSup e₁ e₂) =
       σ e₁ ⊔ σ e₂
 
-end Semantics.Events
+end Semantics.Spatial
 
-namespace Semantics.Events.SpatialTrace
+namespace Semantics.Spatial.SpatialTrace
 
 /-! ### IsSumHom Instance for σ -/
 
@@ -154,4 +154,4 @@ theorem telicity_boundedness_agree (s : PathShape) :
 instance : Core.Scale.LicensingPipeline PathShape where
   toBoundedness p := (pathShapeToTelicity p).toMereoTag.toBoundedness
 
-end Semantics.Events.SpatialTrace
+end Semantics.Spatial.SpatialTrace
