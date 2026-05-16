@@ -8,6 +8,7 @@ import Mathlib.LinearAlgebra.TensorAlgebra.ToTensorPower
 import Mathlib.Algebra.DirectSum.Module
 import Mathlib.LinearAlgebra.Quotient.Basic
 import Mathlib.LinearAlgebra.Isomorphisms
+import Mathlib.Data.List.OfFn
 
 set_option autoImplicit false
 
@@ -122,6 +123,33 @@ theorem circTTensor_tprod (T : L) (n : ℕ) (f : Fin n → L) :
              TensorAlgebra.equivDirectSum_apply,
              TensorAlgebra.toDirectSum_tensorPower_tprod,
              circTGraded_of, circTPi_tprod]
+
+/-! ### §3.A: tprod multiplication
+
+`(tprod_m a) * (tprod_n b) = tprod_{m+n} (Fin.append a b)`. Derived from
+`TensorAlgebra.tprod_apply` (which expresses `tprod` as `List.prod` of
+`ι`s) + `List.prod_append` + `List.ofFn_fin_append`. -/
+
+/-- The product of two tprods is the tprod of the concatenated tuple. -/
+private theorem tprod_mul_tprod (m n : ℕ) (a : Fin m → L) (b : Fin n → L) :
+    (TensorAlgebra.tprod R L m a) * (TensorAlgebra.tprod R L n b) =
+      TensorAlgebra.tprod R L (m + n) (Fin.append a b) := by
+  have h_append :
+      (Fin.append (fun i => TensorAlgebra.ι R (a i))
+                  (fun i => TensorAlgebra.ι R (b i)) :
+                  Fin (m + n) → TensorAlgebra R L) =
+      (fun i => TensorAlgebra.ι R (Fin.append a b i)) := by
+    funext i
+    induction i using Fin.addCases with
+    | left j => simp [Fin.append_left]
+    | right j => simp [Fin.append_right]
+  simp only [TensorAlgebra.tprod_apply, ← List.prod_append, ← List.ofFn_fin_append, h_append]
+
+/-- `ι R x = tprod 1 (fun _ => x)`. -/
+private theorem ι_eq_tprod_one (x : L) :
+    TensorAlgebra.ι R x = TensorAlgebra.tprod R L 1 (fun _ => x) := by
+  rw [TensorAlgebra.tprod_apply]
+  simp
 
 /-! ## §4: `circTTensor` respects `SymRel` (consequence of Lemma 2.5)
 
