@@ -29,7 +29,6 @@ succeed and where they diverge from the modern approach.
 
 namespace Dowty1991
 
-open Semantics.Verb
 open Semantics.Lexical
 open Features.EntailmentProfile
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data

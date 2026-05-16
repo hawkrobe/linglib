@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # Buryat Complementizers and Clause-Embedding Verbs
@@ -51,7 +51,7 @@ The verbs that anchor Bondarenko's bare-vs-nominalized arguments:
 
 namespace Fragments.Buryat.Complementizers
 
-open Semantics.Verb (VerbCore)
+open Semantics.Lexical (VerbCore)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Clause-typing morpheme inventory

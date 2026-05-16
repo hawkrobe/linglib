@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # Greek Mood-Choice Verb Entries @cite{grano-2024}
@@ -21,7 +21,7 @@ both *na* and *oti* (IND/SBJV). Causatives take *na* (SBJV).
 
 namespace Fragments.Greek.StandardModern.MoodChoice
 
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 
 /-- *thélo* (θέλω) 'want' — robustly subjunctive-selecting via *na*.

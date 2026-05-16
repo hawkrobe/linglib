@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 import Linglib.Core.Morphology.MorphRule
 
 /-! # Verbal Predicate Lexicon Fragment
@@ -18,11 +18,11 @@ namespace Fragments.English.Predicates.Verbal
 -- namespace (e.g., `open Fragments.English.Predicates.Verbal (ComplementType ...)`)
 -- continue to find them.
 export Features (Preferential Attitude Causative Implicative)
-export Semantics.Verb (PresupTriggerType ProjectionBehavior ComplementType
+export Semantics.Lexical (PresupTriggerType ProjectionBehavior ComplementType
   ControlType VerbCore ImplicitInterp complementToValence)
 
 open Features
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
@@ -3558,7 +3558,7 @@ namespace V2
 
 open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
 open Features
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 
 variable {V : Type*} {α : V → Type*}

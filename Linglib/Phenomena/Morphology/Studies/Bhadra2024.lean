@@ -40,7 +40,7 @@ theory-portable wing (`ForceTransmissionClass`, `BoundaryStates` operators,
 a second consumer materialises.
 -/
 
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 open Features.EventStructure
 open Features.EntailmentProfile

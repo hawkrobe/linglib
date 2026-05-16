@@ -90,7 +90,7 @@ namespace Chierchia1984
 
 open Semantics.Modality.Kratzer
 open Semantics.Composition.TypeShifting (ComplSemLayer)
-open Semantics.Verb (VerbCore ControlType ComplementType)
+open Semantics.Lexical (VerbCore ControlType ComplementType)
 
 abbrev World := Fin 4
 

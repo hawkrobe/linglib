@@ -60,7 +60,7 @@ open Fragments.French.Predicates
 open Features.EntailmentProfile
 open Semantics.ArgumentStructure.Affectedness.Profile
 open Features
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 open Minimalist
 

@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Theories.Semantics.Composition.LexEntry
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # Lexicon Builder
@@ -50,7 +50,7 @@ open Semantics.Montague (LexEntry Lexicon)
 
 /-! ## Type Dispatch -/
 
-namespace Semantics.Verb
+namespace Semantics.Lexical
 
 open Core.Logic.Intensional (Ty)
 
@@ -80,11 +80,11 @@ def ComplementType.toTy : ComplementType → Ty
 def VerbCore.semanticType (v : VerbCore) : Ty :=
   v.complementType.toTy
 
-end Semantics.Verb
+end Semantics.Lexical
 
 namespace Semantics.Composition.LexiconBuilder
 
-open Semantics.Verb (ComplementType VerbCore)
+open Semantics.Lexical (ComplementType VerbCore)
 
 /-! ## Lexicon Construction -/
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # Romanian Mood-Choice Verb Entries @cite{grano-2024}
@@ -23,7 +23,7 @@ vs *că* = IND) and verb morphology. 'want' and 'intend' take *să* (SBJV);
 
 namespace Fragments.Romanian.MoodChoice
 
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 
 /-- *a vrea* 'want' — robustly subjunctive-selecting via *să*.

@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.MinimalPronoun
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 import Linglib.Typology.Complementation
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
@@ -44,7 +44,7 @@ OC in complement clauses divides into two subtypes:
 namespace Landau2015
 
 open Minimalist.MinimalPronoun
-open Semantics.Verb (VerbCore ControlType ComplementType)
+open Semantics.Lexical (VerbCore ControlType ComplementType)
 open Features (Attitude)
 
 -- ════════════════════════════════════════════════════════════════

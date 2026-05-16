@@ -147,14 +147,14 @@ theorem experiencer_agent_distinct_same_rank :
 -- § 3: VerbCore → Scenario (End-to-End Bridge)
 -- ============================================================================
 
-private def subjectRole (v : Semantics.Verb.VerbCore) : Option ThetaRole :=
+private def subjectRole (v : Semantics.Lexical.VerbCore) : Option ThetaRole :=
   v.effectiveSubjectEntailments.bind (·.toRole)
 
-private def objectRole (v : Semantics.Verb.VerbCore) : Option ThetaRole :=
+private def objectRole (v : Semantics.Lexical.VerbCore) : Option ThetaRole :=
   v.effectiveObjectEntailments.bind (·.toRole)
 
 /-- Derive Anderson's `Scenario` from a Fragment verb entry's derived roles. -/
-def toScenario (v : Semantics.Verb.VerbCore) : Scenario :=
+def toScenario (v : Semantics.Lexical.VerbCore) : Scenario :=
   ⟨(subjectRole v |>.map thetaToCaseRelation).toList ++
    (objectRole v |>.map thetaToCaseRelation).toList⟩
 
@@ -174,7 +174,7 @@ def andersonLinking : LinkingTheory Scenario Unit where
     | _             => none
 
 /-- Anderson's predicted subject theta role for a verb entry. -/
-def andersonPredictedSubjectTheta (v : Semantics.Verb.VerbCore) : Option ThetaRole :=
+def andersonPredictedSubjectTheta (v : Semantics.Lexical.VerbCore) : Option ThetaRole :=
   andersonLinking.predict (toScenario v) () .subject
 
 -- ============================================================================

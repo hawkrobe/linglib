@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # Portuguese Mood-Choice Verb Entries @cite{grano-2024}
@@ -19,7 +19,7 @@ Portuguese 'want' robustly takes SBJV; 'hope' allows both IND and SBJV;
 
 namespace Fragments.Portuguese.MoodChoice
 
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 
 /-- *querer* 'want' — robustly subjunctive-selecting.

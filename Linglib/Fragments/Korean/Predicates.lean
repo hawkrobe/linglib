@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # Korean Predicate Lexicon Fragment
@@ -14,7 +14,7 @@ event is not entailed to have actually occurred.
 
 namespace Fragments.Korean.Predicates
 
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 open Features (Causative)
 

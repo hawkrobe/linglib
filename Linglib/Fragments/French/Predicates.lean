@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # French Predicate Lexicon Fragment
@@ -16,7 +16,7 @@ despite being separate words.
 
 namespace Fragments.French.Predicates
 
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 open Features (Causative)
 open Features.EntailmentProfile

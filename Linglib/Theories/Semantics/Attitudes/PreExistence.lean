@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # Pre-Existence and Modal Insertion in Factive Complements
@@ -43,7 +43,7 @@ and is banned elsewhere.
 
 namespace Semantics.Attitudes.PreExistence
 
-open Semantics.Verb (ComplementType)
+open Semantics.Lexical (ComplementType)
 
 -- ============================================================================
 -- §1. Temporal Satisfaction of Pre-Existence

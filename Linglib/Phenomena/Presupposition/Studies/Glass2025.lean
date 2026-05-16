@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.NegRaising
 import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Semantics.Postsupposition
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 
@@ -44,7 +44,7 @@ namespace Glass2025
 open Semantics.Attitudes.Doxastic
 open Core.Presupposition
 open Core.Postsupposition
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 open Fragments.English.Predicates.Verbal
 open Fragments.Mandarin.Predicates

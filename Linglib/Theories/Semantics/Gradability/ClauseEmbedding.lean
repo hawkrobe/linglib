@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # Clause-Embedding Adjectives
@@ -18,7 +18,7 @@ copula and its syntax belong in the Theory/Syntax layer, not here.
 
 namespace Semantics.Gradability
 
-open Semantics.Verb (ComplementType PresupTriggerType)
+open Semantics.Lexical (ComplementType PresupTriggerType)
 open Features (Attitude)
 open Core.NaturalLogic (EntailmentSig)
 

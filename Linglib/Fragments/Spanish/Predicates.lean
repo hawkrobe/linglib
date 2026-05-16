@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 import Linglib.Theories.Syntax.Minimalist.Applicative
 
 /-!
@@ -29,7 +29,7 @@ whether a verb can anticausativize:
 namespace Fragments.Spanish.Predicates
 
 open Minimalist
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 
 -- ============================================================================

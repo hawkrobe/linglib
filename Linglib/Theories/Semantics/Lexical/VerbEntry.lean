@@ -49,7 +49,7 @@ Language-specific fragments extend `VerbCore` with morphological fields:
 - Mandarin: (none — isolating language)
 -/
 
-namespace Semantics.Verb
+namespace Semantics.Lexical
 
 open Core.Presupposition
 open Features
@@ -569,4 +569,4 @@ def lookupSense (verbs : List VerbCore) (form : String) (tag : SenseTag := .defa
     Option VerbCore :=
   verbs.find? (λ v => v.form == form && v.senseTag == tag)
 
-end Semantics.Verb
+end Semantics.Lexical

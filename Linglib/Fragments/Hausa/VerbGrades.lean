@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 
 /-!
@@ -36,7 +36,7 @@ Per-cell verifications appear as `example`s.
 namespace Fragments.Hausa.VerbGrades
 
 open Phonology.Autosegmental.RegisterTier (TRN)
-open Semantics.Verb (VerbCore VoiceType ComplementType)
+open Semantics.Lexical (VerbCore VoiceType ComplementType)
 
 -- ============================================================================
 -- § 1: Form Inventory (A/B/C/D — @cite{newman-2000} §74.2)

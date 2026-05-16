@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 import Linglib.Theories.Morphology.RootTypology
 
 /-!
@@ -26,10 +26,10 @@ German preferential attitudes pattern with other Indo-European languages:
 
 namespace Fragments.German.Predicates
 
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 open Features (Causative)
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 
 /-- German verb entry: extends VerbCore with German inflectional paradigm. -/

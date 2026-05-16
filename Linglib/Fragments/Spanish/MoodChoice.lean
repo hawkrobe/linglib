@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 
 /-!
 # Spanish Mood-Choice Verb Entries @cite{grano-2024}
@@ -19,7 +19,7 @@ and 'make' — all four take subjunctive or nonfinite complements.
 
 namespace Fragments.Spanish.MoodChoice
 
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Lexical
 
 /-- *querer* 'want' — robustly subjunctive-selecting.

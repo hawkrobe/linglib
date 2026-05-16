@@ -681,7 +681,7 @@ theorem carry_manner_accompaniment :
     let e := DitransitiveRootClass.entailments .carrying
     e.manner = true ∧ e.accompaniment = true ∧ e.possession = .none := ⟨rfl, rfl, rfl⟩
 
-namespace Semantics.Verb
+namespace Semantics.Lexical
 
 /-- Bridge to LevinClass: ditransitive Levin classes → root classes. -/
 def LevinClass.ditransitiveRootClass : LevinClass → Option DitransitiveRootClass
@@ -702,7 +702,7 @@ theorem send_class_sending :
 theorem carry_class_carrying :
     LevinClass.ditransitiveRootClass .carry = some .carrying := rfl
 
-end Semantics.Verb
+end Semantics.Lexical
 
 -- ════════════════════════════════════════════════════
 -- § 7d. Ditransitive Root Denotations (B&@cite{beavers-koontz-garboden-2020} §3.5–3.6)

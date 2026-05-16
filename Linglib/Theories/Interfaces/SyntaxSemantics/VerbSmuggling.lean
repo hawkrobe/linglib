@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.VerbEntry
+import Linglib.Theories.Semantics.Lexical.VerbEntry
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.Movement.Smuggling
 
@@ -26,7 +26,7 @@ deeper Voice-as-not-introducing-external-argument characterization rather
 than the surface `unaccusative : Bool` annotation.
 -/
 
-namespace Semantics.Verb
+namespace Semantics.Lexical
 
 open Minimalist
 
@@ -85,4 +85,4 @@ theorem VerbCore.derivedQI_blocked_when_unergative (v : VerbCore)
   rw [VerbCore.voiceFor_of_unergative v hu]
   exact agentive_blocks_qi _
 
-end Semantics.Verb
+end Semantics.Lexical
