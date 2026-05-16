@@ -34,27 +34,29 @@ the key fact making this descend to `Sym[R]^n L → L`.
 ## Main definitions
 
 * `circTMultilinear T n` — `T ○_(n) (·)` as a `MultilinearMap R (Fin n → L) L`.
-* `circT T n` — the lift to `Sym[R]^n L →ₗ[R] L` via `SymmetricPower.lift`
-  (sorry-fenced on symmetry).
+* `circT T n` — the lift to `Sym[R]^n L →ₗ[R] L` via `SymmetricPower.lift`,
+  using `circTMultilinear_symm` (Lemma 2.5).
 
 ## Status
 
-**Q1b in progress (2026-05-16).** Definition + multilinear structure
-landed. Symmetry (`circTMultilinear_symm`) is decomposed into three
-helper claims:
+**Q1b: `circT T n` sorry-free (2026-05-16).** Symmetry
+(`circTMultilinear_symm`) closed via three helpers:
 
-* `circTMultilinear_symm_interior` — **closed sorry-free**. Swap of two
-  `Fin.castSucc` indices; uses IH on `prev`.
-* `circTMultilinear_symm_exterior` — **sorry-fenced**. Swap of one
-  `Fin.castSucc` with `Fin.last n`; substantively uses the right pre-Lie
-  identity. Substantive remaining work (~150-300 LOC across adjacent +
-  non-adjacent cases, both unfolding `prev`'s recursion).
-* `circTMultilinear_symm_swap` / `circTMultilinear_symm` —
-  **dispatcher + main theorem, sorry-free modulo the two helpers**.
+* `circTMultilinear_symm_interior` — swap of two `Fin.castSucc` indices;
+  uses IH on `prev`.
+* `circTMultilinear_symm_exterior` — swap of one `Fin.castSucc` with
+  `Fin.last n`; case-splits adjacent / non-adjacent. Non-adjacent reduces
+  to adjacent via interior-swap conjugation (`Equiv.swap_apply_apply`).
+  Adjacent (`circTMultilinear_symm_exterior_adj`) goes via the six-term
+  decomposition (`circT_succ_succ_snoc_eval` — three `circTMultilinear_succ`
+  unfolds) and algebraic symmetry (`sixTerm_symm` — pre-Lie identity for
+  pair 1, per-degree OG identity (2.3) `prev_action_pre_lie_identity` for
+  pair 2, `add_comm` for pair 3).
+* `circTMultilinear_symm_swap` / `circTMultilinear_symm` — dispatcher +
+  main theorem.
 
-Once `circTMultilinear_symm_exterior` lands, `circT T n` becomes
-sorry-free and Q1b can proceed to combine per-degree pieces via the
-TensorAlgebra detour.
+Q1b can now proceed to combine per-degree pieces via the TensorAlgebra
+detour.
 
 ## References
 
@@ -255,9 +257,10 @@ any `σ : Equiv.Perm (Fin n)`.
 4. **Main theorem** (`circTMultilinear_symm`): reduces general `σ`
    to (3) via `Equiv.Perm.swap_induction_on`.
 
-**Status (Lemma 2.5 — substantive work pending)**.
-Pieces (1), (2) are sorry-fenced; (3) and (4) are wired sorry-free
-modulo (1) and (2). Each piece is independently tractable. -/
+**Status (Lemma 2.5 — closed sorry-free 2026-05-16)**. All four pieces
+are sorry-free. The substantive content lives in
+`circTMultilinear_symm_exterior_adj` (adjacent case via six-term
+decomposition + algebraic symmetry); other pieces are structural. -/
 
 /-- **Lemma 2.5 — Interior swap invariance**: for `i, j : Fin n`,
     `circTMultilinear R T (n+1)` is invariant under
@@ -492,6 +495,329 @@ private theorem prev_action_pre_lie_identity (R : Type) [CommRing R]
         fun A B C => sub_add_eq_sub_sub A B C]
   rw [h_diag_diff, h_offdiag]
 
+/-! ### §2.A2: Six-term decomposition + symmetry
+
+The OG paper unfolds `T ○_{n+2}` twice via Def 2.4 to get a six-term
+expression in `(prev, A, X, Y)`. Lemma 2.5 reduces to showing that
+this six-term form is symmetric under `X ↔ Y`, which follows from
+the L pre-Lie identity (for the `pA·X·Y` and `pA·(X·Y)` terms) and
+the per-degree OG identity (2.3) (`prev_action_pre_lie_identity`)
+for the inner-sum terms. -/
+
+/-- The six-term form of `circTMultilinear R T (n+2) (Fin.snoc (Fin.snoc A X) Y)`,
+    as an explicit polynomial in `(prev, A, X, Y)`.
+
+    Per OG 2008 Lemma 2.5 proof on page 5. -/
+private noncomputable def sixTerm {R : Type} [CommRing R]
+    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+    {n : ℕ} (prev : MultilinearMap R (fun _ : Fin n ↦ L) L)
+    (A : Fin n → L) (X Y : L) : L :=
+  prev A * X * Y
+  - (∑ i : Fin n, prev (Function.update A i (A i * X))) * Y
+  - (∑ i' : Fin n, prev (Function.update A i' (A i' * Y))) * X
+  + (∑ i' : Fin n, ∑ j : Fin n,
+       prev (Function.update (Function.update A i' (A i' * Y)) j
+              ((Function.update A i' (A i' * Y)) j * X)))
+  - prev A * (X * Y)
+  + (∑ j : Fin n, prev (Function.update A j (A j * (X * Y))))
+
+/-- **Algebraic symmetry of `sixTerm`**: invariant under `X ↔ Y`.
+
+    Three-pair proof:
+    - **Pair 1** `(p A · X · Y − p A · (X · Y))` ↔ same with `Y · X`:
+      `RightPreLieRing.assoc_symm'`.
+    - **Pair 2** `(Σ p(…·(X·Y))) + (Σ Σ p(…·Y·…·X))` ↔ same with X ↔ Y:
+      `prev_action_pre_lie_identity` (rearranged from `A − B = C − D`
+      to `B + C = A + D`).
+    - **Pair 3** `(Σ p(…·X))·Y + (Σ p(…·Y))·X` ↔ same with X ↔ Y:
+      `add_comm` (the two summands literally swap roles). -/
+private lemma sixTerm_symm {R : Type} [CommRing R]
+    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+    {n : ℕ} (prev : MultilinearMap R (fun _ : Fin n ↦ L) L)
+    (A : Fin n → L) (X Y : L) :
+    sixTerm prev A X Y = sixTerm prev A Y X := by
+  simp only [sixTerm]
+  -- Pair 1: pre-Lie identity at (p A, X, Y).
+  have h_assoc :
+      prev A * X * Y - prev A * (X * Y) = prev A * Y * X - prev A * (Y * X) := by
+    have := RightPreLieRing.assoc_symm' (prev A) X Y
+    simp only [associator] at this
+    exact this
+  -- Pair 2: per-degree OG identity (2.3).
+  have h_og := prev_action_pre_lie_identity R prev A X Y
+  -- h_og : (Σ p(…·(X·Y))) - (Σ Σ p(…·X·…·Y))
+  --      = (Σ p(…·(Y·X))) - (Σ Σ p(…·Y·…·X))
+  -- Convert to additive form: (Σ Σ p(…·Y·…·X)) + (Σ p(…·(X·Y)))
+  --                         = (Σ Σ p(…·X·…·Y)) + (Σ p(…·(Y·X))).
+  have h_og_rearr :
+      (∑ i' : Fin n, ∑ j : Fin n,
+         prev (Function.update (Function.update A i' (A i' * Y)) j
+                ((Function.update A i' (A i' * Y)) j * X)))
+      + (∑ j : Fin n, prev (Function.update A j (A j * (X * Y)))) =
+      (∑ i' : Fin n, ∑ j : Fin n,
+         prev (Function.update (Function.update A i' (A i' * X)) j
+                ((Function.update A i' (A i' * X)) j * Y)))
+      + (∑ j : Fin n, prev (Function.update A j (A j * (Y * X)))) := by
+    have h := sub_eq_zero.mpr h_og
+    have eq :
+        ((∑ i' : Fin n, ∑ j : Fin n,
+           prev (Function.update (Function.update A i' (A i' * Y)) j
+                  ((Function.update A i' (A i' * Y)) j * X)))
+         + (∑ j : Fin n, prev (Function.update A j (A j * (X * Y)))))
+        - ((∑ i' : Fin n, ∑ j : Fin n,
+             prev (Function.update (Function.update A i' (A i' * X)) j
+                    ((Function.update A i' (A i' * X)) j * Y)))
+           + (∑ j : Fin n, prev (Function.update A j (A j * (Y * X))))) =
+        ((∑ j : Fin n, prev (Function.update A j (A j * (X * Y))))
+         - (∑ i' : Fin n, ∑ j : Fin n,
+             prev (Function.update (Function.update A i' (A i' * X)) j
+                    ((Function.update A i' (A i' * X)) j * Y))))
+        - ((∑ j : Fin n, prev (Function.update A j (A j * (Y * X))))
+           - (∑ i' : Fin n, ∑ j : Fin n,
+               prev (Function.update (Function.update A i' (A i' * Y)) j
+                      ((Function.update A i' (A i' * Y)) j * X)))) := by
+      abel
+    have : ((∑ i' : Fin n, ∑ j : Fin n,
+              prev (Function.update (Function.update A i' (A i' * Y)) j
+                     ((Function.update A i' (A i' * Y)) j * X)))
+            + (∑ j : Fin n, prev (Function.update A j (A j * (X * Y)))))
+           - ((∑ i' : Fin n, ∑ j : Fin n,
+                prev (Function.update (Function.update A i' (A i' * X)) j
+                       ((Function.update A i' (A i' * X)) j * Y)))
+              + (∑ j : Fin n, prev (Function.update A j (A j * (Y * X))))) = 0 := by
+      rw [eq]; exact h
+    exact sub_eq_zero.mp this
+  -- Pair 3: add_comm on the two `(Σ ...) * (X or Y)` terms.
+  have h_pair3 :
+      (∑ i : Fin n, prev (Function.update A i (A i * X))) * Y
+      + (∑ i' : Fin n, prev (Function.update A i' (A i' * Y))) * X =
+      (∑ i : Fin n, prev (Function.update A i (A i * Y))) * X
+      + (∑ i' : Fin n, prev (Function.update A i' (A i' * X))) * Y := by
+    rw [add_comm]
+  -- Combine via abel and the three pair identities.
+  -- LHS = [(1)-(5)] + [(4)+(6)] - [(2)+(3)]
+  -- RHS = [(1')-(5')] + [(4')+(6')] - [(2')+(3')]
+  have lhs_rearr :
+      prev A * X * Y
+      - (∑ i : Fin n, prev (Function.update A i (A i * X))) * Y
+      - (∑ i' : Fin n, prev (Function.update A i' (A i' * Y))) * X
+      + (∑ i' : Fin n, ∑ j : Fin n,
+           prev (Function.update (Function.update A i' (A i' * Y)) j
+                  ((Function.update A i' (A i' * Y)) j * X)))
+      - prev A * (X * Y)
+      + (∑ j : Fin n, prev (Function.update A j (A j * (X * Y))))
+      =
+      (prev A * X * Y - prev A * (X * Y))
+      + ((∑ i' : Fin n, ∑ j : Fin n,
+            prev (Function.update (Function.update A i' (A i' * Y)) j
+                   ((Function.update A i' (A i' * Y)) j * X)))
+         + (∑ j : Fin n, prev (Function.update A j (A j * (X * Y)))))
+      - ((∑ i : Fin n, prev (Function.update A i (A i * X))) * Y
+         + (∑ i' : Fin n, prev (Function.update A i' (A i' * Y))) * X) := by
+    abel
+  have rhs_rearr :
+      prev A * Y * X
+      - (∑ i : Fin n, prev (Function.update A i (A i * Y))) * X
+      - (∑ i' : Fin n, prev (Function.update A i' (A i' * X))) * Y
+      + (∑ i' : Fin n, ∑ j : Fin n,
+           prev (Function.update (Function.update A i' (A i' * X)) j
+                  ((Function.update A i' (A i' * X)) j * Y)))
+      - prev A * (Y * X)
+      + (∑ j : Fin n, prev (Function.update A j (A j * (Y * X))))
+      =
+      (prev A * Y * X - prev A * (Y * X))
+      + ((∑ i' : Fin n, ∑ j : Fin n,
+            prev (Function.update (Function.update A i' (A i' * X)) j
+                   ((Function.update A i' (A i' * X)) j * Y)))
+         + (∑ j : Fin n, prev (Function.update A j (A j * (Y * X)))))
+      - ((∑ i : Fin n, prev (Function.update A i (A i * Y))) * X
+         + (∑ i' : Fin n, prev (Function.update A i' (A i' * X))) * Y) := by
+    abel
+  rw [lhs_rearr, rhs_rearr, h_assoc, h_og_rearr, h_pair3]
+
+/-- **Decomposition lemma**: `circT (m+3)` evaluated at a snoc-snoc tuple
+    `Fin.snoc (Fin.snoc A X) Y` equals the explicit six-term polynomial in
+    `(prev = circT (m+1), A, X, Y)`.
+
+    This is OG 2008 Lemma 2.5's "unfold three times" step (the leading
+    `circT (m+2)` and the inner summands all unfold via Def 2.4). The
+    `Fin.snoc` form makes the `Fin.init` / `Fin.last` simplifications
+    clean (`Fin.init_snoc`, `Fin.snoc_last`, `Fin.snoc_castSucc`). -/
+private lemma circT_succ_succ_snoc_eval (R : Type) [CommRing R]
+    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+    (T : L) (m : ℕ) (A : Fin (m + 1) → L) (X Y : L) :
+    circTMultilinear R T (m + 3) (Fin.snoc (Fin.snoc A X) Y) =
+      sixTerm (circTMultilinear R T (m + 1)) A X Y := by
+  classical
+  -- Setup: per-summand sub-evaluation lemmas (each is one `circTMultilinear_succ`
+  -- unfold plus snoc/init simplifications).
+  -- (a) Leading: `circT (m+2) (Fin.snoc A X)`.
+  have h_lead :
+      circTMultilinear R T (m + 2) (Fin.snoc A X) =
+        circTMultilinear R T (m + 1) A * X -
+        ∑ i : Fin (m + 1),
+          circTMultilinear R T (m + 1) (Function.update A i (A i * X)) := by
+    show circTMultilinear R T ((m + 1) + 1) (Fin.snoc A X) = _
+    rw [circTMultilinear_succ]
+    simp only [Fin.init_snoc, Fin.snoc_last]
+  -- (b) The `Fin.last (m+1)` summand: `circT (m+2) (update (Fin.snoc A X) (Fin.last (m+1)) (X*Y))`.
+  have h_last :
+      circTMultilinear R T (m + 2)
+          (Function.update (Fin.snoc A X) (Fin.last (m + 1)) (X * Y)) =
+        circTMultilinear R T (m + 1) A * (X * Y) -
+        ∑ j : Fin (m + 1),
+          circTMultilinear R T (m + 1)
+            (Function.update A j (A j * (X * Y))) := by
+    show circTMultilinear R T ((m + 1) + 1)
+        (Function.update (Fin.snoc A X) (Fin.last (m + 1)) (X * Y)) = _
+    rw [circTMultilinear_succ]
+    -- `Fin.init (update q (last (m+1)) z) = Fin.init q`; result `= A`.
+    -- `(update q (last (m+1)) z) (last (m+1)) = z = X*Y`.
+    simp only [Fin.init_update_last, Fin.init_snoc, Function.update_self]
+  -- (c) Each `Fin.castSucc i'` summand: `circT (m+2) (update (Fin.snoc A X) (Fin.castSucc i') (A i' * Y))`.
+  have h_castSucc : ∀ i' : Fin (m + 1),
+      circTMultilinear R T (m + 2)
+          (Function.update (Fin.snoc A X) (Fin.castSucc i') (A i' * Y)) =
+        circTMultilinear R T (m + 1) (Function.update A i' (A i' * Y)) * X -
+        ∑ j : Fin (m + 1),
+          circTMultilinear R T (m + 1)
+            (Function.update (Function.update A i' (A i' * Y)) j
+              ((Function.update A i' (A i' * Y)) j * X)) := by
+    intro i'
+    show circTMultilinear R T ((m + 1) + 1)
+        (Function.update (Fin.snoc A X) (Fin.castSucc i') (A i' * Y)) = _
+    rw [circTMultilinear_succ]
+    -- `Fin.init (update q (castSucc i') y) = update (Fin.init q) i' y`; result `= update A i' (A i' * Y)`.
+    -- `(update q (castSucc i') y) (last (m+1)) = q (last (m+1)) = X` (since castSucc i' ≠ last (m+1)).
+    have h_last_pos :
+        (Function.update (Fin.snoc A X : Fin (m + 2) → L)
+          (Fin.castSucc i') (A i' * Y)) (Fin.last (m + 1)) = X := by
+      rw [Function.update_of_ne (Fin.castSucc_ne_last _).symm, Fin.snoc_last]
+    simp only [Fin.init_update_castSucc, Fin.init_snoc, h_last_pos]
+  -- Main combine.
+  simp only [sixTerm]
+  show circTMultilinear R T ((m + 2) + 1) (Fin.snoc (Fin.snoc A X) Y) = _
+  rw [circTMultilinear_succ]
+  -- Outer simplification: `Fin.init (snoc (snoc A X) Y) = snoc A X`; `(snoc (snoc A X) Y) (last (m+2)) = Y`.
+  simp only [Fin.init_snoc, Fin.snoc_last]
+  -- Split the outer Σ via `Fin.sum_univ_castSucc`.
+  rw [Fin.sum_univ_castSucc]
+  -- Evaluate `(Fin.snoc A X)` at castSucc i' and at last (m+1) within update arguments.
+  simp only [Fin.snoc_castSucc, Fin.snoc_last]
+  -- Rewrite leading and last-summand and each castSucc i' summand.
+  rw [h_lead, h_last]
+  rw [show (∑ i' : Fin (m + 1),
+              circTMultilinear R T (m + 2)
+                (Function.update (Fin.snoc A X) (Fin.castSucc i') (A i' * Y)))
+          = ∑ i' : Fin (m + 1),
+              (circTMultilinear R T (m + 1) (Function.update A i' (A i' * Y)) * X
+              - ∑ j : Fin (m + 1),
+                  circTMultilinear R T (m + 1)
+                    (Function.update (Function.update A i' (A i' * Y)) j
+                      ((Function.update A i' (A i' * Y)) j * X)))
+       from Finset.sum_congr rfl (fun i' _ => h_castSucc i')]
+  -- Distribute Σ over subtraction; pull X out of inner sum.
+  simp only [Finset.sum_sub_distrib, sub_mul, ← Finset.sum_mul]
+  abel
+
+/-! ### §2.B: Adjacent-exterior swap helper
+
+The substantive content of Lemma 2.5's exterior case lives here, in the
+"adjacent" case: invariance of `circT (m+3)` under the swap of the last
+two positions `(m+1, m+2)`. The general exterior swap reduces to this
+via conjugation by an interior swap (see `circTMultilinear_symm_exterior`).
+
+This split lets the non-adjacent case appeal to the adjacent case as a
+plain hypothesis rather than mutually-recursing inside the dispatcher. -/
+
+/-- **Adjacent-exterior swap helper**: for `m : ℕ`, `circT (m+3)` is
+    invariant under `swap (Fin.castSucc (Fin.last (m+1))) (Fin.last (m+2))`
+    (the swap of the last two positions).
+
+    Proof (per OG 2008 Lemma 2.5 page 5): unfold `circT (m+3) f` via
+    `circTMultilinear_succ` twice to get a 6-term expansion. Pair the
+    terms three ways: (1)-(5) via L's pre-Lie identity, (4)+(6) via
+    `prev_action_pre_lie_identity` (the per-degree OG identity 2.3),
+    (2)+(3) trivially by `X ↔ Y` symmetry. -/
+private theorem circTMultilinear_symm_exterior_adj (R : Type) [CommRing R]
+    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+    (T : L) (m : ℕ)
+    (_ih : ∀ τ : Perm (Fin (m + 2)),
+      (circTMultilinear R T (m + 2)).domDomCongr τ =
+        circTMultilinear R T (m + 2)) :
+    (circTMultilinear R T (m + 3)).domDomCongr
+        (Equiv.swap (Fin.castSucc (Fin.last (m + 1))) (Fin.last (m + 2))) =
+      circTMultilinear R T (m + 3) := by
+  classical
+  ext f
+  simp only [MultilinearMap.domDomCongr_apply]
+  -- Reconstruct both `f` and `f ∘ sw` as `Fin.snoc (Fin.snoc A ?) ?` and apply the
+  -- six-term decomposition lemma `circT_succ_succ_snoc_eval` to each. The result
+  -- is `sixTerm ... X Y` for `f` and `sixTerm ... Y X` for `f ∘ sw`; conclude via
+  -- `sixTerm_symm`.
+  set sw : Perm (Fin (m + 3)) :=
+    Equiv.swap (Fin.castSucc (Fin.last (m + 1))) (Fin.last (m + 2)) with hsw_def
+  -- f = Fin.snoc (Fin.snoc (Fin.init (Fin.init f)) X) Y, where
+  -- X = f (Fin.castSucc (Fin.last (m+1))) and Y = f (Fin.last (m+2)).
+  have hf_eq : f = Fin.snoc (Fin.snoc (Fin.init (Fin.init f))
+                              (f (Fin.castSucc (Fin.last (m + 1)))))
+                            (f (Fin.last (m + 2))) := by
+    have h_init_eq : (Fin.init f) (Fin.last (m + 1)) =
+                      f (Fin.castSucc (Fin.last (m + 1))) := rfl
+    have h_inner : Fin.snoc (Fin.init (Fin.init f))
+                            (f (Fin.castSucc (Fin.last (m + 1)))) = Fin.init f := by
+      rw [← h_init_eq]; exact Fin.snoc_init_self (Fin.init f)
+    rw [h_inner]
+    exact (Fin.snoc_init_self f).symm
+  -- (fun k => f (sw k)) = Fin.snoc (Fin.snoc A Y) X, with X, Y swapped.
+  have hf_sw_eq : (fun k => f (sw k)) =
+      Fin.snoc (Fin.snoc (Fin.init (Fin.init f))
+                (f (Fin.last (m + 2))))
+              (f (Fin.castSucc (Fin.last (m + 1)))) := by
+    funext k
+    induction k using Fin.lastCases with
+    | last =>
+      -- sw (last (m+2)) = castSucc (last (m+1)); RHS at last (m+2) = X.
+      show f (sw (Fin.last (m + 2))) =
+        ((Fin.snoc (Fin.snoc (Fin.init (Fin.init f))
+                    (f (Fin.last (m + 2))))
+                  (f (Fin.castSucc (Fin.last (m + 1)))) :
+                Fin (m + 3) → L)) (Fin.last (m + 2))
+      rw [Fin.snoc_last, hsw_def, Equiv.swap_apply_right]
+    | cast k' =>
+      induction k' using Fin.lastCases with
+      | last =>
+        -- sw (castSucc (last (m+1))) = last (m+2); RHS at castSucc (last (m+1)) = Y.
+        show f (sw (Fin.castSucc (Fin.last (m + 1)))) =
+          ((Fin.snoc (Fin.snoc (Fin.init (Fin.init f))
+                      (f (Fin.last (m + 2))))
+                    (f (Fin.castSucc (Fin.last (m + 1)))) :
+                  Fin (m + 3) → L))
+            (Fin.castSucc (Fin.last (m + 1)))
+        rw [Fin.snoc_castSucc, Fin.snoc_last, hsw_def, Equiv.swap_apply_left]
+      | cast k'' =>
+        -- sw fixes castSucc (castSucc k''); both sides reduce to f (castSucc (castSucc k'')).
+        show f (sw (Fin.castSucc (Fin.castSucc k''))) =
+          ((Fin.snoc (Fin.snoc (Fin.init (Fin.init f))
+                      (f (Fin.last (m + 2))))
+                    (f (Fin.castSucc (Fin.last (m + 1)))) :
+                  Fin (m + 3) → L))
+            (Fin.castSucc (Fin.castSucc k''))
+        have h_fix : sw (Fin.castSucc (Fin.castSucc k'')) =
+                      Fin.castSucc (Fin.castSucc k'') := by
+          rw [hsw_def]
+          apply Equiv.swap_apply_of_ne_of_ne
+          · intro h
+            exact (Fin.castSucc_ne_last k'') (Fin.castSucc_injective _ h)
+          · exact Fin.castSucc_ne_last _
+        rw [h_fix, Fin.snoc_castSucc, Fin.snoc_castSucc]
+        rfl
+  -- Apply decomposition + algebraic symmetry.
+  rw [hf_sw_eq]
+  conv_rhs => rw [hf_eq]
+  rw [circT_succ_succ_snoc_eval, circT_succ_succ_snoc_eval]
+  exact sixTerm_symm _ _ _ _
+
 /-- **Lemma 2.5 — Exterior swap invariance**: for `i : Fin n`,
     `circTMultilinear R T (n+1)` is invariant under
     `Equiv.swap (Fin.castSucc i) (Fin.last n)`.
@@ -528,11 +854,9 @@ private theorem prev_action_pre_lie_identity (R : Type) [CommRing R]
     Follows from the L pre-Lie identity applied to each tuple position
     plus relabel symmetry for off-diagonal sums.
 
-    **Remaining work** (~100-150 LOC, multi-session): 6-term expansion of
-    `circT (n+2)` via `circTMultilinear_succ` twice, then apply pre-Lie
-    on (1)-(5) pair, `prev_action_pre_lie_identity` on (4)+(6) pair,
-    trivial swap on (2)+(3) pair. Final ~20 LOC for dispatcher combining
-    with IH on `S_{n+1}` to get full `S_{n+2}`.
+    The adjacent case is now closed in `circTMultilinear_symm_exterior_adj`
+    via `circT_succ_succ_snoc_eval` (six-term decomposition) +
+    `sixTerm_symm` (algebraic symmetry).
 
     Reference: @cite{oudom-guin-2008} Lemma 2.5 proof, p. 5. -/
 private theorem circTMultilinear_symm_exterior (R : Type) [CommRing R]
@@ -566,9 +890,69 @@ private theorem circTMultilinear_symm_exterior (R : Type) [CommRing R]
     have key := RightPreLieRing.assoc_symm' T (f 0) (f 1)
     simp only [associator] at key
     exact key.symm
-  | _ + 2, _ =>
+  | m + 2, i =>
     -- n ≥ 2: general case via OG 6-term proof. See docstring above.
-    sorry
+    -- Case-split: adjacent (`i = Fin.last (m+1)`) vs non-adjacent.
+    classical
+    induction i using Fin.lastCases with
+    | last =>
+      -- Adjacent case: swap exchanges positions m+1, m+2 of Fin (m+3).
+      -- Direct appeal to the substantive helper.
+      exact circTMultilinear_symm_exterior_adj R T m ih
+    | cast j' =>
+      -- Non-adjacent: i = Fin.castSucc j' with j' : Fin (m+1).
+      -- Reduce to adjacent via conjugation by interior swap g, where
+      -- g sends the non-adjacent position `Fin.castSucc (Fin.castSucc j')`
+      -- to the adjacent position `Fin.castSucc (Fin.last (m+1))` and fixes
+      -- `Fin.last (m+2)`. The conjugation identity
+      --   swap (g a) (g b) = g * swap a b * g⁻¹
+      -- (mathlib `Equiv.swap_apply_apply`) gives the rewrite.
+      -- Normalize `m + 2 + 1` to `m + 3` for `rw` to fire syntactically.
+      show (circTMultilinear R T (m + 3)).domDomCongr
+              (Equiv.swap (Fin.castSucc (Fin.castSucc j')) (Fin.last (m + 2))) =
+            circTMultilinear R T (m + 3)
+      set g : Perm (Fin (m + 3)) :=
+        Equiv.swap (Fin.castSucc (Fin.castSucc j'))
+          (Fin.castSucc (Fin.last (m + 1))) with hg_def
+      -- (a) g is self-inverse.
+      have hg_inv : g⁻¹ = g := Equiv.swap_inv _ _
+      -- (b) g fixes `Fin.last (m+2)`.
+      have hg_last : g (Fin.last (m + 2)) = Fin.last (m + 2) := by
+        apply Equiv.swap_apply_of_ne_of_ne
+        · exact (Fin.castSucc_ne_last _).symm
+        · exact (Fin.castSucc_ne_last _).symm
+      -- (c) g sends the non-adjacent position to the adjacent position.
+      have hg_a : g (Fin.castSucc (Fin.castSucc j')) =
+                    Fin.castSucc (Fin.last (m + 1)) :=
+        Equiv.swap_apply_left _ _
+      -- (d) interior-swap invariance applies to g.
+      have h_int :
+          (circTMultilinear R T (m + 3)).domDomCongr g =
+            circTMultilinear R T (m + 3) :=
+        circTMultilinear_symm_interior R T (m + 2)
+          (Fin.castSucc j') (Fin.last (m + 1)) ih
+      -- (e) adjacent-exterior invariance from the helper.
+      have h_adj :
+          (circTMultilinear R T (m + 3)).domDomCongr
+              (Equiv.swap (Fin.castSucc (Fin.last (m + 1)))
+                (Fin.last (m + 2))) =
+            circTMultilinear R T (m + 3) :=
+        circTMultilinear_symm_exterior_adj R T m ih
+      -- (f) conjugation: swap_target = g⁻¹ * swap_adj * g.
+      have h_conj :
+          Equiv.swap (Fin.castSucc (Fin.castSucc j')) (Fin.last (m + 2)) =
+          g⁻¹ * Equiv.swap (Fin.castSucc (Fin.last (m + 1)))
+                  (Fin.last (m + 2)) * g := by
+        have h := Equiv.swap_apply_apply g
+          (Fin.castSucc (Fin.castSucc j')) (Fin.last (m + 2))
+        rw [hg_a, hg_last] at h
+        -- h : swap_adj = g * swap_target * g⁻¹
+        -- Need: swap_target = g⁻¹ * swap_adj * g = g⁻¹ * (g * swap_target * g⁻¹) * g
+        rw [h, mul_assoc g _ g⁻¹, inv_mul_cancel_left, inv_mul_cancel_right]
+      -- (g) Combine via `domDomCongr_mul` (twice) + h_int + h_adj + hg_inv.
+      rw [h_conj, MultilinearMap.domDomCongr_mul, h_int,
+          MultilinearMap.domDomCongr_mul, h_adj, hg_inv]
+      exact h_int
 
 /-- **Lemma 2.5 — Any-swap invariance**: combines interior and exterior
     cases via a case-split on whether either of `x, y : Fin (n+1)` is
