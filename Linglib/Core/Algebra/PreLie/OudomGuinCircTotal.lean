@@ -6,6 +6,8 @@ Authors: Robert Hawkins
 import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
 import Mathlib.LinearAlgebra.TensorAlgebra.ToTensorPower
 import Mathlib.Algebra.DirectSum.Module
+import Mathlib.LinearAlgebra.Quotient.Basic
+import Mathlib.LinearAlgebra.Isomorphisms
 
 set_option autoImplicit false
 
@@ -111,6 +113,16 @@ theorem circTTensor_ι (T : L) (x : L) :
   -- Goal: circTMultilinear R T 1 (fun _ => x) = T * x
   exact circTMultilinear_one_eval T (fun _ => x)
 
+/-- `circTTensor T (TensorAlgebra.tprod R L n f) = circTMultilinear R T n f`. -/
+@[simp]
+theorem circTTensor_tprod (T : L) (n : ℕ) (f : Fin n → L) :
+    circTTensor T (TensorAlgebra.tprod R L n f) = circTMultilinear R T n f := by
+  unfold circTTensor
+  simp only [LinearMap.comp_apply, AlgEquiv.toLinearMap_apply,
+             TensorAlgebra.equivDirectSum_apply,
+             TensorAlgebra.toDirectSum_tensorPower_tprod,
+             circTGraded_of, circTPi_tprod]
+
 /-! ## §4: `circTTensor` respects `SymRel` (consequence of Lemma 2.5)
 
 The substantive content: `circTTensor T (ι(x) * ι(y)) = circTTensor T (ι(y) * ι(x))`,
@@ -152,47 +164,60 @@ theorem circTTensor_symRel (T : L) {a b : TensorAlgebra R L}
     simp only [if_pos, show (1 : Fin 2) ≠ 0 from by decide]
     convert key using 2
 
-/-! ## §5: Lift to `SymmetricAlgebra` via `RingQuot` quotient
+/-! ## §5: Lift to `SymmetricAlgebra` via `Submodule.liftQ`
 
-`SymmetricAlgebra R L = RingQuot (SymRel R L)`. To lift `circTTensor T`
-through the quotient, we need to show it respects the full `RingQuot.Rel`
-closure of `SymRel`, not just `SymRel` itself.
+Use `Submodule.liftQ` after expressing `SymmetricAlgebra R L` as
+`TensorAlgebra R L ⧸ (ker algHom)` via `LinearMap.quotKerEquivOfSurjective`
+(`algHom` is surjective by `RingQuot.mkAlgHom_surjective`).
 
-`RingQuot.Rel` has four constructors: `of` (base), `add_left`, `mul_left`,
-`mul_right`. For our linear map:
-- `of`: handled by `circTTensor_symRel` (Lemma 2.5 at n = 2).
-- `add_left`: automatic from linearity.
-- `mul_left` / `mul_right`: SUBSTANTIVE. Requires the FULL symmetric-group
-  action on `circTMultilinear T n` (Lemma 2.5 across all positions, not
-  just adjacent). The argument: `circTTensor T ((a · ι X · ι Y · c)) =
-  circTMultilinear T (deg) (a's tuple, X, Y, c's tuple) = (with X ↔ Y
-  swapped by `circTMultilinear_symm` applied to the corresponding
-  transposition) = circTTensor T ((a · ι Y · ι X · c))`.
+The kernel-containment `ker algHom ≤ ker (circTTensor T)` is the
+substantive content. Reduces to: for any `r, c ∈ TensorAlgebra R L`
+and `X, Y ∈ L`,
 
-Mathlib's `RingQuot.lift` / `RingQuot.liftAlgHom` only handles `RingHom`s
-and `AlgHom`s — not arbitrary `LinearMap`s. The mathlib gap here is:
-a `RingQuot.liftLinearMap` that takes a linear `f : R →ₗ[T] N` respecting
-the base relation `r` (under the multilinear-from-grading structure of
-TensorAlgebra) and gives `RingQuot r →ₗ[T] N`.
+  `circTTensor T (r * (ι X * ι Y) * c) = circTTensor T (r * (ι Y * ι X) * c)`,
 
-**Plan for the next session:** prove a generalization of
-`circTTensor_symRel` that handles arbitrary embedding of the swap inside
-a product `a · (ι X · ι Y) · b → a · (ι Y · ι X) · b`. Then assemble
-the four-constructor induction to lift through `Quot.lift` + manual
-linearity verification (`AddHom.mk` + `smul`). Estimated ~80-150 LOC.
+which follows from the FULL symmetric-group action on
+`circTMultilinear T n` (Lemma 2.5 across all positions, not just adjacent)
+applied to the concatenated tuple `[r's positions, X, Y, c's positions]`. -/
 
-Alternative: prove `SymmetricAlgebra R L ≃ₗ TensorAlgebra R L ⧸ (ker algHom)`
-(via algHom_surjective + quotient iso), then use `Submodule.liftQ`
-(simpler API). This requires showing `ker algHom ≤ ker circTTensor T`,
-which is the same multilinear-symmetry argument generalized to ideals. -/
+/-- `algHom` (the quotient map) as a `LinearMap`. -/
+private noncomputable def algHomL : TensorAlgebra R L →ₗ[R] SymmetricAlgebra R L :=
+  (SymmetricAlgebra.algHom R L).toLinearMap
+
+private theorem algHomL_surjective :
+    Function.Surjective (algHomL (R := R) (L := L)) :=
+  SymmetricAlgebra.algHom_surjective R L
+
+/-- **Kernel-containment**: `circTTensor T` vanishes on `ker algHom`.
+
+    **Sorry-fenced.** The substantive content: for any `r, c ∈ TensorAlgebra`
+    and `X, Y ∈ L`,
+    `circTTensor T (r * (ι X * ι Y) * c) = circTTensor T (r * (ι Y * ι X) * c)`.
+    Reduces to `circTMultilinear_symm` applied to the (m+1, m+2)-position
+    transposition in the concatenated tuple.
+
+    Proof plan (~80-120 LOC):
+    1. Compute `(tprod_m a) * (ι X * ι Y) * (tprod_k b) = tprod_{m+2+k} (Fin.append a (Fin.append ![X,Y] b))`
+       via `TensorAlgebra.tprod_apply` + `List` associativity.
+    2. `circTTensor T ∘ tprod = circTMultilinear T n` (via the per-degree
+       interface: `toDirectSum_tensorPower_tprod` + `circTGraded_of` +
+       `circTPi_tprod`).
+    3. Swap of X and Y at positions m+1, m+2 in the tuple corresponds to
+       `(Equiv.swap (Fin.castSucc (Fin.last (m+1))) (Fin.last (m+2)))` ∘ tuple.
+       By `circTMultilinear_symm` applied to this perm, equal.
+    4. Extend from tprods to general elements via bilinear linearity (the
+       difference is a bilinear map vanishing on tprods, hence everywhere). -/
+private theorem circTTensor_vanishes_on_ker (T : L) :
+    LinearMap.ker (algHomL (R := R) (L := L)) ≤ LinearMap.ker (circTTensor T) := by
+  sorry
 
 /-- The per-T OG operation, on `SymmetricAlgebra R L`. Lands in `L`.
 
-    **Sorry-fenced (Q1b Step 1 final piece).** See §5 docstring for the
-    plan. The TensorAlgebra-level operation `circTTensor T` is sorry-free;
-    only the quotient lift is pending. -/
+    Built via `Submodule.liftQ` + `LinearMap.quotKerEquivOfSurjective`
+    applied to the surjective `algHom : TensorAlgebra → SymmetricAlgebra`. -/
 noncomputable def circByT_total (T : L) : SymmetricAlgebra R L →ₗ[R] L :=
-  sorry
+  (Submodule.liftQ _ (circTTensor T) (circTTensor_vanishes_on_ker T)).comp
+    (LinearMap.quotKerEquivOfSurjective algHomL algHomL_surjective).symm.toLinearMap
 
 end OudomGuinCircConstruct
 
