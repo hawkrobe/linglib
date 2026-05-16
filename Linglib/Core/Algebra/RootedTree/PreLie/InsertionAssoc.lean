@@ -7071,7 +7071,11 @@ private theorem acc_to_pkfc_image_eq_perKFChoice
     (choice_pre_T_B : List Path)
     (h_T_len : choice_pre_T_B.length = pre_T_B.length)
     (choice_pre_FA_B : List (Fin F_A.length × Path))
-    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length) :
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (h_choice_T_valid : ∀ pair ∈ choice_pre_T_B.zip pre_T_B, IsValidPath pair.fst T)
+    (h_choice_FA_valid : ∀ (i : Fin F_A.length),
+      ∀ pair ∈ perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i,
+        IsValidPath pair.fst F_A[i.val]) :
     -- LHS: image of allACC under acc_to_pkfc, projected to (Nat × Path).
     (Multiset.ofList (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B)).map
       (fun acc =>
@@ -7084,7 +7088,125 @@ private theorem acc_to_pkfc_image_eq_perKFChoice
          multiGraft F_A[i.val]
            (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i)))).map
       (fun p => (p.fst.val, p.snd)) := by
-  sorry
+  -- Plan: split LHS via 4-section structure, group as (T_orig+T_graft) +
+  -- (FA_orig+FA_graft), apply Sessions 15/16. Decompose RHS via perKFChoice_cons,
+  -- bridge FA-half via Fin cast.
+  -- Step 1: List-level decomposition of LHS.
+  unfold allAlphaConstrainedChoiceList
+  rw [Multiset.map_coe]
+  simp only [List.map_append, List.map_map, List.map_flatMap, Function.comp_def]
+  rw [← Multiset.coe_add, ← Multiset.coe_add, ← Multiset.coe_add]
+  -- Goal LHS: ((↑T_orig + ↑T_graft) + ↑FA_orig) + ↑FA_graft.
+  -- Convert each ↑(...) to M.ofList(...) by rfl, so side lemmas match.
+  rw [show (↑((vertices T).map (fun x =>
+            ((acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+              (AlphaConstrainedChoice.t_orig x)).fst.val,
+              (acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+                (AlphaConstrainedChoice.t_orig x)).snd))) : Multiset (ℕ × Path)) =
+          Multiset.ofList ((vertices T).map (fun v =>
+            ((0 : ℕ), transport (choice_pre_T_B.zip pre_T_B) v)))
+      from rfl]
+  rw [show (↑((List.finRange pre_T_B.length).flatMap fun a =>
+            (vertices pre_T_B[a.val]).map fun x =>
+              ((acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+                (AlphaConstrainedChoice.t_graft a x)).fst.val,
+                (acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+                  (AlphaConstrainedChoice.t_graft a x)).snd)) :
+            Multiset (ℕ × Path)) =
+          Multiset.ofList ((List.finRange pre_T_B.length).flatMap fun k =>
+            (vertices pre_T_B[k.val]).map fun q =>
+              ((0 : ℕ), liftMulti (choice_pre_T_B.zip pre_T_B) ⟨k.val, by
+                rw [List.length_zip, h_T_len, min_self]; exact k.isLt⟩ q))
+      from rfl]
+  rw [acc_to_pkfc_T_side_eq T pre_T_B choice_pre_T_B h_T_len h_choice_T_valid]
+  rw [show (↑((List.finRange F_A.length).flatMap fun a =>
+            (vertices F_A[a.val]).map fun x =>
+              ((acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+                (AlphaConstrainedChoice.fa_orig a x)).fst.val,
+                (acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+                  (AlphaConstrainedChoice.fa_orig a x)).snd)) :
+            Multiset (ℕ × Path)) =
+          Multiset.ofList ((List.finRange F_A.length).flatMap (fun (i : Fin F_A.length) =>
+            (vertices F_A[i.val]).map (fun v =>
+              ((i.val + 1 : ℕ), transport
+                (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i) v))))
+      from rfl]
+  rw [show (↑((List.finRange pre_FA_B.length).flatMap fun a =>
+            (vertices pre_FA_B[a.val]).map fun x =>
+              ((acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+                (AlphaConstrainedChoice.fa_graft a x)).fst.val,
+                (acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+                  (AlphaConstrainedChoice.fa_graft a x)).snd)) :
+            Multiset (ℕ × Path)) =
+          Multiset.ofList ((List.finRange pre_FA_B.length).flatMap
+            (fun (k : Fin pre_FA_B.length) =>
+              (vertices pre_FA_B[k.val]).map (fun q =>
+                (((choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst.val +
+                    1 : ℕ),
+                  liftMulti
+                    (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B
+                      (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst)
+                    ⟨rankWithinFilter choice_pre_FA_B k.val
+                        (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst,
+                      rankWithinFilter_lt_perTreePairsFromFChoice F_A pre_FA_B
+                        choice_pre_FA_B h_FA_len k
+                        (by rw [h_FA_len]; exact k.isLt) rfl⟩ q))))
+      from rfl]
+  -- Reassociate to expose FA_orig + FA_graft.
+  rw [add_assoc]
+  rw [acc_to_pkfc_FA_side_eq F_A pre_FA_B choice_pre_FA_B h_FA_len h_choice_FA_valid]
+  -- Step 2: Decompose RHS via perKFChoice_cons.
+  rw [perKFChoice_cons]
+  conv_rhs =>
+    rw [Multiset.map_coe, List.map_append, List.map_map, List.map_map]
+    rw [← Multiset.coe_add]
+  simp only [Function.comp_def]
+  -- T-half match by rfl (Fin _.val of 0 = 0).
+  congr 1
+  -- Goal: FA-half. Bridge perKFChoice F_ins to canonical via Fin cast.
+  show Multiset.ofList ((List.finRange F_A.length).flatMap
+      (fun (i : Fin F_A.length) =>
+        (vertices (multiGraft F_A[i.val]
+          (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))).map
+          (fun v => ((i.val + 1 : ℕ), v)))) =
+    ↑((perKFChoice ((List.finRange F_A.length).map fun (i : Fin F_A.length) =>
+        multiGraft F_A[i.val]
+          (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))).map
+      (fun p => (p.fst.val + 1, p.snd)))
+  unfold perKFChoice
+  rw [List.map_flatMap]
+  simp only [List.map_map, Function.comp_def]
+  rw [← Multiset.coe_bind, ← Multiset.coe_bind]
+  have h_F_ins_len :
+      F_A.length = ((List.finRange F_A.length).map fun (i : Fin F_A.length) =>
+        multiGraft F_A[i.val]
+          (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i)).length := by
+    rw [List.length_map, List.length_finRange]
+  rw [Multiset_bind_finRange_cast h_F_ins_len
+      (fun j => Multiset.ofList ((vertices (((List.finRange F_A.length).map
+            fun (i : Fin F_A.length) =>
+              multiGraft F_A[i.val]
+                (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))[j.val])).map
+          (fun v => ((j.val + 1 : ℕ), v))))]
+  refine Multiset.bind_congr fun j _ => ?_
+  -- Goal: ↑(List.map (fun v => (j.val + 1, v)) (vertices (g j))) =
+  --       ↑(List.map (fun v => ((Fin.cast h j).val + 1, v)) (vertices F_ins[(Fin.cast h j).val]))
+  -- where g j = mG F_A[j.val] (per_tree_pairs j), F_ins = (finRange F_A.length).map g.
+  -- (Fin.cast h_F_ins_len j).val = j.val by rfl. F_ins[(Fin.cast h j).val] = F_ins[j.val] = g j.
+  apply congrArg
+  congr 1
+  · -- vertices arguments: g j = ((finRange F_A.length).map g)[(Fin.cast h j).val].
+    -- Use List.getElem_map + List.getElem_finRange + Fin.cast preservation.
+    rw [show ((List.finRange F_A.length).map fun (i : Fin F_A.length) =>
+            multiGraft F_A[i.val]
+              (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))[
+              (Fin.cast h_F_ins_len j).val]'
+              (Fin.cast h_F_ins_len j).isLt =
+          multiGraft F_A[j.val]
+            (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B j)
+      from by
+        rw [List.getElem_map, List.getElem_finRange]
+        rfl]
 
 /-- **Strategy A scaffold (Session 5+, sorry-fenced)**: the headline
     `LHS_eq_canonical_msform` at `pres = const empty`, proved DIRECTLY via
