@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Features.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness.Hierarchy
 import Linglib.Theories.Semantics.Verb.Affectedness.Defs
 

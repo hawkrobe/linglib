@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Features.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness.Profile
 import Linglib.Theories.Semantics.Lexical.LevinClassProfiles
 import Linglib.Core.Case.Basic

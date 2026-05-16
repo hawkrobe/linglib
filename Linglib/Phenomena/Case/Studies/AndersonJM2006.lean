@@ -1,7 +1,7 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Core.Case.Hierarchy
-import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Features.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Fragments.English.Predicates.Verbal
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Features.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data

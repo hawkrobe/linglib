@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.VoiceProjection
-import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Features.EntailmentProfile
 import Linglib.Phenomena.ArgumentStructure.Studies.Polinsky2013
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 

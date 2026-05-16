@@ -23,7 +23,7 @@ and distinct syntactic frames.
 
 -/
 
-import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Features.EntailmentProfile
 import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
 

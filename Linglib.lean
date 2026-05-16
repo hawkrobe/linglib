@@ -2374,7 +2374,7 @@ import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Typology.Voice
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
-import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Features.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness.Profile
 import Linglib.Theories.Semantics.Lexical.LevinTheory
 import Linglib.Theories.Semantics.Lexical.LevinClassProfiles

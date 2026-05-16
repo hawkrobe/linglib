@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Features.EntailmentProfile
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
