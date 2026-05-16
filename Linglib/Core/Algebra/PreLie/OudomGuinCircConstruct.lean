@@ -356,14 +356,14 @@ the `n = 1` base case of the exterior swap closure (Lemma 2.5). -/
 
 /-- `circTMultilinear R T 1 g = T * g 0`. -/
 @[simp]
-private lemma circTMultilinear_one_eval (T : L) (g : Fin 1 → L) :
+lemma circTMultilinear_one_eval (T : L) (g : Fin 1 → L) :
     circTMultilinear R T 1 g = T * g 0 := by
   show circTMultilinear R T (0 + 1) g = _
   rw [circTMultilinear_succ, Fin.sum_univ_zero, sub_zero, circTMultilinear_zero]
   rfl
 
 /-- `circTMultilinear R T 2 g = (T * g 0) * g 1 - T * (g 0 * g 1)`. -/
-private lemma circTMultilinear_two_eval (T : L) (g : Fin 2 → L) :
+lemma circTMultilinear_two_eval (T : L) (g : Fin 2 → L) :
     circTMultilinear R T 2 g = (T * g 0) * g 1 - T * (g 0 * g 1) := by
   show circTMultilinear R T (1 + 1) g = _
   rw [circTMultilinear_succ, Fin.sum_univ_one,
