@@ -7208,6 +7208,133 @@ private theorem acc_to_pkfc_image_eq_perKFChoice
         rw [List.getElem_map, List.getElem_finRange]
         rfl]
 
+/-! ### §1.11.10: `listChoices` image-equality lifting (Session 18 Part A)
+
+Generic helper lifting a multiset equality at the element level
+`(↑xs).map f = (↑ys).map g` to the list-level
+`(↑(listChoices xs n)).map (·.map f) = (↑(listChoices ys n)).map (·.map g)`.
+
+Proof: induction on `n`. The cons case uses `Multiset.map_bind`,
+`Multiset.bind_map`, and a swap-of-maps identity to expose the IH form.
+
+Generality: stated for arbitrary β γ δ so this could be promoted to mathlib;
+the proof never mentions trees, paths, or any linguistics-specific structure. -/
+
+/-- **Generic listChoices image lift**: if mapping `xs` by `f` agrees
+    multisetwise with mapping `ys` by `g`, then the n-fold list power
+    `listChoices` mapped via `·.map f` / `·.map g` also agree.
+
+    Workhorse for `acc_to_pkfc_list_image_eq` (the Strategy A bijection lift).
+    Mathlib-quality: pure list/multiset induction, no linguistic content. -/
+private theorem listChoices_map_image_eq
+    {β γ δ : Type*} {xs : List β} {ys : List γ} {f : β → δ} {g : γ → δ}
+    (h : (Multiset.ofList xs).map f = (Multiset.ofList ys).map g) (n : ℕ) :
+    (Multiset.ofList (listChoices xs n)).map (fun l => l.map f) =
+    (Multiset.ofList (listChoices ys n)).map (fun l => l.map g) := by
+  induction n with
+  | zero =>
+    -- listChoices _ 0 = [[]]; both sides reduce to ↑[[]] (singleton of [] : List δ).
+    show Multiset.map (fun l => l.map f) (Multiset.ofList [[]]) =
+      Multiset.map (fun l => l.map g) (Multiset.ofList [[]])
+    rfl
+  | succ k ih =>
+    -- Step 1: unfold listChoices_succ on both sides.
+    -- listChoices xs (k+1) = xs.flatMap (fun v => (listChoices xs k).map (v :: ·))
+    show Multiset.map (fun l => l.map f)
+          (Multiset.ofList (xs.flatMap fun v => (listChoices xs k).map (v :: ·))) =
+        Multiset.map (fun l => l.map g)
+          (Multiset.ofList (ys.flatMap fun v => (listChoices ys k).map (v :: ·)))
+    -- Step 2: ↑(l.flatMap g) = (↑l).bind (fun v => ↑(g v))   [← Multiset.coe_bind]
+    rw [show Multiset.ofList (xs.flatMap fun v => (listChoices xs k).map (v :: ·)) =
+            (Multiset.ofList xs).bind
+              (fun v => Multiset.ofList ((listChoices xs k).map (v :: ·)))
+          from (Multiset.coe_bind _ _).symm,
+        show Multiset.ofList (ys.flatMap fun v => (listChoices ys k).map (v :: ·)) =
+            (Multiset.ofList ys).bind
+              (fun v => Multiset.ofList ((listChoices ys k).map (v :: ·)))
+          from (Multiset.coe_bind _ _).symm]
+    -- Step 3: push outer .map inside bind via Multiset.map_bind.
+    rw [Multiset.map_bind, Multiset.map_bind]
+    -- Step 4: per-v inner reshuffle. For each v ∈ xs:
+    --   ↑((listChoices xs k).map (v :: ·)) .map (.map f)
+    --   = (↑(listChoices xs k)).map (v :: ·) .map (.map f)
+    --   = (↑(listChoices xs k)).map (.map f ∘ (v :: ·))      [Multiset.map_map]
+    --   = (↑(listChoices xs k)).map (fun l => f v :: l.map f) -- (v :: l).map f = f v :: l.map f
+    --   = (↑(listChoices xs k)).map ((cons (f v)) ∘ (.map f)) where cons w l := w :: l
+    --   = ((↑(listChoices xs k)).map (.map f)).map (cons (f v))      [Multiset.map_map reversed]
+    have h_lift_f : ∀ (l : List (List β)) (v : β),
+        Multiset.map (fun l' : List β => l'.map f) (Multiset.ofList (l.map (v :: ·))) =
+        Multiset.map (fun l_img : List δ => f v :: l_img)
+          (Multiset.map (fun l' : List β => l'.map f) (Multiset.ofList l)) := by
+      intro l v
+      rw [← Multiset.map_coe (v :: ·) l, Multiset.map_map, Multiset.map_map]
+      rfl
+    have h_lift_g : ∀ (l : List (List γ)) (v' : γ),
+        Multiset.map (fun l' : List γ => l'.map g) (Multiset.ofList (l.map (v' :: ·))) =
+        Multiset.map (fun l_img : List δ => g v' :: l_img)
+          (Multiset.map (fun l' : List γ => l'.map g) (Multiset.ofList l)) := by
+      intro l v'
+      rw [← Multiset.map_coe (v' :: ·) l, Multiset.map_map, Multiset.map_map]
+      rfl
+    simp_rw [h_lift_f, h_lift_g]
+    -- Step 5: apply IH on the (now-isolated) `(↑(listChoices xs k)).map (.map f)` /
+    -- `(↑(listChoices ys k)).map (.map g)` block.
+    rw [ih]
+    -- Step 6: bridge across the f/g divide via h.
+    -- Goal:
+    --   (↑xs).bind (fun v => M.map (fun l_img => f v :: l_img)) =
+    --   (↑ys).bind (fun v' => M.map (fun l_img => g v' :: l_img))
+    -- where M := (↑(listChoices ys k)).map (.map g).
+    -- Pattern: (↑xs).bind (fun v => K (f v)) = ((↑xs).map f).bind K   [← Multiset.bind_map]
+    -- Then rewrite via h, then forward Multiset.bind_map.
+    set M := (Multiset.ofList (listChoices ys k)).map (fun l => l.map g) with hM
+    show (Multiset.ofList xs).bind (fun v => M.map (fun l_img => f v :: l_img)) =
+      (Multiset.ofList ys).bind (fun v' => M.map (fun l_img => g v' :: l_img))
+    rw [show (Multiset.ofList xs).bind (fun v => M.map (fun l_img => f v :: l_img)) =
+            ((Multiset.ofList xs).map f).bind
+              (fun w => M.map (fun l_img => w :: l_img))
+          from (Multiset.bind_map (Multiset.ofList xs)
+                  (fun w : δ => M.map (fun l_img => w :: l_img)) f).symm]
+    rw [h]
+    rw [Multiset.bind_map (Multiset.ofList ys)
+        (fun w : δ => M.map (fun l_img => w :: l_img)) g]
+
+/-- **Part A headline (projected)**: list-level lift of `acc_to_pkfc`'s
+    multiset bijection, at the (ℕ × Path) projection level (Session 17's
+    statement form).
+
+    The Fin types `Fin (F_A.length + 1)` vs `Fin ((T_ins :: F_ins).length)` do
+    not reduce in Lean's elaborator even though they are equal by
+    `List.length_cons`/`_map`/`_finRange`. Sticking to the projected level
+    avoids the casting bookkeeping. Tree preservation (Part B) handles the
+    Fin → tree reconstruction inside `interpret` / `buildFIns` directly. -/
+private theorem acc_to_pkfc_list_image_eq
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (h_choice_T_valid : ∀ pair ∈ choice_pre_T_B.zip pre_T_B, IsValidPath pair.fst T)
+    (h_choice_FA_valid : ∀ (i : Fin F_A.length),
+      ∀ pair ∈ perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i,
+        IsValidPath pair.fst F_A[i.val])
+    (n : ℕ) :
+    (Multiset.ofList
+        (listChoices (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B) n)).map
+      (fun acc_list => acc_list.map (fun acc =>
+        let p := acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len acc
+        (p.fst.val, p.snd))) =
+    (Multiset.ofList (listChoices (perKFChoice
+      (multiGraft T (choice_pre_T_B.zip pre_T_B) ::
+       (List.finRange F_A.length).map fun i =>
+         multiGraft F_A[i.val]
+           (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))) n)).map
+      (fun perKF_list => perKF_list.map (fun p => (p.fst.val, p.snd))) := by
+  exact listChoices_map_image_eq
+    (acc_to_pkfc_image_eq_perKFChoice T F_A pre_T_B pre_FA_B
+      choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+      h_choice_T_valid h_choice_FA_valid) n
+
 /-- **Strategy A scaffold (Session 5+, sorry-fenced)**: the headline
     `LHS_eq_canonical_msform` at `pres = const empty`, proved DIRECTLY via
     a structural bijection between LHS sequential-insertion paths and
