@@ -489,9 +489,8 @@ theorem listChoices_succ_append_bind {γ : Type*}
     function applied to the concatenation.
 
     Companion to `listChoices_succ_append_bind` (which splits off a single bit
-    from the end). Used in `assocBucketSum_eq_iteratedQuadSum_outer_gen`
-    (`InsertionAssoc.lean`) to align the `host_B.length + pre_A.length`-sized
-    `listChoices` enumeration with separate bit vectors for each segment.
+    from the end). Original consumer was the A3.3 basis-level proof in
+    `InsertionAssoc.lean` (deleted 2026-05-16); kept as a general utility.
 
     Proof: induction on `n`. Base `n = 0` reduces via `List.append_nil`; step
     `n + 1` peels off one bit via `listChoices_succ_append_bind` on both sides

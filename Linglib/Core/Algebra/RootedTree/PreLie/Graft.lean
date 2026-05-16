@@ -35,9 +35,11 @@ of `multiGraft T pairs` into three classes paralleling `vertices_insertAt_decomp
   among pairs sharing source `eₖ` (in pair-list order, per Foissy 2021
   convention).
 
-This decomposition is the substrate behind the deep case of
-`assocBucketSum_eq_insertionForest_iterated_msform` (`InsertionAssoc.lean`),
-the keystone for Oudom-Guin Prop 2.7.v at the basis level.
+This decomposition is the vertex-multiset substrate for multi-graft
+analysis. The deprecated A3.3 basis-level approach to Oudom-Guin
+Prop 2.7.v has been superseded by the abstract pre-Lie route — see
+`Linglib/Core/Algebra/PreLie/OudomGuinCirc.lean` and
+`scratch/pivot_to_prelie_pbw.md`.
 
 ## Specialization to single-pair
 
@@ -1614,6 +1616,166 @@ private theorem bind_finRange_singleton_eq {β : Type*} :
         omega
       exact ih g j' hj'
 
+
+/-! ## §8.10: `stripLiftMulti` — operational inverse of `liftMulti`
+
+The map `liftMulti pairs k` injects vertices `q ∈ vertices pairs[k].snd`
+into the lifted-class image at `transport pairs pairs[k].fst ++
+(posInGroup pairs k :: q)`. `stripLiftMulti` is an Option-valued
+operational inverse: it returns `some q` exactly when the input path
+matches that shape.
+
+The aux walker `stripLiftMultiAux e posIG outer p` traces `e` step by
+step, checking at each level that the input path's head matches the
+expected `rootPrependCount`-offsetted descent index. Recursion is
+structural on `e`.
+
+Consumer (§11.5, `composePairs_planarEquiv_partition`): the partition
+of inner paths into "lifted at outer[k]" buckets vs "root vertices of
+the extended tree" uses `stripLiftMulti` as the filter discriminator. -/
+
+/-- Auxiliary walker: structural recursion on the prefix path. -/
+def stripLiftMultiAux : Path → ℕ → List (Path × Planar α) → Path → Option Path
+  | [], _, _, [] => none
+  | [], posIG, _, h :: q => if h = posIG then some q else none
+  | _ :: _, _, _, [] => none
+  | i :: rest, posIG, outer, h :: q =>
+      if h = i + rootPrependCount outer then
+        stripLiftMultiAux rest posIG (descentToChild i outer) q
+      else none
+
+/-- Operational inverse of `liftMulti`: `stripLiftMulti pairs k p = some q`
+    iff `p = liftMulti pairs k q`. Computable. -/
+def stripLiftMulti (pairs : List (Path × Planar α)) (k : Fin pairs.length)
+    (p : Path) : Option Path :=
+  stripLiftMultiAux pairs[k.val].fst (posInGroup pairs k) pairs p
+
+/-- **Characterization of `stripLiftMultiAux`**: it returns `some q` exactly
+    when the input path equals `transport outer e ++ (posIG :: q)`.
+    Proof by structural induction on `e`. -/
+theorem stripLiftMultiAux_eq_some_iff
+    (e : Path) (posIG : ℕ) (outer : List (Path × Planar α)) (p q : Path) :
+    stripLiftMultiAux e posIG outer p = some q ↔
+      p = transport outer e ++ (posIG :: q) := by
+  induction e generalizing outer p with
+  | nil =>
+    rw [transport_nil_path, List.nil_append]
+    cases p with
+    | nil => simp [stripLiftMultiAux]
+    | cons h q' =>
+      show (if h = posIG then some q' else none) = some q ↔
+           (h :: q' : Path) = posIG :: q
+      by_cases hh : h = posIG
+      · rw [if_pos hh, hh]; simp
+      · rw [if_neg hh]; simp [hh]
+  | cons i rest ih =>
+    rw [transport_cons_path]
+    cases p with
+    | nil => simp [stripLiftMultiAux]
+    | cons h q' =>
+      show (if h = i + rootPrependCount outer then
+              stripLiftMultiAux rest posIG (descentToChild i outer) q'
+            else none) = some q ↔
+        (h :: q' : Path) = (i + rootPrependCount outer) ::
+          (transport (descentToChild i outer) rest ++ (posIG :: q))
+      by_cases hh : h = i + rootPrependCount outer
+      · rw [if_pos hh, ih (descentToChild i outer) q']
+        constructor
+        · intro hq'; rw [hq', hh]
+        · intro hcons; injection hcons
+      · rw [if_neg hh]
+        constructor
+        · intro hf; exact absurd hf (by simp)
+        · intro hcons; injection hcons with hhd _; exact (hh hhd).elim
+
+/-- **Iff-characterization**: `stripLiftMulti pairs k p = some q` exactly
+    when `p` is the lifted image of `q` under `liftMulti pairs k`. -/
+theorem stripLiftMulti_eq_some_iff (pairs : List (Path × Planar α))
+    (k : Fin pairs.length) (p q : Path) :
+    stripLiftMulti pairs k p = some q ↔ p = liftMulti pairs k q := by
+  unfold stripLiftMulti liftMulti
+  exact stripLiftMultiAux_eq_some_iff pairs[k.val].fst (posInGroup pairs k) pairs p q
+
+/-- **Correctness**: stripping a lifted vertex recovers the original. -/
+theorem stripLiftMulti_liftMulti (pairs : List (Path × Planar α))
+    (k : Fin pairs.length) (q : Path) :
+    stripLiftMulti pairs k (liftMulti pairs k q) = some q := by
+  rw [stripLiftMulti_eq_some_iff]
+
+/-! ## §8.11: `untransport` — operational inverse of `transport`
+
+`transport pairs v` computes the path of `v ∈ vertices T` in `multiGraft T pairs`.
+`untransport pairs p` returns `some v` if `p = transport pairs v` for some `v`,
+else `none`. Used in §11.5 `rootInner` to recover T-coordinate paths from
+preserved/sourceSelf inner vertices. -/
+
+/-- Recursive Option-valued inverse of `transport`: strips the
+    `rootPrependCount`-offset at each level, recursing into descended pairs. -/
+def untransport : List (Path × Planar α) → Path → Option Path
+  | _, [] => some []
+  | outer, h :: q =>
+      if h ≥ rootPrependCount outer then
+        (untransport (descentToChild (h - rootPrependCount outer) outer) q).map
+          ((h - rootPrependCount outer) :: ·)
+      else none
+
+@[simp] theorem untransport_nil (outer : List (Path × Planar α)) :
+    untransport outer [] = some [] := rfl
+
+/-- **Iff-characterization**: `untransport outer p = some v` iff
+    `p = transport outer v`. Proof by structural induction on `p`. -/
+theorem untransport_eq_some_iff
+    (outer : List (Path × Planar α)) (p v : Path) :
+    untransport outer p = some v ↔ p = transport outer v := by
+  induction p generalizing outer v with
+  | nil =>
+    cases v with
+    | nil => simp
+    | cons i rest =>
+      rw [transport_cons_path]
+      show some ([] : Path) = some (i :: rest) ↔ ([] : Path) = _ :: _
+      simp
+  | cons h q ih =>
+    show (if h ≥ rootPrependCount outer then
+            (untransport (descentToChild (h - rootPrependCount outer) outer) q).map
+              ((h - rootPrependCount outer) :: ·)
+          else none) = some v ↔ (h :: q : Path) = transport outer v
+    by_cases h_ge : h ≥ rootPrependCount outer
+    · rw [if_pos h_ge, Option.map_eq_some_iff]
+      constructor
+      · rintro ⟨a, hut, ha⟩
+        subst ha
+        rw [transport_cons_path]
+        rw [← (ih _ _).mp hut]
+        congr 1; omega
+      · intro hcons
+        cases v with
+        | nil => rw [transport_nil_path] at hcons; simp at hcons
+        | cons i rest =>
+          rw [transport_cons_path] at hcons
+          injection hcons with hhd htail
+          refine ⟨rest, ?_, ?_⟩
+          · have h_i : i = h - rootPrependCount outer := by omega
+            rw [(ih _ _).mpr]
+            rw [← h_i]; exact htail
+          · have h_i : h - rootPrependCount outer = i := by omega
+            rw [h_i]
+    · rw [if_neg h_ge]
+      cases v with
+      | nil => rw [transport_nil_path]; simp
+      | cons i rest =>
+        rw [transport_cons_path]
+        constructor
+        · intro hf; exact absurd hf (by simp)
+        · intro hcons
+          injection hcons with hhd _
+          have : h = i + rootPrependCount outer := hhd
+          omega
+
+/-- **Correctness**: untransporting a transported vertex recovers the original. -/
+theorem untransport_transport (outer : List (Path × Planar α)) (v : Path) :
+    untransport outer (transport outer v) = some v := by
+  rw [untransport_eq_some_iff]
 
 /-! ## §9: The decomposition theorem
 
@@ -3954,6 +4116,72 @@ theorem multiGraft_compose
     -- so we use .symm.
     exact (absorbInnerPair_eq_insertAt T (composePairs outer_pairs tail)
               (transport tail p) c).symm
+
+/-! ### §11.5: `liftedInnerAt`, `rootInner` — partition extractors
+
+For an outer pair list and inner pair list (with inner paths valid in
+`mG T outer`), the 3-class decomposition (§9 `vertices_multiGraft_decomp`)
+classifies each inner path into one of:
+
+- **lifted at outer[k]**: `p = liftMulti outer k q` for some `q`. Recovered
+  by `stripLiftMulti outer k p = some q` (§8.10).
+- **preserved/sourceSelf**: `p = transport outer v` for some `v ∈ vertices T`.
+  Recovered by `untransport outer p = some v` (§8.11).
+
+`liftedInnerAt outer inner k` collects the lifted-at-`k` inner pairs as
+`(q, c)` (stripped paths). `rootInner outer inner` collects the
+preserved/sourceSelf inner pairs as `(v, c)` (untransported paths).
+
+The partition theorem `composePairs_planarEquiv_partition` lives in
+`Insertion.lean` §5.6 (uses `Nonplanar.mk` from
+`Linglib.Core.Combinatorics.RootedTree.Nonplanar`).
+
+**Consumer status (2026-05-16)**: deprecated. The original consumer
+(`InsertionAssoc.lean` §1.11.11 T-bucket bridges) has been deleted as
+the project pivoted to the abstract pre-Lie route. These helpers remain
+as generic vertex-decomposition primitives; revive if a future basis-
+level analysis needs them. -/
+
+/-- Inner pairs lifted at outer[k], with paths stripped to outer[k].snd vertices. -/
+noncomputable def liftedInnerAt (outer inner : List (Path × Planar α))
+    (k : Fin outer.length) : List (Path × Planar α) :=
+  inner.filterMap fun p => (stripLiftMulti outer k p.fst).map (·, p.snd)
+
+/-- Inner pairs in the preserved/sourceSelf class, with paths
+    untransported back to T-coordinates. -/
+noncomputable def rootInner (outer inner : List (Path × Planar α)) :
+    List (Path × Planar α) :=
+  inner.filterMap fun p => (untransport outer p.fst).map (·, p.snd)
+
+@[simp] theorem liftedInnerAt_nil (outer : List (Path × Planar α))
+    (k : Fin outer.length) :
+    liftedInnerAt outer [] k = [] := rfl
+
+@[simp] theorem rootInner_nil (outer : List (Path × Planar α)) :
+    rootInner outer [] = [] := rfl
+
+theorem liftedInnerAt_cons (outer : List (Path × Planar α))
+    (p : Path × Planar α) (rest : List (Path × Planar α))
+    (k : Fin outer.length) :
+    liftedInnerAt outer (p :: rest) k =
+      ((stripLiftMulti outer k p.fst).map (·, p.snd)).toList ++
+      liftedInnerAt outer rest k := by
+  unfold liftedInnerAt
+  rw [List.filterMap_cons]
+  cases hs : stripLiftMulti outer k p.fst with
+  | none => simp
+  | some _ => simp
+
+theorem rootInner_cons (outer : List (Path × Planar α))
+    (p : Path × Planar α) (rest : List (Path × Planar α)) :
+    rootInner outer (p :: rest) =
+      ((untransport outer p.fst).map (·, p.snd)).toList ++
+      rootInner outer rest := by
+  unfold rootInner
+  rw [List.filterMap_cons]
+  cases hu : untransport outer p.fst with
+  | none => simp
+  | some _ => simp
 
 end Pathed
 

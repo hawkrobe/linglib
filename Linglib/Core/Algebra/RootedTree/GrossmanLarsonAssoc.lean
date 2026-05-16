@@ -44,7 +44,30 @@ absent from mathlib's pre-Lie module).
 
 ## Status
 
-`[UPSTREAM]` candidate. Substrate scaffold; proofs in flight.
+**DEPRECATED 2026-05-16** as the active path. See
+`scratch/pivot_to_prelie_pbw.md` and `Linglib/Core/Algebra/PreLie/
+OudomGuinCirc.lean`. The basis-level chain `mul_assoc_basis_via_oudom_guin`
+attempts to prove Prop 2.7.iii / 2.7.v combinatorially over forests; the
+pivoted approach proves them at the abstract `S(L)` level (where Prop
+2.7.iii is by definition and Prop 2.7.v is a 10-line induction), then
+specializes.
+
+Files in this layer that remain useful:
+* `§1 insertion_mul_distrib` (Prop 2.7.iii at basis level) — proven and
+  reusable as a sanity check or specialization target for the abstract
+  result.
+* `§3` cocommutativity helpers — generic, reusable.
+
+Files DEPRECATED (sorries here are NOT on the GL-associativity critical
+path under the pivot):
+* `§2 insertion_assoc_shuffled` — reduces to `insertionMultiset_assoc`
+  (A3.3 sorry). Will be derived from abstract Prop 2.7.v after the
+  pivot's Q1-Q5 lands.
+* `§4b mul_assoc_basis_via_oudom_guin` — the chain proof. Replaced by
+  `mul_assoc_basis_via_prelie_pbw` (future, derived from
+  `OudomGuinCirc.oudomGuinStar_assoc` + Q5 bridge).
+
+`[UPSTREAM]` candidate via the pivoted route, not this file.
 -/
 
 namespace RootedTree

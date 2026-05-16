@@ -415,26 +415,22 @@ theorem insertion_planarEquiv_guests (t : Planar α)
   -- via List.Forall₂ for the pair (fst eq, snd planarEquiv)
   exact multiGraft_planarEquiv_pair_Forall₂ t (zip_pair_Forall₂ choice h)
 
-/-! ## §5.5: A3.3 substrate — validity discharge and `multiGraft_compose`
-        specializations
+/-! ## §5.5: Validity discharge for `multiGraft_compose` at canonical shapes
 
-The A3.3 helpers (`LHS_TRUE_eq_T_buckets`, `LHS_FALSE_eq_FA_buckets` in
-`InsertionAssoc.lean`) need to apply `multiGraft_compose` (Graft.lean §11.4)
-to collapse nested-graft forms of the shape
-```
-multiGraft (multiGraft T (choice_o.zip outer_Ts)) (choice_i.zip inner_Ts)
-```
-into a single `multiGraft T (composePairs ...)`. The validity hypotheses
-of `multiGraft_compose` (every pair's `.fst` is a valid path in the host)
-are discharged here by lifting `mem ∈ listChoices (vertices T) n` to
-`IsValidPath` via the existing `forall_isValidPath`.
-
-These specializations are consumed downstream by the per-class bridge
-lemmas (Session 2 onwards) of the A3.3 helpers.
+When the outer-pair list has the canonical shape `choice.zip Ts` with
+`choice ∈ listChoices (vertices T) Ts.length`, the validity hypothesis
+of `multiGraft_compose` (every pair's `.fst` is a valid path in the
+host) discharges automatically via `forall_isValidPath` lifted from
+`mem_of_mem_listChoices`.
 
 Why this lives here and not in `Graft.lean`: `listChoices` is defined in
 `Insertion.lean` §1, but `multiGraft_compose` is defined in `Graft.lean`
-§11. The validity bridge crossing between them belongs here. -/
+§11. The validity bridge crossing between them belongs here.
+
+**Consumer status (2026-05-16)**: previously used by the A3.3 basis-level
+helpers (deleted with `InsertionAssoc.lean`). These specializations
+remain as general-purpose validity-discharge utilities for any caller
+working with `listChoices`-derived pair lists. -/
 
 /-- Every element of a `choice ∈ listChoices xs n` is a member of `xs`.
     Lifts membership-in-an-enumerated-choice to membership-in-the-alphabet. -/
@@ -742,6 +738,45 @@ theorem listChoices_bind_insertion_inner_split
   refine Multiset.bind_congr fun choice h_choice => ?_
   exact insertion_cons_pair_at_multiGraft_bind_at_choice T Ts choice
     (Multiset.mem_coe.mp h_choice) c filter_t (K choice)
+
+/-! ## §5.7: `composePairs_planarEquiv_partition` — partition of composePairs result
+
+The PE-level partition theorem for `composePairs` (defined in `Graft.lean` §11).
+For an outer pair list and inner pair list (with inner paths valid in
+`mG T outer`), applying `multiGraft T` to `composePairs outer inner` is
+PE-equivalent (at `Nonplanar.mk` level) to applying `multiGraft T` to:
+
+- For each `k : Fin outer.length`: outer[k] modified to have its `.snd`
+  multi-grafted with `liftedInnerAt outer inner k` (the inner pairs lifted
+  into outer[k]'s subtree, with paths stripped via `stripLiftMulti`).
+- Plus `rootInner outer inner`: the preserved/sourceSelf inner pairs with
+  paths untransported back to T-coordinates via `untransport`.
+
+**DEPRECATED 2026-05-16** as critical-path substrate. Off the GL
+associativity path under the abstract OG pivot
+(`scratch/pivot_to_prelie_pbw.md`,
+`Linglib/Core/Algebra/PreLie/OudomGuinCirc.lean`). Sorry remains; the
+helpers `liftedInnerAt`/`rootInner` are kept as generic
+vertex-decomposition primitives. -/
+
+/-- **Partition assembly**: applying `multiGraft T` to `composePairs outer inner`
+    is PE-equivalent (at Nonplanar level) to applying `multiGraft T` to the
+    assembled per-outer-k sub-multiGrafts plus untransported root inner. -/
+theorem composePairs_planarEquiv_partition
+    (T : Planar α) (outer inner : List (Path × Planar α))
+    (_h_outer_valid : ∀ p ∈ outer, IsValidPath p.fst T)
+    (_h_inner_valid : ∀ p ∈ inner, IsValidPath p.fst (multiGraft T outer)) :
+    Nonplanar.mk (multiGraft T (composePairs outer inner)) =
+    Nonplanar.mk (multiGraft T
+      (((List.finRange outer.length).map fun k =>
+          (outer[k.val].fst,
+            multiGraft outer[k.val].snd (liftedInnerAt outer inner k))) ++
+        rootInner outer inner)) := by
+  -- TODO Session 19+: prove the partition. Requires substrate identifying
+  -- composePairs behavior per inner pair class (preserved/sourceSelf via
+  -- untransport-derivable T-coordinates; lifted via stripLiftMulti at outer[k]).
+  -- Plan: foldr induction on inner with case analysis on the head's class.
+  sorry
 
 /-! ## §6: Host invariance via path-swap bijection
 
