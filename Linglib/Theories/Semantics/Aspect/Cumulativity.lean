@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.ThematicRole.Properties
+import Linglib.Theories.Semantics.ArgumentStructure.Properties
 import Linglib.Theories.Semantics.Aspect.Incremental
 
 /-!
@@ -29,7 +29,7 @@ namespace Semantics.Aspect.Cumulativity
 
 open _root_.Mereology
 open Semantics.Events.CEM
-open Semantics.Events.ThematicRole.Properties
+open Semantics.ArgumentStructure.Properties
 open Semantics.Aspect.Incremental
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]

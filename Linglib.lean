@@ -2363,10 +2363,10 @@ import Linglib.Theories.Semantics.Iconic.Basic
 -- Theories: Semantics.Events (neo-Davidsonian)
 import Linglib.Theories.Semantics.Events.Defs
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Semantics.Events.ThematicRole.Defs
+import Linglib.Theories.Semantics.ArgumentStructure.Defs
 import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Aspect.Stratified
-import Linglib.Theories.Semantics.Events.ThematicRole.Properties
+import Linglib.Theories.Semantics.ArgumentStructure.Properties
 import Linglib.Theories.Semantics.Verb.Affectedness.Defs
 import Linglib.Theories.Semantics.Verb.Affectedness.Hierarchy
 import Linglib.Theories.Semantics.Aspect.PrecedenceClosure

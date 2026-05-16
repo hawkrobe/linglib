@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.ThematicRole.Defs
+import Linglib.Theories.Semantics.ArgumentStructure.Defs
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Phenomena.TenseAspect.Diagnostics
@@ -43,7 +43,7 @@ and is marginal for others.
 namespace Cruse1973
 
 open Semantics.Events
-open Semantics.Events.ThematicRoles
+open Semantics.ArgumentStructure
 open Semantics.Causation.CoerciveImplication
 open Features (Causative)
 open Core.Time

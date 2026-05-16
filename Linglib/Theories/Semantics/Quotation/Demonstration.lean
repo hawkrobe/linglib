@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Semantics.Events.ThematicRole.Defs
+import Linglib.Theories.Semantics.ArgumentStructure.Defs
 
 /-!
 # Demonstration Semantics for Quotative Complements
@@ -93,7 +93,7 @@ their own performance type.
 namespace Semantics.Quotation.Demonstration
 
 open Semantics.Events
-open Semantics.Events.ThematicRoles (EventRel)
+open Semantics.ArgumentStructure (EventRel)
 open Core.Time
 
 -- ════════════════════════════════════════════════════

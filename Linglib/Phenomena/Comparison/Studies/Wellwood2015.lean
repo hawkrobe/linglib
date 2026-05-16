@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Measurement
-import Linglib.Theories.Semantics.Events.ThematicRole.Defs
-import Linglib.Theories.Semantics.Events.ThematicRole.Properties
+import Linglib.Theories.Semantics.ArgumentStructure.Defs
+import Linglib.Theories.Semantics.ArgumentStructure.Properties
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Degree.Comparative
@@ -267,7 +267,7 @@ def patientPlaygroundDatum : StateModificationDatum :=
 -- ════════════════════════════════════════════════════
 
 open Semantics.Events (Event EvPred)
-open Semantics.Events.ThematicRoles (ThematicFrame EventModifier
+open Semantics.ArgumentStructure (ThematicFrame EventModifier
   modifiedStativeLogicalForm stativeLogicalForm modify modified_stative_is_pm)
 open Semantics.Measurement
 open Features
@@ -806,7 +806,7 @@ The bridge theorems below connect Krifka's formal CUM/QUA predicates
 and `statusPredictsFelicitous`.
 -/
 
-open Semantics.Events.ThematicRole.Properties (IsCumThetaVerb)
+open Semantics.ArgumentStructure.Properties (IsCumThetaVerb)
 open Semantics.Aspect.Incremental (IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 

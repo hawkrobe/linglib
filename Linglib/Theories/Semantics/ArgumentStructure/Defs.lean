@@ -26,7 +26,7 @@ type/structure declarations and the Fragment ↔ Theory bridge.
 * @cite{rudin-2025b} (EventRel for non-entity arguments)
 -/
 
-namespace Semantics.Events.ThematicRoles
+namespace Semantics.ArgumentStructure
 
 open Semantics.Events
 open Core.Time
@@ -88,4 +88,4 @@ def ThetaRole.toRel {Entity Time : Type*} [LinearOrder Time]
   | .instrument  => frame.instrument
   | .stimulus    => frame.stimulus
 
-end Semantics.Events.ThematicRoles
+end Semantics.ArgumentStructure

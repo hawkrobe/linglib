@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.ThematicRole.Properties
+import Linglib.Theories.Semantics.ArgumentStructure.Properties
 import Linglib.Theories.Semantics.Verb.Affectedness.Hierarchy
 import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 
@@ -41,7 +41,7 @@ and any modern incremental-theme account.
 
 namespace Semantics.Aspect.Incremental
 
-open Semantics.Events.ThematicRole.Properties
+open Semantics.ArgumentStructure.Properties
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
