@@ -6377,6 +6377,15 @@ private def liftFinToZip (choice : List Path) (Ts : List (Planar α))
     Fin (choice.zip Ts).length :=
   ⟨k.val, by rw [List.length_zip, h_len, min_self]; exact k.isLt⟩
 
+/-- Rank of position `k` within `choice_pre_FA_B`-entries with `.fst = i`.
+    Counts how many entries before `k` have the same target F_A-index `i`.
+    Used by `acc_to_pkfc`'s fa_graft case to compute the position in
+    `perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i`. -/
+private def rankWithinFilter {F_A_len : ℕ}
+    (choice_pre_FA_B : List (Fin F_A_len × Path))
+    (k : ℕ) (i : Fin F_A_len) : ℕ :=
+  ((choice_pre_FA_B.take k).filter (fun p => p.fst = i)).length
+
 /-- **Bijection function** (Session 10): `AlphaConstrainedChoice → Fin (F_A.length+1) × Path`,
     classifying each constructor's target position in `(T_ins :: F_ins)`.
 
@@ -6406,12 +6415,19 @@ private noncomputable def acc_to_pkfc {α : Type*}
   | .fa_orig i v =>
       let pairs := perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i
       (i.succ, transport pairs v)
-  | .fa_graft _k _q =>
-      -- TODO Session 11+: implement fa_graft case via "rank within filter".
-      -- Requires computing j_k = ((choice_pre_FA_B.take k.val).filter
-      -- (fun p => p.fst = choice_pre_FA_B[k].fst)).length, then liftMulti
-      -- with the rank-coerced Fin index.
-      sorry
+  | .fa_graft k q =>
+      -- k : Fin pre_FA_B.length. Look up i = choice_pre_FA_B[k].fst (target F_A index).
+      let k_choice : Fin choice_pre_FA_B.length :=
+        ⟨k.val, by rw [h_FA_len]; exact k.isLt⟩
+      let i := choice_pre_FA_B[k_choice].fst
+      let pairs := perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i
+      -- Position of the k-th pair within per_tree_pairs i: rank computation.
+      let j_k := rankWithinFilter choice_pre_FA_B k.val i
+      -- Construct Fin pairs.length. Proof that j_k < pairs.length is sorry-fenced
+      -- (Sessions 12+): requires showing the k-th element of choice_pre_FA_B
+      -- contributes to the filter (since its .fst = i by construction), hence
+      -- j_k = rank-before-k < total-count = pairs.length.
+      (i.succ, liftMulti pairs ⟨j_k, sorry⟩ q)
 
 /-- **Strategy A scaffold (Session 5+, sorry-fenced)**: the headline
     `LHS_eq_canonical_msform` at `pres = const empty`, proved DIRECTLY via
