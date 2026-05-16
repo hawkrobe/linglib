@@ -349,37 +349,44 @@ private theorem circTMultilinear_symm_interior (R : Type) [CommRing R]
     `circTMultilinear R T (n+1)` is invariant under
     `Equiv.swap (Fin.castSucc i) (Fin.last n)`.
 
-    **Substantive case**. The swap exchanges an interior argument with
-    `f_last`, requiring the right pre-Lie identity. Setting
-    `a := Fin.init f`, `b := f (Fin.last n)`, `c := a i`, and unfolding
-    both sides via `circTMultilinear_succ` + `update_idem`/`update_comm`,
-    the equation reduces (after split-at-i-position) to:
+    **OG-paper-derived plan** (after reading @cite{oudom-guin-2008} Lemma 2.5
+    proof, page 5). Substantially cleaner than the recursive-cancellation
+    approach. Outline:
 
-    ```
-    prev a * b - prev (update a i (c*b)) - Σ_{k≠i} prev (update a k (a k * b))
-    = prev (update a i b) * c - prev (update a i (b*c))
-        - Σ_{k≠i} prev (update (update a k (a k * c)) i b)
-    ```
+    1. **Structural reduction**: non-adjacent `i ≠ Fin.last (n-1)` reduces
+       to adjacent `i = Fin.last (n-1)` via conjugation by interior swap
+       (handled by `circTMultilinear_symm_interior`).
 
-    Applying `prev`'s recursion further exposes the right pre-Lie identity
-    at the innermost level (verified for n = 1: the equation reduces
-    exactly to `(T*c)*b - T*(c*b) = (T*b)*c - T*(b*c)`, the pre-Lie axiom).
+    2. **Adjacent case** (`i = Fin.last (n-1)`, viewed as the
+       `(n, n+1)`-position swap): unfolds `circTMultilinear T (n+2)` via
+       `circTMultilinear_succ` applied **twice** to get six terms, then
+       pairs:
 
-    For n ≥ 2, the residual sums (from prev's recursion on top-level + the
-    k ≠ i residual) interleave with opposite signs; full closure requires
-    deep nested unfolding (each level uses pre-Lie + inner-sum cancellation).
+       - **Pair 1** `±((T ○_n A) ○ X) ○ Y ∓ (T ○_n A) ○ (X ○ Y)`:
+         pre-Lie identity on `(T ○_n A, X, Y)` → symmetric in `X ↔ Y`.
+       - **Pair 2** `+T ○_n ((A ○ Y) ○ X) + T ○_n (A ○ (X ○ Y))`:
+         OG identity (2.3) at per-degree level applied via `T ○_n`'s
+         linearity → symmetric in `X ↔ Y`.
+       - **Pair 3** `−(T ○_n (A ○ X)) ○ Y − (T ○_n (A ○ Y)) ○ X`:
+         trivially symmetric in `X ↔ Y`.
 
-    **Effort estimate**: ~300-500 LOC, multi-session. Alternative routes:
+    3. **Full S_{n+2} action** by combining the adjacent (n+1, n+2) swap
+       with IH (symmetry of `circT n+1` on the first n+1 positions).
 
-    1. **Stronger inductive bundle**: state Lemma 2.5 together with a
-       structural update-commutation lemma to make the recursive cancellation
-       provable in one go.
-    2. **Bialgebra route**: define `oudomGuinCirc` via the bialgebra
-       structure of `S(L)` (Q1a) directly using Sweedler notation. This
-       requires extending the L × S(L) → L pre-Lie action via Δ; OG paper
-       Sec 3 sketches this but it requires non-trivial substrate.
+    **OG identity (2.3) at per-degree level**:
+    For `a : Fin n → L`, `X Y : L`:
+    `prev (a ○ (X*Y)) - prev ((a ○ X) ○ Y) = prev (a ○ (Y*X)) - prev ((a ○ Y) ○ X)`
+    where `prev (g ○ X) := Σ_i prev (Function.update g i (g i * X))`.
+    Itself follows from the L pre-Lie identity applied to each tuple position.
 
-    -/
+    **Revised effort estimate**: ~200 LOC (substantially less than my
+    earlier recursive-cancellation estimate). Substrate components:
+    - Per-degree right action `g ↦ g ○ X` as a sum-of-updates (~30 LOC).
+    - Per-degree (2.3) identity (~50 LOC).
+    - 6-term expansion + 3 pairings + closure (~100 LOC).
+    - Combine with IH for full S_{n+2} via dispatcher (~20 LOC).
+
+    Reference: @cite{oudom-guin-2008} Lemma 2.5 proof, p. 5. -/
 private theorem circTMultilinear_symm_exterior (R : Type) [CommRing R]
     {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
     (T : L) (n : ℕ) (i : Fin n)
