@@ -1,7 +1,7 @@
 import Mathlib.Order.Nat
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
-import Linglib.Theories.Semantics.Verb.AgentivityLattice
+import Linglib.Features.AgentivityLattice
 import Linglib.Theories.Semantics.Lexical.Roots.RootFeatures
 
 /-!

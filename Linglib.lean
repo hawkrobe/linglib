@@ -2373,7 +2373,7 @@ import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Typology.Voice
-import Linglib.Theories.Semantics.Verb.AgentivityLattice
+import Linglib.Features.AgentivityLattice
 import Linglib.Features.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness.Profile
 import Linglib.Theories.Semantics.Lexical.LevinTheory

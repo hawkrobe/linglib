@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.AgentivityLattice
+import Linglib.Features.AgentivityLattice
 import Linglib.Features.EntailmentProfile
 import Linglib.Phenomena.Case.Studies.Aissen2003
 
