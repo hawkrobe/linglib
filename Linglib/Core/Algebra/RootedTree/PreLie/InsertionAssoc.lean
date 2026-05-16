@@ -6359,6 +6359,60 @@ Session 4 sub-lemmas marked WARNING (above) are unprovable in general but
 their `pres = const empty` specializations might still be true; whether to
 use them is a Session 6 design decision. -/
 
+/-! ### §1.11.9.A: bijection function `acc_to_pkfc` (Session 10+)
+
+The bijection `acc_to_pkfc` maps each `AlphaConstrainedChoice` constructor to
+the corresponding position in `perKFChoice (T_ins :: F_ins)`. Used by
+Strategy A to bridge the inner enumerations on LHS and RHS.
+
+The function takes hypotheses `choice_pre_T_B.length = pre_T_B.length` and
+`choice_pre_FA_B.length = pre_FA_B.length` (provided at use site by the
+`listChoices` membership at the outer bind level). -/
+
+/-- For a Fin index `k : Fin pre_T_B.length`, lift to `Fin (zip).length` where
+    `zip = choice_pre_T_B.zip pre_T_B`. The lift is well-defined when
+    `choice_pre_T_B.length = pre_T_B.length`. -/
+private def liftFinToZip (choice : List Path) (Ts : List (Planar α))
+    (h_len : choice.length = Ts.length) (k : Fin Ts.length) :
+    Fin (choice.zip Ts).length :=
+  ⟨k.val, by rw [List.length_zip, h_len, min_self]; exact k.isLt⟩
+
+/-- **Bijection function** (Session 10): `AlphaConstrainedChoice → Fin (F_A.length+1) × Path`,
+    classifying each constructor's target position in `(T_ins :: F_ins)`.
+
+    For `t_orig v`: position `(0, transport (choice_pre_T_B.zip pre_T_B) v)`.
+    For `t_graft k q`: position `(0, liftMulti ... q)` (inside pre_T_B[k] graft).
+    For `fa_orig i v`: position `(i.succ, transport (per_tree_pairs i) v)`.
+    For `fa_graft k q`: position `(i.succ, liftMulti (per_tree_pairs i) ⟨j_k, ...⟩ q)`
+    where `i = choice_pre_FA_B[k].fst` and `j_k` is the rank of `k` within
+    `choice_pre_FA_B`-entries with `.fst = i` (= position in `per_tree_pairs i`).
+
+    The fa_graft case requires a "rank within filter" computation; sorry-fenced
+    for now (Sessions 11+). -/
+private noncomputable def acc_to_pkfc {α : Type*}
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (acc : AlphaConstrainedChoice F_A pre_T_B pre_FA_B) :
+    Fin (F_A.length + 1) × Path :=
+  match acc with
+  | .t_orig v =>
+      (⟨0, Nat.succ_pos _⟩, transport (choice_pre_T_B.zip pre_T_B) v)
+  | .t_graft k q =>
+      let pairs := choice_pre_T_B.zip pre_T_B
+      (⟨0, Nat.succ_pos _⟩, liftMulti pairs (liftFinToZip choice_pre_T_B pre_T_B h_T_len k) q)
+  | .fa_orig i v =>
+      let pairs := perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i
+      (i.succ, transport pairs v)
+  | .fa_graft _k _q =>
+      -- TODO Session 11+: implement fa_graft case via "rank within filter".
+      -- Requires computing j_k = ((choice_pre_FA_B.take k.val).filter
+      -- (fun p => p.fst = choice_pre_FA_B[k].fst)).length, then liftMulti
+      -- with the rank-coerced Fin index.
+      sorry
+
 /-- **Strategy A scaffold (Session 5+, sorry-fenced)**: the headline
     `LHS_eq_canonical_msform` at `pres = const empty`, proved DIRECTLY via
     a structural bijection between LHS sequential-insertion paths and
