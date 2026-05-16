@@ -3,7 +3,7 @@ import Linglib.Features.Attitudes
 import Linglib.Features.Causation
 import Linglib.Theories.Semantics.Lexical.LevinClass
 import Linglib.Theories.Semantics.Lexical.MeaningComponents
-import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
+import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!

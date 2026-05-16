@@ -1,5 +1,5 @@
 import Linglib.Features.Prominence
-import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
+import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # Valency Alternation Typology

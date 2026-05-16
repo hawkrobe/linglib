@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Theories.Semantics.ArgumentStructure.AgentivityLattice
 import Linglib.Theories.Semantics.Lexical.LevinClassProfiles
-import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
+import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!

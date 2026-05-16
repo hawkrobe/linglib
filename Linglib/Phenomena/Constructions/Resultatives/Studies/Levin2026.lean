@@ -1,5 +1,5 @@
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
+import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Theories.Semantics.Causation.Resultatives
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal

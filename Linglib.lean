@@ -140,7 +140,7 @@ import Linglib.Features.Attitudes
 import Linglib.Features.Causation
 import Linglib.Theories.Semantics.Lexical.LevinClass
 import Linglib.Theories.Semantics.Lexical.MeaningComponents
-import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
+import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Theories.Semantics.Lexical.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Constraint.Profile

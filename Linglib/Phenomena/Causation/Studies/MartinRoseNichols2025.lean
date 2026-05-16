@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Theories.Semantics.Lexical.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
+import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # Thick vs Thin Causative Verb Data

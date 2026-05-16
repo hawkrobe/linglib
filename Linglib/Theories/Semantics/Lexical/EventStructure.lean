@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
+import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # Event Structure Templates
