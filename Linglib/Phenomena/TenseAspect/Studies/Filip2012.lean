@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Mereology.CEM
+import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
@@ -49,7 +49,7 @@ The third class's compositional behavior:
 namespace Filip2012
 
 open _root_.Mereology
-open Semantics.Mereology.CEM
+open Semantics.Events.CEM
 open Semantics.Events.ThematicRole.Properties
 open Semantics.Aspect.Incremental
 open Semantics.Aspect.Cumulativity

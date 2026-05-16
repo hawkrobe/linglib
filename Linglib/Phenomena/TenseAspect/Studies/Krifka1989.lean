@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Mereology.CEM
+import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
@@ -69,7 +69,7 @@ on abstract domains.
 namespace Krifka1989
 
 open _root_.Mereology
-open Semantics.Mereology.CEM
+open Semantics.Events.CEM
 open Semantics.Events.ThematicRole.Properties (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP qua_propagation)
