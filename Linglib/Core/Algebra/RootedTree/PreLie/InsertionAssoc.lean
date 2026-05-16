@@ -6386,6 +6386,89 @@ private def rankWithinFilter {F_A_len : ℕ}
     (k : ℕ) (i : Fin F_A_len) : ℕ :=
   ((choice_pre_FA_B.take k).filter (fun p => p.fst = i)).length
 
+/-- Filter-on-zip equals filter-on-first when lengths match. The filter checks
+    only the first projection's first component, which equals the original list's
+    elements (modulo zip pairing). -/
+private theorem zip_filter_length_eq_filter
+    {α β γ : Type*} [DecidableEq γ]
+    (l1 : List (γ × α)) (l2 : List β) (i : γ)
+    (h_len : l1.length = l2.length) :
+    ((l1.zip l2).filter (fun p => p.fst.fst = i)).length =
+    (l1.filter (fun p => p.fst = i)).length := by
+  induction l1 generalizing l2 with
+  | nil =>
+    rcases l2 with _ | ⟨hd', tl'⟩
+    · rfl
+    · exact absurd h_len (by simp)
+  | cons hd tl ih =>
+    rcases l2 with _ | ⟨hd', tl'⟩
+    · exact absurd h_len (by simp)
+    · simp only [List.zip_cons_cons, List.filter_cons]
+      have h_tl : tl.length = tl'.length := by
+        simpa using h_len
+      by_cases h : hd.fst = i
+      · simp [h, ih _ h_tl]
+      · simp [h, ih _ h_tl]
+
+/-- The rank `j_k = rankWithinFilter choice_pre_FA_B k.val i` is strictly less
+    than `(perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i).length`.
+
+    Proof: the `(choice_pre_FA_B.drop k.val)` portion contains `choice_pre_FA_B[k]`
+    as its first element (which has `.fst = i` by construction), contributing
+    at least 1 to the filter count. So `j_k + 1 ≤ total = pairs.length`. -/
+private theorem rankWithinFilter_lt_perTreePairsFromFChoice
+    (F_A pre_FA_B : List (Planar α))
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (k : Fin pre_FA_B.length)
+    (h_k_choice : k.val < choice_pre_FA_B.length)
+    (_h_i : (choice_pre_FA_B[k.val]'h_k_choice).fst =
+      (choice_pre_FA_B[k.val]'h_k_choice).fst) :
+    rankWithinFilter choice_pre_FA_B k.val (choice_pre_FA_B[k.val]'h_k_choice).fst <
+      (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B
+        (choice_pre_FA_B[k.val]'h_k_choice).fst).length := by
+  set i := (choice_pre_FA_B[k.val]'h_k_choice).fst with h_i_def
+  unfold rankWithinFilter perTreePairsFromFChoice
+  -- Step 1: filterMap (if cond then some else none) length = filter cond length.
+  have h_fm_to_filter :
+      ((choice_pre_FA_B.zip pre_FA_B).filterMap
+        (fun p => if p.fst.fst = i then some (p.fst.snd, p.snd) else none)).length =
+      ((choice_pre_FA_B.zip pre_FA_B).filter (fun p => p.fst.fst = i)).length := by
+    induction (choice_pre_FA_B.zip pre_FA_B) with
+    | nil => rfl
+    | cons hd tl ih =>
+      simp only [List.filterMap_cons, List.filter_cons]
+      by_cases h : hd.fst.fst = i
+      · simp [h, ih]
+      · simp [h, ih]
+  rw [h_fm_to_filter]
+  -- Step 2: zip-filter under length match: ((zip).filter (·.fst.fst = i)).length =
+  -- (choice_pre_FA_B.filter (·.fst = i)).length.
+  have h_zip_filter :
+      ((choice_pre_FA_B.zip pre_FA_B).filter (fun p => p.fst.fst = i)).length =
+      (choice_pre_FA_B.filter (fun p => p.fst = i)).length :=
+    zip_filter_length_eq_filter choice_pre_FA_B pre_FA_B i h_FA_len
+  rw [h_zip_filter]
+  -- Step 3: choice_pre_FA_B = take ++ drop, filter distributes.
+  conv_rhs => rw [show choice_pre_FA_B =
+                    choice_pre_FA_B.take k.val ++ choice_pre_FA_B.drop k.val
+                  from (List.take_append_drop k.val choice_pre_FA_B).symm]
+  rw [List.filter_append, List.length_append]
+  -- Goal: (take.filter ...).length < (take.filter ...).length + (drop.filter ...).length
+  -- Suffices: (drop.filter ...).length ≥ 1.
+  suffices h : 0 < ((choice_pre_FA_B.drop k.val).filter (fun p => p.fst = i)).length by
+    omega
+  -- Step 4: choice_pre_FA_B[k] is in drop, and passes the filter.
+  rw [List.length_pos_iff_exists_mem]
+  refine ⟨choice_pre_FA_B[k.val]'h_k_choice, ?_⟩
+  rw [List.mem_filter]
+  refine ⟨?_, ?_⟩
+  · -- choice_pre_FA_B[k] ∈ drop k.val choice_pre_FA_B (via cons_getElem_drop_succ)
+    rw [← List.cons_getElem_drop_succ (h := h_k_choice)]
+    exact List.mem_cons_self
+  · -- decide: (choice_pre_FA_B[k]'h_k_choice).fst = i (= same by def)
+    simp [h_i_def]
+
 /-- **Bijection function** (Session 10): `AlphaConstrainedChoice → Fin (F_A.length+1) × Path`,
     classifying each constructor's target position in `(T_ins :: F_ins)`.
 
@@ -6417,17 +6500,15 @@ private noncomputable def acc_to_pkfc {α : Type*}
       (i.succ, transport pairs v)
   | .fa_graft k q =>
       -- k : Fin pre_FA_B.length. Look up i = choice_pre_FA_B[k].fst (target F_A index).
-      let k_choice : Fin choice_pre_FA_B.length :=
-        ⟨k.val, by rw [h_FA_len]; exact k.isLt⟩
-      let i := choice_pre_FA_B[k_choice].fst
+      let h_k_choice : k.val < choice_pre_FA_B.length := by rw [h_FA_len]; exact k.isLt
+      let i := (choice_pre_FA_B[k.val]'h_k_choice).fst
       let pairs := perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i
       -- Position of the k-th pair within per_tree_pairs i: rank computation.
       let j_k := rankWithinFilter choice_pre_FA_B k.val i
-      -- Construct Fin pairs.length. Proof that j_k < pairs.length is sorry-fenced
-      -- (Sessions 12+): requires showing the k-th element of choice_pre_FA_B
-      -- contributes to the filter (since its .fst = i by construction), hence
-      -- j_k = rank-before-k < total-count = pairs.length.
-      (i.succ, liftMulti pairs ⟨j_k, sorry⟩ q)
+      -- Construct Fin pairs.length via the helper lemma.
+      (i.succ, liftMulti pairs
+        ⟨j_k, rankWithinFilter_lt_perTreePairsFromFChoice F_A pre_FA_B
+          choice_pre_FA_B h_FA_len k h_k_choice rfl⟩ q)
 
 /-- **Strategy A scaffold (Session 5+, sorry-fenced)**: the headline
     `LHS_eq_canonical_msform` at `pres = const empty`, proved DIRECTLY via
