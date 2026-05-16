@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 import Linglib.Theories.Semantics.Noun.Kind.Generics
-import Linglib.Theories.Semantics.Verb.Habituals
+import Linglib.Theories.Semantics.Aspect.Habituals
 import Linglib.Theories.Semantics.Aspect.Core
 import Linglib.Features.Genericity
 
@@ -52,7 +52,7 @@ open Core (WorldTimeIndex)
 
 open Semantics.Quantification.CovertQuantifier
 open Semantics.Noun.Kind.Generics (Situation traditionalGEN)
-open Features.Habituals (Occasion traditionalHAB)
+open Semantics.Aspect.Habituals (Occasion traditionalHAB)
 open Semantics.Aspect.Core (ViewpointAspectB)
 
 -- ═══ Operator Distinction ═══

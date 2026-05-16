@@ -14,7 +14,7 @@ HAB is an instance of the shared covert quantifier infrastructure in
 `restriction = characteristic`, `scope = activity`.
 -/
 
-namespace Features.Habituals
+namespace Semantics.Aspect.Habituals
 
 open Semantics.Quantification.CovertQuantifier
 
@@ -151,4 +151,4 @@ def normalOccasions : Characteristic := λ t =>
 
 end Examples
 
-end Features.Habituals
+end Semantics.Aspect.Habituals

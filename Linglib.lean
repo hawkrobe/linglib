@@ -2357,7 +2357,7 @@ import Linglib.Theories.Semantics.Aspect.SubintervalProperty
 import Linglib.Theories.Semantics.Tense.PTS
 import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Theories.Semantics.Aspect.ChangeOfState
-import Linglib.Theories.Semantics.Verb.Habituals
+import Linglib.Theories.Semantics.Aspect.Habituals
 -- Theories: Semantics.Iconic (Iconological Semantics for sign language)
 import Linglib.Theories.Semantics.Iconic.Basic
 -- Theories: Semantics.Events (neo-Davidsonian)
