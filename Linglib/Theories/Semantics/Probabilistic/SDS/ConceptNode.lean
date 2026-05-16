@@ -33,7 +33,7 @@ concept nodes in a DRS.
 
 ## Cross-reference: legacy ℚ-valued selectional substrate
 
-A parallel substrate at `Theories/Semantics/Verb/SelectionalPreferences.lean`
+A parallel substrate (formerly Theories/Semantics/Verb/SelectionalPreferences.lean; deleted as graduation-rule violation 0.231.X)
 uses `Concept → ℚ` (Resnik 1996 + Erk 2007 + Erk-Herbelot 2024). Its
 `RoleWithConstraint Concept` is the ℚ analogue of `SelectionalDist Role
 Concept` here. Full unification (promoting the legacy file to ℝ≥0∞ + PMF)

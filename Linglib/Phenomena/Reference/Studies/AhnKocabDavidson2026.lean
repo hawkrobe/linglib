@@ -2,7 +2,6 @@ import Linglib.Theories.Semantics.Composition.Modification
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Theories.Pragmatics.GriceanMaxims
 import Linglib.Theories.Pragmatics.Expressives.Basic
-import Linglib.Theories.Semantics.Verb.SelectionalPreferences
 
 /-!
 # @cite{ahn-kocab-davidson-2026}
@@ -54,7 +53,23 @@ open Semantics.Composition.Modification (predMod truePred predMod_true_left pred
 open Features (AccessibilityLevel)
 open Pragmatics.GriceanMaxims
 open Pragmatics.Expressives (TwoDimProp)
-open Features.SelectionalPreferences (SemClass)
+
+/-- Basic semantic classes for NP entities (inlined from substrate;
+    @cite{resnik-1996} / @cite{erk-2007} style selectional classes).
+    Used by this paper specifically for `VerbLocusType` → SemClass
+    mapping (personal → animate, locational → location). -/
+inductive SemClass where
+  | animate
+  | inanimate
+  | human
+  | animal
+  | plant
+  | artifact
+  | abstract_
+  | event
+  | location
+  | time
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Core Types
