@@ -6375,7 +6375,10 @@ private theorem LHS_eq_canonical_msform_via_bijection
     ((enumGraftingData T F_A pre_T_B pre_FA_B C.length).map
         (fun gd => interpret T gd C)).map
       (fun L => Multiset.ofList (L.map Nonplanar.mk)) := by
-  -- **Session 6 (0.231.92)**: 3 mechanical steps of the bijection proof:
+  -- **Sessions 6-7 (0.231.92, 0.231.93)**: mechanical steps of Strategy A.
+  --   Session 6 (steps a/b/c): outer-bind unfolds + msform push-through.
+  --   Session 7 (step d): inner insertionForest unfold.
+  --
   --   (a) Apply Session 3's outer-bind unfold (`insertion_outer_bind_at_choice_eq`)
   --       to expose `choice_pre_T_B` as the outer-1st bind variable.
   --   (b) Push `.map msform` through the bind chain via `Multiset.map_bind`.
@@ -6383,6 +6386,10 @@ private theorem LHS_eq_canonical_msform_via_bijection
   --       outer bind into `enumFChoices F_A pre_FA_B` (= `Mset.ofList (lC pKF F_A
   --       pre_FA_B.length)`) mapped via `buildFIns F_A pre_FA_B`. Combined with
   --       `Multiset.bind_map` to expose `choice_pre_FA_B` as a bind variable.
+  --   (d) Apply `insertionForest_eq_explicit` (Session 7) to the INNER
+  --       `insertionForest (T_ins :: F_ins) C`. Combined with `Multiset.map_map`
+  --       to expose `choice_C` as the inner enumeration via
+  --       `(Mset.ofList (lC pKF (T_ins :: F_ins) C.length)).map (msform ∘ buildFIns ...)`.
   rw [insertion_outer_bind_at_choice_eq T pre_T_B]
   rw [Multiset.map_bind]
   simp_rw [Multiset.map_bind]
@@ -6391,39 +6398,46 @@ private theorem LHS_eq_canonical_msform_via_bijection
              Multiset.ofList (listChoices (perKFChoice F_A) pre_FA_B.length)
              from rfl,
            Multiset.bind_map]
-  -- After Session 6: LHS is
+  simp_rw [insertionForest_eq_explicit, Multiset.map_map,
+           show ∀ (F G : List (Planar α)), enumFChoices F G =
+             Multiset.ofList (listChoices (perKFChoice F) G.length)
+             from fun _ _ => rfl]
+  -- After Sessions 6-7: LHS is
   --   `(Mset.ofList (lC vT pre_T_B.length)).bind fun choice_pre_T_B =>
   --     (Mset.ofList (lC pKF F_A pre_FA_B.length)).bind fun choice_pre_FA_B =>
-  --       (insertionForest (mG T (choice_pre_T_B.zip pre_T_B) ::
-  --         buildFIns F_A pre_FA_B choice_pre_FA_B) C).map msform`
-  -- with both T_ins and F_ins substituted via their explicit constructions.
+  --       (Mset.ofList (lC pKF (T_ins :: F_ins) C.length)).map
+  --         (msform ∘ buildFIns (T_ins :: F_ins) C)`
+  -- where T_ins = mG T (choice_pre_T_B.zip pre_T_B), F_ins = buildFIns F_A pre_FA_B choice_pre_FA_B.
   --
-  -- TODO Sessions 7+: continue the bijection proof. Plan:
+  -- **Session 8 (0.231.94)**: RHS unfold. Following the pattern from
+  -- `RHS_eq_canonical_msform_pres` base case (lines ~4900-4910), but
+  -- skipping `Multiset.map_map` (already collapsed by Step (d)'s simp_rw).
   --
-  -- 1. (DONE Session 6) Apply `insertion_outer_bind_at_choice_eq T pre_T_B`
-  --    to expose `choice_pre_T_B ∈ lC vT pre_T_B.length`. T_ins is now
-  --    `mG T (choice_pre_T_B.zip pre_T_B)` everywhere in the inner.
-  -- 2. Apply `insertionForest_eq_explicit F_A pre_FA_B` (specialized) to
-  --    expose `choice_pre_FA_B ∈ lC perKFChoice F_A pre_FA_B.length`.
-  --    F_ins becomes `(List.finRange F_A.length).map (fun i => mG F_A[i]
-  --    (perTreePairsFromFChoice ...))`.
-  -- 3. Apply `insertionForest_eq_explicit (T_ins :: F_ins) C` to expose
-  --    `choice_C ∈ lC perKFChoice (T_ins :: F_ins) C.length`. The leaf
-  --    becomes `msform (buildFIns (T_ins :: F_ins) C choice_C)`.
-  -- 4. Unfold RHS via `enumGraftingData` definition + `← Multiset.coe_bind`.
-  --    Both sides now have `bind choice_pre_T_B => bind choice_pre_FA_B =>
-  --    bind/map inner_choice => msform leaf` structure.
-  -- 5. Establish bijection: `acc_to_pkfc` (per `choice_pre_T_B`,
-  --    `choice_pre_FA_B`) maps each `AlphaConstrainedChoice` to a perKFChoice
-  --    position. Bijection key: `vertices_multiGraft_decomp` partitions
-  --    vertices T_ins into T-vertices (mapped via `transport`) and
-  --    inside-pre_T_B-grafts (mapped via `liftMulti`). Symmetric F-side.
-  -- 6. Tree-preservation: `buildFIns` at `choice_C = targets.map acc_to_pkfc`
-  --    produces a forest msform-equivalent to `interpret T ⟨choice_pre_T_B,
-  --    choice_pre_FA_B, targets⟩ C`. Uses Session 1's
-  --    `multiGraft_compose_cons_pair_at_choice` for the per-c bridge.
-  -- 7. Combine via `Multiset.bind_congr` chain through outer 2 binds, then
-  --    inner enumeration equality (via the bijection + tree-preservation).
+  -- Note: these rewrites also fire on LHS where applicable.
+  -- `Multiset.map_coe` converts `(Mset.ofList l).map f → Mset.ofList (l.map f)`,
+  -- which fires on both LHS's leaf and RHS's outer .map.
+  unfold enumGraftingData
+  simp_rw [Multiset.map_coe, List.map_flatMap, List.map_map]
+  simp_rw [← Multiset.coe_bind]
+  -- After Session 8: both sides should have bind-bind-Mset.ofList(map) shape.
+  --
+  -- **Session 9 (0.231.95)**: outer bind_congr matching. Both LHS and RHS
+  -- have identical outer 2 enumerations (lC vT pre_T_B.length and
+  -- lC pKF F_A pre_FA_B.length); peel them via `Multiset.bind_congr`.
+  refine Multiset.bind_congr fun choice_pre_T_B _ => ?_
+  refine Multiset.bind_congr fun choice_pre_FA_B _ => ?_
+  -- After Session 9: goal is the INNER equality (per fixed choice_pre_T_B,
+  -- choice_pre_FA_B):
+  --   `Mset.ofList ((lC pKF (T_ins :: F_ins) C.length).map (msform ∘ buildFIns ...))`
+  -- = `Mset.ofList ((lC allACC C.length).map (fun targets => msform (interpret ...)))`
+  -- where T_ins = mG T (choice_pre_T_B.zip pre_T_B), F_ins = buildFIns F_A pre_FA_B choice_pre_FA_B.
+  --
+  -- TODO Sessions 10+: SUBSTANTIVE bijection work to close the inner equality.
+  --   - `acc_to_pkfc` bijection function (per choice_pre_T_B, choice_pre_FA_B).
+  --   - Tree-preservation: msform-equivalence of buildFIns vs interpret on
+  --     bijection-corresponding inputs. Uses Session 1 substrate.
+  --   - Multiset bijection between (lC pKF (T_ins :: F_ins) C.length) and
+  --     (lC allACC C.length) via list-level lifting.
   --
   -- Estimated remaining scope: ~400-800 LOC across 3-5 sessions.
   sorry
