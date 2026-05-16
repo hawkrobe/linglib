@@ -17,7 +17,7 @@ middle constructions, first articulated for Indonesian *ber-* by
 @cite{beavers-udayana-2022} but applicable cross-linguistically.
 -/
 
-namespace Semantics.Events.ArgumentRealization
+namespace Typology.Middle
 
 /-- How a suppressed argument variable is interpreted vis-à-vis the
     surface subject. -/
@@ -60,4 +60,4 @@ def MiddleType.agentSurfaces (m : MiddleType) : Prop :=
 instance : DecidablePred MiddleType.agentSurfaces :=
   fun m => decEq m.objRealization .incorporation
 
-end Semantics.Events.ArgumentRealization
+end Typology.Middle

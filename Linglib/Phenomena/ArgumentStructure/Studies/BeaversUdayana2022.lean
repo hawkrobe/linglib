@@ -1,7 +1,7 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Phenomena.ArgumentStructure.Studies.Beavers2010
 import Linglib.Theories.Semantics.Verb.DiathesisAlternation
-import Linglib.Theories.Semantics.Events.ArgumentRealization
+import Linglib.Typology.Middle
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 
 /-!
@@ -92,7 +92,7 @@ open Fragments.Indonesian.VoiceSystem
 open Minimalist (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Beavers2010
 open Features.Affectedness (AffectednessDegree)
-open Semantics.Events.ArgumentRealization
+open Typology.Middle
 open Interfaces.SyntaxSemantics.VoiceSemantics
 open Core.Logic.Intensional
 

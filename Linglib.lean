@@ -2372,7 +2372,7 @@ import Linglib.Theories.Semantics.Verb.Affectedness.Hierarchy
 import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
-import Linglib.Theories.Semantics.Events.ArgumentRealization
+import Linglib.Typology.Middle
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness
