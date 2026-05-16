@@ -8,6 +8,7 @@ import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
 import Mathlib.Algebra.NonAssoc.PreLie.Basic
 import Mathlib.LinearAlgebra.Multilinear.Curry
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.GroupTheory.Perm.Sign
 
 set_option autoImplicit false
@@ -345,6 +346,28 @@ private theorem circTMultilinear_symm_interior (R : Type) [CommRing R]
   exact congr_fun (congr_arg (·.toFun) (ih τ))
     (Function.update (Fin.init f) (τ k) ((Fin.init f) (τ k) * f (Fin.last n)))
 
+/-! ### §2.0: Small-arity evaluation lemmas
+
+Direct evaluation of `circTMultilinear R T n` for `n = 1, 2`. Useful for
+the `n = 1` base case of the exterior swap closure (Lemma 2.5). -/
+
+/-- `circTMultilinear R T 1 g = T * g 0`. -/
+@[simp]
+private lemma circTMultilinear_one_eval (T : L) (g : Fin 1 → L) :
+    circTMultilinear R T 1 g = T * g 0 := by
+  show circTMultilinear R T (0 + 1) g = _
+  rw [circTMultilinear_succ, Fin.sum_univ_zero, sub_zero, circTMultilinear_zero]
+  rfl
+
+/-- `circTMultilinear R T 2 g = (T * g 0) * g 1 - T * (g 0 * g 1)`. -/
+private lemma circTMultilinear_two_eval (T : L) (g : Fin 2 → L) :
+    circTMultilinear R T 2 g = (T * g 0) * g 1 - T * (g 0 * g 1) := by
+  show circTMultilinear R T (1 + 1) g = _
+  rw [circTMultilinear_succ, Fin.sum_univ_one,
+      circTMultilinear_one_eval, circTMultilinear_one_eval,
+      Function.update_self]
+  rfl
+
 /-! ### §2.A: OG identity (2.3) at per-degree level
 
 For any multilinear `prev : MultilinearMap R (Fin n → L) L`, the identity
@@ -497,18 +520,19 @@ private theorem prev_action_pre_lie_identity (R : Type) [CommRing R]
     3. **Full S_{n+2} action** by combining the adjacent (n+1, n+2) swap
        with IH (symmetry of `circT n+1` on the first n+1 positions).
 
-    **OG identity (2.3) at per-degree level**:
+    **OG identity (2.3) at per-degree level** — landed sorry-free as
+    `prev_action_pre_lie_identity` above. Statement:
     For `a : Fin n → L`, `X Y : L`:
     `prev (a ○ (X*Y)) - prev ((a ○ X) ○ Y) = prev (a ○ (Y*X)) - prev ((a ○ Y) ○ X)`
     where `prev (g ○ X) := Σ_i prev (Function.update g i (g i * X))`.
-    Itself follows from the L pre-Lie identity applied to each tuple position.
+    Follows from the L pre-Lie identity applied to each tuple position
+    plus relabel symmetry for off-diagonal sums.
 
-    **Revised effort estimate**: ~200 LOC (substantially less than my
-    earlier recursive-cancellation estimate). Substrate components:
-    - Per-degree right action `g ↦ g ○ X` as a sum-of-updates (~30 LOC).
-    - Per-degree (2.3) identity (~50 LOC).
-    - 6-term expansion + 3 pairings + closure (~100 LOC).
-    - Combine with IH for full S_{n+2} via dispatcher (~20 LOC).
+    **Remaining work** (~100-150 LOC, multi-session): 6-term expansion of
+    `circT (n+2)` via `circTMultilinear_succ` twice, then apply pre-Lie
+    on (1)-(5) pair, `prev_action_pre_lie_identity` on (4)+(6) pair,
+    trivial swap on (2)+(3) pair. Final ~20 LOC for dispatcher combining
+    with IH on `S_{n+1}` to get full `S_{n+2}`.
 
     Reference: @cite{oudom-guin-2008} Lemma 2.5 proof, p. 5. -/
 private theorem circTMultilinear_symm_exterior (R : Type) [CommRing R]
@@ -519,7 +543,32 @@ private theorem circTMultilinear_symm_exterior (R : Type) [CommRing R]
     (circTMultilinear R T (n + 1)).domDomCongr
         (Equiv.swap (Fin.castSucc i) (Fin.last n)) =
       circTMultilinear R T (n + 1) := by
-  sorry
+  match n, i with
+  | 0, i => exact Fin.elim0 i
+  | 1, i =>
+    -- n = 1: i = 0 (only element of Fin 1). One direct pre-Lie application.
+    have hi : i = 0 := Subsingleton.elim _ _
+    subst hi
+    ext f
+    rw [MultilinearMap.domDomCongr_apply,
+        circTMultilinear_two_eval, circTMultilinear_two_eval]
+    have h0 : Equiv.swap (Fin.castSucc (0 : Fin 1)) (Fin.last 1) 0 = 1 :=
+      Equiv.swap_apply_left _ _
+    have h1 : Equiv.swap (Fin.castSucc (0 : Fin 1)) (Fin.last 1) 1 = 0 :=
+      Equiv.swap_apply_right _ _
+    show (T * f (Equiv.swap (Fin.castSucc (0 : Fin 1)) (Fin.last 1) 0)) *
+         f (Equiv.swap (Fin.castSucc (0 : Fin 1)) (Fin.last 1) 1) -
+         T * (f (Equiv.swap (Fin.castSucc (0 : Fin 1)) (Fin.last 1) 0) *
+              f (Equiv.swap (Fin.castSucc (0 : Fin 1)) (Fin.last 1) 1)) =
+         (T * f 0) * f 1 - T * (f 0 * f 1)
+    rw [h0, h1]
+    -- Goal: (T * f 1) * f 0 - T * (f 1 * f 0) = (T * f 0) * f 1 - T * (f 0 * f 1)
+    have key := RightPreLieRing.assoc_symm' T (f 0) (f 1)
+    simp only [associator] at key
+    exact key.symm
+  | _ + 2, _ =>
+    -- n ≥ 2: general case via OG 6-term proof. See docstring above.
+    sorry
 
 /-- **Lemma 2.5 — Any-swap invariance**: combines interior and exterior
     cases via a case-split on whether either of `x, y : Fin (n+1)` is
