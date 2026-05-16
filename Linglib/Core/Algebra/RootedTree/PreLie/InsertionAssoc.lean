@@ -7335,6 +7335,268 @@ private theorem acc_to_pkfc_list_image_eq
       choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
       h_choice_T_valid h_choice_FA_valid) n
 
+/-! ### §1.11.11: T-side per-(acc, c) bridge (Session 18 Part B, Sub-lemma 1)
+
+For a fixed `acc_paired : List (AlphaConstrainedChoice × Planar α)` (the
+bijection-corresponding pair of (acc_list, C)), the T-side at position 0
+of `buildFIns` agrees with the T-side of `interpret` at the Nonplanar.mk
+(planar-equivalence) level.
+
+The pair-list ENCODING differs:
+- `buildFIns[0] = multiGraft T_ins (T_side perTreePairs)` where the inner
+  pairs are `(acc_to_pkfc image .snd, c)` filtered for `acc_to_pkfc.fst = 0`.
+- `interpret T' = multiGraft T (choice_pre_T_B.zip pre_T_B' ++ extractTOrigPairs)`
+  where `pre_T_B'[k] = multiGraft pre_T_B[k] (extractTGraftPairsAt k)`.
+
+By `multiGraft_compose`, the LHS rewrites to `multiGraft T (composePairs outer inner)`
+with `outer = choice_pre_T_B.zip pre_T_B` and `inner = T_side perTreePairs`.
+
+The bridge: `composePairs outer inner` and `interpret-T-pairs` produce
+PlanarEquiv-equal multiGraft results — `Nonplanar.mk` absorbs the planar
+ordering. This is the heart of the T-side tree-preservation chunk of
+Part B's `interpret_eq_buildFIns_msform_per_list` headline.
+
+**Proof strategy**: induct on `acc_paired`. Base case: both sides reduce
+to `multiGraft T outer = T_ins`. Cons case splits on the bucket of `acc.fst`:
+- `fa_orig / fa_graft`: T-side unchanged → trivial via IH.
+- `t_orig v`: inner pair `(transport outer v, c)` appended on LHS; pair
+  `(v, c)` appended on RHS. Bridge via `absorbInnerPair_eq_insertAt` +
+  `multiGraft_cons_pair`.
+- `t_graft k q`: inner pair `(liftMulti outer k q, c)` on LHS; modifies
+  `pre_T_B'[k]` on RHS. Bridge via `multiGraft_split_lifted_aux` +
+  `liftMulti`-rewriting. -/
+
+/-- T-side filter of `acc_paired` projected to `(Path × Planar α)` pairs.
+
+    Computed via `filterMap` on `acc_paired`: keeps only entries where
+    `acc.fst` is `t_orig` or `t_graft` (the two buckets whose `acc_to_pkfc`
+    image has `.fst = 0`). The output pair has `.fst` = Path-in-T_ins and
+    `.snd` = the c-tree.
+
+    This equals `(perTreePairsFromFChoice (T_ins :: F_ins) C perKF_list ⟨0, _⟩)`
+    when `perKF_list = acc_list.map (acc_to_pkfc ...)` and the appropriate
+    `acc_paired = acc_list.zip C`. -/
+private noncomputable def extractT_pkfc_pairs
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (acc_paired :
+      List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    List (Path × Planar α) :=
+  acc_paired.filterMap fun p =>
+    match p.fst with
+    | .t_orig v =>
+        some (transport (choice_pre_T_B.zip pre_T_B) v, p.snd)
+    | .t_graft k q =>
+        some
+          (liftMulti (choice_pre_T_B.zip pre_T_B)
+            ⟨k.val, by
+              rw [List.length_zip, h_T_len, min_self]; exact k.isLt⟩ q,
+          p.snd)
+    | .fa_orig _ _ => none
+    | .fa_graft _ _ => none
+
+@[simp] private theorem extractT_pkfc_pairs_nil
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length) :
+    extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+        ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) =
+      [] := rfl
+
+@[simp] private theorem extractT_pkfc_pairs_cons_t_orig
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (v : Path) (c : Planar α)
+    (rest :
+      List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+        ((AlphaConstrainedChoice.t_orig v, c) :: rest) =
+      (transport (choice_pre_T_B.zip pre_T_B) v, c) ::
+        extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+          rest := rfl
+
+@[simp] private theorem extractT_pkfc_pairs_cons_t_graft
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (k : Fin pre_T_B.length) (q : Path) (c : Planar α)
+    (rest :
+      List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+        ((AlphaConstrainedChoice.t_graft k q, c) :: rest) =
+      (liftMulti (choice_pre_T_B.zip pre_T_B)
+          ⟨k.val, by
+            rw [List.length_zip, h_T_len, min_self]; exact k.isLt⟩ q, c) ::
+        extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+          rest := rfl
+
+@[simp] private theorem extractT_pkfc_pairs_cons_fa_orig
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (i : Fin F_A.length) (v : Path) (c : Planar α)
+    (rest :
+      List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+        ((AlphaConstrainedChoice.fa_orig i v, c) :: rest) =
+      extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+        rest := rfl
+
+@[simp] private theorem extractT_pkfc_pairs_cons_fa_graft
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (k : Fin pre_FA_B.length) (q : Path) (c : Planar α)
+    (rest :
+      List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+        ((AlphaConstrainedChoice.fa_graft k q, c) :: rest) =
+      extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len
+        rest := rfl
+
+/-- The RHS T-pair list assembled from `acc_paired`: the standard
+    `(choice_pre_T_B.zip pre_T_B' ++ extractTOrigPairs acc_paired)` form
+    used by `interpret`, where `pre_T_B'[k] = multiGraft pre_T_B[k]
+    (extractTGraftPairsAt acc_paired k)`. Wrapped as a `def` for naming. -/
+private noncomputable def interpretTSidePairs
+    {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_pre_T_B : List Path)
+    (acc_paired :
+      List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α)) :
+    List (Path × Planar α) :=
+  choice_pre_T_B.zip
+      ((List.finRange pre_T_B.length).map fun k =>
+        multiGraft pre_T_B[k.val] (extractTGraftPairsAt acc_paired k)) ++
+    extractTOrigPairs acc_paired
+
+/-- **Sub-lemma 1 (Session 18 Part B)**: T-side multiGraft-level equality.
+
+    For every `acc_paired`, the T-side at position 0 of `buildFIns` (after
+    `multiGraft_compose` rewrites) is PlanarEquiv-equal to the T-side of
+    `interpret`. `Nonplanar.mk` absorbs the planar ordering.
+
+    The validity hypotheses ensure each pair's path is valid in its host
+    tree, which is needed for `multiGraft_compose`'s validity discharge. -/
+private theorem composePairs_eq_interpret_T_pairs
+    (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (h_choice_T_valid : ∀ pair ∈ choice_pre_T_B.zip pre_T_B,
+      IsValidPath pair.fst T)
+    (acc_paired :
+      List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B × Planar α))
+    (h_inner_valid : ∀ pair ∈ extractT_pkfc_pairs T choice_pre_T_B h_T_len
+                              choice_pre_FA_B h_FA_len acc_paired,
+      IsValidPath pair.fst
+        (multiGraft T (choice_pre_T_B.zip pre_T_B))) :
+    Nonplanar.mk
+        (multiGraft (multiGraft T (choice_pre_T_B.zip pre_T_B))
+          (extractT_pkfc_pairs T choice_pre_T_B h_T_len choice_pre_FA_B
+            h_FA_len acc_paired)) =
+    Nonplanar.mk
+        (multiGraft T
+          (interpretTSidePairs (pre_FA_B := pre_FA_B) choice_pre_T_B
+            acc_paired)) := by
+  induction acc_paired with
+  | nil =>
+    -- Base: both sides reduce to mG T (choice_pre_T_B.zip pre_T_B).
+    show Nonplanar.mk (multiGraft (multiGraft T (choice_pre_T_B.zip pre_T_B))
+            ([] : List (Path × Planar α))) =
+         Nonplanar.mk (multiGraft T
+            (interpretTSidePairs (pre_FA_B := pre_FA_B) choice_pre_T_B
+              ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B ×
+                Planar α))))
+    rw [multiGraft_nil]
+    show Nonplanar.mk (multiGraft T (choice_pre_T_B.zip pre_T_B)) =
+         Nonplanar.mk (multiGraft T
+            (choice_pre_T_B.zip
+              ((List.finRange pre_T_B.length).map fun k =>
+                multiGraft pre_T_B[k.val]
+                  (extractTGraftPairsAt
+                    ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B ×
+                        Planar α)) k)) ++
+              extractTOrigPairs
+                ([] : List (AlphaConstrainedChoice F_A pre_T_B pre_FA_B ×
+                    Planar α))))
+    show Nonplanar.mk (multiGraft T (choice_pre_T_B.zip pre_T_B)) =
+         Nonplanar.mk (multiGraft T
+            (choice_pre_T_B.zip
+              ((List.finRange pre_T_B.length).map fun k =>
+                multiGraft pre_T_B[k.val] []) ++ []))
+    rw [List.append_nil]
+    rw [show (fun k : Fin pre_T_B.length =>
+            multiGraft pre_T_B[k.val] ([] : List (Path × Planar α))) =
+          (fun k : Fin pre_T_B.length => pre_T_B[k.val]) from by
+      funext k; rw [multiGraft_nil]]
+    rw [List.map_getElem_finRange pre_T_B]
+  | cons head tail ih =>
+    -- Cons case: split on the bucket of `head.fst`.
+    obtain ⟨acc, c⟩ := head
+    cases acc with
+    | t_orig v =>
+      -- T-side: inner pair (transport outer v, c) added on LHS; pair (v, c)
+      -- appended to extractTOrigPairs on RHS. Substrate bridge required.
+      -- TODO: close via absorbInnerPair_eq_insertAt + multiGraft_cons_pair.
+      sorry
+    | t_graft k q =>
+      -- T-side: inner pair (liftMulti outer k q, c) added on LHS; pair
+      -- (q, c) added to extractTGraftPairsAt k on RHS (modifying pre_T_B'[k]).
+      -- TODO: close via absorbInnerPair_lifted_at_root + multiGraft pre_T_B[k]
+      -- semantics.
+      sorry
+    | fa_orig i v =>
+      -- T-side unchanged: extractT_pkfc_pairs, extractTGraftPairsAt,
+      -- extractTOrigPairs all reduce to their values on `tail` (by rfl simp
+      -- lemmas above and the per-extractor _cons_fa_orig lemmas).
+      have h_inner_valid_tail :
+          ∀ pair ∈ extractT_pkfc_pairs T choice_pre_T_B h_T_len
+                    choice_pre_FA_B h_FA_len tail,
+          IsValidPath pair.fst (multiGraft T (choice_pre_T_B.zip pre_T_B)) := by
+        intro pair hpair
+        exact h_inner_valid pair (by
+          rw [extractT_pkfc_pairs_cons_fa_orig]; exact hpair)
+      have ih' := ih h_inner_valid_tail
+      -- LHS: extractT_pkfc_pairs _ ((fa_orig i v, c) :: tail) =
+      --       extractT_pkfc_pairs _ tail.
+      -- RHS: extractTGraftPairsAt ((fa_orig i v, c) :: tail) k =
+      --       extractTGraftPairsAt tail k.
+      --      extractTOrigPairs ((fa_orig i v, c) :: tail) =
+      --       extractTOrigPairs tail.
+      simp only [extractT_pkfc_pairs_cons_fa_orig, interpretTSidePairs,
+                 extractTGraftPairsAt_cons_fa_orig,
+                 extractTOrigPairs_cons_fa_orig] at *
+      exact ih'
+    | fa_graft k q =>
+      -- T-side unchanged: symmetric to fa_orig.
+      have h_inner_valid_tail :
+          ∀ pair ∈ extractT_pkfc_pairs T choice_pre_T_B h_T_len
+                    choice_pre_FA_B h_FA_len tail,
+          IsValidPath pair.fst (multiGraft T (choice_pre_T_B.zip pre_T_B)) := by
+        intro pair hpair
+        exact h_inner_valid pair (by
+          rw [extractT_pkfc_pairs_cons_fa_graft]; exact hpair)
+      have ih' := ih h_inner_valid_tail
+      simp only [extractT_pkfc_pairs_cons_fa_graft, interpretTSidePairs,
+                 extractTGraftPairsAt_cons_fa_graft,
+                 extractTOrigPairs_cons_fa_graft] at *
+      exact ih'
+
 /-- **Strategy A scaffold (Session 5+, sorry-fenced)**: the headline
     `LHS_eq_canonical_msform` at `pres = const empty`, proved DIRECTLY via
     a structural bijection between LHS sequential-insertion paths and
