@@ -6510,6 +6510,48 @@ private noncomputable def acc_to_pkfc {α : Type*}
         ⟨j_k, rankWithinFilter_lt_perTreePairsFromFChoice F_A pre_FA_B
           choice_pre_FA_B h_FA_len k h_k_choice rfl⟩ q)
 
+/-- **Multiset bijection (Session 13, sorry-fenced)**: `acc_to_pkfc` lifted
+    to multisets is a bijection between `allAlphaConstrainedChoiceList` and
+    `perKFChoice (T_ins :: F_ins)`.
+
+    The Fin-type mismatch (`Fin (F_A.length + 1)` vs `Fin (T_ins :: F_ins).length`)
+    is bridged by mapping both sides to `Nat × Path` via `.fst.val`.
+
+    Proof outline (Sessions 13+):
+    - Split allACC into T_orig + T_graft + FA_orig + FA_graft sections.
+    - Split perKFChoice (T_ins :: F_ins) into T-side (i = 0) + FA-side (i = succ j).
+    - **T-side**: `(vertices T_ins).map (0, ·)`. By `vertices_multiGraft_decomp` +
+      Session 2's `preserved_add_sourceSelf_eq_vertices_map_transport`,
+      `vertices T_ins = (vertices T).map (transport pairs) + lifted_T`. Match
+      to T_orig + T_graft sections via `acc_to_pkfc` constructors.
+    - **FA-side**: similar but with per-i indexing and per_tree_pairs filter.
+      Requires bijection between (k ∈ pre_FA_B.length, q) and (i, k_i) for
+      pre_FA_B[k] grafted onto F_A[i = choice_pre_FA_B[k].fst]. Uses
+      `rankWithinFilter` + filter-rank-properties.
+
+    Each side is ~50-100 LOC. Sessions 14+ implement.
+    Headline closure (Strategy A) uses this bijection lifted to listChoices
+    via list-level `Multiset.bind_congr` + `acc_to_pkfc.map`-applied targets. -/
+private theorem acc_to_pkfc_image_eq_perKFChoice
+    (T : Planar α) (F_A pre_T_B pre_FA_B : List (Planar α))
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length) :
+    -- LHS: image of allACC under acc_to_pkfc, projected to (Nat × Path).
+    (Multiset.ofList (allAlphaConstrainedChoiceList T F_A pre_T_B pre_FA_B)).map
+      (fun acc =>
+        let p := acc_to_pkfc T choice_pre_T_B h_T_len choice_pre_FA_B h_FA_len acc
+        (p.fst.val, p.snd)) =
+    -- RHS: perKFChoice positions, projected to (Nat × Path).
+    (Multiset.ofList (perKFChoice
+      (multiGraft T (choice_pre_T_B.zip pre_T_B) ::
+       (List.finRange F_A.length).map fun i =>
+         multiGraft F_A[i.val]
+           (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i)))).map
+      (fun p => (p.fst.val, p.snd)) := by
+  sorry
+
 /-- **Strategy A scaffold (Session 5+, sorry-fenced)**: the headline
     `LHS_eq_canonical_msform` at `pres = const empty`, proved DIRECTLY via
     a structural bijection between LHS sequential-insertion paths and
