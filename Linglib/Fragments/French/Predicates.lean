@@ -17,7 +17,6 @@ despite being separate words.
 namespace Fragments.French.Predicates
 
 open Semantics.Lexical
-open Semantics.Lexical
 open Features (Causative)
 open Features.EntailmentProfile
   (EntailmentProfile kickSubjectProfile seeSubjectProfile runSubjectProfile)

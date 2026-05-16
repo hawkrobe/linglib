@@ -16,7 +16,7 @@ derivational stem-templates (gr0–gr7) defined by a fixed pairing of
 This file is the *interpretation* of two existing Theory interfaces in
 Hausa, not a parallel hierarchy:
 
-- `Theories/Semantics/Verb/VerbEntry.VerbCore` carries argument
+- `Theories/Semantics/Lexical/VerbEntry.VerbCore` carries argument
   structure, voice, and Vendler class. A Hausa verb is a `VerbCore`
   *plus* a Parsons grade.
 - `Theories/Phonology/Autosegmental/RegisterTier.TRN` carries

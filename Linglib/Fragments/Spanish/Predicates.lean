@@ -30,7 +30,6 @@ namespace Fragments.Spanish.Predicates
 
 open Minimalist
 open Semantics.Lexical
-open Semantics.Lexical
 
 -- ============================================================================
 -- § 1: Anticausative Marking

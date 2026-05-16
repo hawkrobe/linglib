@@ -33,7 +33,6 @@ demonstrate size-sensitive SOT:
 namespace Fragments.Hungarian.Predicates
 
 open Semantics.Lexical
-open Semantics.Lexical
 
 /-- Hungarian verb entry: extends VerbCore with the definite/indefinite
     conjugation paradigm. -/

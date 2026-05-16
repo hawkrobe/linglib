@@ -888,7 +888,7 @@ theorem largeVase_score_le_one :
 
 /-! @cite{beavers-koontz-garboden-2020} formalize verbal roots as
     bundles of lexical entailments
-    (`Theories/Semantics/Verb/Roots/Basic.lean`). Their classification
+    (`Theories/Semantics/Lexical/Roots/Basic.lean`). Their classification
     of √crack is `[.becomesState "fissured", .hasCause]` — the
     "result + cause, no manner, no state" four-feature signature
     `⟨hasState=false, hasManner=false, hasResult=true, hasCause=true⟩`

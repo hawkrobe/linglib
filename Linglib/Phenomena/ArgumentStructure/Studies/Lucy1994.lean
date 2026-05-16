@@ -51,7 +51,7 @@ open Fragments.Mayan.Yukatek.Operators
 -- ════════════════════════════════════════════════════
 
 /-! `SalienceClass` and `classOfSignature` live in
-    `Theories/Semantics/Verb/Roots/SalienceClass.lean`. This file
+    `Theories/Semantics/Lexical/Roots/SalienceClass.lean`. This file
     provides the full @cite{lucy-1994} analysis on top of them:
     operator-orbit characterizations and per-root sanity checks.
 

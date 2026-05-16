@@ -40,7 +40,7 @@ The diagram from §5 (76a-j):
 
 ## Architecture
 
-* `Theories/Semantics/Noun/Kind/Mendia2020.lean` — substrate: kind formation
+* `Theories/Semantics/Kinds/Mendia2020.lean` — substrate: kind formation
   by salient equivalence relation (= mathlib's `Setoid`); Carlson's
   Disjointness Condition. Snyder's account of why TWO has disjoint subkinds
   `2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ` (§4.3, §5) instantiates the Mendia framework via

@@ -23,7 +23,6 @@ export Semantics.Lexical (PresupTriggerType ProjectionBehavior ComplementType
 
 open Features
 open Semantics.Lexical
-open Semantics.Lexical
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
 open Semantics.Aspect.Incremental (VerbIncClass)
@@ -3558,8 +3557,6 @@ namespace V2
 
 open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
 open Features
-open Semantics.Lexical
-open Semantics.Lexical
 
 variable {V : Type*} {α : V → Type*}
   [Fintype V] [DecidableEq V] [DecidableValuation α] [∀ v, Fintype (α v)]

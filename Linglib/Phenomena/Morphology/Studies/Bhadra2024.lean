@@ -36,11 +36,10 @@ The §§1-14 substrate below was previously a separate top-level theory file;
 Bhadra 2024 is the originating paper, so the substrate now anchors here per
 CLAUDE.md "every file is anchored". The deferred follow-up is to extract the
 theory-portable wing (`ForceTransmissionClass`, `BoundaryStates` operators,
-`Set.multiMembered`) into `Theories/Semantics/Verb/Affectedness.lean` once
+`Set.multiMembered`) into `Theories/Semantics/ArgumentStructure/Affectedness/Profile.lean` once
 a second consumer materialises.
 -/
 
-open Semantics.Lexical
 open Semantics.Lexical
 open Features.EventStructure
 open Features.EntailmentProfile

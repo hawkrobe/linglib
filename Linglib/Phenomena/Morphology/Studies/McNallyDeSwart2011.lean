@@ -44,7 +44,7 @@ The key empirical contrasts (paper §2.3):
   rather than enumerating them inline.
 * **Kind/subkind ontology**: @cite{zamparelli-1995}'s layered DP plus
   @cite{carlson-1977} kinds. The subkind relation is exactly what
-  `Theories/Semantics/Noun/Kind/Mendia2020.lean` provides: a salient
+  `Theories/Semantics/Kinds/Mendia2020.lean` provides: a salient
   equivalence relation on shade-atoms partitions them into colour subkinds,
   and McNally & de Swart's `subkind(xk, red)` is precisely
   `Mendia2020.subkindOf kfShade (canonicalShade rood)`. Carlson's
@@ -263,7 +263,7 @@ def adjectivalProperty (a : AdjEntry) : Shade → Prop :=
 /-- @cite{mcnally-deswart-2011} (24b): `roodheid_N` denotes the set of
     subkinds of the entity correlate (Chierchia ∩) of the property
     `λy. Red(y)`. The substantive Chierchia ∩ operator lives in
-    `Theories/Semantics/Noun/Kind/Chierchia1998.lean` (`down`/`up` for
+    `Theories/Semantics/Kinds/Chierchia1998.lean` (`down`/`up` for
     intensional kinds) and `Theories/Semantics/Composition/TypeShifting.lean`
     (`NOM` extensional counterpart, with `NOM = iota` in the finite
     setting); we do not call them here because the extensional collapse

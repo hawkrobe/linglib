@@ -15,7 +15,6 @@ event is not entailed to have actually occurred.
 namespace Fragments.Korean.Predicates
 
 open Semantics.Lexical
-open Semantics.Lexical
 open Features (Causative)
 
 /-- Korean verb entry: extends VerbCore with Korean inflectional paradigm. -/

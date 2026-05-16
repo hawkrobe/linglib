@@ -1,4 +1,8 @@
-/-
+import Linglib.Features.EntailmentProfile
+import Linglib.Features.Aktionsart
+import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
+
+/-!
 # Event Structure Templates
 
 Verbs decompose into **templates** (structural meaning that determines
@@ -22,10 +26,6 @@ and distinct syntactic frames.
 - `intransitiveVariant` → causative/inchoative alternation (@cite{krejci-2012}; @cite{rappaport-hovav-levin-1998})
 
 -/
-
-import Linglib.Features.EntailmentProfile
-import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
 
 namespace Features.EventStructure
 

@@ -312,7 +312,7 @@ theorem cardinal_proportional_divergence :
     the cardinal reading.
 
     The substrate primitive `PredicateLevel`
-    (`Theories/Semantics/Noun/Kind/Carlson1977.lean §2`) is reused
+    (`Theories/Semantics/Kinds/Carlson1977.lean §2`) is reused
     here directly rather than re-stipulated; the same enum is
     consumed by `Fragments/German/BarePluralWordOrder.lean` and
     `Phenomena/Generics/BarePlurals.lean`. -/

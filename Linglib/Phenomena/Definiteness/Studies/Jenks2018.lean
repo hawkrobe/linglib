@@ -219,7 +219,7 @@ do covertly what you can do overtly"), inherited from
 article means ι is unblocked — bare N can route to a unique-definite
 reading via the type-shift hierarchy of @cite{dayal-2004}.
 
-The substrate has Dayal's hierarchy (`Theories/Semantics/Noun/Kind/Dayal2004.lean`),
+The substrate has Dayal's hierarchy (`Theories/Semantics/Kinds/Dayal2004.lean`),
 already used by `Moroney2021.lean`. The Mandarin parallel theorem is
 the same `selectShift` instance: when no shift is blocked, ι is
 selected first (Meaning Preservation). -/

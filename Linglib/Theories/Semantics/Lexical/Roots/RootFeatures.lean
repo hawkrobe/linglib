@@ -20,7 +20,7 @@ contextual-allosemy framework. Promoting these features to a named
 Theories file (sibling of `Roots/Basic.lean`, `Roots/Typology.lean`,
 `Roots/Template.lean`) makes the framework commitment legible.
 
-**Sibling slots intentionally unfilled.** `Theories/Semantics/Verb/Roots/RappaportHovavLevin.lean`
+**Sibling slots intentionally unfilled.** `Theories/Semantics/Lexical/Roots/RappaportHovavLevin.lean`
 is the natural home for the template-based competitor account
 (@cite{rappaport-hovav-levin-2010}, @cite{rappaport-hovav-levin-2024}).
 @cite{rappaport-hovav-levin-2010} reject the very feature setup
@@ -264,7 +264,7 @@ structure RootProfile where
     @cite{rappaport-hovav-levin-2010} reject this entailment-feature
     framing; for them manner/result are event-structural template
     properties, not root features. The competitor analysis would live
-    in `Theories/Semantics/Verb/Roots/RappaportHovavLevin.lean` (planned).
+    in `Theories/Semantics/Lexical/Roots/RappaportHovavLevin.lean` (planned).
 
     UNVERIFIED: B&KG Table 12 reference cited from memory. -/
 structure RootEntailments where

@@ -15,7 +15,7 @@ classification from `Features.Aktionsart`.
   not yet formalized — `vendlerClassToTypicalTransitivity` is a
   flat lookup, not a derivation from proto-role entailments. A
   principled version would build the mapping out of
-  `Theories/Semantics/Verb/EntailmentProfile.lean` so that, e.g.,
+  `Features/EntailmentProfile.lean` so that, e.g.,
   the achievement → unaccusative arrow falls out of
   `changeOfState ∧ ¬volition`. TODO when EntailmentProfile-based
   unaccusativity diagnostics are wired up.
@@ -31,7 +31,7 @@ open Phenomena.AuxiliaryVerbs.Selection
     subject is a theme/patient.
 
     TODO: derive this from proto-role entailments in
-    `Theories/Semantics/Verb/EntailmentProfile.lean` (cf. file docstring).
+    `Features/EntailmentProfile.lean` (cf. file docstring).
     Today this is a stipulated lookup; the rfl-trivial theorems that
     chained it with `canonicalSelection` have been dropped because they
     just unpacked two lookup tables. -/

@@ -12,7 +12,7 @@ verb-of-creation flag.
 ## Provenance
 
 Moved from `Core/Lexical/VerbClass.lean` in the cleanup that dissolved
-`Core/Lexical/`. Lives at `Theories/Semantics/Verb/` (sibling of
+`Core/Lexical/`. Lives at `Theories/Semantics/Lexical/` (sibling of
 `LevinTheory.lean` for root-entailment derivation, `LevinClassProfiles.lean`
 for argument templates, `MeaningComponents.lean` for the diagnostic
 features) — Levin's framework, not consensus substrate.
@@ -23,13 +23,13 @@ features) — Levin's framework, not consensus substrate.
 English verb classification, but they are **not** the only such taxonomy.
 Sibling theory-named slots are intentionally unfilled in this restructure:
 
-- `Theories/Semantics/Verb/VerbNet.lean` — Kipper-Schuler 2005
+- `Theories/Semantics/Lexical/VerbNet.lean` — Kipper-Schuler 2005
   formally extends Levin to ~270 classes with thematic role hierarchies
-- `Theories/Semantics/Verb/FrameNet.lean` — Fillmore/Baker/Sato semantic
+- `Theories/Semantics/Lexical/FrameNet.lean` — Fillmore/Baker/Sato semantic
   frames as an alternative to alternation-based classification
-- `Theories/Semantics/Verb/PropBank.lean` — Palmer/Gildea/Kingsbury 2005
+- `Theories/Semantics/Lexical/PropBank.lean` — Palmer/Gildea/Kingsbury 2005
   verb-specific argument frames
-- `Theories/Semantics/Verb/Faulhaber2011.lean` — *Verb Valency Patterns*
+- `Theories/Semantics/Lexical/Faulhaber2011.lean` — *Verb Valency Patterns*
   empirical critique of meaning-based predictions about alternation
   participation; the principal disconfirming reference
 

@@ -45,7 +45,6 @@ open Semantics.Attitudes.Doxastic
 open Core.Presupposition
 open Core.Postsupposition
 open Semantics.Lexical
-open Semantics.Lexical
 open Fragments.English.Predicates.Verbal
 open Fragments.Mandarin.Predicates
 

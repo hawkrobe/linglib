@@ -25,7 +25,7 @@ proto-role/diagnostic mismatch. This file makes the contrast explicit.
 
 ## Files
 - Dowty's predicates `PredictsUnaccusative` / `PredictsUnergative`
-  live in `Theories/Semantics/Verb/EntailmentProfile.lean`.
+  live in `Features/EntailmentProfile.lean`.
 - The MoS verb data lives in `Fragments/English/Predicates/Verbal.lean`.
 -/
 

@@ -11,7 +11,6 @@ C-distributivity and NVP class are DERIVED from the `attitude` field.
 namespace Fragments.Mandarin.Predicates
 
 open Semantics.Lexical
-open Semantics.Lexical
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 
 /-- Mandarin verb entry: extends VerbCore with no inflectional morphology
