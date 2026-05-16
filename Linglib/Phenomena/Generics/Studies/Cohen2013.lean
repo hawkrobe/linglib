@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Composition.PredicateTransfer
-import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Genericity.Generics
 import Linglib.Theories.Semantics.Aspect.Habituals
 import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Theories.Semantics.Quantification.CovertQuantifier

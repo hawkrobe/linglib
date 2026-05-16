@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Gradability.Aggregation
 import Linglib.Theories.Semantics.Degree.Core
-import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
+import Linglib.Theories.Semantics.Kinds.Carlson1977
 import Linglib.Core.Scales.Scale
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Tactic.Ring
@@ -85,7 +85,7 @@ namespace Solt2018Proportional
 open Semantics.Gradability.Aggregation (spatialNormalizedScore
   spatialNormalizedScore_unit spatialNormalizedScore_le_one
   spatialNormalizedScore_nonneg weightedScore)
-open Semantics.Noun.Kind.Carlson1977 (PredicateLevel)
+open Semantics.Kinds.Carlson1977 (PredicateLevel)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The proportional-comparative puzzle

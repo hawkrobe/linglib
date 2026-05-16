@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.BinominalDefs
+import Linglib.Theories.Semantics.Quantification.BinominalDefs
 
 /-!
 # Italian Binominal Nouns
@@ -21,7 +21,7 @@ the Latin source for both French and English evaluative BNPs.
 
 namespace Fragments.Italian.Binominals
 
-open Semantics.Noun.Binominal
+open Semantics.Quantification.Binominal
 
 /-- An Italian binominal N₁ noun entry. -/
 structure BinominalN₁Entry where

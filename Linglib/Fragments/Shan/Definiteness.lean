@@ -3,8 +3,8 @@ import Linglib.Core.Deixis.Feature
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
-import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
+import Linglib.Theories.Semantics.Kinds.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.Dayal2004
 
 /-!
 # Shan Definiteness Fragment
@@ -38,7 +38,7 @@ namespace Fragments.Shan.Definiteness
 
 open Features.Definiteness
 open Core.Presupposition (PrProp)
-open Semantics.Noun.Kind
+open Semantics.Kinds
 
 -- ============================================================================
 -- §1: Article Inventory and Blocking

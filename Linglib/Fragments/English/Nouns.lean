@@ -1,6 +1,6 @@
 import Linglib.Core.Word
 import Linglib.Core.Morphology.Exponence
-import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.Chierchia1998
 
 /-! # English Noun Lexicon Fragment
 
@@ -9,7 +9,7 @@ English NP structure. Bare plurals/mass nouns OK, bare singulars blocked.
 
 namespace Fragments.English.Nouns
 
-open Semantics.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
+open Semantics.Kinds.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 
 /-- A lexical entry for an English noun.

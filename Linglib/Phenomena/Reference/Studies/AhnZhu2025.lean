@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.Relational.Barker2011
+import Linglib.Theories.Semantics.ArgumentStructure.Relational
 
 /-
 # Mandarin Demonstrative Semantics
@@ -403,7 +403,7 @@ This section shows how Ahn & Zhu's analysis DERIVES from Barker's framework.
 Rather than re-proving everything, we show the correspondence.
 -/
 
-open Semantics.Noun.Relational.Barker2011
+open Semantics.ArgumentStructure.Relational
 
 /--
 **Connection Theorem 1**: Our local π matches Barker's π.
@@ -413,7 +413,7 @@ This shows the two formalizations are compatible.
 theorem local_pi_matches_barker {E S : Type}
     (P : E → S → Bool) (R : E → E → S → Bool) (z x : E) (s : S) :
     (relationalizer (.pred1 P) R).toPred2 z x s =
-    Semantics.Noun.Relational.Barker2011.π P R z x s := rfl
+    Semantics.ArgumentStructure.Relational.π P R z x s := rfl
 
 /--
 **Connection Theorem 2**: Bridging licensing derives from Barker's framework.
@@ -426,7 +426,7 @@ theorem bridging_from_barker {E S : Type}
     -- Barker: π creates a Pred2 (has relatum slot)
     -- Ahn & Zhu: na applies π, so na creates a relatum slot
     -- Therefore: na enables bridging
-    Semantics.Noun.Relational.Barker2011.CanFillRelatum .appliedPi := trivial
+    Semantics.ArgumentStructure.Relational.CanFillRelatum .appliedPi := trivial
 
 /--
 **The Derivation Chain**:
@@ -442,9 +442,9 @@ applied to Mandarin demonstratives.
 -/
 theorem derivation_chain {E S : Type} :
     -- Step 1-2: From Barker - π application means relatum slot exists
-    Semantics.Noun.Relational.Barker2011.CanFillRelatum .appliedPi ∧
+    Semantics.ArgumentStructure.Relational.CanFillRelatum .appliedPi ∧
     -- Step 3-5: Na uses π, so na enables bridging
-    ¬ Semantics.Noun.Relational.Barker2011.CanFillRelatum .noRelation :=
+    ¬ Semantics.ArgumentStructure.Relational.CanFillRelatum .noRelation :=
   ⟨trivial, id⟩
 
 /-!

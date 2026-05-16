@@ -3,7 +3,7 @@ import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
+import Linglib.Theories.Semantics.Kinds.Dayal2004
 import Linglib.Theories.Semantics.Classifier.Basic
 import Linglib.Phenomena.Definiteness.Studies.Schwarz2009
 import Linglib.Fragments.Mandarin.Definiteness
@@ -224,7 +224,7 @@ already used by `Moroney2021.lean`. The Mandarin parallel theorem is
 the same `selectShift` instance: when no shift is blocked, ι is
 selected first (Meaning Preservation). -/
 
-open Semantics.Noun.Kind
+open Semantics.Kinds
 
 /-- Mandarin's number-neutral nouns under no blocking select ι as the
     preferred type-shift — paper p. 514's "ι is the type-shifter

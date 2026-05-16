@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
-import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Kinds.Chierchia1998
+import Linglib.Theories.Semantics.Genericity.Generics
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Theories.Semantics.Plurality.Cumulativity
 import Linglib.Theories.Semantics.Composition.Tree
@@ -70,7 +70,7 @@ English [+arg, +pred] allows both; Italian [-arg, +pred] forces D.
 
 namespace Guerrini2026
 
-open Semantics.Noun.Kind.Chierchia1998 (NominalMapping Kind CanDenoteKind
+open Semantics.Kinds.Chierchia1998 (NominalMapping Kind CanDenoteKind
   CanDenoteProperty downDefinedFor DPP)
 open Core.Duality (Truth3)
 open Semantics.Plurality.Distributivity (distMaximal pluralTruthValue
@@ -1006,7 +1006,7 @@ they are structurally different semantic compositions that yield
 different truth conditions and different pragmatic properties.
 -/
 
-open Semantics.Noun.Kind.Generics (traditionalGEN Situation
+open Semantics.Genericity.Generics (traditionalGEN Situation
   NormalcyPredicate Restrictor Scope)
 
 /-- The Bona Fide Generic parse is compositionally an instance of

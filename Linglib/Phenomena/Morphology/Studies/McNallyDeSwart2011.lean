@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.Kind.Mendia2020
+import Linglib.Theories.Semantics.Kinds.Mendia2020
 import Linglib.Fragments.Dutch.Adjectives
 import Linglib.Phenomena.Morphology.CategoryChanging
 
@@ -95,7 +95,7 @@ substrate.
 
 namespace Phenomena.Morphology.Studies.McNallyDeSwart2011
 
-open Semantics.Noun.Kind.Mendia2020 (subkindOf disjointness_condition
+open Semantics.Kinds.Mendia2020 (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
 open Fragments.Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
 
@@ -141,7 +141,7 @@ def Fragments.Dutch.Adjectives.AdjEntry.toRootFamily
 
 namespace Phenomena.Morphology.Studies.McNallyDeSwart2011
 
-open Semantics.Noun.Kind.Mendia2020 (subkindOf disjointness_condition
+open Semantics.Kinds.Mendia2020 (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
 open Fragments.Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
 

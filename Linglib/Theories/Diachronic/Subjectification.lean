@@ -23,7 +23,7 @@ unidirectional, and that specific semantic domains exhibit this pattern.
 - `Theories.Semantics.Modality.Narrog`: speaker-orientation level maps to
   subjectivity level; the directionality of modal change (see
   `Diachronic.ModalChange`) is an instance of subjectification.
-- `Semantics.Noun.Binominal`: the bleaching cline (N+PP → evaluative → intensifier)
+- `Semantics.Quantification.Binominal`: the bleaching cline (N+PP → evaluative → intensifier)
   parallels the subjectification trajectory in the nominal domain: N₁ shifts
   from denoting objective properties to expressing speaker attitude.
 - `Diachronic.Grammaticalization`: subjectification is a semantic dimension of

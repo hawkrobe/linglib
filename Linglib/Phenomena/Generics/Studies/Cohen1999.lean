@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Genericity.Generics
 import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 
 /-!
@@ -52,7 +52,7 @@ are disjoint. See `Phenomena/Generics/Studies/Nickel2009.lean`.
 
 namespace Cohen1999
 
-open Semantics.Noun.Kind.Generics
+open Semantics.Genericity.Generics
 open Semantics.Quantification.CovertQuantifier
 -- Cohen's Probability-Based GEN
 

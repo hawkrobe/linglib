@@ -46,7 +46,7 @@ greater morphological boundedness (@cite{lehmann-1985}, @cite{hopper-traugott-20
   is a parallel diachronic process (phonological erosion of frequent forms).
   Apparatus co-located in the Haspelmath 2021 study file (single consumer);
   promote to substrate when a second diachronic study materializes.
-- `Semantics.Noun.Binominal`: the bleaching cline for binominals (N+PP →
+- `Semantics.Quantification.Binominal`: the bleaching cline for binominals (N+PP →
   pseudo-partitive → evaluative → modifier → intensifier) is a specialized
   grammaticalization path in the nominal domain.
 - `Features.Subjectivity`: Traugott's subjectification cline is a semantic

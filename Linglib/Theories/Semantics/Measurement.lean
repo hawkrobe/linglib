@@ -2,7 +2,7 @@ import Linglib.Core.Mereology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Gradability.StatesBased
-import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
+import Linglib.Theories.Semantics.Kinds.Dayal2004
 
 /-!
 # Cross-Categorial Measurement Semantics
@@ -59,7 +59,7 @@ namespace Semantics.Measurement
 open _root_.Mereology
 open Features
 open Features
-open Semantics.Noun.Kind.Dayal2004 (NumberFeature)
+open Semantics.Kinds.Dayal2004 (NumberFeature)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Mereological Status

@@ -3,7 +3,7 @@ import Linglib.Fragments.Japanese.Plurals
 import Linglib.Theories.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Features.Number
 import Linglib.Core.Agreement.Target
-import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.Chierchia1998
 
 /-!
 # Corbett (2000) — Number
@@ -650,7 +650,7 @@ theorem numberStage_consistent_with_size :
 -- §10: Bridge to Chierchia (1998) Nominal Mapping Parameter
 -- ============================================================================
 
-open Semantics.Noun.Kind.Chierchia1998 (NominalMapping CanDenoteKind)
+open Semantics.Kinds.Chierchia1998 (NominalMapping CanDenoteKind)
 
 /-- Corbett's general number languages are those where bare nouns can denote
     kinds without a determiner — exactly Chierchia's [+arg] languages.

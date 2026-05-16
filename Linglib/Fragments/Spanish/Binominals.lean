@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.BinominalDefs
+import Linglib.Theories.Semantics.Quantification.BinominalDefs
 import Linglib.Theories.Morphology.DM.Categorizer
 
 /-!
@@ -19,7 +19,7 @@ and thereby the availability of NP-ellipsis.
 
 namespace Fragments.Spanish.Binominals
 
-open Semantics.Noun.Binominal
+open Semantics.Quantification.Binominal
 open Morphology.DM
 
 /-- A Spanish binominal noun entry, with gender encoded via the DM

@@ -3,8 +3,8 @@ import Linglib.Core.Mereology
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
-import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
-import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.Dayal2004
+import Linglib.Theories.Semantics.Kinds.Chierchia1998
 import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Classifier.Basic
 import Linglib.Fragments.English.Definiteness
@@ -247,7 +247,7 @@ theorem high_existential_universally_blocked :
 -- §4: Type-Shifting Analysis
 -- ============================================================================
 
-open Semantics.Noun.Kind
+open Semantics.Kinds
 
 /-- Shan has no overt determiners: all type-shifts are unblocked.
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.Chierchia1998
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.Mandarin.Nouns
@@ -11,7 +11,7 @@ Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
 
 Connects the cross-linguistic noun categorization typology in
 `Aikhenvald2000` to the Nominal Mapping
-Parameter from `Theories.Semantics.Noun.Kind.Chierchia1998`.
+Parameter from `Theories.Semantics.Kinds.Chierchia1998`.
 
 ## Predictions verified
 
@@ -44,7 +44,7 @@ field on `NounCategorizationSystem` captures this finer distinction.
 namespace Chierchia1998
 
 open Typology
-open Semantics.Noun.Kind.Chierchia1998 (NominalMapping)
+open Semantics.Kinds.Chierchia1998 (NominalMapping)
 open Aikhenvald2000 (mandarin japanese french italian)
 
 /-- Map NominalMapping to the expected classifier type.

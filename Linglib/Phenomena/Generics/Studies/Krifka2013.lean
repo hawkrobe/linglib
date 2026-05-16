@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Genericity.Generics
 import Linglib.Features.Genericity
 
 /-!

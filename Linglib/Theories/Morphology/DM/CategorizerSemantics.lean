@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Semantics.Noun.Relational.Barker2011
+import Linglib.Theories.Semantics.ArgumentStructure.Relational
 
 /-!
 # Categorizer Semantics @cite{adamson-2024} @cite{barker-2011}
@@ -37,7 +37,7 @@ This means the DM categorizer head is simultaneously:
 
 namespace Morphology.DM.CategorizerSemantics
 
-open Semantics.Noun.Relational.Barker2011
+open Semantics.ArgumentStructure.Relational
 
 -- ============================================================================
 -- § 1: Semantic Denotation Types for n Heads

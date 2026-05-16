@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.BinominalDefs
+import Linglib.Theories.Semantics.Quantification.BinominalDefs
 
 /-!
 # French Binominal Nouns @cite{ten-wolde-2023}
@@ -21,7 +21,7 @@ The evaluative BNP may have entered English from French or Latin
 
 namespace Fragments.French.Binominals
 
-open Semantics.Noun.Binominal
+open Semantics.Quantification.Binominal
 
 /-- A French binominal N₁ noun entry. -/
 structure BinominalN₁Entry where

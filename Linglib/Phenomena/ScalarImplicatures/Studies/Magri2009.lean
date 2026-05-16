@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Theories.Pragmatics.Implicature.Defs
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Alternatives.Lexical
-import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
+import Linglib.Theories.Semantics.Kinds.Carlson1977
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Fragments.German.BarePluralWordOrder
 
@@ -81,7 +81,7 @@ abbreviation also used in this project (`bpsToImplicature`,
 namespace Magri2009
 
 open Exhaustification (innocent predToFinset altsFromPreds)
-open Semantics.Noun.Kind.Carlson1977 (PredicateLevel)
+open Semantics.Kinds.Carlson1977 (PredicateLevel)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Blind Strengthening Framework

@@ -24,7 +24,7 @@ namespace Saab2026
 
 open Minimalist
 open Minimalist.Ellipsis.Nominal
-open Semantics.Noun.Binominal
+open Semantics.Quantification.Binominal
 open Phenomena.Ellipsis.NPEllipsis
 
 -- ═══════════════════════════════════════════════════════════════

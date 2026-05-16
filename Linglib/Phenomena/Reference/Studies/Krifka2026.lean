@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.Kind.Anaphora
+import Linglib.Theories.Semantics.Kinds.Anaphora
 
 /-!
 # Anaphora for Concepts, Kinds, and Parts
@@ -39,7 +39,7 @@ He₁ is afraid of them₂,₄.
 namespace Krifka2026
 
 open Semantics.Dynamic.Core (ConceptDRef DRefVal)
-open Semantics.Noun.Kind.Anaphora
+open Semantics.Kinds.Anaphora
 
 -- ════════════════════════════════════════════════════
 -- § 1. Kind Pronoun Selection

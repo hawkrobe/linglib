@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Noun.BinominalDefs
+import Linglib.Theories.Semantics.Quantification.BinominalDefs
 
 /-!
 # NP-Ellipsis in Spanish Binominals @cite{saab-2026}
@@ -30,13 +30,13 @@ a primeval genitive structure with Num[E]) from qualitative (which have
 an equative structure lacking Num[E]).
 
 `BinominalType` and its core structural properties (`licensesNPE`, `hasNumE`)
-are defined in `Semantics.Noun.Binominal`. This file adds ellipsis-specific
+are defined in `Semantics.Quantification.Binominal`. This file adds ellipsis-specific
 data (genitive sources, agreement, concrete examples).
 -/
 
 namespace Phenomena.Ellipsis.NPEllipsis
 
-open Semantics.Noun.Binominal
+open Semantics.Quantification.Binominal
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 1: Genitive Structure

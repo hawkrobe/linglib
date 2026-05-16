@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.Kind.Mendia2020
+import Linglib.Theories.Semantics.Kinds.Mendia2020
 import Linglib.Phenomena.Numerals.Studies.Spector2013
 import Linglib.Fragments.Dutch.Adjectives
 import Mathlib.Data.Fintype.Basic
@@ -92,7 +92,7 @@ for the Degrees-as-Kinds view Snyder adopts in §5.3.
 
 namespace Phenomena.Numerals.Snyder2026
 
-open Semantics.Noun.Kind.Mendia2020 (subkindOf disjointness_condition
+open Semantics.Kinds.Mendia2020 (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
 
 /-! ## Semantic types

@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Quantification
-import Linglib.Theories.Semantics.Noun.Relational.Barker2011
+import Linglib.Theories.Semantics.ArgumentStructure.Relational
 
 /-!
 # Possessive Quantifiers

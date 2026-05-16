@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Genericity.Generics
 import Linglib.Features.Genericity
 
 /-!
@@ -52,7 +52,7 @@ This is discussed in the introduction to *Genericity* (OUP 2013).
 
 namespace Nickel2009
 
-open Semantics.Noun.Kind.Generics (prevalence thresholdGeneric)
+open Semantics.Genericity.Generics (prevalence thresholdGeneric)
 
 -- Ways of Being Normal
 
