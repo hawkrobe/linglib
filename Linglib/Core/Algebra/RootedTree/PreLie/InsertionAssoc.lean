@@ -6510,6 +6510,53 @@ private noncomputable def acc_to_pkfc {α : Type*}
         ⟨j_k, rankWithinFilter_lt_perTreePairsFromFChoice F_A pre_FA_B
           choice_pre_FA_B h_FA_len k h_k_choice rfl⟩ q)
 
+/-- **T-side bijection (Session 14)**: the T_orig + T_graft sections of allACC,
+    after `acc_to_pkfc`-mapping and projection to `Nat × Path`, equal the T-side
+    (`i = 0` portion) of `perKFChoice (T_ins :: F_ins)` after the same projection.
+
+    Proof: vertices T_ins partitions via `vertices_multiGraft_decomp` into
+    preserved+sourceSelf (= `(vertices T).map (transport pairs)` per Session 2's
+    `preserved_add_sourceSelf_eq_vertices_map_transport`) and lifted (=
+    per-pre_T_B[k] graft positions). Match each part to the corresponding
+    allACC section. -/
+private theorem acc_to_pkfc_T_side_eq
+    (T : Planar α) (pre_T_B : List (Planar α))
+    (choice_pre_T_B : List Path)
+    (h_T_len : choice_pre_T_B.length = pre_T_B.length)
+    (h_choice_T_valid : ∀ pair ∈ choice_pre_T_B.zip pre_T_B, IsValidPath pair.fst T) :
+    let pairs := choice_pre_T_B.zip pre_T_B
+    -- T_orig section image (Nat × Path)
+    (Multiset.ofList ((vertices T).map
+      (fun v => ((0 : ℕ), transport pairs v)))) +
+    -- T_graft section image
+    (Multiset.ofList ((List.finRange pre_T_B.length).flatMap fun k =>
+      (vertices pre_T_B[k.val]).map fun q =>
+        ((0 : ℕ), liftMulti pairs ⟨k.val, by
+          rw [List.length_zip, h_T_len, min_self]; exact k.isLt⟩ q))) =
+    -- T-side of perKFChoice projected to Nat × Path
+    Multiset.ofList ((vertices (multiGraft T pairs)).map
+      (fun v => ((0 : ℕ), v))) := by
+  intro pairs
+  -- Step 1: Convert RHS's `Mset.ofList (l.map f)` to `(Mset.ofList l).map f`.
+  rw [← Multiset.map_coe (fun v : Path => ((0 : ℕ), v)) (vertices (multiGraft T pairs))]
+  -- Step 2: Apply vertices_multiGraft_decomp (with validity hypothesis).
+  rw [vertices_multiGraft_decomp T pairs h_choice_T_valid]
+  -- Now RHS = (filterMap + filter.map(transport) + lifted).map (fun v => (0, v))
+  -- Step 3: Combine filterMap + filter.map(transport) via Session 2 substrate.
+  rw [show ((vertices T : Multiset Path).filterMap (preserveMulti pairs)) +
+          (((vertices T : Multiset Path).filter (· ∈ pairSources pairs)).map (transport pairs)) =
+        (vertices T : Multiset Path).map (transport pairs)
+      from preserved_add_sourceSelf_eq_vertices_map_transport pairs _]
+  -- Now RHS = ((vertices T).map (transport pairs) + lifted).map (fun v => (0, v))
+  -- Step 4: Distribute .map (fun v => (0, v)) over the multiset sum.
+  rw [Multiset.map_add]
+  -- Step 5: Convert .map (transport).map (fun v => (0, v)) to .map (fun v => (0, transport v)) via Multiset.map_map.
+  rw [Multiset.map_map]
+  -- TODO Session 15+: continue with:
+  --   - Match (vertices T).map (fun v => (0, transport pairs v)) = T_orig section image.
+  --   - Match the lifted section to T_graft section image (Fin coercion across pairs.length = pre_T_B.length).
+  sorry
+
 /-- **Multiset bijection (Session 13, sorry-fenced)**: `acc_to_pkfc` lifted
     to multisets is a bijection between `allAlphaConstrainedChoiceList` and
     `perKFChoice (T_ins :: F_ins)`.
