@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.Decomposition
+import Linglib.Theories.Semantics.Aspect.SubeventStructure
 import Linglib.Theories.Semantics.Aspect.Core
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Core.Time.Reichenbach
@@ -41,6 +41,7 @@ open Core.Time
 open Core.Time.Reichenbach
 open Features
 open Semantics.Aspect.Core
+open Semantics.Aspect.SubeventStructure
 open Semantics.Events
 
 -- ════════════════════════════════════════════════════

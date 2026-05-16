@@ -1,6 +1,6 @@
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Theories.Semantics.Events.Decomposition
+import Linglib.Theories.Semantics.Aspect.SubeventStructure
 
 /-!
 # Progressive Aspect and Causal Structure
@@ -258,7 +258,7 @@ structure CausallyGroundedEvent (V : Type*) [Fintype V] [DecidableEq V]
   /-- IsDeterministic instance for proc.M (carried explicitly). -/
   detInst : SEM.IsDeterministic process.M
   /-- The temporal phases: activity and result with ordering -/
-  phases : Semantics.Events.SubeventPhases Time
+  phases : Semantics.Aspect.SubeventStructure.SubeventPhases Time
   /-- The causal trajectory is viable: initiator is type-level sufficient. -/
   causallyViable : @CausalProcess.typeLevelHolds V _ _ process detInst
 

@@ -2390,7 +2390,7 @@ import Linglib.Theories.Morphology.TheorySpace
 import Linglib.Theories.Semantics.Spatial.Trace
 import Linglib.Theories.Semantics.Events.Adjacency
 import Linglib.Theories.Semantics.Events.InitialFinalParts
-import Linglib.Theories.Semantics.Events.Decomposition
+import Linglib.Theories.Semantics.Aspect.SubeventStructure
 import Linglib.Theories.Semantics.Attitudes.BuilderProperties
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Attitudes.ClauseDenotation.Content

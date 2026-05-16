@@ -1,5 +1,5 @@
 import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
-import Linglib.Theories.Semantics.Events.Decomposition
+import Linglib.Theories.Semantics.Aspect.SubeventStructure
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 
@@ -240,7 +240,7 @@ theorem iterate_matches_duratize :
 -- § 7: When-Coercion ↔ M&S Event Types
 -- ============================================================================
 
-open Semantics.Events (MoensSteedmanClass WhenTarget)
+open Semantics.Aspect.SubeventStructure (MoensSteedmanClass WhenTarget)
 
 /-- M&S's unified *when*-semantics agrees with the empirical coercion
     pattern: *when* needs no coercion iff `whenCompatible` is true.

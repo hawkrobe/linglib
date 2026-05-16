@@ -43,10 +43,11 @@ consumable by IMPF/PRFV/PERF. Key results:
 
 -/
 
-namespace Semantics.Events
+namespace Semantics.Aspect.SubeventStructure
 
 open Core.Time
 open Features
+open Semantics.Events
 
 /-! ### Subevent Phases -/
 
@@ -480,4 +481,4 @@ theorem hasConsState_of_consState (n : Nucleus Time)
 
 end Nucleus
 
-end Semantics.Events
+end Semantics.Aspect.SubeventStructure
