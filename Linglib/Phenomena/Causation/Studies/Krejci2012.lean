@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Theories.Semantics.Verb.EventStructure
-import Linglib.Theories.Semantics.Verb.ArgDerivation
+import Linglib.Theories.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!
@@ -51,7 +51,7 @@ open Semantics.Verb
 open Semantics.Verb.Roots
 open Semantics.Causation.Morphological
 open Features.EventStructure
-open Features.ArgDerivation
+open Semantics.ArgumentStructure.ArgDerivation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Lexically Reflexive Verb Data

@@ -2380,7 +2380,7 @@ import Linglib.Theories.Semantics.Verb.Affectedness.Profile
 import Linglib.Theories.Semantics.Verb.LevinTheory
 import Linglib.Theories.Semantics.Verb.LevinClassProfiles
 import Linglib.Theories.Semantics.Verb.EventStructure
-import Linglib.Theories.Semantics.Verb.ArgDerivation
+import Linglib.Theories.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Theories.Semantics.Verb.Roots.Basic
 import Linglib.Theories.Semantics.Verb.Roots.Template
 import Linglib.Theories.Semantics.Verb.Roots.Typology
