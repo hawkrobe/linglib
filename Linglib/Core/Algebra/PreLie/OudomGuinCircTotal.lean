@@ -151,6 +151,51 @@ private theorem ι_eq_tprod_one (x : L) :
   rw [TensorAlgebra.tprod_apply]
   simp
 
+/-! ### §3.B: Swap-in-product lemma on tprods
+
+The KEY substantive lemma reducing the kernel-containment to Lemma 2.5.
+For tprods of `a, b` with an `ι X * ι Y` insert: the swap of X and Y
+corresponds to a transposition of two adjacent positions in the
+concatenated tuple, which `circTMultilinear_symm` makes invariant. -/
+
+/-- Express `(tprod_m a) * (ι X * ι Y) * (tprod_n b)` as a single
+    `tprod_{m+2+n}` over the concatenated tuple. -/
+private theorem tprod_mul_ι_pair_mul_tprod
+    (m n : ℕ) (a : Fin m → L) (b : Fin n → L) (X Y : L) :
+    (TensorAlgebra.tprod R L m a) *
+      (TensorAlgebra.ι R X * TensorAlgebra.ι R Y) *
+      (TensorAlgebra.tprod R L n b) =
+    TensorAlgebra.tprod R L (m + 2 + n)
+      (Fin.append (Fin.append a
+                    (Fin.append (fun _ : Fin 1 => X) (fun _ : Fin 1 => Y)))
+                  b) := by
+  rw [ι_eq_tprod_one X, ι_eq_tprod_one Y]
+  rw [tprod_mul_tprod 1 1, tprod_mul_tprod m (1 + 1), tprod_mul_tprod (m + 2) n]
+
+/-- **Swap-in-product on tprods**: invariance under swap of the X, Y
+    factors inserted between tprods.
+
+    Reduces (via `tprod_mul_ι_pair_mul_tprod` + `circTTensor_tprod`) to
+    `circTMultilinear_symm` applied to the transposition of positions
+    `m, m+1` in `Fin (m+2+n)`. -/
+private theorem circTTensor_swap_tprod (T : L)
+    {m n : ℕ} (a : Fin m → L) (b : Fin n → L) (X Y : L) :
+    circTTensor T
+        ((TensorAlgebra.tprod R L m a) *
+          (TensorAlgebra.ι R X * TensorAlgebra.ι R Y) *
+          (TensorAlgebra.tprod R L n b)) =
+    circTTensor T
+        ((TensorAlgebra.tprod R L m a) *
+          (TensorAlgebra.ι R Y * TensorAlgebra.ι R X) *
+          (TensorAlgebra.tprod R L n b)) := by
+  rw [tprod_mul_ι_pair_mul_tprod, tprod_mul_ι_pair_mul_tprod,
+      circTTensor_tprod, circTTensor_tprod]
+  -- Goal: circTMultilinear T (m+2+n) (Fin.append (Fin.append a (Fin.append (const X) (const Y))) b)
+  --     = circTMultilinear T (m+2+n) (Fin.append (Fin.append a (Fin.append (const Y) (const X))) b)
+  -- The two tuples differ by the transposition of positions m, m+1.
+  -- TODO: apply circTMultilinear_symm via funext + case analysis.
+  sorry
+
 /-! ## §4: `circTTensor` respects `SymRel` (consequence of Lemma 2.5)
 
 The substantive content: `circTTensor T (ι(x) * ι(y)) = circTTensor T (ι(y) * ι(x))`,
