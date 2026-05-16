@@ -6479,6 +6479,241 @@ private theorem rankWithinFilter_lt_perTreePairsFromFChoice
   · -- decide: (choice_pre_FA_B[k]'h_k_choice).fst = i (= same by def)
     simp [h_i_def]
 
+/-- **FA-side index bijection (Session 16)**: bijection between the `pre_FA_B.length`-
+    indexed bind on the LHS and the `(F_A.length × per_tree_pairs)`-indexed double-bind
+    on the RHS.
+
+    Each `k : Fin pre_FA_B.length` corresponds to `(i, k_i)` where
+    `i = choice_pre_FA_B[k].fst` (the F_A target) and `k_i = rankWithinFilter
+    choice_pre_FA_B k.val i` (the position of `k` among earlier indices targeting
+    `i`). Conversely each `(i, k_i)` corresponds to a unique `k`. The equality is
+    multiset-level (orderings differ).
+
+    Proof by induction on `pre_FA_B`, with everything else (including `g`)
+    generalized. Inductive step splits LHS into `k = 0` + `(k = succ k')` and
+    RHS into the `(c₀.fst, k_i = 0)` term + remaining. The remaining parts on
+    both sides match a SHIFTED IH (g shifted by `+1` at `i = c₀.fst`). -/
+private theorem perTreePairs_double_bind_eq
+    {γ : Type*} (F_A : List (Planar α)) :
+    ∀ (pre_FA_B : List (Planar α)) (choice_pre_FA_B : List (Fin F_A.length × Path))
+      (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+      (g : Fin F_A.length → ℕ → Planar α → Multiset γ),
+    (Multiset.ofList (List.finRange pre_FA_B.length)).bind (fun k =>
+      g (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst
+        (rankWithinFilter choice_pre_FA_B k.val
+          (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst)
+        pre_FA_B[k.val]) =
+    (Multiset.ofList (List.finRange F_A.length)).bind (fun i =>
+      (Multiset.ofList (List.finRange
+        (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i).length)).bind
+        (fun k_i =>
+          g i k_i.val (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i)[k_i.val].snd)) := by
+  intro pre_FA_B
+  induction pre_FA_B with
+  | nil =>
+    intros choice_pre_FA_B h_FA_len g
+    have hc : choice_pre_FA_B = [] := List.length_eq_zero_iff.mp h_FA_len
+    subst hc
+    -- LHS: (M.ofList (finRange 0)).bind = 0. RHS: each per-i bind is 0; outer bind = 0.
+    -- Per-i: per_tree_pairs F_A [] [] i = [] => length = 0 => finRange = [] => bind = 0 (by rfl).
+    have hL : (Multiset.ofList (List.finRange ([] : List (Planar α)).length)).bind
+                (fun k : Fin ([] : List (Planar α)).length =>
+                  g (([] : List (Fin F_A.length × Path))[k.val]'
+                      (by rw [h_FA_len]; exact k.isLt)).fst
+                    (rankWithinFilter ([] : List (Fin F_A.length × Path)) k.val
+                      (([] : List (Fin F_A.length × Path))[k.val]'
+                        (by rw [h_FA_len]; exact k.isLt)).fst)
+                    ([] : List (Planar α))[k.val]) = (0 : Multiset γ) := by
+      simp [List.finRange_zero, Multiset.coe_nil, Multiset.zero_bind]
+    have hR : (Multiset.ofList (List.finRange F_A.length)).bind (fun i =>
+                (Multiset.ofList (List.finRange
+                    (perTreePairsFromFChoice F_A [] [] i).length)).bind
+                  (fun k_i =>
+                    g i k_i.val (perTreePairsFromFChoice F_A [] [] i)[k_i.val].snd)) =
+              (0 : Multiset γ) := by
+      have h_per_i : ∀ (i : Fin F_A.length),
+          (Multiset.ofList (List.finRange
+              (perTreePairsFromFChoice F_A [] [] i).length)).bind
+            (fun k_i => g i k_i.val
+              (perTreePairsFromFChoice F_A [] [] i)[k_i.val].snd) =
+          (0 : Multiset γ) := fun _ => rfl
+      rw [show (Multiset.ofList (List.finRange F_A.length)).bind (fun i =>
+            (Multiset.ofList (List.finRange
+                (perTreePairsFromFChoice F_A [] [] i).length)).bind
+              (fun k_i => g i k_i.val
+                (perTreePairsFromFChoice F_A [] [] i)[k_i.val].snd)) =
+          (Multiset.ofList (List.finRange F_A.length)).bind (fun _ => (0 : Multiset γ))
+          from Multiset.bind_congr (fun i _ => h_per_i i)]
+      exact Multiset.bind_zero _
+    rw [hL, hR]
+  | cons g₀ pre' ih =>
+    intros choice_pre_FA_B h_FA_len g
+    cases choice_pre_FA_B with
+    | nil => simp at h_FA_len
+    | cons c₀ choice' =>
+      have h_rest : choice'.length = pre'.length := by
+        simpa [List.length_cons] using h_FA_len
+      -- Define shifted g: at i = c₀.fst, shift k_val by +1.
+      let g_shifted : Fin F_A.length → ℕ → Planar α → Multiset γ :=
+        fun i k_val T => g i (k_val + (if c₀.fst = i then 1 else 0)) T
+      -- Apply IH(pre', choice', h_rest, g_shifted).
+      have ih_shifted := ih choice' h_rest g_shifted
+      -- Step 1: Decompose LHS into `g c₀.fst 0 g₀ + LHS_rest_with_shifted_g`.
+      -- (g₀ :: pre').length is definitionally pre'.length + 1.
+      have h_LHS_decomp :
+          (Multiset.ofList (List.finRange (g₀ :: pre').length)).bind (fun k =>
+            g ((c₀ :: choice')[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst
+              (rankWithinFilter (c₀ :: choice') k.val
+                ((c₀ :: choice')[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst)
+              (g₀ :: pre')[k.val]) =
+          g c₀.fst 0 g₀ +
+          (Multiset.ofList (List.finRange pre'.length)).bind (fun k' =>
+            g_shifted (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst
+              (rankWithinFilter choice' k'.val
+                (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst)
+              pre'[k'.val]) := by
+        show (Multiset.ofList (List.finRange (pre'.length + 1))).bind
+            (fun k : Fin (pre'.length + 1) =>
+              g ((c₀ :: choice')[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst
+                (rankWithinFilter (c₀ :: choice') k.val
+                  ((c₀ :: choice')[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst)
+                (g₀ :: pre')[k.val]) = _
+        rw [List.finRange_succ, ← Multiset.cons_coe, Multiset.cons_bind,
+            ← Multiset.map_coe, Multiset.bind_map]
+        -- Goal: f 0 + (M.ofList (finRange pre'.length)).bind (fun k' => f (Fin.succ k')) =
+        --       g c₀.fst 0 g₀ + (M.ofList ...).bind (fun k' => g_shifted ...)
+        -- The head `f 0 = g c₀.fst 0 g₀` holds by rfl (rankWithinFilter ... 0 = 0).
+        -- The tail equality requires per-k' handling.
+        congr 1
+        -- Only one subgoal remains: the tail (head closed by rfl).
+        apply Multiset.bind_congr
+        intro k' _
+        -- For k' : Fin pre'.length, (Fin.succ k').val = k'.val + 1.
+        -- (c₀ :: choice')[k'.val + 1] = choice'[k'.val] (defeq via List indexing).
+        -- (g₀ :: pre')[k'.val + 1] = pre'[k'.val] (defeq).
+        -- rankWithinFilter (c₀ :: choice') (k'.val + 1) i =
+        --   (if c₀.fst = i then 1 else 0) + rankWithinFilter choice' k'.val i.
+        -- All of these are by defeq EXCEPT the rankWithinFilter shift.
+        show g (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst
+              (rankWithinFilter (c₀ :: choice') (k'.val + 1)
+                (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst)
+              pre'[k'.val] =
+            g_shifted (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst
+              (rankWithinFilter choice' k'.val
+                (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst)
+              pre'[k'.val]
+        have h_rank : rankWithinFilter (c₀ :: choice') (k'.val + 1)
+                        (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst =
+                      (if c₀.fst =
+                          (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst then 1 else 0) +
+                        rankWithinFilter choice' k'.val
+                          (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst := by
+          unfold rankWithinFilter
+          rw [List.take_succ_cons, List.filter_cons]
+          by_cases h : c₀.fst =
+              (choice'[k'.val]'(by rw [h_rest]; exact k'.isLt)).fst
+          · simp [h, List.length_cons, add_comm]
+          · simp [h]
+        rw [h_rank]
+        simp only [g_shifted, add_comm
+          (rankWithinFilter _ _ _)
+          (if c₀.fst = (choice'[k'.val]'_).fst then 1 else 0)]
+      rw [h_LHS_decomp]
+      -- Step 2: Decompose RHS per-i. Extract the (i = c₀.fst, k_i = 0) contribution.
+      -- For each i: per_tree_pairs F_A (g₀::pre') (c₀::choice') i =
+      --   if c₀.fst = i then (c₀.snd, g₀) :: per_tree_pairs F_A pre' choice' i
+      --   else per_tree_pairs F_A pre' choice' i.
+      -- Generic helper: bind over (a :: l).length-indexed splits as f 0 a + bind over l.
+      have bind_cons_decomp : ∀ {δ : Type _} (a : Path × Planar α) (l : List (Path × Planar α))
+          (f : ℕ → Path × Planar α → Multiset δ),
+          (Multiset.ofList (List.finRange (a :: l).length)).bind
+            (fun k => f k.val (a :: l)[k.val]) =
+          f 0 a +
+          (Multiset.ofList (List.finRange l.length)).bind
+            (fun k => f (k.val + 1) l[k.val]) := by
+        intros δ a l f
+        show (Multiset.ofList (List.finRange (l.length + 1))).bind _ = _
+        rw [List.finRange_succ, ← Multiset.cons_coe, Multiset.cons_bind,
+            ← Multiset.map_coe, Multiset.bind_map]
+        rfl
+      -- Abstract helper: bind decomposition where L = if cond then a :: L' else L'.
+      have abstract_bind_decomp : ∀ {δ : Type _} (cond : Prop) [Decidable cond]
+          (a : Path × Planar α) (L L' : List (Path × Planar α))
+          (h_L_eq : L = if cond then a :: L' else L')
+          (gg : ℕ → Path × Planar α → Multiset δ),
+          (Multiset.ofList (List.finRange L.length)).bind (fun k => gg k.val L[k.val]) =
+          (if cond then gg 0 a else 0) +
+          (Multiset.ofList (List.finRange L'.length)).bind
+            (fun k => gg (k.val + (if cond then 1 else 0)) L'[k.val]) := by
+        intros δ cond _inst a L L' h_L_eq gg
+        by_cases h : cond
+        · have h_L_eq_pos : L = a :: L' := by
+            rw [h_L_eq, if_pos h]
+          subst h_L_eq_pos
+          simp only [h, ↓reduceIte]
+          exact bind_cons_decomp a L' gg
+        · have h_L_eq_neg : L = L' := by
+            rw [h_L_eq, if_neg h]
+          subst h_L_eq_neg
+          simp only [h, ↓reduceIte, zero_add, add_zero]
+      have h_RHS_per_i : ∀ (i : Fin F_A.length),
+          (Multiset.ofList (List.finRange
+              (perTreePairsFromFChoice F_A (g₀ :: pre') (c₀ :: choice') i).length)).bind
+            (fun k_i => g i k_i.val
+              (perTreePairsFromFChoice F_A (g₀ :: pre') (c₀ :: choice') i)[k_i.val].snd) =
+          (if c₀.fst = i then g i 0 g₀ else 0) +
+          (Multiset.ofList (List.finRange
+              (perTreePairsFromFChoice F_A pre' choice' i).length)).bind
+            (fun k_i => g_shifted i k_i.val
+              (perTreePairsFromFChoice F_A pre' choice' i)[k_i.val].snd) := by
+        intro i
+        have h_pairs_new_eq :
+            perTreePairsFromFChoice F_A (g₀ :: pre') (c₀ :: choice') i =
+            (if c₀.fst = i then ((c₀.snd, g₀) ::
+                perTreePairsFromFChoice F_A pre' choice' i) else
+              perTreePairsFromFChoice F_A pre' choice' i) := by
+          unfold perTreePairsFromFChoice
+          rw [List.zip_cons_cons, List.filterMap_cons]
+          by_cases h : c₀.fst = i
+          · simp [h]
+          · simp [h]
+        have key := abstract_bind_decomp (cond := c₀.fst = i) (a := (c₀.snd, g₀))
+          (L := perTreePairsFromFChoice F_A (g₀ :: pre') (c₀ :: choice') i)
+          (L' := perTreePairsFromFChoice F_A pre' choice' i)
+          (h_L_eq := h_pairs_new_eq)
+          (gg := fun k_val p => g i k_val p.snd)
+        rw [key]
+      -- Apply per-i decomposition to the outer bind.
+      rw [show (Multiset.ofList (List.finRange F_A.length)).bind (fun i =>
+              (Multiset.ofList (List.finRange
+                (perTreePairsFromFChoice F_A (g₀ :: pre') (c₀ :: choice') i).length)).bind
+                (fun k_i => g i k_i.val
+                  (perTreePairsFromFChoice F_A (g₀ :: pre') (c₀ :: choice') i)[k_i.val].snd)) =
+          (Multiset.ofList (List.finRange F_A.length)).bind (fun i =>
+              (if c₀.fst = i then g i 0 g₀ else 0) +
+              (Multiset.ofList (List.finRange
+                  (perTreePairsFromFChoice F_A pre' choice' i).length)).bind
+                (fun k_i => g_shifted i k_i.val
+                  (perTreePairsFromFChoice F_A pre' choice' i)[k_i.val].snd))
+            from Multiset.bind_congr (fun i _ => h_RHS_per_i i)]
+      rw [Multiset.bind_add]
+      -- Step 3: Extract `g c₀.fst 0 g₀` from the first part.
+      have h_extract :
+          (Multiset.ofList (List.finRange F_A.length)).bind
+            (fun i => if c₀.fst = i then g i 0 g₀ else 0) = g c₀.fst 0 g₀ := by
+        rw [← Multiset.bind_filter]
+        rw [Multiset.filter_eq]
+        have h_count : Multiset.count c₀.fst (Multiset.ofList (List.finRange F_A.length)) = 1 := by
+          rw [Multiset.coe_count]
+          exact List.count_eq_one_of_mem (List.nodup_finRange _) (List.mem_finRange c₀.fst)
+        rw [h_count]
+        rw [show Multiset.replicate 1 c₀.fst = ({c₀.fst} : Multiset (Fin F_A.length))
+              from Multiset.replicate_one c₀.fst]
+        rw [Multiset.singleton_bind]
+      rw [h_extract]
+      -- Step 4: Apply IH to close.
+      rw [ih_shifted]
+
 /-- **Bijection function** (Session 10): `AlphaConstrainedChoice → Fin (F_A.length+1) × Path`,
     classifying each constructor's target position in `(T_ins :: F_ins)`.
 
@@ -6487,10 +6722,7 @@ private theorem rankWithinFilter_lt_perTreePairsFromFChoice
     For `fa_orig i v`: position `(i.succ, transport (per_tree_pairs i) v)`.
     For `fa_graft k q`: position `(i.succ, liftMulti (per_tree_pairs i) ⟨j_k, ...⟩ q)`
     where `i = choice_pre_FA_B[k].fst` and `j_k` is the rank of `k` within
-    `choice_pre_FA_B`-entries with `.fst = i` (= position in `per_tree_pairs i`).
-
-    The fa_graft case requires a "rank within filter" computation; sorry-fenced
-    for now (Sessions 11+). -/
+    `choice_pre_FA_B`-entries with `.fst = i` (= position in `per_tree_pairs i`). -/
 private noncomputable def acc_to_pkfc {α : Type*}
     (T : Planar α) {F_A pre_T_B pre_FA_B : List (Planar α)}
     (choice_pre_T_B : List Path)
@@ -6626,6 +6858,191 @@ private theorem acc_to_pkfc_T_side_eq
   -- (function equality auto-closed by Fin.cast preserving val).
   rw [← h_zip_snd]
   congr 1
+
+/-- **FA-side bijection (Session 16)**: the FA_orig + FA_graft sections of
+    allACC, after `acc_to_pkfc`-mapping and projection to `Nat × Path`, equal
+    the FA-side (`i = succ j` portion) of `perKFChoice (T_ins :: F_ins)` after
+    the same projection.
+
+    Proof: per-i, `vertices F_ins[i]` partitions via `vertices_multiGraft_decomp`
+    into preserved+sourceSelf (= `(vertices F_A[i]).map (transport pairs_i)` per
+    Session 2's `preserved_add_sourceSelf_eq_vertices_map_transport`) and lifted
+    (= per-pre_FA_B[k] graft positions for k targeting i). The FA_orig section
+    matches preserved+sourceSelf directly (per i). The FA_graft section matches
+    the lifted parts via Session 16's `perTreePairs_double_bind_eq` bijection
+    helper. -/
+private theorem acc_to_pkfc_FA_side_eq
+    (F_A pre_FA_B : List (Planar α))
+    (choice_pre_FA_B : List (Fin F_A.length × Path))
+    (h_FA_len : choice_pre_FA_B.length = pre_FA_B.length)
+    (h_choice_FA_valid : ∀ (i : Fin F_A.length),
+      ∀ pair ∈ perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i,
+        IsValidPath pair.fst F_A[i.val]) :
+    -- LHS: FA_orig section + FA_graft section.
+    Multiset.ofList ((List.finRange F_A.length).flatMap (fun (i : Fin F_A.length) =>
+      (vertices F_A[i.val]).map (fun v =>
+        ((i.val + 1 : ℕ), transport
+          (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i) v)))) +
+    Multiset.ofList ((List.finRange pre_FA_B.length).flatMap
+      (fun (k : Fin pre_FA_B.length) =>
+        (vertices pre_FA_B[k.val]).map (fun q =>
+          (((choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst.val +
+              1 : ℕ),
+            liftMulti
+              (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B
+                (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst)
+              ⟨rankWithinFilter choice_pre_FA_B k.val
+                  (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst,
+                rankWithinFilter_lt_perTreePairsFromFChoice F_A pre_FA_B
+                  choice_pre_FA_B h_FA_len k
+                  (by rw [h_FA_len]; exact k.isLt) rfl⟩ q)))) =
+    -- RHS: FA-side of perKFChoice projected to Nat × Path.
+    Multiset.ofList ((List.finRange F_A.length).flatMap (fun (i : Fin F_A.length) =>
+      (vertices (multiGraft F_A[i.val]
+        (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))).map
+          (fun v => ((i.val + 1 : ℕ), v)))) := by
+  -- Step 1: Convert `Multiset.ofList (l.flatMap f)` → `bind` form on both sides.
+  rw [← Multiset.coe_bind, ← Multiset.coe_bind, ← Multiset.coe_bind]
+  -- Step 2: Apply per-i decomposition of `vertices (multiGraft F_A[i.val] pairs_i)`.
+  -- Use `vertices_multiGraft_decomp` and `preserved_add_sourceSelf_eq_vertices_map_transport`.
+  have h_per_i_decomp : ∀ (i : Fin F_A.length),
+      ((vertices (multiGraft F_A[i.val]
+          (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i)) : List Path) :
+            Multiset Path) =
+      ((vertices F_A[i.val] : Multiset Path).map
+        (transport (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))) +
+      ((Multiset.ofList (List.finRange
+          (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i).length)).bind
+        (fun k => (vertices
+          (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i)[k].snd :
+            Multiset Path).map
+          (liftMulti (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i) k))) := by
+    intro i
+    rw [vertices_multiGraft_decomp F_A[i.val] _ (h_choice_FA_valid i)]
+    rw [show ((vertices F_A[i.val] : Multiset Path).filterMap
+            (preserveMulti (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))) +
+            (((vertices F_A[i.val] : Multiset Path).filter
+              (· ∈ pairSources
+                (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))).map
+              (transport (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))) =
+          (vertices F_A[i.val] : Multiset Path).map
+            (transport (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))
+        from preserved_add_sourceSelf_eq_vertices_map_transport _ _]
+  -- Step 3: Apply per-i decomposition inside RHS bind, then distribute `.map` and split.
+  rw [show (Multiset.ofList (List.finRange F_A.length)).bind (fun (i : Fin F_A.length) =>
+        (Multiset.ofList ((vertices (multiGraft F_A[i.val]
+          (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i))).map
+            (fun v => ((i.val + 1 : ℕ), v))))) =
+      (Multiset.ofList (List.finRange F_A.length)).bind (fun (i : Fin F_A.length) =>
+        ((vertices F_A[i.val] : Multiset Path).map
+          (fun v => ((i.val + 1 : ℕ),
+            transport (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i) v))) +
+        ((Multiset.ofList (List.finRange
+            (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i).length)).bind
+          (fun k_i => (vertices
+            (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i)[k_i.val].snd :
+              Multiset Path).map
+            (fun q => ((i.val + 1 : ℕ), liftMulti
+              (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i) k_i q)))))
+      from Multiset.bind_congr (fun i _ => by
+        rw [(Multiset.map_coe _ _).symm, h_per_i_decomp i, Multiset.map_add, Multiset.map_map]
+        congr 1
+        rw [Multiset.map_bind]
+        apply Multiset.bind_congr
+        intro k_i _
+        rw [Multiset.map_map]
+        rfl)]
+  -- Step 4: Distribute outer `bind` over `+` via `Multiset.bind_add`.
+  rw [Multiset.bind_add]
+  -- Step 5: Match LHS and RHS structure.
+  -- LHS = FA_orig_part + FA_graft_part. RHS (after step 3+4) = FA_orig_per_i_bind + FA_graft_per_i_bind.
+  congr 1
+  · -- FA_graft section: applies `perTreePairs_double_bind_eq` bijection.
+    -- RHS: bind over (i, k_i) of `(vertices pairs_i[k_i.val].snd).map (...)`.
+    -- LHS: bind over k of `(vertices pre_FA_B[k.val]).map (...)`.
+    -- These match via the Session 16 bijection, with g = (vertices T).map (i.val+1, liftMulti pairs_i ⟨k_val, h⟩ q).
+    -- Use `dite` to handle the Fin-proof requirement; both sides reduce to first branch.
+    have key := perTreePairs_double_bind_eq F_A pre_FA_B choice_pre_FA_B h_FA_len
+      (fun (i : Fin F_A.length) (k_val : ℕ) (T : Planar α) =>
+        (vertices T : Multiset Path).map (fun q =>
+          if h : k_val <
+              (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i).length
+          then ((i.val + 1 : ℕ), liftMulti
+              (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i) ⟨k_val, h⟩ q)
+          else ((i.val + 1 : ℕ), q)))  -- junk default; never reached at valid sites
+    -- Bridge LHS form (with explicit Fin proof) to dite form via dif_pos.
+    have h_LHS_bridge :
+        (Multiset.ofList (List.finRange pre_FA_B.length)).bind (fun k =>
+          (vertices pre_FA_B[k.val] : Multiset Path).map (fun q =>
+            (((choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst.val +
+                1 : ℕ),
+              liftMulti
+                (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B
+                  (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst)
+                ⟨rankWithinFilter choice_pre_FA_B k.val
+                    (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst,
+                  rankWithinFilter_lt_perTreePairsFromFChoice F_A pre_FA_B
+                    choice_pre_FA_B h_FA_len k
+                    (by rw [h_FA_len]; exact k.isLt) rfl⟩ q))) =
+        (Multiset.ofList (List.finRange pre_FA_B.length)).bind (fun k =>
+          (fun (i : Fin F_A.length) (k_val : ℕ) (T : Planar α) =>
+            (vertices T : Multiset Path).map (fun q =>
+              if h : k_val <
+                  (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i).length
+              then ((i.val + 1 : ℕ), liftMulti
+                  (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i) ⟨k_val, h⟩ q)
+              else ((i.val + 1 : ℕ), q)))
+            (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst
+            (rankWithinFilter choice_pre_FA_B k.val
+              (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst)
+            pre_FA_B[k.val]) := by
+      apply Multiset.bind_congr
+      intro k _
+      apply Multiset.map_congr rfl
+      intro q _
+      have h_lt : rankWithinFilter choice_pre_FA_B k.val
+          (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst <
+          (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B
+            (choice_pre_FA_B[k.val]'(by rw [h_FA_len]; exact k.isLt)).fst).length :=
+        rankWithinFilter_lt_perTreePairsFromFChoice F_A pre_FA_B
+          choice_pre_FA_B h_FA_len k _ rfl
+      rw [dif_pos h_lt]
+    -- Bridge RHS form (with k_i.isLt) to dite form via dif_pos.
+    have h_RHS_bridge :
+        (Multiset.ofList (List.finRange F_A.length)).bind (fun (i : Fin F_A.length) =>
+          (Multiset.ofList (List.finRange
+            (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i).length)).bind
+            (fun k_i =>
+              (fun (i : Fin F_A.length) (k_val : ℕ) (T : Planar α) =>
+                (vertices T : Multiset Path).map (fun q =>
+                  if h : k_val <
+                      (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i).length
+                  then ((i.val + 1 : ℕ), liftMulti
+                      (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i) ⟨k_val, h⟩ q)
+                  else ((i.val + 1 : ℕ), q)))
+                i k_i.val
+                (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i)[k_i.val].snd)) =
+        (Multiset.ofList (List.finRange F_A.length)).bind (fun (i : Fin F_A.length) =>
+          (Multiset.ofList (List.finRange
+            (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i).length)).bind
+            (fun k_i =>
+              (vertices (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i)[k_i.val].snd :
+                Multiset Path).map (fun q =>
+                ((i.val + 1 : ℕ), liftMulti
+                  (perTreePairsFromFChoice F_A pre_FA_B choice_pre_FA_B i) k_i q)))) := by
+      apply Multiset.bind_congr
+      intro i _
+      apply Multiset.bind_congr
+      intro k_i _
+      apply Multiset.map_congr rfl
+      intro q _
+      rw [dif_pos k_i.isLt]
+    -- Convert goal LHS: `(M.ofList ...).bind (fun a => ↑(List.map ...))` →
+    -- `(M.ofList ...).bind (fun a => Multiset.map ...)` via simp.
+    simp only [← Multiset.map_coe]
+    -- After simp, both sides may match directly (simp normalized to bind+map form
+    -- which the bijection bridges). If not, h_LHS_bridge + key + h_RHS_bridge close.
+    try rw [h_LHS_bridge, key, ← h_RHS_bridge]
 
 /-- **Multiset bijection (Session 13, sorry-fenced)**: `acc_to_pkfc` lifted
     to multisets is a bijection between `allAlphaConstrainedChoiceList` and
