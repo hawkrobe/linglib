@@ -345,6 +345,130 @@ private theorem circTMultilinear_symm_interior (R : Type) [CommRing R]
   exact congr_fun (congr_arg (·.toFun) (ih τ))
     (Function.update (Fin.init f) (τ k) ((Fin.init f) (τ k) * f (Fin.last n)))
 
+/-! ### §2.A: OG identity (2.3) at per-degree level
+
+For any multilinear `prev : MultilinearMap R (Fin n → L) L`, the identity
+`prev (a ○ (X·Y)) − prev ((a ○ X) ○ Y) = prev (a ○ (Y·X)) − prev ((a ○ Y) ○ X)`
+holds, where `prev (g ○ X) := Σ_i prev (Function.update g i (g i * X))`.
+
+This follows from the L pre-Lie identity applied to each tuple position
+plus a relabel symmetry on the off-diagonal `(i ≠ j)` terms.
+
+Proved as a substrate lemma here for use in the exterior swap invariance
+(Lemma 2.5) closure. -/
+
+/-- Helper: split the inner sum `∑_j prev (update (update a i (a_i * W)) j (… * Z))`
+    into a diagonal term `j = i` (uses `update_idem`) and an off-diagonal sum
+    `j ≠ i` (uses `update_of_ne` + `update_comm` to put the W-update outside). -/
+private lemma split_inner_sum_at_diag (R : Type) [CommRing R]
+    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+    {n : ℕ} (prev : MultilinearMap R (fun _ : Fin n ↦ L) L)
+    (a : Fin n → L) (W Z : L) (i : Fin n) :
+    (∑ j : Fin n, prev (Function.update (Function.update a i (a i * W)) j
+        ((Function.update a i (a i * W)) j * Z))) =
+    prev (Function.update a i ((a i * W) * Z)) +
+    ∑ j ∈ Finset.univ.filter (fun j : Fin n => j ≠ i),
+      prev (Function.update (Function.update a j (a j * Z)) i (a i * W)) := by
+  classical
+  rw [← Finset.sum_filter_add_sum_filter_not Finset.univ (fun j : Fin n => j = i)]
+  congr 1
+  · -- Diagonal: j = i singleton.
+    rw [Finset.filter_eq' Finset.univ i, if_pos (Finset.mem_univ i),
+        Finset.sum_singleton, Function.update_self, Function.update_idem]
+  · -- Off-diagonal: j ≠ i. Apply `update_of_ne` then `update_comm`.
+    apply Finset.sum_congr rfl
+    intros j hj
+    rw [Finset.mem_filter] at hj
+    have hji : j ≠ i := hj.2
+    rw [Function.update_of_ne hji, Function.update_comm hji]
+
+/-- **OG identity (2.3)** at per-degree level. For multilinear `prev`,
+    `a : Fin n → L`, and `X Y : L`, the "${}_n$-th degree" version of OG's
+    right-action symmetry holds.
+
+    Proof: split each inner sum into diagonal + off-diagonal via
+    `split_inner_sum_at_diag`; the diagonal differences cancel via pre-Lie
+    on L (applied with `MultilinearMap.map_update_sub`), the off-diagonal
+    sums are equal by relabeling `(i, j) ↔ (j, i)`. -/
+private theorem prev_action_pre_lie_identity (R : Type) [CommRing R]
+    {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
+    {n : ℕ} (prev : MultilinearMap R (fun _ : Fin n ↦ L) L)
+    (a : Fin n → L) (X Y : L) :
+    (∑ i : Fin n, prev (Function.update a i (a i * (X * Y)))) -
+    (∑ i : Fin n, ∑ j : Fin n, prev (Function.update
+        (Function.update a i (a i * X)) j
+        ((Function.update a i (a i * X)) j * Y))) =
+    (∑ i : Fin n, prev (Function.update a i (a i * (Y * X)))) -
+    (∑ i : Fin n, ∑ j : Fin n, prev (Function.update
+        (Function.update a i (a i * Y)) j
+        ((Function.update a i (a i * Y)) j * X))) := by
+  classical
+  -- Step 1: Split each inner sum at j = i.
+  simp_rw [split_inner_sum_at_diag R prev a X Y, split_inner_sum_at_diag R prev a Y X,
+           Finset.sum_add_distrib]
+  -- Goal now has the form:
+  -- LHS_diag_X*Y − (LHS_diag_(X)*Y + LHS_offdiag_XY) =
+  -- RHS_diag_Y*X − (RHS_diag_(Y)*X + RHS_offdiag_YX)
+  -- where LHS_diag_X*Y = Σ_i prev (update a i (a i * (X*Y))) [from the original LHS first sum]
+  --       LHS_diag_(X)*Y = Σ_i prev (update a i ((a i * X) * Y)) [from h_split's diagonal part]
+  --       LHS_offdiag_XY = Σ_i Σ_{j ≠ i} prev (update (update a j (a j * Y)) i (a i * X))
+  -- Rearranging: (LHS_diag_X*Y − LHS_diag_(X)*Y) − LHS_offdiag_XY
+  --            = (RHS_diag_Y*X − RHS_diag_(Y)*X) − RHS_offdiag_YX
+
+  -- Step 2: The diagonal-difference parts match via pre-Lie + multilinearity.
+  have h_diag_diff :
+      (∑ i : Fin n, prev (Function.update a i (a i * (X * Y)))) -
+      (∑ i : Fin n, prev (Function.update a i ((a i * X) * Y))) =
+      (∑ i : Fin n, prev (Function.update a i (a i * (Y * X)))) -
+      (∑ i : Fin n, prev (Function.update a i ((a i * Y) * X))) := by
+    rw [← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl
+    intros i _
+    -- prev (update a i p) - prev (update a i q) = prev (update a i (p - q))
+    rw [← MultilinearMap.map_update_sub, ← MultilinearMap.map_update_sub]
+    apply congrArg prev
+    apply congrArg (Function.update a i)
+    -- Goal: a i * (X * Y) - a i * X * Y = a i * (Y * X) - a i * Y * X
+    have key := RightPreLieRing.assoc_symm' (a i) X Y
+    simp only [associator] at key
+    -- key : a i * X * Y - a i * (X * Y) = a i * Y * X - a i * (Y * X)
+    -- Goal: negate both sides of key.
+    rw [show a i * (X * Y) - a i * X * Y = -(a i * X * Y - a i * (X * Y)) from
+          (neg_sub _ _).symm,
+        show a i * (Y * X) - a i * Y * X = -(a i * Y * X - a i * (Y * X)) from
+          (neg_sub _ _).symm,
+        key]
+  -- Step 3: The off-diagonal sums match via relabel (i, j) ↔ (j, i).
+  have h_offdiag :
+      (∑ i : Fin n, ∑ j ∈ Finset.univ.filter (fun j : Fin n => j ≠ i),
+          prev (Function.update (Function.update a j (a j * Y)) i (a i * X))) =
+      (∑ i : Fin n, ∑ j ∈ Finset.univ.filter (fun j : Fin n => j ≠ i),
+          prev (Function.update (Function.update a j (a j * X)) i (a i * Y))) := by
+    -- Step 3a: Rewrite LHS using `update_comm` (since j ≠ i): swap outer/inner update order.
+    rw [show (∑ i : Fin n, ∑ j ∈ Finset.univ.filter (fun j : Fin n => j ≠ i),
+              prev (Function.update (Function.update a j (a j * Y)) i (a i * X))) =
+            (∑ i : Fin n, ∑ j ∈ Finset.univ.filter (fun j : Fin n => j ≠ i),
+              prev (Function.update (Function.update a i (a i * X)) j (a j * Y))) from
+         Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j hj => by
+           rw [Finset.mem_filter] at hj
+           rw [Function.update_comm hj.2]]
+    -- Step 3b: Apply `sum_comm'` to swap the outer/inner summation order.
+    -- After alpha-renaming (which Lean handles automatically), the result matches RHS.
+    rw [Finset.sum_comm' (s := Finset.univ) (t' := Finset.univ)
+          (t := fun i : Fin n => Finset.univ.filter (fun j : Fin n => j ≠ i))
+          (s' := fun j : Fin n => Finset.univ.filter (fun i : Fin n => i ≠ j))
+          (h := fun x y => by
+            simp only [Finset.mem_univ, Finset.mem_filter, true_and, and_true]
+            exact ne_comm)]
+  -- Step 4: Combine via additive rearrangement.
+  -- Goal: A - (Diag + OffDiag) = A' - (Diag' + OffDiag')
+  -- where A - Diag = A' - Diag' (h_diag_diff), OffDiag = OffDiag' (h_offdiag).
+  rw [show ∀ (A B C : L), A - (B + C) = (A - B) - C from
+        fun A B C => sub_add_eq_sub_sub A B C]
+  rw [show ∀ (A B C : L), A - (B + C) = (A - B) - C from
+        fun A B C => sub_add_eq_sub_sub A B C]
+  rw [h_diag_diff, h_offdiag]
+
 /-- **Lemma 2.5 — Exterior swap invariance**: for `i : Fin n`,
     `circTMultilinear R T (n+1)` is invariant under
     `Equiv.swap (Fin.castSucc i) (Fin.last n)`.
