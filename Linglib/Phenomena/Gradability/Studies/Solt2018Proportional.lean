@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Gradability.Aggregation
 import Linglib.Theories.Semantics.Degree.Core
-import Linglib.Theories.Semantics.Kinds.Carlson1977
+import Linglib.Theories.Semantics.Kinds.SortedOntology
 import Linglib.Core.Scales.Scale
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Tactic.Ring
@@ -85,7 +85,7 @@ namespace Solt2018Proportional
 open Semantics.Gradability.Aggregation (spatialNormalizedScore
   spatialNormalizedScore_unit spatialNormalizedScore_le_one
   spatialNormalizedScore_nonneg weightedScore)
-open Semantics.Kinds.Carlson1977 (PredicateLevel)
+open Semantics.Kinds.SortedOntology (PredicateLevel)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The proportional-comparative puzzle
@@ -312,7 +312,7 @@ theorem cardinal_proportional_divergence :
     the cardinal reading.
 
     The substrate primitive `PredicateLevel`
-    (`Theories/Semantics/Kinds/Carlson1977.lean §2`) is reused
+    (`Theories/Semantics/Kinds/SortedOntology.lean §2`) is reused
     here directly rather than re-stipulated; the same enum is
     consumed by `Fragments/German/BarePluralWordOrder.lean` and
     `Phenomena/Generics/BarePlurals.lean`. -/

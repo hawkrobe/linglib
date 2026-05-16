@@ -248,7 +248,7 @@ def collectSemantics (cls : List ClassifierEntry) : List SemanticParameter :=
       not beyond them, CLF appears in counting contexts (via the ∩-operator).
 
     Strategy assignments to specific languages live in study files
-    (`Phenomena/Classifiers/Studies/{Chierchia1998,LittleMoroneyRoyer2022,Sudo2016}.lean`),
+    (`Phenomena/Classifiers/Studies/{NMP,LittleMoroneyRoyer2022,Sudo2016}.lean`),
     not in this file or in `NounCategorizationSystem`. Each paper owns its
     own per-language commitments; cross-paper agreement and disagreement
     are first-class theorems in the study files. -/

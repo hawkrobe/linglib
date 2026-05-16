@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.Mendia2020
+import Linglib.Theories.Semantics.Kinds.Subkinds
 import Linglib.Fragments.Dutch.Adjectives
 import Linglib.Phenomena.Morphology.CategoryChanging
 
@@ -44,13 +44,13 @@ The key empirical contrasts (paper §2.3):
   rather than enumerating them inline.
 * **Kind/subkind ontology**: @cite{zamparelli-1995}'s layered DP plus
   @cite{carlson-1977} kinds. The subkind relation is exactly what
-  `Theories/Semantics/Kinds/Mendia2020.lean` provides: a salient
+  `Theories/Semantics/Kinds/Subkinds.lean` provides: a salient
   equivalence relation on shade-atoms partitions them into colour subkinds,
   and McNally & de Swart's `subkind(xk, red)` is precisely
-  `Mendia2020.subkindOf kfShade (canonicalShade rood)`. Carlson's
+  `Subkinds.subkindOf kfShade (canonicalShade rood)`. Carlson's
   Disjointness Condition follows.
 
-This file is the second consumer of `Mendia2020.subkindOf`, alongside
+This file is the second consumer of `Subkinds.subkindOf`, alongside
 `Phenomena/Numerals/Studies/Snyder2026.lean`. Together they witness that
 the Mendia substrate is genuinely cross-domain (numerals + colours), not
 paper-specific scaffolding for one analysis.
@@ -95,7 +95,7 @@ substrate.
 
 namespace Phenomena.Morphology.Studies.McNallyDeSwart2011
 
-open Semantics.Kinds.Mendia2020 (subkindOf disjointness_condition
+open Semantics.Kinds.Subkinds (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
 open Fragments.Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
 
@@ -141,7 +141,7 @@ def Fragments.Dutch.Adjectives.AdjEntry.toRootFamily
 
 namespace Phenomena.Morphology.Studies.McNallyDeSwart2011
 
-open Semantics.Kinds.Mendia2020 (subkindOf disjointness_condition
+open Semantics.Kinds.Subkinds (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
 open Fragments.Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
 
@@ -196,7 +196,7 @@ def canonicalShade (a : AdjEntry) : Shade := ⟨a, 0⟩
 
 /-- @cite{mcnally-deswart-2011} (19): the uninflected nominal `rood_N`
     denotes the set of subkinds (shades) of the colour `red`. Implemented
-    as `Mendia2020.subkindOf kfShade (canonicalShade rood)` — the
+    as `Subkinds.subkindOf kfShade (canonicalShade rood)` — the
     equivalence class of any canonical witness. The Dutch Fragment entry
     `Fragments.Dutch.Adjectives.rood` is the actual lexical anchor. -/
 def uninflectedNominal (a : AdjEntry) : Set Shade :=
@@ -263,7 +263,7 @@ def adjectivalProperty (a : AdjEntry) : Shade → Prop :=
 /-- @cite{mcnally-deswart-2011} (24b): `roodheid_N` denotes the set of
     subkinds of the entity correlate (Chierchia ∩) of the property
     `λy. Red(y)`. The substantive Chierchia ∩ operator lives in
-    `Theories/Semantics/Kinds/Chierchia1998.lean` (`down`/`up` for
+    `Theories/Semantics/Kinds/NMP.lean` (`down`/`up` for
     intensional kinds) and `Theories/Semantics/Composition/TypeShifting.lean`
     (`NOM` extensional counterpart, with `NOM = iota` in the finite
     setting); we do not call them here because the extensional collapse
@@ -635,7 +635,7 @@ the second case lands. -/
 
 `Phenomena/Numerals/Studies/Snyder2026.lean` (Polymorphic Contextualism)
 and this file (McNally & de Swart 2011) both consume the same substrate:
-* `Mendia2020.subkindOf` for kind formation by salient equivalence
+* `Subkinds.subkindOf` for kind formation by salient equivalence
   relation (numerals partition by mathematical system; colours partition
   by chromatic root).
 * IOTA-as-definite for selecting a unique subkind from a modified noun

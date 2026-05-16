@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.Mendia2020
+import Linglib.Theories.Semantics.Kinds.Subkinds
 import Linglib.Phenomena.Numerals.Studies.Spector2013
 import Linglib.Fragments.Dutch.Adjectives
 import Mathlib.Data.Fintype.Basic
@@ -40,7 +40,7 @@ The diagram from §5 (76a-j):
 
 ## Architecture
 
-* `Theories/Semantics/Kinds/Mendia2020.lean` — substrate: kind formation
+* `Theories/Semantics/Kinds/Subkinds.lean` — substrate: kind formation
   by salient equivalence relation (= mathlib's `Setoid`); Carlson's
   Disjointness Condition. Snyder's account of why TWO has disjoint subkinds
   `2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ` (§4.3, §5) instantiates the Mendia framework via
@@ -92,7 +92,7 @@ for the Degrees-as-Kinds view Snyder adopts in §5.3.
 
 namespace Phenomena.Numerals.Snyder2026
 
-open Semantics.Kinds.Mendia2020 (subkindOf disjointness_condition
+open Semantics.Kinds.Subkinds (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
 
 /-! ## Semantic types
@@ -673,7 +673,7 @@ adjective root); they disagree on lexical-projection architecture and on
 whether nominalisation is Partee NOM (Snyder) or Chierchia ∩ (M&deS).
 
 The substrate generalises across domains: this is the *third* consumer of
-`Mendia2020.subkindOf`, after Snyder numerals (above) and McNally-deSwart
+`Subkinds.subkindOf`, after Snyder numerals (above) and McNally-deSwart
 colours/tastes. The `kf{Carrier}` naming convention (`kfTWO`, `kfRed`,
 `kfShade`) is project-wide.
 -/

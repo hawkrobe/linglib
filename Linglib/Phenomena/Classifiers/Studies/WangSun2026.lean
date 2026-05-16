@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
-import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
+import Linglib.Phenomena.Classifiers.Studies.NMP
 
 /-!
 # Wang & Sun (2026): Detaching Mandarin Classifiers from Nouns
@@ -580,8 +580,8 @@ variable {α : Type*} [SemilatticeSup α]
     for the entire mereological analysis. -/
 theorem mandarin_needs_classifiers :
     Fragments.Mandarin.Nouns.mandarinMapping =
-      Semantics.Kinds.Chierchia1998.NominalMapping.argOnly :=
-  Chierchia1998.mandarin_mapping
+      Semantics.Kinds.NMP.NominalMapping.argOnly :=
+  NMP.mandarin_mapping
 
 /-- The Chierchia–Borer–Wang&Sun chain for 杯 bēi:
     1. Mandarin NMP = argOnly → classifiers required (Chierchia)
@@ -592,7 +592,7 @@ theorem mandarin_needs_classifiers :
 theorem full_chain (P : α → Prop) (hc : CUM P) :
     -- Chierchia: Mandarin needs classifiers
     Fragments.Mandarin.Nouns.mandarinMapping =
-      Semantics.Kinds.Chierchia1998.NominalMapping.argOnly ∧
+      Semantics.Kinds.NMP.NominalMapping.argOnly ∧
     -- Fragment: bēi can be mensural
     Fragments.Mandarin.Classifiers.bei.isMensural = true ∧
     -- Structural: opposite visibility
@@ -601,7 +601,7 @@ theorem full_chain (P : α → Prop) (hc : CUM P) :
     -- Semantic: opposite mereological properties
     QUA (nominalDenotation noDe_D P) ∧
     CUM (nominalDenotation de_D P) :=
-  ⟨Chierchia1998.mandarin_mapping,
+  ⟨NMP.mandarin_mapping,
    rfl,
    by decide,
    by decide,

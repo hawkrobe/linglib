@@ -3,8 +3,8 @@ import Linglib.Core.Deixis.Feature
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Kinds.Chierchia1998
-import Linglib.Theories.Semantics.Kinds.Dayal2004
+import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.MeaningPreservation
 
 /-!
 # Shan Definiteness Fragment
@@ -45,7 +45,7 @@ open Semantics.Kinds
 -- ============================================================================
 
 /-- Shan blocking principle: no overt determiners block any type-shift. -/
-def blocking : Chierchia1998.BlockingPrinciple :=
+def blocking : NMP.BlockingPrinciple :=
   { determiners := []
   , iotaBlocked := false
   , existsBlocked := false
@@ -75,7 +75,7 @@ theorem articleInventory_marking :
 /-- Type-shift context for Shan number-neutral bare nouns with a
     non-kind-compatible predicate (e.g., *mǎa* 'dog' in episodic context).
     ι is selected: definite reading. -/
-def neutralNonKindCtx : Dayal2004.TypeShiftContext :=
+def neutralNonKindCtx : MeaningPreservation.TypeShiftContext :=
   { number := .neutral
   , downDefined := false
   , iotaBlocked := false
@@ -86,7 +86,7 @@ def neutralNonKindCtx : Dayal2004.TypeShiftContext :=
 /-- Type-shift context for Shan number-neutral bare nouns with a
     kind-compatible predicate (e.g., *mǎa* 'dog' in generic context).
     ∩ is selected: kind reading. -/
-def neutralKindCtx : Dayal2004.TypeShiftContext :=
+def neutralKindCtx : MeaningPreservation.TypeShiftContext :=
   { number := .neutral
   , downDefined := true
   , iotaBlocked := false
@@ -96,19 +96,19 @@ def neutralKindCtx : Dayal2004.TypeShiftContext :=
 
 /-- Non-kind context yields definite (ι) reading. -/
 theorem neutral_nonkind_is_iota :
-    Dayal2004.selectShift neutralNonKindCtx = some .iota := rfl
+    MeaningPreservation.selectShift neutralNonKindCtx = some .iota := rfl
 
 /-- Kind context yields kind (∩) reading. -/
 theorem neutral_kind_is_down :
-    Dayal2004.selectShift neutralKindCtx = some .down := rfl
+    MeaningPreservation.selectShift neutralKindCtx = some .down := rfl
 
 /-- All three high-ranked shifts (∩, ι, ι^x) are available in kind context. -/
 theorem all_shifts_available :
-    .down ∈ Dayal2004.availableShifts neutralKindCtx ∧
-    .iota ∈ Dayal2004.availableShifts neutralKindCtx ∧
-    .iotaAnaphoric ∈ Dayal2004.availableShifts neutralKindCtx ∧
-    .exists ∈ Dayal2004.availableShifts neutralKindCtx := by
-  simp [Dayal2004.availableShifts, neutralKindCtx]
+    .down ∈ MeaningPreservation.availableShifts neutralKindCtx ∧
+    .iota ∈ MeaningPreservation.availableShifts neutralKindCtx ∧
+    .iotaAnaphoric ∈ MeaningPreservation.availableShifts neutralKindCtx ∧
+    .exists ∈ MeaningPreservation.availableShifts neutralKindCtx := by
+  simp [MeaningPreservation.availableShifts, neutralKindCtx]
 
 -- ============================================================================
 -- §3: Demonstrative Semantics (@cite{moroney-2021} §2.1.3)

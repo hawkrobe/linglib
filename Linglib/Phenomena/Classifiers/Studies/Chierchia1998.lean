@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.NMP
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.Mandarin.Nouns
@@ -11,7 +11,7 @@ Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
 
 Connects the cross-linguistic noun categorization typology in
 `Aikhenvald2000` to the Nominal Mapping
-Parameter from `Theories.Semantics.Kinds.Chierchia1998`.
+Parameter from `Theories.Semantics.Kinds.NMP`.
 
 ## Predictions verified
 
@@ -41,10 +41,10 @@ field on `NounCategorizationSystem` captures this finer distinction.
 - English [+arg, +pred] prediction (no system) not yet connected to data
 -/
 
-namespace Chierchia1998
+namespace NMP
 
 open Typology
-open Semantics.Kinds.Chierchia1998 (NominalMapping)
+open Semantics.Kinds.NMP (NominalMapping)
 open Aikhenvald2000 (mandarin japanese french italian)
 
 /-- Map NominalMapping to the expected classifier type.
@@ -169,4 +169,4 @@ theorem japanese_no_blocking :
     Fragments.Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
     Fragments.Japanese.Nouns.japaneseBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
 
-end Chierchia1998
+end NMP

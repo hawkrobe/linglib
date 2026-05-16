@@ -452,7 +452,7 @@ theorem nAlloseme_cases_count : nAllosemic.allosemeCount = 9 := rfl
 
 /-! ## Three-way framework dialogue
 
-The Mendia2020 substrate now anchors a three-way cross-framework
+The Subkinds substrate now anchors a three-way cross-framework
 dialogue on Dutch nominalisation morphology:
 
 * `McNallyDeSwart2011`: provides the data (`het rode van X`, modifier

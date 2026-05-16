@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Kinds.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.NMP
 
 /-!
 # Dutch Noun Lexicon Fragment
@@ -14,7 +14,7 @@ still be kind-referring, supporting @cite{krifka-2004} over @cite{chierchia-1998
 
 namespace Fragments.Dutch.Nouns
 
-open Semantics.Kinds.Chierchia1998 (BlockingPrinciple)
+open Semantics.Kinds.NMP (BlockingPrinciple)
 
 /-- A lexical entry for a Dutch noun. -/
 structure NounEntry where

@@ -397,7 +397,7 @@ variable {β : Type*} [SemilatticeSup β]
     CUM because `ConnectedLiquid` rejects disconnected sums.
 
     Since @cite{chierchia-1998}'s `IsMass` implies CUM (via `isMass_cum`
-    in `Theories/Semantics/Lexical/Noun/Kind/Chierchia1998.lean`), this
+    in `Theories/Semantics/Lexical/Noun/Kind/NMP.lean`), this
     means substance nouns can be mass. Mixed drink nouns cannot — their
     denotation fails CUM, hence fails `IsMass`. -/
 theorem substanceNoun_cum (substancePred : β → Prop)

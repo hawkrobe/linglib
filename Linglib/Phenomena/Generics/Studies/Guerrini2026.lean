@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.NMP
 import Linglib.Theories.Semantics.Genericity.Generics
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Theories.Semantics.Plurality.Cumulativity
@@ -70,7 +70,7 @@ English [+arg, +pred] allows both; Italian [-arg, +pred] forces D.
 
 namespace Guerrini2026
 
-open Semantics.Kinds.Chierchia1998 (NominalMapping Kind CanDenoteKind
+open Semantics.Kinds.NMP (NominalMapping Kind CanDenoteKind
   CanDenoteProperty downDefinedFor DPP)
 open Core.Duality (Truth3)
 open Semantics.Plurality.Distributivity (distMaximal pluralTruthValue
@@ -120,7 +120,7 @@ section DistributiveKindPred
 variable {Atom W : Type} [DecidableEq Atom] [Fintype Atom]
 
 /-- Extract a kind's extension at a world as a `Finset`, bridging
-    Chierchia1998's `Set Atom` to Distributivity's `Finset Atom`.
+    NMP's `Set Atom` to Distributivity's `Finset Atom`.
 
     This is the type-level bridge between the two modules:
     - `Kind.concept w : Set Atom` (mathematical, for proofs)
@@ -147,7 +147,7 @@ Distributive Kind Predication: evaluate a kind at the actual world to
 get its maximal sum, then distribute a predicate over its atomic parts.
 
 This is the composition of DIST from `Plural/Distributivity.lean` with
-kind extension from `Chierchia1998.lean`. No Gen operator is involved.
+kind extension from `NMP.lean`. No Gen operator is involved.
 
 Parameterized by `kindExtension : W → Finset Atom` (the computational
 representation of the kind's extension). For a `Kind` value, use
@@ -1423,10 +1423,10 @@ four LF paths. Two via kind denotation (DKP, CKP), two via property
 denotation (BFG, DPP). The DPP path yields the existential reading
 of episodic bare plurals ("Bears are destroying my garden" ≈ ∃x[bear(x)
 ∧ destroying-my-garden(x)]), grounded via `DPP` from
-`Chierchia1998.lean`.
+`NMP.lean`.
 -/
 
-/-- DPP (from `Chierchia1998.lean`) is the compositional engine behind
+/-- DPP (from `NMP.lean`) is the compositional engine behind
     the `.existentialDPP` LF parse.
 
     This theorem connects the structural LF typology to the theory-layer

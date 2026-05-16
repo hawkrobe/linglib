@@ -2,7 +2,7 @@ import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Mereology
 import Linglib.Core.Tree
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
-import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
+import Linglib.Phenomena.Classifiers.Studies.NMP
 import Linglib.Phenomena.Classifiers.Studies.Sudo2016
 import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Shan.Classifiers
@@ -232,7 +232,7 @@ theorem shan_predictions_from_strategy :
     `.sudoBlocking`. Run through LMR's diagnostic battery, the two
     strategies make divergent empirical predictions: -/
 theorem chierchia_sudo_diverge_on_predictions :
-    predictionsOf Chierchia1998.japaneseStrategy ≠
+    predictionsOf NMP.japaneseStrategy ≠
       predictionsOf Sudo2016.japaneseStrategy := by decide
 
 /-- The empirical wedge: under LMR's diagnostics, Chierchia's `.forNoun`
@@ -243,7 +243,7 @@ theorem chierchia_sudo_diverge_on_predictions :
     Chierchia predicts `false`. Japanese empirically exhibits the Sudo
     pattern on this diagnostic. -/
 theorem clfInCounting_distinguishes_chierchia_from_sudo :
-    (predictionsOf Chierchia1998.japaneseStrategy).clfInCounting = false ∧
+    (predictionsOf NMP.japaneseStrategy).clfInCounting = false ∧
     (predictionsOf Sudo2016.japaneseStrategy).clfInCounting = true := ⟨rfl, rfl⟩
 
 /-- Symmetric divergence on `clfBeyondNumerals`: Chierchia predicts `true`
@@ -251,7 +251,7 @@ theorem clfInCounting_distinguishes_chierchia_from_sudo :
     independent of numerals); Sudo predicts `false` (CLF exists *for*
     numerals, not beyond them). -/
 theorem clfBeyondNumerals_distinguishes_chierchia_from_sudo :
-    (predictionsOf Chierchia1998.japaneseStrategy).clfBeyondNumerals = true ∧
+    (predictionsOf NMP.japaneseStrategy).clfBeyondNumerals = true ∧
     (predictionsOf Sudo2016.japaneseStrategy).clfBeyondNumerals = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
@@ -538,8 +538,8 @@ theorem sample_no_agreement_with_chol_shan :
     strategy for Mandarin/Japanese; Little et al. provide the diagnostic
     framework that confirms it and extends it to new languages. -/
 theorem shan_agrees_with_chierchia_clf_for_noun :
-    shanStrategy = Chierchia1998.mandarinStrategy ∧
-    shanStrategy = Chierchia1998.japaneseStrategy :=
+    shanStrategy = NMP.mandarinStrategy ∧
+    shanStrategy = NMP.japaneseStrategy :=
   ⟨rfl, rfl⟩
 
 /-- Ch'ol's CLF-for-NUM strategy differs from the Chierchia-predicted
@@ -547,7 +547,7 @@ theorem shan_agrees_with_chierchia_clf_for_noun :
     typological contribution: not all numeral classifier languages use
     the same semantic strategy. -/
 theorem chol_differs_from_chierchia_languages :
-    cholStrategy ≠ Chierchia1998.mandarinStrategy :=
+    cholStrategy ≠ NMP.mandarinStrategy :=
   by decide
 
 -- ============================================================================

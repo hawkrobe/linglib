@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.Carlson1977
+import Linglib.Theories.Semantics.Kinds.SortedOntology
 
 /-
 # Bare Plurals: Generic vs Existential Interpretation
@@ -14,7 +14,7 @@ Theory-neutral data on when bare plurals receive generic vs existential readings
 
 namespace Phenomena.Generics.BarePlurals
 
-open Semantics.Kinds.Carlson1977 (PredicateLevel)
+open Semantics.Kinds.SortedOntology (PredicateLevel)
 
 /-- Locative argument vs adjunct status. -/
 inductive LocativeStatus where

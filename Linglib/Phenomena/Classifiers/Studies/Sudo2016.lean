@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Classifier.TypeN
 import Linglib.Theories.Semantics.Classifier.Composition
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
-import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
+import Linglib.Phenomena.Classifiers.Studies.NMP
 
 /-!
 # Sudo (2016) — The Semantic Role of Classifiers in Japanese
@@ -38,7 +38,7 @@ but the semantics of numerals. His core proposal:
 
 ## Cross-paper disagreement
 
-`Chierchia1998.japaneseStrategy = .forNoun` (CLF atomizes a kind-denoting
+`NMP.japaneseStrategy = .forNoun` (CLF atomizes a kind-denoting
 noun) and `Sudo2016.japaneseStrategy = .sudoBlocking` (CLF blocks the
 silent ∪-operator on numerals) commit to incompatible analyses of the
 same empirical fact (Japanese requires classifiers). The disagreement is
@@ -323,7 +323,7 @@ def japaneseStrategy : Typology.ClassifierStrategy := .sudoBlocking
     under @cite{little-moroney-royer-2022}'s diagnostic battery — see
     `LittleMoroneyRoyer2022.predictionsOf` for the per-strategy profiles. -/
 theorem sudo_disagrees_with_chierchia_on_japanese :
-    japaneseStrategy ≠ Chierchia1998.japaneseStrategy := by decide
+    japaneseStrategy ≠ NMP.japaneseStrategy := by decide
 
 /-! ## §8: Framework-applicability
 

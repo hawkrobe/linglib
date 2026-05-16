@@ -3,7 +3,7 @@ import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Theories.Semantics.Kinds.Dayal2004
+import Linglib.Theories.Semantics.Kinds.MeaningPreservation
 import Linglib.Theories.Semantics.Classifier.Basic
 import Linglib.Phenomena.Definiteness.Studies.Schwarz2009
 import Linglib.Fragments.Mandarin.Definiteness
@@ -219,7 +219,7 @@ do covertly what you can do overtly"), inherited from
 article means ι is unblocked — bare N can route to a unique-definite
 reading via the type-shift hierarchy of @cite{dayal-2004}.
 
-The substrate has Dayal's hierarchy (`Theories/Semantics/Kinds/Dayal2004.lean`),
+The substrate has Dayal's hierarchy (`Theories/Semantics/Kinds/MeaningPreservation.lean`),
 already used by `Moroney2021.lean`. The Mandarin parallel theorem is
 the same `selectShift` instance: when no shift is blocked, ι is
 selected first (Meaning Preservation). -/
@@ -231,14 +231,14 @@ open Semantics.Kinds
     relevant for definite type-shifting", lifted to the Dayal substrate
     Moroney2021 already consumes. -/
 theorem iota_is_last_resort :
-    Dayal2004.selectShift {
+    MeaningPreservation.selectShift {
       number := .neutral, downDefined := false
       iotaBlocked := false, iotaAnaphoricBlocked := false
       existsBlocked := false, instantiationAccessible := true
     } = some .iota := rfl
 
 /-- Bridge to Mandarin's classifier strategy: per
-    `Phenomena.Classifiers.Studies.Chierchia1998.mandarinStrategy`,
+    `Phenomena.Classifiers.Studies.NMP.mandarinStrategy`,
     Mandarin's classifier denotation atomizes the noun (CLF-for-N).
     This is the Trinh 2011 / Krifka 1995 / Chierchia 1998 denotation
     Jenks adopts in §4.1 (eq. 21). Parallels

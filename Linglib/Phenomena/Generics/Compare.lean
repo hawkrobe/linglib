@@ -38,18 +38,18 @@ predict the observed cross-linguistic patterns.
 
 -/
 
-import Linglib.Theories.Semantics.Kinds.Carlson1977
-import Linglib.Theories.Semantics.Kinds.Chierchia1998
-import Linglib.Theories.Semantics.Kinds.Dayal2004
-import Linglib.Theories.Semantics.Kinds.Krifka2004
+import Linglib.Theories.Semantics.Kinds.SortedOntology
+import Linglib.Theories.Semantics.Kinds.NMP
+import Linglib.Theories.Semantics.Kinds.MeaningPreservation
+import Linglib.Phenomena.Generics.Studies.Krifka2004
 import Linglib.Phenomena.Generics.KindReference
 
 namespace Phenomena.Generics.Compare
 
-open Semantics.Kinds.Carlson1977
-open Semantics.Kinds.Chierchia1998
-open Semantics.Kinds.Dayal2004
-open Semantics.Kinds.Krifka2004
+open Semantics.Kinds.SortedOntology
+open Semantics.Kinds.NMP
+open Semantics.Kinds.MeaningPreservation
+open Phenomena.Generics.Studies.Krifka2004
 open Phenomena.Generics.KindReference
 
 -- @cite{carlson-1977}: The Foundation
@@ -102,7 +102,7 @@ theorem carlson_chierchia_structural_equivalence :
     -- We express this as: both introduce existential, both apply P to instance
     (∀ (Entity : Type) (R : RealizationRel Entity) (P : Entity → Bool) (k : Entity),
       stageLevelPred Entity R P k = (∃ y, R y k ∧ P y = true)) ∧
-    -- Chierchia's DKP has the same structure (shown in Chierchia1998.lean)
+    -- Chierchia's DKP has the same structure (shown in NMP.lean)
     -- DKP P k w = ∃ x, x ∈ up k w ∧ P x = true
     True := by
   constructor
@@ -161,7 +161,7 @@ Carlson's key claim: bare plurals are NOT ambiguous between generic and
 existential readings. The NP always denotes the kind; the predicate determines
 whether you get a generic or existential interpretation.
 
-This is captured in `bare_plural_not_ambiguous` in Carlson1977.lean.
+This is captured in `bare_plural_not_ambiguous` in SortedOntology.lean.
 -/
 
 /--
@@ -556,7 +556,7 @@ theorem krifka_handles_scrambling_chierchia_doesnt :
 ## Compositional Derivations
 
 The derivation machinery lives in the theory files:
-- `Chierchia1998.lean`: `chierchiaDerivUnscrambled`, `chierchiaDerivScrambled`, `chierchia_position_invariant`
+- `NMP.lean`: `chierchiaDerivUnscrambled`, `chierchiaDerivScrambled`, `chierchia_position_invariant`
 - `Krifka2004.lean`: `krifkaDerivUnscrambled`, `krifkaDerivScrambled`, `krifka_position_sensitive`
 
 Here we instantiate them with a concrete example to demonstrate the divergence.

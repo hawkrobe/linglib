@@ -3,8 +3,8 @@ import Linglib.Core.Mereology
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
-import Linglib.Theories.Semantics.Kinds.Dayal2004
-import Linglib.Theories.Semantics.Kinds.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.MeaningPreservation
+import Linglib.Theories.Semantics.Kinds.NMP
 import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Classifier.Basic
 import Linglib.Fragments.English.Definiteness
@@ -37,7 +37,7 @@ type of definiteness.
 3. **Type-shifting analysis**: all bare nouns are base type ⟨s,⟨e,t⟩⟩.
    Definite readings arise via unblocked ι type-shift (no overt "the" to
    block it). Kind readings via ∩. Existential via DPP (Derived Predicate
-   Predication, `Chierchia1998.DPP`), which yields obligatory low scope.
+   Predication, `NMP.DPP`), which yields obligatory low scope.
 
 4. **Cross-linguistic definiteness data** (Table 4.4): Shan uses bare nouns
    in ALL @cite{schwarz-2009} definite use types. Demonstrative-noun phrases
@@ -251,7 +251,7 @@ open Semantics.Kinds
 
 /-- Shan has no overt determiners: all type-shifts are unblocked.
 
-Contrast with English (`Dayal2004.englishBlocking`): the presence of
+Contrast with English (`MeaningPreservation.englishBlocking`): the presence of
 *the* blocks covert ι, and *a*/*some* block covert ∃. In Shan, the
 absence of articles means the blocking principle imposes no constraints
 on covert type-shifting. Crucially, both ι AND ι^x are unblocked —
@@ -260,7 +260,7 @@ definiteness (@cite{moroney-2021} §4.3).
 
 Derived from `Fragments.Shan.Definiteness.blocking` — the single source
 of truth for Shan's article inventory. -/
-def shanBlocking : Chierchia1998.BlockingPrinciple :=
+def shanBlocking : NMP.BlockingPrinciple :=
   Fragments.Shan.Definiteness.blocking
 
 /-- When a Shan bare noun is used in a context requiring unique definiteness,
@@ -268,9 +268,9 @@ the preferred type-shift is ι (definite), by Meaning Preservation
 ({∩, ι, ι^x} > ∃). Number-neutral nouns allow both ι and ∩, but ∩
 requires a kind-compatible predicate (`downDefined`).
 
-Compare: English singular nouns get `none` (`Dayal2004.dayal_consistent_english_bare_singular_out`). -/
+Compare: English singular nouns get `none` (`MeaningPreservation.dayal_consistent_english_bare_singular_out`). -/
 theorem shan_neutral_prefers_iota :
-    let ctx : Dayal2004.TypeShiftContext := {
+    let ctx : MeaningPreservation.TypeShiftContext := {
       number := .neutral
       downDefined := false  -- Predicate is not kind-compatible
       iotaBlocked := false
@@ -278,13 +278,13 @@ theorem shan_neutral_prefers_iota :
       existsBlocked := false
       instantiationAccessible := true
     }
-    Dayal2004.selectShift ctx = some .iota := rfl
+    MeaningPreservation.selectShift ctx = some .iota := rfl
 
 /-- When a Shan bare noun is used with a kind-compatible predicate,
 ∩ is selected (it appears first in `availableShifts` for number-neutral
 nouns with `downDefined`). -/
 theorem shan_neutral_kind_prefers_down :
-    let ctx : Dayal2004.TypeShiftContext := {
+    let ctx : MeaningPreservation.TypeShiftContext := {
       number := .neutral
       downDefined := true
       iotaBlocked := false
@@ -292,13 +292,13 @@ theorem shan_neutral_kind_prefers_down :
       existsBlocked := false
       instantiationAccessible := true
     }
-    Dayal2004.selectShift ctx = some .down := rfl
+    MeaningPreservation.selectShift ctx = some .down := rfl
 
 /-- Number-neutral nouns in Shan make BOTH ∩ and ι available simultaneously
 when the predicate is kind-compatible. This correctly predicts the
 ambiguity between definite and kind readings for Shan bare nouns. -/
 theorem shan_neutral_both_available :
-    let ctx : Dayal2004.TypeShiftContext := {
+    let ctx : MeaningPreservation.TypeShiftContext := {
       number := .neutral
       downDefined := true
       iotaBlocked := false
@@ -306,10 +306,10 @@ theorem shan_neutral_both_available :
       existsBlocked := false
       instantiationAccessible := true
     }
-    .down ∈ Dayal2004.availableShifts ctx ∧
-    .iota ∈ Dayal2004.availableShifts ctx ∧
-    .iotaAnaphoric ∈ Dayal2004.availableShifts ctx := by
-  simp [Dayal2004.availableShifts]
+    .down ∈ MeaningPreservation.availableShifts ctx ∧
+    .iota ∈ MeaningPreservation.availableShifts ctx ∧
+    .iotaAnaphoric ∈ MeaningPreservation.availableShifts ctx := by
+  simp [MeaningPreservation.availableShifts]
 
 /-- The Shan–English definiteness contrast derived from blocking.
 
@@ -319,13 +319,13 @@ bare nouns can be definite. English has "the" → ι blocked → bare
 nouns cannot be definite (must use overt determiner). -/
 theorem shan_english_definiteness_contrast :
     -- Shan: number-neutral bare noun gets definite reading
-    Dayal2004.selectShift {
+    MeaningPreservation.selectShift {
       number := .neutral, downDefined := false
       iotaBlocked := false, iotaAnaphoricBlocked := false
       existsBlocked := false, instantiationAccessible := true
     } = some .iota ∧
     -- English: bare singular gets no reading
-    Dayal2004.selectShift {
+    MeaningPreservation.selectShift {
       number := .sg, downDefined := false
       iotaBlocked := true, iotaAnaphoricBlocked := true
       existsBlocked := true, instantiationAccessible := true
@@ -340,18 +340,18 @@ anaphoric definiteness. Both languages have unblocked ι (unique
 definiteness via bare nouns). -/
 theorem shan_thai_anaphoric_contrast :
     -- Shan: ι^x available for anaphoric definiteness
-    .iotaAnaphoric ∈ Dayal2004.availableShifts {
+    .iotaAnaphoric ∈ MeaningPreservation.availableShifts {
       number := .neutral, downDefined := false
       iotaBlocked := false, iotaAnaphoricBlocked := false
       existsBlocked := false, instantiationAccessible := true
     } ∧
     -- Thai: ι^x blocked, only ι available
-    .iotaAnaphoric ∉ Dayal2004.availableShifts {
+    .iotaAnaphoric ∉ MeaningPreservation.availableShifts {
       number := .neutral, downDefined := false
       iotaBlocked := false, iotaAnaphoricBlocked := true
       existsBlocked := false, instantiationAccessible := true
     } := by
-  simp [Dayal2004.availableShifts]
+  simp [MeaningPreservation.availableShifts]
 
 /-- ∃ is available as a last resort in Shan (when ∩ and ι are
 inapplicable), but by Meaning Preservation it is always dispreferred.
@@ -359,20 +359,20 @@ This means bare nouns default to definite/kind, not existential —
 the existential reading arises only via DPP at vP. -/
 theorem shan_exists_is_last_resort :
     -- ∃ is available but not selected when ι is available
-    (Dayal2004.availableShifts {
+    (MeaningPreservation.availableShifts {
       number := .neutral, downDefined := false
       iotaBlocked := false, iotaAnaphoricBlocked := false
       existsBlocked := false, instantiationAccessible := true
     }).head? = some .iota ∧
     -- ∃ appears in the list but after ι
-    .exists ∈ (Dayal2004.availableShifts {
+    .exists ∈ (MeaningPreservation.availableShifts {
       number := .neutral, downDefined := false
       iotaBlocked := false, iotaAnaphoricBlocked := false
       existsBlocked := false, instantiationAccessible := true
     }) := by
   constructor
   · rfl
-  · simp [Dayal2004.availableShifts]
+  · simp [MeaningPreservation.availableShifts]
 
 -- ============================================================================
 -- §5: Marking Strategy ↔ Core/Definiteness Bridge

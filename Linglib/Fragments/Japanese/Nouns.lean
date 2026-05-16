@@ -1,7 +1,7 @@
 import Linglib.Core.Word
 import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.Japanese.Classifier
-import Linglib.Theories.Semantics.Kinds.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.NMP
 
 /-!
 # Japanese Noun Lexicon Fragment
@@ -17,7 +17,7 @@ from the enum-as-source-of-truth fragment (`Fragments.Japanese.Classifier`).
 namespace Fragments.Japanese.Nouns
 
 open Fragments.Japanese (Classifier)
-open Semantics.Kinds.Chierchia1998 (BlockingPrinciple NominalMapping)
+open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 
 /-- A lexical entry for a Japanese noun. -/
 structure NounEntry where

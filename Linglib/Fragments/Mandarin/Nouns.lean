@@ -1,7 +1,7 @@
 import Linglib.Core.Word
 import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.Mandarin.Classifiers
-import Linglib.Theories.Semantics.Kinds.Chierchia1998
+import Linglib.Theories.Semantics.Kinds.NMP
 
 /-!
 # Mandarin Chinese Noun Lexicon Fragment
@@ -21,7 +21,7 @@ namespace Fragments.Mandarin.Nouns
 
 open Typology (ClassifierEntry)
 open Fragments.Mandarin.Classifiers
-open Semantics.Kinds.Chierchia1998 (BlockingPrinciple NominalMapping)
+open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 
 /-- A lexical entry for a Mandarin noun.
 

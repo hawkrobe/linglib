@@ -40,7 +40,7 @@ Aikhenvald-style sample-restricted findings (`sample_all_obligatory`,
 Armenian appears separately in `optionalClassifierSystems`.
 
 Chierchia-anchored claims about Mandarin/Japanese type-shift blocking are
-in `Studies/Chierchia1998.lean` (chronologically older paper, separate
+in `Studies/NMP.lean` (chronologically older paper, separate
 study file). The Greenberg classifier-number complementarity claim
 appears here (Aikhenvald §15 cites Greenberg) and is refined in
 `Studies/LittleMoroneyRoyer2022.lean` (CLF-for-N vs CLF-for-NUM split).
