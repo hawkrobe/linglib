@@ -18,7 +18,7 @@ namespace Fragments.French.Predicates
 
 open Semantics.Lexical
 open Features (Causative)
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
   (EntailmentProfile kickSubjectProfile seeSubjectProfile runSubjectProfile)
 
 /-- French verb entry: extends VerbCore with French inflectional paradigm. -/

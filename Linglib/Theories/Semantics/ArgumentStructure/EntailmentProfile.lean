@@ -47,7 +47,7 @@ has core agentive features (volition/causation) rather than flat-counting.
 `Phenomena/ArgumentStructure/Studies/Dowty1991.lean` for comparison.
 -/
 
-namespace Features.EntailmentProfile
+namespace Semantics.ArgumentStructure.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Entailment Profile (@cite{dowty-1991} pp.572–573)
@@ -357,4 +357,4 @@ theorem pPatientDominates_refl (p : EntailmentProfile) :
     PPatientDominates p p :=
   ⟨id, id, id, id, id⟩
 
-end Features.EntailmentProfile
+end Semantics.ArgumentStructure.EntailmentProfile

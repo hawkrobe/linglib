@@ -1,4 +1,4 @@
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Theories.Semantics.Lexical.LevinClassProfiles
 import Linglib.Core.Case.Basic
@@ -47,9 +47,9 @@ All ordering infrastructure uses Mathlib typeclasses:
 - Transitivity hierarchy → `Tsunoda` verb classification
 -/
 
-namespace Features.AgentivityLattice
+namespace Semantics.ArgumentStructure.AgentivityLattice
 
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Core
 
 -- ════════════════════════════════════════════════════
@@ -845,4 +845,4 @@ theorem persistence_chain :
     PersistenceLevel.quPersBeginning ≤ PersistenceLevel.totalPersistence := by
   decide
 
-end Features.AgentivityLattice
+end Semantics.ArgumentStructure.AgentivityLattice

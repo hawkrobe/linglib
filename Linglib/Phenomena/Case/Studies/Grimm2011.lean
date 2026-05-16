@@ -1,5 +1,5 @@
-import Linglib.Features.AgentivityLattice
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Phenomena.Case.Studies.Aissen2003
 
 /-!
@@ -36,8 +36,8 @@ object marking profiles in `Phenomena/Case/Studies/Aissen2003.lean`.
 
 namespace Grimm2011
 
-open Features.AgentivityLattice
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.AgentivityLattice
+open Semantics.ArgumentStructure.EntailmentProfile
 open Features.Prominence
 open Aissen2003
 

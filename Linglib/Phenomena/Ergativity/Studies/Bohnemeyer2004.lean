@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Theories.Semantics.Lexical.EventStructure
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Theories.Semantics.Causation.Morphological
 
 /-!
@@ -288,7 +288,7 @@ theorem inactive_split_by_causation :
 -- § 8. Bridge to Proto-Role Entailments
 -- ════════════════════════════════════════════════════
 
-open Features.EntailmentProfile (EntailmentProfile)
+open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 
 /-- Internal causation corresponds to the Proto-Agent "causation"
     entailment in @cite{dowty-1991}'s framework: an internally-caused

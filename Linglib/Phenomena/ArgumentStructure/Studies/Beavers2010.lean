@@ -1,6 +1,6 @@
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Profile
-import Linglib.Features.AgentivityLattice
+import Linglib.Theories.Semantics.ArgumentStructure.AgentivityLattice
 import Linglib.Theories.Semantics.Lexical.LevinClassProfiles
 import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
@@ -35,8 +35,8 @@ through the MAP.
 
 namespace Beavers2010
 
-open Features.EntailmentProfile
-open Features.AgentivityLattice
+open Semantics.ArgumentStructure.EntailmentProfile
+open Semantics.ArgumentStructure.AgentivityLattice
 open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree profileToDegree)
 open Semantics.Lexical (DiathesisAlternation)
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data

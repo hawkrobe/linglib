@@ -42,7 +42,7 @@ a second consumer materialises.
 
 open Semantics.Lexical
 open Features.EventStructure
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.ArgumentStructure.Affectedness.Profile
 
 -- ════════════════════════════════════════════════════

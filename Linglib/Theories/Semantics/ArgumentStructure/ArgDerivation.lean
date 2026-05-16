@@ -50,7 +50,7 @@ namespace Semantics.ArgumentStructure.ArgDerivation
 open Semantics.Lexical
 open Features.EventStructure (Template)
 open Features.LevinClassProfiles
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════

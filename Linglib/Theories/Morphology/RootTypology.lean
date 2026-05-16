@@ -59,7 +59,7 @@ you nothing about whether it entails change, and vice versa.
 -/
 
 open Features.EventStructure
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Features.ChangeOfState
 open Semantics.Lexical.Roots
 open Features

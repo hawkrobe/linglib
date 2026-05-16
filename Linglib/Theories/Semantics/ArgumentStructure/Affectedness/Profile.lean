@@ -1,4 +1,4 @@
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Hierarchy
 import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Defs
 
@@ -71,7 +71,7 @@ composed meaning — not the root-level or surface-diagnostic level.
 
 namespace Semantics.ArgumentStructure.Affectedness.Profile
 
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Re-exports from Events/AffectednessHierarchy

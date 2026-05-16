@@ -1,4 +1,4 @@
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -31,7 +31,7 @@ proto-role/diagnostic mismatch. This file makes the contrast explicit.
 
 namespace Phenomena.ArgumentStructure.Unaccusativity.ProtoRoles
 
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Fragments.English.Predicates.Verbal
 
 /-! ## §1. Canonical alignment cases

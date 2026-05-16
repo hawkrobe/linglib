@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
@@ -60,7 +60,7 @@ open Features.Dimension (Dimension)
 open Semantics.Attitudes.Preferential (NVPClass PreferentialPredicate)
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)
-open Features.EntailmentProfile (EntailmentProfile)
+open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Aspect.Incremental (VerbIncClass)
 open Features.LevinClassProfiles

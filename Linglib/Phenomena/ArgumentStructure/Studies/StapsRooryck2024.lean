@@ -57,7 +57,7 @@ open Core (WorldTimeIndex)
 
 open Core.Presupposition
 open Fragments.French.Predicates
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.ArgumentStructure.Affectedness.Profile
 open Features
 open Semantics.Lexical

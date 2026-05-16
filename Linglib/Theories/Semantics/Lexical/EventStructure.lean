@@ -1,4 +1,4 @@
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
 
@@ -30,7 +30,7 @@ and distinct syntactic frames.
 namespace Features.EventStructure
 
 open Semantics.Lexical
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Features
 
 -- ════════════════════════════════════════════════════

@@ -1,7 +1,7 @@
 import Mathlib.Order.Nat
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
-import Linglib.Features.AgentivityLattice
+import Linglib.Theories.Semantics.ArgumentStructure.AgentivityLattice
 import Linglib.Theories.Semantics.Lexical.Roots.RootFeatures
 
 /-!
@@ -74,7 +74,7 @@ the external cause entirely, yielding monoeventive structure.
 namespace Semantics.Causation.Morphological
 
 open Semantics.Causation.Psych (CausalSource)
-open Features.AgentivityLattice (AgentivityNode)
+open Semantics.ArgumentStructure.AgentivityLattice (AgentivityNode)
 open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════

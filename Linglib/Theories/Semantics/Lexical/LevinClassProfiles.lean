@@ -1,4 +1,4 @@
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Semantics.Lexical.LevinTheory
 
@@ -31,7 +31,7 @@ Individual verbs can override class-level profiles via explicit
 namespace Features.LevinClassProfiles
 
 open Semantics.Lexical
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
@@ -122,7 +122,7 @@ end Features.LevinClassProfiles
 
 namespace Semantics.Lexical
 open Features.LevinClassProfiles
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 
 /-- Map a Levin class to its argument structure template.
     Returns `none` for classes whose profiles haven't been determined yet. -/
@@ -177,7 +177,7 @@ end Semantics.Lexical
 
 namespace Features.LevinClassProfiles
 open Semantics.Lexical
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════

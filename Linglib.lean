@@ -2373,8 +2373,8 @@ import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Typology.Voice
-import Linglib.Features.AgentivityLattice
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Theories.Semantics.Lexical.LevinTheory
 import Linglib.Theories.Semantics.Lexical.LevinClassProfiles

@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.VoiceProjection
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Phenomena.ArgumentStructure.Studies.Polinsky2013
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 
@@ -785,7 +785,7 @@ does *not* re-derive the type clash from event-semantic λ-calculus
 substantive content captured: "low Appl needs a theme; unergative
 provides none; composition fails." -/
 
-open Features.EntailmentProfile (EntailmentProfile)
+open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 
 /-- A verb has an unsaturated theme argument iff its object entailment
     profile (if any) carries Proto-Patient entailments. Unergatives have

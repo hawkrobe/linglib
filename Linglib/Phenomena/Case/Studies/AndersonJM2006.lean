@@ -1,7 +1,7 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Core.Case.Hierarchy
-import Linglib.Features.EntailmentProfile
+import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -58,7 +58,7 @@ namespace AndersonJM2006
 
 open Core (CaseRelation Scenario Case)
 open Interfaces.SyntaxSemantics (LinkingTheory ArgPosition)
-open Features.EntailmentProfile
+open Semantics.ArgumentStructure.EntailmentProfile
 open Fragments.English.Predicates.Verbal
 
 -- ============================================================================

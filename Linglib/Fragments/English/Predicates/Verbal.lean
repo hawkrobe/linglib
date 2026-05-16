@@ -26,7 +26,7 @@ open Semantics.Lexical
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
 open Semantics.Aspect.Incremental (VerbIncClass)
-open Features.EntailmentProfile (EntailmentProfile)
+open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════
 -- § English Morphophonological Rules
