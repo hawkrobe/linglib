@@ -51,7 +51,7 @@ open Semantics.Causation.Implicative
 open Features (Causative)
 open Fragments.English.Predicates.Verbal
 open Fragments.English.Predicates.Copular (beAble)
-open Semantics.Verb
+open Semantics.Lexical
 open Core.Causal
 
 -- ════════════════════════════════════════════════════════════════

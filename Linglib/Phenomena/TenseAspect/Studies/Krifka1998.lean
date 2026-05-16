@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Spatial.Trace
-import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Lexical.LevinClass
 import Linglib.Theories.Semantics.Events.Adjacency
 import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 import Linglib.Features.Aktionsart
@@ -97,7 +97,7 @@ namespace Krifka1998
 
 open Fragments.English.Predicates.Verbal
 open Features
-open Semantics.Verb
+open Semantics.Lexical
 open _root_.Mereology
 open Semantics.ArgumentStructure (UP CumTheta IsCumThetaVerb)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb IsIncVerb)

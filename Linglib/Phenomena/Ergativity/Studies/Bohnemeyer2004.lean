@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
-import Linglib.Theories.Semantics.Verb.EventStructure
+import Linglib.Theories.Semantics.Lexical.EventStructure
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Causation.Morphological
 

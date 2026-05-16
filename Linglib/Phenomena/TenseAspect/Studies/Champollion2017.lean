@@ -132,7 +132,7 @@ empirical data the book argues over.
 namespace Champollion2017
 
 open Fragments.English.Predicates.Verbal
-open Semantics.Verb
+open Semantics.Lexical
 open Features
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 

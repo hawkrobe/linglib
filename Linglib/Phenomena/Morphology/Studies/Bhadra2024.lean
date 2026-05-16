@@ -41,6 +41,7 @@ a second consumer materialises.
 -/
 
 open Semantics.Verb
+open Semantics.Lexical
 open Features.EventStructure
 open Features.EntailmentProfile
 open Semantics.Verb.Affectedness.Profile

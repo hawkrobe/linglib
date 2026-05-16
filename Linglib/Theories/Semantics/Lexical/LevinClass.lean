@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.Verb.MeaningComponents
+import Linglib.Theories.Semantics.Lexical.MeaningComponents
 import Linglib.Theories.Semantics.Spatial.Path
 
 /-!
-# Semantics.Verb.LevinClass
+# Semantics.Lexical.LevinClass
 @cite{levin-1993}
 
 The 49-class verb taxonomy from @cite{levin-1993} Part II, with
@@ -71,7 +71,7 @@ sibling theories:
   predicates GO/STAY/CAUSE compose into LCS templates.
 -/
 
-namespace Semantics.Verb
+namespace Semantics.Lexical
 
 /-- Verb class taxonomy from @cite{levin-1993} Part II.
 
@@ -438,4 +438,4 @@ def pathSpec : LevinClass → Option Semantics.Spatial.Path.PathShape
 
 end LevinClass
 
-end Semantics.Verb
+end Semantics.Lexical

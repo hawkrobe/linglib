@@ -37,7 +37,7 @@ namespace Benz2025
 open Morphology.DM.Allosemy
 open Features (Acceptability)
 open Fragments.German.Predicates
-open Semantics.Verb
+open Semantics.Lexical
 open Features
 
 -- ════════════════════════════════════════════════════════════════════

@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Verb.EventStructure
-import Linglib.Theories.Semantics.Verb.LevinClassProfiles
+import Linglib.Theories.Semantics.Lexical.EventStructure
+import Linglib.Theories.Semantics.Lexical.LevinClassProfiles
 
 /-!
 # Argument Structure Derivation Pipeline
@@ -47,11 +47,11 @@ adds information beyond what root entailments + template predict:
 
 namespace Semantics.ArgumentStructure.ArgDerivation
 
-open Semantics.Verb
+open Semantics.Lexical
 open Features.EventStructure (Template)
 open Features.LevinClassProfiles
 open Features.EntailmentProfile
-open Semantics.Verb.Roots
+open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root-Template Compatibility

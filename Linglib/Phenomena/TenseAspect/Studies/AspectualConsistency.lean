@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Spatial.Trace
-import Linglib.Theories.Semantics.Verb.LevinClass
+import Linglib.Theories.Semantics.Lexical.LevinClass
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.Diagnostics
@@ -32,7 +32,7 @@ verifies that the *cross-cutting invariants* hold:
 
 namespace AspectualConsistency
 
-open Semantics.Verb
+open Semantics.Lexical
 open Features
 open Fragments.English.Predicates.Verbal
 open Semantics.Aspect.Incremental (VerbIncClass)

@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Gradability.ClauseEmbedding
+import Linglib.Theories.Semantics.Verb.VerbEntry
 
 /-!
 # English Copular Predicate Fragment
@@ -16,6 +17,7 @@ namespace Fragments.English.Predicates.Copular
 
 open Semantics.Gradability (ClauseEmbeddingAdj)
 open Semantics.Verb
+open Semantics.Lexical
 
 /-- "annoyed (that p)" — emotive factive clause-embedding adjective.
     @cite{degen-tonhauser-2021}, @cite{degen-tonhauser-2022}: canonically factive.

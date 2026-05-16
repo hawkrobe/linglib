@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.Roots.Typology
+import Linglib.Theories.Semantics.Lexical.Roots.Typology
 
 /-!
 # Entailment Closure on Roots
@@ -32,7 +32,7 @@ The infrastructure is designed so that adding a new B&K-G inference
 extension to `bkgRules`.
 -/
 
-namespace Semantics.Verb.Roots
+namespace Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Closure Rules
@@ -270,4 +270,4 @@ theorem closure_bkgRules_any_idempotent (atoms : List LexEntailment)
       List.append_nil]
   simp only [List.any_append, Bool.or_assoc, Bool.or_self]
 
-end Semantics.Verb.Roots
+end Semantics.Lexical.Roots

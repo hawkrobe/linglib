@@ -4,8 +4,8 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Theories.Semantics.Verb.LevinClass
-import Linglib.Theories.Semantics.Verb.MeaningComponents
+import Linglib.Theories.Semantics.Lexical.LevinClass
+import Linglib.Theories.Semantics.Lexical.MeaningComponents
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Aspect.ChangeOfState
 import Linglib.Features.Dimension
@@ -19,7 +19,7 @@ import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Features.Aktionsart
 import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Theories.Semantics.Aspect.Incremental
-import Linglib.Theories.Semantics.Verb.LevinClassProfiles
+import Linglib.Theories.Semantics.Lexical.LevinClassProfiles
 
 /-! # Cross-Linguistic Verb Infrastructure
 
@@ -53,7 +53,8 @@ namespace Semantics.Verb
 
 open Core.Presupposition
 open Features
-open Semantics.Verb.Roots
+open Semantics.Lexical
+open Semantics.Lexical.Roots
 open Features.ChangeOfState
 open Features.Dimension (Dimension)
 open Semantics.Attitudes.Preferential (NVPClass PreferentialPredicate)

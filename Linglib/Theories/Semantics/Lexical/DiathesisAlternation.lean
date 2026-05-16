@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Verb.LevinClass
-import Linglib.Theories.Semantics.Verb.MeaningComponents
+import Linglib.Theories.Semantics.Lexical.LevinClass
+import Linglib.Theories.Semantics.Lexical.MeaningComponents
 
 /-!
 # Features.DiathesisAlternation
@@ -41,7 +41,7 @@ UNVERIFIED: Per-alternation section numbers (e.g., `§1.1.2.1`, `§2.1`,
 - §5 Canonical diagnostic theorems (*break*/*cut*/*hit*/*touch* + cross-class predictions)
 -/
 
-namespace Semantics.Verb
+namespace Semantics.Lexical
 
 -- ════════════════════════════════════════════════════
 -- § 1a. Alternation Families
@@ -693,4 +693,4 @@ theorem swarm_classes :
     ∧ LevinClass.mannerOfMotion.participatesIn .swarm = true
     ∧ LevinClass.bodyInternalMotion.participatesIn .swarm = true := ⟨rfl, rfl, rfl⟩
 
-end Semantics.Verb
+end Semantics.Lexical

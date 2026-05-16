@@ -25,11 +25,11 @@ and distinct syntactic frames.
 
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Verb.DiathesisAlternation
+import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
 
 namespace Features.EventStructure
 
-open Semantics.Verb
+open Semantics.Lexical
 open Features.EntailmentProfile
 open Features
 
@@ -363,7 +363,7 @@ instance (c : CausationType) : Decidable c.LicensesBySelf := by
 
 end Features.EventStructure
 
-namespace Semantics.Verb
+namespace Semantics.Lexical
 
 /-- Predicted event structure template from meaning components. -/
 def MeaningComponents.predictedTemplate : MeaningComponents → Features.EventStructure.Template
@@ -378,10 +378,10 @@ def LevinClass.eventTemplate : LevinClass → Features.EventStructure.Template
   | .wipe => .motionContact
   | c => c.meaningComponents.predictedTemplate
 
-end Semantics.Verb
+end Semantics.Lexical
 
 namespace Features.EventStructure
-open Semantics.Verb
+open Semantics.Lexical
 
 /-! ### Verification: canonical quadruple -/
 

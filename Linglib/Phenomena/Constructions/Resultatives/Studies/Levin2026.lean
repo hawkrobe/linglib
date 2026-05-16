@@ -1,5 +1,5 @@
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Theories.Semantics.Verb.DiathesisAlternation
+import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
 import Linglib.Theories.Semantics.Causation.Resultatives
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
@@ -64,7 +64,7 @@ namespace Levin2026
 
 open Core (WorldTimeIndex)
 
-open Semantics.Verb
+open Semantics.Lexical
 open LevinClass (pushPull hit wipe)
 open Fragments.English.Predicates.Verbal (push pull kick)
 open Fragments.English.Predicates.Adjectival (open_ closed_ shut free_ loose flat

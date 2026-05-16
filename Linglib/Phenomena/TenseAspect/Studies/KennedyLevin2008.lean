@@ -35,6 +35,7 @@ namespace KennedyLevin2008
 open Fragments.English.Predicates.Verbal hiding clean cool warm open_
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Verb
+open Semantics.Lexical
 open Core.Scale (Boundedness LicensingPipeline MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 

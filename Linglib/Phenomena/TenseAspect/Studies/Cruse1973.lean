@@ -48,7 +48,7 @@ open Semantics.Causation.CoerciveImplication
 open Features (Causative)
 open Core.Time
 open Features
-open Semantics.Verb
+open Semantics.Lexical
 open Phenomena.TenseAspect.Diagnostics
 
 -- ════════════════════════════════════════════════════

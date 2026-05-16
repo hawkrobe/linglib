@@ -42,7 +42,7 @@ namespace Semantics.Causation.Resultatives
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
 open Features
-open Semantics.Verb
+open Semantics.Lexical
 open Features.ChangeOfState
 open Features (Causative)
 open Semantics.Causation.ProductionDependence

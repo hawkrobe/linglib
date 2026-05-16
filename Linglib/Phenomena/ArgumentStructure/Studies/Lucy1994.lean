@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Yukatek.Operators
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
-import Linglib.Theories.Semantics.Verb.Roots.SalienceClass
+import Linglib.Theories.Semantics.Lexical.Roots.SalienceClass
 
 /-!
 # Lucy 1994: The role of semantic value in lexical comparison
@@ -41,7 +41,7 @@ finite signature lookups.
 
 namespace Phenomena.ArgumentStructure.Studies.Lucy1994
 
-open Semantics.Verb.Roots
+open Semantics.Lexical.Roots
 open Morphology.Derivation
 open Fragments.Mayan.Yukatek.Roots
 open Fragments.Mayan.Yukatek.Operators

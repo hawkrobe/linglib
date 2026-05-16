@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Verb.EventStructure
+import Linglib.Theories.Semantics.Lexical.EventStructure
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 
 /-!
@@ -43,7 +43,7 @@ quantified over arbitrary `MeaningComponents` and `ResultativeSubconstruction`.
 namespace ConstructionGrammar.Resultatives
 
 open ConstructionGrammar
-open Semantics.Verb
+open Semantics.Lexical
 open Features
 
 /-! ## Core types -/

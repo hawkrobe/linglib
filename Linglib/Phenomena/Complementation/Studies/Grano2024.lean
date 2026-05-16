@@ -49,7 +49,7 @@ When neither departure is present, only indicative mood is possible.
 
 namespace Grano2024
 
-open Semantics.Verb
+open Semantics.Lexical
 open Core.Mood (GramMood MoodEffect)
 open Semantics.Mood
 open Semantics.Attitudes.RationalAttitude

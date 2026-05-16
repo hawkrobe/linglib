@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.Roots.Closure
+import Linglib.Theories.Semantics.Lexical.Roots.Closure
 
 /-!
 # Lexical Salience Classes
@@ -19,7 +19,7 @@ orbits, motion-roots-non-class theorem, per-root verifications —
 lives in `Phenomena/ArgumentStructure/Studies/Lucy1994.lean`.
 -/
 
-namespace Semantics.Verb.Roots
+namespace Semantics.Lexical.Roots
 
 /-- The 4-way salience classification of verbal roots
     (@cite{lucy-1994}). "Salience" is shorthand for "default case-role
@@ -204,4 +204,4 @@ theorem classOfSignature_eq_none_iff (s : FeatureSignature) :
   cases m <;> cases r <;> cases st <;> cases c <;>
     decide
 
-end Semantics.Verb.Roots
+end Semantics.Lexical.Roots

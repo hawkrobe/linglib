@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.Roots.Basic
+import Linglib.Theories.Semantics.Lexical.Roots.Basic
 
 /-!
 # Derivational Operators
@@ -19,7 +19,7 @@ of (root features × operator inventory), not architectural primitives.
 
 namespace Morphology.Derivation
 
-open Semantics.Verb.Roots (Root)
+open Semantics.Lexical.Roots (Root)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Derivational Operators

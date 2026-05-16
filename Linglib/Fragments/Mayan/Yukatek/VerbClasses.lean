@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Aspect.Core
-import Linglib.Theories.Semantics.Verb.EventStructure
-import Linglib.Theories.Semantics.Verb.Roots.SalienceClass
+import Linglib.Theories.Semantics.Lexical.EventStructure
+import Linglib.Theories.Semantics.Lexical.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Params
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Split
@@ -229,7 +229,7 @@ theorem eventType_consistent (c : VerbStemClass) :
 -- § 5.5. Bridge to @cite{lucy-1994} Salience Classes
 -- ════════════════════════════════════════════════════
 
-open Semantics.Verb.Roots (SalienceClass)
+open Semantics.Lexical.Roots (SalienceClass)
 
 /-- Map @cite{bohnemeyer-2004}'s 5-way Yukatek stem classification to
     @cite{lucy-1994}'s 4-way salience cut. The 5-way is a refinement:

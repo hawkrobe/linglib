@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.DiathesisAlternation
+import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
 
 /-!
 # Diathesis Alternation Data
@@ -22,7 +22,7 @@ ascension alternations. Additional verbs demonstrate the locative
 
 namespace Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
-open Semantics.Verb
+open Semantics.Lexical
 open LevinClass DiathesisAlternation
 
 /-- Result of testing whether a verb participates in a diathesis alternation. -/

@@ -26,6 +26,7 @@ which determines the rational attitude reading.
 namespace Fragments.Italian.Predicates
 
 open Semantics.Verb
+open Semantics.Lexical
 open Minimalist (ComplementSize)
 open Semantics.Attitudes.RationalAttitude (Reading readingFromSize)
 

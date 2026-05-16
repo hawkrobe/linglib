@@ -44,7 +44,7 @@ namespace Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
 
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
-open Semantics.Verb
+open Semantics.Lexical
 open Features
 
 /-! ## Empirical data: resultative entries -/

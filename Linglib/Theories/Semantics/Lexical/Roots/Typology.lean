@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.Roots.Template
+import Linglib.Theories.Semantics.Lexical.Roots.Template
 
 /-!
 # B&K-G Typology, Bifurcation, and Manner/Result Complementarity
@@ -25,7 +25,7 @@ as Boolean predicates on roots and provide witnesses (in
 `BeaversKoontzGarboden2020.lean`) that falsify the universal closures.
 -/
 
-namespace Semantics.Verb.Roots
+namespace Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Feature Signature
@@ -97,4 +97,4 @@ def Root.RespectsMannerResultComplementarity (r : Root) : Prop :=
 instance (r : Root) : Decidable r.RespectsMannerResultComplementarity := by
   unfold Root.RespectsMannerResultComplementarity; infer_instance
 
-end Semantics.Verb.Roots
+end Semantics.Lexical.Roots

@@ -61,6 +61,7 @@ open Features.EntailmentProfile
 open Semantics.Verb.Affectedness.Profile
 open Features
 open Semantics.Verb
+open Semantics.Lexical
 open Minimalist
 
 -- ============================================================================

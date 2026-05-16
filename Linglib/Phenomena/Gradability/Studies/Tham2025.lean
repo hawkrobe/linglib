@@ -90,7 +90,7 @@ open Semantics.Gradability (DimensionBindingType GradableAdjEntry
 open Semantics.Gradability.Aggregation (weightedScore boolMeasures
   spatialNormalizedScore spatialNormalizedBinding)
 open Features.DegreeAchievement (DegreeAchievementScale)
-open Semantics.Verb
+open Semantics.Lexical
 open Semantics.Degree (interpretiveEconomy)
 open Fragments.English.Predicates
 
@@ -911,7 +911,7 @@ theorem largeVase_score_le_one :
     state inheritance from root to deverbal adjective is refuted at
     substrate level. -/
 theorem cracked_adj_refutes_bkg_crack_root_inheritance :
-    Semantics.Verb.Roots.Root.hasResult
+    Semantics.Lexical.Roots.Root.hasResult
       Phenomena.ArgumentStructure.Studies.BeaversKoontzGarboden2020.crack
       = true ∧
     crack.adjEntailsPrecedingChange = false := by

@@ -51,7 +51,7 @@ where B&KG and RH&L disagree on attested verbs.
   citations need verification before adding to `references.bib`.
 -/
 
-namespace Semantics.Verb.Roots
+namespace Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Range Mechanism
@@ -435,4 +435,4 @@ def RootProfile.overlaps (rp₁ rp₂ : RootProfile) : Prop :=
 instance (rp₁ rp₂ : RootProfile) : Decidable (rp₁.overlaps rp₂) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _ ∧ _ ∧ _))
 
-end Semantics.Verb.Roots
+end Semantics.Lexical.Roots

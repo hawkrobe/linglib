@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.Verb.EventStructure
+import Linglib.Theories.Semantics.Lexical.EventStructure
 import Linglib.Theories.Semantics.Aspect.ChangeOfState
-import Linglib.Theories.Semantics.Verb.LevinTheory
+import Linglib.Theories.Semantics.Lexical.LevinTheory
 
-open Semantics.Verb
+open Semantics.Lexical
 
 /-!
 # Root Typology: States and Changes of State (@cite{beavers-etal-2021}, B&@cite{beavers-koontz-garboden-2020}) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
@@ -61,7 +61,7 @@ you nothing about whether it entails change, and vice versa.
 open Features.EventStructure
 open Features.EntailmentProfile
 open Features.ChangeOfState
-open Semantics.Verb.Roots
+open Semantics.Lexical.Roots
 open Features
 
 -- ════════════════════════════════════════════════════
@@ -1522,7 +1522,7 @@ inductive TemplateHead where
   | pHave    -- P_have: possession preposition (ditransitive transfer)
   deriving DecidableEq, Repr
 
-namespace Semantics.Verb.Roots
+namespace Semantics.Lexical.Roots
 
 /-- Which template heads a root's entailments make redundant (Table 13).
 
@@ -1539,7 +1539,7 @@ def RootEntailments.entailedHeads (r : RootEntailments) : List TemplateHead :=
   (if r.cause then [.vCause] else []) ++
   (if r.manner && r.cause then [.vAct] else [])
 
-end Semantics.Verb.Roots
+end Semantics.Lexical.Roots
 
 /-- For ditransitive roots, additional prepositional heads beyond
     the verbal heads predicted by `entailedHeads`. -/

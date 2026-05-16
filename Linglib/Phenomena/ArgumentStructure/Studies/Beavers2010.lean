@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness.Profile
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
-import Linglib.Theories.Semantics.Verb.LevinClassProfiles
-import Linglib.Theories.Semantics.Verb.DiathesisAlternation
+import Linglib.Theories.Semantics.Lexical.LevinClassProfiles
+import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!
@@ -38,7 +38,7 @@ namespace Beavers2010
 open Features.EntailmentProfile
 open Features.AgentivityLattice
 open Semantics.Verb.Affectedness.Profile (AffectednessDegree profileToDegree)
-open Semantics.Verb (DiathesisAlternation)
+open Semantics.Lexical (DiathesisAlternation)
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 -- ════════════════════════════════════════════════════

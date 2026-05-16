@@ -47,7 +47,7 @@ vVPE's deletion domain, mismatches in Voice are tolerated.
 
 namespace Kalyakin2026
 
-open Semantics.Verb
+open Semantics.Lexical
 open Minimalist
 open Minimalist.Ellipsis
 

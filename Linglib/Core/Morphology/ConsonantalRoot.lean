@@ -18,7 +18,7 @@ separate matter, parameterized at the study level.
 
 `Core.Morphology.Root` (this file): a *consonantal* melody, a morphological
 primitive (the underlying form of a morpheme).
-`Semantics.Verb.Roots.Root` (`Theories/Semantics/Verb/Roots/Basic.lean`):
+`Semantics.Lexical.Roots.Root` (`Theories/Semantics/Verb/Roots/Basic.lean`):
 a bundle of `LexEntailment` atoms in the @cite{beavers-koontz-garboden-2020}
 sense — same English word, different concept.
 `Core.Lexical.RootFeatures` (`Core/Lexical/RootFeatures.lean`): semantic

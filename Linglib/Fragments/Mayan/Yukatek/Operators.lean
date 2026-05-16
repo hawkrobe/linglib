@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Verb.Roots.Operators
-import Linglib.Theories.Semantics.Verb.Roots.SalienceClass
+import Linglib.Theories.Semantics.Lexical.Roots.Operators
+import Linglib.Theories.Semantics.Lexical.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Yukatek.Roots
 
 /-!
@@ -31,7 +31,7 @@ manner. Spelt out structurally below.
 
 namespace Fragments.Mayan.Yukatek.Operators
 
-open Semantics.Verb.Roots
+open Semantics.Lexical.Roots
 open Morphology.Derivation
 open Fragments.Mayan.Yukatek.Roots
 

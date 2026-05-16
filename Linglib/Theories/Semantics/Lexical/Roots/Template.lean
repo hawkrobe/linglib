@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Verb.Roots.Basic
-import Linglib.Theories.Semantics.Verb.Roots.RootFeatures
+import Linglib.Theories.Semantics.Lexical.Roots.Basic
+import Linglib.Theories.Semantics.Lexical.Roots.RootFeatures
 
 /-!
 # Templatic Heads and Event Structure Composition
@@ -23,7 +23,7 @@ activity, achievement, accomplishment) are *compositions* of these
 primitives — see `EventStructure.toTemplate`.
 -/
 
-namespace Semantics.Verb.Roots
+namespace Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Templatic Heads
@@ -95,4 +95,4 @@ def achievementOf (r : Root) : EventStructure :=
 def accomplishmentOf (r : Root) : EventStructure :=
   ⟨[.v_cause, .v_become], r, .complement⟩
 
-end Semantics.Verb.Roots
+end Semantics.Lexical.Roots

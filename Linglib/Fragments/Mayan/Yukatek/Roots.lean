@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.Roots.Closure
+import Linglib.Theories.Semantics.Lexical.Roots.Closure
 
 /-!
 # Yukatek Maya Roots as B&K-G Entailment Sets
@@ -54,7 +54,7 @@ identifier use; original orthography is preserved in docstrings.
 
 namespace Fragments.Mayan.Yukatek.Roots
 
-open Semantics.Verb.Roots
+open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Agent-Salient Roots (manner only, take `=t`)

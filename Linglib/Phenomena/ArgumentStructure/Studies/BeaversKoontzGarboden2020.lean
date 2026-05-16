@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Verb.Roots.Typology
+import Linglib.Theories.Semantics.Lexical.Roots.Typology
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
@@ -32,7 +32,7 @@ re-derive Levin classes (English) and Bohnemeyer's verb-stem classes
 
 namespace Phenomena.ArgumentStructure.Studies.BeaversKoontzGarboden2020
 
-open Semantics.Verb.Roots
+open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Six Representative Roots

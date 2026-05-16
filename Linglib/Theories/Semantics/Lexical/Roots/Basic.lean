@@ -26,7 +26,7 @@ testable conjectures rather than architectural commitments.
   these full templates live in `Roots/Template.lean`.
 -/
 
-namespace Semantics.Verb.Roots
+namespace Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Atomic Entailments
@@ -125,4 +125,4 @@ def hasCause  (r : Root) : Bool := r.entailments.any (decide <| LexEntailment.is
 
 end Root
 
-end Semantics.Verb.Roots
+end Semantics.Lexical.Roots

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Causation.Morphological
-import Linglib.Theories.Semantics.Verb.EventStructure
+import Linglib.Theories.Semantics.Lexical.EventStructure
 import Linglib.Theories.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Theories.Syntax.Minimalist.Voice
 
@@ -47,8 +47,8 @@ Texas at Austin.
 
 namespace Krejci2012
 
-open Semantics.Verb
-open Semantics.Verb.Roots
+open Semantics.Lexical
+open Semantics.Lexical.Roots
 open Semantics.Causation.Morphological
 open Features.EventStructure
 open Semantics.ArgumentStructure.ArgDerivation

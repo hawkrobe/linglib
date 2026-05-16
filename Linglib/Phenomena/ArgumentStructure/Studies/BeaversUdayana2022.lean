@@ -1,6 +1,6 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Phenomena.ArgumentStructure.Studies.Beavers2010
-import Linglib.Theories.Semantics.Verb.DiathesisAlternation
+import Linglib.Theories.Semantics.Lexical.DiathesisAlternation
 import Linglib.Typology.Voice
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 
@@ -87,7 +87,7 @@ languages, but language-specific argument realization strategies
 
 namespace BeaversUdayana2022
 
-open Semantics.Verb
+open Semantics.Lexical
 open Fragments.Indonesian.VoiceSystem
 open Minimalist (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Beavers2010

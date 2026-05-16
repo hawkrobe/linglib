@@ -1,9 +1,9 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Theories.Semantics.Verb.LevinClass
-import Linglib.Theories.Semantics.Verb.MeaningComponents
-import Linglib.Theories.Semantics.Verb.EventStructure
+import Linglib.Theories.Semantics.Lexical.LevinClass
+import Linglib.Theories.Semantics.Lexical.MeaningComponents
+import Linglib.Theories.Semantics.Lexical.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -62,8 +62,8 @@ varies across languages.
 
 namespace MajidBosterBowerman2008
 
-open Semantics.Verb
-open Semantics.Verb.Roots
+open Semantics.Lexical
+open Semantics.Lexical.Roots
 open Features
 open InstrumentType ObjectDimensionality Robustness ResultType
      ForceLevel ForceDirection

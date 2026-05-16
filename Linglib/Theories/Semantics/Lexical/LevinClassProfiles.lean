@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
-import Linglib.Theories.Semantics.Verb.LevinTheory
+import Linglib.Theories.Semantics.Lexical.LevinTheory
 
 /-!
 # Levin Class → Entailment Profile Mapping
@@ -30,9 +30,9 @@ Individual verbs can override class-level profiles via explicit
 
 namespace Features.LevinClassProfiles
 
-open Semantics.Verb
+open Semantics.Lexical
 open Features.EntailmentProfile
-open Semantics.Verb.Roots
+open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. Argument Structure Templates
@@ -120,7 +120,7 @@ def directedMotion : ArgTemplate where
 
 end Features.LevinClassProfiles
 
-namespace Semantics.Verb
+namespace Semantics.Lexical
 open Features.LevinClassProfiles
 open Features.EntailmentProfile
 
@@ -173,12 +173,12 @@ def LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
 def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
   c.argTemplate.bind (·.objectProfile)
 
-end Semantics.Verb
+end Semantics.Lexical
 
 namespace Features.LevinClassProfiles
-open Semantics.Verb
+open Semantics.Lexical
 open Features.EntailmentProfile
-open Semantics.Verb.Roots
+open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 5. Verification: templates match existing canonical profiles

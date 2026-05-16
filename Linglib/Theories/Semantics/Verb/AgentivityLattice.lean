@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness.Profile
-import Linglib.Theories.Semantics.Verb.LevinClassProfiles
+import Linglib.Theories.Semantics.Lexical.LevinClassProfiles
 import Linglib.Core.Case.Basic
 import Linglib.Features.Prominence
 import Mathlib.Order.Lattice

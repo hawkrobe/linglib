@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Semantics.Verb.Roots.RootFeatures
+import Linglib.Theories.Semantics.Lexical.Roots.RootFeatures
 
 /-!
 # Ellipsis: [E] Features and Deletion Domains
@@ -50,7 +50,7 @@ generically for all `DeletionSpine` instances.
 
 namespace Minimalist.Ellipsis
 
-open Semantics.Verb.Roots
+open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 0. Generic Deletion Spine
