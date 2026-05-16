@@ -1908,8 +1908,13 @@ import Linglib.Core.Algebra.RootedTree.PreLie.InsertSum
 import Linglib.Core.Algebra.RootedTree.PreLie.Insertion
 import Linglib.Core.Algebra.RootedTree.PreLie.Path
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
+import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
+import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
+import Linglib.Core.RingTheory.Bialgebra.SymmetricAlgebra
+import Linglib.Core.RingTheory.HopfAlgebra.SymmetricAlgebra
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc
+import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
