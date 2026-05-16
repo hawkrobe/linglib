@@ -102,8 +102,8 @@ open _root_.Mereology
 open Semantics.ArgumentStructure (UP CumTheta IsCumThetaVerb)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb IsIncVerb)
 open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
-open Semantics.Spatial (SpatialTrace)
-open Semantics.Spatial.SpatialTrace (pathShapeToTelicity)
+open Semantics.Spatial (Trace)
+open Semantics.Spatial.Trace (pathShapeToTelicity)
 open Semantics.Spatial.Path (PathShape)
 open Core.Scale (LicensingPipeline)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction DiagnosticResult)
@@ -918,7 +918,7 @@ open Semantics.Spatial.Path
 
 variable {Loc Time : Type*} [LinearOrder Time]
 variable [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
-variable [st : SpatialTrace Loc Time]
+variable [st : Trace Loc Time]
 
 /-- Bounded path predicate (QUA) ↦ telic VP via the σ-pullback. Backs
     the K98 §4.5 *walked from X to Y* analysis at the Bool-tag level. -/
@@ -926,14 +926,14 @@ theorem walked_from_to_telic_propositional
     (hinj : Function.Injective st.σ)
     {P : Path Loc → Prop} (hP : QUA P) :
     @QUA _ cem.evSemilatticeSup.toPartialOrder (P ∘ st.σ) :=
-  SpatialTrace.bounded_path_telic hinj hP
+  Trace.bounded_path_telic hinj hP
 
 /-- Unbounded path predicate (CUM) ↦ atelic VP via the σ-pullback. Backs
     the K98 §4.5 *walked towards X* analysis at the Bool-tag level. -/
 theorem walked_towards_atelic_propositional
     {P : Path Loc → Prop} (hP : CUM P) :
     @CUM _ cem.evSemilatticeSup (P ∘ st.σ) :=
-  SpatialTrace.unbounded_path_atelic hP
+  Trace.unbounded_path_atelic hP
 
 end SpatialTracePullback
 

@@ -38,7 +38,7 @@ open Semantics.Spatial.Path
 open Features
 open _root_.Mereology
 
-/-! ### SpatialTrace Class -/
+/-! ### Trace Class -/
 
 namespace Semantics.Spatial
 
@@ -50,7 +50,7 @@ namespace Semantics.Spatial
     This ensures CUM pulls back through σ (atelic paths → atelic VPs).
     For QUA pullback, injectivity must be assumed separately
     (via `σ_mereoDim`), just as for τ. -/
-class SpatialTrace (Loc Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
+class Trace (Loc Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
     [SemilatticeSup (Path Loc)] where
   /-- Extract the spatial path of an event. -/
   σ : Event Time → Path Loc
@@ -61,16 +61,16 @@ class SpatialTrace (Loc Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
 
 end Semantics.Spatial
 
-namespace Semantics.Spatial.SpatialTrace
+namespace Semantics.Spatial.Trace
 
 /-! ### IsSumHom Instance for σ -/
 
-/-- σ as an `IsSumHom` instance, derived from `SpatialTrace.σ_map_sup`.
+/-- σ as an `IsSumHom` instance, derived from `Trace.σ_map_sup`.
     Enables `cum_pullback` to work automatically for σ.
     Parallels `instIsSumHomRuntime` for τ. -/
 noncomputable instance instIsSumHomσ (Loc Time : Type*) [LinearOrder Time]
     [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
-    [st : SpatialTrace Loc Time] :
+    [st : Trace Loc Time] :
     @IsSumHom _ _ cem.evSemilatticeSup _ st.σ :=
   @IsSumHom.mk _ _ cem.evSemilatticeSup _
     st.σ (fun e₁ e₂ => st.σ_map_sup e₁ e₂)
@@ -82,7 +82,7 @@ noncomputable instance instIsSumHomσ (Loc Time : Type*) [LinearOrder Time]
     Parallels the pattern for τ (injective τ → MereoDim). -/
 def σ_mereoDim {Loc Time : Type*} [LinearOrder Time]
     [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
-    [st : SpatialTrace Loc Time]
+    [st : Trace Loc Time]
     (hinj : Function.Injective st.σ) :
     @MereoDim _ _ cem.evSemilatticeSup.toPartialOrder
       (inferInstance : PartialOrder (Path Loc)) st.σ :=
@@ -98,7 +98,7 @@ def σ_mereoDim {Loc Time : Type*} [LinearOrder Time]
     @cite{zwarts-2005}: bounded PPs yield telic VPs. -/
 theorem bounded_path_telic {Loc Time : Type*} [LinearOrder Time]
     [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
-    [st : SpatialTrace Loc Time]
+    [st : Trace Loc Time]
     (hinj : Function.Injective st.σ)
     {P : Path Loc → Prop} (hP : QUA P) :
     @QUA _ cem.evSemilatticeSup.toPartialOrder (P ∘ st.σ) := by
@@ -112,7 +112,7 @@ theorem bounded_path_telic {Loc Time : Type*} [LinearOrder Time]
     @cite{zwarts-2005}: unbounded PPs yield atelic VPs. -/
 theorem unbounded_path_atelic {Loc Time : Type*} [LinearOrder Time]
     [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
-    [st : SpatialTrace Loc Time]
+    [st : Trace Loc Time]
     {P : Path Loc → Prop} (hP : CUM P) :
     @CUM _ cem.evSemilatticeSup (P ∘ st.σ) :=
   @cum_pullback _ _ cem.evSemilatticeSup _ st.σ (instIsSumHomσ Loc Time) _ hP
@@ -154,4 +154,4 @@ theorem telicity_boundedness_agree (s : PathShape) :
 instance : Core.Scale.LicensingPipeline PathShape where
   toBoundedness p := (pathShapeToTelicity p).toMereoTag.toBoundedness
 
-end Semantics.Spatial.SpatialTrace
+end Semantics.Spatial.Trace

@@ -110,8 +110,8 @@ function for substrate purposes.
 
 The concrete trace functions in linglib are:
 - **τ** (runtime): instance below, derived from `EventCEM.τ_hom`.
-- **σ** (spatial extent): `instIsSumHomσ` in `SpatialTrace.lean`,
-  derived from `SpatialTrace.σ_map_sup`.
+- **σ** (spatial extent): `instIsSumHomσ` in `Trace.lean`,
+  derived from `Trace.σ_map_sup`.
 - **agentOf / patientOf / themeOf**: instances below, derived from
   `RoleHom.agent_hom / patient_hom / theme_hom`.
 
