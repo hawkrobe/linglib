@@ -102,7 +102,7 @@ complement *pu* from v_State.
 - `hkIncorporable` predicate: @cite{hale-keyser-1993} noun-
   incorporation. Distinct from `Phase.lean` D-incorporation
   (Davies-Dubinsky 2003 phase deactivation) and
-  `Typology.Middle` noun-incorporation (Beavers-Udayana 2022
+  `Typology.Voice` noun-incorporation (Beavers-Udayana 2022
   type-shifting taxonomy). The three are coincidentally named
   but structurally distinct; do NOT unify into a single
   `Incorporation.lean` substrate.

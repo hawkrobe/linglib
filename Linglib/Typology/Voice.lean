@@ -1,23 +1,37 @@
 /-!
-# Argument Realization and Suppression
+# Voice Typology: Argument Realization and Suppression
+@cite{kemmer-1993} @cite{kemmer-1994} @cite{beavers-udayana-2022}
 
-General types for describing how arguments are suppressed and realized
-in voice alternations. These capture two independent dimensions:
+Cross-linguistic substrate for voice alternations — the family of
+constructions (active / passive / antipassive / middle / reflexive /
+anticausative) that systematically vary which argument surfaces as
+subject and how event participants map to surface arguments.
 
-1. **Suppressed variable interpretation**: whether a suppressed argument
-   is interpreted as coreferent with the surface subject (reflexive)
-   or disjoint (dispositional/passive).
+The umbrella framing follows @cite{kemmer-1993}'s monograph *The Middle
+Voice*, which establishes middles as a coherent voice category
+distinct from passive/reflexive while sharing surface affinities with
+both. This file specifically formalizes Beavers-Udayana 2022's 2×2
+middle-construction typology along two orthogonal dimensions:
+
+1. **Suppressed variable interpretation**: whether a suppressed
+   argument is interpreted as coreferent with the surface subject
+   (reflexive) or disjoint (dispositional/passive).
 
 2. **Object realization**: whether the internal argument is realized
    as a full DP (functional application) or an incorporated NP
    (head-adjunction to V).
 
-The cross-product of these two dimensions yields a 2×2 typology of
-middle constructions, first articulated for Indonesian *ber-* by
-@cite{beavers-udayana-2022} but applicable cross-linguistically.
+Both dimensions generalize beyond middles proper — `ObjectRealization`
+covers noun-incorporation typology (cf. Mithun 1984) and
+`SuppressedVarReading` covers reflexive/anticausative readings broadly.
+
+WALS-side neighbors: `Typology.ArgumentStructure` covers WALS chs
+105--111 (ditransitives, reciprocals, passives, antipassives,
+applicatives, causatives); voice alternations specifically are at
+ch 107 (`PassivePresence`) and ch 106 (`ReciprocalType`).
 -/
 
-namespace Typology.Middle
+namespace Typology.Voice
 
 /-- How a suppressed argument variable is interpreted vis-à-vis the
     surface subject. -/
@@ -60,4 +74,4 @@ def MiddleType.agentSurfaces (m : MiddleType) : Prop :=
 instance : DecidablePred MiddleType.agentSurfaces :=
   fun m => decEq m.objRealization .incorporation
 
-end Typology.Middle
+end Typology.Voice
