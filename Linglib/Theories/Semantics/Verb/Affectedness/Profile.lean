@@ -69,7 +69,7 @@ projection here operates on the proto-role level, which is the final
 composed meaning — not the root-level or surface-diagnostic level.
 -/
 
-namespace Features.Affectedness
+namespace Semantics.Verb.Affectedness.Profile
 
 open Features.EntailmentProfile
 
@@ -246,4 +246,4 @@ def IsQuantizedAffected.ofProfileAndWitness {α β δ : Type*}
     IsQuantizedAffected (δ := δ) θ :=
   IsQuantizedAffected.mk' forget g_φ h_quantized
 
-end Features.Affectedness
+end Semantics.Verb.Affectedness.Profile

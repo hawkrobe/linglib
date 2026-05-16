@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
-import Linglib.Theories.Semantics.Verb.Affectedness
+import Linglib.Theories.Semantics.Verb.Affectedness.Profile
 import Linglib.Theories.Semantics.Verb.LevinClassProfiles
 import Linglib.Core.Case.Basic
 import Linglib.Features.Prominence

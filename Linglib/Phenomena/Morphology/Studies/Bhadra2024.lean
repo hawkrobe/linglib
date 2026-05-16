@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Theories.Semantics.Verb.Affectedness
+import Linglib.Theories.Semantics.Verb.Affectedness.Profile
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -43,7 +43,7 @@ a second consumer materialises.
 open Semantics.Verb
 open Features.EventStructure
 open Features.EntailmentProfile
-open Features.Affectedness
+open Semantics.Verb.Affectedness.Profile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Outcome Set Cardinality (eq. 62)

@@ -2376,7 +2376,7 @@ import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Typology.Middle
 import Linglib.Theories.Semantics.Verb.AgentivityLattice
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
-import Linglib.Theories.Semantics.Verb.Affectedness
+import Linglib.Theories.Semantics.Verb.Affectedness.Profile
 import Linglib.Theories.Semantics.Verb.LevinTheory
 import Linglib.Theories.Semantics.Verb.LevinClassProfiles
 import Linglib.Theories.Semantics.Verb.EventStructure
