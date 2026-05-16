@@ -2367,8 +2367,8 @@ import Linglib.Theories.Semantics.Events.ThematicRole.Defs
 import Linglib.Theories.Semantics.Events.CEM
 import Linglib.Theories.Semantics.Aspect.Stratified
 import Linglib.Theories.Semantics.Events.ThematicRole.Properties
-import Linglib.Theories.Semantics.Events.Scalar.Defs
-import Linglib.Theories.Semantics.Events.Scalar.Affectedness
+import Linglib.Theories.Semantics.Verb.Affectedness.Defs
+import Linglib.Theories.Semantics.Verb.Affectedness.Hierarchy
 import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity

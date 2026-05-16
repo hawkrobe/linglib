@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Theories.Semantics.Degree.MeasureFunction
-import Linglib.Theories.Semantics.Events.Scalar.Affectedness
+import Linglib.Theories.Semantics.Verb.Affectedness.Hierarchy
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Phenomena.TenseAspect.Diagnostics
@@ -329,8 +329,8 @@ theorem warm_pipeline_converge :
     independent of this substrate work. -/
 
 open Semantics.Events
-open Semantics.Events.Scalar
-open Semantics.Events.Scalar.Affectedness
+open Semantics.Verb.Affectedness
+open Semantics.Verb.Affectedness.Hierarchy
 open Semantics.Degree.MeasureFunction
 
 /-- Toy time type for the substrate demonstration. -/
