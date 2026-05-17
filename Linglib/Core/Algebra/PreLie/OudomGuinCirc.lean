@@ -277,18 +277,111 @@ theorem one_circ (A : SymmetricAlgebra R L) :
   rw [Algebra.algebraMap_eq_smul_one]
   rfl
 
+/-- Bialgebra counit-comul triangle for `SymmetricAlgebra`:
+    `(mul' R R) ∘ (map ε ε) ∘ Δ = ε` as a linear map `S(L) → R`.
+    Specialized: `mul' R R (map algebraMapInv algebraMapInv (comul B)) = algebraMapInv B`. -/
+private theorem mul'_map_algebraMapInv_comul (B : SymmetricAlgebra R L) :
+    LinearMap.mul' R R
+        (TensorProduct.map
+          (SymmetricAlgebra.algebraMapInv (R := R) (M := L)).toLinearMap
+          (SymmetricAlgebra.algebraMapInv (R := R) (M := L)).toLinearMap
+          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B)) =
+      SymmetricAlgebra.algebraMapInv (R := R) (M := L) B := by
+  -- algebraMapInv.toLinearMap = Coalgebra.counit by the instBialgebra setup.
+  have h_counit_eq : (SymmetricAlgebra.algebraMapInv (R := R) (M := L)).toLinearMap =
+                      Coalgebra.counit (R := R) (A := SymmetricAlgebra R L) := rfl
+  rw [h_counit_eq, ← LinearMap.lTensor_comp_rTensor, LinearMap.comp_apply,
+      Coalgebra.rTensor_counit_comul, LinearMap.lTensor_tmul, LinearMap.mul'_apply,
+      one_mul]
+  rfl
+
 /-- **Prop 2.8 (ii)**: counit and `○` commute. `ε(A ○ B) = ε(A) · ε(B)`.
 
-    **Status**: substrate-level proof outline scaffolded; the bialgebra
-    counit-comul axiom `(mul' R R) ∘ map ε ε ∘ Δ = ε` step on the `mul`
-    case is not yet closed. Cases `algebraMap`, `ι`, `add` close via
-    induction; `mul` case needs the bialgebra-axiom transport from
-    `Coalgebra.rTensor_counit_comul`. TODO: close. -/
+    Strategy: prove the linear-map equality `ε ∘ₗ oudomGuinCirc A = ε A • ε`,
+    then apply at B. Induction on A:
+    - `algebraMap r`: `(algebraMap r in WithConv).ofConv B' = r • algebraMap (counit B')`;
+      ε of both sides reduces via `algebraMap_leftInverse` + `counit = algebraMapInv`.
+    - `ι T`: `(circGen T).ofConv B' = ι (circByT_total T B')`; ε kills ι.
+    - `mul A₁ A₂`: push ε through `mul'` (`AlgHom.comp_mul'`), fuse nested
+      `TensorProduct.map`, apply IH, close via `mul'_map_algebraMapInv_comul`.
+    - `add`: linearity. -/
 theorem counit_circ (A B : SymmetricAlgebra R L) :
     SymmetricAlgebra.algebraMapInv (M := L) (oudomGuinCirc (R := R) A B) =
       (SymmetricAlgebra.algebraMapInv (M := L) A) *
       (SymmetricAlgebra.algebraMapInv (M := L) B) := by
-  sorry
+  -- Reduce to a linear-map equation pre-quantified over B.
+  suffices h : (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap.comp
+                  (oudomGuinCirc (R := R) A) =
+               (SymmetricAlgebra.algebraMapInv (M := L) A) •
+                 (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap by
+    have := congrArg (fun (f : SymmetricAlgebra R L →ₗ[R] R) => f B) h
+    simp only [LinearMap.comp_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply,
+               smul_eq_mul] at this
+    exact this
+  induction A using SymmetricAlgebra.induction with
+  | algebraMap r =>
+    ext B'
+    simp only [LinearMap.comp_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply,
+               smul_eq_mul, oudomGuinCirc_eq_ofConv]
+    rw [AlgHom.commutes, LinearMap.convAlgebraMap_apply, map_smul,
+        AlgHom.commutes, SymmetricAlgebra.algebraMap_leftInverse, smul_eq_mul]
+    -- Goal: r * (algebraMap R R) (counit B') = r * algebraMapInv B'
+    -- (algebraMap R R) = id, counit = algebraMapInv (def from instBialgebra).
+    rfl
+  | ι T =>
+    ext B'
+    simp only [LinearMap.comp_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply,
+               smul_eq_mul, oudomGuinCirc_eq_ofConv, circHom_ι,
+               SymmetricAlgebra.algebraMapInv_ι, zero_mul]
+    show SymmetricAlgebra.algebraMapInv ((SymmetricAlgebra.ι R L).comp
+            (OudomGuinCircConstruct.circByT_total T) B') = 0
+    rw [LinearMap.comp_apply, SymmetricAlgebra.algebraMapInv_ι]
+  | mul A₁ A₂ ih₁ ih₂ =>
+    ext B'
+    simp only [LinearMap.comp_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply]
+    rw [oudomGuinCirc_eq_ofConv, map_mul, LinearMap.convMul_apply]
+    -- Push algebraMapInv through mul' via AlgHom.comp_mul'
+    have h_push := congrArg
+        (fun (f : (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) →ₗ[R] R) =>
+          f ((TensorProduct.map (circHom A₁).ofConv (circHom A₂).ofConv)
+              (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B')))
+        (AlgHom.comp_mul' (SymmetricAlgebra.algebraMapInv (M := L)))
+    simp only [LinearMap.coe_comp, Function.comp_apply,
+               AlgHom.toLinearMap_apply] at h_push
+    rw [h_push]
+    -- Fuse the two `TensorProduct.map` applications via `TensorProduct.map_comp`:
+    -- args order in mathlib is (f₂, g₂, f₁, g₁): map (f₂∘f₁) (g₂∘g₁) = map f₂ g₂ ∘ map f₁ g₁.
+    have h_fuse := congrArg
+      (fun (f : (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) →ₗ[R] R ⊗[R] R) =>
+        f (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B'))
+      (TensorProduct.map_comp
+        (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap
+        (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap
+        (circHom A₁).ofConv
+        (circHom A₂).ofConv)
+    simp only [LinearMap.coe_comp, Function.comp_apply] at h_fuse
+    rw [← h_fuse]
+    -- Apply ih₁ and ih₂ to substitute (algInv ∘ oudomGuinCirc Aᵢ) = algInv Aᵢ • algInv.
+    -- First convert (circHom Aᵢ).ofConv back to oudomGuinCirc Aᵢ (they're defeq).
+    rw [show (circHom A₁).ofConv = oudomGuinCirc (R := R) A₁ from rfl,
+        show (circHom A₂).ofConv = oudomGuinCirc (R := R) A₂ from rfl,
+        ih₁, ih₂]
+    -- Now: mul' R R (map (algInv A₁ • algInv) (algInv A₂ • algInv) (comul B'))
+    -- Pull out the scalars from the map, then from outside the application of mul'.
+    rw [TensorProduct.map_smul_left, TensorProduct.map_smul_right, smul_smul,
+        LinearMap.smul_apply, map_smul, mul'_map_algebraMapInv_comul,
+        ← map_mul, smul_eq_mul]
+  | add A₁ A₂ ih₁ ih₂ =>
+    ext B'
+    simp only [LinearMap.comp_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply,
+               smul_eq_mul]
+    rw [oudomGuinCirc_eq_ofConv, map_add, WithConv.ofConv_add, LinearMap.add_apply,
+        map_add, ← oudomGuinCirc_eq_ofConv, ← oudomGuinCirc_eq_ofConv, map_add]
+    have h₁ := congrArg (fun (f : SymmetricAlgebra R L →ₗ[R] R) => f B') ih₁
+    have h₂ := congrArg (fun (f : SymmetricAlgebra R L →ₗ[R] R) => f B') ih₂
+    simp only [LinearMap.comp_apply, LinearMap.smul_apply, AlgHom.toLinearMap_apply,
+               smul_eq_mul] at h₁ h₂
+    rw [h₁, h₂, ← add_mul]
 
 /-! **Prop 2.8 (iii)**: `Δ` commutes with `○` — `Δ(A ○ B) = Σ (A₍₁₎ ○ B₍₁₎)
 ⊗ (A₍₂₎ ○ B₍₂₎)`, Sweedler-summed over both coproducts.
