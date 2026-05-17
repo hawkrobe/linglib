@@ -211,31 +211,6 @@ theorem evalPres_iff_toSitProp {W Time : Type*}
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Per-Theory Derivations: Wurmbrand
--- ════════════════════════════════════════════════════════════════
-
-open Minimalist.Tense.InfinitivalTense
-
-/-- Wurmbrand classifies "wanted to leave" as future irrealis:
-    the complement is tenseless + woll → future-oriented. -/
-theorem wurmbrand_classifies_wantedToLeave :
-    want.tenseClass = .futureIrrealis ∧
-    classOrientation .futureIrrealis = .futureOriented := ⟨rfl, rfl⟩
-
-/-- Wurmbrand classifies "believes to be sick" as propositional:
-    NOW-anchored → simultaneous with believing. -/
-theorem wurmbrand_classifies_believesToBeSick :
-    believe.tenseClass = .propositional ∧
-    classOrientation .propositional = .simultaneous := ⟨rfl, rfl⟩
-
-/-- Wurmbrand classifies "tried to leave" as restructuring:
-    dependent on matrix → same temporal domain. -/
-theorem wurmbrand_classifies_triedToLeave :
-    try_.tenseClass = .restructuring ∧
-    classOrientation .restructuring = .dependent := ⟨rfl, rfl⟩
-
-
--- ════════════════════════════════════════════════════════════════
 -- § Per-Theory Derivations: Sharvit
 -- ════════════════════════════════════════════════════════════════
 

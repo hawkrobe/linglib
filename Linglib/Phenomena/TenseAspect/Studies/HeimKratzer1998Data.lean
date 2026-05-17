@@ -175,40 +175,6 @@ theorem historicalPresent_is_present :
     historicalPresent.isPresent := rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § 15. Future-Oriented Complements
--- ════════════════════════════════════════════════════════════════
-
-/-! Verbs like *want*, *plan*, *hope* orient their complement toward
-    the future without standard SOT:
-
-    "John wanted to leave."
-
-    The leaving is AFTER the wanting, but there is no future tense
-    morphology. The futurity comes from the verb's lexical semantics,
-    not from tense. @cite{wurmbrand-2014}: the temporal orientation is
-    part of the verb's selection, not tense composition.
-
-    "John planned to leave" — the leaving is strictly after the planning.
-    "John hoped to win" — the winning is after the hoping.
-
-    These complements behave differently from standard SOT because the
-    embedded temporal location is lexically determined, not computed
-    from tense morphology. -/
-
-/-- Future-oriented complement: "John wanted to leave."
-    The wanting is past; the (desired) leaving is after the wanting.
-    No tense morphology on the infinitival complement. -/
-def wantedToLeave : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2     -- wanting in the past
-  eventTime := -1         -- desired leaving after the wanting
-
-/-- Future-oriented: event time after reference time. -/
-theorem wantedToLeave_future_oriented :
-    wantedToLeave.eventTime > wantedToLeave.referenceTime := by native_decide
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 16. Tense in Adjunct Clauses
@@ -321,52 +287,6 @@ def optionalSOTPresentForm : ReichenbachFrame ℤ where
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 22. Dependent vs Independent Tense (@cite{wurmbrand-2014})
--- ════════════════════════════════════════════════════════════════
-
-/-! @cite{wurmbrand-2014} classifies infinitival tense into three types:
-
-    1. **Future irrealis** (decide, want): no independent tense;
-       future orientation comes from woll.
-       "John decided to leave" → leaving after deciding.
-
-    2. **Propositional** (believe, claim): NOW-anchored tense.
-       "John believes Mary to be sick" → simultaneous with believing.
-
-    3. **Restructuring** (try, begin): dependent on matrix tense.
-       "John tried to leave" → leaving in the same temporal domain.
-
-    This is relevant because it shows that the "tenselessness" of
-    infinitives is not uniform — different complement types have
-    different temporal behavior. -/
-
-/-- Future-irrealis complement: "John decided to leave."
-    The deciding is past; the leaving is after the deciding.
-    No tense morphology on "to leave." -/
-def decidedToLeave : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2     -- deciding in the past
-  eventTime := -1         -- leaving after the deciding
-
-/-- Propositional complement: "John believes Mary to be sick."
-    The believing is present; the sickness is simultaneous. -/
-def believesToBeSick : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 0      -- believing now
-  eventTime := 0          -- sickness simultaneous with believing
-
-/-- Restructuring complement: "John tried to leave."
-    The trying and the leaving are in the same temporal domain. -/
-def triedToLeave : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2     -- trying in the past
-  eventTime := -2         -- leaving in the same temporal domain
-
-
--- ════════════════════════════════════════════════════════════════
 -- § Theory-Neutral Temporal Facts
 -- ════════════════════════════════════════════════════════════════
 
@@ -423,19 +343,6 @@ theorem optionalSOT_both_simultaneous :
 /-- Optional SOT: both forms have the same temporal structure. -/
 theorem optionalSOT_same_frame :
     optionalSOTPastForm = optionalSOTPresentForm := rfl
-
-/-- Future-irrealis complement: event after reference (future-oriented). -/
-theorem decidedToLeave_future_oriented :
-    decidedToLeave.eventTime > decidedToLeave.referenceTime := by native_decide
-
-/-- Propositional complement: event at reference (simultaneous). -/
-theorem believesToBeSick_simultaneous :
-    believesToBeSick.eventTime = believesToBeSick.referenceTime := rfl
-
-/-- Restructuring complement: event at reference (same domain). -/
-theorem triedToLeave_same_domain :
-    triedToLeave.eventTime = triedToLeave.referenceTime := rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 23. Temporal Domain: Shift vs. Subordination (Declerck ch. 2 §12–14)
