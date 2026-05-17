@@ -245,4 +245,105 @@ theorem pla_isAcquaintedWith_unifies_with_polymorphic
   Iff.rfl
 
 
+-- ════════════════════════════════════════════════════════════════
+-- § Empirical Data: Abusch's SOT Diagnostic Sentences
+-- ════════════════════════════════════════════════════════════════
+
+/-! Reichenbach frames for the canonical Abusch-tradition SOT
+    diagnostics: past-under-past (simultaneous + shifted), present-
+    under-past (double-access), future-under-past (would), the ULC
+    foil (forward-shifted), and temporal de re. Each embedded frame
+    is constructed via the `embeddedFrame` / `simultaneousFrame` /
+    `shiftedFrame` substrate operators (per CLAUDE.md
+    "Theory-hub denotation as study-file constraint") rather than
+    hand-stipulating S/P/R/E records. -/
+
+/-- Matrix frame for "John said..." (past tense, perfective).
+    Speech time S = 0, saying event at t = -2. Root clause: P = S;
+    perfective: E = R. -/
+def matrixSaid : ReichenbachFrame ℤ where
+  speechTime := 0
+  perspectiveTime := 0
+  referenceTime := -2
+  eventTime := -2
+
+/-- "Mary was sick" — SIMULTANEOUS reading. Embedded P = matrix E = -2,
+    R' = E_matrix = -2: Mary is sick at the time of the saying. -/
+def embeddedSickSimultaneous : ReichenbachFrame ℤ :=
+  simultaneousFrame matrixSaid (-2)
+
+/-- "Mary was sick" — SHIFTED reading. R' = -5 < E_matrix: Mary was
+    sick before the saying. -/
+def embeddedSickShifted : ReichenbachFrame ℤ :=
+  shiftedFrame matrixSaid (-5) (-5)
+
+/-- "Mary is sick" (present-under-past) — DOUBLE-ACCESS reading.
+    Embedded P = matrix E = -2, R' = -2, E = 0 (speech time):
+    Mary is sick now AND the sickness is relevant at the time of saying. -/
+def embeddedSickPresent : ReichenbachFrame ℤ :=
+  embeddedFrame matrixSaid (-2) 0
+
+/-- "Mary would leave" (future-under-past). "Would" = PAST + FUTURE:
+    the leaving is after the saying. R' = -1 > E_matrix. -/
+def embeddedWouldLeave : ReichenbachFrame ℤ :=
+  embeddedFrame matrixSaid (-1) (-1)
+
+/-- Hypothetical FORWARD-SHIFTED frame (ULC foil, §7). R' = -1 >
+    E_matrix = -2: sick AFTER the saying. **Predicted not to exist as
+    a reading** per Abusch's Upper Limit Constraint. Structurally
+    coincides with `embeddedWouldLeave`'s record — the Reichenbach
+    encoding cannot distinguish "ULC violation" from "valid future
+    reading"; only the analyst's intent and the sentence's actual
+    meaning do. -/
+def embeddedSickForwardShifted : ReichenbachFrame ℤ :=
+  embeddedFrame matrixSaid (-1) (-1)
+
+/-- "John believed it was raining" — TEMPORAL DE RE. The rain event
+    is located at -3 via the actual world (de re), not in John's
+    belief worlds (de dicto). Embedded P = -2, R = E = -3. -/
+def temporalDeRe : ReichenbachFrame ℤ :=
+  embeddedFrame matrixSaid (-3) (-3)
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Per-Datum Verifications
+-- ════════════════════════════════════════════════════════════════
+
+/-- The simultaneous frame is `isPresent` (R = P).
+    Per Abusch: a bound variable receives matrix E. -/
+theorem abusch_derives_embeddedSickSimultaneous :
+    embeddedSickSimultaneous.isPresent := rfl
+
+/-- The shifted frame is `isPast` (R < P).
+    Per Abusch: a free past variable below the matrix event time. -/
+theorem abusch_derives_embeddedSickShifted :
+    embeddedSickShifted.isPast := by
+  simp only [ReichenbachFrame.isPast, embeddedSickShifted, shiftedFrame,
+    matrixSaid]; omega
+
+/-- The matrix "said" frame is perfective (E = R). -/
+theorem matrixSaid_is_perfective : matrixSaid.isPerfective := rfl
+
+/-- The shifted embedded frame is perfective (E = R). -/
+theorem embeddedShifted_is_perfective : embeddedSickShifted.isPerfective := rfl
+
+/-- Forward-shifted reading violates ULC: R' > E_matrix is not allowed. -/
+theorem forwardShifted_violates_ulc :
+    ¬ upperLimitConstraint
+      embeddedSickForwardShifted.referenceTime
+      matrixSaid.eventTime := by decide
+
+/-- Simultaneous reading satisfies ULC: R' ≤ E_matrix. -/
+theorem simultaneous_satisfies_ulc :
+    upperLimitConstraint
+      embeddedSickSimultaneous.referenceTime
+      matrixSaid.eventTime := by decide
+
+/-- Shifted reading satisfies ULC: R' < E_matrix. -/
+theorem shifted_satisfies_ulc :
+    upperLimitConstraint
+      embeddedSickShifted.referenceTime
+      matrixSaid.eventTime := by decide
+
+
 end Phenomena.TenseAspect.Studies.Abusch1997

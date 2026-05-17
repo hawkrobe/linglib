@@ -85,69 +85,6 @@ open Core.Time.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 1. Past-Under-Past: "John said Mary was sick"
--- ════════════════════════════════════════════════════════════════
-
-/-! Two readings of "John said that Mary was sick":
-    - SIMULTANEOUS: Mary's being sick overlaps with John's saying
-    - SHIFTED: Mary's being sick precedes John's saying -/
-
-/-- Matrix frame for "John said..." (past tense, perfective).
-    Speech time S = 0, saying event at t = -2. -/
-def matrixSaid : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0    -- root clause: P = S
-  referenceTime := -2     -- PAST: R < P
-  eventTime := -2         -- perfective: E = R
-
-/-- Embedded frame for "Mary was sick" — SIMULTANEOUS reading.
-    Embedded P = matrix E = -2, R' = E_matrix = -2.
-    Mary is sick at the time of the saying. -/
-def embeddedSickSimultaneous : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -2     -- simultaneous: R' = E_matrix
-  eventTime := -2         -- sick-time = say-time
-
-/-- Embedded frame for "Mary was sick" — SHIFTED reading.
-    Embedded P = matrix E = -2, R' = -5 < E_matrix.
-    Mary was sick before the saying. -/
-def embeddedSickShifted : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -5     -- shifted: R' < E_matrix
-  eventTime := -5         -- sick-time before say-time
-
-
--- ════════════════════════════════════════════════════════════════
--- § 2. Present-Under-Past: "John said Mary is sick"
--- ════════════════════════════════════════════════════════════════
-
-/-- Embedded frame for "Mary is sick" — PRESENT under PAST.
-    Double-access reading: Mary is sick now (at speech time) AND
-    the sickness is relevant at the time of saying. -/
-def embeddedSickPresent : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -2     -- R' = P' (present relative to matrix)
-  eventTime := 0          -- sick at speech time (double-access)
-
-
--- ════════════════════════════════════════════════════════════════
--- § 3. Future-Under-Past: "John said Mary would leave"
--- ════════════════════════════════════════════════════════════════
-
-/-- Embedded frame for "Mary would leave" — FUTURE under PAST.
-    "Would" = PAST + FUTURE: the leaving is
-    after the saying but before or at speech time. -/
-def embeddedWouldLeave : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -1     -- R' > E_matrix (future relative to saying)
-  eventTime := -1         -- leaving after saying
-
-
--- ════════════════════════════════════════════════════════════════
 -- § 4. SOT vs Non-SOT: English vs Japanese
 -- ════════════════════════════════════════════════════════════════
 
@@ -167,20 +104,6 @@ def embeddedByookiDatta : ReichenbachFrame ℤ where
   perspectiveTime := 0    -- non-SOT: P = S (absolute, not shifted)
   referenceTime := -5     -- PAST relative to S: R < S
   eventTime := -5
-
-
--- ════════════════════════════════════════════════════════════════
--- § 5. Upper Limit Constraint: No Forward-Shifted Readings
--- ════════════════════════════════════════════════════════════════
-
-/-- Hypothetical forward-shifted frame (for gap demonstration).
-    If past-under-past allowed forward shift, R' > E_matrix.
-    This frame is PREDICTED NOT TO EXIST as a reading. -/
-def embeddedSickForwardShifted : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -1     -- R' = -1 > E_matrix = -2 (forward shifted!)
-  eventTime := -1         -- sick AFTER the saying
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -234,20 +157,6 @@ def counterfactualWere : ReichenbachFrame ℤ where
   perspectiveTime := 0    -- present-time scenario
   referenceTime := 0      -- NOT past! "were" = now, counterfactually
   eventTime := 0
-
-
--- ════════════════════════════════════════════════════════════════
--- § 9. Temporal De Re: "John believed it was raining"
--- ════════════════════════════════════════════════════════════════
-
-/-- Temporal de re frame: "John believed it was raining"
-    The rain event is located at a time determined in the actual
-    world (de re), not in John's belief worlds (de dicto). -/
-def temporalDeRe : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- John's belief time (= saying time)
-  referenceTime := -3     -- the rain time (de re: actual world)
-  eventTime := -3
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -687,61 +596,13 @@ def triedToLeave : ReichenbachFrame ℤ where
 -- § Theory-Neutral Temporal Facts
 -- ════════════════════════════════════════════════════════════════
 
-/-- The matrix "said" is past: R < P. -/
-theorem matrixSaid_R_lt_P :
-    matrixSaid.referenceTime < matrixSaid.perspectiveTime := by native_decide
-
-/-- The matrix frame is a root clause: P = S. -/
-theorem matrixSaid_root :
-    matrixSaid.perspectiveTime = matrixSaid.speechTime := by native_decide
-
-/-- Simultaneous reading: embedded R = matrix E. -/
-theorem simultaneous_R_eq_matrix_E :
-    embeddedSickSimultaneous.referenceTime = matrixSaid.eventTime := by native_decide
-
-/-- Shifted reading: embedded R < matrix E. -/
-theorem shifted_R_lt_matrix_E :
-    embeddedSickShifted.referenceTime < matrixSaid.eventTime := by native_decide
-
-/-- Simultaneous: sick-time = say-time. -/
-theorem simultaneous_sick_at_say_time :
-    embeddedSickSimultaneous.eventTime = matrixSaid.eventTime := by native_decide
-
-/-- Shifted: sick-time < say-time. -/
-theorem shifted_sick_before_say :
-    embeddedSickShifted.eventTime < matrixSaid.eventTime := by native_decide
-
 /-- Japanese: embedded P = S (absolute, not shifted to matrix E). -/
 theorem japanese_absolute_perspective :
     embeddedByookiDatta.perspectiveTime = embeddedByookiDatta.speechTime := by native_decide
 
-/-- English simultaneous: embedded P = matrix E (perspective shifted). -/
-theorem english_simultaneous_perspective_shifted :
-    embeddedSickSimultaneous.perspectiveTime = matrixSaid.eventTime := by native_decide
-
-/-- English shifted: embedded P = matrix E (perspective shifted). -/
-theorem english_shifted_perspective_shifted :
-    embeddedSickShifted.perspectiveTime = matrixSaid.eventTime := by native_decide
-
-/-- Forward-shifted: R' > matrix E (theory-neutral temporal fact). -/
-theorem forwardShifted_R_gt_matrix_E :
-    embeddedSickForwardShifted.referenceTime > matrixSaid.eventTime := by native_decide
-
-/-- Double access reading: present-under-past requires overlap with speech time. -/
-theorem double_access_overlaps_speech :
-    embeddedSickPresent.eventTime = embeddedSickPresent.speechTime := by native_decide
-
-/-- Future-under-past: embedded R > matrix E. -/
-theorem futureUnderPast_R_gt_matrix_E :
-    embeddedWouldLeave.referenceTime > matrixSaid.eventTime := by native_decide
-
 /-- Counterfactual: past morphology but R = P (present reference). -/
 theorem counterfactual_present_reference :
     counterfactualWere.referenceTime = counterfactualWere.perspectiveTime := by native_decide
-
-/-- Temporal de re: R < P (past reference relative to belief time). -/
-theorem deRe_past_reference :
-    temporalDeRe.referenceTime < temporalDeRe.perspectiveTime := by native_decide
 
 /-- RC tense: past reference. -/
 theorem rc_past_reference :

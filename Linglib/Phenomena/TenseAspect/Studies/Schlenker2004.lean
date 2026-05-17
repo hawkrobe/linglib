@@ -1,4 +1,3 @@
-import Linglib.Phenomena.TenseAspect.Studies.HeimKratzer1998Data
 import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
@@ -59,7 +58,7 @@ Phenomena.TenseAspect (matrixSaid, embeddedSickSimultaneous, etc.; data lives in
 namespace Schlenker2004
 
 open Core.Context
-open Phenomena.TenseAspect
+open Phenomena.TenseAspect.Studies.Abusch1997
 
 -- ============================================================================
 -- § Tower-Based Tense Model
