@@ -39,9 +39,9 @@ Core.Context.Tower (ContextTower, push, innermost, origin)
     ↓
 Core.Context.Shifts (temporalShift: changes time, preserves agent/world)
     ↓
-This file: tower operations produce the Reichenbach frames in HeimKratzer1998Data.lean
+This file: tower operations produce the Reichenbach frames in Studies/Abusch1997.lean
     ↓
-Phenomena.TenseAspect (matrixSaid, embeddedSickSimultaneous, etc.; data lives in Studies/HeimKratzer1998Data.lean)
+Phenomena.TenseAspect.Studies.Abusch1997 (matrixSaid, embeddedSickSimultaneous, etc.)
 ```
 
 ## Key Results
