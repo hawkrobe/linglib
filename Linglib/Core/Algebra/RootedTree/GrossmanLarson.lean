@@ -600,8 +600,8 @@ private theorem insertion_one_of'_zero :
   rw [Finsupp.linearCombination_single, one_smul]
   exact insertionBasis_zero_zero
 
-/-- Auxiliary: `insertion 1 (of' G₁) = 0` for non-empty G₁. -/
-private theorem insertion_one_of'_ne_zero (G₁ : Forest (Nonplanar α))
+/-- `insertion 1 (of' G₁) = 0` for non-empty G₁. -/
+theorem insertion_one_of'_ne_zero (G₁ : Forest (Nonplanar α))
     (h : G₁ ≠ 0) :
     insertion (1 : GrossmanLarson R α) (of' (R := R) G₁) =
       (0 : GrossmanLarson R α) := by

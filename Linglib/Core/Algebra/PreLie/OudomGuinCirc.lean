@@ -384,7 +384,7 @@ recursion. -/
     Follows from Prop 2.7 (iii) applied at `C = ι X`, where
     `comul (ι X) = ι X ⊗ 1 + 1 ⊗ ι X` (since `ι X` is primitive) and
     `_ ○ 1 = _` (circ_one_right). -/
-private theorem oudomGuinCirc_mul_ι (A B : SymmetricAlgebra R L) (X : L) :
+theorem oudomGuinCirc_mul_ι (A B : SymmetricAlgebra R L) (X : L) :
     oudomGuinCirc (R := R) (A * B) (SymmetricAlgebra.ι R L X) =
       oudomGuinCirc A (SymmetricAlgebra.ι R L X) * B +
       A * oudomGuinCirc B (SymmetricAlgebra.ι R L X) := by
