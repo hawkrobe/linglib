@@ -1759,6 +1759,7 @@ import Linglib.Phenomena.TenseAspect.Studies.HayKennedyLevin1999
 import Linglib.Phenomena.TenseAspect.Studies.IatridouEtAl2001
 import Linglib.Phenomena.TenseAspect.Studies.IatridouZeijlstra2021
 import Linglib.Phenomena.TenseAspect.Studies.Kiparsky2002
+import Linglib.Phenomena.TenseAspect.Studies.Pancheva2003
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Phenomena.TemporalConnectives.Studies.BeaverCondoravdi2003

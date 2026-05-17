@@ -38,15 +38,14 @@ Kiparsky's theory solves three classic perfect puzzles (§2-§4):
 - **Michaelis's Wh-puzzle** (§4): R-reading excluded in Wh-questions
   unless the adverbial relates to the result state.
 
-## Pancheva 2003 bridge
+## Pancheva 2003 relation
 
 @cite{pancheva-2003}'s aspect-of-perfect-participle classification
-(existential / universal / resultative / experiential) embeds into
-Kiparsky's via `toKiparsky`. Pancheva's account is independent
-(participle-aspect-based vs Kiparsky's event-structure-based); the
-embedding is a structural projection, not a theory of how Pancheva
-arrives at her types. A standalone Pancheva2003 Studies file would
-formalize the upstream account.
+(universal / experiential / resultative) embeds into Kiparsky's via
+the `toKiparsky` bridge that lives in `Studies/Pancheva2003.lean`.
+Pancheva's account is independent: she derives the readings from
+participial aspect (Aktionsart × grammatical aspect), while Kiparsky
+derives them from event-structure mappings.
 
 ## Status
 
@@ -158,32 +157,7 @@ theorem resultative_requires_complex {Time : Type*} [LinearOrder Time]
     ¬ resultativeReading (.simple r) R := by
   simp [resultativeReading]
 
--- ════════════════════════════════════════════════════
--- § 4. @cite{pancheva-2003} Bridge
--- ════════════════════════════════════════════════════
-
-/-- Map @cite{pancheva-2003}'s perfect types to Kiparsky's readings.
-    - experiential → existential
-    - universal → universal
-    - resultative → resultative -/
-def toKiparsky : PerfectType → PerfectReading
-  | .experiential => .existential
-  | .universal => .universal
-  | .resultative => .resultative
-
-/-- Pancheva's classification embeds into Kiparsky's: every Pancheva type
-    maps to a distinct Kiparsky reading. -/
-theorem pancheva_injective :
-    Function.Injective toKiparsky := by
-  intro a b h
-  cases a <;> cases b <;> simp_all [toKiparsky]
-
-/-- Pancheva's types are a proper subset of Kiparsky's: Kiparsky adds
-    the present-state reading which Pancheva does not distinguish. -/
-theorem pancheva_subset_kiparsky :
-    ∀ pt : PerfectType, toKiparsky pt ∈
-      [PerfectReading.existential, .universal, .resultative, .presentState] := by
-  intro pt; cases pt <;> simp [toKiparsky]
+-- (§ 4 Pancheva 2003 bridge moved to Studies/Pancheva2003.lean.)
 
 -- ════════════════════════════════════════════════════
 -- § 5. Kiparsky's Three Puzzles
