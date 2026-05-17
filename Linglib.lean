@@ -266,7 +266,6 @@ import Linglib.Features.VerbCluster
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Order
-import Linglib.Core.Case.FeatureBundle
 import Linglib.Core.Case.Split
 import Linglib.Core.Case.Grammaticalization
 import Linglib.Core.Case.Comparative
@@ -1126,7 +1125,6 @@ import Linglib.Phenomena.Case.Studies.Grimm2011
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Studies.Haspelmath2021
 import Linglib.Phenomena.Case.Studies.Karlsson2017
-import Linglib.Phenomena.Case.Studies.AndersonJM2006
 import Linglib.Phenomena.Case.Studies.Woolford1997
 import Linglib.Phenomena.Case.Studies.Marantz1991
 import Linglib.Phenomena.Case.Studies.Pesetsky2013
@@ -1244,6 +1242,7 @@ import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 import Linglib.Phenomena.Conditionals.Studies.Santorio2018
 import Linglib.Phenomena.Conditionals.Studies.Stalnaker1975
 import Linglib.Phenomena.Conditionals.Studies.Stalnaker1981
+import Linglib.Phenomena.Conditionals.Studies.VonFintelIatridou2005
 import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
@@ -1457,7 +1456,6 @@ import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.FreeChoice.Atoms
 import Linglib.Phenomena.FreeChoice.Worlds
 import Linglib.Phenomena.FreeChoice.Basic
-import Linglib.Phenomena.Modality.Studies.Kratzer2012Practical
 import Linglib.Phenomena.Modality.Studies.Kratzer2012Informational
 import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Phenomena.FreeChoice.Studies.Alsop2024
@@ -1492,6 +1490,7 @@ import Linglib.Phenomena.FreeChoice.Divergences
 import Linglib.Phenomena.Modality.Studies.Cariani2013
 import Linglib.Phenomena.Modality.Studies.Heim1992
 import Linglib.Phenomena.Modality.Studies.Lassiter2017
+import Linglib.Phenomena.Modality.Studies.ChungMascarenhas2024
 import Linglib.Phenomena.Modality.Studies.PhillipsBrown2025
 import Linglib.Phenomena.Modality.Studies.CarianiSantorio2018
 import Linglib.Phenomena.Modality.Studies.BarLevFox2020
@@ -2289,7 +2288,6 @@ import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.ScaleCat
 import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
-import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 import Linglib.Theories.Semantics.Composition.Modification
 import Linglib.Theories.Semantics.Quantification.CovertQuantifier
@@ -2445,6 +2443,7 @@ import Linglib.Theories.Semantics.Conditionals.LeftNested
 import Linglib.Theories.Semantics.Conditionals.Marker
 import Linglib.Theories.Semantics.Conditionals.PremiseSemantic
 import Linglib.Theories.Semantics.Conditionals.Presupposition
+import Linglib.Theories.Semantics.Conditionals.Probabilistic
 import Linglib.Theories.Semantics.Conditionals.Restrictor
 import Linglib.Theories.Semantics.Conditionals.Stalnaker
 import Linglib.Theories.Semantics.Conditionals.Sweetser

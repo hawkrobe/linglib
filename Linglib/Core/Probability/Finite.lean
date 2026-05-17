@@ -187,4 +187,61 @@ theorem condProbSet_strict_anti_of_probOfSet_lt
       Set.inter_eq_right.mpr hAR, Set.inter_eq_right.mpr hAR']
   exact ENNReal.div_lt_div_left hPosA.ne' (probOfSet_ne_top p A) hLt
 
+/-! ## Conditional expectation given a set
+
+The number `E[f ∣ A] = (∑_{a ∈ A} p(a) · f(a)) / P(A)`. Mathlib's heavy
+machinery (`MeasureTheory.condExp`) takes a sub-σ-algebra and produces a
+random variable; the lightweight finite-PMF "expected value given a set"
+is just a number. Equivalent (via `PMF.integral_eq_sum` and
+`MeasureTheory.Measure.cond`) to
+`∫ f d(p.toMeasure.cond A)`; we keep the direct `∑/∑` form for
+`decide`-checkability. -/
+
+/-- Conditional expectation `E[f ∣ A]` of an `ℝ≥0∞`-valued function `f`
+under PMF `p` given the conditioning set `A`. Uses `Set.indicator` to
+avoid threading `DecidablePred` instances; ENNReal's `0/0 = 0` handles
+the degenerate `P(A) = 0` case. -/
+noncomputable def condExpect (p : PMF α) (A : Set α) (f : α → ℝ≥0∞) : ℝ≥0∞ :=
+  (∑ a, A.indicator (fun a => p a * f a) a) / p.probOfSet A
+
+/-- `condExpect` as an explicit ratio of two sums. Provided as a named
+lemma so consumers can `rw [condExpect_eq_div]` rather than `unfold`. -/
+theorem condExpect_eq_div (p : PMF α) (A : Set α) (f : α → ℝ≥0∞) :
+    p.condExpect A f = (∑ a, A.indicator (fun a => p a * f a) a) / p.probOfSet A := rfl
+
+/-- When the value function is `1` on `B` and `0` off `B`, `condExpect`
+reduces to `condProbSet`. The "characteristic-function = indicator"
+bridge. -/
+theorem condExpect_indicator (p : PMF α) (A B : Set α)
+    [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] :
+    p.condExpect A (fun a => if a ∈ B then 1 else 0) = p.condProbSet A B := by
+  unfold condExpect condProbSet
+  congr 1
+  show (∑ a, A.indicator (fun a => p a * if a ∈ B then 1 else 0) a)
+      = p.toOuterMeasure (A ∩ B)
+  rw [PMF.toOuterMeasure_apply_fintype]
+  refine Finset.sum_congr rfl (fun a _ => ?_)
+  classical
+  by_cases hA : a ∈ A <;> by_cases hB : a ∈ B
+  all_goals simp [hA, hB, Set.indicator, Set.mem_inter_iff]
+
+/-- Linearity of `condExpect` in `f`. -/
+theorem condExpect_add (p : PMF α) (A : Set α) (f g : α → ℝ≥0∞) :
+    p.condExpect A (f + g) = p.condExpect A f + p.condExpect A g := by
+  unfold condExpect
+  rw [ENNReal.div_add_div_same]
+  congr 1
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl (fun a _ => ?_)
+  classical
+  by_cases hA : a ∈ A
+  · simp [hA, Set.indicator, Pi.add_apply, mul_add]
+  · simp [hA, Set.indicator]
+
+@[simp]
+theorem condExpect_zero (p : PMF α) (A : Set α) :
+    p.condExpect A (fun _ => 0) = 0 := by
+  unfold condExpect
+  simp [Set.indicator]
+
 end PMF
