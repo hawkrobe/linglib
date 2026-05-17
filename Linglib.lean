@@ -2356,7 +2356,6 @@ import Linglib.Theories.Semantics.Tense.Perspective
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.SequenceOfTense
-import Linglib.Theories.Semantics.Tense.TOChain
 import Linglib.Theories.Semantics.Tense.ConditionalShift
 import Linglib.Theories.Semantics.Aspect.Core
 import Linglib.Theories.Semantics.Aspect.Composition
