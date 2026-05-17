@@ -3,22 +3,33 @@ import Linglib.Core.Time.Boundedness
 import Linglib.Core.Time.Tense
 
 /-!
-# Tense Phenomena: Multi-Source Empirical Data (centered on @cite{heim-kratzer-1998})
+# Tense Phenomena: Multi-Source Empirical Data (DEPRECATED — in dissolution)
 @cite{abusch-1997} @cite{anand-nevins-2004} @cite{banfield-1982}
 @cite{comrie-1985} @cite{deal-2020} @cite{declerck-1991}
-@cite{declerck-2006} @cite{heim-kratzer-1998} @cite{iatridou-2000}
-@cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-sharvit-2012}
-@cite{schlenker-2004} @cite{sharvit-2003} @cite{von-stechow-2009}
-@cite{wurmbrand-2014} @cite{condoravdi-2002} @cite{schlenker-2003}
+@cite{declerck-2006} @cite{iatridou-2000} @cite{klecha-2016}
+@cite{kratzer-1998} @cite{ogihara-sharvit-2012} @cite{schlenker-2004}
+@cite{sharvit-2003} @cite{von-stechow-2009} @cite{wurmbrand-2014}
+@cite{schlenker-2003}
 
-Multi-source empirical data on tense phenomena. Was
-`Phenomena/TenseAspect/Data.lean`; relocated to `Studies/` per the
-provenance-tracking policy. The data spans 18 cited papers and
-cannot be assigned to a single canonical owner; this file is named
-after `HeimKratzer1998` because the file's bridge theorems consume
-HK's compositional-tense framework
-(`Studies/HeimKratzer1998.lean`). Other consumers
-(e.g., `Studies/Schlenker2004.lean`) import from here.
+**This file is being dissolved per-paper into individual Studies/
+files** (see `Studies/Kratzer1998.lean` for §29, which has already
+migrated). The original aggregation violated CLAUDE.md's per-paper
+anchoring rule — every Lean file must anchor on one paper / named
+framework / documented empirical pattern. The remaining sections
+(§0–§28) await migration to their respective per-paper homes.
+
+Was `Phenomena/TenseAspect/Data.lean`; relocated to `Studies/` per
+the provenance-tracking policy. Per-section migration plan:
+`Studies/Abusch1997.lean` (§1-3, 5, 9); `Studies/Ogihara1996.lean`
+(§4, 14); `Studies/Klecha2016.lean` (§7); `Studies/Schlenker2004.lean`
+(§12); `Studies/Sharvit2003.lean` (§6, 11, 18, 21);
+`Studies/Iatridou2000.lean` (§8, 20); `Studies/Wurmbrand2014.lean`
+(§15, 22); `Studies/AnandNevins2004.lean` (§17);
+`Studies/Musan1995.lean` (§19); `Studies/Declerck1991.lean` (§23-26,
+28); `Phenomena/Aspect/Studies/Declerck1991.lean` (§27). §0 +
+§10 will be deleted (boilerplate / narration). The current consumer
+`Studies/Schlenker2004.lean` will repoint to `Studies/Abusch1997.lean`
+once the latter receives the `matrixSaid`/`embeddedSick*` symbols.
 
 Coverage: 10+ temporal phenomena that distinguish tense theories,
 absorbing the former `Phenomena/SequenceOfTense/Data.lean`.
@@ -1363,80 +1374,6 @@ theorem preterit_isPast :
 /-- Preterit is perfective (E = R). -/
 theorem preterit_is_perfective :
     preteritVisitedParis.isPerfective := rfl
-
-
--- ════════════════════════════════════════════════════════════════
--- § 29. Cross-Linguistic Tense Referential Mode (@cite{heim-kratzer-1998})
--- ════════════════════════════════════════════════════════════════
-
-/-! @cite{heim-kratzer-1998} predicts that the distribution of deictic vs anaphoric
-past tense varies cross-linguistically because surface "past" can decompose
-differently:
-
-**English simple past** = PRESENT + PERFECT (@cite{heim-kratzer-1998} §4). The tense
-head is PRESENT (indexical), so it can be used deictically.
-
-**German Preterit** = genuine PAST pronoun (@cite{heim-kratzer-1998} §5). The tense
-head is PAST (anaphoric), requiring a discourse antecedent.
-
-The empirical contrast:
-  English: "I didn't turn off the stove." ✓ (out of the blue)
-  German: #"Ich schaltete den Herd nicht aus." ✗ (out of the blue)
-  German: "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect)
-
-This data is tested against the theory in `Studies/HeimKratzer1998.lean` §29. -/
-
-open Core.Time.Tense
-open Core.ReferentialMode (ReferentialMode)
-
-/-- Whether a surface past tense form can be used deictically
-    (without a discourse-established temporal antecedent). -/
-structure TenseDeicticDatum where
-  /-- Language -/
-  language : String
-  /-- Surface morphological form -/
-  surfaceForm : String
-  /-- Example sentence -/
-  sentence : String
-  /-- Can this form be used "out of the blue"? -/
-  outOfTheBlue : Bool
-  /-- The underlying referential mode (indexical = deictic-compatible,
-      anaphoric = requires antecedent) -/
-  underlyingMode : ReferentialMode
-  deriving Repr, DecidableEq
-
-/-- English simple past: CAN be used out of the blue. -/
-def englishSimplePastDatum : TenseDeicticDatum where
-  language := "English"
-  surfaceForm := "V-ed"
-  sentence := "I didn't turn off the stove."
-  outOfTheBlue := true
-  underlyingMode := .indexical
-
-/-- German Preterit: CANNOT be used out of the blue. -/
-def germanPreteritDatum : TenseDeicticDatum where
-  language := "German"
-  surfaceForm := "V-te"
-  sentence := "Ich schaltete den Herd nicht aus."
-  outOfTheBlue := false
-  underlyingMode := .anaphoric
-
-/-- German Perfekt: CAN be used out of the blue (present tense head). -/
-def germanPerfektDatum : TenseDeicticDatum where
-  language := "German"
-  surfaceForm := "hat/ist V-t"
-  sentence := "Ich habe den Herd nicht ausgeschaltet."
-  outOfTheBlue := true
-  underlyingMode := .indexical
-
-/-- The cross-linguistic deictic data set. -/
-def tenseDeicticData : List TenseDeicticDatum :=
-  [englishSimplePastDatum, germanPreteritDatum, germanPerfektDatum]
-
-/-- Deictic compatibility tracks indexical mode. -/
-theorem deictic_tracks_indexical :
-    (tenseDeicticData.map (·.outOfTheBlue)) =
-    (tenseDeicticData.map (·.underlyingMode == .indexical)) := rfl
 
 
 end Phenomena.TenseAspect
