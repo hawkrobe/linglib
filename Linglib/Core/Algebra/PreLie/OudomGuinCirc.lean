@@ -1787,27 +1787,362 @@ theorem oudomGuinStar_def (A B : SymmetricAlgebra R L) :
           (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B)) :=
   rfl
 
+/-- **LinearMap form** of `oudomGuinStar A : S(L) → S(L)`. Since `★` is
+    R-linear in its second argument (definition uses `mul'`, `TP.map`,
+    and `Coalgebra.comul`, all R-linear), we can promote `A ↦ A ★ ·` to
+    a `LinearMap`.
+
+    Required for TA-side lifting (`algHomL_surjective` +
+    `TA_linearMap_ext_tprod`): the lift framework operates on linear
+    maps `TA → S(L)`, and `oudomGuinStarL` provides the right shape. -/
+noncomputable def oudomGuinStarL (A : SymmetricAlgebra R L) :
+    SymmetricAlgebra R L →ₗ[R] SymmetricAlgebra R L :=
+  (LinearMap.mul' R (SymmetricAlgebra R L)).comp
+    ((TensorProduct.map (oudomGuinCirc (R := R) A) LinearMap.id).comp
+      (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L)))
+
+@[simp]
+theorem oudomGuinStarL_apply (A B : SymmetricAlgebra R L) :
+    oudomGuinStarL (R := R) A B = oudomGuinStar A B := rfl
+
+/-! ### Helpers for `oudomGuinStar_assoc`
+
+The proof of `★`-associativity follows the OG paper p. 7 algebraic chain.
+Both `(A★B)★C` and `A★(B★C)` reduce to multilinear forms in `cm B` and a
+Δ³-iterate on `C`. They differ by a 2-3 swap on the 4-tensor `Δ³(C)`,
+which is killed by `comul_squared_TTTC_eq` (cocommutativity in Δ³ form). -/
+
+/-- **Helper for Q3**: `cm(B ★ C)` in explicit fused form via
+    `Bialgebra.comul_mul` + `TensorProduct.map_comp`. -/
+private theorem comul_oudomGuinStar_eq (B C : SymmetricAlgebra R L) :
+    Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) (oudomGuinStar B C) =
+      (LinearMap.mul' R (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L))
+        ((TensorProduct.map
+            ((Coalgebra.comul (R := R) (A := SymmetricAlgebra R L)).comp
+              (oudomGuinCirc (R := R) B))
+            (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L)))
+          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) C)) := by
+  rw [oudomGuinStar_def B C]
+  -- Push cm through mul' via AlgHom.comp_mul' on Bialgebra.comulAlgHom.
+  have h_push :
+      (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L)).comp
+          (LinearMap.mul' R (SymmetricAlgebra R L)) =
+        (LinearMap.mul' R (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L)).comp
+          (TensorProduct.map
+            (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+            (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))) :=
+    AlgHom.comp_mul' (Bialgebra.comulAlgHom R (SymmetricAlgebra R L))
+  have h_push_at := congrArg
+      (fun f : (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) →ₗ[R]
+                  SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L =>
+        f ((TensorProduct.map (oudomGuinCirc (R := R) B) LinearMap.id)
+          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) C)))
+      h_push
+  simp only [LinearMap.coe_comp, Function.comp_apply] at h_push_at
+  rw [h_push_at]
+  -- Fuse the two TP.maps: TP.map cm cm ∘ TP.map (○B) id = TP.map (cm ∘ ○B) (cm ∘ id) = TP.map (cm ∘ ○B) cm
+  have h_fuse := congrArg
+      (fun f : (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) →ₗ[R]
+                  (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) ⊗[R]
+                  (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) =>
+        f (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) C))
+      (TensorProduct.map_comp
+        (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+        (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+        (oudomGuinCirc (R := R) B)
+        LinearMap.id)
+  simp only [LinearMap.coe_comp, Function.comp_apply] at h_fuse
+  rw [← h_fuse]
+  -- `cm.comp id = cm`.
+  rw [LinearMap.comp_id]
+
+/-- **Helper for Q3**: `X ★ 1 = X` for any `X : S(L)`.
+
+    Direct: `X ★ 1 = (mul' ∘ TP.map (○X) id)(cm 1) = (mul' ∘ TP.map (○X) id)(1⊗1) =
+    (X ○ 1) · 1 = X · 1 = X` (via `circ_one_right` and `mul_one`). -/
+theorem oudomGuinStar_one (X : SymmetricAlgebra R L) :
+    oudomGuinStar X 1 = X := by
+  rw [oudomGuinStar_def X 1, Bialgebra.comul_one, Algebra.TensorProduct.one_def,
+      TensorProduct.map_tmul, LinearMap.id_coe, id_eq, LinearMap.mul'_apply,
+      circ_one_right, mul_one]
+
+/-- **Helper for Q3**: `★` is linear in its second argument.
+
+    `oudomGuinStar X (Y + Z) = oudomGuinStar X Y + oudomGuinStar X Z`. -/
+theorem oudomGuinStar_add_right (X Y Z : SymmetricAlgebra R L) :
+    oudomGuinStar X (Y + Z) = oudomGuinStar X Y + oudomGuinStar X Z := by
+  simp only [oudomGuinStar_def, map_add]
+
+/-- **Helper for Q3**: `★` distributes over scalar multiplication in its
+    second argument. -/
+theorem oudomGuinStar_smul_right (X Y : SymmetricAlgebra R L) (r : R) :
+    oudomGuinStar X (r • Y) = r • oudomGuinStar X Y := by
+  simp only [oudomGuinStar_def, map_smul]
+
+/-- **Helper for Q3 (ι T split)**: For any `X : S(L)` and `T : L`:
+    `X ★ ι T = X ○ ι T + X · ι T`.
+
+    Direct: unfold `X ★ ι T = mul'(TP.map (○X) id (cm ι T))` with primitive
+    `cm ι T = ι T ⊗ 1 + 1 ⊗ ι T`, distribute, apply `circ_one_right` and
+    `mul_one`. -/
+theorem oudomGuinStar_ι_split (X : SymmetricAlgebra R L) (T : L) :
+    oudomGuinStar X (SymmetricAlgebra.ι R L T) =
+      oudomGuinCirc X (SymmetricAlgebra.ι R L T) + X * SymmetricAlgebra.ι R L T := by
+  rw [oudomGuinStar_def X (SymmetricAlgebra.ι R L T)]
+  simp only [SymmetricAlgebra.comul_ι, map_add, TensorProduct.map_tmul,
+             LinearMap.id_coe, id_eq, LinearMap.mul'_apply, mul_one, circ_one_right]
+
+/-- **Closed-form identity** for `Z ★ (X · ι T)`. Key for closing Q3's per-tprod
+    `succ m` case.
+
+    `Z ★ (X · ι T) = (Z ★ X) ○ ι T + (Z ★ X) · ι T - Z ★ (X ○ ι T)`.
+
+    Derived by Sweedler bash on `cm X`: expand `cm(X·ιT) = cm X · cm(ιT)`,
+    apply 3.9.iv (`circ_general_mul_ι`) on the `Z ○ (x₁·ιT)` summand, then
+    identify the residual sums via 2.7.iii applied to `(Z★X)○ιT` and
+    `comul_circ` applied to `Z★(X○ιT)`. The TP-induction on `cm X` is
+    sound because both sides are linear in `cm X` (the structural
+    relationship between `X` and `cm X` is irrelevant once both sides are
+    expanded — they're equal as functions of `cm X` for ANY tensor).
+
+    This identity expresses `Z★(X·ιT)` in terms of `Z★X` and `X○ιT`. In
+    per-tprod context with `X = D = algHomL(tprod m a')`, `X ○ ι T` is a
+    sum of tprods at the same `m` (via `oudomGuinCirc_algHomL_tprod_ι`),
+    so Q3's m+1 case reduces to Q3 at m by linearity in C — no Sweedler
+    cocomm bash needed at all. -/
+private theorem oudomGuinStar_mul_ι_split
+    (Z X : SymmetricAlgebra R L) (T : L) :
+    oudomGuinStar Z (X * SymmetricAlgebra.ι R L T) =
+      oudomGuinCirc (oudomGuinStar Z X) (SymmetricAlgebra.ι R L T) +
+      oudomGuinStar Z X * SymmetricAlgebra.ι R L T -
+      oudomGuinStar Z (oudomGuinCirc X (SymmetricAlgebra.ι R L T)) := by
+  -- Expand all four ★ occurrences + cm(X·ιT), cm(X○ιT) via the substrate
+  -- lemmas, exposing `cm X` in all summands.
+  rw [oudomGuinStar_def Z (X * SymmetricAlgebra.ι R L T),
+      oudomGuinStar_def Z X,
+      oudomGuinStar_def Z (oudomGuinCirc X (SymmetricAlgebra.ι R L T)),
+      Bialgebra.comul_mul X (SymmetricAlgebra.ι R L T),
+      comul_circ X (SymmetricAlgebra.ι R L T),
+      TensorProduct.map_tmul,
+      SymmetricAlgebra.comul_ι R L T]
+  -- Generalize cm X → cmX and induct.
+  generalize Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) X = cmX
+  induction cmX using TensorProduct.induction_on with
+  | zero =>
+    simp only [zero_mul, map_zero, LinearMap.zero_apply,
+               TensorProduct.zero_tmul, mul_zero, sub_zero,
+               add_zero, sub_self, zero_add]
+  | tmul x₁ x₂ =>
+    -- Distribute (x₁⊗x₂) · (ιT⊗1 + 1⊗ιT) = (x₁·ιT)⊗x₂ + x₁⊗(x₂·ιT).
+    rw [show (x₁ ⊗ₜ[R] x₂ :
+             SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) *
+            (SymmetricAlgebra.ι R L T ⊗ₜ[R] (1 : SymmetricAlgebra R L) +
+             (1 : SymmetricAlgebra R L) ⊗ₜ[R] SymmetricAlgebra.ι R L T) =
+          (x₁ * SymmetricAlgebra.ι R L T) ⊗ₜ[R] x₂ +
+          x₁ ⊗ₜ[R] (x₂ * SymmetricAlgebra.ι R L T) from by
+        rw [mul_add, Algebra.TensorProduct.tmul_mul_tmul,
+            Algebra.TensorProduct.tmul_mul_tmul, mul_one, mul_one]]
+    -- Distribute TTTC ((x₁⊗x₂) ⊗ (ιT⊗1 + 1⊗ιT)) on RHS₃ term.
+    rw [show (TensorProduct.tensorTensorTensorComm R
+                (SymmetricAlgebra R L) (SymmetricAlgebra R L)
+                (SymmetricAlgebra R L) (SymmetricAlgebra R L))
+              ((x₁ ⊗ₜ[R] x₂) ⊗ₜ[R]
+                (SymmetricAlgebra.ι R L T ⊗ₜ[R] (1 : SymmetricAlgebra R L) +
+                 (1 : SymmetricAlgebra R L) ⊗ₜ[R] SymmetricAlgebra.ι R L T)) =
+          (x₁ ⊗ₜ[R] SymmetricAlgebra.ι R L T) ⊗ₜ[R]
+            (x₂ ⊗ₜ[R] (1 : SymmetricAlgebra R L)) +
+          (x₁ ⊗ₜ[R] (1 : SymmetricAlgebra R L)) ⊗ₜ[R]
+            (x₂ ⊗ₜ[R] SymmetricAlgebra.ι R L T) from by
+        rw [TensorProduct.tmul_add, map_add,
+            TensorProduct.tensorTensorTensorComm_tmul,
+            TensorProduct.tensorTensorTensorComm_tmul]]
+    -- Reduce pure tensors via TP.map, lift.tmul, mul'_apply, circ_one_right.
+    simp only [map_add, TensorProduct.map_tmul, TensorProduct.lift.tmul,
+               LinearMap.mul'_apply, LinearMap.id_coe, id_eq, circ_one_right]
+    -- Apply 2.7.iii on the first RHS term ((Z○x₁)·x₂)○ιT.
+    rw [circ_mul_distrib_via_comul (oudomGuinCirc Z x₁) x₂
+          (SymmetricAlgebra.ι R L T)]
+    simp only [LinearMap.coe_comp, Function.comp_apply,
+               SymmetricAlgebra.comul_ι, map_add, TensorProduct.map_tmul,
+               LinearMap.mul'_apply, circ_one_right]
+    -- Apply 3.9.iv at (Z, x₁, T): Z○(x₁·ιT) = (Z○x₁)○ιT - Z○(x₁○ιT).
+    rw [circ_general_mul_ι Z x₁ T]
+    -- Close by ring.
+    ring
+  | add a b iha ihb =>
+    -- Linearity: distribute through both sides and combine IHs.
+    simp only [add_mul, TensorProduct.add_tmul, map_add,
+               LinearMap.add_apply, mul_add] at iha ihb ⊢
+    linear_combination iha + ihb
+
+/-- **Per-tprod form** of Lemma 2.10. Proves `(A★B) ★ algHomL(tprod m a) =
+    A ★ (B ★ algHomL(tprod m a))` by induction on `m`.
+
+    Lifted to the full `oudomGuinStar_assoc` via `algHomL_surjective` +
+    `TA_linearMap_ext_tprod` (mirrors Q2's `circ_assoc_via_comul_tprod`
+    structure).
+
+    Proof:
+    - `m = 0` (`tprod_0 = 1`): both sides equal `A ★ B` via
+      `oudomGuinStar_one` applied twice.
+    - `m + 1` (`tprod_{m+1} a = tprod_m (Fin.init a) * ι (a (Fin.last m))`):
+      Let `D = algHomL(tprod m init)`, `X = a(last)`. Apply
+      `oudomGuinStar_mul_ι_split` three times (once to LHS, twice to
+      decompose RHS), apply IH at `Fin.init a` to close `(A★B)★D` →
+      `A★(B★D)`, and reduce the residual difference to
+      `(A★B)★(D○ιX) - A★(B★(D○ιX))`. By `oudomGuinCirc_algHomL_tprod_ι`,
+      `D ○ ι X = Σᵢ algHomL(tprod m (update init i (init i * X)))` — a
+      sum of m tprods at the SAME m. By IH (universally quantified over
+      `a`) applied to each summand, plus linearity of both sides of Q3
+      in `C`, the residual difference vanishes. -/
+private theorem oudomGuinStar_assoc_tprod (A B : SymmetricAlgebra R L) :
+    ∀ (m : ℕ) (a : Fin m → L),
+      oudomGuinStar (oudomGuinStar A B)
+          (OudomGuinCircConstruct.algHomL (TensorAlgebra.tprod R L m a)) =
+        oudomGuinStar A (oudomGuinStar B
+          (OudomGuinCircConstruct.algHomL (TensorAlgebra.tprod R L m a))) := by
+  intro m
+  induction m with
+  | zero =>
+    intro a
+    -- `tprod_0 a = 1` in TA; `algHomL 1 = 1` in S(L).
+    have h_tprod0 : TensorAlgebra.tprod R L 0 a = 1 := by
+      rw [TensorAlgebra.tprod_apply]; simp [List.ofFn_zero]
+    rw [h_tprod0,
+        show OudomGuinCircConstruct.algHomL (R := R) (L := L)
+              (1 : TensorAlgebra R L) = (1 : SymmetricAlgebra R L) from
+          map_one (SymmetricAlgebra.algHom R L)]
+    -- Both sides = A ★ B via `oudomGuinStar_one` (twice on RHS, once on LHS).
+    rw [oudomGuinStar_one, oudomGuinStar_one]
+  | succ m ih =>
+    intro a
+    -- Decompose `tprod_{m+1} a = tprod_m (Fin.init a) * ι (a (Fin.last m))`.
+    have h_a_eq : a = Fin.snoc (Fin.init a) (a (Fin.last m)) :=
+      (Fin.snoc_init_self a).symm
+    have h_tprod_succ :
+        TensorAlgebra.tprod R L (m + 1) a =
+        TensorAlgebra.tprod R L m (Fin.init a) *
+          TensorAlgebra.ι R (a (Fin.last m)) := by
+      conv_lhs => rw [h_a_eq]
+      rw [Fin.snoc_eq_append,
+          OudomGuinCircConstruct.ι_eq_tprod_one,
+          ← OudomGuinCircConstruct.tprod_mul_tprod]
+      congr 1
+    have h_algHomL_split :
+        OudomGuinCircConstruct.algHomL (R := R) (L := L)
+            (TensorAlgebra.tprod R L (m + 1) a) =
+          OudomGuinCircConstruct.algHomL
+              (TensorAlgebra.tprod R L m (Fin.init a)) *
+            SymmetricAlgebra.ι R L (a (Fin.last m)) := by
+      rw [h_tprod_succ]
+      show (SymmetricAlgebra.algHom R L) _ = _
+      rw [map_mul]; rfl
+    rw [h_algHomL_split]
+    -- Let D = algHomL(tprod m init), X = a(last).
+    set D : SymmetricAlgebra R L :=
+      OudomGuinCircConstruct.algHomL (TensorAlgebra.tprod R L m (Fin.init a))
+      with hD
+    set X : L := a (Fin.last m) with hX
+    -- Linearity of `oudomGuinStar Z` in 2nd arg (over add, sub, and finite sums)
+    -- via the LinearMap form `oudomGuinStarL`.
+    have h_star_sub : ∀ Z u v : SymmetricAlgebra R L,
+        oudomGuinStar Z (u - v) = oudomGuinStar Z u - oudomGuinStar Z v := by
+      intro Z u v
+      rw [← oudomGuinStarL_apply Z u, ← oudomGuinStarL_apply Z v,
+          ← oudomGuinStarL_apply Z (u - v), map_sub]
+    have h_star_sum : ∀ Z : SymmetricAlgebra R L, ∀ (f : Fin m → SymmetricAlgebra R L),
+        oudomGuinStar Z (∑ i, f i) = ∑ i, oudomGuinStar Z (f i) := by
+      intro Z f
+      rw [← oudomGuinStarL_apply Z _, map_sum]
+      simp only [oudomGuinStarL_apply]
+    -- Compute `D ○ ι X` as a finite sum of tprods at the same `m`
+    -- (via `oudomGuinCirc_algHomL_tprod_ι`).
+    have h_DcircιX :
+        oudomGuinCirc D (SymmetricAlgebra.ι R L X) =
+          ∑ i : Fin m,
+            OudomGuinCircConstruct.algHomL
+              (TensorAlgebra.tprod R L m
+                (Function.update (Fin.init a) i (Fin.init a i * X))) := by
+      rw [hD]
+      exact oudomGuinCirc_algHomL_tprod_ι X m (Fin.init a)
+    -- Q3 holds at `D ○ ι X` by IH-summand-wise + linearity.
+    have h_Q3_DcircιX :
+        oudomGuinStar (oudomGuinStar A B) (oudomGuinCirc D (SymmetricAlgebra.ι R L X)) =
+          oudomGuinStar A (oudomGuinStar B
+            (oudomGuinCirc D (SymmetricAlgebra.ι R L X))) := by
+      rw [h_DcircιX, h_star_sum (oudomGuinStar A B), h_star_sum B, h_star_sum A]
+      apply Finset.sum_congr rfl
+      intro i _
+      exact ih (Function.update (Fin.init a) i (Fin.init a i * X))
+    -- LHS via split + IH(D)
+    have h_LHS :
+        oudomGuinStar (oudomGuinStar A B) (D * SymmetricAlgebra.ι R L X) =
+          oudomGuinCirc (oudomGuinStar A (oudomGuinStar B D))
+              (SymmetricAlgebra.ι R L X) +
+          oudomGuinStar A (oudomGuinStar B D) * SymmetricAlgebra.ι R L X -
+          oudomGuinStar (oudomGuinStar A B) (oudomGuinCirc D (SymmetricAlgebra.ι R L X)) := by
+      rw [oudomGuinStar_mul_ι_split (oudomGuinStar A B) D X, ih (Fin.init a)]
+    -- RHS via split (on B's side), linearity, then split (on A's side).
+    have h_RHS :
+        oudomGuinStar A (oudomGuinStar B (D * SymmetricAlgebra.ι R L X)) =
+          oudomGuinCirc (oudomGuinStar A (oudomGuinStar B D))
+              (SymmetricAlgebra.ι R L X) +
+          oudomGuinStar A (oudomGuinStar B D) * SymmetricAlgebra.ι R L X -
+          oudomGuinStar A (oudomGuinStar B
+            (oudomGuinCirc D (SymmetricAlgebra.ι R L X))) := by
+      rw [oudomGuinStar_mul_ι_split B D X]
+      rw [show oudomGuinStar A
+                (oudomGuinCirc (oudomGuinStar B D) (SymmetricAlgebra.ι R L X) +
+                  oudomGuinStar B D * SymmetricAlgebra.ι R L X -
+                  oudomGuinStar B (oudomGuinCirc D (SymmetricAlgebra.ι R L X))) =
+              oudomGuinStar A
+                  (oudomGuinCirc (oudomGuinStar B D) (SymmetricAlgebra.ι R L X) +
+                    oudomGuinStar B D * SymmetricAlgebra.ι R L X) -
+              oudomGuinStar A
+                  (oudomGuinStar B (oudomGuinCirc D (SymmetricAlgebra.ι R L X))) from
+            h_star_sub A _ _]
+      rw [oudomGuinStar_add_right A _ _]
+      rw [oudomGuinStar_mul_ι_split A (oudomGuinStar B D) X]
+      ring
+    rw [h_LHS, h_RHS, h_Q3_DcircιX]
+
 /-- **Oudom-Guin Lemma 2.10**: the `★` product is associative.
 
-    Proof structure (6-line algebraic chain from OG paper p. 7):
-    ```
-    (A ★ B) ★ C
-      = (((A ○ B₁) · B₂) ○ C₁) · C₂                [def of ★]
-      = ((A ○ B₁) ○ C₁) · (B₂ ○ C₂) · C₃          [Prop 2.7.iii]
-      = (A ○ ((B₁ ○ C₁) · C₂)) · (B₂ ○ C₃) · C₄   [Prop 2.8.v / Q2]
-      = (A ○ ((B₁ ○ C₁) · C₃)) · (B₂ ○ C₂) · C₄   [cocomm of Δ — Q1a]
-      = A ★ ((B ○ C₁) · C₂)                        [def of ★ + Prop 2.7.iii]
-      = A ★ (B ★ C)                                [def of ★]
-    ```
+    Lifted from per-tprod (`oudomGuinStar_assoc_tprod`) via
+    `algHomL_surjective` + `TA_linearMap_ext_tprod`. Mirrors Q2's
+    lifting pattern (`circ_assoc_via_comul`).
 
-    Sorry-fenced: depends on `circ_mul_distrib_via_comul` (Prop 2.7.iii)
-    and `circ_assoc_via_comul` (Prop 2.8.v / Q2). Both are sorry'd
-    pending the construction of `oudomGuinCirc` (Q1b). Once Q1b lands,
-    the 6-line chain becomes concrete Sweedler manipulations
-    (~50-100 LOC in Lean, given Lean's verbosity with TensorProduct). -/
+    Both sides are R-linear maps in `C`, so checking on tprods suffices.
+
+    Note: the previous proof structure used `SymmetricAlgebra.induction`
+    on `C` with `algebraMap r`, `ι T`, `add`, `mul` cases. The first
+    three closed sorry-free; the `mul X Y` case had no closed-form
+    decomposition (the IHs for X and Y don't compose multiplicatively
+    via ★, and TP-induction on `cm(X·Y)` is unsound — counterexample:
+    `A = ι T, B = 1, cmC' = ι X ⊗ ι Y` gives LHS = ι(T·X)·ι Y ≠ 0 = RHS).
+    The per-tprod approach gives a cleaner structural induction where
+    each m+1 step adds exactly one ι generator. -/
 theorem oudomGuinStar_assoc (A B C : SymmetricAlgebra R L) :
     oudomGuinStar (oudomGuinStar A B) C = oudomGuinStar A (oudomGuinStar B C) := by
-  sorry
+  -- Reduce to TA-side LinearMap equality via `algHomL_surjective`.
+  obtain ⟨z, hz⟩ := OudomGuinCircConstruct.algHomL_surjective C
+  subst hz
+  -- Both sides are R-linear maps `TA →ₗ S(L)` at `z`.
+  set f_LHS : TensorAlgebra R L →ₗ[R] SymmetricAlgebra R L :=
+    (oudomGuinStarL (R := R) (oudomGuinStar A B)).comp
+      OudomGuinCircConstruct.algHomL with hf_LHS
+  set f_RHS : TensorAlgebra R L →ₗ[R] SymmetricAlgebra R L :=
+    ((oudomGuinStarL (R := R) A).comp (oudomGuinStarL (R := R) B)).comp
+      OudomGuinCircConstruct.algHomL with hf_RHS
+  suffices h_LM : f_LHS = f_RHS by
+    have := congrArg (fun (f : TensorAlgebra R L →ₗ[R] SymmetricAlgebra R L) => f z) h_LM
+    simp only [hf_LHS, hf_RHS, LinearMap.comp_apply, oudomGuinStarL_apply] at this
+    exact this
+  -- Apply `TA_linearMap_ext_tprod` and use the per-tprod lemma.
+  apply OudomGuinCircConstruct.TA_linearMap_ext_tprod
+  intro m a
+  simp only [hf_LHS, hf_RHS, LinearMap.comp_apply, oudomGuinStarL_apply]
+  exact oudomGuinStar_assoc_tprod A B m a
 
 end OudomGuinCirc
 

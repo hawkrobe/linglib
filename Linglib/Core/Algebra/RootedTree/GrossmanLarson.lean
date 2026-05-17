@@ -510,10 +510,10 @@ private theorem insertionBasis_zero_left_of_ne_zero
   rw [Nonplanar.insertionMultiset_zero_left_of_ne_zero G_basis h,
       Multiset.map_zero, Multiset.sum_zero]
 
-/-- Auxiliary: `insertion F 1 = F`. The bilinear extension at the unit
+/-- `insertion F 1 = F`. The bilinear extension at the unit
     of H reduces to summing `insertionBasis F_basis 0 = of' F_basis`
     over F's basis decomposition, which equals F by `Finsupp.sum_single`. -/
-private theorem insertion_one_right (F : GrossmanLarson R α) :
+theorem insertion_one_right (F : GrossmanLarson R α) :
     insertion F (1 : GrossmanLarson R α) = F := by
   -- Unfold (1 : GrossmanLarson R α) = AddMonoidAlgebra.one_def = single 0 1
   show insertion F (Finsupp.single (0 : Forest (Nonplanar α)) (1 : R)) = F
