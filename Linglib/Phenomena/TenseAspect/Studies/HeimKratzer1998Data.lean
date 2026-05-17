@@ -85,67 +85,6 @@ open Core.Time.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 6. Relative Clause Tense: "the man who was tall"
--- ════════════════════════════════════════════════════════════════
-
-/-- Relative clause frame: "the man who was tall"
-    Perspective time = time of the described event (not matrix E).
-    The past tense in the RC is checked against the RC's own
-    perspective time, not the matrix tense. -/
-def rcWasTall : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0    -- RC perspective = speech time (default)
-  referenceTime := -3     -- PAST: man was tall before now
-  eventTime := -3         -- tallness at past time
-
-/-- Relative clause under past matrix: "John met the man who was tall"
-    Here the RC tense could be relative to matrix E or to S —
-    this is the Sharvit challenge to Abusch. -/
-def rcWasTallUnderPast : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- if RC perspective shifts to matrix E
-  referenceTime := -4     -- past relative to matrix E
-  eventTime := -4
-
-
--- ════════════════════════════════════════════════════════════════
--- § 11. SOT in Indirect Questions: "John asked who was sick"
--- ════════════════════════════════════════════════════════════════
-
-/-! Indirect questions show SOT effects: "John asked who was sick"
-    has both a simultaneous reading (who is sick at the asking time?)
-    and a shifted reading (who was sick before the asking?).
-
-    The question embedding adds a layer: the embedded wh-clause's
-    tense interacts with both the question semantics and the matrix
-    tense. @cite{sharvit-2003} and @cite{ogihara-sharvit-2012} argue this
-    is not a simple extension of declarative SOT. -/
-
-/-- Matrix frame for "John asked..." (past tense, perfective). -/
-def matrixAsked : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2
-  eventTime := -2
-
-/-- Embedded frame for "who was sick" — simultaneous with asking.
-    The question is about sickness at the asking time. -/
-def indirectQSimultaneous : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -2     -- simultaneous: R' = E_matrix
-  eventTime := -2
-
-/-- Embedded frame for "who was sick" — shifted before asking.
-    The question is about sickness before the asking time. -/
-def indirectQShifted : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -4     -- shifted: R' < E_matrix
-  eventTime := -4
-
-
--- ════════════════════════════════════════════════════════════════
 -- § 13. Historical / Narrative Present
 -- ════════════════════════════════════════════════════════════════
 
@@ -216,74 +155,7 @@ theorem adjunct_before_matrix :
     adjunctBeforeLeft.eventTime < matrixWasHappy.eventTime := by native_decide
 
 
--- ════════════════════════════════════════════════════════════════
--- § 18. Embedded Present Puzzle: "John will say Mary is sick"
--- ════════════════════════════════════════════════════════════════
-
-/-! The embedded present puzzle: present tense under
-    a future matrix verb gets a simultaneous reading with the FUTURE
-    saying time, not with speech time.
-
-    "John will say Mary is sick" → Mary is sick at the (future) saying
-    time, not necessarily at speech time.
-
-    This is puzzling for theories where present = R = S: the present
-    tense should force the event to be at speech time, yet the reading
-    locates it at the future saying time. Sharvit: the "present" is
-    a simultaneous tense evaluated at the future saying time. -/
-
-/-- Matrix frame for "John will say..." (future tense).
-    Speech time S = 0, saying event at t = 3 (future). -/
-def matrixWillSay : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0    -- root clause: P = S
-  referenceTime := 3      -- FUTURE: R > P
-  eventTime := 3          -- saying at future time
-
-/-- Embedded frame for "Mary is sick" under future — simultaneous.
-    The sickness is at the future saying time (= matrix E = 3),
-    not at speech time. -/
-def embeddedPresentUnderFuture : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 3    -- embedded P = matrix E (future saying time)
-  referenceTime := 3      -- simultaneous: R' = P' = matrix E
-  eventTime := 3          -- sick at the saying time
-
-
--- ════════════════════════════════════════════════════════════════
--- § 21. Optional SOT (Hebrew-type)
--- ════════════════════════════════════════════════════════════════
-
-/-! Optional SOT in Hebrew-type languages.
-
-    In English, SOT is obligatory: "John said Mary was sick" is the
-    only form for the simultaneous reading. In Hebrew, both forms
-    are grammatical:
-
-    "John said Mary was sick" → simultaneous reading (simultaneous tense)
-    "John said Mary is sick" → simultaneous reading (present tense)
-
-    Both forms are available with slightly different pragmatic profiles.
-    The past-form version uses Sharvit's simultaneous tense; the
-    present-form version uses genuine present tense. -/
-
-/-- Hebrew-type SOT with past form (simultaneous tense):
-    "John said Mary was sick" → simultaneous reading.
-    Same frame as English embeddedSickSimultaneous. -/
-def optionalSOTPastForm : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -2     -- simultaneous: R' = P'
-  eventTime := -2
-
-/-- Hebrew-type SOT with present form:
-    "John said Mary is sick" → also simultaneous, but via present tense.
-    The present tense directly locates the event at the attitude time. -/
-def optionalSOTPresentForm : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -2     -- R' = P' (present tense)
-  eventTime := -2
+-- (§6, §11, §18, §21 migrated to Studies/Sharvit2003.lean)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -291,20 +163,7 @@ def optionalSOTPresentForm : ReichenbachFrame ℤ where
 -- ════════════════════════════════════════════════════════════════
 
 
-/-- RC tense: past reference. -/
-theorem rc_past_reference :
-    rcWasTall.referenceTime < rcWasTall.perspectiveTime := by native_decide
-
-
 -- ── Eventual target facts ──
-
-/-- Indirect question: simultaneous frame has R = P. -/
-theorem indirectQ_simultaneous_present :
-    indirectQSimultaneous.isPresent := rfl
-
-/-- Indirect question: shifted frame has R < P. -/
-theorem indirectQ_shifted_past :
-    indirectQShifted.referenceTime < indirectQShifted.perspectiveTime := by native_decide
 
 /-- Historical present: present morphology despite past event. -/
 theorem historicalPresent_R_eq_P :
@@ -318,31 +177,6 @@ theorem historicalPresent_not_at_speech :
 theorem adjunct_precedes_matrix :
     adjunctBeforeLeft.eventTime < matrixWasHappy.eventTime := by native_decide
 
-
--- ── Extended phenomena facts ──
-
-/-- Embedded present puzzle: present under future has R = P (simultaneous). -/
-theorem embeddedPresentUnderFuture_simultaneous :
-    embeddedPresentUnderFuture.isPresent := rfl
-
-/-- Embedded present puzzle: event NOT at speech time. -/
-theorem embeddedPresentUnderFuture_not_at_speech :
-    embeddedPresentUnderFuture.eventTime ≠ embeddedPresentUnderFuture.speechTime := by
-  native_decide
-
-/-- Embedded present puzzle: matrix is future. -/
-theorem matrixWillSay_is_future :
-    matrixWillSay.referenceTime > matrixWillSay.perspectiveTime := by native_decide
-
-
-/-- Optional SOT: both forms give R = P. -/
-theorem optionalSOT_both_simultaneous :
-    optionalSOTPastForm.isPresent ∧ optionalSOTPresentForm.isPresent :=
-  ⟨rfl, rfl⟩
-
-/-- Optional SOT: both forms have the same temporal structure. -/
-theorem optionalSOT_same_frame :
-    optionalSOTPastForm = optionalSOTPresentForm := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 23. Temporal Domain: Shift vs. Subordination (Declerck ch. 2 §12–14)

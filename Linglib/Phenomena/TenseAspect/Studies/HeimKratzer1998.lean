@@ -214,17 +214,6 @@ theorem evalPres_iff_toSitProp {W Time : Type*}
 -- § Per-Theory Derivations: Sharvit
 -- ════════════════════════════════════════════════════════════════
 
-/-- Sharvit derives the indirect question simultaneous reading:
-    the simultaneous tense in "John asked who was sick" locates
-    sickness at the asking time. -/
-theorem sharvit_derives_indirectQSimultaneous :
-    indirectQSimultaneous.isPresent := rfl
-
-/-- Sharvit derives the embedded present puzzle:
-    present under future → simultaneous tense at future eval time. -/
-theorem sharvit_derives_embeddedPresentUnderFuture :
-    embeddedPresentUnderFuture.isPresent := rfl
-
 -- ════════════════════════════════════════════════════════════════
 -- § Declerck: Domain Shift vs Subordination (§23)
 -- ════════════════════════════════════════════════════════════════
