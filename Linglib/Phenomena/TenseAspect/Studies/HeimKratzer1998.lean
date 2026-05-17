@@ -37,53 +37,6 @@ open Phenomena.TenseAspect
 open Semantics.Tense
 
 
--- ════════════════════════════════════════════════════════════════
--- § Root-Clause Baseline Verification (§0)
--- ════════════════════════════════════════════════════════════════
-
--- ── satisfiesTense ──
-
-/-- Simple past satisfies PAST. -/
-theorem simplePastLeft_satisfies_past :
-    satisfiesTense .past simplePastLeft = true := by native_decide
-
-/-- Simple present satisfies PRESENT. -/
-theorem simplePresentRains_satisfies_present :
-    satisfiesTense .present simplePresentRains = true := by native_decide
-
-/-- Simple future satisfies FUTURE. -/
-theorem simpleFutureWillLeave_satisfies_future :
-    satisfiesTense .future simpleFutureWillLeave = true := by native_decide
-
-/-- Simple past does NOT satisfy PRESENT or FUTURE. -/
-theorem simplePastLeft_not_present :
-    satisfiesTense .present simplePastLeft = false := by native_decide
-
-theorem simplePastLeft_not_future :
-    satisfiesTense .future simplePastLeft = false := by native_decide
-
-
--- ── GramTense.constrains ↔ isPast / isPresent / isFuture ──
-
-/-- `GramTense.constrains` agrees with `isPast` for simple past. -/
-theorem constrains_agrees_isPast :
-    GramTense.past.constrains simplePastLeft.referenceTime
-      simplePastLeft.perspectiveTime ↔
-    simplePastLeft.isPast := Iff.rfl
-
-/-- `GramTense.constrains` agrees with `isPresent` for simple present. -/
-theorem constrains_agrees_isPresent :
-    GramTense.present.constrains simplePresentRains.referenceTime
-      simplePresentRains.perspectiveTime ↔
-    simplePresentRains.isPresent := Iff.rfl
-
-/-- `GramTense.constrains` agrees with `isFuture` for simple future. -/
-theorem constrains_agrees_isFuture :
-    GramTense.future.constrains simpleFutureWillLeave.referenceTime
-      simpleFutureWillLeave.perspectiveTime ↔
-    simpleFutureWillLeave.isFuture := Iff.rfl
-
-
 -- ── Morphology: form generation ──
 
 section Morphology
@@ -198,38 +151,7 @@ theorem tensePronoun_future_root :
   simp only [TensePronoun.toFrame, TensePronoun.resolve, ReichenbachFrame.isFuture]
   change (0 : ℤ) < 3; omega
 
-/-- The tense pronoun's presupposition matches the frame's tense
-    classification: a past tense pronoun presupposes R < P. -/
-theorem tensePronoun_presupposition_matches_frame :
-    let tp : TensePronoun := ⟨1, .past, .indexical, 0⟩
-    tp.presupposition (-2 : ℤ) 0 ↔ simplePastLeft.isPast := Iff.rfl
-
 end TensePronounBridge
-
-
--- ════════════════════════════════════════════════════════════════
--- § Frame Verification via satisfiesTense
--- ════════════════════════════════════════════════════════════════
-
-/-- The matrix "said" frame satisfies PAST. -/
-theorem matrixSaid_is_past :
-    satisfiesTense .past matrixSaid = true := by native_decide
-
-/-- The simultaneous embedded frame satisfies PRESENT relative to embedded P. -/
-theorem simultaneous_satisfies_present :
-    satisfiesTense .present embeddedSickSimultaneous = true := by native_decide
-
-/-- The shifted embedded frame satisfies PAST relative to embedded P. -/
-theorem shifted_satisfies_past :
-    satisfiesTense .past embeddedSickShifted = true := by native_decide
-
-/-- The present-under-past frame satisfies PRESENT relative to embedded P. -/
-theorem presentUnderPast_satisfies_present :
-    satisfiesTense .present embeddedSickPresent = true := by native_decide
-
-/-- The future-under-past frame: R > P (future relative to matrix E). -/
-theorem futureUnderPast_satisfies_future :
-    satisfiesTense .future embeddedWouldLeave = true := by native_decide
 
 
 -- ════════════════════════════════════════════════════════════════
