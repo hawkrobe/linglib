@@ -42,17 +42,23 @@ left-arguments via OG Prop 2.7.iii.
 
 ## Status (2026-05-16)
 
-**Step 1 mostly landed** (~165 LOC, 1 sorry).
+**Step 1 fully landed sorry-free** (~370 LOC).
 - Items 1–3 (per-degree `circTPi`, graded `circTGraded`,
   TensorAlgebra-level `circTTensor`) — sorry-free.
 - Item 4 (`circTTensor_symRel`: respects SymRel at n = 2 via
   `circTMultilinear_two_eval` + `RightPreLieRing.assoc_symm'`) — sorry-free.
 - Item 5 (`circByT_total`: lift through the `RingQuot` quotient to
-  `SymmetricAlgebra R L →ₗ[R] L`) — **sorry-fenced**. Requires either a
-  `RingQuot.liftLinearMap` mathlib helper (currently only
-  `RingHom`/`AlgHom` versions exist) OR a `Submodule.liftQ`-style
-  construction via `ker (algHom : TensorAlgebra → SymmetricAlgebra)`.
-  See §5 docstring for the detailed plan.
+  `SymmetricAlgebra R L →ₗ[R] L`) — sorry-free via `Submodule.liftQ` +
+  `LinearMap.quotKerEquivOfSurjective` on surjective `algHomL`. The kernel
+  containment `ker algHomL ≤ ker (circTTensor T)` is proven through:
+  (a) `TA_linearMap_ext_tprod` (helper — linear maps from `TensorAlgebra`
+  agreeing on tprods are equal, via `equivDirectSum` + `DirectSum.linearMap_ext`
+  + `PiTensorProduct.ext`);
+  (b) `circTTensor_swap_general` (bilinear extension of `circTTensor_swap_tprod`
+  to general `r, d ∈ TensorAlgebra`);
+  (c) `RingQuot.Rel`/`EqvGen` induction with the strong motive
+  `∀ r d, circTTensor T (r * z₁ * d) = circTTensor T (r * z₂ * d)`,
+  closing under `add_left`/`mul_left`/`mul_right` via associativity + additivity.
 
 ## References
 
@@ -190,11 +196,68 @@ private theorem circTTensor_swap_tprod (T : L)
           (TensorAlgebra.tprod R L n b)) := by
   rw [tprod_mul_ι_pair_mul_tprod, tprod_mul_ι_pair_mul_tprod,
       circTTensor_tprod, circTTensor_tprod]
-  -- Goal: circTMultilinear T (m+2+n) (Fin.append (Fin.append a (Fin.append (const X) (const Y))) b)
-  --     = circTMultilinear T (m+2+n) (Fin.append (Fin.append a (Fin.append (const Y) (const X))) b)
-  -- The two tuples differ by the transposition of positions m, m+1.
-  -- TODO: apply circTMultilinear_symm via funext + case analysis.
-  sorry
+  classical
+  -- σ swaps the two adjacent positions where X and Y sit (positions m, m+1
+  -- in `Fin (m+2+n)`), expressed via the addCases structure.
+  set σ : Equiv.Perm (Fin (m + 2 + n)) :=
+    Equiv.swap
+      (Fin.castAdd n (Fin.natAdd m (Fin.castAdd 1 (0 : Fin 1))))
+      (Fin.castAdd n (Fin.natAdd m (Fin.natAdd 1 (0 : Fin 1)))) with hσ_def
+  -- Key: `tuple_YX = fun i => tuple_XY (σ i)`. Pointwise by 4-case Fin.addCases.
+  have h_tuple :
+      (Fin.append (Fin.append a
+            (Fin.append (fun _ : Fin 1 => Y) (fun _ : Fin 1 => X))) b) =
+      (fun i => (Fin.append (Fin.append a
+            (Fin.append (fun _ : Fin 1 => X) (fun _ : Fin 1 => Y))) b) (σ i)) := by
+    funext i
+    induction i using Fin.addCases with
+    | left j =>
+      induction j using Fin.addCases with
+      | left j' =>
+        -- Position is `Fin.castAdd n (Fin.castAdd 2 j')`, value `j'.val < m`.
+        -- σ fixes it; both tuples give `a j'`.
+        have hσi : σ (Fin.castAdd n (Fin.castAdd 2 j' : Fin (m + 2))) =
+                   Fin.castAdd n (Fin.castAdd 2 j') := by
+          rw [hσ_def, Equiv.swap_apply_of_ne_of_ne]
+          · apply Fin.ne_of_val_ne
+            simp [Fin.val_castAdd, Fin.val_natAdd]; omega
+          · apply Fin.ne_of_val_ne
+            simp [Fin.val_castAdd, Fin.val_natAdd]; omega
+        simp only [hσi, Fin.append_left]
+      | right k' =>
+        induction k' using Fin.addCases with
+        | left z =>
+          -- Position is `Fin.castAdd n (Fin.natAdd m (Fin.castAdd 1 0))` = posX.
+          -- σ posX = posY; LHS = tuple_YX posX = Y; RHS = tuple_XY posY = Y.
+          obtain rfl : z = 0 := Subsingleton.elim _ _
+          have hσi : σ (Fin.castAdd n (Fin.natAdd m (Fin.castAdd 1 (0 : Fin 1)))) =
+                     Fin.castAdd n (Fin.natAdd m (Fin.natAdd 1 (0 : Fin 1))) := by
+            rw [hσ_def]; exact Equiv.swap_apply_left _ _
+          simp only [hσi, Fin.append_left, Fin.append_right]
+        | right z =>
+          -- Position is `Fin.castAdd n (Fin.natAdd m (Fin.natAdd 1 0))` = posY.
+          obtain rfl : z = 0 := Subsingleton.elim _ _
+          have hσi : σ (Fin.castAdd n (Fin.natAdd m (Fin.natAdd 1 (0 : Fin 1)))) =
+                     Fin.castAdd n (Fin.natAdd m (Fin.castAdd 1 (0 : Fin 1))) := by
+            rw [hσ_def]; exact Equiv.swap_apply_right _ _
+          simp only [hσi, Fin.append_left, Fin.append_right]
+    | right k =>
+      -- Position is `Fin.natAdd (m+2) k`, value `m+2+k.val ≥ m+2`. σ fixes it.
+      have hσi : σ (Fin.natAdd (m + 2) k) = Fin.natAdd (m + 2) k := by
+        rw [hσ_def, Equiv.swap_apply_of_ne_of_ne]
+        · apply Fin.ne_of_val_ne
+          simp [Fin.val_castAdd, Fin.val_natAdd]; omega
+        · apply Fin.ne_of_val_ne
+          simp [Fin.val_castAdd, Fin.val_natAdd]; omega
+      simp only [hσi, Fin.append_right]
+  -- Apply circTMultilinear_symm: `circTMultilinear T n (fun i => g (σ i)) = circTMultilinear T n g`.
+  rw [h_tuple]
+  have h_symm := circTMultilinear_symm R T (m + 2 + n) σ
+  have h_apply :=
+    congr_fun (congr_arg (fun (f : MultilinearMap R _ L) => f.toFun) h_symm)
+      (Fin.append (Fin.append a
+        (Fin.append (fun _ : Fin 1 => X) (fun _ : Fin 1 => Y))) b)
+  exact h_apply.symm
 
 /-! ## §4: `circTTensor` respects `SymRel` (consequence of Lemma 2.5)
 
@@ -261,28 +324,191 @@ private theorem algHomL_surjective :
     Function.Surjective (algHomL (R := R) (L := L)) :=
   SymmetricAlgebra.algHom_surjective R L
 
-/-- **Kernel-containment**: `circTTensor T` vanishes on `ker algHom`.
+/-! ### §5.A: Helper — linear maps from `TensorAlgebra` agree iff they agree on tprods
 
-    **Sorry-fenced.** The substantive content: for any `r, c ∈ TensorAlgebra`
-    and `X, Y ∈ L`,
-    `circTTensor T (r * (ι X * ι Y) * c) = circTTensor T (r * (ι Y * ι X) * c)`.
-    Reduces to `circTMultilinear_symm` applied to the (m+1, m+2)-position
-    transposition in the concatenated tuple.
+Bilinear extension lemma: two linear maps `TA → L` that agree on
+`TensorAlgebra.tprod R L n a` for every `n, a` are equal. The proof transfers
+through `TensorAlgebra.equivDirectSum` (algebra equivalence to `⨁ⁿ ⨂ⁿ L`),
+then uses `DirectSum.linearMap_ext` (per-summand check) and
+`PiTensorProduct.ext` (per-tprod check) — both `@[ext]` lemmas in mathlib.
+-/
 
-    Proof plan (~80-120 LOC):
-    1. Compute `(tprod_m a) * (ι X * ι Y) * (tprod_k b) = tprod_{m+2+k} (Fin.append a (Fin.append ![X,Y] b))`
-       via `TensorAlgebra.tprod_apply` + `List` associativity.
-    2. `circTTensor T ∘ tprod = circTMultilinear T n` (via the per-degree
-       interface: `toDirectSum_tensorPower_tprod` + `circTGraded_of` +
-       `circTPi_tprod`).
-    3. Swap of X and Y at positions m+1, m+2 in the tuple corresponds to
-       `(Equiv.swap (Fin.castSucc (Fin.last (m+1))) (Fin.last (m+2)))` ∘ tuple.
-       By `circTMultilinear_symm` applied to this perm, equal.
-    4. Extend from tprods to general elements via bilinear linearity (the
-       difference is a bilinear map vanishing on tprods, hence everywhere). -/
+private lemma TA_linearMap_ext_tprod {f g : TensorAlgebra R L →ₗ[R] L}
+    (h : ∀ n (a : Fin n → L),
+      f (TensorAlgebra.tprod R L n a) = g (TensorAlgebra.tprod R L n a)) :
+    f = g := by
+  -- Transfer through `equivDirectSum`: `f = g ↔ f ∘ e.symm = g ∘ e.symm`.
+  set e : TensorAlgebra R L ≃ₐ[R] ⨁ n, ⨂[R]^n L := TensorAlgebra.equivDirectSum
+  suffices h_eq : f.comp e.symm.toLinearMap = g.comp e.symm.toLinearMap by
+    ext z
+    have := congrArg (fun (φ : (⨁ n, ⨂[R]^n L) →ₗ[R] L) => φ (e z)) h_eq
+    simp only [LinearMap.comp_apply, AlgEquiv.toLinearMap_apply,
+               AlgEquiv.symm_apply_apply] at this
+    exact this
+  -- Per-summand + per-tprod check via the two `@[ext]` lemmas.
+  ext n a
+  -- Goal: (f.comp e.symm.toLinearMap).comp (lof R ℕ _ n) (tprod R a) = same with g
+  simp only [LinearMap.compMultilinearMap_apply, LinearMap.coe_comp, Function.comp_apply,
+             AlgEquiv.toLinearMap_apply]
+  have h_e_symm :
+      e.symm (DirectSum.lof R ℕ (fun n => ⨂[R]^n L) n (PiTensorProduct.tprod R a)) =
+      TensorAlgebra.tprod R L n a := by
+    rw [DirectSum.lof_eq_of]
+    exact TensorAlgebra.ofDirectSum_of_tprod (R := R) (M := L) a
+  rw [h_e_symm]
+  exact h n a
+
+/-! ### §5.B: Bilinear extension of `circTTensor_swap_tprod`
+
+`circTTensor T (r * (ι X * ι Y) * d) = circTTensor T (r * (ι Y * ι X) * d)`
+for all `r, d ∈ TensorAlgebra R L`. Proven by bilinear extension from the
+tprod case (`circTTensor_swap_tprod`) via two applications of
+`TA_linearMap_ext_tprod`. -/
+
+private lemma circTTensor_swap_general (T : L) (X Y : L) (r d : TensorAlgebra R L) :
+    circTTensor T (r * (TensorAlgebra.ι R X * TensorAlgebra.ι R Y) * d) =
+    circTTensor T (r * (TensorAlgebra.ι R Y * TensorAlgebra.ι R X) * d) := by
+  -- The linear map `r' ↦ circTTensor T (r' * w * d)` for fixed d, where w = ι X * ι Y,
+  -- equals the same with w' = ι Y * ι X.
+  -- Use TA_linearMap_ext_tprod twice (for r' first, then for d').
+  -- Build the linear maps via composition with `LinearMap.mulRight`.
+  suffices h_fixed_d : ∀ d' : TensorAlgebra R L,
+      (circTTensor T).comp ((LinearMap.mulRight R d').comp
+        (LinearMap.mulRight R (TensorAlgebra.ι R X * TensorAlgebra.ι R Y))) =
+      (circTTensor T).comp ((LinearMap.mulRight R d').comp
+        (LinearMap.mulRight R (TensorAlgebra.ι R Y * TensorAlgebra.ι R X))) by
+    have := congrArg (fun (φ : TensorAlgebra R L →ₗ[R] L) => φ r) (h_fixed_d d)
+    simp only [LinearMap.comp_apply, LinearMap.mulRight_apply] at this
+    exact this
+  intro d'
+  -- Extend over d' first (use TA_linearMap_ext_tprod on the d' variable).
+  -- For fixed r', the map d' ↦ ... is also linear, via a different composition.
+  -- Strategy: prove the equality of the curried bilinear maps, by ext on r' then on d'.
+  apply TA_linearMap_ext_tprod
+  intro m a
+  -- Goal: circTTensor T (tprod_m a * w * d') = circTTensor T (tprod_m a * w' * d')
+  -- where w = ι X * ι Y, w' = ι Y * ι X.
+  -- For fixed tprod_m a, the map d' ↦ circTTensor T (tprod * w * d') is linear in d'.
+  -- Vanishes on tprods d' by circTTensor_swap_tprod.
+  simp only [LinearMap.comp_apply, LinearMap.mulRight_apply]
+  -- Now: circTTensor T (tprod_m a * w * d') = circTTensor T (tprod_m a * w' * d')
+  -- Use TA_linearMap_ext_tprod on the d' direction.
+  have h_d : ∀ d'' : TensorAlgebra R L,
+      circTTensor T (TensorAlgebra.tprod R L m a *
+        (TensorAlgebra.ι R X * TensorAlgebra.ι R Y) * d'') =
+      circTTensor T (TensorAlgebra.tprod R L m a *
+        (TensorAlgebra.ι R Y * TensorAlgebra.ι R X) * d'') := by
+    intro d''
+    -- Extend over d'' via TA_linearMap_ext_tprod on the d''-variable map.
+    have h_eq : (circTTensor T).comp ((LinearMap.mulLeft R
+        (TensorAlgebra.tprod R L m a *
+          (TensorAlgebra.ι R X * TensorAlgebra.ι R Y)))) =
+      (circTTensor T).comp ((LinearMap.mulLeft R
+        (TensorAlgebra.tprod R L m a *
+          (TensorAlgebra.ι R Y * TensorAlgebra.ι R X)))) := by
+      apply TA_linearMap_ext_tprod
+      intro n b
+      simp only [LinearMap.comp_apply, LinearMap.mulLeft_apply]
+      -- Goal: circTTensor T (tprod_m a * (ι X * ι Y) * tprod_n b) =
+      --       circTTensor T (tprod_m a * (ι Y * ι X) * tprod_n b)
+      exact circTTensor_swap_tprod T a b X Y
+    have := congrArg (fun (φ : TensorAlgebra R L →ₗ[R] L) => φ d'') h_eq
+    simp only [LinearMap.comp_apply, LinearMap.mulLeft_apply] at this
+    exact this
+  exact h_d d'
+
+/-! ### §5.C: Kernel containment via Rel/EqvGen induction
+
+`ker algHomL ≤ ker (circTTensor T)`. Proof: `algHomL z = 0` iff `z` is in
+the same `Quot (Rel SymRel)`-class as `0`. Via Rel induction with a strong
+motive (`∀ r d, circTTensor T (r * z₁ * d) = circTTensor T (r * z₂ * d)`),
+the algebraic closure under `add_left`, `mul_left`, `mul_right` is preserved,
+and the base case is `circTTensor_swap_general`. -/
+
+/-- Strong respects-relation property: invariant under `Rel SymRel`-related
+    elements, even after wrapping by arbitrary `r * · * d`. -/
+private lemma circTTensor_resp_Rel_strong (T : L) :
+    ∀ {z₁ z₂ : TensorAlgebra R L},
+    RingQuot.Rel (TensorAlgebra.SymRel R L) z₁ z₂ →
+    ∀ r d : TensorAlgebra R L,
+      circTTensor T (r * z₁ * d) = circTTensor T (r * z₂ * d) := by
+  intro z₁ z₂ h
+  induction h with
+  | of h_sym =>
+    induction h_sym with
+    | mul_comm X Y =>
+      intro r d
+      exact circTTensor_swap_general T X Y r d
+  | add_left _ ih =>
+    intro r d
+    -- z₁ = a + c, z₂ = b + c with Rel a b
+    -- (r * (a + c) * d) = r * a * d + r * c * d
+    simp only [mul_add, add_mul, map_add, ih r d]
+  | @mul_left a b c _ ih =>
+    intro r d
+    -- z₁ = a * c, z₂ = b * c with Rel a b. Associate to apply IH with d' = c * d.
+    have hL : r * (a * c) * d = r * a * (c * d) := by
+      simp only [mul_assoc]
+    have hR : r * (b * c) * d = r * b * (c * d) := by
+      simp only [mul_assoc]
+    rw [hL, hR]
+    exact ih r (c * d)
+  | @mul_right a b c _ ih =>
+    intro r d
+    -- z₁ = a * b, z₂ = a * c with Rel b c. Associate to apply IH with r' = r * a.
+    have hL : r * (a * b) * d = (r * a) * b * d := by
+      simp only [mul_assoc]
+    have hR : r * (a * c) * d = (r * a) * c * d := by
+      simp only [mul_assoc]
+    rw [hL, hR]
+    exact ih (r * a) d
+
+/-- `circTTensor T` respects `Rel SymRel` (pointwise). -/
+private lemma circTTensor_resp_Rel (T : L) {z₁ z₂ : TensorAlgebra R L}
+    (h : RingQuot.Rel (TensorAlgebra.SymRel R L) z₁ z₂) :
+    circTTensor T z₁ = circTTensor T z₂ := by
+  have := circTTensor_resp_Rel_strong T h 1 1
+  simpa using this
+
+/-- `circTTensor T` respects the equivalence closure of `Rel SymRel`. -/
+private lemma circTTensor_resp_EqvGen (T : L) {z₁ z₂ : TensorAlgebra R L}
+    (h : Relation.EqvGen (RingQuot.Rel (TensorAlgebra.SymRel R L)) z₁ z₂) :
+    circTTensor T z₁ = circTTensor T z₂ := by
+  induction h with
+  | rel _ _ h => exact circTTensor_resp_Rel T h
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+/-- **Kernel-containment**: `circTTensor T` vanishes on `ker algHomL`.
+
+    Proof: `algHomL z = 0` iff `Quot.mk (Rel SymRel) z = Quot.mk (Rel SymRel) 0`
+    iff `EqvGen (Rel SymRel) z 0`. Apply `circTTensor_resp_EqvGen` and conclude
+    `circTTensor T z = circTTensor T 0 = 0`. -/
 private theorem circTTensor_vanishes_on_ker (T : L) :
     LinearMap.ker (algHomL (R := R) (L := L)) ≤ LinearMap.ker (circTTensor T) := by
-  sorry
+  intro z hz
+  rw [LinearMap.mem_ker] at hz ⊢
+  -- algHomL z = 0 = algHomL 0
+  rw [← (algHomL (R := R) (L := L)).map_zero] at hz
+  -- Unfold algHomL = mkAlgHom, get to Quot.mk equality.
+  -- mkAlgHom z = mkAlgHom 0 iff Quot.mk z = Quot.mk 0 iff EqvGen z 0.
+  have h_quot : (Quot.mk (RingQuot.Rel (TensorAlgebra.SymRel R L)) z :
+                  Quot (RingQuot.Rel (TensorAlgebra.SymRel R L))) =
+                Quot.mk _ 0 := by
+    have : (SymmetricAlgebra.algHom R L z).toQuot =
+           (SymmetricAlgebra.algHom R L (0 : TensorAlgebra R L)).toQuot := by
+      exact congrArg (·.toQuot) hz
+    -- SymmetricAlgebra.algHom = mkAlgHom; mkAlgHom z = ⟨Quot.mk (Rel SymRel) z⟩ up to def.
+    -- Unfold to extract the Quot equality.
+    simp only [SymmetricAlgebra.algHom, RingQuot.mkAlgHom_def, RingQuot.mkRingHom_def] at this
+    exact this
+  -- From Quot.mk equality, derive EqvGen.
+  have h_eqv : Relation.EqvGen (RingQuot.Rel (TensorAlgebra.SymRel R L)) z 0 :=
+    Quot.eqvGen_exact h_quot
+  -- Apply circTTensor_resp_EqvGen.
+  have := circTTensor_resp_EqvGen T h_eqv
+  rw [this, (circTTensor T).map_zero]
 
 /-- The per-T OG operation, on `SymmetricAlgebra R L`. Lands in `L`.
 
