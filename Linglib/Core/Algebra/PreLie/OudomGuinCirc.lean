@@ -210,7 +210,26 @@ theorem circ_one_right (A : SymmetricAlgebra R L) :
     `B ∈ S(L)`.
 
     This is the Def 2.4 recursion lifted to the symmetric-algebra
-    setting. The `X` on the right is `ι(X) ∈ S(L)`. -/
+    setting. The `X` on the right is `ι(X) ∈ S(L)`.
+
+    **Status (deferred)**: the math is `circTMultilinear_succ` lifted from the
+    per-degree level to S(L). Direct induction on B via `SymmetricAlgebra.induction`
+    runs into a substrate gap at the `mul B₁ B₂` case: needs a closed form for
+    `circByT_total T (B₁ * B₂)`, which we don't have (Step 1 only built per-degree
+    pieces, not a multiplicative formula on S(L)).
+
+    **Substrate path** (~1-2 sessions of work):
+    1. Add `circByT_total_mul_ι : circByT_total T (B * ι X) = (circByT_total T B) * X
+       - circByT_total T (oudomGuinCirc B (ι X))` to `OudomGuinCircTotal.lean`. Proven by
+       TA-level induction on a representing `z ∈ TA` with `algHomL z = B`, using
+       `circTMultilinear_succ` at the tprod level and lifting via `algHomL`'s
+       algebra-hom property.
+    2. Derivation formula `oudomGuinCirc (B₁ * B₂) (ι X) = oudomGuinCirc B₁ (ι X) * B₂
+       + B₁ * oudomGuinCirc B₂ (ι X)`. Follows from Prop 2.7 (iii) at `C = ι X` and
+       `comul (ι X) = ι X ⊗ 1 + 1 ⊗ ι X` (already established in
+       `Linglib.Core.RingTheory.Bialgebra.SymmetricAlgebra` via `comul_ι`). Plus
+       `circ_one_right` for the `_ ○ 1` simplification.
+    3. Close `circ_T_mul` by applying (1) directly. -/
 theorem circ_T_mul (T : L) (B : SymmetricAlgebra R L) (X : L) :
     oudomGuinCirc (R := R) (SymmetricAlgebra.ι R L T)
         (B * SymmetricAlgebra.ι R L X) =
