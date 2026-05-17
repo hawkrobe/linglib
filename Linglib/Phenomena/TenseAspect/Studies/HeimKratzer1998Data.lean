@@ -115,47 +115,7 @@ theorem historicalPresent_is_present :
 
 
 
--- ════════════════════════════════════════════════════════════════
--- § 16. Tense in Adjunct Clauses
--- ════════════════════════════════════════════════════════════════
-
-/-! Temporal adjunct clauses have their own tense interpretation
-    that doesn't follow the attitude-embedding pattern:
-
-    "Before John left, Mary was happy."
-    "After John arrived, Mary smiled."
-
-    The tense in the adjunct ("left", "arrived") locates an event
-    relative to the matrix event, but NOT via the perspective-shift
-    mechanism used for attitude complements. The adjunct tense is
-    more like an independent temporal reference anchored by the
-    temporal connective (*before*, *after*).
-
-    @cite{arregui-kusumoto-1998}, @cite{ogihara-sharvit-2012}. -/
-
-/-- Adjunct clause: "Before John left, Mary was happy."
-    John's leaving is before Mary's happiness.
-    Both are past relative to S, but their relative ordering
-    comes from "before", not from tense composition. -/
-def adjunctBeforeLeft : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0    -- adjunct tense is absolute (like non-SOT)
-  referenceTime := -3     -- adjunct event: John's leaving
-  eventTime := -3
-
-/-- Matrix with adjunct: "Mary was happy (before John left)." -/
-def matrixWasHappy : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2     -- matrix event: Mary's happiness
-  eventTime := -2
-
-/-- The adjunct event precedes the matrix event (from "before"). -/
-theorem adjunct_before_matrix :
-    adjunctBeforeLeft.eventTime < matrixWasHappy.eventTime := by native_decide
-
-
--- (§6, §11, §18, §21 migrated to Studies/Sharvit2003.lean)
+-- (§16 migrated to Studies/ArreguiKusumoto1998.lean)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -171,11 +131,7 @@ theorem historicalPresent_R_eq_P :
 
 /-- Historical present: event time ≠ speech time. -/
 theorem historicalPresent_not_at_speech :
-    historicalPresent.eventTime ≠ historicalPresent.speechTime := by native_decide
-
-/-- Adjunct "before": adjunct event precedes matrix event. -/
-theorem adjunct_precedes_matrix :
-    adjunctBeforeLeft.eventTime < matrixWasHappy.eventTime := by native_decide
+    historicalPresent.eventTime ≠ historicalPresent.speechTime := by decide
 
 
 -- ════════════════════════════════════════════════════════════════
