@@ -84,54 +84,10 @@ open Core.Time (SituationBoundedness)
 open Core.Time.Tense
 
 
--- ════════════════════════════════════════════════════════════════
--- § 13. Historical / Narrative Present
--- ════════════════════════════════════════════════════════════════
-
-/-! Historical present: present tense morphology with past temporal
-    reference.
-
-    "Napoleon enters the room. He sees the generals."
-
-    The present tense "enters" does not locate the event at speech time.
-    It refers to a past event but uses present morphology for vividness.
-    This is problematic for theories where present tense = R = S:
-    the constraint is violated, yet the sentence is felicitous.
-
-    @cite{wolfson-1979}, @cite{schiffrin-1981}. -/
-
-/-- Historical present: "Napoleon enters the room."
-    Present morphology (R = P) but the event is in the past.
-    Speech time S = 0, but the narrated event is at -200 (schematic). -/
-def historicalPresent : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -200  -- narrative perspective shifted to past
-  referenceTime := -200    -- R = P (present morphology)
-  eventTime := -200        -- event at the narrated past time
-
-/-- Historical present is "present" relative to narrative perspective. -/
-theorem historicalPresent_is_present :
-    historicalPresent.isPresent := rfl
-
-
-
+-- (§13 migrated to Phenomena/TenseAspect/HistoricalPresent.lean — sub-phenomenon file,
+--  no Reichenbach frame; the (S,P,R,E) tuple conflates morphology with interpretation
+--  for HP, per memory feedback_reichenbach_morph_vs_interp_conflation)
 -- (§16 migrated to Studies/ArreguiKusumoto1998.lean)
-
-
--- ════════════════════════════════════════════════════════════════
--- § Theory-Neutral Temporal Facts
--- ════════════════════════════════════════════════════════════════
-
-
--- ── Eventual target facts ──
-
-/-- Historical present: present morphology despite past event. -/
-theorem historicalPresent_R_eq_P :
-    historicalPresent.referenceTime = historicalPresent.perspectiveTime := rfl
-
-/-- Historical present: event time ≠ speech time. -/
-theorem historicalPresent_not_at_speech :
-    historicalPresent.eventTime ≠ historicalPresent.speechTime := by decide
 
 
 -- ════════════════════════════════════════════════════════════════
