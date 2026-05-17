@@ -137,7 +137,7 @@ theorem circTTensor_tprod (T : L) (n : ℕ) (f : Fin n → L) :
 `ι`s) + `List.prod_append` + `List.ofFn_fin_append`. -/
 
 /-- The product of two tprods is the tprod of the concatenated tuple. -/
-private theorem tprod_mul_tprod (m n : ℕ) (a : Fin m → L) (b : Fin n → L) :
+theorem tprod_mul_tprod (m n : ℕ) (a : Fin m → L) (b : Fin n → L) :
     (TensorAlgebra.tprod R L m a) * (TensorAlgebra.tprod R L n b) =
       TensorAlgebra.tprod R L (m + n) (Fin.append a b) := by
   have h_append :
@@ -152,7 +152,7 @@ private theorem tprod_mul_tprod (m n : ℕ) (a : Fin m → L) (b : Fin n → L) 
   simp only [TensorAlgebra.tprod_apply, ← List.prod_append, ← List.ofFn_fin_append, h_append]
 
 /-- `ι R x = tprod 1 (fun _ => x)`. -/
-private theorem ι_eq_tprod_one (x : L) :
+theorem ι_eq_tprod_one (x : L) :
     TensorAlgebra.ι R x = TensorAlgebra.tprod R L 1 (fun _ => x) := by
   rw [TensorAlgebra.tprod_apply]
   simp
@@ -317,10 +317,10 @@ which follows from the FULL symmetric-group action on
 applied to the concatenated tuple `[r's positions, X, Y, c's positions]`. -/
 
 /-- `algHom` (the quotient map) as a `LinearMap`. -/
-private noncomputable def algHomL : TensorAlgebra R L →ₗ[R] SymmetricAlgebra R L :=
+noncomputable def algHomL : TensorAlgebra R L →ₗ[R] SymmetricAlgebra R L :=
   (SymmetricAlgebra.algHom R L).toLinearMap
 
-private theorem algHomL_surjective :
+theorem algHomL_surjective :
     Function.Surjective (algHomL (R := R) (L := L)) :=
   SymmetricAlgebra.algHom_surjective R L
 
@@ -333,7 +333,8 @@ then uses `DirectSum.linearMap_ext` (per-summand check) and
 `PiTensorProduct.ext` (per-tprod check) — both `@[ext]` lemmas in mathlib.
 -/
 
-private lemma TA_linearMap_ext_tprod {f g : TensorAlgebra R L →ₗ[R] L}
+lemma TA_linearMap_ext_tprod {N : Type} [AddCommMonoid N] [Module R N]
+    {f g : TensorAlgebra R L →ₗ[R] N}
     (h : ∀ n (a : Fin n → L),
       f (TensorAlgebra.tprod R L n a) = g (TensorAlgebra.tprod R L n a)) :
     f = g := by
@@ -341,7 +342,7 @@ private lemma TA_linearMap_ext_tprod {f g : TensorAlgebra R L →ₗ[R] L}
   set e : TensorAlgebra R L ≃ₐ[R] ⨁ n, ⨂[R]^n L := TensorAlgebra.equivDirectSum
   suffices h_eq : f.comp e.symm.toLinearMap = g.comp e.symm.toLinearMap by
     ext z
-    have := congrArg (fun (φ : (⨁ n, ⨂[R]^n L) →ₗ[R] L) => φ (e z)) h_eq
+    have := congrArg (fun (φ : (⨁ n, ⨂[R]^n L) →ₗ[R] N) => φ (e z)) h_eq
     simp only [LinearMap.comp_apply, AlgEquiv.toLinearMap_apply,
                AlgEquiv.symm_apply_apply] at this
     exact this
@@ -598,7 +599,7 @@ private theorem circTTensor_T_smul (r : R) (T : L) :
 
 /-- **Key characterization**: `circByT_total T` agrees with `circTTensor T`
     when precomposed with `algHomL`. -/
-private theorem circByT_total_comp_algHomL (T : L) :
+theorem circByT_total_comp_algHomL (T : L) :
     (circByT_total T).comp (algHomL (R := R) (L := L)) = circTTensor T := by
   ext z
   unfold circByT_total
