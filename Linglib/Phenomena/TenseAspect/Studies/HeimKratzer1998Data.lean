@@ -160,40 +160,6 @@ def indirectQShifted : ReichenbachFrame ℤ where
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 12. Free Indirect Discourse
--- ════════════════════════════════════════════════════════════════
-
-/-! Free indirect discourse (FID) exhibits perspective shift in tense
-    without an overt attitude verb:
-
-    "She walked to the window. The garden was/*is beautiful."
-
-    The past tense in the second sentence is evaluated from the
-    character's perspective time, not the narrator's. This challenges
-    theories that derive perspective shift from attitude verb semantics
-    (Abusch, Von Stechow, Kratzer, Ogihara) — there is no attitude verb
-    to trigger the shift.
-
-    @cite{banfield-1982}, @cite{schlenker-2004},. -/
-
-/-- FID matrix: "She walked to the window" (past, narrated event at -3). -/
-def fidWalked : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -3
-  eventTime := -3
-
-/-- FID continuation: "The garden was beautiful."
-    Perspective shifts to character's viewpoint (E_matrix = -3)
-    even though there is no attitude verb. -/
-def fidGardenBeautiful : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -3   -- perspective = character's time (no attitude verb!)
-  referenceTime := -3     -- simultaneous with character's experience
-  eventTime := -3
-
-
--- ════════════════════════════════════════════════════════════════
 -- § 13. Historical / Narrative Present
 -- ════════════════════════════════════════════════════════════════
 
@@ -540,14 +506,6 @@ theorem indirectQ_simultaneous_present :
 /-- Indirect question: shifted frame has R < P. -/
 theorem indirectQ_shifted_past :
     indirectQShifted.referenceTime < indirectQShifted.perspectiveTime := by native_decide
-
-/-- FID: perspective shifts without attitude verb. -/
-theorem fid_perspective_shifted :
-    fidGardenBeautiful.perspectiveTime = fidWalked.eventTime := by native_decide
-
-/-- FID garden: R = P (simultaneous with character's experience). -/
-theorem fid_garden_present :
-    fidGardenBeautiful.isPresent := rfl
 
 /-- Historical present: present morphology despite past event. -/
 theorem historicalPresent_R_eq_P :
