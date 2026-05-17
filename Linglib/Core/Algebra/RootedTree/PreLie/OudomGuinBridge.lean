@@ -688,9 +688,75 @@ private theorem ckIso_circ_intertwine_basis_v
       rw [map_add, ih₁, ih₂, map_add, op_add,
           (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_add,
           LinearMap.add_apply, unop_add]
-    · -- w = single s r: scalar reduction. Blocked by SMulCommClass issue.
+    · -- w = single s r: scalar reduction via Algebra.smul_def detour.
       intro s r
-      sorry
+      letI : SMulCommClass ℤ ℤ (SymmetricAlgebra ℤ (InsertionAlgebra α)) :=
+        smulCommClass_self ℤ (SymmetricAlgebra ℤ (InsertionAlgebra α))
+      let w_single : InsertionAlgebra α := Finsupp.single s r
+      have hw : w_single = r • InsertionAlgebra.ofTree s := by
+        show (Finsupp.single s r : InsertionAlgebra α) =
+              r • (Finsupp.single s 1 : InsertionAlgebra α)
+        exact (Finsupp.smul_single_one s r).symm
+      show ckIsoSymmetricAlgebra ((oudomGuinCirc
+              (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) w_single))
+              (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) =
+            GrossmanLarson.unop ((GrossmanLarson.insertion
+              (GrossmanLarson.op (ckIsoSymmetricAlgebra
+                (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) w_single))))
+              (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _))))
+      have lhs_reduce : ckIsoSymmetricAlgebra ((oudomGuinCirc
+                (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) w_single))
+                (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) =
+            r • ckIsoSymmetricAlgebra ((oudomGuinCirc
+                (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+                  (InsertionAlgebra.ofTree s)))
+                (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) := by
+        rw [hw]
+        rw [(SymmetricAlgebra.ι ℤ (InsertionAlgebra α)).map_smul r _]
+        rw [oudomGuinCirc_eq_ofConv]
+        simp only [_root_.map_smul, WithConv.ofConv_smul, LinearMap.smul_apply]
+        rw [← oudomGuinCirc_eq_ofConv]
+        exact ckIsoSymmetricAlgebra.toLinearEquiv.map_smul r _
+      have rhs_reduce : GrossmanLarson.unop ((GrossmanLarson.insertion
+                (GrossmanLarson.op (ckIsoSymmetricAlgebra
+                  (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) w_single))))
+                (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))) =
+            r • GrossmanLarson.unop ((GrossmanLarson.insertion
+                (GrossmanLarson.op (ckIsoSymmetricAlgebra
+                  (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+                    (InsertionAlgebra.ofTree s)))))
+                (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _)))) := by
+        rw [hw]
+        simp only [_root_.map_smul, op_smul, unop_smul, LinearMap.smul_apply,
+                   LinearMap.map_smul]
+      rw [lhs_reduce, rhs_reduce]
+      -- Reduce to basis-basis case.
+      congr 1
+      rw [circ_ι_ι, InsertionAlgebra.ofTree_mul_ofTree, ckIso_ι_ofMultiset]
+      rw [show ckIsoSymmetricAlgebra (SymmetricAlgebra.ι ℤ _
+              (InsertionAlgebra.ofTree s)) =
+            ConnesKreimer.of' ({s} : Multiset _) from by
+          show ckIsoSymmetricAlgebra (SymmetricAlgebra.ι ℤ _
+                (Finsupp.single s (1 : ℤ))) = _
+          exact ckIsoSymmetricAlgebra_ι_single s]
+      rw [show GrossmanLarson.op (ConnesKreimer.of' ({s} : Multiset (Nonplanar α))) =
+              GrossmanLarson.of' ({s} : Multiset _) from rfl,
+          show GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset (Nonplanar α))) =
+              GrossmanLarson.of' ({t} : Multiset _) from rfl,
+          GrossmanLarson.insertion_of'_of']
+      show ((Nonplanar.insertSum s t).map fun r' =>
+              (ConnesKreimer.of' ({r'} : Multiset (Nonplanar α)) :
+                ConnesKreimer ℤ _)).sum =
+          GrossmanLarson.unop (GrossmanLarson.insertionBasis ({s} : Multiset _)
+              ({t} : Multiset _))
+      rw [show GrossmanLarson.insertionBasis ({s} : Multiset (Nonplanar α))
+              ({t} : Multiset _) =
+            ((Nonplanar.insertionMultiset ({s} : Multiset _) ({t} : Multiset _)).map
+              fun F' => (GrossmanLarson.of' (R := ℤ) F' :
+                GrossmanLarson ℤ α)).sum from rfl,
+          nonplanar_insertionMultiset_singletons s t,
+          Multiset.map_map]
+      rfl
   | mul X Y ih_X ih_Y =>
     -- LHS: `(X * Y) ○ ι(ofTree t) = (X ○ ι _) * Y + X * (Y ○ ι _)` (Leibniz)
     --      then ckIso preserves * and +, apply IHs.
