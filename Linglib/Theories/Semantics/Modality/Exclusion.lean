@@ -2,7 +2,7 @@ import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
 import Linglib.Core.Modality.HistoricalAlternatives
-import Linglib.Theories.Semantics.Tense.Counterfactual.Defs
+import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Reference.Kaplan
 import Linglib.Theories.Semantics.Tense.ConditionalShift
@@ -59,14 +59,81 @@ namespace Semantics.Modality.Exclusion
 
 open Core.Context (KContext ContextTower ContextShift RichContext
   hpShift xMarkingShift DomainExpanding temporalShift)
-open Semantics.Tense.Counterfactual (PastMorphologyUse CounterfactualDistance)
 open Core.Modality.HistoricalAlternatives (WorldHistory historicalBase)
 open Semantics.Mood (subjShift)
 open Semantics.Reference.Kaplan (opActually_access opActually_shift_invariant)
+open Semantics.Tense (upperLimitConstraint)
 open Semantics.Tense.ConditionalShift (domainRestrictedConditional
   trivialConsequent nonTrivialConsequent
   trivial_domainRestricted expansion_resolves_triviality
   nontrivial_conditional_excludes)
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Counterfactual past — the two-uses-of-past machinery
+-- ════════════════════════════════════════════════════════════════
+
+/-! @cite{iatridou-2000}: past morphology is **ambiguous between
+    temporal and counterfactual uses**, with only the temporal use
+    subject to the Upper Limit Constraint. The substrate primitives
+    here are consumed by the `ExclF` machinery below and by the
+    paper-anchored Iatridou2000 / Mizuno2024 Studies files. -/
+
+/-- Two uses of past morphology, following @cite{iatridou-2000}.
+
+    Past morphology is ambiguous between:
+    1. Temporal precedence (genuine past tense)
+    2. Modal remoteness (counterfactual distance from actuality)
+
+    @cite{iatridou-2000}'s "exclusion feature": past morphology marks
+    exclusion from the set of relevant times/worlds. Temporal past
+    excludes present times; counterfactual past excludes actual
+    worlds. -/
+inductive PastMorphologyUse where
+  /-- Temporal: precedence on the time line -/
+  | temporal
+  /-- Counterfactual: distance from actuality -/
+  | counterfactual
+  deriving DecidableEq, Repr
+
+/-- Counterfactual distance: past morphology marks modal remoteness,
+    not temporal precedence. The "reference world" is remote from
+    the actual world. -/
+structure CounterfactualDistance (World : Type*) where
+  /-- The actual world -/
+  actual : World
+  /-- The counterfactual world -/
+  counterfactual : World
+  /-- The worlds are distinct (modal distance > 0) -/
+  distinct : actual ≠ counterfactual
+
+/-- The refined ULC: the upper limit constraint applies only to
+    temporal tense, not to counterfactual tense.
+
+    If the past morphology is temporal, ULC holds (R ≤ E_matrix).
+    If the past morphology is counterfactual, ULC does not apply. -/
+def refinedULC {Time : Type*} [LE Time]
+    (use : PastMorphologyUse) (embeddedR matrixE : Time) : Prop :=
+  match use with
+  | .temporal => upperLimitConstraint embeddedR matrixE
+  | .counterfactual => True
+
+/-- Temporal tense is subject to ULC. -/
+theorem temporal_has_ulc {Time : Type*} [LE Time]
+    (embeddedR matrixE : Time) (h : embeddedR ≤ matrixE) :
+    refinedULC .temporal embeddedR matrixE :=
+  h
+
+/-- Counterfactual tense is exempt from ULC. -/
+theorem counterfactual_exempt_from_ulc {Time : Type*} [LE Time]
+    (embeddedR matrixE : Time) :
+    refinedULC .counterfactual embeddedR matrixE :=
+  trivial
+
+/-- The two uses of past morphology are genuinely distinct. -/
+theorem temporal_ne_counterfactual :
+    PastMorphologyUse.temporal ≠ PastMorphologyUse.counterfactual :=
+  nofun
 
 -- ════════════════════════════════════════════════════════════════
 -- § ExclF: The Exclusion Feature (@cite{iatridou-2000})

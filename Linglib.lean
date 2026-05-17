@@ -2355,7 +2355,6 @@ import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 import Linglib.Theories.Semantics.Tense.Perspective
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Theories.Semantics.Tense.PerfectPolysemy
-import Linglib.Theories.Semantics.Tense.SequenceOfTense
 import Linglib.Theories.Semantics.Tense.ConditionalShift
 import Linglib.Theories.Semantics.Aspect.Core
 import Linglib.Theories.Semantics.Aspect.Composition
@@ -2506,7 +2505,6 @@ import Linglib.Phenomena.TenseAspect.Studies.Kratzer1998
 import Linglib.Theories.Semantics.Tense.SOT.Ambiguity
 import Linglib.Phenomena.TenseAspect.Studies.Ogihara1996
 import Linglib.Theories.Semantics.Tense.Modal.Matrix
-import Linglib.Theories.Semantics.Tense.Counterfactual.Defs
 import Linglib.Phenomena.TenseAspect.Studies.Sharvit2014
 import Linglib.Phenomena.TemporalConnectives.Studies.Giannakidou2002
 import Linglib.Typology.TemporalConnectives
