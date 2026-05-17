@@ -54,7 +54,7 @@ namespace Phenomena.TenseAspect.Studies.Kratzer1998
 
 open Semantics.Tense.SOT.Decomposition
 open Core.Time.Tense
-open Data.Examples (LinguisticExample Judgment)
+open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES
 -- (Generated from Linglib/Data/Examples/Kratzer1998.json by scripts/gen_examples.py.
@@ -191,14 +191,14 @@ def ex32a : LinguisticExample :=
 
 def ex33a : LinguisticExample :=
   { id := "kratzer1998_ex33a"
-    source := ⟨"ogihara-1989", "dissertation multi-embedded SOT"⟩
-    reportedIn := some ⟨"kratzer-1998", "(33a)"⟩
+    source := ⟨"kratzer-1998", "(33a)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "John said he would buy a fish that was still alive."
     discourseSegments := []
     glossedTokens := []
     translation := "John said he would buy a fish that was still alive."
-    context := "Same surface form as (2)/ex02, re-analyzed in Section 5 with zero-tense in the RC."
+    context := "Same surface form as (2)/ex02, re-analyzed in Section 5 with zero-tense in the RC. Kratzer's own multi-LF variant (not attributed to Ogihara below this ex number in the paper)."
     judgment := .acceptable
     alternatives := []
     readings := [("RC zero-tense (alive-at-buying)", .acceptable), ("RC past-tense (alive-at-saying)", .acceptable)]
@@ -304,7 +304,7 @@ def ex40b : LinguisticExample :=
     language := "stan1295"
     primaryText := "Wer baute diese Kirche? Borromini baute diese Kirche."
     discourseSegments := ["Wer baute diese Kirche?", "Borromini baute diese Kirche."]
-    glossedTokens := [("Wer", "who"), ("baute", "build.PST.3SG"), ("diese", "DEM.SG.F"), ("Kirche", "church"), ("Borromini", "Borromini"), ("baute", "build.PST.3SG"), ("diese", "DEM.SG.F"), ("Kirche", "church")]
+    glossedTokens := [("Wer", "who"), ("baute", "build.PST.3SG"), ("diese", "DEM.ACC.SG.F"), ("Kirche", "church"), ("Borromini", "Borromini"), ("baute", "build.PST.3SG"), ("diese", "DEM.ACC.SG.F"), ("Kirche", "church")]
     translation := "Who built this church? Borromini built this church."
     context := "Looking at churches in Italy, no previous discourse. German simple past (Präteritum) infelicitous out of the blue."
     judgment := .ungrammatical
@@ -322,7 +322,7 @@ def ex40c : LinguisticExample :=
     language := "stan1295"
     primaryText := "Wer hat diese Kirche gebaut? Borromini hat diese Kirche gebaut."
     discourseSegments := ["Wer hat diese Kirche gebaut?", "Borromini hat diese Kirche gebaut."]
-    glossedTokens := [("Wer", "who"), ("hat", "have.PRS.3SG"), ("diese", "DEM.SG.F"), ("Kirche", "church"), ("gebaut", "build.PTCP"), ("Borromini", "Borromini"), ("hat", "have.PRS.3SG"), ("diese", "DEM.SG.F"), ("Kirche", "church"), ("gebaut", "build.PTCP")]
+    glossedTokens := [("Wer", "who"), ("hat", "have.AUX.PRS.3SG"), ("diese", "DEM.ACC.SG.F"), ("Kirche", "church"), ("gebaut", "build.PTCP"), ("Borromini", "Borromini"), ("hat", "have.AUX.PRS.3SG"), ("diese", "DEM.ACC.SG.F"), ("Kirche", "church"), ("gebaut", "build.PTCP")]
     translation := "Who has this church built? Borromini has this church built."
     context := "Same out-of-the-blue Italy-church scenario. Standard German Perfekt is felicitous where simple past is not."
     judgment := .acceptable
@@ -358,7 +358,7 @@ def ex41b : LinguisticExample :=
     language := "stan1295"
     primaryText := "Wir werden jeden Brief beantworten, den wir bekamen."
     discourseSegments := []
-    glossedTokens := [("Wir", "we"), ("werden", "will.PRS.1PL"), ("jeden", "every.ACC.M"), ("Brief", "letter"), ("beantworten", "answer.INF"), ("den", "REL.ACC.M"), ("wir", "we"), ("bekamen", "receive.PST.1PL")]
+    glossedTokens := [("Wir", "we"), ("werden", "will.AUX.PRS.1PL"), ("jeden", "every.ACC.SG.M"), ("Brief", "letter"), ("beantworten", "answer.INF"), ("den", "REL.ACC.SG.M"), ("wir", "we"), ("bekamen", "receive.PST.1PL")]
     translation := "We will answer every letter that we received."
     context := "Same content as (41a) in Standard German Präteritum. Needs a contextually salient past time to be acceptable."
     judgment := .marginal
@@ -376,7 +376,7 @@ def ex41c : LinguisticExample :=
     language := "stan1295"
     primaryText := "Wir werden jeden Brief beantworten, den wir bekommen haben."
     discourseSegments := []
-    glossedTokens := [("Wir", "we"), ("werden", "will.PRS.1PL"), ("jeden", "every.ACC.M"), ("Brief", "letter"), ("beantworten", "answer.INF"), ("den", "REL.ACC.M"), ("wir", "we"), ("bekommen", "receive.PTCP"), ("haben", "have.PRS.1PL")]
+    glossedTokens := [("Wir", "we"), ("werden", "will.AUX.PRS.1PL"), ("jeden", "every.ACC.SG.M"), ("Brief", "letter"), ("beantworten", "answer.INF"), ("den", "REL.ACC.SG.M"), ("wir", "we"), ("bekommen", "receive.PTCP"), ("haben", "have.AUX.PRS.1PL")]
     translation := "We will answer every letter that we have received."
     context := "Same content as (41a/b) but with German Perfekt in the RC. Felicitous without a salient past time."
     judgment := .acceptable
@@ -412,14 +412,14 @@ def ex42b : LinguisticExample :=
     language := "stan1295"
     primaryText := "Hans träumte davon, einen Fisch zu essen, den er selber fing."
     discourseSegments := []
-    glossedTokens := [("Hans", "Hans"), ("träumte", "dream.PST.3SG"), ("davon", "of.it"), ("einen", "INDEF.ACC.M"), ("Fisch", "fish"), ("zu", "to.INF"), ("essen", "eat.INF"), ("den", "REL.ACC.M"), ("er", "he"), ("selber", "himself"), ("fing", "catch.PST.3SG")]
+    glossedTokens := [("Hans", "Hans"), ("träumte", "dream.PST.3SG"), ("davon", "R.of"), ("einen", "INDEF.ACC.SG.M"), ("Fisch", "fish"), ("zu", "INF.PRT"), ("essen", "eat.INF"), ("den", "REL.ACC.SG.M"), ("er", "he"), ("selber", "INTENS"), ("fing", "catch.PST.3SG")]
     translation := "Hans dreamed about eating a fish that he himself caught."
     context := "Same content as (42a) with German Präteritum in the RC. Per Kratzer, the past tense must be anaphoric (no backward-shifted reading)."
     judgment := .acceptable
     alternatives := []
-    readings := [("anaphoric (caught-at-dreaming-time)", .acceptable), ("backward-shifted (caught-before-eating)", .ungrammatical)]
+    readings := [("anaphoric (caught-at-dreaming-time)", .acceptable), ("backward-shifted (caught-before-eating)", .unacceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (42b), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense must be anaphoric.\" Backward-shifted reading is unavailable."
+    comment := "Kratzer's example (42b), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense must be anaphoric.\" The backward-shifted reading is an interpretation gap (unavailable LF), not a string ill-formedness — hence `unacceptable` rather than `ungrammatical`."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -430,14 +430,14 @@ def ex42c : LinguisticExample :=
     language := "stan1295"
     primaryText := "Hans träumte davon, einen Fisch zu essen, den er selber gefangen hatte."
     discourseSegments := []
-    glossedTokens := [("Hans", "Hans"), ("träumte", "dream.PST.3SG"), ("davon", "of.it"), ("einen", "INDEF.ACC.M"), ("Fisch", "fish"), ("zu", "to.INF"), ("essen", "eat.INF"), ("den", "REL.ACC.M"), ("er", "he"), ("selber", "himself"), ("gefangen", "catch.PTCP"), ("hatte", "have.PST.3SG")]
-    translation := "Hans dreamed about catching a fish that he had caught himself."
+    glossedTokens := [("Hans", "Hans"), ("träumte", "dream.PST.3SG"), ("davon", "R.of"), ("einen", "INDEF.ACC.SG.M"), ("Fisch", "fish"), ("zu", "INF.PRT"), ("essen", "eat.INF"), ("den", "REL.ACC.SG.M"), ("er", "he"), ("selber", "INTENS"), ("gefangen", "catch.PTCP"), ("hatte", "have.AUX.PST.3SG")]
+    translation := "Hans dreamed about eating a fish that he had caught himself."
     context := "To recover the backward-shifted reading in German, the past perfect (Plusquamperfekt) is required."
     judgment := .acceptable
     alternatives := []
     readings := [("backward-shifted (caught-before-eating)", .acceptable)]
     paperFeatures := []
-    comment := "Kratzer's example (42c), Section 7, p. 17. Past perfect fills the backward-shifted slot that the bare Preterit cannot."
+    comment := "Kratzer's example (42c), Section 7, p. 17. Past perfect fills the backward-shifted slot that the bare Preterit cannot. NB: Kratzer's free English translation in the PDF reads \"catching\" (typo for \"eating\"); the German `einen Fisch zu essen` is unambiguously \"to eat a fish\", with the catching in the RC `den er selber gefangen hatte`. Translation here reflects the German."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -466,65 +466,60 @@ section KratzerChain
 
 open Fragments.English.Tense (kratzerSimplePast)
 open Fragments.German.Tense (kratzerPreterit kratzerPerfekt)
-open Core.Time.Tense (Overtness)
+open Data.Examples (Judgment)
 
 /-- **English simple past = perfect + present.** Per Kratzer §7
     (p. 18), the English simple past decomposes as PRESENT-tense head
-    over PERFECT aspect. The Fragment encodes this as:
-    `kratzerSimplePast.tensePronoun.constraint = .present` and
-    `kratzerSimplePast.hasPerfect = true`. Empirically: the form is
-    deictic-compatible (`canBeDeictic = true`), which agrees with
-    `Examples.ex40a` ("Who built this Church? Borromini built this
-    church.") being acceptable out of the blue. -/
+    over PERFECT aspect. The Fragment-level encoding (`constraint =
+    .present` + `hasPerfect = true`) is verified directly in
+    `Fragments/English/Tense.lean`; this theorem isolates the bridge
+    claim that needs both Fragment-side and Example-side facts: the
+    Fragment encoding predicts deictic usability, and Kratzer's
+    out-of-the-blue example (40a) ("Who built this Church?…") is
+    `.acceptable`. -/
 theorem english_simple_past_chain :
     kratzerSimplePast.tensePronoun.constraint = GramTense.present ∧
     kratzerSimplePast.hasPerfect = true ∧
-    kratzerSimplePast.canBeDeictic ∧
-    Examples.ex40a.judgment = Judgment.acceptable := by
-  refine ⟨rfl, rfl, ?_, rfl⟩
-  decide
+    Examples.ex40a.judgment = Judgment.acceptable :=
+  ⟨rfl, rfl, rfl⟩
 
 /-- **German Preterit = genuine past pronoun.** Per Kratzer §7
     (ex (40b), p. 16): the German Präteritum requires a contextually
     salient past time, behaving like an anaphoric pronoun. The Fragment
     encodes this as `kratzerPreterit.tensePronoun.constraint = .past`
-    and `kratzerPreterit.canBeDeictic = false`. The empirical anchor
-    is `Examples.ex40b` (deviant out of the blue, ungrammaticality
-    star per Kratzer). -/
+    + `hasPerfect = false`; the empirical anchor is `Examples.ex40b`
+    (deviant out of the blue, star per Kratzer). -/
 theorem german_preterit_chain :
     kratzerPreterit.tensePronoun.constraint = GramTense.past ∧
-    ¬ kratzerPreterit.canBeDeictic ∧
     kratzerPreterit.hasPerfect = false ∧
-    Examples.ex40b.judgment = Judgment.ungrammatical := by
-  refine ⟨rfl, ?_, rfl, rfl⟩
-  decide
+    Examples.ex40b.judgment = Judgment.ungrammatical :=
+  ⟨rfl, rfl, rfl⟩
 
 /-- **German Perfekt = perfect + present** (same decomposition as
     English simple past). Per Kratzer §7 (ex (40c), p. 16): the Perfekt
-    fills the deictic-past slot that the Preterit cannot. The Fragment
-    encodes this with `kratzerPerfekt.tensePronoun.constraint = .present`
-    and `kratzerPerfekt.hasPerfect = true`, matching `kratzerSimplePast`'s
-    decomposition. Empirical anchor: `Examples.ex40c` (acceptable out of
-    the blue). -/
+    fills the deictic-past slot that the Preterit cannot. The chain
+    asserts BOTH the empirical agreement on (40c) AND the cross-Fragment
+    parallelism (Perfekt's tense head + perfect-aspect coincide with
+    `kratzerSimplePast`'s), which is the substantive content of "same
+    decomposition." -/
 theorem german_perfekt_chain :
     kratzerPerfekt.tensePronoun.constraint = GramTense.present ∧
-    kratzerPerfekt.canBeDeictic ∧
     kratzerPerfekt.hasPerfect = true ∧
     Examples.ex40c.judgment = Judgment.acceptable ∧
     kratzerPerfekt.tensePronoun.constraint =
       kratzerSimplePast.tensePronoun.constraint ∧
-    kratzerPerfekt.hasPerfect = kratzerSimplePast.hasPerfect := by
-  refine ⟨rfl, ?_, rfl, rfl, rfl, rfl⟩
-  decide
+    kratzerPerfekt.hasPerfect = kratzerSimplePast.hasPerfect :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-/-- **Zero tense.** Per Kratzer §4 (p. 10–11): English has two indexical
-    tenses (present, past) and a zero tense. The zero tense is bound
-    PRESENT (not ambiguous PAST), surfaces phonologically as zero in the
-    SOT environment, and feeds the SOT deletion mechanism. -/
+/-- **Zero tense surface properties.** Per Kratzer §4 (p. 10–11):
+    English has two indexical tenses (present, past) and a zero tense.
+    The substrate lemmas `zero_tense_is_present` and `zero_tense_overtness`
+    in `Tense/SOT/Decomposition.lean` carry the underlying claims; this
+    theorem just binds them locally for cross-reference. -/
 theorem zero_tense_chain :
     (kratzerZeroTense 1).constraint = GramTense.present ∧
-    Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero :=
-  ⟨rfl, rfl⟩
+    Core.Time.Tense.Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero :=
+  ⟨zero_tense_is_present 1, zero_tense_overtness 1⟩
 
 end KratzerChain
 

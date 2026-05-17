@@ -132,14 +132,13 @@
   },
   {
     "id": "kratzer1998_ex33a",
-    "source":     {"bibkey": "ogihara-1989", "paperLabel": "dissertation multi-embedded SOT"},
-    "reportedIn": {"bibkey": "kratzer-1998", "paperLabel": "(33a)"},
+    "source": {"bibkey": "kratzer-1998", "paperLabel": "(33a)"},
     "language": "stan1293",
     "primaryText": "John said he would buy a fish that was still alive.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "John said he would buy a fish that was still alive.",
-    "context": "Same surface form as (2)/ex02, re-analyzed in Section 5 with zero-tense in the RC.",
+    "context": "Same surface form as (2)/ex02, re-analyzed in Section 5 with zero-tense in the RC. Kratzer's own multi-LF variant (not attributed to Ogihara below this ex number in the paper).",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -251,8 +250,8 @@
       "Borromini baute diese Kirche."
     ],
     "glossedTokens": [
-      ["Wer", "who"],          ["baute", "build.PST.3SG"], ["diese", "DEM.SG.F"], ["Kirche", "church"],
-      ["Borromini", "Borromini"], ["baute", "build.PST.3SG"], ["diese", "DEM.SG.F"], ["Kirche", "church"]
+      ["Wer", "who"],          ["baute", "build.PST.3SG"], ["diese", "DEM.ACC.SG.F"], ["Kirche", "church"],
+      ["Borromini", "Borromini"], ["baute", "build.PST.3SG"], ["diese", "DEM.ACC.SG.F"], ["Kirche", "church"]
     ],
     "translation": "Who built this church? Borromini built this church.",
     "context": "Looking at churches in Italy, no previous discourse. German simple past (Präteritum) infelicitous out of the blue.",
@@ -273,8 +272,8 @@
       "Borromini hat diese Kirche gebaut."
     ],
     "glossedTokens": [
-      ["Wer", "who"],            ["hat", "have.PRS.3SG"], ["diese", "DEM.SG.F"], ["Kirche", "church"], ["gebaut", "build.PTCP"],
-      ["Borromini", "Borromini"], ["hat", "have.PRS.3SG"], ["diese", "DEM.SG.F"], ["Kirche", "church"], ["gebaut", "build.PTCP"]
+      ["Wer", "who"],            ["hat", "have.AUX.PRS.3SG"], ["diese", "DEM.ACC.SG.F"], ["Kirche", "church"], ["gebaut", "build.PTCP"],
+      ["Borromini", "Borromini"], ["hat", "have.AUX.PRS.3SG"], ["diese", "DEM.ACC.SG.F"], ["Kirche", "church"], ["gebaut", "build.PTCP"]
     ],
     "translation": "Who has this church built? Borromini has this church built.",
     "context": "Same out-of-the-blue Italy-church scenario. Standard German Perfekt is felicitous where simple past is not.",
@@ -308,8 +307,8 @@
     "primaryText": "Wir werden jeden Brief beantworten, den wir bekamen.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Wir", "we"],           ["werden", "will.PRS.1PL"], ["jeden", "every.ACC.M"], ["Brief", "letter"],
-      ["beantworten", "answer.INF"], ["den", "REL.ACC.M"],     ["wir", "we"],            ["bekamen", "receive.PST.1PL"]
+      ["Wir", "we"],           ["werden", "will.AUX.PRS.1PL"], ["jeden", "every.ACC.SG.M"], ["Brief", "letter"],
+      ["beantworten", "answer.INF"], ["den", "REL.ACC.SG.M"],     ["wir", "we"],            ["bekamen", "receive.PST.1PL"]
     ],
     "translation": "We will answer every letter that we received.",
     "context": "Same content as (41a) in Standard German Präteritum. Needs a contextually salient past time to be acceptable.",
@@ -327,8 +326,8 @@
     "primaryText": "Wir werden jeden Brief beantworten, den wir bekommen haben.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Wir", "we"],              ["werden", "will.PRS.1PL"], ["jeden", "every.ACC.M"], ["Brief", "letter"],
-      ["beantworten", "answer.INF"], ["den", "REL.ACC.M"],     ["wir", "we"],            ["bekommen", "receive.PTCP"], ["haben", "have.PRS.1PL"]
+      ["Wir", "we"],              ["werden", "will.AUX.PRS.1PL"], ["jeden", "every.ACC.SG.M"], ["Brief", "letter"],
+      ["beantworten", "answer.INF"], ["den", "REL.ACC.SG.M"],     ["wir", "we"],            ["bekommen", "receive.PTCP"], ["haben", "have.AUX.PRS.1PL"]
     ],
     "translation": "We will answer every letter that we have received.",
     "context": "Same content as (41a/b) but with German Perfekt in the RC. Felicitous without a salient past time.",
@@ -365,9 +364,9 @@
     "primaryText": "Hans träumte davon, einen Fisch zu essen, den er selber fing.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Hans", "Hans"],            ["träumte", "dream.PST.3SG"], ["davon", "of.it"],     ["einen", "INDEF.ACC.M"],
-      ["Fisch", "fish"],           ["zu", "to.INF"],             ["essen", "eat.INF"],   ["den", "REL.ACC.M"],
-      ["er", "he"],                ["selber", "himself"],        ["fing", "catch.PST.3SG"]
+      ["Hans", "Hans"],            ["träumte", "dream.PST.3SG"], ["davon", "R.of"],          ["einen", "INDEF.ACC.SG.M"],
+      ["Fisch", "fish"],           ["zu", "INF.PRT"],            ["essen", "eat.INF"],       ["den", "REL.ACC.SG.M"],
+      ["er", "he"],                ["selber", "INTENS"],         ["fing", "catch.PST.3SG"]
     ],
     "translation": "Hans dreamed about eating a fish that he himself caught.",
     "context": "Same content as (42a) with German Präteritum in the RC. Per Kratzer, the past tense must be anaphoric (no backward-shifted reading).",
@@ -375,9 +374,9 @@
     "alternatives": [],
     "readings": [
       {"name": "anaphoric (caught-at-dreaming-time)",     "judgment": "acceptable"},
-      {"name": "backward-shifted (caught-before-eating)", "judgment": "ungrammatical"}
+      {"name": "backward-shifted (caught-before-eating)", "judgment": "unacceptable"}
     ],
-    "comment": "Kratzer's example (42b), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense must be anaphoric.\" Backward-shifted reading is unavailable.",
+    "comment": "Kratzer's example (42b), Section 7, p. 16-17. Per Kratzer: \"Underlined past tense must be anaphoric.\" The backward-shifted reading is an interpretation gap (unavailable LF), not a string ill-formedness — hence `unacceptable` rather than `ungrammatical`.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -388,18 +387,18 @@
     "primaryText": "Hans träumte davon, einen Fisch zu essen, den er selber gefangen hatte.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Hans", "Hans"],            ["träumte", "dream.PST.3SG"], ["davon", "of.it"],         ["einen", "INDEF.ACC.M"],
-      ["Fisch", "fish"],           ["zu", "to.INF"],             ["essen", "eat.INF"],       ["den", "REL.ACC.M"],
-      ["er", "he"],                ["selber", "himself"],        ["gefangen", "catch.PTCP"], ["hatte", "have.PST.3SG"]
+      ["Hans", "Hans"],            ["träumte", "dream.PST.3SG"], ["davon", "R.of"],          ["einen", "INDEF.ACC.SG.M"],
+      ["Fisch", "fish"],           ["zu", "INF.PRT"],            ["essen", "eat.INF"],       ["den", "REL.ACC.SG.M"],
+      ["er", "he"],                ["selber", "INTENS"],         ["gefangen", "catch.PTCP"], ["hatte", "have.AUX.PST.3SG"]
     ],
-    "translation": "Hans dreamed about catching a fish that he had caught himself.",
+    "translation": "Hans dreamed about eating a fish that he had caught himself.",
     "context": "To recover the backward-shifted reading in German, the past perfect (Plusquamperfekt) is required.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
       {"name": "backward-shifted (caught-before-eating)", "judgment": "acceptable"}
     ],
-    "comment": "Kratzer's example (42c), Section 7, p. 17. Past perfect fills the backward-shifted slot that the bare Preterit cannot.",
+    "comment": "Kratzer's example (42c), Section 7, p. 17. Past perfect fills the backward-shifted slot that the bare Preterit cannot. NB: Kratzer's free English translation in the PDF reads \"catching\" (typo for \"eating\"); the German `einen Fisch zu essen` is unambiguously \"to eat a fish\", with the catching in the RC `den er selber gefangen hatte`. Translation here reflects the German.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   }
