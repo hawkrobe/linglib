@@ -21,6 +21,22 @@ thesis); shifted expressions read from `.local`.
 (not the 2003 *L&P* paper) as the variant of this analysis that "does
 not depend on morphosyntactic labels" (PDF p. 33).
 
+## Historical / Narrative Present
+
+Schlenker's CT/CU split is also the semantic-theory anchor for the
+**Historical Present** construction (the narrative use of present-
+tense morphology to describe past events: "Napoleon enters the
+room"; the WWII Vercors example below). The Context of Thought is
+shifted into the past so present-tense forms locate the event at the
+narrative now; adverbials anchored to the Context of Utterance
+("fifty eight years ago to this day") produce the characteristic
+"I was there" effect. Sociolinguistic / discourse-analytic accounts
+of HP — @cite{wolfson-1979}, @cite{schiffrin-1981} — describe when
+speakers shift into Conversational Historical Present in oral
+narrative and what discourse functions the shift serves; Schlenker's
+2004 contribution is the formal-semantic mechanism that makes the
+form-meaning mismatch derivable.
+
 ## Provenance
 
 This file was previously misnamed `Studies/Abusch1997.lean`, then
