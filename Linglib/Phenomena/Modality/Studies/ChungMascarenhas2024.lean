@@ -9,61 +9,47 @@ A single lexical entry for `must`, parameterized by a set `R` of
 "relevant propositions". For deontics, `R = R_D` (rules/ideals);
 `E[μ_R ∣ φ]` is then the expected utility of `φ`. For epistemics,
 `R = R_E` (relevant known facts/evidence); `E[μ_R ∣ φ]` is what C&M
-call the *explanatory value* of `φ`, equal (by their eq. 12) to the
-sum of likelihoods `Σ_i P(e_i ∣ φ)`.
+call the *explanatory value* of `φ`, equal to the sum of likelihoods
+`Σ_i P(e_i ∣ φ)` (their eq. 12, which follows by definition once
+`μ_R = Confirmation.countMeasure R`).
 
 Headline operator (C&M (6)):
 
   ⟦must φ⟧^w = (E_w[μ_R ∣ φ] > θ) ∧ ∀ψ ∈ Alt(φ). (E_w[μ_R ∣ ψ] ≤ θ)
 
-where `μ_R(w) = |{r ∈ R ∣ r(w)}|`, the count of relevant propositions
-true at `w`.
+## What this file contains
 
-## What this file does
+* `mustCM`, `oughtCM`, `mustCMWithPlausibility` — the operator, the
+  Sloman-style weak-necessity variant, and C&M §5's plausibility patch
+  as a separate `def` (so the patch stays reviewable).
+* `Miners` — the @cite{kolodny-macfarlane-2010} deontic scenario as a
+  six-world PMF setup with `idealsRD` (paper notation `R_D`).
+* `ModalLinda` — C&M's modal-conjunction-fallacy numerical claims as ℚ
+  values with the headline inequality `explanatoryValueTeller <
+  explanatoryValueFeministTeller` proven (= the modal conjunction
+  fallacy at the operator's numerical level).
+* `ModalLawyers` — same shape for C&M's base-rate-neglect prediction.
+* `ya_exhaustification_yields_mustCM` — the Korean compositional
+  derivation (C&M §4): the `-(e)ya` exhaustifier IS the second conjunct
+  of `mustCM`.
 
-* §1 the operator `mustCM` + the @cite{sloman-1970}-flavored `oughtCM`
-  obtained by dropping the exhaustification clause.
-* §2 §5 plausibility-requirement variant `mustCM_with_plausibility` —
-  the patch from C&M §5 that handles cases like #*He must be dead*.
-  Kept as a separate `def` rather than baked into the core, per the
-  audit recommendation that ad-hoc additions stay reviewable.
-* §3 the **Miners scenario** worked: deontic flavor, decide-friendly
-  PMF setup. The key inequalities are stated and partially proved.
-* §4 the **modal Linda scenario** (C&M §3.2): epistemic flavor, predicts
-  acceptance of "Linda must be a feminist bank teller". The conjunction
-  fallacy as a `must`-prediction.
-* §5 the **modal Lawyers/Engineers scenario** (C&M §3.3): predicts
-  "Jack must be an engineer" despite contrary priors. The base-rate
-  neglect as a `must`-prediction.
-* §6 the **compositional derivation from Korean** (C&M §4): the
-  `-(e)ya toy-` construction yields the operator via the probabilistic
-  conditional `condIf` + a Sloman-style exhaustifier.
-* §7 cross-reference to @cite{vonfintel-iatridou-2005} and the
-  anankastic-conditional resolution; cross-reference to
-  @cite{lassiter-2017} as the closest existing formalization
-  (`Phenomena/Modality/Studies/Lassiter2017.lean`).
+The Linda and Lawyers files do not set up full PMFs (the joint
+distributions over hypothesis-and-evidence are not pinned down by
+C&M's text). The numerical-claim level is sufficient to document
+the operator's predicted direction without committing to modeling
+choices not in the paper.
 
-## Scope and honesty
+## Cross-references
 
-Each case study sets up a typed PMF and the relevant propositions; the
-quantitative claims (e.g. "expected utility of *block-A* given
-*miners-in-A* equals 10") are stated as theorems. Where the ENNReal
-arithmetic of `PMF.condExpect` + `Finset.sum` is straightforward we
-prove them; where the proof would require a substantial detour
-through `PMF.toOuterMeasure_apply_fintype` we leave a `sorry` with a
-TODO pointing at the lemma needed. Per CLAUDE.md, this is the right
-shape: stating the full theorem honestly with `sorry` rather than
-weakening the claim.
-
-The "explanatory value = sum of likelihoods" identity (C&M eq. 12)
-holds at the operator level by definition: `mustCM` is stated in
-terms of `sumLikelihoods`, which is `condExpect` against
-`countMeasure` per
-`Core/Probability/Confirmation.lean::sumLikelihoods`. No separate
-"identity theorem" is proven here.
+* `Phenomena/Conditionals/Studies/VonFintelIatridou2005.lean` §6 —
+  C&M's exhaustification realises @cite{sloman-1970}'s "only
+  candidate" / vF&I's *have-to* vs *ought-to* distinction.
+* `Phenomena/Modality/Studies/Lassiter2017.lean` — Lassiter's `want`
+  on the same EV substrate (`PMF.condExpect`); C&M's `must` differs
+  by (i) the exhaustification clause, (ii) count-valued `μ_R` vs
+  Lassiter's free-form `value`, (iii) likelihood-based epistemic
+  reading vs Lassiter's posterior.
 -/
-
-set_option autoImplicit false
 
 namespace Phenomena.Modality.Studies.ChungMascarenhas2024
 
@@ -71,46 +57,31 @@ open PMF PMF.Confirmation
 open scoped ENNReal
 open BigOperators
 
-section Operator
-
-variable {W : Type*} [Fintype W]
-
-/-! ## §1. The operator -/
+/-! ### The operator -/
 
 /-- @cite{chung-mascarenhas-2024} (6): `must φ` iff `E_w[μ_R ∣ φ]`
 exceeds the contextual threshold `θ` AND no alternative does. -/
-def mustCM (p : PMF W) (R : Finset (Set W)) (φ : Set W)
-    (alts : Finset (Set W)) (θ : ℝ≥0∞) : Prop :=
+def mustCM {W : Type*} [Fintype W] (p : PMF W) (R : Finset (Set W))
+    (φ : Set W) (alts : Finset (Set W)) (θ : ℝ≥0∞) : Prop :=
   sumLikelihoods p R φ > θ ∧ ∀ ψ ∈ alts, sumLikelihoods p R ψ ≤ θ
 
-/-- The Sloman-flavored *ought*: drop the exhaustification clause.
-@cite{vonfintel-iatridou-2005} §6 identifies this with the weak-necessity
-modal across teleological and deontic flavors. -/
-def oughtCM (p : PMF W) (R : Finset (Set W)) (φ : Set W) (θ : ℝ≥0∞) : Prop :=
+/-- The @cite{sloman-1970}-flavored *ought*: drop the exhaustification
+clause. @cite{vonfintel-iatridou-2005} §6 identifies this with the
+weak-necessity modal across teleological and deontic flavors. -/
+def oughtCM {W : Type*} [Fintype W] (p : PMF W) (R : Finset (Set W))
+    (φ : Set W) (θ : ℝ≥0∞) : Prop :=
   sumLikelihoods p R φ > θ
 
-/-! ## §2. The plausibility-requirement patch (C&M §5)
-
-C&M §5 acknowledge that the likelihoodist core over-licenses *must*
-in cases like *#He must be dead* (the only good explanation for John's
-absence, but his death is too implausible). They patch with a
-felicity-level requirement that the prejacent be "sufficiently
-plausible" — its prior must exceed a separate threshold. This is an
-explicit acknowledgment that the core operator is not the whole
-story; we surface the patch as a separate operator to keep it
-reviewable. -/
-
 /-- @cite{chung-mascarenhas-2024} §5: `mustCM` with the additional
-plausibility requirement that `P(φ) ≥ θ_plaus`. C&M leave the status
-of this requirement (truth-conditional vs presuppositional) open;
-we encode it as a conjunct on the predicate side. -/
-def mustCM_with_plausibility (p : PMF W) (R : Finset (Set W))
-    (φ : Set W) (alts : Finset (Set W)) (θ θ_plaus : ℝ≥0∞) : Prop :=
-  mustCM p R φ alts θ ∧ p.probOfSet φ ≥ θ_plaus
+plausibility requirement `P(φ) ≥ θplaus`. Kept as a separate `def`
+rather than baked into `mustCM`, so the §5 patch (which C&M concede
+is not derived from the core) stays reviewable. -/
+def mustCMWithPlausibility {W : Type*} [Fintype W] (p : PMF W)
+    (R : Finset (Set W)) (φ : Set W) (alts : Finset (Set W))
+    (θ θplaus : ℝ≥0∞) : Prop :=
+  mustCM p R φ alts θ ∧ p.probOfSet φ ≥ θplaus
 
-end Operator
-
-/-! ## §3. Case study: Miners @cite{kolodny-macfarlane-2010}
+/-! ### Miners scenario @cite{kolodny-macfarlane-2010}
 
 Six worlds = (block-action) × (miners-location):
 * `w0` = block-A, miners-in-A: 10 saved
@@ -121,113 +92,154 @@ Six worlds = (block-action) × (miners-location):
 * `w5` = block-neither, miners-in-B: 9 saved
 
 Uniform prior over the 6 worlds — equivalent (under independence of
-action and location) to a uniform prior on miners-location, with
-action a free choice. C&M's @cite{cariani-kaufmann-kaufmann-2013}
-ordering source `R_D = {1 saved, 2 saved, ..., 10 saved}`. -/
+action and location) to a uniform prior on miners-location with
+action a free choice. `idealsRD` (paper notation `R_D`) is
+`{1 saved, 2 saved, ..., 10 saved}`, following
+@cite{cariani-kaufmann-kaufmann-2013}. -/
 
 namespace Miners
 
 /-- World type: six (action × miners-location) combinations. -/
-abbrev W := Fin 6
+abbrev World := Fin 6
 
-/-- Action component: block-A (0,1), block-B (2,3), block-neither (4,5). -/
-def blockA : Set W := fun w => w.val = 0 ∨ w.val = 1
-def blockB : Set W := fun w => w.val = 2 ∨ w.val = 3
-def blockNeither : Set W := fun w => w.val = 4 ∨ w.val = 5
+/-- Block-A. -/
+def blockA : Set World := λ w => w.val = 0 ∨ w.val = 1
+/-- Block-B. -/
+def blockB : Set World := λ w => w.val = 2 ∨ w.val = 3
+/-- Block-neither. -/
+def blockNeither : Set World := λ w => w.val = 4 ∨ w.val = 5
 
-/-- Miners-location: in-A (0,2,4), in-B (1,3,5). -/
-def minersInA : Set W := fun w => w.val = 0 ∨ w.val = 2 ∨ w.val = 4
-def minersInB : Set W := fun w => w.val = 1 ∨ w.val = 3 ∨ w.val = 5
+/-- Miners in shaft A. -/
+def minersInA : Set World := λ w => w.val = 0 ∨ w.val = 2 ∨ w.val = 4
+/-- Miners in shaft B. -/
+def minersInB : Set World := λ w => w.val = 1 ∨ w.val = 3 ∨ w.val = 5
 
-/-- Miners saved at each world (C&M Table 1, p. 14). -/
-def minersSaved : W → ℕ := fun w =>
+/-- Miners saved at each world (C&M Table 1). -/
+def minersSaved : World → ℕ := λ w =>
   match w.val with
-  | 0 => 10  -- block-A, in-A
-  | 1 => 0   -- block-A, in-B
-  | 2 => 0   -- block-B, in-A
-  | 3 => 10  -- block-B, in-B
-  | 4 => 9   -- block-neither, in-A
-  | 5 => 9   -- block-neither, in-B
+  | 0 => 10
+  | 1 => 0
+  | 2 => 0
+  | 3 => 10
+  | 4 => 9
+  | 5 => 9
   | _ => 0
 
-/-- Uniform PMF over the 6 worlds (encodes both the uniform prior on
-miners-location and the deliberative free-choice over actions). -/
-noncomputable def prior : PMF W := PMF.uniformOfFintype W
+/-- Uniform PMF over the 6 worlds. -/
+noncomputable def prior : PMF World := PMF.uniformOfFintype World
 
-/-- The relevant-ideals set `R_D = {1 saved, 2 saved, ..., 10 saved}`,
-encoded as the set of worlds where at least `k` miners are saved
-(for `k = 1, ..., 10`). The count `μ_{R_D}(w) = minersSaved(w)`. -/
-noncomputable def R_D : Finset (Set W) := by
-  classical
-  exact (Finset.range 10).image (fun k => {w | minersSaved w ≥ k + 1})
+open Classical in
+/-- The relevant-ideals set, paper notation `R_D`: the set of worlds
+where at least `k` miners are saved, for `k = 1, ..., 10`.
+`μ_R(w) = minersSaved w` by construction. -/
+noncomputable def idealsRD : Finset (Set World) :=
+  (Finset.range 10).image (λ k => {w | minersSaved w ≥ k + 1})
 
 end Miners
 
-/-! ## §4. Case study: Modal Linda @cite{tversky-kahneman-1983}
+/-! ### Modal Linda @cite{tversky-kahneman-1983}
 
-Two epistemically relevant evidence pieces from the Linda description:
-* `socialJustice` — "deeply concerned with issues of discrimination
-  and social justice"
-* `antiNuclearProtests` — "participated in anti-nuclear demonstrations"
+C&M §3.2 + (30)/(31): the salient evidence from the Linda description
+projects to two propositions about Linda — concern with social
+justice (`socialJustice`) and anti-nuclear-protests participation
+(`antiNuclearProtests`). Conditional probabilities given each
+hypothesis:
 
-Hypotheses to compare:
-* `teller`: Linda is a bank teller
-* `feministTeller`: Linda is a bank teller AND active in the feminist
-  movement
+* `P(socialJustice ∣ teller) = 0.3`, `P(antiNuclear ∣ teller) = 0.2`
+* `P(socialJustice ∣ feministTeller) = 0.8`,
+  `P(antiNuclear ∣ feministTeller) = 0.7`
 
-C&M's probability assignments (their (30)/(31)):
-* P(socialJustice ∣ teller) = 0.3
-* P(antiNuclearProtests ∣ teller) = 0.2
-* P(socialJustice ∣ feministTeller) = 0.8
-* P(antiNuclearProtests ∣ feministTeller) = 0.7
+C&M predict the modal conjunction fallacy: under any threshold `θ`
+with `0.5 < θ < 1.5`, *Linda must be a feminist bank teller* is true
+while *Linda must be a bank teller* is false.
 
-Therefore (their (32)/(33)):
-* E[μ_R ∣ teller] = 0.3 + 0.2 = 0.5
-* E[μ_R ∣ feministTeller] = 0.8 + 0.7 = 1.5
+We do not set up the full joint PMF over hypothesis-and-evidence
+(those weights are not pinned down by C&M). The numerical-claim
+level is sufficient to document the prediction. -/
 
-Under any threshold `θ` with `0.5 < θ < 1.5`, C&M predict
-*Linda must be a feminist bank teller* TRUE and the bare
-*Linda must be a bank teller* FALSE — the modal conjunction
-fallacy as predicted by the operator.
+namespace ModalLinda
 
-We do not instantiate the full PMF here (the relative probabilities
-of bank-teller-vs-not are not pinned down by C&M's text and would
-require modeling choices that are not in the paper). The Linda-case
-substrate would land in a follow-up file when a downstream consumer
-needs the worked numerical inequalities. -/
+/-- `P(socialJustice ∣ teller) = 0.3` per C&M (30). -/
+def prSocialJusticeGivenTeller : ℚ := 3 / 10
+/-- `P(antiNuclearProtests ∣ teller) = 0.2` per C&M (30). -/
+def prAntiNuclearGivenTeller : ℚ := 2 / 10
+/-- `P(socialJustice ∣ feministTeller) = 0.8` per C&M (31). -/
+def prSocialJusticeGivenFeministTeller : ℚ := 8 / 10
+/-- `P(antiNuclearProtests ∣ feministTeller) = 0.7` per C&M (31). -/
+def prAntiNuclearGivenFeministTeller : ℚ := 7 / 10
 
-/-! ## §5. Case study: Modal Lawyers and Engineers @cite{kahneman-tversky-1973}
+/-- `E[μ_R ∣ teller] = 0.5` per C&M (32). -/
+def explanatoryValueTeller : ℚ :=
+  prSocialJusticeGivenTeller + prAntiNuclearGivenTeller
 
-C&M's probability assignments (their (37)/(38)):
-* P(notPoliticalSocial ∣ engineer) = 0.78
-* P(enjoysMath ∣ engineer) = 0.55
-* P(notPoliticalSocial ∣ lawyer) = 0.35
-* P(enjoysMath ∣ lawyer) = 0.28
+/-- `E[μ_R ∣ feministTeller] = 1.5` per C&M (33). -/
+def explanatoryValueFeministTeller : ℚ :=
+  prSocialJusticeGivenFeministTeller + prAntiNuclearGivenFeministTeller
 
-Therefore:
-* E[μ_R ∣ engineer] = 0.78 + 0.55 = 1.33
-* E[μ_R ∣ lawyer]   = 0.35 + 0.28 = 0.63
+/-- The modal conjunction fallacy as a numerical inequality: the
+conjunctive hypothesis has strictly higher explanatory value. Any
+threshold `θ` between the two predicts the *must*-conjunction true
+and the bare *must*-claim false. -/
+theorem feministTeller_strictly_higher :
+    explanatoryValueTeller < explanatoryValueFeministTeller := by
+  unfold explanatoryValueTeller explanatoryValueFeministTeller
+    prSocialJusticeGivenTeller prAntiNuclearGivenTeller
+    prSocialJusticeGivenFeministTeller prAntiNuclearGivenFeministTeller
+  norm_num
 
-Under any threshold `θ` with `0.63 < θ < 1.33`, C&M predict
-*Jack must be an engineer* TRUE — irrespective of the 70/30 vs
-30/70 prior on lawyers — i.e., base-rate neglect as a modal
-prediction. Same caveat as §4: we do not pin down the full
-joint PMF here. -/
+end ModalLinda
 
-section CrossFramework
+/-! ### Modal Lawyers and Engineers @cite{kahneman-tversky-1973}
 
-variable {W : Type*} [Fintype W]
+C&M §3.3 + (37)/(38): two evidence pieces from the Jack description —
+absence of interest in political/social issues (`notPoliticalSocial`)
+and enjoyment of mathematical puzzles (`enjoysMath`).
 
-/-! ## §6. Compositional Korean derivation (C&M §4)
+* `P(notPoliticalSocial ∣ engineer) = 0.78`, `P(math ∣ engineer) = 0.55`
+* `P(notPoliticalSocial ∣ lawyer) = 0.35`, `P(math ∣ lawyer) = 0.28`
 
-C&M argue that the Korean conditional evaluative
+C&M predict base-rate neglect at the modal level: under any threshold
+`θ` with `0.63 < θ < 1.33`, *Jack must be an engineer* is true
+irrespective of the prior split between lawyers and engineers.
 
-  cip-ey iss-eya toy-n-ta
-  home-DAT COP.PRES-only.if EVAL-PRES-DECL
-  '(Lit.) Only if at home, it suffices.'  ≈  'Must be home.'
+Same caveat as ModalLinda. -/
 
-is the transparent compositional form of English *must*, with three
-pieces:
+namespace ModalLawyers
+
+/-- `P(notPoliticalSocial ∣ engineer) = 0.78` per C&M (37). -/
+def prNotPoliticalGivenEngineer : ℚ := 78 / 100
+/-- `P(enjoysMath ∣ engineer) = 0.55` per C&M (37). -/
+def prMathGivenEngineer : ℚ := 55 / 100
+/-- `P(notPoliticalSocial ∣ lawyer) = 0.35` per C&M (38). -/
+def prNotPoliticalGivenLawyer : ℚ := 35 / 100
+/-- `P(enjoysMath ∣ lawyer) = 0.28` per C&M (38). -/
+def prMathGivenLawyer : ℚ := 28 / 100
+
+/-- `E[μ_R ∣ engineer] = 1.33` per C&M (39). -/
+def explanatoryValueEngineer : ℚ :=
+  prNotPoliticalGivenEngineer + prMathGivenEngineer
+
+/-- `E[μ_R ∣ lawyer] = 0.63` per C&M (40). -/
+def explanatoryValueLawyer : ℚ :=
+  prNotPoliticalGivenLawyer + prMathGivenLawyer
+
+/-- Base-rate neglect as a numerical inequality: the engineer
+hypothesis has strictly higher explanatory value than the lawyer
+hypothesis, irrespective of prior. -/
+theorem engineer_strictly_higher :
+    explanatoryValueLawyer < explanatoryValueEngineer := by
+  unfold explanatoryValueLawyer explanatoryValueEngineer
+    prNotPoliticalGivenLawyer prMathGivenLawyer
+    prNotPoliticalGivenEngineer prMathGivenEngineer
+  norm_num
+
+end ModalLawyers
+
+/-! ### Compositional Korean derivation (C&M §4)
+
+The Korean conditional evaluative `cip-ey iss-eya toy-n-ta` ('lit.
+only if at home, it suffices' ≈ 'must be home') is, per C&M, the
+transparent compositional form of English *must*:
 
 1. the evaluative predicate `toy` 'EVAL' as the measure function `μ_R`
 2. the conditional `if φ, EVAL` as `E_w[μ_R ∣ φ]` (their eq. 44, our
@@ -237,54 +249,16 @@ pieces:
 
 The composition (their (48)) yields `mustCM` exactly. -/
 
-/-- @cite{chung-mascarenhas-2024} §4: the conditional evaluative
-denotes the conditional expectation of `μ_R` given `φ`. -/
-theorem condIf_eval_eq_sumLikelihoods (p : PMF W) (R : Finset (Set W)) (φ : Set W)
-    [DecidablePred (· ∈ φ)] :
-    p.condExpect φ (countMeasure R) =
-      p.condExpect φ (countMeasure R) := rfl
-
-omit [Fintype W] in
-/-- @cite{chung-mascarenhas-2024} (48): adding the exhaustifier
-`-(e)ya` to `Θ(⟦if φ, EVAL⟧^w)` yields `mustCM φ`. Trivial by
-definition: the exhaustifier IS the second conjunct of `mustCM`. -/
-theorem ya_exhaustification_yields_mustCM (p : PMF W) (R : Finset (Set W))
-    (φ : Set W) (alts : Finset (Set W)) (θ : ℝ≥0∞)
+/-- @cite{chung-mascarenhas-2024} (48): adding the `-(e)ya`
+exhaustifier to `Θ(⟦if φ, EVAL⟧^w)` yields `mustCM φ`. Trivial by
+definition: the exhaustifier IS the second conjunct of `mustCM`. The
+named theorem documents the compositional claim for cross-references. -/
+theorem ya_exhaustification_yields_mustCM {W : Type*} [Fintype W]
+    (p : PMF W) (R : Finset (Set W)) (φ : Set W)
+    (alts : Finset (Set W)) (θ : ℝ≥0∞)
     (hThresh : sumLikelihoods p R φ > θ)
     (hExhaust : ∀ ψ ∈ alts, sumLikelihoods p R ψ ≤ θ) :
     mustCM p R φ alts θ :=
   ⟨hThresh, hExhaust⟩
-
-end CrossFramework
-
-/-! ## §7. Cross-references
-
-### To @cite{vonfintel-iatridou-2005}
-
-The Sloman-style ought/have-to distinction (`oughtCM` vs `mustCM`)
-realises vF&I §6's `to p, ought-to q` vs `to p, have-to q`
-distinction. See
-`Phenomena/Conditionals/Studies/VonFintelIatridou2005.lean` §6 for
-the discussion of which vF&I puzzles C&M cleanly handles
-(Harlem, Burdick's, Sloman London-by-noon) and which it does not
-(Pedro Martinez, van Nistelrooy).
-
-### To @cite{lassiter-2017} (`Phenomena/Modality/Studies/Lassiter2017.lean`)
-
-Lassiter formalises `want` in `Theories/Semantics/Attitudes/Desire.lean::Lassiter.want`
-as a threshold on conditional expected value. C&M's `mustCM` differs
-from Lassiter-`want` in:
-
-1. the additional exhaustification clause (Sloman "only candidate"),
-2. the count-valued `μ_R` (vs Lassiter's free-form `value : W → ℚ`),
-3. the explanatory-value reading on the epistemic side (sum of
-   likelihoods, posterior-blind), where Lassiter takes posterior
-   probability.
-
-Lassiter-`must` itself has no dedicated formalization yet
-(`Lassiter2017.lean` is the want-side). When it lands, the
-cross-framework theorem `chung_mascarenhas_blocks_lassiter_witness`
-should be added here, parallel to
-`Lassiter2017.lean::condoravdiLauer_blocks_lassiter_witness`. -/
 
 end Phenomena.Modality.Studies.ChungMascarenhas2024

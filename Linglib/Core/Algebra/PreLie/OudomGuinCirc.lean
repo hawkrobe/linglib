@@ -669,28 +669,376 @@ theorem circ_T_mul (T : L) (B : SymmetricAlgebra R L) (X : L) :
   rw [h_circ_ιT (oudomGuinCirc _ _),
       oudomGuinCirc_algHomL_tprod_ι, map_sum, map_sum]
 
-/-! **Prop 2.8 (iii)**: `Δ` commutes with `○` — `Δ(A ○ B) = Σ (A₍₁₎ ○ B₍₁₎)
-⊗ (A₍₂₎ ○ B₍₂₎)`, Sweedler-summed over both coproducts.
+/-! ### §3.B: Prop 2.8 (iii) — `Δ` commutes with `○`
 
-This is the OG paper's Sweedler identity used in Prop 2.8.v's `mul` case
-to identify LHS and RHS expansions; combined with `IsCocomm`
-(cocommutativity, now available from
-`Linglib/Core/RingTheory/Bialgebra/SymmetricAlgebra.lean`) to swap inner
-indexing.
+`Δ(A ○ B) = Σ (A₍₁₎ ○ B₍₁₎) ⊗ (A₍₂₎ ○ B₍₂₎)`, Sweedler-summed over both
+coproducts. Stated and proved as a pointwise identity, with the
+multi-Sweedler reshuffling encoded by `TensorProduct.tensorTensorTensorComm`
+(`TTTC`): `(M ⊗ N) ⊗ (P ⊗ Q) → (M ⊗ P) ⊗ (N ⊗ Q)`, applied to
+`Δ A ⊗ Δ B ∈ (S ⊗ S) ⊗ (S ⊗ S)`.
 
-**Lean statement deferred** pending the right mathlib idiom for the
-4-fold tensor reshuffling `(S⊗S) ⊗ (S⊗S) → S⊗S`. The natural form would
-be:
+Proof structure: induction on `A` via `SymmetricAlgebra.induction`. The
+`mul` case requires the iterated-coproduct invariance
+`TTTC ∘ (Δ ⊗ Δ) ∘ Δ = (Δ ⊗ Δ) ∘ Δ`, which follows from cocommutativity
+of `Δ` (via `Coalgebra.IsCocomm`). We factor this into the auxiliary
+lemma `comul_squared_TTTC_eq`. -/
 
-```
-Coalgebra.comul (A ○ B) =
-  (TensorProduct.map oudomGuinCirc oudomGuinCirc).comp
-    (Algebra.TensorProduct.tensorTensorTensorComm ...).comp
-    ... (Coalgebra.comul A, Coalgebra.comul B)
-```
+/-- **Auxiliary**: iterated coproduct on `S(L)` is invariant under the
+    inner `tensorTensorTensorComm` reshuffle. By cocommutativity of `Δ`:
+    `TTTC ∘ (Δ ⊗ Δ) ∘ Δ = (Δ ⊗ Δ) ∘ Δ` as maps `S(L) → S(L)^{⊗4}`.
 
-but mathlib's `tensorTensorTensorComm` is in `TensorProduct.AssocLeft`
-or similar and the exact composition needs care. Future cleanup. -/
+    Proof: lift to `Algebra.TensorProduct.tensorTensorTensorComm` (alg
+    equiv) composed with `Algebra.TensorProduct.map comulAlgHom comulAlgHom`
+    composed with `comulAlgHom`. Both sides are algebra homs `S(L) →ₐ
+    S(L)^{⊗4}`; by `SymmetricAlgebra.algHom_ext`, agree iff agree on
+    generators `ι T`. Check on `ι T` (primitive): the 4-term sum of
+    single-position primitives is symmetric under position-2-3 swap,
+    closed by `abel`. -/
+private theorem comul_squared_TTTC_eq :
+    (TensorProduct.tensorTensorTensorComm R
+        (SymmetricAlgebra R L) (SymmetricAlgebra R L)
+        (SymmetricAlgebra R L) (SymmetricAlgebra R L)).toLinearMap.comp
+      ((TensorProduct.map
+          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))).comp
+        (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))) =
+    (TensorProduct.map
+        (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+        (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))).comp
+      (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L)) := by
+  -- Reduce to pointwise equality via `ext`, then induct on B.
+  -- Goal becomes: for all B, TTTC ((TP.map Δ Δ)(Δ B)) = (TP.map Δ Δ)(Δ B).
+  -- The pointwise form lets us use Bialgebra.comulAlgHom's `map_mul` for the mul case.
+  ext B
+  -- Switch to alg hom forms throughout so we can use `map_mul`, `map_add`, etc.
+  show (Algebra.TensorProduct.tensorTensorTensorComm R R R R _ _ _ _)
+          ((Algebra.TensorProduct.map
+              (Bialgebra.comulAlgHom R (SymmetricAlgebra R L))
+              (Bialgebra.comulAlgHom R (SymmetricAlgebra R L)))
+            ((Bialgebra.comulAlgHom R (SymmetricAlgebra R L)) B)) =
+        (Algebra.TensorProduct.map
+            (Bialgebra.comulAlgHom R (SymmetricAlgebra R L))
+            (Bialgebra.comulAlgHom R (SymmetricAlgebra R L)))
+          ((Bialgebra.comulAlgHom R (SymmetricAlgebra R L)) B)
+  induction B using SymmetricAlgebra.induction with
+  | algebraMap r =>
+    -- All three alg homs/equivs commute with algebraMap.
+    simp only [AlgHom.commutes, AlgEquiv.commutes]
+  | ι T =>
+    -- Δ(ι T) = ι T ⊗ 1 + 1 ⊗ ι T (primitive). Expand fully and apply TTTC
+    -- pointwise. The resulting 4 single-position-ι-T terms are TTTC-permuted
+    -- (position 2 ↔ 3 swap); abel closes.
+    have h_cm_ι : (Bialgebra.comulAlgHom R (SymmetricAlgebra R L))
+                    (SymmetricAlgebra.ι R L T) =
+                  SymmetricAlgebra.ι R L T ⊗ₜ[R] 1 +
+                    1 ⊗ₜ[R] SymmetricAlgebra.ι R L T :=
+      SymmetricAlgebra.comul_ι R L T
+    simp only [h_cm_ι, map_add, Algebra.TensorProduct.map_tmul, map_one,
+               Algebra.TensorProduct.one_def,
+               TensorProduct.add_tmul, TensorProduct.tmul_add,
+               Algebra.TensorProduct.tensorTensorTensorComm_tmul]
+    abel
+  | mul A₁ A₂ ih₁ ih₂ =>
+    -- Δ(A₁ · A₂) = Δ A₁ · Δ A₂ via map_mul on cm.
+    -- (TP.map cm cm) preserves mul via map_mul.
+    -- TTTC preserves mul via map_mul.
+    -- Apply IH.
+    rw [map_mul, map_mul, map_mul, ih₁, ih₂]
+  | add A₁ A₂ ih₁ ih₂ =>
+    rw [map_add, map_add, map_add, ih₁, ih₂]
+
+/-- **Helper**: the cocomm-step factorization. The unified RHS structure
+    `(TP.map μ μ)(TTTC((a ⊗ b) ⊗ x)) = TP.map (○a) (○b) x` follows by
+    pure-tensor extension + `tensorTensorTensorComm_tmul`. -/
+private lemma map_uncurry_TTTC_pure (a b : SymmetricAlgebra R L)
+    (x : SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) :
+    (TensorProduct.map (TensorProduct.lift (oudomGuinCirc (R := R)))
+                       (TensorProduct.lift (oudomGuinCirc (R := R))))
+      ((TensorProduct.tensorTensorTensorComm R
+          (SymmetricAlgebra R L) (SymmetricAlgebra R L)
+          (SymmetricAlgebra R L) (SymmetricAlgebra R L))
+        ((a ⊗ₜ[R] b) ⊗ₜ[R] x)) =
+    (TensorProduct.map (oudomGuinCirc (R := R) a) (oudomGuinCirc (R := R) b)) x := by
+  induction x using TensorProduct.induction_on with
+  | zero =>
+    simp only [TensorProduct.tmul_zero, map_zero]
+  | tmul p q =>
+    rw [TensorProduct.tensorTensorTensorComm_tmul, TensorProduct.map_tmul,
+        TensorProduct.lift.tmul, TensorProduct.lift.tmul, TensorProduct.map_tmul]
+  | add x y ihx ihy =>
+    rw [TensorProduct.tmul_add, map_add, map_add, ihx, ihy, map_add]
+
+/-- **Helper**: `(○1)` as a linear map equals `algebraMap R S ∘ counit`.
+
+    Combines `one_circ` (`1 ○ B = ε(B) • 1`) and `algebraMap_eq_smul_one`. -/
+private lemma circ_one_eq_algebraMap_comp_counit :
+    oudomGuinCirc (R := R) (1 : SymmetricAlgebra R L) =
+      (Algebra.linearMap R (SymmetricAlgebra R L)).comp
+        (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap := by
+  ext B
+  simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply,
+             Algebra.linearMap_apply]
+  rw [one_circ, Algebra.algebraMap_eq_smul_one]
+
+/-- **Helper**: `TP.map (○a) (○1) (Δ B) = (a ○ B) ⊗ 1`.
+
+    Proof: factor `(○1) = algebraMap ∘ counit`, then use the counit triangle
+    `(id ⊗ counit)(Δ B) = B ⊗ 1` (`Coalgebra.lTensor_counit_comul`) and
+    `algebraMap 1 = 1`. -/
+private lemma map_circ_a_circ_one_comul (a B : SymmetricAlgebra R L) :
+    (TensorProduct.map (oudomGuinCirc (R := R) a)
+                       (oudomGuinCirc (R := R) (1 : SymmetricAlgebra R L)))
+      (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B) =
+    (oudomGuinCirc (R := R) a B) ⊗ₜ[R] (1 : SymmetricAlgebra R L) := by
+  rw [circ_one_eq_algebraMap_comp_counit,
+      show TensorProduct.map (oudomGuinCirc (R := R) a)
+            ((Algebra.linearMap R (SymmetricAlgebra R L)).comp
+              (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap) =
+        (TensorProduct.map (oudomGuinCirc (R := R) a)
+            (Algebra.linearMap R (SymmetricAlgebra R L))).comp
+          (TensorProduct.map (LinearMap.id : SymmetricAlgebra R L →ₗ[R] _)
+            (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap) from by
+        rw [← TensorProduct.map_comp, LinearMap.comp_id]]
+  rw [LinearMap.comp_apply]
+  -- TP.map id algebraMapInv (comul B) = B ⊗ 1 via Coalgebra.lTensor_counit_comul.
+  rw [show (TensorProduct.map (LinearMap.id : SymmetricAlgebra R L →ₗ[R] _)
+            (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap)
+            (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B) =
+        B ⊗ₜ[R] (1 : R) from
+      Coalgebra.lTensor_counit_comul B]
+  rw [TensorProduct.map_tmul, Algebra.linearMap_apply, map_one]
+
+/-- **Helper**: `TP.map (○1) (○b) (Δ B) = 1 ⊗ (b ○ B)`.
+
+    Mirror of `map_circ_a_circ_one_comul` using the right counit triangle
+    (`rTensor_counit_comul`). -/
+private lemma map_circ_one_circ_b_comul (b B : SymmetricAlgebra R L) :
+    (TensorProduct.map (oudomGuinCirc (R := R) (1 : SymmetricAlgebra R L))
+                       (oudomGuinCirc (R := R) b))
+      (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B) =
+    (1 : SymmetricAlgebra R L) ⊗ₜ[R] (oudomGuinCirc (R := R) b B) := by
+  rw [circ_one_eq_algebraMap_comp_counit,
+      show TensorProduct.map
+            ((Algebra.linearMap R (SymmetricAlgebra R L)).comp
+              (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap)
+            (oudomGuinCirc (R := R) b) =
+        (TensorProduct.map (Algebra.linearMap R (SymmetricAlgebra R L))
+            (oudomGuinCirc (R := R) b)).comp
+          (TensorProduct.map (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap
+            (LinearMap.id : SymmetricAlgebra R L →ₗ[R] _)) from by
+        rw [← TensorProduct.map_comp, LinearMap.comp_id]]
+  rw [LinearMap.comp_apply]
+  rw [show (TensorProduct.map (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap
+            (LinearMap.id : SymmetricAlgebra R L →ₗ[R] _))
+            (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B) =
+        (1 : R) ⊗ₜ[R] B from
+      Coalgebra.rTensor_counit_comul B]
+  rw [TensorProduct.map_tmul, Algebra.linearMap_apply, map_one]
+
+/-- **Cocomm-step helper for `comul_circ` mul case.**
+
+    After applying Prop 2.7.iii (LHS expansion) + `AlgHom.comp_mul'` (push Δ
+    through `mul'`) + `TensorProduct.map_comp` (fuse TP.maps) + IH (substitute
+    `Δ ∘ ○A_i = (TP.map ○ ○) ∘ TTTC ∘ (TP.map Δ Δ) ∘ (TP.mk A_i)`) on the LHS,
+    and `Bialgebra.comul_mul` on the RHS, the mul case of `comul_circ` reduces
+    to this identity.
+
+    Both sides, fully expanded via Sweedler, give 4-fold sums:
+    - LHS pairing: `(b_{1,1}, b_{2,1}) | (b_{1,2}, b_{2,2})`
+    - RHS pairing (after Prop 2.7.iii on each `(a · a') ○ b` factor):
+      `(b_{1,1}, b_{1,2}) | (b_{2,1}, b_{2,2})`
+
+    They differ by swapping `b_{2,1} ↔ b_{1,2}`, which is TTTC on the iterated
+    coproduct of `B`. By `comul_squared_TTTC_eq` (cocommutativity of `Δ`), this
+    swap fixes the iterated coproduct, so the two sides agree.
+
+    TODO: proof. The chain is mechanical but verbose (~150-300 LOC). Key tools:
+    `LinearMap.mul'_tensor` (turn `mul'_{S⊗S}` into `(TP.map mul' mul') ∘ TTTC`),
+    `circ_mul_distrib_via_comul` (apply Prop 2.7.iii on RHS's
+    `(a·a')○b` factors), `comul_squared_TTTC_eq` (cocomm swap). -/
+private theorem comul_circ_mul_cocomm_aux (A₁ A₂ B : SymmetricAlgebra R L) :
+    LinearMap.mul' R (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L)
+      ((TensorProduct.map
+          ((TensorProduct.map (TensorProduct.lift (oudomGuinCirc (R := R)))
+                              (TensorProduct.lift (oudomGuinCirc (R := R)))).comp
+            ((TensorProduct.tensorTensorTensorComm R
+                (SymmetricAlgebra R L) (SymmetricAlgebra R L)
+                (SymmetricAlgebra R L) (SymmetricAlgebra R L)).toLinearMap.comp
+              ((TensorProduct.map
+                  (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+                  (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))).comp
+                ((TensorProduct.mk R (SymmetricAlgebra R L) (SymmetricAlgebra R L)) A₁))))
+          ((TensorProduct.map (TensorProduct.lift (oudomGuinCirc (R := R)))
+                              (TensorProduct.lift (oudomGuinCirc (R := R)))).comp
+            ((TensorProduct.tensorTensorTensorComm R
+                (SymmetricAlgebra R L) (SymmetricAlgebra R L)
+                (SymmetricAlgebra R L) (SymmetricAlgebra R L)).toLinearMap.comp
+              ((TensorProduct.map
+                  (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+                  (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))).comp
+                ((TensorProduct.mk R (SymmetricAlgebra R L) (SymmetricAlgebra R L)) A₂)))))
+        (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B)) =
+    (TensorProduct.map (TensorProduct.lift (oudomGuinCirc (R := R)))
+                       (TensorProduct.lift (oudomGuinCirc (R := R))))
+      ((TensorProduct.tensorTensorTensorComm R
+          (SymmetricAlgebra R L) (SymmetricAlgebra R L)
+          (SymmetricAlgebra R L) (SymmetricAlgebra R L))
+        ((Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) A₁ *
+          Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) A₂)
+            ⊗ₜ[R]
+          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B))) := by
+  sorry
+
+/-- **Prop 2.8 (iii)** of Oudom-Guin (2008). `Δ(A ○ B) = Σ (A₍₁₎ ○ B₍₁₎) ⊗
+    (A₍₂₎ ○ B₍₂₎)`, the bialgebra-style "○ is a coalgebra map" identity
+    on `S(L) ⊗ S(L)` with the tensor product coalgebra structure.
+
+    In linear-map terms: `(uncurried ○) : S(L) ⊗ S(L) → S(L)` is a
+    coalgebra map (target coalgebra: `S(L)`; source coalgebra: tensor
+    product). Equivalently:
+
+    ```
+    Δ ∘ μ = (μ ⊗ μ) ∘ TTTC ∘ (Δ ⊗ Δ)    as maps  S ⊗ S → S ⊗ S
+    ```
+
+    where `μ = TensorProduct.lift oudomGuinCirc`.
+
+    Proof: induction on `A` via `SymmetricAlgebra.induction` with
+    `generalizing B`. The four cases:
+
+    * `algebraMap r`: both sides reduce to `r • ε(B) • (1 ⊗ 1)` via
+      `one_circ` (Prop 2.8.i) + counit triangle. Uses helpers
+      `map_uncurry_TTTC_pure` + `map_circ_a_circ_one_comul`.
+    * `ι T`: both sides reduce to `(ι T ○ B) ⊗ 1 + 1 ⊗ (ι T ○ B)` via
+      primitivity of `ι T` (so `Δ(ι T) = ι T ⊗ 1 + 1 ⊗ ι T`) and
+      `circByT_total T B ∈ L` (so its image under `ι` is primitive too).
+      Uses `map_circ_a_circ_one_comul` and `map_circ_one_circ_b_comul` on
+      the two halves of `Δ(ι T)`.
+    * `mul A₁ A₂`: OG's Sweedler-chasing chain using Prop 2.7.iii
+      (`circ_mul_distrib_via_comul`) twice, `Bialgebra.comul_mul`, IH on
+      both factors, and `comul_squared_TTTC_eq` (cocommutativity-derived
+      4-fold symmetry) to align the inner pairing.
+    * `add A₁ A₂`: linearity. -/
+theorem comul_circ (A B : SymmetricAlgebra R L) :
+    Coalgebra.comul (R := R) (oudomGuinCirc (R := R) A B) =
+      (TensorProduct.map (TensorProduct.lift (oudomGuinCirc (R := R)))
+                         (TensorProduct.lift (oudomGuinCirc (R := R))))
+        ((TensorProduct.tensorTensorTensorComm R
+            (SymmetricAlgebra R L) (SymmetricAlgebra R L)
+            (SymmetricAlgebra R L) (SymmetricAlgebra R L))
+          ((TensorProduct.map
+              (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+              (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L)))
+            (A ⊗ₜ[R] B))) := by
+  induction A using SymmetricAlgebra.induction generalizing B with
+  | algebraMap r =>
+    -- A = r • 1. Pull r out via linearity in A and reduce to A = 1.
+    rw [Algebra.algebraMap_eq_smul_one]
+    simp only [map_smul, LinearMap.smul_apply, ← TensorProduct.smul_tmul']
+    congr 1
+    -- Goal: comul (1 ○ B) = TP.map μ μ (TTTC (TP.map Δ Δ (1 ⊗ B)))
+    rw [one_circ, map_smul, Bialgebra.comul_one, Algebra.TensorProduct.one_def,
+        TensorProduct.map_tmul, Bialgebra.comul_one, Algebra.TensorProduct.one_def,
+        map_uncurry_TTTC_pure, map_circ_a_circ_one_comul, one_circ,
+        TensorProduct.smul_tmul']
+  | ι T =>
+    -- LHS: comul (ι T ○ B) = comul (ι (circByT_total T B)) [by oudomGuinCirc_eq_ofConv + circHom_ι]
+    --     = (ι T ○ B) ⊗ 1 + 1 ⊗ (ι T ○ B)  [by SymmetricAlgebra.comul_ι and primitivity]
+    have h_ι_T_circ : oudomGuinCirc (R := R) (SymmetricAlgebra.ι R L T) B =
+                     SymmetricAlgebra.ι R L (OudomGuinCircConstruct.circByT_total T B) := by
+      rw [oudomGuinCirc_eq_ofConv, circHom_ι]; rfl
+    rw [h_ι_T_circ,
+        SymmetricAlgebra.comul_ι R L (OudomGuinCircConstruct.circByT_total T B)]
+    -- Now RHS computation: comul (ι T) = ι T ⊗ 1 + 1 ⊗ ι T (primitive).
+    rw [TensorProduct.map_tmul, SymmetricAlgebra.comul_ι R L T]
+    -- After: TP.map μ μ (TTTC ((ι T ⊗ 1 + 1 ⊗ ι T) ⊗ Δ B))
+    rw [TensorProduct.add_tmul, map_add, map_add,
+        map_uncurry_TTTC_pure, map_uncurry_TTTC_pure,
+        map_circ_a_circ_one_comul, map_circ_one_circ_b_comul]
+    -- Now: ι (circByT_total T B) ⊗ 1 + 1 ⊗ ι (circByT_total T B) = (ι T ○ B) ⊗ 1 + 1 ⊗ (ι T ○ B)
+    rw [← h_ι_T_circ]
+  | mul A₁ A₂ ih₁ ih₂ =>
+    -- ## Step 1: LHS via Prop 2.7.iii (`circ_mul_distrib_via_comul`).
+    -- `(A₁·A₂) ○ B = mul'(TP.map (○A₁) (○A₂) (Δ B))`.
+    rw [circ_mul_distrib_via_comul]
+    simp only [LinearMap.coe_comp, Function.comp_apply]
+    -- Goal: Δ(mul'(TP.map (○A₁) (○A₂)(Δ B))) =
+    --       (TP.map ○_lift ○_lift)(TTTC((TP.map Δ Δ)((A₁*A₂) ⊗ B)))
+    -- ## Step 2: Push Δ through mul' via `AlgHom.comp_mul'` on `Bialgebra.comulAlgHom`.
+    -- The linear-map equation `comul ∘ mul' = mul'_{S⊗S} ∘ (TP.map comul comul)`.
+    have h_push_lm :
+        (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L)).comp
+            (LinearMap.mul' R (SymmetricAlgebra R L)) =
+          (LinearMap.mul' R (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L)).comp
+            (TensorProduct.map
+              (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+              (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))) :=
+      AlgHom.comp_mul' (Bialgebra.comulAlgHom R (SymmetricAlgebra R L))
+    have h_push := congrArg
+        (fun (f : (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) →ₗ[R]
+                    SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) =>
+          f ((TensorProduct.map (oudomGuinCirc (R := R) A₁) (oudomGuinCirc (R := R) A₂))
+              (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B)))
+        h_push_lm
+    simp only [LinearMap.coe_comp, Function.comp_apply] at h_push
+    rw [h_push]
+    -- Goal: mul'_{S⊗S}((TP.map Δ Δ)(TP.map (○A₁)(○A₂)(Δ B))) = RHS
+    -- ## Step 3: Fuse the two TP.maps on LHS.
+    have h_fuse := congrArg
+        (fun (f : (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) →ₗ[R]
+                    (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) ⊗[R]
+                    (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L)) =>
+          f (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) B))
+        (TensorProduct.map_comp
+          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+          (oudomGuinCirc (R := R) A₁)
+          (oudomGuinCirc (R := R) A₂))
+    simp only [LinearMap.coe_comp, Function.comp_apply] at h_fuse
+    rw [← h_fuse]
+    -- Goal: mul'_{S⊗S}((TP.map (Δ ∘ₗ ○A₁) (Δ ∘ₗ ○A₂))(Δ B)) = RHS
+    -- ## Step 4: Apply IH as LinearMap equations on the LHS.
+    -- ih_i : ∀ B', Δ(A_i ○ B') = (TP.map ○_lift ○_lift)(TTTC((TP.map Δ Δ)(A_i ⊗ B')))
+    -- Linear-map form: `Δ ∘ ○A_i = (TP.map ○_lift ○_lift) ∘ TTTC ∘ (TP.map Δ Δ) ∘ (TP.mk A_i)`.
+    have ih₁_lm : (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L)).comp
+                    (oudomGuinCirc (R := R) A₁) =
+                  (TensorProduct.map (TensorProduct.lift (oudomGuinCirc (R := R)))
+                                     (TensorProduct.lift (oudomGuinCirc (R := R)))).comp
+                    ((TensorProduct.tensorTensorTensorComm R
+                        (SymmetricAlgebra R L) (SymmetricAlgebra R L)
+                        (SymmetricAlgebra R L) (SymmetricAlgebra R L)).toLinearMap.comp
+                      ((TensorProduct.map
+                          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+                          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))).comp
+                        ((TensorProduct.mk R (SymmetricAlgebra R L) (SymmetricAlgebra R L)) A₁))) := by
+      ext B'
+      simp only [LinearMap.comp_apply, TensorProduct.mk_apply]
+      exact ih₁ B'
+    have ih₂_lm : (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L)).comp
+                    (oudomGuinCirc (R := R) A₂) =
+                  (TensorProduct.map (TensorProduct.lift (oudomGuinCirc (R := R)))
+                                     (TensorProduct.lift (oudomGuinCirc (R := R)))).comp
+                    ((TensorProduct.tensorTensorTensorComm R
+                        (SymmetricAlgebra R L) (SymmetricAlgebra R L)
+                        (SymmetricAlgebra R L) (SymmetricAlgebra R L)).toLinearMap.comp
+                      ((TensorProduct.map
+                          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))
+                          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L))).comp
+                        ((TensorProduct.mk R (SymmetricAlgebra R L) (SymmetricAlgebra R L)) A₂))) := by
+      ext B'
+      simp only [LinearMap.comp_apply, TensorProduct.mk_apply]
+      exact ih₂ B'
+    rw [ih₁_lm, ih₂_lm]
+    -- ## Step 5: Reduce RHS via `Bialgebra.comul_mul`.
+    -- `(TP.map Δ Δ)((A₁*A₂) ⊗ B) = Δ(A₁*A₂) ⊗ Δ B = (Δ A₁ · Δ A₂) ⊗ Δ B`.
+    rw [TensorProduct.map_tmul, Bialgebra.comul_mul]
+    -- ## Step 6: The cocomm step. Both sides are now expressed; close via the
+    -- key lemma `comul_circ_mul_cocomm_aux` (below).
+    exact comul_circ_mul_cocomm_aux A₁ A₂ B
+  | add A₁ A₂ ih₁ ih₂ =>
+    -- Linearity in A: distribute through both sides.
+    simp only [LinearMap.add_apply, map_add, TensorProduct.add_tmul]
+    rw [ih₁, ih₂]
 
 /-! ## §4: Prop 2.8.v — the key inductive lemma
 
@@ -698,40 +1046,75 @@ or similar and the exact composition needs care. Future cleanup. -/
 length of `A` (Oudom-Guin paper page 7).
 
 This is THE substantive lemma needed for Lemma 2.10's proof of `★`
-associativity.
+associativity. -/
 
-### Proof structure (per OG paper p. 7)
+/-- **Sweedler counit calculation** for the Q2 RHS:
+    `ε((B ○ C₍₁₎) · C₍₂₎) = ε(B) · ε(C)`.
 
-By `SymmetricAlgebra.induction` on `A`:
-
-- **`algebraMap r` (rank 0, A = r · 1)**: both sides reduce to
-  `r · ε(B) · ε(C) · 1` via `one_circ` (Prop 2.8.i), `counit_circ`
-  (Prop 2.8.ii), and the counit law `ε(C₍₁₎) · ε(C₍₂₎) = ε(C)`.
-
-- **`ι T` (rank 1, A = ι(T) for T ∈ L)**: the rank-1 OG identity. By
-  Def 2.4 + Prop 2.7.ii (`circ_T_mul`), inductive on B's length. This
-  is the deepest sub-case; depends on the construction of
-  `oudomGuinCirc` at `T ∈ L`.
-
-- **`mul A₁ A₂` (with IH on both)**: OG's main chain (p. 7):
-  ```
-  ((A₁ * A₂) ○ B) ○ C
-    = ((A₁ ○ B₍₁₎)(A₂ ○ B₍₂₎)) ○ C         [Prop 2.7.iii]
-    = ((A₁ ○ B₍₁₎) ○ C₍₁₎)((A₂ ○ B₍₂₎) ○ C₍₂₎)  [Prop 2.7.iii again]
-    = (A₁ ○ ((B₍₁₎ ○ C₍₁₎₍₁₎) C₍₁₎₍₂₎))(A₂ ○ ((B₍₂₎ ○ C₍₂₎₍₁₎) C₍₂₎₍₂₎))  [IH]
-    = (A₁ * A₂) ○ ((B ○ C₍₁₎) C₍₂₎)         [Prop 2.7.iii reversed + Δ identity]
-  ```
-  The final step uses Prop 2.8.iii (`comul_circ`) + `IsCocomm`:
-  `Δ((C ○ D₁)D₂) = (C₁ ○ D₁)D₂ ⊗ (C₂ ○ D₃)D₄` after cocommutative
-  reindexing.
-
-- **`add A₁ A₂` (with IH on both)**: linearity of `oudomGuinCirc`. -/
+    Adapts the smul-pullout pattern from `counit_circ`'s mul case to a
+    sub-shape that occurs inside the Q2 algebraMap case. -/
+private theorem algebraMapInv_circ_mul'_comul_aux
+    (B C : SymmetricAlgebra R L) :
+    SymmetricAlgebra.algebraMapInv (M := L)
+        ((LinearMap.mul' R (SymmetricAlgebra R L) ∘ₗ
+          TensorProduct.map (oudomGuinCirc (R := R) B) LinearMap.id)
+          (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) C)) =
+      SymmetricAlgebra.algebraMapInv (M := L) B *
+      SymmetricAlgebra.algebraMapInv (M := L) C := by
+  simp only [LinearMap.coe_comp, Function.comp_apply]
+  -- Push algebraMapInv through mul' via AlgHom.comp_mul'.
+  have h_push := congrArg
+      (fun (f : (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) →ₗ[R] R) =>
+        f ((TensorProduct.map (oudomGuinCirc (R := R) B) LinearMap.id)
+            (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) C)))
+      (AlgHom.comp_mul' (SymmetricAlgebra.algebraMapInv (M := L)))
+  simp only [LinearMap.coe_comp, Function.comp_apply, AlgHom.toLinearMap_apply] at h_push
+  rw [h_push]
+  -- Fuse the two TensorProduct.map applications.
+  have h_fuse := congrArg
+      (fun (f : (SymmetricAlgebra R L ⊗[R] SymmetricAlgebra R L) →ₗ[R] R ⊗[R] R) =>
+        f (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) C))
+      (TensorProduct.map_comp
+        (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap
+        (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap
+        (oudomGuinCirc (R := R) B)
+        LinearMap.id)
+  simp only [LinearMap.coe_comp, Function.comp_apply] at h_fuse
+  rw [← h_fuse]
+  -- Apply counit_circ in linear-map form: algInv ∘ ○B = algInv B • algInv.
+  have h_algInv_circ_B :
+      (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap.comp
+          (oudomGuinCirc (R := R) B) =
+        SymmetricAlgebra.algebraMapInv (M := L) B •
+          (SymmetricAlgebra.algebraMapInv (M := L)).toLinearMap := by
+    ext X
+    simp only [LinearMap.comp_apply, AlgHom.toLinearMap_apply,
+               LinearMap.smul_apply, smul_eq_mul]
+    exact counit_circ B X
+  rw [h_algInv_circ_B, LinearMap.comp_id]
+  -- Pull smul out of the left factor, then out of map and mul'.
+  rw [TensorProduct.map_smul_left, LinearMap.smul_apply, map_smul,
+      mul'_map_algebraMapInv_comul, smul_eq_mul]
 
 /-- **Prop 2.8 (v)** of Oudom-Guin (2008). The inductive key for Lemma
     2.10's proof of `★` associativity.
 
     `(A ○ B) ○ C = A ○ ((B ○ C₍₁₎) · C₍₂₎)`, Sweedler-summed over the
-    coproduct of `C`. -/
+    coproduct of `C`.
+
+    Proof structure (OG paper p. 7), by `SymmetricAlgebra.induction` on `A`:
+
+    * `algebraMap r` (rank 0, A = r · 1): both sides reduce to
+      `r · ε(B) · ε(C) · 1` via `one_circ` (Prop 2.8.i) + Q2-local helper
+      `algebraMapInv_circ_mul'_comul_aux` (Sweedler counit).
+
+    * `ι T` (rank 1, A = ι(T) for T ∈ L): the rank-1 OG identity, by
+      Def 2.4 + Prop 2.7.ii (`circ_T_mul`), inductive on B's length.
+
+    * `mul A₁ A₂` (with IH on both): OG's main chain — Prop 2.7.iii (twice)
+      + IH on A₁ and A₂ + Prop 2.8.iii (`comul_circ`) + `IsCocomm`.
+
+    * `add A₁ A₂` (with IH on both): linearity of `oudomGuinCirc`. -/
 theorem circ_assoc_via_comul (A B C : SymmetricAlgebra R L) :
     oudomGuinCirc (R := R) (oudomGuinCirc A B) C =
       oudomGuinCirc A
@@ -743,16 +1126,82 @@ theorem circ_assoc_via_comul (A B C : SymmetricAlgebra R L) :
   -- (`circ_mul_distrib_via_comul`) are constructed.
   induction A using SymmetricAlgebra.induction with
   | algebraMap r =>
-    -- A = r · 1. Both sides reduce to `r · ε(B) · ε(C) · 1` via
-    -- one_circ, counit_circ, and the counit law `ε(C₁)·ε(C₂) = ε(C)`.
-    sorry
+    -- A = r • 1. Pull r out of LHS and RHS via linearity of `oudomGuinCirc`
+    -- (`map_smul` + `LinearMap.smul_apply`), then collapse `1 ○ X = ε(X) • 1`
+    -- via `one_circ`. The Sweedler counit `ε(Y) = ε(B) · ε(C)` is the aux
+    -- lemma `algebraMapInv_circ_mul'_comul_aux`.
+    rw [Algebra.algebraMap_eq_smul_one]
+    -- LHS: ((r • 1) ○ B) ○ C
+    rw [show oudomGuinCirc (R := R) (r • (1 : SymmetricAlgebra R L)) B
+          = r • (SymmetricAlgebra.algebraMapInv (M := L) B •
+                 (1 : SymmetricAlgebra R L)) by
+        rw [map_smul, LinearMap.smul_apply, one_circ]]
+    rw [show oudomGuinCirc (R := R)
+              (r • SymmetricAlgebra.algebraMapInv (M := L) B •
+                (1 : SymmetricAlgebra R L)) C
+          = r • SymmetricAlgebra.algebraMapInv (M := L) B •
+              SymmetricAlgebra.algebraMapInv (M := L) C •
+              (1 : SymmetricAlgebra R L) by
+        rw [map_smul, LinearMap.smul_apply, map_smul, LinearMap.smul_apply, one_circ]]
+    -- RHS: (r • 1) ○ Y where Y is the OG-thing.
+    rw [show oudomGuinCirc (R := R) (r • (1 : SymmetricAlgebra R L))
+              ((LinearMap.mul' R (SymmetricAlgebra R L) ∘ₗ
+                TensorProduct.map (oudomGuinCirc (R := R) B) LinearMap.id)
+                (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) C))
+          = r • (SymmetricAlgebra.algebraMapInv (M := L)
+              ((LinearMap.mul' R (SymmetricAlgebra R L) ∘ₗ
+                TensorProduct.map (oudomGuinCirc (R := R) B) LinearMap.id)
+                (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) C))) •
+            (1 : SymmetricAlgebra R L) by
+        rw [map_smul, LinearMap.smul_apply, one_circ]]
+    -- Replace ε(Y) with ε(B) · ε(C) via the aux lemma; collapse smuls.
+    -- `smul_smul : a₁ • a₂ • b = (a₁ * a₂) • b` (rewrites left-to-right
+    -- to *combined* form). After three applications and a `mul_assoc`,
+    -- both sides equal `(r * algInv B * algInv C) • 1`.
+    rw [algebraMapInv_circ_mul'_comul_aux, smul_smul, smul_smul, smul_smul, mul_assoc]
   | ι T =>
-    -- A = ι(T) for T ∈ L. Rank-1 OG identity. Inductive on B's length
-    -- using Prop 2.7.ii (`circ_T_mul`). Deepest sub-case.
+    -- A = ι(T) for T ∈ L. Rank-1 OG identity.
+    --
+    -- TODO: This reduces to an L-level identity (call it
+    -- `circByT_total_assoc_via_comul`):
+    --   `circByT_total (circByT_total T B) C = circByT_total T (Y(B, C))`
+    -- where `Y(B, C) = (B ○ C₍₁₎) · C₍₂₎` Sweedler-summed.
+    -- LHS = `ι (circByT_total (circByT_total T B) C)` via
+    --       `oudomGuinCirc (ι T) = (ι R L).comp (circByT_total T)` applied twice
+    --       (the identity `circHom_ι` + `(circGen T).ofConv = (ι R L).comp ...`).
+    -- RHS = `ι (circByT_total T (Y(B, C)))` via the same identity applied once.
+    -- The L-level claim is bilinear in (B, C). After tprod-ext on C (algHomL_surjective
+    -- + TA_linearMap_ext_tprod) and induction on the tprod length n:
+    --   * n = 0 (C = 1): both sides are `circByT_total T B` (via `circByT_total_one`).
+    --   * n+1 (C_n · ι X): apply `circ_T_mul` to `ι X' ○ (C_n · ι X)` where
+    --     `X' = circByT_total T B`, then use IH at length n (twice) for the
+    --     `(_ ○ C_n) ○ ι X` and `_ ○ (C_n ○ ι X)` terms; the inductive step
+    --     STILL requires expanding `Y(B, C_n · ι X)` via `Δ(C_n · ι X) =
+    --     Δ(C_n) · Δ(ι X)`, and the resulting `B ○ (Cn₍₁₎ · ι X)` term for
+    --     general B has no closed form without Prop 2.8.iii (`comul_circ`)
+    --     or a substantive expansion via the algHomL form of B.
+    --
+    -- Substrate path (one of):
+    --   (a) Prove Prop 2.8.iii first (the 4-fold tensor reshuffle for
+    --       `Δ(A ○ B) = Σ (A₁ ○ B₁) ⊗ (A₂ ○ B₂)`), then close ι T case
+    --       via algebraic Sweedler chain.
+    --   (b) Lift the ι T case L-level identity directly via double tprod-ext
+    --       on (B, C) and per-monomial computation using `circTMultilinear_succ`.
+    --       Lengthy but does not need Prop 2.8.iii.
+    -- See `scratch/q2_session_prompt.md` for the broader plan.
     sorry
   | mul A₁ A₂ ih₁ ih₂ =>
-    -- A = A₁ * A₂. Main chain from OG p. 7: uses Prop 2.7.iii (twice)
-    -- + IH on A₁ and A₂ + Prop 2.8.iii (`comul_circ`) + `IsCocomm`.
+    -- A = A₁ * A₂. OG's main chain (paper p. 7):
+    --   `((A₁ * A₂) ○ B) ○ C = ((A₁ ○ B₍₁₎)(A₂ ○ B₍₂₎)) ○ C`        [Prop 2.7.iii]
+    --                       = `((A₁ ○ B₍₁₎) ○ C₍₁₎)((A₂ ○ B₍₂₎) ○ C₍₂₎)` [Prop 2.7.iii]
+    --                       = `(A₁ ○ (Y(B₍₁₎, C₍₁₎)))(A₂ ○ (Y(B₍₂₎, C₍₂₎)))` [IH on A₁, A₂]
+    --                       = `(A₁ * A₂) ○ (Y(B, C))`               [reverse Prop 2.7.iii +
+    --                                                                Prop 2.8.iii + IsCocomm]
+    --
+    -- BLOCKED on Prop 2.8.iii (`comul_circ`: `Δ(A ○ B) = Σ (A₍₁₎ ○ B₍₁₎) ⊗ (A₍₂₎ ○ B₍₂₎)`).
+    -- Currently deferred (see comment block before §4 docstring above). The
+    -- 4-fold tensor reshuffle is the missing mathlib idiom; once
+    -- `comul_circ` lands, this case is ~150-300 LOC of Sweedler chasing.
     sorry
   | add A₁ A₂ ih₁ ih₂ =>
     -- Linearity of `oudomGuinCirc` in the first argument.

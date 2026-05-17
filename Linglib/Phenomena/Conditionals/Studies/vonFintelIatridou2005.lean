@@ -4,330 +4,229 @@ import Linglib.Data.Examples.Schema
 /-!
 # @cite{vonfintel-iatridou-2005} — Anankastic conditionals and related matters
 
-The "Harlem Sentence":
+The "Harlem Sentence" — *If you want to go to Harlem, you have to take
+the A train* — and the puzzle: no straightforward Kratzerian analysis
+delivers its truth conditions. vF&I rule out three candidate analyses
+(if-clause restricts the modal base, modifies the ordering source à la
+@cite{saebo-2001}, or is restricted by a covert higher modal), then
+propose a **Designated Goals** account paired with
+@cite{sloman-1970}'s have-to-vs-ought-to distinction.
 
-> If you want to go to Harlem, you have to take the A train.
+This file contains:
 
-vF&I argue that **no straightforward Kratzerian analysis** delivers the
-right truth conditions for this sentence, then propose a "designated
-goal" analysis paired with @cite{sloman-1970}'s have-to-vs-ought-to
-distinction. This file formalizes:
+* `obviousAnalysis` (if-clause adds to modal base) refuted on the
+  Hoboken Problem (vF&I (11));
+* `saeboAnalysis` (if-clause adds to ordering source) refuted on the
+  Conflicting Goals scenario (vF&I (13));
+* the **Designated Goals** structure with `oughtTo`/`haveTo` operators
+  and the Sloman entailment `haveTo_implies_oughtTo_of_best_subset_accessible`;
+* cross-reference (in the closing docstring) to
+  @cite{chung-mascarenhas-2024}: the C&M exhaustification clause is the
+  formal expected-value realisation of Sloman's "only candidate".
+  C&M handles the Harlem base case, Burdick's contextual designation,
+  and Breathe-style trivialities (via §5 plausibility). Open: Nissenbaum
+  Pedro Martinez (no causal-essentialness filter); Huitink van
+  Nistelrooy (correlated-irrelevant).
 
-* §1 the **scenario substrate** common to vF&I's worked examples
-  (worlds + want-clause proposition + goal-achievement proposition +
-  action propositions),
-* §2 the **obvious analysis** (if-clause restricts the modal base) and
-  its refutation by the Hoboken Problem (vF&I (11)),
-* §3 @cite{saebo-2001}'s analysis (if-clause modifies the ordering
-  source) and its refutation by the Conflicting Goals scenario (vF&I
-  (13)),
-* §4 the **nested modality analysis** (covert higher modal) and its
-  shared failure on conflicting-goal scenarios,
-* §5 the **Designated Goals proposal** (vF&I §6): the to-clause supplies
-  a designated goal that overrides ancillary considerations, with
-  @cite{sloman-1970}'s have-to-vs-ought-to as exhaustification asymmetry,
-* §6 cross-reference to @cite{chung-mascarenhas-2024}: their
-  exhaustification clause realises Sloman's "only candidate" as a
-  formal expected-value condition. C&M's compositional account cleanly
-  handles the Harlem base case, the contextual-designation Burdick's
-  case, and the trivially-true Breathe! case (via §5's plausibility
-  requirement). It stumbles on Nissenbaum's Pedro Martinez (no causal
-  filter) and Huitink's van Nistelrooy (correlated-irrelevant) absent
-  further refinement.
-
-## Scope
-
-This file does **not** rebuild vF&I's full designated-goal semantics in
-machine-checked form. The two refutation theorems (obvious analysis,
-Sæbø's analysis) are stated and proved on minimal `decide`-checkable
-scenarios; the positive proposal is given as a structure
-(`DesignatedGoal`) with its truth conditions defined, but exhaustive
-predictions are left as informal commentary in docstrings. The point
-is to make vF&I's empirical landscape grep-able and to fix the
-cross-paper bridge to C&M, not to settle the anankastic-conditional
-literature.
-
-The example data lives in `Linglib/Data/Examples/vonFintelIatridou2005.json`
+Example data lives in `Linglib/Data/Examples/vonFintelIatridou2005.json`
 and is generated into the `Examples` section below by
-`scripts/gen_examples.py vonFintelIatridou2005`. See
-`Linglib/Data/Examples/README.md` for the schema and regeneration
-convention.
+`scripts/gen_examples.py vonFintelIatridou2005`.
 -/
 
 namespace Phenomena.Conditionals.Studies.VonFintelIatridou2005
 
-open Semantics.Modality.Kratzer
 open Data.Examples (LinguisticExample SourceRef Judgment)
 
-/-! ## §1. Analytical predicates
+/-! ### Analytical predicates
 
-The four analytical proposals (obvious, Sæbø, nested, designated-goal)
-are predicates on a world type with explicit decidable-predicate
-arguments for the relevant propositions. Each concrete vF&I scenario
-(Hoboken, Conflicting Goals, ...) instantiates these arguments with
-its own predicates. Bundling them into a structure would have hidden
-the decidability needed for `decide`-based refutations behind a field
-projection; the explicit-argument form keeps each refutation
-mechanically verifiable. -/
+Each candidate analysis is a predicate parameterized by the relevant
+propositions on a world type. Concrete vF&I scenarios (Hoboken,
+Conflicting Goals) instantiate these arguments with their own predicates
+and `decide` discharges the refutation. Bundling the propositions into
+a `Scenario` structure would hide the per-predicate decidability the
+refutations need behind a field projection; the explicit-argument form
+keeps each refutation mechanically verifiable. The circumstantial
+modal base is taken as universal (the worked vF&I scenarios do not
+exploit modal-base restriction). -/
 
-/-! ## §2. The "Obvious Analysis" and the Hoboken Problem
+/-! ### Obvious analysis and the Hoboken Problem
 
 vF&I eq. (9): `[have to](w)(f)(g)(q) = 1 iff ∀w' ∈ max_{g(w)}(∩f(w)) : q(w') = 1`.
 vF&I eq. (10): `[if φ](f) = λw. f(w) ∪ {⟦φ⟧}`.
 
-Combined, the "obvious analysis" of *If you want to go to Harlem, you
-have to take the A train* asserts: in the best (per actual goals)
-worlds where you want to go to Harlem, you take the A train.
+Combined, the "obvious analysis" of the Harlem Sentence asserts: in the
+best (per actual goals) worlds where you want to go to Harlem, you take
+the A train. In the Hoboken scenario the actual ordering source ranks
+worlds by satisfaction of *want-Hoboken*. Best *want-Harlem* worlds are
+then those that simultaneously achieve Hoboken — i.e., take the PATH
+train — so the obvious analysis predicts the sentence false (vF&I p. 5
+intuition: true). -/
 
-In the Hoboken scenario the actual ordering source ranks worlds by
-satisfaction of want(Hoboken). Best want(Harlem)-worlds are then those
-that simultaneously achieve Hoboken — i.e., take the PATH train — so
-the sentence is predicted false. Empirically the sentence is true
-(intuition of vF&I, paper p. 5). -/
-
-/-- Truth conditions for the obvious analysis: the candidate is true
-at every accessible-and-want-Harlem world that maximizes
-actual-goal-achievement. -/
+/-- The obvious analysis: the candidate is true at every want-Harlem
+world that maximizes actual-goal-achievement. -/
 def obviousAnalysis {W : Type*}
-    (accessible wantHyp achieveAct candidate : W → Prop) : Prop :=
-  ∀ w : W, accessible w → wantHyp w →
-    (∀ w' : W, accessible w' → wantHyp w' → achieveAct w' → achieveAct w) →
+    (wantHyp achieveAct candidate : W → Prop) : Prop :=
+  ∀ w : W, wantHyp w →
+    (∀ w' : W, wantHyp w' → achieveAct w' → achieveAct w) →
     candidate w
 
-/-! ### The Hoboken scenario
-
-Four worlds:
-* `w0`: takes A train, achieves Harlem (want-Hoboken false, want-Harlem true)
-* `w1`: takes PATH, achieves Hoboken (want-Hoboken true, want-Harlem false)
-* `w2`: takes PATH, achieves Hoboken (want-Hoboken true, want-Harlem true)
-  — accessible & want-Harlem & best-on-actual-goals
-* `w3`: takes A train, achieves Harlem (want-Hoboken false, want-Harlem true)
-
-At evaluation world (where actual goal = Hoboken), the obvious analysis
-restricts to want-Harlem worlds {w0, w2, w3}; best by actual-goal is
-{w2} (achieves Hoboken). At w2 the candidate (A train) is FALSE.
-Therefore the obvious analysis predicts the Harlem Sentence false in
-the Hoboken context. -/
+/-! The Hoboken scenario. Four worlds:
+`w0`: A train, achieves Harlem; `w1`: PATH, achieves Hoboken;
+`w2`: PATH, achieves both Hoboken AND want-Harlem holds — the
+counterexample world; `w3`: A train, achieves Harlem. -/
 
 namespace HobokenScenario
 
-abbrev W := Fin 4
+abbrev World := Fin 4
 
-instance : DecidableEq W := inferInstance
+def wantHypothetical : World → Prop := λ w => w.val = 0 ∨ w.val = 2 ∨ w.val = 3
+instance : DecidablePred wantHypothetical := λ w => by unfold wantHypothetical; infer_instance
 
-def accessible : W → Prop := fun _ => True
-instance : DecidablePred accessible := fun _ => isTrue trivial
+def achieveActual : World → Prop := λ w => w.val = 1 ∨ w.val = 2
+instance : DecidablePred achieveActual := λ w => by unfold achieveActual; infer_instance
 
-def wantHypothetical : W → Prop := fun w => w.val = 0 ∨ w.val = 2 ∨ w.val = 3
-instance : DecidablePred wantHypothetical := fun w => by unfold wantHypothetical; infer_instance
-
-def wantActual : W → Prop := fun w => w.val = 1 ∨ w.val = 2
-instance : DecidablePred wantActual := fun w => by unfold wantActual; infer_instance
-
-def achieveHypothetical : W → Prop := fun w => w.val = 0 ∨ w.val = 3
-instance : DecidablePred achieveHypothetical := fun w => by unfold achieveHypothetical; infer_instance
-
-def achieveActual : W → Prop := fun w => w.val = 1 ∨ w.val = 2
-instance : DecidablePred achieveActual := fun w => by unfold achieveActual; infer_instance
-
-def takeCandidate : W → Prop := fun w => w.val = 0 ∨ w.val = 3
-instance : DecidablePred takeCandidate := fun w => by unfold takeCandidate; infer_instance
-
-def takeAlternative : W → Prop := fun w => w.val = 1 ∨ w.val = 2
-instance : DecidablePred takeAlternative := fun w => by unfold takeAlternative; infer_instance
+def takeCandidate : World → Prop := λ w => w.val = 0 ∨ w.val = 3
+instance : DecidablePred takeCandidate := λ w => by unfold takeCandidate; infer_instance
 
 end HobokenScenario
 
-/-- **Refutation theorem**: the Hoboken scenario falsifies the
-obvious analysis. At w2 (want-Harlem and best-on-actual-goals) the
+/-- The Hoboken scenario falsifies the obvious analysis: at `w2` the
 candidate (A train) is false. -/
 theorem hoboken_refutes_obvious :
     ¬ obviousAnalysis
-        HobokenScenario.accessible
         HobokenScenario.wantHypothetical
         HobokenScenario.achieveActual
         HobokenScenario.takeCandidate := by
   intro h
-  have h2 := h ⟨2, by decide⟩ (by decide) (by decide)
-    (by intro w' _ _ _; decide)
-  exact absurd h2 (by decide)
+  have hCand : HobokenScenario.takeCandidate (⟨2, by decide⟩ : Fin 4) := by
+    apply h ⟨2, by decide⟩
+    · decide -- wantHypothetical w₂
+    · intro w' _ _; decide -- w₂ maximizes achieveActual among want-Harlem worlds
+  exact absurd hCand (by decide)
 
-/-! ## §3. Sæbø 2001's Analysis and the Conflicting Goals refutation
+/-! ### Sæbø 2001's analysis and the Conflicting Goals refutation
 
-@cite{saebo-2001} modifies the ordering source: instead of adding the
-*if*-clause proposition to the modal base, add it to the ordering source.
-vF&I formalize this as `g⁺(w) := g(w) ∪ {⟦want-Harlem⟧}`. The modal
-quantifies over best worlds in the modal base under g⁺.
+@cite{saebo-2001} adds the *if*-clause's proposition to the **ordering
+source** rather than the modal base: `g⁺(w) := g(w) ∪ {⟦want-Harlem⟧}`.
+The modal quantifies over best worlds in the modal base under `g⁺`.
+This survives the basic Hoboken setup but is non-compositional
+(*want* has to be zapped) and fails on Conflicting Goals scenarios
+(vF&I (13), (22)) where actual and hypothetical goals are jointly
+satisfiable yet conflicting in the concrete instance. -/
 
-This avoids the basic Hoboken Problem when the actual ordering source
-contains *want-Hoboken*: the new ordering source augments preferences
-with want-Harlem, so best worlds satisfy both goals — typically the A
-train (Harlem direction). But:
-
-* it is **non-compositional** (vF&I §4.2): want has to be "zapped" so
-  the proposition added to g is `go-to-Harlem`, not `want-go-to-Harlem`;
-* and it fails when actual and hypothetical goals are **jointly
-  satisfiable but conflicting** in the *concrete* scenario, as in
-  vF&I (13) (Hoboken-for-Sæbø) and vF&I (22) (mayor/pub). -/
-
-/-- Truth conditions for Sæbø's analysis. Quantifies over best worlds
-where both the actual goal and the hypothetical goal-achievement are
-ranked together. -/
+/-- Sæbø's analysis: quantifies over worlds maximizing actual goal
+∧ hypothetical goal jointly. -/
 def saeboAnalysis {W : Type*}
-    (accessible achieveAct achieveHyp candidate : W → Prop) : Prop :=
-  ∀ w : W, accessible w →
-    (∀ w' : W, accessible w' →
-       ((achieveAct w' ∧ achieveHyp w') →
-        (achieveAct w ∧ achieveHyp w))) →
+    (achieveAct achieveHyp candidate : W → Prop) : Prop :=
+  ∀ w : W,
+    (∀ w' : W, (achieveAct w' ∧ achieveHyp w') →
+       (achieveAct w ∧ achieveHyp w)) →
     candidate w
 
-/-! ### The Conflicting Goals scenario
-
-Adapted from vF&I (13)/(22). Five worlds:
-* `w0`: takes A, achieves Harlem only (no Hoboken, no mayor-goal)
-* `w1`: takes PATH, achieves Hoboken only
-* `w2`: takes A, achieves both Harlem and Hoboken — best under Sæbø
-* `w3`: takes PATH, achieves both Harlem and Hoboken — best under Sæbø
-* `w4`: takes neither, achieves neither
-
-Under Sæbø, the best-under-`g⁺` set is `{w2, w3}` (both maximize
-joint goal-achievement). At w3 you take PATH, not A. Sæbø therefore
-predicts the Harlem sentence false; vF&I report it as true. -/
+/-! The Conflicting Goals scenario (vF&I (13)/(22)). Five worlds:
+`w0`: A, Harlem-only; `w1`: PATH, Hoboken-only;
+`w2`: A, both; `w3`: PATH, both — the counterexample world;
+`w4`: neither, neither. -/
 
 namespace ConflictingGoalsScenario
 
-abbrev W := Fin 5
+abbrev World := Fin 5
 
-instance : DecidableEq W := inferInstance
+def achieveHypothetical : World → Prop := λ w => w.val = 0 ∨ w.val = 2 ∨ w.val = 3
+instance : DecidablePred achieveHypothetical := λ w => by unfold achieveHypothetical; infer_instance
 
-def accessible : W → Prop := fun _ => True
-instance : DecidablePred accessible := fun _ => isTrue trivial
+def achieveActual : World → Prop := λ w => w.val = 1 ∨ w.val = 2 ∨ w.val = 3
+instance : DecidablePred achieveActual := λ w => by unfold achieveActual; infer_instance
 
-def achieveHypothetical : W → Prop := fun w => w.val = 0 ∨ w.val = 2 ∨ w.val = 3
-instance : DecidablePred achieveHypothetical := fun w => by unfold achieveHypothetical; infer_instance
-
-def achieveActual : W → Prop := fun w => w.val = 1 ∨ w.val = 2 ∨ w.val = 3
-instance : DecidablePred achieveActual := fun w => by unfold achieveActual; infer_instance
-
-def takeCandidate : W → Prop := fun w => w.val = 0 ∨ w.val = 2
-instance : DecidablePred takeCandidate := fun w => by unfold takeCandidate; infer_instance
-
-def takeAlternative : W → Prop := fun w => w.val = 1 ∨ w.val = 3
-instance : DecidablePred takeAlternative := fun w => by unfold takeAlternative; infer_instance
-
-def wantHypothetical : W → Prop := fun _ => True
-instance : DecidablePred wantHypothetical := fun _ => isTrue trivial
-
-def wantActual : W → Prop := fun _ => True
-instance : DecidablePred wantActual := fun _ => isTrue trivial
+def takeCandidate : World → Prop := λ w => w.val = 0 ∨ w.val = 2
+instance : DecidablePred takeCandidate := λ w => by unfold takeCandidate; infer_instance
 
 end ConflictingGoalsScenario
 
-/-- **Refutation theorem**: the Conflicting Goals scenario falsifies
-Sæbø's analysis. World `w3` achieves both goals but takes the
-alternative (PATH), so it is a best-world counterexample to the
-candidate-uniform prediction. -/
+/-- The Conflicting Goals scenario falsifies Sæbø's analysis: at `w3`
+both goals are jointly achieved but the candidate (A train) is false. -/
 theorem conflictingGoals_refutes_saebo :
     ¬ saeboAnalysis
-        ConflictingGoalsScenario.accessible
         ConflictingGoalsScenario.achieveActual
         ConflictingGoalsScenario.achieveHypothetical
         ConflictingGoalsScenario.takeCandidate := by
   intro h
-  have h3 := h ⟨3, by decide⟩ (by decide)
-    (by intro w' _ _; decide)
-  exact absurd h3 (by decide)
+  have hCand : ConflictingGoalsScenario.takeCandidate (⟨3, by decide⟩ : Fin 5) := by
+    apply h ⟨3, by decide⟩
+    intro w' _; decide
+  exact absurd hCand (by decide)
 
-/-! ## §4. Nested Modality
+/-! ### Nested Modality
 
-vF&I §5 propose that the *if*-clause does not modify the lower
-teleological modal at all — instead, the *if*-clause restricts an
-**additional covert necessity modal** scoping over the teleological
-modal:
+vF&I §5 propose that the *if*-clause restricts an additional covert
+necessity modal scoping over the teleological modal:
+`[ NEC if you want to go to Harlem ] [ have-to (you take the A train) ]`.
+This survives the Hoboken Problem but fails on the Conflicting Goals
+scenario and on Huitink's van Nistelrooy (correlated-irrelevant). The
+shared failure motivates the Designated Goals move below. Not
+formalised here. -/
 
-`[ NEC if you want to go to Harlem ] [ have-to (you take the A train) ]`
+/-! ### The Designated Goals proposal -/
 
-This survives the Hoboken Problem (the covert outer modal takes us to
-worlds where you want Harlem; the inner have-to then operates on the
-*actual* goals at those worlds, which include want-Harlem). It fails
-on the Conflicting Goals scenario for analogous reasons, and on
-Huitink's van Nistelrooy (correlated-irrelevant) scenario.
+section DesignatedGoals
+open Semantics.Modality.Kratzer
 
-We do not give a full formalization here; the key point is that the
-shared failure on conflicting-goal scenarios already motivates the
-Designated Goals move (§5). -/
-
-/-! ## §5. The Designated Goals proposal
-
-vF&I §6 propose distinguishing a **designated goal** from ancillary
-considerations. The to-clause / if-clause supplies the designated goal;
-*have-to* and *ought-to* differ in exhaustification:
-
-* `to p, have-to q`: q at every world (in the modal base) where p is
-  achieved.
-* `to p, ought-to q`: q at every world that maximizes the ancillary
-  ordering source restricted to worlds where p is achieved.
-
-These differ exactly in @cite{sloman-1970}'s sense: *have-to* "picks
-out the only candidate"; *ought-to* "says what is best". The
-have-to entails ought-to, and ought-to signals there are alternatives. -/
-
-/-- @cite{vonfintel-iatridou-2005} §6 designated-goal parameter for a
-teleological modal. The `goal` is the to-clause / if-clause–supplied
-proposition; `ancillary` is the ordering source for ranking goal-achieving
-worlds. -/
+/-- @cite{vonfintel-iatridou-2005} §6 parameter for a teleological
+modal: a *designated goal* supplied by the to/if-clause, *ancillary
+considerations* ranking goal-achieving worlds, and a circumstantial
+modal base. -/
 structure DesignatedGoal (W : Type*) where
   /-- The designated goal: a proposition the addressee is taken to pursue. -/
   goal : W → Prop
   /-- Ancillary considerations: a Kratzer ordering source over worlds. -/
   ancillary : OrderingSource W
-  /-- The (circumstantial) modal base. -/
+  /-- Circumstantial modal base. -/
   modalBase : ModalBase W
 
 /-- vF&I (24a): *to p, ought-to q* — q at every ancillary-best
 goal-achieving world. -/
 def oughtTo {W : Type*} (dg : DesignatedGoal W) (q : W → Prop) (w : W) : Prop :=
   ∀ w' : W, w' ∈ bestWorlds dg.modalBase
-                  (fun v => dg.ancillary v ++ [dg.goal]) w →
+                  (λ v => dg.ancillary v ++ [dg.goal]) w →
     q w'
 
 /-- vF&I (24b): *to p, have-to q* — q at every goal-achieving world
-in the modal base. The exhaustification (no ranking over the goal
-slice) is the formal counterpart of Sloman's "only candidate". -/
+in the modal base. The exhaustification (no ranking) is the formal
+counterpart of @cite{sloman-1970}'s "only candidate". -/
 def haveTo {W : Type*} (dg : DesignatedGoal W) (q : W → Prop) (w : W) : Prop :=
   ∀ w' : W, w' ∈ accessibleWorlds dg.modalBase w → dg.goal w' → q w'
 
-/-- @cite{sloman-1970} / @cite{vonfintel-iatridou-2005} §6: have-to is
-strictly stronger than ought-to. Stated as a structural inequality:
-have-to-q quantifies over a (typically larger) set than ought-to-q does. -/
-theorem haveTo_implies_oughtTo_structurally {W : Type*}
+/-- @cite{sloman-1970} / vF&I §6: have-to entails ought-to, under the
+structural assumption that every ancillary-best world is accessible
+and goal-achieving. -/
+theorem haveTo_implies_oughtTo_of_best_subset_accessible {W : Type*}
     (dg : DesignatedGoal W) (q : W → Prop) (w : W)
     (hHave : haveTo dg q w)
     (hBestSubset : ∀ w',
       w' ∈ bestWorlds dg.modalBase
-              (fun v => dg.ancillary v ++ [dg.goal]) w →
+              (λ v => dg.ancillary v ++ [dg.goal]) w →
       w' ∈ accessibleWorlds dg.modalBase w ∧ dg.goal w') :
     oughtTo dg q w := by
   intro w' hBest
   obtain ⟨hAcc, hGoal⟩ := hBestSubset w' hBest
   exact hHave w' hAcc hGoal
 
-/-! ## §6. Cross-reference to @cite{chung-mascarenhas-2024}
+end DesignatedGoals
 
-C&M's `mustCM` operator (`Phenomena/Modality/Studies/ChungMascarenhas2024.lean`)
-realises @cite{sloman-1970}'s "only candidate" condition as an
+/-! ### Cross-reference to @cite{chung-mascarenhas-2024}
+
+C&M's `mustCM` operator
+(`Phenomena/Modality/Studies/ChungMascarenhas2024.lean`) realises
+@cite{sloman-1970}'s "only candidate" condition as an
 **exhaustification clause** on expected values:
+`mustCM φ` iff `E[μ_R ∣ φ] > θ ∧ ∀ψ ∈ Alt(φ). E[μ_R ∣ ψ] ≤ θ`.
+The first conjunct is strong permissibility (φ achieves the goal
+well enough); the second is the only-candidate condition. Under
+deontic/teleological `R = R_D`, this directly maps to vF&I's
+*have-to*: φ has to be the unique good-enough way of achieving the
+designated goal.
 
-> `mustCM φ` iff `E[μ_R ∣ φ] > θ ∧ ∀ψ ∈ Alt(φ). E[μ_R ∣ ψ] ≤ θ`.
-
-The first conjunct is the strong-permissibility condition (φ
-achieves the goal well enough); the second is the only-candidate
-condition (no alternative does). Under the deontic / teleological
-flavor `R = R_D = {goal-achievement-propositions}`, this directly
-maps onto vF&I's *have-to* truth conditions: φ has to be the unique
-good-enough way of achieving the designated goal.
-
-**What C&M handles cleanly:**
+**Handled cleanly by C&M:**
 * Harlem base case (`vFI2005_1_harlem`, `vFI2005_4_harlemPurpose`).
 * Burdick's hot chocolate (`vFI2005_28_burdicks`) via contextually
   supplied `R`.
@@ -337,15 +236,14 @@ good-enough way of achieving the designated goal.
   `vFI2005_p13_londonByNoon`) by dropping the exhaustification clause
   for ought-to.
 
-**What C&M doesn't dissolve:**
+**Not dissolved by C&M:**
 * Pedro Martinez (`vFI2005_36_pedroMartinez`): C&M's `R` is a flat set
   of propositions, no causal-essentialness filter. Nissenbaum's
-  insight (that the to-clause requires the consequent to be an
-  *essential part of a way of achieving* the goal) is not in C&M.
+  insight (the to-clause requires the consequent to be an *essential
+  part of a way of achieving* the goal) is not in C&M.
 * Van Nistelrooy (`vFI2005_p12_vanNistelrooy`): correlated-irrelevant
   preferences enter `R` and skew the expected value.
-
-These remain open puzzles for the expected-value approach. -/
+-/
 
 -- BEGIN GENERATED EXAMPLES
 -- (Generated from Linglib/Data/Examples/vonFintelIatridou2005.json by scripts/gen_examples.py.
