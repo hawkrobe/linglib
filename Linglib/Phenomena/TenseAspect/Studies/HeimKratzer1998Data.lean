@@ -265,52 +265,6 @@ theorem adjunct_before_matrix :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 17. Indexical Tense Shift
--- ════════════════════════════════════════════════════════════════
-
-/-! In some languages, tense can shift under attitude verbs in
-    ways that parallel the shift of indexical pronouns.
-
-    **Amharic**: the present tense in an attitude
-    complement can be interpreted relative to the attitude holder's
-    "now" rather than the speaker's speech time.
-
-    **Zazaki**: similar indexical shift for tense
-    under reportative evidentials.
-
-    This directly bears on the @cite{partee-1973} analogy between tenses
-    and pronouns: if both can undergo indexical shift in the same
-    environments, the structural parallel runs deeper than English
-    data alone suggests.
-
-    In English, indexical shift of tense is debated (but see the
-    double-access reading as a partial parallel). In shifting languages,
-    the embedded present tense receives the attitude holder's time,
-    not the speaker's speech time. -/
-
-/-- Indexical-shift present under past (Amharic-type):
-    "Abebe said Mary IS-sick" where the present tense is interpreted
-    at Abebe's saying time, not at speech time.
-
-    Compare with English double-access `embeddedSickPresent` where
-    present under past requires truth at BOTH speech time and matrix E.
-    In Amharic, there is no double-access requirement — the present
-    is simply evaluated at the attitude holder's time. -/
-def indexicalShiftPresent : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E (attitude holder's time)
-  referenceTime := -2     -- R' = P' (present, shifted to attitude time)
-  eventTime := -2         -- event at attitude holder's "now"
-
-/-- Indexical shift: event time ≠ speech time (unlike English present).
-    The key difference from English double-access: no requirement
-    that E = S. The shifted present locates the event at the
-    attitude holder's time exclusively. -/
-theorem indexicalShift_not_at_speech :
-    indexicalShiftPresent.eventTime ≠ indexicalShiftPresent.speechTime := by native_decide
-
-
--- ════════════════════════════════════════════════════════════════
 -- § 18. Embedded Present Puzzle: "John will say Mary is sick"
 -- ════════════════════════════════════════════════════════════════
 
@@ -488,14 +442,6 @@ theorem historicalPresent_not_at_speech :
 /-- Adjunct "before": adjunct event precedes matrix event. -/
 theorem adjunct_precedes_matrix :
     adjunctBeforeLeft.eventTime < matrixWasHappy.eventTime := by native_decide
-
-/-- Indexical shift: present tense at attitude time, not speech time. -/
-theorem indexicalShift_at_attitude_time :
-    indexicalShiftPresent.referenceTime = indexicalShiftPresent.perspectiveTime ∧
-    indexicalShiftPresent.eventTime ≠ indexicalShiftPresent.speechTime := by
-  constructor
-  · rfl
-  · native_decide
 
 
 -- ── Extended phenomena facts ──

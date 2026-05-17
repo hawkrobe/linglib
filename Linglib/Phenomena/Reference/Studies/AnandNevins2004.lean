@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Theories.Semantics.Tense.DeRe
+import Linglib.Data.Examples.Schema
 
 /-!
 # Reference: ContextTower
@@ -46,6 +47,55 @@ namespace AnandNevins2004
 
 open Core.Context
 open Semantics.Reference.FreeIndirectDiscourse
+open Data.Examples (LinguisticExample)
+
+-- BEGIN GENERATED EXAMPLES
+-- (Generated from Linglib/Data/Examples/AnandNevins2004.json by scripts/gen_examples.py.
+-- Do not edit between markers; re-run the generator after editing the JSON.)
+
+namespace Examples
+open Data.Examples
+
+def ex4 : LinguisticExample :=
+  { id := "anandnevins2004_ex4"
+    source := ⟨"anand-nevins-2004", "(4)"⟩
+    reportedIn := none
+    language := "diml1235"
+    primaryText := "Hɛseni (mık-ra) va kɛ ɛz dɛwlɛtia."
+    discourseSegments := []
+    glossedTokens := [("Hɛseni", "Hesen.OBL"), ("(mık-ra)", "(I.OBL-to)"), ("va", "said"), ("kɛ", "that"), ("ɛz", "I"), ("dɛwlɛtia", "rich.be-PRES")]
+    translation := "Hesen said that {I am, Hesen is} rich."
+    context := "Zazaki: the embedded 1st-person `ɛz` can refer either to the utterance speaker OR to the attitude holder Hesen. Indexical shift is OPTIONAL under `vano` ('say'). Cornerstone first-person example."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("indexical (ɛz = utterance speaker)", .acceptable), ("shifted (ɛz = Hesen)", .acceptable)]
+    paperFeatures := []
+    comment := "Anand & Nevins 2004 ex (4), SALT XIV p. 20. First of four examples (4)-(7) demonstrating that all four Zazaki indexicals (I, you, here, yesterday) can shift under `vano`. The pronominal-shift facts motivate the context-shifting operator OPv."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
+def ex7 : LinguisticExample :=
+  { id := "anandnevins2004_ex7"
+    source := ⟨"anand-nevins-2004", "(7)"⟩
+    reportedIn := none
+    language := "diml1235"
+    primaryText := "Hefte nayeraraver, H. mı-ra va kɛ o vizeri Rojda paci kɛrd."
+    discourseSegments := []
+    glossedTokens := [("Hefte", "week"), ("nayeraraver", "ago"), (",", ","), ("H.", "Hesen"), ("mı-ra", "me-at"), ("va", "said"), ("kɛ", "that"), ("o", "he"), ("vizeri", "yesterday"), ("Rojda", "Rojda"), ("paci", "kiss"), ("kɛrd", "did")]
+    translation := "A week ago, H. told me that he kissed Rojda {8 days ago, #yesterday}."
+    context := "Zazaki temporal-indexical shift. `vizeri` ('yesterday') in the embedded clause can shift to the attitude-context's now (= the day before the saying, i.e. 8 days before utterance), but NOT remain anchored to utterance-yesterday. The unavailable utterance-anchored reading is the diagnostic — English allows only that reading."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("shifted (yesterday = day-before-saying ≈ 8 days ago)", .acceptable), ("indexical (yesterday = utterance-yesterday)", .unacceptable)]
+    paperFeatures := []
+    comment := "Anand & Nevins 2004 ex (7), p. 20. Fourth of four indexical-shift examples (4)-(7). Together with (4)-(6), motivates that ALL indexicals (I, you, here, yesterday) shift in Zazaki — not just pronouns. The temporal-indexical case (7) is the one most directly comparable to the tense-shift claims in HK1998Data §17, though A&N analyze it as an *adverbial* shift (not a tense-pronoun shift)."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
+def all : List LinguisticExample := [ex4, ex7]
+
+end Examples
+-- END GENERATED EXAMPLES
 
 -- ============================================================================
 -- § Concrete Context Type
