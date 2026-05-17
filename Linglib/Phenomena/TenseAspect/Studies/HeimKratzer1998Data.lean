@@ -345,36 +345,6 @@ def embeddedPresentUnderFuture : ReichenbachFrame ℤ where
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 19. Lifetime Effects: "Aristotle was a philosopher"
--- ════════════════════════════════════════════════════════════════
-
-/-! Lifetime effects (@cite{musan-1995}/1997): past tense with individual-level
-    predicates implicates that the subject no longer exists.
-
-    "Aristotle was a philosopher" → Aristotle is dead.
-    "Aristotle was blond" → Aristotle is dead (or no longer blond).
-
-    But: "Aristotle was a philosopher" does NOT merely mean that his
-    philosophizing ended — it implicates his death. This is the
-    "lifetime effect": past tense + individual-level predicate →
-    subject's lifetime has ended.
-
-    This bears on tense theory because it shows that past tense
-    interacts with predicate type (individual-level vs stage-level)
-    in ways that go beyond simple temporal precedence. -/
-
-/-- Lifetime effect frame: "Aristotle was a philosopher."
-    The past tense locates the philosophical property in the past.
-    The lifetime effect (Aristotle is dead) is an implicature, not
-    part of the Reichenbach frame. -/
-def lifetimeAristotle : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2400  -- schematic: Aristotle's time
-  eventTime := -2400
-
-
--- ════════════════════════════════════════════════════════════════
 -- § 20. Fake Past: "If John were taller..."
 -- ════════════════════════════════════════════════════════════════
 
@@ -542,10 +512,6 @@ theorem embeddedPresentUnderFuture_not_at_speech :
 /-- Embedded present puzzle: matrix is future. -/
 theorem matrixWillSay_is_future :
     matrixWillSay.referenceTime > matrixWillSay.perspectiveTime := by native_decide
-
-/-- Lifetime effects: past reference. -/
-theorem lifetimeAristotle_past :
-    lifetimeAristotle.referenceTime < lifetimeAristotle.perspectiveTime := by native_decide
 
 /-- Fake past: past morphology but R = P (present reference). -/
 theorem fakePast_present_reference :
