@@ -29,21 +29,21 @@ typology of SOT/non-SOT and English/Hebrew/Modern Greek.
 - (5)/(6) Hebrew non-SOT minimal pair: embedded PRES gives nonpast,
   embedded PAST gives only anteriority.
 
-## Relation to HK1998Data §6, §11, §18, §21
+## Scope of the Reichenbach frames below
 
-The previous HK1998Data sections framed under `@cite{sharvit-2003}` were:
-- §6 (RC tense "the man who was tall") — NOT in Sharvit 2003; she
-  discusses tense in attitude complements, not relative clauses.
-- §11 (Indirect Q "John asked who was sick") — NOT in Sharvit 2003;
-  she covers propositional complements, not interrogative ones.
-- §18 (Embedded present "John will say Mary is sick") — close to
-  Sharvit's (3) shape but framed under future matrix.
-- §21 (Optional SOT Hebrew) — IS Sharvit's (5)/(6) minimal pair.
+Only `optionalSOT{Past,Present}Form` (Sharvit's (5)/(6) Hebrew minimal
+pair) is verbatim from Sharvit 2003. The other frames encode phenomena
+adjacent to Sharvit's analytical framework but not discussed in the
+paper itself: `rcWasTall` / `rcWasTallUnderPast` cover RC tense
+(Sharvit discusses attitude complements, not RCs); `matrixAsked` /
+`indirectQ{Simultaneous,Shifted}` cover indirect questions (Sharvit
+covers propositional complements, not interrogatives);
+`matrixWillSay` / `embeddedPresentUnderFuture` covers embedded
+present under future (close to Sharvit's (3) but with future matrix).
 
-This file lifts the §6/§11/§18/§21 Reichenbach frames from HK1998Data
-under the schema-gap caveat (the (R,E)-frame can't fully capture
-present-under-past double-access). The verified Sharvit examples live
-in the JSON below.
+Under the schema-gap caveat that (R,E)-frames cannot fully capture
+present-under-past double-access, these frames serve as illustrative
+encodings; Sharvit's actual numbered examples live in the JSON above.
 
 -/
 
@@ -192,13 +192,15 @@ end Examples
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Reichenbach frames (lifted from HK1998Data §6, §11, §18, §21)
+-- § Project-side illustrative Reichenbach frames
 -- ════════════════════════════════════════════════════════════════
 
-/-! These frames represent the *project-side* analytic encodings
-    placed under a Sharvit citation in the previous HK1998Data data
-    file. They are not verbatim from Sharvit 2003. The JSON above
-    carries Sharvit's actual numbered examples. -/
+/-! These frames are illustrative encodings of phenomena adjacent to
+    Sharvit's framework. Only `optionalSOT{Past,Present}Form` is
+    verbatim from Sharvit (5)/(6); the others cover RC tense, indirect
+    questions, and embedded present-under-future. See module docstring
+    "Scope" section for details. The JSON above carries Sharvit's
+    actual numbered examples. -/
 
 /-- "The man who was tall" — relative clause past, anchored to RC's
     own perspective (= speech time). -/

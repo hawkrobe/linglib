@@ -42,21 +42,19 @@ by adverbs of quantification.
 - (18a/b) "I watered the plant before/after it died" — before/after
   veridicality contrast.
 
-## Relation to HK1998Data §16
+## Scope of the Reichenbach frames below
 
-HK1998Data §16 framed "Before John left, Mary was happy" as an
-ArreguiKusumoto example — but that sentence is not in A&K's paper.
-A&K's actual English example for §4.3.1 is **Elliott left before Eva
-came** (ex 7a) and the Geis-ambiguity example (ex 14). The Lean
-frames below are renamed `elliottLeft` / `evaCame` to match. (Sixth
-misattribution caught in the HK1998Data dissolution.)
+A&K's English-side anchor example is **Elliott left before Eva came**
+(ex 7a); the widely-cited "Before John left, Mary was happy" sentence
+sometimes attributed to A&K is not in the paper. Frames are named
+`elliottLeft` / `evaCame` accordingly.
 
-The (R,E)-frame substrate inherited from HK1998Data only captures
-temporal ordering between two past events, not A&K's actual contribution
-(the relative-clause analysis or the past/present quantificational
-contrast). The verified examples in the JSON above carry the empirical
-content; the frames below serve only as illustrative anchors for the
-temporal ordering between matrix and adjunct events.
+The (R,E)-frames only capture temporal ordering between two past
+events. A&K's actual contribution — the relative-clause analysis of
+English/Polish TACs vs direct TP-selection in Japanese, plus the
+past/present quantificational contrast — is not encodable in
+(S,P,R,E) and lives in the JSON above + the verified Geis-ambiguity
+example.
 
 -/
 
@@ -86,7 +84,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("simultaneous (Junko sick at saying time)", .acceptable), ("past-shifted (Junko sick before saying)", .acceptable)]
     paperFeatures := []
-    comment := "Arregui & Kusumoto 1998 ex (1), SALT VIII p. 1. The originating discussion of this example shape is Enç 1987 (cited by A&K as [Eng 1987]); no enc-1987 bib entry yet, so sourced via reportedIn = A&K. NOT in HK1998 textbook — re-anchored from HK1998Data after PDF verification."
+    comment := "Arregui & Kusumoto 1998 ex (1), SALT VIII p. 1. Originating discussion of this example shape is Enç 1987 (cited by A&K as [Eng 1987]; no enc-1987 bib entry yet). Despite being commonly cited via the Heim & Kratzer 1998 *Semantics in Generative Grammar* textbook, the example is not in the H&K textbook (which has no tense chapter)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -176,7 +174,7 @@ def ex7a : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Arregui & Kusumoto 1998 ex (7a), p. 4. THE English-side anchor example for §16. (Note: HK1998Data's `adjunctBeforeLeft` / `matrixWasHappy` invoked 'Before John left, Mary was happy', which is not from A&K. Elliott/Eva is the actual A&K example.)"
+    comment := "Arregui & Kusumoto 1998 ex (7a), p. 4. THE English-side anchor example for A&K's TAC analysis. (Note: the 'Before John left, Mary was happy' sentence sometimes cited for A&K is not in the paper. Elliott/Eva is the actual A&K example.)"
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
@@ -295,7 +293,7 @@ end Examples
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Reichenbach frames (lifted from HK1998Data §16, renamed)
+-- § Reichenbach frames (illustrative; named for A&K ex 7a Elliott/Eva)
 -- ════════════════════════════════════════════════════════════════
 
 /-! These frames represent A&K example (7a) — `Elliott left before Eva

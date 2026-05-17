@@ -13,7 +13,7 @@
     "readings": [
       {"name": "future-irrealis (reading after deciding)", "judgment": "acceptable"}
     ],
-    "comment": "Wurmbrand 2014 ex (1a), LI 45(3) p. 403–404. First diagnostic in her classification of infinitival tense. The HK1998Data §15 `wantedToLeave` (\"John wanted to leave\") is the same class (future irrealis with `want`).",
+    "comment": "Wurmbrand 2014 ex (1a), LI 45(3) p. 403–404. First diagnostic in her classification of infinitival tense — future irrealis with `decide` (and the `want` class more generally).",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   },

@@ -102,7 +102,7 @@ def ex2a : LinguisticExample :=
     alternatives := []
     readings := [("present-CF (he is not smart and not rich)", .acceptable)]
     paperFeatures := []
-    comment := "Iatridou 2000 ex (2a), p. 232. Canonical present counterfactual conditional. The HK1998Data §8 `counterfactualWere` (\"If John were here\") and §20 `fakePastSubjunctive` (\"If John were taller\") are both generic variants of this shape; Iatridou's own (2a) uses `If he were smart`."
+    comment := "Iatridou 2000 ex (2a), p. 232. Canonical present counterfactual conditional. Iatridou's own (2a) uses `If he were smart`; the generic `If John were here` / `If John were taller` form is widely cited but not verbatim from the paper."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 

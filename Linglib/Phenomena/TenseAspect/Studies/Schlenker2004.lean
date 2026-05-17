@@ -37,15 +37,7 @@ narrative and what discourse functions the shift serves; Schlenker's
 2004 contribution is the formal-semantic mechanism that makes the
 form-meaning mismatch derivable.
 
-## Provenance
-
-This file was previously misnamed `Studies/Abusch1997.lean`, then
-renamed to `Studies/Schlenker2003.lean` in 0.230.452. The 0.230.453
-audit identified that the file's content (`ContextTower` +
-`temporalShift` + `presentAccess.depth = .origin` + the Kaplan-stable
-origin theorem) is the *tense-specific application* in Schlenker's MIT
-Press chapter, not the more general indexicals work in the L&P paper.
-Renamed accordingly. The general-indexicals content is at
+The general-indexicals content of @cite{schlenker-2003} lives at
 `Phenomena/Reference/Studies/Schlenker2003.lean`.
 
 ## Derivation Chain
@@ -99,7 +91,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("FID (CT/CU split)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := []
-    comment := "Schlenker 2004 ex (1), Mind & Language 19(3) p. 280. Literary source via Banfield 1982 p. 98 (the line is widely attributed to D.H. Lawrence by Banfield + the FID literature). UNVERIFIED which Lawrence novel: prior project text cited *Women in Love* (Heinemann 1971 edn. p. 185), but the line does NOT appear in Project Gutenberg #4240 (Women in Love full text); most secondary FID literature attributes it to *The Rainbow* instead. Possible 7th misattribution from the HK1998Data dissolution scope. Pending PDF-of-Schlenker-2004 reverification. Cornerstone of Schlenker's CT vs CU framework regardless of literary source: in FID, indexical/tense items split between two contexts."
+    comment := "Schlenker 2004 ex (1), Mind & Language 19(3) p. 280. Literary source via Banfield 1982 p. 98 (a D.H. Lawrence novel; specific novel attribution unverified). Cornerstone of Schlenker's CT vs CU framework: in FID, indexical/tense items split between two contexts."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 

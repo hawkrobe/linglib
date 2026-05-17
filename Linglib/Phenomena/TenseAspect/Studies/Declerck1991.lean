@@ -15,8 +15,7 @@ tense; domain **shift** introduces a fresh absolute anchor. Declerck
 also introduces the FPS/PPS distinction (Future / Present Perspective
 System) for conditionals.
 
-This file covers Declerck's tense + aspect sections that appeared
-in the former `HeimKratzer1998Data.lean`:
+This file covers Declerck's tense + aspect sections:
 
 - §23: Temporal domain — subordination vs shift
 - §24: Modal (false) past — politeness and tentativeness
@@ -31,20 +30,20 @@ in the former `HeimKratzer1998Data.lean`:
 Declerck's framework (time-spheres, PPS/FPS terminology, modal-past
 diagnostics, domain shift / subordination contrast) is taken
 directly from the book and faithfully reproduced. The Reichenbach
-frames below were inherited from `HeimKratzer1998Data` and encode
-project-side analytical takes on the structural patterns Declerck
-describes; many of the literal example sentences in the frame
-docstrings are project paraphrases, not verbatim Declerck examples.
-The verified Declerck example sentences live in the JSON block
-below (extracted from the 1991 book via Zotero MCP fulltext).
+frames below encode project-side analytical takes on the structural
+patterns Declerck describes; many of the literal example sentences
+in the frame docstrings are project paraphrases, not verbatim
+Declerck examples. The verified Declerck example sentences live in
+the JSON block below (extracted from the 1991 book via Zotero MCP
+fulltext).
 
-Most notably, the HK1998Data `perfectVisitedParis` / `preteritVisitedParis`
+Most notably, the `perfectVisitedParis` / `preteritVisitedParis`
 pair invokes "I have visited Paris" / "I visited Paris" — neither
 sentence appears in Declerck. His actual perfect-vs-preterit minimal
 pair (book fn 49) is `I have overslept this morning` /
 `I overslept this morning`, where the present-perfect form requires
 that the morning is not yet over. The frames retain the Paris naming
-for consistency with the broader HK1998Data tradition; consumers
+because the names are widely cited in textbook discussions; consumers
 should treat them as illustrative of Declerck's time-sphere
 distinction, not as literal Declerck examples.
 
@@ -237,9 +236,9 @@ end Examples
 /-! Declerck (ch. 3 §C): a stretch of discourse may either incorporate
     each new clause into an existing temporal domain (relative tenses
     expressing anteriority, simultaneity, posteriority), or shift to
-    a new absolute domain. The HK1998Data §23 frames illustrate the
-    structural contrast: subordination keeps the perspective on the
-    existing domain anchor; shift resets the perspective to S.
+    a new absolute domain. The frames below illustrate the structural
+    contrast: subordination keeps the perspective on the existing
+    domain anchor; shift resets the perspective to S.
 
     See `Examples.declerck1991_domainShift_1a` (subordination) and
     `Examples.declerck1991_domainShift_1b` (shift) for verified
@@ -336,11 +335,11 @@ def falsePastCould : ReichenbachFrame ℤ where
     matrix tense forms anchor the temporal location of the conditional
     situations.
 
-    The frames below encode the analytical structure inherited from
-    HK1998Data; specific Declerck example sentences for the four
-    PPS/FPS-diagnostic positions were not directly extracted from the
-    book during this migration. Consumers should treat the frames as
-    structural illustrations rather than verbatim Declerck examples. -/
+    The frames below encode the project-side analytical structure;
+    specific Declerck example sentences for the four PPS/FPS-
+    diagnostic positions were not directly extracted from the book.
+    Consumers should treat the frames as structural illustrations
+    rather than verbatim Declerck examples. -/
 
 /-- PPS if-clause: "If he comes home..." — present tense in protasis. -/
 def ppsIfComes : ReichenbachFrame ℤ where
@@ -450,15 +449,11 @@ theorem hadLeft_is_perfect :
     frames below illustrate the construction; the per-pair ordering
     theorems verify that the constructed frames satisfy the default.
 
-    The previous formalization in `HeimKratzer1998Data.lean` paired
-    a Reichenbach frame with a `SituationBoundedness` value in a
-    `BoundedFrame` struct. The audit flagged this as a thin two-
-    field wrapper (per memory `feedback_no_thin_bundled_struct`):
-    boundedness characterizes the predicate-over-interval, not the
-    (S, P, R, E) frame; pairing them obscures that they are
-    orthogonal pieces of data. The defs below use plain
-    `ReichenbachFrame ℤ` and record boundedness in prose; consumers
-    needing the label can use `SituationBoundedness` at use site.
+    Frames below use plain `ReichenbachFrame ℤ` and record
+    boundedness in prose. Boundedness characterizes the predicate-
+    over-interval, not the (S,P,R,E) frame, so the two are kept
+    orthogonal; consumers needing the boundedness label use
+    `SituationBoundedness` at use site.
 
     Verified Declerck examples in the JSON above:
     `declerck1991_domainShift_1a` (unbounded simultaneity) and

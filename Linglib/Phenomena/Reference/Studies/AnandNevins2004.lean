@@ -88,7 +88,7 @@ def ex7 : LinguisticExample :=
     alternatives := []
     readings := [("shifted (yesterday = day-before-saying ≈ 8 days ago)", .acceptable), ("indexical (yesterday = utterance-yesterday)", .unacceptable)]
     paperFeatures := []
-    comment := "Anand & Nevins 2004 ex (7), p. 20. Fourth of four indexical-shift examples (4)-(7). Together with (4)-(6), motivates that ALL indexicals (I, you, here, yesterday) shift in Zazaki — not just pronouns. The temporal-indexical case (7) is the one most directly comparable to the tense-shift claims in HK1998Data §17, though A&N analyze it as an *adverbial* shift (not a tense-pronoun shift)."
+    comment := "Anand & Nevins 2004 ex (7), p. 20. Fourth of four indexical-shift examples (4)-(7). Together with (4)-(6), motivates that ALL indexicals (I, you, here, yesterday) shift in Zazaki — not just pronouns. A&N analyze (7) as an *adverbial* shift (`vizeri` is a temporal adverbial), not a tense-pronoun shift — this distinguishes A&N's indexical-shift account from tense-pronoun analyses of cross-linguistic embedded-past."
     metaLanguage := "stan1293"
     lgrConformance := "MORPHEME_ALIGNED" }
 
