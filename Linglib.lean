@@ -1936,9 +1936,7 @@ import Linglib.Phenomena.Modality.Studies.Ferreira2023
 import Linglib.Phenomena.Presupposition.Compare
 import Linglib.Phenomena.ScalarImplicatures.ExhaustivityLimit
 import Linglib.Phenomena.ScalarImplicatures.ScopeExpressivity
-import Linglib.Phenomena.TenseAspect.Compare
-import Linglib.Phenomena.TenseAspect.CompareTenseModal
-import Linglib.Phenomena.TenseAspect.ComparePartee
+import Linglib.Phenomena.TenseAspect.Studies.Partee1973
 -- Theories: Dependency Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria

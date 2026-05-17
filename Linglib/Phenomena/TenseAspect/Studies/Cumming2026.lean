@@ -1,6 +1,9 @@
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
+import Linglib.Theories.Semantics.Modality.Kernel
+import Linglib.Core.Epistemicity
+import Mathlib.Data.Fin.Basic
 
 /-!
 # @cite{cumming-2026} Verification Theorems
@@ -161,5 +164,183 @@ theorem korean_te_ney_ep_diverge :
     refine ⟨⟨⟨0, 0, 0, 0⟩, 0⟩, ?_, ?_⟩
     · show (0 : ℤ) = 0; rfl
     · show ¬ ((0 : ℤ) < 0); omega
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Tense-Modal Evidentiality Bridge (Cumming ↔ VF&G 2010 ↔ Zheng 2025)
+-- ════════════════════════════════════════════════════════════════
+
+/-! @cite{cumming-2026}'s tense evidential constraint and
+    @cite{von-fintel-gillies-2010}'s kernel semantics for epistemic
+    `must` reflect the same underlying requirement: the speaker's
+    evidence is *indirect* — causally downstream of the target event
+    but not directly settling it.
+
+    | Cumming (tense)                   | VF&G (modals)                       |
+    |-----------------------------------|-------------------------------------|
+    | T ≤ A (downstream evidence)       | K doesn't settle φ                  |
+    | Nonfuture → downstream required   | must → indirectness presupposition  |
+    | Future → no constraint            | Bare assertion → no presupposition  |
+    | Direct observation → bare past ok | Direct evidence → must infelicitous |
+
+    The dripping-raincoat scenario (@cite{zheng-2025}, used in
+    `Modality/Kernel.lean`) provides a concrete bridge: the raincoat
+    evidence is causally downstream of rain (T ≤ A), and the kernel
+    {wearingRaincoat} doesn't settle isRaining. -/
+
+abbrev World := Fin 4
+
+def allWorlds : List World := [0, 1, 2, 3]
+
+open Semantics.Modality
+open Core.Presupposition (PrProp)
+
+-- ── § Raincoat scenario (parallel to Kernel.lean) ──
+
+/-! The kernel defs in `Modality/Kernel.lean` are private. We redefine
+    equivalent propositions over `World4` for the bridge. World
+    interpretation: w0 = raining, w1 = sprinkler (wet but not rain),
+    w2 = dry, w3 = unknown. -/
+
+/-- Wearing a raincoat: true in w0 (rain) and w1 (sprinkler). -/
+def wearingRaincoat : World → Prop
+  | 0 => True
+  | 1 => True
+  | _ => False
+
+instance : DecidablePred wearingRaincoat := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable True)
+  | 2 => inferInstanceAs (Decidable False)
+  | 3 => inferInstanceAs (Decidable False)
+
+/-- It is raining: true only in w0. -/
+def isRaining : World → Prop
+  | 0 => True
+  | _ => False
+
+instance : DecidablePred isRaining := fun w =>
+  match w with
+  | 0 => inferInstanceAs (Decidable True)
+  | 1 => inferInstanceAs (Decidable False)
+  | 2 => inferInstanceAs (Decidable False)
+  | 3 => inferInstanceAs (Decidable False)
+
+/-- The raincoat kernel: K = {wearingRaincoat}. -/
+def raincoatK : Kernel World := ⟨[wearingRaincoat]⟩
+
+-- ── § Downstream evidence in the raincoat scenario ──
+
+/-- A concrete evidential frame for the raincoat scenario:
+    S = 0 (speech time now), T = -2 (rain event in the past),
+    R = 0, A = -1 (evidence acquired between event and speech). -/
+def raincoatFrame : EvidentialFrame ℤ where
+  speechTime := 0
+  perspectiveTime := 0
+  referenceTime := 0
+  eventTime := -2
+  acquisitionTime := -1
+
+/-- The raincoat evidence is downstream: T ≤ A (-2 ≤ -1). -/
+theorem raincoat_downstream : downstreamEvidence raincoatFrame := by
+  show (-2 : ℤ) ≤ -1; omega
+
+-- ── § Bridge theorems ──
+
+open Core.Logic.Intensional.Premise (propExtension propIntersection)
+
+/-- The raincoat kernel doesn't settle isRaining: K = {wearingRaincoat},
+    and wearingRaincoat neither entails nor excludes isRaining. -/
+theorem raincoat_not_settled :
+    ¬ directlySettlesExplicit raincoatK isRaining := by
+  rintro ⟨x, hx, hcase⟩
+  rcases List.mem_singleton.mp hx with rfl
+  cases hcase with
+  | inl h_ent =>
+    have hw1 : ((1 : World) : World) ∈ propExtension wearingRaincoat :=
+      show wearingRaincoat (1 : World) from trivial
+    have : isRaining (1 : World) := h_ent (1 : World) hw1
+    exact this
+  | inr h_exc =>
+    exact h_exc ⟨(0 : World), show wearingRaincoat (0 : World) from trivial,
+                       show isRaining (0 : World) from trivial⟩
+
+/-- **Downstream implies must-defined**: in the raincoat scenario, downstream
+    evidence (T ≤ A) co-occurs with the kernel not settling the prejacent. -/
+theorem downstream_implies_must_defined :
+    downstreamEvidence raincoatFrame ∧
+    (kernelMust raincoatK isRaining).presup (0 : World) :=
+  ⟨raincoat_downstream, raincoat_not_settled⟩
+
+/-- **Tense-modal evidential parallel**: both Cumming's nonfuture constraint
+    and VF&G's `kernelMust` presupposition hold simultaneously for the same
+    scenario. The raincoat evidence is downstream (T ≤ A) AND the kernel
+    doesn't settle isRaining. -/
+theorem tense_modal_evidential_parallel :
+    downstreamEvidence raincoatFrame ∧
+    (kernelMust raincoatK isRaining).presup (0 : World) ∧
+    ¬(kernelMust raincoatK isRaining).assertion (0 : World) := by
+  refine ⟨raincoat_downstream, raincoat_not_settled, ?_⟩
+  intro hAll
+  have hw1 : ((1 : World) : World) ∈ propIntersection raincoatK.props := by
+    intro p hp
+    rcases List.mem_singleton.mp hp with rfl
+    exact (show wearingRaincoat (1 : World) from trivial)
+  exact (hAll hw1 : isRaining (1 : World))
+
+private theorem isRaining_settles_isRaining :
+    directlySettlesExplicit (⟨[isRaining]⟩ : Kernel World) isRaining := by
+  refine ⟨isRaining, by simp, Or.inl ?_⟩
+  intro w hw; exact hw
+
+/-- **Direct evidence blocks both**: when evidence is direct, the kernel
+    settles the prejacent → `kernelMust` is undefined and downstream is
+    trivially satisfied (T = A). Speaker uses bare assertion, not `must`. -/
+theorem direct_evidence_blocks_both :
+    let directK : Kernel World := ⟨[isRaining]⟩
+    directlySettlesExplicit directK isRaining ∧
+    ¬(kernelMust directK isRaining).presup (0 : World) ∧
+    let directFrame : EvidentialFrame ℤ :=
+      { speechTime := 0, perspectiveTime := 0, referenceTime := 0, eventTime := -1, acquisitionTime := -1 }
+    downstreamEvidence directFrame := by
+  refine ⟨isRaining_settles_isRaining, ?_, ?_⟩
+  · intro h
+    exact h isRaining_settles_isRaining
+  · show (-1 : ℤ) ≤ -1; omega
+
+-- ── § Epistemic authority bridge ──
+
+open Core.Epistemicity
+open Features.Evidentiality
+
+/-- Strong assertions (ego + direct) correspond to settling kernels.
+    When the speaker has privileged access AND direct evidence, the
+    kernel settles the prejacent — 'must' is infelicitous, bare
+    assertion is used. -/
+theorem strong_assertion_settles :
+    strongAssertion.source = .direct ∧
+    strongAssertion.authority = .ego ∧
+    let directK : Kernel World := ⟨[isRaining]⟩
+    directlySettlesExplicit directK isRaining :=
+  ⟨rfl, rfl, isRaining_settles_isRaining⟩
+
+/-- Inferential claims (nonparticipant + inference) correspond to
+    non-settling kernels with must-defined presuppositions — the
+    canonical 'must' profile. -/
+theorem inferential_claim_must_profile :
+    inferentialClaim.source = .inference ∧
+    inferentialClaim.authority = .nonparticipant ∧
+    ¬ directlySettlesExplicit raincoatK isRaining ∧
+    (kernelMust raincoatK isRaining).presup (0 : World) :=
+  ⟨rfl, rfl, raincoat_not_settled, raincoat_not_settled⟩
+
+/-- Ego↔direct and nonparticipant↔indirect form natural pairs.
+    Epistemic authority and evidential source are orthogonal
+    dimensions that correlate but don't reduce. -/
+theorem authority_source_correlation :
+    strongAssertion.authority = .ego ∧ strongAssertion.source = .direct ∧
+    inferentialClaim.authority = .nonparticipant ∧ inferentialClaim.source = .inference := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
 
 end Cumming2026

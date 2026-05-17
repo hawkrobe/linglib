@@ -21,7 +21,6 @@ of a derivation theorem in that theory's file.
 ## Key Types
 
 - `TensePhenomenon`: the 23 temporal phenomena that distinguish theories
-- `TenseTheory`: identity card for a theory (no verdict field)
 - `AttitudeTemporalSemantics`: how an attitude verb shifts eval time
 
 -/
@@ -113,43 +112,6 @@ inductive TensePhenomenon where
       whether [uPAST] can Agree upward across the complement boundary -/
   | sizeSensitiveSOT
   deriving DecidableEq, Repr, Inhabited
-
-
--- ════════════════════════════════════════════════════════════════
--- § TenseTheory
--- ════════════════════════════════════════════════════════════════
-
-/-- A tense theory's identity card.
-
-    This records the structural properties of each account — what
-    mechanisms it posits — without encoding verdicts. Whether the
-    theory handles a given phenomenon is determined by the existence
-    of derivation theorems in the theory's file.
-
-    Fields are Bool because they describe categorical properties
-    of the formal system, not graded judgments. -/
-structure TenseTheory where
-  /-- Theory name (e.g., "@cite{abusch-1997}") -/
-  name : String
-  /-- Full citation -/
-  citation : String
-  /-- Does the theory have a temporal de re mechanism? -/
-  hasTemporalDeRe : Bool
-  /-- Does the theory impose an upper limit constraint? -/
-  hasULC : Bool
-  /-- Does the theory posit a zero tense (ambiguous past)? -/
-  hasZeroTense : Bool
-  /-- Does the theory use SOT deletion for the simultaneous reading? -/
-  hasSOTDeletion : Bool
-  /-- Does the theory use syntactic Agree for SOT? -/
-  hasAgreeBasedSOT : Bool := false
-  /-- Does the theory treat tenses as presupposition triggers? -/
-  hasPresuppositionalTense : Bool := false
-  /-- Does the theory predict size-sensitive SOT? -/
-  hasSizeSensitiveSOT : Bool := false
-  /-- How the theory derives the simultaneous reading -/
-  simultaneousMechanism : String
-  deriving Repr
 
 
 -- ════════════════════════════════════════════════════════════════

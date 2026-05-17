@@ -27,7 +27,7 @@ assertion. Nonfuture tenses (past, present) impose T ≤ A — evidence is
 The paper's tables (17)–(22) show that Korean (-te, -ney) and Bulgarian (-l)
 tense morphology systematically interacts with evidential perspective. Paradigm
 data is in `Fragments/{English/Tense, Korean/Evidentials, Bulgarian/Evidentials}`;
-verification theorems are in `Phenomena/Cumming2026/Bridge.lean`.
+verification theorems are in `Phenomena/TenseAspect/Studies/Cumming2026.lean`.
 
 ## EP/UP Constraint Enums
 

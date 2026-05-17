@@ -18,9 +18,10 @@ binding mode + an eval time index. The bridges in this file —
 `toSitVarStatus` — are projections of `TensePronoun` onto specific
 theoretical vocabularies.
 
-For the full tense theory comparison (Abusch, Von Stechow, Kratzer,
-Ogihara, Klecha, Deal, Sharvit, Zeijlstra, Wurmbrand), see
-`Comparisons/TenseTheories.lean` and `Theories/Semantics/Tense/`.
+For per-paper tense theory formalizations, see the sibling
+`Studies/` files (Abusch1997, VonStechow2009, Kratzer1998,
+Ogihara1996, Klecha2016, Sharvit2003, Wurmbrand2014, etc.) and
+`Theories/Semantics/Tense/`.
 
 ## The Analogy
 
@@ -54,7 +55,7 @@ referential mechanism operates over different domains.
 
 -/
 
-namespace Phenomena.TenseAspect.ComparePartee
+namespace Phenomena.TenseAspect.Studies.Partee1973
 
 open Semantics.Tense (TenseInterpretation TemporalAssignment
   interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST SitProp)
@@ -284,4 +285,4 @@ theorem two_coarsenings (m : ReferentialMode) :
   · cases m <;> simp [ReferentialMode.isFree, Overtness.fromBinding]
 
 
-end Phenomena.TenseAspect.ComparePartee
+end Phenomena.TenseAspect.Studies.Partee1973
