@@ -109,21 +109,6 @@ def rcWasTallUnderPast : ReichenbachFrame ℤ where
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 7. Modal-Tense: "John might have left"
--- ════════════════════════════════════════════════════════════════
-
-/-- Modal-past frame: "John might have left"
-    The past tense "have left" is under the modal "might".
-    The leaving is past relative to... what? Speech time? Modal eval time?
-    @cite{klecha-2016}: relative to the modal's evaluation time. -/
-def modalPast : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0    -- modal evaluated at speech time
-  referenceTime := -1     -- past: the leaving is before now
-  eventTime := -1
-
-
--- ════════════════════════════════════════════════════════════════
 -- § 8. Counterfactual Tense: "If John were here..."
 -- ════════════════════════════════════════════════════════════════
 
@@ -544,10 +529,6 @@ theorem counterfactual_present_reference :
 /-- RC tense: past reference. -/
 theorem rc_past_reference :
     rcWasTall.referenceTime < rcWasTall.perspectiveTime := by native_decide
-
-/-- Modal past: past reference relative to modal eval time. -/
-theorem modalPast_past_reference :
-    modalPast.referenceTime < modalPast.perspectiveTime := by native_decide
 
 
 -- ── Eventual target facts ──

@@ -211,17 +211,6 @@ theorem evalPres_iff_toSitProp {W Time : Type*}
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Per-Theory Derivations: Klecha
--- ════════════════════════════════════════════════════════════════
-
-/-- Klecha derives the modal-past data: past tense checked against
-    modal eval time. -/
-theorem klecha_derives_modalPast :
-    modalPast.isPast := by
-  simp only [ReichenbachFrame.isPast, modalPast]; omega
-
-
--- ════════════════════════════════════════════════════════════════
 -- § Per-Theory Derivations: Deal
 -- ════════════════════════════════════════════════════════════════
 
