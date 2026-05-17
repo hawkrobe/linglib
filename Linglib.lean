@@ -165,7 +165,6 @@ import Linglib.Core.Constraint.NoiseKernel
 import Linglib.Core.Constraint.System
 import Linglib.Core.Constraint.Pareto
 import Linglib.Core.Constraint.Semiring
-import Linglib.Core.Constraint.Variation
 import Linglib.Core.Constraint.NoisyHG
 import Linglib.Core.Constraint.Dequantization.OTLimit
 import Linglib.Core.Constraint.Cumulativity
