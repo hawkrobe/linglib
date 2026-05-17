@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.ArgumentStructure.Defs
+import Linglib.Theories.Semantics.ArgumentStructure.LF
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Phenomena.TenseAspect.Diagnostics

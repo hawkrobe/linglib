@@ -117,7 +117,8 @@ open Semantics.Attitudes.ClauseDenotation.Content (compC ContentNoun)
 open Semantics.Attitudes.ClauseDenotation.Situation
   (SituationIndividual SituationNoun compPu)
 open Phenomena.Complementation.Studies.Bondarenko2022
-  (NominalSort transparentSSMapping ClauseStructurePath)
+  (NominalSort transparentSSMapping ClauseStructurePath
+   bare_argument_predicted_impossible)
 open Fragments.Greek.StandardModern.Complementizers (GreekComplementizer)
 
 -- ════════════════════════════════════════════════════════════════
@@ -199,7 +200,7 @@ def adjunctSelects (adj : SyntacticObject) (host : Cat) : Prop :=
     fact, NOT axiomatized to imply argumenthood. Cf. fn 4 of the
     paper acknowledging @cite{angelopoulos-michelioudakis-2023}
     on doubling-as-Agree. -/
-def doubledByClitic (xp : SyntacticObject) : Bool :=
+noncomputable def doubledByClitic (xp : SyntacticObject) : Bool :=
   -- Placeholder: actual diagnostic would test for an Agreeing
   -- clitic in the matrix clause. Surface-level Boolean, opaque
   -- to substrate.

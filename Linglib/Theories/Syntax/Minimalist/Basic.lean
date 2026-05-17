@@ -223,20 +223,6 @@ abbrev mul (l r : SyntacticObject) : SyntacticObject := l * r
     during the `TraceTree → FreeCommMagma` migration. -/
 abbrev node (l r : SyntacticObject) : SyntacticObject := mul l r
 
-/-- Cascade combinator: lift a `FreeMagma (LIToken ⊕ Nat) → β` aux to
-    `SyntacticObject → β`, hiding the `FreeMagma.CommRel` machinery
-    from Phenomena consumers. Same as `FreeCommMagma.lift` modulo the
-    SO type ascription at the SO interface. The `_respects` hypothesis
-    still has to be provided, but the type signature is consumer-friendly.
-
-    For OR-symmetric `Bool`-valued predicates, see `liftFM_orSymmetric`
-    below — that version takes a per-FreeMagma-shape predicate and
-    discharges the `_respects` proof automatically. -/
-abbrev liftFM {β : Type*} (f : FreeMagma (LIToken ⊕ Nat) → β)
-    (h : ∀ a b, FreeMagma.CommRel a b → f a = f b) :
-    SyntacticObject → β :=
-  FreeCommMagma.lift f h
-
 /-- The induction principle for `SyntacticObject` with linguistic case names.
     For `Prop` motives, `Quot.ind` propagates through the equivalence
     automatically — no swap-respect obligation needed. The `mul` case must
@@ -345,6 +331,20 @@ def getLIToken : SyntacticObject → Option LIToken :=
     induction r using FreeCommMagma.ind with | _ b => rfl
 
 end SyntacticObject
+
+/-- Cascade combinator: lift a `FreeMagma (LIToken ⊕ Nat) → β` aux to
+    `SyntacticObject → β`, hiding the `FreeMagma.CommRel` machinery
+    from Phenomena consumers. Same as `FreeCommMagma.lift` modulo the
+    SO type ascription at the SO interface. The `_respects` hypothesis
+    still has to be provided, but the type signature is consumer-friendly.
+
+    Lives at `Minimalist.liftFM` (sibling of `leafShape` below), not
+    inside the `SyntacticObject` namespace — `liftFM f h` takes no SO
+    self-argument, so dot notation wouldn't apply. -/
+abbrev liftFM {β : Type*} (f : FreeMagma (LIToken ⊕ Nat) → β)
+    (h : ∀ a b, FreeMagma.CommRel a b → f a = f b) :
+    SyntacticObject → β :=
+  FreeCommMagma.lift f h
 
 /-- Merge: the fundamental structure-building operation. Equal to
     `FreeCommMagma.mul` and to `(· * ·)`. Commutative: `merge x y = merge y x`

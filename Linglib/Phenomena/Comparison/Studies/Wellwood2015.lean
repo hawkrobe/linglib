@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Measurement
 import Linglib.Theories.Semantics.ArgumentStructure.Defs
 import Linglib.Theories.Semantics.ArgumentStructure.Properties
+import Linglib.Theories.Semantics.ArgumentStructure.LF
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Degree.Comparative

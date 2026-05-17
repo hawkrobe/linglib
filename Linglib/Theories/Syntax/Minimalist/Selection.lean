@@ -296,10 +296,12 @@ def nullN (id : Nat) : SyntacticObject :=
   mkLeafPhon .n [] "" id
 
 @[simp] theorem nullN_outerCat_leftSpine (id : Nat) :
-    HeadFunction.leftSpine.outerCat (nullN id) = .n := rfl
+    HeadFunction.leftSpine.outerCat (nullN id) = .n := by
+  simp [nullN, mkLeafPhon, LexicalItem.outerCat, LexicalItem.simple]
 
 @[simp] theorem nullN_checkedSel_leftSpine (id : Nat) :
-    checkedSelWith? HeadFunction.leftSpine (nullN id) = some [] := rfl
+    checkedSelWith? HeadFunction.leftSpine (nullN id) = some [] := by
+  simp [nullN, mkLeafPhon, LexicalItem.outerSel, LexicalItem.simple]
 
 /-! ## Step-level lemmas
 
