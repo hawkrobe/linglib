@@ -5,37 +5,61 @@ import Linglib.Core.Time.Reichenbach
 import Linglib.Theories.Semantics.Tense.Compositional
 
 /-!
-# Perfect Polysemy
-@cite{iatridou-anagnostopoulou-izvorski-2001} @cite{kiparsky-2002} @cite{pancheva-2003}
+# @cite{kiparsky-2002}: Event structure and the perfect
+@cite{kiparsky-2002} @cite{pancheva-2003} @cite{iatridou-anagnostopoulou-izvorski-2001}
 
-Kiparsky's "Event Structure and the Perfect" argues that the English perfect's
-multiple readings (existential, universal, resultative, present-state) arise
-from how the Perfect Time Span (PTS) interacts with the subevent structure of
-the predicate. Telic predicates (accomplishments, achievements) have internal
-activity + result phases; atelic predicates (states, activities) do not. The
-availability of resultative and present-state readings depends on having a
-result phase that can anchor the reference time.
+Kiparsky's argument that the English perfect's distinct readings
+arise from how the **event structure** of the verbal predicate is
+mapped onto the perfect's temporal parameters E, R, P. Telic
+predicates (achievements and accomplishments) denote complex events
+consisting of an activity leading to a change of state; atelic
+predicates do not. The availability of resultative and present-state
+readings depends on having a result phase that can anchor the
+reference time.
 
-## Architecture
+## Five → four readings
 
-This module integrates:
-- `TemporalDecomposition` (subevent phases for telic predicates)
-- `ViewpointAspect.PerfectType` (@cite{pancheva-2003} classification)
-- `ReichenbachFrame` with `perspectiveTime` (Kiparsky's P)
-- `Tense/Basic` (tense applies R relative to P)
+Kiparsky §1 lists five readings: existential, universal, resultative,
+recent past, stative present. He folds recent past into resultative
+(p. 7: "the recent past reading is a special case of the resultative
+reading") leaving four. The `PerfectReading` enum below follows the
+4-reading taxonomy.
 
-## Sections
+## Three puzzles
 
-1. **PerfectReading**: Kiparsky's four readings
-2. **Subevent-to-parameter mappings**: each reading as a predicate
-3. **Reading availability from VendlerClass**: telicity gates resultative
-4. **Pancheva bridge**: Pancheva's types embed into Kiparsky's
-5. **Kiparsky's three puzzles**: SOT asymmetry, present perfect puzzle, wh-puzzle
-6. **Compositional derivation**: existential = PERF(PRFV), universal = PERF(UNBOUNDED)
+Kiparsky's theory solves three classic perfect puzzles (§2-§4):
+
+- **Declerck's SOT puzzle** (§2): existential/universal perfects
+  trigger sequence of tense; resultative does not.
+- **Klein's present perfect puzzle** (§3): past perfect allows
+  point-denoting time adverbials with two readings (existential
+  reading 1 / resultative reading 2); present perfect allows
+  neither.
+- **Michaelis's Wh-puzzle** (§4): R-reading excluded in Wh-questions
+  unless the adverbial relates to the result state.
+
+## Pancheva 2003 bridge
+
+@cite{pancheva-2003}'s aspect-of-perfect-participle classification
+(existential / universal / resultative / experiential) embeds into
+Kiparsky's via `toKiparsky`. Pancheva's account is independent
+(participle-aspect-based vs Kiparsky's event-structure-based); the
+embedding is a structural projection, not a theory of how Pancheva
+arrives at her types. A standalone Pancheva2003 Studies file would
+formalize the upstream account.
+
+## Status
+
+Substrate inherited from `Theories/Semantics/Tense/PerfectPolysemy.lean`
+(deleted; relocated here per CLAUDE.md graduation rule — Studies
+promotes to Theories only when ≥ 2 distinct paper-anchored Studies
+files consume it). Verified against the Kiparsky 2002 PDF: the
+4-reading taxonomy, the subevent-to-parameter mapping thesis, and the
+3 puzzles are all faithful to the paper.
 
 -/
 
-namespace Semantics.Tense.PerfectPolysemy
+namespace Phenomena.TenseAspect.Studies.Kiparsky2002
 
 open Core.Time
 open Core.Time.Reichenbach
@@ -47,7 +71,6 @@ open Semantics.Events
 -- ════════════════════════════════════════════════════
 -- § 1. Perfect Readings (@cite{kiparsky-2002})
 -- ════════════════════════════════════════════════════
-
 /-- Kiparsky's four readings of the perfect.
     - `existential`: ∃ event in PTS ("has visited Paris")
     - `universal`: event spans entire PTS ("has lived here since 2010")
@@ -340,4 +363,4 @@ theorem point_fewer_readings_than_achievement :
     (msAvailableReadings .point).length <
     (availableReadings VendlerClass.achievement).length := by native_decide
 
-end Semantics.Tense.PerfectPolysemy
+end Phenomena.TenseAspect.Studies.Kiparsky2002

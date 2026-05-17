@@ -1756,6 +1756,9 @@ import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
 import Linglib.Phenomena.TenseAspect.Studies.AspectualConsistency
 import Linglib.Phenomena.TenseAspect.Studies.KennedyLevin2008
 import Linglib.Phenomena.TenseAspect.Studies.HayKennedyLevin1999
+import Linglib.Phenomena.TenseAspect.Studies.IatridouEtAl2001
+import Linglib.Phenomena.TenseAspect.Studies.IatridouZeijlstra2021
+import Linglib.Phenomena.TenseAspect.Studies.Kiparsky2002
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Phenomena.TemporalConnectives.Studies.BeaverCondoravdi2003
@@ -2354,12 +2357,10 @@ import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 import Linglib.Theories.Semantics.Tense.Perspective
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
-import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.ConditionalShift
 import Linglib.Theories.Semantics.Aspect.Core
 import Linglib.Theories.Semantics.Aspect.Composition
 import Linglib.Theories.Semantics.Aspect.SubintervalProperty
-import Linglib.Theories.Semantics.Tense.PTS
 import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Theories.Semantics.Aspect.ChangeOfState
 import Linglib.Theories.Semantics.Aspect.Habituals

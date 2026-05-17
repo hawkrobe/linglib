@@ -1,72 +1,70 @@
-import Linglib.Theories.Semantics.Tense.TemporalAdverbials
-import Linglib.Theories.Semantics.Tense.PerfectPolysemy
+import Linglib.Theories.Semantics.Aspect.Core
 import Linglib.Theories.Semantics.Aspect.SubintervalProperty
+import Linglib.Core.Time.Interval.Basic
+import Linglib.Theories.Semantics.Tense.TemporalAdverbials
+import Linglib.Phenomena.TenseAspect.Studies.IatridouEtAl2001
+import Linglib.Phenomena.TenseAspect.Studies.Kiparsky2002
 
 /-!
-# Perfect Time Span / Until Time Span — Unified Framework
-@cite{iatridou-anagnostopoulou-izvorski-2001} @cite{iatridou-zeijlstra-2021}
-@cite{von-fintel-iatridou-2019}
+# @cite{iatridou-zeijlstra-2021}: The complex beauty of boundary adverbials: in years and until
+@cite{iatridou-zeijlstra-2021} @cite{iatridou-anagnostopoulou-izvorski-2001}
+@cite{kiparsky-2002}
 
-Boundary adverbials (*in years*, *since*, *until*, *in (the last) 5 years*)
-set a boundary of a time span. @cite{iatridou-zeijlstra-2021} unify two
-classes:
+Iatridou & Zeijlstra (Linguistic Inquiry 52(1), 2021) unify two
+classes of boundary adverbials:
 
-- **LB adverbials** (*in years*, *since*, *in (the last) 5 years*): set the
-  **left boundary** of the **Perfect Time Span** (PTS). The RB is set by Tense.
-- **RB adverbials** (*until*): set the **right boundary** of the **Until Time
-  Span** (UTS). The LB is contextually set.
+- **LB adverbials** (*in years*, *since*, *in (the last) 5 years*):
+  set the **left boundary** of the **Perfect Time Span (PTS)**, with
+  RB set by Tense.
+- **RB adverbials** (*until*): set the **right boundary** of the
+  **Until Time Span (UTS)**, with LB contextually set.
 
-Both classes can be **boundary domain wideners** — they introduce subdomain
-alternatives to their time span, triggering exhaustification. When they are,
-they produce two noncancelable inferences:
+Both classes can be **boundary domain wideners** — they introduce
+subdomain alternatives to their time span, triggering exhaustification.
+When they are, they produce two noncancelable inferences:
 
-1. **Actuality Inference** (AI): the relevant event took place
-2. **Beyond Expectation Inference** (BEI): the time span is larger than expected
+1. **Actuality Inference (AI)**: the relevant event took place
+2. **Beyond Expectation Inference (BEI)**: the time span is larger
+   than expected
 
-This module consolidates the PTS/UTS framework that was previously scattered
-across `Aspect/Core.lean` (RB, LB, PERF), `TemporalAdverbials.lean`
-(PTSConstraint), and `PerfectPolysemy.lean` (PerfectReading). It re-exports
-the core operators and adds the unified boundary-adverbial abstraction. The
-measure-theoretic `pts`/`TimeMeasure` substrate co-locates with its single
-consumer in `Phenomena/TenseAspect/Studies/Rouillard2026.lean` and would
-graduate here if a second paper-anchored Studies file consumes it.
+The PTS framework (LB / RB / PTS terminology) is from
+@cite{iatridou-anagnostopoulou-izvorski-2001}; UTS, AI/BEI, and the
+NPI-status analysis of *in years* / *until* are this paper's
+contribution. The substrate below extends IAI 2001's PTS with the IZ
+2021 machinery.
 
-## Architecture
+## Status
 
-```
-Aspect/Core.lean     RB, LB, PERF, PERF_XN, IMPF, PRFV
-        ↑
-TemporalAdverbials   PTSConstraint, AdverbialType, PERF_ADV
-        ↑
-PerfectPolysemy      PerfectReading, existential/universalReading
-        ↑
-   THIS FILE          BoundaryKind, TimeSpanKind, BoundaryAdverbial
-                      SubdomainAlternatives, DomainWideningResult
-```
+Substrate inherited from `Theories/Semantics/Tense/PTS.lean` (deleted;
+relocated here per CLAUDE.md graduation rule). Verified against the
+IZ 2021 PDF: the abbreviation table (PTS, UTS, LB, RB, AI, BEI, NPI)
+confirms the terminology; the "in years / until unification" is the
+paper's central claim; domain widener appears 15+ times in the text.
+The Lean encoding of the NPI strength classification and the
+exhaustification machinery is faithful to the paper's analytical
+framework but has not been line-by-line cross-checked against IZ
+2021's specific theorems.
+
 -/
 
-namespace Semantics.Tense.PTS
+namespace Phenomena.TenseAspect.Studies.IatridouZeijlstra2021
 
 open Core.Time
 open Semantics.Events
 open Semantics.Aspect.Core
 open Semantics.Aspect.SubintervalProperty
 open Semantics.Tense.TemporalAdverbials (PTSConstraint AdverbialType)
-open Semantics.Tense.PerfectPolysemy (PerfectReading)
+open Phenomena.TenseAspect.Studies.IatridouEtAl2001 (BoundaryKind)
+open Phenomena.TenseAspect.Studies.Kiparsky2002 (PerfectReading)
 
 variable {W Time : Type*} [LinearOrder Time]
+
 
 -- ════════════════════════════════════════════════════
 -- § 1. Boundary Classification
 -- ════════════════════════════════════════════════════
 
-/-- Which boundary of a time span an adverbial sets.
-    - `left`: LB adverbials (*in years*, *since*, *in (the last) 5 years*)
-    - `right`: RB adverbials (*until*) -/
-inductive BoundaryKind where
-  | left   -- sets the left boundary (e.g., *since Monday*, *in years*)
-  | right  -- sets the right boundary (e.g., *until 5pm*)
-  deriving DecidableEq, Repr
+-- `BoundaryKind` (LB / RB) is from `IatridouEtAl2001`; imported above.
 
 /-- Which time span the adverbial operates on.
     - `pts`: the Perfect Time Span (LB set by adverbial or context, RB by Tense)
@@ -456,4 +454,5 @@ theorem non_widener_not_npi :
     (isDomainWidener inTheLast5Years = false ∧ inTheLast5Years.npiStrength = .none_) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
-end Semantics.Tense.PTS
+
+end Phenomena.TenseAspect.Studies.IatridouZeijlstra2021
