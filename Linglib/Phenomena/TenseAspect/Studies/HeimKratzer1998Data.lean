@@ -85,28 +85,6 @@ open Core.Time.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 4. SOT vs Non-SOT: English vs Japanese
--- ════════════════════════════════════════════════════════════════
-
-/-- Japanese matrix frame: "Taroo-ga... to itta" (Taro said...).
-    Same temporal structure as English matrix. -/
-def matrixItta : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2
-  eventTime := -2
-
-/-- Japanese embedded: "Mary-ga byooki-datta" (Mary was sick) — absolute past.
-    In non-SOT Japanese, embedded past is absolute (relative to S, not E).
-    Only the shifted reading: sick-time < say-time. -/
-def embeddedByookiDatta : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0    -- non-SOT: P = S (absolute, not shifted)
-  referenceTime := -5     -- PAST relative to S: R < S
-  eventTime := -5
-
-
--- ════════════════════════════════════════════════════════════════
 -- § 6. Relative Clause Tense: "the man who was tall"
 -- ════════════════════════════════════════════════════════════════
 
@@ -258,43 +236,6 @@ def historicalPresent : ReichenbachFrame ℤ where
 /-- Historical present is "present" relative to narrative perspective. -/
 theorem historicalPresent_is_present :
     historicalPresent.isPresent := rfl
-
-
--- ════════════════════════════════════════════════════════════════
--- § 14. Perfect Tense Interactions
--- ════════════════════════════════════════════════════════════════
-
-/-! The pluperfect (past perfect) disambiguates past-under-past:
-
-    "John said Mary had been sick."
-
-    Unlike simple past-under-past ("John said Mary was sick"), the
-    pluperfect ONLY has the shifted reading. There is no simultaneous
-    reading — "had been" forces the sickness to precede the saying.
-    This is a useful test case because it disambiguates between
-    theories' predictions about what triggers the simultaneous reading.
-
-    @cite{comrie-1985}, @cite{ogihara-1996} ch. 4. -/
-
-/-- Pluperfect under past: "John said Mary had been sick."
-    Only the shifted reading: sickness before saying.
-    The pluperfect adds an additional layer of temporal precedence:
-    E < R (perfect aspect) + R < P (past tense). -/
-def pluperfectShifted : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2   -- embedded P = matrix E
-  referenceTime := -4     -- R' < E_matrix (past of the shifted perspective)
-  eventTime := -5         -- E < R (perfect: event precedes reference)
-
-/-- The pluperfect frame has the perfect configuration: E < R. -/
-theorem pluperfect_is_perfect :
-    pluperfectShifted.isPerfect := by
-  simp only [ReichenbachFrame.isPerfect, pluperfectShifted]; omega
-
-/-- The pluperfect frame is past relative to embedded P: R < P. -/
-theorem pluperfect_is_past :
-    pluperfectShifted.isPast := by
-  simp only [ReichenbachFrame.isPast, pluperfectShifted]; omega
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -596,10 +537,6 @@ def triedToLeave : ReichenbachFrame ℤ where
 -- § Theory-Neutral Temporal Facts
 -- ════════════════════════════════════════════════════════════════
 
-/-- Japanese: embedded P = S (absolute, not shifted to matrix E). -/
-theorem japanese_absolute_perspective :
-    embeddedByookiDatta.perspectiveTime = embeddedByookiDatta.speechTime := by native_decide
-
 /-- Counterfactual: past morphology but R = P (present reference). -/
 theorem counterfactual_present_reference :
     counterfactualWere.referenceTime = counterfactualWere.perspectiveTime := by native_decide
@@ -638,12 +575,6 @@ theorem historicalPresent_R_eq_P :
 /-- Historical present: event time ≠ speech time. -/
 theorem historicalPresent_not_at_speech :
     historicalPresent.eventTime ≠ historicalPresent.speechTime := by native_decide
-
-/-- Pluperfect: E < R < P (both perfect and past). -/
-theorem pluperfect_E_lt_R_lt_P :
-    pluperfectShifted.eventTime < pluperfectShifted.referenceTime ∧
-    pluperfectShifted.referenceTime < pluperfectShifted.perspectiveTime := by
-  constructor <;> native_decide
 
 /-- Adjunct "before": adjunct event precedes matrix event. -/
 theorem adjunct_precedes_matrix :
