@@ -109,20 +109,6 @@ def rcWasTallUnderPast : ReichenbachFrame ℤ where
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 8. Counterfactual Tense: "If John were here..."
--- ════════════════════════════════════════════════════════════════
-
-/-- Counterfactual frame: "If John were here..."
-    Past morphology ("were") but present-time reference.
-    The "pastness" is modal distance, not temporal precedence. -/
-def counterfactualWere : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0    -- present-time scenario
-  referenceTime := 0      -- NOT past! "were" = now, counterfactually
-  eventTime := 0
-
-
--- ════════════════════════════════════════════════════════════════
 -- § 11. SOT in Indirect Questions: "John asked who was sick"
 -- ════════════════════════════════════════════════════════════════
 
@@ -299,34 +285,6 @@ def embeddedPresentUnderFuture : ReichenbachFrame ℤ where
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 20. Fake Past: "If John were taller..."
--- ════════════════════════════════════════════════════════════════
-
-/-! Fake past: past morphology with non-past semantics
-    in subjunctive/counterfactual contexts.
-
-    "If John were taller, he would play basketball."
-
-    The "were" is morphologically past but does not locate the event
-    before speech time. Rather, it expresses counterfactual distance or modal remoteness.
-
-    This differs from Deal's `counterfactualTense` in specificity:
-    fake past is the broader phenomenon (Iatridou's cross-linguistic
-    generalization), while Deal's treatment focuses on ULC refinement
-    for counterfactuals. -/
-
-/-- Fake past frame: "If John were taller..."
-    Past morphology ("were") but present-time reference.
-    The temporal coordinates are present; the "pastness" is
-    modal distance, not temporal. -/
-def fakePastSubjunctive : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 0      -- NOT past: present-time scenario
-  eventTime := 0          -- counterfactual present
-
-
--- ════════════════════════════════════════════════════════════════
 -- § 21. Optional SOT (Hebrew-type)
 -- ════════════════════════════════════════════════════════════════
 
@@ -412,9 +370,6 @@ def triedToLeave : ReichenbachFrame ℤ where
 -- § Theory-Neutral Temporal Facts
 -- ════════════════════════════════════════════════════════════════
 
-/-- Counterfactual: past morphology but R = P (present reference). -/
-theorem counterfactual_present_reference :
-    counterfactualWere.referenceTime = counterfactualWere.perspectiveTime := by native_decide
 
 /-- RC tense: past reference. -/
 theorem rc_past_reference :
@@ -459,9 +414,6 @@ theorem embeddedPresentUnderFuture_not_at_speech :
 theorem matrixWillSay_is_future :
     matrixWillSay.referenceTime > matrixWillSay.perspectiveTime := by native_decide
 
-/-- Fake past: past morphology but R = P (present reference). -/
-theorem fakePast_present_reference :
-    fakePastSubjunctive.referenceTime = fakePastSubjunctive.perspectiveTime := rfl
 
 /-- Optional SOT: both forms give R = P. -/
 theorem optionalSOT_both_simultaneous :
@@ -605,13 +557,6 @@ theorem falsePast_present_reference_wanted :
 
 theorem falsePast_present_reference_could :
     falsePastCould.referenceTime = falsePastCould.perspectiveTime := rfl
-
-/-- False past and counterfactual produce identical Reichenbach frames.
-    The difference is pragmatic (politeness vs counterfactuality),
-    not temporal. -/
-theorem falsePast_same_structure_as_counterfactual :
-    falsePastWanted = counterfactualWere := rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § 25. PPS vs FPS in Conditionals (Declerck ch. 4 §2)

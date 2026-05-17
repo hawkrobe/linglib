@@ -211,24 +211,6 @@ theorem evalPres_iff_toSitProp {W Time : Type*}
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Per-Theory Derivations: Deal
--- ════════════════════════════════════════════════════════════════
-
-open Semantics.Tense.Counterfactual
-
-/-- Deal derives the counterfactual frame: past morphology with
-    present reference, via modal distance rather than temporal
-    precedence. The refined ULC is satisfied (counterfactual exempt). -/
-theorem deal_derives_counterfactualFrame :
-    counterfactualWere.referenceTime = counterfactualWere.perspectiveTime ∧
-    refinedULC .counterfactual counterfactualWere.referenceTime
-      counterfactualWere.perspectiveTime := by
-  constructor
-  · native_decide
-  · simp [refinedULC]
-
-
--- ════════════════════════════════════════════════════════════════
 -- § Per-Theory Derivations: Wurmbrand
 -- ════════════════════════════════════════════════════════════════
 
@@ -268,17 +250,6 @@ theorem sharvit_derives_indirectQSimultaneous :
 theorem sharvit_derives_embeddedPresentUnderFuture :
     embeddedPresentUnderFuture.isPresent := rfl
 
-/-- Deal derives fake past: past morphology with present reference,
-    via modal distance rather than temporal precedence. -/
-theorem deal_derives_fakePastSubjunctive :
-    fakePastSubjunctive.referenceTime = fakePastSubjunctive.perspectiveTime ∧
-    refinedULC .counterfactual fakePastSubjunctive.referenceTime
-      fakePastSubjunctive.perspectiveTime := by
-  constructor
-  · rfl
-  · simp [refinedULC]
-
-
 -- ════════════════════════════════════════════════════════════════
 -- § Declerck: Domain Shift vs Subordination (§23)
 -- ════════════════════════════════════════════════════════════════
@@ -309,13 +280,6 @@ theorem falsePastWanted_satisfies_present :
 
 theorem falsePastCould_satisfies_present :
     satisfiesTense .present falsePastCould = true := by native_decide
-
-/-- False tense and fake past produce identical frames:
-    the distinction is pragmatic (politeness vs counterfactuality),
-    not temporal-structural. -/
-theorem falsePast_counterfactual_same_frame :
-    falsePastWanted = counterfactualWere := rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Declerck: PPS vs FPS in Conditionals (§25)

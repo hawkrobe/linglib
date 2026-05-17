@@ -1,0 +1,74 @@
+[
+  {
+    "id": "iatridou2000_ex1a",
+    "source": {"bibkey": "iatridou-2000", "paperLabel": "(1a)"},
+    "language": "stan1293",
+    "primaryText": "I wish I had a car.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I wish I had a car.",
+    "context": "Present counterfactual wish. Conveys: I don't have a car now. Past morphology (`had`) but present-time reference.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "present-CF (car absent now)", "judgment": "acceptable"}
+    ],
+    "comment": "Iatridou 2000 ex (1a), Linguistic Inquiry 31(2) p. 232. First of the (1a)/(1b) wishes pair. The grammatical past-tense morpheme contributes counterfactuality (about the present), not temporal precedence — Iatridou's central exclusion-feature claim.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "iatridou2000_ex1b",
+    "source": {"bibkey": "iatridou-2000", "paperLabel": "(1b)"},
+    "language": "stan1293",
+    "primaryText": "I wish I had had a car when I was a student.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "I wish I had had a car when I was a student.",
+    "context": "Past counterfactual wish. Conveys: I didn't have a car then (student days). Says nothing about whether I have a car now. Past-on-past morphology (`had had`) — the doubling encodes BOTH counterfactuality AND past temporal reference.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "past-CF (no car as student)", "judgment": "acceptable"}
+    ],
+    "comment": "Iatridou 2000 ex (1b), p. 232. Second of the wishes pair. The contrast (1a)/(1b) motivates separating the counterfactuality-marking past morpheme from the temporal past morpheme.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "iatridou2000_ex2a",
+    "source": {"bibkey": "iatridou-2000", "paperLabel": "(2a)"},
+    "language": "stan1293",
+    "primaryText": "If he were smart, he would be rich.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If he were smart, he would be rich.",
+    "context": "Present counterfactual conditional. Conveys: he is not smart AND he is not rich. Past morphology (`were`, `would`) with present reference.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "present-CF (he is not smart and not rich)", "judgment": "acceptable"}
+    ],
+    "comment": "Iatridou 2000 ex (2a), p. 232. Canonical present counterfactual conditional. The HK1998Data §8 `counterfactualWere` (\"If John were here\") and §20 `fakePastSubjunctive` (\"If John were taller\") are both generic variants of this shape; Iatridou's own (2a) uses `If he were smart`.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "iatridou2000_ex2b",
+    "source": {"bibkey": "iatridou-2000", "paperLabel": "(2b)"},
+    "language": "stan1293",
+    "primaryText": "If he had been smart, he would have been rich.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "If he had been smart, he would have been rich.",
+    "context": "Past counterfactual conditional. Conveys: he was not smart (in general or on one specific occasion) AND he was not rich. Past-perfect morphology (`had been`, `would have been`) encodes BOTH counterfactuality AND past reference.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "past-CF (he was not smart and not rich)", "judgment": "acceptable"}
+    ],
+    "comment": "Iatridou 2000 ex (2b), p. 232. Past-CF counterpart to (2a). The (2a)/(2b) contrast — like (1a)/(1b) — diagnostics the exclusion-feature analysis: one past morpheme for counterfactuality (excludes the actual world), a second past morpheme for past tense (excludes the present).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
