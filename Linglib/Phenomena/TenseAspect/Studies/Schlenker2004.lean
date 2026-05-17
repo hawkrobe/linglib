@@ -99,7 +99,7 @@ def ex1 : LinguisticExample :=
     alternatives := []
     readings := [("FID (CT/CU split)", .acceptable), ("literal-contradiction", .ungrammatical)]
     paperFeatures := []
-    comment := "Schlenker 2004 ex (1), Mind & Language 19(3) p. 280. Literary source: D.H. Lawrence, *Women in Love* (Heinemann 1971 edn., p. 185); Schlenker cites via Banfield 1982 p. 98 and Doron 1991. (No bib entry exists for the Lawrence novel; if added later, change `source` to point there with `reportedIn` = schlenker-2004.) Cornerstone of Schlenker's CT vs CU framework: in FID, indexical/tense items split between two contexts."
+    comment := "Schlenker 2004 ex (1), Mind & Language 19(3) p. 280. Literary source via Banfield 1982 p. 98 (the line is widely attributed to D.H. Lawrence by Banfield + the FID literature). UNVERIFIED which Lawrence novel: prior project text cited *Women in Love* (Heinemann 1971 edn. p. 185), but the line does NOT appear in Project Gutenberg #4240 (Women in Love full text); most secondary FID literature attributes it to *The Rainbow* instead. Possible 7th misattribution from the HK1998Data dissolution scope. Pending PDF-of-Schlenker-2004 reverification. Cornerstone of Schlenker's CT vs CU framework regardless of literary source: in FID, indexical/tense items split between two contexts."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
