@@ -32,11 +32,10 @@ complements into three types based on tense-aspect behavior:
 
 ## Lean encoding
 
-Reichenbach frames for the three verb classes are constructed below. The
-classification theorems use Fragment entries (`want`, `believe`, `try_`)
-from `Fragments.English.Predicates.Verbal` + `tenseClass` from
-`Minimalist.Tense.InfinitivalTense`. The Fragment field carries
-Wurmbrand's classification; the frames are auxiliary illustrations.
+The classification theorems use Fragment entries (`want`, `believe`,
+`try_`) from `Fragments.English.Predicates.Verbal` + `tenseClass`
+from `Minimalist.Tense.InfinitivalTense`. The Fragment field carries
+Wurmbrand's classification.
 
 -/
 
@@ -133,64 +132,22 @@ end Examples
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Reichenbach frames per verb class
--- ════════════════════════════════════════════════════════════════
-
-/-- "John wanted to leave" — future-irrealis class. Wanting is past;
-    leaving is desired future. Generic shape representative of `want`,
-    `decide`, `plan`, `hope`. -/
-def wantedToLeave : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2
-  eventTime := -1
-
-/-- "John decided to leave" — future-irrealis class (`decide`).
-    Deciding is past; leaving is future of deciding. -/
-def decidedToLeave : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2
-  eventTime := -1
-
-/-- "John believes Mary to be sick" — propositional class (`believe`).
-    Believing is present; sickness simultaneous with believing. -/
-def believesToBeSick : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := 0
-  eventTime := 0
-
-/-- "John tried to leave" — restructuring class (`try`). Trying and
-    leaving in the same temporal domain. -/
-def triedToLeave : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2
-  eventTime := -2
-
-
--- ════════════════════════════════════════════════════════════════
 -- § Per-class theorems (consume Fragment + InfinitivalTense substrate)
 -- ════════════════════════════════════════════════════════════════
 
 /-- `want` is future-irrealis → future-oriented complement. -/
-theorem wurmbrand_classifies_want :
+theorem wurmbrandClassifiesWant :
     want.tenseClass = .futureIrrealis ∧
     classOrientation .futureIrrealis = .futureOriented := ⟨rfl, rfl⟩
 
 /-- `believe` is propositional → simultaneous complement. -/
-theorem wurmbrand_classifies_believe :
+theorem wurmbrandClassifiesBelieve :
     believe.tenseClass = .propositional ∧
     classOrientation .propositional = .simultaneous := ⟨rfl, rfl⟩
 
 /-- `try` is restructuring → dependent on matrix temporal domain. -/
-theorem wurmbrand_classifies_try :
+theorem wurmbrandClassifiesTry :
     try_.tenseClass = .restructuring ∧
     classOrientation .restructuring = .dependent := ⟨rfl, rfl⟩
-
-/-- The wantedToLeave frame is future-oriented (E > R). -/
-theorem wantedToLeave_future_oriented :
-    wantedToLeave.eventTime > wantedToLeave.referenceTime := by decide
 
 end Phenomena.TenseAspect.Studies.Wurmbrand2014

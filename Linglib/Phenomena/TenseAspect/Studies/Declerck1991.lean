@@ -1,6 +1,7 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Core.Time.Reichenbach
 import Linglib.Core.Time.Boundedness
+import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # @cite{declerck-1991}: Tense and the Present/Past Time-Sphere
@@ -42,6 +43,7 @@ fulltext).
 namespace Phenomena.TenseAspect.Studies.Declerck1991
 
 open Core.Time.Reichenbach
+open Semantics.Tense (shiftedFrame)
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES
@@ -241,13 +243,11 @@ def domainSubordLeft : ReichenbachFrame ℤ where
   referenceTime := -5
   eventTime := -5
 
-/-- "...and would never come back" — relative tense within the
-    past domain established by `left`. -/
-def domainSubordWouldReturn : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -5
-  referenceTime := -3
-  eventTime := -3
+/-- "...and would never come back" — relative tense within the past
+    domain established by `left`. Constructed via `shiftedFrame` so
+    the perspective is taken from `domainSubordLeft.eventTime`. -/
+def domainSubordWouldReturn : ReichenbachFrame ℤ :=
+  shiftedFrame domainSubordLeft (-3) (-3)
 
 /-- "He left..." — independent past domain (shift pair). -/
 def domainShiftLeft : ReichenbachFrame ℤ where
@@ -272,7 +272,8 @@ theorem domainShiftLeftPast :
 
 /-- Subordination: `wouldReturn` is posterior within the domain. -/
 theorem domainSubordPosteriority :
-    domainSubordWouldReturn.referenceTime > domainSubordLeft.eventTime := by decide
+    domainSubordWouldReturn.referenceTime > domainSubordLeft.eventTime := by
+  simp only [domainSubordWouldReturn, shiftedFrame, domainSubordLeft]; omega
 
 /-- Shift: both frames have P = S (absolute perspective). -/
 theorem domainShiftBothAbsolute :
@@ -283,7 +284,7 @@ theorem domainShiftBothAbsolute :
 /-- Subordination: `wouldReturn` has shifted perspective. -/
 theorem domainSubordShiftedPerspective :
     domainSubordWouldReturn.perspectiveTime ≠ domainSubordWouldReturn.speechTime := by
-  decide
+  simp only [domainSubordWouldReturn, shiftedFrame, domainSubordLeft]; decide
 
 
 -- ════════════════════════════════════════════════════════════════
