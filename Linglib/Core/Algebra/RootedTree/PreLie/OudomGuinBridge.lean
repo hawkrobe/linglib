@@ -646,14 +646,51 @@ private theorem ckIso_circ_intertwine_basis_v
         (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_add,
         LinearMap.add_apply, unop_add]
   | ι w =>
-    -- w : InsertionAlgebra α = Nonplanar α →₀ ℤ. Bilinear-in-w extension via
-    -- `Finsupp.induction_linear` on w; basis case uses `circ_ι_ι` +
-    -- `ofTree_mul_ofTree` + `ckIso_ι_ofMultiset` + sub-substrate 1.2.
-    --
-    -- TODO: zero, add cases are mostly mechanical; single case has a
-    -- `circHom.map_smul` step that triggers `SMulCommClass ℤ ℤ _` instance
-    -- resolution failure. Needs deeper smul-linearity infrastructure.
-    sorry
+    -- w : InsertionAlgebra α. Use Finsupp.induction_linear.
+    refine Finsupp.induction_linear w ?_ ?_ ?_
+    · -- w = 0: ι 0 = 0; both sides 0.
+      show ckIsoSymmetricAlgebra ((oudomGuinCirc
+              (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) 0))
+              (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) =
+            GrossmanLarson.unop ((GrossmanLarson.insertion
+              (GrossmanLarson.op (ckIsoSymmetricAlgebra
+                (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) 0))))
+              (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _))))
+      rw [LinearMap.map_zero (SymmetricAlgebra.ι ℤ (InsertionAlgebra α))]
+      rw [show oudomGuinCirc (R := ℤ) (0 : SymmetricAlgebra ℤ _)
+                (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) = 0 by
+            rw [oudomGuinCirc_eq_ofConv, map_zero, WithConv.ofConv_zero,
+                LinearMap.zero_apply]]
+      simp only [map_zero, op_zero,
+                 (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_zero,
+                 LinearMap.zero_apply, unop_zero]
+    · -- w = w₁ + w₂: linearity in w.
+      intro w₁ w₂ ih₁ ih₂
+      let w₁' : InsertionAlgebra α := w₁
+      let w₂' : InsertionAlgebra α := w₂
+      show ckIsoSymmetricAlgebra ((oudomGuinCirc
+              (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (w₁' + w₂')))
+              (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t))) =
+            GrossmanLarson.unop ((GrossmanLarson.insertion
+              (GrossmanLarson.op (ckIsoSymmetricAlgebra
+                (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (w₁' + w₂')))))
+              (GrossmanLarson.op (ConnesKreimer.of' ({t} : Multiset _))))
+      rw [LinearMap.map_add (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)) w₁' w₂']
+      rw [show oudomGuinCirc (R := ℤ)
+              (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) w₁' +
+                SymmetricAlgebra.ι ℤ (InsertionAlgebra α) w₂')
+              (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) =
+            oudomGuinCirc (R := ℤ) (SymmetricAlgebra.ι ℤ _ w₁') _ +
+            oudomGuinCirc (R := ℤ) (SymmetricAlgebra.ι ℤ _ w₂') _ from by
+          rw [oudomGuinCirc_eq_ofConv, map_add, WithConv.ofConv_add,
+              LinearMap.add_apply,
+              ← oudomGuinCirc_eq_ofConv, ← oudomGuinCirc_eq_ofConv]]
+      rw [map_add, ih₁, ih₂, map_add, op_add,
+          (GrossmanLarson.insertion : GrossmanLarson ℤ α →ₗ[ℤ] _).map_add,
+          LinearMap.add_apply, unop_add]
+    · -- w = single s r: scalar reduction. Blocked by SMulCommClass issue.
+      intro s r
+      sorry
   | mul X Y ih_X ih_Y =>
     -- LHS: `(X * Y) ○ ι(ofTree t) = (X ○ ι _) * Y + X * (Y ○ ι _)` (Leibniz)
     --      then ckIso preserves * and +, apply IHs.
@@ -746,17 +783,74 @@ private theorem ckIso_circ_intertwine_insertion
         ((GrossmanLarson.insertion (R := ℤ) (α := α)
           (GrossmanLarson.op (ckIsoSymmetricAlgebra X))).map_add _ _), unop_add]
   · -- v = single t r: scalar reduction to basis case; apply helper.
-    -- TODO: smul-linearity step. The chain
-    --   ι (r • x) = r • ι x → oudomGuinCirc X (r • y) = r • oudomGuinCirc X y
-    --   → ckIso (r • z) = r • ckIso z → op (r • w) = r • op w
-    --   → insertion (op X) (r • u) = r • insertion (op X) u
-    --   → unop (r • v) = r • unop v
-    -- triggers `rw`-matching failures on `ckIsoSymmetricAlgebra (r • _)` even
-    -- when the explicit lemma instantiation is provided. Likely an elaboration
-    -- ambiguity with the `r • _` pattern under the AlgEquiv. Pending a
-    -- cleaner smul-pushing approach.
     intro t r
-    sorry
+    let v_single : InsertionAlgebra α := Finsupp.single t r
+    have hv : v_single = r • InsertionAlgebra.ofTree t := by
+      show (Finsupp.single t r : InsertionAlgebra α) =
+            r • (Finsupp.single t 1 : InsertionAlgebra α)
+      exact (Finsupp.smul_single_one t r).symm
+    -- Construct the LHS and RHS at v = ofTree t (helper case) and scale by r.
+    have h_basis := ckIso_circ_intertwine_basis_v X t
+    -- LHS at v_single: linear in v through ι, oudomGuinCirc X, ckIso.
+    -- RHS at v_single: linear in v through ι, ckIso, op, insertion(..,·), unop.
+    -- Both reduce to r • (helper LHS) = r • (helper RHS).
+    show ckIsoSymmetricAlgebra ((oudomGuinCirc X)
+            (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v_single)) =
+        GrossmanLarson.unop ((GrossmanLarson.insertion
+          (GrossmanLarson.op (ckIsoSymmetricAlgebra X)))
+          (GrossmanLarson.op (ckIsoSymmetricAlgebra
+            (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v_single))))
+    -- Reduce LHS to r • (helper LHS form) via linearity.
+    have lhs_reduce : ckIsoSymmetricAlgebra ((oudomGuinCirc X)
+            (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v_single)) =
+          r • ckIsoSymmetricAlgebra ((oudomGuinCirc X)
+            (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+              (InsertionAlgebra.ofTree t))) := by
+      rw [hv]
+      -- Carefully: factor out r through ι, oudomGuinCirc, ckIso.
+      rw [show SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+              (r • InsertionAlgebra.ofTree t) =
+            r • SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+              (InsertionAlgebra.ofTree t) from
+          (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)).map_smul r _]
+      rw [show (oudomGuinCirc (R := ℤ) X)
+              (r • SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) =
+            r • (oudomGuinCirc (R := ℤ) X)
+              (SymmetricAlgebra.ι ℤ _ (InsertionAlgebra.ofTree t)) from
+          (oudomGuinCirc (R := ℤ) X).map_smul r _]
+      exact ckIsoSymmetricAlgebra.toLinearEquiv.map_smul r _
+    have rhs_reduce : GrossmanLarson.unop ((GrossmanLarson.insertion
+            (GrossmanLarson.op (ckIsoSymmetricAlgebra X)))
+            (GrossmanLarson.op (ckIsoSymmetricAlgebra
+              (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) v_single)))) =
+          r • GrossmanLarson.unop ((GrossmanLarson.insertion
+            (GrossmanLarson.op (ckIsoSymmetricAlgebra X)))
+            (GrossmanLarson.op (ckIsoSymmetricAlgebra
+              (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+                (InsertionAlgebra.ofTree t))))) := by
+      rw [hv]
+      rw [show SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+              (r • InsertionAlgebra.ofTree t) =
+            r • SymmetricAlgebra.ι ℤ (InsertionAlgebra α)
+              (InsertionAlgebra.ofTree t) from
+          (SymmetricAlgebra.ι ℤ (InsertionAlgebra α)).map_smul r _]
+      rw [show ckIsoSymmetricAlgebra (r • SymmetricAlgebra.ι ℤ _
+                (InsertionAlgebra.ofTree t)) =
+            r • ckIsoSymmetricAlgebra (SymmetricAlgebra.ι ℤ _
+                (InsertionAlgebra.ofTree t)) from
+          ckIsoSymmetricAlgebra.toLinearEquiv.map_smul r _]
+      rw [op_smul]
+      rw [((GrossmanLarson.insertion (R := ℤ) (α := α)
+            (GrossmanLarson.op (ckIsoSymmetricAlgebra X))).map_smul r _)]
+      rw [unop_smul]
+    rw [lhs_reduce, rhs_reduce, h_basis]
+    -- Now: r • (insertion ... (op (of' {t}))).unop =
+    --      r • (insertion ... (op (ckIso (ι (ofTree t))))).unop
+    -- Equal since ckIso (ι (ofTree t)) = of' {t}.
+    rw [show ckIsoSymmetricAlgebra
+            (SymmetricAlgebra.ι ℤ (InsertionAlgebra α) (InsertionAlgebra.ofTree t)) =
+          ConnesKreimer.of' ({t} : Multiset _) from
+        ckIsoSymmetricAlgebra_ι_single t]
 
 /-- **Substrate 2 for Q5c**: GL.product split lemma (analog of OG Prop 3.9.iv).
 
