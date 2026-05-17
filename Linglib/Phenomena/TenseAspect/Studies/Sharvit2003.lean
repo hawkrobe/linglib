@@ -1,5 +1,6 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Core.Time.Reichenbach
+import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # @cite{sharvit-2003}: Embedded Tense and Universal Grammar
@@ -31,25 +32,20 @@ typology of SOT/non-SOT and English/Hebrew/Modern Greek.
 
 ## Scope of the Reichenbach frames below
 
-Only `optionalSOT{Past,Present}Form` (Sharvit's (5)/(6) Hebrew minimal
-pair) is verbatim from Sharvit 2003. The other frames encode phenomena
-adjacent to Sharvit's analytical framework but not discussed in the
-paper itself: `rcWasTall` / `rcWasTallUnderPast` cover RC tense
-(Sharvit discusses attitude complements, not RCs); `matrixAsked` /
-`indirectQ{Simultaneous,Shifted}` cover indirect questions (Sharvit
-covers propositional complements, not interrogatives);
-`matrixWillSay` / `embeddedPresentUnderFuture` covers embedded
-present under future (close to Sharvit's (3) but with future matrix).
-
-Under the schema-gap caveat that (R,E)-frames cannot fully capture
-present-under-past double-access, these frames serve as illustrative
-encodings; Sharvit's actual numbered examples live in the JSON above.
+The frames cover the embedded-present-under-future shape (close to
+Sharvit's (3) but with future matrix). The (R,E)-frame cannot fully
+capture present-under-past double-access — see the JSON's `ex3` for
+the empirical content. The Hebrew minimal pair (Sharvit's (5)/(6))
+lives entirely in the JSON; structurally the past-form and
+present-form would produce identical (R,E)-frames so encoding the
+contrast as separate Lean defs would be vacuous.
 
 -/
 
 namespace Phenomena.TenseAspect.Studies.Sharvit2003
 
 open Core.Time.Reichenbach
+open Semantics.Tense
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES
@@ -192,55 +188,10 @@ end Examples
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Project-side illustrative Reichenbach frames
+-- § Reichenbach frames for embedded present under future
 -- ════════════════════════════════════════════════════════════════
 
-/-! These frames are illustrative encodings of phenomena adjacent to
-    Sharvit's framework. Only `optionalSOT{Past,Present}Form` is
-    verbatim from Sharvit (5)/(6); the others cover RC tense, indirect
-    questions, and embedded present-under-future. See module docstring
-    "Scope" section for details. The JSON above carries Sharvit's
-    actual numbered examples. -/
-
-/-- "The man who was tall" — relative clause past, anchored to RC's
-    own perspective (= speech time). -/
-def rcWasTall : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -3
-  eventTime := -3
-
-/-- "John met the man who was tall" — RC under past matrix, RC's
-    perspective shifted to matrix event time. -/
-def rcWasTallUnderPast : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2
-  referenceTime := -4
-  eventTime := -4
-
-/-- Matrix "John asked..." (past, perfective). -/
-def matrixAsked : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 0
-  referenceTime := -2
-  eventTime := -2
-
-/-- Indirect question "who was sick" — simultaneous with asking
-    (R = embedded P = matrix E). -/
-def indirectQSimultaneous : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2
-  referenceTime := -2
-  eventTime := -2
-
-/-- Indirect question "who was sick" — shifted reading (R < matrix E). -/
-def indirectQShifted : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2
-  referenceTime := -4
-  eventTime := -4
-
-/-- Matrix "John will say..." (future, perfective). -/
+/-- Matrix "John will say..." — future tense, perfective. -/
 def matrixWillSay : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
@@ -248,40 +199,16 @@ def matrixWillSay : ReichenbachFrame ℤ where
   eventTime := 3
 
 /-- Embedded present under future "Mary is sick" — sickness at the
-    future saying time, not at speech time. The embedded-present puzzle. -/
-def embeddedPresentUnderFuture : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := 3
-  referenceTime := 3
-  eventTime := 3
+    future saying time, R = P relative to the shifted perspective. -/
+def embeddedPresentUnderFuture : ReichenbachFrame ℤ :=
+  embeddedFrame matrixWillSay 3 3
 
-/-- Hebrew "optional SOT" PAST-form variant (Sharvit ex (6)-style). -/
-def optionalSOTPastForm : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2
-  referenceTime := -2
-  eventTime := -2
+/-- Matrix frame satisfies `isFuture` (R > P). -/
+theorem matrixWillSayIsFuture : matrixWillSay.isFuture := by
+  simp only [ReichenbachFrame.isFuture, matrixWillSay]; omega
 
-/-- Hebrew "optional SOT" PRESENT-form variant (Sharvit ex (5)-style). -/
-def optionalSOTPresentForm : ReichenbachFrame ℤ where
-  speechTime := 0
-  perspectiveTime := -2
-  referenceTime := -2
-  eventTime := -2
-
-
--- ════════════════════════════════════════════════════════════════
--- § Per-datum verifications
--- ════════════════════════════════════════════════════════════════
-
-/-- Indirect Q simultaneous: R = P (present-shaped). -/
-theorem indirectQ_simultaneous_present : indirectQSimultaneous.isPresent := rfl
-
-/-- Embedded present under future: R = P. -/
-theorem embeddedPresentUnderFuture_present : embeddedPresentUnderFuture.isPresent := rfl
-
-/-- Optional SOT past-form and present-form yield structurally
-    identical Reichenbach frames; the diagnostic is morphological. -/
-theorem optionalSOT_same_frame : optionalSOTPastForm = optionalSOTPresentForm := rfl
+/-- Embedded present under future: R = P relative to shifted perspective. -/
+theorem embeddedPresentUnderFutureIsPresent : embeddedPresentUnderFuture.isPresent := by
+  simp only [ReichenbachFrame.isPresent, embeddedPresentUnderFuture, embeddedFrame, matrixWillSay]
 
 end Phenomena.TenseAspect.Studies.Sharvit2003
