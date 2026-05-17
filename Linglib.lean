@@ -1911,6 +1911,7 @@ import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Core.LinearAlgebra.SymmetricPower.Lift
 import Linglib.Core.LinearAlgebra.SymmetricPower.ToSymmetricAlgebra
 import Linglib.Core.RingTheory.Bialgebra.SymmetricAlgebra
+import Linglib.Core.RingTheory.Coalgebra.Convolution
 import Linglib.Core.RingTheory.HopfAlgebra.SymmetricAlgebra
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc

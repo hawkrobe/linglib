@@ -518,6 +518,176 @@ noncomputable def circByT_total (T : L) : SymmetricAlgebra R L →ₗ[R] L :=
   (Submodule.liftQ _ (circTTensor T) (circTTensor_vanishes_on_ker T)).comp
     (LinearMap.quotKerEquivOfSurjective algHomL algHomL_surjective).symm.toLinearMap
 
+/-! ## §6: `T`-linearity (Q1b Step 2.1)
+
+Each of `circTMultilinear`, `circTTensor`, `circByT_total` is linear in
+its `T : L` argument. Proven by descent: induction at the multilinear
+level, then transferred through `PiTensorProduct.lift`, `DirectSum.toModule`,
+`equivDirectSum`, and the `Submodule.liftQ` descent.
+
+The final output `circByT_totalLM : L →ₗ[R] SymmetricAlgebra R L →ₗ[R] L`
+is the input to `SymmetricAlgebra.lift` (Q1b Step 2.2). -/
+
+/-- `circTMultilinear R T n` is additive in `T`. Induction on `n`. -/
+private theorem circTMultilinear_T_add (n : ℕ) (T₁ T₂ : L) :
+    circTMultilinear R (T₁ + T₂) n = circTMultilinear R T₁ n + circTMultilinear R T₂ n := by
+  induction n with
+  | zero =>
+    ext f
+    simp only [circTMultilinear_zero, MultilinearMap.add_apply]
+  | succ n ih =>
+    ext f
+    simp only [MultilinearMap.add_apply]
+    rw [circTMultilinear_succ, circTMultilinear_succ, circTMultilinear_succ]
+    have h_init : ∀ (g : Fin n → L),
+        circTMultilinear R (T₁ + T₂) n g =
+        circTMultilinear R T₁ n g + circTMultilinear R T₂ n g := by
+      intro g; rw [ih]; rfl
+    rw [h_init, add_mul]
+    have h_sum :
+        (∑ i : Fin n, circTMultilinear R (T₁ + T₂) n
+            (Function.update (Fin.init f) i (Fin.init f i * f (Fin.last n)))) =
+        (∑ i : Fin n, circTMultilinear R T₁ n
+            (Function.update (Fin.init f) i (Fin.init f i * f (Fin.last n)))) +
+        (∑ i : Fin n, circTMultilinear R T₂ n
+            (Function.update (Fin.init f) i (Fin.init f i * f (Fin.last n)))) := by
+      rw [← Finset.sum_add_distrib]
+      exact Finset.sum_congr rfl (fun i _ => h_init _)
+    rw [h_sum]
+    abel
+
+/-- `circTMultilinear R T n` is `R`-homogeneous in `T`. Induction on `n`. -/
+private theorem circTMultilinear_T_smul (n : ℕ) (r : R) (T : L) :
+    circTMultilinear R (r • T) n = r • circTMultilinear R T n := by
+  induction n with
+  | zero =>
+    ext f
+    simp only [circTMultilinear_zero, MultilinearMap.smul_apply]
+  | succ n ih =>
+    ext f
+    simp only [MultilinearMap.smul_apply]
+    rw [circTMultilinear_succ, circTMultilinear_succ]
+    have h_init : ∀ (g : Fin n → L),
+        circTMultilinear R (r • T) n g = r • circTMultilinear R T n g := by
+      intro g; rw [ih]; rfl
+    rw [h_init, smul_mul_assoc]
+    have h_sum :
+        (∑ i : Fin n, circTMultilinear R (r • T) n
+            (Function.update (Fin.init f) i (Fin.init f i * f (Fin.last n)))) =
+        r • (∑ i : Fin n, circTMultilinear R T n
+            (Function.update (Fin.init f) i (Fin.init f i * f (Fin.last n)))) := by
+      rw [Finset.smul_sum]
+      exact Finset.sum_congr rfl (fun i _ => h_init _)
+    rw [h_sum, ← smul_sub]
+
+/-- `circTTensor` is additive in `T`. Via `TA_linearMap_ext_tprod`. -/
+private theorem circTTensor_T_add (T₁ T₂ : L) :
+    circTTensor (R := R) (T₁ + T₂) = circTTensor T₁ + circTTensor T₂ := by
+  apply TA_linearMap_ext_tprod
+  intro n a
+  rw [circTTensor_tprod, circTMultilinear_T_add, MultilinearMap.add_apply,
+      LinearMap.add_apply, circTTensor_tprod, circTTensor_tprod]
+
+/-- `circTTensor` is `R`-homogeneous in `T`. Via `TA_linearMap_ext_tprod`. -/
+private theorem circTTensor_T_smul (r : R) (T : L) :
+    circTTensor (R := R) (r • T) = r • circTTensor T := by
+  apply TA_linearMap_ext_tprod
+  intro n a
+  rw [circTTensor_tprod, circTMultilinear_T_smul, MultilinearMap.smul_apply,
+      LinearMap.smul_apply, circTTensor_tprod]
+
+/-- **Key characterization**: `circByT_total T` agrees with `circTTensor T`
+    when precomposed with `algHomL`. -/
+private theorem circByT_total_comp_algHomL (T : L) :
+    (circByT_total T).comp (algHomL (R := R) (L := L)) = circTTensor T := by
+  ext z
+  unfold circByT_total
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
+             LinearMap.quotKerEquivOfSurjective_symm_apply,
+             Submodule.liftQ_apply]
+
+/-- `circByT_total` is additive in `T`. Via the algHomL characterization +
+    surjectivity. -/
+theorem circByT_total_T_add (T₁ T₂ : L) :
+    circByT_total (R := R) (T₁ + T₂) =
+      circByT_total T₁ + circByT_total T₂ := by
+  ext B
+  obtain ⟨z, hz⟩ := algHomL_surjective B
+  subst hz
+  have h₁ := congrArg (fun (f : TensorAlgebra R L →ₗ[R] L) => f z)
+                      (circByT_total_comp_algHomL (R := R) (T₁ + T₂))
+  have h₂ := congrArg (fun (f : TensorAlgebra R L →ₗ[R] L) => f z)
+                      (circByT_total_comp_algHomL (R := R) T₁)
+  have h₃ := congrArg (fun (f : TensorAlgebra R L →ₗ[R] L) => f z)
+                      (circByT_total_comp_algHomL (R := R) T₂)
+  simp only [LinearMap.comp_apply] at h₁ h₂ h₃
+  rw [h₁, circTTensor_T_add, LinearMap.add_apply, ← h₂, ← h₃, LinearMap.add_apply]
+
+/-- `circByT_total` is `R`-homogeneous in `T`. -/
+theorem circByT_total_T_smul (r : R) (T : L) :
+    circByT_total (R := R) (r • T) = r • circByT_total T := by
+  ext B
+  obtain ⟨z, hz⟩ := algHomL_surjective B
+  subst hz
+  have h₁ := congrArg (fun (f : TensorAlgebra R L →ₗ[R] L) => f z)
+                      (circByT_total_comp_algHomL (R := R) (r • T))
+  have h₂ := congrArg (fun (f : TensorAlgebra R L →ₗ[R] L) => f z)
+                      (circByT_total_comp_algHomL (R := R) T)
+  simp only [LinearMap.comp_apply] at h₁ h₂
+  rw [h₁, circTTensor_T_smul, LinearMap.smul_apply, ← h₂, LinearMap.smul_apply]
+
+/-- **`circByT_total` as a linear map in `T`**. Input to `SymmetricAlgebra.lift`
+    (Q1b Step 2.2). -/
+noncomputable def circByT_totalLM :
+    L →ₗ[R] (SymmetricAlgebra R L →ₗ[R] L) where
+  toFun := circByT_total
+  map_add' := circByT_total_T_add
+  map_smul' := circByT_total_T_smul
+
+@[simp]
+theorem circByT_totalLM_apply (T : L) (B : SymmetricAlgebra R L) :
+    circByT_totalLM (R := R) T B = circByT_total T B := rfl
+
+/-! ### §6.A: Base-case evaluations of `circByT_total`
+
+For Prop 2.7 (i) / `circ_one_right` (Q1b Step 3.1): need
+`circByT_total T 1 = T`. Traces through the construction chain
+`circByT_total → circTTensor → circTGraded → circTPi → circTMultilinear`
+to the degree-0 base case `circTMultilinear T 0 = T`. -/
+
+/-- `circTTensor T 1 = T`. Base case via `DirectSum.one_def` + `TensorPower.gOne_def`. -/
+theorem circTTensor_one (T : L) :
+    circTTensor (R := R) T 1 = T := by
+  unfold circTTensor
+  simp only [LinearMap.comp_apply, AlgEquiv.toLinearMap_apply, map_one,
+             DirectSum.one_def, TensorPower.gOne_def,
+             circTGraded_of, circTPi_tprod, circTMultilinear_zero]
+
+/-- `circByT_total T 1 = T`. The `T ○ 1 = T` base case (OG Def 2.4 base).
+    Via `circByT_total_comp_algHomL` + `algHomL 1 = 1` + `circTTensor_one`. -/
+theorem circByT_total_one (T : L) :
+    circByT_total (R := R) T 1 = T := by
+  -- algHomL 1 = 1 (algHom preserves 1).
+  have h_alg_one : algHomL (R := R) (L := L) (1 : TensorAlgebra R L) =
+                   (1 : SymmetricAlgebra R L) := by
+    show (SymmetricAlgebra.algHom R L) (1 : TensorAlgebra R L) = 1
+    exact map_one _
+  have h := congrArg (fun (f : TensorAlgebra R L →ₗ[R] L) => f (1 : TensorAlgebra R L))
+                     (circByT_total_comp_algHomL (R := R) T)
+  simp only [LinearMap.comp_apply, h_alg_one] at h
+  rw [h, circTTensor_one]
+
+/-- `circByT_total T (ι X) = T * X`. The degree-1 case (`T ○ X = T · X`
+    in the pre-Lie product on L). -/
+theorem circByT_total_ι (T X : L) :
+    circByT_total (R := R) T (SymmetricAlgebra.ι R L X) = T * X := by
+  have h_alg_ι : algHomL (R := R) (L := L) (TensorAlgebra.ι R X) =
+                 SymmetricAlgebra.ι R L X := rfl
+  have h := congrArg (fun (f : TensorAlgebra R L →ₗ[R] L) => f (TensorAlgebra.ι R X))
+                     (circByT_total_comp_algHomL (R := R) T)
+  simp only [LinearMap.comp_apply, h_alg_ι] at h
+  rw [h, circTTensor_ι]
+
 end OudomGuinCircConstruct
 
 end PreLie

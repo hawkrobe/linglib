@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.PreLie.GuinOudom
+import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
 import Linglib.Core.RingTheory.Bialgebra.SymmetricAlgebra
+import Linglib.Core.RingTheory.Coalgebra.Convolution
 import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
 
 set_option autoImplicit false
@@ -42,15 +44,22 @@ is required for associativity.**
 
 ## Status
 
-**Scaffold (2026-05-16).** The construction of `oudomGuinCirc` itself is
-sorry-fenced (Q1 of the pre-Lie PBW pivot per
-`scratch/pivot_to_prelie_pbw.md`). Substantive future work:
+**Q1b construction landed (2026-05-16).** `oudomGuinCirc` is built via
+`SymmetricAlgebra.lift` into the convolution algebra
+`WithConv (S(L) →ₗ[R] S(L))`. The convolution-algebra structure
+(`LinearMap.convAlgebra` in `Linglib.Core.RingTheory.Coalgebra.Convolution`)
+makes `S(L) →ₗ[R] S(L)` an `R`-algebra under the convolution product
+`(f * g)(c) := μ ∘ (f ⊗ g) ∘ Δ(c)`, commutative because `S(L)` is
+cocommutative (Q1a).
 
-1. Construct `oudomGuinCirc` satisfying the three defining equations.
-   Either (a) via direct recursive construction on the symmetric-algebra
-   quotient of the tensor algebra, or (b) via a future mathlib coproduct
-   on `SymmetricAlgebra` + a clever lift.
-2. Prove uniqueness from the defining equations.
+The generator-level input map `circGen : L →ₗ[R] WithConv (S(L) →ₗ[R] S(L))`
+sends `T ↦ ι ∘ circByT_total T` (lifting the L-valued `circByT_total T`
+from Q1b Step 1 to S(L)-valued via `ι : L → S(L)`). Q1b Step 1's
+T-linearity of `circByT_total` (proven in
+`Linglib.Core.Algebra.PreLie.OudomGuinCircTotal`) is what makes this
+generator map linear.
+
+Remaining for Q1c (uniqueness from defining equations) is deferred.
 
 The interface (defining equations + Prop 2.8.v + Lemma 2.10) is stable
 and consumers (`Q2/Q3/Q4/Q5/Q6` of the pivot) can build against it.
@@ -72,34 +81,87 @@ namespace PreLie
 
 namespace OudomGuinCirc
 
-variable {R : Type*} [CommRing R]
-variable {L : Type*} [RightPreLieRing L] [RightPreLieAlgebra R L]
+open WithConv
+open scoped TensorProduct
+
+variable {R : Type} [CommRing R]
+variable {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
 
 /-! ## §1: The `○` operation on `S(L) × S(L) → S(L)`
 
 Oudom-Guin (2008) Proposition 2.7's defining equations characterize a
 unique bilinear extension of the pre-Lie product `· : L × L → L` to an
-operation `○ : S(L) × S(L) → S(L)`. The construction is recursive on
-the length of the left argument (using equation `(iii)` for the
-reduction step), with the base case `T ○ A` for `T ∈ L` given by
-Def 2.4's recursion on the length of `A`.
+operation `○ : S(L) × S(L) → S(L)`. The construction lifts via
+`SymmetricAlgebra.lift` into the convolution algebra
+`WithConv (S(L) →ₗ[R] S(L))` (commutative because `S(L)` is cocommutative).
 
-This abstract operation is `noncomputable` and uses the coproduct
-`Δ : S(L) → S(L) ⊗ S(L)` provided by `Linglib.Core.RingTheory.Bialgebra.
-SymmetricAlgebra` (Q1a — landed 2026-05-16). Each `x ∈ L` is primitive
-under `Δ`. -/
+The generator-level input is `circGen : L →ₗ[R] WithConv (S(L) →ₗ[R] S(L))`,
+sending `T ↦ ι ∘ circByT_total T` — the L-valued Q1b Step 1 map `circByT_total T`
+post-composed with `ι : L → S(L)` to land in `S(L)`, then opted into the
+convolution multiplication.
+
+`SymmetricAlgebra.lift R L circGen` extends `circGen` uniquely to an
+R-algebra hom `circHom : S(L) →ₐ[R] WithConv (S(L) →ₗ[R] S(L))`. The
+bilinear `oudomGuinCirc` is then `A ↦ B ↦ (circHom A).ofConv B`. -/
+
+/-- Generator map: `T ↦ toConv (ι ∘ circByT_total T)`. Input to
+    `SymmetricAlgebra.lift`. Linear in T by `circByT_total_T_add/smul`
+    from `OudomGuinCircTotal`. -/
+noncomputable def circGen :
+    L →ₗ[R] WithConv (SymmetricAlgebra R L →ₗ[R] SymmetricAlgebra R L) where
+  toFun T := toConv
+    ((SymmetricAlgebra.ι R L).comp (OudomGuinCircConstruct.circByT_total T))
+  map_add' T₁ T₂ := by
+    apply WithConv.ofConv_injective
+    simp only [WithConv.ofConv_add,
+               OudomGuinCircConstruct.circByT_total_T_add,
+               LinearMap.comp_add]
+  map_smul' r T := by
+    apply WithConv.ofConv_injective
+    simp only [WithConv.ofConv_smul,
+               OudomGuinCircConstruct.circByT_total_T_smul,
+               LinearMap.comp_smul, RingHom.id_apply]
+
+/-- The lifted algebra hom `circHom : S(L) →ₐ[R] WithConv (S(L) →ₗ[R] S(L))`,
+    extending `circGen` via the universal property of `SymmetricAlgebra`.
+
+    By construction:
+    - `circHom (ι T) = toConv (ι ∘ circByT_total T)` (`circGen T`).
+    - `circHom (A * B) = circHom A * circHom B` (convolution).
+    - `circHom 1 = 1` (= `toConv (Algebra.linearMap R S(L) ∘ counit)`).
+
+    Convolution is commutative on `WithConv (C →ₗ[R] A)` when `C` is
+    cocommutative and `A` is commutative — both hold for `S(L)`, allowing
+    `SymmetricAlgebra.lift` to land here. -/
+noncomputable def circHom :
+    SymmetricAlgebra R L →ₐ[R]
+      WithConv (SymmetricAlgebra R L →ₗ[R] SymmetricAlgebra R L) :=
+  SymmetricAlgebra.lift circGen
 
 /-- The **Oudom-Guin ○ operation** on `S(L)`. Bilinear extension of the
     pre-Lie product `· : L × L → L` satisfying Prop 2.7's defining
     equations.
 
-    **TODO**: construct via recursive lift. Blocked on a coproduct
-    structure on `SymmetricAlgebra R L` (mathlib upstream). See module
-    docstring. -/
+    Defined as `A ↦ B ↦ (circHom A).ofConv B`. The composition
+    `ofConv ∘ₗ circHom.toLinearMap : S(L) →ₗ[R] (S(L) →ₗ[R] S(L))` is
+    linear in `A` (since `circHom` is an algebra hom, hence linear) and
+    linear in `B` (since each `(circHom A).ofConv` is a linear map). -/
 noncomputable def oudomGuinCirc :
     SymmetricAlgebra R L →ₗ[R] SymmetricAlgebra R L →ₗ[R]
       SymmetricAlgebra R L :=
-  sorry
+  (WithConv.linearEquiv R (SymmetricAlgebra R L →ₗ[R]
+    SymmetricAlgebra R L)).toLinearMap.comp circHom.toLinearMap
+
+@[simp]
+theorem circHom_ι (T : L) :
+    circHom (R := R) (SymmetricAlgebra.ι R L T) = circGen T := by
+  unfold circHom
+  rw [SymmetricAlgebra.lift_ι_apply]
+
+/-- Helper: `oudomGuinCirc A` is `(circHom A).ofConv` as a linear map. By
+    definition of `oudomGuinCirc` as a composition. -/
+theorem oudomGuinCirc_eq_ofConv (A : SymmetricAlgebra R L) :
+    oudomGuinCirc (R := R) A = (circHom A).ofConv := rfl
 
 /-- Notation for the Oudom-Guin ○ operation. -/
 scoped infix:75 " ○ " => fun A B => oudomGuinCirc A B
@@ -111,10 +173,37 @@ uniquely characterize `○`. We state each as a theorem. With the
 construction sorry-fenced, these are also sorry-fenced (they witness
 that the construction satisfies the defining equations). -/
 
-/-- **Prop 2.7 (i)**: right unit. `A ○ 1 = A` for all `A ∈ S(L)`. -/
+/-- **Prop 2.7 (i)**: right unit. `A ○ 1 = A` for all `A ∈ S(L)`.
+
+    Proof structure: induction on `A` via `SymmetricAlgebra.induction`.
+    - `algebraMap r`: `(algebraMap r).ofConv 1 = r • algebraMap (counit 1) =
+       r • algebraMap 1 = r • 1 = algebraMap r`.
+    - `ι T`: `(circGen T).ofConv 1 = (ι ∘ circByT_total T) 1 = ι (circByT_total T 1) =
+       ι T` by `circByT_total_one` (OG Def 2.4 base).
+    - `mul A B`: `(circHom A * circHom B).ofConv 1 =
+       mul' (map (.ofConv) (.ofConv) (comul 1)) =
+       mul' (map (.ofConv) (.ofConv) (1 ⊗ 1)) = (.ofConv 1) * (.ofConv 1) =
+       A * B` by IH.
+    - `add`: linearity. -/
 theorem circ_one_right (A : SymmetricAlgebra R L) :
     oudomGuinCirc (R := R) A 1 = A := by
-  sorry
+  rw [oudomGuinCirc_eq_ofConv]
+  induction A using SymmetricAlgebra.induction with
+  | algebraMap r =>
+    rw [AlgHom.commutes]
+    rw [LinearMap.convAlgebraMap_apply (R := R) (C := SymmetricAlgebra R L)
+        (A := SymmetricAlgebra R L) r (1 : SymmetricAlgebra R L)]
+    rw [Bialgebra.counit_one, map_one, ← Algebra.algebraMap_eq_smul_one]
+  | ι T =>
+    rw [circHom_ι]
+    show ((SymmetricAlgebra.ι R L).comp
+            (OudomGuinCircConstruct.circByT_total T)) 1 = SymmetricAlgebra.ι R L T
+    rw [LinearMap.comp_apply, OudomGuinCircConstruct.circByT_total_one]
+  | mul A B ih_A ih_B =>
+    rw [map_mul, LinearMap.convMul_apply, Bialgebra.comul_one,
+        Algebra.TensorProduct.one_def, TensorProduct.map_tmul, LinearMap.mul'_apply, ih_A, ih_B]
+  | add A B ih_A ih_B =>
+    rw [map_add, WithConv.ofConv_add, LinearMap.add_apply, ih_A, ih_B]
 
 /-- **Prop 2.7 (ii)**: recursive equation for `T ∈ L` on the left.
     `T ○ (B · X) = (T ○ B) ○ X − T ○ (B ○ X)` for `T, X ∈ L`,
@@ -139,13 +228,18 @@ theorem circ_T_mul (T : L) (B : SymmetricAlgebra R L) (X : L) :
     `S(L) × S(L)` on the left argument.
 
     Stated via `Coalgebra.comul` from Q1a's `Bialgebra` instance on
-    `SymmetricAlgebra R L`. -/
+    `SymmetricAlgebra R L`. **By construction**: `circHom` is an algebra
+    hom into the convolution algebra, so `circHom (A * B) = circHom A *
+    circHom B` (convolution), which unfolds to exactly the RHS. -/
 theorem circ_mul_distrib_via_comul (A B C : SymmetricAlgebra R L) :
     oudomGuinCirc (R := R) (A * B) C =
       (LinearMap.mul' R (SymmetricAlgebra R L) ∘ₗ
         TensorProduct.map (oudomGuinCirc A) (oudomGuinCirc B))
         (Coalgebra.comul (R := R) (A := SymmetricAlgebra R L) C) := by
-  sorry
+  simp only [oudomGuinCirc_eq_ofConv, LinearMap.coe_comp, Function.comp_apply]
+  -- LHS = (circHom (A*B)).ofConv C = (circHom A * circHom B).ofConv C by map_mul,
+  -- then unfolds to mul' (map ... (comul C)) by convMul_apply.
+  rw [map_mul, LinearMap.convMul_apply]
 
 /-! ## §3: Reduction to `L × L` pre-Lie product
 
@@ -153,31 +247,43 @@ When both arguments are images of `L` under `ι`, the OG `○` agrees with
 the original pre-Lie product on `L`. -/
 
 /-- `ι(T) ○ ι(X) = ι(T * X)` for `T, X ∈ L`. The pre-Lie product on `L`
-    lifts to `S(L)` via `ι`. -/
+    lifts to `S(L)` via `ι`.
+
+    Direct: `oudomGuinCirc (ι T) (ι X) = (circGen T).ofConv (ι X) =
+    ι (circByT_total T (ι X)) = ι (T * X)` by `circByT_total_ι` (degree-1
+    base case of Q1b Step 1). -/
 theorem circ_ι_ι (T X : L) :
     oudomGuinCirc (R := R) (SymmetricAlgebra.ι R L T)
         (SymmetricAlgebra.ι R L X) =
       SymmetricAlgebra.ι R L (T * X) := by
-  -- Direct from Def 2.4 + Prop 2.7.i.
-  -- Specifically: T ○ ι(X) = T ○ (1 * ι(X)) = (T ○ 1) ○ ι(X) − T ○ (1 ○ ι(X))
-  --             = ι(T) ○ ι(X) − T ○ (ε(X) · 1)
-  --             = T*X (after evaluating ε(X) = 0 for X ∈ L of positive degree).
-  -- Requires unfolding via Prop 2.7.i and the L × L base case identification.
-  sorry
+  rw [oudomGuinCirc_eq_ofConv, circHom_ι]
+  show ((SymmetricAlgebra.ι R L).comp
+          (OudomGuinCircConstruct.circByT_total T)) (SymmetricAlgebra.ι R L X) =
+        SymmetricAlgebra.ι R L (T * X)
+  rw [LinearMap.comp_apply, OudomGuinCircConstruct.circByT_total_ι]
 
 /-- `1 ○ A = ε(A) · 1` for `A ∈ S(L)`. The counit map appears here.
-    (Prop 2.8 (i) in Oudom-Guin.) -/
+    (Prop 2.8 (i) in Oudom-Guin.)
+
+    Direct: `oudomGuinCirc 1 A = (circHom 1).ofConv A = (1 : WithConv).ofConv A
+    = algebraMap R (S L) (counit A) = counit A • 1`. Then `counit = algebraMapInv`
+    by `instBialgebra`'s construction. -/
 theorem one_circ (A : SymmetricAlgebra R L) :
     oudomGuinCirc (R := R) (1 : SymmetricAlgebra R L) A =
       (SymmetricAlgebra.algebraMapInv (M := L) A) • (1 : SymmetricAlgebra R L) := by
-  -- From Prop 2.7.iii with A = B = 1 (using Δ(C) = ...): 1 ○ C = ε(C) · 1.
-  sorry
+  rw [oudomGuinCirc_eq_ofConv, map_one, LinearMap.convOne_apply]
+  -- Goal: algebraMap R (S L) (counit A) = algebraMapInv A • 1
+  -- counit = algebraMapInv by definitional unfolding of instBialgebra.
+  rw [Algebra.algebraMap_eq_smul_one]
+  rfl
 
 /-- **Prop 2.8 (ii)**: counit and `○` commute. `ε(A ○ B) = ε(A) · ε(B)`.
 
-    Follows from Prop 2.7.iii at `A` or `B` constant (`one_circ`-style
-    argument). Used by Q2's algebraMap base case to reduce `ε((B ○ C₁) C₂)`
-    via the counit law. -/
+    **Status**: substrate-level proof outline scaffolded; the bialgebra
+    counit-comul axiom `(mul' R R) ∘ map ε ε ∘ Δ = ε` step on the `mul`
+    case is not yet closed. Cases `algebraMap`, `ι`, `add` close via
+    induction; `mul` case needs the bialgebra-axiom transport from
+    `Coalgebra.rTensor_counit_comul`. TODO: close. -/
 theorem counit_circ (A B : SymmetricAlgebra R L) :
     SymmetricAlgebra.algebraMapInv (M := L) (oudomGuinCirc (R := R) A B) =
       (SymmetricAlgebra.algebraMapInv (M := L) A) *
