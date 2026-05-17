@@ -42,10 +42,7 @@ pair invokes "I have visited Paris" / "I visited Paris" — neither
 sentence appears in Declerck. His actual perfect-vs-preterit minimal
 pair (book fn 49) is `I have overslept this morning` /
 `I overslept this morning`, where the present-perfect form requires
-that the morning is not yet over. The frames retain the Paris naming
-because the names are widely cited in textbook discussions; consumers
-should treat them as illustrative of Declerck's time-sphere
-distinction, not as literal Declerck examples.
+that the morning is not yet over.
 
 -/
 

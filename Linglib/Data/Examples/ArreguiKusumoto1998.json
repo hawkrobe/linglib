@@ -14,7 +14,7 @@
       {"name": "simultaneous (Junko sick at saying time)",   "judgment": "acceptable"},
       {"name": "past-shifted (Junko sick before saying)",    "judgment": "acceptable"}
     ],
-    "comment": "Arregui & Kusumoto 1998 ex (1), SALT VIII p. 1. Originating discussion of this example shape is Enç 1987 (cited by A&K as [Eng 1987]; no enc-1987 bib entry yet). Despite being commonly cited via the Heim & Kratzer 1998 *Semantics in Generative Grammar* textbook, the example is not in the H&K textbook (which has no tense chapter).",
+    "comment": "Arregui & Kusumoto 1998 ex (1), SALT VIII p. 1. Originating discussion of this example shape is Enç 1987 (cited by A&K as [Eng 1987]; no enc-1987 bib entry yet).",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   },
@@ -106,7 +106,7 @@
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
-    "comment": "Arregui & Kusumoto 1998 ex (7a), p. 4. THE English-side anchor example for A&K's TAC analysis. (Note: the 'Before John left, Mary was happy' sentence sometimes cited for A&K is not in the paper. Elliott/Eva is the actual A&K example.)",
+    "comment": "Arregui & Kusumoto 1998 ex (7a), p. 4. The English-side anchor example for A&K's TAC analysis.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
   },
