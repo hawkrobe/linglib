@@ -358,84 +358,9 @@ theorem hadLeft_is_perfect :
   simp only [ReichenbachFrame.isPerfect, hadLeftBefore]; omega
 
 
--- ════════════════════════════════════════════════════════════════
--- § 27. Bounded/Unbounded Default Interpretation (Declerck ch. 3 §1.2)
--- ════════════════════════════════════════════════════════════════
-
-/-! Declerck's Principle of Unmarked Temporal Interpretation (PUTI):
-
-    - Bounded + bounded → iconic (sequential) ordering
-    - Unbounded + unbounded → simultaneity
-    - Mixed → temporal inclusion
-
-    These are pragmatic defaults, not semantic entailments.
-
-    @cite{declerck-1991} ch. 3 §1.2. -/
-
-/-- A Reichenbach frame paired with its aspectual boundedness. -/
-structure BoundedFrame where
-  frame : ReichenbachFrame ℤ
-  boundedness : SituationBoundedness
-
-/-- "He arrived." — bounded (achievement). -/
-def arrivedBounded : BoundedFrame where
-  frame := { speechTime := 0, perspectiveTime := 0, referenceTime := -5, eventTime := -5 }
-  boundedness := .bounded
-
-/-- "He sat down." — bounded (achievement), after arrival. -/
-def satDownBounded : BoundedFrame where
-  frame := { speechTime := 0, perspectiveTime := 0, referenceTime := -4, eventTime := -4 }
-  boundedness := .bounded
-
-/-- "It was raining." — unbounded (activity/state). -/
-def rainingUnbounded : BoundedFrame where
-  frame := { speechTime := 0, perspectiveTime := 0, referenceTime := -3, eventTime := -3 }
-  boundedness := .unbounded
-
-/-- "The wind was blowing." — unbounded (activity), simultaneous with rain. -/
-def windBlowingUnbounded : BoundedFrame where
-  frame := { speechTime := 0, perspectiveTime := 0, referenceTime := -3, eventTime := -3 }
-  boundedness := .unbounded
-
-/-- "He was reading." — unbounded (activity). -/
-def readingUnbounded : BoundedFrame where
-  frame := { speechTime := 0, perspectiveTime := 0, referenceTime := -3, eventTime := -3 }
-  boundedness := .unbounded
-
-/-- "The phone rang." — bounded (achievement), included in reading interval. -/
-def phoneRangBounded : BoundedFrame where
-  frame := { speechTime := 0, perspectiveTime := 0, referenceTime := -3, eventTime := -3 }
-  boundedness := .bounded
-
-
--- ── § 27 temporal facts ──
-
-/-- Sequential (bounded + bounded): arrival before sitting (iconic ordering). -/
-theorem bounded_sequential :
-    arrivedBounded.frame.eventTime < satDownBounded.frame.eventTime := by native_decide
-
-/-- Simultaneous (unbounded + unbounded): rain and wind at the same time. -/
-theorem unbounded_simultaneous :
-    rainingUnbounded.frame.eventTime = windBlowingUnbounded.frame.eventTime := rfl
-
-/-- Inclusion (mixed): phone ringing within reading interval. -/
-theorem mixed_inclusion :
-    phoneRangBounded.frame.eventTime = readingUnbounded.frame.eventTime := rfl
-
-/-- Both bounded frames are bounded. -/
-theorem sequential_both_bounded :
-    arrivedBounded.boundedness = .bounded ∧ satDownBounded.boundedness = .bounded :=
-  ⟨rfl, rfl⟩
-
-/-- Both unbounded frames are unbounded. -/
-theorem simultaneous_both_unbounded :
-    rainingUnbounded.boundedness = .unbounded ∧ windBlowingUnbounded.boundedness = .unbounded :=
-  ⟨rfl, rfl⟩
-
-/-- Mixed: one unbounded, one bounded. -/
-theorem inclusion_mixed_boundedness :
-    readingUnbounded.boundedness = .unbounded ∧ phoneRangBounded.boundedness = .bounded :=
-  ⟨rfl, rfl⟩
+-- (§27 PUTI / Bounded-Unbounded migrated to Phenomena/Aspect/Studies/Declerck1991.lean
+--  per audit finding: aspect content, not tense content. BoundedFrame struct dropped
+--  per audit; plain ReichenbachFrame defs in the new file.)
 
 
 -- ════════════════════════════════════════════════════════════════

@@ -287,22 +287,8 @@ theorem beforeArrived_satisfies_past :
     satisfiesTense .past beforeArrived = true := by native_decide
 
 
--- ════════════════════════════════════════════════════════════════
--- § Declerck: Bounded/Unbounded (§27)
--- ════════════════════════════════════════════════════════════════
-
-/-- All §27 frames satisfy PAST. -/
-theorem arrivedBounded_satisfies_past :
-    satisfiesTense .past arrivedBounded.frame = true := by native_decide
-
-theorem satDownBounded_satisfies_past :
-    satisfiesTense .past satDownBounded.frame = true := by native_decide
-
-theorem rainingUnbounded_satisfies_past :
-    satisfiesTense .past rainingUnbounded.frame = true := by native_decide
-
-theorem windBlowingUnbounded_satisfies_past :
-    satisfiesTense .past windBlowingUnbounded.frame = true := by native_decide
+-- (§27 satisfiesTense theorems deleted: vacuous unfoldings of frame definitions; the
+--  frames themselves migrated to Phenomena/Aspect/Studies/Declerck1991.lean.)
 
 
 -- ════════════════════════════════════════════════════════════════
