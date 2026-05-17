@@ -1,6 +1,6 @@
 [
   {
-    "id": "declerck1991_domainShift_1a",
+    "id": "declerck1991_domainShift1a",
     "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 3 ex (1a)"},
     "language": "stan1293",
     "primaryText": "I left while Bill was sleeping and Mary was having a bath.",
@@ -16,7 +16,7 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "declerck1991_domainShift_1b",
+    "id": "declerck1991_domainShift1b",
     "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 3 ex (1b)"},
     "language": "stan1293",
     "primaryText": "Suddenly the phone rang. Jill stood up from her chair, went over to the telephone and picked up the receiver.",
@@ -32,7 +32,7 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "declerck1991_domainShift_3a",
+    "id": "declerck1991_domainShift3a",
     "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 3 ex (3a)"},
     "language": "stan1293",
     "primaryText": "The soldier got seriously wounded. He died shortly afterwards.",
@@ -48,7 +48,7 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "declerck1991_modalPast_wish",
+    "id": "declerck1991_modalPastWish",
     "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 2 §3"},
     "language": "stan1293",
     "primaryText": "I wish I didn't know his number.",
@@ -64,7 +64,7 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "declerck1991_modalPast_ifWas",
+    "id": "declerck1991_modalPastIfWas",
     "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 2 §3"},
     "language": "stan1293",
     "primaryText": "If I was a rich man, I would travel a lot.",
@@ -112,7 +112,7 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "declerck1991_perfect_haveCome",
+    "id": "declerck1991_perfectHaveCome",
     "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 2 §2"},
     "language": "stan1293",
     "primaryText": "I have come here.",
@@ -128,7 +128,7 @@
     "lgrConformance": "WORD_ALIGNED"
   },
   {
-    "id": "declerck1991_perfect_overslept",
+    "id": "declerck1991_perfectOverslept",
     "source": {"bibkey": "declerck-1991", "paperLabel": "ch. 3 fn 49"},
     "language": "stan1293",
     "primaryText": "I have overslept this morning.",

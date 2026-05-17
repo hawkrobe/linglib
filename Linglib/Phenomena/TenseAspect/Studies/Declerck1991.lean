@@ -37,13 +37,6 @@ Declerck examples. The verified Declerck example sentences live in
 the JSON block below (extracted from the 1991 book via Zotero MCP
 fulltext).
 
-Most notably, the `perfectVisitedParis` / `preteritVisitedParis`
-pair invokes "I have visited Paris" / "I visited Paris" — neither
-sentence appears in Declerck. His actual perfect-vs-preterit minimal
-pair (book fn 49) is `I have overslept this morning` /
-`I overslept this morning`, where the present-perfect form requires
-that the morning is not yet over.
-
 -/
 
 namespace Phenomena.TenseAspect.Studies.Declerck1991
@@ -58,8 +51,8 @@ open Data.Examples (LinguisticExample)
 namespace Examples
 open Data.Examples
 
-def domainShift_1a : LinguisticExample :=
-  { id := "declerck1991_domainShift_1a"
+def domainShift1a : LinguisticExample :=
+  { id := "declerck1991_domainShift1a"
     source := ⟨"declerck-1991", "ch. 3 ex (1a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -76,8 +69,8 @@ def domainShift_1a : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def domainShift_1b : LinguisticExample :=
-  { id := "declerck1991_domainShift_1b"
+def domainShift1b : LinguisticExample :=
+  { id := "declerck1991_domainShift1b"
     source := ⟨"declerck-1991", "ch. 3 ex (1b)"⟩
     reportedIn := none
     language := "stan1293"
@@ -94,8 +87,8 @@ def domainShift_1b : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def domainShift_3a : LinguisticExample :=
-  { id := "declerck1991_domainShift_3a"
+def domainShift3a : LinguisticExample :=
+  { id := "declerck1991_domainShift3a"
     source := ⟨"declerck-1991", "ch. 3 ex (3a)"⟩
     reportedIn := none
     language := "stan1293"
@@ -112,8 +105,8 @@ def domainShift_3a : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def modalPast_wish : LinguisticExample :=
-  { id := "declerck1991_modalPast_wish"
+def modalPastWish : LinguisticExample :=
+  { id := "declerck1991_modalPastWish"
     source := ⟨"declerck-1991", "ch. 2 §3"⟩
     reportedIn := none
     language := "stan1293"
@@ -130,8 +123,8 @@ def modalPast_wish : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def modalPast_ifWas : LinguisticExample :=
-  { id := "declerck1991_modalPast_ifWas"
+def modalPastIfWas : LinguisticExample :=
+  { id := "declerck1991_modalPastIfWas"
     source := ⟨"declerck-1991", "ch. 2 §3"⟩
     reportedIn := none
     language := "stan1293"
@@ -184,8 +177,8 @@ def whenPresent : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def perfect_haveCome : LinguisticExample :=
-  { id := "declerck1991_perfect_haveCome"
+def perfectHaveCome : LinguisticExample :=
+  { id := "declerck1991_perfectHaveCome"
     source := ⟨"declerck-1991", "ch. 2 §2"⟩
     reportedIn := none
     language := "stan1293"
@@ -202,8 +195,8 @@ def perfect_haveCome : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def perfect_overslept : LinguisticExample :=
-  { id := "declerck1991_perfect_overslept"
+def perfectOverslept : LinguisticExample :=
+  { id := "declerck1991_perfectOverslept"
     source := ⟨"declerck-1991", "ch. 3 fn 49"⟩
     reportedIn := none
     language := "stan1293"
@@ -220,7 +213,7 @@ def perfect_overslept : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def all : List LinguisticExample := [domainShift_1a, domainShift_1b, domainShift_3a, modalPast_wish, modalPast_ifWas, futurePerfect, whenPresent, perfect_haveCome, perfect_overslept]
+def all : List LinguisticExample := [domainShift1a, domainShift1b, domainShift3a, modalPastWish, modalPastIfWas, futurePerfect, whenPresent, perfectHaveCome, perfectOverslept]
 
 end Examples
 -- END GENERATED EXAMPLES
@@ -237,8 +230,8 @@ end Examples
     contrast: subordination keeps the perspective on the existing
     domain anchor; shift resets the perspective to S.
 
-    See `Examples.declerck1991_domainShift_1a` (subordination) and
-    `Examples.declerck1991_domainShift_1b` (shift) for verified
+    See `Examples.domainShift1a` (subordination) and
+    `Examples.domainShift1b` (shift) for verified
     Declerck examples. -/
 
 /-- "He left..." — past domain anchor (subordination pair). -/
@@ -271,24 +264,24 @@ def domainShiftCameBack : ReichenbachFrame ℤ where
   eventTime := -3
 
 /-- Both `left` frames are past (R < P). -/
-theorem domainSubord_left_past :
+theorem domainSubordLeftPast :
     domainSubordLeft.referenceTime < domainSubordLeft.perspectiveTime := by decide
 
-theorem domainShift_left_past :
+theorem domainShiftLeftPast :
     domainShiftLeft.referenceTime < domainShiftLeft.perspectiveTime := by decide
 
 /-- Subordination: `wouldReturn` is posterior within the domain. -/
-theorem domainSubord_posteriority :
+theorem domainSubordPosteriority :
     domainSubordWouldReturn.referenceTime > domainSubordLeft.eventTime := by decide
 
 /-- Shift: both frames have P = S (absolute perspective). -/
-theorem domainShift_both_absolute :
+theorem domainShiftBothAbsolute :
     domainShiftLeft.perspectiveTime = domainShiftLeft.speechTime ∧
     domainShiftCameBack.perspectiveTime = domainShiftCameBack.speechTime :=
   ⟨rfl, rfl⟩
 
 /-- Subordination: `wouldReturn` has shifted perspective. -/
-theorem domainSubord_shifted_perspective :
+theorem domainSubordShiftedPerspective :
     domainSubordWouldReturn.perspectiveTime ≠ domainSubordWouldReturn.speechTime := by
   decide
 
@@ -302,8 +295,8 @@ theorem domainSubord_shifted_perspective :
     tentativeness, hypotheticality) rather than past temporal
     location.
 
-    See `Examples.declerck1991_modalPast_wish` and
-    `Examples.declerck1991_modalPast_ifWas` for verified examples. -/
+    See `Examples.modalPastWish` and `Examples.modalPastIfWas` for
+    verified examples. -/
 
 /-- "I wanted to ask you something." — modal past.
     Past morphology, present-time reference (the wanting is now). -/
@@ -366,6 +359,27 @@ def fpsShouldPublish : ReichenbachFrame ℤ where
   referenceTime := 0
   eventTime := 0
 
+/-- PPS pattern: present in protasis, future in apodosis. -/
+theorem ppsProtasisPresentApodosisFuture :
+    ppsIfComes.isPresent ∧ ppsWillBeHappy.isFuture := by
+  refine ⟨rfl, ?_⟩
+  simp only [ReichenbachFrame.isFuture, ppsWillBeHappy]; omega
+
+/-- FPS pattern: future in protasis, present in apodosis (reversed). -/
+theorem fpsProtasisFutureApodosisPresent :
+    fpsIfWillGo.isFuture ∧ fpsShouldPublish.isPresent := by
+  refine ⟨?_, rfl⟩
+  simp only [ReichenbachFrame.isFuture, fpsIfWillGo]; omega
+
+/-- The PPS/FPS distinction is structural: the if-clause vs apodosis
+    tense pattern reverses between systems. -/
+theorem ppsFpsReversed :
+    (ppsIfComes.referenceTime = ppsIfComes.perspectiveTime ∧
+     ppsWillBeHappy.referenceTime > ppsWillBeHappy.perspectiveTime) ∧
+    (fpsIfWillGo.referenceTime > fpsIfWillGo.perspectiveTime ∧
+     fpsShouldPublish.referenceTime = fpsShouldPublish.perspectiveTime) := by
+  refine ⟨⟨rfl, ?_⟩, ⟨?_, rfl⟩⟩ <;> decide
+
 
 -- ════════════════════════════════════════════════════════════════
 -- § §26 — Temporal Conjunctions with Implicit TOs
@@ -377,8 +391,8 @@ def fpsShouldPublish : ReichenbachFrame ℤ where
     to a future reference point. The past-perfect form encodes an
     event anterior to a past reference point.
 
-    See `Examples.declerck1991_futurePerfect` and
-    `Examples.declerck1991_whenPresent` for verified examples. -/
+    See `Examples.futurePerfect` and `Examples.whenPresent` for
+    verified examples. -/
 
 /-- "I will have left by then" — future perfect.
     Event before a future reference point (R > P, E < R). -/
@@ -413,11 +427,11 @@ def beforeArrived : ReichenbachFrame ℤ where
   eventTime := -3
 
 /-- Before-clause: leaving before arrival (E_had_left < E_arrived). -/
-theorem before_leaving_before_arrival :
+theorem beforeLeavingBeforeArrival :
     hadLeftBefore.eventTime < beforeArrived.eventTime := by decide
 
 /-- Past perfect frame has E < R (perfect aspect). -/
-theorem hadLeft_is_perfect :
+theorem hadLeftIsPerfect :
     hadLeftBefore.isPerfect := by
   simp only [ReichenbachFrame.isPerfect, hadLeftBefore]; omega
 
@@ -509,17 +523,17 @@ def phoneRangFrame : ReichenbachFrame ℤ where
 /-- Bounded + bounded → sequential: arrival precedes sitting in the
     constructed frames (illustration of Declerck's domain-shift case
     with iconic ordering). -/
-theorem bounded_sequential :
+theorem boundedSequential :
     arrivedFrame.eventTime < satDownFrame.eventTime := by decide
 
 /-- Unbounded + unbounded → simultaneous: raining and wind-blowing share
     an event time in the constructed frames. -/
-theorem unbounded_simultaneous :
+theorem unboundedSimultaneous :
     rainingFrame.eventTime = windBlowingFrame.eventTime := rfl
 
 /-- Mixed bounded + unbounded → temporal inclusion: phone ringing
     falls within reading in the constructed frames. -/
-theorem mixed_inclusion :
+theorem mixedInclusion :
     phoneRangFrame.eventTime = readingFrame.eventTime := rfl
 
 
@@ -534,53 +548,54 @@ theorem mixed_inclusion :
     the situation is anchored to the present time-sphere or detached
     from it).
 
-    See `Examples.declerck1991_perfect_haveCome` and
-    `Examples.declerck1991_perfect_overslept` for verified examples.
-    `I have overslept this morning` / `I overslept this morning` is
-    Declerck's actual perfect-vs-preterit minimal pair (book fn 49). -/
+    Declerck's minimal pair (book fn 49): `I have overslept this
+    morning` requires that the morning is not yet over (present
+    time-sphere); `I overslept this morning` does not (past time-
+    sphere). See `Examples.perfectOverslept`. -/
 
-/-- "I have visited Paris." — present perfect.
-    Pre-present sector: E < R and R = P (present time-sphere). -/
-def perfectVisitedParis : ReichenbachFrame ℤ where
+/-- "I have overslept this morning." — present perfect.
+    Pre-present sector: E < R and R = P (present time-sphere).
+    The morning must not yet be over. -/
+def perfectOverslept : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := 0
   eventTime := -3
 
-/-- "I visited Paris." — simple preterit.
-    Past time-sphere: E = R < P. -/
-def preteritVisitedParis : ReichenbachFrame ℤ where
+/-- "I overslept this morning." — simple preterit.
+    Past time-sphere: E = R < P. The morning may be over. -/
+def preteritOverslept : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
   referenceTime := -3
   eventTime := -3
 
 /-- Both frames locate the event before speech time. -/
-theorem perfectPreterit_both_event_before_speech :
-    perfectVisitedParis.eventTime < perfectVisitedParis.speechTime ∧
-    preteritVisitedParis.eventTime < preteritVisitedParis.speechTime := by
+theorem perfectPreteritBothEventBeforeSpeech :
+    perfectOverslept.eventTime < perfectOverslept.speechTime ∧
+    preteritOverslept.eventTime < preteritOverslept.speechTime := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- Same event time — the difference is structural, not temporal. -/
-theorem perfectPreterit_same_eventTime :
-    perfectVisitedParis.eventTime = preteritVisitedParis.eventTime := rfl
+theorem perfectPreteritSameEventTime :
+    perfectOverslept.eventTime = preteritOverslept.eventTime := rfl
 
 /-- Present perfect: E < R (perfect aspect, pre-present). -/
-theorem perfect_is_perfect :
-    perfectVisitedParis.isPerfect := by
-  simp only [ReichenbachFrame.isPerfect, perfectVisitedParis]; omega
+theorem perfectIsPerfect :
+    perfectOverslept.isPerfect := by
+  simp only [ReichenbachFrame.isPerfect, perfectOverslept]; omega
 
 /-- Present perfect: R = P (present orientation). -/
-theorem perfect_isPresent :
-    perfectVisitedParis.isPresent := rfl
+theorem perfectIsPresent :
+    perfectOverslept.isPresent := rfl
 
 /-- Preterit: R < P (past orientation). -/
-theorem preterit_isPast :
-    preteritVisitedParis.isPast := by
-  simp only [ReichenbachFrame.isPast, preteritVisitedParis]; omega
+theorem preteritIsPast :
+    preteritOverslept.isPast := by
+  simp only [ReichenbachFrame.isPast, preteritOverslept]; omega
 
 /-- Preterit is perfective (E = R). -/
-theorem preterit_is_perfective :
-    preteritVisitedParis.isPerfective := rfl
+theorem preteritIsPerfective :
+    preteritOverslept.isPerfective := rfl
 
 end Phenomena.TenseAspect.Studies.Declerck1991
