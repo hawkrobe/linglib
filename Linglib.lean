@@ -1592,8 +1592,9 @@ import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020PMF
 import Linglib.Phenomena.Processing.Studies.GiulianelliEtAl2026
+import Linglib.Phenomena.Polysemy.Studies.ChatzikyriakidisLuo2020
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
-import Linglib.Phenomena.Polysemy.Studies.Sutton2024
+import Linglib.Phenomena.Polysemy.Studies.Pustejovsky1995
 import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
 import Linglib.Phenomena.Polysemy.Studies.ErkHerbelot2024
 import Linglib.Phenomena.Possession.Studies.Heine1997
