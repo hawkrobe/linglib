@@ -5,68 +5,22 @@ import Linglib.Data.Examples.Schema
 
 /-!
 # Partee (2010): Privative Adjectives: Subsective plus Coercion
-@cite{partee-2010} @cite{kamp-1975} @cite{kamp-partee-1995} @cite{nowak-2000}
+@cite{partee-2010}
 
-In R. Bäuerle, U. Reyle, & T. E. Zimmermann (eds.), *Presuppositions and
-Discourse: Essays Offered to Hans Kamp*, 273–292. Brill.
+@cite{partee-2010} argues no adjectives are genuinely
+@cite{kamp-1975}-privative: apparent privatives are subsective after
+NVP-driven noun-coercion (@cite{kamp-partee-1995} formulae 18, 20).
+Polish NP-splitting data from @cite{nowak-2000} is the empirical wedge.
 
-(Circulated as a manuscript since 2001.)
+## Main results
 
-## Overview
-
-@cite{partee-2010} argues that there are **no genuinely privative
-adjectives**. What @cite{kamp-1975} classified as "privative" (fake,
-counterfeit, fictitious) is actually **subsective** — under coercion of
-the noun's denotation.
-
-## Structure of the argument (mirrors the paper)
-
-- **§ 2** (paper): reviews the four-class hierarchy with meaning
-  postulates; introduces the gun-real-or-fake puzzle at ex. (10b).
-- **§ 3** (paper): Polish NP-split data from @cite{nowak-2000}; shows
-  that the split diagnostic crosses the privative/non-privative
-  boundary, supporting reclassification.
-- **§ 4** (paper): the "no privative adjectives" hypothesis. Coercion
-  is **principled**, not arbitrary: it is driven jointly by the
-  **Non-Vacuity Principle (NVP)** and the **Head Primacy Principle
-  (HPP)** of @cite{kamp-partee-1995} (paper formulae 18 and 20).
-
-## What this file formalises
-
-The licensing infrastructure — NVP, HPP, `LicensedCoercion` — lives in
-`Theories/Semantics/Composition/Coercion.lean`. The `RevisedClass`
-3-class enum lives in `Theories/Semantics/Gradability/Classification.lean`.
-This study file states the two paper-anchored substantive theorems:
-
-1. `privative_admits_licensed_coercion`: every Kamp-privative
-   adjective admits an NVP-licensed coercion of any noun whose direct
-   application would force vacuity. (Paper § 4.)
-2. `fakeAdj_coerces`: the previous theorem instantiated on
-   @cite{kamp-1975}'s canonical `fakeAdj` witness — the formal bridge
-   showing Partee's reanalysis applies to Kamp's own example.
-
-Both proofs are `sorry`-marked. A faithful proof requires constructing
-the minimal NVP-satisfying shift and verifying HPP-locality; this is
-non-trivial set-theoretic combinatorics that depends on substrate
-(`Set` API around `Property.union`) still being shaped.
-
-## What the paper says but this file does NOT formalise
-
-- The full **NVP-vs-HPP tradeoff calculation** (which principle
-  "wins" for each adjective class). The paper's discussion is informal
-  prose; encoding it would require a decision procedure over coercion
-  contexts. Out of scope here.
-- The constitutive-material cases (stone lion, wooden horse,
-  velveteen rabbit) — encoded as `LinguisticExample`s only.
-- The retired-N gradient (retired professor vs retired CEO) — paper
-  flags this as an open empirical question; encoded as examples only.
-
-## Cited examples
-
-Inline `LinguisticExample` values for paper exs. 10, 11, 13, 14, 15,
-16, 17, 19, 21, 22 are generated from `Linglib/Data/Examples/Partee2010.json`
-via `python3 scripts/gen_examples.py Partee2010` into the marker block
-at the end of this file.
+* `isPrivative_no_LicensedCoercion`: Kamp-privative adjectives admit
+  no `LicensedCoercion` — the formal obstruction motivating reanalysis.
+* `fakeReanalysis : ParteeReanalysis Kamp1975.fakeAdj` — the
+  constructive reanalysis of Kamp's paradigm privative as subsective-
+  after-coercion.
+* Witness bridges from Kamp's `grayAdj`/`skillfulAdj`/`allegedAdj`
+  to `RevisedClass` cases.
 -/
 
 namespace Partee2010
@@ -76,65 +30,49 @@ open Semantics.Composition.Coercion
 
 variable {W E : Type*}
 
-/-! ### Substantive Partee 2010 claims (sorry-marked) -/
+/-- Kamp-privative adjectives admit no NVP-licensed coercion. For any
+    shift, NVP requires a positive witness `x` with `adj shift w x ∧
+    shift w x`; privativity forces `adj shift w x → ¬ shift w x`. -/
+theorem isPrivative_no_LicensedCoercion {adj : AdjMeaning W E}
+    (hp : isPrivative adj) (N : Property W E) (w : W) :
+    IsEmpty (LicensedCoercion N adj w) :=
+  ⟨fun lc => by
+    obtain ⟨x, hadj, hshift⟩ := lc.satisfies_nvp.1
+    exact hp lc.shift w x hadj hshift⟩
 
-/-- **Partee 2010 § 4 (main claim).** Every Kamp-privative adjective
-    admits an NVP-licensed coercion of any noun whose direct
-    application yields a vacuous predicate.
+/-- Specialisation to `Kamp1975.fakeAdj`. -/
+theorem fakeAdj_no_LicensedCoercion (N : Property Kamp1975.W2 Kamp1975.E3)
+    (w : Kamp1975.W2) :
+    IsEmpty (LicensedCoercion N Kamp1975.fakeAdj w) :=
+  isPrivative_no_LicensedCoercion Kamp1975.fake_privative N w
 
-    Paper § 4: the privative classification arises only because the
-    noun's denotation is held fixed; under the Non-Vacuity Principle
-    (`@cite{kamp-partee-1995}` formula 18), the noun coerces to a
-    wider extension making `adj N*` non-vacuous within the local
-    domain established by the Head Primacy Principle (formula 20).
+/-- Reanalysis of `Kamp1975.fakeAdj`: widen `N` by `∨` with `fakeAdj
+    N`, take the reanalysed meaning to be membership-in-`N`-and-of-
+    fake-type. Inert hypothesis is vacuously satisfied because the
+    direct application of `fakeAdj N` to entities in `N` is empty
+    (privative). -/
+def fakeReanalysis : ParteeReanalysis Kamp1975.fakeAdj where
+  noun_shift N := fun w x => N w x ∨ Kamp1975.fakeAdj N w x
+  adj_subsective := fun N _ x => N _ x ∧ x = Kamp1975.E3.b
+  shift_supseteq _ _ _ hN := Or.inl hN
+  is_subsective _ _ _ h := h.1
+  shift_inert N w hne := by
+    obtain ⟨x, hadj, hN⟩ := hne.1
+    exact absurd hN (Kamp1975.fake_privative N w x hadj)
 
-    Proof open. -/
-theorem privative_admits_licensed_coercion
-    {adj : AdjMeaning W E} (_hp : isPrivative adj)
-    (N : Property W E) (w : W) (_hne : ∃ x, adj N w x) :
-    Nonempty (LicensedCoercion N adj w) := by
-  -- TODO(NVP): construct shift := λ w' x => N w' x ∨ adj N w' x;
-  --   ext_of: trivial Or.inl; satisfies_nvp:
-  --   positive extension witnessed by hne; negative extension
-  --   non-empty in HPPDomain shift w requires a "small-enough N"
-  --   hypothesis or a global non-triviality assumption (paper's
-  --   informal "outside its normal bounds" caveat).
-  sorry
+/-! ### `RevisedClass` witness bridges -/
 
-/-- **Bridge to @cite{kamp-1975}.** Partee 2010's reanalysis applied
-    to Kamp's canonical privative witness `Kamp1975.fakeAdj`: even the
-    paradigm "fake" adjective admits a licensed coercion. This is the
-    formal counterpart to the prose claim "fake gun → fake-gun-allowing
-    gun*". Proof reduces to the general claim via `fake_privative`. -/
-theorem fakeAdj_coerces
-    (N : Property Kamp1975.W2 Kamp1975.E3) (w : Kamp1975.W2)
-    (hne : ∃ x, Kamp1975.fakeAdj N w x) :
-    Nonempty (LicensedCoercion N Kamp1975.fakeAdj w) :=
-  privative_admits_licensed_coercion Kamp1975.fake_privative N w hne
+theorem grayAdj_RevisedClass_intersective :
+    RevisedClass.intersective.satisfies Kamp1975.grayAdj :=
+  Kamp1975.gray_intersective
 
-/-! ### Polish NP-splitting (paper § 3, @cite{nowak-2000})
+theorem skillfulAdj_RevisedClass_subsective :
+    RevisedClass.subsective.satisfies Kamp1975.skillfulAdj :=
+  Kamp1975.skillful_subsective
 
-Paper § 3 uses Polish NP-splitting (Nowak 2000) to argue against the
-traditional 4-class hierarchy: the split diagnostic crosses the
-privative/non-privative boundary, treating former privatives the same
-as intersective and subsective adjectives, but rejecting modal
-non-subsectives.
-
-@cite{nowak-2000} reports a critical minimal pair on `biedny` 'poor':
-the adjective splits in the intersective 'not rich' reading (ex. 15b)
-but **not** in the non-subsective 'pitiful' reading (ex. 16a). This is
-the key empirical observation that licenses the 3-class collapse: the
-splitting diagnostic tracks the reading-level semantic class, not the
-lexical form.
-
-The 3-class enum `RevisedClass` in
-`Theories/Semantics/Gradability/Classification.lean` encodes the
-post-collapse hierarchy. Per @cite{partee-2010} footnote 1 the
-hierarchy is subset-ordered, not linear: intersective ⊂ subsective ⊂
-unrestricted.
-
-The Polish judgments themselves live as `LinguisticExample` data
-generated into the block below. -/
+theorem allegedAdj_RevisedClass_nonSubsective :
+    RevisedClass.nonSubsective.satisfies Kamp1975.allegedAdj :=
+  Kamp1975.alleged_not_subsective
 
 -- BEGIN GENERATED EXAMPLES
 -- (Generated from Linglib/Data/Examples/Partee2010.json by scripts/gen_examples.py.
@@ -341,7 +279,151 @@ def ex_22b : LinguisticExample :=
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 
-def all : List LinguisticExample := [ex_10a, ex_10b, ex_11a, ex_11b, ex_13b, ex_14b, biedny_ambiguity, ex_17b, ex_19b, ex_21b, ex_22b]
+def ex_12a : LinguisticExample :=
+  { id := "partee2010_12a"
+    source := ⟨"nowak-2000", "(12a)"⟩
+    reportedIn := some ⟨"partee-2010", "(12a)"⟩
+    language := "poli1260"
+    primaryText := "Włamano się do nowego sklepu."
+    discourseSegments := []
+    glossedTokens := [("Włamano", "break.in-NEUT.SG"), ("się", "REFL"), ("do", "to"), ("nowego", "new.GEN.SG.M"), ("sklepu", "store.GEN.SG")]
+    translation := "Someone broke into the new store."
+    context := "Unmarked NP-internal order; baseline for the split in (12b)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "Partee 2010 §3 ex. (12a); Nowak 2000. Unsplit baseline for the (12b) split-NP contrast."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
+def ex_12b : LinguisticExample :=
+  { id := "partee2010_12b"
+    source := ⟨"nowak-2000", "(12b)"⟩
+    reportedIn := some ⟨"partee-2010", "(12b)"⟩
+    language := "poli1260"
+    primaryText := "Do sklepu włamano się nowego."
+    discourseSegments := []
+    glossedTokens := [("Do", "to"), ("sklepu", "store.GEN.SG"), ("włamano", "break.in-NEUT.SG"), ("się", "REFL"), ("nowego", "new.GEN.SG.M")]
+    translation := "Someone broke into the NEW store."
+    context := "NP-split: noun-in-PP sentence-initial, adjective sentence-final. Intersective 'nowy' (new) splits cleanly."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "Partee 2010 §3 ex. (12b); Nowak 2000. A second splittable intersective adjective, paired with (11b) to show the pattern is not lexically isolated."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
+def ex_13a : LinguisticExample :=
+  { id := "partee2010_13a"
+    source := ⟨"nowak-2000", "(13a)"⟩
+    reportedIn := some ⟨"partee-2010", "(13a)"⟩
+    language := "poli1260"
+    primaryText := "Do rozległej weszliśmy doliny."
+    discourseSegments := []
+    glossedTokens := [("Do", "to"), ("rozległej", "large.GEN.SG.F"), ("weszliśmy", "enter.PST.1PL"), ("doliny", "valley.GEN.SG")]
+    translation := "We entered a large VALLEY."
+    context := "Alternate split order: preposition + adjective initial, noun final. Pair-mate of (13b)."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "Partee 2010 §3 ex. (13a); Nowak 2000. Both orderings of (13) are acceptable splits, demonstrating that the construction does not constrain which element is sentence-final."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
+def ex_14a : LinguisticExample :=
+  { id := "partee2010_14a"
+    source := ⟨"nowak-2000", "(14a)"⟩
+    reportedIn := some ⟨"partee-2010", "(14a)"⟩
+    language := "poli1260"
+    primaryText := "Z byłym rozmawiała prezydentem."
+    discourseSegments := []
+    glossedTokens := [("Z", "with"), ("byłym", "former.INS.SG.M"), ("rozmawiała", "talk.PST.3SG.F"), ("prezydentem", "president.INS.SG")]
+    translation := "She talked with the former PRESIDENT."
+    context := "Attempted NP-split with non-subsective 'były' (former). Ungrammatical regardless of split order; pair-mate of (14b)."
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "Partee 2010 §3 ex. (14a); Nowak 2000. The ungrammaticality holds for both split orders, ruling out a syntactic explanation tied to which element is sentence-final."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
+
+def ex_17a : LinguisticExample :=
+  { id := "partee2010_17a"
+    source := ⟨"partee-2010", "(17a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "I don't care whether that fur is fake fur or real fur."
+    discourseSegments := []
+    glossedTokens := [("I", "1SG"), ("don't", "do.PRS.NEG"), ("care", "care"), ("whether", "whether"), ("that", "DEM"), ("fur", "fur"), ("is", "be.PRS.3SG"), ("fake", "fake"), ("fur", "fur"), ("or", "or"), ("real", "real"), ("fur", "fur")]
+    translation := "I don't care whether that fur is fake fur or real fur."
+    context := "Explicit form of the fur disjunction, with both 'fake fur' and 'real fur' as full NPs. The acceptability shows the noun 'fur' uncontroversially covers both extensions."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "Partee 2010 §4 ex. (17a). The unreduced form makes the coercion visible: 'fur' must be the extension covering both halves of the disjunction."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex_19a : LinguisticExample :=
+  { id := "partee2010_19a"
+    source := ⟨"kamp-partee-1995", "(19a) in Partee 2010"⟩
+    reportedIn := some ⟨"partee-2010", "(19a)"⟩
+    language := "stan1293"
+    primaryText := "a giant midget (a midget, but an exceptionally large one)"
+    discourseSegments := []
+    glossedTokens := [("a", "INDEF"), ("giant", "giant"), ("midget", "midget")]
+    translation := "a giant midget (a midget, but an exceptionally large one)"
+    context := "HPP pair-mate of (19b): with 'midget' as head, the local domain is midgets; 'giant' shifts to 'large for a midget'. Same words, opposite interpretations."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "Partee 2010 §4 ex. (19a); Kamp & Partee 1995. The (19a)/(19b) minimal pair is the canonical demonstration that head choice fixes the local domain — without (19a) as foil, (19b) does not make the HPP point."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex_21a : LinguisticExample :=
+  { id := "partee2010_21a"
+    source := ⟨"kamp-partee-1995", "(21a) in Partee 2010"⟩
+    reportedIn := some ⟨"partee-2010", "(21a)"⟩
+    language := "stan1293"
+    primaryText := "This is a sharp knife."
+    discourseSegments := []
+    glossedTokens := [("This", "DEM"), ("is", "be.PRS.3SG"), ("a", "INDEF"), ("sharp", "sharp"), ("knife", "knife")]
+    translation := "This is a sharp knife."
+    context := "Episodic predication mate of the generic (21b). Both can be true together; 'sharp' is not redundant in (21a) because NVP requires the local domain of knives to contain both sharp and non-sharp instances."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "Partee 2010 §4 ex. (21a); Kamp & Partee 1995. Without (21a) as foil, the NVP analysis of (21b) does not have a contrastive case to anchor."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def ex_22a : LinguisticExample :=
+  { id := "partee2010_22a"
+    source := ⟨"partee-2010", "(22a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "How many poets are there in Amherst?"
+    discourseSegments := []
+    glossedTokens := [("How", "how"), ("many", "many"), ("poets", "poet.PL"), ("are", "be.PRS.3PL"), ("there", "EXIST"), ("in", "in"), ("Amherst", "Amherst")]
+    translation := "How many poets are there in Amherst?"
+    context := "Existential predicate companion of (22b). With 'are there', 'poets' presupposes living poets, contrasting with (22b) where 'are buried' presupposes dead poets. Same noun, context-shifted extension."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := []
+    comment := "Partee 2010 §4 ex. (22a). Required as the live-poets foil for (22b)'s dead-poets reading; the pair demonstrates that the noun-extension shift Partee invokes for privatives is independently attested for ordinary nouns under predicate-driven coercion."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
+
+def all : List LinguisticExample := [ex_10a, ex_10b, ex_11a, ex_11b, ex_13b, ex_14b, biedny_ambiguity, ex_17b, ex_19b, ex_21b, ex_22b, ex_12a, ex_12b, ex_13a, ex_14a, ex_17a, ex_19a, ex_21a, ex_22a]
 
 end Examples
 -- END GENERATED EXAMPLES

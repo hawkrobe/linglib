@@ -194,5 +194,149 @@
     "comment": "Partee 2010 §4 ex. (22b). Closing argument: noun extensions are context-adjustable independently of adjective modification, so the coercion machinery posited for privatives isn't an ad hoc rescue — it's a general property of noun interpretation.",
     "metaLanguage": "stan1293",
     "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_12a",
+    "source": {"bibkey": "nowak-2000", "paperLabel": "(12a)"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(12a)"},
+    "language": "poli1260",
+    "primaryText": "Włamano się do nowego sklepu.",
+    "glossedTokens": [
+      ["Włamano", "break.in-NEUT.SG"], ["się", "REFL"],
+      ["do", "to"], ["nowego", "new.GEN.SG.M"], ["sklepu", "store.GEN.SG"]
+    ],
+    "translation": "Someone broke into the new store.",
+    "context": "Unmarked NP-internal order; baseline for the split in (12b).",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §3 ex. (12a); Nowak 2000. Unsplit baseline for the (12b) split-NP contrast.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "partee2010_12b",
+    "source": {"bibkey": "nowak-2000", "paperLabel": "(12b)"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(12b)"},
+    "language": "poli1260",
+    "primaryText": "Do sklepu włamano się nowego.",
+    "glossedTokens": [
+      ["Do", "to"], ["sklepu", "store.GEN.SG"],
+      ["włamano", "break.in-NEUT.SG"], ["się", "REFL"],
+      ["nowego", "new.GEN.SG.M"]
+    ],
+    "translation": "Someone broke into the NEW store.",
+    "context": "NP-split: noun-in-PP sentence-initial, adjective sentence-final. Intersective 'nowy' (new) splits cleanly.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §3 ex. (12b); Nowak 2000. A second splittable intersective adjective, paired with (11b) to show the pattern is not lexically isolated.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "partee2010_13a",
+    "source": {"bibkey": "nowak-2000", "paperLabel": "(13a)"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(13a)"},
+    "language": "poli1260",
+    "primaryText": "Do rozległej weszliśmy doliny.",
+    "glossedTokens": [
+      ["Do", "to"], ["rozległej", "large.GEN.SG.F"],
+      ["weszliśmy", "enter.PST.1PL"], ["doliny", "valley.GEN.SG"]
+    ],
+    "translation": "We entered a large VALLEY.",
+    "context": "Alternate split order: preposition + adjective initial, noun final. Pair-mate of (13b).",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §3 ex. (13a); Nowak 2000. Both orderings of (13) are acceptable splits, demonstrating that the construction does not constrain which element is sentence-final.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "partee2010_14a",
+    "source": {"bibkey": "nowak-2000", "paperLabel": "(14a)"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(14a)"},
+    "language": "poli1260",
+    "primaryText": "Z byłym rozmawiała prezydentem.",
+    "glossedTokens": [
+      ["Z", "with"], ["byłym", "former.INS.SG.M"],
+      ["rozmawiała", "talk.PST.3SG.F"], ["prezydentem", "president.INS.SG"]
+    ],
+    "translation": "She talked with the former PRESIDENT.",
+    "context": "Attempted NP-split with non-subsective 'były' (former). Ungrammatical regardless of split order; pair-mate of (14b).",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "comment": "Partee 2010 §3 ex. (14a); Nowak 2000. The ungrammaticality holds for both split orders, ruling out a syntactic explanation tied to which element is sentence-final.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "partee2010_17a",
+    "source": {"bibkey": "partee-2010", "paperLabel": "(17a)"},
+    "language": "stan1293",
+    "primaryText": "I don't care whether that fur is fake fur or real fur.",
+    "glossedTokens": [
+      ["I", "1SG"], ["don't", "do.PRS.NEG"], ["care", "care"], ["whether", "whether"],
+      ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"],
+      ["fake", "fake"], ["fur", "fur"], ["or", "or"], ["real", "real"], ["fur", "fur"]
+    ],
+    "translation": "I don't care whether that fur is fake fur or real fur.",
+    "context": "Explicit form of the fur disjunction, with both 'fake fur' and 'real fur' as full NPs. The acceptability shows the noun 'fur' uncontroversially covers both extensions.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §4 ex. (17a). The unreduced form makes the coercion visible: 'fur' must be the extension covering both halves of the disjunction.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_19a",
+    "source": {"bibkey": "kamp-partee-1995", "paperLabel": "(19a) in Partee 2010"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(19a)"},
+    "language": "stan1293",
+    "primaryText": "a giant midget (a midget, but an exceptionally large one)",
+    "glossedTokens": [
+      ["a", "INDEF"], ["giant", "giant"], ["midget", "midget"]
+    ],
+    "translation": "a giant midget (a midget, but an exceptionally large one)",
+    "context": "HPP pair-mate of (19b): with 'midget' as head, the local domain is midgets; 'giant' shifts to 'large for a midget'. Same words, opposite interpretations.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §4 ex. (19a); Kamp & Partee 1995. The (19a)/(19b) minimal pair is the canonical demonstration that head choice fixes the local domain — without (19a) as foil, (19b) does not make the HPP point.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_21a",
+    "source": {"bibkey": "kamp-partee-1995", "paperLabel": "(21a) in Partee 2010"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(21a)"},
+    "language": "stan1293",
+    "primaryText": "This is a sharp knife.",
+    "glossedTokens": [
+      ["This", "DEM"], ["is", "be.PRS.3SG"], ["a", "INDEF"],
+      ["sharp", "sharp"], ["knife", "knife"]
+    ],
+    "translation": "This is a sharp knife.",
+    "context": "Episodic predication mate of the generic (21b). Both can be true together; 'sharp' is not redundant in (21a) because NVP requires the local domain of knives to contain both sharp and non-sharp instances.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §4 ex. (21a); Kamp & Partee 1995. Without (21a) as foil, the NVP analysis of (21b) does not have a contrastive case to anchor.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_22a",
+    "source": {"bibkey": "partee-2010", "paperLabel": "(22a)"},
+    "language": "stan1293",
+    "primaryText": "How many poets are there in Amherst?",
+    "glossedTokens": [
+      ["How", "how"], ["many", "many"], ["poets", "poet.PL"],
+      ["are", "be.PRS.3PL"], ["there", "EXIST"],
+      ["in", "in"], ["Amherst", "Amherst"]
+    ],
+    "translation": "How many poets are there in Amherst?",
+    "context": "Existential predicate companion of (22b). With 'are there', 'poets' presupposes living poets, contrasting with (22b) where 'are buried' presupposes dead poets. Same noun, context-shifted extension.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §4 ex. (22a). Required as the live-poets foil for (22b)'s dead-poets reading; the pair demonstrates that the noun-extension shift Partee invokes for privatives is independently attested for ordinary nouns under predicate-driven coercion.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
   }
 ]
