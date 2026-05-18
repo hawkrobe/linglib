@@ -461,6 +461,257 @@ theorem bMinusLin_SL_ιTree (a : α) (t : Nonplanar α) :
   rw [h_one_tprod, psiA_tensor_tprod, psiA_multi_zero]
   rfl
 
+/-! ### §9.5: Length-vanishing substrate for the ι case of Piece C
+
+The cocycle ι case (`bMinusLin_SL_oudomGuinStar` at `A = ι Y`) reduces — via
+Sweedler bashing on `cm B` — to the property that `bMinusLin_SL` extracts only
+the length-1 component. We package this as two private lemmas:
+
+- `bMinusLin_SL_ι_mul_ι`: `bMinusLin_SL a (ι Z · ι W) = 0`. Grade-2 vanishing
+  via the TA-side `psiA_multi_succ_succ`.
+- `bMinusLin_SL_ι_mul_eps`: `bMinusLin_SL a (ι Z · Y) = ε(Y) • bMinusLin_SL a (ι Z)`.
+  The "B⁻ extracts the length-1 part" statement. Lifted from TA via
+  `algHomL_surjective` + `TA_linearMap_ext_tprod`.
+- `bMinusLin_SL_ι_star`: `bMinusLin_SL a (ι Y ★ B) = psiA_L a (circByT_total Y B)`.
+  The length-argument identity for the ι case of OG Prop 3.2.
+-/
+
+/-- **Grade-2 vanishing**: `bMinusLin_SL a (ι Z · ι W) = 0`. Direct from
+    `psiA_multi_succ_succ` (psiA_tensor vanishes on grade ≥ 2 tprods). -/
+private theorem bMinusLin_SL_ι_mul_ι (a : α) (Z W : LL) :
+    bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL Z * SymmetricAlgebra.ι ℤ LL W) = 0 := by
+  -- ι Z * ι W = algHom (ι_TA Z * ι_TA W). Push to TA side.
+  have h_alg : SymmetricAlgebra.ι ℤ LL Z * SymmetricAlgebra.ι ℤ LL W =
+      PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)
+        (TensorAlgebra.ι ℤ Z * TensorAlgebra.ι ℤ W) := by
+    show _ = (SymmetricAlgebra.algHom ℤ LL).toLinearMap _
+    show _ = SymmetricAlgebra.algHom ℤ LL (TensorAlgebra.ι ℤ Z * TensorAlgebra.ι ℤ W)
+    rw [map_mul]
+    rfl
+  rw [h_alg, bMinusLin_SL_algHomL]
+  -- ι_TA Z * ι_TA W = tprod 1 ![Z] * tprod 1 ![W] = tprod 2 (![Z] ++ ![W]).
+  rw [PreLie.OudomGuinCircConstruct.ι_eq_tprod_one Z,
+      PreLie.OudomGuinCircConstruct.ι_eq_tprod_one W]
+  rw [PreLie.OudomGuinCircConstruct.tprod_mul_tprod]
+  -- psiA_tensor (tprod 2 ...) = psiA_multi 2 ... = 0.
+  rw [psiA_tensor_tprod, psiA_multi_succ_succ]
+  rfl
+
+/-- Helper: `algebraMapInv ∘ algHomL` vanishes on positive-grade tprods.
+    `algHom (tprod (n+1) f) = ∏ ι(f i)` is a product of `n+1` ι-elements;
+    `algebraMapInv` of any ι is 0, so the product is 0 (for n+1 ≥ 1). -/
+private lemma algebraMapInv_algHom_tprod_succ (n : ℕ) (f : Fin (n+1) → LL) :
+    SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)
+        ((SymmetricAlgebra.algHom ℤ LL) (TensorAlgebra.tprod ℤ LL (n+1) f)) = 0 := by
+  rw [TensorAlgebra.tprod_apply, _root_.map_list_prod, List.map_ofFn,
+      _root_.map_list_prod, List.map_ofFn]
+  -- Goal: (List.ofFn (algebraMapInv ∘ algHom ∘ fun i => ι (f i))).prod = 0.
+  -- Each composed function maps to 0: algHom (ι x) = ι_SL x; algebraMapInv (ι_SL x) = 0.
+  simp only [Function.comp_def,
+             show ∀ x, SymmetricAlgebra.algHom ℤ LL (TensorAlgebra.ι ℤ x) =
+                 SymmetricAlgebra.ι ℤ LL x from fun _ => rfl,
+             SymmetricAlgebra.algebraMapInv_ι]
+  -- Goal: (List.ofFn (fun _ : Fin (n+1) => (0 : ℤ))).prod = 0.
+  rw [List.ofFn_const, List.prod_replicate]
+  exact zero_pow (Nat.succ_ne_zero n)
+
+/-- Per-tprod helper: the value of `bMinusLin_SL a (ι Z * algHomL (tprod n f))`
+    and its match with the RHS. Splits on `n = 0` vs `n ≥ 1`. -/
+private theorem bMinusLin_SL_ι_mul_algHom_tprod (a : α) (Z : LL)
+    (n : ℕ) (f : Fin n → LL) :
+    bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL Z *
+                     (SymmetricAlgebra.algHom ℤ LL) (TensorAlgebra.tprod ℤ LL n f)) =
+      SymmetricAlgebra.algebraMapInv (M := LL)
+        ((SymmetricAlgebra.algHom ℤ LL) (TensorAlgebra.tprod ℤ LL n f)) •
+        bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL Z) := by
+  -- ι Z = algHom (ι_TA Z); push mul through algHom.
+  rw [show SymmetricAlgebra.ι ℤ LL Z =
+        (SymmetricAlgebra.algHom ℤ LL) (TensorAlgebra.ι ℤ Z) from rfl]
+  rw [← _root_.map_mul,
+      PreLie.OudomGuinCircConstruct.ι_eq_tprod_one Z,
+      PreLie.OudomGuinCircConstruct.tprod_mul_tprod]
+  show bMinusLin_SL a (PreLie.OudomGuinCircConstruct.algHomL
+        (TensorAlgebra.tprod ℤ LL (1+n) (Fin.append (fun _ => Z) f))) = _
+  rw [bMinusLin_SL_algHomL, psiA_tensor_tprod]
+  cases n with
+  | zero =>
+    -- LHS: psiA_multi a 1 (Fin.append ![Z] _) = psiA_L a Z (since (1+0 = 1) by rfl).
+    -- RHS: algebraMapInv (algHom (tprod 0 f)) • bMinusLin_SL (algHom (tprod 1 ![Z])) = 1 • bMinusLin_SL (ι Z).
+    show psiA_multi a 1 (Fin.append (fun _ : Fin 1 => Z) f) = _
+    rw [psiA_multi_one_eq, psiA_multi_one_apply,
+        show (Fin.append (fun _ : Fin 1 => Z) f) 0 = Z from rfl]
+    rw [show (TensorAlgebra.tprod ℤ LL 0 f : TensorAlgebra ℤ LL) = 1 from by
+      rw [TensorAlgebra.tprod_apply]; simp [List.ofFn_zero]]
+    rw [_root_.map_one, _root_.map_one, one_smul]
+    -- Convert RHS (algHom (tprod 1 ![Z])) back to (ι Z) and apply bMinusLin_SL_ι.
+    simp only [← PreLie.OudomGuinCircConstruct.ι_eq_tprod_one]
+    exact (bMinusLin_SL_ι a Z).symm
+  | succ k =>
+    -- LHS: psiA_multi a (1+(k+1)) (...) = 0 (grade ≥ 2 vanishing).
+    -- RHS: algebraMapInv (algHom (tprod (k+1) _)) • _ = 0 • _ = 0 (positive grade).
+    have h_multi_zero : psiA_multi a (1 + (k+1)) = 0 :=
+      psiA_multi_eq_zero_of_ge_two a (by omega)
+    rw [h_multi_zero]
+    show (0 : SL) = _
+    rw [algebraMapInv_algHom_tprod_succ k f, zero_smul]
+
+/-- **B⁻ extracts the length-1 part of a left ι-multiplication**: for any
+    `Z ∈ L` and `Y ∈ SL`, `bMinusLin_SL a (ι Z · Y) = ε(Y) • bMinusLin_SL a (ι Z)`.
+
+    Proof: lift `Y = algHomL z` via `algHomL_surjective`. Reduce to a
+    TA-level LinearMap equality `F = G` via `TA_linearMap_ext_tprod`. Each
+    `tprod n f` case is handled by `bMinusLin_SL_ι_mul_algHom_tprod`. -/
+private theorem bMinusLin_SL_ι_mul_eps (a : α) (Z : LL) (Y : SL) :
+    bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL Z * Y) =
+      SymmetricAlgebra.algebraMapInv (M := LL) Y •
+        bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL Z) := by
+  obtain ⟨z, rfl⟩ := PreLie.OudomGuinCircConstruct.algHomL_surjective Y
+  -- Reduce to LinearMap equality F = G on TA.
+  suffices h_eq :
+      ((bMinusLin_SL a).comp
+        ((LinearMap.mulLeft ℤ (SymmetricAlgebra.ι ℤ LL Z)).comp
+          (PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)))) =
+      LinearMap.smulRight
+        (((SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap).comp
+          (PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)))
+        (bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL Z)) by
+    have := LinearMap.congr_fun h_eq z
+    simp only [LinearMap.comp_apply, LinearMap.mulLeft_apply,
+               LinearMap.smulRight_apply, AlgHom.toLinearMap_apply] at this
+    exact this
+  apply PreLie.OudomGuinCircConstruct.TA_linearMap_ext_tprod
+  intro n f
+  simp only [LinearMap.comp_apply, LinearMap.mulLeft_apply,
+             LinearMap.smulRight_apply, AlgHom.toLinearMap_apply]
+  exact bMinusLin_SL_ι_mul_algHom_tprod a Z n f
+
+/-- **Length-argument lemma** (the ι case of Piece C reduces to this): for
+    `Y ∈ L` and `B ∈ SL`,
+    `bMinusLin_SL a (ι Y ★ B) = psiA_L a (circByT_total Y B)`.
+
+    Proof: unfold `★` via Def 2.9 to get a sum over Sweedler of
+    `(ι Y ○ B₁) · B₂ = ι(circByT_total Y B₁) · B₂`. Apply `bMinusLin_SL_ι_mul_eps`
+    to each summand: only the length-0 component of `B₂` contributes (giving
+    `ε(B₂) • bMinusLin_SL (ι(circByT_total Y B₁))`). Sum collapses via the
+    counit-comul triangle to `psiA_L a (circByT_total Y B)`. -/
+private theorem bMinusLin_SL_ι_star (a : α) (Y : LL) (B : SL) :
+    bMinusLin_SL a (oudomGuinStar (SymmetricAlgebra.ι ℤ LL Y) B) =
+      psiA_L a
+        ((PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ) (L := LL) Y) B) := by
+  -- LinearMap equality on SL ⊗ SL: both sides at cm B reduce to
+  -- `ε(B₂) • psiA_L a (circByT_total Y B₁)` summed over Sweedler.
+  have h_lm :
+      (bMinusLin_SL a).comp ((LinearMap.mul' ℤ SL).comp
+        (TensorProduct.map
+          (oudomGuinCirc (R := ℤ) (SymmetricAlgebra.ι ℤ LL Y))
+          (LinearMap.id : SL →ₗ[ℤ] SL))) =
+      ((psiA_L a).comp
+        (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ) (L := LL) Y)).comp
+        ((LinearMap.mul' ℤ SL).comp
+          (TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+            ((Algebra.linearMap ℤ SL).comp
+              (SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap))) := by
+    apply TensorProduct.ext'
+    intro b₁ b₂
+    -- Compute LHS = bMinusLin_SL a (oudomGuinCirc (ι Y) b₁ * b₂)
+    --         = bMinusLin_SL a (ι (circByT_total Y b₁) * b₂)
+    --         = ε(b₂) • bMinusLin_SL a (ι (circByT_total Y b₁))
+    --         = ε(b₂) • psiA_L a (circByT_total Y b₁).
+    have h_LHS :
+        ((bMinusLin_SL a).comp ((LinearMap.mul' ℤ SL).comp
+          (TensorProduct.map
+            (oudomGuinCirc (R := ℤ) (SymmetricAlgebra.ι ℤ LL Y))
+            (LinearMap.id : SL →ₗ[ℤ] SL)))) (b₁ ⊗ₜ[ℤ] b₂) =
+        SymmetricAlgebra.algebraMapInv (M := LL) b₂ •
+          psiA_L a (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ) Y b₁) := by
+      show (bMinusLin_SL a) ((LinearMap.mul' ℤ SL)
+            (((oudomGuinCirc (R := ℤ) (SymmetricAlgebra.ι ℤ LL Y)) b₁) ⊗ₜ[ℤ] b₂)) = _
+      rw [LinearMap.mul'_apply]
+      -- Goal: bMinusLin_SL a (oudomGuinCirc (ι Y) b₁ * b₂) = ε(b₂) • psiA_L a (circByT_total Y b₁)
+      conv_lhs => rw [show oudomGuinCirc (R := ℤ) (SymmetricAlgebra.ι ℤ LL Y) b₁ =
+                          SymmetricAlgebra.ι ℤ LL
+                            (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ) Y b₁)
+                      from by rw [oudomGuinCirc_eq_ofConv, circHom_ι]; rfl]
+      rw [bMinusLin_SL_ι_mul_eps, bMinusLin_SL_ι]
+    -- Compute RHS = psiA_L a (circByT_total Y (b₁ * algebraMap (ε b₂)))
+    --         = psiA_L a (circByT_total Y (ε(b₂) • b₁))
+    --         = ε(b₂) • psiA_L a (circByT_total Y b₁).
+    have h_RHS :
+        (((psiA_L a).comp
+          (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ) (L := LL) Y)).comp
+          ((LinearMap.mul' ℤ SL).comp
+            (TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+              ((Algebra.linearMap ℤ SL).comp
+                (SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap))))
+            (b₁ ⊗ₜ[ℤ] b₂) =
+        SymmetricAlgebra.algebraMapInv (M := LL) b₂ •
+          psiA_L a (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ) Y b₁) := by
+      show (psiA_L a) ((PreLie.OudomGuinCircConstruct.circByT_total Y)
+              ((LinearMap.mul' ℤ SL)
+                (b₁ ⊗ₜ[ℤ] (algebraMap ℤ SL (SymmetricAlgebra.algebraMapInv (M := LL) b₂))))) = _
+      rw [LinearMap.mul'_apply]
+      conv_lhs => rw [show b₁ * algebraMap ℤ SL (SymmetricAlgebra.algebraMapInv (M := LL) b₂) =
+                          (SymmetricAlgebra.algebraMapInv (M := LL) b₂) • b₁
+                      from by rw [Algebra.algebraMap_eq_smul_one, mul_smul_comm, mul_one]; rfl]
+      rw [map_smul, map_smul]
+    exact h_LHS.trans h_RHS.symm
+  -- Use AlgHom-form comul (`Bialgebra.comulAlgHom`) so the `SL` notation doesn't
+  -- block typeclass synthesis on the LinearMap-form `Coalgebra.comul`.
+  set cmB : SL ⊗[ℤ] SL :=
+    (Bialgebra.comulAlgHom ℤ (SymmetricAlgebra ℤ LL)).toLinearMap B with hcmB
+  have h_at_B := LinearMap.congr_fun h_lm cmB
+  simp only [LinearMap.comp_apply] at h_at_B
+  -- LHS of goal ≡ h_at_B's LHS (definitionally via oudomGuinStar_def + comulAlgHom.toLinearMap = comul).
+  -- Reduce RHS of h_at_B to RHS of goal via counit triangle.
+  refine h_at_B.trans ?_
+  -- Goal: psiA_L a (circByT_total Y (mul' (map id (algebraMap ∘ counit) cmB)))
+  --     = psiA_L a (circByT_total Y B)
+  -- Reduce inner: mul' (map id (algebraMap ∘ counit) cmB) = B via counit triangle.
+  -- Force CoalgebraStruct on the unfolded type via the Bialgebra instance directly.
+  letI inst_B : Bialgebra ℤ (SymmetricAlgebra ℤ LL) := SymmetricAlgebra.instBialgebra ℤ LL
+  letI inst_Co : Coalgebra ℤ (SymmetricAlgebra ℤ LL) := inst_B.toCoalgebra
+  letI inst_C : CoalgebraStruct ℤ (SymmetricAlgebra ℤ LL) := inst_Co.toCoalgebraStruct
+  have h_inner :
+      (LinearMap.mul' ℤ SL)
+          ((TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+              ((Algebra.linearMap ℤ SL).comp
+                (SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap))
+            cmB) = B := by
+    rw [show TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+            ((Algebra.linearMap ℤ SL).comp
+              (SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap) =
+        (TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+            (Algebra.linearMap ℤ SL)).comp
+          (TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+            (SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap) from by
+        rw [← TensorProduct.map_comp, LinearMap.comp_id]]
+    rw [LinearMap.comp_apply, hcmB]
+    -- cmB = (comulAlgHom).toLinearMap B = comul B definitionally.
+    show (LinearMap.mul' ℤ SL)
+          ((TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+              (Algebra.linearMap ℤ SL))
+            ((TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+                (SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap)
+              (Coalgebra.comul (R := ℤ) (A := SymmetricAlgebra ℤ LL) B))) = B
+    rw [show (TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+              (SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap)
+              (Coalgebra.comul (R := ℤ) (A := SymmetricAlgebra ℤ LL) B) =
+            B ⊗ₜ[ℤ] (1 : ℤ) from
+          Coalgebra.lTensor_counit_comul (R := ℤ) (A := SymmetricAlgebra ℤ LL) B]
+    rw [TensorProduct.map_tmul]
+    show (LinearMap.mul' ℤ SL) (B ⊗ₜ[ℤ] (algebraMap ℤ SL 1)) = B
+    rw [map_one]
+    -- Now: mul' (B ⊗ₜ 1) = B
+    show B * 1 = B
+    exact mul_one B
+  show (psiA_L a) ((PreLie.OudomGuinCircConstruct.circByT_total Y)
+        ((LinearMap.mul' ℤ SL)
+          ((TensorProduct.map (LinearMap.id : SL →ₗ[ℤ] SL)
+              ((Algebra.linearMap ℤ SL).comp
+                (SymmetricAlgebra.algebraMapInv (M := LL) (R := ℤ)).toLinearMap))
+            cmB))) = _
+  rw [h_inner]
+
 /-! ## §10: ckIso transport for `bMinusLin_SL`
 
 The transport identity `bMinusLin a (ckIso X) = ckIso (bMinusLin_SL a X)`
@@ -680,59 +931,152 @@ private theorem prod_oudomGuinCirc_ι_aux {β : Type*} [DecidableEq β]
           Multiset.prod_cons]
       ring
 
-/-- **Nonplanar.insertSum node decomposition** (Multiset.bind form): when the
-    left operand is a `Nonplanar.node a A''` and the right operand is `c`, the
-    insertion-sum decomposes as one root-graft summand plus a bind over A''
-    of "subtree-grafts":
+/-! ### Substrate for `insertSum_node_decompose`
 
-    `insertSum (node a A'') c = node a (c ::ₘ A'') ::ₘ
-       A''.bind (fun d => (insertSum d c).map (fun d' => node a (d' ::ₘ A''.erase d)))`
+The decomposition uses two helpers: a Multiset cons/+ swap and a
+prefix-generalized list-induction lemma. -/
 
-    **Proof plan** (~150-250 LOC):
-    1. Pick a planar representative for A'': use `A''.toList.map Quotient.out`
-       (a `List (Planar α)`). Set `cs := A''.toList.map Quotient.out`; then
-       `Nonplanar.node a A'' = mk (Planar.node a cs)` and
-       `A'' = ↑(cs.map mk)`. Pick `c_pl := c.out`; `c = mk c_pl`.
-    2. Reduce LHS to planar via `mk_insertSum`:
-       `Nonplanar.insertSum (mk (Planar.node a cs)) (mk c_pl) =
-        (Planar.insertSum (Planar.node a cs) c_pl).map mk`.
-    3. Apply `Planar.insertSum_node`:
-       `Planar.insertSum (Planar.node a cs) c_pl =
-        Planar.node a (c_pl :: cs) ::ₘ (insertSumList cs c_pl).map (Planar.node a)`.
-    4. Distribute `.map mk` over the cons. First summand: `mk (Planar.node a
-       (c_pl :: cs)) = Nonplanar.node a (mk c_pl ::ₘ ↑(cs.map mk)) =
-       Nonplanar.node a (c ::ₘ A'')` (via `node_mk_planar_list`).
-    5. Show the second summand equals the bind: this is a separate list
-       induction lemma `insertSumList_bind_lift`. Stated:
+/-- Multiset identity: `B + (x ::ₘ C) = (x ::ₘ B) + C`. A single cons can
+    swap from "right of +" to "left of +". -/
+private lemma cons_add_swap {β : Type*} (x : β) (B C : Multiset β) :
+    B + (x ::ₘ C) = (x ::ₘ B) + C := by
+  rw [Multiset.add_cons, ← Multiset.cons_add]
 
-       `(insertSumList cs c_pl).map (mk ∘ Planar.node a) =
-        ↑(cs.map mk).bind (fun d => (Nonplanar.insertSum d (mk c_pl)).map
-          (fun d' => Nonplanar.node a (d' ::ₘ (↑(cs.map mk)).erase d)))`
+/-- Prefix-generalized auxiliary form of `insertSum_node_decompose`. The
+    induction substrate: list-induction on `cs` with an arbitrary prefix
+    `pre` carried in the inner `node`'s children-multiset. -/
+private theorem insertSumList_bind_lift_aux [DecidableEq (Nonplanar α)]
+    (a : α) (pre : Multiset (Nonplanar α))
+    (cs : List (Planar α)) (c_pl : Planar α) :
+    (Planar.insertSumList cs c_pl).map (fun cs' =>
+      Nonplanar.node a (pre + ↑(cs'.map Nonplanar.mk))) =
+    (↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α)).bind (fun d =>
+      (Nonplanar.insertSum d (Nonplanar.mk c_pl)).map (fun d' =>
+        Nonplanar.node a (d' ::ₘ pre +
+          (↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α)).erase d))) := by
+  induction cs generalizing pre with
+  | nil =>
+    simp only [Planar.insertSumList_nil, Multiset.map_zero,
+               List.map_nil, Multiset.coe_nil, Multiset.zero_bind]
+  | cons e cs' ih =>
+    rw [Planar.insertSumList_cons, Multiset.map_add,
+        Multiset.map_map, Multiset.map_map]
+    simp only [Function.comp_def]
+    -- Convert `↑((e :: cs').map mk)` to `mk e ::ₘ ↑(cs'.map mk)` (rfl) under
+    -- all binders.
+    simp only [show (↑((e :: cs').map Nonplanar.mk) : Multiset (Nonplanar α)) =
+                    Nonplanar.mk e ::ₘ ↑(cs'.map Nonplanar.mk) from rfl]
+    rw [Multiset.cons_bind, Multiset.erase_cons_head]
+    refine congr_arg₂ (· + ·) ?_ ?_
+    · -- First piece: head graft into `e`.
+      rw [Nonplanar.mk_insertSum, Multiset.map_map]
+      simp only [Function.comp_def]
+      apply Multiset.map_congr rfl
+      intro c' _
+      -- Force the goal into cons form so `cons_add_swap` unifies directly.
+      show Nonplanar.node a (pre + (Nonplanar.mk c' ::ₘ ↑(cs'.map Nonplanar.mk))) =
+           Nonplanar.node a (Nonplanar.mk c' ::ₘ pre + ↑(cs'.map Nonplanar.mk))
+      congr 1
+      exact cons_add_swap (Nonplanar.mk c') pre _
+    · -- Second piece: apply IH at `pre' = mk e ::ₘ pre`, then bridge to RHS.
+      have hLHS_bridge :
+          (Planar.insertSumList cs' c_pl).map (fun L' =>
+            Nonplanar.node a (pre + ↑((e :: L').map Nonplanar.mk))) =
+          (Planar.insertSumList cs' c_pl).map (fun L' =>
+            Nonplanar.node a ((Nonplanar.mk e ::ₘ pre) + ↑(L'.map Nonplanar.mk))) := by
+        apply Multiset.map_congr rfl
+        intro L' _
+        show Nonplanar.node a (pre + (Nonplanar.mk e ::ₘ ↑(L'.map Nonplanar.mk))) =
+             Nonplanar.node a ((Nonplanar.mk e ::ₘ pre) + ↑(L'.map Nonplanar.mk))
+        congr 1
+        exact cons_add_swap (Nonplanar.mk e) pre _
+      rw [hLHS_bridge, ih (Nonplanar.mk e ::ₘ pre)]
+      -- Bridge IH-RHS form to RHS form (per-d, per-d' on the bind).
+      apply Multiset.bind_congr
+      intro d hd
+      apply Multiset.map_congr rfl
+      intro d' _
+      congr 1
+      conv_lhs => rw [Multiset.cons_add]
+      conv_rhs => rw [Multiset.cons_add]
+      congr 1
+      -- Goal: (mk e ::ₘ pre) + ↑(cs'.map mk).erase d =
+      --       pre + (mk e ::ₘ ↑(cs'.map mk)).erase d
+      by_cases h : d = Nonplanar.mk e
+      · subst h
+        rw [Multiset.erase_cons_head]
+        conv_rhs => rw [← Multiset.cons_erase hd]
+        exact (cons_add_swap (Nonplanar.mk e) pre _).symm
+      · have hne : Nonplanar.mk e ≠ d := fun heq => h heq.symm
+        rw [Multiset.erase_cons_tail (s := ↑(cs'.map Nonplanar.mk)) hne]
+        exact (cons_add_swap (Nonplanar.mk e) pre _).symm
 
-       Induct on `cs`:
-       - nil: both sides 0. ✓
-       - cons e cs': use `Planar.insertSumList_cons` + `Multiset.cons_bind`
-         to split each side into "graft at first child" + "graft deeper".
-         For the first summand: equate
-         `(Planar.insertSum e c_pl).map (mk ∘ Planar.node a ∘ (·:: cs'))`
-         with `(Nonplanar.insertSum (mk e) (mk c_pl)).map (fun d' =>
-         Nonplanar.node a (d' ::ₘ ↑(cs'.map mk)))`. (Uses erase_cons_head
-         to simplify the multiset erase: `(mk e ::ₘ A_cs').erase (mk e) = A_cs'`.)
-         For the second summand: apply IH on cs', but need to handle the new
-         `mk e` factor. Since `(mk e ::ₘ A_cs').erase d` for `d ∈ A_cs'`:
-         if `d = mk e` (duplicate), this is `A_cs'`; if `d ≠ mk e`, this is
-         `mk e ::ₘ A_cs'.erase d`. The IH-as-stated may need adjustment.
-
-    **Alternative**: state and prove via `Pathed.vertices` path-indexed form
-    (using `insertSum_eq_coe_map_insertAt`). May be cleaner. -/
+/-- **Nonplanar.insertSum node decomposition** (Multiset.bind form): grafting
+    `c` at each vertex of `node a A''` splits into one root-graft summand
+    `node a (c ::ₘ A'')` plus a bind over `A''` of subtree-grafts at each
+    child `d ∈ A''`. Proof: descend through planar representatives, apply
+    `Planar.insertSum_node` then bridge to the bind via the prefix-generalized
+    `insertSumList_bind_lift_aux`. -/
 private theorem insertSum_node_decompose [DecidableEq (Nonplanar α)]
     (a : α) (A'' : Multiset (Nonplanar α)) (c : Nonplanar α) :
     Nonplanar.insertSum (Nonplanar.node a A'') c =
       Nonplanar.node a (c ::ₘ A'') ::ₘ
       A''.bind (fun d => (Nonplanar.insertSum d c).map
         (fun d' => Nonplanar.node a (d' ::ₘ A''.erase d))) := by
-  -- TODO: descend through planar representatives + list induction (see docstring).
-  sorry
+  -- Step 1: Substitute c = mk c_pl and A'' = ↑(cs.map mk) for planar reps.
+  obtain ⟨c_pl, rfl⟩ : ∃ c_pl : Planar α, c = Nonplanar.mk c_pl :=
+    ⟨c.out, c.out_eq.symm⟩
+  obtain ⟨cs, rfl⟩ : ∃ cs : List (Planar α),
+      A'' = (↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α)) := by
+    refine ⟨A''.toList.map Quotient.out, ?_⟩
+    have h_cs_lift : (A''.toList.map Quotient.out).map Nonplanar.mk = A''.toList := by
+      rw [List.map_map]
+      induction A''.toList with
+      | nil => rfl
+      | cons hd tl ih =>
+        show (Nonplanar.mk ∘ Quotient.out) hd ::
+             tl.map (Nonplanar.mk ∘ Quotient.out) = hd :: tl
+        rw [show (Nonplanar.mk ∘ Quotient.out) hd = hd from hd.out_eq, ih]
+    rw [h_cs_lift]
+    exact A''.coe_toList.symm
+  -- Step 2: Reduce LHS via `node_mk_planar_list` + `mk_insertSum` +
+  -- `Planar.insertSum_node` + `Multiset.map_cons`.
+  rw [Nonplanar.node_mk_planar_list a cs, Nonplanar.mk_insertSum,
+      Planar.insertSum_node, Multiset.map_cons]
+  -- Step 3: Match the two cons-heads + tails separately.
+  congr 1
+  · -- Heads: `mk (Planar.node a (c_pl :: cs)) = node a (mk c_pl ::ₘ ↑(cs.map mk))`
+    -- by `node_mk_planar_list`-symm + `cons_coe` (rfl).
+    rw [← Nonplanar.node_mk_planar_list a (c_pl :: cs)]
+    rfl
+  · -- Tails: `((insertSumList cs c_pl).map (Planar.node a)).map mk = bind form`.
+    rw [Multiset.map_map]
+    -- LHS bridge: `(mk ∘ Planar.node a) cs' = node a (0 + ↑(cs'.map mk))`.
+    have hLHS_eq : (Planar.insertSumList cs c_pl).map
+          (Nonplanar.mk ∘ Planar.node a) =
+        (Planar.insertSumList cs c_pl).map (fun cs' =>
+          Nonplanar.node a (0 + ↑(cs'.map Nonplanar.mk))) := by
+      apply Multiset.map_congr rfl
+      intro cs' _
+      show Nonplanar.mk (Planar.node a cs') =
+           Nonplanar.node a (0 + ↑(cs'.map Nonplanar.mk))
+      rw [Multiset.zero_add, Nonplanar.node_mk_planar_list]
+    -- RHS bridge: drop `+ 0` inside the bind.
+    have hRHS_eq :
+        ((↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α))).bind (fun d =>
+          (Nonplanar.insertSum d (Nonplanar.mk c_pl)).map (fun d' =>
+            Nonplanar.node a (d' ::ₘ (0 : Multiset (Nonplanar α)) +
+              ((↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α))).erase d))) =
+        ((↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α))).bind (fun d =>
+          (Nonplanar.insertSum d (Nonplanar.mk c_pl)).map (fun d' =>
+            Nonplanar.node a (d' ::ₘ
+              ((↑(cs.map Nonplanar.mk) : Multiset (Nonplanar α))).erase d))) := by
+      apply Multiset.bind_congr
+      intro d _
+      apply Multiset.map_congr rfl
+      intro d' _
+      simp only [Multiset.cons_add, Multiset.zero_add]
+    rw [hLHS_eq, insertSumList_bind_lift_aux (α := α) a 0 cs c_pl, hRHS_eq]
 
 /-- Linearity of `ι ∘ ofMultiset`: `ι(ofMultiset M) = Σ_{t ∈ M} ι(ofTree t)`.
     Mechanical Multiset.induction on M. -/
@@ -927,6 +1271,533 @@ theorem iotaTree_node_via_circ (a : α) (A' : Multiset (Nonplanar α)) :
         intro d' hd'
         exact h_inner d hd d' hd'
 
+/-! ### §11.C: Helpers for the ι case of OG Prop 3.2 (`psiA_L_circByT_total_eq`)
+
+Three helpers and the main identity, all consumed by `bMinusLin_SL_oudomGuinStar`'s
+ι branch (§12). Stated separately so each helper's proof can be inspected
+independently:
+
+- `psiA_L_ofMultiset`: linearity over multiset sums.
+- `psiA_L_mul_eq` (L-side cocycle): bilinear extension to the basis case;
+  substantive math via `insertSum_node_decompose` + `prod_oudomGuinCirc_ι_aux`.
+- `psiA_L_circByT_leaf_eq_id` (key lemma): TA-descent + n-induction;
+  cancellation via `oudomGuinCirc_algHomL_tprod_ι`.
+- `psiA_L_circByT_leaf_eq_zero` (a' ≠ a analog): same descent, IH ≡ 0.
+- `psiA_L_circByT_total_eq`: main identity; uses Piece D
+  (`iotaTree_node_via_circ`) + 2.8.v (`circ_assoc_via_comul`) +
+  `bMinusLin_SL_ι` bridge + Helper 2/3 case split. -/
+
+/-- Linearity of `psiA_L` over `ofMultiset`: `psiA_L a (ofMultiset M) =
+    sum of psiA_basis a applied termwise`. Direct multiset induction. -/
+private theorem psiA_L_ofMultiset (a : α) (M : Multiset (Nonplanar α)) :
+    psiA_L a (InsertionAlgebra.ofMultiset M) =
+      (M.map (psiA_basis a)).sum := by
+  induction M using Multiset.induction with
+  | empty =>
+    simp only [InsertionAlgebra.ofMultiset_zero, map_zero,
+               Multiset.map_zero, Multiset.sum_zero]
+  | cons t M ih =>
+    rw [InsertionAlgebra.ofMultiset_cons, map_add, ih,
+        Multiset.map_cons, Multiset.sum_cons, psiA_L_ofTree]
+
+/-- Closed-form for `psiA_basis a (node a A)` (self-color case):
+    `((A.map ιTree).prod)`. -/
+private lemma psiA_basis_node_self (a : α) (A : Multiset (Nonplanar α)) :
+    psiA_basis a (Nonplanar.node a A) =
+      (A.map (fun c => ιTree c)).prod := by
+  unfold psiA_basis
+  rw [Nonplanar.rootLabel_node, Nonplanar.rootChildren_node]
+  exact if_pos rfl
+
+/-- Closed-form for `psiA_basis a (node a' A)` (off-color case): `0`. -/
+private lemma psiA_basis_node_neq (a a' : α) (h : a' ≠ a)
+    (A : Multiset (Nonplanar α)) :
+    psiA_basis a (Nonplanar.node a' A) = 0 := by
+  unfold psiA_basis
+  rw [Nonplanar.rootLabel_node]
+  exact if_neg h
+
+/-- **L-side cocycle for `psiA_L`** (Helper 1 of `psiA_L_circByT_total_eq`):
+    `psiA_L a (Y * Z) = (psiA_L a Y) ○ ι Z + (psiA_L a Y) · ι Z` for `Y, Z ∈ L`.
+
+    Proof: bilinear extension to basis case `(Y, Z) = (ofTree t, ofTree s)`,
+    decomposed via `insertSum_node_decompose`; LHS bind-sum matches
+    `Q ○ ι(ofTree s)` via `prod_oudomGuinCirc_ι_aux` + `iota_ofMultiset`. -/
+private theorem psiA_L_mul_eq [DecidableEq (Nonplanar α)]
+    (a : α) (Y Z : LL) :
+    psiA_L a (Y * Z) =
+      oudomGuinCirc (R := ℤ) (psiA_L a Y) (SymmetricAlgebra.ι ℤ LL Z) +
+      psiA_L a Y * SymmetricAlgebra.ι ℤ LL Z := by
+  classical
+  suffices h_basis : ∀ (t s : Nonplanar α),
+      psiA_L a (InsertionAlgebra.ofTree t * InsertionAlgebra.ofTree s) =
+        oudomGuinCirc (R := ℤ) (psiA_L a (InsertionAlgebra.ofTree t))
+          (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree s)) +
+        psiA_L a (InsertionAlgebra.ofTree t) *
+          SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree s) by
+    -- Outer Y-extension via Finsupp.induction_linear.
+    -- Use the `let ... := ...` pattern (per BMinus.lean) to bind bound-type
+    -- variables at LL type, then `show` to reformulate the goal in LL terms.
+    induction Y using Finsupp.induction_linear with
+    | zero =>
+      let Y' : LL := (0 : LL)
+      show psiA_L a (Y' * Z) =
+           oudomGuinCirc (R := ℤ) (psiA_L a Y')
+             (SymmetricAlgebra.ι ℤ LL Z) +
+           psiA_L a Y' * SymmetricAlgebra.ι ℤ LL Z
+      show psiA_L a ((0 : LL) * Z) = _
+      rw [InsertionAlgebra.zero_mul, map_zero, map_zero,
+          LinearMap.zero_apply, zero_mul, add_zero]
+    | add Y₁ Y₂ ih₁ ih₂ =>
+      let Y₁' : LL := Y₁
+      let Y₂' : LL := Y₂
+      show psiA_L a ((Y₁' + Y₂') * Z) =
+           oudomGuinCirc (R := ℤ) (psiA_L a (Y₁' + Y₂'))
+             (SymmetricAlgebra.ι ℤ LL Z) +
+           psiA_L a (Y₁' + Y₂') * SymmetricAlgebra.ι ℤ LL Z
+      rw [InsertionAlgebra.add_mul, map_add, ih₁, ih₂,
+          map_add, (oudomGuinCirc (R := ℤ)).map_add,
+          LinearMap.add_apply, add_mul]
+      abel
+    | single t r =>
+      let Y' : LL := Finsupp.single t r
+      show psiA_L a (Y' * Z) =
+           oudomGuinCirc (R := ℤ) (psiA_L a Y')
+             (SymmetricAlgebra.ι ℤ LL Z) +
+           psiA_L a Y' * SymmetricAlgebra.ι ℤ LL Z
+      have hY : Y' = r • InsertionAlgebra.ofTree t :=
+        (Finsupp.smul_single_one t r).symm
+      rw [hY]
+      have h_psi_smul :
+          psiA_L a (r • InsertionAlgebra.ofTree t) =
+            r • psiA_L a (InsertionAlgebra.ofTree t) :=
+        map_smul _ _ _
+      have h_LHS_eq :
+          psiA_L a ((r • InsertionAlgebra.ofTree t) * Z) =
+            r • psiA_L a (InsertionAlgebra.ofTree t * Z) := by
+        rw [smul_mul_assoc, map_smul]
+      have h_oudom_smul :
+          oudomGuinCirc (R := ℤ) (psiA_L a (r • InsertionAlgebra.ofTree t))
+              (SymmetricAlgebra.ι ℤ LL Z) =
+            r • oudomGuinCirc (R := ℤ) (psiA_L a (InsertionAlgebra.ofTree t))
+              (SymmetricAlgebra.ι ℤ LL Z) := by
+        rw [h_psi_smul]
+        rw [show oudomGuinCirc (R := ℤ)
+              (r • psiA_L a (InsertionAlgebra.ofTree t))
+              (SymmetricAlgebra.ι ℤ LL Z) =
+              r • oudomGuinCirc (R := ℤ)
+                (psiA_L a (InsertionAlgebra.ofTree t))
+                (SymmetricAlgebra.ι ℤ LL Z) from by
+          have := LinearMap.congr_fun
+            ((oudomGuinCirc (R := ℤ)).map_smul r
+              (psiA_L a (InsertionAlgebra.ofTree t)))
+            (SymmetricAlgebra.ι ℤ LL Z)
+          simp only [LinearMap.smul_apply] at this
+          exact this]
+      have h_RHS_mul :
+          psiA_L a (r • InsertionAlgebra.ofTree t) *
+              SymmetricAlgebra.ι ℤ LL Z =
+            r • (psiA_L a (InsertionAlgebra.ofTree t) *
+                  SymmetricAlgebra.ι ℤ LL Z) := by
+        rw [h_psi_smul, smul_mul_assoc]
+      rw [h_LHS_eq, h_oudom_smul, h_RHS_mul, ← smul_add]
+      congr 1
+      -- Clear the Z-dependent helper hypotheses so the inner induction's IHs
+      -- don't get cluttered with preconditions.
+      clear h_LHS_eq h_oudom_smul h_RHS_mul h_psi_smul hY
+      -- Inner Z-extension via Finsupp.induction_linear.
+      induction Z using Finsupp.induction_linear with
+      | zero =>
+        let Z' : LL := (0 : LL)
+        show psiA_L a (InsertionAlgebra.ofTree t * Z') =
+             oudomGuinCirc (R := ℤ) (psiA_L a (InsertionAlgebra.ofTree t))
+               (SymmetricAlgebra.ι ℤ LL Z') +
+             psiA_L a (InsertionAlgebra.ofTree t) *
+               SymmetricAlgebra.ι ℤ LL Z'
+        show psiA_L a (InsertionAlgebra.ofTree t * (0 : LL)) = _
+        rw [mul_zero, map_zero, map_zero, map_zero,
+            mul_zero, add_zero]
+      | add Z₁ Z₂ ih₁' ih₂' =>
+        let Z₁' : LL := Z₁
+        let Z₂' : LL := Z₂
+        show psiA_L a (InsertionAlgebra.ofTree t * (Z₁' + Z₂')) =
+             oudomGuinCirc (R := ℤ) (psiA_L a (InsertionAlgebra.ofTree t))
+               (SymmetricAlgebra.ι ℤ LL (Z₁' + Z₂')) +
+             psiA_L a (InsertionAlgebra.ofTree t) *
+               SymmetricAlgebra.ι ℤ LL (Z₁' + Z₂')
+        rw [mul_add, map_add, ih₁', ih₂', map_add,
+            (oudomGuinCirc (R := ℤ) (psiA_L a (InsertionAlgebra.ofTree t))).map_add,
+            mul_add]
+        abel
+      | single s u =>
+        let Z' : LL := Finsupp.single s u
+        show psiA_L a (InsertionAlgebra.ofTree t * Z') =
+             oudomGuinCirc (R := ℤ) (psiA_L a (InsertionAlgebra.ofTree t))
+               (SymmetricAlgebra.ι ℤ LL Z') +
+             psiA_L a (InsertionAlgebra.ofTree t) *
+               SymmetricAlgebra.ι ℤ LL Z'
+        have hZ : Z' = u • InsertionAlgebra.ofTree s :=
+          (Finsupp.smul_single_one s u).symm
+        rw [hZ]
+        have h_RHS_circ :
+            oudomGuinCirc (R := ℤ) (psiA_L a (InsertionAlgebra.ofTree t))
+              (SymmetricAlgebra.ι ℤ LL (u • InsertionAlgebra.ofTree s)) =
+            u • oudomGuinCirc (R := ℤ) (psiA_L a (InsertionAlgebra.ofTree t))
+              (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree s)) := by
+          rw [map_smul]
+          exact (oudomGuinCirc (R := ℤ)
+            (psiA_L a (InsertionAlgebra.ofTree t))).map_smul u _
+        have h_RHS_mul :
+            psiA_L a (InsertionAlgebra.ofTree t) *
+                SymmetricAlgebra.ι ℤ LL (u • InsertionAlgebra.ofTree s) =
+              u • (psiA_L a (InsertionAlgebra.ofTree t) *
+                    SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree s)) := by
+          rw [map_smul, mul_smul_comm]
+        rw [mul_smul_comm, map_smul, h_RHS_circ, h_RHS_mul, ← smul_add]
+        congr 1
+        exact h_basis t s
+  -- Basis case.
+  intro t s
+  obtain ⟨a', A', rfl⟩ : ∃ a' A', t = Nonplanar.node a' A' :=
+    ⟨t.rootLabel, t.rootChildren, (Nonplanar.node_eta t).symm⟩
+  set ιs : SL := SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree s) with hιs
+  rw [InsertionAlgebra.ofTree_mul_ofTree, insertSum_node_decompose,
+      InsertionAlgebra.ofMultiset_cons, map_add, psiA_L_ofTree,
+      psiA_L_ofMultiset, psiA_L_ofTree]
+  by_cases ha : a' = a
+  · -- Case a' = a. Rewrite all a' to a via ha.
+    rw [ha]
+    -- Use closed-form for psiA_basis a (node a B) = (B.map ιTree).prod.
+    rw [psiA_basis_node_self, psiA_basis_node_self]
+    -- LHS first term: ((s ::ₘ A').map ιTree).prod = ιTree s * Q
+    rw [Multiset.map_cons, Multiset.prod_cons]
+    -- Q := (A'.map ιTree).prod
+    set Q : SL := (A'.map (fun c => ιTree c)).prod with hQ
+    have h_ιTree_s : (ιTree s : SL) = ιs := rfl
+    rw [h_ιTree_s, mul_comm ιs Q]
+    rw [add_comm (oudomGuinCirc (R := ℤ) Q ιs) (Q * ιs)]
+    congr 1
+    -- Need: bind-sum = Q ○ ιs.
+    rw [hQ, prod_oudomGuinCirc_ι_aux (fun c => ιTree c) A'
+          (InsertionAlgebra.ofTree s)]
+    rw [Multiset.map_bind]
+    rw [show A'.bind (fun d =>
+                ((Nonplanar.insertSum d s).map (fun d' =>
+                  Nonplanar.node a (d' ::ₘ A'.erase d))).map (psiA_basis a)) =
+            A'.bind (fun d =>
+              (Nonplanar.insertSum d s).map (fun d' =>
+                ιTree d' * ((A'.erase d).map (fun c => ιTree c)).prod))
+        from by
+      apply Multiset.bind_congr
+      intro d _
+      rw [Multiset.map_map]
+      apply Multiset.map_congr rfl
+      intro d' _
+      rw [Function.comp_apply, psiA_basis_node_self]
+      rw [Multiset.map_cons, Multiset.prod_cons]]
+    rw [Multiset.sum_bind]
+    apply congrArg Multiset.sum
+    apply Multiset.map_congr rfl
+    intro d _
+    have h_circ_d : oudomGuinCirc (R := ℤ) (ιTree d) ιs =
+        ((Nonplanar.insertSum d s).map (fun t' => ιTree t')).sum := by
+      show oudomGuinCirc (R := ℤ)
+            (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree d))
+            (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree s)) = _
+      rw [circ_ι_ι, InsertionAlgebra.ofTree_mul_ofTree, iota_ofMultiset]
+      rfl
+    rw [h_circ_d, ← Multiset.sum_map_mul_left]
+    apply congrArg Multiset.sum
+    apply Multiset.map_congr rfl
+    intro d' _
+    ring
+  · -- Case a' ≠ a.
+    have h_zero : ∀ (B : Multiset (Nonplanar α)),
+        psiA_basis a (Nonplanar.node a' B) = 0 := psiA_basis_node_neq a a' ha
+    -- Show LHS = 0 and RHS = 0 separately.
+    have h_LHS_zero : psiA_basis a (Nonplanar.node a' (s ::ₘ A')) +
+        ((A'.bind (fun d =>
+          (Nonplanar.insertSum d s).map (fun d' =>
+            Nonplanar.node a' (d' ::ₘ A'.erase d)))).map (psiA_basis a)).sum =
+        (0 : SL) := by
+      rw [h_zero, zero_add, Multiset.map_bind]
+      rw [show A'.bind (fun d =>
+                ((Nonplanar.insertSum d s).map (fun d' =>
+                  Nonplanar.node a' (d' ::ₘ A'.erase d))).map (psiA_basis a)) =
+              A'.bind (fun d =>
+                (Nonplanar.insertSum d s).map (fun _ : Nonplanar α => (0 : SL)))
+          from by
+        apply Multiset.bind_congr
+        intro d _
+        rw [Multiset.map_map]
+        apply Multiset.map_congr rfl
+        intro d' _
+        exact h_zero _]
+      rw [Multiset.sum_bind]
+      rw [show A'.map (fun d => ((Nonplanar.insertSum d s).map
+                (fun _ : Nonplanar α => (0 : SL))).sum) =
+              A'.map (fun _ : Nonplanar α => (0 : SL)) from by
+        apply Multiset.map_congr rfl
+        intro d _
+        rw [Multiset.map_const', Multiset.sum_replicate, smul_zero]]
+      rw [Multiset.map_const', Multiset.sum_replicate, smul_zero]
+    have h_RHS_zero :
+        oudomGuinCirc (R := ℤ) (psiA_basis a (Nonplanar.node a' A')) ιs +
+          psiA_basis a (Nonplanar.node a' A') * ιs = (0 : SL) := by
+      rw [h_zero, LinearMap.map_zero, LinearMap.zero_apply,
+          zero_mul, add_zero]
+    rw [h_LHS_zero, h_RHS_zero]
+
+/-- **Key lemma** (Helper 2 of `psiA_L_circByT_total_eq`): for `X ∈ SL`,
+    `psiA_L a (circByT_total (leaf a) X) = X`.
+
+    TA-descent + induction on `n`. n+1 case: apply `psiA_L_mul_eq` to the
+    leading term of `circTMultilinear_succ`, then `oudomGuinCirc_algHomL_tprod_ι`
+    cancels the negative sum. -/
+private theorem psiA_L_circByT_leaf_eq_id [DecidableEq (Nonplanar α)]
+    (a : α) (X : SL) :
+    psiA_L a (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+      (InsertionAlgebra.ofTree (Nonplanar.leaf a)) X) = X := by
+  classical
+  obtain ⟨z, rfl⟩ := PreLie.OudomGuinCircConstruct.algHomL_surjective X
+  suffices h_per_tprod : ∀ (n : ℕ) (f : Fin n → LL),
+      psiA_L a (PreLie.OudomGuinCircConstruct.circTMultilinear ℤ
+        (InsertionAlgebra.ofTree (Nonplanar.leaf a)) n f) =
+      PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)
+        (TensorAlgebra.tprod ℤ LL n f) by
+    have h_eq :
+        (psiA_L a).comp
+          ((PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+            (InsertionAlgebra.ofTree (Nonplanar.leaf a))).comp
+          (PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL))) =
+        PreLie.OudomGuinCircConstruct.algHomL := by
+      apply PreLie.OudomGuinCircConstruct.TA_linearMap_ext_tprod
+      intro n f
+      simp only [LinearMap.comp_apply]
+      have h_tot := LinearMap.congr_fun
+        (PreLie.OudomGuinCircConstruct.circByT_total_comp_algHomL (R := ℤ)
+          (InsertionAlgebra.ofTree (Nonplanar.leaf a)))
+        (TensorAlgebra.tprod ℤ LL n f)
+      simp only [LinearMap.comp_apply] at h_tot
+      rw [h_tot, PreLie.OudomGuinCircConstruct.circTTensor_tprod]
+      exact h_per_tprod n f
+    exact LinearMap.congr_fun h_eq z
+  intro n
+  induction n with
+  | zero =>
+    intro f
+    rw [PreLie.OudomGuinCircConstruct.circTMultilinear_zero, psiA_L_ofTree]
+    rw [leaf_eq_node_zero, psiA_basis_node_self]
+    rw [Multiset.map_zero, Multiset.prod_zero]
+    rw [show TensorAlgebra.tprod ℤ LL 0 f = (1 : TensorAlgebra ℤ LL) from by
+          rw [TensorAlgebra.tprod_apply]; simp [List.ofFn_zero]]
+    show (1 : SL) = (SymmetricAlgebra.algHom ℤ LL).toLinearMap 1
+    show (1 : SL) = SymmetricAlgebra.algHom ℤ LL 1
+    rw [map_one]
+  | succ n IH =>
+    intro f
+    rw [PreLie.OudomGuinCircConstruct.circTMultilinear_succ]
+    rw [map_sub, map_sum, psiA_L_mul_eq, IH (Fin.init f)]
+    rw [oudomGuinCirc_algHomL_tprod_ι (f (Fin.last n)) n (Fin.init f)]
+    rw [show ∑ i, psiA_L a (PreLie.OudomGuinCircConstruct.circTMultilinear ℤ
+                (InsertionAlgebra.ofTree (Nonplanar.leaf a)) n
+                (Function.update (Fin.init f) i (Fin.init f i * f (Fin.last n)))) =
+            ∑ i, PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)
+              (TensorAlgebra.tprod ℤ LL n
+                (Function.update (Fin.init f) i (Fin.init f i * f (Fin.last n))))
+          from Finset.sum_congr rfl (fun i _ => IH _)]
+    rw [add_sub_cancel_left]
+    rw [show PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)
+              (TensorAlgebra.tprod ℤ LL (n + 1) f) =
+            PreLie.OudomGuinCircConstruct.algHomL
+              (TensorAlgebra.tprod ℤ LL n (Fin.init f)) *
+              SymmetricAlgebra.ι ℤ LL (f (Fin.last n))
+        from by
+      have h_f_eq : f = Fin.snoc (Fin.init f) (f (Fin.last n)) :=
+        (Fin.snoc_init_self f).symm
+      have h_tprod_succ :
+          TensorAlgebra.tprod ℤ LL (n + 1) f =
+          TensorAlgebra.tprod ℤ LL n (Fin.init f) *
+            TensorAlgebra.ι ℤ (f (Fin.last n)) := by
+        conv_lhs => rw [h_f_eq]
+        rw [Fin.snoc_eq_append,
+            PreLie.OudomGuinCircConstruct.ι_eq_tprod_one,
+            ← PreLie.OudomGuinCircConstruct.tprod_mul_tprod]
+        congr 1
+      rw [h_tprod_succ]
+      show (SymmetricAlgebra.algHom ℤ LL).toLinearMap _ = _
+      show (SymmetricAlgebra.algHom ℤ LL) _ = _
+      rw [map_mul]
+      rfl]
+
+/-- **Vanishing key lemma** (Helper 3 of `psiA_L_circByT_total_eq`): for
+    `a' ≠ a` and `X ∈ SL`,
+    `psiA_L a (circByT_total (leaf a') X) = 0`.
+
+    Same TA-descent as Helper 2. n+1 step: IH gives 0 in both the leading
+    term and the negative sum, so no cancellation needed. -/
+private theorem psiA_L_circByT_leaf_eq_zero [DecidableEq (Nonplanar α)]
+    (a a' : α) (h : a' ≠ a) (X : SL) :
+    psiA_L a (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+      (InsertionAlgebra.ofTree (Nonplanar.leaf a')) X) = 0 := by
+  classical
+  obtain ⟨z, rfl⟩ := PreLie.OudomGuinCircConstruct.algHomL_surjective X
+  suffices h_per_tprod : ∀ (n : ℕ) (f : Fin n → LL),
+      psiA_L a (PreLie.OudomGuinCircConstruct.circTMultilinear ℤ
+        (InsertionAlgebra.ofTree (Nonplanar.leaf a')) n f) = 0 by
+    have h_eq :
+        (psiA_L a).comp
+          ((PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+            (InsertionAlgebra.ofTree (Nonplanar.leaf a'))).comp
+          (PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL))) =
+        0 := by
+      apply PreLie.OudomGuinCircConstruct.TA_linearMap_ext_tprod
+      intro n f
+      simp only [LinearMap.comp_apply, LinearMap.zero_apply]
+      have h_tot := LinearMap.congr_fun
+        (PreLie.OudomGuinCircConstruct.circByT_total_comp_algHomL (R := ℤ)
+          (InsertionAlgebra.ofTree (Nonplanar.leaf a')))
+        (TensorAlgebra.tprod ℤ LL n f)
+      simp only [LinearMap.comp_apply] at h_tot
+      rw [h_tot, PreLie.OudomGuinCircConstruct.circTTensor_tprod]
+      exact h_per_tprod n f
+    exact LinearMap.congr_fun h_eq z
+  intro n
+  induction n with
+  | zero =>
+    intro f
+    rw [PreLie.OudomGuinCircConstruct.circTMultilinear_zero, psiA_L_ofTree,
+        leaf_eq_node_zero, psiA_basis_node_neq a a' h]
+  | succ n IH =>
+    intro f
+    rw [PreLie.OudomGuinCircConstruct.circTMultilinear_succ]
+    rw [map_sub, map_sum, psiA_L_mul_eq, IH (Fin.init f)]
+    -- IH gives 0 for leading-term Y. So 0 ○ ι _ + 0 * ι _ = 0.
+    rw [LinearMap.map_zero, LinearMap.zero_apply, zero_add, zero_mul]
+    -- Σᵢ IH = Σᵢ 0 = 0. Then 0 - 0 = 0.
+    rw [show ∑ i, psiA_L a (PreLie.OudomGuinCircConstruct.circTMultilinear ℤ
+                (InsertionAlgebra.ofTree (Nonplanar.leaf a')) n
+                (Function.update (Fin.init f) i (Fin.init f i * f (Fin.last n)))) =
+            (0 : SL) from by
+      rw [show (0 : SL) = ∑ _ : Fin n, (0 : SL) from
+            (Finset.sum_const_zero).symm]
+      exact Finset.sum_congr rfl (fun i _ => IH _)]
+    rw [sub_zero]
+
+/-- **Substantive identity** for the ι case of Piece C: for `Y ∈ L` and `B ∈ SL`,
+    `psiA_L a (circByT_total Y B) = (psiA_L a Y) ★ B`.
+
+    **Proof**: Reduce Y via `Finsupp.induction_linear` to `Y = ofTree t`.
+    By `Nonplanar.node_eta`, `t = node a' A'`. Apply `iotaTree_node_via_circ`
+    (Piece D) to factor `ι(ofTree(node a' A')) = ι(leaf a') ○ Q` where
+    `Q = ∏_{c ∈ A'} ι(ofTree c)`; then `circ_assoc_via_comul` (Prop 2.8.v)
+    converts `(ι(leaf a') ○ Q) ○ B` to `ι(leaf a') ○ (Q ★ B) =
+    ι(circByT_total (leaf a') (Q ★ B))`. Bridge via `bMinusLin_SL_ι`:
+    `psiA_L a (circByT_total (node a' A') B) =
+     psiA_L a (circByT_total (leaf a') (Q ★ B))`. Case-split:
+    - `a' = a`: Helper 2 gives `Q ★ B`, matching RHS.
+    - `a' ≠ a`: Helper 3 gives 0; `psiA_basis a (node a' _) = 0` makes RHS 0. -/
+private theorem psiA_L_circByT_total_eq [DecidableEq (Nonplanar α)]
+    (a : α) (Y : LL) (B : SL) :
+    psiA_L a
+        ((PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ) (L := LL) Y) B) =
+      oudomGuinStar (psiA_L a Y) B := by
+  classical
+  induction Y using Finsupp.induction_linear with
+  | zero =>
+    let Y' : LL := (0 : LL)
+    show psiA_L a ((PreLie.OudomGuinCircConstruct.circByT_total
+      (R := ℤ) (L := LL) Y') B) =
+         oudomGuinStar (psiA_L a Y') B
+    have h_circByT_zero :
+        PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ) (L := LL) (0 : LL)
+          = 0 :=
+      PreLie.OudomGuinCircConstruct.circByT_totalLM.map_zero
+    show psiA_L a ((PreLie.OudomGuinCircConstruct.circByT_total
+      (R := ℤ) (L := LL) (0 : LL)) B) = _
+    rw [h_circByT_zero, LinearMap.zero_apply, map_zero,
+        oudomGuinStar_zero_left]
+  | add Y₁ Y₂ ih₁ ih₂ =>
+    let Y₁' : LL := Y₁
+    let Y₂' : LL := Y₂
+    show psiA_L a ((PreLie.OudomGuinCircConstruct.circByT_total
+      (R := ℤ) (L := LL) (Y₁' + Y₂')) B) =
+         oudomGuinStar (psiA_L a (Y₁' + Y₂')) B
+    rw [PreLie.OudomGuinCircConstruct.circByT_total_T_add,
+        LinearMap.add_apply, map_add, map_add, oudomGuinStar_add_left, ih₁, ih₂]
+  | single t r =>
+    let Y' : LL := Finsupp.single t r
+    show psiA_L a ((PreLie.OudomGuinCircConstruct.circByT_total
+      (R := ℤ) (L := LL) Y') B) =
+         oudomGuinStar (psiA_L a Y') B
+    have hY : Y' = r • InsertionAlgebra.ofTree t :=
+      (Finsupp.smul_single_one t r).symm
+    rw [hY]
+    have h_psi_smul :
+        psiA_L a (r • InsertionAlgebra.ofTree t) =
+          r • psiA_L a (InsertionAlgebra.ofTree t) :=
+      map_smul _ _ _
+    have h_LHS_eq :
+        psiA_L a ((PreLie.OudomGuinCircConstruct.circByT_total
+            (R := ℤ) (L := LL) (r • InsertionAlgebra.ofTree t)) B) =
+          r • psiA_L a ((PreLie.OudomGuinCircConstruct.circByT_total
+            (R := ℤ) (L := LL) (InsertionAlgebra.ofTree t)) B) := by
+      rw [PreLie.OudomGuinCircConstruct.circByT_total_T_smul,
+          LinearMap.smul_apply, map_smul]
+    have h_RHS_eq :
+        oudomGuinStar (psiA_L a (r • InsertionAlgebra.ofTree t)) B =
+          r • oudomGuinStar (psiA_L a (InsertionAlgebra.ofTree t)) B := by
+      rw [h_psi_smul]
+      exact oudomGuinStar_smul_left r _ _
+    rw [h_LHS_eq, h_RHS_eq]
+    congr 1
+    -- Now: psiA_L a (circByT_total (ofTree t) B) = (psiA_L a (ofTree t)) ★ B.
+    obtain ⟨a', A', rfl⟩ : ∃ a' A', t = Nonplanar.node a' A' :=
+      ⟨t.rootLabel, t.rootChildren, (Nonplanar.node_eta t).symm⟩
+    set Q : SL := (A'.map (fun c => SymmetricAlgebra.ι ℤ LL
+      (InsertionAlgebra.ofTree c))).prod with hQ
+    have h_circ_node :
+        SymmetricAlgebra.ι ℤ LL
+          (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+            (InsertionAlgebra.ofTree (Nonplanar.node a' A')) B) =
+        SymmetricAlgebra.ι ℤ LL
+          (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+            (InsertionAlgebra.ofTree (Nonplanar.leaf a')) (oudomGuinStar Q B)) := by
+      have h_LHS_circ :
+          SymmetricAlgebra.ι ℤ LL
+              (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+                (InsertionAlgebra.ofTree (Nonplanar.node a' A')) B) =
+          oudomGuinCirc (R := ℤ) (SymmetricAlgebra.ι ℤ LL
+            (InsertionAlgebra.ofTree (Nonplanar.node a' A'))) B := by
+        rw [oudomGuinCirc_eq_ofConv, circHom_ι]
+        rfl
+      have h_RHS_circ :
+          SymmetricAlgebra.ι ℤ LL
+              (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+                (InsertionAlgebra.ofTree (Nonplanar.leaf a')) (oudomGuinStar Q B)) =
+          oudomGuinCirc (R := ℤ) (SymmetricAlgebra.ι ℤ LL
+            (InsertionAlgebra.ofTree (Nonplanar.leaf a'))) (oudomGuinStar Q B) := by
+        rw [oudomGuinCirc_eq_ofConv, circHom_ι]
+        rfl
+      rw [h_LHS_circ, h_RHS_circ, iotaTree_node_via_circ a' A',
+          circ_assoc_via_comul]
+      rfl
+    have h_psi_eq :
+        psiA_L a (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+          (InsertionAlgebra.ofTree (Nonplanar.node a' A')) B) =
+        psiA_L a (PreLie.OudomGuinCircConstruct.circByT_total (R := ℤ)
+          (InsertionAlgebra.ofTree (Nonplanar.leaf a')) (oudomGuinStar Q B)) := by
+      have := congrArg (bMinusLin_SL a) h_circ_node
+      simp only [bMinusLin_SL_ι] at this
+      exact this
+    rw [h_psi_eq, psiA_L_ofTree]
+    by_cases ha : a' = a
+    · subst ha
+      rw [psiA_L_circByT_leaf_eq_id, psiA_basis_node_self]
+      rfl
+    · rw [psiA_L_circByT_leaf_eq_zero a a' ha,
+          psiA_basis_node_neq a a' ha, oudomGuinStar_zero_left]
+
 /-! ## §12: Piece C — OG Prop 3.2 on SL
 
 `bMinusLin_SL a (A ★ B) = ε(A) • bMinusLin_SL a B + bMinusLin_SL a A ★ B`
@@ -952,35 +1823,41 @@ By SymmetricAlgebra.induction on A:
     page-10 argument (see header comment). The substantive case
     (`A = ι x`) uses `iotaTree_node_via_circ` (Piece D) + `circ_assoc_via_comul`
     (Prop 2.8.v, sorry-free in OudomGuinCirc.lean). -/
-theorem bMinusLin_SL_oudomGuinStar (a : α) (A B : SL) :
+theorem bMinusLin_SL_oudomGuinStar [DecidableEq (Nonplanar α)]
+    (a : α) (A B : SL) :
     bMinusLin_SL a (oudomGuinStar A B) =
       SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α) A •
         bMinusLin_SL a B +
       oudomGuinStar (bMinusLin_SL a A) B := by
   induction A using SymmetricAlgebra.induction with
   | algebraMap r =>
-    -- A = algebraMap r = r • 1. A ★ B = r • B (via 1 ★ B = B + scalar compat).
-    -- bMinusLin_SL is linear, so bMinusLin_SL a (r • B) = r • bMinusLin_SL a B.
-    -- ε(algebraMap r) = r. bMinusLin_SL (algebraMap r) = 0 (length-0 vanishes).
-    -- 0 ★ B = 0. So RHS = r • bMinusLin_SL B + 0 = r • bMinusLin_SL B. ✓
-    sorry
+    -- A = algebraMap r = r • 1. (r • 1) ★ B = r • (1 ★ B) = r • B.
+    -- bMinusLin_SL (r • 1) = r • bMinusLin_SL 1 = 0. ε(algebraMap r) = r.
+    -- LHS = bMinusLin_SL (r • B) = r • bMinusLin_SL B.
+    -- RHS = r • bMinusLin_SL B + 0 ★ B = r • bMinusLin_SL B + 0.
+    rw [Algebra.algebraMap_eq_smul_one, oudomGuinStar_smul_left,
+        oudomGuinStar_one_left]
+    simp only [map_smul, map_one, bMinusLin_SL_one, smul_zero,
+               oudomGuinStar_zero_left, add_zero, smul_eq_mul, mul_one]
   | ι x =>
-    -- The substantive case. Uses Piece D + Prop 2.8.v.
-    sorry
+    -- The substantive case. ε(ι x) = 0 (primitive), so RHS collapses to
+    -- (bMinusLin_SL (ι x)) ★ B = (psiA_L a x) ★ B.
+    -- LHS reduces via length-argument (bMinusLin_SL_ι_star) to
+    -- psiA_L a (circByT_total x B). Equality via psiA_L_circByT_total_eq
+    -- (the substantive OG combinatorial identity, currently `sorry`).
+    rw [SymmetricAlgebra.algebraMapInv_ι, zero_smul, zero_add,
+        bMinusLin_SL_ι_star a x B, psiA_L_circByT_total_eq a x B,
+        bMinusLin_SL_ι]
   | mul A₁ A₂ ih₁ ih₂ =>
     -- A = A₁ * A₂. (A₁ · A₂) ★ B has its own associativity (Lemma 2.10:
     -- ★ on S(L) is associative + makes (S(L), ★, Δ) a Hopf algebra).
     -- Reduce via ih₁, ih₂ on the appropriate sub-products.
     sorry
   | add A₁ A₂ ih₁ ih₂ =>
-    -- Linearity case: ★ is linear in first arg; ε linear; bMinusLin_SL linear.
-    show bMinusLin_SL a (oudomGuinStar (A₁ + A₂) B) =
-      SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α) (A₁ + A₂) •
-        bMinusLin_SL a B +
-      oudomGuinStar (bMinusLin_SL a (A₁ + A₂)) B
-    -- TODO: oudomGuinStar linearity in first arg + algebraMapInv linearity
-    -- + bMinusLin_SL linearity + ih₁ + ih₂. ~10 LOC mechanical.
-    sorry
+    -- Linearity: ★ left-linear, bMinusLin_SL linear, ε linear.
+    rw [oudomGuinStar_add_left, map_add, map_add, map_add,
+        oudomGuinStar_add_left, ih₁, ih₂, add_smul]
+    abel
 
 end SymAlg
 
