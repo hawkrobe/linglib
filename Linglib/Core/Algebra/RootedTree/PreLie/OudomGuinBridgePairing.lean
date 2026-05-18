@@ -463,20 +463,37 @@ theorem pairing_apply_bPlus_gl_mul (a : α)
 /-! ### Phase D main: Q5c via pairing nondegeneracy -/
 
 /-- **Q5c via OG B+/B- duality**: `ckIso (X ★ Y) = unop (op (ckIso X) *
-    op (ckIso Y))`. OG paper §3.2 Prop 3.2's argument, transcribed.
+    op (ckIso Y))`. OG paper §3.2 Prop 3.2's statement, restated here
+    as the entry point for the pairing-route Phase D.
 
-    Proof skeleton:
-    1. By `pairing_nondegenerate`, reduce to `⟨LHS, z⟩ = ⟨RHS, z⟩ ∀ z`.
-    2. Induct on `z`'s B+ structure. Both sides unfold via Phase B+C+OG identities.
+    **Closure note (2026-05-17)**: After Phase B+C+D substrates closed
+    (Steps 1, 3, 4, 5), an audit revealed the pairing-route induction on
+    `z`'s B+ structure requires an LHS recurrence
+    `bMinusLin a (ckIso (X★Y)) = ε(ckIso X) • bMinusLin a (ckIso Y)
+                                + ckIso (B⁻_SL X ★ Y)` — which is OG
+    Prop 3.2 transported via ckIso, and equivalent to Q5c itself
+    (circular without independent OG-side machinery).
 
-    Currently sorry-fenced pending Phase C closure + induction wiring. -/
+    The pairing route's *strict* advantage over the existing tprod-route
+    (`gl_product_eq_oudomGuinStar`) was meant to be: bypass substrate 2
+    (the deprecated `GL_product_split_mul_ι`) by replacing combinatorial
+    GL surgery with the linear-algebra `pairing_nondegenerate` + B+/B-
+    duality. But the induction on z bottoms out at z = 1 (counit-side,
+    closed via `counit_gl_mul`) and reduces the step case
+    `z = B+_a w` to a recurrence on `bMinusLin a (ckIso (X★Y))` that
+    has no formula independent of Q5c.
+
+    Conclusion: delegate to the existing `gl_product_eq_oudomGuinStar`
+    (still substrate-2-blocked). Phases A-D and their helpers
+    (`bMinusLin_gl_mul`, `counit_gl_mul`, `pairing_apply_bPlus_gl_mul`)
+    remain useful infrastructure for future approaches. -/
 theorem gl_product_eq_oudomGuinStar_via_pairing
     (X Y : SymmetricAlgebra ℤ (InsertionAlgebra α)) :
     ((ckIsoSymmetricAlgebra (oudomGuinStar X Y) : ConnesKreimer ℤ (Nonplanar α)) :
       GrossmanLarson ℤ α) =
       (GrossmanLarson.op (ckIsoSymmetricAlgebra X)) *
-      (GrossmanLarson.op (ckIsoSymmetricAlgebra Y)) := by
-  sorry
+      (GrossmanLarson.op (ckIsoSymmetricAlgebra Y)) :=
+  gl_product_eq_oudomGuinStar X Y
 
 end GrossmanLarson
 
