@@ -1,0 +1,198 @@
+[
+  {
+    "id": "partee2010_10a",
+    "source": {"bibkey": "partee-2010", "paperLabel": "(10a)"},
+    "language": "stan1293",
+    "primaryText": "A fake gun is not a gun.",
+    "glossedTokens": [
+      ["A", "INDEF"], ["fake", "fake"], ["gun", "gun"], ["is", "be.PRS.3SG"],
+      ["not", "NEG"], ["a", "INDEF"], ["gun", "gun"]
+    ],
+    "translation": "A fake gun is not a gun.",
+    "context": "Cited as an apparently-true privative entailment (the prima facie evidence for the privative class).",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee §2. Paired with (10b): if 'gun' excludes fake guns (the privative analysis), why is (10b) well-formed?",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_10b",
+    "source": {"bibkey": "partee-2010", "paperLabel": "(10b)"},
+    "language": "stan1293",
+    "primaryText": "Is that gun real or fake?",
+    "glossedTokens": [
+      ["Is", "be.PRS.3SG"], ["that", "DEM"], ["gun", "gun"],
+      ["real", "real"], ["or", "or"], ["fake", "fake"]
+    ],
+    "translation": "Is that gun real or fake?",
+    "context": "The 'gun puzzle': for this question to be well-formed, 'gun' must include both real and fake guns. Direct evidence that the noun's denotation coerces to include the adjective's extension.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee §2 ex. (10b). The motivating puzzle: traditional privative analysis predicts 'gun' ∩ 'fake gun' = ∅, but (10b) presupposes 'gun' covers both. Resolved in §4 via NVP-licensed coercion of 'gun' to 'gun*'.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_11a",
+    "source": {"bibkey": "nowak-2000", "paperLabel": "(11a)"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(11a)"},
+    "language": "poli1260",
+    "primaryText": "Kelnerki rozmawiały o przystojnym chłopcu.",
+    "glossedTokens": [
+      ["Kelnerki", "waitress.NOM.PL"], ["rozmawiały", "talk.PST.3PL.F"],
+      ["o", "about"], ["przystojnym", "handsome.LOC.SG.M"],
+      ["chłopcu", "boy.LOC.SG"]
+    ],
+    "translation": "The waitresses talked about a handsome boy.",
+    "context": "Unmarked NP-internal word order; Adj+N adjacent within the PP.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §3 ex. (11a); Nowak 2000. Baseline for the split construction in (11b).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "partee2010_11b",
+    "source": {"bibkey": "nowak-2000", "paperLabel": "(11b)"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(11b)"},
+    "language": "poli1260",
+    "primaryText": "O przystojnym kelnerki rozmawiały chłopcu.",
+    "glossedTokens": [
+      ["O", "about"], ["przystojnym", "handsome.LOC.SG.M"],
+      ["kelnerki", "waitress.NOM.PL"], ["rozmawiały", "talk.PST.3PL.F"],
+      ["chłopcu", "boy.LOC.SG"]
+    ],
+    "translation": "The waitresses talked about a handsome BOY.",
+    "context": "NP-split: preposition + adjective in sentence-initial position, head noun sentence-final. Topic-focus structure highlights the noun.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §3 ex. (11b); Nowak 2000. The split-NP construction central to Partee's argument: intersective 'przystojny' splits cleanly. Compare with (14b) where non-subsective 'były' cannot split.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "partee2010_13b",
+    "source": {"bibkey": "nowak-2000", "paperLabel": "(13b)"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(13b)"},
+    "language": "poli1260",
+    "primaryText": "Do doliny weszliśmy rozległej.",
+    "glossedTokens": [
+      ["Do", "to"], ["doliny", "valley.GEN.SG"],
+      ["weszliśmy", "enter.PST.1PL"], ["rozległej", "large.GEN.SG.F"]
+    ],
+    "translation": "We entered a LARGE valley.",
+    "context": "NP-split with intersective adjective 'rozległy' (large). The split succeeds, as expected for intersective Adj+N.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §3 ex. (13b); Nowak 2000. Intersective member of the splittable class (15a/c).",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "partee2010_14b",
+    "source": {"bibkey": "nowak-2000", "paperLabel": "(14b)"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(14b)"},
+    "language": "poli1260",
+    "primaryText": "Z prezydentem rozmawiała byłym.",
+    "glossedTokens": [
+      ["Z", "with"], ["prezydentem", "president.INS.SG"],
+      ["rozmawiała", "talk.PST.3SG.F"], ["byłym", "former.INS.SG.M"]
+    ],
+    "translation": "She talked with the FORMER president.",
+    "context": "Attempted NP-split with non-subsective modal adjective 'były' (former). The split is ungrammatical.",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "comment": "Partee 2010 §3 ex. (14b); Nowak 2000. Critical negative datum: non-subsective adjectives cannot split. This is the empirical contrast that motivates the 3-class hierarchy: the splitting diagnostic distinguishes subsective (including former privatives) from non-subsective, NOT privative from non-privative.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "MORPHEME_ALIGNED"
+  },
+  {
+    "id": "partee2010_biedny_ambiguity",
+    "source": {"bibkey": "nowak-2000", "paperLabel": "(15b),(16a)"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(15b),(16a)"},
+    "language": "poli1260",
+    "primaryText": "biedny",
+    "glossedTokens": [["biedny", "poor.NOM.SG.M"]],
+    "translation": "poor / pitiful (lexically ambiguous)",
+    "context": "Polish 'biedny' is lexically ambiguous between an intersective reading 'not rich' (15b: can split in NP-split construction) and a non-subsective reading 'pitiful' (16a: cannot split). The splitting diagnostic tracks the READING, not the lexical form.",
+    "judgment": "acceptable",
+    "readings": [
+      {"name": "intersective 'not rich'", "judgment": "acceptable"},
+      {"name": "non-subsective 'pitiful'", "judgment": "unacceptable"}
+    ],
+    "comment": "Partee 2010 §3 exs. (15b) and (16a); Nowak 2000. The single most precise empirical claim in the paper: the same lexical item splits or fails to split depending on its semantic class. This refutes any attempt to assimilate splitting to a morphological or lexical feature of the adjective. The `readings` field captures the discrimination at the reading level — the discrimination cannot be encoded at the class level alone.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_17b",
+    "source": {"bibkey": "partee-2010", "paperLabel": "(17b)"},
+    "language": "stan1293",
+    "primaryText": "I don't care whether that fur is fake or real.",
+    "glossedTokens": [
+      ["I", "1SG"], ["don't", "do.PRS.NEG"], ["care", "care"], ["whether", "whether"],
+      ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"],
+      ["fake", "fake"], ["or", "or"], ["real", "real"]
+    ],
+    "translation": "I don't care whether that fur is fake or real.",
+    "context": "Generalization of the (10b) gun-puzzle to 'fur'. The polar disjunction 'fake or real' presupposes that 'fur' covers both fake and real fur; otherwise 'real' would be redundant. Direct evidence of NVP-licensed coercion of the noun extension.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §4 ex. (17b). Together with (10b), the canonical evidence for noun-extension coercion. The paper notes 'real' would always be redundant without coercion.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_19b",
+    "source": {"bibkey": "kamp-partee-1995", "paperLabel": "(19b) in Partee 2010"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(19b)"},
+    "language": "stan1293",
+    "primaryText": "a midget giant (a giant, but an exceptionally small one)",
+    "glossedTokens": [
+      ["a", "INDEF"], ["midget", "midget"], ["giant", "giant"]
+    ],
+    "translation": "a midget giant (a giant, but an exceptionally small one)",
+    "context": "Test case for HPP (Head Primacy Principle): the head 'giant' fixes the local domain; the modifier 'midget' is interpreted relative to that domain, yielding 'small for a giant'. Compare (19a) 'giant midget' = a midget who is exceptionally large.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §4 ex. (19b); credited to Kamp & Partee 1995. The classical HPP example: identical adjective+noun pairs receive different interpretations depending on which is head, because the head fixes the local domain.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_21b",
+    "source": {"bibkey": "kamp-partee-1995", "paperLabel": "(21b) in Partee 2010"},
+    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(21b)"},
+    "language": "stan1293",
+    "primaryText": "Knives are sharp.",
+    "glossedTokens": [
+      ["Knives", "knife.PL"], ["are", "be.PRS.3PL"], ["sharp", "sharp"]
+    ],
+    "translation": "Knives are sharp.",
+    "context": "Test case for NVP (Non-Vacuity Principle). Generic predication: 'sharp' would be redundant if 'knife' presupposed sharpness; NVP forces a reading where some knives are not sharp, so the generic claim is non-vacuous.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §4 ex. (21b); credited to Kamp & Partee 1995. Demonstrates that NVP applies to simple predicates, not just to Adj+N combinations — the same principle Partee invokes for privative coercion.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  },
+  {
+    "id": "partee2010_22b",
+    "source": {"bibkey": "partee-2010", "paperLabel": "(22b)"},
+    "language": "stan1293",
+    "primaryText": "How many poets are buried in Amherst?",
+    "glossedTokens": [
+      ["How", "how"], ["many", "many"], ["poets", "poet.PL"],
+      ["are", "be.PRS.3PL"], ["buried", "bury.PASS.PTCP"],
+      ["in", "in"], ["Amherst", "Amherst"]
+    ],
+    "translation": "How many poets are buried in Amherst?",
+    "context": "Demonstrates context-shift of the noun 'poet' independent of any adjective. With predicate 'buried', 'poets' presupposes dead poets; with 'live in' or similar present-tense, 'poets' presupposes living poets. Shows N's extension is itself adjustable, supporting the coercion mechanism Partee invokes for privatives.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "Partee 2010 §4 ex. (22b). Closing argument: noun extensions are context-adjustable independently of adjective modification, so the coercion machinery posited for privatives isn't an ad hoc rescue — it's a general property of noun interpretation.",
+    "metaLanguage": "stan1293",
+    "lgrConformance": "WORD_ALIGNED"
+  }
+]
