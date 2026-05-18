@@ -2254,6 +2254,7 @@ import Linglib.Theories.Semantics.Composition.Effects
 import Linglib.Theories.Semantics.Composition.LexiconBuilder
 import Linglib.Theories.Semantics.Composition.MaybeMonad
 import Linglib.Theories.Semantics.Composition.TypeShifting
+import Linglib.Theories.Semantics.Composition.Coercion
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Theories.Semantics.Tense.Modal.AtOperator
