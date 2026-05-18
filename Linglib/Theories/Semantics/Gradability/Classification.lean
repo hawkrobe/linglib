@@ -215,7 +215,14 @@ inductive RevisedClass where
 /-- Predicate-level interpretation of `RevisedClass`. Per the subset
     ordering, `intersective` and `subsective` are not disjoint: every
     intersective adjective satisfies `isSubsective` (see
-    `intersective_implies_subsective`). -/
+    `intersective_implies_subsective`).
+
+    Caveat on `.nonSubsective`: the membership condition `¬ isSubsective
+    adj` is necessary but coarse — it also holds of Kamp-privatives,
+    which under Partee's reanalysis are not supposed to exist as a
+    natural class. Read `.nonSubsective` as Partee's *intended* "modal"
+    class (alleged, potential, putative); the bare predicate
+    `¬ isSubsective` over-generates. -/
 def RevisedClass.satisfies : RevisedClass → AdjMeaning W E → Prop
   | .intersective  => isIntersective
   | .subsective    => isSubsective
