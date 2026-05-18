@@ -1351,6 +1351,7 @@ import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024JoS
 import Linglib.Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
 import Linglib.Phenomena.Gradability.Studies.Bochnak2015
 import Linglib.Phenomena.Gradability.Studies.CobrerosEtAl2012
+import Linglib.Phenomena.Gradability.Studies.DelPinal2015
 import Linglib.Phenomena.Gradability.Studies.Fine1975
 import Linglib.Phenomena.Gradability.Studies.Kamp1975
 import Linglib.Phenomena.Gradability.Studies.Klein1980
