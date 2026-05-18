@@ -606,83 +606,326 @@ theorem leaf_eq_node_zero (a : α) :
     Nonplanar.mk (Planar.node a (([] : List (Nonplanar α)).map Quotient.out))
   rfl
 
+/-! ### §11.A: Substrate helpers for the cancellation argument -/
+
+/-- **Notation 2.2** (Oudom-Guin): Leibniz formula for `oudomGuinCirc · (ι X)`
+    applied to a multiset product. For any `f : β → SL` and `M : Multiset β`:
+
+    `(M.map f).prod ○ ι X = Σ_{s ∈ M} ((M.erase s).map f).prod · (f s ○ ι X)`
+
+    Each summand "pulls out" the factor `f s`, applies `○ ι X` to it, and keeps
+    the rest of the product as-is. With duplicates in `M`: `erase` removes one
+    copy, so the multinomial coefficient is implicit in iterating `Multiset.map`.
+
+    Proof structure: `Multiset.induction` on `M`. Base case: `1 ○ ι X = 0 =
+    empty sum` via `one_circ` + `algebraMapInv_ι` (since `ι X` has zero scalar
+    part). Cons case `t ::ₘ M`: apply `oudomGuinCirc_mul_ι` (Leibniz form,
+    Prop 2.7.iii specialization), apply IH, then equate per-summand via
+    `Multiset.map_congr` (handling `(t::M).erase s = t :: M.erase s` for `s≠t`
+    and `(t::M).erase t = M` for `s = t` from `cons_erase`). -/
+private theorem prod_oudomGuinCirc_ι_aux {β : Type*} [DecidableEq β]
+    (f : β → SL) (M : Multiset β) (X : LL) :
+    oudomGuinCirc (R := ℤ) (M.map f).prod (SymmetricAlgebra.ι ℤ LL X) =
+      (M.map (fun s => ((M.erase s).map f).prod *
+        oudomGuinCirc (R := ℤ) (f s) (SymmetricAlgebra.ι ℤ LL X))).sum := by
+  induction M using Multiset.induction with
+  | empty =>
+    -- LHS: oudomGuinCirc 1 (ι X) = algebraMapInv (ι X) • 1 = 0 (since ι X has 0 scalar part)
+    -- RHS: empty sum = 0
+    simp only [Multiset.map_zero, Multiset.prod_zero, Multiset.sum_zero]
+    rw [one_circ, SymmetricAlgebra.algebraMapInv_ι]
+    exact zero_smul _ _
+  | cons t M ih =>
+    -- LHS: (f t * (M.map f).prod) ○ ι X
+    --    = (f t ○ ι X) * (M.map f).prod + f t * ((M.map f).prod ○ ι X)  [Leibniz]
+    --    = (f t ○ ι X) * (M.map f).prod + f t * (M.map g).sum  [by IH]
+    --      where g(s) = ((M.erase s).map f).prod * (f s ○ ι X)
+    -- RHS: ((t ::ₘ M).map g').sum where g'(s) = ((t ::ₘ M).erase s).map f).prod * (f s ○ ι X)
+    --    = g'(t) + (M.map g').sum
+    --    = (M.map f).prod * (f t ○ ι X) + (M.map g').sum  [erase_cons_head]
+    -- We need: (M.map g').sum = f t * (M.map g).sum.
+    -- For each s ∈ M: g'(s) = ((t ::ₘ M).erase s).map f).prod * (f s ○ ι X).
+    --   If s = t (t ∈ M): erase_cons_head → ((t ::ₘ M).erase t = M),
+    --     so g'(t) = (M.map f).prod * (f t ○ ι X) = (t ::ₘ M.erase t).map f).prod * (f t ○ ι X)
+    --     = f t * (M.erase t).map f).prod * (f t ○ ι X) = f t * g(t).  ✓
+    --   If s ≠ t: erase_cons_tail → ((t ::ₘ M).erase s = t ::ₘ M.erase s),
+    --     so g'(s) = (t ::ₘ M.erase s).map f).prod * (f s ○ ι X)
+    --     = f t * (M.erase s).map f).prod * (f s ○ ι X) = f t * g(s).  ✓
+    rw [Multiset.map_cons, Multiset.prod_cons, oudomGuinCirc_mul_ι, ih]
+    rw [Multiset.map_cons, Multiset.sum_cons, Multiset.erase_cons_head]
+    rw [mul_comm ((M.map f).prod) (oudomGuinCirc (f t) _)]
+    congr 1
+    -- Goal: f t * (M.map g).sum = (M.map g').sum where g/g' per above.
+    rw [← Multiset.sum_map_mul_left]
+    apply congrArg Multiset.sum
+    apply Multiset.map_congr rfl
+    intro s hs
+    -- Per-s: f t * (((M.erase s).map f).prod * (f s ○ ι X)) =
+    --        ((t ::ₘ M).erase s).map f).prod * (f s ○ ι X)
+    -- Split on s = t vs s ≠ t.
+    by_cases hst : s = t
+    · -- s = t case: subst eliminates t, replacing with s.
+      subst hst
+      -- After subst: Context has M : Multiset β, s : β, hs : s ∈ M
+      -- Goal: f s * ((M.erase s).map f).prod * (f s ○ X) =
+      --       ((s ::ₘ M).erase s).map f).prod * (f s ○ X)
+      have hM : M = s ::ₘ M.erase s := (Multiset.cons_erase hs).symm
+      rw [Multiset.erase_cons_head]
+      -- Goal: f s * ((M.erase s).map f).prod * (f s ○ X) = (M.map f).prod * (f s ○ X)
+      conv_rhs => rw [hM, Multiset.map_cons, Multiset.prod_cons]
+      ring
+    · -- s ≠ t case. (t :: M).erase s = t :: M.erase s
+      have h_ne : t ≠ s := Ne.symm hst
+      rw [Multiset.erase_cons_tail (s := M) h_ne, Multiset.map_cons,
+          Multiset.prod_cons]
+      ring
+
+/-- **Nonplanar.insertSum node decomposition** (Multiset.bind form): when the
+    left operand is a `Nonplanar.node a A''` and the right operand is `c`, the
+    insertion-sum decomposes as one root-graft summand plus a bind over A''
+    of "subtree-grafts":
+
+    `insertSum (node a A'') c = node a (c ::ₘ A'') ::ₘ
+       A''.bind (fun d => (insertSum d c).map (fun d' => node a (d' ::ₘ A''.erase d)))`
+
+    **Proof plan** (~150-250 LOC):
+    1. Pick a planar representative for A'': use `A''.toList.map Quotient.out`
+       (a `List (Planar α)`). Set `cs := A''.toList.map Quotient.out`; then
+       `Nonplanar.node a A'' = mk (Planar.node a cs)` and
+       `A'' = ↑(cs.map mk)`. Pick `c_pl := c.out`; `c = mk c_pl`.
+    2. Reduce LHS to planar via `mk_insertSum`:
+       `Nonplanar.insertSum (mk (Planar.node a cs)) (mk c_pl) =
+        (Planar.insertSum (Planar.node a cs) c_pl).map mk`.
+    3. Apply `Planar.insertSum_node`:
+       `Planar.insertSum (Planar.node a cs) c_pl =
+        Planar.node a (c_pl :: cs) ::ₘ (insertSumList cs c_pl).map (Planar.node a)`.
+    4. Distribute `.map mk` over the cons. First summand: `mk (Planar.node a
+       (c_pl :: cs)) = Nonplanar.node a (mk c_pl ::ₘ ↑(cs.map mk)) =
+       Nonplanar.node a (c ::ₘ A'')` (via `node_mk_planar_list`).
+    5. Show the second summand equals the bind: this is a separate list
+       induction lemma `insertSumList_bind_lift`. Stated:
+
+       `(insertSumList cs c_pl).map (mk ∘ Planar.node a) =
+        ↑(cs.map mk).bind (fun d => (Nonplanar.insertSum d (mk c_pl)).map
+          (fun d' => Nonplanar.node a (d' ::ₘ (↑(cs.map mk)).erase d)))`
+
+       Induct on `cs`:
+       - nil: both sides 0. ✓
+       - cons e cs': use `Planar.insertSumList_cons` + `Multiset.cons_bind`
+         to split each side into "graft at first child" + "graft deeper".
+         For the first summand: equate
+         `(Planar.insertSum e c_pl).map (mk ∘ Planar.node a ∘ (·:: cs'))`
+         with `(Nonplanar.insertSum (mk e) (mk c_pl)).map (fun d' =>
+         Nonplanar.node a (d' ::ₘ ↑(cs'.map mk)))`. (Uses erase_cons_head
+         to simplify the multiset erase: `(mk e ::ₘ A_cs').erase (mk e) = A_cs'`.)
+         For the second summand: apply IH on cs', but need to handle the new
+         `mk e` factor. Since `(mk e ::ₘ A_cs').erase d` for `d ∈ A_cs'`:
+         if `d = mk e` (duplicate), this is `A_cs'`; if `d ≠ mk e`, this is
+         `mk e ::ₘ A_cs'.erase d`. The IH-as-stated may need adjustment.
+
+    **Alternative**: state and prove via `Pathed.vertices` path-indexed form
+    (using `insertSum_eq_coe_map_insertAt`). May be cleaner. -/
+private theorem insertSum_node_decompose [DecidableEq (Nonplanar α)]
+    (a : α) (A'' : Multiset (Nonplanar α)) (c : Nonplanar α) :
+    Nonplanar.insertSum (Nonplanar.node a A'') c =
+      Nonplanar.node a (c ::ₘ A'') ::ₘ
+      A''.bind (fun d => (Nonplanar.insertSum d c).map
+        (fun d' => Nonplanar.node a (d' ::ₘ A''.erase d))) := by
+  -- TODO: descend through planar representatives + list induction (see docstring).
+  sorry
+
+/-- Linearity of `ι ∘ ofMultiset`: `ι(ofMultiset M) = Σ_{t ∈ M} ι(ofTree t)`.
+    Mechanical Multiset.induction on M. -/
+private theorem iota_ofMultiset (M : Multiset (Nonplanar α)) :
+    SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofMultiset M) =
+      (M.map (fun t => SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree t))).sum := by
+  induction M using Multiset.induction with
+  | empty =>
+    simp only [InsertionAlgebra.ofMultiset_zero, map_zero, Multiset.map_zero,
+               Multiset.sum_zero]
+  | cons t M ih =>
+    rw [InsertionAlgebra.ofMultiset_cons, map_add, ih,
+        Multiset.map_cons, Multiset.sum_cons]
+
+/-! ### §11.B: Main theorem — `iotaTree_node_via_circ` via strong cardinality
+induction -/
+
 /-- **Piece D**: every nonplanar tree is the OG circ-product of its
     singleton-vertex root with its children-forest.
 
     `ι(ofTree (node a A')) = ι(ofTree (leaf a)) ○ (∏ c ∈ A', ι(ofTree c))`
 
-    **Status**: base case proved, cons case `sorry`. Closure via
-    `Multiset.induction` on `A'`:
-    - **Base case** `A' = 0`: `node a 0 = leaf a`. `Multiset.prod 0 = 1`.
-      `circ_one_right` closes. ✓ (proved here)
-    - **Cons case** `A' = c ::ₘ A''`: apply `circ_T_mul` (Prop 2.7.ii)
-      after commuting `ι(c) * Q` to `Q * ι(c)` via `mul_comm`. The
-      "first term" `(ι(leaf a) ○ Q) ○ ι(c)` reduces via IH + `circ_ι_ι`
-      to `ι((node a A'') • c)`, which equals the desired
-      `node a (c ::ₘ A'')` plus subtree-graft summands. The "second
-      term" `ι(leaf a) ○ (Q ○ ι(c))` contains exactly the subtree-graft
-      cancellation.
+    OG paper §3 Prop 3.1 (page 9): for the free pre-Lie algebra of rooted
+    trees, the universal property gives this identity.
 
-    Estimated cons-case LOC: ~150-200 + helpers for L-side pre-Lie
-    grafting. -/
+    **Proof strategy**: strong induction on `A'.card`. The cancellation
+    argument requires the IH at multisets of cardinality `n - 1` of the
+    form `d' ::ₘ A''.erase d` where `d ∈ A''`, `d' ∈ insertSum d c` — these
+    have `card = 1 + (n - 2) = n - 1 < n`. NB: weight is NOT a valid
+    induction measure: weight is conserved exactly under subtree-grafting
+    (weight `node a (d' ::ₘ A''.erase d) = 1 + weight(c) + weight(A'') =
+    weight(node a (c ::ₘ A''))`); only cardinality of the children-multiset
+    strictly decreases. -/
 theorem iotaTree_node_via_circ (a : α) (A' : Multiset (Nonplanar α)) :
     SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree (Nonplanar.node a A')) =
     oudomGuinCirc
         (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree (Nonplanar.leaf a)))
         ((A'.map (fun c =>
             SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c))).prod) := by
-  induction A' using Multiset.induction with
-  | empty =>
-    -- Base case: A' = 0. node a 0 = leaf a. Multiset.prod 0 = 1. circ_one_right.
-    simp only [Multiset.map_zero, Multiset.prod_zero, ← leaf_eq_node_zero]
-    rw [circ_one_right]
-  | cons c A'' ih =>
-    -- Cons case: A' = c ::ₘ A''.
-    -- Setup: Q := (A''.map f).prod where f c' := ι(ofTree c').
-    -- ((c ::ₘ A'').map f).prod = ι(ofTree c) * Q.
-    -- By commutativity (SL is commutative algebra), ι(ofTree c) * Q = Q * ι(ofTree c).
-    rw [Multiset.map_cons, Multiset.prod_cons]
-    -- Goal: ι(ofTree (node a (c ::ₘ A''))) =
-    --       ι(ofTree (leaf a)) ○ (ι(ofTree c) * (A''.map f).prod)
-    -- Commute the product: ι(c) * Q = Q * ι(c).
-    rw [mul_comm (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c))
-        ((A''.map (fun c' => SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c'))).prod)]
-    -- Now apply circ_T_mul: ι(leaf a) ○ (Q * ι(ofTree c)) =
-    --   (ι(leaf a) ○ Q) ○ ι(ofTree c) - ι(leaf a) ○ (Q ○ ι(ofTree c))
-    rw [circ_T_mul]
-    -- Apply IH on A'': ι(leaf a) ○ Q = ι(ofTree (node a A''))
-    -- The IH binder is `c`; the goal's binder is `c'`. Bridge via congr.
-    rw [show (Multiset.map (fun c' =>
-                SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c')) A'').prod =
-            (Multiset.map (fun c =>
-                SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c)) A'').prod from
-        rfl]
-    rw [← ih]
-    -- Goal: ι(ofTree (node a (c ::ₘ A''))) =
-    --       ι(ofTree (node a A'')) ○ ι(ofTree c) - ι(leaf a) ○ (Q ○ ι(ofTree c))
-    --
-    -- TODO: The cancellation argument. We need to show:
-    --   ι(ofTree (node a (c ::ₘ A''))) =
-    --   ι(ofMultiset (insertSum (node a A'') c)) - ι(leaf a) ○ (Q ○ ι(ofTree c))
-    -- which reduces to:
-    --   ι(leaf a) ○ (Q ○ ι(ofTree c)) =
-    --   ι(ofMultiset (insertSum (node a A'') c \ {node a (c ::ₘ A'')}))
-    -- (where the right side is the multiset of "subtree-graft" summands).
-    --
-    -- Each subtree-graft summand has form node a (d' ::ₘ A''.erase d) for
-    -- d ∈ A'', d' ∈ insertSum d c. To match these against ι(leaf a) ○ (Q ○ ι c)
-    -- we'd need:
-    --   1. Notation 2.2 expansion: (∏ ι(c_i)) ○ ι(t) = Σ_i (∏_{j≠i} ι(c_j)) · ι(c_i • t in L).
-    --   2. Pre-Lie product on L unfolding: ι(c) ○ ι(t) = ι(ofMultiset (insertSum c t)).
-    --   3. Apply this lemma at smaller multisets (d' ::ₘ A''.erase d).
-    --
-    -- The challenge: Multiset.induction's IH gives the result for A''
-    -- (one element smaller), but the cancellation needs the result for
-    -- (d' ::ₘ A''.erase d) which has the SAME cardinality as A''.
-    -- Requires either strong induction on `weight (node a A')` or a
-    -- different lemma structure (e.g., extension over arbitrary x ∈ L
-    -- rather than just basis trees).
-    sorry
+  classical
+  -- Set up abbreviations for readability.
+  set f : Nonplanar α → SL :=
+    fun c => SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c) with hf
+  set ιa : SL := SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree (Nonplanar.leaf a))
+    with hιa
+  -- Reduce to a Nat-indexed statement, then do strong induction on Nat.
+  suffices H : ∀ n A' (h : Multiset.card A' = n),
+      SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree (Nonplanar.node a A')) =
+      oudomGuinCirc (R := ℤ) ιa ((A'.map f).prod) by
+    exact H A'.card A' rfl
+  intro n
+  induction n using Nat.strong_induction_on with
+  | _ n IH =>
+    intro A' hA'
+    -- Base case: A' = 0 (card 0). node a 0 = leaf a. prod 0 = 1.
+    rcases Nat.eq_zero_or_pos n with hn | hn
+    · -- n = 0 case
+      subst hn
+      have hA'0 : A' = 0 := Multiset.card_eq_zero.mp hA'
+      subst hA'0
+      simp only [Multiset.map_zero, Multiset.prod_zero, ← leaf_eq_node_zero, hιa]
+      rw [circ_one_right]
+    · -- n ≥ 1. A' is nonempty; pick a head element.
+      have hA'_ne : A' ≠ 0 := by
+        intro h
+        rw [h, Multiset.card_zero] at hA'
+        omega
+      -- Decompose A' = c ::ₘ A'' for some c, A''.
+      obtain ⟨c, hc⟩ := Multiset.exists_mem_of_ne_zero hA'_ne
+      obtain ⟨A'', rfl⟩ := Multiset.exists_cons_of_mem hc
+      have hA''_card : Multiset.card A'' = n - 1 := by
+        rw [Multiset.card_cons] at hA'
+        omega
+      have h_sub_lt : n - 1 < n := Nat.sub_lt hn Nat.one_pos
+      -- Apply IH to A'' at cardinality n - 1.
+      have ih_A'' : SymmetricAlgebra.ι ℤ LL
+            (InsertionAlgebra.ofTree (Nonplanar.node a A'')) =
+          oudomGuinCirc (R := ℤ) ιa ((A''.map f).prod) :=
+        IH (n - 1) h_sub_lt A'' hA''_card
+      -- Set up abbreviations for the RHS pieces.
+      set Q : SL := (A''.map f).prod
+      set Qιc : SL :=
+        oudomGuinCirc (R := ℤ) Q (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c))
+      set SG : Multiset (Nonplanar α) :=
+        A''.bind (fun d => (Nonplanar.insertSum d c).map
+          (fun d' => Nonplanar.node a (d' ::ₘ A''.erase d)))
+      -- Suffices the cancellation: ιa ○ Qιc = ι(ofMultiset SG).
+      suffices h_cancel :
+          oudomGuinCirc (R := ℤ) ιa Qιc =
+          SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofMultiset SG) by
+        -- Unfold the LHS prod cons and commute.
+        rw [Multiset.map_cons, Multiset.prod_cons]
+        -- Goal: ι(node a (c ::ₘ A'')) = ιa ○ (f c * Q)
+        rw [mul_comm (f c) Q]
+        -- Goal: ι(node a (c ::ₘ A'')) = ιa ○ (Q * f c)
+        show SymmetricAlgebra.ι ℤ LL _ =
+          oudomGuinCirc (R := ℤ) ιa
+            (Q * SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c))
+        rw [circ_T_mul]
+        -- Goal: ι(node a (c::A'')) = (ιa ○ Q) ○ ι c - ιa ○ (Q ○ ι c)
+        rw [← ih_A'']
+        -- Goal: ι(node a (c::A'')) = ι(node a A'') ○ ι c - ιa ○ Qιc
+        rw [circ_ι_ι, InsertionAlgebra.ofTree_mul_ofTree,
+            insertSum_node_decompose a A'' c,
+            InsertionAlgebra.ofMultiset_cons, map_add, h_cancel]
+        -- Goal: ι(node a (c::A'')) = (ι(node a (c::A'')) + ι(ofMultiset SG)) - ι(ofMultiset SG)
+        ring
+      -- Now prove the cancellation: ιa ○ (Q ○ ι c) = ι(ofMultiset SG).
+      -- Apply IH to each (d' ::ₘ A''.erase d) (cardinality n - 1 < n).
+      have h_inner : ∀ d ∈ A'', ∀ d' ∈ Nonplanar.insertSum d c,
+          SymmetricAlgebra.ι ℤ LL
+            (InsertionAlgebra.ofTree
+              (Nonplanar.node a (d' ::ₘ A''.erase d))) =
+          oudomGuinCirc (R := ℤ) ιa (((d' ::ₘ A''.erase d).map f).prod) := by
+        intro d hd d' _
+        have hA''_pos : 0 < Multiset.card A'' :=
+          Multiset.card_pos_iff_exists_mem.mpr ⟨d, hd⟩
+        have h_card : Multiset.card (d' ::ₘ A''.erase d) = n - 1 := by
+          rw [Multiset.card_cons, Multiset.card_erase_of_mem hd, hA''_card,
+              Nat.pred_eq_sub_one]
+          omega
+        exact IH (n - 1) h_sub_lt (d' ::ₘ A''.erase d) h_card
+      -- RHS: ι(ofMultiset SG) = (SG.map (ι ∘ ofTree)).sum.
+      -- SG = A''.bind (...) so ι(ofMultiset SG) becomes a bind of mapped sums.
+      rw [iota_ofMultiset]
+      simp only [SG, Multiset.map_bind, Multiset.map_map, Function.comp_def]
+      -- After fusing maps, the inner function inside the bind is:
+      -- fun d' => ι(ofTree (node a (d' ::ₘ A''.erase d))).
+      -- Substitute via h_inner.
+      rw [show A''.bind (fun d =>
+                (Nonplanar.insertSum d c).map (fun d' =>
+                  SymmetricAlgebra.ι ℤ LL
+                    (InsertionAlgebra.ofTree
+                      (Nonplanar.node a (d' ::ₘ A''.erase d))))) =
+              A''.bind (fun d =>
+                (Nonplanar.insertSum d c).map (fun d' =>
+                  oudomGuinCirc (R := ℤ) ιa
+                    (((d' ::ₘ A''.erase d).map f).prod))) from ?_]
+      · -- Now LHS: ιa ○ Qιc. RHS: bind-of-IH-applied sum.
+        -- Compute LHS via Notation 2.2 + ι linearity.
+        show oudomGuinCirc (R := ℤ) ιa Qιc = _
+        -- Unfold Qιc := oudomGuinCirc Q (ι c).
+        show oudomGuinCirc (R := ℤ) ιa
+          (oudomGuinCirc (R := ℤ) Q
+            (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c))) = _
+        -- Q = (A''.map f).prod. Apply Notation 2.2 on Q ○ ι c.
+        rw [show Q = (A''.map f).prod from rfl,
+            prod_oudomGuinCirc_ι_aux f A'' (InsertionAlgebra.ofTree c)]
+        -- Inner: Q ○ ι c = (A''.map (fun d => (A''.erase d).map f).prod * (f d ○ ι c))).sum.
+        -- Apply ιa ○ _ linearity to distribute over the outer sum.
+        rw [map_multiset_sum, Multiset.map_map]
+        -- LHS: (A''.map (ιa ○ ·) ∘ (fun d => ...)).sum.
+        -- Rewrite per d: ιa ○ ((A''.erase d).map f).prod * (f d ○ ι c)) = (per d sum).
+        -- The RHS is a bind: Σ_{d ∈ A''} (insertSum d c).map (...).sum.
+        -- Reformulate the RHS using Multiset.sum_bind:
+        rw [Multiset.sum_bind]
+        -- Now both sides are sums over A''. Show termwise equality.
+        apply congrArg Multiset.sum
+        apply Multiset.map_congr rfl
+        intro d hd
+        simp only [Function.comp_apply]
+        -- Per-d goal: ιa ○ (Md * (f d ○ ι c)) =
+        --   (insertSum d c).map (fun d' => ιa ○ ((d' ::ₘ A''.erase d).map f).prod).sum
+        -- where Md = ((A''.erase d).map f).prod.
+        -- Step 1: convert (d' ::ₘ A''.erase d).map f).prod = f d' * Md
+        simp only [Multiset.map_cons, Multiset.prod_cons]
+        -- Step 2: replace f d ○ ι c = ι(d * c) = ι(ofMultiset (insertSum d c))
+        have h_fd_circ : oudomGuinCirc (R := ℤ) (f d)
+            (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c)) =
+            SymmetricAlgebra.ι ℤ LL
+              (InsertionAlgebra.ofMultiset (Nonplanar.insertSum d c)) := by
+          rw [hf]
+          show oudomGuinCirc (R := ℤ)
+            (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree d))
+            (SymmetricAlgebra.ι ℤ LL (InsertionAlgebra.ofTree c)) = _
+          rw [circ_ι_ι, InsertionAlgebra.ofTree_mul_ofTree]
+        rw [h_fd_circ]
+        -- Step 3: distribute ιa ○ (Md * ι(ofMultiset (insertSum d c)))
+        -- via iota_ofMultiset and linearity.
+        rw [iota_ofMultiset, ← Multiset.sum_map_mul_left, map_multiset_sum,
+            Multiset.map_map]
+        -- Both sides are sums over (insertSum d c). Match termwise.
+        apply congrArg Multiset.sum
+        apply Multiset.map_congr rfl
+        intro d' _
+        simp only [Function.comp_apply]
+        rw [mul_comm ((A''.erase d).map f).prod _]
+      · -- Bind congruence for the substitution via h_inner.
+        apply Multiset.bind_congr
+        intro d hd
+        apply Multiset.map_congr rfl
+        intro d' hd'
+        exact h_inner d hd d' hd'
 
 /-! ## §12: Piece C — OG Prop 3.2 on SL
 
