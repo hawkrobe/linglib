@@ -466,6 +466,51 @@ noncomputable instance instMul : Mul (GrossmanLarson R α) where
 
 theorem mul_def (x y : GrossmanLarson R α) : x * y = product x y := rfl
 
+/-- **Left distributivity**: `a * (b + c) = a * b + a * c`. Follows from
+    `product`'s bilinearity. Registered as `LeftDistribClass` (a Prop-only
+    class that doesn't extend `Mul`/`Add`, avoiding parent-class disagreement
+    with the existing `instMul` and `instAddCommMonoid`). Sorry-free. -/
+instance instLeftDistribClass : LeftDistribClass (GrossmanLarson R α) where
+  left_distrib a b c := by
+    show product a (b + c) = product a b + product a c
+    exact map_add (product a) b c
+
+/-- **Right distributivity**: `(a + b) * c = a * c + b * c`. Same approach as
+    `instLeftDistribClass`. Sorry-free. -/
+instance instRightDistribClass : RightDistribClass (GrossmanLarson R α) where
+  right_distrib a b c := by
+    show product (a + b) c = product a c + product b c
+    rw [show product (a + b) = product a + product b from
+        map_add product a b]
+    rfl
+
+/-- Direct lemmas for `0 * a = 0` and `a * 0 = 0`. Registering `MulZeroClass`
+    runs into the parent-class disagreement issue (it extends `Mul`/`Zero`),
+    so we expose these as plain theorems. Invoke as
+    `GrossmanLarson.zero_mul_gl`/`mul_zero_gl`. -/
+theorem zero_mul_gl (x : GrossmanLarson R α) : (0 : GrossmanLarson R α) * x = 0 := by
+  show product 0 x = 0
+  rw [map_zero]
+  rfl
+
+theorem mul_zero_gl (x : GrossmanLarson R α) : x * (0 : GrossmanLarson R α) = 0 := by
+  show product x 0 = 0
+  exact map_zero _
+
+/-- Direct lemma for `(r • a) * b = r • (a * b)`. Standalone since
+    `IsScalarTower R GL GL` isn't registered (parent-class disagreement). -/
+theorem smul_mul_gl (r : R) (a b : GrossmanLarson R α) :
+    (r • a) * b = r • (a * b) := by
+  show product (r • a) b = r • product a b
+  rw [LinearMap.map_smul]
+  rfl
+
+/-- Direct lemma for `a * (s • b) = s • (a * b)`. Standalone since
+    `SMulCommClass R GL GL` isn't registered (parent-class disagreement). -/
+theorem mul_smul_gl (s : R) (a b : GrossmanLarson R α) :
+    a * (s • b) = s • (a * b) :=
+  LinearMap.map_smul (product a) s b
+
 /-- **Basis form** of the GL product: `(of' F) * (of' G) = productForest (of' F) G`.
     Reduces the `linearCombination`-extended product to the explicit
     powerset-sum formula. -/

@@ -918,33 +918,33 @@ private theorem ckIso_circ_intertwine_insertion
           ConnesKreimer.of' ({t} : Multiset _) from
         ckIsoSymmetricAlgebra_ι_single t]
 
-/-- **Substrate 2 for Q5c**: GL.product split lemma (analog of OG Prop 3.9.iv).
+/-- **Substrate 2 for Q5c** — DEPRECATED (2026-05-17). This identity was
+    invented for the per-tprod induction strategy of `gl_product_eq_oudomGuinStar`.
+    Audit revealed:
 
-    Stated additively (avoiding GL subtraction): for all F ∈ GL, G ∈ CK,
-    v : Nonplanar α:
+    1. The identity is the GL/CK transport of OG `oudomGuinStar_mul_ι_split`.
+    2. Reducing the basis case proves to require the singleton-{v} case of
+       `Nonplanar.insertionMultiset_assoc` (the A3.3 keystone sorry).
+    3. **OG paper §3.2 (Prop 3.2) does NOT use this identity.** OG proves
+       Q5c-equivalent via B+/B- duality with Δ^ρ: show `B-(A ∗ B) =
+       ε(A) B-(B) + B-(A) ∗ B` and conclude via pairing nondegeneracy.
 
+    The OG-faithful route is now the active plan; see
+    `[[feedback-substrate2-not-og]]` and `[[project-q5c-architecture]]`.
+    Substrate infrastructure required for the new route:
+    - `GrossmanLarsonPairing.lean` (currently sorry-fenced).
+    - `Nonplanar.autCard` (Aut.lean, sorry).
+    - `Δ^ρ` cocycle (PruningNonplanar.lean, sorry-free) — REUSED.
+    - `B+_a` operator (PruningNonplanar.lean, sorry-free) — REUSED.
+
+    Substrate 2 is preserved as a sorry below to mark the abandoned path
+    and to let the per-tprod m+1 case (which references it) typecheck.
+    Closure via the deprecated combinatorial route is NOT recommended.
+
+    Original statement (additive, avoiding GL subtraction):
     `F * op (G * of'({v})) + F * insertion (op G) (op (of'({v})))
        = insertion (F * op G) (op (of'({v}))) + op (unop (F * op G) * of'({v}))`
-
-    Equivalently: `F * op(G * of'({v})) = insertion(F*op G)(op(of'({v})))
-                                       + op(unop(F*op G) * of'({v}))
-                                       - F * insertion(op G)(op(of'({v})))`
-    (when subtraction is available).
-
-    Proven by manipulating Foissy's powerset formula:
-    `productForest F (G+{v}) = Σ_{H ⊆ G+{v}} insertion F (of' H) *_CK of'((G+{v}) - H)`.
-    Split sum based on `v ∈ H` or `v ∉ H`:
-    - `v ∉ H` (H ⊆ G): factors as `(GL.product F G) *_CK of'({v})`.
-    - `v ∈ H` (H = H' + {v}, H' ⊆ G): needs an `insertion` split identity
-      `insertion F (of'(H'+{v})) + insertion F (insertion (of' H') (of'({v})))
-         = insertion(insertion F (of' H'))(of'({v}))`,
-      following from Foissy's grafting semantics on F's original vertices.
-
-    Verified on the small case (F = of'({a}), G = of'({b}), v = c): LHS and
-    RHS-as-3-terms both compute to `of'({a,b,c}) + of'({a▷b, c}) +
-    of'({a▷c, b}) + of'({a▷(b,c)})`.
-
-    Pending closure: estimated ~200-300 LOC. -/
+-/
 private theorem GL_product_split_mul_ι
     (F : GrossmanLarson ℤ α)
     (G : ConnesKreimer ℤ (Nonplanar α))

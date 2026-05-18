@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Combinatorics.RootedTree.Aut
+import Mathlib.Tactic.Ring
 
 set_option autoImplicit false
 
@@ -92,23 +93,79 @@ noncomputable def forestAutCard (F : Forest (Nonplanar α)) : ℕ :=
 
 /-- The **symmetry-weighted pairing** `⟨·, ·⟩ : H × H → R`. On basis
     elements, `⟨of' F, of' G⟩ = if F = G then forestAutCard F else 0`
-    (in `R`, via `Nat.cast`). Bilinearly extended. -/
+    (in `R`, via `Nat.cast`). Bilinearly extended via `Finsupp.lift`. -/
 noncomputable def pairing :
     ConnesKreimer R (Nonplanar α) →ₗ[R]
-      ConnesKreimer R (Nonplanar α) →ₗ[R] R := sorry
+      ConnesKreimer R (Nonplanar α) →ₗ[R] R :=
+  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
+  Finsupp.lift _ R (Forest (Nonplanar α)) (fun F =>
+    Finsupp.lift R R (Forest (Nonplanar α)) (fun G =>
+      if F = G then (forestAutCard F : R) else 0))
 
 @[simp] theorem pairing_of'_of' (F G : Forest (Nonplanar α)) :
     pairing (R := R) (ConnesKreimer.of' (R := R) F)
                      (ConnesKreimer.of' (R := R) G) =
       (letI : Decidable (F = G) := Classical.dec _
        if F = G then (forestAutCard F : R) else 0) := by
-  sorry
+  letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
+  show (Finsupp.lift _ R (Forest (Nonplanar α)) (fun F' =>
+    Finsupp.lift R R (Forest (Nonplanar α)) (fun G' =>
+      if F' = G' then (forestAutCard F' : R) else 0)))
+    (Finsupp.single F 1 : Forest (Nonplanar α) →₀ R) (ConnesKreimer.of' G) = _
+  rw [Finsupp.lift_apply, Finsupp.sum_single_index]
+  · rw [one_smul]
+    show (Finsupp.lift R R (Forest (Nonplanar α)) (fun G' =>
+        if F = G' then (forestAutCard F : R) else 0))
+        (Finsupp.single G 1 : Forest (Nonplanar α) →₀ R) = _
+    rw [Finsupp.lift_apply, Finsupp.sum_single_index]
+    · simp only [one_smul]
+    · simp
+  · simp
 
-/-- The pairing is symmetric. **TODO**: proof. Reduces to
-    `forestAutCard F = forestAutCard F` on the diagonal. -/
+/-- The pairing is symmetric. Reduces by bilinearity to the basis case,
+    where `pairing_of'_of'` shows both sides are `if F = G then
+    forestAutCard F else 0` — same value (the `F = G` case forces it). -/
 theorem pairing_symm (x y : ConnesKreimer R (Nonplanar α)) :
     pairing (R := R) x y = pairing y x := by
-  sorry
+  refine Finsupp.induction_linear x ?_ ?_ ?_
+  · show pairing (R := R) (0 : ConnesKreimer R (Nonplanar α)) y =
+        pairing y (0 : ConnesKreimer R (Nonplanar α))
+    rw [LinearMap.map_zero, LinearMap.zero_apply, LinearMap.map_zero]
+  · intro x₁ x₂ ih₁ ih₂
+    let x₁' : ConnesKreimer R (Nonplanar α) := x₁
+    let x₂' : ConnesKreimer R (Nonplanar α) := x₂
+    show pairing (R := R) (x₁' + x₂') y = pairing y (x₁' + x₂')
+    rw [map_add, LinearMap.add_apply, ih₁, ih₂, map_add]
+  · intro F r
+    refine Finsupp.induction_linear y ?_ ?_ ?_
+    · let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      show pairing (R := R) x_single (0 : ConnesKreimer R (Nonplanar α)) =
+          pairing (0 : ConnesKreimer R (Nonplanar α)) x_single
+      rw [LinearMap.map_zero, LinearMap.map_zero, LinearMap.zero_apply]
+    · intro y₁ y₂ ih₁ ih₂
+      let y₁' : ConnesKreimer R (Nonplanar α) := y₁
+      let y₂' : ConnesKreimer R (Nonplanar α) := y₂
+      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      show pairing (R := R) x_single (y₁' + y₂') = pairing (y₁' + y₂') x_single
+      rw [map_add, LinearMap.map_add, LinearMap.add_apply, ih₁, ih₂]
+    · intro G s
+      let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+      let y_single : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
+      show pairing (R := R) x_single y_single = pairing y_single x_single
+      have hx : x_single = r • (ConnesKreimer.of' (R := R) F) := by
+        show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
+              r • (Finsupp.single F 1 : ConnesKreimer R (Nonplanar α))
+        exact (Finsupp.smul_single_one F r).symm
+      have hy : y_single = s • (ConnesKreimer.of' (R := R) G) := by
+        show (Finsupp.single G s : ConnesKreimer R (Nonplanar α)) =
+              s • (Finsupp.single G 1 : ConnesKreimer R (Nonplanar α))
+        exact (Finsupp.smul_single_one G s).symm
+      rw [hx, hy]
+      simp only [LinearMap.map_smul, LinearMap.smul_apply, pairing_of'_of']
+      by_cases h : F = G
+      · subst h; ring
+      · have h' : G ≠ F := fun heq => h heq.symm
+        simp [h, h']
 
 /-- The pairing vanishes on `0`. Free from linearity. -/
 @[simp] theorem pairing_zero_left (y : ConnesKreimer R (Nonplanar α)) :
@@ -120,14 +177,75 @@ theorem pairing_symm (x y : ConnesKreimer R (Nonplanar α)) :
     pairing (R := R) x 0 = 0 :=
   LinearMap.map_zero _
 
-/-- **Non-degeneracy** (over a field of characteristic 0, or any `R`
-    where every `forestAutCard F` is a non-zero-divisor). If `pairing x y
-    = 0` for all `y`, then `x = 0`. **TODO**: proof + correct
-    hypothesis on `R`. -/
+/-- Each pairing against a basis element `of' G` extracts the coefficient
+    of `G` in `x`, weighted by `forestAutCard G`. Proof: reduce to basis
+    via `Finsupp.induction_linear` on `x`, then `pairing_of'_of'`. -/
+theorem pairing_apply_of' (x : ConnesKreimer R (Nonplanar α))
+    (G : Forest (Nonplanar α)) :
+    pairing (R := R) x (ConnesKreimer.of' G) =
+      (x : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R) := by
+  refine Finsupp.induction_linear x ?_ ?_ ?_
+  · show pairing (R := R) (0 : ConnesKreimer R (Nonplanar α))
+                          (ConnesKreimer.of' G) =
+        (0 : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R)
+    rw [pairing_zero_left, Finsupp.zero_apply, zero_mul]
+  · intro x₁ x₂ ih₁ ih₂
+    let x₁' : ConnesKreimer R (Nonplanar α) := x₁
+    let x₂' : ConnesKreimer R (Nonplanar α) := x₂
+    show pairing (R := R) (x₁' + x₂') (ConnesKreimer.of' G) =
+        (((x₁' + x₂') : ConnesKreimer R (Nonplanar α)) :
+          Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R)
+    rw [map_add, LinearMap.add_apply, ih₁, ih₂]
+    show (x₁' : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R) +
+        (x₂' : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R) =
+        ((x₁' + x₂') : Forest (Nonplanar α) →₀ R) G * (forestAutCard G : R)
+    show x₁ G * (forestAutCard G : R) + x₂ G * (forestAutCard G : R) =
+        (x₁ + x₂) G * (forestAutCard G : R)
+    rw [Finsupp.add_apply, add_mul]
+  · intro F r
+    have hx : (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
+              r • (ConnesKreimer.of' (R := R) F) := by
+      show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
+            r • (Finsupp.single F 1 : ConnesKreimer R (Nonplanar α))
+      exact (Finsupp.smul_single_one F r).symm
+    rw [hx]
+    simp only [LinearMap.map_smul, LinearMap.smul_apply, pairing_of'_of']
+    letI : DecidableEq (Forest (Nonplanar α)) := Classical.decEq _
+    by_cases h : F = G
+    · subst h
+      rw [if_pos rfl, smul_eq_mul]
+      show r * (forestAutCard F : R) =
+          (r • (Finsupp.single F 1 : Forest (Nonplanar α) →₀ R)) F *
+            (forestAutCard F : R)
+      rw [Finsupp.smul_apply, Finsupp.single_eq_same]
+      ring
+    · rw [if_neg h, smul_zero]
+      show 0 =
+          (r • (Finsupp.single F 1 : Forest (Nonplanar α) →₀ R)) G *
+            (forestAutCard G : R)
+      rw [Finsupp.smul_apply, Finsupp.single_apply, if_neg h, smul_zero, zero_mul]
+
+/-- **Non-degeneracy** of the pairing over `CharZero R` with no zero
+    divisors. If `pairing x y = 0` for all `y`, then `x = 0`. Uses
+    `pairing_apply_of'` (coefficient extraction) + `forestAutCard_pos`
+    (positivity) + `Nat.cast_ne_zero` (CharZero R has no Nat-cast torsion)
+    + `mul_eq_zero` (NoZeroDivisors R).
+
+    Holds for any commutative ring with characteristic 0 and no zero
+    divisors (e.g. `ℤ`, `ℚ`, `ℝ`, `ℂ`, any field of char 0). -/
 theorem pairing_nondegenerate
-    [CharZero R] (x : ConnesKreimer R (Nonplanar α))
+    [CharZero R] [NoZeroDivisors R] (x : ConnesKreimer R (Nonplanar α))
     (h : ∀ y, pairing (R := R) x y = 0) : x = 0 := by
-  sorry
+  apply Finsupp.ext (M := R)
+  intro G
+  have hG : pairing (R := R) x (ConnesKreimer.of' G) = 0 := h _
+  rw [pairing_apply_of'] at hG
+  have hauts_ne : (Nonplanar.forestAutCard G : R) ≠ 0 :=
+    Nat.cast_ne_zero.mpr (Nonplanar.forestAutCard_pos G).ne'
+  show (x : Forest (Nonplanar α) →₀ R) G = 0
+  rcases mul_eq_zero.mp hG with hx | hx
+  · exact hx
+  · exact absurd hx hauts_ne
 
 end GrossmanLarson
 
