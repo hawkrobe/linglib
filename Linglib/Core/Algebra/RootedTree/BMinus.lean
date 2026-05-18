@@ -571,7 +571,7 @@ private theorem singleton_node_a_insertion_eq_bPlus_gl_mul
 
 /-- `bMinusLin a` is the constant function `0` on basis forests that are
     not singleton-a-rooted. Helper for the easy cases of Phase C. -/
-private theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
+theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
     (F : Forest (Nonplanar α))
     (h : ¬ ∃ G' : Forest (Nonplanar α), F = ({Nonplanar.node a G'} : Forest _)) :
     bMinusBasis (R := R) a F = 0 := by
