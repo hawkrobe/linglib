@@ -7,7 +7,7 @@ Predicate modification (@cite{heim-kratzer-1998} Ch. 4):
 
 The adjective classification hierarchy (intersective, subsective,
 privative, extensional) is in
-`Theories/Semantics/Lexical/Adjective/Classification.lean`.
+`Theories/Semantics/Gradability/Classification.lean`.
 -/
 
 import Linglib.Core.Logic.Intensional.Frame
@@ -42,7 +42,7 @@ theorem predMod_true_left {E : Type*} (p : E → Bool) : predMod truePred p = p 
 end Generic
 
 /-! The adjective classification hierarchy (intersective, subsective,
-    privative, extensional) is in `Lexical/Adjective/Classification.lean`.
+    privative, extensional) is in `Gradability/Classification.lean`.
     This file provides the composition operation (Predicate Modification)
     that implements the intersective case. -/
 
