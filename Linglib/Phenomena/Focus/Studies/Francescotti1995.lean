@@ -31,7 +31,7 @@ predictions for both.
 
 namespace Francescotti1995
 
-open Semantics.FocusParticles (EvenThreshold evenPresupWith)
+open Semantics.Focus.Particles (EvenThreshold evenPresupWith)
 open Fragments.English.FocusParticles (even_)
 
 -- ============================================================

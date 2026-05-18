@@ -1,173 +1,103 @@
-/-
-# Focus Interpretation @cite{rooth-1992}
-
-Rooth's "A Theory of Focus Interpretation" introduces the Focus Interpretation
-Principle (FIP) and the ~ operator to connect focus semantic values with context.
-
-## Insight: Type Identity
-
-Rooth's focus semantic value ⟦α⟧f is a **set of propositions**, of the
-same type as Hamblin-style question denotations. In the substrate's
-Set-based representation, this is `Set (Set W)`. This grounds Q-A
-congruence: the focus value of an answer equals the question denotation.
-
-The substrate's inquisitive question type `Core.Question W` carries
-strictly more structure (downward-closed family of states); a focus
-value `Set (Set W)` corresponds to its `alt`-image — flat sets of
-propositions matching Rooth's intuition.
-
-## The ~ Operator
-
-The squiggle operator (~) introduces a focus constraint via an anaphoric variable Γ:
-- Γ is resolved to a salient set of alternatives from context
-- FIP requires: Γ ⊆ ⟦α⟧f (the contrast set is a subset of focus alternatives)
-
-## Four FIP Applications (Rooth §2)
-
-1. Focusing adverbs (only, even) - association with focus
-2. Contrast/parallelism - parallel focus triggers contrast presupposition
-3. Scalar implicature - focus alternatives feed into SI computation
-4. Q-A congruence - answer focus must match question
-
--/
-
 import Linglib.Features.InformationStructure
 import Mathlib.Data.Set.Basic
 import Mathlib.Tactic.Tauto
 
+/-!
+# Focus interpretation
+
+Set-based encoding of Rooth's focus interpretation principle (FIP) and
+the squiggle (~) operator. Focus values are represented as `Set (Set W)`,
+matching Hamblin-style question denotations.
+
+## Main definitions
+
+* `PropFocusValue W`: propositional focus value `Set (Set W)`.
+* `Squiggle W`: a squiggle anaphor carrying its contrast set Γ.
+* `fip`: Rooth's focus interpretation principle (Γ ⊆ ⟦α⟧f).
+* `qaCongruent` / `qaCongruentWeak`: Q-A congruence as set-equality
+  and as the weaker subset relation.
+* `FocusResolution W`: bundles FIP with the ordinary-value-in-class
+  constraint.
+* `ClauseEmbedPred W E`: clause-embedding predicate with explicit
+  access to focus alternatives.
+* `IsFocusSensitive`, `IsNotFocusSensitive`: focus sensitivity of a
+  clause-embedding predicate, with a `liftNonFS` lift for the negative
+  case.
+
+## References
+
+* @cite{rooth-1992}, @cite{ozyildiz-etal-2025}.
+-/
+
 open Features.InformationStructure
 
-namespace Semantics.FocusInterpretation
+namespace Semantics.Focus.Interpretation
 
--- Focus Semantic Values (@cite{rooth-1985}, 1992)
+variable {W E : Type*}
 
-/-- Propositional focus value: set of propositions.
-    Type: ⟨⟨s,t⟩,t⟩ in Montague notation, modelled as `Set (Set W)`. -/
+/-- Propositional focus value: a set of propositions over `W`. -/
 abbrev PropFocusValue (W : Type*) := Set (Set W)
 
--- The ~ Operator (Squiggle)
-
-/-- The ~ operator introduces a focus constraint via anaphor Γ.
-
-    @cite{rooth-1992} §2: "α ~ Γ" where:
-    - α is an expression with focus marking
-    - Γ is an anaphoric variable resolved to a contextual set of alternatives
-    - FIP requires: Γ ⊆ ⟦α⟧f -/
+/-- The ~ operator introduces a focus constraint via the anaphoric
+contrast set `Γ`. -/
 structure Squiggle (W : Type*) where
-  /-- The contrasting set Γ (anaphor to context) -/
+  /-- The contrast set `Γ`, resolved from context. -/
   contrastSet : Set (Set W)
 
-/-- Focus Interpretation Principle (FIP):
-    The contextual contrast set Γ must be a subset of the focus semantic value.
-
-    @cite{rooth-1992} §2: "Γ ⊆ ⟦α⟧f" -/
-def fip {W : Type*} (gamma : Set (Set W)) (focusValue : Set (Set W)) : Prop :=
+/-- Focus interpretation principle: the contextual contrast set `Γ` is a
+subset of the focus semantic value. -/
+def fip (gamma focusValue : Set (Set W)) : Prop :=
   gamma ⊆ focusValue
 
--- Question-Answer Congruence
-
-/-- Q-A Congruence: An answer is congruent to a question iff the focus
-    semantic value of the answer equals the question denotation.
-
-    @cite{rooth-1992} §4: Focus on the answer must match the wh-position in the question.
-
-    Example:
-    - Q: "Who ate the beans?" = {fredAteBeans, maryAteBeans}
-    - A: "FRED ate the beans" has ⟦A⟧f = {fredAteBeans, maryAteBeans}
-    - Congruent iff ⟦A⟧f = ⟦Q⟧ -/
-def qaCongruent {W : Type*} (answerFocus : PropFocusValue W)
-    (question : PropFocusValue W) : Prop :=
+/-- Q-A congruence (strong): answer focus value equals question
+denotation. -/
+def qaCongruent (answerFocus question : PropFocusValue W) : Prop :=
   answerFocus = question
 
-/-- Weaker Q-A congruence: question alternatives are a subset of answer focus.
-    This handles cases where the answer may introduce additional alternatives. -/
-def qaCongruentWeak {W : Type*} (answerFocus : PropFocusValue W)
-    (question : PropFocusValue W) : Prop :=
+/-- Q-A congruence (weak): question denotation is a subset of the answer
+focus value. -/
+def qaCongruentWeak (answerFocus question : PropFocusValue W) : Prop :=
   question ⊆ answerFocus
 
--- FIP Applications (Rooth §2)
--- FIPApplication is defined in Features.InformationStructure (opened above)
-
-/-- Description of each FIP application -/
+/-- Short label for each `FIPApplication` case. -/
 def FIPApplication.description : FIPApplication → String
   | .focusingAdverb => "Focus-sensitive particles (only, even, also) associate with focus"
   | .contrast => "Parallel focus in discourse triggers contrast presupposition"
   | .scalarImplicature => "Focus alternatives feed into scalar implicature computation"
   | .qaCongruence => "Answer focus must match question (see Questions/FocusAnswer.lean)"
 
--- ============================================================================
--- Focus Resolution (Extended ~ Semantics)
--- ============================================================================
-
-/-!
-## Full ~ Operator: Focus Resolution
-
-@cite{rooth-1992} §2: α ~ introduces an anaphoric variable C (the
-comparison class / contrast set) constrained by TWO conditions:
-
-1. **FIP**: C ⊆ ⟦α⟧f — every proposition in C is a focus alternative
-2. **Ordinary inclusion**: ⟦α⟧o ∈ C — the ordinary value is in C
-
-The existing `fip` function captures constraint 1 alone. `FocusResolution`
-bundles both constraints, making the full ~ semantics explicit.
-
-This is the entry point for the compositional chain that derives TSP:
-~ resolves C → degree predicate uses C → significance falls out.
-See `Focus/Sensitivity.lean` for the downstream derivation.
--/
-
-/-- The full ~ operator resolves focus alternatives to a comparison class C.
-
-    Bundles @cite{rooth-1992}'s two constraints:
-    1. C ⊆ ⟦α⟧f (FIP — comparison class bounded by focus alternatives)
-    2. ⟦α⟧o ∈ C (ordinary value is in the comparison class)
-
-    The comparison class is `Set (Set W)`, the substrate-aligned shape
-    matching the rest of the focus theory. -/
+/-- The full ~ operator: resolves focus alternatives to a comparison
+class `C` constrained by FIP (`C ⊆ ⟦α⟧f`) and ordinary-inclusion
+(`⟦α⟧o ∈ C`). -/
 structure FocusResolution (W : Type*) where
-  /-- ⟦α⟧o — the ordinary semantic value of the focused constituent -/
+  /-- The ordinary semantic value `⟦α⟧o`. -/
   ordinary : Set W
-  /-- ⟦α⟧f — the focus semantic value (set of alternative propositions) -/
+  /-- The focus semantic value `⟦α⟧f`. -/
   focusValue : PropFocusValue W
-  /-- C — the comparison class, resolved from context -/
+  /-- The comparison class `C`, resolved from context. -/
   comparisonClass : Set (Set W)
-  /-- FIP: C ⊆ ⟦α⟧f — every proposition in C is a focus alternative -/
+  /-- FIP: `C ⊆ ⟦α⟧f`. -/
   fip_subset : comparisonClass ⊆ focusValue
-  /-- ⟦α⟧o ∈ C — the ordinary value is in the comparison class -/
+  /-- The ordinary value lies in the comparison class. -/
   ordinary_in_C : ordinary ∈ comparisonClass
 
--- ============================================================================
--- Clause-Embedding Predicates with Focus (@cite{ozyildiz-etal-2025})
--- ============================================================================
-
-/-- A clause-embedding predicate with explicit access to focus alternatives.
-
-    Takes: agent, ordinary proposition, focus alternatives, world → Prop.
-
-    Non-focus-sensitive predicates (believe, know) ignore the focus alternatives.
-    Focus-sensitive predicates (want, be glad, be surprised) use them to
-    determine the comparison class for degree semantics.
-
-    @cite{ozyildiz-etal-2025} def 2/58. -/
+/-- Clause-embedding predicate with explicit access to focus
+alternatives: agent → ordinary proposition → focus alternatives → world
+predicate. @cite{ozyildiz-etal-2025}. -/
 abbrev ClauseEmbedPred (W E : Type*) := E → Set W → PropFocusValue W → Set W
 
-/-- A clause-embedding predicate V is **focus-sensitive** iff its truth value
-    can depend on the focus alternatives, not just the ordinary proposition.
-
-    @cite{ozyildiz-etal-2025} def 2/58: there exist context, agent, proposition,
-    and two different focus-alternative sets such that V yields different truth
-    values. -/
-def IsFocusSensitive {W E : Type*} (V : ClauseEmbedPred W E) : Prop :=
+/-- A clause-embedding predicate is focus-sensitive when its truth
+depends on the focus alternatives, not just the ordinary proposition. -/
+def IsFocusSensitive (V : ClauseEmbedPred W E) : Prop :=
   ∃ (x : E) (p : Set W) (f₁ f₂ : PropFocusValue W) (w : W),
     (w ∈ V x p f₁) ≠ (w ∈ V x p f₂)
 
-/-- A predicate is **not** focus-sensitive iff it ignores focus alternatives
-    entirely. -/
-def IsNotFocusSensitive {W E : Type*} (V : ClauseEmbedPred W E) : Prop :=
+/-- A clause-embedding predicate ignores focus alternatives entirely. -/
+def IsNotFocusSensitive (V : ClauseEmbedPred W E) : Prop :=
   ∀ (x : E) (p : Set W) (f₁ f₂ : PropFocusValue W),
     V x p f₁ = V x p f₂
 
-theorem not_fs_iff_ignores_focus {W E : Type*} (V : ClauseEmbedPred W E) :
+theorem not_fs_iff_ignores_focus (V : ClauseEmbedPred W E) :
     IsNotFocusSensitive V ↔ ¬ IsFocusSensitive V := by
   constructor
   · intro h ⟨x, p, f₁, f₂, w, hne⟩; exact hne (by rw [h x p f₁ f₂])
@@ -176,32 +106,13 @@ theorem not_fs_iff_ignores_focus {W E : Type*} (V : ClauseEmbedPred W E) :
     by_contra hne
     exact h ⟨x, p, f₁, f₂, w, by tauto⟩
 
-/-- Lift a non-focus-sensitive predicate to the `ClauseEmbedPred` type
-    by ignoring focus alternatives. -/
-def liftNonFS {W E : Type*} (V : E → Set W → Set W) : ClauseEmbedPred W E :=
+/-- Lift a focus-agnostic predicate to a `ClauseEmbedPred` by ignoring
+the focus alternatives. -/
+def liftNonFS (V : E → Set W → Set W) : ClauseEmbedPred W E :=
   λ x p _f => V x p
 
-/-- Any lifted non-focus-sensitive predicate is indeed not focus-sensitive. -/
-theorem liftNonFS_not_fs {W E : Type*} (V : E → Set W → Set W) :
+theorem liftNonFS_not_fs (V : E → Set W → Set W) :
     IsNotFocusSensitive (liftNonFS V) := by
   intro _ _ _ _; rfl
 
--- Connection to Additive Particles
-
-/-!
-## Additive Particles and FIP
-
-@cite{rooth-1992} §2.2 analyzes "too" via FIP: @cite{rooth-1985}
-
-"Mary read Lear, and she read Macbeth too"
-- Focus: MACBETH
-- ⟦Macbeth⟧f = {Lear, Macbeth, Hamlet,...} (works of Shakespeare)
-- Antecedent "Lear" must be in ⟦Macbeth⟧f ✓
-- FIP: The antecedent is in the focus alternatives
-
-See:
-- `Phenomena/AdditiveParticles/Data.lean` for empirical data
-- `Theories/Semantics/Focus/Particles.lean` for semantic analysis
--/
-
-end Semantics.FocusInterpretation
+end Semantics.Focus.Interpretation

@@ -38,7 +38,7 @@ does not.
 
 namespace Lahiri1998
 
-open Semantics.FocusParticles (TraditionalEven LikelihoodOrder LikelihoodMonotone)
+open Semantics.Focus.Particles (TraditionalEven LikelihoodOrder LikelihoodMonotone)
 open Semantics.Entailment (World allWorlds entails pnot)
 open Typology.PolarityItem
 

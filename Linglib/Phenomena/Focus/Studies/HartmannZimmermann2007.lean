@@ -1,53 +1,77 @@
 import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Fragments.Hausa.Tone
-import Linglib.Theories.Semantics.Focus.MeaningStructureMapping
+import Linglib.Core.Logic.FactorsThroughOn
 
 /-!
-# Hartmann & Zimmermann (2007) — Focus in Hausa
-@cite{hartmann-zimmermann-2007} @cite{newman-2000}
+# Hausa focus strategies and pragmatic types
 
-@cite{hartmann-zimmermann-2007} argue that Hausa is a counterexample to
-the universalist claim that focus marking is obligatory and that focus
-position determines pragmatic interpretation. The empirical claims
-formalised in this study file are:
+Formalises the Hartmann & Zimmermann (2007) argument that Hausa is a
+counterexample to the universalist claims that focus marking is
+obligatory and that focus position determines pragmatic
+interpretation.
 
-- **Two focus strategies** (§2): *ex-situ* (fronted, with relative TAM
-  and optional stabilizer *nē/cē*) and *in-situ* (base position, no
-  morphosyntactic reflex). Already encoded in `Fragments/Hausa/Focus.lean`'s
-  `Strategy`/`FocusConfig`.
-- **Subject-focus generalization** (§2.2.2). Hausa subjects are forced
-  ex-situ *only when the TAM admits a relative form* (the paper notes
-  this "applies only in the perfective and continuous"); the future,
-  habitual, and subjunctive don't show the asymmetry. The conditional
-  form is exactly `FocusUtterance.IsHausaLicensed` below.
-- **Pragmatic uses of focus** (§3.2). Four uses of one semantic focus —
-  new-information, corrective, selective, contrastive — that all attest
-  on both strategies, refuting the position-determines-interpretation
-  Meaning-Structure Mapping Hypothesis.
-- **Meaning-Structure Mapping Hypothesis** (eq. 21). Generalised
-  polymorphically over arbitrary `FocusUtterance → α` interpretation
-  functions; the pragmatic-type instance is the one Hausa refutes.
-- **Polar tone of *nē/cē*** (§2.1): the stabilizer surfaces with the
-  *opposite* tone of the immediately preceding syllable. This is
-  exactly `Stabilizer.toneAfter` from `Fragments/Hausa/Focus.lean` §8,
-  which delegates to `Tone.polarOf`.
-- **Universalist Basic Focus Rule fails on Hausa** (§5, §6.2). Defined
-  as a structural predicate (`UniversalBFR`) requiring every
-  Hausa-licensed utterance to carry a morphosyntactic reflex of focus
-  (ex-situ position or stabilizer); refuted by the in-situ
-  new-information cell, which carries neither.
+## Main definitions
 
-Out of scope: §3.2.5 *exhaustivity* against @cite{kiss-1998} requires
-an alternatives-semantics exhaustivity operator and a derivation that
-projects ex-situ to non-exhaustive readings — needs more infrastructure
-than `PragType` tags can carry, deferred to a study file with proper
-exhaustivity semantics. §4 *focus pied-piping* / *partial focus
-movement* and the eq. (47) "Ex-Situ Generalisation, final version"
-need a structured-meaning overlap predicate the current Fragment
-doesn't expose. The §5 prosodic pilot study and §6.1 *emphasis*
-motivation are quantitative tendencies / functional pressures rather
-than categorical claims and live in docstring prose only.
+* `PragType`: four pragmatic uses of focus (new-info, corrective,
+  selective, contrastive), paper §1.2 / eq. (1a-d).
+* `Focused`: subject vs nonSubject classification.
+* `FocusUtterance`: bundles `FocusConfig`, `PragType`, and `Focused`.
+* `FocusUtterance.IsHausaLicensed`: morphosyntactic licensing plus
+  the §2.2.2 subject-focus generalization conditional on
+  `TAM.HasRelativeForm`.
+* `FocusUtterance.HasMorphosyntacticReflex`: ex-situ position or
+  stabilizer.
+* `hzMatrix`: the 8-cell empirical matrix from paper §3.2.
+* `UniversalBFR`: universalist Basic Focus Rule (morphosyntactic
+  reflex required on every focus).
+
+## Main results
+
+* `all_hzMatrix_IsHausaLicensed`: every cell of the 8-cell matrix is
+  Hausa-licensed.
+* `strategy_does_not_determine_pragType`: `pragType` does not factor
+  through `cfg.strategy` on Hausa-licensed utterances. The same
+  factor-through schema (`Function.FactorsThroughOn`) is *satisfied*
+  for Hungarian in `Kiss1998.lean` with `position`/`focusType`.
+* `strategy_underdetermines_pragType_inSitu`: even restricted to
+  in-situ utterances, strategy underdetermines pragType.
+* `subject_focus_only_exSitu`: subject focus requires ex-situ when
+  the TAM admits a relative form (paper §2.2.2).
+* `hausa_falsifies_UniversalBFR`: in-situ new-info utterances carry
+  no morphosyntactic reflex, refuting the universalist BFR.
+* `polar_tone_from_polarOf`: the *nē/cē* polar-tone description
+  derives from the cross-fragment `Tone.polarOf` operator.
+
+## Implementation notes
+
+The "Meaning-Structure Mapping Hypothesis" the substrate used to
+ascribe to this paper (eq. 21) is the formaliser's coinage; neither
+H&Z nor Kiss 1998 use that label. The shared schema is now
+`Function.FactorsThroughOn` (in `Core.Logic.FactorsThroughOn`),
+making the typological contrast a difference of verdict on a single
+set-theoretic factor-through predicate.
+
+The specific equation numbers in paper-citation comments (eq. 22-30)
+have been verified against the same authors' Tangale paper
+(Studia Linguistica 61(2)) which shares the pragmatic-focus
+taxonomy and the focus-marking assumptions, but the Hausa book
+chapter itself has not been spot-checked. Equation references in
+this file are flagged `-- UNVERIFIED` accordingly.
+
+## TODO
+
+* §3.2.5 exhaustivity contrast against Kiss 1998 requires an
+  alternatives-semantics exhaustivity operator beyond `PragType` tags.
+* §4 focus pied-piping / partial focus movement and the eq. (47)
+  "Ex-Situ Generalisation, final version" need a structured-meaning
+  overlap predicate.
+* §5 prosodic pilot data and §6.1 emphasis motivation are
+  quantitative tendencies, currently in docstring prose only.
+
+## References
+
+* @cite{hartmann-zimmermann-2007}, @cite{newman-2000}.
 -/
 
 namespace Phenomena.Focus.Studies.HartmannZimmermann2007
@@ -59,11 +83,8 @@ open Fragments.Hausa.Inflection
 open Fragments.Hausa.Tone (polarOf)
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Features (SurfaceGender)
-open Theories.Semantics.Focus.MSMH
 
--- ============================================================================
--- § 1: Pragmatic Focus Types (paper §1.2, after Uhmann 1991)
--- ============================================================================
+/-! ## Pragmatic focus types (paper §1.2, after Uhmann 1991) -/
 
 /-- The four pragmatic uses of focus distinguished in
     @cite{hartmann-zimmermann-2007} §1.2 (eq. 1a–d), built on a single
@@ -80,9 +101,7 @@ inductive PragType where
   | contrastive  -- (1d) parallel contrast across utterances
   deriving DecidableEq, Repr, Inhabited
 
--- ============================================================================
--- § 2: What is Focused (subject vs non-subject; for the §2.2.2 generalization)
--- ============================================================================
+/-! ## What is focused (paper §2.2.2) -/
 
 /-- A coarse classification of the focused constituent. Hausa singles
     out *subjects* as the cell where in-situ focus is unavailable in the
@@ -93,9 +112,7 @@ inductive Focused where
   | nonSubject
   deriving DecidableEq, Repr, Inhabited
 
--- ============================================================================
--- § 3: Tagged Focus Utterances + Hausa Licensing
--- ============================================================================
+/-! ## Tagged focus utterances and Hausa licensing -/
 
 /-- A *focus utterance* bundles a `FocusConfig` (morphosyntax, from
     `Fragments/Hausa/Focus.lean`) with its pragmatic interpretation and
@@ -127,10 +144,9 @@ def FocusUtterance.IsHausaLicensed (u : FocusUtterance) : Prop :=
 instance (u : FocusUtterance) : Decidable u.IsHausaLicensed :=
   inferInstanceAs (Decidable (_ ∧ _))
 
--- ============================================================================
--- § 4: The 8-Cell Empirical Matrix (paper §3.2)
---     Ex-situ × all four pragmatic types, then in-situ × all four
--- ============================================================================
+/-! ## The 8-cell empirical matrix (paper §3.2)
+
+Ex-situ × all four pragmatic types, then in-situ × all four. -/
 
 /-- Smart constructor for an ex-situ focus utterance. The proof
     obligation `pac.tam.HasRelativeForm → pac.mode = .relative` is
@@ -194,8 +210,8 @@ def inSitu_selective : FocusUtterance := mkInSituUtt fut_1sg .masculine true .se
 def inSitu_contrastive : FocusUtterance := mkInSituUtt cmp_3sm_G .masculine true .contrastive
 
 /-- The 8-cell empirical matrix from paper §3.2. Every cell is
-    Hausa-licensed; together they witness the failure of the MSMH
-    (§5 below). -/
+    Hausa-licensed; together they witness `strategy_does_not_determine_pragType`
+    below. -/
 def hzMatrix : List FocusUtterance :=
   [exSitu_newInfo, exSitu_corrective, exSitu_selective, exSitu_contrastive,
    inSitu_newInfo, inSitu_corrective, inSitu_selective, inSitu_contrastive]
@@ -210,48 +226,37 @@ theorem all_hzMatrix_IsHausaLicensed :
   simp only [hzMatrix, List.mem_cons, List.not_mem_nil, or_false] at hu
   rcases hu with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
 
--- ============================================================================
--- § 5: Meaning-Structure Mapping Hypothesis (paper eq. 21) — refuted
--- ============================================================================
+/-! ## Strategy does not determine pragmatic type (paper §3.2)
 
-/-- **MSMH instantiated for Hausa.** Specialises the polymorphic
-    `Theories.Semantics.Focus.MSMH.MeaningStructureMapping` with
-    `FocusUtterance.IsHausaLicensed` as the admissibility filter,
-    `cfg.strategy` as the structural projection, and `pragType` as the
-    interpretation projection. The Hungarian study file
-    (`Kiss1998.lean`) instantiates the *same* polymorphic predicate
-    with Hungarian-specific projections and proves it holds —
-    making the typological contrast a difference of verdict on a
-    single shared hypothesis. -/
-def HausaMSMH : Prop :=
-  MeaningStructureMapping
-    FocusUtterance.IsHausaLicensed
-    (fun u : FocusUtterance => u.cfg.strategy)
-    FocusUtterance.pragType
+The 8-cell matrix witnesses that, on Hausa-licensed utterances,
+`pragType` does *not* factor through `cfg.strategy`. The same
+factor-through schema (`Function.FactorsThroughOn`) is *satisfied*
+for Hungarian in `Kiss1998.lean` with `position`/`focusType`. -/
 
-/-- **Hausa falsifies the MSMH** (paper §3.2). Witness:
-    `exSitu_newInfo` (eq. 22) and `exSitu_corrective` (eq. 24) are
-    both ex-situ Hausa-licensed utterances differing in pragmatic
-    type. The 8-cell matrix supplies many further same-strategy /
-    different-pragType pairs. -/
-theorem hausa_falsifies_MSMH : ¬ HausaMSMH :=
-  refute_by_witness exSitu_newInfo exSitu_corrective
-    (by decide) (by decide) rfl (by decide)
+/-- Hausa-licensed utterances do not exhibit a factor-through from
+strategy to pragmatic type: `exSitu_newInfo` (eq. 22, -- UNVERIFIED)
+and `exSitu_corrective` (eq. 24, -- UNVERIFIED) are both ex-situ but
+have distinct pragmatic types. -/
+theorem strategy_does_not_determine_pragType :
+    ¬ Function.FactorsThroughOn
+        FocusUtterance.pragType
+        (fun u : FocusUtterance => u.cfg.strategy)
+        {u | u.IsHausaLicensed} := by
+  rw [Function.not_factorsThroughOn_iff_exists_witness]
+  exact ⟨exSitu_newInfo, exSitu_corrective,
+    by decide, by decide, rfl, by decide⟩
 
-/-- **In-situ also falsifies the MSMH.** The same-strategy /
-    different-pragType pattern is not unique to ex-situ:
-    `inSitu_newInfo` (eq. 23) and `inSitu_corrective` (eq. 25) are
-    both in-situ Hausa-licensed utterances differing in pragmatic
-    type. -/
-theorem hausa_falsifies_MSMH_inSitu :
+/-- The same-strategy / different-pragType pattern obtains in-situ too:
+`inSitu_newInfo` (eq. 23, -- UNVERIFIED) and `inSitu_corrective`
+(eq. 25, -- UNVERIFIED) are both in-situ but have distinct pragmatic
+types. -/
+theorem strategy_underdetermines_pragType_inSitu :
     ∃ u₁ u₂ : FocusUtterance,
       u₁.IsHausaLicensed ∧ u₂.IsHausaLicensed ∧
       u₁.cfg.strategy = u₂.cfg.strategy ∧ u₁.pragType ≠ u₂.pragType :=
   ⟨inSitu_newInfo, inSitu_corrective, by decide, by decide, rfl, by decide⟩
 
--- ============================================================================
--- § 6: Subject-Focus Generalization (paper §2.2.2) — conditional version
--- ============================================================================
+/-! ## Subject-focus generalization (paper §2.2.2) -/
 
 /-- **Subject-focus generalization** (paper §2.2.2). Hausa subjects can
     only be focused via the ex-situ strategy *when the TAM admits a
@@ -303,9 +308,7 @@ def inSitu_subject_subjunctive : FocusUtterance :=
 theorem inSitu_subject_subjunctive_IsHausaLicensed :
     inSitu_subject_subjunctive.IsHausaLicensed := by decide
 
--- ============================================================================
--- § 7: Universalist Basic Focus Rule (paper §5, §6.2) — refuted
--- ============================================================================
+/-! ## Universalist Basic Focus Rule (paper §5, §6.2) -/
 
 /-- A focus utterance carries a **morphosyntactic reflex of focus** iff
     it fronts the focus (`exSitu`) or surfaces a stabilizer. This is
@@ -338,16 +341,12 @@ theorem hausa_falsifies_UniversalBFR : ¬ UniversalBFR := by
   have hRef : inSitu_newInfo.HasMorphosyntacticReflex := h _ hLic
   revert hRef; decide
 
--- ============================================================================
--- § 8: Polar Tone of *nē/cē* — Cross-Fragment Bridge (paper §2.1)
--- ============================================================================
+/-! ## Polar tone of *nē/cē* (paper §2.1)
 
-/-! Paper §2.1: the focus-sensitive particle *nē/cē* surfaces "with low
-tone if the immediately preceding syllable is high, and with high
-tone if the preceding syllable is low" — i.e. polar tone. This is
-*exactly* `Stabilizer.toneAfter` from `Fragments/Hausa/Focus.lean` §8,
-which delegates to `Tone.polarOf` from `Fragments/Hausa/Tone.lean`.
-The two minimal-pair examples below are paper eq. (3a, 3b). -/
+The focus-sensitive particle *nē/cē* surfaces with low tone after a
+high syllable and high tone after a low syllable — exactly
+`Stabilizer.toneAfter`, which delegates to `Tone.polarOf`. The minimal
+pair below is paper eq. (3a, 3b). -/
 
 /-- Eq. (3a): *[DP Kandè] cee* — the host *Kandè* ends in a low
     syllable (*-dè* with grave accent), so the stabilizer surfaces

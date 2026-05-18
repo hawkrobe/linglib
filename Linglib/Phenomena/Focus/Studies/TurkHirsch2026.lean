@@ -41,7 +41,7 @@ namespace Phenomena.Focus.Studies.TurkHirsch2026
 
 open Features.InformationStructure
 open Semantics.Alternatives
-open Semantics.FocusInterpretation (PropFocusValue)
+open Semantics.Focus.Interpretation (PropFocusValue)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  World type and propositions

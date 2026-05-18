@@ -59,7 +59,7 @@ namespace Phenomena.Focus.Rooth1992Bridge
 
 open Features.InformationStructure
 open Semantics.Alternatives
-open Semantics.FocusInterpretation (fip PropFocusValue qaCongruent qaCongruentWeak)
+open Semantics.Focus.Interpretation (fip PropFocusValue qaCongruent qaCongruentWeak)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Q-A Congruence World Model
@@ -381,7 +381,7 @@ theorem datum_only_sue_app :
 /-- Bridge: congruent judgment confirmed by FIP. -/
 theorem bridge_qa_congruent :
     Basic.qaCongruent.application = .qaCongruence ∧
-    Semantics.FocusInterpretation.qaCongruent
+    Semantics.Focus.Interpretation.qaCongruent
       fv_subjectFocus q_whoAteBeans :=
   ⟨rfl, rfl⟩
 

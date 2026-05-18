@@ -637,7 +637,7 @@ theorem hannahBeans_relevant_to_strategy :
     downward-closed) lives in the focus-as-issue lift; see
     Focus/Interpretation.lean. -/
 theorem focus_value_is_propositional_set :
-    Semantics.FocusInterpretation.PropFocusValue D0World =
+    Semantics.Focus.Interpretation.PropFocusValue D0World =
     Set (Set D0World) := rfl
 
 end Roberts2012

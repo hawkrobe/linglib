@@ -1,42 +1,42 @@
-/-
-# @cite{kratzer-selkirk-2020}: Deconstructing Information Structure
-
-Formalization of Kratzer & Selkirk's two-feature theory of information structure.
-
-## Core Insight
-
-What has traditionally been analyzed as a single [F]-feature must be decomposed into TWO privative morphosyntactic features:
-
-- **[FoC]** (FoCus): Introduces alternatives, signals contrast via ~ operator
-- **[G]** (Givenness): Presupposes discourse salience, signals match
-
-These features have distinct syntactic, semantic, prosodic, and pragmatic properties.
-Crucially, there is NO feature for newness: apparent prosodic effects of new material
-are the result of default prosody.
-
-## Grounding in Linglib
-
-- [FoC] and [G] both contribute **use-conditional** (expressive) meaning, not at-issue
-  content → grounded in `Expressives/Basic.lean` `TwoDimProp`
-- [G] is a **contextual presupposition** → grounded in `Core/Presupposition.lean`
-- [FoC] introduces **alternatives** → grounded in `Core/InformationStructure.lean`
-- The ~ operator is [FoC]'s obligatory companion → refines existing `Squiggle`
-
-## Key Formal Results
-
-1. [FoC] and [G] are mutually exclusive (no constituent bears both)
-2. Givenness = singleton alternatives set
-3. Contrast requires antecedent ∈ alternatives, antecedent ≠ O-value
-4. [G] containing [FoC] requires an alternatives-consuming operator inside
-5. Spellout ranking: [G]=No-φ >> [FoC]=φ-Level-Head (English)
-
--/
-
 import Linglib.Features.InformationStructure
 import Linglib.Features.Prosody
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
+
+/-!
+# Two-feature decomposition of information structure
+
+Kratzer & Selkirk's privative-feature analysis: information structure
+decomposes into `[FoC]` (introduces alternatives) and `[G]` (presupposes
+discourse salience), with no separate feature for newness.
+
+## Main definitions
+
+* `ISFeature`: `FoC` and `G` constructors.
+* `applyFoC`, `applyG`: feature contributions to an `AltMeaning`.
+* `isGiven`, `isAGiven`: K&S givenness and Schwarzschild A-givenness on
+  alternative sets.
+* `Contrast`, `ContrastOperator`: contrast representation and the K&S
+  ~ operator that collapses alternatives.
+* `onlySemantics`: the K&S analysis of *only*.
+* `FoCSpellout`, `GSpellout`, `englishSpelloutRanking`: prosodic
+  spellout machinery.
+* `SOFDatum`, `ProsodicTripleDatum`: second-occurrence-focus data.
+* `PressureForG`, `PressureForFoC`: pragmatic pressures.
+
+## Main results
+
+* `foc_g_exclusion`: `[FoC]` and `[G]` cannot both hold of a single
+  meaning under a non-trivial domain.
+* `givenness_entails_aGivenness`: K&S givenness implies Schwarzschild
+  A-givenness; the converse is refuted.
+
+## References
+
+* @cite{kratzer-selkirk-2020}, @cite{schwarzschild-1999},
+  @cite{beaver-2007}, @cite{katz-selkirk-2011}.
+-/
 
 open Features.InformationStructure
 open Semantics.Alternatives
@@ -44,11 +44,7 @@ open Features.Prosody
 open Pragmatics.Expressives
 open Core.Presupposition
 
-namespace Semantics.Focus.KratzerSelkirk2020
-
--- ════════════════════════════════════════════════════
--- § IS Features (@cite{kratzer-selkirk-2020} §2, §8)
--- ════════════════════════════════════════════════════
+namespace Phenomena.Focus.Studies.KratzerSelkirk2020
 
 /-- The two privative morphosyntactic features of @cite{kratzer-selkirk-2020}.
 
@@ -70,7 +66,7 @@ inductive ISFeature where
 def isNew (hasFoC : Bool) (hasG : Bool) : Bool :=
   !hasFoC && !hasG
 
-/-! ## §8 (45). The Contribution of [FoC]
+/-! ## Contribution of [FoC]
 
 [FoC] does NOT change the O-value. Its A-value is the full domain D_τ
 (all possible entities of the relevant semantic type). This is standard
@@ -82,14 +78,14 @@ Roothian focus semantics.
 
 /-- Apply [FoC] to a meaning: O-value unchanged, A-value becomes full domain.
     K&S (45): The A-value of [α]_{FoC} is D_τ. -/
-def applyFoC {α : Type} (m : AltMeaning α) (domain : List α) : AltMeaning α :=
+def applyFoC {α : Type*} (m : AltMeaning α) (domain : List α) : AltMeaning α :=
   { oValue := m.oValue, aValue := domain }
 
 /-- [FoC] preserves O-value. K&S (45) first clause. -/
-theorem foc_preserves_oValue {α : Type} (m : AltMeaning α) (domain : List α) :
+theorem foc_preserves_oValue {α : Type*} (m : AltMeaning α) (domain : List α) :
     (applyFoC m domain).oValue = m.oValue := rfl
 
-/-! ## §8 (46-47). The Contribution of [G]
+/-! ## Contribution of [G]
 
 [G] introduces a Givenness requirement: the expression must match a salient
 discourse referent. Technically:
@@ -111,12 +107,12 @@ not on truth conditions.
 
     Intuitively: the alternatives set has collapsed to a single salient entity,
     meaning there's nothing to contrast — the content is already "in the air". -/
-def isGiven {α : Type} [DecidableEq α] (aValue : List α) (referent : α) : Prop :=
+def isGiven {α : Type*} [DecidableEq α] (aValue : List α) (referent : α) : Prop :=
   match aValue with
   | [a] => a = referent
   | _ => False
 
-instance instDecidableIsGiven {α : Type} [DecidableEq α] (aValue : List α) (referent : α) :
+instance instDecidableIsGiven {α : Type*} [DecidableEq α] (aValue : List α) (referent : α) :
     Decidable (isGiven aValue referent) :=
   match aValue with
   | [a] => (inferInstance : Decidable (a = referent))
@@ -128,17 +124,17 @@ instance instDecidableIsGiven {α : Type} [DecidableEq α] (aValue : List α) (r
 
     Unlike [FoC], [G] does NOT change the A-value. Its contribution is
     purely a presupposition on the discourse context. -/
-def applyG {α : Type} (m : AltMeaning α) : AltMeaning α := m
+def applyG {α : Type*} (m : AltMeaning α) : AltMeaning α := m
 
 /-- [G] preserves O-value. K&S (47): if defined, O-value unchanged. -/
-theorem g_preserves_oValue {α : Type} (m : AltMeaning α) :
+theorem g_preserves_oValue {α : Type*} (m : AltMeaning α) :
     (applyG m).oValue = m.oValue := rfl
 
 /-- [G] preserves A-value. K&S (47): A-value unchanged. -/
-theorem g_preserves_aValue {α : Type} (m : AltMeaning α) :
+theorem g_preserves_aValue {α : Type*} (m : AltMeaning α) :
     (applyG m).aValue = m.aValue := rfl
 
-/-! ## §8 (58). [FoC] and [G] are Mutually Exclusive
+/-! ## Mutual exclusivity of [FoC] and [G]
 
 A single constituent CANNOT bear both [FoC] and [G]. The proof follows from
 the A-value conditions:
@@ -150,8 +146,11 @@ No semantic domain is both maximal and a singleton (assuming |D_τ| > 1). -/
     the [FoC] A-value condition (full domain) and the [G] A-value condition
     (singleton) simultaneously, when the domain has more than one element.
 
-    K&S (58, first part): follows from the incompatibility of A-value conditions. -/
-theorem foc_g_exclusion {α : Type} [DecidableEq α] (domain : List α) (referent : α)
+    Stated in K&S §8 prose immediately preceding (58): "It follows that no
+    constituents can be both [G]-marked and [FoC]-marked." Distinct from (58)
+    itself, which states the [G]-can-contain-[FoC]-only-with-consumption
+    consequence. -/
+theorem foc_g_exclusion {α : Type*} [DecidableEq α] (domain : List α) (referent : α)
     (h_domain : domain.length > 1) :
     ¬ isGiven domain referent := by
   match domain, h_domain with
@@ -159,9 +158,9 @@ theorem foc_g_exclusion {α : Type} [DecidableEq α] (domain : List α) (referen
   | [_], h => simp at h
   | _ :: _ :: _, _ => intro h; simp only [isGiven] at h
 
-variable {W : Type*} {Entity : Type}
+variable {W : Type*} {Entity : Type*}
 
-/-! ## §8 (45, 47). Both Features are Use-Conditional
+/-! ## Both features are use-conditional
 
 Neither [FoC] nor [G] changes the truth-conditional (at-issue) content of
 the expression it attaches to. Both contribute use-conditional / expressive
@@ -204,7 +203,7 @@ theorem g_projects_through_neg (atIssue givennessPresup : W → Prop) :
     = (gAsTwoDim atIssue givennessPresup).ci :=
   TwoDimProp.ci_projects_through_neg _
 
-/-! ## §8 (49). Contrast Representation
+/-! ## Contrast representation
 
 An expression α represents a contrast with discourse referent a iff:
 (i) a ∈ ⟦α⟧_{A,C} — the referent is among the alternatives
@@ -217,7 +216,7 @@ Condition (iii) prevents over-FoCusing. -/
 /-- Conditions (i) and (ii) of Contrast (K&S 49).
     Condition (iii) — the minimality condition — is structural and requires
     checking FoC/G-variants, which we leave to the prosodic spellout layer. -/
-structure Contrast (α : Type) where
+structure Contrast (α : Type*) where
   /-- The expression's A-value (alternatives) -/
   aValue : List α
   /-- The expression's O-value (ordinary denotation) -/
@@ -229,7 +228,7 @@ structure Contrast (α : Type) where
   /-- (ii): referent differs from the O-value -/
   ref_ne_oValue : referent ≠ oValue
 
-/-! ## §8 (53-54). The ~ Operator
+/-! ## The ~ operator
 
 [FoC]-marked constituents must be c-commanded by a ~ operator.
 The ~ operator:
@@ -249,7 +248,7 @@ direct relation to FoCus. -/
 
     If defined, ⟦~_𝔠 α⟧_{O,C} = ⟦α⟧_{O,C}
     A-values: ⟦~_𝔠 α⟧_{A,C} = {⟦α⟧_{O,C}} (singleton — alternatives consumed). -/
-structure ContrastOperator (α : Type) where
+structure ContrastOperator (α : Type*) where
   /-- The expression's meaning -/
   meaning : AltMeaning α
   /-- The contrasting discourse referent(s) -/
@@ -260,19 +259,19 @@ structure ContrastOperator (α : Type) where
   antecedents_ne_oValue : ∀ a ∈ antecedents, a ≠ meaning.oValue
 
 /-- The ~ operator consumes alternatives: result A-value is singleton. -/
-def ContrastOperator.result {α : Type}
+def ContrastOperator.result {α : Type*}
     (op : ContrastOperator α) : AltMeaning α :=
   { oValue := op.meaning.oValue, aValue := [op.meaning.oValue] }
 
 /-- ~ preserves O-value. -/
-theorem squiggle_preserves_oValue {α : Type} (op : ContrastOperator α) :
+theorem squiggle_preserves_oValue {α : Type*} (op : ContrastOperator α) :
     op.result.oValue = op.meaning.oValue := rfl
 
 /-- ~ collapses A-value to singleton. -/
-theorem squiggle_singleton_aValue {α : Type} (op : ContrastOperator α) :
+theorem squiggle_singleton_aValue {α : Type*} (op : ContrastOperator α) :
     op.result.aValue = [op.meaning.oValue] := rfl
 
-/-! ## §8 (56). The Semantics of *only*
+/-! ## Semantics of *only*
 
 K&S's *only* directly takes a contextual variable 𝔠 (the contrast set),
 rather than accessing focus alternatives indirectly:
@@ -290,7 +289,7 @@ def onlySemantics (contrastSet : List (W → Prop)) (prejacent : W → Prop)
     (w : W) : Prop :=
   ∀ q ∈ contrastSet, q w → (q w ↔ prejacent w)
 
-/-! ## §8 (58). [G] Containing [FoC] Requires Alternatives Consumption
+/-! ## [G] containing [FoC] requires alternatives consumption
 
 A constituent α containing [FoC]-marked β can be [G]-marked only if α also
 contains an operator that consumes the alternatives generated by β.
@@ -306,14 +305,14 @@ the alternatives before they reach the VP level. -/
 
 /-- After ~ consumption, the result A-value is a singleton,
     which is the precondition for [G]-marking. -/
-theorem consumed_alts_enable_g {α : Type} [DecidableEq α]
+theorem consumed_alts_enable_g {α : Type*} [DecidableEq α]
     (op : ContrastOperator α) :
     isGiven op.result.aValue op.meaning.oValue := by
   show isGiven [op.meaning.oValue] op.meaning.oValue
   unfold isGiven
   rfl
 
-/-! ## §7. Prosodic Spellout
+/-! ## Prosodic spellout
 
 In Standard American and British English, [FoC] and [G] are spelled out
 prosodically at the syntax-phonology interface (MSO → PI mapping).
@@ -355,10 +354,13 @@ structure GSpellout where
   /-- A [G]-marked constituent has no φ in PI -/
   no_phi : Bool := true
 
-/-- K&S (41, 44): When [G] and [FoC] spellout conflict, [G] wins.
+/-- K&S (44): When [G] and [FoC] spellout conflict, [G] wins.
 
     Ranking in Standard American and British English:
       [G]=No-φ >> MatchPhrase >> [FoC]=φ-Level-Head
+
+    The [G] >> MatchPhrase part comes from (41); the [G] >> [FoC] part
+    comes from (44).
 
     This means: dephrasing a [G]-marked constituent takes priority over
     giving a [FoC]-marked constituent φ-level prominence.
@@ -376,7 +378,7 @@ inductive SpelloutRanking where
 def englishSpelloutRanking : List SpelloutRanking :=
   [.g_over_match, .match_over_foc_phi]
 
-/-! ## §4, §7.3. Second Occurrence Focus
+/-! ## Second-occurrence focus
 
 SOF is the strongest empirical argument for the two-feature system.
 
@@ -456,7 +458,7 @@ def katzSelkirk2011_newNew : ProsodicTripleDatum := {
   source := "Katz & Selkirk (2011), K&S (36c)"
 }
 
-/-! ## §8 (61, 66). Pressure for [G]-Marking and [FoC]-Marking
+/-! ## Pragmatic pressure for [G]- and [FoC]-marking
 
 [G]-marking and [FoC]-marking are obligatory under certain discourse conditions
 in Standard American and British English.
@@ -488,7 +490,7 @@ structure PressureForFoC where
   /-- Would failure to [FoC]-mark violate Pressure for [FoC]-Marking? -/
   faultedIfMissed : Bool := true
 
-/-! ## Bridge: K&S vs @cite{schwarzschild-1999}
+/-! ## Bridge to Schwarzschild A-givenness
 
 Schwarzschild's "A-Givenness" (within Rooth's Alternatives Semantics)
 falls out as a special case of K&S's [G]-feature.
@@ -503,16 +505,16 @@ condition was too weak — Schwarzschild noted it was trivially satisfiable
 for universal quantifiers (every cat is a complainer → trivially A-Given). -/
 
 /-- Schwarzschild's A-Givenness: some referent is in the alternatives set. -/
-def isAGiven {α : Type} (aValue : List α) (referent : α) : Prop :=
+def isAGiven {α : Type*} (aValue : List α) (referent : α) : Prop :=
   referent ∈ aValue
 
-instance instDecidableIsAGiven {α : Type} [DecidableEq α] (aValue : List α) (referent : α) :
+instance instDecidableIsAGiven {α : Type*} [DecidableEq α] (aValue : List α) (referent : α) :
     Decidable (isAGiven aValue referent) :=
   inferInstanceAs (Decidable (referent ∈ aValue))
 
 /-- K&S Givenness entails Schwarzschild A-Givenness.
     If the alternatives set is a singleton {a}, then certainly a ∈ alternatives. -/
-theorem givenness_entails_aGivenness {α : Type} [DecidableEq α]
+theorem givenness_entails_aGivenness {α : Type*} [DecidableEq α]
     (aValue : List α) (referent : α)
     (h : isGiven aValue referent) :
     isAGiven aValue referent := by
@@ -536,4 +538,4 @@ theorem aGivenness_not_sufficient : ∃ (aValue : List Nat) (referent : Nat),
     isAGiven aValue referent ∧ ¬ isGiven aValue referent := by
   exact ⟨[1, 2], 1, by decide, by decide⟩
 
-end Semantics.Focus.KratzerSelkirk2020
+end Phenomena.Focus.Studies.KratzerSelkirk2020

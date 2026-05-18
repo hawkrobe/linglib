@@ -1,3 +1,5 @@
+import Mathlib.Tactic.TypeStar
+
 /-!
 # Two-Dimensional Alternative Meanings
 @cite{rooth-1985} @cite{rooth-1992} @cite{kratzer-selkirk-2020}
@@ -19,7 +21,7 @@ namespace Semantics.Alternatives
     Every expression has an O-value and an A-value.
 
     @cite{kratzer-selkirk-2020} §3, §8. -/
-structure AltMeaning (α : Type) where
+structure AltMeaning (α : Type*) where
   /-- O(rdinary)-value: the actual denotation -/
   oValue : α
   /-- A(lternatives)-value: the set of alternatives (including oValue) -/
@@ -28,13 +30,13 @@ structure AltMeaning (α : Type) where
 /-- The O-value of a non-featured expression equals its ordinary denotation.
     The A-value of a non-featured expression is a singleton containing
     its O-value (no alternatives evoked). -/
-def AltMeaning.unfeatured {α : Type} (x : α) : AltMeaning α :=
+def AltMeaning.unfeatured {α : Type*} (x : α) : AltMeaning α :=
   { oValue := x, aValue := [x] }
 
-@[simp] theorem AltMeaning.unfeatured_oValue {α : Type} (x : α) :
+@[simp] theorem AltMeaning.unfeatured_oValue {α : Type*} (x : α) :
     (AltMeaning.unfeatured x).oValue = x := rfl
 
-@[simp] theorem AltMeaning.unfeatured_aValue {α : Type} (x : α) :
+@[simp] theorem AltMeaning.unfeatured_aValue {α : Type*} (x : α) :
     (AltMeaning.unfeatured x).aValue = [x] := rfl
 
 end Semantics.Alternatives

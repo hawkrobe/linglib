@@ -1,61 +1,58 @@
 import Linglib.Fragments.Hungarian.Focus
-import Linglib.Theories.Semantics.Focus.MeaningStructureMapping
+import Linglib.Core.Logic.FactorsThroughOn
 
 /-!
-# É. Kiss (1998) — Identificational Focus versus Information Focus
-@cite{kiss-1998} @cite{hartmann-zimmermann-2007}
+# Hungarian preverbal/postverbal focus contrast
 
-@cite{kiss-1998} argues for a structural distinction between two
-focus types in Hungarian:
+Formalises the §1 minimal pairs, the §2 structural claim that
+position determines focus type, and the §3 distributional
+restrictions of É. Kiss (1998) on Hungarian focus.
 
-- **Identificational focus** moves to Spec,FP (immediately preverbal)
-  and expresses *exhaustive identification* — selecting the maximal
-  subset of contextually-given alternatives for which the predicate
-  holds.
-- **Information focus** stays VP-internal (postverbal); it merely
-  marks nonpresupposed information without exhaustivity.
+## Main definitions
 
-Hungarian is the empirical pivot in the typological debate that
-@cite{hartmann-zimmermann-2007} later use Hausa to challenge:
-Hungarian **validates** the Meaning-Structure Mapping Hypothesis
-(focus position determines focus type and exhaustivity); Hausa
-*refutes* it.
+* `preverbal_identificational`, `postverbal_information`: paper eq. (5a)/(5b).
+* `preverbal_hat`, `postverbal_hat`: paper eq. (8a)/(8b).
+* `starred_universal_identificational`, `universal_information`: eq. (17b)/(19b).
 
-This file is the second of two studies that instantiate
-`Theories.Semantics.Focus.MSMH.MeaningStructureMapping` (the
-polymorphic hypothesis). The contrast is deep, not analogical: the
-*same* theorem statement holds for Hungarian (`hungarian_satisfies_MSMH`
-below) and fails for Hausa (`hausa_falsifies_MSMH` in
-`HartmannZimmermann2007.lean`). The two refutations / validations use
-the same predicate from `Theories/Semantics/Focus/`.
+## Main results
 
-The §3 distributional restrictions are encoded via
-`Fragments.Hungarian.Focus.ConstituentClass.compatibleWith`. The
-positive theorems `onlyPhrase_forces_identificational` and
-`someIndef_never_licensed` live at the Fragment level (they are
-universal closures over arbitrary licensed configs); this file only
-adds the empirical cells from the paper and the typological
-contrast theorems.
+* `position_determines_focusType`: on licensed configs, `focusType`
+  factors through `position`. Kiss's §2 structural claim.
+* `preverbal_iff_exhaustive`: exhaustivity equivalent to preverbal
+  position on licensed configs.
+* `starred_universal_identificational_not_licensed`,
+  `universal_information_licensed`, `only_information_not_licensed`,
+  `someIndef_neither_licensed`: §3 restrictions.
 
-Out of scope: §4 *scope* (identificational focus binds variables;
-information focus does not); §5.2 the cleft-construction realisation
-of identificational focus in English (would need an English Cleft
-Fragment); §6 the cross-linguistic feature typology
-([±exhaustive], [±contrastive]) parametrising Italian, Romanian,
-Catalan, Greek, Arabic, Finnish; §7 focus iteration and projection
-(eq. 51–53). The §1 examples are tagged in docstring prose with
-cell labels rather than encoded as separate per-PAC cells (Hungarian
-PACs are not yet formalised as a TAM type).
+## Implementation notes
+
+Kiss's exhaustivity claim has been substantially revised in later
+work (Onea & Beaver 2011, Horváth 2010, Wedgwood 2005). The
+theorems below formalise Kiss's 1998 position faithfully without
+adjudicating between Kiss and her successors.
+
+The same factor-through schema (`Function.FactorsThroughOn`) is
+instantiated for Hausa in `HartmannZimmermann2007.lean`, where it is
+refuted.
+
+## TODO
+
+* §4 scope (identificational focus binds variables).
+* §5.2 cleft realisation in English.
+* §9 cross-linguistic feature typology for Italian, Romanian,
+  Catalan, Greek, Arabic, Finnish.
+* §7 focus iteration and projection (eq. 51-53).
+
+## References
+
+* @cite{kiss-1998}.
 -/
 
 namespace Phenomena.Focus.Studies.Kiss1998
 
 open Fragments.Hungarian.Focus
-open Theories.Semantics.Focus.MSMH
 
--- ============================================================================
--- § 1: Cells (paper eq. 5a/5b minimal pair, eq. 8a/8b, eq. 17b)
--- ============================================================================
+/-! ## Cells (paper §1, eq. 5a/5b, 8a/8b, 17b, 19b) -/
 
 /-- Eq. (5a): *Tegnap este Marinak mutattam be Pétert*
     'It was to MARY that I introduced Peter last night.'
@@ -99,27 +96,24 @@ def starred_universal_identificational : FocusConfig :=
 def universal_information : FocusConfig :=
   mkInformation .universal (by simp [ConstituentClass.compatibleWith])
 
--- ============================================================================
--- § 2: MSMH instantiation (paper §2, eq. 9)
--- ============================================================================
+/-! ## Position determines focus type (paper §2)
 
-/-- **MSMH instantiated for Hungarian.** The polymorphic hypothesis
-    from `Theories/Semantics/Focus/MeaningStructureMapping.lean`,
-    specialised with `FocusConfig.Licensed` as the admissibility
-    filter, `position` as the structural projection, and `focusType`
-    as the interpretation projection. -/
-def HungarianMSMH : Prop :=
-  MeaningStructureMapping
-    FocusConfig.Licensed
-    FocusConfig.position
-    FocusConfig.focusType
+Kiss's §2 (p. 246, property list (1)-(6); p. 249 prose after eq. (9))
+argues that the two Hungarian focus positions encode genuinely distinct
+focus *types*, not merely interpretational variants of a single focus.
+Formalised here as: among licensed configurations, `focusType` factors
+through `position` (i.e. position determines type).
 
-/-- **Hungarian satisfies the MSMH.** Two licensed configurations with
-    the same position must have the same focus type. The proof
-    reduces to `licensed_position_determines_type`: the Hungarian
-    fragment encodes the position–type pairing in `Licensed`, so
-    sameness of position transports along the pairing. -/
-theorem hungarian_satisfies_MSMH : HungarianMSMH := by
+The same schema is instantiated for Hausa in `HartmannZimmermann2007.lean`
+with `cfg.strategy` for the structural projection and `pragType` for the
+interpretation, and is *refuted* there — making the typological contrast
+a difference of verdict on a single shared factor-through schema. -/
+
+/-- Position determines focus type on licensed configurations: Kiss's
+§2 structural claim. -/
+theorem position_determines_focusType :
+    Function.FactorsThroughOn
+      FocusConfig.focusType FocusConfig.position {c | c.Licensed} := by
   intro c₁ c₂ h₁ h₂ hpos
   obtain ⟨hpos₁, _⟩ := h₁
   obtain ⟨hpos₂, _⟩ := h₂
@@ -128,18 +122,15 @@ theorem hungarian_satisfies_MSMH : HungarianMSMH := by
   cases ft₁ : c₁.focusType <;> cases ft₂ : c₂.focusType <;>
     rw [ft₁, ft₂] at heq <;> simp [positionFor] at heq
 
-/-- **Position determines exhaustivity for licensed Hungarian focus.**
-    Composition of the position–type and type–exhaustivity
-    equivalences. The semantic payoff of the §2 structural
-    distinction. -/
+/-- Position equivalence with exhaustivity: composition of the
+position-type and type-exhaustivity equivalences. The semantic payoff
+of Kiss's §2 structural distinction. -/
 theorem preverbal_iff_exhaustive (c : FocusConfig) (h : c.Licensed) :
     c.position = .preverbal ↔ c.focusType.IsExhaustive := by
   rw [licensed_position_determines_type c h]
   cases c.focusType <;> simp [FocusType.IsExhaustive]
 
--- ============================================================================
--- § 3: Distributional Restriction Cells (paper §3, eq. 17)
--- ============================================================================
+/-! ## Distributional restrictions (paper §3, eq. 17) -/
 
 /-- **Universal quantifiers cannot be identificational foci** (paper
     eq. 17b). The `starred_universal_identificational` configuration
@@ -170,9 +161,7 @@ theorem someIndef_neither_licensed :
     ¬ (FocusConfig.mk .postverbal .information .someIndef).Licensed := by
   refine ⟨?_, ?_⟩ <;> decide
 
--- ============================================================================
--- § 4: Cell Properties
--- ============================================================================
+/-! ## Cell properties -/
 
 theorem preverbal_identificational_licensed :
     preverbal_identificational.Licensed :=

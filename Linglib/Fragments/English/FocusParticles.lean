@@ -8,12 +8,12 @@ import Linglib.Features.InformationStructure
 @cite{rooth-1992} @cite{karttunen-peters-1979} @cite{francescotti-1995}
 
 Lexical entries for English focus-sensitive particles, typed by
-`Semantics.FocusParticles` theory types.
+`Semantics.Focus.Particles` theory types.
 -/
 
 namespace Fragments.English.FocusParticles
 
-open Semantics.FocusParticles (EvenThreshold)
+open Semantics.Focus.Particles (EvenThreshold)
 open Core.Semantics.ContentLayer (ContentLayer)
 open Features.InformationStructure (FIPApplication)
 open Core.Discourse.Coherence (CoherenceRelation)

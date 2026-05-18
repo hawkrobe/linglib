@@ -4,50 +4,26 @@ import Linglib.Typology.PolarityMarking
 import Linglib.Features.InformationStructure
 
 /-!
-# Polarity-Marking Levels
-Blühdorn (2012), @cite{turco-braun-dimroth-2014}, @cite{hohle-1992}
+# Polarity-marking levels
 
-Languages mark polarity switches (negation → affirmation) by targeting
-one of two distinct semantic levels:
+A two-level taxonomy of polarity-marking devices: particles target the
+polarity operator directly, while Verum focus targets the assertion
+operator that wraps it. Predicts opposite co-occurrence patterns with
+sentential negation.
 
-1. **Polarity level**: a particle directly sets [+Pol], "undoing" contextual
-   negation. Dutch *wel*, French *si*, Swedish *jo*.
+## Main definitions
 
-2. **Assertion level**: prosodic prominence on the finite verb highlights
-   the *assertion operator* — the element that carries the assertive
-   relation between topic and comment. German Verum focus.
+* `PolarityMarkingLevel`: `polarity` (particles set `[+Pol]`) vs
+  `assertion` (VF highlights the assertion operator).
+* `strategyLevel`: maps each typological `Strategy` to its
+  `PolarityMarkingLevel`.
+* `SentenceStructure W`: radical + polarity + optional level marking.
+* `SentenceStructure.eval`, `.wellFormed`: truth conditions and
+  well-formedness under the structural constraint.
 
-Both achieve polarity contrast/correction at the pragmatic level, but
-they operate on different structural components of the sentence and make
-different predictions about co-occurrence with negation.
+## References
 
-## Key prediction: negation compatibility
-
-Because the assertion operator *wraps* the polarized proposition, Verum
-focus is compatible with either polarity value:
-
-- "Das Kind HAT nicht geweint" (VF + neg = emphatic denial) ✓
-- "Das Kind HAT geweint" (VF + pos = emphatic assertion) ✓
-
-Because a polarity particle *is* the polarity operator, it clashes with
-the opposite polarity value:
-
-- "Het kind heeft wel gehuild" (wel + pos) ✓
-- *"Het kind heeft wel niet gehuild" (wel + neg = contradictory) ✗
-
-## Sentence decomposition
-
-Following Blühdorn (2012), a sentence's polarity-relevant structure
-decomposes into three layers:
-
-```
-  ASSERT [ POL [ RADICAL ] ]
-    ↑           ↑       ↑
-    VF         wel    content
-```
-
-Verum focus targets ASSERT; polarity particles target POL. The radical
-is the polarity-neutral propositional content.
+* @cite{turco-braun-dimroth-2014}, @cite{hohle-1992}.
 -/
 
 namespace Semantics.Focus.PolarityLevel
@@ -55,10 +31,6 @@ namespace Semantics.Focus.PolarityLevel
 open Features (Polarity)
 open Typology.PolarityMarking (Strategy)
 open Core.Discourse.Coherence (CoherenceRelation)
-
--- ════════════════════════════════════════════════════
--- § 1. Polarity-marking levels
--- ════════════════════════════════════════════════════
 
 /-- The semantic level at which a polarity-marking device operates.
 
@@ -83,11 +55,9 @@ def strategyLevel : Strategy → Option PolarityMarkingLevel
   | .other           => none
   | .unmarked        => none
 
-variable {W : Type}
+variable {W : Type*}
 
--- ════════════════════════════════════════════════════
--- § 2. Sentence structure
--- ════════════════════════════════════════════════════
+/-! ## Sentence structure -/
 
 /-- A sentence decomposed into its polarity-relevant structural layers.
 
@@ -98,7 +68,7 @@ variable {W : Type}
     The `marking` field uses `Option PolarityMarkingLevel` rather than
     two independent Bools — assertion-level and polarity-level marking
     are mutually exclusive by construction. -/
-structure SentenceStructure (W : Type) where
+structure SentenceStructure (W : Type*) where
   /-- Polarity-neutral propositional content -/
   radical : W → Bool
   /-- The polarity value [±Pol] -/
@@ -115,9 +85,7 @@ def SentenceStructure.eval (s : SentenceStructure W) : W → Bool :=
   | .positive => s.radical
   | .negative => λ w => !s.radical w
 
--- ════════════════════════════════════════════════════
--- § 3. Predictions: negation compatibility
--- ════════════════════════════════════════════════════
+/-! ## Negation-compatibility predictions -/
 
 /-- Is a marking level compatible with a given polarity value?
 
@@ -171,9 +139,7 @@ theorem levels_differ_on_negation :
     PolarityMarkingLevel.polarity.compatibleWith .negative ≠
     PolarityMarkingLevel.assertion.compatibleWith .negative := by decide
 
--- ════════════════════════════════════════════════════
--- § 4. Functional equivalence
--- ════════════════════════════════════════════════════
+/-! ## Functional equivalence -/
 
 /-- Despite operating at different semantic levels, both strategies yield
     the same truth conditions when applied to a positive proposition.
@@ -197,9 +163,7 @@ theorem functional_equivalence_positive (radical : W → Bool) :
 -- theorem connecting `strategyLevel` to a `CoherenceRelation`
 -- predicate; deferred until a consumer needs it.
 
--- ════════════════════════════════════════════════════
--- § 5. Strategy-level bridge
--- ════════════════════════════════════════════════════
+/-! ## Strategy-level bridge -/
 
 theorem particle_targets_polarity :
     strategyLevel .particle = some .polarity := rfl

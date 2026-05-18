@@ -14,6 +14,7 @@ import Linglib.Features.ClauseForm
 import Linglib.Features.Clusivity
 import Linglib.Theories.Syntax.Common.Inversion
 import Linglib.Typology.Pronouns
+import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
@@ -1318,6 +1319,7 @@ import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Typology.Relativization.Defs
 import Linglib.Typology.Relativization.Basic
 import Linglib.Phenomena.Focus.Basic
+import Linglib.Phenomena.Focus.Studies.KratzerSelkirk2020
 import Linglib.Phenomena.Focus.Studies.Roberts2012
 import Linglib.Phenomena.Focus.Studies.Rooth1992
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
@@ -2101,8 +2103,6 @@ import Linglib.Theories.Syntax.HPSG.Core.LexicalRules
 import Linglib.Theories.Syntax.HPSG.Core.RelativeClauses
 import Linglib.Theories.Syntax.HPSG.Coreference
 import Linglib.Theories.Syntax.HPSG.Inversion
--- Theories: Information Structure (now in Focus/)
-import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 -- Theories: Minimalism
 import Linglib.Theories.Syntax.Minimalist.Features
 import Linglib.Theories.Syntax.Minimalist.Checking
@@ -2341,7 +2341,6 @@ import Linglib.Phenomena.Focus.Studies.HartmannZimmermann2007
 import Linglib.Phenomena.Focus.Studies.Kiss1998
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Focus.Particles
-import Linglib.Theories.Semantics.Focus.MeaningStructureMapping
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions

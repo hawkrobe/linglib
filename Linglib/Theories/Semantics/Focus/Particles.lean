@@ -1,73 +1,48 @@
-/-
-# Focus Particles: EVEN and Only
-@cite{lahiri-1998} @cite{crnic-2014} @cite{karttunen-peters-1979}
-@cite{bennett-1982} @cite{francescotti-1995}
-
-Traditional semantic treatments of focus-sensitive particles.
-
-## EVEN and NPI Licensing
-
-@cite{lahiri-1998} shows that Hindi NPIs are morphologically composed of
-an indefinite plus the overt EVEN particle bhii, and that implicature clash
-in positive contexts explains their distribution. @cite{crnic-2014} extends
-this to English, proposing that NPIs like "anyone" contain a covert EVEN
-operator that contributes:
-
-1. **Presupposition**: The focused element is the LEAST LIKELY alternative
-2. **Assertion**: The prejacent is true
-
-Structure: EVEN [anyone] saw John
-→ Presupposes: For all x, P(x saw John) ≤ P(anyone saw John)
-→ Asserts: Someone saw John
-
-This presupposition is satisfied in DE contexts (under negation):
-"John didn't see anyone"
-→ "anyone" = widest domain = least likely to have ALL seen John
-→ EVEN presupposition satisfied
-
-## Comparison with Local RSA
-
-Local RSA derives EVEN effects from polarity-sensitive informativity:
-- In DE contexts, wider domains are MORE informative
-- RSA preference for informativity mimics EVEN's likelihood presupposition
-- No covert operator needed — it's pragmatic!
-
--/
-
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Logic.NaturalLogic
 
-namespace Semantics.FocusParticles
-
-variable {World Entity : Type}
-
--- Propositions and Alternatives
-
-/-- Alternative semantics: focused element evokes alternatives -/
-structure FocusStructure (α : Type) where
-  /-- The ordinary semantic value -/
-  ordinary : α
-  /-- The focus alternatives -/
-  alternatives : List α
-
--- EVEN: The Traditional Account
-
 /-!
-## Covert EVEN (@cite{crnic-2014}, building on @cite{lahiri-1998})
-@cite{rooth-1992}
+# Focus-sensitive particles: even and only
 
-EVEN has two semantic contributions:
+Traditional truth-conditional semantics for focus-sensitive particles
+(*even*, *only*), with NPI licensing derived from the scalar
+presupposition of *even*.
 
-1. **Scalar presupposition**: The focused element is least likely among alternatives
-2. **Additive presupposition**: At least one alternative is true (for "also" reading)
-3. **Assertion**: The prejacent is true
+## Main definitions
 
-For NPI licensing, only the scalar presupposition matters.
+* `FocusStructure α`: alternative-semantics pair of an ordinary value
+  and a list of alternatives.
+* `LikelihoodOrder W`: relation on `W → Bool` predicates expressing
+  context-dependent likelihood.
+* `TraditionalEven`, `TraditionalOnly`: bundled semantics of *even*
+  and *only*.
+* `EvenThreshold` + `evenPresupWith`: existential / universal / most
+  variants of the *even* scalar presupposition.
+* `npiLicensed`: NPI licensing condition keyed on `ContextPolarity`.
+* `LikelihoodMonotone`: monotonicity of a likelihood ordering with
+  respect to entailment.
+
+## References
+
+* @cite{lahiri-1998}, @cite{crnic-2014}, @cite{karttunen-peters-1979},
+  @cite{bennett-1982}, @cite{francescotti-1995}, @cite{rooth-1992}.
 -/
 
-/-- Likelihood ordering over propositions (context-dependent).
-    `likelihood a b` holds when `a` is less likely (more surprising) than `b`. -/
-def LikelihoodOrder (World : Type) := (World → Bool) → (World → Bool) → Prop
+namespace Semantics.Focus.Particles
+
+variable {World Entity : Type*}
+
+/-- Alternative-semantics pair: an ordinary value plus a list of
+alternatives. -/
+structure FocusStructure (α : Type*) where
+  /-- The ordinary semantic value. -/
+  ordinary : α
+  /-- The focus alternatives. -/
+  alternatives : List α
+
+/-- Context-dependent likelihood ordering on `World → Bool` predicates.
+`lo a b` holds when `a` is less likely (more surprising) than `b`. -/
+def LikelihoodOrder (World : Type*) := (World → Bool) → (World → Bool) → Prop
 
 /-- Traditional EVEN semantics -/
 structure TraditionalEven where
@@ -96,27 +71,6 @@ def TraditionalEven.defined (even : TraditionalEven (World := World)) : Prop :=
 /-- Full EVEN meaning: defined and true -/
 def TraditionalEven.trueAt (even : TraditionalEven (World := World)) (w : World) : Prop :=
   even.defined ∧ even.prejacent w
-
--- NPI Licensing via EVEN
-
-/-!
-## NPI Licensing Mechanism
-
-The key insight: In DE contexts, wide-domain NPIs make the prejacent LESS likely,
-satisfying EVEN's presupposition.
-
-"John didn't see anyone"
-= EVEN [John didn't see anyone]
-= Presupposes: For all x, P(John didn't see x) ≥ P(John didn't see anyone)
-= "Not seeing anyone" is less likely than "not seeing some particular person"
-= Presupposition SATISFIED (negation creates DE context)
-
-"*John saw anyone"
-= EVEN [John saw anyone]
-= Presupposes: For all x, P(John saw x) ≥ P(John saw anyone)
-= "Seeing anyone" is MORE likely than seeing some particular person
-= Presupposition VIOLATED
--/
 
 open Core.NaturalLogic (ContextPolarity)
 
@@ -152,22 +106,6 @@ theorem npi_unlicensed_nonmon (npiDomain regularDomain : Set Entity)
     (hWider : regularDomain ⊆ npiDomain) :
     npiLicensed .nonMonotonic npiDomain regularDomain hWider = False := rfl
 
--- Only: The Exhaustification Particle
-
-/-!
-## Overt "only"
-
-"Only" is the overt counterpart of EXH:
-- Presupposes: The prejacent is true
-- Asserts: No stronger alternative is true
-
-"Only John came"
-= Presupposes: John came
-= Asserts: No one other than John came
-
-This is equivalent to EXH with the prejacent as a presupposition.
--/
-
 /-- Traditional "only" semantics -/
 structure TraditionalOnly where
   /-- The prejacent (the focused element's contribution) -/
@@ -189,45 +127,11 @@ def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : (World
 def TraditionalOnly.trueAt (only : TraditionalOnly (World := World)) (w : World) : Prop :=
   only.prejacent w ∧ only.assertion w
 
--- Likelihood Monotonicity
-
-/-- A likelihood ordering is MONOTONE w.r.t. entailment when stronger
-    propositions (true in fewer worlds) are less likely.
-
-    If `p` entails `q` (i.e., `p` is true only at worlds where `q` is true),
-    then `lessLikely p q` (p is at least as unlikely as q).
-
-    This is the bridge between `Theories/Semantics/Entailment/` and
-    focus particle semantics — the connection that @cite{lahiri-1998}
-    relies on to derive NPI licensing from the cardinality scale. -/
-def LikelihoodMonotone {W : Type} (lessLikely : (W → Bool) → (W → Bool) → Prop) : Prop :=
+/-- A likelihood ordering is monotone with respect to entailment when a
+stronger proposition (true at fewer worlds) is less likely than a weaker
+one. -/
+def LikelihoodMonotone {W : Type*} (lessLikely : (W → Bool) → (W → Bool) → Prop) : Prop :=
   ∀ (p q : (W → Bool)), (∀ w, p w = true → q w = true) → lessLikely p q
-
--- Comparison: EVEN vs EXH vs Only
-
-/-!
-## Focus Particle Comparison
-
-| Particle | Presupposition | Assertion | Polarity Effect |
-|----------|----------------|-----------|-----------------|
-| EVEN     | Least likely   | Prejacent | Licenses NPIs (DE) |
-| EXH      | None           | Prejacent ∧ ¬alternatives | Scalar implicatures (UE) |
-| only     | Prejacent      | ¬alternatives | Explicit exhaustivity |
-
-### Key Observations
-
-1. **EVEN and EXH are duals**:
-   - EVEN: active in DE contexts (licenses NPIs)
-   - EXH: active in UE contexts (generates SIs)
-
-2. **Only is overt EXH**:
-   - Same semantic effect as covert EXH
-   - But with prejacent as presupposition, not assertion
--/
-
--- ============================================================
--- Threshold Variants (@cite{francescotti-1995})
--- ============================================================
 
 /-- Threshold variants for the EVEN scalar presupposition.
     The theoretical dispute concerns how many alternatives the prejacent
@@ -245,14 +149,14 @@ inductive EvenThreshold where
   deriving DecidableEq, Repr
 
 /-- Count of alternatives that the prejacent exceeds under a decidable ordering. -/
-def countExceeded {α : Type} (prejacent : α) (alternatives : List α)
+def countExceeded {α : Type*} (prejacent : α) (alternatives : List α)
     (moreSurprising : α → α → Bool) : Nat :=
   (alternatives.filter (moreSurprising prejacent)).length
 
 /-- Generalized EVEN presupposition parameterized by threshold.
     `moreSurprising a b` returns `true` when `a` is more surprising
     (less likely) than `b`. -/
-def evenPresupWith {α : Type} (prejacent : α) (alternatives : List α)
+def evenPresupWith {α : Type*} (prejacent : α) (alternatives : List α)
     (moreSurprising : α → α → Bool) (threshold : EvenThreshold) : Bool :=
   let n := countExceeded prejacent alternatives moreSurprising
   match threshold with
@@ -260,4 +164,4 @@ def evenPresupWith {α : Type} (prejacent : α) (alternatives : List α)
   | .universal => decide (n = alternatives.length)
   | .most => decide (n * 2 > alternatives.length)
 
-end Semantics.FocusParticles
+end Semantics.Focus.Particles

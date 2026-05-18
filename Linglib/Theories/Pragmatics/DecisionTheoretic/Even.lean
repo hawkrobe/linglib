@@ -88,7 +88,7 @@ end Predictions
 
     Higher BF = more informative about the issue = less likely a priori =
     more surprising. This connects Merin's relevance ordering to the
-    traditional EVEN presupposition framework in `Semantics.FocusParticles`.
+    traditional EVEN presupposition framework in `Semantics.Focus.Particles`.
 
     @cite{merin-1999} subsumes @cite{francescotti-1995}'s "surprise" and
     @cite{kay-1990}'s "informativeness" as special cases of signed relevance.
@@ -97,7 +97,7 @@ end Predictions
     upstream Focus.Particles interface). We embed each Bool predicate
     into a Prop predicate via `· = true` to apply `bayesFactor`. -/
 def dtsLikelihood {W : Type} [Fintype W] (ctx : DTSContext W) :
-    Semantics.FocusParticles.LikelihoodOrder W :=
+    Semantics.Focus.Particles.LikelihoodOrder W :=
   fun a b =>
     bayesFactor ctx ({w | a w = true} : Set W) >
       bayesFactor ctx ({w | b w = true} : Set W)

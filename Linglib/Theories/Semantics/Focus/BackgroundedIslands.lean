@@ -9,38 +9,47 @@ import Linglib.Core.Discourse.AtIssueness
 import Linglib.Theories.Semantics.Focus.Interpretation
 
 /-!
-# Backgrounded Constituents Are Islands
-@cite{kratzer-selkirk-2020} @cite{lu-pan-degen-2025} @cite{roberts-2012} @cite{goldberg-2006}
+# Backgrounded constituents are islands
 
-Formalization of the discourse-backgroundedness account of manner-of-speaking
-(MoS) island effects, following @cite{lu-pan-degen-2025}.
+Discourse-backgroundedness account of manner-of-speaking (MoS) island
+effects. Communication events have manner and content dimensions; the
+active QUD partitions events along one dimension and backgrounds the
+other; backgrounded constituents resist wh-extraction.
 
-## Core Argument
+## Main definitions
 
-MoS verbs (whisper, shout, etc.) decompose into SAY + MANNER. The manner component activates a salient alternative set that addresses
-the QUD, foregrounding the verb and — by the single-QUD-at-a-time constraint — backgrounding the complement. Backgrounded constituents
-resist wh-extraction, producing the
-island effect.
+* `MannerComponent`, `VerbDecomp`: lexical decomposition of communication
+  verbs.
+* `hasMannerWeight`: predicate on a `VerbDecomp` true exactly when the
+  verb carries lexical or compositional manner content.
+* `CommEvent`, `QUDDimension`, `mannerQUD`, `contentQUD`: two-dimensional
+  events and their QUD projections.
+* `complementBackgrounded`, `verbForegrounded`: discourse status under a
+  given QUD.
+* `extractionQUD`, `qaCongruent_*` lemmas: Q-A congruence applied to
+  wh-extraction.
+* `MannerWeightSource`, `AtIssuenessDegree`, `complementAtIssueness`:
+  gradient manner weight and a rational at-issueness scale.
+* `IslandPrediction`, `predictIsland`: extraction-prediction API derived
+  from `complementAtIssueness`.
+* `ExtractionProfile`: backgroundedness × projectivity × extraction-
+  resistance triple, exhibiting the projectivity/extraction dissociation.
 
-## Formal Strategy
+## Main results
 
-Communication events have two semantic dimensions: manner and content. The
-active QUD (from `Core/QUD.lean`) partitions events along one dimension,
-foregrounding it and backgrounding the other. We derive:
+* `mos_island_effect`, `bridge_no_island`: contrasting predictions for
+  MoS and bridge verbs.
+* `prosodic_amelioration`, `say_adverb_replication`: prosodic focus
+  ameliorates and *say + adverb* replicates the island effect.
+* `mos_complement_projects`, `bridge_complement_not_projects`: complement
+  projection under sentential negation.
+* `extraction_rank_monotone_in_atIssueness`: extraction rank is monotone
+  in the at-issueness degree.
 
-1. Manner QUD → content is invisible to the partition → content is backgrounded
-2. Content QUD → manner is invisible → content is foregrounded
-3. Verb with manner weight → manner QUD is default → island effect
-4. Prosodic focus on embedded object → overrides to content QUD → amelioration
-5. Adding manner adverb to bridge verb → acquires manner weight → replicates island
+## References
 
-## Grounding
-
-- Paper def (3) "foregrounded" = QUD projection (`Core/QUD.lean : QUD.ofDecEq`)
-- Paper "backgrounded" = K&S `DiscourseStatus.given` (`Core/InformationStructure.lean`)
-- Rooth FIP / Q-A congruence (imported from `Focus/Interpretation.lean`) = QUD cell membership;
-  `qaCongruentWeak` derives that extracted fillers are focused (§4 Route 2)
-
+* @cite{lu-pan-degen-2025}, @cite{kratzer-selkirk-2020},
+  @cite{roberts-2012}, @cite{goldberg-2006}.
 -/
 
 open Features.InformationStructure (FocusMark)
@@ -50,7 +59,7 @@ open Core.Discourse.AtIssueness
 
 namespace Semantics.Focus.BackgroundedIslands
 
-/-! ## §1. Verb Decomposition
+/-! ## Verb decomposition
 
 MoS verbs are lexically composed of a light verb SAY and a manner component:
 
@@ -101,7 +110,7 @@ def shoutDecomp : VerbDecomp := { manner := some ⟨"shouting"⟩ }
 def sayDecomp : VerbDecomp := {}
 def saySoftlyDecomp : VerbDecomp := { mannerAdverb := some "softly" }
 
-/-! ## §2. Two-Dimensional Communication Events and QUD Projections
+/-! ## Two-dimensional communication events and QUD projections
 
 A communication event has two semantic dimensions: the **manner** of
 communication (how it was said) and the propositional **content** (what
@@ -125,11 +134,11 @@ inductive CommDimension where
 /-- A communication event has two semantic dimensions.
 This mirrors the verb decomposition: MoS verbs make both dimensions
 available, while bridge verbs foreground only content. -/
-structure CommEvent (Manner Content : Type) where
+structure CommEvent (Manner Content : Type*) where
   manner : Manner
   content : Content
 
-variable {Manner Content : Type} [DecidableEq Manner] [DecidableEq Content]
+variable {Manner Content : Type*} [DecidableEq Manner] [DecidableEq Content]
 
 instance [BEq Manner] [BEq Content] : BEq (CommEvent Manner Content) where
   beq e1 e2 := e1.manner == e2.manner && e1.content == e2.content
@@ -154,7 +163,7 @@ Built using `QUD.ofDecEq` from `Core/QUD.lean`. -/
 def contentQUD : QUD (CommEvent Manner Content) :=
   QUD.ofDecEq (·.content) "content"
 
-/-! ## §3. Core Theorems: QUD Determines Backgroundedness
+/-! ## QUD determines backgroundedness
 
 These theorems formalize the paper's central claim: the QUD determines which
 dimension of a communication event is foregrounded (participates in the QUD
@@ -240,7 +249,7 @@ theorem manner_content_qud_distinct
     ¬ (contentQUD (Manner := Manner) (Content := Content)).r e1 e2 :=
   ⟨manner_qud_ignores_content e1 e2 h_same_manner, h_diff_content⟩
 
-/-! ## §4. Deriving the Extraction Constraint
+/-! ## The extraction constraint
 @cite{erteschik-shir-1973} @cite{roberts-1996} @cite{goldberg-2006}
 
 The backgroundedness constraint on extraction — that backgrounded constituents
@@ -330,7 +339,7 @@ theorem extraction_filler_varies
     ¬ (extractionQUD (Manner := Manner) (Content := Content)).r
       ⟨m, c₁⟩ ⟨m, c₂⟩ := hne
 
-open Semantics.FocusInterpretation in
+open Semantics.Focus.Interpretation in
 omit [DecidableEq Manner] [DecidableEq Content] in
 /-- **Q-A congruence applied to extraction** (@cite{rooth-1992} (26d)):
 if Q-A congruence holds between the extraction question and the answer's
@@ -386,7 +395,7 @@ theorem atissue_extraction_compatible :
     ¬ extractionISClash extractedFillerStatus .new := by decide
 
 
-/-! ## §5. Default QUD Selection: From Verbs to Backgroundedness
+/-! ## Default QUD selection
 
 MoS verbs, due to their manner component, activate manner alternatives and
 make the manner QUD salient by default. Bridge verbs like *say*, lacking a
@@ -429,7 +438,7 @@ def verbGivenness (dim : CommDimension) : BinaryGivenness :=
   | .manner  => .new
   | .content => .given
 
-/-! ## §6. The MoS Island Effect: Main Derivation
+/-! ## The MoS island effect
 
 The full derivation chain:
 
@@ -481,7 +490,7 @@ theorem bridge_no_extraction_clash (v : VerbDecomp) (h : ¬ v.hasMannerWeight) :
   simp only [defaultDimension, if_neg h, complementStatus, extractedFillerStatus]
   decide
 
-/-! ## §7. Prosodic Amelioration (Experiments 1 & 3b)
+/-! ## Prosodic amelioration
 
 Prosodic focus ([FoC]) on the embedded object overrides the default manner
 QUD, forcing the content QUD. Under the content QUD, content extraction
@@ -555,7 +564,7 @@ theorem mos_focus_sensitivity (v : VerbDecomp) (h : v.hasMannerWeight) :
   simp only [↓reduceIte, if_pos h, complementStatus]
   decide
 
-/-! ## §8. Say + Adverb Replication (Experiment 3)
+/-! ## Say-plus-adverb replication
 
 **The paper's key novel prediction**: adding a manner adverb to *say* gives
 it manner weight, shifting the default QUD to manner and replicating the
@@ -615,7 +624,7 @@ theorem say_adverb_focus_sensitive :
     (complementStatus (activeDimension saySoftlyDecomp true)).rank := by
   decide
 
-/-! ## §9. Theory Comparison
+/-! ## Theory comparison
 
 Three accounts of the MoS island effect make different predictions. Only the
 backgroundedness account correctly predicts all five experiments' results.
@@ -698,7 +707,7 @@ theorem backgroundedness_dominates :
     accountScore .backgroundedness > accountScore .verbFrameFrequency := by
   constructor <;> decide
 
-/-! ## §10. Grounding in Linglib Infrastructure
+/-! ## Grounding bridges
 
 These theorems connect the paper's theoretical definitions to existing
 linglib formalization, establishing that this is not an isolated theory
@@ -755,7 +764,7 @@ which is the binary-focus axis value in the new substrate. -/
 theorem foregrounding_is_focused :
     verbFocus .manner = FocusMark.focused := rfl
 
-/-! ## §11. Gradient Manner Weight: Lexical vs. Compositional
+/-! ## Gradient manner weight: lexical vs. compositional
 
 @cite{lu-pan-degen-2025} Experiment 2a shows a residual difference between MoS
 verbs and *say* even under identical prosodic manipulation: MoS verb complements
@@ -819,7 +828,7 @@ theorem manner_weight_source_consistent (v : VerbDecomp) :
   cases hm : v.manner <;> cases ha : v.mannerAdverb <;>
     simp [Option.isSome]
 
-/-! ## §12. Backgroundedness–Projectivity Dissociation
+/-! ## Backgroundedness/projectivity dissociation
 
 @cite{tonhauser-beaver-degen-2018} show that projectivity and at-issueness are
 anti-correlated (r = .85–.99): content that is not at-issue tends to project.
@@ -890,7 +899,7 @@ theorem factive_backgrounded_iff_resists :
 theorem bridge_backgrounded_iff_resists :
     bridgeComplementProfile.backgrounded = bridgeComplementProfile.resistsExtraction := rfl
 
-/-! ## §13. Negation Test (Diagnostic for Backgroundedness)
+/-! ## Negation test as a backgroundedness diagnostic
 
 The negation test (@cite{erteschik-shir-1973}, @cite{ambridge-goldberg-2008},
 @cite{lu-pan-degen-2025} p. 630):
@@ -938,7 +947,7 @@ theorem prosodic_focus_overrides_negation (v : VerbDecomp) :
   simp [activeDimension, complementStatus, projectsUnderNegation]
 
 
-/-! ## §14. Complementizer Restriction (Open Problem)
+/-! ## Complementizer restriction
 
 MoS verbs require an overt complementizer *that*; bridge verbs allow null *that*:
 
@@ -956,7 +965,7 @@ is unavailable because null complementizers require syntactic selection.
 This remains an open problem and a genuine empirical advantage of the
 structural account that the discourse account does not currently capture. -/
 
-/-! ## §15. Gradient At-Issueness: From Binary to Continuous
+/-! ## Gradient at-issueness
 @cite{tonhauser-beaver-degen-2018} @cite{lu-pan-degen-2025}
 
 The binary model (§5) treats backgroundedness as all-or-nothing: complement
@@ -1039,7 +1048,7 @@ theorem gradient_distinguishes_lexical_compositional :
                complementAtIssueness]; norm_num
 
 
-/-! ## §16. General Island Prediction API
+/-! ## Island prediction API
 
 Given an at-issueness degree for any complement type, derive extraction
 predictions automatically. This decouples island prediction from manner-of-
