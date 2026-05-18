@@ -453,26 +453,26 @@ The threshold θ makes them gradable (@cite{kennedy-2007}): "more generous"
 ⟦generous N⟧(p) = N(p) ∧ ω_AIA(p) > θ. -/
 def generousAdj (θ : ℚ) :
     Semantics.Gradability.Classification.AdjMeaning Unit SocialValueProfile :=
-  fun N _ p => decide (p.ωAIA > θ) && N () p
+  fun N _ p => p.ωAIA > θ ∧ N () p
 
 /-- "Fair-minded" as an intersective adjective meaning:
 ⟦fair-minded N⟧(p) = N(p) ∧ ω_DIA(p) > θ. -/
 def fairMindedAdj (θ : ℚ) :
     Semantics.Gradability.Classification.AdjMeaning Unit SocialValueProfile :=
-  fun N _ p => decide (p.ωDIA > θ) && N () p
+  fun N _ p => p.ωDIA > θ ∧ N () p
 
 open Semantics.Gradability.Classification in
 /-- Evaluative adjectives grounded in BToM-inferred preferences are
 intersective: ⟦generous N⟧ = ⟦N⟧ ∩ {x | ω_AIA(x) > θ}. -/
 theorem generous_is_intersective (θ : ℚ) :
     isIntersective (generousAdj θ) :=
-  ⟨fun _ p => decide (p.ωAIA > θ), fun _ _ _ => rfl⟩
+  ⟨fun _ p => p.ωAIA > θ, fun _ _ _ => Iff.rfl⟩
 
 open Semantics.Gradability.Classification in
 /-- Fair-minded is intersective. -/
 theorem fairMinded_is_intersective (θ : ℚ) :
     isIntersective (fairMindedAdj θ) :=
-  ⟨fun _ p => decide (p.ωDIA > θ), fun _ _ _ => rfl⟩
+  ⟨fun _ p => p.ωDIA > θ, fun _ _ _ => Iff.rfl⟩
 
 /-- Generous and selfish are contradictory at any threshold:
 generous requires ω_AIA > θ, selfish requires ω_AIA < θ. -/

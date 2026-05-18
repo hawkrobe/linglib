@@ -46,9 +46,7 @@ namespace Elbourne2026
 open Semantics.Gradability.Classification
   (Property AdjMeaning isIntersective isSubsective)
 
--- ════════════════════════════════════════════════════════
--- § 1. ⟨et,et⟩ Adjective Denotations
--- ════════════════════════════════════════════════════════
+/-! ### ⟨et,et⟩ Adjective Denotations -/
 
 section AdjDenotations
 
@@ -57,14 +55,14 @@ variable {I E : Type*}
 /-- The trivially true noun meaning: `λt.λx. ⊤`.
     The copula applies an ⟨et,et⟩ adjective to this to extract
     the adjective's inherent content. -/
-def trivialNoun : Property I E := λ _ _ => true
+def trivialNoun : Property I E := fun _ _ => True
 
 /-- Intersective ⟨et,et⟩ adjective: `λN.λt.λx. N(t)(x) ∧ Q(t)(x)`.
 
     @cite{elbourne-2026} (24b)/(59):
     `/cute/ :: λf⟨e,it⟩.λx.λt. f(x)(t) & cute(x)(t)` -/
 def intersective (Q : Property I E) : AdjMeaning I E :=
-  λ N t x => N t x && Q t x
+  fun N t x => N t x ∧ Q t x
 
 /-- Applying an intersective adjective to the trivial noun recovers
     the underlying property Q. This is what the copula exploits. -/
@@ -74,9 +72,7 @@ theorem intersective_trivial (Q : Property I E) :
 
 end AdjDenotations
 
--- ════════════════════════════════════════════════════════
--- § 2. Copula BE
--- ════════════════════════════════════════════════════════
+/-! ### Copula BE -/
 
 section Copula
 
@@ -92,21 +88,19 @@ variable {I E : Type*}
     `BE :: λR⟨i,it⟩.λG⟨eit,eit⟩.λx.λt. ∃t'(R(t')(t) & G(λy.λt''.⊤)(x)(t'))` -/
 def copulaBE (R : I → I → Prop) (G : AdjMeaning I E)
     (x : E) (t : I) : Prop :=
-  ∃ t', R t' t ∧ G trivialNoun t' x = true
+  ∃ t', R t' t ∧ G trivialNoun t' x
 
 /-- BE applied to an intersective adjective produces the expected
     truth conditions: `∃t'. R(t',t) ∧ Q(t')(x)`. -/
 theorem copulaBE_intersective (Q : Property I E) (R : I → I → Prop)
     (x : E) (t : I) :
     copulaBE R (intersective Q) x t ↔
-    ∃ t', R t' t ∧ Q t' x = true := by
+    ∃ t', R t' t ∧ Q t' x := by
   simp [copulaBE, intersective_trivial]
 
 end Copula
 
--- ════════════════════════════════════════════════════════
--- § 3. FA-Sufficiency
--- ════════════════════════════════════════════════════════
+/-! ### FA-Sufficiency -/
 
 section FASufficiency
 
@@ -123,8 +117,8 @@ variable {I E : Type*}
     @cite{elbourne-2026} (25)–(26):
     `⟦cute donkey⟧ = λx.λt. donkey(x)(t) & cute(x)(t)` -/
 theorem fa_eq_pm (Q N : Property I E) :
-    intersective Q N = (λ t x => Q t x && N t x) := by
-  funext t x; exact Bool.and_comm (N t x) (Q t x)
+    intersective Q N = (fun t x => Q t x ∧ N t x) := by
+  funext t x; exact propext And.comm
 
 /-- PM always produces **intersective** results: the composition
     `λN.λt.λx. A(t)(x) ∧ N(t)(x)` satisfies `Classification.isIntersective`
@@ -136,21 +130,18 @@ theorem fa_eq_pm (Q N : Property I E) :
     intersective semantics that we have just seen is inappropriate for
     merely subsective adjectives." -/
 theorem pm_always_intersective (A : Property I E) :
-    isIntersective (λ N t x => A t x && N t x) :=
-  ⟨A, λ _ _ _ => rfl⟩
+    isIntersective (fun N t x => A t x ∧ N t x) :=
+  ⟨A, fun _ _ _ => Iff.rfl⟩
 
 /-- Corollary: PM always yields subsective results (`A ∧ N` entails
     `N`). Follows from `pm_always_intersective` via the hierarchy
     (`intersective → subsective`), but also provable directly. -/
 theorem pm_always_subsective (A N : Property I E) (t : I) (x : E)
-    (h : (A t x && N t x) = true) : N t x = true := by
-  simp only [Bool.and_eq_true] at h; exact h.2
+    (h : A t x ∧ N t x) : N t x := h.2
 
 end FASufficiency
 
--- ════════════════════════════════════════════════════════
--- § 4. "Fido was cute" Derivation
--- ════════════════════════════════════════════════════════
+/-! ### "Fido was cute" Derivation -/
 
 section Derivation
 
@@ -166,14 +157,12 @@ variable {I E : Type*}
 theorem fido_was_cute (Q : Property I E) (lt : I → I → Prop)
     (fido : E) (t : I) :
     copulaBE lt (intersective Q) fido t ↔
-    ∃ t', lt t' t ∧ Q t' fido = true := by
+    ∃ t', lt t' t ∧ Q t' fido := by
   simp [copulaBE, intersective_trivial]
 
 end Derivation
 
--- ════════════════════════════════════════════════════════
--- § 5. Connection to Classification Hierarchy
--- ════════════════════════════════════════════════════════
+/-! ### Connection to Classification Hierarchy -/
 
 section HierarchyConnection
 
@@ -184,15 +173,13 @@ variable {I E : Type*}
     property Q. -/
 theorem intersective_is_classified (Q : Property I E) :
     isIntersective (intersective Q) :=
-  ⟨Q, λ N t x => Bool.and_comm (N t x) (Q t x)⟩
+  ⟨Q, fun _ _ _ => And.comm⟩
 
 /-- Intersective ⟨et,et⟩ adjectives are subsective:
     `cute N` entails `N`. -/
 theorem intersective_is_subsective (Q : Property I E) :
-    isSubsective (intersective Q) := by
-  intro N t x h
-  simp only [intersective, Bool.and_eq_true] at h
-  exact h.1
+    isSubsective (intersective Q) :=
+  fun _ _ _ h => h.1
 
 /-- Attributive combination (FA on ⟨et,et⟩ adj + noun) and predicative
     extraction (copula applies adj to trivial noun) use the SAME
@@ -211,14 +198,12 @@ theorem attributive_predicative_same_denotation (Q : Property I E)
     -- The extracted predicate equals Q itself
     pred = Q ∧
     -- The attributive result conjoins Q with the noun
-    attr = (λ t x => noun t x && Q t x) := by
-  exact ⟨intersective_trivial Q, rfl⟩
+    attr = (fun t x => noun t x ∧ Q t x) :=
+  ⟨intersective_trivial Q, rfl⟩
 
 end HierarchyConnection
 
--- ════════════════════════════════════════════════════════
--- § 6. Former — Non-Subsective ⟨et,et⟩ Adjective
--- ════════════════════════════════════════════════════════
+/-! ### Former — Non-Subsective ⟨et,et⟩ Adjective -/
 
 section Former
 
@@ -229,55 +214,57 @@ private inductive T2 | past | now deriving DecidableEq
 private inductive E1 | joe deriving DecidableEq
 
 private def judge : Property T2 E1
-  | .past, .joe => true
-  | .now, .joe => false
+  | .past, .joe => True
+  | .now,  .joe => False
 
 /-- Non-subsective ⟨et,et⟩ adjective: `former`.
-    Computable over a finite list of time points via `List.any`.
+    Computable over a finite list of time points via `List.any`-shaped
+    Prop existential.
 
-    `formerAdj times ltb N t x = true` iff some earlier time `t'`
-    satisfies `ltb t' t ∧ N t' x` and `N t x = false`.
+    `formerAdj times ltb N t x` iff some earlier time `t'` satisfies
+    `ltb t' t ∧ N t' x` and `¬ N t x`.
 
     @cite{elbourne-2026} (44)/(60):
     `λf⟨e,it⟩.λx.λt. ∃t'(< (t')(t) & f(x)(t') & ¬f(x)(t))` -/
 def formerAdj {I E : Type*} (times : List I)
-    (ltb : I → I → Bool) : AdjMeaning I E :=
-  λ N t x => times.any (λ t' => ltb t' t && N t' x) && !(N t x)
+    (ltb : I → I → Prop) : AdjMeaning I E :=
+  fun N t x => (∃ t' ∈ times, ltb t' t ∧ N t' x) ∧ ¬ N t x
 
-private def ltb2 : T2 → T2 → Bool
-  | .past, .now => true
-  | _, _ => false
+private def ltb2 : T2 → T2 → Prop
+  | .past, .now => True
+  | _,     _    => False
 
 private def allT2 : List T2 := [.past, .now]
 
 /-- `formerAdj` produces the expected truth value at `(now, joe)`:
     Joe is a former judge. -/
 theorem former_adj_holds :
-    formerAdj allT2 ltb2 judge .now .joe = true := by native_decide
+    formerAdj allT2 ltb2 judge .now .joe := by
+  refine ⟨⟨.past, ?_, ?_, ?_⟩, ?_⟩
+  · simp [allT2]
+  · exact trivial
+  · exact trivial
+  · exact id
 
 /-- `formerAdj` is not subsective — connecting directly to
     `Classification.isSubsective`. This is a genuine `AdjMeaning`,
     so it integrates with the full Classification hierarchy. -/
 theorem former_adj_not_subsective :
-    ¬isSubsective (formerAdj (E := E1) allT2 ltb2) := by
+    ¬ isSubsective (formerAdj (E := E1) allT2 ltb2) := by
   intro h
-  have := h judge .now .joe former_adj_holds
-  simp [judge] at this
+  exact h judge .now .joe former_adj_holds
 
--- ────────────────────────────────────────────────────
--- PM failure: why ⟨e,t⟩ theory cannot handle former
--- ────────────────────────────────────────────────────
+/-! #### PM failure: why ⟨e,t⟩ theory cannot handle former -/
 
 /-- No ⟨e,t⟩ adjective property, combined with `judge` via PM, can
-    yield a true result at `(now, joe)` — because `judge(now)(joe)`
-    is `false` and PM includes the noun in the conjunction.
+    yield a true result at `(now, joe)` — because `judge(now)(joe)` is
+    `False` and PM includes the noun in the conjunction.
 
-    Contrast with `former_adj_holds`: the ⟨et,et⟩ theory CAN
-    produce a true `former judge` result while `judge` is false. -/
+    Contrast with `former_adj_holds`: the ⟨et,et⟩ theory CAN produce a
+    true `former judge` result while `judge` is false. -/
 theorem pm_cannot_produce_former :
-    ¬∃ (A : Property T2 E1),
-      (A .now .joe && judge .now .joe) = true := by
-  intro ⟨_, h⟩; simp [judge] at h
+    ¬ ∃ (A : Property T2 E1), A .now .joe ∧ judge .now .joe :=
+  fun ⟨_, _, h⟩ => h
 
 /-- **End-to-end chain**: the ⟨et,et⟩ theory strictly subsumes
     ⟨e,t⟩ + PM for adjective-noun composition.
@@ -285,31 +272,29 @@ theorem pm_cannot_produce_former :
     1. For intersective adjectives, FA on ⟨et,et⟩ reproduces PM
        (`fa_eq_pm`).
     2. For non-subsective adjectives, ⟨et,et⟩ succeeds
-       (`former_adj_holds` ∧ `judge .now .joe = false`).
+       (`former_adj_holds` ∧ `¬ judge .now .joe`).
     3. For non-subsective adjectives, ⟨e,t⟩ + PM fails
        (`pm_cannot_produce_former`). -/
 theorem etet_subsumes_et :
     (∀ (Q N : Property T2 E1),
-      intersective Q N = (λ t x => Q t x && N t x)) ∧
-    (formerAdj allT2 ltb2 judge .now .joe = true ∧ judge .now .joe = false) ∧
-    (¬∃ (A : Property T2 E1), (A .now .joe && judge .now .joe) = true) :=
-  ⟨fa_eq_pm, ⟨former_adj_holds, rfl⟩, pm_cannot_produce_former⟩
+      intersective Q N = (fun t x => Q t x ∧ N t x)) ∧
+    (formerAdj allT2 ltb2 judge .now .joe ∧ ¬ judge .now .joe) ∧
+    (¬ ∃ (A : Property T2 E1), A .now .joe ∧ judge .now .joe) :=
+  ⟨fa_eq_pm, ⟨former_adj_holds, id⟩, pm_cannot_produce_former⟩
 
-/-- Applying `formerAdj` to the trivial noun gives `false` everywhere:
-    `⊤` can never "formerly" hold (it always holds). The copula applies
-    adjectives to `⊤`, so `former` in predicative position would be
-    vacuously false — a semantic reason for the attributive-only
-    restriction (complementing compulsory E_R in § 7). -/
+/-- Applying `formerAdj` to the trivial noun gives `False` everywhere:
+    `⊤` can never "formerly" hold (it always holds). The copula
+    applies adjectives to `⊤`, so `former` in predicative position
+    would be vacuously false — a semantic reason for the attributive-
+    only restriction (complementing compulsory E_R in § 7). -/
 theorem formerAdj_trivialNoun {I E : Type*} (times : List I)
-    (ltb : I → I → Bool) (t : I) (x : E) :
-    formerAdj times ltb trivialNoun t x = false := by
+    (ltb : I → I → Prop) (t : I) (x : E) :
+    ¬ formerAdj times ltb trivialNoun t x := by
   simp [formerAdj, trivialNoun]
 
 end Former
 
--- ════════════════════════════════════════════════════════
--- § 7. Compulsory E_R (Attributive-Only Adjectives)
--- ════════════════════════════════════════════════════════
+/-! ### Compulsory E_R (Attributive-Only Adjectives) -/
 
 section CompulsoryER
 

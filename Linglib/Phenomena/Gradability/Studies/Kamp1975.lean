@@ -15,7 +15,7 @@ Kamp presents two theories of adjective semantics:
 **Theory 1 (§ 1–2)**: Adjectives as functions from properties to
 properties (type `⟨⟨e,t⟩,⟨e,t⟩⟩`). The classification hierarchy —
 intersective, subsective, privative, extensional — is formalized in
-`Theories/Semantics/Lexical/Adjective/Classification.lean`.
+`Theories/Semantics/Gradability/Classification.lean`.
 
 **Theory 2 (§ 3–7)**: Vague/graded models. Kamp introduces *vague
 models* `⟨M, S, F, p⟩` (partial model + completions + σ-field +
@@ -47,15 +47,13 @@ namespace Kamp1975
 
 open Semantics.Gradability.Classification
 
--- ════════════════════════════════════════════════════
--- § 1. Bridge to Modification.lean
--- ════════════════════════════════════════════════════
+/-! ### Bridge to single-world predicates
 
-/-! `Classification.lean` defines the general intensional hierarchy:
-    `isIntersective`, `isSubsective`, `isPrivative`, `isExtensional`
-    over `Property W E = W → E → Bool`. The bridge theorems below show
-    that fixing a world reduces the intensional definitions to their
-    single-world extensional counterparts. -/
+`Classification.lean` defines the general intensional hierarchy:
+`isIntersective`, `isSubsective`, `isPrivative`, `isExtensional` over
+`Property W E = W → E → Prop`. The bridge theorems below show that
+fixing a world reduces the intensional definitions to their single-
+world counterparts. -/
 
 section Bridge
 
@@ -65,37 +63,33 @@ variable {W E : Type*}
     hierarchy reduces to the extensional one.
 
     If `adj` is intersective, then at any fixed world `w`, the function
-    `N ↦ adj N w` is intersective in the sense of `Modification.lean`
-    (there exists a fixed predicate Q(w) such that the result is
-    Q(w) ∩ N(w)). -/
+    `N ↦ adj N w` is intersective in the extensional sense: there
+    exists a fixed predicate Q(w) such that the result is Q(w) ∩ N(w). -/
 theorem intersective_at_world {adj : AdjMeaning W E}
     (h : isIntersective adj) (w : W) :
-    ∃ (Q_w : E → Bool), ∀ (N : E → Bool) (x : E),
-      adj (λ _ => N) w x = (Q_w x && N x) := by
+    ∃ (Q_w : E → Prop), ∀ (N : E → Prop) (x : E),
+      adj (fun _ => N) w x ↔ (Q_w x ∧ N x) := by
   obtain ⟨Q, hQ⟩ := h
-  exact ⟨Q w, λ N x => hQ (λ _ => N) w x⟩
+  exact ⟨Q w, fun N x => hQ (fun _ => N) w x⟩
 
 /-- Single-world specialization of subsective. -/
 theorem subsective_at_world {adj : AdjMeaning W E}
     (h : isSubsective adj) (w : W) :
-    ∀ (N : E → Bool) (x : E),
-      adj (λ _ => N) w x = true → N x = true := by
+    ∀ (N : E → Prop) (x : E), adj (fun _ => N) w x → N x := by
   intro N x hadj
-  exact h (λ _ => N) w x hadj
+  exact h (fun _ => N) w x hadj
 
 /-! `intersective_at_world` and `subsective_at_world` show that fixing
-    a world reduces the intensional hierarchy to single-world properties:
-    `∃ Q_w, adj(N)(w)(x) = Q_w(x) ∧ N(x)` (intersective) and
-    `adj(N)(w)(x) → N(x)` (subsective). -/
+    a world reduces the intensional hierarchy to single-world
+    predicates. -/
 
 end Bridge
 
--- ════════════════════════════════════════════════════
--- § 2. Many-Valued Logic Failure
--- ════════════════════════════════════════════════════
+/-! ### Many-Valued Logic Failure -/
 
 /-! @cite{kamp-1975} (p. 233) argues that truth-functional many-valued
-    logic cannot adequately handle vague connectives. The key observation:
+    logic cannot adequately handle vague connectives. The key
+    observation:
 
     If `⟦φ⟧ = ½` (borderline), then `⟦¬φ⟧ = ½` (standard negation).
     We want `⟦φ ∧ ¬φ⟧ = 0` (contradictions are false). But any
@@ -110,15 +104,14 @@ end Bridge
 
 open Core.Duality (Truth3)
 
-/-- **Kamp's dilemma**: no
-    truth-functional binary operator can simultaneously be
-    idempotent (`F(x,x) = x`) and make borderline contradictions
-    false (`F(½, ¬½) = 0`).
+/-- **Kamp's dilemma**: no truth-functional binary operator can
+    simultaneously be idempotent (`F(x,x) = x`) and make borderline
+    contradictions false (`F(½, ¬½) = 0`).
 
     Since `¬½ = ½` in any symmetric three-valued logic, the two
-    requirements conflict: idempotence demands `F(½,½) = ½`,
-    but the contradiction requirement demands `F(½,½) = 0`.
-    This is what motivates the move to supervaluation. -/
+    requirements conflict: idempotence demands `F(½,½) = ½`, but the
+    contradiction requirement demands `F(½,½) = 0`. This is what
+    motivates the move to supervaluation. -/
 theorem kleene_dilemma :
     ¬∃ (meet : Truth3 → Truth3 → Truth3),
       (∀ x, meet x x = x) ∧
@@ -130,9 +123,7 @@ theorem kleene_dilemma :
   rw [hcontra] at this
   cases this
 
--- ════════════════════════════════════════════════════
--- § 3. Kamp → Klein Lineage
--- ════════════════════════════════════════════════════
+/-! ### Kamp → Klein Lineage -/
 
 /-! @cite{kamp-1975}'s definition (12) for the comparative:
 
@@ -147,13 +138,15 @@ theorem kleene_dilemma :
     is equivalent to Klein's "¬∃ completion where u₂ ∈ ext ∧ u₁ ∉ ext",
     and Klein's strict comparative adds the asymmetric witness. -/
 
-/-- Kamp's definition (12) induces a `Preorder` on entities:
-    `u₁ ≤ u₂` iff every completion in S that puts u₂ in the extension
-    also puts u₁ in the extension.
+/-- Kamp's definition (12) induces a `Preorder` on entities: `u₁ ≤ u₂`
+    iff every completion in S that puts u₂ in the extension also puts
+    u₁ in the extension.
 
     This is the S-restricted analogue of `kleinPreorder` from
-    `Delineation.lean`. When S = Set.univ and ext is Bool-valued,
-    the two coincide (see `Klein1980.kleinPreorder_eq_kampAtLeastAs`). -/
+    `Delineation.lean`. The extension parameter remains `Bool`-valued
+    here because this section interfaces with vague-model
+    extension-membership (different abstraction from the intensional
+    adjective `Property` migrated above). -/
 @[reducible] def kampPreorder {E C : Type*} (ext : C → E → Bool) (S : Set C) :
     Preorder E where
   le u₁ u₂ := ∀ c, c ∈ S → ext c u₂ = true → ext c u₁ = true
@@ -166,24 +159,22 @@ theorem kampPreorder_antitone {E C : Type*} (ext : C → E → Bool) (u₁ u₂ 
     Antitone (fun S => (kampPreorder ext S).le u₁ u₂) :=
   fun _ _ hle hall c hc => hall c (hle hc)
 
--- ════════════════════════════════════════════════════
--- § 4. Concrete Witnesses for Each Class
--- ════════════════════════════════════════════════════
+/-! ### Concrete Witnesses for Each Class
 
-/-! Each class in the hierarchy is non-empty. We construct explicit
-    adjective denotations that provably satisfy each definition from
-    `Classification.lean`, modeling the classic examples: "gray"
-    (intersective), "fake" (privative), "skillful" (subsective but not
-    extensional), and "alleged" (non-subsective/modal).
+Each class in the hierarchy is non-empty. We construct explicit
+adjective denotations that provably satisfy each definition from
+`Classification.lean`, modeling the classic examples: "gray"
+(intersective), "fake" (privative), "skillful" (subsective but not
+extensional), and "alleged" (non-subsective/modal).
 
-    These are the formal counterparts of the informal entailment judgments
-    from the literature (e.g., "gray cat entails cat" ↔ `isSubsective`,
-    "skillful surgeon + violinist ⊬ skillful violinist" ↔ `¬isExtensional`).
+These are the formal counterparts of the informal entailment judgments
+from the literature (e.g., "gray cat entails cat" ↔ `isSubsective`,
+"skillful surgeon + violinist ⊬ skillful violinist" ↔ `¬isExtensional`).
 
-    @cite{partee-2010} argues that the privative class should be eliminated
-    in favor of subsective + noun coercion. The witness `fakeAdj` below
-    models the traditional analysis; see `Partee2010.lean` for the
-    coercion reanalysis. -/
+@cite{partee-2010} argues that the privative class should be eliminated
+in favor of subsective + noun coercion. The witness `fakeAdj` below
+models the traditional analysis; see `Partee2010.lean` for the
+coercion reanalysis. -/
 
 section Witnesses
 
@@ -200,12 +191,12 @@ inductive E3 | a | b | c
     Models @cite{kamp-1975} definition (4). Entailment pattern:
     "gray cat" entails both "gray" and "cat"; "gray" + "cat" entails
     "gray cat". -/
-def grayAdj : AdjMeaning W2 E3 := λ N w x =>
-  (match x with | .a => true | _ => false) && N w x
+def grayAdj : AdjMeaning W2 E3 := fun N w x =>
+  (match x with | .a => True | _ => False) ∧ N w x
 
 theorem gray_intersective : isIntersective grayAdj :=
-  ⟨λ _ x => match x with | .a => true | _ => false,
-   λ N w x => by cases x <;> simp [grayAdj]⟩
+  ⟨fun _ x => match x with | .a => True | _ => False,
+   fun N w x => by cases x <;> simp [grayAdj]⟩
 
 /-- "gray" is therefore also extensional and subsective. -/
 example : isExtensional grayAdj := intersective_implies_extensional gray_intersective
@@ -219,13 +210,12 @@ example : isSubsective grayAdj := intersective_implies_subsective gray_intersect
 
     @cite{partee-2010} argues this class should be reanalyzed as
     subsective with noun coercion — see `Partee2010.lean`. -/
-def fakeAdj : AdjMeaning W2 E3 := λ N w x =>
-  (match x with | .b => true | _ => false) && !N w x
+def fakeAdj : AdjMeaning W2 E3 := fun N w x =>
+  (match x with | .b => True | _ => False) ∧ ¬ N w x
 
 theorem fake_privative : isPrivative fakeAdj := by
   intro N w x h
-  unfold fakeAdj at h
-  cases x <;> simp_all
+  exact h.2
 
 /-- **"skillful"**: a subsective adjective that is NOT extensional.
     Being a "skillful N" depends on N's intension — what counts as an N
@@ -235,49 +225,47 @@ theorem fake_privative : isPrivative fakeAdj := by
     Entailment pattern: "skillful surgeon" entails "surgeon" (subsective),
     but "skillful surgeon" + "violinist" does not entail "skillful
     violinist" (not intersective, because not extensional). -/
-def skillfulAdj : AdjMeaning W2 E3 := λ N w x =>
-  N w x && match x with
+def skillfulAdj : AdjMeaning W2 E3 := fun N w x =>
+  N w x ∧ match x with
     | .a => N .w₁ .a  -- a's skill assessment depends on N's intension
-    | _ => false
+    | _  => False
 
 theorem skillful_subsective : isSubsective skillfulAdj := by
   intro N w x h
-  unfold skillfulAdj at h
-  cases x <;> simp_all
+  exact h.1
 
-theorem skillful_not_extensional : ¬isExtensional skillfulAdj := by
+theorem skillful_not_extensional : ¬ isExtensional skillfulAdj := by
   intro hext
-  let N₁ : Property W2 E3 := λ _ _ => true
-  let N₂ : Property W2 E3 := λ w x => match w, x with
-    | .w₁, .a => false | _, _ => true
-  have heq : ∀ x, N₁ .w₂ x = N₂ .w₂ x := by intro x; cases x <;> rfl
-  have h := hext N₁ N₂ .w₂ heq .a
-  have h₁ : skillfulAdj N₁ .w₂ .a = true := rfl
-  have h₂ : skillfulAdj N₂ .w₂ .a = false := rfl
-  rw [h₁, h₂] at h; cases h
+  let N₁ : Property W2 E3 := fun _ _ => True
+  let N₂ : Property W2 E3 := fun w x => match w, x with
+    | .w₁, .a => False
+    | _, _    => True
+  have hagree : ∀ x, N₁ .w₂ x ↔ N₂ .w₂ x := fun x => by
+    cases x <;> simp [N₁, N₂]
+  have h := hext N₁ N₂ .w₂ hagree .a
+  have hLHS : skillfulAdj N₁ .w₂ .a := ⟨trivial, trivial⟩
+  exact (h.mp hLHS).2
 
 /-- **"alleged"**: a non-subsective (modal) adjective. An "alleged N"
-    may or may not be an N — the adjective creates an intensional context
-    without entailing or anti-entailing the noun.
+    may or may not be an N — the adjective creates an intensional
+    context without entailing or anti-entailing the noun.
 
     This is the complement class in the hierarchy: adjectives like
     "alleged", "potential", "putative" that carry no meaning postulate
     constraining the relationship between the modified and unmodified
     extension. -/
-def allegedAdj : AdjMeaning W2 E3 := λ _N _ x =>
-  match x with | .a => true | _ => false
+def allegedAdj : AdjMeaning W2 E3 := fun _N _ x =>
+  match x with | .a => True | _ => False
 
 /-- "alleged N" does not entail "N" (not subsective). -/
-theorem alleged_not_subsective : ¬isSubsective allegedAdj := by
+theorem alleged_not_subsective : ¬ isSubsective allegedAdj := by
   intro h
-  have := h (λ _ _ => false) .w₁ .a rfl
-  cases this
+  exact h (fun _ _ => False) .w₁ .a trivial
 
 /-- "alleged N" does not entail "not N" (not privative). -/
-theorem alleged_not_privative : ¬isPrivative allegedAdj := by
+theorem alleged_not_privative : ¬ isPrivative allegedAdj := by
   intro h
-  have := h (λ _ _ => true) .w₁ .a rfl
-  cases this
+  exact h (fun _ _ => True) .w₁ .a trivial trivial
 
 end Witnesses
 
