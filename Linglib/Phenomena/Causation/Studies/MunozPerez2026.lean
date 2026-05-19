@@ -1,6 +1,5 @@
 import Linglib.Features.Acceptability
 import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
@@ -158,11 +157,61 @@ theorem marking_restriction :
     mejorar_le.acceptability == .ungrammatical) = true := rfl
 
 -- ============================================================================
--- § 6: Bridge — Spanish Fission Instantiation
+-- § 6: Generic Fission Framework (@cite{halle-marantz-1993})
 -- ============================================================================
 
 open Minimalist
-open Morphology.DM.Fission
+
+/-! Fission is a postsyntactic operation that splits a single terminal
+    node into two morphological exponents. Three parameters control any
+    Fission rule: (1) the structural context that licenses Fission;
+    (2) the person condition that triggers it; (3) the realization that
+    spells out the split terminal. -/
+
+/-- The result of Fission: two clitic positions. -/
+structure FissionOutput where
+  /-- Cl₁: bears person features. -/
+  cl1Form : String
+  /-- Cl₂: bears case features. -/
+  cl2Form : String
+  deriving Repr, DecidableEq
+
+/-- A Fission rule parameterized over a person category type. -/
+structure FissionRule (Person : Type) where
+  /-- Structural context check (e.g., inchoative = vGO ∧ vBE). -/
+  contextOk : List VerbHead → Bool
+  /-- Person/number condition (e.g., [+PART, +SING]). -/
+  personOk : Person → Bool
+  /-- Realization: map person category to the two clitic forms. -/
+  realize : Person → FissionOutput
+
+/-- Apply Fission given a rule, a person category, and a verb-head list.
+    Returns `none` if either the structural or person condition fails. -/
+def applyFission {Person : Type} (rule : FissionRule Person)
+    (p : Person) (heads : List VerbHead) : Option FissionOutput :=
+  if rule.contextOk heads && rule.personOk p then
+    some (rule.realize p)
+  else
+    none
+
+/-- A PF well-formedness condition: checks whether a list of overt
+    clitic forms satisfies a language-specific phonological requirement
+    (e.g., anticausative marking in Spanish). -/
+structure PFMarkingCondition where
+  isSatisfied : List String → Bool
+
+/-- When Fission produces a clitic that satisfies a PF condition,
+    another overt marker (e.g., SE) may be optional. -/
+def fissionSatisfiesPF {Person : Type} (rule : FissionRule Person)
+    (pf : PFMarkingCondition) (p : Person) (heads : List VerbHead) : Bool :=
+  match applyFission rule p heads with
+  | some output => pf.isSatisfied [output.cl1Form]
+  | none => false
+
+-- ============================================================================
+-- § 7: Bridge — Spanish Fission Instantiation
+-- ============================================================================
+
 open Fragments.Spanish.PersonFeatures
 open Fragments.Spanish.Predicates
 open Fragments.Spanish.Clitics
@@ -197,7 +246,7 @@ def spanishFissionSatisfiesPF (p : Category) (heads : List VerbHead) : Bool :=
   fissionSatisfiesPF spanishFissionRule spanishAnticausativePF p heads
 
 -- ============================================================================
--- § 7: Bridge — Person Restriction (Prediction 1)
+-- § 8: Bridge — Person Restriction (Prediction 1)
 -- ============================================================================
 
 /-- Fission applies only to 1SG and 2SG.
@@ -227,7 +276,7 @@ theorem person_restriction_matches_data :
   refine ⟨?_, rfl, ?_, rfl, ?_, rfl⟩ <;> decide
 
 -- ============================================================================
--- § 8: Bridge — Inchoative Requirement (Prediction 2)
+-- § 9: Bridge — Inchoative Requirement (Prediction 2)
 -- ============================================================================
 
 /-- Stylistic LE requires inchoative context (vGO ∧ vBE).
@@ -248,7 +297,7 @@ theorem stylLE_verbs_inchoative :
       (fun v => isInchoative v.verbHead) = true := by native_decide
 
 -- ============================================================================
--- § 9: Bridge — Marking Restriction (Prediction 3)
+-- § 10: Bridge — Marking Restriction (Prediction 3)
 -- ============================================================================
 
 /-- Unmarked anticausatives block stylistic LE.
@@ -274,7 +323,7 @@ theorem blocking_verbs_all_unmarked :
       (fun v => v.anticausativeMarking == .unmarked) = true := by native_decide
 
 -- ============================================================================
--- § 10: Bridge — SE-Optionality (Prediction 4)
+-- § 11: Bridge — SE-Optionality (Prediction 4)
 -- ============================================================================
 
 /-- When Fission applies, the output clitic satisfies the PF
@@ -293,7 +342,7 @@ theorem syncretism_aligns_with_fission :
     datReflSyncretic .third .Sing = false := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 11: Bridge — Three-Way Synonymy (Prediction 5)
+-- § 12: Bridge — Three-Way Synonymy (Prediction 5)
 -- ============================================================================
 
 /-- The three clitic patterns (SE+CL, CL+LE, SE+CL+LE) are semantically
@@ -315,7 +364,7 @@ theorem three_way_synonymy_from_vacuity :
   refine ⟨rfl, rfl, rfl, ?_⟩; decide
 
 -- ============================================================================
--- § 12: Bridge — Fission Verification
+-- § 13: Bridge — Fission Verification
 -- ============================================================================
 
 /-- Fission applies to 1SG in inchoative context. -/
@@ -354,7 +403,7 @@ theorem cl2_invariable :
     (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by native_decide
 
 -- ============================================================================
--- § 13: Bridge — Per-Verb Inchoative Verification
+-- § 14: Bridge — Per-Verb Inchoative Verification
 -- ============================================================================
 
 /-- Each verb individually checked against the inchoative requirement. -/
