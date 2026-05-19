@@ -135,19 +135,109 @@ holds because:
 private def stripTraceQuotient (t : Planar (α ⊕ β)) : Option (Nonplanar α) :=
   (Planar.stripTrace t).map Nonplanar.mk
 
-/-- **PlanarEquiv invariance** of the strip-then-mk composition. The
-    proof reduces (by `EqvGen` induction) to `PlanarStep` invariance,
-    which holds by structural induction: swapping children at the root
-    produces strip-results that differ only by a child-list permutation
-    (vanishing under `Nonplanar.mk`); recursive steps lift via the
-    same argument on the recursive call's child.
+/-- `Planar.stripTraceList` agrees with `List.filterMap Planar.stripTrace`
+    (by structural induction on the list — both pattern-match the same
+    way on the optional strip result). -/
+private theorem stripTraceList_eq_filterMap (cs : List (Planar (α ⊕ β))) :
+    Planar.stripTraceList cs = cs.filterMap Planar.stripTrace := by
+  induction cs with
+  | nil => rfl
+  | cons head tail ih =>
+    show (match Planar.stripTrace head with
+            | none => Planar.stripTraceList tail
+            | some t => t :: Planar.stripTraceList tail) =
+         (head :: tail).filterMap Planar.stripTrace
+    cases h : Planar.stripTrace head with
+    | none => simp [List.filterMap_cons_none h, ih]
+    | some t => simp [List.filterMap_cons_some h, ih]
 
-    TODO: structural proof. Sorry-fenced for now; the statement is
-    correct and matches the well-known combinatorial fact. -/
+/-- `PlanarStep` invariance of the strip-then-mk composition. Two cases:
+    swapping children permutes the strip-filtered list (`Perm.filterMap`);
+    recursive step lifts via `planarEquiv_recurse_lift`. -/
+private theorem stripTraceQuotient_planarStep :
+    ∀ {t t' : Planar (α ⊕ β)}, Planar.PlanarStep t t' →
+      stripTraceQuotient t = stripTraceQuotient t' := by
+  intro t t' h
+  induction h with
+  | @swapAtRoot a l r pre post =>
+    cases a with
+    | inl a' =>
+      show ((Planar.stripTrace (Planar.node (Sum.inl a') (pre ++ l :: r :: post))).map
+              Nonplanar.mk) =
+           ((Planar.stripTrace (Planar.node (Sum.inl a') (pre ++ r :: l :: post))).map
+              Nonplanar.mk)
+      simp only [Planar.stripTrace_inl, Option.map_some, stripTraceList_eq_filterMap]
+      congr 1
+      apply Nonplanar.mk_eq_mk_iff.mpr
+      apply Planar.planarEquiv_root_perm
+      exact List.Perm.filterMap _ (List.Perm.append_left pre (List.Perm.swap r l post))
+    | inr b =>
+      show ((Planar.stripTrace (Planar.node (Sum.inr b) (pre ++ l :: r :: post))).map
+              Nonplanar.mk) =
+           ((Planar.stripTrace (Planar.node (Sum.inr b) (pre ++ r :: l :: post))).map
+              Nonplanar.mk)
+      simp only [Planar.stripTrace_inr, Option.map_none]
+  | @recurse a pre old new post _hstep ih =>
+    cases a with
+    | inl a' =>
+      show ((Planar.stripTrace (Planar.node (Sum.inl a') (pre ++ old :: post))).map
+              Nonplanar.mk) =
+           ((Planar.stripTrace (Planar.node (Sum.inl a') (pre ++ new :: post))).map
+              Nonplanar.mk)
+      simp only [Planar.stripTrace_inl, Option.map_some, stripTraceList_eq_filterMap,
+                 List.filterMap_append]
+      congr 1
+      apply Nonplanar.mk_eq_mk_iff.mpr
+      -- ih has type stripTraceQuotient old = stripTraceQuotient new, i.e.
+      --   (Planar.stripTrace old).map Nonplanar.mk = (Planar.stripTrace new).map Nonplanar.mk
+      -- ih has type stripTraceQuotient old = stripTraceQuotient new.
+      have ih' : (Planar.stripTrace old).map Nonplanar.mk =
+                 (Planar.stripTrace new).map Nonplanar.mk := ih
+      cases hold : Planar.stripTrace old with
+      | none =>
+        rw [hold] at ih'
+        simp only [Option.map_none] at ih'
+        have hnew : Planar.stripTrace new = none := by
+          cases hnew' : Planar.stripTrace new with
+          | none => rfl
+          | some _ =>
+            rw [hnew'] at ih'
+            simp at ih'
+        simp only [List.filterMap_cons_none hold, List.filterMap_cons_none hnew]
+        exact Planar.PlanarEquiv.refl _
+      | some t_old =>
+        rw [hold] at ih'
+        simp only [Option.map_some] at ih'
+        -- ih' : some (Nonplanar.mk t_old) = (Planar.stripTrace new).map Nonplanar.mk
+        cases hnew : Planar.stripTrace new with
+        | none =>
+          exfalso
+          rw [hnew] at ih'
+          simp at ih'
+        | some t_new =>
+          rw [hnew] at ih'
+          simp only [Option.map_some, Option.some_inj] at ih'
+          simp only [List.filterMap_cons_some hold, List.filterMap_cons_some hnew]
+          exact Planar.planarEquiv_recurse_lift (pre.filterMap Planar.stripTrace)
+                  (post.filterMap Planar.stripTrace) (Nonplanar.mk_eq_mk_iff.mp ih')
+    | inr b =>
+      show ((Planar.stripTrace (Planar.node (Sum.inr b) (pre ++ old :: post))).map
+              Nonplanar.mk) =
+           ((Planar.stripTrace (Planar.node (Sum.inr b) (pre ++ new :: post))).map
+              Nonplanar.mk)
+      simp only [Planar.stripTrace_inr, Option.map_none]
+
+/-- **PlanarEquiv invariance** of the strip-then-mk composition.
+    By `Relation.EqvGen` induction, reduces to `PlanarStep` invariance. -/
 private theorem stripTraceQuotient_planarEquiv :
     ∀ (t t' : Planar (α ⊕ β)), t ≈ t' →
       stripTraceQuotient t = stripTraceQuotient t' := by
-  sorry
+  intro t t' h
+  induction h with
+  | rel _ _ hstep => exact stripTraceQuotient_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih1 ih2 => exact ih1.trans ih2
 
 /-- Strip trace-placeholder subtrees from a `Nonplanar` tree. -/
 noncomputable def Nonplanar.stripTrace : Nonplanar (α ⊕ β) → Option (Nonplanar α) :=
