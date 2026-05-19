@@ -850,6 +850,210 @@ theorem comulCN_coassoc [CharZero R'] [NoZeroDivisors R']
 
 end CoassocCommRing
 
+/-! ### Empty-cut uniqueness — combinatorial substrate for the per-tree counit law
+
+For any extract policy and tree `T`, the unique cut summand of
+`cutSummandsG extract T` with empty cut forest (`p.1.card = 0`) is the
+empty cut `(0, T)`. By mutual structural induction with the list and
+per-child cases. This is the substrate for the Δ^c per-tree counit law:
+under `(counit ⊗ id)`, only this summand survives, contributing
+`1 ⊗ ofTree T`. -/
+
+namespace ConnesKreimer
+
+/-- Helper: filter of `(s ×ˢ t)` by a conjunction predicate distributes
+    into a product of filters. Used to factor the cardinality-zero
+    condition on `(p.1.1 + p.2.1)` into independent conditions on each
+    factor of the cartesian product. -/
+private lemma filter_product_split {α₁ β₁ : Type*}
+    (s : Multiset α₁) (t : Multiset β₁)
+    (p : α₁ → Prop) [DecidablePred p] (q : β₁ → Prop) [DecidablePred q] :
+    (s ×ˢ t).filter (fun pr => p pr.1 ∧ q pr.2) = (s.filter p) ×ˢ (t.filter q) := by
+  show ((s.bind fun a => t.map (Prod.mk a)).filter (fun pr => p pr.1 ∧ q pr.2)) =
+       (s.filter p).bind (fun a => (t.filter q).map (Prod.mk a))
+  rw [Multiset.filter_bind, Multiset.bind_filter]
+  apply Multiset.bind_congr
+  intro a _
+  rw [Multiset.filter_map]
+  by_cases h : p a
+  · rw [if_pos h]
+    apply congrArg
+    apply Multiset.filter_congr
+    intro b _
+    show (p a ∧ q b) ↔ q b
+    simp [h]
+  · rw [if_neg h]
+    apply Multiset.eq_zero_of_forall_notMem
+    intro pr hpr
+    rw [Multiset.mem_map] at hpr
+    obtain ⟨b, hb_mem, _hb_eq⟩ := hpr
+    rw [Multiset.mem_filter] at hb_mem
+    -- hb_mem.2 : ((fun pr => p pr.1 ∧ q pr.2) ∘ Prod.mk a) b = (p a ∧ q b) after β
+    have hpa : p a := hb_mem.2.1
+    exact h hpa
+
+variable {α : Type*}
+
+mutual
+
+/-- The unique cut summand of `cutSummandsG extract T` with empty cut
+    forest is the empty cut `(0, T)`. -/
+private theorem cutSummandsG_filter_empty
+    (extract : Planar α → Option (List (Planar α))) :
+    ∀ (T : Planar α),
+      (cutSummandsG extract T).filter (fun p => p.1.card = 0) =
+        ({((0 : Forest (Planar α)), T)} : Multiset _)
+  | .node a cs => by
+    rw [cutSummandsG_node, Multiset.filter_map]
+    -- After filter_map the inner predicate is `(·.1.card = 0) ∘ (fun p => (p.1, .node a p.2))`,
+    -- which is definitionally `fun p => p.1.card = 0`. Use Multiset.filter_congr to
+    -- rewrite the predicate to the form the IH expects.
+    have hcongr :
+        Multiset.filter
+            ((fun p : Forest (Planar α) × Planar α => p.1.card = 0) ∘
+              fun p : Forest (Planar α) × List (Planar α) => (p.1, Planar.node a p.2))
+            (cutListSummandsG extract cs) =
+        Multiset.filter (fun p => p.1.card = 0) (cutListSummandsG extract cs) := by
+      apply Multiset.filter_congr
+      intro p _
+      rfl
+    rw [hcongr, cutListSummandsG_filter_empty extract cs, Multiset.map_singleton]
+
+/-- The unique list-cut summand of `cutListSummandsG extract cs` with
+    empty cut forest is `(0, cs)`. -/
+private theorem cutListSummandsG_filter_empty
+    (extract : Planar α → Option (List (Planar α))) :
+    ∀ (cs : List (Planar α)),
+      (cutListSummandsG extract cs).filter (fun p => p.1.card = 0) =
+        ({((0 : Forest (Planar α)), cs)} : Multiset _)
+  | [] => by
+    rw [cutListSummandsG_nil, Multiset.filter_singleton]
+    rw [if_pos (show (0 : Forest (Planar α)).card = 0 from Multiset.card_zero)]
+  | t :: ts => by
+    rw [cutListSummandsG_cons, Multiset.filter_map]
+    -- Convert composed predicate to a conjunction form using card_add.
+    have hcongr :
+        Multiset.filter
+            ((fun p : Forest (Planar α) × List (Planar α) => p.1.card = 0) ∘
+              fun p : (Forest (Planar α) × List (Planar α)) ×
+                       (Forest (Planar α) × List (Planar α)) =>
+                (p.1.1 + p.2.1, p.1.2 ++ p.2.2))
+            (augActionG extract t ×ˢ cutListSummandsG extract ts) =
+        Multiset.filter
+            (fun p : (Forest (Planar α) × List (Planar α)) ×
+                     (Forest (Planar α) × List (Planar α)) =>
+              (fun q : Forest (Planar α) × List (Planar α) => q.1.card = 0) p.1 ∧
+              (fun q : Forest (Planar α) × List (Planar α) => q.1.card = 0) p.2)
+            (augActionG extract t ×ˢ cutListSummandsG extract ts) := by
+      apply Multiset.filter_congr
+      intro p _
+      show (p.1.1 + p.2.1).card = 0 ↔ p.1.1.card = 0 ∧ p.2.1.card = 0
+      rw [Multiset.card_add, Nat.add_eq_zero_iff]
+    rw [hcongr,
+        filter_product_split (augActionG extract t) (cutListSummandsG extract ts)
+          (fun q : Forest (Planar α) × List (Planar α) => q.1.card = 0)
+          (fun q : Forest (Planar α) × List (Planar α) => q.1.card = 0),
+        augActionG_filter_empty extract t,
+        cutListSummandsG_filter_empty extract ts,
+        Multiset.product_singleton, Multiset.map_singleton]
+    show ({((0 : Forest (Planar α)) + (0 : Forest (Planar α)),
+            ([t] : List (Planar α)) ++ ts)} : Multiset _) = _
+    rw [zero_add]
+    rfl
+
+/-- The unique per-child decision of `augActionG extract t` with empty
+    cut forest is `(0, [t])` (the "recurse with empty cut" branch). -/
+private theorem augActionG_filter_empty
+    (extract : Planar α → Option (List (Planar α))) :
+    ∀ (t : Planar α),
+      (augActionG extract t).filter (fun p => p.1.card = 0) =
+        ({((0 : Forest (Planar α)), [t])} : Multiset _)
+  | t => by
+    -- Case-split on extract t up-front using the specialized augActionG_eq_*
+    -- lemmas (which avoid the inline match expression).
+    cases h_ext : extract t with
+    | none =>
+      rw [augActionG_eq_none extract t h_ext, Multiset.filter_map]
+      have hcongr :
+          Multiset.filter
+              ((fun p : Forest (Planar α) × List (Planar α) => p.1.card = 0) ∘
+                fun p : Forest (Planar α) × Planar α => (p.1, [p.2]))
+              (cutSummandsG extract t) =
+          Multiset.filter (fun p => p.1.card = 0) (cutSummandsG extract t) := by
+        apply Multiset.filter_congr
+        intro p _
+        rfl
+      rw [hcongr, cutSummandsG_filter_empty extract t, Multiset.map_singleton]
+    | some r =>
+      rw [augActionG_eq_some extract t r h_ext, Multiset.filter_cons]
+      -- filter cons: if pred (({t}, r)) then {({t},r)} else 0, plus filter of the tail
+      rw [if_neg (by
+        show ¬ ({t} : Forest (Planar α)).card = 0
+        rw [Multiset.card_singleton]
+        decide)]
+      rw [Multiset.zero_add, Multiset.filter_map]
+      have hcongr :
+          Multiset.filter
+              ((fun p : Forest (Planar α) × List (Planar α) => p.1.card = 0) ∘
+                fun p : Forest (Planar α) × Planar α => (p.1, [p.2]))
+              (cutSummandsG extract t) =
+          Multiset.filter (fun p => p.1.card = 0) (cutSummandsG extract t) := by
+        apply Multiset.filter_congr
+        intro p _
+        rfl
+      rw [hcongr, cutSummandsG_filter_empty extract t, Multiset.map_singleton]
+
+end
+
+/-- Nonplanar-level descent: the unique cut summand of `cutSummandsCN τ T`
+    with empty cut forest is `(0, T)`. -/
+private theorem cutSummandsCN_filter_empty {α β : Type*}
+    (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar (α ⊕ β)) :
+    (cutSummandsCN τ T).filter (fun p => p.1.card = 0) =
+      ({((0 : Forest (Nonplanar (α ⊕ β))), T)} : Multiset _) := by
+  obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar (α ⊕ β), T = Nonplanar.mk T₀ :=
+    ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
+  rw [cutSummandsCN_mk, Multiset.filter_map]
+  -- `(projSummand p).1.card = (p.1.map Nonplanar.mk).card = p.1.card`; use filter_congr.
+  have hcongr :
+      Multiset.filter
+          ((fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) => p.1.card = 0) ∘
+            projSummand (α := α ⊕ β))
+          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) =
+      Multiset.filter (fun p : Forest (Planar (α ⊕ β)) × Planar (α ⊕ β) => p.1.card = 0)
+          (cutSummandsCP (τ ∘ Nonplanar.mk) T₀) := by
+    apply Multiset.filter_congr
+    intro p _
+    show (p.1.map Nonplanar.mk).card = 0 ↔ p.1.card = 0
+    rw [Multiset.card_map]
+  rw [hcongr]
+  show Multiset.map projSummand
+        (Multiset.filter (fun p : Forest (Planar (α ⊕ β)) × Planar (α ⊕ β) => p.1.card = 0)
+          (cutSummandsG (extractC (τ ∘ Nonplanar.mk)) T₀)) = _
+  rw [cutSummandsG_filter_empty (extractC (τ ∘ Nonplanar.mk)) T₀,
+      Multiset.map_singleton]
+  show ((((0 : Forest (Planar (α ⊕ β))).map Nonplanar.mk : Forest (Nonplanar (α ⊕ β))),
+         Nonplanar.mk T₀) : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β)) ::ₘ 0 = _
+  rw [Multiset.map_zero]
+  rfl
+
+end ConnesKreimer
+
+/-- Sum-of-conditional helper: sum of a multiset map where each entry is
+    conditionally zero equals the sum over the filtered subset. -/
+private lemma sum_map_ite_zero {ι M : Type*} [AddCommMonoid M]
+    (s : Multiset ι) (p : ι → Prop) [DecidablePred p] (g : ι → M) :
+    (s.map (fun a => if p a then g a else (0 : M))).sum =
+      ((s.filter p).map g).sum := by
+  induction s using Multiset.induction with
+  | empty => simp
+  | cons a s ih =>
+    rw [Multiset.map_cons, Multiset.sum_cons, ih]
+    by_cases hpa : p a
+    · rw [if_pos hpa, Multiset.filter_cons_of_pos _ hpa,
+          Multiset.map_cons, Multiset.sum_cons]
+    · rw [if_neg hpa, Multiset.filter_cons_of_neg _ hpa, zero_add]
+
 /-! ### Counit laws + Bialgebra instance
 
 With `comulCN_coassoc` structurally closed (modulo 4 deferred substrate
@@ -858,10 +1062,8 @@ sorries), the remaining inputs to `Bialgebra.ofAlgHom` are:
 2. The right counit law (`counit_rTensor_comulCAlgHomN`).
 3. The left counit law (`counit_lTensor_comulCAlgHomN`).
 
-Each lands here. The counit laws are sorry-pivoted as named axioms
-(direct consequence of `cutSummandsCN`'s structural decomposition:
-the (0, T) cut summand contributes `1 ⊗ ofTree T`, other summands
-have `counit(of' p_1) = 0`). -/
+Each lands here. The per-tree counit laws are derived from the empty-cut
+uniqueness substrate (`cutSummandsCN_filter_empty`) above. -/
 
 section BialgebraInst
 variable {R' : Type*} [CommRing R'] {α' β' : Type*}
@@ -890,34 +1092,110 @@ Mirrors the Δ^ρ proof structure in `PruningNonplanar.lean` (lines
 per-tree sorries that capture the `cutSummandsCN` substrate work
 (the (0, T) summand + non-zero-p₁ killing under `counit ⊗ id`). -/
 
-/-- **Per-tree right counit law** (sorry'd substrate): captures the
-    `cutSummandsCN` structural fact that under `(counit ⊗ id)`, only
-    the `(0, T)` cut summand survives, contributing `1 ⊗ ofTree T`.
+/-- **Per-tree right counit law**: under `(counit ⊗ id)`, only the `(0, T)`
+    cut summand of `cutSummandsCN τ T` survives, contributing `1 ⊗ ofTree T`.
 
-    Proof outline:
-    * `comulCTreeN τ T = ofTree T ⊗ 1 + Σ (of' p₁ ⊗ ofTree p₂)`.
-    * `(counit ⊗ id) (ofTree T ⊗ 1) = counit(ofTree T) ⊗ 1 = 0 ⊗ 1 = 0`
-      via `counit_ofTree`.
-    * For each cut summand `(p₁, p₂)`: `(counit ⊗ id) (of' p₁ ⊗ ofTree p₂)
-      = counit(of' p₁) ⊗ ofTree p₂`. This is 0 if `p₁ ≠ 0` (counit kills
-      non-empty forests) and `1 ⊗ ofTree p₂` if `p₁ = 0`.
-    * Need: only one summand has `p₁ = 0`, namely `(0, T)`. -/
+    Proof: expand `comulCTreeN τ T = ofTree T ⊗ 1 + Σ (of' p₁ ⊗ ofTree p₂)`.
+    Apply `(counit ⊗ id)`: the first summand vanishes via `counit_ofTree`;
+    each cut-summand contribution becomes `(if p₁.card = 0 then 1 else 0) ⊗
+    ofTree p₂`. Extract the filtered sum via `sum_map_ite_zero`, then use
+    `cutSummandsCN_filter_empty` to show the filter yields exactly `{(0, T)}`. -/
 private theorem counit_rTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β')
     (T : Nonplanar (α' ⊕ β')) :
     (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
         (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))
       (comulCTreeN τ T) = (1 : R') ⊗ₜ ConnesKreimer.ofTree T := by
-  sorry
+  -- Expand comulCTreeN τ T.
+  unfold comulCTreeN
+  rw [map_add]
+  -- First summand: (counit ⊗ id)(ofTree T ⊗ 1) = counit(ofTree T) ⊗ 1 = 0 ⊗ 1 = 0.
+  rw [show (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+              (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))
+            (ConnesKreimer.ofTree T ⊗ₜ[R']
+              (1 : ConnesKreimer R' (Nonplanar (α' ⊕ β')))) = 0 from by
+    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, ConnesKreimer.counit_ofTree,
+        TensorProduct.zero_tmul]]
+  rw [zero_add]
+  -- Distribute (counit ⊗ id) through the multiset sum.
+  rw [map_multiset_sum
+        (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+          (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β')))))]
+  simp only [Multiset.map_map]
+  -- Each summand: (counit ⊗ id)(of' p.1 ⊗ ofTree p.2) =
+  --   (if p.1.card = 0 then 1 else 0) ⊗ ofTree p.2.
+  rw [show ((Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+              (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))) ∘
+            (fun p : Forest (Nonplanar (α' ⊕ β')) × Nonplanar (α' ⊕ β') =>
+              ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2)) =
+            (fun p => (if p.1.card = 0 then (1 : R') else 0) ⊗ₜ[R']
+                       ConnesKreimer.ofTree p.2) from by
+    funext p
+    show (Algebra.TensorProduct.map (ConnesKreimer.counit (R := R'))
+            (AlgHom.id R' _))
+          (ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2) = _
+    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, ConnesKreimer.counit_of']]
+  -- Pull the if outside the tensor product: (if h then 1 else 0) ⊗ y = if h then 1 ⊗ y else 0.
+  rw [show (fun p : Forest (Nonplanar (α' ⊕ β')) × Nonplanar (α' ⊕ β') =>
+              (if p.1.card = 0 then (1 : R') else 0) ⊗ₜ[R']
+                ConnesKreimer.ofTree p.2) =
+            (fun p =>
+              if p.1.card = 0 then
+                ((1 : R') ⊗ₜ[R'] ConnesKreimer.ofTree p.2 :
+                  R' ⊗[R'] ConnesKreimer R' (Nonplanar (α' ⊕ β')))
+              else 0) from by
+    funext p
+    by_cases hp : p.1.card = 0
+    · rw [if_pos hp, if_pos hp]
+    · rw [if_neg hp, if_neg hp, TensorProduct.zero_tmul]]
+  -- Extract the filter via sum_map_ite_zero.
+  rw [sum_map_ite_zero]
+  -- Filter equals {(0, T)} by cutSummandsCN_filter_empty.
+  rw [ConnesKreimer.cutSummandsCN_filter_empty τ T,
+      Multiset.map_singleton, Multiset.sum_singleton]
 
-/-- **Per-tree left counit law** (sorry'd substrate): mirror of the
-    right counit. Same `cutSummandsCN` substrate, with `counit` on the
-    right factor instead. -/
+/-- **Per-tree left counit law**: mirror of the right counit. Same
+    `cutSummandsCN` substrate, with `counit` on the right factor. -/
 private theorem counit_lTensor_comulCTreeN (τ : Nonplanar (α' ⊕ β') → β')
     (T : Nonplanar (α' ⊕ β')) :
     (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
         (ConnesKreimer.counit (R := R')))
       (comulCTreeN τ T) = ConnesKreimer.ofTree T ⊗ₜ (1 : R') := by
-  sorry
+  unfold comulCTreeN
+  rw [map_add]
+  -- First summand: (id ⊗ counit)(ofTree T ⊗ 1) = ofTree T ⊗ counit(1) = ofTree T ⊗ 1.
+  rw [show (Algebra.TensorProduct.map
+              (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
+              (ConnesKreimer.counit (R := R')))
+            (ConnesKreimer.ofTree T ⊗ₜ[R']
+              (1 : ConnesKreimer R' (Nonplanar (α' ⊕ β')))) =
+          ConnesKreimer.ofTree T ⊗ₜ[R'] (1 : R') from by
+    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one]]
+  -- Second summand: distribute via map_multiset_sum, then show the entire sum is 0.
+  rw [map_multiset_sum
+        (Algebra.TensorProduct.map (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
+          (ConnesKreimer.counit (R := R')))]
+  simp only [Multiset.map_map]
+  -- Each summand: (id ⊗ counit)(of' p.1 ⊗ ofTree p.2) = of' p.1 ⊗ counit(ofTree p.2)
+  --              = of' p.1 ⊗ 0 = 0.
+  rw [show ((Algebra.TensorProduct.map
+              (AlgHom.id R' (ConnesKreimer R' (Nonplanar (α' ⊕ β'))))
+              (ConnesKreimer.counit (R := R'))) ∘
+            (fun p : Forest (Nonplanar (α' ⊕ β')) × Nonplanar (α' ⊕ β') =>
+              ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2)) =
+            (fun _ => (0 : ConnesKreimer R' (Nonplanar (α' ⊕ β')) ⊗[R'] R')) from by
+    funext p
+    show (Algebra.TensorProduct.map
+            (AlgHom.id R' _) (ConnesKreimer.counit (R := R')))
+          (ConnesKreimer.of' (R := R') p.1 ⊗ₜ[R'] ConnesKreimer.ofTree p.2) = _
+    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, ConnesKreimer.counit_ofTree,
+        TensorProduct.tmul_zero]]
+  -- The sum of all zeros over a multiset is 0.
+  rw [show ((cutSummandsCN τ T).map (fun _ : Forest (Nonplanar (α' ⊕ β')) × Nonplanar (α' ⊕ β') =>
+              (0 : ConnesKreimer R' (Nonplanar (α' ⊕ β')) ⊗[R'] R'))).sum = 0 from by
+    induction (cutSummandsCN τ T) using Multiset.induction with
+    | empty => simp
+    | cons _ _ ih => rw [Multiset.map_cons, Multiset.sum_cons, ih, add_zero]]
+  rw [add_zero]
 
 /-- **Forest right counit law**: lift per-tree to forest via `Multiset.induction`
     + multiplicativity of `comulCForestN` and `(counit ⊗ id)` as AlgHom.
