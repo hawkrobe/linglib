@@ -168,4 +168,14 @@ theorem IsRightSubsequential.isWeaklyDeterministic
   funext xs
   rfl
 
+/-- **Direction-parameterised WD inclusion**: every subsequential function
+(in either scan direction) is Weakly Deterministic. Delegates to the
+Left- / Right- specialised theorems. -/
+theorem IsSubsequential.isWeaklyDeterministic {d : Direction}
+    {f : List α → List α} (hf : IsSubsequential d f) :
+    IsWeaklyDeterministic f := by
+  cases d with
+  | left => exact IsLeftSubsequential.isWeaklyDeterministic hf
+  | right => exact IsRightSubsequential.isWeaklyDeterministic hf
+
 end Core.Computability.Subregular.Function

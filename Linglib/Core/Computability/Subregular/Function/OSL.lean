@@ -233,4 +233,24 @@ theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ} [Fintype β]
   have heq : r.toFinSFST.run = f := r.toFinSFST_run_eq_apply.trans hr
   exact heq ▸ r.toFinSFST.isLeftSubsequential
 
+/-- **Right-OSL ⊆ Right-Subsequential**, derived from the Left- side via
+the reverse-conjugation lemmas. The Right-OSL ↔ Left-OSL and
+Right-Subseq ↔ Left-Subseq isomorphisms commute. -/
+theorem isRightOutputStrictlyLocal_right_subsequential {k : ℕ} [Fintype β]
+    {f : List α → List β} (h : IsRightOutputStrictlyLocal k f) :
+    IsRightSubsequential f := by
+  rw [isRightOutputStrictlyLocal_iff_left_reverse] at h
+  rw [isRightSubsequential_iff_left_reverse]
+  exact isLeftOutputStrictlyLocal_left_subsequential h
+
+/-- **Direction-parameterised OSL ⊆ Subsequential umbrella**: in both
+scan directions, OSL functions are subsequential. Delegates to the
+Left- / Right- specialised theorems. -/
+theorem isOutputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
+    [Fintype β] {f : List α → List β} (h : IsOutputStrictlyLocal d k f) :
+    IsSubsequential d f := by
+  cases d with
+  | left => exact isLeftOutputStrictlyLocal_left_subsequential h
+  | right => exact isRightOutputStrictlyLocal_right_subsequential h
+
 end Core.Computability.Subregular.Function

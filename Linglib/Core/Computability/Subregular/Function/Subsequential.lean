@@ -403,4 +403,31 @@ theorem IsLeftSubsequential.comp {α β γ : Type*}
   show Tg.run (Tf.run xs) = g (f xs)
   rw [hTf, hTg]
 
+/-- **Right-Subsequential closure under composition**, derived from the
+Left- counterpart via `isRightSubsequential_iff_left_reverse`. The
+reverse-conjugate of a composition equals the composition of
+reverse-conjugates, so Left-Subseq closure carries over to Right-Subseq. -/
+theorem IsRightSubsequential.comp {α β γ : Type*}
+    {g : List β → List γ} (hg : IsRightSubsequential g)
+    {f : List α → List β} (hf : IsRightSubsequential f) :
+    IsRightSubsequential (g ∘ f) := by
+  rw [isRightSubsequential_iff_left_reverse] at hg hf ⊢
+  have h := hg.comp hf
+  convert h using 1
+  funext xs
+  show ((g ∘ f) xs.reverse).reverse
+      = ((fun ys => (g ys.reverse).reverse) ∘ (fun ys => (f ys.reverse).reverse)) xs
+  simp [Function.comp_apply, List.reverse_reverse]
+
+/-- **Direction-parameterised composition closure**: both Left- and
+Right-Subsequential functions are closed under composition. Delegates to
+`IsLeftSubsequential.comp` / `IsRightSubsequential.comp`. -/
+theorem IsSubsequential.comp {α β γ : Type*} {d : Direction}
+    {g : List β → List γ} (hg : IsSubsequential d g)
+    {f : List α → List β} (hf : IsSubsequential d f) :
+    IsSubsequential d (g ∘ f) := by
+  cases d with
+  | left => exact IsLeftSubsequential.comp hg hf
+  | right => exact IsRightSubsequential.comp hg hf
+
 end Core.Computability.Subregular.Function

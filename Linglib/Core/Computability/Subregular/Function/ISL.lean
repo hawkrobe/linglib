@@ -336,18 +336,24 @@ theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ} [Fintype α]
   have heq : r.toFinSFST.run = f := r.toFinSFST_run_eq_apply.trans hr
   exact heq ▸ r.toFinSFST.isLeftSubsequential
 
+/-- **Right-ISL ⊆ Right-Subsequential**, derived from the Left- side via
+the reverse-conjugation lemmas. The Right-ISL ↔ Left-ISL and
+Right-Subseq ↔ Left-Subseq isomorphisms commute. -/
+theorem isRightInputStrictlyLocal_right_subsequential {k : ℕ} [Fintype α]
+    {f : List α → List β} (h : IsRightInputStrictlyLocal k f) :
+    IsRightSubsequential f := by
+  rw [isRightInputStrictlyLocal_iff_left_reverse] at h
+  rw [isRightSubsequential_iff_left_reverse]
+  exact isLeftInputStrictlyLocal_left_subsequential h
+
 /-- Direction-parameterised: ISL_d ⊆ Subseq_d for both directions (over
-a finite input alphabet). -/
+a finite input alphabet). Delegates to the Left- / Right- specialised
+theorems. -/
 theorem isInputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
     [Fintype α] {f : List α → List β} (h : IsInputStrictlyLocal d k f) :
     IsSubsequential d f := by
   cases d with
   | left => exact isLeftInputStrictlyLocal_left_subsequential h
-  | right =>
-    rw [isSubsequential_right]
-    rw [isInputStrictlyLocal_right] at h
-    rw [isRightInputStrictlyLocal_iff_left_reverse] at h
-    rw [isRightSubsequential_iff_left_reverse]
-    exact isLeftInputStrictlyLocal_left_subsequential h
+  | right => exact isRightInputStrictlyLocal_right_subsequential h
 
 end Core.Computability.Subregular.Function
