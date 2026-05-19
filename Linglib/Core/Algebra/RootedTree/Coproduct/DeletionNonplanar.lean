@@ -62,17 +62,14 @@ substrate Δ^d ≡ Δ^ρ (modulo the embedding) has strict coassoc.
 
 ## Status
 
-`[UPSTREAM]` candidate. Sorry-free except for:
-* `comulDN_embedInl_eq_comulAlgHomN` — the equivalence theorem
-  (sorry'd; combinatorial bijection between Δ^c cut summands of
-  `embed T` and Δ^ρ cut summands of T). The left-channel half is
-  handled by `stripTraceAlgHom_comp_embedInlAlgHom` (sorry-free);
-  the deeper right-channel trace-removal is the remaining gap.
-
-The PlanarEquiv invariance of trace-stripping is now sorry-free
-(`stripTraceQuotient_planarEquiv`, via structural induction on
-PlanarStep + `List.Perm.filterMap`). The substrate (definitions,
-types, downstream API surface, strip-inverts-embed lemma) is closed.
+`[UPSTREAM]` candidate. **Sorry-free** as of MCB Phase F.1 R.9 closure:
+`comulDN_embedInl_eq_comulAlgHomN` is now proven via planar mutual
+structural induction on tree / children-list, factoring the wrapper
+`bPlusLin a` out of the per-summand tensors so the head and tail
+induction hypotheses apply cleanly. The left-channel half uses
+`stripTraceAlgHom_comp_embedInlAlgHom` (strip inverts the Sum.inl
+embedding); the right-channel trace-removal uses
+`strip_cutSummandsCP_sum_eq` + `strip_cutListSummandsG_unwrap_sum_eq`.
 -/
 
 namespace RootedTree
@@ -425,39 +422,673 @@ In MCB's binary substrate this requires the additional `Π_{d,p}`
 rebinarize step on the right channel; in our n-ary substrate, the
 strip is enough. -/
 
+/-- `stripTraceAlgHom` applied to `ofTree (embedInl T)` returns `ofTree T`.
+    Forest-level lift of `Nonplanar.stripTrace_embedInl`. -/
+private theorem stripTraceAlgHom_ofTree_embedInl
+    (T : Nonplanar α) :
+    stripTraceAlgHom (R := R) (β := β)
+        (ofTree (Nonplanar.embedInl T)) =
+      ofTree T := by
+  show stripTraceAlgHom (of' ({Nonplanar.embedInl T} : Forest (Nonplanar (α ⊕ β)))) =
+       of' ({T} : Forest (Nonplanar α))
+  rw [stripTraceAlgHom_of']
+  congr 1
+  rw [show ({Nonplanar.embedInl T} : Forest (Nonplanar (α ⊕ β))) =
+        ({T} : Forest (Nonplanar α)).map Nonplanar.embedInl from
+      (Multiset.map_singleton _ _).symm]
+  exact stripTrace_embedInl_filterMap _
+
+/-- `Planar.stripTraceList` distributes over list concatenation.
+    Follows from `stripTraceList_eq_filterMap` + `List.filterMap_append`. -/
+private theorem stripTraceList_append
+    (l1 l2 : List (Planar (α ⊕ β))) :
+    Planar.stripTraceList (l1 ++ l2) =
+      Planar.stripTraceList l1 ++ Planar.stripTraceList l2 := by
+  rw [stripTraceList_eq_filterMap, stripTraceList_eq_filterMap,
+      stripTraceList_eq_filterMap, List.filterMap_append]
+
+/-! ### Planar-level cut-tensor builders
+
+The tensors that arise when applying `(S ⊗ S)` to `comulCTreeN`'s cut
+summands on the LHS, and to `comulTreeN`'s cut summands on the RHS,
+both viewed at the `Nonplanar α` level. -/
+
+/-- LHS tensor builder: a Δ^c cut summand pair `(F_C, T_C)` lifted to
+    `Nonplanar α ⊗ Nonplanar α` via `stripTraceAlgHom` on both channels. -/
+private noncomputable def cutTensorC_planar
+    (p : Forest (Planar (α ⊕ β)) × Planar (α ⊕ β)) :
+    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+  stripTraceAlgHom (of' (p.1.map Nonplanar.mk)) ⊗ₜ[R]
+    stripTraceAlgHom (ofTree (Nonplanar.mk p.2))
+
+/-- RHS tensor builder: a Δ^ρ cut summand pair `(F, T')` directly at
+    the `Nonplanar α` level. -/
+private noncomputable def cutTensorP_planar
+    (p : Forest (Planar α) × Planar α) :
+    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+  (of' (p.1.map Nonplanar.mk) : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+    ofTree (Nonplanar.mk p.2)
+
+/-- Unwrapped LHS tensor builder for **list-level** cut summands:
+    `(F, l)` is mapped to a tensor where the right channel is `of'`
+    applied to the forest of stripped survivors (no `.node a`-wrapping). -/
+private noncomputable def cutTensorC_planar_unwrap
+    (p : Forest (Planar (α ⊕ β)) × List (Planar (α ⊕ β))) :
+    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+  stripTraceAlgHom (of' (p.1.map Nonplanar.mk)) ⊗ₜ[R]
+    (of' (Multiset.ofList ((Planar.stripTraceList p.2).map Nonplanar.mk)) :
+      ConnesKreimer R (Nonplanar α))
+
+/-- Unwrapped RHS tensor builder for **list-level** cut summands. -/
+private noncomputable def cutTensorP_planar_unwrap
+    (p : Forest (Planar α) × List (Planar α)) :
+    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+  (of' (p.1.map Nonplanar.mk) : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+    (of' (Multiset.ofList (p.2.map Nonplanar.mk)) :
+      ConnesKreimer R (Nonplanar α))
+
+/-- Per-tree-augmentation tensor builder for `augActionP`: handles the
+    `Option`-shaped remainder by mapping `none ↦ 1` and `some r ↦ ofTree r`. -/
+private noncomputable def cutTensorP_augAction
+    (p : Forest (Planar α) × Option (Planar α)) :
+    ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α) :=
+  (of' (p.1.map Nonplanar.mk) : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+    (match p.2 with
+     | none => (1 : ConnesKreimer R (Nonplanar α))
+     | some r => ofTree (Nonplanar.mk r))
+
+/-! ### Multiplicativity of cut-tensor builders under `combine`
+
+Both unwrapped builders factor through the cons combiners as products. -/
+
+/-- `cutTensorC_planar_unwrap` is multiplicative under `combine_G`. -/
+private theorem cutTensorC_planar_unwrap_combine_G
+    (p : (Forest (Planar (α ⊕ β)) × List (Planar (α ⊕ β))) ×
+         (Forest (Planar (α ⊕ β)) × List (Planar (α ⊕ β)))) :
+    cutTensorC_planar_unwrap (R := R) (p.1.1 + p.2.1, p.1.2 ++ p.2.2) =
+      cutTensorC_planar_unwrap (R := R) p.1 *
+        cutTensorC_planar_unwrap (R := R) p.2 := by
+  unfold cutTensorC_planar_unwrap
+  obtain ⟨⟨F1, l1⟩, ⟨F2, l2⟩⟩ := p
+  show (stripTraceAlgHom (of' ((F1 + F2).map Nonplanar.mk))) ⊗ₜ[R]
+        (of' (Multiset.ofList ((Planar.stripTraceList (l1 ++ l2)).map Nonplanar.mk))
+          : ConnesKreimer R (Nonplanar α))
+       = (stripTraceAlgHom (of' (F1.map Nonplanar.mk)) ⊗ₜ[R]
+          (of' (Multiset.ofList ((Planar.stripTraceList l1).map Nonplanar.mk))
+            : ConnesKreimer R (Nonplanar α))) *
+         (stripTraceAlgHom (of' (F2.map Nonplanar.mk)) ⊗ₜ[R]
+          (of' (Multiset.ofList ((Planar.stripTraceList l2).map Nonplanar.mk))
+            : ConnesKreimer R (Nonplanar α)))
+  rw [Algebra.TensorProduct.tmul_mul_tmul]
+  rw [Multiset.map_add, of'_add, map_mul]
+  rw [stripTraceList_append, List.map_append]
+  rw [show (((Planar.stripTraceList l1).map Nonplanar.mk ++
+              (Planar.stripTraceList l2).map Nonplanar.mk : List (Nonplanar α)) :
+            Multiset (Nonplanar α)) =
+          (Multiset.ofList ((Planar.stripTraceList l1).map Nonplanar.mk) +
+            Multiset.ofList ((Planar.stripTraceList l2).map Nonplanar.mk)) from
+        (Multiset.coe_add _ _).symm]
+  rw [of'_add]
+
+/-- Named version of the combine_P function (extracted to avoid Lean's
+    "inline match generates fresh matchers" issue when this is reused
+    across proofs via rewrite). -/
+private def combineP_fn :
+    (Forest (Planar α) × Option (Planar α)) ×
+        (Forest (Planar α) × List (Planar α)) →
+      Forest (Planar α) × List (Planar α) :=
+  fun p => match p.1.2 with
+    | none => (p.1.1 + p.2.1, p.2.2)
+    | some r => (p.1.1 + p.2.1, r :: p.2.2)
+
+theorem cutListSummandsP_cons' (t : Planar α) (ts : List (Planar α)) :
+    cutListSummandsP (t :: ts) =
+      (augActionP t ×ˢ cutListSummandsP ts).map combineP_fn := by
+  rw [cutListSummandsP_cons]; rfl
+
+/-- `cutTensorP_planar_unwrap` factors via `cutTensorP_augAction` and
+    `cutTensorP_planar_unwrap` under `combineP_fn`. -/
+private theorem cutTensorP_planar_unwrap_combine_P
+    (p : (Forest (Planar α) × Option (Planar α)) ×
+         (Forest (Planar α) × List (Planar α))) :
+    cutTensorP_planar_unwrap (R := R) (combineP_fn p) =
+      cutTensorP_augAction (R := R) p.1 *
+        cutTensorP_planar_unwrap (R := R) p.2 := by
+  show cutTensorP_planar_unwrap (R := R)
+        (match p.1.2 with
+         | none => (p.1.1 + p.2.1, p.2.2)
+         | some r => (p.1.1 + p.2.1, r :: p.2.2)) =
+      cutTensorP_augAction (R := R) p.1 *
+        cutTensorP_planar_unwrap (R := R) p.2
+  unfold cutTensorP_planar_unwrap cutTensorP_augAction
+  obtain ⟨⟨F1, opt⟩, ⟨F2, l2⟩⟩ := p
+  cases opt with
+  | none =>
+    show ((of' ((F1 + F2).map Nonplanar.mk) :
+            ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+          (of' (Multiset.ofList (l2.map Nonplanar.mk))
+            : ConnesKreimer R (Nonplanar α)))
+       = ((of' (F1.map Nonplanar.mk) : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+          (1 : ConnesKreimer R (Nonplanar α))) *
+         ((of' (F2.map Nonplanar.mk) : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+          (of' (Multiset.ofList (l2.map Nonplanar.mk))
+            : ConnesKreimer R (Nonplanar α)))
+    rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, Multiset.map_add, of'_add]
+  | some r =>
+    show ((of' ((F1 + F2).map Nonplanar.mk) :
+            ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+          (of' (Multiset.ofList ((r :: l2).map Nonplanar.mk))
+            : ConnesKreimer R (Nonplanar α)))
+       = ((of' (F1.map Nonplanar.mk) : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+          ofTree (Nonplanar.mk r)) *
+         ((of' (F2.map Nonplanar.mk) : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+          (of' (Multiset.ofList (l2.map Nonplanar.mk))
+            : ConnesKreimer R (Nonplanar α)))
+    rw [Algebra.TensorProduct.tmul_mul_tmul, Multiset.map_add, of'_add,
+        List.map_cons,
+        show ((Nonplanar.mk r :: l2.map Nonplanar.mk : List (Nonplanar α)) :
+              Multiset (Nonplanar α)) =
+              (Nonplanar.mk r ::ₘ (Multiset.ofList (l2.map Nonplanar.mk))) from
+          (Multiset.cons_coe _ _).symm,
+        ← Multiset.singleton_add, of'_add, of'_singleton]
+
+/-! ### Sum-of-product over cartesian product
+
+Standard distributivity: when the integrand factors as `f a * g b` over
+`s ×ˢ t`, the sum equals `(s.map f).sum * (t.map g).sum`. -/
+
+/-- Sum of `f a * g b` over `s ×ˢ t` factors as a product of sums. -/
+private theorem sum_map_product_mul
+    {A : Type*} [NonUnitalNonAssocSemiring A]
+    {γ δ : Type*} (s : Multiset γ) (t : Multiset δ)
+    (f : γ → A) (g : δ → A) :
+    ((s ×ˢ t).map (fun p => f p.1 * g p.2)).sum =
+      ((s.map f).sum) * ((t.map g).sum) := by
+  rw [show ((s ×ˢ t).map (fun p => f p.1 * g p.2)) =
+        s.bind (fun a => t.map (fun b => f a * g b)) from by
+    show (s.bind (fun a => t.map (Prod.mk a))).map _ = _
+    rw [Multiset.map_bind]
+    apply Multiset.bind_congr
+    intro a _
+    rw [Multiset.map_map]
+    rfl]
+  rw [Multiset.sum_bind]
+  -- Goal: (s.map (fun a => (t.map (fun b => f a * g b)).sum)).sum =
+  --       (s.map f).sum * (t.map g).sum
+  rw [show (s.map (fun a => (t.map (fun b => f a * g b)).sum)) =
+        s.map (fun a => f a * (t.map g).sum) from
+      Multiset.map_congr rfl (fun a _ => Multiset.sum_map_mul_left)]
+  exact Multiset.sum_map_mul_right
+
+/-! ### Universal identity: unwrapped tensor for singleton-remainder
+
+For any `t_c : Planar (α ⊕ β)` (regardless of root), the unwrapped
+cutTensor for `(F, [t_c])` equals `cutTensorC_planar (F, t_c)`. This
+holds for both `Sum.inl`-rooted `t_c` (where strip succeeds, yielding
+the stripped tree) and `Sum.inr`-rooted `t_c` (where both sides reduce
+to `... ⊗ 1`). -/
+
+private theorem cutTensorC_planar_unwrap_singleton
+    (F : Forest (Planar (α ⊕ β))) (t_c : Planar (α ⊕ β)) :
+    cutTensorC_planar_unwrap (R := R) (F, [t_c]) =
+      cutTensorC_planar (R := R) (F, t_c) := by
+  unfold cutTensorC_planar_unwrap cutTensorC_planar
+  congr 1
+  -- Right channel: of'(Multiset.ofList (stripTraceList [t_c] .map mk)) = S(ofTree (mk t_c))
+  show (of' (Multiset.ofList ((Planar.stripTraceList [t_c]).map Nonplanar.mk))
+          : ConnesKreimer R (Nonplanar α))
+       = stripTraceAlgHom (ofTree (Nonplanar.mk t_c))
+  show (of' (Multiset.ofList ((Planar.stripTraceList [t_c]).map Nonplanar.mk))
+          : ConnesKreimer R (Nonplanar α))
+       = stripTraceAlgHom (of' ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))))
+  rw [stripTraceAlgHom_of']
+  -- Case-split on Planar.stripTrace t_c.
+  cases h : Planar.stripTrace t_c with
+  | none =>
+    show (of' (Multiset.ofList ((Planar.stripTraceList [t_c]).map Nonplanar.mk))
+          : ConnesKreimer R (Nonplanar α))
+         = of' (({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))).filterMap
+            Nonplanar.stripTrace)
+    rw [show Planar.stripTraceList [t_c] = [] from by
+      show (match Planar.stripTrace t_c with
+              | none => Planar.stripTraceList []
+              | some t => t :: Planar.stripTraceList []) = []
+      rw [h]; rfl]
+    rw [show ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))).filterMap
+              Nonplanar.stripTrace = 0 from by
+      rw [show ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))) =
+            Nonplanar.mk t_c ::ₘ 0 from rfl,
+          Multiset.filterMap_cons]
+      show ((Nonplanar.stripTrace (Nonplanar.mk t_c)).map (fun x => ({x} : Multiset
+              (Nonplanar α)))).getD 0 + (0 : Multiset (Nonplanar (α ⊕ β))).filterMap
+              Nonplanar.stripTrace = 0
+      rw [Multiset.filterMap_zero]
+      show ((Nonplanar.stripTrace (Nonplanar.mk t_c)).map (fun x => ({x} : Multiset
+              (Nonplanar α)))).getD 0 + 0 = 0
+      rw [add_zero]
+      show ((Nonplanar.stripTrace (Nonplanar.mk t_c)).map (fun x => ({x} : Multiset
+              (Nonplanar α)))).getD 0 = 0
+      show (((Planar.stripTrace t_c).map Nonplanar.mk).map (fun x => ({x} : Multiset
+              (Nonplanar α)))).getD 0 = 0
+      rw [h]
+      rfl]
+    rfl
+  | some t' =>
+    show (of' (Multiset.ofList ((Planar.stripTraceList [t_c]).map Nonplanar.mk))
+          : ConnesKreimer R (Nonplanar α))
+         = of' (({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))).filterMap
+            Nonplanar.stripTrace)
+    rw [show Planar.stripTraceList [t_c] = [t'] from by
+      show (match Planar.stripTrace t_c with
+              | none => Planar.stripTraceList []
+              | some t => t :: Planar.stripTraceList []) = [t']
+      rw [h]; rfl]
+    rw [show ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))).filterMap
+              Nonplanar.stripTrace = ({Nonplanar.mk t'} : Multiset (Nonplanar α)) from by
+      rw [show ({Nonplanar.mk t_c} : Forest (Nonplanar (α ⊕ β))) =
+            Nonplanar.mk t_c ::ₘ 0 from rfl,
+          Multiset.filterMap_cons, Multiset.filterMap_zero]
+      show ((Nonplanar.stripTrace (Nonplanar.mk t_c)).map (fun x => ({x} : Multiset
+              (Nonplanar α)))).getD 0 + 0 = {Nonplanar.mk t'}
+      rw [add_zero]
+      show (((Planar.stripTrace t_c).map Nonplanar.mk).map (fun x => ({x} : Multiset
+              (Nonplanar α)))).getD 0 = {Nonplanar.mk t'}
+      rw [h]
+      rfl]
+    rfl
+
+/-! ### Mutual planar lemmas
+
+The tree-level lemma uses the unwrapped list-level lemma (applied to
+children of the tree, with the root wrapped via `bPlusLin` on the right
+channel). The list-level lemma's cons case uses the tree-level lemma
+for the head child (via mutual call) + the unwrapped list-level lemma
+for the tail (via direct call). -/
+
+mutual
+
+/-- **Tree-level**: sum of Δ^c-stripped cut tensors of `embed t` equals
+    sum of Δ^ρ cut tensors of `t`. -/
+private theorem strip_cutSummandsCP_sum_eq
+    (τ : Nonplanar (α ⊕ β) → β) :
+    ∀ (t : Planar α),
+      ((cutSummandsCP (τ ∘ Nonplanar.mk) (Planar.map Sum.inl t)).map
+        (cutTensorC_planar (R := R))).sum
+      = ((cutSummandsP t).map (cutTensorP_planar (R := R))).sum
+  | .node a cs => by
+    show ((cutSummandsCP (τ ∘ Nonplanar.mk)
+              (Planar.node (Sum.inl a) (Planar.mapList Sum.inl cs))).map
+              (cutTensorC_planar (R := R))).sum
+       = ((cutSummandsP (Planar.node a cs)).map (cutTensorP_planar (R := R))).sum
+    rw [cutSummandsCP_node, cutSummandsP_node,
+        Multiset.map_map, Multiset.map_map]
+    -- The wrapped tensor builder `(p ↦ cutTensorC_planar (p.1, .node (Sum.inl a) p.2))`
+    -- factors as `(TP.map id (bPlusLin a)) ∘ cutTensorC_planar_unwrap`.
+    -- Convert both LHS / RHS maps to (lTensor (bPlusLin a)) ∘ unwrap.
+    have hLHS_factor :
+        ∀ (p : Forest (Planar (α ⊕ β)) × List (Planar (α ⊕ β))),
+          cutTensorC_planar (R := R) (p.1, Planar.node (Sum.inl a) p.2) =
+            (LinearMap.lTensor (ConnesKreimer R (Nonplanar α))
+                (bPlusLin (R := R) a)) (cutTensorC_planar_unwrap (R := R) p) := by
+      intro p
+      unfold cutTensorC_planar cutTensorC_planar_unwrap
+      rw [LinearMap.lTensor_tmul, bPlusLin_of']
+      congr 1
+      show stripTraceAlgHom (ofTree (Nonplanar.mk (Planar.node (Sum.inl a) p.2))) =
+            ofTree (Nonplanar.node a (Multiset.ofList ((Planar.stripTraceList p.2).map
+              Nonplanar.mk)))
+      show stripTraceAlgHom (of' ({Nonplanar.mk (Planar.node (Sum.inl a) p.2)}
+            : Forest (Nonplanar (α ⊕ β)))) = _
+      rw [stripTraceAlgHom_of']
+      rw [show ({Nonplanar.mk (Planar.node (Sum.inl a) p.2)}
+                : Forest (Nonplanar (α ⊕ β))).filterMap Nonplanar.stripTrace =
+                ({Nonplanar.mk (Planar.node a (Planar.stripTraceList p.2))}
+                : Forest (Nonplanar α)) from by
+        rw [show ({Nonplanar.mk (Planar.node (Sum.inl a) p.2)} : Forest
+              (Nonplanar (α ⊕ β))) = Nonplanar.mk (Planar.node (Sum.inl a) p.2) ::ₘ 0
+              from rfl,
+            Multiset.filterMap_cons, Multiset.filterMap_zero, add_zero]
+        show ((Nonplanar.stripTrace (Nonplanar.mk (Planar.node (Sum.inl a) p.2))).map
+                (fun x => ({x} : Multiset (Nonplanar α)))).getD 0 =
+              {Nonplanar.mk (Planar.node a (Planar.stripTraceList p.2))}
+        show (((Planar.stripTrace (Planar.node (Sum.inl a) p.2)).map Nonplanar.mk).map
+                (fun x => ({x} : Multiset (Nonplanar α)))).getD 0 =
+              {Nonplanar.mk (Planar.node a (Planar.stripTraceList p.2))}
+        rw [Planar.stripTrace_inl]
+        rfl]
+      rw [of'_singleton]
+      congr 1
+      exact (Nonplanar.node_mk_planar_list a _).symm
+    have hRHS_factor :
+        ∀ (p : Forest (Planar α) × List (Planar α)),
+          cutTensorP_planar (R := R) (p.1, Planar.node a p.2) =
+            (LinearMap.lTensor (ConnesKreimer R (Nonplanar α))
+                (bPlusLin (R := R) a)) (cutTensorP_planar_unwrap (R := R) p) := by
+      intro p
+      unfold cutTensorP_planar cutTensorP_planar_unwrap
+      rw [LinearMap.lTensor_tmul, bPlusLin_of']
+      congr 1
+      show ofTree (Nonplanar.mk (Planar.node a p.2)) =
+            ofTree (Nonplanar.node a (Multiset.ofList (p.2.map Nonplanar.mk)))
+      congr 1
+      exact (Nonplanar.node_mk_planar_list a _).symm
+    rw [show (Multiset.map ((cutTensorC_planar (R := R)) ∘
+              (fun p : Forest (Planar (α ⊕ β)) × List (Planar (α ⊕ β)) =>
+                (p.1, Planar.node (Sum.inl a) p.2)))
+              (cutListSummandsG (extractC (τ ∘ Nonplanar.mk))
+                  (Planar.mapList Sum.inl cs)))
+            = (Multiset.map ((LinearMap.lTensor (ConnesKreimer R (Nonplanar α))
+                  (bPlusLin (R := R) a)) ∘ (cutTensorC_planar_unwrap (R := R)))
+                (cutListSummandsG (extractC (τ ∘ Nonplanar.mk))
+                  (Planar.mapList Sum.inl cs))) from
+            Multiset.map_congr rfl (fun p _ => hLHS_factor p)]
+    rw [show (Multiset.map ((cutTensorP_planar (R := R)) ∘
+              (fun p : Forest (Planar α) × List (Planar α) =>
+                (p.1, Planar.node a p.2)))
+              (cutListSummandsP cs))
+            = (Multiset.map ((LinearMap.lTensor (ConnesKreimer R (Nonplanar α))
+                  (bPlusLin (R := R) a)) ∘ (cutTensorP_planar_unwrap (R := R)))
+                (cutListSummandsP cs)) from
+            Multiset.map_congr rfl (fun p _ => hRHS_factor p)]
+    rw [← Multiset.map_map, ← Multiset.map_map,
+        ← map_multiset_sum (LinearMap.lTensor (ConnesKreimer R (Nonplanar α))
+          (bPlusLin (R := R) a)),
+        ← map_multiset_sum (LinearMap.lTensor (ConnesKreimer R (Nonplanar α))
+          (bPlusLin (R := R) a))]
+    -- Apply unwrapped list IH.
+    congr 1
+    exact strip_cutListSummandsG_unwrap_sum_eq τ cs
+
+/-- **List-level (unwrapped)**: sum of unwrapped Δ^c-stripped tensors of
+    cut summands of `(embed cs)` equals sum of unwrapped Δ^ρ tensors of
+    cut summands of `cs`. The tree-level wrapper `bPlusLin a` is factored
+    out, so this lemma is parameter-free in `a`. -/
+private theorem strip_cutListSummandsG_unwrap_sum_eq
+    (τ : Nonplanar (α ⊕ β) → β) :
+    ∀ (cs : List (Planar α)),
+      ((cutListSummandsG (extractC (τ ∘ Nonplanar.mk))
+          (Planar.mapList Sum.inl cs)).map
+        (cutTensorC_planar_unwrap (R := R))).sum
+      = ((cutListSummandsP cs).map (cutTensorP_planar_unwrap (R := R))).sum
+  | [] => by
+    show ((cutListSummandsG (extractC (τ ∘ Nonplanar.mk))
+            (Planar.mapList Sum.inl ([] : List (Planar α)))).map _).sum
+       = ((cutListSummandsP ([] : List (Planar α))).map _).sum
+    rw [show Planar.mapList Sum.inl ([] : List (Planar α)) = [] from rfl,
+        cutListSummandsG_nil, cutListSummandsP_nil,
+        Multiset.map_singleton, Multiset.map_singleton,
+        Multiset.sum_singleton, Multiset.sum_singleton]
+    show cutTensorC_planar_unwrap (R := R)
+            ((0 : Forest (Planar (α ⊕ β))), ([] : List (Planar (α ⊕ β))))
+       = cutTensorP_planar_unwrap (R := R)
+            ((0 : Forest (Planar α)), ([] : List (Planar α)))
+    unfold cutTensorC_planar_unwrap cutTensorP_planar_unwrap
+    simp only [Multiset.map_zero, of'_zero, map_one, List.map_nil,
+               Multiset.coe_nil]
+    show (1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+            (of' (0 : Forest (Nonplanar α)) : ConnesKreimer R (Nonplanar α))
+       = (1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+            (of' (0 : Forest (Nonplanar α)) : ConnesKreimer R (Nonplanar α))
+    rfl
+  | c :: cs' => by
+    show ((cutListSummandsG (extractC (τ ∘ Nonplanar.mk))
+            (Planar.mapList Sum.inl (c :: cs'))).map
+            (cutTensorC_planar_unwrap (R := R))).sum
+       = ((cutListSummandsP (c :: cs')).map
+            (cutTensorP_planar_unwrap (R := R))).sum
+    -- Unfold cons (using cutListSummandsP_cons' with named combine_P_fn).
+    rw [show Planar.mapList Sum.inl (c :: cs') =
+          Planar.map Sum.inl c :: Planar.mapList Sum.inl cs' from rfl,
+        cutListSummandsG_cons, cutListSummandsP_cons']
+    -- LHS: the integrand factors as gC c * gC tail via combine_G multiplicativity.
+    rw [show (Multiset.map (cutTensorC_planar_unwrap (R := R))
+              ((Multiset.map (fun (p : (Forest (Planar (α ⊕ β)) × List (Planar (α ⊕ β))) ×
+                  (Forest (Planar (α ⊕ β)) × List (Planar (α ⊕ β)))) =>
+                  (p.1.1 + p.2.1, p.1.2 ++ p.2.2))
+                ((augActionG (extractC (τ ∘ Nonplanar.mk)) (Planar.map Sum.inl c)) ×ˢ
+                  (cutListSummandsG (extractC (τ ∘ Nonplanar.mk))
+                    (Planar.mapList Sum.inl cs')))))).sum =
+            (Multiset.map
+              (fun p => cutTensorC_planar_unwrap (R := R) p.1 *
+                        cutTensorC_planar_unwrap (R := R) p.2)
+              ((augActionG (extractC (τ ∘ Nonplanar.mk)) (Planar.map Sum.inl c)) ×ˢ
+                (cutListSummandsG (extractC (τ ∘ Nonplanar.mk))
+                  (Planar.mapList Sum.inl cs')))).sum from by
+      congr 1
+      rw [Multiset.map_map]
+      apply Multiset.map_congr rfl
+      intro p _
+      exact cutTensorC_planar_unwrap_combine_G p]
+    rw [sum_map_product_mul]
+    -- RHS: simplify by composing maps and using cutTensorP_planar_unwrap_combine_P.
+    simp only [Multiset.map_map]
+    rw [show ((cutTensorP_planar_unwrap (R := R)) ∘ (combineP_fn : _ → _)) =
+            (fun p => cutTensorP_augAction (R := R) p.1 *
+                      cutTensorP_planar_unwrap (R := R) p.2) from by
+      funext p
+      exact cutTensorP_planar_unwrap_combine_P p]
+    rw [sum_map_product_mul]
+    -- Now both sides are products of sums.
+    -- Tail equality via mutual IH.
+    have ih_tail :
+        ((cutListSummandsG (extractC (τ ∘ Nonplanar.mk))
+            (Planar.mapList Sum.inl cs')).map
+          (cutTensorC_planar_unwrap (R := R))).sum
+        = ((cutListSummandsP cs').map (cutTensorP_planar_unwrap (R := R))).sum :=
+      strip_cutListSummandsG_unwrap_sum_eq τ cs'
+    -- Head equality via mutual IH (per-tree on c). Convert to cutSummandsG-form
+    -- so it matches the goal after augActionG unfolds via cutSummandsG.
+    have ih_head_cp :
+        ((cutSummandsCP (τ ∘ Nonplanar.mk) (Planar.map Sum.inl c)).map
+          (cutTensorC_planar (R := R))).sum
+        = ((cutSummandsP c).map (cutTensorP_planar (R := R))).sum :=
+      strip_cutSummandsCP_sum_eq τ c
+    have ih_head :
+        ((cutSummandsG (extractC (τ ∘ Nonplanar.mk)) (Planar.map Sum.inl c)).map
+          (cutTensorC_planar (R := R))).sum
+        = ((cutSummandsP c).map (cutTensorP_planar (R := R))).sum := by
+      rwa [cutSummandsCP_def] at ih_head_cp
+    -- Reduce head: ((augActionG ...).map gC_unwrap).sum = ofTree (mk c) ⊗ 1 + IH-LHS;
+    -- ((augActionP c).map gP_augAction).sum = ofTree (mk c) ⊗ 1 + IH-RHS.
+    have hextract : extractC (τ ∘ Nonplanar.mk) (Planar.map Sum.inl c) =
+        some [traceLeaf ((τ ∘ Nonplanar.mk) (Planar.map Sum.inl c))] := by
+      obtain ⟨a_c, cs_c⟩ := c
+      rfl
+    rw [augActionG_eq_some _ _ _ hextract, augActionP_eq,
+        Multiset.map_cons, Multiset.sum_cons,
+        Multiset.map_cons, Multiset.sum_cons,
+        Multiset.map_map, Multiset.map_map]
+    -- LHS-head reduces to (ofTree (mk c) ⊗ 1) + tree-IH-LHS via cutTensorC_planar_unwrap_singleton.
+    rw [show (cutTensorC_planar_unwrap (R := R)
+              ((({Planar.map Sum.inl c} : Forest (Planar (α ⊕ β))),
+                [traceLeaf ((τ ∘ Nonplanar.mk) (Planar.map Sum.inl c))]))) =
+          (ofTree (Nonplanar.mk c) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))
+            : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) from by
+      unfold cutTensorC_planar_unwrap
+      show stripTraceAlgHom (of' (({Planar.map Sum.inl c} :
+              Forest (Planar (α ⊕ β))).map Nonplanar.mk)) ⊗ₜ[R]
+            (of' (Multiset.ofList ((Planar.stripTraceList
+              [traceLeaf ((τ ∘ Nonplanar.mk) (Planar.map Sum.inl c))]).map Nonplanar.mk))
+              : ConnesKreimer R (Nonplanar α))
+          = ofTree (Nonplanar.mk c) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))
+      rw [show Planar.stripTraceList
+            [traceLeaf ((τ ∘ Nonplanar.mk) (Planar.map Sum.inl c))] =
+            ([] : List (Planar α)) from by
+        show Planar.stripTraceList
+              [Planar.node (Sum.inr ((τ ∘ Nonplanar.mk) (Planar.map Sum.inl c)))
+                ([] : List (Planar (α ⊕ β)))] =
+              ([] : List (Planar α))
+        rfl]
+      simp only [List.map_nil, Multiset.coe_nil, of'_zero,
+                 Multiset.map_singleton]
+      congr 1
+      show stripTraceAlgHom (ofTree (Nonplanar.mk (Planar.map Sum.inl c))) =
+            ofTree (Nonplanar.mk c)
+      show stripTraceAlgHom (ofTree (Nonplanar.embedInl (Nonplanar.mk c))) =
+            ofTree (Nonplanar.mk c)
+      exact stripTraceAlgHom_ofTree_embedInl _]
+    rw [show ((cutTensorC_planar_unwrap (R := R)) ∘
+              (fun p : Forest (Planar (α ⊕ β)) × Planar (α ⊕ β) =>
+                (p.1, [p.2]))) = (cutTensorC_planar (R := R)) from by
+      funext p
+      exact cutTensorC_planar_unwrap_singleton p.1 p.2]
+    -- RHS: (cutTensorP_augAction ({c}, none)) = ofTree (mk c) ⊗ 1.
+    rw [show cutTensorP_augAction (R := R)
+          ((({c} : Forest (Planar α)), Option.none)) =
+          (ofTree (Nonplanar.mk c) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))
+            : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) from by
+      unfold cutTensorP_augAction
+      show (of' (({c} : Forest (Planar α)).map Nonplanar.mk)
+              : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+            (1 : ConnesKreimer R (Nonplanar α))
+          = ofTree (Nonplanar.mk c) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α))
+      rw [Multiset.map_singleton, of'_singleton]]
+    rw [show ((cutTensorP_augAction (R := R)) ∘
+              (fun p : Forest (Planar α) × Planar α =>
+                (p.1, Option.some p.2))) = (cutTensorP_planar (R := R)) from by
+      funext p
+      unfold cutTensorP_augAction cutTensorP_planar
+      rfl]
+    -- Now both LHS-head and RHS-head are (ofTree (mk c) ⊗ 1) + (cuts of c map).
+    rw [ih_head, ih_tail]
+
+end
+
+/-! ### Lift from planar to Nonplanar -/
+
+/-- **Per-tree**: `(S ⊗ S) (comulCTreeN τ (embedInl T)) = comulTreeN T`.
+    Descent of `strip_cutSummandsCP_sum_eq` through `Quotient.inductionOn`. -/
+private theorem strip_comulCTreeN_embedInl
+    (τ : Nonplanar (α ⊕ β) → β) (T : Nonplanar α) :
+    (Algebra.TensorProduct.map (stripTraceAlgHom (R := R) (α := α) (β := β))
+        stripTraceAlgHom) (comulCTreeN τ (Nonplanar.embedInl T)) =
+      comulTreeN T := by
+  refine Quotient.inductionOn T ?_
+  intro t
+  -- Unfold both sides via comulCTreeN definition.
+  show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
+        (comulCTreeN τ (Nonplanar.mk (Planar.map Sum.inl t))) =
+       comulTreeN (Nonplanar.mk t)
+  unfold comulCTreeN
+  rw [map_add]
+  -- First summand: (S ⊗ S) (ofTree (mk (embed t)) ⊗ 1) = ofTree (mk t) ⊗ 1.
+  rw [show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
+            (ofTree (Nonplanar.mk (Planar.map Sum.inl t)) ⊗ₜ[R]
+              (1 : ConnesKreimer R (Nonplanar (α ⊕ β)))) =
+          ofTree (Nonplanar.mk t) ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) from by
+    rw [Algebra.TensorProduct.map_tmul, map_one]
+    congr 1
+    -- mk (Planar.map Sum.inl t) = embedInl (mk t)
+    exact stripTraceAlgHom_ofTree_embedInl (Nonplanar.mk t)]
+  congr 1
+  -- Second summand: (S ⊗ S) (sum over cuts) = sum over Δ^ρ cuts.
+  rw [map_multiset_sum
+        (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)]
+  simp only [Multiset.map_map]
+  -- Reduce sum-of-(S⊗S)-applied to sum of per-summand tensors.
+  rw [show ((Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom) ∘
+            (fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) =>
+              of' (R := R) p.1 ⊗ₜ[R] ofTree p.2)) =
+          (fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) =>
+            stripTraceAlgHom (of' (R := R) p.1) ⊗ₜ[R]
+              stripTraceAlgHom (ofTree p.2)) from by
+    funext p
+    rw [Function.comp_apply, Algebra.TensorProduct.map_tmul]]
+  -- Cuts descend to planar: cutSummandsCN τ (mk t') = (cutSummandsCP (τ ∘ mk) t').map projSummand.
+  rw [show cutSummandsCN τ (Nonplanar.mk (Planar.map Sum.inl t)) =
+        (cutSummandsCP (τ ∘ Nonplanar.mk) (Planar.map Sum.inl t)).map projSummand from
+      cutSummandsCN_mk _ _]
+  rw [show cutSummandsN (Nonplanar.mk t) =
+        (cutSummandsP t).map projSummand from
+      cutSummandsN_mk _]
+  rw [Multiset.map_map, Multiset.map_map]
+  -- Now both sums are over the planar cut-summand multisets.
+  -- The maps compose to cutTensorC_planar / cutTensorP_planar respectively.
+  rw [show ((fun p : Forest (Nonplanar (α ⊕ β)) × Nonplanar (α ⊕ β) =>
+              stripTraceAlgHom (of' (R := R) p.1) ⊗ₜ[R]
+                stripTraceAlgHom (ofTree p.2)) ∘ projSummand) =
+          cutTensorC_planar (R := R) from by
+    funext p
+    show stripTraceAlgHom (of' (p.1.map Nonplanar.mk)) ⊗ₜ[R]
+            stripTraceAlgHom (ofTree (Nonplanar.mk p.2)) =
+         cutTensorC_planar (R := R) p
+    rfl]
+  rw [show ((fun p : Forest (Nonplanar α) × Nonplanar α =>
+              (of' (R := R) p.1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R]
+                ofTree p.2) ∘ projSummand) =
+          cutTensorP_planar (R := R) from by
+    funext p
+    rfl]
+  exact strip_cutSummandsCP_sum_eq τ t
+
+/-- **Per-forest**: `(S ⊗ S) (comulCForestN τ (F.map embedInl)) = comulForestN F`.
+    Lift per-tree via `Multiset.induction` + multiplicativity of forest coproducts
+    and the AlgHom `(S ⊗ S)`. -/
+private theorem strip_comulCForestN_embedInl
+    (τ : Nonplanar (α ⊕ β) → β) (F : Forest (Nonplanar α)) :
+    (Algebra.TensorProduct.map (stripTraceAlgHom (R := R) (α := α) (β := β))
+        stripTraceAlgHom) (comulCForestN τ (F.map Nonplanar.embedInl)) =
+      comulForestN F := by
+  induction F using Multiset.induction with
+  | empty =>
+    rw [Multiset.map_zero, comulCForestN_zero, comulForestN_zero, map_one]
+  | cons T F' ih =>
+    rw [Multiset.map_cons, comulForestN_cons]
+    -- comulCForestN τ (T_embed ::ₘ F'_embed) = comulCTreeN τ T_embed * comulCForestN τ F'_embed
+    have hcons : comulCForestN (R := R) τ
+        (Nonplanar.embedInl T ::ₘ F'.map Nonplanar.embedInl) =
+        comulCTreeN τ (Nonplanar.embedInl T) *
+          comulCForestN (R := R) τ (F'.map Nonplanar.embedInl) := by
+      unfold comulCForestN
+      rw [Multiset.map_cons, Multiset.prod_cons]
+    rw [hcons, map_mul, strip_comulCTreeN_embedInl, ih]
+
 /-- **MCB equivalence** (n-ary specialization): the Δ^d-via-Δ^c
     construction agrees with Δ^ρ on trace-free trees.
 
     `comulDN ∘ embed_{Sum.inl} = comulAlgHomN`
 
-    **Sorry**: the substantive content of MCB Lemma 1.3.10 in our n-ary
-    setting (with Π_{d,p} = identity). Closing requires the
-    cut-bijection lemma:
-
-    `cutSummandsCN τ (Nonplanar.embedInl T) =
-        (cutSummandsN T).map (fun (F, T') => (F.map embedInl, ?embed-T'-with-traces))`
-
-    i.e., Δ^c cuts of `embedInl T` correspond bijectively to Δ^ρ cuts
-    of `T`, with the right-channel-trunk carrying traceLeaf placeholders
-    in the Δ^c version. After (strip ⊗ strip): the strip on the left
-    channel inverts `embedInl` (via `stripTraceAlgHom_comp_embedInlAlgHom`
-    above), and the strip on the right channel removes the traceLeaf
-    placeholders, recovering the Δ^ρ trunk.
-
-    The bijection itself requires either: (a) careful structural
-    induction on the planar tree at the `cutSummandsCP` vs
-    `cutSummandsP` level (~200-300 LOC), or (b) an abstract argument
-    via the extractC vs extractP comparison + the generic `cutSummandsG`
-    naturality. Both routes are tractable but exceed this session's
-    scope.
-
-    The scaffolding `stripTraceAlgHom_comp_embedInlAlgHom` (above)
-    handles the left-channel half (strip inverts embed); the
-    right-channel trace-removal is the deeper part. -/
+    Closed via: (a) AlgHom extensionality + `Finsupp.induction_linear` reduces
+    to per-basis `of' F`; (b) Multiset multiplicativity of `comulCForestN`,
+    `comulForestN`, and `(stripTraceAlgHom ⊗ stripTraceAlgHom)` reduces to
+    per-tree; (c) `Quotient.inductionOn` reduces per-tree to planar; (d)
+    planar mutual structural induction on tree / children-list closes the
+    cut-summand bijection via `strip_cutSummandsCP_sum_eq`. -/
 theorem comulDN_embedInl_eq_comulAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
     (comulDN (R := R) τ).comp (embedInlAlgHom (R := R) (β := β)) =
       comulAlgHomN := by
-  sorry
+  apply AlgHom.ext
+  intro x
+  show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R))
+          stripTraceAlgHom) (comulCAlgHomN τ (embedInlAlgHom x)) =
+       comulAlgHomN x
+  refine Finsupp.induction_linear x ?_ ?_ ?_
+  · show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
+          (comulCAlgHomN τ (embedInlAlgHom
+              (0 : ConnesKreimer R (Nonplanar α)))) =
+         comulAlgHomN (0 : ConnesKreimer R (Nonplanar α))
+    rw [map_zero, map_zero, map_zero, map_zero]
+  · intro a b ha hb
+    let a' : ConnesKreimer R (Nonplanar α) := a
+    let b' : ConnesKreimer R (Nonplanar α) := b
+    have ha' : (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
+          (comulCAlgHomN τ (embedInlAlgHom a')) = comulAlgHomN a' := ha
+    have hb' : (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
+          (comulCAlgHomN τ (embedInlAlgHom b')) = comulAlgHomN b' := hb
+    show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
+          (comulCAlgHomN τ (embedInlAlgHom (a' + b'))) = comulAlgHomN (a' + b')
+    rw [map_add, map_add, map_add, map_add, ha', hb']
+  · intro F r
+    show (Algebra.TensorProduct.map (stripTraceAlgHom (R := R)) stripTraceAlgHom)
+          (comulCAlgHomN τ (embedInlAlgHom (Finsupp.single F r))) =
+         comulAlgHomN (Finsupp.single F r)
+    have hsingle : (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
+        r • (of' (R := R) F : ConnesKreimer R (Nonplanar α)) :=
+      (Finsupp.smul_single_one F r).symm
+    rw [hsingle, map_smul, map_smul, map_smul, map_smul, embedInlAlgHom_of',
+        comulCAlgHomN_apply_of', comulAlgHomN_apply_of']
+    congr 1
+    exact strip_comulCForestN_embedInl τ F
 
 end ConnesKreimer
 
