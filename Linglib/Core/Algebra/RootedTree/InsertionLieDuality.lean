@@ -44,10 +44,13 @@ These are sorry-free general lemmas; potential mathlib upstream.
   (sorry-free).
 * `mcb_lemma_1_7_3_dualPrimitive` — corollary that the convolution Lie
   bracket of two single-tree deltas is again a dual primitive
-  (sorry-free). The **full** combinatorial Lemma 1.7.3 identifying the
-  bracket as `δ_{T₁ ▷ T₂ − T₂ ▷ T₁}` requires the vertex-match count
-  `c^T_{T_1,T_2}` and the linear extension of `δ` to formal sums of
-  trees, both deferred to a follow-up.
+  (sorry-free).
+* `mcb_lemma_1_7_3_explicit` — the **full** Lemma 1.7.3 in Δ^ρ form:
+  `[δ_{T₁}, δ_{T₂}](of' {T}) = countSingleCutsRho T T₁ T₂ −
+  countSingleCutsRho T T₂ T₁`. Substrate-faithful analog of MCB's
+  `c^T_{T₁,T₂} − c^T_{T₂,T₁}` using Δ^ρ (deletion) semantics rather
+  than Δ^c (trace-leaf). The Δ^c version follows via the strip
+  bijection in `Coproduct/DeletionNonplanar.lean`.
 
 ## What this file does NOT do
 
@@ -473,26 +476,218 @@ theorem mcb_lemma_1_7_3_dualPrimitive (T₁ T₂ : Nonplanar α) :
     (deltaSingleton_isDualPrimitive T₁)
     (deltaSingleton_isDualPrimitive T₂)
 
-/-! ### What's deferred to a future session
+/-! ## §4: MCB Lemma 1.7.3 (full) — explicit count formula
 
-The **full** MCB Lemma 1.7.3 (per book p. 79):
+The substantive bracket-counting form of MCB Lemma 1.7.3. Since our
+Bialgebra structure uses Δ^ρ (deletion remainder), the count is in
+terms of Δ^ρ cut summands rather than MCB's Δ^c (trace-leaf) version:
 
-  `[δ_{T_1}, δ_{T_2}](of' {T}) = c^T_{T_1,T_2} − c^T_{T_2,T_1}`
+  `[δ_{T₁}, δ_{T₂}](of' {T}) = countSingleCutsRho T T₁ T₂
+                              − countSingleCutsRho T T₂ T₁`
 
-where `c^T_{T_1,T_2} = #{v ∈ V(T) | T_v ≃ T_1 ∧ T/T_v ≃ T_2}` (Δ^c
-quotient on the right channel). Equivalently:
+where `countSingleCutsRho T T₁ T₂` counts the Δ^ρ cut summands of `T`
+whose cut forest is exactly `{T₁}` and whose remainder is exactly `T₂`.
 
-  `[δ_{T_1}, δ_{T_2}] = δ_{T_1 ▷ T_2 − T_2 ▷ T_1}`
+This is the substrate-faithful analog of MCB's `c^T_{T₁,T₂}`. The
+Δ^c-quotient version (with trace leaves at cut sites) would yield the
+same count under the bijection between Δ^ρ remainders and Δ^c trunks
+established in `Coproduct/DeletionNonplanar.lean`. -/
 
-(extended linearly). Formalizing this requires building:
-* The vertex-match count `c^T_{T_1,T_2} : Nonplanar α → Nonplanar α →
-  Nonplanar α → ℕ` (subtree-at-vertex + Δ^c quotient + isomorphism).
-* The linear extension of `δ` to formal sums of trees.
+section MCBLemma_1_7_3_Full
 
-These extensions are tractable but exceed this session's scope. The
-substrate built here (`IsDualPrimitive`, `dualPrimitives`,
-`convBracket`, `deltaSingleton`) is the load-bearing API; the count
-substrate + per-test-tree statement go in a follow-up. -/
+open WithConv Classical
+
+attribute [local instance] Classical.propDecidable
+
+/-- **Δ^ρ single-cut count**: number of Δ^ρ cut summands of `T` whose
+    cut forest equals `{T₁}` and whose remainder tree equals `T₂`. -/
+noncomputable def countSingleCutsRho (T T₁ T₂ : Nonplanar α) : ℕ :=
+  (cutSummandsN T).countP
+    (fun p => p.1 = ({T₁} : Forest (Nonplanar α)) ∧ p.2 = T₂)
+
+/-- A delta on a singleton forest applied to `of' F`: returns `1` if
+    `F = {T}` and `0` otherwise (rephrased as an indicator). -/
+private theorem deltaSingleton_of'_indicator (T : Nonplanar α)
+    (F : Forest (Nonplanar α)) :
+    deltaSingleton (R := R) T (of' F) =
+      (if F = ({T} : Forest (Nonplanar α)) then (1 : R) else 0) := by
+  classical
+  by_cases hF : F = ({T} : Forest (Nonplanar α))
+  · subst hF
+    rw [if_pos rfl, deltaSingleton_of'_self]
+  · rw [if_neg hF, deltaSingleton_of'_other T F hF]
+
+/-- `δ_{T₂}` applied to a singleton-tree basis vector `ofTree T'` is
+    the indicator `[T' = T₂]`. -/
+private theorem deltaSingleton_ofTree_indicator (T₂ T' : Nonplanar α) :
+    deltaSingleton (R := R) T₂ (ofTree T') =
+      (if T' = T₂ then (1 : R) else 0) := by
+  classical
+  show deltaSingleton (R := R) T₂
+        (of' ({T'} : Forest (Nonplanar α))) = _
+  rw [deltaSingleton_of'_indicator]
+  by_cases h : T' = T₂
+  · subst h
+    rw [if_pos rfl, if_pos rfl]
+  · have h' : ({T'} : Forest (Nonplanar α)) ≠ {T₂} := by
+      intro heq
+      have := Multiset.singleton_inj.mp heq
+      exact h this
+    rw [if_neg h', if_neg h]
+
+/-- The convolution `(toConv δ_{T₁} * toConv δ_{T₂}).ofConv` evaluated
+    on a single-tree basis vector `of' {T}` equals the count of Δ^ρ
+    cut summands of `T` extracting `{T₁}` and leaving `T₂`. -/
+theorem deltaSingleton_conv_apply_singleton (T T₁ T₂ : Nonplanar α) :
+    ((toConv (deltaSingleton (R := R) T₁) *
+        toConv (deltaSingleton T₂) :
+        WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))).ofConv
+        (of' ({T} : Forest (Nonplanar α))) =
+      (countSingleCutsRho T T₁ T₂ : R) := by
+  -- Unfold convolution: `(f * g).ofConv z = mul' (TensorProduct.map f g (comul z))`.
+  rw [show ((toConv (deltaSingleton (R := R) T₁) *
+            toConv (deltaSingleton T₂) :
+            WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))).ofConv
+              (of' ({T} : Forest (Nonplanar α))) =
+            (toConv (deltaSingleton (R := R) T₁) *
+              toConv (deltaSingleton T₂) :
+                WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))
+              (of' ({T} : Forest (Nonplanar α))) from rfl,
+      LinearMap.convMul_apply]
+  -- `comul (of' {T}) = comulAlgHomN (of' {T}) = comulForestN {T} = comulTreeN T`.
+  show LinearMap.mul' R R
+        (TensorProduct.map (deltaSingleton (R := R) T₁) (deltaSingleton T₂)
+          (Coalgebra.comul (R := R) (of' ({T} : Forest (Nonplanar α))))) = _
+  rw [show (Coalgebra.comul (R := R)
+              (of' ({T} : Forest (Nonplanar α))) :
+              ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) =
+            comulTreeN T from by
+    show comulAlgHomN (R := R) (of' ({T} : Forest (Nonplanar α))) = _
+    rw [comulAlgHomN_apply_of']
+    show comulForestN (R := R) ({T} : Forest (Nonplanar α)) = comulTreeN T
+    unfold comulForestN
+    rw [Multiset.map_singleton, Multiset.prod_singleton]]
+  -- Unfold `comulTreeN T = ofTree T ⊗ 1 + Σ cuts`.
+  unfold comulTreeN
+  rw [map_add, map_add]
+  -- First summand: `mul' R R (δ_{T₁}(ofTree T) ⊗ δ_{T₂}(1)) = δ_{T₁}(ofTree T) * 0 = 0`.
+  rw [show LinearMap.mul' R R
+        (TensorProduct.map (deltaSingleton (R := R) T₁) (deltaSingleton T₂)
+          (ofTree T ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)))) =
+            (0 : R) from by
+    rw [TensorProduct.map_tmul, LinearMap.mul'_apply,
+        show deltaSingleton (R := R) T₂
+              (1 : ConnesKreimer R (Nonplanar α)) = 0 from by
+          show deltaSingleton (R := R) T₂
+                (of' (0 : Forest (Nonplanar α))) = 0
+          rw [deltaSingleton_of'_indicator]
+          have h : (0 : Forest (Nonplanar α)) ≠ {T₂} := by
+            intro h
+            have := congrArg Multiset.card h
+            simp [Multiset.card_singleton] at this
+          rw [if_neg h]]
+    rw [mul_zero]]
+  rw [zero_add]
+  -- Second summand: distribute over the multiset sum, reduce each summand to indicator.
+  rw [map_multiset_sum (TensorProduct.map (deltaSingleton (R := R) T₁)
+        (deltaSingleton T₂)),
+      map_multiset_sum (LinearMap.mul' R R)]
+  simp only [Multiset.map_map]
+  -- Each summand: `mul' R R (TP.map δ_{T₁} δ_{T₂} (of' p.1 ⊗ ofTree p.2))
+  --                = δ_{T₁}(of' p.1) * δ_{T₂}(ofTree p.2)`.
+  rw [show ((LinearMap.mul' R R) ∘
+            (TensorProduct.map (deltaSingleton (R := R) T₁) (deltaSingleton T₂)) ∘
+            (fun p : Forest (Nonplanar α) × Nonplanar α =>
+              (of' (R := R) p.1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ[R] ofTree p.2)) =
+            (fun p : Forest (Nonplanar α) × Nonplanar α =>
+              deltaSingleton (R := R) T₁ (of' p.1) *
+                deltaSingleton T₂ (ofTree p.2)) from by
+    funext p
+    show LinearMap.mul' R R (TensorProduct.map (deltaSingleton (R := R) T₁)
+          (deltaSingleton T₂) (of' p.1 ⊗ₜ[R] ofTree p.2)) = _
+    rw [TensorProduct.map_tmul, LinearMap.mul'_apply]]
+  -- Replace each summand by the indicator `[p.1 = {T₁} ∧ p.2 = T₂]`.
+  have step_indicator :
+      ((cutSummandsN T).map
+        (fun p : Forest (Nonplanar α) × Nonplanar α =>
+          deltaSingleton (R := R) T₁ (of' p.1) *
+            deltaSingleton T₂ (ofTree p.2))) =
+      ((cutSummandsN T).map
+        (fun p : Forest (Nonplanar α) × Nonplanar α =>
+          (if p.1 = ({T₁} : Forest (Nonplanar α)) ∧ p.2 = T₂
+            then (1 : R) else 0))) := by
+    apply Multiset.map_congr rfl
+    intro p _
+    rw [deltaSingleton_of'_indicator, deltaSingleton_ofTree_indicator]
+    by_cases h1 : p.1 = ({T₁} : Forest (Nonplanar α))
+    · by_cases h2 : p.2 = T₂
+      · have h12 : p.1 = ({T₁} : Forest (Nonplanar α)) ∧ p.2 = T₂ := ⟨h1, h2⟩
+        rw [if_pos h1, if_pos h2, if_pos h12, mul_one]
+      · have h12 : ¬(p.1 = ({T₁} : Forest (Nonplanar α)) ∧ p.2 = T₂) := by
+          intro h; exact h2 h.2
+        rw [if_pos h1, if_neg h2, if_neg h12, one_mul]
+    · have h12 : ¬(p.1 = ({T₁} : Forest (Nonplanar α)) ∧ p.2 = T₂) := by
+        intro h; exact h1 h.1
+      rw [if_neg h1, if_neg h12, zero_mul]
+  rw [step_indicator]
+  -- Sum of indicators = countP cast to R.
+  have step_count :
+      ((cutSummandsN T).map
+        (fun p : Forest (Nonplanar α) × Nonplanar α =>
+          (if p.1 = ({T₁} : Forest (Nonplanar α)) ∧ p.2 = T₂
+            then (1 : R) else 0))).sum =
+      ((countSingleCutsRho T T₁ T₂ : ℕ) : R) := by
+    unfold countSingleCutsRho
+    rw [Multiset.countP_eq_card_filter]
+    induction (cutSummandsN T) using Multiset.induction with
+    | empty =>
+      rw [Multiset.map_zero, Multiset.sum_zero, Multiset.filter_zero,
+          Multiset.card_zero, Nat.cast_zero]
+    | cons p s ih =>
+      rw [Multiset.map_cons, Multiset.sum_cons, Multiset.filter_cons, ih]
+      by_cases h : p.1 = ({T₁} : Forest (Nonplanar α)) ∧ p.2 = T₂
+      · rw [if_pos h, if_pos h, Multiset.card_add, Multiset.card_singleton,
+            Nat.cast_add, Nat.cast_one, add_comm]
+      · simp only [if_neg h, zero_add]
+  exact step_count
+
+/-- **MCB Lemma 1.7.3** (Δ^ρ explicit form): the convolution Lie bracket
+    of two single-tree deltas evaluated on a single-tree basis vector
+    is the antisymmetrized count of single-tree Δ^ρ cuts:
+
+    `[δ_{T₁}, δ_{T₂}](of' {T}) = countSingleCutsRho T T₁ T₂
+                                − countSingleCutsRho T T₂ T₁`
+
+    Substrate-faithful analog of the book's `c^T_{T₁,T₂} − c^T_{T₂,T₁}`.
+    The Δ^c-quotient version (with trace leaves) would yield the same
+    count via the strip bijection in `Coproduct/DeletionNonplanar.lean`. -/
+theorem mcb_lemma_1_7_3_explicit (T T₁ T₂ : Nonplanar α) :
+    convBracket (deltaSingleton (R := R) T₁) (deltaSingleton T₂)
+        (of' ({T} : Forest (Nonplanar α))) =
+      (countSingleCutsRho T T₁ T₂ : R) - (countSingleCutsRho T T₂ T₁ : R) := by
+  show ((toConv (deltaSingleton (R := R) T₁) *
+        toConv (deltaSingleton T₂) -
+        toConv (deltaSingleton T₂) * toConv (deltaSingleton T₁) :
+        WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))).ofConv
+        (of' ({T} : Forest (Nonplanar α))) = _
+  rw [show ((toConv (deltaSingleton (R := R) T₁) *
+              toConv (deltaSingleton T₂) -
+              toConv (deltaSingleton T₂) * toConv (deltaSingleton T₁) :
+              WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))).ofConv
+              (of' ({T} : Forest (Nonplanar α))) =
+            ((toConv (deltaSingleton (R := R) T₁) *
+              toConv (deltaSingleton T₂) :
+                WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))).ofConv
+                (of' ({T} : Forest (Nonplanar α))) -
+            ((toConv (deltaSingleton (R := R) T₂) *
+              toConv (deltaSingleton T₁) :
+                WithConv (ConnesKreimer R (Nonplanar α) →ₗ[R] R))).ofConv
+                (of' ({T} : Forest (Nonplanar α))) from by
+    show _ = _
+    rfl]
+  rw [deltaSingleton_conv_apply_singleton, deltaSingleton_conv_apply_singleton]
+
+end MCBLemma_1_7_3_Full
 
 end ConnesKreimer
 
