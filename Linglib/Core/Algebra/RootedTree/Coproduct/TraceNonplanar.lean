@@ -706,12 +706,12 @@ are proved by `TensorProduct.induction_on`, reducing to the pure-tensor
 case where `pairing₃_tmul_tmul_tmul` and `pairing₂_tmul_tmul` agree. -/
 
 /-- `pairing₃ (x ⊗ (y ⊗ z')) ∘ assoc` on a `(U ⊗ c)`-shape tensor:
-    factors as `pairing₂ (x ⊗ y) U * pairing z' c`. -/
-private lemma pairing₃_assoc_tmul
-    (x y z' : ConnesKreimer R (Nonplanar (α ⊕ β)))
-    (U : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-          ConnesKreimer R (Nonplanar (α ⊕ β)))
-    (c : ConnesKreimer R (Nonplanar (α ⊕ β))) :
+    factors as `pairing₂ (x ⊗ y) U * pairing z' c`. Generic in `α`
+    (the trace decoration is irrelevant). -/
+lemma pairing₃_assoc_tmul
+    (x y z' : ConnesKreimer R (Nonplanar α))
+    (U : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
+    (c : ConnesKreimer R (Nonplanar α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
         ((TensorProduct.assoc R _ _ _) (U ⊗ₜ[R] c)) =
       pairing₂ (R := R) (x ⊗ₜ[R] y) U * GrossmanLarson.pairing z' c := by
@@ -724,11 +724,10 @@ private lemma pairing₃_assoc_tmul
     rw [TensorProduct.add_tmul, map_add, map_add, ih₁, ih₂, map_add, add_mul]
 
 /-- `pairing₃ (x ⊗ (y ⊗ z'))` on a `(a ⊗ S)`-shape tensor: factors as
-    `pairing x a * pairing₂ (y ⊗ z') S`. -/
-private lemma pairing₃_tmul_apply
-    (x y z' a : ConnesKreimer R (Nonplanar (α ⊕ β)))
-    (S : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-          ConnesKreimer R (Nonplanar (α ⊕ β))) :
+    `pairing x a * pairing₂ (y ⊗ z') S`. Generic in `α`. -/
+lemma pairing₃_tmul_apply
+    (x y z' a : ConnesKreimer R (Nonplanar α))
+    (S : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (a ⊗ₜ[R] S) =
       GrossmanLarson.pairing x a * pairing₂ (R := R) (y ⊗ₜ[R] z') S := by
   induction S using TensorProduct.induction_on with
@@ -901,21 +900,21 @@ private theorem pairing₂_nondegenerate
     `pairing₂_nondegenerate`, `c F = 0`. Hence `c = 0` and `U = 0`. -/
 theorem pairing₃_nondegenerate
     [CharZero R] [NoZeroDivisors R]
-    (U : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-          (ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-            ConnesKreimer R (Nonplanar (α ⊕ β))))
+    (U : ConnesKreimer R (Nonplanar α) ⊗[R]
+          (ConnesKreimer R (Nonplanar α) ⊗[R]
+            ConnesKreimer R (Nonplanar α)))
     (h : ∀ t, pairing₃ (R := R) t U = 0) : U = 0 := by
   classical
-  let ℬ : Module.Basis (Forest (Nonplanar (α ⊕ β))) R
-        (ConnesKreimer R (Nonplanar (α ⊕ β))) :=
+  let ℬ : Module.Basis (Forest (Nonplanar α)) R
+        (ConnesKreimer R (Nonplanar α)) :=
     Finsupp.basisSingleOne
-  obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar (α ⊕ β)) →₀
-        (ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
-          ConnesKreimer R (Nonplanar (α ⊕ β))),
+  obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar α) →₀
+        (ConnesKreimer R (Nonplanar α) ⊗[R]
+          ConnesKreimer R (Nonplanar α)),
       c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
     TensorProduct.eq_repr_basis_left ℬ U
-  have hℬ : ∀ G : Forest (Nonplanar (α ⊕ β)),
-      (ℬ G : ConnesKreimer R (Nonplanar (α ⊕ β))) = ConnesKreimer.of' G :=
+  have hℬ : ∀ G : Forest (Nonplanar α),
+      (ℬ G : ConnesKreimer R (Nonplanar α)) = ConnesKreimer.of' G :=
     fun _ => rfl
   have hc_zero : ∀ F, c F = 0 := by
     intro F
@@ -953,14 +952,14 @@ also returns CK with CommRing-derived CommSemiring) matches without
 diamond. -/
 
 section PairingUnique
-variable {R₁ : Type*} [CommRing R₁] {α₁ β₁ : Type*}
+variable {R₁ : Type*} [CommRing R₁] {α₁ : Type*}
 
 theorem pairing₃_unique [CharZero R₁] [NoZeroDivisors R₁]
-    (U V : ConnesKreimer R₁ (Nonplanar (α₁ ⊕ β₁)) ⊗[R₁]
-          (ConnesKreimer R₁ (Nonplanar (α₁ ⊕ β₁)) ⊗[R₁]
-            ConnesKreimer R₁ (Nonplanar (α₁ ⊕ β₁))))
+    (U V : ConnesKreimer R₁ (Nonplanar α₁) ⊗[R₁]
+          (ConnesKreimer R₁ (Nonplanar α₁) ⊗[R₁]
+            ConnesKreimer R₁ (Nonplanar α₁)))
     (h : ∀ t, pairing₃ (R := R₁) t U = pairing₃ (R := R₁) t V) : U = V := by
-  letI : AddCommGroup (ConnesKreimer R₁ (Nonplanar (α₁ ⊕ β₁))) :=
+  letI : AddCommGroup (ConnesKreimer R₁ (Nonplanar α₁)) :=
     ConnesKreimer.addCommGroupOf
   rw [← sub_eq_zero]
   apply pairing₃_nondegenerate
