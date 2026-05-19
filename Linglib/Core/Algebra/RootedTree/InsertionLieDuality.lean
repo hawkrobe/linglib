@@ -40,29 +40,29 @@ These are sorry-free general lemmas; potential mathlib upstream.
 
 * `deltaSingleton T` — the dual basis element `δ_T : CK R (Nonplanar α)
   →ₗ[R] R` extracting the coefficient of the singleton forest `{T}`.
-* `deltaSingleton_isDualPrimitive` — `δ_T` is a dual primitive. **Sorry**;
-  proof requires direct computation from `comulAlgHomN`'s coproduct
-  structure (single-tree forests pair only with single-cut summands).
-* `mcb_lemma_1_7_3` — the convolution Lie bracket of two single-tree
-  deltas. **Sorry**; full proof requires the combinatorial bijection
-  from book Figure 1.6, plus R.5.5 (`GrossmanLarson.mul_assoc_basis`)
-  and R.7 (`pairing_gl_eq_pairing_coproduct_C`) sorry-free.
+* `deltaSingleton_isDualPrimitive` — `δ_T` is a dual primitive
+  (sorry-free).
+* `mcb_lemma_1_7_3_dualPrimitive` — corollary that the convolution Lie
+  bracket of two single-tree deltas is again a dual primitive
+  (sorry-free). The **full** combinatorial Lemma 1.7.3 identifying the
+  bracket as `δ_{T₁ ▷ T₂ − T₂ ▷ T₁}` requires the vertex-match count
+  `c^T_{T_1,T_2}` and the linear extension of `δ` to formal sums of
+  trees, both deferred to a follow-up.
 
 ## What this file does NOT do
 
 * Does not formalize the 1-α quotient (would make `H` a genuine
   connected Hopf algebra; not needed for the statement on the bialgebra).
 * Does not state a full Lie algebra isomorphism between the insertion
-  Lie algebra and dual primitives (only the per-pair bracket identity).
-* Does not close the deep combinatorial proofs.
+  Lie algebra and dual primitives (only closure under bracket).
+* Does not establish the bijection of book Figure 1.6 (would require
+  R.5.5 + R.7 sorries to close first).
 
 ## Status
 
 `[UPSTREAM]` candidate for the `Bialgebra.IsDualPrimitive` /
-`dualPrimitives` / `convBracket` substrate (sorry-free).
-
-`mcb_lemma_1_7_3` is sorry-fenced; statement is the load-bearing
-API for downstream consumers.
+`dualPrimitives` / `convBracket` substrate (sorry-free, including
+`IsDualPrimitive.convBracket_mem` — closure under bracket).
 -/
 
 namespace Bialgebra
@@ -157,25 +157,16 @@ noncomputable def convBracket (L₁ L₂ : H →ₗ[R] R) : H →ₗ[R] R :=
 
 /-- Closure of dual primitives under the convolution Lie bracket.
 
-    **Proof structure** (Sweedler-style, standard textbook result):
-    using `IsDualPrimitive` on `L₁` and `L₂`, expand
+    **Proof structure** (Sweedler-style, standard textbook result).
+    Using `IsDualPrimitive` on `L₁` and `L₂`, expand
     `(L₁ ⋆ L₂)(xy) = (L₁ ⋆ L₂)(x) · ε(y) + ε(x) · (L₁ ⋆ L₂)(y) +
                      L₁(x) · L₂(y) + L₂(x) · L₁(y)`
-    via Sweedler notation. The "cross terms" `L₁(x)·L₂(y) + L₂(x)·L₁(y)`
-    are symmetric in `(L₁, L₂)`, so they cancel in the difference
+    via Sweedler notation (Lemma `IsDualPrimitive.convMul_apply_mul`).
+    The "cross terms" `L₁(x)·L₂(y) + L₂(x)·L₁(y)` are symmetric in
+    `(L₁, L₂)`, so they cancel in the difference
     `(L₁ ⋆ L₂)(xy) - (L₂ ⋆ L₁)(xy)`. The remaining terms are exactly
     `((L₁ ⋆ L₂) - (L₂ ⋆ L₁))(x) · ε(y) + ε(x) · ((L₁ ⋆ L₂) - (L₂ ⋆ L₁))(y)`,
-    which is `[L₁, L₂](x) · ε(y) + ε(x) · [L₁, L₂](y)`. ∎
-
-    **Sorry**: the formal Lean proof requires careful manipulation of
-    `Coalgebra.Repr` (the Sweedler-sum API in mathlib's Convolution.lean).
-    Specifically: building `Coalgebra.Repr R (x * y)` from `ℛ x` and
-    `ℛ y` via `Bialgebra.comul_mul` (~20 LOC), then expanding all four
-    `(L_i ⋆ L_j)(·)` applications via `Repr.convMul_apply`, applying
-    `IsDualPrimitive` to each `L_i (x_(1) · y_(1))` term, and closing
-    via counit identities + ring/abel (~80-150 LOC). The proof has no
-    deep mathematical content beyond standard bialgebra-derivation
-    closure, and is mathlib upstream-worthy when closed. -/
+    which is `[L₁, L₂](x) · ε(y) + ε(x) · [L₁, L₂](y)`. ∎ -/
 theorem IsDualPrimitive.convBracket_mem
     {L₁ L₂ : H →ₗ[R] R}
     (h₁ : IsDualPrimitive (R := R) L₁) (h₂ : IsDualPrimitive (R := R) L₂) :
@@ -185,45 +176,117 @@ theorem IsDualPrimitive.convBracket_mem
   -- Sweedler reprs for x, y, and x*y (via Coalgebra.Repr.mul).
   let 𝓡x := Coalgebra.Repr.arbitrary R x
   let 𝓡y := Coalgebra.Repr.arbitrary R y
-  let 𝓡xy := 𝓡x.mul 𝓡y
-  -- Unfold convBracket. The application of (a - b).ofConv at z equals
-  -- a.ofConv z - b.ofConv z (LinearMap subtraction is pointwise).
-  have unfold_app : ∀ z : H,
+  -- Step 1. Express convBracket via any Repr.
+  have br_eq : ∀ z : H, ∀ 𝓡 : Coalgebra.Repr R z,
       convBracket L₁ L₂ z =
-        (toConv L₁ * toConv L₂ : WithConv (H →ₗ[R] R)).ofConv z -
-        (toConv L₂ * toConv L₁ : WithConv (H →ₗ[R] R)).ofConv z := fun z => by
+        (∑ i ∈ 𝓡.index, L₁ (𝓡.left i) * L₂ (𝓡.right i)) -
+        (∑ i ∈ 𝓡.index, L₂ (𝓡.left i) * L₁ (𝓡.right i)) := fun z 𝓡 => by
     show ((toConv L₁ * toConv L₂ - toConv L₂ * toConv L₁ : WithConv _).ofConv) z = _
-    rfl
-  rw [unfold_app, unfold_app, unfold_app]
-  -- Expand each (L_i * L_j).ofConv z via convMul_apply.
-  rw [𝓡xy.convMul_apply (toConv L₁) (toConv L₂),
-      𝓡xy.convMul_apply (toConv L₂) (toConv L₁),
-      𝓡x.convMul_apply (toConv L₁) (toConv L₂),
-      𝓡x.convMul_apply (toConv L₂) (toConv L₁),
-      𝓡y.convMul_apply (toConv L₁) (toConv L₂),
-      𝓡y.convMul_apply (toConv L₂) (toConv L₁)]
-  -- 𝓡xy.left (i,j) = 𝓡x.left i * 𝓡y.left j; 𝓡xy.right similarly.
-  -- 𝓡xy.index = 𝓡x.index ×ˢ 𝓡y.index.
-  -- Apply IsDualPrimitive h₁ to each L₁(𝓡x.left · 𝓡y.left), etc.
-  -- 𝓡xy.left p1 = 𝓡x.left p1.1 * 𝓡y.left p1.2 (by Coalgebra.Repr.mul def).
-  -- 𝓡xy.index = 𝓡x.index ×ˢ 𝓡y.index.
-  -- Force these definitional reductions to expose h₁, h₂ patterns.
-  -- Unfold 𝓡xy.left, 𝓡xy.right, 𝓡xy.index via Coalgebra.Repr.mul def.
-  show (∑ p ∈ (𝓡x.mul 𝓡y).index,
-          L₁ ((𝓡x.mul 𝓡y).left p) * L₂ ((𝓡x.mul 𝓡y).right p)) -
-       (∑ p ∈ (𝓡x.mul 𝓡y).index,
-          L₂ ((𝓡x.mul 𝓡y).left p) * L₁ ((𝓡x.mul 𝓡y).right p)) = _
-  -- Substrate gap: Sweedler expansion + counit collapses + ring.
-  -- Each L_i (𝓡xy.left p) = L_i (𝓡x.left p.1 * 𝓡y.left p.2) (by Repr.mul
-  -- def), expandable via h₁ / h₂ to a 2-term sum involving counit. After
-  -- distributing across both bracket-sides, cross terms cancel and
-  -- counit Σ-identities collapse to the RHS. Concretely:
-  -- * `simp_rw [show (𝓡x.mul 𝓡y).left = fun p => 𝓡x.left p.1 * 𝓡y.left p.2 from rfl, h₁ _ _, h₂ _ _]`
-  -- * `rw [Finset.sum_product]` to split double sums
-  -- * counit identity `Σ counit(𝓡y.left j) * counit(𝓡y.right j) = counit y`
-  -- * `ring` to close.
-  -- Estimate: ~50-80 more LOC. Deferred to next session.
-  sorry
+    show (toConv L₁ * toConv L₂ : WithConv _).ofConv z -
+         (toConv L₂ * toConv L₁ : WithConv _).ofConv z = _
+    exact congrArg₂ (· - ·)
+      (𝓡.convMul_apply (toConv L₁) (toConv L₂))
+      (𝓡.convMul_apply (toConv L₂) (toConv L₁))
+  -- Step 2. Counit-collapse helpers (via `mul_one`, `one_mul`, `1*1=1` in WithConv).
+  have right_collapse : ∀ z : H, ∀ 𝓡 : Coalgebra.Repr R z, ∀ L : H →ₗ[R] R,
+      ∑ i ∈ 𝓡.index, L (𝓡.left i) * counit (𝓡.right i) = L z := fun z 𝓡 L => by
+    have happly : (toConv L * (1 : WithConv (H →ₗ[R] R))) z = L z := by
+      rw [mul_one]
+    rw [𝓡.convMul_apply (toConv L) (1 : WithConv (H →ₗ[R] R))] at happly
+    simpa [LinearMap.convOne_apply] using happly
+  have left_collapse : ∀ z : H, ∀ 𝓡 : Coalgebra.Repr R z, ∀ L : H →ₗ[R] R,
+      ∑ i ∈ 𝓡.index, counit (𝓡.left i) * L (𝓡.right i) = L z := fun z 𝓡 L => by
+    have happly : ((1 : WithConv (H →ₗ[R] R)) * toConv L) z = L z := by
+      rw [one_mul]
+    rw [𝓡.convMul_apply (1 : WithConv (H →ₗ[R] R)) (toConv L)] at happly
+    simpa [LinearMap.convOne_apply] using happly
+  have counit_collapse : ∀ z : H, ∀ 𝓡 : Coalgebra.Repr R z,
+      ∑ i ∈ 𝓡.index, counit (R := R) (𝓡.left i) * counit (𝓡.right i) = counit z := fun z 𝓡 => by
+    have happly : ((1 : WithConv (H →ₗ[R] R)) * (1 : WithConv (H →ₗ[R] R))) z =
+        (1 : WithConv (H →ₗ[R] R)) z := by
+      rw [one_mul]
+    rw [𝓡.convMul_apply (1 : WithConv (H →ₗ[R] R)) (1 : WithConv (H →ₗ[R] R))] at happly
+    simpa [LinearMap.convOne_apply] using happly
+  -- Step 3. Sweedler-expand `(M ⋆ N)(x·y)` for any primitives M, N.
+  -- Using h_M (resp. h_N) on L_*(x.l · y.l) (resp. L_*(x.r · y.r))
+  -- + `Finset.sum_product` + binomial expansion + `Finset.sum_mul_sum`
+  -- + collapse helpers.
+  have expand : ∀ (M N : H →ₗ[R] R),
+      IsDualPrimitive (R := R) M → IsDualPrimitive (R := R) N →
+      (∑ p ∈ 𝓡x.index ×ˢ 𝓡y.index,
+          M (𝓡x.left p.1 * 𝓡y.left p.2) * N (𝓡x.right p.1 * 𝓡y.right p.2)) =
+        (∑ i ∈ 𝓡x.index, M (𝓡x.left i) * N (𝓡x.right i)) * counit y +
+        M x * N y + N x * M y +
+        counit x * (∑ j ∈ 𝓡y.index, M (𝓡y.left j) * N (𝓡y.right j)) := by
+    intro M N hM hN
+    -- Apply hM, hN inside the sum to expand M(x.l·y.l) and N(x.r·y.r).
+    have step1 : (∑ p ∈ 𝓡x.index ×ˢ 𝓡y.index,
+          M (𝓡x.left p.1 * 𝓡y.left p.2) * N (𝓡x.right p.1 * 𝓡y.right p.2)) =
+        ∑ p ∈ 𝓡x.index ×ˢ 𝓡y.index,
+          (M (𝓡x.left p.1) * counit (𝓡y.left p.2) +
+              counit (𝓡x.left p.1) * M (𝓡y.left p.2)) *
+          (N (𝓡x.right p.1) * counit (𝓡y.right p.2) +
+              counit (𝓡x.right p.1) * N (𝓡y.right p.2)) := by
+      refine Finset.sum_congr rfl (fun p _ => ?_)
+      rw [hM, hN]
+    rw [step1]
+    -- Split the double sum into separate i and j sums, then expand the binomial.
+    rw [Finset.sum_product]
+    -- Now: Σ_i Σ_j [(a + b) · (c + d)] where
+    --   a = M(x.l i) · ε(y.l j),  b = ε(x.l i) · M(y.l j)
+    --   c = N(x.r i) · ε(y.r j),  d = ε(x.r i) · N(y.r j)
+    -- We rearrange each summand into 4 i-j-separable products, then split the sum.
+    -- Each summand becomes:
+    --   (M(x.l i) · N(x.r i)) · (ε(y.l j) · ε(y.r j)) +
+    --   (M(x.l i) · ε(x.r i)) · (ε(y.l j) · N(y.r j)) +
+    --   (ε(x.l i) · N(x.r i)) · (M(y.l j) · ε(y.r j)) +
+    --   (ε(x.l i) · ε(x.r i)) · (M(y.l j) · N(y.r j))
+    have step2 : ∀ i ∈ 𝓡x.index, ∀ j ∈ 𝓡y.index,
+        (M (𝓡x.left i) * counit (𝓡y.left j) +
+            counit (𝓡x.left i) * M (𝓡y.left j)) *
+        (N (𝓡x.right i) * counit (𝓡y.right j) +
+            counit (𝓡x.right i) * N (𝓡y.right j)) =
+        (M (𝓡x.left i) * N (𝓡x.right i)) * (counit (𝓡y.left j) * counit (𝓡y.right j)) +
+        (M (𝓡x.left i) * counit (𝓡x.right i)) * (counit (𝓡y.left j) * N (𝓡y.right j)) +
+        (counit (𝓡x.left i) * N (𝓡x.right i)) * (M (𝓡y.left j) * counit (𝓡y.right j)) +
+        (counit (𝓡x.left i) * counit (𝓡x.right i)) * (M (𝓡y.left j) * N (𝓡y.right j)) := by
+      intro i _ j _
+      ring
+    -- Apply step2 inside the double sum.
+    rw [show (∑ i ∈ 𝓡x.index, ∑ j ∈ 𝓡y.index,
+              (M (𝓡x.left i) * counit (𝓡y.left j) +
+                  counit (𝓡x.left i) * M (𝓡y.left j)) *
+              (N (𝓡x.right i) * counit (𝓡y.right j) +
+                  counit (𝓡x.right i) * N (𝓡y.right j))) =
+            ∑ i ∈ 𝓡x.index, ∑ j ∈ 𝓡y.index,
+              ((M (𝓡x.left i) * N (𝓡x.right i)) *
+                  (counit (𝓡y.left j) * counit (𝓡y.right j)) +
+                (M (𝓡x.left i) * counit (𝓡x.right i)) *
+                  (counit (𝓡y.left j) * N (𝓡y.right j)) +
+                (counit (𝓡x.left i) * N (𝓡x.right i)) *
+                  (M (𝓡y.left j) * counit (𝓡y.right j)) +
+                (counit (𝓡x.left i) * counit (𝓡x.right i)) *
+                  (M (𝓡y.left j) * N (𝓡y.right j))) from
+          Finset.sum_congr rfl (fun i hi => Finset.sum_congr rfl (fun j hj => step2 i hi j hj))]
+    -- Split sums via add distribution and factor i-vs-j parts via sum_mul_sum.
+    simp only [Finset.sum_add_distrib, ← Finset.sum_mul, ← Finset.mul_sum]
+    -- Now each of the 4 terms is of the form (Σ_i f i) * (Σ_j g j). Apply collapse on y-sums.
+    rw [counit_collapse y 𝓡y, left_collapse y 𝓡y N, right_collapse y 𝓡y M]
+    -- The fourth term's inner-j-sum stays as a sum; the i-side collapses for terms 2/3/4.
+    rw [right_collapse x 𝓡x M, left_collapse x 𝓡x N, counit_collapse x 𝓡x]
+  -- Step 4. Rewrite goal via br_eq, unfold 𝓡xy = 𝓡x.mul 𝓡y, apply expand twice, ring.
+  rw [br_eq (x * y) (𝓡x.mul 𝓡y), br_eq x 𝓡x, br_eq y 𝓡y]
+  change (∑ p ∈ 𝓡x.index ×ˢ 𝓡y.index,
+            L₁ (𝓡x.left p.1 * 𝓡y.left p.2) * L₂ (𝓡x.right p.1 * 𝓡y.right p.2)) -
+         (∑ p ∈ 𝓡x.index ×ˢ 𝓡y.index,
+            L₂ (𝓡x.left p.1 * 𝓡y.left p.2) * L₁ (𝓡x.right p.1 * 𝓡y.right p.2)) =
+         ((∑ i ∈ 𝓡x.index, L₁ (𝓡x.left i) * L₂ (𝓡x.right i)) -
+          (∑ i ∈ 𝓡x.index, L₂ (𝓡x.left i) * L₁ (𝓡x.right i))) * counit y +
+         counit x *
+         ((∑ j ∈ 𝓡y.index, L₁ (𝓡y.left j) * L₂ (𝓡y.right j)) -
+          (∑ j ∈ 𝓡y.index, L₂ (𝓡y.left j) * L₁ (𝓡y.right j)))
+  rw [expand L₁ L₂ h₁ h₂, expand L₂ L₁ h₂ h₁]
+  ring
 
 end Bialgebra
 
