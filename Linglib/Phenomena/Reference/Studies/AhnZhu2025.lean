@@ -412,8 +412,11 @@ This shows the two formalizations are compatible.
 -/
 theorem local_pi_matches_barker {E S : Type}
     (P : E → S → Bool) (R : E → E → S → Bool) (z x : E) (s : S) :
-    (relationalizer (.pred1 P) R).toPred2 z x s =
-    Semantics.ArgumentStructure.Relational.π P R z x s := rfl
+    ((relationalizer (.pred1 P) R).toPred2 z x s = true) ↔
+    Semantics.ArgumentStructure.Relational.π
+      (λ y t => P y t = true) (λ a b t => R a b t = true) z x s := by
+  simp only [relationalizer, Pred.toPred2, Pred.toPred1,
+    Semantics.ArgumentStructure.Relational.π, Bool.and_eq_true]
 
 /--
 **Connection Theorem 2**: Bridging licensing derives from Barker's framework.

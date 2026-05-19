@@ -2,257 +2,228 @@ import Mathlib.Data.Fintype.Basic
 import Linglib.Core.Logic.Quantification
 
 /-!
-# Possessives and Relational Nouns
-@cite{barker-2011}
+# Possessives and relational nouns
 
-Barker's type-shifting analysis: π relationalizes sortals, Ex detransitivizes relations.
+Type-shifting operators for the analysis of possessive constructions and
+relational nouns, following @cite{barker-2011}.
+
+The relationalizer `π` takes a sortal predicate `P` and a relation `R` and
+returns the relational predicate `fun x y ↦ P y ∧ R x y`. Its quasi-adjoint
+`Ex` collapses a relation back to a property by existentially closing the
+second argument.
+
+The structural condition *having a relatum slot* controls three surface
+phenomena — possessor licensing, antecedent bridging, and demonstrative
+anaphora. They are tracked as separate predicates (`hasRelatumSlot`,
+`canTakePossessor`, `canBridge`) over `NominalInterpType` because they
+describe distinct linguistic facts, even though they coincide by construction.
 
 ## Main definitions
 
-`π`, `ExProp`, `ExDecidable`, `PossessiveSemantics`, `possessiveRelational`, `possessiveSortal`, `naSemantics`, `bareSemantics`
+* `π P R`: Barker's relationalizer.
+* `Ex R`: existential closure of a relation.
+* `possessiveRelational possessor R`: applying a possessor to a relational noun.
+* `possessiveSortal possessor P R`: applying a possessor to a sortal noun via `π`.
+* `iotaPresupposition P`: Russellian uniqueness presupposition for definites.
+* `NominalInterpType`: relational arity of a nominal denotation.
+* `PossessionRelationType`: four-way Vikner-Jensen possession taxonomy.
+
+## Main statements
+
+* `ex_pi_retraction`: `Ex` recovers a witness of `π P R` from witnesses of
+  `P` and `R`.
+
+## References
+
+* @cite{barker-2011}: Possessives and relational nouns
+  (§6 of Portner/Heusinger/Maienborn handbook; π and Ex on pp. 184–189,
+  Vikner-Jensen taxonomy reproduced in Fig 6.1 p. 185).
+* @cite{vikner-jensen-2002}: Semantic analysis of the English possessive.
+
+## Tags
+
+possessive, relational noun, type shifting, bridging, definite description
 -/
 
 namespace Semantics.ArgumentStructure.Relational
 
+/-! ### Predicates and arity -/
 
-/-- One-place predicates: E → S → Bool -/
-abbrev Pred1 (E S : Type) := E → S → Bool
+/-- One-place predicate over entities and states. -/
+abbrev Pred1 (E S : Type*) := E → S → Prop
 
-/-- Two-place predicates (relations): E → E → S → Bool -/
-abbrev Pred2 (E S : Type) := E → E → S → Bool
+/-- Two-place predicate over entities and states. -/
+abbrev Pred2 (E S : Type*) := E → E → S → Prop
 
-/-- The semantic type of an expression, tracking arity. -/
+/-- Semantic arity of a nominal expression. -/
 inductive SemType where
-  | pred1  -- Property: E → S → Bool
-  | pred2  -- Relation: E → E → S → Bool
-  | entity -- Individual: E
+  /-- Property `Pred1`. -/
+  | pred1
+  /-- Relation `Pred2`. -/
+  | pred2
+  /-- Bare individual. -/
+  | entity
   deriving DecidableEq, Repr
 
+/-! ### Type shifters -/
 
-/-- Barker's π (Relationalizer): λP.λx.λy. P(y) ∧ R(x,y) -/
-def π {E S : Type} (P : Pred1 E S) (R : Pred2 E S) : Pred2 E S :=
-  λ x y s => P y s && R x y s
+section TypeShifters
 
-scoped notation "relationalizer(" P ", " R ")" => π P R
+variable {E S : Type*}
 
-/-- Ex (Existential Closure): λR.λx. ∃y. R(x,y) -/
-def ExProp {E S : Type} (R : Pred2 E S) : E → S → Prop :=
-  λ x s => ∃ y : E, R x y s = true
+/-- Barker's relationalizer: `π P R x y s ↔ P y s ∧ R x y s`. -/
+def π (P : Pred1 E S) (R : Pred2 E S) : Pred2 E S :=
+  λ x y s => P y s ∧ R x y s
 
-def ExDecidable {E S : Type} [Fintype E] [DecidableEq E]
-    (R : Pred2 E S) : Pred1 E S :=
-  λ x s => decide (∃ y : E, R x y s = true)
+@[inherit_doc] scoped notation "relationalizer(" P ", " R ")" => π P R
 
-/-- Semantic structure of possessive phrase -/
-structure PossessiveSemantics (E S : Type) where
+/-- Existential closure of a relation in its second argument:
+`Ex R x s ↔ ∃ y, R x y s`. -/
+def Ex (R : Pred2 E S) : Pred1 E S :=
+  λ x s => ∃ y, R x y s
+
+/-- `Ex (π P R) z s` is witnessed whenever some `y` satisfies both `P y s`
+and `R z y s`. -/
+theorem ex_pi_retraction [Nonempty E]
+    (P : Pred1 E S) (R : Pred2 E S) (y z : E) (s : S)
+    (hP : P y s) (hR : R z y s) :
+    Ex (π P R) z s :=
+  ⟨y, hP, hR⟩
+
+end TypeShifters
+
+/-! ### Possessive constructions -/
+
+section Possessives
+
+variable {E S : Type*}
+
+/-- Possessor, possessee predicate, possession relation, and a flag
+recording whether the relation is lexical (vs pragmatically supplied). -/
+structure PossessiveSemantics (E S : Type*) where
   possessor : E
   possesseePred : Pred1 E S
   relation : Pred2 E S
   relationIsLexical : Bool
 
-def possessiveRelational {E S : Type}
-    (possessor : E) (nounRel : Pred2 E S) : Pred1 E S :=
+/-- Applying a possessor to a lexically relational noun. -/
+def possessiveRelational (possessor : E) (nounRel : Pred2 E S) : Pred1 E S :=
   λ y s => nounRel possessor y s
 
-def possessiveSortal {E S : Type}
-    (possessor : E) (nounPred : Pred1 E S) (R : Pred2 E S) : Pred1 E S :=
-  λ y s => (π nounPred R) possessor y s
+/-- Applying a possessor to a sortal noun via `π`. -/
+def possessiveSortal (possessor : E) (nounPred : Pred1 E S)
+    (R : Pred2 E S) : Pred1 E S :=
+  λ y s => π nounPred R possessor y s
 
-theorem possessive_sortal_is_pi {E S : Type}
-    (possessor : E) (P : Pred1 E S) (R : Pred2 E S) (y : E) (s : S) :
-    possessiveSortal possessor P R y s = (π P R) possessor y s := rfl
+/-- Russellian uniqueness presupposition: there exists a unique `x` satisfying
+`P`. -/
+def iotaPresupposition (P : Pred1 E S) (s : S) : Prop :=
+  ∃ x : E, P x s ∧ ∀ y : E, P y s → y = x
 
-def iotaPresupposition {E S : Type} (P : Pred1 E S) (s : S) : Prop :=
-  ∃ x : E, P x s = true ∧ ∀ y : E, P y s = true → y = x
-
-structure DefinitePossessive (E S : Type) where
+/-- A definite possessive carrying its uniqueness presupposition. -/
+structure DefinitePossessive (E S : Type*) where
   possessor : E
   predicate : Pred1 E S
   presupposition : ∀ s : S, iotaPresupposition predicate s
 
-def naSemantics {E S : Type}
-    (nounPred : Pred1 E S) (R : Pred2 E S) (relatum : E) : Pred1 E S :=
-  λ x s => (π nounPred R) relatum x s
+/-- Demonstrative-headed nominal: `π` applied to a sortal noun with the
+demonstrative supplying the relatum. -/
+def naSemantics (nounPred : Pred1 E S) (R : Pred2 E S) (relatum : E) :
+    Pred1 E S :=
+  λ x s => π nounPred R relatum x s
 
-def bareSemantics {E S : Type} (nounPred : Pred1 E S) : Pred1 E S :=
+/-- Bare nominal: identity on the predicate (no relatum slot). -/
+def bareSemantics (nounPred : Pred1 E S) : Pred1 E S :=
   nounPred
 
-theorem na_has_relatum_slot {E S : Type}
-    (P : Pred1 E S) (R : Pred2 E S) (z x : E) (s : S) :
-    naSemantics P R z x s = (P x s && R z x s) := rfl
+end Possessives
 
-theorem bare_has_no_relatum_slot {E S : Type}
-    (P : Pred1 E S) (x : E) (s : S) :
-    bareSemantics P x s = P x s := rfl
+/-! ### Interpretation sources and bridging -/
 
-/-- Source of the relational interpretation. -/
+/-- Source of a noun's relational interpretation. -/
 inductive InterpretationSource where
-  | lexicalRelation   -- Noun is lexically relational (brother, author)
-  | appliedPi         -- π was applied (possessive/demonstrative)
-  | noRelation        -- No relation available (bare sortal)
+  /-- Noun is lexically relational (e.g. *brother*, *author*). -/
+  | lexicalRelation
+  /-- `π` was applied (e.g. possessive, demonstrative). -/
+  | appliedPi
+  /-- No relation available (bare sortal). -/
+  | noRelation
   deriving DecidableEq, Repr
 
+/-- Whether an interpretation source provides a relatum slot. -/
 def CanFillRelatum : InterpretationSource → Prop
-  | .lexicalRelation => True   -- Lexical slot
-  | .appliedPi => True         -- π-created slot
-  | .noRelation => False       -- No slot
+  | .lexicalRelation => True
+  | .appliedPi => True
+  | .noRelation => False
 
-instance : DecidablePred CanFillRelatum := fun s => by
+instance : DecidablePred CanFillRelatum := λ s => by
   cases s <;> unfold CanFillRelatum <;> infer_instance
 
-/-- Bridging licensing follows from π-application.
+/-! ### Vikner-Jensen possession taxonomy -/
 
-Sortal nouns: π creates slot (bridging OK); no π means no slot (blocked).
-Relational nouns: lexical slot exists regardless of π. -/
-theorem bridging_from_pi {E S : Type}
-    (P : Pred1 E S) (R : Pred2 E S) :
-    -- π always creates a relatum slot
-    CanFillRelatum .appliedPi ∧
-    -- No π means no slot (for sortal nouns)
-    ¬ CanFillRelatum .noRelation ∧
-    -- Lexical relations have slots
-    CanFillRelatum .lexicalRelation :=
-  ⟨trivial, id, trivial⟩
-
-
-/-- Vikner & Jensen's taxonomy of possession relations (Barker p. 9). -/
+/-- Four-way lexical taxonomy of possession relations from
+@cite{vikner-jensen-2002} §3.1.2, reproduced in Fig 6.1 of
+@cite{barker-2011}. The separate "pragmatic" interpretation
+(@cite{vikner-jensen-2002} §3.1.1) is not lexical and is not one of the
+four cases below. -/
 inductive PossessionRelationType where
-  /-- Inherent: part-whole, properties (the car's speed, the table's leg) -/
+  /-- Inherent relation: lexically argument-structural (the teacher's class). -/
   | inherent
-  /-- Agentive: agent relation (John's poem = poem John wrote) -/
+  /-- Part-whole relation (the girl's nose, the car's wheel). -/
+  | partWhole
+  /-- Agentive relation (the girl's poem = the poem the girl wrote). -/
   | agentive
-  /-- Control: ownership, legal control (John's house) -/
+  /-- Control relation: ownership or legal control (the girl's car). -/
   | control
-  /-- Pragmatic: any contextually salient relation -/
-  | pragmatic
   deriving DecidableEq, Repr
 
-/-- Lexical possession (relational noun) vs pragmatic possession (sortal noun). -/
-def relationSource (isNounRelational : Bool) : String :=
-  if isNounRelational then "lexical" else "pragmatic (from π)"
+/-! ### Nominal interpretation type -/
 
-
-/-- Derivation: "John's brother" (relational noun, no π needed). -/
-def derivation_johns_brother {E S : Type}
-    (john : E) (brother : Pred2 E S) : Pred1 E S :=
-  possessiveRelational john brother
-
-/-- Derivation: "John's cloud" (sortal noun, π required). -/
-def derivation_johns_cloud {E S : Type}
-    (john : E) (cloud : Pred1 E S) (R : Pred2 E S) : Pred1 E S :=
-  possessiveSortal john cloud R
-
-/-- Derivation: Mandarin "na zuozhe" (that author; relational noun). -/
-def derivation_na_author {E S : Type}
-    (author : Pred2 E S) (relatum : E) : Pred1 E S :=
-  λ x s => author relatum x s
-
-/-- Derivation: Mandarin "na zuoyi" (that seat; sortal noun, π from *na*). -/
-def derivation_na_seat {E S : Type}
-    (seat : Pred1 E S) (R : Pred2 E S) (car : E) : Pred1 E S :=
-  naSemantics seat R car
-
-/-- Derivation: Bare Mandarin "zuoyi" (seat; no π, no bridging slot). -/
-def derivation_bare_seat {E S : Type}
-    (seat : Pred1 E S) : Pred1 E S :=
-  bareSemantics seat
-
-
-/-!
-## Algebraic Structure
-@cite{ahn-zhu-2025} @cite{barker-2011}
-
-π and Ex form a pseudo-adjoint pair:
-Ex(π(P, R)) ≈ P (when R is satisfied by some entity).
--/
-
-/-- Retraction: Ex(π(P, R)) holds when both P(y) and R(z,y) hold. -/
-theorem ex_pi_retraction {E S : Type} [Nonempty E]
-    (P : Pred1 E S) (R : Pred2 E S) (y z : E) (s : S)
-    (hP : P y s = true) (hR : R z y s = true) :
-    ExProp (π P R) z s := by
-  exact ⟨y, by simp [π, hP, hR]⟩
-
-/-!
-## Unification of Possessives, Demonstratives, and Bridging
-
-Three questions are equivalent:
-1. Can "John's N" be interpreted? (possessive licensing)
-2. Can "na N" accommodate a bridging antecedent? (bridging licensing)
-3. Does the interpretation of N have type Pred2? (structural question)
--/
-
-/-- The interpretation type of a nominal -/
+/-- Interpretation type of a nominal: with or without a relatum slot. -/
 inductive NominalInterpType where
-  /-- Pred1: No relatum slot (sortal, no π) -/
+  /-- `Pred1`: no relatum slot (sortal, no `π`). -/
   | pred1
-  /-- Pred2: Has relatum slot (relational or π-shifted) -/
+  /-- `Pred2`: relatum slot (relational or `π`-shifted). -/
   | pred2
   deriving DecidableEq, Repr
 
-/-- Does this interpretation type have a relatum slot? -/
-def NominalInterpType.hasRelatumSlot : NominalInterpType → Bool
-  | .pred1 => false
-  | .pred2 => true
+namespace NominalInterpType
 
-/-- Can this interpretation type take a possessor? -/
-def NominalInterpType.canTakePossessor : NominalInterpType → Bool
-  | .pred1 => false  -- Need π first
-  | .pred2 => true   -- Possessor fills relatum
+/-- Whether the interpretation type has a relatum slot. -/
+def hasRelatumSlot : NominalInterpType → Prop
+  | .pred1 => False
+  | .pred2 => True
 
-/-- Can this interpretation type accommodate bridging? -/
-def NominalInterpType.canBridge : NominalInterpType → Bool
-  | .pred1 => false  -- No slot for antecedent
-  | .pred2 => true   -- Antecedent fills relatum
+instance : DecidablePred hasRelatumSlot := λ t => by
+  cases t <;> unfold hasRelatumSlot <;> infer_instance
 
-/-- hasRelatumSlot ⟺ canTakePossessor ⟺ canBridge. -/
-theorem unification_principle :
-    ∀ t : NominalInterpType,
-      t.hasRelatumSlot = t.canTakePossessor ∧
-      t.canTakePossessor = t.canBridge := by
-  intro t
-  cases t <;> exact ⟨rfl, rfl⟩
+/-- Whether the interpretation type can take a possessor argument. -/
+def canTakePossessor : NominalInterpType → Prop
+  | .pred1 => False
+  | .pred2 => True
 
-/-- Bridging asymmetry = possessive asymmetry. -/
-theorem bridging_is_possession (t : NominalInterpType) :
-    t.canBridge = t.canTakePossessor := by
-  cases t <;> rfl
+instance : DecidablePred canTakePossessor := λ t => by
+  cases t <;> unfold canTakePossessor <;> infer_instance
 
-/-- π always creates a relatum slot (π : Pred1 → Pred2). -/
-theorem pi_creates_slot {E S : Type} (P : Pred1 E S) (R : Pred2 E S) :
-    -- After π, we have a Pred2, which has a relatum slot
-    -- The slot is the first argument position
-    ∀ z x s, (π P R) z x s = (P x s && R z x s) := by
-  intros; rfl
+/-- Whether the interpretation type can accommodate bridging. -/
+def canBridge : NominalInterpType → Prop
+  | .pred1 => False
+  | .pred2 => True
 
-/-- Bridging ↔ having a relatum slot. -/
-theorem structural_explanation (t : NominalInterpType) :
-    t.canBridge = true ↔ t.hasRelatumSlot = true := by
-  cases t <;> simp [NominalInterpType.canBridge, NominalInterpType.hasRelatumSlot]
+instance : DecidablePred canBridge := λ t => by
+  cases t <;> unfold canBridge <;> infer_instance
 
--- ============================================================================
--- Bridge: Possessives as Type ⟨1⟩ Quantifiers (NPQ)
--- ============================================================================
+end NominalInterpType
 
-/-- A possessive like "John's" produces a type ⟨1⟩ quantifier (NPQ):
-    ⟦John's⟧ = λR.λP. ∃y. R(possessor, y) ∧ P(y).
-    When the possessum is unique, this is a Montagovian individual.
+/-! ### Bridge to type ⟨1⟩ quantifiers -/
 
-    Possessive GQs are NON-ISOM: "John's cat" depends on the identity
-    of John, not just cardinalities. This connects Barker's type-shifting
-    analysis to the GQ framework in `Core.Quantification`. -/
-def possessiveAsNPQ {E : Type}
-    (possessor : E) (R : E → E → Bool) :
+/-- Possessive as a type ⟨1⟩ quantifier (NPQ):
+`⟦John's⟧ = fun R P ↦ ∃ y, R possessor y ∧ P y`.
+
+Possessive GQs are not isomorphism-invariant: they depend on the identity of
+the possessor, not just cardinalities. -/
+def possessiveAsNPQ {E : Type*} (possessor : E) (R : E → E → Bool) :
     Core.Quantification.NPQ E :=
   λ P => ∃ y : E, R possessor y = true ∧ P y
-
-/-- When the possessum is unique, the possessive NP denotes a Montagovian
-    individual: ⟦John's brother⟧ = I_{b} where b is John's unique brother.
-    The Montagovian individual I_b maps any property P to P(b).
-    Cross-ref: `Core.Quantification.individual`. -/
-theorem possessive_individual_eval {E : Type} (b : E) :
-    ∀ P : E → Prop,
-      Core.Quantification.individual b P = P b := by
-  intro P; rfl
 
 end Semantics.ArgumentStructure.Relational

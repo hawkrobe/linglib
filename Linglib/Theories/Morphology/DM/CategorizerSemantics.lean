@@ -97,7 +97,7 @@ def nSortalDenot {E S : Type} (rootPred : Pred1 E S) : Pred1 E S :=
     possessee. -/
 def nAlienatorDenot {E S : Type}
     (relation : Pred2 E S) (x : E) (s : S) : Prop :=
-  ∃ y, relation y x s = true
+  ∃ y, relation y x s
 
 -- ============================================================================
 -- § 3: Bridge to Barker 2011
@@ -115,7 +115,7 @@ theorem nSortalDenot_eq_bare {E S : Type} (rootPred : Pred1 E S) :
 /-- n_{alienator} is the argument-flipped version of Barker's Ex.
 
     Barker's Ex closes the second argument of R(x,y):
-      ExProp(R)(x)(s) = ∃y. R(x,y,s)
+      Ex(R)(x)(s) = ∃y. R(x,y,s)
 
     The alienator closes the first argument (the possessor):
       nAlienatorDenot(R)(x)(s) = ∃y. R(y,x,s)
@@ -124,8 +124,8 @@ theorem nSortalDenot_eq_bare {E S : Type} (rootPred : Pred1 E S) :
     of the relation represents the possessor vs possessee. -/
 theorem nAlienatorDenot_is_ex_flipped {E S : Type}
     (R : Pred2 E S) (x : E) (s : S) :
-    nAlienatorDenot R x s ↔ ExProp (λ a b t => R b a t) x s := by
-  simp [nAlienatorDenot, ExProp]
+    nAlienatorDenot R x s ↔ Ex (λ a b t => R b a t) x s := by
+  simp only [nAlienatorDenot, Ex]
 
 /-- n with {D} produces a relational denotation; n without {D} does not. -/
 theorem selectsD_iff_relational (ch : CatHead) :
@@ -182,14 +182,14 @@ theorem sortal_is_pred1 (isHouse : Pred1 E S) :
     alternation (relational vs sortal/alienated). -/
 theorem same_root_different_types (x y : E) (s : S) :
     -- iPossessed: relational — takes a possessor argument
-    teopSpleenIPossessed isSpleen bodyPartOf y x s =
-      (isSpleen x s && bodyPartOf y x s) := rfl
+    teopSpleenIPossessed isSpleen bodyPartOf y x s ↔
+      (isSpleen x s ∧ bodyPartOf y x s) := Iff.rfl
 
 /-- The alienator existentially closes the possessor slot. -/
 theorem alienated_closes_possessor (x : E) (s : S) :
     teopSpleenAPossessed isSpleen bodyPartOf x s ↔
-      ∃ z, isSpleen x s = true ∧ bodyPartOf z x s = true := by
-  simp [teopSpleenAPossessed, nAlienatorDenot, nBodyPartDenot, π]
+      ∃ z, isSpleen x s ∧ bodyPartOf z x s := by
+  simp only [teopSpleenAPossessed, nAlienatorDenot, nBodyPartDenot, π]
 
 end TeopExample
 
@@ -221,8 +221,8 @@ is secondary (determined by whether aPossession is mediated). -/
     noun is feminine (unmarked). -/
 theorem alienator_retraction {E S : Type}
     (P : Pred1 E S) (R : Pred2 E S) (x : E) (s : S) :
-    nAlienatorDenot (π P R) x s ↔ ∃ y, P x s = true ∧ R y x s = true := by
-  simp [nAlienatorDenot, π]
+    nAlienatorDenot (π P R) x s ↔ ∃ y, P x s ∧ R y x s := by
+  simp only [nAlienatorDenot, π]
 
 /-- NominalInterpType from Barker 2011 corresponds to NSemanticType. -/
 def NSemanticType.toBarker : NSemanticType → NominalInterpType
@@ -233,7 +233,7 @@ def NSemanticType.toBarker : NSemanticType → NominalInterpType
 /-- Only relational nouns (n with {D}) can directly take a possessor.
     Sortal and alienated nouns cannot — they need Barker's π first. -/
 theorem possessor_requires_relational (t : NSemanticType) :
-    t.toBarker.canTakePossessor = true ↔ t = .relational := by
+    t.toBarker.canTakePossessor ↔ t = .relational := by
   cases t <;> simp [NSemanticType.toBarker, NominalInterpType.canTakePossessor]
 
 end Morphology.DM.CategorizerSemantics

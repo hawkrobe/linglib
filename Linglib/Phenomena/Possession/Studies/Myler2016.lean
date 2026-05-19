@@ -193,8 +193,8 @@ open Semantics.ArgumentStructure.Relational in
     The bridge: relational HAVE ↔ possessedDP complement ↔
     `NominalInterpType.pred2` (has relatum slot for possessor). -/
 theorem relational_have_requires_pred2 :
-    NominalInterpType.pred2.hasRelatumSlot = true ∧
-    NominalInterpType.pred2.canTakePossessor = true := ⟨rfl, rfl⟩
+    NominalInterpType.pred2.hasRelatumSlot ∧
+    NominalInterpType.pred2.canTakePossessor := ⟨trivial, trivial⟩
 
 open Semantics.ArgumentStructure.Relational in
 
@@ -202,7 +202,7 @@ open Semantics.ArgumentStructure.Relational in
     "I have a cloud" requires a contextually supplied relation (π).
     Without π, the DP has no possessor slot, so no possessive reading. -/
 theorem bare_sortal_blocks_relational :
-    NominalInterpType.pred1.canTakePossessor = false := rfl
+    ¬ NominalInterpType.pred1.canTakePossessor := id
 
 -- ─── Bridge to NominalStructure (Possession Type) ───
 

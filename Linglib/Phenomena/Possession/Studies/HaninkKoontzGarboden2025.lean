@@ -136,17 +136,17 @@ variable {Entity State : Type}
     relation R, returning a predicate of individuals who possess
     something satisfying P. Quantification over the possessum y is
     modeled via `List.any` over a finite entity domain. -/
-def vHave [BEq Entity] (entities : List Entity)
+def vHave (entities : List Entity)
     (P : Pred1 Entity State) (R : Pred2 Entity State)
-    (x : Entity) (s : State) : Bool :=
-  entities.any (λ y => P y s && R x y s)
+    (x : Entity) (s : State) : Prop :=
+  ∃ y ∈ entities, P y s ∧ R x y s
 
 /-- v_have is Barker's π composed with existential closure:
-    `vHave entities P R x s = ∃y ∈ entities. (π P R) x y s` -/
-theorem vHave_is_ex_pi [BEq Entity] (entities : List Entity)
+    `vHave entities P R x s ↔ ∃y ∈ entities, (π P R) x y s` -/
+theorem vHave_is_ex_pi (entities : List Entity)
     (P : Pred1 Entity State) (R : Pred2 Entity State)
     (x : Entity) (s : State) :
-    vHave entities P R x s = entities.any (λ y => (π P R) x y s) := by
+    vHave entities P R x s ↔ ∃ y ∈ entities, (π P R) x y s := by
   simp only [vHave, π]
 
 -- ════════════════════════════════════════════════════
