@@ -1,5 +1,4 @@
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Morphology.DM.PostSyntacticOps
 import Linglib.Phenomena.Morphology.Studies.Baker1985
 
 /-!
@@ -34,16 +33,16 @@ until Vocabulary Insertion at MS — this is **Late Insertion**. The VI
 mechanism (`subsetPrinciple`) IS Late Insertion in action: it maps
 feature bundles to exponents, making DM realizational by construction.
 
-Impoverishment and Fission — also introduced in this paper — are
-formalized as general mechanisms in `Theories/Morphology/DM/Impoverishment.lean`
-and `Theories/Morphology/DM/Fission.lean`. This study file instantiates
-impoverishment on the English paradigm to derive syncretism (§4).
+Impoverishment — also introduced in this paper — is formalized as a
+general mechanism in `Theories/Morphology/DM/Impoverishment.lean`.
+This study file instantiates impoverishment on the English paradigm
+to derive syncretism (§4). Fusion is defined inline (§3) since this
+file is its only consumer.
 -/
 
 namespace HalleMarantz1993
 
 open Morphology.DM.VI
-open Morphology.DM.PostSyntactic
 open Morphology.MirrorPrinciple
 open Core.Morphology (MorphCategory)
 
@@ -253,11 +252,32 @@ affixes) for Tns+Agr: *walk-s* realizes both non-past Tns and 3sg
 Agr in one exponent, because Fusion merges the two terminals before
 VI applies.
 
-We model fusion using `FusionRule` from the DM theory layer and
-show that the fused features feed directly into the VI paradigm
-from §1. -/
+We model fusion using `FusionRule` (inlined below; this study is its
+only consumer in linglib) and show that the fused features feed
+directly into the VI paradigm from §1. -/
 
 section TnsAgrFusion
+
+/-- Fusion (@cite{halle-marantz-1993}): merges two adjacent terminal
+    nodes into a single terminal before Vocabulary Insertion. The fused
+    node bears the union of both terminals' features; a single VI then
+    spells out the fused bundle, yielding a portmanteau.
+
+    Canonical example: French *du* = Fusion of P[de] and D[le.MASC.SG].
+    @cite{kalin-bjorkman-etal-2026} §4.4. -/
+structure FusionRule (Terminal : Type) where
+  /-- First terminal (structurally higher). -/
+  terminal1 : Terminal
+  /-- Second terminal (structurally lower / complement head). -/
+  terminal2 : Terminal
+
+/-- The result of Fusion: a single terminal bearing features from both
+    inputs, parameterized over a feature-union operation. -/
+def FusionRule.apply {Terminal Features : Type}
+    (r : FusionRule Terminal)
+    (getFeatures : Terminal → Features)
+    (union : Features → Features → Features) : Features :=
+  union (getFeatures r.terminal1) (getFeatures r.terminal2)
 
 /-- The two inflectional heads that fuse in English. -/
 inductive InflHead where

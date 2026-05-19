@@ -475,7 +475,7 @@ and should eventually carry such a bridge.
 ### DM Fusion ↔ informational fusion
 
 @cite{halle-marantz-1993} treat fusion as postsyntactic merger of adjacent
-terminals (`Theories/Morphology/DM/PostSyntacticOps.lean::FusionRule`).
+terminals (`FusionRule`, inlined in `HalleMarantz1993.lean`).
 @cite{rathi-hahn-futrell-2026}'s informational fusion is a usage-statistic
 on surface paradigm forms. The two are different mathematical objects with
 overlapping names; a formal bridge `dm_fusion_implies_high_mi` is out of

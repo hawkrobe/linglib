@@ -530,9 +530,7 @@ state Participant Dissimilation, Ergative Metathesis, and the Ondarru
 divergence witness.
 
 Embick & Noyer 2001 call rules of `TermMetaRule`'s shape "Local
-Dislocation"; an abstract stub `LocalDislocationRule` lives in
-`Theories/Morphology/DM/PostSyntacticOps.lean` parameterised over `Elem`
-without semantics. `TermMetaRule` is the `FeatureBundle`-typed
+Dislocation". `TermMetaRule` is the `FeatureBundle`-typed
 instantiation with the applicator. -/
 
 /-- A Basque morphological phrase: a linear sequence of terminal
