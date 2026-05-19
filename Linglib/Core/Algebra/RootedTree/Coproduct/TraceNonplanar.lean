@@ -7,6 +7,7 @@ import Linglib.Core.Algebra.RootedTree.Coproduct.Trace
 import Linglib.Core.Algebra.RootedTree.GrossmanLarson
 import Linglib.Core.Algebra.RootedTree.GrossmanLarsonPairing
 import Mathlib.RingTheory.Bialgebra.Basic
+import Mathlib.LinearAlgebra.TensorProduct.Basis
 
 set_option autoImplicit false
 
@@ -719,28 +720,129 @@ theorem pairing₃_coassocRHSLin
 
 end CoassocChain
 
-/-! ### Nondegeneracy of `pairing₃` (lifted from binary)
+/-! ### Nondegeneracy of `pairing₂` and `pairing₃` (lifted from binary)
 
-`pairing₃` is nondegenerate over `[CharZero R] [NoZeroDivisors R]`,
-following from binary `pairing_nondegenerate` + the tensor-product
-structure. -/
+`pairing₂` and `pairing₃` are nondegenerate over `[CharZero R]
+[NoZeroDivisors R]`, lifted from binary `pairing_nondegenerate` via the
+natural basis of `CK = (Forest T) →₀ R`. -/
+
+/-- Bilinear extension: `pairing₃ (of' F ⊗ s) (of' G ⊗ t) = pairing (of' F)
+    (of' G) * pairing₂ s t` for arbitrary `s, t ∈ CK ⊗ CK`. Proven via
+    `TensorProduct.induction_on` on `s` and `t`, reducing to the pure-tensor
+    case where `pairing₃_tmul_tmul_tmul` and `pairing₂_tmul_tmul` agree. -/
+private theorem pairing₃_of'_tmul_of'_tmul (F G : Forest (Nonplanar α))
+    (s t : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
+    pairing₃ (R := R)
+        (ConnesKreimer.of' F ⊗ₜ[R] s)
+        (ConnesKreimer.of' G ⊗ₜ[R] t) =
+      GrossmanLarson.pairing (ConnesKreimer.of' (R := R) F)
+                              (ConnesKreimer.of' G) *
+        pairing₂ (R := R) s t := by
+  induction s using TensorProduct.induction_on with
+  | zero => simp
+  | tmul b c =>
+    induction t using TensorProduct.induction_on with
+    | zero => simp
+    | tmul y z =>
+      simp only [pairing₃_tmul_tmul_tmul, pairing₂_tmul_tmul]
+    | add t₁ t₂ ih₁ ih₂ =>
+      -- pairing₃ is linear in 2nd arg (map_add); also `of' G ⊗ ·` distributes.
+      rw [TensorProduct.tmul_add, map_add, ih₁, ih₂, map_add, mul_add]
+  | add s₁ s₂ ih₁ ih₂ =>
+    -- pairing₃ is linear in 1st arg, via map_add at the outer; same for pairing₂.
+    rw [TensorProduct.tmul_add, map_add, LinearMap.add_apply, ih₁, ih₂,
+        map_add, LinearMap.add_apply, mul_add]
+
+/-- **Nondegeneracy of `pairing₂`** (lifted from binary): if
+    `U ∈ CK ⊗ CK` pairs to zero against every pure tensor `x ⊗ y`,
+    then `U = 0`.
+
+    Proof: decompose `U` via the natural basis of `CK = (Forest T) →₀ R`
+    as `U = c.sum (fun F U_F => of' F ⊗ U_F)`. Pairing against
+    `of' F ⊗ y` extracts `autF · pairing y (c F)`. Over `CharZero`
+    (so `autF ≠ 0`), each `c F = 0` by `pairing_nondegenerate` +
+    `pairing_symm`, hence `c = 0` and `U = 0`. -/
+private theorem pairing₂_nondegenerate
+    [CharZero R] [NoZeroDivisors R]
+    (U : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α))
+    (h : ∀ x y : ConnesKreimer R (Nonplanar α),
+      pairing₂ (R := R) (x ⊗ₜ[R] y) U = 0) : U = 0 := by
+  classical
+  let ℬ : Module.Basis (Forest (Nonplanar α)) R (ConnesKreimer R (Nonplanar α)) :=
+    Finsupp.basisSingleOne
+  obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar α) →₀ ConnesKreimer R (Nonplanar α),
+      c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
+    TensorProduct.eq_repr_basis_left ℬ U
+  have hℬ : ∀ G : Forest (Nonplanar α),
+      (ℬ G : ConnesKreimer R (Nonplanar α)) = ConnesKreimer.of' G := fun _ => rfl
+  have hc_zero : ∀ F, c F = 0 := by
+    intro F
+    apply GrossmanLarson.pairing_nondegenerate (c F)
+    intro y
+    rw [GrossmanLarson.pairing_symm]
+    have h_aut_ne : (Nonplanar.forestAutCard F : R) ≠ 0 :=
+      Nat.cast_ne_zero.mpr (Nonplanar.forestAutCard_pos F).ne'
+    have h_eval := h (ConnesKreimer.of' F) y
+    rw [← hc] at h_eval
+    rw [map_finsuppSum (pairing₂ (R := R) (ConnesKreimer.of' F ⊗ₜ[R] y))] at h_eval
+    simp only [hℬ, pairing₂_tmul_tmul, GrossmanLarson.pairing_of'_of'] at h_eval
+    rw [Finsupp.sum_eq_single F
+          (fun G _ hGF => by rw [if_neg (fun heq => hGF heq.symm), zero_mul])
+          (fun _ => by rw [LinearMap.map_zero, mul_zero])] at h_eval
+    rw [if_pos rfl] at h_eval
+    rcases mul_eq_zero.mp h_eval with h' | h'
+    · exact absurd h' h_aut_ne
+    · exact h'
+  have hc_zero' : c = 0 := Finsupp.ext hc_zero
+  rw [← hc, hc_zero', Finsupp.sum_zero_index]
 
 /-- **Nondegeneracy of `pairing₃`**: if `U ∈ CK ⊗ (CK ⊗ CK)` pairs to
     zero against every test triple tensor, then `U = 0`.
 
-    Proof: write `U` in basis form `sum_F of' F ⊗ U_F` (via Finsupp);
-    pairing against `of' F ⊗ s` gives `Aut(F) · pairing₂(s, U_F)`;
-    over `CharZero`, `Aut(F) ≠ 0`, so pairing₂ nondegeneracy (itself
-    lifted from binary) forces `U_F = 0` for all F, hence `U = 0`.
-
-    Sorry'd: ~50 LOC chain via Finsupp basis + pairing₂ nondegen lift. -/
+    Proof: decompose `U` via the basis on the outer factor as
+    `U = c.sum (fun F U_F => of' F ⊗ U_F)` where `U_F ∈ CK ⊗ CK`.
+    Pairing against `of' F ⊗ (x ⊗ y)` extracts `autF · pairing₂ (x ⊗ y)
+    (c F)` via `pairing₃_of'_tmul_of'_tmul`. Over `CharZero` (so
+    `autF ≠ 0`), each `pairing₂ (x ⊗ y) (c F) = 0` for all `x, y`; by
+    `pairing₂_nondegenerate`, `c F = 0`. Hence `c = 0` and `U = 0`. -/
 theorem pairing₃_nondegenerate
     [CharZero R] [NoZeroDivisors R]
     (U : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
           (ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
             ConnesKreimer R (Nonplanar (α ⊕ β))))
     (h : ∀ t, pairing₃ (R := R) t U = 0) : U = 0 := by
-  sorry  -- TODO: Finsupp-basis lift from binary pairing_nondegenerate
+  classical
+  let ℬ : Module.Basis (Forest (Nonplanar (α ⊕ β))) R
+        (ConnesKreimer R (Nonplanar (α ⊕ β))) :=
+    Finsupp.basisSingleOne
+  obtain ⟨c, hc⟩ : ∃ c : Forest (Nonplanar (α ⊕ β)) →₀
+        (ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
+          ConnesKreimer R (Nonplanar (α ⊕ β))),
+      c.sum (fun F U_F => ℬ F ⊗ₜ[R] U_F) = U :=
+    TensorProduct.eq_repr_basis_left ℬ U
+  have hℬ : ∀ G : Forest (Nonplanar (α ⊕ β)),
+      (ℬ G : ConnesKreimer R (Nonplanar (α ⊕ β))) = ConnesKreimer.of' G :=
+    fun _ => rfl
+  have hc_zero : ∀ F, c F = 0 := by
+    intro F
+    apply pairing₂_nondegenerate (c F)
+    intro x y
+    have h_aut_ne : (Nonplanar.forestAutCard F : R) ≠ 0 :=
+      Nat.cast_ne_zero.mpr (Nonplanar.forestAutCard_pos F).ne'
+    have h_eval := h (ConnesKreimer.of' F ⊗ₜ[R] (x ⊗ₜ[R] y))
+    rw [← hc] at h_eval
+    rw [map_finsuppSum
+          (pairing₃ (R := R) (ConnesKreimer.of' F ⊗ₜ[R] (x ⊗ₜ[R] y)))] at h_eval
+    simp only [hℬ, pairing₃_of'_tmul_of'_tmul, GrossmanLarson.pairing_of'_of'] at h_eval
+    rw [Finsupp.sum_eq_single F
+          (fun G _ hGF => by rw [if_neg (fun heq => hGF heq.symm), zero_mul])
+          (fun _ => by rw [LinearMap.map_zero, mul_zero])] at h_eval
+    rw [if_pos rfl] at h_eval
+    rcases mul_eq_zero.mp h_eval with h' | h'
+    · exact absurd h' h_aut_ne
+    · exact h'
+  have hc_zero' : c = 0 := Finsupp.ext hc_zero
+  rw [← hc, hc_zero', Finsupp.sum_zero_index]
 
 /-! ### Equality form of nondegeneracy
 
