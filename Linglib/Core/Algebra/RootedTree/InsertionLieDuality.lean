@@ -113,6 +113,34 @@ end Bialgebra
 
 /-! ## §2: Convolution Lie bracket -/
 
+/-! ### Sweedler representation of a product
+
+`Coalgebra.Repr.mul` builds a Repr for `x * y` in a `Bialgebra` from
+Reprs of `x` and `y`, via the bialgebra axiom `comul (xy) = comul x *
+comul y`. This is the key helper for any Sweedler-style proof that
+works with products in a bialgebra; missing from mathlib. -/
+
+/-- **Sweedler representation of `x * y`**: given Reprs `𝓡x : Repr R x`
+    and `𝓡y : Repr R y` in a bialgebra `H`, the product `x * y` has
+    Repr indexed by `𝓡x.index ×ˢ 𝓡y.index` with
+    `left (i, j) = 𝓡x.left i * 𝓡y.left j` and
+    `right (i, j) = 𝓡x.right i * 𝓡y.right j`.
+
+    Mathlib gap. -/
+noncomputable def Coalgebra.Repr.mul {R H : Type*}
+    [CommSemiring R] [Semiring H] [Bialgebra R H]
+    {x y : H} (𝓡x : Coalgebra.Repr R x) (𝓡y : Coalgebra.Repr R y) :
+    Coalgebra.Repr R (x * y) where
+  ι := 𝓡x.ι × 𝓡y.ι
+  index := 𝓡x.index ×ˢ 𝓡y.index
+  left := fun p => 𝓡x.left p.1 * 𝓡y.left p.2
+  right := fun p => 𝓡x.right p.1 * 𝓡y.right p.2
+  eq := by
+    rw [Bialgebra.comul_mul, ← 𝓡x.eq, ← 𝓡y.eq, Finset.sum_product,
+        Finset.sum_mul_sum]
+    refine Finset.sum_congr rfl (fun i _ => Finset.sum_congr rfl (fun j _ => ?_))
+    exact (Algebra.TensorProduct.tmul_mul_tmul _ _ _ _).symm
+
 namespace Bialgebra
 
 open scoped TensorProduct
@@ -129,15 +157,35 @@ noncomputable def convBracket (L₁ L₂ : H →ₗ[R] R) : H →ₗ[R] R :=
 
 /-- Closure of dual primitives under the convolution Lie bracket.
 
-    **Sorry**: proof requires verifying that the convolution product of
-    two dual primitives satisfies the dual-primitive identity. This is
-    a Sweedler-style computation: expand `(L₁ ⋆ L₂)(xy)` using the
-    coproduct's coassociativity and the algebra-hom property; rearrange
-    using bialgebra axioms. Standard textbook result. -/
+    **Proof structure** (Sweedler-style, standard textbook result):
+    using `IsDualPrimitive` on `L₁` and `L₂`, expand
+    `(L₁ ⋆ L₂)(xy) = (L₁ ⋆ L₂)(x) · ε(y) + ε(x) · (L₁ ⋆ L₂)(y) +
+                     L₁(x) · L₂(y) + L₂(x) · L₁(y)`
+    via Sweedler notation. The "cross terms" `L₁(x)·L₂(y) + L₂(x)·L₁(y)`
+    are symmetric in `(L₁, L₂)`, so they cancel in the difference
+    `(L₁ ⋆ L₂)(xy) - (L₂ ⋆ L₁)(xy)`. The remaining terms are exactly
+    `((L₁ ⋆ L₂) - (L₂ ⋆ L₁))(x) · ε(y) + ε(x) · ((L₁ ⋆ L₂) - (L₂ ⋆ L₁))(y)`,
+    which is `[L₁, L₂](x) · ε(y) + ε(x) · [L₁, L₂](y)`. ∎
+
+    **Sorry**: the formal Lean proof requires careful manipulation of
+    `Coalgebra.Repr` (the Sweedler-sum API in mathlib's Convolution.lean).
+    Specifically: building `Coalgebra.Repr R (x * y)` from `ℛ x` and
+    `ℛ y` via `Bialgebra.comul_mul` (~20 LOC), then expanding all four
+    `(L_i ⋆ L_j)(·)` applications via `Repr.convMul_apply`, applying
+    `IsDualPrimitive` to each `L_i (x_(1) · y_(1))` term, and closing
+    via counit identities + ring/abel (~80-150 LOC). The proof has no
+    deep mathematical content beyond standard bialgebra-derivation
+    closure, and is mathlib upstream-worthy when closed. -/
 theorem IsDualPrimitive.convBracket_mem
     {L₁ L₂ : H →ₗ[R] R}
-    (_h₁ : IsDualPrimitive (R := R) L₁) (_h₂ : IsDualPrimitive (R := R) L₂) :
+    (h₁ : IsDualPrimitive (R := R) L₁) (h₂ : IsDualPrimitive (R := R) L₂) :
     IsDualPrimitive (convBracket L₁ L₂) := by
+  classical
+  intro x y
+  -- Sweedler reprs for x, y, and x*y (via Coalgebra.Repr.mul).
+  let 𝓡x := Coalgebra.Repr.arbitrary R x
+  let 𝓡y := Coalgebra.Repr.arbitrary R y
+  let 𝓡xy := 𝓡x.mul 𝓡y
   sorry
 
 end Bialgebra
