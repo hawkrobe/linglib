@@ -182,28 +182,137 @@ theorem deltaSingleton_of'_other (T : Nonplanar α)
     This is the bialgebraic content of MCB's observation (book p. 79)
     that primitives in `H^∨` are exactly the single-tree deltas.
 
-    **Sorry**. Proof structure (conceptually straightforward but
-    Lean-elaboration-heavy):
-
-    1. **Bilinear reduction** to basis pairs `x = of' F`, `y = of' G`.
-       Both sides are linear in `x` and `y` (via algebra-hom-ness of
-       `counit` and linearity of `deltaSingleton`). Implementation needs
-       explicit type management — `ConnesKreimer R (Nonplanar α)` is a
-       def alias for `Forest →₀ R`, and mathlib's `Finsupp.induction_linear`
-       motive types as `Finsupp`, dropping the algebra structure.
-
-    2. **Basis pair**: `of' F * of' G = of' (F + G)` (`of'_add`). Case
-       on `F + G = {T}`:
-       * Yes: `card F + card G = 1`, so one side is `0`, the other is
-         `{T}`; LHS = 1, RHS = 1 (exactly one term contributes 1).
-       * No: LHS = 0 by `deltaSingleton_of'_other`; RHS = 0 by case
-         analysis (both terms would force `F + G = {T}`, contradiction).
-
-    Deferred to a follow-up session that builds bilinear-reduction
-    infrastructure for the `ConnesKreimer` algebra alias. -/
+    Proof: bilinear `suffices` reduction to a basis-pair statement,
+    then `smul_mul_smul_comm` + `← of'_add` factors the scalars out,
+    leaving an unscaled basis identity. The basis identity is closed
+    by case-split on `F + G = {T}` via Multiset cardinality (singleton
+    forces one factor to be empty, the other to be `{T}`). -/
 theorem deltaSingleton_isDualPrimitive (T : Nonplanar α) :
     IsDualPrimitive (deltaSingleton (R := R) T) := by
-  sorry
+  classical
+  -- Step 1: reduce to a basis-pair + scalars statement.
+  suffices h : ∀ F G : Forest (Nonplanar α), ∀ r s : R,
+      deltaSingleton (R := R) T
+          ((r • of' F : ConnesKreimer R (Nonplanar α)) * (s • of' G)) =
+        deltaSingleton T (r • of' F : ConnesKreimer R (Nonplanar α)) *
+          counit (s • of' G : ConnesKreimer R (Nonplanar α)) +
+        counit (r • of' F : ConnesKreimer R (Nonplanar α)) *
+          deltaSingleton T (s • of' G : ConnesKreimer R (Nonplanar α)) by
+    intro x y
+    refine Finsupp.induction_linear x ?_ ?_ ?_
+    · -- x = 0
+      show deltaSingleton T ((0 : ConnesKreimer R (Nonplanar α)) * y) =
+           deltaSingleton T (0 : ConnesKreimer R (Nonplanar α)) * counit y +
+           counit (0 : ConnesKreimer R (Nonplanar α)) * deltaSingleton T y
+      simp
+    · -- x = x₁ + x₂
+      intro x₁ x₂ ih₁ ih₂
+      let x₁' : ConnesKreimer R (Nonplanar α) := x₁
+      let x₂' : ConnesKreimer R (Nonplanar α) := x₂
+      show deltaSingleton T ((x₁' + x₂') * y) =
+           deltaSingleton T (x₁' + x₂') * counit y +
+           counit (x₁' + x₂') * deltaSingleton T y
+      rw [add_mul, map_add, map_add, map_add, ih₁, ih₂]
+      -- Unify `CoalgebraStruct.counit` (from ih) ↔ `counit` (from show);
+      -- both are defeq via `Coalgebra.counit` projection. `show` forces
+      -- the goal into a single normalized form, then `ring` closes.
+      show deltaSingleton T x₁ * counit y + counit x₁ * deltaSingleton T y +
+           (deltaSingleton T x₂ * counit y + counit x₂ * deltaSingleton T y) =
+           (deltaSingleton T x₁ + deltaSingleton T x₂) * counit y +
+           (counit x₁ + counit x₂) * deltaSingleton T y
+      ring
+    · -- x = single F r
+      intro F r
+      refine Finsupp.induction_linear y ?_ ?_ ?_
+      · -- y = 0
+        let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+        show deltaSingleton T (x_single * (0 : ConnesKreimer R (Nonplanar α))) =
+             deltaSingleton T x_single * counit (0 : ConnesKreimer R (Nonplanar α)) +
+             counit x_single * deltaSingleton T (0 : ConnesKreimer R (Nonplanar α))
+        simp
+      · -- y = y₁ + y₂
+        intro y₁ y₂ ih₁ ih₂
+        let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+        let y₁' : ConnesKreimer R (Nonplanar α) := y₁
+        let y₂' : ConnesKreimer R (Nonplanar α) := y₂
+        show deltaSingleton T (x_single * (y₁' + y₂')) =
+             deltaSingleton T x_single * counit (y₁' + y₂') +
+             counit x_single * deltaSingleton T (y₁' + y₂')
+        rw [mul_add, map_add, map_add, map_add, ih₁, ih₂]
+        show deltaSingleton T x_single * counit y₁ + counit x_single * deltaSingleton T y₁ +
+             (deltaSingleton T x_single * counit y₂ + counit x_single * deltaSingleton T y₂) =
+             deltaSingleton T x_single * (counit y₁ + counit y₂) +
+             counit x_single * (deltaSingleton T y₁ + deltaSingleton T y₂)
+        ring
+      · -- y = single G s
+        intro G s
+        let x_single : ConnesKreimer R (Nonplanar α) := Finsupp.single F r
+        let y_single : ConnesKreimer R (Nonplanar α) := Finsupp.single G s
+        show deltaSingleton T (x_single * y_single) =
+             deltaSingleton T x_single * counit y_single +
+             counit x_single * deltaSingleton T y_single
+        have hx : x_single = r • (of' (R := R) F) :=
+          (Finsupp.smul_single_one F r).symm
+        have hy : y_single = s • (of' (R := R) G) :=
+          (Finsupp.smul_single_one G s).symm
+        rw [hx, hy]
+        exact h F G r s
+  -- Step 2: scalars factor out; reduce to the unscaled basis identity.
+  intro F G r s
+  suffices hbasis : deltaSingleton (R := R) T
+        (of' (F + G) : ConnesKreimer R (Nonplanar α)) =
+      deltaSingleton T (of' F : ConnesKreimer R (Nonplanar α)) * counit (of' G) +
+      counit (of' F : ConnesKreimer R (Nonplanar α)) * deltaSingleton T (of' G) by
+    rw [smul_mul_smul_comm, ← of'_add]
+    simp only [map_smul, smul_eq_mul, hbasis]
+    ring
+  -- Step 3: unscaled basis identity. Case-split on F + G = {T}.
+  by_cases hFG : F + G = ({T} : Forest (Nonplanar α))
+  · -- F + G = {T}. Card sum = 1; one of F, G is empty, the other is {T}.
+    have hcard : F.card + G.card = 1 := by
+      have := congrArg Multiset.card hFG
+      simpa [Multiset.card_add, Multiset.card_singleton] using this
+    have h0_ne : (0 : Forest (Nonplanar α)) ≠ {T} := by
+      intro h
+      have := congrArg Multiset.card h
+      simp [Multiset.card_singleton] at this
+    rcases Nat.add_eq_one_iff.mp hcard with ⟨hF, hG⟩ | ⟨hF, hG⟩
+    · -- F = 0, G = {T}
+      have hF0 : F = 0 := Multiset.card_eq_zero.mp hF
+      have hG_T : G = {T} := by rw [hF0, zero_add] at hFG; exact hFG
+      subst hF0; subst hG_T
+      -- Reorder: kill δ_T (of' 0) FIRST (before of'_zero rewrites of' 0 away).
+      rw [zero_add, deltaSingleton_of'_self, deltaSingleton_of'_other T 0 h0_ne,
+          of'_zero, map_one, counit_of', Multiset.card_singleton]
+      simp
+    · -- F = {T}, G = 0
+      have hG0 : G = 0 := Multiset.card_eq_zero.mp hG
+      have hF_T : F = {T} := by rw [hG0, add_zero] at hFG; exact hFG
+      subst hG0; subst hF_T
+      rw [add_zero, deltaSingleton_of'_self, deltaSingleton_of'_other T 0 h0_ne,
+          of'_zero, map_one, counit_of', Multiset.card_singleton]
+      simp
+  · -- F + G ≠ {T}. Both sides reduce to 0.
+    rw [deltaSingleton_of'_other T (F + G) hFG]
+    have hT1 : deltaSingleton T (of' F : ConnesKreimer R (Nonplanar α)) *
+               counit (of' G : ConnesKreimer R (Nonplanar α)) = 0 := by
+      by_cases hF : F = {T}
+      · by_cases hG : G.card = 0
+        · exfalso
+          have hG0 : G = 0 := Multiset.card_eq_zero.mp hG
+          exact hFG (by rw [hF, hG0, add_zero])
+        · rw [counit_of', if_neg hG, mul_zero]
+      · rw [deltaSingleton_of'_other T F hF, zero_mul]
+    have hT2 : counit (of' F : ConnesKreimer R (Nonplanar α)) *
+               deltaSingleton T (of' G : ConnesKreimer R (Nonplanar α)) = 0 := by
+      by_cases hG : G = {T}
+      · by_cases hF : F.card = 0
+        · exfalso
+          have hF0 : F = 0 := Multiset.card_eq_zero.mp hF
+          exact hFG (by rw [hF0, hG, zero_add])
+        · rw [counit_of', if_neg hF, zero_mul]
+      · rw [deltaSingleton_of'_other T G hG, mul_zero]
+    rw [hT1, hT2, zero_add]
 
 /-- **MCB Lemma 1.7.3** (dual-primitive closure corollary): the
     convolution Lie bracket of two single-tree deltas is again a dual
