@@ -789,7 +789,7 @@ private theorem antipodeAlgHomN_axiom_at_of' (F : Forest (Nonplanar α)) :
   rw [comulAlgHomN_apply_of']
   exact antipodeAlgHomN_axiom_forest F
 
-private theorem antipode_rTensor_axiom :
+private theorem antipode_rTensor_axiom [CharZero R] [NoZeroDivisors R] :
     (Algebra.TensorProduct.lift (antipodeAlgHomN (R := R))
       (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
       (fun _ _ => Commute.all _ _)).comp
@@ -829,7 +829,7 @@ private theorem antipodeRightAlgHomN_axiom_at_of' (F : Forest (Nonplanar α)) :
 
 /-- The right antipode satisfies the lTensor antipode axiom as an `AlgHom` equality.
     This is the lTensor analogue of `antipode_rTensor_axiom`, but for R rather than S. -/
-private theorem antipodeRight_lTensor_axiom :
+private theorem antipodeRight_lTensor_axiom [CharZero R] [NoZeroDivisors R] :
     (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
       (antipodeRightAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)).comp
@@ -871,7 +871,7 @@ private lemma lift_eq_mulPrime_comp_map
 /-- Generic WithConv lemma: an AlgHom-form lTensor/rTensor axiom for `f, g : H →ₐ H`
     is equivalent to `toConv f.toLinearMap * toConv g.toLinearMap = 1` in `WithConv`.
     Used to derive both `S * id = 1` and `id * R = 1` from the tree-level axioms. -/
-private lemma withConv_mul_eq_one_of_axiom
+private lemma withConv_mul_eq_one_of_axiom [CharZero R] [NoZeroDivisors R]
     (f g : ConnesKreimer R (Nonplanar α) →ₐ[R] ConnesKreimer R (Nonplanar α))
     (h_axiom : (Algebra.TensorProduct.lift f g (fun _ _ => Commute.all _ _)).comp
         (Bialgebra.comulAlgHom R (ConnesKreimer R (Nonplanar α))) =
@@ -888,7 +888,8 @@ private lemma withConv_mul_eq_one_of_axiom
 
 /-- `S = R` as algebra homs. The Sweedler/Kassel `left_inv_eq_right_inv`
     argument in the convolution monoid `WithConv (H →ₗ[R] H)`. -/
-private theorem antipodeAlgHomN_eq_antipodeRightAlgHomN :
+private theorem antipodeAlgHomN_eq_antipodeRightAlgHomN
+    [CharZero R] [NoZeroDivisors R] :
     (antipodeAlgHomN (R := R) (α := α)) = antipodeRightAlgHomN := by
   apply AlgHom.toLinearMap_injective
   apply WithConv.toConv_injective
@@ -899,7 +900,8 @@ private theorem antipodeAlgHomN_eq_antipodeRightAlgHomN :
     (withConv_mul_eq_one_of_axiom (AlgHom.id R _) antipodeRightAlgHomN
       antipodeRight_lTensor_axiom)
 
-private theorem antipodeAlgHomN_axiom_at_of'_lTensor (F : Forest (Nonplanar α)) :
+private theorem antipodeAlgHomN_axiom_at_of'_lTensor
+    [CharZero R] [NoZeroDivisors R] (F : Forest (Nonplanar α)) :
     (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
       (antipodeAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)) (comulAlgHomN (of' F)) =
@@ -907,7 +909,7 @@ private theorem antipodeAlgHomN_axiom_at_of'_lTensor (F : Forest (Nonplanar α))
   rw [antipodeAlgHomN_eq_antipodeRightAlgHomN]
   exact antipodeRightAlgHomN_axiom_at_of' F
 
-private theorem antipode_lTensor_axiom :
+private theorem antipode_lTensor_axiom [CharZero R] [NoZeroDivisors R] :
     (Algebra.TensorProduct.lift (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
       (antipodeAlgHomN (R := R))
       (fun _ _ => Commute.all _ _)).comp
@@ -923,7 +925,8 @@ private theorem antipode_lTensor_axiom :
 Assemble the Bialgebra (from CoproductNonplanar.lean) + antipode + axioms via
 mathlib's `HopfAlgebra.ofAlgHom`. -/
 
-noncomputable instance : HopfAlgebra R (ConnesKreimer R (Nonplanar α)) :=
+noncomputable instance [CharZero R] [NoZeroDivisors R] :
+    HopfAlgebra R (ConnesKreimer R (Nonplanar α)) :=
   HopfAlgebra.ofAlgHom antipodeAlgHomN
     antipode_rTensor_axiom
     antipode_lTensor_axiom

@@ -22,12 +22,16 @@ established, `Nonplanar.lift` produces `cutSummandsN`, which extends to
 
 ## Status
 
-`[UPSTREAM]` candidate. Sorry-free for the full Bialgebra structure:
+`[UPSTREAM]` candidate. The Bialgebra structure depends on one Foissy
+axiom (`pairing_gl_eq_pairing_coproduct_Rho`, GL/CK duality identity,
+classical result of @cite{foissy-2002}); the rest is sorry-free. Covers:
 the descent (`comulAlgHomN`), the Hochschild 1-cocycle
-(`comulTreeN_node_cocycle`, `comulAlgHomN_bPlusLin_cocycle`), Foissy
-clean coassoc (`coassocSubalg_eq_top`), the counit laws
+(`comulTreeN_node_cocycle`, `comulAlgHomN_bPlusLin_cocycle`),
+coassociativity via GL/CK duality (`comulRhoN_coassoc` →
+`comulAlgHomN_coassoc_algHom`), the counit laws
 (`counit_rTensor_comulAlgHomN`, `counit_lTensor_comulAlgHomN`), and the
-`Bialgebra (ConnesKreimer R (Nonplanar α))` instance.
+`Bialgebra (ConnesKreimer R (Nonplanar α))` instance over
+`[CommRing R] [CharZero R] [NoZeroDivisors R]`.
 
 The full `HopfAlgebra` instance (with antipode) lives in the sibling
 `HopfAlgebraNonplanar.lean` (Phase A.8).
@@ -903,16 +907,20 @@ theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (Nonplanar α)) :
   rw [bPlusLin_of', comulAlgHomN_apply_ofTree, comulAlgHomN_apply_of']
   exact comulTreeN_node_cocycle a F
 
-/-! ## Phase A.7-δ — Foissy clean coassoc + `Bialgebra` instance
+/-! ## Phase A.7-δ — Counit laws + coassoc via GL/CK duality + `Bialgebra`
 
-Foissy's clean proof: define `A := { x : H | (id ⊗ Δ)(Δ x) = assoc((Δ ⊗ id)(Δ x)) }`
-as the equalizer of two algebra homs `H →ₐ[R] H ⊗ H ⊗ H`. By the cocycle
-`comulTreeN_node_cocycle`, `A` is closed under `B+_a`; by tree induction,
-`A` contains every `ofTree T` and hence (closed under sum and product)
-all of `H`. Therefore `A = ⊤`, giving coassociativity of `Δ`. The
-counit laws follow analogously by reducing to the tree case via
-`AddMonoidAlgebra.algHom_ext` + multiplicativity. The final `Bialgebra`
-instance is assembled via `Bialgebra.ofAlgHom`. -/
+Counit laws follow by reducing to the tree case via
+`AddMonoidAlgebra.algHom_ext` + multiplicativity (the empty-cut summand
+contributes `1 ⊗ of' F`; all others are killed by `counit`).
+
+Coassociativity uses GL/CK duality: `comulRhoN_coassoc` (LinearMap form)
+is derived from `pairing_gl_eq_pairing_coproduct_Rho` (Foissy axiom) +
+`GrossmanLarson.mul_assoc` via `pairing₃_unique`; the AlgHom form
+`comulAlgHomN_coassoc_algHom` is a one-line lift. This replaces the
+earlier direct Foissy-clean proof (≈ 350 LOC, deleted in R.8 Phase 2):
+both Δ^ρ and Δ^c coassoc now use a single GL-duality framework.
+
+The final `Bialgebra` instance is assembled via `Bialgebra.ofAlgHom`. -/
 
 /-! ### Empty cut existence (substrate for counit laws)
 
@@ -1210,357 +1218,6 @@ private theorem comulTreeN_counit_lTensor (T : Nonplanar α) :
       | add z₁ z₂ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂, add_zero]]
     rw [add_zero]
 
-/-- The "compute coassociativity left-hand side" algebra hom:
-    `x ↦ assoc((Δ ⊗ id)(Δ x))`. -/
-noncomputable def coassocLHS :
-    ConnesKreimer R (Nonplanar α) →ₐ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R]
-        (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :=
-  (Algebra.TensorProduct.assoc R R R _ _ _).toAlgHom.comp <|
-    (Algebra.TensorProduct.map comulAlgHomN (AlgHom.id R _)).comp comulAlgHomN
-
-/-- The "compute coassociativity right-hand side" algebra hom:
-    `x ↦ (id ⊗ Δ)(Δ x)`. -/
-noncomputable def coassocRHS :
-    ConnesKreimer R (Nonplanar α) →ₐ[R]
-      ConnesKreimer R (Nonplanar α) ⊗[R]
-        (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :=
-  (Algebra.TensorProduct.map (AlgHom.id R _) comulAlgHomN).comp comulAlgHomN
-
-/-- The **Foissy coassociativity subalgebra**: elements where the two
-    sides of coassociativity agree. By Foissy's clean argument
-    (`coassocSubalg_eq_top`), this is all of `H`. -/
-noncomputable def coassocSubalg : Subalgebra R (ConnesKreimer R (Nonplanar α)) :=
-  AlgHom.equalizer (coassocLHS (R := R) (α := α)) coassocRHS
-
-theorem mem_coassocSubalg (x : ConnesKreimer R (Nonplanar α)) :
-    x ∈ coassocSubalg (R := R) (α := α) ↔ coassocLHS x = coassocRHS x :=
-  AlgHom.mem_equalizer _ _ _
-
-/-! ### Linear extension of the cocycle
-
-The cocycle `comulAlgHomN_bPlusLin_cocycle` is stated for `of' F`. Since
-both sides are R-linear in `x : H`, it extends to arbitrary `x` via
-`Finsupp.lhom_ext` (all linear maps out of `H = R[Forest]` are determined
-by their action on basis vectors `of' F = Finsupp.single F 1`). -/
-
-/-- The cocycle, extended to arbitrary `x : H` via linearity. -/
-theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
-    (x : ConnesKreimer R (Nonplanar α)) :
-    comulAlgHomN (bPlusLin (R := R) a x) =
-      bPlusLin (R := R) a x ⊗ₜ[R] (1 : ConnesKreimer R (Nonplanar α)) +
-      (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulAlgHomN x) := by
-  -- LHS and RHS are both R-linear in x. Reduce to checking on Finsupp.single F r
-  -- (= r • of' F), then to F = of' F (r = 1) via scalar linearity, then apply cocycle.
-  have heq :
-      (comulAlgHomN.toLinearMap.comp (bPlusLin (R := R) a) :
-        ConnesKreimer R (Nonplanar α) →ₗ[R]
-          ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) =
-      ((TensorProduct.mk R _ _).flip 1).comp (bPlusLin (R := R) a) +
-      (LinearMap.lTensor _ (bPlusLin (R := R) a)).comp comulAlgHomN.toLinearMap := by
-    apply Finsupp.lhom_ext
-    intro F r
-    -- Convert single F r to r • of' F, then use cocycle. Use `change` to force the
-    -- smul to elaborate via Module instance (matching what map_smul expects), avoiding
-    -- the SMulZeroClass mismatch from `Finsupp.smul_single`.
-    show comulAlgHomN.toLinearMap (bPlusLin a (Finsupp.single F r)) =
-         (TensorProduct.mk R _ _).flip 1 (bPlusLin a (Finsupp.single F r)) +
-         LinearMap.lTensor _ (bPlusLin a) (comulAlgHomN.toLinearMap (Finsupp.single F r))
-    have hr : Finsupp.single F r = (r : R) • (of' F : ConnesKreimer R (Nonplanar α)) := by
-      show Finsupp.single F r = r • Finsupp.single F (1 : R)
-      rw [Finsupp.smul_single, smul_eq_mul, mul_one]
-    rw [hr]
-    -- Force re-elaboration through Module-flavored smul:
-    change comulAlgHomN.toLinearMap (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (Nonplanar α)))) =
-           (TensorProduct.mk R _ _).flip 1
-              (bPlusLin a ((r : R) • (of' F : ConnesKreimer R (Nonplanar α)))) +
-           LinearMap.lTensor _ (bPlusLin a)
-              (comulAlgHomN.toLinearMap ((r : R) • (of' F : ConnesKreimer R (Nonplanar α))))
-    rw [(bPlusLin (R := R) a).map_smul, comulAlgHomN.toLinearMap.map_smul,
-        AlgHom.toLinearMap_apply, AlgHom.toLinearMap_apply,
-        comulAlgHomN_bPlusLin_cocycle, smul_add, TensorProduct.smul_tmul']
-    -- Now match the second summand on both sides:
-    --   r • (lTensor _ (bPlusLin a)) (comulAlgHomN (of' F))
-    --   = (lTensor _ (bPlusLin a)) (comulAlgHomN (r • of' F))
-    -- via map_smul on comulAlgHomN and lTensor in turn.
-    simp only [LinearMap.flip_apply, TensorProduct.mk_apply]
-    congr 1
-    -- Now isolate the r-smul mismatch: (lTensor _ ...) (r • _) vs r • (lTensor _ ...) _.
-    change (r : R) • (LinearMap.lTensor _ (bPlusLin (R := R) a))
-              (comulAlgHomN (of' F)) =
-           (LinearMap.lTensor _ (bPlusLin (R := R) a))
-              (comulAlgHomN ((r : R) • (of' F : ConnesKreimer R (Nonplanar α))))
-    rw [_root_.map_smul comulAlgHomN, (LinearMap.lTensor _ (bPlusLin (R := R) a)).map_smul]
-  exact congr($heq x)
-
-/-! ### Closure of `coassocSubalg` under `B+_a`
-
-The substantive Foissy bit. Uses the cocycle (twice) plus tensor-algebra
-calculations. Sketch (Sweedler-style, with `Δ x = Σᵢ aᵢ ⊗ bᵢ`):
-
-* `Δ(B+_a x) = (B+_a x) ⊗ 1 + Σᵢ aᵢ ⊗ B+_a bᵢ` (cocycle).
-* `(Δ ⊗ id)(Δ(B+_a x)) = Δ(B+_a x) ⊗ 1 + Σᵢ Δ(aᵢ) ⊗ B+_a bᵢ`. Re-apply cocycle to
-  `Δ(B+_a x)` to expand the first summand.
-* `assoc((Δ ⊗ id)(Δ(B+_a x))) = (B+_a x) ⊗ (1 ⊗ 1) + Σᵢ aᵢ ⊗ (B+_a bᵢ ⊗ 1) +
-  Σᵢ assoc(Δ(aᵢ) ⊗ B+_a bᵢ)`.
-* `(id ⊗ Δ)(Δ(B+_a x)) = (B+_a x) ⊗ (1 ⊗ 1) + Σᵢ aᵢ ⊗ (B+_a bᵢ ⊗ 1) +
-  Σᵢ aᵢ ⊗ ((id ⊗ B+_a)(Δ bᵢ))`.
-* The "shared" first two summands match by inspection. The third summands match via
-  `(id ⊗ id ⊗ B+_a)` applied to the hypothesis `assoc((Δ ⊗ id)(Δ x)) = (id ⊗ Δ)(Δ x)`.
-
-A clean Lean implementation would extract a `LinearMap`-level helper
-`assoc_lTensor_bPlus_eq : assoc ∘ (Δ ⊗ id) ∘ (id ⊗ B+_a) = (id ⊗ id ⊗ B+_a) ∘ assoc ∘ (Δ ⊗ id)`
-(provable by `TensorProduct.induction_on`), then close by `congrArg ((id ⊗ id ⊗ B+_a))` on `hx`. -/
-/-! ### Helper commutations for the bPlus closure proof
-
-Three commutation/identity lemmas for the substantive Foissy bit:
-
-* `comulAlgHomN_lTensor_bPlus_commute`: `(Δ ⊗ id) ∘ (id ⊗ B+) = (id ⊗ id ⊗ B+) ∘ (Δ ⊗ id)`,
-  i.e., the comul on the left factor commutes with B+ on the right factor.
-* `assoc_lTensor_bPlus_commute`: `assoc ∘ (id ⊗ id_R ⊗ B+ on (H⊗H)⊗H) =
-  (id ⊗ id ⊗ B+ on H⊗(H⊗H)) ∘ assoc`, i.e., the associator commutes with B+
-  acting on the rightmost factor.
-* `lTensor_id_Δ_bPlus_eq`: `(id ⊗ Δ) ∘ (id ⊗ B+) z = assoc((id ⊗ B+)(z) ⊗ 1) +
-  (id ⊗ id ⊗ B+) ∘ (id ⊗ Δ)(z)`, by cocycle on the right factor of `(id ⊗ B+)(z)`. -/
-
-private theorem comulAlgHomN_lTensor_bPlus_commute (a : α)
-    (z : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
-    (Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α))))
-      ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
-    (LinearMap.lTensor _ (bPlusLin (R := R) a))
-      ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-        (AlgHom.id R (ConnesKreimer R (Nonplanar α)))) z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => rw [map_zero, map_zero, map_zero]
-  | tmul x y =>
-    rw [LinearMap.lTensor_tmul, Algebra.TensorProduct.map_tmul,
-        Algebra.TensorProduct.map_tmul, AlgHom.id_apply, AlgHom.id_apply,
-        LinearMap.lTensor_tmul]
-  | add z₁ z₂ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂, map_add, map_add]
-
-private theorem assoc_lTensor_bPlus_commute (a : α)
-    (z : (ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) ⊗[R]
-          ConnesKreimer R (Nonplanar α)) :
-    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α)))
-      ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
-    (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
-      ((Algebra.TensorProduct.assoc R R R (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α))) z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul w c =>
-    -- w : H ⊗ H, c : H. Need to induct on w to expose the (a ⊗ b) ⊗ c form.
-    induction w using TensorProduct.induction_on with
-    | zero => simp
-    | tmul x y =>
-      rw [LinearMap.lTensor_tmul, Algebra.TensorProduct.assoc_tmul,
-          Algebra.TensorProduct.assoc_tmul, LinearMap.lTensor_tmul,
-          LinearMap.lTensor_tmul]
-    | add w₁ w₂ ih₁ ih₂ =>
-      simp only [TensorProduct.add_tmul, map_add]
-      rw [ih₁, ih₂]
-  | add z₁ z₂ ih₁ ih₂ =>
-    simp only [map_add]
-    rw [ih₁, ih₂]
-
-private theorem lTensor_id_Δ_bPlus_eq (a : α)
-    (z : ConnesKreimer R (Nonplanar α) ⊗[R] ConnesKreimer R (Nonplanar α)) :
-    (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
-        (comulAlgHomN (R := R) (α := α)))
-      ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
-    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α)))
-      ((LinearMap.lTensor _ (bPlusLin (R := R) a) z) ⊗ₜ
-        (1 : ConnesKreimer R (Nonplanar α))) +
-    (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
-      ((Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (Nonplanar α)))
-        (comulAlgHomN (R := R) (α := α))) z) := by
-  induction z using TensorProduct.induction_on with
-  | zero => simp
-  | tmul x y =>
-    -- LHS: (map id Δ)((lTensor B+a)(x ⊗ y)) = (map id Δ)(x ⊗ B+a y) = x ⊗ Δ(B+a y)
-    --    = x ⊗ ((B+a y) ⊗ 1 + (lTensor B+a)(Δ y)) = x ⊗ ((B+a y) ⊗ 1) + x ⊗ (lTensor B+a)(Δ y)
-    -- RHS: assoc((x ⊗ B+a y) ⊗ 1) + (lTensor (lTensor B+a))(x ⊗ Δy)
-    --    = x ⊗ ((B+a y) ⊗ 1) + x ⊗ (lTensor B+a)(Δ y)
-    -- ✓ by simp with all the relevant tmul + cocycle lemmas.
-    simp only [LinearMap.lTensor_tmul, Algebra.TensorProduct.map_tmul,
-               Algebra.TensorProduct.assoc_tmul, AlgHom.id_apply,
-               comulAlgHomN_bPlusLin_cocycle_general, TensorProduct.tmul_add]
-  | add z₁ z₂ ih₁ ih₂ =>
-    simp only [map_add, TensorProduct.add_tmul]
-    rw [ih₁, ih₂]
-    abel
-
-theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (Nonplanar α))
-    (hx : x ∈ coassocSubalg (R := R) (α := α)) :
-    bPlusLin (R := R) a x ∈ coassocSubalg (R := R) (α := α) := by
-  rw [mem_coassocSubalg] at hx ⊢
-  -- The proof structure: express both `coassocLHS (B+_a x)` and `coassocRHS (B+_a x)`
-  -- in the form `shared + (lTensor H (lTensor H B+_a))(coassocXXX x)` with the
-  -- *same* shared part, then use hx (coassocLHS x = coassocRHS x) to conclude.
-  --
-  -- shared := (B+_a x) ⊗ (1 ⊗ 1) + assoc(((lTensor H B+_a)(Δ x)) ⊗ 1)
-  show (Algebra.TensorProduct.assoc R R R _ _ _)
-        ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-          (AlgHom.id R _)) (comulAlgHomN (bPlusLin (R := R) a x))) =
-       (Algebra.TensorProduct.map (AlgHom.id R _)
-          (comulAlgHomN (R := R) (α := α))) (comulAlgHomN (bPlusLin (R := R) a x))
-  -- Apply cocycle on x: Δ(B+_a x) = (B+_a x) ⊗ 1 + (lTensor _ B+_a)(Δ x).
-  rw [comulAlgHomN_bPlusLin_cocycle_general]
-  -- Distribute (map ⊗ id), (map id ⊗ ·), assoc through the addition.
-  rw [map_add, map_add, map_add]
-  -- LHS first term: assoc((map Δ id)(Bx ⊗ 1)) = assoc(Δ(Bx) ⊗ 1)
-  --                  = assoc(((Bx ⊗ 1) + (lTensor _ B+a)(Δx)) ⊗ 1) [cocycle on Bx]
-  --                  = assoc((Bx ⊗ 1) ⊗ 1) + assoc(((lTensor _ B+a)(Δx)) ⊗ 1)
-  --                  = Bx ⊗ (1 ⊗ 1) + assoc(((lTensor _ B+a)(Δx)) ⊗ 1)
-  rw [show (Algebra.TensorProduct.assoc R R R _ _ _)
-        ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-          (AlgHom.id R _)) (bPlusLin (R := R) a x ⊗ₜ
-            (1 : ConnesKreimer R (Nonplanar α)))) =
-      (bPlusLin (R := R) a x) ⊗ₜ ((1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ
-        (1 : ConnesKreimer R (Nonplanar α))) +
-      (Algebra.TensorProduct.assoc R R R _ _ _)
-        ((LinearMap.lTensor _ (bPlusLin (R := R) a))
-          (comulAlgHomN x) ⊗ₜ (1 : ConnesKreimer R (Nonplanar α))) from by
-    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply,
-        comulAlgHomN_bPlusLin_cocycle_general, TensorProduct.add_tmul, map_add,
-        Algebra.TensorProduct.assoc_tmul]]
-  -- LHS second term: use Δ⊗id-vs-id⊗B+a commutation, then assoc-vs-B+a commutation.
-  rw [comulAlgHomN_lTensor_bPlus_commute, assoc_lTensor_bPlus_commute]
-  -- RHS first term: (map id Δ)(Bx ⊗ 1) = Bx ⊗ Δ(1) = Bx ⊗ (1 ⊗ 1).
-  rw [show (Algebra.TensorProduct.map (AlgHom.id R _)
-            (comulAlgHomN (R := R) (α := α)))
-          (bPlusLin (R := R) a x ⊗ₜ (1 : ConnesKreimer R (Nonplanar α))) =
-        (bPlusLin (R := R) a x) ⊗ₜ
-          ((1 : ConnesKreimer R (Nonplanar α)) ⊗ₜ
-            (1 : ConnesKreimer R (Nonplanar α))) from by
-    rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one,
-        Algebra.TensorProduct.one_def]]
-  -- RHS second term: use cocycle-driven identity `lTensor_id_Δ_bPlus_eq`.
-  rw [lTensor_id_Δ_bPlus_eq]
-  -- Now both sides are `Bx ⊗ (1⊗1) + assoc(...) + (lTensor (lTensor B+a))(coassocXXX_inner x)`,
-  -- modulo associativity. Use hx (coassocLHS x = coassocRHS x — defeq to the inner forms)
-  -- to bridge the two third summands; then `abel` for reordering.
-  have hlift : (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
-                ((Algebra.TensorProduct.assoc R R R _ _ _)
-                  ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-                    (AlgHom.id R _)) (comulAlgHomN x))) =
-              (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
-                ((Algebra.TensorProduct.map (AlgHom.id R _)
-                  (comulAlgHomN (R := R) (α := α))) (comulAlgHomN x)) :=
-    congrArg _ hx
-  rw [hlift]
-  abel
-
-/-! ### Tree induction: every `ofTree T` is in `coassocSubalg` -/
-
-/-- Helper: `of' F` is in `coassocSubalg` whenever every `ofTree T` for `T ∈ F` is.
-    By Multiset.induction on F using `of'_singleton`, `of'_zero`, `of'_add`, plus
-    subalgebra closure under * and 1. -/
-private theorem of'_mem_coassocSubalg_of_trees (F : Forest (Nonplanar α))
-    (h : ∀ T ∈ F, ofTree T ∈ coassocSubalg (R := R) (α := α)) :
-    of' (R := R) F ∈ coassocSubalg (R := R) (α := α) := by
-  induction F using Multiset.induction with
-  | empty =>
-    rw [show ((0 : Forest (Nonplanar α)) : Forest (Nonplanar α)) = (0 : Forest (Nonplanar α)) from rfl,
-        of'_zero]
-    exact one_mem _
-  | cons T F' ih =>
-    have hT : ofTree T ∈ coassocSubalg (R := R) (α := α) := h T (Multiset.mem_cons_self T F')
-    have hF' : ∀ T' ∈ F', ofTree T' ∈ coassocSubalg (R := R) (α := α) :=
-      fun T' hT' => h T' (Multiset.mem_cons_of_mem hT')
-    have ih' := ih hF'
-    rw [show ((T ::ₘ F') : Forest (Nonplanar α)) = ({T} + F') from rfl, of'_add, of'_singleton]
-    exact mul_mem hT ih'
-
-/-- Every Nonplanar tree's `ofTree` lies in `coassocSubalg`. By strong
-    induction on tree depth: leaves are `B+_a 1` (closed under `B+_a` from `1`);
-    nodes are `B+_a (of' F)` where `of' F` is a product of `ofTree` of smaller-depth
-    trees. -/
-theorem ofTree_mem_coassocSubalg (T : Nonplanar α) :
-    ofTree T ∈ coassocSubalg (R := R) (α := α) := by
-  -- Strong induction on T.depth.
-  suffices aux : ∀ n : ℕ, ∀ T : Nonplanar α, T.depth = n →
-      ofTree T ∈ coassocSubalg (R := R) (α := α) by
-    exact aux T.depth T rfl
-  intro n
-  induction n using Nat.strong_induction_on with
-  | _ n IH =>
-    intro T hT
-    -- Pick a planar rep T = mk (Planar.node a children).
-    obtain ⟨T₀, rfl⟩ : ∃ T₀ : Planar α, T = Nonplanar.mk T₀ :=
-      ⟨Quotient.out T, (Quotient.out_eq T).symm⟩
-    obtain ⟨a, children⟩ := T₀
-    -- T = mk (.node a children) = Nonplanar.node a (Multiset.ofList (children.map mk))
-    rw [show (Nonplanar.mk (Planar.node a children) : Nonplanar α) =
-        Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk))
-        from (Nonplanar.node_mk_planar_list a children).symm]
-    -- ofTree (Nonplanar.node a F) = bPlusLin a (of' F) by bPlusLin_of'.
-    rw [show ofTree (Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk)))
-            = bPlusLin (R := R) a (of' (Multiset.ofList (children.map Nonplanar.mk)))
-            from (bPlusLin_of' a _).symm]
-    apply bPlus_mem_coassocSubalg
-    -- of' F ∈ coassocSubalg, where F = Multiset.ofList (children.map mk).
-    apply of'_mem_coassocSubalg_of_trees
-    intro T' hT'
-    -- T' ∈ Multiset.ofList (children.map mk). Use IH on T'.depth < (mk (.node a children)).depth.
-    have hT'_depth : T'.depth < (Nonplanar.mk (Planar.node a children)).depth := by
-      have := Nonplanar.depth_lt_of_mem T'
-        (Multiset.ofList (children.map Nonplanar.mk)) hT' a
-      rw [show (Nonplanar.node a (Multiset.ofList (children.map Nonplanar.mk)) : Nonplanar α) =
-          Nonplanar.mk (Planar.node a children) from
-          Nonplanar.node_mk_planar_list a children] at this
-      exact this
-    rw [hT] at hT'_depth
-    exact IH T'.depth hT'_depth T' rfl
-
-/-! ### `coassocSubalg = ⊤`
-
-Since `H` is generated as an algebra by `{ofTree T | T : Nonplanar α}` and
-each generator is in `coassocSubalg`, the subalgebra is the whole thing. -/
-
-theorem coassocSubalg_eq_top :
-    coassocSubalg (R := R) (α := α) = ⊤ := by
-  rw [eq_top_iff]
-  intro x _
-  -- Induct on x via Finsupp.induction_linear. Each piece is in coassocSubalg.
-  refine x.induction_linear ?_ ?_ ?_
-  · exact zero_mem _
-  · intro f g hf hg
-    exact add_mem hf hg
-  · intro F r
-    -- Finsupp.single F r = r • of' F ∈ coassocSubalg via algebraMap.
-    show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) ∈ _
-    rw [show (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) = r • of' F from by
-        show Finsupp.single F r = r • Finsupp.single F (1 : R)
-        rw [Finsupp.smul_single, smul_eq_mul, mul_one]]
-    exact Subalgebra.smul_mem _ (of'_mem_coassocSubalg_of_trees F
-      (fun T _ => ofTree_mem_coassocSubalg T)) r
-
-/-! ### Coassociativity at the algebra-hom level
-
-Direct corollary: `coassocLHS = coassocRHS` as algebra homs. The
-`Bialgebra.ofAlgHom` constructor takes this in its unfolded form
-(without going through the `coassocLHS`/`coassocRHS` named bundles),
-so we expose both. -/
-
-theorem coassocLHS_eq_coassocRHS :
-    coassocLHS (R := R) (α := α) = coassocRHS := by
-  ext x
-  have h : x ∈ coassocSubalg (R := R) (α := α) := by
-    rw [coassocSubalg_eq_top]; trivial
-  exact (mem_coassocSubalg x).mp h
-
-theorem comulAlgHomN_coassoc_algHom :
-    (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (Nonplanar α))
-        (ConnesKreimer R (Nonplanar α)) (ConnesKreimer R (Nonplanar α))).toAlgHom.comp
-      ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-        (AlgHom.id R _)).comp comulAlgHomN) =
-    (Algebra.TensorProduct.map (AlgHom.id R _) comulAlgHomN).comp comulAlgHomN :=
-  coassocLHS_eq_coassocRHS
-
 /-! ### Counit laws (algebra-hom level)
 
 Strategy: reduce to `of' F` via `AddMonoidAlgebra.algHom_ext`. For each `F`, expand
@@ -1598,22 +1255,18 @@ theorem counit_lTensor_comulAlgHomN :
   rw [comulAlgHomN_apply_of', Algebra.TensorProduct.rid_symm_apply]
   exact comulForestN_counit_lTensor F (fun T _ => comulTreeN_counit_lTensor T)
 
-/-! ### Δ^ρ coassoc via GL/CK duality (alternative proof) — R.8 Phase 1
+/-! ### Δ^ρ coassoc via GL/CK duality
 
 Mirrors the Δ^c structure in `TraceNonplanar.lean`: prove `comulAlgHomN`
 coassoc via duality with `GrossmanLarson.mul_assoc`, using the
-symmetry-weighted pairing as a bridge. Validates the unification
-architecture (see `memory/project_mcb_unification_rationale.md`) — the
-same GL-duality framework subsumes both Δ^ρ and Δ^c coassoc.
+symmetry-weighted pairing as a bridge. A single GL-duality framework
+subsumes both Δ^ρ and Δ^c coassoc (see
+`memory/project_mcb_unification_rationale.md`).
 
 The Foissy axiom `pairing_gl_eq_pairing_coproduct_Rho` is the GL/CK
 duality identity at the level of pairing + cut summands for Δ^ρ; this
 is the classical result of @cite{foissy-2002}. Formalization deferred
-(parallel to `pairing_gl_eq_pairing_coproduct_C` for Δ^c).
-
-This proof **coexists** with `comulAlgHomN_coassoc_algHom` (the direct
-Foissy-clean-coassoc proof above) in R.8 Phase 1. Phase 2 will delete
-the direct proof and rewire the Bialgebra instance to use this one. -/
+(parallel to `pairing_gl_eq_pairing_coproduct_C` for Δ^c). -/
 
 /-- **GL/CK duality for Δ^ρ** (@cite{foissy-2002}): the GL `★` product
     and Δ^ρ coproduct are paired via the symmetry-weighted pairing:
@@ -1727,7 +1380,7 @@ theorem pairing₃_coassocRHSLinRho
   exact (pairing_gl_eq_pairing_coproduct_Rho x
           (GrossmanLarson.product y z') z).symm
 
-/-! ### Coassociativity of Δ^ρ via duality — alternative to `comulAlgHomN_coassoc_algHom`
+/-! ### Coassociativity of Δ^ρ via GL/CK duality (LinearMap form)
 
 Specialized to `[CommRing R]` (rather than `[CommSemiring R]`) since the
 proof uses subtraction (via `sub_eq_zero` in `pairing₃_unique`), which
@@ -1736,8 +1389,8 @@ requires `R` to be a Ring (so `CK R T` has `AddCommGroup`). -/
 section CoassocCommRingRho
 variable {R' : Type*} [CommRing R'] {α' : Type*}
 
-/-- **Coassociativity of `comulAlgHomN` via GL/CK duality** (alternative
-    to `comulAlgHomN_coassoc_algHom`).
+/-- **Coassociativity of `comulAlgHomN`** (LinearMap form), via GL/CK
+    duality. Parallel to `TraceNonplanar.comulCN_coassoc` for Δ^c.
 
     Derived via the chain:
     1. `ext z`: reduce to pointwise `LHS z = RHS z`.
@@ -1750,11 +1403,8 @@ variable {R' : Type*} [CommRing R'] {α' : Type*}
     5. `GrossmanLarson.mul_assoc x y z'` closes.
 
     Sorry-fenced substrate: just `pairing_gl_eq_pairing_coproduct_Rho`
-    (the Foissy axiom, parallel to the Δ^c version).
-
-    R.8 Phase 2 will rewire the `Bialgebra` instance to use this proof
-    and delete the direct Foissy-clean machinery above (~700 LOC). -/
-theorem comulRhoN_coassoc_via_duality [CharZero R'] [NoZeroDivisors R'] :
+    (the Foissy axiom, parallel to the Δ^c version). -/
+theorem comulRhoN_coassoc [CharZero R'] [NoZeroDivisors R'] :
     (TensorProduct.assoc R'
         (ConnesKreimer R' (Nonplanar α'))
         (ConnesKreimer R' (Nonplanar α'))
@@ -1786,11 +1436,32 @@ theorem comulRhoN_coassoc_via_duality [CharZero R'] [NoZeroDivisors R'] :
   | add a b iha ihb =>
     simp only [map_add, LinearMap.add_apply, iha, ihb]
 
+/-- **AlgHom-form coassociativity** of `comulAlgHomN`. Follows from
+    `comulRhoN_coassoc` (LinearMap form) by AlgHom extensionality, the
+    same one-liner pattern as `TraceNonplanar.comulCAlgHomN_coassoc_algHom`. -/
+theorem comulAlgHomN_coassoc_algHom [CharZero R'] [NoZeroDivisors R'] :
+    (Algebra.TensorProduct.assoc R' R' R'
+        (ConnesKreimer R' (Nonplanar α'))
+        (ConnesKreimer R' (Nonplanar α'))
+        (ConnesKreimer R' (Nonplanar α'))).toAlgHom.comp
+      ((Algebra.TensorProduct.map (comulAlgHomN (R := R') (α := α'))
+        (AlgHom.id R' _)).comp comulAlgHomN) =
+    (Algebra.TensorProduct.map (AlgHom.id R' _) comulAlgHomN).comp comulAlgHomN := by
+  apply AlgHom.toLinearMap_injective
+  exact comulRhoN_coassoc
+
 end CoassocCommRingRho
 
-/-! ### `Bialgebra` instance -/
+/-! ### `Bialgebra` instance
 
-noncomputable instance : Bialgebra R (ConnesKreimer R (Nonplanar α)) :=
+Built via `Bialgebra.ofAlgHom` from `comulAlgHomN_coassoc_algHom` (GL/CK
+duality) and the two counit AlgHom laws. The duality-based coassoc proof
+forces `[CommRing R] [CharZero R] [NoZeroDivisors R]`; the counit laws
+hold over `[CommSemiring R]` and are automatically satisfied. -/
+
+noncomputable instance instBialgebraRho
+    {R' : Type*} [CommRing R'] [CharZero R'] [NoZeroDivisors R'] {α' : Type*} :
+    Bialgebra R' (ConnesKreimer R' (Nonplanar α')) :=
   Bialgebra.ofAlgHom comulAlgHomN counit
     comulAlgHomN_coassoc_algHom
     counit_rTensor_comulAlgHomN
