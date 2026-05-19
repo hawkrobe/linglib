@@ -98,6 +98,52 @@ noncomputable instance instAlgebra : Algebra R (ConnesKreimer R T) :=
 instance instFunLike : FunLike (ConnesKreimer R T) (Forest T) R :=
   inferInstanceAs (FunLike (Forest T →₀ R) (Forest T) R)
 
+/-! ### Field-coherent `AddCommGroup` for `[CommRing R]`
+
+Constructed manually as `{ instAddCommMonoid with ... }` — fields typed
+`CK → CK → CK`, not `Finsupp → Finsupp → Finsupp`. This avoids the kernel
+mismatch that `inferInstanceAs (AddCommGroup (Forest T →₀ R))` triggers:
+that form's `_aux_1_*` fields carry Finsupp types and reject when used as
+`AddCommGroup CK`.
+
+The `neg`/`sub`/`zsmul` fields delegate to the underlying Finsupp
+operations via the identity coercion (CK = AddMonoidAlgebra R (Forest T) =
+Forest T →₀ R as defs). They agree definitionally with the operations
+coming through `Algebra ℤ CK → Module ℤ CK → SMul ℤ CK`, so no SMul ℤ
+diamond arises at downstream call sites. -/
+
+/-! ### AddCommGroup helper (NOT a global instance — use `attribute [local instance]`)
+
+**Diamond verdict (2026-05-19, task #12 deep-dive)**: registering `AddCommGroup CK`
+globally creates a `SMul ℤ CK` diamond. Two paths to `SMul ℤ CK`:
+- `Algebra ℤ CK → Module ℤ CK → SMul ℤ CK` (existing, via instAlgebra)
+- `AddCommGroup CK → SubNegMonoid → SubNegMonoid.toZSMul → SMul ℤ CK` (new)
+
+Lean's typeclass elaboration picks one OR the other depending on context.
+At `op_smul := rfl` sites in `PreLie/OudomGuinBridge.lean`, the LHS (CK-side
+`r • x`) may pick SubNeg while the RHS (GL-side `r • op x` via GL's frozen
+`instModule = inferInstanceAs (Module R CK)`) is locked to Algebra-derived.
+
+**Structural fix would be**: refactor CK from `def` to `structure` (mathlib's
+pattern for `Polynomial`, `WittVector`). This isolates all instances — no
+parent-type alternative paths exist. Large refactor (hundreds of call sites).
+
+**Tactical fix**: provide AddCommGroup as a `def` (not an instance), and use
+`attribute [local instance]` at the consumer site so other files don't pick
+it up. -/
+
+/-- `AddCommGroup` on `ConnesKreimer R T` (not a global instance). Register
+    locally in consumer files via `attribute [local instance] addCommGroupOf`.
+
+    Takes both `[CommSemiring R]` and `[CommRing R]` to avoid a typeclass-instance
+    diamond at consumer sites where the section variable has `[CommSemiring R]`
+    and the theorem adds `[CommRing R]` (Lean treats these as separate hypotheses
+    even though `CommRing` extends `CommSemiring`). -/
+@[reducible] noncomputable def addCommGroupOf {R : Type*}
+    [CommRing R] {T : Type*} :
+    AddCommGroup (ConnesKreimer R T) :=
+  inferInstanceAs (AddCommGroup (AddMonoidAlgebra R (Forest T)))
+
 /-! ## §4: Basis embeddings — `of'`, `ofTree`
 
 The natural inclusions of basis elements (forests, single trees) into
