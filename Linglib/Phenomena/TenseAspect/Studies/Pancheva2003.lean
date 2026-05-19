@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Schema
-import Linglib.Theories.Semantics.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Basic
 import Linglib.Phenomena.TenseAspect.Studies.Kiparsky2002
 
 /-!
@@ -54,7 +54,7 @@ analysis uses.
 namespace Phenomena.TenseAspect.Studies.Pancheva2003
 
 open Data.Examples (LinguisticExample)
-open Semantics.Aspect.Core (PerfectType)
+open Semantics.Aspect (PerfectType)
 open Phenomena.TenseAspect.Studies.Kiparsky2002 (PerfectReading)
 
 -- BEGIN GENERATED EXAMPLES

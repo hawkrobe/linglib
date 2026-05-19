@@ -29,13 +29,13 @@ The difference is in how the threshold is determined:
 
 -/
 
-import Linglib.Theories.Semantics.Probabilistic.SDS.Core
+import Linglib.Theories.Semantics.Probabilistic.SDS.Basic
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdSemantics
 
 namespace Semantics.Probabilistic.SDS.ThresholdInstances
 
 open Semantics.Probabilistic.SDS.ThresholdSemantics
-open Semantics.Probabilistic.SDS.Core
+open Semantics.Probabilistic.SDS
 
 -- Threshold Support: Discretized [0,1]
 

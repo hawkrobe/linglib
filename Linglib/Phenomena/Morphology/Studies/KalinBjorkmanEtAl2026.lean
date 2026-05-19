@@ -4,7 +4,7 @@ import Linglib.Core.Morphology.MorphRule
 import Linglib.Phenomena.Morphology.Studies.ZwickyPullum1983
 import Linglib.Theories.Phonology.Prosodic.Word
 import Linglib.Core.Morphology.FormMeaningMapping
-import Linglib.Theories.Morphology.Nanosyntax.Core
+import Linglib.Theories.Morphology.Nanosyntax.Basic
 
 -- ============================================================================
 -- § 0b: PFM Substrate (was Theories/Morphology/PFM/Core.lean,

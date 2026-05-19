@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
+import Linglib.Theories.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Theories.Pragmatics.DecisionTheoretic.ScalarImplicature
 import Linglib.Core.Semantics.Presupposition
 import Mathlib.Algebra.Order.BigOperators.Group.Finset

@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.Nanosyntax.Core
+import Linglib.Theories.Morphology.Nanosyntax.Basic
 import Linglib.Typology.Indefinite
 import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.English.Indefinites

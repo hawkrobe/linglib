@@ -1,5 +1,5 @@
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
+import Linglib.Theories.Pragmatics.DecisionTheoretic.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!

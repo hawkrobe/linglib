@@ -2067,7 +2067,7 @@ import Linglib.Theories.Semantics.Dynamic.PLA.Quantifiers
 import Linglib.Theories.Semantics.Dynamic.PLA.Semantics
 import Linglib.Theories.Semantics.Dynamic.PLA.Update
 -- Theories: Decision-Theoretic Semantics (Merin 1999)
-import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
+import Linglib.Theories.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Theories.Pragmatics.DecisionTheoretic.ScalarImplicature
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Even
@@ -2086,7 +2086,7 @@ import Linglib.Theories.Pragmatics.RelevanceTheory.Relevance
 import Linglib.Theories.Pragmatics.RelevanceTheory.Ostension
 import Linglib.Theories.Pragmatics.RelevanceTheory.Comprehension
 -- Theories: TTR (Type Theory with Records)
-import Linglib.Theories.Semantics.TypeTheoretic.Core
+import Linglib.Theories.Semantics.TypeTheoretic.Basic
 import Linglib.Theories.Semantics.TypeTheoretic.Discourse
 -- Theories: Construction Grammar
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
@@ -2185,7 +2185,7 @@ import Linglib.Theories.Morphology.DM.Metathesis
 import Linglib.Theories.Morphology.DM.PostsyntacticDerivation
 import Linglib.Theories.Morphology.DM.LinearPostsyntax
 import Linglib.Theories.Morphology.DM.PostSyntacticOps
-import Linglib.Theories.Morphology.Nanosyntax.Core
+import Linglib.Theories.Morphology.Nanosyntax.Basic
 import Linglib.Theories.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
@@ -2359,7 +2359,7 @@ import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 import Linglib.Theories.Semantics.Tense.Perspective
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Theories.Semantics.Tense.ConditionalShift
-import Linglib.Theories.Semantics.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Basic
 import Linglib.Theories.Semantics.Aspect.Composition
 import Linglib.Theories.Semantics.Aspect.SubintervalProperty
 import Linglib.Theories.Semantics.Aspect.DegreeAchievement
@@ -2588,7 +2588,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity
 import Linglib.Phenomena.ScalarImplicatures.Studies.Spector2007
 import Linglib.Phenomena.ScalarImplicatures.Studies.Spector2016
 -- Theories: IBR
-import Linglib.Theories.Pragmatics.IBR.Core
+import Linglib.Theories.Pragmatics.IBR.Basic
 import Linglib.Theories.Pragmatics.IBR.Convergence
 import Linglib.Theories.Pragmatics.IBR.ScalarGames
 import Linglib.Theories.Pragmatics.IBR.RSABridge
@@ -2750,7 +2750,7 @@ import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Theories.Sociolinguistics.SocialMeaningGame
 -- Theories: SDS
 import Linglib.Theories.Semantics.Probabilistic.SDS.ConceptNode
-import Linglib.Theories.Semantics.Probabilistic.SDS.Core
+import Linglib.Theories.Semantics.Probabilistic.SDS.Basic
 import Linglib.Theories.Semantics.Probabilistic.SDS.GraphicalModel
 import Linglib.Theories.Semantics.Probabilistic.SDS.JointPosterior
 import Linglib.Theories.Semantics.Probabilistic.SDS.Marginalization

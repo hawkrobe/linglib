@@ -1,7 +1,7 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Time.Interval.Generalized
 import Linglib.Theories.Semantics.Entailment.Extremum
-import Linglib.Theories.Semantics.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Basic
 import Linglib.Theories.Semantics.Aspect.SubintervalProperty
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.TemporalExpressions
@@ -88,7 +88,7 @@ namespace Phenomena.TenseAspect.Studies.Rouillard2026
 open Core.Time
 open Core.Time.Interval
 open Semantics.Events
-open Semantics.Aspect.Core
+open Semantics.Aspect
 open Semantics.Aspect.SubintervalProperty
 open Features
 open Core.Scale

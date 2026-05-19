@@ -31,7 +31,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
 import Mathlib.Tactic.Ring
 
-namespace Semantics.Probabilistic.SDS.Core
+namespace Semantics.Probabilistic.SDS
 
 -- Core Typeclass: SDSConstraintSystem
 
@@ -400,4 +400,4 @@ def ConceptFeature.projectFeature {α Concept Feature : Type*}
     (cf : ConceptFeature Concept Feature) (sys : α) (f : Feature) : ℚ :=
   SDSConstraintSystem.expectation sys (λ c => cf.featureProb c f)
 
-end Semantics.Probabilistic.SDS.Core
+end Semantics.Probabilistic.SDS

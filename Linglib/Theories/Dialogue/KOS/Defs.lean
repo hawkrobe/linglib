@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Theories.Semantics.TypeTheoretic.Core
+import Linglib.Theories.Semantics.TypeTheoretic.Basic
 
 /-!
 # KOS: Type Definitions
@@ -15,7 +15,7 @@ Operations live in sibling files (`Basic`, `InquiryCycle`, `Grounding`,
 KOS is built on TTR (@cite{cooper-2023}). `LocProp` is a structural
 refinement of `TTRSign String Cont` (Cooper §2.5 ex 70): same
 `phon : String` + `cont : Cont` fields, plus dialogue-grade additions
-(`cat`, `cparams`, `qcparams`, `constits`). The `SubtypeOf` instance and
+(`cat`, `cparams`, `qcparams`, `constits`). The `Coe` instance and
 the forgetful projection `LocProp.toTTRSign` live with the type definition
 itself — `LocProp ⊐ TTRSign` is part of the substrate, not a downstream
 bridge file.
@@ -73,7 +73,7 @@ tags carry information our consumers find useful.
 
 namespace Dialogue.KOS
 
-open Semantics.TypeTheoretic (TTRSign SubtypeOf)
+open Semantics.TypeTheoretic (TTRSign)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Illocutionary Moves
@@ -215,8 +215,8 @@ def LocProp.toTTRSign {Cont : Type} (lp : LocProp Cont) : TTRSign String Cont wh
 
 /-- `LocProp Cont ⊐ TTRSign String Cont` is structural: every `LocProp`
 projects to a `TTRSign` via `LocProp.toTTRSign`. -/
-instance {Cont : Type} : SubtypeOf (LocProp Cont) (TTRSign String Cont) where
-  up := LocProp.toTTRSign
+instance {Cont : Type} : Coe (LocProp Cont) (TTRSign String Cont) where
+  coe := LocProp.toTTRSign
 
 /-- The projection preserves `phon`. -/
 @[simp] theorem LocProp.toTTRSign_phon {Cont : Type} (lp : LocProp Cont) :

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.TypeTheoretic.Core
+import Linglib.Theories.Semantics.TypeTheoretic.Basic
 import Linglib.Theories.Semantics.Dynamic.Connectives.CCP
 import Linglib.Core.Mood.IllocutionaryMood
 import Linglib.Features.ClauseForm
@@ -61,8 +61,8 @@ structure ForcedSign (Phon Cont : Type) extends TTRSign Phon Cont where
   illoc : IllocutionaryMood
 
 /-- ForcedSign ⊑ TTRSign (adding illoc = more fields = subtype). -/
-instance (Phon Cont : Type) : SubtypeOf (ForcedSign Phon Cont) (TTRSign Phon Cont) where
-  up := ForcedSign.toTTRSign
+instance (Phon Cont : Type) : Coe (ForcedSign Phon Cont) (TTRSign Phon Cont) where
+  coe := ForcedSign.toTTRSign
 
 /-- Bridge: `IllocutionaryMood` → form-level `ClauseForm`. The two
     question form distinctions (matrix vs embedded) are not visible from

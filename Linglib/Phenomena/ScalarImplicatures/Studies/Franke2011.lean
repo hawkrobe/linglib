@@ -11,7 +11,7 @@ General IBR theory (InterpGame, strategies, convergence) is in
 - Concrete examples (scalar implicature, free choice disjunction)
 -/
 
-import Linglib.Theories.Pragmatics.IBR.Core
+import Linglib.Theories.Pragmatics.IBR.Basic
 import Linglib.Theories.Pragmatics.IBR.ScalarGames
 
 namespace RSA.IBR

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Basic
 
 /-!
 # The Subinterval Property
@@ -26,7 +26,7 @@ namespace Semantics.Aspect.SubintervalProperty
 
 open Core.Time
 open Semantics.Events
-open Semantics.Aspect.Core
+open Semantics.Aspect
 
 variable {W Time : Type*} [LinearOrder Time]
 

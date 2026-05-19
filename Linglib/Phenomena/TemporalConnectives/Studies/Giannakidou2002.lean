@@ -1,6 +1,6 @@
 import Linglib.Typology.TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
-import Linglib.Theories.Semantics.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Basic
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives
@@ -69,7 +69,7 @@ namespace Giannakidou2002
 open Core.Time
 open Core.Time.Interval
 open Semantics.Events
-open Semantics.Aspect.Core
+open Semantics.Aspect
 open Semantics.Tense.TemporalConnectives
 
 variable {Time : Type*} [LinearOrder Time]

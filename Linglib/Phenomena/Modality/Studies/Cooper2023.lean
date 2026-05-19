@@ -888,8 +888,8 @@ theorem ancients_separate_beliefs :
 /-- The identity becomes explicit only in the "after" type.
 Structural consequence: the after-type is a subtype of the before-type
 (it has more fields/constraints). -/
-instance : SubtypeOf AncientsLTM_After AncientsLTM_Before where
-  up := AncientsLTM_After.toAncientsLTM_Before
+instance : Coe AncientsLTM_After AncientsLTM_Before where
+  coe := AncientsLTM_After.toAncientsLTM_Before
 
 /-- Learning Hesperus = Phosphorus is adding a constraint (more fields). -/
 theorem learning_adds_constraint (ltm : AncientsLTM_After) :
@@ -1262,7 +1262,7 @@ a boy and a dog (regardless of what is going on between them). -/
 example (E : Type) (Boy Dog : E → Prop) (Hug : E → E → Prop)
     (sit : BoyHugsDog E Boy Dog Hug) :
     BoyAndDog E Boy Dog :=
-  SubtypeOf.up sit
+  sit.toBoyAndDog
 
 end CorePhenomena
 

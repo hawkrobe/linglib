@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Basic
 import Linglib.Theories.Semantics.Aspect.SubintervalProperty
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
@@ -51,7 +51,7 @@ namespace Phenomena.TenseAspect.Studies.IatridouZeijlstra2021
 
 open Core.Time
 open Semantics.Events
-open Semantics.Aspect.Core
+open Semantics.Aspect
 open Semantics.Aspect.SubintervalProperty
 open Semantics.Tense.TemporalAdverbials (PTSConstraint AdverbialType)
 open Phenomena.TenseAspect.Studies.IatridouEtAl2001 (BoundaryKind)

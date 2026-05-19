@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
+import Linglib.Theories.Pragmatics.DecisionTheoretic.Basic
 
 /-!
 # Decision-Theoretic Semantics: Scalar Implicature (@cite{merin-1999} §3)

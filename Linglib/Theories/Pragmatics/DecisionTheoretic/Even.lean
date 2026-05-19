@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
+import Linglib.Theories.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 import Linglib.Theories.Semantics.Focus.Particles
 

@@ -670,7 +670,7 @@ theorem japanese_ato_matches_datum :
     sits inside the event's runtime in the actual world, while alternatives
     contain worlds where the continuation reaches a target. -/
 
-open Semantics.Aspect.Core
+open Semantics.Aspect
 open Semantics.Aspect.SubintervalProperty
 
 /-! **Imperfective paradox ↔ before non-veridicality: shared vacuous-∀ structure.**

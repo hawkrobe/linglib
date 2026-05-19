@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Discourse
 
 The TTR-typed instantiation of KOS substrate. `LocProp ⊐ TTRSign` is
 already structural in `KOS/Defs.lean` (via `LocProp.toTTRSign` and the
-`SubtypeOf` instance) — this file is not a "bridge" but a worked
+`Coe` instance) — this file is not a "bridge" but a worked
 instantiation pattern: how do we exercise the KOS conversational rules
 when facts are TTR Austinian propositions and questions are TTR
 question-bodies?
@@ -30,7 +30,7 @@ The Cooper-2023 ↔ Ginzburg-2012 genealogical bridge
 namespace Dialogue.KOS.Austinian
 
 open Semantics.TypeTheoretic (BCheckableAustinian CheckableAustinian
-  IsTrue IsFalse SubtypeOf)
+  IsTrue IsFalse)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Bool-Valued TTR Questions

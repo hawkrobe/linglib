@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Aspect.Core
+import Linglib.Theories.Semantics.Aspect.Basic
 
 /-!
 # @cite{del-prete-2013} — Imperfectivity and Habituality in Italian
@@ -61,7 +61,7 @@ the SOE conflicting with common knowledge (§8.7).
 
 namespace DelPrete2013
 
-open Semantics.Aspect.Core (ViewpointAspectB)
+open Semantics.Aspect (ViewpointAspectB)
 
 -- ═══ Reading Types ═══
 

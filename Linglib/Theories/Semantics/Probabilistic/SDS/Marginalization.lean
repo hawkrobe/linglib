@@ -36,14 +36,14 @@ This factorization enables:
 
 -/
 
-import Linglib.Theories.Semantics.Probabilistic.SDS.Core
+import Linglib.Theories.Semantics.Probabilistic.SDS.Basic
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances
 import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
 import Linglib.Theories.Semantics.Probabilistic.BayesianSemantics
 
 namespace Semantics.Probabilistic.SDS.Marginalization
 
-open Semantics.Probabilistic.SDS.Core
+open Semantics.Probabilistic.SDS
 open Semantics.Probabilistic.SDS.ThresholdInstances
 open Semantics.Probabilistic.SDS.ThresholdSemantics
 open Semantics.Montague.BayesianSemantics

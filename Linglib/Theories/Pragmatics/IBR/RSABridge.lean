@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.IBR.Core
+import Linglib.Theories.Pragmatics.IBR.Basic
 import Linglib.Theories.Pragmatics.RSA.Limits
 
 /-!

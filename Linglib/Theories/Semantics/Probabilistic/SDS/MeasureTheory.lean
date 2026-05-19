@@ -32,7 +32,7 @@ SDSConstraintSystem (discrete, ℚ) SDSMeasureSystem (continuous, ℝ)
 
 -/
 
-import Linglib.Theories.Semantics.Probabilistic.SDS.Core
+import Linglib.Theories.Semantics.Probabilistic.SDS.Basic
 
 namespace Semantics.Probabilistic.SDS.MeasureTheory
 
