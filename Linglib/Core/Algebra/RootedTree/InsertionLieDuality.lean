@@ -202,12 +202,27 @@ theorem IsDualPrimitive.convBracket_mem
       𝓡x.convMul_apply (toConv L₂) (toConv L₁),
       𝓡y.convMul_apply (toConv L₁) (toConv L₂),
       𝓡y.convMul_apply (toConv L₂) (toConv L₁)]
-  -- At this point: LHS is a difference of two sums over 𝓡xy.index
-  -- (= 𝓡x.index ×ˢ 𝓡y.index), each of the form Σ L_i (𝓡xy.left p) ·
-  -- L_j (𝓡xy.right p). Unfold 𝓡xy via Finset.sum_product and apply
-  -- IsDualPrimitive (h₁, h₂) to each `L_i (𝓡x.left · 𝓡y.left)` factor.
-  -- Cross-terms cancel under the L₁⋆L₂ - L₂⋆L₁ subtraction; remaining
-  -- terms collect into the RHS via counit identities + ring.
+  -- 𝓡xy.left (i,j) = 𝓡x.left i * 𝓡y.left j; 𝓡xy.right similarly.
+  -- 𝓡xy.index = 𝓡x.index ×ˢ 𝓡y.index.
+  -- Apply IsDualPrimitive h₁ to each L₁(𝓡x.left · 𝓡y.left), etc.
+  -- 𝓡xy.left p1 = 𝓡x.left p1.1 * 𝓡y.left p1.2 (by Coalgebra.Repr.mul def).
+  -- 𝓡xy.index = 𝓡x.index ×ˢ 𝓡y.index.
+  -- Force these definitional reductions to expose h₁, h₂ patterns.
+  -- Unfold 𝓡xy.left, 𝓡xy.right, 𝓡xy.index via Coalgebra.Repr.mul def.
+  show (∑ p ∈ (𝓡x.mul 𝓡y).index,
+          L₁ ((𝓡x.mul 𝓡y).left p) * L₂ ((𝓡x.mul 𝓡y).right p)) -
+       (∑ p ∈ (𝓡x.mul 𝓡y).index,
+          L₂ ((𝓡x.mul 𝓡y).left p) * L₁ ((𝓡x.mul 𝓡y).right p)) = _
+  -- Substrate gap: Sweedler expansion + counit collapses + ring.
+  -- Each L_i (𝓡xy.left p) = L_i (𝓡x.left p.1 * 𝓡y.left p.2) (by Repr.mul
+  -- def), expandable via h₁ / h₂ to a 2-term sum involving counit. After
+  -- distributing across both bracket-sides, cross terms cancel and
+  -- counit Σ-identities collapse to the RHS. Concretely:
+  -- * `simp_rw [show (𝓡x.mul 𝓡y).left = fun p => 𝓡x.left p.1 * 𝓡y.left p.2 from rfl, h₁ _ _, h₂ _ _]`
+  -- * `rw [Finset.sum_product]` to split double sums
+  -- * counit identity `Σ counit(𝓡y.left j) * counit(𝓡y.right j) = counit y`
+  -- * `ring` to close.
+  -- Estimate: ~50-80 more LOC. Deferred to next session.
   sorry
 
 end Bialgebra
