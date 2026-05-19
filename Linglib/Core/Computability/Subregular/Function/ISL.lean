@@ -12,51 +12,49 @@ import Linglib.Core.Computability.Subregular.Function.Subsequential
 # Input Strictly Local (ISL) Functions
 
 A function `f : List α → List β` is **k-Input Strictly Local** when each
-output block depends only on the **last k − 1 input symbols** plus the
-current input symbol — a strict bound on input-window memory @cite{chandlee-2014}
-@cite{chandlee-heinz-2018}.
-
-ISL is the most restrictive class of the function-level subregular
-hierarchy (@cite{aksenova-rawski-graf-heinz-2020} §2; @cite{meinhardt-mai-bakovic-mccollum-2024}
-Fig. 1). It captures local non-iterative phonological maps: Quechua
-postnasal voicing, English flapping, German final devoicing, etc. It is
-**properly contained** in the Output Strictly Local class (`OSL.lean`),
-which is in turn properly contained in the Subsequential class
-(`Subsequential.lean`); see `Hierarchy.lean` for the inclusion theorems.
-
-ISL does **not** capture iterative spreading (which requires output
-context — OSL), unbounded long-distance assimilation (which requires
-tier projections), bidirectional harmony (Weakly Deterministic class),
-or tone (which is non-subsequential per @cite{jardine-2016}).
-
-## Architectural parallel
-
-This file is the function-level analogue of `StrictlyLocal.lean` (which
-defines `IsStrictlyLocal k L : Prop := ∃ G, G.lang = L` for languages).
-We mirror the same witness-style: `IsInputStrictlyLocal k f : Prop :=
-∃ r : ISLRule k α β, r.apply = f`. The witness type `ISLRule` is the
-substantive content of the class — the bounded-window memory.
+output block depends only on the last `k - 1` input symbols plus the
+current input symbol. ISL is the most restrictive class of the
+function-level subregular hierarchy.
 
 ## Main definitions
 
-* `ISLRule k α β` — a k-ISL rule: a window-based output function
-  `(List α) → α → List β` that consumes the (k − 1)-symbol left context
-  plus the current symbol and emits an output block.
-* `ISLRule.apply r` — the induced string function `List α → List β`.
-* `IsInputStrictlyLocal k f` — predicate witness-style.
+* `ISLRule k α β` — a `k`-ISL rule: a window-based output function
+  `List α → α → List β` consuming the `k - 1`-symbol left context plus
+  the current input symbol and emitting an output block.
+* `ISLRule.apply` — the induced string function `List α → List β`.
+* `IsLeftInputStrictlyLocal k f`, `IsRightInputStrictlyLocal k f` —
+  witness predicates: there exists an `ISLRule k α β` whose `apply`
+  computes `f` (resp. via right-to-left scan).
+* `IsInputStrictlyLocal d k f` — direction-parameterised umbrella.
 
-## Reuse
+## Main results
 
-`Linglib/Core/StringHom.lean` provides letterwise homomorphisms
-(`StringHom α β := α → List β`). These are the **k = 1** specialisation
-of ISL — no left context. We do not yet provide the embedding
-`StringHom α β ≃ ISLRule 1 α β`; this is straightforward and lives in a
-follow-up `Function/StringHom.lean` bridge once a consumer needs it.
+* `isRightInputStrictlyLocal_iff_left_reverse` — the right class is the
+  reverse-conjugate of the left class.
+* `isLeftInputStrictlyLocal_left_subsequential` — every Left-ISL
+  function is Left-Subsequential, witnessed by `ISLRule.toSFST`.
+* `Core.StringHom.apply_isLeftInputStrictlyLocal_one`,
+  `Core.Tier.apply_isLeftInputStrictlyLocal_one` — letterwise
+  homomorphisms and tier projections are the `k = 1` specialisation.
+
+## Implementation notes
+
+The witness style `IsX k f := ∃ r : XRule k α β, r.apply = f` mirrors
+`IsStrictlyLocal k L := ∃ G, G.lang = L` from `StrictlyLocal.lean`. The
+`k` parameter is a type-level annotation only: `windowOutput` is
+unconstrained at the type level (compare `SLGrammar k α`); `applyAux`
+truncates the threaded window to length `k - 1`.
+
+## References
+
+* @cite{chandlee-2014}
+* @cite{chandlee-heinz-2018}
+* @cite{chandlee-eyraud-heinz-2015}
+* @cite{heinz-lai-2013}
+* @cite{jardine-2016}
 -/
 
 namespace Core.Computability.Subregular.Function
-
-export Core (Direction)
 
 variable {α β : Type*}
 
@@ -127,17 +125,15 @@ def apply (r : ISLRule k α β) (input : List α) : List β :=
 
 end ISLRule
 
-/-- A function `f : List α → List β` is **k-Left-Input-Strictly-Local**
-iff some `k`-ISL rule computes it via left-to-right scan (the canonical
-ISL direction in @cite{chandlee-heinz-2018}). Witness-style, mirroring
-`IsStrictlyLocal k L := ∃ G, G.lang = L` from `StrictlyLocal.lean`. -/
+/-- `f : List α → List β` is **k-Left-Input-Strictly-Local** iff some
+`k`-ISL rule computes it via left-to-right scan. -/
 def IsLeftInputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
   ∃ r : ISLRule k α β, r.apply = f
 
-/-- A function `f : List α → List β` is **k-Right-Input-Strictly-Local**
-iff some `k`-ISL rule computes it via right-to-left scan. Mirror image
-of the left class via the involution `f ↦ List.reverse ∘ f ∘ List.reverse`
-(see `isRightInputStrictlyLocal_iff_left_reverse`). -/
+/-- `f : List α → List β` is **k-Right-Input-Strictly-Local** iff some
+`k`-ISL rule computes it via right-to-left scan. Mirror image of the
+left class via `f ↦ List.reverse ∘ f ∘ List.reverse`; see
+`isRightInputStrictlyLocal_iff_left_reverse`. -/
 def IsRightInputStrictlyLocal (k : ℕ) (f : List α → List β) : Prop :=
   ∃ r : ISLRule k α β, (fun input => (r.apply input.reverse).reverse) = f
 
@@ -202,26 +198,20 @@ lemma isLeftInputStrictlyLocal_const_nil (k : ℕ) :
     show ([] : List β) ++ _ = []
     rw [List.nil_append, ih]
 
--- ============================================================================
--- § StringHom / Tier as the k = 1 Specialisation
--- ============================================================================
---
--- A `StringHom α β := α → List β` (letterwise homomorphism, no left context)
--- is exactly the `k = 1` ISL specialisation: the windowOutput's window
--- argument is always `[]` and only the current input symbol matters.
--- Tier projections (`Tier α β := α → Option β`) are the further erasing
--- specialisation. The bridges below derive the function-level subregular
--- classification of these foundational types from their definition,
--- closing the integration gap flagged by audit (cross-framework #2).
+/-! ### StringHom / Tier as the `k = 1` specialisation
+
+`StringHom α β := α → List β` is the `k = 1` specialisation: the window
+argument is always empty and only the current input symbol matters.
+`Tier α β := α → Option β` is the further erasing specialisation. -/
 
 /-- Embed a string homomorphism as a 1-ISL rule (no left context). The
 windowOutput ignores its window argument and behaves letterwise. -/
-def StringHomBridge.toISLRule (h : Core.StringHom α β) : ISLRule 1 α β where
+def ISLRule.ofStringHom (h : Core.StringHom α β) : ISLRule 1 α β where
   windowOutput := fun _ x => h x
 
-private lemma StringHomBridge.applyAux_eq (h : Core.StringHom α β)
+private lemma ISLRule.applyAux_ofStringHom (h : Core.StringHom α β)
     (window : List α) (xs : List α) :
-    (StringHomBridge.toISLRule h).applyAux window xs = Core.StringHom.apply h xs := by
+    (ISLRule.ofStringHom h).applyAux window xs = Core.StringHom.apply h xs := by
   induction xs generalizing window with
   | nil => rfl
   | cons x ys ih =>
@@ -231,26 +221,26 @@ private lemma StringHomBridge.applyAux_eq (h : Core.StringHom α β)
 
 /-- The 1-ISL rule constructed from `h` computes `h` on lists. Definitional
 up to `applyAux` unfolding; the inductive proof handles the window-threading. -/
-@[simp] theorem StringHomBridge.toISLRule_apply (h : Core.StringHom α β) :
-    (StringHomBridge.toISLRule h).apply = Core.StringHom.apply h := by
+@[simp] theorem ISLRule.ofStringHom_apply (h : Core.StringHom α β) :
+    (ISLRule.ofStringHom h).apply = Core.StringHom.apply h := by
   funext xs
-  show (StringHomBridge.toISLRule h).applyAux [] xs = _
-  exact StringHomBridge.applyAux_eq h [] xs
+  show (ISLRule.ofStringHom h).applyAux [] xs = _
+  exact ISLRule.applyAux_ofStringHom h [] xs
 
 /-- **Every string homomorphism is 1-Left-ISL.** The substrate-level claim
 that `StringHom α β` and `ISLRule 1 α β` denote the same function class. -/
 theorem Core.StringHom.apply_isLeftInputStrictlyLocal_one (h : Core.StringHom α β) :
     IsLeftInputStrictlyLocal 1 (Core.StringHom.apply h) :=
-  ⟨StringHomBridge.toISLRule h, StringHomBridge.toISLRule_apply h⟩
+  ⟨ISLRule.ofStringHom h, ISLRule.ofStringHom_apply h⟩
 
-/-- **Every tier projection is 1-Left-ISL.** Tier projections (per
-`Core/StringHom.lean`'s `Tier α β := α → Option β`) are letterwise
-erasing, hence a special case of the StringHom bridge. -/
+/-- **Every tier projection is 1-Left-ISL.** Tier projections are
+letterwise erasing (`Tier α β := α → Option β`), hence a special case
+of `ISLRule.ofStringHom` via `fun x => (T x).toList`. -/
 theorem Core.Tier.apply_isLeftInputStrictlyLocal_one (T : Core.Tier α β) :
     IsLeftInputStrictlyLocal 1 (Core.Tier.apply T) := by
   -- Tier.apply T = filterMap T = flatMap (Option.toList ∘ T) = StringHom.apply (Option.toList ∘ T)
-  refine ⟨StringHomBridge.toISLRule (fun x => (T x).toList), ?_⟩
-  rw [StringHomBridge.toISLRule_apply]
+  refine ⟨ISLRule.ofStringHom (fun x => (T x).toList), ?_⟩
+  rw [ISLRule.ofStringHom_apply]
   funext xs
   show List.flatMap (fun x => (T x).toList) xs = List.filterMap T xs
   induction xs with
@@ -264,15 +254,12 @@ theorem Core.Tier.apply_isLeftInputStrictlyLocal_one (T : Core.Tier α β) :
       simp only [List.flatMap_cons, List.filterMap_cons, h, Option.toList_some,
         List.cons_append, List.nil_append, ih]
 
-/-! ## ISL → Subsequential
+/-! ### ISL ⊆ Subsequential
 
-Construction-with-cast co-located on the source side: `ISLRule.toSFST` is
-the SFST view of an ISL rule, and the inclusion proof rides on it. This
-diverges from the language-side convention "cast lives with the larger
-class" because the dependency direction (SFST primitive in
-`Subsequential.lean`; ISL projects into it) forces the construction's
-home file to also house the cast. Mathlib precedent for `X.toY` living
-with the source X: `MulHom.toAddHom`, `Subgroup.toSubmonoid`. -/
+`ISLRule.toSFST` projects an ISL rule into an SFST; the inclusion rides
+on the run-equality. Co-located on the source side because the
+dependency direction (SFST in `Subsequential.lean`; ISL projects into
+it) forces both construction and cast into this file. -/
 
 section ISLToSubseq
 
@@ -302,9 +289,7 @@ theorem ISLRule.toSFST_run_eq_apply {k : ℕ} (r : ISLRule k α β) :
               ++ ISLRule.applyAux r (lastN (k - 1) (window ++ [x])) xs
     rw [ih]
 
-/-- **Left-ISL ⊆ Left-Subsequential**: every Left-ISL function is
-computed by some SFST scanning left-to-right (@cite{chandlee-heinz-2018}
-§4). -/
+/-- **Left-ISL ⊆ Left-Subsequential.** -/
 theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ}
     {f : List α → List β} (h : IsLeftInputStrictlyLocal k f) :
     IsLeftSubsequential f := by
