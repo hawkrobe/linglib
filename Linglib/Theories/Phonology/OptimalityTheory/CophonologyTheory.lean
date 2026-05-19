@@ -22,7 +22,7 @@ specifies a constraint subranking that applies when that VI wins insertion.
 This gives DM's Vocabulary Item a four-part structure:
 1. **M** — morphosyntactic features (= `contextMatch` in `VocabItem`)
 2. **F** — phonological content (= `exponent`)
-3. **P** — prosodic subcategorization (not formalized here; see `RichExponent`)
+3. **P** — prosodic subcategorization (not formalized here)
 4. **R** — constraint subranking (= `subranking` below)
 
 ## Connection to linglib

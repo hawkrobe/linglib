@@ -7,7 +7,6 @@ import Linglib.Theories.Phonology.Prosodic.Syllable.Foot
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Phonology.OptimalityTheory.Stratal
 import Linglib.Theories.Phonology.Prosodic.Word
-import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Phonology.Prosodic.Moraic.CompensatoryLengthening
 open Core.Case.Allomorphy
 
@@ -500,7 +499,34 @@ section WordLevel
 
 open Phonology.Stratal
 open Phonology.ProsodicWord
-open Morphology.DM.RichRepresentation
+
+-- ────────────────────────────────────────────────────────────────────
+-- Rich phonological exponent substrate (@cite{alderete-1999})
+-- ────────────────────────────────────────────────────────────────────
+
+/-- Prosodic prespecification for a morphological exponent.
+    `none` means the property is unspecified (determined by the
+    phonological grammar alone). -/
+structure ProsodicPrespec where
+  inherentStress : Option Bool := none
+  deriving DecidableEq, Repr
+
+/-- A rich exponent: segmental content plus optional prosodic
+    prespecification. Used here for Telugu singular *-ni*'s lexically
+    prespecified stress (@cite{aitha-2026} §5; precedent
+    @cite{alderete-1999} on English stress-shifting suffixes). -/
+structure RichExponent where
+  segments : String
+  prosody : ProsodicPrespec := {}
+  deriving DecidableEq, Repr
+
+/-- Create a stressed exponent. -/
+def RichExponent.stressed (s : String) : RichExponent :=
+  ⟨s, { inherentStress := some true }⟩
+
+-- ────────────────────────────────────────────────────────────────────
+-- Word-level phonology
+-- ────────────────────────────────────────────────────────────────────
 
 /-- The singular suffix *-ni* carries prespecified stress.
     This prespecification, interacting with FT-BIN(μ) and IDENT-STRESS
