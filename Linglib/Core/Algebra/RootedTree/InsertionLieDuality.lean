@@ -177,18 +177,30 @@ theorem deltaSingleton_of'_other (T : Nonplanar α)
   exact if_neg hF
 
 /-- The delta functional on a single tree is a **dual primitive** —
-    i.e., it satisfies the derivation-like identity
-    `δ_T(x * y) = δ_T(x) · ε(y) + ε(x) · δ_T(y)`.
+    i.e., it satisfies `δ_T(x * y) = δ_T(x) · ε(y) + ε(x) · δ_T(y)`.
 
     This is the bialgebraic content of MCB's observation (book p. 79)
     that primitives in `H^∨` are exactly the single-tree deltas.
 
-    **Sorry**: proof requires a direct computation. The product `x * y`
-    in `ConnesKreimer R (Nonplanar α)` is the disjoint-union (`+` on
-    forests) convolution. The coefficient of `{T}` in `x * y` is
-    nonzero only when one of `x, y` contributes the empty forest and
-    the other contributes `{T}` — matching the RHS via the counit
-    extracting the empty-forest coefficient. -/
+    **Sorry**. Proof structure (conceptually straightforward but
+    Lean-elaboration-heavy):
+
+    1. **Bilinear reduction** to basis pairs `x = of' F`, `y = of' G`.
+       Both sides are linear in `x` and `y` (via algebra-hom-ness of
+       `counit` and linearity of `deltaSingleton`). Implementation needs
+       explicit type management — `ConnesKreimer R (Nonplanar α)` is a
+       def alias for `Forest →₀ R`, and mathlib's `Finsupp.induction_linear`
+       motive types as `Finsupp`, dropping the algebra structure.
+
+    2. **Basis pair**: `of' F * of' G = of' (F + G)` (`of'_add`). Case
+       on `F + G = {T}`:
+       * Yes: `card F + card G = 1`, so one side is `0`, the other is
+         `{T}`; LHS = 1, RHS = 1 (exactly one term contributes 1).
+       * No: LHS = 0 by `deltaSingleton_of'_other`; RHS = 0 by case
+         analysis (both terms would force `F + G = {T}`, contradiction).
+
+    Deferred to a follow-up session that builds bilinear-reduction
+    infrastructure for the `ConnesKreimer` algebra alias. -/
 theorem deltaSingleton_isDualPrimitive (T : Nonplanar α) :
     IsDualPrimitive (deltaSingleton (R := R) T) := by
   sorry
