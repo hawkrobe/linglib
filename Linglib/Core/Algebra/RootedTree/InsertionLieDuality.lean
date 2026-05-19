@@ -186,6 +186,28 @@ theorem IsDualPrimitive.convBracket_mem
   let 𝓡x := Coalgebra.Repr.arbitrary R x
   let 𝓡y := Coalgebra.Repr.arbitrary R y
   let 𝓡xy := 𝓡x.mul 𝓡y
+  -- Unfold convBracket. The application of (a - b).ofConv at z equals
+  -- a.ofConv z - b.ofConv z (LinearMap subtraction is pointwise).
+  have unfold_app : ∀ z : H,
+      convBracket L₁ L₂ z =
+        (toConv L₁ * toConv L₂ : WithConv (H →ₗ[R] R)).ofConv z -
+        (toConv L₂ * toConv L₁ : WithConv (H →ₗ[R] R)).ofConv z := fun z => by
+    show ((toConv L₁ * toConv L₂ - toConv L₂ * toConv L₁ : WithConv _).ofConv) z = _
+    rfl
+  rw [unfold_app, unfold_app, unfold_app]
+  -- Expand each (L_i * L_j).ofConv z via convMul_apply.
+  rw [𝓡xy.convMul_apply (toConv L₁) (toConv L₂),
+      𝓡xy.convMul_apply (toConv L₂) (toConv L₁),
+      𝓡x.convMul_apply (toConv L₁) (toConv L₂),
+      𝓡x.convMul_apply (toConv L₂) (toConv L₁),
+      𝓡y.convMul_apply (toConv L₁) (toConv L₂),
+      𝓡y.convMul_apply (toConv L₂) (toConv L₁)]
+  -- At this point: LHS is a difference of two sums over 𝓡xy.index
+  -- (= 𝓡x.index ×ˢ 𝓡y.index), each of the form Σ L_i (𝓡xy.left p) ·
+  -- L_j (𝓡xy.right p). Unfold 𝓡xy via Finset.sum_product and apply
+  -- IsDualPrimitive (h₁, h₂) to each `L_i (𝓡x.left · 𝓡y.left)` factor.
+  -- Cross-terms cancel under the L₁⋆L₂ - L₂⋆L₁ subtraction; remaining
+  -- terms collect into the RHS via counit identities + ring.
   sorry
 
 end Bialgebra
