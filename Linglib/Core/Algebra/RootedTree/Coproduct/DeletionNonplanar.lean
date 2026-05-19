@@ -63,15 +63,16 @@ substrate Δ^d ≡ Δ^ρ (modulo the embedding) has strict coassoc.
 ## Status
 
 `[UPSTREAM]` candidate. Sorry-free except for:
-* `Nonplanar.stripTrace_planarEquiv` — PlanarEquiv invariance of the
-  tree-level strip (sorry'd; structural induction on PlanarStep).
 * `comulDN_embedInl_eq_comulAlgHomN` — the equivalence theorem
   (sorry'd; combinatorial bijection between Δ^c cut summands of
-  `embed T` and Δ^ρ cut summands of T).
+  `embed T` and Δ^ρ cut summands of T). The left-channel half is
+  handled by `stripTraceAlgHom_comp_embedInlAlgHom` (sorry-free);
+  the deeper right-channel trace-removal is the remaining gap.
 
-Both sorries are statements of true mathematical facts; the proofs are
-deferred. The substrate (definitions, types, downstream API surface)
-is closed.
+The PlanarEquiv invariance of trace-stripping is now sorry-free
+(`stripTraceQuotient_planarEquiv`, via structural induction on
+PlanarStep + `List.Perm.filterMap`). The substrate (definitions,
+types, downstream API surface, strip-inverts-embed lemma) is closed.
 -/
 
 namespace RootedTree
@@ -311,6 +312,87 @@ noncomputable def embedInlAlgHom :
   rw [Finsupp.mapDomain_single]
   rfl
 
+/-! ### Strip inverts embed
+
+`Planar.stripTrace (Planar.map Sum.inl p) = some p` — embedding via
+`Sum.inl` then stripping recovers the original. Proven by mutual
+structural induction on the planar tree / its child list. Descends to
+the Nonplanar level via `Quotient.inductionOn`, and lifts to the
+algebra-hom level: `stripTraceAlgHom ∘ embedInlAlgHom = id`. -/
+
+mutual
+
+private theorem Planar.stripTrace_map_inl :
+    ∀ (p : Planar α), Planar.stripTrace (Planar.map (Sum.inl : α → α ⊕ β) p) = some p
+  | .node a cs => by
+    show Planar.stripTrace (.node (Sum.inl a) (Planar.mapList Sum.inl cs)) = _
+    rw [Planar.stripTrace_inl]
+    congr 1
+    show Planar.node a (Planar.stripTraceList (Planar.mapList Sum.inl cs)) =
+         Planar.node a cs
+    rw [Planar.stripTraceList_mapList_inl]
+
+private theorem Planar.stripTraceList_mapList_inl :
+    ∀ (cs : List (Planar α)),
+      Planar.stripTraceList (Planar.mapList (Sum.inl : α → α ⊕ β) cs) = cs
+  | [] => rfl
+  | c :: cs => by
+    show (match Planar.stripTrace (Planar.map Sum.inl c) with
+           | none => Planar.stripTraceList (Planar.mapList Sum.inl cs)
+           | some t => t :: Planar.stripTraceList (Planar.mapList Sum.inl cs)) =
+         c :: cs
+    rw [Planar.stripTrace_map_inl c, Planar.stripTraceList_mapList_inl cs]
+
+end
+
+theorem Nonplanar.stripTrace_embedInl (T : Nonplanar α) :
+    Nonplanar.stripTrace (Nonplanar.embedInl (β := β) T) = some T := by
+  refine Quotient.inductionOn T ?_
+  intro p
+  show Nonplanar.stripTrace (Nonplanar.map Sum.inl (Nonplanar.mk p)) = some (Nonplanar.mk p)
+  rw [Nonplanar.map_mk]
+  show ((Planar.stripTrace (Planar.map Sum.inl p)).map Nonplanar.mk : Option (Nonplanar α)) =
+       some (Nonplanar.mk p)
+  rw [Planar.stripTrace_map_inl]
+  rfl
+
+/-- `stripTrace ∘ embedInl = some` (as forest-level filterMap = identity).
+    This is the multiset-level version of `Nonplanar.stripTrace_embedInl`. -/
+theorem stripTrace_embedInl_filterMap (F : Forest (Nonplanar α)) :
+    (F.map (Nonplanar.embedInl (β := β))).filterMap Nonplanar.stripTrace = F := by
+  rw [Multiset.filterMap_map]
+  have h : (Nonplanar.stripTrace ∘ (Nonplanar.embedInl (α := α) (β := β))) = some := by
+    funext T
+    exact Nonplanar.stripTrace_embedInl T
+  rw [h, Multiset.filterMap_some]
+
+/-- `stripTraceAlgHom ∘ embedInlAlgHom = id`. The strip inverts the
+    Sum.inl embedding at the AlgHom level: trace-free trees survive a
+    round-trip through embedding + stripping. -/
+theorem stripTraceAlgHom_comp_embedInlAlgHom :
+    (stripTraceAlgHom (R := R) (α := α) (β := β)).comp embedInlAlgHom =
+      AlgHom.id R (ConnesKreimer R (Nonplanar α)) := by
+  apply AlgHom.ext
+  intro x
+  show stripTraceAlgHom (embedInlAlgHom x) = x
+  refine Finsupp.induction_linear x ?_ ?_ ?_
+  · show stripTraceAlgHom (embedInlAlgHom (0 : ConnesKreimer R (Nonplanar α))) = 0
+    rw [map_zero, map_zero]
+  · intro a b ha hb
+    let a' : ConnesKreimer R (Nonplanar α) := a
+    let b' : ConnesKreimer R (Nonplanar α) := b
+    have ha' : stripTraceAlgHom (embedInlAlgHom a') = a' := ha
+    have hb' : stripTraceAlgHom (embedInlAlgHom b') = b' := hb
+    show stripTraceAlgHom (embedInlAlgHom (a' + b')) = a' + b'
+    rw [map_add, map_add, ha', hb']
+  · intro F r
+    show stripTraceAlgHom (embedInlAlgHom (Finsupp.single F r)) = Finsupp.single F r
+    have hsingle : (Finsupp.single F r : ConnesKreimer R (Nonplanar α)) =
+        r • (of' (R := R) F : ConnesKreimer R (Nonplanar α)) :=
+      (Finsupp.smul_single_one F r).symm
+    rw [hsingle, map_smul, map_smul, embedInlAlgHom_of', stripTraceAlgHom_of',
+        stripTrace_embedInl_filterMap]
+
 /-! ## Δ^d definition
 
 `comulDN := (Π_{d,c} ⊗ Π_{d,c}) ∘ Δ^c` — MCB Lemma 1.3.10 by
@@ -348,15 +430,30 @@ strip is enough. -/
 
     `comulDN ∘ embed_{Sum.inl} = comulAlgHomN`
 
-    TODO: combinatorial bijection between Δ^c cut summands of
-    `embedInl T` (in `Nonplanar (α ⊕ β)`) and Δ^ρ cut summands of
-    `T` (in `Nonplanar α`). The strip realizes the bijection on
-    remainders; cut-forest components are Sum.inl-only by construction
-    (since the original tree is Sum.inl-only) so strip is identity on
-    them.
+    **Sorry**: the substantive content of MCB Lemma 1.3.10 in our n-ary
+    setting (with Π_{d,p} = identity). Closing requires the
+    cut-bijection lemma:
 
-    Sorry-fenced; the statement is the load-bearing API surface for
-    downstream consumers wanting `Δ^d ≡ Δ^ρ`. -/
+    `cutSummandsCN τ (Nonplanar.embedInl T) =
+        (cutSummandsN T).map (fun (F, T') => (F.map embedInl, ?embed-T'-with-traces))`
+
+    i.e., Δ^c cuts of `embedInl T` correspond bijectively to Δ^ρ cuts
+    of `T`, with the right-channel-trunk carrying traceLeaf placeholders
+    in the Δ^c version. After (strip ⊗ strip): the strip on the left
+    channel inverts `embedInl` (via `stripTraceAlgHom_comp_embedInlAlgHom`
+    above), and the strip on the right channel removes the traceLeaf
+    placeholders, recovering the Δ^ρ trunk.
+
+    The bijection itself requires either: (a) careful structural
+    induction on the planar tree at the `cutSummandsCP` vs
+    `cutSummandsP` level (~200-300 LOC), or (b) an abstract argument
+    via the extractC vs extractP comparison + the generic `cutSummandsG`
+    naturality. Both routes are tractable but exceed this session's
+    scope.
+
+    The scaffolding `stripTraceAlgHom_comp_embedInlAlgHom` (above)
+    handles the left-channel half (strip inverts embed); the
+    right-channel trace-removal is the deeper part. -/
 theorem comulDN_embedInl_eq_comulAlgHomN (τ : Nonplanar (α ⊕ β) → β) :
     (comulDN (R := R) τ).comp (embedInlAlgHom (R := R) (β := β)) =
       comulAlgHomN := by
