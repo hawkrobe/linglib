@@ -10,43 +10,58 @@ import Linglib.Core.Computability.Subregular.Function.Subsequential
 # Output Strictly Local (OSL) Functions
 
 A function `f : List α → List β` is **k-Output Strictly Local** when each
-output block depends only on the **last k − 1 output symbols** plus the
-current input symbol @cite{chandlee-eyraud-heinz-2015}. The OSL class
-captures iterative spreading processes — patterns where the spreading
-feature value of segment *i* depends on the spreading feature value of
-segment *i − 1* (already determined by the OSL function), not on the
-underlying input value.
-
-Like Subsequential, OSL has **left** and **right** variants depending on
-scan direction. Left-OSL: each output block depends on previous output
-(processed left-to-right). Right-OSL: each output block depends on
-following output (process right-to-left).
-
-OSL is **properly contained** in Subsequential and **properly contains**
-ISL @cite{aksenova-rawski-graf-heinz-2020}. The proper containments are:
-* ISL ⊊ OSL: many iterative spreading patterns (e.g. progressive nasal
-  harmony) are OSL but not ISL — output decisions feed forward.
-* OSL ⊊ Subsequential: subsequential FSTs can carry richer state than
-  bounded output windows; iterative-with-blocking patterns may need this.
-
-Bidirectional iterative harmony patterns (Maasai, Turkana ATR harmony)
-are above all unidirectional OSL classes — they need the Weakly
-Deterministic class @cite{heinz-lai-2013} @cite{meinhardt-mai-bakovic-mccollum-2024}.
+output block depends only on the last `k - 1` *output* symbols plus the
+current input symbol. OSL captures iterative spreading processes —
+progressive nasal harmony, vowel harmony, tone spreading — where the
+decision at position *i* feeds forward to the decision at position
+*i + 1*. The function-level subregular hierarchy at this layer is
+ISL ⊊ OSL ⊊ Subsequential; bidirectional iterative harmony (Maasai,
+Turkana ATR) is Weakly Deterministic (composition of two
+opposite-direction subsequentials) rather than OSL in either direction.
 
 ## Main definitions
 
-* `OSLRule k α β` — a k-OSL rule: a window-based output function
-  `(List β) → α → List β` that consumes the (k − 1)-symbol output
-  context plus the current input symbol and emits an output block.
-* `OSLRule.apply r` — the induced string function `List α → List β`,
-  threading the output window left-to-right.
-* `IsLeftOutputStrictlyLocal k f`, `IsRightOutputStrictlyLocal k f`,
-  `IsOutputStrictlyLocal d k f` — Direction-parameterised predicates.
+* `OSLRule k α β` — a `k`-OSL rule: a window-based output function
+  `List β → α → List β` consuming the (k - 1)-symbol output context
+  plus the current input symbol and emitting an output block.
+* `OSLRule.apply` — the induced string function, threading the output
+  window left-to-right.
+* `IsLeftOutputStrictlyLocal k f`, `IsRightOutputStrictlyLocal k f` —
+  witness predicates for each scan direction.
+* `IsOutputStrictlyLocal d k f` — direction-parameterised umbrella.
+
+## Main results
+
+* `isRightOutputStrictlyLocal_iff_left_reverse` — Right-OSL is the
+  reverse-conjugate of Left-OSL.
+* `isLeftOutputStrictlyLocal_left_subsequential` — Left-OSL ⊆
+  Left-Subsequential, via `OSLRule.toSFST`.
+
+## Implementation notes
+
+The witness style `IsX k f := ∃ r : OSLRule k α β, r.apply = f` mirrors
+`IsLeftInputStrictlyLocal` in `ISL.lean`. Unlike ISL, whose window is
+over input symbols and threads independently of what was emitted, the
+OSL window is over **already-emitted output** — each step truncates
+`outputWindow ++ windowOutput outputWindow x` to the last `k - 1`
+symbols before recursing. The `k` parameter is a type-level annotation;
+window-length truncation in `applyAux` is what enforces it semantically.
+
+`OSLRule.toSFST` deliberately repeats `r.windowOutput outputWindow x`
+in the two tuple components of `step` rather than `let`-binding it, so
+that `(step ow x).2` reduces definitionally for `toSFST_run_eq_apply`.
+
+## References
+
+* @cite{chandlee-eyraud-heinz-2015}
+* @cite{aksenova-rawski-graf-heinz-2020}
+* @cite{heinz-lai-2013}
+* @cite{meinhardt-mai-bakovic-mccollum-2024}
 -/
 
 namespace Core.Computability.Subregular.Function
 
-variable {α β : Type}
+variable {α β : Type*}
 
 /-- A **k-Output-Strictly-Local rule** over input alphabet `α` and
 output alphabet `β`. The single field `windowOutput` consumes the
@@ -158,50 +173,64 @@ theorem isRightOutputStrictlyLocal_iff_left_reverse {k : ℕ}
     rw [List.reverse_reverse] at h
     rw [h, List.reverse_reverse]
 
-/-! ## OSL → Subsequential
+/-! ### OSL ⊆ Subsequential
 
-Construction-with-cast co-located on the source side, mirroring the ISL
-treatment. -/
+`OSLRule.toFinSFST` projects an OSL rule into an SFST whose state is
+the bounded output window (length ≤ k − 1). The inclusion rides on the
+run-equality plus the `Fintype` instance for the bounded-window subtype
+(reusing `fintypeListLengthLE` from `ISL.lean`). Co-located on the
+source side because the dependency direction (SFST in
+`Subsequential.lean`; OSL projects into it) forces both construction
+and cast into this file.
+
+The output alphabet `[Fintype β]` constraint matches @cite{mohri-1997}'s
+finite-alphabet assumption — the state space (a bounded output window)
+is finite precisely when the output alphabet is. -/
 
 /-- Construction: every Left-OSL rule induces an SFST whose state is the
-output window (length ≤ k − 1) and whose `finalOutput` is empty.
+output window — a list of output symbols of length at most `k − 1` —
+and whose `finalOutput` is empty.
 
 The `windowOutput` call is repeated in the two tuple components rather
 than `let`-bound so that `(step ow x).2` reduces definitionally to
-`r.windowOutput ow x` for the proof of `toSFST_run_eq_apply`. -/
-def OSLRule.toSFST {k : ℕ} (r : OSLRule k α β) : SFST (List β) α β where
-  initial := []
-  step outputWindow x :=
-    (lastN (k - 1) (outputWindow ++ r.windowOutput outputWindow x),
-     r.windowOutput outputWindow x)
+`r.windowOutput ow x` for the proof of `toFinSFST_run_eq_apply`. -/
+def OSLRule.toFinSFST {k : ℕ} (r : OSLRule k α β) :
+    SFST {l : List β // l.length ≤ k - 1} α β where
+  initial := ⟨[], Nat.zero_le _⟩
+  step w x :=
+    (⟨lastN (k - 1) (w.val ++ r.windowOutput w.val x), lastN_length_le _ _⟩,
+     r.windowOutput w.val x)
   finalOutput _ := []
 
 /-- The SFST induced by an OSL rule computes the same string function. -/
-theorem OSLRule.toSFST_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
-    r.toSFST.run = r.apply := by
+theorem OSLRule.toFinSFST_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
+    r.toFinSFST.run = r.apply := by
   funext input
-  show SFST.runFrom r.toSFST [] input = OSLRule.applyAux r [] input
-  suffices h : ∀ outputWindow : List β,
-      SFST.runFrom r.toSFST outputWindow input
-        = OSLRule.applyAux r outputWindow input from h []
-  intro outputWindow
-  induction input generalizing outputWindow with
+  show SFST.runFrom r.toFinSFST ⟨[], Nat.zero_le _⟩ input
+         = OSLRule.applyAux r [] input
+  suffices h : ∀ w : {l : List β // l.length ≤ k - 1},
+      SFST.runFrom r.toFinSFST w input = OSLRule.applyAux r w.val input from h _
+  intro w
+  induction input generalizing w with
   | nil => rfl
   | cons x xs ih =>
-    change r.windowOutput outputWindow x
-              ++ SFST.runFrom r.toSFST
-                  (lastN (k - 1) (outputWindow ++ r.windowOutput outputWindow x)) xs
-         = r.windowOutput outputWindow x
+    change r.windowOutput w.val x
+              ++ SFST.runFrom r.toFinSFST
+                  ⟨lastN (k - 1) (w.val ++ r.windowOutput w.val x),
+                   lastN_length_le _ _⟩ xs
+         = r.windowOutput w.val x
               ++ OSLRule.applyAux r
-                  (lastN (k - 1) (outputWindow ++ r.windowOutput outputWindow x)) xs
-    rw [ih]
+                  (lastN (k - 1) (w.val ++ r.windowOutput w.val x)) xs
+    exact congrArg _ (ih _)
 
-/-- **Left-OSL ⊆ Left-Subsequential**: every Left-OSL function is
-computed by some SFST scanning left-to-right. -/
-theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ}
+/-- **Left-OSL ⊆ Left-Subsequential** (over a finite output alphabet).
+The `[Fintype β]` matches @cite{mohri-1997}'s finite-alphabet assumption
+and lets the bounded output window serve as a finite state space. -/
+theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ} [Fintype β]
     {f : List α → List β} (h : IsLeftOutputStrictlyLocal k f) :
     IsLeftSubsequential f := by
   obtain ⟨r, hr⟩ := h
-  exact ⟨List β, r.toSFST, hr ▸ r.toSFST_run_eq_apply⟩
+  have heq : r.toFinSFST.run = f := r.toFinSFST_run_eq_apply.trans hr
+  exact heq ▸ r.toFinSFST.isLeftSubsequential
 
 end Core.Computability.Subregular.Function

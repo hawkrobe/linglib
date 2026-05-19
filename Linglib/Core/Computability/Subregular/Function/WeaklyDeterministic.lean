@@ -93,7 +93,7 @@ suffices for both:
 
 namespace Core.Computability.Subregular.Function
 
-variable {α : Type}
+variable {α : Type*}
 
 /-- **Weakly Deterministic** function class. A function `f : List α →
 List α` is WD iff it decomposes as the composition of two
@@ -112,60 +112,60 @@ def IsWeaklyDeterministic (f : List α → List α) : Prop :=
   (∃ g h : List α → List α,
     IsRightSubsequential h ∧ IsLeftSubsequential g ∧ f = g ∘ h)
 
+/-- The trivial pass-through SFST over alphabet `α`: a one-state machine
+that emits each input symbol unchanged. Its `run` is the identity, which
+makes it a convenient witness for `IsLeftSubsequential id` / `IsRightSubsequential id`. -/
+private def idSFST (α : Type*) : SFST Unit α α where
+  initial := ()
+  step _ x := ((), [x])
+  finalOutput _ := []
+
+private lemma idSFST_runFrom (α : Type*) (s : Unit) (xs : List α) :
+    (idSFST α).runFrom s xs = xs := by
+  induction xs generalizing s with
+  | nil => rfl
+  | cons y ys ih =>
+    show [y] ++ (idSFST α).runFrom () ys = y :: ys
+    exact congrArg (y :: ·) (ih _)
+
+private lemma idSFST_run (α : Type*) : (idSFST α).run = id := by
+  funext xs; exact idSFST_runFrom α () xs
+
+private lemma idSFST_runRight (α : Type*) : (idSFST α).runRight = id := by
+  funext xs
+  show ((idSFST α).run xs.reverse).reverse = id xs
+  rw [idSFST_run α]
+  exact List.reverse_reverse xs
+
+/-- The identity is Left-Subsequential (witnessed by the trivial
+one-state pass-through SFST). -/
+theorem isLeftSubsequential_id {α : Type*} :
+    IsLeftSubsequential (id : List α → List α) :=
+  idSFST_run α ▸ (idSFST α).isLeftSubsequential
+
+/-- The identity is Right-Subsequential (witnessed by the trivial
+one-state pass-through SFST). -/
+theorem isRightSubsequential_id {α : Type*} :
+    IsRightSubsequential (id : List α → List α) :=
+  idSFST_runRight α ▸ (idSFST α).isRightSubsequential
+
 /-- Every Left-Subsequential function is WD: take the inner function as
 itself and the outer function as the identity (Right-Subsequential
 trivially via the identity FST). The composition `id ∘ f = f`. -/
 theorem IsLeftSubsequential.isWeaklyDeterministic
     {f : List α → List α} (hf : IsLeftSubsequential f) :
     IsWeaklyDeterministic f := by
-  refine Or.inl ⟨id, f, hf, ?_, ?_⟩
-  · -- identity is Right-Subsequential: pick the trivial 1-state SFST
-    -- with finalOutput := id, step := pass-through.
-    refine ⟨Unit, ?_, ?_⟩
-    · exact { initial := (), step := fun _ x => ((), [x]),
-              finalOutput := fun _ => [] }
-    · funext xs
-      show SFST.runRight _ xs = id xs
-      show (SFST.run _ xs.reverse).reverse = xs
-      have hrun : ∀ s : Unit, ∀ ys : List α,
-          SFST.runFrom { initial := (), step := fun _ x => ((), [x]),
-                         finalOutput := fun _ => [] } s ys = ys := by
-        intro s ys
-        induction ys generalizing s with
-        | nil => rfl
-        | cons y ys ih =>
-          show [y] ++ _ = y :: ys
-          show y :: _ = y :: ys
-          exact congrArg (y :: ·) (ih _)
-      rw [show SFST.run _ xs.reverse = xs.reverse from hrun () xs.reverse]
-      exact List.reverse_reverse xs
-  · funext xs
-    rfl
+  refine Or.inl ⟨id, f, hf, isRightSubsequential_id, ?_⟩
+  funext xs
+  rfl
 
 /-- Every Right-Subsequential function is WD: dual of the left case.
 Take the inner function as itself and the outer as the identity. -/
 theorem IsRightSubsequential.isWeaklyDeterministic
     {f : List α → List α} (hf : IsRightSubsequential f) :
     IsWeaklyDeterministic f := by
-  refine Or.inr ⟨id, f, hf, ?_, ?_⟩
-  · -- identity is Left-Subsequential: trivial 1-state SFST.
-    refine ⟨Unit, ?_, ?_⟩
-    · exact { initial := (), step := fun _ x => ((), [x]),
-              finalOutput := fun _ => [] }
-    · funext xs
-      show SFST.run _ xs = id xs
-      have hrun : ∀ s : Unit, ∀ ys : List α,
-          SFST.runFrom { initial := (), step := fun _ x => ((), [x]),
-                         finalOutput := fun _ => [] } s ys = ys := by
-        intro s ys
-        induction ys generalizing s with
-        | nil => rfl
-        | cons y ys ih =>
-          show [y] ++ _ = y :: ys
-          show y :: _ = y :: ys
-          exact congrArg (y :: ·) (ih _)
-      exact hrun () xs
-  · funext xs
-    rfl
+  refine Or.inr ⟨id, f, hf, isLeftSubsequential_id, ?_⟩
+  funext xs
+  rfl
 
 end Core.Computability.Subregular.Function

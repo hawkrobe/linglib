@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
+import Mathlib.Data.Fintype.Sigma
+import Mathlib.Data.Fintype.Vector
 import Linglib.Core.Direction
 import Linglib.Core.StringHom
 import Linglib.Core.Computability.Subregular.Function.Subsequential
@@ -69,6 +71,32 @@ def lastN (n : ℕ) (xs : List α) : List α := xs.drop (xs.length - n)
 
 @[simp] lemma lastN_nil (n : ℕ) : lastN n ([] : List α) = [] := by
   simp [lastN]
+
+/-- `lastN n xs` has length at most `n`: the drop count is
+`xs.length - n`, so what remains is `min n xs.length ≤ n`. -/
+lemma lastN_length_le (n : ℕ) (xs : List α) : (lastN n xs).length ≤ n := by
+  unfold lastN
+  rw [List.length_drop]
+  omega
+
+/-- The "list of length at most `n`" subtype is finite when `α` is. The
+witness is a surjection from `Σ m : Fin (n + 1), List.Vector α m` (which
+has a `Fintype` instance via `Mathlib.Data.Fintype.{Sigma,Vector}`). Used
+to give ISL/OSL projections into SFST a manifestly-finite state space
+(matching @cite{mohri-1997}'s finite-state assumption). Uses `classical`
+to discharge the `DecidableEq` side condition without imposing it on
+consumers (matches mathlib pattern for finite types over `Fintype α`). -/
+noncomputable instance fintypeListLengthLE {α : Type*} [Fintype α] (n : ℕ) :
+    Fintype {l : List α // l.length ≤ n} := by
+  classical
+  exact Fintype.ofSurjective
+    (fun (s : Σ m : Fin (n + 1), List.Vector α m) =>
+      (⟨s.snd.toList, by
+        rw [List.Vector.toList_length]
+        exact Nat.lt_succ_iff.mp s.fst.isLt⟩ :
+        {l : List α // l.length ≤ n}))
+    (fun l => ⟨⟨⟨l.val.length, Nat.lt_succ_iff.mpr l.property⟩,
+                  ⟨l.val, rfl⟩⟩, rfl⟩)
 
 /-- A **k-Input-Strictly-Local rule** over input alphabet `α` and output
 alphabet `β`. The single field `windowOutput` consumes the
@@ -256,49 +284,62 @@ theorem Core.Tier.apply_isLeftInputStrictlyLocal_one (T : Core.Tier α β) :
 
 /-! ### ISL ⊆ Subsequential
 
-`ISLRule.toSFST` projects an ISL rule into an SFST; the inclusion rides
-on the run-equality. Co-located on the source side because the
+`ISLRule.toFinSFST` projects an ISL rule into a finite-state SFST whose
+state space is the bounded input window `{l : List α // l.length ≤ k - 1}`.
+The `[Fintype α]` constraint matches the source literature
+(@cite{mohri-1997}; @cite{chandlee-2014}): every subsequential model has
+a finite alphabet and finite state by definition. The inclusion theorem
+rides on the run-equality. Co-located on the source side because the
 dependency direction (SFST in `Subsequential.lean`; ISL projects into
 it) forces both construction and cast into this file. -/
 
-section ISLToSubseq
-
-variable {α β : Type}
-
-/-- Construction: every ISL rule induces an SFST whose state is the
-input window (length ≤ k − 1) and whose `finalOutput` is empty. -/
-def ISLRule.toSFST {k : ℕ} (r : ISLRule k α β) : SFST (List α) α β where
-  initial := []
-  step window x := (lastN (k - 1) (window ++ [x]), r.windowOutput window x)
+/-- Construction: every ISL rule induces a **finite-state** SFST whose
+state is the bounded input window `{l : List α // l.length ≤ k - 1}`,
+and whose `finalOutput` is empty. The state is manifestly finite via
+`fintypeListLengthLE`, witnessing ISL ⊆ Subsequential under the source
+literature's finite-state assumption. -/
+def ISLRule.toFinSFST {k : ℕ} [Fintype α] (r : ISLRule k α β) :
+    SFST {l : List α // l.length ≤ k - 1} α β where
+  initial := ⟨[], Nat.zero_le _⟩
+  step w x :=
+    (⟨lastN (k - 1) (w.val ++ [x]), lastN_length_le _ _⟩,
+     r.windowOutput w.val x)
   finalOutput _ := []
 
-/-- The SFST induced by an ISL rule computes the same string function. -/
-theorem ISLRule.toSFST_run_eq_apply {k : ℕ} (r : ISLRule k α β) :
-    r.toSFST.run = r.apply := by
+/-- The finite-state SFST induced by an ISL rule computes the same
+string function. -/
+theorem ISLRule.toFinSFST_run_eq_apply {k : ℕ} [Fintype α] (r : ISLRule k α β) :
+    r.toFinSFST.run = r.apply := by
   funext input
-  show SFST.runFrom r.toSFST [] input = ISLRule.applyAux r [] input
-  suffices h : ∀ window : List α,
-      SFST.runFrom r.toSFST window input = ISLRule.applyAux r window input from h []
-  intro window
-  induction input generalizing window with
+  show SFST.runFrom r.toFinSFST ⟨[], Nat.zero_le _⟩ input
+    = ISLRule.applyAux r [] input
+  suffices h : ∀ (w : {l : List α // l.length ≤ k - 1}),
+      SFST.runFrom r.toFinSFST w input = ISLRule.applyAux r w.val input from h _
+  intro w
+  induction input generalizing w with
   | nil => rfl
   | cons x xs ih =>
-    change r.windowOutput window x
-              ++ SFST.runFrom r.toSFST (lastN (k - 1) (window ++ [x])) xs
-         = r.windowOutput window x
-              ++ ISLRule.applyAux r (lastN (k - 1) (window ++ [x])) xs
-    rw [ih]
+    change r.windowOutput w.val x
+              ++ SFST.runFrom r.toFinSFST
+                  ⟨lastN (k - 1) (w.val ++ [x]), lastN_length_le _ _⟩ xs
+         = r.windowOutput w.val x
+              ++ ISLRule.applyAux r (lastN (k - 1) (w.val ++ [x])) xs
+    exact congrArg _ (ih _)
 
-/-- **Left-ISL ⊆ Left-Subsequential.** -/
-theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ}
+/-- **Left-ISL ⊆ Left-Subsequential** (over a finite input alphabet).
+The `[Fintype α]` matches @cite{mohri-1997}'s finite-alphabet assumption
+and lets the bounded input window serve as a finite state space. -/
+theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ} [Fintype α]
     {f : List α → List β} (h : IsLeftInputStrictlyLocal k f) :
     IsLeftSubsequential f := by
   obtain ⟨r, hr⟩ := h
-  exact ⟨List α, r.toSFST, hr ▸ r.toSFST_run_eq_apply⟩
+  have heq : r.toFinSFST.run = f := r.toFinSFST_run_eq_apply.trans hr
+  exact heq ▸ r.toFinSFST.isLeftSubsequential
 
-/-- Direction-parameterised: ISL_d ⊆ Subseq_d for both directions. -/
+/-- Direction-parameterised: ISL_d ⊆ Subseq_d for both directions (over
+a finite input alphabet). -/
 theorem isInputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
-    {f : List α → List β} (h : IsInputStrictlyLocal d k f) :
+    [Fintype α] {f : List α → List β} (h : IsInputStrictlyLocal d k f) :
     IsSubsequential d f := by
   cases d with
   | left => exact isLeftInputStrictlyLocal_left_subsequential h
@@ -308,7 +349,5 @@ theorem isInputStrictlyLocal_isSubsequential {d : Direction} {k : ℕ}
     rw [isRightInputStrictlyLocal_iff_left_reverse] at h
     rw [isRightSubsequential_iff_left_reverse]
     exact isLeftInputStrictlyLocal_left_subsequential h
-
-end ISLToSubseq
 
 end Core.Computability.Subregular.Function

@@ -133,6 +133,10 @@ inductive Seg
   | a
   deriving DecidableEq, Repr
 
+instance : Fintype Seg where
+  elems := {.recL, .recH, .dom, .a}
+  complete := λ x => by cases x <;> simp
+
 namespace Seg
 
 /-- Whether the segment is a [+ATR] vowel (after surface realisation).
@@ -258,7 +262,7 @@ theorem rightwardATR_osl_isLeftOutputStrictlyLocal :
 claim than OSL but the umbrella class). Witness: the SFST. -/
 theorem rightwardATR_isLeftSubsequential :
     IsLeftSubsequential rightwardATR.run :=
-  ⟨Bool, rightwardATR, rfl⟩
+  rightwardATR.isLeftSubsequential
 
 /-- Since OSL ⊆ Left-Subsequential (`Function/Hierarchy.lean`), the OSL
 classification automatically lifts. -/

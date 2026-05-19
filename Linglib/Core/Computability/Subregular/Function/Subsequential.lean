@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
+import Mathlib.Data.Fintype.Prod
 import Linglib.Core.Direction
 
 /-!
@@ -174,6 +175,51 @@ lemma runFrom_append (T : SFST σ α β) (s : σ) (xs ys : List α) :
 
 end SFST
 
+/-! ### State-space transfer
+
+Transferring an SFST along a state-space equivalence preserves its
+`run` function. The headline use case is bringing a universe-polymorphic
+state down to `Fin n` (universe `Type 0`) via `Fintype.equivFin`, which
+lets the universe-polymorphic constructions in `ISL.lean` / `OSL.lean`
+witness the `Type 0`-state existential of `IsLeftSubsequential` /
+`IsRightSubsequential`. -/
+
+namespace SFST
+
+variable {σ τ α β : Type*}
+
+/-- Transfer an SFST along a state-space equivalence `σ ≃ τ`. Replaces
+each state-valued field with the corresponding `τ`-valued one via the
+equivalence. -/
+def transferEquiv (T : SFST σ α β) (e : σ ≃ τ) : SFST τ α β where
+  initial := e T.initial
+  step t x :=
+    let (s', out) := T.step (e.symm t) x
+    (e s', out)
+  finalOutput t := T.finalOutput (e.symm t)
+
+lemma transferEquiv_runFrom (T : SFST σ α β) (e : σ ≃ τ)
+    (s : σ) (xs : List α) :
+    (T.transferEquiv e).runFrom (e s) xs = T.runFrom s xs := by
+  induction xs generalizing s with
+  | nil =>
+    show T.finalOutput (e.symm (e s)) = T.finalOutput s
+    rw [e.symm_apply_apply]
+  | cons x xs ih =>
+    show (T.step (e.symm (e s)) x).2
+            ++ (T.transferEquiv e).runFrom (e (T.step (e.symm (e s)) x).1) xs
+         = (T.step s x).2 ++ T.runFrom (T.step s x).1 xs
+    rw [e.symm_apply_apply, ih]
+
+/-- The transferred SFST computes the same string function as the original. -/
+@[simp] theorem transferEquiv_run (T : SFST σ α β) (e : σ ≃ τ) :
+    (T.transferEquiv e).run = T.run := by
+  funext xs
+  show (T.transferEquiv e).runFrom (e T.initial) xs = T.runFrom T.initial xs
+  exact T.transferEquiv_runFrom e _ _
+
+end SFST
+
 /-! ### Composition
 
 Subsequential functions are closed under composition (Mohri 1997 §3,
@@ -232,54 +278,92 @@ theorem compose_runFrom (Tg : SFST σg β γ) (Tf : SFST σf α β)
 
 end SFST
 
-/-! ### Universe-level constraint on classification predicates
+/-! ### Subsequential classification predicates
 
-The witness-style predicates below restrict alphabet binders to `Type 0`
-rather than `Type*`. The reason: `∃ σ : Type, ∃ T : SFST σ α β, …`
-requires `σ`'s universe to be fixed at definition site (a `σ` at
-universe `w` plus alphabets at universes `u, v` would force the body
-into universe `max u v w`, which `Prop` accepts only with `ULift`/`PLift`
-boilerplate). Phonological alphabets are concrete inductive types at
-`Type 0`, so the constraint is non-binding for current consumers; if a
-`Type*` consumer ever appears, lift via `ULift` or duplicate predicates
-at the needed universe rather than universe-polymorphising in place. -/
+The witness-style predicates below follow mathlib's `Language.IsRegular`
+shape: the state space `σ` is existentially quantified at `Type` with a
+`Fintype σ` instance, while the alphabets `α β` are universe-polymorphic
+at `Type*`. The `Fintype` constraint matches the source literature
+(@cite{mohri-1997} §3; @cite{heinz-lai-2013}; @cite{chandlee-2014}),
+where every SFST has finitely many states by definition, and also lets
+the universe parameter for state collapse cleanly without `universe`
+declarations or `ULift` coercions.
+
+Constructor lemmas (`SFST.isLeftSubsequential`, `SFST.isRightSubsequential`
+below) hide the existential-over-types shape so future redesigns
+(e.g. to a Myhill–Nerode finite-index characterization with σ ≃ Fin n)
+won't touch consumer sites. Downstream ISL/OSL inclusion theorems take
+`[Fintype α]` / `[Fintype β]` and use a bounded-window finite state to
+witness the predicate (`Function/{ISL,OSL}.lean`). -/
 
 /-- A function `f : List α → List β` is **left-subsequential** iff some
-SFST computes it via left-to-right scan. -/
-def IsLeftSubsequential {α β : Type} (f : List α → List β) : Prop :=
-  ∃ σ : Type, ∃ T : SFST σ α β, T.run = f
+SFST with a finite state space computes it via left-to-right scan. The
+`Fintype σ` constraint matches the source literature
+(@cite{mohri-1997}; @cite{chandlee-2014}). -/
+def IsLeftSubsequential {α β : Type*} (f : List α → List β) : Prop :=
+  ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST σ α β, T.run = f
 
 /-- A function `f : List α → List β` is **right-subsequential** iff some
-SFST computes it via right-to-left scan (`runRight`). -/
-def IsRightSubsequential {α β : Type} (f : List α → List β) : Prop :=
-  ∃ σ : Type, ∃ T : SFST σ α β, T.runRight = f
+SFST with a finite state space computes it via right-to-left scan
+(`runRight`). -/
+def IsRightSubsequential {α β : Type*} (f : List α → List β) : Prop :=
+  ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST σ α β, T.runRight = f
 
 /-- A function `f : List α → List β` is **subsequential in direction `d`**
-iff some SFST computes it via the corresponding scan direction. The
-audit-recommended Direction-parameterised form (rather than separate
-Left/Right files); concrete claims should typically use one of
-`IsLeftSubsequential` / `IsRightSubsequential` directly for clarity. -/
-def IsSubsequential {α β : Type} (d : Direction) (f : List α → List β) : Prop :=
+iff some finite-state SFST computes it via the corresponding scan
+direction. Direction-parameterised umbrella; concrete claims should
+typically use one of `IsLeftSubsequential` / `IsRightSubsequential`
+directly for clarity. -/
+def IsSubsequential {α β : Type*} (d : Direction) (f : List α → List β) : Prop :=
   match d with
   | .left => IsLeftSubsequential f
   | .right => IsRightSubsequential f
 
-@[simp] lemma isSubsequential_left {α β : Type} (f : List α → List β) :
+@[simp] lemma isSubsequential_left {α β : Type*} (f : List α → List β) :
     IsSubsequential .left f ↔ IsLeftSubsequential f := Iff.rfl
 
-@[simp] lemma isSubsequential_right {α β : Type} (f : List α → List β) :
+@[simp] lemma isSubsequential_right {α β : Type*} (f : List α → List β) :
     IsSubsequential .right f ↔ IsRightSubsequential f := Iff.rfl
+
+/-- **Constructor lemma**: every finite-state SFST witnesses
+`IsLeftSubsequential` for its `run` function. Consumers should use
+`T.isLeftSubsequential` rather than constructing
+`⟨σ, inferInstance, T, rfl⟩` quadruples directly — this hides the
+existential-over-types shape of the predicate, so future redesigns
+(e.g. to a Myhill–Nerode finite-index characterization with σ ≃ Fin n)
+only need to update this lemma's body, not every consumer call site.
+
+The state space `σ` is accepted at arbitrary `Type*`; the witness is
+brought down to `Fin (Fintype.card σ)` (which lives in `Type`) via
+`SFST.transferEquiv` and `Fintype.equivFin`. This lets bounded-window
+ISL/OSL states at the alphabet's universe witness the predicate. -/
+theorem SFST.isLeftSubsequential {σ : Type*} [Fintype σ] {α β : Type*}
+    (T : SFST σ α β) : IsLeftSubsequential T.run := by
+  refine ⟨Fin (Fintype.card σ), inferInstance,
+          T.transferEquiv (Fintype.equivFin σ), ?_⟩
+  exact T.transferEquiv_run _
+
+/-- **Constructor lemma**: every finite-state SFST witnesses
+`IsRightSubsequential` for its `runRight` function. See
+`SFST.isLeftSubsequential` for rationale. -/
+theorem SFST.isRightSubsequential {σ : Type*} [Fintype σ] {α β : Type*}
+    (T : SFST σ α β) : IsRightSubsequential T.runRight := by
+  refine ⟨Fin (Fintype.card σ), inferInstance,
+          T.transferEquiv (Fintype.equivFin σ), ?_⟩
+  funext xs
+  show ((T.transferEquiv _).run xs.reverse).reverse = (T.run xs.reverse).reverse
+  rw [T.transferEquiv_run]
 
 /-- **Reverse-conjugation lemma**: a function is Right-Subsequential iff
 its reverse-conjugate is Left-Subsequential. The two classes are
 isomorphic via the involution `f ↦ List.reverse ∘ f ∘ List.reverse`. -/
-theorem isRightSubsequential_iff_left_reverse {α β : Type}
+theorem isRightSubsequential_iff_left_reverse {α β : Type*}
     (f : List α → List β) :
     IsRightSubsequential f
       ↔ IsLeftSubsequential (fun xs => (f xs.reverse).reverse) := by
   refine ⟨?_, ?_⟩
-  · rintro ⟨σ, T, hT⟩
-    refine ⟨σ, T, ?_⟩
+  · rintro ⟨σ, _, T, hT⟩
+    refine ⟨σ, inferInstance, T, ?_⟩
     funext xs
     have h := congrFun hT xs.reverse
     -- h : T.runRight xs.reverse = f xs.reverse
@@ -289,8 +373,8 @@ theorem isRightSubsequential_iff_left_reverse {α β : Type}
       rw [SFST.runRight, List.reverse_reverse] at h
       exact h
     rw [← this, List.reverse_reverse]
-  · rintro ⟨σ, T, hT⟩
-    refine ⟨σ, T, ?_⟩
+  · rintro ⟨σ, _, T, hT⟩
+    refine ⟨σ, inferInstance, T, ?_⟩
     funext xs
     show (T.run xs.reverse).reverse = f xs
     have h := congrFun hT xs.reverse
@@ -302,14 +386,15 @@ theorem isRightSubsequential_iff_left_reverse {α β : Type}
 §3, originally Schützenberger and Choffrut). The load-bearing fact that
 makes the Heinz-Lai 2013 Weakly Deterministic class definition work as
 the composition of two subsequential functions reading from opposite
-directions. -/
-theorem IsLeftSubsequential.comp {α β γ : Type}
+directions. The product state `σf × σg` inherits `Fintype` automatically
+from `Mathlib.Data.Fintype.Prod`. -/
+theorem IsLeftSubsequential.comp {α β γ : Type*}
     {g : List β → List γ} (hg : IsLeftSubsequential g)
     {f : List α → List β} (hf : IsLeftSubsequential f) :
     IsLeftSubsequential (g ∘ f) := by
-  obtain ⟨σf, Tf, hTf⟩ := hf
-  obtain ⟨σg, Tg, hTg⟩ := hg
-  refine ⟨σf × σg, Tg.compose Tf, ?_⟩
+  obtain ⟨σf, _, Tf, hTf⟩ := hf
+  obtain ⟨σg, _, Tg, hTg⟩ := hg
+  refine ⟨σf × σg, inferInstance, Tg.compose Tf, ?_⟩
   funext xs
   show (Tg.compose Tf).run xs = g (f xs)
   show (Tg.compose Tf).runFrom (Tf.initial, Tg.initial) xs = g (f xs)

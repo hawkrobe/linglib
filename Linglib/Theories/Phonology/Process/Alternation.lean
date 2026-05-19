@@ -1,3 +1,4 @@
+import Mathlib.Data.Fintype.Option
 import Linglib.Core.StringHom
 import Linglib.Core.Direction
 import Linglib.Core.Computability.Subregular.Function.Subsequential
@@ -308,13 +309,14 @@ lemma toIdTierSFST_runFrom_eq_applyToStringAux (r : TierRule α)
 functions.** Closes audit D6 with a real witness construction (not a
 sorry): the SFST has state `Option α` (last-context-matching segment
 seen) and emits the rule's prediction at each step. -/
-theorem applyToString_isLeftSubsequential_of_id_tier
+theorem applyToString_isLeftSubsequential_of_id_tier [Fintype α]
     (r : TierRule α) (h_id : r.tier = Tier.id) (h_side : r.side = .left) :
     IsLeftSubsequential r.applyToString := by
-  refine ⟨Option α, r.toIdTierSFST, ?_⟩
-  funext input
-  show r.toIdTierSFST.runFrom none input = applyToString.applyToStringAux r input []
-  -- `none = lastContextOf []` definitionally
-  exact r.toIdTierSFST_runFrom_eq_applyToStringAux h_id h_side [] input
+  have h_run : r.toIdTierSFST.run = r.applyToString := by
+    funext input
+    show r.toIdTierSFST.runFrom none input = applyToString.applyToStringAux r input []
+    -- `none = lastContextOf []` definitionally
+    exact r.toIdTierSFST_runFrom_eq_applyToStringAux h_id h_side [] input
+  exact h_run ▸ r.toIdTierSFST.isLeftSubsequential
 
 end Phonology.Alternation.TierRule
