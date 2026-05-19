@@ -698,6 +698,89 @@ private noncomputable def coassocRHSLin :
   (comulCAlgHomN (R := R) τ).toLinearMap.lTensor _ ∘ₗ
     (comulCAlgHomN (R := R) τ).toLinearMap
 
+/-! ### Helpers: `pairing₃` on shifted-tensor forms
+
+Two reduction lemmas that express `pairing₃ (x ⊗ (y ⊗ z'))` evaluated on
+shifted tensor forms in terms of `pairing₂` and binary `pairing`. Both
+are proved by `TensorProduct.induction_on`, reducing to the pure-tensor
+case where `pairing₃_tmul_tmul_tmul` and `pairing₂_tmul_tmul` agree. -/
+
+/-- `pairing₃ (x ⊗ (y ⊗ z')) ∘ assoc` on a `(U ⊗ c)`-shape tensor:
+    factors as `pairing₂ (x ⊗ y) U * pairing z' c`. -/
+private lemma pairing₃_assoc_tmul
+    (x y z' : ConnesKreimer R (Nonplanar (α ⊕ β)))
+    (U : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
+          ConnesKreimer R (Nonplanar (α ⊕ β)))
+    (c : ConnesKreimer R (Nonplanar (α ⊕ β))) :
+    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
+        ((TensorProduct.assoc R _ _ _) (U ⊗ₜ[R] c)) =
+      pairing₂ (R := R) (x ⊗ₜ[R] y) U * GrossmanLarson.pairing z' c := by
+  induction U using TensorProduct.induction_on with
+  | zero => simp
+  | tmul a b =>
+    simp only [TensorProduct.assoc_tmul, pairing₃_tmul_tmul_tmul,
+               pairing₂_tmul_tmul, mul_assoc]
+  | add U₁ U₂ ih₁ ih₂ =>
+    rw [TensorProduct.add_tmul, map_add, map_add, ih₁, ih₂, map_add, add_mul]
+
+/-- `pairing₃ (x ⊗ (y ⊗ z'))` on a `(a ⊗ S)`-shape tensor: factors as
+    `pairing x a * pairing₂ (y ⊗ z') S`. -/
+private lemma pairing₃_tmul_apply
+    (x y z' a : ConnesKreimer R (Nonplanar (α ⊕ β)))
+    (S : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
+          ConnesKreimer R (Nonplanar (α ⊕ β))) :
+    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (a ⊗ₜ[R] S) =
+      GrossmanLarson.pairing x a * pairing₂ (R := R) (y ⊗ₜ[R] z') S := by
+  induction S using TensorProduct.induction_on with
+  | zero => simp
+  | tmul b c =>
+    simp only [pairing₃_tmul_tmul_tmul, pairing₂_tmul_tmul]
+  | add S₁ S₂ ih₁ ih₂ =>
+    rw [TensorProduct.tmul_add, map_add, ih₁, ih₂, map_add, mul_add]
+
+/-! ### Chain lemmas: pairing₃ against `coassocLHSLin/RHSLin`
+
+These compose two applications of `pairing_gl_eq_pairing_coproduct_C`
+(Foissy 2018 §4.2) through the helper lemmas above. The intermediate
+`pairing₃_assoc_rTensor_comul` / `pairing₃_lTensor_comul` lemmas
+generalize over the inner Δ^c-image, enabling a clean specialization
+to `V = Δ^c z`. -/
+
+/-- Intermediate: combining `assoc` + `rTensor (Δ^c)` + `pairing₃` via
+    one application of the Foissy axiom. -/
+private lemma pairing₃_assoc_rTensor_comul
+    (x y z' : ConnesKreimer R (Nonplanar (α ⊕ β)))
+    (V : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
+          ConnesKreimer R (Nonplanar (α ⊕ β))) :
+    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
+        ((TensorProduct.assoc R _ _ _)
+          ((comulCAlgHomN (R := R) τ).toLinearMap.rTensor _ V)) =
+      pairing₂ (R := R) (GrossmanLarson.product x y ⊗ₜ[R] z') V := by
+  induction V using TensorProduct.induction_on with
+  | zero => simp
+  | tmul a b =>
+    rw [LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_assoc_tmul,
+        ← pairing_gl_eq_pairing_coproduct_C τ x y a, pairing₂_tmul_tmul]
+  | add V₁ V₂ ih₁ ih₂ =>
+    rw [map_add, map_add, map_add, ih₁, ih₂, map_add]
+
+/-- Intermediate: combining `lTensor (Δ^c)` + `pairing₃` via one
+    application of the Foissy axiom. -/
+private lemma pairing₃_lTensor_comul
+    (x y z' : ConnesKreimer R (Nonplanar (α ⊕ β)))
+    (W : ConnesKreimer R (Nonplanar (α ⊕ β)) ⊗[R]
+          ConnesKreimer R (Nonplanar (α ⊕ β))) :
+    pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
+        ((comulCAlgHomN (R := R) τ).toLinearMap.lTensor _ W) =
+      pairing₂ (R := R) (x ⊗ₜ[R] GrossmanLarson.product y z') W := by
+  induction W using TensorProduct.induction_on with
+  | zero => simp
+  | tmul a b =>
+    rw [LinearMap.lTensor_tmul, AlgHom.toLinearMap_apply, pairing₃_tmul_apply,
+        ← pairing_gl_eq_pairing_coproduct_C τ y z' b, pairing₂_tmul_tmul]
+  | add W₁ W₂ ih₁ ih₂ =>
+    rw [map_add, map_add, ih₁, ih₂, map_add]
+
 /-- **LHS chain via Foissy 2018 §4.2 (twice)**: pairing the LHS coassoc
     expression against a pure triple tensor reduces to pairing the
     left-associated GL product against `z`. -/
@@ -706,7 +789,13 @@ theorem pairing₃_coassocLHSLin
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (coassocLHSLin (R := R) τ z) =
       GrossmanLarson.pairing
         (GrossmanLarson.product (GrossmanLarson.product x y) z') z := by
-  sorry  -- TODO: chain of Foissy 2018 §4.2 applications through pairing₂
+  show pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
+        ((TensorProduct.assoc R _ _ _)
+          ((comulCAlgHomN (R := R) τ).toLinearMap.rTensor _
+            ((comulCAlgHomN (R := R) τ).toLinearMap z))) = _
+  rw [AlgHom.toLinearMap_apply, pairing₃_assoc_rTensor_comul]
+  exact (pairing_gl_eq_pairing_coproduct_C τ
+          (GrossmanLarson.product x y) z' z).symm
 
 /-- **RHS chain via Foissy 2018 §4.2 (twice)**: pairing the RHS coassoc
     expression against a pure triple tensor reduces to pairing the
@@ -716,7 +805,12 @@ theorem pairing₃_coassocRHSLin
     pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z')) (coassocRHSLin (R := R) τ z) =
       GrossmanLarson.pairing
         (GrossmanLarson.product x (GrossmanLarson.product y z')) z := by
-  sorry  -- TODO: chain of Foissy 2018 §4.2 applications through pairing₂
+  show pairing₃ (R := R) (x ⊗ₜ[R] (y ⊗ₜ[R] z'))
+        ((comulCAlgHomN (R := R) τ).toLinearMap.lTensor _
+          ((comulCAlgHomN (R := R) τ).toLinearMap z)) = _
+  rw [AlgHom.toLinearMap_apply, pairing₃_lTensor_comul]
+  exact (pairing_gl_eq_pairing_coproduct_C τ x
+          (GrossmanLarson.product y z') z).symm
 
 end CoassocChain
 
