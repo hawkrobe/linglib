@@ -1145,7 +1145,6 @@ import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
 import Linglib.Studies.Anaphora.AsherLascarides2003
 import Linglib.Studies.Anaphora.Hofmann2025
 import Linglib.Phenomena.Anaphora.Bridging
-import Linglib.Studies.Anaphora.OsborneLi2023
 import Linglib.Studies.Anaphora.Reinhart1976
 import Linglib.Studies.Anaphora.Hudson1990
 import Linglib.Studies.Anaphora.SagWasowBender2003
@@ -1296,6 +1295,7 @@ import Linglib.Phenomena.Coordination.Studies.Bruening2025
 import Linglib.Phenomena.Coordination.Studies.Schwarzer2026
 import Linglib.Phenomena.Coordination.Studies.Stassen2000
 import Linglib.Phenomena.Coordination.Studies.Haspelmath2007
+import Linglib.Phenomena.Coordination.Studies.OsborneLi2023
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
@@ -1980,7 +1980,6 @@ import Linglib.Theories.Processing.PredictiveUncertainty.Config
 import Linglib.Theories.Processing.PredictiveUncertainty.IAS
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
-import Linglib.Theories.Syntax.DependencyGrammar.CRDC
 import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
 import Linglib.Phenomena.WordOrder.Studies.Gibson2025
 import Linglib.Phenomena.WordOrder.Studies.KuhlmannNivre2006

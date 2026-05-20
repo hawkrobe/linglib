@@ -1,5 +1,4 @@
 import Linglib.Core.Dependency.Basic
-import Linglib.Theories.Syntax.DependencyGrammar.CRDC
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria
 
 /-!
@@ -22,8 +21,6 @@ count, different morphological requirements on the complement.
 
 ## Bridges
 
-- → `CRDC.lean`: government complements `ValencyFrame` — valency says WHAT
-  slots exist, government says HOW they're filled
 - → `HeadCriteria.lean`: government is criterion 5 (morphological determination)
   — the governor is the head
 - → `Core/Basic.lean`: `ArgSlot` has `cat` and `depType`; government adds
@@ -134,7 +131,8 @@ def checkGovernment (t : DepTree) (govReqs : List GovRequirement) : Bool :=
 -- ============================================================================
 
 /-- A government pattern: a verb with its government requirements.
-    Distinct from `CRDC.ValencyFrame` which captures WHAT dependents appear. -/
+    Government is distinct from valency: valency captures WHAT dependents
+    appear, while government captures WHAT FORM those dependents must take. -/
 structure GovernmentPattern where
   verb : String
   requirements : List GovRequirement
@@ -236,17 +234,12 @@ theorem enjoysSwimming_govOk :
 -- §7: Bridges
 -- ============================================================================
 
-/-- **Bridge → CRDC.lean**: Same valency frame can have different government.
-    Both "want" and "enjoy" are transitive (take xcomp), but differ in government.
-    Valency frame (what slots exist) is independent of government (how slots
-    are realized morphologically). -/
+/-- Government distinguishes what valency does not: "want" and "enjoy" both
+    take an xcomp complement, but require infinitive vs gerund form. -/
 theorem same_valency_different_government :
-    let wantFrame := CRDC.transitiveFrame "want"
-    let enjoyFrame := CRDC.transitiveFrame "enjoy"
-    wantFrame.valents.length == enjoyFrame.valents.length &&
     wantGov.requirements.head?.map (·.requiredValue) !=
       enjoyGov.requirements.head?.map (·.requiredValue) := by
-  native_decide
+  decide
 
 /-- **Bridge → HeadCriteria.lean**: Government is one of the six head criteria
     (criterion 5: morphological determination). The governor is the head.

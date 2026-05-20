@@ -1,7 +1,7 @@
 /-
 Shared nominal classification and phi-feature agreement for DG coreference theories.
 
-Used by both d-command (Coreference.lean) and CRDC (CRDC.lean) binding analyses.
+Used by d-command (Coreference.lean) binding analyses.
 -/
 
 import Linglib.Core.Word
@@ -64,7 +64,7 @@ def phiAgree (w1 w2 : Word) : Bool :=
   personMatch && numberMatch && genderMatch
 
 -- ============================================================================
--- Shared Test Words (from Fragments, used by Coreference.lean and CRDC.lean)
+-- Shared Test Words (from Fragments, used by Coreference.lean)
 -- ============================================================================
 
 abbrev john := Fragments.English.Nouns.john.toWordSg
