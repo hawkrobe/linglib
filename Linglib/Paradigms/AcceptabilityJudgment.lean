@@ -56,6 +56,22 @@ namespace Paradigms.AcceptabilityJudgment
 
 open Features
 
+/-- Acceptability / felicity judgment on the Schütze/Sprouse five-level
+    scale. Constructor order encodes "worse" (`acceptable` is best,
+    `ungrammatical` worst); the derived `Ord` makes "this paper rates X
+    worse than Y" comparisons available without an extra wrapper.
+
+    Use `.acceptable` for clean grammatical/felicitous data; reserve
+    `.ungrammatical` for hard star judgments and `.unacceptable` for
+    pragmatic/felicity failure short of ungrammaticality. -/
+inductive Judgment where
+  | acceptable
+  | marginal
+  | questionable
+  | unacceptable
+  | ungrammatical
+  deriving DecidableEq, BEq, Repr, Inhabited, Ord
+
 -- ============================================================================
 -- §1. Factorial conditions
 -- ============================================================================
@@ -205,15 +221,17 @@ end AccountPredictions
 
 -- §4.1 Word-based
 
-/-- A minimal pair: grammatical vs ungrammatical, with context.
-
-    Conceptually a degenerate `FactorialCondition Unit Bool` with the
-    Bool factor being grammaticality and a single trivial Unit factor;
-    kept as a distinct shape because the introspective tradition speaks
-    in `grammatical` / `ungrammatical` rather than factorial cells. -/
+/-- A minimal pair: two candidate forms with per-side acceptability
+    judgments. The judgment fields default to the traditional binary
+    (`lhs` = `.acceptable`, `rhs` = `.ungrammatical`) so most data sites
+    only need to provide `lhs` and `rhs`; studies of graded phenomena
+    (e.g. CRDC marginality, @cite{osborne-li-2023}) override the
+    judgments with the appropriate `Judgment` constructor. -/
 structure MinimalPair where
-  grammatical : List Word
-  ungrammatical : List Word
+  lhs : List Word
+  rhs : List Word
+  lhsJudgment : Judgment := .acceptable
+  rhsJudgment : Judgment := .ungrammatical
   clauseType : ClauseForm
   description : String
   citation : String := ""
@@ -226,12 +244,24 @@ structure PhenomenonData where
   generalization : String
   deriving Repr
 
+/-- Whether a Bool-valued grammaticality prediction agrees with a
+    `Judgment`. Categorical predicates can only adjudicate the endpoints
+    of the scale; for graded judgments (`.marginal`, `.questionable`,
+    `.unacceptable`) the predicate is treated as vacuously consistent,
+    since a Bool theory is not equipped to make those distinctions. -/
+def predictionAgrees (predicted : Bool) : Judgment → Bool
+  | .acceptable    => predicted
+  | .ungrammatical => !predicted
+  | _              => true
+
 /-- Check if a grammaticality predicate captures a minimal pair.
 
-    Captures the pair iff the predicate accepts the grammatical sentence
-    and rejects the ungrammatical sentence. -/
+    Captures iff the predicate's Bool result agrees with each side's
+    `Judgment` per `predictionAgrees`. With default judgments this is
+    the traditional `pred lhs && !pred rhs`. -/
 def capturesMinimalPairBy (pred : List Word → Bool) (pair : MinimalPair) : Bool :=
-  pred pair.grammatical && !pred pair.ungrammatical
+  predictionAgrees (pred pair.lhs) pair.lhsJudgment &&
+  predictionAgrees (pred pair.rhs) pair.rhsJudgment
 
 /-- Check if a grammaticality predicate captures all minimal pairs in a
     phenomenon dataset. -/

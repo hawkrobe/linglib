@@ -1,3 +1,5 @@
+import Linglib.Paradigms.AcceptabilityJudgment
+
 /-!
 # `LinguisticExample` schema
 
@@ -51,33 +53,13 @@ grow optional fields without breaking existing rows.
 
 namespace Data.Examples
 
+open Paradigms.AcceptabilityJudgment (Judgment)
+
 /-- Glottolog 5.0 language identifier (e.g. "stan1293" for Standard English).
     Type alias only; values are not validated against Glottolog at the type
     level. Matches the convention in `Data.PHOIBLE.Inventory.glottocode`
     and `Data.WALS.Datapoint.iso`. -/
 abbrev Glottocode := String
-
-/-- Acceptability / felicity judgment scale. Five levels matching the
-    Schütze/Sprouse standard (✓, ?, ??, ?*/* boundary, *).
-
-    Star-character constructors (`*`, `?`) are avoided because `*` is a Lean
-    reserved token and `?` collides with tactic syntax. The named cases below
-    cover the same judgment scale unambiguously.
-
-    Use `.acceptable` for clean grammatical/felicitous data; reserve
-    `.ungrammatical` for hard star judgments and `.unacceptable` for
-    pragmatic/felicity-failed data that isn't strictly ungrammatical.
-
-    Constructor order encodes "worse" (`.acceptable` is best, `.ungrammatical`
-    worst); the derived `Ord` makes "this paper rates X worse than Y"
-    theorems possible without an extra wrapper. -/
-inductive Judgment where
-  | acceptable      -- ✓
-  | marginal        -- ?
-  | questionable    -- ??
-  | unacceptable    -- ?* (pragmatic/felicity failure short of ungrammaticality)
-  | ungrammatical   -- *
-  deriving DecidableEq, BEq, Repr, Inhabited, Ord
 
 /-- Reference to a published source for an example. Two fields kept separate
     rather than concatenated so each can be grepped independently:

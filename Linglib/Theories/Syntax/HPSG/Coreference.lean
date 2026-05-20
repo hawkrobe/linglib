@@ -332,16 +332,9 @@ def localCoreferenceBlocked (ws : List Word) : Bool :=
 -- Capturing Phenomena Data
 -- ============================================================================
 
-/-- Check if HPSG correctly predicts a minimal pair for coreference
-
-    Grammatical sentence should pass, ungrammatical should fail. -/
-def capturesCoreferenceMinimalPair (pair : MinimalPair) : Bool :=
-  grammaticalForCoreference pair.grammatical &&
-  !grammaticalForCoreference pair.ungrammatical
-
-/-- Check all pairs in a PhenomenonData -/
+/-- Check all pairs in a `PhenomenonData` under HPSG's coreference predicate. -/
 def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
-  phenom.pairs.all capturesCoreferenceMinimalPair
+  capturesPhenomenonData grammaticalForCoreference phenom
 
 -- ============================================================================
 -- Per-Pair Verification

@@ -466,7 +466,7 @@ section KratzerChain
 
 open Fragments.English.Tense (kratzerSimplePast)
 open Fragments.German.Tense (kratzerPreterit kratzerPerfekt)
-open Data.Examples (Judgment)
+open Paradigms.AcceptabilityJudgment (Judgment)
 
 /-- **English simple past = perfect + present.** Per Kratzer §7
     (p. 18), the English simple past decomposes as PRESENT-tense head

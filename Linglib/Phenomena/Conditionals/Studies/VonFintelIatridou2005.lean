@@ -35,7 +35,8 @@ and is generated into the `Examples` section below by
 
 namespace Phenomena.Conditionals.Studies.VonFintelIatridou2005
 
-open Data.Examples (LinguisticExample SourceRef Judgment)
+open Data.Examples (LinguisticExample SourceRef)
+open Paradigms.AcceptabilityJudgment (Judgment)
 
 /-! ### Analytical predicates
 

@@ -41,7 +41,7 @@ open Phenomena.Anaphora.Coreference
     underlying `grammaticalForCoreference` predicate is `Prop`-valued. -/
 def capturesCoreferenceData (phenom : PhenomenonData) : Prop :=
   ∀ p ∈ phenom.pairs,
-    grammaticalForCoreference p.grammatical ∧ ¬ grammaticalForCoreference p.ungrammatical
+    grammaticalForCoreference p.lhs ∧ ¬ grammaticalForCoreference p.rhs
 
 instance (phenom : PhenomenonData) : Decidable (capturesCoreferenceData phenom) := by
   unfold capturesCoreferenceData; infer_instance
