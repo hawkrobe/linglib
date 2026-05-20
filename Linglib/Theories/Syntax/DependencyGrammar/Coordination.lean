@@ -52,6 +52,17 @@ def getConjuncts (t : DepTree) (headIdx : Nat) : List Nat :=
   t.deps.filter (λ d => d.headIdx == headIdx && d.depType == .conj)
     |>.map (·.depIdx)
 
+/-- Word `i` heads a coordinate structure iff it has at least one
+    outgoing `.conj` edge (UD basic-tree convention). -/
+def hasConjuncts (t : DepTree) (i : Nat) : Bool :=
+  ¬ (getConjuncts t i).isEmpty
+
+/-- All conjuncts of a coordinate structure headed at `headIdx` —
+    `headIdx` itself (the first conjunct, which heads the structure
+    in UD basic-tree convention) plus the words linked via `.conj`. -/
+def allConjuncts (t : DepTree) (headIdx : Nat) : List Nat :=
+  headIdx :: getConjuncts t headIdx
+
 /-- Check that for every `conj` edge, the conjuncts have matching categories. -/
 def checkCatMatch (t : DepTree) : Bool :=
   t.deps.all λ d =>

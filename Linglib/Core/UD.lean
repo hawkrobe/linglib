@@ -490,6 +490,16 @@ def DepRel.isCoreArg : DepRel → Bool
   | .obj | .iobj | .ccomp | .xcomp => true
   | _ => false
 
+/-- Is this a valency-bearing dependency? Extends `isCoreArg` with
+    `.obl` (oblique nominals), which valency frameworks (e.g.
+    @cite{osborne-li-2023} on dependency-grammar valent typology)
+    treat as a valency role even though UD classifies it as
+    non-core. -/
+def DepRel.isValencyArg : DepRel → Bool
+  | .nsubj | .nsubjPass | .csubj | .csubjPass
+  | .obj | .iobj | .ccomp | .xcomp | .obl => true
+  | _ => false
+
 /-- Is this a subject relation? -/
 def DepRel.isSubject : DepRel → Bool
   | .nsubj | .nsubjPass | .csubj | .csubjPass => true
