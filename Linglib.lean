@@ -25,6 +25,7 @@ import Linglib.Core.Logic.Modal.Inclusion
 import Linglib.Core.Logic.Modal.Kripke
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
+import Linglib.Core.Logic.Team.ClosureProfile
 import Linglib.Features.Acceptability
 import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.UD

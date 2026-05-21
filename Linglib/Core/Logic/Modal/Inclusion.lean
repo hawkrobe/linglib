@@ -1,6 +1,7 @@
 import Linglib.Core.Logic.Modal.Kripke
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
+import Linglib.Core.Logic.Team.ClosureProfile
 
 /-!
 # Modal Inclusion Logic (MIL)
@@ -290,6 +291,16 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     show support M ψ ((∅ : Finset W).biUnion M.access)
     rw [Finset.biUnion_empty]
     exact ih
+
+/-- **MIL has the upward closure profile**: every formula's support is
+    sup-closed and contains the empty team
+    (`Core.Logic.Team.IsUpwardProfile`). Bundles `support_supClosed`
+    and `support_empty` into the named profile, placing MIL alongside
+    BSML-with-NE and BSMLEmpty in the `IsUpwardProfile` cell of the
+    closure-property lattice. -/
+theorem support_isUpwardProfile (M : KripkeModel W Atom) (φ : Formula Atom) :
+    Core.Logic.Team.IsUpwardProfile { t : Finset W | support M φ t } :=
+  ⟨support_supClosed M φ, support_empty M φ⟩
 
 /-! ### Inclusion breaks downward closure (the defining feature) -/
 
