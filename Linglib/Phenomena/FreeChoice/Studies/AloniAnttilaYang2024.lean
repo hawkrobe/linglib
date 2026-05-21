@@ -218,74 +218,24 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
   induction φ with
   | atom p =>
     intro k _ M M' s s' hbisim b
-    cases b
+    cases b <;>
     · constructor
       · intro h w' hw'
         obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        have hval : M.val p w = M'.val p w' := match k, hbw with
-          | 0, h => h p
-          | _ + 1, ⟨h, _, _⟩ => h p
-        rw [← hval]; exact h w hw
+        rw [← hbw.val_eq]; exact h w hw
       · intro h w hw
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        have hval : M.val p w = M'.val p w' := match k, hbw with
-          | 0, h => h p
-          | _ + 1, ⟨h, _, _⟩ => h p
-        rw [hval]; exact h w' hw'
-    · constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        have hval : M.val p w = M'.val p w' := match k, hbw with
-          | 0, h => h p
-          | _ + 1, ⟨h, _, _⟩ => h p
-        rw [← hval]; exact h w hw
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        have hval : M.val p w = M'.val p w' := match k, hbw with
-          | 0, h => h p
-          | _ + 1, ⟨h, _, _⟩ => h p
-        rw [hval]; exact h w' hw'
+        rw [hbw.val_eq]; exact h w' hw'
   | bot =>
     intro k _ M M' s s' hbisim b
     cases b
-    · -- antiSupport bot: True
-      exact ⟨fun _ => trivial, fun _ => trivial⟩
-    · -- support bot: s = ∅. Preserved under state bisim because both
-      -- directions imply each other (bisim has back/forth).
-      constructor
-      · intro hs
-        apply Finset.eq_empty_of_forall_notMem
-        intro w' hw'
-        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
-        exact absurd hw (hs ▸ Finset.notMem_empty w)
-      · intro hs'
-        apply Finset.eq_empty_of_forall_notMem
-        intro w hw
-        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
-        exact absurd hw' (hs' ▸ Finset.notMem_empty w')
+    · exact ⟨fun _ => trivial, fun _ => trivial⟩
+    · exact hbisim.eq_empty_iff
   | ne =>
     intro k _ M M' s s' hbisim b
     cases b
-    · -- antiSupport ne: s = ∅
-      constructor
-      · intro h
-        apply Finset.eq_empty_of_forall_notMem
-        intro w' hw'
-        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
-        exact absurd hw (h ▸ Finset.notMem_empty w)
-      · intro h
-        apply Finset.eq_empty_of_forall_notMem
-        intro w hw
-        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
-        exact absurd hw' (h ▸ Finset.notMem_empty w')
-    · -- support ne: s.Nonempty
-      constructor
-      · rintro ⟨w, hw⟩
-        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
-        exact ⟨w', hw'⟩
-      · rintro ⟨w', hw'⟩
-        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
-        exact ⟨w, hw⟩
+    · exact hbisim.eq_empty_iff
+    · exact hbisim.nonempty_iff
   | neg ψ ih =>
     intro k hd M M' s s' hbisim b
     cases b
@@ -383,64 +333,24 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
       constructor
       · intro h w' hw'
         obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
-          obtain ⟨_, hforth, hback⟩ := hbw
-          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
-        exact (ih hdψ hacc false).mp (h w hw)
+        exact (ih hdψ hbw.accessStateBisim false).mp (h w hw)
       · intro h w hw
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
-          obtain ⟨_, hforth, hback⟩ := hbw
-          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
-        exact (ih hdψ hacc false).mpr (h w' hw')
-    · -- support (poss ψ): ∀ w ∈ s, ∃ t ⊆ R[w], t.Nonempty ∧ support ψ t
+        exact (ih hdψ hbw.accessStateBisim false).mpr (h w' hw')
+    · -- support (poss ψ): existential sub-team transported via image_subset
       constructor
       · intro h w' hw'
         obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
         obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
-        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
-          obtain ⟨_, hforth, hback⟩ := hbw
-          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
-        classical
-        let t' : Finset W' :=
-          (M'.access w').filter (fun v' => ∃ v ∈ t, WorldBisim k M v M' v')
-        refine ⟨t', ?_, ?_, ?_⟩
-        · intro v' hv'; exact (Finset.mem_filter.mp hv').1
-        · obtain ⟨v, hv⟩ := htne
-          obtain ⟨v', hv', hbv⟩ := hacc.1 v (htsub hv)
-          exact ⟨v', Finset.mem_filter.mpr ⟨hv', v, hv, hbv⟩⟩
-        · have htbisim : StateBisim k M t M' t' := by
-            refine ⟨?_, ?_⟩
-            · intro v hv
-              obtain ⟨v', hv', hbv⟩ := hacc.1 v (htsub hv)
-              exact ⟨v', Finset.mem_filter.mpr ⟨hv', v, hv, hbv⟩, hbv⟩
-            · intro v' hv'
-              obtain ⟨_, v, hv, hbv⟩ := Finset.mem_filter.mp hv'
-              exact ⟨v, hv, hbv⟩
-          exact (ih hdψ htbisim true).mp htsupp
+        obtain ⟨t', ht'sub, ht'ne, htbisim⟩ :=
+          hbw.accessStateBisim.exists_image_subset htsub
+        exact ⟨t', ht'sub, ht'ne htne, (ih hdψ htbisim true).mp htsupp⟩
       · intro h w hw
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        obtain ⟨t', htsub, htne, htsupp⟩ := h w' hw'
-        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
-          obtain ⟨_, hforth, hback⟩ := hbw
-          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
-        classical
-        let t : Finset W :=
-          (M.access w).filter (fun v => ∃ v' ∈ t', WorldBisim k M v M' v')
-        refine ⟨t, ?_, ?_, ?_⟩
-        · intro v hv; exact (Finset.mem_filter.mp hv).1
-        · obtain ⟨v', hv'⟩ := htne
-          obtain ⟨v, hv, hbv⟩ := hacc.2 v' (htsub hv')
-          exact ⟨v, Finset.mem_filter.mpr ⟨hv, v', hv', hbv⟩⟩
-        · have htbisim : StateBisim k M t M' t' := by
-            refine ⟨?_, ?_⟩
-            · intro v hv
-              obtain ⟨_, v', hv', hbv⟩ := Finset.mem_filter.mp hv
-              exact ⟨v', hv', hbv⟩
-            · intro v' hv'
-              obtain ⟨v, hv, hbv⟩ := hacc.2 v' (htsub hv')
-              exact ⟨v, Finset.mem_filter.mpr ⟨hv, v', hv', hbv⟩, hbv⟩
-          exact (ih hdψ htbisim true).mpr htsupp
+        obtain ⟨t', ht'sub, ht'ne, ht'supp⟩ := h w' hw'
+        obtain ⟨t, htsub, htne, htbisim⟩ :=
+          hbw.accessStateBisim.symm.exists_image_subset ht'sub
+        exact ⟨t, htsub, htne ht'ne, (ih hdψ htbisim.symm true).mpr ht'supp⟩
 
 end BSMLOr
 
@@ -654,69 +564,24 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
   induction φ with
   | atom p =>
     intro k _ M M' s s' hbisim b
-    cases b
+    cases b <;>
     · constructor
       · intro h w' hw'
         obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        have hval : M.val p w = M'.val p w' := match k, hbw with
-          | 0, h => h p
-          | _ + 1, ⟨h, _, _⟩ => h p
-        rw [← hval]; exact h w hw
+        rw [← hbw.val_eq]; exact h w hw
       · intro h w hw
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        have hval : M.val p w = M'.val p w' := match k, hbw with
-          | 0, h => h p
-          | _ + 1, ⟨h, _, _⟩ => h p
-        rw [hval]; exact h w' hw'
-    · constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        have hval : M.val p w = M'.val p w' := match k, hbw with
-          | 0, h => h p
-          | _ + 1, ⟨h, _, _⟩ => h p
-        rw [← hval]; exact h w hw
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        have hval : M.val p w = M'.val p w' := match k, hbw with
-          | 0, h => h p
-          | _ + 1, ⟨h, _, _⟩ => h p
-        rw [hval]; exact h w' hw'
+        rw [hbw.val_eq]; exact h w' hw'
   | bot =>
     intro k _ M M' s s' hbisim b
     cases b
     · exact ⟨fun _ => trivial, fun _ => trivial⟩
-    · constructor
-      · intro hs
-        apply Finset.eq_empty_of_forall_notMem
-        intro w' hw'
-        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
-        exact absurd hw (hs ▸ Finset.notMem_empty w)
-      · intro hs'
-        apply Finset.eq_empty_of_forall_notMem
-        intro w hw
-        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
-        exact absurd hw' (hs' ▸ Finset.notMem_empty w')
+    · exact hbisim.eq_empty_iff
   | ne =>
     intro k _ M M' s s' hbisim b
     cases b
-    · constructor
-      · intro h
-        apply Finset.eq_empty_of_forall_notMem
-        intro w' hw'
-        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
-        exact absurd hw (h ▸ Finset.notMem_empty w)
-      · intro h
-        apply Finset.eq_empty_of_forall_notMem
-        intro w hw
-        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
-        exact absurd hw' (h ▸ Finset.notMem_empty w')
-    · constructor
-      · rintro ⟨w, hw⟩
-        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
-        exact ⟨w', hw'⟩
-      · rintro ⟨w', hw'⟩
-        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
-        exact ⟨w, hw⟩
+    · exact hbisim.eq_empty_iff
+    · exact hbisim.nonempty_iff
   | neg ψ ih =>
     intro k hd M M' s s' hbisim b
     cases b
@@ -812,63 +677,23 @@ theorem bisim_invariant_eval (φ : Formula Atom) :
     · constructor
       · intro h w' hw'
         obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
-          obtain ⟨_, hforth, hback⟩ := hbw
-          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
-        exact (ih hdψ hacc false).mp (h w hw)
+        exact (ih hdψ hbw.accessStateBisim false).mp (h w hw)
       · intro h w hw
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
-          obtain ⟨_, hforth, hback⟩ := hbw
-          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
-        exact (ih hdψ hacc false).mpr (h w' hw')
+        exact (ih hdψ hbw.accessStateBisim false).mpr (h w' hw')
     · constructor
       · intro h w' hw'
         obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
         obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
-        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
-          obtain ⟨_, hforth, hback⟩ := hbw
-          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
-        classical
-        let t' : Finset W' :=
-          (M'.access w').filter (fun v' => ∃ v ∈ t, WorldBisim k M v M' v')
-        refine ⟨t', ?_, ?_, ?_⟩
-        · intro v' hv'; exact (Finset.mem_filter.mp hv').1
-        · obtain ⟨v, hv⟩ := htne
-          obtain ⟨v', hv', hbv⟩ := hacc.1 v (htsub hv)
-          exact ⟨v', Finset.mem_filter.mpr ⟨hv', v, hv, hbv⟩⟩
-        · have htbisim : StateBisim k M t M' t' := by
-            refine ⟨?_, ?_⟩
-            · intro v hv
-              obtain ⟨v', hv', hbv⟩ := hacc.1 v (htsub hv)
-              exact ⟨v', Finset.mem_filter.mpr ⟨hv', v, hv, hbv⟩, hbv⟩
-            · intro v' hv'
-              obtain ⟨_, v, hv, hbv⟩ := Finset.mem_filter.mp hv'
-              exact ⟨v, hv, hbv⟩
-          exact (ih hdψ htbisim true).mp htsupp
+        obtain ⟨t', ht'sub, ht'ne, htbisim⟩ :=
+          hbw.accessStateBisim.exists_image_subset htsub
+        exact ⟨t', ht'sub, ht'ne htne, (ih hdψ htbisim true).mp htsupp⟩
       · intro h w hw
         obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        obtain ⟨t', htsub, htne, htsupp⟩ := h w' hw'
-        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
-          obtain ⟨_, hforth, hback⟩ := hbw
-          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
-        classical
-        let t : Finset W :=
-          (M.access w).filter (fun v => ∃ v' ∈ t', WorldBisim k M v M' v')
-        refine ⟨t, ?_, ?_, ?_⟩
-        · intro v hv; exact (Finset.mem_filter.mp hv).1
-        · obtain ⟨v', hv'⟩ := htne
-          obtain ⟨v, hv, hbv⟩ := hacc.2 v' (htsub hv')
-          exact ⟨v, Finset.mem_filter.mpr ⟨hv, v', hv', hbv⟩⟩
-        · have htbisim : StateBisim k M t M' t' := by
-            refine ⟨?_, ?_⟩
-            · intro v hv
-              obtain ⟨_, v', hv', hbv⟩ := Finset.mem_filter.mp hv
-              exact ⟨v', hv', hbv⟩
-            · intro v' hv'
-              obtain ⟨v, hv, hbv⟩ := hacc.2 v' (htsub hv')
-              exact ⟨v, Finset.mem_filter.mpr ⟨hv, v', hv', hbv⟩, hbv⟩
-          exact (ih hdψ htbisim true).mpr htsupp
+        obtain ⟨t', ht'sub, ht'ne, ht'supp⟩ := h w' hw'
+        obtain ⟨t, htsub, htne, htbisim⟩ :=
+          hbw.accessStateBisim.symm.exists_image_subset ht'sub
+        exact ⟨t, htsub, htne ht'ne, (ih hdψ htbisim.symm true).mpr ht'supp⟩
 
 end BSMLEmpty
 
