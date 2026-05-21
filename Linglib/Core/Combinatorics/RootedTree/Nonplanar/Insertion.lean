@@ -93,6 +93,65 @@ theorem insertionMultiset_zero_left_of_ne_zero (G : Multiset (Nonplanar α))
   · show (Planar.Pathed.insertionForest [] (Quotient.out g :: gs.map Quotient.out)).map _ = 0
     rw [Planar.Pathed.insertionForest_empty_host_nonempty_guests, Multiset.map_zero]
 
+/-! ## §1.5: Cardinality preservation
+
+NIM grafts guest-trees into host-vertices; no host trees are created or
+destroyed. Hence every output forest has the same cardinality as the host. -/
+
+/-- **Planar**: every list `L ∈ insertionForest hosts guests` has
+    `L.length = hosts.length`. Structural induction on hosts/guests. -/
+theorem _root_.RootedTree.Planar.Pathed.insertionForest_length
+    {α : Type*} (hosts guests : List (Planar α))
+    {L : List (Planar α)}
+    (h : L ∈ Planar.Pathed.insertionForest hosts guests) :
+    L.length = hosts.length := by
+  induction hosts generalizing guests L with
+  | nil =>
+    cases guests with
+    | nil =>
+      rw [Planar.Pathed.insertionForest_nil_nil] at h
+      have : L = [] := Multiset.mem_singleton.mp h
+      simp [this]
+    | cons _ _ =>
+      rw [Planar.Pathed.insertionForest_empty_host_nonempty_guests] at h
+      exact absurd h (by simp)
+  | cons T F ih =>
+    cases guests with
+    | nil =>
+      rw [Planar.Pathed.insertionForest_cons_host_nil_guests] at h
+      have : L = T :: F := Multiset.mem_singleton.mp h
+      simp [this]
+    | cons Tg Ts =>
+      rw [Planar.Pathed.insertionForest_cons_cons] at h
+      rw [Multiset.mem_bind] at h
+      obtain ⟨_assn, _hassn, h2⟩ := h
+      rw [Multiset.mem_bind] at h2
+      obtain ⟨T', _hT', h3⟩ := h2
+      rw [Multiset.mem_map] at h3
+      obtain ⟨F', hF', hLeq⟩ := h3
+      have hF'len : F'.length = F.length := ih _ hF'
+      rw [← hLeq]
+      show (T' :: F').length = (T :: F).length
+      simp [hF'len]
+
+/-- **Cardinality preservation**: every `F' ∈ NIM(A, B)` has `|F'| = |A|`.
+    Lifts `Planar.Pathed.insertionForest_length` through `Nonplanar.mk`. -/
+theorem insertionMultiset_card_eq (A B : Multiset (Nonplanar α))
+    {F' : Multiset (Nonplanar α)} (h : F' ∈ insertionMultiset A B) :
+    F'.card = A.card := by
+  unfold insertionMultiset at h
+  rw [Multiset.mem_map] at h
+  obtain ⟨L, hL, hF'_eq⟩ := h
+  have hLlen : L.length = A.toList.length := by
+    have h_hosts_len : (A.toList.map Quotient.out).length = A.toList.length :=
+      List.length_map _
+    rw [← h_hosts_len]
+    exact Planar.Pathed.insertionForest_length _ _ hL
+  rw [← hF'_eq]
+  show ((Multiset.ofList (L.map Nonplanar.mk)) : Multiset (Nonplanar α)).card =
+      A.card
+  rw [Multiset.coe_card, List.length_map, hLlen, Multiset.length_toList]
+
 /-! ## §2: toList helpers
 
 Multiset's `toList` returns a non-canonical list representative. Two

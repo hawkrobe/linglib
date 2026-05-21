@@ -540,6 +540,126 @@ example {α : Type*} (a b c : α) :
   have := node_mk_planar_list a [Planar.leaf b, Planar.leaf c]
   simpa [leaf] using this
 
+/-! ### Root label and root children
+
+Projections recovering the root label and the unordered multiset of
+root children from a `Nonplanar α`. The root label lifts from
+`Planar.label` (already proven `PlanarEquiv`-invariant). The children
+multiset requires its own invariance proof: under `PlanarStep`, the
+swap case permutes children (multiset-preserving), and the recurse
+case replaces one child by an equivalent one (collapses under
+`Nonplanar.mk`). -/
+
+/-- The root label of a nonplanar tree, lifted from `Planar.label`. -/
+def rootLabel : Nonplanar α → α :=
+  lift Planar.label (fun _ _ h => Planar.planarEquiv_label_eq h)
+
+@[simp] theorem rootLabel_mk (t : Planar α) :
+    rootLabel (mk t) = t.label := rfl
+
+@[simp] theorem rootLabel_node (a : α) (F : Multiset (Nonplanar α)) :
+    rootLabel (node a F) = a := by
+  obtain ⟨lst, hlst⟩ : ∃ lst : List (Nonplanar α), F = ↑lst :=
+    ⟨F.toList, F.coe_toList.symm⟩
+  subst hlst
+  show rootLabel (node a (Multiset.ofList lst)) = a
+  show rootLabel (mk (.node a (lst.map Quotient.out))) = a
+  rfl
+
+end Nonplanar
+
+/-! ### Root-children multiset invariance under `PlanarEquiv` -/
+
+namespace Planar
+
+variable {α : Type*}
+
+/-- The unordered multiset of root-children, viewed as `Multiset (Nonplanar α)`
+    via `Nonplanar.mk`. -/
+def rootChildrenMk : Planar α → Multiset (Nonplanar α)
+  | .node _ cs => Multiset.ofList (cs.map Nonplanar.mk)
+
+@[simp] theorem rootChildrenMk_node (a : α) (cs : List (Planar α)) :
+    rootChildrenMk (Planar.node a cs) =
+      Multiset.ofList (cs.map Nonplanar.mk) := rfl
+
+/-- The root-children multiset is invariant under `PlanarStep`. The swap
+    case permutes children (multiset-invariant); the recurse case
+    replaces one child by an equivalent one (collapses under `Nonplanar.mk`). -/
+private theorem rootChildrenMk_planarStep : ∀ {t s : Planar α},
+    PlanarStep t s → rootChildrenMk t = rootChildrenMk s
+  | _, _, @PlanarStep.swapAtRoot _ _ l r pre post => by
+    show Multiset.ofList (List.map Nonplanar.mk (pre ++ l :: r :: post)) =
+         Multiset.ofList (List.map Nonplanar.mk (pre ++ r :: l :: post))
+    apply Multiset.coe_eq_coe.mpr
+    exact (List.Perm.append_left pre (.swap r l post)).map _
+  | _, _, @PlanarStep.recurse _ _ pre old new post hstep => by
+    show Multiset.ofList (List.map Nonplanar.mk (pre ++ old :: post)) =
+         Multiset.ofList (List.map Nonplanar.mk (pre ++ new :: post))
+    have hmk : Nonplanar.mk old = Nonplanar.mk new := Nonplanar.mk_step hstep
+    congr 1
+    simp only [List.map_append, List.map_cons, hmk]
+
+/-- The root-children multiset is invariant under `PlanarEquiv`. -/
+theorem rootChildrenMk_planarEquiv {t s : Planar α} (h : PlanarEquiv t s) :
+    rootChildrenMk t = rootChildrenMk s := by
+  induction h with
+  | rel _ _ hstep => exact rootChildrenMk_planarStep hstep
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+end Planar
+
+namespace Nonplanar
+
+variable {α : Type*}
+
+/-- The root-children multiset of a nonplanar tree, lifted from
+    `Planar.rootChildrenMk`. -/
+noncomputable def rootChildren : Nonplanar α → Multiset (Nonplanar α) :=
+  lift Planar.rootChildrenMk
+    (fun _ _ h => Planar.rootChildrenMk_planarEquiv h)
+
+@[simp] theorem rootChildren_mk (t : Planar α) :
+    rootChildren (mk t) = Planar.rootChildrenMk t := rfl
+
+@[simp] theorem rootChildren_node (a : α) (F : Multiset (Nonplanar α)) :
+    rootChildren (node a F) = F := by
+  obtain ⟨lst, hlst⟩ : ∃ lst : List (Nonplanar α), F = ↑lst :=
+    ⟨F.toList, F.coe_toList.symm⟩
+  subst hlst
+  show rootChildren (node a (Multiset.ofList lst)) = ↑lst
+  show rootChildren (mk (.node a (lst.map Quotient.out))) = ↑lst
+  show Planar.rootChildrenMk (.node a (lst.map Quotient.out)) = ↑lst
+  show Multiset.ofList (((lst.map Quotient.out)).map mk) = ↑lst
+  congr 1
+  rw [List.map_map]
+  induction lst with
+  | nil => rfl
+  | cons head tail ih =>
+    show (mk ∘ Quotient.out) head :: List.map (mk ∘ Quotient.out) tail =
+         head :: tail
+    rw [ih]
+    show (mk ∘ Quotient.out) head :: tail = head :: tail
+    rw [show (mk ∘ Quotient.out) head = head from head.out_eq]
+
+/-- **Eta principle**: every nonplanar tree equals `node` applied to its
+    root label and children-multiset. -/
+theorem node_eta (T : Nonplanar α) :
+    Nonplanar.node (rootLabel T) (rootChildren T) = T := by
+  induction T using Quotient.inductionOn with
+  | h t =>
+    rcases t with ⟨a, cs⟩
+    -- t = Planar.node a cs.
+    show Nonplanar.node (rootLabel (mk (.node a cs)))
+         (rootChildren (mk (.node a cs))) = mk (.node a cs)
+    rw [rootLabel_mk, rootChildren_mk]
+    show Nonplanar.node a (Planar.rootChildrenMk (.node a cs)) = mk (.node a cs)
+    rw [Planar.rootChildrenMk_node]
+    -- Nonplanar.node a (Multiset.ofList (cs.map mk)) = mk (.node a cs)
+    exact node_mk_planar_list a cs
+
 end Nonplanar
 
 /-! ## Functoriality of `map` under `PlanarEquiv`
