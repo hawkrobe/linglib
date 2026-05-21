@@ -45,7 +45,7 @@ agreement. Both relations are symmetric in their `S`/`S'` arguments.
 
 namespace Phenomena.Focus.Studies.IppolitoKissWilliams2022
 
-open Core Core.Question Semantics.Questions.Probabilistic
+open Question Semantics.Questions.Probabilistic
 
 variable {W : Type*}
 
@@ -58,7 +58,7 @@ variable {W : Type*}
 
     Refines the 2022 informal "q provides evidence for r" as
     `IsPositiveEvidence` (conditional-probability shift). -/
-def Supports (dox : Set W) (S : Core.Question W) (r : Set W) (μ : PMF W) : Prop :=
+def Supports (dox : Set W) (S : Question W) (r : Set W) (μ : PMF W) : Prop :=
   ∃ q ∈ alt S, dox ⊆ q ∧ IsPositiveEvidence q r μ
 
 /-- An info-seeking speaker — one who doesn't believe any alternative of
@@ -66,7 +66,7 @@ def Supports (dox : Set W) (S : Core.Question W) (r : Set W) (μ : PMF W) : Prop
     derivation of @cite{ippolito-kiss-williams-2025} §5.2's
     interrogative-left-argument restriction: the failure isn't a
     clause-type filter but a doxastic consequence of `Supports`. -/
-theorem Supports.of_no_belief_fails {dox : Set W} {S : Core.Question W}
+theorem Supports.of_no_belief_fails {dox : Set W} {S : Question W}
     {r : Set W} {μ : PMF W}
     (h : ∀ q ∈ alt S, ¬ (dox ⊆ q)) :
     ¬ Supports dox S r μ := by
@@ -76,7 +76,7 @@ theorem Supports.of_no_belief_fails {dox : Set W} {S : Core.Question W}
 /-- `Supports dox S r μ` exposes a doxastically-grounded alternative
     of `S` containing `dox`. The bridge from probabilistic support to
     pure inquisitive `Resolves`-style witnesses. -/
-theorem Supports.exists_dox_alt {dox : Set W} {S : Core.Question W}
+theorem Supports.exists_dox_alt {dox : Set W} {S : Question W}
     {r : Set W} {μ : PMF W}
     (h : Supports dox S r μ) :
     ∃ p ∈ alt S, dox ⊆ p := by
@@ -88,25 +88,25 @@ theorem Supports.exists_dox_alt {dox : Set W} {S : Core.Question W}
 
 /-- Two sentences `S` and `S'` **agree** on QUD `Q` from doxastic state
     `dox` iff some alternative `α ∈ alt Q` is supported by both. -/
-def Agree (dox : Set W) (S S' Q : Core.Question W) (μ : PMF W) : Prop :=
+def Agree (dox : Set W) (S S' Q : Question W) (μ : PMF W) : Prop :=
   ∃ α ∈ alt Q, Supports dox S α μ ∧ Supports dox S' α μ
 
 /-- Two sentences `S` and `S'` **disagree** on QUD `Q` from doxastic
     state `dox` iff each supports some answer but no shared alternative
     witnesses agreement. -/
-def Disagree (dox : Set W) (S S' Q : Core.Question W) (μ : PMF W) : Prop :=
+def Disagree (dox : Set W) (S S' Q : Question W) (μ : PMF W) : Prop :=
   (∃ α ∈ alt Q, Supports dox S α μ) ∧
   (∃ α ∈ alt Q, Supports dox S' α μ) ∧
   ¬ Agree dox S S' Q μ
 
 /-- `Agree` is symmetric in its `S`/`S'` arguments. -/
-theorem Agree.symm {dox : Set W} {S S' Q : Core.Question W} {μ : PMF W}
+theorem Agree.symm {dox : Set W} {S S' Q : Question W} {μ : PMF W}
     (h : Agree dox S S' Q μ) : Agree dox S' S Q μ := by
   obtain ⟨α, hMem, hS, hS'⟩ := h
   exact ⟨α, hMem, hS', hS⟩
 
 /-- `Disagree` is symmetric in its `S`/`S'` arguments. -/
-theorem Disagree.symm {dox : Set W} {S S' Q : Core.Question W} {μ : PMF W}
+theorem Disagree.symm {dox : Set W} {S S' Q : Question W} {μ : PMF W}
     (h : Disagree dox S S' Q μ) : Disagree dox S' S Q μ := by
   obtain ⟨hS, hS', hNotAgree⟩ := h
   exact ⟨hS', hS, fun hAgree => hNotAgree hAgree.symm⟩

@@ -14,7 +14,7 @@ import Linglib.Theories.Semantics.Questions.Partition.Constructors
 
 Two felicity conditions on assertions:
 
-1. **Core.Question Condition** (def 8): An assertion must address a good question —
+1. **Question Condition** (def 8): An assertion must address a good question —
    one not trivially settled by the common ground.
 
 2. **Answer Condition** (def 15): An assertion must not be needlessly inferior
@@ -61,7 +61,7 @@ variable {W U : Type*} (s : Scenario W U)
 /-- Context-compatible worlds. -/
 def cWorlds : List W := s.worlds.filter s.context
 
-/-- Core.Question Condition violation (K&S def 7–8): the QUD is trivially settled
+/-- Question Condition violation (K&S def 7–8): the QUD is trivially settled
 by CK — all context-compatible worlds give the same answer.
 
 Each scenario defines its QUD via a content-specific projection function
@@ -93,7 +93,7 @@ there exists a strictly better alternative. -/
 def needlesslyInferior (u : U) : Bool :=
   s.utterances.any λ v => s.betterThan v u
 
-/-- K&S Oddness: violates Core.Question Condition or Answer Condition. -/
+/-- K&S Oddness: violates Question Condition or Answer Condition. -/
 def isOdd (u : U) : Bool :=
   s.badQuestion || s.needlesslyInferior u
 
@@ -172,7 +172,7 @@ def allAlternativesTrivial (φ : W → Bool) (alts : List (W → Bool)) : Bool :
 end Triviality
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §3  Italian Warmth Oddness — Core.Question Condition
+-- §3  Italian Warmth Oddness — Question Condition
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! K&S ex. (1)–(2): "# Some/All Italians come from a warm country"
@@ -183,7 +183,7 @@ an alternative explanation: the QUD is trivially settled by CK.
 
 CK: Italy is a warm country. Since all Italians come from Italy,
 the QUD "Do [some/all] Italians come from a warm country?" is
-trivially settled → Core.Question Condition violation.
+trivially settled → Question Condition violation.
 
 Both K&S and @cite{spector-2014} predict oddness here (§1.2). -/
 
@@ -216,7 +216,7 @@ def italianWarmthScenario : Scenario ItalyWorld ItalyUtt where
 theorem italianWarmth_contextEquiv :
     italianWarmthScenario.contextEquiv .some_ .all_ = true := by native_decide
 
-/-- QUD trivially settled by CK → Core.Question Condition violated. -/
+/-- QUD trivially settled by CK → Question Condition violated. -/
 theorem italianWarmth_badQuestion :
     italianWarmthScenario.badQuestion = true := by native_decide
 
@@ -535,14 +535,14 @@ end MaxPresup
 -- §8  Independence of the Two Conditions
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- The Core.Question Condition and Answer Condition are independent:
-- Italian warmth: Core.Question Condition violated, Answer Condition irrelevant
-- Grade: Core.Question Condition satisfied, Answer Condition violated
+/-- The Question Condition and Answer Condition are independent:
+- Italian warmth: Question Condition violated, Answer Condition irrelevant
+- Grade: Question Condition satisfied, Answer Condition violated
 This shows neither condition subsumes the other. -/
 theorem conditions_independent :
-    -- Core.Question Condition violated (Italian warmth)
+    -- Question Condition violated (Italian warmth)
     italianWarmthScenario.badQuestion = true ∧
-    -- Core.Question Condition satisfied (Grade)
+    -- Question Condition satisfied (Grade)
     gradeScenario.badQuestion = false ∧
     -- Answer Condition violated (Grade: "some" needlessly weak)
     gradeScenario.needlesslyInferior .some_ = true ∧
@@ -628,10 +628,10 @@ theorem compose_open_context :
 end Composability
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §12  Explicit Core.Question Rescue (K&S §2.2)
+-- §12  Explicit Question Rescue (K&S §2.2)
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! K&S predict that an explicit question neutralizes the Core.Question Condition.
+/-! K&S predict that an explicit question neutralizes the Question Condition.
 
 (3a)  # John has one wife — odd (no explicit question)
 (11a) (How many wives does John have?) John has one wife — OK
@@ -690,13 +690,13 @@ theorem wife_one_not_inferior :
     wifeScenario.needlesslyInferior .one = false := by native_decide
 
 /-- Without explicit question: "John has one wife" is odd.
-K&S (3a): the QUD is trivially settled → Core.Question Condition violated. -/
+K&S (3a): the QUD is trivially settled → Question Condition violated. -/
 theorem wife_one_odd :
     wifeScenario.isOdd .one = true := by native_decide
 
 /-- K&S prediction with explicit question (K&S (11a)):
 
-When "How many wives does John have?" is explicitly asked, the Core.Question
+When "How many wives does John have?" is explicitly asked, the Question
 Condition is satisfied (the question is good by K&S (7) — all participants
 are committed to settling it). Oddness depends solely on the Answer
 Condition. Since "one wife" is not needlessly inferior, the sentence
@@ -800,7 +800,7 @@ theorem hurford_rescued_match_data :
 All three agree on "some". The disagreement on "all" reveals:
 - **@cite{magri-2009}** is the most targeted: only oddness when a blind
   implicature contradicts CK. "All" generates no implicature, so it's fine.
-- **K&S** casts the widest net via the Core.Question Condition: ANY utterance
+- **K&S** casts the widest net via the Question Condition: ANY utterance
   addressing a trivially settled QUD is odd.
 - **@cite{spector-2014}** predicts oddness via triviality: "all" is a
   C-tautology (entailed by CK), so the only alternative is trivial → odd. -/
@@ -829,7 +829,7 @@ Magri says fine; K&S and Spector both say odd. -/
 theorem three_way_disagree_all :
     -- Magri: fine (no implicature generated)
     italianScenario.blindOdd .all_ = false ∧
-    -- K&S: odd (Core.Question Condition violated)
+    -- K&S: odd (Question Condition violated)
     italianWarmthScenario.isOdd .all_ = true ∧
     -- Spector: odd (sole alternative is trivial)
     allAlternativesTrivial

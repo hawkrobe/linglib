@@ -454,7 +454,7 @@ theorem toPOSWQ_interrogation_eq_inquire (K : Scoreboard W)
     (K.interrogationUpdate q a).toPOSWQ.inquiry =
       (K.toPOSWQ.inquire (Core.Mood.POSWQ.polarSetoid q)).inquiry := rfl
 
-/-- **Core.Question-strengthening principle** (the inquiry analogue of
+/-- **Question-strengthening principle** (the inquiry analogue of
     `boxCs_after_assertion` and `direction_demotes_violators`):
     after posing `q`, every proposition that is settled by `q`
     *and* compatible with the prior inquiry is settled by the new

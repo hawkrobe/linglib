@@ -20,11 +20,10 @@ strength (Deo–Thomas fn. 20).
 3. Some `P`-alternative is properly contained in some `Q`-alternative.
 
 The asymmetry (`P` widens *into* `Q`'s coarser alternatives) reproduces
-the Deo–Thomas Bool/List definition over `Core.Question`'s native maximal-
+the Deo–Thomas Bool/List definition over `Question`'s native maximal-
 alternatives selector `alt`.
 -/
 
-namespace Core
 
 namespace Question
 
@@ -49,4 +48,3 @@ def widerThan (P Q : Question W) : Prop :=
 
 end Question
 
-end Core

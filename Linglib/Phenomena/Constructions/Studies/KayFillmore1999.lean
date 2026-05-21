@@ -469,12 +469,12 @@ theorem wxdy_ci_independent {W : Type*}
 -- F. Hamblin question semantics bridge (Theories/Semantics/Questions/Hamblin.lean substrate)
 -- ============================================================================
 
-open Core.Question
+open Question
 
 /-- Literal reading: standard wh-question "which activity is X engaged in?"
-Delegates to substrate `Core.Question.which` over a domain of activities. -/
+Delegates to substrate `Question.which` over a domain of activities. -/
 def wxdyLiteralQ {W E : Type*}
-    (activities : Set E) (pred : E → Set W) : Core.Question W :=
+    (activities : Set E) (pred : E → Set W) : Question W :=
   which activities pred
 
 /-- Incredulity reading: degenerate question with only the presupposed
@@ -483,7 +483,7 @@ the speaker already knows the answer.
 
 In the substrate, this is the declarative principal ideal of the
 presupposed proposition — a single-alternative question. -/
-def wxdyIncredulityQ {W : Type*} (presupposedProp : Set W) : Core.Question W :=
+def wxdyIncredulityQ {W : Type*} (presupposedProp : Set W) : Question W :=
   declarative presupposedProp
 
 /-- The incredulity reading has exactly one alternative: the presupposed
@@ -494,7 +494,7 @@ theorem incredulity_single_answer {W : Type*}
   alt_declarative presupposedProp
 
 /-- The literal reading is a genuine (non-degenerate) question: it delegates
-to substrate `Core.Question.which`, which yields a Hamblin-style alternative
+to substrate `Question.which`, which yields a Hamblin-style alternative
 set indexed by the activity domain. -/
 theorem literal_is_genuine_question {W E : Type*}
     (activities : Set E) (pred : E → Set W) :

@@ -31,7 +31,6 @@ files (`Phenomena/Questions/Studies/`) and use `IsSingleton` /
 `SingletonQuestion` directly.
 -/
 
-namespace Core
 
 namespace Question
 
@@ -165,4 +164,3 @@ end SingletonQuestion
 
 end Question
 
-end Core

@@ -3,10 +3,10 @@ import Linglib.Theories.Semantics.Questions.Resolution
 import Linglib.Theories.Semantics.Questions.Exhaustivity
 
 /-!
-# @cite{george-2011}: Core.Question Embedding and the Semantics of Answers
+# @cite{george-2011}: Question Embedding and the Semantics of Answers
 @cite{karttunen-1977} @cite{groenendijk-stokhof-1984} @cite{heim-1994} @cite{dayal-1996}
 
-Single-paper formalisation of @cite{george-2011}, *Core.Question Embedding
+Single-paper formalisation of @cite{george-2011}, *Question Embedding
 and the Semantics of Answers* (UCLA Ph.D. dissertation). George's
 central methodological claim: the **weak/intermediate exhaustivity**
 that is widely posited to explain *Maggie-knows-was-admitted* /
@@ -30,7 +30,7 @@ relationship Groenendijk-Stokhof assumed).
 George's `Strong` operator (eq 125) takes a world `w` and an abstract
 `α` (an `⟨s, τ⟩` function) and returns the proposition that holds
 exactly at worlds where the abstract has the same extension as in
-`w`. On the substrate's `Core.Question W` view (which fixes `τ = ⟨e, t⟩`-ish
+`w`. On the substrate's `Question W` view (which fixes `τ = ⟨e, t⟩`-ish
 content), `Strong(w)(Q) = strongAnswer Q w`.
 
 George's `Weak` operator (eq 130) takes an abstract `α` and returns
@@ -70,14 +70,14 @@ of all alternatives true at `w`.
 ## What this file does NOT cover
 
 * George's compositional system (Chapter 2): topical-property /
-  abstract machinery is richer than `Core.Question W = LowerSet (Set W)`.
+  abstract machinery is richer than `Question W = LowerSet (Set W)`.
 * Chapters 5–6 alternative-question and mention-some scope account.
 * Chapter 7 strong-ish exhaustivity speculation.
 -/
 
 namespace Phenomena.Questions.Studies.George2011
 
-open Core Core.Question Semantics.Questions.Resolution
+open Question Semantics.Questions.Resolution
 open Semantics.Questions.Exhaustivity
 
 variable {W : Type*}
@@ -89,10 +89,10 @@ variable {W : Type*}
     worlds whose extension on every alternative matches `w`. Same as
     the substrate's `strongAnswer Q w` (see `Heim1994` for the
     bridge to ans₂). -/
-def Strong (Q : Core.Question W) (w : W) : Set W :=
+def Strong (Q : Question W) (w : W) : Set W :=
   strongAnswer Q w
 
-@[simp] theorem Strong_eq_strongAnswer (Q : Core.Question W) (w : W) :
+@[simp] theorem Strong_eq_strongAnswer (Q : Question W) (w : W) :
     Strong Q w = strongAnswer Q w := rfl
 
 /-! ### §2.6.3 Weak operator (eq 130) -/
@@ -102,10 +102,10 @@ def Strong (Q : Core.Question W) (w : W) : Set W :=
     the set of worlds where the alternative's extension at `w` is a
     subset of its extension here. Same as the substrate's
     `weakAnswer Q w`. -/
-def Weak (Q : Core.Question W) (w : W) : Set W :=
+def Weak (Q : Question W) (w : W) : Set W :=
   weakAnswer Q w
 
-@[simp] theorem Weak_eq_weakAnswer (Q : Core.Question W) (w : W) :
+@[simp] theorem Weak_eq_weakAnswer (Q : Question W) (w : W) :
     Weak Q w = weakAnswer Q w := rfl
 
 /-- @cite{george-2011} §2.6.3: any state σ supporting the Strong
@@ -114,7 +114,7 @@ def Weak (Q : Core.Question W) (w : W) : Set W :=
     of George's claim that "weak exhaustivity is dispensable":
     everywhere we'd want to use Weak, the stronger Strong already
     serves. -/
-theorem Strong_subset_Weak (Q : Core.Question W) (w : W) :
+theorem Strong_subset_Weak (Q : Question W) (w : W) :
     Strong Q w ⊆ Weak Q w :=
   strongAnswer_subset_weakAnswer Q w
 
@@ -143,7 +143,7 @@ hypotheses. -/
     Captures the @cite{groenendijk-stokhof-1984} argument structure
     that George dissects in (5)-(10). -/
 theorem strongAnswer_eq_when_alts_agree
-    (Q Q' : Core.Question W) (w : W)
+    (Q Q' : Question W) (w : W)
     (hAgree : ∀ v, (∀ p ∈ alt Q, w ∈ p ↔ v ∈ p) ↔
                    (∀ p ∈ alt Q', w ∈ p ↔ v ∈ p)) :
     strongAnswer Q w = strongAnswer Q' w := by
@@ -179,7 +179,7 @@ asymmetry is empirically active. -/
     `0`) but the strong answer is `{0}` alone (since `1` decides
     `{1,2}` differently from `0`). Constructing this concrete
     instance in Lean requires more substrate API for `alt` of
-    `Core.Question.ofList`-style constructions; the substrate fact itself
+    `Question.ofList`-style constructions; the substrate fact itself
     is documented in `Exhaustivity.strongAnswer_subset_weakAnswer`'s
     one-direction status. -/
 

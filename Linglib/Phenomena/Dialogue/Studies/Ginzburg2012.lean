@@ -65,7 +65,7 @@ core that downstream work consumes.
 
 namespace Phenomena.Dialogue.Studies.Ginzburg2012
 
-open Dialogue.KOS Core.Question
+open Dialogue.KOS Question
 
 -- ════════════════════════════════════════════════════════════
 -- § 1. The Turn-Taking Puzzle (Ch. 2)

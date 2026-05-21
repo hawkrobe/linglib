@@ -33,14 +33,14 @@ that evaluate the relation (filter, `decide`, list aggregation) take
 
 ## Notation
 
-Scoped `s ⊨ q` for `Support.supports s q` lives in `Core.Question` so
-it can coexist with the inquisitive `s ⊨ p` from `Core.Question.Basic`
+Scoped `s ⊨ q` for `Support.supports s q` lives in `Question` so
+it can coexist with the inquisitive `s ⊨ p` from `Question.Basic`
 (once the namespace consolidates, this notation simply becomes the
 canonical one).
 
 ## Specialisations
 
-* `Core.Question.Relevance` — `partiallyAnswers` and `moveRelevant`
+* `Question.Relevance` — `partiallyAnswers` and `moveRelevant`
   (Roberts QUD-relevance) over `Question W`. Specific notions, not a
   typeclass.
 * `Semantics.Questions.Resolution` — `Resolves`, `MentionSome`,
@@ -53,7 +53,7 @@ canonical one).
   typeclass; see that file's `Supports` directly.
 -/
 
-namespace Core.Question
+namespace Question
 
 /-- The state `s` supports / resolves the question `q`.
 
@@ -110,4 +110,4 @@ instance allResolvedList.instDecidable [DecidableSupport State Question]
 
 end DecidableSupport
 
-end Core.Question
+end Question

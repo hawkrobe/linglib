@@ -125,50 +125,6 @@ theorem ckIsoSymmetricAlgebra_ι_single (t : Nonplanar α) :
   rw [h2]
   rfl
 
-/-! ## §1c: Counit transport
-
-The iso `ckIsoSymmetricAlgebra` is an `AlgEquiv`, so it intertwines the
-counits of `SL = SymmetricAlgebra ℤ (InsertionAlgebra α)` (whose canonical
-counit is `SymmetricAlgebra.algebraMapInv`) and `ConnesKreimer ℤ (Nonplanar α)`
-(whose counit is `ConnesKreimer.counit`). Both are AlgHoms to `ℤ` that
-vanish on `ι`-image, so `SymmetricAlgebra.algHom_ext` reduces equality to
-a pointwise check on `ι`. -/
-
-/-- **Counit transport** for `ckIsoSymmetricAlgebra`: the CK counit composed
-    with `ckIso` equals `SymmetricAlgebra.algebraMapInv`. Both AlgHoms
-    `SL →ₐ[ℤ] ℤ` vanish on `ι` (LHS via `counit_of'` with `|{t}| = 1 ≠ 0`;
-    RHS via `algebraMapInv_ι`), and `SymmetricAlgebra.algHom_ext` lifts the
-    `ι`-restricted equality to the full AlgHom. -/
-@[simp] theorem counit_ckIsoSymmetricAlgebra
-    (X : SymmetricAlgebra ℤ (InsertionAlgebra α)) :
-    (ConnesKreimer.counit (R := ℤ) (T := Nonplanar α))
-        (ckIsoSymmetricAlgebra X) =
-      SymmetricAlgebra.algebraMapInv
-        (R := ℤ) (M := InsertionAlgebra α) X := by
-  have h_alg :
-      ((ConnesKreimer.counit (R := ℤ) (T := Nonplanar α)).comp
-          (ckIsoSymmetricAlgebra (α := α)).toAlgHom) =
-        (SymmetricAlgebra.algebraMapInv
-          (R := ℤ) (M := InsertionAlgebra α)) := by
-    apply SymmetricAlgebra.algHom_ext
-    -- Equality of LinearMaps `LL →ₗ[ℤ] ℤ` via Basis extension.
-    -- `Finsupp.basisSingleOne` is the canonical basis of `LL = Nonplanar α →₀ ℤ`.
-    apply Module.Basis.ext
-      (Finsupp.basisSingleOne (R := ℤ) (ι := Nonplanar α) :
-        Module.Basis (Nonplanar α) ℤ (InsertionAlgebra α))
-    intro t
-    -- Goal: `counit (ckIso (ι (single t 1))) = algebraMapInv (ι (single t 1))`.
-    -- LHS = counit (of'({t})) = 0 (|{t}| = 1).
-    -- RHS = algebraMapInv (ι _) = 0.
-    show ConnesKreimer.counit (ckIsoSymmetricAlgebra
-          ((SymmetricAlgebra.ι ℤ (InsertionAlgebra α)) (Finsupp.single t (1 : ℤ)))) =
-        SymmetricAlgebra.algebraMapInv
-          ((SymmetricAlgebra.ι ℤ (InsertionAlgebra α)) (Finsupp.single t (1 : ℤ)))
-    rw [ckIsoSymmetricAlgebra_ι_single, ConnesKreimer.counit_of',
-        SymmetricAlgebra.algebraMapInv_ι]
-    simp [Multiset.card_singleton]
-  exact AlgHom.congr_fun h_alg X
-
 /-! ## §2: Q5c — bridge `oudomGuinStar` ↔ `GrossmanLarson.product`
 
 The two products on `ConnesKreimer ℤ (Nonplanar α)`:
@@ -962,174 +918,163 @@ private theorem ckIso_circ_intertwine_insertion
           ConnesKreimer.of' ({t} : Multiset _) from
         ckIsoSymmetricAlgebra_ι_single t]
 
-/-- **Q5c — pre-Lie PBW iso for Hopf algebras of rooted trees**.
+/-- **Substrate 2 for Q5c** — DEPRECATED (2026-05-17). This identity was
+    invented for the per-tprod induction strategy of `gl_product_eq_oudomGuinStar`.
+    Audit revealed:
 
-    The OG `★` product on `S(InsertionAlgebra α)`, transported via
-    `ckIsoSymmetricAlgebra`, equals the Grossman-Larson product on
-    `ConnesKreimer ℤ (Nonplanar α)`.
+    1. The identity is the GL/CK transport of OG `oudomGuinStar_mul_ι_split`.
+    2. Reducing the basis case proves to require the singleton-{v} case of
+       `Nonplanar.insertionMultiset_assoc` (the A3.3 keystone sorry).
+    3. **OG paper §3.2 (Prop 3.2) does NOT use this identity.** OG proves
+       Q5c-equivalent via B+/B- duality with Δ^ρ: show `B-(A ∗ B) =
+       ε(A) B-(B) + B-(A) ∗ B` and conclude via pairing nondegeneracy.
 
-    `ckIso (X ★ Y) = unop (op (ckIso X) * op (ckIso Y))`
+    The OG-faithful route is now the active plan; see
+    `[[feedback-substrate2-not-og]]` and `[[project-q5c-architecture]]`.
+    Substrate infrastructure required for the new route:
+    - `GrossmanLarsonPairing.lean` (currently sorry-fenced).
+    - `Nonplanar.autCard` (Aut.lean, sorry).
+    - `Δ^ρ` cocycle (PruningNonplanar.lean, sorry-free) — REUSED.
+    - `B+_a` operator (PruningNonplanar.lean, sorry-free) — REUSED.
 
-    **This is a known result** in the literature:
-    * Foissy 2002, "Les algèbres de Hopf des arbres enracinés décorés"
-      (arXiv:math/0105212), §13.3 Prop 85 + Cor 86: identifies
-      `(Ker Φ)^⊥ ⊂ HP,R` with the universal enveloping algebra of the
-      Grossman-Larson Lie algebra, with the product matching `★`.
-    * Manchon, "Hopf algebras, from basics to applications to
-      renormalization" (arXiv:math/0408405) — survey treatment.
-    * Oudom-Guin 2008, "On the Lie envelopping algebra of a pre-Lie
-      algebra" (arXiv:math/0404457) — implicit via their construction.
+    Substrate 2 is preserved as a sorry below to mark the abandoned path
+    and to let the per-tprod m+1 case (which references it) typecheck.
+    Closure via the deprecated combinatorial route is NOT recommended.
 
-    **Formalization status (2026-05-18)**: `sorry`-fenced as a top-level
-    axiom. Previous attempts to close combinatorially:
-    * Per-tprod induction with `GL_product_split_mul_ι` substrate
-      (deprecated 2026-05-17 — bridge to `insertionMultiset_assoc`'s
-      A3.3 keystone, multi-session dead-end).
-    * Pairing-route via `gl_product_eq_oudomGuinStar_via_pairing`
-      (`OudomGuinBridgePairing.lean`) — also blocked on
-      A3.3-family combinatorics + multi-tree-z handling.
-    * Foissy 2002's planar-bialgebra dual identification — would
-      require substantial new planar substrate (~1000-2000 LOC).
+    Original statement (additive, avoiding GL subtraction):
+    `F * op (G * of'({v})) + F * insertion (op G) (op (of'({v})))
+       = insertion (F * op G) (op (of'({v}))) + op (unop (F * op G) * of'({v}))`
+-/
+private theorem GL_product_split_mul_ι
+    (F : GrossmanLarson ℤ α)
+    (G : ConnesKreimer ℤ (Nonplanar α))
+    (v : Nonplanar α) :
+    F * GrossmanLarson.op (G * ConnesKreimer.of' {v}) +
+    F * GrossmanLarson.insertion (GrossmanLarson.op G)
+        (GrossmanLarson.op (ConnesKreimer.of' {v})) =
+      GrossmanLarson.insertion (F * GrossmanLarson.op G)
+        (GrossmanLarson.op (ConnesKreimer.of' {v})) +
+      GrossmanLarson.op
+        (GrossmanLarson.unop (F * GrossmanLarson.op G) * ConnesKreimer.of' {v}) := by
+  sorry
 
-    Closure is **deferred**. Downstream consumers (`bMinusLin_gl_mul_via_pbw`,
-    Q6 = `mul_assoc_basis_via_oudom_guin_pbw`, MCB Lemma 1.2.10) trust
-    this as a named axiom. -/
+/-- **Per-tprod form** of Q5c (lifts to full Q5c via `algHomL_surjective`).
+
+    For all X ∈ S(L), m ∈ ℕ, a : Fin m → L:
+      `ckIso(X ★ algHomL(tprod m a)) = (op (ckIso X)) * (op (ckIso (algHomL (tprod m a))))`
+
+    Proof by induction on m, using `oudomGuinStar_mul_ι_split` + IH +
+    `oudomGuinCirc_algHomL_tprod_ι` + the two substrate lemmas above.
+
+    Pending closure: depends on substrates above. -/
+private theorem gl_product_eq_oudomGuinStar_tprod
+    (X : SymmetricAlgebra ℤ (InsertionAlgebra α)) :
+    ∀ (m : ℕ) (a : Fin m → InsertionAlgebra α),
+      ((ckIsoSymmetricAlgebra (oudomGuinStar X
+          (PreLie.OudomGuinCircConstruct.algHomL
+            (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m a))) :
+        ConnesKreimer ℤ (Nonplanar α)) : GrossmanLarson ℤ α) =
+      (GrossmanLarson.op (ckIsoSymmetricAlgebra X)) *
+      (GrossmanLarson.op (ckIsoSymmetricAlgebra
+        (PreLie.OudomGuinCircConstruct.algHomL
+          (TensorAlgebra.tprod ℤ (InsertionAlgebra α) m a)))) := by
+  intro m
+  induction m with
+  | zero =>
+    intro a
+    -- algHomL(tprod 0) = 1; both sides reduce to op(ckIso X).
+    have h_tprod0 : TensorAlgebra.tprod ℤ (InsertionAlgebra α) 0 a = 1 := by
+      rw [TensorAlgebra.tprod_apply]; simp [List.ofFn_zero]
+    rw [h_tprod0,
+        show PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := InsertionAlgebra α)
+              (1 : TensorAlgebra ℤ (InsertionAlgebra α)) =
+            (1 : SymmetricAlgebra ℤ (InsertionAlgebra α)) from
+          map_one (SymmetricAlgebra.algHom ℤ (InsertionAlgebra α))]
+    rw [oudomGuinStar_one, map_one]
+    show (ckIsoSymmetricAlgebra X : ConnesKreimer ℤ _) =
+        GrossmanLarson.unop
+          (GrossmanLarson.op (ckIsoSymmetricAlgebra X) * (1 : GrossmanLarson ℤ α))
+    rw [GrossmanLarson.mul_one]
+    rfl
+  | succ m ih =>
+    intro a
+    -- Y = D · ι v, D = algHomL(tprod m init), v = a(last).
+    -- Uses oudomGuinStar_mul_ι_split + IH(D) + IH-summand-wise(D○ιv) +
+    -- ckIso_circ_intertwine_insertion + GL_product_split_mul_ι.
+    -- Detailed wiring deferred — substrate sorries above must close first.
+    sorry
+
+/-- **Q5c**: the OG `★` product, transported via `ckIsoSymmetricAlgebra`,
+    equals the Grossman-Larson product on `ConnesKreimer ℤ (Nonplanar α)`.
+
+    Lifted from `gl_product_eq_oudomGuinStar_tprod` via `algHomL_surjective`
+    + `TA_linearMap_ext_tprod` for Y. Mirrors Q3's lifting pattern
+    (`oudomGuinStar_assoc`).
+
+    Pending: per-tprod m+1 case depends on `ckIso_circ_intertwine_insertion`
+    + `GL_product_split_mul_ι` substrate lemmas (sorry-fenced above). -/
 theorem gl_product_eq_oudomGuinStar
     (X Y : SymmetricAlgebra ℤ (InsertionAlgebra α)) :
     ((ckIsoSymmetricAlgebra (oudomGuinStar X Y) : ConnesKreimer ℤ (Nonplanar α)) :
       GrossmanLarson ℤ α) =
       (GrossmanLarson.op (ckIsoSymmetricAlgebra X)) *
       (GrossmanLarson.op (ckIsoSymmetricAlgebra Y)) := by
-  sorry
+  -- Reduce to TA-side LinearMap equality via `algHomL_surjective` (for Y),
+  -- then TA_linearMap_ext_tprod to per-tprod.
+  obtain ⟨z, hz⟩ := PreLie.OudomGuinCircConstruct.algHomL_surjective Y
+  subst hz
+  -- Both sides are linear maps TA →ₗ GL evaluated at z.
+  set f_LHS : TensorAlgebra ℤ (InsertionAlgebra α) →ₗ[ℤ] GrossmanLarson ℤ α :=
+    (ckIsoSymmetricAlgebra (α := α)).toLinearMap.comp
+      ((oudomGuinStarL X).comp PreLie.OudomGuinCircConstruct.algHomL) with hf_LHS
+  set f_RHS : TensorAlgebra ℤ (InsertionAlgebra α) →ₗ[ℤ] GrossmanLarson ℤ α :=
+    (GrossmanLarson.product (GrossmanLarson.op (ckIsoSymmetricAlgebra X))).comp
+      ((ckIsoSymmetricAlgebra (α := α)).toLinearMap.comp
+        PreLie.OudomGuinCircConstruct.algHomL) with hf_RHS
+  suffices h_LM : f_LHS = f_RHS by
+    have := congrArg
+      (fun (f : TensorAlgebra ℤ (InsertionAlgebra α) →ₗ[ℤ] GrossmanLarson ℤ α) => f z)
+      h_LM
+    simp only [hf_LHS, hf_RHS, LinearMap.comp_apply, oudomGuinStarL_apply,
+               AlgEquiv.toLinearMap_apply] at this
+    -- `this` should now state the desired equation.
+    exact this
+  -- Apply TA_linearMap_ext_tprod.
+  apply PreLie.OudomGuinCircConstruct.TA_linearMap_ext_tprod
+  intro m a
+  simp only [hf_LHS, hf_RHS, LinearMap.comp_apply, oudomGuinStarL_apply,
+             AlgEquiv.toLinearMap_apply]
+  exact gl_product_eq_oudomGuinStar_tprod X m a
 
 /-! ## §3: Q6 — `mul_assoc_basis` for `R = ℤ` via Q3 + Q5
 
-Combining `oudomGuinStar_assoc` (Q3, **sorry-free** as of 2026-05-17) with
-`gl_product_eq_oudomGuinStar` (Q5c, single top-level sorry — the pre-Lie
-PBW iso, a known result) closes `mul_assoc_basis` for `R = ℤ`. -/
+Combining `oudomGuinStar_assoc` (Q3, currently sorry-fenced at line 1895
+of `OudomGuinCirc.lean`) with `gl_product_eq_oudomGuinStar` (Q5c, also
+sorry-fenced above) closes `mul_assoc_basis` for `R = ℤ`. -/
 
 /-- **Q6 (for R = ℤ)**: associativity of the Grossman-Larson product on basis.
 
-    Sorry-fenced on Q5c (`gl_product_eq_oudomGuinStar`). The mechanical
-    wiring (lift via `ckIsoSymmetricAlgebra.symm`, apply `oudomGuinStar_assoc`
-    on SL side, transport back via Q5c) is straightforward (~10-20 LOC). -/
+    Doubly sorry-fenced: depends on Q3 (`oudomGuinStar_assoc`'s mul case)
+    + Q5c (`gl_product_eq_oudomGuinStar`). Verifies the structural path
+    works once both are closed. -/
 theorem GrossmanLarson.mul_assoc_basis_via_oudom_guin_pbw
     (F₁ F₂ F₃ : Forest (Nonplanar α)) :
     ((GrossmanLarson.of' F₁ : GrossmanLarson ℤ α) *
         GrossmanLarson.of' F₂) * GrossmanLarson.of' F₃ =
       GrossmanLarson.of' F₁ *
         (GrossmanLarson.of' F₂ * GrossmanLarson.of' F₃) := by
-  -- Lift each `of' Fᵢ` back to S(L) via `ckIsoSymmetricAlgebra.symm`.
-  set X₁ : SymmetricAlgebra ℤ (InsertionAlgebra α) :=
-    ckIsoSymmetricAlgebra.symm
-      (GrossmanLarson.unop (GrossmanLarson.of' F₁ : GrossmanLarson ℤ α))
-    with hX₁
-  set X₂ : SymmetricAlgebra ℤ (InsertionAlgebra α) :=
-    ckIsoSymmetricAlgebra.symm
-      (GrossmanLarson.unop (GrossmanLarson.of' F₂ : GrossmanLarson ℤ α))
-    with hX₂
-  set X₃ : SymmetricAlgebra ℤ (InsertionAlgebra α) :=
-    ckIsoSymmetricAlgebra.symm
-      (GrossmanLarson.unop (GrossmanLarson.of' F₃ : GrossmanLarson ℤ α))
-    with hX₃
-  -- Each `of' Fᵢ` = `op (ckIso Xᵢ)` via `apply_symm_apply` (`unop` is identity).
-  have h_F₁ : (GrossmanLarson.of' F₁ : GrossmanLarson ℤ α) =
-              GrossmanLarson.op (ckIsoSymmetricAlgebra X₁) := by
-    rw [hX₁, ckIsoSymmetricAlgebra.apply_symm_apply]; rfl
-  have h_F₂ : (GrossmanLarson.of' F₂ : GrossmanLarson ℤ α) =
-              GrossmanLarson.op (ckIsoSymmetricAlgebra X₂) := by
-    rw [hX₂, ckIsoSymmetricAlgebra.apply_symm_apply]; rfl
-  have h_F₃ : (GrossmanLarson.of' F₃ : GrossmanLarson ℤ α) =
-              GrossmanLarson.op (ckIsoSymmetricAlgebra X₃) := by
-    rw [hX₃, ckIsoSymmetricAlgebra.apply_symm_apply]; rfl
-  rw [h_F₁, h_F₂, h_F₃]
-  -- Helper: applied Q5c forward turns `op (ckIso (X ★ Y))` into
-  -- `op (ckIso X) * op (ckIso Y)`. The CK→GL coercion in Q5c's LHS
-  -- is the same as `op` definitionally; we expose this with `show`.
-  have Q5c_op : ∀ (X Y : SymmetricAlgebra ℤ (InsertionAlgebra α)),
-      GrossmanLarson.op (ckIsoSymmetricAlgebra (oudomGuinStar X Y)) =
-      GrossmanLarson.op (ckIsoSymmetricAlgebra X) *
-      GrossmanLarson.op (ckIsoSymmetricAlgebra Y) := fun X Y =>
-    gl_product_eq_oudomGuinStar X Y
-  -- Fold each binary product back into `op (ckIso (X ★ Y))` via Q5c.
-  rw [← Q5c_op X₁ X₂, ← Q5c_op X₂ X₃,
-      ← Q5c_op (oudomGuinStar X₁ X₂) X₃,
-      ← Q5c_op X₁ (oudomGuinStar X₂ X₃)]
-  -- Goal: op (ckIso ((X₁ ★ X₂) ★ X₃)) = op (ckIso (X₁ ★ (X₂ ★ X₃)))
-  -- Follows from Q3 (`oudomGuinStar_assoc`, sorry-free 2026-05-17).
-  rw [oudomGuinStar_assoc]
-
-/-- **Q6 lift to general elements**: `mul_assoc` for `GrossmanLarson ℤ α`,
-    via triple bilinearity reduction (`Finsupp.addHom_ext` thrice) to the
-    basis case `mul_assoc_basis_via_oudom_guin_pbw` (Q6). Mirrors the
-    structure of `GrossmanLarson.mul_assoc` (general R, sorry-fenced) but
-    closes the basis step via Q5c-PBW. -/
-theorem GrossmanLarson.mul_assoc_ℤ (F₁ F₂ F₃ : GrossmanLarson ℤ α) :
-    F₁ * F₂ * F₃ = F₁ * (F₂ * F₃) := by
-  -- Reduce F₁ to single via addHom_ext.
-  have h₁ : GrossmanLarson.assocLHSHom F₂ F₃ = GrossmanLarson.assocRHSHom F₂ F₃ := by
-    refine Finsupp.addHom_ext fun T₁ a₁ => ?_
-    set s₁ : GrossmanLarson ℤ α := Finsupp.single T₁ a₁ with s₁_def
-    show GrossmanLarson.assocLHSHom F₂ F₃ s₁ = GrossmanLarson.assocRHSHom F₂ F₃ s₁
-    rw [GrossmanLarson.assocLHSHom_apply, GrossmanLarson.assocRHSHom_apply]
-    -- Reduce F₂ to single.
-    have h₂ : GrossmanLarson.assocLHSHomY s₁ F₃ = GrossmanLarson.assocRHSHomY s₁ F₃ := by
-      refine Finsupp.addHom_ext fun T₂ a₂ => ?_
-      set s₂ : GrossmanLarson ℤ α := Finsupp.single T₂ a₂ with s₂_def
-      show GrossmanLarson.assocLHSHomY s₁ F₃ s₂ = GrossmanLarson.assocRHSHomY s₁ F₃ s₂
-      rw [GrossmanLarson.assocLHSHomY_apply, GrossmanLarson.assocRHSHomY_apply]
-      -- Reduce F₃ to single.
-      have h₃ : GrossmanLarson.assocLHSHomZ s₁ s₂ = GrossmanLarson.assocRHSHomZ s₁ s₂ := by
-        refine Finsupp.addHom_ext fun T₃ a₃ => ?_
-        set s₃ : GrossmanLarson ℤ α := Finsupp.single T₃ a₃ with s₃_def
-        show GrossmanLarson.assocLHSHomZ s₁ s₂ s₃ = GrossmanLarson.assocRHSHomZ s₁ s₂ s₃
-        rw [GrossmanLarson.assocLHSHomZ_apply, GrossmanLarson.assocRHSHomZ_apply]
-        -- Scalar pull-out to `aᵢ • of' Tᵢ` form.
-        rw [show s₁ = a₁ • (GrossmanLarson.of' T₁ : GrossmanLarson ℤ α) from
-              (Finsupp.smul_single_one T₁ a₁).symm,
-            show s₂ = a₂ • (GrossmanLarson.of' T₂ : GrossmanLarson ℤ α) from
-              (Finsupp.smul_single_one T₂ a₂).symm,
-            show s₃ = a₃ • (GrossmanLarson.of' T₃ : GrossmanLarson ℤ α) from
-              (Finsupp.smul_single_one T₃ a₃).symm]
-        simp only [GrossmanLarson.smul_mul_left, GrossmanLarson.mul_smul_right]
-        rw [GrossmanLarson.mul_assoc_basis_via_oudom_guin_pbw T₁ T₂ T₃]
-      have h₃App := DFunLike.congr_fun h₃ F₃
-      rw [GrossmanLarson.assocLHSHomZ_apply, GrossmanLarson.assocRHSHomZ_apply] at h₃App
-      exact h₃App
-    have h₂App := DFunLike.congr_fun h₂ F₂
-    rw [GrossmanLarson.assocLHSHomY_apply, GrossmanLarson.assocRHSHomY_apply] at h₂App
-    exact h₂App
-  have h₁App := DFunLike.congr_fun h₁ F₁
-  rw [GrossmanLarson.assocLHSHom_apply, GrossmanLarson.assocRHSHom_apply] at h₁App
-  exact h₁App
-
-/-! ## §4: `Semigroup` / `Monoid` instances for `GrossmanLarson ℤ α`
-
-With `mul_assoc_ℤ` closed, register the algebraic typeclass instances
-at the `ℤ` specialization. Downstream Bialgebra / Hopf registration
-(MCB Lemma 1.2.10 / 1.2.11) depends on these. -/
-
-namespace GrossmanLarson
-
-variable {α : Type} [DecidableEq (Nonplanar α)]
-
-noncomputable instance instSemigroup_ℤ : Semigroup (GrossmanLarson ℤ α) where
-  mul_assoc := mul_assoc_ℤ
-
-noncomputable instance instMonoid_ℤ : Monoid (GrossmanLarson ℤ α) where
-  mul_assoc := mul_assoc_ℤ
-  one_mul := one_mul
-  mul_one := mul_one
-
-noncomputable instance instSemiring_ℤ : Semiring (GrossmanLarson ℤ α) where
-  mul_assoc := mul_assoc_ℤ
-  one_mul := one_mul
-  mul_one := mul_one
-  left_distrib := mul_add
-  right_distrib := add_mul
-  zero_mul := zero_mul_gl
-  mul_zero := mul_zero_gl
-
-end GrossmanLarson
+  -- Lift `of' Fᵢ` back through `ckIsoSymmetricAlgebra⁻¹` to SymmetricAlgebra,
+  -- apply oudomGuinStar_assoc there, transport back via Q5c.
+  set X₁ := ckIsoSymmetricAlgebra.symm
+    ((GrossmanLarson.unop (GrossmanLarson.of' F₁ : GrossmanLarson ℤ α)))
+  set X₂ := ckIsoSymmetricAlgebra.symm
+    ((GrossmanLarson.unop (GrossmanLarson.of' F₂ : GrossmanLarson ℤ α)))
+  set X₃ := ckIsoSymmetricAlgebra.symm
+    ((GrossmanLarson.unop (GrossmanLarson.of' F₃ : GrossmanLarson ℤ α)))
+  have h := oudomGuinStar_assoc X₁ X₂ X₃   -- Q3 (sorry-fenced)
+  -- Apply ckIsoSymmetricAlgebra to both sides and use Q5c to transport.
+  have := congrArg (ckIsoSymmetricAlgebra (α := α)) h
+  -- The (★ ↔ GL.product) intertwining (Q5c, sorry-fenced) gives the result.
+  sorry  -- Q5c + Q3 + simp closure; ~5-20 LOC once both are sorry-free
 
 end RootedTree

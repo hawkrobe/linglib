@@ -7,7 +7,7 @@ import Linglib.Core.Logic.Modal.Inquisitive
 @cite{ciardelli-2022} @cite{ciardelli-groenendijk-roelofsen-2018}
 
 Semantic-theory claim: formulas of various inquisitive-flavored logics
-denote inquisitive contents (`Core.Question`). This file collects the
+denote inquisitive contents (`Question`). This file collects the
 denotation maps for each logic in tree that can be interpreted into
 Question-space.
 
@@ -16,12 +16,12 @@ Question-space.
 * **InqML** (`Core/Logic/Modal/Inquisitive.lean`) — Ciardelli 2022 Ch 8
   modal inquisitive logic. The denotation `ofInqML M φ` packages the
   set of supporting teams (viewed as info states via the canonical
-  `Finset W → Set W` coercion) into a `Core.Question W`.
+  `Finset W → Set W` coercion) into a `Question W`.
 
 ## Type alignment
 
 InqML's support is `support M φ : Finset W → Prop` (teams = Finsets of
-worlds). CGR's `Core.Question W` has `props : Set (Set W)` (info states
+worlds). CGR's `Question W` has `props : Set (Set W)` (info states
 = subsets of worlds). The bridge uses the `Finset W → Set W` coercion
 to translate supporting teams into info states.
 
@@ -50,7 +50,6 @@ characterization.
 
 namespace Theories.Semantics.Questions.Denotation
 
-open Core (Question)
 open Core.Logic.Modal (KripkeModel)
 open Core.Logic.Modal.Inquisitive
 

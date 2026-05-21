@@ -38,17 +38,17 @@ from being felicitous when a weaker prejacent would do (the
 
 namespace Phenomena.AdditiveParticles.Thomas2026
 
-open Core Core.Question Semantics.Questions.Probabilistic
+open Question Semantics.Questions.Probabilistic
 
 variable {W : Type*} {μ : PMF W}
-  {prejacent antecedent : Set W} {rq : Core.Question W} {𝒜 : Set (Set W)}
+  {prejacent antecedent : Set W} {rq : Question W} {𝒜 : Set (Set W)}
 
 /-! ### TOO felicity (@cite{thomas-2026} Def 64) -/
 
 /-- `TOO(π)` felicity in the sense of @cite{thomas-2026} Def 64. The
     five conditions are bundled below as a `structure` so consumers
     can project them by name. -/
-structure IsTooFelicitous (prejacent antecedent : Set W) (rq : Core.Question W)
+structure IsTooFelicitous (prejacent antecedent : Set W) (rq : Question W)
     (μ : PMF W) : Prop where
   /-- Def 64a: the antecedent answers the relevant question. -/
   antecedent_answers : Answers antecedent rq μ
@@ -101,7 +101,7 @@ theorem IsTooFelicitous.exists_strict_improvement
 
 /-! ### RQ vs CQ — the contextual-relevance layer (@cite{thomas-2026} §5.4.3, §5.5)
 
-The RQ in `IsTooFelicitous` need not be a Current Core.Question (CQ) in
+The RQ in `IsTooFelicitous` need not be a Current Question (CQ) in
 the discourse tree — it only needs to be *relevant* to one (the DQ
 or some other in-scope question). This generalization is what
 licenses *too* in cases like (45c) [implicit RQ] and (71) [single
@@ -114,7 +114,7 @@ licenses *too* in cases like (45c) [implicit RQ] and (71) [single
     paper requires `rq` to be Relevant to *some* `dq` in the discourse
     tree. -/
 def IsTooLicensedByDQ (prejacent antecedent : Set W)
-    (rq dq : Core.Question W) (μ : PMF W) : Prop :=
+    (rq dq : Question W) (μ : PMF W) : Prop :=
   IsTooFelicitous prejacent antecedent rq μ ∧ IsRelevantTo rq dq μ
 
 /-! ### Predicted infelicity
@@ -128,7 +128,7 @@ infelicity patterns from §5.5: -/
     antecedent, *too* is infelicitous. The infelicity is captured by
     the absence of any felicitous RQ for the given (prejacent, ant). -/
 def IsTooInfelicitous (prejacent antecedent : Set W) (μ : PMF W) : Prop :=
-  ∀ rq : Core.Question W, ¬ IsTooFelicitous prejacent antecedent rq μ
+  ∀ rq : Question W, ¬ IsTooFelicitous prejacent antecedent rq μ
 
 /-- @cite{thomas-2026} §5.5.1 (ex 75): if a single *wh*-answer (e.g.,
     "Bailey ate spaghetti") is offered against a multiple-*wh* CQ
@@ -139,7 +139,7 @@ def IsTooInfelicitous (prejacent antecedent : Set W) (μ : PMF W) : Prop :=
     the CQ is reinterpreted (cf. ex 77, where multiple-*wh* admits a
     mention-some single-pair reading). -/
 def IsTooInfelicitousAgainstCQ (prejacent antecedent : Set W)
-    (cq : Core.Question W) (μ : PMF W) : Prop :=
+    (cq : Question W) (μ : PMF W) : Prop :=
   ¬ IsTooFelicitous prejacent antecedent cq μ
 
 /-! ### Empirical predictions catalog

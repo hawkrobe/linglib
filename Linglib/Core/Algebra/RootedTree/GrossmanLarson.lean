@@ -784,7 +784,7 @@ all the heavy lifting happens at the underlying `Finsupp` level. -/
 /-- Right multiplication by `y` as an `AddMonoidHom`, additive in `x`.
     Bilinearity of `product` (which is a LinearMap) gives the additive
     structure for free. -/
-noncomputable def mulRightHom (y : GrossmanLarson R α) :
+private noncomputable def mulRightHom (y : GrossmanLarson R α) :
     GrossmanLarson R α →+ GrossmanLarson R α where
   toFun x := x * y
   map_zero' := by
@@ -795,7 +795,7 @@ noncomputable def mulRightHom (y : GrossmanLarson R α) :
     rw [product.map_add, LinearMap.add_apply]
 
 /-- Left multiplication by `x` as an `AddMonoidHom`, additive in `y`. -/
-noncomputable def mulLeftHom (x : GrossmanLarson R α) :
+private noncomputable def mulLeftHom (x : GrossmanLarson R α) :
     GrossmanLarson R α →+ GrossmanLarson R α where
   toFun y := x * y
   map_zero' := by
@@ -805,72 +805,72 @@ noncomputable def mulLeftHom (x : GrossmanLarson R α) :
     show product x (y₁ + y₂) = product x y₁ + product x y₂
     exact (product x).map_add y₁ y₂
 
-@[simp] theorem mulRightHom_apply (x y : GrossmanLarson R α) :
+@[simp] private theorem mulRightHom_apply (x y : GrossmanLarson R α) :
     mulRightHom y x = x * y := rfl
 
-@[simp] theorem mulLeftHom_apply (x y : GrossmanLarson R α) :
+@[simp] private theorem mulLeftHom_apply (x y : GrossmanLarson R α) :
     mulLeftHom x y = x * y := rfl
 
 /-- Scalar pull-out on the LEFT factor: `(c • x) * y = c • (x * y)`. -/
-theorem smul_mul_left (c : R) (x y : GrossmanLarson R α) :
+private theorem smul_mul_left (c : R) (x y : GrossmanLarson R α) :
     ((c • x : GrossmanLarson R α) * y) = c • (x * y) := by
   show product (c • x) y = c • product x y
   rw [product.map_smul, LinearMap.smul_apply]
 
 /-- Scalar pull-out on the RIGHT factor: `x * (c • y) = c • (x * y)`. -/
-theorem mul_smul_right (c : R) (x y : GrossmanLarson R α) :
+private theorem mul_smul_right (c : R) (x y : GrossmanLarson R α) :
     (x * (c • y : GrossmanLarson R α)) = c • (x * y) := by
   show product x (c • y) = c • product x y
   exact (product x).map_smul c y
 
 /-- AddMonoidHom for `x ↦ x * y * z`, additive in `x`. -/
-noncomputable def assocLHSHom (y z : GrossmanLarson R α) :
+private noncomputable def assocLHSHom (y z : GrossmanLarson R α) :
     GrossmanLarson R α →+ GrossmanLarson R α :=
   (mulRightHom z).comp (mulRightHom y)
 
 /-- AddMonoidHom for `x ↦ x * (y * z)`, additive in `x`. -/
-noncomputable def assocRHSHom (y z : GrossmanLarson R α) :
+private noncomputable def assocRHSHom (y z : GrossmanLarson R α) :
     GrossmanLarson R α →+ GrossmanLarson R α :=
   mulRightHom (y * z)
 
-@[simp] theorem assocLHSHom_apply (x y z : GrossmanLarson R α) :
+@[simp] private theorem assocLHSHom_apply (x y z : GrossmanLarson R α) :
     assocLHSHom y z x = x * y * z := rfl
 
-@[simp] theorem assocRHSHom_apply (x y z : GrossmanLarson R α) :
+@[simp] private theorem assocRHSHom_apply (x y z : GrossmanLarson R α) :
     assocRHSHom y z x = x * (y * z) := rfl
 
 /-- AddMonoidHom for `y ↦ x * y * z`, additive in `y` (with `x, z` fixed). -/
-noncomputable def assocLHSHomY (x z : GrossmanLarson R α) :
+private noncomputable def assocLHSHomY (x z : GrossmanLarson R α) :
     GrossmanLarson R α →+ GrossmanLarson R α :=
   (mulRightHom z).comp (mulLeftHom x)
 
 /-- AddMonoidHom for `y ↦ x * (y * z)`, additive in `y` (with `x, z` fixed). -/
-noncomputable def assocRHSHomY (x z : GrossmanLarson R α) :
+private noncomputable def assocRHSHomY (x z : GrossmanLarson R α) :
     GrossmanLarson R α →+ GrossmanLarson R α :=
   (mulLeftHom x).comp (mulRightHom z)
 
-@[simp] theorem assocLHSHomY_apply (x y z : GrossmanLarson R α) :
+@[simp] private theorem assocLHSHomY_apply (x y z : GrossmanLarson R α) :
     assocLHSHomY x z y = x * y * z := rfl
 
-@[simp] theorem assocRHSHomY_apply (x y z : GrossmanLarson R α) :
+@[simp] private theorem assocRHSHomY_apply (x y z : GrossmanLarson R α) :
     assocRHSHomY x z y = x * (y * z) := by
   show (mulLeftHom x) ((mulRightHom z) y) = x * (y * z)
   rfl
 
 /-- AddMonoidHom for `z ↦ x * y * z`, additive in `z` (with `x, y` fixed). -/
-noncomputable def assocLHSHomZ (x y : GrossmanLarson R α) :
+private noncomputable def assocLHSHomZ (x y : GrossmanLarson R α) :
     GrossmanLarson R α →+ GrossmanLarson R α :=
   (mulLeftHom (x * y))
 
 /-- AddMonoidHom for `z ↦ x * (y * z)`, additive in `z` (with `x, y` fixed). -/
-noncomputable def assocRHSHomZ (x y : GrossmanLarson R α) :
+private noncomputable def assocRHSHomZ (x y : GrossmanLarson R α) :
     GrossmanLarson R α →+ GrossmanLarson R α :=
   (mulLeftHom x).comp (mulLeftHom y)
 
-@[simp] theorem assocLHSHomZ_apply (x y z : GrossmanLarson R α) :
+@[simp] private theorem assocLHSHomZ_apply (x y z : GrossmanLarson R α) :
     assocLHSHomZ x y z = x * y * z := rfl
 
-@[simp] theorem assocRHSHomZ_apply (x y z : GrossmanLarson R α) :
+@[simp] private theorem assocRHSHomZ_apply (x y z : GrossmanLarson R α) :
     assocRHSHomZ x y z = x * (y * z) := by
   show (mulLeftHom x) ((mulLeftHom y) z) = x * (y * z)
   rfl

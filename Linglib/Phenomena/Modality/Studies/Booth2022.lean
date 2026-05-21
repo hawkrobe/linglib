@@ -23,20 +23,20 @@ combine both.
 
 ## Substrate alignment
 
-- `Core.Question W` (`Core/Core.Question/Basic.lean`) supplies subset-closed
+- `Question W` (`Core/Question/Basic.lean`) supplies subset-closed
   families of states with `∅`-membership — Booth Definition 10's `P°`
-  constraint becomes a `Core.Question`. `BilatInqProp` is then paired
+  constraint becomes a `Question`. `BilatInqProp` is then paired
   `Questions` plus a no-substantive-overlap field.
-- `Core.Question.declarative` is exactly Booth's `↓{·}` (Def 11 with a
-  singleton input); `Core.Question.info` is exactly `info(·)` (Def 12);
-  `Core.Question.alt` is exactly `alt` (Def 13).
+- `Question.declarative` is exactly Booth's `↓{·}` (Def 11 with a
+  singleton input); `Question.info` is exactly `info(·)` (Def 12);
+  `Question.alt` is exactly `alt` (Def 13).
 - `IsBilateral` (`Core/Logic/Bilateral/Defs.lean`) supplies the
   bilateral-substrate predicate. The `BilatInqProp` instance is
   `rfl`-trivial — bilateral negation is bundled-record swap. This is
   the sixth consumer of the `IsBilateral` substrate (BSML, QBSML, BUS,
   ICDRT, Truthmaker propositions, and now Booth bilateral inquisitive).
 - `IsMinCover` is expressed as `Minimal (IsCover · S) C` using mathlib's
-  `Minimal` predicate, mirroring how `Core.Question.alt` uses `Maximal`
+  `Minimal` predicate, mirroring how `Question.alt` uses `Maximal`
   (Booth's `alt` is the dual of his m-cover).
 
 ## Out of scope
@@ -68,7 +68,7 @@ that the alternatives of `⟦φ⟧⁺` cover `R(w)`, but that they form a
 `R(w)`. This is what derives Independence inferences (Fact 9): each
 alternative must be "needed", so no single alternative dominates.
 
-Expressed via mathlib's `Minimal` predicate (mirrors `Core.Question.alt`'s
+Expressed via mathlib's `Minimal` predicate (mirrors `Question.alt`'s
 use of `Maximal` — Booth's `alt` and `m-cover` are dual instances of
 the order-theoretic extremality pattern). -/
 
@@ -87,18 +87,18 @@ theorem IsMinCover.isCover {C : Set (Set W)} {S : Set W}
 /-! ### §2 Bilateral inquisitive propositions (Booth Def 10) -/
 
 /-- **Booth Def 10**: a bilateral inquisitive proposition is a paired
-    `pos`/`neg : Core.Question W` with no substantive overlap — only the
+    `pos`/`neg : Question W` with no substantive overlap — only the
     inconsistent (empty) state may both verify and falsify φ. The
     subset-closure and `∅`-membership requirements (Booth Def 10
-    bullets 2 and the implicit `∅ ∈ P°`) are baked into `Core.Question`. -/
+    bullets 2 and the implicit `∅ ∈ P°`) are baked into `Question`. -/
 structure BilatInqProp (W : Type*) where
   /-- Positive interpretation: states verifying the formula. -/
-  pos : Core.Question W
+  pos : Question W
   /-- Negative interpretation: states falsifying the formula. -/
-  neg : Core.Question W
+  neg : Question W
   /-- No substantive overlap: `pos.props ∩ neg.props ⊆ {∅}`. The reverse
-      `{∅} ⊆ pos.props ∩ neg.props` holds for free since both `Core.Question`s
-      contain `∅` (`Core.Question.contains_empty`). -/
+      `{∅} ⊆ pos.props ∩ neg.props` holds for free since both `Question`s
+      contain `∅` (`Question.contains_empty`). -/
   no_overlap : ∀ s : Set W, s ∈ pos → s ∈ neg → s = ∅
 
 namespace BilatInqProp
@@ -128,11 +128,11 @@ theorem isBilateral :
   negative_negate _ := rfl
 
 /-- **Booth Def 14, atomic clause**: `⟦p⟧⁺ = ↓{V(p)}`,
-    `⟦p⟧⁻ = ↓{W \ V(p)}`. Encoded with `Core.Question.declarative` since
+    `⟦p⟧⁻ = ↓{W \ V(p)}`. Encoded with `Question.declarative` since
     `↓{X} = declarative X`. -/
 def atom (V : Set W) : BilatInqProp W where
-  pos := Core.Question.declarative V
-  neg := Core.Question.declarative Vᶜ
+  pos := Question.declarative V
+  neg := Question.declarative Vᶜ
   no_overlap s hpos hneg := by
     have hV : s ⊆ V := hpos
     have hVc : s ⊆ Vᶜ := hneg
@@ -141,8 +141,8 @@ def atom (V : Set W) : BilatInqProp W where
     exact Set.subset_empty_iff.mp hsub
 
 /-- **Booth Def 14, ∨-clause**: `⟦φ ∨ ψ⟧⁺ = ⟦φ⟧⁺ ∪ ⟦ψ⟧⁺` (inquisitive
-    disjunction at the `props` level, = `Core.Question.⊔`); `⟦φ ∨ ψ⟧⁻ =
-    ⟦φ⟧⁻ ∩ ⟦ψ⟧⁻` (= `Core.Question.⊓`). -/
+    disjunction at the `props` level, = `Question.⊔`); `⟦φ ∨ ψ⟧⁻ =
+    ⟦φ⟧⁻ ∩ ⟦ψ⟧⁻` (= `Question.⊓`). -/
 def disj (φ ψ : BilatInqProp W) : BilatInqProp W where
   pos := φ.pos ⊔ ψ.pos
   neg := φ.neg ⊓ ψ.neg
@@ -181,26 +181,26 @@ his Def 14, which we mirror). -/
     `β ∈ φ.neg.props` containing `v`. Downward closure gives
     `{v} ∈ φ.pos ∩ φ.neg`, contradicting `φ.no_overlap`. -/
 def necessity (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W where
-  pos := Core.Question.declarative
-    {w : W | (R w).Nonempty ∧ IsMinCover (Core.Question.alt φ.pos) (R w)}
-  neg := Core.Question.declarative
+  pos := Question.declarative
+    {w : W | (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w)}
+  neg := Question.declarative
     {w : W | ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧
-              IsMinCover (Core.Question.alt φ.neg) R'}
+              IsMinCover (Question.alt φ.neg) R'}
   no_overlap s hpos hneg := by
     by_contra hne
     obtain ⟨w, hws⟩ : s.Nonempty := Set.nonempty_iff_ne_empty.mpr hne
-    have hwPos : (R w).Nonempty ∧ IsMinCover (Core.Question.alt φ.pos) (R w) :=
+    have hwPos : (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w) :=
       hpos hws
     obtain ⟨R', hR'sub, hR'ne, hR'mc⟩ : ∃ R' : Set W, R' ⊆ R w ∧
-        R'.Nonempty ∧ IsMinCover (Core.Question.alt φ.neg) R' := hneg hws
+        R'.Nonempty ∧ IsMinCover (Question.alt φ.neg) R' := hneg hws
     obtain ⟨v, hvR'⟩ := hR'ne
     have hvRw : v ∈ R w := hR'sub hvR'
-    obtain ⟨α, hαAlt, hvα⟩ : ∃ α ∈ Core.Question.alt φ.pos, v ∈ α :=
+    obtain ⟨α, hαAlt, hvα⟩ : ∃ α ∈ Question.alt φ.pos, v ∈ α :=
       hwPos.2.isCover hvRw
-    obtain ⟨β, hβAlt, hvβ⟩ : ∃ β ∈ Core.Question.alt φ.neg, v ∈ β :=
+    obtain ⟨β, hβAlt, hvβ⟩ : ∃ β ∈ Question.alt φ.neg, v ∈ β :=
       hR'mc.isCover hvR'
-    have hαPos : α ∈ φ.pos.props := Core.Question.alt_subset_props _ hαAlt
-    have hβNeg : β ∈ φ.neg.props := Core.Question.alt_subset_props _ hβAlt
+    have hαPos : α ∈ φ.pos.props := Question.alt_subset_props _ hαAlt
+    have hβNeg : β ∈ φ.neg.props := Question.alt_subset_props _ hβAlt
     have hvSPos : ({v} : Set W) ∈ φ.pos.props :=
       φ.pos.downward_closed α hαPos {v} (Set.singleton_subset_iff.mpr hvα)
     have hvSNeg : ({v} : Set W) ∈ φ.neg.props :=
@@ -216,7 +216,7 @@ end BilatInqProp
 /-! ### §4 Truth and falsity (Booth Def 17)
 
 A world `w` makes `φ` **true** in model `(W, R, V)` iff `{w} ∈ ⟦φ⟧⁺`,
-and **false** iff `{w} ∈ ⟦φ⟧⁻`. Since `Core.Question`s are subset-closed,
+and **false** iff `{w} ∈ ⟦φ⟧⁻`. Since `Question`s are subset-closed,
 this is equivalent to `∃ s ∈ ⟦φ⟧°, w ∈ s` for a non-empty witness. -/
 
 /-- **Booth Def 17**: world `w` is true at `φ` iff the singleton `{w}`
@@ -241,7 +241,7 @@ theorem not_isTrue_and_isFalse (φ : BilatInqProp W) (w : W) :
 theorem isTrue_possibility_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
     isTrue (BilatInqProp.possibility R φ) w ↔
     ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧
-                  IsMinCover (Core.Question.alt φ.pos) R' := by
+                  IsMinCover (Question.alt φ.pos) R' := by
   constructor
   · intro h
     exact h (Set.mem_singleton_iff.mpr rfl)
@@ -251,7 +251,7 @@ theorem isTrue_possibility_iff (R : W → Set W) (φ : BilatInqProp W) (w : W) :
 
 /-! ### §5 Per-constructor algebra of `alt` (Booth Compactness substrate)
 
-Per-constructor equations for `Core.Question.alt` on `BilatInqProp`'s
+Per-constructor equations for `Question.alt` on `BilatInqProp`'s
 positive interpretation. Used by the worked example (§6), the general
 Independence theorem (§7), and downstream Booth Compactness
 (`eq_iSup_declarative_alt_of_exists_alt`) consumers. The atomic-case
@@ -260,25 +260,25 @@ private corollaries (`alt_disj_atom_eq_pair`,
 generalizations. -/
 
 /-- `alt` of `atom V` is the singleton `{V}`. Direct corollary of
-    `Core.Question.alt_declarative`. -/
+    `Question.alt_declarative`. -/
 theorem alt_atom_pos (V : Set W) :
-    Core.Question.alt (BilatInqProp.atom V).pos = ({V} : Set (Set W)) := by
-  show Core.Question.alt (Core.Question.declarative V) = _
-  exact Core.Question.alt_declarative V
+    Question.alt (BilatInqProp.atom V).pos = ({V} : Set (Set W)) := by
+  show Question.alt (Question.declarative V) = _
+  exact Question.alt_declarative V
 
 /-- `alt` of `negate φ`'s positive interpretation is `alt` of φ's
     negative interpretation. By definition of `negate`, structural rfl. -/
 theorem alt_negate_pos (φ : BilatInqProp W) :
-    Core.Question.alt (BilatInqProp.negate φ).pos = Core.Question.alt φ.neg := rfl
+    Question.alt (BilatInqProp.negate φ).pos = Question.alt φ.neg := rfl
 
 /-- `alt` of `necessity R φ`'s positive interpretation is the singleton
-    of the witness w-set, since `necessity` uses `Core.Question.declarative`. -/
+    of the witness w-set, since `necessity` uses `Question.declarative`. -/
 theorem alt_necessity_pos (R : W → Set W) (φ : BilatInqProp W) :
-    Core.Question.alt (BilatInqProp.necessity R φ).pos =
-      ({{w : W | (R w).Nonempty ∧ IsMinCover (Core.Question.alt φ.pos) (R w)}} :
+    Question.alt (BilatInqProp.necessity R φ).pos =
+      ({{w : W | (R w).Nonempty ∧ IsMinCover (Question.alt φ.pos) (R w)}} :
         Set (Set W)) := by
-  show Core.Question.alt (Core.Question.declarative _) = _
-  exact Core.Question.alt_declarative _
+  show Question.alt (Question.declarative _) = _
+  exact Question.alt_declarative _
 
 /-- **General non-Hurford alt of disjunction**: when no φ-alt entails ψ
     and no ψ-alt entails φ (the "non-Hurford" condition lifted from
@@ -286,19 +286,19 @@ theorem alt_necessity_pos (R : W → Set W) (φ : BilatInqProp W) :
     alt ψ.pos`. The atomic case (`alt_disj_atom_eq_pair`) is a
     specialization. -/
 theorem alt_disj_pos_eq_union (φ ψ : BilatInqProp W)
-    (hφψ : ∀ a ∈ Core.Question.alt φ.pos, a ∉ ψ.pos.props)
-    (hψφ : ∀ b ∈ Core.Question.alt ψ.pos, b ∉ φ.pos.props) :
-    Core.Question.alt (BilatInqProp.disj φ ψ).pos
-      = Core.Question.alt φ.pos ∪ Core.Question.alt ψ.pos := by
-  show Core.Question.alt (φ.pos ⊔ ψ.pos) = _
+    (hφψ : ∀ a ∈ Question.alt φ.pos, a ∉ ψ.pos.props)
+    (hψφ : ∀ b ∈ Question.alt ψ.pos, b ∉ φ.pos.props) :
+    Question.alt (BilatInqProp.disj φ ψ).pos
+      = Question.alt φ.pos ∪ Question.alt ψ.pos := by
+  show Question.alt (φ.pos ⊔ ψ.pos) = _
   apply Set.eq_of_subset_of_subset
-  · exact Core.Question.alt_sup_subset_union φ.pos ψ.pos
+  · exact Question.alt_sup_subset_union φ.pos ψ.pos
   · intro q hq
     rcases hq with hq | hq
-    · apply Core.Question.mem_alt_sup_of_alt_left hq
+    · apply Question.mem_alt_sup_of_alt_left hq
       intro r hr hqr
       exact absurd (ψ.pos.downward_closed r hr q hqr) (hφψ q hq)
-    · apply Core.Question.mem_alt_sup_of_alt_right hq
+    · apply Question.mem_alt_sup_of_alt_right hq
       intro r hr hqr
       exact absurd (φ.pos.downward_closed r hr q hqr) (hψφ q hq)
 
@@ -308,16 +308,16 @@ theorem alt_disj_pos_eq_union (φ ψ : BilatInqProp W)
     `(declarative Vq).props = {q | q ⊆ Vq}`. -/
 private lemma alt_disj_atom_eq_pair (Vp Vq : Set W)
     (hpq : ¬ Vp ⊆ Vq) (hqp : ¬ Vq ⊆ Vp) :
-    Core.Question.alt
+    Question.alt
         (BilatInqProp.disj (BilatInqProp.atom Vp) (BilatInqProp.atom Vq)).pos
       = ({Vp, Vq} : Set (Set W)) := by
-  have hφψ : ∀ a ∈ Core.Question.alt (BilatInqProp.atom Vp).pos,
+  have hφψ : ∀ a ∈ Question.alt (BilatInqProp.atom Vp).pos,
              a ∉ (BilatInqProp.atom Vq).pos.props := by
     intro a haAlt
     rw [alt_atom_pos] at haAlt
     rcases Set.mem_singleton_iff.mp haAlt with rfl
     exact hpq
-  have hψφ : ∀ b ∈ Core.Question.alt (BilatInqProp.atom Vq).pos,
+  have hψφ : ∀ b ∈ Question.alt (BilatInqProp.atom Vq).pos,
              b ∉ (BilatInqProp.atom Vp).pos.props := by
     intro b hbAlt
     rw [alt_atom_pos] at hbAlt
@@ -327,15 +327,15 @@ private lemma alt_disj_atom_eq_pair (Vp Vq : Set W)
       Set.singleton_union]
 
 /-- Atomic specialization: alt of `atom Vp ∧ ¬ atom Vq` is `{Vp ∩ Vqᶜ}`
-    via `Core.Question.declarative_inf` collapsing the meet. -/
+    via `Question.declarative_inf` collapsing the meet. -/
 private lemma alt_conj_atom_negate_eq_singleton (Vp Vq : Set W) :
-    Core.Question.alt
+    Question.alt
         (BilatInqProp.conj (BilatInqProp.atom Vp)
           (BilatInqProp.negate (BilatInqProp.atom Vq))).pos
       = ({Vp ∩ Vqᶜ} : Set (Set W)) := by
-  show Core.Question.alt (Core.Question.declarative Vp ⊓ Core.Question.declarative Vqᶜ) = _
-  rw [Core.Question.declarative_inf]
-  exact Core.Question.alt_declarative _
+  show Question.alt (Question.declarative Vp ⊓ Question.declarative Vqᶜ) = _
+  rw [Question.declarative_inf]
+  exact Question.alt_declarative _
 
 /-! ### §6 Worked example: Independence inference on a 3-world model
 
@@ -398,14 +398,14 @@ private lemma Vq_nsub_Vp : ¬ Vq ⊆ Vp :=
 private lemma R₃_nonempty (w : W4) : (R₃ w).Nonempty :=
   ⟨(true, true), Or.inl true_true_in_Vp⟩
 
-/-! #### Core.Question-algebraic helpers (specializations of §5 helpers) -/
+/-! #### Question-algebraic helpers (specializations of §5 helpers) -/
 
 private lemma alt_p_or_q_pos :
-    Core.Question.alt p_or_q.pos = ({Vp, Vq} : Set (Set W4)) :=
+    Question.alt p_or_q.pos = ({Vp, Vq} : Set (Set W4)) :=
   alt_disj_atom_eq_pair Vp Vq Vp_nsub_Vq Vq_nsub_Vp
 
 private lemma alt_p_and_not_q_pos :
-    Core.Question.alt p_and_not_q.pos = ({Vp ∩ Vqᶜ} : Set (Set W4)) :=
+    Question.alt p_and_not_q.pos = ({Vp ∩ Vqᶜ} : Set (Set W4)) :=
   alt_conj_atom_negate_eq_singleton Vp Vq
 
 /-! #### The Independence-witness theorems -/
@@ -456,7 +456,7 @@ theorem boothExample_possibility_holds :
     isTrue (BilatInqProp.possibility R₃ p_and_not_q) ((true, true) : W4) := by
   show ({((true, true) : W4)} : Set W4) ⊆
     {w : W4 | ∃ R' : Set W4, R' ⊆ R₃ w ∧ R'.Nonempty ∧
-              IsMinCover (Core.Question.alt p_and_not_q.pos) R'}
+              IsMinCover (Question.alt p_and_not_q.pos) R'}
   intro w hw
   rcases Set.mem_singleton_iff.mp hw with rfl
   refine ⟨{((true, false) : W4)}, ?_, ⟨(true, false), rfl⟩, ?_⟩
@@ -498,7 +498,7 @@ For each `BilatInqProp` constructor, the compactness equation
 `(... constructor ...).pos = ⨆ p ∈ alt _.pos, declarative p` (and the
 dual `.neg` form where it differs). Each proof discharges the
 `∀ p ∈ Q.props, ∃ q ∈ alt Q, p ⊆ q` hypothesis of
-`Core.Question.eq_iSup_declarative_alt_of_exists_alt`.
+`Question.eq_iSup_declarative_alt_of_exists_alt`.
 
 These are the building blocks for proving compactness of any specific
 `BilatInqProp` formula. (The fully general statement for arbitrary
@@ -510,8 +510,8 @@ function; that's deferred.) -/
     extends to V trivially. -/
 theorem pos_eq_iSup_alt_atom (V : Set W) :
     (BilatInqProp.atom V).pos =
-      ⨆ p ∈ Core.Question.alt (BilatInqProp.atom V).pos, Core.Question.declarative p := by
-  apply Core.Question.eq_iSup_declarative_alt_of_exists_alt
+      ⨆ p ∈ Question.alt (BilatInqProp.atom V).pos, Question.declarative p := by
+  apply Question.eq_iSup_declarative_alt_of_exists_alt
   intro p hp
   refine ⟨V, ?_, hp⟩
   rw [alt_atom_pos]
@@ -520,33 +520,33 @@ theorem pos_eq_iSup_alt_atom (V : Set W) :
 /-- Dual of `pos_eq_iSup_alt_atom` for `.neg`. -/
 theorem neg_eq_iSup_alt_atom (V : Set W) :
     (BilatInqProp.atom V).neg =
-      ⨆ p ∈ Core.Question.alt (BilatInqProp.atom V).neg, Core.Question.declarative p := by
-  apply Core.Question.eq_iSup_declarative_alt_of_exists_alt
+      ⨆ p ∈ Question.alt (BilatInqProp.atom V).neg, Question.declarative p := by
+  apply Question.eq_iSup_declarative_alt_of_exists_alt
   intro p hp
   refine ⟨Vᶜ, ?_, hp⟩
-  show Vᶜ ∈ Core.Question.alt (Core.Question.declarative Vᶜ)
-  rw [Core.Question.alt_declarative]
+  show Vᶜ ∈ Question.alt (Question.declarative Vᶜ)
+  rw [Question.alt_declarative]
   exact Set.mem_singleton _
 
 /-- Compactness for `negate φ`'s positive interpretation reduces to
     compactness of `φ.neg` (since `(negate φ).pos = φ.neg` by `rfl`). -/
 theorem pos_eq_iSup_alt_negate (φ : BilatInqProp W)
-    (hφ : φ.neg = ⨆ p ∈ Core.Question.alt φ.neg, Core.Question.declarative p) :
+    (hφ : φ.neg = ⨆ p ∈ Question.alt φ.neg, Question.declarative p) :
     (BilatInqProp.negate φ).pos =
-      ⨆ p ∈ Core.Question.alt (BilatInqProp.negate φ).pos, Core.Question.declarative p := hφ
+      ⨆ p ∈ Question.alt (BilatInqProp.negate φ).pos, Question.declarative p := hφ
 
 /-- Dual of `pos_eq_iSup_alt_negate`. -/
 theorem neg_eq_iSup_alt_negate (φ : BilatInqProp W)
-    (hφ : φ.pos = ⨆ p ∈ Core.Question.alt φ.pos, Core.Question.declarative p) :
+    (hφ : φ.pos = ⨆ p ∈ Question.alt φ.pos, Question.declarative p) :
     (BilatInqProp.negate φ).neg =
-      ⨆ p ∈ Core.Question.alt (BilatInqProp.negate φ).neg, Core.Question.declarative p := hφ
+      ⨆ p ∈ Question.alt (BilatInqProp.negate φ).neg, Question.declarative p := hφ
 
 /-- Compactness equation for `necessity R φ`'s positive interpretation:
     a single declarative whose alt is the singleton witness w-set. -/
 theorem pos_eq_iSup_alt_necessity (R : W → Set W) (φ : BilatInqProp W) :
     (BilatInqProp.necessity R φ).pos =
-      ⨆ p ∈ Core.Question.alt (BilatInqProp.necessity R φ).pos, Core.Question.declarative p := by
-  apply Core.Question.eq_iSup_declarative_alt_of_exists_alt
+      ⨆ p ∈ Question.alt (BilatInqProp.necessity R φ).pos, Question.declarative p := by
+  apply Question.eq_iSup_declarative_alt_of_exists_alt
   intro p hp
   refine ⟨_, ?_, hp⟩
   rw [alt_necessity_pos]
@@ -556,17 +556,17 @@ theorem pos_eq_iSup_alt_necessity (R : W → Set W) (φ : BilatInqProp W) :
     witness w-set (same shape as `alt_necessity_pos` with the existential
     substituted for the `m-cover R(w)` form). -/
 theorem alt_necessity_neg (R : W → Set W) (φ : BilatInqProp W) :
-    Core.Question.alt (BilatInqProp.necessity R φ).neg =
+    Question.alt (BilatInqProp.necessity R φ).neg =
       ({{w : W | ∃ R' : Set W, R' ⊆ R w ∧ R'.Nonempty ∧
-          IsMinCover (Core.Question.alt φ.neg) R'}} : Set (Set W)) := by
-  show Core.Question.alt (Core.Question.declarative _) = _
-  exact Core.Question.alt_declarative _
+          IsMinCover (Question.alt φ.neg) R'}} : Set (Set W)) := by
+  show Question.alt (Question.declarative _) = _
+  exact Question.alt_declarative _
 
 /-- Dual of `pos_eq_iSup_alt_necessity` for `.neg`. -/
 theorem neg_eq_iSup_alt_necessity (R : W → Set W) (φ : BilatInqProp W) :
     (BilatInqProp.necessity R φ).neg =
-      ⨆ p ∈ Core.Question.alt (BilatInqProp.necessity R φ).neg, Core.Question.declarative p := by
-  apply Core.Question.eq_iSup_declarative_alt_of_exists_alt
+      ⨆ p ∈ Question.alt (BilatInqProp.necessity R φ).neg, Question.declarative p := by
+  apply Question.eq_iSup_declarative_alt_of_exists_alt
   intro p hp
   refine ⟨_, ?_, hp⟩
   rw [alt_necessity_neg]
@@ -577,13 +577,13 @@ theorem neg_eq_iSup_alt_necessity (R : W → Set W) (φ : BilatInqProp W) :
     union of summand alts (`alt_disj_pos_eq_union`); each prop in the
     disj's pos comes from one summand's pos and lifts to its alt. -/
 theorem pos_eq_iSup_alt_disj (φ ψ : BilatInqProp W)
-    (hφ : ∀ p ∈ φ.pos.props, ∃ q ∈ Core.Question.alt φ.pos, p ⊆ q)
-    (hψ : ∀ p ∈ ψ.pos.props, ∃ q ∈ Core.Question.alt ψ.pos, p ⊆ q)
-    (hφψ : ∀ a ∈ Core.Question.alt φ.pos, a ∉ ψ.pos.props)
-    (hψφ : ∀ b ∈ Core.Question.alt ψ.pos, b ∉ φ.pos.props) :
+    (hφ : ∀ p ∈ φ.pos.props, ∃ q ∈ Question.alt φ.pos, p ⊆ q)
+    (hψ : ∀ p ∈ ψ.pos.props, ∃ q ∈ Question.alt ψ.pos, p ⊆ q)
+    (hφψ : ∀ a ∈ Question.alt φ.pos, a ∉ ψ.pos.props)
+    (hψφ : ∀ b ∈ Question.alt ψ.pos, b ∉ φ.pos.props) :
     (BilatInqProp.disj φ ψ).pos =
-      ⨆ p ∈ Core.Question.alt (BilatInqProp.disj φ ψ).pos, Core.Question.declarative p := by
-  apply Core.Question.eq_iSup_declarative_alt_of_exists_alt
+      ⨆ p ∈ Question.alt (BilatInqProp.disj φ ψ).pos, Question.declarative p := by
+  apply Question.eq_iSup_declarative_alt_of_exists_alt
   intro p hp
   rw [alt_disj_pos_eq_union φ ψ hφψ hψφ]
   rcases hp with hp | hp
@@ -597,7 +597,7 @@ theorem pos_eq_iSup_alt_disj (φ ψ : BilatInqProp W)
     and the latter is compact via `neg_eq_iSup_alt_necessity`. -/
 theorem pos_eq_iSup_alt_possibility (R : W → Set W) (φ : BilatInqProp W) :
     (BilatInqProp.possibility R φ).pos =
-      ⨆ p ∈ Core.Question.alt (BilatInqProp.possibility R φ).pos, Core.Question.declarative p :=
+      ⨆ p ∈ Question.alt (BilatInqProp.possibility R φ).pos, Question.declarative p :=
   neg_eq_iSup_alt_necessity R (BilatInqProp.negate φ)
 
 /-! ### §8 The Independence inference, general meta-language form (Booth Fact 9)
@@ -636,7 +636,7 @@ theorem independence_p_not_q
   intro h
   -- Step 1: extract the conjunction at w from h's subset semantics.
   have hw_in : w ∈ {w' : W | (R w').Nonempty ∧
-      IsMinCover (Core.Question.alt (BilatInqProp.disj (BilatInqProp.atom Vp)
+      IsMinCover (Question.alt (BilatInqProp.disj (BilatInqProp.atom Vp)
         (BilatInqProp.atom Vq)).pos) (R w')} :=
     h (Set.mem_singleton_iff.mpr rfl)
   obtain ⟨_hRne, hMinCover⟩ := hw_in

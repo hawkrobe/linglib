@@ -23,7 +23,7 @@ partition-based answerhood predicate `PropResolvesQUD`.
 
 ## Answerhood
 
-KOS's "fact resolves question" relation is the `Core.Question.Support`
+KOS's "fact resolves question" relation is the `Question.Support`
 typeclass (Prop-valued, mathlib-shaped). With QUD now storing
 `InfoStruc QContent Cont` (per Ch. 6 final), the support check on
 `f ⊨ is.q` projects through the InfoStruc's question field.
@@ -31,7 +31,7 @@ typeclass (Prop-valued, mathlib-shaped). With QUD now storing
 
 namespace Dialogue.KOS
 
-open Core.Question
+open Question
 
 -- ════════════════════════════════════════════════════
 -- § 1. DGB Structural Lemmas

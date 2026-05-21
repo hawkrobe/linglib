@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Questions.Resolution
 # Exhaustivity — the weak / strong / Dayal / Xiang ladder
 @cite{karttunen-1977} @cite{heim-1994} @cite{groenendijk-stokhof-1984} @cite{dayal-1996} @cite{george-2011} @cite{klinedinst-rothschild-2011} @cite{xiang-2022} @cite{fox-2018} @cite{theiler-etal-2018}
 
-The canonical exhaustivity operators on `Core.Question W`. Different
+The canonical exhaustivity operators on `Question W`. Different
 authors over the past 50 years have proposed sibling operators that
 extract "the answer to Q at the actual world w" with different strength
 profiles. This file states them in one place, in mathlib-style
@@ -13,7 +13,7 @@ profiles. This file states them in one place, in mathlib-style
 
 ## The ladder
 
-Given `Q : Core.Question W` and a world `w : W`:
+Given `Q : Question W` and a world `w : W`:
 
 - **weakAnswer(Q, w)** (@cite{heim-1994}, @cite{karttunen-1977}): the
   intersection of all true alternatives at w. The natural "what σ must
@@ -46,7 +46,7 @@ namespace Semantics.Questions.Exhaustivity
 universe u
 variable {W : Type u}
 
-open Core.Question
+open Question
 open Semantics.Questions.Resolution
 
 /-! ### Weak exhaustivity (Heim 1994 / Karttunen 1977) -/
@@ -54,46 +54,46 @@ open Semantics.Questions.Resolution
 /-- **Weak exhaustive answer**: the set of worlds that lie in every true
     alternative at w (`⋂ {p ∈ alt Q | w ∈ p}`). A state σ "weakly
     answers" Q at w iff σ ⊆ weakAnswer Q w. -/
-def weakAnswer (Q : Core.Question W) (w : W) : Set W :=
+def weakAnswer (Q : Question W) (w : W) : Set W :=
   {v | ∀ p ∈ alt Q, w ∈ p → v ∈ p}
 
 /-! ### Strong exhaustivity (Groenendijk-Stokhof 1984 / Heim 1994) -/
 
 /-- **Strong exhaustive answer**: the set of worlds that decide every
     alternative the same way as w. -/
-def strongAnswer (Q : Core.Question W) (w : W) : Set W :=
+def strongAnswer (Q : Question W) (w : W) : Set W :=
   {v | ∀ p ∈ alt Q, (w ∈ p ↔ v ∈ p)}
 
 /-- A state σ is the **strong-exhaustive answer** at w iff σ equals
     `strongAnswer Q w`. -/
-def IsStronglyExhaustiveAnswer (σ : Set W) (Q : Core.Question W) (w : W) : Prop :=
+def IsStronglyExhaustiveAnswer (σ : Set W) (Q : Question W) (w : W) : Prop :=
   σ = strongAnswer Q w
 
 /-! ### Dayal's strongest-true answer (@cite{dayal-1996}) -/
 
 /-- True alternatives at `w`: alternatives of `Q` that contain `w`. -/
-def trueAlternatives (Q : Core.Question W) (w : W) : Set (Set W) :=
+def trueAlternatives (Q : Question W) (w : W) : Set (Set W) :=
   {p ∈ alt Q | w ∈ p}
 
 /-- A proposition `p` is the **strongest true answer** to `Q` at `w`
     iff `p ∈ alt Q`, `w ∈ p`, and `p ⊆ q` for every other true
     alternative `q`. (@cite{dayal-1996} Ans(Q) when defined.) -/
-def IsStrongestTrueAnswer (Q : Core.Question W) (w : W) (p : Set W) : Prop :=
+def IsStrongestTrueAnswer (Q : Question W) (w : W) (p : Set W) : Prop :=
   p ∈ alt Q ∧ w ∈ p ∧ ∀ q ∈ alt Q, w ∈ q → p ⊆ q
 
 /-- **Dayal's Exhaustivity Presupposition** (@cite{dayal-1996}):
     a strongest true answer exists at `w`. -/
-def IsExhaustivelyResolvable (Q : Core.Question W) (w : W) : Prop :=
+def IsExhaustivelyResolvable (Q : Question W) (w : W) : Prop :=
   ∃ p, IsStrongestTrueAnswer Q w p
 
 /-- Dayal's answer (when EP holds): the unique strongest true
     alternative at `w`. -/
-noncomputable def dayalAns (Q : Core.Question W) (w : W) : Option (Set W) :=
+noncomputable def dayalAns (Q : Question W) (w : W) : Option (Set W) :=
   open Classical in
   if h : IsExhaustivelyResolvable Q w then some (Classical.choose h) else none
 
 /-- `dayalAns` returns `some` iff EP holds. -/
-theorem dayalAns_isSome_iff_EP (Q : Core.Question W) (w : W) :
+theorem dayalAns_isSome_iff_EP (Q : Question W) (w : W) :
     (dayalAns Q w).isSome ↔ IsExhaustivelyResolvable Q w := by
   unfold dayalAns
   split
@@ -104,27 +104,27 @@ theorem dayalAns_isSome_iff_EP (Q : Core.Question W) (w : W) :
 
 /-- True alternatives **restricted to a modal base** `M`: alternatives
     of `Q` that contain `w` AND have non-empty intersection with `M`. -/
-def trueAlternativesIn (Q : Core.Question W) (w : W) (M : Set W) : Set (Set W) :=
+def trueAlternativesIn (Q : Question W) (w : W) (M : Set W) : Set (Set W) :=
   {p ∈ alt Q | w ∈ p ∧ ∃ v ∈ M, v ∈ p}
 
 /-- A proposition `p` is the **strongest true answer relative to modal
     base `M`** at `w`: `p ∈ alt Q`, `w ∈ p`, intersects `M`, and
     M-entails every other M-true alternative. -/
 def IsStrongestRelTrueAnswer
-    (Q : Core.Question W) (w : W) (M : Set W) (p : Set W) : Prop :=
+    (Q : Question W) (w : W) (M : Set W) (p : Set W) : Prop :=
   p ∈ alt Q ∧ w ∈ p ∧ (∃ v ∈ M, v ∈ p) ∧
   ∀ q ∈ alt Q, w ∈ q → (∃ v ∈ M, v ∈ q) → p ∩ M ⊆ q ∩ M
 
 /-- **Xiang's relExh**: relativized exhaustivity at `w` against modal
     base `M` (@cite{xiang-2022} Def 91). -/
-def relExh (Q : Core.Question W) (w : W) (M : Set W) : Prop :=
+def relExh (Q : Question W) (w : W) (M : Set W) : Prop :=
   ∃ p, IsStrongestRelTrueAnswer Q w M p
 
 /-! ### Bridges -/
 
 /-- A strong-exhaustive answer at `w` mention-all-answers `Q`. -/
 theorem stronglyExhaustive_imp_mentionAll
-    (σ : Set W) (Q : Core.Question W) (w : W)
+    (σ : Set W) (Q : Question W) (w : W)
     (h : IsStronglyExhaustiveAnswer σ Q w) :
     MentionAll σ Q := by
   intro p hp
@@ -140,7 +140,7 @@ theorem stronglyExhaustive_imp_mentionAll
 
 /-- The Dayal answer is by construction a strongest-true answer when it
     fires. -/
-theorem dayalAns_spec (Q : Core.Question W) (w : W) (p : Set W)
+theorem dayalAns_spec (Q : Question W) (w : W) (p : Set W)
     (h : dayalAns Q w = some p) :
     IsStrongestTrueAnswer Q w p := by
   unfold dayalAns at h
@@ -157,7 +157,7 @@ theorem dayalAns_spec (Q : Core.Question W) (w : W) (p : Set W)
     answer: any state deciding every alternative the same way as `w`
     automatically lies inside every alternative true at `w`.
     @cite{heim-1994} §4 / @cite{george-2011} §2.6 substrate fact. -/
-theorem strongAnswer_subset_weakAnswer (Q : Core.Question W) (w : W) :
+theorem strongAnswer_subset_weakAnswer (Q : Question W) (w : W) :
     strongAnswer Q w ⊆ weakAnswer Q w := by
   intro v hv p hp hwp
   exact (hv p hp).mp hwp
@@ -170,19 +170,19 @@ on every alternative of `Q`". The image `Set.range (strongAnswer Q)`
 is what @cite{fox-2018} eq (3) calls the **Logical Partition** of `Q`. -/
 
 /-- Reflexivity: `w` decides every alternative the same way as itself. -/
-@[simp] theorem strongAnswer_self_mem (Q : Core.Question W) (w : W) :
+@[simp] theorem strongAnswer_self_mem (Q : Question W) (w : W) :
     w ∈ strongAnswer Q w := fun _ _ => Iff.rfl
 
 /-- Symmetry of the underlying equivalence: `v ∈ strongAnswer Q w ↔
     w ∈ strongAnswer Q v`. -/
-theorem mem_strongAnswer_symm (Q : Core.Question W) {w v : W} :
+theorem mem_strongAnswer_symm (Q : Question W) {w v : W} :
     v ∈ strongAnswer Q w ↔ w ∈ strongAnswer Q v := by
   unfold strongAnswer
   refine ⟨fun h p hp => (h p hp).symm, fun h p hp => (h p hp).symm⟩
 
 /-- Transitivity: `u ∈ strongAnswer Q v` and `v ∈ strongAnswer Q w`
     implies `u ∈ strongAnswer Q w`. -/
-theorem strongAnswer_trans (Q : Core.Question W) {w v u : W}
+theorem strongAnswer_trans (Q : Question W) {w v u : W}
     (huv : u ∈ strongAnswer Q v) (hvw : v ∈ strongAnswer Q w) :
     u ∈ strongAnswer Q w := by
   intro p hp
@@ -190,7 +190,7 @@ theorem strongAnswer_trans (Q : Core.Question W) {w v u : W}
 
 /-- Two strong-answer cells are either equal or disjoint — the
     equivalence-relation partition property. -/
-theorem strongAnswer_eq_or_disjoint (Q : Core.Question W) (w v : W) :
+theorem strongAnswer_eq_or_disjoint (Q : Question W) (w v : W) :
     strongAnswer Q w = strongAnswer Q v ∨
       Disjoint (strongAnswer Q w) (strongAnswer Q v) := by
   by_cases h : ∃ u, u ∈ strongAnswer Q w ∧ u ∈ strongAnswer Q v
@@ -217,7 +217,7 @@ theorem strongAnswer_eq_or_disjoint (Q : Core.Question W) (w v : W) :
 
 /-- The cells of the strong-answer partition cover `W`: every world
     is in some cell (its own). -/
-@[simp] theorem iUnion_strongAnswer (Q : Core.Question W) :
+@[simp] theorem iUnion_strongAnswer (Q : Question W) :
     ⋃ w, strongAnswer Q w = Set.univ := by
   ext v
   simp only [Set.mem_iUnion, Set.mem_univ, iff_true]
@@ -226,7 +226,7 @@ theorem strongAnswer_eq_or_disjoint (Q : Core.Question W) (w v : W) :
 /-- The Fox 2018 LogicalPartition characterization: any cell in
     `Set.range (strongAnswer Q)` is uniquely determined by any of its
     elements. -/
-theorem mem_range_strongAnswer_iff (Q : Core.Question W) (C : Set W) :
+theorem mem_range_strongAnswer_iff (Q : Question W) (C : Set W) :
     C ∈ Set.range (strongAnswer Q) ↔ ∃ w ∈ C, C = strongAnswer Q w := by
   refine ⟨?_, ?_⟩
   · rintro ⟨w, rfl⟩
@@ -255,14 +255,14 @@ only the substrate primitives the paper consumes. -/
     informative true Hamblin alternative. Identifies a cell of the
     logical partition by the alt that "Exh-strengthens to it".
     Substrate identification: `{w | IsStrongestTrueAnswer Q w p}`. -/
-def exhCell (Q : Core.Question W) (p : Set W) : Set W :=
+def exhCell (Q : Question W) (p : Set W) : Set W :=
   {w | IsStrongestTrueAnswer Q w p}
 
-@[simp] theorem mem_exhCell {Q : Core.Question W} {p : Set W} {w : W} :
+@[simp] theorem mem_exhCell {Q : Question W} {p : Set W} {w : W} :
     w ∈ exhCell Q p ↔ IsStrongestTrueAnswer Q w p := Iff.rfl
 
 /-- An Exh-cell membership entails the world is in the alternative. -/
-theorem exhCell_subset (Q : Core.Question W) (p : Set W) :
+theorem exhCell_subset (Q : Question W) (p : Set W) :
     exhCell Q p ⊆ p :=
   fun _ h => h.2.1
 
@@ -270,10 +270,10 @@ theorem exhCell_subset (Q : Core.Question W) (p : Set W) :
     of `strongAnswer`. Substrate-level: equivalence classes of `W` under
     "agreement on every alternative". A partition by
     `strongAnswer_eq_or_disjoint` and `iUnion_strongAnswer`. -/
-def exhaustifiedPartition (Q : Core.Question W) : Set (Set W) :=
+def exhaustifiedPartition (Q : Question W) : Set (Set W) :=
   Set.range (strongAnswer Q)
 
-@[simp] theorem mem_exhaustifiedPartition {Q : Core.Question W} {C : Set W} :
+@[simp] theorem mem_exhaustifiedPartition {Q : Question W} {C : Set W} :
     C ∈ exhaustifiedPartition Q ↔ ∃ w, C = strongAnswer Q w := by
   unfold exhaustifiedPartition
   simp only [Set.mem_range, eq_comm]
@@ -281,7 +281,7 @@ def exhaustifiedPartition (Q : Core.Question W) : Set (Set W) :=
 /-- The exhaustified partition cells are nonempty (each contains its
     representative world). -/
 theorem exhaustifiedPartition_nonempty
-    (Q : Core.Question W) {C : Set W} (h : C ∈ exhaustifiedPartition Q) :
+    (Q : Question W) {C : Set W} (h : C ∈ exhaustifiedPartition Q) :
     C.Nonempty := by
   obtain ⟨w, rfl⟩ := h
   exact ⟨w, strongAnswer_self_mem Q w⟩
@@ -289,7 +289,7 @@ theorem exhaustifiedPartition_nonempty
 /-- Two exhaustified-partition cells are equal or disjoint — direct
     consequence of `strongAnswer_eq_or_disjoint`. -/
 theorem exhaustifiedPartition_eq_or_disjoint
-    (Q : Core.Question W) {C₁ C₂ : Set W}
+    (Q : Question W) {C₁ C₂ : Set W}
     (h₁ : C₁ ∈ exhaustifiedPartition Q) (h₂ : C₂ ∈ exhaustifiedPartition Q) :
     C₁ = C₂ ∨ Disjoint C₁ C₂ := by
   obtain ⟨w₁, rfl⟩ := h₁
@@ -298,14 +298,14 @@ theorem exhaustifiedPartition_eq_or_disjoint
 
 /-- The exhaustified partition covers `W` — every world is in its own
     cell. Direct consequence of `iUnion_strongAnswer`. -/
-@[simp] theorem sUnion_exhaustifiedPartition (Q : Core.Question W) :
+@[simp] theorem sUnion_exhaustifiedPartition (Q : Question W) :
     ⋃₀ exhaustifiedPartition Q = Set.univ := by
   rw [exhaustifiedPartition, Set.sUnion_range]
   exact iUnion_strongAnswer Q
 
 /-! ### Per-constructor characterizations -/
 
-open Core.Question (mem_alt_polar_of_nontrivial alt_polar_of_nontrivial)
+open Question (mem_alt_polar_of_nontrivial alt_polar_of_nontrivial)
 
 /-- True alternatives of `polar p` at `w`: just `{p}` if `w ∈ p`, else
     `{pᶜ}`. (For nontrivial polar.) -/
@@ -407,7 +407,7 @@ theorem weakAnswer_declarative_of_pos {p : Set W}
     weakAnswer (declarative p) w = p := by
   ext v
   unfold weakAnswer
-  rw [Set.mem_setOf_eq, Core.Question.alt_declarative]
+  rw [Set.mem_setOf_eq, Question.alt_declarative]
   refine ⟨fun h => h p (Set.mem_singleton p) hwp, fun hvp q hq _ => ?_⟩
   rw [Set.mem_singleton_iff] at hq
   exact hq ▸ hvp
@@ -418,7 +418,7 @@ theorem strongAnswer_declarative_of_pos {p : Set W}
     strongAnswer (declarative p) w = p := by
   ext v
   unfold strongAnswer
-  rw [Set.mem_setOf_eq, Core.Question.alt_declarative]
+  rw [Set.mem_setOf_eq, Question.alt_declarative]
   refine ⟨fun h => (h p (Set.mem_singleton p)).mp hwp, fun hvp q hq => ?_⟩
   rw [Set.mem_singleton_iff] at hq
   exact hq ▸ iff_of_true hwp hvp

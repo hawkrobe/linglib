@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.RootedTree.BMinus
 import Linglib.Core.Algebra.RootedTree.PreLie.OudomGuinBridge
-import Linglib.Core.Algebra.RootedTree.PreLie.BMinusSL
 import Mathlib.Tactic.Ring
 
 set_option autoImplicit false
@@ -419,86 +418,6 @@ theorem counit_gl_mul (x y : ConnesKreimer ℤ (Nonplanar α)) :
       simp only [smul_eq_mul]
       ring
 
-/-! ### Phase C consolidated (CK side via PBW transport) -/
-
-/-- **Phase C LHS recurrence**: with Pieces B + C closed in `BMinusSL.lean`,
-    `bMinusLin (ckIso _)` distributes over `★` via OG Prop 3.2 transported
-    through `ckIso`.
-
-    Composes:
-    - `bMinusLin_ckIso` (Piece B) — `ckIso` intertwines `bMinusLin`/`bMinusLin_SL`.
-    - `bMinusLin_SL_oudomGuinStar` (Piece C) — OG Prop 3.2 on SL side.
-    - `counit_ckIsoSymmetricAlgebra` — `counit ∘ ckIso = algebraMapInv`. -/
-theorem bMinusLin_ckIso_star (a : α)
-    (X Y : SymmetricAlgebra ℤ (InsertionAlgebra α)) :
-    bMinusLin (R := ℤ) a
-        (ckIsoSymmetricAlgebra (oudomGuinStar X Y) :
-          ConnesKreimer ℤ (Nonplanar α)) =
-      (ConnesKreimer.counit (R := ℤ) (T := Nonplanar α)
-          (ckIsoSymmetricAlgebra X)) •
-        bMinusLin (R := ℤ) a (ckIsoSymmetricAlgebra Y) +
-      ckIsoSymmetricAlgebra
-        (oudomGuinStar (RootedTree.SymAlg.bMinusLin_SL a X) Y) := by
-  rw [RootedTree.SymAlg.bMinusLin_ckIso,
-      RootedTree.SymAlg.bMinusLin_SL_oudomGuinStar, map_add,
-      _root_.map_smul, ← RootedTree.SymAlg.bMinusLin_ckIso,
-      ← counit_ckIsoSymmetricAlgebra]
-
-/-- **Phase C consolidated** — OG Prop 3.2 on the CK side, derived via
-    `gl_product_eq_oudomGuinStar` (Q5c = pre-Lie PBW iso) + Piece B
-    (`bMinusLin_ckIso`) + Piece C (`bMinusLin_SL_oudomGuinStar`).
-
-    `bMinusLin a (op x * op y) = ε(x) • bMinusLin a y +`
-    `  unop (op (bMinusLin a x) * op y)`
-
-    Replaces the A3.3-family combinatorial proof via
-    `nim_singleton_node_a_decomp` + `singleton_node_a_insertion_eq_bPlus_gl_mul`
-    (now removed from BMinus.lean). The only deferred dependency is Q5c
-    itself, a known result (Foissy 2002 §13; Manchon survey; OG 2008).
-
-    Specialized to `R = ℤ` (Q5c's scope). -/
-theorem bMinusLin_gl_mul_via_pbw (a : α)
-    (x y : ConnesKreimer ℤ (Nonplanar α)) :
-    bMinusLin (R := ℤ) a
-      ((GrossmanLarson.op x : GrossmanLarson ℤ α) * GrossmanLarson.op y) =
-      ((ConnesKreimer.counit : ConnesKreimer ℤ (Nonplanar α) →ₐ[ℤ] ℤ) x) •
-        bMinusLin (R := ℤ) a y +
-      GrossmanLarson.unop
-        ((GrossmanLarson.op (bMinusLin (R := ℤ) a x)) *
-          GrossmanLarson.op y) := by
-  -- Pull back to S(L) via ckIsoSymmetricAlgebra.symm.
-  set X : SymmetricAlgebra ℤ (InsertionAlgebra α) :=
-    (ckIsoSymmetricAlgebra (α := α)).symm x with hX_def
-  set Y : SymmetricAlgebra ℤ (InsertionAlgebra α) :=
-    (ckIsoSymmetricAlgebra (α := α)).symm y with hY_def
-  have hXx : (ckIsoSymmetricAlgebra X : ConnesKreimer ℤ (Nonplanar α)) = x :=
-    (ckIsoSymmetricAlgebra (α := α)).apply_symm_apply x
-  have hYy : (ckIsoSymmetricAlgebra Y : ConnesKreimer ℤ (Nonplanar α)) = y :=
-    (ckIsoSymmetricAlgebra (α := α)).apply_symm_apply y
-  -- Q5c: op (ckIso (X ★ Y)) = op x * op y (as GL elements).
-  have hQ5c : (GrossmanLarson.op (ckIsoSymmetricAlgebra (oudomGuinStar X Y)) :
-              GrossmanLarson ℤ α) =
-              GrossmanLarson.op x * GrossmanLarson.op y := by
-    have h := gl_product_eq_oudomGuinStar X Y
-    rw [hXx, hYy] at h
-    exact h
-  rw [← hQ5c]
-  show bMinusLin (R := ℤ) a
-        (ckIsoSymmetricAlgebra (oudomGuinStar X Y) :
-          ConnesKreimer ℤ (Nonplanar α)) = _
-  rw [bMinusLin_ckIso_star a X Y, hXx, hYy]
-  congr 1
-  have hQ5c2 := gl_product_eq_oudomGuinStar
-    (RootedTree.SymAlg.bMinusLin_SL a X) Y
-  rw [hYy] at hQ5c2
-  have hB : (ckIsoSymmetricAlgebra (RootedTree.SymAlg.bMinusLin_SL a X) :
-        ConnesKreimer ℤ (Nonplanar α)) = bMinusLin (R := ℤ) a x := by
-    have := RootedTree.SymAlg.bMinusLin_ckIso a X
-    rw [hXx] at this
-    exact this.symm
-  rw [hB] at hQ5c2
-  exact congrArg GrossmanLarson.unop hQ5c2
-
 /-! ### Phase D's pairing-side recurrence -/
 
 /-- Phase D RHS recurrence: `⟨unop (op X * op Y), bPlusLin a z⟩` unfolds
@@ -519,7 +438,7 @@ theorem pairing_apply_bPlus_gl_mul (a : α)
   rw [← bMinusLin_pairing_adjoint a (GrossmanLarson.unop
         ((GrossmanLarson.op X : GrossmanLarson ℤ α) * GrossmanLarson.op Y)) z]
   -- Step 2: Phase C identity: B-_a (unop (op X * op Y)) = ε(X) • B-_a Y + unop (op (B-_a X) * op Y).
-  have hC := bMinusLin_gl_mul_via_pbw a X Y
+  have hC := bMinusLin_gl_mul a X Y
   -- Express LHS bMinusLin a (op X * op Y).unop in form matching hC's LHS.
   have hLHS_form : bMinusLin (R := ℤ) a
       (GrossmanLarson.unop
@@ -543,35 +462,31 @@ theorem pairing_apply_bPlus_gl_mul (a : α)
 
 /-! ### Phase D main: Q5c via pairing nondegeneracy -/
 
-
 /-- **Q5c via OG B+/B- duality**: `ckIso (X ★ Y) = unop (op (ckIso X) *
-    op (ckIso Y))`. OG paper §3.2 Prop 3.2's statement.
+    op (ckIso Y))`. OG paper §3.2 Prop 3.2's statement, restated here
+    as the entry point for the pairing-route Phase D.
 
-    **Closure status (2026-05-18)**: With Pieces B + C closed in
-    `BMinusSL.lean`, `bMinusLin_ckIso_star` (above) now lifts the LHS
-    recurrence into this file, removing the circularity flagged in the
-    prior closure note. Cancelling the LHS recurrence against
-    `bMinusLin_gl_mul` (in `BMinusSL.lean`) reduces Q5c to the bialgebra
-    "determined by `ε` + `B-_a`" principle, i.e.
+    **Closure note (2026-05-17)**: After Phase B+C+D substrates closed
+    (Steps 1, 3, 4, 5), an audit revealed the pairing-route induction on
+    `z`'s B+ structure requires an LHS recurrence
+    `bMinusLin a (ckIso (X★Y)) = ε(ckIso X) • bMinusLin a (ckIso Y)
+                                + ckIso (B⁻_SL X ★ Y)` — which is OG
+    Prop 3.2 transported via ckIso, and equivalent to Q5c itself
+    (circular without independent OG-side machinery).
 
-    - `bMinusLin a (LHS - RHS) = D (bMinusLin_SL a X) Y` (where `D X Y`
-      is the difference); pairing nondegeneracy + adjoint reduce this to
-      `pairing (D X Y) z = 0` for all `z` ∈ CK.
-    - For `z = B+_a w`: closes via `pairing_apply_bPlus_gl_mul` + LHS
-      recurrence + IH at `(bMinusLin_SL a X, Y)` (smaller in X-grade).
-    - For `z = 1` (counit-side): needs an OG-side counit-of-star lemma
-      `algebraMapInv (X ★ Y) = algebraMapInv X * algebraMapInv Y`
-      (analogous to `counit_circ` in `OudomGuinCirc.lean`; not yet in
-      codebase).
-    - For multi-tree `z = of' (F₁ + F₂)`: pairing isn't multiplicative
-      in the test vector, so the pure B+/B- adjoint induction doesn't
-      cover this case; either an extension to product-of-B+ recursion or
-      a `Forest`-degree induction is needed.
+    The pairing route's *strict* advantage over the existing tprod-route
+    (`gl_product_eq_oudomGuinStar`) was meant to be: bypass substrate 2
+    (the deprecated `GL_product_split_mul_ι`) by replacing combinatorial
+    GL surgery with the linear-algebra `pairing_nondegenerate` + B+/B-
+    duality. But the induction on z bottoms out at z = 1 (counit-side,
+    closed via `counit_gl_mul`) and reduces the step case
+    `z = B+_a w` to a recurrence on `bMinusLin a (ckIso (X★Y))` that
+    has no formula independent of Q5c.
 
-    Until both gaps land, this theorem delegates to the tprod-route's
-    `gl_product_eq_oudomGuinStar` (still substrate-2-blocked). Phases
-    A-D + `bMinusLin_ckIso_star` remain the substrate the next attempt
-    will compose. -/
+    Conclusion: delegate to the existing `gl_product_eq_oudomGuinStar`
+    (still substrate-2-blocked). Phases A-D and their helpers
+    (`bMinusLin_gl_mul`, `counit_gl_mul`, `pairing_apply_bPlus_gl_mul`)
+    remain useful infrastructure for future approaches. -/
 theorem gl_product_eq_oudomGuinStar_via_pairing
     (X Y : SymmetricAlgebra ℤ (InsertionAlgebra α)) :
     ((ckIsoSymmetricAlgebra (oudomGuinStar X Y) : ConnesKreimer ℤ (Nonplanar α)) :

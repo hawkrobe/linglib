@@ -30,7 +30,7 @@ counterpart over `BCheckableAustinian S` and `TTRQuestionB R`.
 
 namespace Dialogue.KOS.Examples
 
-open Dialogue.KOS Core.Question
+open Dialogue.KOS Question
 
 -- ════════════════════════════════════════════════════
 -- § 1. Inquiry Cycle Example (Bo)

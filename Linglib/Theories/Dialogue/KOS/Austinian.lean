@@ -96,7 +96,7 @@ For a fact `⟨s, T⟩` and question `Q`: the fact resolves Q when T(s) is true
 AND Q.body(s) is true — the situation that makes the fact true also answers
 the question. -/
 instance austinianSupport (S : Type) :
-    Core.Question.DecidableSupport (BCheckableAustinian S) (TTRQuestionB S) where
+    Question.DecidableSupport (BCheckableAustinian S) (TTRQuestionB S) where
   supports fact question := fact.isTrue = true ∧ question.body fact.sit = true
   decSupports fact question := inferInstanceAs (Decidable (_ ∧ _))
 
@@ -127,7 +127,7 @@ def isItRaining : TTRQuestionB Weather where
 /-- The fact "it is raining" resolves the question "is it raining?":
 the situation (rainy) makes both the fact true and the question body true. -/
 theorem raining_resolves :
-    Core.Question.Support.supports
+    Question.Support.supports
       (self := (austinianSupport Weather).toSupport)
       itIsRaining isItRaining := ⟨rfl, rfl⟩
 
@@ -138,7 +138,7 @@ def itIsSunny : BCheckableAustinian Weather where
 
 /-- A true fact about a different situation does not resolve the raining question. -/
 theorem sunny_does_not_resolve_raining :
-    ¬ Core.Question.Support.supports
+    ¬ Question.Support.supports
       (self := (austinianSupport Weather).toSupport)
       itIsSunny isItRaining := by
   rintro ⟨_, h⟩; cases h
@@ -162,7 +162,7 @@ def atis₂ : AustinianTIS Weather Weather Unit :=
 
 theorem atis_assert_resolves : atis₂.dgb.qud = [] := by
   simp [atis₂, TIS.assertRule, DGB.assertFact, DGB.addFact, DGB.downdateQud,
-    DGB.recordMove, Core.Question.Support.supports,
+    DGB.recordMove, Question.Support.supports,
     BCheckableAustinian.isTrue, itIsRaining, isItRaining, atis₁, adgb₀,
     DGB.initial, DGB.pushQud, InfoStruc.fromQuestion]
 

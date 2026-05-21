@@ -38,7 +38,7 @@ the sibling `KOS/Grounding.lean`.
 
 namespace Dialogue.KOS
 
-open Core.Question
+open Question
 
 -- ════════════════════════════════════════════════════
 -- § 1. TIS Conversational Rules

@@ -22,7 +22,7 @@ are all derived notions over the inquisitive substrate.
   utility-asymmetry pattern.
 * **Blackwell dominance** (`@cite{blackwell-1953}`). The inquisitive
   setting splits the partition notion of "refinement" into two
-  independent directions, both in `Core.Question.Relevance`:
+  independent directions, both in `Question.Relevance`:
   - `questionEntails P Q` — every P-alt ⊆ some Q-alt (P-alts are
     *contained in* Q-alts).
   - `CoversAltsOf P Q` — every nonempty Q-alt is covered by some
@@ -41,7 +41,7 @@ are all derived notions over the inquisitive substrate.
 
 ## Substrate split
 
-Question denotations are inquisitive (`Core.Question W`) — `Set`-based
+Question denotations are inquisitive (`Question W`) — `Set`-based
 alternatives. Decision problems live in `Core.Agent.DecisionTheory`
 with `Finset`-based action and cell sets. The bridge requires
 `[Fintype W]` plus per-alternative decidability; consumers that don't
@@ -51,7 +51,7 @@ predicates here.
 
 namespace Semantics.Questions.DecisionTheoretic
 
-open Core Core.Question Semantics.Questions.Resolution
+open Question Semantics.Questions.Resolution
 
 variable {W A : Type*}
 
@@ -185,10 +185,10 @@ theorem IsPPQ.not_isAltQ {Q : Question W}
 /-! ### Blackwell informativeness (@cite{blackwell-1953})
 
 The Blackwell informativeness order on questions is
-`Core.Question.Relevance.questionEntails P Q`: every alternative of
+`Question.Relevance.questionEntails P Q`: every alternative of
 `P` is contained in some alternative of `Q` (P is finer than Q).
 The dual condition — every nonempty Q-alt is covered by a nonempty
-P-alt — is `Core.Question.Relevance.CoversAltsOf P Q`. On *partition*
+P-alt — is `Question.Relevance.CoversAltsOf P Q`. On *partition*
 questions the two coincide; on general inquisitive `Question W` they
 are distinct. The decision-relevance preservation theorem requires
 the dual form. -/
@@ -196,7 +196,7 @@ the dual form. -/
 /-! The decision-relevance preservation theorem itself
 (`CoversAltsOf.preserves_decisionRelevant`) is declared at the bottom
 of this file, *outside* the topic namespace, under
-`Core.Question.CoversAltsOf` so dot notation works at consumer
+`Question.CoversAltsOf` so dot notation works at consumer
 sites. -/
 
 /-! ### Question entropy and NPI strength (@cite{chierchia-2013})
@@ -248,15 +248,15 @@ end Semantics.Questions.DecisionTheoretic
 
 /-! ### `CoversAltsOf` API extensions
 
-Theorem placed under `Core.Question.CoversAltsOf` namespace (not the
+Theorem placed under `Question.CoversAltsOf` namespace (not the
 file's `Semantics.Questions.DecisionTheoretic` topic namespace) so
 dot-notation `hCover.preserves_decisionRelevant` resolves at consumer
 sites. Mathlib pattern: declarations follow the type's namespace, not
 the file's topic namespace. -/
 
-namespace Core.Question.CoversAltsOf
+namespace Question.CoversAltsOf
 
-open Core.Question Semantics.Questions.DecisionTheoretic
+open Question Semantics.Questions.DecisionTheoretic
 
 variable {W A : Type*}
 
@@ -275,4 +275,4 @@ theorem preserves_decisionRelevant
          fun w hw => hpa w (hpP_sub hw),
          fun w hw => hpa' w (hp'P_sub hw)⟩
 
-end Core.Question.CoversAltsOf
+end Question.CoversAltsOf

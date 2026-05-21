@@ -34,7 +34,6 @@ sense, plus a legacy bridge to the Bool-based `QUD W`.
   (round-trip with `fromSetoid` from `Core/Mood/PartitionAsInquiry.lean`).
 -/
 
-namespace Core
 
 namespace Question
 
@@ -246,4 +245,3 @@ theorem isPartition_ofList {L : List (Set W)} (hL : L ≠ [])
 
 end Question
 
-end Core

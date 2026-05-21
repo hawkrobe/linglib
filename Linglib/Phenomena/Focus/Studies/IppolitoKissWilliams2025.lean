@@ -89,7 +89,7 @@ deferred.
 
 namespace Phenomena.Focus.Studies.IppolitoKissWilliams2025
 
-open Core Core.Question Semantics.Questions.Probabilistic
+open Question Semantics.Questions.Probabilistic
 open Phenomena.Focus.Studies.IppolitoKissWilliams2022
 
 /-! ### Discourse context -/
@@ -101,7 +101,7 @@ out naturally: canonical info-seeking questions fail the doxastic
 condition of `Supports` (the speaker doesn't believe any answer). -/
 structure Context (W : Type*) where
   /-- The QUD as an inquisitive issue. -/
-  qud : Core.Question W
+  qud : Question W
   /-- Prior probability distribution. -/
   prior : PMF W
   /-- Speaker's doxastic state `dox_sp`. -/
@@ -113,7 +113,7 @@ structure Context (W : Type*) where
   /-- Subquestions of the QUD established by the discourse context.
       @cite{roberts-2012} (subquestion strategy); IKW §5.1: provided
       by the context, not computed. -/
-  subquestions : List (Core.Question W)
+  subquestions : List (Question W)
 
 /-! ### Sentence -/
 
@@ -125,9 +125,9 @@ denotation type is uniform — what varies between declarative and
 interrogative arguments is whether `Supports` can be satisfied. -/
 structure Sentence (W : Type*) where
   /-- Inquisitive denotation of the left argument `S`. -/
-  sDen : Core.Question W
+  sDen : Question W
   /-- Inquisitive denotation of the right argument `S'`. -/
-  s'Den : Core.Question W
+  s'Den : Question W
 
 namespace Sentence
 
@@ -198,7 +198,7 @@ end Sentence
     doesn't believe any of its alternatives, so `Supports` fails for
     every answer. Direct re-export of `Supports.of_no_belief_fails`. -/
 theorem interrogative_blocks_support {W : Type*} {dox : Set W}
-    {S : Core.Question W} {μ : PMF W} {α : Set W}
+    {S : Question W} {μ : PMF W} {α : Set W}
     (h : ∀ q ∈ alt S, ¬ (dox ⊆ q)) :
     ¬ Supports dox S α μ :=
   Supports.of_no_belief_fails h
@@ -207,7 +207,7 @@ theorem interrogative_blocks_support {W : Type*} {dox : Set W}
     interrogative `S'` trivially satisfies the CI's condition (ii) —
     `Supports` fails for every `α`, so `¬ Supports …` holds. -/
 theorem interrogative_satisfies_ci_clause {W : Type*} {dox : Set W}
-    {S' : Core.Question W} {μ : PMF W} {α : Set W}
+    {S' : Question W} {μ : PMF W} {α : Set W}
     (h : ∀ q ∈ alt S', ¬ (dox ⊆ q)) :
     ¬ Supports dox S' α μ :=
   Supports.of_no_belief_fails h
@@ -303,16 +303,16 @@ noncomputable def prior : PMF World :=
 /-! ### § 2: QUD and Denotations -/
 
 /-- QUD: "Should we buy the house?" — binary issue. -/
-def qud : Core.Question World := Core.Question.polar buy
+def qud : Question World := Question.polar buy
 
 /-- Declarative S: "The house is beautiful" — one alternative. -/
-def sBeautiful : Core.Question World := Core.Question.polar beautiful
+def sBeautiful : Question World := Question.polar beautiful
 
 /-- Declarative S': "It's (very) expensive" — one alternative. -/
-def s'Expensive : Core.Question World := Core.Question.polar expensive
+def s'Expensive : Question World := Question.polar expensive
 
 /-- Polar Q S': "Has it been renovated?" — two alternatives. -/
-def s'RenovatedQ : Core.Question World := Core.Question.polar renovated
+def s'RenovatedQ : Question World := Question.polar renovated
 
 /-! ### § 3: Doxastic States -/
 
@@ -339,8 +339,8 @@ noncomputable def coreCtx : Context World where
   prior := prior
   dox := doxBE
   partialAnswers := []
-  subquestions := [Core.Question.polar beautiful, Core.Question.polar expensive,
-                   Core.Question.polar renovated]
+  subquestions := [Question.polar beautiful, Question.polar expensive,
+                   Question.polar renovated]
 
 /-- Context for clause-type examples: S = "beautiful", S' =
     interrogative. Speaker believes S but doesn't know the answer to
@@ -351,8 +351,8 @@ noncomputable def clauseTypeCtx : Context World where
   prior := prior
   dox := doxB
   partialAnswers := []
-  subquestions := [Core.Question.polar beautiful, Core.Question.polar expensive,
-                   Core.Question.polar renovated]
+  subquestions := [Question.polar beautiful, Question.polar expensive,
+                   Question.polar renovated]
 
 /-! ### § 5: Sentences -/
 
@@ -645,7 +645,7 @@ private lemma doxBE_not_subset_beautiful_compl : ¬ doxBE ⊆ beautifulᶜ := by
 private lemma sBeautiful_supports_buy_doxBE :
     Supports doxBE sBeautiful buy prior := by
   refine ⟨beautiful, ?_, doxBE_subset_beautiful, beautiful_pos_evidence_buy⟩
-  rw [show sBeautiful = Core.Question.polar beautiful from rfl,
+  rw [show sBeautiful = Question.polar beautiful from rfl,
       alt_polar_of_nontrivial beautiful_ne_empty beautiful_ne_univ]
   exact Set.mem_insert _ _
 
@@ -653,7 +653,7 @@ private lemma sBeautiful_supports_buy_doxBE :
 private lemma sExpensive_supports_buy_compl_doxBE :
     Supports doxBE s'Expensive buyᶜ prior := by
   refine ⟨expensive, ?_, doxBE_subset_expensive, expensive_pos_evidence_buy_compl⟩
-  rw [show s'Expensive = Core.Question.polar expensive from rfl,
+  rw [show s'Expensive = Question.polar expensive from rfl,
       alt_polar_of_nontrivial expensive_ne_empty expensive_ne_univ]
   exact Set.mem_insert _ _
 
@@ -663,7 +663,7 @@ private lemma sExpensive_supports_buy_compl_doxBE :
 private lemma sExpensive_not_supports_buy_doxBE :
     ¬ Supports doxBE s'Expensive buy prior := by
   rintro ⟨q, hq, hdox, hpos⟩
-  rw [show s'Expensive = Core.Question.polar expensive from rfl,
+  rw [show s'Expensive = Question.polar expensive from rfl,
       alt_polar_of_nontrivial expensive_ne_empty expensive_ne_univ] at hq
   rcases hq with hq | hq
   · subst hq; exact expensive_not_pos_evidence_buy hpos
@@ -675,7 +675,7 @@ private lemma sExpensive_not_supports_buy_doxBE :
 private lemma sBeautiful_not_supports_buy_compl_doxBE :
     ¬ Supports doxBE sBeautiful buyᶜ prior := by
   rintro ⟨q, hq, hdox, hpos⟩
-  rw [show sBeautiful = Core.Question.polar beautiful from rfl,
+  rw [show sBeautiful = Question.polar beautiful from rfl,
       alt_polar_of_nontrivial beautiful_ne_empty beautiful_ne_univ] at hq
   rcases hq with hq | hq
   · subst hq; exact beautiful_not_pos_evidence_buy_compl hpos
@@ -690,26 +690,26 @@ theorem core_isDefined : declSentence.isDefined coreCtx := by
   refine ⟨?_, ?_, ?_⟩
   · -- moveRelevant sBeautiful coreCtx.qud coreCtx.subquestions
     -- via the `polar beautiful` subquestion in coreCtx.subquestions
-    rw [show declSentence.sDen = Core.Question.polar beautiful from rfl,
+    rw [show declSentence.sDen = Question.polar beautiful from rfl,
         moveRelevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
     refine Or.inl (Or.inr ?_)
-    refine ⟨Core.Question.polar beautiful, ?_, ?_⟩
-    · show Core.Question.polar beautiful ∈ coreCtx.subquestions
+    refine ⟨Question.polar beautiful, ?_, ?_⟩
+    · show Question.polar beautiful ∈ coreCtx.subquestions
       simp [coreCtx]
     · rw [partiallyAnswers_polar_iff beautiful_ne_empty beautiful_ne_univ]
       exact Or.inl Set.Subset.rfl
   · -- moveRelevant s'Expensive coreCtx.qud coreCtx.subquestions
-    rw [show declSentence.s'Den = Core.Question.polar expensive from rfl,
+    rw [show declSentence.s'Den = Question.polar expensive from rfl,
         moveRelevant_polar_iff expensive_ne_empty expensive_ne_univ]
     refine Or.inl (Or.inr ?_)
-    refine ⟨Core.Question.polar expensive, ?_, ?_⟩
-    · show Core.Question.polar expensive ∈ coreCtx.subquestions
+    refine ⟨Question.polar expensive, ?_, ?_⟩
+    · show Question.polar expensive ∈ coreCtx.subquestions
       simp [coreCtx]
     · rw [partiallyAnswers_polar_iff expensive_ne_empty expensive_ne_univ]
       exact Or.inl Set.Subset.rfl
   · -- ∃ α ∈ alt qud, Supports doxBE sBeautiful α prior
     refine ⟨buy, ?_, sBeautiful_supports_buy_doxBE⟩
-    show buy ∈ alt (Core.Question.polar buy)
+    show buy ∈ alt (Question.polar buy)
     rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
     exact Set.mem_insert _ _
 
@@ -718,7 +718,7 @@ theorem core_isDefined : declSentence.isDefined coreCtx := by
     S supports α, and S' does not. -/
 theorem core_ciContent : declSentence.ciContent coreCtx := by
   refine ⟨buy, ?_, ?_, sBeautiful_supports_buy_doxBE, sExpensive_not_supports_buy_doxBE⟩
-  · show buy ∈ alt (Core.Question.polar buy)
+  · show buy ∈ alt (Question.polar buy)
     rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
     exact Set.mem_insert _ _
   · -- ∀ p ∈ partialAnswers (= []), ...
@@ -730,7 +730,7 @@ theorem core_ciContent : declSentence.ciContent coreCtx := by
 theorem core_atIssue_nonempty :
     (2 : World) ∈ declSentence.atIssueContent := by
   unfold Sentence.atIssueContent declSentence sBeautiful s'Expensive
-  simp [Core.Question.info_polar]
+  simp [Question.info_polar]
 
 /-- S and S' disagree w.r.t. the QUD: S supports "buy", S' supports
     "don't buy", no shared answer is supported by both. -/
@@ -738,19 +738,19 @@ theorem core_disagree : declSentence.disagree coreCtx := by
   refine ⟨?_, ?_, ?_⟩
   · -- S supports something
     refine ⟨buy, ?_, sBeautiful_supports_buy_doxBE⟩
-    show buy ∈ alt (Core.Question.polar buy)
+    show buy ∈ alt (Question.polar buy)
     rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
     exact Set.mem_insert _ _
   · -- S' supports something
     refine ⟨buyᶜ, ?_, sExpensive_supports_buy_compl_doxBE⟩
-    show buyᶜ ∈ alt (Core.Question.polar buy)
+    show buyᶜ ∈ alt (Question.polar buy)
     rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
     exact Set.mem_insert_of_mem _ rfl
   · -- ¬ Agree: refute shared support
     rintro ⟨α, hα, hSα, hS'α⟩
-    rw [show declSentence.s'Den = Core.Question.polar expensive from rfl] at hS'α
-    rw [show declSentence.sDen = Core.Question.polar beautiful from rfl] at hSα
-    rw [show coreCtx.qud = Core.Question.polar buy from rfl,
+    rw [show declSentence.s'Den = Question.polar expensive from rfl] at hS'α
+    rw [show declSentence.sDen = Question.polar beautiful from rfl] at hSα
+    rw [show coreCtx.qud = Question.polar buy from rfl,
         alt_polar_of_nontrivial buy_ne_empty buy_ne_univ] at hα
     rcases hα with hα | hα
     · subst hα
@@ -798,7 +798,7 @@ section PolarQDerivation
 private lemma sBeautiful_supports_buy_doxB :
     Supports doxB sBeautiful buy prior := by
   refine ⟨beautiful, ?_, ?_, beautiful_pos_evidence_buy⟩
-  · rw [show sBeautiful = Core.Question.polar beautiful from rfl,
+  · rw [show sBeautiful = Question.polar beautiful from rfl,
         alt_polar_of_nontrivial beautiful_ne_empty beautiful_ne_univ]
     exact Set.mem_insert _ _
   · -- doxB = beautiful ⊆ beautiful
@@ -829,25 +829,25 @@ private lemma doxB_not_subset_renovated_compl : ¬ doxB ⊆ renovatedᶜ := by
 theorem polarQ_isDefined : polarQSentence.isDefined clauseTypeCtx := by
   refine ⟨?_, ?_, ?_⟩
   · -- moveRelevant sBeautiful via polar beautiful subquestion
-    rw [show polarQSentence.sDen = Core.Question.polar beautiful from rfl,
+    rw [show polarQSentence.sDen = Question.polar beautiful from rfl,
         moveRelevant_polar_iff beautiful_ne_empty beautiful_ne_univ]
     refine Or.inl (Or.inr ?_)
-    refine ⟨Core.Question.polar beautiful, ?_, ?_⟩
-    · show Core.Question.polar beautiful ∈ clauseTypeCtx.subquestions
+    refine ⟨Question.polar beautiful, ?_, ?_⟩
+    · show Question.polar beautiful ∈ clauseTypeCtx.subquestions
       simp [clauseTypeCtx]
     · rw [partiallyAnswers_polar_iff beautiful_ne_empty beautiful_ne_univ]
       exact Or.inl Set.Subset.rfl
   · -- moveRelevant s'RenovatedQ via polar renovated subquestion
-    rw [show polarQSentence.s'Den = Core.Question.polar renovated from rfl,
+    rw [show polarQSentence.s'Den = Question.polar renovated from rfl,
         moveRelevant_polar_iff renovated_ne_empty renovated_ne_univ]
     refine Or.inl (Or.inr ?_)
-    refine ⟨Core.Question.polar renovated, ?_, ?_⟩
-    · show Core.Question.polar renovated ∈ clauseTypeCtx.subquestions
+    refine ⟨Question.polar renovated, ?_, ?_⟩
+    · show Question.polar renovated ∈ clauseTypeCtx.subquestions
       simp [clauseTypeCtx]
     · rw [partiallyAnswers_polar_iff renovated_ne_empty renovated_ne_univ]
       exact Or.inl Set.Subset.rfl
   · refine ⟨buy, ?_, sBeautiful_supports_buy_doxB⟩
-    show buy ∈ alt (Core.Question.polar buy)
+    show buy ∈ alt (Question.polar buy)
     rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
     exact Set.mem_insert _ _
 
@@ -857,7 +857,7 @@ theorem polarQ_isDefined : polarQSentence.isDefined clauseTypeCtx := by
     believe any answer to "has it been renovated?". -/
 theorem polarQ_ciContent : polarQSentence.ciContent clauseTypeCtx := by
   refine ⟨buy, ?_, ?_, sBeautiful_supports_buy_doxB, ?_⟩
-  · show buy ∈ alt (Core.Question.polar buy)
+  · show buy ∈ alt (Question.polar buy)
     rw [alt_polar_of_nontrivial buy_ne_empty buy_ne_univ]
     exact Set.mem_insert _ _
   · intro p hp _
@@ -865,7 +865,7 @@ theorem polarQ_ciContent : polarQSentence.ciContent clauseTypeCtx := by
   · -- ¬ Supports doxB s'RenovatedQ buy prior — speaker doesn't believe any answer
     apply Supports.of_no_belief_fails
     intro q hq
-    rw [show polarQSentence.s'Den = Core.Question.polar renovated from rfl,
+    rw [show polarQSentence.s'Den = Question.polar renovated from rfl,
         alt_polar_of_nontrivial renovated_ne_empty renovated_ne_univ] at hq
     rcases hq with hq | hq
     · subst hq; exact doxB_not_subset_renovated

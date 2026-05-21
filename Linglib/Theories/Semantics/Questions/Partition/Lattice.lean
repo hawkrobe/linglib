@@ -13,7 +13,7 @@ Refinement and coarsening order on partitions (`QUD`):
 ## Lattice structure
 
 Partitions form a bounded lattice ordered by refinement:
-- Meet (`*` from `Core.Question.Partition.QUD`): coarsest common refinement.
+- Meet (`*` from `Question.Partition.QUD`): coarsest common refinement.
 - Top: `exact` (finest).
 - Bottom: `trivial` (coarsest).
 

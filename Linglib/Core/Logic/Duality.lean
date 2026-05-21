@@ -299,6 +299,68 @@ def distList {α : Type*} (l : List α) (P : α → Prop) [DecidablePred P] : Tr
   else if ∃ a ∈ l, P a then .indet
   else .false
 
+/-- `dist s P = .true` iff every element of `s` satisfies `P`. -/
+theorem dist_eq_true_iff {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] :
+    dist s P = .true ↔ ∀ a ∈ s, P a := by
+  unfold dist
+  by_cases h : ∀ a ∈ s, P a
+  · rw [if_pos h]; exact ⟨fun _ => h, fun _ => rfl⟩
+  · refine ⟨fun habs => ?_, fun habs => absurd habs h⟩
+    rw [if_neg h] at habs
+    split_ifs at habs
+
+/-- `dist s P = .false` iff `s` is nonempty and no element satisfies `P`. -/
+theorem dist_eq_false_iff {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] :
+    dist s P = .false ↔ s.Nonempty ∧ ∀ a ∈ s, ¬ P a := by
+  unfold dist
+  by_cases h1 : ∀ a ∈ s, P a
+  · rw [if_pos h1]
+    refine ⟨fun habs => ?_, ?_⟩
+    · cases habs
+    · rintro ⟨⟨a, ha⟩, hno⟩; exact (hno a ha (h1 a ha)).elim
+  · rw [if_neg h1]
+    by_cases h2 : ∃ a ∈ s, P a
+    · rw [if_pos h2]
+      refine ⟨fun habs => ?_, ?_⟩
+      · cases habs
+      · rintro ⟨_, hno⟩
+        obtain ⟨a, ha, hPa⟩ := h2
+        exact (hno a ha hPa).elim
+    · rw [if_neg h2]
+      refine ⟨fun _ => ?_, fun _ => rfl⟩
+      refine ⟨?_, ?_⟩
+      · -- s.Nonempty
+        by_contra hne
+        rw [Finset.not_nonempty_iff_eq_empty] at hne
+        apply h1
+        intro a ha; rw [hne] at ha
+        exact Finset.notMem_empty a ha |>.elim
+      · -- ∀ a ∈ s, ¬ P a
+        intro a ha hPa
+        exact h2 ⟨a, ha, hPa⟩
+
+/-- `dist s P = .indet` iff some elements of `s` satisfy `P` and some don't. -/
+theorem dist_eq_indet_iff {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] :
+    dist s P = .indet ↔ (∃ a ∈ s, P a) ∧ (∃ a ∈ s, ¬ P a) := by
+  unfold dist
+  by_cases h1 : ∀ a ∈ s, P a
+  · rw [if_pos h1]
+    refine ⟨fun habs => ?_, ?_⟩
+    · cases habs
+    · rintro ⟨_, ⟨a, ha, hnP⟩⟩; exact (hnP (h1 a ha)).elim
+  · rw [if_neg h1]
+    by_cases h2 : ∃ a ∈ s, P a
+    · rw [if_pos h2]
+      refine ⟨fun _ => ?_, fun _ => rfl⟩
+      refine ⟨h2, ?_⟩
+      push Not at h1
+      exact h1
+    · rw [if_neg h2]
+      refine ⟨fun habs => ?_, ?_⟩
+      · cases habs
+      · rintro ⟨⟨a, ha, hPa⟩, _⟩
+        exact (h2 ⟨a, ha, hPa⟩).elim
+
 /-- `dist` is `.true` on the empty Finset (vacuous super-truth). -/
 @[simp] theorem dist_empty {α : Type*} (P : α → Prop) [DecidablePred P] :
     dist (∅ : Finset α) P = .true := by simp [dist]

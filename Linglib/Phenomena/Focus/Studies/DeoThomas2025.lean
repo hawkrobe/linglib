@@ -25,7 +25,7 @@ import Linglib.Theories.Semantics.Degree.Granularity
 namespace DeoThomas2025
 
 open Phenomena.Focus.Exclusives
--- open removed: Core.Question is top-level after Theories/Semantics/Questions/ relocation
+-- open removed: Question is top-level after Theories/Semantics/Questions/ relocation
 
 -- ============================================================================
 -- A. Alternative Source
@@ -61,7 +61,7 @@ def associatedSource : JustFlavor → AlternativeSource
 /-- A discourse context provides construals of an underspecified question (UQ)
     together with Quality and Relevance filters.
 
-    Construals are `Core.Question`s (sets of alternative propositions), matching the
+    Construals are `Question`s (sets of alternative propositions), matching the
     paper's definition (30)-(31): questions are sets of propositions that cover
     the common ground. This is more faithful than using partitions (`QUD`),
     since the paper explicitly notes that granularity-based construals generally
@@ -70,22 +70,22 @@ def associatedSource : JustFlavor → AlternativeSource
     `W` is the world type. -/
 structure DiscourseContext (W : Type*) where
   /-- The available construals of UQ_c -/
-  construals : List (Core.Question W)
+  construals : List (Question W)
   /-- Does the speaker have sufficient evidence to answer this question? -/
-  quality : Core.Question W → Bool
+  quality : Question W → Bool
   /-- Is this question relevant to the current discourse? -/
-  relevance : Core.Question W → Bool
+  relevance : Question W → Bool
   /-- There must be at least one construal -/
   nonempty : construals ≠ []
 
 variable {W : Type*}
 
 /-- A question is answerable iff it passes both Quality and Relevance (34). -/
-def answerable (ctx : DiscourseContext W) (q : Core.Question W) : Bool :=
+def answerable (ctx : DiscourseContext W) (q : Question W) : Bool :=
   ctx.quality q && ctx.relevance q
 
 -- ============================================================================
--- C. Widest Answerable Core.Question
+-- C. Widest Answerable Question
 -- ============================================================================
 
 /-- OPT_c(Q) (@cite{deo-thomas-2025} (35)): the optimal question in a set
@@ -94,11 +94,11 @@ def answerable (ctx : DiscourseContext W) (q : Core.Question W) : Bool :=
     `q` is the widest answerable construal: it is answerable, it is in the
     construal set, and no strictly wider answerable construal exists.
 
-    Width is measured by `Core.Question.widerThan` ((32)), the paper's comparison
+    Width is measured by `Question.widerThan` ((32)), the paper's comparison
     of question inquisitivity — explicitly weaker than G&S question entailment
     (fn. 20), because granularity-based construals generally cannot be ordered
     by entailment strength. -/
-def isWidestAnswerable (ctx : DiscourseContext W) (q : Core.Question W) : Prop :=
+def isWidestAnswerable (ctx : DiscourseContext W) (q : Question W) : Prop :=
   q ∈ ctx.construals ∧
   answerable ctx q = true ∧
   ∀ q' ∈ ctx.construals, answerable ctx q' = true → ¬ q'.widerThan q
@@ -233,39 +233,39 @@ theorem wxdy_incongruity_is_counterexpectational :
 The paper's central formal insight: finer granularity produces wider questions.
 At the partition level, "finer" is `QUD.refines` (every fine cell ⊆ some coarse
 cell), equivalently `q.toSetoid ≤ q'.toSetoid` in mathlib's `Setoid` lattice.
-At the issue level, "wider" is `Core.Question.widerThan` (@cite{deo-thomas-2025}
+At the issue level, "wider" is `Question.widerThan` (@cite{deo-thomas-2025}
 (32): same `info`, no coarse answer ⊊ fine answer, some fine answer ⊊ coarse
-answer). The bridge: `toIssue := Core.Question.fromSetoid ∘ QUD.toSetoid`
+answer). The bridge: `toIssue := Question.fromSetoid ∘ QUD.toSetoid`
 preserves this relationship.
 
 The proof is an order-theoretic one-liner over `Setoid`: every alternative
-of `Core.Question.fromSetoid r` is either `∅` or an equivalence class of `r`
+of `Question.fromSetoid r` is either `∅` or an equivalence class of `r`
 (`alt_fromSetoid_subset_classes`), and the q-class of `w₀` is contained in
 the q'-class of `w₀` by refinement, with `v₀` witnessing strict containment.
 This replaces a 100-line Bool/List proof that managed indices into
 `worlds : List W` and case-split on `properlyContains`. -/
 
 /-- A `QUD` partitions a meaning space via an equivalence relation; via
-    `QUD.toSetoid` and `Core.Question.fromSetoid`, every QUD induces an
+    `QUD.toSetoid` and `Question.fromSetoid`, every QUD induces an
     inquisitive content whose alternatives are exactly the QUD's
-    equivalence classes. The bridge is one-way: not every `Core.Question`
+    equivalence classes. The bridge is one-way: not every `Question`
     arises from a `QUD` (mention-some, intermediate-exhaustive, and
     conditional-question alternatives are non-disjoint or non-exhaustive
     and so are not representable as the cells of any equivalence
     relation — @cite{theiler-etal-2018}). -/
-def toIssue {W : Type*} (q : QUD W) : Core.Question W :=
-  Core.Question.fromSetoid q.toSetoid
+def toIssue {W : Type*} (q : QUD W) : Question W :=
+  Question.fromSetoid q.toSetoid
 
 /-- Strict partition refinement implies issue width.
 
     If `q` (strictly) refines `q'` (`q` is the finer partition), then
-    `toIssue q` is wider than `toIssue q'` as `Core.Question`s.
+    `toIssue q` is wider than `toIssue q'` as `Question`s.
 
     The strictness witnesses `w₀, v₀ : W` share a coarse cell
     (`q'.r w₀ v₀`) but not a fine cell
     (`¬ q.r w₀ v₀`); they witness condition (c).
 
-    The proof establishes the three conditions of `Core.Question.widerThan`:
+    The proof establishes the three conditions of `Question.widerThan`:
     - (a) Same `info`: both `fromSetoid`-derived issues have `info = univ`.
     - (b) No q'-alternative is properly contained in any q-alternative:
       alternatives are classes (or `∅`); under refinement, classes only
@@ -289,25 +289,25 @@ theorem refinement_implies_wider {W : Type*}
   let C₂ : Set W := {x | q'.toSetoid x w₀}
   have hC₁_class : C₁ ∈ q.toSetoid.classes := Setoid.mem_classes q.toSetoid w₀
   have hC₂_class : C₂ ∈ q'.toSetoid.classes := Setoid.mem_classes q'.toSetoid w₀
-  have hC₁_alt : C₁ ∈ Core.Question.alt (Core.Question.fromSetoid q.toSetoid) :=
-    Core.Question.class_mem_alt_fromSetoid _ hC₁_class
-  have hC₂_alt : C₂ ∈ Core.Question.alt (Core.Question.fromSetoid q'.toSetoid) :=
-    Core.Question.class_mem_alt_fromSetoid _ hC₂_class
+  have hC₁_alt : C₁ ∈ Question.alt (Question.fromSetoid q.toSetoid) :=
+    Question.class_mem_alt_fromSetoid _ hC₁_class
+  have hC₂_alt : C₂ ∈ Question.alt (Question.fromSetoid q'.toSetoid) :=
+    Question.class_mem_alt_fromSetoid _ hC₂_class
   refine ⟨?_, ?_, ?_⟩
   -- (a) Same info: both reduce to Set.univ
-  · simp only [toIssue, Core.Question.info_fromSetoid]
+  · simp only [toIssue, Question.info_fromSetoid]
   -- (b) No q'-alternative properly contained in any q-alternative
   · intro p₂ hp₂ p₁ hp₁ hssub
-    rcases Core.Question.alt_fromSetoid_subset_classes _ hp₂ with hp₂_empty | hp₂_class
+    rcases Question.alt_fromSetoid_subset_classes _ hp₂ with hp₂_empty | hp₂_class
     · -- p₂ = ∅ but the q'-class of w₀ contains w₀, so ∅ ∉ alt — contradiction
-      have hC₂_props : C₂ ∈ (Core.Question.fromSetoid q'.toSetoid).props :=
+      have hC₂_props : C₂ ∈ (Question.fromSetoid q'.toSetoid).props :=
         Or.inr ⟨C₂, hC₂_class, subset_rfl⟩
       have hp_sub : p₂ ⊆ C₂ := by rw [hp₂_empty]; exact Set.empty_subset _
       have heq : p₂ = C₂ := hp₂.2 C₂ hC₂_props hp_sub
       have hw₀_in : w₀ ∈ p₂ := by rw [heq]; exact Setoid.refl' q'.toSetoid w₀
       rw [hp₂_empty] at hw₀_in
       exact hw₀_in.elim
-    · rcases Core.Question.alt_fromSetoid_subset_classes _ hp₁ with hp₁_empty | hp₁_class
+    · rcases Question.alt_fromSetoid_subset_classes _ hp₁ with hp₁_empty | hp₁_class
       · -- p₁ = ∅, so p₂ ⊊ ∅: p₂ ⊆ ∅ AND ¬ ∅ ⊆ p₂. The latter is vacuously false.
         rw [hp₁_empty] at hssub
         exact hssub.2 (Set.empty_subset _)
@@ -341,7 +341,7 @@ theorem refinement_implies_wider {W : Type*}
       exact hFine (q.iseqv.symm hv₀_C₁)
 
 -- ============================================================================
--- G. Granularity–Core.Question Composition (§3.1.2 + §3.2)
+-- G. Granularity–Question Composition (§3.1.2 + §3.2)
 -- ============================================================================
 
 /-! ### The full chain: finer granularity → wider question

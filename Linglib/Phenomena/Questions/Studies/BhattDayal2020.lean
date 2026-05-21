@@ -7,7 +7,7 @@ import Linglib.Fragments.English.QuestionParticles
 /-!
 # Bhatt & Dayal (2020): PQP analysis of Hindi-Urdu *kya:* @cite{bhatt-dayal-2020}
 
-Polar Core.Question Particle analysis: Hindi-Urdu *kya:* sits at PerspP, not CP.
+Polar Question Particle analysis: Hindi-Urdu *kya:* sits at PerspP, not CP.
 Combined with @cite{dayal-2025}'s three-layer cartography
 `[SAP [PerspP [CP ...]]]` and @cite{sauerland-yatsushiro-2017}'s analysis
 of Japanese *kke* as a meta question particle (MQP).
@@ -30,7 +30,7 @@ the fragments themselves carry only theory-neutral distributional fields.
 namespace Phenomena.Questions.Studies.BhattDayal2020
 
 open Features (QParticleLayer)
-open Core.Question (IsSingleton SingletonQuestion declarative polar
+open Question (IsSingleton SingletonQuestion declarative polar
   isSingleton_declarative not_isSingleton_polar_of_nontrivial)
 open Fragments.HindiUrdu.Particles (kya)
 open Fragments.Japanese.Particles (ka kke)
@@ -167,7 +167,7 @@ theorem sap_particles_not_in_quasi_sub :
 `⟦kya:⟧ = λp[∃q ∈ Q[∀q′[q′ ∈ Q → q′ = q]].Q`
 i.e. *kya:* is interpreted only when its sister question `Q` has a
 singleton alternative set, in which case the particle is the identity
-on `Q`. The presupposition is exactly `Core.Question.IsSingleton`; the
+on `Q`. The presupposition is exactly `Question.IsSingleton`; the
 well-typed analogue of "felicitous sister content" is the subtype
 `SingletonQuestion W` (a question paired with a proof that its
 alternative set is a singleton). The "highlighted" terminology of

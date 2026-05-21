@@ -27,7 +27,7 @@ parameter is the **answering system**: truth-based vs polarity-based.
 
 ## Connection to Existing Infrastructure
 
-- `Core.Question.polar` (substrate-level inquisitive polar question)
+- `Question.polar` (substrate-level inquisitive polar question)
 - `Minimalist.Polarity.PolFeature` (syntactic [±Pol] feature)
 - `AnsweringSystem` (typological parameter)
 - `NegationHeight` → `predictedSystem` (negation height derives answering system)
@@ -39,7 +39,7 @@ parameter is the **answering system**: truth-based vs polarity-based.
 
 namespace Holmberg2016
 
-open Core.Question
+open Question
 open Features (AnsweringSystem PolarAnswerProfile)
 open Minimalist.Polarity
 
@@ -47,7 +47,7 @@ open Minimalist.Polarity
 -- § 1. Bridge: Hamblin polar ↔ [±Pol] variable
 -- ════════════════════════════════════════════════════════════════
 
-/-! A polar question `?p = {p, pᶜ}` (substrate `Core.Question.polar`)
+/-! A polar question `?p = {p, pᶜ}` (substrate `Question.polar`)
     corresponds to an unvalued [±Pol] feature. Each alternative cell
     values the feature:
     - `p` → [+Pol] (affirmative)

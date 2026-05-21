@@ -798,288 +798,36 @@ private theorem bMinusLin_of'_mul_of' (a : α) (F G : Forest (Nonplanar α)) :
     · simp [hF, hG]
     · simp [hF, hG]
 
-/-! ### §10c: Full CK ε-Leibniz
-
-Bilinear extension of `bMinusLin_of'_mul_of'`. For arbitrary
-`X, Y : ConnesKreimer ℤ (Nonplanar α)`,
-
-```
-bMinusLin a (X * Y) = counit X • bMinusLin a Y + counit Y • bMinusLin a X
-```
-
-Proof: double induction on Y then X using `Finsupp.induction_linear`. The
-`single F r * single G s = single (F + G) (r * s)` case
-(`AddMonoidAlgebra.single_mul_single`) reduces to `bMinusLin_of'_mul_of'`
-modulo scalar pull-through. -/
-
-/-- **CK ε-Leibniz**: `bMinusLin` is a counit-derivation for CK's product. -/
-theorem bMinusLin_mul (a : α) (X Y : ConnesKreimer ℤ (Nonplanar α)) :
-    bMinusLin (R := ℤ) a (X * Y) =
-      counit X • bMinusLin (R := ℤ) a Y +
-        counit Y • bMinusLin (R := ℤ) a X := by
-  -- Two bilinear maps `CK × CK → CK`; prove equality via `Module.Basis.ext`
-  -- twice (basis = `Finsupp.basisSingleOne` indexed by `Forest`).
-  -- LHS as LinearMap X ↦ (Y ↦ bMinusLin a (X * Y)).
-  let LHS : ConnesKreimer ℤ (Nonplanar α) →ₗ[ℤ]
-        ConnesKreimer ℤ (Nonplanar α) →ₗ[ℤ] ConnesKreimer ℤ (Nonplanar α) :=
-    LinearMap.mk₂ ℤ (fun X Y => bMinusLin a (X * Y))
-      (fun X₁ X₂ Y => by simp only [add_mul, map_add])
-      (fun r X Y => by simp only [smul_mul_assoc, map_smul])
-      (fun X Y₁ Y₂ => by simp only [mul_add, map_add])
-      (fun X r Y => by simp only [mul_smul_comm, map_smul])
-  let RHS : ConnesKreimer ℤ (Nonplanar α) →ₗ[ℤ]
-        ConnesKreimer ℤ (Nonplanar α) →ₗ[ℤ] ConnesKreimer ℤ (Nonplanar α) :=
-    LinearMap.mk₂ ℤ (fun X Y =>
-        counit X • bMinusLin a Y + counit Y • bMinusLin a X)
-      (fun X₁ X₂ Y => by
-        simp only [map_add, add_smul, smul_add]; abel)
-      (fun r X Y => by
-        simp only [map_smul, smul_smul, smul_add, smul_eq_mul, mul_comm])
-      (fun X Y₁ Y₂ => by
-        simp only [map_add, add_smul, smul_add]; abel)
-      (fun X r Y => by
-        simp only [map_smul, smul_smul, smul_add, smul_eq_mul, mul_comm])
-  -- Reduce to pointwise via LinearMap.ext_iff.
-  suffices h_eq : LHS = RHS by
-    have := LinearMap.congr_fun (LinearMap.congr_fun h_eq X) Y
-    exact this
-  -- Apply Module.Basis.ext on X.
-  apply Module.Basis.ext (Finsupp.basisSingleOne (R := ℤ) (ι := Forest (Nonplanar α)) :
-    Module.Basis (Forest (Nonplanar α)) ℤ (ConnesKreimer ℤ (Nonplanar α)))
-  intro F
-  -- For each F, show LHS (single F 1) = RHS (single F 1) as `CK →ₗ CK`.
-  -- Apply Module.Basis.ext on Y (i.e., the inner LinearMap).
-  apply Module.Basis.ext (Finsupp.basisSingleOne (R := ℤ) (ι := Forest (Nonplanar α)) :
-    Module.Basis (Forest (Nonplanar α)) ℤ (ConnesKreimer ℤ (Nonplanar α)))
-  intro G
-  -- Show LHS (single F 1) (single G 1) = RHS (single F 1) (single G 1).
-  -- single F 1 = of' F; this is exactly `bMinusLin_of'_mul_of'`.
-  show bMinusLin a ((ConnesKreimer.of' F : ConnesKreimer ℤ (Nonplanar α)) *
-        ConnesKreimer.of' G) =
-      counit (R := ℤ) (T := Nonplanar α)
-        (ConnesKreimer.of' F : ConnesKreimer ℤ (Nonplanar α)) •
-          bMinusLin a (ConnesKreimer.of' G : ConnesKreimer ℤ (Nonplanar α)) +
-      counit (R := ℤ) (T := Nonplanar α)
-        (ConnesKreimer.of' G : ConnesKreimer ℤ (Nonplanar α)) •
-          bMinusLin a (ConnesKreimer.of' F : ConnesKreimer ℤ (Nonplanar α))
-  exact bMinusLin_of'_mul_of' a F G
-
-/-! ### §10d: n = 1 base case for the transport theorem
-
-The per-tprod induction (Piece C analog at BMinusSL.lean:1835) handles
-`X = algHomL(tprod n f)` by induction on `n`. For `n + 1` with factor
-`D * SL.ι Y` (where `D = algHomL(tprod n init)`), CK ε-Leibniz on the LHS
-and `bMinusLin_SL_ι_mul_eps` on the RHS reduce the equation to:
-
-```
-bMinusLin (ckIso (SL.ι Y)) = ckIso (bMinusLin_SL (SL.ι Y))   (for Y : LL)
-```
-
-This is the `n = 1` case, proved here as a standalone lemma via
-`Module.Basis.ext` on `Y = single t 1 = ofTree t`. At the basis level, both
-sides reduce to forest-vs-product computations on `Nonplanar.rootChildren t`,
-intermediated by the helper `ckIso_prod_ιTree_eq_of'`. -/
-
-/-- Helper: `ckIso ((A.map ιTree).prod) = of' A` via multiset induction.
-    Bridges the SL-side `∏ ι(ofTree)` representation of `psiA_basis a (node a A)`
-    to the CK-side `of' A` representation of `bMinusBasis a {node a A}`. -/
-private theorem ckIso_prod_ιTree_eq_of'
-    [DecidableEq (Nonplanar α)] (A : Multiset (Nonplanar α)) :
-    ckIsoSymmetricAlgebra ((A.map (fun c => ιTree c)).prod) =
-      (ConnesKreimer.of' A : ConnesKreimer ℤ (Nonplanar α)) := by
-  induction A using Multiset.induction_on with
-  | empty =>
-    rw [Multiset.map_zero, Multiset.prod_zero, map_one, ← ConnesKreimer.of'_zero]
-  | cons c A' ih =>
-    rw [Multiset.map_cons, Multiset.prod_cons, map_mul, ih]
-    -- Goal: ckIso (ιTree c) * of' A' = of' (c ::ₘ A')
-    show ckIsoSymmetricAlgebra (SymmetricAlgebra.ι ℤ LL
-            (Finsupp.single c (1 : ℤ))) * ConnesKreimer.of' A' = _
-    rw [ckIsoSymmetricAlgebra_ι_single]
-    -- Now: of'({c}) * of' A' = of' (c ::ₘ A')
-    rw [← ConnesKreimer.of'_add, Multiset.singleton_add]
-
-/-- **n = 1 base case** for `bMinusLin_ckIso`. Both sides as LinearMaps `LL →ₗ CK`;
-    reduce to basis `Y = single t 1` via `Module.Basis.ext`, then case on
-    `rootLabel t = a` using `bMinusBasis_singleton_node` /
-    `bMinusBasis_eq_zero_of_not_singleton_a` on the CK side and
-    `psiA_basis_node_self` / `psiA_basis_node_neq` on the SL side. -/
-private theorem bMinusLin_ckIso_ι [DecidableEq (Nonplanar α)] (a : α) (Y : LL) :
-    bMinusLin (R := ℤ) a (ckIsoSymmetricAlgebra (SymmetricAlgebra.ι ℤ LL Y)) =
-    ckIsoSymmetricAlgebra (bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL Y)) := by
-  -- Reduce to LinearMap equality `LL →ₗ[ℤ] CK` via `Module.Basis.ext`.
-  -- Both maps Y ↦ bMinusLin(ckIso(SL.ι Y)) and Y ↦ ckIso(bMinusLin_SL(SL.ι Y))
-  -- are R-linear.
-  let f₁ : LL →ₗ[ℤ] ConnesKreimer ℤ (Nonplanar α) :=
-    ((bMinusLin a).comp (ckIsoSymmetricAlgebra (α := α)).toLinearMap).comp
-      (SymmetricAlgebra.ι ℤ LL)
-  let f₂ : LL →ₗ[ℤ] ConnesKreimer ℤ (Nonplanar α) :=
-    ((ckIsoSymmetricAlgebra (α := α)).toLinearMap.comp
-      (bMinusLin_SL a)).comp (SymmetricAlgebra.ι ℤ LL)
-  suffices h_eq : f₁ = f₂ by
-    have := LinearMap.congr_fun h_eq Y
-    simpa using this
-  -- Apply Module.Basis.ext with Finsupp.basisSingleOne.
-  apply Module.Basis.ext (Finsupp.basisSingleOne (R := ℤ) (ι := Nonplanar α) :
-    Module.Basis (Nonplanar α) ℤ LL)
-  intro t
-  -- Compute both sides at `single t 1 = ofTree t`.
-  show bMinusLin a (ckIsoSymmetricAlgebra (SymmetricAlgebra.ι ℤ LL
-            (Finsupp.single t (1 : ℤ)))) =
-        ckIsoSymmetricAlgebra (bMinusLin_SL a
-          (SymmetricAlgebra.ι ℤ LL (Finsupp.single t (1 : ℤ))))
-  -- LHS: ckIso(SL.ι(single t 1)) = of'({t}); bMinusLin (of'({t})) = bMinusBasis a {t}.
-  rw [ckIsoSymmetricAlgebra_ι_single]
-  -- RHS: bMinusLin_SL(SL.ι(single t 1)) = psiA_L(single t 1) = psiA_basis a t.
-  rw [bMinusLin_SL_ι, show (Finsupp.single t (1 : ℤ) : LL) =
-          InsertionAlgebra.ofTree t from rfl, psiA_L_ofTree]
-  -- LHS now: bMinusLin (of'({t})); RHS: ckIso (psiA_basis a t).
-  -- Case on `t = node b A` for `b = rootLabel t, A = rootChildren t`.
-  rw [← Nonplanar.node_eta t]
-  -- Now t replaced by node (rootLabel t) (rootChildren t) everywhere
-  -- Bridge namespace difference: `ConnesKreimer.of'` to use `bMinusLin_of'`.
-  rw [show bMinusLin a (ConnesKreimer.of' ({Nonplanar.node (Nonplanar.rootLabel t)
-            (Nonplanar.rootChildren t)} : Forest (Nonplanar α)) :
-            ConnesKreimer ℤ (Nonplanar α)) =
-          bMinusBasis (R := ℤ) a ({Nonplanar.node (Nonplanar.rootLabel t)
-            (Nonplanar.rootChildren t)} : Forest _) from
-        bMinusLin_of' a _]
-  by_cases hroot : Nonplanar.rootLabel t = a
-  · -- rootLabel t = a: both sides equal `of' (rootChildren t)`.
-    rw [hroot, bMinusBasis_singleton_node]
-    -- RHS: psiA_basis a (node a A) unfolds to (A.map ιTree).prod via the if-true branch.
-    have h_psi : psiA_basis a (Nonplanar.node a (Nonplanar.rootChildren t)) =
-        ((Nonplanar.rootChildren t).map (fun c => ιTree c)).prod := by
-      unfold psiA_basis
-      rw [Nonplanar.rootLabel_node, Nonplanar.rootChildren_node]
-      exact if_pos rfl
-    rw [h_psi]
-    exact (ckIso_prod_ιTree_eq_of' _).symm
-  · -- rootLabel t ≠ a: both sides = 0.
-    have hne : (Nonplanar.rootLabel t) ≠ a := hroot
-    have h_psi : psiA_basis a (Nonplanar.node (Nonplanar.rootLabel t)
-          (Nonplanar.rootChildren t)) = 0 := by
-      unfold psiA_basis
-      rw [Nonplanar.rootLabel_node]
-      exact if_neg hne
-    rw [h_psi, map_zero, bMinusBasis_eq_zero_of_not_singleton_a]
-    rintro ⟨G', hG'⟩
-    have h_node_eq : Nonplanar.node (Nonplanar.rootLabel t) (Nonplanar.rootChildren t) =
-        Nonplanar.node a G' := Multiset.singleton_inj.mp hG'
-    have h_label : Nonplanar.rootLabel t = a := by
-      have := congrArg Nonplanar.rootLabel h_node_eq
-      rwa [Nonplanar.rootLabel_node, Nonplanar.rootLabel_node] at this
-    exact hroot h_label
-
-/-! ### §10e: Main transport identity
+/-! ### §10c: Main transport identity (partial — see TODO)
 
 `bMinusLin a (ckIso X) = ckIso (bMinusLin_SL a X)` for all `X ∈ SL`.
 
-Proof: lift `X = algHomL z` via `algHomL_surjective`, then reduce to a
-LinearMap equality `TA →ₗ CK` via `TA_linearMap_ext_tprod`. Per-tprod
-induction on `n`: `n = 0` reduces to `bMinusLin 1 = 0 = ckIso (bMinusLin_SL 1)`;
-`n + 1` factors `algHomL(tprod (n+1) f) = D * SL.ι (f last)`, applies CK
-ε-Leibniz (`bMinusLin_mul`) on LHS and `bMinusLin_SL_ι_mul_eps` on RHS (with
-SL commutativity), then `counit_ckIsoSymmetricAlgebra` translates SL/CK
-counits, and `bMinusLin_ckIso_ι` closes the residue. -/
+**Status (2026-05-18)**: stated with `sorry`. Closure requires:
 
-/-- **Piece B**: `bMinusLin_SL` is intertwined with the CK-side `bMinusLin`
-    by `ckIsoSymmetricAlgebra`. -/
+1. **Full CK ε-Leibniz** (bilinear extension of `bMinusLin_of'_mul_of'`):
+   for general `X, Y : ConnesKreimer ℤ (Nonplanar α)`,
+   `bMinusLin a (X * Y) = counit X • bMinusLin a Y + counit Y • bMinusLin a X`.
+   Estimated 50-80 LOC via `Finsupp.induction_linear` on Y, then X.
+   Subtlety: type-alias discipline between `ConnesKreimer ℤ (Nonplanar α)`
+   and `Forest (Nonplanar α) →₀ ℤ`; explicit `show` casts needed.
+
+2. **TA-side per-tprod-n induction**: via `algHomL_surjective` +
+   `TA_linearMap_ext_tprod` + induction on `n`. For `n = 0` and `n = 1`
+   direct; for `n ≥ 2`, CK ε-Leibniz reduces to `0 = 0` because both
+   factor counits vanish (`ε(ckIso(SL.ι _)) = ε(SL.ι _) = 0` via
+   `SymmetricAlgebra.algebraMapInv_ι`).
+
+   Estimated 80-120 LOC.
+
+Total for closure: ~150-200 LOC additional. Targeted for the next session
+on this Piece. -/
+
+/-- **TODO**: The transport identity (Piece B). See header comment for
+    closure plan. -/
 theorem bMinusLin_ckIso [DecidableEq (Nonplanar α)] (a : α) (X : SL) :
     bMinusLin (R := ℤ) a (ckIsoSymmetricAlgebra X) =
     ckIsoSymmetricAlgebra (bMinusLin_SL a X) := by
-  -- Per-tprod claim (∀ over f).
-  have h_tprod : ∀ (n : ℕ) (f : Fin n → LL),
-      bMinusLin a (ckIsoSymmetricAlgebra
-        (PreLie.OudomGuinCircConstruct.algHomL (TensorAlgebra.tprod ℤ LL n f))) =
-      ckIsoSymmetricAlgebra (bMinusLin_SL a
-        (PreLie.OudomGuinCircConstruct.algHomL (TensorAlgebra.tprod ℤ LL n f))) := by
-    intro n
-    induction n with
-    | zero =>
-      intro f
-      -- tprod 0 _ = 1; algHomL 1 = 1. Both sides reduce to ckIso 0 = 0.
-      have h_tprod0 : TensorAlgebra.tprod ℤ LL 0 f = 1 := by
-        rw [TensorAlgebra.tprod_apply]; simp [List.ofFn_zero]
-      rw [h_tprod0, show PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)
-                          (1 : TensorAlgebra ℤ LL) = (1 : SL) from
-            map_one (SymmetricAlgebra.algHom ℤ LL),
-          map_one, bMinusLin_SL_one, map_zero]
-      -- Goal: bMinusLin a 1 = 0
-      rw [show (1 : ConnesKreimer ℤ (Nonplanar α)) =
-              ConnesKreimer.of' (0 : Forest (Nonplanar α)) from
-          ConnesKreimer.of'_zero.symm]
-      -- Bridge namespace difference: ConnesKreimer.of' for bMinusLin_of'.
-      rw [show bMinusLin (R := ℤ) a (ConnesKreimer.of' (0 : Forest (Nonplanar α)) :
-              ConnesKreimer ℤ (Nonplanar α)) = bMinusBasis (R := ℤ) a 0 from
-          bMinusLin_of' a _,
-          bMinusBasis_zero]
-    | succ n ih =>
-      intro f
-      -- Decompose `tprod (n+1) f = tprod n (Fin.init f) * SL.ι (f (Fin.last n))`.
-      have h_f_eq : f = Fin.snoc (Fin.init f) (f (Fin.last n)) :=
-        (Fin.snoc_init_self f).symm
-      have h_tprod_succ :
-          TensorAlgebra.tprod ℤ LL (n + 1) f =
-            TensorAlgebra.tprod ℤ LL n (Fin.init f) *
-              TensorAlgebra.ι ℤ (f (Fin.last n)) := by
-        conv_lhs => rw [h_f_eq]
-        rw [Fin.snoc_eq_append,
-            PreLie.OudomGuinCircConstruct.ι_eq_tprod_one,
-            ← PreLie.OudomGuinCircConstruct.tprod_mul_tprod]
-        congr 1
-      have h_algHomL_split :
-          PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)
-              (TensorAlgebra.tprod ℤ LL (n + 1) f) =
-            PreLie.OudomGuinCircConstruct.algHomL
-                (TensorAlgebra.tprod ℤ LL n (Fin.init f)) *
-              SymmetricAlgebra.ι ℤ LL (f (Fin.last n)) := by
-        rw [h_tprod_succ]
-        show (SymmetricAlgebra.algHom ℤ LL) _ = _
-        rw [map_mul]; rfl
-      rw [h_algHomL_split]
-      set D : SL := PreLie.OudomGuinCircConstruct.algHomL
-        (TensorAlgebra.tprod ℤ LL n (Fin.init f)) with hD
-      set Y : LL := f (Fin.last n) with hY
-      -- LHS: bMinusLin (ckIso (D * SL.ι Y))
-      --   = bMinusLin (ckIso D * ckIso (SL.ι Y))     [ckIso preserves mul]
-      --   = counit(ckIso D) • bMinusLin(ckIso(SL.ι Y))
-      --       + counit(ckIso(SL.ι Y)) • bMinusLin(ckIso D)   [bMinusLin_mul]
-      --   = algebraMapInv D • bMinusLin(ckIso(SL.ι Y))
-      --       + algebraMapInv(SL.ι Y) • bMinusLin(ckIso D)   [counit_ckIso]
-      --   = algebraMapInv D • bMinusLin(ckIso(SL.ι Y)) + 0   [algebraMapInv_ι]
-      rw [map_mul, bMinusLin_mul, counit_ckIsoSymmetricAlgebra,
-          counit_ckIsoSymmetricAlgebra, SymmetricAlgebra.algebraMapInv_ι,
-          zero_smul, add_zero]
-      -- RHS: ckIso (bMinusLin_SL (D * SL.ι Y))
-      --   = ckIso (bMinusLin_SL (SL.ι Y * D))     [SL commutativity]
-      --   = ckIso (algebraMapInv D • bMinusLin_SL (SL.ι Y))   [bMinusLin_SL_ι_mul_eps]
-      --   = algebraMapInv D • ckIso (bMinusLin_SL (SL.ι Y))   [ckIso linear]
-      rw [show D * SymmetricAlgebra.ι ℤ LL Y =
-              SymmetricAlgebra.ι ℤ LL Y * D from mul_comm _ _,
-          bMinusLin_SL_ι_mul_eps, map_smul]
-      -- Goal: algebraMapInv D • bMinusLin (ckIso (SL.ι Y)) =
-      --       algebraMapInv D • ckIso (bMinusLin_SL (SL.ι Y))
-      congr 1
-      exact bMinusLin_ckIso_ι a Y
-  -- Lift via algHomL_surjective + TA_linearMap_ext_tprod.
-  obtain ⟨z, hz⟩ := PreLie.OudomGuinCircConstruct.algHomL_surjective X
-  subst hz
-  -- LinearMap equality on TA: f_LHS = f_RHS, where
-  --   f_LHS z = bMinusLin (ckIso (algHomL z))
-  --   f_RHS z = ckIso (bMinusLin_SL (algHomL z))
-  suffices h_LM :
-      ((bMinusLin a).comp ((ckIsoSymmetricAlgebra (α := α)).toLinearMap.comp
-        (PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)))) =
-      ((ckIsoSymmetricAlgebra (α := α)).toLinearMap.comp
-        ((bMinusLin_SL a).comp
-          (PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)))) by
-    have := LinearMap.congr_fun h_LM z
-    simpa using this
-  apply PreLie.OudomGuinCircConstruct.TA_linearMap_ext_tprod
-  intro n f
-  simp only [LinearMap.comp_apply, AlgEquiv.toLinearMap_apply]
-  exact h_tprod n f
+  sorry
 
 /-! ## §11: Piece D — tree decomposition `ι(node a A') = ι(•_a) ○ (∏ ι child)`
 
@@ -2054,237 +1802,62 @@ private theorem psiA_L_circByT_total_eq [DecidableEq (Nonplanar α)]
 
 `bMinusLin_SL a (A ★ B) = ε(A) • bMinusLin_SL a B + bMinusLin_SL a A ★ B`
 
-Proved by TA-side per-tprod induction on `A`. The `*` mul case of
-`SymmetricAlgebra.induction` on `A` has no closed-form decomposition (the
-symmetric-algebra product `*` and the Hopf-algebra product `★` are distinct),
-so we instead bound `A = algHomL z` via `algHomL_surjective`, reduce to
-`z = tprod_m a'` via `TA_linearMap_ext_tprod`, and induct on `m`. The
-substantive `m + 1` step uses `oudomGuinStar_ι_split` (rearranged as
-`D · ι X = D ★ ι X − D ○ ι X`), `oudomGuinStar_assoc` twice, the ι case
-(`bMinusLin_SL_ι_star + psiA_L_circByT_total_eq`), and per-summand IH on
-`D ○ ι X = ∑ algHomL(tprod m (update init i …))` (summands at the same `m`,
-via `oudomGuinCirc_algHomL_tprod_ι`). -/
+OG paper page 10 proof, adapted:
+
+By SymmetricAlgebra.induction on A:
+1. **`algebraMap r`** (scalar): A ★ B = r • B (via 1 ★ _ = _ + scalar
+   compatibility). LHS = r • bMinusLin_SL B. RHS: ε(r) = r, bMinusLin_SL r = 0.
+   So ε(A) • bMinusLin_SL B + 0 ★ B = r • bMinusLin_SL B. ✓
+2. **`ι x`** (substantive): use Piece D to write x's image as
+   `ι(leaf rootLabel) ○ children`, then OG paper's chain via 2.8.v.
+3. **`mul A₁ A₂`** (substantive): use IH on A₁ and A₂.
+4. **`add A₁ A₂`** (linearity): trivial.
+
+**Status**: stated with `sorry` pending Piece D + ε-Leibniz machinery. -/
 
 /-- **Piece C**: OG Prop 3.2 (cocycle identity for `B⁻_SL_a` w.r.t. `★`).
 
     `bMinusLin_SL a (A ★ B) = ε(A) • bMinusLin_SL a B + bMinusLin_SL a A ★ B`
 
-    SL-side analog of CK's `bMinusLin_gl_mul`. The `*` mul case of
-    `SymmetricAlgebra.induction` on `A` has no closed-form expansion via
-    `A₁ ★ _` and `A₂ ★ _` (the symmetric-algebra product `*` and the
-    Hopf-algebra product `★` are distinct). We instead prove a per-tprod
-    claim by induction on `m` (each `m + 1` step grows the tprod by a
-    single `ι`), then lift via `algHomL_surjective + TA_linearMap_ext_tprod`
-    (mirrors `oudomGuinStar_assoc`'s pattern).
-
-    The substantive step in the `succ m` case rewrites
-    `D * ι X = D ★ ι X − D ○ ι X` (`oudomGuinStar_ι_split` rearranged),
-    applies ★-associativity twice, uses the ι case via
-    `bMinusLin_SL_ι_star + psiA_L_circByT_total_eq + bMinusLin_SL_ι`, and
-    handles `D ○ ι X` as a sum of `algHomL(tprod m (update init i …))`
-    summands (via `oudomGuinCirc_algHomL_tprod_ι`), each at the SAME `m`
-    so the IH applies. -/
+    SL-side analog of CK's `bMinusLin_gl_mul`. Proved via OG paper's
+    page-10 argument (see header comment). The substantive case
+    (`A = ι x`) uses `iotaTree_node_via_circ` (Piece D) + `circ_assoc_via_comul`
+    (Prop 2.8.v, sorry-free in OudomGuinCirc.lean). -/
 theorem bMinusLin_SL_oudomGuinStar [DecidableEq (Nonplanar α)]
     (a : α) (A B : SL) :
     bMinusLin_SL a (oudomGuinStar A B) =
       SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α) A •
         bMinusLin_SL a B +
       oudomGuinStar (bMinusLin_SL a A) B := by
-  -- Per-tprod claim, ∀-quantified over `B'`.
-  have h_tprod : ∀ (m : ℕ) (a' : Fin m → LL) (B' : SL),
-      bMinusLin_SL a (oudomGuinStar
-        (PreLie.OudomGuinCircConstruct.algHomL (TensorAlgebra.tprod ℤ LL m a')) B') =
-        SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α)
-          (PreLie.OudomGuinCircConstruct.algHomL (TensorAlgebra.tprod ℤ LL m a')) •
-          bMinusLin_SL a B' +
-        oudomGuinStar (bMinusLin_SL a
-          (PreLie.OudomGuinCircConstruct.algHomL (TensorAlgebra.tprod ℤ LL m a'))) B' := by
-    intro m
-    induction m with
-    | zero =>
-      intro a' B'
-      -- `tprod 0 _ = 1`; `algHomL 1 = 1`. `1 ★ B' = B'`; `ε(1) = 1`;
-      -- `bMinusLin_SL 1 = 0`; `0 ★ B' = 0`. Both sides reduce to `bMinusLin B'`.
-      have h_tprod0 : TensorAlgebra.tprod ℤ LL 0 a' = 1 := by
-        rw [TensorAlgebra.tprod_apply]; simp [List.ofFn_zero]
-      rw [h_tprod0, show PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)
-                          (1 : TensorAlgebra ℤ LL) = (1 : SL) from
-            map_one (SymmetricAlgebra.algHom ℤ LL),
-          oudomGuinStar_one_left, map_one, one_smul,
-          bMinusLin_SL_one, oudomGuinStar_zero_left, add_zero]
-    | succ m ih =>
-      intro a' B'
-      -- Decompose `tprod_{m+1} a' = tprod_m (Fin.init a') * ι (a' (Fin.last m))`.
-      have h_a_eq : a' = Fin.snoc (Fin.init a') (a' (Fin.last m)) :=
-        (Fin.snoc_init_self a').symm
-      have h_tprod_succ :
-          TensorAlgebra.tprod ℤ LL (m + 1) a' =
-            TensorAlgebra.tprod ℤ LL m (Fin.init a') *
-              TensorAlgebra.ι ℤ (a' (Fin.last m)) := by
-        conv_lhs => rw [h_a_eq]
-        rw [Fin.snoc_eq_append,
-            PreLie.OudomGuinCircConstruct.ι_eq_tprod_one,
-            ← PreLie.OudomGuinCircConstruct.tprod_mul_tprod]
-        congr 1
-      have h_algHomL_split :
-          PreLie.OudomGuinCircConstruct.algHomL (R := ℤ) (L := LL)
-              (TensorAlgebra.tprod ℤ LL (m + 1) a') =
-            PreLie.OudomGuinCircConstruct.algHomL
-                (TensorAlgebra.tprod ℤ LL m (Fin.init a')) *
-              SymmetricAlgebra.ι ℤ LL (a' (Fin.last m)) := by
-        rw [h_tprod_succ]
-        show (SymmetricAlgebra.algHom ℤ LL) _ = _
-        rw [map_mul]; rfl
-      rw [h_algHomL_split]
-      set D : SL :=
-        PreLie.OudomGuinCircConstruct.algHomL (TensorAlgebra.tprod ℤ LL m (Fin.init a'))
-        with hD
-      set X : LL := a' (Fin.last m) with hX
-      -- `ε(D * ι X) = ε(D) * ε(ι X) = ε(D) * 0 = 0`.
-      have h_eps_DιX :
-          SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α)
-            (D * SymmetricAlgebra.ι ℤ LL X) = 0 := by
-        rw [map_mul, SymmetricAlgebra.algebraMapInv_ι, mul_zero]
-      rw [h_eps_DιX, zero_smul, zero_add]
-      -- Build LinearMap form of `(· ★ B')` for fixed `B'` (left-application of ★).
-      let starLeftB' : SL →ₗ[ℤ] SL :=
-        { toFun := fun A' => oudomGuinStar A' B'
-          map_add' := fun A₁ A₂ => oudomGuinStar_add_left A₁ A₂ B'
-          map_smul' := fun r A' => oudomGuinStar_smul_left r A' B' }
-      have h_starLeftB'_apply : ∀ A', starLeftB' A' = oudomGuinStar A' B' :=
-        fun _ => rfl
-      -- Left-sub-linearity of `★` in first arg.
-      have h_sub_star_left : ∀ U V : SL,
-          oudomGuinStar (U - V) B' = oudomGuinStar U B' - oudomGuinStar V B' := by
-        intro U V
-        rw [← h_starLeftB'_apply U, ← h_starLeftB'_apply V,
-            ← h_starLeftB'_apply (U - V), map_sub]
-      -- Left-sum-linearity of `★` in first arg.
-      have h_sum_star_left : ∀ (s : Finset (Fin m)) (f : Fin m → SL),
-          oudomGuinStar (∑ i ∈ s, f i) B' = ∑ i ∈ s, oudomGuinStar (f i) B' := by
-        intro s f
-        rw [← h_starLeftB'_apply, map_sum]
-        simp only [h_starLeftB'_apply]
-      -- Smul-star pull-through (used to fold `r • (A ★ B') = (r • A) ★ B'`).
-      have h_smul_star_left : ∀ (r : ℤ) (U : SL),
-          r • oudomGuinStar U B' = oudomGuinStar (r • U) B' := by
-        intro r U
-        rw [← h_starLeftB'_apply, ← h_starLeftB'_apply, ← starLeftB'.map_smul]
-      -- `D ○ ι X` as a finite sum of `algHomL(tprod m …)` summands at the SAME `m`
-      -- (via `oudomGuinCirc_algHomL_tprod_ι`).
-      have h_DcircιX :
-          oudomGuinCirc D (SymmetricAlgebra.ι ℤ LL X) =
-            ∑ i : Fin m,
-              PreLie.OudomGuinCircConstruct.algHomL
-                (TensorAlgebra.tprod ℤ LL m
-                  (Function.update (Fin.init a') i (Fin.init a' i * X))) := by
-        rw [hD]
-        exact oudomGuinCirc_algHomL_tprod_ι X m (Fin.init a')
-      -- Sub-claim (a): `bMinusLin ((D ○ ι X) ★ B') = bMinusLin (D ○ ι X) ★ B'`.
-      -- ε(D ○ ι X) = ε(D) * ε(ι X) = 0, so the ε-term of the cocycle vanishes.
-      -- Sum-of-ε-summands also vanishes (linearity of ε over sums).
-      have h_eps_DcircιX :
-          SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α)
-            (oudomGuinCirc D (SymmetricAlgebra.ι ℤ LL X)) = 0 := by
-        rw [counit_circ, SymmetricAlgebra.algebraMapInv_ι, mul_zero]
-      have h_eps_sum :
-          ∑ i : Fin m, SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α)
-            (PreLie.OudomGuinCircConstruct.algHomL
-              (TensorAlgebra.tprod ℤ LL m
-                (Function.update (Fin.init a') i (Fin.init a' i * X)))) = 0 := by
-        rw [← map_sum, ← h_DcircιX, h_eps_DcircιX]
-      have h_DcircιX_star :
-          bMinusLin_SL a (oudomGuinStar (oudomGuinCirc D (SymmetricAlgebra.ι ℤ LL X)) B') =
-          oudomGuinStar (bMinusLin_SL a (oudomGuinCirc D (SymmetricAlgebra.ι ℤ LL X))) B' := by
-        -- Convert both sides to sum form.
-        rw [h_DcircιX, h_sum_star_left, map_sum, map_sum, h_sum_star_left]
-        -- LHS: ∑ bMinusLin (algHomL(...) ★ B')
-        -- RHS: ∑ bMinusLin(algHomL(...)) ★ B'
-        -- Apply IH summand-wise on LHS.
-        rw [show
-              ∑ i : Fin m, bMinusLin_SL a (oudomGuinStar
-                (PreLie.OudomGuinCircConstruct.algHomL
-                  (TensorAlgebra.tprod ℤ LL m
-                    (Function.update (Fin.init a') i (Fin.init a' i * X)))) B') =
-              ∑ i : Fin m,
-                (SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α)
-                  (PreLie.OudomGuinCircConstruct.algHomL
-                    (TensorAlgebra.tprod ℤ LL m
-                      (Function.update (Fin.init a') i (Fin.init a' i * X)))) •
-                  bMinusLin_SL a B' +
-                oudomGuinStar (bMinusLin_SL a
-                  (PreLie.OudomGuinCircConstruct.algHomL
-                    (TensorAlgebra.tprod ℤ LL m
-                      (Function.update (Fin.init a') i (Fin.init a' i * X))))) B') from
-            Finset.sum_congr rfl (fun i _ =>
-              ih (Function.update (Fin.init a') i (Fin.init a' i * X)) B')]
-        -- LHS: ∑ (ε(...) • bMinusLin B' + bMinusLin(...) ★ B')
-        rw [Finset.sum_add_distrib, ← Finset.sum_smul, h_eps_sum, zero_smul, zero_add]
-      -- Sub-claim (b): bMinusLin(D * ι X) = ε(D) • bMinusLin(ι X) +
-      --                                     bMinusLin(D) ★ ι X − bMinusLin(D ○ ι X).
-      -- Proved via D * ι X = D ★ ι X − D ○ ι X (rearrangement of oudomGuinStar_ι_split)
-      -- + IH at D with B'' = ι X.
-      have h_DιX_eq :
-          D * SymmetricAlgebra.ι ℤ LL X =
-            oudomGuinStar D (SymmetricAlgebra.ι ℤ LL X) -
-              oudomGuinCirc D (SymmetricAlgebra.ι ℤ LL X) := by
-        rw [oudomGuinStar_ι_split D X]; ring
-      have h_bMinusLin_DιX :
-          bMinusLin_SL a (D * SymmetricAlgebra.ι ℤ LL X) =
-            SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α) D •
-              bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL X) +
-            oudomGuinStar (bMinusLin_SL a D) (SymmetricAlgebra.ι ℤ LL X) -
-            bMinusLin_SL a (oudomGuinCirc D (SymmetricAlgebra.ι ℤ LL X)) := by
-        rw [h_DιX_eq, map_sub, ih (Fin.init a') (SymmetricAlgebra.ι ℤ LL X)]
-      -- Main computation.
-      -- Substitute sub-claim (b) on the RHS FIRST (must happen before `D * ι X`
-      -- gets rewritten everywhere by `h_DιX_eq`).
-      rw [h_bMinusLin_DιX]
-      -- Now expand LHS: `D * ι X = D ★ ι X − D ○ ι X` + left-sub-linearity.
-      rw [h_DιX_eq, h_sub_star_left, map_sub]
-      -- ★-assoc on first term: (D ★ ι X) ★ B' = D ★ (ι X ★ B').
-      rw [oudomGuinStar_assoc D (SymmetricAlgebra.ι ℤ LL X) B']
-      -- IH at D with B'' = ι X ★ B'.
-      rw [ih (Fin.init a') (oudomGuinStar (SymmetricAlgebra.ι ℤ LL X) B')]
-      -- ι case for inner bMinusLin (ι X ★ B').
-      rw [show bMinusLin_SL a (oudomGuinStar (SymmetricAlgebra.ι ℤ LL X) B') =
-                oudomGuinStar (bMinusLin_SL a (SymmetricAlgebra.ι ℤ LL X)) B' from by
-            rw [bMinusLin_SL_ι_star a X B', psiA_L_circByT_total_eq a X B',
-                bMinusLin_SL_ι]]
-      -- ★-assoc reverse on bMinusLin(D) ★ (ι X ★ B').
-      rw [← oudomGuinStar_assoc (bMinusLin_SL a D) (SymmetricAlgebra.ι ℤ LL X) B']
-      -- Sub-claim (a) on the (D ○ ι X) ★ B' term.
-      rw [h_DcircιX_star]
-      -- Convert LHS first term `ε(D) • (a ★ B')` → `(ε(D) • a) ★ B'`.
-      rw [h_smul_star_left]
-      -- Pull out ★ B' on RHS via left-add/sub-linearity.
-      rw [h_sub_star_left, oudomGuinStar_add_left]
-  -- Lift to all `A` via TA-side LinearMap ext.
-  obtain ⟨z, hz⟩ := PreLie.OudomGuinCircConstruct.algHomL_surjective A
-  subst hz
-  -- Build LinearMap form of `(· ★ B)` for fixed `B`.
-  let starLeftB : SL →ₗ[ℤ] SL :=
-    { toFun := fun A' => oudomGuinStar A' B
-      map_add' := fun A₁ A₂ => oudomGuinStar_add_left A₁ A₂ B
-      map_smul' := fun r A' => oudomGuinStar_smul_left r A' B }
-  set f_LHS : TensorAlgebra ℤ LL →ₗ[ℤ] SL :=
-    (bMinusLin_SL a).comp (starLeftB.comp PreLie.OudomGuinCircConstruct.algHomL)
-    with hf_LHS
-  set f_RHS : TensorAlgebra ℤ LL →ₗ[ℤ] SL :=
-    (((SymmetricAlgebra.algebraMapInv (M := InsertionAlgebra α) (R := ℤ)).toLinearMap.comp
-        PreLie.OudomGuinCircConstruct.algHomL).smulRight (bMinusLin_SL a B)) +
-    starLeftB.comp ((bMinusLin_SL a).comp PreLie.OudomGuinCircConstruct.algHomL)
-    with hf_RHS
-  suffices h_LM : f_LHS = f_RHS by
-    have := congrArg (fun (f : TensorAlgebra ℤ LL →ₗ[ℤ] SL) => f z) h_LM
-    simp only [hf_LHS, hf_RHS, LinearMap.coe_comp, Function.comp_apply] at this
-    exact this
-  apply PreLie.OudomGuinCircConstruct.TA_linearMap_ext_tprod
-  intro m a'
-  simp only [hf_LHS, hf_RHS, LinearMap.coe_comp, Function.comp_apply,
-             LinearMap.add_apply, LinearMap.smulRight_apply,
-             AlgHom.toLinearMap_apply]
-  exact h_tprod m a' B
+  induction A using SymmetricAlgebra.induction with
+  | algebraMap r =>
+    -- A = algebraMap r = r • 1. (r • 1) ★ B = r • (1 ★ B) = r • B.
+    -- bMinusLin_SL (r • 1) = r • bMinusLin_SL 1 = 0. ε(algebraMap r) = r.
+    -- LHS = bMinusLin_SL (r • B) = r • bMinusLin_SL B.
+    -- RHS = r • bMinusLin_SL B + 0 ★ B = r • bMinusLin_SL B + 0.
+    rw [Algebra.algebraMap_eq_smul_one, oudomGuinStar_smul_left,
+        oudomGuinStar_one_left]
+    simp only [map_smul, map_one, bMinusLin_SL_one, smul_zero,
+               oudomGuinStar_zero_left, add_zero, smul_eq_mul, mul_one]
+  | ι x =>
+    -- The substantive case. ε(ι x) = 0 (primitive), so RHS collapses to
+    -- (bMinusLin_SL (ι x)) ★ B = (psiA_L a x) ★ B.
+    -- LHS reduces via length-argument (bMinusLin_SL_ι_star) to
+    -- psiA_L a (circByT_total x B). Equality via psiA_L_circByT_total_eq
+    -- (the substantive OG combinatorial identity, currently `sorry`).
+    rw [SymmetricAlgebra.algebraMapInv_ι, zero_smul, zero_add,
+        bMinusLin_SL_ι_star a x B, psiA_L_circByT_total_eq a x B,
+        bMinusLin_SL_ι]
+  | mul A₁ A₂ ih₁ ih₂ =>
+    -- A = A₁ * A₂. (A₁ · A₂) ★ B has its own associativity (Lemma 2.10:
+    -- ★ on S(L) is associative + makes (S(L), ★, Δ) a Hopf algebra).
+    -- Reduce via ih₁, ih₂ on the appropriate sub-products.
+    sorry
+  | add A₁ A₂ ih₁ ih₂ =>
+    -- Linearity: ★ left-linear, bMinusLin_SL linear, ε linear.
+    rw [oudomGuinStar_add_left, map_add, map_add, map_add,
+        oudomGuinStar_add_left, ih₁, ih₂, add_smul]
+    abel
 
 end SymAlg
 

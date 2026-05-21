@@ -45,7 +45,7 @@ discourse-*only* study file.
 
 namespace Semantics.Questions.Probabilistic
 
-open Core Core.Question PMF
+open Question PMF
 
 variable {W : Type*} {μ : PMF W} {A R R' R'' : Set W}
   {Q : Question W} {𝒜 𝒜' : Set (Set W)}

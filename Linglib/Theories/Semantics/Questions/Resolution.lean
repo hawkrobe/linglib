@@ -3,18 +3,18 @@ import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Questions.Relevance
 
 /-!
-# Resolution — answerhood predicates on `Core.Question`
+# Resolution — answerhood predicates on `Question`
 @cite{ciardelli-groenendijk-roelofsen-2018} @cite{theiler-etal-2018} @cite{roberts-2012} @cite{groenendijk-stokhof-1984}
 
 Canonical Prop-valued answerhood predicates over the inquisitive
-substrate (`Core.Question W`). One topical home for the "what does it
+substrate (`Question W`). One topical home for the "what does it
 mean for a state σ to answer a question Q?" question, with definitions
 chosen to match modern (CGR 2018) formal-semantics consensus rather
 than the historical Hamblin/Karttunen/G&S conventions.
 
 ## The notions formalised
 
-Given a state `σ : Set W` and a question `Q : Core.Question W`:
+Given a state `σ : Set W` and a question `Q : Question W`:
 
 - **Resolves**: σ settles at least one alternative — `∃ p ∈ alt Q, σ ⊆ p`.
   This is the standard inquisitive resolution relation
@@ -38,7 +38,7 @@ Given a state `σ : Set W` and a question `Q : Core.Question W`:
   weak / intermediate / strong / relativized exhaustivity ladder
   (@cite{heim-1994}, @cite{george-2011}, @cite{xiang-2022}).
 
-- **partiallyResolves**: re-export of `Core.Question.Relevance.partiallyAnswers`
+- **partiallyResolves**: re-export of `Question.Relevance.partiallyAnswers`
   (@cite{roberts-2012} Def. 3a). σ settles at least one alternative either
   positively (`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`).
 
@@ -64,7 +64,7 @@ namespace Semantics.Questions.Resolution
 universe u
 variable {W : Type u}
 
-open Core.Question
+open Question
 
 /-- `σ` **resolves** `Q`: settles at least one alternative.
     The standard inquisitive resolution relation
@@ -72,14 +72,14 @@ open Core.Question
     @cite{groenendijk-stokhof-1984} Ch. VI §5 "mention-some" notion is
     this same predicate; the literature's `MentionSome` is just
     `Resolves` applied to a singleton-witness. -/
-def Resolves (σ : Set W) (Q : Core.Question W) : Prop :=
+def Resolves (σ : Set W) (Q : Question W) : Prop :=
   ∃ p ∈ alt Q, σ ⊆ p
 
 /-- **Mention-all** answer: σ decides every alternative.
     For each alternative `p`, σ either entails `p` (`σ ⊆ p`) or rules
     `p` out (`σ ⊆ pᶜ`). On partition questions this is equivalent to σ
     being contained in a single cell. -/
-def MentionAll (σ : Set W) (Q : Core.Question W) : Prop :=
+def MentionAll (σ : Set W) (Q : Question W) : Prop :=
   ∀ p ∈ alt Q, σ ⊆ p ∨ σ ⊆ pᶜ
 
 /-- **Completely resolves**: σ entails every alternative simultaneously.
@@ -87,27 +87,27 @@ def MentionAll (σ : Set W) (Q : Core.Question W) : Prop :=
     questions whose alternatives have empty intersection (most
     interesting questions). Included to make the contrast with
     `MentionAll` explicit. -/
-def CompletelyResolves (σ : Set W) (Q : Core.Question W) : Prop :=
+def CompletelyResolves (σ : Set W) (Q : Question W) : Prop :=
   ∀ p ∈ alt Q, σ ⊆ p
 
 /-! ### Basic relationships -/
 
 /-- Resolving implies partially answering the question (the positive
-    disjunct of `Core.Question.partiallyAnswers` fires). -/
+    disjunct of `Question.partiallyAnswers` fires). -/
 theorem resolves_imp_partiallyAnswers
-    (σ : Set W) (Q : Core.Question W) :
-    Resolves σ Q → Core.Question.partiallyAnswers Q σ := by
+    (σ : Set W) (Q : Question W) :
+    Resolves σ Q → Question.partiallyAnswers Q σ := by
   rintro ⟨p, hp, hsub⟩
   exact ⟨p, hp, Or.inl hsub⟩
 
 /-- Completely resolving implies mention-all (the positive disjunct fires
     at every alternative). -/
 theorem completelyResolves_imp_mentionAll
-    (σ : Set W) (Q : Core.Question W) :
+    (σ : Set W) (Q : Question W) :
     CompletelyResolves σ Q → MentionAll σ Q :=
   fun h p hp => Or.inl (h p hp)
 
-/-! ### Bridge to `Core.Question.Support`
+/-! ### Bridge to `Question.Support`
 
 `Resolves σ Q` (alt-witnessed) and `Support.supports σ Q := σ ∈ Q.props`
 (CGR support, downward-closed) are two views on the same intuitive
@@ -118,25 +118,25 @@ alt-witnessed corollary, equivalent under finiteness of `Q.props`. -/
 /-- `Resolves` (alt-witness) implies `Support.supports` (CGR
     membership): an alt is a resolving proposition, so any state below
     an alt is a resolving proposition by `downward_closed`. -/
-theorem resolves_imp_supports (σ : Set W) (Q : Core.Question W) :
-    Resolves σ Q → Core.Question.Support.supports σ Q := by
+theorem resolves_imp_supports (σ : Set W) (Q : Question W) :
+    Resolves σ Q → Question.Support.supports σ Q := by
   rintro ⟨p, hp, hsub⟩
-  exact Q.downward_closed p (Core.Question.alt_subset_props _ hp) σ hsub
+  exact Q.downward_closed p (Question.alt_subset_props _ hp) σ hsub
 
 /-- Under finiteness of `Q.props`, `Support.supports` (CGR membership)
     yields an alt witness via `Question.exists_alt_above` — recovering
     `Resolves`. The two notions are equivalent when alternatives form
     a finite antichain (the typical empirical case). -/
-theorem supports_imp_resolves (σ : Set W) (Q : Core.Question W)
+theorem supports_imp_resolves (σ : Set W) (Q : Question W)
     (hFin : Q.props.Finite) :
-    Core.Question.Support.supports σ Q → Resolves σ Q := by
+    Question.Support.supports σ Q → Resolves σ Q := by
   intro hσ
-  exact Core.Question.exists_alt_above Q hFin hσ
+  exact Question.exists_alt_above Q hFin hσ
 
 /-- Equivalence of `Resolves` and `Support.supports` under finiteness. -/
-theorem resolves_iff_supports (σ : Set W) (Q : Core.Question W)
+theorem resolves_iff_supports (σ : Set W) (Q : Question W)
     (hFin : Q.props.Finite) :
-    Resolves σ Q ↔ Core.Question.Support.supports σ Q :=
+    Resolves σ Q ↔ Question.Support.supports σ Q :=
   ⟨resolves_imp_supports σ Q, supports_imp_resolves σ Q hFin⟩
 
 /-! ### Per-constructor characterizations

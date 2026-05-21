@@ -23,7 +23,7 @@ all true alternatives.
 
 The substrate joints (`alt_polar_iff`, `Resolves_polar_iff`,
 `trueAlternatives_polar_iff_of_nontrivial`, `weakAnswer_polar_of_pos`,
-`weakAnswer_polar_of_neg`) live in `Core.Question.Hamblin`,
+`weakAnswer_polar_of_neg`) live in `Question.Hamblin`,
 `Resolution.lean`, and `Exhaustivity.lean`. This file uses them to
 prove Karttunen's stated observations directly.
 
@@ -43,8 +43,8 @@ prove Karttunen's stated observations directly.
 Karttunen's syntactic apparatus (proto-questions, the WH-Quantification
 rule, the AQ rule, the YNQ rule) is **encoding machinery**, not
 empirical content. We formalise the **denotational consequences** of
-those rules. The Hamblin-shaped constructors `Core.Question.polar` and
-`Core.Question.which` from `Core.Question.Hamblin` already produce the
+those rules. The Hamblin-shaped constructors `Question.polar` and
+`Question.which` from `Question.Hamblin` already produce the
 right semantic objects.
 
 The §2.10 multiple-wh ambiguity (Baker's observation) and §2.12
@@ -55,7 +55,7 @@ substrate is in place.
 
 namespace Phenomena.Questions.Studies.Karttunen1977
 
-open Core Core.Question Semantics.Questions.Resolution
+open Question Semantics.Questions.Resolution
 open Semantics.Questions.Exhaustivity
 
 variable {W : Type*}
@@ -65,11 +65,11 @@ variable {W : Type*}
 /-- @cite{karttunen-1977} §2.1: the **Karttunen denotation** of
     question `Q` at world `w` is the set of true alternatives.
     Definitionally equal to `Exhaustivity.trueAlternatives`. -/
-def karttunenDenotation (Q : Core.Question W) (w : W) : Set (Set W) :=
+def karttunenDenotation (Q : Question W) (w : W) : Set (Set W) :=
   trueAlternatives Q w
 
 @[simp] theorem karttunenDenotation_eq_trueAlternatives
-    (Q : Core.Question W) (w : W) :
+    (Q : Question W) (w : W) :
     karttunenDenotation Q w = trueAlternatives Q w := rfl
 
 /-! ### The complete-answer view (§2.4 footnote 11) -/
@@ -77,22 +77,22 @@ def karttunenDenotation (Q : Core.Question W) (w : W) : Set (Set W) :=
 /-- @cite{karttunen-1977} §2.4 fn 11: the **complete answer** to `Q`
     at `w` — the proposition the agent must believe to count as
     knowing `Q`. Equal to `weakAnswer Q w`. -/
-def karttunenCompleteAnswer (Q : Core.Question W) (w : W) : Set W :=
+def karttunenCompleteAnswer (Q : Question W) (w : W) : Set W :=
   weakAnswer Q w
 
 @[simp] theorem karttunenCompleteAnswer_eq_weakAnswer
-    (Q : Core.Question W) (w : W) :
+    (Q : Question W) (w : W) :
     karttunenCompleteAnswer Q w = weakAnswer Q w := rfl
 
 /-- The complete answer at `w` always contains `w` itself: every true
     alternative contains `w` by definition. -/
-theorem mem_karttunenCompleteAnswer_self (Q : Core.Question W) (w : W) :
+theorem mem_karttunenCompleteAnswer_self (Q : Question W) (w : W) :
     w ∈ karttunenCompleteAnswer Q w := by
   intro p _ hwp; exact hwp
 
 /-- The complete answer is the intersection of the Karttunen
     denotation. -/
-theorem karttunenCompleteAnswer_eq_sInter (Q : Core.Question W) (w : W) :
+theorem karttunenCompleteAnswer_eq_sInter (Q : Question W) (w : W) :
     karttunenCompleteAnswer Q w = ⋂₀ (karttunenDenotation Q w) := by
   ext v; constructor
   · intro h p ⟨hp, hwp⟩; exact h p hp hwp
@@ -108,7 +108,7 @@ theorem karttunenCompleteAnswer_eq_sInter (Q : Core.Question W) (w : W) :
     question denotes `{p}`. -/
 theorem karttunen_polar_pos (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     (w : W) (hwp : w ∈ p) :
-    karttunenDenotation (Core.Question.polar p) w = {p} := by
+    karttunenDenotation (Question.polar p) w = {p} := by
   ext q
   rw [karttunenDenotation_eq_trueAlternatives,
       trueAlternatives_polar_iff_of_nontrivial p hne hnu]
@@ -118,7 +118,7 @@ theorem karttunen_polar_pos (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     question denotes `{pᶜ}`. -/
 theorem karttunen_polar_neg (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     (w : W) (hwp : w ∉ p) :
-    karttunenDenotation (Core.Question.polar p) w = {pᶜ} := by
+    karttunenDenotation (Question.polar p) w = {pᶜ} := by
   ext q
   rw [karttunenDenotation_eq_trueAlternatives,
       trueAlternatives_polar_iff_of_nontrivial p hne hnu]
@@ -128,14 +128,14 @@ theorem karttunen_polar_neg (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     world is just `p`. -/
 theorem karttunenCompleteAnswer_polar_pos {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∈ p) :
-    karttunenCompleteAnswer (Core.Question.polar p) w = p := by
+    karttunenCompleteAnswer (Question.polar p) w = p := by
   rw [karttunenCompleteAnswer_eq_weakAnswer, weakAnswer_polar_of_pos hne hnu hwp]
 
 /-- §2.4 corollary: the complete answer to `whether p` at a `p`-false
     world is `pᶜ`. -/
 theorem karttunenCompleteAnswer_polar_neg {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∉ p) :
-    karttunenCompleteAnswer (Core.Question.polar p) w = pᶜ := by
+    karttunenCompleteAnswer (Question.polar p) w = pᶜ := by
   rw [karttunenCompleteAnswer_eq_weakAnswer, weakAnswer_polar_of_neg hne hnu hwp]
 
 /-! ### §2.4 know-meaning postulate
@@ -148,7 +148,7 @@ theorem karttunenCompleteAnswer_polar_neg {p : Set W}
 The substrate-level invariant: a state σ supports every true
 alternative of `Q` at `w` iff σ ⊆ karttunenCompleteAnswer Q w. -/
 
-theorem subset_karttunenCompleteAnswer_iff (σ : Set W) (Q : Core.Question W) (w : W) :
+theorem subset_karttunenCompleteAnswer_iff (σ : Set W) (Q : Question W) (w : W) :
     σ ⊆ karttunenCompleteAnswer Q w ↔
       ∀ p ∈ alt Q, w ∈ p → σ ⊆ p := by
   constructor
@@ -165,11 +165,11 @@ captured at this stage; @cite{dayal-1996} adds it. -/
 
 theorem karttunen_which_no_witness {E : Type*} (D : Set E) (P : E → Set W) (w : W)
     (h : ∀ e ∈ D, w ∉ P e) :
-    ∀ q ∈ karttunenDenotation (Core.Question.which D P) w, q = ∅ := by
+    ∀ q ∈ karttunenDenotation (Question.which D P) w, q = ∅ := by
   intro q hq
   obtain ⟨hq, hwq⟩ := hq
-  have hq_mem : q ∈ Core.Question.which D P := alt_subset_props _ hq
-  rcases Core.Question.mem_which.mp hq_mem with hempty | ⟨e, heD, hqe⟩
+  have hq_mem : q ∈ Question.which D P := alt_subset_props _ hq
+  rcases Question.mem_which.mp hq_mem with hempty | ⟨e, heD, hqe⟩
   · exact hempty
   · exact absurd (hqe hwq) (h e heD)
 

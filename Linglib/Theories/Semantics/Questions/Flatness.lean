@@ -54,7 +54,7 @@ The `teamSupport` bridge is how a `Set W`-carried `Question` instantiates
 the `Finset W`-carried `IsFlat`.
 -/
 
-namespace Core.Question
+namespace Question
 
 variable {W : Type*}
 
@@ -155,4 +155,4 @@ theorem isFlat_teamSupport_of_isDeclarative [DecidableEq W] (P : Question W)
     (supClosed_teamSupport_of_isDeclarative P hdecl)
     (teamSupport_empty P)
 
-end Core.Question
+end Question

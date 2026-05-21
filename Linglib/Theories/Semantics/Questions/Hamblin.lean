@@ -22,7 +22,6 @@ informativity/inquisitivity facts then derive from `info_sup`,
 `info_declarative`, and properties of the underlying `Set` operations.
 -/
 
-namespace Core
 
 namespace Question
 
@@ -266,7 +265,7 @@ theorem mem_alt_which_of_maximal {E : Type v} {D : Set E} {P : E → Set W}
 /-! ### Hamblin construction from a finite alternative list
 
 Bridge primitive: `ofList L` packages a `List (Set W)` of alternatives
-into a `Core.Question W`, mediating between abstract Set-based issues and
+into a `Question W`, mediating between abstract Set-based issues and
 finite-presentation consumers (Roberts QUD relevance, Hamblin focus
 alternatives, etc.). -/
 
@@ -517,4 +516,3 @@ theorem polar_inf_polar_le_ofList_of_corners
 
 end Question
 
-end Core

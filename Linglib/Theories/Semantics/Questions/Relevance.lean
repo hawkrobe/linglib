@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.Hamblin
 import Mathlib.Data.Fintype.Powerset
 
 /-!
-# Roberts (2012) QUD relevance — Prop predicates on `Core.Question`
+# Roberts (2012) QUD relevance — Prop predicates on `Question`
 @cite{roberts-2012} @cite{groenendijk-stokhof-1984}
 
 Mathlib-style Prop predicates with `Decidable` instances. Successor of an
@@ -10,7 +10,7 @@ earlier Bool/List `partiallyAnswers`/`questionEntails`/`isSubquestion`/
 `moveRelevant` API (now removed) that operated on a Hamblin
 list-of-alternatives `Question` type.
 
-The predicates operate directly on `Core.Question`, ranging over `alt P`
+The predicates operate directly on `Question`, ranging over `alt P`
 (the maximal-resolving propositions). For computability, an `Question`
 must expose a finite alternative-list witness via `HasAltList`. The
 canonical witness for a polar question is `HasAltList.polar`; for an
@@ -33,7 +33,6 @@ questions) or invoke a specialized decision procedure tied to the
 specific alternative list.
 -/
 
-namespace Core
 namespace Question
 
 universe u
@@ -322,4 +321,3 @@ theorem moveRelevant_polar_iff {p : Set W} {qud : Question W}
     · exact ⟨pᶜ, Or.inr rfl, h⟩
 
 end Question
-end Core

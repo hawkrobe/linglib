@@ -27,7 +27,7 @@ maps to the substrate as:
 | `UV(Learn C, choose later) = max_a EU(a, C)`     | `Core.DecisionTheory.valueAfterLearning`   |
 | `UV(C) = UV(L C, c later) − UV(C now)`           | `Core.DecisionTheory.utilityValue`         |
 | `UV*(C) = VSI(C)` ≥ 0                            | `Core.DecisionTheory.valueSampleInfo`      |
-| `Q ⊑ Q'`  (every Q-alt ⊆ some Q'-alt)            | `Core.Question.questionEntails`            |
+| `Q ⊑ Q'`  (every Q-alt ⊆ some Q'-alt)            | `Question.questionEntails`            |
 | `C resolves DP`                                  | `Core.DecisionTheory.IsResolved`           |
 
 ## What this file proves
@@ -38,7 +38,7 @@ maps to the substrate as:
   `Core.DecisionTheory.IsResolved dp acts C` — some action weakly
   dominates every other on every world in C.
 * **§4.1 Blackwell-style ordering** (p. 741): the "Q is more
-  informative than Q'" notion is `Core.Question.questionEntails Q Q'`
+  informative than Q'" notion is `Question.questionEntails Q Q'`
   (no paper-specific alias needed).
 * **§4.1 Decision-relevance preservation**: under the *strong*
   Blackwell condition (`CoversAltsOf` from substrate), preservation
@@ -51,7 +51,7 @@ maps to the substrate as:
   named-individual / referential machinery beyond plain `Set W`;
   deferred.
 * The *underspecified meaning* proposal (§5) requires a typed
-  ambiguity-resolution layer beyond `Core.Question W`; deferred.
+  ambiguity-resolution layer beyond `Question W`; deferred.
 * The Italian-newspaper mention-some example (§3.2 (12)) is the
   natural target for the next refinement, when the
   `Phenomena.Questions.MentionSome` data file is wired up.
@@ -59,7 +59,7 @@ maps to the substrate as:
 
 namespace Phenomena.Questions.Studies.VanRooy2003
 
-open Core Core.DecisionTheory Core.Question
+open Core Core.DecisionTheory Question
 open Semantics.Questions.DecisionTheoretic
 
 variable {W A : Type*}
@@ -109,7 +109,7 @@ This is exactly `Core.DecisionTheory.IsResolved dp acts C`. We do not
 introduce a paper-vocabulary alias — consumers should use the
 substrate predicate directly. -/
 
-/-! ### §4.1 Core.Question ordering (p. 741)
+/-! ### §4.1 Question ordering (p. 741)
 
 @cite{van-rooy-2003} p. 741: "Q is a *better* question than Q' [...]
 in terms of @cite{groenendijk-stokhof-1984} partition semantics this
@@ -119,9 +119,9 @@ latter, i.e., `Q ⊑ Q'`:
 
     Q ⊑ Q' iff ∀q ∈ Q : ∃q' ∈ Q' : q ⊆ q'."
 
-This is exactly `Core.Question.questionEntails Q Q'`. We do not
+This is exactly `Question.questionEntails Q Q'`. We do not
 introduce a paper-vocabulary alias — consumers should write
-`questionEntails Q Q'` (or use `≤` on `Core.Question W`'s lattice
+`questionEntails Q Q'` (or use `≤` on `Question W`'s lattice
 instance) directly. The relation is reflexive (`questionEntails_refl`)
 and transitive (`questionEntails_trans`). -/
 
@@ -146,7 +146,7 @@ partition-based theorem. -/
     alternatives, decision-relevance lifts. Direct re-export of the
     substrate's `CoversAltsOf.preserves_decisionRelevant`. -/
 theorem decisionRelevance_preserved_under_cover
-    {Q Q' : Core.Question W} (hCover : CoversAltsOf Q Q')
+    {Q Q' : Question W} (hCover : CoversAltsOf Q Q')
     {dp : DecisionProblem W A} {acts : Set A}
     (hQ' : IsDecisionRelevant Q' dp acts) :
     IsDecisionRelevant Q dp acts :=
@@ -157,9 +157,9 @@ theorem decisionRelevance_preserved_under_cover
 The bare @cite{van-rooy-2003} `Q ⊑ Q'` ordering does **not** suffice
 for decision-relevance preservation on the inquisitive substrate:
 `questionEntails` says only that `Q`-alts ⊆ `Q'`-alts, not the dual
-"every `Q'`-alt is covered by a `Q`-alt". On a partition `Core.Question W`
+"every `Q'`-alt is covered by a `Q`-alt". On a partition `Question W`
 the two directions coincide and @cite{van-rooy-2003}'s informal
-argument goes through; on a general inquisitive `Core.Question W` they
+argument goes through; on a general inquisitive `Question W` they
 split. The substrate exposes the dual as `CoversAltsOf` and proves
 preservation against that direction. See the docstring of
 `Semantics.Questions.DecisionTheoretic.CoversAltsOf`. -/

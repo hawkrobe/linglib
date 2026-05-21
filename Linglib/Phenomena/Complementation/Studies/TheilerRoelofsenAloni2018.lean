@@ -21,7 +21,7 @@ example from Section 3.1, which justifies the existence of
 
 1. **Figure 2** examples (Section 2.1, p. 415): the polar interrogative
    `Did Amy leave?` and the declarative `Amy left.` constructed via the
-   `polar` and `declarative` constructors of `Core.Question`. We
+   `polar` and `declarative` constructors of `Question`. We
    prove the four characteristic properties from the paper's prose
    discussion (Section 2.2):
    - `amyLeft` is informative and non-inquisitive (declarative).
@@ -37,7 +37,7 @@ example from Section 3.1, which justifies the existence of
 
    This is the forcing theorem for the architectural decision in the
    "Architectural note" docstring of `Core/Mood/POSWQ.lean` (added
-   0.229.922) — it shows that `Setoid → Core.Question` is a
+   0.229.922) — it shows that `Setoid → Question` is a
    strictly weaker representation, and so the sibling-structure
    architecture is necessary rather than redundant.
 
@@ -49,7 +49,7 @@ This file does **not** formalize the rest of the paper:
   meaning, which we leave for a follow-up.
 - Sections 4–6 (verb meanings, predicates of relevance, constraints
   on responsive verb meanings) require a full Fragment of attitude
-  verbs typed against `Core.Question`, also future work.
+  verbs typed against `Question`, also future work.
 - Appendices A–B (comparison with @cite{uegaki-2015} inverse reductive
   approach; formal proofs).
 
@@ -61,7 +61,7 @@ pair was built to support.
 
 namespace Phenomena.Complementation.Studies.TheilerRoelofsenAloni2018
 
-open Core Core.Question
+open Question
 
 /-! ### Section 2.1: Figure 2 — Did Amy leave? / Amy left. -/
 
@@ -74,10 +74,10 @@ abbrev W : Type := Fin 4
 def amyLeft : Set W := {0, 1}
 
 /-- (6b) **Amy left.** — Figure 2(b). -/
-def amyLeftMeaning : Core.Question W := declarative amyLeft
+def amyLeftMeaning : Question W := declarative amyLeft
 
 /-- (6a) **Did Amy leave?** — Figure 2(a). -/
-def didAmyLeaveMeaning : Core.Question W := polar amyLeft
+def didAmyLeaveMeaning : Question W := polar amyLeft
 
 theorem amyLeftMeaning_info : amyLeftMeaning.info = amyLeft :=
   info_declarative amyLeft
@@ -158,7 +158,7 @@ def msPaperworld : Set MS := {1, 2}
     it agrees on at least one of the two stores selling. The
     alternatives are `msNewstopia` and `msPaperworld`, which **overlap**
     at world `1`. -/
-def mentionSome : Core.Question MS where
+def mentionSome : Question MS where
   props := {q | q ⊆ msNewstopia ∨ q ⊆ msPaperworld}
   contains_empty := Or.inl (Set.empty_subset _)
   downward_closed := fun _ hp _ hr => by
@@ -167,7 +167,7 @@ def mentionSome : Core.Question MS where
     · exact Or.inr (hr.trans h)
 
 /-- **Forcing theorem** (the architectural justification for
-    `Core.Question`). The mention-some content is **not** in the
+    `Question`). The mention-some content is **not** in the
     image of `fromSetoid` for any `Setoid` on the three worlds.
 
     Proof: `msNewstopia = {0, 1}` and `msPaperworld = {1, 2}` both lie

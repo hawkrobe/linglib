@@ -68,7 +68,6 @@ and is lost in `LowerSet`. We use `SetLike` instead, which gives the
 membership/coercion API without forcing `LowerSet`'s `⊥`.
 -/
 
-namespace Core
 
 universe u
 
@@ -943,21 +942,20 @@ theorem not_lem_inquisitive_content :
   · have : true ∈ ({true} : Set Bool)ᶜ := h1 (Set.mem_univ true)
     simp at this
 
-/-! ### `Core.Question.Support` instance
+/-! ### `Question.Support` instance
 
-The cross-tradition `s ⊨ Q` interface (`Core.Question.Support`) is satisfied
+The cross-tradition `s ⊨ Q` interface (`Question.Support`) is satisfied
 by `Question` in the standard inquisitive way: an information state `s : Set W`
 supports / resolves the issue `P` iff `s` is one of the resolving propositions
 (`s ∈ P.props`). This is the inquisitive notion of support
 (@cite{ciardelli-groenendijk-roelofsen-2018}). -/
 
 /-- Inquisitive support: `s ⊨ P` iff the state `s` resolves the issue `P`. -/
-instance instSupport : Core.Question.Support (Set W) (Question W) where
+instance instSupport : Question.Support (Set W) (Question W) where
   supports s P := s ∈ P
 
 theorem supports_iff (s : Set W) (P : Question W) :
-    Core.Question.Support.supports s P ↔ s ∈ P := Iff.rfl
+    Question.Support.supports s P ↔ s ∈ P := Iff.rfl
 
 end Question
 
-end Core
