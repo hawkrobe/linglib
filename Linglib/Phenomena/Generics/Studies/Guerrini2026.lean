@@ -1476,11 +1476,13 @@ theorem diagram_145_four_paths :
 ## The Role of Hab in Both LF Structures
 
 @cite{guerrini-2026} §3.4: The VP in habitual sentences involves a habitual
-aspect operator **Hab** (formalized in `Theories/Semantics/Lexical/Verb/Habituals.lean`
-as `traditionalHAB`). On the "habituality is genericity" view
+aspect operator **Hab**. On the "habituality is genericity" view
 (@cite{chierchia-1995}, @cite{chierchia-1998}), Hab IS Gen applied to situations
-involving a single individual. On the Dobrovie-Sorin (2001) view, Hab is a
-distinct operator below Gen.
+involving a single individual — in linglib this view collapses Hab into the
+shared `covertQ` skeleton in `CovertQuantifier.lean`. On the Dobrovie-Sorin (2001)
+view (also @cite{boneh-doron-2013}), Hab is a distinct existential operator
+below Gen; the existential force is recorded by
+`BonehDoron2013.habConfig.force = .existential`.
 
 Either way, the paper's structural ambiguity holds. The two LF structures
 (41a) and (41b)/(42b) share the same "low part" (⟦Hab VP⟧) but differ in

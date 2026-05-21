@@ -625,9 +625,9 @@ Beta mixtures that capture the qualitative predictions:
 
 The paper reports a model fit of r²(93) = 0.894 on habitual endorsement data.
 
-See also: `Semantics.Aspect.Habituals.hab_reduces_to_threshold` for
-the formal bridge from the traditional HAB operator to threshold semantics,
-completing the pipeline: HAB → threshold → uncertain threshold → RSA endorsement.
+See also: `CovertQuantifier.reduces_to_threshold` for the general bridge
+from `covertQ` to threshold semantics, completing the pipeline:
+covertQ → threshold → uncertain threshold → RSA endorsement.
 -/
 
 /-- Frequency prior for "runs": moderate expectation.
@@ -884,7 +884,7 @@ This unification is structural (by construction), not proven post hoc.
 The integration pipeline is:
 
 1. **Traditional operator** (GEN/HAB) reduces to threshold semantics
-   (`CovertQuantifier.reduces_to_threshold`, `Habituals.hab_reduces_to_threshold`)
+   (`CovertQuantifier.reduces_to_threshold`)
 2. **Threshold semantics** with uncertain threshold → marginalized L0
 3. **RSA endorsement** (`mkGenericCfg`) decides between generic and silence
 4. **Endorsement ≈ cue validity** (`endorsed_iff_cue_validity_gt_one`)

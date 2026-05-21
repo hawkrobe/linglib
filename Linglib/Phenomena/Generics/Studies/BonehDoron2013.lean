@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 import Linglib.Theories.Semantics.Genericity.Generics
-import Linglib.Theories.Semantics.Aspect.Habituals
 import Linglib.Theories.Semantics.Aspect.Basic
 import Linglib.Features.Genericity
 
@@ -37,9 +36,12 @@ the simple past tense form, the periphrastic *used to*, and *would*.
 
 ## Connection to Existing Infrastructure
 
-- `CovertQuantifier.lean`: shared skeleton `covertQ`; `gen_is_covertQ`
-  and `hab_is_covertQ` show both operators instantiate it.
-- `Aspect/Core.lean`: `ViewpointAspectB` — the `aspectCompatibility`
+- `CovertQuantifier.lean`: shared skeleton `covertQ`. GEN derives from it
+  (see `gen_skeleton` below). HAB does *not* — B&D's central claim is that
+  HAB is a modalized *existential* over event sums, structurally distinct
+  from `covertQ`'s universal form; its force is recorded by
+  `habConfig.force = .existential`.
+- `Aspect/Basic.lean`: `ViewpointAspectB` — the `aspectCompatibility`
   bridge connects B&D's Table (41) to the aspectual infrastructure.
 - `DelPrete2013.lean`: Del Prete's Same-Object Effect (SOE) is the Italian
   analogue of the same-object readings in B&D's exx. (4b), (6b), (7b).
@@ -52,7 +54,6 @@ open Core (WorldTimeIndex)
 
 open Semantics.Quantification.CovertQuantifier
 open Semantics.Genericity.Generics (Situation traditionalGEN)
-open Semantics.Aspect.Habituals (Occasion traditionalHAB)
 open Semantics.Aspect (ViewpointAspectB)
 
 -- ═══ Operator Distinction ═══
@@ -467,23 +468,20 @@ theorem would_no_retrospective :
     hasRetrospective .usedTo = true := by
   exact ⟨rfl, rfl, rfl⟩
 
--- ═══ Shared Skeleton ═══
+-- ═══ GEN-side skeleton ═══
 
-/-- Despite the structural differences, both operators instantiate `covertQ`.
-    This is not in tension with distinctness — `covertQ` is the *skeleton*,
-    and the two operators differ in what fills its parameters.
+/-- GEN's denotation reduces to `covertQ` with restrictor conjoined from
+    a normalcy predicate and a kind/restrictor predicate.
 
-    GEN: `covertQ individuals (normal ∧ kind) property`
-    HAB: `covertQ occasions characteristic activity`
-
-    The skeleton is shared; the interpretation is different. -/
-theorem shared_skeleton :
-    (∀ (sits : List Situation) normal restrictor scope,
-      traditionalGEN sits normal restrictor scope =
-      covertQ sits (λ s => normal s && restrictor s) scope) ∧
-    (∀ (occs : List Occasion) characteristic activity,
-      traditionalHAB occs characteristic activity =
-      covertQ occs characteristic activity) :=
-  ⟨λ _ _ _ _ => rfl, λ _ _ _ => rfl⟩
+    HAB does *not* admit a parallel reduction: B&D §6.2.1 argue HAB is
+    a modalized *existential* over event sums (`∃x [cigarette(x) & Hab e
+    smoke(e, Mary, x)]`), not a universal over a list. The genuinely
+    distinctive existential force is recorded by
+    `habConfig.force = .existential`; there is no `covertQ`-style
+    derivation theorem for HAB. -/
+theorem gen_skeleton
+    (sits : List Situation) (normal restrictor scope : Situation → Bool) :
+    traditionalGEN sits normal restrictor scope =
+    covertQ sits (λ s => normal s && restrictor s) scope := rfl
 
 end BonehDoron2013

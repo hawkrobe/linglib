@@ -36,8 +36,12 @@ namespace Semantics.Quantification.CovertQuantifier
 variable {D : Type}
 
 /-- A covert quantifier: `∀d ∈ domain. restriction(d) → scope(d)`.
-GEN instantiates with `D = Situation`, `restriction = normal ∧ restrictor`.
-HAB instantiates with `D = Occasion`, `restriction = characteristic`. -/
+GEN instantiates with `D = Situation`, `restriction = normal ∧ restrictor`
+(see `traditionalGEN` in `Genericity/Generics.lean`). The "habituality is
+genericity" view (@cite{chierchia-1995}, @cite{krifka-etal-1995}) treats
+HAB the same way; the Boneh–Doron view (@cite{boneh-doron-2013}) treats
+HAB as a structurally distinct existential, not a `covertQ` instance —
+see `Phenomena/Generics/Studies/BonehDoron2013.lean`. -/
 def covertQ (domain : List D) (restriction : D → Bool) (scope : D → Bool) : Bool :=
   domain.all λ d => !restriction d || scope d
 
@@ -182,7 +186,10 @@ def dpp (F : Frame) (atoms : List F.Entity) : LexEntry F :=
 /-- Hab: `(e→t) → (e→t)`. Habitual aspectual operator.
 
     `h` maps a predicate to its habitual counterpart.
-    Montague-typed counterpart of `traditionalHAB` (in `Habituals.lean`). -/
+    On the Chierchia/Krifka "Hab-is-Gen" view, `h` collapses into the
+    universal `covertQ` skeleton above; on the Boneh–Doron view it is a
+    distinct existential operator (see
+    `Phenomena/Generics/Studies/BonehDoron2013.lean`). -/
 def hab (F : Frame) (h : (F.Entity → Prop) → (F.Entity → Prop))
     : LexEntry F :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), h⟩

@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Composition.PredicateTransfer
 import Linglib.Theories.Semantics.Genericity.Generics
-import Linglib.Theories.Semantics.Aspect.Habituals
 import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 
@@ -66,8 +65,9 @@ built directly on `transferGen` and `gamma` from `PredicateTransfer.lean`:
 3. **Scope hierarchy**: overt > predicateTransfer > typeShift
 
 These connect to `PredicateTransfer.lean` (T_g, γ, SHIFT, `QuantifierSource`),
-`Generics.lean` (traditionalGEN), `Habituals.lean` (traditionalHAB),
-`CovertQuantifier.lean` (shared `covertQ`), and `Scope.lean` (ScopeConfig).
+`Generics.lean` (traditionalGEN), `CovertQuantifier.lean` (shared `covertQ`),
+and `Scope.lean` (ScopeConfig). A local 3-cell `Occasion` enum (below) supplies
+the habitual-side domain.
 -/
 
 namespace Cohen2013
