@@ -87,6 +87,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Semantics.Postsupposition
 import Linglib.Core.Semantics.ContentLayer
+import Linglib.Theories.Semantics.Questions.Denotation
 import Linglib.Theories.Semantics.Questions.Partition.Lattice
 import Linglib.Theories.Semantics.Questions.Partition.Cells
 import Linglib.Theories.Semantics.Questions.Partition.Binary
