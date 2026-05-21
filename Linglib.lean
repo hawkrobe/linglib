@@ -2189,14 +2189,10 @@ import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.CategorizerSemantics
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.NominalStructure
-import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Impoverishment
-import Linglib.Theories.Morphology.DM.Metathesis
-import Linglib.Theories.Morphology.DM.PostsyntacticDerivation
 import Linglib.Theories.Morphology.DM.LinearPostsyntax
-import Linglib.Theories.Morphology.DM.PostSyntacticOps
 import Linglib.Theories.Morphology.Nanosyntax.Basic
 import Linglib.Theories.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
