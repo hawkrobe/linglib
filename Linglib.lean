@@ -1478,6 +1478,7 @@ import Linglib.Phenomena.Modality.Studies.Narrog2010
 import Linglib.Phenomena.Modality.Studies.Narrog2012
 import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019PMF
 import Linglib.Phenomena.Modality.Studies.Huijsmans2025
+import Linglib.Theories.Semantics.BSML.Bisimulation
 import Linglib.Theories.Semantics.BSML.Bridge
 import Linglib.Theories.Semantics.BSML.ClassicalValidities
 import Linglib.Theories.Semantics.BSML.Defs
