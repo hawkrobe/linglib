@@ -24,12 +24,12 @@ team-semantic skeleton (formulas as predicates of teams, downward
 closure, dependence atoms) transfers directly.
 
 MDL is studied for its computational and model-theoretic properties
-(satisfiability complexity in Sevenster 2009 and Lohmann-Vollmer 2013;
-expressive power; bisimulation invariance), with applications in
-database theory, knowledge representation, and AI rather than primarily
-in linguistic semantics — hence the placement in `Core/Logic/` rather
-than `Theories/Semantics/`, alongside the other team-semantic primitives
-(`Core/Logic/Team/`, `Core/Logic/Bilateral/`).
+(satisfiability complexity in @cite{lohmann-vollmer-2013} and Sevenster's
+earlier expressive-power work; bisimulation invariance), with
+applications in database theory, knowledge representation, and AI
+rather than primarily in linguistic semantics — hence the placement in
+`Core/Logic/` rather than `Theories/Semantics/`, alongside the other
+team-semantic primitives (`Core/Logic/Team/`, `Core/Logic/Bilateral/`).
 
 ## What changes from BSML
 
@@ -97,9 +97,10 @@ This directory houses modal-logic variants that share Kripke-model
 infrastructure but differ in atom flavor:
 
 * `Modal/Dependence.lean` (this file) — MDL with dependence atoms.
-* `Modal/Inclusion.lean` (future) — modal inclusion logic ML(⊆)
-  (Galliani 2012; @cite{anttila-2025} Ch 5).
-* `Modal/Independence.lean` (future) — modal independence logic.
+* `Modal/Inclusion.lean` (future) — modal inclusion logic ML(⊆),
+  introduced by Galliani; axiomatized in @cite{anttila-2025} Ch 5.
+* `Modal/Independence.lean` (future) — modal independence logic
+  (Grädel and Väänänen).
 * `Modal/Bilateral.lean` (future, after BSML's eventual Core/
   graduation) — BSML's bilateral negation + NE atom.
 
@@ -110,16 +111,15 @@ and `Core/Logic/Modal/Bisimulation.lean`.
 
 ## Todo
 
-* Lohmann-Vollmer 2013 (*Studia Logica* 101:343-366) — adds classical
-  disjunction `⓿` (the BSML∨ analogue) and complete satisfiability
-  complexity classification. Natural second consumer paper, with a
-  Studies file anchored on it.
+* @cite{lohmann-vollmer-2013} — adds classical disjunction `⓿` (the
+  BSML∨ analogue) and complete satisfiability complexity classification.
+  Natural second consumer paper, with a Studies file anchored on it.
 * Bisim invariance for MDL — same shape as BSML/BSMLOr/BSMLEmpty
   proofs in `BSML/Bisimulation.lean` and `Studies/AloniAnttilaYang2024`,
   but the modal-case argument differs because MDL's ◇ uses single-
   witness semantics rather than per-world.
-* Independence atoms (Grädel-Väänänen 2013) — sibling at
-  `Core/Logic/Modal/Independence.lean`.
+* Modal independence logic (Grädel and Väänänen's independence atoms) —
+  sibling at `Core/Logic/Modal/Independence.lean`.
 * Kripke-model extraction to `Core/Logic/Modal/Kripke.lean`, resolving
   the Core→Theories import inversion noted above.
 -/
@@ -194,6 +194,22 @@ abbrev support (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop 
 abbrev antiSupport (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M false φ t
 
+@[simp] lemma support_atom (M : BSMLModel W Atom) (p : Atom) (t : Finset W) :
+    support M (.atom p) t ↔ ∀ w ∈ t, M.val p w = true := Iff.rfl
+
+@[simp] lemma antiSupport_atom (M : BSMLModel W Atom) (p : Atom) (t : Finset W) :
+    antiSupport M (.atom p) t ↔ ∀ w ∈ t, M.val p w = false := Iff.rfl
+
+@[simp] lemma support_dep (M : BSMLModel W Atom) (xs : List Atom) (y : Atom)
+    (t : Finset W) :
+    support M (.dep xs y) t ↔
+      ∀ w₁ ∈ t, ∀ w₂ ∈ t,
+        (∀ x ∈ xs, M.val x w₁ = M.val x w₂) → M.val y w₁ = M.val y w₂ := Iff.rfl
+
+@[simp] lemma antiSupport_dep (M : BSMLModel W Atom) (xs : List Atom) (y : Atom)
+    (t : Finset W) :
+    antiSupport M (.dep xs y) t ↔ t = ∅ := Iff.rfl
+
 @[simp] lemma support_neg (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.neg φ) t ↔ antiSupport M φ t := Iff.rfl
 
@@ -203,12 +219,26 @@ abbrev antiSupport (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : P
 @[simp] lemma support_conj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.conj φ ψ) t ↔ support M φ t ∧ support M ψ t := Iff.rfl
 
+@[simp] lemma antiSupport_conj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+    antiSupport M (.conj φ ψ) t ↔
+      ∃ t₁ t₂ : Finset W, Core.Logic.Team.splitsAs t t₁ t₂ ∧
+        antiSupport M φ t₁ ∧ antiSupport M ψ t₂ := Iff.rfl
+
+@[simp] lemma support_disj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+    support M (.disj φ ψ) t ↔
+      ∃ t₁ t₂ : Finset W, Core.Logic.Team.splitsAs t t₁ t₂ ∧
+        support M φ t₁ ∧ support M ψ t₂ := Iff.rfl
+
 @[simp] lemma antiSupport_disj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.disj φ ψ) t ↔ antiSupport M φ t ∧ antiSupport M ψ t := Iff.rfl
 
-@[simp] lemma antiSupport_dep (M : BSMLModel W Atom) (xs : List Atom) (y : Atom)
-    (t : Finset W) :
-    antiSupport M (.dep xs y) t ↔ t = ∅ := Iff.rfl
+@[simp] lemma support_poss (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+    support M (.poss φ) t ↔
+      ∃ Y : Finset W, (∀ w ∈ t, ∃ y ∈ Y, y ∈ M.access w) ∧ support M φ Y :=
+  Iff.rfl
+
+@[simp] lemma antiSupport_poss (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+    antiSupport M (.poss φ) t ↔ antiSupport M φ (t.biUnion M.access) := Iff.rfl
 
 /-- MDL's `support`/`antiSupport` form a paraconsistent bilateral logic
     under `Formula.neg`. -/
@@ -267,8 +297,7 @@ private theorem support_and_antiSupport_downward (φ : Formula Atom)
       intro s t hsub ⟨t₁, t₂, hsplit, ha₁, ha₂⟩
       refine ⟨t₁ ∩ t, t₂ ∩ t, ?_, ?_, ?_⟩
       · show (t₁ ∩ t) ∪ (t₂ ∩ t) = t
-        rw [show (t₁ ∩ t) ∪ (t₂ ∩ t) = (t₁ ∪ t₂) ∩ t from by
-          ext x; simp [Finset.mem_inter, Finset.mem_union]; tauto]
+        rw [(Finset.union_inter_distrib_right t₁ t₂ t).symm]
         have heq : t₁ ∪ t₂ = s := hsplit
         rw [heq]; exact Finset.inter_eq_right.mpr hsub
       · exact iha₁ t₁ (t₁ ∩ t) Finset.inter_subset_left ha₁
@@ -281,8 +310,7 @@ private theorem support_and_antiSupport_downward (φ : Formula Atom)
       intro s t hsub ⟨t₁, t₂, hsplit, hs₁, hs₂⟩
       refine ⟨t₁ ∩ t, t₂ ∩ t, ?_, ?_, ?_⟩
       · show (t₁ ∩ t) ∪ (t₂ ∩ t) = t
-        rw [show (t₁ ∩ t) ∪ (t₂ ∩ t) = (t₁ ∪ t₂) ∩ t from by
-          ext x; simp [Finset.mem_inter, Finset.mem_union]; tauto]
+        rw [(Finset.union_inter_distrib_right t₁ t₂ t).symm]
         have heq : t₁ ∪ t₂ = s := hsplit
         rw [heq]; exact Finset.inter_eq_right.mpr hsub
       · exact ihs₁ t₁ (t₁ ∩ t) Finset.inter_subset_left hs₁
@@ -370,7 +398,6 @@ theorem support_empty (M : BSMLModel W Atom) (φ : Formula Atom) :
     each support `=(p; q)` vacuously (each is a singleton, so the
     functional-dependence condition is trivial), but `{w₁, w₂}` does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
-    (_hne : w₁ ≠ w₂)
     {M : BSMLModel W Atom}
     (_hp : M.val p w₁ = M.val p w₂)
     (hq : M.val q w₁ ≠ M.val q w₂) :
