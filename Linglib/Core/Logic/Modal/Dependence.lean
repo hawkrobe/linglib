@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.BSML.Defs
+import Linglib.Core.Logic.Modal.Kripke
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
@@ -85,17 +85,17 @@ clause is the under-DC simplified form `X = Y ∪ Z` (paper's (T6)'
 under Lemma 4.2 part 1) rather than the literal `X ⊆ Y ∪ Z` from
 (T6); under downward closure they are equivalent.
 
-The `BSMLModel` carrier from `Theories/Semantics/BSML/Defs.lean` is
-reused — MDL Kripke models have the same shape (accessibility +
-valuation). This is the 5th consumer of `BSMLModel` (BSML, QBSML,
-BSMLOr, BSMLEmpty, MDL); a future refactor should extract it to
-`Core/Logic/Modal/KripkeModel.lean` and rename appropriately.
+The `KripkeModel` carrier from `Core/Logic/Modal/Kripke.lean` is the
+shared substrate; BSML, QBSML, and the AAY-2024 extensions
+(BSMLOr/BSMLEmpty) alias `BSMLModel := KripkeModel` for literature
+compatibility.
 
 ## Sibling logics in `Core/Logic/Modal/`
 
 This directory houses modal-logic variants that share Kripke-model
 infrastructure but differ in atom flavor:
 
+* `Modal/Kripke.lean` — the carrier type, shared.
 * `Modal/Dependence.lean` (this file) — MDL with dependence atoms.
 * `Modal/Inclusion.lean` (future) — modal inclusion logic ML(⊆),
   introduced by Galliani; axiomatized in @cite{anttila-2025} Ch 5.
@@ -104,10 +104,9 @@ infrastructure but differ in atom flavor:
 * `Modal/Bilateral.lean` (future, after BSML's eventual Core/
   graduation) — BSML's bilateral negation + NE atom.
 
-The shared Kripke-model + bisimulation substrate currently lives at
-`Theories/Semantics/BSML/{Defs,Bisimulation}.lean` for historical
-reasons; a future refactor lifts those to `Core/Logic/Modal/Kripke.lean`
-and `Core/Logic/Modal/Bisimulation.lean`.
+The bisimulation substrate currently lives at
+`Theories/Semantics/BSML/Bisimulation.lean` for historical reasons; a
+future refactor lifts it to `Core/Logic/Modal/Bisimulation.lean`.
 
 ## Todo
 
@@ -120,15 +119,13 @@ and `Core/Logic/Modal/Bisimulation.lean`.
   witness semantics rather than per-world.
 * Modal independence logic (Grädel and Väänänen's independence atoms) —
   sibling at `Core/Logic/Modal/Independence.lean`.
-* Kripke-model extraction to `Core/Logic/Modal/Kripke.lean`, resolving
-  the Core→Theories import inversion noted above.
 -/
 
 namespace Core.Logic.Modal.Dependence
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
-open Semantics.BSML (BSMLModel)
+open Core.Logic.Modal (KripkeModel)
 
 /-! ### Syntax (Definition 1.1) -/
 
@@ -164,7 +161,7 @@ inductive Formula (Atom : Type*) where
     The ◇ clauses (T8), (T9) use Väänänen's single-witness form, not
     BSML's per-world form; the two formulations diverge for non-union-
     closed logics like MDL. -/
-def eval (M : BSMLModel W Atom) : Bool → Formula Atom → Finset W → Prop
+def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,        t => ∀ w ∈ t, M.val p w = true
   | false, .atom p,        t => ∀ w ∈ t, M.val p w = false
   | true,  .dep xs y,      t => ∀ w₁ ∈ t, ∀ w₂ ∈ t,
@@ -187,62 +184,62 @@ def eval (M : BSMLModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | false, .poss ψ,        t => eval M false ψ (t.biUnion M.access)
 
 /-- Support: positive evaluation. -/
-abbrev support (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M true φ t
 
 /-- Anti-support: negative evaluation. -/
-abbrev antiSupport (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
+abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M false φ t
 
-@[simp] lemma support_atom (M : BSMLModel W Atom) (p : Atom) (t : Finset W) :
+@[simp] lemma support_atom (M : KripkeModel W Atom) (p : Atom) (t : Finset W) :
     support M (.atom p) t ↔ ∀ w ∈ t, M.val p w = true := Iff.rfl
 
-@[simp] lemma antiSupport_atom (M : BSMLModel W Atom) (p : Atom) (t : Finset W) :
+@[simp] lemma antiSupport_atom (M : KripkeModel W Atom) (p : Atom) (t : Finset W) :
     antiSupport M (.atom p) t ↔ ∀ w ∈ t, M.val p w = false := Iff.rfl
 
-@[simp] lemma support_dep (M : BSMLModel W Atom) (xs : List Atom) (y : Atom)
+@[simp] lemma support_dep (M : KripkeModel W Atom) (xs : List Atom) (y : Atom)
     (t : Finset W) :
     support M (.dep xs y) t ↔
       ∀ w₁ ∈ t, ∀ w₂ ∈ t,
         (∀ x ∈ xs, M.val x w₁ = M.val x w₂) → M.val y w₁ = M.val y w₂ := Iff.rfl
 
-@[simp] lemma antiSupport_dep (M : BSMLModel W Atom) (xs : List Atom) (y : Atom)
+@[simp] lemma antiSupport_dep (M : KripkeModel W Atom) (xs : List Atom) (y : Atom)
     (t : Finset W) :
     antiSupport M (.dep xs y) t ↔ t = ∅ := Iff.rfl
 
-@[simp] lemma support_neg (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.neg φ) t ↔ antiSupport M φ t := Iff.rfl
 
-@[simp] lemma antiSupport_neg (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     antiSupport M (.neg φ) t ↔ support M φ t := Iff.rfl
 
-@[simp] lemma support_conj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_conj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.conj φ ψ) t ↔ support M φ t ∧ support M ψ t := Iff.rfl
 
-@[simp] lemma antiSupport_conj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_conj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.conj φ ψ) t ↔
       ∃ t₁ t₂ : Finset W, Core.Logic.Team.splitsAs t t₁ t₂ ∧
         antiSupport M φ t₁ ∧ antiSupport M ψ t₂ := Iff.rfl
 
-@[simp] lemma support_disj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_disj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.disj φ ψ) t ↔
       ∃ t₁ t₂ : Finset W, Core.Logic.Team.splitsAs t t₁ t₂ ∧
         support M φ t₁ ∧ support M ψ t₂ := Iff.rfl
 
-@[simp] lemma antiSupport_disj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_disj (M : KripkeModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     antiSupport M (.disj φ ψ) t ↔ antiSupport M φ t ∧ antiSupport M ψ t := Iff.rfl
 
-@[simp] lemma support_poss (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma support_poss (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.poss φ) t ↔
       ∃ Y : Finset W, (∀ w ∈ t, ∃ y ∈ Y, y ∈ M.access w) ∧ support M φ Y :=
   Iff.rfl
 
-@[simp] lemma antiSupport_poss (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
+@[simp] lemma antiSupport_poss (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     antiSupport M (.poss φ) t ↔ antiSupport M φ (t.biUnion M.access) := Iff.rfl
 
 /-- MDL's `support`/`antiSupport` form a paraconsistent bilateral logic
     under `Formula.neg`. -/
-theorem isBilateral (M : BSMLModel W Atom) :
+theorem isBilateral (M : KripkeModel W Atom) :
     Core.Logic.Bilateral.IsBilateral
       (support M) (antiSupport M) Formula.neg :=
   Core.Logic.Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
@@ -265,7 +262,7 @@ def Formula.modalDepth : Formula Atom → ℕ
     each clause preserves the ⊆-direction, including the new dep clause
     (subteam of functionally-dependent is functionally dependent). -/
 private theorem support_and_antiSupport_downward (φ : Formula Atom)
-    (M : BSMLModel W Atom) :
+    (M : KripkeModel W Atom) :
     (∀ s t : Finset W, t ⊆ s → support M φ s → support M φ t) ∧
     (∀ s t : Finset W, t ⊆ s → antiSupport M φ s → antiSupport M φ t) := by
   induction φ with
@@ -336,7 +333,7 @@ private theorem support_and_antiSupport_downward (φ : Formula Atom)
 /-- **Lemma 4.2 of @cite{vaananen-2008}**: every MDL formula's support
     is downward-closed. The defining closure property of the dependence
     family — what BSML loses when it adds NE. -/
-theorem isLowerSet_support (M : BSMLModel W Atom) (φ : Formula Atom) :
+theorem isLowerSet_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     IsLowerSet { t : Finset W | support M φ t } :=
   fun _ _ hab hb =>
     (support_and_antiSupport_downward φ M).1 _ _ hab hb
@@ -347,7 +344,7 @@ theorem isLowerSet_support (M : BSMLModel W Atom) (φ : Formula Atom) :
     and empty anti-support. Proved by structural induction; differs
     from BSML in that no `NE` constructor breaks it. -/
 private theorem support_and_antiSupport_empty
-    (φ : Formula Atom) (M : BSMLModel W Atom) :
+    (φ : Formula Atom) (M : KripkeModel W Atom) :
     support M φ ∅ ∧ antiSupport M φ ∅ := by
   induction φ with
   | atom p =>
@@ -386,7 +383,7 @@ private theorem support_and_antiSupport_empty
       exact ha
 
 /-- Every MDL formula is supported on the empty team. -/
-theorem support_empty (M : BSMLModel W Atom) (φ : Formula Atom) :
+theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     support M φ ∅ :=
   (support_and_antiSupport_empty φ M).1
 
@@ -398,7 +395,7 @@ theorem support_empty (M : BSMLModel W Atom) (φ : Formula Atom) :
     each support `=(p; q)` vacuously (each is a singleton, so the
     functional-dependence condition is trivial), but `{w₁, w₂}` does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
-    {M : BSMLModel W Atom}
+    {M : KripkeModel W Atom}
     (_hp : M.val p w₁ = M.val p w₂)
     (hq : M.val q w₁ ≠ M.val q w₂) :
     ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := by

@@ -3,6 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Bilateral.Defs
+import Linglib.Core.Logic.Modal.Kripke
 
 /-!
 # Bilateral State-based Modal Logic (BSML) — Core Definitions
@@ -138,17 +139,12 @@ theorem BSMLFormula.isAtom_implies_isNEFree (φ : BSMLFormula Atom)
 -- §2: Models
 -- ============================================================================
 
-/-- A BSML model: accessibility and valuation over a finite type of worlds
-    (Definition 1, @cite{aloni-2022}). The universe of worlds is given by
-    `[Fintype W]` — use `Finset.univ` for the full set.
-
-    Parameterized over both `W` (worlds) and `Atom` (atomic propositions).
-    The `val` field maps an atom name to its truth value at each world. -/
-structure BSMLModel (W : Type*) (Atom : Type*) [DecidableEq W] [Fintype W] where
-  /-- Accessibility: R[w] = worlds accessible from w -/
-  access : W → Finset W
-  /-- Valuation: which atoms are true at which worlds -/
-  val : Atom → W → Bool
+/-- A BSML model (Definition 1, @cite{aloni-2022}): accessibility and
+    valuation over a finite type of worlds. Aliased to the generic
+    `Core.Logic.Modal.KripkeModel`; the carrier structure is identical,
+    `BSMLModel` is just the name BSML literature uses. -/
+abbrev BSMLModel (W : Type*) (Atom : Type*) [DecidableEq W] [Fintype W] :=
+  Core.Logic.Modal.KripkeModel W Atom
 
 -- ============================================================================
 -- §3: Evaluation (Definition 2)
