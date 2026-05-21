@@ -1489,6 +1489,7 @@ import Linglib.Theories.Semantics.QBSML.Properties
 import Linglib.Theories.Semantics.QBSML.Enrichment
 import Linglib.Theories.Semantics.QBSML.FreeChoice
 import Linglib.Phenomena.FreeChoice.Studies.Aloni2022
+import Linglib.Phenomena.FreeChoice.Studies.AloniAnttilaYang2024
 import Linglib.Phenomena.FreeChoice.Studies.AloniVanOrmondt2023
 import Linglib.Phenomena.FreeChoice.Divergences
 import Linglib.Phenomena.Modality.Studies.Cariani2013
