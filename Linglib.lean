@@ -22,6 +22,7 @@ import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Bilateral.Classical
 import Linglib.Core.Logic.Modal.Dependence
 import Linglib.Core.Logic.Modal.Inclusion
+import Linglib.Core.Logic.Modal.Inquisitive
 import Linglib.Core.Logic.Modal.Kripke
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
