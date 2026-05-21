@@ -20,6 +20,7 @@ import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Bilateral.Classical
+import Linglib.Core.Logic.Modal.Dependence
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
 import Linglib.Features.Acceptability
