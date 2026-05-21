@@ -22,7 +22,6 @@ import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Bilateral.Classical
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
-import Linglib.Core.Logic.Team.Properties
 import Linglib.Features.Acceptability
 import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.UD
@@ -270,7 +269,8 @@ import Linglib.Core.Case.Order
 import Linglib.Core.Case.Split
 import Linglib.Core.Case.Grammaticalization
 import Linglib.Core.Case.Comparative
-import Linglib.Core.AgreementTarget
+import Linglib.Core.Agreement.Controller
+import Linglib.Core.Agreement.Target
 import Linglib.Core.Morphology.Containment
 import Linglib.Core.Morphology.DegreeContainment
 import Linglib.Core.Morphology.DomainLocality
@@ -804,6 +804,7 @@ import Linglib.Fragments.Latin.Adjectives
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Latin.Indefinites
+import Linglib.Fragments.Latin.Phonology
 import Linglib.Fragments.Latin.Reference
 import Linglib.Fragments.Latin.Directives
 import Linglib.Fragments.Latvian.IndeterminatePronouns
@@ -1477,11 +1478,11 @@ import Linglib.Phenomena.Modality.Studies.Narrog2010
 import Linglib.Phenomena.Modality.Studies.Narrog2012
 import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019PMF
 import Linglib.Phenomena.Modality.Studies.Huijsmans2025
+import Linglib.Theories.Semantics.BSML.Bridge
+import Linglib.Theories.Semantics.BSML.ClassicalValidities
 import Linglib.Theories.Semantics.BSML.Defs
 import Linglib.Theories.Semantics.BSML.Enrichment
 import Linglib.Theories.Semantics.BSML.FreeChoice
-import Linglib.Theories.Semantics.BSML.Negation
-import Linglib.Theories.Semantics.BSML.Bridge
 import Linglib.Theories.Semantics.BSML.Properties
 import Linglib.Theories.Semantics.QBSML.Defs
 import Linglib.Theories.Semantics.QBSML.Properties
@@ -1807,6 +1808,7 @@ import Linglib.Fragments.Swahili.Phonology
 import Linglib.Fragments.Yoruba.Phonology
 import Linglib.Fragments.Maori.Phonology
 import Linglib.Fragments.Zulu.Phonology
+import Linglib.Phenomena.CompensatoryLengthening.Studies.Hayes1989
 import Linglib.Phenomena.Phonology.Studies.Anttila1997
 import Linglib.Phenomena.Phonology.Studies.Belth2026
 import Linglib.Phenomena.Phonology.Studies.Benua1997
@@ -1830,6 +1832,7 @@ import Linglib.Phenomena.Phonology.Studies.RoseWalker2004
 import Linglib.Phenomena.Phonology.Studies.Sagey1986
 import Linglib.Phenomena.Phonology.Studies.Saito2025
 import Linglib.Phenomena.Phonology.Studies.SandeClemDabkowski2026
+import Linglib.Phenomena.Phonology.Studies.Sen2015
 import Linglib.Phenomena.Phonology.Studies.SPEDerivations
 import Linglib.Phenomena.Phonology.Studies.Storme2026
 import Linglib.Phenomena.Phonology.Studies.Zuraw2010
@@ -1844,7 +1847,6 @@ import Linglib.Phenomena.Tone.Studies.AkinboFwangwar2026
 import Linglib.Phenomena.Tone.Studies.McPhersonLamont2026
 import Linglib.Phenomena.Tone.Studies.ChuangEtAl2026
 import Linglib.Phenomena.Tone.Studies.LuChuangBaayen2026
-import Linglib.Phenomena.CompensatoryLengthening.Studies.Hayes1989
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.Combinators
@@ -2184,6 +2186,7 @@ import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Morphology.DM.Allosemy
+import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Impoverishment
 import Linglib.Theories.Morphology.DM.Metathesis
 import Linglib.Theories.Morphology.DM.PostsyntacticDerivation
@@ -2696,9 +2699,11 @@ import Linglib.Theories.Dialogue.KOS.Austinian
 import Linglib.Theories.Dialogue.KOS.CooperInfoState
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Featural.Features
+import Linglib.Theories.Phonology.Featural.NaturalClasses
 import Linglib.Theories.Phonology.Featural.Geometry
 import Linglib.Theories.Phonology.Featural.ComplexSegments
 import Linglib.Theories.Phonology.Featural.Bundle
+import Linglib.Theories.Phonology.Featural.Underspecification
 import Linglib.Theories.Phonology.Featural.ElementTheory
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier

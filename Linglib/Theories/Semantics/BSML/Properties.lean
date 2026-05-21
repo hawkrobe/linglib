@@ -1,51 +1,46 @@
 import Linglib.Theories.Semantics.BSML.Defs
-import Linglib.Core.Logic.Team.Properties
+import Linglib.Core.Logic.Team.Closure
 
 /-!
-# BSML formula properties — Anttila 2021 Proposition 2.2.8 + corollary
+# BSML formula closure properties (Anttila 2021 Proposition 2.2.8)
 
-@cite{anttila-2021}
+@cite{anttila-2021} @cite{aloni-2022}
 
 For BSML's `support` relation, this file proves the three constituent
-properties from Anttila 2021 Proposition 2.2.8 (specialized to a logic
-without ⨼ / global disjunction):
+properties from Anttila 2021 Proposition 2.2.8 (specialised to a logic
+without global disjunction ⨼) plus the flatness corollary from Anttila
+2.2.16 / @cite{aloni-2022} Fact 15.
 
-1. **All BSML formulas have union closure** (Anttila 2.2.8 part 2).
-   BSML's connective set has no ⨼; the only source of union-closure
-   failure is absent.
+## Main declarations
 
-2. **NE-free BSML formulas have the empty team property** (Anttila 2.2.8 part 1).
-   The only formula without the empty team property is NE itself.
+* `supClosed_support` — every BSML formula has sup-closed support
+  (Anttila 2.2.8 part 2; BSML's connective set has no ⨼, so the
+  union-closure obstruction is absent).
+* `support_empty_of_isNEFree` — NE-free BSML formulas are supported on
+  the empty team (Anttila 2.2.8 part 1).
+* `isLowerSet_support_of_isNEFree` — NE-free BSML formulas are
+  downward-closed (Anttila 2.2.8 part 1).
+* `isFlat_support_of_isNEFree` — NE-free BSML formulas are flat
+  (Anttila 2.2.16 / @cite{aloni-2022} Fact 15), derived via Anttila
+  Proposition 2.2.2 from the three properties above.
 
-3. **NE-free BSML formulas are downward-closed** (Anttila 2.2.8 part 1).
-   NE is the only non-downward-closed primitive.
+## Implementation notes
 
-The corollary, via `Core.Logic.Team.flat_of_downwardClosed_unionClosed_emptyTeam`
-(our formalization of Anttila Proposition 2.2.2), is:
-
-4. **NE-free BSML formulas are flat** (Anttila Proposition 2.2.16 /
-   Fact 15 from @cite{aloni-2022}).
+The negation case needs bilateral mutual induction (support of `¬φ` is
+anti-support of `φ`), so each property is proved as a *joint* statement
+over support + anti-support via a `private` helper, then the public form
+projects the support component.
 
 A direct flatness proof is also available in `Bridge.lean` as
 `neFree_flat_eq`, which proves the stronger statement `support t ↔ ∀ w ∈ t,
-classicalEval w` (flatness + the classical-evaluation bridge). This file's
-proof routes through the foundational decomposition; `neFree_flat_eq` provides
-the additional bridge to classical Kripke semantics.
+classicalEval w` (flatness + classical-evaluation bridge). This file's
+proof routes through the foundational decomposition; `neFree_flat_eq`
+provides the additional bridge to classical Kripke semantics.
 
-## Why both proofs?
-
-The decomposition through Anttila 2.2.8 + 2.2.2 is REUSABLE. Any future
-team-semantic logic in linglib (QBSML, inquisitive, dependence logic) needs
-the same structural argument — proving its three properties separately and
-composing them via `Core.Logic.Team.flat_iff_...`. The Bridge.lean direct
-proof is BSML-specific (uses BSML's classicalEval).
-
-## Status
-
-Property theorems currently SKETCHED (statements + proof structure). Full
-proofs require structural induction with careful handling of negation
-(bilateral mutual induction for the neg case). Tracked as in-flight; the
-flatness corollary is proved fully against the sketches.
+The decomposition through Anttila 2.2.8 + 2.2.2 is reusable: any future
+team-semantic logic in linglib (QBSML, inquisitive, dependence logic)
+needs the same structural argument — proving the three closure properties
+separately and composing them via `Core.Logic.Team.isFlat_iff`.
 -/
 
 namespace Semantics.BSML
@@ -54,9 +49,7 @@ open Core.Logic.Team
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
--- ============================================================================
--- §1 BSML support is always union-closed (Anttila 2.2.8 part 2 for ⨼-free)
--- ============================================================================
+/-! ### Sup-closure (Anttila 2.2.8 part 2) -/
 
 /-- Joint union closure for both polarities. The conj-anti-support and
     disj-support cases need mutual induction on partitions; the neg case
@@ -141,17 +134,14 @@ private theorem support_and_antiSupport_unionClosed
       | inl h => exact hs w h
       | inr h => exact ht w h
 
-/-- All BSML formulas are union-closed. BSML's connective set lacks the global
-    disjunction ⨼ — Anttila Proposition 2.2.8 part 2 specializes to "all
-    formulas" in this case. -/
-theorem unionClosed_support (φ : BSMLFormula Atom) :
-    Core.Logic.Team.unionClosed (support (W := W)) φ := by
-  intro M a ha b hb
-  exact (support_and_antiSupport_unionClosed φ M).1 a b ha hb
+/-- BSML support is sup-closed (Anttila Proposition 2.2.8 part 2). BSML's
+    connective set lacks the global disjunction ⨼, so the union-closure
+    obstruction is absent and all formulas satisfy the property. -/
+theorem supClosed_support (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
+    SupClosed { t : Finset W | support M φ t } :=
+  fun _ ha _ hb => (support_and_antiSupport_unionClosed φ M).1 _ _ ha hb
 
--- ============================================================================
--- §2 NE-free BSML formulas have the empty team property (Anttila 2.2.8 part 1)
--- ============================================================================
+/-! ### Empty-team property for NE-free formulas (Anttila 2.2.8 part 1) -/
 
 /-- Joint empty-team property: NE-free formulas have BOTH support and
     anti-support on the empty team. Used as the engine for the bilateral
@@ -201,16 +191,13 @@ private theorem support_and_antiSupport_empty_of_isNEFree
     · intro w hw; exact absurd hw (by simp)
     · intro w hw; exact absurd hw (by simp)
 
-/-- NE-free BSML formulas are supported on the empty team. The only obstruction
-    is NE itself, which fails on ∅ by definition. -/
-theorem emptyTeam_support_of_isNEFree {φ : BSMLFormula Atom}
-    (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.emptyTeam (support (W := W)) φ :=
-  fun M => (support_and_antiSupport_empty_of_isNEFree φ hNE M).1
+/-- NE-free BSML formulas are supported on the empty team. The only
+    obstruction is NE itself, which fails on ∅ by definition. -/
+theorem support_empty_of_isNEFree {φ : BSMLFormula Atom}
+    (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) : support M φ ∅ :=
+  (support_and_antiSupport_empty_of_isNEFree φ hNE M).1
 
--- ============================================================================
--- §3 NE-free BSML formulas are downward-closed (Anttila 2.2.8 part 1)
--- ============================================================================
+/-! ### Downward closure for NE-free formulas (Anttila 2.2.8 part 1) -/
 
 /-- Joint downward closure: NE-free formulas have BOTH support and
     anti-support downward-closed. The bilateral mutual induction handles
@@ -290,35 +277,30 @@ private theorem support_and_antiSupport_downward_of_isNEFree
       intro s t hsub hasupp w hw
       exact hasupp w (hsub hw)
 
-/-- NE-free BSML formulas are downward-closed: support survives under taking
-    subsets of the team. -/
-theorem downwardClosed_support_of_isNEFree {φ : BSMLFormula Atom}
-    (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.downwardClosed (support (W := W)) φ := by
-  -- IsLowerSet shape: b ≤ a → a ∈ T → b ∈ T (a is bigger, b is smaller).
-  -- Helper signature: ∀ s t, t ⊆ s → support s → support t (s bigger, t smaller).
-  intro M a b hab hb
-  exact (support_and_antiSupport_downward_of_isNEFree φ hNE M).1 a b hab hb
+/-- NE-free BSML formulas are downward-closed: support survives under
+    taking subsets of the team. -/
+theorem isLowerSet_support_of_isNEFree {φ : BSMLFormula Atom}
+    (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) :
+    IsLowerSet { t : Finset W | support M φ t } :=
+  fun _ _ hab hb =>
+    (support_and_antiSupport_downward_of_isNEFree φ hNE M).1 _ _ hab hb
 
--- ============================================================================
--- §4 Corollary: NE-free BSML formulas are flat (Anttila 2.2.16 / Fact 15)
--- ============================================================================
+/-! ### Flatness corollary (Anttila 2.2.16) -/
 
-/-- **Anttila Proposition 2.2.16** (BSML specialization of Fact 15 from
-    @cite{aloni-2022}): NE-free BSML formulas are flat — team support equals
-    pointwise support at each world in the team.
+/-- **Anttila Proposition 2.2.16** (BSML specialisation of Fact 15 from
+    @cite{aloni-2022}): NE-free BSML formulas are flat — team support
+    equals pointwise support at each world in the team.
 
-    Derived as a corollary of the foundational `flat_iff_downwardClosed_unionClosed_emptyTeam`
-    (`Core.Logic.Team.Properties`) applied to the three properties proved above.
-
-    The same conclusion is also proved directly with the classical-evaluation
-    bridge in `Bridge.lean` as `neFree_flat_eq`. -/
-theorem flat_support_of_isNEFree {φ : BSMLFormula Atom}
-    (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.flat (support (W := W)) φ :=
-  Core.Logic.Team.flat_of_downwardClosed_unionClosed_emptyTeam
-    (downwardClosed_support_of_isNEFree hNE)
-    (unionClosed_support φ)
-    (emptyTeam_support_of_isNEFree hNE)
+    Derived from Anttila 2.2.2 (`Core.Logic.Team.isFlat_iff`) applied to
+    the three closure properties proved above. The same conclusion has a
+    direct classical-evaluation-bridge proof in `Bridge.lean` as
+    `neFree_flat_eq`. -/
+theorem isFlat_support_of_isNEFree {φ : BSMLFormula Atom}
+    (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) :
+    IsFlat { t : Finset W | support M φ t } :=
+  isFlat_of_isLowerSet_supClosed_empty
+    (isLowerSet_support_of_isNEFree hNE M)
+    (supClosed_support M φ)
+    (support_empty_of_isNEFree hNE M)
 
 end Semantics.BSML

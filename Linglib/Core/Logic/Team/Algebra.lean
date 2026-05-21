@@ -40,6 +40,49 @@ a set of (world, assignment) pairs (QBSML), a set of assignments
 We retain the term "state-based" in `isStateBased` because that is its
 established name in the Aloni / Anttila literature — the property holds
 of an accessibility relation, not of a team-semantic logic generally.
+
+## Roadmap — team-semantics architecture
+
+The team-semantic logics form a 4-family Hasse lattice over two orthogonal
+axes — syntactic (which atoms/connectives are admitted) and semantic
+(which closure property the definable team-properties have). Anttila's
+dissertation (@cite{anttila-2025}) is the authoritative basic-level
+taxonomy. The natural cuts that this `Core/Logic/Team/` substrate
+underwrites, once enough Layer-2 consumers land to anchor them:
+
+* **`Theories/Semantics/Bilateral/`** — Family A: BSML, BSML∨, BSML⊘,
+  QBSML. Bilateral negation + NE atom. Currently at `Theories/Semantics/
+  BSML/` and `QBSML/`; should consolidate. @cite{aloni-anttila-yang-2024}
+  is the family's axiomatization paper, @cite{aloni-2022} the founding
+  free-choice application, @cite{aloni-vanormondt-2023} the first-order
+  extension. Closure: union-closed, empty-state property.
+* **`Theories/Semantics/Dependence/`** — Family B: modal dependence logic,
+  modal inclusion logic ML(⊆), ML(▽) (@cite{anttila-2025} Ch 5;
+  @cite{vaananen-2007}). Closure: downward-closed (dependence),
+  union-closed (inclusion).
+* **`Theories/Semantics/DualNegation/`** — Family C: modal team logic
+  (MTL with Boolean ~), propositional team logic, Hawke &
+  Steinert-Threlkeld's logic, propositional dependence logic
+  (@cite{anttila-2025} Ch 4). Closure: fully expressive over modally
+  definable state properties.
+* **`Theories/Semantics/Inquisitive/`** — Family D: InqB, InqML
+  (global ∨∨ central; Ciardelli, Roelofsen). Close cousin of BSML∨.
+
+The families are sibling, not nested — none extends another. They share
+this substrate (team partitions + frame conditions), the closure-property
+predicates in `Core/Logic/Team/Closure.lean`, and the abstract
+`Core/Logic/Bilateral/IsBilateral` typeclass. Substrate consumers use
+mathlib-direct predicates `IsLowerSet { t | support M φ t }`,
+`SupClosed { t | support M φ t }`, and `support M φ ∅` per-`M` rather
+than project-specific wrappers — see `Closure.lean`'s docstring for the
+shape.
+
+Layer 1 (a generic `Theories/Semantics/TeamSemantics/` parameterizing
+over admitted connectives) should NOT be extracted until ≥ 3 systems
+have landed and the duplication pattern is concrete. Premature
+abstraction would design the typeclass interface against a sample size
+of 1; the mathlib algebraic hierarchy got its current shape by being
+refactored backward from concrete instances, not designed forward.
 -/
 
 namespace Core.Logic.Team

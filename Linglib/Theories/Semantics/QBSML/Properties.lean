@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.QBSML.Defs
-import Linglib.Core.Logic.Team.Properties
+import Linglib.Core.Logic.Team.Closure
 
 /-!
 # QBSML formula properties — Anttila 2021 Proposition 2.2.8 (substrate test)
@@ -54,9 +54,7 @@ variable {W Var Domain Pred : Type*}
 variable [DecidableEq W] [Fintype W]
 variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
--- ============================================================================
--- §1 Joint empty-team property — bilateral induction
--- ============================================================================
+/-! ### Empty-team property for NE-free formulas -/
 
 /-- Joint empty-team property: NE-free QBSML formulas have BOTH support and
     anti-support on the empty team. The bilateral mutual induction handles
@@ -137,14 +135,12 @@ private theorem support_and_antiSupport_empty_of_isNEFree
       exact ha
 
 /-- NE-free QBSML formulas are supported on the empty team. -/
-theorem emptyTeam_support_of_isNEFree {φ : QBSMLFormula Var Pred}
-    (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.emptyTeam (support (W := W) (Domain := Domain)) φ :=
-  fun M => (support_and_antiSupport_empty_of_isNEFree φ hNE M).1
+theorem support_empty_of_isNEFree {φ : QBSMLFormula Var Pred}
+    (hNE : φ.isNEFree = true) (M : QBSMLModel W Domain Pred) :
+    support M φ ∅ :=
+  (support_and_antiSupport_empty_of_isNEFree φ hNE M).1
 
--- ============================================================================
--- §2 Joint downward + union closure for NE-free QBSML formulas
--- ============================================================================
+/-! ### Joint downward + sup closure for NE-free formulas -/
 
 /-- Joint statement of all four closure properties for both polarities of an
     NE-free QBSML formula. The union case of `exi` (and antiSupport `univ`)
@@ -376,38 +372,36 @@ private theorem support_and_antiSupport_dc_uc_of_isNEFree
 
 /-- NE-free QBSML formulas are downward-closed (Anttila 2.2.8 part 1
     extended to first-order). -/
-theorem downwardClosed_support_of_isNEFree {φ : QBSMLFormula Var Pred}
-    (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.downwardClosed (support (W := W) (Domain := Domain)) φ := by
-  intro M a b hab hb
-  -- IsLowerSet shape: b ≤ a → support a → support b. Helper: s t (t ⊆ s).
-  exact (support_and_antiSupport_dc_uc_of_isNEFree φ hNE M).1 a b hab hb
+theorem isLowerSet_support_of_isNEFree {φ : QBSMLFormula Var Pred}
+    (hNE : φ.isNEFree = true) (M : QBSMLModel W Domain Pred) :
+    IsLowerSet { t : Finset (Index W Var Domain) | support M φ t } :=
+  fun _ _ hab hb =>
+    (support_and_antiSupport_dc_uc_of_isNEFree φ hNE M).1 _ _ hab hb
 
-/-- NE-free QBSML formulas are union-closed.
+/-- NE-free QBSML formulas have sup-closed support.
 
-    NB: Stronger than BSML's `unionClosed_support` requires no NE-free
-    hypothesis, but QBSML's `exi` UC needs DC of ψ as IH (see file
-    docstring), so we narrow to NE-free. The downstream flat corollary
-    consumes NE-free anyway. -/
-theorem unionClosed_support_of_isNEFree {φ : QBSMLFormula Var Pred}
-    (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.unionClosed (support (W := W) (Domain := Domain)) φ := by
-  intro M a ha b hb
-  exact (support_and_antiSupport_dc_uc_of_isNEFree φ hNE M).2.1 a b ha hb
+    NB: BSML's `supClosed_support` needs no NE-free hypothesis, but
+    QBSML's `exi` UC case needs downward closure of ψ as IH (see file
+    docstring), so the QBSML version narrows to NE-free. The downstream
+    flat corollary consumes NE-free anyway. -/
+theorem supClosed_support_of_isNEFree {φ : QBSMLFormula Var Pred}
+    (hNE : φ.isNEFree = true) (M : QBSMLModel W Domain Pred) :
+    SupClosed { t : Finset (Index W Var Domain) | support M φ t } :=
+  fun _ ha _ hb =>
+    (support_and_antiSupport_dc_uc_of_isNEFree φ hNE M).2.1 _ _ ha hb
 
--- ============================================================================
--- §3 Corollary: NE-free QBSML formulas are flat
--- ============================================================================
+/-! ### Flatness corollary -/
 
-/-- **Anttila Proposition 2.2.16 (QBSML specialization)**: NE-free QBSML
-    formulas are flat. Same call structure as BSML's `flat_support_of_isNEFree`
-    — substrate validates. -/
-theorem flat_support_of_isNEFree {φ : QBSMLFormula Var Pred}
-    (hNE : φ.isNEFree = true) :
-    Core.Logic.Team.flat (support (W := W) (Domain := Domain)) φ :=
-  Core.Logic.Team.flat_of_downwardClosed_unionClosed_emptyTeam
-    (downwardClosed_support_of_isNEFree hNE)
-    (unionClosed_support_of_isNEFree hNE)
-    (emptyTeam_support_of_isNEFree hNE)
+/-- **Anttila Proposition 2.2.16 (QBSML specialisation)**: NE-free QBSML
+    formulas are flat. Derived from Anttila 2.2.2
+    (`Core.Logic.Team.isFlat_iff`) applied to the three closure properties
+    above. -/
+theorem isFlat_support_of_isNEFree {φ : QBSMLFormula Var Pred}
+    (hNE : φ.isNEFree = true) (M : QBSMLModel W Domain Pred) :
+    IsFlat { t : Finset (Index W Var Domain) | support M φ t } :=
+  isFlat_of_isLowerSet_supClosed_empty
+    (isLowerSet_support_of_isNEFree hNE M)
+    (supClosed_support_of_isNEFree hNE M)
+    (support_empty_of_isNEFree hNE M)
 
 end Semantics.QBSML
