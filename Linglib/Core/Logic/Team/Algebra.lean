@@ -32,66 +32,29 @@ a set of (world, assignment) pairs (QBSML), a set of assignments
 1. **Team partition** (`splitsAs`, `splitsAsNE`): the structural condition
    underlying team-semantic split disjunction.
 
-2. **Frame conditions on accessibility** (`isStateBased`, `isIndisputable`):
+2. **Frame conditions on accessibility** (`IsStateBased`, `IsIndisputable`):
    Anttila Definition 2.2.10-equivalent properties of a relation
    `R : W → Finset W` relative to a base team. Used to distinguish
    epistemic and deontic modalities (Aloni 2022 §6.1).
 
-We retain the term "state-based" in `isStateBased` because that is its
-established name in the Aloni / Anttila literature — the property holds
-of an accessibility relation, not of a team-semantic logic generally.
+## Family roadmap
 
-## Roadmap — team-semantics architecture
-
-The team-semantic logics form a 4-family Hasse lattice over two orthogonal
-axes — syntactic (which atoms/connectives are admitted) and semantic
-(which closure property the definable team-properties have). Anttila's
-dissertation (@cite{anttila-2025}) is the authoritative basic-level
-taxonomy. The natural cuts that this `Core/Logic/Team/` substrate
-underwrites, once enough Layer-2 consumers land to anchor them:
-
-* **`Theories/Semantics/Bilateral/`** — Family A: BSML, BSML∨, BSML⊘,
-  QBSML. Bilateral negation + NE atom. Currently at `Theories/Semantics/
-  BSML/` and `QBSML/`; should consolidate. @cite{aloni-anttila-yang-2024}
-  is the family's axiomatization paper, @cite{aloni-2022} the founding
-  free-choice application, @cite{aloni-vanormondt-2023} the first-order
-  extension. Closure: union-closed, empty-state property.
-* **`Theories/Semantics/Dependence/`** — Family B: modal dependence logic,
-  modal inclusion logic ML(⊆), ML(▽) (@cite{anttila-2025} Ch 5;
-  @cite{vaananen-2007}). Closure: downward-closed (dependence),
-  union-closed (inclusion).
-* **`Theories/Semantics/DualNegation/`** — Family C: modal team logic
-  (MTL with Boolean ~), propositional team logic, Hawke &
-  Steinert-Threlkeld's logic, propositional dependence logic
-  (@cite{anttila-2025} Ch 4). Closure: fully expressive over modally
-  definable state properties.
-* **`Theories/Semantics/Inquisitive/`** — Family D: InqB, InqML
-  (global ∨∨ central; Ciardelli, Roelofsen). Close cousin of BSML∨.
-
-The families are sibling, not nested — none extends another. They share
-this substrate (team partitions + frame conditions), the closure-property
-predicates in `Core/Logic/Team/Closure.lean`, and the abstract
-`Core/Logic/Bilateral/IsBilateral` typeclass. Substrate consumers use
-mathlib-direct predicates `IsLowerSet { t | support M φ t }`,
-`SupClosed { t | support M φ t }`, and `support M φ ∅` per-`M` rather
-than project-specific wrappers — see `Closure.lean`'s docstring for the
-shape.
-
-Layer 1 (a generic `Theories/Semantics/TeamSemantics/` parameterizing
-over admitted connectives) should NOT be extracted until ≥ 3 systems
-have landed and the duplication pattern is concrete. Premature
-abstraction would design the typeclass interface against a sample size
-of 1; the mathlib algebraic hierarchy got its current shape by being
-refactored backward from concrete instances, not designed forward.
+Team-semantic logics in Anttila's (@cite{anttila-2025}) taxonomy form a
+family of systems differing in which closure properties their support
+relation satisfies (`IsLowerSet`, `SupClosed`, `⊥ ∈ ·`). This substrate
+provides the closure predicates each family's main theorems are stated
+in. Concrete families with formalised consumers: BSML and QBSML at
+`Theories/Semantics/BSML/`, `QBSML/`. A Layer-1 abstraction parametrising
+over closure profiles should NOT be extracted until ≥ 3 distinct systems
+land — the mathlib pattern is to refactor backward from concrete
+instances, not design forward.
 -/
 
 namespace Core.Logic.Team
 
 variable {α : Type*} [DecidableEq α]
 
--- ============================================================================
--- §1 Team partition (split disjunction primitive)
--- ============================================================================
+/-! ### Team partition (split disjunction primitive) -/
 
 /-- Binary cover: team `s` is the union of teams `t₁` and `t₂`. The two
     sub-teams may overlap; only their union must equal `s`. This is the
@@ -158,38 +121,33 @@ namespace Core.Logic.Team
 
 variable {W : Type*}
 
--- ============================================================================
--- §2 Frame conditions on accessibility
--- ============================================================================
+/-! ### Frame conditions on accessibility -/
 
 /-- `R` is **state-based** on team `s` iff every world in `s` is `R`-accessible
     exactly to `s`. Strictly stronger than indisputability.
 
-    Aloni 2022 Definition 5; Anttila 2021 Definition 4.10-style. The name
-    is established in the BSML literature even though we use "team" for
-    the underlying object — the property pertains to the accessibility
-    relation, not the team itself. -/
-def isStateBased (R : W → Finset W) (s : Finset W) : Prop :=
+    Aloni 2022 Definition 5; Anttila 2021 Definition 4.10-style. -/
+def IsStateBased (R : W → Finset W) (s : Finset W) : Prop :=
   ∀ w ∈ s, R w = s
 
 /-- `R` is **indisputable** on team `s` iff all worlds in `s` see the same
     set of accessible worlds. Equivalently: `R` is constant on `s`.
 
     Aloni 2022 Definition 5 (indisputable ↔ deontic-with-knowledgeable-speaker). -/
-def isIndisputable (R : W → Finset W) (s : Finset W) : Prop :=
+def IsIndisputable (R : W → Finset W) (s : Finset W) : Prop :=
   ∀ w₁ ∈ s, ∀ w₂ ∈ s, R w₁ = R w₂
 
 /-- State-based implies indisputable. -/
-theorem isStateBased_imp_isIndisputable (R : W → Finset W) (s : Finset W)
-    (h : isStateBased R s) : isIndisputable R s := by
+theorem IsStateBased.isIndisputable {R : W → Finset W} {s : Finset W}
+    (h : IsStateBased R s) : IsIndisputable R s := by
   intro w₁ hw₁ w₂ hw₂; rw [h w₁ hw₁, h w₂ hw₂]
 
 instance (R : W → Finset W) (s : Finset W)
-    [DecidableEq W] [Fintype W] : Decidable (isStateBased R s) := by
-  unfold isStateBased; infer_instance
+    [DecidableEq W] [Fintype W] : Decidable (IsStateBased R s) := by
+  unfold IsStateBased; infer_instance
 
 instance (R : W → Finset W) (s : Finset W)
-    [DecidableEq W] [Fintype W] : Decidable (isIndisputable R s) := by
-  unfold isIndisputable; infer_instance
+    [DecidableEq W] [Fintype W] : Decidable (IsIndisputable R s) := by
+  unfold IsIndisputable; infer_instance
 
 end Core.Logic.Team

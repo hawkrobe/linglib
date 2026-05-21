@@ -34,7 +34,7 @@ predicates with terms.
 ## Substrate dependencies
 
 The split-disjunction predicate `splitsAs` and the frame-condition
-predicates `isStateBased` / `isIndisputable` live in
+predicates `IsStateBased` / `IsIndisputable` live in
 `Core.Logic.Team` (theory-neutral `Finset` combinatorics) and
 are consumed below. This is the same machinery QBSML reuses via the
 `s↓` projection from `Finset (W × Assignment)` to `Finset W`.
@@ -246,17 +246,17 @@ lemma empty_supports_atom (M : BSMLModel W Atom) (p : Atom) :
 /-- Indisputable accessibility: all worlds in team see the same accessible worlds.
     Required for wide-scope FC (Fact 5, @cite{aloni-2022}).
 
-    Defined via `Core.Logic.Team.isIndisputable` to share substrate
+    Defined via `Core.Logic.Team.IsIndisputable` to share substrate
     with QBSML and any other state-based logic. -/
 def BSMLModel.isIndisputable (M : BSMLModel W Atom) (t : Finset W) : Prop :=
-  Core.Logic.Team.isIndisputable M.access t
+  Core.Logic.Team.IsIndisputable M.access t
 
 /-- State-based accessibility: every world in team has the team itself as
     accessible worlds. Strictly stronger than indisputability.
 
-    Defined via `Core.Logic.Team.isStateBased`. -/
+    Defined via `Core.Logic.Team.IsStateBased`. -/
 def BSMLModel.isStateBased (M : BSMLModel W Atom) (t : Finset W) : Prop :=
-  Core.Logic.Team.isStateBased M.access t
+  Core.Logic.Team.IsStateBased M.access t
 
 instance (M : BSMLModel W Atom) (t : Finset W) : Decidable (M.isIndisputable t) := by
   unfold BSMLModel.isIndisputable; infer_instance

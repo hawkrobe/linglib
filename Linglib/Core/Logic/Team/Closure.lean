@@ -40,6 +40,14 @@ theorem isSupClosed_support (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
 ```
 
 No project-specific wrapper around `SupClosed`/`IsLowerSet` is needed.
+
+## Todo
+
+* Generalise `IsFlat` to `[SemilatticeSup L] [OrderBot L] [IsAtomistic L]`
+  with the pointwise condition stated over `IsAtom a ∧ a ≤ s`; the
+  current `Finset α` form falls out as the canonical instance. Defer
+  until a non-`Finset` Layer-2 consumer surfaces (e.g., an `Inquisitive`
+  formalisation over `Set W` would force this).
 -/
 
 namespace Core.Logic.Team

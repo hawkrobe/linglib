@@ -400,7 +400,7 @@ theorem isBilateral (M : QBSMLModel W Domain Pred) :
 -- ============================================================================
 
 /-- QBSML's `isStateBased`: defined via the `s↓` projection composed with
-    `Core.Logic.Team.isStateBased`. The same Core function as BSML uses,
+    `Core.Logic.Team.IsStateBased`. The same Core function as BSML uses,
     just applied to the world-set of the team rather than the team itself.
 
     Aloni & van Ormondt §4 Definition 4.10: `R is state-based on (M, s)` iff
@@ -409,11 +409,11 @@ theorem isBilateral (M : QBSMLModel W Domain Pred) :
     instantiation via projection. -/
 def QBSMLModel.isStateBased (M : QBSMLModel W Domain Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
-  Core.Logic.Team.isStateBased M.access (State.worldProj s)
+  Core.Logic.Team.IsStateBased M.access (State.worldProj s)
 
 /-- QBSML's `isIndisputable`: same Core function, applied to `s↓`. -/
 def QBSMLModel.isIndisputable (M : QBSMLModel W Domain Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
-  Core.Logic.Team.isIndisputable M.access (State.worldProj s)
+  Core.Logic.Team.IsIndisputable M.access (State.worldProj s)
 
 end Semantics.QBSML

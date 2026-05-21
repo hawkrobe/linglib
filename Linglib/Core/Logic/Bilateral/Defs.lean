@@ -60,9 +60,7 @@ namespace Core.Logic.Bilateral
 
 variable {Form Result : Type*}
 
--- ============================================================================
--- §1 The paraconsistent bilateral predicate
--- ============================================================================
+/-! ### The paraconsistent bilateral predicate -/
 
 /-- A **bilateral structure** on (`Form`, `Result`): two interpretations
     `positive, negative : Form → Result` and a negation constructor
@@ -79,9 +77,7 @@ structure IsBilateral
   /-- Negation flips `negative` to `positive`. -/
   negative_negate : ∀ φ : Form, negative (negate φ) = positive φ
 
--- ============================================================================
--- §2 The negation involution
--- ============================================================================
+/-! ### The negation involution -/
 
 /-- **Negation is involutive on the underlying interpretations**: applying
     `negate` twice restores both `positive` and `negative` to their
@@ -101,9 +97,7 @@ theorem IsBilateral.negative_negate_negate
     negative (negate (negate φ)) = negative φ := by
   rw [h.negative_negate, h.positive_negate]
 
--- ============================================================================
--- §3 Constructor: pointwise Iff → function-level IsBilateral
--- ============================================================================
+/-! ### Constructor from pointwise `Iff` lemmas -/
 
 /-- **Construct `IsBilateral` from pointwise `Iff` lemmas**, lifted via
     `funext + propext`. The common case for consumers whose `positive`
@@ -124,9 +118,7 @@ theorem IsBilateral.of_iff {α : Type*}
   positive_negate φ := funext fun a => propext (hp φ a)
   negative_negate φ := funext fun a => propext (hn φ a)
 
--- ============================================================================
--- §4 Triple-negation collapse
--- ============================================================================
+/-! ### Triple-negation collapse -/
 
 /-- Three applications of `negate` collapse to one (on `positive`):
     `positive (negate^3 φ) = negative φ`. Composes
@@ -145,9 +137,7 @@ theorem IsBilateral.negative_negate_three
     negative (negate (negate (negate φ))) = positive φ := by
   rw [h.negative_negate_negate, h.negative_negate]
 
--- ============================================================================
--- §5 Bilateral congruence
--- ============================================================================
+/-! ### Bilateral congruence -/
 
 /-- If two formulas have equal `positive`, their negations have equal
     `negative` — bilateral analogue of "negation is a function." -/
