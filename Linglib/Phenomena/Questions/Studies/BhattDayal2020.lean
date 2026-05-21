@@ -1,5 +1,5 @@
 import Linglib.Features.QParticleLayer
-import Linglib.Core.Question.Singleton
+import Linglib.Theories.Semantics.Questions.Singleton
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.English.QuestionParticles
@@ -7,7 +7,7 @@ import Linglib.Fragments.English.QuestionParticles
 /-!
 # Bhatt & Dayal (2020): PQP analysis of Hindi-Urdu *kya:* @cite{bhatt-dayal-2020}
 
-Polar Question Particle analysis: Hindi-Urdu *kya:* sits at PerspP, not CP.
+Polar Core.Question Particle analysis: Hindi-Urdu *kya:* sits at PerspP, not CP.
 Combined with @cite{dayal-2025}'s three-layer cartography
 `[SAP [PerspP [CP ...]]]` and @cite{sauerland-yatsushiro-2017}'s analysis
 of Japanese *kke* as a meta question particle (MQP).

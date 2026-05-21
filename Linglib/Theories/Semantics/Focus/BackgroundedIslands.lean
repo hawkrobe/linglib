@@ -1,5 +1,5 @@
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.PrecisionProjection
+import Linglib.Theories.Semantics.Questions.Partition.QUD
+import Linglib.Theories.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Features.InformationStructure
@@ -256,7 +256,7 @@ The backgroundedness constraint on extraction — that backgrounded constituents
 resist wh-extraction — is not stipulated but **derived** from the QUD partition
 via two converging routes.
 
-### Route 1: Question relevance (@cite{roberts-1996})
+### Route 1: Core.Question relevance (@cite{roberts-1996})
 
 Extraction creates a wh-question about the gap:
 
@@ -292,7 +292,7 @@ Both routes derive the same prediction from the same QUD property
 degraded, and the degradation disappears when the QUD shifts to target
 content (prosodic amelioration). -/
 
--- ── Route 1: Question relevance ─────────────────────────────────────
+-- ── Route 1: Core.Question relevance ─────────────────────────────────────
 
 /-- Whether a wh-question about the content of a communication event is
 **relevant** to a given QUD (@cite{roberts-1996}): different content values

@@ -1,6 +1,6 @@
-import Linglib.Core.Question.Basic
-import Linglib.Core.Question.Hamblin
-import Linglib.Core.Question.Relevance
+import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Relevance
 
 /-!
 # Resolution — answerhood predicates on `Core.Question`

@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Truth3
-import Linglib.Core.Question.Partition.QUD
+import Linglib.Theories.Semantics.Questions.Partition.QUD
 import Linglib.Theories.Semantics.Supervaluation.Basic
 
 /-!
@@ -217,7 +217,7 @@ theorem removeGap_not_homogeneous (S : SentenceTV W) :
     the homogeneity gap. Two independent principles interact:
 
     1. **Sufficient Truth**: weakens Quality to "true enough for current purposes"
-    2. **Addressing an Question**: restricts which sentences can be used for which
+    2. **Addressing an Core.Question**: restricts which sentences can be used for which
        issues, based on alignment between truth-value boundaries and issue cells
 
     Together, they predict that a sentence can be used at a gap-world iff
@@ -238,7 +238,7 @@ theorem literal_imp_sufficient (q : QUD W) (S : SentenceTV W) (w : W)
     (h : S w = .true) : sufficientlyTrue q S w :=
   ⟨w, q.iseqv.refl w, h⟩
 
-/-- Addressing an Question: S may be used to address issue I only if no
+/-- Addressing an Core.Question: S may be used to address issue I only if no
     cell of I overlaps with both the positive and the negative extension.
 
     Gap-worlds are invisible: a cell containing true-worlds and gap-worlds

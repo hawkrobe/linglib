@@ -3,8 +3,8 @@ import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.BToM
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Tactics.RSAPredict
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.PrecisionProjection
+import Linglib.Theories.Semantics.Questions.Partition.QUD
+import Linglib.Theories.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Features.Subjectivity

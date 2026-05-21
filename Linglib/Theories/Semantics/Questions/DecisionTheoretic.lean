@@ -1,5 +1,5 @@
-import Linglib.Core.Question.Basic
-import Linglib.Core.Question.Relevance
+import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Theories.Semantics.Questions.Relevance
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Theories.Semantics.Questions.Resolution
 

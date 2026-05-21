@@ -6,7 +6,7 @@ import Mathlib.Order.CompleteBooleanAlgebra
 import Mathlib.Order.CompleteLattice.Basic
 import Mathlib.Order.Lattice
 import Mathlib.Order.Preorder.Finite
-import Linglib.Core.Question.Support
+import Linglib.Theories.Semantics.Questions.Support
 
 /-!
 # Question — core type, lattice, Heyting derivatives

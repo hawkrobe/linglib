@@ -1,5 +1,5 @@
-import Linglib.Core.Question.Basic
-import Linglib.Core.Question.Hamblin
+import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Questions.Resolution
 
 /-!
@@ -8,7 +8,7 @@ import Linglib.Theories.Semantics.Questions.Resolution
 
 Substrate-audit study file for @cite{ciardelli-groenendijk-roelofsen-2018}
 *Inquisitive Semantics* (OUP, Oxford Surveys in Semantics and
-Pragmatics 6). The substrate of `Core/Question/` IS this paper's
+Pragmatics 6). The substrate of `Theories/Semantics/Questions/` IS this paper's
 formalisation: every CGR Chapter-2 and Chapter-3 definition has a
 direct counterpart in `Core.Question`. This file's job is to make the
 correspondence explicit, by (a) docstring-mapping each CGR definition
@@ -31,7 +31,7 @@ already implements the paper).
 | Def 2.3 Issue (non-empty downward-closed set of states) | `Core.Question W`        |
 | Def 2.4 Resolution `s ∈ I`                     | `s ∈ I.props` ≡ `Support.supports s I` |
 | Def 2.5 Issues over a state `⋃I = s`           | `info I = s`                     |
-| Def 2.6 Refinement `I ⊆ J`                     | `(I : Question W) ≤ J`           |
+| Def 2.6 Refinement `I ⊆ J`                     | `(I : Core.Question W) ≤ J`           |
 | Def 2.7 Alternatives in an issue (max elts)    | `Core.Question.alt`              |
 | Fact 2.8 Multi-alts iff proper (finite case)   | `isInquisitive_of_two_alternatives` (one direction; full equivalence under `Q.props.Finite`) |
 | Def 2.9 Proposition (non-empty downward-closed)| `Core.Question W` (same as Issue) |
@@ -119,7 +119,7 @@ substrate-level proof uses `info` and `downward_closed`. -/
 
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} Fact 2.14 (Truth and
     support): `P` is true at `w` iff `P` is supported by `{w}`. -/
-theorem truth_iff_singleton_support (P : Question W) (w : W) :
+theorem truth_iff_singleton_support (P : Core.Question W) (w : W) :
     w ∈ info P ↔ ({w} : Set W) ∈ P := by
   constructor
   · rintro ⟨q, hq, hwq⟩
@@ -136,7 +136,7 @@ disjuncts under substrate names. -/
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} Fact 2.18 (i):
     non-inquisitive iff `info(P) ∈ P`. The substrate's
     `isDeclarative` IS this condition by definition. -/
-theorem CGR_2_18_non_inquisitive_iff (P : Question W) :
+theorem CGR_2_18_non_inquisitive_iff (P : Core.Question W) :
     ¬ P.isInquisitive ↔ P.isDeclarative :=
   (isDeclarative_iff_not_isInquisitive P).symm
 
@@ -144,14 +144,14 @@ theorem CGR_2_18_non_inquisitive_iff (P : Question W) :
     non-informative iff `info(P) = W`. The substrate's `isInformative`
     is "informative content excludes some world", so non-informative is
     the negation. -/
-theorem CGR_2_18_non_informative_iff (P : Question W) :
+theorem CGR_2_18_non_informative_iff (P : Core.Question W) :
     ¬ P.isInformative ↔ P.info = Set.univ := by
   unfold isInformative
   exact not_not
 
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} Fact 2.18 (iii):
     `P` is a tautology iff `W ∈ P`. -/
-theorem CGR_2_18_tautology_iff (P : Question W) :
+theorem CGR_2_18_tautology_iff (P : Core.Question W) :
     P = ⊤ ↔ Set.univ ∈ P := by
   constructor
   · rintro rfl; exact Set.mem_univ _
@@ -171,7 +171,7 @@ characterization 2 in the chain). The other directions follow. -/
     non-inquisitive iff `P = ℘(info(P))` (the principal-ideal
     characterization). The substrate-level
     `isDeclarative_iff_eq_declarative_info` IS this. -/
-theorem CGR_2_19_eq_declarative_info (P : Question W) :
+theorem CGR_2_19_eq_declarative_info (P : Core.Question W) :
     P.isDeclarative ↔ P = declarative P.info :=
   isDeclarative_iff_eq_declarative_info P
 
@@ -179,7 +179,7 @@ theorem CGR_2_19_eq_declarative_info (P : Question W) :
     non-inquisitive iff `P` is supported by `s` exactly when `P` is
     true at every world in `s` (truth-conditional support). Direct
     consequence of `truth_iff_singleton_support` + downward closure. -/
-theorem CGR_2_19_truth_conditional (P : Question W)
+theorem CGR_2_19_truth_conditional (P : Core.Question W)
     (h : P.isDeclarative) (s : Set W) :
     s ∈ P ↔ ∀ w ∈ s, w ∈ info P := by
   have heq := (isDeclarative_iff_eq_declarative_info P).mp h
@@ -202,7 +202,7 @@ reduces to the standard intersection on informative content. -/
     substrate meet operation. Tautology — substrate-`⊓` was defined
     pointwise on `props`. Stated as a theorem to anchor the
     substrate's `inf` to CGR's `[·]` notation. -/
-theorem CGR_2_35_update_eq_inf (C P : Question W) :
+theorem CGR_2_35_update_eq_inf (C P : Core.Question W) :
     (C ⊓ P).props = C.props ∩ P.props := rfl
 
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} Fact 2.36 (Update
@@ -211,7 +211,7 @@ theorem CGR_2_35_update_eq_inf (C P : Question W) :
     non-inquisitive, with informative content equal to the standard
     intersection of the inputs' informative contents. -/
 theorem CGR_2_36_update_non_inquisitive
-    (C P : Question W) (hC : C.isDeclarative) (hP : P.isDeclarative) :
+    (C P : Core.Question W) (hC : C.isDeclarative) (hP : P.isDeclarative) :
     (C ⊓ P).isDeclarative ∧ (C ⊓ P).info = C.info ∩ P.info := by
   -- Step 1: info commutes with meet on declaratives.
   have hInfo : (C ⊓ P).info = C.info ∩ P.info := by
@@ -243,7 +243,7 @@ formulations directly on the substrate's vocabulary. -/
     arbitrary meet has support iff every member supports.
     Substrate-side: `sInfContent` is defined this way; restate to
     expose the CGR membership iff. -/
-theorem CGR_3_1_meet (S : Set (Question W)) (s : Set W) :
+theorem CGR_3_1_meet (S : Set (Core.Question W)) (s : Set W) :
     s ∈ sInf S ↔ ∀ P ∈ S, s ∈ P := mem_sInf_props
 
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} Fact 3.2 (Join):
@@ -251,37 +251,37 @@ theorem CGR_3_1_meet (S : Set (Question W)) (s : Set W) :
     The substrate-side `mem_sSup_props` exposes the disjunctive
     structure. The CGR formulation special-cases the empty family to
     `{∅} = ⊥`; the substrate gets this from the `s = ∅` clause. -/
-theorem CGR_3_2_join (S : Set (Question W)) (s : Set W) :
+theorem CGR_3_2_join (S : Set (Core.Question W)) (s : Set W) :
     s ∈ sSup S ↔ s = ∅ ∨ ∃ P ∈ S, s ∈ P := mem_sSup_props
 
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} Fact 3.5 (Absolute
     pseudo-complement, alternative characterization): `P* = ℘(¬info(P))`.
     The substrate's `compl_eq` IS this — `Pᶜ = declarative (info P)ᶜ`,
     and `declarative q = ℘(q)` (principal ideal). -/
-theorem CGR_3_5_pseudo_complement (P : Question W) :
+theorem CGR_3_5_pseudo_complement (P : Core.Question W) :
     Pᶜ = declarative (P.info)ᶜ := compl_eq P
 
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} Def 3.13 (Projection
     operators): `!P := ℘(info(P))` is the substrate's `proj`; `?P` is
     `nonInfo P := P ⊔ Pᶜ`. -/
-theorem CGR_3_13_proj_eq (P : Question W) :
+theorem CGR_3_13_proj_eq (P : Core.Question W) :
     P.proj = declarative P.info := rfl
 
-theorem CGR_3_13_nonInfo_eq (P : Question W) :
+theorem CGR_3_13_nonInfo_eq (P : Core.Question W) :
     nonInfo P = P ⊔ Pᶜ := nonInfo_eq_sup_compl P
 
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} Fact 3.14 (Division):
     every proposition decomposes uniquely as the meet of its non-inquisitive
     projection and its non-informative projection. Substrate's
     `proj_inf_nonInfo`. -/
-theorem CGR_3_14_division (P : Question W) :
+theorem CGR_3_14_division (P : Core.Question W) :
     P = P.proj ⊓ nonInfo P :=
   (proj_inf_nonInfo P).symm
 
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} Fact 3.15 (Projection
     operators in algebraic terms): `!P = P**`. Substrate's
     `proj_eq_compl_compl`. -/
-theorem CGR_3_15_proj_eq_compl_compl (P : Question W) :
+theorem CGR_3_15_proj_eq_compl_compl (P : Core.Question W) :
     P.proj = Pᶜᶜ := proj_eq_compl_compl P
 
 /-! ### §5.1 Polar questions
@@ -311,12 +311,12 @@ construction. -/
     identification: the mention-some wh-question denotation `∃xLax`
     matches the substrate's `which D L` Hamblin disjunction. The
     `↓` notation in CGR is downward closure, which is automatic in
-    the substrate (`Question` is a `LowerSet`). -/
+    the substrate (`Core.Question` is a `LowerSet`). -/
 theorem CGR_5_4_2_which_resolution
     {E : Type*} (D : Set E) (P : E → Set W) (s : Set W) :
     s ∈ which D P ↔ s = ∅ ∨ ∃ e ∈ D, s ⊆ P e := mem_which
 
-/-! ### §5.5 Question coordination
+/-! ### §5.5 Core.Question coordination
 
 @cite{ciardelli-groenendijk-roelofsen-2018} §5.5: question conjunction
 and disjunction are uniformly the lattice meet and join, exactly as
@@ -327,13 +327,13 @@ operator. -/
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} §5.5.1: question
     conjunction reduces to substrate `⊓`. The CGR claim is that the
     InqB translation of "Q and Q'" is `μ ∧ μ'` — same operator as for
-    declaratives. The substrate's `Question.conj = ⊓` IS this. -/
-theorem CGR_5_5_1_conj_eq_inf (Q Q' : Question W) :
+    declaratives. The substrate's `Core.Question.conj = ⊓` IS this. -/
+theorem CGR_5_5_1_conj_eq_inf (Q Q' : Core.Question W) :
     Q ⊓ Q' = conj Q Q' := inf_eq_conj Q Q'
 
 /-- @cite{ciardelli-groenendijk-roelofsen-2018} §5.5.2: question
     disjunction reduces to substrate `⊔`. -/
-theorem CGR_5_5_2_disj_eq_sup (Q Q' : Question W) :
+theorem CGR_5_5_2_disj_eq_sup (Q Q' : Core.Question W) :
     Q ⊔ Q' = inqDisj Q Q' := sup_eq_inqDisj Q Q'
 
 /-! ### Closing observation
@@ -342,7 +342,7 @@ The substrate-side coverage of @cite{ciardelli-groenendijk-roelofsen-2018}
 Chapters 2, 3, and 5 is essentially complete: every CGR primitive has
 a direct substrate counterpart with matching semantics. The only
 non-trivial added structure on the substrate side is the
-`SetLike (Question W) (Set W)` instance and the
+`SetLike (Core.Question W) (Set W)` instance and the
 `CompleteDistribLattice` registration — both of which are mathlib-style
 ergonomic upgrades that don't change the underlying mathematics.
 

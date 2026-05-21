@@ -4,7 +4,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Features.Aktionsart
-import Linglib.Core.Question.Hamblin
+import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.TenseAspect.Diagnostics
@@ -466,7 +466,7 @@ theorem wxdy_ci_independent {W : Type*}
   exact ⟨λ _ => h_ci, λ _ => h_ci⟩
 
 -- ============================================================================
--- F. Hamblin question semantics bridge (Core/Question/Hamblin.lean substrate)
+-- F. Hamblin question semantics bridge (Theories/Semantics/Questions/Hamblin.lean substrate)
 -- ============================================================================
 
 open Core.Question

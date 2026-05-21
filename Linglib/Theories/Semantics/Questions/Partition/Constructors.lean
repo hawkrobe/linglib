@@ -1,5 +1,5 @@
-import Linglib.Core.Question.Partition.Lattice
-import Linglib.Core.Question.Partition.Cells
+import Linglib.Theories.Semantics.Questions.Partition.Lattice
+import Linglib.Theories.Semantics.Questions.Partition.Cells
 
 /-!
 # Partition-Question Constructors

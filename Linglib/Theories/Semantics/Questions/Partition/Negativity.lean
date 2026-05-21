@@ -1,7 +1,7 @@
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.Partition.Lattice
-import Linglib.Core.Question.Partition.Cells
-import Linglib.Core.Question.Partition.Binary
+import Linglib.Theories.Semantics.Questions.Partition.QUD
+import Linglib.Theories.Semantics.Questions.Partition.Lattice
+import Linglib.Theories.Semantics.Questions.Partition.Cells
+import Linglib.Theories.Semantics.Questions.Partition.Binary
 
 /-!
 # Negative Attributes via Proper Coarsening

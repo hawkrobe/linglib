@@ -1,5 +1,5 @@
-import Linglib.Core.Question.Basic
-import Linglib.Core.Question.Hamblin
+import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Theories.Semantics.Questions.Hamblin
 
 /-!
 # Highlighting
@@ -41,9 +41,9 @@ migrated:
   + `highlightedValue` for Pruitt-Roelofsen 2011 / Uegaki 2022 hope-whether.
 * `Phenomena/Dialogue/Studies/FarkasRoelofsen2017.lean` — paper-side
   highlighted-alternative prose; F&R 2015 is the substrate's own anchor.
-* `Core/Question/Singleton.lean` — `IsSingleton` documents itself in
+* `Theories/Semantics/Questions/Singleton.lean` — `IsSingleton` documents itself in
   @cite{roelofsen-farkas-2015} terminology but is a different abstraction
-  (property of a `Question`, not a discourse context).
+  (property of a `Core.Question`, not a discourse context).
 * `Theories/Semantics/Modality/BiasedPQ.lean` — `OriginalBias` /
   `ContextualEvidence` cover adjacent ground (prior-discourse bias) with
   a different shape; bridge not yet written.

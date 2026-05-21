@@ -1,5 +1,5 @@
-import Linglib.Core.Question.Hamblin
-import Linglib.Core.Question.Relevance
+import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Relevance
 
 /-!
 # Strategy of Inquiry: Rose-Tree Decomposition of a QUD
@@ -14,7 +14,7 @@ unanswered slice; a strategy captures the *full plan*.
 The strategy is parameterized by `Core.Question W` — the Set-based
 inquisitive-content lattice. The completeness predicate uses lattice
 meet `⊓` (children's joint answer) and the Prop-valued
-`Core.Question.questionEntails` from `Core/Question/Relevance.lean`.
+`Core.Question.questionEntails` from `Core/Core.Question/Relevance.lean`.
 -/
 
 namespace Discourse
@@ -30,15 +30,15 @@ open Core
     Modeled as a rose tree: each node is a question, children are
     subquestions whose collective answers resolve the parent. -/
 inductive Strategy (W : Type*) where
-  | leaf : Question W → Strategy W
-  | branch : Question W → List (Strategy W) → Strategy W
+  | leaf : Core.Question W → Strategy W
+  | branch : Core.Question W → List (Strategy W) → Strategy W
 
 namespace Strategy
 
 variable {W : Type*}
 
 /-- The question at the root of this (sub)strategy. -/
-def question : Strategy W → Question W
+def question : Strategy W → Core.Question W
   | .leaf q | .branch q _ => q
 
 /-- Immediate substrategies (empty for leaves). -/
@@ -47,12 +47,12 @@ def substrategies : Strategy W → List (Strategy W)
   | .branch _ ss => ss
 
 /-- All questions in the strategy (root + all descendants). -/
-def allQuestions : Strategy W → List (Question W)
+def allQuestions : Strategy W → List (Core.Question W)
   | .leaf q => [q]
   | .branch q ss => q :: ss.flatMap allQuestions
 
 /-- Leaf questions only (terminal nodes of the strategy). -/
-def leaves : Strategy W → List (Question W)
+def leaves : Strategy W → List (Core.Question W)
   | .leaf q => [q]
   | .branch _ ss => ss.flatMap leaves
 
@@ -68,7 +68,7 @@ def isComplete : Strategy W → Prop
   | .leaf _ => True
   | .branch q children =>
     let combined := (children.map (·.question)).foldl (· ⊓ ·) ⊤
-    Question.questionEntails combined q
+    Core.Question.questionEntails combined q
 
 end Strategy
 
@@ -77,7 +77,7 @@ end Strategy
 
     Derived from `Core.Question.moveRelevant` by treating every question in
     the strategy tree as a candidate subquestion. -/
-def moveRelevantToStrategy {W : Type*} (den : Question W) (strat : Strategy W) : Prop :=
-  ∃ a ∈ Question.alt den, ∃ q ∈ strat.allQuestions, Question.partiallyAnswers q a
+def moveRelevantToStrategy {W : Type*} (den : Core.Question W) (strat : Strategy W) : Prop :=
+  ∃ a ∈ Core.Question.alt den, ∃ q ∈ strat.allQuestions, Core.Question.partiallyAnswers q a
 
 end Discourse

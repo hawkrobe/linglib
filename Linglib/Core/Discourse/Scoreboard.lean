@@ -2,8 +2,8 @@ import Linglib.Core.Discourse.Goal
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.PrecisionProjection
+import Linglib.Theories.Semantics.Questions.Partition.QUD
+import Linglib.Theories.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Mood.POSW
@@ -454,7 +454,7 @@ theorem toPOSWQ_interrogation_eq_inquire (K : Scoreboard W)
     (K.interrogationUpdate q a).toPOSWQ.inquiry =
       (K.toPOSWQ.inquire (Core.Mood.POSWQ.polarSetoid q)).inquiry := rfl
 
-/-- **Question-strengthening principle** (the inquiry analogue of
+/-- **Core.Question-strengthening principle** (the inquiry analogue of
     `boxCs_after_assertion` and `direction_demotes_violators`):
     after posing `q`, every proposition that is settled by `q`
     *and* compatible with the prior inquiry is settled by the new

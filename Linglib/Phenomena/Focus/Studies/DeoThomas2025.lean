@@ -14,10 +14,10 @@ alternatives, explaining why it substitutes in only 2 of the 9 flavors.
 
 -/
 
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.PrecisionProjection
-import Linglib.Core.Question.Basic
-import Linglib.Core.Question.Granularity
+import Linglib.Theories.Semantics.Questions.Partition.QUD
+import Linglib.Theories.Semantics.Questions.PrecisionProjection
+import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Theories.Semantics.Questions.Granularity
 import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Phenomena.Focus.Exclusives
 import Linglib.Theories.Semantics.Degree.Granularity
@@ -25,7 +25,7 @@ import Linglib.Theories.Semantics.Degree.Granularity
 namespace DeoThomas2025
 
 open Phenomena.Focus.Exclusives
-open Core (Question)
+-- open removed: Core.Question is top-level after Theories/Semantics/Questions/ relocation
 
 -- ============================================================================
 -- A. Alternative Source
@@ -61,7 +61,7 @@ def associatedSource : JustFlavor → AlternativeSource
 /-- A discourse context provides construals of an underspecified question (UQ)
     together with Quality and Relevance filters.
 
-    Construals are `Question`s (sets of alternative propositions), matching the
+    Construals are `Core.Question`s (sets of alternative propositions), matching the
     paper's definition (30)-(31): questions are sets of propositions that cover
     the common ground. This is more faithful than using partitions (`QUD`),
     since the paper explicitly notes that granularity-based construals generally
@@ -70,22 +70,22 @@ def associatedSource : JustFlavor → AlternativeSource
     `W` is the world type. -/
 structure DiscourseContext (W : Type*) where
   /-- The available construals of UQ_c -/
-  construals : List (Question W)
+  construals : List (Core.Question W)
   /-- Does the speaker have sufficient evidence to answer this question? -/
-  quality : Question W → Bool
+  quality : Core.Question W → Bool
   /-- Is this question relevant to the current discourse? -/
-  relevance : Question W → Bool
+  relevance : Core.Question W → Bool
   /-- There must be at least one construal -/
   nonempty : construals ≠ []
 
 variable {W : Type*}
 
 /-- A question is answerable iff it passes both Quality and Relevance (34). -/
-def answerable (ctx : DiscourseContext W) (q : Question W) : Bool :=
+def answerable (ctx : DiscourseContext W) (q : Core.Question W) : Bool :=
   ctx.quality q && ctx.relevance q
 
 -- ============================================================================
--- C. Widest Answerable Question
+-- C. Widest Answerable Core.Question
 -- ============================================================================
 
 /-- OPT_c(Q) (@cite{deo-thomas-2025} (35)): the optimal question in a set
@@ -98,7 +98,7 @@ def answerable (ctx : DiscourseContext W) (q : Question W) : Bool :=
     of question inquisitivity — explicitly weaker than G&S question entailment
     (fn. 20), because granularity-based construals generally cannot be ordered
     by entailment strength. -/
-def isWidestAnswerable (ctx : DiscourseContext W) (q : Question W) : Prop :=
+def isWidestAnswerable (ctx : DiscourseContext W) (q : Core.Question W) : Prop :=
   q ∈ ctx.construals ∧
   answerable ctx q = true ∧
   ∀ q' ∈ ctx.construals, answerable ctx q' = true → ¬ q'.widerThan q
@@ -341,7 +341,7 @@ theorem refinement_implies_wider {W : Type*}
       exact hFine (q.iseqv.symm hv₀_C₁)
 
 -- ============================================================================
--- G. Granularity–Question Composition (§3.1.2 + §3.2)
+-- G. Granularity–Core.Question Composition (§3.1.2 + §3.2)
 -- ============================================================================
 
 /-! ### The full chain: finer granularity → wider question

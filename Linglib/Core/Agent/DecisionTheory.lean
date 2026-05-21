@@ -5,7 +5,7 @@ import Mathlib.Data.Finset.Max
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
-import Linglib.Core.Question.Relevance
+import Linglib.Theories.Semantics.Questions.Relevance
 
 /-!
 # Core Decision Theory
@@ -142,7 +142,7 @@ instance IsResolved.instDecidable {W A : Type*}
     Decidable (IsResolved dp acts c) := by
   unfold IsResolved; infer_instance
 
-/-! ### Question Utility -/
+/-! ### Core.Question Utility -/
 
 /-- EUV(Q) = Sum_{q in Q} P(q) * UV(q), expected utility value of question Q. -/
 def questionUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
@@ -312,7 +312,7 @@ theorem maximinUtilityValue_nonneg {W A : Type*} [DecidableEq W]
   have hsub : worlds ∩ c ⊆ worlds := Finset.inter_subset_left
   linarith [maximinValue_subset_ge dp (worlds ∩ c) worlds actions hNonempty hsub]
 
--- ── List helpers for Question (List-based) iteration ────────────────
+-- ── List helpers for Core.Question (List-based) iteration ────────────────
 
 /-- A lower bound of all values is ≤ foldl min. -/
 theorem le_foldl_min {α : Type*} (f : α → ℚ) (xs : List α) (init b : ℚ)
@@ -376,7 +376,7 @@ def mentionSomeDP {W : Type*} (satisfies : W -> Bool) : DecisionProblem W Bool w
   utility w a := if a && satisfies w then 1 else 0
   prior _ := 1
 
-/-! ### Binary Question Value Decomposition
+/-! ### Binary Core.Question Value Decomposition
 
 For a binary partition [P, ¬P], the probability-weighted sum of conditional
 DP values equals Van Rooy's question utility plus the baseline DP value.
@@ -446,7 +446,7 @@ theorem binary_question_value_decomposition
                dpValue dp actions = dpValue dp actions from by
     rw [← add_mul, hSum, one_mul]]
 
-/-! ### Answer and Question Orderings
+/-! ### Answer and Core.Question Orderings
 
 @cite{van-rooy-2003}'s relevance-based orderings on answers and questions. -/
 

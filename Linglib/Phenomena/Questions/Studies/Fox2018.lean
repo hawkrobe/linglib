@@ -1,4 +1,4 @@
-import Linglib.Core.Question.Basic
+import Linglib.Theories.Semantics.Questions.Basic
 import Linglib.Theories.Semantics.Questions.Resolution
 import Linglib.Theories.Semantics.Questions.Exhaustivity
 
@@ -28,12 +28,12 @@ informative true Hamblin alternative.
 | Dayal's `Ans_D` presupposition         | `IsExhaustivelyResolvable` (Exhaustivity.lean) |
 | **Cell Identification (CI)** (eq 19)   | `CellIdentification` defined here |
 | **Non-Vacuity (NV)** (eq 20b)          | `NonVacuity` defined here         |
-| **Question Partition Matching (QPM)** (eq 20) | `QPM = CI ∧ NV`              |
+| **Core.Question Partition Matching (QPM)** (eq 20) | `QPM = CI ∧ NV`              |
 
 ## Section coverage
 
-* **§1.1** Question duality (partition vs Hamblin set) — captured by
-  the substrate's `Question W = LowerSet (Set W)` (Hamblin shape) and
+* **§1.1** Core.Question duality (partition vs Hamblin set) — captured by
+  the substrate's `Core.Question W = LowerSet (Set W)` (Hamblin shape) and
   `strongAnswer Q w` (the partition view as equivalence classes).
 * **§1.2** Dayal's solution — `IsExhaustivelyResolvable` is already
   the substrate's predicate; `Exh` here connects it to Fox's
@@ -82,23 +82,23 @@ locally. -/
 /-- @cite{fox-2018} (11): the **Exh-cell** of proposition `p` in
     question `Q`. Substrate primitive `exhCell` re-exported under
     Fox's notation. -/
-abbrev Exh (Q : Question W) (p : Set W) : Set W := exhCell Q p
+abbrev Exh (Q : Core.Question W) (p : Set W) : Set W := exhCell Q p
 
 /-! ### §1.1 Logical and contextual partitions (eq 3, eq 10) -/
 
 /-- @cite{fox-2018} (3): the **Logical Partition** of `Q`. Substrate
     primitive `exhaustifiedPartition` re-exported under Fox's notation. -/
-abbrev LogicalPartition (Q : Question W) : Set (Set W) :=
+abbrev LogicalPartition (Q : Core.Question W) : Set (Set W) :=
   exhaustifiedPartition Q
 
 /-- @cite{fox-2018} (10): the **Contextual Partition** of `Q` over
     context-set `A` — the Logical Partition cells intersected with `A`.
     Paper-specific variant; the substrate primitive `exhaustifiedPartition`
     is the unrestricted form. -/
-def ContextualPartition (Q : Question W) (A : Set W) : Set (Set W) :=
+def ContextualPartition (Q : Core.Question W) (A : Set W) : Set (Set W) :=
   {C | ∃ w ∈ A, C = strongAnswer Q w ∩ A}
 
-theorem mem_ContextualPartition (Q : Question W) (A : Set W) (C : Set W) :
+theorem mem_ContextualPartition (Q : Core.Question W) (A : Set W) (C : Set W) :
     C ∈ ContextualPartition Q A ↔ ∃ w ∈ A, C = strongAnswer Q w ∩ A :=
   Iff.rfl
 
@@ -107,17 +107,17 @@ theorem mem_ContextualPartition (Q : Question W) (A : Set W) (C : Set W) :
 /-- @cite{fox-2018} (19): **Cell Identification (CI)** — every cell
     in `Partition_C(Q, A)` is identifiable by some `Exh(Q, p)`
     intersected with `A`. -/
-def CellIdentification (Q : Question W) (A : Set W) : Prop :=
+def CellIdentification (Q : Core.Question W) (A : Set W) : Prop :=
   ∀ C ∈ ContextualPartition Q A, ∃ p ∈ alt Q, C = Exh Q p ∩ A
 
 /-- @cite{fox-2018} (20b): **Non-Vacuity (NV)** — every alternative
     `p ∈ alt Q` identifies *some* cell of `Partition_C(Q, A)`. -/
-def NonVacuity (Q : Question W) (A : Set W) : Prop :=
+def NonVacuity (Q : Core.Question W) (A : Set W) : Prop :=
   ∀ p ∈ alt Q, Exh Q p ∩ A ≠ ∅ → ∃ C ∈ ContextualPartition Q A, C = Exh Q p ∩ A
 
-/-- @cite{fox-2018} (20): **Question Partition Matching (QPM)** —
+/-- @cite{fox-2018} (20): **Core.Question Partition Matching (QPM)** —
     `Q` and the context-set `A` jointly satisfy CI and NV. -/
-def QPM (Q : Question W) (A : Set W) : Prop :=
+def QPM (Q : Core.Question W) (A : Set W) : Prop :=
   CellIdentification Q A ∧ NonVacuity Q A
 
 /-! ### §1.2 Dayal's EP ↔ CI (the central bridge)
@@ -133,7 +133,7 @@ Q w` for every `w ∈ A` implies `CellIdentification Q A`. -/
     contextual partition is `Exh`-identifiable. The substrate
     counterpart of the Dayal-EP-implies-CI direction. -/
 theorem cellIdentification_of_isExhaustivelyResolvable
-    (Q : Question W) (A : Set W)
+    (Q : Core.Question W) (A : Set W)
     (hEP : ∀ w ∈ A, IsExhaustivelyResolvable Q w) :
     CellIdentification Q A := by
   intro C hC
@@ -183,7 +183,7 @@ sense (`Resolves σ Q` succeeds for some non-maximal `p`). -/
     p₂` together with maximality of both alts witnesses the
     incomparability that defeats EP. -/
 theorem resolves_can_succeed_when_EP_fails
-    (Q : Question W) (w : W) (σ p₁ p₂ : Set W)
+    (Q : Core.Question W) (w : W) (σ p₁ p₂ : Set W)
     (hp₁ : p₁ ∈ alt Q) (hp₂ : p₂ ∈ alt Q)
     (hwp₁ : w ∈ p₁) (hwp₂ : w ∈ p₂)
     (hp₁p₂ : ¬ p₁ ⊆ p₂)

@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Highlighting
 import Linglib.Theories.Discourse.EvidentialIllocution
 import Linglib.Features.Evidentiality
 import Linglib.Core.Discourse.Roles
-import Linglib.Core.Question.Hamblin
+import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Phenomena.Verum.Basic
 import Linglib.Phenomena.Verum.Studies.Hohle1992
 import Linglib.Phenomena.Questions.Studies.RomeroHan2004
@@ -70,7 +70,7 @@ Three empirical signatures:
 | `Theories/Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
 | `Theories/Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
 | `Features/Evidentiality` | `EvidentialSource` (`direct`, `hearsay`, `inference`) |
-| `Core/Question/Hamblin` | `Question.polar` for the polar QUD |
+| `Theories/Semantics/Questions/Hamblin` | `Core.Question.polar` for the polar QUD |
 
 ## Methodological note
 

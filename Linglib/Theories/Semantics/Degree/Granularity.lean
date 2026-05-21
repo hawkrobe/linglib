@@ -1,11 +1,11 @@
 import Mathlib.Order.Basic
 import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.PrecisionProjection
+import Linglib.Theories.Semantics.Questions.Partition.QUD
+import Linglib.Theories.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
-import Linglib.Core.Question.Partition.Lattice
+import Linglib.Theories.Semantics.Questions.Partition.Lattice
 
 /-!
 # Granularity-Sensitive Degree Semantics @cite{thomas-deo-2020}
@@ -213,7 +213,7 @@ theorem just_rules_out (p : G → D → Prop) (finest g : G)
 end JustTheory
 
 -- ════════════════════════════════════════════════════
--- § 4. Granularity–Question Bridge
+-- § 4. Granularity–Core.Question Bridge
 -- ════════════════════════════════════════════════════
 
 /-! ### Grain width → partition → question width

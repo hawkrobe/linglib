@@ -1,4 +1,4 @@
-import Linglib.Core.Question.Basic
+import Linglib.Theories.Semantics.Questions.Basic
 
 /-!
 # QUD Stack: Ordered Accepted-Unanswered Questions
@@ -15,8 +15,6 @@ Parameterized by `Core.Question W` — the Set-based inquisitive-content lattice
 
 namespace Discourse
 
-open Core
-
 /-- A QUD stack: ordered list of accepted, unanswered questions.
     The head is the immediate QUD (most recently accepted question).
 
@@ -25,7 +23,7 @@ open Core
     at m, but which have not yet been answered." The stack ordering
     reflects discourse subordination — subquestions pushed on top. -/
 structure QUDStack (W : Type*) where
-  questions : List (Question W)
+  questions : List (Core.Question W)
 
 namespace QUDStack
 
@@ -35,11 +33,11 @@ variable {W : Type*}
 def empty : QUDStack W := ⟨[]⟩
 
 /-- The immediate QUD: the most recently accepted, unanswered question. -/
-def immediateQUD (s : QUDStack W) : Option (Question W) := s.questions.head?
+def immediateQUD (s : QUDStack W) : Option (Core.Question W) := s.questions.head?
 
 /-- Accept a new question: push onto the stack.
     @cite{roberts-2012}: "a subquestion of QUD is pushed onto QUD." -/
-def push (s : QUDStack W) (q : Question W) : QUDStack W := ⟨q :: s.questions⟩
+def push (s : QUDStack W) (q : Core.Question W) : QUDStack W := ⟨q :: s.questions⟩
 
 /-- Answer the immediate QUD: pop from the stack.
     @cite{roberts-2012}: "an answer to QUD pops QUD off the stack." -/

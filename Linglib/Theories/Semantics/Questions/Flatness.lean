@@ -1,4 +1,4 @@
-import Linglib.Core.Question.Basic
+import Linglib.Theories.Semantics.Questions.Basic
 import Linglib.Core.Logic.Team.Closure
 import Mathlib.Order.UpperLower.Basic
 import Mathlib.Order.SupClosed

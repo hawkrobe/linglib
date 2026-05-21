@@ -1,7 +1,7 @@
 /-
 # The Interrogative Left Periphery
 
-Question meaning is built at three points in the left periphery:
+Core.Question meaning is built at three points in the left periphery:
 
     [SAP SA_ASK [PerspectiveP PRO Persp_CQ [CP C_±WH [TP...]]]]
 
@@ -16,9 +16,9 @@ This is DERIVED, not stipulated.
 
 -/
 
-import Linglib.Core.Question.Basic
-import Linglib.Core.Question.Partition.Cells
-import Linglib.Core.Question.Partition.Constructors
+import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Theories.Semantics.Questions.Partition.Cells
+import Linglib.Theories.Semantics.Questions.Partition.Constructors
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -249,7 +249,7 @@ theorem derived_class_matches_manual :
 PerspP introduces a not-at-issue presupposition: the perspectival center
 *possibly doesn't know* the answer to the question. We formalize this using
 `diaAt` (existential modal, ◇) from `Doxastic.lean` and `QUD.ans` from
-`Core/Question/Partition/Cells.lean`.
+`Theories/Semantics/Questions/Partition/Cells.lean`.
 -/
 
 open Semantics.Attitudes.Doxastic
@@ -260,7 +260,7 @@ open Semantics.Questions
 
     This is PerspP's not-at-issue presupposition (@cite{dayal-2025}: §2.3).
     Uses `diaAt` from Doxastic.lean and `QUD.ans` from
-    Core/Question/Partition/Cells.lean. -/
+    Theories/Semantics/Questions/Partition/Cells.lean. -/
 def possibleIgnorance {W E : Type*} (R : AccessRel W E) (center : E)
     (Q : GSQuestion W) (w : W) (worlds : List W) : Prop :=
   diaAt R center w worlds (fun w' => QUD.ans Q w w' = false)

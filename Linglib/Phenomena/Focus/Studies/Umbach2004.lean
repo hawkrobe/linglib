@@ -1,9 +1,9 @@
 import Linglib.Features.InformationStructure
 import Linglib.Theories.Semantics.Focus.Comparability
 import Linglib.Core.Discourse.Coherence
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.PrecisionProjection
-import Linglib.Core.Question.Relevance
+import Linglib.Theories.Semantics.Questions.Partition.QUD
+import Linglib.Theories.Semantics.Questions.PrecisionProjection
+import Linglib.Theories.Semantics.Questions.Relevance
 import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy

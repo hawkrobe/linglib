@@ -1,7 +1,7 @@
 import Linglib.Theories.Dialogue.KOS.InquiryCycle
 import Linglib.Theories.Dialogue.KOS.Genre
 import Linglib.Theories.Dialogue.KOS.Grounding
-import Linglib.Core.Question.Partition.QUD
+import Linglib.Theories.Semantics.Questions.Partition.QUD
 
 /-!
 # KOS: Worked Examples

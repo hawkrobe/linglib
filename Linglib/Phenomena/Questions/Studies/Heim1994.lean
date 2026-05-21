@@ -1,4 +1,4 @@
-import Linglib.Core.Question.Basic
+import Linglib.Theories.Semantics.Questions.Basic
 import Linglib.Theories.Semantics.Questions.Resolution
 import Linglib.Theories.Semantics.Questions.Exhaustivity
 
@@ -60,7 +60,7 @@ contexts).
   identical with themselves" and (24) "John knows which students live
   with their actual spouses" — divergence cases requiring intensional
   CN binding; deferred.
-* **§8** Structured propositions — requires extending the `Question`
+* **§8** Structured propositions — requires extending the `Core.Question`
   type with CN-meaning ↔ atomic individual structure; deferred.
 -/
 
@@ -76,22 +76,22 @@ variable {W : Type*}
 /-- @cite{heim-1994} (15): the **answer-in-the-first-sense** is the
     Karttunen intersection `∩⟦α⟧K(w)`. Identified with the substrate's
     `weakAnswer`. -/
-def heimAns1 (Q : Question W) (w : W) : Set W :=
+def heimAns1 (Q : Core.Question W) (w : W) : Set W :=
   weakAnswer Q w
 
-@[simp] theorem heimAns1_eq_weakAnswer (Q : Question W) (w : W) :
+@[simp] theorem heimAns1_eq_weakAnswer (Q : Core.Question W) (w : W) :
     heimAns1 Q w = weakAnswer Q w := rfl
 
 /-- @cite{heim-1994} (16): the **answer-in-the-second-sense** is the
     set of worlds whose ans₁-image equals `w`'s. The reflective
     formulation of strong exhaustivity. -/
-def heimAns2 (Q : Question W) (w : W) : Set W :=
+def heimAns2 (Q : Core.Question W) (w : W) : Set W :=
   {w' | heimAns1 Q w' = heimAns1 Q w}
 
-@[simp] theorem mem_heimAns2 (Q : Question W) (w v : W) :
+@[simp] theorem mem_heimAns2 (Q : Core.Question W) (w v : W) :
     v ∈ heimAns2 Q w ↔ weakAnswer Q v = weakAnswer Q w := Iff.rfl
 
-theorem heimAns2_self_mem (Q : Question W) (w : W) :
+theorem heimAns2_self_mem (Q : Core.Question W) (w : W) :
     w ∈ heimAns2 Q w := rfl
 
 /-! ### §6 bridge: `strongAnswer ⊆ heimAns2`
@@ -106,7 +106,7 @@ intersection — direct. -/
 
 /-- Heim's §6 inclusion: if `v` decides every alternative the same
     way as `w`, then `v` and `w` have the same Karttunen intersection. -/
-theorem strongAnswer_subset_heimAns2 (Q : Question W) (w : W) :
+theorem strongAnswer_subset_heimAns2 (Q : Core.Question W) (w : W) :
     strongAnswer Q w ⊆ heimAns2 Q w := by
   intro v hv
   show weakAnswer Q v = weakAnswer Q w
@@ -138,11 +138,11 @@ content as `weakAnswer`. -/
 
 /-- @cite{heim-1994} §1 (4): the *simplified* Karttunen content of
     `know Q w` is `weakAnswer Q w` — what the agent must believe. -/
-def simplifiedKarttunenContent (Q : Question W) (w : W) : Set W :=
+def simplifiedKarttunenContent (Q : Core.Question W) (w : W) : Set W :=
   weakAnswer Q w
 
 @[simp] theorem simplifiedKarttunenContent_eq_weakAnswer
-    (Q : Question W) (w : W) :
+    (Q : Core.Question W) (w : W) :
     simplifiedKarttunenContent Q w = weakAnswer Q w := rfl
 
 /-! ### §5: G&S strong answer
@@ -153,14 +153,14 @@ this; we re-export under the paper's vocabulary for cross-reference. -/
 
 /-- @cite{heim-1994} §5 / @cite{groenendijk-stokhof-1984}: the G&S
     answer is the substrate's `strongAnswer`. -/
-def gsAnswer (Q : Question W) (w : W) : Set W :=
+def gsAnswer (Q : Core.Question W) (w : W) : Set W :=
   strongAnswer Q w
 
-@[simp] theorem gsAnswer_eq_strongAnswer (Q : Question W) (w : W) :
+@[simp] theorem gsAnswer_eq_strongAnswer (Q : Core.Question W) (w : W) :
     gsAnswer Q w = strongAnswer Q w := rfl
 
 /-- @cite{heim-1994} §6: G&S answer is contained in Heim's ans₂. -/
-theorem gsAnswer_subset_heimAns2 (Q : Question W) (w : W) :
+theorem gsAnswer_subset_heimAns2 (Q : Core.Question W) (w : W) :
     gsAnswer Q w ⊆ heimAns2 Q w :=
   strongAnswer_subset_heimAns2 Q w
 

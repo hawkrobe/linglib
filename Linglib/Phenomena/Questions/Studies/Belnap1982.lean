@@ -1,4 +1,4 @@
-import Linglib.Core.Question.Partition.Constructors
+import Linglib.Theories.Semantics.Questions.Partition.Constructors
 import Linglib.Phenomena.Questions.Studies.GroenendijkStokhof1984
 
 /-!

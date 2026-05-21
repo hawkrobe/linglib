@@ -1,4 +1,4 @@
-import Linglib.Core.Question.Hamblin
+import Linglib.Theories.Semantics.Questions.Hamblin
 
 /-!
 # Question — singleton-alternative predicate

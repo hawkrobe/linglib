@@ -1,5 +1,5 @@
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.Partition.Lattice
+import Linglib.Theories.Semantics.Questions.Partition.QUD
+import Linglib.Theories.Semantics.Questions.Partition.Lattice
 
 /-!
 # Binary Partitions and P-Preserving Coarsenings

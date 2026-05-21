@@ -1,4 +1,4 @@
-import Linglib.Core.Question.Hamblin
+import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Core.Probability.Finite
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.SymmDiff

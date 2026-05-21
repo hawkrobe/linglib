@@ -1,11 +1,11 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Powerset
-import Linglib.Core.Question.Partition.QUD
-import Linglib.Core.Question.PrecisionProjection
+import Linglib.Theories.Semantics.Questions.Partition.QUD
+import Linglib.Theories.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Logic.Truth3
-import Linglib.Theories.Semantics.Supervaluation.Basic
+import Linglib.Core.Logic.Duality
 
 /-!
 # Plural Distributivity and Non-Maximality
@@ -198,83 +198,45 @@ instance noneSatisfy.instDecidable (P : Atom → W → Prop)
 -- Part 2: Trivalent Truth Values (Core.Duality.Truth3)
 
 open Core.Duality (Truth3)
-open Semantics.Supervaluation (SpecSpace superTrue)
 
 /--
 The trivalent truth value for plural predication "the Xs are P".
 
-- TRUE: all atoms satisfy P
-- FALSE: no atoms satisfy P
-- GAP: some but not all satisfy P
+- TRUE: all atoms satisfy P (vacuously on `∅`)
+- FALSE: nonempty plurality with no atoms satisfying P
+- GAP: witnesses on both sides
 
-This is the core of @cite{kriz-spector-2021} Section 2, instantiated
-as a supervaluation over the atoms of the plurality: each atom is a
-"specification point", and predication is super-true iff the predicate
-holds at all of them.
--/
-def pluralTruthValue (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) : Truth3 :=
-  if h : x.Nonempty then
-    superTrue (fun a => P a w) ⟨x, h⟩
-  else .true  -- empty plurality: vacuously true
+This is the core of @cite{kriz-spector-2021} Section 2: predication
+on a plurality is super-true iff the predicate holds at every atom,
+super-false iff it fails at every atom, gap otherwise. The
+@cite{van-fraassen-1966} supervaluation framing (each atom as a
+"specification point", per `Semantics.Supervaluation.superTrue`) is
+documented by `Semantics.Supervaluation.superTrue_eq_dist`. -/
+@[reducible] def pluralTruthValue (P : Atom → W → Prop)
+    [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) : Truth3 :=
+  Core.Duality.dist x (fun a => P a w)
 
 /-- pluralTruthValue is .true iff allSatisfy holds -/
 @[simp]
 theorem pluralTruthValue_eq_true_iff (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
-    pluralTruthValue P x w = .true ↔ allSatisfy P x w := by
-  unfold pluralTruthValue allSatisfy
-  by_cases h : x.Nonempty
-  · rw [dif_pos h, Semantics.Supervaluation.superTrue_true_iff]
-  · rw [dif_neg h]
-    have hx : x = ∅ := Finset.not_nonempty_iff_eq_empty.mp h
-    simp [hx]
+    pluralTruthValue P x w = .true ↔ allSatisfy P x w :=
+  Core.Duality.dist_eq_true_iff x _
 
 /-- pluralTruthValue is .false iff noneSatisfy holds (and x is nonempty) -/
 @[simp]
 theorem pluralTruthValue_eq_false_iff (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
-    pluralTruthValue P x w = .false ↔ x.Nonempty ∧ noneSatisfy P x w := by
-  unfold pluralTruthValue noneSatisfy
-  by_cases h : x.Nonempty
-  · rw [dif_pos h, Semantics.Supervaluation.superTrue_false_iff]
-    exact ⟨fun hf => ⟨h, hf⟩, fun ⟨_, hf⟩ => hf⟩
-  · rw [dif_neg h]
-    refine ⟨fun hf => Truth3.noConfusion hf, fun ⟨h', _⟩ => absurd h' h⟩
+    pluralTruthValue P x w = .false ↔ x.Nonempty ∧ noneSatisfy P x w :=
+  Core.Duality.dist_eq_false_iff x _
 
 /-- pluralTruthValue is .indet iff witnesses on both sides exist -/
 @[simp]
 theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .indet ↔
-    (∃ a ∈ x, P a w) ∧ (∃ a ∈ x, ¬ P a w) := by
-  unfold pluralTruthValue
-  by_cases h : x.Nonempty
-  · rw [dif_pos h, Semantics.Supervaluation.superTrue_indet_iff]
-  · rw [dif_neg h]
-    have hx : x = ∅ := Finset.not_nonempty_iff_eq_empty.mp h
-    refine ⟨fun hf => Truth3.noConfusion hf, fun ⟨⟨a, ha, _⟩, _⟩ => ?_⟩
-    rw [hx] at ha; exact absurd ha (Finset.notMem_empty _)
-
-/-- **`pluralTruthValue` is `Core.Duality.dist` on the plurality.**
-
-    Bridge from Križ-Spector trivalent plural predication to the canonical
-    trivalent classifier. Both are Fine super-truth (van Fraassen 1966
-    supervaluation) — `pluralTruthValue` parameterized over an atom-world
-    predicate, `dist` over an arbitrary `Finset α + (α → Prop)`. The
-    nonempty case routes through `superTrue_eq_dist`; the empty case
-    matches because both give `.true` (vacuous super-truth). -/
-theorem pluralTruthValue_eq_dist (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
-    (x : Finset Atom) (w : W) :
-    pluralTruthValue P x w = Core.Duality.dist x (fun a => P a w) := by
-  unfold pluralTruthValue
-  by_cases h : x.Nonempty
-  · rw [dif_pos h]
-    exact Semantics.Supervaluation.superTrue_eq_dist (fun a => P a w) ⟨x, h⟩
-  · rw [dif_neg h]
-    have hx : x = ∅ := Finset.not_nonempty_iff_eq_empty.mp h
-    subst hx
-    exact (Core.Duality.dist_empty _).symm
+    (∃ a ∈ x, P a w) ∧ (∃ a ∈ x, ¬ P a w) :=
+  Core.Duality.dist_eq_indet_iff x _
 
 /-- If all satisfy P, then none satisfy ¬P -/
 theorem allSatisfy_imp_noneSatisfy_neg (P : Atom → W → Prop)

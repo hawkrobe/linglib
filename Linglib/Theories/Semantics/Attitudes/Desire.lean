@@ -3,8 +3,8 @@ import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.SimilarityOrdering
-import Linglib.Core.Question.Hamblin
-import Linglib.Core.Question.Partition.Basic
+import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Partition.Basic
 import Linglib.Core.Agent.DecisionTheory
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
@@ -143,7 +143,7 @@ def propositionOrdering (GS : List (DecProp W)) :
 abbrev undominatedAnswers (GS answers : List (DecProp W)) : List (DecProp W) :=
   (propositionOrdering GS).undominated answers
 
-/-! ## Question-relative belief (paper §3.3)
+/-! ## Core.Question-relative belief (paper §3.3)
 
 Q_c-Bel_S = the cells of Q_c compatible with S's beliefs. -/
 
@@ -313,7 +313,7 @@ evaluation; we expose them as a `PrProp W` for uniformity with
 linglib's presupposition infrastructure, with the world argument
 suppressed. -/
 
-/-- Question-based `want` as a partial proposition (`Core.PrProp`):
+/-- Core.Question-based `want` as a partial proposition (`Core.PrProp`):
     presupposition = full definedness; assertion = question-based truth. -/
 def wantPrProp (belS : Set W) [DecidablePred belS]
     (GS naturalProps answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
@@ -492,7 +492,7 @@ theorem wantVF_upward_monotonic (belS : Set W) [DecidablePred belS]
     wantVF belS GS q :=
   fun w hw hund => hpq w (h w hw hund)
 
-/-- Question-based `want` is **Strawson upward monotonic** (paper §4.2):
+/-- Core.Question-based `want` is **Strawson upward monotonic** (paper §4.2):
     `wantQuestionBased belS GS Q p`, `p ⊆ q`, and `q` considered
     relative to `Q` jointly imply `wantQuestionBased belS GS Q q`. The
     Considering presupposition is what blocks naive upward monotonicity
@@ -857,7 +857,7 @@ predicate corresponds to a property of the underlying
   answer to "p?".
 
 The `toQuestion` constructor lifts a `List (DecProp W)` to
-`Core.Question W` via `Question.ofList`. -/
+`Core.Question W` via `Core.Question.ofList`. -/
 
 /-- Lift a list of decidable cells to a `Core.Question W`. -/
 def toQuestion (answers : List (DecProp W)) : Core.Question W :=

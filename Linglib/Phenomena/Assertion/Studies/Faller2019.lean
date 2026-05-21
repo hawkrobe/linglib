@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Discourse.Roles
-import Linglib.Core.Question.Basic
+import Linglib.Theories.Semantics.Questions.Basic
 
 /-!
 # Faller (2019): The discourse commitments of illocutionary reportatives
@@ -27,7 +27,7 @@ when they don't immediately disagree.
 * `Core/Discourse/Roles.DiscourseRole` for binary speaker/addressee
   (Faller adds Goffman's animator/author/principal — see § Goffman roles
   below; if a second study consumes these they graduate to substrate).
-* `Core/Question/Basic.Question` is *not* directly used — Faller's
+* `Theories/Semantics/Questions/Basic.Core.Question` is *not* directly used — Faller's
   Table is a stack of pushed propositions (her T_i), simpler than
   the inquisitive substrate.
 

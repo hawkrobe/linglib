@@ -1,4 +1,4 @@
-import Linglib.Core.Question.Partition.QUD
+import Linglib.Theories.Semantics.Questions.Partition.QUD
 
 /-!
 # Partition Refinement Lattice

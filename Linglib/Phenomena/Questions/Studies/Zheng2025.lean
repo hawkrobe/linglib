@@ -2,7 +2,7 @@ import Linglib.Core.Word
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Theories.Semantics.Modality.Kernel
 import Linglib.Features.QParticleLayer
-import Linglib.Core.Question.Singleton
+import Linglib.Theories.Semantics.Questions.Singleton
 import Linglib.Phenomena.Questions.Studies.BhattDayal2020
 
 /-!
@@ -306,12 +306,12 @@ theorem nandao_kya_share_felicity (p : Set W) :
         (W := W) p := rfl
 
 -- ════════════════════════════════════════════════════════════════════════════
--- §5 — Integrated Felicity: §2 (Kernel-bias) ∧ §4 (Question-singleton)
+-- §5 — Integrated Felicity: §2 (Kernel-bias) ∧ §4 (Core.Question-singleton)
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-! Bridge §2 and §4. Nandao's full felicity has two independent layers:
 
-  - **Layer 1** (Question-level, §4): the sister content `Q : Core.Question World`
+  - **Layer 1** (Core.Question-level, §4): the sister content `Q : Core.Question World`
     is *singleton* — `alt Q = {p}` for some unique witness `p`. This is the
     @cite{bhatt-dayal-2020} eq. 23 presupposition: nandao requires a
     one-cell sister, not a two-cell Hamblin polar.

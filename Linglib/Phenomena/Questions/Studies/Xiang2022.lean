@@ -1,4 +1,4 @@
-import Linglib.Core.Question.Basic
+import Linglib.Theories.Semantics.Questions.Basic
 import Linglib.Theories.Semantics.Questions.Resolution
 import Linglib.Theories.Semantics.Questions.Exhaustivity
 
@@ -25,10 +25,10 @@ local-uniqueness in modalised singular *wh*-questions.
 | **Relativized Exhaustivity, `REP(w, M, [Q])`** (eq 91) | `RelExhPresupposition` here |
 | `ANS^S` / `ANS^P` (eq 27, 97)                  | `Exhaustivity.dayalAns` (singular case); plural needs the topical-property layer |
 
-The `Question W = LowerSet (Set W)` substrate captures the
+The `Core.Question W = LowerSet (Set W)` substrate captures the
 *propositional* side of Xiang's framework. The full §4.1 topical
 property layer (questions as functions from short answers `α : Type`
-to propositional answers `Set W`) requires extending the `Question`
+to propositional answers `Set W`) requires extending the `Core.Question`
 type to a paired `(ShortAns → Prop) × (... → Set W)` shape; we
 defer that lift and work with the propositional projection here.
 
@@ -52,7 +52,7 @@ defer that lift and work with the propositional projection here.
 
 ## What this file does NOT cover
 
-* §4.1.1 topical-property lift of `Question` (functions from short
+* §4.1.1 topical-property lift of `Core.Question` (functions from short
   answers to propositions).
 * §4.2 first-order/higher-order interpretation distinction; requires
   GQ-typed *wh*-traces (Spector 2008).
@@ -79,12 +79,12 @@ variable {W : Type*}
     other true alternative. Identified with the substrate's
     `IsStrongestTrueAnswer` (without Dayal's iota-uniqueness — Xiang
     follows Fox 2013 in dropping it). -/
-abbrev MaxI (Q : Question W) (w : W) (p : Set W) : Prop :=
+abbrev MaxI (Q : Core.Question W) (w : W) (p : Set W) : Prop :=
   IsStrongestTrueAnswer Q w p
 
 /-- @cite{xiang-2022} eq (96) modal-base-relative max-informativity.
     Identified with the substrate's `IsStrongestRelTrueAnswer`. -/
-abbrev MaxIRel (Q : Question W) (w : W) (M : Set W) (p : Set W) : Prop :=
+abbrev MaxIRel (Q : Core.Question W) (w : W) (M : Set W) (p : Set W) : Prop :=
   IsStrongestRelTrueAnswer Q w M p
 
 /-! ### §6.1 Dayal's EP relativised + RelExh (eq 90, 91)
@@ -104,11 +104,11 @@ demands a max-informative answer at *every accessible world*
 /-- @cite{xiang-2022} eq (90): Dayal's EP relativised to modal base
     `M`. Substrate identification: `relExh` from `Exhaustivity.lean`. -/
 def IsRelativelyExhaustivelyResolvable
-    (Q : Question W) (w : W) (M : Set W) : Prop :=
+    (Q : Core.Question W) (w : W) (M : Set W) : Prop :=
   ∃ p, MaxIRel Q w M p
 
 @[simp] theorem isRelativelyExhaustivelyResolvable_iff_relExh
-    (Q : Question W) (w : W) (M : Set W) :
+    (Q : Core.Question W) (w : W) (M : Set W) :
     IsRelativelyExhaustivelyResolvable Q w M ↔ relExh Q w M := Iff.rfl
 
 /-- @cite{xiang-2022} eq (91): **Relativized Exhaustivity (RelExh)**.
@@ -123,7 +123,7 @@ def IsRelativelyExhaustivelyResolvable
     RelExh is essentially "Dayal's EP holds at every accessible
     world that verifies some `Q`-alternative true at `w`". -/
 def RelExhPresupposition
-    (Q : Question W) (w : W) (M : Set W) : Prop :=
+    (Q : Core.Question W) (w : W) (M : Set W) : Prop :=
   ∀ w' ∈ M,
     (∃ p ∈ alt Q, w ∈ p ∧ w' ∈ p) →
     IsExhaustivelyResolvable Q w'
@@ -139,7 +139,7 @@ unique exhaustively-true answer relative to that world's perspective. -/
     presupposition is trivially satisfied — the `permits MS` half
     of @cite{xiang-2022} §6.2.1. -/
 theorem relExhPresupposition_of_pointwise_EP
-    (Q : Question W) (w : W) (M : Set W)
+    (Q : Core.Question W) (w : W) (M : Set W)
     (hEP : ∀ w' ∈ M, IsExhaustivelyResolvable Q w') :
     RelExhPresupposition Q w M := by
   intro w' hw'M _
@@ -160,7 +160,7 @@ dilemma by relativising the EP to a per-accessible-world basis. -/
     relative to a modal base where each accessible world has its own
     max-info answer. -/
 theorem relExh_resolves_dilemma_example
-    (Q : Question W) (w w₁ w₂ : W) (p₁ p₂ : Set W)
+    (Q : Core.Question W) (w w₁ w₂ : W) (p₁ p₂ : Set W)
     (hM : ({w₁, w₂} : Set W) ⊆ Set.univ)
     (hSTA1 : IsStrongestTrueAnswer Q w₁ p₁)
     (hSTA2 : IsStrongestTrueAnswer Q w₂ p₂) :
@@ -177,7 +177,7 @@ theorem relExh_resolves_dilemma_example
 /-- @cite{xiang-2022} (90)/(91) collapse: when the modal base is the
     singleton `{w}`, RelExh reduces to Dayal's standard EP at `w`. -/
 theorem relExhPresupposition_singleton_iff
-    (Q : Question W) (w : W) (hSelf : ∃ p ∈ alt Q, w ∈ p) :
+    (Q : Core.Question W) (w : W) (hSelf : ∃ p ∈ alt Q, w ∈ p) :
     RelExhPresupposition Q w {w} ↔ IsExhaustivelyResolvable Q w := by
   constructor
   · intro h

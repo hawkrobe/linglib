@@ -1,5 +1,5 @@
-import Linglib.Core.Question.Basic
-import Linglib.Core.Question.Hamblin
+import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Questions.Exhaustivity
 import Linglib.Theories.Semantics.Questions.Resolution
 
@@ -36,7 +36,7 @@ holds (`IsExhaustivelyResolvable`).
   per-world equivalence.
 * **§2.2.2 architectural move**: Dayal separates the truth requirement
   from question denotation. Captured by the substrate's
-  `Question`-vs-`trueAlternatives` split.
+  `Core.Question`-vs-`trueAlternatives` split.
 * **§2.3.4 EP empirical predictions**:
   - **(57a)**: cancelling EP with *no one* leaves the question itself
     well-formed (the EP fails *post hoc*; the question is felicitous).
@@ -69,27 +69,27 @@ variable {W : Type*}
 
 /-- @cite{dayal-2016} (48a): the **maximally informative true answer**,
     when defined. Identified with the substrate's `dayalAns`. -/
-noncomputable def AnsD (Q : Question W) (w : W) : Option (Set W) :=
+noncomputable def AnsD (Q : Core.Question W) (w : W) : Option (Set W) :=
   dayalAns Q w
 
-@[simp] theorem ansD_eq_dayalAns (Q : Question W) (w : W) :
+@[simp] theorem ansD_eq_dayalAns (Q : Core.Question W) (w : W) :
     AnsD Q w = dayalAns Q w := rfl
 
 /-- @cite{dayal-2016} (48b): **strong-exhaustivity bridge** — two
     worlds map to the same maximally-informative true answer. -/
-def AnsDHStrong (Q : Question W) (w w' : W) : Prop :=
+def AnsDHStrong (Q : Core.Question W) (w w' : W) : Prop :=
   AnsD Q w = AnsD Q w'
 
 /-- The **existential presupposition** of @cite{dayal-2016} (the iota
     definedness condition of (48a)) — at world `w`, the question `Q`
     has a unique strongest true alternative. -/
-def IsEPSatisfied (Q : Question W) (w : W) : Prop :=
+def IsEPSatisfied (Q : Core.Question W) (w : W) : Prop :=
   IsExhaustivelyResolvable Q w
 
-@[simp] theorem isEPSatisfied_iff (Q : Question W) (w : W) :
+@[simp] theorem isEPSatisfied_iff (Q : Core.Question W) (w : W) :
     IsEPSatisfied Q w ↔ IsExhaustivelyResolvable Q w := Iff.rfl
 
-theorem ansD_isSome_iff_EP (Q : Question W) (w : W) :
+theorem ansD_isSome_iff_EP (Q : Core.Question W) (w : W) :
     (AnsD Q w).isSome ↔ IsEPSatisfied Q w :=
   dayalAns_isSome_iff_EP Q w
 
@@ -112,7 +112,7 @@ view, not the question itself. -/
 /-- The Karttunen-style "set of true alternatives" is recovered from
     the Dayal-style architecture by applying the truth filter to
     `alt Q`. The substrate exposes this directly via `trueAlternatives`. -/
-theorem karttunen_view_eq_trueAlternatives (Q : Question W) (w : W) :
+theorem karttunen_view_eq_trueAlternatives (Q : Core.Question W) (w : W) :
     trueAlternatives Q w = {p ∈ alt Q | w ∈ p} := rfl
 
 /-! ### Polar questions: EP always satisfied -/
@@ -122,19 +122,19 @@ theorem karttunen_view_eq_trueAlternatives (Q : Question W) (w : W) :
     maximally-informative true answer. -/
 theorem polar_isEPSatisfied {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) (w : W) :
-    IsEPSatisfied (Question.polar p) w :=
+    IsEPSatisfied (Core.Question.polar p) w :=
   isExhaustivelyResolvable_polar_of_nontrivial hne hnu w
 
 /-- For a `p`-true world, `p` itself is a strongest true answer. -/
 theorem isStrongestTrueAnswer_polar_pos {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∈ p) :
-    IsStrongestTrueAnswer (Question.polar p) w p :=
+    IsStrongestTrueAnswer (Core.Question.polar p) w p :=
   isStrongestTrueAnswer_polar_of_pos hne hnu hwp
 
 /-- For a `p`-false world, `pᶜ` is a strongest true answer. -/
 theorem isStrongestTrueAnswer_polar_neg {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) {w : W} (hwp : w ∉ p) :
-    IsStrongestTrueAnswer (Question.polar p) w pᶜ :=
+    IsStrongestTrueAnswer (Core.Question.polar p) w pᶜ :=
   isStrongestTrueAnswer_polar_of_neg hne hnu hwp
 
 /-! ### §2.3.4 EP empirical predictions
@@ -152,7 +152,7 @@ view. -/
     alternative at `w`, the EP fails — the existence presupposition
     is the load-bearing condition that distinguishes Karttunen's
     truth-in-denotation from Dayal's truth-in-answerhood-operator. -/
-theorem ep_fails_when_no_true_alt (Q : Question W) (w : W)
+theorem ep_fails_when_no_true_alt (Q : Core.Question W) (w : W)
     (h : ∀ p ∈ alt Q, w ∉ p) :
     ¬ IsEPSatisfied Q w := by
   rintro ⟨p, hp, hwp, _⟩
@@ -166,7 +166,7 @@ theorem ep_fails_when_no_true_alt (Q : Question W) (w : W)
     `like_w(j, b)`. If John likes Mary AND Sue (atomic individuals,
     incomparable propositions), no single proposition entails the
     other; iota is undefined. -/
-theorem ep_fails_when_two_incomparable_true_alts (Q : Question W) (w : W)
+theorem ep_fails_when_two_incomparable_true_alts (Q : Core.Question W) (w : W)
     (p₁ p₂ : Set W)
     (hp₁ : p₁ ∈ alt Q) (hp₂ : p₂ ∈ alt Q)
     (hwp₁ : w ∈ p₁) (hwp₂ : w ∈ p₂)

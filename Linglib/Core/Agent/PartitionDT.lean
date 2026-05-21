@@ -1,5 +1,5 @@
-import Linglib.Core.Question.Partition.Lattice
-import Linglib.Core.Question.Partition.Cells
+import Linglib.Theories.Semantics.Questions.Partition.Lattice
+import Linglib.Theories.Semantics.Questions.Partition.Cells
 import Linglib.Core.Agent.DecisionTheory
 import Mathlib.Order.Partition.Finpartition
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -455,7 +455,7 @@ theorem blackwell_characterizes_refinement [DecidableEq M]
       {true, false}
       (by intro _; norm_num))
 
-/-! #### Question Utility Bridge
+/-! #### Core.Question Utility Bridge
 
 Connect Finset-based `questionUtility` (from `Core.DecisionTheory`) to
 Finset-based `partitionValue`. The algebraic identity:
