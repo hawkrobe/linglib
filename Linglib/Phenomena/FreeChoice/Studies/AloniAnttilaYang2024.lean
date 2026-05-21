@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.BSML.Defs
 import Linglib.Theories.Semantics.BSML.Properties
+import Linglib.Theories.Semantics.BSML.Bisimulation
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
@@ -70,12 +71,12 @@ BSMLEmpty omits `⨼`, union closure is preserved.
 
 ## Todo
 
-* §3 Expressive completeness — requires the state-bisimulation substrate
-  (`StateBisimulation`, bounded-bisimulation depth) that linglib does not
-  yet have. BSMLOr is expressively complete for bisimulation-invariant
-  state properties; BSMLEmpty for the union-closed ∩ bisimulation-
-  invariant fragment. See @cite{anttila-2025} Chapter 3 for the cleanest
-  exposition of bisimulation invariance in the BSML family.
+* §3.2 Expressive-completeness theorems — BSMLOr is expressively complete
+  for bisimulation-invariant state properties; BSMLEmpty for the
+  union-closed ∩ bisimulation-invariant fragment. The bisim-invariance
+  half is done (Theorem 3.8 above for both BSMLOr and BSMLEmpty); the
+  converse direction requires Hintikka formulas for states (Definition
+  3.10) and finite atom sets. See @cite{anttila-2025} Chapter 3.
 * §4 Natural-deduction axiomatisations for each of BSML, BSMLOr,
   BSMLEmpty. Soundness + completeness theorems; @cite{anttila-2025}
   Chapter 4 has the updated proofs.
@@ -94,9 +95,10 @@ BSMLEmpty omits `⨼`, union closure is preserved.
 
 namespace AloniAnttilaYang2024
 
-variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
+variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
+variable {Atom : Type*}
 
-open Semantics.BSML (BSMLModel BSMLFormula)
+open Semantics.BSML (BSMLModel BSMLFormula StateBisim WorldBisim)
 
 /-! ### BSMLOr — BSML with global disjunction `⨼` -/
 
@@ -188,6 +190,257 @@ theorem isBilateral (M : BSMLModel W Atom) :
     Core.Logic.Bilateral.IsBilateral
       (support M) (antiSupport M) Formula.neg :=
   Core.Logic.Bilateral.IsBilateral.of_iff (support_neg M) (antiSupport_neg M)
+
+/-! ### Modal depth and bisim invariance for BSMLOr (Theorem 3.8) -/
+
+/-- Modal depth of a `BSMLOr.Formula`: `bot`, atoms, `ne` are 0; `neg`
+    preserves depth; `conj`, `disj`, `gdisj` take the max; `poss`
+    increments. -/
+def Formula.modalDepth : Formula Atom → ℕ
+  | .atom _ => 0
+  | .bot => 0
+  | .ne => 0
+  | .neg ψ => ψ.modalDepth
+  | .conj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
+  | .disj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
+  | .gdisj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
+  | .poss ψ => ψ.modalDepth + 1
+
+/-- **Theorem 3.8 of @cite{aloni-anttila-yang-2024} for BSMLOr**: if
+    `s ⇌_k s'` and `φ : Formula Atom` has modal depth `≤ k`, then
+    `eval M b φ s ↔ eval M' b φ s'` for both polarities. -/
+theorem bisim_invariant_eval (φ : Formula Atom) :
+    ∀ {k : ℕ}, φ.modalDepth ≤ k →
+    ∀ {M : BSMLModel W Atom} {M' : BSMLModel W' Atom}
+      {s : Finset W} {s' : Finset W'},
+    StateBisim k M s M' s' →
+    ∀ b : Bool, eval M b φ s ↔ eval M' b φ s' := by
+  induction φ with
+  | atom p =>
+    intro k _ M M' s s' hbisim b
+    cases b
+    · constructor
+      · intro h w' hw'
+        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+        have hval : M.val p w = M'.val p w' := match k, hbw with
+          | 0, h => h p
+          | _ + 1, ⟨h, _, _⟩ => h p
+        rw [← hval]; exact h w hw
+      · intro h w hw
+        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+        have hval : M.val p w = M'.val p w' := match k, hbw with
+          | 0, h => h p
+          | _ + 1, ⟨h, _, _⟩ => h p
+        rw [hval]; exact h w' hw'
+    · constructor
+      · intro h w' hw'
+        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+        have hval : M.val p w = M'.val p w' := match k, hbw with
+          | 0, h => h p
+          | _ + 1, ⟨h, _, _⟩ => h p
+        rw [← hval]; exact h w hw
+      · intro h w hw
+        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+        have hval : M.val p w = M'.val p w' := match k, hbw with
+          | 0, h => h p
+          | _ + 1, ⟨h, _, _⟩ => h p
+        rw [hval]; exact h w' hw'
+  | bot =>
+    intro k _ M M' s s' hbisim b
+    cases b
+    · -- antiSupport bot: True
+      exact ⟨fun _ => trivial, fun _ => trivial⟩
+    · -- support bot: s = ∅. Preserved under state bisim because both
+      -- directions imply each other (bisim has back/forth).
+      constructor
+      · intro hs
+        apply Finset.eq_empty_of_forall_notMem
+        intro w' hw'
+        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
+        exact absurd hw (hs ▸ Finset.notMem_empty w)
+      · intro hs'
+        apply Finset.eq_empty_of_forall_notMem
+        intro w hw
+        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
+        exact absurd hw' (hs' ▸ Finset.notMem_empty w')
+  | ne =>
+    intro k _ M M' s s' hbisim b
+    cases b
+    · -- antiSupport ne: s = ∅
+      constructor
+      · intro h
+        apply Finset.eq_empty_of_forall_notMem
+        intro w' hw'
+        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
+        exact absurd hw (h ▸ Finset.notMem_empty w)
+      · intro h
+        apply Finset.eq_empty_of_forall_notMem
+        intro w hw
+        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
+        exact absurd hw' (h ▸ Finset.notMem_empty w')
+    · -- support ne: s.Nonempty
+      constructor
+      · rintro ⟨w, hw⟩
+        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
+        exact ⟨w', hw'⟩
+      · rintro ⟨w', hw'⟩
+        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
+        exact ⟨w, hw⟩
+  | neg ψ ih =>
+    intro k hd M M' s s' hbisim b
+    cases b
+    · exact ih hd hbisim true
+    · exact ih hd hbisim false
+  | conj ψ₁ ψ₂ ih₁ ih₂ =>
+    intro k hd M M' s s' hbisim b
+    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
+    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    cases b
+    · -- antiSupport (conj): split-existential, use splitPreserve
+      constructor
+      · rintro ⟨t, u, hsplit, h₁, h₂⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
+          hbisim.splitPreserve hsplit
+            (Core.Logic.Team.splitsAs_left_subset hsplit)
+            (Core.Logic.Team.splitsAs_right_subset hsplit)
+        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt false).mp h₁,
+               (ih₂ hd₂ hbu false).mp h₂⟩
+      · rintro ⟨t', u', hsplit', h₁, h₂⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
+          StateBisim.splitPreserve hbisim.symm hsplit'
+            (Core.Logic.Team.splitsAs_left_subset hsplit')
+            (Core.Logic.Team.splitsAs_right_subset hsplit')
+        refine ⟨t, u, hsplit, ?_, ?_⟩
+        · exact (ih₁ hd₁ hbt.symm false).mpr h₁
+        · exact (ih₂ hd₂ hbu.symm false).mpr h₂
+    · -- support (conj) = support ψ₁ ∧ support ψ₂
+      constructor
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim true).mp h₁, (ih₂ hd₂ hbisim true).mp h₂⟩
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim true).mpr h₁, (ih₂ hd₂ hbisim true).mpr h₂⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ =>
+    intro k hd M M' s s' hbisim b
+    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
+    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    cases b
+    · -- antiSupport (disj) = antiSupport ψ₁ ∧ antiSupport ψ₂
+      constructor
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim false).mp h₁, (ih₂ hd₂ hbisim false).mp h₂⟩
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim false).mpr h₁, (ih₂ hd₂ hbisim false).mpr h₂⟩
+    · -- support (disj): split-existential, use splitPreserve
+      constructor
+      · rintro ⟨t, u, hsplit, h₁, h₂⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
+          hbisim.splitPreserve hsplit
+            (Core.Logic.Team.splitsAs_left_subset hsplit)
+            (Core.Logic.Team.splitsAs_right_subset hsplit)
+        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt true).mp h₁,
+               (ih₂ hd₂ hbu true).mp h₂⟩
+      · rintro ⟨t', u', hsplit', h₁, h₂⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
+          StateBisim.splitPreserve hbisim.symm hsplit'
+            (Core.Logic.Team.splitsAs_left_subset hsplit')
+            (Core.Logic.Team.splitsAs_right_subset hsplit')
+        refine ⟨t, u, hsplit, ?_, ?_⟩
+        · exact (ih₁ hd₁ hbt.symm true).mpr h₁
+        · exact (ih₂ hd₂ hbu.symm true).mpr h₂
+  | gdisj ψ₁ ψ₂ ih₁ ih₂ =>
+    -- NEW CASE for BSMLOr: support .gdisj = support ψ₁ ∨ support ψ₂ (team-level),
+    -- antiSupport .gdisj = antiSupport ψ₁ ∧ antiSupport ψ₂.
+    intro k hd M M' s s' hbisim b
+    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
+    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    cases b
+    · -- antiSupport: ∧, use IH for both halves
+      constructor
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim false).mp h₁, (ih₂ hd₂ hbisim false).mp h₂⟩
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim false).mpr h₁, (ih₂ hd₂ hbisim false).mpr h₂⟩
+    · -- support: ∨, use IH on each disjunct
+      constructor
+      · rintro (h | h)
+        · exact Or.inl ((ih₁ hd₁ hbisim true).mp h)
+        · exact Or.inr ((ih₂ hd₂ hbisim true).mp h)
+      · rintro (h | h)
+        · exact Or.inl ((ih₁ hd₁ hbisim true).mpr h)
+        · exact Or.inr ((ih₂ hd₂ hbisim true).mpr h)
+  | poss ψ ih =>
+    intro k hd M M' s s' hbisim b
+    obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := by
+      cases k with
+      | zero => exact absurd hd (by simp [Formula.modalDepth])
+      | succ k => exact ⟨k, rfl⟩
+    have hdψ : ψ.modalDepth ≤ k := by
+      have := hd
+      simp only [Formula.modalDepth] at this
+      omega
+    cases b
+    · -- antiSupport (poss ψ): ∀ w ∈ s, antiSupport ψ (M.access w)
+      constructor
+      · intro h w' hw'
+        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
+          obtain ⟨_, hforth, hback⟩ := hbw
+          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
+        exact (ih hdψ hacc false).mp (h w hw)
+      · intro h w hw
+        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
+          obtain ⟨_, hforth, hback⟩ := hbw
+          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
+        exact (ih hdψ hacc false).mpr (h w' hw')
+    · -- support (poss ψ): ∀ w ∈ s, ∃ t ⊆ R[w], t.Nonempty ∧ support ψ t
+      constructor
+      · intro h w' hw'
+        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+        obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
+        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
+          obtain ⟨_, hforth, hback⟩ := hbw
+          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
+        classical
+        let t' : Finset W' :=
+          (M'.access w').filter (fun v' => ∃ v ∈ t, WorldBisim k M v M' v')
+        refine ⟨t', ?_, ?_, ?_⟩
+        · intro v' hv'; exact (Finset.mem_filter.mp hv').1
+        · obtain ⟨v, hv⟩ := htne
+          obtain ⟨v', hv', hbv⟩ := hacc.1 v (htsub hv)
+          exact ⟨v', Finset.mem_filter.mpr ⟨hv', v, hv, hbv⟩⟩
+        · have htbisim : StateBisim k M t M' t' := by
+            refine ⟨?_, ?_⟩
+            · intro v hv
+              obtain ⟨v', hv', hbv⟩ := hacc.1 v (htsub hv)
+              exact ⟨v', Finset.mem_filter.mpr ⟨hv', v, hv, hbv⟩, hbv⟩
+            · intro v' hv'
+              obtain ⟨_, v, hv, hbv⟩ := Finset.mem_filter.mp hv'
+              exact ⟨v, hv, hbv⟩
+          exact (ih hdψ htbisim true).mp htsupp
+      · intro h w hw
+        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+        obtain ⟨t', htsub, htne, htsupp⟩ := h w' hw'
+        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
+          obtain ⟨_, hforth, hback⟩ := hbw
+          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
+        classical
+        let t : Finset W :=
+          (M.access w).filter (fun v => ∃ v' ∈ t', WorldBisim k M v M' v')
+        refine ⟨t, ?_, ?_, ?_⟩
+        · intro v hv; exact (Finset.mem_filter.mp hv).1
+        · obtain ⟨v', hv'⟩ := htne
+          obtain ⟨v, hv, hbv⟩ := hacc.2 v' (htsub hv')
+          exact ⟨v, Finset.mem_filter.mpr ⟨hv, v', hv', hbv⟩⟩
+        · have htbisim : StateBisim k M t M' t' := by
+            refine ⟨?_, ?_⟩
+            · intro v hv
+              obtain ⟨_, v', hv', hbv⟩ := Finset.mem_filter.mp hv
+              exact ⟨v', hv', hbv⟩
+            · intro v' hv'
+              obtain ⟨v, hv, hbv⟩ := hacc.2 v' (htsub hv')
+              exact ⟨v, Finset.mem_filter.mpr ⟨hv, v', hv', hbv⟩, hbv⟩
+          exact (ih hdψ htbisim true).mpr htsupp
 
 end BSMLOr
 
@@ -373,6 +626,249 @@ private theorem support_and_antiSupport_supClosed
 theorem supClosed_support (M : BSMLModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } :=
   fun _ ha _ hb => (support_and_antiSupport_supClosed φ M).1 _ _ ha hb
+
+/-! ### Modal depth and bisim invariance for BSMLEmpty (Theorem 3.8) -/
+
+/-- Modal depth of a `BSMLEmpty.Formula`: `bot`, atoms, `ne` are 0;
+    `neg` and `empt` preserve depth; `conj`, `disj` take the max; `poss`
+    increments. (`empt`/`⊘` does not contain a modal operator.) -/
+def Formula.modalDepth : Formula Atom → ℕ
+  | .atom _ => 0
+  | .bot => 0
+  | .ne => 0
+  | .neg ψ => ψ.modalDepth
+  | .conj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
+  | .disj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
+  | .empt ψ => ψ.modalDepth
+  | .poss ψ => ψ.modalDepth + 1
+
+/-- **Theorem 3.8 of @cite{aloni-anttila-yang-2024} for BSMLEmpty**: if
+    `s ⇌_k s'` and `φ : Formula Atom` has modal depth `≤ k`, then
+    `eval M b φ s ↔ eval M' b φ s'` for both polarities. -/
+theorem bisim_invariant_eval (φ : Formula Atom) :
+    ∀ {k : ℕ}, φ.modalDepth ≤ k →
+    ∀ {M : BSMLModel W Atom} {M' : BSMLModel W' Atom}
+      {s : Finset W} {s' : Finset W'},
+    StateBisim k M s M' s' →
+    ∀ b : Bool, eval M b φ s ↔ eval M' b φ s' := by
+  induction φ with
+  | atom p =>
+    intro k _ M M' s s' hbisim b
+    cases b
+    · constructor
+      · intro h w' hw'
+        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+        have hval : M.val p w = M'.val p w' := match k, hbw with
+          | 0, h => h p
+          | _ + 1, ⟨h, _, _⟩ => h p
+        rw [← hval]; exact h w hw
+      · intro h w hw
+        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+        have hval : M.val p w = M'.val p w' := match k, hbw with
+          | 0, h => h p
+          | _ + 1, ⟨h, _, _⟩ => h p
+        rw [hval]; exact h w' hw'
+    · constructor
+      · intro h w' hw'
+        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+        have hval : M.val p w = M'.val p w' := match k, hbw with
+          | 0, h => h p
+          | _ + 1, ⟨h, _, _⟩ => h p
+        rw [← hval]; exact h w hw
+      · intro h w hw
+        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+        have hval : M.val p w = M'.val p w' := match k, hbw with
+          | 0, h => h p
+          | _ + 1, ⟨h, _, _⟩ => h p
+        rw [hval]; exact h w' hw'
+  | bot =>
+    intro k _ M M' s s' hbisim b
+    cases b
+    · exact ⟨fun _ => trivial, fun _ => trivial⟩
+    · constructor
+      · intro hs
+        apply Finset.eq_empty_of_forall_notMem
+        intro w' hw'
+        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
+        exact absurd hw (hs ▸ Finset.notMem_empty w)
+      · intro hs'
+        apply Finset.eq_empty_of_forall_notMem
+        intro w hw
+        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
+        exact absurd hw' (hs' ▸ Finset.notMem_empty w')
+  | ne =>
+    intro k _ M M' s s' hbisim b
+    cases b
+    · constructor
+      · intro h
+        apply Finset.eq_empty_of_forall_notMem
+        intro w' hw'
+        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
+        exact absurd hw (h ▸ Finset.notMem_empty w)
+      · intro h
+        apply Finset.eq_empty_of_forall_notMem
+        intro w hw
+        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
+        exact absurd hw' (h ▸ Finset.notMem_empty w')
+    · constructor
+      · rintro ⟨w, hw⟩
+        obtain ⟨w', hw', _⟩ := hbisim.1 w hw
+        exact ⟨w', hw'⟩
+      · rintro ⟨w', hw'⟩
+        obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
+        exact ⟨w, hw⟩
+  | neg ψ ih =>
+    intro k hd M M' s s' hbisim b
+    cases b
+    · exact ih hd hbisim true
+    · exact ih hd hbisim false
+  | conj ψ₁ ψ₂ ih₁ ih₂ =>
+    intro k hd M M' s s' hbisim b
+    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
+    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    cases b
+    · constructor
+      · rintro ⟨t, u, hsplit, h₁, h₂⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
+          hbisim.splitPreserve hsplit
+            (Core.Logic.Team.splitsAs_left_subset hsplit)
+            (Core.Logic.Team.splitsAs_right_subset hsplit)
+        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt false).mp h₁,
+               (ih₂ hd₂ hbu false).mp h₂⟩
+      · rintro ⟨t', u', hsplit', h₁, h₂⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
+          StateBisim.splitPreserve hbisim.symm hsplit'
+            (Core.Logic.Team.splitsAs_left_subset hsplit')
+            (Core.Logic.Team.splitsAs_right_subset hsplit')
+        refine ⟨t, u, hsplit, ?_, ?_⟩
+        · exact (ih₁ hd₁ hbt.symm false).mpr h₁
+        · exact (ih₂ hd₂ hbu.symm false).mpr h₂
+    · constructor
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim true).mp h₁, (ih₂ hd₂ hbisim true).mp h₂⟩
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim true).mpr h₁, (ih₂ hd₂ hbisim true).mpr h₂⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ =>
+    intro k hd M M' s s' hbisim b
+    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
+    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    cases b
+    · constructor
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim false).mp h₁, (ih₂ hd₂ hbisim false).mp h₂⟩
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim false).mpr h₁, (ih₂ hd₂ hbisim false).mpr h₂⟩
+    · constructor
+      · rintro ⟨t, u, hsplit, h₁, h₂⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
+          hbisim.splitPreserve hsplit
+            (Core.Logic.Team.splitsAs_left_subset hsplit)
+            (Core.Logic.Team.splitsAs_right_subset hsplit)
+        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt true).mp h₁,
+               (ih₂ hd₂ hbu true).mp h₂⟩
+      · rintro ⟨t', u', hsplit', h₁, h₂⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
+          StateBisim.splitPreserve hbisim.symm hsplit'
+            (Core.Logic.Team.splitsAs_left_subset hsplit')
+            (Core.Logic.Team.splitsAs_right_subset hsplit')
+        refine ⟨t, u, hsplit, ?_, ?_⟩
+        · exact (ih₁ hd₁ hbt.symm true).mpr h₁
+        · exact (ih₂ hd₂ hbu.symm true).mpr h₂
+  | empt ψ ih =>
+    -- NEW CASE for BSMLEmpty: support .empt = support ψ ∨ s = ∅,
+    -- antiSupport .empt = antiSupport ψ.
+    intro k hd M M' s s' hbisim b
+    cases b
+    · -- antiSupport: just antiSupport ψ, use IH directly
+      exact ih hd hbisim false
+    · -- support: support ψ ∨ s = ∅. The Or is preserved if both
+      -- disjuncts are preserved. support ψ by IH; s = ∅ ↔ s' = ∅ under bisim.
+      constructor
+      · rintro (h | h)
+        · exact Or.inl ((ih hd hbisim true).mp h)
+        · right
+          apply Finset.eq_empty_of_forall_notMem
+          intro w' hw'
+          obtain ⟨w, hw, _⟩ := hbisim.2 w' hw'
+          exact absurd hw (h ▸ Finset.notMem_empty w)
+      · rintro (h | h)
+        · exact Or.inl ((ih hd hbisim true).mpr h)
+        · right
+          apply Finset.eq_empty_of_forall_notMem
+          intro w hw
+          obtain ⟨w', hw', _⟩ := hbisim.1 w hw
+          exact absurd hw' (h ▸ Finset.notMem_empty w')
+  | poss ψ ih =>
+    intro k hd M M' s s' hbisim b
+    obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := by
+      cases k with
+      | zero => exact absurd hd (by simp [Formula.modalDepth])
+      | succ k => exact ⟨k, rfl⟩
+    have hdψ : ψ.modalDepth ≤ k := by
+      have := hd
+      simp only [Formula.modalDepth] at this
+      omega
+    cases b
+    · constructor
+      · intro h w' hw'
+        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
+          obtain ⟨_, hforth, hback⟩ := hbw
+          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
+        exact (ih hdψ hacc false).mp (h w hw)
+      · intro h w hw
+        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
+          obtain ⟨_, hforth, hback⟩ := hbw
+          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
+        exact (ih hdψ hacc false).mpr (h w' hw')
+    · constructor
+      · intro h w' hw'
+        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+        obtain ⟨t, htsub, htne, htsupp⟩ := h w hw
+        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
+          obtain ⟨_, hforth, hback⟩ := hbw
+          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
+        classical
+        let t' : Finset W' :=
+          (M'.access w').filter (fun v' => ∃ v ∈ t, WorldBisim k M v M' v')
+        refine ⟨t', ?_, ?_, ?_⟩
+        · intro v' hv'; exact (Finset.mem_filter.mp hv').1
+        · obtain ⟨v, hv⟩ := htne
+          obtain ⟨v', hv', hbv⟩ := hacc.1 v (htsub hv)
+          exact ⟨v', Finset.mem_filter.mpr ⟨hv', v, hv, hbv⟩⟩
+        · have htbisim : StateBisim k M t M' t' := by
+            refine ⟨?_, ?_⟩
+            · intro v hv
+              obtain ⟨v', hv', hbv⟩ := hacc.1 v (htsub hv)
+              exact ⟨v', Finset.mem_filter.mpr ⟨hv', v, hv, hbv⟩, hbv⟩
+            · intro v' hv'
+              obtain ⟨_, v, hv, hbv⟩ := Finset.mem_filter.mp hv'
+              exact ⟨v, hv, hbv⟩
+          exact (ih hdψ htbisim true).mp htsupp
+      · intro h w hw
+        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+        obtain ⟨t', htsub, htne, htsupp⟩ := h w' hw'
+        have hacc : StateBisim k M (M.access w) M' (M'.access w') := by
+          obtain ⟨_, hforth, hback⟩ := hbw
+          exact ⟨fun v hv => hforth v hv, fun v' hv' => hback v' hv'⟩
+        classical
+        let t : Finset W :=
+          (M.access w).filter (fun v => ∃ v' ∈ t', WorldBisim k M v M' v')
+        refine ⟨t, ?_, ?_, ?_⟩
+        · intro v hv; exact (Finset.mem_filter.mp hv).1
+        · obtain ⟨v', hv'⟩ := htne
+          obtain ⟨v, hv, hbv⟩ := hacc.2 v' (htsub hv')
+          exact ⟨v, Finset.mem_filter.mpr ⟨hv, v', hv', hbv⟩⟩
+        · have htbisim : StateBisim k M t M' t' := by
+            refine ⟨?_, ?_⟩
+            · intro v hv
+              obtain ⟨_, v', hv', hbv⟩ := Finset.mem_filter.mp hv
+              exact ⟨v', hv', hbv⟩
+            · intro v' hv'
+              obtain ⟨v, hv, hbv⟩ := hacc.2 v' (htsub hv')
+              exact ⟨v, Finset.mem_filter.mpr ⟨hv, v', hv', hbv⟩, hbv⟩
+          exact (ih hdψ htbisim true).mpr htsupp
 
 end BSMLEmpty
 
