@@ -21,11 +21,15 @@ Both extend BSML's `BSMLModel` (worlds + accessibility + valuation) and
 inherit the bilateral support/anti-support semantics. The new connectives
 are characterised by Fact 2.7 in the paper:
 
-| Logic    | Includes `NE` | Includes `⨼` | Downward-closed | Union-closed |
-|----------|---------------|--------------|-----------------|--------------|
-| BSML     | yes           | no           | NE-free only    | always       |
-| BSMLOr   | yes           | yes          | NE-free only    | ⨼-free only  |
-| BSMLEmpty| yes           | no           | NE-free only    | always       |
+| Logic     | Has `NE` | Has `⨼` | Downward-closed     | Union-closed   |
+|-----------|----------|---------|---------------------|----------------|
+| BSML      | yes      | no      | when NE-free        | always         |
+| BSMLOr    | yes      | yes     | when NE-free        | when ⨼-free    |
+| BSMLEmpty | yes      | no      | when NE-free        | always         |
+
+The "when NE-free" / "when ⨼-free" entries express Fact 2.7's universal
+statement uniformly across all three logics — NE is the only obstruction
+to downward closure; `⨼` is the only obstruction to union closure.
 
 The closure-property classification matches the audit's family-axis
 insight: each extension occupies a different cell of the
@@ -70,9 +74,17 @@ BSMLEmpty omits `⨼`, union closure is preserved.
   (`StateBisimulation`, bounded-bisimulation depth) that linglib does not
   yet have. BSMLOr is expressively complete for bisimulation-invariant
   state properties; BSMLEmpty for the union-closed ∩ bisimulation-
-  invariant fragment.
+  invariant fragment. See @cite{anttila-2025} Chapter 3 for the cleanest
+  exposition of bisimulation invariance in the BSML family.
 * §4 Natural-deduction axiomatisations for each of BSML, BSMLOr,
-  BSMLEmpty. Soundness + completeness theorems.
+  BSMLEmpty. Soundness + completeness theorems; @cite{anttila-2025}
+  Chapter 4 has the updated proofs.
+* Free-choice prediction theorem: state the narrow-scope FC inference
+  `[◇(p ∨ q)]⁺ ⊨ ◇p ∧ ◇q` (and the analogous cancellation under
+  negation, Example (2) of the paper) over BSMLEmpty. Requires extending
+  `BSML/Enrichment.lean`'s `[·]⁺` to target `BSMLEmpty.Formula`.
+  Currently the file formalises the vehicle (syntax + semantics) but
+  never fires the gun (FC prediction).
 * Fact 2.5 (negation normal form) and Fact 2.8 (ML embedding) — provable
   but not load-bearing for the closure-property story.
 * `BSMLOr`-specific theorem: `supClosed_support_of_isGDFree` (Fact 2.7
@@ -161,6 +173,9 @@ abbrev antiSupport (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : P
 @[simp] lemma support_conj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.conj φ ψ) t ↔ support M φ t ∧ support M ψ t := Iff.rfl
 
+@[simp] lemma antiSupport_disj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+    antiSupport M (.disj φ ψ) t ↔ antiSupport M φ t ∧ antiSupport M ψ t := Iff.rfl
+
 @[simp] lemma support_gdisj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
     support M (.gdisj φ ψ) t ↔ support M φ t ∨ support M ψ t := Iff.rfl
 
@@ -234,6 +249,15 @@ abbrev antiSupport (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) : P
 
 @[simp] lemma support_bot (M : BSMLModel W Atom) (t : Finset W) :
     support M (.bot : Formula Atom) t ↔ t = ∅ := Iff.rfl
+
+@[simp] lemma support_ne (M : BSMLModel W Atom) (t : Finset W) :
+    support M (.ne : Formula Atom) t ↔ t.Nonempty := Iff.rfl
+
+@[simp] lemma support_conj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+    support M (.conj φ ψ) t ↔ support M φ t ∧ support M ψ t := Iff.rfl
+
+@[simp] lemma antiSupport_disj (M : BSMLModel W Atom) (φ ψ : Formula Atom) (t : Finset W) :
+    antiSupport M (.disj φ ψ) t ↔ antiSupport M φ t ∧ antiSupport M ψ t := Iff.rfl
 
 @[simp] lemma support_empt (M : BSMLModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.empt φ) t ↔ support M φ t ∨ t = ∅ := Iff.rfl
@@ -325,11 +349,11 @@ private theorem support_and_antiSupport_supClosed
       rcases hs with hs | hs
       · rcases ht with ht | ht
         · exact Or.inl (ihs s t hs ht)
-        · subst ht; rw [Finset.union_empty]; exact Or.inl hs
+        · subst ht; simpa using Or.inl hs
       · subst hs
         rcases ht with ht | ht
-        · rw [Finset.empty_union]; exact Or.inl ht
-        · subst ht; exact Or.inr (Finset.union_empty ∅)
+        · simpa using Or.inl ht
+        · subst ht; simp
     · intro s t hs ht; exact iha s t hs ht
   | poss ψ _ih =>
     refine ⟨?_, ?_⟩
