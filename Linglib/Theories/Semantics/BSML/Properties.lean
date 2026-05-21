@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.BSML.Defs
 import Linglib.Core.Logic.Team.Closure
-import Linglib.Core.Logic.Team.ClosureProfile
 
 /-!
 # BSML formula closure properties (Anttila 2021 Proposition 2.2.8)
@@ -303,22 +302,5 @@ theorem isFlat_support_of_isNEFree {φ : BSMLFormula Atom}
     (isLowerSet_support_of_isNEFree hNE M)
     (supClosed_support M φ)
     (support_empty_of_isNEFree hNE M)
-
-/-! ### Closure profile -/
-
-/-- **BSML has the upward closure profile** when NE is present in the
-    formula: every formula's support is sup-closed (always) and contains
-    the empty team (NE-free fragment). Bundles `supClosed_support` and
-    `support_empty_of_isNEFree` into the named profile, placing BSML in
-    the `IsUpwardProfile` cell of the closure-property lattice alongside
-    BSMLEmpty and MIL.
-
-    For the NE-free fragment, `isFlat_support_of_isNEFree` gives the
-    stronger full `IsFlat` profile (sup-closed + downward-closed + empty);
-    the upward profile is the recoverable claim in the presence of NE. -/
-theorem support_isUpwardProfile_of_isNEFree {φ : BSMLFormula Atom}
-    (hNE : φ.isNEFree = true) (M : BSMLModel W Atom) :
-    Core.Logic.Team.IsUpwardProfile { t : Finset W | support M φ t } :=
-  ⟨supClosed_support M φ, support_empty_of_isNEFree hNE M⟩
 
 end Semantics.BSML

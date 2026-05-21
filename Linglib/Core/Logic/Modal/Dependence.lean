@@ -2,7 +2,6 @@ import Linglib.Core.Logic.Modal.Kripke
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
-import Linglib.Core.Logic.Team.ClosureProfile
 
 /-!
 # Modal Dependence Logic (MDL)
@@ -387,15 +386,6 @@ private theorem support_and_antiSupport_empty
 theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     support M φ ∅ :=
   (support_and_antiSupport_empty φ M).1
-
-/-- **MDL has the downward closure profile**: every formula's support
-    is downward-closed and contains the empty team
-    (`Core.Logic.Team.IsDownwardProfile`). Bundles `isLowerSet_support`
-    and `support_empty` into the named profile — MDL is the (currently
-    only) inhabitant of the `IsDownwardProfile` cell. -/
-theorem support_isDownwardProfile (M : KripkeModel W Atom) (φ : Formula Atom) :
-    Core.Logic.Team.IsDownwardProfile { t : Finset W | support M φ t } :=
-  ⟨isLowerSet_support M φ, support_empty M φ⟩
 
 /-! ### Dep breaks union closure (the defining feature) -/
 
