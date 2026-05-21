@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
+import Linglib.Phenomena.Causation.Studies.KoontzGarboden2009
 
 /-!
 # Muñoz Pérez (2026) — Stylistic Applicatives in Chilean Spanish
@@ -426,25 +427,33 @@ theorem cl2_invariable :
     (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" ∧
     (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by decide
 
+/-! ### Refutation of @cite{koontz-garboden-2009}
+
+K-G's reflexivization analysis predicts that every alternating verb
+has SE in its anticausative form (cumulation of A and P spelled out as
+SE). The verb-level predicate `KoontzGarboden2009.kgPredictsSEMarked`
+formalises this chain. *mejorar* "improve" alternates while remaining
+unmarked, falsifying the prediction. -/
+
+/-- Refutation of @cite{koontz-garboden-2009}: *mejorar* alternates but
+    is unmarked (no SE), against K-G's prediction that reflexivization
+    requires SE-spell-out. Closes the bridge from K-G's
+    `reflexivization.involvesCumulation = true` to a falsifying
+    Spanish verb. -/
+theorem refutes_koontzgarboden :
+    ¬ KoontzGarboden2009.kgPredictsSEMarked mejorar := by
+  unfold KoontzGarboden2009.kgPredictsSEMarked KoontzGarboden2009.hasSEMarking
+  intro h
+  rcases h rfl with h | h
+  all_goals exact absurd h (by decide)
+
 /-! ### Cross-framework comparisons
 
-The paper draws two comparative arguments — against @cite{koontz-garboden-2009}'s
-reflexivization analysis, and narrower than @cite{martin-schaefer-kastner-2025}'s
-two-flavor Voice — that are not yet stated as Lean theorems.
+The paper draws a second comparative argument — narrower than
+@cite{martin-schaefer-kastner-2025}'s two-flavor Voice — that is not
+yet stated as a Lean theorem.
 
 ## Todo
-
-* **K-G refutation as a real bridge theorem.** Currently the docstring
-  prose asserts *mejorar* refutes K-G by being an unmarked anticausative,
-  but the Fragment field `mejorar.anticausativeMarking = .unmarked` is
-  stipulated, not derived. A genuine refutation requires K-G's verb-level
-  prediction to be formalised on the K-G side: add a derived predicate
-  `kgPredictsSEMarked : SpanishVerbEntry → Prop` to
-  `Phenomena/Causation/Studies/KoontzGarboden2009.lean`, built from
-  K-G's `reflexivize` + the verbHead-identity claim in
-  `reflexivization_satisfiesMH_verbHead`. Then state the refutation
-  as `¬ kgPredictsSEMarked mejorar` — which would actually contradict
-  K-G's mechanism rather than restate the Fragment.
 
 * **MSK comparison as a real bridge theorem.** Analogously,
   `MartinSchaeferKastner2025.seVoiceOptions : List VoiceFlavor` is a

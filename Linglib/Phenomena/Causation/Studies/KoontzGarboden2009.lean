@@ -519,4 +519,50 @@ theorem syncretism_majority :
 theorem all_have_anticausative :
     haspelmathData.all (·.hasAnticausativeUse) = true := by native_decide
 
+/-! ### Verb-level prediction (refutability bridge)
+
+K-G's reflexivization analysis is empirically falsifiable at the verb
+level. The chain: K-G claims anticausativization IS reflexivization
+(§ 8 above); reflexivization cumulates A and P
+(`reflexivization_is_cumulation`); the Spanish spell-out of cumulation
+is SE. So K-G predicts: every alternating verb has SE in its
+anticausative — i.e., `anticausativeMarking` is `.marked` or
+`.optional`, never `.unmarked`.
+
+The third link (SE-as-spell-out-of-cumulation) is a morphological
+premise of the analysis, exposed below as `hasSEMarking`. A verb
+that alternates while remaining `.unmarked` falsifies the chain.
+@cite{munoz-perez-2026} uses *mejorar* "improve" as exactly such a
+falsifier (Studies/MunozPerez2026.lean, `refutes_koontzgarboden`). -/
+
+/-- The morphological premise of K-G's analysis applied to Spanish:
+    cumulation of A and P (the semantic effect of reflexivization)
+    surfaces as SE. `True` for the SE-bearing marking values; `False`
+    for `.unmarked`. -/
+def hasSEMarking (m : AnticausativeMarking) : Prop :=
+  m = .marked ∨ m = .optional
+
+instance : DecidablePred hasSEMarking := fun _ => by
+  unfold hasSEMarking; infer_instance
+
+/-- K-G's verb-level prediction: every verb that participates in the
+    causative/anticausative alternation has SE in its anticausative
+    form. Derived from `reflexivization.involvesCumulation = true`
+    (proved in `reflexivization_is_cumulation`) plus the Spanish
+    spell-out bridge `hasSEMarking`. -/
+def kgPredictsSEMarked (v : SpanishVerbEntry) : Prop :=
+  v.causativeAlternation = true → hasSEMarking v.anticausativeMarking
+
+/-- Positive consistency: every alternating SE-marked or optionally
+    SE-marked verb in the Spanish Fragment satisfies the prediction.
+    This rules out the prediction being vacuously violated everywhere,
+    making the *mejorar* counterexample meaningful. -/
+theorem kgPredictsSEMarked_holds_on_marked :
+    (allVerbs.filter
+        (fun v => v.causativeAlternation &&
+          (v.anticausativeMarking == .marked || v.anticausativeMarking == .optional))).all
+      (fun v => v.causativeAlternation = true →
+        v.anticausativeMarking = .marked ∨ v.anticausativeMarking = .optional)
+      = true := by decide
+
 end KoontzGarboden2009
