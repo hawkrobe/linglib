@@ -120,7 +120,7 @@ def hundir : SpanishVerbEntry :=
                                  false, false, false, false, false⟩ }
 
 /-- *caer* "fall" — marked anticausative, licenses stylistic LE.
-    (exx. 11–12, unaccusative) -/
+    (ex. 9, unaccusative) -/
 def caer : SpanishVerbEntry :=
   { form := "caer", complementType := .none,
     unaccusative := true,
@@ -129,7 +129,7 @@ def caer : SpanishVerbEntry :=
     licensesStylLE := true }
 
 /-- *morir* "die" — marked anticausative, licenses stylistic LE.
-    (exx. 13–14) -/
+    (ex. 10) -/
 def morir : SpanishVerbEntry :=
   { form := "morir", complementType := .none,
     unaccusative := true,
@@ -137,8 +137,17 @@ def morir : SpanishVerbEntry :=
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
+/-- *cerrar* "close" — marked anticausative; vehicle for the person-paradigm
+    in @cite{munoz-perez-2026} exx. 15–19 (*me/te le cerró la ventana* OK,
+    *le/nos/les le cerró la ventana* unacceptable). -/
+def cerrar : SpanishVerbEntry :=
+  { form := "cerrar", complementType := .np,
+    anticausativeMarking := .marked,
+    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
+    licensesStylLE := true }
+
 /-- *quebrar* "crack" — marked anticausative, licenses stylistic LE.
-    (ex. 39a) -/
+    (exx. 38–39) -/
 def quebrar : SpanishVerbEntry :=
   { form := "quebrar", complementType := .np,
     anticausativeMarking := .marked,
@@ -146,7 +155,7 @@ def quebrar : SpanishVerbEntry :=
     licensesStylLE := true }
 
 /-- *hervir* "boil" — optional SE marking, but still licenses stylistic LE.
-    (ex. 40) -/
+    (exx. 41–44) -/
 def hervir : SpanishVerbEntry :=
   { form := "hervir", complementType := .np,
     anticausativeMarking := .optional,
@@ -154,7 +163,7 @@ def hervir : SpanishVerbEntry :=
     licensesStylLE := true }
 
 /-- *olvidar* "forget" — marked anticausative, licenses stylistic LE.
-    (exx. 15–16, psych verb) -/
+    (ex. 11, psych verb) -/
 def olvidar : SpanishVerbEntry :=
   { form := "olvidar", complementType := .np,
     anticausativeMarking := .marked,
@@ -162,7 +171,7 @@ def olvidar : SpanishVerbEntry :=
     licensesStylLE := true }
 
 /-- *ocurrir* "occur" — marked anticausative, licenses stylistic LE.
-    (exx. 17–18) -/
+    (ex. 12) -/
 def ocurrir : SpanishVerbEntry :=
   { form := "ocurrir", complementType := .none,
     unaccusative := true,
@@ -171,7 +180,7 @@ def ocurrir : SpanishVerbEntry :=
     licensesStylLE := true }
 
 /-- *mejorar* "improve" — UNMARKED anticausative, does NOT license stylistic LE.
-    (ex. 39b) -/
+    (ex. 40b *Me le mejoró el sueldo) -/
 def mejorar : SpanishVerbEntry :=
   { form := "mejorar", complementType := .np,
     anticausativeMarking := .unmarked,
@@ -248,7 +257,7 @@ def crecer : SpanishVerbEntry :=
 
 /-- Verbs from @cite{munoz-perez-2026} — tested for stylistic LE. -/
 def munozVerbs : List SpanishVerbEntry :=
-  [abrir, romper, hundir, caer, morir, quebrar, hervir, olvidar, ocurrir, mejorar, rasgar]
+  [abrir, romper, hundir, caer, morir, cerrar, quebrar, hervir, olvidar, ocurrir, mejorar, rasgar]
 
 /-- Verbs from @cite{koontz-garboden-2009} — causer specification data,
     not tested for stylistic LE. -/
@@ -267,6 +276,7 @@ theorem romper_licenses_stylLE : romper.licensesStylLE = true := rfl
 theorem hundir_licenses_stylLE : hundir.licensesStylLE = true := rfl
 theorem caer_licenses_stylLE : caer.licensesStylLE = true := rfl
 theorem morir_licenses_stylLE : morir.licensesStylLE = true := rfl
+theorem cerrar_licenses_stylLE : cerrar.licensesStylLE = true := rfl
 theorem quebrar_licenses_stylLE : quebrar.licensesStylLE = true := rfl
 theorem hervir_licenses_stylLE : hervir.licensesStylLE = true := rfl
 theorem olvidar_licenses_stylLE : olvidar.licensesStylLE = true := rfl

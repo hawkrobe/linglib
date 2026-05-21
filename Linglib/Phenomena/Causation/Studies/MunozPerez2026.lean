@@ -1,174 +1,251 @@
 import Linglib.Features.Acceptability
+import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
 
-open Features (Acceptability)
-
 /-!
-# Muñoz @cite{munoz-perez-2026} — Empirical Data
+# Muñoz Pérez (2026) — Stylistic Applicatives in Chilean Spanish
 @cite{munoz-perez-2026}
 
-Grammaticality judgments from Muñoz @cite{munoz-perez-2026} "Stylistic applicatives:
+Grammaticality judgments from @cite{munoz-perez-2026} "Stylistic applicatives:
 A lens into the nature of anticausative SE" (*Glossa* 11(1)).
 
-## Key Data Points
+## Main declarations
 
-1. **Three-way synonymy** (exx. 7–18): For marked anticausatives with
+* `Judgment`, `CliticPattern`, `DativeCliticPerson` — empirical data types
+* `spanishFissionRule` — instantiation of the generic Fission framework
+  (`Theories.Morphology.DM.Fission`) with Chilean-Spanish-specific data
+* `voice_semantically_vacuous` — re-export of
+  `Minimalist.nonThematic_no_semantics`
+* `three_way_synonymy_from_vacuity`,
+  `fission_person_restriction`, `stylLE_requires_inchoative`,
+  `unmarked_blocks_stylLE` — bridge theorems for the paper's five
+  predictions
+
+## Implementation notes
+
+Acceptability follows the project-canonical `Features.Acceptability`
+six-level taxonomy. Paper-internal `*` maps to `.unacceptable`, `??`
+maps to `.marginal`, and the unmarked judgment maps to `.ok`.
+
+## Key data points
+
+1. **Three-way synonymy** (exx. 7–10): For marked anticausatives with
    1SG/2SG dative, three clitic patterns are interchangeable:
    - SE + CL_dat: *se me rompió* "it broke on me"
    - CL_dat + LE: *me le rompió*
    - SE + CL_dat + LE: *se me le rompió*
 
-2. **Person restriction** (exx. 15–19): Stylistic LE is available only
-   with 1SG (*me*) and 2SG (*te*), not 3SG (*le*), 1PL (*nos*), 2/3PL (*les*).
+2. **Person restriction** (exx. 15–19, *cerrar la ventana*): Stylistic
+   LE is available only with 1SG (*me*) and 2SG (*te*), not 3SG (*le*),
+   1PL (*nos*), 2/3PL (*les*).
 
-3. **Marking restriction** (exx. 39–40): Stylistic LE requires SE-marked
+3. **Marking restriction** (exx. 39–44): Stylistic LE requires SE-marked
    (or optionally SE-marked) anticausatives. Unmarked anticausatives
    (*mejorar*) block it.
 
+4. **Negative controls** (exx. 13b, 14b): *quejarse* and impersonal SE
+   reject the *me le* pattern; the stylistic *le* is not a free dative.
 -/
+
+open Features (Acceptability)
 
 namespace MunozPerez2026
 
--- ============================================================================
--- § 1: Acceptability Data Types
--- ============================================================================
-
-/-- Acceptability status for Chilean Spanish judgments. -/
-inductive Acceptability where
-  | grammatical      -- Fully acceptable (✓)
-  | ungrammatical    -- Rejected (*)
-  | marginal         -- Marginal (??)
-  deriving DecidableEq, Repr
+/-! ### Data types -/
 
 /-- A clitic pattern in an anticausative construction. -/
 inductive CliticPattern where
-  | se_cl        -- SE + dative clitic: se me rompió
-  | cl_le        -- Dative clitic + LE: me le rompió (stylistic applicative)
-  | se_cl_le     -- SE + dative clitic + LE: se me le rompió
+  /-- SE + dative clitic: *se me rompió*. -/
+  | se_cl
+  /-- Dative clitic + LE: *me le rompió* (stylistic applicative). -/
+  | cl_le
+  /-- SE + dative clitic + LE: *se me le rompió*. -/
+  | se_cl_le
   deriving DecidableEq, Repr
 
 /-- Person of the dative clitic. -/
 inductive DativeCliticPerson where
-  | first_sg   -- me
-  | second_sg  -- te
-  | third_sg   -- le
-  | first_pl   -- nos
-  | third_pl   -- les
+  /-- *me* -/
+  | first_sg
+  /-- *te* -/
+  | second_sg
+  /-- *le* -/
+  | third_sg
+  /-- *nos* -/
+  | first_pl
+  /-- *les* -/
+  | third_pl
   deriving DecidableEq, Repr
 
 /-- A single grammaticality judgment from the paper. -/
 structure Judgment where
-  /-- Example number in the paper -/
+  /-- Example number in the paper. -/
   exNumber : String
-  /-- The verb -/
+  /-- The verb in citation form. -/
   verb : String
-  /-- The clitic pattern -/
+  /-- The clitic pattern. -/
   pattern : CliticPattern
-  /-- Person of the dative clitic -/
+  /-- Person of the dative clitic. -/
   dativePerson : DativeCliticPerson
-  /-- Acceptability -/
+  /-- Acceptability per `Features.Acceptability`. -/
   acceptability : Acceptability
   deriving Repr, BEq
 
--- ============================================================================
--- § 2: Three-Way Synonymy Data (exx. 7–18)
--- ============================================================================
+/-! ### Three-way synonymy data (exx. 7–12) -/
 
 /-- *romper* "break" with 1SG dative: all three patterns OK. -/
-def romper_se_me : Judgment := { exNumber := "7", verb := "romper", pattern := .se_cl, dativePerson := .first_sg, acceptability := .grammatical }
-def romper_me_le : Judgment := { exNumber := "8a", verb := "romper", pattern := .cl_le, dativePerson := .first_sg, acceptability := .grammatical }
-def romper_se_me_le : Judgment := { exNumber := "8b", verb := "romper", pattern := .se_cl_le, dativePerson := .first_sg, acceptability := .grammatical }
+def romper_se_me : Judgment :=
+  { exNumber := "7a", verb := "romper", pattern := .se_cl,
+    dativePerson := .first_sg, acceptability := .ok }
+def romper_me_le : Judgment :=
+  { exNumber := "7b", verb := "romper", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
+def romper_se_me_le : Judgment :=
+  { exNumber := "7c", verb := "romper", pattern := .se_cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
 
 /-- *hundir* "sink" with 1SG dative. -/
-def hundir_se_me : Judgment := { exNumber := "9", verb := "hundir", pattern := .se_cl, dativePerson := .first_sg, acceptability := .grammatical }
-def hundir_me_le : Judgment := { exNumber := "10a", verb := "hundir", pattern := .cl_le, dativePerson := .first_sg, acceptability := .grammatical }
+def hundir_se_me : Judgment :=
+  { exNumber := "8a", verb := "hundir", pattern := .se_cl,
+    dativePerson := .first_sg, acceptability := .ok }
+def hundir_me_le : Judgment :=
+  { exNumber := "8b", verb := "hundir", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
 
 /-- *caer* "fall" with 1SG dative. -/
-def caer_se_me : Judgment := { exNumber := "11", verb := "caer", pattern := .se_cl, dativePerson := .first_sg, acceptability := .grammatical }
-def caer_me_le : Judgment := { exNumber := "12a", verb := "caer", pattern := .cl_le, dativePerson := .first_sg, acceptability := .grammatical }
+def caer_se_me : Judgment :=
+  { exNumber := "9a", verb := "caer", pattern := .se_cl,
+    dativePerson := .first_sg, acceptability := .ok }
+def caer_me_le : Judgment :=
+  { exNumber := "9b", verb := "caer", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
 
 /-- *morir* "die" with 1SG dative. -/
-def morir_se_me : Judgment := { exNumber := "13", verb := "morir", pattern := .se_cl, dativePerson := .first_sg, acceptability := .grammatical }
-def morir_me_le : Judgment := { exNumber := "14a", verb := "morir", pattern := .cl_le, dativePerson := .first_sg, acceptability := .grammatical }
+def morir_se_me : Judgment :=
+  { exNumber := "10a", verb := "morir", pattern := .se_cl,
+    dativePerson := .first_sg, acceptability := .ok }
+def morir_me_le : Judgment :=
+  { exNumber := "10b", verb := "morir", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
 
--- ============================================================================
--- § 3: Person Restriction Data (exx. 15–19)
--- ============================================================================
+/-! ### Negative controls (exx. 13b, 14b)
 
-/-- 1SG: stylistic LE is OK. -/
-def person_1sg : Judgment := { exNumber := "15", verb := "caer", pattern := .cl_le, dativePerson := .first_sg, acceptability := .grammatical }
+Crucially, the *me le* pattern is NOT freely available — it is rejected
+with the inherently reflexive verb *quejarse* "complain" (ex. 13b) and
+with impersonal SE plus an argumental dative (ex. 14b). These witnesses
+keep the dataset honest: stylistic LE depends on the marked-anticausative
+structure, not on phonological adjacency. -/
 
-/-- 2SG: stylistic LE is OK. -/
-def person_2sg : Judgment := { exNumber := "16", verb := "caer", pattern := .cl_le, dativePerson := .second_sg, acceptability := .grammatical }
+/-- *quejarse* "complain" rejects the *me le* pattern (ex. 13b). -/
+def quejarse_me_le : Judgment :=
+  { exNumber := "13b", verb := "quejarse", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .unacceptable }
 
-/-- 3SG: stylistic LE is BLOCKED. -/
-def person_3sg : Judgment := { exNumber := "17", verb := "caer", pattern := .cl_le, dativePerson := .third_sg, acceptability := .ungrammatical }
+/-- Impersonal SE + argumental dative rejects the *me le* pattern (ex. 14b). -/
+def impersonal_me_le : Judgment :=
+  { exNumber := "14b", verb := "dar", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .unacceptable }
 
-/-- 1PL: stylistic LE is BLOCKED. -/
-def person_1pl : Judgment := { exNumber := "18", verb := "caer", pattern := .cl_le, dativePerson := .first_pl, acceptability := .ungrammatical }
+/-- Negative-control judgments. -/
+def negativeControls : List Judgment :=
+  [quejarse_me_le, impersonal_me_le]
 
-/-- 3PL: stylistic LE is BLOCKED. -/
-def person_3pl : Judgment := { exNumber := "19", verb := "caer", pattern := .cl_le, dativePerson := .third_pl, acceptability := .ungrammatical }
+/-! ### Person restriction data (exx. 15–19, *cerrar la ventana*) -/
+
+/-- 1SG: stylistic LE is OK (ex. 15b *Me le cerró la ventana*). -/
+def person_1sg : Judgment :=
+  { exNumber := "15b", verb := "cerrar", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
+
+/-- 2SG: stylistic LE is OK (ex. 16b *Te le cerró la ventana*). -/
+def person_2sg : Judgment :=
+  { exNumber := "16b", verb := "cerrar", pattern := .cl_le,
+    dativePerson := .second_sg, acceptability := .ok }
+
+/-- 3SG: stylistic LE is BLOCKED (ex. 17b *Le le cerró la ventana*). -/
+def person_3sg : Judgment :=
+  { exNumber := "17b", verb := "cerrar", pattern := .cl_le,
+    dativePerson := .third_sg, acceptability := .unacceptable }
+
+/-- 1PL: stylistic LE is BLOCKED (ex. 18b *Nos le cerró la ventana*). -/
+def person_1pl : Judgment :=
+  { exNumber := "18b", verb := "cerrar", pattern := .cl_le,
+    dativePerson := .first_pl, acceptability := .unacceptable }
+
+/-- 2/3PL: stylistic LE is BLOCKED (ex. 19b *Les le cerró la ventana*). -/
+def person_3pl : Judgment :=
+  { exNumber := "19b", verb := "cerrar", pattern := .cl_le,
+    dativePerson := .third_pl, acceptability := .unacceptable }
 
 /-- Person restriction data collected. -/
 def personRestrictionData : List Judgment :=
   [person_1sg, person_2sg, person_3sg, person_1pl, person_3pl]
 
--- ============================================================================
--- § 4: Marking Restriction Data (exx. 39–40)
--- ============================================================================
+/-! ### Marking restriction data (exx. 39–44) -/
 
-/-- *quebrar* (marked SE) licenses stylistic LE. -/
-def quebrar_le : Judgment := { exNumber := "39a", verb := "quebrar", pattern := .cl_le, dativePerson := .first_sg, acceptability := .grammatical }
+/-- *quebrar* (marked SE) licenses stylistic LE (ex. 39b *Me le quebró el florero*). -/
+def quebrar_le : Judgment :=
+  { exNumber := "39b", verb := "quebrar", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
 
-/-- *mejorar* (unmarked) does NOT license stylistic LE. -/
-def mejorar_le : Judgment := { exNumber := "39b", verb := "mejorar", pattern := .cl_le, dativePerson := .first_sg, acceptability := .ungrammatical }
+/-- *mejorar* (unmarked) does NOT license stylistic LE (ex. 40b *Me le mejoró el sueldo). -/
+def mejorar_le : Judgment :=
+  { exNumber := "40b", verb := "mejorar", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .unacceptable }
 
-/-- *hervir* (optional SE) DOES license stylistic LE. -/
-def hervir_le : Judgment := { exNumber := "40", verb := "hervir", pattern := .cl_le, dativePerson := .first_sg, acceptability := .grammatical }
+/-- *hervir* (optional SE) DOES license stylistic LE (ex. 44a *Me le hirvió el agua*). -/
+def hervir_le : Judgment :=
+  { exNumber := "44a", verb := "hervir", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
 
--- ============================================================================
--- § 5: Data Verification
--- ============================================================================
+/-! ### Data verification -/
 
 /-- All three-way synonymy patterns are grammatical for 1SG. -/
 theorem three_way_all_grammatical :
-    (romper_se_me.acceptability == .grammatical &&
-    romper_me_le.acceptability == .grammatical &&
-    romper_se_me_le.acceptability == .grammatical) = true := rfl
+    (romper_se_me.acceptability == .ok &&
+    romper_me_le.acceptability == .ok &&
+    romper_se_me_le.acceptability == .ok) = true := rfl
 
 /-- Person restriction: exactly 1SG and 2SG are grammatical. -/
 theorem person_restriction_data :
-    (personRestrictionData.filter (·.acceptability == .grammatical)).length = 2 := by
-  native_decide
+    (personRestrictionData.filter (·.acceptability == .ok)).length = 2 := by
+  decide
 
 /-- Person restriction: exactly 3SG, 1PL, 3PL are ungrammatical. -/
 theorem person_restriction_blocked :
-    (personRestrictionData.filter (·.acceptability == .ungrammatical)).length = 3 := by
-  native_decide
+    (personRestrictionData.filter (·.acceptability == .unacceptable)).length = 3 := by
+  decide
+
+/-- The person paradigm uses *cerrar* (ex. 15), not *caer* (ex. 9). -/
+theorem cerrar_anchors_person_paradigm :
+    personRestrictionData.all (·.verb == "cerrar") = true := by decide
 
 /-- Marking restriction: marked/optional → OK, unmarked → blocked. -/
 theorem marking_restriction :
-    (quebrar_le.acceptability == .grammatical &&
-    hervir_le.acceptability == .grammatical &&
-    mejorar_le.acceptability == .ungrammatical) = true := rfl
+    (quebrar_le.acceptability == .ok &&
+    hervir_le.acceptability == .ok &&
+    mejorar_le.acceptability == .unacceptable) = true := rfl
 
--- ============================================================================
--- § 6: Generic Fission Framework (@cite{halle-marantz-1993})
--- ============================================================================
+/-- Negative controls are present and uniformly unacceptable. Drift sentry:
+    if the *me le* pattern were ever miscoded as `.ok`, this fails. -/
+theorem negative_controls_unacceptable :
+    negativeControls.all (·.acceptability == .unacceptable) = true := by decide
+
+/-! ### Spanish Fission instantiation -/
 
 open Minimalist
+open Morphology.DM.Fission
+open Fragments.Spanish.PersonFeatures
+open Fragments.Spanish.Predicates
+open Fragments.Spanish.Clitics
+open Features.Person
 
-/-! Fission is a postsyntactic operation that splits a single terminal
-    node into two morphological exponents. Three parameters control any
-    Fission rule: (1) the structural context that licenses Fission;
-    (2) the person condition that triggers it; (3) the realization that
-    spells out the split terminal. -/
-
-/-- The result of Fission: two clitic positions. -/
+/-- The Spanish-specific realization output of Fission: two clitic
+    positions. Cl₁ surfaces person features (`me`/`te`), Cl₂ is
+    invariably `le`. -/
 structure FissionOutput where
   /-- Cl₁: bears person features. -/
   cl1Form : String
@@ -176,64 +253,31 @@ structure FissionOutput where
   cl2Form : String
   deriving Repr, DecidableEq
 
-/-- A Fission rule parameterized over a person category type. -/
-structure FissionRule (Person : Type) where
-  /-- Structural context check (e.g., inchoative = vGO ∧ vBE). -/
-  contextOk : List VerbHead → Bool
-  /-- Person/number condition (e.g., [+PART, +SING]). -/
-  personOk : Person → Bool
-  /-- Realization: map person category to the two clitic forms. -/
-  realize : Person → FissionOutput
+/-- The stylistic applicative Fission rule for Chilean Spanish
+    (@cite{munoz-perez-2026} rule 55).
 
-/-- Apply Fission given a rule, a person category, and a verb-head list.
-    Returns `none` if either the structural or person condition fails. -/
-def applyFission {Person : Type} (rule : FissionRule Person)
-    (p : Person) (heads : List VerbHead) : Option FissionOutput :=
-  if rule.contextOk heads && rule.personOk p then
-    some (rule.realize p)
-  else
-    none
-
-/-- A PF well-formedness condition: checks whether a list of overt
-    clitic forms satisfies a language-specific phonological requirement
-    (e.g., anticausative marking in Spanish). -/
-structure PFMarkingCondition where
-  isSatisfied : List String → Bool
-
-/-- When Fission produces a clitic that satisfies a PF condition,
-    another overt marker (e.g., SE) may be optional. -/
-def fissionSatisfiesPF {Person : Type} (rule : FissionRule Person)
-    (pf : PFMarkingCondition) (p : Person) (heads : List VerbHead) : Bool :=
-  match applyFission rule p heads with
-  | some output => pf.isSatisfied [output.cl1Form]
-  | none => false
-
--- ============================================================================
--- § 7: Bridge — Spanish Fission Instantiation
--- ============================================================================
-
-open Fragments.Spanish.PersonFeatures
-open Fragments.Spanish.Predicates
-open Fragments.Spanish.Clitics
-open Features.Person
-
-/-- The stylistic applicative Fission rule for Chilean Spanish.
-    Instantiates the generic Fission framework with Spanish-specific data:
-    - Context: inchoative (vGO ∧ vBE)
+    Instantiates the generic Fission framework
+    (`Theories.Morphology.DM.Fission`) with Spanish-specific data:
+    - Context: inchoative verbal-head sequence (vGO ⌒ vBE)
     - Person: [+PART, +SING] (1SG or 2SG)
     - Realization: Cl₁ = me/te (from [±AUTHOR]), Cl₂ = le (invariable) -/
-def spanishFissionRule : FissionRule Category where
-  contextOk := isInchoative
-  personOk := fun p => decide (IsFissionApplicable p)
+def spanishFissionRule : FissionRule Category (List VerbHead) FissionOutput where
+  contextOk := fun heads => isInchoative heads = true
+  decContext := fun heads => inferInstanceAs (Decidable (isInchoative heads = true))
+  personOk := IsFissionApplicable
+  decPerson := inferInstance
   realize := fun p => {
     cl1Form := if p.toFeatures.hasAuthor then "me" else "te"
     cl2Form := "le"
   }
 
 /-- Muñoz @cite{munoz-perez-2026}: Non-thematic Voice must be overtly
-    marked by a reflexive-like element at PF. -/
-def spanishAnticausativePF : PFMarkingCondition where
-  isSatisfied := fun cs => cs.any (fun c => c == "se" || c == "me" || c == "te" || c == "nos")
+    marked by a reflexive-like element at PF. The Fission rule licenses
+    only 1SG/2SG (`me`/`te`); the 1PL form `nos` is correctly excluded
+    because Fission does not apply to plurals. -/
+def spanishAnticausativePF : PFMarkingCondition FissionOutput where
+  satisfied := fun out => out.cl1Form = "me" ∨ out.cl1Form = "te" ∨ out.cl1Form = "se"
+  decSatisfied := fun _ => inferInstance
 
 /-- Apply the Spanish stylistic applicative Fission rule. -/
 def applySpanishFission (p : Category) (heads : List VerbHead) :
@@ -245,9 +289,7 @@ def applySpanishFission (p : Category) (heads : List VerbHead) :
 def spanishFissionSatisfiesPF (p : Category) (heads : List VerbHead) : Bool :=
   fissionSatisfiesPF spanishFissionRule spanishAnticausativePF p heads
 
--- ============================================================================
--- § 8: Bridge — Person Restriction (Prediction 1)
--- ============================================================================
+/-! ### Person restriction (Prediction 1) -/
 
 /-- Fission applies only to 1SG and 2SG.
     DERIVED from [+PARTICIPANT, +SINGULAR] feature condition. -/
@@ -264,41 +306,31 @@ theorem fission_person_restriction :
 /-- The person restriction matches the empirical data:
     Fission applies ↔ stylistic LE is grammatical. -/
 theorem person_restriction_matches_data :
-    -- 1SG: Fission applies, data says grammatical
     IsFissionApplicable .s1 ∧
-    person_1sg.acceptability = .grammatical ∧
-    -- 2SG: Fission applies, data says grammatical
+    person_1sg.acceptability = .ok ∧
     IsFissionApplicable .s2 ∧
-    person_2sg.acceptability = .grammatical ∧
-    -- 3SG: Fission blocked, data says ungrammatical
+    person_2sg.acceptability = .ok ∧
     ¬ IsFissionApplicable .s3 ∧
-    person_3sg.acceptability = .ungrammatical := by
+    person_3sg.acceptability = .unacceptable := by
   refine ⟨?_, rfl, ?_, rfl, ?_, rfl⟩ <;> decide
 
--- ============================================================================
--- § 9: Bridge — Inchoative Requirement (Prediction 2)
--- ============================================================================
+/-! ### Inchoative requirement (Prediction 2) -/
 
 /-- Stylistic LE requires inchoative context (vGO ∧ vBE).
     DERIVED from Fission's structural context condition. -/
 theorem stylLE_requires_inchoative :
-    -- Fission applies in inchoative context
     (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).isSome = true ∧
-    -- Fission blocked in activity context
     (applySpanishFission .s1 [.vDO]).isSome = false ∧
-    -- Fission blocked in causative context
     (applySpanishFission .s1 [.vDO, .vCAUSE, .vGO, .vBE]).isSome = false := by
-  native_decide
+  decide
 
 /-- Every Muñoz-Pérez verb that licenses stylistic LE has inchoative structure.
     DERIVED from the verb fragment. -/
 theorem stylLE_verbs_inchoative :
     (Fragments.Spanish.Predicates.munozVerbs.filter (·.licensesStylLE)).all
-      (fun v => isInchoative v.verbHead) = true := by native_decide
+      (fun v => isInchoative v.verbHead) = true := by decide
 
--- ============================================================================
--- § 10: Bridge — Marking Restriction (Prediction 3)
--- ============================================================================
+/-! ### Marking restriction (Prediction 3) -/
 
 /-- Unmarked anticausatives block stylistic LE.
     DERIVED from the verb fragment: mejorar is unmarked and blocks LE. -/
@@ -320,19 +352,17 @@ theorem optional_licenses_stylLE :
     DERIVED from the fragment data. -/
 theorem blocking_verbs_all_unmarked :
     (Fragments.Spanish.Predicates.munozVerbs.filter (!·.licensesStylLE)).all
-      (fun v => v.anticausativeMarking == .unmarked) = true := by native_decide
+      (fun v => v.anticausativeMarking == .unmarked) = true := by decide
 
--- ============================================================================
--- § 11: Bridge — SE-Optionality (Prediction 4)
--- ============================================================================
+/-! ### SE-optionality (Prediction 4) -/
 
 /-- When Fission applies, the output clitic satisfies the PF
     marking condition (syncretic with reflexive), making SE optional. -/
 theorem se_optional_1sg :
-    spanishFissionSatisfiesPF .s1 [.vCAUSE, .vGO, .vBE] = true := by native_decide
+    spanishFissionSatisfiesPF .s1 [.vCAUSE, .vGO, .vBE] = true := by decide
 
 theorem se_optional_2sg :
-    spanishFissionSatisfiesPF .s2 [.vCAUSE, .vGO, .vBE] = true := by native_decide
+    spanishFissionSatisfiesPF .s2 [.vCAUSE, .vGO, .vBE] = true := by decide
 
 /-- The DAT-REFL syncretism that enables SE-optionality is present
     for exactly the persons where Fission applies. -/
@@ -341,81 +371,114 @@ theorem syncretism_aligns_with_fission :
     datReflSyncretic .second .Sing = true ∧
     datReflSyncretic .third .Sing = false := ⟨rfl, rfl, rfl⟩
 
--- ============================================================================
--- § 12: Bridge — Three-Way Synonymy (Prediction 5)
--- ============================================================================
+/-! ### Three-way synonymy (Prediction 5) -/
 
-/-- The three clitic patterns (SE+CL, CL+LE, SE+CL+LE) are semantically
-    identical because non-thematic Voice contributes no semantics.
-    SE is purely a PF marker — its presence or absence is phonological,
-    not semantic. -/
+/-- Re-export of `Minimalist.nonThematic_no_semantics` in the Muñoz-Pérez
+    frame. SE is purely a PF marker — its presence or absence is
+    phonological, not semantic. -/
 theorem voice_semantically_vacuous :
-    ¬ Minimalist.voiceAnticausative.HasSemantics := by decide
+    ¬ Minimalist.voiceAnticausative.HasSemantics :=
+  Minimalist.nonThematic_no_semantics
 
 /-- The empirical three-way synonymy follows: since Voice has no
     semantics, adding or removing SE doesn't change meaning. -/
 theorem three_way_synonymy_from_vacuity :
-    -- All three patterns are grammatical (data)
-    romper_se_me.acceptability = .grammatical ∧
-    romper_me_le.acceptability = .grammatical ∧
-    romper_se_me_le.acceptability = .grammatical ∧
-    -- Non-thematic Voice is semantically vacuous (theory)
+    romper_se_me.acceptability = .ok ∧
+    romper_me_le.acceptability = .ok ∧
+    romper_se_me_le.acceptability = .ok ∧
     ¬ Minimalist.voiceAnticausative.HasSemantics := by
-  refine ⟨rfl, rfl, rfl, ?_⟩; decide
+  refine ⟨rfl, rfl, rfl, ?_⟩; exact voice_semantically_vacuous
 
--- ============================================================================
--- § 13: Bridge — Fission Verification
--- ============================================================================
+/-! ### Fission verification -/
 
 /-- Fission applies to 1SG in inchoative context. -/
 theorem fission_1sg_inchoative :
     applySpanishFission .s1 [.vCAUSE, .vGO, .vBE] =
-      some { cl1Form := "me", cl2Form := "le" } := by native_decide
+      some { cl1Form := "me", cl2Form := "le" } := by decide
 
 /-- Fission applies to 2SG in inchoative context. -/
 theorem fission_2sg_inchoative :
     applySpanishFission .s2 [.vCAUSE, .vGO, .vBE] =
-      some { cl1Form := "te", cl2Form := "le" } := by native_decide
+      some { cl1Form := "te", cl2Form := "le" } := by decide
 
 /-- Fission does NOT apply to 3SG (not [+PART]). -/
 theorem fission_blocked_3sg :
-    applySpanishFission .s3 [.vCAUSE, .vGO, .vBE] = none := by native_decide
+    applySpanishFission .s3 [.vCAUSE, .vGO, .vBE] = none := by decide
 
 /-- Fission does NOT apply in non-inchoative context (activity). -/
 theorem fission_blocked_activity :
-    applySpanishFission .s1 [.vDO] = none := by native_decide
+    applySpanishFission .s1 [.vDO] = none := by decide
 
 /-- Fission does NOT apply in causative context (has vDO). -/
 theorem fission_blocked_causative :
-    applySpanishFission .s1 [.vDO, .vCAUSE, .vGO, .vBE] = none := by native_decide
+    applySpanishFission .s1 [.vDO, .vCAUSE, .vGO, .vBE] = none := by decide
 
 /-- 1SG Cl₁ is "me" (reflects [+AUTHOR]). -/
 theorem cl1_1sg_is_me :
-    (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "me" := by native_decide
+    (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "me" := by decide
 
 /-- 2SG Cl₁ is "te" (reflects [-AUTHOR]). -/
 theorem cl1_2sg_is_te :
-    (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "te" := by native_decide
+    (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "te" := by decide
 
 /-- Cl₂ is always invariable "le". -/
 theorem cl2_invariable :
     (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" ∧
-    (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by native_decide
+    (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by decide
 
--- ============================================================================
--- § 14: Bridge — Per-Verb Inchoative Verification
--- ============================================================================
+/-! ### Cross-framework comparisons
 
-/-- Each verb individually checked against the inchoative requirement. -/
-theorem abrir_inchoative : isInchoative abrir.verbHead = true := by native_decide
-theorem romper_inchoative : isInchoative romper.verbHead = true := by native_decide
-theorem hundir_inchoative : isInchoative hundir.verbHead = true := by native_decide
-theorem caer_inchoative : isInchoative caer.verbHead = true := by native_decide
-theorem morir_inchoative : isInchoative morir.verbHead = true := by native_decide
-theorem quebrar_inchoative : isInchoative quebrar.verbHead = true := by native_decide
-theorem hervir_inchoative : isInchoative hervir.verbHead = true := by native_decide
-theorem olvidar_inchoative : isInchoative olvidar.verbHead = true := by native_decide
-theorem ocurrir_inchoative : isInchoative ocurrir.verbHead = true := by native_decide
-theorem mejorar_inchoative : isInchoative mejorar.verbHead = true := by native_decide
+The paper draws two comparative arguments — against @cite{koontz-garboden-2009}'s
+reflexivization analysis, and narrower than @cite{martin-schaefer-kastner-2025}'s
+two-flavor Voice — that are not yet stated as Lean theorems.
+
+## Todo
+
+* **K-G refutation as a real bridge theorem.** Currently the docstring
+  prose asserts *mejorar* refutes K-G by being an unmarked anticausative,
+  but the Fragment field `mejorar.anticausativeMarking = .unmarked` is
+  stipulated, not derived. A genuine refutation requires K-G's verb-level
+  prediction to be formalised on the K-G side: add a derived predicate
+  `kgPredictsSEMarked : SpanishVerbEntry → Prop` to
+  `Phenomena/Causation/Studies/KoontzGarboden2009.lean`, built from
+  K-G's `reflexivize` + the verbHead-identity claim in
+  `reflexivization_satisfiesMH_verbHead`. Then state the refutation
+  as `¬ kgPredictsSEMarked mejorar` — which would actually contradict
+  K-G's mechanism rather than restate the Fragment.
+
+* **MSK comparison as a real bridge theorem.** Analogously,
+  `MartinSchaeferKastner2025.seVoiceOptions : List VoiceFlavor` is a
+  list literal `[.nonThematic, .reflexive]`. A subset claim against any
+  hand-written Muñoz list of flavors is decided by `decide` over list
+  literals — no real Voice-flavor mechanism is engaged. A genuine
+  comparison requires deriving each paper's *predicted* flavor set from
+  its analytical commitments (Voice-flavor licensing rules in MSK;
+  Fission + Voice-vacuity in MunozPerez), then proving inclusion of
+  the derived sets.
+
+* **vGO ⌒ vBE adjacency in `isInchoative` (Phase D — substrate).**
+  Muñoz Pérez's Fission rule has the explicit context `/vGO __ vBE`,
+  but `Theories/Syntax/Minimalist/VerbalDecomposition.lean`'s
+  `isInchoative` checks only set-membership (`heads.contains .vGO`),
+  not adjacency. Deferred because the refactor touches 8 downstream
+  consumer files. A focused session should add an `applPos` field (or
+  similar adjacency witness) to the decomposition and audit each
+  consumer site.
+
+* **Derive `licensesStylLE` from structure
+  (Phase D — `Fragments/Spanish/Predicates.lean`).** The Fragment
+  currently stipulates `licensesStylLE : Bool` per verb; per
+  CLAUDE.md's "derive, don't stipulate" rule it should be computed
+  from existing structural fields, plausibly
+  `isInchoative v.verbHead && v.anticausativeMarking ∈ [.marked, .optional]`.
+  Deferred pending Phase D's `isInchoative` refactor (the derivation
+  needs adjacency-aware inchoativity to be empirically tight).
+
+* **Newman 2024 Feature Failure (Phase D — Minimalist substrate).**
+  Paper rule 60 grounds why the stylistic *le*'s unchecked features
+  do not crash the derivation. The Minimalist substrate currently
+  has no `Derivation` or `crashes` predicates to formalise
+  Feature Failure against; deferred pending those primitives.
+-/
 
 end MunozPerez2026
