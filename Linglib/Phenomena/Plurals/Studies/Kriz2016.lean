@@ -635,7 +635,8 @@ omit [DecidableEq Atom] in
 theorem barePluralTV_eq_superTrue (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (hne : x.Nonempty) (w : W) :
     barePluralTV P x w = superTrue (fun a => P a w) ⟨x, hne⟩ := by
-  simp [barePluralTV, pluralTruthValue, dif_pos hne]
+  simp only [barePluralTV, pluralTruthValue, dif_pos hne]
+  rw [Semantics.Supervaluation.superTrue_eq_dist]
 
 omit [DecidableEq Atom] in
 /-- Corollary: homogeneity (gap existence) is exactly supervaluation

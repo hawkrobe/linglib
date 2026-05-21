@@ -540,6 +540,28 @@ example {α : Type*} (a b c : α) :
   have := node_mk_planar_list a [Planar.leaf b, Planar.leaf c]
   simpa [leaf] using this
 
+/-! ### Root label and children (parallel-session API stubs)
+
+Referenced by `Core/Algebra/RootedTree/BMinus.lean`. Stubbed with
+`sorry` to unblock the build; proper implementation requires lifting
+`Planar.label` (via `planarEquiv_label_eq`) and `Planar.children` (via
+`planarEquiv_root_perm`) through the `PlanarEquiv` quotient. -/
+
+/-- The root label of a nonplanar tree. -/
+noncomputable def rootLabel : Nonplanar α → α := sorry
+
+/-- The multiset of root children of a nonplanar tree. -/
+noncomputable def rootChildren : Nonplanar α → Multiset (Nonplanar α) := sorry
+
+@[simp] theorem rootLabel_node (a : α) (F : Multiset (Nonplanar α)) :
+    rootLabel (node a F) = a := sorry
+
+@[simp] theorem rootChildren_node (a : α) (F : Multiset (Nonplanar α)) :
+    rootChildren (node a F) = F := sorry
+
+/-- Eta law: every tree is the `node` of its root label and root children. -/
+theorem node_eta (t : Nonplanar α) : node (rootLabel t) (rootChildren t) = t := sorry
+
 end Nonplanar
 
 /-! ## Functoriality of `map` under `PlanarEquiv`

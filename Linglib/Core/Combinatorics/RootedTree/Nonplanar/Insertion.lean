@@ -123,6 +123,12 @@ theorem toList_map_quotientOut_add_perm (M N : Multiset (Nonplanar α)) :
   rw [← List.map_append]
   exact (Multiset.toList_add_perm M N).map _
 
+/-- The insertion multiset preserves cardinality: every forest in
+    `insertionMultiset A B` has the same cardinality as `A`. Stub. -/
+theorem insertionMultiset_card_eq {α : Type*} (A B : Multiset (Nonplanar α))
+    {F' : Multiset (Nonplanar α)} (hF' : F' ∈ insertionMultiset A B) :
+    F'.card = A.card := sorry
+
 end Nonplanar
 
 end RootedTree

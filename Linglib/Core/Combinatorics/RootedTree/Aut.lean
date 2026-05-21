@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Combinatorics.RootedTree.Nonplanar
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Data.Nat.Factorial.Basic
 
@@ -76,6 +77,13 @@ noncomputable def autCard : Nonplanar α → ℕ := sorry
 @[simp] theorem autCard_leaf (a : α) : autCard (Nonplanar.leaf a : Nonplanar α) = 1 := by
   sorry
 
+/-- The automorphism group of any tree is non-trivial (contains identity).
+    Stated as positivity of the cardinality. **TODO**: implementation —
+    depends on `autCard` being properly defined; currently `sorry`-consistent
+    with `autCard` itself. -/
+theorem autCard_pos (t : Nonplanar α) : 0 < autCard t := by
+  sorry
+
 /-- The cardinality `|Aut(F)|` of the automorphism group of a forest
     `F` (multiset of nonplanar trees), defined as the product over
     distinct trees `T ∈ F`:
@@ -99,6 +107,21 @@ noncomputable def forestAutCard (F : Multiset (Nonplanar α)) : ℕ :=
     forestAutCard (0 : Multiset (Nonplanar α)) = 1 := by
   letI : DecidableEq (Nonplanar α) := Classical.decEq _
   simp [forestAutCard]
+
+/-- The aut group of any forest is non-trivial (contains identity).
+    Each factor `(F.count t)! * autCard t ^ F.count t` is positive
+    (factorial always positive; `autCard_pos` gives the tree factor). -/
+theorem forestAutCard_pos (F : Multiset (Nonplanar α)) : 0 < forestAutCard F := by
+  letI : DecidableEq (Nonplanar α) := Classical.decEq _
+  unfold forestAutCard
+  exact Finset.prod_pos fun t _ =>
+    Nat.mul_pos (Nat.factorial_pos _) (pow_pos (autCard_pos t) _)
+
+/-- `autCard` on the smart `node` constructor: the recursive definition.
+    **TODO**: depends on `autCard` being properly defined. -/
+@[simp] theorem autCard_node (a : α) (F : Multiset (Nonplanar α)) :
+    autCard (Nonplanar.node a F) = forestAutCard F := by
+  sorry
 
 end Nonplanar
 
