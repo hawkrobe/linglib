@@ -9,7 +9,7 @@ active variant exists — every other piece of information about each
 verb (the *-st* classification, the anticausative-marking morpheme,
 the @cite{cuervo-2003}-style root decomposition, the
 possessive-dative diagnostic) is paper-specific apparatus and lives
-in `Phenomena.ArgumentStructure.Studies.Wood2015`, where it can
+in `Wood2015`, where it can
 participate in further analysis without polluting the Fragment
 schema.
 

@@ -114,7 +114,7 @@ movement of the empty-headed PP to SpecSC1.
   PASSIVE-style operation. den Dikken argues Larson's analysis fails
   for triadic VPCs (book §3.2 ex. 4-6) because the particle's
   position cannot be accommodated in Larson's flat VP shell.
-  See `Phenomena/ArgumentStructure/Studies/Larson1988.lean` for the
+  See `Studies/Larson1988.lean` for the
   predecessor formalization.
 - @cite{baker-1988} is the source of the Government Transparency
   Corollary used to license Case assignment after P-incorporation.
@@ -133,7 +133,7 @@ architectural target memo).
 
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Dendikken1995
+namespace Dendikken1995
 
 open Minimalist
 
@@ -457,4 +457,4 @@ theorem post_inversion_sc1_send_isSmallClause :
 theorem sc1_send_doc_dstr_isSmallClause :
     IsSmallClause sc1_send_doc_dstr := by sorry
 
-end Phenomena.ArgumentStructure.Studies.Dendikken1995
+end Dendikken1995

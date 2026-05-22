@@ -1,6 +1,6 @@
 import Linglib.Typology.ArgumentStructure
-import Linglib.Phenomena.ArgumentStructure.Studies.Siloni2012
-import Linglib.Phenomena.ArgumentStructure.Studies.Polinsky2013
+import Linglib.Studies.Siloni2012
+import Linglib.Studies.Polinsky2013
 import Linglib.Data.WALS.Features.F106A
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.Swahili.Reciprocals
@@ -36,7 +36,7 @@ import a 2023 paper).
 - Fragment grounding for English reciprocals
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Nordlinger2023
+namespace Nordlinger2023
 
 open Typology.ArgumentStructure
 
@@ -299,7 +299,7 @@ theorem rp_wambaya_wals :
 -- ============================================================================
 
 section ProfileAgreement
-open Phenomena.ArgumentStructure.Studies.Polinsky2013
+open Polinsky2013
 
 /-- For languages with both a `ValenceProfile` (Polinsky2013) and a
     `RecipProfile` (this file), the reflexive-reciprocal classification
@@ -488,7 +488,7 @@ open Fragments.English.Pronouns in
     pronouns, and the profile records "each other" as a bipartite NP
     strategy. -/
 theorem english_profile_grounded :
-    Phenomena.ArgumentStructure.Studies.Polinsky2013.english.reciprocal
+    Polinsky2013.english.reciprocal
         = ReciprocalType.distinctFromReflexive ∧
     rp_english.primaryStrategy = .bipartiteNP ∧
     rp_english.valency = .bivalent ∧
@@ -530,4 +530,4 @@ theorem swahili_consistent_with_siloni :
 theorem greek_consistent_with_siloni :
     rp_greek.formation = some RecipFormation.lexical := by native_decide
 
-end Phenomena.ArgumentStructure.Studies.Nordlinger2023
+end Nordlinger2023

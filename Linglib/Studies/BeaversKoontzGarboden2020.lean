@@ -30,7 +30,7 @@ re-derive Levin classes (English) and Bohnemeyer's verb-stem classes
 (Yukatek) as orbits under per-language derivational operators.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.BeaversKoontzGarboden2020
+namespace BeaversKoontzGarboden2020
 
 open Semantics.Lexical.Roots
 
@@ -141,4 +141,4 @@ theorem pure_ontological_respects_bifurcation :
 theorem crack_respects_manner_result :
     crack.RespectsMannerResultComplementarity := by decide
 
-end Phenomena.ArgumentStructure.Studies.BeaversKoontzGarboden2020
+end BeaversKoontzGarboden2020

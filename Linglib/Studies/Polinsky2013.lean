@@ -6,7 +6,7 @@ import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.English.Pronouns
 
 /-!
-# Phenomena.ArgumentStructure.Studies.Polinsky2013
+# Polinsky2013
 @cite{polinsky-2013-antipassive} @cite{polinsky-2013-applicative}
 @cite{maslova-nedjalkov-2013} @cite{siewierska-2013}
 @cite{haspelmath-2013-ditransitive}
@@ -53,7 +53,7 @@ Siloni's lexical/syntactic distinction is in `Studies/Siloni2012.lean`.
 
 set_option autoImplicit false
 
-namespace Phenomena.ArgumentStructure.Studies.Polinsky2013
+namespace Polinsky2013
 
 open Typology.ArgumentStructure
 
@@ -586,4 +586,4 @@ theorem finnish_passive_has_semantics :
 theorem finnish_passive_no_agent :
     ¬ Fragments.Finnish.Predicates.finnishPassive.AssignsTheta := by decide
 
-end Phenomena.ArgumentStructure.Studies.Polinsky2013
+end Polinsky2013

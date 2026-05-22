@@ -5,7 +5,7 @@ import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Sassoon2013
 import Linglib.Studies.Solt2018Multidim
-import Linglib.Phenomena.ArgumentStructure.Studies.BeaversKoontzGarboden2020
+import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Core.Scales.Scale
 
 /-!
@@ -892,7 +892,7 @@ theorem largeVase_score_le_one :
     of √crack is `[.becomesState "fissured", .hasCause]` — the
     "result + cause, no manner, no state" four-feature signature
     `⟨hasState=false, hasManner=false, hasResult=true, hasCause=true⟩`
-    (`Phenomena/ArgumentStructure/Studies/BeaversKoontzGarboden2020.lean
+    (`Studies/BeaversKoontzGarboden2020.lean
     line 52`).
 
     Tham §5.1 (the (45) examples — cracked pumpkin, dented helmet
@@ -912,7 +912,7 @@ theorem largeVase_score_le_one :
     substrate level. -/
 theorem cracked_adj_refutes_bkg_crack_root_inheritance :
     Semantics.Lexical.Roots.Root.hasResult
-      Phenomena.ArgumentStructure.Studies.BeaversKoontzGarboden2020.crack
+      BeaversKoontzGarboden2020.crack
       = true ∧
     crack.adjEntailsPrecedingChange = false := by
   refine ⟨rfl, rfl⟩

@@ -41,7 +41,7 @@ introduces CAUSE, rather than @cite{cuervo-2003}'s multi-headed
 decomposition. The VerbHead decomposition used here is a linglib
 modeling choice that captures the same Voice–CAUSE independence
 using @cite{cuervo-2003}'s notation. See
-`Phenomena.ArgumentStructure.Studies.Wood2015` for the Icelandic -st
+`Wood2015` for the Icelandic -st
 apparatus (the Wood-2015 -st classification, root-structure
 projections, and ±D/±λx grid analysis); the lexical fragment
 `Fragments.Icelandic.Predicates` carries only the consensus verb

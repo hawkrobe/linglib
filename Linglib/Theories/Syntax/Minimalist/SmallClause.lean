@@ -102,7 +102,7 @@ Mathlib analogue: `Submonoid` (structure) + `IsSubmonoid` (predicate).
 
 Use this companion to characterize SC encodings written as raw
 `merge`-built `SyntacticObject`s (the prevailing style in study files
-like `HaddicanEtAl2026`, `Phenomena/ArgumentStructure/Studies/Dendikken1995`)
+like `HaddicanEtAl2026`, `Studies/Dendikken1995`)
 without forcing them through the `SmallClause` constructor. -/
 
 /-- Head category of a syntactic object: the leftmost terminal's outer

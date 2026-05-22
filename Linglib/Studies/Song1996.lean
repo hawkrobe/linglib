@@ -14,7 +14,7 @@ PURP (Korean *-ke ha-*).
 This file owns Song's typology + 6 per-language datums + WALS Ch 110A/111A
 grounding theorems + the Comrie-Song complexity bridge. The orthogonal
 Pylkkänen 2008 Voice-bundling × selection typology lives at
-`Phenomena/ArgumentStructure/Studies/Pylkkanen2008.lean` §13 (Pylkkänen's
+`Studies/Pylkkanen2008.lean` §13 (Pylkkänen's
 substrate; not subsumed by Song's). Comrie 1989's compact/morphological/
 periphrastic complexity scale lives at
 `Theories/Semantics/Causation/Morphological.CausativeComplexity` (the

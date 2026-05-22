@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Theories.Syntax.Minimalist.SmallClause
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
-import Linglib.Phenomena.ArgumentStructure.Studies.Bruening2021
+import Linglib.Studies.Bruening2021
 
 /-!
 # PVC–DOC Structural Priming
@@ -320,7 +320,7 @@ theorem doc_nested_matches_appl :
 amalgam analysis. The lexical-fragment side of the same paper —
 Bruening's classification of implicit-argument behavior across
 ~43 ditransitive verbs (Table 56) — is formalized in
-`Phenomena/ArgumentStructure/Studies/Bruening2021.lean`. The
+`Studies/Bruening2021.lean`. The
 `bruening_give_field_consistent` theorem below ties this structural
 witness to that lexical-fragment side. -/
 
@@ -445,7 +445,7 @@ et al. (2026) explicitly say (p.2) "we set aside details of the
 internal structure of the small clause", and the flat DP–DP shape
 is the deliberate simplification. The richer DOC encoding (with
 BE+P decomposition / Predicate Inversion) in
-`Phenomena/ArgumentStructure/Studies/Dendikken1995` does satisfy
+`Studies/Dendikken1995` does satisfy
 `IsSmallClause` at every nested SC layer. -/
 
 /-- Phase 1.0 caveat: `IsSmallClause` is `noncomputable` because it

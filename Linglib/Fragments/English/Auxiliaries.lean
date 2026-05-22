@@ -40,7 +40,7 @@ the last audit):
   RotterLiu2025Concord, YingEtAl2025}`
 - Auxiliary diagnostics: `Phenomena/AuxiliaryVerbs/{Diagnostics,
   Typology}`, `Phenomena/Morphology/Studies/ZwickyPullum1983`
-- Argument structure / control: `Phenomena/ArgumentStructure/Studies/
+- Argument structure / control: `Studies/
   Osborne2019`, `Studies/Osborne2019Control`
 - Reference: `Studies/Percus2000` (via modal-adverb
   side, indirectly)

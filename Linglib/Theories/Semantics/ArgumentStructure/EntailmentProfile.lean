@@ -44,7 +44,7 @@ For unaccusativity, the priority-based approach checks whether the sole argument
 has core agentive features (volition/causation) rather than flat-counting.
 
 @cite{dowty-1991}'s original flat-counting ASP is preserved in
-`Phenomena/ArgumentStructure/Studies/Dowty1991.lean` for comparison.
+`Studies/Dowty1991.lean` for comparison.
 -/
 
 namespace Semantics.ArgumentStructure.EntailmentProfile

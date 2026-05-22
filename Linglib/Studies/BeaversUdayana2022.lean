@@ -1,5 +1,5 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
-import Linglib.Phenomena.ArgumentStructure.Studies.Beavers2010
+import Linglib.Studies.Beavers2010
 import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Typology.Voice
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
@@ -45,7 +45,7 @@ anticausatives (blocks *murder*-type verbs). The 2022 generalization
 to Indonesian middle voice drops this restriction because *ber-*
 suppresses arguments other than causers. The 2013 operator with the
 U_I restriction is formalized at
-`Phenomena.ArgumentStructure.Studies.BeaversZubair2013.causerSuppress`.
+`BeaversZubair2013.causerSuppress`.
 
 ## 2×2 typology (the paper's (31))
 

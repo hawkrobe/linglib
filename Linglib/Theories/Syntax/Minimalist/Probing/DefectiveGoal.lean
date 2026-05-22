@@ -13,7 +13,7 @@ default subject marking in QI, Bantu locative inversion agreement.
 Used by:
 - `DefectiveCircumvention.lean` — Storment's probing operation that
   conditionally re-probes past a defective goal.
-- `Phenomena/ArgumentStructure/Studies/Storment2026.lean` — derives
+- `Studies/Storment2026.lean` — derives
   Setswana QI agreement default from defective theme.
 -/
 

@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Theories.Syntax.Minimalist.SmallClause
-import Linglib.Phenomena.ArgumentStructure.Studies.Dendikken1995
+import Linglib.Studies.Dendikken1995
 
 /-!
 # Transitive causatives — den Dikken's affixal-particle analysis
@@ -75,7 +75,7 @@ for the Theme.
 
 ## Cross-references
 
-- `Phenomena/ArgumentStructure/Studies/Dendikken1995` — the triadic
+- `Studies/Dendikken1995` — the triadic
   formalisation (book ch. 3). Same SC-in-SC template, V-slot filled
   with abstract BE rather than V_emb.
 - `Phenomena/Constructions/ParticleVerbs/Studies/Dendikken1995` — the
@@ -84,7 +84,7 @@ for the Theme.
   (book p. 235 ex. 25).
 - `Theories/Syntax/Minimalism/Applicative.lean` — Pylkkänen's
   high/low applicative typology. Per chronological dependency, this
-  1995 file does not import `Phenomena/ArgumentStructure/Studies/Pylkkanen2008`;
+  1995 file does not import `Studies/Pylkkanen2008`;
   the reverse direction is appropriate.
 
 ## Scope (and what's deferred)
@@ -294,7 +294,7 @@ docstring assertion. -/
     the structural assimilation thesis at the geometric level. -/
 theorem causative_triadic_same_shape :
     sc1_faire_manger.shape =
-      (Phenomena.ArgumentStructure.Studies.Dendikken1995.sc1_send).shape := by
+      (Dendikken1995.sc1_send).shape := by
   decide
 
 /-- The Dutch *ver-* causative also matches the triadic shape — the
@@ -302,7 +302,7 @@ theorem causative_triadic_same_shape :
     triadic particle X position. -/
 theorem dutch_ver_triadic_same_shape :
     sc1_ver_schaffen.shape =
-      (Phenomena.ArgumentStructure.Studies.Dendikken1995.sc1_send).shape := by
+      (Dendikken1995.sc1_send).shape := by
   decide
 
 /-! ## §10. Bridge to Pylkkänen's applicative typology

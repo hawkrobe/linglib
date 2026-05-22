@@ -15,7 +15,7 @@ function. The CI rule correctly blocks *cut* via `!instrumentSpec`
 the agentless inchoative).
 -/
 
-namespace Phenomena.ArgumentStructure.DiathesisAlternations.Bridge
+namespace Levin1993
 
 open Semantics.Lexical
 open Fragments.English.Predicates.Verbal
@@ -328,4 +328,4 @@ theorem ia_appear_agrees :
     ia_appear.result = .blocked ∧
     LevinClass.appear.participatesIn .inducedAction = false := ⟨rfl, rfl⟩
 
-end Phenomena.ArgumentStructure.DiathesisAlternations.Bridge
+end Levin1993

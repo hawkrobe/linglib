@@ -4,8 +4,8 @@ import Linglib.Theories.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.VoiceProjection
 import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Phenomena.ArgumentStructure.Studies.Polinsky2013
-import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
+import Linglib.Studies.Polinsky2013
+import Linglib.Studies.Larson1988
 
 /-!
 # @cite{pylkkanen-2008} — Introducing Arguments
@@ -920,12 +920,12 @@ of cross-framework editorial disagreement visible. -/
     Pylkkänen says low recipient. Same for Japanese. The disagreement
     is about the criterion for "applicative," not about the data. -/
 theorem wals_pylkkanen_diverge_on_english :
-    Phenomena.ArgumentStructure.Studies.Polinsky2013.english.applicative
+    Polinsky2013.english.applicative
         = .noApplicative ∧
     english_appl.classification = .lowRecipient := ⟨rfl, rfl⟩
 
 theorem wals_pylkkanen_diverge_on_japanese :
-    Phenomena.ArgumentStructure.Studies.Polinsky2013.japanese.applicative
+    Polinsky2013.japanese.applicative
         = .noApplicative ∧
     japanese_appl.classification = .lowRecipient := ⟨rfl, rfl⟩
 

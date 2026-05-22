@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Scope
 import Linglib.Features.ScopeTypes
-import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
+import Linglib.Studies.Pylkkanen2008
 
 /-!
 # @cite{bruening-2001} — QR Obeys Superiority

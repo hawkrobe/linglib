@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
-import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
+import Linglib.Studies.Larson1988
+import Linglib.Studies.Pylkkanen2008
 
 /-! # Bruening 2021 — Implicit Arguments in English Double Object Constructions
 @cite{bruening-2021}
@@ -81,7 +81,7 @@ available. Treating alternation as Bruening's classification (not as a
 Fragment-derivable fact) keeps the drift sentry focused on the schema
 fields it can actually check.
 
-See `Phenomena/ArgumentStructure/Studies/HaddicanEtAl2026.lean`
+See `Studies/HaddicanEtAl2026.lean`
 (`doc_bruening` and `bruening_give_field_consistent`) for a
 `SyntacticObject` witness of Bruening's V+P amalgam structure that
 consumes this file's `give` Fragment entry — a complementary tree-shape

@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.Applicative
-import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
+import Linglib.Studies.Pylkkanen2008
 
 /-!
 # @cite{everdell-2023} — Applicativization in O'dam (Southeastern Tepiman)

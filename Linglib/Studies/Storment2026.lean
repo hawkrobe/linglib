@@ -45,7 +45,7 @@ claims. They live in topic-named files alongside this study:
   discourse-sourced MoS island finding (compatibility, not contradiction)
 -/
 
-namespace Phenomena.ArgumentStructure.Unaccusativity.Bridge
+namespace Storment2026
 
 open Semantics.Lexical
 open Fragments.English.Predicates.Verbal
@@ -388,4 +388,4 @@ theorem english_qi_clash_on_incompatible_agent
     defectiveCircumvention probe alpha beta true compat = .featureClash :=
   defectiveCircumvention_clash_on_incompatible _ _ _ _ hd hc
 
-end Phenomena.ArgumentStructure.Unaccusativity.Bridge
+end Storment2026

@@ -39,7 +39,7 @@ the specific root identity. The per-root checks then degenerate to
 finite signature lookups.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Lucy1994
+namespace Lucy1994
 
 open Semantics.Lexical.Roots
 open Morphology.Derivation
@@ -291,4 +291,4 @@ theorem kul_lucy_agrees_positional :
     predictedClass kul =
       some (VerbStemClass.positional.toSalienceClass) := rfl
 
-end Phenomena.ArgumentStructure.Studies.Lucy1994
+end Lucy1994

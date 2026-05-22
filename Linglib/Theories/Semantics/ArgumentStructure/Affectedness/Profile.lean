@@ -51,7 +51,7 @@ grammatical predictions:
 The affectedness hierarchy predicts the **Morphosyntactic Alignment
 Principle (MAP)**: when an argument alternates between direct and oblique
 realization, the direct variant has truth conditions at least as strong
-as the oblique. See `Phenomena/ArgumentStructure/Studies/Beavers2010.lean`
+as the oblique. See `Studies/Beavers2010.lean`
 for the empirical verification.
 
 ## Interface to root semantics

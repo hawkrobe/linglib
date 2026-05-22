@@ -14,7 +14,7 @@ appropriate `Cat` and `SelStack` features.
 
 Concrete derivation *instances* using these projections live in
 `Phenomena/`, anchored to specific paper analyses (e.g.
-`Phenomena/ArgumentStructure/Studies/Adger2003.lean` for c-selection).
+`Studies/Adger2003.lean` for c-selection).
 
 ## Sections
 

@@ -64,11 +64,11 @@ Modality,Gender,Alignment}` substrate-extension pattern. Fragment-importable.
 The 19-language `ValenceProfile` sample, cross-chapter correlations,
 the 47-language antipassive-alignment table (@cite{polinsky-2013-antipassive}
 Table 1), and Fragment-bridge theorems live in
-`Phenomena/ArgumentStructure/Studies/Polinsky2013.lean`.
+`Studies/Polinsky2013.lean`.
 Pylkkänen's structural Appl typology and its WALS divergence are in
-`Phenomena/ArgumentStructure/Studies/Pylkkanen2008.lean`. Nordlinger's
+`Studies/Pylkkanen2008.lean`. Nordlinger's
 extended reciprocal apparatus (`RecipProfile`, strategy/valency
-correlations) is in `Phenomena/ArgumentStructure/Studies/Nordlinger2023.lean`.
+correlations) is in `Studies/Nordlinger2023.lean`.
 -/
 
 set_option autoImplicit false

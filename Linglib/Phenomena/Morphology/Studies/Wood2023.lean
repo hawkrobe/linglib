@@ -1,7 +1,7 @@
 import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Fragments.Icelandic.Nominalizations
 import Linglib.Fragments.Icelandic.Predicates
-import Linglib.Phenomena.ArgumentStructure.Studies.Wood2015
+import Linglib.Studies.Wood2015
 import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
 import Linglib.Phenomena.Morphology.Studies.McNallyDeSwart2011
 
