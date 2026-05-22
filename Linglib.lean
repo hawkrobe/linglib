@@ -1142,11 +1142,11 @@ import Linglib.Studies.SarvasyAikhenvald2025
 import Linglib.Studies.Stassen2013
 import Linglib.Studies.Partee1987
 import Linglib.Studies.Elbourne2026
-import Linglib.Phenomena.Attitudes.ConjunctionDistribution.Data
-import Linglib.Phenomena.Attitudes.Studies.Montague1973
-import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
-import Linglib.Phenomena.Attitudes.Studies.BondarenkoElliott2026
-import Linglib.Phenomena.Attitudes.Studies.Pasternak2019
+import Linglib.Phenomena.Attitudes.ConjunctionDistribution
+import Linglib.Studies.Montague1973Attitudes
+import Linglib.Phenomena.Attitudes.IntentionalIdentity
+import Linglib.Studies.BondarenkoElliott2026
+import Linglib.Studies.Pasternak2019
 import Linglib.Studies.ChatzikyriakidisEtAl2025
 import Linglib.Studies.AsherLascarides2003
 import Linglib.Studies.Hofmann2025

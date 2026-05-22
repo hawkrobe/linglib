@@ -12,7 +12,7 @@ Toy examples in Montague's PTQ-style intensional logic:
 Uses the infrastructure from
 `Core/Logic/Intensional/Examples.lean`. -/
 
-namespace Phenomena.Attitudes.Studies.Montague1973
+namespace Montague1973Attitudes
 
 abbrev World := Fin 4
 
@@ -202,4 +202,4 @@ theorem name_vs_concept_independence :
     simp only [hesperus_rigid, Core.Intension.rigid, morningStar] at this
     cases this
 
-end Phenomena.Attitudes.Studies.Montague1973
+end Montague1973Attitudes

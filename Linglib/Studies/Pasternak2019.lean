@@ -82,7 +82,7 @@ do not exist. Corrected:
 
 -/
 
-namespace Phenomena.Attitudes.Studies.Pasternak2019
+namespace Pasternak2019
 
 open Semantics.Gradability.StatesBased
 open Semantics.Attitudes.Confidence
@@ -470,4 +470,4 @@ also future work.
 
 -/
 
-end Phenomena.Attitudes.Studies.Pasternak2019
+end Pasternak2019

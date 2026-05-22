@@ -409,14 +409,14 @@ theorem sit_cp_via_situation_blocked :
 -- ════════════════════════════════════════════════════════════════
 --
 -- The mereological monotonicity apparatus in
--- `Phenomena/Attitudes/Studies/BondarenkoElliott2026.lean` (MSI,
+-- `Studies/BondarenkoElliott2026.lean` (MSI,
 -- MSO, TECM) presupposes the equality semantics defended here.
 -- This bridge is informational; no formal dependency to chase.
 
 /-- Bondarenko & Elliott 2026 inherit the **equality** semantics
     from this dissertation. The substantive bridge requires
     referencing a specific equality-using definition from
-    `Phenomena/Attitudes/Studies/BondarenkoElliott2026.lean`
+    `Studies/BondarenkoElliott2026.lean`
     (their `MSI`/`MSO`/`TECM` apparatus presupposes `CONT(x) = ⟦S⟧`
     rather than `CONT(x) ⊆ ⟦S⟧`). The full bridge is queued: this
     file does not yet import BE2026, and the cross-file `Iff`

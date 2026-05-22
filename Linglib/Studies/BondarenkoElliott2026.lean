@@ -1,7 +1,7 @@
 import Linglib.Core.Mereology
 import Linglib.Theories.Semantics.Truthmaker.Inexact
 import Linglib.Theories.Semantics.Truthmaker.Entailment
-import Linglib.Phenomena.Attitudes.Studies.Pasternak2019
+import Linglib.Studies.Pasternak2019
 
 /-! # Bondarenko & Elliott (2026) @cite{bondarenko-elliott-2026}
 
@@ -93,7 +93,7 @@ The contrast in (2) follows.
 
 -/
 
-namespace Phenomena.Attitudes.Studies.BondarenkoElliott2026
+namespace BondarenkoElliott2026
 
 -- ════════════════════════════════════════════════════
 -- § 1. Informational Parthood (paper eq. 43)
@@ -194,7 +194,7 @@ omit [Preorder E] in
 theorem belief_div_specializes_pasternak_homogeneity
     (believe : V → Prop) (HOLDER : V → Option E)
     (h : BelievingDIV believe HOLDER) :
-    Phenomena.Attitudes.Studies.Pasternak2019.MentalStateHomogeneity believe :=
+    Pasternak2019.MentalStateHomogeneity believe :=
   h.1
 
 end Constraints
@@ -752,4 +752,4 @@ theorem believes_does_not_always_close_under_intersection :
 
 end CrossFramework
 
-end Phenomena.Attitudes.Studies.BondarenkoElliott2026
+end BondarenkoElliott2026

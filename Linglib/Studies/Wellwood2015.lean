@@ -383,7 +383,7 @@ def IsMaxDeg (S : Set ℚ) (δ : ℚ) : Prop :=
     than-clause predicates: degrees d such that some b-eventuality
     satisfying `Pthan` has a measured value at least d.
 
-    Used by intensity comparatives (`Phenomena/Attitudes/Studies/Pasternak2019.lean`)
+    Used by intensity comparatives (`Studies/Pasternak2019.lean`)
     where the matrix and than-clause have different themes, e.g.,
     `Ann hates Bill more than Matt hates Jeff` — both sides use the
     `hate` predicate but conjoined with different theme-roles. -/

@@ -86,7 +86,7 @@ study, not built speculatively. The clearest forcing candidate is
 interrogative complements, which derives mention-some and
 intermediate-exhaustive readings as theorems and shows that
 @cite{groenendijk-stokhof-1984}'s partition theory provably cannot.
-When that study is formalized in `Phenomena/Attitudes/Studies/`, the
+When that study is formalized in `Studies/`, the
 `InquisitiveContent W` type becomes load-bearing; until then, every
 existing POSWQ use case is partition-based and `Setoid W` is the
 right structure (mathlib already provides its `CompleteLattice`).

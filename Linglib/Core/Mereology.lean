@@ -771,7 +771,7 @@ end IsContentPart
     A partial map `f : α → Option β` *reflects* proper parthood when
     every proper sub-image `q' < f(x)` is the image of some proper
     sub-input `x' < x`. Generic reusable formulation; specialized in
-    `Phenomena/Attitudes/Studies/BondarenkoElliott2026.lean` to MSI
+    `Studies/BondarenkoElliott2026.lean` to MSI
     (Mapping to Sub-parts of the Input). -/
 def StrictPartReflecting {α β : Type*} [Preorder α] [Preorder β]
     (f : α → Option β) : Prop :=
@@ -781,7 +781,7 @@ def StrictPartReflecting {α β : Type*} [Preorder α] [Preorder β]
     A partial map `f : α → Option β` *preserves* proper parthood when
     every proper sub-input `x' < x` (with `f x` defined) yields a proper
     sub-image of `f(x)`. Generic reusable formulation; specialized in
-    `Phenomena/Attitudes/Studies/BondarenkoElliott2026.lean` to MSO
+    `Studies/BondarenkoElliott2026.lean` to MSO
     (Mapping to Sub-parts of the Output). -/
 def StrictPartPreserving {α β : Type*} [Preorder α] [Preorder β]
     (f : α → Option β) : Prop :=
