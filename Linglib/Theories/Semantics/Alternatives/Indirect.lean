@@ -35,7 +35,7 @@ pronounceability predicate, and the meaning function. It composes with
 P meaning size` instead of the bare base source to obtain an MP rule
 that competes with unpronounceable witnesses.
 
-See `Phenomena/Presupposition/Studies/JereticEtAl2025.lean` for the
+See `Studies/JereticEtAl2025.lean` for the
 empirical applications.
 -/
 

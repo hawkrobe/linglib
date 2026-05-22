@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Composition.MaybeMonad
-import Linglib.Phenomena.Presupposition.Studies.Heim1992
+import Linglib.Studies.Heim1992Projection
 
 /-!
 # Grove 2022: Presupposition Projection as a Scope Phenomenon
@@ -37,7 +37,7 @@ scope mechanism predicts:
 - **Local** (de dicto): presupposition is that Theo *believes* he has a wetsuit
 - **Global** (de re): presupposition is that Theo *has* a wetsuit
 
-This connects to `Heim1992.lean`'s know/believe asymmetry but derives it
+This connects to `Heim1992Projection.lean`'s know/believe asymmetry but derives it
 from scope rather than from local-context filtering.
 
 ## Empirical Data
@@ -303,7 +303,7 @@ theorem believe_global_definedness (w : AttWorld) :
 
 /-! ### §7 Connection to @cite{heim-1992}
 
-@cite{heim-1992}'s know/believe asymmetry is derived in `Heim1992.lean`
+@cite{heim-1992}'s know/believe asymmetry is derived in `Heim1992Projection.lean`
 via local-context filtering and KD45 frame conditions. The scope theory
 provides an alternative explanation: the asymmetry arises because the
 trigger can take different scopes relative to the attitude verb.

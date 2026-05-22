@@ -49,7 +49,7 @@ as Modals* (Natural Language Semantics 13:383–410). Following
   content = assertion, the Geurts disjunction coincides pointwise with
   `PrProp.orFlex` = `PrProp.orBelnap` (@cite{belnap-1970}).
 * `exhaustivity_implies_uninformative` — used by
-  `Phenomena/Presupposition/Studies/Yagi2025.lean` as the formal residue of
+  `Studies/Yagi2025.lean` as the formal residue of
   @cite{schlenker-2009}'s local-context-failure observation.
 
 ## Implementation notes
@@ -259,7 +259,7 @@ The formal residue of @cite{schlenker-2009}'s local-context-failure
 discussion: pragmatic conditions on local contexts force s₀ to contain only
 worlds where some disjunct is true, making the disjunction trivially
 satisfied. Geurts's Exhaustivity is the explicit form of that constraint.
-Consumed by `Phenomena/Presupposition/Studies/Yagi2025.lean`. -/
+Consumed by `Studies/Yagi2025.lean`. -/
 theorem exhaustivity_implies_uninformative (p q : PrProp W)
     (C : Set W) (h_exh : exhaustivity C (fromPrProp p q))
     (w : W) (hw : C w) :

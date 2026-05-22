@@ -8,7 +8,7 @@ inference. A `PowerSet2World` enumerates the 2² = 4 truth assignments to
 two atoms — Aloni 2022 Figure 1 (`w_∅`, `w_a`, `w_b`, `w_ab`).
 
 This pattern is independently reinvented in `Aloni2022.lean` (as
-`PermissionWorld` over coffee/tea), `Heim1992.lean` (line 51, "4-world
+`PermissionWorld` over coffee/tea), `Heim1992Desire.lean` (line 51, "4-world
 model with two binary dimensions"), `Boylan2023.lean` (line 570),
 `Roberts2023.lean` (line 301). Hoisting it here lets all of those
 consume one definition.

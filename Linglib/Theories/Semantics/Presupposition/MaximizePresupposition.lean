@@ -34,7 +34,7 @@ connects it to existing domain-specific implementations:
    but over different candidate-generation mechanisms.
 
 3. **IC/FP/MP ranking** (`PragConstraint.MP` in
-   `Phenomena/Presupposition/Studies/Wang2025.lean`): MP as a
+   `Studies/Wang2025.lean`): MP as a
    violable constraint ranked below IC (Internal Coherence) and FP
    (Felicity Presupposition). Describes MP's position in the
    constraint hierarchy for presupposition obligatoriness

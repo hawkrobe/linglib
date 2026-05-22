@@ -12,7 +12,7 @@ is reused; only `form` and language-specific feature combinations
 differ.
 
 This fragment is the minimum needed by
-`Phenomena/Presupposition/Studies/JereticEtAl2025.lean`. The notable
+`Studies/JereticEtAl2025.lean`. The notable
 gap relative to English: French has no lexical dual universal
 quantifier (no counterpart of `both`). The expression `les deux` is the
 nearest equivalent and is encoded here, with `numberRestriction := some

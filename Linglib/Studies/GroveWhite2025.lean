@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Attitudes.Factivity
 import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Phenomena.Presupposition.Gradience
-import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2022
-import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
+import Linglib.Studies.DegenTonhauser2022
+import Linglib.Studies.ScontrasTonhauser2025
 import Linglib.Core.Scales.Scale
 
 /-!

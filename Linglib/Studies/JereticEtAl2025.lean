@@ -81,7 +81,7 @@ accounts (@cite{magri-2009}) is real. This file commits to MP.
 
 set_option autoImplicit false
 
-namespace Phenomena.Presupposition.Studies.JereticEtAl2025
+namespace JereticEtAl2025
 
 open Core.CoreConcept
 open Theories.Semantics.Quantification.Lexicon (QuantifierEntry)
@@ -602,4 +602,4 @@ theorem tous_violatesMP_via_indirect :
 
 end WorkedExample
 
-end Phenomena.Presupposition.Studies.JereticEtAl2025
+end JereticEtAl2025

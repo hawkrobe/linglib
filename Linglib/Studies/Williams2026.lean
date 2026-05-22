@@ -49,7 +49,7 @@ The Fragment split is a practical separation of entailment patterns;
 
 -/
 
-namespace Phenomena.Presupposition.Studies.Williams2026
+namespace Williams2026
 
 open Semantics.Lexical (ComplementType)
 
@@ -152,4 +152,4 @@ theorem modal_iff_implicative :
       (fun j => (decide (j.content = .modal)) == j.implicativeNegative) = true := by
   decide
 
-end Phenomena.Presupposition.Studies.Williams2026
+end Williams2026

@@ -2,7 +2,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.Truth3
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Studies.Geurts2005
-import Linglib.Phenomena.Presupposition.Studies.Karttunen1973
+import Linglib.Studies.Karttunen1973
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -190,7 +190,7 @@ stronger** than `orKP` (worked counterexample: at a world with `A(φ)=⊤`,
 `A(ψ)=⊥`, `Π(φ)=⊤`, `Π(ψ)=⊥`, `orKP` is defined, `orFilter` is not).
 The two are not predictionally equivalent, and neither is the asymmetric
 @cite{karttunen-1973} rule (24b) used as `PrProp.disjFilterLeft` —
-see `Phenomena/Presupposition/Studies/Karttunen1973.lean`. -/
+see `Studies/Karttunen1973.lean`. -/
 
 /-- Classical disjunction requires both presuppositions: presup = `p ∧ q`. -/
 def classicalDisj : PrProp W := PrProp.or kingOpensParl presConductsCeremony
@@ -602,7 +602,7 @@ that motivates accommodation in (1c) and (15) is absent in (18), so
 genuineness should not even fire. The success is unprincipled.
 
 Linglib's @cite{karttunen-1973} formalisation
-(`Phenomena/Presupposition/Studies/Karttunen1973.lean`) handles (18) via
+(`Studies/Karttunen1973.lean`) handles (18) via
 the **asymmetric** `disjFilterLeft` rule (24b): when `¬A` entails `Π(B)`,
 the presupposition is filtered. This is the principled alternative
 that the symmetric variants (`orKP`, `orFilter`) cannot offer. -/
@@ -670,7 +670,7 @@ theorem ex18_unprincipled_in_right_presup_failure :
   ⟨id, ex18_orFlex_no_projection_via_vacuous_left, ex18_left_presup_vacuous⟩
 
 /-- @cite{karttunen-1973}'s asymmetric rule (24b) — formalised in
-`Phenomena/Presupposition/Studies/Karttunen1973.lean` as
+`Studies/Karttunen1973.lean` as
 `PrProp.disjFilterLeft` — gives a *principled* derivation: `¬(¬solved) =
 solved` entails the factive presupposition, so it is filtered. We invoke
 the K1973 sibling theorem

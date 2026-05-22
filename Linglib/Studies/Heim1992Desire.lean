@@ -15,7 +15,7 @@ world.
 
 This study file replicates the desire-semantics half of @cite{heim-1992}
 (the presupposition-projection half is at
-`Phenomena/Presupposition/Studies/Heim1992.lean`). Substrate is
+`Studies/Heim1992.lean`). Substrate is
 `Theories/Semantics/Attitudes/Desire.lean` (`wantHeim`,
 `wantHeimDefined`, `HeimDesireParams`, `wantHeim_no_simultaneous_pq_and_negpq`).
 
@@ -32,7 +32,7 @@ This study file replicates the desire-semantics half of @cite{heim-1992}
 
 ## Cross-references
 
-* `Phenomena/Presupposition/Studies/Heim1992.lean` formalizes the
+* `Studies/Heim1992.lean` formalizes the
   know/believe asymmetry — the *other* half of Heim 1992 (and the more
   durably cited half).
 * The substrate's `BeliefBasedDesireSemantics` typology (in `Desire.lean`)

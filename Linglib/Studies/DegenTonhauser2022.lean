@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
+import Linglib.Studies.DegenTonhauser2021
 
 /-!
 # @cite{degen-tonhauser-2022}: Are There Factive Predicates?

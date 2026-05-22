@@ -2,7 +2,7 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.Agent.BToM
 import Linglib.Theories.Semantics.Attitudes.Factivity
-import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
+import Linglib.Studies.DegenTonhauser2021
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!

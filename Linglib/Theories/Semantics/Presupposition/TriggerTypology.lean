@@ -9,7 +9,7 @@ Cross-linguistic typology of presupposition triggers, classifying triggers
 by what non-presuppositional alternative they have. The classification
 follows @cite{wang-2025} Table 4.1 and is consumed by:
 
-- `Phenomena/Presupposition/Studies/Wang2025.lean` — IC ≫ FP ≫ MP
+- `Studies/Wang2025.lean` — IC ≫ FP ≫ MP
   constraint-based competition analysis
 - `Fragments/Mandarin/Particles.lean` — Mandarin trigger entries
 
@@ -28,7 +28,7 @@ The alternative-structure axis predicts obligatoriness:
 
 This file provides the **typology**; the constraint-based formulation of
 Maximize Presupposition lives in `MaximizePresupposition.lean`, and the
-paper-specific IC/FP/MP ranking in `Phenomena/Presupposition/Studies/Wang2025.lean`.
+paper-specific IC/FP/MP ranking in `Studies/Wang2025.lean`.
 -/
 
 namespace Semantics.Presupposition.TriggerTypology

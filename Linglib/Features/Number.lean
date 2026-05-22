@@ -529,7 +529,7 @@ This connects the Harbour feature bundle `dualF = ⟨isAtomic := false,
 isMinimal := true⟩` to the predicate modifier required by the paper's
 Indirect Alternative analysis: *les deux* lexicalizes the predicate
 modifier `dualPredOnLattice _ _ verres` ('cup'), which is what blocks
-*tous les NP.dual*. See `Phenomena/Presupposition/Studies/JereticEtAl2025.lean`. -/
+*tous les NP.dual*. See `Studies/JereticEtAl2025.lean`. -/
 
 /-- ⟦DUAL⟧ as a predicate modifier on a join-semilattice domain
 (@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025} eq 39).

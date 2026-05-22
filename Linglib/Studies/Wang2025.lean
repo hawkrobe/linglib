@@ -65,7 +65,7 @@ The epistemic operator K (speaker's beliefs) interacts with exhaustification:
 
 -/
 
-namespace Phenomena.Presupposition.Studies.Wang2025
+namespace Wang2025
 
 open Features (Acceptability)
 open Fragments.Mandarin.Particles (MandarinTrigger)
@@ -427,4 +427,4 @@ theorem ciLift_felicitous_when_fp_holds (presup assertion : W → Prop)
   exact hfp w hw
 
 
-end Phenomena.Presupposition.Studies.Wang2025
+end Wang2025

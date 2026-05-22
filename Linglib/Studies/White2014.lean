@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Presupposition.Studies.Williams2026
+import Linglib.Studies.Williams2026
 import Linglib.Theories.Semantics.Attitudes.PreExistence
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -28,10 +28,10 @@ a known overprediction of the original MCA.
 
 -/
 
-namespace Phenomena.Presupposition.Studies.White2014
+namespace White2014
 
 open Semantics.Lexical (ComplementType)
-open Phenomena.Presupposition.Studies.Williams2026
+open Williams2026
 open Semantics.Attitudes.PreExistence
 open Fragments.English.Predicates.Verbal
 
@@ -112,4 +112,4 @@ theorem forget_rog_satisfies_preExistence :
 theorem forget_inf_violates_preExistence :
     satisfiesPreExistence forget.complementType = false := by decide
 
-end Phenomena.Presupposition.Studies.White2014
+end White2014

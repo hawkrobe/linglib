@@ -1392,7 +1392,7 @@ import Linglib.Studies.SumersEtAl2023
 -- Phenomena: Implicit Causality (Solstad & Bott 2022)
 import Linglib.Studies.SolstadBott2022
 -- Phenomena: Presupposition — Solstad & Bott 2024 (occasion verb projectivity)
-import Linglib.Phenomena.Presupposition.Studies.SolstadBott2024
+import Linglib.Studies.SolstadBott2024
 -- Phenomena: Imprecision (extracted from Gradability/)
 import Linglib.Studies.Haslinger2025
 import Linglib.Studies.SoltWaldon2019
@@ -1499,7 +1499,7 @@ import Linglib.Phenomena.FreeChoice.Studies.AloniAnttilaYang2024
 import Linglib.Phenomena.FreeChoice.Studies.AloniVanOrmondt2023
 import Linglib.Phenomena.FreeChoice.Divergences
 import Linglib.Studies.Cariani2013
-import Linglib.Studies.Heim1992
+import Linglib.Studies.Heim1992Desire
 import Linglib.Studies.Lassiter2017
 import Linglib.Studies.ChungMascarenhas2024
 import Linglib.Studies.PhillipsBrown2025
@@ -1623,37 +1623,37 @@ import Linglib.Phenomena.Presupposition.Basic
 import Linglib.Phenomena.Presupposition.Diagnostics
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 import Linglib.Phenomena.Presupposition.Gradience
-import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
-import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2022
-import Linglib.Phenomena.Presupposition.Studies.GroveWhite2025
-import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
+import Linglib.Studies.DegenTonhauser2021
+import Linglib.Studies.DegenTonhauser2022
+import Linglib.Studies.GroveWhite2025
+import Linglib.Studies.HeKaiserIskarous2025
 import Linglib.Studies.HarrisPotts2009
 import Linglib.Studies.LoGuercio2025
 import Linglib.Studies.KirkGiannini2024
 import Linglib.Studies.Maier2014
 import Linglib.Studies.Rudin2025LI
-import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
-import Linglib.Phenomena.Presupposition.Studies.Wang2025
-import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
-import Linglib.Phenomena.Presupposition.Studies.Yagi2025
-import Linglib.Phenomena.Presupposition.Studies.Sharvit2025
-import Linglib.Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018
-import Linglib.Phenomena.Presupposition.Studies.Schlenker2009
-import Linglib.Phenomena.Presupposition.Studies.Heim1983
-import Linglib.Phenomena.Presupposition.Studies.RobertsSimons2024
-import Linglib.Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
-import Linglib.Phenomena.Presupposition.Studies.TowerDerivation
-import Linglib.Phenomena.Presupposition.Studies.WangDavidson2026
-import Linglib.Phenomena.Presupposition.Studies.Heim1992
-import Linglib.Phenomena.Presupposition.Studies.JereticEtAl2025
-import Linglib.Phenomena.Presupposition.Studies.Williams2026
-import Linglib.Phenomena.Presupposition.Studies.White2014
-import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
-import Linglib.Phenomena.Presupposition.Studies.Grove2022
-import Linglib.Phenomena.Presupposition.Studies.Beaver2001.Basic
-import Linglib.Phenomena.Presupposition.Studies.Blutner2000
-import Linglib.Phenomena.Presupposition.Studies.Karttunen1973
-import Linglib.Phenomena.Presupposition.Studies.Glass2025
+import Linglib.Studies.ScontrasTonhauser2025
+import Linglib.Studies.Wang2025
+import Linglib.Studies.Warstadt2022
+import Linglib.Studies.Yagi2025
+import Linglib.Studies.Sharvit2025
+import Linglib.Studies.TonhauserBeaverDegen2018
+import Linglib.Studies.Schlenker2009
+import Linglib.Studies.Heim1983
+import Linglib.Studies.RobertsSimons2024
+import Linglib.Studies.QingGoodmanLassiter2016
+import Linglib.Phenomena.Presupposition.TowerDerivation
+import Linglib.Studies.WangDavidson2026
+import Linglib.Studies.Heim1992Projection
+import Linglib.Studies.JereticEtAl2025
+import Linglib.Studies.Williams2026
+import Linglib.Studies.White2014
+import Linglib.Studies.GiorgoloAsudeh2012
+import Linglib.Studies.Grove2022
+import Linglib.Studies.Beaver2001.Basic
+import Linglib.Studies.Blutner2000
+import Linglib.Studies.Karttunen1973
+import Linglib.Studies.Glass2025
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Studies.Chierchia1998
@@ -2042,7 +2042,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.Translation
 import Linglib.Theories.Semantics.Dynamic.Connectives.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.Update
 -- Theories: Dynamic Semantics — ABLE (Beaver 2001)
-import Linglib.Phenomena.Presupposition.Studies.Beaver2001.ABLE
+import Linglib.Studies.Beaver2001.ABLE
 -- Theories: Dynamic Semantics — Frameworks
 import Linglib.Studies.Heim1982.FileChangeSemantics
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
@@ -2590,7 +2590,7 @@ import Linglib.Phenomena.Polarity.Studies.Gajewski2002
 import Linglib.Phenomena.Polarity.Studies.Gajewski2011
 import Linglib.Phenomena.Polarity.Studies.Israel2001
 import Linglib.Phenomena.Polarity.Studies.KadmonLandman1993
-import Linglib.Phenomena.Presupposition.Studies.Wang2025
+import Linglib.Studies.Wang2025
 import Linglib.Phenomena.ScalarImplicatures.Studies.Chierchia2004
 import Linglib.Phenomena.ScalarImplicatures.Studies.FoxSpector2018
 import Linglib.Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity

@@ -490,7 +490,7 @@ theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
 @cite{heim-1992}'s comparative-belief semantics (`wantHeim`) is the
 *other* canonical belief-based account — formalized at
 `Theories/Semantics/Attitudes/Desire.lean` and exercised in
-`Studies/Heim1992.lean`. The substrate's
+`Studies/Heim1992Desire.lean`. The substrate's
 `BeliefBasedDesireSemantics` typology packages vF, Heim, and (in
 principle) Levinson 2003 / sufficient-desirability accounts under a
 single structural property `isConflictBlocking`.

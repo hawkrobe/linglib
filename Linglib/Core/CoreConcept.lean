@@ -51,7 +51,7 @@ core concept iff some entry realizes it. The realization relation
 `realizes` is supplied by the caller — typically a per-language
 predicate that inspects the lexical entry's denotation.
 
-Example: in `Phenomena/Presupposition/Studies/JereticEtAl2025.lean`,
+Example: in `Studies/JereticEtAl2025.lean`,
 English `realizes both Id.dual = True`, French `realizes _ Id.dual = False`. -/
 def Lexicalizes {Tok : Type} (lex : List Tok)
     (realizes : Tok → Id → Prop) (c : Id) : Prop :=
