@@ -37,7 +37,7 @@ set_option autoImplicit false
 
 /-! ## §1. Substrate: world states, utterance enums, meaning functions, access -/
 
-namespace Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.PMF
+namespace GoodmanStuhlmuller2013PMF
 
 /-- World states: how many of 3 objects have the property. -/
 inductive WorldState where
@@ -97,7 +97,6 @@ theorem toNat_le_three (a : Access) : a.toNat ≤ 3 :=
 end Access
 
 open scoped ENNReal
-open Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
 
 /-! ## §2. World prior — uniform on `WorldState` -/
 
@@ -1485,4 +1484,4 @@ theorem one_partial_1v2_canceled_sil
       obsKernel_a2_s1_k2_zero]
   ennreal_close
 
-end Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.PMF
+end GoodmanStuhlmuller2013PMF

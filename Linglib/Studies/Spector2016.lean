@@ -31,7 +31,7 @@ table of `MaximizeStrengthExample` records.
 - `maximizeStrengthExamples` — Maximize Strength contexts table
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.Spector2016
+namespace Spector2016
 
 open Exhaustification
 open Semantics.Entailment.Polarity (ContextPolarity)
@@ -411,4 +411,4 @@ def ms_universal_restrictor : MaximizeStrengthExample :=
 def maximizeStrengthExamples : List MaximizeStrengthExample :=
   [ms_matrix_clause, ms_negation, ms_antecedent, ms_universal_restrictor]
 
-end Phenomena.ScalarImplicatures.Studies.Spector2016
+end Spector2016

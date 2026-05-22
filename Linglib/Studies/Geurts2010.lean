@@ -1,6 +1,6 @@
 import Linglib.Phenomena.ScalarImplicatures.Embedded.Basic
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+import Linglib.Studies.GeurtsPouscoulous2009
 
 /-!
 # Geurts 2010 — *Quantity Implicatures* @cite{geurts-2010}
@@ -25,7 +25,7 @@ namespace Geurts2010
 
 open Phenomena.ScalarImplicatures.Embedded.Simplified
 open Phenomena.ScalarImplicatures
-open Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+open GeurtsPouscoulous2009
 
 /-- The empirical DE-blocking / UE-allowing pattern that grounds the
 textbook's neo-Gricean account. The simplified LU model predicts the

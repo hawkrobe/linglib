@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.NormNum
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Alternatives.Symmetric
-import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
+import Linglib.Studies.Magri2009
 
 /-!
 # Probabilities and Logic in Implicature Computation

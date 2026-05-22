@@ -1,5 +1,5 @@
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+import Linglib.Studies.GeurtsPouscoulous2009
 import Linglib.Theories.Pragmatics.Implicature.Defs
 import Linglib.Theories.Pragmatics.Implicature.Diagnostics
 
@@ -103,7 +103,7 @@ are verified at the rate level.
   *every*/*exactly one*/*no* conditions
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.ChemlaSpector2011
+namespace ChemlaSpector2011
 
 open Phenomena.ScalarImplicatures (SomeAllWorld)
 
@@ -712,7 +712,7 @@ Three connections to existing linglib content:
    GP09 found ~50% inference rate (chance); CS11 finds 73% LOCAL
    rating. The paradigm shift recovers the localist signal. -/
 
-open Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+open GeurtsPouscoulous2009
 
 /-- A real cross-experiment claim: both papers find DE local-SI rates
 *well below* their respective high baselines.
@@ -777,4 +777,4 @@ Open questions noted by the paper itself (page 32):
   localist *pragmatic* account (à la Recanati's free enrichment) do
   the work? -/
 
-end Phenomena.ScalarImplicatures.Studies.ChemlaSpector2011
+end ChemlaSpector2011

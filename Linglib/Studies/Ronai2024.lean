@@ -1,4 +1,4 @@
-import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
+import Linglib.Studies.VanTielEtAl2016
 import Mathlib.Data.Rat.Defs
 
 /-!

@@ -27,7 +27,7 @@ all live elsewhere:
   `Theories/Semantics/Quantification/Quantifier.lean` (`gqtMeaning`),
   `Theories/Semantics/Probabilistic/PrototypeTheory.lean` (`ptMeaning`).
 - Per-paper parameter values:
-  `Phenomena/ScalarImplicatures/Studies/VanTielEtAl2021.lean`.
+  `Studies/VanTielEtAl2021.lean`.
 -/
 
 namespace Fragments.English.Determiners

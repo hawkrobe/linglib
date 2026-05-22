@@ -15,7 +15,7 @@ genuinely non-negative, monotone-decreasing in `|x|`, and continuous
 at the breakpoints. See `bumpKernel`.
 
 This is the parametric theory consumed by paper-specific PT models
-(e.g., `Phenomena/ScalarImplicatures/Studies/VanTielEtAl2021.lean`),
+(e.g., `Studies/VanTielEtAl2021.lean`),
 which provide their own prototype/spread parameter values.
 -/
 

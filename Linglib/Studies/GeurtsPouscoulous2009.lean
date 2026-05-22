@@ -97,7 +97,7 @@ formalized as historical-state-of-knowledge claims, per linglib's
 chronological-dependency rule.
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+namespace GeurtsPouscoulous2009
 
 open Semantics.Entailment.Polarity (ContextPolarity)
 open Phenomena.ScalarImplicatures (SomeAllWorld)
@@ -885,7 +885,7 @@ the canonical `SomeAllWorld` model from `Phenomena.ScalarImplicatures.Basic`,
 exercising the spine in `Defs.lean` and the diagnostics in
 `Diagnostics.lean`. -/
 
-open SomeAllWorld
+open Phenomena.ScalarImplicatures.SomeAllWorld
 
 /-- The neo-Gricean SI derived from *some students passed* in a UE
 context (paper §1's ∅-condition). Mechanism is the Sauerland Standard
@@ -977,4 +977,4 @@ Sample stimulus pairs from Experiments 1a-b live in the paper's
 appendix (page 4:31) and the separately available background-materials
 file (doi:10.3765/sp.2.4a); they are not reproduced here. -/
 
-end Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+end GeurtsPouscoulous2009

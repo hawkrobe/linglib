@@ -161,7 +161,7 @@ because `U_n` depends on `Y_i` directly via `noise(Y_i)`, not just on `U_i`.
 GS2013's per-(world-pair) findings (e.g. "L1(s2 | u) > L1(s3 | u) weakens at
 lower access") are NOT corollaries of any clean MI cancellation. They are
 specific numerical evaluations of the model — see
-`Phenomena/ScalarImplicatures/Studies/GoodmanStuhlmuller2013PMF.lean` for the
+`Studies/GoodmanStuhlmuller2013PMF.lean` for the
 illustrative computations.
 
 The proper architectural framing: §2 above is the universal structural theorem

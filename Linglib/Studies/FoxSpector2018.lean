@@ -17,7 +17,7 @@ distributivity finding (page 20) is direct empirical support: for the
 'or' item under STRONG condition, sub-cases STRONG[≠] (where
 distributivity inferences are non-vacuous) are rated significantly
 higher than STRONG[=] (where they are vacuous), 99.5% vs 73%, W = 78,
-p < .005. See `Phenomena/ScalarImplicatures/Studies/ChemlaSpector2011.lean`
+p < .005. See `Studies/ChemlaSpector2011.lean`
 `distributivity_strong_neq_gt_strong_eq` for the captured empirical
 inequality.
 
@@ -67,7 +67,7 @@ Economy and structural complexity are **complementary**:
   alternatives → blocks vacuous/weakening insertions
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.FoxSpector2018
+namespace FoxSpector2018
 
 open Exhaustification
 
@@ -466,4 +466,4 @@ theorem vacuous_violates_economy (ALT : Set (Set World))
   exact hext C hC (exhIE ALT φ) φ (fun w => Iff.of_eq (congrFun hvac w)) w
 
 
-end Phenomena.ScalarImplicatures.Studies.FoxSpector2018
+end FoxSpector2018

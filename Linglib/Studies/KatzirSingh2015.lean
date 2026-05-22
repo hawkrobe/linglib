@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
+import Linglib.Studies.Magri2009
 import Linglib.Theories.Semantics.Questions.Partition.Constructors
 
 /-!
