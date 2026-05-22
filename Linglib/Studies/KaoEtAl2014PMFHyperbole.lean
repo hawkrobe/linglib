@@ -63,7 +63,7 @@ follows the Kao Metaphor / FG2012 pattern.
 
 set_option autoImplicit false
 
-namespace Phenomena.Nonliteral.Hyperbole.KaoEtAl2014.PMF
+namespace KaoEtAl2014PMFHyperbole
 
 open scoped ENNReal
 
@@ -365,4 +365,4 @@ Each follows the substrate pattern: structural decomposition via
 numerical comparison at the specific priors.
 -/
 
-end Phenomena.Nonliteral.Hyperbole.KaoEtAl2014.PMF
+end KaoEtAl2014PMFHyperbole

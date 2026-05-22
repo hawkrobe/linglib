@@ -76,7 +76,7 @@ headline above.
 
 set_option autoImplicit false
 
-namespace Phenomena.Nonliteral.Irony.KaoEtAl2015.PMF
+namespace KaoEtAl2015PMF
 
 open scoped ENNReal
 
@@ -341,4 +341,4 @@ Future work: discharge via the substrate pattern. The architectural
 content (irony emerges from arousal-symmetric prior + arousal QUD) is
 captured in §4 above. -/
 
-end Phenomena.Nonliteral.Irony.KaoEtAl2015.PMF
+end KaoEtAl2015PMF

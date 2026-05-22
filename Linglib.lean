@@ -1383,8 +1383,8 @@ import Linglib.Studies.Bobaljik2012
 import Linglib.Studies.BhattPancheva2004
 import Linglib.Studies.Lechner2004
 import Linglib.Studies.BhattTakahashi2011
-import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
-import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014PMF
+import Linglib.Studies.KaoEtAl2016
+import Linglib.Studies.KaoEtAl2014PMFHyperbole
 import Linglib.Studies.CondoravdiLauer2012
 import Linglib.Studies.Roberts2023
 import Linglib.Studies.RuytenbeekEtAl2017
@@ -1434,11 +1434,11 @@ import Linglib.Studies.SagWasowBender2003RelativeClauses
 import Linglib.Studies.Scott2021
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
-import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015PMF
-import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025PMF
-import Linglib.Phenomena.Nonliteral.Studies.Clark1983
-import Linglib.Phenomena.Nonliteral.Studies.RelevanceTheory
-import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014PMF
+import Linglib.Studies.KaoEtAl2015PMF
+import Linglib.Studies.SpinosoDiPiano2025PMF
+import Linglib.Studies.Clark1983
+import Linglib.Theories.Pragmatics.RelevanceTheory.Nonliteral
+import Linglib.Studies.KaoEtAl2014PMFMetaphor
 import Linglib.Studies.BylininaNouwen2020
 import Linglib.Studies.ClausWalch2024
 import Linglib.Studies.Cummins2015

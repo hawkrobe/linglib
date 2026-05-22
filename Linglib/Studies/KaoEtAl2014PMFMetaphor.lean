@@ -58,7 +58,7 @@ The two formulations agree by associativity of `bind`.
 
 set_option autoImplicit false
 
-namespace Phenomena.Nonliteral.Metaphor.KaoEtAl2014.PMF
+namespace KaoEtAl2014PMFMetaphor
 
 open scoped ENNReal
 
@@ -525,4 +525,4 @@ identical RSA architecture for hyperbole (with `quantity` rather than
 file would reuse most of this file's substrate.
 -/
 
-end Phenomena.Nonliteral.Metaphor.KaoEtAl2014.PMF
+end KaoEtAl2014PMFMetaphor
