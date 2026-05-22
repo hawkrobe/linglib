@@ -11,7 +11,7 @@ input/output types. Used as substrate by:
 - `ChannelCapacity.lean` — capacity, CAP, mutual-information bounds
 - `Theories.Pragmatics.AsymmetricCommunication` — speaker-listener
   asymmetric setups (variation, iterated learning)
-- `Phenomena.Color.Studies.ZaslavskyEtAl2019` — color naming
+- `ZaslavskyEtAl2019` — color naming
 - `Theories.Diachronic.Lexicalization` — listener model conditioned on `L`
 - RSA literal speaker S₀ (the channel) and L₀ (the posterior)
 

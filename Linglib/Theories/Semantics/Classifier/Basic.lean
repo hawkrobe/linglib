@@ -147,7 +147,7 @@ theorem groupClf_qua {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
       numeral-side analysis onto a noun-side abstraction. The disagreement
       with Chierchia is *not* in noun-side individuation; it's in *where*
       the obligation to use a classifier comes from. See
-      `Phenomena/Classifiers/Studies/Sudo2016.lean`.) -/
+      `Studies/Sudo2016.lean`.) -/
 def classifierDenot {α : Type*} [PartialOrder α]
     (s : ClassifierStrategy) (P : α → Prop) (μ : α → ℚ) (n : ℚ) : α → Prop :=
   match s with

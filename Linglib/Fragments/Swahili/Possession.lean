@@ -18,7 +18,7 @@ Schema belong-construction using the associative `-a`.
 PossessionProfile bundle for Swahili (ISO `swh`), per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
 `Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
-Swahili lives in `Phenomena/Possession/Studies/Heine1997.lean`. The
+Swahili lives in `Studies/Heine1997.lean`. The
 `PossessionProfile.adnominalStrategy = .headMarking` here flattens the
 @cite{nichols-1986} categorisation; Swahili's Bantu noun-class concord is
 strictly head-marking only in the agreement sense, with the associative

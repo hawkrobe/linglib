@@ -243,7 +243,7 @@ Subject Constraint / Condition on Extraction Domain). The predictions:
 
 These predictions match the Toba Batak extraction data formalized in
 `Fragments.TobaBatak.Basic` and verified in
-`Phenomena.FillerGap.Studies.Erlewine2018`.
+`Erlewine2018`.
 -/
 
 /-- The direct object is contained within the fronted VP. In the
@@ -406,7 +406,7 @@ theorem object_does_not_ccommand_subject :
 
 The VP-raising analysis's extraction predictions are independently
 formalized in `Fragments.TobaBatak.Basic` (empirical extraction data)
-and `Phenomena.FillerGap.Studies.Erlewine2018` (verification theorems).
+and `Erlewine2018` (verification theorems).
 This section bridges the derivational analysis to that data.
 -/
 

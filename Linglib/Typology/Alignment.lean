@@ -49,7 +49,7 @@ Modality,Gender}` substrate-extension pattern. Fragment-importable.
 
 The 22-language sample, cross-linguistic generalisations (Dixon,
 Silverstein), ditransitive sample, and Fragment-bridge theorems live in
-`Phenomena/Alignment/Studies/Dixon1994.lean`.
+`Studies/Dixon1994.lean`.
 @cite{comrie-1989}'s typology generalisations are in
 `Studies/Comrie1989.lean`.
 -/

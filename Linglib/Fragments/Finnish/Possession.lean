@@ -20,7 +20,7 @@ use is no longer interpreted as locative by speakers
 PossessionProfile bundle for Finnish (ISO `fin`), per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
 `Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
-Finnish lives in `Phenomena/Possession/Studies/Heine1997.lean`.
+Finnish lives in `Studies/Heine1997.lean`.
 
 ## Examples
 

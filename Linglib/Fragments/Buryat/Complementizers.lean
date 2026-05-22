@@ -28,7 +28,7 @@ Per the project Fragment-discipline rule (textbook-consensus
 metadata only): this file exposes only the **morphological inventory
 and surface co-occurrence facts**. The Bondarenko-specific
 ContP-bearing projection (`bearsContP`) lives as a Studies-local
-projection in `Phenomena/Complementation/Studies/Bondarenko2022.lean`,
+projection in `Studies/Bondarenko2022.lean`,
 not as a field of the morpheme record. Alternative analyses
 (Knyazev's spanning-complementiser account, Stassen's serial-verb
 analysis of *gɔ*) treat the morphology differently; this fragment

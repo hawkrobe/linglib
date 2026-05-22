@@ -9,7 +9,7 @@ semantic-only on the strength of the *he/she/it* pronoun distinction.
 This is the more recent of Corbett's two classifications; his 1991
 monograph applies a stricter controller-marking criterion that excludes
 English from the gender typology. The Corbett 1991 view is a per-Study
-override at `Phenomena/Gender/Studies/Corbett1991.lean`.
+override at `Studies/Corbett1991.lean`.
 -/
 
 namespace Fragments.English.Gender

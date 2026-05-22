@@ -27,7 +27,7 @@ tolerance to weaken.
 domain) is an "unmarked default" that functional items like `all`/`each` can remove.
 The tolerance relation ≤ is the formal locus: predicates introduce it by default,
 `all` binds it universally, `each` renders it vacuous on atoms, and `jeweils`
-preserves it at the operator level. See `Phenomena/Imprecision/Studies/Haslinger2025.lean`.
+preserves it at the operator level. See `Studies/Haslinger2025.lean`.
 
 -/
 

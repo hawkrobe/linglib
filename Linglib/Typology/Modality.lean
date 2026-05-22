@@ -242,7 +242,7 @@ def walsEvidentialCoding (iso : String) : Option EvidentialCoding :=
     will get `.directAndIndirect` from `fromWALS77A` rather than
     `.threeOrMore`. Per @cite{aikhenvald-2004}'s richer typology, those
     languages need a Studies-side override (mirrors the Corbett 1991 vs
-    2013 record-update pattern in `Phenomena/Gender/Studies/Corbett1991`). -/
+    2013 record-update pattern in `Studies/Corbett1991`). -/
 def EvidentialityProfile.fromWALS
     (language iso family : String)
     (markers : List String := [])

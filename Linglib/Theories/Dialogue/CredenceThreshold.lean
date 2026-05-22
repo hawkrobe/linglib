@@ -29,7 +29,7 @@ substrate-supported elsewhere:
   `IndexedWeightedCommitment.commit/refuse` and the
   `toDoxasticContextSet` / `toPreferentialContextSet` projections).
 - The @cite{condoravdi-lauer-2012} imperative-as-PEP study lives in
-  `Phenomena/Directives/Studies/CondoravdiLauer2012.lean`.
+  `Studies/CondoravdiLauer2012.lean`.
 
 ## Key properties of this file
 

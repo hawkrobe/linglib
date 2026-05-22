@@ -27,7 +27,7 @@ The Fragment carries two empirical fields per entry:
 
 These two fields suffice to project every entry's structural analysis
 under @cite{kramer-2015} Ch. 6's Set-1 DM categorizer (the projection
-lives in `Phenomena/Gender/Studies/Kramer2020.lean`); they also support
+lives in `Studies/Kramer2020.lean`); they also support
 @cite{harris-1991}'s lexical-rule analysis directly (Harris's [FEMALE]
 and [HUMAN] features map onto `attestedGender` and the natural-gender
 inference).

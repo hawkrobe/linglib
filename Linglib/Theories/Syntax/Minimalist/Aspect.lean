@@ -51,7 +51,7 @@ unchanged.
 - The "split aspect" framework as a *named theory* (the cluster of
   @cite{travis-2010}, @cite{macdonald-2008}, @cite{tsai-2008},
   @cite{sybesma-2017}) — its analytical claims live in
-  `Phenomena/Complementation/Studies/LiuYip2026.lean`, which is the first
+  `Studies/LiuYip2026.lean`, which is the first
   paper-anchored consumer of this substrate. Promotion to a separate
   `SplitAspect.lean` theory file would follow when a second study consumes
   the same primitives.

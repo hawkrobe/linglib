@@ -56,7 +56,7 @@ has the surface pattern it does — e.g., Erlewine `@cite{erlewine-2016}`
 Anti-Locality repair; Erlewine 2018 on Toba Batak extraction as a
 structural pivot restriction; Aldridge, Coon, Coon & Mateo Pedro &
 Preminger, Coon & Keine, Henderson, etc. with rival analyses — live
-in `Phenomena/FillerGap/Studies/` files anchored on the specific
+in `Studies/` files anchored on the specific
 paper. They are not enum cases here. -/
 
 -- ============================================================================

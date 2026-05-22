@@ -9,7 +9,7 @@ project's "per-language data flows through Fragments" rule. Substrate
 types (`PossessionProfile`, `PredicativePossession`, `AdnominalPossession`,
 …) live in `Linglib/Typology/Possession.lean`. Cross-linguistic theorems
 consuming this profile live in
-`Phenomena/Possession/Studies/NicholsBickel2013.lean`.
+`Studies/NicholsBickel2013.lean`.
 -/
 
 set_option autoImplicit false

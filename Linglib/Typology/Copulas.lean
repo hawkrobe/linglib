@@ -52,9 +52,9 @@ Fragment-importable.
 
 The 20-language `CopulaProfile` sample, cross-chapter correlations
 (Stassen's implication, areal patterns, copula-type distributions), and
-Fragment-bridge theorems live in `Phenomena/Copulas/Studies/Stassen2013.lean`.
+Fragment-bridge theorems live in `Studies/Stassen2013.lean`.
 Partee's compositional `BE` type-shift bridge to copula typology is in
-`Phenomena/Copulas/Studies/Partee1987.lean`.
+`Studies/Partee1987.lean`.
 -/
 
 set_option autoImplicit false

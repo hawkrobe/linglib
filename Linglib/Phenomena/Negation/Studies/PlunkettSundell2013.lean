@@ -108,7 +108,7 @@ theorem metalinguistic_negotiation_consistent_contents
     `predA = predB` automatically produces a counterexample to
     `consistentContents`. K-G's `applyApprop`-chain analysis (which
     uses a single shared `AppropStandard`) is exactly such a competitor;
-    see `Phenomena.Quotation.Studies.KirkGiannini2024.kg_refutes_plunkett_sundell`. -/
+    see `KirkGiannini2024.kg_refutes_plunkett_sundell`. -/
 theorem MetalinguisticDispute.consistentContents_excludes_shared_standard
     {Entity W : Type} (d : MetalinguisticDispute Entity W)
     (hShared : d.predA = d.predB) :

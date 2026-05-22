@@ -35,7 +35,7 @@ reasoning is shared rather than re-stipulated:
 - @cite{cole-hermon-2008} (informal use): {Toba Batak} VoiceP raising
   + remnant movement in `Phenomena/WordOrder/Studies/ColeHermon2008.lean`.
 - @cite{erlewine-2018} (informal use): predicate fronting in
-  `Phenomena/FillerGap/Studies/Erlewine2018.lean`.
+  `Studies/Erlewine2018.lean`.
 
 TODO: migrate informal consumers to import this substrate. The
 extraction-without-migration pattern follows mathlib practice — the

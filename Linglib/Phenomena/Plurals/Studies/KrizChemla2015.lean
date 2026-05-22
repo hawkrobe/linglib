@@ -25,7 +25,7 @@ formal work (`@cite{kriz-2016}`) and the extension by `@cite{bar-lev-2021}` and
 ## Provenance
 
 This data was previously bundled inside `Phenomena/Imprecision/Projection.lean`
-and then `Phenomena/Imprecision/Studies/Haslinger2025.lean`. Moved here at
+and then `Studies/Haslinger2025.lean`. Moved here at
 0.230.521 because the empirical anchor is Križ & Chemla 2015 — Haslinger 2025
 discusses these data points in Ch 7 but as a published-result substrate, not as
 her own original observation.

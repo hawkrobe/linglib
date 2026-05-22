@@ -413,7 +413,7 @@ def setBLinearity : MarkerLinearity := .prefixal
     `dedicatedMorpheme` (the descriptive surface category) to parallel
     Q'anjob'al/Kaqchikel/K'iche'. The analytical claim that AF is an
     SSAL repair (Erlewine-line) lives in
-    `Phenomena/FillerGap/Studies/Erlewine2016.lean`; rival accounts
+    `Studies/Erlewine2016.lean`; rival accounts
     (Coon-Mateo Pedro-Preminger absolutive licensing, Coon-Keine
     Feature Gluttony) are not encoded in the typology enum. -/
 def extractionProfile : Typology.ExtractionProfile :=

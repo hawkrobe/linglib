@@ -20,7 +20,7 @@ form differs from the form used in all nonnominative contexts
 hierarchy (@cite{caha-2009}), where all nonnominative cases include
 the ACC feature in their syntactic representation.
 
-See `Phenomena/Allomorphy/Studies/Aitha2026.lean` for
+See `Studies/Aitha2026.lean` for
 the full analysis of Telugu stem allomorphy patterns.
 -/
 

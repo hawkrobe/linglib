@@ -51,7 +51,7 @@ The `IndirectAct` structure in `§K` consumes `Core.Discourse.PreparatoryConditi
 willingness). Clark's canonical example *Do you know what time it is?* used
 as a request projects to `prepCondition := some .knowledge` — the same
 substrate `Phenomena/Politeness/Studies/FrancikClark1985.lean` and
-`Phenomena/Directives/Studies/RuytenbeekEtAl2017.lean` consume.
+`Studies/RuytenbeekEtAl2017.lean` consume.
 
 The DM bridge in `§I` consumes `Theories.Morphology.DM.Categorizer`'s
 `Recategorization.denominal` for the syntactic operation underlying nonce
@@ -687,7 +687,7 @@ def timeQuestionExample : IndirectAct Unit where
 /-- The time-question example projects via the `.knowledge` preparatory
     condition, exactly the substrate `Phenomena/Politeness/Studies/FrancikClark1985.lean`
     formalizes for `RequestForm.doYouKnow` and that
-    `Phenomena/Directives/Studies/RuytenbeekEtAl2017.lean` consumes for its
+    `Studies/RuytenbeekEtAl2017.lean` consumes for its
     mechanism 2. -/
 theorem time_question_routes_via_knowledge :
     timeQuestionExample.prepCondition = some .knowledge := rfl

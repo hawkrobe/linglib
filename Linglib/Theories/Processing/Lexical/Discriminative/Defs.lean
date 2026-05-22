@@ -11,8 +11,8 @@ processing* in which form ↔ meaning relations are mediated by error-
 driven networks rather than by stored lexical entries
 (@cite{baayen-2019}). This file lifts the DLM substrate out of the
 two paper-anchored Studies files that introduced it
-(`Phenomena/Tone/Studies/ChuangEtAl2026.lean`,
-`Phenomena/Tone/Studies/LuChuangBaayen2026.lean`) into a shared
+(`Studies/ChuangEtAl2026.lean`,
+`Studies/LuChuangBaayen2026.lean`) into a shared
 location. The substrate has graduated to `Theories/` per `CLAUDE.md`'s
 ≥ 2-consumer rule.
 
@@ -163,7 +163,7 @@ theorem linear_dlm_distinguishes_meanings
     form identity, that identity follows from their meaning-difference
     landing in `ker production`, not from a stipulated rule. The
     Lu, Chuang & Baayen 2026 study applies this to Taiwan Mandarin T3
-    tone sandhi (`Phenomena/Tone/Studies/LuChuangBaayen2026.lean`):
+    tone sandhi (`Studies/LuChuangBaayen2026.lean`):
     T3-T3 and T2-T3 word centroids in CE space differ only by a
     kernel-element of the DLM's trained production map, so their
     surface contours coincide — no phonological sandhi rule invoked.

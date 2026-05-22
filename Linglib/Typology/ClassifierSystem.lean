@@ -41,7 +41,7 @@ exists.
 
 Theoretical commitments about *which strategy* mediates the numeral-noun
 composition (`forNoun` per Chierchia, `sudoBlocking` per Sudo) live in
-the relevant `Phenomena/Classifiers/Studies/` files, not on the
+the relevant `Studies/` files, not on the
 description here. Cross-paper disagreement is proved as theorems, not
 embedded as metadata.
 
@@ -248,7 +248,7 @@ def collectSemantics (cls : List ClassifierEntry) : List SemanticParameter :=
       not beyond them, CLF appears in counting contexts (via the ∩-operator).
 
     Strategy assignments to specific languages live in study files
-    (`Phenomena/Classifiers/Studies/{NMP,LittleMoroneyRoyer2022,Sudo2016}.lean`),
+    (`Studies/{NMP,LittleMoroneyRoyer2022,Sudo2016}.lean`),
     not in this file or in `NounCategorizationSystem`. Each paper owns its
     own per-language commitments; cross-paper agreement and disagreement
     are first-class theorems in the study files. -/

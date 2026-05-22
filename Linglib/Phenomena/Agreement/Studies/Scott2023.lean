@@ -443,7 +443,7 @@ theorem satisfaction_matches_fragment :
 -- The former §13 (Unified Agree — bridging Scott 2023's φ-Agree pipeline
 -- with Elkins-Torrence-Brown 2026's oblique-Agree pipeline) violated the
 -- chronological dependency rule (a 2023 study cross-referencing a 2026
--- study). It moved to `Phenomena/FillerGap/Studies/ElkinsTorrenceBrown2026.lean`
+-- study). It moved to `Studies/ElkinsTorrenceBrown2026.lean`
 -- (the later paper, which can correctly back-reference Scott 2023's
 -- φ-probe + Set A vocabulary defs).
 

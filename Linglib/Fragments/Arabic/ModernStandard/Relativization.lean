@@ -145,7 +145,7 @@ def relMarkers : List RelClauseMarker :=
     `lowestRelativizable := .oblique`: the WALS Ch 122/123 coarse value;
     K&C Table 1 records OCOMP coverage. The bridge theorem
     `arabic_kc_covers_deeper_than_wals` in
-    `Phenomena/Relativization/Studies/KeenanComrie1977.lean` documents
+    `Studies/KeenanComrie1977.lean` documents
     the systematic K&C-vs-WALS asymmetry. -/
 def relativization : Typology.Relativization.RelativizationProfile :=
   { subjStrategy := .gap

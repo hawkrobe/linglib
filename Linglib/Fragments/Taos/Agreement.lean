@@ -16,7 +16,7 @@ This fragment provides only the *morpheme inventory* and a
 representation of agreement prefixes as `FeatureBundle` lists. The
 postsyntactic rules of impoverishment and metathesis that derive the
 surface forms — and the theorems about ordering — live in
-`Phenomena/Allomorphy/Studies/Middleton2026.lean`.
+`Studies/Middleton2026.lean`.
 
 ## Person and Number Features (Harbour)
 

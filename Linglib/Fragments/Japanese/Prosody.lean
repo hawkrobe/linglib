@@ -1,7 +1,7 @@
 import Linglib.Features.Prosody
 import Linglib.Theories.Phonology.Prosodic.Accent
 import Linglib.Theories.Phonology.ItemSpecificity.Defs
-import Linglib.Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
+import Linglib.Studies.BeckmanPierrehumbert1986
 
 /-!
 # Japanese Prosody Fragment

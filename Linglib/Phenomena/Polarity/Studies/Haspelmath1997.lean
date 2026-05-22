@@ -31,7 +31,7 @@ Typology and Linguistic Theory. Oxford University Press.
 
 Polarity-side projection of @cite{haspelmath-1997}'s 9-function
 implicational map for indefinite pronouns. Where the sibling file
-`Phenomena/Indefinites/Studies/Haspelmath1997.lean` formalises the
+`Studies/Haspelmath1997.lean` formalises the
 indefinite-typology angle (Fragment-derived `IndefiniteParadigm`s for a
 6-language sample, with WALS-bridge theorems checking the F46A
 classification), this file owns the polarity-side claims:
@@ -99,7 +99,7 @@ Audit history (see `project_indefinite_substrate_contested.md` memory note):
   consumers, not an isolated stipulation.
 
 The Fragment-vs-Studies disagreement is two published analyses, lifted
-to theorem level in `Phenomena/Indefinites/Studies/Bubnov2026.lean` §11:
+to theorem level in `Studies/Bubnov2026.lean` §11:
 `fragment_polarity_disagree_on_kto_to` proves the Russian case;
 `fragment_polarity_disagree_on_some` proves the English case. Both are
 `decide`-checked extensional inequalities on the Haspelmath function

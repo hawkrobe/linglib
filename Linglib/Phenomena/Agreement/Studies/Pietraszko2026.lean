@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.Features
 import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Theories.Syntax.Minimalist.Phase
 import Linglib.Theories.Syntax.Minimalist.Probe
-import Linglib.Phenomena.FillerGap.Studies.ErlewineSommerlot2025
+import Linglib.Studies.ErlewineSommerlot2025
 import Linglib.Studies.Coon2019
 import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
 
@@ -359,9 +359,9 @@ rather than docstring-asserted. -/
 theorem voice_phase_attested_in_two_families :
     Sample.voiceWithEPP.IsPhasal ∧
     Sample.voiceWithoutEPP.IsPhasal ∧
-    (Phenomena.FillerGap.Studies.ErlewineSommerlot2025.clauseToVoiceHead
+    (ErlewineSommerlot2025.clauseToVoiceHead
        .diPassive).IsPhasal ∧
-    (Phenomena.FillerGap.Studies.ErlewineSommerlot2025.clauseToVoiceHead
+    (ErlewineSommerlot2025.clauseToVoiceHead
        .barePassive).IsPhasal := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
@@ -411,11 +411,11 @@ theorem typology_cell_coon_intransitive :
     forces phasal against the passive flavor default (which Collins-style
     treats as non-phasal). -/
 theorem typology_cell_erlewine_sommerlot :
-    (Phenomena.FillerGap.Studies.ErlewineSommerlot2025.clauseToVoiceHead
+    (ErlewineSommerlot2025.clauseToVoiceHead
        .diPassive).flavor = VoiceFlavor.passive ∧
-    (Phenomena.FillerGap.Studies.ErlewineSommerlot2025.clauseToVoiceHead
+    (ErlewineSommerlot2025.clauseToVoiceHead
        .diPassive).phaseOverride = some true ∧
-    (Phenomena.FillerGap.Studies.ErlewineSommerlot2025.clauseToVoiceHead
+    (ErlewineSommerlot2025.clauseToVoiceHead
        .diPassive).IsPhasal := by decide
 
 -- The four cells stand alone as named theorems above; each can be

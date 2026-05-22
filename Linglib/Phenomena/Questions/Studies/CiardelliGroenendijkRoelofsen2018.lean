@@ -96,7 +96,7 @@ already implements the paper).
   Ch 7's full empirical analysis lives in
   `Theories/Semantics/Conditionals/` and study files there.
 * **Ch 8** Inquisitive epistemic logic / `know` and `wonder`: see
-  `Theories/Semantics/Attitudes/` and `Phenomena/Complementation/Studies/TheilerRoelofsenAloni2018.lean`.
+  `Theories/Semantics/Attitudes/` and `Studies/TheilerRoelofsenAloni2018.lean`.
 * **Ch 9** Comparison with alternative semantics, partition semantics,
   inquisitive indifference: covered piecemeal in
   `Phenomena/Questions/Studies/{Hamblin1973_TODO, GroenendijkStokhof1984}.lean`

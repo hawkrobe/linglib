@@ -270,7 +270,7 @@ form-class encoding. Two of them are formalized in linglib:
   reject it on the same form-meaning grounds (M&N §2 "epistemic
   account").
 - `Theories/Semantics/Mood/Gutzmann.lean` /
-  `Phenomena/SentenceMood/Studies/Gutzmann2015.lean` formalize
+  `Studies/Gutzmann2015.lean` formalize
   @cite{gutzmann-2015}'s use-conditional sentence-mood operators
   (DEONT/EPIS/HKNOW). The verum-specific Gutzmann work M&N cite
   (Gutzmann & Castroviejo Miró 2011) is *not* formalized in

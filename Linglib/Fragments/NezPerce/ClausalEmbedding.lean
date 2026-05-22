@@ -17,7 +17,7 @@ diagnostics).
 Predicate list and factivity assessments are from @cite{deal-2026} §3 (RE-takers)
 and §6 (simplex-takers); the analytical RE-vs-simplex split is *not* encoded
 here as a Fragment field — it is Deal-specific apparatus and lives in the
-co-located study file `Phenomena/Complementation/Studies/Deal2026.lean` as a
+co-located study file `Studies/Deal2026.lean` as a
 Studies-side projection.
 
 Relative-pronoun paradigm is from @cite{deal-2016a} (Table 22 reproduced in
@@ -68,7 +68,7 @@ open Typology.Complementation (CTPClass)
       complement edge is ungrammatical. This field is *observable* — it
       records what the morphology does, not what it means. Theory-laden
       interpretations (selectional features, projection sites) belong in
-      `Phenomena/Complementation/Studies/Deal2026.lean`.
+      `Studies/Deal2026.lean`.
 
     A `notionalTransitivity` field would be uniformly `intransitive` for
     every predicate Deal 2026 reviews (cf. §4 (38)–(39)) and is therefore

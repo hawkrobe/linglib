@@ -57,13 +57,13 @@ extension pattern. Fragment-importable.
 - The CTP per-verb data (Sections E-G of the original file: `english_say`,
   `latin_dicere`, etc.) and Noonan's verified generalizations
   (G1--G4: realis/irrealis split, equi-deletion restriction, negative
-  raising, indicative hierarchy) live in `Phenomena/Complementation/Studies/
+  raising, indicative hierarchy) live in `Studies/
   Noonan2007.lean`.
 - The 20-language `SubordinationProfile` sample, the Q1--Q12 typological
   generalizations, and areal pattern theorems live in
-  `Phenomena/Complementation/Studies/Dryer2013.lean`.
+  `Studies/Dryer2013.lean`.
 - The 19-language `ComplementationProfile` sample and W/X cross-chapter
-  generalizations live in `Phenomena/Complementation/Studies/Cristofaro2013.lean`.
+  generalizations live in `Studies/Cristofaro2013.lean`.
 -/
 
 set_option autoImplicit false
@@ -486,7 +486,7 @@ houses the external axis as Fragment-importable substrate.
 
 Anchored to @cite{deal-2026} Table 79; placement of individual languages in
 Table 79 cells consumes per-language Fragment data and lives in
-`Phenomena/Complementation/Studies/Deal2026.lean`. -/
+`Studies/Deal2026.lean`. -/
 
 /-- A wrapping head category that may appear above a CP in a notional complement.
     @cite{deal-2026} Table 79 attests three: D (Washo, Adyghe), N (Adyghe),

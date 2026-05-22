@@ -1,5 +1,5 @@
 import Linglib.Fragments.Ga.Basic
-import Linglib.Phenomena.Control.Studies.Landau2015
+import Linglib.Studies.Landau2015
 
 /-!
 # Gã Complement-Taking Predicates

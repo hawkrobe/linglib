@@ -9,7 +9,7 @@ Georgian lacks noun-class affixes, and WALS applies a noun-side-marking
 criterion. Corbett 1991 classifies Georgian's rationality/animacy split as
 a 4-class non-sex-based gender system on the basis of pronominal and verbal
 agreement targets. The Corbett 1991 view is a per-Study override at
-`Phenomena/Gender/Studies/Corbett1991.lean`.
+`Studies/Corbett1991.lean`.
 -/
 
 namespace Fragments.Georgian.Gender

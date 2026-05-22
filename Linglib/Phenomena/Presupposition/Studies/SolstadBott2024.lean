@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Phenomena.Presupposition.ProjectiveContent
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2022
+import Linglib.Studies.SolstadBott2022
 import Linglib.Fragments.German.Predicates
 import Linglib.Core.Discourse.AtIssueness
 

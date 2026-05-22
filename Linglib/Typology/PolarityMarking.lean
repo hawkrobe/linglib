@@ -57,7 +57,7 @@ several — alongside @cite{hohle-1992}'s verum-as-illocutionary-operator
 (`Phenomena/Questions/Studies/RomeroHan2004.lean`), and
 @cite{gutzmann-2015}'s use-conditional sentence-mood operators
 (`Theories/Semantics/Mood/Gutzmann.lean` +
-`Phenomena/SentenceMood/Studies/Gutzmann2015.lean`, where verum
+`Studies/Gutzmann2015.lean`, where verum
 composes via DEONT/EPIS/HKNOW dimensions orthogonal to truth-
 conditional polarity). All three sibling frameworks are in tension
 with the form-class encoding for different reasons; the

@@ -9,7 +9,7 @@ The Minimalist `VoiceHead`, `ClauseSpine`, and `MamDirHead` apparatus
 that previously lived in this file (=(y)a' analysis, antipassive)
 moved to:
 
-- `Phenomena/FillerGap/Studies/ElkinsTorrenceBrown2026.lean` — primary
+- `Studies/ElkinsTorrenceBrown2026.lean` — primary
   anchor for the Minimalist treatment of =(y)a' / oblique extraction
   (@cite{elkins-torrence-brown-2026}); also houses the antipassive
   Voice apparatus from @cite{scott-2023} §2.5.4.1.

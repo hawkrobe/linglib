@@ -1,8 +1,8 @@
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Data.WALS.Features.F101A
-import Linglib.Phenomena.Control.Studies.Allotey2021
-import Linglib.Phenomena.Control.Studies.Ostrove2026
+import Linglib.Studies.Allotey2021
+import Linglib.Studies.Ostrove2026
 
 /-!
 # Pro-Drop / Overt-PRO Registry @cite{ostrove-2026}

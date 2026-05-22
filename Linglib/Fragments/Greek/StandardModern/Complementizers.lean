@@ -15,7 +15,7 @@ This file exposes ONLY consensus typological metadata. The
 content/situation typing of the matrix-verb selection that
 @cite{angelopoulos-2026} introduces (following @cite{bondarenko-2022})
 is paper-specific apparatus and lives in
-`Phenomena/Complementation/Studies/Angelopoulos2026.lean` as a
+`Studies/Angelopoulos2026.lean` as a
 projection over these `VerbCore` entries — it does not pollute the
 fragment schema.
 

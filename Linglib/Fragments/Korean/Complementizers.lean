@@ -17,7 +17,7 @@ nominalized embedded clauses (@cite{bondarenko-2022} §4.3.2).
   differently (clause-typing morpheme without specific structural
   decomposition). This Fragment file exposes the morpheme; the
   ContP-bearing claim is paper-specific apparatus and lives in
-  `Phenomena/Complementation/Studies/Bondarenko2022.lean`.
+  `Studies/Bondarenko2022.lean`.
 - **-nun** — adnominal ending; turns a clause into a noun-modifier.
   Co-occurs with *kes* in nominalized complement clauses.
 - **-ko** — connective / quotative complementizer. Used in serialised

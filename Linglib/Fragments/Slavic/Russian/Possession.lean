@@ -21,7 +21,7 @@ using `imet'` 'to have' (< `*em-` 'take'), where the possessor is subject.
 PossessionProfile bundle for Russian (ISO `rus`), per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
 `Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
-Russian lives in `Phenomena/Possession/Studies/Heine1997.lean`.
+Russian lives in `Studies/Heine1997.lean`.
 
 ## Examples
 

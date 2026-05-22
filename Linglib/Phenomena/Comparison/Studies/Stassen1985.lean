@@ -1,5 +1,5 @@
 import Linglib.Typology.Comparison
-import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
+import Linglib.Studies.SarvasyAikhenvald2025
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Fragments.English.Comparison

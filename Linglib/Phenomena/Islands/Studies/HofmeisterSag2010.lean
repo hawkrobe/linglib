@@ -23,7 +23,7 @@ and the Minimal Link Condition.
    islands are ameliorated, not eliminated.
 
 The cross-theory comparison (competence vs. performance vs. discourse) lives in
-`Phenomena.FillerGap.Studies.LuPanDegen2025`, which integrates these findings
+`LuPanDegen2025`, which integrates these findings
 with @cite{lu-pan-degen-2025}'s discourse-based account.
 -/
 

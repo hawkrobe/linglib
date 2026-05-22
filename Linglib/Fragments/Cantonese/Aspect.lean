@@ -15,7 +15,7 @@ complements catalogued by @cite{yip-k-f-2025} and reproduced in
 This file commits the lexical data; the analytical positioning of -faan as
 outer-aspect-associated (and -gwo as inner-aspect-associated) is per Liu &
 Yip 2026's analysis and lives in
-`Phenomena/Complementation/Studies/LiuYip2026.lean`.
+`Studies/LiuYip2026.lean`.
 -/
 
 namespace Fragments.Cantonese.Aspect

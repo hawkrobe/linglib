@@ -9,7 +9,7 @@ import Linglib.Typology.Possession
 `PossessionProfile` bundle for Standard Modern Greek (SMG; ISO `ell`), per
 the project's per-language data flows through Fragments rule. Substrate
 types live in `Linglib/Typology/Possession.lean`. Cross-linguistic theorems
-consume this profile from `Phenomena/Possession/Studies/NicholsBickel2013.lean`.
+consume this profile from `Studies/NicholsBickel2013.lean`.
 
 Greek is the canonical case of a language that **morphologically** has a
 single adnominal possession class (no alienable/inalienable split is marked
@@ -27,7 +27,7 @@ genitive (per @cite{kampanarou-alexiadou-2026} §5). Felicity is gated by
 the relation type (part-whole and source: free; ownership and kinship:
 degraded) and by whether the possessor can be construed as a set (modified
 or pluralised possessors are felicitous). The licensing apparatus lives in
-`Phenomena/Possession/Studies/KampanarouAlexiadou2026.lean`.
+`Studies/KampanarouAlexiadou2026.lean`.
 
 For the dialect contrast, see `Fragments/Greek/Grevena/Possession.lean`
 (genitive-loss endpoint per @cite{michelioudakis-chatzikyriakidis-spathas-2024})

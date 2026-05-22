@@ -41,7 +41,7 @@ cases, while the quantificational analysis fails for distributive operators
   singular null pronoun antecedent (§2, @cite{rakosi-2019})
 - `Fragments/Wan/Reciprocals.lean` — Wan logophoric reciprocal data (§6)
 - `Core/Discourse/Logophoricity.lean` — Sells (1987) logophoric roles
-- `Phenomena/Control/Studies/Landau2015.lean` — control tier distinction
+- `Studies/Landau2015.lean` — control tier distinction
   (exhaustive vs. partial) relevant to §4
 -/
 

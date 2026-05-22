@@ -3,7 +3,7 @@
 @cite{deo-2025-bara} @cite{deo-2023}
 
 Lexical entries for Marathi utterance-final discourse particles. The
-semantic/pragmatic content lives in `Phenomena/SentenceMood/Studies/Deo2025.lean`;
+semantic/pragmatic content lives in `Studies/Deo2025.lean`;
 this file just packages the basic morphological + clause-type-distribution data.
 -/
 
@@ -41,7 +41,7 @@ structure ParticleEntry where
     condition tying this uptake to a salient addressee-benefiting goal.
 
     @cite{deo-2025-bara} (20)–(21). The semantic/pragmatic apparatus
-    lives in `Phenomena/SentenceMood/Studies/Deo2025.lean`. -/
+    lives in `Studies/Deo2025.lean`. -/
 def bara : ParticleEntry where
   form  := "bərə"
   gloss := "BARA"
@@ -57,7 +57,7 @@ def bara : ParticleEntry where
     convention).
 
     Stub entry — full lexical/semantic apparatus deferred to a future
-    `Phenomena/SentenceMood/Studies/Deo2023.lean`. The clause-type
+    `Studies/Deo2023.lean`. The clause-type
     distribution fields are placeholders; @cite{deo-2025-bara}
     footnote 6 (p. 392) only attests *na* as one of the four
     imperative-augmenting particles (*na, hã/h̆ə, ki, bərə*); the

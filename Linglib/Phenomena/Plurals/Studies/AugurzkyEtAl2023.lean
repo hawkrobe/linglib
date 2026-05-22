@@ -119,7 +119,7 @@ targets, NOT endorsed by this file):
   triggering implicature.
 - @cite{haslinger-2025-diss} §3.6.2 (Magri effects): the asymmetry follows
   from how potential p-equivalence and complexity interact with embedding
-  monotonicity; see also `Phenomena/Imprecision/Studies/Haslinger2025.lean`.
+  monotonicity; see also `Studies/Haslinger2025.lean`.
 
 The two accounts make divergent predictions for embedded environments not
 yet tested experimentally.

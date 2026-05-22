@@ -40,7 +40,7 @@ item inventory.
    conditions at Spell-Out, not Vocabulary Insertion per se.
 
 Landau-specific theory (the Two-Tiered Theory of Control, predicate
-classification, clause classes) is in `Phenomena/Control/Studies/Landau2015.lean`.
+classification, clause classes) is in `Studies/Landau2015.lean`.
 -/
 
 namespace Minimalist.MinimalPronoun

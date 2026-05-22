@@ -11,7 +11,7 @@ denote scalar properties of individuals. Clause-embedding adjectives
 denote attitudes or evaluations toward propositions.
 
 Whether predication requires a copula is a **language-level** property
-(tracked in `Phenomena/Copulas/Studies/Stassen2013.lean`), not a property of the
+(tracked in `Studies/Stassen2013.lean`), not a property of the
 adjective. English requires "be", Mandarin and Japanese do not. The
 copula and its syntax belong in the Theory/Syntax layer, not here.
 -/

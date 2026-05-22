@@ -1,6 +1,6 @@
 import Linglib.Typology.ClassifierSystem
 import Linglib.Features.Prominence
-import Linglib.Phenomena.Classifiers.Studies.Aikhenvald2000
+import Linglib.Studies.Aikhenvald2000
 
 /-!
 # Prasertsom, Smith & Culbertson (2026)

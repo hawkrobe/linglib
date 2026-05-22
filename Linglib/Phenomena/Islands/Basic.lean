@@ -36,7 +36,7 @@ Files that classify islands using these types include:
 - `Studies/HofmeisterSag2010.lean` — processing/gradient
 - `Phenomena/Islands/MannerOfSpeaking.lean` — discourse backgroundedness
 - `Phenomena/Questions/Studies/ChanShen2026.lean` — semantic
-- `Phenomena/FillerGap/Studies/LuPanDegen2025.lean` — backgroundedness
+- `Studies/LuPanDegen2025.lean` — backgroundedness
 -/
 
 namespace Phenomena.Islands

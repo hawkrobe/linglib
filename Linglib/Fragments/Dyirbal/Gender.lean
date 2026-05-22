@@ -10,7 +10,7 @@ that Class I includes male humans. Corbett's 1991 monograph and Lakoff's
 Dyirbal as non-sex-based on the broader principle that the system's
 organising criteria (edibility, natural-force association) cut across
 biological sex. The Corbett 1991 view is a per-Study override at
-`Phenomena/Gender/Studies/Corbett1991.lean`.
+`Studies/Corbett1991.lean`.
 -/
 
 namespace Fragments.Dyirbal.Gender

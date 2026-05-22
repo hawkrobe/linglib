@@ -11,7 +11,7 @@ profile, and the typological AF/extraction-gap classification.
 The theory-laden apparatus that interprets this data lives in study
 files per the project Fragment-discipline rule (CLAUDE.md):
 - OT competing-derivations + SSAL/XRef constraints + ranking →
-  `Phenomena/FillerGap/Studies/Erlewine2016.lean`
+  `Studies/Erlewine2016.lean`
 - Minimalist Voice/ClauseSpine for Kaqchikel →
   `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean`
 

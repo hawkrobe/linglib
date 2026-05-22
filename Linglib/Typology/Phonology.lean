@@ -185,7 +185,7 @@ inductive SyllableComplexity where
     **Theory-laden**: defines tone by level-inventory size, which Hyman
     2006 explicitly challenges (functional definition: "pitch enters
     lexical realisation"). Substrate records WALS as-is; functional-tone
-    work projects via `Phenomena/Tone/Studies/Hyman2006.lean`. -/
+    work projects via `Studies/Hyman2006.lean`. -/
 inductive ToneSystem where
   | none | simple | complex
   deriving DecidableEq, Repr

@@ -71,7 +71,7 @@ def contiguousOnAH (positions : List AHPosition) : Bool :=
 
 /-- Prop wrapper around `contiguousOnAH`. The `Bool`-shaped definition
     is structural and load-bearing for the PRC general-proof case-analysis
-    in `Phenomena/Relativization/Studies/KeenanComrie1977.lean`; this
+    in `Studies/KeenanComrie1977.lean`; this
     Prop version is the canonical user-facing predicate. -/
 def ContiguousOnAH (positions : List AHPosition) : Prop :=
   contiguousOnAH positions = true
@@ -133,6 +133,6 @@ theorem ah_transitive (a b c : AHPosition)
   simp [AHPosition.atLeastAsAccessible] at *; omega
 
 /-! The K&C-anchored contiguity examples and the Primary Relativization
-Constraint general proof live in `Phenomena/Relativization/Studies/KeenanComrie1977.lean`. -/
+Constraint general proof live in `Studies/KeenanComrie1977.lean`. -/
 
 end Core

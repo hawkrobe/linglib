@@ -22,7 +22,7 @@ Examples (paper §6.1):
 
 This Fragment file commits the inventory; the cross-Sinitic typological
 contrast with Mandarin is theoremed in
-`Phenomena/Definiteness/Studies/Jenks2018.lean`.
+`Studies/Jenks2018.lean`.
 -/
 
 namespace Fragments.Cantonese.Definiteness

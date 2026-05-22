@@ -10,7 +10,7 @@ project's "per-language data flows through Fragments" rule. Substrate
 types (`PossessionProfile`, `PredicativePossession`, `AdnominalPossession`,
 …) live in `Linglib/Typology/Possession.lean`. Cross-linguistic theorems
 consuming this profile live in
-`Phenomena/Possession/Studies/NicholsBickel2013.lean`.
+`Studies/NicholsBickel2013.lean`.
 
 The `adnominalStrategy := .headMarking` choice is consistent with both
 standard reference grammars: @cite{kenesei-vago-fenyvesi-1998} §1.10

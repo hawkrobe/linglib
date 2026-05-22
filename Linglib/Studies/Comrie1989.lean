@@ -3,7 +3,7 @@ import Linglib.Core.Relativization.Hierarchy
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Typology.Alignment
-import Linglib.Phenomena.Alignment.Studies.Dixon1994
+import Linglib.Studies.Dixon1994
 import Linglib.Studies.Aissen2003
 import Linglib.Fragments.Dargwa.ComplexPredicates
 
@@ -69,7 +69,7 @@ namespace Comrie1989
 /-! ### Cross-domain unity of the animacy hierarchy
 
 The `AnimacyLevel` type in `Features.Prominence` is imported by both
-`Phenomena.Alignment.Studies.Dixon1994` (Silverstein's split ergativity) and
+`Dixon1994` (Silverstein's split ergativity) and
 `Aissen2003` (DOM via OT). This is structural
 grounding: the same 3-level hierarchy (human > animate > inanimate)
 governs both phenomena, with no possibility of drift between separate
@@ -187,7 +187,7 @@ theorem syntacticErg_subject_converges :
 
 /-! ### Alignment profiles predict subject property convergence
 
-Each language's alignment profile (from `Phenomena.Alignment.Studies.Dixon1994`)
+Each language's alignment profile (from `Dixon1994`)
 generates a predicted subject property bundle via `toSubjectBundle`.
 These theorems verify the predictions against the known typological
 facts for each language:
@@ -201,7 +201,7 @@ facts for each language:
 The `syntacticErg` parameter captures the rare/common ergativity
 distinction that @cite{comrie-1989} Ch 5 identifies as central. -/
 
-open Phenomena.Alignment.Studies.Dixon1994
+open Dixon1994
   (english dyirbal basque hindiUrdu dargwa japanese)
 
 /-- English: accusative NP alignment → derived bundle converges. -/
@@ -419,7 +419,7 @@ connection is built in by construction — both import `Features.Prominence`. -/
 open Features.Prominence (DefinitenessLevel)
 open Aissen2003
   (DOMProfile spanishDOM russianDOM turkishDOM hindiDOM noDOMProfile)
-open Phenomena.Alignment.Studies.Dixon1994 (russian turkish dyirbalSplit)
+open Dixon1994 (russian turkish dyirbalSplit)
 open Core (AlignmentFamily Aspect hindiSplit)
 
 /-- Whether DOM (differential P marking) is expected given alignment.

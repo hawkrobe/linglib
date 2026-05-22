@@ -7,7 +7,7 @@ Quantifier scope phenomena.
 - `ScopeFreezing.Availability`, `ScopeFreezing.FreezingContext`
 
 Numeral imprecision data lives in
-`Phenomena.Imprecision.Studies.Haslinger2025` (sub-namespace `Numerals`).
+`Haslinger2025` (sub-namespace `Numerals`).
 
 -/
 

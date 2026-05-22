@@ -29,7 +29,7 @@ Jackendoff 1985). Williams (fn 1) brackets the implicative-negative entailment
 to focus on presupposition; he does not refute it. The
 `implicativeNegative` field below records it for cross-paper consistency
 with the Karttunen tradition (formalized in
-`Phenomena/Complementation/Studies/Karttunen1971.lean` and
+`Studies/Karttunen1971.lean` and
 `Theories/Semantics/Causation/Implicative.lean`).
 
 A second presupposition Williams identifies for the psych-action reading,

@@ -89,7 +89,7 @@ and (19)) for the *you*-skipping pattern. Theory-light: only consensus
 typology — surface form, finite vs nonfinite complement selection, and
 @cite{noonan-2007} `CTPClass`. The [+D] / [-D] selectional refinement
 within nonfinite TPs (Lin & Liu 2009) is theory-laden and lives in
-`Phenomena/Complementation/Studies/LiuYip2026.lean` as a Studies-side
+`Studies/LiuYip2026.lean` as a Studies-side
 projection per the audit's "derive don't stipulate" discipline. -/
 
 /-- 想 *xiang* 'want' — desiderative; nonfinite-taking. Liu & Yip 2026 (18). -/

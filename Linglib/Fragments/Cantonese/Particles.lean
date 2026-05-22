@@ -9,7 +9,7 @@ parallel to the Mandarin entries in `Fragments/Mandarin/Particles.lean`.
 Per @cite{liu-yip-2026} §5, these are the Cantonese counterparts of
 Mandarin *you* and *zai* respectively, but unlike Mandarin *you*, the
 preverbal Cantonese *jau* does NOT exhibit the scope-skipping pattern
-(see `Phenomena/Complementation/Studies/LiuYip2026.lean` for the analytical
+(see `Studies/LiuYip2026.lean` for the analytical
 discussion).
 
 This file commits the consensus lexical data only; the analytical claim that

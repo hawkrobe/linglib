@@ -29,7 +29,7 @@ the scope. Others (*yalnhej*) lack this condition.
 
 Worked examples (Book/BookWorld and Card/CardWorld scenarios for
 non-maximality and harmonic interpretations) live in the study file
-`Phenomena/ModalIndefinites/Studies/AlonsoOvalleRoyer2024.lean`.
+`Studies/AlonsoOvalleRoyer2024.lean`.
 
 -/
 

@@ -57,7 +57,7 @@ WALS chapter aggregate distributions (`ch58_distribution`,
 substrate layer per the project's "WALS goes to `Linglib/Typology/`" rule,
 since they are theory-neutral facts about WALS data, not paper-specific
 contributions. Cross-linguistic theorems consuming Fragment per-language
-data live in `Phenomena/Possession/Studies/NicholsBickel2013.lean`.
+data live in `Studies/NicholsBickel2013.lean`.
 -/
 
 set_option autoImplicit false

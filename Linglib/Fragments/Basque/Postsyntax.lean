@@ -23,7 +23,7 @@ on **whole terminals**, not on features within a single bundle:
 
 This file provides only the bundle constructors and predicates the
 rules need to fire. The rules themselves and the divergence proof
-live in `Phenomena/Allomorphy/Studies/Middleton2026.lean`.
+live in `Studies/Middleton2026.lean`.
 
 ## Encoding choices
 

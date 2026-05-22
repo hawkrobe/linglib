@@ -139,7 +139,7 @@ agreement bridge with @cite{caha-2009}.
   inventory.
 - *vrač* and Pesetsky's feminizing Ж analysis (Ch 5) are noted; the
   morphological-declension claim itself is owned by
-  `Phenomena/Gender/Studies/Kramer2020.lean::vrač_morph_masculine`.
+  `Studies/Kramer2020.lean::vrač_morph_masculine`.
 -/
 
 namespace Pesetsky2013

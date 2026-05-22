@@ -17,7 +17,7 @@ existential `var`, and the Equation Schema for belong-constructions.
 PossessionProfile bundle for Turkish (ISO `tur`), per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
 `Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
-Turkish lives in `Phenomena/Possession/Studies/Heine1997.lean`.
+Turkish lives in `Studies/Heine1997.lean`.
 
 ## Examples
 

@@ -25,9 +25,9 @@ distinguished background is the agent's effective preference function `EP`
 
 Anankastic-conditional analyses live in `Studies/`;
 imperative analyses (C&L 2012, contra @cite{roberts-2023}'s
-modal-in-LF account) in `Phenomena/Directives/Studies/`;
+modal-in-LF account) in `Studies/`;
 discourse-particle uses (@cite{deo-2025-bara}) in
-`Phenomena/SentenceMood/Studies/`.
+`Studies/`.
 -/
 
 namespace Semantics.Attitudes.CondoravdiLauer

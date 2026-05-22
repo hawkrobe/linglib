@@ -23,7 +23,7 @@ The Fragment commits to two empirical fields per entry:
   Newman/Corbett/Kramer all agree on this empirical field.
 
 These two fields suffice to project every entry's structural analysis
-under a Set-1 DM categorizer (see `Phenomena/Gender/Studies/Kramer2020.lean`
+under a Set-1 DM categorizer (see `Studies/Kramer2020.lean`
 for the projection); they also suffice for Newman-style and Corbett-style
 analyses that don't go through DM at all.
 
@@ -52,7 +52,7 @@ assignment with exceptions. Diachronic origin in §4.5 (pp. 102–103).
 of [+FEM] on n, NOT phonological *assignment*. Aligns with Newman's
 synchronic view.
 
-The cross-framework theorems live in `Phenomena/Gender/Studies/Kramer2020.lean`.
+The cross-framework theorems live in `Studies/Kramer2020.lean`.
 Spanish/Russian/German Fragment Gender files still bake in DM `CatHead`
 fields; Hausa is the pilot for theory-neutral Fragment-layer encoding.
 -/

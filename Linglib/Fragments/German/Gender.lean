@@ -22,7 +22,7 @@ derivational suffixes always assign arbitrary gender (the suffix is the
 locus of the gender feature, not the root's semantic content). The
 @cite{kramer-2015} structural analysis (each suffix IS a categorizing
 head *n* with a fixed gender feature: *-schaft* = n u[+FEM], *-chen* =
-plain n) is a projection that lives in `Phenomena/Gender/Studies/`.
+plain n) is a projection that lives in `Studies/`.
 
 The empirical content captured here is the **morphological override**:
 *Mädchen* 'girl' is neuter despite its semantic referent being female,

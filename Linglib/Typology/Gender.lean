@@ -43,9 +43,9 @@ substrate-extension pattern. Fragment-importable.
 ## Out of scope
 
 The 21-language sample and Corbett's typological generalisations live in
-`Phenomena/Gender/Studies/Corbett1991.lean`.
+`Studies/Corbett1991.lean`.
 @cite{kramer-2020}'s feature-tier analysis lives in
-`Phenomena/Gender/Studies/Kramer2020.lean`.
+`Studies/Kramer2020.lean`.
 -/
 
 set_option autoImplicit false
