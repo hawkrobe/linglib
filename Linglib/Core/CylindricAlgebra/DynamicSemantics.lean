@@ -109,7 +109,7 @@ theorem cdrt_eq_dref_eq_diagonal {E : Type*} (i j : Nat) :
 end CDRT
 
 -- The Charlow 2019 bridges that previously lived here have been moved to
--- `Linglib/Studies/Anaphora/Charlow2019.lean` (§ Cylindric algebra bridges).
+-- `Linglib/Studies/Charlow2019.lean` (§ Cylindric algebra bridges).
 -- A Core file cannot import from Studies — the substrate→Phenomena arrow
 -- runs the other way. The DPL and CDRT bridges above are layering-legal
 -- because their substrate lives in `Theories/Semantics/Dynamic/`.

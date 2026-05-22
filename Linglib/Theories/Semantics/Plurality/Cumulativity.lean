@@ -11,7 +11,7 @@ Formalises the cumulative operator `**`. The operator's lineage:
   relation closed under `⟨a,b⟩+⟨c,d⟩ → ⟨a∪c, b∪d⟩`).
 - **@cite{sternefeld-1998}**: extension to the n-ary case (paper §3.1
   defines `***` for three-place relations) — formalised in
-  `Phenomena/Anaphora/Studies/Sternefeld1998.lean` (just the binary
+  `Studies/Sternefeld1998.lean` (just the binary
   closure form so far).
 - **@cite{beck-sauerland-2000}**: the bidirectional-coverage
   reformulation `(∀a∈x. ∃b∈y. R(a,b)) ∧ (∀b∈y. ∃a∈x. R(a,b))`
@@ -46,12 +46,12 @@ to a non-cumulative predicate is itself cumulative.
 - @cite{beck-2001} §4.3 derives Weak Reciprocity from
   `**(λxλy.[R(x,y) ∧ @(x ≠ y)])(A,A)` (paper eq 120) — `**` applied
   to the verb relation strengthened by *presupposed* distinctness.
-  See `Phenomena/Anaphora/Studies/Beck2001.lean`.
+  See `Studies/Beck2001.lean`.
 - @cite{sternefeld-1998} §3 derives Weak Reciprocity from
   `⟨A, A⟩ ∈ **λxy[R(x,y) ∧ x ≠ y]` (paper eq 26b) — same shape as
   Beck eq 120 but with *asserted* distinctness. In bivalent encoding
   the two predicates coincide. See
-  `Phenomena/Anaphora/Studies/Sternefeld1998.lean` (which also
+  `Studies/Sternefeld1998.lean` (which also
   defines @cite{krifka-1989}'s closure form `**` and proves the
   forward direction of its equivalence to the bidirectional-coverage
   form here).

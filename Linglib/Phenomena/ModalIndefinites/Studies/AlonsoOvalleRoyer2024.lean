@@ -1,7 +1,7 @@
 import Linglib.Features.ModalIndefinite
 import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.ModalIndefinites
-import Linglib.Phenomena.Causation.Studies.Coon2019
+import Linglib.Studies.Coon2019
 import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.German.ModalIndefinites

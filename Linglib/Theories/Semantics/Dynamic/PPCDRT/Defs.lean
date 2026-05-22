@@ -56,7 +56,7 @@ need `PPDRSCond` plus the `Core.PluralAssign` primitives (`singularAt`,
 Framework substrate. PPCDRT originates with @cite{brasoveanu-2007} (PCDRT)
 and @cite{haug-2014} (Partial CDRT); @cite{haug-dalrymple-2020} composes
 them into PPCDRT. Initial linglib consumer:
-`Phenomena/Anaphora/Studies/HaugDalrymple2020.lean`. Mirrors
+`Studies/HaugDalrymple2020.lean`. Mirrors
 `Theories/Semantics/Dynamic/Intensional.lean` (ICDRT substrate, also
 single current consumer).
 -/

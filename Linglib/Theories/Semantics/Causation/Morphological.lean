@@ -172,7 +172,7 @@ def Mediation.rank : Mediation → Nat
     Ordered from compact to analytic.
 
     Naming-collision note: `CausativeComplexity.lexical` (this constructor)
-    and `Phenomena/Causation/Studies/Song1996.CausativeMorphology.lexical`
+    and `Studies/Song1996.CausativeMorphology.lexical`
     share the constructor name `lexical` but encode different claims.
     `CausativeComplexity.lexical` is a construction-level claim — "this
     causative construction sits at the most-compact end of Comrie's
@@ -399,7 +399,7 @@ theorem physImpact_no_induced :
       [BECOME [x STATE]], with no causer position. On the competing
       reflexivization analysis (@cite{koontz-garboden-2009}), CAUSE is
       retained and the EFFECTOR is identified with the THEME — the result
-      is bieventive. See `Phenomena/Causation/Studies/KoontzGarboden2009.lean`.
+      is bieventive. See `Studies/KoontzGarboden2009.lean`.
     - **reflexive**: the causer and causee are *coidentified* —
       a single participant fills both roles. The result is bieventive:
       [x ACT] CAUSE [BECOME [x STATE]] with causer = causee.
@@ -456,7 +456,7 @@ theorem bieventive_implies_bySelf (it : IntransitivizationType) :
 /-- Anticausatives are monoeventive on @cite{krejci-2012}'s analysis:
     no coidentification, no bieventivity, no "by itself" licensing.
     @cite{koontz-garboden-2009} disputes this — see
-    `Phenomena/Causation/Studies/KoontzGarboden2009.lean`. -/
+    `Studies/KoontzGarboden2009.lean`. -/
 theorem anticausative_monoeventive :
     IntransitivizationType.isBieventive .anticausative = false ∧
     IntransitivizationType.hasCoidentification .anticausative = false ∧

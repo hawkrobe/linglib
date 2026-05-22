@@ -57,7 +57,7 @@ incompatible ways:
 | Framework | DNE mechanism | File |
 |-----------|---------------|------|
 | Bilateral (BUS, @cite{krahmer-muskens-1995}, @cite{elliott-sudo-2025}) | Two update channels (positive/negative); negation = swap | `Dynamic/Bilateral/Basic.lean`, `Dynamic/Bilateral/ICDRT.lean` |
-| ICDRT (@cite{hofmann-2025}) | Propositional drefs + complementation under flat update | `Phenomena/Anaphora/Studies/Hofmann2025.lean` |
+| ICDRT (@cite{hofmann-2025}) | Propositional drefs + complementation under flat update | `Studies/Hofmann2025.lean` |
 | TTR (@cite{cooper-2023}) | Classical metalanguage reduction; negation is static | `Theories/Semantics/TypeTheoretic/` |
 
 These are not mere notational variants. Bilateral DNE is structural
@@ -69,10 +69,10 @@ distinguish speaker-vs-hearer commitments; ICDRT requires intensional
 contexts; TTR loses dynamic state-threading at the negation site.
 
 The cross-framework comparisons are formalized at the phenomenon level:
-`Phenomena/Anaphora/Studies/Hofmann2025.lean §7` (bilateral vs ICDRT on
-the bathroom sentence), `Phenomena/Anaphora/Studies/Cooper2023.lean §§ 4-5`
+`Studies/Hofmann2025.lean §7` (bilateral vs ICDRT on
+the bathroom sentence), `Studies/Cooper2023.lean §§ 4-5`
 (CDRT ↔ TTR truth-conditional equivalence + dynamic divergence under
-negation), and `Phenomena/Anaphora/Studies/Dekker2012.lean` (PLA vs BUS
+negation), and `Studies/Dekker2012.lean` (PLA vs BUS
 on the bathroom sentence: eliminative test vs structural swap). New
 dynamic frameworks should declare which DNE strategy they adopt and
 link to one of these comparisons.

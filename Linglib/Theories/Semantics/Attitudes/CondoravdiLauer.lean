@@ -23,7 +23,7 @@ distinguished background is the agent's effective preference function `EP`
   ordering source consumed by the inner modal in the double-modal
   anankastic analysis.
 
-Anankastic-conditional analyses live in `Phenomena/Conditionals/Studies/`;
+Anankastic-conditional analyses live in `Studies/`;
 imperative analyses (C&L 2012, contra @cite{roberts-2023}'s
 modal-in-LF account) in `Phenomena/Directives/Studies/`;
 discourse-particle uses (@cite{deo-2025-bara}) in

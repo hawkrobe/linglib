@@ -42,7 +42,7 @@ distributivity, contextually-salient partitions).
 ## Consumer status
 
 This file currently has no Lean `import` consumers — only a docstring
-mention in `Phenomena/Anaphora/Studies/Sternefeld1998.lean`. The
+mention in `Studies/Sternefeld1998.lean`. The
 substrate is structurally sound (the
 @cite{schwarzschild-1996}-`AlgClosure` bridge `algClosure_of_finCover`
 is the natural API any anaphoric-distributivity Studies file would

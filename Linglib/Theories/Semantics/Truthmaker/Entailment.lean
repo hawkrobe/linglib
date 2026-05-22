@@ -30,7 +30,7 @@ This file:
 
 ## Cross-framework convergence
 
-`Phenomena.Conditionals.Studies.Santorio2018.IsTruthmaker p S` is the
+`Santorio2018.IsTruthmaker p S` is the
 **world-extensional** truthmaker of @cite{santorio-2018}. It is now
 defined as an `abbrev` for `ExactEntails` on the Bool extension:
 `IsTruthmaker p S := (p · = true) ⊨ₑ (S · = true)`. It does **not**

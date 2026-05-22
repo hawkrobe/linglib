@@ -22,10 +22,10 @@ bridge theorems usable by any study of counterfactuals or
 crosslinguistic conditional morphology. Paper-specific typologies and
 empirical claims live in the corresponding `Studies/` files:
 
-- `Phenomena/Conditionals/Studies/Iatridou2000.lean` —
+- `Studies/Iatridou2000.lean` —
   `IatridouPredType` / `CounterfactualType` / `classifyCounterfactual`
   (FLV/PresCF/PastCF taxonomy)
-- `Phenomena/Conditionals/Studies/Mizuno2024.lean` —
+- `Studies/Mizuno2024.lean` —
   Anderson-conditional empirical observations (English X-marking,
   Japanese O-marking, FLV correlation)
 

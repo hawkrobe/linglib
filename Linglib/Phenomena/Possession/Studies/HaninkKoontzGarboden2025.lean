@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Phenomena.Causation.Studies.KoontzGarboden2009
+import Linglib.Studies.KoontzGarboden2009
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Semantics.ArgumentStructure.Relational
 

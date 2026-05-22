@@ -171,7 +171,7 @@ end PartialAssign
     Wrapped in a structure so the bespoke `Membership` instance is found
     by typeclass search instead of mathlib's `Set` instances.
 
-    Consumers: `Phenomena/Anaphora/Studies/Spector2025.lean` (trivalent),
+    Consumers: `Studies/Spector2025.lean` (trivalent),
     `Theories/Semantics/Dynamic/PPCDRT/` (plural partial CDRT). -/
 @[ext] structure PluralAssign (D : Type*) where
   /-- The membership predicate on atomic assignments. -/

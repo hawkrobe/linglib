@@ -7,7 +7,8 @@ Usage:
 Example:
     python3 scripts/gen_examples.py Charlow2014
         Reads:    Linglib/Data/Examples/Charlow2014.json
-        Locates:  Linglib/Studies/*/Charlow2014.lean (or
+        Locates:  Linglib/Studies/Charlow2014.lean (or
+                  Linglib/Studies/Charlow2014/Basic.lean for multi-file papers, or
                   Linglib/Phenomena/*/Studies/Charlow2014.lean during migration)
         Inserts:  generated `namespace Examples ... end` block between markers
                   -- BEGIN GENERATED EXAMPLES
@@ -272,14 +273,17 @@ end Examples
 
 
 def find_target_file(author_year: str) -> Path:
-    new_matches    = list(STUDIES.glob(f"*/{author_year}.lean"))
+    flat_match     = STUDIES / f"{author_year}.lean"
+    subdir_match   = STUDIES / author_year / "Basic.lean"
+    new_matches    = [p for p in (flat_match, subdir_match) if p.exists()]
     legacy_matches = list(PHENOMENA.glob(f"*/Studies/{author_year}.lean"))
     matches        = new_matches + legacy_matches
 
     if len(matches) == 0:
         sys.stderr.write(
             f"FATAL: no study file found for {author_year}; checked:\n"
-            f"  Linglib/Studies/*/{author_year}.lean\n"
+            f"  Linglib/Studies/{author_year}.lean\n"
+            f"  Linglib/Studies/{author_year}/Basic.lean\n"
             f"  Linglib/Phenomena/*/Studies/{author_year}.lean\n"
             f"Create the file (with marker block) before running the generator.\n"
         )

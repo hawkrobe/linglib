@@ -13,7 +13,7 @@ Generic infrastructure for dynamic semantics built over `ICDRTAssignment`
 `PVar → Set W`). This is a layer above `Dynamic/Core/DiscourseRef.lean`
 (which owns the assignment type) and below paper-specific theories such as
 @cite{hofmann-2025} (whose paper apparatus lives in
-`Phenomena/Anaphora/Studies/Hofmann2025.lean`).
+`Studies/Hofmann2025.lean`).
 
 ## Main definitions
 

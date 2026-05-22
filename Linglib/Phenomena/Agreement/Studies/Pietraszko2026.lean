@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Theories.Syntax.Minimalist.Phase
 import Linglib.Theories.Syntax.Minimalist.Probe
 import Linglib.Phenomena.FillerGap.Studies.ErlewineSommerlot2025
-import Linglib.Phenomena.Causation.Studies.Coon2019
+import Linglib.Studies.Coon2019
 import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
 
 /-!

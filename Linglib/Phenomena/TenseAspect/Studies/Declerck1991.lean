@@ -139,7 +139,7 @@ def modalPastIfWas : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := []
-    comment := "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology. Compare Iatridou 2000 fake-past analysis (Phenomena/Conditionals/Studies/Iatridou2000.lean)."
+    comment := "Declerck 1991 ch. 2 §3. Modal past in conditional protasis — the reference is non-past despite past morphology. Compare Iatridou 2000 fake-past analysis (Studies/Iatridou2000.lean)."
     metaLanguage := "stan1293"
     lgrConformance := "WORD_ALIGNED" }
 

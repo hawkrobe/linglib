@@ -15,7 +15,7 @@ cannot handle disagreement or modal subordination contexts.
 
 ## Cross-cutting smell: two competing approaches to cross-disjunct anaphora
 
-This file and `Phenomena/Anaphora/Studies/Hofmann2025.lean` are two
+This file and `Studies/Hofmann2025.lean` are two
 formalizations of the same empirical territory — cross-negation and
 cross-disjunct anaphora (the "bathroom sentence" pattern: *Either
 there's no bathroom, or it's upstairs*). They are not stacked
@@ -35,7 +35,7 @@ if only the basic bathroom pattern matters, the bilateral apparatus
 here suffices.
 
 The empirical comparison is formalized in
-`Phenomena/Anaphora/Studies/Hofmann2025.lean §7`, which proves both
+`Studies/Hofmann2025.lean §7`, which proves both
 approaches solve the bathroom sentence and identifies the four cases
 (disagreement, modal subordination, three-way veridicality
 classification, negated existential truth conditions) where ICDRT is

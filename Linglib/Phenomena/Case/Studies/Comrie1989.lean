@@ -267,7 +267,7 @@ theorem compact_direct_vs_periphrastic_indirect :
 
 -- The earlier `song_multiclause_both_periphrastic` theorem was a Song-1996-vs-
 -- Comrie-1989 cross-paper bridge; it was relocated to
--- `Phenomena/Causation/Studies/Song1996.lean` per the chronology rule
+-- `Studies/Song1996.lean` per the chronology rule
 -- (Comrie 1989 cannot cite Song 1996 — the bridge belongs in the later paper).
 
 /-- Causee demotion: intransitive base → causee gets DO (rank 2),

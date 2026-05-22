@@ -3,7 +3,7 @@ import Linglib.Features.Logophoricity
 import Linglib.Features.Person
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Clitics
-import Linglib.Studies.Anaphora.CharnavelMateu2015
+import Linglib.Studies.CharnavelMateu2015
 
 /-!
 # Pancheva & Zubizarreta (2018): The Person Case Constraint
@@ -378,12 +378,12 @@ theorem mefirst_three_three_exempt :
 -- phenomena are related but nevertheless distinct."
 --
 -- C&M unify CLR and PCC under their `Antilogophoric` predicate
--- (`Studies.Anaphora.CharnavelMateu2015`). P&Z separate them:
+-- (`CharnavelMateu2015`). P&Z separate them:
 -- PCC is the syntactic P-Constraint over Appl (`IsLicit` here); CLR is a
 -- distinct semantic constraint operating over logophoric centres directly.
 -- ============================================================================
 
-open Studies.Anaphora.CharnavelMateu2015 (LogoCenter CLRViolated)
+open CharnavelMateu2015 (LogoCenter CLRViolated)
 
 /-- P&Z's reading of the dative clitic — as a `pivot` (Sells's broadest
     role) — is incompatible with @cite{charnavel-mateu-2015}'s reading

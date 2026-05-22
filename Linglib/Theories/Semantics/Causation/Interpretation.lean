@@ -34,7 +34,7 @@ asserts `B := A ∧ X` (accessory variable required), while cause asserts
 `B := A`. Under that view, the present `Causative.toSemantics`
 mis-classifies enable. The Sloman alternative dispatch — and a
 divergence theorem witnessing the disagreement on `enable` — lives
-in `Phenomena/Causation/Studies/SlomanBarbeyHotaling2009.lean`.
+in `Studies/SlomanBarbeyHotaling2009.lean`.
 
 This is intentional. linglib does not pretend a single canonical
 mapping exists; both dispatches coexist as named functions and the

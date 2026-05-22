@@ -50,7 +50,7 @@ parameterized over the category type `C`, so they work with UD-grounded
 
 - **Horn scales subsumed**: Lexical substitution of same-category items
   is a special case of structural alternatives (§8)
-- **Fills truthmaker gap**: `Phenomena/Conditionals/Studies/Santorio2018.lean`'s
+- **Fills truthmaker gap**: `Studies/Santorio2018.lean`'s
   `IsTruthmaker` requires ALT_S computed via structural alternative generation
 - **Economy connection**: @cite{katzir-singh-2015}'s complexity ordering
   in `KatzirSingh2015.lean` is based on structural complexity (def 19)

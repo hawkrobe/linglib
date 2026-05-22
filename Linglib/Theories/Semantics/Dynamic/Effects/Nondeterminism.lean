@@ -22,7 +22,7 @@ This file consolidates two former modules:
 The companion paper-level study (Charlow 2019's `StateCCP`, distributivity,
 destructive-update theorems) lives in `Dynamic/Nondeterminism/Charlow2019.lean`
 pending Phase 4e of the discourse restructure (where it migrates to
-`Phenomena/Anaphora/Studies/Charlow2019.lean`).
+`Studies/Charlow2019.lean`).
 -/
 
 -- ════════════════════════════════════════════════════════════════

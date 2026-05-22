@@ -256,7 +256,7 @@ The intervention-based counterfactual primitive lives in
 `Core/Causal/V2/SEM/Counterfactual.lean` as `causallySufficient` (which
 is exactly "extending with antecedent then developing produces consequent").
 The full formalization of @cite{lewis-1973-causation}'s causal dependence
-appears as a paper-replication study under `Phenomena/Causation/Studies/Lewis1973.lean`.
+appears as a paper-replication study under `Studies/Lewis1973.lean`.
 -/
 
 -- ════════════════════════════════════════════════════

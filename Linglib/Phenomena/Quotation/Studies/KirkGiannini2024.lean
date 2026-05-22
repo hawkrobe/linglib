@@ -5,7 +5,7 @@ import Linglib.Phenomena.Quotation.Studies.Maier2014
 import Linglib.Phenomena.Expressives.Studies.HarrisPotts2009
 import Linglib.Phenomena.Negation.Studies.Horn1989
 import Linglib.Phenomena.Negation.Studies.PlunkettSundell2013
-import Linglib.Phenomena.Conditionals.Studies.KocurekJerzakRudolph2020
+import Linglib.Studies.KocurekJerzakRudolph2020
 
 /-!
 # Kirk-Giannini 2024: Covert Mixed Quotation
@@ -407,7 +407,7 @@ theorem diagonalize_no_kaplan_monster {W E P T : Type*} :
 
 /--
 **K-G refutes KJR's convention-shift architecture.** KJR
-(`Phenomena.Conditionals.Studies.KocurekJerzakRudolph2020`) replace
+(`KocurekJerzakRudolph2020`) replace
 worlds with world-convention pairs and treat conditionals as shifting
 the convention component. K-G's analysis preserves
 worlds-as-evaluation-points and uses `†` instead.

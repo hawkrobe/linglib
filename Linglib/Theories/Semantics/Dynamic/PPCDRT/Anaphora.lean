@@ -39,7 +39,7 @@ with antecedent and relation φ, maximize the set `R_u` of pairs in the
 relation, subject to consistency with world knowledge. The substrate-level
 statement is given here; the §6.1/§6.2/§6.3 applications (the SMH contrast,
 the multi-reciprocal pairwise prediction, the Tracy/Matty/Chris case) live
-in `Phenomena/Anaphora/Studies/HaugDalrymple2020.lean`.
+in `Studies/HaugDalrymple2020.lean`.
 -/
 
 namespace Theories.Semantics.Dynamic.PPCDRT

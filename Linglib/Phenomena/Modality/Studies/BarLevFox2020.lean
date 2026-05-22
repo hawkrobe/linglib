@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Theories.Semantics.Exhaustification.Operators.Decidable
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Linglib.Phenomena.FreeChoice.Basic
-import Linglib.Phenomena.Conditionals.Studies.Santorio2018
+import Linglib.Studies.Santorio2018
 
 /-!
 # Bar-Lev & Fox (2020) — Free Choice via Innocent Inclusion
@@ -788,7 +788,7 @@ than Santorio on this scenario — they agree on SDA, diverge on the
 extra negative conjunct.
 -/
 
-open Phenomena.Conditionals.Studies.Santorio2018
+open Santorio2018
 
 /-- The SDA alternatives as `DecAlt SDAWorld`s for use in
     @cite{santorio-2018}'s `sdaEval` apparatus. -/

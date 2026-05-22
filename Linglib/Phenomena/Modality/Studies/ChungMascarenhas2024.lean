@@ -41,7 +41,7 @@ choices not in the paper.
 
 ## Cross-references
 
-* `Phenomena/Conditionals/Studies/VonFintelIatridou2005.lean` §6 —
+* `Studies/VonFintelIatridou2005.lean` §6 —
   C&M's exhaustification realises @cite{sloman-1970}'s "only
   candidate" / vF&I's *have-to* vs *ought-to* distinction.
 * `Phenomena/Modality/Studies/Lassiter2017.lean` — Lassiter's `want`

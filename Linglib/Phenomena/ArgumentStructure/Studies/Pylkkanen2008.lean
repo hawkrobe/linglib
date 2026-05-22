@@ -592,7 +592,7 @@ here; Pylkkanen2008 is the sole writer in the codebase, so substrate
 promotion is unwarranted (per CLAUDE.md "promote when ≥2 consumers").
 
 Orthogonal to @cite{song-1996}'s expression-style typology in
-`Phenomena/Causation/Studies/Song1996.lean`: Song classifies the
+`Studies/Song1996.lean`: Song classifies the
 morphosyntactic *packaging* of a causative (compact / and / purp);
 Pylkkänen classifies the underlying syntactic *configuration*
 (Voice-bundled vs independent; selecting root, verb, or phase). A

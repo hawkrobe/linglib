@@ -59,11 +59,11 @@ project's 5-level enum.
 ## Cross-framework relationship
 
 The standard binding theories formalized elsewhere in linglib —
-@cite{chomsky-1981} (`Studies/Anaphora/Chomsky1981.lean`),
-@cite{hudson-1990} (`Studies/Anaphora/Hudson1990.lean`),
+@cite{chomsky-1981} (`Studies/Chomsky1981.lean`),
+@cite{hudson-1990} (`Studies/Hudson1990.lean`),
 @cite{pollard-sag-1994} / @cite{sag-wasow-bender-2003}
 (`Theories/Syntax/HPSG/Coreference.lean`,
-`Studies/Anaphora/SagWasowBender2003.lean`) — make *categorical*
+`Studies/SagWasowBender2003.lean`) — make *categorical*
 predictions via `Bool`-valued `grammaticalForCoreference`. The CRDC
 contributes a *graded* prediction (`.questionable`) that those
 predicates cannot express in their current shape; the comparison is

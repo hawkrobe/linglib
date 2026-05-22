@@ -1,44 +1,60 @@
 # `Linglib/Studies/` — paper-anchored study files
 
 This is the migration target for paper-anchored studies that previously lived
-at `Linglib/Phenomena/X/Studies/AuthorYear.lean`. New layout:
+at `Linglib/Phenomena/X/Studies/AuthorYear.lean`. New layout is **flat**:
 
 ```
-Linglib/Studies/{Phenomenon}/{AuthorYear}.lean
-namespace Studies.{Phenomenon}.{AuthorYear}
+Linglib/Studies/{AuthorYear}.lean
+namespace {AuthorYear}
 ```
 
-## Migration status (2026-05-05)
+Multi-file papers (rare) use a per-paper subdirectory:
 
-| Phenomenon | Status | Notes |
-|---|---|---|
-| `Anaphora/` | **migrated** | Pilot batch — 30 files + `Heim1982/` subdir |
-| (everything else) | **not migrated** | Still at `Linglib/Phenomena/X/Studies/` |
+```
+Linglib/Studies/{AuthorYear}/Basic.lean
+Linglib/Studies/{AuthorYear}/{Topic}.lean
+namespace {AuthorYear}     -- in Basic.lean (no path prefix)
+```
 
-**For new contributors:** if you're adding a study to a phenomenon that
-hasn't migrated yet, put it under `Linglib/Phenomena/{X}/Studies/` with the
-old `Phenomena.{X}.Studies.{AuthorYear}` namespace. When that phenomenon
-migrates as a batch, the relocation script will rename uniformly.
+## Why flat?
 
-For phenomena that *have* migrated (currently only Anaphora), put new study
-files under `Linglib/Studies/{Phenomenon}/` with the new namespace.
+The previous plan grouped study files by phenomenon
+(`Studies/{Phenomenon}/{AuthorYear}.lean`). Two reasons we moved away from
+that:
 
-## Why migrate?
+1. **The phenomenon taxonomy is editorial.** Many papers contribute to
+   multiple phenomena; a "primary phenomenon" tiebreaker rule existed
+   precisely because the call is contested. Going flat eliminates the
+   placement decision.
+2. **`@cite{key}` already provides phenomenon-based discovery.** A reverse
+   index from `bibkey` to consuming files (under `blog/data/references.bib`)
+   recovers "show me all studies of X" without baking the categorisation
+   into paths. Path churn (when phenomena get renamed/split/merged) is
+   eliminated.
 
-Per `CLAUDE.md` — anchoring discipline says paper-anchored content lives in a
-single, predictable place keyed by the paper, not by editorial decisions
-about which phenomenon "owns" it. The top-level layout makes this uniform:
-`Studies/{Phenomenon}/{AuthorYear}.lean` mirrors how a working linguist
-thinks ("Charlow 2014 on anaphora" → `Studies/Anaphora/Charlow2014.lean`)
-rather than burying the studies inside a deeper hierarchy.
+The cost is browsing affordance — `ls Studies/` lists files alphabetically
+by author-year rather than grouped by topic. `grep -l "Phenomena.X" Studies/`
+recovers the grouping when needed.
+
+## Migration status (2026-05-22)
+
+| Source location | Status |
+|---|---|
+| `Linglib/Studies/AuthorYear.lean` | **flat target** (canonical) |
+| `Linglib/Phenomena/X/Studies/AuthorYear.lean` | **legacy** — migrate when touched |
+
+Anaphora was the pilot batch (~30 single-file papers + the `Heim1982/`
+subdirectory). The remaining ~75 phenomena still have studies under
+`Linglib/Phenomena/X/Studies/`. New study files in unmigrated phenomena
+should go directly under `Linglib/Studies/AuthorYear.lean` — no need to
+land them in the old grouped path first.
 
 ## Cross-phenomenon imports
 
-Migrated studies can freely import from un-migrated phenomena's studies (and
-vice versa) — the namespace just differs. E.g.,
-`Linglib/Phenomena/Agreement/Studies/PanchevaZubizarreta2018.lean` already
-imports `Linglib.Studies.Anaphora.CharnavelMateu2015` across the
-phenomenon-migration boundary. Lean doesn't care about co-location.
+Studies can freely import from each other regardless of phenomenon. E.g.,
+`Linglib/Phenomena/Agreement/Studies/PanchevaZubizarreta2018.lean` imports
+`Linglib.Studies.CharnavelMateu2015` (an anaphora study) for its
+binding-domain content.
 
 ## Examples and generated content
 
@@ -48,6 +64,12 @@ into a `namespace Examples ... end` block delimited by marker comments
 study file. JSON (not CSV) because the `LinguisticExample` schema has
 nested fields (gloss pairs, alternatives, readings, source/reportedIn
 objects) that don't fit cleanly in CSV.
+
+The generator (`scripts/gen_examples.py`) searches both the flat target
+(`Linglib/Studies/{AuthorYear}.lean`), the multi-file subdir form
+(`Linglib/Studies/{AuthorYear}/Basic.lean`), and the legacy
+`Linglib/Phenomena/*/Studies/{AuthorYear}.lean` path during the migration
+window.
 
 See [`Linglib/Data/Examples/README.md`](../Data/Examples/README.md) for
 the schema reference, file-format conventions, and Leipzig glossing rules

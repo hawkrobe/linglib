@@ -618,7 +618,7 @@ theorem switches_all_on_clearly_true :
     - @cite{haug-dalrymple-2020} §5 (paper eq 109): varying the
       *precisification of the reciprocal's restrictor* (maximal-set vs
       reference-set) for quantified-antecedent reciprocals — see
-      `Phenomena/Anaphora/Studies/HaugDalrymple2020.lean`'s
+      `Studies/HaugDalrymple2020.lean`'s
       `quantifiedReciprocalTV_iff_supervaluation`. -/
 
 open Semantics.Supervaluation (SpecSpace superTrue)

@@ -36,7 +36,7 @@ with carried `DecidablePred` witnesses, matching the
 ## Implementation notes
 
 This file is currently consumed by exactly one paper anchor —
-`Phenomena/Causation/Studies/MunozPerez2026.lean` (Chilean Spanish
+`Studies/MunozPerez2026.lean` (Chilean Spanish
 stylistic applicatives). Per linglib's ≥2-consumer graduation rule,
 single-paper formalisations normally stay in `Studies/`. The promotion
 here is deliberate: the inline Fission framework in MunozPerez2026 is
