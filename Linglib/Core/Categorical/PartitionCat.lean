@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Questions.Partition.Lattice
 /-!
 # Category of QUD Partitions
 
-Category of QUD (Core.Question Under Discussion) partitions over a fixed type `M`,
+Category of QUD (Question Under Discussion) partitions over a fixed type `M`,
 with refinement witnesses as morphisms.
 
 This is a **thin** category (at most one morphism between any two objects):

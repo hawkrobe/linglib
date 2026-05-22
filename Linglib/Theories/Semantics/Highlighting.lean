@@ -43,7 +43,7 @@ migrated:
   highlighted-alternative prose; F&R 2015 is the substrate's own anchor.
 * `Theories/Semantics/Questions/Singleton.lean` — `IsSingleton` documents itself in
   @cite{roelofsen-farkas-2015} terminology but is a different abstraction
-  (property of a `Core.Question`, not a discourse context).
+  (property of a `Question`, not a discourse context).
 * `Theories/Semantics/Modality/BiasedPQ.lean` — `OriginalBias` /
   `ContextualEvidence` cover adjacent ground (prior-discourse bias) with
   a different shape; bridge not yet written.
@@ -61,7 +61,7 @@ structure HighlightingContext (W : Type*) where
   /-- Propositions made salient by recent utterances. -/
   salient : Set (Set W)
   /-- The current question under discussion. -/
-  qud : Core.Question W
+  qud : Question W
 
 variable {W : Type*}
 
@@ -69,7 +69,7 @@ variable {W : Type*}
     some alternative — entailing it or being entailed by it. The simplest
     Set-valued version of @cite{simons-tonhauser-beaver-roberts-2010}'s
     "contextually entails an answer". -/
-def AddressesQUD (q : Core.Question W) (p : Set W) : Prop :=
+def AddressesQUD (q : Question W) (p : Set W) : Prop :=
   ∃ a ∈ q.alt, p ⊆ a ∨ a ⊆ p
 
 /-- @cite{martinez-vera-2026} (38): proposition `p` is **highlighted** in
@@ -92,12 +92,12 @@ instance (c : HighlightingContext W) (p : Set W)
 /-- The empty highlighting context: no salient propositions, the trivial
     QUD that is resolved by anything. -/
 def empty : HighlightingContext W :=
-  { salient := ∅, qud := Core.Question.declarative Set.univ }
+  { salient := ∅, qud := Question.declarative Set.univ }
 
 /-- A highlighting context built from a single salient proposition that
     declaratively resolves its own QUD. -/
 def singleton (p : Set W) : HighlightingContext W :=
-  { salient := {p}, qud := Core.Question.declarative p }
+  { salient := {p}, qud := Question.declarative p }
 
 /-- Add a proposition to the salient set without touching the QUD. -/
 def addSalient (c : HighlightingContext W) (p : Set W) : HighlightingContext W :=
@@ -114,7 +114,7 @@ def addSalient (c : HighlightingContext W) (p : Set W) : HighlightingContext W :
     (singleton p : HighlightingContext W).salient = {p} := rfl
 
 @[simp] theorem qud_singleton (p : Set W) :
-    (singleton p : HighlightingContext W).qud = Core.Question.declarative p := rfl
+    (singleton p : HighlightingContext W).qud = Question.declarative p := rfl
 
 /-! ### @cite{roelofsen-farkas-2015}: polarity particles -/
 

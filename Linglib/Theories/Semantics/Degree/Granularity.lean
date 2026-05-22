@@ -213,7 +213,7 @@ theorem just_rules_out (p : G → D → Prop) (finest g : G)
 end JustTheory
 
 -- ════════════════════════════════════════════════════
--- § 4. Granularity–Core.Question Bridge
+-- § 4. Granularity–Question Bridge
 -- ════════════════════════════════════════════════════
 
 /-! ### Grain width → partition → question width

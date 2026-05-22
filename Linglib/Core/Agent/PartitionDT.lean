@@ -455,7 +455,7 @@ theorem blackwell_characterizes_refinement [DecidableEq M]
       {true, false}
       (by intro _; norm_num))
 
-/-! #### Core.Question Utility Bridge
+/-! #### Question Utility Bridge
 
 Connect Finset-based `questionUtility` (from `Core.DecisionTheory`) to
 Finset-based `partitionValue`. The algebraic identity:

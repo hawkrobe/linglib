@@ -143,7 +143,7 @@ def propositionOrdering (GS : List (DecProp W)) :
 abbrev undominatedAnswers (GS answers : List (DecProp W)) : List (DecProp W) :=
   (propositionOrdering GS).undominated answers
 
-/-! ## Core.Question-relative belief (paper §3.3)
+/-! ## Question-relative belief (paper §3.3)
 
 Q_c-Bel_S = the cells of Q_c compatible with S's beliefs. -/
 
@@ -313,7 +313,7 @@ evaluation; we expose them as a `PrProp W` for uniformity with
 linglib's presupposition infrastructure, with the world argument
 suppressed. -/
 
-/-- Core.Question-based `want` as a partial proposition (`Core.PrProp`):
+/-- Question-based `want` as a partial proposition (`Core.PrProp`):
     presupposition = full definedness; assertion = question-based truth. -/
 def wantPrProp (belS : Set W) [DecidablePred belS]
     (GS naturalProps answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
@@ -492,7 +492,7 @@ theorem wantVF_upward_monotonic (belS : Set W) [DecidablePred belS]
     wantVF belS GS q :=
   fun w hw hund => hpq w (h w hw hund)
 
-/-- Core.Question-based `want` is **Strawson upward monotonic** (paper §4.2):
+/-- Question-based `want` is **Strawson upward monotonic** (paper §4.2):
     `wantQuestionBased belS GS Q p`, `p ⊆ q`, and `q` considered
     relative to `Q` jointly imply `wantQuestionBased belS GS Q q`. The
     Considering presupposition is what blocks naive upward monotonicity
@@ -841,12 +841,12 @@ theorem heimSemantics_isConflictBlocking {W : Type*} [Fintype W] [DecidableEq W]
   exact wantHeim_no_simultaneous_pq_and_negpq belS params w_eval p hAsym hDef
     ⟨hp, hnp⟩
 
-/-! ## Bridge to `Core.Question` infrastructure
+/-! ## Bridge to `Question` infrastructure
 
 PB's `List (DecProp W)` is a finite-presentation view of a partition
 question. The substrate exposes bridge theorems showing each PB
 predicate corresponds to a property of the underlying
-`Core.Question W`:
+`Question W`:
 
 * `wantQuestionBased` "every undominated answer entails p" relates to
   the partition property "every undominated cell of `Q` entails `p`"
@@ -857,11 +857,11 @@ predicate corresponds to a property of the underlying
   answer to "p?".
 
 The `toQuestion` constructor lifts a `List (DecProp W)` to
-`Core.Question W` via `Core.Question.ofList`. -/
+`Question W` via `Question.ofList`. -/
 
-/-- Lift a list of decidable cells to a `Core.Question W`. -/
-def toQuestion (answers : List (DecProp W)) : Core.Question W :=
-  Core.Question.ofList (answers.map (·.prop))
+/-- Lift a list of decidable cells to a `Question W`. -/
+def toQuestion (answers : List (DecProp W)) : Question W :=
+  Question.ofList (answers.map (·.prop))
 
 omit [Fintype W] [DecidableEq W] in
 /-- `isConsidered Q p` agrees with the polar-answerhood reading of

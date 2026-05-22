@@ -1,7 +1,7 @@
 /-
 # The Interrogative Left Periphery
 
-Core.Question meaning is built at three points in the left periphery:
+Question meaning is built at three points in the left periphery:
 
     [SAP SA_ASK [PerspectiveP PRO Persp_CQ [CP C_±WH [TP...]]]]
 
@@ -270,14 +270,14 @@ def possibleIgnorance {W E : Type*} (R : AccessRel W E) (center : E)
     Not-at-issue presupposition: ◇¬know(center, Ans(Q)). -/
 structure PerspPResult (W : Type*) where
   /-- The at-issue question content (unchanged by PerspP) -/
-  question : Core.Question W
+  question : Question W
   /-- Whether the possible-ignorance presupposition is satisfied -/
   presupSatisfied : Prop
 
 /-- Apply PerspP to a question: checks possible-ignorance presupposition. -/
 def applyPerspP {W E : Type*} (R : AccessRel W E) (center : E)
     (Q : GSQuestion W) (w : W) (worlds : List W)
-    (hamblinQ : Core.Question W) : PerspPResult W :=
+    (hamblinQ : Question W) : PerspPResult W :=
   { question := hamblinQ
   , presupSatisfied := possibleIgnorance R center Q w worlds }
 

@@ -43,7 +43,7 @@ Three empirical signatures:
   case (innocently excludable alternatives are absent from polar
   partitions, so exhaustification collapses to identity).
 * `polarQUD p` — the QUD over which a verum-marker felicity question
-  is settled, built from `Core.Question.polar`. Its `alt = {p, pᶜ}`,
+  is settled, built from `Question.polar`. Its `alt = {p, pᶜ}`,
   so `Highlighting.AddressesQUD` does real filtering work.
 * `updateAfterAct` — generic discourse update that adds an act's
   `EvidentialAct.raisedPropositions` to the salient set. No
@@ -70,7 +70,7 @@ Three empirical signatures:
 | `Theories/Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
 | `Theories/Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
 | `Features/Evidentiality` | `EvidentialSource` (`direct`, `hearsay`, `inference`) |
-| `Theories/Semantics/Questions/Hamblin` | `Core.Question.polar` for the polar QUD |
+| `Theories/Semantics/Questions/Hamblin` | `Question.polar` for the polar QUD |
 
 ## Methodological note
 
@@ -114,7 +114,7 @@ def miFelicitous (c : HighlightingContext W) (alts : Set (Set W))
 /-! ### § 2. The polar QUD setup -/
 
 /-- The polar QUD over a contingent proposition `p`: alternatives are
-    `{p, pᶜ}`. Built from `Core.Question.polar p`. Used as the QUD slot
+    `{p, pᶜ}`. Built from `Question.polar p`. Used as the QUD slot
     in the discourse contexts that license a `=mi` follow-up.
 
     With this (non-trivial) QUD, `AddressesQUD` does real filtering work:
@@ -123,19 +123,19 @@ def miFelicitous (c : HighlightingContext W) (alts : Set (Set W))
     a subset of itself), so the highlighted alternatives in the headline
     contrast satisfy the QUD-addressing requirement of `Highlighted`. -/
 def polarQUD (p : Set W) : HighlightingContext W :=
-  { salient := ∅, qud := Core.Question.polar p }
+  { salient := ∅, qud := Question.polar p }
 
 /-- Either `p` or `pᶜ` is itself a maximal answer to `polar p`, when `p`
     is contingent (`p ≠ ∅` and `p ≠ Set.univ`). This is the substrate
-    fact `Core.Question.alt_polar_of_nontrivial`. -/
+    fact `Question.alt_polar_of_nontrivial`. -/
 theorem mem_alt_polar (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    p ∈ (Core.Question.polar p).alt := by
-  rw [Core.Question.alt_polar_of_nontrivial hne hnu]
+    p ∈ (Question.polar p).alt := by
+  rw [Question.alt_polar_of_nontrivial hne hnu]
   simp
 
 theorem mem_alt_polar_compl (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
-    pᶜ ∈ (Core.Question.polar p).alt := by
-  rw [Core.Question.alt_polar_of_nontrivial hne hnu]
+    pᶜ ∈ (Question.polar p).alt := by
+  rw [Question.alt_polar_of_nontrivial hne hnu]
   simp
 
 /-- `p` itself addresses the polar QUD over `p`: it equals one of the two
