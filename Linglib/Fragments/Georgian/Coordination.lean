@@ -16,7 +16,7 @@ the M&S prediction. Crucially, *-c* is a **bound clitic**, unlike Hungarian
 *is* (free). @cite{bill-etal-2025} speculate this morphological difference may
 explain why Georgian children found MU-involving strategies harder.
 
-Connection to Typology.lean: `Phenomena.Coordination.Studies.Haspelmath2007.georgian`
+Connection to Typology.lean: `Haspelmath2007.georgian`
 Connection to BillEtAl2025: Georgian children found J-MU hardest (contrary
 to the Transparency Principle prediction).
 

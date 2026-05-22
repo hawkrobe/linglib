@@ -8,7 +8,7 @@ Irish coordination morphemes. Irish is a J-only language for conjunction:
 "agus" is the sole conjunctive coordinator. There is no MU (additive
 particle) strategy for conjunction attested.
 
-Connection to Typology.lean: `Phenomena.Coordination.Studies.Haspelmath2007.irish`
+Connection to Typology.lean: `Haspelmath2007.irish`
 encodes the structural pattern (a_co_b only, J-only strategy).
 
 -/

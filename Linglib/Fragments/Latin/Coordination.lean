@@ -15,7 +15,7 @@ The J/MU decomposition (@cite{mitrovic-sauerland-2014}, @cite{mitrovic-sauerland
 The *et...et* pattern ("both...and") and *neque...neque* pattern are
 bisyndetic uses of J particles.
 
-Connection to Typology.lean: `Phenomena.Coordination.Studies.Haspelmath2007.latin`
+Connection to Typology.lean: `Haspelmath2007.latin`
 encodes the structural patterns (a_co_b, a_b'co, co'a_b'co).
 
 -/

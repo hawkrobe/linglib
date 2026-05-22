@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Features.Coordination
-import Linglib.Phenomena.Coordination.Studies.Haspelmath2007
+import Linglib.Studies.Haspelmath2007
 
 /-!
 # @cite{bill-etal-2025} — DP Conjunction Complexity
@@ -559,7 +559,7 @@ end MUDistributivity
 -- § Typological Challenges
 -- ============================================================================
 
-open Phenomena.Coordination.Studies.Haspelmath2007 (hasAllThreeStrategies georgian hungarian) in
+open Haspelmath2007 (hasAllThreeStrategies georgian hungarian) in
 /--
 **M&S universality challenged.**
 
@@ -574,7 +574,7 @@ theorem ms_universality_challenged :
     georgianChild_j_vs_jmu.estimate_thou < 0 := by
   native_decide
 
-open Phenomena.Coordination.Studies.Haspelmath2007 (georgian hungarian) in
+open Haspelmath2007 (georgian hungarian) in
 open Typology.Coordination (ConjunctionSystem.muBoundness) in
 /--
 **The boundness confound.**

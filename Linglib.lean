@@ -1295,13 +1295,13 @@ import Linglib.Studies.MartinSchaeferKastner2025
 import Linglib.Studies.NadathurLauer2020
 import Linglib.Studies.MunozPerez2026
 import Linglib.Studies.Coon2019
-import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
-import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
-import Linglib.Phenomena.Coordination.Studies.Bruening2025
-import Linglib.Phenomena.Coordination.Studies.Schwarzer2026
-import Linglib.Phenomena.Coordination.Studies.Stassen2000
-import Linglib.Phenomena.Coordination.Studies.Haspelmath2007
-import Linglib.Phenomena.Coordination.Studies.OsborneLi2023
+import Linglib.Studies.BillEtAl2025
+import Linglib.Studies.BrueningAlKhalaf2020
+import Linglib.Studies.Bruening2025
+import Linglib.Studies.Schwarzer2026
+import Linglib.Studies.Stassen2000
+import Linglib.Studies.Haspelmath2007
+import Linglib.Studies.OsborneLi2023
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
@@ -1884,7 +1884,7 @@ import Linglib.Phenomena.Agreement.Studies.Keine2019
 import Linglib.Phenomena.Agreement.Studies.Keine2020
 import Linglib.Phenomena.Agreement.Studies.Preminger2014
 import Linglib.Phenomena.Agreement.Studies.Pietraszko2026
-import Linglib.Phenomena.Coordination.Studies.Steedman2000
+import Linglib.Studies.Steedman2000
 import Linglib.Theories.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
 import Linglib.Theories.Syntax.CCG.Gapping

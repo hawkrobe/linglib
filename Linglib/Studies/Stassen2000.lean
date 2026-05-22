@@ -55,7 +55,7 @@ many counterexamples.
 
 set_option autoImplicit false
 
-namespace Phenomena.Coordination.Studies.Stassen2000
+namespace Stassen2000
 
 open Typology.Coordination
 
@@ -313,4 +313,4 @@ theorem japanese_mu_quantifier_bridge :
     Fragments.Japanese.Determiners.dare_mo.particle = some "mo" := by
   exact ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Coordination.Studies.Stassen2000
+end Stassen2000

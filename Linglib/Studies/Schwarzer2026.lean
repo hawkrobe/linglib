@@ -4,7 +4,7 @@ import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.WordOrder
 import Linglib.Typology.WordOrder
 import Linglib.Features.Coordination
-import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
+import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!

@@ -45,7 +45,7 @@ The 19 languages combine:
 
 set_option autoImplicit false
 
-namespace Phenomena.Coordination.Studies.Haspelmath2007
+namespace Haspelmath2007
 
 open Typology.Coordination
 open Features.Coordination
@@ -355,4 +355,4 @@ theorem focus_particle_source_bisyndetic :
     withFocusParticle.all (·.hasBisyndetic) = true := by
   native_decide
 
-end Phenomena.Coordination.Studies.Haspelmath2007
+end Haspelmath2007

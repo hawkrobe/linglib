@@ -37,7 +37,7 @@ quantification = interrogative (all are ∨ over elements).
 
 ## Connections
 
-- Typology.lean: `Phenomena.Coordination.Studies.Haspelmath2007.japanese`
+- Typology.lean: `Haspelmath2007.japanese`
 - Determiners.lean: `dare_mo.particle = some "mo"`, `dare_ka.particle = some "ka"`
 - AdditiveParticles/Data.lean: `japaneseMo`
 - BillEtAl2025.lean: `mu_is_distributive_check`

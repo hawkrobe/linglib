@@ -31,7 +31,7 @@ Both conjuncts have category S/NP, so they can coordinate normally.
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 
-namespace Phenomena.Coordination
+namespace Steedman2000
 
 open CCG
 open Semantics.Montague
@@ -193,4 +193,4 @@ This is the hallmark of a good theory: diverse phenomena explained by
 the same core mechanisms, with correct empirical predictions.
 -/
 
-end Phenomena.Coordination
+end Steedman2000

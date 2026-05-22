@@ -69,7 +69,7 @@ complement *pu* from v_State.
 - **Theoretical ally:** @cite{bruening-2025} ("C-Selection
   Irreducibility") makes a parallel argument for bidirectional
   feature-driven selection in coordination, formalised in
-  `Phenomena/Coordination/Studies/Bruening2025.lean`. The
+  `Studies/Bruening2025.lean`. The
   bidirectional-selection move here generalises Bruening's
   argument-side claim to the adjunct domain.
 - **Silent divergence vs HPSG:** HPSG selection is intrinsically

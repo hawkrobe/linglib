@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
+import Linglib.Studies.BrueningAlKhalaf2020
 
 /-!
 # @cite{bruening-2025} — Selectional Violations in Coordination: A Response
