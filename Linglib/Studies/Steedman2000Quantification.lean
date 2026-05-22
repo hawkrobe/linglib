@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.CCG.Scope
-import Linglib.Phenomena.Quantification.Studies.Bruening2001
+import Linglib.Studies.Bruening2001
 
 /-!
 # CCG Scope Bridge

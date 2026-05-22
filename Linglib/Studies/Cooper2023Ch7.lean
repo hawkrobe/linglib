@@ -28,7 +28,7 @@ Key contributions:
 
 -/
 
-namespace Phenomena.Quantification.Studies.Cooper2023
+namespace Cooper2023Ch7
 
 open Semantics.TypeTheoretic (Ppty PPpty Parametric Quant propT)
 
@@ -727,4 +727,4 @@ end Ch7Theorems_contd
 
 end Ch7_WitnessQuantification
 
-end Phenomena.Quantification.Studies.Cooper2023
+end Cooper2023Ch7

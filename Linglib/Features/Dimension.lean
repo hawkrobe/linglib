@@ -23,7 +23,7 @@ studies that need to label values without committing to a specific dimension.
 
 - `Theories/Semantics/Measurement/Basic.lean`: `MeasureFn` carries `Dimension`
 - `Fragments/English/MeasurePhrases.lean`: `MeasureTermEntry` carries `Dimension`
-- `Phenomena/Quantification/Studies/{BaleSchwarz2022, BaleSchwarz2026, Scontras2014}.lean`
+- `Studies/{BaleSchwarz2022, BaleSchwarz2026, Scontras2014}.lean`
 - `Theories/Semantics/{Noun/Binominal, Gradability/Hierarchy, Verb/VerbEntry, Events/MeasurePhrases}.lean`
 
 -/

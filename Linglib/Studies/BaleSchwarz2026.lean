@@ -2,7 +2,7 @@ import Linglib.Features.Acceptability
 import Linglib.Features.Dimension
 import Linglib.Theories.Semantics.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
-import Linglib.Phenomena.Quantification.Studies.BaleSchwarz2022
+import Linglib.Studies.BaleSchwarz2022
 
 /-!
 # @cite{bale-schwarz-2026} — Natural Language and External Conventions: Re-examining *per*

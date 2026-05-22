@@ -39,7 +39,7 @@ can end up at different heights.
 
 -/
 
-namespace Phenomena.Quantification.Studies.Elliott2025
+namespace Elliott2025
 
 open Core.Quantification
 
@@ -180,4 +180,4 @@ theorem every_from_neg_polInd (entities : List α) (R S : α → Prop) :
   apply and_congr_right; intro _
   rw [PolInd.toGQ_neg]
 
-end Phenomena.Quantification.Studies.Elliott2025
+end Elliott2025

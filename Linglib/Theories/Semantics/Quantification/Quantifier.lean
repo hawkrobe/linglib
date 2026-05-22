@@ -841,7 +841,7 @@ the GQ machinery — both architectural decisions beyond this section's scope.
 
 For consumers wanting to instantiate the abstract `Square (W → Bool)` from
 `Core.Opposition.Square`, pass `decide`-coerced versions of the GQ predicates.
-The downstream `Phenomena/Quantification/Studies/BarwiseCooper1981.lean` §8
+The downstream `Studies/BarwiseCooper1981.lean` §8
 duality theorems are the natural site to package this bridge. -/
 
 /-- **Contradiction (A vs O)**: the A-form and O-form are contradictories. -/

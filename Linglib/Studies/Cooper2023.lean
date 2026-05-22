@@ -1,5 +1,5 @@
 import Linglib.Studies.Cooper2023Ch8
-import Linglib.Phenomena.Quantification.Studies.Cooper2023
+import Linglib.Studies.Cooper2023Ch7
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Coreference
@@ -176,7 +176,7 @@ to the same classical truth conditions.
 
 open Semantics.Dynamic.CDRT (DProp Register SProp)
 open Semantics.TypeTheoretic (Ppty PPpty Parametric IsTrue IsFalse propT)
-open Phenomena.Quantification.Studies.Cooper2023 (purify purifyUniv)
+open Cooper2023Ch7 (purify purifyUniv)
 
 variable {E : Type}
 

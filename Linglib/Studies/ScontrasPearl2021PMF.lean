@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Operators
-import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
+import Linglib.Studies.ScontrasPearl2021Quantification
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Probability.ProbabilityMassFunction.Binomial
@@ -57,7 +57,7 @@ paper-faithful claims.
 This file's RSA chain is the L&G-derived Bayesian inversion architecture
 (cf. `LassiterGoodman2017PMF.lean`). The paper §3.1 explicitly adopts
 @cite{goodman-frank-2016}'s framework. Sibling models on quantifier-negation
-scope ambiguity exist in linglib's `Phenomena/Quantification/Studies/` but
+scope ambiguity exist in linglib's `Studies/` but
 none have been audit-cleaned to PMF; this file's parameterized substrate
 (§8) is the first.
 

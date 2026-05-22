@@ -250,7 +250,7 @@ Blocked on numeric-content fixture (propositions indexed by ℕ) and
 generalized speech-act conjunction over a finite range. The
 implementable form is paper eq. 46 (conjoined ASSERT(≠n) for n > k),
 not eq. 44 (iterated `~GRANT`, blocked on substrate eq. 28). A focused
-study `Phenomena/Quantification/Studies/CohenKrifka2014_Superlatives.lean`
+study `Studies/CohenKrifka2014_Superlatives.lean`
 could land later with a finite numeric model.
 
 The empirical anchor for the deferred superlatives study is the paper's

@@ -11,7 +11,7 @@ Numeral imprecision data lives in
 
 -/
 
-import Linglib.Phenomena.Quantification.Studies.Bruening2001
+import Linglib.Studies.Bruening2001
 
 namespace Phenomena.Quantification
 

@@ -565,7 +565,7 @@ theorem aGlassOfWine_is_qua :
     This section registers the data items K89 builds his quantification
     analysis on. Full formalization of `max` / MXE / MXT / cumulative-
     distributive derivations is left to a successor file (e.g. a
-    `Phenomena/Quantification/Studies/Krifka1989Quant.lean`); the
+    `Studies/Krifka1989Quant.lean`); the
     chronological anchor is here, but the substrate work-product would
     naturally cluster with Plurals/Quantification, where Champollion
     2017 already engages cumulative readings. -/

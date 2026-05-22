@@ -15,7 +15,7 @@ truth conditions.
 
 Used by:
 - `Theories.Semantics.Quantification.Syllogistic.Basic` for the semantics
-- `Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022` and any
+- `TesslerTenenbaumGoodman2022` and any
   future Bayesian/RSA/mental-models paper formalisation
 -/
 

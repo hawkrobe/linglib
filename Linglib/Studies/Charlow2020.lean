@@ -37,7 +37,7 @@ The theoretical core (the set monad) is formalized in
 it on concrete examples, verifying the paper's empirical predictions.
 -/
 
-namespace Phenomena.Quantification.Studies.Charlow2020
+namespace Charlow2020
 
 open Semantics.Composition.SetMonad
 
@@ -344,4 +344,4 @@ to block the wide-scope reading (cf. eqs (67)–(69) in the paper). -/
 -- Lean's type checker. The indefinite's dependence on the bound
 -- variable `x` prevents it from scoping over x's binder.
 
-end Phenomena.Quantification.Studies.Charlow2020
+end Charlow2020

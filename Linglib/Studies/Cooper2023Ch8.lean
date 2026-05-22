@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Quantification.Studies.Cooper2023
+import Linglib.Studies.Cooper2023Ch7
 import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
 
@@ -56,7 +56,7 @@ directory.
 namespace Cooper2023.Ch8
 
 open Semantics.TypeTheoretic
-open Phenomena.Quantification.Studies.Cooper2023
+open Cooper2023Ch7
 
 -- ============================================================================
 -- Quantifier stores and plugged/unplugged content
