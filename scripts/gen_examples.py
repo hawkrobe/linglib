@@ -8,8 +8,7 @@ Example:
     python3 scripts/gen_examples.py Charlow2014
         Reads:    Linglib/Data/Examples/Charlow2014.json
         Locates:  Linglib/Studies/Charlow2014.lean (or
-                  Linglib/Studies/Charlow2014/Basic.lean for multi-file papers, or
-                  Linglib/Phenomena/*/Studies/Charlow2014.lean during migration)
+                  Linglib/Studies/Charlow2014/Basic.lean for multi-file papers)
         Inserts:  generated `namespace Examples ... end` block between markers
                   -- BEGIN GENERATED EXAMPLES
                   -- END GENERATED EXAMPLES
@@ -60,7 +59,6 @@ from pathlib import Path
 ROOT       = Path(__file__).resolve().parent.parent
 JSON_DIR   = ROOT / "Linglib" / "Data" / "Examples"
 STUDIES    = ROOT / "Linglib" / "Studies"
-PHENOMENA  = ROOT / "Linglib" / "Phenomena"
 
 BEGIN_MARKER = "-- BEGIN GENERATED EXAMPLES"
 END_MARKER   = "-- END GENERATED EXAMPLES"
@@ -273,18 +271,15 @@ end Examples
 
 
 def find_target_file(author_year: str) -> Path:
-    flat_match     = STUDIES / f"{author_year}.lean"
-    subdir_match   = STUDIES / author_year / "Basic.lean"
-    new_matches    = [p for p in (flat_match, subdir_match) if p.exists()]
-    legacy_matches = list(PHENOMENA.glob(f"*/Studies/{author_year}.lean"))
-    matches        = new_matches + legacy_matches
+    flat_match   = STUDIES / f"{author_year}.lean"
+    subdir_match = STUDIES / author_year / "Basic.lean"
+    matches      = [p for p in (flat_match, subdir_match) if p.exists()]
 
     if len(matches) == 0:
         sys.stderr.write(
             f"FATAL: no study file found for {author_year}; checked:\n"
             f"  Linglib/Studies/{author_year}.lean\n"
             f"  Linglib/Studies/{author_year}/Basic.lean\n"
-            f"  Linglib/Phenomena/*/Studies/{author_year}.lean\n"
             f"Create the file (with marker block) before running the generator.\n"
         )
         sys.exit(1)

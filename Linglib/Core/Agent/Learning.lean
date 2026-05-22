@@ -607,7 +607,7 @@ i.e., cue equally predicts outcome whether C is present or not) lives in
 the contingency-association literature (@cite{cheng-holyoak-1995},
 @cite{ellis-2006}) — to be defined locally in the study file when formalized.
 
-See `Phenomena.Acquisition.Studies.Ellis2006` for the concrete
+See `Studies.Ellis2006` (not yet formalized) for the concrete
 Chapman & Robbins (1990) experiment verifying both measures. -/
 theorem RescorlaWagner.blocked_cue_zero (rw : RescorlaWagner C)
     (S : Finset C) (V : C → ℝ) (C' : C)
