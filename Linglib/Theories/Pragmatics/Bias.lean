@@ -52,7 +52,7 @@ so consumers can use `obtain`/`rintro` directly. Decidability is provided.
 in `Phenomena.Negation.ExpletiveNegation.PolarityLicensing`. The Romero-2024 HiNQ bridge — a
 predicate-level correspondence between this licensing condition and
 Romero's bias requirement — lives in
-`Phenomena/Questions/Studies/Romero2024.lean`, so that this file does
+`Studies/Romero2024.lean`, so that this file does
 not have to import the BiasedPQ stack.
 
 These are **predicate-level correspondences**, not stipulated maps. An
@@ -233,7 +233,7 @@ theorem licensed_activates_weakEN :
   intro _; refine ⟨rfl, rfl, rfl, rfl⟩
 
 -- The Romero (2024) HiNQ bridge formerly lived here as §7 but was relocated
--- to `Phenomena/Questions/Studies/Romero2024.lean` so that this file does not
+-- to `Studies/Romero2024.lean` so that this file does not
 -- have to import the BiasedPQ stack (CommonGround / InformationStructure /
 -- Discourse.{IllocutionaryForce,Intentionality,Commitment} / Kratzer.Flavor /
 -- Core.Logic.Intensional.Examples). The bridge is predicate-level — sharing only the

@@ -22,7 +22,7 @@ of *denn*: *denn* is at the (matrix) PerspP layer but is not restricted
 to polar questions.
 -/
 
-namespace Phenomena.Questions.Studies.Theiler2021
+namespace Theiler2021
 
 open Features (QParticleLayer)
 
@@ -49,4 +49,4 @@ theorem denn_wh_unlike_nandao :
     Fragments.German.QuestionParticles.denn.whOk = true ∧
     Fragments.Mandarin.QuestionParticles.nandao.whOk = false := ⟨rfl, rfl⟩
 
-end Phenomena.Questions.Studies.Theiler2021
+end Theiler2021

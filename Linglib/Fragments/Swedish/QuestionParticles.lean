@@ -5,7 +5,7 @@
 Lexical entries for Swedish modal particles that occur in declarative
 questions. The fragment commits only to theory-neutral lexical primitives;
 the left-peripheral layer assignment lives in
-`Phenomena.Questions.Studies.SeeligerRepp2018`.
+`SeeligerRepp2018`.
 
 ## Particles
 

@@ -64,7 +64,7 @@ informative true Hamblin alternative.
   empirical claims about distribution of higher-order interpretations.
 -/
 
-namespace Phenomena.Questions.Studies.Fox2018
+namespace Fox2018
 
 open Question Semantics.Questions.Resolution
 open Semantics.Questions.Exhaustivity
@@ -199,4 +199,4 @@ theorem resolves_can_succeed_when_EP_fails
   apply hp₁p₂
   rw [← hqp₁, hqp₂]
 
-end Phenomena.Questions.Studies.Fox2018
+end Fox2018

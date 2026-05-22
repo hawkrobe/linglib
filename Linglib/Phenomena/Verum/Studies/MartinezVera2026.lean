@@ -7,7 +7,7 @@ import Linglib.Core.Discourse.Roles
 import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Phenomena.Verum.Basic
 import Linglib.Phenomena.Verum.Studies.Hohle1992
-import Linglib.Phenomena.Questions.Studies.RomeroHan2004
+import Linglib.Studies.RomeroHan2004
 
 /-!
 # Martínez Vera (2026): Verum, contrast, and evidentiality in Saraguro Kichwa

@@ -6,7 +6,7 @@ Lexical entries for English MQP-like adverbs that participate in the
 left-peripheral typology of Q-particles. The fragment commits only to
 theory-neutral lexical primitives (form, gloss, distribution); the
 left-peripheral layer assignment lives in
-`Phenomena.Questions.Studies.BhattDayal2020`.
+`BhattDayal2020`.
 
 ## Particles
 

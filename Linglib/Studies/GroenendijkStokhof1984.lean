@@ -28,7 +28,7 @@ theorems about refinement, exhaustivity, and de dicto answers.
   ANS-transfer between questions.
 -/
 
-namespace Phenomena.Questions.Studies.GroenendijkStokhof1984
+namespace GroenendijkStokhof1984
 
 open Semantics.Questions
 open scoped GSQuestion  -- For ⊑ notation
@@ -169,4 +169,4 @@ theorem refinement_iff_answer_transfer {W : Type*} (q1 q2 : GSQuestion W) :
   ⟨λ h => refinement_transfers_answers q1 q2 h,
    λ h => answer_transfer_implies_refinement q1 q2 h⟩
 
-end Phenomena.Questions.Studies.GroenendijkStokhof1984
+end GroenendijkStokhof1984

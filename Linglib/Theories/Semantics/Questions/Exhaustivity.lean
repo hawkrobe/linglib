@@ -247,7 +247,7 @@ substrate-level primitives:
   `Set.range (strongAnswer Q)`, the "Logical Partition" of Q.
 
 The paper-specific apparatus (Cell Identification, Non-Vacuity, QPM)
-lives in `Phenomena/Questions/Studies/Fox2018.lean`; here we expose
+lives in `Studies/Fox2018.lean`; here we expose
 only the substrate primitives the paper consumes. -/
 
 /-- @cite{fox-2018} (eq 11): the **Exh-cell** of proposition `p` in

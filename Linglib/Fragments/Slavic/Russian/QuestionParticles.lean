@@ -6,7 +6,7 @@ Lexical entries for Russian interrogative particles with distributional
 properties and bias profiles. The fragment commits only to theory-neutral
 lexical primitives (form, gloss, distribution, bias profile); the
 left-peripheral layer assignment lives in
-`Phenomena.Questions.Studies.Simik2024`.
+`Simik2024`.
 
 ## Particles
 

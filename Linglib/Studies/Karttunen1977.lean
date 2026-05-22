@@ -53,7 +53,7 @@ deferred to a future Karttunen-1977-extended file once the lifting
 substrate is in place.
 -/
 
-namespace Phenomena.Questions.Studies.Karttunen1977
+namespace Karttunen1977
 
 open Question Semantics.Questions.Resolution
 open Semantics.Questions.Exhaustivity
@@ -173,4 +173,4 @@ theorem karttunen_which_no_witness {E : Type*} (D : Set E) (P : E → Set W) (w 
   · exact hempty
   · exact absurd (hqe hwq) (h e heD)
 
-end Phenomena.Questions.Studies.Karttunen1977
+end Karttunen1977

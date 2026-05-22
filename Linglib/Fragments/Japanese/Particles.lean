@@ -9,7 +9,7 @@ import Linglib.Theories.Pragmatics.Expressives.OutlookMarker
 Q-morphemes and related particles in Japanese. The fragment commits only to
 theory-neutral lexical primitives (clause-internal distribution); the
 left-peripheral layer assignment lives in
-`Phenomena.Questions.Studies.BhattDayal2020`.
+`BhattDayal2020`.
 
 1. *ka/no*: Clause-typing Q-morphemes — appear in subordinated interrogatives
 2. *koto*: Declarative complementizer (contrast with *ka* in interrogatives)

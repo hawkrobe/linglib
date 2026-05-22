@@ -58,7 +58,7 @@ holds (`IsExhaustivelyResolvable`).
   rejected by Dayal; not formalised.
 -/
 
-namespace Phenomena.Questions.Studies.Dayal2016
+namespace Dayal2016
 
 open Question Semantics.Questions.Resolution
 open Semantics.Questions.Exhaustivity
@@ -188,4 +188,4 @@ theorem ep_fails_when_two_incomparable_true_alts (Q : Question W) (w : W)
   apply hp₁_not_sub
   rw [← hqp₁, hqp₂]
 
-end Phenomena.Questions.Studies.Dayal2016
+end Dayal2016

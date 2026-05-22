@@ -3,7 +3,7 @@ import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Theories.Semantics.Modality.Kernel
 import Linglib.Features.QParticleLayer
 import Linglib.Theories.Semantics.Questions.Singleton
-import Linglib.Phenomena.Questions.Studies.BhattDayal2020
+import Linglib.Studies.BhattDayal2020
 
 /-!
 # Zheng (2025): Nandao-Q Felicity @cite{zheng-2025}
@@ -43,7 +43,7 @@ nor sufficient**.
 - No formalization of the unexpectedness requirement in the Kernel theory
 -/
 
-namespace Phenomena.Questions.Studies.Zheng2025
+namespace Zheng2025
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- §1 — Empirical Data
@@ -302,7 +302,7 @@ theorem nandao_felicitous_declarative (p : Set W) :
     @cite{bhatt-dayal-2020} fn. 11 holds by construction. -/
 theorem nandao_kya_share_felicity (p : Set W) :
     nandao_felicitous_declarative (W := W) p =
-      Phenomena.Questions.Studies.BhattDayal2020.kya_felicitous_declarative
+      BhattDayal2020.kya_felicitous_declarative
         (W := W) p := rfl
 
 -- ════════════════════════════════════════════════════════════════════════════
@@ -426,4 +426,4 @@ theorem biasedUse_witnesses_integrated_felicity :
       isRaining :=
   ⟨rfl, rfl, rfl, biasedUse_integrated_felicity⟩
 
-end Phenomena.Questions.Studies.Zheng2025
+end Zheng2025

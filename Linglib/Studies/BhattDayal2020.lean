@@ -27,7 +27,7 @@ The layer assignments are theoretical overlays on the fragment particles —
 the fragments themselves carry only theory-neutral distributional fields.
 -/
 
-namespace Phenomena.Questions.Studies.BhattDayal2020
+namespace BhattDayal2020
 
 open Features (QParticleLayer)
 open Question (IsSingleton SingletonQuestion declarative polar
@@ -177,7 +177,7 @@ setting (one-cell denotation, in contrast to the two-cell `polar p`).
 @cite{bhatt-dayal-2020} fn. 11 cites the parallel Mandarin *nandao*
 analysis as the model for kya:; the shared `IsSingleton` predicate
 captures that convergence by construction. See
-`Phenomena.Questions.Studies.Zheng2025` for the nandao binding. -/
+`Zheng2025` for the nandao binding. -/
 
 universe u
 variable {W : Type u}
@@ -213,4 +213,4 @@ theorem kya_infelicitous_two_cell_polar {p : Set W}
 theorem kya_polarQuestion_signals_singletonPresup :
     Fragments.HindiUrdu.Particles.kya.polarQuestion = true := rfl
 
-end Phenomena.Questions.Studies.BhattDayal2020
+end BhattDayal2020

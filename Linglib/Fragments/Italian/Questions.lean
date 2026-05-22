@@ -7,9 +7,9 @@ import Linglib.Typology.Question
 `QuestionProfile` bundle for Italian (ISO `ita`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
 `Linglib/Typology/Question.lean`. Cross-linguistic theorems consuming
-this profile live in `Phenomena/Questions/Studies/Dryer2013.lean`. The
+this profile live in `Studies/Dryer2013Question.lean`. The
 forced-clause-typing analysis lives in
-`Phenomena/Questions/Studies/Dayal2025.lean`.
+`Studies/Dayal2025.lean`.
 
 Italian: no polar Q particle, wh-fronting (not in WALS Ch 93A sample, so
 `whMovement = none`), polar formed by intonation only.

@@ -4,8 +4,8 @@
 
 Lexical entries for German interrogative/flavoring particles. The fragment
 commits only to theory-neutral lexical primitives; the left-peripheral
-layer assignment lives in `Phenomena.Questions.Studies.Theiler2021`
-(*denn*) and `Phenomena.Questions.Studies.SeeligerRepp2018` (*doch wohl*).
+layer assignment lives in `Theiler2021`
+(*denn*) and `SeeligerRepp2018` (*doch wohl*).
 
 ## Particles
 

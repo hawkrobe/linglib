@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Questions.Partition.Constructors
-import Linglib.Phenomena.Questions.Studies.GroenendijkStokhof1984
+import Linglib.Studies.GroenendijkStokhof1984
 
 /-!
 # @cite{belnap-1982}: Approaches to the semantics of questions in natural language
@@ -24,10 +24,10 @@ over the `GSQuestion W` substrate.
   doesn't know IQ* must be inconsistent for `P` to answer `IQ`.
 -/
 
-namespace Phenomena.Questions.Studies.Belnap1982
+namespace Belnap1982
 
 open Semantics.Questions
-open Phenomena.Questions.Studies.GroenendijkStokhof1984
+open GroenendijkStokhof1984
 
 /-! ### Unique Answer Fallacy (§2.3) -/
 
@@ -137,4 +137,4 @@ theorem distributivity_test_examples :
     failsDistributivityTest (λ w => decide (w.val < 2)) q 0 worlds = true := by
   native_decide
 
-end Phenomena.Questions.Studies.Belnap1982
+end Belnap1982

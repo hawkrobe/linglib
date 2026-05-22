@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Modality.BiasedPQ
 Lexical entries for Mandarin interrogative particles with distributional
 properties and bias profiles. The fragment commits only to theory-neutral
 lexical primitives; the left-peripheral layer assignment lives in
-`Phenomena.Questions.Studies.Zheng2025`.
+`Zheng2025`.
 
 ## Particles
 

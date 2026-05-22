@@ -184,7 +184,7 @@ def ah : SentenceFinalParticle :=
 /-- Singlish *the-hell* — an aggressively non-D-linked (ANDL) wh-modifier.
     Theory-neutral lexical entry; the Minimalist POV-feature analysis
     lives in `Theories/Syntax/Minimalism/ANDL.lean`, the empirical
-    licensing data in `Phenomena/Questions/Studies/ChanShen2026.lean`.
+    licensing data in `Studies/ChanShen2026.lean`.
 
     Parametric values: parasitic movement (must adjoin to wh-phrase;
     cannot move on its own), matrix-scope host requirement. -/

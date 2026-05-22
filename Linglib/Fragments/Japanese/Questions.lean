@@ -7,9 +7,9 @@ import Linglib.Typology.Question
 `QuestionProfile` bundle for Japanese (ISO `jpn`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
 `Linglib/Typology/Question.lean`. Cross-linguistic theorems consuming
-this profile live in `Phenomena/Questions/Studies/Dryer2013.lean`. The
+this profile live in `Studies/Dryer2013Question.lean`. The
 CP-layer *ka* and SAP-layer *kke* analyses live in
-`Phenomena/Questions/Studies/BhattDayal2020.lean`.
+`Studies/BhattDayal2020.lean`.
 
 Japanese: final polar Q particle *ka*, wh-in-situ, polar formed by particle.
 -/

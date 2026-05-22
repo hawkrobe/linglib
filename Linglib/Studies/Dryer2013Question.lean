@@ -30,7 +30,7 @@ WALS aggregate sample-size theorems live in `Linglib/Typology/Question.lean`.
 
 set_option autoImplicit false
 
-namespace Phenomena.Questions.Studies.Dryer2013
+namespace Dryer2013Question
 
 open Typology.Question
 
@@ -69,4 +69,4 @@ theorem particle_polar_count :
       (λ p => p.polarStrategy == some .particle)).length = 4 := by
   native_decide
 
-end Phenomena.Questions.Studies.Dryer2013
+end Dryer2013Question

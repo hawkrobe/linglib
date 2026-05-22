@@ -1,6 +1,6 @@
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Phenomena.Questions.Embedding
-import Linglib.Phenomena.Questions.Studies.BhattDayal2020
+import Linglib.Studies.BhattDayal2020
 
 /-!
 # Dayal (2025): Three-layer cartography for clause-typing
@@ -32,7 +32,7 @@ This study file is the canonical home for:
   clause-typing at `Force⁰[+Q]`; Dayal places it at `C` with a downstream
   `PerspP` shift. The disagreement is real and not currently formalized as
   a bridge theorem. See `Theories/Syntax/Minimalist/Questions.lean`.
-- **Holmberg 2016 / `Phenomena/Questions/Studies/Holmberg2016.lean`**
+- **Holmberg 2016 / `Studies/Holmberg2016.lean`**
   places the polar-Q-typing locus at `PolP` (via the
   `Features/AnsweringSystem.lean` typological parameter). Holmberg's
   analysis competes with Dayal's for the same matrix-polar facts.
@@ -42,11 +42,11 @@ This study file is the canonical home for:
   theorem `SpeechActs.SoK ↔ PerspP-PRO over Newari` is unformalized.
 -/
 
-namespace Phenomena.Questions.Studies.Dayal2025
+namespace Dayal2025
 
 open Interfaces.SyntaxSemantics.LeftPeriphery
 open Phenomena.Questions.Embedding
-open Phenomena.Questions.Studies.BhattDayal2020
+open BhattDayal2020
 
 -- ============================================================================
 -- §1. Clause-typing typology (Dayal 2025 §4.4)
@@ -368,4 +368,4 @@ theorem classifyVerb_agrees_with_selectionClass :
       = fieldSelectionClass Fragments.English.Predicates.Verbal.believe := by
   decide
 
-end Phenomena.Questions.Studies.Dayal2025
+end Dayal2025

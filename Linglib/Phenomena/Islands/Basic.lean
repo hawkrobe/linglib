@@ -35,7 +35,7 @@ Files that classify islands using these types include:
 - `Studies/CartnerEtAl2026.lean` — cross-constructional invariance
 - `Studies/HofmeisterSag2010.lean` — processing/gradient
 - `Phenomena/Islands/MannerOfSpeaking.lean` — discourse backgroundedness
-- `Phenomena/Questions/Studies/ChanShen2026.lean` — semantic
+- `Studies/ChanShen2026.lean` — semantic
 - `Studies/LuPanDegen2025.lean` — backgroundedness
 -/
 

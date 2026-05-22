@@ -190,7 +190,7 @@ theorem hon_agree_values (level : HonLevel) :
       = some [.valued (.hon level)] := by
   cases level <;> native_decide
 
-/-- Bridge to Phenomena/Questions/Studies/BhattDayal2020: SAP unembeddability
+/-- Bridge to Studies/BhattDayal2020: SAP unembeddability
     parallels `sap_particles_not_in_quasi_sub`. Both follow from SAP being
     the speech-act layer that does not embed.
 

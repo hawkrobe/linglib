@@ -88,7 +88,7 @@ with low negation). Supports fronted-negation + *väl* marking NRQs.
 - `Theories/Semantics/Modality/BiasedPQ.lean` — Romero's PQ bias
   framework (VERUM, FALSUM, OriginalBias, ContextualEvidence). The
   bridge maps Sudo's bias values to Romero's coarser three-valued scheme.
-- `Phenomena/Questions/Studies/RomeroHan2004.lean::Verum` — detailed
+- `Studies/RomeroHan2004.lean::Verum` — detailed
   VERUM semantics with modal frames.
 - `Features/AnsweringSystem.lean` — polar answer typology
   (Holmberg 2016).

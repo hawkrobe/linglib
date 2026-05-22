@@ -36,10 +36,10 @@ to the semantic `WHFeature`:
 This file places clause-typing at `Force⁰[+Q]` per @cite{rizzi-1997}. Two
 sibling analyses in linglib place it elsewhere:
 
-- **@cite{dayal-2025}** (`Phenomena/Questions/Studies/Dayal2025.lean`):
+- **@cite{dayal-2025}** (`Studies/Dayal2025.lean`):
   clause-typing locus is `C` for CP-typed languages (English, Italian) and
   `PerspP` for PerspP-typed languages (Hindi-Urdu).
-- **@cite{holmberg-2016}** (`Phenomena/Questions/Studies/Holmberg2016.lean`):
+- **@cite{holmberg-2016}** (`Studies/Holmberg2016.lean`):
   the answering-system parameter places polar-Q-typing at `Pol⁰` via
   `Features/AnsweringSystem.lean`.
 

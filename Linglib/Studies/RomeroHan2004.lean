@@ -32,7 +32,7 @@ with x's conversational goals, p is in the Common Ground." Short form:
 
 ## Related Work
 
-- `Phenomena/Questions/Studies/Holmberg2016.lean` — complementary analysis.
+- `Studies/Holmberg2016.lean` — complementary analysis.
   R&H explains the *structural source of bias* (preposed negation forces
   an epistemic expectation via VERUM); Holmberg explains *cross-linguistic
   answer variation* (the [±Pol] feature, negation height). Both agree

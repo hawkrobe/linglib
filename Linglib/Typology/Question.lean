@@ -39,8 +39,8 @@ WordOrder).
 - **The cartographic clause-typing locus is contested.** Rizzi 1997 places
   it at `Force⁰[+Q]`; Holmberg 2016 places it at `Pol⁰`; Dayal 2025 places
   it at `C` with PerspP-shift. `QuestionProfile` is silent on this — see
-  `Phenomena/Questions/Studies/Dayal2025.lean`,
-  `Phenomena/Questions/Studies/Holmberg2016.lean`, and
+  `Studies/Dayal2025.lean`,
+  `Studies/Holmberg2016.lean`, and
   `Theories/Syntax/Minimalist/Questions.lean` for competing analyses.
 
 ## WALS aggregates
@@ -49,7 +49,7 @@ WALS chapter aggregate distributions (`ch92Total`, `ch93Total`, etc.)
 live in this file at the substrate layer per the project's "WALS goes to
 `Linglib/Typology/`" rule. Cross-linguistic theorems consuming Fragment
 per-language data live in
-`Phenomena/Questions/Studies/Dryer2013.lean`.
+`Studies/Dryer2013Question.lean`.
 -/
 
 set_option autoImplicit false

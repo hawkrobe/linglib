@@ -64,7 +64,7 @@ contexts).
   type with CN-meaning ↔ atomic individual structure; deferred.
 -/
 
-namespace Phenomena.Questions.Studies.Heim1994
+namespace Heim1994
 
 open Question Semantics.Questions.Resolution
 open Semantics.Questions.Exhaustivity
@@ -164,4 +164,4 @@ theorem gsAnswer_subset_heimAns2 (Q : Question W) (w : W) :
     gsAnswer Q w ⊆ heimAns2 Q w :=
   strongAnswer_subset_heimAns2 Q w
 
-end Phenomena.Questions.Studies.Heim1994
+end Heim1994

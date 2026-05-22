@@ -64,7 +64,7 @@ defer that lift and work with the propositional projection here.
   with first-order vs higher-order MS — require modal-flavour discrimination.
 -/
 
-namespace Phenomena.Questions.Studies.Xiang2022
+namespace Xiang2022
 
 open Question Semantics.Questions.Resolution
 open Semantics.Questions.Exhaustivity
@@ -189,4 +189,4 @@ theorem relExhPresupposition_singleton_iff
     subst hw'M
     exact hEP
 
-end Phenomena.Questions.Studies.Xiang2022
+end Xiang2022

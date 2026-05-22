@@ -4,7 +4,7 @@
 
 Lexical entries for Slovenian interrogative particles. The fragment
 commits only to theory-neutral lexical primitives; the left-peripheral
-layer assignment lives in `Phenomena.Questions.Studies.Simik2024`.
+layer assignment lives in `Simik2024`.
 
 ## Particles
 

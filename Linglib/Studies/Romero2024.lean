@@ -27,7 +27,7 @@ that was a category error masquerading as a structural map. The
 predicate-level bridge below is the right granularity.
 -/
 
-namespace Phenomena.Questions.Studies.Romero2024
+namespace Romero2024
 
 open Pragmatics.Bias
 open Semantics.Modality.BiasedPQ
@@ -40,4 +40,4 @@ theorem licensed_contradictsPriorBelief_matches_hiNQ_bias :
   intro _
   rfl
 
-end Phenomena.Questions.Studies.Romero2024
+end Romero2024

@@ -27,7 +27,7 @@ the only feature that distinguishes it from the two-cell `polar p`, and
 that feature is `IsSingleton (declarative p)` itself.
 
 Particle-specific bindings (kya:, nandao) live in their respective study
-files (`Phenomena/Questions/Studies/`) and use `IsSingleton` /
+files (`Studies/`) and use `IsSingleton` /
 `SingletonQuestion` directly.
 -/
 

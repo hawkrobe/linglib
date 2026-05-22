@@ -7,7 +7,7 @@ import Linglib.Typology.Question
 `QuestionProfile` bundle for English (ISO/WALS `eng`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
 `Linglib/Typology/Question.lean`. Cross-linguistic theorems consuming
-this profile live in `Phenomena/Questions/Studies/Dryer2013.lean`.
+this profile live in `Studies/Dryer2013Question.lean`.
 
 English: no polar Q particle (subject-aux inversion + intonation), wh-fronting
 (`what did you see?`), polar formed by interrogative word order

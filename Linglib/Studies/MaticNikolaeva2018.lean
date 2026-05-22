@@ -264,7 +264,7 @@ reaching the same conclusion. -/
 M&N §2 explicitly target three sibling frameworks beyond the substrate's
 form-class encoding. Two of them are formalized in linglib:
 
-- `Phenomena/Questions/Studies/RomeroHan2004.lean` formalizes
+- `Studies/RomeroHan2004.lean` formalizes
   @cite{romero-han-2004}'s **FOR-SURE-CG** epistemic-conjunction
   operator. M&N call this "Lexical Operator Theory" (LOT) and
   reject it on the same form-meaning grounds (M&N §2 "epistemic

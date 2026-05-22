@@ -99,12 +99,12 @@ already implements the paper).
   `Theories/Semantics/Attitudes/` and `Studies/TheilerRoelofsenAloni2018.lean`.
 * **Ch 9** Comparison with alternative semantics, partition semantics,
   inquisitive indifference: covered piecemeal in
-  `Phenomena/Questions/Studies/{Hamblin1973_TODO, GroenendijkStokhof1984}.lean`
+  `Studies/{Hamblin1973_TODO, GroenendijkStokhof1984}.lean`
   (alt and partition) and `Theories/Semantics/Questions/` (as topical
   bridges).
 -/
 
-namespace Phenomena.Questions.Studies.CiardelliGroenendijkRoelofsen2018
+namespace CiardelliGroenendijkRoelofsen2018
 
 universe u
 variable {W : Type u}
@@ -352,4 +352,4 @@ inquisitive proposition, with the same algebraic and order-theoretic
 structure. Future substrate refactors should preserve these
 identifications. -/
 
-end Phenomena.Questions.Studies.CiardelliGroenendijkRoelofsen2018
+end CiardelliGroenendijkRoelofsen2018

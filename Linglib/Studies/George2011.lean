@@ -75,7 +75,7 @@ of all alternatives true at `w`.
 * Chapter 7 strong-ish exhaustivity speculation.
 -/
 
-namespace Phenomena.Questions.Studies.George2011
+namespace George2011
 
 open Question Semantics.Questions.Resolution
 open Semantics.Questions.Exhaustivity
@@ -183,4 +183,4 @@ asymmetry is empirically active. -/
     is documented in `Exhaustivity.strongAnswer_subset_weakAnswer`'s
     one-direction status. -/
 
-end Phenomena.Questions.Studies.George2011
+end George2011

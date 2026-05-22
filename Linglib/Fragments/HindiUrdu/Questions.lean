@@ -7,10 +7,10 @@ import Linglib.Typology.Question
 `QuestionProfile` bundle for Hindi-Urdu (ISO `hin`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
 `Linglib/Typology/Question.lean`. Cross-linguistic theorems consuming
-this profile live in `Phenomena/Questions/Studies/Dryer2013.lean`. The
+this profile live in `Studies/Dryer2013Question.lean`. The
 PerspP analysis of *kya:* lives in
-`Phenomena/Questions/Studies/BhattDayal2020.lean`; clause-typing typology
-in `Phenomena/Questions/Studies/Dayal2025.lean`.
+`Studies/BhattDayal2020.lean`; clause-typing typology
+in `Studies/Dayal2025.lean`.
 
 Hindi-Urdu: initial polar Q particle *kya:*, wh-in-situ, polar formed by
 particle.

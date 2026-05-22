@@ -57,7 +57,7 @@ maps to the substrate as:
   `Phenomena.Questions.MentionSome` data file is wired up.
 -/
 
-namespace Phenomena.Questions.Studies.VanRooy2003
+namespace VanRooy2003
 
 open Core Core.DecisionTheory Question
 open Semantics.Questions.DecisionTheoretic
@@ -164,4 +164,4 @@ split. The substrate exposes the dual as `CoversAltsOf` and proves
 preservation against that direction. See the docstring of
 `Semantics.Questions.DecisionTheoretic.CoversAltsOf`. -/
 
-end Phenomena.Questions.Studies.VanRooy2003
+end VanRooy2003

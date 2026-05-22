@@ -45,7 +45,7 @@ that the cartography in @cite{dayal-2025} extends beyond Hindi-Urdu and
 Japanese to a much wider typological range.
 -/
 
-namespace Phenomena.Questions.Studies.Simik2024
+namespace Simik2024
 
 open Features (QParticleLayer)
 
@@ -123,4 +123,4 @@ theorem layer_correlates_with_bias :
     Fragments.Slavic.Serbian.QuestionParticles.zar_.requiresEvidentialBias = true :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Questions.Studies.Simik2024
+end Simik2024
