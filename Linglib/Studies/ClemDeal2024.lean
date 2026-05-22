@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Agreement.Studies.Deal2024
+import Linglib.Studies.Deal2024
 import Linglib.Fragments.Kawapanan.Shawi.Basic
 
 /-!
@@ -43,7 +43,7 @@ table from infrastructure linglib already has, and flags the new
 machinery as a separate follow-up.
 -/
 
-namespace Phenomena.Agreement.Studies.ClemDeal2024
+namespace ClemDeal2024
 
 open Features.Prominence (PersonLevel)
 open Deal2024 (DealGrammar isLicit strictlyDescending dpBears
@@ -344,4 +344,4 @@ Once (1)–(3) are in place, the OAgr-on-S correlation here can be
 strengthened from a definitional implication to a derived theorem.
 -/
 
-end Phenomena.Agreement.Studies.ClemDeal2024
+end ClemDeal2024

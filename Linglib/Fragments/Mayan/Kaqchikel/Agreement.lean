@@ -14,7 +14,7 @@ positions, and the empirical AF agreement table.
 The theory-laden apparatus that interprets this data — DM Vocabulary
 insertion, PersonGeometry feature decomposition, the omnivorous
 hierarchy, the AgreeOutcome inductive — lives in
-`Phenomena/Agreement/Studies/Preminger2014.lean`. Per the project
+`Studies/Preminger2014.lean`. Per the project
 Fragment-discipline rule (CLAUDE.md), fragments hold only consensus
 typological metadata; paper-specific apparatus is consumed in study
 files via projections.
@@ -49,7 +49,7 @@ restriction blocks combinations of two 1st/2nd-person arguments.
 
 The empirical paradigm data sits here as `afParadigm`. The choice rule
 that predicts it is theory-laden — see
-`Phenomena/Agreement/Studies/Preminger2014.lean` for the two-probe
+`Studies/Preminger2014.lean` for the two-probe
 relativized-probing derivation (after @cite{bejar-rezac-2003}, applied
 to Kichean per @cite{preminger-2014} §4.4). Earlier analyses
 (@cite{stiebels-2006} and others) framed the same surface pattern as

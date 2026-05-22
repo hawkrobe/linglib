@@ -28,7 +28,7 @@ deletion of the pronominal base morpheme when its features are
 redundantly expressed by agreement. This is structurally parallel to
 Impoverishment: features on the pronoun node are deleted (at PF) when
 they are recoverable from agreement, yielding a reduced form. Mam's
-rule is paradigmatic — see `Phenomena/Agreement/Studies/Scott2023.lean`.
+rule is paradigmatic — see `Studies/Scott2023Agreement.lean`.
 -/
 
 namespace Morphology.DM.Impoverishment

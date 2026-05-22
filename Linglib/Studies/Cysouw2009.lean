@@ -37,7 +37,7 @@ sharing a class are homophonous (marked by the same form).
 
 -/
 
-namespace Phenomena.Agreement.Studies.Cysouw2009
+namespace Cysouw2009
 
 open Features.Person
 
@@ -700,4 +700,4 @@ theorem finnish_singular_distinct_from_fragment :
     let sg := (Fragments.Finnish.Negation.negParadigm.filter (·.number == "sg")).map (·.form)
     sg.eraseDups.length = 3 := by decide
 
-end Phenomena.Agreement.Studies.Cysouw2009
+end Cysouw2009

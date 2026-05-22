@@ -8,7 +8,7 @@ import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Studies.Kramer2020
 import Linglib.Theories.Syntax.Minimalist.Agreement.GenderResolution
 import Linglib.Theories.Syntax.Minimalist.Agreement.CoordinateResolution
-import Linglib.Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
+import Linglib.Studies.AdamsonAnagnostopoulou2025
 
 /-!
 # Carstens 2026: The Grammar of Gender

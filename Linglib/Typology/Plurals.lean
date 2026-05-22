@@ -20,7 +20,7 @@ re-tabulating here. Corbett 2000 *Number* refines several of these (general
 number, dual/trial/paucal inventory, facultative number, Smith-Stark animacy
 hierarchy, clusivity); those distinctions are formalized in
 `Features/Number.lean`, `Features/Person.lean`, and
-`Phenomena/Agreement/Studies/Corbett2000.lean` rather than here.
+`Studies/Corbett2000.lean` rather than here.
 
 ## Layer discipline
 

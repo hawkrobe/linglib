@@ -46,7 +46,7 @@ deferred work (multi-clause hyperraising; per-paper alternative models
 as formalized siblings; bibliography backlog).
 -/
 
-namespace Phenomena.Agreement.Studies.Pietraszko2026
+namespace Pietraszko2026
 
 open Minimalist
 
@@ -580,4 +580,4 @@ theorem object_dislocation_entails_subject_accessibility
 theorem no_object_dislocation_when_subject_in_situ :
     ¬ CanObjectDislocate auxVTree_inSitu := by decide
 
-end Phenomena.Agreement.Studies.Pietraszko2026
+end Pietraszko2026

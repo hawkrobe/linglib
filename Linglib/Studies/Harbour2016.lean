@@ -2,7 +2,7 @@ import Linglib.Features.Person
 import Linglib.Features.Number
 import Linglib.Theories.Syntax.Minimalist.CyclicAgree
 import Linglib.Theories.Syntax.Minimalist.Agreement.FeatureRecursion
-import Linglib.Phenomena.Agreement.Studies.Corbett2000
+import Linglib.Studies.Corbett2000
 
 /-!
 # Harbour (2016): Impossible Persons

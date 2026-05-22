@@ -14,7 +14,7 @@ moved to:
   (@cite{elkins-torrence-brown-2026}); also houses the antipassive
   Voice apparatus from @cite{scott-2023} §2.5.4.1.
 - Cross-Studies consumer:
-  `Phenomena/Agreement/Studies/Scott2023.lean` imports the Minimalist
+  `Studies/Scott2023Agreement.lean` imports the Minimalist
   Mam Voice from ETB2026 to compare φ-Agree and oblique-Agree pipelines.
 
 This Fragment file retains only `mamVoiceSystem : VoiceSystemProfile` —

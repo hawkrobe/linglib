@@ -44,7 +44,7 @@ treatment of dative intervention via `DativeInterventionContext` and
 analysis to Amato's feature-ordering analysis are future work.
 -/
 
-namespace Phenomena.Agreement.Studies.Amato2025
+namespace Amato2025Agreement
 
 open Minimalist
 open Minimalist.NestedAgree
@@ -275,4 +275,4 @@ theorem lakPerfective_excludes_ergative :
 
 end Lak
 
-end Phenomena.Agreement.Studies.Amato2025
+end Amato2025Agreement

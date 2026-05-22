@@ -44,7 +44,7 @@ This study is extended by @cite{adamson-zompi-2025} (study file
 that PCC effects diagnose *interpretable* (not agreement) person.
 -/
 
-namespace Phenomena.Agreement.Studies.PanchevaZubizarreta2018
+namespace PanchevaZubizarreta2018
 
 open Features.Prominence (PersonLevel)
 open Features.Logophoricity (LogophoricRole pointOfViewPrinciple)
@@ -426,4 +426,4 @@ theorem mefirst_wedge_with_cm :
     IsLicit meFirstGrammar .third .third ∧
     CLRViolated (.empathyLocus, .attitudeHolder) := ⟨by decide, by decide⟩
 
-end Phenomena.Agreement.Studies.PanchevaZubizarreta2018
+end PanchevaZubizarreta2018

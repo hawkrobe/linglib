@@ -143,7 +143,7 @@ theorem erg_abs_matches_AP :
     argues against direct salience-scale primitives; the rank
     ordering below is a surface effect of probe priority, not a
     hierarchy-as-grammatical-primitive. See
-    `Phenomena/Agreement/Studies/Preminger2014.lean` for the
+    `Studies/Preminger2014.lean` for the
     anti-hierarchy theorems. -/
 
 /-- Person dominates for both P and A indexing (derived from fragments). -/

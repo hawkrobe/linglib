@@ -19,7 +19,7 @@ A parametric theory of person-sensitivity in clitic clusters, due to
 Empirical predictions for the eight named grammar instances, and the
 correspondence P&Z draw between P-Prominence settings and Sells's
 logophoric roles (§6.2), live in the study file
-`Phenomena/Agreement/Studies/PanchevaZubizarreta2018.lean`. This file holds
+`Studies/PanchevaZubizarreta2018.lean`. This file holds
 only the framework-neutral parametric API — no commitment to any particular
 theory of logophoric roles:
 

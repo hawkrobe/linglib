@@ -25,7 +25,7 @@ In Scott's Mam architecture each case has a dedicated assigner:
 
 This produces a tripartite underlying system (ERG ≠ ACC ≠ ABS) visible
 through the Mam agreement patterns formalized in
-`Phenomena/Agreement/Studies/Scott2023.lean`.
+`Studies/Scott2023Agreement.lean`.
 
 ## Contrast with Other Case Theories
 
@@ -51,7 +51,7 @@ behavior of the dependent case algorithm.
 
 ## See Also
 
-- `Phenomena/Agreement/Studies/Scott2023.lean` — full Agree/Spellout
+- `Studies/Scott2023Agreement.lean` — full Agree/Spellout
   pipeline for the Mam agreement morphology, including the impoverishment
   rule that bleeds reduced pronouns
 - `Phenomena/Ergativity/Studies/Scott2023.lean` — super-extended

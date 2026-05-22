@@ -46,7 +46,7 @@ work):
   case)
 
 The cross-domain Amato 2025 case studies for non-restructuring
-phenomena live in `Phenomena/Agreement/Studies/Amato2025.lean`
+phenomena live in `Studies/Amato2025Agreement.lean`
 (§4.1.2 Icelandic DAT-NOM, §4.2.1 Lak perfective) and
 `Studies/Amato2025.lean` (§4.2.3 Bulgarian wh).
 

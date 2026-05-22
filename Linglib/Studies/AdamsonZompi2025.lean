@@ -6,7 +6,7 @@ import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.German.Pronouns
 import Linglib.Features.Person
-import Linglib.Phenomena.Agreement.Studies.Deal2024
+import Linglib.Studies.Deal2024
 
 /-!
 # Adamson & Zompì (2025): Polite Pronouns and the PCC

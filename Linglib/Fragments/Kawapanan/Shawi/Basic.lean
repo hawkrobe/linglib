@@ -33,7 +33,7 @@ preparation).
 
 This file imports only `Core/`. All theoretical analysis — the mapping
 of ergative distribution to a particular Agree configuration — lives in
-`Phenomena/Agreement/Studies/ClemDeal2024.lean`.
+`Studies/ClemDeal2024.lean`.
 -/
 
 namespace Fragments.Kawapanan.Shawi

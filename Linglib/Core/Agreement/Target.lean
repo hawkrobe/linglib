@@ -10,7 +10,7 @@ target, it shows agreement on all higher targets.
 
 This type is shared by gender typology (`Linglib/Typology/Gender.lean` and
 `Studies/Corbett1991.lean`) and number agreement
-(`Phenomena/Agreement/Studies/Corbett2000.lean`).
+(`Studies/Corbett2000.lean`).
 -/
 
 namespace Core

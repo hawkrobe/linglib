@@ -7,7 +7,7 @@ verbs least likely. If a language shows gender/number agreement on a lower
 target, it shows agreement on all higher targets.
 
 This type is shared by gender typology (`Phenomena/Gender/Typology.lean`)
-and number agreement (`Phenomena/Agreement/Studies/Corbett2000.lean`).
+and number agreement (`Studies/Corbett2000.lean`).
 -/
 
 namespace Core

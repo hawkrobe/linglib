@@ -38,7 +38,7 @@ the additional feature [±additive], also theory-layer.
 
 The full typological machinery (number systems, animacy profiles, agreement
 hierarchy, language data) remains in
-`Phenomena/Agreement/Studies/Corbett2000.lean`.
+`Studies/Corbett2000.lean`.
 
 -/
 
@@ -636,7 +636,7 @@ theorem ps3_dual_triple_excluded :
 
     Used by both @cite{cysouw-2009} (paradigmatic person-marking) and
     @cite{corbett-2000} (`NumberSystem.toNumberStage` bridge in
-    `Phenomena/Agreement/Studies/Corbett2000.lean`). -/
+    `Studies/Corbett2000.lean`). -/
 inductive NumberStage where
   /-- Undifferentiated number marking (singular = group unmarked). -/
   | N1

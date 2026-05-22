@@ -98,14 +98,14 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
   @cite{preminger-2014}, @cite{pancheva-zubizarreta-2018}).
 - `Theories/Morphology/DM/VocabSimple.lean` —
   the substrate: `Vocabulary`, `VocabEntry`, `makePersonVocab`.
-- `Phenomena/Agreement/Studies/Scott2023.lean` — parallel
+- `Studies/Scott2023Agreement.lean` — parallel
   application of the same DM/Agree machinery to Mam (where Infl's
   φ-probe is blocked in transitives).
 - `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean` —
   Voice/case-flavor side of the same author cluster's Mayan work.
 -/
 
-namespace Phenomena.Agreement.Studies.Preminger2014
+namespace Preminger2014
 
 open Fragments.Mayan (PersonNumber)
 open Fragments.Mayan.Kaqchikel
@@ -307,4 +307,4 @@ theorem ch7_arg4_form_distinctness_smoke_check :
     setBExponent .p2pl ≠ setBExponent .p3pl :=
   ⟨rfl, rfl, rfl, rfl, rfl, by decide, by decide, by decide, by decide⟩
 
-end Phenomena.Agreement.Studies.Preminger2014
+end Preminger2014
