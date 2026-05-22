@@ -195,9 +195,9 @@ than substrate. See project memory note `project_so_carrier_rho_projection.md`.
 The migration from the prior planar `TraceTree LIToken Nat` carrier landed
 at version 0.230.857 (Phase 0.5 substrate) + 0.230.858 (mathlib-canonical
 `DecidableEq` via `CommEqv`, no `LinearOrder` needed). See
-`docs/nonplanar-migration-plan.md` and `Linglib/Scratch/PreLiePlanarCheck.lean`
-(counterexample showing the §1.7 pre-Lie identity is FALSE on planar trees,
-the headline reason for nonplanarity).
+`Linglib/Scratch/PreLiePlanarCheck.lean` (counterexample showing the §1.7
+pre-Lie identity is FALSE on planar trees, the headline reason for
+nonplanarity).
 
 For LF composition, see `SyntacticObject.toLFTree`. -/
 abbrev SyntacticObject : Type := FreeCommMagma (LIToken ⊕ Nat)
