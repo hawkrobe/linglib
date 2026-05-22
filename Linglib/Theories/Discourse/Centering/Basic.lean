@@ -278,7 +278,7 @@ theorem cb_eq_none_iff [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E
     "The Optimization of Discourse Anaphora." Both substrates here use
     `List.argmax` from `Mathlib.Data.List.MinMax` as the underlying
     extremum-selection primitive; the bridge theorem connecting them
-    will live in `Phenomena/Reference/Studies/Beaver2004.lean` (a
+    will live in `Studies/Beaver2004.lean` (a
     future commit). The deliberate non-bridging follows mathlib's
     `PMF` vs `Measure` precedent: each substrate keeps its own
     vocabulary, with cross-framework identities anchored in the paper

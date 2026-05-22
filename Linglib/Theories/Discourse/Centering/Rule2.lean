@@ -17,7 +17,7 @@ distinguish three formulations of Rule 2:
   with @cite{brennan-friedman-pollard-1987}'s 4-way refinement:
   CON > RET > SSH > RSH (Smooth Shift = Cb stable as Cp; Rough Shift
   = Cb stable but ≠ Cp). The 4-way `BFPTransition` enum lives in
-  `Phenomena/Reference/Studies/PoesioEtAl2004.lean` (deferred per
+  `Studies/PoesioEtAl2004.lean` (deferred per
   CLAUDE.md "extract on second consumer" — Rule2BFP87 is currently
   the only substrate-level consumer; promote to `Transition.lean`
   when a second consumer arrives).
@@ -135,7 +135,7 @@ def Rule2Strube1998Preferred [DecidableEq E] [CfRankerOf E R] {U : Type}
     where Smooth Shift splits from Rough Shift on whether
     `CB(U_n) = CP(U_n)`). Per the audit's "extract on second consumer"
     discipline, the 4-way enum lives in
-    `Phenomena/Reference/Studies/PoesioEtAl2004.lean` as a `private
+    `Studies/PoesioEtAl2004.lean` as a `private
     structure` until a second consumer (Walker 1989, Brennan 1995,
     or other BFP-style algorithm) motivates promotion to substrate.
 

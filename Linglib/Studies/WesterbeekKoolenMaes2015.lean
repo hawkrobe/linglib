@@ -2,7 +2,7 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.Channel
 import Linglib.Core.Prototype
-import Linglib.Phenomena.Reference.Studies.DaleReiter1995
+import Linglib.Studies.DaleReiter1995
 
 /-!
 # @cite{westerbeek-koolen-maes-2015}

@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.GriceanMaxims
-import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
-import Linglib.Phenomena.Reference.Studies.DaleReiter1995
+import Linglib.Studies.SedivyEtAl1999
+import Linglib.Studies.DaleReiter1995
 
 /-!
 # @cite{engelhardt-etal-2006}

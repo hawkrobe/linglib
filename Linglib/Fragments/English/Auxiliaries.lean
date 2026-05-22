@@ -42,7 +42,7 @@ the last audit):
   Typology}`, `Phenomena/Morphology/Studies/ZwickyPullum1983`
 - Argument structure / control: `Phenomena/ArgumentStructure/Studies/
   Osborne2019`, `Studies/Osborne2019Control`
-- Reference: `Phenomena/Reference/Studies/Percus2000` (via modal-adverb
+- Reference: `Studies/Percus2000` (via modal-adverb
   side, indirectly)
 
 To find every claim made about a particular entry, grep for

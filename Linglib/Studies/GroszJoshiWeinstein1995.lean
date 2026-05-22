@@ -4,10 +4,10 @@ import Linglib.Theories.Discourse.Centering.Rule1
 import Linglib.Theories.Discourse.Centering.Rule2
 import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Features.Accessibility
-import Linglib.Phenomena.Reference.Studies.Sidner1983
-import Linglib.Phenomena.Reference.Studies.Ariel2001
-import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
-import Linglib.Phenomena.Reference.Studies.KwonLee2026
+import Linglib.Studies.Sidner1983
+import Linglib.Studies.Ariel2001
+import Linglib.Studies.KehlerRohde2013
+import Linglib.Studies.KwonLee2026
 
 /-!
 # @cite{grosz-joshi-weinstein-1995}: Centering Theory
@@ -445,7 +445,7 @@ theorem cb_marker_is_high_accessibility :
 
     - Sidner: agent-position pronoun → actor focus (Carl). See
       `Sidner1983.resolvePronoun` and the focus-state computation in
-      `Phenomena/Reference/Studies/Sidner1983.lean`.
+      `Studies/Sidner1983.lean`.
     - GJW: pick the resolution that yields the higher-ranked Rule-2
       transition. With "he" = Jeff the Cb is preserved (Jeff → Jeff)
       but the matrix subject "I" becomes the new Cp, so this is a

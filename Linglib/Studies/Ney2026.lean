@@ -92,7 +92,7 @@ Insinuative reference is distinct from:
 @cite{ney-2026} §5 proposes reserving "insinuation" for the Camp-style
 implicature phenomenon and using "insinuative speech" as the broader
 deniability-preserving category encompassing all four. This file's
-namespace is `Phenomena.Reference.Studies.Ney2026`; a future
+namespace is `Ney2026`; a future
 `Phenomena.InsinuativeSpeech.*` superclass with sibling Camp / Saul
 formalizations is the obvious organising principle but is not built
 here.
@@ -136,7 +136,7 @@ the §5 conclusion proposes the broader "insinuative speech" terminology.
 @cite{king-2014b} is its considered restatement.
 -/
 
-namespace Phenomena.Reference.Studies.Ney2026
+namespace Ney2026
 
 open Semantics.Reference.Basic Core.CommonGround
 
@@ -863,4 +863,4 @@ argument. A full formalization distinguishing de re grasp
 substrate not yet built; the structural requirement here is sufficient
 for what Ney's argument needs at the formal level. -/
 
-end Phenomena.Reference.Studies.Ney2026
+end Ney2026

@@ -4,7 +4,7 @@ import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.PropertyDomain
 import Linglib.Paradigms.VisualWorld
 import Linglib.Theories.Pragmatics.RSA.Channel
-import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
+import Linglib.Studies.SedivyEtAl1999
 
 /-!
 # @cite{ronderos-etal-2024}

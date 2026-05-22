@@ -1,8 +1,8 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Linglib.Features.Accessibility
-import Linglib.Phenomena.Reference.Studies.Ariel2001
-import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
+import Linglib.Studies.Ariel2001
+import Linglib.Studies.KehlerRohde2013
 import Linglib.Fragments.Korean.Pronouns
 
 /-!
@@ -710,7 +710,7 @@ theorem pah_silent_on_fullNP :
 -- § 6c. Bridge to AccessibilityAssessment: What Each Experiment Manipulates
 -- ════════════════════════════════════════════════════
 
-open Phenomena.Reference.Studies.Ariel2001 (AccessibilityAssessment)
+open Ariel2001 (AccessibilityAssessment)
 
 /-- Exp 1: a single antecedent in same-clause topic position. Maximally
     accessible — no competition, tight unity, recently mentioned, topical.

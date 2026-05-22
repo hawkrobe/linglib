@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.GriceanMaxims
-import Linglib.Phenomena.Reference.Studies.DaleReiter1995
+import Linglib.Studies.DaleReiter1995
 
 /-!
 # @cite{qing-franke-2015}

@@ -3,7 +3,7 @@ import Linglib.Core.Discourse.Coherence
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
-import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
+import Linglib.Studies.KehlerRohde2013
 
 /-!
 # @cite{rosa-arnold-2017}
@@ -402,7 +402,7 @@ open KehlerRohde2013
 
     **Substrate-level explanation**:
     `KehlerRohde2013.cb_topichood_dissociation_under_voice` (§12 of
-    `Phenomena/Reference/Studies/KehlerRohde2013.lean`) exhibits the
+    `Studies/KehlerRohde2013.lean`) exhibits the
     structural reason: under Kameyama's GR ranker, Centering's `cb` is
     voice-blind, so any pronominalization gradient between active and
     passive subjects must be carried by a signal external to `cb` —

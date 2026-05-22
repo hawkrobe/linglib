@@ -32,7 +32,7 @@ by cognitive status. Ariel argues (her chapter pp. 62-65) that
 `AccessibilityLevel`'s 18 tiers are better empirically supported than
 GHZ-6's 6 tiers; both retained as substrate because they serve
 different consumer profiles. The `GivennessStatus.toAccessibility`
-projection (in `Phenomena/Reference/Studies/Ariel2001.lean`) bridges
+projection (in `Studies/Ariel2001.lean`) bridges
 them.
 
 This module connects `Phenomena/Reference/` (form choice) to

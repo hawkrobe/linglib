@@ -6,8 +6,8 @@ import Linglib.Theories.Discourse.Centering.Transition
 import Linglib.Theories.Discourse.Centering.Coherence
 import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Theories.Discourse.Centering.Instances.InformationStatus
-import Linglib.Phenomena.Reference.Studies.Sidner1983
-import Linglib.Phenomena.Reference.Studies.Beaver2004
+import Linglib.Studies.Sidner1983
+import Linglib.Studies.Beaver2004
 
 /-!
 # @cite{poesio-stevenson-eugenio-hitzeman-2004}: Centering as a Parametric Theory
@@ -107,7 +107,7 @@ type-changing axes, not the bookkeeping ones" recommendation.
 - **The OT-bridge to `Core.Constraint.OT.Tableau.optimal`** per
   Beaver 2004. PSDH §3.1 fn 12 endorse Beaver's OT reformulation
   of Centering, but the bridge theorem belongs in
-  `Phenomena/Reference/Studies/Beaver2004.lean` (queued as a
+  `Studies/Beaver2004.lean` (queued as a
   separate commit), per mathlib's `PMF` vs `Measure` precedent.
 -/
 
@@ -212,7 +212,7 @@ theorem u227_to_u229_violates_strong_c1 :
     focus) co-occurring with an inanimate one (discourse focus).
 
     The `Sidner1983.FocusState` two-slot architecture (discourse focus
-    + actor focus) at `Phenomena/Reference/Studies/Sidner1983.lean`
+    + actor focus) at `Studies/Sidner1983.lean`
     accommodates exactly these cases — they're not "two CBs" in
     Sidner's framework, they're "the AF and the DF, which by Sidner's
     architecture can coincide or differ." -/
@@ -317,7 +317,7 @@ theorem psdh_two_cb_witnesses_sidner_two_foci :
     mapping `CoherenceRelation → Transition`, but doesn't model the
     instructional/temporal connectives that carry (23)'s coherence.
     A future commit could extend the substrate or add a
-    `Phenomena/Reference/Studies/Knott2001.lean` to formalize PSDH's
+    `Studies/Knott2001.lean` to formalize PSDH's
     cited finding that relational accounts converge with entity
     coherence rather than displacing it. -/
 
@@ -420,7 +420,7 @@ theorem is_ranker_picks_hearerOld_as_cp :
     BFP-equivalence witnesses on his examples (12) and (2), and the
     PRO-TOP demotion (Beaver §4.1) that fixes the BFP Rule-1
     overprediction PSDH §3.1 fn 12 explicitly cite — lives in
-    `Phenomena/Reference/Studies/Beaver2004.lean`.
+    `Studies/Beaver2004.lean`.
 
     Three of Beaver's six constraints are LITERAL RESTATEMENTS of
     existing Centering primitives (PRO-TOP via `Rule1GJW95`,

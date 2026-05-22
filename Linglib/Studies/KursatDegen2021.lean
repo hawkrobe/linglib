@@ -1,8 +1,8 @@
 import Linglib.Features.PropertyDomain
 import Linglib.Theories.Pragmatics.RSA.Channel
-import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
-import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
-import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
+import Linglib.Studies.DegenEtAl2020
+import Linglib.Studies.WaldonDegen2021
+import Linglib.Studies.EngelhardtEtAl2006
 
 /-!
 # @cite{kursat-degen-2021}

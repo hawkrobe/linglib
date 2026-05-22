@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Phenomena.Generics.KindReference
-import Linglib.Phenomena.Reference.Studies.Longobardi2001
+import Linglib.Studies.Longobardi2001
 
 /-! # Guerrini (2026): Distributive Kind Predication
 @cite{guerrini-2026}

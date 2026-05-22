@@ -38,7 +38,7 @@ narrative and what discourse functions the shift serves; Schlenker's
 form-meaning mismatch derivable.
 
 The general-indexicals content of @cite{schlenker-2003} lives at
-`Phenomena/Reference/Studies/Schlenker2003.lean`.
+`Studies/Schlenker2003.lean`.
 
 ## Derivation Chain
 
@@ -313,7 +313,7 @@ theorem schlenker_origin_supports_abusch_double_access
     the discrimination uniformly across `Res` types — so the
     parallel with @cite{anand-nevins-2004}'s Kaplan-compliant vs
     shifted indexicals at `Res = Agent`
-    (`Phenomena/Reference/Studies/AnandNevins2004.lean`) is
+    (`Studies/AnandNevins2004.lean`) is
     substrate-level visible.
 
     **Caveat on the underlying formalization**: the tower-depth

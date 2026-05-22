@@ -30,7 +30,7 @@ For this reason, this file does **not** instantiate
 `Discourse.Centering.CfRanker`. Sidner's account is a separate
 formalization, structurally orthogonal to the Centering substrate.
 The cross-framework comparison lives in
-`Phenomena/Reference/Studies/GroszJoshiWeinstein1995.lean` §8 (the
+`Studies/GroszJoshiWeinstein1995.lean` §8 (the
 chronologically-later paper, per linglib's chronological-dependency
 convention), which imports this file and proves the disagreement on
 GJW's example (34).

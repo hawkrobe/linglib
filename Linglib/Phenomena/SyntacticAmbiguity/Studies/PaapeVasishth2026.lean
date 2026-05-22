@@ -48,7 +48,7 @@ bimodality (@cite{van-schijndel-linzen-2021}, @cite{huang-etal-2024}).
 - `Theories/Semantics/Lexical/Determiner/Definite.lean`: Uniqueness
   presupposition of `the_uniq` grounds the context manipulation — bare
   definites fail uniqueness in non-unique contexts, motivating RC modifiers (§ 9)
-- `Phenomena/Reference/Studies/SedivyEtAl1999.lean`: Shared mechanism —
+- `Studies/SedivyEtAl1999.lean`: Shared mechanism —
   modifier informativity given a contrast set drives both contrastive
   inference (Sedivy) and context-sensitive attachment (§ 9)
 -/

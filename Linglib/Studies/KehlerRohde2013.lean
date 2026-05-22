@@ -598,7 +598,7 @@ theorem contiguity_class_splits :
     dissociation theorem `cb_topichood_dissociation_under_voice` below
     is the structural reason why
     `RosaArnold2017.independence_violated_bridges_to_KR`
-    (`Phenomena/Reference/Studies/RosaArnold2017.lean`) finds K&R's
+    (`Studies/RosaArnold2017.lean`) finds K&R's
     Independence Hypothesis empirically *violatable*: because
     `cb` cannot detect the voice manipulation, any pronominalization
     asymmetry between active and passive subjects must be carried by a

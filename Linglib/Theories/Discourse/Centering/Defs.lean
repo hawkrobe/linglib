@@ -19,7 +19,7 @@ The shape of Centering as a framework:
   by `GrammaticalRole` (@cite{kameyama-1986}) in the `Instances/`
   module. @cite{sidner-1979}'s focus-based account does not fit a
   ranker shape and is formalized as its own architecture in
-  `Phenomena/Reference/Studies/Sidner1983.lean`.
+  `Studies/Sidner1983.lean`.
 
 * `[CfRankerOf E R]` provides the per-realization rank used to order
   Cf. Higher rank = more prominent. The simpler `[CfRanker R]` (rank
@@ -62,7 +62,7 @@ namespace Discourse.Centering
 
     Earlier work (@cite{sidner-1979}, @cite{sidner-1983}) used a
     different focus architecture that does not fit a single ranking
-    scheme — see `Phenomena/Reference/Studies/Sidner1983.lean` for
+    scheme — see `Studies/Sidner1983.lean` for
     that formalization. -/
 class CfRanker (R : Type) where
   rank : R → Nat

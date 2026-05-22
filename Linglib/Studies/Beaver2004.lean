@@ -236,7 +236,7 @@ def cotRanking [DecidableEq E] [CfRankerOf E R]
 
 /-! These two theorems are the substrate-level structural backing for
     the cross-framework finding worked out in
-    `Phenomena/Reference/Studies/PoesioEtAl2004.lean §5.1`: Beaver's
+    `Studies/PoesioEtAl2004.lean §5.1`: Beaver's
     COT cannot distinguish two candidates whose `cb` agrees, and ALIGN
     additionally consults `cp`. Per-example facts in §5.1 (the
     `decide`-checked Nat comparisons on `u227`/`u229`) follow as

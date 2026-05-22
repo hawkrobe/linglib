@@ -4,8 +4,8 @@ import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Core.Discourse.Coherence
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.Reference.Studies.RosaArnold2017
-import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
+import Linglib.Studies.RosaArnold2017
+import Linglib.Studies.KehlerRohde2013
 
 /-!
 # Solstad & Bott (2022): Implicit causality and consequentiality for psych verbs

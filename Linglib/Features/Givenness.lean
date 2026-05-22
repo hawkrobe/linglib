@@ -30,7 +30,7 @@ This file provides the substrate for both:
 
 - `GivennessStatus` (GHZ-6): `inFocus | activated | familiar |
   uniquelyIdentifiable | referential | typeIdentifiable`. The full
-  hierarchy, promoted from `Phenomena/Reference/Studies/Ariel2001.lean`
+  hierarchy, promoted from `Studies/Ariel2001.lean`
   (where it was originally defined for the GHZ-vs-Ariel comparison) so
   it can be consumed across `Theories/` and `Features/`.
 
@@ -79,7 +79,7 @@ theorems, where AccessibilityLevel's 18 tiers can be unwieldy.
 `Features.AccessibilityLevel` (@cite{ariel-2001}) is the
 empirically-better-supported sibling: 18 tiers of NP-form-marking
 with informativity, rigidity, and attenuation criteria. Ariel's `toAccessibility` projection from GHZ-6
-to AccessibilityLevel lives in `Phenomena/Reference/Studies/Ariel2001.lean`
+to AccessibilityLevel lives in `Studies/Ariel2001.lean`
 (Ariel-specific bridge). Use AccessibilityLevel when finer distinctions
 matter (proximate vs distal demonstratives; clitic vs unstressed vs zero
 pronouns); use GivennessStatus when the IS-literature 6-tier shape is
@@ -116,7 +116,7 @@ namespace Features
     `referential`          = indefinite this N
     `typeIdentifiable`     = a N
 
-    Promoted from `Phenomena/Reference/Studies/Ariel2001.lean` where it
+    Promoted from `Studies/Ariel2001.lean` where it
     was originally defined for the GHZ-vs-Ariel-accessibility
     comparison. The Ariel-specific projection
     (`GivennessStatus.toAccessibility`) stays in `Ariel2001.lean`. -/

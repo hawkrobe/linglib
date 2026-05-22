@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Incremental
 import Linglib.Paradigms.VisualWorld
-import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
+import Linglib.Studies.SedivyEtAl1999
 
 /-!
 # @cite{cohn-gordon-goodman-potts-2019} — Incremental Iterated Response Model

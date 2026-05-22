@@ -41,7 +41,7 @@ stimuli become one-liner instances.
 
 ## Concrete instantiation
 
-`Phenomena/Reference/Studies/FrankGoodman2012.lean` instantiates these
+`Studies/FrankGoodman2012.lean` instantiates these
 theorems at the paper's 3-object × 4-feature stimulus. Each of the 4 paper
 findings is a one-liner corollary.
 -/

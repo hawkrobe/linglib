@@ -115,7 +115,7 @@ def AccessibilityLevel.all : List AccessibilityLevel :=
 
 end Features
 
-namespace Phenomena.Reference.Studies.Ariel2001
+namespace Ariel2001
 
 open Features.Prominence (DefinitenessLevel)
 open Features
@@ -241,7 +241,7 @@ theorem strength_coarsening_agrees :
 -- `toAccessibility` projection below remains here as the
 -- study-specific bridge.
 
-end Phenomena.Reference.Studies.Ariel2001
+end Ariel2001
 
 namespace Features
 
@@ -269,7 +269,7 @@ def GivennessStatus.toAccessibility : GivennessStatus → AccessibilityLevel
 
 end Features
 
-namespace Phenomena.Reference.Studies.Ariel2001
+namespace Ariel2001
 
 open Features.Prominence (DefinitenessLevel)
 open Features
@@ -332,4 +332,4 @@ theorem predictedForm_uses_accessibility :
     NextMentionBias.low.predictedForm = .fullName :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Reference.Studies.Ariel2001
+end Ariel2001
