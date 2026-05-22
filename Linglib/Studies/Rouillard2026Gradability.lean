@@ -52,7 +52,7 @@ to `Boundedness.closed`/`.open_`, yielding identical licensing predictions.
 
 -/
 
-namespace Phenomena.Gradability.CrossDomainLicensingBridge
+namespace Rouillard2026
 
 open Core (WorldTimeIndex)
 
@@ -165,4 +165,4 @@ theorem epistemic_agrees_with_qua :
     LicensingPipeline.isLicensed epistemicBoundedness =
     LicensingPipeline.isLicensed MereoTag.qua := rfl
 
-end Phenomena.Gradability.CrossDomainLicensingBridge
+end Rouillard2026

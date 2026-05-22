@@ -16,7 +16,7 @@ is to provide the typology *enum as a substrate-adjacent primitive*
 that other gradability study files can reference by name —
 specifically:
 
-- `Phenomena/Gradability/Studies/Tham2025.lean` (already in codebase;
+- `Studies/Tham2025.lean` (already in codebase;
   *cracked* belongs to AbsPart, the closest sibling class to
   *clean*/*dirty*/*salty* per Solt's classification)
 - A future `Lasersohn2005`/`Stephenson2007`/`Kennedy2013` study file

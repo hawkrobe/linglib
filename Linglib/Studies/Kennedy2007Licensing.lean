@@ -28,7 +28,7 @@ and Phenomena data (`closurePuzzle`, `completelyModifier`).
 
 -/
 
-namespace Phenomena.Gradability.Kennedy2007
+namespace Kennedy2007Licensing
 
 -- ════════════════════════════════════════════════════
 -- Empirical Data (@cite{kennedy-2007})
@@ -402,18 +402,18 @@ def licenses : DegreeModifierType → Core.Scale.Boundedness → Bool
   | .intensifier, _ => true
   | .measurePhrase, _ => true
 
-end Phenomena.Gradability.Kennedy2007
+end Kennedy2007Licensing
 
 -- ════════════════════════════════════════════════════
 -- Licensing Bridge Theorems
 -- ════════════════════════════════════════════════════
 
-namespace Phenomena.Gradability.KennedyLicensingBridge
+namespace Kennedy2007Licensing.Bridge
 
 open Semantics.Gradability
 open Fragments.English.Predicates.Adjectival
 open Core.Scale
-open Phenomena.Gradability.Kennedy2007
+open Kennedy2007Licensing
 
 -- ════════════════════════════════════════════════════
 -- § 1. Fragment → DirectedMeasure Licensing
@@ -617,4 +617,4 @@ theorem closurePuzzle_via_matrix :
     licenses .proportional .open_ = closurePuzzle.worksWithOpen :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Gradability.KennedyLicensingBridge
+end Kennedy2007Licensing.Bridge

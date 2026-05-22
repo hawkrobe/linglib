@@ -1352,19 +1352,19 @@ import Linglib.Phenomena.Generics.Studies.AsherPelletier2013
 import Linglib.Studies.Corbett1991
 import Linglib.Studies.Kramer2020
 import Linglib.Phenomena.Gradability.ComparisonClass
-import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
-import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024JoS
-import Linglib.Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
-import Linglib.Phenomena.Gradability.Studies.Bochnak2015
-import Linglib.Phenomena.Gradability.Studies.CobrerosEtAl2012
-import Linglib.Phenomena.Gradability.Studies.DelPinal2015
-import Linglib.Phenomena.Gradability.Studies.Fine1975
-import Linglib.Phenomena.Gradability.Studies.Kamp1975
-import Linglib.Phenomena.Gradability.Studies.Klein1980
-import Linglib.Phenomena.Gradability.Studies.Nouwen2024
-import Linglib.Phenomena.Gradability.Studies.Nouwen2024PMF
-import Linglib.Phenomena.Gradability.Studies.Partee2010
-import Linglib.Phenomena.Gradability.Studies.Rett2015
+import Linglib.Studies.AlexandropoulouGotzner2024
+import Linglib.Studies.AlexandropoulouGotzner2024JoS
+import Linglib.Studies.CarianiSantorioWellwood2024
+import Linglib.Studies.Bochnak2015
+import Linglib.Studies.CobrerosEtAl2012
+import Linglib.Studies.DelPinal2015
+import Linglib.Studies.Fine1975
+import Linglib.Studies.Kamp1975
+import Linglib.Studies.Klein1980
+import Linglib.Studies.Nouwen2024
+import Linglib.Studies.Nouwen2024PMF
+import Linglib.Studies.Partee2010
+import Linglib.Studies.Rett2015
 import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
 import Linglib.Phenomena.Comparison.Compare
@@ -1400,8 +1400,8 @@ import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Studies.EgreEtAl2023
 import Linglib.Studies.BeltramaSchwarz2024
 import Linglib.Studies.BeltramaSoltBurnett2022
-import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017PMF
-import Linglib.Phenomena.Gradability.Studies.BumfordRett2021
+import Linglib.Studies.LassiterGoodman2017PMF
+import Linglib.Studies.BumfordRett2021
 -- Phenomena: Intonation (prosodic hierarchy, catathesis, cross-linguistic comparison)
 import Linglib.Studies.BeckmanPierrehumbert1986
 -- Phenomena: Iconicity (sign language classifier predicates, viewpoints)
@@ -2577,7 +2577,7 @@ import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Theories.Semantics.Polarity.Operator
 import Linglib.Theories.Semantics.Presupposition.TriggerTypology
 -- Phenomena studies depending on Implicature/Alternatives/Exhaustification
-import Linglib.Phenomena.Gradability.Studies.Rett2015Implicature
+import Linglib.Studies.Rett2015Implicature
 import Linglib.Phenomena.Plurals.Studies.BaleKhanjian2014
 import Linglib.Phenomena.Plurals.Studies.BarLev2021
 import Linglib.Phenomena.Plurals.Studies.Enguehard2024
@@ -2652,19 +2652,19 @@ import Linglib.Phenomena.Dialogue.Studies.PurverGinzburg2004
 import Linglib.Phenomena.Quantification.Studies.Steedman2000
 import Linglib.Phenomena.Negation.Studies.TesslerFranke2020PMF
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
-import Linglib.Phenomena.Gradability.Studies.TesslerGoodman2022
-import Linglib.Phenomena.Gradability.Studies.Horn1984
-import Linglib.Phenomena.Gradability.Studies.Kennedy2007Licensing
-import Linglib.Phenomena.Gradability.Studies.Morzycki2009
-import Linglib.Phenomena.Gradability.Studies.Rouillard2026
-import Linglib.Phenomena.Gradability.Studies.DAmbrosioHedden2024
-import Linglib.Phenomena.Gradability.Studies.Sassoon2013
-import Linglib.Phenomena.Gradability.Studies.Solt2018Multidim
-import Linglib.Phenomena.Gradability.Studies.Solt2018Proportional
-import Linglib.Phenomena.Gradability.Studies.Tham2025
-import Linglib.Phenomena.Gradability.Studies.Beltrama2025
-import Linglib.Phenomena.Gradability.Studies.WaldonEtAl2023
-import Linglib.Phenomena.Gradability.Studies.RudolphKocurek2024
+import Linglib.Studies.TesslerGoodman2022
+import Linglib.Studies.Horn1984
+import Linglib.Studies.Kennedy2007Licensing
+import Linglib.Studies.Morzycki2009
+import Linglib.Studies.Rouillard2026
+import Linglib.Studies.DAmbrosioHedden2024
+import Linglib.Studies.Sassoon2013
+import Linglib.Studies.Solt2018Multidim
+import Linglib.Studies.Solt2018Proportional
+import Linglib.Studies.Tham2025
+import Linglib.Studies.Beltrama2025
+import Linglib.Studies.WaldonEtAl2023
+import Linglib.Studies.RudolphKocurek2024
 import Linglib.Studies.WaldonDegen2021
 import Linglib.Studies.SchlotterbeckWang2023
 import Linglib.Studies.Elbourne2013

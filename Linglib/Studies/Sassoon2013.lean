@@ -48,7 +48,7 @@ predictions are our addition for verification purposes.
 
 ## Cross-framework refutations using `MultidimAdj`
 
-`Phenomena/Gradability/Studies/Tham2025.lean §12` constructs
+`Studies/Tham2025.lean §12` constructs
 `crackedAsConjunctive`/`Disjunctive`/`Mixed` as concrete `MultidimAdj`
 instances and proves `no_cracked_multidimAdj_satisfies_both`: no
 `DimensionBindingType` choice satisfies both Tham's §3.2.1 simple-

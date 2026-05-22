@@ -70,7 +70,7 @@ All qualitative Goldilocks predictions are preserved.
 -- §1. Empirical Data (§2)
 -- ============================================================================
 
-namespace Phenomena.Gradability.Intensifiers
+namespace Nouwen2024.Intensifiers
 
 open Features (EvaluativeValence)
 
@@ -588,7 +588,7 @@ theorem antonym_pairs_resolve :
       | none => true) = true := by
   native_decide
 
-end Phenomena.Gradability.Intensifiers
+end Nouwen2024.Intensifiers
 
 -- ============================================================================
 -- §2. RSA Model

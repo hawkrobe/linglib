@@ -132,7 +132,7 @@ theorem degree_delineations_are_linear {E D : Type*} [LinearOrder D]
     comparison classes). This is impossible for any degree-induced
     delineation, since degree orderings are asymmetric.
 
-    See `Phenomena/Gradability/Studies/Klein1980.lean` for the empirical
+    See `Studies/Klein1980.lean` for the empirical
     motivation and the concrete "clever" witness. Here we prove the
     theoretical separation at the framework level. -/
 

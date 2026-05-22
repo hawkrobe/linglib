@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.Implicature.Markedness
-import Linglib.Phenomena.Gradability.Studies.Rett2015
+import Linglib.Studies.Rett2015
 
 /-!
 # Bridge: NeoGricean Alternatives → M-Alternative Verification
@@ -14,7 +14,7 @@ Tests that the M-alternative framework correctly identifies:
 
 -/
 
-namespace Phenomena.Gradability.Implicature_AlternativesBridge
+namespace Horn1984
 
 open Implicature.Markedness
 
@@ -62,4 +62,4 @@ theorem tall_is_not_marked_in_equative :
   native_decide
 
 
-end Phenomena.Gradability.Implicature_AlternativesBridge
+end Horn1984

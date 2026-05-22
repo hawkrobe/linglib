@@ -3,8 +3,8 @@ import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Theories.Semantics.Degree.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.Gradability.Studies.Sassoon2013
-import Linglib.Phenomena.Gradability.Studies.Solt2018Multidim
+import Linglib.Studies.Sassoon2013
+import Linglib.Studies.Solt2018Multidim
 import Linglib.Phenomena.ArgumentStructure.Studies.BeaversKoontzGarboden2020
 import Linglib.Core.Scales.Scale
 
@@ -612,7 +612,7 @@ theorem crack_refutes_strict_hkl_matrix :
 -- ════════════════════════════════════════════════════
 
 /-! @cite{kennedy-2007}'s `closedAdj_licensed` substrate (consumed in
-    `Phenomena/Gradability/Studies/Kennedy2007Licensing.lean` for *full*,
+    `Studies/Kennedy2007Licensing.lean` for *full*,
     *wet*, *dry*, *straight*) extends to disturbance adjectives without
     modification. The convergence at `Boundedness` is the partner of the
     §9 divergence at `VendlerClass`: same substrate, different
@@ -654,7 +654,7 @@ theorem all_disturbance_pipeline_licensed :
     `.conjunctive` (*healthy* — all dimensions), `.disjunctive` (*sick*
     — some dimension), or `.mixed` (*intelligent* — context-dependent).
     That apparatus is in
-    `Phenomena/Gradability/Studies/Sassoon2013.lean` (`MultidimAdj`).
+    `Studies/Sassoon2013.lean` (`MultidimAdj`).
 
     Tham §3.2.1 + §3 (ex. 20a), TAKEN TOGETHER, yield a tension under
     Sassoon's framework: in the SAME context (one host entity with one
@@ -955,7 +955,7 @@ theorem tham_spatial_normalization_distinguishes_what_waldon_does_not :
 -- § 16. Cross-paper engagement: Solt 2018 SuB reciprocal bridge
 -- ════════════════════════════════════════════════════
 
-/-! Solt 2018 SuB (`Phenomena/Gradability/Studies/Solt2018Proportional.lean`)
+/-! Solt 2018 SuB (`Studies/Solt2018Proportional.lean`)
     and Tham 2025 are the substrate's two consumers. Solt's
     `proportionalMeasure μ tot y` (her eq. 21) is
     `spatialNormalizedScore [1] [μ] (fun _ => μ tot) y` — the
@@ -1021,7 +1021,7 @@ theorem cracked_ie_max_vs_tham_lower_bound :
     experimental five-class subjectivity typology
     (RelNum/AbsTot/AbsPart/RelNo/Eval, Fig. 1, pp. 5–6). The class
     is encoded as a substrate-adjacent enum at
-    `Phenomena/Gradability/Studies/Solt2018Multidim.lean`.
+    `Studies/Solt2018Multidim.lean`.
 
     *cracked* belongs to the AbsPart class — partially-closed scale,
     physical-property domain, intermediate ordering subjectivity

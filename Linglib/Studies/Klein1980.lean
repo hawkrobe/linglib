@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Gradability.Delineation
-import Linglib.Phenomena.Gradability.Studies.Kamp1975
+import Linglib.Studies.Kamp1975
 
 /-!
 # Klein (1980): A Semantics for Positive and Comparative Adjectives

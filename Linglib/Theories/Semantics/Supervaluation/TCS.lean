@@ -120,7 +120,7 @@ vocabulary) results apply; phenomena requiring first-order quantifiers
 
 The 4-element worked example from p. 354 of the paper (in the body text
 immediately above footnote 4) lives in
-`Phenomena/Gradability/Studies/CobrerosEtAl2012.lean`. The asymmetric
+`Studies/CobrerosEtAl2012.lean`. The asymmetric
 reciprocation point with `LassiterGoodman2017PMF.lean::lg_literal_borderline_bounded`
 is addressed in that Studies file's §8-§9.
 -/
@@ -1017,7 +1017,7 @@ theorem st_two_step_valid (P : Pred) (a b c : D) :
     *verdict* question.
 
     A concrete instantiation on the paper's 4-element model is provided
-    in `Phenomena/Gradability/Studies/CobrerosEtAl2012.lean`. -/
+    in `Studies/CobrerosEtAl2012.lean`. -/
 
 /-- **TCS-vs-Supervaluation borderline-contradiction divergence (schema
     form)**: for any T-model `M`, predicate `P`, and individual `a` that

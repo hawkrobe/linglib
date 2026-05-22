@@ -55,7 +55,7 @@ witnesses the central cross-framework disagreement against
 
 -/
 
-namespace Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
+namespace CarianiSantorioWellwood2024
 
 open Semantics.Gradability.StatesBased
 open Semantics.Attitudes.Confidence
@@ -449,4 +449,4 @@ the impersonal `likely` semantics.
 
 -/
 
-end Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
+end CarianiSantorioWellwood2024

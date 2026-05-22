@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Gradability.Aggregation
-import Linglib.Phenomena.Gradability.Studies.Sassoon2013
+import Linglib.Studies.Sassoon2013
 
 /-!
 # @cite{dambrosio-hedden-2024}

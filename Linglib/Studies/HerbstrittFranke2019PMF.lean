@@ -14,7 +14,7 @@ threshold semantics + RSA over an urn scenario with N=10 balls. Cognition
 186 (2019) 50–71.
 
 This file formalises the **structural skeleton** of HF 2019 on mathlib's
-`PMF`, in the same key as `Phenomena/Gradability/Studies/LassiterGoodman2017PMF.lean`
+`PMF`, in the same key as `Studies/LassiterGoodman2017PMF.lean`
 — honest about what the file does and does not capture.
 
 ## Scope

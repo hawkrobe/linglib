@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Theories.Semantics.Supervaluation.TCS
-import Linglib.Phenomena.Gradability.Studies.CobrerosEtAl2012
+import Linglib.Studies.CobrerosEtAl2012
 
 /-!
 # Vagueness Theory Comparison
@@ -163,7 +163,7 @@ theorem supervaluationism_D_verified {Spec : Type*}
 
 /-! The TCS profile's claims are backed by formal proofs in
     `Theories/Semantics/Supervaluation/TCS.lean` (substrate) +
-    `Phenomena/Gradability/Studies/CobrerosEtAl2012.lean` (worked
+    `Studies/CobrerosEtAl2012.lean` (worked
     4-element example):
 
     - `allowsTruthValueGaps = true`: borderline cases exist and
@@ -179,7 +179,7 @@ theorem supervaluationism_D_verified {Spec : Type*}
     These verification theorems re-export the key results. -/
 
 open Semantics.Supervaluation.TCS
-open Phenomena.Gradability.Studies.CobrerosEtAl2012
+open CobrerosEtAl2012
 
 /-- TCS allows borderline contradictions: in the 4-element sorites
     model, borderline individuals tolerantly satisfy P ∧ ¬P. -/

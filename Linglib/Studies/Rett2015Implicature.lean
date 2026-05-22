@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Pragmatics.Implicature.Basic
 import Linglib.Theories.Pragmatics.Implicature.Markedness
 import Linglib.Theories.Semantics.Gradability.Basic
-import Linglib.Phenomena.Gradability.Studies.Rett2015
+import Linglib.Studies.Rett2015
 
 /-!
 # @cite{rett-2015} — Neo-Gricean Account of Evaluativity
@@ -53,7 +53,7 @@ Why do equatives show asymmetry (marked antonyms evaluative) but comparatives do
 §7. Bridge to empirical data (`Rett2015.lean`)
 -/
 
-namespace Phenomena.Gradability.Studies.Rett2015Implicature
+namespace Rett2015Implicature
 
 open Implicature
 open Implicature.Markedness
@@ -911,7 +911,7 @@ theorem complete_derivation_as_tall_as :
 -- §7  Bridge: NeoGricean predictions ↔ empirical data
 -- ============================================================================
 
-open Phenomena.Gradability.EvaluativityBridge
+open Rett2015.Evaluativity
 
 /--
 Convert this study's derivation prediction to the empirical data format.
@@ -972,4 +972,4 @@ theorem matches_question_short :
     predictionMatches (deriveEvaluativity .degreeQuestion .negative) question_short = true := by
   native_decide
 
-end Phenomena.Gradability.Studies.Rett2015Implicature
+end Rett2015Implicature

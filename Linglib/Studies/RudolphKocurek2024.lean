@@ -71,7 +71,7 @@ transitivity.
   (Klein ← Kennedy ← Measurement strict hierarchy)
 -/
 
-namespace Phenomena.Gradability.RudolphKocurek2024
+namespace RudolphKocurek2024
 
 open Semantics.Comparison.Metalinguistic
 
@@ -805,4 +805,4 @@ theorem strictlyBetter_la_ca_model4_false :
       (denotation interp₄ Ca₄ ord₄ .i .w0) = false := by native_decide
 
 
-end Phenomena.Gradability.RudolphKocurek2024
+end RudolphKocurek2024

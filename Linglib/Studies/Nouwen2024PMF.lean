@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.LatentOperators
-import Linglib.Phenomena.Gradability.Studies.Nouwen2024
-import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017PMF
+import Linglib.Studies.Nouwen2024
+import Linglib.Studies.LassiterGoodman2017PMF
 
 /-!
 # @cite{nouwen-2024} on mathlib `PMF` — chained-RSA structural shell

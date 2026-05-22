@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.LatentOperators
 import Linglib.Core.Probability.JointPosterior
-import Linglib.Phenomena.Gradability.Studies.CobrerosEtAl2012
+import Linglib.Studies.CobrerosEtAl2012
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
@@ -98,15 +98,15 @@ below as a deferred sorry.
 L&G's probabilistic resolution of the sorites and characterisation of
 borderline cases are *one* of several formalised positions in linglib:
 
-* `Phenomena/Gradability/Studies/Fine1975.lean` — supervaluation,
+* `Studies/Fine1975.lean` — supervaluation,
   borderline mapped to `Truth3.indet`, sorites resolved by super-falsity
   of the inductive premise.
 * `Linglib/Theories/Semantics/Supervaluation/TCS.lean` —
   Cobreros-Égré-Ripley-van-Rooij Tolerant/Strict/Classical, sorites
   resolved by non-transitivity of st-consequence.
-* `Phenomena/Gradability/Studies/Klein1980.lean` — comparison-class
+* `Studies/Klein1980.lean` — comparison-class
   delineation.
-* `Phenomena/Gradability/Studies/Kennedy2007Licensing.lean` —
+* `Studies/Kennedy2007Licensing.lean` —
   standard-of-comparison contextualism.
 
 Per linglib's "no bridge files" discipline, framework-comparison content
@@ -508,7 +508,7 @@ theorem lg_literal_borderline_bounded {S : Type*} (L1_latent : PMF S) (s : Set S
 
 The previous version of this engagement was docstring-prose-only: §7
 above mentions TCS as the framework that handles the data direction
-the literal rule misses, and `Phenomena/Gradability/Studies/CobrerosEtAl2012.lean`
+the literal rule misses, and `Studies/CobrerosEtAl2012.lean`
 docstring mentions L&G's `lg_literal_borderline_bounded` as the empirical
 challenge that motivated TCS — but no Lean theorem connected the two.
 
@@ -521,7 +521,7 @@ fractional). The abstract real-arithmetic version of the same gap is
 make the framework architecture difference visible at theorem level
 from both sides. -/
 
-open Phenomena.Gradability.Studies.CobrerosEtAl2012 (
+open CobrerosEtAl2012 (
   tcs_borderline_contradiction_categorical)
 open Semantics.Supervaluation.TCS (
   TModel IsBorderline Sat SatMode TCSAtom)

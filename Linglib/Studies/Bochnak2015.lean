@@ -88,7 +88,7 @@ paper-anchored here since the footnote is Bochnak-specific.
 
 -/
 
-namespace Phenomena.Gradability.Studies.Bochnak2015
+namespace Bochnak2015
 
 open Semantics.Gradability.Delineation
 
@@ -389,4 +389,4 @@ theorem cc_b_requires_shared_class :
     · intro ⟨_, h⟩
       exact Bool.noConfusion h
 
-end Phenomena.Gradability.Studies.Bochnak2015
+end Bochnak2015

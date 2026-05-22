@@ -95,7 +95,7 @@ inductive AdjectivalConstruction where
 /-- User-facing rendering, distinct from `Repr` (which prefixes the
 namespace). Consumed by Studies files that string-interpolate construction
 names into diagnostic messages — see e.g.
-`Phenomena/Gradability/Studies/Rett2015Implicature.lean`. -/
+`Studies/Rett2015Implicature.lean`. -/
 instance : ToString AdjectivalConstruction where
   toString
     | .positive => "positive"

@@ -29,7 +29,7 @@ Bedeutung 27*, pp. 674–692.
    `Theories/Semantics/Degree/Aggregation.lean`. Tham 2025 adds a
    third aggregation mode (`spatialNormalizedScore`, with a host-extent
    denominator) for physical disturbance predicates — see
-   `Phenomena/Gradability/Studies/Tham2025.lean §15` for the
+   `Studies/Tham2025.lean §15` for the
    substrate-level contrast (Waldon's domain has no host-extent
    denominator naturally; Tham's does).
 

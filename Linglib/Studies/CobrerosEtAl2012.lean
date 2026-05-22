@@ -60,7 +60,7 @@ discipline, the worked example was extracted here from a previous
 embedding inside `Theories/Semantics/Supervaluation/TCS.lean`.
 -/
 
-namespace Phenomena.Gradability.Studies.CobrerosEtAl2012
+namespace CobrerosEtAl2012
 
 open Semantics.Supervaluation.TCS
 open Core.Duality (Truth3)
@@ -379,7 +379,7 @@ theorem tcs_borderline_contradiction_categorical
     contrast theorem with two simultaneous halves, witnessing that TCS
     and any "literal rule = product of complementary probabilities"
     framework (paradigmatically L&G:
-    `Phenomena/Gradability/Studies/LassiterGoodman2017PMF.lean::lg_literal_borderline_bounded`)
+    `Studies/LassiterGoodman2017PMF.lean::lg_literal_borderline_bounded`)
     diverge structurally on borderline contradictions:
 
     - **TCS half**: the conjunction `P(a) ∧ ¬P(a)` is tolerantly TRUE
@@ -454,4 +454,4 @@ theorem sorites_chain_invalid :
   have hconc := h soritesModel hprem
   exact tolerant_extension.2.2.2 hconc
 
-end Phenomena.Gradability.Studies.CobrerosEtAl2012
+end CobrerosEtAl2012
