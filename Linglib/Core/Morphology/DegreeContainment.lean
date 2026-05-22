@@ -19,7 +19,7 @@ unattested. This file supplies the pattern type and the *ABA
 detector. What *explains* the generalization (Containment Hypothesis +
 late insertion + Elsewhere ordering) is theory-laden and lives
 elsewhere — see `Theories/Morphology/DM/ContainmentVI.lean` for the
-DM-flavored VI account and `Phenomena/Comparison/Studies/Bobaljik2012.lean`
+DM-flavored VI account and `Studies/Bobaljik2012.lean`
 for the bundle of CSG predictions and attested-pattern theorems.
 
 Scope restriction (cf. @cite{bobaljik-2012} on relative vs. absolute

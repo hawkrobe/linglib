@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Morphology.CategoryChanging
-import Linglib.Phenomena.Morphology.Studies.McNallyDeSwart2011
+import Linglib.Studies.McNallyDeSwart2011
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 
@@ -235,7 +235,7 @@ analyses M&deS's data. -/
 
 namespace MdSBridge
 
-open Phenomena.Morphology.Studies.McNallyDeSwart2011
+open McNallyDeSwart2011
 
 /-- The structural commitment each `InflectedAnalysis` rival makes about
     SWITCH placement, modelling Panagiotidis §6.7.1's geometric reasoning

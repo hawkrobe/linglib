@@ -24,7 +24,7 @@ here.
 meaning, Ch 3 paradigm organization (basic-derived, local markedness),
 Ch 4 lexical-derivational-inflectional CONTINUUM (which contradicts the
 substrate's discrete `MorphStatus` enum — flagged for future work), Part
-II aspect/tense/mood detail (Ch 6-9). See `Phenomena/Morphology/Studies/
+II aspect/tense/mood detail (Ch 6-9). See `Studies/
 HahnDegenFutrell2021.lean` for a downstream consumer of the §6 ordering
 data via `RespectsRelevanceHierarchy`. Ch 5's **dynamic network model**
 substrate now lives in `Theories/Morphology/UsageBased/Network.lean`;
@@ -32,7 +32,7 @@ substrate now lives in `Theories/Morphology/UsageBased/Network.lean`;
 
 -/
 
-namespace Phenomena.Morphology.Studies.Bybee1985
+namespace Bybee1985
 
 open Core.Morphology
 
@@ -370,4 +370,4 @@ theorem ch5_section6_anchor_lives_in_substrate :
     > (strongRegularized.map (·.tokenFreq)).sum * strongStillStrong.length :=
   strong_verbs_higher_frequency_than_regularized
 
-end Phenomena.Morphology.Studies.Bybee1985
+end Bybee1985

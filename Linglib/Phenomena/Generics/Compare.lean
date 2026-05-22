@@ -41,7 +41,7 @@ predict the observed cross-linguistic patterns.
 import Linglib.Theories.Semantics.Kinds.SortedOntology
 import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 import Linglib.Theories.Semantics.Kinds.MeaningPreservation
-import Linglib.Phenomena.Generics.Studies.Krifka2004
+import Linglib.Studies.Krifka2004
 import Linglib.Phenomena.Generics.KindReference
 
 namespace Phenomena.Generics.Compare
@@ -49,7 +49,7 @@ namespace Phenomena.Generics.Compare
 open Semantics.Kinds.SortedOntology
 open Semantics.Kinds.NMP
 open Semantics.Kinds.MeaningPreservation
-open Phenomena.Generics.Studies.Krifka2004
+open Krifka2004
 open Phenomena.Generics.KindReference
 
 -- @cite{carlson-1977}: The Foundation

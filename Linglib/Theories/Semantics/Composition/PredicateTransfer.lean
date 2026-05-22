@@ -29,7 +29,7 @@ type-shifting cannot commute with negation: ¬SHIFT(V) ≠ SHIFT(¬V). This
 non-commutativity proves that the shift must apply *before* other operators
 — i.e., locally. The same reasoning applies to γ.
 
-See `Phenomena/Generics/Studies/Cohen2013.lean` for the empirical
+See `Studies/Cohen2013.lean` for the empirical
 predictions and verification.
 -/
 

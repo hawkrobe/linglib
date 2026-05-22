@@ -1,8 +1,8 @@
 import Linglib.Theories.Processing.MemorySurprisal.InformationalFusion
 import Linglib.Theories.Processing.MemorySurprisal.Basic
-import Linglib.Phenomena.Morphology.Studies.AckermanMalouf2013
-import Linglib.Phenomena.Morphology.Studies.Bybee1985
-import Linglib.Phenomena.Morphology.Studies.BickelNichols2013
+import Linglib.Studies.AckermanMalouf2013
+import Linglib.Studies.Bybee1985
+import Linglib.Studies.BickelNichols2013
 import Linglib.Core.Morphology.MorphRule
 import Linglib.Core.Morphology.Paradigm
 
@@ -14,7 +14,7 @@ import Linglib.Core.Morphology.Paradigm
 @cite{rathi-hahn-futrell-2026} extend the **Memory-Surprisal Tradeoff**
 (@cite{hahn-degen-futrell-2021}, formalized in
 `Theories/Processing/MemorySurprisal/Basic.lean` and consumed in
-`Phenomena/Morphology/Studies/HahnDegenFutrell2021.lean`) from word/morpheme
+`Studies/HahnDegenFutrell2021Morphology.lean`) from word/morpheme
 order to four further morphological phenomena:
 
 1. **Polyexponence** — features fused into a single morpheme.
@@ -63,11 +63,11 @@ claims about the same data; this study file follows the paper but flags the
 distinction.
 -/
 
-namespace Phenomena.Morphology.Studies.RathiHahnFutrell2026
+namespace RathiHahnFutrell2026
 
 open Core.Morphology
 open Processing.MemorySurprisal.InformationalFusion
-open Phenomena.Morphology.Studies.Bybee1985
+open Bybee1985
 
 -- ============================================================================
 -- §1: Toy languages L_agg, L_fus, L_clustered (paper Tables 4, 5, 6)
@@ -467,9 +467,9 @@ ETH derives ordering from on-line processing efficiency rather than from
 underlying syntactic structure.
 
 A formal bridge `mirror_compatible_with_information_locality` would need
-`Phenomena/Morphology/Studies/Baker1985.lean` to import the memory-surprisal
+`Studies/Baker1985.lean` to import the memory-surprisal
 substrate. This is out of scope for the current study file; the existing
-Baker 1985 study exists as `Phenomena/Morphology/Studies/Baker1985.lean`
+Baker 1985 study exists as `Studies/Baker1985.lean`
 and should eventually carry such a bridge.
 
 ### DM Fusion ↔ informational fusion
@@ -493,4 +493,4 @@ share `Core.Morphology.ParadigmSystem` and route through
 `iComplexity ↔ MutualInfoProfile.totalInfo` is left for future work; the
 shared substrate makes such a bridge syntactically straightforward. -/
 
-end Phenomena.Morphology.Studies.RathiHahnFutrell2026
+end RathiHahnFutrell2026

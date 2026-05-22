@@ -112,7 +112,7 @@ of inflectional affixes, not clitics.
 
 -/
 
-namespace Phenomena.Morphology.ZwickyPullum1983
+namespace ZwickyPullum1983
 
 open Morphology.Diagnostics
 open Core.Morphology (MorphStatus SelectionDegree)
@@ -474,4 +474,4 @@ contracted negative form (Z&P criterion C). -/
 theorem nt_has_irregulars :
     (allAuxiliaries.filter (λ a => a.negIrregular)).length ≥ 5 := by native_decide
 
-end Phenomena.Morphology.ZwickyPullum1983
+end ZwickyPullum1983

@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Comparison.Studies.Kennedy1999
+import Linglib.Studies.Kennedy1999
 import Linglib.Theories.Semantics.Degree.Abstraction
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Syntax.Minimalist.DegreeMovement

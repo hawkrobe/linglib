@@ -19,7 +19,7 @@ import Linglib.Fragments.German.Morph
 import Linglib.Fragments.Spanish.Morph
 
 /-!
-# Phenomena.Morphology.Studies.BickelNichols2013
+# BickelNichols2013
 @cite{bickel-nichols-2013a} @cite{bickel-nichols-2013b} @cite{bickel-nichols-2013c}
 @cite{bickel-nichols-2001}
 
@@ -64,7 +64,7 @@ is structural and lives in `Core/Morphology/MorphProfile.lean §6`.
 
 set_option autoImplicit false
 
-namespace Phenomena.Morphology.Studies.BickelNichols2013
+namespace BickelNichols2013
 
 open Core.Morphology
 
@@ -168,4 +168,4 @@ theorem sample_type_exhaustive :
     (allMorphProfiles.filter (fun p => decide p.IsNonlinear)).length +
     (allMorphProfiles.filter (fun p => decide p.IsIsolating)).length := by decide
 
-end Phenomena.Morphology.Studies.BickelNichols2013
+end BickelNichols2013

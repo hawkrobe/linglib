@@ -58,11 +58,11 @@ This file adds the WALS-aggregate layer:
 The 18-language `MorphProfile` sample and the cross-chapter theorems built
 on it -- B&N orthogonality (concatenative × flexivity), agglutinating-vs-
 fusional partition, head-marking-implies-high-synthesis -- live in
-`Phenomena/Morphology/Studies/BickelNichols2013.lean`.
+`Studies/BickelNichols2013.lean`.
 
 @cite{ackerman-malouf-2013}'s `LanguageData` (10-language E/I-complexity
 sample) and the LCEC apparatus live in
-`Phenomena/Morphology/Studies/AckermanMalouf2013.lean`.
+`Studies/AckermanMalouf2013.lean`.
 -/
 
 set_option autoImplicit false

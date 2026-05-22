@@ -29,7 +29,7 @@ typology + superlative strategies). Fragment-importable; mirrors the
 
 - **`ComparativeType` is the WALS 2013 5-way typology.** Stassen's original
   1985 6-way typology (`separative | allative | locative | exceed |
-  conjoined | particle`) lives in `Phenomena/Comparison/Studies/Stassen1985.lean`
+  conjoined | particle`) lives in `Studies/Stassen1985.lean`
   because the 3-way adverbial split is paper-distinctive — the WALS update
   collapses it into a single `locational` for cross-linguistic indexing.
 - **`DegreeWordType` is Beck et al. 2009's three-way classification.** Other

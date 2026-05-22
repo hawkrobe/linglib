@@ -45,7 +45,7 @@ makes the Anderson Ch 5 typology directly Lean-checkable:
 
 ## Bybee 1985 motivation
 
-`Phenomena/Morphology/Studies/Bybee1985.lean:255-257` already encodes
+`Studies/Bybee1985.lean:255-257` already encodes
 Bybee's source distinction `personAgr / personAgrObj / genderAgr` but
 collapses all three onto flat `.agreement` in the substrate projection.
 With the parametric form, the projection round-trips:

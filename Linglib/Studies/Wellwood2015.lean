@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.ArgumentStructure.LF
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Phenomena.Comparison.Studies.Bresnan1973
+import Linglib.Studies.Bresnan1973
 
 /-!
 # @cite{wellwood-2015}: On the Semantics of Comparison Across Categories

@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Gradability.StatesBased
 import Linglib.Theories.Semantics.Attitudes.Confidence
 import Linglib.Theories.Semantics.ArgumentStructure.Defs
-import Linglib.Phenomena.Comparison.Studies.Wellwood2015
+import Linglib.Studies.Wellwood2015
 import Linglib.Core.Mereology
 import Linglib.Fragments.English.Predicates.Verbal
 

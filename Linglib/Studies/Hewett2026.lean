@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Syntax.Minimalist.Checking
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
-import Linglib.Phenomena.Morphology.Studies.Baker1985
+import Linglib.Studies.Baker1985
 
 /-!
 # Verbal Templates Can Influence L-Selection in Semitic

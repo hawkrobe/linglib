@@ -7,9 +7,9 @@ import Linglib.Typology.Comparison
 `ComparativeProfile` bundle for Russian (ISO `rus`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in
 `Linglib/Typology/Comparison.lean`. Cross-linguistic theorems consuming
-this profile live in `Phenomena/Comparison/Studies/Stassen2013.lean`. The
+this profile live in `Studies/Stassen2013Comparison.lean`. The
 @cite{stassen-1985} 6-way classification (where applicable) lives in
-`Phenomena/Comparison/Studies/Stassen1985.lean`.
+`Studies/Stassen1985.lean`.
 -/
 
 set_option autoImplicit false

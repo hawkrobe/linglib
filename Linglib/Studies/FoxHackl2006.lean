@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Comparison.Studies.Heim2001
+import Linglib.Studies.Heim2001
 import Linglib.Theories.Semantics.Degree.Abstraction
 
 /-!

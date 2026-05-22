@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Theories.Semantics.Plurality.Cumulativity
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Core.Logic.Truth3
-import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
+import Linglib.Studies.TesslerGoodman2019
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Studies.Longobardi2001
 
@@ -46,7 +46,7 @@ so DIST never applies, and they are limited to Bona Fide Genericity.
 ## Connection to Tessler & Goodman (2019)
 
 @cite{tessler-goodman-2019}'s threshold semantics for generics
-(see `Phenomena/Generics/Studies/TesslerGoodman2019.lean`)
+(see `Studies/TesslerGoodman2019.lean`)
 applies to the **Bona Fide Generic** parse: prevalence-based inference
 determines whether the Gen-quantified generalization is judged true.
 But on the **Distributive Kind Predication** parse, there is no Gen —

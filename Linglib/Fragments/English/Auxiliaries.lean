@@ -39,7 +39,7 @@ the last audit):
   CiardelliGuerrini2026, ImelGuoST2026, LiuRotter2025,
   RotterLiu2025Concord, YingEtAl2025}`
 - Auxiliary diagnostics: `Phenomena/AuxiliaryVerbs/{Diagnostics,
-  Typology}`, `Phenomena/Morphology/Studies/ZwickyPullum1983`
+  Typology}`, `Studies/ZwickyPullum1983`
 - Argument structure / control: `Studies/
   Osborne2019`, `Studies/Osborne2019Control`
 - Reference: `Studies/Percus2000` (via modal-adverb

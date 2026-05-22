@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Gradability.StatesBased
 import Linglib.Theories.Semantics.Attitudes.Confidence
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Modifiers.Adjectives
-import Linglib.Phenomena.Comparison.Studies.Wellwood2015
+import Linglib.Studies.Wellwood2015
 
 /-!
 # @cite{cariani-santorio-wellwood-2024}: Confidence Reports

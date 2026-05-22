@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Phenomena.Morphology.Studies.Baker1985
+import Linglib.Studies.Baker1985
 
 /-!
 # @cite{halle-marantz-1993}: Distributed Morphology and the Pieces of Inflection

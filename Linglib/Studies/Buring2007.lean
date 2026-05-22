@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Intervals
 import Linglib.Theories.Semantics.Degree.Little
-import Linglib.Phenomena.Comparison.Studies.VonStechow1984
+import Linglib.Studies.VonStechow1984
 
 /-!
 # Büring 2007: Cross-Polar Nomalies

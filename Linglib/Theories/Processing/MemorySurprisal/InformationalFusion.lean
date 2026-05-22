@@ -53,7 +53,7 @@ The paper proves three pure information-theoretic claims:
 
 This file states A1/A2/A3 as **abstract theorems on entropy** parameterized
 over distributions on `Fin n`-typed random variables. The Rathi 2026 study
-file (`Phenomena/Morphology/Studies/RathiHahnFutrell2026.lean`) instantiates
+file (`Studies/RathiHahnFutrell2026.lean`) instantiates
 them on the paper's toy languages L_agg, L_fus, L_clustered with concrete
 finite distributions, and proves the consequences computationally (`decide`
 on rationals, no `native_decide`).

@@ -40,7 +40,7 @@ the shared structure and the threshold-based alternative that eliminates it.
 **definitional** generics ("A madrigal is polyphonic"). Only descriptive
 generics are eliminable via threshold semantics; definitional generics
 restrict the interpretation index, not the world index. See
-`Phenomena/Generics/Studies/Krifka2013.lean` for the two-index formalization.
+`Studies/Krifka2013.lean` for the two-index formalization.
 
 ## Comparison with RSA Treatment
 
@@ -49,7 +49,7 @@ restrict the interpretation index, not the world index. See
 - Threshold is uncertain, inferred pragmatically
 - Prior over prevalence varies by property
 
-See `Phenomena/Generics/Studies/TesslerGoodman2019.lean` for the RSA account
+See `Studies/TesslerGoodman2019.lean` for the RSA account
 and `Comparisons/GenericSemantics.lean` for the formal comparison.
 
 -/
@@ -225,7 +225,7 @@ def normalDogSituation : NormalcyPredicate := λ s =>
 ## Related Theory
 
 - `Theories/Semantics/Lexical/Noun/Kind/NMP.lean` - Kind reference, bare plurals, DKP
-- `Phenomena/Generics/Studies/TesslerGoodman2019.lean` - RSA treatment of generics
+- `Studies/TesslerGoodman2019.lean` - RSA treatment of generics
 
 ## Empirical Data
 

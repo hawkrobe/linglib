@@ -65,7 +65,7 @@ paper-specific scaffolding for one analysis.
   the role of `RootFamily` for the colour and taste sub-paradigms;
   the connection is documented but not yet bridged formally (a
   `AdjEntry → RootFamily` adapter is plausible future work).
-* `Phenomena/Morphology/Studies/Panagiotidis2015.lean` engages this file
+* `Studies/Panagiotidis2015.lean` engages this file
   via a *diagnostic-alignment* bridge in its own §6 (`namespace MdSBridge`):
   Panagiotidis's §6.7.1 modifier-distribution diagnostic for SWITCH
   placement (geometric reasoning: SWITCH-dominated constituent projects
@@ -93,7 +93,7 @@ This is a genuine theoretical incompatibility surfaced by sharing
 substrate.
 -/
 
-namespace Phenomena.Morphology.Studies.McNallyDeSwart2011
+namespace McNallyDeSwart2011
 
 open Semantics.Kinds.Subkinds (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
@@ -115,7 +115,7 @@ forms (uninflected adjective, inflected adjective per M&deS §3.4, derived
 noun in `-heid`). The adapter `AdjEntry.toRootFamily` below makes the
 connection code-level, not just docstring. -/
 
-end Phenomena.Morphology.Studies.McNallyDeSwart2011
+end McNallyDeSwart2011
 
 /-- Lift a Dutch `AdjEntry` into a @cite{marantz-1997}-style
     `RootFamily` (`Phenomena/Morphology/CategoryChanging.lean`). The
@@ -139,7 +139,7 @@ def Fragments.Dutch.Adjectives.AdjEntry.toRootFamily
   { rootLabel := a.form
     forms := (a.form, .adjective) :: inflForms ++ nominalForms }
 
-namespace Phenomena.Morphology.Studies.McNallyDeSwart2011
+namespace McNallyDeSwart2011
 
 open Semantics.Kinds.Subkinds (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
@@ -658,4 +658,4 @@ incompatibility. This is exactly the kind of cross-framework engagement
 linglib is designed to surface.
 -/
 
-end Phenomena.Morphology.Studies.McNallyDeSwart2011
+end McNallyDeSwart2011

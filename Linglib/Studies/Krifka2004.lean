@@ -24,7 +24,7 @@ Kind readings require topic position.
 
 -/
 
-namespace Phenomena.Generics.Studies.Krifka2004
+namespace Krifka2004
 
 -- Type System: Properties with Number Arguments
 
@@ -179,4 +179,4 @@ theorem krifka_position_sensitive
     : krifkaDerivScrambled domain prop vp =
       existsShiftApply domain prop (KrifkaVP.neg vp) := rfl
 
-end Phenomena.Generics.Studies.Krifka2004
+end Krifka2004

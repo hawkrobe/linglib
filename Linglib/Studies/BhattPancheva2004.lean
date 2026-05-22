@@ -1,7 +1,7 @@
 import Linglib.Studies.Hoeksema1983
 import Linglib.Theories.Semantics.Polarity.Licensing
-import Linglib.Phenomena.Comparison.Studies.Heim2001
-import Linglib.Phenomena.Comparison.Studies.Bresnan1973
+import Linglib.Studies.Heim2001
+import Linglib.Studies.Bresnan1973
 import Linglib.Theories.Syntax.Minimalist.DegreeMovement
 import Linglib.Theories.Semantics.Degree.ThanClause
 import Linglib.Typology.PolarityItem
@@ -206,7 +206,7 @@ and the diagnostic apparatus needed to derive distinguishing predictions
 (binding minimal pairs in the style of Lechner 2004; idiom-chunk tests,
 scope diagnostics, ECM cases) is not encoded here. The disagreement is
 *formalized* in @cite{bhatt-takahashi-2011} (see
-`Phenomena/Comparison/Studies/BhattTakahashi2011.lean`), which supplies
+`Studies/BhattTakahashi2011.lean`), which supplies
 the binding battery (`englishBindingPairs` + `realizesReduction`) and
 reaches the conclusion that English in fact patterns with B&T's
 Reduction Analysis, vindicating Bresnan's clausal-source view against

@@ -57,7 +57,7 @@ inductive GenericForm where
 
     Formally, descriptive generics restrict the set of possible *worlds*
     (DES update), while definitional generics restrict the set of admissible
-    *interpretations* (DEF update). See `Phenomena/Generics/Studies/Krifka2013.lean`
+    *interpretations* (DEF update). See `Studies/Krifka2013.lean`
     for the two-index formalization. -/
 inductive GenericReading where
   /-- Descriptive: empirical generalization about the world.

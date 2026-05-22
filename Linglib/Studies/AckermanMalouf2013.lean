@@ -90,7 +90,7 @@ theorem transparent_iComplexity_zero {n : Nat} (ps : ParadigmSystem n String)
 
 end Morphology.WP
 
-namespace Phenomena.Morphology.AckermanMalouf2013
+namespace AckermanMalouf2013
 
 -- ============================================================================
 -- LanguageData Sample (Tables 2--3 of @cite{ackerman-malouf-2013})
@@ -343,4 +343,4 @@ theorem mazatec_violates_synonymyAvoidance :
     mazatec.avgCondEntropy > 0 := by
   unfold mazatec; norm_num
 
-end Phenomena.Morphology.AckermanMalouf2013
+end AckermanMalouf2013

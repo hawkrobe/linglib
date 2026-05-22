@@ -844,7 +844,7 @@ despite exceptions), with subkinds as the specification points. The
 `Theories.Semantics.Homogeneity.Basic` substrate docstring records this as a
 candidate spec-point instantiation.
 
-However, `Phenomena.Generics.Studies.Cohen1999` uses the word "homogeneity"
+However, `Cohen1999` uses the word "homogeneity"
 for a *different* equation: presupposition failure when conditional probabilities
 diverge across partitions of the domain. Cohen's homogeneity returns
 "undefined" via *presupposition failure*; Križ's returns `Truth3.indet` via

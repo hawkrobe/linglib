@@ -88,7 +88,7 @@ wiring this to a real Wilson interval (or the @cite{albright-hayes-2002}
 MGL implementation) is deferred.
 -/
 
-namespace Phenomena.Morphology.Studies.AlbrightHayes2003
+namespace AlbrightHayes2003
 
 open Paradigms.WugTest (Attestation HasFactor HasAttestation Rate
   NovelShowsFactorGradient NovelInvariantInFactor
@@ -410,4 +410,4 @@ theorem ah_excludes_singleDefaultRule
     h_inv cell_bredge False True ?_
   exact ⟨False.elim, fun h => h trivial⟩
 
-end Phenomena.Morphology.Studies.AlbrightHayes2003
+end AlbrightHayes2003

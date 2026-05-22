@@ -53,7 +53,7 @@ dichotomy Lean-checkable.
 - @cite{odonnell-2015} Ch 6–7.
 -/
 
-namespace Phenomena.Morphology.Studies.ODonnell2015
+namespace ODonnell2015
 
 open Morphology.FragmentGrammars Phenomena.Morphology.Productivity
 
@@ -331,7 +331,7 @@ theorem dmpcfgFromObserved_mapWeightPMF_prior_and_posterior_disagree
   ⟨dmpcfgFromObserved_mapWeightPMF_prior_lt,
    dmpcfgFromObserved_mapWeightPMF_lt_of_count_gap D h⟩
 
-end Phenomena.Morphology.Studies.ODonnell2015
+end ODonnell2015
 
 /-
 TODO(theorem) — bridge claims for future study files. Each is
@@ -353,7 +353,7 @@ as a Lean theorem.
   `FragmentGrammars/AdaptorGrammar.lean`); needs a richer toy grammar
   with `-able`/`-ity` rules and a stored `-ability` fragment.
 - `cross_study_albright_hayes` — productivity index alignment. Needs
-  a `suffixToAHRule` shim into `Phenomena/Morphology/Studies/AlbrightHayes2003.lean`'s
+  a `suffixToAHRule` shim into `Studies/AlbrightHayes2003.lean`'s
   `StochasticRule` substrate, then a `pseudo`-vs-`rawConfidence`
   comparison theorem.
 -/

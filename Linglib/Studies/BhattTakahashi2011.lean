@@ -1,5 +1,5 @@
-import Linglib.Phenomena.Comparison.Studies.BhattPancheva2004
-import Linglib.Phenomena.Comparison.Studies.Lechner2004
+import Linglib.Studies.BhattPancheva2004
+import Linglib.Studies.Lechner2004
 import Linglib.Theories.Syntax.Minimalist.DegreeMovement
 
 /-!

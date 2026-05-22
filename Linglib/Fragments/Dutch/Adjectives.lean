@@ -13,7 +13,7 @@ The schema records *consensus* Dutch grammatical metadata — distinctions
 that any theory of Dutch adjective semantics could consume. Theory- and
 paper-specific apparatus (the `Pasp` relational denotation, trope vs kind
 classification, Chierchia ∩ in `het`-as-nominaliser) lives in the relevant
-study files (currently `Phenomena/Morphology/Studies/McNallyDeSwart2011.lean`).
+study files (currently `Studies/McNallyDeSwart2011.lean`).
 
 ## Inflection alternation
 

@@ -47,7 +47,7 @@ view cannot handle conjunctive generics like "Elephants live in Africa
 and Asia." If this is equivalent to the conjunction "Elephants live in
 Africa AND Elephants live in Asia," then both conjuncts would need to
 hold with probability > 0.5, which is impossible if the populations
-are disjoint. See `Phenomena/Generics/Studies/Nickel2009.lean`.
+are disjoint. See `Studies/Nickel2009.lean`.
 -/
 
 namespace Cohen1999

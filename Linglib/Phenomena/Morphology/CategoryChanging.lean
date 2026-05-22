@@ -18,11 +18,11 @@ by inherent properties of the root itself.
 
 ## Downstream consumers
 
-* `Phenomena/Morphology/Studies/Panagiotidis2015.lean` — categoriser
+* `Studies/Panagiotidis2015.lean` — categoriser
   theory consuming `RootFamily` + `LexCat`. Includes a bridge to
   `McNallyDeSwart2011.InflectedAnalysis` (`namespace MdSBridge`) using
   the §6.7.1 modifier-distribution diagnostic.
-* `Phenomena/Morphology/Studies/McNallyDeSwart2011.lean` — provides an
+* `Studies/McNallyDeSwart2011.lean` — provides an
   `AdjEntry → RootFamily` adapter for Dutch adjective entries.
 -/
 

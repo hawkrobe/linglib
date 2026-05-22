@@ -2,8 +2,8 @@ import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Fragments.Icelandic.Nominalizations
 import Linglib.Fragments.Icelandic.Predicates
 import Linglib.Studies.Wood2015
-import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
-import Linglib.Phenomena.Morphology.Studies.McNallyDeSwart2011
+import Linglib.Studies.Panagiotidis2015
+import Linglib.Studies.McNallyDeSwart2011
 
 /-!
 # @cite{wood-2023} — Icelandic Nominalizations and Allosemy
@@ -384,7 +384,7 @@ bridge in `Panagiotidis2015.lean` (`namespace MdSBridge`) noted as
 
 namespace MdSPanaDivergence
 
-open Phenomena.Morphology.Studies.McNallyDeSwart2011
+open McNallyDeSwart2011
 open Morphology.DM.Allosemy
 
 /-- Wood's framework requires every `n`-headed nominalisation to commit

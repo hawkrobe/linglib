@@ -48,7 +48,7 @@ The diagram from §5 (76a-j):
 * This file additionally implements Snyder's §6-§7 colour-word extension
   via a second local Mendia partition `kfRed : Setoid ColorToken`,
   consuming the Dutch adjective Fragment for colour roots.
-* `Phenomena/Morphology/Studies/McNallyDeSwart2011.lean` is a sibling
+* `Studies/McNallyDeSwart2011.lean` is a sibling
   Mendia consumer, with `kfShade : Setoid Shade` partitioning Dutch
   colour and taste shades by adjective root. Together with the two
   partitions in this file, the Mendia substrate now has *three*
@@ -667,7 +667,7 @@ numeral analysis predicts.
 colours-as-kinds claim. This file implements Snyder's *own* Polymorphic
 Contextualism extension; for the @cite{mcnally-deswart-2011} *competing*
 analysis (lexical category-projected, Chierchia ∩-via-*het* nominalisation),
-see `Phenomena/Morphology/Studies/McNallyDeSwart2011.lean`. Both analyses
+see `Studies/McNallyDeSwart2011.lean`. Both analyses
 consume the same Mendia substrate (`subkindOf` on a `Setoid` partition by
 adjective root); they disagree on lexical-projection architecture and on
 whether nominalisation is Partee NOM (Snyder) or Chierchia ∩ (M&deS).

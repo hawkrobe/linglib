@@ -41,7 +41,7 @@ typology and the chaining-based universals live in
 
 set_option autoImplicit false
 
-namespace Phenomena.Comparison.Studies.Stassen2013
+namespace Stassen2013Comparison
 
 open Typology.Comparison
 
@@ -280,4 +280,4 @@ theorem no_comparative_no_superlative :
     let noDedicated := allLanguages.filter (·.hasType .conjoined)
     noDedicated.all (λ p => p.superlative == .none) = true := by native_decide
 
-end Phenomena.Comparison.Studies.Stassen2013
+end Stassen2013Comparison

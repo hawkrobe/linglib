@@ -1,7 +1,7 @@
 import Linglib.Theories.Morphology.TheorySpace
 import Linglib.Core.Morphology.Wordhood
 import Linglib.Core.Morphology.MorphRule
-import Linglib.Phenomena.Morphology.Studies.ZwickyPullum1983
+import Linglib.Studies.ZwickyPullum1983
 import Linglib.Theories.Phonology.Prosodic.Word
 import Linglib.Core.Morphology.FormMeaningMapping
 import Linglib.Theories.Morphology.Nanosyntax.Basic

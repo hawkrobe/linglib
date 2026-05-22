@@ -77,7 +77,7 @@ or consecutive), confirming Universal 1A (p. 108).
 
 set_option autoImplicit false
 
-namespace Phenomena.Comparison.Studies.Stassen1985
+namespace Stassen1985
 
 open Typology.Comparison
 open Core (CaseAssignment FixedCaseEncoding)
@@ -471,4 +471,4 @@ theorem turkish_deranking_consistent :
 -- 3. Navajo: locative in 1985 (p. 42 "Navaho"), conjoined in WALS 2013.
 --    Genuine reclassification between the two works.
 
-end Phenomena.Comparison.Studies.Stassen1985
+end Stassen1985
