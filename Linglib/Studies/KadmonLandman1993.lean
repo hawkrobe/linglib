@@ -5,8 +5,8 @@ import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
-import Linglib.Phenomena.Polarity.Studies.KadmonLandman1993Apparatus
-import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
+import Linglib.Studies.KadmonLandman1993Apparatus
+import Linglib.Studies.Ladusaw1979
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -66,7 +66,7 @@ open Typology.PolarityItem (LicensingContext PolarityType)
 open Semantics.Polarity.Licensing (LicensingMechanism)
 open Semantics.Entailment.Polarity
 open Semantics.Entailment.AntiAdditivity
-open Phenomena.Polarity.Studies.KadmonLandman1993.Apparatus
+open KadmonLandman1993.Apparatus
 open Exhaustification.FreeChoice (Ctx existsInDomain
   widening_strengthens_in_de widening_weakens_in_ue)
 

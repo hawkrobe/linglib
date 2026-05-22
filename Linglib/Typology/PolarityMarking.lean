@@ -30,7 +30,7 @@ This taxonomy treats polarity-marking strategies as form-class properties
 (a particle either *is* or *is not* `polarityReversal`), aligned with the
 @cite{bluhdorn-lohnstein-2012} / @cite{sudhoff-2012} / @cite{turco-braun-dimroth-2014}
 tradition that pairs polarity contrast with specific lexical or prosodic
-devices. See `Phenomena/Polarity/Studies/TurcoBraunDimroth2014.lean` for
+devices. See `Studies/TurcoBraunDimroth2014.lean` for
 the canonical consumer.
 
 **This framework is contested.** @cite{matic-nikolaeva-2018} (in
@@ -48,7 +48,7 @@ disagrees with the encoding choice this enum makes.
 
 The non-equivalence between form-class encoding and M&N's pragmatic
 salient-polarity property is stated as a Lean theorem in
-`Phenomena/Polarity/Studies/MaticNikolaeva2018.lean`. The substrate
+`Studies/MaticNikolaeva2018.lean`. The substrate
 keeps the form-class enum because (a) it has 8 cross-language
 consumers via TBD2014, (b) M&N's framework is one alternative among
 several — alongside @cite{hohle-1992}'s verum-as-illocutionary-operator
@@ -111,7 +111,7 @@ inductive Env where
     See module docstring for the framework-commitment note: this schema
     records form-class properties in the Blühdorn/Sudhoff/TBD2014
     tradition, an encoding contested by @cite{matic-nikolaeva-2018}
-    (formalized in `Phenomena/Polarity/Studies/MaticNikolaeva2018.lean`).
+    (formalized in `Studies/MaticNikolaeva2018.lean`).
     The schema is intentionally thin — syntactic position
     (clause-initial construction vs. response particle vs.
     sentence-medial discourse marker) is *not* encoded;

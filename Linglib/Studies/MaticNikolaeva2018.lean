@@ -44,16 +44,16 @@ docstring) with a back-pointer here.
 
 - `Features/InformationStructure.lean::Strategy` — the
   form-class encoding M&N reject; docstring acknowledges the rejection.
-- `Phenomena/Polarity/Studies/GarassinoJacob2018.lean` — same volume;
+- `Studies/GarassinoJacob2018.lean` — same volume;
   G&J explicitly endorse M&N (their fn 13).
 - `Phenomena/Verum/Studies/Hohle1992.lean` — the verum-focus origin
   M&N argue against in §2.2 ("the reduction of salient polarity to
   accented finite verbs is neither empirically nor conceptually valid").
-- `Phenomena/Polarity/Studies/TurcoBraunDimroth2014.lean` — the
+- `Studies/TurcoBraunDimroth2014.lean` — the
   production data M&N reinterpret.
 -/
 
-namespace Phenomena.Polarity.Studies.MaticNikolaeva2018
+namespace MaticNikolaeva2018
 
 open Typology.PolarityMarking (Strategy Entry)
 open Fragments.English.PolarityMarking (emphaticDo)
@@ -254,7 +254,7 @@ theorem mn_attested_list_strictly_grows : mnOpenEndedWitnesses ≠ [] := by deci
 
 The same-volume @cite{garassino-jacob-2018} explicitly adopt M&N's
 salient-polarity view (their fn 13, p. 236; verbatim quote in
-`Phenomena/Polarity/Studies/GarassinoJacob2018.lean::§4`). This is a
+`Studies/GarassinoJacob2018.lean::§4`). This is a
 documented framework alignment within the volume itself, not the
 formaliser's editorial synthesis — a peer in the same edited volume
 reaching the same conclusion. -/
@@ -359,4 +359,4 @@ theorem mn_argument_extends_across_frameworks :
     (mnAllStructures.filter (fun s => gutzmannBestEffort s == none)).length = 18 := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
-end Phenomena.Polarity.Studies.MaticNikolaeva2018
+end MaticNikolaeva2018

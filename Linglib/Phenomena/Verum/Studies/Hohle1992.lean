@@ -32,7 +32,7 @@ suspension of p) and serves to settle that prior issue.
 
 ## Relation to other studies
 
-This file used to live at `Phenomena/Polarity/Studies/Hohle1992.lean`
+This file used to live at `Studies/Hohle1992.lean`
 as a 158-LOC file of bare `def` data records (sentences and tags) with
 no actual analysis of Höhle's verum-focus operator. Re-homed here as
 part of the Verum directory landing, replacing the data-only content

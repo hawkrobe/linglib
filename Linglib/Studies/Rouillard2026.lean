@@ -77,7 +77,7 @@ Sections:
   file by user direction; they belong in dedicated cross-framework Studies.
 - The `LicensingMechanism` enum + `mip_subsumes_de` strawman of the prior
   file is dropped — a real DE comparison would need to engage
-  `Phenomena/Polarity/Studies/Ladusaw1979.lean` rather than stipulate.
+  `Studies/Ladusaw1979.lean` rather than stipulate.
 - The "Kennedy–Rouillard isomorphism" framing of the prior file's § 7 is
   dropped — Rouillard does not invoke Kennedy adjectival scales. The
   boundedness chain is retained as substrate-internal plumbing.

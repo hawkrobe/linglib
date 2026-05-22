@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Polarity.Studies.Hoeksema1983
+import Linglib.Studies.Hoeksema1983
 import Linglib.Theories.Semantics.Polarity.Licensing
 import Linglib.Phenomena.Comparison.Studies.Heim2001
 import Linglib.Phenomena.Comparison.Studies.Bresnan1973

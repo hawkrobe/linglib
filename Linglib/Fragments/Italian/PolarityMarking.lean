@@ -62,7 +62,7 @@ distribution, and is neutral between these analyses. Analytical content
 specific to Garassino & Jacob's chapter — the corpus interpretation,
 the strategy taxonomy, and the explicit endorsement of Matić & Nikolaeva's
 "salient polarity" framework — lives in
-`Phenomena/Polarity/Studies/GarassinoJacob2018.lean`.
+`Studies/GarassinoJacob2018.lean`.
 -/
 
 namespace Fragments.Italian.PolarityMarking

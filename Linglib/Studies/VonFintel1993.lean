@@ -30,7 +30,7 @@ between this file's Fragment-derived predictions and those operators
 is not yet wired up — TODO.
 -/
 
-namespace Phenomena.Polarity.Studies.VonFintel1993
+namespace VonFintel1993
 
 
 /--
@@ -393,4 +393,4 @@ theorem universal_qforce_partition :
       (λ q => q != .universal && q != .negative) = true := by
   constructor <;> decide
 
-end Phenomena.Polarity.Studies.VonFintel1993
+end VonFintel1993

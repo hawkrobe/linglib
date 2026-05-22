@@ -52,7 +52,7 @@ item itself).
 
 The Israel↔Ladusaw refutation theorem — showing a context where the
 scalar model and the monotonicity model disagree — is **planned** for
-`Phenomena/Polarity/Studies/Israel2001.lean`. The natural witness is
+`Studies/Israel2001.lean`. The natural witness is
 Israel's **pecuniary paradox** (@cite{israel-2001}): *a red cent* (NPI,
 resource = impeding role) and *for peanuts* (PPI, reward = facilitating
 role) inhabit the same monetary semantic domain — pure-monotonicity
@@ -88,7 +88,7 @@ Polarity items are characterized by two orthogonal scalar features
 
 These interact with **LikelihoodEffect** — whether the item's referent
 facilitates or impedes the event — to predict **Canonicity**
-(canonical vs inverted). See `Phenomena/Polarity/Studies/Israel2001.lean`.
+(canonical vs inverted). See `Studies/Israel2001.lean`.
 -/
 
 namespace Typology.PolarityItem

@@ -93,7 +93,7 @@ Audit history (see `project_indefinite_substrate_contested.md` memory note):
   `FormsDisjoint` as a constraint. The Russian paradigm here now follows
   D&A 2025's classification (-то = Epistemic {SU, NS}); see
   `disjoint_languages_count` + `russian_not_disjoint`.
-- `Phenomena/Polarity/Studies/Chierchia2006.lean` already consumes this
+- `Studies/Chierchia2006.lean` already consumes this
   file's `italian`/`english`/`german`/`mandarin` paradigms as substrate.
   Hand-stipulation here is therefore a working pattern with multiple
   consumers, not an isolated stipulation.
@@ -117,13 +117,13 @@ phenomena when the contributions split cleanly. The split here:
 
 - `Indefinites/Studies/Haspelmath1997.lean` — typological coverage of
   indefinites, advancing claims about `IndefiniteParadigm`'s F46A bridge
-- `Phenomena/Polarity/Studies/Haspelmath1997.lean` (this file) — polarity-
+- `Studies/Haspelmath1997Polarity.lean` (this file) — polarity-
   side projection, advancing claims about NPI/FC clustering, neg-concord,
   and Fragment-PolarityItem consistency
 
 -/
 
-namespace Phenomena.Polarity.Studies.Haspelmath1997
+namespace Haspelmath1997Polarity
 
 open _root_.Typology.Indefinite
 open Data.WALS
@@ -895,4 +895,4 @@ theorem swahili_hakunaMtu_covers_negation :
 
 end FragmentBridges
 
-end Phenomena.Polarity.Studies.Haspelmath1997
+end Haspelmath1997Polarity

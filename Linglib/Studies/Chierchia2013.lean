@@ -19,7 +19,7 @@ The file provides a `predictReading` function over `ContextPolarity`
 reading from structural position.
 -/
 
-namespace Phenomena.Polarity.Studies.Chierchia2013
+namespace Chierchia2013
 
 
 /--
@@ -752,4 +752,4 @@ def anyExamples : List AnyExample :=
 -- Verify all grammaticality predictions match
 example : anyExamples.all (λ ex => ex.grammatical == ufciGrammatical ex.context) := by decide
 
-end Phenomena.Polarity.Studies.Chierchia2013
+end Chierchia2013

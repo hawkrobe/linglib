@@ -43,7 +43,7 @@ The cross-file gap with `Theories/Semantics/Polarity/Licensing.lean`
 remains unclosed by this restructure. The refutation theorem —
 showing a context where Israel's role-likelihood mapping and Ladusaw's
 monotonicity-licensing diverge in their predictions — is **planned**
-for `Phenomena/Polarity/Studies/Israel2001.lean`. The natural witness
+for `Studies/Israel2001.lean`. The natural witness
 is the pecuniary paradox above. NOTE: `Israel2001.lean §8` currently
 formalizes Israel↔Ladusaw *agreement* via a `ScaleDirection` bridge
 enum — that's the wrong direction; the refutation work is genuinely

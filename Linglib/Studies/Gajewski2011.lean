@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Polarity.Licensing
 import Linglib.Theories.Semantics.Entailment.Intolerance
 import Linglib.Theories.Semantics.Entailment.PresuppositionLicensing
 import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Phenomena.Polarity.Studies.VonFintel1999
+import Linglib.Studies.VonFintel1999
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Typology.PolarityItem
 
@@ -75,7 +75,7 @@ with "DE + scalar endpoint" (Conjecture 48).
   (Chierchia's "highest-scopal-item only" alternatives generated from
   the strong NPI in scope). The substrate `Exhaustification.exhMW` and
   `Exhaustification.exhIE` provide the O-operator; the Chierchia-side
-  ALT-1 generator (matching `Phenomena/Polarity/Studies/Chierchia2006.lean`'s
+  ALT-1 generator (matching `Studies/Chierchia2006.lean`'s
   `PSIProfile` framework) needs to be wired up. Concrete witness for
   `only`'s Cond 2 failure would require this.
 - The Intolerance-based account of `few` licensing strong NPIs in
@@ -87,7 +87,7 @@ with "DE + scalar endpoint" (Conjecture 48).
   challenge to the Strawson-DE picture, the natural sequel paper.
 -/
 
-namespace Phenomena.Polarity.Studies.Gajewski2011
+namespace Gajewski2011
 
 open Semantics.Entailment
 open Semantics.Entailment.Polarity
@@ -247,7 +247,7 @@ context-dependent truncation à la Chierchia 2004 axiom (i)). Deferred.
 
 - @cite{von-fintel-1999}: provides the Strawson-DE substrate. Gajewski's
   Appendix 1 SAA proofs use exactly the operators vF defined; see
-  `Phenomena/Polarity/Studies/VonFintel1999.lean`.
+  `Studies/VonFintel1999.lean`.
 - @cite{kadmon-landman-1993}: K&L's widening + strengthening account of
   `any` precedes the Strawson framework; Gajewski's intolerance comes
   from @cite{horn-1989}, not from K&L. K&L's `LicensingMechanism`
@@ -355,7 +355,7 @@ parallel to its satisfaction of Condition 3.
 The full Gajewski analysis under Conditions 1, 2 requires non-trivial
 ALT-1 sets (Chierchia's "highest-scopal-item only", eq. 55). The
 @cite{chierchia-2006} (file
-`Phenomena/Polarity/Studies/Chierchia2006.lean`) and
+`Studies/Chierchia2006.lean`) and
 @cite{chierchia-2013} formalizations would supply concrete ALT-1
 generators. Concrete `only` proofs under Conditions 1, 2 with
 non-trivial ALTs are deferred until that infrastructure is wired in.
@@ -378,7 +378,7 @@ theorem only_satisfies_condition1_no_alts (x : World → Prop) :
     the **attested** ALT-1 (Chierchia's "highest-scopal-item only"
     alternatives generated from the strong NPI in scope) — requires a
     scalar-alternative generator that lives in
-    `Phenomena/Polarity/Studies/Chierchia2006.lean`'s `PSIProfile`
+    `Studies/Chierchia2006.lean`'s `PSIProfile`
     framework or equivalent. Wiring up a concrete ALT-1 generator
     that demonstrates the empirical Cond 2 failure for `only` is
     deferred to a follow-up study file (likely an extension of
@@ -445,4 +445,4 @@ theorem gaj2011_strongNPIs_excluded_from_strawson_only_contexts :
   cases ctx <;> simp_all [liftAFinger, budgeAnInch, inYears, until_, either_npi,
     contextProperties]
 
-end Phenomena.Polarity.Studies.Gajewski2011
+end Gajewski2011

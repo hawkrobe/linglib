@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Polarity.Studies.Haspelmath1997
+import Linglib.Studies.Haspelmath1997Polarity
 import Linglib.Typology.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
@@ -6,7 +6,7 @@ import Linglib.Fragments.German.PolarityItems
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
 import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Theories.Semantics.Exhaustification.Operators.Antiexhaustive
-import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
+import Linglib.Studies.AlonsoOvalleMoghiseh2025
 
 /-!
 # Chierchia 2006: Domain Widening and the PSI Typology
@@ -55,7 +55,7 @@ refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 
 namespace Chierchia2006
 
-open Phenomena.Polarity.Studies.Haspelmath1997
+open Haspelmath1997Polarity
 open Typology.Indefinite
 open AlonsoOvalleMoghiseh2025 (FCIFlavor EFCIRescue)
 

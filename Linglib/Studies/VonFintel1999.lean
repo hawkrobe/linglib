@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
-import Linglib.Phenomena.Polarity.Studies.KadmonLandman1993
-import Linglib.Phenomena.Polarity.Studies.Lahiri1998
-import Linglib.Phenomena.Polarity.Studies.Hoeksema1983
+import Linglib.Studies.KadmonLandman1993
+import Linglib.Studies.Lahiri1998
+import Linglib.Studies.Hoeksema1983
 
 /-!
 # @cite{von-fintel-1999} — Strawson entailment as a rescue for Fauconnier-Ladusaw
@@ -54,7 +54,7 @@ the paper.
   `superlative_isStrawsonDE`.
 -/
 
-namespace Phenomena.Polarity.Studies.VonFintel1999
+namespace VonFintel1999
 
 open Semantics.Entailment
 open Semantics.Entailment.Polarity
@@ -247,7 +247,7 @@ sentence with `sorry` is fine.
 
 The same adversative/non-adversative asymmetry shows up in Hindi
 (@cite{lahiri-1998} §4.5): *aaScarya* 'surprised' licenses *koii bhii* /
-*ek bhii*; *khuS* 'glad' does not. See `Phenomena/Polarity/Studies/Lahiri1998.lean`
+*ek bhii*; *khuS* 'glad' does not. See `Studies/Lahiri1998.lean`
 for the Hindi data (`npi_adversative_surprise_ek`,
 `npi_adversative_surprise_koii`, `npi_glad_bad`). The two papers offer
 different explanations — Lahiri posits a covert anti-additive operator
@@ -507,4 +507,4 @@ theorem bridge_hoeksema_sComparative_strawsonDE
   antitone_implies_strawsonDE _
     (Semantics.Degree.Comparative.sComparative_isAntiAdditive μ).antitone defined
 
-end Phenomena.Polarity.Studies.VonFintel1999
+end VonFintel1999

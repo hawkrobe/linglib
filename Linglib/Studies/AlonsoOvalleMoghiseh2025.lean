@@ -31,7 +31,7 @@ Combined with assertion ∃x. P(x), this yields ⊥.
 
 import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Phenomena.Polarity.Studies.Chierchia2013
+import Linglib.Studies.Chierchia2013
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Set.Basic
@@ -429,7 +429,7 @@ theorem de_plainExistential (rescue : EFCIRescue) (modal : Option ModalFlavor) :
 
 The Universal FCIs (English *any*, Italian *qualunque*) and their
 characteristic distribution are formalized in
-`Phenomena/Polarity/Studies/Chierchia2013.lean` (Section "Universal Free
+`Studies/Chierchia2013.lean` (Section "Universal Free
 Choice Items"). The contrast theorems below pair the existential-FCI
 behaviour modeled here with the universal-FCI behaviour modeled there.
 -/
@@ -445,7 +445,7 @@ inductive FCIFlavor where
   | universal    -- any, qualunque, whatever
   deriving DecidableEq, Repr
 
-open Phenomena.Polarity.Studies.Chierchia2013 (ufciGrammatical ufciReading)
+open Chierchia2013 (ufciGrammatical ufciReading)
 
 /-- Existential FCIs allow root readings -/
 theorem efci_allows_root : efciReading .modalInsertion false none = some .epistemicIgnorance := rfl

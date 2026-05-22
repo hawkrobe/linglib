@@ -16,7 +16,7 @@ The set-of-degrees S-comparative `sComparative` (originally
 of `comparativeSem` from a binary comparator to a degree-set comparator.
 Hoeksema's polarity-asymmetry consumers (Boolean-hom `npComparativeGQ`,
 the licensing-context registry connection) remain in
-`Phenomena/Polarity/Studies/Hoeksema1983.lean`.
+`Studies/Hoeksema1983.lean`.
 
 Framework-specific content for Rett 2026 (MAX, ambidirectionality,
 manner implicature) lives in `Phenomena/Negation/Studies/Rett2026.lean`.
@@ -180,7 +180,7 @@ theorem sComparative_atomic_eq_comparativeSem
     This is the generic monotonicity fact behind the surface observation
     that *than*-clauses are downward-entailing — not @cite{hoeksema-1983}'s
     specific anti-additivity / Boolean-homomorphism result, which is
-    proved in `Phenomena/Polarity/Studies/Hoeksema1983.lean`. -/
+    proved in `Studies/Hoeksema1983.lean`. -/
 theorem comparative_than_DE {α : Type*} (R : α → α → Prop)
     (μ_a : α) (D₁ D₂ : Set α) (h_sub : D₁ ⊆ D₂)
     (h : ∀ d ∈ D₂, R μ_a d) : ∀ d ∈ D₁, R μ_a d :=

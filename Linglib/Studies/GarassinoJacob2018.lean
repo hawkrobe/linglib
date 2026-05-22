@@ -36,13 +36,13 @@ as Romance polarity-focus (PF) realization strategies.
    "salient polarity" framework** (footnote 13, p. 236), against the form-
    class encoding that the substrate's `Strategy` records.
    See §4 below; the formal statement of the non-equivalence lives in
-   `Phenomena/Polarity/Studies/MaticNikolaeva2018.lean`.
+   `Studies/MaticNikolaeva2018.lean`.
 
 ## Cross-references
 
-- `Phenomena/Polarity/Studies/MaticNikolaeva2018.lean` — same volume,
+- `Studies/MaticNikolaeva2018.lean` — same volume,
   the framework G&J endorse against form-class encoding.
-- `Phenomena/Polarity/Studies/TurcoBraunDimroth2014.lean` — earlier
+- `Studies/TurcoBraunDimroth2014.lean` — earlier
   Germanic-vs-Romance production study G&J cite as their typological
   starting point (their footnote 5, p. 230); the
   `italian_spanish_cognates` theorem squatting at `TBD2014:446` was
@@ -53,7 +53,7 @@ as Romance polarity-focus (PF) realization strategies.
   now lives below as Lean data.
 -/
 
-namespace Phenomena.Polarity.Studies.GarassinoJacob2018
+namespace GarassinoJacob2018
 
 open Typology.PolarityMarking (Entry Strategy
   Env)
@@ -279,7 +279,7 @@ which assigns each entry a single `.polarityReversal` / `.particle` /
 `.verumFocus` strategy class as if it were a fixed form-meaning property.
 The contradiction is recorded at the substrate's def-site
 (`Features/InformationStructure.lean::Strategy` docstring)
-and formalized in `Phenomena/Polarity/Studies/MaticNikolaeva2018.lean`. -/
+and formalized in `Studies/MaticNikolaeva2018.lean`. -/
 
 /-! ## §5 Surface-class lumping caveat (footnote 11, p. 234)
 
@@ -298,4 +298,4 @@ flag in `Strategy` docstring records this caveat. The
 `french_lacks_siQueClass` theorem in §1 above proves the corresponding
 data-level claim. -/
 
-end Phenomena.Polarity.Studies.GarassinoJacob2018
+end GarassinoJacob2018

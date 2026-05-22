@@ -20,8 +20,8 @@ Theory-neutral lexical entries for polarity-sensitive items:
 
 ## Theoretical Analyses
 
-- `Phenomena/Polarity/Studies/Israel2001.lean`: Scalar Model, inverted items
-- `Phenomena/Polarity/Studies/AlonsoOvalleMoghiseh2025.lean`: EFCI exhaustification analysis
+- `Studies/Israel2001.lean`: Scalar Model, inverted items
+- `Studies/AlonsoOvalleMoghiseh2025.lean`: EFCI exhaustification analysis
 
 -/
 
