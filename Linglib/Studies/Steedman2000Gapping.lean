@@ -15,7 +15,7 @@ Proves that:
 
 -/
 
-namespace Phenomena.Ellipsis.CCG_GappingBridge
+namespace Steedman2000Gapping
 
 open CCG
 open CCG.Gapping
@@ -120,4 +120,4 @@ theorem dutch_allows_both_gapping :
   refine ⟨trivial, ?_⟩
   exact Or.inr trivial
 
-end Phenomena.Ellipsis.CCG_GappingBridge
+end Steedman2000Gapping

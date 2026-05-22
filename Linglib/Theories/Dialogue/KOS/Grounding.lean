@@ -54,7 +54,7 @@ for paper-replication studies.
 The 2004 coercion-operations apparatus (`parameterFocussing`,
 `parameterIdentification`, `existentialGeneralization`) is the
 predecessor to this protocol; it lives in
-`Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean` (paper-anchored,
+`Studies/GinzburgCooper2004.lean` (paper-anchored,
 single-consumer demotion).
 -/
 
@@ -201,7 +201,7 @@ specific kind of CR question:
 These replace the three coercion operations of @cite{ginzburg-cooper-2004}
 (`parameterFocussing`, `parameterIdentification`, `existentialGeneralization`),
 which now live as paper-specific apparatus in
-`Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean §0`. The 2004→2012
+`Studies/GinzburgCooper2004.lean §0`. The 2004→2012
 correspondence: `parameterFocussing` (2004) ↔ `parameterFocussing` (2012);
 `parameterIdentification` (both); `existentialGeneralization` (2004) has
 no 2012 CCUR analog (the 2012 framework handles it via contextual

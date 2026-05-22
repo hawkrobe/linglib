@@ -15,7 +15,7 @@ This is the structural basis for @cite{kalyakin-2026}'s analysis of
 (= v) survives while its complement (= VP, containing the nominal
 root) is elided. The theoretical analysis (mismatch predictions,
 root position mapping, *again* diagnostics) lives in the study file
-`Phenomena/Ellipsis/Studies/Kalyakin2026.lean`.
+`Studies/Kalyakin2026.lean`.
 
 ## Light Verbs (§4.5.1 of @cite{sumbatova-2021})
 

@@ -60,7 +60,7 @@ Bruening's positions Lean-checkable against linglib's existing Pylkkänen
   per-frame implicit fields; schema change is out of scope for this study.
 
 **G1** (sluicing asymmetry) is formalized as a sibling in
-`Phenomena/Ellipsis/Studies/Bruening2021Sluicing.lean`, deriving
+`Studies/Bruening2021Sluicing.lean`, deriving
 implicit-second-obj-licenses-sluicing-but-implicit-first-obj-doesn't from
 the maximal-projection identity condition (Bruening §5.5).
 
@@ -230,7 +230,7 @@ theorem g3_base_transitive_constraint :
 
 ```
 -- G1 (sluicing asymmetry, §2.1): formalized as a sibling in
--- `Phenomena/Ellipsis/Studies/Bruening2021Sluicing.lean` via
+-- `Studies/Bruening2021Sluicing.lean` via
 -- `g1_sluicing_asymmetry`. Substrate: `bruening2021Identity` in
 -- `Theories/Syntax/Minimalist/Ellipsis/FormalMatching.lean` § 7.
 --

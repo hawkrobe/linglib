@@ -179,7 +179,7 @@ data + theorems consuming it.
 
 The intra-English variety A/B split (paper-specific to
 @cite{citko-gracanin-yuksek-2025}) lives in
-`Phenomena/Ellipsis/Studies/CitkoGracaninYuksek2025.lean`. -/
+`Studies/CitkoGracaninYuksek2025.lean`. -/
 
 /-- Cross-linguistic MWF datum. Records the parameter setting and an
     example question. `AllowsMultipleSluicing` is **derived** from the

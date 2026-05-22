@@ -845,7 +845,7 @@ theorem domain_root_is_divergence_source :
 -- no correlate in the elided clause (filtered out as a movement non-head).
 --
 -- The G1 derivation proper is in
--- `Phenomena/Ellipsis/Studies/Bruening2021Sluicing.lean`.
+-- `Studies/Bruening2021Sluicing.lean`.
 
 /-- Maximal projections within a SO `root`: subtrees `t` such that
     `Labeling.isMaximalAt h root t` under head function `h`. Per
