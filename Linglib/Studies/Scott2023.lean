@@ -54,7 +54,7 @@ behavior of the dependent case algorithm.
 - `Studies/Scott2023Agreement.lean` — full Agree/Spellout
   pipeline for the Mam agreement morphology, including the impoverishment
   rule that bleeds reduced pronouns
-- `Phenomena/Ergativity/Studies/Scott2023.lean` — super-extended
+- `Studies/Scott2023.lean` — super-extended
   ergativity (clause-type-conditioned alignment shift)
 - `Studies/Woolford1997.lean` — the predecessor analysis
   treating ERG as inherent Case

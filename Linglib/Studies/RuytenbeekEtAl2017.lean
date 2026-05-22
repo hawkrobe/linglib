@@ -69,7 +69,7 @@ regression coefficients.
 - `Studies/Roberts2023.lean`: a chronologically
   later sibling that contradicts the imperative's deontic-flavor
   assignment; the cross-paper wedge lives in Roberts2023.
-- `Phenomena/Politeness/Studies/FrancikClark1985.lean`: another
+- `Studies/FrancikClark1985.lean`: another
   consumer of `Core.Discourse.PreparatoryCondition`. Both that file's
   `RequestForm.queriedCondition` and this file's `SentType.queriedPrep`
   are `Option PreparatoryCondition`-valued projections sharing the
@@ -211,7 +211,7 @@ imperative's modal semantics. The substrate
 `Core.Discourse.PreparatoryCondition` (Searle's hierarchy: ability /
 knowledge / memory / perception / permission / willingness) is the
 target type; the projection `SentType.queriedPrep` mirrors
-`Phenomena/Politeness/Studies/FrancikClark1985.lean`'s
+`Studies/FrancikClark1985.lean`'s
 `RequestForm.queriedCondition`. -/
 
 /-- The preparatory condition queried by each sentence type, when one

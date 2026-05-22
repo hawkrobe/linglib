@@ -32,7 +32,7 @@ both c-commanded by `probingHead` in `root` *and* phi-active.
 ## Cross-domain applications
 
 Italian aux selection (§3) is formalized at
-`Phenomena/AuxiliaryVerbs/Studies/Amato2025.lean`. Other Amato 2025 §4
+`Studies/Amato2025.lean`. Other Amato 2025 §4
 case studies (Icelandic DAT-NOM, Lak perfective, Spanish VOS,
 Bulgarian wh, ditransitives) are deferred — their consumers will
 construct `SyntacticObject` trees and `validGoal` predicates the
@@ -284,7 +284,7 @@ apparent minimality violation.
 
 `validGoal` is `true` everywhere here (transitive case); the
 unaccusative case (`validGoal (.leaf aV) = false`) is the one tested
-in `Phenomena/AuxiliaryVerbs/Studies/Amato2025.lean`. -/
+in `Studies/Amato2025.lean`. -/
 
 private def aT : LIToken := ⟨LexicalItem.simple .T [], 0⟩
 private def aV : LIToken := ⟨LexicalItem.simple .V [], 1⟩

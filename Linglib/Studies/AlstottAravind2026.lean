@@ -1,6 +1,6 @@
 import Linglib.Features.Acceptability
 import Linglib.Fragments.English.TemporalExpressions
-import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
+import Linglib.Studies.Rett2020
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Slavic.Serbian.TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.Compare

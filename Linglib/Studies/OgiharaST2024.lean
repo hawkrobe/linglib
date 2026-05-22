@@ -1,6 +1,6 @@
-import Linglib.Phenomena.TemporalConnectives.Studies.Anscombe1964
-import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
-import Linglib.Phenomena.TemporalConnectives.Studies.BeaverCondoravdi2003
+import Linglib.Studies.Anscombe1964
+import Linglib.Studies.Karttunen1974
+import Linglib.Studies.BeaverCondoravdi2003
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.EventBridge
 import Linglib.Theories.Semantics.Aspect.SubintervalProperty
 import Linglib.Fragments.English.TemporalExpressions

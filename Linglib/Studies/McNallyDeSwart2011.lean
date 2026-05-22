@@ -51,7 +51,7 @@ The key empirical contrasts (paper §2.3):
   Disjointness Condition follows.
 
 This file is the second consumer of `Subkinds.subkindOf`, alongside
-`Phenomena/Numerals/Studies/Snyder2026.lean`. Together they witness that
+`Studies/Snyder2026.lean`. Together they witness that
 the Mendia substrate is genuinely cross-domain (numerals + colours), not
 paper-specific scaffolding for one analysis.
 
@@ -633,7 +633,7 @@ the second case lands. -/
 
 /-! ## §5: Cross-paper substrate alignment with Snyder 2026
 
-`Phenomena/Numerals/Studies/Snyder2026.lean` (Polymorphic Contextualism)
+`Studies/Snyder2026.lean` (Polymorphic Contextualism)
 and this file (McNally & de Swart 2011) both consume the same substrate:
 * `Subkinds.subkindOf` for kind formation by salient equivalence
   relation (numerals partition by mathematical system; colours partition

@@ -87,9 +87,9 @@ inductive VerumStrategy where
     Inhabitants of this structure formalise different verum-marker
     analyses across the literature:
 
-    * `Phenomena.Verum.Studies.Hohle1992.verumFocusOp` (paired with
+    * `Hohle1992.verumFocusOp` (paired with
       `verumFelicitous`) — Höhle's polarity-focus account.
-    * `Phenomena.Verum.Studies.MartinezVera2026.miFelicitous`
+    * `MartinezVera2026.miFelicitous`
       (instantiated with the polar partition) — MV's focus-marker
       account, equivalent to Höhle's on the polar reduction (see
       `mi_polar_iff_verumFelicitous` in that file).

@@ -101,7 +101,7 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
 - `Studies/Scott2023Agreement.lean` — parallel
   application of the same DM/Agree machinery to Mam (where Infl's
   φ-probe is blocked in transitives).
-- `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean` —
+- `Studies/CoonMateoPedroPreminger2014.lean` —
   Voice/case-flavor side of the same author cluster's Mayan work.
 -/
 

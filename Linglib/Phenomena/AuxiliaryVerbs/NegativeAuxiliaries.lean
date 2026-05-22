@@ -70,7 +70,7 @@ def NegStrategy.isVerbal : NegStrategy → Bool
     formaliser shorthand) preserves @cite{miestamo-2005}'s
     particle-vs-verb morphological distinction; the cross-framework
     equivalence theorem `auxiliary_stage_iff_aux_verb_morpheme` in
-    `Phenomena/AuxiliaryVerbs/Studies/Anderson2006.lean` makes the
+    `Studies/Anderson2006.lean` makes the
     Anderson-cline / Miestamo-morpheme-type agreement Lean-checkable. -/
 def NegStrategy.toGramStage : NegStrategy → Option GramStage
   | .negVerb     => some .auxiliary

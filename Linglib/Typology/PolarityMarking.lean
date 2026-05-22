@@ -52,7 +52,7 @@ salient-polarity property is stated as a Lean theorem in
 keeps the form-class enum because (a) it has 8 cross-language
 consumers via TBD2014, (b) M&N's framework is one alternative among
 several — alongside @cite{hohle-1992}'s verum-as-illocutionary-operator
-(`Phenomena/Verum/Studies/Hohle1992.lean`),
+(`Studies/Hohle1992.lean`),
 @cite{romero-han-2004}'s epistemic-CONJ FOR-SURE-CG
 (`Studies/RomeroHan2004.lean`), and
 @cite{gutzmann-2015}'s use-conditional sentence-mood operators

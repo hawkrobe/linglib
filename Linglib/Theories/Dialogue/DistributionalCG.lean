@@ -26,7 +26,7 @@ This file hosts:
   `Dialogue.Krifka.CommitmentSpace W ℝ`, plus the support-equivalence
   theorem.
 
-The Anderson 2021 study (`Phenomena/Dialogue/Studies/Anderson2021.lean`)
+The Anderson 2021 study (`Studies/Anderson2021.lean`)
 imports this substrate and adds the conversation-update + RSA-bridge
 content on top.
 

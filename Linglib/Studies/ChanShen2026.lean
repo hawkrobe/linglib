@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.Minimalist.Features
 import Linglib.Typology.ExpressiveModifier
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Paradigms.AcceptabilityJudgment
-import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Studies.Ross1967
 
 /-!
 # Chan & Shen (2026): Conditions on *wh-the-hell* licensing

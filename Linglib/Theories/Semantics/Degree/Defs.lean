@@ -68,7 +68,7 @@ inductive StandardType where
 /-- Degree modifier direction — the same axis as NPI scalar direction.
 Lexical instantiations of named modifiers (*slightly*, *very*, *quite*,
 etc.) live in consuming Studies files (e.g.
-`Phenomena/Politeness/Studies/MachinoEtAl2025.lean` for the AmE/BrE
+`Studies/MachinoEtAl2025.lean` for the AmE/BrE
 `quite` contrast). -/
 inductive ModifierDirection where
   /-- *very*, *extremely* — raises the threshold. -/

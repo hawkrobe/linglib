@@ -1,0 +1,45 @@
+import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Features.Aktionsart
+
+/-!
+# Sorace (2000): Auxiliary Selection × Vendler Aspect Classes
+@cite{sorace-2000}
+
+Connects the auxiliary selection data in
+`Phenomena.AuxiliaryVerbs.Selection` to Vendler's aspectual
+classification from `Features.Aktionsart`.
+
+## Known gaps
+
+- @cite{sorace-2000}'s gradient Auxiliary Selection Hierarchy is
+  not yet formalized — `vendlerClassToTypicalTransitivity` is a
+  flat lookup, not a derivation from proto-role entailments. A
+  principled version would build the mapping out of
+  `Features/EntailmentProfile.lean` so that, e.g.,
+  the achievement → unaccusative arrow falls out of
+  `changeOfState ∧ ¬volition`. TODO when EntailmentProfile-based
+  unaccusativity diagnostics are wired up.
+-/
+
+namespace Sorace2000
+
+open Features
+open Phenomena.AuxiliaryVerbs.Selection
+
+/-- Vendler's achievement class (telic, punctual) typically corresponds to
+    unaccusativity: canonical achievements are change-of-state verbs whose
+    subject is a theme/patient.
+
+    TODO: derive this from proto-role entailments in
+    `Features/EntailmentProfile.lean` (cf. file docstring).
+    Today this is a stipulated lookup; the rfl-trivial theorems that
+    chained it with `canonicalSelection` have been dropped because they
+    just unpacked two lookup tables. -/
+def vendlerClassToTypicalTransitivity : VendlerClass → TransitivityClass
+  | .achievement    => .unaccusative
+  | .accomplishment => .transitive
+  | .activity       => .unergative
+  | .state          => .unergative
+  | .semelfactive   => .unergative
+
+end Sorace2000

@@ -20,7 +20,7 @@ typology of the durative/eventive *until* distinction following
    co-occur with negation; a separate PPI supplies the 'not before'
    meaning without negation.
 
-## What lives here vs. `Phenomena/TemporalConnectives/Studies/Giannakidou2002.lean`
+## What lives here vs. `Studies/Giannakidou2002.lean`
 
 This file holds the substrate types (the strategy enum + the per-language
 record schema). Per-language entries + sample-restricted typological

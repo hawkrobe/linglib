@@ -44,7 +44,7 @@ shape exactly as BSML's does — same template, different `Point` type.
 This file: types, state operations, support relation. No Anttila 2.2.8 proofs
 (those go in `Properties.lean` to validate the substrate). No pragmatic
 enrichment (separate `Enrichment.lean`). No free-choice theorems (separate
-study files under `Phenomena/FreeChoice/Studies/`).
+study files under `Studies/`).
 
 ## Simplifications vs the paper
 

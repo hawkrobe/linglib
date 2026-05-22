@@ -1,5 +1,5 @@
 import Linglib.Theories.Dialogue.CommitmentSpace
-import Linglib.Phenomena.Assertion.Studies.Krifka2015
+import Linglib.Studies.Krifka2015
 
 /-!
 # Imperatives as Preferential Commitment
@@ -198,7 +198,7 @@ theorem imperative_conflated_loses_distinction (w : AddrPosture) :
 
 Per the chronological-dependency rule, this 2012 paper PRECEDES
 Krifka 2015 — but Krifka 2015's framework, as formalised in
-`Phenomena/Assertion/Studies/Krifka2015.lean`, only exercises
+`Studies/Krifka2015.lean`, only exercises
 `force = .doxastic` (the substrate's default). Condoravdi-Lauer 2012
 provides the missing imperative case via `force = .preferential`,
 exercising the same substrate machinery on the same `IndexedCommitment`

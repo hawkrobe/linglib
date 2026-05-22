@@ -40,7 +40,7 @@ become theorems about whether they satisfy or violate it.
 - `WeakRCH` / `StrongRCH` — Prop predicates over predictors
 
 The GQ-violation theorem and the q-params/dgb-params satisfaction theorem live
-in `Phenomena/Dialogue/Studies/PurverGinzburg2004.lean`, which consumes this
+in `Studies/PurverGinzburg2004.lean`, which consumes this
 file.
 -/
 
@@ -57,7 +57,7 @@ that any single reprise fragment admits up to four readings, distinguished
 by what they query.
 
 This enum mirrors the `CRReading` enum in
-`Phenomena/Dialogue/Studies/Ginzburg2012.lean`. We declare it here so that
+`Studies/Ginzburg2012.lean`. We declare it here so that
 `KOS/RepriseContent.lean` does not depend downstream on any Phenomena file. -/
 inductive RFReading where
   /-- "Are you asking/saying that p?" — confirms propositional content -/

@@ -33,7 +33,7 @@ This module formalizes Veltman's §3: expectation states, the operators
 §5 proves which inference patterns are valid for the default
 conditional (contraposition fails, cautious monotonicity holds, etc.).
 Key patterns are verified as regression tests in
-`Phenomena/DefaultReasoning/Studies/Veltman1996.lean`.
+`Studies/Veltman1996.lean`.
 
 §4 (expectation frames, conditional defaults, specificity) is
 formalized in `Frames.lean` alongside this module.

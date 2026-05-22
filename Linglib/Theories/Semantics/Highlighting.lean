@@ -39,7 +39,7 @@ migrated:
 
 * `Theories/Semantics/Attitudes/Preferential.lean` — `HighlightingClauseType`
   + `highlightedValue` for Pruitt-Roelofsen 2011 / Uegaki 2022 hope-whether.
-* `Phenomena/Dialogue/Studies/FarkasRoelofsen2017.lean` — paper-side
+* `Studies/FarkasRoelofsen2017.lean` — paper-side
   highlighted-alternative prose; F&R 2015 is the substrate's own anchor.
 * `Theories/Semantics/Questions/Singleton.lean` — `IsSingleton` documents itself in
   @cite{roelofsen-farkas-2015} terminology but is a different abstraction

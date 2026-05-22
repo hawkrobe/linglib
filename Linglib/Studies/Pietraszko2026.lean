@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.Minimalist.Phase
 import Linglib.Theories.Syntax.Minimalist.Probe
 import Linglib.Studies.ErlewineSommerlot2025
 import Linglib.Studies.Coon2019
-import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
+import Linglib.Studies.CoonMateoPedroPreminger2014
 
 /-!
 # Pietraszko 2026: In defense of the clause-internal phase (Ndebele)

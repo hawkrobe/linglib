@@ -1,4 +1,4 @@
-import Linglib.Phenomena.FreeChoice.Studies.Aloni2022
+import Linglib.Studies.Aloni2022
 import Linglib.Studies.HollidayMandelkern2024
 
 /-!
@@ -32,7 +32,7 @@ namespace Phenomena.FreeChoice.Divergences
 
 open Semantics.BSML
 open Semantics.Modality.Orthologic
-open Phenomena.FreeChoice.Studies.Aloni2022
+open Aloni2022
 open HollidayMandelkern2024
 
 -- ============================================================================
@@ -41,7 +41,7 @@ open HollidayMandelkern2024
 
 /-! **The two frameworks make opposite predictions, but for different modal flavors.**
 
-    Aloni 2022's BSML+ (`Phenomena/FreeChoice/Studies/Aloni2022.lean`) derives FC
+    Aloni 2022's BSML+ (`Studies/Aloni2022.lean`) derives FC
     for permission-flavored ◇ via pragmatic enrichment + state-based / indisputable
     accessibility. Holliday & Mandelkern 2024's orthologic
     (`Studies/HollidayMandelkern2024.lean`) is designed for
@@ -112,7 +112,7 @@ theorem bsml_plus_WS_FC_sensitive_to_indisputability
     (the paper's central argument for moving beyond grammatical exhaustification).
 
     **Why this is structurally blocked at the Lean level**: Fox 2007's substrate
-    in linglib (`Phenomena/FreeChoice/Studies/Fox2007.lean`) operates over `Set
+    in linglib (`Studies/Fox2007.lean`) operates over `Set
     World`-style predicates and an `innocent.exh` operator that takes Sauerland
     alternatives. BSML+ operates over teams (`Finset W`) with bilateral
     `support`/`antiSupport`. Negation is set complement in Fox; bilateral

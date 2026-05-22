@@ -21,7 +21,7 @@ disjoint.
 
 Consumers:
 
-* `Phenomena/Numerals/Studies/Snyder2026.lean` — instantiates the framework
+* `Studies/Snyder2026.lean` — instantiates the framework
   for the kind TWO with subkinds `2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ` (Snyder §4.3, §5).
 * `Theories/Semantics/Kinds/MeaningPreservation.lean` — singular kinds satisfy
   the framework with the discrete partition (one-class-per-kind).

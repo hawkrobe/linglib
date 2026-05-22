@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Focus.BackgroundedIslands
-import Linglib.Phenomena.Islands.Studies.Ross1967
-import Linglib.Phenomena.Islands.Studies.HofmeisterSag2010
+import Linglib.Studies.Ross1967
+import Linglib.Studies.HofmeisterSag2010
 import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Studies.Sag2010
 import Linglib.Features.Aktionsart

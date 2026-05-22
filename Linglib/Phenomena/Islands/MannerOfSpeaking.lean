@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Studies.Ross1967
 
 /-!
 # Manner-of-Speaking Island Effects: Experimental Data

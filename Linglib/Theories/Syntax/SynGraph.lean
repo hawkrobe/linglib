@@ -302,7 +302,7 @@ theorem al_blocks_superlocal :
     @cite{adger-2025} eq. (31a) p. 92: parent c (0) with two daughter
     1-parts b (1) and a (2). Trying to subjoin a to b (sibling) fails
     Angular Locality because b has no 1-parts (the candidate-α set is
-    empty). Cross-referenced from `Phenomena/Islands/Studies/Adger2025.lean`
+    empty). Cross-referenced from `Studies/Adger2025.lean`
     in the cross-framework convergence with MCB §1.6 (which independently
     rejects the same configuration as Sideward 3(b)). -/
 def g_sideward := mkGraph 3
@@ -500,7 +500,7 @@ Structure:
 /-- Definite-nominal island configuration (@cite{adger-2025}, Ch 6 §6.3.2).
     `D (5) ──2──▶ Det (8)` represents Det subjunction filling D's 2-part;
     extracting `wh (9)` to matrix `C (0)` traverses cross-dimensional path.
-    Public (consumed by `Phenomena/Islands/Studies/Adger2025.lean`). -/
+    Public (consumed by `Studies/Adger2025.lean`). -/
 def g_definite_island := mkGraph 10
   -- 1-part edges: C─T─v─V, D─P─N
   [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
@@ -574,7 +574,7 @@ this correctly predicts "Who [t arrived]?" is grammatical. -/
 /-- Subject-island configuration (@cite{adger-2025}, Ch 7 §7.7).
     Sub-extraction of `N_who (8)` from within subject `DP_subj (4)` traverses
     `N_who <₁ PP <₂ NP <₁ DP <₂ T`, crossing dimensions twice.
-    Public (consumed by `Phenomena/Islands/Studies/Adger2025.lean`). -/
+    Public (consumed by `Studies/Adger2025.lean`). -/
 def g_subject_island := mkGraph 9
   -- 1-parts: C─T─v─V, DP─NP─N_friend, PP─N_who
   [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
@@ -618,7 +618,7 @@ but NP_wh is not (NP_wh is in AdvP's 1-part chain, not its 2-part chain). -/
     cross-dimensional mechanism applied to an `AdvP` 2-part of `v`. Adger's
     Ch 8 admits adjunct islands receive only a sketch (book p. 225) and the
     full Mod-headed Geis/Haegeman analysis is not formalised here.
-    Public (consumed by `Phenomena/Islands/Studies/Adger2025.lean`). -/
+    Public (consumed by `Studies/Adger2025.lean`). -/
 def g_adjunct_island := mkGraph 8
   -- 1-parts: C─T─v─V, AdvP─PP─NP_wh
   [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),

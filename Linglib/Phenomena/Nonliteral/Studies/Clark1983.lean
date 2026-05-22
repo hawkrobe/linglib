@@ -50,7 +50,7 @@ The `IndirectAct` structure in `§K` consumes `Core.Discourse.PreparatoryConditi
 (Searle's hierarchy: ability / knowledge / memory / perception / permission /
 willingness). Clark's canonical example *Do you know what time it is?* used
 as a request projects to `prepCondition := some .knowledge` — the same
-substrate `Phenomena/Politeness/Studies/FrancikClark1985.lean` and
+substrate `Studies/FrancikClark1985.lean` and
 `Studies/RuytenbeekEtAl2017.lean` consume.
 
 The DM bridge in `§I` consumes `Theories.Morphology.DM.Categorizer`'s
@@ -685,7 +685,7 @@ def timeQuestionExample : IndirectAct Unit where
   commonGround := .empty
 
 /-- The time-question example projects via the `.knowledge` preparatory
-    condition, exactly the substrate `Phenomena/Politeness/Studies/FrancikClark1985.lean`
+    condition, exactly the substrate `Studies/FrancikClark1985.lean`
     formalizes for `RequestForm.doYouKnow` and that
     `Studies/RuytenbeekEtAl2017.lean` consumes for its
     mechanism 2. -/

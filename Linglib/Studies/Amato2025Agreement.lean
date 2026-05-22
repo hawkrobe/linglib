@@ -22,7 +22,7 @@ case studies whose primary phenomenon is **agreement**:
   absolutive through v.
 
 The Italian auxiliary selection chapter (§3) lives at
-`Phenomena/AuxiliaryVerbs/Studies/Amato2025.lean` (different primary
+`Studies/Amato2025.lean` (different primary
 phenomenon). Cross-domain cases beyond agreement — Bulgarian
 multiple wh-fronting (§4.2.3), ditransitive case alignments (§4.1.1)
 — are deferred to future companion files in their respective

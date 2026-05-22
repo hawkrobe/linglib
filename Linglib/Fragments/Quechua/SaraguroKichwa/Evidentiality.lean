@@ -19,7 +19,7 @@ contested across Quechuan varieties (Faller's direct-evidential analysis
 for Cuzco Quechua does NOT carry over to Saraguro per
 @cite{martinez-vera-2026}). The Fragment records only the consensus
 typological metadata; the focus-marker-with-discourse-sensitivity
-analysis lives in `Phenomena/Verum/Studies/MartinezVera2026.lean`.
+analysis lives in `Studies/MartinezVera2026.lean`.
 
 WALS Ch 77 has no entry for `qvj`; the `threeOrMore` fallback fires.
 

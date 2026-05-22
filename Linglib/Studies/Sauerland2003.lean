@@ -628,7 +628,7 @@ they impose no domain restriction and hence no falsehood risk.
 
 The formal content of this prediction is captured by
 `isSemanticUnmarked` in `PhiFeatures.lean §5` and verified by
-@cite{wang-r-2023} (see `Phenomena/Politeness/Studies/Wang2023.lean`),
+@cite{wang-r-2023} (see `Studies/Wang2023.lean`),
 which proves that all three cross-linguistic honorific strategies
 (plural, 3rd person, indefinite) recruit the minimal (unmarked) cell.
 -/

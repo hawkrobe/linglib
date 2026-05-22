@@ -155,7 +155,7 @@ raised:
   is open.
 
 This is the substrate-level claim about Faller/Murray's analysis.
-Verum studies (e.g. `Phenomena/Verum/Studies/MartinezVera2026.lean`)
+Verum studies (e.g. `Studies/MartinezVera2026.lean`)
 build their discourse-update maps by adding `raisedPropositions` to
 whatever salience tracker they use, rather than re-stipulating the
 match-on-`commitsToScope`.

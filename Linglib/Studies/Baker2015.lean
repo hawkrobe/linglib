@@ -326,7 +326,7 @@ theorem georgian_present_in_inventory :
 
     See `Studies/Woolford1997.lean` for the inherent-ergative
     defense against the dependent derivation; see
-    `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean` for the
+    `Studies/CoonMateoPedroPreminger2014.lean` for the
     Chol-specific extraction-asymmetry argument. -/
 
 section ComparisonWithCoon2013

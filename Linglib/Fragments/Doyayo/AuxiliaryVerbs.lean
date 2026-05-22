@@ -78,7 +78,7 @@ def splitDoubledGloss : String :=
     elements; object agreement appears only on LV. The role-typed
     encoding (subj vs obj) makes the Anderson Ch 5 §5.2 "objects on
     LV only" generalization directly Lean-checkable: see
-    `Phenomena/AuxiliaryVerbs/Studies/Anderson2006.lean`. -/
+    `Studies/Anderson2006.lean`. -/
 def splitDoubledDistribution : InflDistribution :=
   { onAux := [.agreement .subj]
   , onLex := [.agreement .subj, .agreement .obj] }

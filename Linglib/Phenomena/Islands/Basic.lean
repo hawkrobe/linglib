@@ -97,7 +97,7 @@ inductive IslandSource where
 end Phenomena.Islands
 
 -- Re-export at the top level so the existing consumer pattern
--- `import Linglib.Phenomena.Islands.Studies.Ross1967` (which transitively
+-- `import Linglib.Studies.Ross1967` (which transitively
 -- imports this file) continues to expose the enum constructors as
 -- `IslandSource.syntactic`, `ConstraintStrength.weak`, etc. without any
 -- consumer-side `open` or namespace qualification.

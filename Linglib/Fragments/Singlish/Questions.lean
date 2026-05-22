@@ -1,5 +1,5 @@
 import Linglib.Typology.Question
-import Linglib.Phenomena.Islands.Studies.ShenHuang2026
+import Linglib.Studies.ShenHuang2026
 import Linglib.Typology.ExpressiveModifier
 
 /-!

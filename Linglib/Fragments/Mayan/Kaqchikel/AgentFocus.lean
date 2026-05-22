@@ -13,7 +13,7 @@ files per the project Fragment-discipline rule (CLAUDE.md):
 - OT competing-derivations + SSAL/XRef constraints + ranking →
   `Studies/Erlewine2016.lean`
 - Minimalist Voice/ClauseSpine for Kaqchikel →
-  `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean`
+  `Studies/CoonMateoPedroPreminger2014.lean`
 
 ## The Paradigm
 

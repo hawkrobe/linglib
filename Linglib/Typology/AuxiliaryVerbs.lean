@@ -26,7 +26,7 @@ varies across 5 macro-patterns.
 - `AVCElement`: which element(s) of an AVC bear a given property
 - `AVCDatum`: a per-language AVC datum (form, pattern, distribution, gloss)
 
-## What lives here vs. `Phenomena/AuxiliaryVerbs/Studies/Anderson2006.lean`
+## What lives here vs. `Studies/Anderson2006.lean`
 
 This file holds the substrate types and Fragment-independent invariants
 (`semantic_head_always_lex`, `auxHeaded_infl_on_phrasal_head`, etc.).

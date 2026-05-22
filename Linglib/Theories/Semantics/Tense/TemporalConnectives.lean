@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives.EventBridge
 # Temporal Connective Infrastructure
 
 Shared infrastructure for temporal connective semantics. Study-specific
-analyses live in `Phenomena/TemporalConnectives/Studies/`:
+analyses live in `Studies/`:
 
 - `Anscombe1964.lean`: Point-level and event-level ∃∀/∃∃ semantics
 - `Karttunen1974.lean`: *When*, *while*, *until*, *till*, *since*, *by*

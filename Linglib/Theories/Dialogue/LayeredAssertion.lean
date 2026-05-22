@@ -25,8 +25,8 @@ This file is sibling to `Theories/Dialogue/CommitmentSpace.lean` (the 2015
 commitment-space framework). The two are independent — neither imports
 the other — and study files target whichever is appropriate:
 
-- `Phenomena/Assertion/Studies/Krifka2015.lean` consumes `CommitmentSpace`
-- `Phenomena/Assertion/Studies/Krifka2020.lean` consumes this file
+- `Studies/Krifka2015.lean` consumes `CommitmentSpace`
+- `Studies/Krifka2020.lean` consumes this file
 -/
 
 namespace Dialogue.Krifka

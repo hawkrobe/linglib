@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Islands.MannerOfSpeaking
-import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Studies.Ross1967
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Theories.Interfaces.SyntaxSemantics.VerbSmuggling
 import Linglib.Fragments.English.Predicates.Verbal

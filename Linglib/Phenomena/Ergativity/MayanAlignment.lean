@@ -183,7 +183,7 @@ theorem mam_is_tripartite_in_perfective :
 -- The Tada bridge theorem `hasSyntacticErgativity (toCaseLocus
 -- (absPositionOf lang)) = true ↔ absPositionOf lang = .high` requires
 -- CMP 2014's analytical apparatus (`subjectTrapped`, `objectMustExitVP`)
--- and so lives in `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean`,
+-- and so lives in `Studies/CoonMateoPedroPreminger2014.lean`,
 -- where the `absPositionOf` dispatcher above is consumed by the
 -- parameterized `mayan_tada` theorem. The data file consumes only
 -- Fragment data, not paper-specific analyses.
