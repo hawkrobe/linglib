@@ -31,7 +31,7 @@ Veltman's update semantics, etc.) requires a formula-tree representation
 that's currently unavailable (deferred substrate work).
 -/
 
-namespace Phenomena.Modality.Studies.KlinedinstRothschild2012
+namespace KlinedinstRothschild2012
 
 /-- Disjunctive syllogism failure intuition: from `p ∨ q` and `¬q`,
     classical logic concludes `p`. For epistemic-modal `q`, this inference
@@ -63,4 +63,4 @@ def disjSyllFailure : DisjSyllIntuition :=
   , conclusion := "The dog is inside"
   , valid := false }
 
-end Phenomena.Modality.Studies.KlinedinstRothschild2012
+end KlinedinstRothschild2012

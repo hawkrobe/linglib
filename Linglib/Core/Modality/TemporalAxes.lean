@@ -25,7 +25,7 @@ rather than redeclaring local copies.
 
 ## Note on @cite{condoravdi-2002}'s narrower local enums
 
-`Phenomena/Modality/Studies/Condoravdi2002.lean` carries its own
+`Studies/Condoravdi2002.lean` carries its own
 2-element `Perspective` (matching `TemporalPerspective` here) and a
 2-element `Orientation` (`future | past` only — Condoravdi's 4-reading
 typology has no present-orientation cell). Those local enums are

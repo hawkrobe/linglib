@@ -34,7 +34,7 @@ the last audit):
 - Word-order / inversion: `Phenomena/WordOrder/Studies/{SagWasowBender2003,
   Adger2003}`, `Theories/Syntax/Minimalism/Inversion.lean`,
   `Theories/Syntax/HPSG/Inversion.lean`
-- Modality: `Phenomena/Modality/Studies/{Ferreira2023, Rubinstein2014,
+- Modality: `Studies/{Ferreira2023, Rubinstein2014,
   CarianiSantorio2018, AghaJeretic2022, AghaJeretic2026,
   CiardelliGuerrini2026, ImelGuoST2026, LiuRotter2025,
   RotterLiu2025Concord, YingEtAl2025}`

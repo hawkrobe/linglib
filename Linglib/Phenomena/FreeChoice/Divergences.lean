@@ -1,5 +1,5 @@
 import Linglib.Phenomena.FreeChoice.Studies.Aloni2022
-import Linglib.Phenomena.Modality.Studies.HollidayMandelkern2024
+import Linglib.Studies.HollidayMandelkern2024
 
 /-!
 # Cross-framework divergence theorems for free choice
@@ -33,7 +33,7 @@ namespace Phenomena.FreeChoice.Divergences
 open Semantics.BSML
 open Semantics.Modality.Orthologic
 open Phenomena.FreeChoice.Studies.Aloni2022
-open Phenomena.Modality.Studies.HollidayMandelkern2024
+open HollidayMandelkern2024
 
 -- ============================================================================
 -- §1 Aloni 2022 (BSML+ deontic) vs Holliday & Mandelkern 2024 (orthologic epistemic)
@@ -44,7 +44,7 @@ open Phenomena.Modality.Studies.HollidayMandelkern2024
     Aloni 2022's BSML+ (`Phenomena/FreeChoice/Studies/Aloni2022.lean`) derives FC
     for permission-flavored ◇ via pragmatic enrichment + state-based / indisputable
     accessibility. Holliday & Mandelkern 2024's orthologic
-    (`Phenomena/Modality/Studies/HollidayMandelkern2024.lean`) is designed for
+    (`Studies/HollidayMandelkern2024.lean`) is designed for
     epistemic ◇, where the orthologic move predicts that FC FAILS at world states
     that aren't fully uncertain.
 

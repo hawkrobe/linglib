@@ -44,7 +44,7 @@ PB's `isConsidered` (§3.6) is the same predicate as @cite{cariani-2013}'s
 `isVisible` (§4 p.545–546): both require every cell of the
 partition/option-set to settle the prejacent. PB doesn't cite Cariani;
 Cariani doesn't anticipate PB. The identification is exposed in
-`Phenomena/Modality/Studies/Cariani2013.lean`, where Cariani's
+`Studies/Cariani2013.lean`, where Cariani's
 `isVisible` is defined as `abbrev isVisible rc p := isConsidered
 rc.options p` and the bridge theorem `isVisible_iff_isConsidered`
 reduces to `Iff.rfl`. The agreement is independent reinvention across
@@ -490,7 +490,7 @@ theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
 @cite{heim-1992}'s comparative-belief semantics (`wantHeim`) is the
 *other* canonical belief-based account — formalized at
 `Theories/Semantics/Attitudes/Desire.lean` and exercised in
-`Phenomena/Modality/Studies/Heim1992.lean`. The substrate's
+`Studies/Heim1992.lean`. The substrate's
 `BeliefBasedDesireSemantics` typology packages vF, Heim, and (in
 principle) Levinson 2003 / sufficient-desirability accounts under a
 single structural property `isConflictBlocking`.

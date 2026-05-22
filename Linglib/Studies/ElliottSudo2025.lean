@@ -41,7 +41,7 @@ Under these simplification conditions, the general FC preconditions
 (both disjPos nonempty) yield the bathroom inference.
 -/
 
-namespace Phenomena.Modality.Studies.ElliottSudo2025
+namespace ElliottSudo2025
 
 open Semantics.Dynamic.Core
 open Semantics.Dynamic
@@ -317,4 +317,4 @@ def exampleBathroomConfig : BathroomConfig BathroomWorld BathroomEntity :=
   , funnyPlace := BilateralDen.pred1 inFunnyPlace 0
   , x := 0 }
 
-end Phenomena.Modality.Studies.ElliottSudo2025
+end ElliottSudo2025

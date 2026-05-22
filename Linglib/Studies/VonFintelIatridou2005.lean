@@ -217,7 +217,7 @@ end DesignatedGoals
 /-! ### Cross-reference to @cite{chung-mascarenhas-2024}
 
 C&M's `mustCM` operator
-(`Phenomena/Modality/Studies/ChungMascarenhas2024.lean`) realises
+(`Studies/ChungMascarenhas2024.lean`) realises
 @cite{sloman-1970}'s "only candidate" condition as an
 **exhaustification clause** on expected values:
 `mustCM φ` iff `E[μ_R ∣ φ] > θ ∧ ∀ψ ∈ Alt(φ). E[μ_R ∣ ψ] ≤ θ`.

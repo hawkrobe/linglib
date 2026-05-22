@@ -48,7 +48,7 @@ substrate-extension pattern. Fragment-importable.
 ## Out of scope
 
 Cross-linguistic generalisations consuming Fragment per-language data
-live in `Phenomena/Modality/Studies/Aikhenvald2004.lean` (evidentiality
+live in `Studies/Aikhenvald2004.lean` (evidentiality
 typology + the 18-language sample) and other paper-anchored studies
 (Narrog2010/2012 for deontic necessity; Rubinstein2014 for weak
 necessity; ImelGuoST2026 for modal-meaning typology).

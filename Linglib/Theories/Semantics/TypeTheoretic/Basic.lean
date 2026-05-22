@@ -599,7 +599,7 @@ end TTRSign
 
 -- (Cooper §1.3 intensional examples — `groundhog`/`woodchuck`,
 --  `roundSquare`/`evenPrimeGt2`, `BoyHugsDog` subtyping demo —
---  moved to `Phenomena/Modality/Studies/Cooper2023.lean` §7.)
+--  moved to `Studies/Cooper2023.lean` §7.)
 
 -- ============================================================================
 -- Grammar (Cat, GSign, PSRule)
@@ -823,7 +823,7 @@ theorem existPQ_eq_exists {E : Type} (P Q : E → Prop) :
 
 -- (Cooper §3.4 derivation examples — `Conductor`/`Composer`/`Dudamel`/
 --  `Beethoven`, `cnstrIsA`, `aConductorIsDudamel` reversal demo —
---  moved to `Phenomena/Modality/Studies/Cooper2023.lean` §8.)
+--  moved to `Studies/Cooper2023.lean` §8.)
 
 
 -- ============================================================================

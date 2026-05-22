@@ -35,7 +35,7 @@ Paper-specific instantiations of the substrate (the five-possibility
 path frame `Poss5`, the Epistemic Scale, ortholattice failures of
 distributivity / orthomodularity / pseudocomplementation, and the
 two-world lifting) live in
-`Phenomena/Modality/Studies/HollidayMandelkern2024.lean`.
+`Studies/HollidayMandelkern2024.lean`.
 
 ## Conventions
 

@@ -36,7 +36,7 @@ confirms the register approach.
 
 -/
 
-namespace Phenomena.Modality.ModalConcord.Bridge
+namespace RotterLiu2025Concord
 
 open Phenomena.Modality.ModalConcord
 open Fragments.English.Auxiliaries
@@ -183,4 +183,4 @@ theorem iff_enables_concord :
     haveTo.modalMeaning.contains deoNec = true := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-end Phenomena.Modality.ModalConcord.Bridge
+end RotterLiu2025Concord

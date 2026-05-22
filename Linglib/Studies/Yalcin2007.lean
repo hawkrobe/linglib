@@ -52,7 +52,7 @@ empirical *judgments* recorded here are widely shared; the *labels*
 content interacts with assertion, which is itself contested.
 -/
 
-namespace Phenomena.Modality.Studies.Yalcin2007
+namespace Yalcin2007
 
 /-- A sentence type: how epistemic modality interacts with assertion.
 
@@ -94,4 +94,4 @@ def felicitousUnderEmbedding : SentenceType → Bool
   | .wittgenstein => false
   | .classical => false
 
-end Phenomena.Modality.Studies.Yalcin2007
+end Yalcin2007

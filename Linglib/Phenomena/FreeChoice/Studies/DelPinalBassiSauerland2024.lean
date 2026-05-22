@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Exhaustification.Presuppositional
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.Accommodation
-import Linglib.Phenomena.Modality.Studies.BarLevFox2020
+import Linglib.Studies.BarLevFox2020
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -42,7 +42,7 @@ namespace DelPinalBassiSauerland2024
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
 open Exhaustification.Presuppositional
-open Phenomena.Modality.Studies.BarLevFox2020
+open BarLevFox2020
 open Exhaustification
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.BeliefEmbedding
@@ -68,7 +68,7 @@ data in `Phenomena.FreeChoice`.
 ## §2.2: pex Applied to ◇(p ∨ q)
 
 Instantiating `pexIEII_full` on the five-world FC toy from
-`Phenomena.Modality.Studies.BarLevFox2020`:
+`BarLevFox2020`:
 
 - φ = ◇(p ∨ q) = `permAorB` = `fcPrejacent`
 - ALT = {◇(p ∨ q), ◇p, ◇q, ◇(p ∧ q)} = `fcALT`

@@ -1,7 +1,7 @@
 import Linglib.Core.Modality.TemporalAxes
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.NezPerce.Modals
-import Linglib.Phenomena.Modality.Studies.Condoravdi2002
+import Linglib.Studies.Condoravdi2002
 import Linglib.Theories.Semantics.Modality.ActualityEntailments
 
 /-!

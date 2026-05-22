@@ -34,7 +34,7 @@ https://clmbr.shane.st/modal-typology/
 
 -/
 
-namespace Phenomena.Modality.Studies.ImelGuoST2026
+namespace ImelGuoST2026
 
 open Core.Modality (ModalForce ModalFlavor ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression ModalInventory satisfiesIFF)
@@ -305,4 +305,4 @@ def populationMeanOptimality : Float := 0.776
 theorem natural_more_optimal :
     naturalMeanOptimality > populationMeanOptimality := by native_decide
 
-end Phenomena.Modality.Studies.ImelGuoST2026
+end ImelGuoST2026

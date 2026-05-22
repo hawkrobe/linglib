@@ -44,14 +44,14 @@ choices not in the paper.
 * `Studies/VonFintelIatridou2005.lean` §6 —
   C&M's exhaustification realises @cite{sloman-1970}'s "only
   candidate" / vF&I's *have-to* vs *ought-to* distinction.
-* `Phenomena/Modality/Studies/Lassiter2017.lean` — Lassiter's `want`
+* `Studies/Lassiter2017.lean` — Lassiter's `want`
   on the same EV substrate (`PMF.condExpect`); C&M's `must` differs
   by (i) the exhaustification clause, (ii) count-valued `μ_R` vs
   Lassiter's free-form `value`, (iii) likelihood-based epistemic
   reading vs Lassiter's posterior.
 -/
 
-namespace Phenomena.Modality.Studies.ChungMascarenhas2024
+namespace ChungMascarenhas2024
 
 open PMF PMF.Confirmation
 open scoped ENNReal
@@ -261,4 +261,4 @@ theorem ya_exhaustification_yields_mustCM {W : Type*} [Fintype W]
     mustCM p R φ alts θ :=
   ⟨hThresh, hExhaust⟩
 
-end Phenomena.Modality.Studies.ChungMascarenhas2024
+end ChungMascarenhas2024

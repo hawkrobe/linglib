@@ -49,7 +49,7 @@ frame, that the formalization gets each prediction right and that the
 unrevised definitions fail in exactly the way Kratzer says they do.
 -/
 
-namespace Phenomena.Modality.Studies.Kratzer1977
+namespace Kratzer1977
 
 open Core.Logic.Intensional.Premise
 
@@ -376,4 +376,4 @@ theorem def6_vs_def8_q :
     ¬ canInView f q 0 ∧ canInView' f q 0 :=
   ⟨can_q_under_def6, sentence_9_can_q⟩
 
-end Phenomena.Modality.Studies.Kratzer1977
+end Kratzer1977

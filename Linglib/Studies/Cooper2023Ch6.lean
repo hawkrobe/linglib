@@ -29,7 +29,7 @@ single-paper Cooper-textbook replication: only `ChatzikyriakidisEtAl2025`
 
 -/
 
-namespace Phenomena.Modality.Studies.Cooper2023
+namespace Cooper2023Ch6
 
 open Semantics.TypeTheoretic
 
@@ -1499,4 +1499,4 @@ theorem ttr_kratzer_modal_arithmetic_agree
 
 end TtrKratzerBridge
 
-end Phenomena.Modality.Studies.Cooper2023
+end Cooper2023Ch6

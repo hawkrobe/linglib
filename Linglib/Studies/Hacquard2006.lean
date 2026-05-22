@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Modality.Temporal
 import Mathlib.Data.List.Defs
 import Linglib.Theories.Semantics.Aspect.Basic
 import Linglib.Theories.Semantics.Modality.ActualityEntailments
-import Linglib.Phenomena.Modality.Studies.Condoravdi2002
+import Linglib.Studies.Condoravdi2002
 
 /-!
 # Event Projection → Temporal Orientation
@@ -294,7 +294,7 @@ complement, while those with **imperfective** aspect do not.
 
 -/
 
-namespace Phenomena.Modality.ActualityInferencesBridge
+namespace Hacquard2006.ActualityInferences
 
 open Semantics.Aspect (ViewpointAspectB)
 
@@ -492,4 +492,4 @@ theorem english_matches_theory :
     english_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Modality.ActualityInferencesBridge
+end Hacquard2006.ActualityInferences

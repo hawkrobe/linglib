@@ -51,7 +51,7 @@ example over `FCWorld` (the five-world toy from @cite{bar-lev-fox-2020}) and
 all consequences specific to that example — `pexFC`, `pex_fc`,
 `pex_double_prohibition`, the negative-FC isomorphism, and the embedding
 puzzles from §3–§5 — live in the study file
-`Phenomena/Modality/Studies/DelPinalBassiSauerland2024.lean`.
+`Studies/DelPinalBassiSauerland2024.lean`.
 -/
 
 namespace Exhaustification.Presuppositional
@@ -249,7 +249,7 @@ at-issue structure differs. This difference is what allows pex to solve
 the embedded FC puzzles that exh cannot.
 
 For the concrete worked example over `FCWorld` and the embedded FC
-puzzles, see `Phenomena/Modality/Studies/DelPinalBassiSauerland2024.lean`.
+puzzles, see `Studies/DelPinalBassiSauerland2024.lean`.
 -/
 
 -- ============================================================================

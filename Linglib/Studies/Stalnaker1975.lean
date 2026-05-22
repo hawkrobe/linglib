@@ -60,7 +60,7 @@ The two universal pragmatic postulates from the Appendix
 
 ## See also
 
-* `Phenomena/Modality/Studies/CarianiSantorio2018.lean` — extends the
+* `Studies/CarianiSantorio2018.lean` — extends the
   Stalnaker selection-function mechanism from conditionals to bare
   *will*. C&S's `Semantics.Conditionals.SelectionFunction` infrastructure is exactly the
   one used here for `selectionConditional`; the `would`-conditional /

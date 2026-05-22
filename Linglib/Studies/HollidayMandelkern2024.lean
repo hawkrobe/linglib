@@ -2,9 +2,9 @@ import Linglib.Theories.Semantics.Modality.Orthologic.Frames
 import Linglib.Theories.Semantics.Modality.Orthologic.Modal
 import Linglib.Theories.Semantics.Modality.Orthologic.RegularProp
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
-import Linglib.Phenomena.Modality.Studies.Yalcin2007
-import Linglib.Phenomena.Modality.Studies.Mandelkern2019
-import Linglib.Phenomena.Modality.Studies.KlinedinstRothschild2012
+import Linglib.Studies.Yalcin2007
+import Linglib.Studies.Mandelkern2019
+import Linglib.Studies.KlinedinstRothschild2012
 
 /-!
 # @cite{holliday-mandelkern-2024}: Possibility-Semantics Case Studies
@@ -63,7 +63,7 @@ predictions that depend on them.
   the cross-paper agreement bridge is unwritten).
 -/
 
-namespace Phenomena.Modality.Studies.HollidayMandelkern2024
+namespace HollidayMandelkern2024
 
 open Semantics.Modality.Orthologic
 
@@ -306,7 +306,7 @@ instance : DecidableRel epistemicScale.toCompatFrame.compat :=
 `epistemicScale` satisfies all three conditions of HM 2024 Definition 4.26
 (Reflexivity is in the structure; R-regularity and Knowability are
 decide-checked here). Bundled as `epistemicCompatFrame`, so
-`Phenomena.Modality.Studies.HollidayMandelkern2024.wittgenstein_p` and
+`HollidayMandelkern2024.wittgenstein_p` and
 `wittgenstein_neg_p` collapse to one-line corollaries of the substrate
 `Semantics.Modality.Orthologic.wittgensteinLaw` (Proposition 4.27). -/
 
@@ -473,7 +473,7 @@ theorem epistemic_distrib_failure :
     ◇¬p is false).
 
     For a deontic-modal account where free choice DOES emerge — via
-    pragmatic enrichment in BSML — see `Phenomena/Modality/Studies/Aloni2022.lean`.
+    pragmatic enrichment in BSML — see `Studies/Aloni2022.lean`.
     The contrast is *modal-flavor-dependent* rather than directly contradictory:
     Aloni 2022 derives FC for permission-flavored ◇, HM 2024 predicts FC failure
     for epistemic-flavored ◇. -/
@@ -728,7 +728,7 @@ theorem hm_predicts_wittgenstein_infelicitous :
       ¬ conj (orthoNeg pathFrame propP) (diamond epistemicScale propP) x ∧
       ¬ conj (orthoNeg pathFrame (orthoNeg pathFrame propP))
              (diamond epistemicScale (orthoNeg pathFrame propP)) x) ∧
-    Phenomena.Modality.Studies.Yalcin2007.felicitousUnderEmbedding
+    Yalcin2007.felicitousUnderEmbedding
       .wittgenstein = false :=
   ⟨fun x => ⟨wittgenstein_p x, wittgenstein_neg_p x⟩, rfl⟩
 
@@ -738,7 +738,7 @@ theorem hm_predicts_wittgenstein_infelicitous :
     on `RegularProp pathFrame`. -/
 theorem hm_predicts_classical_infelicitous :
     (∀ x : Poss5, ¬ conj propP (orthoNeg pathFrame propP) x) ∧
-    Phenomena.Modality.Studies.Yalcin2007.felicitousUnderEmbedding
+    Yalcin2007.felicitousUnderEmbedding
       .classical = false :=
   ⟨fun x => by cases x <;> decide, rfl⟩
 
@@ -755,8 +755,8 @@ theorem hm_predicts_distrib_failure :
        (conj propP uncertainty)
        (conj (orthoNeg pathFrame propP) uncertainty)
      lhs .x3 ∧ ¬ rhs .x3) ∧
-    Phenomena.Modality.Studies.Mandelkern2019.distribFailure.lhsFelicitous = true ∧
-    Phenomena.Modality.Studies.Mandelkern2019.distribFailure.rhsFelicitous = false :=
+    Mandelkern2019.distribFailure.lhsFelicitous = true ∧
+    Mandelkern2019.distribFailure.rhsFelicitous = false :=
   ⟨epistemic_distrib_failure, rfl, rfl⟩
 
 /-- HM 2024 predicts Klinedinst & Rothschild (2012)'s disjunctive-syllogism
@@ -768,7 +768,7 @@ theorem hm_predicts_disjSyll_failure :
      let pOrMustNotP := disj pathFrame propP mustNotP
      let notMustNotP := orthoNeg pathFrame mustNotP
      pOrMustNotP .x3 ∧ notMustNotP .x3 ∧ ¬ propP .x3) ∧
-    Phenomena.Modality.Studies.KlinedinstRothschild2012.disjSyllFailure.valid = false :=
+    KlinedinstRothschild2012.disjSyllFailure.valid = false :=
   ⟨disjSyllogism_fails, rfl⟩
 
 -- ════════════════════════════════════════════════════
@@ -826,4 +826,4 @@ theorem hm_veltman_disagree_on_wittgenstein_symmetry :
          (Semantics.Dynamic.UpdateSemantics.Update.prop p) s).Nonempty) :=
   ⟨hm_wittgenstein_symmetric, Semantics.Dynamic.UpdateSemantics.might_order_matters⟩
 
-end Phenomena.Modality.Studies.HollidayMandelkern2024
+end HollidayMandelkern2024

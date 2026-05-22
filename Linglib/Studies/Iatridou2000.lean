@@ -31,7 +31,7 @@ Theory-neutral cross-linguistic data on counterfactual morphology from
 
 ## See also
 
-- `Phenomena/Modality/Studies/CarianiSantorio2018.lean` — selectional
+- `Studies/CarianiSantorio2018.lean` — selectional
   account where past morphology shifts the modal parameter rather than
   introducing a separate counterfactual operator. C&S §5.3.2 identifies
   *would* with morphological past *will*, dovetailing with Iatridou's

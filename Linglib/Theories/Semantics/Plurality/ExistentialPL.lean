@@ -40,7 +40,7 @@ bridge if needed.
 - `Theories/Semantics/Plurality/Link1983.lean`: `star`, `IsDistr`
 - `Lexical/Plural/Distributivity.lean`: `distMaximal` (∀ atoms satisfy P)
 - `Exhaustification/Operators/Basic.lean` (Exh^{IE+II}) +
-  `Phenomena/Modality/Studies/BarLevFox2020.lean` (worked FC example):
+  `Studies/BarLevFox2020.lean` (worked FC example):
   Exh^{IE+II} derives universality from existential + non-closed alternatives
 -/
 

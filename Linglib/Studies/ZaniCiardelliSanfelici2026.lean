@@ -1,5 +1,5 @@
 import Linglib.Studies.Santorio2018
-import Linglib.Phenomena.Modality.Studies.BarLevFox2020
+import Linglib.Studies.BarLevFox2020
 import Linglib.Phenomena.Plurals.Studies.TieuKrizChemla2019
 import Mathlib.Data.Rat.Defs
 
@@ -520,7 +520,7 @@ the SDA inference proper — verifiable at the Lean substrate level via:
 - @cite{santorio-2018}'s `Santorio2018.sdaEval` (per-alternative
   homogeneity, `Studies/Santorio2018.lean`)
 - @cite{bar-lev-fox-2020}'s `BarLevFox2020.bar_lev_fox_sda` (Innocent
-  Inclusion derivation, `Phenomena/Modality/Studies/BarLevFox2020.lean`)
+  Inclusion derivation, `Studies/BarLevFox2020.lean`)
 
 The cross-mechanism agreement
 `BarLevFox2020.bar_lev_fox_sda_implies_santorio_sda_inference` proves
@@ -547,13 +547,13 @@ the two only at the developmental level, not the mature-grammar level.
     proved in `BarLevFox2020.lean §7`. -/
 theorem bar_lev_fox_and_santorio_agree_on_mature_sda :
     ∀ w, Exhaustification.exhIEII
-            Phenomena.Modality.Studies.BarLevFox2020.sdaALT
-            Phenomena.Modality.Studies.BarLevFox2020.sdaPrejacent w →
+            BarLevFox2020.sdaALT
+            BarLevFox2020.sdaPrejacent w →
       Santorio2018.sdaEval
-        Phenomena.Modality.Studies.BarLevFox2020.sdaSim
-        Phenomena.Modality.Studies.BarLevFox2020.sdaSantorioAlts
-        Phenomena.Modality.Studies.BarLevFox2020.sdaR w :=
-  Phenomena.Modality.Studies.BarLevFox2020.bar_lev_fox_sda_implies_santorio_sda_inference
+        BarLevFox2020.sdaSim
+        BarLevFox2020.sdaSantorioAlts
+        BarLevFox2020.sdaR w :=
+  BarLevFox2020.bar_lev_fox_sda_implies_santorio_sda_inference
 
 /-- **Bar-Lev/Fox derives a STRICTLY STRONGER verdict than Santorio**
     on the same model: in addition to the SDA inference proper,
@@ -563,11 +563,11 @@ theorem bar_lev_fox_and_santorio_agree_on_mature_sda :
     homogeneity-based derivation. -/
 theorem bar_lev_fox_strictly_stronger_than_santorio :
     ∀ w, Exhaustification.exhIEII
-            Phenomena.Modality.Studies.BarLevFox2020.sdaALT
-            Phenomena.Modality.Studies.BarLevFox2020.sdaPrejacent w →
-      ¬ Phenomena.Modality.Studies.BarLevFox2020.sdaPandQbox w := by
+            BarLevFox2020.sdaALT
+            BarLevFox2020.sdaPrejacent w →
+      ¬ BarLevFox2020.sdaPandQbox w := by
   intro w h
-  exact (Phenomena.Modality.Studies.BarLevFox2020.bar_lev_fox_sda w h).2.2
+  exact (BarLevFox2020.bar_lev_fox_sda w h).2.2
 
 
 end ZaniCiardelliSanfelici2026

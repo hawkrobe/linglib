@@ -42,7 +42,7 @@ This study file replicates the desire-semantics half of @cite{heim-1992}
   those later study files, not here.
 -/
 
-namespace Phenomena.Modality.Studies.Heim1992
+namespace Heim1992
 
 open Semantics.Attitudes.Desire
 
@@ -199,4 +199,4 @@ a faithful instantiation needs `Sim` non-trivial. Phase 2 will land
 this scenario along with `prefRecovered`'s evaluation-world parameter
 genuinely exercised. -/
 
-end Phenomena.Modality.Studies.Heim1992
+end Heim1992

@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Modality.Studies.Yalcin2007
+import Linglib.Studies.Yalcin2007
 
 /-!
 # @cite{mandelkern-2019}: Wittgenstein Sentences and Distributivity Failure
@@ -32,9 +32,9 @@ formal semantic account (the orthologic) that derives this failure from
 non-distributivity of the underlying ortholattice.
 -/
 
-namespace Phenomena.Modality.Studies.Mandelkern2019
+namespace Mandelkern2019
 
-open Phenomena.Modality.Studies.Yalcin2007 (SentenceType)
+open Yalcin2007 (SentenceType)
 
 /-- Distributivity-failure intuition: a felicitous sentence becomes
     infelicitous when classically distributed. The natural-language LHS and
@@ -69,4 +69,4 @@ def distribFailure : DistribIntuition :=
   , lhsFelicitous := true
   , rhsFelicitous := false }
 
-end Phenomena.Modality.Studies.Mandelkern2019
+end Mandelkern2019

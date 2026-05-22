@@ -59,7 +59,7 @@ follows the paper's actual definitions.
 
 -/
 
-namespace Phenomena.Modality.Studies.BarLevFox2020
+namespace BarLevFox2020
 
 open Exhaustification
 
@@ -1161,4 +1161,4 @@ theorem universal_fc :
 
 end UniversalFC
 
-end Phenomena.Modality.Studies.BarLevFox2020
+end BarLevFox2020

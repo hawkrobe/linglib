@@ -42,7 +42,7 @@ is the German deontic scenario at p. 67 (examples 59-61).
 > is good than any world where injustice is rewarded." (p. 67)
 -/
 
-namespace Phenomena.Modality.Studies.Kratzer2012Conditionals
+namespace Kratzer2012Conditionals
 
 open Semantics.Modality.Kratzer
 
@@ -302,4 +302,4 @@ theorem traditional_collapses_kratzer_distinguishes :
   ⟨⟨traditional_60_vacuously_true, traditional_61_vacuously_true⟩,
    ⟨ex60_holds 0, ex61_fails 0⟩⟩
 
-end Phenomena.Modality.Studies.Kratzer2012Conditionals
+end Kratzer2012Conditionals

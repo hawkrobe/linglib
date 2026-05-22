@@ -1,7 +1,7 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.Truth3
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
-import Linglib.Phenomena.Modality.Studies.Geurts2005
+import Linglib.Studies.Geurts2005
 import Linglib.Phenomena.Presupposition.Studies.Karttunen1973
 import Mathlib.Tactic.DeriveFintype
 
@@ -29,7 +29,7 @@ non-conflicting cases like (18)).
 different account that also delivers a "split" disjunction; we mention
 it here because Yagi cites it alongside Geurts as a flexible-accommodation
 co-developer, but it is formalised separately at
-`Phenomena/Modality/Studies/Aloni2022.lean` and not engaged here.
+`Studies/Aloni2022.lean` and not engaged here.
 
 Yagi's example (8) — "Either baldness is not hereditary, or all of Bill's
 children are bald" (@cite{karttunen-1974}) — appears in §2.2 as a
@@ -473,7 +473,7 @@ theorem flex_genuineness :
 NOT a Yagi claim — @cite{belnap-1970} is not in his references.
 This is an observation `Core/Semantics/Presupposition.lean` already
 makes (`orFlex_eq_orBelnap`) and that
-`Phenomena/Modality/Studies/Geurts2005.lean` extends to a three-way
+`Studies/Geurts2005.lean` extends to a three-way
 identity with @cite{geurts-2005}'s modal-disjunction view. We instantiate
 the substrate identity at the Buganda case for clarity. -/
 

@@ -62,7 +62,7 @@ applying (paper §8.2 footnote 32).
 
 set_option autoImplicit false
 
-namespace Phenomena.Modality.Studies.CarianiSantorio2018
+namespace CarianiSantorio2018
 
 open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Modality.Selectional
@@ -434,4 +434,4 @@ theorem cs_will_would_morph_distinct :
     Fragments.English.Auxiliaries.will.tense ≠
       Fragments.English.Auxiliaries.would.tense := by decide
 
-end Phenomena.Modality.Studies.CarianiSantorio2018
+end CarianiSantorio2018

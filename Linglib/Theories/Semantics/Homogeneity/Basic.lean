@@ -28,7 +28,7 @@ homogeneity gaps.
 | Conditionals            | closest P-worlds    | `necessarily`               | §6 below + `Conditionals.Counterfactual`      |
 | Summative (spatial)     | spatial parts       | `completely` / `whole`      | not yet formalized                            |
 | Generics                | subkinds            | `all`                       | not yet formalized; cf. `Cohen1999` (different equation) |
-| Modal                   | best worlds         | `necessarily`               | `Phenomena.Modality.Studies.AghaJeretic2022`  |
+| Modal                   | best worlds         | `necessarily`               | `AghaJeretic2022`  |
 
 The shared structure is supervaluation over specification points.
 

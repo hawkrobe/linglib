@@ -15,7 +15,7 @@ and theorems live here. Concrete paper instantiations (the Epistemic Scale
 over `Poss5`, Wittgenstein-sentence verifications, free-choice / orthomodularity
 / pseudocomplementation failures, level-wise classicality theorems, lifting
 from W={0,1}) live in
-`Phenomena/Modality/Studies/HollidayMandelkern2024.lean`.
+`Studies/HollidayMandelkern2024.lean`.
 
 ## What's here
 

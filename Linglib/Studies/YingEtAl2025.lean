@@ -30,10 +30,10 @@ table in `EpistemicThreshold.lean`). The bridge proves:
                     ↓
     Theories/Semantics/Attitudes/EpistemicThreshold.lean (EpistemicEntry, θ)
                     ↓
-    Phenomena/Modality/Studies/YingEtAl2025.lean (this file)
+    Studies/YingEtAl2025.lean (this file)
 -/
 
-namespace Phenomena.Modality.Studies.YingEtAl2025
+namespace YingEtAl2025
 
 open Fragments.English.Auxiliaries
 open Semantics.Attitudes.EpistemicThreshold (EpistemicEntry)
@@ -151,4 +151,4 @@ theorem may_gt_might : EpistemicEntry.may_.θ > EpistemicEntry.might_.θ := by
 /-- `might` = `could` in threshold (both 0.20). -/
 theorem might_eq_could : EpistemicEntry.might_.θ = EpistemicEntry.could_.θ := rfl
 
-end Phenomena.Modality.Studies.YingEtAl2025
+end YingEtAl2025

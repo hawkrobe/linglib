@@ -69,7 +69,7 @@ note. Substantive structural / implicational claims kept.
 
 set_option autoImplicit false
 
-namespace Phenomena.Modality.Studies.Aikhenvald2004
+namespace Aikhenvald2004
 
 open Typology.Modality
 
@@ -355,4 +355,4 @@ theorem tariana_aikhenvald_vs_de_haan :
     Fragments.Tariana.Evidentiality.evidentialityProfile.coding = .partOfTAM := by
   decide
 
-end Phenomena.Modality.Studies.Aikhenvald2004
+end Aikhenvald2004

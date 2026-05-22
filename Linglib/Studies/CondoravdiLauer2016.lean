@@ -49,7 +49,7 @@ paper-specific; tracked in
 * `Studies/vonFintelIatridou2005.lean` — vF&I's
   primary-secondary ordering source analysis that C&L 2016 critiques
   (paper § 3.2.2).
-* `Phenomena/Modality/Studies/PhillipsBrown2025.lean` § 11 — sibling
+* `Studies/PhillipsBrown2025.lean` § 11 — sibling
   no-go theorem `condoravdiLauer_blocks_simultaneous_pq_and_negpq`,
   same consistency-of-EP delegation pattern.
 -/

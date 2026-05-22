@@ -45,7 +45,7 @@ Ortholattices need not satisfy:
 Imposing distributivity collapses the typeclass to `BooleanAlgebra`;
 imposing orthomodularity yields *orthomodular lattices* (the algebra of
 quantum-mechanical propositions). Concrete counterexamples to all three
-appear in `Linglib.Phenomena.Modality.Studies.HollidayMandelkern2024`.
+appear in `Linglib.Studies.HollidayMandelkern2024`.
 
 ## TODO
 

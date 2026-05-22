@@ -29,7 +29,7 @@ patterns with negative concord (solidarity), necessity MC contrasts (competence)
 
 -/
 
-namespace Phenomena.Modality.ModalConcord.LiuRotter2025.Bridge
+namespace LiuRotter2025
 
 open Phenomena.Modality.ModalConcord.LiuRotter2025
 open Fragments.English.Auxiliaries
@@ -196,4 +196,4 @@ theorem social_index_aligns_with_commitment :
     (commitmentRating posMC).mean < (commitmentRating posSM).mean := by
   refine ⟨rfl, ?_, rfl, ?_⟩ <;> native_decide
 
-end Phenomena.Modality.ModalConcord.LiuRotter2025.Bridge
+end LiuRotter2025

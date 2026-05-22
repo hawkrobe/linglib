@@ -4,8 +4,8 @@ import Linglib.Theories.Semantics.Tense.Modal.Matrix
 import Linglib.Theories.Semantics.Modality.TemporalConstraint
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Gitksan.Modals
-import Linglib.Phenomena.Modality.Studies.Matthewson2013
-import Linglib.Phenomena.Modality.Studies.Hacquard2006
+import Linglib.Studies.Matthewson2013
+import Linglib.Studies.Hacquard2006
 import Linglib.Studies.Sharvit2014
 import Linglib.Theories.Semantics.Tense.DeRe
 import Linglib.Data.Examples.Schema

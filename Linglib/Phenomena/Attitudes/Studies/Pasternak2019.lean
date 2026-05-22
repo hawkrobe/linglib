@@ -450,7 +450,7 @@ Phillips-Brown 2018 (Sinn und Bedeutung) on graded want — also not in
 linglib bib yet.
 
 The chronologically-later @cite{phillips-brown-2025} formalization
-(`Phenomena/Modality/Studies/PhillipsBrown2025.lean`) builds on the same
+(`Studies/PhillipsBrown2025.lean`) builds on the same
 `Attitudes.Desire` substrate, generalizing `wantVF` to question-based
 `wantQuestionBased`. That study file's §11 makes the disagreement with
 @cite{condoravdi-lauer-2016} explicit; the analogous Pasternak vs
@@ -458,7 +458,7 @@ question-based contrast (intensity-based vs question-based resolution
 of conflicting desires) is left as future work.
 
 The chronologically-later @cite{lassiter-2017} formalization
-(`Phenomena/Modality/Studies/Lassiter2017.lean`) sits structurally
+(`Studies/Lassiter2017.lean`) sits structurally
 adjacent to Pasternak: both are gradable-`want` accounts (Pasternak
 intensity, Lassiter expected value) using ℚ-valued degree functions.
 The substrate overlap is `Attitudes.Desire.Lassiter.expectedValue` vs

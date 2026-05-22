@@ -53,7 +53,7 @@ combine both.
   requires a separate Compactness lemma we don't yet have.
 -/
 
-namespace Phenomena.Modality.Studies.Booth2022
+namespace Booth2022
 
 open Core
 open Core.Logic.Bilateral
@@ -680,4 +680,4 @@ theorem independence_p_not_q
       rcases Set.mem_singleton_iff.mp hZ_in with rfl
       exact hZY
 
-end Phenomena.Modality.Studies.Booth2022
+end Booth2022

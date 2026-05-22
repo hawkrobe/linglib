@@ -372,7 +372,7 @@ to empirical data in `Phenomena.FreeChoice`.
 -/
 
 
-namespace Phenomena.Modality.RSA_ChampollionAlsopGrosu2019Bridge
+namespace ChampollionAlsopGrosu2019.Bridge
 
 /-!
 ## Connection to Empirical Data
@@ -393,4 +393,4 @@ The model predicts the patterns in `Phenomena.FreeChoice`:
    - The asymmetry comes from the alternative structure
 -/
 
-end Phenomena.Modality.RSA_ChampollionAlsopGrosu2019Bridge
+end ChampollionAlsopGrosu2019.Bridge

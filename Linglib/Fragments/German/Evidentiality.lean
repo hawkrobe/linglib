@@ -7,7 +7,7 @@ import Linglib.Typology.Modality
 WALS @cite{de-haan-2013} F77A: `indirectOnly` (de Haan counts modal verbs
 *sollen* / *wollen* as grammatical reportatives). @cite{aikhenvald-2004}'s
 stricter criterion treats German as having no grammatical evidentials;
-Studies-side override in `Phenomena/Modality/Studies/Aikhenvald2004.lean`.
+Studies-side override in `Studies/Aikhenvald2004.lean`.
 -/
 
 namespace Fragments.German.Evidentiality

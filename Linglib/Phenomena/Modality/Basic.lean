@@ -12,11 +12,11 @@ Free choice is covered separately under `Phenomena.FreeChoice`.
 - Related to Conditionals/: Modal subordination
 -/
 
-import Linglib.Phenomena.Modality.Studies.ImelGuoST2026
+import Linglib.Studies.ImelGuoST2026
 
 namespace Phenomena.Modality
 
 -- Re-export for convenience
-export Studies.ImelGuoST2026 (tlingit javanese gitksan korean greek mandarin dutch hungarian)
+export ImelGuoST2026 (tlingit javanese gitksan korean greek mandarin dutch hungarian)
 
 end Phenomena.Modality

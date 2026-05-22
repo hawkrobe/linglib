@@ -41,7 +41,7 @@ not formalized in this file; consumers wanting full denotations should
 combine `Modal.flavor` with `Theories.Semantics.Modality.Kratzer.necessity`.
 -/
 
-namespace Phenomena.Modality.Studies.Huijsmans2025
+namespace Huijsmans2025
 
 open Semantics.Tense.Evidential (EPCondition EvidentialFrame)
 
@@ -207,4 +207,4 @@ theorem MBT_vs_EAT_diverge_on_felipe :
     ∧ ¬ will.profile.eatLicenses felipeRain := by
   refine ⟨?_, ?_⟩ <;> decide
 
-end Phenomena.Modality.Studies.Huijsmans2025
+end Huijsmans2025
