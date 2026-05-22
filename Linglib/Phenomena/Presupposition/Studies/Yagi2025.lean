@@ -1,7 +1,7 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.Truth3
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
-import Linglib.Theories.Semantics.Modality.Disjunction
+import Linglib.Phenomena.Modality.Studies.Geurts2005
 import Linglib.Phenomena.Presupposition.Studies.Karttunen1973
 import Mathlib.Tactic.DeriveFintype
 
@@ -55,7 +55,7 @@ definition with disjunction-update survival.
   (`filter_wrong_at_kingOpens`)
 - `PrProp.orKP` (symmetric, negative-antecedent K&P of Yagi Def 2):
   presupposition entails assertion (`kp_presup_entails_assertion`)
-- `Semantics.Modality.Disjunction.exhaustivity_implies_uninformative`:
+- `Geurts2005.exhaustivity_implies_uninformative`:
   the *consequence* (not the derivation) of @cite{schlenker-2009} §2.4
   via the Geurts-modal-disjunction substrate
   (`truthset_uninformative_geurts_route`)
@@ -299,7 +299,7 @@ What we actually formalise here is the **consequence**, not Yagi's
 derivation. We stipulate the truth-set `truthSet` directly (kingOpens +
 presidentConducts — the worlds where some disjunct is defined-and-true)
 and show via the substrate's
-`Semantics.Modality.Disjunction.exhaustivity_implies_uninformative` that
+`Geurts2005.exhaustivity_implies_uninformative` that
 the disjunction is true throughout `truthSet`. This is an instance of
 Geurts's exhaustivity-implies-uninformativity, which Yagi argues coincides
 with Schlenker's verdict on the same context. The actual Schlenker
@@ -319,22 +319,21 @@ def truthSet : Set W := { W.kingOpens, W.presidentConducts }
 /-- Geurts exhaustivity holds on `truthSet`: every truth-set world is in
 some disjunct's modal cell (`domain ∩ content` = `presup ∧ assertion`). -/
 theorem truthSet_exhausted :
-    Semantics.Modality.Disjunction.exhaustivity truthSet
-      (Semantics.Modality.Disjunction.fromPrProp
-        kingOpensParl presConductsCeremony) := by
+    Geurts2005.exhaustivity truthSet
+      (Geurts2005.fromPrProp kingOpensParl presConductsCeremony) := by
   intro w hw
   rcases hw with rfl | rfl
   · -- Witness: the king-disjunct, with cell membership at `kingOpens`.
     refine ⟨{ domain := kingOpensParl.presup,
-              force := Semantics.Modality.Disjunction.Force.existential,
+              force := .possibility,
               content := kingOpensParl.assertion },
-            by simp [Semantics.Modality.Disjunction.fromPrProp], ?_⟩
+            by simp [Geurts2005.fromPrProp], ?_⟩
     exact ⟨trivial, rfl⟩
   · -- Witness: the president-disjunct, with cell membership at `presidentConducts`.
     refine ⟨{ domain := presConductsCeremony.presup,
-              force := Semantics.Modality.Disjunction.Force.existential,
+              force := .possibility,
               content := presConductsCeremony.assertion },
-            by simp [Semantics.Modality.Disjunction.fromPrProp], ?_⟩
+            by simp [Geurts2005.fromPrProp], ?_⟩
     exact ⟨trivial, rfl⟩
 
 /-- Truth-set uninformativity via Geurts (the *consequence* of Yagi §2.4,
@@ -347,7 +346,7 @@ theorem truthset_uninformative_geurts_route :
     ∀ w ∈ truthSet,
       (PrProp.orFlex kingOpensParl presConductsCeremony).assertion w := by
   intro w hw
-  exact Semantics.Modality.Disjunction.exhaustivity_implies_uninformative
+  exact Geurts2005.exhaustivity_implies_uninformative
     kingOpensParl presConductsCeremony truthSet
     truthSet_exhausted w hw
 
@@ -474,7 +473,7 @@ theorem flex_genuineness :
 NOT a Yagi claim — @cite{belnap-1970} is not in his references.
 This is an observation `Core/Semantics/Presupposition.lean` already
 makes (`orFlex_eq_orBelnap`) and that
-`Theories/Semantics/Modality/Disjunction.lean` extends to a three-way
+`Phenomena/Modality/Studies/Geurts2005.lean` extends to a three-way
 identity with @cite{geurts-2005}'s modal-disjunction view. We instantiate
 the substrate identity at the Buganda case for clarity. -/
 
@@ -701,7 +700,7 @@ theorem orFlex_satisfies_both :
 /-- The substrate-canonical orFlex / orBelnap / Geurts three-way
 identity, instantiated at the Buganda case. The substrate-side identity
 is `Core.Presupposition.PrProp.orFlex_eq_orBelnap` and
-`Theories.Semantics.Modality.Disjunction.fromPrProp_cell_iff_orBelnap`. -/
+`Geurts2005.fromPrProp_cell_iff_orBelnap`. -/
 theorem orFlex_eq_orBelnap_at_buganda :
     PrProp.orFlex (W := W) = PrProp.orBelnap :=
   funext₂ PrProp.orFlex_eq_orBelnap
