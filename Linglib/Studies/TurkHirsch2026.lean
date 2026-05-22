@@ -37,7 +37,7 @@ is `AUX`. Category match yields {p, ¬p} — the correct polar question.
 Four worlds: Ali sleeps/doesn't × deontic must/free.
 -/
 
-namespace Phenomena.Focus.Studies.TurkHirsch2026
+namespace TurkHirsch2026
 
 open Features.InformationStructure
 open Semantics.Alternatives
@@ -337,4 +337,4 @@ theorem mi_denotation_matches_head :
 theorem mi_category_matches :
     miAnalysis.upos = UD.UPOS.PART := rfl
 
-end Phenomena.Focus.Studies.TurkHirsch2026
+end TurkHirsch2026

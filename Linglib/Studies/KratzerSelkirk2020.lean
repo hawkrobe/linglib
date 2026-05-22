@@ -44,7 +44,7 @@ open Features.Prosody
 open Pragmatics.Expressives
 open Core.Presupposition
 
-namespace Phenomena.Focus.Studies.KratzerSelkirk2020
+namespace KratzerSelkirk2020
 
 /-- The two privative morphosyntactic features of @cite{kratzer-selkirk-2020}.
 
@@ -538,4 +538,4 @@ theorem aGivenness_not_sufficient : ∃ (aValue : List Nat) (referent : Nat),
     isAGiven aValue referent ∧ ¬ isGiven aValue referent := by
   exact ⟨[1, 2], 1, by decide, by decide⟩
 
-end Phenomena.Focus.Studies.KratzerSelkirk2020
+end KratzerSelkirk2020

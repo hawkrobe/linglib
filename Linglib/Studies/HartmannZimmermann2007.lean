@@ -74,7 +74,7 @@ this file are flagged `-- UNVERIFIED` accordingly.
 * @cite{hartmann-zimmermann-2007}, @cite{newman-2000}.
 -/
 
-namespace Phenomena.Focus.Studies.HartmannZimmermann2007
+namespace HartmannZimmermann2007
 
 open Fragments.Hausa.Focus
 open Fragments.Hausa.Inflection
@@ -366,4 +366,4 @@ theorem polar_tone_from_polarOf (s : Stabilizer) (host : TRN) :
     s.toneAfter host = polarOf host :=
   stabilizer_tone_is_polar s host
 
-end Phenomena.Focus.Studies.HartmannZimmermann2007
+end HartmannZimmermann2007

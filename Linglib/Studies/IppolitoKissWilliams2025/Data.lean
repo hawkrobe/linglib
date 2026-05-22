@@ -42,7 +42,7 @@ allows all types except exclamatives.
 
 -/
 
-namespace Phenomena.Focus.Studies.IppolitoKissWilliams2025.Data
+namespace IppolitoKissWilliams2025.Data
 
 open Fragments.Italian.DiscourseParticles (soloChe)
 open Fragments.Slavic.Russian.DiscourseParticles (tolko)
@@ -674,4 +674,4 @@ theorem core_count : coreExamples.length = 5 := rfl
 theorem clauseType_count : clauseTypeData.length = 23 := rfl
 theorem total_count : allDiscourseOnlyData.length = 28 := rfl
 
-end Phenomena.Focus.Studies.IppolitoKissWilliams2025.Data
+end IppolitoKissWilliams2025.Data

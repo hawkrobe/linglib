@@ -43,7 +43,7 @@ agreement. Both relations are symmetric in their `S`/`S'` arguments.
 
 -/
 
-namespace Phenomena.Focus.Studies.IppolitoKissWilliams2022
+namespace IppolitoKissWilliams2022
 
 open Question Semantics.Questions.Probabilistic
 
@@ -111,4 +111,4 @@ theorem Disagree.symm {dox : Set W} {S S' Q : Question W} {μ : PMF W}
   obtain ⟨hS, hS', hNotAgree⟩ := h
   exact ⟨hS', hS, fun hAgree => hNotAgree hAgree.symm⟩
 
-end Phenomena.Focus.Studies.IppolitoKissWilliams2022
+end IppolitoKissWilliams2022

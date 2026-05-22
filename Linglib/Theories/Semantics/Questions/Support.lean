@@ -46,7 +46,7 @@ canonical one).
 * `Semantics.Questions.Resolution` — `Resolves`, `MentionSome`,
   `MentionAll` over `Set W → Question W`. Each is a candidate `Support`
   instance for the inquisitive substrate.
-* `Phenomena/Focus/Studies/IppolitoKissWilliams2022.lean` — IKW
+* `Studies/IppolitoKissWilliams2022.lean` — IKW
   evidential SUPPORT (introduced in @cite{ippolito-kiss-williams-2022},
   reused by @cite{ippolito-kiss-williams-2025}): doxastic +
   probabilistic. Prior-parameterised, so it does **not** fit this

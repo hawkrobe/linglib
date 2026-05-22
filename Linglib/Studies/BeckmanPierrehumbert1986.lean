@@ -1,7 +1,7 @@
 import Linglib.Features.Prosody
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Syntax.CCG.Intonation
-import Linglib.Phenomena.Focus.Studies.KratzerSelkirk2020
+import Linglib.Studies.KratzerSelkirk2020
 
 /-!
 # Beckman & Pierrehumbert (1986) @cite{beckman-pierrehumbert-1986}
@@ -392,7 +392,7 @@ theorem continuation_ip_matches_theme_terminal :
 -- § 8: Bridge to Kratzer & Selkirk 2020 — ip as Focus-Prosody Domain
 -- ============================================================================
 
-open Phenomena.Focus.Studies.KratzerSelkirk2020
+open KratzerSelkirk2020
 
 /-- The ip/φ domain serves two independent functions:
     1. **Catathesis domain** (B&P §4): register resets at ip boundaries

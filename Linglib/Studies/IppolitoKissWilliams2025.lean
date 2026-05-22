@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Questions.Probabilistic
 import Linglib.Theories.Semantics.Questions.Relevance
-import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2022
-import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2025.Data
+import Linglib.Studies.IppolitoKissWilliams2022
+import Linglib.Studies.IppolitoKissWilliams2025.Data
 import Linglib.Core.Probability.Finite
 import Mathlib.Algebra.BigOperators.Fin
 
@@ -19,7 +19,7 @@ The doxastic-evidential apparatus (`Supports`, `Agree`, `Disagree`)
 that the paper's §4 statement uses is attributed by the paper itself
 to the predecessor @cite{ippolito-kiss-williams-2022} ("Following
 Ippolito et al. (2022) we define…"); it lives in
-`Phenomena/Focus/Studies/IppolitoKissWilliams2022.lean` and is imported
+`Studies/IppolitoKissWilliams2022.lean` and is imported
 here. This file owns the paper-specific bundling — `Sentence`,
 `Context`, the felicity conditions of ex. (16), the architectural
 derivations of §5.2, and the worked house-buying example of §7.
@@ -87,10 +87,10 @@ deferred.
   in the sibling `Data.lean`.
 -/
 
-namespace Phenomena.Focus.Studies.IppolitoKissWilliams2025
+namespace IppolitoKissWilliams2025
 
 open Question Semantics.Questions.Probabilistic
-open Phenomena.Focus.Studies.IppolitoKissWilliams2022
+open IppolitoKissWilliams2022
 
 /-! ### Discourse context -/
 
@@ -255,7 +255,7 @@ scenario (@cite{ippolito-kiss-williams-2025} §7). Connects the
 substrate predictions to the empirical data in the sibling `Data.lean`
 under this study's subdirectory. -/
 
-open Phenomena.Focus.Studies.IppolitoKissWilliams2025.Data
+open IppolitoKissWilliams2025.Data
 
 /-! ### § 1: World Type and Propositions
 
@@ -917,4 +917,4 @@ theorem interrogative_s'_ci_satisfied {W' : Type*}
     simp at hp
   · exact Supports.of_no_belief_fails hNoBelief
 
-end Phenomena.Focus.Studies.IppolitoKissWilliams2025
+end IppolitoKissWilliams2025

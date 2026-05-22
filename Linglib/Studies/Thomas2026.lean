@@ -36,7 +36,7 @@ from being felicitous when a weaker prejacent would do (the
 "some-instrument vs cello" case (30)).
 -/
 
-namespace Phenomena.AdditiveParticles.Thomas2026
+namespace Thomas2026
 
 open Question Semantics.Questions.Probabilistic
 
@@ -219,4 +219,4 @@ formalisations are deferred to per-example study artifacts.
 * (82)–(85) ✓ Wh-question domain restriction (Theiler 2019); felicity
   requires the variable in the prejacent to be properly bound. -/
 
-end Phenomena.AdditiveParticles.Thomas2026
+end Thomas2026

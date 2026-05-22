@@ -48,7 +48,7 @@ refuted.
 * @cite{kiss-1998}.
 -/
 
-namespace Phenomena.Focus.Studies.Kiss1998
+namespace Kiss1998
 
 open Fragments.Hungarian.Focus
 
@@ -179,4 +179,4 @@ theorem postverbal_information_licensed :
 theorem minimal_pair_distinct_types :
     preverbal_hat.focusType ≠ postverbal_hat.focusType := by decide
 
-end Phenomena.Focus.Studies.Kiss1998
+end Kiss1998

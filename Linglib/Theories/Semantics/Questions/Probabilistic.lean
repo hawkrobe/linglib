@@ -38,7 +38,7 @@ conjunction of alternatives, in the inquisitive sense of
 
 The doxastic `Supports` / `Agree` / `Disagree` predicates previously
 lived here; they have been moved to
-`Phenomena/Focus/Studies/IppolitoKissWilliams2022.lean` (the paper
+`Studies/IppolitoKissWilliams2022.lean` (the paper
 that introduced them) since their only consumer is the IKW 2025
 discourse-*only* study file.
 -/
@@ -81,7 +81,7 @@ The atomic Bayesian-evidence relation: conditioning on `R` raises the
 probability of `A`. The pointwise version of `IsResolutionEvidencedBy`'s
 `raises_prob` field, factored out so consumers
 (@cite{thomas-2026} §1.2, the IKW 2022 `Supports` predicate in
-`Phenomena/Focus/Studies/IppolitoKissWilliams2022.lean`) can refer to
+`Studies/IppolitoKissWilliams2022.lean`) can refer to
 it directly. -/
 
 /-- `R` provides **positive evidence** for `A`: conditioning on `R`
