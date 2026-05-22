@@ -2,7 +2,7 @@ import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.Evaluation
 import Linglib.Core.Constraint.Superoptimal
 import Linglib.Features.Prominence
-import Linglib.Phenomena.Case.Studies.Aissen2003
+import Linglib.Studies.Aissen2003
 
 /-!
 # @cite{de-hoop-malchukov-2008}: Case-Marking Strategies @cite{de-hoop-malchukov-2008}

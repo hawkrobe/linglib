@@ -47,7 +47,7 @@ in principle but the present `PhasedNP` representation does not yet
 distinguish embedded vs matrix domains.
 -/
 
-namespace Phenomena.Case.Studies.BakerVinokurova2010
+namespace BakerVinokurova2010
 
 open Syntax.Case
 
@@ -627,4 +627,4 @@ theorem all_sakha_derivations_total :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     apply assignCasesPhased_length
 
-end Phenomena.Case.Studies.BakerVinokurova2010
+end BakerVinokurova2010

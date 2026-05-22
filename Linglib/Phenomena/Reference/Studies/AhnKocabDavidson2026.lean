@@ -589,7 +589,7 @@ when the default interpretation suffices."
 with grammatical relations. The locus parallel suggests the same mechanism
 extends to the visual-spatial modality.
 
-See `Phenomena/Case/Studies/Aissen2003.lean` for the OT formalization.
+See `Studies/Aissen2003.lean` for the OT formalization.
 -/
 
 -- ════════════════════════════════════════════════════════════════

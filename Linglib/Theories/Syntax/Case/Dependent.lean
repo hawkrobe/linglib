@@ -21,7 +21,7 @@ disjunctive priority hierarchy:
 This file is the *theory* — the language-typology enum, the configural
 rules, and the case-assignment algorithm. Empirical applications,
 cross-linguistic validation, and competing analyses live in
-`Phenomena/Case/Studies/`.
+`Studies/`.
 
 ## Where to Find What
 
@@ -62,7 +62,7 @@ cross-linguistic validation, and competing analyses live in
   DOM patterns as the surface signature of secondary-licenser activation
 - `Core/Case/Order.lean` — the containment hierarchy (`PartialOrder
   Core.Case`); `Core/Case/Allomorphy.lean` — the framework-neutral
-  `AllomorphyPattern` and *ABA substrate; `Phenomena/Case/Studies/
+  `AllomorphyPattern` and *ABA substrate; `Studies/
   Caha2009.lean` — the Caha-specific `RespectsCahaContainment`
   predicate that consumes `Core.Case` values
 

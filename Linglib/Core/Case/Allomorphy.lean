@@ -22,7 +22,7 @@ What *explains* the *ABA gap is contested between DM (post-syntactic
 VI + Elsewhere ordering — `@cite{bobaljik-2012}`) and Nanosyntax
 (phrasal spellout + Superset Principle — `@cite{caha-2009}`). This
 file commits to neither; per-paper analyses live in
-`Phenomena/Case/Studies/`.
+`Studies/`.
 -/
 
 namespace Core.Case.Allomorphy

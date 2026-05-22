@@ -49,7 +49,7 @@ on the NP referent (their §4).
 
 The Fragment keeps the single-entry schema for textbook-consensus reasons;
 the four-way refinement is formalised in
-`Phenomena/Case/Studies/SadakaneKoizumi1995.lean`, which derives the
+`Studies/SadakaneKoizumi1995.lean`, which derives the
 conflation as a Lean theorem (`fragment_ni_conflates_sk_types`) and aligns
 S&K's classification with Marantz's `CaseSource` partial map
 (`sk_to_marantz`). Surfacing this contested commitment via that study
@@ -80,7 +80,7 @@ Other phenomena out of scope at the case-marking layer:
   here; the syntax of causative case assignment lives elsewhere.
 - The Double-*o* Constraint (Harada 1973, treated in @cite{tsujimura-2014}
   ch. 5 §5.2): a categorical syntactic constraint barring two *-o*-marked
-  NPs in a clause. A natural future `Phenomena/Case/Studies/Harada1973.lean`
+  NPs in a clause. A natural future `Studies/Harada1973.lean`
   study file would import the Fragment to formalize the constraint's
   empirical effects.
 - Case-particle and postposition stacking (*Tarō-ni-no tegami* 'a letter to

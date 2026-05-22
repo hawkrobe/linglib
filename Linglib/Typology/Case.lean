@@ -43,7 +43,7 @@ The substrate exposes:
 No Fragment imports (substrate discipline). Theory-specific apparatus
 (Aissen 2003 OT factorial typology, DeHoop-Malchukov BiOT, Grimm 2011
 agentivity lattice, Haspelmath 2021 form-frequency correspondences) lives
-in `Phenomena/Case/Studies/`. Abstract-case theory (Marantz 1991, Pesetsky
+in `Studies/`. Abstract-case theory (Marantz 1991, Pesetsky
 2013, Caha 2009 nanosyntax, Baker 2015 dependent case, Woolford 1997
 lexical case) lives in `Linglib/Theories/Syntax/Case/` over a different
 ontology and does NOT consume this WALS substrate.

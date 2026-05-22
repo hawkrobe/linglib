@@ -4,7 +4,7 @@ import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Typology.Alignment
 import Linglib.Phenomena.Alignment.Studies.Dixon1994
-import Linglib.Phenomena.Case.Studies.Aissen2003
+import Linglib.Studies.Aissen2003
 import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!

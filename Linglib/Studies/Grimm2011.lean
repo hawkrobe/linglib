@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.ArgumentStructure.AgentivityLattice
 import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Phenomena.Case.Studies.Aissen2003
+import Linglib.Studies.Aissen2003
 
 /-!
 # @cite{grimm-2011}: Semantics of Case — Lattice Predictions
@@ -8,7 +8,7 @@ import Linglib.Phenomena.Case.Studies.Aissen2003
 
 Study file connecting @cite{grimm-2011}'s agentivity lattice
 (`Theories/Semantics/Events/AgentivityLattice.lean`) to the differential
-object marking profiles in `Phenomena/Case/Studies/Aissen2003.lean`.
+object marking profiles in `Studies/Aissen2003.lean`.
 
 ## Key results
 

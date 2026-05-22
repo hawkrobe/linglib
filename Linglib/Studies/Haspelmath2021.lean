@@ -1,8 +1,8 @@
 import Linglib.Features.Prominence
 import Linglib.Features.Givenness
-import Linglib.Phenomena.Case.Studies.Aissen2003
-import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
-import Linglib.Phenomena.Case.Studies.Marantz1991
+import Linglib.Studies.Aissen2003
+import Linglib.Studies.DeHoopMalchukov2008
+import Linglib.Studies.Marantz1991
 import Linglib.Typology.Alignment
 
 /-!

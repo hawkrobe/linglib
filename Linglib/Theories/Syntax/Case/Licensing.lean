@@ -75,7 +75,7 @@ licensers always activate uniformly.
   with dependent case assigning the morphological exponent and licensing
   determining whether a secondary licenser had to merge to host a given
   nominal.
-- **Voice-based case** (`Phenomena/Case/Studies/Scott2023.lean`): case
+- **Voice-based case** (`Studies/Scott2023.lean`): case
   is keyed to argument position via Voice. Both frameworks use
   designated functional heads as case assigners; whether secondary
   licensers in a particular language are best identified with Voice
@@ -501,7 +501,7 @@ theorem all_isLicensed_iff_caseFilterHolds (results : List LicensedResult) :
 
 /-! These illustrate the algorithm on a Turkish-style DOM clause and on
 the degenerate no-secondary configuration. They are not the empirical
-core of the framework — that lives in `Phenomena/Case/Studies/` — but
+core of the framework — that lives in `Studies/` — but
 they exercise the algorithm end-to-end and would catch breakage from
 any refactor of the licensing pipeline. -/
 

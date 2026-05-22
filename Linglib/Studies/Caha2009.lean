@@ -54,7 +54,7 @@ Ch. 6), and Hungarian (GEN-less, dative-as-possessor syncretism per
 @cite{caha-2008} §5).
 -/
 
-namespace Phenomena.Case.Studies.Caha2009
+namespace Caha2009
 
 open Core
 
@@ -687,4 +687,4 @@ the four other Slavic languages). -/
 
 end Slavic
 
-end Phenomena.Case.Studies.Caha2009
+end Caha2009

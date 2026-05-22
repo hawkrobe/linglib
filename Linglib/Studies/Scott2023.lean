@@ -56,11 +56,11 @@ behavior of the dependent case algorithm.
   rule that bleeds reduced pronouns
 - `Phenomena/Ergativity/Studies/Scott2023.lean` — super-extended
   ergativity (clause-type-conditioned alignment shift)
-- `Phenomena/Case/Studies/Woolford1997.lean` — the predecessor analysis
+- `Studies/Woolford1997.lean` — the predecessor analysis
   treating ERG as inherent Case
 -/
 
-namespace Phenomena.Case.Studies.Scott2023
+namespace Scott2023
 
 open Minimalist
 open Syntax.Case
@@ -149,4 +149,4 @@ theorem dependent_case_tripartite :
     getCaseOf "lower" (assignCases .tripartite nps) = some .acc := by
   decide
 
-end Phenomena.Case.Studies.Scott2023
+end Scott2023

@@ -50,7 +50,7 @@ Rules) rather than the three coercion operations
 We preserve the 2004 formulation here because this study replicates the
 2004 paper directly — the apparatus is single-consumer paper-specific
 content, demoted from substrate to consumer per the linglib pattern
-(cf. `Core/FormFrequency.lean → Phenomena/Case/Studies/Haspelmath2021.lean §0`).
+(cf. `Core/FormFrequency.lean → Studies/Haspelmath2021.lean §0`).
 
 The shared substrate primitives — `CParam`, `CParamSet`, `SubUtterance` —
 remain in `KOS/Defs.lean` since they survive into the 2012 framework as

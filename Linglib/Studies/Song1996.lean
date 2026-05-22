@@ -422,7 +422,7 @@ theorem compact_not_periphrastic :
   simp [CausativeConstructionType.toComplexity]
 
 /-- Both multi-clause Song types map to Comrie's `periphrastic`.
-    Relocated here from `Phenomena/Case/Studies/Comrie1989.lean` per the
+    Relocated here from `Studies/Comrie1989.lean` per the
     chronology-discipline rule (Comrie 1989 cannot cite Song 1996; the
     cross-paper bridge belongs in the later paper's study file). -/
 theorem song_multiclause_both_periphrastic :

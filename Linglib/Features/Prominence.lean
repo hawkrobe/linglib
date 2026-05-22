@@ -564,7 +564,7 @@ theorem Scenario.all_length : Scenario.all.length = 9 := rfl
 
     Definitionally `r.lowDefault` — the two functions agree pointwise
     over all five argument roles. The aliasing makes U3, U7, U8 in
-    `Phenomena/Case/Studies/Haspelmath2021.lean` `rfl` against the
+    `Studies/Haspelmath2021.lean` `rfl` against the
     substrate, rather than re-proving the equality in the study file. -/
 def differentialTargetsProminent (r : ArgumentRole) : Bool := r.lowDefault
 

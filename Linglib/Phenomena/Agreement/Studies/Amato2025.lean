@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.NestedAgree
-import Linglib.Phenomena.Case.Studies.Marantz1991
+import Linglib.Studies.Marantz1991
 
 /-!
 # @cite{amato-2025} — Agreement case studies via Nested Agree
@@ -38,7 +38,7 @@ rather than Italian-shaped scaffolding.
 
 ## Related infrastructure
 
-`Phenomena/Case/Studies/Marantz1991.lean` contains an independent
+`Studies/Marantz1991.lean` contains an independent
 treatment of dative intervention via `DativeInterventionContext` and
 `dativeIntervenes`. Bridge theorems connecting Marantz's threshold
 analysis to Amato's feature-ordering analysis are future work.

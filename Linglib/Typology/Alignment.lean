@@ -51,7 +51,7 @@ The 22-language sample, cross-linguistic generalisations (Dixon,
 Silverstein), ditransitive sample, and Fragment-bridge theorems live in
 `Phenomena/Alignment/Studies/Dixon1994.lean`.
 @cite{comrie-1989}'s typology generalisations are in
-`Phenomena/Case/Studies/Comrie1989.lean`.
+`Studies/Comrie1989.lean`.
 -/
 
 set_option autoImplicit false

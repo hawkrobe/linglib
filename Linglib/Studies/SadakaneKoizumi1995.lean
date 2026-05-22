@@ -107,7 +107,7 @@ from the **innovating** dialect (per @cite{kuno-1987}, Miyagawa 1989).
 The **conservative** dialect (Shibatani 1977) gives different judgments
 for some categories (notably K, *Ohaio Ginkoo-ni* 'work for Ohio Bank').
 This Studies file's `Classification.signature` reflects the innovating
-dialect; a future `Phenomena/Case/Studies/Shibatani1977.lean` could
+dialect; a future `Studies/Shibatani1977.lean` could
 formalise the conservative judgments and surface where they diverge.
 The `Dialect` enum is intentionally NOT introduced here (was dead code
 in the previous version) — it earns its keep when the conservative file
@@ -123,7 +123,7 @@ Pattern B (rich marker structure); currently it's a `Finset Core.Case`
 stipulation only. Documented here as future work.
 -/
 
-namespace Phenomena.Case.Studies.SadakaneKoizumi1995
+namespace SadakaneKoizumi1995
 
 open Features (Acceptability)
 
@@ -533,4 +533,4 @@ theorem case_ni_lexemes_all_adposition :
     Classification.gramStage .niInsertion      = some .adposition := by
   refine ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Case.Studies.SadakaneKoizumi1995
+end SadakaneKoizumi1995

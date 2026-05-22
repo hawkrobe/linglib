@@ -12,7 +12,7 @@ while NOM is assigned by finite T via Agree and GEN is assigned by
 D via Agree.
 
 The clausal-level derivations live in
-`Phenomena/Case/Studies/BakerVinokurova2010.lean`. This fragment
+`Studies/BakerVinokurova2010.lean`. This fragment
 records the language-level case inventory and the corresponding
 `CaseSystemConfig` instance, parallel to `Fragments.Mongolian.Case`.
 -/

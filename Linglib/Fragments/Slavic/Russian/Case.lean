@@ -10,7 +10,7 @@ LOC) used by a small and shrinking class of masculines; the historical
 vocative is moribund. `caseInventory` aliases the shared 6-case core
 (secondary cases are paradigm slots within selected nouns, not modeled
 at the inventory level). For @cite{pesetsky-2013}'s POS-as-case
-reduction, see `Phenomena.Case.Studies.Pesetsky2013`.
+reduction, see `Pesetsky2013`.
 -/
 
 namespace Fragments.Slavic.Russian.Case

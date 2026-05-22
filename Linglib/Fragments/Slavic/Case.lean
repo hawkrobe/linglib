@@ -15,7 +15,7 @@ Per-language sources (chapters of @cite{comrie-corbett-1993}):
 @cite{short-1993-czech} (p. 466), @cite{browne-1993} (p. 319),
 @cite{timberlake-1993} (p. 836), @cite{priestly-1993} (p. 399).
 
-Caha-containment lemmas live in `Phenomena/Case/Studies/Caha2009.lean`
+Caha-containment lemmas live in `Studies/Caha2009.lean`
 (paper-anchored, keeps this substrate file Theory-import-free).
 -/
 

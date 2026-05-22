@@ -142,7 +142,7 @@ agreement bridge with @cite{caha-2009}.
   `Phenomena/Gender/Studies/Kramer2020.lean::vrač_morph_masculine`.
 -/
 
-namespace Phenomena.Case.Studies.Pesetsky2013
+namespace Pesetsky2013
 
 open Minimalist (Cat SyntacticObject LIToken LexicalItem merge mkLeaf
   mkLeafPhon)
@@ -308,7 +308,7 @@ noncomputable def surfaceCase (so : SyntacticObject) (tok : LIToken) : Option Co
     and @cite{pesetsky-2013} Ch 3 §3.2, Lardil has *partial* deletion
     (e.g., FUT only stacks outside GEN, not outside ACC); a faithful
     Lardil model requires modeling the partial-deletion pattern, left
-    for a follow-on `Phenomena/Case/Studies/Richards2013.lean`. -/
+    for a follow-on `Studies/Richards2013.lean`. -/
 def noDeletionSpellOut : List POSCat → List POSCat := id
 
 /-- No-deletion spell-out and Russian One-Suffix diverge whenever the
@@ -576,4 +576,4 @@ theorem pesetsky_caha_compatible_prefix :
       ({.nom, .acc, .gen, .dat, .loc} : Finset Core.Case) := by
   decide
 
-end Phenomena.Case.Studies.Pesetsky2013
+end Pesetsky2013

@@ -53,13 +53,13 @@ absolutive (ergative frames) functions.
 
 @cite{baker-vinokurova-2010}'s Sakha analysis is the empirical
 foundation of one of Baker's columns; that paper's full derivations
-live in `Phenomena/Case/Studies/BakerVinokurova2010.lean` and are not
+live in `Studies/BakerVinokurova2010.lean` and are not
 duplicated here. Marantz's original abstract-vs-morphological case
 distinction and its Georgian application live in
-`Phenomena/Case/Studies/Marantz1991.lean`.
+`Studies/Marantz1991.lean`.
 -/
 
-namespace Phenomena.Case.Studies.Baker2015
+namespace Baker2015
 
 open Syntax.Case
 
@@ -324,7 +324,7 @@ theorem georgian_present_in_inventory :
     is invisible at this level — it shows up only when one asks *why* a given
     case appears, not *which* case appears.
 
-    See `Phenomena/Case/Studies/Woolford1997.lean` for the inherent-ergative
+    See `Studies/Woolford1997.lean` for the inherent-ergative
     defense against the dependent derivation; see
     `Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean` for the
     Chol-specific extraction-asymmetry argument. -/
@@ -443,4 +443,4 @@ theorem dependent_case_insufficient_for_extended_ergative :
 
 end ComparisonWithCoon2013
 
-end Phenomena.Case.Studies.Baker2015
+end Baker2015

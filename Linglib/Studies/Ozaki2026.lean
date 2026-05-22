@@ -33,7 +33,7 @@ connection to dependent case theory and Minimalist syntax.
 
 -/
 
-namespace Phenomena.Case.Ozaki2026.Data
+namespace Ozaki2026
 
 -- ============================================================================
 -- § 1: Data Types
@@ -418,4 +418,4 @@ theorem direct_passive_requires_voice :
     ¬ voiceAnticausative.AssignsTheta := by
   refine ⟨rfl, ?_⟩; decide
 
-end Phenomena.Case.Ozaki2026.Data
+end Ozaki2026
