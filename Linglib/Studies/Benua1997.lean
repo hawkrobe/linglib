@@ -61,7 +61,7 @@ machinery — the cross-linguistic point of @cite{benua-1997} is that
 **one mechanism explains both**.
 -/
 
-namespace Phenomena.Phonology.Studies.Benua1997
+namespace Benua1997
 
 open Phonology.Correspondence (Corr)
 open Phonology.TCT (Role TetruSchema)
@@ -534,4 +534,4 @@ through the `Corr Role α` type that both architectures now share.
 
 end StratalComparison
 
-end Phenomena.Phonology.Studies.Benua1997
+end Benua1997

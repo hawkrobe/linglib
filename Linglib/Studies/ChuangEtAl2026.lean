@@ -109,7 +109,7 @@ paper interrogates.
 ## Cross-framework note: vs. Storme 2026 *HOMOPHONY
 
 `Storme2026.starHomophony` (@cite{storme-2026},
-`Phenomena/Phonology/Studies/Storme2026.lean`) formalises a **systemic**
+`Studies/Storme2026.lean`) formalises a **systemic**
 constraint that penalises output tuples in which distinct inputs
 produce identical surface forms. It operates on **segmental** form and
 predicts **categorical** distinct-meaning–distinct-form pressure.

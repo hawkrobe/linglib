@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Phonology.Studies.ZurawHayes2017
+import Linglib.Studies.ZurawHayes2017
 
 /-!
 # @cite{magri-2025}: Constraint Interaction in Probabilistic Phonology
@@ -30,7 +30,7 @@ nasal substitution case study from the paper, verifying:
 4. The identity holds for *any* weight assignment (not just specific values)
 
 The 2×2 square data and constraint inventory come from
-`Phenomena/Phonology/Studies/ZurawHayes2017.lean` (Magri 2025 inherits
+`Studies/ZurawHayes2017.lean` (Magri 2025 inherits
 the sub-square setup from Z&H 2017).
 -/
 

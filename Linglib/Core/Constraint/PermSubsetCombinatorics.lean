@@ -24,8 +24,8 @@ canonical OT factorial-typology pattern.
 
 This reduces O(n!) constraint-ranking enumeration to closed-form
 arithmetic. Two factorial-typology studies consume it:
-`Phenomena/Phonology/Studies/Zuraw2010.lean` and
-`Phenomena/Phonology/Studies/Anttila1997.lean`.
+`Studies/Zuraw2010.lean` and
+`Studies/Anttila1997.lean`.
 
 ## Proof technique
 
@@ -436,7 +436,7 @@ theorem perm_filter_head_in_rate (D Y : Finset (Fin n)) :
 
 /-! Pure list-filter / `head?` facts about how `(L.filter (· ∈ D)).head?`
 behaves under subset relations between `D` and `D'`. Used by factorial-typology
-studies (e.g., `Phenomena/Phonology/Studies/Zuraw2010.lean`'s structural
+studies (e.g., `Studies/Zuraw2010.lean`'s structural
 voicing/place implications) to propagate "first element of `L` falling in
 `D` lies in `Y`" properties across distinguishing-set / favoring-set pairs.
 

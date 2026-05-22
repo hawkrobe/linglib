@@ -1,5 +1,5 @@
 import Linglib.Core.Constraint.Separability
-import Linglib.Phenomena.Phonology.Studies.Zuraw2010
+import Linglib.Studies.Zuraw2010
 
 /-!
 # @cite{zuraw-hayes-2017}: Intersecting Constraint Families

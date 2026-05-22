@@ -333,7 +333,7 @@ gradient similarity-based OCP of @cite{frisch-pierrehumbert-broe-2004}:
 Arabic co-occurrence restrictions decay with featural distance rather
 than following a clean tier cut, so the same `R` paired with different
 `p` yields incomparable predictions about which root pairs are licit.
-See `Phenomena/Phonology/Studies/FrischPierrehumbertBroe2004.lean` for
+See `Studies/FrischPierrehumbertBroe2004.lean` for
 the load-bearing instance: the natural-classes similarity metric
 (FPB eq. 7), the worked examples /f, m/ → 2/9 and /b, f/ → 3/8, and
 the `categorical_fails_three_test_points` divergence theorem witnessing

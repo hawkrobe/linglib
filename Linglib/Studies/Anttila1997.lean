@@ -96,8 +96,8 @@ substrate predictor `pocPredict (discrete n)` with binary candidate
 spaces — variant probability = `|Y ∩ D| / |D|` (where D distinguishes
 and Y favors the chosen variant). The reusability across three
 phonological domains validates the abstraction; see
-`Phenomena/Phonology/Studies/Zuraw2010.lean` and
-`Phenomena/Phonology/Studies/CoetzeePater2011.lean` for sister
+`Studies/Zuraw2010.lean` and
+`Studies/CoetzeePater2011.lean` for sister
 consumers.
 -/
 

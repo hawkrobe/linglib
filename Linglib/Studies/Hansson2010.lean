@@ -76,7 +76,7 @@ Things this formalization is silent on, by design:
    this — see the design-boundary docstring on `tierProject`
    non-monotonicity in `ForbiddenPairs.lean`, and the load-bearing
    gradient-OCP instance in
-   `Phenomena/Phonology/Studies/FrischPierrehumbertBroe2004.lean`,
+   `Studies/FrischPierrehumbertBroe2004.lean`,
    which formalises @cite{frisch-pierrehumbert-broe-2004}'s
    natural-classes similarity metric (eq. 7) and proves no
    similarity-threshold TSL_2 grammar can match three Table IV bins.

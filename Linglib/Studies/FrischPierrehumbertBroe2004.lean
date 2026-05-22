@@ -123,7 +123,7 @@ specific Table IV bins.
 
 ## Connection to `Hansson2010.lean`
 
-@cite{hansson-2010} (`Phenomena/Phonology/Studies/Hansson2010.lean`)
+@cite{hansson-2010} (`Studies/Hansson2010.lean`)
 cites FPB at line 76 in its design-boundary section on
 similarity-graded transparency: cases where intervening segments
 behave differently depending on similarity to the harmonising pair

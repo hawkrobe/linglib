@@ -67,7 +67,7 @@ Bridge theorems of that form are deferred — would require a uniform
 
 set_option autoImplicit false
 
-namespace Phenomena.Phonology.Studies.Maddieson2013
+namespace Maddieson2013
 
 open Typology.Phonology
 open Data.PHOIBLE
@@ -269,4 +269,4 @@ theorem batch_bin_distribution :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     native_decide
 
-end Phenomena.Phonology.Studies.Maddieson2013
+end Maddieson2013

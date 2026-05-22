@@ -78,7 +78,7 @@ representative examples, plus the Tolerance Principle inequality that
 licenses convergence.
 -/
 
-namespace Phenomena.Phonology.Studies.Belth2026
+namespace Belth2026
 
 open Core
 open Phonology.Alternation
@@ -580,4 +580,4 @@ theorem latinTSLGrammar_lang_isBTSL2 :
     Core.Computability.Subregular.IsBTSL 2 latinTSLGrammar.lang :=
   latinTSLGrammar_lang_isTSL2.toIsBTSL
 
-end Phenomena.Phonology.Studies.Belth2026
+end Belth2026

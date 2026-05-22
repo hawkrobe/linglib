@@ -104,7 +104,7 @@ contrast theorem.
 - §4 Empirical content (prose; includes CIND and HomophoneSemSim)
 -/
 
-namespace Phenomena.Phonology.Studies.GahlBaayen2024
+namespace GahlBaayen2024
 
 open Theories.Processing.Lexical.Discriminative
 
@@ -254,4 +254,4 @@ entry need carry a frequency property.
   composite-frequency thesis of paper §6.4 receives independent
   support from the German morpho-phonetics data of Saito 2025. -/
 
-end Phenomena.Phonology.Studies.GahlBaayen2024
+end GahlBaayen2024

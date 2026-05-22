@@ -101,11 +101,11 @@ is not a counterexample to the OSL classification of root-internal
 ATR harmony — the two analyses describe disjoint construction types
 — but it does refute the broader extrapolation that "ATR harmony is
 strictly local on the surface" universally. See
-`Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean` for the
+`Studies/SandeClemDabkowski2026.lean` for the
 discontinuous case.
 -/
 
-namespace Phenomena.Phonology.Studies.MeinhardtEtAl2024
+namespace MeinhardtEtAl2024
 
 open Core.Computability.Subregular.Function
 
@@ -306,4 +306,4 @@ cross-linguistically; formalising the impossibility-of-WD claim is
 deferred to a follow-up.
 -/
 
-end Phenomena.Phonology.Studies.MeinhardtEtAl2024
+end MeinhardtEtAl2024

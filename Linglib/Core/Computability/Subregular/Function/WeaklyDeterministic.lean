@@ -88,7 +88,7 @@ suffices for both:
   formalise the MMBM2024 patch and the sour-grapes refutation).
 * Non-trivial decomposition theorems (e.g. Maasai is structurally WD
   via explicit `leftwardATR ∘ rightwardATR` composition; lives in
-  `Phenomena/Phonology/Studies/MeinhardtEtAl2024.lean`).
+  `Studies/MeinhardtEtAl2024.lean`).
 -/
 
 namespace Core.Computability.Subregular.Function

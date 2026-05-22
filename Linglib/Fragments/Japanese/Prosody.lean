@@ -105,7 +105,7 @@ def ame : JProsodicEntry :=
 /-- A Japanese lexical entry extending `JProsodicEntry` with the two
     annotations needed for frequency-conditioned phonology (e.g., the
     Breiss-Katsuda-Kawahara compounds in
-    `Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`):
+    `Studies/BreissKatsudaKawahara2026.lean`):
     a corpus token log-frequency and a free/bound flag.
 
     Following CLAUDE.md's "infrastructure on demand", these annotations

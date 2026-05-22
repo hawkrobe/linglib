@@ -25,7 +25,7 @@ anti-geminate, and Meeussen's rule factor through `TSLGrammar.ocp`. The
 generic `TSLGrammar.ofForbiddenPairs` subsumes both — and asymmetric
 patterns that are neither pure agreement nor pure dissimilation
 (directional harmony driven by morphological geometry, e.g. Kikongo nasal
-harmony in `Phenomena/Phonology/Studies/RoseWalker2004.lean`) instantiate
+harmony in `Studies/RoseWalker2004.lean`) instantiate
 the generic constructor directly with their own asymmetric `R`.
 
 Everything here is a one-line specialization of the generic

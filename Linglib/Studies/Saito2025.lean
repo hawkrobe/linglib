@@ -107,7 +107,7 @@ with the **stored-lexicon** assumptions in:
   Bybee's `tokenFreq : Nat` is the canonical stored-frequency primitive;
   the DLM's `production` linear map dispenses with it.
 
-`Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean` is the
+`Studies/BreissKatsudaKawahara2026.lean` is the
 closest sibling phenomenon — Japanese morpho-phonetics with explicit
 discrimination among the four `ItemSpecificity` channels. Saito's
 DLM analysis would form a natural 5th line in that paper's
@@ -123,7 +123,7 @@ the cross-framework reconciler's recommendation, see CHANGELOG 0.231.15).
 - §4 Empirical content (prose)
 -/
 
-namespace Phenomena.Phonology.Studies.Saito2025
+namespace Saito2025
 
 open Theories.Processing.Lexical.Discriminative
 
@@ -271,4 +271,4 @@ effects coexist, modulated by semantic support.
   beyond pitch — cf. Lu et al. 2026 §5 conjecture that "form-meaning
   isomorphism is not a tone-language quirk". -/
 
-end Phenomena.Phonology.Studies.Saito2025
+end Saito2025

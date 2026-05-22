@@ -32,7 +32,7 @@ but **always in the same direction across constraints sharing the same
 target**, scaled-weights is the better fit. Where direction *flips*
 across constraints (e.g., compound-frequency raises nasalisation but
 N2-frequency lowers it, as in
-`Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`), this
+`Studies/BreissKatsudaKawahara2026.lean`), this
 theory needs separate slopes per constraint — which it has, and so
 remains a viable account.
 -/

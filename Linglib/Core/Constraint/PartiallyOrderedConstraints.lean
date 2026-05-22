@@ -48,7 +48,7 @@ t/d-deletion analysis) that no single OT ranking can reproduce.
 
 ## Where this is used
 
-`Phenomena/Phonology/Studies/CoetzeePater2011.lean` currently does its POC
+`Studies/CoetzeePater2011.lean` currently does its POC
 analysis by manually enumerating `permutations constraints` and filtering.
 A follow-up refactor would have CoetzeePater consume `pocPredict` and
 substrate-level POC theorems instead.
@@ -353,7 +353,7 @@ This bridges POC's lex-strict-better predicate to
 form, letting any binary-candidate POC study compute its `pocPredict` value
 in closed form (`n! × |Y ∩ D| / |D|`) without enumerating `n!` rankings.
 
-Used by `Phenomena/Phonology/Studies/CoetzeePater2011.lean` (English t/d-deletion;
+Used by `Studies/CoetzeePater2011.lean` (English t/d-deletion;
 binary `{retain, delete}` outputs across 3 contexts). -/
 
 namespace PartialOrderConstraints
@@ -488,9 +488,9 @@ variable {Input Output : Type*} [DecidableEq Output] {n : ℕ}
     `Core.Constraint.PermSubsetCombinatorics.perm_filter_head_in_rate`
     (the rate form of the closed-form combinatorics).
 
-    Consumed by `Phenomena/Phonology/Studies/CoetzeePater2011.lean`
+    Consumed by `Studies/CoetzeePater2011.lean`
     (binary `{retain, delete}` over Fin 4) and
-    `Phenomena/Phonology/Studies/Zuraw2010.lean` (binary `{yes, no}`
+    `Studies/Zuraw2010.lean` (binary `{yes, no}`
     over Fin 6). -/
 theorem picksAt_rate_eq
     (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)

@@ -44,7 +44,7 @@ overapplication and underapplication as duals of a single mechanism.
 
 The empirical case studies — Sundanese nasal harmony overapplication
 and Tiberian Hebrew spirantization underapplication — are formalized
-in `Phenomena/Phonology/Studies/Benua1997.lean`.
+in `Studies/Benua1997.lean`.
 
 ## What lives where
 

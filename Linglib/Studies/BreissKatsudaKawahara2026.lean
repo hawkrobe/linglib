@@ -116,7 +116,7 @@ favouring a paradigm-anchored account.
   `novel_compounds_show_n2_gradient` discriminator.
 -/
 
-namespace Phenomena.Phonology.Studies.BreissKatsudaKawahara2026
+namespace BreissKatsudaKawahara2026
 
 open Fragments.Japanese.Prosody
 open Phonology.ItemSpecificity
@@ -676,4 +676,4 @@ theorem dokunga_op_vs_lc :
     cpdOpPuViolations cpd_dokunga ≠ cpdPuViolations cpd_dokunga :=
   op_lc_disagree_on_bound cpd_dokunga rfl (by decide)
 
-end Phenomena.Phonology.Studies.BreissKatsudaKawahara2026
+end BreissKatsudaKawahara2026

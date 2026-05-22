@@ -62,7 +62,7 @@ choices commit to different theories of what makes two segments
 This file provides the substrate. Per CLAUDE.md fragment-schema
 discipline, ET decompositions of specific languages (Tigrinya
 gutturals, Tigre vowels) are *paper-specific projections* and live in
-study files (e.g. `Phenomena/Phonology/Studies/FaustLampitelli2026.lean`),
+study files (e.g. `Studies/FaustLampitelli2026.lean`),
 not in fragment files.
 
 The full Backley 2011 inventory adds tonal elements |H| and |L|

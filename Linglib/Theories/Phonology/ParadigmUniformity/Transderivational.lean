@@ -63,7 +63,7 @@ open Core.Constraint.OT (NamedConstraint ConstraintFamily)
     non-identity morphological mapping — the OO edge is *not* generally
     parallel-pair (the singular [ɲĩãr] base maps to non-adjacent
     positions in the plural [ɲ-ar-ĩãr]). See
-    `Phenomena/Phonology/Studies/Benua1997.lean` for the canonical
+    `Studies/Benua1997.lean` for the canonical
     Sundanese example. -/
 def diagramWithEdge {α : Type}
     (input base derivative : List α)

@@ -24,7 +24,7 @@ collapsed into Maddieson's 5-bin partition). The two are complementary:
 WALS gives partition-based typology; PHOIBLE gives the underlying
 inventories. Bridge theorems WALS↔PHOIBLE (e.g. WALS Ch 1 inventory-size
 bin matches PHOIBLE inventory cardinality) live in
-`Phenomena/Phonology/Studies/Maddieson2013.lean` (when written).
+`Studies/Maddieson2013.lean` (when written).
 
 ## Citation
 

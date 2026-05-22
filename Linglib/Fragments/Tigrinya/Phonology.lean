@@ -20,7 +20,7 @@ inventory, and the unanimous facts about which segments are gutturals.
 The Element-Theory decomposition of these segments (e.g. that
 pharyngeals are headed by |A|, [ʌ] is non-headed |A|, [a] is headed |A|)
 is paper-specific theoretical apparatus and lives in
-`Phenomena/Phonology/Studies/FaustLampitelli2026.lean` as a per-segment
+`Studies/FaustLampitelli2026.lean` as a per-segment
 projection, not in this fragment.
 
 ## Vowel inventory

@@ -82,7 +82,7 @@ Worked examples are checked via `decide` rather than `rfl` where
 appropriate.
 -/
 
-namespace Phenomena.Phonology.Studies.FaustLampitelli2026
+namespace FaustLampitelli2026
 
 open Phonology.ElementTheory
 open Phonology.Government
@@ -439,4 +439,4 @@ misrepresent the paper's epistemic stance.
   observation, not a derived prediction.
 -/
 
-end Phenomena.Phonology.Studies.FaustLampitelli2026
+end FaustLampitelli2026

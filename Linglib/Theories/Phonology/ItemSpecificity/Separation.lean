@@ -55,7 +55,7 @@ have observable consequences.
   dependence) that combine their commitments.
 - It does not commit to a specific empirical case study. The
   Breiss-Katsuda-Kawahara compound data
-  (`Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`) is
+  (`Studies/BreissKatsudaKawahara2026.lean`) is
   one *application* of these separations to Japanese velar
   nasalisation; this file stays abstract.
 -/

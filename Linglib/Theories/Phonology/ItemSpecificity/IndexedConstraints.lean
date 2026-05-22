@@ -23,7 +23,7 @@ Indexed-constraint theories predict **discontinuous** frequency effects:
 two distinct distributions, with no in-stratum gradience. Where the
 empirical distribution is gradient and continuous in log-frequency
 (e.g., the Breiss-Katsuda-Kawahara compounds in
-`Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`), this
+`Studies/BreissKatsudaKawahara2026.lean`), this
 theory under-fits relative to `ScaledWeights` /
 `RepresentationStrength`.
 -/

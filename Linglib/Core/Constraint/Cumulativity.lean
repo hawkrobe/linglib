@@ -44,7 +44,7 @@ voicing. It is the smallest known witness of the cumulativity gap.
 
 ## Where this is used
 
-`Phenomena/Phonology/Studies/CoetzeePater2011.lean` instantiates the
+`Studies/CoetzeePater2011.lean` instantiates the
 abstract witness with concrete Japanese loanword forms (bobu, webbu,
 guddo). Future studies of HG-vs-OT cumulativity (Pater 2009 stress
 window cumulativity; French schwa; Tagalog nasal substitution) should

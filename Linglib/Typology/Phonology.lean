@@ -71,7 +71,7 @@ are inventory-presence claims that could derive from the featural substrate
 in `Linglib/Theories/Phonology/Featural/Features.lean` (`[+constricted
 glottis]`, `[+lateral]`, `[+nasal, +dorsal]`, `[+front, +round]`) applied
 to a PHOIBLE inventory. Bridge theorems are deferred to
-`Phenomena/Phonology/Studies/Maddieson2013.lean`.
+`Studies/Maddieson2013.lean`.
 
 ## PHOIBLE 2.0 as the post-2019 successor for inventory facts
 
@@ -82,7 +82,7 @@ transcription + 37-feature decomposition), housed in
 `Linglib/Data/PHOIBLE/`. WALS partitions remain useful for cross-paper
 *classification* references; PHOIBLE provides the underlying inventories.
 Bridge theorems WALS↔PHOIBLE live in
-`Phenomena/Phonology/Studies/Maddieson2013.lean`.
+`Studies/Maddieson2013.lean`.
 
 -/
 

@@ -41,7 +41,7 @@ associated with a vP, CP, or DP phase head, activating over the entire
 phase complement at spell-out. The substrate for that extension lives
 in the sibling file `CophonologyByPhrase.lean`. Consumers handling
 long-distance morphologically conditioned phonological effects (cross-
-word) — e.g. `Phenomena/Phonology/Studies/SandeClemDabkowski2026.lean`
+word) — e.g. `Studies/SandeClemDabkowski2026.lean`
 — should reach for the phrasal version. Per-VI cophonology (this file)
 remains the right substrate for morpheme-internal effects.
 -/

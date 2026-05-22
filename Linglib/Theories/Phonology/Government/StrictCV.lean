@@ -36,7 +36,7 @@ form suffices for the Faust & Lampitelli analysis.
 * **Self-licensing domains** (@cite{faust-lampitelli-2026} eq. 25, 28).
   The "licensing overrides government" stipulation (paper n. 18: "this
   cannot be a general principle in Strict CV") is **paper-specific**
-  apparatus and lives in `Phenomena/Phonology/Studies/FaustLampitelli2026.lean`,
+  apparatus and lives in `Studies/FaustLampitelli2026.lean`,
   not here.
 * **Templatic structure** (root-template association, *Misalignment).
   That lives in `Theories/Phonology/Prosodic/Templates.lean`, anchored

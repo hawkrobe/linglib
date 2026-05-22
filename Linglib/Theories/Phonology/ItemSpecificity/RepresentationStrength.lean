@@ -71,7 +71,7 @@ pattern. Under this hybrid: high N2 frequency → high N2-initial
 activity → activity threshold for faithful boundary preservation
 (`χ > θ`) more easily met → less nasalisation. The prediction follows
 from S-G's optimality condition without further machinery; cf.
-`Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean` for the
+`Studies/BreissKatsudaKawahara2026.lean` for the
 discrimination across siblings.
 -/
 

@@ -35,7 +35,7 @@ similarities directly.
 
 ## Graduation history
 
-These measures lived inline in `Phenomena/Phonology/Studies/Saito2025.lean`
+These measures lived inline in `Studies/Saito2025.lean`
 as the only consumer at first landing (CHANGELOG 0.231.17). Per
 `CLAUDE.md`'s ≥-2-consumers graduation rule, they lifted to substrate
 when @cite{gahl-baayen-2024} landed as the second paper-anchored

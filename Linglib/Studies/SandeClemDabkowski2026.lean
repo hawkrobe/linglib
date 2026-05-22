@@ -88,9 +88,9 @@ discontinuous pattern. The file does not formally simulate each
 rejected theory (autosegmental @cite{clements-1985}, gestural
 @cite{gafos-1998}, ABC @cite{rose-walker-2004}), but cross-references
 their formalizations elsewhere in linglib —
-`Phenomena/Phonology/Studies/RoseWalker2004.lean`,
-`Phenomena/Phonology/Studies/Hansson2010.lean`,
-`Phenomena/Phonology/Studies/Sagey1986.lean` — and notes how each
+`Studies/RoseWalker2004.lean`,
+`Studies/Hansson2010.lean`,
+`Studies/Sagey1986.lean` — and notes how each
 predicts the observed locality bound that SCD 2026 demonstrates is
 empirically violated.
 
@@ -117,7 +117,7 @@ Per-language Guébie data lives entirely in this file (no
 lives in Studies, not Fragments".
 -/
 
-namespace Phenomena.Phonology.Studies.SandeClemDabkowski2026
+namespace SandeClemDabkowski2026
 
 open Minimalist (PICStrength)
 open Minimalist.Linearization
@@ -508,4 +508,4 @@ theorem wolof_harmony_uniform :
     diagnostics for verb doubling (the analogue of SCD §3 for
     Guébie). -/
 
-end Phenomena.Phonology.Studies.SandeClemDabkowski2026
+end SandeClemDabkowski2026

@@ -36,13 +36,13 @@ the independent rule of homorganic-nasal-place assimilation, which
 
 - @cite{zuraw-2010} factorial typology of NS over six obstruents with
   the constraint set DEP-C / \*NC / \*ASSOC / \*[ŋ / \*[n / \*[m
-  → see `Phenomena/Phonology/Studies/Zuraw2010.lean`.
+  → see `Studies/Zuraw2010.lean`.
 - @cite{zuraw-hayes-2017} 2×2 sub-square analysis (maŋ-other × paŋ-res
   prefixes, /b/ × /k/ stems) with prefix-indexed UNIFORMITY constraints
-  → see `Phenomena/Phonology/Studies/ZurawHayes2017.lean`.
+  → see `Studies/ZurawHayes2017.lean`.
 - @cite{magri-2025} MaxEnt-on-square deduction from the Hayes-Zuraw
   shifted-sigmoids generalization
-  → see `Phenomena/Phonology/Studies/Magri2025.lean`.
+  → see `Studies/Magri2025.lean`.
 -/
 
 open Phonology

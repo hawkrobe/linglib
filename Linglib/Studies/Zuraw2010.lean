@@ -80,8 +80,8 @@ rates than voiced stems at the labial place (p: 253/263 vs b: 177/277).
 ## Relation to other Tagalog NS analyses
 
 The closely-related study files
-`Phenomena/Phonology/Studies/ZurawHayes2017.lean` and
-`Phenomena/Phonology/Studies/Magri2025.lean` analyze a 2×2 sub-square
+`Studies/ZurawHayes2017.lean` and
+`Studies/Magri2025.lean` analyze a 2×2 sub-square
 of this same phenomenon (maŋ-other / paŋ-res prefixes × /b/ /k/ stems)
 under a different constraint inventory (NasSub / \*NC / \*[stemŋ] /
 \*[stemŋ]/n / prefix-indexed UNIFORMITY) for a MaxEnt analysis of the
@@ -506,8 +506,8 @@ theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nsCands vp σ .g .y
 
     The probabilistic 2×2-square version of the Tagalog variation
     pattern under a different constraint inventory is treated in
-    `Phenomena/Phonology/Studies/ZurawHayes2017.lean` and
-    `Phenomena/Phonology/Studies/Magri2025.lean`. -/
+    `Studies/ZurawHayes2017.lean` and
+    `Studies/Magri2025.lean`. -/
 theorem pattern_j_witness :
     ∃ σ : Equiv.Perm (Fin 6),
       PicksAt nsCands vp σ .p .yes ∧ PicksAt nsCands vp σ .t .yes ∧
