@@ -66,7 +66,7 @@ The prediction is computed via:
   blocking principle that renders `tous les NP.dual` unpronounceable.
 - The paper's MP-via-indirect-alts is a refinement of the
   MP-via-direct-alts machinery already in linglib via
-  `Phenomena/Plurals/Studies/Sauerland2003.lean` (sg/pl/dual phi-MP);
+  `Studies/Sauerland2003.lean` (sg/pl/dual phi-MP);
   Sauerland's account works for English *both* but not French *tous*,
   which is exactly the gap this paper fills.
 
@@ -400,7 +400,7 @@ theorem slovenian_universal_not_anti_dual :
 -- §6  Connection to MP-via-direct-alts (Sauerland 2003)
 -- ============================================================================
 
-/-! ### Bridge to `Phenomena/Plurals/Studies/Sauerland2003.lean`
+/-! ### Bridge to `Studies/Sauerland2003.lean`
 
 @cite{sauerland-2003} formalizes MP competition over phi-features
 (sg/pl/dual) via direct alternatives — the standard

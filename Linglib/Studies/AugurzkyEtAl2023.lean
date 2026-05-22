@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Plurals.Studies.KrizChemla2015
+import Linglib.Studies.KrizChemla2015
 
 /-!
 # @cite{augurzky-etal-2023}: QUD manipulation of homogeneity projection
@@ -11,7 +11,7 @@ Bedeutung 27*: 19-32.
 
 Augurzky et al. extend the Križ & Chemla 2015 paradigm
 (`@cite{kriz-chemla-2015}`, formalized at
-`Phenomena/Plurals/Studies/KrizChemla2015.lean`) by manipulating the QUD
+`Studies/KrizChemla2015.lean`) by manipulating the QUD
 between participants:
 
 - **Strict context**: QUD targets the strongest reading.
@@ -38,9 +38,9 @@ with the rival explanations cited as future-work targets.
 
 -/
 
-namespace Phenomena.Plurals.Studies.AugurzkyEtAl2023
+namespace AugurzkyEtAl2023
 
-open Phenomena.Plurals.Studies.KrizChemla2015 (EmbeddingOperator)
+open KrizChemla2015 (EmbeddingOperator)
 
 /--
 QUD-manipulation datum for plural-definite acceptance in gap scenarios.
@@ -151,4 +151,4 @@ def noNotEveryAsymmetry : NoNotEveryAsymmetryDatum :=
 def qudManipulationData : List QUDManipulationDatum :=
   [everyQUDEffect, noQUDEffect, notEveryQUDEffect]
 
-end Phenomena.Plurals.Studies.AugurzkyEtAl2023
+end AugurzkyEtAl2023

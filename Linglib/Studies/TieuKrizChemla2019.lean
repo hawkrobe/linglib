@@ -1,6 +1,6 @@
 import Linglib.Features.Polarity
 import Linglib.Phenomena.Plurals.Homogeneity
-import Linglib.Phenomena.Plurals.Studies.Magri2014
+import Linglib.Studies.Magri2014
 
 /-!
 # Tieu, Križ & Chemla (2019): Children's Acquisition of Homogeneity

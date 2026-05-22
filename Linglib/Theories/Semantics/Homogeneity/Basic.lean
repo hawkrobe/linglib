@@ -15,7 +15,7 @@ here as `Truth3.metaAssert`).
 
 ## Layered structure
 
-This file is the substrate for `Phenomena.Plurals.Studies.Kriz2016` (the
+This file is the substrate for `Kriz2016` (the
 plural-specific instantiation) and for downstream consumers across plurals,
 conditionals, modality, generics, and summative predicates that exhibit
 homogeneity gaps.
@@ -24,7 +24,7 @@ homogeneity gaps.
 
 | Domain                  | Spec points         | Remover                     | Anchored at                                   |
 |-------------------------|---------------------|-----------------------------|-----------------------------------------------|
-| Plural definites        | atoms               | `all`                       | `Phenomena.Plurals.Studies.Kriz2016`          |
+| Plural definites        | atoms               | `all`                       | `Kriz2016`          |
 | Conditionals            | closest P-worlds    | `necessarily`               | §6 below + `Conditionals.Counterfactual`      |
 | Summative (spatial)     | spatial parts       | `completely` / `whole`      | not yet formalized                            |
 | Generics                | subkinds            | `all`                       | not yet formalized; cf. `Cohen1999` (different equation) |
@@ -304,7 +304,7 @@ theorem bivalent_communicated_eq_posExt (q : QUD W) (S : SentenceTV W)
     then everything communicated under q' is also communicated under q.
 
     This is @cite{kriz-2016}'s key prediction: coarser QUDs enable more
-    non-maximal use. The finite model in `Phenomena.Plurals.Studies.Kriz2016`
+    non-maximal use. The finite model in `Kriz2016`
     demonstrates this: `coarseQ` communicates `smithNeutral` but `fineQ`
     does not. -/
 theorem communicatedContent_antitone (q q' : QUD W) (S : SentenceTV W)

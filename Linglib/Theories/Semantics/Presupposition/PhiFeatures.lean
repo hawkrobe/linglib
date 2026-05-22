@@ -42,7 +42,7 @@ framework without stipulation.
 This file was extracted from `Sauerland2003` to
 separate general phi-feature presuppositional theory (which belongs in
 `Theories/`) from Sauerland's specific arguments about number (which
-belong in `Phenomena/Plurals/Studies/`).
+belong in `Studies/`).
 -/
 
 set_option autoImplicit false

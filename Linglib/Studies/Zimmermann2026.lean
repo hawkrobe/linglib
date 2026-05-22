@@ -3,7 +3,7 @@ import Linglib.Fragments.Akan.Determiners
 import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
 import Linglib.Theories.Semantics.Quantification.ONEModifiers
 import Linglib.Theories.Semantics.Quantification.ChoiceFunction
-import Linglib.Phenomena.Plurals.Studies.HaslingerHienEtAl2025
+import Linglib.Studies.HaslingerHienEtAl2025
 
 /-!
 # @cite{zimmermann-2026}: African Lambdas I — Formal Semantics of African

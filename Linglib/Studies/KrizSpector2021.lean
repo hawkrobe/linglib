@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
-import Linglib.Phenomena.Plurals.Studies.Kriz2016
+import Linglib.Studies.Kriz2016
 
 /-!
 # Križ & Spector (2021): Interpreting Plural Predication
@@ -39,7 +39,7 @@ namespace KrizSpector2021
 open Core.Duality (Truth3)
 open Semantics.Plurality.Distributivity
 open Semantics.Homogeneity
-open Phenomena.Plurals.Studies.Kriz2016
+open Kriz2016
 
 variable {Atom W : Type*} [DecidableEq Atom]
 

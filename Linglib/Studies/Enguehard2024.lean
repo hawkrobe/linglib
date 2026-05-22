@@ -1,7 +1,7 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Phenomena.Plurals.Multiplicity
-import Linglib.Phenomena.Plurals.Studies.Sauerland2003
+import Linglib.Studies.Sauerland2003
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Theories.Semantics.Exhaustification.Presuppositional

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Composition.Continuation
-import Linglib.Phenomena.Plurals.Studies.Charlow2021.Basic
+import Linglib.Studies.Charlow2021.Basic
 
 /-!
 # Higher-Order Dynamic Generalized Quantifiers
@@ -20,10 +20,10 @@ flat DRS — the nuclear scope can only be placed outside maximization.
 
 -/
 
-namespace Phenomena.Plurals.Studies.Charlow2021.HigherOrder
+namespace Charlow2021.HigherOrder
 
 open Semantics.Dynamic.Core
-open Phenomena.Plurals.Studies.Charlow2021.Basic
+open Charlow2021.Basic
 open Semantics.Composition.Continuation
 open _root_.Mereology
 
@@ -103,4 +103,4 @@ theorem ho_cumulative_derivation [AssignmentStructure S E] [PartialOrder E] [Fin
     cumulative v u boys movies saw' := by
   rfl
 
-end Phenomena.Plurals.Studies.Charlow2021.HigherOrder
+end Charlow2021.HigherOrder

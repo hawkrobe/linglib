@@ -547,7 +547,7 @@ theorem quantifiedReciprocalTV_iff_supervaluation
     simp [hdEval, hdSpec, hm, hr]
 
 /-- **Sibling parallel — Križ 2016 plural homogeneity.**
-    `Phenomena/Plurals/Studies/Kriz2016.lean`'s `barePluralTV_eq_superTrue`
+    `Studies/Kriz2016.lean`'s `barePluralTV_eq_superTrue`
     proves `barePluralTV P x w = superTrue (fun a => P a w) ⟨x, hne⟩` —
     plural homogeneity reduces to `superTrue` over **atoms in the
     plurality** as specification points. The bridge above shows the H&D

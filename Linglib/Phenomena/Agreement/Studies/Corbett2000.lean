@@ -136,7 +136,7 @@ def japaneseNS : NumberSystem :=
     plural *dəgha-ner* is strictly ≥2. The general-number reading is
     *blocked* in definite contexts via syntactic-complexity competition
     with the same-complexity plural alternative — see
-    `Phenomena/Plurals/Studies/BaleKhanjian2014.lean`. Korean (Kim 2005)
+    `Studies/BaleKhanjian2014.lean`. Korean (Kim 2005)
     and Turkish (Bliss 2004) pattern alike per BK 2014 §2.3 and fn 14. -/
 def westernArmenianNS : NumberSystem :=
   { name := "Western Armenian"

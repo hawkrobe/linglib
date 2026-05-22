@@ -1,6 +1,6 @@
 import Linglib.Studies.Santorio2018
 import Linglib.Studies.BarLevFox2020
-import Linglib.Phenomena.Plurals.Studies.TieuKrizChemla2019
+import Linglib.Studies.TieuKrizChemla2019
 import Mathlib.Data.Rat.Defs
 
 /-!

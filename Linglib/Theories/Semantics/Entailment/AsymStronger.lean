@@ -30,7 +30,7 @@ right home for a polymorphic primitive. This file is.
   built around the unary form. Rewriting them on top of this primitive
   is a separate refactor.
 
-- **`Magri2014.innerExcludable`** (`Phenomena/Plurals/Studies/Magri2014.lean`) —
+- **`Magri2014.innerExcludable`** (`Studies/Magri2014.lean`) —
   combines (a) a hand-wired `entails : Role → Role → Bool` on a
   three-element role enum with (b) a Horn-mateness filter. The `entails`
   is not derivable as `asymStrongerOn` over a world set because Magri's

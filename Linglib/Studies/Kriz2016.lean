@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
-import Linglib.Phenomena.Plurals.Studies.Magri2014
+import Linglib.Studies.Magri2014
 import Linglib.Theories.Semantics.Homogeneity.Basic
 import Linglib.Theories.Semantics.Plurality.Distributivity
 
@@ -93,7 +93,7 @@ issue-relevant — capturing @cite{kriz-2016} §4.2's distinctive prediction.
 Adding "all" blocks non-maximal use entirely.
 -/
 
-namespace Phenomena.Plurals.Studies.Kriz2016
+namespace Kriz2016
 
 open Core.Duality (Truth3)
 open Semantics.Plurality.Distributivity
@@ -856,4 +856,4 @@ not done here. The substrate docstring's claim that "the framework extends to
 generics" should be read with this caveat: it extends to a Križ-style
 treatment of generics, which is NOT what `Cohen1999` formalizes. -/
 
-end Phenomena.Plurals.Studies.Kriz2016
+end Kriz2016

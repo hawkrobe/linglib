@@ -32,7 +32,7 @@ her own original observation.
 
 -/
 
-namespace Phenomena.Plurals.Studies.KrizChemla2015
+namespace KrizChemla2015
 
 /--
 Types of embedding operators for projection studies.
@@ -170,4 +170,4 @@ def projectionData : List ProjectionDatum :=
 def truthConditionsData : List EmbeddedTruthConditions :=
   [everyTruthConditions, noTruthConditions, exactlyOneTruthConditions]
 
-end Phenomena.Plurals.Studies.KrizChemla2015
+end KrizChemla2015

@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Plurality.Cumulativity
 import Linglib.Theories.Semantics.Aspect.Cumulativity
-import Linglib.Phenomena.Plurals.Studies.Charlow2021.HigherOrder
+import Linglib.Studies.Charlow2021.HigherOrder
 
 /-!
 # Cross-framework synthesis: cumulative readings of modified numerals
@@ -15,7 +15,7 @@ and (until this file) never spoke to each other:
 
 | Account | Mechanism | Location |
 |---|---|---|
-| Tower continuations | Higher-order dynamic GQ via `Cont` monad | `Phenomena/Plurals/Studies/Charlow2021/HigherOrder.lean` |
+| Tower continuations | Higher-order dynamic GQ via `Cont` monad | `Studies/Charlow2021/HigherOrder.lean` |
 | Beck-Sauerland `**` | Pluralization operator on relations between Finsets | `Theories/Semantics/Plurality/Cumulativity.lean` |
 | Champollion `*` | Cumulative-closure on event predicates | `Theories/Semantics/Events/Aspect/Cumulativity.lean` |
 

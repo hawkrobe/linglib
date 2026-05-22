@@ -57,7 +57,7 @@ atelicity diagnostic; CUM is the NP→VP propagation property.
   `Tense/Aspect/SubintervalProperty.lean` rather than as an
   SR-decomposition form. The SR form at `(τ, point-granularity)` has
   no current consumer.
-* `Phenomena/Plurals/Studies/Champollion2017.lean` covers distributivity
+* `Studies/Champollion2017.lean` covers distributivity
   (Ch 6 SDR) + a basic SSR↔Vendler atelicity bridge (§ 5), but does NOT
   yet formalize Champollion's distinctive Ch 6 *push carts all the way
   to the store for fifty minutes* contrast — the empirical case where

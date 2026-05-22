@@ -21,7 +21,7 @@ produces cumulative readings automatically.
 
 -/
 
-namespace Phenomena.Plurals.Studies.Charlow2021.UpdateTheoretic
+namespace Charlow2021.UpdateTheoretic
 
 open Semantics.Dynamic.Core
 open _root_.Mereology
@@ -210,4 +210,4 @@ theorem exactlyN_u_distributive [PartialOrder E] [Fintype E]
       (isMaximal_congr (fun y => (evar_u_vvals_single v P i y).trans
         (evar_u_vvals v P s y ⟨i, his⟩).symm) _).mp hmax_i⟩, hcount_i⟩
 
-end Phenomena.Plurals.Studies.Charlow2021.UpdateTheoretic
+end Charlow2021.UpdateTheoretic

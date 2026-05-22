@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Plurals.Studies.Charlow2021.Basic
+import Linglib.Studies.Charlow2021.Basic
 
 /-!
 # Subtype Polymorphism for Dynamic GQs
@@ -17,7 +17,7 @@ tests scope outside M_v.
 
 -/
 
-namespace Phenomena.Plurals.Studies.Charlow2021.SubtypePolymorphism
+namespace Charlow2021.SubtypePolymorphism
 
 /-- Completeness level: `incomplete` (t) or `complete` (T).
     Incomplete meanings await further composition (e.g., a cardinality test).
@@ -75,4 +75,4 @@ theorem pseudo_cumulative_illtyped :
     ¬ subtypeOf CardTest_type Mvar_type := by
   simp [CardTest_type, Mvar_type, subtypeOf]
 
-end Phenomena.Plurals.Studies.Charlow2021.SubtypePolymorphism
+end Charlow2021.SubtypePolymorphism

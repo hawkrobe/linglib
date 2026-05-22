@@ -4,8 +4,8 @@ import Linglib.Theories.Semantics.Plurality.ExistentialPL
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Multiplicity
-import Linglib.Phenomena.Plurals.Studies.Kriz2016
-import Linglib.Phenomena.Plurals.Studies.Magri2014
+import Linglib.Studies.Kriz2016
+import Linglib.Studies.Magri2014
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -892,14 +892,14 @@ of the §11 polarities-symmetric vs. polarities-asymmetric disagreement. -/
 /-- At `onlyKelly`, Križ's bare-plural denotation of "the kids laughed" is
     a homogeneity gap (.indet) — Kelly laughed, Jane didn't. -/
 theorem kriz_bare_kids_onlyKelly_gap :
-    Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughed theKids
+    Kriz2016.barePluralTV laughed theKids
       .onlyKelly = .indet := by decide
 
 /-- Križ's Strong-Kleene negation of a gap is also a gap. So the negation
     "the kids didn't laugh" at `onlyKelly` is `.indet` under Križ. -/
 theorem kriz_neg_bare_kids_onlyKelly_gap :
     Core.Duality.Truth3.neg
-      (Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughed theKids
+      (Kriz2016.barePluralTV laughed theKids
         .onlyKelly) = .indet := by
   rw [kriz_bare_kids_onlyKelly_gap]; decide
 
@@ -925,7 +925,7 @@ theorem barlev_neg_someLaughed_onlyKelly_false :
     in prose. -/
 theorem kriz_vs_barlev_negative_nonmax :
     Core.Duality.Truth3.neg
-      (Phenomena.Plurals.Studies.Kriz2016.barePluralTV laughed theKids
+      (Kriz2016.barePluralTV laughed theKids
         .onlyKelly) = .indet ∧
     ¬ ¬ someLaughed .onlyKelly :=
   ⟨kriz_neg_bare_kids_onlyKelly_gap, barlev_neg_someLaughed_onlyKelly_false⟩
