@@ -16,7 +16,7 @@ because the fronting target is in the CP domain.
 SOV base order, V-to-I yields verb-final embedded surface order. The
 +Fin° claim is the @cite{vikner-1995} analysis;
 @cite{harizanov-gribanova-2019} denies V-to-I in German embedded
-clauses. See `Phenomena/WordOrder/Studies/HarizanovGribanova2019.lean`
+clauses. See `Studies/HarizanovGribanova2019.lean`
 for the formal contrast.
 -/
 

@@ -49,7 +49,7 @@ substrates carry adjacent typology: `Typology/Adposition.lean` for
 Ch 85; nominal-internal and correlation-pair profiles can be added
 when consumers demand them. Cross-tabulation primitives for
 correlation tables (Gibson 2025-style 2×2 head-direction tables) live
-in their consuming Studies file (`Phenomena/WordOrder/Studies/
+in their consuming Studies file (`Studies/
 Gibson2025.lean`) until a second framework consumer materialises.
 -/
 

@@ -1,5 +1,5 @@
 import Linglib.Theories.Processing.MemorySurprisal.Basic
-import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
+import Linglib.Studies.FutrellEtAl2020
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Data.WALS.Languages
 

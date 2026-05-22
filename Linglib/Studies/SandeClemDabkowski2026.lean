@@ -107,7 +107,7 @@ Substrate consumed (additions landed in this same overhaul):
   `PICStrength.linearizationBound` and `admitsExtraction`.
 - `Theories/Syntax/Minimalist/Linearization/Cyclic.lean` — added
   `FrozenFeature` / `frozenValue` for cross-phase feature preservation.
-- `Phenomena/WordOrder/Studies/HarizanovGribanova2019Amalgamation.lean`
+- `Studies/HarizanovGribanova2019Amalgamation.lean`
   — refactored `axiom verb_doubling_implies_syntactic` to a
   per-construction `Prop`, motivated by SCD 2026's stance that the
   universal version is too strong (Landau 2006 Hebrew counterexample).

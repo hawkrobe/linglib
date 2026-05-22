@@ -2,7 +2,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Core.Discourse.Coherence
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
+import Linglib.Studies.ArnoldEtAl2000
 import Linglib.Studies.KehlerRohde2013
 
 /-!

@@ -65,7 +65,7 @@ initial languages exist but are rare" statistical character can be tested
 non-vacuously.
 -/
 
-namespace Phenomena.WordOrder.Studies.Greenberg1963
+namespace Greenberg1963
 
 open _root_.Typology (ImplicationalUniversal)
 
@@ -203,4 +203,4 @@ theorem dryer_bdt_ov_postp :
 -- sentinel in each `Fragments/{Lang}/WordOrder.lean` already covers the drift
 -- an aggregate sample-consistency theorem would catch.
 
-end Phenomena.WordOrder.Studies.Greenberg1963
+end Greenberg1963

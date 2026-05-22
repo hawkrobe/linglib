@@ -98,7 +98,7 @@ the case-marking facts, making no claims about phrase structure.
 
 The processing-side dissociation (cross-serial easier than nested despite
 greater formal complexity) is the subject of @cite{bach-brown-marslen-wilson-1986},
-formalized in `Phenomena.WordOrder.Studies.BachBrownMarslenWilson1986` —
+formalized in `BachBrownMarslenWilson1986` —
 not duplicated here.
 -/
 

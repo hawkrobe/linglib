@@ -5,7 +5,7 @@ import Linglib.Typology.Relativization.ExtractionBridge
 import Linglib.Theories.Syntax.Minimalist.Position
 import Linglib.Theories.Syntax.Minimalist.Derivation
 import Linglib.Theories.Syntax.Minimalist.Movement.Remnant
-import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
+import Linglib.Studies.ColeHermon2008
 
 /-!
 # Toba Batak Extraction Restriction @cite{erlewine-2018}

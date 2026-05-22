@@ -41,13 +41,13 @@ differ in magnitude (Gibson 981 = 454+41+14+472; WALS Ch 95 raw =
 984 = 456+42+14+472, the residual ~3 absorbed in Gibson's reporting
 and ~158 "Other" languages excluded by Gibson). Cell *pairings* match
 exactly: hihf = HI×HF = (VO, postpositions); hfhi = HF×HI = (OV,
-prepositions). `Phenomena/WordOrder/Studies/DryerHaspelmath2013.lean`
+prepositions). `Studies/DryerHaspelmath2013.lean`
 has its own aggregate-count `ch95_harmonic_dominant` theorem at higher
 stringency (>16×); chronological dependency rules prohibit DH2013
 importing this file, so it is not currently wired through.
 -/
 
-namespace Phenomena.WordOrder.Studies.Gibson2025
+namespace Gibson2025
 
 open DepGrammar DependencyLength DepGrammar.HarmonicOrder
 
@@ -310,4 +310,4 @@ set_option maxRecDepth 8192 in
 theorem fromWALSCh95_harmonic_dominant :
     CrossTab.fromWALSCh95.IsHarmonicDominant := by decide
 
-end Phenomena.WordOrder.Studies.Gibson2025
+end Gibson2025

@@ -24,7 +24,7 @@ reasoning is shared rather than re-stipulated:
   in {Gungbe} and across {Kwa}.
 - @cite{harizanov-gribanova-2017} / @cite{harizanov-gribanova-2019}:
   alternative analysis (postsyntactic amalgamation), formalized in
-  `Phenomena/WordOrder/Studies/HarizanovGribanova2019Amalgamation.lean`
+  `Studies/HarizanovGribanova2019Amalgamation.lean`
   with the syntactic-vs-PF dichotomy.
 - @cite{van-urk-2024}: cross-linguistic constraints on predicate
   fronting; alternative substantive proposals.
@@ -33,7 +33,7 @@ reasoning is shared rather than re-stipulated:
   V → v → T head movement and object shift, leaving only the particle
   in the remnant.
 - @cite{cole-hermon-2008} (informal use): {Toba Batak} VoiceP raising
-  + remnant movement in `Phenomena/WordOrder/Studies/ColeHermon2008.lean`.
+  + remnant movement in `Studies/ColeHermon2008.lean`.
 - @cite{erlewine-2018} (informal use): predicate fronting in
   `Studies/Erlewine2018.lean`.
 

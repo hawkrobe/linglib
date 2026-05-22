@@ -316,7 +316,7 @@ theorem neg_same_proclitic :
 -- The substrate-typed word-order profile lives in
 -- `Fragments/Mayan/Kiche/WordOrder.lean`. The transitive vs intransitive
 -- vs passive distinction Mondloch draws (Lesson 9) is paper-specific
--- apparatus and would belong in a `Phenomena/WordOrder/Studies/Mondloch2017.lean`
+-- apparatus and would belong in a `Studies/Mondloch2017.lean`
 -- if a study file were written; nothing currently consumes it.
 
 end Fragments.Mayan.Kiche

@@ -45,7 +45,7 @@ synthesis of many of these correlations, predating WALS.
     single-word dependents where head direction is less predictive).
 -/
 
-namespace Phenomena.WordOrder.Studies.DryerHaspelmath2013
+namespace DryerHaspelmath2013
 
 private abbrev ch81  := Data.WALS.F81A.allData
 private abbrev ch82  := Data.WALS.F82A.allData
@@ -206,4 +206,4 @@ theorem ch61_withoutMarking_majority :
     (ch61.filter (·.value == .withoutMarking)).length >
     ch61.length / 2 := by decide
 
-end Phenomena.WordOrder.Studies.DryerHaspelmath2013
+end DryerHaspelmath2013

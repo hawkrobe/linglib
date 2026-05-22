@@ -147,7 +147,7 @@ theorem amalgamation_host_ccommands_target (a : Amalgamation) (root : SyntacticO
 
     Decidable for any concrete `Derivation`.
 
-    Migration note: previously lived in `Phenomena/WordOrder/Studies/
+    Migration note: previously lived in `Studies/
     HarizanovGribanova2019Amalgamation.lean`, which was deleted at
     0.230.X. The relational-predicate substrate from that file
     (`covers`, `coversAmongHeads`, `coversProjection`,
