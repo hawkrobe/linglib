@@ -108,7 +108,7 @@ NOT formalised (each pending substrate work):
 
 -/
 
-namespace Phenomena.Constructions.Causatives.Studies.Dendikken1995
+namespace Dendikken1995Causatives
 
 open Minimalist
 
@@ -349,4 +349,4 @@ theorem high_appl_not_affixal_particle :
   simp only [mkLeafPhon, HeadFunction.outerCat_leaf]
   rfl
 
-end Phenomena.Constructions.Causatives.Studies.Dendikken1995
+end Dendikken1995Causatives

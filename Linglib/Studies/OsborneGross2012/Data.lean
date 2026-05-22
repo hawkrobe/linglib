@@ -26,7 +26,7 @@ The paper demonstrates catenae across five construction types:
 5. **Comparative correlative** (§6): each correlative clause forms a catena
 -/
 
-namespace Phenomena.Constructions.Studies.OsborneGross2012
+namespace OsborneGross2012
 
 open DepGrammar
 
@@ -211,7 +211,7 @@ def theMoreTheFatter : DepTree :=
              ⟨7, 6, .nsubj⟩, ⟨7, 5, .xcomp⟩, ⟨5, 4, .det⟩]
     rootIdx := 7 }
 
-end Phenomena.Constructions.Studies.OsborneGross2012
+end OsborneGross2012
 
 /-! ## Bridge content (merged from DG_OsborneGross2012Bridge.lean) -/
 
@@ -246,10 +246,10 @@ substantive decoding idioms ("kick the bucket") and formal idioms
 
 -/
 
-namespace Phenomena.Constructions.Studies.OsborneGross2012.Bridge
+namespace OsborneGross2012.Bridge
 
 open DepGrammar DepGrammar.Catena ConstructionGrammar
-open Phenomena.Constructions.Studies.OsborneGross2012
+open OsborneGross2012
 open DepGrammar.CatenalConstruction
 
 -- ============================================================================
@@ -559,4 +559,4 @@ theorem cc_matches_fko1988 :
     isCatena theMoreTheFatter.deps [4, 5, 6, 7] = true := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> native_decide
 
-end Phenomena.Constructions.Studies.OsborneGross2012.Bridge
+end OsborneGross2012.Bridge

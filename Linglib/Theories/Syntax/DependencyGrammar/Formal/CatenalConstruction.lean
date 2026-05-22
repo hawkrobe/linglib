@@ -32,7 +32,7 @@ proof that those nodes form a catena.
   statement; per-tree instances verified via `native_decide` in the bridge)
 
 Concrete instances and verified claims are in
-`Phenomena/Constructions/Studies/OsborneGross2012/Data.lean`.
+`Studies/OsborneGross2012/Data.lean`.
 
 -/
 

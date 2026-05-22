@@ -13,7 +13,7 @@ typed verbal/constructional subevent relations, and the compositional
 fusion machinery linking verb meaning to constructional contribution.
 
 Paper data and per-datum verifications for @cite{goldberg-jackendoff-2004}
-itself live in `Phenomena/Constructions/Resultatives/Studies/GoldbergJackendoff2004.lean`,
+itself live in `Studies/GoldbergJackendoff2004.lean`,
 which imports this file.
 
 ## Core types

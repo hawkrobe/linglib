@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.SmallClause
-import Linglib.Phenomena.Constructions.ParticleVerbs.Data
+import Linglib.Phenomena.Constructions.ParticleVerbs
 
 /-!
 # Particle verb constructions — small-clause analysis
@@ -49,7 +49,7 @@ are property of the corresponding study file.
 
 -/
 
-namespace Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
+namespace Dendikken1995ParticleVerbs
 
 open Minimalist
 open Phenomena.Constructions.ParticleVerbs
@@ -109,4 +109,4 @@ theorem pvToSmallClause_isSmallClause (pv : ParticleVerb) (dpId prtId : Nat) :
     IsSmallClause (pvToSmallClause pv dpId prtId).toSO :=
   SmallClause.toSO_isSmallClause _ (pvToSmallClause_consistent pv dpId prtId)
 
-end Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
+end Dendikken1995ParticleVerbs

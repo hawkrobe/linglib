@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Theories.Syntax.Minimalist.SmallClause
-import Linglib.Phenomena.Constructions.ParticleVerbs.Data
+import Linglib.Phenomena.Constructions.ParticleVerbs
 import Linglib.Studies.Bruening2021
 
 /-!

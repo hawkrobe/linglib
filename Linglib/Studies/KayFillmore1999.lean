@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround

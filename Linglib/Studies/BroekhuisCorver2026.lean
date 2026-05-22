@@ -1,7 +1,7 @@
 import Linglib.Fragments.Dutch.Adpositions
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Typology.Adposition
-import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
+import Linglib.Studies.Dendikken1995ParticleVerbs
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Theories.Semantics.Spatial.Trace
 
@@ -320,7 +320,7 @@ theorem af_only_intransitive :
 /-- @cite{dendikken-1995} PVC predicate category is P — matching
     the category of intransitive adpositions in the fragment. -/
 theorem pvc_predCat_is_P :
-    Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995.pvc_pred_is_P
+    Dendikken1995ParticleVerbs.pvc_pred_is_P
       Phenomena.Constructions.ParticleVerbs.pick_up 0 1 = rfl := rfl
 
 -- ════════════════════════════════════════════════════

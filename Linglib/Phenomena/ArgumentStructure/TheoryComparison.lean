@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
+import Linglib.Studies.GoldbergJackendoff2004
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Core.Dependency.Basic
 
@@ -29,7 +29,7 @@ namespace TheoryComparison
 
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
-open Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
+open GoldbergJackendoff2004
 open DepGrammar
 
 /-! ## §1. Three theories of argument licensing -/

@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.SmallClause
-import Linglib.Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
+import Linglib.Studies.GoldbergJackendoff2004
 
 /-!
 # Resultative — Small Clause Bridge
@@ -38,10 +38,10 @@ onto SC predicate categories:
 
 -/
 
-namespace Phenomena.Constructions.Resultatives.Studies.Dendikken1995
+namespace Dendikken1995Resultatives
 
 open Minimalist
-open Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
+open GoldbergJackendoff2004
 
 /-! ## §1. Resultative types → SC predicate categories
 
@@ -169,4 +169,4 @@ theorem datumToSC_isSmallClause (d : ResultativeDatum) (dpId predId : Nat) :
     IsSmallClause (datumToSC d dpId predId).toSO :=
   SmallClause.toSO_isSmallClause _ (datumToSC_consistent d dpId predId)
 
-end Phenomena.Constructions.Resultatives.Studies.Dendikken1995
+end Dendikken1995Resultatives

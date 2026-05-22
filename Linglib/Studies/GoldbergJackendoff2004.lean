@@ -40,7 +40,7 @@ This file holds:
   judgments and aspectual contrasts drawn from §§2–8 of the paper.
 -/
 
-namespace Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
+namespace GoldbergJackendoff2004
 
 open ConstructionGrammar
 open ConstructionGrammar.Resultatives
@@ -516,4 +516,4 @@ theorem atelic_adverbial_pattern :
     hammer_bare_for.judgment == .ok := by
   native_decide
 
-end Phenomena.Constructions.Resultatives.Studies.GoldbergJackendoff2004
+end GoldbergJackendoff2004
