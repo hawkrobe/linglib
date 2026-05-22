@@ -232,7 +232,7 @@ theorem fid_time_eq_direct :
     The architectural payoff: this is **exactly parallel** to how
     `Intension.IsRigid` distinguishes Abusch-style wide-scope rigid
     time-references from de dicto descriptive time-concepts in
-    `Phenomena/TenseAspect/Studies/Abusch1997.lean` (`TimeConcept`).
+    `Studies/Abusch1997.lean` (`TimeConcept`).
     The polymorphism in `Intension W τ` is non-trivial: individual
     de re (this file) and temporal de re (Abusch) are *the same
     machinery* at different `Res` types. The

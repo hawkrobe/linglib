@@ -111,7 +111,7 @@ end NamedTO
 
     `ReichenbachFrame` is recast as a `Domain` with central = S (point)
     and sub-TOs = [P, R, E] (each a point);
-    `Phenomena.TenseAspect.Studies.Declerck1991.TOChain.DeclercianSchema`
+    `Declerck1991.TOChain.DeclercianSchema`
     is recast as a `Domain` plus a `Zone`-classifier function. -/
 structure Domain (Time : Type*) (Role : Type*) [LinearOrder Time] where
   /-- The central TO — the binding TO of the domain. For matrix

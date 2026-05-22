@@ -50,7 +50,7 @@ judgment.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Kratzer1998
+namespace Kratzer1998
 
 open Semantics.Tense.SOT.Decomposition
 open Core.Time.Tense
@@ -530,4 +530,4 @@ intentionally not yet landed; substrate is ready (`applyDeletion`,
 `sotDeletionApplicable`, the kratzer-named lexical entries are all
 exported from `Tense/SOT/Decomposition.lean`). -/
 
-end Phenomena.TenseAspect.Studies.Kratzer1998
+end Kratzer1998

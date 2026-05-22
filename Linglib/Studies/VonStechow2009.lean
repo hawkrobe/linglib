@@ -43,7 +43,7 @@ collects the paper-attributed theorems.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.VonStechow2009
+namespace VonStechow2009
 
 open Core.Time.Tense
 open Core.Time.Reichenbach
@@ -114,4 +114,4 @@ theorem feature_checking_is_fullPresupposition {Time : Type*} [LinearOrder Time]
   Iff.rfl
 
 
-end Phenomena.TenseAspect.Studies.VonStechow2009
+end VonStechow2009

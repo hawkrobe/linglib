@@ -2,8 +2,8 @@ import Linglib.Theories.Semantics.Aspect.Basic
 import Linglib.Theories.Semantics.Aspect.SubintervalProperty
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
-import Linglib.Phenomena.TenseAspect.Studies.IatridouEtAl2001
-import Linglib.Phenomena.TenseAspect.Studies.Kiparsky2002
+import Linglib.Studies.IatridouEtAl2001
+import Linglib.Studies.Kiparsky2002
 
 /-!
 # @cite{iatridou-zeijlstra-2021}: The complex beauty of boundary adverbials: in years and until
@@ -47,15 +47,15 @@ framework but has not been line-by-line cross-checked against IZ
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.IatridouZeijlstra2021
+namespace IatridouZeijlstra2021
 
 open Core.Time
 open Semantics.Events
 open Semantics.Aspect
 open Semantics.Aspect.SubintervalProperty
 open Semantics.Tense.TemporalAdverbials (PTSConstraint AdverbialType)
-open Phenomena.TenseAspect.Studies.IatridouEtAl2001 (BoundaryKind)
-open Phenomena.TenseAspect.Studies.Kiparsky2002 (PerfectReading)
+open IatridouEtAl2001 (BoundaryKind)
+open Kiparsky2002 (PerfectReading)
 
 variable {W Time : Type*} [LinearOrder Time]
 
@@ -455,4 +455,4 @@ theorem non_widener_not_npi :
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
 
-end Phenomena.TenseAspect.Studies.IatridouZeijlstra2021
+end IatridouZeijlstra2021

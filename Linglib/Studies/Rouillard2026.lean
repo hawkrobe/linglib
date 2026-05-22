@@ -83,7 +83,7 @@ Sections:
   boundedness chain is retained as substrate-internal plumbing.
 -/
 
-namespace Phenomena.TenseAspect.Studies.Rouillard2026
+namespace Rouillard2026
 
 open Core.Time
 open Core.Time.Interval
@@ -659,4 +659,4 @@ theorem rouillard_partial :
 /-- E-TIA and G-TIA share the preposition *in* (consensus Fragment fact). -/
 theorem shared_preposition : inTelic.form = inGap.form := rfl
 
-end Phenomena.TenseAspect.Studies.Rouillard2026
+end Rouillard2026

@@ -63,7 +63,7 @@ dynamic tense inherit the same partition properties from a single source.
 Sibling of `Tense/Compositional.lean` (where `precedes`/`coincides`/`follows`
 and the static `PAST`/`PRES`/`FUT` live) and `Mood/Dynamic.lean` (parallel
 realization pattern for SUBJ/IND). Used by
-`Phenomena/TenseAspect/Studies/Mendes2025.lean`'s analysis of the
+`Studies/Mendes2025.lean`'s analysis of the
 Subordinate Future.
 -/
 

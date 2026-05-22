@@ -34,7 +34,7 @@ specific Mandarin verbs requires per-verb denotations (theory-hub
 denotation discipline; follow-up).
 -/
 
-namespace Phenomena.TenseAspect.CrossDomainBridge
+namespace Zhao2025
 
 open Features
 open Fragments.Mandarin.AspectComparison
@@ -51,4 +51,4 @@ theorem meiyou_requires_anti_atomDist : meiyou.requiresAntiAtomDist = true := rf
 theorem guo_compatible_with_all :
     guo.requiresAntiAtomDist = false := rfl
 
-end Phenomena.TenseAspect.CrossDomainBridge
+end Zhao2025

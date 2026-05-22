@@ -30,7 +30,7 @@ past witness. The IPF mechanism is in
 `Theories/Semantics/Tense/TemporalConnectives/Before.lean`.
 
 The cross-linguistic typology ((98), (99)) lives in
-`Phenomena/TenseAspect/Studies/Sharvit2014.lean`.
+`Studies/Sharvit2014.lean`.
 -/
 
 namespace Semantics.Tense

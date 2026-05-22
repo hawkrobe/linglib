@@ -28,7 +28,7 @@ The key empirical contrasts establishing (8):
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Izvorski1997.Data
+namespace Izvorski1997
 
 -- ════════════════════════════════════════════════════
 -- § 1. Languages with PE
@@ -280,4 +280,4 @@ theorem izvorski_projection (f : ModalBase World) (g : OrderingSource World) (p 
 
 theorem nfutL_compatible_with_izvorski : nfutL.ep = .downstream := rfl
 
-end Phenomena.TenseAspect.Studies.Izvorski1997.Data
+end Izvorski1997

@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Phenomena.Modality.Studies.Matthewson2013
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
-import Linglib.Phenomena.TenseAspect.Studies.Sharvit2014
+import Linglib.Studies.Sharvit2014
 import Linglib.Theories.Semantics.Tense.DeRe
 import Linglib.Data.Examples.Schema
 
@@ -615,7 +615,7 @@ Different mechanisms, same value-level prediction: `embeddedEventTime =
 matrixEvalTime`. The bridge below witnesses both halves: (a) Sharvit's
 typology Bool prediction for English, (b) Klecha's value-level Iff. -/
 
-open Phenomena.TenseAspect.Studies.Sharvit2014 (english)
+open Sharvit2014 (english)
 
 /-- Phase F bridge — Klecha-Sharvit agreement on the simultaneous reading
     for English. @cite{sharvit-2014}'s `english.simultaneousAttitudeReading`

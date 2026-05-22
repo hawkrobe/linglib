@@ -56,7 +56,7 @@ example.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.ArreguiKusumoto1998
+namespace ArreguiKusumoto1998
 
 open Core.Time.Reichenbach
 open Data.Examples (LinguisticExample)
@@ -330,4 +330,4 @@ def elliottLeft : ReichenbachFrame ℤ where
 theorem evaCame_before_elliottLeft :
     evaCame.eventTime < elliottLeft.eventTime := by decide
 
-end Phenomena.TenseAspect.Studies.ArreguiKusumoto1998
+end ArreguiKusumoto1998

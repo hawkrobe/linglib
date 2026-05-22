@@ -1,4 +1,4 @@
-import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
+import Linglib.Studies.Abusch1997
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Data.Examples.Schema
@@ -49,7 +49,7 @@ Core.Context.Shifts (temporalShift: changes time, preserves agent/world)
     ↓
 This file: tower operations produce the Reichenbach frames in Studies/Abusch1997.lean
     ↓
-Phenomena.TenseAspect.Studies.Abusch1997 (matrixSaid, embeddedSickSimultaneous, etc.)
+Abusch1997 (matrixSaid, embeddedSickSimultaneous, etc.)
 ```
 
 ## Key Results
@@ -67,7 +67,7 @@ Phenomena.TenseAspect.Studies.Abusch1997 (matrixSaid, embeddedSickSimultaneous, 
 namespace Schlenker2004
 
 open Core.Context
-open Phenomena.TenseAspect.Studies.Abusch1997
+open Abusch1997
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES
@@ -280,7 +280,7 @@ Abusch's mechanism asserts the property holds *at* speech time.
 Different conceptual moves, same value-level prediction. The bridge
 makes the agreement on the speech-time conjunct kernel-checked. -/
 
-open Phenomena.TenseAspect.Studies.Abusch1997 in
+open Abusch1997 in
 /-- Phase F bridge — Schlenker-Abusch on the speech-time component of
     Double Access: Schlenker's `.origin` reading discharges the first
     conjunct of @cite{abusch-1997}'s `doubleAccess`. -/
@@ -386,7 +386,7 @@ theorem schlenkerShifted_not_isRigid : ¬ Core.Intension.IsRigid schlenkerShifte
 -- § Cross-Framework Agreement (Schlenker ↔ Abusch on simultaneous SOT)
 -- ============================================================================
 
-open Phenomena.TenseAspect.Studies.Abusch1997 in
+open Abusch1997 in
 /-- **Cross-framework value-coincidence on the simultaneous SOT value**:
     @cite{schlenker-2004-sot}'s `shiftedAccess.resolve sotTower` and
     @cite{abusch-1997}'s `abusch_derives_simultaneous_via_binding`
@@ -417,7 +417,7 @@ theorem schlenker_abusch_agree_on_simultaneous_value
     shiftedAccess.resolve sotTower =
     tp.resolve (Core.Time.Tense.updateTemporal g tp.varIndex matrixSaid.eventTime) := by
   show matrixSaid.eventTime = _
-  exact (Phenomena.TenseAspect.Studies.Abusch1997.abusch_derives_simultaneous_via_binding
+  exact (Abusch1997.abusch_derives_simultaneous_via_binding
     tp g matrixSaid).symm
 
 

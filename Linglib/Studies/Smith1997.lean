@@ -526,7 +526,7 @@ theorem semelfactive_coercion_three_ways :
     (`MereoTag.qua`/`.cum`) — but agree on the four-way Vendler
     partition. This one-line bridge makes the cross-framework agreement
     visible at the type level (round-2 cross-framework audit found that
-    `Phenomena/TenseAspect/Studies/Krifka1989.lean` was running on a
+    `Studies/Krifka1989.lean` was running on a
     parallel track without an explicit Smith ↔ K89 connection). -/
 theorem hasNaturalEndpoint_iff_telic_to_qua (c : VendlerClass) :
     hasNaturalEndpoint c = true ↔

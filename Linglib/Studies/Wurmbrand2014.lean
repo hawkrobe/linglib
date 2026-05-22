@@ -39,7 +39,7 @@ Wurmbrand's classification.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Wurmbrand2014
+namespace Wurmbrand2014
 
 open Core.Time.Reichenbach
 open Data.Examples (LinguisticExample)
@@ -150,4 +150,4 @@ theorem wurmbrandClassifiesTry :
     try_.tenseClass = .restructuring ∧
     classOrientation .restructuring = .dependent := ⟨rfl, rfl⟩
 
-end Phenomena.TenseAspect.Studies.Wurmbrand2014
+end Wurmbrand2014

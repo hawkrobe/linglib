@@ -39,7 +39,7 @@ function (eq 25, in `MeasureFunction.lean`) refines HKL's INCREASE with
 explicit clamping at the initial degree (`differenceFunction`, K&L eq 23).
 Per-verb derivation of `vendlerClass` from
 `degreeAchievementScale.scaleBoundedness` is in
-`Phenomena/TenseAspect/Studies/KennedyLevin2008.lean`. This file focuses
+`Studies/KennedyLevin2008.lean`. This file focuses
 on what's specific to HKL 1999: the original INCREASE operator, the §3
 data, and the closed/open-range vocabulary HKL introduced (the same
 distinction Kennedy & McNally 2005 later canonicalized as
@@ -47,7 +47,7 @@ distinction Kennedy & McNally 2005 later canonicalized as
 
 ## Anchoring discipline
 
-§7 of `Phenomena/TenseAspect/Studies/Krifka1989.lean` (added in 0.230.429)
+§7 of `Studies/Krifka1989.lean` (added in 0.230.429)
 explicitly cites HKL 1999 as the source of the *defeasible*
 closed-scale → telic-verb bridge for **degree achievements specifically**.
 This file makes that bridge a Lean-checkable matrix on fragment data
@@ -311,7 +311,7 @@ theorem hklSection3_3Data_matrix :
     argument itself (HKL §4.2). That argument is recorded as data here
     but not further formalized — the K89 quantization framework
     (`Theories/Semantics/Events/Krifka1989.lean`) is the substrate for
-    the consumption/creation cases, and `Phenomena/TenseAspect/Studies/Krifka1989.lean`
+    the consumption/creation cases, and `Studies/Krifka1989.lean`
     §1-§4 cover the same ground via Krifka's QUA/CUM apparatus. -/
 
 /-- A datum from HKL §4.1's beyond-DA generalization. -/

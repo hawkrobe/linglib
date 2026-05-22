@@ -42,7 +42,7 @@ puzzle (where they actually diverge).
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Ogihara1996
+namespace Ogihara1996
 
 open Core.Time.Tense
 open Core.Time.Reichenbach
@@ -244,4 +244,4 @@ theorem pluperfect_is_past : pluperfectShifted.isPast := by
     matrixItta]; omega
 
 
-end Phenomena.TenseAspect.Studies.Ogihara1996
+end Ogihara1996

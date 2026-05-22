@@ -4,9 +4,9 @@ import Linglib.Theories.Semantics.Lexical.LevinClass
 import Linglib.Theories.Semantics.Aspect.Cumulativity
 import Linglib.Theories.Semantics.Aspect.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.Diagnostics
-import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
-import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
-import Linglib.Phenomena.TenseAspect.Studies.Champollion2017
+import Linglib.Studies.Krifka1989
+import Linglib.Studies.Krifka1998
+import Linglib.Studies.Champollion2017
 
 /-!
 # Cross-Bridge Consistency Tests
@@ -556,7 +556,7 @@ theorem k89_read_refines_k98_matches_fragment :
     K89 → K98 chain, but at the substrate level rather than the
     Bool-tag level. They fire on any `[IsSincVerb θ]` instance; the
     concrete `eatThemeToy` instance in
-    `Phenomena/TenseAspect/Studies/Krifka1998.lean` §9 proves the
+    `Studies/Krifka1998.lean` §9 proves the
     typeclass admits real witnesses. -/
 
 section PropositionalConsistency

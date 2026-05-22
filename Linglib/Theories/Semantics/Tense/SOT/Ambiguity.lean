@@ -13,7 +13,7 @@ modal-base × tense composition without past-tense ambiguity).
 
 This file carries the *type-level* commitment (the 2-case enum). The
 *paper-attributed* theorems and the Ogihara-vs-Kratzer divergence
-claim live in `Phenomena/TenseAspect/Studies/Ogihara1996.lean`.
+claim live in `Studies/Ogihara1996.lean`.
 
 Mathlib analogue: this is a `Mathlib/Order/SuccPred/Basic.lean`-style
 substrate — orders that aren't successor-preorders simply don't import

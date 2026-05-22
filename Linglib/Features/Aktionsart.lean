@@ -32,7 +32,7 @@ Sibling formalizations of competitor lexical-aspect frameworks:
 `Theories/Semantics/Events/CEM.lean`; @cite{dowty-1979} SIP in
 `Theories/Semantics/Tense/Aspect/SubintervalProperty.lean`;
 @cite{filip-2012} three-way refutation of binary telicity in
-`Phenomena/TenseAspect/Studies/Filip2012.lean`.
+`Studies/Filip2012.lean`.
 -/
 
 namespace Features

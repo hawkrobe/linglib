@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Theories.Semantics.Aspect.Basic
-import Linglib.Phenomena.TenseAspect.Studies.Kiparsky2002
+import Linglib.Studies.Kiparsky2002
 
 /-!
 # @cite{pancheva-2003}: The aspectual makeup of Perfect participles and the interpretations of the Perfect
@@ -51,11 +51,11 @@ analysis uses.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Pancheva2003
+namespace Pancheva2003
 
 open Data.Examples (LinguisticExample)
 open Semantics.Aspect (PerfectType)
-open Phenomena.TenseAspect.Studies.Kiparsky2002 (PerfectReading)
+open Kiparsky2002 (PerfectReading)
 
 -- BEGIN GENERATED EXAMPLES
 -- (Generated from Linglib/Data/Examples/Pancheva2003.json by scripts/gen_examples.py.
@@ -189,4 +189,4 @@ theorem pancheva_subset_kiparsky :
       [PerfectReading.existential, .universal, .resultative, .presentState] := by
   intro pt; cases pt <;> simp [toKiparsky]
 
-end Phenomena.TenseAspect.Studies.Pancheva2003
+end Pancheva2003

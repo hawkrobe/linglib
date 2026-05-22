@@ -85,7 +85,7 @@ and corrects locator hallucinations ("table 98" → "(98)", "eq 105" →
 "(105)" — Sharvit numbers them as examples, not as tables/equations).
 -/
 
-namespace Phenomena.TenseAspect.Studies.Sharvit2014
+namespace Sharvit2014
 
 open Semantics.Tense (LexicalType)
 open Semantics.Tense.TemporalConnectives.Before
@@ -324,4 +324,4 @@ theorem english_sot_matches_kratzer :
     Semantics.Tense.SOT.Decomposition.sotDeletionApplicable .past .past = true :=
   ⟨rfl, rfl⟩
 
-end Phenomena.TenseAspect.Studies.Sharvit2014
+end Sharvit2014

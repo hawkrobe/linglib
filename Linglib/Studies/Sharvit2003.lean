@@ -42,7 +42,7 @@ contrast as separate Lean defs would be vacuous.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Sharvit2003
+namespace Sharvit2003
 
 open Core.Time.Reichenbach
 open Semantics.Tense
@@ -211,4 +211,4 @@ theorem matrixWillSayIsFuture : matrixWillSay.isFuture := by
 theorem embeddedPresentUnderFutureIsPresent : embeddedPresentUnderFuture.isPresent := by
   simp only [ReichenbachFrame.isPresent, embeddedPresentUnderFuture, embeddedFrame, matrixWillSay]
 
-end Phenomena.TenseAspect.Studies.Sharvit2003
+end Sharvit2003

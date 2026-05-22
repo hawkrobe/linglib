@@ -9,7 +9,7 @@ import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
-import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
+import Linglib.Studies.Krifka1989
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Lattice.Basic
 import Mathlib.Data.Fintype.Basic

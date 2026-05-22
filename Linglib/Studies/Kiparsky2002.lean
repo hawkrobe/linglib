@@ -58,7 +58,7 @@ files consume it). Verified against the Kiparsky 2002 PDF: the
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Kiparsky2002
+namespace Kiparsky2002
 
 open Core.Time
 open Core.Time.Reichenbach
@@ -337,4 +337,4 @@ theorem point_fewer_readings_than_achievement :
     (msAvailableReadings .point).length <
     (availableReadings VendlerClass.achievement).length := by native_decide
 
-end Phenomena.TenseAspect.Studies.Kiparsky2002
+end Kiparsky2002

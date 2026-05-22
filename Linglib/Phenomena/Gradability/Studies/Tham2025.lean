@@ -573,7 +573,7 @@ theorem shatter_also_achievement :
     about scale closure but wrong about what that closure implies for
     aspectual class.
 
-    Contrast with `Phenomena/TenseAspect/Studies/KennedyLevin2008.lean`,
+    Contrast with `Studies/KennedyLevin2008.lean`,
     which proves convergence for 12 standard DAs — there, convergence at
     `Boundedness` ALSO means convergence at `VendlerClass`. For *crack*,
     only `Boundedness` converges. -/
@@ -588,7 +588,7 @@ theorem crack_boundedness_converges_despite_vendler_divergence :
 /-! @cite{hay-kennedy-levin-1999}'s central thesis (HKL §3.2): closed-
     range adjectives → telic DA verbs; open-range adjectives → atelic.
     The substrate sibling
-    `Phenomena/TenseAspect/Studies/HayKennedyLevin1999.lean` proves this
+    `Studies/HayKennedyLevin1999.lean` proves this
     holds for *straighten* (closed → accomplishment) and *lengthen,
     widen, cool, warm* (open → activity).
 

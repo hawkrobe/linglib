@@ -15,7 +15,7 @@ their UP constraints differ:
 - **-te**: UP is always T < S (past-shifted)
 - **-ney**: UP tracks speech-time more tightly (T < S, T = S, S < T)
 
-This EP/UP factorization is verified in `Phenomena/TenseAspect/Studies/Cumming2026.lean`.
+This EP/UP factorization is verified in `Studies/Cumming2026.lean`.
 
 -/
 

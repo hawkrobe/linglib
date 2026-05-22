@@ -32,7 +32,7 @@ See `feedback_reichenbach_morph_vs_interp_conflation.md` for the broader
 pattern: many tense-related phenomena are not faithfully modeled by
 Reichenbach frames alone. -/
 
-namespace Phenomena.TenseAspect.Studies.Musan1995
+namespace Musan1995
 
 open Data.Examples (LinguisticExample)
 
@@ -84,4 +84,4 @@ def all : List LinguisticExample := [ex2a, ex2b]
 end Examples
 -- END GENERATED EXAMPLES
 
-end Phenomena.TenseAspect.Studies.Musan1995
+end Musan1995

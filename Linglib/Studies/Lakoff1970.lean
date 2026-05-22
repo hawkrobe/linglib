@@ -24,7 +24,7 @@ by phenomenon.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Lakoff1970.Data
+namespace Lakoff1970
 
 open Core.Morphology.Tense
 
@@ -270,4 +270,4 @@ theorem false_periphrastic_is_ungrammatical :
      ex8a.formType == .periphrastic &&
      ex8a.acceptability == .ungrammatical) = true := rfl
 
-end Phenomena.TenseAspect.Studies.Lakoff1970.Data
+end Lakoff1970

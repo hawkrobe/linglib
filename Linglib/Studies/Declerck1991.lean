@@ -40,7 +40,7 @@ fulltext).
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Declerck1991
+namespace Declerck1991
 
 open Core.Time.Reichenbach
 open Semantics.Tense (shiftedFrame)
@@ -1443,4 +1443,4 @@ theorem preteritIsPast :
 theorem preteritIsPerfective :
     preteritOverslept.isPerfective := rfl
 
-end Phenomena.TenseAspect.Studies.Declerck1991
+end Declerck1991

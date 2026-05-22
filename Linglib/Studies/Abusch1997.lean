@@ -89,7 +89,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Abusch1997
+namespace Abusch1997
 
 open Core.Time.Tense
 open Core.Time.Reichenbach
@@ -432,4 +432,4 @@ theorem shifted_satisfies_ulc :
       matrixSaid.eventTime := by decide
 
 
-end Phenomena.TenseAspect.Studies.Abusch1997
+end Abusch1997

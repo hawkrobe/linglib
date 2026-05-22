@@ -2,7 +2,7 @@ import Linglib.Core.Mereotopology
 import Linglib.Core.Mereology
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Semantics.Aspect.Incremental
-import Linglib.Phenomena.TenseAspect.Studies.Filip2012
+import Linglib.Studies.Filip2012
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
@@ -27,7 +27,7 @@ QUA (telic). The topological non-cumulativity proved here
 (`mixedDrink_not_qua`) jointly witness Filip's middle ground at the
 NP level. The propositional substrate for the gap propagating to VPs
 under SINC + UP + CumTheta verbs lives in
-`Phenomena/TenseAspect/Studies/Filip2012.lean` as the typeclass-form
+`Studies/Filip2012.lean` as the typeclass-form
 public API `not_cum_vp_of_witnesses` and `middle_ground_stable`
 (both `[IsSincVerb θ]`-parametric per mathlib discipline); the bridge
 in §12 below invokes them directly. Moon's mixed-drink case is the

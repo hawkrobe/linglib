@@ -67,7 +67,7 @@ trivially satisfied after the projections it compares are forced
 equal by the preceding `dynIntroduce`.
 
 Sibling of `Mood/Basic.lean` and `Tense/Dynamic.lean`. Used by
-`Phenomena/TenseAspect/Studies/Mendes2025.lean` (which hosts the SF
+`Studies/Mendes2025.lean` (which hosts the SF
 operator and the modal donkey anaphora chain that consumes
 `dynSUBJ`/`dynIND`).
 -/

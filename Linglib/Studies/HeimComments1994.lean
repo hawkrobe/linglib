@@ -79,7 +79,7 @@ intensional precomp infrastructure
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.HeimComments1994
+namespace HeimComments1994
 
 open Core (Intension WorldTimeIndex)
 open Core.Context (KContext)
@@ -241,4 +241,4 @@ theorem toSubstrate_image_isExhaustiveOn {W E P T : Type*}
   exact hcr
 
 
-end Phenomena.TenseAspect.Studies.HeimComments1994
+end HeimComments1994

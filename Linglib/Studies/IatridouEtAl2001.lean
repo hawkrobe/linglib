@@ -40,7 +40,7 @@ and its interaction with temporal adverbials.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.IatridouEtAl2001
+namespace IatridouEtAl2001
 
 /-- Which boundary of a time span an adverbial sets.
     - `left`: LB adverbials (*in years*, *since*, *in (the last) 5 years*)
@@ -93,4 +93,4 @@ theorem adverbiallyModifiedBothVariants :
     PerfectVariant.existential ∈ availableVariants .adverbiallyModified :=
   ⟨List.Mem.head _, List.Mem.tail _ (List.Mem.head _)⟩
 
-end Phenomena.TenseAspect.Studies.IatridouEtAl2001
+end IatridouEtAl2001

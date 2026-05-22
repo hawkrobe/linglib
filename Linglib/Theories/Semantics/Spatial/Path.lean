@@ -104,7 +104,7 @@ set_option linter.dupNamespace false in
     eq. 14) is axiomatized abstractly on a part structure; for the
     concrete `Path Loc` the share-an-endpoint definition is the
     intended instance. Used by K98 §4 movement-relation definitions
-    (inlined in `Phenomena/TenseAspect/Studies/Krifka1998.lean` Part II)
+    (inlined in `Studies/Krifka1998.lean` Part II)
     to relate spatial adjacency on paths to temporal adjacency on events. -/
 def Path.adjacent {Loc : Type*} (p1 p2 : Path Loc) : Prop :=
   p1.goal = p2.source ∨ p2.goal = p1.source

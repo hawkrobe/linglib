@@ -28,7 +28,7 @@ individual.
 This file is anchored on the centered-world de re framework, not on
 Abusch 1997 alone — Lewis 1979 + Cresswell & von Stechow 1982 are the
 foundational layer Abusch builds on. Paper-anchored derivation theorems
-live in `Phenomena/TenseAspect/Studies/Abusch1997.lean`.
+live in `Studies/Abusch1997.lean`.
 
 ## Reuse
 
@@ -94,7 +94,7 @@ live in `Phenomena/TenseAspect/Studies/Abusch1997.lean`.
 - **PLA-side individual unification.** The `EntityConcept` analog at
   `Idx := Assignment E × WitnessSeq E` is what PLA's `Concept E` is
   (definitionally); the formal unification theorem is in
-  `Phenomena/TenseAspect/Studies/Abusch1997.lean`.
+  `Studies/Abusch1997.lean`.
 -/
 
 namespace Semantics.Tense.DeRe
