@@ -9,7 +9,7 @@ import Linglib.Fragments.Pipil.AuxiliaryVerbs
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Sorace2000
-import Linglib.Phenomena.Negation.Studies.Miestamo2005
+import Linglib.Studies.Miestamo2005
 import Linglib.Theories.Diachronic.Grammaticalization
 import Linglib.Features.Aktionsart
 
@@ -527,7 +527,7 @@ Miestamo's `.toNegMorphemeType = .auxVerb`.
 
 Composition with @cite{miestamo-2005}'s
 `verbal_constructional_always_derived` (in
-`Linglib/Phenomena/Negation/Studies/Miestamo2005.lean`) then
+`Linglib/Studies/Miestamo2005.lean`) then
 yields: any `NegStrategy` Anderson places at the auxiliary cline
 stage, in any Miestamo datum showing constructional asymmetry,
 has its asymmetry classified as `.derived` rather than

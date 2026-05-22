@@ -61,7 +61,7 @@ Polarity-sensitive items (n-words, NPIs, FCIs) are NOT marker-side data;
 they live in `Typology/PolarityItem.lean` and in each language's
 `Fragments/{Lang}/PolarityItems.lean`. Cross-linguistic theorems consuming
 Fragment per-language data live in
-`Phenomena/Negation/Studies/Dryer2013.lean` (Ch 112/143A/144A grounding)
+`Studies/Dryer2013Negation.lean` (Ch 112/143A/144A grounding)
 and `Studies/Miestamo2005.lean` (Ch 113-115 grounding).
 -/
 

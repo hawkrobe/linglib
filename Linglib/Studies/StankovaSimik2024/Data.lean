@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Negation.Studies.Stakov2026Typology
+import Linglib.Studies.Stakov2026Typology
 
 /-!
 # Staňková & Šimík (2024): Negation in Czech Polar Questions
@@ -30,7 +30,7 @@ in Czech polar questions (Staňková & Šimík, FASL 32 / JSL 33).
 
 namespace Data
 
-open Phenomena.Negation.CzechThreeWayNegTypologyBridge
+open Stakov2026Typology
 open Semantics.Negation.CzechNegation
 
 -- ============================================================================

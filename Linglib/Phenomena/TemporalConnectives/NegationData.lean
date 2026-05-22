@@ -415,6 +415,6 @@ theorem en_iff_ambidirectional :
 -- ============================================================================
 
 /-! EN survey data (722 languages, 74 with EN, 37 genera) is defined
-    in `Phenomena.Negation.Studies.JinKoenig2021.enSurvey` to avoid duplication. -/
+    in `JinKoenig2021.enSurvey` to avoid duplication. -/
 
 end Phenomena.TemporalConnectives.NegationData

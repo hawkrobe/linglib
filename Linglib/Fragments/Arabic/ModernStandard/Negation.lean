@@ -140,7 +140,7 @@ def negationSystem : NegationSystem :=
     *lays-a*; the asymmetry comes from the tense/mood-conditioned
     alternation. Per Ryding §37 + Benmamoun ch 6 + the Miestamo
     construction-typology framing in
-    `Phenomena/Negation/Studies/Miestamo2005.lean`. -/
+    `Studies/Miestamo2005.lean`. -/
 def negationProfile : NegationProfile :=
   { language := "Arabic (Modern Standard)"
   , iso := "arb"

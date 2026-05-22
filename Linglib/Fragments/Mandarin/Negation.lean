@@ -57,7 +57,7 @@ def mei : NegMarkerEntry :=
 /-- The Mandarin negation system: two aspect-conditioned markers.
     *bù* (default, non-perfective) listed first per the ordering
     convention in `NegationSystem`; *méi* second. The Fragment-side
-    joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
+    joint consumed by `Studies/Dryer2013Negation.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "cmn" [bu, mei]
 

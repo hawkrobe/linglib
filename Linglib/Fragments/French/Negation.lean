@@ -60,7 +60,7 @@ def bipartite : NegMarkerEntry :=
 /-- The French negation system: a single bipartite construction.
     *Length-1* `markers` list — *ne* and *pas* are not alternative
     markers but two morphemes of one bipartite construction. The
-    Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
+    Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "fra" [bipartite]
 

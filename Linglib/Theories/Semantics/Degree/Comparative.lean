@@ -19,7 +19,7 @@ the licensing-context registry connection) remain in
 `Studies/Hoeksema1983.lean`.
 
 Framework-specific content for Rett 2026 (MAX, ambidirectionality,
-manner implicature) lives in `Phenomena/Negation/Studies/Rett2026.lean`.
+manner implicature) lives in `Studies/Rett2026.lean`.
 
 ## Key Results
 

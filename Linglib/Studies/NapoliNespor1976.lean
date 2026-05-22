@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.Bias
-import Linglib.Phenomena.Negation.Studies.Rett2026
-import Linglib.Phenomena.Negation.Studies.Tsiakmakis2025
+import Linglib.Studies.Rett2026
+import Linglib.Studies.Tsiakmakis2025
 import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Core.Mood.Basic
@@ -63,7 +63,7 @@ to Italian comparatives.
   environments. N&N's *pur*-licensing data motivates this classification.
 -/
 
-namespace Phenomena.Negation.Studies.NapoliNespor1976
+namespace NapoliNespor1976
 
 open Pragmatics.Bias
   (BiasLicensingProfile licensedProfile blockedProfile
@@ -395,4 +395,4 @@ theorem rett_italianComparative_optionality_grounded :
     licensedProfile.licenses ∧ ¬ blockedProfile.licenses := by
   refine ⟨rfl, ?_, ?_⟩ <;> decide
 
-end Phenomena.Negation.Studies.NapoliNespor1976
+end NapoliNespor1976

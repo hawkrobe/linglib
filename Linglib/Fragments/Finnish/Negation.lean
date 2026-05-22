@@ -55,7 +55,7 @@ def ei : NegMarkerEntry :=
     (`negParadigm`) are not multiple *markers* — they're inflectional
     variants of one auxiliary, captured cross-linguistically by the single
     `NegMarkerEntry`. The Fragment-side joint consumed by
-    `Phenomena/Negation/Studies/Dryer2013.lean`. -/
+    `Studies/Dryer2013Negation.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "fin" [ei]
 

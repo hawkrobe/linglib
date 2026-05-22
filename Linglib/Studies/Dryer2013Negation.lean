@@ -44,7 +44,7 @@ Ch 113-115 (Miestamo's symmetric/asymmetric chapters) are grounded in
 
 set_option autoImplicit false
 
-namespace Phenomena.Negation.Studies.Dryer2013
+namespace Dryer2013Negation
 
 open Typology.Negation
 
@@ -141,4 +141,4 @@ theorem slavic_neg_concord :
     Fragments.Slavic.Czech.Negation.negationProfile.hasNegConcord = true := by
   exact ⟨by native_decide, by native_decide⟩
 
-end Phenomena.Negation.Studies.Dryer2013
+end Dryer2013Negation

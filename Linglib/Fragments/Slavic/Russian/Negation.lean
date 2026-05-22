@@ -20,7 +20,7 @@ lives in `Fragments/Russian/PolarityItems.lean` per the operator/lexical-
 reactive split documented in `Core/Lexical/NegMarker.lean`. The
 `NegConcordExample` data below illustrates the marker's NC behavior at
 the sentence level, which is operator-side typology consumed by
-`Phenomena/Negation/Studies/Miestamo2005.lean`.
+`Studies/Miestamo2005.lean`.
 -/
 
 namespace Fragments.Slavic.Russian.Negation
@@ -35,7 +35,7 @@ def ne : NegMarkerEntry :=
   , position := .preverbal }
 
 /-- The Russian negation system: a single preverbal particle.
-    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
+    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "rus" [ne]
 

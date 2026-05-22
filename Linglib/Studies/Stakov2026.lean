@@ -28,7 +28,7 @@ The core types (`NegPosition`, `Diagnostic`, `licenses`) are in
 
 -/
 
-namespace Phenomena.Negation.CzechThreeWayNegBridge
+namespace Stakov2026
 
 open Semantics.Negation.CzechNegation
 
@@ -114,4 +114,4 @@ theorem noninner_licenses_ppi :
     licenses .medial .ppiOutscoping = true ∧
     licenses .outer .ppiOutscoping = true := ⟨rfl, rfl⟩
 
-end Phenomena.Negation.CzechThreeWayNegBridge
+end Stakov2026

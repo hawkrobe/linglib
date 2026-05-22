@@ -36,12 +36,12 @@ def ne : NegMarkerEntry :=
   , position := .preverbal }
 
 /-- The Czech negation system: a single verbal prefix.
-    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
+    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "ces" [ne]
 
 /-- Legacy String accessor for the prefix. Kept for back-compat with
-    `Phenomena/Negation/Studies/Miestamo2005.lean`. New consumers should
+    `Studies/Miestamo2005.lean`. New consumers should
     use `ne.form`. -/
 def negPrefix : String := ne.form
 

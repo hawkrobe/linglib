@@ -42,7 +42,7 @@ def negSuffix : NegMarkerEntry :=
   , position := .morphological }
 
 /-- The Turkish negation system: a single verbal affix.
-    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
+    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "tur" [negSuffix]
 

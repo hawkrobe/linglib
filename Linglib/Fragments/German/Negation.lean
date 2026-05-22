@@ -47,7 +47,7 @@ def nicht : NegMarkerEntry :=
 def negDeterminer : String := "kein"
 
 /-- The German negation system: a single particle.
-    The Fragment-side joint consumed by `Phenomena/Negation/Studies/Dryer2013.lean`. -/
+    The Fragment-side joint consumed by `Studies/Dryer2013Negation.lean`. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "deu" [nicht]
 

@@ -19,7 +19,7 @@ Double negation does NOT eliminate.
 θ) and the gap emerges through pragmatic strengthening (M-principle). The
 contrary model captures the *effective* semantics after strengthening. Both
 models are formalized here; the pragmatic derivation connecting them is in
-`Phenomena/Negation/Studies/Krifka2007.lean`.
+`Studies/Krifka2007.lean`.
 
 The core operations (`contradictoryNeg`, `contraryNeg`, `inGapRegion`,
 `ThresholdPair`, `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`)

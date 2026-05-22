@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Gradability.Basic
 import Linglib.Theories.Semantics.Gradability.Antonymy
 import Linglib.Theories.Semantics.Gradability.AntonymPrediction
-import Linglib.Phenomena.Negation.Studies.Krifka2007
+import Linglib.Studies.Krifka2007
 import Linglib.Fragments.English.Predicates.Adjectival
 /-!
 # @cite{alexandropoulou-gotzner-2024-jos} — The Interpretation of Relative and Absolute Adjectives Under Negation

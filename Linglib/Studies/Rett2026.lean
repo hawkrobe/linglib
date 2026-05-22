@@ -1,11 +1,11 @@
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
-import Linglib.Phenomena.Negation.Studies.JinKoenig2021
+import Linglib.Studies.JinKoenig2021
 import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Italian.PolarityItems
-import Linglib.Phenomena.Negation.Studies.Tsiakmakis2025
+import Linglib.Studies.Tsiakmakis2025
 
 /-!
 # Expletive Negation: Typology and Licensing
@@ -151,7 +151,7 @@ def spanishComparative : ENDatum :=
 /-- Italian *non₂* in *più…di quanto* comparatives. The `isOptional` and
     `licensedNPIForms` fields are coarsenings of the contextual licensing
     profile in `Pragmatics.Bias.BiasLicensingProfile`, refined in
-    `Phenomena.Negation.Studies.NapoliNespor1976`:
+    `NapoliNespor1976`:
 
     - `isOptional = true`: optionality is *contextually conditioned* on
       a contradicted-prior-belief presupposition (@cite{napoli-nespor-1976}

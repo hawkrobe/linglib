@@ -3,8 +3,8 @@ import Linglib.Theories.Semantics.Reference.Monsters
 import Linglib.Phenomena.Negation.Denial
 import Linglib.Studies.Maier2014
 import Linglib.Studies.HarrisPotts2009
-import Linglib.Phenomena.Negation.Studies.Horn1989
-import Linglib.Phenomena.Negation.Studies.PlunkettSundell2013
+import Linglib.Studies.Horn1989
+import Linglib.Studies.PlunkettSundell2013
 import Linglib.Studies.KocurekJerzakRudolph2020
 
 /-!
@@ -558,7 +558,7 @@ appropriateness modal `♦` and the shunting structure: NPIs require
 descriptive-negation downward-entailing scope, but `♦` is not
 downward-entailing in the relevant sense.
 
-Lifted from `Phenomena.Negation.Studies.Horn1989`.
+Lifted from `Horn1989`.
 -/
 theorem mongeese_blocks_npi_licensing
     (occ : Horn1989.NegScopeOccurrence MNExpr) :
@@ -724,7 +724,7 @@ theorem speakerB_denial_under_shared_standard
 K-G and P&S make incompatible commitments about the structure of a
 metalinguistic dispute:
 
-- **P&S** (`Phenomena.Negation.Studies.PlunkettSundell2013`):
+- **P&S** (`PlunkettSundell2013`):
   `consistentContents` requires `predA ≠ predB` extensionally —
   speakers use DIFFERENT idiolectal extensions of the contested
   predicate, and joint satisfiability witnesses their distinct

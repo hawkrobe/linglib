@@ -97,7 +97,7 @@ def minMarker : Typology.Negation.NegMarkerEntry :=
 /-- The Greek negation system: two mood-conditioned preverbal particles.
     *dhen* (indicative, default-context) listed first, *min* (subjunctive/
     modal) second. The Fragment-side joint consumed by
-    `Phenomena/Negation/Studies/Dryer2013.lean`. -/
+    `Studies/Dryer2013Negation.lean`. -/
 def negationSystem : Typology.Negation.NegationSystem :=
   Typology.Negation.NegationSystem.ofISO "ell" [dhenMarker, minMarker]
 

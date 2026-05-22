@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Negation.Studies.Stakov2026
+import Linglib.Studies.Stakov2026
 import Linglib.Theories.Semantics.Negation.CzechNegation
 import Linglib.Theories.Semantics.Modality.BiasedPQ
 
@@ -57,7 +57,7 @@ def NegPosition.requiresFocus : NegPosition → Bool
 
 end Semantics.Negation.CzechNegation
 
-namespace Phenomena.Negation.CzechThreeWayNegTypologyBridge
+namespace Stakov2026Typology
 
 open Semantics.Negation.CzechNegation
 open Semantics.Modality.BiasedPQ
@@ -135,10 +135,10 @@ inductive VerbPosition where
   | nonV1
   deriving DecidableEq, Repr
 
-end Phenomena.Negation.CzechThreeWayNegTypologyBridge
+end Stakov2026Typology
 
 namespace Semantics.Negation.CzechNegation
-open Phenomena.Negation.CzechThreeWayNegTypologyBridge (VerbPosition)
+open Stakov2026Typology (VerbPosition)
 
 /-- Map negation positions to verb position.
 
@@ -151,10 +151,10 @@ def NegPosition.toVerbPosition : NegPosition → VerbPosition
 
 end Semantics.Negation.CzechNegation
 
-namespace Phenomena.Negation.CzechThreeWayNegTypologyBridge
+namespace Stakov2026Typology
 open Semantics.Negation.CzechNegation
 open Semantics.Modality.BiasedPQ
-open Phenomena.Negation.CzechThreeWayNegBridge (signature)
+open Stakov2026 (signature)
 
 /-- A Czech PQ negation example with its reading and Romero classification. -/
 structure CzechNegDatum where
@@ -414,10 +414,10 @@ def CzechPQForm.toPQForm : CzechPQForm → PQForm
 theorem interNPQ_is_hiNQ : CzechPQForm.interNPQ.toPQForm = .HiNQ := rfl
 theorem declNPQ_is_loNQ : CzechPQForm.declNPQ.toPQForm = .LoNQ := rfl
 
-end Phenomena.Negation.CzechThreeWayNegTypologyBridge
+end Stakov2026Typology
 
 namespace Semantics.Negation.CzechNegation
-open Phenomena.Negation.CzechThreeWayNegTypologyBridge (CzechPQForm)
+open Stakov2026Typology (CzechPQForm)
 
 /-- Map negation positions to Czech PQ forms.
 
@@ -430,7 +430,7 @@ def NegPosition.toCzechPQForm : NegPosition → CzechPQForm
 
 end Semantics.Negation.CzechNegation
 
-namespace Phenomena.Negation.CzechThreeWayNegTypologyBridge
+namespace Stakov2026Typology
 open Semantics.Negation.CzechNegation
 open Semantics.Modality.BiasedPQ
 
@@ -691,4 +691,4 @@ theorem explanationSeeking_most_common :
     interNPQDistribution .explanationSeeking >
     interNPQDistribution .belief := by decide
 
-end Phenomena.Negation.CzechThreeWayNegTypologyBridge
+end Stakov2026Typology
