@@ -425,17 +425,16 @@ a pure number (ℚ), not a truth value (Bool). `PrProp` cannot represent
 this directly — it only handles presupposed propositions. -/
 def perAnaphoricWithPresup {E : Type*} (μ : MeasureFn E) (q : ℚ)
     (x : E) : PrValue Unit ℚ where
-  presup := fun _ => decide (μ.apply x ≥ q)
+  presup := fun _ => μ.apply x ≥ q
   value := fun _ => perAnaphoric μ q x
 
 /-- The unit sensitivity presupposition (eq. 43): μ_{dim(q)}(x) ≥ q. -/
-def perPresup {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) : Bool :=
-  decide (μ.apply x ≥ q)
+def perPresup {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) : Prop :=
+  μ.apply x ≥ q
 
 /-- The presupposition is satisfied iff the entity's measure ≥ the unit. -/
 theorem presup_satisfied_iff {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) :
-    (perAnaphoricWithPresup μ q x).presup () = true ↔ μ.apply x ≥ q := by
-  simp [perAnaphoricWithPresup, decide_eq_true_eq]
+    (perAnaphoricWithPresup μ q x).presup () ↔ μ.apply x ≥ q := Iff.rfl
 
 /-- The at-issue value is the pure number μ(x)/q. -/
 theorem perValue_eq {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) :

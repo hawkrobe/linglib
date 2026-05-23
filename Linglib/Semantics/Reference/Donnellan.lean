@@ -103,14 +103,16 @@ library; familiarity-based, anaphoric, and discourse-restricted variants all
 use `presupOfReferent` with different referent selectors. -/
 def definitePrProp {W E : Type*} (domain : List E) (restrictor : E → W → Bool)
     (predicate : E → W → Bool) : PrProp W :=
-  presupOfReferent (attributiveContent domain restrictor) predicate
+  presupOfReferent (attributiveContent domain restrictor)
+    (fun e w => predicate e w = true)
 
 /-- Unfolding lemma: `definitePrProp` is `presupOfReferent` applied to
     `attributiveContent`. By definition. -/
 theorem definitePrProp_eq_presupOfReferent {W E : Type*} (domain : List E)
     (restrictor : E → W → Bool) (predicate : E → W → Bool) :
     definitePrProp domain restrictor predicate =
-    presupOfReferent (attributiveContent domain restrictor) predicate := rfl
+    presupOfReferent (attributiveContent domain restrictor)
+      (fun e w => predicate e w = true) := rfl
 
 /-- Direct presupposition characterization: `definitePrProp` presupposes
     that `attributiveContent` returns `some` referent. -/

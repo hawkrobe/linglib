@@ -672,9 +672,9 @@ theorem pex_factive_asserts_prejacent
 
     For "A ∨ exh(◇(p∨q))": the presupposition is trivial (True). -/
 theorem exh_filtering_no_presupposition (firstDisjunct : FCWorld → Prop) :
-    (PrProp.disjFilterLeft firstDisjunct (PrProp.ofProp' flatExhFC)).presup =
+    (PrProp.disjFilterLeft firstDisjunct (PrProp.ofProp flatExhFC)).presup =
       (fun _ => True) := by
-  funext; simp [PrProp.disjFilterLeft, PrProp.ofProp']
+  funext; simp [PrProp.disjFilterLeft, PrProp.ofProp]
 
 /-- pex's filtering disjunction has a non-trivial presupposition (homogeneity
     conditioned on ¬firstDisjunct). -/

@@ -79,7 +79,7 @@ def trivialCloser : W → W → W → Bool := fun _ _ _ => true
   p-worlds (contrast with K/P's LOCAL check)
 - **Assertion**: q holds at all CLOS-closest p-worlds
 
-When the antecedent p has no presupposition, use `PrProp.ofProp'`.
+When the antecedent p has no presupposition, use `PrProp.ofProp`.
 Requires `[DecidablePred p.assertion]` for `List.filter`. -/
 def ifPresup [DecidableEq W] (closer : W → W → W → Bool)
     (restriction : List W) (p : PrProp W) (q : PrProp W)

@@ -548,7 +548,7 @@ def toldScope : DiscEntity → Bool := fun _ => true
 private def thePresup (domain : List DiscEntity) (restrictor scope : DiscEntity → Bool) :
     PrProp Unit :=
   presupOfReferent (fun _ : Unit => russellIotaList domain restrictor)
-                   (fun e _ => scope e)
+                   (fun e _ => scope e = true)
 
 /-- In non-unique context, bare "the woman" FAILS uniqueness:
     two entities satisfy the restrictor, so referent selection returns

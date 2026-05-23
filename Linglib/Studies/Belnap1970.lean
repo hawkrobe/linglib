@@ -89,7 +89,7 @@ abbrev condAssert {W : Type*} := @PrProp.condAssert W
 
 /-- Belnap's (6): atomic sentences are categorical — always assertive
     and always asserting the same proposition. -/
-abbrev atomic {W : Type*} := @PrProp.ofProp' W
+abbrev atomic {W : Type*} := @PrProp.ofProp W
 
 /-- Atomic sentences are assertive at every world (Belnap's (6)). -/
 theorem atomic_always_assertive {W : Type*} (p : W → Prop) (w : W) :

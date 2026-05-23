@@ -98,7 +98,7 @@ def noSem {E : Type}
     (restrictor : E → Bool) (scope : E → Bool) : PrProp Unit :=
   PrProp.presupOfReferent
     (fun _ : Unit => Core.Nominal.russellIotaList dc.salient restrictor)
-    (fun e _ => scope e)
+    (fun e _ => scope e = true)
 
 -- ════════════════════════════════════════════════════
 -- § 2. Bare NPs

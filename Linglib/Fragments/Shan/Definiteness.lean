@@ -177,6 +177,6 @@ theorem dem_refines_bare {E : Type} (domain : List E)
     definedness; the assertion is the scope applied to the referent. -/
 def liftToPrProp {E : Type} (selector : Option E) (scope : E → Bool) :
     PrProp Unit :=
-  PrProp.presupOfReferent (fun _ : Unit => selector) (fun e _ => scope e)
+  PrProp.presupOfReferent (fun _ : Unit => selector) (fun e _ => scope e = true)
 
 end Fragments.Shan.Definiteness

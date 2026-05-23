@@ -51,59 +51,37 @@ section Filtering
 
 variable {W : Type*}
 
-/--
-A factive verb "know" has a presupposition: C must be true.
--/
-def factivePresup (c : W → Prop) : PrProp W where
-  presup := c
-  assertion := λ _ => True  -- Simplified: just the presupposition component
-
-/--
-A non-factive verb "think" has NO presupposition.
--/
-def nonFactivePresup : PrProp W where
-  presup := λ _ => True
-  assertion := λ _ => True
-
-/--
-The filtering prediction for "if A then know-C":
-the presupposition of the consequent (= C) is filtered by the antecedent.
-Result: conditional presupposes "A → C".
--/
+/-- The filtering prediction for "if A then know-C":
+    the presupposition of the consequent (= C) is filtered by the antecedent.
+    Result: conditional presupposes "A → C". -/
 def filteringPrediction_know (a c : W → Prop) : PrProp W :=
-  PrProp.impFilter (PrProp.ofProp' a) (factivePresup c)
+  PrProp.impFilter (PrProp.ofProp a) (PrProp.condAssert c (fun _ => True))
 
-/--
-The filtering prediction for "if A then think-C":
-"think" has no presupposition, so filtering produces a trivial result.
--/
+/-- The filtering prediction for "if A then think-C":
+    "think" has no presupposition, so filtering produces a trivial result. -/
 def filteringPrediction_think (a : W → Prop) : PrProp W :=
-  PrProp.impFilter (PrProp.ofProp' a) nonFactivePresup
+  PrProp.impFilter (PrProp.ofProp a) PrProp.top
 
-/--
-**Filtering predicts non-trivial presupposition for "know"**:
-The presupposition of "if A then know-C" is ¬A ∨ C (= A → C),
-which is NOT tautological.
--/
+/-- **Filtering predicts non-trivial presupposition for "know"**:
+    The presupposition of "if A then know-C" is ¬A ∨ C (= A → C),
+    which is NOT tautological. -/
 theorem filtering_know_nontrivial (a c : W → Prop)
     (h : ∃ w, a w ∧ ¬c w) :
     ∃ w, ¬(filteringPrediction_know a c).presup w := by
   obtain ⟨w, ha, hc⟩ := h
   refine ⟨w, ?_⟩
-  simp only [filteringPrediction_know, PrProp.impFilter, PrProp.ofProp', factivePresup,
+  simp only [filteringPrediction_know, PrProp.impFilter, PrProp.ofProp, PrProp.condAssert,
     not_and]
   intro _
   exact fun h_imp => hc (h_imp ha)
 
-/--
-**Filtering predicts TRIVIAL presupposition for "think"**:
-The presupposition of "if A then think-C" is always true,
-regardless of A, because "think" contributes no presupposition.
--/
+/-- **Filtering predicts TRIVIAL presupposition for "think"**:
+    The presupposition of "if A then think-C" is always true,
+    regardless of A, because "think" contributes no presupposition. -/
 theorem filtering_think_trivial (a : W → Prop) :
     ∀ w, (filteringPrediction_think a).presup w := by
   intro w
-  simp only [filteringPrediction_think, PrProp.impFilter, PrProp.ofProp', nonFactivePresup]
+  simp only [filteringPrediction_think, PrProp.impFilter, PrProp.ofProp, PrProp.top]
   exact ⟨trivial, fun _ => trivial⟩
 
 end Filtering

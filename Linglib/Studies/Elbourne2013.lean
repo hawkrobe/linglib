@@ -139,7 +139,7 @@ def the_sit (F : SituationFrame) (domain : List F.Ent)
     (scope : F.Ent → F.Sit → Bool)
     : PrProp F.Sit :=
   presupOfReferent (fun s => russellIotaList domain (fun e => restrictor e s))
-                   scope
+                   (fun e s => scope e s = true)
 
 /-- `the_sit` instantiated with bare type parameters (no SituationFrame).
     Coincides with `Donnellan.definitePrProp` — the same Russellian iota
@@ -147,7 +147,7 @@ def the_sit (F : SituationFrame) (domain : List F.Ent)
 def the_sit' {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
   presupOfReferent (fun w => russellIotaList domain (fun e => restrictor e w))
-                   scope
+                   (fun e w => scope e w = true)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -179,8 +179,8 @@ theorem the_sit_presup_depends_on_filter
 theorem the_sit_assertion_implies_presup
     {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool)
-    (w : W) (h : (the_sit' domain restrictor scope).assertion w = true) :
-    (the_sit' domain restrictor scope).presup w = true := by
+    (w : W) (h : (the_sit' domain restrictor scope).assertion w) :
+    (the_sit' domain restrictor scope).presup w := by
   simp only [the_sit', presupOfReferent, russellIotaList] at h ⊢
   split at h <;> simp_all [Option.isSome]
 
@@ -315,8 +315,8 @@ theorem pronoun_is_definite_article
 theorem pronoun_assertion_implies_presup
     {W E : Type} (domain : List E)
     (recoveredNP : E → W → Bool) (scope : E → W → Bool)
-    (w : W) (h : (pronounDenot domain recoveredNP scope).assertion w = true) :
-    (pronounDenot domain recoveredNP scope).presup w = true :=
+    (w : W) (h : (pronounDenot domain recoveredNP scope).assertion w) :
+    (pronounDenot domain recoveredNP scope).presup w :=
   the_sit_assertion_implies_presup domain recoveredNP scope w h
 
 
@@ -491,18 +491,19 @@ def isInsane : Ent → Sit → Bool
 def theMurderer : PrProp Sit := the_sit' allEnts isMurderer isInsane
 
 theorem referential_presup :
-    theMurderer.presup .sCourtroom = true := rfl
+    theMurderer.presup .sCourtroom := rfl
 theorem referential_assertion :
-    theMurderer.assertion .sCourtroom = true := rfl
+    theMurderer.assertion .sCourtroom := rfl
 
 theorem attributive_presup :
-    theMurderer.presup .wActual = true := rfl
+    theMurderer.presup .wActual := rfl
 theorem attributive_assertion :
-    theMurderer.assertion .wActual = false := rfl
+    ¬ theMurderer.assertion .wActual := by
+  show ¬ ((false : Bool) = true); decide
 
 theorem ref_attr_diverge :
-    theMurderer.assertion .sCourtroom ≠ theMurderer.assertion .wActual := by
-  rw [referential_assertion, attributive_assertion]; decide
+    theMurderer.assertion .sCourtroom ∧ ¬ theMurderer.assertion .wActual :=
+  ⟨referential_assertion, attributive_assertion⟩
 
 def refSitVar : SitVar := .free
 def attrSitVar : SitVar := .bound 1
@@ -534,11 +535,11 @@ def isCoveredWithBooks : Ent → Sit → Bool
 def theTable : PrProp Sit := the_sit' allEnts isTable isCoveredWithBooks
 
 theorem incomplete_presup_office :
-    theTable.presup .sOffice = true := rfl
+    theTable.presup .sOffice := rfl
 theorem incomplete_presup_world :
-    theTable.presup .wActual = false := rfl
+    ¬ theTable.presup .wActual := by show ¬ ((false : Bool) = true); decide
 theorem incomplete_assertion_office :
-    theTable.assertion .sOffice = true := rfl
+    theTable.assertion .sOffice := rfl
 
 theorem incompleteness_is_situation_variable :
     elbournePreferred = .situationVariable := rfl
@@ -606,16 +607,16 @@ def isBeaten : DkEnt → DkSit → Bool
 def donkeyPronoun : PrProp DkSit := the_sit' dkEnts isDonkey isBeaten
 
 theorem donkey_presup_min1 :
-    donkeyPronoun.presup .sMin1 = true := rfl
+    donkeyPronoun.presup .sMin1 := rfl
 theorem donkey_presup_min2 :
-    donkeyPronoun.presup .sMin2 = true := rfl
+    donkeyPronoun.presup .sMin2 := rfl
 theorem donkey_presup_world_fails :
-    donkeyPronoun.presup .wActual = false := rfl
+    ¬ donkeyPronoun.presup .wActual := by show ¬ ((false : Bool) = true); decide
 
 theorem donkey_assertion_min1 :
-    donkeyPronoun.assertion .sMin1 = true := rfl
+    donkeyPronoun.assertion .sMin1 := rfl
 theorem donkey_assertion_min2 :
-    donkeyPronoun.assertion .sMin2 = true := rfl
+    donkeyPronoun.assertion .sMin2 := rfl
 
 def donkeyConfig1 : DonkeyConfig DkF where
   nounContent := isDonkey
@@ -678,15 +679,16 @@ def isSpy : BEnt → BSit → Bool
 
 def thePresident : PrProp BSit := the_sit' bEnts isPresident isSpy
 
-theorem deRe_presup : thePresident.presup .actual = true := rfl
-theorem deRe_assertion : thePresident.assertion .actual = false := rfl
+theorem deRe_presup : thePresident.presup .actual := rfl
+theorem deRe_assertion : ¬ thePresident.assertion .actual := by
+  show ¬ ((false : Bool) = true); decide
 
-theorem deDicto_presup : thePresident.presup .belief = true := rfl
-theorem deDicto_assertion : thePresident.assertion .belief = true := rfl
+theorem deDicto_presup : thePresident.presup .belief := rfl
+theorem deDicto_assertion : thePresident.assertion .belief := rfl
 
 theorem deRe_deDicto_diverge :
-    thePresident.assertion .actual ≠ thePresident.assertion .belief := by
-  rw [deRe_assertion, deDicto_assertion]; decide
+    ¬ thePresident.assertion .actual ∧ thePresident.assertion .belief :=
+  ⟨deRe_assertion, deDicto_assertion⟩
 
 theorem deRe_is_free : SitVarStatus.free = useModeToSitVar .referential := rfl
 theorem deDicto_is_bound : SitVarStatus.bound = useModeToSitVar .attributive := rfl
@@ -741,9 +743,9 @@ def isQuiet : GhostEnt → GhostSit → Bool
 def theGhost : PrProp GhostSit := the_sit' ghostEnts isGhost isQuiet
 
 theorem ghost_presup_belief :
-    theGhost.presup .belief = true := rfl
+    theGhost.presup .belief := rfl
 theorem ghost_presup_actual :
-    theGhost.presup .actual = false := rfl
+    ¬ theGhost.presup .actual := by show ¬ ((false : Bool) = true); decide
 
 theorem ghost_matches_datum :
     hansGhost.speakerPresupposes = false ∧
@@ -772,9 +774,9 @@ def itAsDonkey : PrProp DkSit :=
 theorem pronoun_matches_definite_min1 :
     itAsDonkey = donkeyPronoun := rfl
 theorem pronoun_presup_min1 :
-    itAsDonkey.presup .sMin1 = true := rfl
+    itAsDonkey.presup .sMin1 := rfl
 theorem pronoun_presup_world_fails :
-    itAsDonkey.presup .wActual = false := rfl
+    ¬ itAsDonkey.presup .wActual := by show ¬ ((false : Bool) = true); decide
 
 theorem np_sources_exercised :
     donkeyPronounExample.npSource = .donkeyRestrictor ∧

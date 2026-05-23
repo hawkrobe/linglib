@@ -67,8 +67,8 @@ open Core.Duality
 presupposition holds.
 
 `PrValue W α` generalizes presuppositional propositions: the
-presupposition is always `W → Bool`, but the at-issue content can be
-any type — a truth value (`Bool`), a degree (`ℚ`), a measure, etc.
+presupposition is `W → Prop`, and the at-issue content is any type — a
+truth value (`Bool`), a degree (`ℚ`), a measure, etc.
 
 Linguistic motivation: many presupposition triggers return non-boolean
 values. The revised *per* entry (@cite{bale-schwarz-2022}, eq. 43)
@@ -76,7 +76,7 @@ returns a presupposed pure number (`ℚ`). Definite descriptions return
 presupposed entities. `PrValue` handles all of these uniformly. -/
 structure PrValue (W : Type*) (α : Type*) where
   /-- The presupposition (must hold for definedness). -/
-  presup : W → Bool
+  presup : W → Prop
   /-- The at-issue content (value). -/
   value : W → α
 
@@ -85,11 +85,11 @@ namespace PrValue
 variable {W : Type*} {α : Type*}
 
 /-- A presupposed value is defined at w iff its presupposition holds. -/
-def defined (w : W) (pv : PrValue W α) : Prop := pv.presup w = true
+def defined (w : W) (pv : PrValue W α) : Prop := pv.presup w
 
 /-- Create a presuppositionless value (always defined). -/
 def pure (a : W → α) : PrValue W α where
-  presup := fun _ => true
+  presup := fun _ => True
   value := a
 
 end PrValue
@@ -130,14 +130,15 @@ def ofProp3 (p : Prop3 W) : PrProp W where
 
 /-- Convert a presupposed Bool value (`PrValue W Bool`) to `PrProp W`. -/
 def ofPrValue (pv : PrValue W Bool) : PrProp W where
-  presup := fun w => pv.presup w = true
+  presup := pv.presup
   assertion := fun w => pv.value w = true
 
-/-- Convert a `PrProp` to a `PrValue W Bool` (noncomputable — requires
-    deciding Props to produce Bool values). -/
-noncomputable def toPrValue (p : PrProp W) : PrValue W Bool where
-  presup := fun w => decide (p.presup w)
-  value := fun w => decide (p.assertion w)
+/-- Convert a `PrProp` to a `PrValue W Prop`. Computable — both the
+    source and target store presuppositions and content as `Prop`-valued
+    functions, so no `decide` plumbing is required. -/
+def toPrValue (p : PrProp W) : PrValue W Prop where
+  presup := p.presup
+  value := p.assertion
 
 /-- Belnap's conditional assertion (A/B): assert B on condition A.
 
@@ -926,7 +927,7 @@ theorem forallPr_holds {α : Type*} (S : α → Prop) (φ : α → PrProp W) (w 
 
 - `referent : W → Option E` — a partial selector returning the referent at
   each world (or `none` when no unique referent is determined),
-- `scope : E → W → Bool` — what is asserted of the chosen referent,
+- `scope : E → W → Prop` — what is asserted of the chosen referent,
 
 build the `PrProp` that presupposes referent definedness and asserts the
 scope of the referent. This is the single source of truth for all definite
@@ -935,29 +936,29 @@ familiarity-based (`russellIotaList dc.salient R`), anaphoric
 (`russellIotaList domain (R ∧ Q)`), and Donnellan's attributive
 (`attributiveContent domain R`) all instantiate the selector slot. -/
 def presupOfReferent {E : Type*} (referent : W → Option E)
-    (scope : E → W → Bool) : PrProp W where
+    (scope : E → W → Prop) : PrProp W where
   presup := fun w => (referent w).isSome
   assertion := fun w => match referent w with
     | some e => scope e w
-    | none => false
+    | none => False
 
 /-- `presupOfReferent` is defined iff a referent is selected at `w`. -/
 @[simp] theorem presupOfReferent_presup {E : Type*}
-    (referent : W → Option E) (scope : E → W → Bool) (w : W) :
+    (referent : W → Option E) (scope : E → W → Prop) (w : W) :
     (presupOfReferent referent scope).presup w = (referent w).isSome := rfl
 
 /-- When a referent is selected, the assertion is the scope applied to it. -/
 theorem presupOfReferent_assertion_some {E : Type*}
-    (referent : W → Option E) (scope : E → W → Bool) (w : W) (e : E)
+    (referent : W → Option E) (scope : E → W → Prop) (w : W) (e : E)
     (h : referent w = some e) :
     (presupOfReferent referent scope).assertion w = scope e w := by
   simp only [presupOfReferent, h]
 
-/-- Without a referent, the assertion is `false`. -/
+/-- Without a referent, the assertion is `False`. -/
 theorem presupOfReferent_assertion_none {E : Type*}
-    (referent : W → Option E) (scope : E → W → Bool) (w : W)
+    (referent : W → Option E) (scope : E → W → Prop) (w : W)
     (h : referent w = none) :
-    (presupOfReferent referent scope).assertion w = false := by
+    (presupOfReferent referent scope).assertion w = False := by
   simp only [presupOfReferent, h]
 
 end PrProp
