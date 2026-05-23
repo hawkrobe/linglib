@@ -1,4 +1,4 @@
-import Linglib.Theories.Sociolinguistics.SCM
+import Linglib.Sociolinguistics.SCM
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Mathlib.Tactic.Linarith
 

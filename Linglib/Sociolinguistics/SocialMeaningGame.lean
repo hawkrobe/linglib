@@ -1,4 +1,4 @@
-import Linglib.Theories.Sociolinguistics.EckertMontague
+import Linglib.Sociolinguistics.EckertMontague
 import Linglib.Theories.Pragmatics.IBR.Basic
 
 /-!

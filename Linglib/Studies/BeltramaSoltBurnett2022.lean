@@ -1,8 +1,8 @@
 import Linglib.Core.Scales.Roundness
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Semantics.Numerals.Precision
-import Linglib.Theories.Sociolinguistics.SCM
-import Linglib.Theories.Sociolinguistics.EckertMontague
+import Linglib.Sociolinguistics.SCM
+import Linglib.Sociolinguistics.EckertMontague
 import Linglib.Fragments.English.NumeralModifiers
 
 /-!

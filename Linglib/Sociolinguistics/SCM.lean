@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Sociolinguistics.PropertySpace
+import Linglib.Sociolinguistics.PropertySpace
 
 /-!
 # Stereotype Content Model

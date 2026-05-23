@@ -2759,10 +2759,10 @@ import Linglib.Phonology.ItemSpecificity.ScaledWeights
 import Linglib.Phonology.ItemSpecificity.Separation
 import Linglib.Phonology.ItemSpecificity.UseListed
 -- Theories: Sociolinguistics
-import Linglib.Theories.Sociolinguistics.PropertySpace
-import Linglib.Theories.Sociolinguistics.SCM
-import Linglib.Theories.Sociolinguistics.EckertMontague
-import Linglib.Theories.Sociolinguistics.SocialMeaningGame
+import Linglib.Sociolinguistics.PropertySpace
+import Linglib.Sociolinguistics.SCM
+import Linglib.Sociolinguistics.EckertMontague
+import Linglib.Sociolinguistics.SocialMeaningGame
 -- Theories: SDS
 import Linglib.Semantics.Probabilistic.SDS.ConceptNode
 import Linglib.Semantics.Probabilistic.SDS.Basic

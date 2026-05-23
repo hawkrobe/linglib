@@ -1,6 +1,6 @@
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Phenomena.SocialMeaning.ING
-import Linglib.Theories.Sociolinguistics.EckertMontague
+import Linglib.Sociolinguistics.EckertMontague
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -62,7 +62,7 @@ exercises this parallel with concrete data from Figures 3 and 4.
 * `Ochs1992`: predecessor —
   `composeIndex` was introduced to formalize Ochs's indirect
   indexicality; Eckert generalizes it to stance accretion
-* `Theories.Sociolinguistics.EckertMontague`: the Eckert-Montague
+* `Sociolinguistics.EckertMontague`: the Eckert-Montague
   lift operationalizes the mapping from indexical field to compatible
   personae, connecting to @cite{burnett-2019}'s social meaning games
 -/

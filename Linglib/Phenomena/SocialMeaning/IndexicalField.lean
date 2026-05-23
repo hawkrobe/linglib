@@ -108,7 +108,7 @@ def IndexicalField.indexes {Variant Trait : Type}
 -- ============================================================================
 
 -- `SocialDimension` (Fiske et al.'s competence/warmth/antiSolidarity axes)
--- has moved to `Theories/Sociolinguistics/SCM.lean`, where it belongs as part
+-- has moved to `Sociolinguistics/SCM.lean`, where it belongs as part
 -- of the Stereotype Content Model theory rather than framework-agnostic Core.
 
 -- ============================================================================
