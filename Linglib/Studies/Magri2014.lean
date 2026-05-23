@@ -735,7 +735,8 @@ are *included in the list*. THE and SOME get different alternative lists:
 
 section FoxBridge
 
-open Exhaustification (innocent predToFinset altsFromPreds)
+open Exhaustification (innocent predToFinset altsFromPreds
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty)
 
 /-- Three worlds for a two-member plurality: none, one, or all satisfy. -/
 inductive Sat where | none | one | all
@@ -753,10 +754,15 @@ private def theAlts : List (Sat → Bool) := [bSome]
 private def someAlts : List (Sat → Bool) := [bSome, bAll]
 
 /-- Inner EXH(THE) = SOME: THE has no excludable alternatives because
-    its only Horn-mate (SOME) is equivalent, not strictly stronger. -/
+    its only Horn-mate (SOME) is equivalent, not strictly stronger.
+
+    Vacuity case: derives from the substrate's
+    `innocent_exh_eq_phi_of_innocentlyExcludable_empty` (IE is empty
+    because the single alt equals φ). -/
 theorem fox_inner_exh_the :
     innocent.exh (altsFromPreds theAlts) (predToFinset bSome)
-      = predToFinset bSome := by decide
+      = predToFinset bSome :=
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty (by decide)
 
 /-- Inner EXH(SOME) = SOME ∧ ¬ALL: the standard "only some" SI. -/
 theorem fox_inner_exh_some :
@@ -889,7 +895,8 @@ behaves as disjunction: |||not·AND_unF||| = not·OR.
 
 section EnrichedConjunction
 
-open Exhaustification (innocent predToFinset altsFromPreds)
+open Exhaustification (innocent predToFinset altsFromPreds
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty)
 
 /-- Four worlds for two atomic propositions (saw Adam, saw Bill). -/
 inductive ConjW where
@@ -921,15 +928,18 @@ private def rightAlts : List (ConjW → Bool) := [cAnd, cAnd, cOr, cLeft]
 
 -- Inner EXH for each item (with their own alternative lists)
 
-/-- EXH(AND_unF) = AND (vacuous: all alts are entailed by AND). -/
+/-- EXH(AND_unF) = AND (vacuous: all alts are entailed by AND). Derives
+    from the substrate vacuity lemma. -/
 theorem exh_andUnF :
     innocent.exh (altsFromPreds andUnFAlts) (predToFinset cAnd)
-      = predToFinset cAnd := by decide
+      = predToFinset cAnd :=
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty (by decide)
 
 /-- EXH(AND_F) = AND (same: AND entails everything in its alt list). -/
 theorem exh_andF :
     innocent.exh (altsFromPreds andFAlts) (predToFinset cAnd)
-      = predToFinset cAnd := by decide
+      = predToFinset cAnd :=
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty (by decide)
 
 /-- EXH(LEFT) = LEFT ∧ ¬RIGHT (RIGHT is the only IE alternative). -/
 theorem exh_left :
@@ -959,10 +969,12 @@ private def nRightAlts : List (ConjW → Bool) := [nAnd, nAnd, nOr, nLeft]
 
 /-- (71b) EXH(not·AND_unF) = not·AND (vacuous inner EXH).
     Neither not·LEFT nor not·RIGHT is IE: excluding one forces including
-    the other, since ¬AND ∧ LEFT ∧ RIGHT is inconsistent. -/
+    the other, since ¬AND ∧ LEFT ∧ RIGHT is inconsistent. Derives from
+    the substrate vacuity lemma. -/
 theorem de_exh_notAndUnF :
     innocent.exh (altsFromPreds nAndUnFAlts) (predToFinset nAnd)
-      = predToFinset nAnd := by decide
+      = predToFinset nAnd :=
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty (by decide)
 
 /-- (71a) EXH(not·AND_F) = not·AND ∧ ¬not·OR = not·AND ∧ OR.
     not·OR is IE (the only alternative not entailed by not·AND_F
