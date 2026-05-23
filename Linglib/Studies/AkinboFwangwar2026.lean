@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mwaghavul.Basic
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Phonology.Autosegmental.CoPScope
 import Linglib.Phonology.Autosegmental.Floating

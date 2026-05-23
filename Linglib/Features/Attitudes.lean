@@ -61,7 +61,7 @@ Bouletic verbs (*want*, *wish*) are typically slotted under
 gradable-attitude analysis. Speech-act predicates (*promise*,
 *demand*, *order*) are not covered by this feature taxonomy and
 would need a parallel `SpeechActPredicate` type in
-`Theories/Pragmatics/`.
+`Pragmatics/`.
 -/
 
 namespace Features

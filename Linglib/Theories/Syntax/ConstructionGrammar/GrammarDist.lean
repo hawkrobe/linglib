@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
-import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
+import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 
 /-!
 # L_TU: A Logic for Truth-Conditional and Use-Conditional Meaning

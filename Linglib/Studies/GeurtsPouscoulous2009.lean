@@ -2,9 +2,9 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Embedded.Attitudes
-import Linglib.Theories.Pragmatics.Implicature.Competence
-import Linglib.Theories.Pragmatics.Implicature.Defs
-import Linglib.Theories.Pragmatics.Implicature.Diagnostics
+import Linglib.Pragmatics.Implicature.Competence
+import Linglib.Pragmatics.Implicature.Defs
+import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Semantics.Entailment.Polarity
 
 /-!

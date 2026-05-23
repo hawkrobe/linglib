@@ -30,7 +30,7 @@ for working with such posteriors:
 ## Architectural role
 
 This file is part of the **structural track** of the PMF-based RSA
-discipline (cf. `Theories/Pragmatics/RSA/Cancellation.lean`). The
+discipline (cf. `Pragmatics/RSA/Cancellation.lean`). The
 structural-track substrate provides theorems about model-class behavior
 (joint inference, marginalization, cancellation); per-paper studies
 build on it via instantiations and `example`-style illustrations.

@@ -1,5 +1,5 @@
 import Lean
-import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict.Helpers
 
 set_option autoImplicit false

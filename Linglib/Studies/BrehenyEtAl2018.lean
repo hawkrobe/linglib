@@ -443,7 +443,7 @@ This paper reveals several tensions in linglib's organization:
 
 1. **Alternatives straddle semantics/pragmatics**: structural
    alternatives (`Semantics/Alternatives/`) and RSA
-   alternatives (`Theories/Pragmatics/RSA/`) address the same
+   alternatives (`Pragmatics/RSA/`) address the same
    problem but with incompatible representations.
 
 2. **Type-level vs value-level alternatives**: RSA models define

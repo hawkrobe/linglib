@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.GriceanMaxims
+import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Studies.SedivyEtAl1999
 import Linglib.Studies.DaleReiter1995
 

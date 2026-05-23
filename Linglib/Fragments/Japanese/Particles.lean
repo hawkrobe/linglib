@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Expressives.OutlookMarker
+import Linglib.Pragmatics.Expressives.OutlookMarker
 
 /-!
 # Japanese Particles

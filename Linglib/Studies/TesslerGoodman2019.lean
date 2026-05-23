@@ -1,8 +1,8 @@
 import Linglib.Semantics.Degree.Basic
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Pragmatics.RSA.Limits
-import Linglib.Theories.Pragmatics.RSA.Monotonicity
+import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Limits
+import Linglib.Pragmatics.RSA.Monotonicity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!

@@ -5,7 +5,7 @@ import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Features.Acceptability
 import Linglib.Fragments.Mandarin.Particles
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!

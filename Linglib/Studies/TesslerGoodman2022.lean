@@ -1,7 +1,7 @@
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Degree.Kennedy
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Core.NestedRestriction
 import Mathlib.Analysis.SpecialFunctions.Pow.Real

@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Reference.SearchEfficiency
 import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.Psychophysics
-import Linglib.Theories.Pragmatics.RSA.Channel
+import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.KursatDegen2021
 import Linglib.Studies.DegenEtAl2020
 import Linglib.Studies.EngelhardtEtAl2006

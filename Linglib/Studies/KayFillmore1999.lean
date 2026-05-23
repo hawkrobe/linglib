@@ -2,7 +2,7 @@ import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery

@@ -8,7 +8,7 @@ import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Semantics.Focus.Interpretation
-import Linglib.Theories.Pragmatics.DecisionTheoretic.But
+import Linglib.Pragmatics.DecisionTheoretic.But
 import Linglib.Fragments.English.FocusParticles
 import Linglib.Fragments.English.FunctionWords
 

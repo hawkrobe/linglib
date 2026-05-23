@@ -1,8 +1,8 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Pragmatics.RSA.Channel
-import Linglib.Theories.Pragmatics.RSA.Noisy
-import Linglib.Theories.Pragmatics.RSA.Sequential
+import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Channel
+import Linglib.Pragmatics.RSA.Noisy
+import Linglib.Pragmatics.RSA.Sequential
 
 /-!
 # @cite{waldon-degen-2021} — Continuous-Incremental RSA (CI-RSA)

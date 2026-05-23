@@ -5,14 +5,14 @@ rational conversation. S&P 4(1):1-82.
 IBR (iterated best response) converges to exhaustive interpretation (exhMW).
 
 General IBR theory (InterpGame, strategies, convergence) is in
-`Theories/Pragmatics/IBR/`. This file contains paper-specific results:
+`Pragmatics/IBR/`. This file contains paper-specific results:
 - Facts 1, 3, 4 connecting IBR to the exhaustification literature
 - Alternative counting (eq. 107) and the R₁ characterization
 - Concrete examples (scalar implicature, free choice disjunction)
 -/
 
-import Linglib.Theories.Pragmatics.IBR.Basic
-import Linglib.Theories.Pragmatics.IBR.ScalarGames
+import Linglib.Pragmatics.IBR.Basic
+import Linglib.Pragmatics.IBR.ScalarGames
 
 namespace RSA.IBR
 

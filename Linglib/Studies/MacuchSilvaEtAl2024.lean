@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.ArgumentativeStrength
+import Linglib.Pragmatics.RSA.ArgumentativeStrength
 import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
 import Linglib.Semantics.Alternatives.Lexical
 import Mathlib.Data.Rat.Defs

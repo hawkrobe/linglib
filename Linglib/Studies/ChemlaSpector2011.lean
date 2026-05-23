@@ -1,7 +1,7 @@
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Studies.GeurtsPouscoulous2009
-import Linglib.Theories.Pragmatics.Implicature.Defs
-import Linglib.Theories.Pragmatics.Implicature.Diagnostics
+import Linglib.Pragmatics.Implicature.Defs
+import Linglib.Pragmatics.Implicature.Diagnostics
 
 /-!
 # @cite{chemla-spector-2011} — Experimental Evidence for Embedded Scalar Implicatures
@@ -84,14 +84,14 @@ are verified at the rate level.
 - Reading extensions (literal, global, local) are `Picture → Bool`
   functions matching the established pattern in
   `Phenomena.ScalarImplicatures.Embedded.Attitudes` and
-  `Theories.Pragmatics.RSA.EmbeddedSI`.
+  `Pragmatics.RSA.EmbeddedSI`.
 - The §3.2 monotonicity conjecture is captured locally as
   `RatingsMonotone`; promotion to shared substrate is deferred until a
   second graded-TVJ consumer materializes (Beltrama-Schwarz 2024,
   Ramotowska 2025, Tieu et al. — none currently expose monotonicity as
   a theorem).
 - The qualitative "local reading exists" conclusion is bridged through
-  `Implicature` (the spine in `Theories/Pragmatics/Implicature/`) using
+  `Implicature` (the spine in `Pragmatics/Implicature/`) using
   `mechanism := .exhIE` (the localist EXH family).
 
 ## Subsequent literature (forward pointers)

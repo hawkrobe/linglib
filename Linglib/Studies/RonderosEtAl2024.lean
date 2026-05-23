@@ -3,7 +3,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.PropertyDomain
 import Linglib.Paradigms.VisualWorld
-import Linglib.Theories.Pragmatics.RSA.Channel
+import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.SedivyEtAl1999
 
 /-!
@@ -140,7 +140,7 @@ is observable independent of any contrast manipulation.
 
 - **No theoretical witness for `SatisfiesRonderosPattern`**: only the
   trivial witness `trivialLooks` is provided. A natural deepening is
-  to instantiate `Theories/Pragmatics/RSA/Incremental.lean` with a
+  to instantiate `Pragmatics/RSA/Incremental.lean` with a
   noise-perturbed `wordApplies` (using `RSA.Noise.noiseChannel` and
   the per-domain match/mismatch parameters) and prove the resulting
   `LookProportion` satisfies the pattern — this would derive the

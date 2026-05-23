@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.RSA.Operators
-import Linglib.Theories.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
+import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Semantics.Degree.Basic
 import Linglib.Phenomena.Negation.FlexibleNegation
 import Mathlib.Probability.Distributions.Uniform

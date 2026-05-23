@@ -3,7 +3,7 @@ import Linglib.Semantics.Composition.WriterMonad
 import Linglib.Semantics.Composition.SetMonad
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.QuantifierComposition
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Reference.Binding
 import Linglib.Core.Logic.Intensional.Frame

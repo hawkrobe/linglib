@@ -43,7 +43,7 @@ import Linglib.Dialogue.Assertable
 
 The two universal pragmatic postulates from the Appendix
 (`respectsCompatibility`, `changeFn_eq`) are stated in
-`Theories/Pragmatics/Assertion/ReasonableInference.lean`.
+`Pragmatics/Assertion/ReasonableInference.lean`.
 
 ## Integration
 
@@ -54,7 +54,7 @@ The two universal pragmatic postulates from the Appendix
   in `Mood.admissibleSelection`, not in two parallel conditional defs:
   `.indicative` requires `pragmaticConstraint`, `.subjunctive` imposes none.
 * `Appropriateness`, `changeFn`, `reasonableInference` — in
-  `Theories/Pragmatics/Assertion/ReasonableInference.lean`.
+  `Pragmatics/Assertion/ReasonableInference.lean`.
 * This file: a butler/gardener witness for (4); abstract version of (4)
   parameterised over any constraint-respecting selection function.
 

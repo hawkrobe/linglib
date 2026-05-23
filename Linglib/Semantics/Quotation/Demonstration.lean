@@ -46,7 +46,7 @@ properties + axioms, separated from the larger structure that consumes
 them. It also makes the Farkas-Bruce bridge possible: a discourse-state
 adapter can supply a `PerformanceOntology` instance whose `Commits` and
 `RaisesIssue` are *derived* from F&B dcS / table operations rather than
-stipulated (see `Theories/Pragmatics/Assertion/QuotationFBOntology.lean`).
+stipulated (see `Pragmatics/Assertion/QuotationFBOntology.lean`).
 
 ## Meaning Postulates
 

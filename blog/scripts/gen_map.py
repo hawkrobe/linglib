@@ -52,8 +52,8 @@ NODES = [
     # Luce cluster
     {"id": "RationalAction", "root": "luce",      "file_path": "Core/RationalAction.lean"},
     {"id": "UtilityTheory",  "root": "luce",      "file_path": "Core/UtilityTheory.lean"},
-    {"id": "RSAConfig",      "root": "luce",      "file_path": "Theories/Pragmatics/RSA/Core/Config.lean"},
-    {"id": "RSAImpl",        "root": "luce",      "file_path": "Theories/Pragmatics/RSA/Implementations/*"},
+    {"id": "RSAConfig",      "root": "luce",      "file_path": "Pragmatics/RSA/Core/Config.lean"},
+    {"id": "RSAImpl",        "root": "luce",      "file_path": "Pragmatics/RSA/Implementations/*"},
     # Proposition cluster
     {"id": "Proposition",    "root": "proposition", "file_path": "Core/Proposition.lean"},
     {"id": "Kleene",         "root": "proposition", "file_path": "Core/Kleene.lean"},
@@ -401,9 +401,9 @@ def display_file(node: dict) -> str:
     """Convert a node's file_path to a short display string."""
     fp = node["file_path"]
     if "*" in fp:
-        return fp.replace("Theories/Pragmatics/", "").replace("Semantics/", "")
+        return fp.replace("Pragmatics/", "").replace("Semantics/", "")
     fp = fp.replace("Semantics/", "")
-    fp = fp.replace("Theories/Pragmatics/", "")
+    fp = fp.replace("Pragmatics/", "")
     return fp
 
 

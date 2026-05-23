@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Operators
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Studies.ScontrasPearl2021Quantification
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Probability.ProbabilityMassFunction.Monad
@@ -782,7 +782,7 @@ encode this via the `dite` pattern: `S2Score = L1At u h w` if h holds, else 0.
 
 Implementation note: this S2 is paper-specific (intersective truth-value-judgment
 production), not a generic RSA layer — keep in study file rather than
-promoting to `Theories/Pragmatics/RSA/`. -/
+promoting to `Pragmatics/RSA/`. -/
 
 /-- The unnormalized S2 score at `(w, u)`: the L1 posterior at `w` given `u`,
 or 0 if the L1 marginal at `u` is degenerate. -/

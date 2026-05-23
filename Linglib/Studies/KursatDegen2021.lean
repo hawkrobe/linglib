@@ -1,5 +1,5 @@
 import Linglib.Features.PropertyDomain
-import Linglib.Theories.Pragmatics.RSA.Channel
+import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.DegenEtAl2020
 import Linglib.Studies.WaldonDegen2021
 import Linglib.Studies.EngelhardtEtAl2006

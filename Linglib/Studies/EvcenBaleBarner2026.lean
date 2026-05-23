@@ -2,7 +2,7 @@ import Linglib.Features.Acceptability
 import Mathlib.Data.Rat.Defs
 import Linglib.Semantics.Conditionals.Exhaustivity
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Theories.Pragmatics.Implicature.Competence
+import Linglib.Pragmatics.Implicature.Competence
 import Linglib.Studies.BaleEtAl2025
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic

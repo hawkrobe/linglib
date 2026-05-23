@@ -1,5 +1,5 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Theories.Pragmatics.Implicature.Defs
+import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Kinds.SortedOntology
@@ -1252,7 +1252,7 @@ end AlternativeSourceBridge
 
 Wraps a `BlindScenario`-derived strengthened meaning as an `Implicature`
 value over the same world type, exercising the cross-mechanism spine in
-`Theories/Pragmatics/Implicature/Defs.lean`. The `Bool`-valued
+`Pragmatics/Implicature/Defs.lean`. The `Bool`-valued
 strengthening becomes a `Prop`-valued implicature `content` via
 `s.strengthened u w = true`.
 
@@ -1266,7 +1266,7 @@ contradicts the EXH'd implicature — so `IsCancellable` (and
 `IsCancellableInContext`) both *hold*. The contentful Magri claim
 is a *different* diagnostic: **the strengthened meaning has no
 CK-realizer.** That is the theorem delivered here. See
-`Theories/Pragmatics/Implicature/Diagnostics.lean` docstring for the
+`Pragmatics/Implicature/Diagnostics.lean` docstring for the
 extended discussion of why Magri obligatoriness ≠ IsCancellable failure.
 -/
 

@@ -1,7 +1,7 @@
 import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.EvalLemmas
-import Linglib.Theories.Pragmatics.RSA.Operators
-import Linglib.Theories.Pragmatics.RSA.Silence
+import Linglib.Pragmatics.RSA.Operators
+import Linglib.Pragmatics.RSA.Silence
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Probability.Distributions.Uniform
 
@@ -1241,7 +1241,7 @@ model produces the predictions plotted in Fig. 2 (A, B).
 **They are NOT corollaries of a single information-theoretic cancellation
 theorem.** The structural theorem that IS provable
 (`RSA.mutualInfoStateObs_bind_noise_le` in
-`Linglib/Theories/Pragmatics/RSA/Cancellation.lean`) only gives obs-level
+`Linglib/Pragmatics/RSA/Cancellation.lean`) only gives obs-level
 MI cancellation: `MI(state; obs_n) ≤ MI(state; obs_i)`. The per-(world-pair)
 orderings these cells encode are utterance-level claims that depend on the
 specific lex shape, not just on kernel informativity — see Cancellation.lean

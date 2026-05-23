@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Limits
+import Linglib.Pragmatics.RSA.Limits
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Alternatives.Lexical
 import Mathlib.Analysis.SpecialFunctions.Pow.Real

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Syllogistic.Forms
-import Linglib.Theories.Pragmatics.RSA.Channel
+import Linglib.Pragmatics.RSA.Channel
 import Linglib.Core.Logic.Opposition.Probabilistic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 

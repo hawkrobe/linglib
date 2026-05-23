@@ -1,6 +1,6 @@
 import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Theories.Pragmatics.RSA.Limits
+import Linglib.Pragmatics.RSA.Limits
 import Mathlib.Data.Rat.Cast.Defs
 
 /-!

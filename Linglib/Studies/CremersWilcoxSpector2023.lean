@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack

@@ -1,6 +1,6 @@
 import Linglib.Features.InformationStructure
 import Linglib.Features.Prosody
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Semantics.Alternatives.AltMeaning
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RelevanceTheory.Comprehension
+import Linglib.Pragmatics.RelevanceTheory.Comprehension
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!

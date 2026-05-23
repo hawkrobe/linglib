@@ -45,7 +45,7 @@ on the q-params record, not on a higher-order GQ denotation. RCH then
 ## What this file proves
 
 Two theorems about RCH (defined in
-`Theories/Pragmatics/Dialogue/KOS/RepriseContent.lean`):
+`Pragmatics/Dialogue/KOS/RepriseContent.lean`):
 
 1. `gq_reprise_type_mismatch`: a predictor that licenses only `.functional`
    queries — the GQ prediction — fails Weak RCH against any reprise event

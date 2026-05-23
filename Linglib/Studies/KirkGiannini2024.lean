@@ -211,7 +211,7 @@ theorem gd_strip_then_remix_loses_original_ci :
 /--
 **K-G refutes Potts's universal CI projection.** Per
 @cite{potts-2005} (formalised as
-`Theories.Pragmatics.Expressives.Basic.ci_projects_through_neg`):
+`Pragmatics.Expressives.Basic.ci_projects_through_neg`):
 `(neg p).ci = p.ci`. The CI of a `TwoDimProp` projects unchanged
 through any at-issue operator. K-G's analysis predicts that under
 indirect-speech embedding the CI is REPLACED by utterance

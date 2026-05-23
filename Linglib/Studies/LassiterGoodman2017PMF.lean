@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.RSA.Operators
-import Linglib.Theories.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
+import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Core.Probability.JointPosterior
 import Linglib.Studies.CobrerosEtAl2012
 import Mathlib.Probability.Distributions.Uniform

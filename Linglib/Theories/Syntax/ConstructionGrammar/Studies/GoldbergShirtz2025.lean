@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 
 /-!
 # @cite{goldberg-shirtz-2025}: PAL Constructions — Theoretical Analysis

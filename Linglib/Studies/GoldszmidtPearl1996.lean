@@ -1,7 +1,7 @@
 import Linglib.Core.Logic.SystemZ
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Studies.Veltman1996
-import Linglib.Theories.Pragmatics.RSA.Ranking
+import Linglib.Pragmatics.RSA.Ranking
 
 /-!
 # Goldszmidt & Pearl (1996): Qualitative Probabilities for Default Reasoning

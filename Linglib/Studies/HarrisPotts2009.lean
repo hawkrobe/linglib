@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 
 /-!
 # Harris & Potts 2009: Orientation variables for CI items

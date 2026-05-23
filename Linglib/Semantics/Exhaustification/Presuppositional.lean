@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Pragmatics.Implicature.Diagnostics
+import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
 

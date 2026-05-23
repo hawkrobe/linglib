@@ -14,7 +14,7 @@ illocutionary force component reuses `Core.Mood.IllocutionaryMood` rather
 than @cite{cooper-2023}'s parallel four-way `IllocForce` enum (the surface
 distinction `assertion | query | command | acknowledgement` is the
 declarative/interrogative/imperative slice plus a backchannel constructor;
-true backchannels live in `Theories/Pragmatics/Dialogue/KOS/`).
+true backchannels live in `Pragmatics/Dialogue/KOS/`).
 
 **Information States**: InfoState (gameboard), agenda operations,
   bridge to Core.CommonGround (§2.6).
@@ -49,7 +49,7 @@ introduces a four-way TTR-internal enum `assertion | query | command |
 acknowledgement`. We collapse `assertion/query/command` into
 `Core.Mood.IllocutionaryMood`'s `declarative/interrogative/imperative`
 (the same Searlean cuts) and let backchannel acknowledgements be handled
-where dialogue moves live (`Theories/Pragmatics/Dialogue/KOS/`). The
+where dialogue moves live (`Pragmatics/Dialogue/KOS/`). The
 result: TTR signs share the rest of the library's mood vocabulary
 rather than re-stipulating it. -/
 

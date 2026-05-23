@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Bias
+import Linglib.Pragmatics.Bias
 import Linglib.Semantics.Modality.BiasedPQ
 
 /-!
@@ -15,7 +15,7 @@ constructions differ in illocutionary force (declarative vs interrogative);
 the bridge is at the condition-level, not at the form-level.
 
 This study file is the home for that cross-construction bridge. It was
-formerly inlined into `Theories/Pragmatics/Bias.lean` §7, but the
+formerly inlined into `Pragmatics/Bias.lean` §7, but the
 `BiasedPQ` import (with its CommonGround/InformationStructure/Discourse
 transitive stack) dominated the build cost of `Bias.lean`. Hosting the
 bridge here keeps `Bias.lean` lean and concentrates Romero-2024-specific

@@ -5,7 +5,7 @@ import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Alternatives.Source
 import Linglib.Semantics.Alternatives.Indirect
 import Linglib.Semantics.Alternatives.Structural
-import Linglib.Theories.Pragmatics.AvoidAmbiguity
+import Linglib.Pragmatics.AvoidAmbiguity
 import Linglib.Fragments.French.Determiners
 import Linglib.Fragments.English.Determiners
 

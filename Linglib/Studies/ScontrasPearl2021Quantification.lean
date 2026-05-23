@@ -1,5 +1,5 @@
 import Linglib.Semantics.Numerals.Basic
-import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Composition.Scope
@@ -653,7 +653,7 @@ noncomputable abbrev allBiasedCfg :=
 -- S2 Endorsement
 
 /-! S2 endorsement uses the generic `RSAConfig.S2` from
-    `Theories/Pragmatics/RSA/Core/Config.lean`:
+    `Pragmatics/RSA/Core/Config.lean`:
     S2(u|w) = S2agent.policy(w, u) where S2agent.score(w, u) = cfg.L1(u, w)
     (the **normalized** L1 posterior).
 

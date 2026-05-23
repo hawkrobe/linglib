@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Implicature.Markedness
+import Linglib.Pragmatics.Implicature.Markedness
 import Linglib.Studies.Rett2015
 
 /-!

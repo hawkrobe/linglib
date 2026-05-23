@@ -22,7 +22,7 @@ right home for a polymorphic primitive. This file is.
 
 ## What this does NOT subsume
 
-- **`RSA.IBR.strongestAt`** (`Theories/Pragmatics/IBR/ScalarGames.lean`) —
+- **`RSA.IBR.strongestAt`** (`Pragmatics/IBR/ScalarGames.lean`) —
   expresses "m is the strongest true message at s" as a unary predicate
   on messages, not the binary asymmetric-entailment relation. The two
   are linked (m strongest ↔ ∀ m', ¬ asymStrongerOn univ (G.meaning m') (G.meaning m)

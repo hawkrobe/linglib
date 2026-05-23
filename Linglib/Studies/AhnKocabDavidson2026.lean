@@ -1,7 +1,7 @@
 import Linglib.Semantics.Composition.Modification
 import Linglib.Studies.Ariel2001
-import Linglib.Theories.Pragmatics.GriceanMaxims
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.GriceanMaxims
+import Linglib.Pragmatics.Expressives.Basic
 
 /-!
 # @cite{ahn-kocab-davidson-2026}

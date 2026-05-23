@@ -12,7 +12,7 @@ inventoried for typological completeness.
 `Dimension` pairs a human-readable name with a `PropertyDomain` and is
 populated by the smart constructors below; the bridge to noise
 parameters (`Features.PropertyDomain.noiseDiscrimination`) lives in
-`Theories/Pragmatics/RSA/Channel.lean`.
+`Pragmatics/RSA/Channel.lean`.
 -/
 
 namespace Features

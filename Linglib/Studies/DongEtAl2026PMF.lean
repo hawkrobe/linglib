@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Operators
+import Linglib.Pragmatics.RSA.Operators
 import Mathlib.Probability.Distributions.Uniform
 
 /-!

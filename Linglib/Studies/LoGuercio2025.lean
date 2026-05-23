@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Semantics.Entailment.Polarity
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Composition.WriterMonad
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!

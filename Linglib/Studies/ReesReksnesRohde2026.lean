@@ -1,6 +1,6 @@
-import Linglib.Theories.Pragmatics.RelevanceTheory.Comprehension
-import Linglib.Theories.Pragmatics.RelevanceTheory.CognitiveEffects
-import Linglib.Theories.Pragmatics.RelevanceTheory.Ostension
+import Linglib.Pragmatics.RelevanceTheory.Comprehension
+import Linglib.Pragmatics.RelevanceTheory.CognitiveEffects
+import Linglib.Pragmatics.RelevanceTheory.Ostension
 
 /-!
 # Rees, Reksnes & Rohde (2026) @cite{rees-reksnes-rohde-2026}

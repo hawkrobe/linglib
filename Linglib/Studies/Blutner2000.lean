@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.Evaluation
 import Linglib.Core.Constraint.Superoptimal
-import Linglib.Theories.Pragmatics.Bidirectional
+import Linglib.Pragmatics.Bidirectional
 import Linglib.Semantics.Presupposition.Accommodation
 
 /-!

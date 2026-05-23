@@ -42,7 +42,7 @@ features, no Spec-CP, no Agree, no AttP. A Minimalist analysis (POV
 features [*ud*]/[+d], Spec-head Agree, parasitic adjunction) would live
 in `Theories/Syntax/Minimalist/ANDL.lean` (planned; not yet present).
 The semantic analysis (negative attitude, conventional implicature,
-possible-ignorance presupposition) lives in `Theories/Pragmatics/Expressives/`
+possible-ignorance presupposition) lives in `Pragmatics/Expressives/`
 (currently `Basic.lean` + `OutlookMarker.lean`) and
 `Theories/Interfaces/SyntaxSemantics/LeftPeriphery.lean`. Fragment
 lexemes import only this file.

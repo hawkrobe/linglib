@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Pragmatics.RSA.Channel
-import Linglib.Theories.Pragmatics.GriceanMaxims
+import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Channel
+import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Studies.DaleReiter1995
 import Linglib.Studies.EngelhardtEtAl2006
 import Linglib.Studies.WesterbeekKoolenMaes2015

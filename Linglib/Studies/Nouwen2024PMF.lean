@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.RSA.Operators
-import Linglib.Theories.Pragmatics.RSA.LatentOperators
+import Linglib.Pragmatics.RSA.Operators
+import Linglib.Pragmatics.RSA.LatentOperators
 import Linglib.Studies.Nouwen2024
 import Linglib.Studies.LassiterGoodman2017PMF
 

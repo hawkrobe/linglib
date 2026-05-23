@@ -1,5 +1,5 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Studies.Rett2015Implicature
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
@@ -59,7 +59,7 @@ preserving the qualitative predictions with a 45-world grid
 ## Connection to @cite{rett-2015}
 
 @cite{rett-2015} derives evaluativity categorically via Q/R-implicature
-(formalized in `Theories/Pragmatics/Implicature/Evaluativity.lean`).
+(formalized in `Pragmatics/Implicature/Evaluativity.lean`).
 This RSA model derives the same predictions *gradiently*: evaluativity
 strength varies continuously across constructions. Both accounts agree
 on the antonym-sensitive pattern (equative marked > equative unmarked).
@@ -433,7 +433,7 @@ constructions:
 /-! ### RSA ↔ Neo-Gricean Agreement
 
 @cite{rett-2015}'s Neo-Gricean account (formalized in
-`Theories/Pragmatics/Implicature/Evaluativity.lean`) classifies
+`Pragmatics/Implicature/Evaluativity.lean`) classifies
 constructions categorically using `AdjectivalConstruction` and `Polarity`:
 - **Positive** (`.positive`): evaluative for both polarities (Q-implicature)
 - **Equative** (`.equative`): evaluative for `.negative` only (Manner/R-implicature)

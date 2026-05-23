@@ -1,6 +1,6 @@
 import Linglib.Semantics.Gradability.Aggregation
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Prod

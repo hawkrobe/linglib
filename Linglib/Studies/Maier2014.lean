@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Pragmatics.Expressives.Basic
 
 /-!
 # Maier 2014a: Mixed quotation as syntactic chameleonism

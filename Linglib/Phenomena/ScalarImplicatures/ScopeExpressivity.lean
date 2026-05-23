@@ -1,5 +1,5 @@
 import Linglib.Semantics.Exhaustification.Operators.Basic
-import Linglib.Theories.Pragmatics.RSA.EmbeddedSI
+import Linglib.Pragmatics.RSA.EmbeddedSI
 
 /-!
 # RSA vs EXH: Expressivity Gap

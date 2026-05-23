@@ -1,8 +1,8 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Pragmatics.RSA.Channel
-import Linglib.Theories.Pragmatics.RSA.Noisy
-import Linglib.Theories.Pragmatics.RSA.Sequential
+import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Channel
+import Linglib.Pragmatics.RSA.Noisy
+import Linglib.Pragmatics.RSA.Sequential
 
 /-!
 # @cite{schlotterbeck-wang-2023} — Incremental RSA for Adjective Ordering (sanity-check slice)
@@ -52,7 +52,7 @@ full-sequence L0 posterior is order-independent.
 
 ## Substrate use
 
-This file plugs `RSA.NoisyLex` (`Theories/Pragmatics/RSA/Noisy.lean`) into
+This file plugs `RSA.NoisyLex` (`Pragmatics/RSA/Noisy.lean`) into
 `RSAConfig`'s sequential machinery. Each scene becomes a `NoisyLex` value
 plus a scene predicate; `NoisyLex.toRSAConfigSeq` produces the incremental
 RSAConfig. The PoE prefix-product order-independence lemmas live in

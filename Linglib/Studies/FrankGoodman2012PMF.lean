@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.ReferenceGame
+import Linglib.Pragmatics.RSA.ReferenceGame
 
 /-!
 # @cite{frank-goodman-2012} reference game (concrete instance)
@@ -9,7 +9,7 @@ import Linglib.Theories.Pragmatics.RSA.ReferenceGame
 ## What this file is
 
 A **concrete instance** of the parametric reference-game substrate
-(`Theories/Pragmatics/RSA/ReferenceGame.lean`). Everything architectural —
+(`Pragmatics/RSA/ReferenceGame.lean`). Everything architectural —
 the size principle, pragmatic narrowing, unique reference — is proved
 generically there, parametric in the meaning matrix and world prior. Here
 we only need to:

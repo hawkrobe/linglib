@@ -2,7 +2,7 @@ import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
-import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
+import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Mathlib.Data.Fintype.BigOperators
 
 /-!
@@ -56,7 +56,7 @@ substrate `Studies/FrancikClark1985.lean` and
 The DM bridge in `§I` consumes `Morphology.DM.Categorizer`'s
 `Recategorization.denominal` for the syntactic operation underlying nonce
 verbs. The LU-RSA bridge in `§H` consumes
-`Theories.Pragmatics.RSA.LexicalUncertainty.Lexicon`.
+`Pragmatics.RSA.LexicalUncertainty.Lexicon`.
 
 The shared mechanism Clark posits in `§K` is operationalized as a typed
 projection: both `IndirectAct` and `DenominalVerbConvention` provide a

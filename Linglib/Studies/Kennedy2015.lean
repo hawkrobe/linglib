@@ -1,7 +1,7 @@
 import Linglib.Semantics.Numerals.Basic
-import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.Implicature.EpistemicBlocking
+import Linglib.Pragmatics.Implicature.EpistemicBlocking
 import Linglib.Semantics.Entailment.AsymStronger
 import Mathlib.Data.Rat.Defs
 

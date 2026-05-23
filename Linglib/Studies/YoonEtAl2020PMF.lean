@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Operators
+import Linglib.Pragmatics.RSA.Operators
 import Linglib.Studies.YoonEtAl2020
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 

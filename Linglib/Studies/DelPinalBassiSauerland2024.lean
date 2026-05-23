@@ -841,7 +841,7 @@ theorem enemy_territory_blocks_projection {W : Type*}
 /-! ## Bridge: `pexFC` as `Implicature FCWorld Prop` + non-cancellability
 
 The marquee BPS-style result the cross-mechanism `Implicature` spine in
-`Theories/Pragmatics/Implicature/Defs.lean` was designed to host. The
+`Pragmatics/Implicature/Defs.lean` was designed to host. The
 free-choice inference (◇A ∧ ◇B from ◇(A ∨ B)) is wrapped as an
 `Implicature FCWorld Prop` whose `content` is the presupposed component
 of `pexFC`. Two non-cancellability theorems are stated, tracking the

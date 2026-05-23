@@ -32,7 +32,7 @@ of *but*'s arguments — not in decision-theoretic semantics. The bridge
 was the formaliser's editorial overlay; the substrate-internal Bayesian
 theorems it contained (`probSupports_implies_posRelevant_binary`,
 `negRelevant_implies_not_probSupports`) moved to
-`Theories/Pragmatics/DecisionTheoretic/Core.lean` where they belong.
+`Pragmatics/DecisionTheoretic/Core.lean` where they belong.
 
 ## The puzzle
 

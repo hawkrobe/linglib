@@ -1,6 +1,6 @@
 import Linglib.Semantics.Gradability.Antonymy
 import Linglib.Semantics.Gradability.AntonymPrediction
-import Linglib.Theories.Pragmatics.Implicature.Markedness
+import Linglib.Pragmatics.Implicature.Markedness
 import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.Superoptimal

@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.GriceanMaxims
-import Linglib.Theories.Pragmatics.RSA.Channel
+import Linglib.Pragmatics.GriceanMaxims
+import Linglib.Pragmatics.RSA.Channel
 
 /-!
 # @cite{dale-reiter-1995}

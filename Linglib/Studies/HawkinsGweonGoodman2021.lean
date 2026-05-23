@@ -44,7 +44,7 @@ the RSAConfig loop as paper-specific extensions (Part V).
 -/
 
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Basic
 import Linglib.Semantics.Composition.Modification
 import Mathlib.Data.Rat.Defs
 

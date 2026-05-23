@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.Implicature.Basic
-import Linglib.Theories.Pragmatics.Implicature.Markedness
+import Linglib.Pragmatics.Implicature.Basic
+import Linglib.Pragmatics.Implicature.Markedness
 import Linglib.Semantics.Gradability.Basic
 import Linglib.Studies.Rett2015
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.GriceanMaxims
+import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Fragments.French.Predicates

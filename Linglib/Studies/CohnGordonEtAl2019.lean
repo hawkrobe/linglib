@@ -1,5 +1,5 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Incremental
+import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Paradigms.VisualWorld
 import Linglib.Studies.SedivyEtAl1999
 
@@ -31,7 +31,7 @@ where U is the set of complete utterances and ⊑ is the prefix relation.
 ## Formalization via the `IncrementalSemantics` bundle
 
 Each scene in this file is a single value of `RSA.IncrementalSemantics U W`
-(in `Theories/Pragmatics/RSA/Incremental.lean`), specifying just the lexicon
+(in `Pragmatics/RSA/Incremental.lean`), specifying just the lexicon
 (`wordApplies`), the closed set of complete utterances, and the world set.
 The bundle's `toRSAConfig` builder produces the full `RSAConfig` with chain-
 rule speaker, α = 1, no cost, uniform priors, and extension-based L0 — so
@@ -290,7 +290,7 @@ incremental speaker has no global view of the utterance space, the
 greedy choice at each step yields a complete utterance under which the
 literal listener's posterior for the target is at least 1 / |W|. The
 bound itself — `l0Utt_ge_inv_card` — is proved generically over the
-`IncrementalSemantics` bundle in `Theories/Pragmatics/RSA/Incremental.lean`.
+`IncrementalSemantics` bundle in `Pragmatics/RSA/Incremental.lean`.
 What's left for this study is to (i) define the greedy unroller for
 Figure 1's three referents and (ii) verify that each output is a complete
 utterance true of the target; the §2.4 bound then follows. -/

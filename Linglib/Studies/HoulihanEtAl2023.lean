@@ -1,8 +1,8 @@
 import Linglib.Core.Agent.Emotion
 import Linglib.Core.Agent.BToM
-import Linglib.Theories.Pragmatics.GameTheory
+import Linglib.Pragmatics.GameTheory
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Theories.Pragmatics.RSA.Speaker.CombinedUtility
+import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
 import Linglib.Semantics.Gradability.Classification
 
 /-!

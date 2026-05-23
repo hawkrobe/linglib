@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Pragmatics.RSA.ArgumentativeStrength
-import Linglib.Theories.Pragmatics.RSA.Speaker.CombinedUtility
+import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.ArgumentativeStrength
+import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
 import Mathlib.Data.Rat.Defs
 
 /-!

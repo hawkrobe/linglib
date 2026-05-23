@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.Efficiency
-import Linglib.Theories.Pragmatics.AsymmetricCommunication
+import Linglib.Pragmatics.Efficiency
+import Linglib.Pragmatics.AsymmetricCommunication
 
 /-!
 # Lexicalization: Efficient Encoding of Emerging Concepts

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Numerals.Basic
-import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Pragmatics.RSA.Monotonicity
+import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.Monotonicity
 import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs
 

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.DomainRestriction
-import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Pragmatics.RSA.BToM
+import Linglib.Pragmatics.RSA.Basic
+import Linglib.Pragmatics.RSA.BToM
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Tactics.RSAPredict
 import Linglib.Semantics.Questions.Partition.QUD
