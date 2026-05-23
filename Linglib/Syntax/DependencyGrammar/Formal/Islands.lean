@@ -1,6 +1,5 @@
 import Linglib.Syntax.DependencyGrammar.Formal.Discontinuity
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
-import Linglib.Syntax.DependencyGrammar.LongDistance
 
 /-!
 # Islands as Constraints on Rising Catenae
@@ -35,7 +34,12 @@ different ways:
 
 - → `Discontinuity.lean`: islands block the formation of risen catenae
 - → `Catena.lean`: island material forms catenae (proven), uses `isCatena`
-- → `LongDistance.lean`: maps to `IslandType` (4 shared types + 5 new)
+
+A previous `toLongDistanceIslandType` bridge mapped two of the Osborne
+cases onto a now-deleted `LongDistance.IslandType`; the canonical Ross-1967
+inventory lives in `Phenomena.Islands.ConstraintType`, which this file
+cannot import from `Theories/`. Promoting that enum to substrate so a
+real bridge can be supplied is a Todo (see `LongDistance.lean`).
 -/
 
 namespace DepGrammar.Islands
@@ -204,50 +208,30 @@ theorem specifiedNP_is_catena :
 -- governor form a risen catena: connected in the tree but with non-contiguous
 -- yield. The island constraint blocks this risen catena from being well-formed.
 
-set_option maxRecDepth 4096 in
 /-- Left branch: {whose(0), house(4)} is a risen catena — connected via det
     but do(1), you(2), like(3) intervene. -/
 theorem leftBranch_extraction_risen :
-    isRisenCatena island_leftBranch [0, 4] = true := by
-  have hc : isContiguous [0, 4] = false := by simp [isContiguous, isInterval, List.mergeSort]
-  have hk : Catena.isCatena island_leftBranch.deps [0, 4] = true := by decide
-  simp [isRisenCatena, hc, hk]
+    isRisenCatena island_leftBranch [0, 4] = true := by decide
 
-set_option maxRecDepth 4096 in
 /-- Subject: {car(1), of(5)} is a risen catena — connected via nmod
     but did(2), the(3), driver(4) intervene. -/
 theorem subject_extraction_risen :
-    isRisenCatena island_subject [1, 5] = true := by
-  have hc : isContiguous [1, 5] = false := by simp [isContiguous, isInterval, List.mergeSort]
-  have hk : Catena.isCatena island_subject.deps [1, 5] = true := by decide
-  simp [isRisenCatena, hc, hk]
+    isRisenCatena island_subject [1, 5] = true := by decide
 
-set_option maxRecDepth 4096 in
 /-- Adjunct: {what(0), cleaning(5)} is a risen catena — connected via obj
     but do(1), they(2), argue(3), before(4) intervene. -/
 theorem adjunct_extraction_risen :
-    isRisenCatena island_adjunct [0, 5] = true := by
-  have hc : isContiguous [0, 5] = false := by simp [isContiguous, isInterval, List.mergeSort]
-  have hk : Catena.isCatena island_adjunct.deps [0, 5] = true := by decide
-  simp [isRisenCatena, hc, hk]
+    isRisenCatena island_adjunct [0, 5] = true := by decide
 
-set_option maxRecDepth 4096 in
 /-- Wh-island: {judge(1), surprised(5)} is a risen catena — connected via
     nsubj but might(2), they(3), inquire(4) intervene. -/
 theorem whIsland_extraction_risen :
-    isRisenCatena island_whIsland [1, 5] = true := by
-  have hc : isContiguous [1, 5] = false := by simp [isContiguous, isInterval, List.mergeSort]
-  have hk : Catena.isCatena island_whIsland.deps [1, 5] = true := by decide
-  simp [isRisenCatena, hc, hk]
+    isRisenCatena island_whIsland [1, 5] = true := by decide
 
-set_option maxRecDepth 4096 in
 /-- Specified NP: {who(0), of(6)} is a risen catena — connected via nmod
     but did(1).pictures(5) intervene. -/
 theorem specifiedNP_extraction_risen :
-    isRisenCatena island_specifiedNP [0, 6] = true := by
-  have hc : isContiguous [0, 6] = false := by simp [isContiguous, isInterval, List.mergeSort]
-  have hk : Catena.isCatena island_specifiedNP.deps [0, 6] = true := by decide
-  simp [isRisenCatena, hc, hk]
+    isRisenCatena island_specifiedNP [0, 6] = true := by decide
 
 /-- All island violations produce risen catenae: extraction from an island
     creates a catena with non-contiguous yield. -/
@@ -263,15 +247,6 @@ theorem all_island_extractions_risen :
 -- ============================================================================
 -- §5: Bridges
 -- ============================================================================
-
-/-- **Bridge → LongDistance.lean**: Map `OsborneIslandType` to existing
-    `IslandType` for the 4 shared types. Osborne's taxonomy is more
-    fine-grained, distinguishing types by their constraints on rising catenae. -/
-def toLongDistanceIslandType :
-    OsborneIslandType → Option LongDistance.IslandType
-  | .adjunct    => some .adjunct
-  | .subject    => some .subject
-  | _           => none  -- leftBranch, specifiedNP, whIsland, rightRoof, pStranding, piedPiping are new
 
 /-- **Bridge → Discontinuity.lean**: islands constrain the formation of risen
     catenae. All island violation examples contain risen catenae (proven above),

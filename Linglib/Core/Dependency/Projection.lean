@@ -1,5 +1,6 @@
 import Linglib.Core.Dependency.Basic
 import Mathlib.Logic.Relation
+import Mathlib.Data.List.Sort
 
 /-!
 @cite{kuhlmann-nivre-2006} @cite{kuhlmann-2013}
@@ -48,7 +49,14 @@ def projection (deps : List Dependency) (root : Nat) : List Nat :=
       else
         let children := deps.filter (·.headIdx == node) |>.map (·.depIdx)
         go (rest ++ children) (node :: visited) fuel'
-  (go [root] [] fuel).mergeSort (· ≤ ·)
+  -- `insertionSort` (not `mergeSort`): the former is structurally recursive on
+  -- the input list and reduces under `decide`/`rfl`; mergeSort uses
+  -- well-founded recursion and does not reduce in the kernel, which would
+  -- force consumers like `isProjective` into `native_decide`. Downstream
+  -- helpers that sort `List Nat` (e.g. `Formal/Discontinuity.isContiguous`,
+  -- `Formal/CatenalConstruction.CatenalCx.isContiguous`) should follow the
+  -- same convention for the same reason.
+  (go [root] [] fuel).insertionSort (· ≤ ·)
 
 /-- Whether a sorted list of positions forms an interval [min.max] with no
     internal gaps. A projection is an interval iff its node has gap degree 0. -/
@@ -142,21 +150,17 @@ private theorem pairwise_lt_of_sorted_nodup (l : List Nat)
 
 /-- The output of `projection` is strictly increasing (sorted, no duplicates).
     Proof: BFS visits each node at most once (visited check), then
-    `mergeSort` produces a sorted list. Since visited prevents duplicates,
+    `insertionSort` produces a sorted list. Since visited prevents duplicates,
     the sorted list is strictly increasing. -/
 theorem projection_chain' (deps : List Dependency) (root : Nat) :
     (projection deps root).IsChain (· < ·) := by
   unfold projection
   set goResult := projection.go deps [root] [] (deps.length * (deps.length + 1) + 2)
   have hnodup_go : goResult.Nodup := go_nodup deps [root] [] _ List.nodup_nil
-  have hnodup : (goResult.mergeSort (· ≤ ·)).Nodup :=
-    (List.mergeSort_perm goResult (· ≤ ·)).nodup_iff.mpr hnodup_go
-  have hsorted : (goResult.mergeSort (· ≤ ·)).Pairwise (· ≤ ·) := by
-    have h := @List.pairwise_mergeSort Nat (fun a b => decide (a ≤ b))
-      (fun a b c hab hbc => decide_eq_true (Nat.le_trans (of_decide_eq_true hab) (of_decide_eq_true hbc)))
-      (fun a b => by rcases Nat.le_total a b with h | h <;> simp [decide_eq_true h])
-      goResult
-    exact h.imp (fun hab => of_decide_eq_true hab)
+  have hnodup : (goResult.insertionSort (· ≤ ·)).Nodup :=
+    (List.perm_insertionSort _ goResult).nodup_iff.mpr hnodup_go
+  have hsorted : (goResult.insertionSort (· ≤ ·)).Pairwise (· ≤ ·) :=
+    List.pairwise_insertionSort (· ≤ ·) goResult
   exact List.isChain_iff_pairwise.mpr (pairwise_lt_of_sorted_nodup _ hsorted hnodup)
 
 /-- Elements in `visited` are preserved by `go`. -/
@@ -186,7 +190,7 @@ private theorem root_mem_go (deps : List Dependency) (root : Nat) :
 theorem root_mem_projection (deps : List Dependency) (root : Nat) :
     root ∈ projection deps root := by
   unfold projection
-  exact (List.mergeSort_perm _ (· ≤ ·)).mem_iff.mpr (root_mem_go deps root)
+  exact (List.perm_insertionSort _ _).mem_iff.mpr (root_mem_go deps root)
 
 /-- The output of `projection` is non-empty (root is always included). -/
 theorem projection_nonempty (deps : List Dependency) (root : Nat) :
@@ -215,7 +219,7 @@ theorem projection_of_no_children (deps : List Dependency) (idx : Nat)
   -- By h, filter = [], so children = [], so go ([] ++ []) [idx] fuel'
   simp only [h, List.map_nil, List.append_nil]
   rw [go_empty_queue]
-  exact List.mergeSort_singleton idx
+  rfl
 
 -- ============================================================================
 -- BFS Queue Membership Lemmas (for child_mem_projection)
@@ -259,13 +263,13 @@ private theorem go_mem_of_queue (deps : List Dependency)
 
 /-- The output of `projection` is a list with no duplicates.
     Follows from BFS visiting each node at most once (`go_nodup`), composed
-    with the fact that `mergeSort` preserves the multiset (hence Nodup). -/
+    with the fact that `insertionSort` preserves the multiset (hence Nodup). -/
 theorem projection_nodup (deps : List Dependency) (root : Nat) :
     (projection deps root).Nodup := by
   unfold projection
   set goResult := projection.go deps [root] [] (deps.length * (deps.length + 1) + 2)
   have hnodup_go : goResult.Nodup := go_nodup deps [root] [] _ List.nodup_nil
-  exact (List.mergeSort_perm goResult (· ≤ ·)).nodup_iff.mpr hnodup_go
+  exact (List.perm_insertionSort _ goResult).nodup_iff.mpr hnodup_go
 
 /-- If (v, w) is a dependency edge, then w ∈ projection deps v.
     Proof: BFS from v processes v first (adding children to queue),
@@ -275,9 +279,9 @@ theorem child_mem_projection (deps : List Dependency) (v w : Nat)
     w ∈ projection deps v := by
   unfold projection
   set goResult := projection.go deps [v] [] (deps.length * (deps.length + 1) + 2)
-  -- Suffices to show w ∈ goResult (membership preserved by mergeSort)
+  -- Suffices to show w ∈ goResult (membership preserved by insertionSort)
   suffices h : w ∈ goResult from
-    (List.mergeSort_perm goResult (· ≤ ·)).mem_iff.mpr h
+    (List.perm_insertionSort _ goResult).mem_iff.mpr h
   -- Unfold one BFS step: go processes v, adding children to queue
   show w ∈ projection.go deps [v] [] (deps.length * (deps.length + 1) + 2)
   have hfuel_rw : deps.length * (deps.length + 1) + 2 =
@@ -650,7 +654,7 @@ private theorem go_dominates_of_mem (deps : List Dependency)
 theorem dominates_of_mem_projection {deps : List Dependency} {v x : Nat}
     (h : x ∈ projection deps v) : Dominates deps v x := by
   have hx_go : x ∈ projection.go deps [v] [] (deps.length * (deps.length + 1) + 2) := by
-    simp only [projection, List.mem_mergeSort] at h
+    simp only [projection, List.mem_insertionSort] at h
     exact h
   rcases go_dominates_of_mem deps [v] [] _ x hx_go with habs | ⟨q, hq, hdom⟩
   · exact nomatch habs
@@ -805,7 +809,7 @@ theorem projection_closed_under_children (deps : List Dependency) (r w c : Nat)
     (hedge : parentEdge deps w c) :
     c ∈ projection deps r := by
   unfold projection at hw ⊢
-  rw [List.mem_mergeSort] at hw ⊢
+  rw [List.mem_insertionSort] at hw ⊢
   have hc_child : c ∈ (deps.filter (fun d => d.headIdx == w)).map (fun d => d.depIdx) := by
     obtain ⟨d, hd_mem, hd_head, hd_dep⟩ := hedge
     exact List.mem_map.mpr ⟨d, List.mem_filter.mpr ⟨hd_mem, by simp [hd_head]⟩, hd_dep⟩

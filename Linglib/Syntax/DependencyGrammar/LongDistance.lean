@@ -1,147 +1,161 @@
-/-
-# Word Grammar Analysis of Long-Distance Dependencies
-@cite{de-marneffe-nivre-2019} @cite{hudson-2010}
-
-Word Grammar analysis using SLASH features and filler-gap tracking.
-Long-distance dependencies are represented directly using DepTree (basic) and DepGraph
-(enhanced). The basic tree represents the surface structure; the enhanced graph fills
-gaps with explicit argument edges.
-
-Reference: @cite{hudson-1990}, @cite{gibson-2025}
--/
-
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.Auxiliaries
-import Linglib.Fragments.English.Complementizers
 import Linglib.Core.Dependency.Projection
+
+/-!
+# Long-distance dependencies in UD enhanced graphs
+@cite{de-marneffe-nivre-2019}
+
+Implements the gap-filling step of Universal Dependencies' enhanced
+dependency graphs (@cite{de-marneffe-nivre-2019}, §4.2 and Figure 9):
+the basic dependency tree obeys a unique-heads constraint that loses the
+predicate-argument relation across a filler-gap configuration, and the
+enhanced graph recovers it by adding an explicit edge from the gap-host
+word to the filler, producing a directed graph (not a tree) in which a
+word may have multiple incoming arcs.
+
+Word Grammar (@cite{hudson-2010}, §7.6.4-5) handles the same data with a
+structurally analogous "hopping" mechanism: the extracted element bears an
+*extractee* dependency from each intermediate verb in the chain, in
+addition to the grammatical relation (e.g. `object`) it holds of the
+deepest verb. This file follows the UD presentation rather than Hudson's
+extractee-and-`isA` machinery; cf. Hudson 2010 Figure 7.19 / 7.21 for the
+WG analogue.
+
+The earlier GPSG approach (@cite{gazdar-1981}) handles unbounded
+dependencies via SLASH-feature percolation through phrase-structure
+nodes — a categorially distinct mechanism not implemented here, and the
+historical source of HPSG's `SlashValue` apparatus. The file is named
+"LongDistance" rather than "SLASH" precisely because the data structure
+is a dependency graph, not a slash-augmented constituent category.
+
+## Main declarations
+
+* `GapType` — the four core UD argument positions a missing element may
+  fill (subject, object, indirect object, oblique).
+* `gapToDepRel` — the UD `DepRel` corresponding to a `GapType`.
+* `fillGap`, `fillGaps` — enhanced-edge construction: produce a `DepGraph`
+  from a basic `DepTree` by appending edges that record gap-filling.
+* `extractionLabel` — recover the gap-type label at a node by diffing the
+  basic tree against the enhanced graph.
+* `hasGapInModifierOrConjunct`, `checkNoIslandViolation` — a coarse
+  modifier/conjunct heuristic; does *not* implement Ross 1967's full
+  island inventory.
+* `isLDWellFormed` — structural well-formedness plus the coarse island
+  heuristic plus filler-licensing.
+
+## Implementation notes
+
+* The `Bool`-valued predicates follow `Core.Dependency.Projection`'s
+  convention of returning `Bool`; converting them to `Prop` + `Decidable`
+  is a substrate-wide refactor not done here.
+* `hasGapInModifierOrConjunct` is a deliberately coarse check: it flags
+  any gap whose direct head is `nmod` or `conj`. It does *not* correctly
+  recognize CNPC (which requires `acl` inside a nominal), CSC (which bans
+  extraction *out of* a single conjunct), adjunct islands (`advcl`), or
+  subject islands (`csubj`). The predicate is named to reflect what it
+  actually checks. Richer island handling for dependency grammar lives
+  in `DependencyGrammar/Formal/Islands.lean` (@cite{osborne-2019}), which
+  builds a finer taxonomy on top of rising catenae.
+* `GapType` covers only the four core UD argument positions (`nsubj`,
+  `obj`, `iobj`, `obl`). Possessor extraction (`nmod:poss`), parasitic
+  gaps, ATB extraction, and pied-piping are out of scope.
+* Filler licensing in `isLDWellFormed` recognizes wh-fronting,
+  topicalization (heuristic: `fillerIdx < rootIdx`), and relative-clause
+  heads (via `acl`). Clefts, pseudo-clefts, reduced relatives, and
+  tough-movement are out of scope.
+
+## Todo
+
+* Replace `hasGapInModifierOrConjunct` with structurally correct island
+  checks (CNPC via `acl` under a nominal, CSC via "out of a single
+  conjunct", adjunct via `advcl`, subject via `csubj`).
+* Promote `Phenomena.Islands.ConstraintType` (the canonical Ross-1967
+  enum) to substrate so this file and `Formal/Islands.lean` can share it
+  instead of each defining a private subset.
+* Build a cross-framework `FillerGap` abstract layer so `HPSG.SlashValue`,
+  `LongDistance.GapType`, and Minimalist movement labels all specialize a
+  shared interface.
+-/
 
 namespace DepGrammar.LongDistance
 
 open DepGrammar
 
-private abbrev what := Fragments.English.Pronouns.what.toWord
-private abbrev who := Fragments.English.Pronouns.who.toWord
-private abbrev did := Fragments.English.Auxiliaries.did.toWord
-private abbrev john := Fragments.English.Nouns.john.toWordSg
-private abbrev mary := Fragments.English.Nouns.mary.toWordSg
-private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
-private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
-private abbrev reads := Fragments.English.Predicates.Verbal.read.toWord3sg
-private abbrev gives := Fragments.English.Predicates.Verbal.give.toWord3sg
-private abbrev sleeps := Fragments.English.Predicates.Verbal.sleep.toWord3sg
-private abbrev think := Fragments.English.Predicates.Verbal.think.toWordPl
-private abbrev wonder := Fragments.English.Predicates.Verbal.wonder.toWordPl
-private abbrev the := Fragments.English.Determiners.the.toWord
-private abbrev book := Fragments.English.Nouns.book.toWordSg
-private abbrev that := Fragments.English.Determiners.that.toWord
-private abbrev if_ := Fragments.English.Complementizers.if_.toWord
+/-! ### Gap types and the UD relation map -/
 
--- ============================================================================
--- SLASH Features and Gap Types
--- ============================================================================
-
-/-- What type of element is missing in the gap -/
+/-- Argument position of the missing element: the four core UD argument
+relations subject (`nsubj`), object (`obj`), indirect object (`iobj`), and
+oblique (`obl`). -/
 inductive GapType where
-  | subjGap   -- Subject extraction: "Who _ saw Mary?"
-  | objGap    -- Object extraction: "What did you see _?"
-  | iobjGap   -- Indirect object extraction: "Who did you give the book _?"
-  | oblGap    -- Oblique extraction: "What did you put the book on _?"
-  deriving Repr, DecidableEq, Inhabited
-
-/-- Convert GapType to UD dependency relation -/
-def gapToDepRel : GapType → UD.DepRel
-  | .subjGap => .nsubj
-  | .objGap => .obj
-  | .iobjGap => .iobj
-  | .oblGap => .obl
-
-/-- SLASH feature: tracks what's missing
-    V/NP means "verb phrase missing a noun phrase" -/
-structure SLASH where
-  gapType : Option GapType := none
+  | subjGap
+  | objGap
+  | iobjGap
+  | oblGap
   deriving Repr, DecidableEq
 
--- ============================================================================
--- Island Constraints
--- ============================================================================
+/-- The UD `DepRel` corresponding to a `GapType`. -/
+@[simp] def gapToDepRel : GapType → UD.DepRel
+  | .subjGap => .nsubj
+  | .objGap  => .obj
+  | .iobjGap => .iobj
+  | .oblGap  => .obl
 
-/-- Island constraint types -/
-inductive IslandType where
-  | complex_NP    -- *"What did you meet [the man who saw _]?"
-  | coordinate    -- *"What did you eat [rice and _]?"
-  | adjunct       -- *"What did you leave [before seeing _]?"
-  | subject       -- *"Who did [that _ left] surprise you?"
-  deriving Repr, DecidableEq, Inhabited
+/-! ### Enhanced-edge construction -/
 
-/-- Check if a position is inside an island (simplified).
-    Works on a DepTree directly. -/
-def isInsideIsland (t : DepTree) (gapIdx : Nat) : Bool :=
-  t.deps.any λ d =>
-    (d.depType == .nmod || d.depType == .conj) &&
-    d.depIdx == gapIdx
-
-/-- Validate that no extraction site is inside an island.
-    Takes explicit filler-gap pairs as (fillerIdx, gapHostIdx, gapType). -/
-def checkNoIslandViolation (t : DepTree)
-    (gaps : List (Nat × Nat × GapType)) : Bool :=
-  gaps.all λ (_, gapHostIdx, _) =>
-    !isInsideIsland t gapHostIdx
-
--- ============================================================================
--- Gap Filling: DepTree → DepGraph
--- ============================================================================
-
-/-- Fill a gap by adding an argument edge to the enhanced graph.
-    The fillerIdx word becomes a dependent of gapHostIdx with the relation
-    corresponding to gapType. -/
-def fillGap (t : DepTree) (fillerIdx gapHostIdx : Nat) (gapType : GapType) : DepGraph :=
-  let newDep : Dependency := ⟨gapHostIdx, fillerIdx, gapToDepRel gapType⟩
+/-- Add a single enhanced edge to `t`, producing a `DepGraph`: the filler
+becomes a dependent of the gap-host with the UD relation corresponding to
+`gapType`. Matches the construction in @cite{de-marneffe-nivre-2019}
+Figure 9. -/
+def fillGap (t : DepTree) (fillerIdx gapHostIdx : Nat) (gapType : GapType) :
+    DepGraph :=
   { words := t.words
-    deps := t.deps ++ [newDep]
+    deps  := t.deps ++ [⟨gapHostIdx, fillerIdx, gapToDepRel gapType⟩]
     rootIdx := t.rootIdx }
 
-/-- Fill multiple gaps at once. -/
+/-- Add multiple enhanced edges at once. -/
 def fillGaps (t : DepTree) (gaps : List (Nat × Nat × GapType)) : DepGraph :=
   let newDeps := gaps.map λ (filler, host, gtype) =>
-    ({ headIdx := host, depIdx := filler, depType := gapToDepRel gtype } : Dependency)
+    (⟨host, filler, gapToDepRel gtype⟩ : Dependency)
   { words := t.words
-    deps := t.deps ++ newDeps
+    deps  := t.deps ++ newDeps
     rootIdx := t.rootIdx }
 
--- ============================================================================
--- SLASH Derivation from Graph Difference
--- ============================================================================
-
-/-- Get SLASH feature at a node by comparing basic tree vs enhanced graph.
-    If the enhanced graph has an argument edge to a word that the basic tree
-    doesn't, that word has a SLASH feature. -/
-def getSLASH (basic : DepTree) (enhanced : DepGraph) (nodeIdx : Nat) : SLASH :=
-  let enhancedOnly := enhanced.deps.filter λ d =>
+/-- Recover the gap-type label at `nodeIdx` by diffing `basic` against
+`enhanced`: returns the first enhanced-only argument-shaped edge's
+`GapType` interpretation, or `none`. -/
+def extractionLabel (basic : DepTree) (enhanced : DepGraph) (nodeIdx : Nat) :
+    Option GapType :=
+  let enhancedOnly := enhanced.deps.filter λ d=>
     d.depIdx == nodeIdx &&
-    !(basic.deps.any λ bd => bd.depIdx == d.depIdx && bd.headIdx == d.headIdx
-                             && bd.depType == d.depType)
-  match enhancedOnly.head? with
-  | some d =>
-    if d.depType == .nsubj then { gapType := some .subjGap }
-    else if d.depType == .obj then { gapType := some .objGap }
-    else if d.depType == .iobj then { gapType := some .iobjGap }
-    else if d.depType == .obl then { gapType := some .oblGap }
-    else {}
-  | none => {}
+    !(basic.deps.any λ bd=>
+        bd.depIdx == d.depIdx && bd.headIdx == d.headIdx &&
+        bd.depType == d.depType)
+  enhancedOnly.head?.bind λ d=>
+    match d.depType with
+    | .nsubj => some .subjGap
+    | .obj   => some .objGap
+    | .iobj  => some .iobjGap
+    | .obl   => some .oblGap
+    | _      => none
 
--- ============================================================================
--- Well-formedness
--- ============================================================================
+/-! ### Island heuristic and well-formedness -/
 
-/-- A long-distance dependency tree is well-formed if:
-    1. Structural constraints (unique heads, acyclicity, projectivity, agreement)
-    2. No island violations
-    3. Fillers are wh-words, fronted, or relative clause heads
-    Note: `checkVerbSubcat` is omitted because LD trees inherently have
-    argument gaps (the whole point of long-distance dependencies). -/
+/-- Coarse check: does the word at `gapIdx` head an `nmod` or `conj`
+relation. This does *not* correctly recognize any of the four classical
+Ross-1967 islands; see the module docstring's Todo. -/
+def hasGapInModifierOrConjunct (t : DepTree) (gapIdx : Nat) : Bool :=
+  t.deps.any λ d=>
+    (d.depType == .nmod || d.depType == .conj) && d.depIdx == gapIdx
+
+/-- No gap is reported inside the coarse modifier/conjunct heuristic. -/
+def checkNoIslandViolation (t : DepTree) (gaps : List (Nat × Nat × GapType)) :
+    Bool :=
+  gaps.all λ (_, gapHostIdx, _) => !hasGapInModifierOrConjunct t gapHostIdx
+
+/-- Combined well-formedness for trees with long-distance gaps: structural
+tree-level checks (from `Core.Dependency.Projection.isWellFormed` minus
+`checkVerbSubcat`, since LD trees inherently have argument gaps), the
+coarse island heuristic, and filler-licensing (wh-word, leftward
+topicalization, or relative-clause head). -/
 def isLDWellFormed (t : DepTree) (gaps : List (Nat × Nat × GapType)) : Bool :=
   hasUniqueHeads t &&
   isAcyclic t &&
@@ -151,143 +165,9 @@ def isLDWellFormed (t : DepTree) (gaps : List (Nat × Nat × GapType)) : Bool :=
   checkNoIslandViolation t gaps &&
   gaps.all λ (fillerIdx, _, _) =>
     match t.words[fillerIdx]? with
-    | some w => w.features.wh || fillerIdx < t.rootIdx ||
-                -- Relative clause: filler is the head noun of an acl relation
-                t.deps.any (fun d => d.headIdx == fillerIdx && d.depType == .acl)
+    | some w =>
+      w.features.wh || fillerIdx < t.rootIdx ||
+        t.deps.any λ d=> d.headIdx == fillerIdx && d.depType == .acl
     | none => false
-
--- ============================================================================
--- Example Trees: Wh-Questions
--- ============================================================================
-
-/-- "What did John see?" - Object wh-question (basic tree).
-    Words: what(0) did(1) John(2) see(3)
-    In UD, the wh-word attaches as obj of the main verb. -/
-def ex_whatDidJohnSee : DepTree :=
-  { words := [what, did, john, see]
-    deps := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
-    rootIdx := 1 }
-
-/-- "Who saw Mary?" - Subject wh-question (no gap needed). -/
-def ex_whoSawMary : DepTree :=
-  { words := [who, sees, mary]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
-    rootIdx := 1 }
-
-/-- "Who did John see?" - Object wh-question with "who". -/
-def ex_whoDidJohnSee : DepTree :=
-  { words := [who, did, john, see]
-    deps := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
-    rootIdx := 1 }
-
--- ============================================================================
--- Example Trees: Relative Clauses
--- ============================================================================
-
-/-- "the book that John read" - Object relative clause (basic tree).
-    Words: the(0) book(1) that(2) John(3) read(4)
-    In UD, the relative clause attaches via `acl` from head noun to RC verb.
-    The gap (book as obj of read) is implicit. -/
-def ex_theBookThatJohnRead : DepTree :=
-  { words := [the, book, that, john, reads]
-    deps := [⟨1, 0, .det⟩, ⟨1, 4, .acl⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩]
-    rootIdx := 1 }
-
-/-- Enhanced graph for "the book that John read" — gap filled.
-    Book (1) is added as obj of read (4). -/
-def ex_theBookThatJohnRead_enhanced : DepGraph :=
-  fillGap ex_theBookThatJohnRead 1 4 .objGap
-
-/-- "the book that John gave Mary" - Object relative with ditransitive. -/
-def ex_theBookThatJohnGaveMary : DepTree :=
-  { words := [the, book, that, john, gives, mary]
-    deps := [⟨1, 0, .det⟩, ⟨1, 4, .acl⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩, ⟨4, 5, .iobj⟩]
-    rootIdx := 1 }
-
--- ============================================================================
--- Example Trees: Complement Clauses
--- ============================================================================
-
-/-- "John thinks that Mary sleeps" - That-complement (no gap). -/
-def ex_johnThinksThatMarySleeps : DepTree :=
-  { words := [john, think, that, mary, sleeps]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩]
-    rootIdx := 1 }
-
-/-- "John thinks Mary sleeps" - Bare complement (that-omission, no gap). -/
-def ex_johnThinksMarySleeps : DepTree :=
-  { words := [john, think, mary, sleeps]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .ccomp⟩, ⟨3, 2, .nsubj⟩]
-    rootIdx := 1 }
-
-/-- "John wonders if Mary sleeps" - If-complement (no gap). -/
-def ex_johnWondersIfMarySleeps : DepTree :=
-  { words := [john, wonder, if_, mary, sleeps]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩]
-    rootIdx := 1 }
-
-/-- "John wonders what Mary saw" - Embedded wh-question.
-    Words: john(0) wonder(1) what(2) mary(3) sees(4) -/
-def ex_johnWondersWhatMarySaw : DepTree :=
-  { words := [john, wonder, what, mary, sees]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 3, .nsubj⟩, ⟨4, 2, .obj⟩]
-    rootIdx := 1 }
-
--- ============================================================================
--- Tests
--- ============================================================================
-
-#guard isLDWellFormed ex_whatDidJohnSee [(0, 3, .objGap)]
-#guard isLDWellFormed ex_whoSawMary []
-#guard isLDWellFormed ex_theBookThatJohnRead [(1, 4, .objGap)]
-
--- ============================================================================
--- Proofs
--- ============================================================================
-
-/-- Object wh-questions have wh-word at index 0. -/
-theorem whatDidJohnSee_has_wh :
-    (ex_whatDidJohnSee.words[0]?.map (·.features.wh)) = some true := rfl
-
-/-- Subject wh-questions don't need gaps (empty gap list). -/
-theorem whoSawMary_no_gap :
-    isLDWellFormed ex_whoSawMary [] = true := by native_decide
-
-/-- Enhanced graph for relative clause has the filled gap edge. -/
-theorem relclause_enhanced_has_obj :
-    ex_theBookThatJohnRead_enhanced.deps.any
-      (λ d => d.headIdx == 4 && d.depIdx == 1 && d.depType == .obj) = true := by
-  native_decide
-
-/-- The basic tree of "the book that John read" does NOT have this obj edge. -/
-theorem relclause_basic_lacks_obj :
-    ¬ (ex_theBookThatJohnRead.deps.any
-      (λ d => d.headIdx == 4 && d.depIdx == 1 && d.depType == .obj) = true) := by
-  native_decide
-
-/-- Enhanced graph has more edges than the basic tree. -/
-theorem relclause_enhanced_more_edges :
-    ex_theBookThatJohnRead_enhanced.deps.length >
-    ex_theBookThatJohnRead.deps.length := by native_decide
-
-/-- Enhanced graph violates unique-heads (book has edges from both det and obj). -/
-theorem relclause_enhanced_not_tree :
-    hasUniqueHeads { words := ex_theBookThatJohnRead_enhanced.words
-                     deps := ex_theBookThatJohnRead_enhanced.deps
-                     rootIdx := ex_theBookThatJohnRead_enhanced.rootIdx } = false := by
-  native_decide
-
-/-- The basic tree IS a tree (unique heads). -/
-theorem relclause_basic_is_tree :
-    hasUniqueHeads ex_theBookThatJohnRead = true := by native_decide
-
-/-- SLASH derivation: book (1) gets an obj SLASH from comparing basic vs enhanced. -/
-theorem relclause_slash_derived :
-    getSLASH ex_theBookThatJohnRead ex_theBookThatJohnRead_enhanced 1
-      = { gapType := some .objGap } := by native_decide
-
-/-- Complement clauses have no filler-gap dependencies. -/
-theorem complement_no_gap :
-    checkNoIslandViolation ex_johnThinksThatMarySleeps [] = true := by native_decide
 
 end DepGrammar.LongDistance
