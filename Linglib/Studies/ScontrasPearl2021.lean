@@ -19,7 +19,7 @@ TruthConditions.TruthJudgment
 ```
 -/
 
-import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
+import Linglib.Syntax.CCG.Interface
 import Linglib.Phenomena.Entailment.Basic
 
 namespace CCG.TruthConditions

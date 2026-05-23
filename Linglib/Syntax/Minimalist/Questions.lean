@@ -25,7 +25,7 @@ give the following structure for a polar question:
 
 ## Connection to Semantic Questions
 
-`Interfaces.SyntaxSemantics.LeftPeriphery` defines `WHFeature` (±WH on C) —
+`Syntax.Minimalist.LeftPeriphery` defines `WHFeature` (±WH on C) —
 the semantic clause-typing feature. The syntactic `FeatureVal.q` corresponds
 to the semantic `WHFeature`:
 - `FeatureVal.q true` ↔ `WHFeature.plusWH`

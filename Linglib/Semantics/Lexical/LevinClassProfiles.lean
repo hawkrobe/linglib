@@ -1,5 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.Lexical.LevinTheory
 
 /-!

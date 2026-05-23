@@ -11,14 +11,14 @@ import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Semantics.Composition.ToyDomain
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
+import Linglib.Syntax.Binding.Semantics
 
 namespace Semantics.Reference.Binding
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Semantics.Montague
-open Interfaces.BindingSemantics
+open BindingSemantics
 
 
 section InterpretationState

@@ -44,7 +44,7 @@ in `Syntax/Minimalist/ANDL.lean` (planned; not yet present).
 The semantic analysis (negative attitude, conventional implicature,
 possible-ignorance presupposition) lives in `Pragmatics/Expressives/`
 (currently `Basic.lean` + `OutlookMarker.lean`) and
-`Theories/Interfaces/SyntaxSemantics/LeftPeriphery.lean`. Fragment
+`Syntax/Minimalist/LeftPeriphery.lean`. Fragment
 lexemes import only this file.
 -/
 

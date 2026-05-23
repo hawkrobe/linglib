@@ -1,6 +1,6 @@
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Interfaces.SyntaxSemantics.VerbSmuggling
+import Linglib.Semantics.Lexical.VerbSmuggling
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Movement.Smuggling
 import Linglib.Syntax.Minimalist.Movement.InverseVoice

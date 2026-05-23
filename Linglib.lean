@@ -119,7 +119,7 @@ import Linglib.Core.Discourse.Goal
 import Linglib.Core.Discourse.Scoreboard
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
-import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
+import Linglib.Syntax.Binding.Semantics
 import Linglib.Core.CombinationKind
 import Linglib.Features.ScopeTypes
 import Linglib.Typology.Extraction
@@ -1860,8 +1860,8 @@ import Linglib.Studies.LuChuangBaayen2026
 -- Theories: CCG
 import Linglib.Syntax.CCG.Core.Basic
 import Linglib.Syntax.CCG.Core.Combinators
-import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
-import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Homomorphism
+import Linglib.Syntax.CCG.Interface
+import Linglib.Syntax.CCG.Homomorphism
 import Linglib.Studies.Cysouw2009
 import Linglib.Studies.Scott2023Agreement
 import Linglib.Phenomena.Agreement.DifferentialIndexing
@@ -2027,7 +2027,7 @@ import Linglib.Discourse.SDRT.RightFrontier
 -- Theories: Discourse — Faller/Murray illocutionary operators
 import Linglib.Discourse.EvidentialIllocution
 -- Theories: Interfaces — Centering ↔ DRT bridge
-import Linglib.Theories.Interfaces.SemanticsDiscourse.CenteringDRSExpr
+import Linglib.Discourse.Centering.DRSExpr
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
 import Linglib.Semantics.Dynamic.Connectives.Assignment
@@ -2307,9 +2307,9 @@ import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.ScaleCat
-import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
-import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
-import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
+import Linglib.Semantics.Composition.SyntaxInterface
+import Linglib.Studies.Borer2005
+import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 import Linglib.Semantics.Composition.Modification
 import Linglib.Semantics.Quantification.CovertQuantifier
 import Linglib.Semantics.Quantification.Binominal
@@ -2541,7 +2541,7 @@ import Linglib.Semantics.Questions.Probabilistic
 import Linglib.Pragmatics.DecisionTheoretic.MerinBridge
 import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
+import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Studies.BrehenyEtAl2018
 import Linglib.Studies.Katzir2007
 import Linglib.Studies.KatzirSingh2015
@@ -2776,7 +2776,7 @@ import Linglib.Semantics.Probabilistic.SDS.ThresholdSemantics
 -- Storment2026 mathlib-style refactor: VerbCore↔smuggling bridge,
 -- Probing primitives (Roberts 2010, Storment 2025), InverseVoice family,
 -- and three meta-bridges in Unaccusativity/.
-import Linglib.Theories.Interfaces.SyntaxSemantics.VerbSmuggling
+import Linglib.Semantics.Lexical.VerbSmuggling
 import Linglib.Syntax.Minimalist.Probing.DefectiveGoal
 import Linglib.Syntax.Minimalist.Probing.DefectiveCircumvention
 import Linglib.Syntax.Minimalist.Movement.InverseVoice

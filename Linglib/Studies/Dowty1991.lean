@@ -1,6 +1,6 @@
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.AgentivityLattice
-import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 import Linglib.Fragments.English.Predicates.Verbal
 

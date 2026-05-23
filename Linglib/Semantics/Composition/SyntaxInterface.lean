@@ -11,7 +11,7 @@ Documents compositional homomorphism requirement and syntax-agnostic nature of M
 
 import Linglib.Core.Logic.Intensional.Frame
 
-namespace Semantics.Montague.Interface.SyntaxInterface
+namespace Semantics.Composition.SyntaxInterface
 
 open Core.Logic.Intensional
 
@@ -37,4 +37,4 @@ structure MontagueBenefits (SynCat : Type) (Deriv : Type) [MontagueSyntax SynCat
   trueIn : Deriv → Frame → Bool
   entails : Deriv → Deriv → Frame → Bool
 
-end Semantics.Montague.Interface.SyntaxInterface
+end Semantics.Composition.SyntaxInterface

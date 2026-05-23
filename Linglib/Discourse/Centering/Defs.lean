@@ -32,7 +32,7 @@ The shape of Centering as a framework:
 * `[Realizes U E]` is the plug-in semantics of "u realizes e". The
   `outParam` on `E` lets Lean infer the entity type from the utterance.
   An instance for `Utterance E R` is provided in `Basic.lean`; the
-  DRT bridge in `Theories/Interfaces/SemanticsDiscourse/CenteringDRSExpr.lean`
+  DRT bridge in `Discourse/Centering/DRSExpr.lean`
   provides an instance for `DRSExpr`, so Cb computation works on either
   representation.
 

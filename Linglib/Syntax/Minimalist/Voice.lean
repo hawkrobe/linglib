@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.VerbalDecomposition
-import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # Voice Head Flavors

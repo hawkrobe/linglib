@@ -27,7 +27,7 @@ consumers (Yang's morphological productivity, infant rule generalization
 @cite{emond-shi-2021}) are not yet wired in.
 -/
 
-namespace Theories.Learning.TolerancePrinciple
+namespace Yang2016
 
 /-- The tolerance threshold for a vocabulary of size `n`. When `n ≤ 1`,
     `Real.log n ≤ 0` and the threshold collapses (mathlib's convention
@@ -54,4 +54,4 @@ theorem threshold_nonneg (n : ℕ) : 0 ≤ threshold n := by
 theorem tolerates_zero (n : ℕ) : tolerates n 0 := by
   simpa [tolerates] using threshold_nonneg n
 
-end Theories.Learning.TolerancePrinciple
+end Yang2016

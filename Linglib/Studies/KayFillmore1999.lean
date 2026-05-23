@@ -5,7 +5,7 @@ import Linglib.Core.Semantics.CommonGround
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
+import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
@@ -290,7 +290,7 @@ The two readings are distinguished by the PerspectiveP layer:
 | 1 | `Core/Presupposition` | WXDY presupposes the embedded proposition |
 | 2 | `Expressives/Basic` | Incredulity is CI content (projects through negation) |
 | 3 | `Semantics.Questions/Hamblin` | Literal = standard `which`; incredulity = degenerate Q |
-| 4 | `Interfaces.SyntaxSemantics/LeftPeriphery` | PerspP disambiguates the two readings |
+| 4 | `Semantics.ArgumentStructure.Linking/LeftPeriphery` | PerspP disambiguates the two readings |
 | 5 | `Core/CommonGround` | Presupposition requires CG entailment |
 | 6 | `Verb/Aspect` | Progressive requirement (durative ∧ dynamic) |
 | 7 | `Focus/DomainWidening` | Incongruity = normative expectation violation |
@@ -501,10 +501,10 @@ theorem literal_is_genuine_question {W E : Type*}
     wxdyLiteralQ activities pred = which activities pred := rfl
 
 -- ============================================================================
--- G. Left Periphery bridge (Interfaces.SyntaxSemantics/LeftPeriphery.lean) — DEEPEST BRIDGE
+-- G. Left Periphery bridge (Semantics.ArgumentStructure.Linking/LeftPeriphery.lean) — DEEPEST BRIDGE
 -- ============================================================================
 
-open Interfaces.SyntaxSemantics.LeftPeriphery
+open Syntax.Minimalist.LeftPeriphery
 
 /-- WXDY has a +WH feature on C (it is syntactically interrogative). -/
 def wxdyWHFeature : WHFeature := .plusWH

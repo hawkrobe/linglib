@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Studies.Ross1967
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
-import Linglib.Theories.Interfaces.SyntaxSemantics.VerbSmuggling
+import Linglib.Semantics.Lexical.VerbSmuggling
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -52,7 +52,7 @@ open Semantics.Lexical
 
 `mosIslandSources` is from @cite{lu-pan-degen-2025} (`Phenomena/Islands/
 MannerOfSpeaking.lean`); `derivedQI` is the syntactic prediction from
-@cite{storment-2026} (`Theories/Interfaces/SyntaxSemantics/VerbSmuggling.lean`).
+@cite{storment-2026} (`Semantics/Lexical/VerbSmuggling.lean`).
 For every MoS verb the Fragment lists as unaccusative, both observations
 hold simultaneously. -/
 

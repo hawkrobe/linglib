@@ -31,7 +31,7 @@ that records which drefs are realized pronominally.
 
 set_option autoImplicit false
 
-namespace Interfaces.SemanticsDiscourse.CenteringDRSExpr
+namespace Discourse.Centering.DRSExpr
 
 open Discourse.Centering
 open Semantics.Dynamic.Core.DRSExpr (DRSExpr occurs)
@@ -51,4 +51,4 @@ theorem box_realizes_new_dref (drefs : List Nat) (conds : List DRSExpr)
   unfold occurs
   exact Bool.or_eq_true_iff.mpr (Or.inl (List.contains_iff_mem.mpr h))
 
-end Interfaces.SemanticsDiscourse.CenteringDRSExpr
+end Discourse.Centering.DRSExpr

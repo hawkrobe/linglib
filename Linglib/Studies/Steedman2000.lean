@@ -29,7 +29,7 @@ Both conjuncts have category S/NP, so they can coordinate normally.
 -/
 
 import Linglib.Syntax.CCG.Core.Basic
-import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
+import Linglib.Syntax.CCG.Interface
 
 namespace Steedman2000
 

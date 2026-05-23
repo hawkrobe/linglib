@@ -51,7 +51,7 @@ of @cite{beavers-udayana-2022} is a consequence of Montague composition,
 not a stipulated data structure.
 -/
 
-namespace Interfaces.SyntaxSemantics.VoiceSemantics
+namespace Semantics.ArgumentStructure.VoiceSemantics
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
@@ -263,4 +263,4 @@ theorem berSemG_assignment_agnostic {F : Frame} {τ : Ty} (n : ℕ)
     berSemG n vp g₁ = berSemG n vp g₂ := by
   simp only [berSemG, h, hvp]
 
-end Interfaces.SyntaxSemantics.VoiceSemantics
+end Semantics.ArgumentStructure.VoiceSemantics

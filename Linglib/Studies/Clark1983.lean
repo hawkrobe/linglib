@@ -1,7 +1,7 @@
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Morphology.DM.Categorizer
-import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Pragmatics.RSA.LexicalUncertainty
 import Mathlib.Data.Fintype.BigOperators
 

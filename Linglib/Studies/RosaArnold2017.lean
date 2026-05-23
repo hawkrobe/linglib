@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Core.Discourse.Coherence
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Predicates.Verbal

@@ -1,5 +1,5 @@
 import Linglib.Typology.Complementation
-import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
+import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Semantics.Mood.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
@@ -36,7 +36,7 @@ namespace Noonan2007
 
 open Typology.Complementation
 open Fragments.English.Predicates.Verbal
-open Interfaces.SyntaxSemantics.LeftPeriphery
+open Syntax.Minimalist.LeftPeriphery
 open Semantics.Mood
 
 -- ============================================================================

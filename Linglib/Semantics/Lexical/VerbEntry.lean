@@ -14,7 +14,7 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.Implicative
-import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.Causation.Psych
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Aspect.DegreeAchievement

@@ -2,7 +2,7 @@ import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Mandarin.Questions
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Typology.ExpressiveModifier
-import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
+import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Paradigms.AcceptabilityJudgment
 import Linglib.Studies.Ross1967
 
@@ -161,7 +161,7 @@ open Minimalist.ANDL
   (povUnvaluedFeature povOperatorFeature LicensedMinimalist)
 open Paradigms.AcceptabilityJudgment
   (FactorialCondition DDResult AccountPredictions)
-open Interfaces.SyntaxSemantics.LeftPeriphery (SelectionClass)
+open Syntax.Minimalist.LeftPeriphery (SelectionClass)
 
 -- ============================================================================
 -- §1. The licensing predicate — derived from mechanism
@@ -398,7 +398,7 @@ def theHellSelectionClass : SelectionClass := .rogativePerspP
     entail knowledge of the answer — matching *the-hell*'s ignorance
     component (@cite{martin-2020}). Bridge from `LeftPeriphery`. -/
 theorem theHell_no_knowledge :
-    Interfaces.SyntaxSemantics.LeftPeriphery.entailsKnowledge
+    Syntax.Minimalist.LeftPeriphery.entailsKnowledge
       theHellSelectionClass = false := rfl
 
 /-- The PerspP-selecting class is consistent with the possible-ignorance
@@ -406,7 +406,7 @@ theorem theHell_no_knowledge :
     *the-hell*'s negative attitude (@cite{rawlins-2008},
     @cite{ippolito-2024}). -/
 theorem theHell_persp_consistent :
-    Interfaces.SyntaxSemantics.LeftPeriphery.perspPConsistent
+    Syntax.Minimalist.LeftPeriphery.perspPConsistent
       theHellSelectionClass false false = true := rfl
 
 -- ============================================================================

@@ -1,6 +1,6 @@
 import Linglib.Core.Mereotopology
 import Linglib.Core.Mereology
-import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
+import Linglib.Studies.Borer2005
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Studies.Filip2012
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
@@ -462,7 +462,7 @@ role of Q), but through orthogonal properties of the parthood lattice:
 the algebraic (atomicity) versus the topological (connectivity).
 -/
 
-open Interfaces.SyntaxSemantics.Borer2005 (Div div_qua)
+open Borer2005 (Div div_qua)
 
 /-- Mixed drinks are not mereological atoms: they have proper parts
     (their ingredient components).

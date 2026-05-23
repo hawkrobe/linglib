@@ -4,7 +4,7 @@
 Data types for H&K-style assignment-based binding semantics.
 -/
 
-namespace Interfaces.BindingSemantics
+namespace BindingSemantics
 
 /-- A position in a syntactic structure. -/
 structure Position where
@@ -45,4 +45,4 @@ def BindingConfig.wellFormed (bc : BindingConfig) : Bool :=
       r1.binder != r2.binder || r1.varIndex == r2.varIndex
   noDoubleBinding && noSelfBinding && consistentIndices
 
-end Interfaces.BindingSemantics
+end BindingSemantics

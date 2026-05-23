@@ -254,7 +254,7 @@ theorem canonical_profiles_wellformed (r : ThetaRole) :
 -- § 6. Argument position
 -- ════════════════════════════════════════════════════════════════════════
 
-namespace Interfaces.SyntaxSemantics
+namespace Semantics.ArgumentStructure.Linking
 
 /-- Which argument position in the clause we're asking about.
     Theory-neutral: expressed as grammatical functions, not structural
@@ -318,4 +318,4 @@ def LinkingTheory.matchesAt {Verb Ctx : Type} [BEq Ctx]
     (actual : Option ThetaRole) : Bool :=
   (th.compatible v).any fun ctx => th.predict v ctx pos == actual
 
-end Interfaces.SyntaxSemantics
+end Semantics.ArgumentStructure.Linking

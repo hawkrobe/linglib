@@ -52,7 +52,7 @@ consistent with compositional semantics:
 
 -/
 
-namespace Interfaces.SyntaxSemantics.Borer2005
+namespace Borer2005
 
 open _root_.Mereology
 
@@ -515,4 +515,4 @@ The composition `qua_pullback (θ : Event → Entity) (div_qua P)` is
 already supported by `Core/Mereology` §8.
 -/
 
-end Interfaces.SyntaxSemantics.Borer2005
+end Borer2005

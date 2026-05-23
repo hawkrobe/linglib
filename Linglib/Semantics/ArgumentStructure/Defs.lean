@@ -1,6 +1,6 @@
 import Linglib.Semantics.Events.Defs
 import Linglib.Core.Word
-import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # Thematic Roles — type definitions

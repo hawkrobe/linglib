@@ -1,7 +1,7 @@
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Lexical.EventStructure
-import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # ConstructionGrammar.Resultatives — Theory of the resultative construction family

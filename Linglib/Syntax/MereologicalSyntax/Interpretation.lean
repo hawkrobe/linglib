@@ -1,5 +1,5 @@
 import Linglib.Syntax.MereologicalSyntax.Basic
-import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
+import Linglib.Studies.Borer2005
 
 set_option autoImplicit false
 
@@ -46,7 +46,7 @@ def individuates (d : SynObj) : Bool :=
 section Semantics
 
 open _root_.Mereology
-open Interfaces.SyntaxSemantics.Borer2005
+open Borer2005
 
 variable {α : Type*} [SemilatticeSup α]
 

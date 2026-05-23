@@ -27,7 +27,7 @@ typically classified as a pragmatic theory of local coherence whereas
 
 set_option autoImplicit false
 
-namespace Interfaces.PragmaticsDiscourse.CenteringCoherence
+namespace Discourse.Centering.Rule2Coherence
 
 open Discourse.Centering
 open Core.Discourse.Coherence
@@ -57,4 +57,4 @@ theorem causal_pair_preferred_over_substitution :
     coherencePairScore .explanation .result >
     coherencePairScore .contrast .correction := by decide
 
-end Interfaces.PragmaticsDiscourse.CenteringCoherence
+end Discourse.Centering.Rule2Coherence

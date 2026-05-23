@@ -1,6 +1,6 @@
 import Linglib.Studies.Cooper2023Ch7
 import Linglib.Semantics.Composition.Scope
-import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
+import Linglib.Syntax.Binding.Semantics
 
 /-!
 # Cooper (2023) Ch. 8 — Type-Based Underspecification
@@ -744,7 +744,7 @@ end BindingPhenomenon
 /-! ### Bridge to positional binding interface
 
 Connect TTR's semantic binding (ℜ / @_{i,j}) to the syntactic binding
-interface in `Theories.Interfaces.SyntaxSemantics.Binding`.
+interface in `Theories.Semantics.ArgumentStructure.Linking.Binding`.
 
 TTR's binding theory is *semantic* (argument identification via types),
 while `BindingSemantics` is *syntactic* (position-based binder–bindee
@@ -754,7 +754,7 @@ relations). The bridge maps:
 
 section BindingSemBridge
 
-open Interfaces.BindingSemantics
+open BindingSemantics
 
 /-- ℜ induces a binding relation: subject binds the reflexive object.
     Cooper Ch8, (81): S → NP VP | B(NP'(@VP')).

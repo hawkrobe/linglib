@@ -1,4 +1,4 @@
-import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
+import Linglib.Syntax.Minimalist.LeftPeriphery
 import Linglib.Phenomena.Questions.Embedding
 import Linglib.Studies.BhattDayal2020
 
@@ -44,7 +44,7 @@ This study file is the canonical home for:
 
 namespace Dayal2025
 
-open Interfaces.SyntaxSemantics.LeftPeriphery
+open Syntax.Minimalist.LeftPeriphery
 open Phenomena.Questions.Embedding
 open BhattDayal2020
 
@@ -268,13 +268,13 @@ def classifyVerb : String → SelectionClass
 theorem theory_predicts_embedding :
     ∀ d ∈ allEmbeddingData,
       allowsEmbedding (classifyVerb d.verb)
-        Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.subordination
+        Syntax.Minimalist.LeftPeriphery.EmbedType.subordination
         false false = d.subordination ∧
       allowsEmbedding (classifyVerb d.verb)
-        Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.quasiSubordination
+        Syntax.Minimalist.LeftPeriphery.EmbedType.quasiSubordination
         false false = d.quasiSubordination ∧
       allowsEmbedding (classifyVerb d.verb)
-        Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.quotation
+        Syntax.Minimalist.LeftPeriphery.EmbedType.quotation
         false false = d.quotation := by
   intro d hd
   simp only [allEmbeddingData, List.mem_cons, List.mem_singleton, List.mem_nil_iff,

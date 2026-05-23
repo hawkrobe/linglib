@@ -2,7 +2,7 @@ import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Studies.Beavers2010
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Typology.Voice
-import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
+import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 
 /-!
 # @cite{beavers-udayana-2022} Middle voice as generalized argument suppression
@@ -93,7 +93,7 @@ open Minimalist (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Beavers2010
 open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree)
 open Typology.Voice
-open Interfaces.SyntaxSemantics.VoiceSemantics
+open Semantics.ArgumentStructure.VoiceSemantics
 open Core.Logic.Intensional
 
 -- ============================================================================

@@ -1,7 +1,7 @@
 import Linglib.Phonology.Process.Alternation
 import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Phonology.Subregular.OCP
-import Linglib.Theories.Learning.TolerancePrinciple
+import Linglib.Studies.Yang2016
 import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
@@ -270,7 +270,7 @@ rule with `n` items in scope and `e` exceptions is *tolerated* iff
 threshold, matching @cite{belth-2026}'s 4-of-121 (~3%) result on the
 full Perseus corpus. -/
 
-open Theories.Learning.TolerancePrinciple in
+open Yang2016 in
 /-- The threshold inequality for the six-example demo: 1 exception ≤ 6/ln 6. -/
 theorem tolerates_six_one : tolerates 6 1 := by
   unfold tolerates threshold
@@ -280,7 +280,7 @@ theorem tolerates_six_one : tolerates 6 1 := by
   rw [le_div_iff₀ hpos]
   linarith
 
-open Theories.Learning.TolerancePrinciple in
+open Yang2016 in
 /-- The learned rule passes Yang's Tolerance Principle on the worked
     examples: its exception count (1, *lunaris*) fits under the threshold
     `latinData.length / ln latinData.length`. This is the productivity

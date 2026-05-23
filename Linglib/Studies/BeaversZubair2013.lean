@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.CauserSort
-import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
+import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 import Linglib.Core.Case.Basic
 import Linglib.Fragments.Sinhala.Verbs
 
@@ -192,7 +192,7 @@ theorem volitive_admitted_for_break :
 /-! The `anticausativizes` predicate above is the type
     checker's view of B&Z's prediction. The semantic operator that
     actually does the work — `causerSuppress` from
-    `Theories/Interfaces/SyntaxSemantics/VoiceSemantics.lean` — takes
+    `Semantics/ArgumentStructure/VoiceSemantics.lean` — takes
     a `CauserSort` and a *proof* that it admits individuals as a
     parameter. The proof obligation IS the predictive engine: a verb
     that does not anticausativize cannot have its operator
@@ -202,7 +202,7 @@ theorem volitive_admitted_for_break :
     *kadann* 'break' the operator instantiates with a `decide`-discharged
     obligation; for *minimarann* 'murder' no such proof exists. -/
 
-open Interfaces.SyntaxSemantics.VoiceSemantics
+open Semantics.ArgumentStructure.VoiceSemantics
 
 /-- The Sinhala suppression operator can be instantiated for *kadann*
     'break' because its causer sort `.any` admits individuals. The
