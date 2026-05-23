@@ -127,18 +127,22 @@ theorem tolerant_exh_subset_innocent_exh
   obtain ⟨hw_phi, hw_neg⟩ := hw
   refine ⟨hw_phi, fun a ha_ie hw_a => ?_⟩
   have ha_alt : a ∈ ALT := Innocent.innocentlyExcludable_subset ALT φ ha_ie
-  -- a is innocently excludable, so a ∈ every MC-set, in particular it's
-  -- consistently negatable alongside φ. So φ ⊄ a (there's a φ-world
-  -- outside a). Therefore tolerant negates a too. So if w were in a,
-  -- tolerant would have excluded w from φ, contradicting hw_neg.
+  -- a is innocently excludable, so its negation is consistent with φ —
+  -- i.e., there is some φ-world outside a. So ¬(φ ⊆ a), and tolerant
+  -- negates a. Then if w ∈ a, tolerant would have excluded w, contra.
   apply hw_neg a ha_alt
-  · -- ¬ φ ⊆ a: follows from a being innocently excludable
+  · -- ¬ φ ⊆ a: follows from a being innocently excludable.
     intro hsub
-    -- If φ ⊆ a, then negating a is inconsistent with φ — contradicts IE
-    have hφ_mem : φ ∈ Innocent.innocentlyExcludable ALT φ →
-                  False := by
-      sorry -- needs lemma "if φ ⊆ a then a ∉ IE"
-    sorry -- TODO: complete via existing characterization
+    -- Bridge Finset → Set, then apply `not_isInnocentlyExcludable_of_phi_subset`.
+    have hSet : Exhaustification.IsInnocentlyExcludable
+        (Innocent.asSetOfSets ALT) (↑φ : Set W) (↑a : Set W) :=
+      (Innocent.isInnocentlyExcludable_iff ALT φ a).mpr ha_ie
+    have hfin : Set.Finite (Innocent.asSetOfSets ALT) :=
+      (Set.toFinite _).image _
+    have hsat : ∃ x : W, (↑φ : Set W) x := ⟨w, hw_phi⟩
+    have h_subset_set : (↑φ : Set W) ⊆ (↑a : Set W) := fun x hx => hsub hx
+    exact Exhaustification.not_isInnocentlyExcludable_of_phi_subset
+        hfin hsat h_subset_set hSet
   · exact hw_a
 
 /-- **Partial-cover alts**: when `(φ \ ALT.sup id).Nonempty`, every
