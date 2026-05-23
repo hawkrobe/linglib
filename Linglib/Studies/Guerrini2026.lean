@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
 import Linglib.Theories.Semantics.Genericity.Generics
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Theories.Semantics.Plurality.Cumulativity
+import Linglib.Theories.Semantics.Plurality.Trivalent
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Core.Logic.Truth3
 import Linglib.Studies.TesslerGoodman2019
@@ -73,8 +74,8 @@ namespace Guerrini2026
 open Semantics.Kinds.NMP (NominalMapping Kind CanDenoteKind
   CanDenoteProperty downDefinedFor DPP)
 open Core.Duality (Truth3)
-open Semantics.Plurality.Distributivity (distMaximal pluralTruthValue
-  allSatisfy noneSatisfy)
+open Semantics.Plurality (distMaximal allSatisfy noneSatisfy)
+open Semantics.Plurality.Trivalent (pluralTruthValue)
 open Phenomena.Generics.KindReference (NominalDenotation)
 
 -- ============================================================================

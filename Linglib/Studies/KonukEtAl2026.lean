@@ -252,7 +252,7 @@ theorem loss_gap_iff_pluralGap :
     (lossClassical (f 0) (f 1) (f 2) (f 3) = true ∧
      lossStrong (f 0) (f 1) (f 2) (f 3) = false) ↔
     (lossClassical (f 0) (f 1) (f 2) (f 3) = true ∧
-     Semantics.Plurality.Distributivity.someSatisfy
+     Semantics.Plurality.someSatisfy
        (fun (i : Fin 4) (_ : Unit) => f i) Finset.univ () = true) := by
   decide
 
@@ -342,7 +342,7 @@ theorem lossStrong_iff_allFalse (f : Fin 4 → Bool) :
 theorem lossStrong_eq_noneSatisfy :
     ∀ f : Fin 4 → Bool,
     lossStrong (f 0) (f 1) (f 2) (f 3) =
-    Semantics.Plurality.Distributivity.noneSatisfy
+    Semantics.Plurality.noneSatisfy
       (fun (i : Fin 4) (_ : Unit) => f i) Finset.univ () := by
   decide
 

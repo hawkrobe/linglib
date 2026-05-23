@@ -532,6 +532,7 @@ general case for arbitrary pluralities.
 section MUDistributivity
 
 open Core.Logic.Intensional.Conjunction
+open Semantics.Plurality
 open Semantics.Plurality.Distributivity
 
 /--

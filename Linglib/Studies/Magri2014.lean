@@ -3,6 +3,7 @@ import Linglib.Features.Polarity
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Plurality.Implicature
 
 /-!
 # Magri (2014): Homogeneity Effects via Double Strengthening
@@ -207,6 +208,66 @@ theorem strong_entails_weak (s : Scenario) (hn : s.total ≥ 1) :
     allMeaning s = true → someMeaning s = true := by
   simp only [allMeaning, someMeaning, beq_iff_eq, decide_eq_true_eq]
   omega
+
+/-! ### Bridge to @cite{bar-lev-2021}'s `existPL`
+
+Magri 2014's "plain existential" semantics for plural definites (§3)
+is structurally identical to Bar-Lev 2021's `∃-PL` operator
+(`Plurality.Implicature.existPL`) applied on the full domain. The two
+homogeneity accounts agree on the basic meaning and diverge only in
+the strengthening mechanism: Magri uses *double scalar implicature*
+(§3 of @cite{magri-2014}), Bar-Lev uses `Exh^{IE+II}`. The bridge
+below formalises the convergence at the substrate level.
+
+The translation `fromPredicate` abstracts a Bar-Lev-style predicative
+model `(P, x, w)` to a Magri-style `Scenario` by counting how many
+atoms of `x` satisfy `P` at `w`. -/
+
+section ImplicatureBridge
+
+open Semantics.Plurality.Implicature (existPL existPL_full)
+
+variable {Atom W : Type*} [DecidableEq Atom]
+
+/-- Translate a Bar-Lev-style predicative model into a Magri-style
+    `Scenario` by counting how many atoms of `x` satisfy `P` at `w`. -/
+def fromPredicate (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) : Scenario where
+  total := x.card
+  satisfying := (x.filter (fun a => P a w)).card
+  valid := Finset.card_filter_le _ _
+
+/-- **Magri's plain existential = Bar-Lev's `existPL` on full domain.**
+    The "plain existential" semantics Magri assigns to plural definites
+    is structurally identical to Bar-Lev 2021's `∃-PL` operator with
+    `D = x`. Both homogeneity accounts thus share the basic meaning;
+    they differ only in the strengthening mechanism. -/
+theorem someMeaning_iff_existPL
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) :
+    someMeaning (fromPredicate P x w) = true ↔ existPL x P x w := by
+  rw [existPL_full _ _ _ _ (Finset.Subset.refl x)]
+  simp only [someMeaning, fromPredicate, decide_eq_true_eq, ge_iff_le,
+             Nat.one_le_iff_ne_zero, Finset.card_ne_zero,
+             Finset.filter_nonempty_iff]
+
+/-- **Magri's strong universal = atomic universal.** `allMeaning s = true`
+    iff every atom of `x` satisfies `P` — the truth condition the
+    universal reading of the plural definite is supposed to converge
+    on under either double strengthening (Magri) or `Exh^{IE+II}`
+    (Bar-Lev). -/
+theorem allMeaning_iff_forall_mem
+    (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
+    (x : Finset Atom) (w : W) :
+    allMeaning (fromPredicate P x w) = true ↔ ∀ a ∈ x, P a w := by
+  simp only [allMeaning, fromPredicate, beq_iff_eq]
+  refine ⟨fun h a hax => ?_, fun h => ?_⟩
+  · have hfeq : x.filter (fun a => P a w) = x :=
+      Finset.eq_of_subset_of_card_le (Finset.filter_subset _ _) (by omega)
+    exact (Finset.filter_eq_self.mp hfeq) a hax
+  · rw [Finset.filter_eq_self.mpr h]
+
+end ImplicatureBridge
 
 /--
 EXH applied to a prejacent: assert the prejacent and negate all

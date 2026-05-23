@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
+import Linglib.Theories.Semantics.Plurality.Trivalent
 
 /-!
 # German Distributive Expressions
@@ -29,7 +29,9 @@ Theory definitions, never stipulating their own meaning functions.
 
 namespace Fragments.German.Distributives
 
+open Semantics.Plurality
 open Semantics.Plurality.Distributivity
+open Semantics.Plurality.Trivalent
 
 variable {Atom W : Type*} [DecidableEq Atom]
 
@@ -149,9 +151,9 @@ theorem alle_iff_allSatisfy [Fintype Atom] (P : Atom → W → Prop)
     This is a descriptive correlation, not a theorem — the paper notes
     that `jeder*` (eq. 27) would be a counterexample if attested. -/
 theorem dp_use_implies_maximal_for_attested :
-    jederEntry.hasDPUse = true ∧ jederEntry.distMaxClass.isMaximal = true ∧
-    alleEntry.hasDPUse = true ∧ alleEntry.distMaxClass.isMaximal = true ∧
-    jeweilsEntry.hasDPUse = false ∧ jeweilsEntry.distMaxClass.isMaximal = false := by
+    jederEntry.hasDPUse = true ∧ jederEntry.distMaxClass.isMaximal ∧
+    alleEntry.hasDPUse = true ∧ alleEntry.distMaxClass.isMaximal ∧
+    jeweilsEntry.hasDPUse = false ∧ ¬ jeweilsEntry.distMaxClass.isMaximal := by
   decide
 
 end Fragments.German.Distributives

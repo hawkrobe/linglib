@@ -82,21 +82,20 @@ open Fragments.Mwaghavul
 /-- The Mwaghavul-instantiated autosegmental form. -/
 abbrev MwaghavulForm := FloatingForm Syl
 
-/-- Morpheme ID for the ideophone root (wùlàʃ in Tableau 24, háŋláyáp
-    in Tableau 25). Both single-root tableaux share this ID. -/
-def rootMorph : MorphemeId := 0
+/-- The ideophone root (wùlàʃ in Tableau 24, háŋláyáp in Tableau 25).
+    Both single-root tableaux share this morpheme. -/
+def rootMorph : Morpheme := { form := "root" }
 
-/-- Morpheme ID for the verbaliser. The M-tone verbaliser (Tableau 24)
-    and the M-H verbaliser (Tableaux 25/26) share this ID — they're
-    suppletive allomorphs of the same verbaliser morpheme per paper
-    p. 20 eq. (17). -/
-def vbzMorph : MorphemeId := 1
+/-- The verbaliser. The M-tone verbaliser (Tableau 24) and the M-H
+    verbaliser (Tableaux 25/26) share this morpheme — they're suppletive
+    allomorphs of the same verbaliser per paper p. 20 eq. (17). -/
+def vbzMorph : Morpheme := { form := "vbz" }
 
-/-- Morpheme ID for the reduplicant root in pluractional Tableau 26. -/
-def rootRedMorph : MorphemeId := 2
+/-- The reduplicant root in pluractional Tableau 26. -/
+def rootRedMorph : Morpheme := { form := "root-red" }
 
-/-- Morpheme ID for the base root in pluractional Tableau 26. -/
-def rootBaseMorph : MorphemeId := 3
+/-- The base root in pluractional Tableau 26. -/
+def rootBaseMorph : Morpheme := { form := "root-base" }
 
 /-- Wrap a Mwaghavul syllable as a TBU of the (single) ideophone root. -/
 def rootSeg (s : Syl) : SegSpec Syl := { seg := s, morpheme := rootMorph }
@@ -139,20 +138,20 @@ def lBase : ToneSpec := { tone := TRN.L, morpheme := rootBaseMorph }
 section SingleRoot
 
 /-- Does TBU `i` bear a tone of value `t` from morpheme `m`? -/
-def isGramTbu (t : TRN) (m : MorphemeId) (f : MwaghavulForm) (i : SegIdx) : Bool :=
+def isGramTbu (t : TRN) (m : Morpheme) (f : MwaghavulForm) (i : SegIdx) : Bool :=
   (f.linksTo i).any fun k =>
     (f.ulTones[k]?).any fun ts => decide (ts.tone = t ∧ ts.morpheme = m)
 
 /-- L-ANCHOR-`t`-from-`m`: number of TBUs (in tier order) before the
     leftmost gram-`t`-from-`m` TBU. If no such TBU exists, every TBU
     counts (full TBU count). -/
-def lAnchTone (t : TRN) (m : MorphemeId) (f : MwaghavulForm) : Nat :=
+def lAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
   match (List.range f.segs.length).findIdx? (isGramTbu t m f) with
   | some i => i
   | none   => f.segs.length
 
 /-- R-ANCHOR-`t`-from-`m`: counted from the right edge. -/
-def rAnchTone (t : TRN) (m : MorphemeId) (f : MwaghavulForm) : Nat :=
+def rAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
   match (List.range f.segs.length).reverse.findIdx? (isGramTbu t m f) with
   | some i => i
   | none   => f.segs.length
@@ -163,14 +162,14 @@ def maxToneAuto (f : MwaghavulForm) : Nat :=
   (List.range f.ulTones.length).countP (fun k => decide (f.IsDeleted k))
 
 /-- L-ANCHOR-Mᵥ as a `DirectionalConstraint`. -/
-def lAnchToneC (t : TRN) (m : MorphemeId) : DirectionalConstraint MwaghavulForm where
-  name := s!"L-ANCH-{reprStr t}({m})"
+def lAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm where
+  name := s!"L-ANCH-{reprStr t}({m.form})"
   family := .faithfulness
   eval := fun f => [lAnchTone t m f]
 
 /-- R-ANCHOR-Mᵥ as a `DirectionalConstraint`. -/
-def rAnchToneC (t : TRN) (m : MorphemeId) : DirectionalConstraint MwaghavulForm where
-  name := s!"R-ANCH-{reprStr t}({m})"
+def rAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm where
+  name := s!"R-ANCH-{reprStr t}({m.form})"
   family := .faithfulness
   eval := fun f => [rAnchTone t m f]
 
@@ -202,14 +201,14 @@ section PerRoot
 
 /-- A gram-`t`-from-`m` tone is realised on root `rm` iff some TBU of
     `rm` bears one. -/
-def isRealisedOnRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
+def isRealisedOnRoot (t : TRN) (m : Morpheme) (rm : Morpheme)
     (f : MwaghavulForm) : Bool :=
   (f.segsOfMorpheme rm).any (isGramTbu t m f)
 
 /-- L-ANCHOR scoped to root `rm`. 0 if `t`-from-`m` not realised on
     `rm` (per paper p. 28: "no violation to the other root morpheme");
     else count TBUs of `rm` before the leftmost gram-`t` TBU of `rm`. -/
-def lAnchTonePerRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
+def lAnchTonePerRoot (t : TRN) (m : Morpheme) (rm : Morpheme)
     (f : MwaghavulForm) : Nat :=
   if isRealisedOnRoot t m rm f then
     match (f.segsOfMorpheme rm).findIdx? (isGramTbu t m f) with
@@ -218,7 +217,7 @@ def lAnchTonePerRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
   else 0
 
 /-- R-ANCHOR scoped to root `rm`. -/
-def rAnchTonePerRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
+def rAnchTonePerRoot (t : TRN) (m : Morpheme) (rm : Morpheme)
     (f : MwaghavulForm) : Nat :=
   if isRealisedOnRoot t m rm f then
     match (f.segsOfMorpheme rm).reverse.findIdx? (isGramTbu t m f) with
@@ -229,7 +228,7 @@ def rAnchTonePerRoot (t : TRN) (m : MorphemeId) (rm : MorphemeId)
 /-- L-ANCHOR summed across a list of root morphemes. If the gram tone
     is not realised on ANY of the roots, paper p. 28 assigns one
     violation per TBU of every targeted root (not 0). -/
-def lAnchToneAcrossRoots (t : TRN) (m : MorphemeId) (rms : List MorphemeId)
+def lAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
     (f : MwaghavulForm) : Nat :=
   if rms.any (fun rm => isRealisedOnRoot t m rm f) then
     rms.foldl (fun acc rm => acc + lAnchTonePerRoot t m rm f) 0
@@ -237,7 +236,7 @@ def lAnchToneAcrossRoots (t : TRN) (m : MorphemeId) (rms : List MorphemeId)
     rms.foldl (fun acc rm => acc + (f.segsOfMorpheme rm).length) 0
 
 /-- R-ANCHOR summed across a list of root morphemes. -/
-def rAnchToneAcrossRoots (t : TRN) (m : MorphemeId) (rms : List MorphemeId)
+def rAnchToneAcrossRoots (t : TRN) (m : Morpheme) (rms : List Morpheme)
     (f : MwaghavulForm) : Nat :=
   if rms.any (fun rm => isRealisedOnRoot t m rm f) then
     rms.foldl (fun acc rm => acc + rAnchTonePerRoot t m rm f) 0
@@ -245,16 +244,16 @@ def rAnchToneAcrossRoots (t : TRN) (m : MorphemeId) (rms : List MorphemeId)
     rms.foldl (fun acc rm => acc + (f.segsOfMorpheme rm).length) 0
 
 /-- L-ANCHOR-`t`-from-`m`-across-roots as a `DirectionalConstraint`. -/
-def lAnchToneCAcross (t : TRN) (m : MorphemeId) (rms : List MorphemeId) :
+def lAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
     DirectionalConstraint MwaghavulForm where
-  name := s!"L-ANCH-{reprStr t}({m},across)"
+  name := s!"L-ANCH-{reprStr t}({m.form},across)"
   family := .faithfulness
   eval := fun f => [lAnchToneAcrossRoots t m rms f]
 
 /-- R-ANCHOR across roots as a `DirectionalConstraint`. -/
-def rAnchToneCAcross (t : TRN) (m : MorphemeId) (rms : List MorphemeId) :
+def rAnchToneCAcross (t : TRN) (m : Morpheme) (rms : List Morpheme) :
     DirectionalConstraint MwaghavulForm where
-  name := s!"R-ANCH-{reprStr t}({m},across)"
+  name := s!"R-ANCH-{reprStr t}({m.form},across)"
   family := .faithfulness
   eval := fun f => [rAnchToneAcrossRoots t m rms f]
 

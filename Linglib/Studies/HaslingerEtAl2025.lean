@@ -32,11 +32,13 @@ preserves it at the operator level. See `Studies/Haslinger2025.lean`.
 -/
 
 import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
+import Linglib.Theories.Semantics.Plurality.Trivalent
 
 namespace HaslingerEtAl2025
 
+open Semantics.Plurality
 open Semantics.Plurality.Distributivity
+open Semantics.Plurality.Trivalent
 
 -- German Distributive Lexical Items
 
@@ -136,9 +138,9 @@ def distanceJederInNonMax : Observation :=
 
 /-- The independence claim: same distributivity, different maximality -/
 theorem independence_attested :
-    jeder.semanticClass.isDistributive = jeweils.semanticClass.isDistributive ∧
+    (jeder.semanticClass.isDistributive ↔ jeweils.semanticClass.isDistributive) ∧
     jeder.semanticClass ≠ jeweils.semanticClass := by
-  constructor <;> native_decide
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- Correlation (Section 4): No DP use ↔ permits non-maximality? -/
 def hasDPUse (item : LexicalItem) : Bool :=

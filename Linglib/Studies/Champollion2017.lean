@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Aspect.Stratified
 import Linglib.Theories.Semantics.Events.CEM
+import Linglib.Theories.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
@@ -135,6 +136,54 @@ open Fragments.English.Predicates.Verbal
 open Semantics.Lexical
 open Features
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
+open _root_.Mereology
+open Semantics.Plurality.Algebra (Materialization)
+
+/-! ### Champollion §2.5/§2.7.2 algebraic substrate
+
+Champollion's framework rests on two algebraic-substrate assumptions:
+
+* **§2.5 — thematic roles and `τ` are sum homomorphisms.** Thematic
+  roles (`agent`, `theme`, …) and the temporal trace
+  `τ : Event → Interval` distribute over join:
+  `θ(e₁ ⊔ e₂) = θ(e₁) ⊔ θ(e₂)`. This is exactly the `IsSumHom h`
+  clause inside `Plurality.Algebra.Materialization`.
+
+* **§2.7.2 — lexical cumulativity.** Every verb's denotation is closed
+  under sum: `*[[V]] = [[V]]`. Equivalently, `AlgClosure ⟦V⟧ = ⟦V⟧`
+  (`Algebra.star` is a fixed point on `⟦V⟧`), which is what Krifka's
+  `CUM` predicate captures. This assumption underwrites his
+  *for*-adverbial entry and the Distributivity Constraint. -/
+
+section ThematicRolesAndCumulativity
+
+variable {E I : Type*} [SemilatticeSup E] [SemilatticeSup I]
+
+/-- Champollion §2.5: any sum-homomorphism `f : Event → α` (thematic
+    role or `τ` runtime) packages into a `Materialization` (=
+    `SupHom E I`). Bridges the unbundled `IsSumHom` typeclass and the
+    bundled SupHom struct via `IsSumHom.toSupHom`. -/
+def materializationOfSumHom (f : E → I) [hf : IsSumHom f] :
+    Materialization E I :=
+  hf.toSupHom
+
+@[simp] theorem materializationOfSumHom_apply (f : E → I) [IsSumHom f] (x : E) :
+    materializationOfSumHom f x = f x := rfl
+
+/-- Champollion §2.7.2: lexical cumulativity for a single predicate is
+    the assumption that `AlgClosure P = P` extensionally —
+    equivalently, that `P` is a fixed point of `Algebra.star`. -/
+def LexicallyCumulative {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
+  ∀ x, AlgClosure P x ↔ P x
+
+/-- Lexical cumulativity entails `CUM` (Krifka 1989 D12): a verb
+    denotation closed under `*` is closed under binary join. -/
+theorem lexicallyCumulative_imp_cum {α : Type*} [SemilatticeSup α]
+    {P : α → Prop} (h : LexicallyCumulative P) : CUM P := by
+  intro x y hPx hPy
+  exact (h _).mp (AlgClosure.sum (AlgClosure.base hPx) (AlgClosure.base hPy))
+
+end ThematicRolesAndCumulativity
 
 /-! ### Distributivity Profiles -/
 

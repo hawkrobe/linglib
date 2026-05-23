@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Events.CEM
-import Linglib.Theories.Semantics.Plurality.MassCount
+import Linglib.Theories.Semantics.Plurality.Algebra
+import Linglib.Theories.Semantics.Plurality.Reference
 import Linglib.Theories.Semantics.ArgumentStructure.Properties
 import Linglib.Theories.Semantics.Aspect.Incremental
 import Linglib.Theories.Semantics.Aspect.Cumulativity
@@ -71,7 +72,8 @@ namespace Krifka1989
 
 open _root_.Mereology
 open Semantics.Events.CEM
-open Semantics.Plurality.MassCount (MassNoun CountNoun BarePlural barePlural_cum)
+open Semantics.Plurality.Algebra (Materialization)
+open Semantics.Plurality.Reference (MassNoun CountNoun BarePlural barePlural_cum)
 open Semantics.ArgumentStructure (UP)
 open Semantics.Aspect.Incremental (SINC VerbIncClass IsSincVerb)
 open Semantics.Aspect.Cumulativity (VP qua_propagation)
@@ -242,8 +244,8 @@ section Grounding
 variable {α : Type*}
 
 /-- Bare-plural NPs are cumulative — citation of `barePlural_cum`
-    from `Theories/Semantics/Events/Krifka1989.lean`. K89 §3 derives this
-    from algebraic closure (*P closed under sum). -/
+    from `Theories/Semantics/Plurality/Reference.lean`. K89 §3 derives
+    this from algebraic closure (*P closed under sum). -/
 theorem barePlural_grounded [SemilatticeSup α] {P : α → Prop} :
     CUM (BarePlural P) :=
   barePlural_cum
@@ -313,8 +315,7 @@ end MeasurePhrases
     These five labels are K89's thematic-relation classes. The
     propositional predicates (SUM, UP, MO, MSO, MSE, UE, UO, GUE) are
     K89 D29-D35 (§4, pp. 92-96) and live in
-    `Theories/Semantics/Events/Krifka1998.lean` for organizational
-    reasons. Below, each class is captured as a Bool feature profile;
+    `Studies/Krifka1998.lean` for organizational reasons. Below, each class is captured as a Bool feature profile;
     a successor study could instantiate the propositional predicates
     on concrete θ relations.
 
@@ -528,6 +529,34 @@ theorem qua_implies_atm {P : α → Prop} (hQua : QUA P) : ATM P := by
     motivation. -/
 
 end Atomicity
+
+/-! ### K89 §3/§5 Materialization Homomorphisms
+
+K89 page 87 introduces a function `h : I → Q` mapping individuals to
+their constitutive matter, with `Q(x) → h(x) = x` (identity on
+Q-elements) and `h(x ∪ y) = h(x) ∪_Q h(y)` (join preservation). K89
+§5 D40 (page 96) introduces the temporal trace `τ : E → T` with the
+same shape: `τ(e ∪ e') = τ(e) ∪_T τ(e')`. Both are join
+homomorphisms between complete join semi-lattices, exactly the shape
+captured by `Plurality.Algebra.Materialization` (= mathlib's
+`SupHom I Q`). K89's specific bisorted I/Q framing adds the identity-
+on-Q condition; the lattice-homomorphism backbone is shared. -/
+
+section Materialization
+
+variable {I Q : Type*} [SemilatticeSup I] [SemilatticeSup Q]
+
+/-- K89's homomorphism law `h(x ∪ y) = h(x) ⊔ h(y)` (page 87) is the
+    `map_sup'` clause of a `Materialization` (= `SupHom I Q`). This
+    lemma exposes it as a named theorem for K89-side use; a
+    join-homomorphism is constructed from any `IsSumHom`-bearing
+    function via `IsSumHom.toSupHom` (e.g., for the temporal trace
+    `τ : E → T` from §5 D40, page 96). -/
+theorem materialization_join (mat : Materialization I Q) (x y : I) :
+    mat (x ⊔ y) = mat x ⊔ mat y :=
+  mat.map_sup' x y
+
+end Materialization
 
 /-- *Ann drank wine in 0.43 seconds* (K89 §5 eq. 19): a CUM-NP VP that
     accepts *in*-X. Listed as a thematic datum (K89 §4 eat-class) with

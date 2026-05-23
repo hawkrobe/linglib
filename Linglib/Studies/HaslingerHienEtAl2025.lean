@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
 import Linglib.Theories.Semantics.Quantification.ONEModifiers
 import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
+import Linglib.Theories.Semantics.Plurality.Trivalent
 import Linglib.Fragments.German.Distributives
 
 /-!
@@ -44,7 +44,9 @@ namespace HaslingerHienEtAl2025
 
 open Semantics.Quantification.UnifiedUniversal
 open Semantics.Quantification.ONEModifiers
+open Semantics.Plurality
 open Semantics.Plurality.Distributivity
+open Semantics.Plurality.Trivalent
 open _root_.Mereology
 
 -- ════════════════════════════════════════════════════
@@ -201,7 +203,7 @@ theorem QForall_cum_iff_allSatisfy
     (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (X : Finset Atom) (w : W) :
     allSatisfy P X w ↔ (∀ a ∈ X, P a w) := by
-  simp [allSatisfy]
+  simp [allSatisfy, distMaximal]
 
 -- ════════════════════════════════════════════════════
 -- § 5. English every/each/all Decomposition Verification
@@ -261,8 +263,8 @@ theorem alle_matches_bare_QForall :
 /-- The DNG explains the dist/non-dist split between jeder and alle:
     same Q_∀ semantics, different complement structure. -/
 theorem german_dng_explained :
-    Fragments.German.Distributives.jederEntry.distMaxClass.isDistributive = true ∧
-    Fragments.German.Distributives.alleEntry.distMaxClass.isDistributive = false := by
+    Fragments.German.Distributives.jederEntry.distMaxClass.isDistributive ∧
+    ¬ Fragments.German.Distributives.alleEntry.distMaxClass.isDistributive := by
   decide
 
 -- ════════════════════════════════════════════════════

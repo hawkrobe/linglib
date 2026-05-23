@@ -1,4 +1,6 @@
 import Linglib.Core.Mereology
+import Linglib.Theories.Semantics.Plurality.Algebra
+import Linglib.Theories.Semantics.Plurality.Cover
 import Linglib.Features.PrivativePair
 import Linglib.Features.Number
 import Linglib.Features.Person
@@ -50,6 +52,8 @@ set_option autoImplicit false
 namespace Sauerland2003
 
 open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
+open Semantics.Plurality.Algebra (star D)
+open Semantics.Plurality.Cover (IsFinCover algClosure_of_finCover)
 open Features (PrivativePair PhiFeatures)
 open Core.Presupposition (PrProp)
 open Core.Constraint.OT (NamedConstraint mkTableau)
@@ -222,6 +226,45 @@ theorem coordination_requires_plural (a b : E) (ha : Atom a) (hb : Atom b)
 end Coordination
 
 -- ============================================================================
+-- §3 (eq 16-17)  Sauerland's cover-based `*`-operator
+-- ============================================================================
+
+/-!
+## §3: `*P(X)` via Schwarzschild covers
+
+Sauerland (eq. 16-17) defines the `*`-operator via covers:
+
+> (16) `∗P(X) = 1` iff there is a **cover** `C` of `X` with `P(x) = 1`
+>       for every `x` in `C`.
+> (17) A set of individuals `C` is a **Cover** for `X` iff `⊕C = X`.
+
+This is structurally equivalent to Link's inductive `AlgClosure` (=
+`Plurality.Algebra.star`): both characterize "x is a sum of P-elements".
+The cover-based formulation foregrounds @cite{schwarzschild-1996}'s
+notion that `*` is anaphoric on a contextually-salient cover. The
+forward direction (cover witnesses star) is the substrate bridge
+`Plurality.Cover.algClosure_of_finCover`.
+-/
+
+section SauerlandStar
+
+variable {E : Type*} [SemilatticeSup E]
+
+/-- **Sauerland 2003 eq. (16) forward direction**: a finite cover `C`
+    of `X` whose parts all satisfy `R` witnesses `*R(X)` (= `star R X`
+    = `AlgClosure R X`). This is the substrate bridge between
+    @cite{schwarzschild-1996}-style cover semantics and Link 1983's
+    inductive `*` operator. Restatement of `Cover.algClosure_of_finCover`
+    under Sauerland's eq. (16) labeling. -/
+theorem sauerland_star_from_cover
+    {R : E → Prop} {parts : Finset E} {h : parts.Nonempty} {X : E}
+    (hCover : IsFinCover parts h X) (hR : ∀ p ∈ parts, R p) :
+    star R X :=
+  algClosure_of_finCover hCover hR
+
+end SauerlandStar
+
+-- ============================================================================
 -- §5  Every = JE ∘ DER
 -- ============================================================================
 
@@ -278,6 +321,18 @@ theorem je_presup_projects {E : Type*} [PartialOrder E]
     (X : E) (P : E → Prop) (domP : E → Prop) (w : E)
     (h : (JE X P domP).defined w) :
     ∀ a, Atom a → a ≤ X → domP a := h
+
+/-- **JE assertion = Link's D operator** (@cite{link-1987} eq. 48,
+    p. 171). Sauerland's JE (eq. 30b) quantifying universally over the
+    atoms of a group individual is *the same primitive* as Link's D
+    operator on its assertion side. The substrate-level connection
+    makes the K&S-tradition/Link-tradition convergence kernel-checked. -/
+theorem je_assertion_eq_D {E : Type*} [SemilatticeSup E]
+    (X : E) (P : E → Prop) (w : E) :
+    (JE X P).assertion w ↔ D P X := by
+  constructor
+  · intro h y hle hAtom; exact h y hAtom hle
+  · intro h a hAtom hle; exact h a hle hAtom
 
 /-- With a total scope predicate (no presupposition), JE's
     presupposition is trivially satisfied. -/

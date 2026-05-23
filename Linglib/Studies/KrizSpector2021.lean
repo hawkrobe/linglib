@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
+import Linglib.Theories.Semantics.Plurality.Trivalent
 import Linglib.Studies.Kriz2016
 
 /-!
@@ -29,7 +29,7 @@ This file proves the correspondence between the two accounts:
 
 These theorems connect two independently formalized mechanisms:
 - `Semantics.Homogeneity.addressesIssue` (from Križ 2016)
-- `Semantics.Plurality.Distributivity.isStronglyRelevantProp` (from K&S 2021)
+- `Semantics.Homogeneity.isStronglyRelevantProp` (substrate, originating with K&S 2021)
 
 showing they agree on the bivalent fragment.
 -/
@@ -37,7 +37,9 @@ showing they agree on the bivalent fragment.
 namespace KrizSpector2021
 
 open Core.Duality (Truth3)
+open Semantics.Plurality
 open Semantics.Plurality.Distributivity
+open Semantics.Plurality.Trivalent
 open Semantics.Homogeneity
 open Kriz2016
 
@@ -92,7 +94,7 @@ theorem bivalent_addressing_iff_stronglyRelevant (q : QUD W) (S : SentenceTV W)
 
 /-! For `all`-sentences, the bridge specializes further: Addressing ↔
 `allSatisfy` is strongly relevant to the QUD. This connects directly to
-`nonMaximality_from_coarse_qud` in Distributivity.lean: when the QUD groups
+`nonMaximality_from_coarse_qud` in CandidateInterpretation.lean: when the QUD groups
 an all-true world with a not-all-true world, the `all`-sentence fails to
 address the issue, so `all` cannot be used non-maximally. -/
 

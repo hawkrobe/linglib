@@ -1,5 +1,6 @@
 import Mathlib.Data.Finset.Card
 import Linglib.Theories.Semantics.Plurality.Cumulativity
+import Linglib.Theories.Semantics.Plurality.Reciprocal
 import Linglib.Theories.Semantics.Dynamic.PPCDRT.Cumulativity
 
 /-!
@@ -31,7 +32,7 @@ A scope-bounded slice of the paper:
 | §2.6    | Entailment lattice (eq 28)             | Implication theorems       |
 | §3.3    | HLM "the other ones among them" (eq 76) | `otherOnesAmongThem`       |
 | §4.3    | Bare `**(R)(A,A)` coverage forward dir | `weaklyReciprocal_implies_cumulative_R` |
-| §4.3.2  | Beck eq 120 = @cite{sternefeld-1998} eq 26b (bivalent) | `weaklyReciprocal_iff_cumulative_with_distinctness` |
+| §4.3.2  | Beck eq 120 = @cite{sternefeld-1998} eq 26b (bivalent) | `Plurality.Reciprocal.weakReciprocity_iff_cumulative_strict` |
 | §4.3.2  | Distinctness as presupposition         | Bridge to H&D 2020         |
 
 The two readings whose definitions involve unbounded existentials —
@@ -81,6 +82,7 @@ chain through `PPCDRT/Cumulativity.lean` (which both papers consume).
 namespace Beck2001
 
 open Semantics.Plurality.Cumulativity
+open Semantics.Plurality.Reciprocal
 open Theories.Semantics.Dynamic.PPCDRT
 
 -- ════════════════════════════════════════════════════════════════
@@ -89,138 +91,18 @@ open Theories.Semantics.Dynamic.PPCDRT
 
 variable {α : Type*} [DecidableEq α]
 
-/-- **Strong Reciprocity** (paper eq 10): `∀x ∈ A. ∀y ∈ A. y ≠ x → xRy`.
-    Every distinct pair is in the relation. -/
-def stronglyReciprocal (A : Finset α) (R : α → α → Prop) : Prop :=
-  ∀ x ∈ A, ∀ y ∈ A, y ≠ x → R x y
+/-! ### § 1-2: Reciprocal schemes + entailment lattice
 
-instance stronglyReciprocal.instDecidable
-    (A : Finset α) (R : α → α → Prop) [∀ a b, Decidable (R a b)] :
-    Decidable (stronglyReciprocal A R) := by
-  unfold stronglyReciprocal; infer_instance
+The six DKMPK / Langendoen 1978 reciprocal schemes and Beck's
+entailment lattice (paper eq 28) now live in
+`Plurality/Reciprocal.lean`. See `StrongReciprocity`, `WeakReciprocity`,
+`OneWayWeakReciprocity`, `InclusiveAlternativeOrdering`,
+`PartitionedStrongReciprocity`, `IntermediateReciprocity` for the
+predicates, and `strong_imp_weak`, `weak_imp_oneWay`,
+`oneWay_imp_inclusiveAlternative`, `strong_imp_inclusiveAlternative`
+for the right-hand-spine entailments. -/
 
-/-- **Weak Reciprocity** (paper eq 20, @cite{langendoen-1978}): for each
-    x in A, some y is R-related to x, and for each y in A, some x is
-    R-related to y. Captures "the prisoners released each other" / "the
-    children give each other a present". -/
-def weaklyReciprocal (A : Finset α) (R : α → α → Prop) : Prop :=
-  (∀ x ∈ A, ∃ y ∈ A, R x y ∧ x ≠ y) ∧ (∀ y ∈ A, ∃ x ∈ A, R x y ∧ x ≠ y)
-
-instance weaklyReciprocal.instDecidable
-    (A : Finset α) (R : α → α → Prop) [∀ a b, Decidable (R a b)] :
-    Decidable (weaklyReciprocal A R) := by
-  unfold weaklyReciprocal; infer_instance
-
-/-- **One-way Weak Reciprocity** (paper eq 25): only the first direction
-    is required. "The pirates are staring at each other" — pirate 6 is
-    not stared at by anybody, but everyone stares at someone. -/
-def onewayWeaklyReciprocal (A : Finset α) (R : α → α → Prop) : Prop :=
-  ∀ x ∈ A, ∃ y ∈ A, R x y ∧ x ≠ y
-
-instance onewayWeaklyReciprocal.instDecidable
-    (A : Finset α) (R : α → α → Prop) [∀ a b, Decidable (R a b)] :
-    Decidable (onewayWeaklyReciprocal A R) := by
-  unfold onewayWeaklyReciprocal; infer_instance
-
-/-- **Inclusive Alternative Ordering** (paper eq 27, Kanski 1987 — no
-    bib entry yet): each member of A participates in the relation as
-    either first or second argument. "The plates are stacked on top of
-    each other" — each plate is on top of one or has one on top of
-    itself. -/
-def inclusiveAlternativeOrdering (A : Finset α) (R : α → α → Prop) : Prop :=
-  ∀ x ∈ A, ∃ y ∈ A, x ≠ y ∧ (R x y ∨ R y x)
-
-instance inclusiveAlternativeOrdering.instDecidable
-    (A : Finset α) (R : α → α → Prop) [∀ a b, Decidable (R a b)] :
-    Decidable (inclusiveAlternativeOrdering A R) := by
-  unfold inclusiveAlternativeOrdering; infer_instance
-
--- ════════════════════════════════════════════════════════════════
--- § 1.5: Two readings with unbounded quantification
--- ════════════════════════════════════════════════════════════════
-
-/-- **Partitioned Strong Reciprocity** (paper eq 12, Fiengo & Lasnik 1973
-    — no bib entry yet): there is a partition `PART` of A such that SR
-    holds within each cell. "The men are hitting each other" can be true
-    if the men team up in pairs that stand in the hit-relation. -/
-def partitionedStronglyReciprocal (A : Finset α) (R : α → α → Prop) : Prop :=
-  ∃ PART : Finset (Finset α),
-    (∀ X ∈ PART, X ⊆ A) ∧
-    (∀ a ∈ A, ∃ X ∈ PART, a ∈ X) ∧
-    (∀ X ∈ PART, ∀ x ∈ X, ∀ y ∈ X, y ≠ x → R x y)
-
-/-- **Intermediate Reciprocity** (paper eq 17): any two members of A
-    are connected by a chain of elements that stand in the reciprocal
-    relation. "Five Boston pitchers sat alongside each other." -/
-def intermediatelyReciprocal (A : Finset α) (R : α → α → Prop) : Prop :=
-  ∀ x ∈ A, ∀ y ∈ A, y ≠ x →
-    ∃ chain : List α, chain.head? = some x ∧ chain.getLast? = some y ∧
-      (∀ z ∈ chain, z ∈ A) ∧
-      chain.IsChain R
-
--- ════════════════════════════════════════════════════════════════
--- § 2: Entailment Lattice for the Basic Readings (paper eq 28)
--- ════════════════════════════════════════════════════════════════
-
-/-! Beck's entailment lattice (paper eq 28) is a Hasse diagram with
-    parallel weakening from SR:
-
-    ```
-            SR
-           /  \
-          IR  PartSR
-           \  /
-            WR
-            |
-           OWR
-            |
-           IAO
-    ```
-
-    SR weakens *in parallel* into IR and PartSR; both reconverge at WR.
-    Below WR the lattice is a chain (WR → OWR → IAO).
-
-    The fragment we prove here covers the **right-hand spine** of the
-    diagram: SR → WR (the SR-to-WR shortcut, which equally bypasses
-    the IR and PartSR intermediates) plus WR → OWR → IAO. -/
-
-/-- SR implies WR (paper eq 28, right-hand spine). -/
-theorem SR_implies_WR (A : Finset α) (R : α → α → Prop) (hne : 1 < A.card)
-    (hSR : stronglyReciprocal A R) :
-    weaklyReciprocal A R := by
-  refine ⟨?_, ?_⟩
-  · intro x hx
-    obtain ⟨y, hy, hxy⟩ := A.exists_mem_ne hne x
-    exact ⟨y, hy, hSR x hx y hy hxy, hxy.symm⟩
-  · intro x hx
-    obtain ⟨y, hy, hxy⟩ := A.exists_mem_ne hne x
-    exact ⟨y, hy, hSR y hy x hx hxy.symm, hxy⟩
-
-/-- WR implies OWR: bidirectional coverage entails one-direction
-    coverage. -/
-theorem WR_implies_OWR (A : Finset α) (R : α → α → Prop)
-    (hWR : weaklyReciprocal A R) :
-    onewayWeaklyReciprocal A R :=
-  hWR.1
-
-/-- OWR implies IAO: one-direction coverage entails the disjunctive
-    `xRy ∨ yRx` form. -/
-theorem OWR_implies_IAO (A : Finset α) (R : α → α → Prop)
-    (hOWR : onewayWeaklyReciprocal A R) :
-    inclusiveAlternativeOrdering A R := by
-  intro x hx
-  obtain ⟨y, hy, hRxy, hxy⟩ := hOWR x hx
-  exact ⟨y, hy, hxy, Or.inl hRxy⟩
-
-/-- Composition: SR → IAO via the right-hand spine SR → WR → OWR → IAO. -/
-theorem SR_implies_IAO (A : Finset α) (R : α → α → Prop) (hne : 1 < A.card)
-    (hSR : stronglyReciprocal A R) :
-    inclusiveAlternativeOrdering A R :=
-  OWR_implies_IAO A R (WR_implies_OWR A R (SR_implies_WR A R hne hSR))
-
--- ════════════════════════════════════════════════════════════════
--- § 3: Beck's HLM Denotation for *each other* (paper eq 76)
--- ════════════════════════════════════════════════════════════════
+/-! ### § 3: Beck's HLM Denotation for *each other* (paper eq 76) -/
 
 /-- Paper eq 76: `each other = max(*λz[¬z∘x₁ ∧ z ≤ x₃ ∧ Cov(z)])` —
     "the other ones among them" via the maximum of the (covered) parts
@@ -235,7 +117,7 @@ theorem SR_implies_IAO (A : Finset α) (R : α → α → Prop) (hne : 1 < A.car
 
     *Layered-grounding gap*: the full eq 76 invokes Sharvy max
     (`Core/Nominal/Maximality.lean` provides the substrate) and Link `*`
-    (`Plurality/Link1983.lean`); current `A.erase x` is the simplest
+    (`Plurality/Algebra.lean`); current `A.erase x` is the simplest
     case. Promoting `otherOnesAmongThem` to consume `Nominal/Maximality`
     is queued (Tier-4 of the cross-framework auditor's recommendation
     list). -/
@@ -261,64 +143,20 @@ theorem otherOnesAmongThem_nonempty (A : Finset α) (x : α)
   unfold otherOnesAmongThem
   exact Finset.mem_erase.mpr ⟨hyx, hy⟩
 
--- ════════════════════════════════════════════════════════════════
--- § 4: WR via Cumulation — @cite{sternefeld-1998} eq 26b vs Beck eq 120
--- ════════════════════════════════════════════════════════════════
+/-! ### § 4: WR via Cumulation — @cite{sternefeld-1998} eq 26b vs Beck eq 120
 
-/-! Beck (paper §4.3) extends @cite{sternefeld-1998}'s reciprocity-as-
-    cumulativity analysis with one refinement: distinctness is marked
-    as **presupposition** rather than assertion. Reading
-    @cite{sternefeld-1998} directly (eq 26b, p. 316), the distinctness
-    clause `x ≠ y` is INSIDE the `**`'s relation argument in BOTH
-    analyses — `⟨A,A⟩ ∈ **λxy[R(x,y) ∧ x ≠ y]` for Sternefeld vs
-    `**(λxλy.[R(x,y) ∧ @(x ≠ y)])(A,A)` for Beck eq 120. The two
-    differ only in the trivalent assertion-vs-presupposition status of
-    `x ≠ y` (visible only when R holds with x = y).
-
-    In bivalent encoding both collapse to `weaklyReciprocal` — see
-    `weaklyReciprocal_iff_cumulative_with_distinctness` below. The
-    bare-`**(R)(A,A)` shape (without inner distinctness) is what
-    NEITHER paper proposes; the forward direction
-    `weaklyReciprocal → Cumulative R` is just a structural weakening,
-    not a faithful analysis of either. -/
-
-/-- **Forward weakening**: WR truth conditions entail bare
-    Beck-Sauerland `**(R)(A,A)` coverage of the verb relation
-    (without inner distinctness). This is *strictly weaker* than
-    either @cite{sternefeld-1998} eq 26b or @cite{beck-2001} eq 120
-    — both of those put the distinctness clause `x ≠ y` INSIDE the
-    relation argument (see `weaklyReciprocal_iff_cumulative_with_distinctness`).
-    Forward direction holds because WR's `R(x,y) ∧ x ≠ y` witnesses
-    are *a fortiori* `R(x,y)` witnesses. -/
-theorem weaklyReciprocal_implies_cumulative_R
-    (A : Finset α) (R : α → α → Prop)
-    (hWR : weaklyReciprocal A R) :
-    Cumulative R A A := by
-  refine ⟨?_, ?_⟩
-  · intro x hx
-    obtain ⟨y, hy, hRxy, _⟩ := hWR.1 x hx
-    exact ⟨y, hy, hRxy⟩
-  · intro y hy
-    obtain ⟨x, hx, hRxy, _⟩ := hWR.2 y hy
-    exact ⟨x, hx, hRxy⟩
-
-/-- **@cite{sternefeld-1998} eq 26b ↔ @cite{beck-2001} eq 120 (bivalent
-    collapse)**: WR truth conditions are exactly `**(λxλy.[R(x,y) ∧
-    x ≠ y])(A,A)` — Beck-Sauerland cumulation applied to the relation
-    `R` *strengthened by per-witness distinctness*. The `@`
-    presupposition marker of Beck eq 120 collapses to assertion in
-    bivalent encoding, yielding the same predicate as Sternefeld
-    eq 26b's asserted `R(x,y) ∧ x ≠ y`.
-
-    The Sternefeld 1998 ↔ Beck 2001 divergence is therefore *only*
-    visible in trivalent semantics: Sternefeld returns false when R
-    holds with x = y; Beck returns "undefined" (presupposition
-    failure). See `Studies/Sternefeld1998.lean` for the cross-paper
-    bridge `sternefeldWR_iff_weaklyReciprocal`. -/
-theorem weaklyReciprocal_iff_cumulative_with_distinctness
-    (A : Finset α) (R : α → α → Prop) :
-    weaklyReciprocal A R ↔
-    Cumulative (fun x y => R x y ∧ x ≠ y) A A := Iff.rfl
+The substrate-level bridge `WeakReciprocity R A ↔
+Cumulative (fun a b => R a b ∧ a ≠ b) A A` and the forward weakening
+`WeakReciprocity → Cumulative` both live in `Plurality/Reciprocal.lean`
+(`weakReciprocity_iff_cumulative_strict`, `weakReciprocity_imp_cumulative`).
+They formalise the bivalent collapse of @cite{sternefeld-1998} eq 26b
+and @cite{beck-2001} eq 120 (both papers keep the distinctness clause
+`x ≠ y` inside the `**`'s relation argument; they differ only at the
+trivalent layer, where Sternefeld asserts distinctness and Beck
+presupposes it). The cross-paper trivalent divergence is *only*
+visible in trivalent semantics: Sternefeld returns false when R holds
+with x = y; Beck returns "undefined" (presupposition failure). See
+`Studies/Sternefeld1998.lean` for the cross-paper bridges. -/
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5: Cross-framework Bridge to H&D 2020
@@ -402,9 +240,9 @@ theorem reciprocity_factors_as_coverage_and_distinctness
 /-! **Divergence with @cite{sternefeld-1998}** is *only* visible in
     trivalent semantics. In bivalent encoding, Sternefeld eq 26b and
     Beck eq 120 produce the same predicate — formally witnessed by
-    `Sternefeld1998.sternefeldWR_iff_weaklyReciprocal` (chained
-    through `weaklyReciprocal_iff_cumulative_with_distinctness`
-    above). The presupposition-vs-assertion divergence on truth-value
+    `Sternefeld1998.sternefeldWR_iff_WeakReciprocity` (chained
+    through `Plurality.Reciprocal.weakReciprocity_iff_cumulative_strict`).
+    The presupposition-vs-assertion divergence on truth-value
     gaps when `R` holds with `x = y` requires `∂` substrate (PPCDRT
     operator set was trimmed in 0.230.781; queued).
 

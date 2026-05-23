@@ -1,5 +1,6 @@
 import Mathlib.Data.Finset.Card
 import Linglib.Theories.Semantics.Plurality.Cumulativity
+import Linglib.Theories.Semantics.Plurality.Reciprocal
 import Linglib.Studies.Beck2001
 
 /-!
@@ -24,7 +25,7 @@ literature suggest.
 
 In bivalent semantics this is structurally identical to
 @cite{beck-2001}'s eq 120 (`**(λxλy.[R(x,y) ∧ @(x ≠ y)])(A,A)`). The
-two analyses agree on the bivalent predicate — `Beck2001.weaklyReciprocal`
+two analyses agree on the bivalent predicate — `Plurality.Reciprocal.WeakReciprocity`
 — and diverge only on:
 
 1. **Status of distinctness**: Sternefeld asserts; Beck presupposes
@@ -97,6 +98,7 @@ eq 120 ↔ H&D's group identity all factor through
 namespace Sternefeld1998
 
 open Semantics.Plurality.Cumulativity
+open Semantics.Plurality.Reciprocal
 
 variable {α : Type*} [DecidableEq α]
 
@@ -179,10 +181,10 @@ theorem sternefeldStarStar_implies_cumulative
     Sternefeld's closure-form `**`).
 
     In bivalent semantics this is structurally identical to
-    `Beck2001.weaklyReciprocal` (and to Beck eq 120). The two analyses
-    diverge only on the trivalent assertion-vs-presupposition status
-    of `x ≠ y` (Sternefeld asserts; @cite{beck-2001} eq 120 presupposes
-    via `@`). -/
+    `Plurality.Reciprocal.WeakReciprocity` (and to Beck eq 120). The
+    two analyses diverge only on the trivalent assertion-vs-
+    presupposition status of `x ≠ y` (Sternefeld asserts;
+    @cite{beck-2001} eq 120 presupposes via `@`). -/
 def sternefeldWR (A : Finset α) (R : α → α → Prop) : Prop :=
   Cumulative (fun x y => R x y ∧ x ≠ y) A A
 
@@ -195,11 +197,12 @@ instance sternefeldWR.instDecidable
     encoding, the two reciprocity analyses produce identical
     predicates. The cumulation-with-distinctness shape is the
     *common ground* of both papers; they only diverge at the
-    trivalent (presupposition projection) layer. -/
-theorem sternefeldWR_iff_weaklyReciprocal
+    trivalent (presupposition projection) layer. Substrate form
+    `Plurality.Reciprocal.WeakReciprocity`. -/
+theorem sternefeldWR_iff_WeakReciprocity
     (A : Finset α) (R : α → α → Prop) :
-    sternefeldWR A R ↔ Beck2001.weaklyReciprocal A R :=
-  (Beck2001.weaklyReciprocal_iff_cumulative_with_distinctness A R).symm
+    sternefeldWR A R ↔ WeakReciprocity R A :=
+  (weakReciprocity_iff_cumulative_strict R A).symm
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Langendoen-style WR (paper §1, eq 25b — equivalent on
@@ -215,7 +218,7 @@ theorem sternefeldWR_iff_weaklyReciprocal
     "problematic situation" `f(R) = {⟨⟨a,b⟩, c⟩, ⟨c, a⟩, ⟨c, b⟩}`,
     eq 25b cannot apply but eq 26b is still true. For D-based
     relations on Quine-innovation domains, the two coincide and both
-    reduce to `Beck2001.weaklyReciprocal`. -/
+    reduce to `Plurality.Reciprocal.WeakReciprocity`. -/
 def langendoenWR (A : Finset α) (R : α → α → Prop) : Prop :=
   ∀ x ∈ A, ∃ y ∈ A, ∃ z ∈ A,
     x ≠ y ∧ x ≠ z ∧ R x y ∧ R z x
@@ -226,12 +229,12 @@ instance langendoenWR.instDecidable
   unfold langendoenWR; infer_instance
 
 /-- For symmetric, distinctness-bearing R, @cite{langendoen-1978} WR
-    entails `Beck2001.weaklyReciprocal`: the existence-witnesses on
-    each side are the y and z of the Langendoen formula. -/
-theorem langendoenWR_implies_weaklyReciprocal
+    entails `Plurality.Reciprocal.WeakReciprocity`: the existence-
+    witnesses on each side are the y and z of the Langendoen formula. -/
+theorem langendoenWR_implies_WeakReciprocity
     (A : Finset α) (R : α → α → Prop)
     (h : langendoenWR A R) :
-    Beck2001.weaklyReciprocal A R := by
+    WeakReciprocity R A := by
   refine ⟨?_, ?_⟩
   · intro x hx
     obtain ⟨y, hy, _, _, hxy, _, hRxy, _⟩ := h x hx
@@ -249,38 +252,37 @@ theorem langendoenWR_implies_weaklyReciprocal
     distributes over A; the inner `*` quantifies universally over
     `{y ∈ A : y ≠ x}`. Assuming R is D-based (applies only to atoms),
     this unfolds to `∀x ∈ A. ∀y ∈ A. y ≠ x → R(x,y)` — exactly
-    `Beck2001.stronglyReciprocal`.
+    `Plurality.Reciprocal.StrongReciprocity`.
 
     Sternefeld's point (paper §3.5–3.6): SR is *expressible* in his
     framework but is not a basic reading; it falls out of more
     general WR + focus mechanisms (the Geach-Kaplan analysis,
     paper §3.6). This contrasts with @cite{beck-2001}, who takes SR
     as a basic reading. -/
-theorem sternefeldSR_iff_stronglyReciprocal
+theorem sternefeldSR_iff_StrongReciprocity
     (A : Finset α) (R : α → α → Prop) :
     (∀ x ∈ A, ∀ y ∈ A, y ≠ x → R x y) ↔
-    Beck2001.stronglyReciprocal A R := Iff.rfl
+    StrongReciprocity R A := Iff.rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5: Cross-paper Cumulation Bridges
 -- ════════════════════════════════════════════════════════════════
 
 /-- **Sternefeld 1998 ↔ @cite{beck-2001} ↔ @cite{haug-dalrymple-2020}
-    (bivalent)**: chain `sternefeldWR → Cumulative` (via the
-    weaklyReciprocal bridge) — the meeting point of all three
-    analyses at the cumulation substrate.
+    (bivalent)**: chain `sternefeldWR → Cumulative` via the substrate
+    `WeakReciprocity` bridge — the meeting point of all three analyses
+    at the cumulation substrate.
 
     The three-paper convergence makes
-    `Plurality.Cumulativity.Cumulative` the substrate consumed by
-    all three Studies files; the implementation choice (BS form
-    vs Krifka closure form) is invisible from the consumer side
-    modulo the easy-direction equivalence
-    `sternefeldStarStar_implies_cumulative`. -/
+    `Plurality.Cumulativity.Cumulative` the substrate consumed by all
+    three Studies files; the implementation choice (BS form vs Krifka
+    closure form) is invisible from the consumer side modulo the
+    easy-direction equivalence `sternefeldStarStar_implies_cumulative`. -/
 theorem sternefeldWR_implies_cumulative_R
     (A : Finset α) (R : α → α → Prop)
     (hWR : sternefeldWR A R) :
     Cumulative R A A := by
-  rw [sternefeldWR_iff_weaklyReciprocal] at hWR
-  exact Beck2001.weaklyReciprocal_implies_cumulative_R A R hWR
+  rw [sternefeldWR_iff_WeakReciprocity] at hWR
+  exact weakReciprocity_imp_cumulative R A hWR
 
 end Sternefeld1998

@@ -3,6 +3,7 @@ import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Studies.Magri2014
 import Linglib.Theories.Semantics.Homogeneity.Basic
 import Linglib.Theories.Semantics.Plurality.Distributivity
+import Linglib.Theories.Semantics.Plurality.Trivalent
 
 /-!
 # Križ (2016): Homogeneity, Non-Maximality, and All — Plural Instantiation
@@ -96,7 +97,9 @@ Adding "all" blocks non-maximal use entirely.
 namespace Kriz2016
 
 open Core.Duality (Truth3)
+open Semantics.Plurality
 open Semantics.Plurality.Distributivity
+open Semantics.Plurality.Trivalent
 open Semantics.Homogeneity
 
 variable {Atom W : Type*} [DecidableEq Atom]
