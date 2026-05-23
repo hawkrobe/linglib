@@ -64,11 +64,13 @@ framework-agnostic; this file is the Excluder-API specialization.
 ## Todo
 
 * `innocent_exh_pairwise_disjoint_cover` — when ALT's members are
-  pairwise disjoint and their union covers φ, IE = ∅ (the Spector
-  closure-failure case driving @cite{alonso-ovalle-moghiseh-2025}
-  eq. 101's missing third MCE). Stated as a `sorry` for now; proof
-  requires constructing MCEs as ALT-minus-one-element subsets and
-  showing their intersection is empty.
+  pairwise disjoint and their union *covers* φ (the complementary case
+  to `_partial`), IE = ∅. This is the Spector closure-failure case
+  driving @cite{alonso-ovalle-moghiseh-2025} eq. 101's missing third
+  MCE. Currently consumers reach this case via
+  `innocent_exh_eq_phi_of_innocentlyExcludable_empty` + a `decide` on
+  `IE = ∅`; a structural lemma would expose the *reason* for the
+  collapse rather than the algorithm's output.
 
 * Kripke-frame lift: a `D → Bool` predicate transports to
   `W → Bool` via `λ w => Acc w ∧ ∃ d, P d w`. The structural results
@@ -358,35 +360,3 @@ theorem innocent_exh_erase_entailed
         exact hb_in_every_MC E hE_pow_erase hE_mc_erase
 
 end Exhaustification
-
-/-! ## Smoke test
-
-A 2-world finite example that exercises the API surface:
-- Worlds: `Two = w0 | w1`
-- φ = {w0, w1}
-- α = {w0}
-- Expected: `innocent.exh {α} φ = {w1}` (= `φ \ α`), but proved
-  directly via `decide` rather than the (still-`sorry`) general
-  `innocent_exh_singleton_proper`.
-
-The smoke test ensures the imports + namespace + Finset wrangling
-compose correctly even before the general theorems are fully proved.
--/
-
-section SmokeTest
-
-inductive Two : Type
-  | w0 | w1
-  deriving DecidableEq, Repr, Fintype
-
-open Exhaustification
-
-private def twoPhi : Finset Two := Finset.univ
-private def twoAlt : Finset Two := {Two.w0}
-private def twoALT : Finset (Finset Two) := {twoAlt}
-
-example : innocent.exh twoALT twoPhi = {Two.w1} := by decide
-
-example : tolerant.exh twoALT twoPhi = {Two.w1} := by decide
-
-end SmokeTest

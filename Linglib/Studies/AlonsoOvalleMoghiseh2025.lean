@@ -49,10 +49,13 @@ plus arbitrary Kripke frames via `Acc : W → Prop` + `Q : D → W → Prop`.
 * `Generic.scalar_exh_uniqueness` — "at least one and not at least two" ↔ "exactly one"
 * `Generic.fc_two_element` — for |D|=2, ∃≥2 = ∀d
 * `Generic.root_full_exh_contradiction` — full exh on |D|=2 → ⊥
-* `Generic.exclusive_pairwise_inconsistent` — Spector closure observation
 * `Generic.full_exh_consistent_three` — root contradiction is |D|=2-specific
 * `Generic.modal_split_exh_fc`, `Generic.modal_split_exh_full` —
   Kripke-frame lift of the deontic-possibility split-exh result
+
+(The Spector closure observation
+`Core.Quantification.exclusive_pairwise_inconsistent` lives in
+`Core/Logic/Quantification/Exclusive.lean` and is `open`'d in `Generic`.)
 
 Table 2 typology is canonicalized in `Fragments.Farsi.Determiners`
 (`EFCIRescue` enum, per-item `yeki`/`irgendein_de`/`vreun_ro` entries,
@@ -60,15 +63,21 @@ per-item root-reading theorems). See the EFCI Typology section below.
 
 ## Implementation notes
 
-Two complementary layers:
+Two passes over the same content:
 
-1. **Computational** (top-level): three finite world types (`PQWorld`
-   4 worlds, `PermW` 8 worlds, `CondW` 8 worlds) with theorems closed by
-   `decide` over `Finset` substrate from `Linglib.Semantics.Exhaustification`.
-2. **Structural** (`Generic` sub-namespace): Prop-level proofs over
-   arbitrary `D : Type*` and Kripke frames. The structural layer proves
-   *why* the results hold; the computational layer verifies the algorithm
-   computes the right answers on the paper's worked 2-book domain.
+1. **Concrete computation** (top-level): three finite world types
+   (`PQWorld` 4 worlds, `PermW` 8 worlds, `CondW` 8 worlds). Theorems
+   close by `decide` over `Finset` substrate; the paper-equation-labelled
+   ones derive from structural lemmas in
+   `Linglib.Semantics.Exhaustification.Structural`.
+2. **Abstract structure** (`Generic` sub-namespace): Prop-level proofs
+   over arbitrary `D : Type*` and Kripke frames. Lifts each finite-world
+   result to its general form (`scalar_exh_uniqueness`,
+   `root_full_exh_contradiction`, the modal-frame variants).
+
+The computational layer uses `α → Bool` rather than `α → Prop` to enable
+`decide` on `Finset` coercions via the substrate's `predToFinset` and
+`altsFromPreds` helpers.
 
 The 2-book root case exposes a counting subtlety: the paper's (101)
 lists 2 MCEs for the full alternative set, but there are actually 3
@@ -110,10 +119,10 @@ inductive PQWorld where
   | pOnly | qOnly | both | neither
   deriving Repr, DecidableEq, Fintype
 
-def pProp : PQWorld → Bool | .pOnly | .both => true | _ => false
-def qProp : PQWorld → Bool | .qOnly | .both => true | _ => false
-def pOrQ  : PQWorld → Bool | .neither => false | _ => true
-def pAndQ : PQWorld → Bool | .both => true | _ => false
+private def pProp : PQWorld → Bool | .pOnly | .both => true | _ => false
+private def qProp : PQWorld → Bool | .qOnly | .both => true | _ => false
+private def pOrQ  : PQWorld → Bool | .neither => false | _ => true
+private def pAndQ : PQWorld → Bool | .both => true | _ => false
 
 /-- Assertion: ∃x ∈ {b₁,b₂}. bought(x) = b₁ ∨ b₂ -/
 private def assertion : PQWorld → Bool := pOrQ
@@ -611,11 +620,12 @@ private abbrev condPreExhDomAltsF : Finset (Finset CondW) :=
   altsFromPreds condPreExhDomAlts
 
 /-- **Theorem**: In DE contexts, domain exhaustification on the
-    conditional is vacuous. The assertion (b₁∨b₂)→g already entails
-    both b₁→g and b₂→g, so the pre-exhaustified domain alternatives
-    (b₁→g ∧ ¬(b₂→g)) and (b₂→g ∧ ¬(b₁→g)) are both inconsistent
-    with the assertion. IE correctly returns ∅, and `innocent.exh`
-    is the identity.
+    conditional is vacuous: `innocent.exh = condNoExhF`. The
+    pre-exhaustified domain alternatives `(b₁→g) ∧ ¬(b₂→g)` and
+    `(b₂→g) ∧ ¬(b₁→g)` are inconsistent with the full-domain
+    conditional, so any IE-excluded alt is disjoint from `condNoExhF`
+    — excluding it removes nothing from the prejacent's support, and
+    `innocent.exh` reduces to the identity.
 
     This means even without Maximize Strength blocking O_σ, O_EXH-D
     alone contributes nothing in DE contexts — the plain existential
@@ -659,8 +669,7 @@ the results hold at full generality.
 
 namespace Generic
 
-open Core.Quantification (exclusive_pairwise_inconsistent neg_all_exclusive_alts
-  exclusive_false_of_universal uniqueness_precludes_universality)
+open Core.Quantification (neg_all_exclusive_alts exclusive_false_of_universal)
 
 
 /-! #### Scalar exhaustification → uniqueness -/

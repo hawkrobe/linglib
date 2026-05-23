@@ -2571,9 +2571,9 @@ import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.Decidable
 import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Semantics.Exhaustification.Presuppositional
-import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Semantics.Exhaustification.Relevance
 import Linglib.Semantics.Exhaustification.ScalePredictions
+import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Semantics.Exhaustification.Tolerant
 import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Semantics.Polarity.Operator
