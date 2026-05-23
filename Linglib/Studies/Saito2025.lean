@@ -1,6 +1,6 @@
-import Linglib.Theories.Processing.Lexical.Discriminative.Defs
-import Linglib.Theories.Processing.Lexical.Discriminative.Measures
-import Linglib.Theories.Processing.Lexical.Discriminative.Normed
+import Linglib.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.Lexical.Discriminative.Measures
+import Linglib.Processing.Lexical.Discriminative.Normed
 
 /-!
 # Saito, Tomaschek & Baayen (2025): Frequency × inflectional status via DLM
@@ -50,7 +50,7 @@ boundary effect is driven by inflectional semantics**.
 
 This file is the **third** consumer of the
 `LinearDiscriminativeLexicon` substrate
-(`Theories/Processing/Lexical/Discriminative/Defs.lean`), after
+(`Processing/Lexical/Discriminative/Defs.lean`), after
 @cite{chuang-bell-tseng-baayen-2026} and @cite{lu-chuang-baayen-2026}.
 It validates the polymorphic carrier typing across **every** axis of
 variation:
@@ -77,7 +77,7 @@ of a trained DLM: `SemSup`, `SemSupVowel`, `SemSupSuffix`, `SemSupWord`,
 four are paper-headline; the rest are diagnostic.
 
 The general measures (`semSup`, `semSupWord`) plus their linearity
-lemmas live in `Theories/Processing/Lexical/Discriminative/Measures.lean`,
+lemmas live in `Processing/Lexical/Discriminative/Measures.lean`,
 having graduated to substrate when @cite{gahl-baayen-2024} landed as a
 second consumer. The paper-specific positional variants
 (`semSupVowel`, `semSupSuffix`) stay here as `abbrev`s wrapping the
@@ -90,7 +90,7 @@ morpheme layer is needed between semantics and articulation — directly
 challenges WEAVER++ (@cite{levelt-roelofs-meyer-1999} and the broader
 WEAVER lineage). linglib does not currently formalize WEAVER++; the
 cross-framework discrimination would require a
-`Theories/Processing/Lexical/WEAVER/` sibling that explicitly posits a
+`Processing/Lexical/WEAVER/` sibling that explicitly posits a
 lemma layer. Defer until a second WEAVER-using study lands.
 
 ## Sibling-framework engagement
@@ -125,7 +125,7 @@ the cross-framework reconciler's recommendation, see CHANGELOG 0.231.15).
 
 namespace Saito2025
 
-open Theories.Processing.Lexical.Discriminative
+open Processing.Lexical.Discriminative
 
 -- ============================================================================
 -- §1: Substrate instantiation — German DLM
@@ -151,7 +151,7 @@ abbrev GermanWord2VecVec : Type := MeaningVec Word2VecGermanDim
 
 /-- The paper's specific DLM instantiation. The substrate type
     `LinearDiscriminativeLexicon` is in
-    `Theories/Processing/Lexical/Discriminative/Defs.lean`; this
+    `Processing/Lexical/Discriminative/Defs.lean`; this
     abbreviation specialises it to the German triphone × word2vec
     dimensions. -/
 abbrev GermanInflectionalDLM : Type :=
@@ -164,7 +164,7 @@ abbrev GermanInflectionalDLM : Type :=
 /-! ### SemSupVowel and SemSupSuffix (paper §3.1 eq. 3, 4)
 
 The general measures `semSup` and `semSupWord` (with linearity lemmas)
-live in `Theories/Processing/Lexical/Discriminative/Measures.lean`.
+live in `Processing/Lexical/Discriminative/Measures.lean`.
 The two positional variants below are paper-specific bindings naming
 which triphone index is being projected. `abbrev` for transparency
 (`simp` / `rw` see through to `semSup`). -/

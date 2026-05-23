@@ -1,5 +1,5 @@
-import Linglib.Theories.Processing.LanguageModel.Basic
-import Linglib.Theories.Processing.PredictiveUncertainty.Config
+import Linglib.Processing.LanguageModel.Basic
+import Linglib.Processing.PredictiveUncertainty.Config
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -8,7 +8,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 The probabilistic backbone underneath `Config.lean`'s enum-level
 configuration. The `LangModel` primitive lives in
-`Theories/Processing/LanguageModel/Basic.lean`; this file builds on it
+`Processing/LanguageModel/Basic.lean`; this file builds on it
 to define the `genSurprisal` family of @cite{giulianelli-etal-2026}'s
 Eq. 3 — real-valued functions of an LM, context, and target — and shows
 that classical surprisal is recovered as the special case
@@ -39,10 +39,10 @@ classical −log p(w | c).
 
 set_option autoImplicit false
 
-namespace Theories.Processing.PredictiveUncertainty
+namespace Processing.PredictiveUncertainty
 
 open Finset BigOperators Real
-open Theories.Processing.LanguageModel (LangModel)
+open Processing.LanguageModel (LangModel)
 
 -- ============================================================================
 -- §1: Generalised Surprisal (Eq. 3)
@@ -201,4 +201,4 @@ theorem informationValue_applyTo_eq_informationValue1
         WarpingFn.denote ScoringFn.denote genSurprisal informationValue1
   rfl
 
-end Theories.Processing.PredictiveUncertainty
+end Processing.PredictiveUncertainty

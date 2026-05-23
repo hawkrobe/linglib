@@ -1,4 +1,4 @@
-import Linglib.Theories.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.Lexical.Discriminative.Defs
 
 /-!
 # DLM-derived semantic-support measures
@@ -43,7 +43,7 @@ consumer (CHANGELOG 0.231.18). The cross-paper concept of
 "semantic support for form" is general DLM theory, not paper-specific.
 -/
 
-namespace Theories.Processing.Lexical.Discriminative
+namespace Processing.Lexical.Discriminative
 
 noncomputable section SemSupMeasures
 
@@ -132,4 +132,4 @@ no current consumer requires it. -/
 
 end SemSupMeasures
 
-end Theories.Processing.Lexical.Discriminative
+end Processing.Lexical.Discriminative

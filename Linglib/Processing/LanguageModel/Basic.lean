@@ -9,7 +9,7 @@ kernel `List Voc → PMF (Option Voc)` from contexts to next-symbol
 distributions, with `none` denoting end-of-string.
 
 This is the smallest cross-cutting primitive shared by everything in
-`Theories/Processing/`: surprisal-based theories, the IAS family
+`Processing/`: surprisal-based theories, the IAS family
 (@cite{giulianelli-etal-2026}), and any downstream measure that wants
 a unified notion of "the LM's predictive distribution at a context".
 
@@ -28,7 +28,7 @@ need not be finite).
 
 set_option autoImplicit false
 
-namespace Theories.Processing.LanguageModel
+namespace Processing.LanguageModel
 
 open Real
 open scoped ENNReal
@@ -54,4 +54,4 @@ noncomputable def surprisal (c : List Voc) (w : Voc) : ℝ :=
 
 end LangModel
 
-end Theories.Processing.LanguageModel
+end Processing.LanguageModel

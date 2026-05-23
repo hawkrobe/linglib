@@ -1,4 +1,4 @@
-import Linglib.Theories.Processing.MemorySurprisal.Basic
+import Linglib.Processing.MemorySurprisal.Basic
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Core.Morphology.MorphRule
 

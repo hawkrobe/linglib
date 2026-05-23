@@ -1,4 +1,4 @@
-import Linglib.Theories.Processing.CueBasedRetrieval.Basic
+import Linglib.Processing.CueBasedRetrieval.Basic
 import Linglib.Fragments.Turkish.Anaphors
 import Linglib.Studies.BarkerPullum1990
 

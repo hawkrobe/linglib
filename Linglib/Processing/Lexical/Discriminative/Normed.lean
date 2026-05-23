@@ -1,4 +1,4 @@
-import Linglib.Theories.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.Lexical.Discriminative.Defs
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Analysis.Normed.Operator.Basic
 
@@ -60,7 +60,7 @@ norm suffices for direction-of-effect arguments (kernel proximity →
 contour proximity).
 -/
 
-namespace Theories.Processing.Lexical.Discriminative
+namespace Processing.Lexical.Discriminative
 
 -- ============================================================================
 -- §1: Lipschitz continuity of the production map
@@ -185,4 +185,4 @@ theorem LinearDiscriminativeLexicon.isMeaningApproxIso_zero_iff
 
 end ApproximateInverse
 
-end Theories.Processing.Lexical.Discriminative
+end Processing.Lexical.Discriminative

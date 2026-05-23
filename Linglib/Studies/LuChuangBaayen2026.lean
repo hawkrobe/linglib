@@ -1,5 +1,5 @@
-import Linglib.Theories.Processing.Lexical.Discriminative.Defs
-import Linglib.Theories.Processing.Lexical.Discriminative.Normed
+import Linglib.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.Lexical.Discriminative.Normed
 import Linglib.Studies.ChuangEtAl2026
 
 /-!
@@ -55,7 +55,7 @@ visible to the eye" but reportedly incomplete; @cite{lu-chuang-baayen-2026}
 ## Substrate
 
 The `LinearDiscriminativeLexicon` substrate
-(`Theories/Processing/Lexical/Discriminative/Defs.lean`) is **reused
+(`Processing/Lexical/Discriminative/Defs.lean`) is **reused
 verbatim** — this is the second paper-anchored study consuming it
 (@cite{chuang-bell-tseng-baayen-2026} is the first). This file
 specialises the substrate to:
@@ -112,7 +112,7 @@ not. Until then, this comparison lives in prose.
 
 namespace LuChuangBaayen2026
 
-open Theories.Processing.Lexical.Discriminative
+open Processing.Lexical.Discriminative
 open ChuangEtAl2026
 
 -- ============================================================================
@@ -131,7 +131,7 @@ abbrev LuPitchContour : Type := FormVec LuPitchSampleCount
     768-dim contextualised embeddings (`CKIPGPT2HiddenDim` reused from
     `ChuangEtAl2026`). The substrate type
     `LinearDiscriminativeLexicon` is in
-    `Theories/Processing/Lexical/Discriminative/Defs.lean`. -/
+    `Processing/Lexical/Discriminative/Defs.lean`. -/
 abbrev LuTaiwanMandarinDLM : Type :=
   LinearDiscriminativeLexicon ℝ LuPitchContour ContextualEmbedding
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Processing.NoisyChannel.Basic
+import Linglib.Processing.NoisyChannel.Basic
 
 /-!
 # Lossy-Context Surprisal: Bridge to Classical Surprisal
@@ -33,9 +33,9 @@ deterministic summary) recovers Shannon's `−log p(w | c)`.
 
 set_option autoImplicit false
 
-namespace Theories.Processing.NoisyChannel
+namespace Processing.NoisyChannel
 
-open Theories.Processing.LanguageModel (LangModel)
+open Processing.LanguageModel (LangModel)
 
 namespace MemoryProcess
 
@@ -97,4 +97,4 @@ theorem expectedSurprisal_eq_virtualLM_surprisal
 
 end MemoryProcess
 
-end Theories.Processing.NoisyChannel
+end Processing.NoisyChannel

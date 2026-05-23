@@ -1,6 +1,6 @@
-import Linglib.Theories.Processing.Cost.Profile
-import Linglib.Theories.Processing.PredictiveUncertainty.Config
-import Linglib.Theories.Processing.NoisyChannel.LossyContext
+import Linglib.Processing.Cost.Profile
+import Linglib.Processing.PredictiveUncertainty.Config
+import Linglib.Processing.NoisyChannel.LossyContext
 
 /-!
 # Memory-Surprisal Trade-off Framework
@@ -86,7 +86,7 @@ structure MemoryEncoding (W : Type) (Mem : Type) where
 /-- Iterate a `MemoryEncoding` over an entire history to produce the
 final memory state. This is the *context-summary function* that, when
 paired with a predictor `Mem → PMF (Option W)`, induces a Dirac
-`MemoryProcess` (in `Theories.Processing.Memory`). Such a
+`MemoryProcess` (in `Processing.Memory`). Such a
 process is lossless for its own virtual LM
 (`MemoryProcess.expectedSurprisal_eq_virtualLM_surprisal`), so
 classical surprisal arises *exactly* when memory is encoded
@@ -580,15 +580,15 @@ trade-off: standard surprisal (negLog × indicator × h=1 × predictive).
 The trade-off curve parametrizes over memory encodings while holding
 this resolution fixed. IAS extends this by also parametrizing over the
 prediction resolution (horizon and representational level). -/
-def memorySurprisalConfig : Theories.Processing.PredictiveUncertainty.SurprisalConfig :=
-  Theories.Processing.PredictiveUncertainty.standardSurprisal
+def memorySurprisalConfig : Processing.PredictiveUncertainty.SurprisalConfig :=
+  Processing.PredictiveUncertainty.standardSurprisal
 
 /-! ### Bridge to NoisyChannel: deterministic encoders are Dirac MemoryProcesses
 
 The `MemoryEncoding` of @cite{hahn-degen-futrell-2021} is a *deterministic*
 context-summary `(Mem × W) → Mem` (plus an initial state). Paired with a
 predictor `Mem → PMF (Option W)`, it induces a `MemoryProcess` (in
-`Theories.Processing.NoisyChannel`) whose encoder is a Dirac at the
+`Processing.NoisyChannel`) whose encoder is a Dirac at the
 iterated memory state. The deterministic encoder is exactly the lossless
 special case that the @cite{futrell-gibson-levy-2020} `MemoryProcess`
 substrate generalizes — making the connection true by construction. -/
@@ -600,7 +600,7 @@ namespace MemoryEncoding
 the predictor is exposed unchanged. -/
 noncomputable def toMemoryProcess {W Mem : Type} (me : MemoryEncoding W Mem)
     (predict : Mem → PMF (Option W)) :
-    Theories.Processing.NoisyChannel.MemoryProcess W Mem where
+    Processing.NoisyChannel.MemoryProcess W Mem where
   encode := fun c => PMF.pure (me.summary c)
   predict := predict
 
@@ -618,7 +618,7 @@ theorem toMemoryProcess_expectedSurprisal_eq_virtualLM_surprisal
     (predict : Mem → PMF (Option W)) (c : List W) (w : W) :
     (me.toMemoryProcess predict).expectedSurprisal c w =
       ((me.toMemoryProcess predict).virtualLM me.summary).surprisal c w :=
-  Theories.Processing.NoisyChannel.MemoryProcess.expectedSurprisal_eq_virtualLM_surprisal
+  Processing.NoisyChannel.MemoryProcess.expectedSurprisal_eq_virtualLM_surprisal
     (me.toMemoryProcess_isDirac predict) c w
 
 end MemoryEncoding

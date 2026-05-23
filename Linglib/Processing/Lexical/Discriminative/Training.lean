@@ -1,4 +1,4 @@
-import Linglib.Theories.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.Lexical.Discriminative.Defs
 import Mathlib.Algebra.BigOperators.Pi
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Linarith
@@ -83,7 +83,7 @@ We do *not* formalise:
   derived PMF view is straightforward via normalization.
 -/
 
-namespace Theories.Processing.Lexical.Discriminative
+namespace Processing.Lexical.Discriminative
 
 noncomputable section TrainingSubstrate
 
@@ -345,4 +345,4 @@ abbrev LinearDiscriminativeLexicon.IsFILTrainedOn
     (data : TrainingExperience m n d) (q : FrequencyVector m) : Prop :=
   D.IsTrainedOn data q
 
-end Theories.Processing.Lexical.Discriminative
+end Processing.Lexical.Discriminative

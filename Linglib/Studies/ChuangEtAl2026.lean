@@ -1,5 +1,5 @@
-import Linglib.Theories.Processing.Lexical.Discriminative.Defs
-import Linglib.Theories.Processing.Lexical.Discriminative.Normed
+import Linglib.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.Lexical.Discriminative.Normed
 
 /-!
 # Chuang, Bell, Tseng & Baayen (2026): Word-specific tonal realizations in Mandarin
@@ -46,7 +46,7 @@ orthogonal modules of grammar.
 The DLM substrate (`LinearDiscriminativeLexicon`, `FormVec`, `MeaningVec`,
 `broadcastFirstCoord`, `linear_dlm_distinguishes_meanings`,
 `dlm_neutralizes_meanings_in_kernel`, `linear_dlm_admits_meaning_specific_contours`)
-lives in `Theories/Processing/Lexical/Discriminative/Defs.lean`
+lives in `Processing/Lexical/Discriminative/Defs.lean`
 @cite{baayen-2019} @cite{heitmeier-chuang-baayen-2026}. This file
 imports it and supplies the paper-specific instantiation: 50-dim pitch
 contours, 768-dim CKIP GPT-2 contextualised embeddings, the 51 RF
@@ -57,7 +57,7 @@ contains **no stored representations** — only the connection weights
 of comprehension and production maps. The substrate `structure` has
 exactly two fields, both `LinearMap`s; there is no `entries`-typed
 projection. This is the substantive reason DLM is housed under
-`Theories/Processing/Lexical/` rather than `Theories/Lexicon/` — see
+`Processing/Lexical/` rather than `Theories/Lexicon/` — see
 the substrate file's docstring for the full architectural argument.
 
 ## Relation to existing usage-based / frequency-channel theories
@@ -140,7 +140,7 @@ discrete-segmental and continuous-sub-segmental representations of
 
 namespace ChuangEtAl2026
 
-open Theories.Processing.Lexical.Discriminative
+open Processing.Lexical.Discriminative
 
 -- ============================================================================
 -- §1: Paper-specific instantiation — Taiwan Mandarin RF disyllables

@@ -1,4 +1,4 @@
-import Linglib.Theories.Processing.Cost.Profile
+import Linglib.Processing.Cost.Profile
 import Linglib.Phenomena.WordOrder.CrossSerial
 
 /-!

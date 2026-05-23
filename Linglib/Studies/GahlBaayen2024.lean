@@ -1,6 +1,6 @@
-import Linglib.Theories.Processing.Lexical.Discriminative.Defs
-import Linglib.Theories.Processing.Lexical.Discriminative.Measures
-import Linglib.Theories.Processing.Lexical.Discriminative.Normed
+import Linglib.Processing.Lexical.Discriminative.Defs
+import Linglib.Processing.Lexical.Discriminative.Measures
+import Linglib.Processing.Lexical.Discriminative.Normed
 
 /-!
 # Gahl & Baayen (2024): English homophone duration via DLM
@@ -49,7 +49,7 @@ attributed to frequency.
 ## Substrate (this file)
 
 This is the **fourth** consumer of the `LinearDiscriminativeLexicon`
-substrate (`Theories/Processing/Lexical/Discriminative/Defs.lean`),
+substrate (`Processing/Lexical/Discriminative/Defs.lean`),
 after `ChuangEtAl2026`, `LuChuangBaayen2026`, and `Saito2025`. It is
 also the **second** consumer of the `semSup` family (after Saito
 2025), the consumer that triggered the `semSup`/`semSupWord` lift
@@ -92,7 +92,7 @@ The paper directly compares DL-based GAMMs to GAMMs grounded in
 where frequency is a property of stored lexical entries. linglib does
 not currently formalize WEAVER or Dell-style spreading-activation
 substrates; the cross-framework discrimination lives in this file's
-prose (§5 below). When a `Theories/Processing/Lexical/WEAVER/` sibling
+prose (§5 below). When a `Processing/Lexical/WEAVER/` sibling
 lands, the localist–DL comparison can become a Lean-stateable
 contrast theorem.
 
@@ -106,7 +106,7 @@ contrast theorem.
 
 namespace GahlBaayen2024
 
-open Theories.Processing.Lexical.Discriminative
+open Processing.Lexical.Discriminative
 
 -- ============================================================================
 -- §1: Substrate instantiation — English DLM
@@ -142,7 +142,7 @@ abbrev EnglishHomophoneDLM : Type :=
     support a word's meaning provides to its constituent triphones,
     `Σ_{j ∈ word} (D.production s) j`. The paper's name for the
     `semSupWord` measure (now in
-    `Theories/Processing/Lexical/Discriminative/Measures.lean`); here
+    `Processing/Lexical/Discriminative/Measures.lean`); here
     as an `abbrev` re-exporting under the paper-specific name.
 
     Two other paper-specific measures (`CIND` for contextual

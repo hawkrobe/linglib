@@ -18,7 +18,7 @@ location. The substrate has graduated to `Theories/` per `CLAUDE.md`'s
 
 ## Architectural placement: Processing/Lexical, not Lexicon
 
-The DLM is housed under `Theories/Processing/Lexical/` rather than
+The DLM is housed under `Processing/Lexical/` rather than
 under a hypothetical `Theories/Lexicon/` for a substantive reason:
 the DLM **denies** that there is a separable lexicon to theorize
 about — its central architectural commitment is that the lexicon-as-
@@ -28,7 +28,7 @@ abstract; see also the discussion in @cite{lu-chuang-baayen-2026} §5
 on word-and-paradigm processing). Filing the DLM under "Lexicon"
 would commit linglib to the very architecture the model rejects. By
 contrast, the DLM is unambiguously a *processing* theory in the sense
-of `Theories/Processing/`: it specifies how form vectors map to
+of `Processing/`: it specifies how form vectors map to
 meaning vectors and back, with the network weights as the operative
 computational object.
 
@@ -86,7 +86,7 @@ explain.
   the substrate deliberately doesn't have.
 -/
 
-namespace Theories.Processing.Lexical.Discriminative
+namespace Processing.Lexical.Discriminative
 
 universe u
 
@@ -235,4 +235,4 @@ theorem linear_dlm_admits_meaning_specific_contours
                Function.update_self] at h0
     exact zero_ne_one h0
 
-end Theories.Processing.Lexical.Discriminative
+end Processing.Lexical.Discriminative

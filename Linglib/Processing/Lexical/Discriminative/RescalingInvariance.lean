@@ -1,4 +1,4 @@
-import Linglib.Theories.Processing.Lexical.Discriminative.Training
+import Linglib.Processing.Lexical.Discriminative.Training
 
 /-!
 # DLM ERM-invariance under positive rescaling
@@ -54,7 +54,7 @@ There is no project-side `toEmpiricalPMF` wrapper — the inline
 `toEmpiricalPMF` reinvented `PMF.ofRealWeightFn`; removed 0.231.X.)
 -/
 
-namespace Theories.Processing.Lexical.Discriminative
+namespace Processing.Lexical.Discriminative
 
 noncomputable section RescalingInvariance
 
@@ -94,4 +94,4 @@ theorem isERMSolution_of_same_normalize
 
 end RescalingInvariance
 
-end Theories.Processing.Lexical.Discriminative
+end Processing.Lexical.Discriminative

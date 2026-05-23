@@ -1,6 +1,6 @@
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Topology.Algebra.InfiniteSum.Basic
-import Linglib.Theories.Processing.LanguageModel.Basic
+import Linglib.Processing.LanguageModel.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import Mathlib.Analysis.Convex.Jensen
@@ -66,11 +66,11 @@ sums are taken as `tsum` (`∑'`) which collapses to `Finset.sum` whenever a
 
 set_option autoImplicit false
 
-namespace Theories.Processing.NoisyChannel
+namespace Processing.NoisyChannel
 
 open Real
 open scoped ENNReal
-open Theories.Processing.LanguageModel (LangModel)
+open Processing.LanguageModel (LangModel)
 
 /-- A processing architecture with a memory bottleneck.
 
@@ -256,4 +256,4 @@ theorem neg_log_marginalProb_le_expectedSurprisal
 
 end MemoryProcess
 
-end Theories.Processing.NoisyChannel
+end Processing.NoisyChannel

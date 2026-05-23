@@ -1,5 +1,5 @@
 import Linglib.Studies.Ross1967
-import Linglib.Theories.Processing.Cost.Profile
+import Linglib.Processing.Cost.Profile
 
 /-!
 # Cognitive Constraints and Island Effects
@@ -169,7 +169,7 @@ theorem best_island_lt_baseline :
 -- ============================================================================
 
 /-! Pareto profiles re-encode H&S's key conditions in the format used by
-`Theories.Processing.Cost.Profile`, supporting weight-free ordinal
+`Processing.Cost.Profile`, supporting weight-free ordinal
 comparison via Pareto dominance. -/
 
 /-- Bare wh + definite island-forming NP: worst CNPC condition.

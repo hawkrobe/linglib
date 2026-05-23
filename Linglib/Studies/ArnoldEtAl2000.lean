@@ -84,12 +84,12 @@ contradicting the paper's findings.
   binary postverbal pair. The same module's word-invariance
   (`dlm_word_invariant`) shows DLM cannot, on its own, also derive
   the newness effect — motivating §10's UID derivation.
-- `Theories.Processing.MemorySurprisal` — under @cite{futrell-2019}'s
+- `Processing.MemorySurprisal` — under @cite{futrell-2019}'s
   information-locality framework, DLM and UID are reductions of a
   single mutual-information-weighted cost (§11), so the two
   independent constraints `*HEAVY-FIRST` and `*NEW-FIRST` reflect
   variation along orthogonal axes of one underlying processing theory.
-- `Theories.Processing.Memory` — `MemorySurprisal`'s information
+- `Processing.Memory` — `MemorySurprisal`'s information
   locality is itself the *behavioural profile* of a finite-capacity
   `MemoryProcess` (@cite{futrell-gibson-levy-2020}'s lossy-context
   surprisal). §11 below traces the full grounding chain
@@ -575,10 +575,10 @@ independently-motivated processing cost already formalized in linglib:
 | Constraint | Bridge | Cost lives in |
 |---|---|---|
 | `*HEAVY-FIRST` | `heavyDiff_eq_dlm_signal` | `Theories.Syntax.DependencyGrammar.Formal.DependencyLength` |
-| `*NEW-FIRST`   | `newDiff_pos_implies_uid_prefers_themeLast` | `Theories.Processing.MemorySurprisal` (information locality) |
+| `*NEW-FIRST`   | `newDiff_pos_implies_uid_prefers_themeLast` | `Processing.MemorySurprisal` (information locality) |
 
 The two costs unify under @cite{futrell-2019}'s **information locality**
-framework (see `Theories.Processing.MemorySurprisal.Basic`,
+framework (see `Processing.MemorySurprisal.Basic`,
 `MutualInfoProfile.weightedSum`): both DLM and UID are special cases of
 minimizing Σ (memory cost × mutual information) across the utterance.
 
@@ -601,7 +601,7 @@ themselves rather than leaving them as stipulated penalties.
 
 `MutualInfoProfile.weightedSum` is itself a *behavioural profile* of a
 deeper substrate: a `MemoryProcess` (@cite{futrell-gibson-levy-2020},
-formalized in `Theories.Processing.Memory.Basic`) — a predictor that
+formalized in `Processing.Memory.Basic`) — a predictor that
 reads from a lossily-encoded summary of the past rather than from the
 raw history. Classical surprisal arises as the lossless special case
 (`MemoryProcess.expectedSurprisal_eq_surprisal_of_lossless` in
@@ -619,7 +619,7 @@ Both Arnold constraints are diagnostic of this finite memory:
 The 4-level grounding chain is therefore explicit:
 
 ```
-MemoryProcess (lossy substrate; Theories.Processing.Memory)
+MemoryProcess (lossy substrate; Processing.Memory)
    ↓  (behavioural profile across distances)
 MemorySurprisal.MutualInfoProfile (information locality)
    ↓  (specialise to one axis)

@@ -1,5 +1,5 @@
-import Linglib.Theories.Processing.LanguageModel.Basic
-import Linglib.Theories.Processing.PredictiveUncertainty.IAS
+import Linglib.Processing.LanguageModel.Basic
+import Linglib.Processing.PredictiveUncertainty.IAS
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
@@ -22,7 +22,7 @@ Two structural claims sit at the formal core:
 
 1. **Standard surprisal is a special case** of the IAS family — the
    instance with warping `−log` and indicator scoring at horizon 1.
-   Formalised in `Theories.Processing.PredictiveUncertainty.IAS` as
+   Formalised in `Processing.PredictiveUncertainty.IAS` as
    `standardSurprisal_denotes_surprisal`.
 
 2. **IAS is strictly more expressive than surprisal** — fixing the
@@ -72,8 +72,8 @@ set_option autoImplicit false
 
 namespace GiulianelliEtAl2026
 
-open Theories.Processing.PredictiveUncertainty
-open Theories.Processing.LanguageModel (LangModel)
+open Processing.PredictiveUncertainty
+open Processing.LanguageModel (LangModel)
 
 -- ============================================================================
 -- §1: IAS is strictly more expressive than surprisal

@@ -36,7 +36,7 @@ theorems.
 
 set_option autoImplicit false
 
-namespace Theories.Processing.PredictiveUncertainty
+namespace Processing.PredictiveUncertainty
 
 -- ============================================================================
 -- §1: Warping and Scoring Functions
@@ -130,4 +130,4 @@ theorem ias_recovers_surprisal :
     standardSurprisal := by
   rfl
 
-end Theories.Processing.PredictiveUncertainty
+end Processing.PredictiveUncertainty
