@@ -2932,7 +2932,7 @@
   doi       = {10.1515/9783110852820.302},
   validated = {true},
   role      = {foundational},
-  sources   = {Theories/Semantics/Lexical/Plural/Link1983.lean, Core/Mereology.lean}
+  sources   = {Theories/Semantics/Plurality/Algebra.lean;Core/Mereology.lean}
 }% REF: Zipf, G. K. (1935). The Psycho-Biology of Language. Houghton Mifflin.
 @book{kleene-1952,
   author    = {Kleene, Stephen C.},
@@ -10350,7 +10350,7 @@
   subfield  = {semantics/lexical},
   validated = {true},
   role      = {formalized},
-  sources   = {Phenomena/Plurals/Homogeneity.lean;Phenomena/Plurals/NonMaximality.lean;Theories/Semantics/Lexical/Plural/Distributivity.lean}
+  sources   = {Phenomena/Plurals/Homogeneity.lean;Phenomena/Plurals/NonMaximality.lean;Theories/Semantics/Plurality/Distributivity.lean;Theories/Semantics/Plurality/CandidateInterpretation.lean;Studies/KrizSpector2021.lean}
 }
 @article{haslinger-etal-2025,
   author    = {Haslinger, Nina and Rosina, Emil Eva and Schmitt, Viola and Wurm, Valerie},
@@ -10362,7 +10362,7 @@
   subfield  = {semantics/lexical},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Semantics/Lexical/Plural/Distributivity.lean;Phenomena/Plurals/Studies/HaslingerEtAl2025.lean;Fragments/German/Distributives.lean}
+  sources   = {Theories/Semantics/Plurality/Distributivity.lean;Studies/HaslingerEtAl2025.lean;Fragments/German/Distributives.lean}
 }
 @article{haslinger-etal-2025-nllt,
   author    = {Haslinger, Nina and Hien, Alain Noindonmon and Rosina, Emil Eva and Schmitt, Viola and Wurm, Valerie},
@@ -10375,7 +10375,7 @@
   subfield  = {semantics/lexical},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Semantics/Lexical/Determiner/UnifiedUniversal.lean;Theories/Semantics/Lexical/Determiner/ONEModifiers.lean;Phenomena/Plurals/Studies/HaslingerHienEtAl2025.lean}
+  sources   = {Theories/Semantics/Lexical/Determiner/UnifiedUniversal.lean;Theories/Semantics/Lexical/Determiner/ONEModifiers.lean;Studies/HaslingerHienEtAl2025.lean}
 }
 @phdthesis{haslinger-2025-diss,
   author    = {Haslinger, Nina},
@@ -10589,6 +10589,40 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Numerals/Compare.lean;Phenomena/Plurals/NonMaximality.lean;Theories/Semantics/Lexical/Numeral/Precision.lean}
+}
+@book{lasersohn-1995,
+  author    = {Lasersohn, Peter},
+  year      = {1995},
+  title     = {Plurality, Conjunction and Events},
+  publisher = {Springer Netherlands},
+  series    = {Studies in Linguistics and Philosophy},
+  volume    = {55},
+  doi       = {10.1007/978-94-015-8581-1},
+  subfield  = {semantics/lexical},
+  role      = {cited}
+}
+@article{gillon-1987,
+  author    = {Gillon, Brendan S.},
+  year      = {1987},
+  title     = {The Readings of Plural Noun Phrases in English},
+  journal   = {Linguistics and Philosophy},
+  volume    = {10},
+  number    = {2},
+  pages     = {199--219},
+  doi       = {10.1007/BF00584319},
+  subfield  = {semantics/lexical},
+  role      = {cited}
+}
+@book{schein-1993,
+  author    = {Schein, Barry},
+  year      = {1993},
+  title     = {Plurals and Events},
+  publisher = {MIT Press},
+  series    = {Current Studies in Linguistics},
+  volume    = {23},
+  isbn      = {9780262193344},
+  subfield  = {semantics/lexical},
+  role      = {cited}
 }% REF: Stanley, J. & Szabó, Z.G. (2000). On quantifier domain restriction. M&L 15(3).
 @article{stanley-szab-2000,
   author    = {Stanley, Jason and Gendler Szabó, Zoltán},
@@ -16486,7 +16520,34 @@
   subfield  = {semantics/events},
   validated = {true},
   role      = {cited},
-  sources   = {Core/Mereology.lean;Theories/Semantics/Events/Mereology.lean;Phenomena/Plurals/Bridge/StratifiedReference.lean}
+  sources   = {Core/Mereology.lean;Theories/Semantics/Events/Mereology.lean;Studies/Champollion2017.lean;Theories/Semantics/Aspect/Stratified.lean}
+}
+@incollection{link-1987,
+  author    = {Link, Godehard},
+  year      = {1987},
+  title     = {Generalized Quantifiers and Plurals},
+  booktitle = {Generalized Quantifiers: Linguistic and Logical Approaches},
+  editor    = {G{\"a}rdenfors, Peter},
+  publisher = {D. Reidel},
+  series    = {Studies in Linguistics and Philosophy},
+  volume    = {31},
+  pages     = {151--180},
+  doi       = {10.1007/978-94-009-3381-1_6},
+  isbn      = {9789400933811},
+  subfield  = {semantics/compositional},
+  role      = {foundational},
+  sources   = {Theories/Semantics/Plurality/Algebra.lean}
+}
+@article{champollion-2019,
+  author    = {Champollion, Lucas},
+  year      = {2019},
+  title     = {Distributivity in Formal Semantics},
+  journal   = {Annual Review of Linguistics},
+  volume    = {5},
+  pages     = {289--308},
+  doi       = {10.1146/annurev-linguistics-011718-012528},
+  subfield  = {semantics/events},
+  role      = {cited}
 }% ══════════════════════════════════════════════════════════════════════════════
 
 @article{koontz-garboden-2009,
@@ -16683,7 +16744,7 @@
   school    = {Massachusetts Institute of Technology},
   title     = {Autosegmental Phonology},
   url       = {https://dspace.mit.edu/handle/1721.1/16388},
-    subfield  = {morphology},
+  subfield  = {phonology},
   role      = {cited},
   validated = {true},
   sources   = {Fragments/Finnish/VowelHarmony.lean}
@@ -23404,7 +23465,7 @@
   doi       = {10.1017/S0952675726100268},
   subfield  = {phonology},
   role      = {formalized},
-  sources   = {Phenomena/Tone/Studies/McPhersonLamont2026.lean}
+  sources   = {Studies/McPhersonLamont2026.lean}
 }
 
 % REF: Pruitt (2023). Serialism and Opacity in Phonological Theory.
