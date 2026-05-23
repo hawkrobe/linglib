@@ -262,9 +262,51 @@ theorem bivalent_usable_iff_true (q : QUD W) (S : SentenceTV W)
   · intro ⟨hTrue, hAddr⟩
     exact ⟨by simp [hTrue], literal_imp_sufficient q S w hTrue, hAddr⟩
 
--- ════════════════════════════════════════════════════════════════════════════
--- § 5. Communicated Content
--- ════════════════════════════════════════════════════════════════════════════
+/-! ### Strong relevance (K&S 2021)
+
+Bivalent counterpart of `addressesIssue`: a `W → Prop` is *strongly relevant*
+to a QUD when it is constant on each cell of the partition. For bivalent
+sentences this is equivalent to `addressesIssue` (bridge:
+`bivalent_addressing_iff_stronglyRelevant` in `Studies/KrizSpector2021.lean`).
+
+Originates with @cite{kriz-spector-2021} §3; consolidated here as substrate
+since it is a generic property of partition-respecting predicates, not
+specific to plural predication. -/
+
+/-- A proposition is **strongly relevant** to a QUD iff it is constant on
+    each cell of the QUD partition. -/
+def isStronglyRelevantProp (q : QUD W) (p : W → Prop) : Prop :=
+  ∀ w₁ w₂ : W, q.r w₁ w₂ → (p w₁ ↔ p w₂)
+
+/-- Filter a set of propositions to those strongly relevant to `q`. -/
+def stronglyRelevantSet (q : QUD W) (candidates : Set (W → Prop)) :
+    Set (W → Prop) :=
+  { p ∈ candidates | isStronglyRelevantProp q p }
+
+/-- With the trivial QUD (all worlds in one cell), strong relevance reduces
+    to constancy on `W`. -/
+theorem trivial_relevant_iff_constant (p : W → Prop) :
+    isStronglyRelevantProp (QUD.trivial (M := W)) p ↔
+    ∀ w₁ w₂ : W, p w₁ ↔ p w₂ := by
+  simp only [isStronglyRelevantProp, QUD.trivial_r]
+  exact ⟨fun h w₁ w₂ => h w₁ w₂ ⟨⟩, fun h _ _ _ => h _ _⟩
+
+/-- With the exact QUD (singleton cells), every proposition is strongly
+    relevant. -/
+theorem exact_all_relevant [BEq W] [LawfulBEq W] (p : W → Prop) :
+    isStronglyRelevantProp (QUD.exact (M := W)) p := by
+  intro w₁ w₂ h
+  rw [show w₁ = w₂ from h]
+
+/-- With the exact QUD, the strongly-relevant filter is the identity. -/
+theorem exact_stronglyRelevantSet_eq [BEq W] [LawfulBEq W]
+    (candidates : Set (W → Prop)) :
+    stronglyRelevantSet (QUD.exact (M := W)) candidates = candidates := by
+  ext p
+  simp only [stronglyRelevantSet, Set.mem_sep_iff]
+  exact ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, exact_all_relevant p⟩⟩
+
+/-! ### Communicated Content -/
 
 /-- The communicated content of S relative to issue I: the set of worlds
     the hearer considers possible after hearing S.
