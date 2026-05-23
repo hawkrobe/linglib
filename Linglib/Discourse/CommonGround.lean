@@ -15,7 +15,7 @@ Multi-agent epistemic operators (knowledge, belief, common knowledge)
 are in `Semantics/Modality/EpistemicLogic.lean`.
 -/
 
-namespace Core.CommonGround
+namespace Discourse.CommonGround
 
 /-- A context set is the set of worlds compatible with the common ground.
 
@@ -171,4 +171,4 @@ theorem hasContextSet_add_restricts {W : Type*} (cg : CG W) (p : Set W) :
     HasContextSet.toContextSet (cg.add p) ⊆ HasContextSet.toContextSet cg :=
   CG.add_restricts cg p
 
-end Core.CommonGround
+end Discourse.CommonGround

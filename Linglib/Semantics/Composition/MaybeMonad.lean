@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Truth3
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # The Maybe Monad: Presupposition as Scope
@@ -55,7 +55,7 @@ set_option autoImplicit false
 namespace Semantics.Composition.MaybeMonad
 
 open Core.Duality (Truth3 Prop3)
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 
 -- ════════════════════════════════════════════════════════════════
 -- §1 Connectives on Option Bool

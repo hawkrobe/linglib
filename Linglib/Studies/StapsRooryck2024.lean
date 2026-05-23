@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.French.Predicates
 import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Features.Aktionsart
@@ -55,7 +55,7 @@ namespace StapsRooryck2024
 
 open Core (WorldTimeIndex)
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Fragments.French.Predicates
 open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.ArgumentStructure.Affectedness.Profile
@@ -496,7 +496,7 @@ theorem dynamic_follow_high :
 The paper's key semantic contribution: par and de share at-issue content
 (Initiator(x,e)) but carry complementary presuppositions about
 proto-agentivity. Formalized using `PrProp W` from
-`Core.Semantics.Presupposition`. -/
+`Semantics.Presupposition`. -/
 
 /-- Parameters for agentive preposition denotations (35a/35b).
     Bundled so the denotation is parametric over the event/entity model. -/

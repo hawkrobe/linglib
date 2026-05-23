@@ -23,8 +23,8 @@ coherent architecture with three layers:
 
 - `Core.Negation` — framework-agnostic classification types (ENType, ENStrength,
   PolarityClass, PolarityLicensing) with Mathlib lattice instances
-- `Mathlib.Data.Set.Basic` — set complement (`pᶜ`) replaces the old
-  `Core.Semantics.Proposition.pnot`
+- `Mathlib.Data.Set.Basic` — set complement (`pᶜ`) is the canonical
+  propositional negation (no custom `pnot` wrapper)
 - `Core.Logic.NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic),
   `strengthSufficient`
 - `Semantics.Entailment.Polarity` — `IsDE = Antitone`,

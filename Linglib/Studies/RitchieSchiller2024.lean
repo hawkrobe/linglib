@@ -1,7 +1,7 @@
 import Linglib.Semantics.Quantification.DomainRestriction
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.BToM
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Tactics.RSAPredict
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
@@ -421,7 +421,7 @@ speaker and hearer derive the same DDRP. Different perceptual access yields
 different DDRPs, motivating R&S's requirement of perceptual co-presence. -/
 
 open Core
-open Core.CommonGround
+open Discourse.CommonGround
 
 /-- The RSA-BToM bridge applies to the domain restriction RSA config. -/
 theorem rsa_btom_bridge (u : Utterance) (w : World) :

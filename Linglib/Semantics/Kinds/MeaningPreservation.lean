@@ -342,7 +342,7 @@ type-shift converts this intensional property into a different semantic type:
 
 These connect the abstract shift-selection machinery to Chierchia's `down`
 operator and the `Core.Nominal.russellIotaList` /
-`Core.Presupposition.PrProp.presupOfReferent` canonical pieces consumed by
+`Semantics.Presupposition.PrProp.presupOfReferent` canonical pieces consumed by
 `Semantics/Definiteness/Basic.lean`.
 -/
 

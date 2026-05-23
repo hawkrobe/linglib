@@ -57,7 +57,7 @@ reduces to a single update checking both conditions. This holds for
 both ∃ and ∀ projection.
 -/
 
-namespace Core.Semantics.ParameterizedUpdate
+namespace Semantics.Dynamic.ParameterizedUpdate
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Fragment Sets
@@ -328,4 +328,4 @@ theorem existentialUpdate_singleton (cs : Set W) (p₀ : P)
     λ ⟨hcs, _, hp, hs⟩ => by subst hp; exact ⟨hcs, hs⟩,
     λ ⟨hcs, hs⟩ => ⟨hcs, p₀, rfl, hs⟩⟩
 
-end Core.Semantics.ParameterizedUpdate
+end Semantics.Dynamic.ParameterizedUpdate

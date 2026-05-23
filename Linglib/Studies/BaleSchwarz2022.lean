@@ -1,6 +1,6 @@
 import Linglib.Features.Acceptability
 import Linglib.Features.Dimension
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
@@ -52,7 +52,7 @@ namespace Phenomena.Quantification.BaleSchwarz2022
 open Semantics.Measurement
 open Features.Dimension (Dimension QuotientDimension quotient_components_distinct)
 open Fragments.English.MeasurePhrases (gram kilo milliliter liter MeasureTermEntry)
-open Core.Presupposition (PrProp PrValue)
+open Semantics.Presupposition (PrProp PrValue)
 open Features (Acceptability)
 
 -- ============================================================================

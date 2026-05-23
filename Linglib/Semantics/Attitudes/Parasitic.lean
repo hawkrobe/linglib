@@ -35,12 +35,12 @@ The parasitic relationship means:
 
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.Preferential
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 
 namespace Semantics.Attitudes.Parasitic
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Semantics.Attitudes.Doxastic
 open Semantics.Attitudes.Preferential
 open Semantics.Presupposition.BeliefEmbedding
@@ -291,7 +291,7 @@ theorem parasitic_uses_belief_local_context {W E : Type*}
     presupAttributedToHolder blc p ↔
     ∀ w_star, globalCtx w_star → ∀ w', dox agent w_star w' → p.presup w' := by
   simp only [toBeliefLocalCtx, presupAttributedToHolder, BeliefLocalCtx.atWorld,
-        Core.CommonGround.ContextSet.entails]
+        Discourse.CommonGround.ContextSet.entails]
   constructor
   · intro h w_star hw_star w' hdox
     exact h w_star hw_star (And.intro hw_star hdox)

@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
@@ -36,7 +36,7 @@ Source determines who can challenge:
 namespace Dialogue.Gunlogson
 
 open Core.Discourse.Commitment
-open Core.CommonGround (ContextSet CG)
+open Discourse.CommonGround (ContextSet CG)
 open Core.Discourse (DiscourseRole)
 
 -- ════════════════════════════════════════════════════
@@ -336,7 +336,7 @@ theorem confirm_still_unstable {W : Type*} (p : Set W) :
 -- HasContextSet instance
 -- ════════════════════════════════════════════════════
 
-open Core.CommonGround in
+open Discourse.CommonGround in
 /-- Gunlogson states project to a context set via `contextSet` —
     the intersection of both participants' commitment contexts
     (regardless of source). -/

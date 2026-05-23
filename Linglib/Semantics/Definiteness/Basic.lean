@@ -1,7 +1,7 @@
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Reference.Donnellan
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.Maximality
 import Linglib.Fragments.English.Determiners
@@ -15,7 +15,7 @@ the library. The denotational layer itself lives in two canonical pieces:
 
 - `Core.Nominal.russellIotaList` (the per-context referent selector,
   Russellian iota over a `List E` filtered by a `Bool` predicate), and
-- `Core.Presupposition.PrProp.presupOfReferent` (the combinator lifting a
+- `Semantics.Presupposition.PrProp.presupOfReferent` (the combinator lifting a
   referent selector and a scope predicate into a `PrProp W`).
 
 All variants — uniqueness-based, familiarity-based, anaphoric (ι^x),
@@ -45,7 +45,7 @@ open Core.Logic.Intensional (Frame Ty)
 open Semantics.Montague (toyModel ToyEntity)
 open Semantics.Quantification.Quantifier (every_sem some_sem Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 open Features.Definiteness (DefPresupType Definiteness)
 open Semantics.Reference.Donnellan (definitePrProp attributiveContent)
 

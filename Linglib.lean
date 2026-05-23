@@ -27,7 +27,7 @@ import Linglib.Core.Logic.Modal.Kripke
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
 import Linglib.Features.Acceptability
-import Linglib.Core.Semantics.ParameterizedUpdate
+import Linglib.Semantics.Dynamic.ParameterizedUpdate
 import Linglib.Core.UD
 import Linglib.Core.Tree
 import Linglib.Features.Coordination
@@ -83,11 +83,11 @@ import Linglib.Features.Register
 import Linglib.Features.QParticleLayer
 import Linglib.Features.AnsweringSystem
 import Linglib.Phenomena.SocialMeaning.IndexicalField
-import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.PresuppositionContext
-import Linglib.Core.Semantics.Postsupposition
-import Linglib.Core.Semantics.ContentLayer
+import Linglib.Discourse.CommonGround
+import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Presupposition.Context
+import Linglib.Semantics.Dynamic.Postsupposition
+import Linglib.Semantics.ContentLayer
 import Linglib.Semantics.Questions.Denotation
 import Linglib.Semantics.Questions.Partition.Lattice
 import Linglib.Semantics.Questions.Partition.Cells

@@ -44,15 +44,15 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
 
 -/
 
-import Linglib.Core.Semantics.PresuppositionContext
+import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Semantics.Modality.EpistemicLogic
 
 namespace Semantics.Presupposition.BeliefEmbedding
 
-open Core.Presupposition
-open Core.CommonGround
-open Core.PresuppositionContext
+open Semantics.Presupposition
+open Discourse.CommonGround
+open Semantics.Presupposition.Context
 open Semantics.Presupposition.LocalContext
 
 variable {W : Type*} {Agent : Type*}

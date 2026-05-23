@@ -1,5 +1,5 @@
-import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Semantics.Presupposition.Basic
+import Linglib.Discourse.CommonGround
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Semantics.Presupposition.BeliefEmbedding
@@ -30,9 +30,9 @@ Heim-1992-era hole consensus.
 
 namespace Karttunen1973
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Semantics.Lexical (ProjectionBehavior VerbCore)
-open Core.CommonGround (ContextSet)
+open Discourse.CommonGround (ContextSet)
 open Fragments.English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════════════════
@@ -206,7 +206,7 @@ theorem karttunen1973_disagrees_with_modern_consensus :
 -- § 3. Filter Rules for the Connectives
 -- ════════════════════════════════════════════════════════════════
 
-/-! Karttunen's rules (13), (17), (24) are realized by `Core.Presupposition`
+/-! Karttunen's rules (13), (17), (24) are realized by `Semantics.Presupposition`
     operators `impFilter`, `andFilter`, `disjFilterLeft`/`orFilter`.
     Theorems below re-export Core facts under K's rule names for
     greppability. -/
@@ -365,7 +365,7 @@ theorem andFilter_presup_weaker_than_cumulative (p q : PrProp W) (w : W)
     > all of them." (p. 187)
 
     K defines `⌜¬A⌝ ≡ ⌜~t(A)⌝`. Both operators are now in
-    `Core.Presupposition`: `PrProp.neg` (internal/choice) and
+    `Semantics.Presupposition`: `PrProp.neg` (internal/choice) and
     `PrProp.negExt` (external/exclusion = `neg ∘ truthOp`). -/
 
 /-- Internal negation preserves presupposition (it's a hole). -/

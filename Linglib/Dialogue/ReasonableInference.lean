@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 
 /-!
 # Reasonable Inference @cite{stalnaker-1975}
@@ -16,7 +16,7 @@ The formal apparatus is a triple `(⟦·⟧, A, g)`:
 * `A(P, k)`: the **appropriateness** relation — whether asserting `P` in
   context `k` is appropriate;
 * `g(P, k) = k ∩ ⟦P⟧_k`: the **change function** — the new context after
-  asserting `P`. This is exactly `Core.CommonGround.ContextSet.update`.
+  asserting `P`. This is exactly `Discourse.CommonGround.ContextSet.update`.
 
 This module defines `Appropriateness`, sequential appropriateness `A*`,
 sequential update `g*`, and the `reasonableInference` predicate.
@@ -29,7 +29,7 @@ exhibits the gap.
 
 namespace Dialogue.ReasonableInference
 
-open Core.CommonGround
+open Discourse.CommonGround
 
 /--
 **Appropriateness** of a sentence in a context. Stalnaker leaves this

@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Semantics.ArgumentStructure.Linking
@@ -67,7 +67,7 @@ level rather than a vacuous law-of-excluded-middle.
 
 namespace Clark1983
 
-open Core.CommonGround
+open Discourse.CommonGround
 open Core.Discourse (PreparatoryCondition)
 open Morphology.DM (Categorizer Recategorization CategorizedRoot
   denominal_requires_n recategorization_changes_category)

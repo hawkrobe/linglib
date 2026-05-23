@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Logic.Truth3
 import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Studies.Geurts2005
@@ -62,7 +62,7 @@ definition with disjunction-update survival.
 - `Prop3.metaAssert`: allows falsity, no presupposition
   (`metaAssert_allows_falsity`, `metaAssert_no_gap`)
 - `PrProp.orFlex` = `PrProp.orBelnap` (substrate identity from
-  `Core/Semantics/Presupposition.lean`): correct (2a) and (2b), with a
+  `Semantics/Presupposition/Basic.lean`): correct (2a) and (2b), with a
   discriminating world `noHeadOfState` to prove the presupposition is
   non-trivial
 - `PrProp.orFlex.presup` overgenerates trivial-truth in eq. (7) shape:
@@ -77,7 +77,7 @@ definition with disjunction-update survival.
 namespace Yagi2025
 
 open Core.Duality
-open Core.Presupposition
+open Semantics.Presupposition
 
 /-! ## World type
 
@@ -471,7 +471,7 @@ theorem flex_genuineness :
 /-! ### Substrate observation: orFlex = orBelnap
 
 NOT a Yagi claim — @cite{belnap-1970} is not in his references.
-This is an observation `Core/Semantics/Presupposition.lean` already
+This is an observation `Semantics/Presupposition/Basic.lean` already
 makes (`orFlex_eq_orBelnap`) and that
 `Studies/Geurts2005.lean` extends to a three-way
 identity with @cite{geurts-2005}'s modal-disjunction view. We instantiate
@@ -699,7 +699,7 @@ theorem orFlex_satisfies_both :
 
 /-- The substrate-canonical orFlex / orBelnap / Geurts three-way
 identity, instantiated at the Buganda case. The substrate-side identity
-is `Core.Presupposition.PrProp.orFlex_eq_orBelnap` and
+is `Semantics.Presupposition.PrProp.orFlex_eq_orBelnap` and
 `Geurts2005.fromPrProp_cell_iff_orBelnap`. -/
 theorem orFlex_eq_orBelnap_at_buganda :
     PrProp.orFlex (W := W) = PrProp.orBelnap :=

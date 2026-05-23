@@ -33,14 +33,14 @@ For a sentence S with embedded clause φ at position i:
 
 -/
 
-import Linglib.Core.Semantics.PresuppositionContext
+import Linglib.Semantics.Presupposition.Context
 import Linglib.Core.Context.Tower
 
 namespace Semantics.Presupposition.LocalContext
 
-open Core.Presupposition
-open Core.CommonGround
-open Core.PresuppositionContext
+open Semantics.Presupposition
+open Discourse.CommonGround
+open Semantics.Presupposition.Context
 
 variable {W : Type*}
 
@@ -117,14 +117,14 @@ def localCtxSecondDisjunct (c : LocalCtx W) (first : PrProp W) : LocalCtx W :=
 
 
 /-- A presupposition projects at a local context if it's not entailed.
-    Delegates to `Core.PresuppositionContext.presupProjects`. -/
+    Delegates to `Semantics.Presupposition.Context.presupProjects`. -/
 abbrev presupProjects (lc : LocalCtx W) (p : PrProp W) : Prop :=
-  Core.PresuppositionContext.presupProjects lc.worlds p
+  Semantics.Presupposition.Context.presupProjects lc.worlds p
 
 /-- A presupposition is filtered (satisfied) at a local context if it IS entailed.
-    Delegates to `Core.PresuppositionContext.presupSatisfied`. -/
+    Delegates to `Semantics.Presupposition.Context.presupSatisfied`. -/
 abbrev presupFiltered (lc : LocalCtx W) (p : PrProp W) : Prop :=
-  Core.PresuppositionContext.presupSatisfied lc.worlds p
+  Semantics.Presupposition.Context.presupSatisfied lc.worlds p
 
 /-- Projection and filtering are complementary. -/
 theorem projects_iff_not_filtered (lc : LocalCtx W) (p : PrProp W) :
@@ -211,7 +211,7 @@ theorem king_conditional_filters (c : ContextSet KingWorld')
 
 /--
 The local context theory derives the same result as the filtering
-connectives in Core.Presupposition.
+connectives in Semantics.Presupposition.
 
 This theorem shows the correspondence between:
 - Schlenker's local context computation

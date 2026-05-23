@@ -53,7 +53,7 @@ open Semantics.Quantification.ChoiceFunction
 open Semantics.Definiteness
 open Semantics.Quantification.UnifiedUniversal
 open Features.Definiteness
-open Core.Presupposition
+open Semantics.Presupposition
 
 -- ════════════════════════════════════════════════════
 -- § 1. Definiteness: *nó*

@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.ContentLayer
+import Linglib.Semantics.ContentLayer
 import Linglib.Features.Acceptability
 
 /-!
@@ -50,7 +50,7 @@ with worked examples and Off→DenialDatum agreement proofs in
 
 namespace Phenomena.Negation.Denial
 
-open Core.Semantics.ContentLayer
+open Semantics.ContentLayer
 
 -- ════════════════════════════════════════════════════
 -- § Denial Type

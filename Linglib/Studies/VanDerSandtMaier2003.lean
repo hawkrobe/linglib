@@ -1,6 +1,6 @@
 import Linglib.Semantics.Dynamic.DRT.Basic
 import Linglib.Phenomena.Negation.Denial
-import Linglib.Core.Semantics.ContentLayer
+import Linglib.Semantics.ContentLayer
 
 /-!
 # Van der Sandt & Maier (2003) — Denials in Discourse
@@ -11,7 +11,7 @@ Denials in Discourse. Michigan Linguistics and Philosophy Workshop, 2003.
 Formalization of directed reverse anaphora (RA*) applied to the paper's
 worked examples. Connects three linglib modules:
 
-- `Core.Semantics.ContentLayer` — `Off` (which layers are offensive)
+- `Semantics.ContentLayer` — `Off` (which layers are offensive)
 - `Semantics.Dynamic.DRT.Basic` — LDRT types and RA*
 - `Phenomena.Negation.Denial` — empirical denial data
 
@@ -47,7 +47,7 @@ set_option autoImplicit false
 
 namespace VanDerSandtMaier2003
 
-open Core.Semantics.ContentLayer
+open Semantics.ContentLayer
 open Semantics.Dynamic.DRT
 open Semantics.Dynamic.Core.DRSExpr (DRSExpr)
 open Phenomena.Negation.Denial

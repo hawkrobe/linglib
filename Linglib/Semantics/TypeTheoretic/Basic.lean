@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Logic.Intensional.Rigidity
-import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Discourse.CommonGround
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.UD
 
 /-!

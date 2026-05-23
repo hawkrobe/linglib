@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.PresuppositionContext
+import Linglib.Semantics.Presupposition.Context
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Semantics.Presupposition.Accommodation
 import Linglib.Semantics.Presupposition.LocalContext
@@ -66,9 +66,9 @@ partially addressed by the `QuantifierProjection` type in
 
 namespace Beaver2001
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Core.Duality
-open Core.CommonGround
+open Discourse.CommonGround
 
 variable {W : Type*}
 
@@ -237,7 +237,7 @@ q's presupposition (from q.presup).
 
 @cite{beaver-2001} Ch. 4 discusses @cite{stalnaker-1974}'s common ground
 and @cite{heim-1983}'s File Change Semantics in detail. The `ContextSet W`
-type used here IS the context set from `Core.Semantics.CommonGround`.
+type used here IS the context set from `Discourse.CommonGround`.
 `ContextSet.update` IS Heim's FCS update: intersect the context set with a
 proposition, keeping only worlds where the proposition holds.
 

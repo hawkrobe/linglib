@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Basic
 import Linglib.Syntax.ConstructionGrammar.Basic
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # @cite{fillmore-kay-oconnor-1988}: Let Alone

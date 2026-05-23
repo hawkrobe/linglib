@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.Boxes.Accessibility
-import Linglib.Core.Semantics.ContentLayer
+import Linglib.Semantics.ContentLayer
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -51,7 +51,7 @@ open Semantics.Dynamic.Core.Accessibility
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core (Assignment)
 open Semantics.Dynamic.Core.WeakestPrecondition
-open Core.Semantics.ContentLayer
+open Semantics.ContentLayer
 
 -- ════════════════════════════════════════════════════
 -- § 1. K&R Model Theory (@cite{kamp-reyle-1993}, Def 1.2.1)
@@ -246,7 +246,7 @@ theorem toLDRS_toDRSExpr_conditions (drefs : List Nat) (conds : List DRSExpr) :
 -- ════════════════════════════════════════════════════
 
 /-! @cite{van-der-sandt-maier-2003} §4.3: given a set of offensive
-layers (computed by `Off` from `Core.Semantics.ContentLayer`), RA*
+layers (computed by `Off` from `Semantics.ContentLayer`), RA*
 partitions the LDRS conditions: surviving conditions remain in the
 main DRS, offensive conditions are moved under negation. -/
 

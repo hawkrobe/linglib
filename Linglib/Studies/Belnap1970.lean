@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Logic.Opposition.Square
 import Linglib.Semantics.Quantification.Quantifier
 import Mathlib.Data.Fintype.Basic
@@ -70,7 +70,7 @@ set_option autoImplicit false
 
 namespace Belnap1970
 
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 open Core.Duality (Truth3)
 open Core.Opposition (Square SquareRelations)
 open Semantics.Quantification.Quantifier

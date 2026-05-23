@@ -1,7 +1,7 @@
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -49,7 +49,7 @@ model lacks.
 namespace Dialogue.CredenceThreshold
 
 open Core.Discourse.Commitment (CommitmentSlate)
-open Core.CommonGround (ContextSet)
+open Discourse.CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Credence Functions
@@ -166,7 +166,7 @@ theorem always_stable {W : Type*} (s : State W) :
 -- HasContextSet instance
 -- ════════════════════════════════════════════════════
 
-open Core.CommonGround in
+open Discourse.CommonGround in
 /-- Credence-threshold states project to a context set via the
     asserted-list intersection (`contextSet`). The credence + threshold
     machinery gates *which* assertions can occur; once asserted, the

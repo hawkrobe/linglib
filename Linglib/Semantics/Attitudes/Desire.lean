@@ -1,6 +1,6 @@
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Semantics.Questions.Hamblin
@@ -76,7 +76,7 @@ for the bridge.
 
 namespace Semantics.Attitudes.Desire
 
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 open Core.Order (SatisfactionOrdering)
 
 section Generic

@@ -1,6 +1,6 @@
 import Linglib.Core.NestedRestriction
 import Linglib.Core.Mereology
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Height as Domain Restriction in ASL
@@ -41,7 +41,7 @@ set_option autoImplicit false
 
 namespace Fragments.ASL.Height
 
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Vertical Height Scale

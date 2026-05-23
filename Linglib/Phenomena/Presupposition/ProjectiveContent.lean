@@ -39,12 +39,12 @@ Belief-Predicate Test (for OLE):
 
 -/
 
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Discourse.AtIssueness
 
 namespace Phenomena.Presupposition.ProjectiveContent
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Core.Discourse.AtIssueness
 
 

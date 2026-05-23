@@ -2,7 +2,7 @@ import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Core.Mood.Basic
 import Linglib.Core.Order.SimilarityOrdering
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 
 /-!
 # Stalnaker selection-function counterfactuals
@@ -57,7 +57,7 @@ equivalence within an appropriate context (the
 
 namespace Semantics.Conditionals
 
-open Core.CommonGround (ContextSet)
+open Discourse.CommonGround (ContextSet)
 open Core.Mood (GramMood)
 open _root_.Semantics.Conditionals (SelectionFunction selectionPrefers)
 open Core.Order (SimilarityOrdering)

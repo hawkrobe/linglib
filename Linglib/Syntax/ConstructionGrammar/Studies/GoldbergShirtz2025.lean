@@ -1,6 +1,6 @@
 import Linglib.Syntax.ConstructionGrammar.Basic
-import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Semantics.Presupposition.Basic
+import Linglib.Discourse.CommonGround
 import Linglib.Pragmatics.Expressives.Basic
 
 /-!
@@ -27,8 +27,8 @@ lunch", "a must-see movie"). Their key theoretical properties:
 namespace ConstructionGrammar.Studies.GoldbergShirtz2025
 
 open ConstructionGrammar
-open Core.Presupposition
-open Core.CommonGround
+open Semantics.Presupposition
+open Discourse.CommonGround
 open Pragmatics.Expressives
 
 /-! ## Section 1: PAL Construction definitions -/
@@ -153,8 +153,8 @@ def palConstructicon : Constructicon :=
 
 /-! ## Section 2: Presupposition bridge
 
-Connect PAL's familiarity presupposition to Core.Presupposition and
-Core.CommonGround infrastructure. -/
+Connect PAL's familiarity presupposition to Semantics.Presupposition and
+Discourse.CommonGround infrastructure. -/
 
 /-- PAL presupposes the situation type is in the common ground.
 

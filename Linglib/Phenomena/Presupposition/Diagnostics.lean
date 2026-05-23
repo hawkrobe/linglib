@@ -31,7 +31,7 @@ These tests identify what's presupposed vs. what's asserted.
 
 -/
 
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Acceptability
 
 namespace Phenomena.Presupposition.Diagnostics

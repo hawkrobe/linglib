@@ -1,5 +1,5 @@
-import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.PresuppositionContext
+import Linglib.Semantics.Presupposition.Basic
+import Linglib.Semantics.Presupposition.Context
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Studies.Sauerland2003
 import Linglib.Semantics.Presupposition.PhiFeatures
@@ -70,7 +70,7 @@ set_option autoImplicit false
 
 namespace Enguehard2024
 
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 open Semantics.Presupposition.PhiFeatures
 
 -- ============================================================================
@@ -664,11 +664,11 @@ categorical judgments in examples (5)–(6).
     world — there is no middle ground. -/
 theorem constant_presup_satisfied_iff_satisfiable
     {W : Type*} (witnessCard : W → Nat) (conceivable : W → Prop)
-    (c : Core.CommonGround.ContextSet W)
+    (c : Discourse.CommonGround.ContextSet W)
     (hne : c.nonEmpty) :
-    Core.PresuppositionContext.presupSatisfied c
+    Semantics.Presupposition.Context.presupSatisfied c
       (sgIndefPresup witnessCard conceivable) ↔
-    Core.PresuppositionContext.presupSatisfiable c
+    Semantics.Presupposition.Context.presupSatisfiable c
       (sgIndefPresup witnessCard conceivable) := by
   constructor
   · intro hsat

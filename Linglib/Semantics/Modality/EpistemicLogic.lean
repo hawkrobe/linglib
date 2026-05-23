@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Core.Logic.Intensional.RestrictedModality
 import Linglib.Core.Scales.EpistemicScale.Defs
 
@@ -29,7 +29,7 @@ This file lives in `Semantics/Modality/` because it makes
 substantive theoretical commitments (S5 for knowledge, KD45 for belief,
 fixed-point characterization of common knowledge). The framework-agnostic
 context management (`ContextSet`, `CG`) lives in
-`Core/Semantics/CommonGround.lean`.
+`Discourse/CommonGround.lean`.
 
 Following mathlib style, all operators are `Prop`-valued; computation
 on finite worlds goes through `Decidable` instances + `decide`.
@@ -40,7 +40,7 @@ namespace Semantics.Modality.EpistemicLogic
 open Core.Logic.Intensional
   (AccessRel AgentAccessRel boxR diamondR IsReflexive IsSerial IsTransitive IsSymmetric IsEuclidean
    boxR_T boxR_D boxR_four boxR_B boxR_five)
-open Core.CommonGround (CG)
+open Discourse.CommonGround (CG)
 
 /-! ## Individual Knowledge
 
@@ -262,7 +262,7 @@ are common knowledge among the discourse participants. -/
 
 /-- A common ground is grounded in common knowledge when its context
     set equals the intersection of what is commonly known. -/
-def _root_.Core.CommonGround.CG.groundedIn {W E : Type*}
+def _root_.Discourse.CommonGround.CG.groundedIn {W E : Type*}
     (cg : CG W) (Rs : AgentAccessRel W E) (group : List E)
     (bound : ℕ) : Prop :=
   ∀ w, cg.contextSet w ↔

@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Core.Agent.Learning
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Dialogue.CommitmentSpace
 import Linglib.Dialogue.DistributionalCG
 
@@ -51,7 +51,7 @@ utterances describe those features.
 
 namespace Anderson2021
 
-open Core.CommonGround (ContextSet)
+open Discourse.CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════
 -- § 1. MutualFriends Domain
@@ -682,7 +682,7 @@ posterior that assigns zero weight to worlds where the utterance is false,
 the updated CG excludes exactly those worlds — recovering `ContextSet.update`.
 
 This bridge connects the probabilistic conversation model to the classical
-assertion framework in `Core.Semantics.CommonGround`. -/
+assertion framework in `Discourse.CommonGround`. -/
 theorem lr_one_excludes_false_worlds (cg : DistributionalCG MFWorld)
     (posterior : MFWorld → ℝ) (hn : ∀ w, 0 ≤ posterior w) (w : MFWorld)
     (h : posterior w = 0) :

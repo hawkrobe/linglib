@@ -28,9 +28,9 @@ because the consumers — verum studies, evidential illocution, biased polar
 questions — operate over `Set W` already and never reduce to a
 truth-table.
 
-## Relation to `Core/Semantics/ContentLayer.LayeredProp`
+## Relation to `Semantics/ContentLayer.LayeredProp`
 
-`Core/Semantics/ContentLayer.lean` defines a 3-layer `LayeredProp W`
+`Semantics/ContentLayer.lean` defines a 3-layer `LayeredProp W`
 (`presupposition / atIssue / implicature`, all `W → Bool`) anchored on
 @cite{van-der-sandt-maier-2003}'s LDRT, with offensive-layer machinery
 for the Off-computation. `BiLayered` here is a 2-layer `W → Prop`-valued

@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Core.Discourse.Roles
 
 /-!
@@ -487,7 +487,7 @@ end Commitment
 -- § 5. HasContextSet Instance
 -- ════════════════════════════════════════════════════════════════
 
-open Core.CommonGround in
+open Discourse.CommonGround in
 /-- A commitment slate projects to a context set: the worlds compatible
     with all committed propositions. -/
 instance {W : Type*} : HasContextSet (Commitment.CommitmentSlate W) W where

@@ -5,7 +5,7 @@ import Linglib.Semantics.Tense.TemporalConnectives.EventBridge
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Japanese.TemporalConnectives
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # @cite{ogihara-steinert-threlkeld-2024} — Data
@@ -1076,7 +1076,7 @@ theorem veridicality_from_quantifiers :
 -- § 22: Presupposition Modeling
 -- ============================================================================
 
-open Core.Presupposition
+open Semantics.Presupposition
 
 /-- A temporal connective modeled as a presuppositional proposition.
     Veridical connectives presuppose their complement (like factives);

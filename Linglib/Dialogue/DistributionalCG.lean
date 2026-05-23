@@ -1,6 +1,6 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Core.Discourse.Commitment
 import Linglib.Dialogue.CommitmentSpace
 
@@ -11,7 +11,7 @@ import Linglib.Dialogue.CommitmentSpace
 
 A non-negative real-valued weight function over worlds, refining
 @cite{stalnaker-2002}'s sharp set-membership context set with graded
-plausibility. The probabilistic counterpart of `Core.CommonGround.CG W`.
+plausibility. The probabilistic counterpart of `Discourse.CommonGround.CG W`.
 
 ## Substrate role
 
@@ -43,7 +43,7 @@ frameworks.
 
 namespace Dialogue
 
-open Core.CommonGround (ContextSet HasContextSet)
+open Discourse.CommonGround (ContextSet HasContextSet)
 open Core.Discourse (DiscourseRole)
 open Core.Discourse.Commitment (HasSupport IndexedWeightedCommitment CommitmentForce)
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Entailment.Polarity
 
 /-!
@@ -33,7 +33,7 @@ paper-specific IC/FP/MP ranking in `Studies/Wang2025.lean`.
 
 namespace Semantics.Presupposition.TriggerTypology
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Semantics.Entailment.Polarity
 
 /--

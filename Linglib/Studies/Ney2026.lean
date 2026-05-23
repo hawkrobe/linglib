@@ -1,5 +1,5 @@
 import Linglib.Semantics.Reference.Basic
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 
 /-!
 # Ney 2026 — Insinuative reference and the coordination account
@@ -68,7 +68,7 @@ The §3 prima-facie challenge is formalized abstractly:
 hypothesis on the conception. Substantive Ney soundness — that the
 resolution holds under a *realistic* CG operator derived from
 `commonBelief` (@cite{stalnaker-2002}) — requires a `CG.toAgentAccess :
-CG W → AgentAccessRel W E` bridge in `Core/Semantics/CommonGround.lean`
+CG W → AgentAccessRel W E` bridge in `Discourse/CommonGround.lean`
 that does not yet exist. Until that bridge lands, the resolution
 theorems are witnessed by toy operators (a degenerate `inCG := · = True`
 that distinguishes intersection-CG-transparency from union-CG-transparency
@@ -103,7 +103,7 @@ language* per @cite{beaver-stanley-2023}.
 ## Substrate primitives this file leans on (with citations)
 
 Imports `Reference.Basic` (@cite{kaplan-1989}'s Character/Content +
-@cite{almog-2014}'s ReferentialProfile) and `Core.Semantics.CommonGround`
+@cite{almog-2014}'s ReferentialProfile) and `Discourse.CommonGround`
 (@cite{stalnaker-2002}'s context set). `SpeakerIntention.intendedRef`
 parallels @cite{donnellan-1966}'s referential-use intended object;
 the broader speaker-intent structure connects to @cite{searle-1983}
@@ -138,7 +138,7 @@ the §5 conclusion proposes the broader "insinuative speech" terminology.
 
 namespace Ney2026
 
-open Semantics.Reference.Basic Core.CommonGround
+open Semantics.Reference.Basic Discourse.CommonGround
 
 /-! ## §1. Metasemantic apparatus -/
 
@@ -467,7 +467,7 @@ the trivially-failing `noSemanticValueAccount := ⊥`. A genuine
 predict no semantic value, so the discriminator stays formally sound
 but is currently unfalsifiable: any always-false account produces the
 same negative side. The principled fix is to lift `Account` to range
-over `Core.Semantics.ContentLayer.LayeredProp` so that Camp routes the
+over `Semantics.ContentLayer.LayeredProp` so that Camp routes the
 unavowed content to `.implicature` while coordination routes to
 `.atIssue` — a cross-framework integration deferred until a real Camp
 study lands. -/

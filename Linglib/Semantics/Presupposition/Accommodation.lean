@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.PresuppositionContext
+import Linglib.Semantics.Presupposition.Context
 
 /-!
 # Accommodation
@@ -38,9 +38,9 @@ paribus — presupposition P comes into existence at t."
 namespace Semantics.Presupposition.Accommodation
 
 open Classical
-open Core.Presupposition
-open Core.CommonGround
-open Core.PresuppositionContext
+open Semantics.Presupposition
+open Discourse.CommonGround
+open Semantics.Presupposition.Context
 
 variable {W : Type*}
 
@@ -68,7 +68,7 @@ inductive AccommodationLevel where
 /-- Global accommodation: update the context to include the presupposition.
  @cite{lewis-1979}: "presupposition P comes into existence."
 
- Delegates to `Core.PresuppositionContext.accommodate`. -/
+ Delegates to `Semantics.Presupposition.Context.accommodate`. -/
 abbrev globalAccommodate (c : ContextSet W) (presup : Set W) : ContextSet W :=
  accommodate c presup
 
@@ -91,7 +91,7 @@ instance (bindingDepth : Nat) : DecidablePred (isTrapped bindingDepth) := fun l 
  unfold isTrapped; cases l <;> infer_instance
 
 /-- All constraints bundled together.
- Uses canonical operations from `Core.PresuppositionContext`. -/
+ Uses canonical operations from `Semantics.Presupposition.Context`. -/
 structure AccommodationOK (c : ContextSet W) (presup : Set W) : Prop where
  informative : accommodationInformative c presup
  consistent : accommodationConsistent c presup

@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
@@ -43,7 +43,7 @@ assertive from presuppositional content.
 `pexIEII` takes the same IE/II computation from `Operators.lean` and
 produces a `PrProp World` — a Prop-based partial proposition with separate
 assertive and presuppositional components. This directly integrates with
-the presupposition projection infrastructure in `Core.Semantics.Presupposition`.
+the presupposition projection infrastructure in `Semantics.Presupposition`.
 
 This file contains only the abstract pex theory (parameterized by an
 arbitrary `World` type and abstract `ALT`, `φ`). The concrete worked
@@ -57,7 +57,7 @@ puzzles from §3–§5 — live in the study file
 namespace Exhaustification.Presuppositional
 
 open Exhaustification
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 
 variable {World : Type*}
 
@@ -288,7 +288,7 @@ flat-EXH assertion paired with its consequence) and "inference projects"
 (expensive: distinguishes pex from flat EXH).
 -/
 
-open Core.Presupposition
+open Semantics.Presupposition
 
 /-- Wrap a `PrProp W` (e.g. a pex output) as an `Implicature W Prop` whose
 content is the presupposed component. Callers supply `kind` via record
@@ -329,7 +329,7 @@ theorem bps_neg_not_cancellable {W : Type*}
     ¬ Implicature.IsCancellable (fun w => PrProp.holds w p.neg)
                                 (bpsToImplicature alts p) :=
   -- `h.1 : (p.neg).presup w` is definitionally `p.presup w` because
-  -- `PrProp.neg.presup := p.presup` (Core.Semantics.Presupposition:185-186).
+  -- `PrProp.neg.presup := p.presup` (Semantics.Presupposition:185-186).
   -- This is the projection identity `PrProp.neg_presup` in concrete form.
   Implicature.IsCancellable.false_of_assertion_implies_content (fun _ h => h.1)
 

@@ -1,6 +1,6 @@
 import Linglib.Features.Evidentiality
 import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Tense.Evidential
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 import Mathlib.Data.Set.Basic
@@ -163,7 +163,7 @@ theorem all_evidentialSurvives :
 -- ════════════════════════════════════════════════════
 
 open Semantics.Modality.Kratzer
-open Core.Presupposition
+open Semantics.Presupposition
 open Features.Evidentiality
 open Semantics.Tense.Evidential
 open Fragments.Slavic.Bulgarian.Evidentials

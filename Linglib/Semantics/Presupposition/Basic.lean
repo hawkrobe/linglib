@@ -59,7 +59,7 @@ idiom in logic-heavy files such as `Mathlib/Order/Filter/Basic.lean`.
   one definition each, with one bridge theorem instead of eight.
 -/
 
-namespace Core.Presupposition
+namespace Semantics.Presupposition
 
 open Core.Duality
 
@@ -963,4 +963,4 @@ theorem presupOfReferent_assertion_none {E : Type*}
 
 end PrProp
 
-end Core.Presupposition
+end Semantics.Presupposition

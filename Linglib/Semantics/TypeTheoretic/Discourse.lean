@@ -17,10 +17,10 @@ declarative/interrogative/imperative slice plus a backchannel constructor;
 true backchannels live in `Pragmatics/Dialogue/KOS/`).
 
 **Information States**: InfoState (gameboard), agenda operations,
-  bridge to Core.CommonGround (§2.6).
+  bridge to Discourse.CommonGround (§2.6).
 
 **Parametric Content**: Parametric bg/fg, PPpty, PQuant, PQuantDet, PRel2 (§4.2–4.3).
-  Bridge to Core.Presupposition.PrProp.
+  Bridge to Semantics.Presupposition.PrProp.
 
 **Reference & Mental States**: HasNamed, NameContext, semPropNameP,
   TotalInfoState, AccommodationKind, Paderewski puzzle,
@@ -150,17 +150,17 @@ def InfoState.pushAgenda {SignT CommT : Type}
     InfoState SignT CommT :=
   { s with agenda := signType :: s.agenda }
 
-/-! ## Bridge to Core.CommonGround -/
+/-! ## Bridge to Discourse.CommonGround -/
 
 /-- Bridge: a `Set W`-based information state's commitments form a CG. -/
 def InfoState.toCG {W SignT : Type}
     (s : InfoState SignT (List (Set W))) :
-    Core.CommonGround.CG W where
+    Discourse.CommonGround.CG W where
   propositions := s.commitments
 
 /-- InfoState with `Set W` commitments projects to a context set via CG. -/
 instance {W SignT : Type} :
-    Core.CommonGround.HasContextSet
+    Discourse.CommonGround.HasContextSet
       (InfoState SignT (List (Set W))) W where
   toContextSet s := s.toCG.contextSet
 
@@ -168,7 +168,7 @@ instance {W SignT : Type} :
 theorem infoState_initial_eq_empty_cg (W SignT : Type) :
     (InfoState.initial (SignT := SignT)
       ([] : List (Set W))).toCG =
-    Core.CommonGround.CG.empty := rfl
+    Discourse.CommonGround.CG.empty := rfl
 
 /-- Bridge: integrating a commitment = adding to common ground. -/
 theorem integrate_comm_eq_cg_add {W SignT : Type}
@@ -282,30 +282,30 @@ theorem Parametric.trivial_fg {Content : Type*} (c : Content) (u : Unit) :
 noncomputable def Parametric.toPrProp {W : Type*} (p : Parametric (W → Prop))
     (presupTest : W → Prop) [DecidablePred presupTest]
     (bgWitness : (w : W) → presupTest w → p.Bg) :
-    Core.Presupposition.PrProp W where
+    Semantics.Presupposition.PrProp W where
   presup := presupTest
   assertion := λ w =>
     if h : presupTest w then p.fg (bgWitness w h) w else False
 
 /-- Convert a PrProp back to a Parametric. -/
-def _root_.Core.Presupposition.PrProp.toParametric {W : Type*}
-    (p : Core.Presupposition.PrProp W) :
+def _root_.Semantics.Presupposition.PrProp.toParametric {W : Type*}
+    (p : Semantics.Presupposition.PrProp W) :
     Parametric (Set W) where
   Bg := { w : W // p.presup w }
   fg := λ _ => p.assertion
 
 /-- Parametric ↔ PrProp roundtrip: the assertion component survives
 when the presupposition holds. -/
-theorem toParametric_toPrProp_assertion {W : Type*} (p : Core.Presupposition.PrProp W) (w : W)
+theorem toParametric_toPrProp_assertion {W : Type*} (p : Semantics.Presupposition.PrProp W) (w : W)
     (hp : p.presup w) :
     p.toParametric.fg ⟨w, hp⟩ w ↔ p.assertion w := by
-  simp only [Core.Presupposition.PrProp.toParametric]
+  simp only [Semantics.Presupposition.PrProp.toParametric]
 
 /-- When a Parametric has a Prop-valued background, it directly maps to PrProp. -/
 noncomputable def Parametric.toPrPropSimple {W : Type*}
     (presup : W → Prop) [DecidablePred presup]
     (assertion : (w : W) → presup w → Prop) :
-    Core.Presupposition.PrProp W where
+    Semantics.Presupposition.PrProp W where
   presup := presup
   assertion := λ w => if h : presup w then assertion w h else False
 

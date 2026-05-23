@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Kratzer.Flavor
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Data.Fin.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
@@ -24,7 +24,7 @@ possible* (Observation 5). Kernel semantics resolves this because *can't φ* =
 namespace Semantics.Modality
 
 open Semantics.Modality.Kratzer
-open Core.Presupposition
+open Semantics.Presupposition
 
 variable {W : Type*}
 /-! ## Helpers -/

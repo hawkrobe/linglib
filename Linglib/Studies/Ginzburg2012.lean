@@ -610,7 +610,7 @@ def kosSpeakerDGB : DGB String (Set RainW) String String :=
 def kosAddresseeDGB : DGB String (Set RainW) String String :=
   DGB.initial
 
-open Core.CommonGround in
+open Discourse.CommonGround in
 /-- KOS-vs-Stalnaker architectural contrast: KOS's two DGBs project to
 *different* `ContextSet`s after one-sided assertion. Stalnaker's
 framework has a single CG that cannot represent this divergence —

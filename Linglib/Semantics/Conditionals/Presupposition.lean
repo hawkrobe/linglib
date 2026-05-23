@@ -1,5 +1,5 @@
 import Linglib.Semantics.Conditionals.Basic
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Presuppositional Conditionals: K/P vs K/P*
@@ -44,7 +44,7 @@ namespace Semantics.Conditionals.Presupposition
 
 open Semantics.Conditionals
 open Core.Order (SimilarityOrdering)
-open Core.Presupposition
+open Semantics.Presupposition
 
 variable {W : Type*}
 

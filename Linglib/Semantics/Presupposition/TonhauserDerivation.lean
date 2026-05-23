@@ -81,15 +81,15 @@ information structure (see Core.QUD, Features.InformationStructure).
 
 -/
 
-import Linglib.Core.Semantics.PresuppositionContext
+import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Semantics.Presupposition.BeliefEmbedding
 
 namespace Semantics.Presupposition.TonhauserDerivation
 
-open Core.Presupposition
-open Core.CommonGround
-open Core.PresuppositionContext
+open Semantics.Presupposition
+open Discourse.CommonGround
+open Semantics.Presupposition.Context
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.BeliefEmbedding
 

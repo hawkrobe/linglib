@@ -33,19 +33,19 @@ content (singularProp = false), but is used referentially.
 - `donnellanDivergence`: The two uses come apart when the description
   fails to apply to the intended referent
 - `definitePrProp`: Attributive semantics with presupposition (bridges
-  to `Core.Presupposition.PrProp`)
+  to `Semantics.Presupposition.PrProp`)
 
 -/
 
 import Linglib.Semantics.Reference.Basic
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 namespace Semantics.Reference.Donnellan
 
 open Core (Intension)
 open Core.Intension (rigid IsRigid rigid_isRigid)
-open Core.Presupposition (PrProp)
-open Core.Presupposition.PrProp (presupOfReferent)
+open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition.PrProp (presupOfReferent)
 open Semantics.Reference.Basic
 
 /-! ## Use Modes -/

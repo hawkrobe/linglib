@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Conditionals.Presupposition
 
 /-!
@@ -28,7 +28,7 @@ worlds to drop from the ∃-reading's quantification domain.
 
 namespace Sharvit2025
 
-open Core.Presupposition
+open Semantics.Presupposition
 
 -- ════════════════════════════════════════════════════════════════
 -- § World type (Sharvit's Mia/Sue scenario)

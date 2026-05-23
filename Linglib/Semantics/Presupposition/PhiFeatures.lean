@@ -3,7 +3,7 @@ import Linglib.Features.PrivativePair
 import Linglib.Features.Number
 import Linglib.Features.Person
 import Linglib.Features.Gender
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Presuppositional Semantics of Phi-Features
@@ -51,7 +51,7 @@ namespace Semantics.Presupposition.PhiFeatures
 
 open Mereology (Atom)
 open Features (PrivativePair PhiFeatures)
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 
 -- ============================================================================
 -- §1  Generic Presuppositional Denotations
@@ -541,7 +541,7 @@ witness, that witness is atomic; if ≥ 2, their sum is non-atomic.
 ### Connection to `PresuppositionContext.presupSatisfiable`
 
 Conceivability = satisfiability in context:
-`presupSatisfiable c p` from `Core.Semantics.PresuppositionContext`
+`presupSatisfiable c p` from `Semantics.Presupposition.Context`
 checks whether `p.presup` is compatible with context set `c`. The
 conceivability presupposition of an indefinite is the meta-requirement
 that the number feature's entity-level presupposition be satisfiable.

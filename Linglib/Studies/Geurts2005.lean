@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.List.Pairwise
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Modality.ModalTypes
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Geurts 2005: Disjunctions as Modals
@@ -90,7 +90,7 @@ substantive move is the LF reanalysis (p.391), not a structural inference.
 namespace Geurts2005
 
 open Core.Modality
-open Core.Presupposition
+open Semantics.Presupposition
 
 variable {W : Type*}
 
@@ -218,7 +218,7 @@ theorem default_existential_holds_iff (C : Set W) (bs : List (Set W)) :
 When presuppositions conflict, modal domains coincide with presuppositional
 domains and Geurts's disjunction specialises to `PrProp.orFlex`. These
 lemmas are structural (the orFlex domain is defined as the union of
-disjunct presuppositions in `Core/Semantics/Presupposition.lean`), not
+disjunct presuppositions in `Semantics/Presupposition/Basic.lean`), not
 stipulated bridges. -/
 
 /-- Construct a Geurts possibility disjunction from two presuppositional

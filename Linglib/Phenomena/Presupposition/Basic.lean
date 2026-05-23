@@ -30,12 +30,12 @@ Following @cite{karttunen-1973} and @cite{heim-1983}:
 
 -/
 
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Data.Fintype.Basic
 
 namespace Phenomena.Presupposition
 
-open Core.Presupposition
+open Semantics.Presupposition
 
 
 /--

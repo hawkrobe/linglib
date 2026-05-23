@@ -1,7 +1,7 @@
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Semantics.Definiteness.Basic
 import Linglib.Core.Nominal.Maximality
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Paape & Vasishth (2026) @cite{paape-vasishth-2026}
@@ -513,8 +513,8 @@ The argument chain:
 section UniquenessBridge
 
 open Semantics.Definiteness (modifierNecessary)
-open Core.Presupposition (PrProp)
-open Core.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
+open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
 open Core.Nominal (russellIotaList)
 

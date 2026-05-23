@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
@@ -74,7 +74,7 @@ open Core.Discourse.Commitment
   (CommitmentSlate IndexedCommitment IndexedWeightedCommitment CommitmentForce
    HasSupport CommitmentGrade)
 open Core.Discourse (DiscourseRole)
-open Core.CommonGround (ContextSet)
+open Discourse.CommonGround (ContextSet)
 open Core.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════
@@ -755,7 +755,7 @@ end KrifkaState
 -- § 5. HasContextSet Instances
 -- ════════════════════════════════════════════════════
 
-open Core.CommonGround in
+open Discourse.CommonGround in
 /-- A polymorphic commitment space projects to a context set via its root,
     using the `[HasSupport G]` typeclass's `support` projection. Recovers
     the binary case at `G = Prop` definitionally (via `support := id` in
@@ -765,12 +765,12 @@ instance {W G : Type*} [HasSupport G] :
     HasContextSet (CommitmentSpace W G) W where
   toContextSet := CommitmentSpace.toContextSet
 
-open Core.CommonGround in
+open Discourse.CommonGround in
 /-- A Krifka state projects to a context set via the commitment space root. -/
 instance {W : Type*} : HasContextSet (KrifkaState W) W where
   toContextSet := KrifkaState.contextSet
 
-open Core.CommonGround in
+open Discourse.CommonGround in
 /-- KrifkaState context set agrees with CommitmentSpace context set. -/
 theorem krifkaState_contextSet_eq_space {W : Type*} (s : KrifkaState W) :
     HasContextSet.toContextSet s = HasContextSet.toContextSet s.space := rfl

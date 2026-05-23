@@ -30,7 +30,7 @@ Key CI expressions:
 
 -/
 
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 namespace Pragmatics.Expressives
 
@@ -432,7 +432,7 @@ an attitude verb, the presupposition can be evaluated against the common ground
 ### Bridge: PrProp ↔ TwoDimProp
 
 This provides a new cross-module connection between:
-- `Core.Presupposition.PrProp` (presupposition + assertion)
+- `Semantics.Presupposition.PrProp` (presupposition + assertion)
 - `Pragmatics.Expressives.TwoDimProp` (at-issue + CI)
 
 -/

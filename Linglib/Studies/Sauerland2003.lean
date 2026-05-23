@@ -5,7 +5,7 @@ import Linglib.Features.PrivativePair
 import Linglib.Features.Number
 import Linglib.Features.Person
 import Linglib.Features.Gender
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Presupposition.MaximizePresupposition
@@ -55,7 +55,7 @@ open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
 open Semantics.Plurality.Algebra (star D)
 open Semantics.Plurality.Cover (IsFinCover algClosure_of_finCover)
 open Features (PrivativePair PhiFeatures)
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 open Core.Constraint.OT (NamedConstraint mkTableau)
 open Semantics.Presupposition.PhiFeatures
 open Semantics.Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maximal)

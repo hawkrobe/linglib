@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 
 /-!
 # Discourse State
@@ -43,7 +43,7 @@ properties — `assert_adds_to_dcS`, `assert_preserves_cg`,
 
 namespace Dialogue.FarkasBruce
 
-open Core.CommonGround
+open Discourse.CommonGround
 
 
 /--
@@ -124,7 +124,7 @@ def empty : DiscourseState W := ⟨[], [], [], []⟩
 /--
 Convert common ground to a ContextSet (worlds where all cg props hold).
 
-Bridges to the existing `Core.CommonGround` infrastructure as the
+Bridges to the existing `Discourse.CommonGround` infrastructure as the
 fold-intersection of the cg list.
 -/
 def toContextSet (ds : DiscourseState W) : ContextSet W :=
@@ -341,7 +341,7 @@ end DiscourseState
 -- HasContextSet instance
 -- ════════════════════════════════════════════════════
 
-open Core.CommonGround in
+open Discourse.CommonGround in
 /-- F&B states project to a context set via `cg`-only intersection
     (`toContextSet`). Note: this projection deliberately ignores
     `dcS`/`dcL` and `table` — F&B's whole point is that assertion

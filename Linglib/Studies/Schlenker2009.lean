@@ -76,8 +76,8 @@ example : ProjectiveTrigger.appositive.toClass.ole = .notObligatory := rfl
 @cite{tonhauser-beaver-roberts-simons-2013}. The four-class taxonomy is derived
 from the SCF x OLE feature space. -/
 
-open Core.Presupposition
-open Core.CommonGround
+open Semantics.Presupposition
+open Discourse.CommonGround
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.TonhauserDerivation
 

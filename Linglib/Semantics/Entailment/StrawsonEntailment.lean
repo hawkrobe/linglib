@@ -2,7 +2,7 @@ import Mathlib.Order.Monotone.Defs
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Semantics.Entailment.Polarity
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Strawson Entailment
@@ -187,7 +187,7 @@ Von Fintel's key observation: `only` is NOT classically DE
 "Only x VP" as a `PrProp`: Horn's asymmetric decomposition.
 -/
 def onlyPrProp {W : Type*} (x : W → Prop) (scope : Set W) :
-    Core.Presupposition.PrProp W where
+    Semantics.Presupposition.PrProp W where
   presup := fun _ => ∃ y, x y ∧ scope y
   assertion := fun _ => ∀ y, x y ∨ ¬ scope y
 

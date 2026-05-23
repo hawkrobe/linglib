@@ -1,7 +1,7 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Core.Logic.Truth3
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -69,7 +69,7 @@ Type B (EXH¹).
 namespace WangDavidson2026
 
 open Core.Duality (Truth3 Prop3)
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 open Exhaustification (innocent predToFinset altsFromPreds)
 open Exhaustification.Trivalent
 

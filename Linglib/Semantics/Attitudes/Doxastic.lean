@@ -19,7 +19,7 @@ Doxastic attitudes use Hintikka-style accessibility relations:
 - `assertion` = universal modal (∀w'. R(x,w,w') → p(w'))
 
 This connects doxastic attitudes to the presupposition infrastructure
-in `Core.Presupposition`, enabling uniform treatment of factive
+in `Semantics.Presupposition`, enabling uniform treatment of factive
 presuppositions, projection, and the @cite{glass-2025} typology.
 
 ## PresupClass
@@ -39,7 +39,7 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Logic.Intensional.RestrictedModality
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
@@ -116,7 +116,7 @@ The key insight: this classification is DERIVED from the `PrProp` produced by
 field of the PrProp determines the classification.
 
 Postsuppositions (yǐwéi's ◇¬p) are output-context constraints, formalized
-separately in `Core.Postsupposition`.
+separately in `Semantics.Dynamic.Postsupposition`.
 -/
 
 /--
@@ -354,7 +354,7 @@ their projective content is fundamentally different:
 
 1. **Not a presupposition**: @cite{glass-2025} argues yǐwéi's falsity inference
    is a postsupposition (about output context) not presupposition (input).
-   Postsuppositions are formalized in `Core.Postsupposition`.
+   Postsuppositions are formalized in `Semantics.Dynamic.Postsupposition`.
 
 2. **Different requirement**: yǐwéi requires CG ◇ ¬p (CG compatible with ¬p),
    not CG ⊨ ¬p (CG entails ¬p)
@@ -494,7 +494,7 @@ instance DoxasticPredicate.holdsAt_decidable {W E : Type*}
 -- PrProp Construction: Doxastic Predicates as Partial Propositions
 -- ============================================================================
 
-open Core.Presupposition
+open Semantics.Presupposition
 
 /--
 Convert a doxastic predicate application to a `PrProp`.

@@ -1,5 +1,5 @@
 import Mathlib.Data.Fintype.Basic
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
@@ -493,7 +493,7 @@ def evalMCond {I W Pred Entity : Type} [Fintype I]
 -- § 6. Connection to Common Ground
 -- ════════════════════════════════════════════════════════════════
 
-open Core.CommonGround (ContextSet HasContextSet)
+open Discourse.CommonGround (ContextSet HasContextSet)
 
 /-- An ordering-world pair: the enriched index for metalinguistic CG.
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Kratzer.Flavor
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
@@ -37,7 +37,7 @@ for Czech.
 namespace Semantics.Modality.BiasedPQ
 
 open Semantics.Modality.Kratzer
-open Core.CommonGround
+open Discourse.CommonGround
 
 variable {W : Type*}
 

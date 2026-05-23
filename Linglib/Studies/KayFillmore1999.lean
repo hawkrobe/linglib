@@ -1,7 +1,7 @@
 import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Syntax.ConstructionGrammar.Basic
-import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Semantics.Presupposition.Basic
+import Linglib.Discourse.CommonGround
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Questions.Hamblin
@@ -401,7 +401,7 @@ theorem wxdy_same_class_as_incredulity_response :
 -- D. Presupposition bridge (Core/Presupposition.lean)
 -- ============================================================================
 
-open Core.Presupposition
+open Semantics.Presupposition
 
 /-- On the incredulity reading, WXDY presupposes the embedded proposition
 (the situation that the speaker finds surprising) and has trivial assertion.
@@ -553,7 +553,7 @@ theorem perspP_disambiguates_wxdy {W : Type*}
 -- H. Common ground bridge (Core/CommonGround.lean)
 -- ============================================================================
 
-open Core.CommonGround
+open Discourse.CommonGround
 
 /-- The WXDY presupposition must be entailed by the common ground.
 For "What's this fly doing in my soup?", the CG must already entail

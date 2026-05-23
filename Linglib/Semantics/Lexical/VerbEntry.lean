@@ -1,6 +1,6 @@
 import Linglib.Core.Word
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
@@ -51,7 +51,7 @@ Language-specific fragments extend `VerbCore` with morphological fields:
 
 namespace Semantics.Lexical
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Features
 open Semantics.Lexical
 open Semantics.Lexical.Roots
@@ -115,7 +115,7 @@ Postsupposition type: output-context constraint distinct from presuppositions.
 after accepting "x yǐwéi p", the CG must be compatible with ¬p.
 This cannot be derived from veridicality alone.
 
-The concrete `Core.Postsupposition.Postsupposition W` is parameterized
+The concrete `Semantics.Dynamic.Postsupposition.Postsupposition W` is parameterized
 by the world type; this enum is the world-type-independent tag stored
 in `VerbCore`.
 -/

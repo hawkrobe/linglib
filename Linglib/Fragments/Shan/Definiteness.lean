@@ -2,7 +2,7 @@ import Linglib.Features.Definiteness
 import Linglib.Core.Deixis.Feature
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Maximality
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Kinds.MeaningPreservation
 
@@ -37,7 +37,7 @@ situation) and add spatial content to the presupposition filter.
 namespace Fragments.Shan.Definiteness
 
 open Features.Definiteness
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 open Semantics.Kinds
 
 -- ============================================================================

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.NegRaising
-import Linglib.Core.Semantics.PresuppositionContext
-import Linglib.Core.Semantics.Postsupposition
+import Linglib.Semantics.Presupposition.Context
+import Linglib.Semantics.Dynamic.Postsupposition
 import Linglib.Semantics.Lexical.VerbEntry
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
@@ -35,15 +35,15 @@ Semantics and Pragmatics 18, Article 8: 1-17.
 Belief verb denotations are `PrProp W` values produced by
 `DoxasticPredicate.toPrProp`. The presup field captures the factive
 presupposition (or lack thereof). yǐwéi's postsupposition is a separate
-`Core.Postsupposition` value. The `PresupClass` classification and PLC
+`Semantics.Dynamic.Postsupposition` value. The `PresupClass` classification and PLC
 validation from `Doxastic.lean` derive the contrafactive gap.
 -/
 
 namespace Glass2025
 
 open Semantics.Attitudes.Doxastic
-open Core.Presupposition
-open Core.Postsupposition
+open Semantics.Presupposition
+open Semantics.Dynamic.Postsupposition
 open Semantics.Lexical
 open Fragments.English.Predicates.Verbal
 open Fragments.Mandarin.Predicates

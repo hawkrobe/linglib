@@ -1,5 +1,5 @@
-import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Semantics.ParameterizedUpdate
+import Linglib.Discourse.CommonGround
+import Linglib.Semantics.Dynamic.ParameterizedUpdate
 
 /-!
 # Disjunctive Context Updating
@@ -34,7 +34,7 @@ that made α true at w.
 ## Architecture
 
 Disjunctive Updating is an instance of ∃-projection from
-`Core.Semantics.ParameterizedUpdate`: the parameter is the compositional
+`Semantics.Dynamic.ParameterizedUpdate`: the parameter is the compositional
 context C, and the fragment set `F c w := I w c` says which contexts are
 available at each world. `disjunctiveUpdate` = `existentialUpdate` and
 `prune` = `fiberwiseFilter` (both with argument order swapped).
@@ -58,8 +58,8 @@ sequential update = single conjunctive update — apply directly.
 
 namespace Dialogue.DisjunctiveUpdate
 
-open Core.CommonGround (ContextSet)
-open Core.Semantics.ParameterizedUpdate
+open Discourse.CommonGround (ContextSet)
+open Semantics.Dynamic.ParameterizedUpdate
 
 
 -- ════════════════════════════════════════════════════════════════

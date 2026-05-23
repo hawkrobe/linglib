@@ -1,5 +1,5 @@
-import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Semantics.Presupposition.Basic
+import Linglib.Discourse.CommonGround
 
 /-!
 # Presupposition–Context Bridge
@@ -33,10 +33,10 @@ presupposition is *conceivable* in the common ground iff there exists some
 world in the context set satisfying it.
 -/
 
-namespace Core.PresuppositionContext
+namespace Semantics.Presupposition.Context
 
-open Core.Presupposition
-open Core.CommonGround
+open Semantics.Presupposition
+open Discourse.CommonGround
 
 variable {W : Type*}
 
@@ -143,4 +143,4 @@ abbrev presupSatisfiableIn {S : Type*} [HasContextSet S W] (s : S) (p : PrProp W
 abbrev presupProjectsFrom {S : Type*} [HasContextSet S W] (s : S) (p : PrProp W) : Prop :=
   presupProjects (HasContextSet.toContextSet s) p
 
-end Core.PresuppositionContext
+end Semantics.Presupposition.Context

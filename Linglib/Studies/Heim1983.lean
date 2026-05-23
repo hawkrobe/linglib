@@ -17,7 +17,7 @@ examples from Phenomena for NeoGricean SI computation.
 
 namespace Heim1983
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Semantics.Presupposition.TriggerTypology
 open Phenomena.Presupposition
 

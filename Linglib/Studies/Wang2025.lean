@@ -1,8 +1,8 @@
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Logic.Intensional.RestrictedModality
-import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Discourse.CommonGround
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Acceptability
 import Linglib.Fragments.Mandarin.Particles
 import Linglib.Pragmatics.Expressives.Basic
@@ -184,8 +184,8 @@ theorem additive_deRe_available : ye_deRe.accepted = true := rfl
 -- Constraint-based Formalization (was: Implicature/Constraints/Wang2025.lean)
 -- ============================================================================
 
-open Core.Presupposition (PrProp)
-open Core.CommonGround (ContextSet)
+open Semantics.Presupposition (PrProp)
+open Discourse.CommonGround (ContextSet)
 
 /-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
 of the speaker-K operator. The Prop-valued canonical version lives in

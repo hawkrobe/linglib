@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # @cite{warstadt-2022}: Presupposition Triggering and Utterance Utility @cite{warstadt-2022}
@@ -25,7 +25,7 @@ sprinter") triggers stronger accommodation than genus-level ("not runner").
 
 namespace Warstadt2022
 
-open Core.Presupposition
+open Semantics.Presupposition
 
 
 /-! ## Green Card Example (Table 1) -/

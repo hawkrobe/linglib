@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.LocalContext
 
 /-!
@@ -41,7 +41,7 @@ items).
 
 namespace Phenomena.Presupposition.Compare
 
-open Core.Presupposition
+open Semantics.Presupposition
 
 open Classical
 

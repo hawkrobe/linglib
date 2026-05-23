@@ -61,8 +61,8 @@ open Semantics.Presupposition.OntologicalPreconditions
 open Phenomena.Presupposition.ProjectiveContent
 open SolstadBott2022
 open Fragments.German.Predicates
-open Core.Presupposition
-open Core.CommonGround
+open Semantics.Presupposition
+open Discourse.CommonGround
 open Core.Discourse.AtIssueness
 
 -- ════════════════════════════════════════════════════

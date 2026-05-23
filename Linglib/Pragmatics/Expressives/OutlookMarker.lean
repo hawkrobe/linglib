@@ -1,5 +1,5 @@
 import Linglib.Core.Modality.ModalTypes
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Pragmatics.Expressives.Basic
 
 /-!
@@ -35,7 +35,7 @@ but share properties of both — specifically:
 
 namespace Pragmatics.Expressives.OutlookMarker
 
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 open Core.Modality (ModalFlavor)
 open Pragmatics.Expressives (TwoDimProp SecondaryMeaningProperties expressiveProperties)
 

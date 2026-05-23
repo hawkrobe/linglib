@@ -63,7 +63,7 @@ after the utterance. This is NOT a presupposition and cannot be derived
 from veridicality alone (@cite{glass-2025}, @cite{glass-2023}).
 
 Encoded structurally as `postsupType := some .weakContrafactive` in VerbCore,
-formalized as `Core.Postsupposition.weakContrafactive`, and exercised in
+formalized as `Semantics.Dynamic.Postsupposition.weakContrafactive`, and exercised in
 `Glass2025`.
 -/
 

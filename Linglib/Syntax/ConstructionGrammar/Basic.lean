@@ -1,5 +1,5 @@
-import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Semantics.Presupposition.Basic
+import Linglib.Discourse.CommonGround
 
 /-!
 # Construction Grammar: Core Types

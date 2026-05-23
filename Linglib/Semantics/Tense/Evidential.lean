@@ -1,7 +1,7 @@
 import Linglib.Semantics.Tense.Compositional
 import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Mood.Basic
 import Linglib.Core.Context.Shifts
 
@@ -59,7 +59,7 @@ open Core.Time.Reichenbach
 open Semantics.Tense
 open Features.Evidentiality
 open Features.Mirativity
-open Core.Presupposition
+open Semantics.Presupposition
 
 -- ════════════════════════════════════════════════════
 -- § 1. Evidential Frame

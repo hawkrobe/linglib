@@ -2,7 +2,7 @@ import Linglib.Semantics.PIP.Expr
 import Linglib.Semantics.PIP.Felicity
 import Linglib.Semantics.PIP.Connectives
 import Linglib.Semantics.PIP.Composition
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Plurality.Algebra
 import Mathlib.Data.Fintype.Basic
@@ -50,7 +50,7 @@ open Core.Logic.Intensional.Logic (frameConditions)
 /-!
 ### Presupposition Projection: F ↔ PrProp connectives
 
-PIP's F operator and `Core.Presupposition.PrProp` filtering connectives
+PIP's F operator and `Semantics.Presupposition.PrProp` filtering connectives
 implement the same Karttunen conjunction clause (@cite{karttunen-1973}).
 These theorems were previously in the study file; they belong in the
 theory layer because they establish a general correspondence.
@@ -62,7 +62,7 @@ PIP's conjunction felicity agrees with `PrProp.andFilter`.
 **PIP Felicity** (`PIPExpr.felicitous` for `.conj φ ψ`):
   `φ.felicitous w && ((φ.truth w).not || ψ.felicitous w)`
 
-**PrProp.andFilter** (`Core.Presupposition`):
+**PrProp.andFilter** (`Semantics.Presupposition`):
   `p.presup w && (!p.assertion w || q.presup w)`
 
 These are structurally identical when interpreting `truth` as `assertion`
@@ -71,10 +71,10 @@ and `felicitous` as `presup`.
 theorem pip_felicity_agrees_with_andFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
     ((Felicity.PIPExpr.conj φ ψ).felicitous w = true) ↔
-    (Core.Presupposition.PrProp.andFilter
-      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Core.Presupposition.PrProp _))
-      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Core.Presupposition.PrProp _))).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.andFilter,
+    (Semantics.Presupposition.PrProp.andFilter
+      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Semantics.Presupposition.PrProp _))
+      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Semantics.Presupposition.PrProp _))).presup w := by
+  simp only [Felicity.PIPExpr.felicitous, Semantics.Presupposition.PrProp.andFilter,
     Bool.and_eq_true, Bool.or_eq_true]
   constructor
   · intro ⟨h1, h2⟩
@@ -95,9 +95,9 @@ presupposition/felicity of the negated expression unchanged.
 theorem pip_felicity_agrees_with_neg {W : Type*}
     (φ : Felicity.PIPExpr W) (w : W) :
     ((Felicity.PIPExpr.neg φ).felicitous w = true) ↔
-    (Core.Presupposition.PrProp.neg
-      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Core.Presupposition.PrProp _))).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.neg]
+    (Semantics.Presupposition.PrProp.neg
+      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Semantics.Presupposition.PrProp _))).presup w := by
+  simp only [Felicity.PIPExpr.felicitous, Semantics.Presupposition.PrProp.neg]
 
 /--
 PIP's implication felicity agrees with `PrProp.impFilter`.
@@ -110,10 +110,10 @@ the antecedent can satisfy the consequent's presupposition.
 theorem pip_felicity_agrees_with_impFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
     ((Felicity.PIPExpr.impl φ ψ).felicitous w = true) ↔
-    (Core.Presupposition.PrProp.impFilter
-      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Core.Presupposition.PrProp _))
-      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Core.Presupposition.PrProp _))).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.impFilter,
+    (Semantics.Presupposition.PrProp.impFilter
+      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Semantics.Presupposition.PrProp _))
+      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Semantics.Presupposition.PrProp _))).presup w := by
+  simp only [Felicity.PIPExpr.felicitous, Semantics.Presupposition.PrProp.impFilter,
     Bool.and_eq_true, Bool.or_eq_true]
   constructor
   · intro ⟨h1, h2⟩

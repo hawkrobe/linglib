@@ -1,7 +1,7 @@
 import Linglib.Features.InformationStructure
 import Linglib.Features.Prosody
 import Linglib.Pragmatics.Expressives.Basic
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Alternatives.AltMeaning
 
 /-!
@@ -42,7 +42,7 @@ open Features.InformationStructure
 open Semantics.Alternatives
 open Features.Prosody
 open Pragmatics.Expressives
-open Core.Presupposition
+open Semantics.Presupposition
 
 namespace KratzerSelkirk2020
 

@@ -1,6 +1,6 @@
 import Linglib.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Pragmatics.DecisionTheoretic.ScalarImplicature
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
@@ -29,7 +29,7 @@ antecedent D must have been relevant before becoming presupposed.
 
 namespace DTS.Also
 
-open Core.Presupposition
+open Semantics.Presupposition
 open DTS
 open DTS.ScalarImplicature (sgnRelevance RelevanceSign)
 

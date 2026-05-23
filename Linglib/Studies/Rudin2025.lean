@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Mathlib.Data.Set.Basic
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Kratzer.Ordering
@@ -30,7 +30,7 @@ predicates carry `[DecidablePred p]` constraints.
 
 namespace Rudin2025
 
-open Core.CommonGround
+open Discourse.CommonGround
 
 abbrev World := Fin 4
 

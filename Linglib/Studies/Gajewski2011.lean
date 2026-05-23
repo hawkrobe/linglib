@@ -281,7 +281,7 @@ them to `only` and verify the empirical match: weak NPIs licensed
 -/
 
 open Semantics.Entailment.PresuppositionLicensing
-open Core.Presupposition (PrProp)
+open Semantics.Presupposition (PrProp)
 
 /-- The K&P operator for `only x`: assertion = "no y ≠ x has scope",
     presupposition = "some y has x and scope" (Horn 1996). Built directly

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Focus.Particles
-import Linglib.Core.Semantics.ContentLayer
+import Linglib.Semantics.ContentLayer
 import Linglib.Core.Discourse.Coherence
 import Linglib.Features.InformationStructure
 
@@ -14,7 +14,7 @@ Lexical entries for English focus-sensitive particles, typed by
 namespace Fragments.English.FocusParticles
 
 open Semantics.Focus.Particles (EvenThreshold)
-open Core.Semantics.ContentLayer (ContentLayer)
+open Semantics.ContentLayer (ContentLayer)
 open Features.InformationStructure (FIPApplication)
 open Core.Discourse.Coherence (CoherenceRelation)
 

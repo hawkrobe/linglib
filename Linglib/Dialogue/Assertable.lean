@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 import Linglib.Core.Discourse.Roles
 import Linglib.Dialogue.Stalnaker
 import Linglib.Dialogue.CommitmentSpace
@@ -70,7 +70,7 @@ via the existing `KrifkaState.hasNoOpenContinuations` and
 namespace Dialogue
 
 open Core.Discourse (DiscourseRole)
-open Core.CommonGround (ContextSet HasContextSet)
+open Discourse.CommonGround (ContextSet HasContextSet)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. The Assertable typeclass
@@ -159,7 +159,7 @@ end Assertable
 /-- @cite{stalnaker-1978}'s common-ground-as-context-set instance.
 
     `speakerAssert s φ` is `s.add φ` (set intersection). The two laws
-    follow from `Core.CommonGround.CG.contextSet` reducing the asserted
+    follow from `Discourse.CommonGround.CG.contextSet` reducing the asserted
     CG to `φ ∩ s.contextSet`: monotonicity is the right conjunct of
     set-intersection membership, narrowing is the left. -/
 instance instStalnaker {W : Type*} :

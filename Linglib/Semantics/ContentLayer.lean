@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Content Layers
@@ -32,10 +32,10 @@ existing linglib distinctions:
 
 ## Design Note
 
-`ContentLayer` lives in `Core/Semantics/` because it generalizes `PrProp`.
+`ContentLayer` lives in `Semantics/` because it generalizes `PrProp`.
 Bridges to `Core/Discourse/AtIssueness` and `Phenomena/Presupposition/
 ProjectiveContent.Challengeability` live downstream in bridge files,
-preserving the independence of `Core/Semantics/` and `Core/Discourse/`.
+preserving the independence of `Semantics/` and `Core/Discourse/`.
 
 ## Scope
 
@@ -58,7 +58,7 @@ future `Layered n` parameterised refactor would consolidate the two.
 
 set_option linter.dupNamespace false
 
-namespace Core.Semantics.ContentLayer
+namespace Semantics.ContentLayer
 
 /-- The layer of a semantic contribution, determining its discourse behavior.
 
@@ -112,7 +112,7 @@ def LayeredProp.get {W : Type*} (lp : LayeredProp W) : ContentLayer → (W → B
 -- § Bridge to PrProp
 -- ════════════════════════════════════════════════════
 
-open Core.Presupposition in
+open Semantics.Presupposition in
 /-- Project a `LayeredProp` to a `PrProp` by discarding the implicature layer.
 
     This is the canonical projection: `PrProp` is the 2-layer special case
@@ -121,7 +121,7 @@ def LayeredProp.toPrProp {W : Type*} (lp : LayeredProp W) : PrProp W :=
   { presup := fun w => lp.presupposition w = true
   , assertion := fun w => lp.atIssue w = true }
 
-open Core.Presupposition Classical in
+open Semantics.Presupposition Classical in
 /-- Lift a `PrProp` to a `LayeredProp` with trivially true implicature.
 
     This is the canonical embedding: every `PrProp` is a `LayeredProp` with
@@ -132,7 +132,7 @@ noncomputable def LayeredProp.ofPrProp {W : Type*} (p : PrProp W) : LayeredProp 
   , atIssue := fun w => if p.assertion w then true else false
   , implicature := λ _ => true }
 
-open Core.Presupposition Classical in
+open Semantics.Presupposition Classical in
 /-- The round-trip `PrProp → LayeredProp → PrProp` is the identity.
 
     This confirms that `PrProp` embeds faithfully into `LayeredProp`:
@@ -270,4 +270,4 @@ theorem modal_implicature_denial :
     = [.implicature] := by
   native_decide
 
-end Core.Semantics.ContentLayer
+end Semantics.ContentLayer

@@ -1,7 +1,7 @@
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 
 /-!
 # @cite{brandom-1994}: Scorekeeping Model of Assertion
@@ -37,7 +37,7 @@ inferential role.
 namespace Dialogue.Brandom
 
 open Core.Discourse.Commitment (CommitmentSlate)
-open Core.CommonGround (ContextSet CG)
+open Discourse.CommonGround (ContextSet CG)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Normative Status
@@ -220,7 +220,7 @@ theorem scorekeepers_can_disagree :
 -- § 7. HasContextSet instance
 -- ════════════════════════════════════════════════════
 
-open Core.CommonGround in
+open Discourse.CommonGround in
 /-- Brandom states project to a context set via `effectiveContextSet`
     (the lossy Brandom → Stalnaker projection: intersection of all
     self-attributed commitments). The lossy projection is the price of

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 
 /-!
@@ -166,7 +166,7 @@ while the assertion commits the speaker to p via DECL (72).
 -/
 
 open Core.Time
-open Core.Presupposition
+open Semantics.Presupposition
 open Semantics.Events
 open Semantics.Tense.Evidential
 open Fragments.Slavic.Bulgarian.Evidentials

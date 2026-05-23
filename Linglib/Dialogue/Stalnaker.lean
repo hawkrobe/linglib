@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Discourse.CommonGround
 
 /-!
 # Stalnaker's Common Ground Model of Assertion
@@ -29,7 +29,7 @@ The norms are relevant to Krifka's separation of commitment from belief.
 
 namespace Dialogue.Stalnaker
 
-open Core.CommonGround (CG ContextSet)
+open Discourse.CommonGround (CG ContextSet)
 
 -- ════════════════════════════════════════════════════
 -- § 1. State = Common Ground
@@ -78,11 +78,11 @@ theorem always_stable {W : Type*} (s : StalnakerState W) : isStable s := trivial
 -- HasContextSet (re-export via abbrev)
 -- ════════════════════════════════════════════════════
 
-/-- Theorem (not instance — the `CG W` instance from `Core.CommonGround`
+/-- Theorem (not instance — the `CG W` instance from `Discourse.CommonGround`
     already resolves through the `StalnakerState W := CG W` abbrev): the
     `HasContextSet` projection on a Stalnaker state agrees with the
     local `Stalnaker.contextSet` def. Documents the bridge for grep. -/
 theorem hasContextSet_eq_contextSet {W : Type*} (s : StalnakerState W) :
-    Core.CommonGround.HasContextSet.toContextSet s = Stalnaker.contextSet s := rfl
+    Discourse.CommonGround.HasContextSet.toContextSet s = Stalnaker.contextSet s := rfl
 
 end Dialogue.Stalnaker

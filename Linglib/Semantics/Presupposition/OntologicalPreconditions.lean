@@ -35,13 +35,13 @@ Two tests from @cite{roberts-simons-2024} §2.1:
 -/
 
 import Linglib.Features.Polarity
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Features.Aktionsart
 
 namespace Semantics.Presupposition.OntologicalPreconditions
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Features.ChangeOfState
 open Features
 open Features

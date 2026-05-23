@@ -39,8 +39,8 @@ set_option autoImplicit false
 
 namespace DelPinalBassiSauerland2024
 
-open Core.Presupposition (PrProp)
-open Core.CommonGround (ContextSet)
+open Semantics.Presupposition (PrProp)
+open Discourse.CommonGround (ContextSet)
 open Exhaustification.Presuppositional
 open BarLevFox2020
 open Exhaustification
@@ -247,7 +247,7 @@ so it projects independently.
     When pex(◇(p∨q)) is embedded under "unaware", the overall sentence
     *presupposes* ◇p ∧ ◇q (free choice as presupposition).
 
-    Uses `PrProp.negFactive` from `Core.Semantics.Presupposition`. -/
+    Uses `PrProp.negFactive` from `Semantics.Presupposition`. -/
 theorem fc_presupposed_under_neg_factive
     (believes : (FCWorld → Prop) → FCWorld → Prop) :
     ∀ w, (PrProp.negFactive pexFC believes).presup w → permA w ∧ permB w :=
@@ -298,7 +298,7 @@ meaning.
 
 /-- When the first disjunct is false, Karttunen filtering recovers full
     satisfaction of the second disjunct.
-    Uses `PrProp.disjFilterLeft` from `Core.Semantics.Presupposition`. -/
+    Uses `PrProp.disjFilterLeft` from `Semantics.Presupposition`. -/
 theorem filtering_recovers_pex {World : Type*}
     (firstDisjunct : World → Prop) (sp : PrProp World)
     (w : World) (hFirst : ¬firstDisjunct w)
@@ -466,7 +466,7 @@ theorem existential_fc {Student : Type*}
     universal FC follows.
 
     This connects the abstract entailment theorems above to the concrete
-    `forallPr` combinator from `Core.Semantics.Presupposition`. -/
+    `forallPr` combinator from `Semantics.Presupposition`. -/
 theorem forallPr_fc {Student W : Type*}
     (S : Student → Prop) (pexPerStudent : Student → PrProp W) (w : W)
     (projA projB : Student → Set W)
@@ -483,7 +483,7 @@ theorem forallPr_fc {Student W : Type*}
     projection from an existential quantifier, we get existential FC.
 
     This connects the existential entailment theorem to the concrete
-    `existsPrUniv` combinator from `Core.Semantics.Presupposition`. -/
+    `existsPrUniv` combinator from `Semantics.Presupposition`. -/
 theorem existsPrUniv_fc {Student W : Type*}
     (S : Student → Prop) (pexPerStudent : Student → PrProp W) (w : W)
     (projA projB : Student → Set W)
@@ -499,7 +499,7 @@ theorem existsPrUniv_fc {Student W : Type*}
     universal negative FC follows.
 
     This connects `universal_negative_fc` to the concrete
-    `negExistsPr` combinator from `Core.Semantics.Presupposition`,
+    `negExistsPr` combinator from `Semantics.Presupposition`,
     completing the set of quantifier bridges alongside
     `forallPr_fc` and `existsPrUniv_fc`.
 

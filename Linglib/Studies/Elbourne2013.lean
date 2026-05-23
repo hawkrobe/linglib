@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Logic.Intensional.Rigidity
@@ -64,8 +64,8 @@ namespace Elbourne2013
 
 open Core (WorldTimeIndex)
 
-open Core.Presupposition (PrProp)
-open Core.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
+open Semantics.Presupposition (PrProp)
+open Semantics.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
   presupOfReferent_assertion_some presupOfReferent_assertion_none)
 open Core.Nominal (russellIotaList)
 open Features.Definiteness (DefPresupType)
@@ -464,7 +464,7 @@ section RefAttr
 
 -- TODO: Bool→Prop migration of isMurderer/isInsane/isTable/isCoveredWithBooks/
 -- isDonkey/isBeaten/isPresident/isSpy/isGhost/isQuiet cascades to
--- Linglib/Core/Semantics/Presupposition.lean (presupOfReferent : (W → Option E) → ...)
+-- Linglib/Semantics/Presupposition/Basic.lean (presupOfReferent : (W → Option E) → ...)
 -- and Linglib/Core/Nominal/Maximality.lean (russellIotaList : List E → (E → Bool) → Option E).
 -- These predicates feed into the_sit'/the_sit/definitePrProp which require E → W → Bool.
 -- Migration deferred until those external Core APIs migrate to Prop with [DecidablePred].

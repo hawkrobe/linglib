@@ -132,7 +132,7 @@ theorem russellIota_witness_unique
 /-- Computable list-based Russellian iota: returns the unique witness when
     `domain.filter P` is a singleton, `none` otherwise. This is the concrete
     operational counterpart to `russellIota` and the canonical referent
-    selector used by `Core.Presupposition.presupOfReferent`. -/
+    selector used by `Semantics.Presupposition.presupOfReferent`. -/
 def russellIotaList {E : Type*} (domain : List E) (P : E → Bool) : Option E :=
   match domain.filter P with
   | [e] => some e

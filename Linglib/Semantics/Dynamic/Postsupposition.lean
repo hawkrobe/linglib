@@ -14,7 +14,7 @@ This is distinct from a presupposition (input-context condition) and
 cannot be derived from veridicality alone.
 -/
 
-namespace Core.Postsupposition
+namespace Semantics.Dynamic.Postsupposition
 
 /-- A postsupposition: a constraint on the output context after a
     discourse update.
@@ -81,4 +81,4 @@ theorem weak_not_entails_strong :
   ⟨[true, false], id, rfl, rfl⟩
 
 end Postsupposition
-end Core.Postsupposition
+end Semantics.Dynamic.Postsupposition

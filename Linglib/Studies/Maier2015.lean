@@ -30,11 +30,11 @@ but hope cannot filter belief's presuppositions.
 
 -/
 
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 
 namespace Maier2015
 
-open Core.Presupposition
+open Semantics.Presupposition
 
 
 /--

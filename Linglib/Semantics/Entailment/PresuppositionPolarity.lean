@@ -24,13 +24,13 @@ Local context theory unifies presupposition projection and implicature:
 -/
 
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.Polarity
 
 namespace Semantics.Entailment.PresuppositionPolarity
 
-open Core.Presupposition
+open Semantics.Presupposition
 open Semantics.Entailment
 open Semantics.Entailment.Polarity
 
