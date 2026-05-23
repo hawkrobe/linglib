@@ -39,7 +39,7 @@ the morphological word level), not whether meaning exists.
 
 -/
 
-namespace Core.Morphology
+namespace Morphology
 
 -- ============================================================================
 -- §1: Attachment Side
@@ -359,4 +359,4 @@ structure InflDistribution where
   onLex : List MorphCategory
   deriving Repr, DecidableEq
 
-end Core.Morphology
+end Morphology

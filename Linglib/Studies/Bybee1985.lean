@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 import Linglib.Morphology.UsageBased.Network
 import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Tactic.DeriveFintype
@@ -34,7 +34,7 @@ substrate now lives in `Morphology/UsageBased/Network.lean`;
 
 namespace Bybee1985
 
-open Core.Morphology
+open Morphology
 
 -- ============================================================================
 -- §1: Bybee's Verbal Categories (Ch 2 §3, p. 20-23)

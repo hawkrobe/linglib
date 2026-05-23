@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.ConsonantalRoot
+import Linglib.Morphology.ConsonantalRoot
 import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
@@ -31,7 +31,7 @@ the first place — the central analytical move of @cite{faust-2026} §4.
 
 namespace Phonology.Templates
 
-open Core.Morphology
+open Morphology
 open Core.Constraint.OT (NamedConstraint)
 open Phonology.Constraints (mkAlign)
 

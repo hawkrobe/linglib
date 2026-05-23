@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Thai Morphological Profile
@@ -13,7 +13,7 @@ fallback is exercised. B&N 2001 flexivity/bnExponence are not stipulated.
 
 namespace Fragments.Thai
 
-open Core.Morphology
+open Morphology
 
 /-- Thai: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

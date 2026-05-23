@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.ConsonantalRoot
+import Linglib.Morphology.ConsonantalRoot
 
 /-!
 # Modern Hebrew Consonantal Roots
@@ -15,7 +15,7 @@ non-glide-final triradicals as the contrast class.
 
 namespace Fragments.Hebrew
 
-open Core.Morphology
+open Morphology
 
 -- ============================================================================
 -- § 1: [j]-final triradicals (@cite{faust-2026} (3))

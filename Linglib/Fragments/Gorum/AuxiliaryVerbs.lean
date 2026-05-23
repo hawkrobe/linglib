@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Gorum Auxiliary Verb Fragment
@@ -14,7 +14,7 @@ Source: Aze 1973, cited in @cite{anderson-2006}.
 
 namespace Fragments.Gorum.AuxiliaryVerbs
 
-open Core.Morphology (InflDistribution MorphCategory)
+open Morphology (InflDistribution MorphCategory)
 
 /-- Primary AVC example form.
     *miŋ ne-gaʔ-ru ne-laʔ-ru*

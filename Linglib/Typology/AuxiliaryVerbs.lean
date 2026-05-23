@@ -1,5 +1,5 @@
 import Linglib.Core.UD
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Auxiliary Verb Construction Typology — substrate
@@ -114,7 +114,7 @@ structure AVCDatum where
   language : String
   form : String
   inflPattern : InflPattern
-  distribution : Option Core.Morphology.InflDistribution := none
+  distribution : Option Morphology.InflDistribution := none
   gloss : String := ""
   deriving Repr, BEq
 

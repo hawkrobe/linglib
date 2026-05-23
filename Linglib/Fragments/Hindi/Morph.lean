@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Hindi-Urdu Morphological Profile
@@ -10,7 +10,7 @@ in the "fusional" cell (concatenative + flexive + cumulative).
 
 namespace Fragments.Hindi
 
-open Core.Morphology
+open Morphology
 
 /-- Hindi-Urdu: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

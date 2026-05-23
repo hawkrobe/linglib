@@ -3,7 +3,7 @@ import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Context.Basic
-import Linglib.Core.Morphology.Exponence
+import Linglib.Morphology.Exponence
 
 /-!
 # Tense and Participant Perspective
@@ -107,7 +107,7 @@ def willDeletion (f : TensePerspective ℤ) : Prop :=
 -- § 3. True vs False Tense Classification
 -- ════════════════════════════════════════════════════
 
-open Core.Morphology.Tense in
+open Morphology.Tense in
 
 /-- Lakoff's central classification: a tense use is **true** when the
     grammatical tense matches the temporal relation, **false** when there
@@ -127,7 +127,7 @@ def classifyUse (gramTense : GramTense) (f : TensePerspective ℤ) : TenseUse :=
   | .future  => if f.speechTime < f.eventTime then .trueTense else .falseTense
   | .nonpast => if f.speechTime ≤ f.eventTime then .trueTense else .falseTense
 
-open Core.Morphology.Tense in
+open Morphology.Tense in
 
 /-- **Periphrastic forms block false tense** (Lakoff §1, ex. 8a vs 9a):
     if the tense use is false and the form is periphrastic, the result is

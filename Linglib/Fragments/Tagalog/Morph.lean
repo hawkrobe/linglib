@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Tagalog Morphological Profile
@@ -10,7 +10,7 @@ the "agglutinating" cell (concatenative + nonflexive + separative).
 
 namespace Fragments.Tagalog
 
-open Core.Morphology
+open Morphology
 
 /-- Tagalog: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

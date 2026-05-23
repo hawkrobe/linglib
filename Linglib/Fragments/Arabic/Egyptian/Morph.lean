@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Arabic (Egyptian) Morphological Profile
@@ -14,7 +14,7 @@ is the canonical non-concatenative case.
 
 namespace Fragments.Arabic.Egyptian
 
-open Core.Morphology
+open Morphology
 
 /-- Arabic (Egyptian): WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

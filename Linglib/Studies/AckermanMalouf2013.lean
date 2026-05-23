@@ -1,5 +1,5 @@
-import Linglib.Core.Morphology.MorphRule
-import Linglib.Core.Morphology.Paradigm
+import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Paradigm
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -30,7 +30,7 @@ H(Cᵢ | Cⱼ) is the conditional entropy of cell i given cell j.
 
 - §0: i-Complexity (paper-specific aggregation; substrate types
   `InflectionClass`/`ParadigmSystem`/`cellEntropy`/`conditionalCellEntropy`
-  live in `Core/Morphology/Paradigm.lean`, hoisted there 0.230.X for shared
+  live in `Morphology/Paradigm.lean`, hoisted there 0.230.X for shared
   use with @cite{rathi-hahn-futrell-2026}'s informational fusion)
 - §1: Per-language LCEC verification (all 10 languages)
 - §2: E-complexity / I-complexity dissociation
@@ -43,7 +43,7 @@ H(Cᵢ | Cⱼ) is the conditional entropy of cell i given cell j.
 
 namespace Morphology.WP
 
-open Core.Morphology
+open Morphology
 
 /-- @cite{ackerman-malouf-2013}'s **integrative complexity**: average
     conditional cell entropy across all off-diagonal cell pairs.

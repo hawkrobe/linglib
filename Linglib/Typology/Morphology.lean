@@ -41,7 +41,7 @@ The morphological **types** themselves -- `Fusion`, `Flexivity`, `Exponence`,
 `ZeroMarkingAP`, `CaseSyncretism`, `VerbalSyncretism`, `TAMExponence`,
 `ActionNominal`, `SuppletionTA`, `SuppletionImperative`, `VerbalNumber` --
 plus the `MorphProfile` struct and the `fromWALS{20A..80A}` converters --
-already live in `Core/Morphology/MorphProfile.lean` (Fragments depend on
+already live in `Morphology/MorphProfile.lean` (Fragments depend on
 them directly).
 
 This file adds the WALS-aggregate layer:

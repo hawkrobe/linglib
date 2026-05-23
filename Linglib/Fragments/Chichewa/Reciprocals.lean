@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Chicheŵa Reciprocal Fragment
@@ -16,7 +16,7 @@ The reciprocal affix is distinct from the reflexive prefix "dzi-".
 
 namespace Fragments.Chichewa.Reciprocals
 
-open Core.Morphology
+open Morphology
 
 /-- Chicheŵa reciprocal suffix "-an-" as a morphological rule. -/
 def reciprocalAffix : MorphRule Bool :=

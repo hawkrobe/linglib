@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Georgian Morphological Profile
@@ -10,7 +10,7 @@ in the "fusional" cell (concatenative + flexive + cumulative).
 
 namespace Fragments.Georgian
 
-open Core.Morphology
+open Morphology
 
 /-- Georgian: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

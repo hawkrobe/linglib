@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.Containment
+import Linglib.Morphology.Containment
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Range
 

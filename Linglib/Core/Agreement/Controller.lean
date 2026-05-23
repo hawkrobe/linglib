@@ -15,7 +15,7 @@ The labels here are typological metalanguage — Comrie/Dixon S/A/P
 + grammatical-relation labels used across frameworks. Different theories
 operationalize them differently (LFG SUBJ ≠ Minimalist external argument
 ≠ RG 1), but at the level of CROSS-LINGUISTIC DESCRIPTION (which is what
-`Core.Morphology.MorphCategory.agreement` records), the labels are
+`Morphology.MorphCategory.agreement` records), the labels are
 reasonably consensual. Framework-specific projections
 (LFG analysis → Controller, Minimalist analysis → Controller) live in
 `Syntax/`.

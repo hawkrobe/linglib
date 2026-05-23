@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # German Morphological Profile
@@ -18,7 +18,7 @@ German as exclusively concatenative.
 
 namespace Fragments.German
 
-open Core.Morphology
+open Morphology
 
 /-- German: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. Required-field
     fallbacks match WALS values (lookup wins when present); `flexivity` and

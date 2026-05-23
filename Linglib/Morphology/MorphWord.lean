@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Morphological Word Structure
@@ -35,7 +35,7 @@ positions are implicit between adjacent morphemes in the flattened list.
 
 -- ============================================================================
 -- Circumfixal Exponence
---   (inlined from former Core/Morphology/Circumfix.lean, sole external
+--   (inlined from former Morphology/Circumfix.lean, sole external
 --    consumer is Fragments/Tigrinya/ClausePrefixes.lean)
 -- ============================================================================
 
@@ -47,7 +47,7 @@ Examples: German *ge-mach-t*, Tigrinya *ʔay-...-n*, Malay *ke-baik-an*. -/
 
 namespace Morphology.Circumfix
 
-open Core.Morphology (AttachmentSide)
+open Morphology (AttachmentSide)
 
 /-- Circumfixal exponence: a stem wrapped by a prefix and suffix. -/
 structure CircumfixExponence where
@@ -95,7 +95,7 @@ end Morphology.Circumfix
 
 namespace Morphology.WordStructure
 
-open Core.Morphology (MorphStatus AttachmentSide)
+open Morphology (MorphStatus AttachmentSide)
 open Morphology.Circumfix (CircumfixExponence)
 
 -- ============================================================================

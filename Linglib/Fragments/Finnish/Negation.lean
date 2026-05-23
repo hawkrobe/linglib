@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 import Linglib.Typology.Negation
 
 /-!
@@ -32,7 +32,7 @@ rather than within a synthetic word.
 
 namespace Fragments.Finnish.Negation
 
-open Core.Morphology (MorphCategory MorphRule InflDistribution)
+open Morphology (MorphCategory MorphRule InflDistribution)
 open Typology.Negation
 
 -- ============================================================================
@@ -120,7 +120,7 @@ def negAgreementRule (person : Nat) (number : String) : MorphRule Bool :=
 
     The negative auxiliary hosts: negation, tense, agreement.
     The main verb retains: stem, aspect (via participle choice).
-    Uses the shared `InflDistribution` from `Core.Morphology`:
+    Uses the shared `InflDistribution` from `Morphology`:
     `onAux` = negative auxiliary, `onLex` = main verb. -/
 def finnishNegDistribution : InflDistribution :=
   { onAux := [.negation, .tense, .agreement .subj]

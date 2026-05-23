@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Doubling Theory: Identity vs. Reduplication
@@ -219,7 +219,7 @@ theorem redupFor_not_monotone :
 -- § 2d: Bridge to MorphProfile
 -- ============================================================================
 
-open Core.Morphology (Reduplication)
+open Morphology (Reduplication)
 
 /-- Languages without productive reduplication (WALS Ch 27) have no
     reduplication for any `DoublingFunction`.

@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Hemba Auxiliary Verb Fragment
@@ -30,7 +30,7 @@ both elements while tense and mood are split between them.
 
 namespace Fragments.Hemba.AuxiliaryVerbs
 
-open Core.Morphology (MorphCategory InflDistribution)
+open Morphology (MorphCategory InflDistribution)
 
 /-- Hemba progressive/past AVC form. -/
 def form : String := "tw-a-li tu-tib-a muti"

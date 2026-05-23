@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Features
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Syntactic Modification via Feature Composition
@@ -41,7 +41,7 @@ conversion.
 
 namespace Minimalist.Modification
 
-open Core.Morphology (MorphStatus)
+open Morphology (MorphStatus)
 
 -- ============================================================================
 -- § 1: Attributivizer Status

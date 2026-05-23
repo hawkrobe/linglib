@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.Paradigm
+import Linglib.Morphology.Paradigm
 import Linglib.Processing.MemorySurprisal.Basic
 
 /-!
@@ -64,7 +64,7 @@ The substrate proofs use `Core.InformationTheory.conditionalEntropy_le_entropy`
 
 namespace Processing.MemorySurprisal.InformationalFusion
 
-open Core.Morphology
+open Morphology
 
 -- ============================================================================
 -- §1: Empirical estimator (paper §2.1.1, eq. 4 + eq. 12)
@@ -189,7 +189,7 @@ attested at the cell — this is the "totally surprising" case
     This is the smallest non-trivial witness that `LearnerModel` has at
     least one inhabitant; the full validity proof (probabilities sum to 1
     and are non-negative) requires `cellDistribution_nonneg` and
-    `cellDistribution_sum_pos` lemmas in `Core/Morphology/Paradigm.lean`,
+    `cellDistribution_sum_pos` lemmas in `Morphology/Paradigm.lean`,
     flagged as future work in the substrate restructure. The empirical
     learner's behaviour on the toy paradigms `L_agg` and `L_fus` is
     discussed in the Rathi 2026 study file. -/

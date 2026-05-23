@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Spanish Morphological Profile
@@ -10,7 +10,7 @@ the "fusional" cell (concatenative + flexive + cumulative).
 
 namespace Fragments.Spanish
 
-open Core.Morphology
+open Morphology
 
 /-- Spanish: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

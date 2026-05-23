@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphWord
+import Linglib.Morphology.MorphWord
 import Linglib.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Phonology.Autosegmental.NoCrossing
 import Linglib.Phonology.Autosegmental.RegisterTier

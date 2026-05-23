@@ -1,6 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Features.Aktionsart
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Finnish Case System @cite{karlsson-2017}
@@ -146,7 +146,7 @@ theorem partitive_has_licensor :
 -- Part II: Suffix Order vs. Bybee's Relevance Hierarchy
 -- ============================================================================
 
-open Core.Morphology (MorphCategory RespectsRelevanceHierarchy)
+open Morphology (MorphCategory RespectsRelevanceHierarchy)
 
 -- ============================================================================
 -- § 5: Finnish Nominal Suffix Slots

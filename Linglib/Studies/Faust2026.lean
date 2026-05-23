@@ -54,7 +54,7 @@ jointly resolves three Semitic puzzles:
 
 This file consumes and exercises the shared infrastructure:
 
-- `Core.Morphology.Root` — polymorphic consonantal-root carrier.
+- `Morphology.Root` — polymorphic consonantal-root carrier.
 - `Phonology.Templates` — `CVSlot`, `Template`, `Association`,
   `RootTemplateMatch`, with derived `isMisaligned`, `allCSlotsFilled`,
   `satisfies`.
@@ -72,7 +72,7 @@ type level rather than restated in prose.
 
 namespace Faust2026
 
-open Core.Morphology
+open Morphology
 open Phonology.Templates
 
 -- ============================================================================
@@ -469,7 +469,7 @@ biradicals like √wd — turn out to have *distinct* radicals after all
 (/w/ ≠ /d/), with surface gemination produced by template spreading
 rather than root identity.
 
-The `Root.satisfiesOCP` predicate (in `Core.Morphology`) makes this
+The `Root.satisfiesOCP` predicate (in `Morphology`) makes this
 verifiable rather than asserted. -/
 
 /-- @cite{faust-2026} page 432: √wd has no OCP violation at the root

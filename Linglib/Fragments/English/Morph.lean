@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # English Morphological Profile
@@ -11,7 +11,7 @@ despite its small inflectional inventory; cf. @cite{bickel-nichols-2001}.
 
 namespace Fragments.English
 
-open Core.Morphology
+open Morphology
 
 /-- English: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

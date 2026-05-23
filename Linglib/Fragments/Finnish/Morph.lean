@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Finnish Morphological Profile
@@ -10,7 +10,7 @@ WALS-derived profile for Finnish (ISO `fin`). B&N 2001 places Finnish in the
 
 namespace Fragments.Finnish
 
-open Core.Morphology
+open Morphology
 
 /-- Finnish: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

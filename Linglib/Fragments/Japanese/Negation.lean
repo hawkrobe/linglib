@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 import Linglib.Typology.Negation
 
 /-!
@@ -35,7 +35,7 @@ category marking.
 
 namespace Fragments.Japanese.Negation
 
-open Core.Morphology (MorphCategory)
+open Morphology (MorphCategory)
 open Typology.Negation
 
 /-- *-nai* — Japanese's negative verbal suffix.

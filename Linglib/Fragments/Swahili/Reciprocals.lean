@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Swahili Reciprocal Fragment
@@ -17,7 +17,7 @@ The reciprocal affix is distinct from the reflexive prefix "ji-".
 
 namespace Fragments.Swahili.Reciprocals
 
-open Core.Morphology
+open Morphology
 
 /-- Swahili reciprocal suffix "-an-" as a morphological rule. -/
 def reciprocalAffix : MorphRule Bool :=

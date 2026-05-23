@@ -31,7 +31,7 @@ grammaticalization framework.
    the lexical verb is always the semantic head, regardless of where
    inflection sits.
 3. **Typed inflectional distribution**: `InflDistribution` (from
-   `Core.Morphology`) records which `MorphCategory` values each
+   `Morphology`) records which `MorphCategory` values each
    element hosts.
 4. **Grammaticalization grounding**: Anderson ch. 7 traces AVCs
    onto Heine 1993's cline (Anderson p. 5: *"According to Heine

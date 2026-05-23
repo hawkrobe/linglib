@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Quechua (Imbabura) Morphological Profile
@@ -12,7 +12,7 @@ fragments in this directory.
 
 namespace Fragments.Quechua
 
-open Core.Morphology
+open Morphology
 
 /-- Quechua (Imbabura): WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.ConsonantalRoot
+import Linglib.Morphology.ConsonantalRoot
 import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
@@ -18,7 +18,7 @@ roots after all.
 
 namespace Fragments.Amharic
 
-open Core.Morphology
+open Morphology
 
 -- ============================================================================
 -- § 1: [j]-final triradicals — the [t]-intrusion class (@cite{faust-2026} (5c))

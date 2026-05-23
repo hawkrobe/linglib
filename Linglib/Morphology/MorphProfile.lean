@@ -26,7 +26,7 @@ Types correspond to WALS chapters 20--29 plus supplementary chapters
 data to these coarser local classifications.
 -/
 
-namespace Core.Morphology
+namespace Morphology
 
 -- ============================================================================
 -- §1. Typological Classification Types
@@ -688,4 +688,4 @@ theorem agglutinating_fusional_exclusive (p : MorphProfile) :
 
 end MorphProfile
 
-end Core.Morphology
+end Morphology

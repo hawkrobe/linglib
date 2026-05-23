@@ -1,5 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -9,7 +9,7 @@ import Mathlib.Data.Rat.Defs
 Cross-paper substrate for paradigm-cell-level analyses: inflection classes,
 paradigm systems, cell distributions, and entropy-based measures over them.
 
-`Core.Morphology.ParadigmCell` (in `MorphRule.lean`) is the type for **one
+`Morphology.ParadigmCell` (in `MorphRule.lean`) is the type for **one
 cell** of a paradigm with its features and form; `ParadigmSystem` here is the
 **whole table** with frequency weights, organized by inflection class.
 
@@ -39,7 +39,7 @@ refactor.
 are particular aggregations the paper defines, not substrate primitives.
 -/
 
-namespace Core.Morphology
+namespace Morphology
 
 /-- **Private (ι→ℝ) Shannon entropy** for paradigm-cell complexity computations.
     Inlined from the deleted `Core.InformationTheory.entropy` (the canonical PMF
@@ -133,7 +133,7 @@ def ParadigmSystem.isTransparent {n : Nat} {Form : Type} [BEq Form] [DecidableEq
     features and base meaning) to a per-cell surface realization.
     Specialized to `Form := String` since `Stem`'s `allForms` returns
     `String`-typed surface forms. -/
-def ParadigmSystem.fromStems {σ : Type} (stems : List (Core.Morphology.Stem σ))
+def ParadigmSystem.fromStems {σ : Type} (stems : List (Morphology.Stem σ))
     (baseMeaning : σ) (numCells : Nat)
     (cellExtractor : List (String × Features × σ) → Fin numCells → String) :
     ParadigmSystem numCells String :=
@@ -144,4 +144,4 @@ def ParadigmSystem.fromStems {σ : Type} (stems : List (Core.Morphology.Stem σ)
   let unique := groupBySum (allParadigms.map λ ic => (ic, (1 : ℚ)))
   { entries := unique.map λ (ic, count) => (ic, count / total) }
 
-end Core.Morphology
+end Morphology

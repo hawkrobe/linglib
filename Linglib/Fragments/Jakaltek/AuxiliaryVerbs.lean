@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Jakaltek (Jacaltec) Auxiliary Verb Fragment
@@ -15,7 +15,7 @@ Source: Craig 1977, cited in @cite{anderson-2006}.
 
 namespace Fragments.Jakaltek.AuxiliaryVerbs
 
-open Core.Morphology (InflDistribution MorphCategory)
+open Morphology (InflDistribution MorphCategory)
 
 /-- Primary AVC example form.
     *šk-ach w-ila*

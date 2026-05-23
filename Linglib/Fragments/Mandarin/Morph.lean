@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Mandarin Chinese Morphological Profile
@@ -13,7 +13,7 @@ because the largely isolating typology renders them inapplicable.
 
 namespace Fragments.Mandarin
 
-open Core.Morphology
+open Morphology
 
 /-- Mandarin Chinese: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

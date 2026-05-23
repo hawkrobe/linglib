@@ -37,7 +37,7 @@ open Semantics.Tense.Evidential
 open Semantics.Tense.SOT.Decomposition
 open Semantics.Tense
 open Core.Time.Tense
-open Core.Morphology.Tense
+open Morphology.Tense
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. TAMEEntry Instances

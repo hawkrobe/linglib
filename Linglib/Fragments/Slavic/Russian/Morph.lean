@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Russian Morphological Profile
@@ -13,7 +13,7 @@ across declension classes.
 
 namespace Fragments.Slavic.Russian
 
-open Core.Morphology
+open Morphology
 
 /-- Russian: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

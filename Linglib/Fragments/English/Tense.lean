@@ -95,7 +95,7 @@ def nonfutureEntries : List TAMEEntry :=
 
 open Semantics.Tense
 open Semantics.Tense.ParticipantPerspective
-open Core.Morphology.Tense
+open Morphology.Tense
 
 /-- A tense paradigm entry enriched with Lakoff's perspective dimensions:
     grammatical tense and morphological form type (synthetic vs periphrastic).

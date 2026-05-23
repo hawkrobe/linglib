@@ -1,5 +1,5 @@
 import Linglib.Morphology.TheorySpace
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Phonology.Prosodic.Word
 import Linglib.Morphology.Nanosyntax.Basic
@@ -92,7 +92,7 @@ def derive {Feature : Type} [BEq Feature]
 end Morphology.PFM
 
 -- ============================================================================
--- § 0a: Wordhood Typology (was Core/Morphology/Wordhood.lean,
+-- § 0a: Wordhood Typology (was Morphology/Wordhood.lean,
 --      inlined as sole consumer per CLAUDE.md anchoring rules)
 -- ============================================================================
 
@@ -203,7 +203,7 @@ dimension is orthogonal (determined by prosodic diagnostics). -/
 namespace Morphology.WordhoodBridge
 
 open Morphology.Wordhood
-open Core.Morphology (MorphStatus)
+open Morphology (MorphStatus)
 open Morphology.Diagnostics (CliticAffixProfile)
 
 /-- Map a morpheme's morphological status to its ms-boundedness. -/
@@ -427,12 +427,12 @@ theorem wordhood_injective (w₁ w₂ : WordhoodProfile)
 This is formalized in `WordhoodBridge`. -/
 
 /-- Affixhood (in MorphStatus) is equivalent to ms-boundedness. -/
-theorem affix_iff_msbound (s : Core.Morphology.MorphStatus) :
+theorem affix_iff_msbound (s : Morphology.MorphStatus) :
     s.IsAffix ↔ morphStatusToMSBound s = .bound :=
   affix_iff_ms_bound s
 
 /-- Clitichood implies ms-freedom. -/
-theorem clitic_implies_msfree (s : Core.Morphology.MorphStatus)
+theorem clitic_implies_msfree (s : Morphology.MorphStatus)
     (h : s.IsClitic) : morphStatusToMSBound s = .free :=
   clitic_implies_ms_free s h
 
@@ -463,7 +463,7 @@ theorem zpAffix_plus_prWdExternal :
 
 -- ============================================================================
 -- §3: Form-Meaning Mapping (Element §4)
---     (Inlined from former Core/Morphology/FormMeaningMapping.lean.)
+--     (Inlined from former Morphology/FormMeaningMapping.lean.)
 -- ============================================================================
 
 /-! §4 of @cite{kalin-bjorkman-etal-2026} identifies seven descriptive types

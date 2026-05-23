@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Morphology.ConsonantalRoot
+import Linglib.Morphology.ConsonantalRoot
 import Linglib.Fragments.Tigrinya.Phonology
 
 /-!
@@ -60,7 +60,7 @@ identifiers; IPA forms in docstrings.
 
 namespace Fragments.Tigre.Phonology
 
-open Core.Morphology
+open Morphology
 
 /-- Re-export the Tigrinya vowel type for Tigre. The two languages
     share the same seven-vowel inventory per paper §2.1 +

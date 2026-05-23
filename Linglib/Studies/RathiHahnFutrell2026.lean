@@ -3,8 +3,8 @@ import Linglib.Processing.MemorySurprisal.Basic
 import Linglib.Studies.AckermanMalouf2013
 import Linglib.Studies.Bybee1985
 import Linglib.Studies.BickelNichols2013
-import Linglib.Core.Morphology.MorphRule
-import Linglib.Core.Morphology.Paradigm
+import Linglib.Morphology.MorphRule
+import Linglib.Morphology.Paradigm
 
 /-!
 # @cite{rathi-hahn-futrell-2026}: Information-theoretic morphological fusion
@@ -65,7 +65,7 @@ distinction.
 
 namespace RathiHahnFutrell2026
 
-open Core.Morphology
+open Morphology
 open Processing.MemorySurprisal.InformationalFusion
 open Bybee1985
 
@@ -421,7 +421,7 @@ information is a *usage-statistic*. These coincide to the extent that
 semantic relevance drives co-occurrence regularity, but they are distinct
 constructs and can in principle diverge.
 
-The substrate's `Core.Morphology.MorphCategory.peripherality` numerically
+The substrate's `Morphology.MorphCategory.peripherality` numerically
 encodes Bybee's hierarchy as constants (`MorphRule.lean:264-276`). The
 bridge `Bybee1985.toMorphCategory : BybeeCategory → MorphCategory`
 (`Bybee1985.lean:248-257`) connects the paper-typed enum to the substrate.
@@ -488,7 +488,7 @@ the average pairwise conditional entropy across cells of the same paradigm
 system. @cite{rathi-hahn-futrell-2026}'s pairwise informational fusion
 `φ₂(f₁,f₂)` is closely related — both measure paradigm-internal
 predictability. With Phase 3 of the substrate restructure, both consumers
-share `Core.Morphology.ParadigmSystem` and route through
+share `Morphology.ParadigmSystem` and route through
 `PMF.conditionalEntropy`. A formal bridge
 `iComplexity ↔ MutualInfoProfile.totalInfo` is left for future work; the
 shared substrate makes such a bridge syntactically straightforward. -/

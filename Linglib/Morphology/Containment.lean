@@ -18,7 +18,7 @@ computable `Bool` decision procedure and a `Prop` wrapper carrying a
 `Decidable` instance. Domain-specific instantiations live elsewhere:
 
 - Case allomorphy (`Core/Case/Allomorphy.lean`)
-- Degree morphology (`Core/Morphology/DegreeContainment.lean`)
+- Degree morphology (`Morphology/DegreeContainment.lean`)
 
 What *explains* the gap is theory-laden and contested. The DM
 tradition (`@cite{bobaljik-2012}`) derives it from post-syntactic

@@ -44,7 +44,7 @@ namespace HalleMarantz1993
 
 open Morphology.DM.VI
 open Morphology.MirrorPrinciple
-open Core.Morphology (MorphCategory)
+open Morphology (MorphCategory)
 
 -- ============================================================================
 -- §1: English Verb Inflection

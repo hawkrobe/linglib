@@ -20,8 +20,8 @@ Both share scale type and antonym information, but serve different grammatical f
 
 import Linglib.Core.Word
 import Linglib.Features.PropertyDomain
-import Linglib.Core.Morphology.Exponence
-import Linglib.Core.Morphology.DegreeContainment
+import Linglib.Morphology.Exponence
+import Linglib.Morphology.DegreeContainment
 import Linglib.Semantics.Gradability.Basic
 
 namespace Fragments.English.Modifiers.Adjectives
@@ -66,7 +66,7 @@ structure AdjModifierEntry where
       throughout). Set to `abb` for suppletive entries like *good/better/best*.
       See `DegreeContainment.lean` for pattern definitions and the *ABA
       constraint. -/
-  suppletion : Core.Morphology.DegreeContainment.DegreePattern := ⟨0, 0, 0⟩
+  suppletion : Morphology.DegreeContainment.DegreePattern := ⟨0, 0, 0⟩
   deriving Repr, BEq
 
 -- ============================================================================
@@ -337,16 +337,16 @@ def AdjModifierEntry.toWord (a : AdjModifierEntry) : Word :=
     Periphrastic adjectives (e.g., "expensive" → "more expensive")
     work naturally: the full periphrastic form is stored as the
     irregular form string. -/
-def AdjModifierEntry.toStem (a : AdjModifierEntry) (σ : Type) : Core.Morphology.Stem σ :=
+def AdjModifierEntry.toStem (a : AdjModifierEntry) (σ : Type) : Morphology.Stem σ :=
   { lemma_ := a.form
   , cat := .ADJ
   , baseFeatures := {}
   , paradigm :=
       (match a.formComp with
-       | some comp => [Core.Morphology.Degree.comparativeRule σ (irregularForm := some comp)]
+       | some comp => [Morphology.Degree.comparativeRule σ (irregularForm := some comp)]
        | none => []) ++
       (match a.formSuper with
-       | some super_ => [Core.Morphology.Degree.superlativeRule σ (irregularForm := some super_)]
+       | some super_ => [Morphology.Degree.superlativeRule σ (irregularForm := some super_)]
        | none => []) }
 
 -- ============================================================================

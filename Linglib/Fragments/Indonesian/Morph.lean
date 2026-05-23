@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Indonesian Morphological Profile
@@ -14,7 +14,7 @@ requires `.concatenative` fusion.
 
 namespace Fragments.Indonesian
 
-open Core.Morphology
+open Morphology
 
 /-- Indonesian: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

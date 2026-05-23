@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Core.Morphology.Exponence
+import Linglib.Morphology.Exponence
 import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-! # English Noun Lexicon Fragment
@@ -207,7 +207,7 @@ def NounEntry.toWordPl (n : NounEntry) : Word :=
     Countable nouns get a plural rule; irregular plurals (man/men,
     child/children) use a custom `formRule`. Mass nouns and proper
     names have empty paradigms. -/
-def NounEntry.toStem {α : Type} (n : NounEntry) : Core.Morphology.Stem (α → Bool) :=
+def NounEntry.toStem {α : Type} (n : NounEntry) : Morphology.Stem (α → Bool) :=
   { lemma_ := n.formSg
   , cat := if n.proper then .PROPN else .NOUN
   , baseFeatures := { number := some .Sing
@@ -217,7 +217,7 @@ def NounEntry.toStem {α : Type} (n : NounEntry) : Core.Morphology.Stem (α → 
       if n.countable == .count && !n.proper then
         let irregForm := n.formPl.bind λ pl =>
           if pl == n.formSg ++ "s" then none else some pl
-        [Core.Morphology.Number.pluralNounRuleFlat (irregularForm := irregForm)]
+        [Morphology.Number.pluralNounRuleFlat (irregularForm := irregForm)]
       else [] }
 
 def lookup (form : String) : Option NounEntry :=

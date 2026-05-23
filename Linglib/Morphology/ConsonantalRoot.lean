@@ -16,7 +16,7 @@ separate matter, parameterized at the study level.
 
 ## Namespace separation
 
-`Core.Morphology.Root` (this file): a *consonantal* melody, a morphological
+`Morphology.Root` (this file): a *consonantal* melody, a morphological
 primitive (the underlying form of a morpheme).
 `Semantics.Lexical.Roots.Root` (`Semantics/Lexical/Roots/Basic.lean`):
 a bundle of `LexEntailment` atoms in the @cite{beavers-koontz-garboden-2020}
@@ -25,7 +25,7 @@ sense — same English word, different concept.
 quality dimensions on a verb root — orthogonal to both.
 -/
 
-namespace Core.Morphology
+namespace Morphology
 
 /-- A consonantal root: an ordered list of segments. Polymorphic in the
     segment type so that fragments may pick the granularity they need
@@ -84,4 +84,4 @@ def adjDupCount [BEq α] : List α → Nat
 def satisfiesOCP [BEq α] (r : Root α) : Bool := adjDupCount r.segments == 0
 
 end Root
-end Core.Morphology
+end Morphology

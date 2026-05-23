@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Modern Greek Reciprocal Fragment
@@ -18,7 +18,7 @@ which per Siloni's analysis implies lexical formation (Dimitriadis 2004, 2008).
 
 namespace Fragments.Greek.StandardModern.Reciprocals
 
-open Core.Morphology
+open Morphology
 
 /-- Greek nonactive voice suffix as a morphological rule.
 

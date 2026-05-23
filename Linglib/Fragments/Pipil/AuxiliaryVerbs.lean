@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Pipil Auxiliary Verb Fragment
@@ -31,7 +31,7 @@ on BOTH elements. Audit fix: 2026-04-30.
 
 namespace Fragments.Pipil.AuxiliaryVerbs
 
-open Core.Morphology (InflDistribution MorphCategory)
+open Morphology (InflDistribution MorphCategory)
 
 def family : String := "Uto-Aztecan"
 def location : String := "El Salvador"

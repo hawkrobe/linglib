@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Doyayo Auxiliary Verb Fragment
@@ -29,7 +29,7 @@ Doyayo passages (Anderson cites W&W pp. 55, 77, 217, 221, 222).
 
 namespace Fragments.Doyayo.AuxiliaryVerbs
 
-open Core.Morphology (InflDistribution MorphCategory)
+open Morphology (InflDistribution MorphCategory)
 
 def family : String := "Adamawa, Niger-Congo"
 def location : String := "Cameroon"

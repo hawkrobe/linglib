@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # @cite{baker-1985}: The Mirror Principle and Morphosyntactic Explanation
@@ -41,7 +41,7 @@ construction. Formalized below via `DerivationStep`. -/
 
 namespace Morphology.MirrorPrinciple
 
-open Core.Morphology (MorphCategory)
+open Morphology (MorphCategory)
 
 /-- Grammatical function changing rules (GF-rules). @cite{baker-1985} §§2-4. -/
 inductive GFRuleType where

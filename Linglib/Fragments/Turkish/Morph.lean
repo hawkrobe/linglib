@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Turkish Morphological Profile
@@ -12,7 +12,7 @@ allomorphy with no class-conditioned variation.
 
 namespace Fragments.Turkish
 
-open Core.Morphology
+open Morphology
 
 /-- Turkish: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Swahili Morphological Profile
@@ -12,7 +12,7 @@ suffixing.
 
 namespace Fragments.Swahili
 
-open Core.Morphology
+open Morphology
 
 /-- Swahili: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

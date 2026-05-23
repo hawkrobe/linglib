@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Hungarian Morphological Profile
@@ -10,7 +10,7 @@ in the "agglutinating" cell (concatenative + nonflexive + separative).
 
 namespace Fragments.Hungarian
 
-open Core.Morphology
+open Morphology
 
 /-- Hungarian: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

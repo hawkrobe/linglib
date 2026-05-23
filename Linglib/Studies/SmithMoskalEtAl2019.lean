@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.DegreeContainment
+import Linglib.Morphology.DegreeContainment
 import Linglib.Core.Case.Allomorphy
 import Linglib.Core.Case.Order
 import Linglib.Morphology.DM.ContainmentVI
@@ -54,12 +54,12 @@ as substrate-addition TODOs.
 - Number AAB attestation: stubbed (`§ 3`); same TODO shape.
 - Domain-based locality predicate: stubbed substrate addition (`§ 4`);
   this is the substrate refactor (3.7) the paper motivates and that
-  would naturally land as a sibling of `Core/Morphology/Containment.lean`.
+  would naturally land as a sibling of `Morphology/Containment.lean`.
 -/
 
 namespace SmithMoskalEtAl2019
 
-open Core.Morphology.DegreeContainment
+open Morphology.DegreeContainment
 open Core.Case.Allomorphy
 open Morphology.DM.ContainmentVI.Degree
 
@@ -90,7 +90,7 @@ theorem dm_excludes_cmpr_sprl_distinct
     be VI-generated under DM root-out locality.
 
     `aab : DegreePattern := ⟨0, 0, 1⟩` lives in
-    `Core/Morphology/DegreeContainment.lean`. -/
+    `Morphology/DegreeContainment.lean`. -/
 theorem dm_excludes_aab
     (rules : List LocalVIRule) (defaultForm : Nat) :
     viPattern rules defaultForm ≠ aab := by
@@ -253,7 +253,7 @@ locality predicate driving suppletion contiguity is *not* structural
 adjacency (@cite{bobaljik-2012}) or linear adjacency
 (@cite{embick-2010}), but *domain-based*
 (@cite{moskal-2015a-dissertation}). The substrate for this lives in
-`Core/Morphology/DomainLocality.lean` (`DomainPartition`,
+`Morphology/DM/DomainLocality.lean` (`DomainPartition`,
 `SameDomain`, `ViolatesABAWithin`, `IsContiguousWithin`,
 `DomainPartition.trivial`).
 

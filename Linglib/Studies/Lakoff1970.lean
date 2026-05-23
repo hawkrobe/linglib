@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.Exponence
+import Linglib.Morphology.Exponence
 import Linglib.Fragments.English.Tense
 import Linglib.Semantics.Tense.ParticipantPerspective
 
@@ -26,7 +26,7 @@ by phenomenon.
 
 namespace Lakoff1970
 
-open Core.Morphology.Tense
+open Morphology.Tense
 
 /-- Acceptability judgment for a tense example. -/
 inductive Acceptability where
@@ -205,7 +205,7 @@ theorem false_periphrastic_ungrammatical :
 open Fragments.English.Tense
 open Semantics.Tense.ParticipantPerspective
 open Semantics.Tense
-open Core.Morphology.Tense
+open Morphology.Tense
 
 theorem ex4a_formType :
     ex4a.formType = simplePastPerspective.formType := rfl

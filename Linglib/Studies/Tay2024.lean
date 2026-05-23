@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.Resultatives
-import Linglib.Core.Morphology.MorphWord
+import Linglib.Morphology.MorphWord
 import Linglib.Studies.GoldbergJackendoff2004
 import Linglib.Fragments.Mandarin.Resultatives
 

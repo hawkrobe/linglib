@@ -1,5 +1,5 @@
 import Linglib.Semantics.Lexical.VerbEntry
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-! # Verbal Predicate Lexicon Fragment
 
@@ -3512,7 +3512,7 @@ theorem forget_entails_not_complement_derived :
     tense/aspect semantics is compositional, handled by
     `Semantics.Intensional`. The `delegatedSemantics := true` flags make
     this explicit. -/
-def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Core.Morphology.Stem σ :=
+def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Morphology.Stem σ :=
   { lemma_ := v.form
   , cat := .VERB
   , baseFeatures := { valence := some (complementToValence v.complementType)

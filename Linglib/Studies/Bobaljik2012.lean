@@ -1,6 +1,6 @@
-import Linglib.Core.Morphology.DegreeContainment
+import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.DM.ContainmentVI
-import Linglib.Core.Morphology.Exponence
+import Linglib.Morphology.Exponence
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Degree.Superlative
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -50,16 +50,16 @@ encode empirically observed root-class patterns.
 -- § 0: Scale-Generation Substrate (was Morphology/Core/ScaleFromParadigm.lean)
 -- ============================================================================
 
-/-! Connects morphological infrastructure (`Core.Morphology`) to scalar-
+/-! Connects morphological infrastructure (`Morphology`) to scalar-
 alternative infrastructure (`Semantics/Alternatives/HornScale.lean`),
 enabling automatic generation of the alternatives needed for scalar
 implicature computation. Was previously in `Morphology/Core/
 ScaleFromParadigm.lean`; relocated 0.230.455 (sole consumer is this study
 file). @cite{horn-1972} @cite{kennedy-2007} -/
 
-namespace Core.Morphology.ScaleFromParadigm
+namespace Morphology.ScaleFromParadigm
 
-open Core.Morphology
+open Morphology
 open Alternatives (HornScale)
 
 /-- A morphologically-derived Horn scale. -/
@@ -93,11 +93,11 @@ def morphologicalAlternatives {σ : Type} (stem : Stem σ) (form : String) :
     let scale := ms.toHornScale
     scale.members.filter (· != form)
 
-end Core.Morphology.ScaleFromParadigm
+end Morphology.ScaleFromParadigm
 
 namespace Bobaljik2012
 
-open Core.Morphology.DegreeContainment
+open Morphology.DegreeContainment
 open Fragments.English.Modifiers.Adjectives
 
 -- ============================================================================
@@ -295,7 +295,7 @@ from degree paradigms: a stem with comparative + superlative rules
 yields a 3-point scale `[positive, comparative, superlative]`. The tests
 below verify the extractor on the English adjective fragment. -/
 
-open Core.Morphology.ScaleFromParadigm
+open Morphology.ScaleFromParadigm
 
 private def tallStem := tall.toStem Unit
 private def goodStem := good.toStem Unit

@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphProfile
+import Linglib.Morphology.MorphProfile
 
 /-!
 # Japanese Morphological Profile
@@ -10,7 +10,7 @@ in the "agglutinating" cell (concatenative + nonflexive + separative).
 
 namespace Fragments.Japanese
 
-open Core.Morphology
+open Morphology
 
 /-- Japanese: WALS-derived `MorphProfile` via `MorphProfile.fromWALS`. -/
 def morphProfile : MorphProfile :=

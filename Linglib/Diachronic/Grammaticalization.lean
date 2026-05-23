@@ -1,5 +1,5 @@
 import Mathlib.Order.Nat
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Grammaticalization
@@ -37,7 +37,7 @@ greater morphological boundedness (@cite{lehmann-1985}, @cite{hopper-traugott-20
 
 - `GramStage`: stages on the grammaticalization cline
 - `GramStage.boundedness`: numeric encoding of morphological boundedness
-- `GramStage.toMorphStatus`: projection onto `Core.Morphology.MorphStatus`
+- `GramStage.toMorphStatus`: projection onto `Morphology.MorphStatus`
 - `AVCSource`: diachronic source constructions for auxiliary verb constructions
 
 ## Connections
@@ -110,11 +110,11 @@ theorem unidirectional_of_lt {s₁ s₂ : GramStage} (h : s₁ < s₂) :
   Nat.not_lt.mpr (Nat.le_of_lt h)
 
 /-- Project a grammaticalization stage onto its canonical
-    `Core.Morphology.MorphStatus` realization. Auxiliaries and full
+    `Morphology.MorphStatus` realization. Auxiliaries and full
     verbs are free words on the cline; clitics map to simple-clitic
     status; affixes to inflectional-affix status; the zero endpoint
     has no overt morphological realization. -/
-def GramStage.toMorphStatus : GramStage → Option Core.Morphology.MorphStatus
+def GramStage.toMorphStatus : GramStage → Option Morphology.MorphStatus
   | .fullVerb  => some .freeWord
   | .auxiliary => some .freeWord
   | .clitic    => some .simpleClitic

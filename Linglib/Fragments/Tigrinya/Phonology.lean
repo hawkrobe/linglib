@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Morphology.ConsonantalRoot
+import Linglib.Morphology.ConsonantalRoot
 
 /-!
 # Tigrinya Phonological Inventory and Verbal Roots
@@ -73,13 +73,13 @@ scenarios its analysis treats:
 * roots with weak |I|-final radicals (the bi-morphemic /iIu/ → [ju]
   syneresis case)
 
-Roots are stored as `Core.Morphology.Root String` per the existing
+Roots are stored as `Morphology.Root String` per the existing
 Hebrew/Amharic pattern.
 -/
 
 namespace Fragments.Tigrinya.Phonology
 
-open Core.Morphology
+open Morphology
 
 -- ============================================================================
 -- § 1: Vowel inventory (theory-neutral IPA)

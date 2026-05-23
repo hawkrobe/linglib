@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.MorphRule
+import Linglib.Morphology.MorphRule
 
 /-!
 # Morphological Exponence Rules
@@ -16,7 +16,7 @@ singular restricts to atoms, plural applies algebraic closure.
 -- § Tense
 -- ════════════════════════════════════════════════════
 
-namespace Core.Morphology.Tense
+namespace Morphology.Tense
 
 /-- Whether a tense form is realized synthetically (inflectional suffix)
     or periphrastically (auxiliary + verb). Lakoff's key diagnostic:
@@ -115,13 +115,13 @@ theorem periphrasticFuture_category (σ : Type) :
 theorem pastPart_category (σ : Type) (irr : Option String) :
     (pastPartRule σ irr).category = .tense := rfl
 
-end Core.Morphology.Tense
+end Morphology.Tense
 
 -- ════════════════════════════════════════════════════
 -- § Aspect
 -- ════════════════════════════════════════════════════
 
-namespace Core.Morphology.Aspect
+namespace Morphology.Aspect
 
 /-- Present participle rule: appends "-ing" to the lemma.
 
@@ -138,13 +138,13 @@ def presPartRule (σ : Type) (irregularForm : Option String := none) : MorphRule
 theorem presPart_category (σ : Type) (irr : Option String) :
     (presPartRule σ irr).category = .aspect := rfl
 
-end Core.Morphology.Aspect
+end Morphology.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § Number
 -- ════════════════════════════════════════════════════
 
-namespace Core.Morphology.Number
+namespace Morphology.Number
 
 /-- Singular rule for nouns: adds atomicity condition.
 
@@ -200,13 +200,13 @@ def verbAgreement3sg (σ : Type) : MorphRule σ :=
 theorem verbAgreement_preserves_meaning (σ : Type) (meaning : σ) :
     (verbAgreement3sg σ).semEffect meaning = meaning := rfl
 
-end Core.Morphology.Number
+end Morphology.Number
 
 -- ════════════════════════════════════════════════════
 -- § Degree
 -- ════════════════════════════════════════════════════
 
-namespace Core.Morphology.Degree
+namespace Morphology.Degree
 
 /-- Comparative degree rule: generates the comparative form of an adjective.
 
@@ -246,4 +246,4 @@ theorem comparative_category (σ : Type) (irr : Option String) :
 theorem superlative_category (σ : Type) (irr : Option String) :
     (superlativeRule σ irr).category = .degree := rfl
 
-end Core.Morphology.Degree
+end Morphology.Degree

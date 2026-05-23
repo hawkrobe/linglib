@@ -138,7 +138,7 @@ inductive AgreementType where
       (Belhare/Swahili verb agreement: subject's person/number → verb;
       = head marking in the sense of §3.)
 
-    Related to but distinct from `Core.Morphology.LocusOfMarking`: locus
+    Related to but distinct from `Morphology.LocusOfMarking`: locus
     is a language-level WALS typological parameter classifying where *all*
     grammatical relations are marked (head, dependent, double, zero).
     `AgreementDirection` is phenomenon-specific — a language can be

@@ -1,4 +1,4 @@
-import Linglib.Core.Morphology.Containment
+import Linglib.Morphology.Containment
 
 /-!
 # Degree Containment — Substrate
@@ -29,7 +29,7 @@ distinct morphological category whose internal structure need not
 contain CMPR.
 -/
 
-namespace Core.Morphology.DegreeContainment
+namespace Morphology.DegreeContainment
 
 -- ============================================================================
 -- § 1: Degree Grade
@@ -199,4 +199,4 @@ example : patternFromForms "tall" "tall" "tall" = aaa := by decide
 example : patternFromForms "A" "B" "B" = abb := by decide
 example : patternFromForms "A" "B" "C" = abc := by decide
 
-end Core.Morphology.DegreeContainment
+end Morphology.DegreeContainment

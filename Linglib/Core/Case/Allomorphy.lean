@@ -1,6 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Morphology.Containment
+import Linglib.Morphology.Containment
 
 /-!
 # Case Allomorphy and Syncretism — Substrate
