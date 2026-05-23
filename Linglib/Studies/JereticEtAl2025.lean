@@ -3,7 +3,6 @@ import Linglib.Features.Number
 import Linglib.Core.Tree
 import Linglib.Theories.Semantics.Quantification.Lexicon
 import Linglib.Theories.Semantics.Alternatives.Source
-import Linglib.Theories.Semantics.Alternatives.Pronounceable
 import Linglib.Theories.Semantics.Alternatives.Indirect
 import Linglib.Theories.Semantics.Alternatives.Structural
 import Linglib.Theories.Pragmatics.AvoidAmbiguity
@@ -457,7 +456,7 @@ theorem accounts_diverge :
 The typological table above asserts that French *tous* is anti-dual via
 an indirect alternative. This section *exercises* the typeclass
 infrastructure end-to-end on a minimal sentence pair, demonstrating
-that `AlternativeSource` / `Pronounceability` / `indirectFrom` /
+that `AlternativeSource` / `indirectFrom` /
 `Alternatives.Structural.violatesMP` compose correctly: each component
 plugs into the next and the final `violatesMP` predicate fires on real
 parse trees.
@@ -518,8 +517,8 @@ private def hasLesDeux (t : Tree Cat String) : Bool :=
     | _ => false
 
 /-- French pronounceability: trees containing `tous_DUAL` are silent. -/
-private def frenchPron : Pronounceability (Tree Cat String) :=
-  ⟨fun t => hasDualMarker t = false⟩
+private def frenchPron : Tree Cat String → Prop :=
+  fun t => hasDualMarker t = false
 
 /-- Toy semantics. *tous V* asserts "all cups full" with trivial
 presupposition. The dual variants (silent or *les deux*) additionally
@@ -570,7 +569,7 @@ private theorem lesDeux_indirectAlt_tous :
   refine ⟨?_, tousDualVerres, tousDual_katzir_alt, ?_, ?_⟩
   · -- size lesDeuxVerres ≤ size tousVerres (both are 3)
     decide
-  · -- frenchPron.unpron tousDualVerres
+  · -- ¬ frenchPron tousDualVerres
     show ¬ (hasDualMarker tousDualVerres = false)
     decide
   · -- meaning lesDeuxVerres = meaning tousDualVerres
@@ -582,7 +581,7 @@ via competition with the indirect alternative *les deux V*, which is
 licensed by the silent witness *tous_DUAL V*.
 
 This is the end-to-end demonstration that the
-`AlternativeSource` / `Pronounceability` / `indirectFrom` /
+`AlternativeSource` / `indirectFrom` /
 `Alternatives.Structural.violatesMP` infrastructure is wired
 correctly: the abstract pragmatic-competition operator fires on a
 real tree-based example with a real silent witness via a real indirect

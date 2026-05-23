@@ -52,7 +52,7 @@ the algebra; this file shows the linguistic substance the asymmetry
 licenses.
 -/
 
-namespace Alternatives.AtomicConstraint
+namespace TrinhHaida2015
 
 open Core.Tree (Tree Cat)
 open Core.Tree.Cat
@@ -371,4 +371,4 @@ def nonWeakeningStep {W : Type} (domain : List W)
   domain.any fun w => after w && !before w
 
 
-end Alternatives.AtomicConstraint
+end TrinhHaida2015

@@ -1,6 +1,4 @@
 import Linglib.Theories.Semantics.Alternatives.Source
-import Linglib.Theories.Semantics.Alternatives.Pronounceable
-import Linglib.Core.Tree
 
 /-!
 # Indirect alternatives
@@ -32,31 +30,26 @@ Maximize Presupposition, deriving anti-duality of *tous*.
 The infrastructure is generic over the base alternative source, the
 pronounceability predicate, and the meaning function. It composes with
 `violatesMP` from `Alternatives.Structural`: pass `indirectFrom base
-P meaning size` instead of the bare base source to obtain an MP rule
-that competes with unpronounceable witnesses.
+pron meaning size` instead of the bare base source to obtain an MP
+rule that competes with unpronounceable witnesses.
 
-See `Studies/JereticEtAl2025.lean` for the
-empirical applications.
+See `Studies/JereticEtAl2025.lean` for the empirical applications.
 -/
-
-set_option autoImplicit false
 
 namespace Alternatives.Indirect
 
-universe u v
-
 open Alternatives
-open Core.Tree
 
 /-- The indirect-alternative source (paper eq 43).
 
-`indirectFrom base P meaning size s` is the set of pronounceable
+`indirectFrom base pron meaning size s` is the set of pronounceable
 expressions `s'` such that `size s' ≤ size s` and there is some
 unpronounceable `sₓ ∈ base s` with `meaning s' = meaning sₓ`.
 
 Parameters:
 - `base`: the underlying alternative source (typically Katzir).
-- `P`: the pronounceability predicate; `unpron P sₓ ≡ ¬ P.pron sₓ`.
+- `pron`: the pronounceability predicate; an expression is silent
+  when `¬ pron s` holds.
 - `meaning`: the semantic interpretation function.
 - `size`: complexity measure (e.g. `Tree.size`).
 
@@ -64,27 +57,27 @@ Note: the surrogate `s'` is *not* required to be pronounceable here —
 that is enforced separately by the consumer (typically MP, which only
 asserts the implicated presupposition for pronounceable competitors).
 -/
-def indirectFrom {S : Type u} {M : Type v}
-    (base : AlternativeSource S) (P : Pronounceability S)
+def indirectFrom {S : Type*} {M : Type*}
+    (base : AlternativeSource S) (pron : S → Prop)
     (meaning : S → M) (size : S → Nat) :
     AlternativeSource S :=
-  fun s => {s' | size s' ≤ size s ∧ ∃ sₓ ∈ base s, P.unpron sₓ ∧ meaning s' = meaning sₓ}
+  fun s => {s' | size s' ≤ size s ∧ ∃ sₓ ∈ base s, ¬ pron sₓ ∧ meaning s' = meaning sₓ}
 
 /-- Indirect alternatives are at most as complex as the original. -/
-theorem size_le_of_mem {S : Type u} {M : Type v}
-    {base : AlternativeSource S} {P : Pronounceability S}
+theorem size_le_of_mem {S : Type*} {M : Type*}
+    {base : AlternativeSource S} {pron : S → Prop}
     {meaning : S → M} {size : S → Nat}
-    {s' s : S} (h : s' ∈ indirectFrom base P meaning size s) :
+    {s' s : S} (h : s' ∈ indirectFrom base pron meaning size s) :
     size s' ≤ size s := h.1
 
 /-- The indirect-alternative set is empty when the base source contains
 no unpronounceable witnesses — the genuine refinement: an indirect
 alternative requires a *silent* witness in the base. -/
-theorem empty_when_all_pronounceable {S : Type u} {M : Type v}
-    {base : AlternativeSource S} {P : Pronounceability S}
+theorem empty_when_all_pronounceable {S : Type*} {M : Type*}
+    {base : AlternativeSource S} {pron : S → Prop}
     {meaning : S → M} {size : S → Nat}
-    {s' s : S} (h : s' ∈ indirectFrom base P meaning size s)
-    (allPron : ∀ x ∈ base s, P.pron x) : False :=
+    {s' s : S} (h : s' ∈ indirectFrom base pron meaning size s)
+    (allPron : ∀ x ∈ base s, pron x) : False :=
   match h.2 with
   | ⟨sₓ, hMem, hUnpron, _⟩ => hUnpron (allPron sₓ hMem)
 

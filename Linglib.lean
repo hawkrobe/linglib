@@ -1514,6 +1514,8 @@ import Linglib.Studies.ElliottSudo2025
 import Linglib.Studies.AnandHacquard2013
 import Linglib.Studies.Condoravdi2002
 import Linglib.Studies.Fox2007
+import Linglib.Studies.FoxKatzir2011
+import Linglib.Studies.TrinhHaida2015
 import Linglib.Studies.Yalcin2007
 import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.KlinedinstRothschild2012
@@ -2311,7 +2313,6 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 import Linglib.Theories.Semantics.Composition.Modification
 import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 import Linglib.Theories.Semantics.Quantification.Binominal
-import Linglib.Theories.Semantics.Plurality.MassCount
 import Linglib.Theories.Semantics.Classifier.Basic
 import Linglib.Theories.Semantics.Classifier.Composition
 import Linglib.Theories.Semantics.Classifier.Defs
@@ -2327,12 +2328,15 @@ import Linglib.Studies.Krifka2004
 import Linglib.Theories.Semantics.Kinds.Subkinds
 import Linglib.Theories.Semantics.Homogeneity.Basic
 import Linglib.Theories.Semantics.ArgumentStructure.Relational
+import Linglib.Theories.Semantics.Plurality.Algebra
+import Linglib.Theories.Semantics.Plurality.Basic
 import Linglib.Theories.Semantics.Plurality.Cover
 import Linglib.Theories.Semantics.Plurality.Cumulativity
-import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
 import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Theories.Semantics.Plurality.Link1983
-import Linglib.Theories.Semantics.Plurality.ExistentialPL
+import Linglib.Theories.Semantics.Plurality.Implicature
+import Linglib.Theories.Semantics.Plurality.Reciprocal
+import Linglib.Theories.Semantics.Plurality.Reference
+import Linglib.Theories.Semantics.Plurality.Trivalent
 import Linglib.Studies.Montague1973Quantification
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.Basic
@@ -2553,10 +2557,7 @@ import Linglib.Theories.Pragmatics.Implicature.EpistemicBlocking
 import Linglib.Theories.Pragmatics.Implicature.Markedness
 import Linglib.Theories.Pragmatics.Implicature.Scales
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
-import Linglib.Theories.Semantics.Alternatives.AtomicConstraint
-import Linglib.Theories.Semantics.Alternatives.FoxKatzir2011
 import Linglib.Theories.Semantics.Alternatives.Indirect
-import Linglib.Theories.Semantics.Alternatives.Pronounceable
 import Linglib.Theories.Semantics.Alternatives.Source
 import Linglib.Theories.Semantics.Alternatives.Structural
 import Linglib.Theories.Semantics.Alternatives.Symmetric
@@ -2718,6 +2719,9 @@ import Linglib.Theories.Phonology.Government.StrictCV
 import Linglib.Theories.Phonology.Tone.Constraints
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
 import Linglib.Theories.Phonology.Autosegmental.CoPScope
+import Linglib.Theories.Phonology.Autosegmental.DominantCophAgreement
+import Linglib.Theories.Phonology.Autosegmental.NoCrossing
+import Linglib.Theories.Phonology.Autosegmental.OverwriteEmbedding
 import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
 import Linglib.Theories.Phonology.Prosodic.Syllable.Foot
 import Linglib.Theories.Phonology.Prosodic.Syllable.NaturalClass

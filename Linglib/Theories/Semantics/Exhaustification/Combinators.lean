@@ -47,7 +47,7 @@ an algebraic fact about which combinator one chose: post-filter
 | Combinator         | Use site                                                         |
 | ------------------ | ---------------------------------------------------------------- |
 | `magri R`          | `Relevance.lean` — `innocent.restrict R`                         |
-| `_ .preFilter P`   | `Alternatives/AtomicConstraint.lean` — Trinh–Haida F_AT ⊊ F      |
+| `_ .preFilter P`   | `Studies/TrinhHaida2015.lean` — Atomicity F_AT ⊊ F                |
 
 -/
 

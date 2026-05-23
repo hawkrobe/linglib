@@ -49,7 +49,7 @@ contextual parameter C and is focus-sensitive.
 - **§5.2 allowable restriction / exhaustive relevance** (eqs. 55–56) is out of scope.
 -/
 
-namespace Alternatives.FoxKatzir2011
+namespace FoxKatzir2011
 
 open Alternatives.Symmetric
 open Exhaustification (innocent predToFinset altsFromPreds)
@@ -473,4 +473,4 @@ theorem context_cannot_break_symmetry_FK2011 {W : Type}
   Alternatives.Symmetric.context_cannot_break_symmetry rc s s₁ hs h₁
 
 
-end Alternatives.FoxKatzir2011
+end FoxKatzir2011
