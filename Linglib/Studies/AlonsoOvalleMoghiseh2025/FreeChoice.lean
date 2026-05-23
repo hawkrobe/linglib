@@ -83,7 +83,8 @@ namespace AlonsoOvalleMoghiseh2025
 open Exhaustification (innocent tolerant predToFinset altsFromPreds
   altsFromPreds_singleton tolerant_exh_eq_empty_of_covered
   innocent_exh_eq_phi_of_innocentlyExcludable_empty
-  innocent_exh_singleton_proper)
+  innocent_exh_singleton_proper
+  innocent_exh_pairwise_disjoint_partial)
 open Data.Examples (LinguisticExample)
 export Fragments.Farsi.Determiners (EFCIRescue EFCIReading ModalFlavor)
 
@@ -216,16 +217,16 @@ theorem root_scalar_only_contingent :
     This is blocked by Chierchia's Economy Principle (the result is
     equivalent to the scalar alternative).
 
-    **TODO**: derive from a substrate theorem characterizing IE on
-    a pairwise-disjoint alternative set whose union covers φ. The
-    structural fact: with ALT = pairwise-disjoint αᵢ ⊆ φ whose union
-    equals φ, IE returns ALT itself (every αᵢ is the unique MC-set
-    member excluded by negating all others), and so `innocent.exh = ∅`.
-    But here `α₁ = pOnly`, `α₂ = qOnly`, and `α₁ ∪ α₂ = {pOnly, qOnly}`
-    which is a *proper* subset of φ = {pOnly, qOnly, both} — so the
-    "world `both`" survives, giving exactly the scalar-alt prediction. -/
+    Derived from `innocent_exh_pairwise_disjoint_partial`: the two
+    pre-exhaustified domain alternatives (`{pOnly}` and `{qOnly}`) are
+    pairwise-disjoint singletons both ⊆ `assertionF`, with witness
+    `both ∈ assertionF \ (alt₁ ∪ alt₂)`. The substrate returns
+    `assertionF \ ({pOnly} ∪ {qOnly}) = {both} = predToFinset pAndQ`. -/
 theorem root_domain_only_conjunction :
-    innocent.exh preExhDomAltsF assertionF = predToFinset pAndQ := by decide
+    innocent.exh preExhDomAltsF assertionF = predToFinset pAndQ := by
+  have hcompat : (assertionF \ preExhDomAltsF.sup id).Nonempty := by decide
+  rw [innocent_exh_pairwise_disjoint_partial hcompat]
+  decide
 
 /-- Domain-only result is equivalent to the scalar alternative → blocked
     by the Exhaustification Economy Principle. -/
@@ -314,10 +315,20 @@ theorem preExhDom_from_innocent :
     ◇(b₁⊻b₂) ∧ (◇b₁ ↔ ◇b₂)
 
     Equivalently: ◇(b₁⊻b₂) ∧ ◇b₁ ∧ ◇b₂ — each book is a permitted
-    option, and in each permitted world exactly one book is bought. -/
+    option, and in each permitted world exactly one book is bought.
+
+    Derived from `innocent_exh_pairwise_disjoint_partial`: the two
+    pre-exhaustified modal domain alternatives (`canB1 ∧ ¬canB2` and
+    `canB2 ∧ ¬canB1`) are pairwise-disjoint subsets of `canExOrF`,
+    with worlds satisfying both `canB1` and `canB2` (e.g. `w111`)
+    surviving as the partial-cover witness. The set-difference RHS
+    then equals the filter RHS by Finset extensionality. -/
 theorem deontic_poss_split_exh :
     innocent.exh modalPreExhDomAltsF canExOrF
-      = canExOrF.filter (fun w => canB1 w == canB2 w) := by decide
+      = canExOrF.filter (fun w => canB1 w == canB2 w) := by
+  have hcompat : (canExOrF \ modalPreExhDomAltsF.sup id).Nonempty := by decide
+  rw [innocent_exh_pairwise_disjoint_partial hcompat]
+  decide
 
 /-- FC component: the result entails ◇b₁ ∧ ◇b₂ whenever true. -/
 theorem deontic_poss_fc (w : PermW)
@@ -499,10 +510,22 @@ theorem preExhDom_from_innocent_nec :
     FC + embedded uniqueness: □(b₁⊻b₂) ∧ (□b₁ ↔ □b₂).
 
     "Must buy exactly one book, and neither book is predetermined" —
-    each book remains a possible choice within the obligation. -/
+    each book remains a possible choice within the obligation.
+
+    Derived from `innocent_exh_pairwise_disjoint_partial`, analogous to
+    `deontic_poss_split_exh` under □: with `boxExOrF \ ALT.sup id`
+    non-empty (joint-allowing worlds outside both alts), every
+    alternative is innocently excludable. Note the alts here are *not*
+    subsets of `boxExOrF` — a world like `w101` (joint allowed,
+    `boxB1 ∧ ¬boxB2` holds) lies in `necPreExhDomAlt1` but outside
+    `boxExOrF`. The substrate's `φ \ ALT.sup id` formulation handles
+    this by intersecting alts with `φ` automatically. -/
 theorem deontic_nec_split_exh :
     innocent.exh necPreExhDomAltsF boxExOrF
-      = boxExOrF.filter (fun w => boxB1 w == boxB2 w) := by decide
+      = boxExOrF.filter (fun w => boxB1 w == boxB2 w) := by
+  have hcompat : (boxExOrF \ necPreExhDomAltsF.sup id).Nonempty := by decide
+  rw [innocent_exh_pairwise_disjoint_partial hcompat]
+  decide
 
 /-- FC component under □: ¬□b₁ ∧ ¬□b₂ (neither book is obligatory)
     whenever the exhaustified assertion holds non-vacuously. -/

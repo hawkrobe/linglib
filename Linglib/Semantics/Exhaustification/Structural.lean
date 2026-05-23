@@ -24,10 +24,18 @@ this specific value." That bridging layer is what this file provides.
   exhaustification" used in @cite{alonso-ovalle-moghiseh-2025}'s
   eq. 92 / root_full_tolerant_contradiction.
 
-* `innocent_exh_singleton_proper` — when `ALT = {α}` with `α ⊊ φ`,
-  the IE operator returns `φ \ α`. This is the partial-scalar
-  exhaustification case (yek-i's root uniqueness reading,
-  @cite{alonso-ovalle-moghiseh-2025} eq. 93a).
+* `innocent_exh_pairwise_disjoint_partial` — when `(φ \ ALT.sup id)`
+  is nonempty (the alts don't cover `φ`), every alternative is
+  innocently excludable and `innocent.exh ALT φ = φ \ ALT.sup id`.
+  The partial-cover witness suffices for joint
+  full-exclusion-consistency across all `α ∈ ALT` simultaneously.
+  Drives @cite{alonso-ovalle-moghiseh-2025}'s root domain-only
+  result (eq. 93b) and the deontic split-exh results (eq. 119, 120).
+
+* `innocent_exh_singleton_proper` — corollary of the above for
+  `|ALT| = 1`: when `α ⊊ φ`, `innocent.exh {α} φ = φ \ α`. Drives
+  yek-i's root uniqueness reading
+  (@cite{alonso-ovalle-moghiseh-2025} eq. 93a).
 
 * `tolerant_exh_subset_innocent_exh` — Chierchia's tolerant operator
   is always ⊆ Fox's innocent operator. Concrete form of the
@@ -133,47 +141,69 @@ theorem tolerant_exh_subset_innocent_exh
     sorry -- TODO: complete via existing characterization
   · exact hw_a
 
+/-- **Partial-cover alts**: when `(φ \ ALT.sup id).Nonempty`, every
+alternative in `ALT` is innocently excludable, and
+`innocent.exh ALT φ = φ \ ALT.sup id`.
+
+The "consumer-intent" hypotheses one might expect — `∀ α ∈ ALT, α ⊆ φ`
+and `(ALT : Set _).PairwiseDisjoint id` — turn out to be *unused*. The
+single witness `w ∈ φ \ ALT.sup id` discharges
+`IsInnocentlyExcludable.of_full_exclusion_consistent` for every
+`α ∈ ALT` simultaneously: the witness condition `w ∈ φ ∧ ∀ b ∈ ALT, w ∉ b`
+doesn't depend on which `α` is being shown excludable. The MC-set
+`{φ} ∪ ((univ \ ·) '' ALT)` is then unique and contains every
+complement, so `innocentlyExcludable ALT φ = ALT`.
+
+This lets the same substrate result fire on consumer patterns where the
+alts aren't subsets of `φ` (e.g., AOM 2025's `□`-side pre-exhaustified
+domain alts — `boxB1 ∧ ¬boxB2` extends outside `□(b₁⊻b₂)` to worlds
+where `canJoint` is true). `φ \ ALT.sup id` masks the out-of-φ portion
+of each alt automatically.
+
+Generalizes `innocent_exh_singleton_proper` (the `|ALT| = 1` case;
+derived as a corollary below). The complementary case where
+`ALT.sup id ⊇ φ` (so `hcompat` fails) is covered by
+`innocent_exh_eq_phi_of_innocentlyExcludable_empty` when IE collapses. -/
+theorem innocent_exh_pairwise_disjoint_partial
+    {ALT : Finset (Finset W)} {φ : Finset W}
+    (hcompat : (φ \ ALT.sup id).Nonempty) :
+    innocent.exh ALT φ = φ \ ALT.sup id := by
+  -- Step 1: innocentlyExcludable ALT φ = ALT.
+  have h_ie_eq : Innocent.innocentlyExcludable ALT φ = ALT := by
+    refine Finset.Subset.antisymm (Innocent.innocentlyExcludable_subset _ _) ?_
+    intro α hα
+    rw [← Innocent.isInnocentlyExcludable_iff]
+    apply Exhaustification.IsInnocentlyExcludable.of_full_exclusion_consistent
+    · exact Innocent.mem_asSetOfSets.mpr ⟨α, hα, rfl⟩
+    · obtain ⟨w, hw⟩ := hcompat
+      rw [Finset.mem_sdiff] at hw
+      obtain ⟨hw_phi, hw_not_sup⟩ := hw
+      refine ⟨w, hw_phi, ?_⟩
+      intro b hb
+      rcases Innocent.mem_asSetOfSets.mp hb with ⟨β, hβ_mem, rfl⟩
+      intro hw_β
+      apply hw_not_sup
+      rw [Finset.sup_eq_biUnion]
+      exact Finset.mem_biUnion.mpr ⟨β, hβ_mem, hw_β⟩
+  -- Step 2: unfold `exh` and convert `biUnion id` to `sup id`.
+  show φ \ ((Innocent.innocentlyExcludable ALT φ).biUnion id) = φ \ ALT.sup id
+  rw [h_ie_eq, ← Finset.sup_eq_biUnion]
+
 /-- **Singleton excludable alt**: when `ALT = {α}` and `α ⊊ φ`,
 exhaustification returns `φ \ α`. This is yek-i's partial-scalar
 exhaustification result (@cite{alonso-ovalle-moghiseh-2025} eq. 93a):
 with a single innocently-excludable alternative, IE returns it exactly,
 giving "exactly one" semantics.
 
-Strategy: `innocentlyExcludable {α} φ = {α}` (subset is automatic from
-`innocentlyExcludable_subset`; reverse direction reduces to showing `α`
-itself is innocently excludable, which follows from the Set-side
-`IsInnocentlyExcludable.of_full_exclusion_consistent` lemma — the
-witness is any element of `φ \ α`, which exists because `α ⊊ φ`).
-Then `({α}).biUnion id = α` (by `Finset.singleton_biUnion`). -/
+Corollary of `innocent_exh_pairwise_disjoint_partial`: `{α}.sup id = α`,
+and `α ⊂ φ` provides the partial-cover witness. -/
 theorem innocent_exh_singleton_proper {α φ : Finset W} (h : α ⊂ φ) :
     innocent.exh ({α} : Finset (Finset W)) φ = φ \ α := by
-  -- Step 1: innocentlyExcludable {α} φ = {α}.
-  have h_ie_eq :
-      Innocent.innocentlyExcludable ({α} : Finset (Finset W)) φ = {α} := by
-    apply Finset.Subset.antisymm
-    · -- ⊆ {α} follows from innocentlyExcludable_subset (image into ALT = {α}).
-      exact Innocent.innocentlyExcludable_subset _ _
-    · -- ⊇ {α}: show α ∈ innocentlyExcludable {α} φ via the Set-side bridge.
-      intro a ha
-      rw [Finset.mem_singleton] at ha
-      rw [ha, ← Innocent.isInnocentlyExcludable_iff]
-      -- Use of_full_exclusion_consistent on the Set side.
-      apply Exhaustification.IsInnocentlyExcludable.of_full_exclusion_consistent
-      · exact Innocent.mem_asSetOfSets.mpr
-          ⟨α, Finset.mem_singleton_self α, rfl⟩
-      · -- Witness: any w ∈ φ \ α (exists since α ⊊ φ).
-        obtain ⟨w, hw_phi, hw_not_alpha⟩ := Finset.exists_of_ssubset h
-        refine ⟨w, hw_phi, ?_⟩
-        intro b hb
-        rcases Innocent.mem_asSetOfSets.mp hb with ⟨a, ha_mem, rfl⟩
-        rw [Finset.mem_singleton] at ha_mem
-        subst ha_mem
-        exact hw_not_alpha
-  -- Step 2: unfold exh, rewrite with h_ie_eq, simplify singleton biUnion.
-  show φ \ ((Innocent.innocentlyExcludable
-            ({α} : Finset (Finset W)) φ).biUnion id) = φ \ α
-  rw [h_ie_eq, Finset.singleton_biUnion]
-  rfl
+  have hsup : ({α} : Finset (Finset W)).sup id = α := Finset.sup_singleton
+  have hcompat : (φ \ ({α} : Finset (Finset W)).sup id).Nonempty := by
+    rw [hsup]; exact (Finset.exists_of_ssubset h).imp fun _ ⟨h₁, h₂⟩ =>
+      Finset.mem_sdiff.mpr ⟨h₁, h₂⟩
+  rw [innocent_exh_pairwise_disjoint_partial hcompat, hsup]
 
 end Exhaustification
 
