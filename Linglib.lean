@@ -40,6 +40,7 @@ import Linglib.Core.Logic.Quantification.NumberTree
 import Linglib.Core.Logic.Quantification.Lattice
 import Linglib.Core.Logic.Quantification.Logicality
 import Linglib.Core.Logic.Quantification.Polyadic
+import Linglib.Core.Logic.Quantification.Exclusive
 import Linglib.Core.Logic.Opposition.Aristotelian
 import Linglib.Core.Logic.Opposition.Atoms
 import Linglib.Core.Logic.Opposition.Bitstring
@@ -1469,8 +1470,6 @@ import Linglib.Studies.Kratzer2012Informational
 import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Studies.Alsop2024
 import Linglib.Studies.ChampollionAlsopGrosu2019
-import Linglib.Studies.AlonsoOvalleMoghiseh2025.Basic
-import Linglib.Studies.AlonsoOvalleMoghiseh2025.Closure
 import Linglib.Studies.AlonsoOvalleMoghiseh2025.FreeChoice
 import Linglib.Studies.AlonsoOvalleMoghiseh2025.Generic
 import Linglib.Studies.Khoo2015
@@ -2573,6 +2572,7 @@ import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.Decidable
 import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Semantics.Exhaustification.Presuppositional
+import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Semantics.Exhaustification.Relevance
 import Linglib.Semantics.Exhaustification.ScalePredictions
 import Linglib.Semantics.Exhaustification.Tolerant

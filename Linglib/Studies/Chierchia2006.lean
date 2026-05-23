@@ -6,7 +6,8 @@ import Linglib.Fragments.German.PolarityItems
 import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.Antiexhaustive
-import Linglib.Studies.AlonsoOvalleMoghiseh2025.Basic
+import Linglib.Studies.Chierchia2013
+import Linglib.Fragments.Farsi.Determiners
 
 /-!
 # Chierchia 2006: Domain Widening and the PSI Typology
@@ -57,7 +58,8 @@ namespace Chierchia2006
 
 open Haspelmath1997Polarity
 open Typology.Indefinite
-open AlonsoOvalleMoghiseh2025 (FCIFlavor EFCIRescue)
+open Chierchia2013 (FCIFlavor)
+open Fragments.Farsi.Determiners (EFCIRescue)
 
 -- ============================================================================
 -- §1. The PSI Parameter Space

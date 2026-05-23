@@ -1,7 +1,10 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.Tolerant
 import Linglib.Fragments.Farsi.Determiners
+import Linglib.Data.Examples.Schema
 import Mathlib.Tactic.DeriveFintype
+import Mathlib.Tactic.FinCases
+import Mathlib.Data.Fintype.Fin
 
 /-!
 # Alonso-Ovalle & Moghiseh 2025: Existential Free Choice Items
@@ -18,6 +21,8 @@ with scalar exhaustification clause-bounded below the modal.
 
 ## Main declarations
 
+### Computational verification (decide-checked on finite world types)
+
 * `root_full_innocent_vacuous` — full IE on the 2-book root alternative
   set is vacuous (3 MCEs, no shared alt; IE = ∅).
 * `root_full_tolerant_contradiction` — Chierchia's tolerant operator
@@ -33,20 +38,35 @@ with scalar exhaustification clause-bounded below the modal.
   strictly weakens the matrix (cf. eq. 129–135).
 * `single_exh_no_fc`, `above_only_all_alts_too_strong`,
   `two_ie_above_below_too_strong` — three non-split architectures fail.
-* `rootReading` and `*_reading_agrees` — Table 2 typology and its
-  bridge to the `Fragments.Farsi.Determiners` lexicon.
+
+### Structural Prop-level proofs (`Generic` sub-namespace)
+
+These lift the paper claims to arbitrary `D : Type*` with `P : D → Prop`,
+plus arbitrary Kripke frames via `Acc : W → Prop` + `Q : D → W → Prop`.
+
+* `Generic.scalar_exh_uniqueness` — "at least one and not at least two" ↔ "exactly one"
+* `Generic.fc_two_element` — for |D|=2, ∃≥2 = ∀d
+* `Generic.root_full_exh_contradiction` — full exh on |D|=2 → ⊥
+* `Generic.exclusive_pairwise_inconsistent` — Spector closure observation
+* `Generic.full_exh_consistent_three` — root contradiction is |D|=2-specific
+* `Generic.modal_split_exh_fc`, `Generic.modal_split_exh_full` —
+  Kripke-frame lift of the deontic-possibility split-exh result
+
+Table 2 typology is canonicalized in `Fragments.Farsi.Determiners`
+(`EFCIRescue` enum, per-item `yeki`/`irgendein_de`/`vreun_ro` entries,
+per-item root-reading theorems). See the EFCI Typology section below.
 
 ## Implementation notes
 
-Three finite world types: `PQWorld` (4 worlds), `PermW` (8 worlds),
-`CondW` (8 worlds). Theorems close by `decide` over `Finset` substrate;
-`abbrev` aliases on the alternative-set Finsets drive reduction.
+Two complementary layers:
 
-The sibling module `Studies.AlonsoOvalleMoghiseh2025.Generic` proves
-the same results structurally at the `Prop` level for arbitrary domains
-and lifts them to arbitrary Kripke frames. The two are complementary:
-`Generic` proves *why* the results hold; this file checks that the
-algorithm computes the right answers.
+1. **Computational** (top-level): three finite world types (`PQWorld`
+   4 worlds, `PermW` 8 worlds, `CondW` 8 worlds) with theorems closed by
+   `decide` over `Finset` substrate from `Linglib.Semantics.Exhaustification`.
+2. **Structural** (`Generic` sub-namespace): Prop-level proofs over
+   arbitrary `D : Type*` and Kripke frames. The structural layer proves
+   *why* the results hold; the computational layer verifies the algorithm
+   computes the right answers on the paper's worked 2-book domain.
 
 The 2-book root case exposes a counting subtlety: the paper's (101)
 lists 2 MCEs for the full alternative set, but there are actually 3
@@ -55,16 +75,13 @@ and `innocent.exh` is vacuous (see `root_full_innocent_vacuous`). The
 paper's result (103) requires applying operators separately — exactly
 the split-exhaustification architecture.
 
-## Todo
-
-* The bridge theorems use a local `RootReading` enum mapped to
-  `Fragments.Farsi.Determiners.EFCIReading` via `RootReading.toDetReading`.
-  Using `EFCIReading` directly would eliminate the conversion.
 -/
 
 namespace AlonsoOvalleMoghiseh2025
 
 open Exhaustification (innocent tolerant predToFinset altsFromPreds)
+open Data.Examples (LinguisticExample)
+export Fragments.Farsi.Determiners (EFCIRescue EFCIReading ModalFlavor)
 
 
 /-!
@@ -553,106 +570,235 @@ end DEContext
 
 
 /-!
-### EFCI Typology
+### EFCI Typology (Table 2)
 
 @cite{alonso-ovalle-moghiseh-2025} Table 2: EFCIs vary along two
 parameters — modal insertion and partial exhaustification.
 
-| Type           | Modal insertion | Partial exh |
-|----------------|:-:|:-:|
-| *vreun*        | − | − |
-| *irgendein*    | + | − |
-| *yek-i*        | − | + |
+| Type        | Modal insertion | Partial exh | Lexicon entry |
+|-------------|:-:|:-:|---|
+| *vreun*     | − | − | `Fragments.Farsi.Determiners.vreun_ro` |
+| *irgendein* | + | − | `Fragments.Farsi.Determiners.irgendein_de` |
+| *yek-i*     | − | + | `Fragments.Farsi.Determiners.yeki` |
 
-- *vreun*: neither mechanism → contradiction in root → ungrammatical
-- *irgendein*: modal insertion → covert □ rescues → epistemic ignorance
-- *yek-i*: partial exh (scalar only) → uniqueness in root
+The typology is canonicalized in `Fragments.Farsi.Determiners.EFCIRescue`
+(re-exported above), and the per-item root-reading predictions are
+checked there:
+
+- `Fragments.Farsi.Determiners.yeki_root : getReading yeki rootContext = some .uniqueness`
+- `Fragments.Farsi.Determiners.irgendein_root : getReading irgendein_de rootContext = some .epistemicIgnorance`
+- `Fragments.Farsi.Determiners.vreun_root_ungrammatical : getReading vreun_ro rootContext = none`
 -/
 
-section Typology
+-- BEGIN GENERATED EXAMPLES
+-- (Generated from Linglib/Data/Examples/AlonsoOvalleMoghiseh2025.json by scripts/gen_examples.py.
+-- Do not edit between markers; re-run the generator after editing the JSON.)
 
-/-- A rescue parameter bundle for an EFCI. -/
-structure EFCIParams where
-  modalInsertion : Bool
-  partialExh : Bool
-  deriving DecidableEq, Repr
+namespace Examples
+open Data.Examples
 
-def vreunParams : EFCIParams := ⟨false, false⟩
-def irgendeinParams : EFCIParams := ⟨true, false⟩
-def yekiParams : EFCIParams := ⟨false, true⟩
+def aom2025_rootUniqueness : LinguisticExample :=
+  { id := "aom2025_rootUniqueness"
+    source := ⟨"alonso-ovalle-moghiseh-2025", "root uniqueness, §2.4.2"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "yek-i az dānešju-hā umæd."
+    discourseSegments := []
+    glossedTokens := [("yek-i", "one-INDF"), ("az", "of"), ("dānešju-hā", "student-PL"), ("umæd", "came")]
+    translation := "One of the students came."
+    context := "root context (no modal embedding)"
+    judgment := .acceptable
+    alternatives := []
+    readings := [("uniqueness (exactly one student)", .acceptable)]
+    paperFeatures := [("contextType", "root"), ("modalFlavor", ""), ("uniqueness", "true"), ("freeChoice", "false"), ("modalVariation", "false")]
+    comment := "Supplementary illustration of yek-i's root uniqueness reading. Migrated from the legacy `FreeChoiceFarsi.lean` data file; the example is not a direct transcription from the paper but reflects the paper's central claim about yek-i in root contexts."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
 
-/-- Grammaticality in root: an EFCI is grammatical iff at least one
-    rescue mechanism is available. -/
-def grammaticalInRoot (p : EFCIParams) : Bool :=
-  p.modalInsertion || p.partialExh
+def aom2025_deonticFreeChoice : LinguisticExample :=
+  { id := "aom2025_deonticFreeChoice"
+    source := ⟨"alonso-ovalle-moghiseh-2025", "deontic FC, §2.3.1"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "mituni yek-i az in sib-ā-ro bardāri."
+    discourseSegments := []
+    glossedTokens := [("mituni", "can.2SG"), ("yek-i", "one-INDF"), ("az", "of"), ("in", "this"), ("sib-ā-ro", "apple-PL-RA"), ("bardāri", "pick.2SG")]
+    translation := "You can pick one of these apples."
+    context := "deontic possibility modal scopes over yek-i"
+    judgment := .acceptable
+    alternatives := []
+    readings := [("free choice (each apple is a permitted option)", .acceptable), ("embedded uniqueness (only one apple permitted total)", .acceptable)]
+    paperFeatures := [("contextType", "deontic modal"), ("modalFlavor", "permission"), ("uniqueness", "true"), ("freeChoice", "true"), ("modalVariation", "false")]
+    comment := "Supplementary illustration. Migrated from `FreeChoiceFarsi.lean`. The paper's canonical deontic FC examples are (20a), (25), (26)."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
 
-theorem vreun_ungrammatical : grammaticalInRoot vreunParams = false := rfl
-theorem irgendein_grammatical : grammaticalInRoot irgendeinParams = true := rfl
-theorem yeki_grammatical : grammaticalInRoot yekiParams = true := rfl
+def aom2025_deonticBooks : LinguisticExample :=
+  { id := "aom2025_deonticBooks"
+    source := ⟨"alonso-ovalle-moghiseh-2025", "deontic FC, books variant"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "mituni yek-i az in ketāb-hā-ro bekhuni."
+    discourseSegments := []
+    glossedTokens := [("mituni", "can.2SG"), ("yek-i", "one-INDF"), ("az", "of"), ("in", "this"), ("ketāb-hā-ro", "book-PL-RA"), ("bekhuni", "read.2SG")]
+    translation := "You can read one of these books."
+    context := "deontic possibility modal scopes over yek-i"
+    judgment := .acceptable
+    alternatives := []
+    readings := [("free choice (each book is a permitted option)", .acceptable), ("embedded uniqueness (only one book permitted total)", .acceptable)]
+    paperFeatures := [("contextType", "deontic modal"), ("modalFlavor", "permission"), ("uniqueness", "true"), ("freeChoice", "true")]
+    comment := "Books variant of the deontic FC example. Migrated from `FreeChoiceFarsi.lean`."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
 
-/-- Root reading when grammatical. -/
-inductive RootReading where
-  | uniqueness          -- partial exh (scalar only)
-  | epistemicIgnorance  -- modal insertion (covert □)
-  | ungrammatical       -- no rescue
-  deriving DecidableEq, Repr
+def aom2025_epistemicModalVariation : LinguisticExample :=
+  { id := "aom2025_epistemicModalVariation"
+    source := ⟨"alonso-ovalle-moghiseh-2025", "epistemic modal variation, §2.3.2"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "yek-i az dānešju-hā ketāb-o dozid-e."
+    discourseSegments := []
+    glossedTokens := [("yek-i", "one-INDF"), ("az", "of"), ("dānešju-hā", "student-PL"), ("ketāb-o", "book-RA"), ("dozid-e", "stole-3SG")]
+    translation := "One of the students (might have) stolen the book."
+    context := "epistemic possibility (covert or pragmatic) over yek-i"
+    judgment := .acceptable
+    alternatives := []
+    readings := [("modal variation (at least two students are possible)", .acceptable), ("embedded uniqueness (exactly one stole it)", .acceptable)]
+    paperFeatures := [("contextType", "epistemic modal"), ("modalFlavor", "epistemic"), ("modalVariation", "true"), ("uniqueness", "true"), ("freeChoice", "false")]
+    comment := "Supplementary illustration of yek-i's modal variation reading under epistemic possibility. Migrated from `FreeChoiceFarsi.lean`. Paper's canonical epistemic example is (32)."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
 
-/-- Derive root reading from rescue parameters.
-    Modal insertion takes priority when both are available. -/
-def rootReading (p : EFCIParams) : RootReading :=
-  if p.modalInsertion then .epistemicIgnorance
-  else if p.partialExh then .uniqueness
-  else .ungrammatical
+def aom2025_epistemicExplicit : LinguisticExample :=
+  { id := "aom2025_epistemicExplicit"
+    source := ⟨"alonso-ovalle-moghiseh-2025", "explicit epistemic modal"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "momken-e yek-i az dānešju-hā biyād."
+    discourseSegments := []
+    glossedTokens := [("momken-e", "possible-is"), ("yek-i", "one-INDF"), ("az", "of"), ("dānešju-hā", "student-PL"), ("biyād", "come.3SG")]
+    translation := "It's possible that one of the students will come."
+    context := "explicit epistemic possibility modal over yek-i"
+    judgment := .acceptable
+    alternatives := []
+    readings := [("modal variation (multiple students are possible)", .acceptable)]
+    paperFeatures := [("contextType", "epistemic modal"), ("modalFlavor", "epistemic"), ("modalVariation", "true"), ("uniqueness", "true")]
+    comment := "Supplementary example with overt epistemic possibility modal `momken`. Migrated from `FreeChoiceFarsi.lean`."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
 
-theorem vreun_root : rootReading vreunParams = .ungrammatical := rfl
-theorem irgendein_root_reading : rootReading irgendeinParams = .epistemicIgnorance := rfl
-theorem yeki_root_reading : rootReading yekiParams = .uniqueness := rfl
+def aom2025_deNegation : LinguisticExample :=
+  { id := "aom2025_deNegation"
+    source := ⟨"alonso-ovalle-moghiseh-2025", "negation context"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "yek-i az dānešju-hā-ro nadid-æm."
+    discourseSegments := []
+    glossedTokens := [("yek-i", "one-INDF"), ("az", "of"), ("dānešju-hā-ro", "student-PL-RA"), ("nadid-æm", "NEG.see-1SG")]
+    translation := "I didn't see any of the students."
+    context := "downward-entailing: sentential negation, partitive structure"
+    judgment := .acceptable
+    alternatives := []
+    readings := [("narrow-scope existential (no student seen)", .acceptable)]
+    paperFeatures := [("contextType", "DE (negation)"), ("modalFlavor", ""), ("uniqueness", "false")]
+    comment := "yek-i in DE contexts contributes plain existential force. The paper (17) shows that bare yek-i cannot scope under sentential negation; this partitive variant (`yek-i az NP`) appears compatible with the polarity-item reading. Migrated from `FreeChoiceFarsi.lean`."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
 
-end Typology
+def aom2025_deConditional : LinguisticExample :=
+  { id := "aom2025_deConditional"
+    source := ⟨"alonso-ovalle-moghiseh-2025", "conditional antecedent"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "ægær yek-i az dānešju-hā biyād, xošhāl mišæm."
+    discourseSegments := []
+    glossedTokens := [("ægær", "if"), ("yek-i", "one-INDF"), ("az", "of"), ("dānešju-hā", "student-PL"), ("biyād", "come.3SG"), ("xošhāl", "happy"), ("mišæm", "become.1SG")]
+    translation := "If any of the students comes, I'll be happy."
+    context := "downward-entailing: conditional antecedent"
+    judgment := .acceptable
+    alternatives := []
+    readings := [("narrow-scope existential (some student coming suffices)", .acceptable)]
+    paperFeatures := [("contextType", "DE (conditional)"), ("modalFlavor", ""), ("uniqueness", "false")]
+    comment := "Conditional antecedent is the canonical DE context where yek-i contributes plain existential force (paper §2.2; cf. eq. 16). Migrated from `FreeChoiceFarsi.lean`."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
 
+def aom2025_embeddedUniqueness : LinguisticExample :=
+  { id := "aom2025_embeddedUniqueness"
+    source := ⟨"alonso-ovalle-moghiseh-2025", "embedded uniqueness contrast"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "mituni yek-i az in sib-ā-ro bardāri, #væli do-tā nemituni."
+    discourseSegments := []
+    glossedTokens := [("mituni", "can.2SG"), ("yek-i", "one-INDF"), ("az", "of"), ("in", "this"), ("sib-ā-ro", "apple-PL-RA"), ("bardāri", "pick.2SG"), ("væli", "but"), ("do-tā", "two-CL"), ("nemituni", "NEG.can.2SG")]
+    translation := "You can pick one of these apples, #but not two."
+    context := "deontic possibility, with continuation testing uniqueness"
+    judgment := .marginal
+    alternatives := [("mituni yek-i az in sib-ā-ro bardāri.", .acceptable)]
+    readings := [("FC + embedded uniqueness (continuation redundant/contradictory)", .marginal)]
+    paperFeatures := [("contextType", "deontic modal"), ("modalFlavor", "permission"), ("uniqueness", "true"), ("freeChoice", "true")]
+    comment := "Continuation `but not two` is infelicitous (marked `#`) because the embedded uniqueness component already entails that only one apple may be picked. Migrated from `FreeChoiceFarsi.lean` (the original recorded `do-tā væli næ` which appears garbled; corrected here to `do-tā nemituni` 'cannot two')."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
 
-/-!
-### Bridge to Determiners Lexicon
+def aom2025_contrast_irgendein : LinguisticExample :=
+  { id := "aom2025_contrast_irgendein"
+    source := ⟨"kratzer-shimoyama-2002", "irgendein root"⟩
+    reportedIn := some ⟨"alonso-ovalle-moghiseh-2025", "(1), Table 1"⟩
+    language := "stan1295"
+    primaryText := "Irgendjemand hat angerufen."
+    discourseSegments := []
+    glossedTokens := [("Irgendjemand", "IRGEND.somebody"), ("hat", "AUX.3SG"), ("angerufen", "called.PTCP")]
+    translation := "Somebody (the speaker doesn't know/care who) called."
+    context := "root context (no modal); contrast with yek-i in (8)"
+    judgment := .acceptable
+    alternatives := []
+    readings := [("epistemic ignorance/indifference (modal insertion)", .acceptable)]
+    paperFeatures := [("item", "irgendein"), ("language", "German"), ("rescueMechanism", "modalInsertion"), ("hasModalInRoot", "true"), ("efciType", "irgendein")]
+    comment := "Cross-linguistic EFCI contrast: irgendein has a modal component in root contexts (covert epistemic insertion), unlike yek-i."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
 
-The study's `EFCIParams`/`rootReading` and the Fragment lexicon's
-`IndefiniteEntry`/`getReading` are two views of the same typology.
-These bridge theorems prove they agree for all three EFCI types.
--/
+def aom2025_contrast_yeki : LinguisticExample :=
+  { id := "aom2025_contrast_yeki"
+    source := ⟨"alonso-ovalle-moghiseh-2025", "yek-i root contrast, §2.4"⟩
+    reportedIn := none
+    language := "west2369"
+    primaryText := "Yek-i zæng zæd."
+    discourseSegments := []
+    glossedTokens := [("Yek-i", "one-INDF"), ("zæng", "ring"), ("zæd", "hit.3SG")]
+    translation := "Exactly one person called."
+    context := "root context (no modal); contrast with irgendein"
+    judgment := .acceptable
+    alternatives := []
+    readings := [("uniqueness (no modal component)", .acceptable)]
+    paperFeatures := [("item", "yek-i"), ("language", "Farsi"), ("rescueMechanism", "partialExhaustification"), ("hasModalInRoot", "false"), ("efciType", "yeki")]
+    comment := "Cross-linguistic EFCI contrast row: yek-i in root yields uniqueness with no modal component, the paper's central novel claim."
+    metaLanguage := "stan1293"
+    lgrConformance := "MORPHEME_ALIGNED" }
 
-section Bridge
+def aom2025_contrast_vreun : LinguisticExample :=
+  { id := "aom2025_contrast_vreun"
+    source := ⟨"falaus-2014", "p. 122 (cited at AOM 2025 ex. 4)"⟩
+    reportedIn := some ⟨"alonso-ovalle-moghiseh-2025", "(4), Table 1"⟩
+    language := "roma1327"
+    primaryText := "*Monica s-a întâlnit cu vreun prieten."
+    discourseSegments := []
+    glossedTokens := [("Monica", "Monica"), ("s-a", "REFL-have.3SG"), ("întâlnit", "met"), ("cu", "with"), ("vreun", "VREUN"), ("prieten", "friend.MASC")]
+    translation := "(intended) Monica met a friend."
+    context := "root context (no modal); contrast with irgendein and yek-i"
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("item", "vreun"), ("language", "Romanian"), ("rescueMechanism", "none"), ("hasModalInRoot", "false"), ("efciType", "vreun")]
+    comment := "Cross-linguistic EFCI contrast: vreun has no rescue mechanism and is ungrammatical in unembedded contexts (Fălăuș 2014: 122, cited at AOM 2025 ex. 4 / Table 1)."
+    metaLanguage := "stan1293"
+    lgrConformance := "WORD_ALIGNED" }
 
-open Fragments.Farsi.Determiners
+def all : List LinguisticExample := [aom2025_rootUniqueness, aom2025_deonticFreeChoice, aom2025_deonticBooks, aom2025_epistemicModalVariation, aom2025_epistemicExplicit, aom2025_deNegation, aom2025_deConditional, aom2025_embeddedUniqueness, aom2025_contrast_irgendein, aom2025_contrast_yeki, aom2025_contrast_vreun]
 
-/-- Convert study-level RootReading to Determiners EFCIReading option. -/
-def RootReading.toDetReading : RootReading → Option EFCIReading
-  | .uniqueness => some .uniqueness
-  | .epistemicIgnorance => some .epistemicIgnorance
-  | .ungrammatical => none
-
-/-- yek-i: study predicts uniqueness, lexicon agrees. -/
-theorem yeki_reading_agrees :
-    getReading yeki rootContext = (rootReading yekiParams).toDetReading := rfl
-
-/-- irgendein: study predicts epistemic ignorance, lexicon agrees. -/
-theorem irgendein_reading_agrees :
-    getReading irgendein_de rootContext = (rootReading irgendeinParams).toDetReading := rfl
-
-/-- vreun: study predicts ungrammatical (none), lexicon agrees. -/
-theorem vreun_reading_agrees :
-    getReading vreun_ro rootContext = (rootReading vreunParams).toDetReading := rfl
-
-/-- The study's grammaticality prediction matches the lexicon:
-    getReading returns `some _` iff `grammaticalInRoot` is true. -/
-theorem yeki_grammaticality_agrees :
-    (getReading yeki rootContext).isSome = grammaticalInRoot yekiParams := rfl
-
-theorem irgendein_grammaticality_agrees :
-    (getReading irgendein_de rootContext).isSome = grammaticalInRoot irgendeinParams := rfl
-
-theorem vreun_grammaticality_agrees :
-    (getReading vreun_ro rootContext).isSome = grammaticalInRoot vreunParams := rfl
-
-end Bridge
+end Examples
+-- END GENERATED EXAMPLES
 
 
 end AlonsoOvalleMoghiseh2025

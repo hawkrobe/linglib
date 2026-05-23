@@ -1,5 +1,6 @@
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.Fintype.Fin
+import Linglib.Core.Logic.Quantification.Exclusive
 
 /-! # Alonso-Ovalle & Moghiseh 2025: Generic split exhaustification
 @cite{alonso-ovalle-moghiseh-2025}
@@ -65,6 +66,9 @@ at `Q d := ∃ w, Acc w ∧ P d w`. The modal theorems add:
 
 namespace AlonsoOvalleMoghiseh2025.Generic
 
+open Core.Quantification (exclusive_pairwise_inconsistent neg_all_exclusive_alts
+  exclusive_false_of_universal uniqueness_precludes_universality)
+
 
 -- ============================================================
 -- § 1. Scalar Exhaustification → Uniqueness
@@ -116,21 +120,10 @@ The general-to-specific factoring explains why FC emerges specifically
 from the 2-element structure: "at least 2 out of 2" = "all."
 -/
 
-/-- **Exclusive-alt negation → plurality**: if at least one element
-satisfies P, and no element is the exclusive satisfier, then at least
-two distinct elements satisfy P.
-
-This is the content of O_EXH-D: each pre-exhaustified domain alternative
-is innocently excludable (they form a single MCE since they can all be
-simultaneously negated), and negating all of them forces multiple
-satisfiers. General over any domain D. -/
-theorem neg_all_exclusive_alts {D : Type*} (P : D → Prop)
-    (hExist : ∃ d, P d)
-    (hNegExcl : ∀ d, ¬(P d ∧ ∀ e, e ≠ d → ¬P e)) :
-    ∃ d₁ d₂, d₁ ≠ d₂ ∧ P d₁ ∧ P d₂ := by
-  obtain ⟨d, hd⟩ := hExist
-  by_contra hNoTwo
-  exact hNegExcl d ⟨hd, fun e hne hPe => hNoTwo ⟨e, d, hne, hPe, hd⟩⟩
+/-! **Pure-logic lemmas** `neg_all_exclusive_alts` and
+`exclusive_pairwise_inconsistent` (the Spector closure structural fact)
+are imported from `Core.Quantification` via the `open` above; this
+file uses them but does not duplicate their statements. -/
 
 /-- **Two-element free choice**: for a two-element domain, existence plus
 negation of all exclusive alternatives forces every element to satisfy P.
@@ -183,16 +176,9 @@ theorem uniqueness_satisfiable :
     ∃ P : Fin 2 → Prop, ∃ d, P d ∧ ∀ e, P e → e = d :=
   ⟨(· = 0), 0, rfl, fun _ h => h⟩
 
-/-- Uniqueness precludes universality: "exactly one" entails "not all"
-for any domain with at least two elements. This shows O_σ's result is
-strictly between the assertion and the full-exh contradiction. -/
-theorem uniqueness_precludes_universality {D : Type*} {a b : D}
-    (hab : a ≠ b) (P : D → Prop)
-    (hUniq : ∃ d, P d ∧ ∀ e, P e → e = d) :
-    ¬∀ d, P d := by
-  obtain ⟨d, _, huniq⟩ := hUniq
-  intro hall
-  exact hab ((huniq a (hall a)).trans (huniq b (hall b)).symm)
+/-! **Pure-logic lemma** `uniqueness_precludes_universality` lives in
+`Core.Quantification` (imported above): exactly-one ⇒ not-all in any
+non-trivial domain. -/
 
 
 -- ============================================================
@@ -284,20 +270,9 @@ The structural core of the argument:
    simultaneously.
 -/
 
-/-- **Exclusive alternatives false under universality**: if all elements
-satisfy P, then no element is the exclusive satisfier.
-
-Consequence for split exh: O_EXH-D's negations are entailed by ∀d P d,
-so the scalar alternative cannot be innocently excluded by domain-only
-exhaustification. A fortiori, the scalar is never negated by O_EXH-D.
-General over any domain D with at least two elements. -/
-theorem exclusive_false_of_universal {D : Type*} {a b : D}
-    (hab : a ≠ b) (P : D → Prop) (hAll : ∀ d, P d) :
-    ∀ d, ¬(P d ∧ ∀ e, e ≠ d → ¬P e) := by
-  intro d ⟨_, hexcl⟩
-  have : Nontrivial D := ⟨⟨a, b, hab⟩⟩
-  obtain ⟨e, hne⟩ := exists_ne d
-  exact hexcl e hne (hAll e)
+/-! **Pure-logic lemma** `exclusive_false_of_universal` lives in
+`Core.Quantification` (imported above): universal P ⇒ no exclusive
+satisfier exists, in non-trivial domains. -/
 
 /-- **Domain-exh result compatible with scalar**: there exists a model
 satisfying all three conditions simultaneously — the assertion (∃d P d),

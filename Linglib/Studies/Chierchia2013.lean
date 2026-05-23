@@ -617,6 +617,23 @@ inductive UFCIReading where
   deriving DecidableEq, Repr
 
 /--
+FCI flavor: existential vs universal force.
+
+Note: "Universal" FCIs (English *any*, Italian *qualunque*) have existential
+base meaning but universal surface force due to obligatory exhaustification.
+Existential FCIs (German *irgendein*, Farsi *yek-i*, Romanian *vreun*)
+retain narrow existential force. The flavor is a Chierchia-tradition
+typological dimension consumed by paper-specific studies (e.g.,
+@cite{chierchia-2006}, @cite{alonso-ovalle-moghiseh-2025}).
+-/
+inductive FCIFlavor where
+  /-- Existential FCIs: *irgendein*, *yek-i*, *vreun* -/
+  | existential
+  /-- Universal FCIs: *any*, *qualunque*, *whatever* -/
+  | universal
+  deriving DecidableEq, Repr
+
+/--
 Universal FCI grammaticality prediction.
 
 Ungrammatical only in positive episodic (UE without rescue).

@@ -271,26 +271,46 @@ end Examples
 
 
 def find_target_file(author_year: str) -> Path:
-    flat_match   = STUDIES / f"{author_year}.lean"
-    subdir_match = STUDIES / author_year / "Basic.lean"
-    matches      = [p for p in (flat_match, subdir_match) if p.exists()]
+    """Locate the study file containing the marker block.
 
-    if len(matches) == 0:
+    Search order:
+      1. `Linglib/Studies/{author_year}.lean` (flat single-file paper)
+      2. Any `.lean` file under `Linglib/Studies/{author_year}/` that
+         contains the BEGIN/END marker block (multi-file paper subdir;
+         the markers can live in whichever file conceptually owns the
+         examples, not necessarily `Basic.lean`).
+
+    Errors out if zero or multiple files match.
+    """
+    flat_match = STUDIES / f"{author_year}.lean"
+    subdir     = STUDIES / author_year
+
+    candidates: list[Path] = []
+    if flat_match.exists():
+        candidates.append(flat_match)
+    if subdir.is_dir():
+        for path in sorted(subdir.glob("*.lean")):
+            text = path.read_text(encoding="utf-8")
+            if BEGIN_MARKER in text and END_MARKER in text:
+                candidates.append(path)
+
+    if len(candidates) == 0:
         sys.stderr.write(
-            f"FATAL: no study file found for {author_year}; checked:\n"
+            f"FATAL: no study file with marker block found for {author_year}; checked:\n"
             f"  Linglib/Studies/{author_year}.lean\n"
-            f"  Linglib/Studies/{author_year}/Basic.lean\n"
-            f"Create the file (with marker block) before running the generator.\n"
+            f"  Linglib/Studies/{author_year}/*.lean\n"
+            f"Add `-- BEGIN GENERATED EXAMPLES` / `-- END GENERATED EXAMPLES`\n"
+            f"markers to the file that should host the generated block.\n"
         )
         sys.exit(1)
-    if len(matches) > 1:
-        paths = "\n  ".join(str(p.relative_to(ROOT)) for p in matches)
+    if len(candidates) > 1:
+        paths = "\n  ".join(str(p.relative_to(ROOT)) for p in candidates)
         sys.stderr.write(
-            f"FATAL: ambiguous match for {author_year}; found multiple study files:\n"
+            f"FATAL: ambiguous match for {author_year}; multiple files carry the marker block:\n"
             f"  {paths}\n"
         )
         sys.exit(1)
-    return matches[0]
+    return candidates[0]
 
 
 def replace_between_markers(file_path: Path, new_block: str) -> bool:
