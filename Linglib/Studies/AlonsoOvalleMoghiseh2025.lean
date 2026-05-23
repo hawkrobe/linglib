@@ -41,21 +41,24 @@ with scalar exhaustification clause-bounded below the modal.
 * `single_exh_no_fc`, `above_only_all_alts_too_strong`,
   `two_ie_above_below_too_strong` — three non-split architectures fail.
 
-### Structural Prop-level proofs (`Abstract` sub-namespace)
+### Project contributions beyond the paper (`Abstract` sub-namespace)
 
-These lift the paper claims to arbitrary `D : Type*` with `P : D → Prop`,
-plus arbitrary Kripke frames via `Acc : W → Prop` + `Q : D → W → Prop`.
+The `Abstract` block carries content that the paper's worked example
+doesn't formalize but that the structural framework supports:
 
-* `Abstract.scalar_exh_uniqueness` — "at least one and not at least two" ↔ "exactly one"
-* `Abstract.fc_two_element` — for |D|=2, ∃≥2 = ∀d
-* `Abstract.root_full_exh_contradiction` — full exh on |D|=2 → ⊥
-* `Abstract.full_exh_consistent_three` — root contradiction is |D|=2-specific
+* `Abstract.full_exh_consistent_three` — the root contradiction is
+  specifically a |D|=2 artifact; for |D|≥3, the premises that
+  contradict on 2-book Fin 2 are jointly satisfiable.
 * `Abstract.modal_split_exh_fc`, `Abstract.modal_split_exh_full` —
-  Kripke-frame lift of the deontic-possibility split-exh result
-
-(The Spector closure observation
-`Core.Quantification.exclusive_pairwise_inconsistent` lives in
-`Core/Logic/Quantification/Exclusive.lean` and is `open`'d in `Abstract`.)
+  Kripke-frame lift of the deontic-possibility split-exh result; FC and
+  embedded uniqueness hold over arbitrary `Acc : W → Prop` and
+  `Q : D → W → Prop`, not just the specific PermW encoding.
+* `Abstract.modal_full_exh_contradiction`,
+  `Abstract.modal_uniqueness_not_fc`,
+  `Abstract.modal_split_compatible_with_joint`,
+  `Abstract.modal_split_full_compatible_with_joint` — Kripke-frame
+  versions of the architecture-comparison results (single-vs-split exh,
+  witness countermodels).
 
 Table 2 typology is canonicalized in `Fragments.Farsi.Determiners`
 (`EFCIRescue` enum, per-item `yeki`/`irgendein_de`/`vreun_ro` entries,
@@ -70,10 +73,12 @@ Two passes over the same content:
    close by `decide` over `Finset` substrate; the paper-equation-labelled
    ones derive from structural lemmas in
    `Linglib.Semantics.Exhaustification.Structural`.
-2. **Abstract structure** (`Abstract` sub-namespace): Prop-level proofs
-   over arbitrary `D : Type*` and Kripke frames. Lifts each finite-world
-   result to its general form (`scalar_exh_uniqueness`,
-   `root_full_exh_contradiction`, the modal-frame variants).
+2. **Abstract** (`Abstract` sub-namespace): proofs the substrate can't
+   express — the |D|≥3 paper-scope finding (`full_exh_consistent_three`)
+   and the Kripke-frame modal lifts (`modal_split_exh_fc` and friends).
+   Note: paper-claim restatements at the Type level were removed during
+   cleanup since they duplicated the substrate-derived top-level
+   theorems on the worked 2-book example.
 
 The computational layer uses `α → Bool` rather than `α → Prop` to enable
 `decide` on `Finset` coercions via the substrate's `predToFinset` and
@@ -678,35 +683,19 @@ namespace Abstract
 open Core.Quantification (neg_all_exclusive_alts exclusive_false_of_universal)
 
 
-/-! #### Scalar exhaustification → uniqueness -/
+/-! #### Internal scaffolding
 
-/-- **Scalar uniqueness**: "at least one and not at least two" is
-equivalent to "exactly one."
-
-This is the semantic content of O_σ: with a single scalar alternative
-(the next numeral on the Horn scale), innocent exclusion trivially
-returns that alternative (singleton MCE), and its negation gives
-uniqueness. General over any domain D — no finiteness needed. -/
-theorem scalar_exh_uniqueness {D : Type*} (P : D → Prop) :
-    ((∃ d, P d) ∧ ¬∃ d₁ d₂, d₁ ≠ d₂ ∧ P d₁ ∧ P d₂) ↔
-    ∃ d, P d ∧ ∀ e, P e → e = d := by
-  constructor
-  · rintro ⟨⟨d, hd⟩, hNotTwo⟩
-    exact ⟨d, hd, fun e he => by_contra fun hne =>
-      hNotTwo ⟨e, d, hne, he, hd⟩⟩
-  · rintro ⟨d, hd, huniq⟩
-    exact ⟨⟨d, hd⟩, fun ⟨d₁, d₂, hne, h1, h2⟩ =>
-      hne ((huniq d₁ h1).trans (huniq d₂ h2).symm)⟩
-
-
-/-! #### Domain exhaustification → free choice -/
+Two pure-logic lemmas used by the Kripke-frame lifts below.
+`scalar_exh_uniqueness`, `antecedent_weakening`, `de_domain_alt_entailed`
+and similar paper-claim restatements were removed during a cleanup pass:
+the top-level computational layer captures them via substrate-derived
+proofs on the worked example, so the Type-level versions in this
+namespace would duplicate. The two lemmas kept here are the ones the
+Kripke-frame modal lifts (`modal_split_exh_fc`, `modal_full_exh_contradiction`)
+genuinely depend on. -/
 
 /-- **Two-element free choice**: for a two-element domain, existence plus
-negation of all exclusive alternatives forces every element to satisfy P.
-
-This completes the FC derivation for yek-i under deontic modals:
-O_EXH-D negates the two exclusive modal alternatives, and since |D| = 2,
-"at least 2 satisfy ◇P" becomes "both satisfy ◇P" — free choice. -/
+negation of all exclusive alternatives forces every element to satisfy P. -/
 theorem fc_two_element (P : Fin 2 → Prop)
     (hExist : ∃ d, P d)
     (hNegExcl : ∀ d, ¬(P d ∧ ∀ e, e ≠ d → ¬P e)) :
@@ -714,12 +703,9 @@ theorem fc_two_element (P : Fin 2 → Prop)
   obtain ⟨d₁, d₂, hne, h1, h2⟩ := neg_all_exclusive_alts P hExist hNegExcl
   intro d; fin_cases d <;> fin_cases d₁ <;> fin_cases d₂ <;> simp_all
 
-
-/-! #### Root contradiction -/
-
-/-- **Root contradiction**: asserting "at least one," negating "all"
-(scalar), and negating both exclusive domain alternatives yields ⊥
-for a two-element domain. -/
+/-- **Root contradiction**: asserting ∃d P d, negating ∀d P d (scalar),
+and negating both exclusive domain alternatives yields ⊥ for a
+two-element domain. -/
 theorem root_full_exh_contradiction (P : Fin 2 → Prop)
     (hExist : ∃ d, P d)
     (hNotAll : ¬∀ d, P d)
@@ -727,62 +713,13 @@ theorem root_full_exh_contradiction (P : Fin 2 → Prop)
     False :=
   hNotAll (fc_two_element P hExist hNegExcl)
 
-/-- Uniqueness (from scalar-only exhaustification) is satisfiable:
-unlike full exhaustification, O_σ alone yields a consistent result.
-This witnesses that partial exhaustification is a genuine rescue. -/
-theorem uniqueness_satisfiable :
-    ∃ P : Fin 2 → Prop, ∃ d, P d ∧ ∀ e, P e → e = d :=
-  ⟨(· = 0), 0, rfl, fun _ h => h⟩
 
+/-! #### Paper-scope finding
 
-/-! #### DE contexts -/
-
-/-- **Antecedent monotonicity**: strengthening a conditional's antecedent
-weakens the conditional. -/
-theorem antecedent_weakening {P Q R : Prop} (hQP : Q → P) :
-    (P → R) → (Q → R) :=
-  fun hPR hQ => hPR (hQP hQ)
-
-/-- **Strict weakening witness**: when Q ⊂ P strictly, there is a world
-where the weaker conditional P → R fails but the stronger conditional
-Q → R holds. -/
-theorem strict_antecedent_weakening {W : Type*} (P Q R : W → Prop)
-    (hWitness : ∃ w, P w ∧ ¬Q w ∧ ¬R w) :
-    ∃ w, ¬(P w → R w) ∧ (Q w → R w) := by
-  obtain ⟨w, hPw, hNQw, hNRw⟩ := hWitness
-  exact ⟨w, fun hPR => hNRw (hPR hPw), fun hQw => absurd hQw hNQw⟩
-
-/-- **Domain alternatives entailed in DE**: the full-domain conditional
-(∃x P(x)) → R entails each subdomain conditional P(d) → R. -/
-theorem de_domain_alt_entailed {D : Type*} (P : D → Prop) (R : Prop) (d : D) :
-    ((∃ x, P x) → R) → (P d → R) :=
-  fun h hPd => h ⟨d, hPd⟩
-
-
-/-! #### Why split exhaustification is necessary
-
-@cite{alonso-ovalle-moghiseh-2025} argue (§5, eqs. 143–146) that only
-split exhaustification derives the correct FC + embedded uniqueness for
-EFCIs under modals. The structural core:
-
-1. Domain-exh preserves scalar compatibility — when all elements satisfy
-   P, every exclusive alternative is false (`exclusive_false_of_universal`,
-   imported from `Core.Quantification`).
-2. Full exh contradicts for |D|=2 (`root_full_exh_contradiction`).
-3. Full exh is consistent for |D|≥3 (`full_exh_consistent_three`).
--/
-
-/-- **Domain-exh result compatible with scalar**: there exists a model
-satisfying all three conditions simultaneously — assertion (∃d P d),
-domain-exh negations (∀d ¬exclusive(d)), AND scalar (∀d P d). -/
-theorem domain_exh_result_compatible_with_scalar {D : Type*} {a b : D}
-    (hab : a ≠ b) :
-    ∃ P : D → Prop,
-      (∃ d, P d) ∧
-      (∀ d, ¬(P d ∧ ∀ e, e ≠ d → ¬P e)) ∧
-      (∀ d, P d) := by
-  refine ⟨fun _ => True, ⟨a, trivial⟩, ?_, fun _ => trivial⟩
-  exact exclusive_false_of_universal hab _ (fun _ => trivial)
+`full_exh_consistent_three` shows the root contradiction is specifically
+a |D|=2 artifact: for any |D|≥3, the three premises that contradict on
+2-book Fin 2 are jointly satisfiable. This is the project's
+contribution beyond the paper's worked example. -/
 
 /-- **Full exh consistent for 3-element domain**: unlike the 2-element
 case, for |D|=3 we can simultaneously have (∃d P d), ¬(∀d P d), and
