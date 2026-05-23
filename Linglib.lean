@@ -2627,11 +2627,11 @@ import Linglib.Theories.Pragmatics.RSA.LatentOperators
 import Linglib.Theories.Pragmatics.RSA.Silence
 import Linglib.Theories.Pragmatics.RSA.Cancellation
 import Linglib.Studies.Haspelmath2001
-import Linglib.Theories.Diachronic.Areal
-import Linglib.Theories.Diachronic.Grammaticalization
-import Linglib.Theories.Diachronic.Lexicalization
-import Linglib.Theories.Diachronic.ModalChange
-import Linglib.Theories.Diachronic.Subjectification
+import Linglib.Diachronic.Areal
+import Linglib.Diachronic.Grammaticalization
+import Linglib.Diachronic.Lexicalization
+import Linglib.Diachronic.ModalChange
+import Linglib.Diachronic.Subjectification
 import Linglib.Studies.BellerGerstenberg2025
 import Linglib.Studies.KonukEtAl2026
 import Linglib.Studies.KoontzGarboden2009

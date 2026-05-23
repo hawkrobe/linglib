@@ -1,5 +1,5 @@
 import Linglib.Studies.Gotham2017
-import Linglib.Theories.Diachronic.Lexicalization
+import Linglib.Diachronic.Lexicalization
 
 /-!
 # Word Reuse and Combination Support Efficient Communication

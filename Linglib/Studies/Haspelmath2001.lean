@@ -1,4 +1,4 @@
-import Linglib.Theories.Diachronic.Areal
+import Linglib.Diachronic.Areal
 import Linglib.Data.WALS.Features.F37A
 import Linglib.Data.WALS.Features.F38A
 import Linglib.Data.WALS.Features.F47A
@@ -24,7 +24,7 @@ shared structural features that are absent in the geographically and
 genealogically adjacent languages.
 
 This study instantiates the framework-neutral schema in
-`Theories.Diachronic.Areal`: SAE is a `LinguisticArea SAELanguage SAEFeature`
+`Diachronic.Areal`: SAE is a `LinguisticArea SAELanguage SAEFeature`
 whose feature set is the twelve major Europeanisms of §2 of the paper, whose
 reference frame is the four samples §1 demands (area, cofamilial, adjacent,
 world), and whose areality is verified feature-by-feature against
@@ -57,7 +57,7 @@ feature data via `LinguisticArea.clusterScore` and `nucleus`.
 
 namespace Haspelmath2001
 
-open Theories.Diachronic.Areal
+open Diachronic.Areal
 
 -- ============================================================================
 -- §1. The Language Sample

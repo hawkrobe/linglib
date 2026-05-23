@@ -1,6 +1,6 @@
 import Linglib.Typology.AuxiliaryVerbs
 import Linglib.Typology.Negation
-import Linglib.Theories.Diachronic.Grammaticalization
+import Linglib.Diachronic.Grammaticalization
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Italian.Negation
 

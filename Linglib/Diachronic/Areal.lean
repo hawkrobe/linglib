@@ -73,7 +73,7 @@ the bridge: a future `GradientLinguisticArea` sibling can replace
 `ArealProfile` and `ArealThresholds` unchanged.
 -/
 
-namespace Theories.Diachronic.Areal
+namespace Diachronic.Areal
 
 universe u v
 
@@ -365,4 +365,4 @@ def nucleus (A : LinguisticArea L F) : Set L :=
 
 end LinguisticArea
 
-end Theories.Diachronic.Areal
+end Diachronic.Areal

@@ -10,7 +10,7 @@ import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Studies.Sorace2000
 import Linglib.Studies.Miestamo2005
-import Linglib.Theories.Diachronic.Grammaticalization
+import Linglib.Diachronic.Grammaticalization
 import Linglib.Features.Aktionsart
 
 /-!
@@ -36,7 +36,7 @@ grammaticalization framework.
 4. **Grammaticalization grounding**: Anderson ch. 7 traces AVCs
    onto Heine 1993's cline (Anderson p. 5: *"According to Heine
    (1993: 48ff.)..."*). The cline lives in
-   `Theories/Diachronic/Grammaticalization.lean`, anchored on
+   `Diachronic/Grammaticalization.lean`, anchored on
    @cite{heine-1993} ch. 3.
 
 ## Coverage
@@ -67,7 +67,7 @@ and Heine 1993 (book p. 48ff. via Anderson p. 5):
 - **Cline reattributed to @cite{heine-1993}** (Anderson p. 5
   explicitly cites Heine 1993:48ff.). Substrate
   `GramStage.toMorphStatus` projection moved to
-  `Theories/Diachronic/Grammaticalization.lean`.
+  `Diachronic/Grammaticalization.lean`.
 - **`negStrategyStage` moved to `NegativeAuxiliaries.lean`** as
   `NegStrategy.toGramStage : NegStrategy → Option GramStage`, with
   `.negParticle => none` (not on the verbal cline) — fixes the

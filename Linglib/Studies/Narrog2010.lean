@@ -1,6 +1,6 @@
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Semantics.Modality.Narrog
-import Linglib.Theories.Diachronic.ModalChange
+import Linglib.Diachronic.ModalChange
 
 /-!
 # Narrog (2010): (Inter)subjectification in Modality and Mood

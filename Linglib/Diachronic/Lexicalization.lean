@@ -28,7 +28,7 @@ asymmetry is the diachronic content — it lives at the type level via
 
 Cline-following diachronic processes (grammaticalization,
 subjectification) and constructionalization are out of scope here; see
-sibling files in `Theories/Diachronic/`. The contrast is
+sibling files in `Diachronic/`. The contrast is
 *type of diachronic process* (cline-following vs. punctuated lexical
 innovation), not diachronic vs. synchronic.
 -/
