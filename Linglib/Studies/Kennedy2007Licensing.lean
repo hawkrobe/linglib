@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Degree.Kennedy
-import Linglib.Theories.Semantics.Gradability.Basic
+import Linglib.Semantics.Degree.Kennedy
+import Linglib.Semantics.Gradability.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
 import Linglib.Features.PropertyDomain

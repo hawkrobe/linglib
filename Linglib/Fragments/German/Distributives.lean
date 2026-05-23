@@ -1,11 +1,11 @@
-import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Theories.Semantics.Plurality.Trivalent
+import Linglib.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Plurality.Trivalent
 
 /-!
 # German Distributive Expressions
 
 Fragment entries for German distributive items grounded in the theory-layer
-operators from `Theories/Semantics/Lexical/Plural/Distributivity.lean`.
+operators from `Semantics/Lexical/Plural/Distributivity.lean`.
 
 ## Inventory
 

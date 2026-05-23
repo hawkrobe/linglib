@@ -1,13 +1,13 @@
 import Linglib.Core.Modality.HistoricalAlternatives
-import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Theories.Semantics.Tense.Modal.Matrix
-import Linglib.Theories.Semantics.Modality.TemporalConstraint
+import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Modal.Matrix
+import Linglib.Semantics.Modality.TemporalConstraint
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Studies.Matthewson2013
 import Linglib.Studies.Hacquard2006
 import Linglib.Studies.Sharvit2014
-import Linglib.Theories.Semantics.Tense.DeRe
+import Linglib.Semantics.Tense.DeRe
 import Linglib.Data.Examples.Schema
 
 /-!
@@ -308,7 +308,7 @@ DOX-pronoun's lexical entry, not a separately-asserted presupposition
 on T-nodes. The substrate derivation lives in
 `Core.Modality.HistoricalAlternatives` (`actualHistoryBase_time_actual`,
 `futureHistoryBase_time_future`); the `attitudeTemporalConstraint`
-projection in `Theories/Semantics/Modality/TemporalConstraint.lean`
+projection in `Semantics/Modality/TemporalConstraint.lean`
 delegates to it. -/
 
 /-- ULC at ℤ via `actualHistoryBase` membership: any embedded situation
@@ -357,7 +357,7 @@ proposition:
   definition. The doxastic-alternative quantification is carried by
   `WorldHistory W Time` membership.
 
-- **Abusch route** (in `Theories/Semantics/Tense/Basic.lean`): the
+- **Abusch route** (in `Semantics/Tense/Basic.lean`): the
   predicate is stated directly as `abbrev upperLimitConstraint
   embeddedR matrixE := embeddedR ≤ matrixE`. @cite{abusch-1997} §7
   states ULC informally; @cite{heim-1994-comments} formalizes it as a
@@ -797,7 +797,7 @@ theorem klecha_covers_hope_future_oriented_reading
 /-- **Substrate bridge**: @cite{klecha-2016}'s actual-history base
     `actualHistoryBase history matrix.toSituation` IS the substrate's
     `TemporalDeReReading.metaphysicalAlternatives` (defined in
-    `Theories/Semantics/Tense/DeRe.lean`) for a `TemporalDeReReading`
+    `Semantics/Tense/DeRe.lean`) for a `TemporalDeReReading`
     whose holderContext projects to `matrix`. The substrate's
     metaphysical-alternatives constructor was *designed* to recover
     Klecha's DOX behavior; this theorem makes the equivalence

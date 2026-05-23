@@ -21,7 +21,7 @@ This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
 
 Per master plan v4, `relationalGQ` and its lemmas may move to
-`Theories/Semantics/Gradability/Kennedy.lean` in Phase B (it's a
+`Semantics/Gradability/Kennedy.lean` in Phase B (it's a
 Kennedy-2015-framework operator, not a domain-general primitive).
 -/
 
@@ -93,7 +93,7 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
 /-! The cross-world entailment-based `IsMaxInf` (Fox 2007 / vFFI 2014 /
     Beck-Rullmann 1999 / Rouillard 2026) is linguistic substrate, not
     pure order theory — it lives in
-    `Theories/Semantics/Entailment/Extremum.lean`. The per-world
+    `Semantics/Entailment/Extremum.lean`. The per-world
     specialization is just `IsLeast {y | P y w} x` from mathlib
     (`Mathlib.Order.Bounds.Defs`); the per-world↔cross-world bridge under
     monotonicity is mathlib's `MonotoneOn.map_isLeast` family
@@ -169,7 +169,7 @@ theorem moreThan_eq_atLeast_succ {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W) 
 /-! IsMaxInf-flavored consequences of these degree predicates
     (`atLeast_hasMaxInf`, `moreThan_noMaxInf`, `isMaxInf_atLeast_iff_eq`,
     `moreThan_nat_hasMaxInf`) live in
-    `Theories/Semantics/Entailment/Extremum.lean` since they depend on
+    `Semantics/Entailment/Extremum.lean` since they depend on
     the linguistic-substrate `IsMaxInf` predicate. -/
 
 -- ════════════════════════════════════════════════════
@@ -248,7 +248,7 @@ the corresponding relation. The Class A vs Class B distinction
 property of `rel`: Class B ↔ `IsRefl α rel`; Class A ↔ `IsIrrefl α rel`.
 
 **Phase B note**: this Kennedy-framework operator is scheduled to move to
-`Theories/Semantics/Gradability/Kennedy.lean` per master plan v4. -/
+`Semantics/Gradability/Kennedy.lean` per master plan v4. -/
 
 /-- Kennedy's unified GQ denotation: `(rel) (μ w) d`. The five named degree
     properties are definitionally equal to instantiations of this. -/
@@ -313,7 +313,7 @@ directions without needing a Horn scale at all.
 The lemmas below state the failure-of-monotonicity and weakness-vs-exact
 results purely in terms of `eqDeg` / `atLeastDeg` / `moreThanDeg` —
 independent of any specific scale. The Nat-specific results in
-`Theories/Semantics/Numerals/Basic.lean` are immediate corollaries. -/
+`Semantics/Numerals/Basic.lean` are immediate corollaries. -/
 
 /-- "More than `d`" and "exactly `d`" are disjoint (general). -/
 theorem moreThanDeg_disjoint_eqDeg {W : Type*} (μ : W → α) (d : α) (w : W) :
@@ -380,6 +380,6 @@ theorem atMostDeg_upMono {W : Type*} (μ : W → α) : IsUpwardMonotone (atMostD
 
 /-! IsMaxInf-flavored consequences of `atMostDeg` (`atMost_hasMaxInf`,
     `isMaxInf_atMost_iff_eq`) live in
-    `Theories/Semantics/Entailment/Extremum.lean`. -/
+    `Semantics/Entailment/Extremum.lean`. -/
 
 end Core.Scale

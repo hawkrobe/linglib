@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Gradability.ClauseEmbedding
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Gradability.ClauseEmbedding
+import Linglib.Semantics.Lexical.VerbEntry
 
 /-!
 # English Copular Predicate Fragment

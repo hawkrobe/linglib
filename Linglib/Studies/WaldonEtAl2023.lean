@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Gradability.Aggregation
+import Linglib.Semantics.Gradability.Aggregation
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Mathlib.Data.Rat.Defs
@@ -26,7 +26,7 @@ Bedeutung 27*, pp. 674–692.
    in contrast to natural kinds which compose multiplicatively.
 
    This is the `weightedScore` substrate primitive in
-   `Theories/Semantics/Degree/Aggregation.lean`. Tham 2025 adds a
+   `Semantics/Degree/Aggregation.lean`. Tham 2025 adds a
    third aggregation mode (`spatialNormalizedScore`, with a host-extent
    denominator) for physical disturbance predicates — see
    `Studies/Tham2025.lean §15` for the

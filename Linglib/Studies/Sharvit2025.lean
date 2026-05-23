@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Conditionals.Presupposition
+import Linglib.Semantics.Conditionals.Presupposition
 
 /-!
 # Rooth-Partee Conditionals: Empirical Data

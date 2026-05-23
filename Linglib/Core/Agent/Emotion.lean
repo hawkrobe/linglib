@@ -251,7 +251,7 @@ inferred preferences and updated beliefs. This connects counterfactual
 *appraisal* (utility comparison) to counterfactual *reasoning* (how
 likely was the alternative?) — bridging `counterfactualAppraisal` here
 with the counterfactual conditional semantics in
-`Theories.Semantics.Conditionals.Counterfactual`. -/
+`Semantics.Conditionals.Counterfactual`. -/
 def weightedCounterfactualAppraisal (utility : W → A → F)
     (altProb : F) (actualAction altAction : A) (world : W) : F :=
   altProb * (utility world altAction - utility world actualAction)

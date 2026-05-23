@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Basic
 
 /-!
 # Russian Temporal Deictic Adverbs

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Attitudes.Desire
+import Linglib.Semantics.Attitudes.Desire
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -72,7 +72,7 @@ Our `ought_negation_via_coarse_falsemaking` makes this precise.
 ## Cross-framework: structural agreement with Phillips-Brown
 
 Cariani's `visible` is **definitionally identical** to Phillips-Brown's
-`isConsidered` (`Theories/Semantics/Attitudes/Desire.lean`,
+`isConsidered` (`Semantics/Attitudes/Desire.lean`,
 @cite{phillips-brown-2025} §3.6) — so much so that we don't redefine
 it: `Cariani2013.isVisible` is an `abbrev` for `isConsidered` over the
 options list. The bridge theorem `isVisible_iff_isConsidered` is
@@ -111,7 +111,7 @@ parameters are options, ordering, benchmark. Per §4 (p.545):
 > logical space.
 
 We model options as a `List (DecProp W)` — finite, with decidable
-membership — matching the substrate's `Theories.Semantics.Attitudes.Desire`
+membership — matching the substrate's `Semantics.Attitudes.Desire`
 representation of partition cells. Mutual exclusivity is a hypothesis
 on consumers, not a structure field. -/
 
@@ -251,7 +251,7 @@ instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
 /-! ## §4. Bridge to Phillips-Brown's `isConsidered`
 
 @cite{phillips-brown-2025}'s `isConsidered`
-(`Theories.Semantics.Attitudes.Desire`) is *definitionally* the same
+(`Semantics.Attitudes.Desire`) is *definitionally* the same
 predicate as Cariani's `isVisible`. Since `isVisible` is now an
 `abbrev` (§2 above), the bridge theorem is `Iff.rfl`.
 

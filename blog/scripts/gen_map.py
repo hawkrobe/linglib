@@ -41,14 +41,14 @@ NODES = [
     {"id": "MereoDim",     "root": "scale",       "file_path": "Core/MereoDim.lean"},
     {"id": "Path",         "root": "scale",       "file_path": "Core/Path.lean"},
     {"id": "Time",         "root": "scale",       "file_path": "Core/Time.lean"},
-    {"id": "DimBridge",    "root": "scale",       "file_path": "Theories/Semantics/Events/DimensionBridge.lean"},
+    {"id": "DimBridge",    "root": "scale",       "file_path": "Semantics/Events/DimensionBridge.lean"},
     # Closure cluster
     {"id": "Causation",    "root": "closure",     "file_path": "Core/Causation.lean"},
-    {"id": "Sufficiency",  "root": "closure",     "file_path": "Theories/Semantics/Causation/Sufficiency.lean"},
-    {"id": "Necessity",    "root": "closure",     "file_path": "Theories/Semantics/Causation/Necessity.lean"},
-    {"id": "Implicative",  "root": "closure",     "file_path": "Theories/Semantics/Causation/Implicative.lean"},
-    {"id": "Ability",      "root": "closure",     "file_path": "Theories/Semantics/Modality/Ability.lean"},
-    {"id": "GradedCaus",   "root": "closure",     "file_path": "Theories/Semantics/Causation/GradedCausation.lean"},
+    {"id": "Sufficiency",  "root": "closure",     "file_path": "Semantics/Causation/Sufficiency.lean"},
+    {"id": "Necessity",    "root": "closure",     "file_path": "Semantics/Causation/Necessity.lean"},
+    {"id": "Implicative",  "root": "closure",     "file_path": "Semantics/Causation/Implicative.lean"},
+    {"id": "Ability",      "root": "closure",     "file_path": "Semantics/Modality/Ability.lean"},
+    {"id": "GradedCaus",   "root": "closure",     "file_path": "Semantics/Causation/GradedCausation.lean"},
     # Luce cluster
     {"id": "RationalAction", "root": "luce",      "file_path": "Core/RationalAction.lean"},
     {"id": "UtilityTheory",  "root": "luce",      "file_path": "Core/UtilityTheory.lean"},
@@ -72,8 +72,8 @@ NODES = [
 
 # Proposed nodes
 PROPOSED_NODES = [
-    {"id": "CausalClosure",   "root": "closure", "file_path": "Theories/Semantics/Causation/CausalClosure.lean"},
-    {"id": "DegreeCausation",  "root": "closure", "file_path": "Theories/Semantics/Causation/DegreeCausation.lean"},
+    {"id": "CausalClosure",   "root": "closure", "file_path": "Semantics/Causation/CausalClosure.lean"},
+    {"id": "DegreeCausation",  "root": "closure", "file_path": "Semantics/Causation/DegreeCausation.lean"},
 ]
 
 # Conceptual edges not derivable from direct imports.
@@ -401,8 +401,8 @@ def display_file(node: dict) -> str:
     """Convert a node's file_path to a short display string."""
     fp = node["file_path"]
     if "*" in fp:
-        return fp.replace("Theories/Pragmatics/", "").replace("Theories/Semantics/", "")
-    fp = fp.replace("Theories/Semantics/", "")
+        return fp.replace("Theories/Pragmatics/", "").replace("Semantics/", "")
+    fp = fp.replace("Semantics/", "")
     fp = fp.replace("Theories/Pragmatics/", "")
     return fp
 

@@ -1,6 +1,6 @@
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Theories.Semantics.Exhaustification.FreeChoice
+import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Phenomena.Modality.ModalConcord.Data
 import Mathlib.Data.Set.Basic
 

@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
-import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
-import Linglib.Theories.Semantics.Plurality.Implicature
+import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
+import Linglib.Semantics.Plurality.Implicature
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Multiplicity

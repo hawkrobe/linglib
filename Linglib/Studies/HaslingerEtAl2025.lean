@@ -12,7 +12,7 @@ This demonstrates that distributivity and maximality are independent.
 
 ## Theoretical Connection
 
-The theory in `Theories/Semantics/Lexical/Plural/Distributivity.lean` predicts:
+The theory in `Semantics/Lexical/Plural/Distributivity.lean` predicts:
 - *jeder* uses `distMaximal` (identity tolerance)
 - *jeweils* uses `distTolerant` (context-sensitive tolerance)
 - *alle* universally binds the tolerance parameter (`allViaForallH`)
@@ -31,8 +31,8 @@ preserves it at the operator level. See `Studies/Haslinger2025.lean`.
 
 -/
 
-import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Theories.Semantics.Plurality.Trivalent
+import Linglib.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Plurality.Trivalent
 
 namespace HaslingerEtAl2025
 

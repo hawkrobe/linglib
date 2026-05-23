@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Degree.Basic
-import Linglib.Theories.Semantics.Degree.ThanClause
-import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Theories.Semantics.Degree.Differential
+import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.ThanClause
+import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Differential
 
 /-!
 # Bresnan 1973: Syntax of the Comparative Clause Construction in English

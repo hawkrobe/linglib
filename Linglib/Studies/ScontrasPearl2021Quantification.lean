@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.Numerals.Basic
+import Linglib.Semantics.Numerals.Basic
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Theories.Semantics.Composition.Scope
+import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Composition.Scope
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!

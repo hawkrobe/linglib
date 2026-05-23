@@ -38,9 +38,9 @@ predict the observed cross-linguistic patterns.
 
 -/
 
-import Linglib.Theories.Semantics.Kinds.SortedOntology
-import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
-import Linglib.Theories.Semantics.Kinds.MeaningPreservation
+import Linglib.Semantics.Kinds.SortedOntology
+import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Kinds.MeaningPreservation
 import Linglib.Studies.Krifka2004
 import Linglib.Phenomena.Generics.KindReference
 

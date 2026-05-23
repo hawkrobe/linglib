@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Directive
+import Linglib.Semantics.Modality.Directive
 import Linglib.Fragments.English.Auxiliaries
 import Mathlib.Data.Fin.Basic
 

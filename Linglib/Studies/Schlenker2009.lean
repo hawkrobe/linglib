@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
-import Linglib.Theories.Semantics.Presupposition.TonhauserDerivation
+import Linglib.Semantics.Presupposition.BeliefEmbedding
+import Linglib.Semantics.Presupposition.TonhauserDerivation
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 import Mathlib.Data.Set.Basic
 

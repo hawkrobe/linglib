@@ -1,6 +1,6 @@
 import Linglib.Studies.Anscombe1964
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Aspect.ChangeOfState
+import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Studies.Karttunen1974
 import Linglib.Fragments.English.TemporalExpressions
 

@@ -1,8 +1,8 @@
 import Linglib.Core.Morphology.DegreeContainment
 import Linglib.Theories.Morphology.DM.ContainmentVI
 import Linglib.Core.Morphology.Exponence
-import Linglib.Theories.Semantics.Alternatives.Lexical
-import Linglib.Theories.Semantics.Degree.Superlative
+import Linglib.Semantics.Alternatives.Lexical
+import Linglib.Semantics.Degree.Superlative
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Latin.Adjectives
 
@@ -51,7 +51,7 @@ encode empirically observed root-class patterns.
 -- ============================================================================
 
 /-! Connects morphological infrastructure (`Core.Morphology`) to scalar-
-alternative infrastructure (`Theories/Semantics/Alternatives/HornScale.lean`),
+alternative infrastructure (`Semantics/Alternatives/HornScale.lean`),
 enabling automatic generation of the alternatives needed for scalar
 implicature computation. Was previously in `Theories/Morphology/Core/
 ScaleFromParadigm.lean`; relocated 0.230.455 (sole consumer is this study

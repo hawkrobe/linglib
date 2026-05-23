@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Degree.Abstraction
-import Linglib.Theories.Semantics.Gradability.Delineation
-import Linglib.Theories.Semantics.Degree.Intervals
-import Linglib.Theories.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Abstraction
+import Linglib.Semantics.Gradability.Delineation
+import Linglib.Semantics.Degree.Intervals
+import Linglib.Semantics.Degree.Comparative
 
 /-!
 # Framework Comparison: Where Kennedy and Heim Diverge

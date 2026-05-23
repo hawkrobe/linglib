@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Basic
 
 /-!
 # @cite{del-prete-2013} — Imperfectivity and Habituality in Italian

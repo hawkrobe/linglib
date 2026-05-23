@@ -16,7 +16,7 @@ This breaks closure and creates the need for rescue mechanisms.
 
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Studies.AlonsoOvalleMoghiseh2025
 import Mathlib.Data.Set.Basic
 

@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Aspect.Stratified
-import Linglib.Theories.Semantics.Events.CEM
-import Linglib.Theories.Semantics.Plurality.Algebra
+import Linglib.Semantics.Aspect.Stratified
+import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.Plurality.Algebra
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
@@ -16,7 +16,7 @@ describing entity `x` is acceptable iff `SR_{M,g}(S)(x)` (Distributivity
 Constraint, Ch 4 §4.6).
 
 Substrate types `SR`, `SDR`, `SSR`, `SMR` and the construction
-abbreviations live in `Theories/Semantics/Events/Aspect/Stratified.lean`.
+abbreviations live in `Semantics/Events/Aspect/Stratified.lean`.
 This file consumes them against English Fragment verbs and stages the
 empirical data the book argues over.
 

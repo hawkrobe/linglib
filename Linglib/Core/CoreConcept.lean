@@ -15,7 +15,7 @@ notion to "conceptual alternatives" feeding pragmatic competition, and
 core concepts feed competition only when an *indirect* alternative —
 a pronounceable expression equivalent in meaning to the unpronounceable
 core-concept structure — is available (Indirect Alternatives,
-`Theories/Semantics/Alternatives/Indirect.lean`).
+`Semantics/Alternatives/Indirect.lean`).
 
 This module is a small registry. The actual *denotation* of each core
 concept lives where its semantic content does (e.g. `dualPredOnLattice`

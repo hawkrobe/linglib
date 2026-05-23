@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.Questions.Hamblin
-import Linglib.Theories.Semantics.Questions.Relevance
+import Linglib.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Relevance
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
-import Linglib.Theories.Semantics.Focus.Interpretation
+import Linglib.Semantics.Focus.Interpretation
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Prod
 

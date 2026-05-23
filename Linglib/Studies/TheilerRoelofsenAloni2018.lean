@@ -1,8 +1,8 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Setoid.Basic
 import Mathlib.Data.Setoid.Partition
-import Linglib.Theories.Semantics.Questions.Basic
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Hamblin
 import Linglib.Core.Mood.PartitionAsInquiry
 
 /-!
@@ -14,7 +14,7 @@ import Linglib.Core.Mood.PartitionAsInquiry
 This study formalizes Section 2 of the paper (semantic framework:
 inquisitive sentence meanings) plus the **forcing** mention-some
 example from Section 3.1, which justifies the existence of
-`Theories/Semantics/Questions/Basic.lean` as a sibling structure to
+`Semantics/Questions/Basic.lean` as a sibling structure to
 `Setoid W`.
 
 ## What this file establishes
@@ -55,7 +55,7 @@ This file does **not** formalize the rest of the paper:
 
 The point of this file is the existence theorem for the "more
 expressive than partitions" claim, which is what the
-`Theories/Semantics/Questions/Basic.lean`/`Core/Mood/PartitionAsInquiry.lean`
+`Semantics/Questions/Basic.lean`/`Core/Mood/PartitionAsInquiry.lean`
 pair was built to support.
 -/
 

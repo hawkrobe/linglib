@@ -1,5 +1,5 @@
 import Linglib.Features.QParticleLayer
-import Linglib.Theories.Semantics.Questions.Singleton
+import Linglib.Semantics.Questions.Singleton
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.English.QuestionParticles

@@ -7,7 +7,7 @@ import Linglib.Tactics.OntSort
 
 Foundational scale-classification types used across all gradability/degree
 substrate. No framework-specific operators here (those live in
-`Theories/Semantics/Gradability/`).
+`Semantics/Gradability/`).
 
 Contents:
 - `Boundedness` enum + `hasMax`/`hasMin`/`isLicensed`

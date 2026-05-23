@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Data.Examples.Schema
 
 /-!

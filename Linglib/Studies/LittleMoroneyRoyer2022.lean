@@ -6,7 +6,7 @@ import Linglib.Studies.Chierchia1998
 import Linglib.Studies.Sudo2016
 import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Shan.Classifiers
-import Linglib.Theories.Semantics.Classifier.Basic
+import Linglib.Semantics.Classifier.Basic
 
 /-!
 # Little, Moroney & Royer (2022)

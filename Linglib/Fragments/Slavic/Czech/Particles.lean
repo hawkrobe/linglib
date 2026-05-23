@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Negation.CzechNegation
+import Linglib.Semantics.Negation.CzechNegation
 
 /-!
 # Czech Diagnostic Particles

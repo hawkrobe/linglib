@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Attitudes.Desire
-import Linglib.Theories.Semantics.Attitudes.CondoravdiLauer
+import Linglib.Semantics.Attitudes.Desire
+import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -17,7 +17,7 @@ This study file replicates the Nap, Lobster, Lu/Happy/Rain
 @cite{condoravdi-lauer-2016} (an effective-preferential alternative
 that refuses simultaneous `want(p)` and `want(¬p)`).
 
-The substrate is `Theories/Semantics/Attitudes/Desire.lean`. All theorems
+The substrate is `Semantics/Attitudes/Desire.lean`. All theorems
 here either compute by `decide` over an 8-world model (3 binary
 dimensions: `nap × rested × pass` = `lobster × gustatory × ¬die`) or
 delegate to the substrate's general theorems
@@ -489,7 +489,7 @@ theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
 
 @cite{heim-1992}'s comparative-belief semantics (`wantHeim`) is the
 *other* canonical belief-based account — formalized at
-`Theories/Semantics/Attitudes/Desire.lean` and exercised in
+`Semantics/Attitudes/Desire.lean` and exercised in
 `Studies/Heim1992Desire.lean`. The substrate's
 `BeliefBasedDesireSemantics` typology packages vF, Heim, and (in
 principle) Levinson 2003 / sufficient-desirability accounts under a
@@ -505,7 +505,7 @@ PB's argument against belief-based semantics generalizes from
 * vF: blocked by `wantVF_no_simultaneous_pq_and_negpq`.
 * Any future `BeliefBasedDesireSemantics` instance: blocked by the
   parametric `isConflictBlocking` predicate (currently proved per
-  instance in `Theories/Semantics/Attitudes/Desire.lean`).
+  instance in `Semantics/Attitudes/Desire.lean`).
 
 PB's `wantQuestionBased` *evades* the no-go by selecting from
 `Q-Bel_S` rather than directly from `Bel_S` — it is *not* an

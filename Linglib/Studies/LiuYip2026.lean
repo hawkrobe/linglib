@@ -500,7 +500,7 @@ theorem proposition_surface :
   under A-dependency) is left as prose. Promotion to a substrate operator
   awaits a second consumer.
 
-- **`Theories/Semantics/Again/` substrate**: a uniform *again*-presupposition
+- **`Semantics/Again/` substrate**: a uniform *again*-presupposition
   substrate (@cite{von-stechow-1996} / @cite{beck-2006} parameterization)
   is recommended but not landed. Without it, every *again*-element's
   presupposition is encoded independently in its Fragment lexical entry,

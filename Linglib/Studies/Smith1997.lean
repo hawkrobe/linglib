@@ -1,6 +1,6 @@
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Aspect.Basic
-import Linglib.Theories.Semantics.Aspect.Composition
+import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Composition
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Fragments.English.TenseAspect
 import Linglib.Fragments.French.TenseAspect

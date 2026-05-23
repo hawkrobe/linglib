@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Card
-import Linglib.Theories.Semantics.Plurality.Cumulativity
-import Linglib.Theories.Semantics.Plurality.Reciprocal
-import Linglib.Theories.Semantics.Dynamic.PPCDRT.Cumulativity
+import Linglib.Semantics.Plurality.Cumulativity
+import Linglib.Semantics.Plurality.Reciprocal
+import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 
 /-!
 # Beck (2001): Reciprocals are Definites
@@ -83,7 +83,7 @@ namespace Beck2001
 
 open Semantics.Plurality.Cumulativity
 open Semantics.Plurality.Reciprocal
-open Theories.Semantics.Dynamic.PPCDRT
+open Semantics.Dynamic.PPCDRT
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Four Basic Reciprocal Readings (paper §2)

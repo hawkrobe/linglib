@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Conditionals.PremiseSemantic
+import Linglib.Semantics.Conditionals.PremiseSemantic
 
 /-!
 # @cite{kratzer-2012} §5.4.3 — Lumping blocks spurious counterfactuals
@@ -95,7 +95,7 @@ Other admissibility conditions we do not check:
 ## On the discriminating contrast: Paula vs. switches
 
 The lumping CF is *not the only* operator that gets the right answer
-on the Paula scenario. `Theories/Semantics/Conditionals/Counterfactual.universalCounterfactual`
+on the Paula scenario. `Semantics/Conditionals/Counterfactual.universalCounterfactual`
 (Lewis/Stalnaker minimal-change) also blocks the spurious prediction
 on Paula, because the closest `notPa`-world to `actual` under any
 sensible similarity ordering is `noApplesQuiet` (one switch flipped),

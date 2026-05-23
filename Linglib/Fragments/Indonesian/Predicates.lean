@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Lexical.VerbEntry
 import Linglib.Typology.Voice
 import Linglib.Fragments.Indonesian.Morphophonology
 

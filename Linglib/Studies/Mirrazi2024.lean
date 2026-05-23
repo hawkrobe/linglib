@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Quantification.ChoiceFunction
-import Linglib.Theories.Semantics.Attitudes.NegRaising
+import Linglib.Semantics.Quantification.ChoiceFunction
+import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Fragments.Farsi.Determiners
 
 /-!

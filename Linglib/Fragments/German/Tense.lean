@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.SOT.Decomposition
 
 /-!
 # German Tense Fragment

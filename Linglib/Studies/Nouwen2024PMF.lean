@@ -97,7 +97,7 @@ Nouwen's own intersection proposal being the FOURTH:
 3. Nouwen 2010 existential boost: `∃d[μ_warm(t)(@) ≥ d ∧ horrible(λw.μ_warm(t)(w) ≥ d)]` (Eq. 33-35)
 4. Nouwen 2024 intersection: Eq. 44/45 (this file's nominal target)
 
-NONE of (1)-(3) are formalised in linglib. `Theories/Semantics/Gradability/Intensification.lean`
+NONE of (1)-(3) are formalised in linglib. `Semantics/Gradability/Intensification.lean`
 ships only Nouwen 2024's intersection as `intensifiedMeaning` — silently
 adopting one of the four contenders as if uncontested. The cross-framework
 auditor flagged this as a broader linglib gap; the fix is an

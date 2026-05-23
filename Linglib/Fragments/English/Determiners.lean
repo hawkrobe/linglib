@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Quantification.Lexicon
+import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # English Determiners
@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Quantification.Lexicon
 
 English-specific determiner lexicon. The shared `QuantifierEntry`
 structure (and the `QForce`/`Monotonicity`/`Strength` enums) lives in
-`Theories/Semantics/Quantification/Lexicon.lean`; this file is the
+`Semantics/Quantification/Lexicon.lean`; this file is the
 English instantiation and a small numerical-determiner sublexicon.
 
 ## Scope
@@ -22,17 +22,17 @@ all live elsewhere:
   its B&C-style GQ denotation table:
   `Phenomena/Quantification/Inventory.lean`.
 - Compositional GQ denotations (`every_sem`, `both_sem`, `neither_sem`,
-  …): `Theories/Semantics/Quantification/Quantifier.lean`.
+  …): `Semantics/Quantification/Quantifier.lean`.
 - GQT/PT meaning operators consuming numerical parameters:
-  `Theories/Semantics/Quantification/Quantifier.lean` (`gqtMeaning`),
-  `Theories/Semantics/Probabilistic/PrototypeTheory.lean` (`ptMeaning`).
+  `Semantics/Quantification/Quantifier.lean` (`gqtMeaning`),
+  `Semantics/Probabilistic/PrototypeTheory.lean` (`ptMeaning`).
 - Per-paper parameter values:
   `Studies/VanTielEtAl2021.lean`.
 -/
 
 namespace Fragments.English.Determiners
 
-export Theories.Semantics.Quantification.Lexicon
+export Semantics.Quantification.Lexicon
   (QForce Monotonicity Strength QuantifierEntry)
 
 def none_ : QuantifierEntry :=
@@ -162,7 +162,7 @@ def an : QuantifierEntry :=
 /-- "both" - universal dual, presupposes exactly 2.
     K&S (83a): [_Det each of the two] ⇒ both.
     Compositional denotation `both_sem` lives in
-    `Theories.Semantics.Quantification.Quantifier`.
+    `Semantics.Quantification.Quantifier`.
 
     `numberRestriction := some .du` carries the dual core concept
     (@cite{harbour-2014} `[−atomic, +minimal]`); the cardinality clause
@@ -180,7 +180,7 @@ def both : QuantifierEntry :=
 /-- "neither" - negative dual, presupposes exactly 2.
     K&S (83b): [_Det (not one) of the two] ⇒ neither.
     Compositional denotation `neither_sem` lives in
-    `Theories.Semantics.Quantification.Quantifier`. -/
+    `Semantics.Quantification.Quantifier`. -/
 def neither : QuantifierEntry :=
   { form := "neither"
   , qforce := .negative

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Gradability.Intensification
+import Linglib.Semantics.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs

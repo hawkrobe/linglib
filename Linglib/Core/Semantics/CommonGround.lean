@@ -12,7 +12,7 @@ and the `HasContextSet` interface unifying both with the various
 discourse-state representations across `Theories/`.
 
 Multi-agent epistemic operators (knowledge, belief, common knowledge)
-are in `Theories/Semantics/Modality/EpistemicLogic.lean`.
+are in `Semantics/Modality/EpistemicLogic.lean`.
 -/
 
 namespace Core.CommonGround

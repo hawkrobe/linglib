@@ -1,9 +1,9 @@
 import Mathlib.Data.List.Sublists
-import Linglib.Theories.Semantics.Conditionals.Counterfactual
+import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Duality
-import Linglib.Theories.Semantics.Truthmaker.Inexact
-import Linglib.Theories.Semantics.Truthmaker.Basic
+import Linglib.Semantics.Truthmaker.Inexact
+import Linglib.Semantics.Truthmaker.Basic
 import Linglib.Studies.McKayVanInwagen1977
 
 /-!
@@ -74,7 +74,7 @@ predicate.
    "dual" and hedges. The general theorem
    `santorio_minimal_stable_dual_to_fox_maximal_exclusion` is not
    formalised; it requires either a witness-typed `IsMaximalExclusion`
-   predicate in `Theories/Semantics/Exhaustification/Innocent.lean`
+   predicate in `Semantics/Exhaustification/Innocent.lean`
    (which currently exposes `IE` / `innocentlyExcludable` over
    `Finset (Finset W)`) or a `Finset Nat ↔ List Nat` reflection.
 
@@ -94,7 +94,7 @@ predicate.
 
 - **§II.2 Raffle / probability-operator argument (pp. 525–527)** —
   Santorio's central anti-scalar argument. Requires a probability
-  operator scoping over a counterfactual; `Theories/Semantics/Conditionals/`
+  operator scoping over a counterfactual; `Semantics/Conditionals/`
   has no such operator at present.
 - **§II.3 Otto/Anna/Waldo non-closest-worlds (pp. 527–530)** —
   refutes minimal-change. Requires a `WaldoWorld` enum with a tied-

@@ -1,6 +1,6 @@
 import Linglib.Features.Acceptability
 import Linglib.Theories.Syntax.Minimalist.Cascade
-import Linglib.Theories.Semantics.Causation.Psych
+import Linglib.Semantics.Causation.Psych
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!

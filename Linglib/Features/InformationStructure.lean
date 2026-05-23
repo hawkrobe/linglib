@@ -26,8 +26,8 @@ predate Krifka's decomposition and target distinct phenomena
 
 Theory-level predicates over these taxonomies (Umbach's alt-set
 well-formedness, Erteschik-Shir/Abeillé extraction-IS clash) live in
-`Theories/Semantics/Focus/Comparability.lean`. Focus-specific compositional
-operations (`AltMeaning`) live in `Theories/Semantics/Alternatives/`.
+`Semantics/Focus/Comparability.lean`. Focus-specific compositional
+operations (`AltMeaning`) live in `Semantics/Alternatives/`.
 -/
 
 namespace Features.InformationStructure

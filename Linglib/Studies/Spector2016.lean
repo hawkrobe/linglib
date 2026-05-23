@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
-import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Entailment.Polarity
 
 /-!
 # Spector (2016): Worked examples of exhaustivity operators
@@ -14,7 +14,7 @@ on the two classic Horn scales:
 2. **or/and** scale: "John sang or danced" → exclusive reading
 
 The abstract Spector framework lives in
-`Theories/Semantics/Exhaustification/Operators/Basic.lean`. This file holds the
+`Semantics/Exhaustification/Operators/Basic.lean`. This file holds the
 empirical exemplars — small finite worlds, scale-specific alternative
 sets, and the per-scale `exhMW ≡ exhIE` corollaries — kept out of the
 theory file in line with the project's Theory/Phenomena split.

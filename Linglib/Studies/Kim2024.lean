@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Causation.Psych
-import Linglib.Theories.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Causation.Psych
+import Linglib.Semantics.Modality.EventRelativity
 
 /-!
 # Psych Verb Contentfulness ↔ Modal Content Licensing

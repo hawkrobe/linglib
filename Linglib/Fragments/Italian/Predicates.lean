@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.VerbEntry
-import Linglib.Theories.Semantics.Attitudes.RationalAttitude
+import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!

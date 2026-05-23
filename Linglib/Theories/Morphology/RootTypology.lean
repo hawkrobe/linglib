@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Lexical.EventStructure
-import Linglib.Theories.Semantics.Aspect.ChangeOfState
-import Linglib.Theories.Semantics.Lexical.LevinTheory
+import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.Aspect.ChangeOfState
+import Linglib.Semantics.Lexical.LevinTheory
 
 open Semantics.Lexical
 

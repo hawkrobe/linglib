@@ -1,5 +1,5 @@
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Theories.Semantics.Alternatives.Lexical
+import Linglib.Semantics.Alternatives.Lexical
 
 /-!
 # Horn Scales
@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Alternatives.Lexical
 
 Connects the string-based `HornScaleDatumPair` records in
 `Phenomena/ScalarImplicatures/Basic.lean` to the typed Horn scale algebra
-in `Theories/Semantics/Alternatives/HornScale.lean` (`Quantifiers.entails`, `Connectives.entails`,
+in `Semantics/Alternatives/HornScale.lean` (`Quantifiers.entails`, `Connectives.entails`,
 `Modals.entails`, `strongerAlternatives`).
 
 ## Structure

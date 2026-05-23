@@ -5,7 +5,7 @@ import Linglib.Phenomena.ScalarImplicatures.Embedded.Attitudes
 import Linglib.Theories.Pragmatics.Implicature.Competence
 import Linglib.Theories.Pragmatics.Implicature.Defs
 import Linglib.Theories.Pragmatics.Implicature.Diagnostics
-import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.Polarity
 
 /-!
 # @cite{geurts-pouscoulous-2009} — Embedded Implicatures?!?

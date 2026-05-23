@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Conditionals.Counterfactual
+import Linglib.Semantics.Conditionals.Counterfactual
 import Mathlib.Tactic.NormNum
 import Mathlib.Data.Rat.Defs
 

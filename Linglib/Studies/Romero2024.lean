@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.Bias
-import Linglib.Theories.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Modality.BiasedPQ
 
 /-!
 # Romero (2024): Biased Polar Questions

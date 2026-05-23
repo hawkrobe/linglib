@@ -1,8 +1,8 @@
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Theories.Semantics.Composition.ToyDomain
-import Linglib.Theories.Semantics.Reference.Binding
-import Linglib.Theories.Semantics.Composition.Applicative
+import Linglib.Semantics.Composition.ToyDomain
+import Linglib.Semantics.Reference.Binding
+import Linglib.Semantics.Composition.Applicative
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 
 /-!

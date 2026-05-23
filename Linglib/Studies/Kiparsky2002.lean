@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.Aspect.SubeventStructure
-import Linglib.Theories.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.SubeventStructure
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Core.Time.Reichenbach
-import Linglib.Theories.Semantics.Tense.Compositional
+import Linglib.Semantics.Tense.Compositional
 
 /-!
 # @cite{kiparsky-2002}: Event structure and the perfect
@@ -49,7 +49,7 @@ derives them from event-structure mappings.
 
 ## Status
 
-Substrate inherited from `Theories/Semantics/Tense/PerfectPolysemy.lean`
+Substrate inherited from `Semantics/Tense/PerfectPolysemy.lean`
 (deleted; relocated here per CLAUDE.md graduation rule — Studies
 promotes to Theories only when ≥ 2 distinct paper-anchored Studies
 files consume it). Verified against the Kiparsky 2002 PDF: the

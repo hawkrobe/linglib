@@ -1,6 +1,6 @@
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Profile
-import Linglib.Theories.Semantics.Events.Basic
+import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
+import Linglib.Semantics.Events.Basic
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -36,7 +36,7 @@ The §§1-14 substrate below was previously a separate top-level theory file;
 Bhadra 2024 is the originating paper, so the substrate now anchors here per
 CLAUDE.md "every file is anchored". The deferred follow-up is to extract the
 theory-portable wing (`ForceTransmissionClass`, `BoundaryStates` operators,
-`Set.multiMembered`) into `Theories/Semantics/ArgumentStructure/Affectedness/Profile.lean` once
+`Set.multiMembered`) into `Semantics/ArgumentStructure/Affectedness/Profile.lean` once
 a second consumer materialises.
 -/
 

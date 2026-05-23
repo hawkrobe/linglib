@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Questions.Basic
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Hamblin
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Theories.Semantics.Questions.DecisionTheoretic
+import Linglib.Semantics.Questions.DecisionTheoretic
 
 /-!
 # @cite{van-rooy-2003}: Questioning to Resolve Decision Problems

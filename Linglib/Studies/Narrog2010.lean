@@ -1,5 +1,5 @@
 import Linglib.Core.Modality.DeonticNecessity
-import Linglib.Theories.Semantics.Modality.Narrog
+import Linglib.Semantics.Modality.Narrog
 import Linglib.Theories.Diachronic.ModalChange
 
 /-!

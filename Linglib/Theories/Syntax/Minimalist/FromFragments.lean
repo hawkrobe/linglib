@@ -3,7 +3,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Determiners
-import Linglib.Theories.Semantics.Quantification.Lexicon
+import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # Minimalism: Fragment Lexicon → Syntactic Object Interpretation
@@ -39,7 +39,7 @@ open Minimalist
 open Fragments.English.Predicates.Verbal (VerbEntry ComplementType)
 open Fragments.English.Pronouns (PronounEntry PronounType)
 open Fragments.English.Nouns (NounEntry)
-open Theories.Semantics.Quantification.Lexicon (QuantifierEntry)
+open Semantics.Quantification.Lexicon (QuantifierEntry)
 
 section SelectionalEncoding
 

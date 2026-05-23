@@ -1,6 +1,6 @@
 import Linglib.Core.Scales.Roundness
 import Linglib.Phenomena.SocialMeaning.IndexicalField
-import Linglib.Theories.Semantics.Numerals.Precision
+import Linglib.Semantics.Numerals.Precision
 import Linglib.Theories.Sociolinguistics.SCM
 import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Studies.BeltramaSoltBurnett2022

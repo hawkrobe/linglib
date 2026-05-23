@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.SOT.Decomposition
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.German.Tense
 import Linglib.Data.Examples.Schema
@@ -14,7 +14,7 @@ tense–pronoun analogy in three directions: an aspect-based decomposition
 of English simple past, SOT deletion via zero tenses, and zero forms with
 locality constraints. The substrate machinery (deletion mechanism +
 Kratzer-named lexical entries used by Fragments) is at
-`Theories/Semantics/Tense/SOT/Decomposition.lean`; this study file
+`Semantics/Tense/SOT/Decomposition.lean`; this study file
 collects the paper-anchored cross-references and the empirical chain
 theorems connecting Fragments → Theory → Data → Empirical judgments.
 

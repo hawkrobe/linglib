@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Modality.Selectional
-import Linglib.Theories.Semantics.Conditionals.WillConditional
+import Linglib.Semantics.Modality.Selectional
+import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Core.Probability.Finite
 import Linglib.Fragments.English.Auxiliaries
@@ -396,7 +396,7 @@ every analysis that touches a given entry, grep for
 This section records *morphological* preconditions only. The C&S
 semantic clauses (`willSem`, `wouldSem`) and their downstream theorems
 live in the rest of this file and in
-`Theories/Semantics/Modality/Selectional.lean`. The signature mismatch
+`Semantics/Modality/Selectional.lean`. The signature mismatch
 between C&S's atemporal-propositional `willSem` and Condoravdi's
 time-indexed-eventive `woll` means their predictions cannot be
 compared by direct equation; a divergence-witness theorem against

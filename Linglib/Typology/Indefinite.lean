@@ -14,7 +14,7 @@ the same `Typology/{Domain}.lean` pattern as `WordOrder.lean`,
 
 Theory-specific apparatus (Degano & Aloni's 7-type team-semantic typology,
 choice-function denotations, Hamblin alternatives, …) lives as projections
-in theory files (e.g., `Theories/Semantics/Quantification/DeganoAloni2025.lean`),
+in theory files (e.g., `Semantics/Quantification/DeganoAloni2025.lean`),
 not in this substrate. This follows the consensus-only Fragment-schema
 discipline: the substrate carries only what a typological reference
 grammar would record.

@@ -1,11 +1,11 @@
-import Linglib.Theories.Semantics.Attitudes.Preferential
-import Linglib.Theories.Semantics.Attitudes.NegRaising
+import Linglib.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Studies.Karttunen1974
-import Linglib.Theories.Semantics.Modality.Kratzer.Operators
-import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Theories.Semantics.Conditionals.Basic
-import Linglib.Theories.Semantics.Causation.Interpretation
-import Linglib.Theories.Semantics.Causation.Implicative
+import Linglib.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Conditionals.Basic
+import Linglib.Semantics.Causation.Interpretation
+import Linglib.Semantics.Causation.Implicative
 import Linglib.Typology.Negation
 import Linglib.Fragments.French.Negation
 import Linglib.Fragments.Mandarin.Negation
@@ -1025,7 +1025,7 @@ theorem unless_licensing :
 - **Positive**: Q(Z, D) — Z has property Q to degree D
 - **Negative**: ¬Q(Z, D'), D' > D — Z does NOT have Q to degree D'
 
-In the degree semantics of `Theories.Semantics.Degree.Comparative`:
+In the degree semantics of `Semantics.Degree.Comparative`:
   comparativeSem μ a b .positive ↔ μ(a) > μ(b)
 
 This entails: ∃D (= μ(b)) such that Q(Z, D), and ∃D' (= μ(a)) > D

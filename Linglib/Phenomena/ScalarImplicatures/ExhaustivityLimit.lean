@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Limits
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Theories.Semantics.Alternatives.Lexical
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Alternatives.Lexical
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 set_option autoImplicit false

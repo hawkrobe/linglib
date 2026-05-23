@@ -1,6 +1,6 @@
 import Linglib.Studies.Cooper2023Ch8
 import Linglib.Studies.Cooper2023Ch7
-import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
+import Linglib.Semantics.Dynamic.CDRT.Basic
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Coreference
 
@@ -13,7 +13,7 @@ Connects TTR underspecification to anaphora data, drawing on
 
 Connects TTR's localization (donkey anaphora) and binding theory
 (reflexivization, anaphoric resolution) from
-`Theories.Semantics.TypeTheoretic.Underspecification` to the empirical
+`Semantics.TypeTheoretic.Underspecification` to the empirical
 data in `Phenomena.Anaphora.DonkeyAnaphora` and
 `Phenomena.Anaphora.Coreference`.
 
@@ -336,7 +336,7 @@ how many negations wrap it.
 
 This is the architectural difference: CDRT uses *state* for binding;
 TTR uses *structure*. The bilateral DNE strategy
-(`Theories/Semantics/Dynamic/Bilateral/Basic.lean`) is a third
+(`Semantics/Dynamic/Bilateral/Basic.lean`) is a third
 approach — bilateral DNE is structural at the *state* level (swap is
 involutive), distinct from TTR's structural-at-the-*type* level. The
 three are surveyed in `Dynamic/Core/DynProp.lean`'s "three

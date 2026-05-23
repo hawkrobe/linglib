@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.CauserSort
+import Linglib.Semantics.Causation.CauserSort
 
 /-!
 # Colloquial Sinhala verb fragment

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Modality.BiasedPQ
 import Linglib.Features.Polarity
 import Linglib.Features.QParticleLayer
 import Linglib.Fragments.Swedish.QuestionParticles
@@ -85,7 +85,7 @@ with low negation). Supports fronted-negation + *väl* marking NRQs.
 
 ## Related Work
 
-- `Theories/Semantics/Modality/BiasedPQ.lean` — Romero's PQ bias
+- `Semantics/Modality/BiasedPQ.lean` — Romero's PQ bias
   framework (VERUM, FALSUM, OriginalBias, ContextualEvidence). The
   bridge maps Sudo's bias values to Romero's coarser three-valued scheme.
 - `Studies/RomeroHan2004.lean::Verum` — detailed

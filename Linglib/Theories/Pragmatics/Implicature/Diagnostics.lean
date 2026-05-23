@@ -9,7 +9,7 @@ Formalizes the standard Gricean diagnostic tests for distinguishing
 implicatures from entailments and presuppositions, stated uniformly
 over the `Implicature W Prop` type from `Defs.lean`. The headline
 application is the BPS bridge in
-`Theories/Semantics/Exhaustification/Presuppositional.lean`, which
+`Semantics/Exhaustification/Presuppositional.lean`, which
 delivers two non-cancellability theorems for pex outputs: `bps_not_cancellable`
 (structural — assertion = `p.holds` makes content survive trivially)
 and `bps_neg_not_cancellable` (substantive — assertion = `p.neg.holds`
@@ -166,7 +166,7 @@ non-cancellability follows from `holds → presup` via
 content of "presuppositions fail cancellability" comes from the
 structural assertion-vs-presupposition split in `PrProp`, not from
 stipulation. The bridge theorem `bps_not_cancellable` is in
-`Theories/Semantics/Exhaustification/Presuppositional.lean`.
+`Semantics/Exhaustification/Presuppositional.lean`.
 -/
 def IsCancellable (φ : W → Prop) (i : Implicature W Prop) : Prop :=
   ∃ cancel : W → Prop,

@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.Copula
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.NominalStructure
-import Linglib.Theories.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!
 # Myler 2016: Building and Interpreting Possession Sentences

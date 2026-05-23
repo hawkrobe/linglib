@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Conditionals.Basic
-import Linglib.Theories.Semantics.Conditionals.Stalnaker
+import Linglib.Semantics.Conditionals.Basic
+import Linglib.Semantics.Conditionals.Stalnaker
 import Linglib.Theories.Dialogue.ReasonableInference
 import Linglib.Theories.Dialogue.Assertable
 
@@ -50,7 +50,7 @@ The two universal pragmatic postulates from the Appendix
 * `pragmaticConstraint`, `selectionConditional`, `moodedConditional`,
   `Mood.admissibleSelection`, `selectionConditional_eq_material_within_context`,
   `moodedConditional_indicative_eq_material_within_context` —
-  in `Theories/Semantics/Conditionals/Basic.lean`. The mood distinction lives
+  in `Semantics/Conditionals/Basic.lean`. The mood distinction lives
   in `Mood.admissibleSelection`, not in two parallel conditional defs:
   `.indicative` requires `pragmaticConstraint`, `.subjunctive` imposes none.
 * `Appropriateness`, `changeFn`, `reasonableInference` — in

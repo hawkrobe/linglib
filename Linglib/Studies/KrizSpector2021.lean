@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Plurality.Trivalent
+import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Studies.Kriz2016
 
 /-!

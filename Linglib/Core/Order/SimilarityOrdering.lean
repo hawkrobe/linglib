@@ -17,9 +17,9 @@ counterfactuals (@cite{lewis-1973} / @cite{stalnaker-1968}) and of any
 
 The structure lives in `Core.Order` (not `Conditionals`) because it is a
 general-purpose primitive: it is used directly by counterfactual operators
-in `Theories/Semantics/Conditionals/`, by alternative-sensitive operators
+in `Semantics/Conditionals/`, by alternative-sensitive operators
 (@cite{santorio-2018}), by causal psycholinguistic models in
-`Theories/Semantics/Causation/`, and by any future "closest match" theory.
+`Semantics/Causation/`, and by any future "closest match" theory.
 
 ## Key operations
 
@@ -37,7 +37,7 @@ in `Theories/Semantics/Conditionals/`, by alternative-sensitive operators
 `Semantics.Conditionals.SelectionFunction` and `SimilarityOrdering` are dual presentations of
 the same intuition. A coherent selection function induces a similarity
 ordering via the `coherentSelectionToSimilarity` constructor (which lives
-in `Theories/Semantics/Conditionals/Basic.lean` because it depends on
+in `Semantics/Conditionals/Basic.lean` because it depends on
 selection-function machinery from `Semantics.Conditionals.SelectionFunction`).
 -/
 
@@ -180,7 +180,7 @@ These derive selection-function-flavoured notions from a similarity
 ordering without depending on `Semantics.Conditionals.SelectionFunction` itself, so they
 can sit in `Core.Order`. The full selection-function ↔ similarity
 duality (`coherentSelectionToSimilarity`) lives in
-`Theories/Semantics/Conditionals/Basic.lean` where both sides of the
+`Semantics/Conditionals/Basic.lean` where both sides of the
 bridge are imported. -/
 
 /-- **Candidate selection set**: the worlds in `A ∩ domain` that are

@@ -1,7 +1,7 @@
 import Linglib.Features.InformationStructure
-import Linglib.Theories.Semantics.Alternatives.AltMeaning
-import Linglib.Theories.Semantics.Focus.Interpretation
-import Linglib.Theories.Semantics.Composition.Tree
+import Linglib.Semantics.Alternatives.AltMeaning
+import Linglib.Semantics.Focus.Interpretation
+import Linglib.Semantics.Composition.Tree
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Focus.Basic

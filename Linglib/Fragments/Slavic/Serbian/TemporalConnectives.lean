@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Fragments.English.TemporalExpressions
 
 /-!

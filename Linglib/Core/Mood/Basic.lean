@@ -11,7 +11,7 @@ The two dimensions are orthogonal: a clause can be
 [interrogative, indicative] ("Does he sleep?") or
 [interrogative, subjunctive] (Spanish "¿Que duerma?").
 
-See `Theories/Semantics/Mood/Basic.lean` for the semantic operators (SUBJ, IND)
+See `Semantics/Mood/Basic.lean` for the semantic operators (SUBJ, IND)
 that interpret these categories.
 
 This file lives in `Core/Mood/` alongside `IllocutionaryMood.lean` (force) and

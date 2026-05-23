@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Mood.Gutzmann
+import Linglib.Semantics.Mood.Gutzmann
 import Linglib.Features.ClauseForm
 
 /-!
@@ -12,7 +12,7 @@ presence (dass vs not), with their associated mood-operator inventories
 and clause-level mood compositions.
 
 This file is the *German fragment* counterpart of the language-agnostic
-operators in `Theories.Semantics.Mood.Gutzmann`. The theory file
+operators in `Semantics.Mood.Gutzmann`. The theory file
 defines DEONT, EPIS, the E modifier, and HKNOW; this file specifies
 *which* of those operators each German clause type composes.
 

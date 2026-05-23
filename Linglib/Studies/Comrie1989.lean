@@ -1,7 +1,7 @@
 import Linglib.Features.Prominence
 import Linglib.Core.Relativization.Hierarchy
 import Linglib.Phenomena.Subjecthood.SubjectProperties
-import Linglib.Theories.Semantics.Causation.Morphological
+import Linglib.Semantics.Causation.Morphological
 import Linglib.Typology.Alignment
 import Linglib.Studies.Dixon1994
 import Linglib.Studies.Aissen2003
@@ -34,7 +34,7 @@ grammatical domains:
   The AH positions (Subject > DO > IO > OBL) mirror the GR hierarchy
   that governs causee demotion.
 - **Causatives** (Ch 8): Morphological complexity correlates with semantic
-  directness (`Theories.Semantics.Causation.Morphological`); causee
+  directness (`Semantics.Causation.Morphological`); causee
   marking follows the GR hierarchy (`CauseeSlot`).
 
 The shared infrastructure in `Features.Prominence` ensures the animacy
@@ -315,7 +315,7 @@ accessibility (Ch 7):
 
     Subject > Direct Object > Indirect Object > Oblique
 
-`CauseeSlot` (in `Theories.Semantics.Causation.Morphological`) and
+`CauseeSlot` (in `Semantics.Causation.Morphological`) and
 `AHPosition` (in `Core.Relativization.Hierarchy`) encode overlapping
 portions of this hierarchy independently. The bridge function
 `causeeToAH` maps causee slots to their corresponding AH positions,

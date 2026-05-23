@@ -1,5 +1,5 @@
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
-import Linglib.Theories.Semantics.Definiteness.Basic
+import Linglib.Semantics.Definiteness.Basic
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Semantics.Presupposition
 
@@ -45,7 +45,7 @@ bimodality (@cite{van-schijndel-linzen-2021}, @cite{huang-etal-2024}).
 - `Basic.lean`: Reuses `Disambiguation`, `ReferentialContext`, `Condition`,
   `disambiguationProfile`, `rc_pareto_harder`
 - `Core.ProcessingModel`: Ordinal profile bridge (§ 7)
-- `Theories/Semantics/Lexical/Determiner/Definite.lean`: Uniqueness
+- `Semantics/Lexical/Determiner/Definite.lean`: Uniqueness
   presupposition of `the_uniq` grounds the context manipulation — bare
   definites fail uniqueness in non-unique contexts, motivating RC modifiers (§ 9)
 - `Studies/SedivyEtAl1999.lean`: Shared mechanism —
@@ -485,7 +485,7 @@ theorem mpt_consistent_with_pareto :
 
 The experimental manipulation of referential context (unique vs. non-unique
 referents) is grounded in the **uniqueness presupposition** of definite
-descriptions (`the_uniq` in `Theories/Semantics/Lexical/Determiner/Definite.lean`).
+descriptions (`the_uniq` in `Semantics/Lexical/Determiner/Definite.lean`).
 
 In the non-unique condition (*He was introduced to two women. He told the
 woman that...*), a bare definite "the woman" fails uniqueness because two

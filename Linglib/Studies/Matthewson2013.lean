@@ -2,7 +2,7 @@ import Linglib.Core.Modality.TemporalAxes
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.NezPerce.Modals
 import Linglib.Studies.Condoravdi2002
-import Linglib.Theories.Semantics.Modality.ActualityEntailments
+import Linglib.Semantics.Modality.ActualityEntailments
 
 /-!
 # @cite{matthewson-2013} — Gitksan Modals

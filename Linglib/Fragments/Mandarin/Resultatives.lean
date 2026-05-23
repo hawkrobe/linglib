@@ -1,10 +1,10 @@
-import Linglib.Theories.Semantics.Causation.Resultatives
+import Linglib.Semantics.Causation.Resultatives
 
 /-!
 # Mandarin Resultative Compound Fragment
 
 Lexical entries for Mandarin V-V resultative compounds and phase complements,
-parameterized by cross-linguistic types from `Theories.Semantics.Causation.Resultatives`.
+parameterized by cross-linguistic types from `Semantics.Causation.Resultatives`.
 
 ## Compound data
 
@@ -20,16 +20,16 @@ dǎo 倒, wán 完, hǎo 好, diào 掉, zhù 住.
 
 ## Cross-Module Connections
 
-- `Theories.Semantics.Causation.Resultatives`: `ResultativeRealization`,
+- `Semantics.Causation.Resultatives`: `ResultativeRealization`,
   `ResultOrientation`
-- `Theories.Semantics.Aspect.ChangeOfState`: `CoSType`
+- `Semantics.Aspect.ChangeOfState`: `CoSType`
 - `Tay2024`: thesis-specific theorems and analysis that import this Fragment
 
 `PhaseComplement` (the closed-class V2 morpheme enum) lives here rather
 than in `Theories/`: it enumerates Mandarin-specific morphemes
 (dǎo/wán/hǎo/diào/zhù), so the data is Mandarin-anchored. Cross-linguistic
 typological parameters (`ResultativeRealization`, `ResultOrientation`)
-remain in `Theories.Semantics.Causation.Resultatives`.
+remain in `Semantics.Causation.Resultatives`.
 -/
 
 namespace Fragments.Mandarin.Resultatives

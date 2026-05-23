@@ -11,7 +11,7 @@ every other type in this module is a dimension that maps into this binary
 distinction: article morphology, pragmatic use type, bridging relation, etc.
 
 Used by:
-- `Theories/Semantics.Montague/Determiner/Definite.lean` (denotations: ⟦the⟧)
+- `Semantics.Montague/Determiner/Definite.lean` (denotations: ⟦the⟧)
 - `Phenomena/Anaphora/PronounTypology.lean` (cross-linguistic article data)
 - `Phenomena/Anaphora/Bridging.lean` (bridging presupposition types)
 

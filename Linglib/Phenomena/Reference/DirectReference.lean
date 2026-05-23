@@ -4,7 +4,7 @@
 
 Classic empirical phenomena motivating the theory of direct reference.
 These are framework-neutral observations — the theoretical accounts live
-in `Theories/Semantics.Intensional/Reference/`.
+in `Semantics.Intensional/Reference/`.
 
 ## Phenomena
 
@@ -203,7 +203,7 @@ operators ("monsters").
 Status: holds for English; challenged cross-linguistically by indexical
 shift under attitude verbs in Amharic, Zazaki, Slave, Navajo, and Uyghur.
 
-Theoretical account: `Theories/Semantics.Intensional/Reference/Monsters.lean`. -/
+Theoretical account: `Semantics.Intensional/Reference/Monsters.lean`. -/
 structure MonsterThesis where
   /-- The thesis: no NL operator shifts the context of utterance -/
   thesis : String := "No natural language operator shifts the context of utterance"

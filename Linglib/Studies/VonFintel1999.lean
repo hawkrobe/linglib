@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
+import Linglib.Semantics.Entailment.StrawsonEntailment
 import Linglib.Studies.KadmonLandman1993
 import Linglib.Studies.Lahiri1998
 import Linglib.Studies.Hoeksema1983
@@ -22,7 +22,7 @@ Fauconnier-Ladusaw schema goes through.
 ## What this study file does
 
 It is *not* a re-derivation of Strawson-DE — that lives in
-`Theories/Semantics/Entailment/StrawsonEntailment.lean`, which already
+`Semantics/Entailment/StrawsonEntailment.lean`, which already
 proves `onlyFull_isStrawsonDE`, `sorryFull_isStrawsonDE`, `gladFull_isUE`,
 `superlative_isStrawsonDE`, `conditional_antecedent_strawsonDE`, and the
 relevant non-DE lemmas. This file is the *paper-citation index*: each

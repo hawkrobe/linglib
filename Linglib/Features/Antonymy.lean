@@ -48,7 +48,7 @@ inductive NegationType where
     Used as the codomain of prediction signatures in studies of negated
     antonymic adjectives (Horn 1989, Krifka 2007, Tessler & Franke 2019,
     Alexandropoulou & Gotzner 2024). Anchored in
-    `Theories/Semantics/Gradability/AntonymPrediction.lean`'s
+    `Semantics/Gradability/AntonymPrediction.lean`'s
     `predictionForAntonymy` map and its substrate witness theorems. -/
 inductive Asymmetry where
   | asymmetric    -- diverging behavior under polarity

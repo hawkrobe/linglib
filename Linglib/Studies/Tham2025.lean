@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Gradability.Aggregation
-import Linglib.Theories.Semantics.Aspect.DegreeAchievement
-import Linglib.Theories.Semantics.Degree.Basic
+import Linglib.Semantics.Gradability.Aggregation
+import Linglib.Semantics.Aspect.DegreeAchievement
+import Linglib.Semantics.Degree.Basic
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Sassoon2013
@@ -794,7 +794,7 @@ theorem no_cracked_multidimAdj_satisfies_both :
     The numerator is a weighted sum of per-dimension EXTENT measures
     (captured by `weightedScore`); the denominator is the host's spatial
     extent. The substrate primitive is
-    `spatialNormalizedScore` (Theories/Semantics/Degree/Aggregation.lean
+    `spatialNormalizedScore` (Semantics/Degree/Aggregation.lean
     §2). The boundedness of the upper end of the scale (Tham §3.4
     "structural integrity limit") comes from the denominator: the same
     physical disturbance counts as more severe on a smaller host.
@@ -888,7 +888,7 @@ theorem largeVase_score_le_one :
 
 /-! @cite{beavers-koontz-garboden-2020} formalize verbal roots as
     bundles of lexical entailments
-    (`Theories/Semantics/Lexical/Roots/Basic.lean`). Their classification
+    (`Semantics/Lexical/Roots/Basic.lean`). Their classification
     of √crack is `[.becomesState "fissured", .hasCause]` — the
     "result + cause, no manner, no state" four-feature signature
     `⟨hasState=false, hasManner=false, hasResult=true, hasCause=true⟩`

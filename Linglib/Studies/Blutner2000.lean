@@ -1,7 +1,7 @@
 import Linglib.Core.Constraint.Evaluation
 import Linglib.Core.Constraint.Superoptimal
 import Linglib.Theories.Pragmatics.Bidirectional
-import Linglib.Theories.Semantics.Presupposition.Accommodation
+import Linglib.Semantics.Presupposition.Accommodation
 
 /-!
 # @cite{blutner-2000} — Presupposition Projection via Bidirectional OT

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Measurement.Basic
+import Linglib.Semantics.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!

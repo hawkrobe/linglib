@@ -1,7 +1,7 @@
 import Linglib.Features.Evidentiality
-import Linglib.Theories.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Tense.Evidential
+import Linglib.Semantics.Tense.Evidential
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fin.Basic

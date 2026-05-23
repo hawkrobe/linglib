@@ -697,8 +697,8 @@ explicitly cites Caponigro & Polinsky as theoretical kin. -/
 matching tense (vs. simplex embeddings where shift and relative-tense are
 both available). The semantic substrate for these claims is
 @cite{deal-2020}'s `A Theory of Indexical Shift` book; that substrate is
-not yet implemented in linglib (no `Theories/Semantics/IndexicalShift/`
-directory exists; existing `Theories/Semantics/Reference/{ShiftedIndexicals,
+not yet implemented in linglib (no `Semantics/IndexicalShift/`
+directory exists; existing `Semantics/Reference/{ShiftedIndexicals,
 Monsters,Kaplan}.lean` cover Kaplanian framing but not Deal's Σ-monsters
 specifically).
 

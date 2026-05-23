@@ -1,5 +1,5 @@
 import Linglib.Core.Time.Reichenbach
-import Linglib.Theories.Semantics.Tense.Perspective
+import Linglib.Semantics.Tense.Perspective
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.Mandarin.TemporalDeictic

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Intensional
+import Linglib.Semantics.Dynamic.Intensional
 import Linglib.Data.Examples.Schema
 
 /-!

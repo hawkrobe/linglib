@@ -1,7 +1,7 @@
 import Linglib.Core.Mereotopology
 import Linglib.Core.Mereology
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
-import Linglib.Theories.Semantics.Aspect.Incremental
+import Linglib.Semantics.Aspect.Incremental
 import Linglib.Studies.Filip2012
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
@@ -397,7 +397,7 @@ variable {β : Type*} [SemilatticeSup β]
     CUM because `ConnectedLiquid` rejects disconnected sums.
 
     Since @cite{chierchia-1998}'s `IsMass` implies CUM (via `isMass_cum`
-    in `Theories/Semantics/Lexical/Noun/Kind/NMP.lean`), this
+    in `Semantics/Lexical/Noun/Kind/NMP.lean`), this
     means substance nouns can be mass. Mixed drink nouns cannot — their
     denotation fails CUM, hence fails `IsMass`. -/
 theorem substanceNoun_cum (substancePred : β → Prop)

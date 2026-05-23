@@ -1,8 +1,8 @@
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Theories.Pragmatics.Implicature.Defs
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Theories.Semantics.Alternatives.Lexical
-import Linglib.Theories.Semantics.Kinds.SortedOntology
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Alternatives.Lexical
+import Linglib.Semantics.Kinds.SortedOntology
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Fragments.German.BarePluralWordOrder
 
@@ -1278,7 +1278,7 @@ variable {W U : Type} [Fintype W] [DecidableEq W]
 `Implicature W Prop`. The `content` is `s.strengthened u · = true`
 (the EXH'd meaning at each world); the `mechanism` is `.exhIE` —
 @cite{magri-2009} uses Fox's innocent-exclusion operator only
-(`innocent.exh` in `Theories/Semantics/Exhaustification/Excluder.lean`,
+(`innocent.exh` in `Semantics/Exhaustification/Excluder.lean`,
 implementing @cite{fox-2007}'s IE algorithm), not the Bar-Lev–Fox
 2020 IE+II extension that postdates the paper by 11 years. -/
 def magriToImplicature (s : BlindScenario W U) (u : U) : Implicature W Prop where

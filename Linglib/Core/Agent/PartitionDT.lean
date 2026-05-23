@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Questions.Partition.Lattice
-import Linglib.Theories.Semantics.Questions.Partition.Cells
+import Linglib.Semantics.Questions.Partition.Lattice
+import Linglib.Semantics.Questions.Partition.Cells
 import Linglib.Core.Agent.DecisionTheory
 import Mathlib.Order.Partition.Finpartition
 import Mathlib.Algebra.Order.BigOperators.Group.Finset

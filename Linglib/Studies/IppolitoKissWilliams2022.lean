@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.Probabilistic
+import Linglib.Semantics.Questions.Probabilistic
 
 /-!
 # Ippolito, Kiss & Williams 2022: Discourse Function of Adversative Conjunction
@@ -29,7 +29,7 @@ any alternative cannot use the sentence to support anything.
 **Project-canonical refinement.** The original 2022 statement leaves
 "q provides evidence for r" deliberately informal. We formalize it as
 `IsPositiveEvidence q r μ` (Bayesian conditional-probability shift,
-see `Theories/Semantics/Questions/Probabilistic.lean`). This is a
+see `Semantics/Questions/Probabilistic.lean`). This is a
 strengthening; the §5.2 architectural derivations carry over but rest
 on the strengthened relation. A flavor-agnostic version parameterized
 by an abstract evidence relation could be added if a sibling theory

@@ -1,69 +1,97 @@
-/-
-# Word Grammar Analysis of Coordination
-@cite{de-marneffe-nivre-2019} @cite{hudson-2010}
-
-Word Grammar analysis of coordination structures.
-Coordination is represented directly using DepTree (basic) and DepGraph (enhanced).
-The basic tree attaches shared dependents to the first conjunct only; the enhanced
-graph propagates them to all conjuncts, making implicit predicate-argument relations
-explicit.
-
-Reference: @cite{hudson-1990}, @cite{gibson-2025}
--/
-
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Determiners
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.FunctionWords
-import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Core.Dependency.Basic
+
+/-!
+# Coordination in UD enhanced graphs
+@cite{de-marneffe-nivre-2019}
+
+Implements coordination in Universal Dependencies' enhanced-dependency
+graphs (@cite{de-marneffe-nivre-2019}, §4.2 and Figure 9, applied to
+coordinate structures): the basic dependency tree attaches each shared
+dependent to the first conjunct only, and the enhanced graph recovers the
+parallel attachments by propagating `obj` / `nsubj` / `iobj` edges from the
+first-conjunct head to every other conjunct.
+
+Word Grammar (@cite{hudson-2010}, §7.5.4 "Non-constituent coordination")
+handles the same data via a different device: a contiguous string of
+words may be treated as a single chunk ("word string") and entered into a
+dependency relation as a whole, eliminating the need to propagate shared
+dependents. The UD mechanism implemented here keeps a flat word-by-word
+graph and adds redundant edges for the enhanced layer.
+
+For the historical phrase-structure approach to coordination (Coordinate
+Structure Constraint, ATB extraction as theorems of a complex-symbol
+grammar), see @cite{gazdar-1981}.
+
+## Main declarations
+
+* `ConjType` — labels for English conjunctions (`and`, `or`, `but`).
+* `getConjuncts`, `hasConjuncts`, `allConjuncts` — inspect the conjunct
+  structure of a head node in a basic dependency tree.
+* `checkCatMatch` — verifies that every `conj` edge connects words of
+  matching UPOS categories.
+* `checkArgStrMatch` — for verbal `conj` edges, verifies matching valence.
+* `enhanceSharedDeps` — produce a `DepGraph` from a basic `DepTree` by
+  propagating shared `obj` / `nsubj` / `iobj` edges from the first
+  conjunct's head to each subsequent conjunct.
+
+## Implementation notes
+
+* The `Bool`-valued predicates follow `Core.Dependency.Projection`'s
+  convention of returning `Bool`; migrating to `Prop` + `Decidable` is a
+  substrate-wide refactor not done here.
+* Paper-replication fixtures and worked theorems for `enhanceSharedDeps`
+  live in `Studies/DeMarneffeNivre2019Coordination.lean`. Downstream
+  substrate consumers (`Formal/EnhancedDependencies.lean`,
+  `Formal/CoordinationParallelism.lean`) define their own local minimal
+  fixtures for the same reason.
+* `checkArgStrMatch` is a coarse heuristic over `Features.valence`. Real
+  coordination-parallelism judgements (gapping, ATB extraction) live in
+  `Formal/CoordinationParallelism.lean`.
+
+## Todo
+
+* Tighten `checkArgStrMatch` to handle clausal coordination (`ccomp` /
+  `xcomp` conjuncts) and to be sensitive to subcategorization beyond
+  intransitive/transitive.
+* Track conjunct labels (`ConjType`) per `conj` edge — currently the
+  enum is decorative.
+-/
 
 namespace DepGrammar.Coordination
 
 open DepGrammar
 
-private abbrev john := Fragments.English.Nouns.john.toWordSg
-private abbrev mary := Fragments.English.Nouns.mary.toWordSg
-private abbrev and_ := Fragments.English.FunctionWords.and_.toWord
-private abbrev sleep := Fragments.English.Predicates.Verbal.sleep.toWordPl
-private abbrev sleeps := Fragments.English.Predicates.Verbal.sleep.toWord3sg
-private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
-private abbrev the := Fragments.English.Determiners.the.toWord
-private abbrev happy := Fragments.English.Modifiers.Adjectives.happy.toWord
-private abbrev smart := Fragments.English.Modifiers.Adjectives.smart.toWord
-private abbrev boy := Fragments.English.Nouns.boy.toWordSg
-private abbrev eats := Fragments.English.Predicates.Verbal.eat.toWord3sg
-private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
-private abbrev devours := Fragments.English.Predicates.Verbal.devour.toWord3sg
+/-! ### Coordinate structure -/
 
--- ============================================================================
--- Coordination Structure (derived from graph edges)
--- ============================================================================
-
-/-- Conjunction types -/
+/-- Conjunction labels for English. Currently decorative — `conj` edges
+do not carry a `ConjType` field. -/
 inductive ConjType where
-  | and_   -- "and"
-  | or_    -- "or"
-  | but_   -- "but"
-  deriving Repr, DecidableEq, Inhabited
+  | and_
+  | or_
+  | but_
+  deriving Repr, DecidableEq
 
-/-- Get conjuncts of a head: words linked by `conj` edges from headIdx. -/
+/-- Conjuncts of a head: words linked by `conj` edges from `headIdx`.
+In UD basic-tree convention these are the second-and-later conjuncts;
+the first conjunct *is* `headIdx`. -/
 def getConjuncts (t : DepTree) (headIdx : Nat) : List Nat :=
   t.deps.filter (λ d => d.headIdx == headIdx && d.depType == .conj)
     |>.map (·.depIdx)
 
-/-- Word `i` heads a coordinate structure iff it has at least one
-    outgoing `.conj` edge (UD basic-tree convention). -/
+/-- Word `i` heads a coordinate structure iff it has at least one outgoing
+`conj` edge. -/
 def hasConjuncts (t : DepTree) (i : Nat) : Bool :=
   ¬ (getConjuncts t i).isEmpty
 
-/-- All conjuncts of a coordinate structure headed at `headIdx` —
-    `headIdx` itself (the first conjunct, which heads the structure
-    in UD basic-tree convention) plus the words linked via `.conj`. -/
+/-- All conjuncts of a coordinate structure headed at `headIdx`: `headIdx`
+itself (first conjunct, which heads the structure in UD basic-tree
+convention) plus the words linked via `conj`. -/
 def allConjuncts (t : DepTree) (headIdx : Nat) : List Nat :=
   headIdx :: getConjuncts t headIdx
 
-/-- Check that for every `conj` edge, the conjuncts have matching categories. -/
+/-! ### Parallelism heuristics -/
+
+/-- Every `conj` edge connects words of matching UPOS categories. -/
 def checkCatMatch (t : DepTree) : Bool :=
   t.deps.all λ d =>
     if d.depType == .conj then
@@ -72,7 +100,8 @@ def checkCatMatch (t : DepTree) : Bool :=
       | _, _ => false
     else true
 
-/-- For verbal `conj` edges, check that conjuncts have matching argument structures. -/
+/-- For verbal `conj` edges, conjuncts have matching `valence`. Coarse
+heuristic — see Todo. -/
 def checkArgStrMatch (t : DepTree) : Bool :=
   t.deps.all λ d =>
     if d.depType == .conj then
@@ -84,13 +113,13 @@ def checkArgStrMatch (t : DepTree) : Bool :=
       | _, _ => false
     else true
 
--- ============================================================================
--- Enhanced Coordination (shared dep propagation)
--- ============================================================================
+/-! ### UD enhanced-edge construction -/
 
-/-- Enhance a basic tree by propagating shared dependents from first conjunct
-    to all other conjuncts. For each `conj` edge head→dep, propagates obj/nsubj/iobj
-    edges from head to dep. Returns a DepGraph (multiple heads per word). -/
+/-- Enhance a basic tree by propagating shared dependents from the first
+conjunct to all subsequent conjuncts. For each `conj` edge head→dep,
+propagates the head's `obj` / `nsubj` / `iobj` edges to `dep`. Returns a
+`DepGraph` (words may have multiple incoming edges). Cf.
+@cite{de-marneffe-nivre-2019} Figure 9 for the relative-clause analogue. -/
 def enhanceSharedDeps (t : DepTree) : DepGraph :=
   let conjEdges := t.deps.filter (·.depType == .conj)
   let enhancedDeps := conjEdges.foldl (λ acc conjEdge =>
@@ -101,128 +130,7 @@ def enhanceSharedDeps (t : DepTree) : DepGraph :=
     acc ++ newDeps
   ) []
   { words := t.words
-    deps := t.deps ++ enhancedDeps
+    deps  := t.deps ++ enhancedDeps
     rootIdx := t.rootIdx }
-
--- ============================================================================
--- Example Trees
--- ============================================================================
-
-/-- "John and Mary sleep" - NP coordination.
-    Words: John(0) and(1) Mary(2) sleep(3)
-    Basic tree is sufficient — no shared deps needed. -/
-def ex_johnAndMarySleep : DepTree :=
-  { words := [john, and_, mary, sleep]
-    deps := [⟨3, 0, .nsubj⟩, ⟨0, 2, .conj⟩]
-    rootIdx := 3 }
-
-/-- "John sleeps and Mary sleeps" - S coordination.
-    Words: John(0) sleeps(1) and(2) Mary(3) sleeps(4) -/
-def ex_johnSleepsAndMarySleeps : DepTree :=
-  { words := [john, sleeps, and_, mary, sleeps]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .conj⟩, ⟨4, 3, .nsubj⟩]
-    rootIdx := 1 }
-
-/-- "John sees and hears Mary" - VP coordination (basic tree).
-    Words: John(0) sees(1) and(2) hears(3) Mary(4)
-    Mary attaches as obj of sees only. Hears is conj of sees. -/
-def ex_johnSeesAndHearsMary : DepTree :=
-  { words := [john, sees, and_, sees, mary]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .cc⟩, ⟨1, 3, .conj⟩, ⟨1, 4, .obj⟩]
-    rootIdx := 1 }
-
-/-- Enhanced graph for "John sees and hears Mary".
-    Mary is obj of BOTH sees and hears — the shared dep is propagated. -/
-def ex_johnSeesAndHearsMary_enhanced : DepGraph :=
-  enhanceSharedDeps ex_johnSeesAndHearsMary
-
-/-- "the old and wise man" - Adjective coordination.
-    Words: the(0) happy(1) and(2) smart(3) boy(4) -/
-def ex_oldAndWiseMan : DepTree :=
-  { words := [the, happy, and_, smart, boy]
-    deps := [⟨4, 0, .det⟩, ⟨4, 1, .amod⟩, ⟨1, 3, .conj⟩]
-    rootIdx := 4 }
-
-/-- "John likes and Mary hates pizza" - Right Node Raising.
-    Words: John(0) devours(1) and(2) Mary(3) devours(4) pizza(5)
-    Pizza attaches to devours(1) only in the basic tree. -/
-def ex_rnr : DepTree :=
-  { words := [john, devours, and_, mary, devours, pizza]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 4, .conj⟩, ⟨4, 3, .nsubj⟩, ⟨1, 5, .obj⟩]
-    rootIdx := 1 }
-
-/-- Enhanced graph for RNR: pizza is obj of both verbs. -/
-def ex_rnr_enhanced : DepGraph :=
-  enhanceSharedDeps ex_rnr
-
--- ============================================================================
--- Tests
--- ============================================================================
-
-#guard checkCatMatch ex_johnAndMarySleep
-#guard checkCatMatch ex_johnSleepsAndMarySleeps
-#guard checkArgStrMatch ex_johnSeesAndHearsMary
-
--- ============================================================================
--- Proofs
--- ============================================================================
-
-/-- NP coordination has matching categories. -/
-theorem johnAndMary_cat_match :
-    checkCatMatch ex_johnAndMarySleep = true := by native_decide
-
-/-- S coordination has matching categories. -/
-theorem johnSleepsAndMarySleeps_cat_match :
-    checkCatMatch ex_johnSleepsAndMarySleeps = true := by native_decide
-
-/-- VP coordination has matching argument structures. -/
-theorem seesAndHears_argstr_match :
-    checkArgStrMatch ex_johnSeesAndHearsMary = true := by native_decide
-
-/-- Adjective coordination has matching categories. -/
-theorem oldAndWise_cat_match :
-    checkCatMatch ex_oldAndWiseMan = true := by native_decide
-
-/-- enhanceSharedDeps produces a graph with the missing obj edge from hears to Mary. -/
-theorem enhanced_has_shared_obj :
-    ex_johnSeesAndHearsMary_enhanced.deps.any
-      (λ d => d.headIdx == 3 && d.depIdx == 4 && d.depType == .obj) = true := by
-  native_decide
-
-/-- The basic tree does NOT have this edge. -/
-theorem basic_lacks_shared_obj :
-    ¬ (ex_johnSeesAndHearsMary.deps.any
-      (λ d => d.headIdx == 3 && d.depIdx == 4 && d.depType == .obj) = true) := by
-  native_decide
-
-/-- Enhanced graph has more edges than the basic tree. -/
-theorem enhanced_more_edges :
-    ex_johnSeesAndHearsMary_enhanced.deps.length >
-    ex_johnSeesAndHearsMary.deps.length := by native_decide
-
-/-- Enhanced graph violates unique-heads — it's genuinely a graph, not a tree.
-    Mary (idx 4) has two incoming obj edges (from sees and hears). -/
-theorem enhanced_not_tree :
-    hasUniqueHeads { words := ex_johnSeesAndHearsMary_enhanced.words
-                     deps := ex_johnSeesAndHearsMary_enhanced.deps
-                     rootIdx := ex_johnSeesAndHearsMary_enhanced.rootIdx } = false := by
-  native_decide
-
-/-- The basic tree IS a tree (unique heads). -/
-theorem basic_is_tree :
-    hasUniqueHeads ex_johnSeesAndHearsMary = true := by native_decide
-
-/-- RNR enhancement propagates obj to second conjunct. -/
-theorem rnr_enhanced_has_shared_obj :
-    ex_rnr_enhanced.deps.any
-      (λ d => d.headIdx == 4 && d.depIdx == 5 && d.depType == .obj) = true := by
-  native_decide
-
-/-- RNR enhanced graph violates unique-heads. -/
-theorem rnr_enhanced_not_tree :
-    hasUniqueHeads { words := ex_rnr_enhanced.words
-                     deps := ex_rnr_enhanced.deps
-                     rootIdx := ex_rnr_enhanced.rootIdx } = false := by
-  native_decide
 
 end DepGrammar.Coordination

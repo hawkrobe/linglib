@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Gradability.StatesBased
-import Linglib.Theories.Semantics.Attitudes.Confidence
-import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
+import Linglib.Semantics.Gradability.StatesBased
+import Linglib.Semantics.Attitudes.Confidence
+import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Studies.Wellwood2015
 
@@ -17,13 +17,13 @@ contribution is a POS-morpheme-free account of the positive form
 (CSW §3.3) plus a per-holder, non-probabilistic confidence ordering
 (CSW §4.1) that admits Tversky–Kahneman conjunction fallacies (CSW §4.6).
 
-The substrate machinery lives in `Theories/Semantics/Gradability/StatesBased.lean`
+The substrate machinery lives in `Semantics/Gradability/StatesBased.lean`
 (positive-region predicates over a preorder) and
-`Theories/Semantics/Attitudes/Confidence.lean` (`ConfidenceOrdering`,
+`Semantics/Attitudes/Confidence.lean` (`ConfidenceOrdering`,
 `confidentEntry`/`certainEntry`, the §4.6 logic theorems). This study
 file connects CSW's empirical claims to the substrate theorems and
 witnesses the central cross-framework disagreement against
-`Theories/Semantics/Attitudes/EpistemicThreshold.lean`.
+`Semantics/Attitudes/EpistemicThreshold.lean`.
 
 ## Coverage
 

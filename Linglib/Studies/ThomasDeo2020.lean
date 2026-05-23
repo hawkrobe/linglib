@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Degree.Granularity
-import Linglib.Theories.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Granularity
+import Linglib.Semantics.Degree.Basic
 import Linglib.Phenomena.Focus.Exclusives
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Phenomena.Focus.Exclusives
 @cite{deo-thomas-2025}
 
 Connects the formal semantics of approximative *just* from
-`Theories.Semantics.Degree.Granularity` to the *just* flavor data in
+`Semantics.Degree.Granularity` to the *just* flavor data in
 `Phenomena.Focus.Exclusives`.
 
 The `.precisifyingEquality` flavor ("just as tall as" ≈ "exactly")

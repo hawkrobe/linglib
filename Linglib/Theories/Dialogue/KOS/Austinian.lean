@@ -1,5 +1,5 @@
 import Linglib.Theories.Dialogue.KOS.InquiryCycle
-import Linglib.Theories.Semantics.TypeTheoretic.Discourse
+import Linglib.Semantics.TypeTheoretic.Discourse
 
 /-!
 # KOS over Austinian Propositions

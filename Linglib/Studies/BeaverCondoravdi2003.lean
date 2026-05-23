@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.TemporalConnectives.Basic
+import Linglib.Semantics.Tense.TemporalConnectives.Basic
 import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Core.Scales.Scale
 

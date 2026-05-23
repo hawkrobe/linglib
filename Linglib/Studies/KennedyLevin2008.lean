@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Aspect.DegreeAchievement
-import Linglib.Theories.Semantics.Degree.MeasureFunction
-import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Hierarchy
+import Linglib.Semantics.Aspect.DegreeAchievement
+import Linglib.Semantics.Degree.MeasureFunction
+import Linglib.Semantics.ArgumentStructure.Affectedness.Hierarchy
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Phenomena.TenseAspect.Diagnostics
@@ -303,9 +303,9 @@ theorem warm_pipeline_converge :
 -- ════════════════════════════════════════════════════
 
 /-! K&L 2008's measure-of-change function `m_Δ` (eq. 25), formalised in
-    `Theories/Semantics/Degree/MeasureFunction.lean`, plugs directly
+    `Semantics/Degree/MeasureFunction.lean`, plugs directly
     into Beavers' affectedness typeclass chain
-    (`Theories/Semantics/Events/Scalar/Affectedness.lean`).
+    (`Semantics/Events/Scalar/Affectedness.lean`).
 
     This section provides the **first production `[HasMeasureFunction]`
     instances in linglib** — toy domains for *straighten* (closed

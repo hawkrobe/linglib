@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Exhaustification.Presuppositional
-import Linglib.Theories.Semantics.Presupposition.LocalContext
-import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
-import Linglib.Theories.Semantics.Presupposition.Accommodation
+import Linglib.Semantics.Exhaustification.Presuppositional
+import Linglib.Semantics.Presupposition.LocalContext
+import Linglib.Semantics.Presupposition.BeliefEmbedding
+import Linglib.Semantics.Presupposition.Accommodation
 import Linglib.Studies.BarLevFox2020
 import Mathlib.Data.Set.Basic
 
@@ -30,7 +30,7 @@ This structural split solves embedded FC puzzles that flat exh cannot:
 ## Architecture
 
 The core operator `pexIEII` is defined in
-`Theories/Semantics/Exhaustification/Presuppositional.lean`.
+`Semantics/Exhaustification/Presuppositional.lean`.
 This file connects pex to empirical free choice data and formalizes the
 embedding puzzles from §3–§5.
 -/

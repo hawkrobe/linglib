@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.Partition.Binary
+import Linglib.Semantics.Questions.Partition.Binary
 import Linglib.Core.Logic.NaturalLogic
 
 /-!

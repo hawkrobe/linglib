@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Profile
-import Linglib.Theories.Semantics.ArgumentStructure.AgentivityLattice
-import Linglib.Theories.Semantics.Lexical.LevinClassProfiles
-import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
+import Linglib.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Semantics.Lexical.LevinClassProfiles
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!
@@ -373,7 +373,7 @@ theorem locative_data_attested :
     loc_load.result = .participates := ⟨rfl, rfl⟩
 
 /-! The `profileToDegree` bridge (formerly §8) and its verification theorems
-    have been promoted to `Theories/Semantics/Events/Affectedness.lean`.
+    have been promoted to `Semantics/Events/Affectedness.lean`.
     They are opened at the top of this file. -/
 
 -- ════════════════════════════════════════════════════

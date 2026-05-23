@@ -1,11 +1,11 @@
-import Linglib.Theories.Semantics.ArgumentStructure.Properties
-import Linglib.Theories.Semantics.Aspect.Incremental
-import Linglib.Theories.Semantics.Aspect.Cumulativity
-import Linglib.Theories.Semantics.Events.CEM
-import Linglib.Theories.Semantics.Spatial.Trace
-import Linglib.Theories.Semantics.Lexical.LevinClass
-import Linglib.Theories.Semantics.Events.Adjacency
-import Linglib.Theories.Semantics.Aspect.PrecedenceClosure
+import Linglib.Semantics.ArgumentStructure.Properties
+import Linglib.Semantics.Aspect.Incremental
+import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.Spatial.Trace
+import Linglib.Semantics.Lexical.LevinClass
+import Linglib.Semantics.Events.Adjacency
+import Linglib.Semantics.Aspect.PrecedenceClosure
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
@@ -27,11 +27,11 @@ K98's two distinctive contributions, formalized end-to-end:
 
 The substrate predicates (SUM, UO, UE, MO, MSO, MSE, GUE, SINC, INC,
 CumTheta — K98 §3.2 eq. 43-52, eq. 59) live in
-`Theories/Semantics/Events/{Incrementality,ThematicRoleProperties}.lean`;
-the σ-trace pullback machinery in `Theories/Semantics/Spatial/Trace.lean`.
+`Semantics/Events/{Incrementality,ThematicRoleProperties}.lean`;
+the σ-trace pullback machinery in `Semantics/Spatial/Trace.lean`.
 This file exercises both on the English fragment and inlines the §4
 movement-relation predicates (formerly in
-`Theories/Semantics/Events/MovementRelations.lean`).
+`Semantics/Events/MovementRelations.lean`).
 
 ## Main definitions
 

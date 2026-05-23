@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Gradability.Aggregation
-import Linglib.Theories.Semantics.Degree.Basic
-import Linglib.Theories.Semantics.Kinds.SortedOntology
+import Linglib.Semantics.Gradability.Aggregation
+import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Kinds.SortedOntology
 import Linglib.Core.Scales.Scale
 import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Tactic.Ring
@@ -50,7 +50,7 @@ of the totality.
 ## Relation to substrate
 
 Solt's eq. (21) is exactly an instance of `spatialNormalizedScore` in
-`Theories/Semantics/Degree/Aggregation.lean §2`: the numerator is a
+`Semantics/Degree/Aggregation.lean §2`: the numerator is a
 weighted sum (with `weights = [1]` and one measure function) and the
 denominator is `μ_DIM(totality)`. Solt 2018 (this paper) and
 @cite{tham-2025} are the two consumers of `spatialNormalizedScore` —
@@ -312,7 +312,7 @@ theorem cardinal_proportional_divergence :
     the cardinal reading.
 
     The substrate primitive `PredicateLevel`
-    (`Theories/Semantics/Kinds/SortedOntology.lean §2`) is reused
+    (`Semantics/Kinds/SortedOntology.lean §2`) is reused
     here directly rather than re-stipulated; the same enum is
     consumed by `Fragments/German/BarePluralWordOrder.lean` and
     `Phenomena/Generics/BarePlurals.lean`. -/

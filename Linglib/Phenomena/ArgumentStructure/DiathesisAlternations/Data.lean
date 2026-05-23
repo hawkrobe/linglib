@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # Diathesis Alternation Data

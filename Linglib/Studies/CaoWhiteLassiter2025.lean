@@ -39,11 +39,11 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.NNReal.Basic
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Tactic.NormNum
-import Linglib.Theories.Semantics.Causation.CoerciveImplication
+import Linglib.Semantics.Causation.CoerciveImplication
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Causal.SEM.Interventional
-import Linglib.Theories.Semantics.Causation.Interpretation
+import Linglib.Semantics.Causation.Interpretation
 
 namespace CaoWhiteLassiter2025
 

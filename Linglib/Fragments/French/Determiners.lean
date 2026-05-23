@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Quantification.Lexicon
+import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # French Determiners and Quantifiers
@@ -22,7 +22,7 @@ realizes the dual core concept (`Core.CoreConcept.Id.dual`).
 
 namespace Fragments.French.Determiners
 
-open Theories.Semantics.Quantification.Lexicon
+open Semantics.Quantification.Lexicon
   (QuantifierEntry QForce Monotonicity Strength)
 
 /-- *tous* — universal, plural. The French universal of @cite{chemla-2007}'s

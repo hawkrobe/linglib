@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Basic
 
 /-
 # Minding the Politeness Gap

@@ -5,7 +5,7 @@ import Mathlib.Data.Finset.Max
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
-import Linglib.Theories.Semantics.Questions.Relevance
+import Linglib.Semantics.Questions.Relevance
 
 /-!
 # Core Decision Theory
@@ -14,7 +14,7 @@ import Linglib.Theories.Semantics.Questions.Relevance
 Theory-neutral decision-theoretic infrastructure: decision problems, expected
 utility, maximin, and mention-some/mention-all classification.
 
-Promoted from `Theories.Semantics.Questions.DecisionTheory` so that any module
+Promoted from `Semantics.Questions.DecisionTheory` so that any module
 (RSA, causal decision theory, explanation models) can use decision problems
 without pulling in question-semantic types.
 

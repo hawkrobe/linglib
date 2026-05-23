@@ -1,5 +1,5 @@
 import Linglib.Studies.Cooper2023Ch7
-import Linglib.Theories.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Core.Logic.Quantification.NumberTree
 import Mathlib.Data.Finset.Powerset
 
@@ -29,9 +29,9 @@ a **descriptive quantifier condition** (q-cond), and a **quantifier perspective*
 ## Thread map
 
 - **Ordered set bipartitions**: defined here (`BP`)
-- **Witness sets**: `Theories.Semantics.TypeTheoretic.Quantification` —
+- **Witness sets**: `Semantics.TypeTheoretic.Quantification` —
   `WitnessSet`, `IsExistW`, `AnaphoraRef`, `anaphoraAvailable`
-- **GQT properties**: `Theories.Semantics.Quantification.Quantifier` —
+- **GQT properties**: `Semantics.Quantification.Quantifier` —
   `GQ`, `Conservative`
 - **Conservative count**: `Core.Quantification.conservativeQuantifierCount`
 - **Dog example**: reuses `DogWorld` from TTR Ch. 7

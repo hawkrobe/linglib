@@ -147,11 +147,37 @@ def controlEnhancedGraph : DepGraph :=
 -- Key Theorems: Basic Tree Loses Information
 -- ============================================================================
 
--- Aliases for Coordination/LongDistance examples
-private abbrev coordBasicTree := Coordination.ex_johnSeesAndHearsMary
-private abbrev coordEnhancedGraph := Coordination.ex_johnSeesAndHearsMary_enhanced
-private abbrev relClauseBasicTree := LongDistance.ex_theBookThatJohnRead
-private abbrev relClauseEnhancedGraph := LongDistance.ex_theBookThatJohnRead_enhanced
+-- Coord fixture defined locally (matching the control example): basic tree
+-- has `Mary` only as `obj` of `sees`; `enhanceSharedDeps` propagates `obj` to
+-- `hears` in the enhanced graph. Theorems below are structural and don't
+-- depend on feature richness.
+def coordBasicTree : DepTree :=
+  { words := [Word.mk' "John" .PROPN, Word.mk' "sees" .VERB,
+              Word.mk' "and" .CCONJ, Word.mk' "hears" .VERB,
+              Word.mk' "Mary" .PROPN]
+    deps  := [⟨1, 0, .nsubj⟩, ⟨1, 2, .cc⟩, ⟨1, 3, .conj⟩, ⟨1, 4, .obj⟩]
+    rootIdx := 1 }
+
+def coordEnhancedGraph : DepGraph :=
+  Coordination.enhanceSharedDeps coordBasicTree
+
+-- Relclause fixture defined locally (cf. control example above): basic tree
+-- has `book` only as `det`'s head; enhanced graph adds `obj` from `read`. The
+-- theorems below are structural and don't depend on feature richness.
+private def the_ : Word := Word.mk' "the" .DET
+private def book_ : Word := Word.mk' "book" .NOUN
+private def that_ : Word := Word.mk' "that" .SCONJ
+private def john_ : Word := Word.mk' "John" .PROPN
+private def read_ : Word := Word.mk' "read" .VERB
+
+def relClauseBasicTree : DepTree :=
+  { words := [the_, book_, that_, john_, read_]
+    deps  := [⟨1, 0, .det⟩, ⟨1, 4, .acl⟩, ⟨4, 2, .mark⟩, ⟨4, 3, .nsubj⟩]
+    rootIdx := 1 }
+
+def relClauseEnhancedGraph : DepGraph :=
+  { relClauseBasicTree.toGraph with
+    deps := relClauseBasicTree.deps ++ [⟨4, 1, .obj⟩] }
 
 /-- Coordination: Mary (idx 4) has an unrepresented argument in the basic tree.
     She is semantically obj of hears (3), but the tree only attaches her to sees (1). -/

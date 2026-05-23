@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Roots.Typology
+import Linglib.Semantics.Lexical.Roots.Typology
 
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning

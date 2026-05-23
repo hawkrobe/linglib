@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Lexical.VerbEntry
 
 /-!
 # Greek Mood-Choice Verb Entries @cite{grano-2024}

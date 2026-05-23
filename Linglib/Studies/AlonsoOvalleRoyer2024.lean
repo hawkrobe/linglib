@@ -1,6 +1,6 @@
 import Linglib.Features.ModalIndefinite
-import Linglib.Theories.Semantics.Modality.EventRelativity
-import Linglib.Theories.Semantics.Modality.ModalIndefinites
+import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.ModalIndefinites
 import Linglib.Studies.Coon2019
 import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Spanish.ModalIndefinites
@@ -17,7 +17,7 @@ import Linglib.Fragments.Italian.ModalIndefinites
 
 Cross-linguistic typology of modal indefinites and bridge theorems connecting
 the event-relative modality theory (@cite{hacquard-2006}, formalized in
-`Theories/Semantics/Modality/EventRelativity`) to empirical observations.
+`Semantics/Modality/EventRelativity`) to empirical observations.
 
 Lexical entries are defined in Fragment files (single source of truth):
 - `Fragments/Chuj/ModalIndefinites.lean`: *yalnhej*, *komon*
@@ -511,7 +511,7 @@ theorem harmonic_neq_nonharmonic :
 -- ════════════════════════════════════════════════════════════════
 
 /-! Concrete model-theoretic witnesses for the typological claims of
-Part I. These instantiate `Theories/Semantics/Modality/ModalIndefinites.lean`
+Part I. These instantiate `Semantics/Modality/ModalIndefinites.lean`
 on small finite domains to demonstrate (a) non-maximality, (b) the
 upper-bounded vs. non-upper-bounded contrast, and (c) the harmonic
 vs. non-harmonic anchoring distinction. The toy domains live here

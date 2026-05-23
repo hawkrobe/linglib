@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!

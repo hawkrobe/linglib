@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.Probabilistic
+import Linglib.Semantics.Questions.Probabilistic
 
 /-!
 # Thomas (2026): Probabilistic, question-based additivity
@@ -10,7 +10,7 @@ additive use of *too* with a previously unstudied "argument-building
 use" by formalising felicity in terms of Bayesian inquisitive
 answerhood — Def 62 of the paper. The substrate primitives
 (`Answers`, `IsResolutionEvidencedBy`, `evidencesResolutionMore`)
-live in `Theories/Semantics/Questions/Probabilistic.lean`; this file
+live in `Semantics/Questions/Probabilistic.lean`; this file
 encodes Def 64 (TOO felicity) and the abstract consequences that
 account for the empirical contrasts in §3 and §4.
 

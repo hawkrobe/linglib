@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.Truth3
-import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
+import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Studies.Geurts2005
 import Linglib.Studies.Karttunen1973
 import Mathlib.Tactic.DeriveFintype
@@ -233,7 +233,7 @@ theorem kp_presup_entails_assertion :
 
 /-! ## Failure 3: Update semantics (@cite{yagi-2025} §2.3)
 
-Bridges to `Theories.Semantics.Dynamic.UpdateSemantics.Basic`, which
+Bridges to `Semantics.Dynamic.UpdateSemantics.Basic`, which
 collapses the @cite{heim-1982}/@cite{veltman-1996}/@cite{beaver-2001}
 treatments of presuppositional disjunction into a single `PUpdate.disjPresup`
 operator. -/

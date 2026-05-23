@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Presupposition.LocalContext
+import Linglib.Semantics.Presupposition.LocalContext
 
 /-!
 # Projection Mechanisms: Compositional Filtering vs. RSA BToM

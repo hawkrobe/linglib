@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Quantification.BinominalDefs
-import Linglib.Theories.Semantics.Quantification.Binominal
+import Linglib.Semantics.Quantification.BinominalDefs
+import Linglib.Semantics.Quantification.Binominal
 import Linglib.Fragments.English.Binominals
 
 /-!
@@ -225,7 +225,7 @@ theorem hell_uniquely_all_six :
 
 Demonstrates the progression from EBNP (full gradable predicate)
 to EM (evaluative measure) to BI (degree intensifier) using the
-worked examples from `Theories/Semantics/Lexical/Noun/Binominal`. -/
+worked examples from `Semantics/Lexical/Noun/Binominal`. -/
 
 /-- The three evaluative semantics form an entailment chain:
     BI → EM (proved), but EBNP is independent of EM. -/

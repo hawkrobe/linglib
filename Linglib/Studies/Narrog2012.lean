@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Narrog
+import Linglib.Semantics.Modality.Narrog
 import Linglib.Phenomena.Modality.ComparePosition
 
 /-!

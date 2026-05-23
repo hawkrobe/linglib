@@ -1,13 +1,13 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Entailment.Extremum
-import Linglib.Theories.Semantics.Numerals.Basic
+import Linglib.Semantics.Entailment.Extremum
+import Linglib.Semantics.Numerals.Basic
 
 /-!
 # Numeral MIP Bridge
 @cite{fox-hackl-2006} @cite{kennedy-2015}
 
 Surfaces the maximal informativity theorems from
-`Theories/Semantics/Entailment/Extremum.lean` at the Phenomena level,
+`Semantics/Entailment/Extremum.lean` at the Phenomena level,
 connecting numeral semantics (the named `*Meaning` functions) to the
 `HasMaxInf` / `IsMaxInf` infrastructure and the @cite{fox-hackl-2006}
 density predictions.
@@ -16,7 +16,7 @@ density predictions.
 
 The named numeral meanings (`atLeastMeaning`, `moreThanMeaning`, ...) are
 `abbrev`s over `Core.Scale.{atLeastDeg, moreThanDeg, ...} id` in
-`Theories/Semantics/Numerals/Basic.lean` §2 — the connection holds by
+`Semantics/Numerals/Basic.lean` §2 — the connection holds by
 construction, no bridge lemma needed.
 
 1. **HasMaxInf for "at least"**: `atLeast_hasMaxInf` gives the existence

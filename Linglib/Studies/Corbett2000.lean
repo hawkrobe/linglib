@@ -3,7 +3,7 @@ import Linglib.Fragments.Japanese.Plurals
 import Linglib.Theories.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Features.Number
 import Linglib.Core.Agreement.Target
-import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-!
 # Corbett (2000) — Number

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.CauserSort
+import Linglib.Semantics.Causation.CauserSort
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 import Linglib.Core.Case.Basic
 import Linglib.Fragments.Sinhala.Verbs
@@ -177,7 +177,7 @@ theorem cut_no_anticausative : ¬ anticausativizes kapann := by decide
     causer sort includes events. The generic predicate
     `CauserSort.admitsVolitive` and the lattice-level theorem
     `not_admitsVolitive_individual` ("anticausatives are always
-    involitive", B&Z §8) live in `Theories/Semantics/Causation/CauserSort.lean`;
+    involitive", B&Z §8) live in `Semantics/Causation/CauserSort.lean`;
     here we just verify the predictions for the Sinhala fragment. -/
 theorem volitive_admitted_for_murder :
     CauserSort.admitsVolitive minimarann.causerSort := by decide

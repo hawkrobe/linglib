@@ -1,10 +1,10 @@
-import Linglib.Theories.Semantics.Causation.ProductionDependence
+import Linglib.Semantics.Causation.ProductionDependence
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
-import Linglib.Theories.Semantics.Lexical.EventStructure
+import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # Thick vs Thin Causative Verb Data

@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
-import Linglib.Theories.Semantics.Lexical.EventStructure
-import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Theories.Semantics.Causation.Morphological
+import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.Causation.Morphological
 
 /-!
 # Bohnemeyer 2004: Split Intransitivity in Yukatek Maya

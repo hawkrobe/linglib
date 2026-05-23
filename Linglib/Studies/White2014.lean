@@ -1,5 +1,5 @@
 import Linglib.Studies.Williams2026
-import Linglib.Theories.Semantics.Attitudes.PreExistence
+import Linglib.Semantics.Attitudes.PreExistence
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -20,7 +20,7 @@ Fragment-level consistency: the English Fragment's split of *forget* into
 `forget` (negative implicative, infinitival) and `forget_rog` (factive,
 finite) aligns with the typology MCA + pre-existence together predict.
 
-The pre-existence apparatus in `Theories/Semantics/Attitudes/PreExistence.lean`
+The pre-existence apparatus in `Semantics/Attitudes/PreExistence.lean`
 is post-2014 (Bondarenko 2019/2020, taken up by @cite{williams-2026});
 where this file uses `needsModalInsertion`, treat that as the project-canonical
 upgrade of White's structural prediction, with the gerund case flagged as

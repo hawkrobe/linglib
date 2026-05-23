@@ -9,7 +9,7 @@ that `v` satisfies. The Kratzer-style derivation of a world ordering from
 an ordering source, applied to `maxElts`. Used by
 @cite{condoravdi-lauer-2016} (88): `g_epA(w) = max[EP(Ad, w)]`.
 
-The bridge to a `List`-valued `Theories.Semantics.Modality.Kratzer.OrderingSource`
+The bridge to a `List`-valued `Semantics.Modality.Kratzer.OrderingSource`
 requires either a finiteness witness or a non-constructive enumeration; that
 bridge lives downstream.
 -/

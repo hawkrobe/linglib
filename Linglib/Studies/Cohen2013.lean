@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Composition.PredicateTransfer
-import Linglib.Theories.Semantics.Genericity.Generics
-import Linglib.Theories.Semantics.Composition.Scope
-import Linglib.Theories.Semantics.Quantification.CovertQuantifier
+import Linglib.Semantics.Composition.PredicateTransfer
+import Linglib.Semantics.Genericity.Generics
+import Linglib.Semantics.Composition.Scope
+import Linglib.Semantics.Quantification.CovertQuantifier
 
 /-!
 # @cite{cohen-2013}: No Quantification without Reinterpretation

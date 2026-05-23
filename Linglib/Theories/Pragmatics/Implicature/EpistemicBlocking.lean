@@ -1,5 +1,5 @@
 import Mathlib.Data.Finset.Basic
-import Linglib.Theories.Semantics.Entailment.AsymStronger
+import Linglib.Semantics.Entailment.AsymStronger
 
 /-!
 # Sauerland's Epistemic Implicature Framework
@@ -31,7 +31,7 @@ or the primary implicatures.
 
 The asymmetric-entailment primitive used to characterize Sauerland's
 primary-implicature alternatives lives in
-`Theories/Semantics/Entailment/AsymStronger.lean` as `asymStrongerOn`.
+`Semantics/Entailment/AsymStronger.lean` as `asymStrongerOn`.
 A consumer wanting "the alternatives that trigger primary implicatures"
 writes `alts.filter (asymStrongerOn e.possible · φ)` directly — no
 wrapper needed.
@@ -70,7 +70,7 @@ instance {W : Type*} (e : EpistemicState W) (φ : W → Prop) [DecidablePred φ]
   inferInstanceAs (Decidable (∃ w ∈ e.possible, φ w))
 
 /-- Standard epistemic duality: ¬K¬φ ↔ Pφ. One of five sibling `theorem duality`s
-    (see `Theories/Semantics/Modality/Kratzer/Operators.lean::duality` for the
+    (see `Semantics/Modality/Kratzer/Operators.lean::duality` for the
     unification opportunity via `Core.Logic.Opposition.Square.fromBox`). -/
 theorem duality {W : Type*} (e : EpistemicState W) (φ : W → Prop) :
     ¬ knows e (fun w => ¬ φ w) ↔ possible e φ := by

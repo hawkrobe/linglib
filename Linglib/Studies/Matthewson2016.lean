@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Modality.Typology
-import Linglib.Theories.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.NezPerce.Modals

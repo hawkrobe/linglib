@@ -1,10 +1,10 @@
-import Linglib.Theories.Semantics.Quantification.DomainRestriction
+import Linglib.Semantics.Quantification.DomainRestriction
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.BToM
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Semantics.Questions.Partition.QUD
-import Linglib.Theories.Semantics.Questions.PrecisionProjection
+import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Features.Subjectivity

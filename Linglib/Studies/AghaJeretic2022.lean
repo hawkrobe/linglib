@@ -1,8 +1,8 @@
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Plurals.Homogeneity
-import Linglib.Theories.Semantics.Modality.Directive
-import Linglib.Theories.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Modality.Directive
+import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.French.Modals

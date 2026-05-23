@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Basic
 import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Core.Time.Tense

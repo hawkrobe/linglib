@@ -150,7 +150,7 @@ is observable independent of any contrast manipulation.
   channel) cannot satisfy `SatisfiesRonderosPattern` because it would
   predict equal contrast effects for all adjective types — a useful
   negative result that could itself be a theorem.
-- **Connection to `Theories/Semantics/Gradability/`**: Ronderos's
+- **Connection to `Semantics/Gradability/`**: Ronderos's
   semantic factor (scalar = gradable + comparison-class-dependent;
   color/material = non-gradable) is currently mediated only through
   `Features.PropertyDomain.requiresComparisonClass`. A deeper bridge

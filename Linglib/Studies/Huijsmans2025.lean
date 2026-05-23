@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Evidential
+import Linglib.Semantics.Tense.Evidential
 import Linglib.Core.Modality.ModalTypes
 
 /-!
@@ -18,7 +18,7 @@ at least one modal-base proposition to hold **at or following** that moment.
 ## Structural claim
 
 The temporal-presupposition partition is structurally identical to the
-EP-condition partition in `Theories/Semantics/Tense/Evidential.lean`,
+EP-condition partition in `Semantics/Tense/Evidential.lean`,
 but indexed on **MBT** (modal-base time) rather than **EAT** (evidence
 acquisition time). `EPCondition` is reused under the slot reinterpretation
 `MBT ↦ acquisitionTime`, `PrejT ↦ eventTime`. The bridge is
@@ -38,7 +38,7 @@ EAT analysis (with the same partition reinterpreted) does not.
 The at-issue content is Kratzer strong necessity over the modal base,
 shared across all four lexical entries (modulo modal-base type). It is
 not formalized in this file; consumers wanting full denotations should
-combine `Modal.flavor` with `Theories.Semantics.Modality.Kratzer.necessity`.
+combine `Modal.flavor` with `Semantics.Modality.Kratzer.necessity`.
 -/
 
 namespace Huijsmans2025

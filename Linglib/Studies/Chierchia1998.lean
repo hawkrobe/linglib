@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.Mandarin.Nouns
@@ -11,7 +11,7 @@ Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
 
 Connects the cross-linguistic noun categorization typology in
 `Aikhenvald2000` to the Nominal Mapping
-Parameter from `Theories.Semantics.Kinds.NMP`.
+Parameter from `Semantics.Kinds.NMP`.
 
 ## Predictions verified
 

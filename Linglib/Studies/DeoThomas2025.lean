@@ -14,18 +14,18 @@ alternatives, explaining why it substitutes in only 2 of the 9 flavors.
 
 -/
 
-import Linglib.Theories.Semantics.Questions.Partition.QUD
-import Linglib.Theories.Semantics.Questions.PrecisionProjection
-import Linglib.Theories.Semantics.Questions.Basic
-import Linglib.Theories.Semantics.Questions.Granularity
+import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.PrecisionProjection
+import Linglib.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Granularity
 import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Phenomena.Focus.Exclusives
-import Linglib.Theories.Semantics.Degree.Granularity
+import Linglib.Semantics.Degree.Granularity
 
 namespace DeoThomas2025
 
 open Phenomena.Focus.Exclusives
--- open removed: Question is top-level after Theories/Semantics/Questions/ relocation
+-- open removed: Question is top-level after Semantics/Questions/ relocation
 
 -- ============================================================================
 -- A. Alternative Source
@@ -347,7 +347,7 @@ theorem refinement_implies_wider {W : Type*}
 /-! ### The full chain: finer granularity → wider question
 
 Composes the two independently proved steps:
-1. `finer_granularity_refines` (from `Theories.Semantics.Degree.Granularity`):
+1. `finer_granularity_refines` (from `Semantics.Degree.Granularity`):
    if ε₁ ∣ ε₂, the ε₁-partition refines the ε₂-partition
 2. `refinement_implies_wider` (proved above):
    strict partition refinement → issue width

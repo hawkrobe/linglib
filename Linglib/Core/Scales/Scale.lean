@@ -20,7 +20,7 @@ content has been carved into:
 - `Rat01.lean` — rational unit interval [0, 1]
 - `Comparative.lean` — ComparativeScale + AdditiveScale
 - `DirectedMeasure.lean` — DirectedMeasure + Kennedy/Rouillard MIP-domain operators
-  (the framework operators move to `Theories/Semantics/Gradability/{Kennedy,Rouillard}.lean`
+  (the framework operators move to `Semantics/Gradability/{Kennedy,Rouillard}.lean`
   in Phase B)
 - `Predicate.lean` — IsUpwardMonotone/etc. + eqDeg/atLeastDeg/etc. + relationalGQ
 - `Bounds.lean` — typeclass licensing theorems + maxOnScale/IsMaxDetermined

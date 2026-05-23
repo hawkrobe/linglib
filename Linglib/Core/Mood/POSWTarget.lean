@@ -30,7 +30,7 @@ semantic glosses. The link is the projection
 matching POSWQ-level operation type.
 
 Modal flavors will get their own instance once
-`Theories/Semantics/Modality/` is rephrased over POSW.
+`Semantics/Modality/` is rephrased over POSW.
 -/
 
 namespace Core.Mood
@@ -52,7 +52,7 @@ namespace Core.Mood
       this as PPOSW (a partition replaces `cs`); we instead represent
       it as a third coordinate of `POSWQ`. Verbal mood does not
       select for partition in @cite{portner-2018}; see
-      `Theories/Semantics/Mood/VerbalMood.lean` for our extension. -/
+      `Semantics/Mood/VerbalMood.lean` for our extension. -/
 inductive POSWTarget where
   | informational
   | preferential

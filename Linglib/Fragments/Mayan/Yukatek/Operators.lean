@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.Roots.Operators
-import Linglib.Theories.Semantics.Lexical.Roots.SalienceClass
+import Linglib.Semantics.Lexical.Roots.Operators
+import Linglib.Semantics.Lexical.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Yukatek.Roots
 
 /-!

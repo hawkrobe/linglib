@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Questions.Basic
-import Linglib.Theories.Semantics.Questions.Hamblin
-import Linglib.Theories.Semantics.Questions.Resolution
-import Linglib.Theories.Semantics.Questions.Exhaustivity
+import Linglib.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Resolution
+import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
 # @cite{karttunen-1977}: Syntax and Semantics of Questions

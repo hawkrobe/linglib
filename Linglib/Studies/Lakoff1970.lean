@@ -1,6 +1,6 @@
 import Linglib.Core.Morphology.Exponence
 import Linglib.Fragments.English.Tense
-import Linglib.Theories.Semantics.Tense.ParticipantPerspective
+import Linglib.Semantics.Tense.ParticipantPerspective
 
 /-!
 # @cite{lakoff-1970} Grammaticality Judgments

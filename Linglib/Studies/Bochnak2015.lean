@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Gradability.Delineation
+import Linglib.Semantics.Gradability.Delineation
 
 /-!
 # @cite{bochnak-2015} Degree Semantics Parameter and Washo
@@ -19,7 +19,7 @@ natural-language gradable predicates introduce degree arguments.
 ## Why this paper grounds linglib's substrate
 
 Linglib's @cite{klein-1980}/@cite{kennedy-2007} comparison hierarchy
-(`Theories/Semantics/Comparison/Hierarchy.lean`) already proves
+(`Semantics/Comparison/Hierarchy.lean`) already proves
 **`degree_characterization`**: degree semantics is exactly the monotone
 fragment of Klein's delineation framework. @cite{bochnak-2015}'s Washo
 data sits inside this monotone fragment (Washo *tall*, *long*, *bent*

@@ -1,5 +1,5 @@
 import Linglib.Fragments.ASL.Height
-import Linglib.Theories.Semantics.Quantification.DomainRestriction
+import Linglib.Semantics.Quantification.DomainRestriction
 
 /-!
 # @cite{davidson-gagne-2022}

@@ -1,13 +1,13 @@
-import Linglib.Theories.Semantics.Dynamic.PLA.DeepTheorems
+import Linglib.Semantics.Dynamic.PLA.DeepTheorems
 
 /-!
 # Dekker (2012): Predicate Logic with Anaphora vs Bilateral Update Semantics
 @cite{dekker-2012} @cite{krahmer-muskens-1995}
 
-PLA (`Theories/Semantics/Dynamic/PLA/`) is the foundational system for
+PLA (`Semantics/Dynamic/PLA/`) is the foundational system for
 dynamic semantics with explicit pronoun indices. This study verifies
 PLA's behavior on the canonical anaphora puzzles and contrasts it
-with Bilateral Update Semantics (BUS, `Theories/Semantics/Dynamic/Bilateral/`),
+with Bilateral Update Semantics (BUS, `Semantics/Dynamic/Bilateral/`),
 which solves anaphora cases that PLA structurally cannot.
 
 ## The Core Difference
@@ -89,7 +89,7 @@ theorem bathroom_pla_has_domain :
 -- § 2. PLA vs BUS: architectural divergence
 -- ════════════════════════════════════════════════════════════════
 
-/-! BUS lives in `Theories/Semantics/Dynamic/Bilateral/Basic.lean` with
+/-! BUS lives in `Semantics/Dynamic/Bilateral/Basic.lean` with
 the type
 
 ```

@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions
-import Linglib.Theories.Semantics.Aspect.ChangeOfState
+import Linglib.Semantics.Presupposition.OntologicalPreconditions
+import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Features.Aktionsart
 import Linglib.Phenomena.Presupposition.Diagnostics
 import Linglib.Phenomena.Presupposition.ProjectiveContent

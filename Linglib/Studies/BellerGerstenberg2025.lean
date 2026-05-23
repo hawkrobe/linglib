@@ -2,10 +2,10 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Theories.Semantics.Causation.Sufficiency
-import Linglib.Theories.Semantics.Causation.Necessity
-import Linglib.Theories.Semantics.Alternatives.Lexical
-import Linglib.Theories.Semantics.Causation.ProductionDependence
+import Linglib.Semantics.Causation.Sufficiency
+import Linglib.Semantics.Causation.Necessity
+import Linglib.Semantics.Alternatives.Lexical
+import Linglib.Semantics.Causation.ProductionDependence
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Rat.Defs
 

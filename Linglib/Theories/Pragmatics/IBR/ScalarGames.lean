@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.IBR.Basic
-import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.Operators.Basic
 
 /-!
 # IBR for Scalar Games

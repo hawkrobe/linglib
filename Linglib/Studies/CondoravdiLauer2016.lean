@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Attitudes.CondoravdiLauer
-import Linglib.Theories.Semantics.Conditionals.Restrictor
+import Linglib.Semantics.Attitudes.CondoravdiLauer
+import Linglib.Semantics.Conditionals.Restrictor
 import Linglib.Data.Examples.Schema
 import Mathlib.Tactic.FinCases
 
@@ -9,7 +9,7 @@ import Mathlib.Tactic.FinCases
 C&L's central claim: anankastics (eq. 1, the Harlem sentence) need no
 special compositional treatment, provided (i) `want` is given the
 effective-preference reading from § 5 (substrate at
-`Theories/Semantics/Attitudes/CondoravdiLauer.lean`) and (ii) the
+`Semantics/Attitudes/CondoravdiLauer.lean`) and (ii) the
 conditional has the double-modal `NEC[ψ][MODAL[φ]]` LF from § 6. The
 Hoboken problem (§ 2.3, § 7.1.1) is then solved by *consistency-driven
 vacuous truth*: a hypothetical effective preference for Harlem is
@@ -44,7 +44,7 @@ paper-specific; tracked in
 
 ## Cross-references
 
-* `Theories/Semantics/Attitudes/CondoravdiLauer.lean` — `wantEP` and
+* `Semantics/Attitudes/CondoravdiLauer.lean` — `wantEP` and
   `wantEP_jointly_belief_consistent` (the load-bearing lemma).
 * `Studies/vonFintelIatridou2005.lean` — vF&I's
   primary-secondary ordering source analysis that C&L 2016 critiques
@@ -68,11 +68,11 @@ universe u
 /-- @cite{condoravdi-lauer-2016} eq. (77): `If ψ, MODAL[φ]` parses as
 `NEC[ψ][MODAL[φ]]` when the consequent contains an overt modal claim.
 Composed from `conditionalNecessity` (the outer NEC restriction by
-antecedent, from `Theories/Semantics/Conditionals/Restrictor.lean`) and
+antecedent, from `Semantics/Conditionals/Restrictor.lean`) and
 an arbitrary world-indexed inner-modal proposition.
 
 This is the schema instantiated by `harlemLF`. Kept inline rather than
-promoted to `Theories/Semantics/Conditionals/DoubleModal.lean` because
+promoted to `Semantics/Conditionals/DoubleModal.lean` because
 no second paper-anchored study currently consumes it (≥ 2-consumer
 graduation rule). Kaufmann & Schwager 2009 on conditional imperatives
 would be the natural second consumer. -/
@@ -91,7 +91,7 @@ The four contextual parameters:
 * `gNorm` — ordering source of NEC, "stereotypical" (paper § 6.1).
 * `fHist` — modal base of MUST, "historical alternatives at time t"
   (paper p. 42; `historicalNecessity` substrate exists at
-  `Theories/Semantics/Modality/Temporal.lean:119`, but the v1 LF here
+  `Semantics/Modality/Temporal.lean:119`, but the v1 LF here
   takes an arbitrary modal base because the Hoboken theorem doesn't
   constrain it).
 * `gInner` — ordering source of MUST. Paper eq. (88) uses `g_epA`

@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Theories.Semantics.TypeTheoretic.Basic
+import Linglib.Semantics.TypeTheoretic.Basic
 
 /-!
 # KOS: Type Definitions
@@ -31,7 +31,7 @@ The structural commitment is unchanged: every `LocProp` projects to a
 `Participant`, `Fact`, `QContent` are universe-polymorphic (`Type*`).
 `Cont` is **pinned to `Type` (= `Type 0`)** because it flows into the
 `TTRSign String Cont` projection (`LocProp.toTTRSign`), and TTRSign is
-itself `Type`-pinned in `Theories/Semantics/TypeTheoretic/Core.lean`
+itself `Type`-pinned in `Semantics/TypeTheoretic/Core.lean`
 (Cooper's "type-is-a-type" semantics requires `Type 0` for the carrier).
 Same pinning applies in `KOS/Austinian.lean` (where `BCheckableAustinian`
 and `TTRQuestionB` similarly require `Type`) and in

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Conditionals.PremiseSemantic
+import Linglib.Semantics.Conditionals.PremiseSemantic
 
 /-!
 # @cite{ciardelli-zhang-champollion-2018} switches under @cite{kratzer-2012} lumping CF

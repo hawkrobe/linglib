@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Degree.Basic
-import Linglib.Theories.Semantics.Degree.Kennedy
-import Linglib.Theories.Semantics.Gradability.Basic
-import Linglib.Theories.Semantics.Gradability.Intensification
+import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Kennedy
+import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
 

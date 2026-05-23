@@ -699,7 +699,7 @@ def convexClosureOp {α : Type*} [PartialOrder α] :
 
 /-- **Down clause** of conjunctive parthood: every element of `p` has a
     part in `q`. Generic poset relation; specialized in
-    `Theories/Semantics/Truthmaker/Basic.lean` to content parthood. -/
+    `Semantics/Truthmaker/Basic.lean` to content parthood. -/
 def IsSubsumedBy {α : Type*} [Preorder α] (q p : α → Prop) : Prop :=
   ∀ s, p s → ∃ t, q t ∧ t ≤ s
 

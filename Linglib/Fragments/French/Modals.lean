@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Assert
+import Linglib.Semantics.Modality.Assert
 
 /-!
 # French Modal Auxiliaries and Modal Constructions

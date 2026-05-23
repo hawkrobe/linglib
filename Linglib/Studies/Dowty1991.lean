@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Theories.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.AgentivityLattice
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 import Linglib.Fragments.English.Predicates.Verbal
@@ -7,7 +7,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 /-!
 # @cite{dowty-1991} Thematic Proto-Roles and Argument Selection
 
-Study file connecting the proto-role theory (`Theories/Semantics/Events/ProtoRoles.lean`)
+Study file connecting the proto-role theory (`Semantics/Events/ProtoRoles.lean`)
 to argument selection phenomena.
 
 ## Dowty's original flat-counting ASP

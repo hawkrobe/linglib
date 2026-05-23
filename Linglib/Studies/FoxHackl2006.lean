@@ -1,5 +1,5 @@
 import Linglib.Studies.Heim2001
-import Linglib.Theories.Semantics.Degree.Abstraction
+import Linglib.Semantics.Degree.Abstraction
 
 /-!
 # Fox & Hackl 2006: Degree Questions and Negative Islands

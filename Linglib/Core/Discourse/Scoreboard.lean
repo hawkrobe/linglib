@@ -2,8 +2,8 @@ import Linglib.Core.Discourse.Goal
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
-import Linglib.Theories.Semantics.Questions.Partition.QUD
-import Linglib.Theories.Semantics.Questions.PrecisionProjection
+import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Mood.POSW

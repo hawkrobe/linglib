@@ -1,5 +1,5 @@
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Tense.TemporalAdverbials
+import Linglib.Semantics.Tense.TemporalAdverbials
 import Linglib.Typology.PolarityItem
 import Linglib.Fragments.English.FunctionWords
 
@@ -499,7 +499,7 @@ inductive DurationKind where
     `Determiners.lean`).
 
     Cross-references for *in years* (the NPI-gap entry):
-    - `Theories/Semantics/Tense/PTS.lean :: inYears` — Iatridou-Zeijlstra
+    - `Semantics/Tense/PTS.lean :: inYears` — Iatridou-Zeijlstra
       2021 boundary-adverbial projection (PTS-tradition apparatus).
     - `Fragments/English/PolarityItems.lean :: inYears` — polarity-theoretic
       projection (Israel 1996 / 2001 scalar model).

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.Typology
 
 /-!
 # St'át'imcets (Lillooet Salish) Modal Inventory

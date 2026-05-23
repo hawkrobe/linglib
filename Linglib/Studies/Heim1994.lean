@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Questions.Basic
-import Linglib.Theories.Semantics.Questions.Resolution
-import Linglib.Theories.Semantics.Questions.Exhaustivity
+import Linglib.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Resolution
+import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
 # @cite{heim-1994}: Interrogative Semantics and Karttunen's Semantics for know
@@ -39,7 +39,7 @@ contexts).
 * **§1** Karttunen — `simplifiedKarttunenKnow`-style "x believes ∩q(w)"
   is captured by `weakAnswer`. The actual lexical `know` predicate
   (which involves doxastic accessibility) lives in
-  `Theories/Semantics/Attitudes/Doxastic.lean`; we identify the
+  `Semantics/Attitudes/Doxastic.lean`; we identify the
   *content* `weakAnswer Q w` here.
 * **§2** Exhaustiveness — Karttunen's eq (5) "if q(w) = ∅ then x
   believes that q is empty" becomes the substrate's
@@ -133,7 +133,7 @@ directly. -/
 The simplified Karttunen meaning of `know(Q)(x)` at world `w` is
 "x believes `∩q(w)`" — substrate-level: "x's doxastic state is
 contained in `weakAnswer Q w`". The doxastic predicate itself lives
-in `Theories/Semantics/Attitudes/Doxastic.lean`; here we expose the
+in `Semantics/Attitudes/Doxastic.lean`; here we expose the
 content as `weakAnswer`. -/
 
 /-- @cite{heim-1994} §1 (4): the *simplified* Karttunen content of

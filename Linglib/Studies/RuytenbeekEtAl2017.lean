@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Theories.Semantics.Modality.Assert
+import Linglib.Semantics.Modality.Assert
 import Linglib.Fragments.French.Modals
 
 /-!
@@ -63,7 +63,7 @@ regression coefficients.
 
 ## Cross-paper bridges
 
-- `Theories/Semantics/Modality/Assert.lean`: the imperative's
+- `Semantics/Modality/Assert.lean`: the imperative's
   `primaryFlavor = .deontic` is the layered foundation;
   `SentType.modalFlavor` for the imperative branch derives from it.
 - `Studies/Roberts2023.lean`: a chronologically

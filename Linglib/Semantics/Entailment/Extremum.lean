@@ -1,0 +1,257 @@
+import Mathlib.Order.Bounds.Image
+import Linglib.Core.Scales.Scale
+
+/-!
+# Cross-world extremum under entailment
+@cite{fox-2007} @cite{fox-hackl-2006} @cite{beck-rullmann-1999}
+@cite{von-fintel-fox-iatridou-2014} @cite{rouillard-2026}
+
+The cross-world entailment-based "maximally informative" predicate (`IsMaxInf`)
+that has no mathlib analogue, plus mathlib bridges for the per-world
+specialization, plus the `MIP_Licensed` licensing predicate combining
+non-constancy with per-world extremum existence.
+
+## Two formulations
+
+The mathlib-shape per-world reading is just `IsLeast {y | P y w} x`
+(or `IsGreatest`) — call mathlib directly. The Fox 2007-style cross-world
+reading is unique to formal semantics:
+
+  IsMaxInf P x w := P x w ∧ ∀ y, P y w → ∀ w', P x w' → P y w'
+
+reading: at world w, x is true; and for any other true alternative y at w,
+the proposition denoted by x entails the proposition denoted by y across
+every world. Equivalently: x denotes the smallest proposition (in subset
+order on `Set W`) among true alternatives at w. Bridge to per-world via
+mathlib's `MonotoneOn.map_isLeast` family.
+
+Two predicates fail under different conditions, so the MIP licensing
+condition is their conjunction:
+
+- `AdmitsOptimum P` (non-constancy in α; the *atelic / homogeneous* failure):
+  fails when every alternative denotes the same proposition — no informative
+  distinction among alternatives.
+- `IsLeast {y | P y w} x` (existence of a smallest-true alternative; the
+  *no-extremum* failure under density): fails when the true set is upward-closed
+  with no minimum (e.g., `Set.Ioi a` in a dense linear order).
+
+## Naming
+
+The shared mathematical structure — extracting the extremal element of an
+indexed family under an evaluation map — also appears outside semantics
+(notably as `argmax_u (ln P_L0(s | u))` in RSA-style pragmatics; both pick
+the most informative alternative under their respective evaluation map).
+The file lives in `Semantics/Entailment/` because the cross-world
+quantifier is the entailment relation between propositions.
+
+## Beck-Rullmann attribution
+
+@cite{beck-rullmann-1999} introduce `answer1(w)(Q) = ⋂{p : Q(w)(p) ∧ p(w)}` —
+the conjunction of all true Hamblin propositions at `w`. For upward-monotone
+scalar predicates this reduces to the smallest-true-degree case captured by
+`IsLeast`. For non-scalar predicates (their §4.4) it is the literal
+conjunction and not an extremum. So the `IsLeast` per-world reading is
+an *ergonomic specialization* of Beck-Rullmann answerhood under monotonicity,
+not their primary formulation.
+-/
+
+namespace Semantics.Entailment.Extremum
+
+open Core.Scale
+
+variable {α : Type*} [LinearOrder α]
+
+-- ════════════════════════════════════════════════════
+-- § 1. Cross-world entailment-based maximal informativity
+-- ════════════════════════════════════════════════════
+
+/-- A scale value `x` is **maximally informative** in a degree property `P`
+    at world `w` iff `P x w` is true and `P x` entails `P y` (across every
+    world) for every other true `P y w`.
+
+    The unified exhaustivity condition underlying *only*-implicatures, degree
+    questions, and definite descriptions in the @cite{fox-2007} /
+    @cite{von-fintel-fox-iatridou-2014} tradition. @cite{rouillard-2026}
+    specializes this to numerals in temporal *in*-adverbials. -/
+def IsMaxInf {W : Type*} (P : α → W → Prop) (x : α) (w : W) : Prop :=
+  P x w ∧ ∀ y, P y w → (∀ w', P x w' → P y w')
+
+/-- A degree property has a maximally informative element at world `w`. -/
+def HasMaxInf {W : Type*} (P : α → W → Prop) (w : W) : Prop :=
+  ∃ x, IsMaxInf P x w
+
+/-- Information collapse: no element is maximally informative at any world.
+    @cite{fox-hackl-2006}: this is why degree questions fail over dense
+    complements, why *only* + "more than n" is contradictory, and why
+    definite descriptions over dense open sets lack a presupposition-satisfying
+    referent. -/
+def InformationCollapse {W : Type*} (P : α → W → Prop) : Prop :=
+  ∀ w, ¬ HasMaxInf P w
+
+-- ════════════════════════════════════════════════════
+-- § 2. Bridges from mathlib per-world IsLeast/IsGreatest
+-- ════════════════════════════════════════════════════
+
+/-- For an upward-monotone family, a per-world smallest-true value is
+    cross-world maximally informative. The converse requires
+    threshold-witness assumptions on the world space (one direction only). -/
+theorem isMaxInf_of_isLeast_upward {W : Type*}
+    {P : α → W → Prop} (hUp : IsUpwardMonotone P) (w : W) (x : α)
+    (h : IsLeast {y | P y w} x) : IsMaxInf P x w := by
+  refine ⟨h.1, fun y hy w' hx_w' => ?_⟩
+  exact hUp x y (h.2 hy) w' hx_w'
+
+/-- Dually for downward-monotone families: the per-world largest-true value
+    is cross-world maximally informative. -/
+theorem isMaxInf_of_isGreatest_downward {W : Type*}
+    {P : α → W → Prop} (hDown : IsDownwardMonotone P) (w : W) (x : α)
+    (h : IsGreatest {y | P y w} x) : IsMaxInf P x w := by
+  refine ⟨h.1, fun y hy w' hx_w' => ?_⟩
+  exact hDown y x (h.2 hy) w' hx_w'
+
+-- ════════════════════════════════════════════════════
+-- § 3. MIP licensing
+-- ════════════════════════════════════════════════════
+
+/-- **Maximal Informativity Principle licensing** for upward-monotone
+    derived properties (e.g., E-TIA telic in @cite{rouillard-2026}). The
+    conjunction captures both failure modes:
+    - `AdmitsOptimum P` (non-constancy): the family distinguishes alternatives
+      at all (failure mode for atelic / homogeneous predicates).
+    - `IsLeast {y | P y w} x` at some `w`: a smallest true value exists
+      (failure mode under density without minimum). -/
+def MIP_Licensed {W : Type*} (P : α → W → Prop) : Prop :=
+  AdmitsOptimum P ∧ ∃ w x, IsLeast {y | P y w} x
+
+/-- Dual MIP licensing for downward-monotone derived properties (e.g., G-TIA
+    in negative perfects). -/
+def MIP_LicensedDown {W : Type*} (P : α → W → Prop) : Prop :=
+  AdmitsOptimum P ∧ ∃ w x, IsGreatest {y | P y w} x
+
+-- ════════════════════════════════════════════════════
+-- § 4. Degree-predicate IsMaxInf characterizations
+-- ════════════════════════════════════════════════════
+
+/-! Migrated from `Core/Scales/Scale.lean`: applications of `IsMaxInf` to
+    the canonical degree predicates `atLeastDeg`, `moreThanDeg`, `atMostDeg`
+    (defined in Scale.lean, monotonicity proven there). The pure scale
+    theory stays in Scale.lean; the IsMaxInf-flavored consequences live
+    here as a downstream entailment-theoretic application. -/
+
+/-- "At least d" always has a maximally informative element: d₀ = μ(w).
+
+    This holds on ANY scale — dense or discrete — because the actual
+    value μ(w) is always in the domain and "at least μ(w)" entails
+    "at least d" for all d ≤ μ(w) by transitivity.
+
+    This is why bare numerals generate scalar implicatures regardless
+    of scale density: the `≥` relation creates a closed set with a
+    natural maximum at the true value. -/
+theorem atLeast_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
+    HasMaxInf (atLeastDeg μ) w :=
+  ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hd hw'⟩
+
+/-- **Implicature asymmetry** (@cite{fox-2007}, @cite{fox-hackl-2006}):
+    on a dense scale, "more than n" has NO maximally informative element.
+
+    For any candidate d₀ < μ(w), density gives d' ∈ (d₀, μ(w)).
+    A witness world w₁ with μ(w₁) ∈ (d₀, d') has "more than d₀"
+    true but "more than d'" false — so d₀ does not entail d'.
+
+    The `hSurj` hypothesis says every degree value is realized by some
+    possible world. -/
+theorem moreThan_noMaxInf {W : Type*} [DenselyOrdered α] (μ : W → α)
+    (hSurj : Function.Surjective μ) (w : W) :
+    ¬ HasMaxInf (moreThanDeg μ) w := by
+  intro ⟨d₀, hd₀, hent⟩
+  obtain ⟨d', hd₀d', hd'w⟩ := DenselyOrdered.dense d₀ (μ w) hd₀
+  obtain ⟨m, hd₀m, hmd'⟩ := DenselyOrdered.dense d₀ d' hd₀d'
+  obtain ⟨w₁, rfl⟩ := hSurj m
+  exact absurd (hent d' hd'w w₁ hd₀m) (not_lt.mpr (le_of_lt hmd'))
+
+/-- **Kennedy / @cite{fox-hackl-2006} bridge (point-realization form)**:
+    `IsMaxInf` of the "at least" degree property at value m and world w holds
+    iff `μ w = m`, given only that `m` itself is in the image of `μ`. This is
+    strictly weaker than full `Function.Surjective μ` and is the hypothesis
+    actually used in the proof. -/
+theorem isMaxInf_atLeast_of_hit {W : Type*} (μ : W → α) (m : α) (w : W)
+    (hHit : ∃ w', μ w' = m) :
+    IsMaxInf (atLeastDeg μ) m w ↔ μ w = m := by
+  constructor
+  · intro ⟨hge, hent⟩
+    obtain ⟨w_m, hw_m⟩ := hHit
+    have h : μ w_m ≥ μ w := hent (μ w) (le_refl _) w_m (le_of_eq hw_m.symm)
+    have : μ w ≤ m := by rw [← hw_m]; exact h
+    exact (le_antisymm hge this).symm
+  · rintro rfl
+    exact ⟨le_refl _, fun _ hd _ hn' => le_trans hd hn'⟩
+
+/-- **Kennedy / @cite{fox-hackl-2006} bridge**: `IsMaxInf` of the "at least"
+    degree property at value m and world w holds iff the measure at w
+    equals m, under full surjectivity. Corollary of `isMaxInf_atLeast_of_hit`. -/
+theorem isMaxInf_atLeast_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
+    (hSurj : Function.Surjective μ) :
+    IsMaxInf (atLeastDeg μ) m w ↔ μ w = m :=
+  isMaxInf_atLeast_of_hit μ m w (hSurj m)
+
+/-- On ℕ, "more than m" has `HasMaxInf`: the discrete collapse rescues maximality.
+    Contrast with `moreThan_noMaxInf`: on dense scales, `HasMaxInf` fails. -/
+theorem moreThan_nat_hasMaxInf {W : Type*} (μ : W → ℕ) (w : W)
+    (hw : moreThanDeg μ 0 w) : HasMaxInf (moreThanDeg μ) w := by
+  refine ⟨μ w - 1, ?_, fun d hd w' hw' => ?_⟩
+  · have : μ w > 0 := hw; show μ w > μ w - 1; omega
+  · have : μ w' > μ w - 1 := hw'; have : μ w > d := hd; show μ w' > d; omega
+
+/-- "At most d" always has a maximally informative element: d₀ = μ(w).
+    Symmetric to `atLeast_hasMaxInf`. -/
+theorem atMost_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
+    HasMaxInf (atMostDeg μ) w :=
+  ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hw' hd⟩
+
+/-- **Kennedy / @cite{rouillard-2026} bridge**: `IsMaxInf` of "at most d" at
+    value m and world w holds iff the measure at w equals m. Symmetric to
+    `isMaxInf_atLeast_iff_eq`: the MIP derives exact meaning from "at most"
+    just as it does from "at least". -/
+theorem isMaxInf_atMost_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
+    (hSurj : Function.Surjective μ) :
+    IsMaxInf (atMostDeg μ) m w ↔ μ w = m := by
+  constructor
+  · intro ⟨hle, hent⟩
+    obtain ⟨w_m, hw_m⟩ := hSurj m
+    have h : μ w_m ≤ μ w := hent (μ w) (le_refl _) w_m (le_of_eq hw_m)
+    have : m ≤ μ w := hw_m ▸ h
+    exact le_antisymm hle this
+  · rintro rfl
+    exact ⟨le_refl _, fun _ hd _ hw' => le_trans hw' hd⟩
+
+-- ════════════════════════════════════════════════════
+-- § 5. MIP = Kennedy's Type-Shift
+-- ════════════════════════════════════════════════════
+
+/-! Kennedy's de-Fregean type-shift is the MIP applied to a monotone degree
+    property: for both "at least" (Kennedy direction) and "at most"
+    (@cite{rouillard-2026} direction), max⊨ at world w = μ(w), the true
+    value. So the MIP universally derives exact meaning from monotone
+    degree properties, regardless of monotonicity direction. -/
+
+/-- MIP derives exact meaning from "at least" (Kennedy's direction). -/
+theorem mip_atLeast_is_exact {W : Type*} (μ : W → α) (m : α) (w : W)
+    (hSurj : Function.Surjective μ) :
+    IsMaxInf (atLeastDeg μ) m w ↔ eqDeg μ m w :=
+  isMaxInf_atLeast_iff_eq μ m w hSurj
+
+/-- MIP derives exact meaning from "at most" (Rouillard's direction). -/
+theorem mip_atMost_is_exact {W : Type*} (μ : W → α) (m : α) (w : W)
+    (hSurj : Function.Surjective μ) :
+    IsMaxInf (atMostDeg μ) m w ↔ eqDeg μ m w :=
+  isMaxInf_atMost_iff_eq μ m w hSurj
+
+/-- The MIP is direction-invariant: "at least" and "at most" yield the
+    same exact meaning under maximal informativity. Kennedy's type-shift
+    and Rouillard's MIP are literally the same operation. -/
+theorem mip_direction_invariant {W : Type*} (μ : W → α) (m : α) (w : W)
+    (hSurj : Function.Surjective μ) :
+    IsMaxInf (atLeastDeg μ) m w ↔ IsMaxInf (atMostDeg μ) m w := by
+  rw [mip_atLeast_is_exact μ m w hSurj, mip_atMost_is_exact μ m w hSurj]
+
+end Semantics.Entailment.Extremum

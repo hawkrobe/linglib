@@ -42,12 +42,12 @@ preserving the independence of `Core/Semantics/` and `Core/Discourse/`.
 This module captures the layer taxonomy and the `Off` function (which
 layers are offensive = inconsistent with a correction). The directed
 reverse anaphora (RA*) mechanism that uses `Off` to selectively retract
-conditions is defined in `Theories.Semantics.Dynamic.DRT.Basic` as
+conditions is defined in `Semantics.Dynamic.DRT.Basic` as
 `LDRS.directedRA`.
 
-## See also: `Theories/Semantics/Composition/Layered.BiLayered`
+## See also: `Semantics/Composition/Layered.BiLayered`
 
-`Theories/Semantics/Composition/Layered.lean` defines a 2-layer Prop-valued
+`Semantics/Composition/Layered.lean` defines a 2-layer Prop-valued
 sibling `BiLayered W` (atIssue / notAtIssue, both `W → Prop`) with
 @cite{martinez-vera-2026}'s composition rules I/II/III. Use `LayeredProp`
 when LDRT's offensive-layer machinery is needed; use `BiLayered` when

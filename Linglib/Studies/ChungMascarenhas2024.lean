@@ -1,5 +1,5 @@
 import Linglib.Core.Probability.Confirmation
-import Linglib.Theories.Semantics.Conditionals.Probabilistic
+import Linglib.Semantics.Conditionals.Probabilistic
 import Mathlib.Probability.Distributions.Uniform
 
 /-!

@@ -1,7 +1,7 @@
 import Linglib.Core.Semantics.CommonGround
 import Mathlib.Data.Set.Basic
-import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
-import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
+import Linglib.Semantics.Modality.Kratzer.Flavor
+import Linglib.Semantics.Modality.Kratzer.Ordering
 import Mathlib.Data.Fin.Basic
 
 /-!

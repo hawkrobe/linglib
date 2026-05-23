@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Causation.Morphological
-import Linglib.Theories.Semantics.Lexical.EventStructure
+import Linglib.Semantics.Causation.Morphological
+import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Theories.Syntax.ArgumentStructure.Alternation
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Genericity.GenericsDynamic
+import Linglib.Semantics.Genericity.GenericsDynamic
 
 /-!
 # @cite{kirkpatrick-2024}: The Dynamics of Generics

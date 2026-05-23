@@ -29,7 +29,7 @@ interpretation functions (`Name_M` in Kamp & Reyle), arity-indexed
 interpretation tables, lookup arrays, or any `Nat → α` that doesn't
 participate in variable-binding semantics. Renaming those would conflate
 distinct primitives. (`KRModel.names : Nat → E` in
-`Theories/Semantics/Dynamic/DRT/Basic.lean` documents one such case.)
+`Semantics/Dynamic/DRT/Basic.lean` documents one such case.)
 
 ## Out of scope
 
@@ -97,7 +97,7 @@ end Assignment
     Used in trivalent semantics (@cite{spector-2025}, @cite{beaver-krahmer-2001})
     where `g(x) = none` means variable `x` is not valued. The trivalent
     *application* rule that turns this into the third value `#` lives with
-    the predicate machinery in `Theories/Semantics/Presupposition/`, not here. -/
+    the predicate machinery in `Semantics/Presupposition/`, not here. -/
 abbrev PartialAssign (D : Type*) := Nat → Option D
 
 namespace PartialAssign
@@ -172,7 +172,7 @@ end PartialAssign
     by typeclass search instead of mathlib's `Set` instances.
 
     Consumers: `Studies/Spector2025.lean` (trivalent),
-    `Theories/Semantics/Dynamic/PPCDRT/` (plural partial CDRT). -/
+    `Semantics/Dynamic/PPCDRT/` (plural partial CDRT). -/
 @[ext] structure PluralAssign (D : Type*) where
   /-- The membership predicate on atomic assignments. -/
   pred : PartialAssign D → Prop

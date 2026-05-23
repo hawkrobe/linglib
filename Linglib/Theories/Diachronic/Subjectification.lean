@@ -20,7 +20,7 @@ unidirectional, and that specific semantic domains exhibit this pattern.
 
 ## Connections
 
-- `Theories.Semantics.Modality.Narrog`: speaker-orientation level maps to
+- `Semantics.Modality.Narrog`: speaker-orientation level maps to
   subjectivity level; the directionality of modal change (see
   `Diachronic.ModalChange`) is an instance of subjectification.
 - `Semantics.Quantification.Binominal`: the bleaching cline (N+PP → evaluative → intensifier)

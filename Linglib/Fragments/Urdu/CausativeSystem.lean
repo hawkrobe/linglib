@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.Morphological
+import Linglib.Semantics.Causation.Morphological
 
 /-!
 # Urdu Causative Construction System
@@ -47,7 +47,7 @@ The discourse production study confirms key patterns:
 ## Bridges
 
 - Each construction is typed as `CausativeConstruction` from
-  `Theories/Semantics/Causation/MorphologicalCausation.lean`
+  `Semantics/Causation/MorphologicalCausation.lean`
 - `prototype` field encodes Table 25 semantic prototypes using
   `presentCausers`/`absentCausers`/`presentCausees`/`absentCausees`
 - Per-datum verification theorems check complexity, mediation,

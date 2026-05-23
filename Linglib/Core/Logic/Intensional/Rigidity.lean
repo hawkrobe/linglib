@@ -115,7 +115,7 @@ def precomp {W₁ W₂ τ : Type*} (g : W₂ → W₁) (f : Intension W₁ τ) :
     pre-composed intension `f ∘ g : Intension W₂ τ` is rigid whenever
     `f` is — constancy survives any relabeling of the input space.
 
-    Used by `Theories/Semantics/Tense/DeRe.lean` to lift a rigid
+    Used by `Semantics/Tense/DeRe.lean` to lift a rigid
     `TimeConcept` over `KContext` to a rigid intension over the
     holder's `WorldTimeIndex` alternative-shift. -/
 theorem IsRigid.precomp {W₁ W₂ τ : Type*}

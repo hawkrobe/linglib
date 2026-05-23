@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Questions.Partition.QUD
-import Linglib.Theories.Semantics.Questions.PrecisionProjection
+import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Scales.Scale

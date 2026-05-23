@@ -1,6 +1,6 @@
 import Linglib.Studies.KampReyle1993
-import Linglib.Theories.Semantics.Dynamic.DPL.Basic
-import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
+import Linglib.Semantics.Dynamic.DPL.Basic
+import Linglib.Semantics.Dynamic.CDRT.Basic
 import Linglib.Studies.Cooper2023
 import Linglib.Data.Examples.Schema
 
@@ -40,7 +40,7 @@ record is local — earned by exactly one consumer (this file's headline
 theorem) and not promoted to substrate. If a similar quartet appears
 in another phenomenon (e.g., a Modality quartet built on the
 existing Cooper-Kratzer bridge), the record can promote to
-`Theories/Semantics/Anaphora/Framework.lean` at that point.
+`Semantics/Anaphora/Framework.lean` at that point.
 
 ## Anchoring
 

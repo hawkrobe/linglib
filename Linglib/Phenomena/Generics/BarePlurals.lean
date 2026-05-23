@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.SortedOntology
+import Linglib.Semantics.Kinds.SortedOntology
 
 /-
 # Bare Plurals: Generic vs Existential Interpretation

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Supervaluation.TCS
+import Linglib.Semantics.Supervaluation.TCS
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 
@@ -9,7 +9,7 @@ import Mathlib.Tactic.Linarith
 
 The paper's worked 4-element example (described in the body text on
 p. 354, immediately above footnote 4), formalized against the substrate
-types in `Theories/Semantics/Supervaluation/TCS.lean`.
+types in `Semantics/Supervaluation/TCS.lean`.
 
 ## The model
 
@@ -57,7 +57,7 @@ TCS prediction direction matches the data.
 This file is anchored on the Cobreros-Egré-Ripley-van Rooij 2012 paper
 itself. Per CLAUDE.md "no bridge files" + "Theory examples to Phenomena"
 discipline, the worked example was extracted here from a previous
-embedding inside `Theories/Semantics/Supervaluation/TCS.lean`.
+embedding inside `Semantics/Supervaluation/TCS.lean`.
 -/
 
 namespace CobrerosEtAl2012
@@ -416,7 +416,7 @@ theorem tcs_categorical_vs_product_bounded
     tall, c is classically not-tall). Any Klein-style sound delineation
     derived from `M.interp .tall` would impose a scalar relation
     `R b c` on this pair (per
-    `Theories/Semantics/Comparison/Delineation.lean::IsSoundDelineation`),
+    `Semantics/Comparison/Delineation.lean::IsSoundDelineation`),
     over-generating where TCS says `b` and `c` are *both equally
     borderline* and the scalar relation should be unwarranted.
 

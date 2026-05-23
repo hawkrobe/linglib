@@ -1,5 +1,5 @@
 import Linglib.Features.Dimension
-import Linglib.Theories.Semantics.Measurement.Basic
+import Linglib.Semantics.Measurement.Basic
 
 /-!
 # English Measure Phrase Fragment
@@ -17,7 +17,7 @@ This fragment provides the English-specific data layer for measurement:
 The `Dimension` / `QuotientDimension` / `DimensionType` taxonomies live
 in `Features/Dimension.lean`. The `MeasureFn` structure and
 `MeasureFn.applyNumeral` semantics live in
-`Theories/Semantics/Measurement/Basic.lean`. This file
+`Semantics/Measurement/Basic.lean`. This file
 provides English lexical entries — pure data typed by those substrate
 types, following the Theories → Fragments dependency discipline.
 

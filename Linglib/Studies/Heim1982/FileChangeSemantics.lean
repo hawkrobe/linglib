@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Core.Update
+import Linglib.Semantics.Dynamic.Core.Update
 
 /-!
 # File Change Semantics

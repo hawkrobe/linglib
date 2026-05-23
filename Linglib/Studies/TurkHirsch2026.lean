@@ -1,9 +1,9 @@
 import Linglib.Features.InformationStructure
 import Linglib.Core.Logic.Intensional.Premise
 import Linglib.Core.UD
-import Linglib.Theories.Semantics.Alternatives.AltMeaning
-import Linglib.Theories.Semantics.Polarity.Operator
-import Linglib.Theories.Semantics.Focus.Interpretation
+import Linglib.Semantics.Alternatives.AltMeaning
+import Linglib.Semantics.Polarity.Operator
+import Linglib.Semantics.Focus.Interpretation
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Phenomena.Questions.PolarAnswers
 import Mathlib.Data.Set.Basic

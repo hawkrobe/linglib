@@ -25,7 +25,7 @@ showing they are algebraically equivalent. This file formalizes:
 ## The Connection
 
 ```
-Kratzer ordering source (Theories/Semantics/Modality/Kratzer.lean)
+Kratzer ordering source (Semantics/Modality/Kratzer.lean)
     ↓
 PlausibilityOrder (Core/Order/Plausibility.lean)
     ↓
@@ -100,7 +100,7 @@ structure AGMRevision (W : Type*) where
 
     This is exactly Kratzer's `atLeastAsGoodAs`, repackaged as a
     `PlausibilityOrder`. The bridge connects:
-    - Kratzer modal semantics (Theories/Semantics/Modality/Kratzer.lean)
+    - Kratzer modal semantics (Semantics/Modality/Kratzer.lean)
     - Preferential reasoning (System P axioms above)
     - Epistemic likelihood (Core/Scales/EpistemicScale/ via halpernLift) -/
 private lemma filter_sublist_of_imp {α : Type*} (l : List α)

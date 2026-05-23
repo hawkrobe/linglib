@@ -1,8 +1,8 @@
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Semantics.Spatial.Trace
-import Linglib.Theories.Semantics.Lexical.LevinClass
-import Linglib.Theories.Semantics.Aspect.Cumulativity
-import Linglib.Theories.Semantics.Aspect.DegreeAchievement
+import Linglib.Semantics.Spatial.Trace
+import Linglib.Semantics.Lexical.LevinClass
+import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Studies.Krifka1989
 import Linglib.Studies.Krifka1998
@@ -547,10 +547,10 @@ theorem k89_read_refines_k98_matches_fragment :
     → MereoTag → Boundedness → for/in licensing). This section
     verifies the **propositional** propagation chain at the typeclass
     level: given `[IsSincVerb θ]` (which bundles SINC + UP + CumTheta;
-    declared in `Theories/Semantics/Events/Aspect/Incremental.lean`),
+    declared in `Semantics/Events/Aspect/Incremental.lean`),
     QUA and CUM propagate through the verb's incremental theme to the
     VP via substrate's typeclass-form `qua_propagation` and
-    `cum_propagation` (`Theories/Semantics/Events/Aspect/Cumulativity.lean`).
+    `cum_propagation` (`Semantics/Events/Aspect/Cumulativity.lean`).
 
     These are propositional cousins of §3's full-pipeline tests — same
     K89 → K98 chain, but at the substrate level rather than the

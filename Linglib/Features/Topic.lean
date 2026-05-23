@@ -39,7 +39,7 @@ This file deliberately does NOT formalize:
 
 - Büring 2003's full [T,F]-marking + question hierarchy / D-tree
   semantics. That belongs in a future
-  `Theories/Semantics/Focus/Buring2003.lean` study or similar.
+  `Semantics/Focus/Buring2003.lean` study or similar.
 - Krifka 2008's frame-setting topics (§5.1.4) and delimitation
   topics — distinct concepts to add when consumers demand them.
 - @cite{fery-ishihara-2016} Ch 4 (Büring) argues for *eliminating*

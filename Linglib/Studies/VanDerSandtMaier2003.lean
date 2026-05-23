@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.DRT.Basic
+import Linglib.Semantics.Dynamic.DRT.Basic
 import Linglib.Phenomena.Negation.Denial
 import Linglib.Core.Semantics.ContentLayer
 
@@ -12,7 +12,7 @@ Formalization of directed reverse anaphora (RA*) applied to the paper's
 worked examples. Connects three linglib modules:
 
 - `Core.Semantics.ContentLayer` — `Off` (which layers are offensive)
-- `Theories.Semantics.Dynamic.DRT.Basic` — LDRT types and RA*
+- `Semantics.Dynamic.DRT.Basic` — LDRT types and RA*
 - `Phenomena.Negation.Denial` — empirical denial data
 
 ## Layer Naming Convention

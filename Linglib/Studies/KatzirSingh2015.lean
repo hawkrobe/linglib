@@ -1,10 +1,10 @@
-import Linglib.Theories.Semantics.Questions.Partition.QUD
-import Linglib.Theories.Semantics.Questions.PrecisionProjection
+import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Studies.Magri2009
-import Linglib.Theories.Semantics.Questions.Partition.Constructors
+import Linglib.Semantics.Questions.Partition.Constructors
 
 /-!
 # Economy of Structure and Information

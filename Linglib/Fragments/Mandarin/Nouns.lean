@@ -1,7 +1,7 @@
 import Linglib.Core.Word
 import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.Mandarin.Classifiers
-import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-!
 # Mandarin Chinese Noun Lexicon Fragment

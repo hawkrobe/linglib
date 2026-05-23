@@ -2,9 +2,9 @@ import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
-import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Theories.Semantics.Kinds.MeaningPreservation
-import Linglib.Theories.Semantics.Classifier.Basic
+import Linglib.Semantics.Presupposition.MaximizePresupposition
+import Linglib.Semantics.Kinds.MeaningPreservation
+import Linglib.Semantics.Classifier.Basic
 import Linglib.Studies.Schwarz2009
 import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Cantonese.Definiteness
@@ -219,7 +219,7 @@ do covertly what you can do overtly"), inherited from
 article means ι is unblocked — bare N can route to a unique-definite
 reading via the type-shift hierarchy of @cite{dayal-2004}.
 
-The substrate has Dayal's hierarchy (`Theories/Semantics/Kinds/MeaningPreservation.lean`),
+The substrate has Dayal's hierarchy (`Semantics/Kinds/MeaningPreservation.lean`),
 already used by `Moroney2021.lean`. The Mandarin parallel theorem is
 the same `selectShift` instance: when no shift is blocked, ι is
 selected first (Meaning Preservation). -/
@@ -278,7 +278,7 @@ placeholder theorem. -/
 /-! Paper p. 524 (eq. 50): **Index! = "Represent and bind all possible
 indices"**. Jenks derives this from Heim 1990 Maximize Presupposition
 via Schlenker 2012's Gricean reduction. The substrate provides
-`Theories.Semantics.Presupposition.MaximizePresupposition.mpConstraintOf`,
+`Semantics.Presupposition.MaximizePresupposition.mpConstraintOf`,
 parametric over an arbitrary candidate type and strength function —
 the natural slot for any MP-instance.
 
@@ -287,7 +287,7 @@ sufficient to demonstrate the principle's qualitative behavior
 (prefer indexed when index is available; neutral otherwise). A
 fuller instantiation would parameterize over `NominalKind F` and the
 discourse-context predicate licensing the index — that refactor
-belongs in a substrate file (`Theories/Semantics/Presupposition/Index.lean`)
+belongs in a substrate file (`Semantics/Presupposition/Index.lean`)
 when a second consumer needs it. -/
 
 /-- Index! candidate: an indexed alternative is in the running only

@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Gradability.Basic
+import Linglib.Semantics.Gradability.Basic
 import Linglib.Phenomena.Gradability.Vagueness
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
@@ -17,7 +17,7 @@ ALL, and indefinite otherwise.
 
 The *general* supervaluation framework (specification spaces, super-truth,
 D operator, classical validity biconditional) lives in
-`Theories/Semantics/Supervaluation/Basic.lean`. This study file
+`Semantics/Supervaluation/Basic.lean`. This study file
 **specializes** that framework to threshold-based precisifications for
 gradable adjectives, and proves results specific to degree semantics:
 
@@ -41,7 +41,7 @@ P ∧ P from P ∧ ¬P) is resolved by supervaluation — see
 
 @cite{klein-1980}'s comparative — "∃ C where tall(a,C) ∧ ¬tall(b,C)" —
 is the existential dual of supervaluation. See
-`Theories/Semantics/Comparison/Delineation.lean`.
+`Semantics/Comparison/Delineation.lean`.
 -/
 
 open Phenomena.Gradability

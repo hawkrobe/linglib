@@ -127,7 +127,7 @@ def trueAtWorld (φ : W → PartialAssign D → Truth3) (w : W) : Prop :=
 
 /-! ### Abstract Transparency
 
-Originally split out into `Theories/Semantics/Presupposition/Transparency.lean`,
+Originally split out into `Semantics/Presupposition/Transparency.lean`,
 but Spector 2025 is the only consumer; per the project's N≥2 promotion
 discipline this co-locates the abstract API with its sole user until a
 second consumer (e.g., a future Mandelkern 2022 study file) lands.
@@ -628,7 +628,7 @@ Key changes from the simplified system:
     brings `PluralAssign`, `singularAt`, `singular`, `restrict`, `defined`,
     `null`, `ofPred`, `singleton`, `sumDref` into scope). Spector's static
     reuse is one consumer; the PPCDRT substrate
-    (`Theories/Semantics/Dynamic/PPCDRT/`) is the other — once linglib has
+    (`Semantics/Dynamic/PPCDRT/`) is the other — once linglib has
     ≥2 consumers of plural-assignment machinery it belongs in `Core`. -/
 
 section PluralSemantics

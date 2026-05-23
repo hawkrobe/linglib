@@ -35,7 +35,7 @@ typology + superlative strategies). Fragment-importable; mirrors the
 - **`DegreeWordType` is Beck et al. 2009's three-way classification.** Other
   approaches (Kennedy 1999, Beck 2011, Bochnak 2013) refine the typology with
   scale-structure and degree-argument parameters; those live in
-  `Theories/Semantics/Degree/`.
+  `Semantics/Degree/`.
 
 ## Out of scope
 

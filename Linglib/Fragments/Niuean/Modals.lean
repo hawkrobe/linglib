@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.Typology
 
 /-!
 # Niuean Modal Inventory

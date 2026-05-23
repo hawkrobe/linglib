@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Attitudes.Representationality
-import Linglib.Theories.Semantics.Attitudes.Preferential
-import Linglib.Theories.Semantics.Attitudes.Doxastic
+import Linglib.Semantics.Attitudes.Representationality
+import Linglib.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Core.Agent.Emotion
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Bilateral.BUS
+import Linglib.Semantics.Dynamic.Bilateral.BUS
 
 /-!
 # Elliott & Sudo (2025): Free Choice with Anaphora

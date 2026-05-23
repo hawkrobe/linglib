@@ -11,7 +11,7 @@ argument theta roles. The two predicates live next to the types they
 project from: severing in `VoiceFlavor.thetaRole`
 (`Theories/Syntax/Minimalist/Voice.lean`) and lexicalist in
 `VerbCore.predictedSubjectTheta`
-(`Theories/Semantics/Lexical/VerbEntry.lean`). Both operate over proto-role
+(`Semantics/Lexical/VerbEntry.lean`). Both operate over proto-role
 entailment profiles (`subjectEntailments` / `objectEntailments`) rather
 than the legacy `subjectTheta` / `objectTheta` labels (which were
 removed from `VerbCore`). Studies comparing the two accounts apply both

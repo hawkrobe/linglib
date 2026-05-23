@@ -1,9 +1,9 @@
-import Linglib.Theories.Semantics.Modality.Exclusion
+import Linglib.Semantics.Modality.Exclusion
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Theories.Semantics.Lexical.LevinClass
-import Linglib.Theories.Semantics.Lexical.MeaningComponents
+import Linglib.Semantics.Lexical.LevinClass
+import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Data.Examples.Schema
 
 /-!

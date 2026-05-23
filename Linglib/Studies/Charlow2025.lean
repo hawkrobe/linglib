@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.DPL.Basic
+import Linglib.Semantics.Dynamic.DPL.Basic
 import Linglib.Core.Logic.Bilateral.Defs
 
 /-!
@@ -20,7 +20,7 @@ on the image of the lifted interpretation.
 Per linglib anchoring discipline (CLAUDE.md), framework substrate originating
 with a paper lives in the originating Studies file until ≥ 2 paper-anchored
 consumers exist. Currently only this file consumes the lift framework, so
-the typeclasses live here. Promotion to `Theories/Semantics/Dynamic/Lift.lean`
+the typeclasses live here. Promotion to `Semantics/Dynamic/Lift.lean`
 is queued for when a Mandelkern2022 or Gotham2019 study lands.
 
 The framework is **strictly more general than `Core.Logic.Bilateral.IsBilateral`**:
@@ -37,7 +37,7 @@ formalizes the partition of dynamic-anaphora frameworks into
 Charlow 2025 strengthens the state-threading side: any two lifts that
 satisfy Emb/Inv/Neg over the same substrate δ are isomorphic on the image
 of `liftInterp`. This subsumes the prose "three incompatible DNE solutions"
-table in `Theories/Semantics/Dynamic/Connectives/Defs.lean §49-78` for the
+table in `Semantics/Dynamic/Connectives/Defs.lean §49-78` for the
 state-threading row — bilateral and ICDRT-bilateral are not incompatible
 choices, they are isomorphic presentations once the substrate is fixed.
 TTR remains genuinely outside the lift framework (its classical metalanguage

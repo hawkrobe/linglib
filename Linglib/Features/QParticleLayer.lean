@@ -7,7 +7,7 @@ left periphery. Used cross-paper by typological work on question
 particles (Bhatt-Dayal 2020, Theiler 2021, Simik 2024, Zheng 2025,
 Seeliger-Repp 2018).
 
-Lives in `Features/` (not `Theories/Semantics/Questions/`) because it
+Lives in `Features/` (not `Semantics/Questions/`) because it
 is a feature taxonomy with no semantic commitments — sibling of
 `Polarity`, `Mood`, `Evidentiality`.
 -/

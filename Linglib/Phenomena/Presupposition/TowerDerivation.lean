@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Presupposition.Basic
-import Linglib.Theories.Semantics.Presupposition.LocalContext
+import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 
@@ -18,7 +18,7 @@ Core.Context.Tower (ContextTower, push, depth)
     ↓
 Core.Context.Shifts (attitudeShift)
     ↓
-Theories.Semantics.Presupposition.LocalContext (LocalCtx, depth, filtering)
+Semantics.Presupposition.LocalContext (LocalCtx, depth, filtering)
     ↓
 This file: tower depth = local context depth, projection patterns
     ↓

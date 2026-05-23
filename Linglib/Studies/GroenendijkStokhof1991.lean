@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.DPL.Basic
+import Linglib.Semantics.Dynamic.DPL.Basic
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 

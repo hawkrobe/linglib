@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Lexical.EventStructure
+import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 
 /-!

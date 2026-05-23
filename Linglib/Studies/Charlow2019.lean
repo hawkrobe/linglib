@@ -8,9 +8,9 @@ are retained.
 
 -/
 
-import Linglib.Theories.Semantics.Dynamic.DPL.Basic
-import Linglib.Theories.Semantics.Dynamic.Connectives.CCP
-import Linglib.Theories.Semantics.Dynamic.Effects.HasFiberedLookup
+import Linglib.Semantics.Dynamic.DPL.Basic
+import Linglib.Semantics.Dynamic.Connectives.CCP
+import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
 import Linglib.Core.CylindricAlgebra
 
 namespace Semantics.Dynamic.Charlow2019

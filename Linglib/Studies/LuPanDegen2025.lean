@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Focus.BackgroundedIslands
+import Linglib.Semantics.Focus.BackgroundedIslands
 import Linglib.Studies.Ross1967
 import Linglib.Studies.HofmeisterSag2010
 import Linglib.Phenomena.Islands.MannerOfSpeaking
@@ -6,15 +6,15 @@ import Linglib.Studies.Sag2010
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Theories.Semantics.Lexical.LevinClass
-import Linglib.Theories.Semantics.Lexical.MeaningComponents
+import Linglib.Semantics.Lexical.LevinClass
+import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Bridge: Backgrounded Islands → Island Classification
 @cite{lu-pan-degen-2025}
 
-Connects the formal backgroundedness model (Theories/Semantics/Focus) to the
+Connects the formal backgroundedness model (Semantics/Focus) to the
 shared island infrastructure in `Phenomena/FillerGap/Islands/Data.lean` and
 to the lexical infrastructure in `Core/Lexical/LevinClass.lean`.
 

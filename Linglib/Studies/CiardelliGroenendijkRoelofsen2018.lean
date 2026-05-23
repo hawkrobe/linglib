@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Questions.Basic
-import Linglib.Theories.Semantics.Questions.Hamblin
-import Linglib.Theories.Semantics.Questions.Resolution
+import Linglib.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Resolution
 
 /-!
 # @cite{ciardelli-groenendijk-roelofsen-2018}: Inquisitive Semantics
@@ -8,7 +8,7 @@ import Linglib.Theories.Semantics.Questions.Resolution
 
 Substrate-audit study file for @cite{ciardelli-groenendijk-roelofsen-2018}
 *Inquisitive Semantics* (OUP, Oxford Surveys in Semantics and
-Pragmatics 6). The substrate of `Theories/Semantics/Questions/` IS this paper's
+Pragmatics 6). The substrate of `Semantics/Questions/` IS this paper's
 formalisation: every CGR Chapter-2 and Chapter-3 definition has a
 direct counterpart in `Question`. This file's job is to make the
 correspondence explicit, by (a) docstring-mapping each CGR definition
@@ -90,17 +90,17 @@ already implements the paper).
   is at the meaning side (`Question W`); the syntactic translation
   layer is not formalised here.
 * **Ch 6** Disjunction, clause typing, intonation: partial coverage in
-  `Theories/Semantics/Mood/` and `Phenomena/Focus/`.
+  `Semantics/Mood/` and `Phenomena/Focus/`.
 * **Ch 7** Conditionals: the substrate exposes `⇨` via the
   `HeytingAlgebra` instance; @cite{ciardelli-groenendijk-roelofsen-2018}
   Ch 7's full empirical analysis lives in
-  `Theories/Semantics/Conditionals/` and study files there.
+  `Semantics/Conditionals/` and study files there.
 * **Ch 8** Inquisitive epistemic logic / `know` and `wonder`: see
-  `Theories/Semantics/Attitudes/` and `Studies/TheilerRoelofsenAloni2018.lean`.
+  `Semantics/Attitudes/` and `Studies/TheilerRoelofsenAloni2018.lean`.
 * **Ch 9** Comparison with alternative semantics, partition semantics,
   inquisitive indifference: covered piecemeal in
   `Studies/{Hamblin1973_TODO, GroenendijkStokhof1984}.lean`
-  (alt and partition) and `Theories/Semantics/Questions/` (as topical
+  (alt and partition) and `Semantics/Questions/` (as topical
   bridges).
 -/
 

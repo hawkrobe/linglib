@@ -1,10 +1,10 @@
 import Linglib.Core.CoreConcept
 import Linglib.Features.Number
 import Linglib.Core.Tree
-import Linglib.Theories.Semantics.Quantification.Lexicon
-import Linglib.Theories.Semantics.Alternatives.Source
-import Linglib.Theories.Semantics.Alternatives.Indirect
-import Linglib.Theories.Semantics.Alternatives.Structural
+import Linglib.Semantics.Quantification.Lexicon
+import Linglib.Semantics.Alternatives.Source
+import Linglib.Semantics.Alternatives.Indirect
+import Linglib.Semantics.Alternatives.Structural
 import Linglib.Theories.Pragmatics.AvoidAmbiguity
 import Linglib.Fragments.French.Determiners
 import Linglib.Fragments.English.Determiners
@@ -83,7 +83,7 @@ set_option autoImplicit false
 namespace JereticEtAl2025
 
 open Core.CoreConcept
-open Theories.Semantics.Quantification.Lexicon (QuantifierEntry)
+open Semantics.Quantification.Lexicon (QuantifierEntry)
 
 -- ============================================================================
 -- §1  Languages and quantifier slots

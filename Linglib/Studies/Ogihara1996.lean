@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Theories.Semantics.Tense.SOT.Ambiguity
+import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.SOT.Ambiguity
 import Linglib.Data.Examples.Schema
 
 /-!
@@ -12,7 +12,7 @@ a bound variable that receives the matrix event time, producing the
 simultaneous reading.
 
 The substrate enum `PastReading` lives in
-`Theories/Semantics/Tense/SOT/Ambiguity.lean`. This Studies file
+`Semantics/Tense/SOT/Ambiguity.lean`. This Studies file
 attributes the two-reading commitment to @cite{ogihara-1996}, derives
 the two predictions, and records the contrast with @cite{kratzer-1998}
 (deletion, not ambiguity).

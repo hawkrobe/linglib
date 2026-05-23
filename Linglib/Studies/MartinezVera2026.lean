@@ -1,10 +1,10 @@
 import Mathlib.Data.Set.Insert
-import Linglib.Theories.Semantics.Composition.Layered
-import Linglib.Theories.Semantics.Highlighting
+import Linglib.Semantics.Composition.Layered
+import Linglib.Semantics.Highlighting
 import Linglib.Theories.Discourse.EvidentialIllocution
 import Linglib.Features.Evidentiality
 import Linglib.Core.Discourse.Roles
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Hamblin
 import Linglib.Phenomena.Verum.Basic
 import Linglib.Studies.Hohle1992
 import Linglib.Studies.RomeroHan2004
@@ -66,11 +66,11 @@ Three empirical signatures:
 
 | Substrate | Provides |
 |-----------|----------|
-| `Theories/Semantics/Composition/Layered` | `BiLayered W` ⟨A, N⟩ pair, three composition rules |
-| `Theories/Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
+| `Semantics/Composition/Layered` | `BiLayered W` ⟨A, N⟩ pair, three composition rules |
+| `Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
 | `Theories/Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
 | `Features/Evidentiality` | `EvidentialSource` (`direct`, `hearsay`, `inference`) |
-| `Theories/Semantics/Questions/Hamblin` | `Question.polar` for the polar QUD |
+| `Semantics/Questions/Hamblin` | `Question.polar` for the polar QUD |
 
 ## Methodological note
 
@@ -106,7 +106,7 @@ variable {W : Type*}
     Note: the polar reduction does NOT extend to constituent-focus
     contrast cases (paper §3 examples 22–28), where alts may include
     multiple elements with overlap. Those would consume the full
-    `Theories/Semantics/Exhaustification.Excluder` machinery. -/
+    `Semantics/Exhaustification.Excluder` machinery. -/
 def miFelicitous (c : HighlightingContext W) (alts : Set (Set W))
     (S : BiLayered W) : Prop :=
   ∃ q ∈ alts, Highlighted c q ∧ q ⊆ ({ w | S.atIssue w } : Set W)ᶜ

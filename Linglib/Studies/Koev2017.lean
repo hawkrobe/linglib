@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Semantics.Tense.Evidential
+import Linglib.Semantics.Events.Basic
+import Linglib.Semantics.Tense.Evidential
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 
@@ -176,7 +176,7 @@ open Fragments.Slavic.Bulgarian.Evidentials
 /-! @cite{koev-2017} Definition 24: two events satisfy △ when either
     their temporal traces don't overlap (standard indirect evidence) or
     they occur at different locations (smoke-from-chimney scenario).
-    Inlined from former `Theories/Semantics/Events/SpatiotemporalDistance.lean`
+    Inlined from former `Semantics/Events/SpatiotemporalDistance.lean`
     — single-consumer (this file) substrate, paper-anchored entirely on
     Koev 2017. Architectural note: `Event Time` lacks a built-in location
     field, so △ is parameterized by an external `loc : Event Time → L`. -/

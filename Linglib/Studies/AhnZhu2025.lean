@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.ArgumentStructure.Relational
 
 /-
 # Mandarin Demonstrative Semantics

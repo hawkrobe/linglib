@@ -402,7 +402,7 @@ theorem hierarchy_ordering : nsRank < suRank ∧ suRank < skRank :=
 /-! Connect the nanosyntactic spellout results to the typed indefinite
     entries in the fragment files. The fragment entries use the
     @cite{haspelmath-1997} function-coverage substrate; the D&A typology
-    is a projection living in `Theories/Semantics/Quantification/DeganoAloni2025.lean`.
+    is a projection living in `Semantics/Quantification/DeganoAloni2025.lean`.
     Dekier's syntactic hierarchy is the candidate counterpart on the
     morphological side; the bridge here pairs each Fragment entry's
     function coverage with the lexicon's spellout result. -/

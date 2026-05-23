@@ -1,8 +1,8 @@
 import Linglib.Core.Word
 import Linglib.Fragments.Mandarin.QuestionParticles
-import Linglib.Theories.Semantics.Modality.Kernel
+import Linglib.Semantics.Modality.Kernel
 import Linglib.Features.QParticleLayer
-import Linglib.Theories.Semantics.Questions.Singleton
+import Linglib.Semantics.Questions.Singleton
 import Linglib.Studies.BhattDayal2020
 
 /-!
@@ -394,7 +394,7 @@ theorem nandaoFullFelicity_declarative_iff {p : Set World} [DecidablePred p]
   - p = `isRaining` — the question content
 
 The Kernel-side bias check is `raincoat_nandao_felicitous` (proven in
-`Theories/Semantics/Modality/Kernel.lean` from explicit cardinality
+`Semantics/Modality/Kernel.lean` from explicit cardinality
 counts on `World4`). Pairing it with the singleton presupposition
 yields integrated felicity at the §5 level. The §1 datum `biasedUse`
 records the same scenario as empirical data (`evidentialBias = true`,

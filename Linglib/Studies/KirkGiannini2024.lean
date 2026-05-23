@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Quotation.Mixed
-import Linglib.Theories.Semantics.Reference.Monsters
+import Linglib.Semantics.Quotation.Mixed
+import Linglib.Semantics.Reference.Monsters
 import Linglib.Phenomena.Negation.Denial
 import Linglib.Studies.Maier2014
 import Linglib.Studies.HarrisPotts2009
@@ -386,7 +386,7 @@ def kgEmbeddingShifts {W E P T : Type*} :
    Core.Context.identityShift]  -- image of 𝔄
 
 /--
-**Bridge to Kaplan's no-monster thesis** (`Theories/Semantics/Reference/
+**Bridge to Kaplan's no-monster thesis** (`Semantics/Reference/
 Monsters.lean`). K-G's `†` is a content operator (it shifts the world
 component of the quotative interpretation), NOT a context operator.
 K-G's apparatus, projected to Kaplan-context space, contributes only

@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Gradability.Classification
-import Linglib.Theories.Semantics.Composition.Coercion
+import Linglib.Semantics.Gradability.Classification
+import Linglib.Semantics.Composition.Coercion
 import Linglib.Studies.Kamp1975
 import Linglib.Studies.Partee2010
 import Linglib.Data.Examples.Schema

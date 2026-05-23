@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Modal.AtOperator
+import Linglib.Semantics.Tense.Modal.AtOperator
 import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Fragments.English.Auxiliaries
 
@@ -26,7 +26,7 @@ Present and for the Past. In D. Beaver, S. Kaufmann, B. Clark, & L. Casillas
 ## Architecture
 
 - The `AT` and `atForward` primitives live in
-  `Theories/Semantics/Tense/AT.lean`.
+  `Semantics/Tense/AT.lean`.
 - Branching-time, settledness, and diversity live in
   `Core/Modality/HistoricalAlternatives.lean`.
 - This file composes them into Condoravdi's specific operators and

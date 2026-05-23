@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Aspect.Basic
-import Linglib.Theories.Semantics.Aspect.SubintervalProperty
+import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Core.Time.Interval.Basic
-import Linglib.Theories.Semantics.Tense.TemporalAdverbials
+import Linglib.Semantics.Tense.TemporalAdverbials
 import Linglib.Studies.IatridouEtAl2001
 import Linglib.Studies.Kiparsky2002
 
@@ -35,7 +35,7 @@ contribution. The substrate below extends IAI 2001's PTS with the IZ
 
 ## Status
 
-Substrate inherited from `Theories/Semantics/Tense/PTS.lean` (deleted;
+Substrate inherited from `Semantics/Tense/PTS.lean` (deleted;
 relocated here per CLAUDE.md graduation rule). Verified against the
 IZ 2021 PDF: the abbreviation table (PTS, UTS, LB, RB, AI, BEI, NPI)
 confirms the terminology; the "in years / until unification" is the

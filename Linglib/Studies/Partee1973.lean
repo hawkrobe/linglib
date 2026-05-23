@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Tense.Compositional
-import Linglib.Theories.Semantics.Tense.SOT.Decomposition
-import Linglib.Theories.Semantics.Reference.KaplanLD
+import Linglib.Semantics.Tense.Compositional
+import Linglib.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Reference.KaplanLD
 import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
@@ -21,7 +21,7 @@ theoretical vocabularies.
 For per-paper tense theory formalizations, see the sibling
 `Studies/` files (Abusch1997, VonStechow2009, Kratzer1998,
 Ogihara1996, Klecha2016, Sharvit2003, Wurmbrand2014, etc.) and
-`Theories/Semantics/Tense/`.
+`Semantics/Tense/`.
 
 ## The Analogy
 

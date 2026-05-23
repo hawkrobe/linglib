@@ -1,7 +1,7 @@
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Theories.Semantics.Causation.Strength
-import Linglib.Theories.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Causation.Strength
+import Linglib.Semantics.Plurality.Distributivity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Data.Fintype.Fin

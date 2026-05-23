@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.Expressives.Basic
-import Linglib.Theories.Semantics.Alternatives.Structural
-import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Semantics.Alternatives.Structural
+import Linglib.Semantics.Entailment.Polarity
 
 /-!
 # @cite{lo-guercio-2025} — Anti-Conventional Implicatures
@@ -21,7 +21,7 @@ The mechanism parallels:
 - ACIs: compare CI content (Maximize Conventional Implicatures!)
 
 All three are instances of `violatesMaximize` from
-`Theories/Semantics/Alternatives/Structural.lean`, applied to different
+`Semantics/Alternatives/Structural.lean`, applied to different
 content dimensions; `violatesMCIs` is the CI-content instantiation.
 
 ## The MCIs! Principle (@cite{lo-guercio-2025} def 15)

@@ -13,7 +13,7 @@ Completes the IL semantic rule toolkit with:
 
 These are the *IL-level* operators — the primitives from which Kratzer's modal
 semantics, tense operators, and PTQ translations are all derived. Kratzer's
-richer framework (modal base + ordering source) in `Theories/Semantics/Modality/`
+richer framework (modal base + ordering source) in `Semantics/Modality/`
 generalizes `box`/`diamond` here.
 -/
 
@@ -149,7 +149,7 @@ theorem identIntens_up {a : Ty} (x y : F.Denot a)
 
     DWP Semantic Rule B.13. In Montague's original IL, □ quantifies
     over *all* indices — it is S5 necessity. Kratzer's framework
-    (`Theories/Semantics/Modality/Kratzer/`) restricts quantification
+    (`Semantics/Modality/Kratzer/`) restricts quantification
     to accessible worlds via a modal base and ordering source. -/
 def box (p : F.Denot .prop) : F.Denot .t :=
   ∀ i : F.Index, p i

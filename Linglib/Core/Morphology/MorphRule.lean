@@ -30,7 +30,7 @@ semantic relevance to the stem:
 A `MorphRule σ` transforms a stem's surface form, morphosyntactic features,
 and meaning of type `σ` simultaneously. Rules where the word-level semantic
 contribution is delegated to a higher composition layer (e.g., tense rules
-that delegate to `Theories/Semantics/Tense/`, agreement rules that contribute
+that delegate to `Semantics/Tense/`, agreement rules that contribute
 no truth-conditional meaning) carry `delegatedSemantics := true`. The Bool
 flag is **not** a claim that the morpheme is meaningless — Bybee 1985 Ch 1
 §3 explicitly argues against the vacuity-of-inflection position. It tracks
@@ -311,7 +311,7 @@ structure MorphRule (σ : Type) where
   semEffect : σ → σ
   /-- Is the word-level semantic contribution delegated to a higher
       composition layer? (Set `true` for agreement, tense, etc., where
-      `Theories/Semantics/{Tense,Aspect,Modality,Agreement}/` handle
+      `Semantics/{Tense,Aspect,Modality,Agreement}/` handle
       the meaning. NOT a claim that the morpheme is meaningless —
       see file docstring.) -/
   delegatedSemantics : Bool := false

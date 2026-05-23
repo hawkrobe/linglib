@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.Polarity
 
 /-!
 # Neo-Gricean Pragmatics: Basic Definitions

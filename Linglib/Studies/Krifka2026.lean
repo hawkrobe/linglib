@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Kinds.Anaphora
+import Linglib.Semantics.Kinds.Anaphora
 
 /-!
 # Anaphora for Concepts, Kinds, and Parts

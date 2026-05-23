@@ -1,6 +1,6 @@
 import Linglib.Data.WALS.Features.F110A
 import Linglib.Data.WALS.Features.F111A
-import Linglib.Theories.Semantics.Causation.Morphological
+import Linglib.Semantics.Causation.Morphological
 
 /-!
 # Song 1996: Causative Construction Typology
@@ -17,7 +17,7 @@ Pylkkänen 2008 Voice-bundling × selection typology lives at
 `Studies/Pylkkanen2008.lean` §13 (Pylkkänen's
 substrate; not subsumed by Song's). Comrie 1989's compact/morphological/
 periphrastic complexity scale lives at
-`Theories/Semantics/Causation/Morphological.CausativeComplexity` (the
+`Semantics/Causation/Morphological.CausativeComplexity` (the
 substrate Song's `toComplexity` projects into).
 
 This file replaces a previous 41-LOC `Studies/Song1996.lean` that was an
@@ -103,7 +103,7 @@ def CausativeConstructionType.isImplicative : CausativeConstructionType → Bool
     - A lexical fusion with no separable morpheme (English *kill*)
 
     Note: `CausativeMorphology.lexical` (no separable morpheme) and
-    `Theories/Semantics/Causation/Morphological.CausativeComplexity.lexical`
+    `Semantics/Causation/Morphological.CausativeComplexity.lexical`
     (most-compact end of Comrie's complexity scale) share the constructor
     name `lexical` but are NOT semantically equivalent. The first is a
     morpheme-shape claim; the second is a construction-complexity claim.

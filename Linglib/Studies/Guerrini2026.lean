@@ -1,9 +1,9 @@
-import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
-import Linglib.Theories.Semantics.Genericity.Generics
-import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Theories.Semantics.Plurality.Cumulativity
-import Linglib.Theories.Semantics.Plurality.Trivalent
-import Linglib.Theories.Semantics.Composition.Tree
+import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Genericity.Generics
+import Linglib.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Plurality.Cumulativity
+import Linglib.Semantics.Plurality.Trivalent
+import Linglib.Semantics.Composition.Tree
 import Linglib.Core.Logic.Truth3
 import Linglib.Studies.TesslerGoodman2019
 import Linglib.Phenomena.Generics.KindReference

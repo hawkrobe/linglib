@@ -1,15 +1,15 @@
 import Linglib.Core.Mereology
-import Linglib.Theories.Semantics.Plurality.Algebra
-import Linglib.Theories.Semantics.Plurality.Cover
+import Linglib.Semantics.Plurality.Algebra
+import Linglib.Semantics.Plurality.Cover
 import Linglib.Features.PrivativePair
 import Linglib.Features.Number
 import Linglib.Features.Person
 import Linglib.Features.Gender
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Phenomena.Plurals.Multiplicity
-import Linglib.Theories.Semantics.Presupposition.PhiFeatures
-import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
+import Linglib.Semantics.Presupposition.PhiFeatures
+import Linglib.Semantics.Presupposition.MaximizePresupposition
+import Linglib.Semantics.Quantification.UnifiedUniversal
 
 /-!
 # Sauerland (2003): A New Semantics for Number
@@ -26,7 +26,7 @@ chapter "The Plural is Semantically Unmarked."
 Number features are **presuppositional partial identity functions** on the
 entity domain, ordered by `PrivativePair.specLevel`. The general
 presuppositional framework (`phiPresup`, `sgSem`, `plSem`, etc.) is in
-`Theories.Semantics.Presupposition.PhiFeatures`; this file applies it to
+`Semantics.Presupposition.PhiFeatures`; this file applies it to
 Sauerland's specific arguments about number semantics.
 
 ## Key Results (study-specific)
@@ -480,7 +480,7 @@ is non-atomic (more than one).
 On the modern (2020s) account (@cite{delpinal-bassi-sauerland-2024}),
 this is derived via presuppositional exhaustification (pex): pex over
 {⟦Sg⟧, ⟦Pl⟧} presupposes the negation of [Sg]'s presupposition (= ¬Atom).
-See `Theories/Semantics/Exhaustification/Presuppositional.lean`.
+See `Semantics/Exhaustification/Presuppositional.lean`.
 
 ## Bridge to `Phenomena.Plurals.Multiplicity`
 
@@ -504,7 +504,7 @@ This means number competition falls under `violatesMP` (presuppositional
 competition: same assertion, different presupposition strength), NOT
 under `violatesConversationalPrinciple` (at-issue competition: different
 truth conditions). Both operators are defined in
-`Theories/Semantics/Alternatives/Structural.lean`, and the distinction
+`Semantics/Alternatives/Structural.lean`, and the distinction
 between them is exactly Sauerland's theoretical contribution.
 -/
 

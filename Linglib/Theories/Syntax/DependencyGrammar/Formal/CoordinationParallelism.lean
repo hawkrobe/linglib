@@ -24,8 +24,9 @@ coordination is just catena-ellipsis. The CSC follows from requiring symmetric
 
 ## Bridges
 
-- → `Coordination.lean`: extends with sharing type classification;
-  reuses `ex_rnr`, `checkCatMatch`, `checkArgStrMatch`
+- → `Coordination.lean`: consumes the `enhanceSharedDeps`,
+  `checkCatMatch`, `checkArgStrMatch` substrate functions and adds a
+  sharing-type classification on top.
 - → `Catena.lean`: shared material forms catenae (proven)
 - → `Ellipsis.lean`: gapping = catena-ellipsis in coordination
 - → `Phenomena/Ellipsis/Gapping.lean`: gapping direction ↔ sharing direction
@@ -59,10 +60,11 @@ inductive SharingType where
     @cite{osborne-2019}. -/
 def parallelConjuncts (t : DepTree) (c1 c2 : Nat) : Bool :=
   let isCoreArg (r : UD.DepRel) := r == .nsubj || r == .obj || r == .iobj
+  -- `insertionSort` is kernel-decidable; see `Core/Dependency/Projection.projection`.
   let rels1 := t.deps.filter (λ d => d.headIdx == c1 && isCoreArg d.depType)
-    |>.map (·.depType) |>.mergeSort (·.toString ≤ ·.toString) |>.eraseDups
+    |>.map (·.depType) |>.insertionSort (·.toString ≤ ·.toString) |>.eraseDups
   let rels2 := t.deps.filter (λ d => d.headIdx == c2 && isCoreArg d.depType)
-    |>.map (·.depType) |>.mergeSort (·.toString ≤ ·.toString) |>.eraseDups
+    |>.map (·.depType) |>.insertionSort (·.toString ≤ ·.toString) |>.eraseDups
   rels1.length == rels2.length && rels1.all rels2.contains
 
 /-- Get shared dependents between two conjuncts: deps that have the same
@@ -94,9 +96,18 @@ def ex_forwardSharing : DepTree :=
 def ex_forwardSharing_enhanced : DepGraph :=
   Coordination.enhanceSharedDeps ex_forwardSharing
 
--- Backward sharing (RNR): reuse `Coordination.ex_rnr`.
--- "John devours and Mary devours pizza"
--- Shared = {pizza} — obj of both verbs.
+/-- **Backward sharing (RNR)**: "John likes and Mary hates pizza".
+    Words: John(0) likes(1) and(2) Mary(3) hates(4) pizza(5).
+    The basic tree attaches pizza to likes(1) only; `enhanceSharedDeps`
+    propagates it as `obj` of hates(4) too. -/
+def rnrBasicTree : DepTree :=
+  { words := [ Word.mk' "John" .PROPN, Word.mk' "likes" .VERB
+             , Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN
+             , Word.mk' "hates" .VERB, Word.mk' "pizza" .NOUN ]
+    deps  := [ ⟨1, 0, .nsubj⟩, ⟨1, 4, .conj⟩, ⟨4, 3, .nsubj⟩, ⟨1, 5, .obj⟩ ]
+    rootIdx := 1 }
+
+def rnrEnhancedGraph : DepGraph := Coordination.enhanceSharedDeps rnrBasicTree
 
 /-- **Gapping-as-coordination**: "Fred eats beans and Jim rice"
     Words: Fred(0) eats(1) beans(2) and(3) Jim(4) rice(5)
@@ -143,9 +154,9 @@ def ex_atbExtraction_enhanced : DepGraph :=
 theorem forwardSharing_shared_is_catena :
     Catena.isCatena ex_forwardSharing.deps [0] = true := by native_decide
 
-/-- In RNR (Coordination.ex_rnr), the shared object {pizza(5)} is a catena. -/
+/-- In RNR (rnrBasicTree), the shared object {pizza(5)} is a catena. -/
 theorem rnr_shared_is_catena :
-    Catena.isCatena Coordination.ex_rnr.deps [5] = true := by native_decide
+    Catena.isCatena rnrBasicTree.deps [5] = true := by native_decide
 
 /-- In gapping, the shared verb {eats(1)} is a catena (links to both clauses). -/
 theorem gapping_shared_verb_is_catena :
@@ -229,9 +240,9 @@ theorem forward_sharing_enhanced_propagates :
       (λ d => d.headIdx == 3 && d.depIdx == 0 && d.depType == .nsubj) = true := by
   native_decide
 
-/-- **Bridge → Coordination.ex_rnr**: RNR enhanced graph has shared obj. -/
+/-- **Bridge → rnrBasicTree**: RNR enhanced graph has shared obj. -/
 theorem rnr_bridge :
-    Coordination.ex_rnr_enhanced.deps.any
+    rnrEnhancedGraph.deps.any
       (λ d => d.headIdx == 4 && d.depIdx == 5 && d.depType == .obj) = true := by
   native_decide
 
@@ -239,7 +250,7 @@ theorem rnr_bridge :
     catenae — singletons are trivially connected. -/
 theorem all_shared_are_catenae :
     Catena.isCatena ex_forwardSharing.deps [0] = true ∧
-    Catena.isCatena Coordination.ex_rnr.deps [5] = true ∧
+    Catena.isCatena rnrBasicTree.deps [5] = true ∧
     Catena.isCatena ex_gapping_preEllipsis.deps [1] = true ∧
     Catena.isCatena ex_atbExtraction.deps [0] = true := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide

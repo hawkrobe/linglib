@@ -269,7 +269,7 @@ form-class encoding. Two of them are formalized in linglib:
   operator. M&N call this "Lexical Operator Theory" (LOT) and
   reject it on the same form-meaning grounds (M&N §2 "epistemic
   account").
-- `Theories/Semantics/Mood/Gutzmann.lean` /
+- `Semantics/Mood/Gutzmann.lean` /
   `Studies/Gutzmann2015.lean` formalize
   @cite{gutzmann-2015}'s use-conditional sentence-mood operators
   (DEONT/EPIS/HKNOW). The verum-specific Gutzmann work M&N cite

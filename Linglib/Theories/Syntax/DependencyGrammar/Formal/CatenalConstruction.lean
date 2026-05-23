@@ -93,7 +93,8 @@ def CatenalCx.isNonConstituentCatena (cx : CatenalCx) : Bool :=
     catena is a **risen catena** (@cite{osborne-2019}, Ch 7) — connected in the tree
     but separated by intervening material in the string. -/
 def CatenalCx.isContiguous (cx : CatenalCx) : Bool :=
-  isInterval (cx.nodes.mergeSort (· ≤ ·))
+  -- `insertionSort` is kernel-decidable; see `Core/Dependency/Projection.projection`.
+  isInterval (cx.nodes.insertionSort (· ≤ ·))
 
 -- ============================================================================
 -- §3: Smart Constructors

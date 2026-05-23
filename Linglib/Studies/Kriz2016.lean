@@ -1,9 +1,9 @@
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Studies.Magri2014
-import Linglib.Theories.Semantics.Homogeneity.Basic
-import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Theories.Semantics.Plurality.Trivalent
+import Linglib.Semantics.Homogeneity.Basic
+import Linglib.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Plurality.Trivalent
 
 /-!
 # Križ (2016): Homogeneity, Non-Maximality, and All — Plural Instantiation
@@ -12,7 +12,7 @@ import Linglib.Theories.Semantics.Plurality.Trivalent
 Homogeneity, Non-Maximality, and All. Journal of Semantics 33(3): 493-539.
 
 This file is the **plural instantiation** of the general homogeneity substrate
-in `Theories.Semantics.Homogeneity.Basic`. It connects @cite{kriz-2016}'s
+in `Semantics.Homogeneity.Basic`. It connects @cite{kriz-2016}'s
 plural-definite analysis (atoms as specification points; `all` as gap remover)
 to the substrate operators (`removeGap`, `addressesIssue`, `usable`,
 `communicatedContent`).
@@ -844,7 +844,7 @@ end MagriDivergence
 /-! @cite{kriz-2016} §6.3 claims the homogeneity-plus-pragmatics machinery
 extends to bare-plural generics ("Israelis live on the coastal plain" — true
 despite exceptions), with subkinds as the specification points. The
-`Theories.Semantics.Homogeneity.Basic` substrate docstring records this as a
+`Semantics.Homogeneity.Basic` substrate docstring records this as a
 candidate spec-point instantiation.
 
 However, `Cohen1999` uses the word "homogeneity"

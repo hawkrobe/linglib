@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.UseConditional.LTU
-import Linglib.Theories.Semantics.Mood.Gutzmann
+import Linglib.Semantics.UseConditional.LTU
+import Linglib.Semantics.Mood.Gutzmann
 import Linglib.Fragments.German.ClauseTypes
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality

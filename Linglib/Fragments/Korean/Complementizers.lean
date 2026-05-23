@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Lexical.VerbEntry
 
 /-!
 # Korean Complementizers and Clause-Embedding Verbs

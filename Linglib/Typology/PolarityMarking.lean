@@ -56,7 +56,7 @@ several — alongside @cite{hohle-1992}'s verum-as-illocutionary-operator
 @cite{romero-han-2004}'s epistemic-CONJ FOR-SURE-CG
 (`Studies/RomeroHan2004.lean`), and
 @cite{gutzmann-2015}'s use-conditional sentence-mood operators
-(`Theories/Semantics/Mood/Gutzmann.lean` +
+(`Semantics/Mood/Gutzmann.lean` +
 `Studies/Gutzmann2015.lean`, where verum
 composes via DEONT/EPIS/HKNOW dimensions orthogonal to truth-
 conditional polarity). All three sibling frameworks are in tension

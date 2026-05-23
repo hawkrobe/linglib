@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Questions.Hamblin
-import Linglib.Theories.Semantics.Questions.Relevance
+import Linglib.Semantics.Questions.Hamblin
+import Linglib.Semantics.Questions.Relevance
 
 /-!
 # Strategy of Inquiry: Rose-Tree Decomposition of a QUD

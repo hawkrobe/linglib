@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Semantics.Lexical.Roots.RootFeatures
+import Linglib.Semantics.Lexical.Roots.RootFeatures
 
 /-!
 # Ellipsis: [E] Features and Deletion Domains

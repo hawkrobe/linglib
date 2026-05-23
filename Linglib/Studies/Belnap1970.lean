@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.Opposition.Square
-import Linglib.Theories.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.Quantifier
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -56,11 +56,11 @@ quantification in linglib:
    + universal quantification. @cite{belnap-1970}
 2. **Kratzer restrictor**: if-clauses restrict modal bases, deriving
    restricted quantification from modality. @cite{kratzer-1986}
-   See `Theories/Semantics/Conditionals/Restrictor.lean`.
+   See `Semantics/Conditionals/Restrictor.lean`.
 3. **Domain restriction**: contextual predicates intersect the restrictor,
    deriving restricted quantification from pragmatics.
    @cite{von-fintel-1994} @cite{stanley-szab-2000}
-   See `Theories/Semantics/Lexical/Determiner/DomainRestriction.lean`.
+   See `Semantics/Lexical/Determiner/DomainRestriction.lean`.
 
 The convergence of three independent mechanisms on the same result
 suggests restricted quantification is a deep linguistic universal.

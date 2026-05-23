@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.QBSML.FreeChoice
-import Linglib.Theories.Semantics.QBSML.Properties
+import Linglib.Semantics.QBSML.FreeChoice
+import Linglib.Semantics.QBSML.Properties
 import Linglib.Phenomena.FreeChoice.Atoms
 import Linglib.Phenomena.FreeChoice.Worlds
 
@@ -29,7 +29,7 @@ The framework's central facts (paper §5):
 ## What this file proves
 
 The QBSML substrate now carries the universal forms of Facts 8 and 10
-(in `Theories/Semantics/QBSML/FreeChoice.lean`). This file instantiates
+(in `Semantics/QBSML/FreeChoice.lean`). This file instantiates
 both at a concrete model — paralleling `Aloni2022.lean`'s pattern of
 substrate-theorem invocation:
 
@@ -155,7 +155,7 @@ theorem Qx_isNEFree : Qx.isNEFree = true := rfl
 
     Enriched negation `[¬(Px ∨ Qx)]⁺` entails the conjunction of negated
     disjuncts `¬Px ∧ ¬Qx`. One-line invocation of the substrate's
-    `negationStrip_Q` (`Theories/Semantics/QBSML/FreeChoice.lean`).
+    `negationStrip_Q` (`Semantics/QBSML/FreeChoice.lean`).
     Mirrors `Aloni2022.aloni2022_fact11_dual_prohibition` style — substrate
     theorem, model + NE-free witnesses applied. -/
 theorem fact10_negation

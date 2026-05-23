@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.Attitudes.Doxastic
-import Linglib.Theories.Semantics.Attitudes.NegRaising
+import Linglib.Semantics.Attitudes.Doxastic
+import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Semantics.Postsupposition
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Lexical.VerbEntry
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 

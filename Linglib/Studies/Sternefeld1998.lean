@@ -1,6 +1,6 @@
 import Mathlib.Data.Finset.Card
-import Linglib.Theories.Semantics.Plurality.Cumulativity
-import Linglib.Theories.Semantics.Plurality.Reciprocal
+import Linglib.Semantics.Plurality.Cumulativity
+import Linglib.Semantics.Plurality.Reciprocal
 import Linglib.Studies.Beck2001
 
 /-!
@@ -56,7 +56,7 @@ two analyses agree on the bivalent predicate — `Plurality.Reciprocal.WeakRecip
 The `**` closure-form ↔ bidirectional-coverage equivalence is proved
 in the easy direction (`sternefeldStarStar_implies_cumulative`).
 The reverse direction is a substantial inductive argument that would
-properly belong in `Theories/Semantics/Plurality/Cumulativity.lean` as
+properly belong in `Semantics/Plurality/Cumulativity.lean` as
 substrate justification for treating the two `**` formulations as
 interchangeable; not in this study file.
 

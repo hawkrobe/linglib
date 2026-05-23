@@ -20,8 +20,8 @@ The scalar implicature "some → not all" is derived from:
 This grounds the NeoGricean analysis in compositional semantics.
 -/
 
-import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Exhaustification.Operators.Basic
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic

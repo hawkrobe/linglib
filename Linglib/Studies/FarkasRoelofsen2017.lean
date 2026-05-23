@@ -1,7 +1,7 @@
 import Linglib.Theories.Dialogue.FarkasBruce
 import Linglib.Theories.Dialogue.Gunlogson
 import Linglib.Theories.Dialogue.CommitmentSpace
-import Linglib.Theories.Semantics.Highlighting
+import Linglib.Semantics.Highlighting
 
 /-!
 # Farkas & Roelofsen (2017): Division of Labor in Declaratives and Interrogatives
@@ -83,7 +83,7 @@ to give a uniform account of the six sentence types in (3)–(8):
 
 - `Theories/Dialogue/FarkasBruce.lean` — `DiscourseState`,
   `assertDeclarative`, `askPolarQuestion`, `pushIssue`, `addToDcS`.
-- `Theories/Semantics/Highlighting.lean` — `HighlightingContext`,
+- `Semantics/Highlighting.lean` — `HighlightingContext`,
   `Highlighted`, `AddressesQUD`. Anchored on Roelofsen & Farkas (2015),
   which F&R 2017 cites and builds on.
 - `Theories/Dialogue/Gunlogson.lean` — the divergence in §8 (rising
@@ -400,7 +400,7 @@ theorem rising_dec_and_rising_tag_disjoint (c : CredenceLevel) :
 
 /-! F&R 2017's signaled-credence claims are explicitly about
 "the highlighted alternative" (p. 256). The substrate
-`Theories/Semantics/Highlighting.lean` (anchored on
+`Semantics/Highlighting.lean` (anchored on
 @cite{roelofsen-farkas-2015}, the same author line two years prior
 to F&R 2017) supplies the `HighlightingContext`/`Highlighted`
 predicate. This section threads it through `felicitous`, retiring the
@@ -449,7 +449,7 @@ theorem rising_dec_and_falling_tag_disjoint_in_context
 
 /-- Felicity-in-context implies the proposition addresses the current
     QUD. Routes through `Highlighting.highlighted_imp_addressesQUD` —
-    making the integration with `Theories/Semantics/Highlighting.lean`
+    making the integration with `Semantics/Highlighting.lean`
     load-bearing (the substrate's `AddressesQUD` API is invoked, not
     just its `Highlighted` predicate's existence). -/
 theorem felicitousInContext_imp_addressesQUD

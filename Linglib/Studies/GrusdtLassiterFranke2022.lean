@@ -1,9 +1,9 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.Causal.BayesNet
-import Linglib.Theories.Semantics.Probabilistic.ConditionalAssertability
-import Linglib.Theories.Semantics.Causation.Sufficiency
-import Linglib.Theories.Semantics.Causation.Necessity
+import Linglib.Semantics.Probabilistic.ConditionalAssertability
+import Linglib.Semantics.Causation.Sufficiency
+import Linglib.Semantics.Causation.Necessity
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!

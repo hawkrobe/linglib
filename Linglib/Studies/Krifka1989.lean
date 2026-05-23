@@ -1,9 +1,9 @@
-import Linglib.Theories.Semantics.Events.CEM
-import Linglib.Theories.Semantics.Plurality.Algebra
-import Linglib.Theories.Semantics.Plurality.Reference
-import Linglib.Theories.Semantics.ArgumentStructure.Properties
-import Linglib.Theories.Semantics.Aspect.Incremental
-import Linglib.Theories.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.Plurality.Algebra
+import Linglib.Semantics.Plurality.Reference
+import Linglib.Semantics.ArgumentStructure.Properties
+import Linglib.Semantics.Aspect.Incremental
+import Linglib.Semantics.Aspect.Cumulativity
 import Linglib.Core.Scales.Scale
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
@@ -244,7 +244,7 @@ section Grounding
 variable {α : Type*}
 
 /-- Bare-plural NPs are cumulative — citation of `barePlural_cum`
-    from `Theories/Semantics/Plurality/Reference.lean`. K89 §3 derives
+    from `Semantics/Plurality/Reference.lean`. K89 §3 derives
     this from algebraic closure (*P closed under sum). -/
 theorem barePlural_grounded [SemilatticeSup α] {P : α → Prop} :
     CUM (BarePlural P) :=

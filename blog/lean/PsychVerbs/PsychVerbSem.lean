@@ -1,12 +1,12 @@
 -- TODO: 4 orphan imports — these modules never landed in main.
--- import Linglib.Theories.Semantics.Causation.PsychCausation
--- import Linglib.Theories.Semantics.Causation.PsychCausalLink
+-- import Linglib.Semantics.Causation.PsychCausation
+-- import Linglib.Semantics.Causation.PsychCausalLink
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
 -- import Linglib.Core.StructuralEquationModel
 -- import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Studies.HartshorneEtAl2016
-import Linglib.Theories.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Attitudes.Preferential
 
 /-!
 # Psych Verb Denotation via Cognitive Situation Models

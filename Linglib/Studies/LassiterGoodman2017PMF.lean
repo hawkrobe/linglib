@@ -101,7 +101,7 @@ borderline cases are *one* of several formalised positions in linglib:
 * `Studies/Fine1975.lean` — supervaluation,
   borderline mapped to `Truth3.indet`, sorites resolved by super-falsity
   of the inductive premise.
-* `Linglib/Theories/Semantics/Supervaluation/TCS.lean` —
+* `Linglib/Semantics/Supervaluation/TCS.lean` —
   Cobreros-Égré-Ripley-van-Rooij Tolerant/Strict/Classical, sorites
   resolved by non-transitivity of st-consequence.
 * `Studies/Klein1980.lean` — comparison-class
@@ -455,7 +455,7 @@ acceptance** for "X is tall and not tall" applied to the median
 
 `44.7% > 25%`, so a literal-meaning probabilistic account cannot
 reproduce the data. This is the formal expression of the empirical
-challenge that motivated TCS (`Linglib/Theories/Semantics/Supervaluation/TCS.lean`,
+challenge that motivated TCS (`Linglib/Semantics/Supervaluation/TCS.lean`,
 @cite{cobreros-etal-2012}), where borderline cases tolerantly satisfy
 `P ∧ ¬P` *as a tolerantly-true proposition* — not via probability
 multiplication.
@@ -473,7 +473,7 @@ threshold posterior or the height being judged.
 Empirical contrast: @cite{alxatib-pelletier-2011} report 44.7% — well
 above 25% — so the literal-rule prediction is empirically refuted.
 TCS (`@cite{cobreros-etal-2012}`, formalised in
-`Theories/Semantics/Supervaluation/TCS.lean`) accommodates the data via
+`Semantics/Supervaluation/TCS.lean`) accommodates the data via
 non-probabilistic tolerant satisfaction. -/
 theorem lg_literal_borderline_bounded {S : Type*} (L1_latent : PMF S) (s : Set S) :
     L1_latent.toOuterMeasure s * (1 - L1_latent.toOuterMeasure s) ≤ (1/4 : ℝ≥0∞) := by

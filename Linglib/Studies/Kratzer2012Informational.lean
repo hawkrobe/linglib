@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Features.Evidentiality
 import Mathlib.Data.Fin.Basic
 

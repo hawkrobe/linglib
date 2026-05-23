@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Theories.Semantics.Causation.CauserSort
+import Linglib.Semantics.Causation.CauserSort
 
 /-!
 # Voice Semantics: Compositional Operations on Argument Structure

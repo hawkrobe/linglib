@@ -1,7 +1,7 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Theories.Semantics.Alternatives.Structural
-import Linglib.Theories.Semantics.Alternatives.Symmetric
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Alternatives.Structural
+import Linglib.Semantics.Alternatives.Symmetric
+import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Fox & Katzir 2011: On the Characterization of Alternatives

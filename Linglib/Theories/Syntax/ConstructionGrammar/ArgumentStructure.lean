@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Core.CombinationKind
-import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Core.UD
 
 /-!

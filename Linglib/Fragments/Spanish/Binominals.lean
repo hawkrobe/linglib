@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Quantification.BinominalDefs
+import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Theories.Morphology.DM.Categorizer
 
 /-!

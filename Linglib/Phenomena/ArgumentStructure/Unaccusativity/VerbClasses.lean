@@ -1,9 +1,9 @@
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
-import Linglib.Theories.Semantics.Lexical.LevinClass
-import Linglib.Theories.Semantics.Lexical.MeaningComponents
-import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.Lexical.LevinClass
+import Linglib.Semantics.Lexical.MeaningComponents
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!

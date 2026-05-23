@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.Numerals.Basic
+import Linglib.Semantics.Numerals.Basic
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.Implicature.EpistemicBlocking
-import Linglib.Theories.Semantics.Entailment.AsymStronger
+import Linglib.Semantics.Entailment.AsymStronger
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -40,7 +40,7 @@ We formalize both routes:
 
 - §2 derives the predictions **symbolically** via `asymStrongerOn`
   (the polymorphic primitive from
-  `Theories/Semantics/Entailment/AsymStronger.lean`).
+  `Semantics/Entailment/AsymStronger.lean`).
 - §3 derives the same direction probabilistically through RSA L1.
 
 §3 is our own integration contribution, not Kennedy's — Kennedy's paper
@@ -51,7 +51,7 @@ predictions emerge from a soft-max listener over the same alternative set
 and bare-numeral semantics.
 
 The formalization consumes `NumeralExpr.meaning` from
-`Theories/Semantics/Numerals/Basic.lean` directly — there is no separate
+`Semantics/Numerals/Basic.lean` directly — there is no separate
 "Kennedy meaning" function (Kennedy's alternative set is *which*
 `NumeralExpr` values to consider, not *what they mean*).
 

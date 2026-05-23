@@ -2,7 +2,7 @@ import Linglib.Features.InformationStructure
 import Linglib.Features.Prosody
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Alternatives.AltMeaning
+import Linglib.Semantics.Alternatives.AltMeaning
 
 /-!
 # Two-feature decomposition of information structure

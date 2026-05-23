@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Theories.Semantics.Alternatives.Symmetric
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Alternatives.Symmetric
 
 /-!
 # The Symmetry Problem: Current Theories and Prospects
@@ -442,7 +442,7 @@ open as of this paper.
 This paper reveals several tensions in linglib's organization:
 
 1. **Alternatives straddle semantics/pragmatics**: structural
-   alternatives (`Theories/Semantics/Alternatives/`) and RSA
+   alternatives (`Semantics/Alternatives/`) and RSA
    alternatives (`Theories/Pragmatics/RSA/`) address the same
    problem but with incompatible representations.
 

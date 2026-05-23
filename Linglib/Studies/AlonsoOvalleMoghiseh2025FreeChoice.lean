@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Theories.Semantics.Exhaustification.Tolerant
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Tolerant
 import Linglib.Fragments.Farsi.Determiners
 import Mathlib.Tactic.DeriveFintype
 

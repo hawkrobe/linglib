@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Quantification.Syllogistic.Forms
+import Linglib.Semantics.Quantification.Syllogistic.Forms
 import Linglib.Theories.Pragmatics.RSA.Channel
 import Linglib.Core.Logic.Opposition.Probabilistic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -29,7 +29,7 @@ This per-syllogism cancellation is proved as `stateCom_eq_beliefAlignment`.
 
 ## Substrate (`Semantics.Quantification.Syllogistic`)
 
-This file consumes the syllogistic substrate at `Theories/Semantics/Quantification/`:
+This file consumes the syllogistic substrate at `Semantics/Quantification/`:
 
 - `Region`, `VennState`, `AristQuant`, `Syllogism`, `Conclusion` types
 - `hasA`/`hasB`/`hasC` region predicates

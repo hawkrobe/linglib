@@ -26,7 +26,7 @@ Theory-neutral lexical entries for polarity-sensitive items:
 -/
 
 import Linglib.Typology.PolarityItem
-import Linglib.Theories.Semantics.Polarity.Israel
+import Linglib.Semantics.Polarity.Israel
 
 namespace Fragments.English.PolarityItems
 

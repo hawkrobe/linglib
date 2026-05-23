@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Core.Time.Reichenbach
 import Linglib.Core.Time.Boundedness
-import Linglib.Theories.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Basic
 
 /-!
 # @cite{declerck-1991}: Tense and the Present/Past Time-Sphere

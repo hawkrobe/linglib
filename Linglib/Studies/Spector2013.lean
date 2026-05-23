@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Numerals.Basic
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Numerals.Basic
+import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Spector 2013: Bare Numerals and Scalar Implicatures
@@ -40,7 +40,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 
 ## Integration
 
-- **EXH bridge** (§3) connects `Theories/Semantics/Lexical/Numeral/Semantics.lean`'s
+- **EXH bridge** (§3) connects `Semantics/Lexical/Numeral/Semantics.lean`'s
   `exhNumeral` to the `Exhaustification.innocent` excluder
 - `ExhaustivityLimit.lean` proves RSA at α→∞ = EXH for ⟨some, all⟩
 - @cite{spector-2007} proves Max(P) = {Exhaust(P)} (Gricean ↔ exhaustive)
@@ -57,7 +57,7 @@ open Exhaustification (innocent predToFinset altsFromPreds)
 
 /-! Inlined embedding combinators specialised to LowerBound (`atLeastMeaning`)
 and Exact (`bareMeaning`) numeral semantics. These replace the polymorphic
-versions previously housed in `Theories/Semantics/Numerals/Embedding.lean`,
+versions previously housed in `Semantics/Numerals/Embedding.lean`,
 which has been dissolved as part of the `NumeralTheory` cleanup. -/
 
 @[reducible] def notLB (w : BareNumeral) (n : Nat) : Prop :=

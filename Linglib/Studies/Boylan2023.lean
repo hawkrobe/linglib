@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Modality.Kratzer.Operators
-import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
+import Linglib.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.Modality.Kratzer.Flavor
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fin.Basic

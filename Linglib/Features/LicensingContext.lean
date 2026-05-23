@@ -10,7 +10,7 @@ to talk about these context labels.
 
 ## Provenance
 
-Extracted from `Theories/Semantics/Polarity/Licensing.lean` after
+Extracted from `Semantics/Polarity/Licensing.lean` after
 audit consensus that `LicensingContext` is data, not theory: the
 22 cases are observational labels for syntactic environments, while
 only the *signatures* assigned to them in `contextProperties`
@@ -22,7 +22,7 @@ The earlier 2-way split (Theories/Polarity/Licensing.lean for the
 enum + theory together; Typology/PolarityItem.lean for entry +
 Israel) forced `Typology/PolarityItem.lean` to import from
 `Theories/`, the only such cross-layer import in linglib. This file
-breaks that inversion: `Typology/` and `Theories/Semantics/Polarity/`
+breaks that inversion: `Typology/` and `Semantics/Polarity/`
 both import from `Features/`, no peer-layer crossings.
 
 ## Framework commitment
@@ -33,13 +33,13 @@ specific traditions' classification of contexts), but the cases
 themselves enumerate empirically-attested licensing environments any
 framework needs to talk about. The DE/anti-additive/anti-morphic
 *labelling* of these contexts is theory-laden and lives in
-`Theories/Semantics/Polarity/Licensing.lean::contextProperties`
+`Semantics/Polarity/Licensing.lean::contextProperties`
 (Ladusaw/Zwarts canonical) — not here.
 
 UNVERIFIED: The 22-case carve-up is English-anchored and may need
 cross-linguistic restructuring (e.g., factor by veridicality + monotonicity
 per Giannakidou 1998, rather than by surface construction); see the
-`Theories/Semantics/Polarity/Licensing.lean` "Out of scope" section
+`Semantics/Polarity/Licensing.lean` "Out of scope" section
 for the documented gap.
 -/
 
@@ -54,7 +54,7 @@ namespace Features
 
     Per-context theoretical classifications (DE strength, K&L mechanism,
     Strawson-DE flagging) live in
-    `Theories/Semantics/Polarity/Licensing.lean::contextProperties`. -/
+    `Semantics/Polarity/Licensing.lean::contextProperties`. -/
 inductive LicensingContext where
   | negation          -- "not", "never", "without"
   | nobody            -- "nobody", "nothing" (negative quantifiers)

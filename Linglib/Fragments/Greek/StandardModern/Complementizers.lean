@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Lexical.VerbEntry
 
 /-!
 # Modern Greek Complementizers @cite{christidis-1982} @cite{roussou-2010}

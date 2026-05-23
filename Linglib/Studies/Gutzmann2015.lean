@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Mood.Gutzmann
+import Linglib.Semantics.Mood.Gutzmann
 import Linglib.Fragments.German.ClauseTypes
 import Linglib.Fragments.German.ModalParticles
 import Linglib.Features.ClauseForm

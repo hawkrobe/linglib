@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Iconic.Basic
-import Linglib.Theories.Semantics.Reference.Monsters
+import Linglib.Semantics.Iconic.Basic
+import Linglib.Semantics.Reference.Monsters
 import Linglib.Phenomena.Iconicity.Basic
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Core.Context.Shifts

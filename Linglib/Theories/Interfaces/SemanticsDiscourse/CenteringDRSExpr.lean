@@ -1,5 +1,5 @@
 import Linglib.Theories.Discourse.Centering.Basic
-import Linglib.Theories.Semantics.Dynamic.Boxes.Syntax
+import Linglib.Semantics.Dynamic.Boxes.Syntax
 
 /-!
 # Centering ↔ DRT Bridge

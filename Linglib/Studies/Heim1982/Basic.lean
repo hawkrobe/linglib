@@ -7,7 +7,7 @@ import Linglib.Phenomena.Anaphora.CrossSentential
 
 Formal analysis of cross-sentential anaphora using @cite{heim-1982}'s
 File Change Semantics. This study file connects the FCS theory
-(`Theories/Semantics/Dynamic/FileChange/Basic.lean`) to the empirical
+(`Semantics/Dynamic/FileChange/Basic.lean`) to the empirical
 data in `Phenomena/Anaphora/CrossSentential.lean`.
 
 ## Key Claims Formalized

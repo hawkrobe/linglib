@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Aspect.Basic
-import Linglib.Theories.Semantics.Lexical.EventStructure
-import Linglib.Theories.Semantics.Lexical.Roots.SalienceClass
+import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Lexical.EventStructure
+import Linglib.Semantics.Lexical.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Params
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Split

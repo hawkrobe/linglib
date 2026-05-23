@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Questions.Basic
-import Linglib.Theories.Semantics.Questions.Resolution
-import Linglib.Theories.Semantics.Questions.Exhaustivity
+import Linglib.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Resolution
+import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
 # @cite{fox-2018}: Partition by Exhaustification: Comments on Dayal 1996
@@ -74,7 +74,7 @@ variable {W : Type*}
 /-! ### §1 Exh-derived cells (eq 11) — substrate-level primitives
 
 Fox's `Exh(Q,p)` and `Partition_L(Q)` are substrate primitives now —
-see `Theories/Semantics/Questions/Exhaustivity.lean::exhCell` and
+see `Semantics/Questions/Exhaustivity.lean::exhCell` and
 `exhaustifiedPartition`. We re-export them here under Fox's names for
 paper-faithfulness, and define the paper-specific contextual variant
 locally. -/

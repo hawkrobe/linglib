@@ -1,8 +1,8 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Time.Interval.Generalized
-import Linglib.Theories.Semantics.Entailment.Extremum
-import Linglib.Theories.Semantics.Aspect.Basic
-import Linglib.Theories.Semantics.Aspect.SubintervalProperty
+import Linglib.Semantics.Entailment.Extremum
+import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.English.TemporalExpressions
 
@@ -192,7 +192,7 @@ def gTIAPropertyOpenNeg (P : EventPred W Time) (μ : Interval Time → ℕ)
 -- ════════════════════════════════════════════════════
 
 /-! `MIP_Licensed` and `MIP_LicensedDown` are defined in
-    `Theories/Semantics/Entailment/Extremum.lean` and reused here. They
+    `Semantics/Entailment/Extremum.lean` and reused here. They
     combine `Core.Scale.AdmitsOptimum P` (non-constancy: the *atelic*
     failure mode) with the per-world existence of a `Set.IsLeast` /
     `Set.IsGreatest` (mathlib): a most-informative numeral exists at some

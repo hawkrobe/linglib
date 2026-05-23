@@ -16,10 +16,10 @@ This is DERIVED, not stipulated.
 
 -/
 
-import Linglib.Theories.Semantics.Questions.Basic
-import Linglib.Theories.Semantics.Questions.Partition.Cells
-import Linglib.Theories.Semantics.Questions.Partition.Constructors
-import Linglib.Theories.Semantics.Attitudes.Doxastic
+import Linglib.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Partition.Cells
+import Linglib.Semantics.Questions.Partition.Constructors
+import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Fragments.English.Predicates.Verbal
 
 namespace Interfaces.SyntaxSemantics.LeftPeriphery
@@ -249,7 +249,7 @@ theorem derived_class_matches_manual :
 PerspP introduces a not-at-issue presupposition: the perspectival center
 *possibly doesn't know* the answer to the question. We formalize this using
 `diaAt` (existential modal, ◇) from `Doxastic.lean` and `QUD.ans` from
-`Theories/Semantics/Questions/Partition/Cells.lean`.
+`Semantics/Questions/Partition/Cells.lean`.
 -/
 
 open Semantics.Attitudes.Doxastic
@@ -260,7 +260,7 @@ open Semantics.Questions
 
     This is PerspP's not-at-issue presupposition (@cite{dayal-2025}: §2.3).
     Uses `diaAt` from Doxastic.lean and `QUD.ans` from
-    Theories/Semantics/Questions/Partition/Cells.lean. -/
+    Semantics/Questions/Partition/Cells.lean. -/
 def possibleIgnorance {W E : Type*} (R : AccessRel W E) (center : E)
     (Q : GSQuestion W) (w : W) (worlds : List W) : Prop :=
   diaAt R center w worlds (fun w' => QUD.ans Q w w' = false)
@@ -562,7 +562,7 @@ The `Ans(Q)` referenced throughout this module — in PerspP's
 `◇¬know(x, Ans(Q))` and SAP's obligation to assert `Ans(Q)` — corresponds to
 @cite{dayal-1996}'s strongest true answer when the question's Exhaustivity
 Presupposition (EP) is satisfied. See
-`Theories/Semantics/Questions/Exhaustivity.lean` for the topical Prop/Set
+`Semantics/Questions/Exhaustivity.lean` for the topical Prop/Set
 operators (`dayalAns`, `IsExhaustivelyResolvable`, `relExh`).
 
 When EP fails (e.g., ability-*can* questions under first-order scope), there

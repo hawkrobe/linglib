@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Composition.SetMonad
+import Linglib.Semantics.Composition.SetMonad
 
 /-!
 # Charlow (2020): The Scope of Alternatives
@@ -33,7 +33,7 @@ Alternative-denoting expressions interact with their semantic context by
 ## Formalization
 
 The theoretical core (the set monad) is formalized in
-`Theories/Semantics/Composition/SetMonad.lean`. This file instantiates
+`Semantics/Composition/SetMonad.lean`. This file instantiates
 it on concrete examples, verifying the paper's empirical predictions.
 -/
 

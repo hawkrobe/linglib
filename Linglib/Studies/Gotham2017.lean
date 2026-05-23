@@ -10,7 +10,7 @@ semantic aspects apply to the same polysemous noun phrase ("the book
 is heavy and interesting"). This study file owns:
 
 1. The TTR dot-type infrastructure (formerly
-   `Theories/Semantics/TypeTheoretic/Copredication.lean`, absorbed
+   `Semantics/TypeTheoretic/Copredication.lean`, absorbed
    here as the only consumer per linglib's substrate-by-need rule).
 2. The canonical empirical data (formerly `Polysemy/Data.lean`,
    dissolved per the provenance-tracking policy).

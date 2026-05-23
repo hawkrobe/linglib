@@ -26,7 +26,7 @@ level. The substrate-side treatment lives in `Core/Time/AtomDist.lean`
 (`AtomDist τ V`, with `EvQuant.ofPred` bridging from event predicates
 to event quantifiers); for the witness-universal subinterval form on
 event predicates, see `HasSubintervalProp` in
-`Theories/Semantics/Tense/Aspect/SubintervalProperty.lean`. The
+`Semantics/Tense/Aspect/SubintervalProperty.lean`. The
 unification: Zhao 2025's particle-licensing condition is the
 quantifier-level atomic-granularity stativity test along the time
 dimension. Bridging Fragment Bool fields to substrate `Prop`s for

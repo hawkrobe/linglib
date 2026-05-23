@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Quantification.BinominalDefs
-import Linglib.Theories.Semantics.Quantification.Binominal
+import Linglib.Semantics.Quantification.BinominalDefs
+import Linglib.Semantics.Quantification.Binominal
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 
 /-!

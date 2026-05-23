@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Conjunction
-import Linglib.Theories.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Features.Coordination
 import Linglib.Studies.Haspelmath2007
 

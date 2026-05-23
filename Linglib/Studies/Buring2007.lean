@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Theories.Semantics.Degree.Intervals
-import Linglib.Theories.Semantics.Degree.Little
+import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Intervals
+import Linglib.Semantics.Degree.Little
 import Linglib.Studies.VonStechow1984
 
 /-!
@@ -74,7 +74,7 @@ open Core.Scale (posExt negExt crossExtentInclusion crossExtent_always_false)
 -- § 1. LITTLE: Degree Negation on Extents
 -- ════════════════════════════════════════════════════
 
--- LITTLE is in the theory layer at `Theories/Semantics/Degree/Little.lean`:
+-- LITTLE is in the theory layer at `Semantics/Degree/Little.lean`:
 --   littlePred, little_posExt_eq_negExt, little_involution,
 --   little_reverses_comparison.
 -- This section adds Büring-specific bridges.

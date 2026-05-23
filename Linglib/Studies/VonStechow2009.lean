@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.Basic
 
 /-!
 # @cite{von-stechow-2009}: Tenses in Compositional Semantics
@@ -17,7 +17,7 @@ anchor.
    Stechow's; the underlying predicate is the framework-neutral
    `feature.constrains refTime evalTime`.
 2. **Perspective shift** = `embeddedFrame` (substrate primitive in
-   `Theories/Semantics/Tense/Basic.lean`). The attitude verb sets the
+   `Semantics/Tense/Basic.lean`). The attitude verb sets the
    embedded eval time = matrix E. von Stechow calls this "perspective
    shift"; the operation is the framework-neutral `embeddedFrame
    matrixFrame embeddedR embeddedE`.
@@ -27,7 +27,7 @@ anchor.
 ## Architectural Note
 
 After the 0.230.452 wrapper-trim and the Phase E 0.230.456 split, this
-file has no concept-file companion in `Theories/Semantics/Tense/`.
+file has no concept-file companion in `Semantics/Tense/`.
 @cite{von-stechow-2009}'s contribution is *terminological* — the
 "feature checking" name for what is structurally `GramTense.constrains`
 applied at a `embeddedFrame`-shifted eval time. The substrate lives

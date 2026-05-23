@@ -62,7 +62,7 @@ open Core.Logic.Intensional (AccessRel AgentAccessRel IsTransitive IsEuclidean I
     accessing agent). The pair indexing reflects van der Leer 2026's
     point that commitment is ternary `C_{a,b} π` — `a` is committed
     *towards* `b` to `π`. No analogue exists in linglib's existing
-    epistemic substrate (`Theories/Semantics/Modality/EpistemicLogic.lean`),
+    epistemic substrate (`Semantics/Modality/EpistemicLogic.lean`),
     which only formalises unary belief/knowledge. -/
 abbrev PairAccessRel (W A : Type*) := A → A → AccessRel W
 

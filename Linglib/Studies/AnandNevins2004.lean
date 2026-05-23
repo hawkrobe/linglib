@@ -1,8 +1,8 @@
 import Linglib.Phenomena.Reference.DirectReference
-import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
+import Linglib.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
-import Linglib.Theories.Semantics.Tense.DeRe
+import Linglib.Semantics.Tense.DeRe
 import Linglib.Data.Examples.Schema
 
 /-!
@@ -20,7 +20,7 @@ Core.Context.Tower (ContextTower, push, origin, innermost)
     ↓
 Core.Context.Shifts (attitudeShift, perspectiveShift, identityShift)
     ↓
-Theories.Semantics.Reference.FreeIndirectDiscourse (FIDProfile)
+Semantics.Reference.FreeIndirectDiscourse (FIDProfile)
     ↓
 This file: tower operations model Kaplan's thesis and its violations
     ↓

@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Attitudes.ClauseDenotation.Content
-import Linglib.Theories.Semantics.Attitudes.ClauseDenotation.Situation
+import Linglib.Semantics.Attitudes.ClauseDenotation.Content
+import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 
 /-!
 # Bondarenko 2022: Anatomy of an Attitude @cite{bondarenko-2022}
@@ -102,7 +102,7 @@ open Semantics.Attitudes.ClauseDenotation.Situation
 /-- Bondarenko's typology of noun sorts that combine with embedded
     CPs. Studies-local enum per the typological-discipline rule:
     the substrate (`ContentIndividual`, `SituationIndividual`) lives
-    in `Theories/Semantics/Attitudes/ClauseDenotation/`; the typology-
+    in `Semantics/Attitudes/ClauseDenotation/`; the typology-
     level tagging stays here.
 
     Cross-linguistic robustness varies (English *the situation* vs
@@ -570,7 +570,7 @@ theorem nominalizedCP_satisfies_every_theta :
 -- ════════════════════════════════════════════════════════════════
 --
 -- Per Layered Grounding obligation (cross-framework auditor):
--- consume `Theories.Semantics.Composition.Modification`'s
+-- consume `Semantics.Composition.Modification`'s
 -- `predicateModification` (`⊓ₚ`) — DO NOT redefine PM here. The
 -- substrate operates over `Frame.Denot (.e ⇒ .t)` typed-semantics
 -- predicates; this Studies file states only the abstract
@@ -590,7 +590,7 @@ theorem nominalizedCP_satisfies_every_theta :
     the individual variable in Bondarenko's lift; substantively, both
     arguments are situation-predicates and intersect by PM). The
     `predicateModification` substrate at
-    `Theories/Semantics/Composition/Modification.lean` is the typed
+    `Semantics/Composition/Modification.lean` is the typed
     realisation; this Studies-level predicate is its qualitative
     projection. -/
 def composesViaPM : ClauseType → Prop
@@ -729,7 +729,7 @@ instance : DecidablePred NominalSort.occurrenceCompatible
 --
 -- **Cont head** (ex. 150): ⟦Cont⟧^{s,g,t} = λp_{st}.λx_e. CONT(x) = p
 -- — IS the existing `compC` from
--- `Theories/Semantics/Attitudes/ClauseDenotation/Content.lean`.
+-- `Semantics/Attitudes/ClauseDenotation/Content.lean`.
 --
 -- **Comp head** (ex. 151): ⟦Comp⟧^{s,g,t} = λp_{et}.λx_e. x ⊑ s ∧ x ⊩_e p
 -- — `x ⊑ s` is situation parthood (`Core/Logic/Intensional/
@@ -764,8 +764,8 @@ theorem cont_head_denotation_is_compC {W : Type*}
 
 /-- @cite{bondarenko-2022} §2.3 ex. 151 Comp head denotation,
     consuming the Truthmaker substrate
-    (`Theories/Semantics/Truthmaker/Basic.lean` `attHolds`-style
-    parthood `s ≤ σ x`, `Theories/Semantics/Truthmaker/Inexact.lean`
+    (`Semantics/Truthmaker/Basic.lean` `attHolds`-style
+    parthood `s ≤ σ x`, `Semantics/Truthmaker/Inexact.lean`
     `inexactVer` for the part-existential variant) and situation
     parthood (`Core/Logic/Intensional/Situations.lean` `≼`).
 
@@ -784,7 +784,7 @@ def compHead {S : Type*} [Preorder S]
 
 /-- Exact exemplification implies inexact exemplification (a
     verifier is a part of itself). Substrate connection to
-    `Theories/Semantics/Truthmaker/Inexact.lean`'s
+    `Semantics/Truthmaker/Inexact.lean`'s
     `inexactVer_of_exact`. -/
 theorem compHead_implies_inexactVerifier {S : Type*} [Preorder S]
     (p : S → Prop) (x evalSit : S) (h : compHead p x evalSit) :

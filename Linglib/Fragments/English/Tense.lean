@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Tense.Evidential
-import Linglib.Theories.Semantics.Tense.ParticipantPerspective
-import Linglib.Theories.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.Evidential
+import Linglib.Semantics.Tense.ParticipantPerspective
+import Linglib.Semantics.Tense.SOT.Decomposition
 
 /-!
 # English Tense Fragment (@cite{cumming-2026} + @cite{lakoff-1970})

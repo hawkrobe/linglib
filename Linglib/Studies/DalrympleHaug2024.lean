@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Reference.Reciprocals
-import Linglib.Theories.Semantics.Dynamic.PPCDRT.Anaphora
-import Linglib.Theories.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Reference.Reciprocals
+import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
+import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Wan.Reciprocals
 
@@ -32,9 +32,9 @@ cases, while the quantificational analysis fails for distributive operators
 
 ## Connections
 
-- `Theories/Semantics/Reference/Reciprocals.lean` — the three anaphoric
+- `Semantics/Reference/Reciprocals.lean` — the three anaphoric
   relations (=, ∪, R) and prediction functions
-- `Theories/Semantics/Lexical/Plural/Distributivity.lean` — distributive
+- `Semantics/Lexical/Plural/Distributivity.lean` — distributive
   operators (§5 shows *each* does NOT block wide scope, contra
   @cite{heim-lasnik-may-1991})
 - `Fragments/Hungarian/Reciprocals.lean` — Hungarian *egymás* with
@@ -48,7 +48,7 @@ cases, while the quantificational analysis fails for distributive operators
 namespace DalrympleHaug2024
 
 open Semantics.Reference.Reciprocals
-open Theories.Semantics.Dynamic.PPCDRT
+open Semantics.Dynamic.PPCDRT
 open Core
 
 -- ════════════════════════════════════════════════════════════════
@@ -505,7 +505,7 @@ theorem wan_log_is_at_least_pivot :
     pointwise, the value-sets are equal, so wide scope is the natural
     reading. Connects the scope predictions to the formal semantics of
     @cite{haug-dalrymple-2020} §§2.2--3, now over the PPCDRT substrate
-    (`Theories/Semantics/Dynamic/PPCDRT/Anaphora.lean`). -/
+    (`Semantics/Dynamic/PPCDRT/Anaphora.lean`). -/
 theorem bound_implies_wide_via_formal_semantics {E : Type}
     (uAnaph uAnt : Nat) (S : PluralAssign E) (Δ : Set Nat)
     (h : bindingCond uAnaph uAnt S Δ) : groupIdentityCond uAnaph uAnt S Δ :=

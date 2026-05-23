@@ -28,7 +28,7 @@ MDL is studied for its computational and model-theoretic properties
 earlier expressive-power work; bisimulation invariance), with
 applications in database theory, knowledge representation, and AI
 rather than primarily in linguistic semantics — hence the placement in
-`Core/Logic/` rather than `Theories/Semantics/`, alongside the other
+`Core/Logic/` rather than `Semantics/`, alongside the other
 team-semantic primitives (`Core/Logic/Team/`, `Core/Logic/Bilateral/`).
 
 ## What changes from BSML
@@ -105,7 +105,7 @@ infrastructure but differ in atom flavor:
   graduation) — BSML's bilateral negation + NE atom.
 
 The bisimulation substrate currently lives at
-`Theories/Semantics/BSML/Bisimulation.lean` for historical reasons; a
+`Semantics/BSML/Bisimulation.lean` for historical reasons; a
 future refactor lifts it to `Core/Logic/Modal/Bisimulation.lean`.
 
 ## Todo

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Lexical.VerbEntry
 
 /-!
 # Buryat Complementizers and Clause-Embedding Verbs

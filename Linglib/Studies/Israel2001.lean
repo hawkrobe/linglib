@@ -1,5 +1,5 @@
 import Linglib.Typology.PolarityItem
-import Linglib.Theories.Semantics.Polarity.Israel
+import Linglib.Semantics.Polarity.Israel
 import Linglib.Fragments.English.PolarityItems
 
 /-!

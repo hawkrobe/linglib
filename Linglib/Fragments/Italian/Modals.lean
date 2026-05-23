@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.EventRelativity
 
 /-!
 # Italian Modal Auxiliaries

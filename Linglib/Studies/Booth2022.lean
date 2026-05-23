@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Bilateral.Defs
-import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Basic
 
 /-!
 # Booth 2022 — Bilateral inquisitive minimal-cover semantics for `□`

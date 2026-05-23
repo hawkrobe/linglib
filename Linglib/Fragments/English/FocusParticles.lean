@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Focus.Particles
+import Linglib.Semantics.Focus.Particles
 import Linglib.Core.Semantics.ContentLayer
 import Linglib.Core.Discourse.Coherence
 import Linglib.Features.InformationStructure

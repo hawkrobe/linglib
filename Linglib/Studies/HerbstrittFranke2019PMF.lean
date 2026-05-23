@@ -2,7 +2,7 @@ import Linglib.Core.Probability.Hypergeometric
 import Linglib.Core.Probability.Posterior
 import Linglib.Core.Probability.JointPosterior
 import Linglib.Core.Probability.Entropy
-import Linglib.Theories.Semantics.Modality.EpistemicProbability
+import Linglib.Semantics.Modality.EpistemicProbability
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
@@ -38,7 +38,7 @@ HF 2019's *novel architectural* contributions are:
    `posterior_snd_apply` substrate.
 3. **Compositional threshold semantics for nested probability
    expressions** (Eq. 22-23) — formalised against the theory-layer
-   `Theories/Semantics/Modality/EpistemicProbability.nestedThreshold`.
+   `Semantics/Modality/EpistemicProbability.nestedThreshold`.
 
 **What this file captures:**
 

@@ -1,10 +1,10 @@
-import Linglib.Theories.Semantics.Reference.Reciprocals
-import Linglib.Theories.Semantics.Dynamic.PPCDRT.Defs
-import Linglib.Theories.Semantics.Dynamic.PPCDRT.Anaphora
-import Linglib.Theories.Semantics.Dynamic.PPCDRT.Cumulativity
-import Linglib.Theories.Semantics.Plurality.Cumulativity
-import Linglib.Theories.Semantics.Homogeneity.Basic
-import Linglib.Theories.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Reference.Reciprocals
+import Linglib.Semantics.Dynamic.PPCDRT.Defs
+import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
+import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
+import Linglib.Semantics.Plurality.Cumulativity
+import Linglib.Semantics.Homogeneity.Basic
+import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Truth3
 
 /-!
@@ -22,7 +22,7 @@ embedded local antecedent (group identity ∪ vs. binding =).
 ## What is formalized
 
 Witness-based formalisation of the paper's empirical contributions over
-the PPCDRT substrate (`Theories/Semantics/Dynamic/PPCDRT/`):
+the PPCDRT substrate (`Semantics/Dynamic/PPCDRT/`):
 
 | Paper § | Topic                                  | Witness type               |
 |---------|----------------------------------------|----------------------------|
@@ -48,7 +48,7 @@ the §5.2 empirical-fit table; the §7 typological excursus.
 
 - @cite{champollion-bumford-henderson-2019} for the §5 supervaluationist
   truth-value-gap analysis — realised via
-  `Theories/Semantics/Homogeneity/Basic.lean`'s `removeGap` /
+  `Semantics/Homogeneity/Basic.lean`'s `removeGap` /
   `Truth3.metaAssert`.
 - @cite{kriz-2015} for the homogeneity background; same substrate.
 - @cite{langendoen-1978} for the reciprocity-as-cumulativity link —
@@ -68,7 +68,7 @@ docstrings here follow that attribution.
 namespace HaugDalrymple2020
 
 open Semantics.Reference.Reciprocals
-open Theories.Semantics.Dynamic.PPCDRT
+open Semantics.Dynamic.PPCDRT
 open Core
 open Core.Duality
 open Semantics.Plurality.Cumulativity
@@ -488,7 +488,7 @@ theorem collective_groupIdentity_no_distinct :
     for the supervaluationist machinery.
 
     Here we encode the truth-value gap directly via `Truth3`, exploiting
-    the existing `Theories/Semantics/Homogeneity/Basic.lean` substrate
+    the existing `Semantics/Homogeneity/Basic.lean` substrate
     (`removeGap`, `Truth3.metaAssert`). -/
 
 /-- The truth value of a quantified-antecedent reciprocal sentence,

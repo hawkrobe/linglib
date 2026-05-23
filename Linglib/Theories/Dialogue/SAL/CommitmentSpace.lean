@@ -123,7 +123,7 @@ def MutuallyCommitted (C : CommitmentSpace W A) (π : Set W) : Prop :=
 /-- A proposition is **commonly believed** at world `w` of state `c`
     in the space iff `EpistemicLogic.commonBelief` holds for the given
     agent group up to the iteration bound. Delegates to the existing
-    `Theories/Semantics/Modality/EpistemicLogic.commonBelief` substrate
+    `Semantics/Modality/EpistemicLogic.commonBelief` substrate
     rather than re-stipulating; the SAL-side wrapper just selects the
     state's belief relation. -/
 def CommonlyBelieved (c : CommitmentState W A) (group : List A)

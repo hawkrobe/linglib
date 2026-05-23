@@ -1,6 +1,6 @@
 import Linglib.Typology.Complementation
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
-import Linglib.Theories.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.Basic
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-! # Noonan (2007): Complementation Typology + Bridge Theorems

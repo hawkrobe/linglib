@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
+import Linglib.Semantics.Presupposition.BeliefEmbedding
 
 /-!
 # KD45 Projection: The @cite{heim-1992} Know/Believe Asymmetry

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Reference.Basic
+import Linglib.Semantics.Reference.Basic
 import Linglib.Core.Semantics.CommonGround
 
 /-!
@@ -119,7 +119,7 @@ intentional states (not unified here).
    principled fix is to refactor `demonstratum` to a relation
    `C → E → Prop`.
 2. `inCG : Prop → Prop` (here taken as hypothesis) should connect to
-   `commonBelief` in `Theories/Semantics/Modality/EpistemicLogic.lean`
+   `commonBelief` in `Semantics/Modality/EpistemicLogic.lean`
    once a `CG.toAgentAccess` bridge exists.
 3. `SpeakerIntention.intendedRef` parallel-stipulates with
    `Donnellan.DefiniteDescription.intendedRef`; not unified.

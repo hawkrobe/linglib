@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.ArgumentStructure.AgentivityLattice
-import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.AgentivityLattice
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Studies.Aissen2003
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Studies.Aissen2003
 @cite{grimm-2011} @cite{aissen-2003} @cite{von-heusinger-2008}
 
 Study file connecting @cite{grimm-2011}'s agentivity lattice
-(`Theories/Semantics/Events/AgentivityLattice.lean`) to the differential
+(`Semantics/Events/AgentivityLattice.lean`) to the differential
 object marking profiles in `Studies/Aissen2003.lean`.
 
 ## Key results

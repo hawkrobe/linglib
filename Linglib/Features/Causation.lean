@@ -38,7 +38,7 @@ neutral substrate:
     head is a separately licensed functional element).
   None of these carve verbs into exactly the 5 cases here.
 
-  See `Theories/Semantics/Causation/Interpretation.lean` for the
+  See `Semantics/Causation/Interpretation.lean` for the
   force-dynamic mapping to truth conditions; alternative analyses live
   in sibling Theories files.
 
@@ -50,7 +50,7 @@ neutral substrate:
   treat implicativity as projection through context rather than direct
   entailment. The substrate fixes 2 cases; richer frameworks need their
   own enum (planned slot:
-  `Theories/Semantics/Implicative/NairnCondoravdiKarttunen.lean`).
+  `Semantics/Implicative/NairnCondoravdiKarttunen.lean`).
 
 UNVERIFIED: Shibatani 1976 / Shibatani & Pardeshi 2002 publication
 details and Karttunen 2012 / Nairn-Condoravdi-Karttunen 2006 9-way
@@ -67,7 +67,7 @@ namespace Features
 /-- How a causative verb's semantics is built from causal model infrastructure.
 
     Names a **force-dynamic mechanism**, not a causal-model property.
-    `toSemantics` (in `Theories/Semantics/Causation/Interpretation.lean`)
+    `toSemantics` (in `Semantics/Causation/Interpretation.lean`)
     maps each variant to its truth-condition function; properties like
     sufficiency/necessity are derived via theorems.
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
+import Linglib.Semantics.Dynamic.Core.DynamicTy2
 import Mathlib.Data.Fintype.Basic
 
 /-!

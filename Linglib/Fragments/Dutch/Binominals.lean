@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Quantification.BinominalDefs
+import Linglib.Semantics.Quantification.BinominalDefs
 
 /-!
 # Dutch Binominal Nouns

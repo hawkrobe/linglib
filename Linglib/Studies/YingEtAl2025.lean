@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
+import Linglib.Semantics.Attitudes.EpistemicThreshold
 
 /-!
 # Ying et al. (2025) — English-modal bridge to LaBToM threshold semantics
@@ -10,7 +10,7 @@ Connects the English modal fragment (`Fragments.English.FunctionWords`) to
 the epistemic threshold semantics of @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
 ("Understanding Epistemic Language with a Language-Augmented Bayesian
 Theory of Mind", TACL 13:613–637), formalized in
-`Theories.Semantics.Attitudes.EpistemicThreshold`.
+`Semantics.Attitudes.EpistemicThreshold`.
 
 ## The Bridge
 
@@ -28,7 +28,7 @@ table in `EpistemicThreshold.lean`). The bridge proves:
 
     Fragments/English/FunctionWords.lean (AuxEntry, modalMeaning)
                     ↓
-    Theories/Semantics/Attitudes/EpistemicThreshold.lean (EpistemicEntry, θ)
+    Semantics/Attitudes/EpistemicThreshold.lean (EpistemicEntry, θ)
                     ↓
     Studies/YingEtAl2025.lean (this file)
 -/

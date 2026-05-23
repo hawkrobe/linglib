@@ -1,6 +1,6 @@
 import Linglib.Studies.Charlow2021.Data
 import Linglib.Studies.Charlow2021.UpdateTheoretic
-import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism
+import Linglib.Semantics.Dynamic.Effects.Nondeterminism
 
 /-!
 # @cite{charlow-2021}: Cumulative Readings Bridge

@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Fragments.French.Predicates
-import Linglib.Theories.Semantics.ArgumentStructure.Affectedness.Profile
+import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Features.Aktionsart
 import Linglib.Theories.Syntax.Minimalist.Voice
 

@@ -1,6 +1,6 @@
 import Linglib.Typology.TemporalConnectives
 import Linglib.Studies.Karttunen1974
-import Linglib.Theories.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 import Linglib.Fragments.Icelandic.TemporalConnectives

@@ -1,8 +1,8 @@
 import Linglib.Theories.Syntax.Minimalist.Selection
 import Linglib.Theories.Syntax.Minimalist.CategorialFeatures
-import Linglib.Theories.Semantics.Attitudes.ClauseDenotation.Content
-import Linglib.Theories.Semantics.Attitudes.ClauseDenotation.Situation
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Attitudes.ClauseDenotation.Content
+import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
+import Linglib.Semantics.Lexical.VerbEntry
 import Linglib.Studies.Bondarenko2022
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 

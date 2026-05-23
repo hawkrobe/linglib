@@ -1,14 +1,14 @@
 import Linglib.Theories.Pragmatics.Implicature.Basic
-import Linglib.Theories.Semantics.Alternatives.Lexical
-import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Semantics.Alternatives.Lexical
+import Linglib.Semantics.Entailment.Polarity
 
 /-!
 # Generic Scalar Implicature Helpers
 @cite{geurts-2010}
 
 Generic scalar-implicature computation built on `HornScale` (from
-`Theories/Semantics/Alternatives/Lexical.lean`) and contextual polarity
-(from `Theories/Semantics/Entailment/Polarity.lean`).
+`Semantics/Alternatives/Lexical.lean`) and contextual polarity
+(from `Semantics/Entailment/Polarity.lean`).
 
 ## Key operations
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.FreeChoice
+import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Mathlib.Data.Set.Basic
 

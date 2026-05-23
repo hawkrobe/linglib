@@ -235,7 +235,7 @@ def crossLinguisticData : List CrossLinguisticDatum :=
 - ⟦Macbeth⟧f = {Lear, Macbeth, Hamlet,...}
 - Antecedent "Lear" ∈ ⟦Macbeth⟧f ✓
 
-See `Theories/Semantics/Focus/Interpretation.lean` for formalization.
+See `Semantics/Focus/Interpretation.lean` for formalization.
 -/
 
 /-- Rooth's classic "too" example -/

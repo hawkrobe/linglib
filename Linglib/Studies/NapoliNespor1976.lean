@@ -201,7 +201,7 @@ inductive CliticPresence where
     iff *non₂* is underlyingly present (modulo lexical mood control by
     *credere* etc., abstracted away here). Returning `Core.Mood.GramMood`
     rather than `Bool` connects this prediction to the mood semantics in
-    `Theories/Semantics/Mood/`. -/
+    `Semantics/Mood/`. -/
 def predictsGramMood (p : BiasLicensingProfile) : Core.Mood.GramMood :=
   if p.licenses then .subjunctive else .indicative
 

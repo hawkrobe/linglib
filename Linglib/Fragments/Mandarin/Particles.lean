@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Presupposition.TriggerTypology
+import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!
 # Mandarin Presuppositional Particles

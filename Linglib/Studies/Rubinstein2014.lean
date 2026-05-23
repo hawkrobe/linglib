@@ -1,6 +1,6 @@
 import Linglib.Core.Modality.DeonticNecessity
-import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
-import Linglib.Theories.Semantics.Modality.Directive
+import Linglib.Semantics.Modality.Kratzer.Flavor
+import Linglib.Semantics.Modality.Directive
 import Linglib.Fragments.English.Auxiliaries
 import Mathlib.Data.Fin.Basic
 

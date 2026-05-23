@@ -1,5 +1,5 @@
 import Mathlib.Data.Fin.Basic
-import Linglib.Theories.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
 # §2.9 Conditionals — @cite{kratzer-2012}

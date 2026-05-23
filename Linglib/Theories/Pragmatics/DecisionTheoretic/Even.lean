@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Basic
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
-import Linglib.Theories.Semantics.Focus.Particles
+import Linglib.Semantics.Focus.Particles
 
 /-!
 # Decision-Theoretic Semantics: "Even" (@cite{merin-1999} §5)

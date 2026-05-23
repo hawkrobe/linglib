@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Negation.CzechNegation
+import Linglib.Semantics.Negation.CzechNegation
 
 /-!
 # Czech Three-Way Negation in Polar Questions
@@ -22,7 +22,7 @@ syntactic/prosodic encoding (word order and focus).
 
 This file contains per-cell verification theorems and scope generalizations.
 The core types (`NegPosition`, `Diagnostic`, `licenses`) are in
-`Theories.Semantics.Negation.CzechNegation`. Cross-linguistic bridges to
+`Semantics.Negation.CzechNegation`. Cross-linguistic bridges to
 @cite{romero-2024}, @cite{simik-2024}, verb position, and bias profiles are in
 `CzechThreeWayNeg.Typology`.
 

@@ -3,8 +3,8 @@ import Linglib.Core.Deixis.Feature
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Kinds.NominalMappingParameter
-import Linglib.Theories.Semantics.Kinds.MeaningPreservation
+import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Semantics.Kinds.MeaningPreservation
 
 /-!
 # Shan Definiteness Fragment

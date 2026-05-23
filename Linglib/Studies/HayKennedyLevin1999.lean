@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Aspect.DegreeAchievement
-import Linglib.Theories.Semantics.Degree.MeasureFunction
+import Linglib.Semantics.Aspect.DegreeAchievement
+import Linglib.Semantics.Degree.MeasureFunction
 import Linglib.Core.Scales.Scale
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -20,7 +20,7 @@ telicity: bounded difference → telic; unbounded difference → atelic.
 ## Sections
 
 - §1 — HKL's `INCREASE` operator (eq 16) + bridge note to K&L 2008's
-  `measureOfChange` substrate (`Theories/Semantics/Degree/MeasureFunction.lean`).
+  `measureOfChange` substrate (`Semantics/Degree/MeasureFunction.lean`).
 - §2 — Central matrix prediction (HKL §3.2): closed-range adjective →
   telic DA verb; open-range adjective → atelic DA verb. Verified against
   fragment `degreeAchievementScale` annotations on *straighten* (closed →
@@ -66,7 +66,7 @@ open Fragments.English.Predicates.Verbal
 /-- HKL eq 11: `[long(x)(t)] = the degree to which x is long at time t`.
     A gradable adjective denotes a time-indexed measure function — the
     same shape as K&L 2008's `MeasureFunction α δ Time` in
-    `Theories/Semantics/Degree/MeasureFunction.lean`. -/
+    `Semantics/Degree/MeasureFunction.lean`. -/
 abbrev TimedAdjective (α δ Time : Type*) := α → Time → δ
 
 /-- HKL eq 16, the INCREASE function:
@@ -310,7 +310,7 @@ theorem hklSection3_3Data_matrix :
     properly construed as a *property of an argument*, not the
     argument itself (HKL §4.2). That argument is recorded as data here
     but not further formalized — the K89 quantization framework
-    (`Theories/Semantics/Events/Krifka1989.lean`) is the substrate for
+    (`Semantics/Events/Krifka1989.lean`) is the substrate for
     the consumption/creation cases, and `Studies/Krifka1989.lean`
     §1-§4 cover the same ground via Krifka's QUA/CUM apparatus. -/
 

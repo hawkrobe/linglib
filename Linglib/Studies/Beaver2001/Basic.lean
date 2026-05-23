@@ -1,7 +1,7 @@
 import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Logic.ThreeValuedLogic
-import Linglib.Theories.Semantics.Presupposition.Accommodation
-import Linglib.Theories.Semantics.Presupposition.LocalContext
+import Linglib.Semantics.Presupposition.Accommodation
+import Linglib.Semantics.Presupposition.LocalContext
 import Linglib.Studies.Beaver2001.ABLE
 import Mathlib.Data.Set.Basic
 
@@ -57,7 +57,7 @@ function output.
 ## Formalization Coverage
 
 This file formalizes key results from Chs. 2-7. The ABLE fragment (Ch. 7)
-is formalized in `Theories.Semantics.Dynamic.ABLE.Basic` and demonstrated
+is formalized in `Semantics.Dynamic.ABLE.Basic` and demonstrated
 here via worked examples (§8). Quantifier projection (Ch. 8) and ABLE
 accommodation (Ch. 9) are not yet formalized. Quantifier projection is
 partially addressed by the `QuantifierProjection` type in
@@ -372,7 +372,7 @@ context updates. The core operations map to `ContextSet` operations:
 - **Conditional** σ[φ → ψ] = σ \ (σ[φ] \ σ[φ][ψ]) (residual)
 
 PUL conjunction is exactly CCP sequential composition
-(`CCP.seq` from `Theories.Semantics.Dynamic.Core.CCP`).
+(`CCP.seq` from `Semantics.Dynamic.Core.CCP`).
 PUL negation differs from CCP's test-based negation:
 PUL computes the complement within the input state, while CCP
 negation passes or fails the entire state.
@@ -448,7 +448,7 @@ theorem pulImpl_atomic (p q : Set W) (σ : ContextSet W) (w : W) :
 
 /-! ### ABLE Fragment Demonstrations
 
-The ABLE formalization in `Theories.Semantics.Dynamic.ABLE.Basic` provides
+The ABLE formalization in `Semantics.Dynamic.ABLE.Basic` provides
 the `Formula` type and its evaluation semantics. Here we instantiate it
 with the Spaceman Spiff scenario from §6 to demonstrate projection through
 negation and conditionals.

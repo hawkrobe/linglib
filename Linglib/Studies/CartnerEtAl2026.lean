@@ -1,7 +1,7 @@
 import Linglib.Studies.Ross1967
 import Linglib.Studies.Adger2025
 import Linglib.Features.Givenness
-import Linglib.Theories.Semantics.Focus.Comparability
+import Linglib.Semantics.Focus.Comparability
 
 /-!
 # Cartner, Kogan, Webster, Wagers & Sichel (2026)
@@ -366,7 +366,7 @@ def cartnerTestsTheory : DiscourseIslandTheory → Bool
 
 /-- The direct backgroundedness account (BCI) is untouched by these results.
 This connects to the existing formalization in
-`Theories/Semantics/Focus/BackgroundedIslands.lean`, which models
+`Semantics/Focus/BackgroundedIslands.lean`, which models
 QUD-determined backgroundedness for MoS islands — a different phenomenon
 that these experiments do not address. -/
 theorem bci_not_falsified :

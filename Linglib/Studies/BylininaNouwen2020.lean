@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Numerals.Basic
+import Linglib.Semantics.Numerals.Basic
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.RSA.Monotonicity
 import Linglib.Tactics.RSAPredict
@@ -19,7 +19,7 @@ the lower-bound view (`bare n` = `≥n`; @cite{horn-1972}) and the exact view
 L0→S1→L1 RSA cascade with bare numerals over a 0–3 cardinality domain
 strengthens "two" from `≥2` to peak at `w=2`, and analogously for "one".
 
-The construction reuses `atLeastMeaning` from `Theories/Semantics/Numerals/Basic.lean`
+The construction reuses `atLeastMeaning` from `Semantics/Numerals/Basic.lean`
 via a small finite domain wrapper (`NCard`, `NUtt`) suited to `rsa_predict` reification.
 The `lbNuttMeaning_eq_atLeastMeaning` grounding theorem witnesses that the inlined
 meaning is the same one defined there.

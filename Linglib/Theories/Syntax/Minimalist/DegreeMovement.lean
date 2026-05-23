@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.LateMerger
-import Linglib.Theories.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Comparative
 
 /-!
 # Degree Movement

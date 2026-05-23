@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
-import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
-import Linglib.Theories.Semantics.Exhaustification.Operators.Decidable
-import Linglib.Theories.Semantics.Conditionals.Counterfactual
+import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
+import Linglib.Semantics.Exhaustification.Operators.Decidable
+import Linglib.Semantics.Conditionals.Counterfactual
 import Linglib.Phenomena.FreeChoice.Basic
 import Linglib.Studies.Santorio2018
 
@@ -18,7 +18,7 @@ toy modal model.
 The abstract theory of Innocent Exclusion (`IE`), Innocent Inclusion (`II`),
 the cell-of-the-induced-partition (`cell`), and the cell-identification theorem
 `mem_II_of_cell_witness` lives in
-`Theories/Semantics/Exhaustification/Operators/Basic.lean`. This file instantiates
+`Semantics/Exhaustification/Operators/Basic.lean`. This file instantiates
 that theory on a small `FCWorld` and verifies the paper's headline empirical
 prediction:
 
@@ -54,7 +54,7 @@ but not jointly).
 II is **not** "all non-IE alternatives" (a popular but incorrect gloss).
 The non-IE = II coincidence in the basic FC case is a *derived* fact
 (paper §3.3.3) once the cell is identified, not a definition. The
-substrate `Theories/Semantics/Exhaustification/Operators/Basic.lean`
+substrate `Semantics/Exhaustification/Operators/Basic.lean`
 follows the paper's actual definitions.
 
 -/
@@ -859,7 +859,7 @@ the six non-IE alternatives, giving Bar-Lev/Fox's verdict (eqn 57 p. 202):
 This is the **second consumer** of the substrate factorization
 theorems `exhIEII_implies_cell_witnessed_alt` and
 `exhIEII_negates_excludable` added in
-`Theories/Semantics/Exhaustification/Operators/InnocentInclusion.lean`.
+`Semantics/Exhaustification/Operators/InnocentInclusion.lean`.
 The cell witness `wAllP_AllQ` realizes simultaneous accessibility of
 the all-P and all-Q scenarios with no overlap-scenario; the main
 theorem follows in 3 substrate-application lines.
@@ -1144,7 +1144,7 @@ theorem univFcSomeBoth_is_ie :
     factorization theorems: `exhIEII_implies_cell_witnessed_alt` for
     the two universal-distributive non-IE alternatives, and
     `exhIEII_negates_excludable` for the existential-conjunctive IE
-    alternative. The substrate factorization (`Theories/Semantics/
+    alternative. The substrate factorization (`Semantics/
     Exhaustification/Operators/InnocentInclusion.lean`) is what makes
     this main theorem a 3-line consequence of the cell witness. -/
 theorem universal_fc :

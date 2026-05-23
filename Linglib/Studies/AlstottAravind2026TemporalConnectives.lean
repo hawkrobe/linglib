@@ -1,5 +1,5 @@
 import Linglib.Studies.Rett2020
-import Linglib.Theories.Semantics.Aspect.SubeventStructure
+import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 

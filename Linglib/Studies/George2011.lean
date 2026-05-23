@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Questions.Basic
-import Linglib.Theories.Semantics.Questions.Resolution
-import Linglib.Theories.Semantics.Questions.Exhaustivity
+import Linglib.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Resolution
+import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
 # @cite{george-2011}: Question Embedding and the Semantics of Answers

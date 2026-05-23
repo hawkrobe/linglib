@@ -1,5 +1,5 @@
 import Mathlib.CategoryTheory.Category.Basic
-import Linglib.Theories.Semantics.Questions.Partition.Lattice
+import Linglib.Semantics.Questions.Partition.Lattice
 
 /-!
 # Category of QUD Partitions

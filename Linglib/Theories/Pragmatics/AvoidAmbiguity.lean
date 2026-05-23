@@ -21,7 +21,7 @@ clearer alternative exists at no extra cost) is not.
 ## Why this is its own principle
 
 `AvoidAmbiguity` differs from Maximize Presupposition (cf.
-`Theories.Semantics.Alternatives.Structural.violatesMP`) along three
+`Semantics.Alternatives.Structural.violatesMP`) along three
 axes:
 
 1. *Trigger*: MP's competitor wins by **stronger presupposition**;
@@ -42,7 +42,7 @@ phonological realization `tous les NP` is also ambiguous with
 `[tous les NP.pl]`, and the unambiguous expression `les deux NP` (no
 more complex by node count) realizes the dual meaning. The blocked
 dual parse persists as an *unpronounceable alternative*, feeding
-indirect competition (`Theories.Semantics.Alternatives.Indirect`).
+indirect competition (`Semantics.Alternatives.Indirect`).
 
 ## Generic shape
 

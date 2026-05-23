@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Quantification.ChoiceFunction
+import Linglib.Semantics.Quantification.ChoiceFunction
 import Mathlib.Data.Rat.Defs
 
 /-! # Farsi Determiner and Indefinite Lexicon

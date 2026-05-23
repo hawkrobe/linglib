@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Probabilistic.SDS.GraphicalModel
-import Linglib.Theories.Semantics.Probabilistic.SDS.JointPosterior
+import Linglib.Semantics.Probabilistic.SDS.GraphicalModel
+import Linglib.Semantics.Probabilistic.SDS.JointPosterior
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
@@ -12,7 +12,7 @@ for Meaning in Context. *Journal of Semantics* 40(4), 549–583.
 ## Status: Phase 3 (paper-faithful instantiation)
 
 This file instantiates the SDS substrate from
-`Theories/Semantics/Probabilistic/SDS/{GraphicalModel,JointPosterior}.lean`
+`Semantics/Probabilistic/SDS/{GraphicalModel,JointPosterior}.lean`
 on the paper's running examples — currently the bat-in-player sentence
 (paper §5.1, Figure 5, Table 1). Phase 4 will add the astronomer-married-
 star sentence (Table 2).

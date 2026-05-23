@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.ArgumentStructure.Alternation
-import Linglib.Theories.Semantics.Lexical.Roots.RootFeatures
+import Linglib.Semantics.Lexical.Roots.RootFeatures
 
 /-!
 # Dargwa (Tanti / Muira) Complex Predicates @cite{sumbatova-2021}

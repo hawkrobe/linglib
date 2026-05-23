@@ -1,6 +1,6 @@
 import Linglib.Theories.Dialogue.SAL.Frame
 import Linglib.Core.Logic.Intensional.RestrictedModality
-import Linglib.Theories.Semantics.Modality.EpistemicLogic
+import Linglib.Semantics.Modality.EpistemicLogic
 
 /-!
 # SAL Modal Operators
@@ -15,7 +15,7 @@ This file is a thin presentational layer:
 
 * `Believes c a π w` is `EpistemicLogic.knows c.belief a (· ∈ π) w`
   — the existing multi-agent epistemic operator from
-  `Theories/Semantics/Modality/EpistemicLogic.lean`. Using `knows`
+  `Semantics/Modality/EpistemicLogic.lean`. Using `knows`
   via SAL is a doxastic interpretation: KD45 belief, not S5 knowledge.
 * `Committed c a b π w` is `boxR (c.commitment a b) (· ∈ π) w` — the
   pair-indexed analogue. No existing operator in the substrate covers

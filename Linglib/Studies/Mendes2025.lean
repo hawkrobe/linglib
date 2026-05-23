@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Tense.Dynamic
-import Linglib.Theories.Semantics.Mood.Dynamic
+import Linglib.Semantics.Tense.Dynamic
+import Linglib.Semantics.Mood.Dynamic
 import Linglib.Core.Modality.HistoricalAlternatives
 
 /-!
@@ -29,10 +29,10 @@ with future morphology) that:
   quantifiers, formalized as modal displacement.
 
 The dynamic primitives are imported from co-located dynamic operator
-files: `dynSUBJ`/`dynIND` from `Theories/Semantics/Mood/Dynamic.lean`
+files: `dynSUBJ`/`dynIND` from `Semantics/Mood/Dynamic.lean`
 (siblings of static `Mood.SUBJ`/`IND`), `dynFUT` from
-`Theories/Semantics/Tense/Dynamic.lean`, and `SitContext`/`SVar` from
-`Theories/Semantics/Dynamic/Core/{ContextFilter,DiscourseRef}.lean`.
+`Semantics/Tense/Dynamic.lean`, and `SitContext`/`SVar` from
+`Semantics/Dynamic/Core/{ContextFilter,DiscourseRef}.lean`.
 -/
 
 namespace Mendes2025
@@ -647,7 +647,7 @@ Modal donkey anaphora:
   - Main clause retrieves s₁ for temporal anchoring
 
 Correspondence with the dynamic primitives in
-`Theories/Semantics/Mood/Dynamic.lean`:
+`Semantics/Mood/Dynamic.lean`:
 - SUBJ introduces: `dynSUBJ history v = dynIntroduce (historicalBase history) v`
 - IND retrieves: `dynIND v = dynRelationOn (·.2) (·.1 v) sameWorld`
 -/

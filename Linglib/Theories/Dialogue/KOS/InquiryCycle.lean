@@ -1,5 +1,5 @@
 import Linglib.Theories.Dialogue.KOS.Basic
-import Linglib.Theories.Semantics.Questions.Support
+import Linglib.Semantics.Questions.Support
 
 /-!
 # KOS: Conversational Rules on the TIS

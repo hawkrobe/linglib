@@ -138,7 +138,7 @@ def entails (p q : World → Bool) : Bool :=
     EP(H, w) = ∃p ∈ H. p(w) ∧ ∀q ∈ H. q(w) → p ⊆ q
 
     Corresponds to `dayalEP` in
-    `Theories.Semantics.Questions.Exhaustivity`. -/
+    `Semantics.Questions.Exhaustivity`. -/
 def epHolds (hamblin : List (World → Bool)) (w : World) : Bool :=
   let trueProps := hamblin.filter (· w)
   trueProps.any (λ p => trueProps.all (λ q => entails p q))
@@ -149,7 +149,7 @@ def epHolds (hamblin : List (World → Bool)) (w : World) : Bool :=
     proposition in the singular alternative's Hamblin set is true.
 
     Connects to `pexIEII` in
-    `Theories.Semantics.Exhaustification.Presuppositional`. -/
+    `Semantics.Exhaustification.Presuppositional`. -/
 def exhPAntiUniq (singularIndivH : List (World → Bool)) (w : World) : Bool :=
   (singularIndivH.filter (· w)).length > 1
 

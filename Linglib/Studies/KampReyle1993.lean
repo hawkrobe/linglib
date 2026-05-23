@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Dynamic.Boxes.Accessibility
-import Linglib.Theories.Semantics.Dynamic.DRT.Basic
+import Linglib.Semantics.Dynamic.Boxes.Accessibility
+import Linglib.Semantics.Dynamic.DRT.Basic
 
 /-!
 # Kamp & Reyle (1993): From Discourse to Logic

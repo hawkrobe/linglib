@@ -6,7 +6,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Features.Acceptability
 import Linglib.Fragments.Mandarin.Particles
 import Linglib.Theories.Pragmatics.Expressives.Basic
-import Linglib.Theories.Semantics.Presupposition.TriggerTypology
+import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!
 # @cite{wang-2025} Presupposition, Competition, and Coherence

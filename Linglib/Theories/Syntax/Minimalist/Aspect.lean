@@ -25,7 +25,7 @@ unchanged.
 
 ## What does NOT live here
 
-- The viewpoint-aspect denotation (`Theories/Semantics/Tense/Aspect/Core.lean`
+- The viewpoint-aspect denotation (`Semantics/Tense/Aspect/Core.lean`
   `ViewpointType`). Travis, MacDonald, Tsai disagree on AspO denotation, so
   "AspP_outer hosts viewpoint aspect" is *not* a uniform substrate identity.
   Per-morpheme bridges live in the relevant Fragment files (e.g.,

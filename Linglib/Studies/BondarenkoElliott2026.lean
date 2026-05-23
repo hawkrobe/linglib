@@ -1,6 +1,6 @@
 import Linglib.Core.Mereology
-import Linglib.Theories.Semantics.Truthmaker.Inexact
-import Linglib.Theories.Semantics.Truthmaker.Entailment
+import Linglib.Semantics.Truthmaker.Inexact
+import Linglib.Semantics.Truthmaker.Entailment
 import Linglib.Studies.Pasternak2019
 
 /-! # Bondarenko & Elliott (2026) @cite{bondarenko-elliott-2026}
@@ -630,7 +630,7 @@ proposes Fine's *conjunctive parthood* (eq. 94, footnote 27) as a
 refinement.
 
 This is exactly `Mereology.IsContentPart` (Jago Def 5, re-exported
-through `Theories/Semantics/Truthmaker/Basic.lean`). With argument
+through `Semantics/Truthmaker/Basic.lean`). With argument
 order matching the paper's convention "Q' is conjunctive part of Q",
 we have:
 
@@ -689,7 +689,7 @@ closes under intersection; B&E does **not** always close (witnessed by
 a model where `CONTSum` is violated).
 
 A self-contained `hintikkaBox` is used here rather than importing
-`Theories/Semantics/Attitudes/Doxastic.boxAt` directly — same definition,
+`Semantics/Attitudes/Doxastic.boxAt` directly — same definition,
 no transitive deps. -/
 
 section CrossFramework

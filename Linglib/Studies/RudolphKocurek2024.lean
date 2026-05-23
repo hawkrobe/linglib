@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Comparison.Metalinguistic
-import Linglib.Theories.Semantics.Comparison.MetalinguisticDegree
+import Linglib.Semantics.Comparison.Metalinguistic
+import Linglib.Semantics.Comparison.MetalinguisticDegree
 
 /-!
 # @cite{rudolph-kocurek-2024}: Metalinguistic Gradability
@@ -61,13 +61,13 @@ transitivity.
 
 ## Connections
 
-- **Theory layer**: `Theories/Semantics/Comparison/Metalinguistic.lean`
+- **Theory layer**: `Semantics/Comparison/Metalinguistic.lean`
   (SemanticOrdering, MFormula, eval, evalRevised, evalGen, evalMCond,
   assertoricContent, DistanceFunction, evalVery/evalSorta/evalMostly,
   noReversal, MetalinguisticCG)
-- **Delineation**: `Theories/Semantics/Comparison/Delineation.lean`
+- **Delineation**: `Semantics/Comparison/Delineation.lean`
   (@cite{klein-1980}'s comparison class approach — connected via No Reversal)
-- **Hierarchy**: `Theories/Semantics/Comparison/Hierarchy.lean`
+- **Hierarchy**: `Semantics/Comparison/Hierarchy.lean`
   (Klein ← Kennedy ← Measurement strict hierarchy)
 -/
 
@@ -428,7 +428,7 @@ The key consequence of NR: when it holds, `Fa ≻ Gb` simplifies to the
 **delineation comparative** `∃ i' ≤ i : Fa∧¬Gb` — the universal clause
 of eq. (48) becomes redundant. This connects metalinguistic
 comparatives to @cite{klein-1980}'s supervaluation comparative
-(see `Theories/Semantics/Comparison/Delineation.lean`) and
+(see `Semantics/Comparison/Delineation.lean`) and
 @cite{kamp-1975}'s completion-based approach. -/
 theorem nr_trivial_single_entity :
     noReversal interp₃ ord₃ .linguist .w0 .ann .ann := by

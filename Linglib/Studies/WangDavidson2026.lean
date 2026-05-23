@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Theories.Semantics.Exhaustification.Trivalent
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Trivalent
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Semantics.Presupposition
 import Mathlib.Tactic.DeriveFintype

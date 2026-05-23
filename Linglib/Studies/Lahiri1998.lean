@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Focus.Particles
-import Linglib.Theories.Semantics.Entailment.Basic
-import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Semantics.Focus.Particles
+import Linglib.Semantics.Entailment.Basic
+import Linglib.Semantics.Entailment.Polarity
 import Linglib.Typology.PolarityItem
 import Linglib.Fragments.Hindi.PolarityItems
 

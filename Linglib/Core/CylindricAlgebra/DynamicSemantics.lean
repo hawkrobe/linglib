@@ -1,6 +1,6 @@
 import Linglib.Core.CylindricAlgebra
-import Linglib.Theories.Semantics.Dynamic.DPL.Basic
-import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
+import Linglib.Semantics.Dynamic.DPL.Basic
+import Linglib.Semantics.Dynamic.CDRT.Basic
 
 /-!
 # Cylindric Algebra Bridges for Dynamic Semantics
@@ -112,6 +112,6 @@ end CDRT
 -- `Linglib/Studies/Charlow2019.lean` (§ Cylindric algebra bridges).
 -- A Core file cannot import from Studies — the substrate→Phenomena arrow
 -- runs the other way. The DPL and CDRT bridges above are layering-legal
--- because their substrate lives in `Theories/Semantics/Dynamic/`.
+-- because their substrate lives in `Semantics/Dynamic/`.
 
 end Core.CylindricAlgebra

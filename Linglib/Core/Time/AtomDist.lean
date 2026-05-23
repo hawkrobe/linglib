@@ -15,7 +15,7 @@ Per the strata-theory unification (@cite{champollion-2017}), this is
 the quantifier-level form of stratified reference at point-interval
 granularity along the time dimension — a sibling of the Bennett-Partee
 1972 strict subinterval property (`HasSubintervalProp` in
-`Theories/Semantics/Tense/Aspect/SubintervalProperty.lean`). The
+`Semantics/Tense/Aspect/SubintervalProperty.lean`). The
 bridge `EvQuant.ofPred` below lifts an event predicate to an event
 quantifier; the witness-universal and quantifier-restriction
 formulations live at the same parameter-space point but differ in

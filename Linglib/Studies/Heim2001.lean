@@ -1,6 +1,6 @@
 import Linglib.Studies.Kennedy1999
-import Linglib.Theories.Semantics.Degree.Abstraction
-import Linglib.Theories.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Abstraction
+import Linglib.Semantics.Degree.Comparative
 import Linglib.Theories.Syntax.Minimalist.DegreeMovement
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Order.Interval.Set.Disjoint
@@ -54,7 +54,7 @@ re-exported below.
 - **Heim's free-world-variable implementation of de re/de dicto**
   (paper §2.4, ex. (40); Percus-style binding per @cite{percus-2000} and
   Abusch 1994 — paper fn. 16). The substrate's
-  `Theories/Semantics/Degree/Intensional.lean` formalizes the alternative
+  `Semantics/Degree/Intensional.lean` formalizes the alternative
   ACTUALLY-operator implementation (von Stechow 1984), used in
   `VonStechow1984.lean`. The two implementations agree on the diagnosis
   (Russell ambiguity is de re/de dicto, not DegP-scope) but differ on the
@@ -291,7 +291,7 @@ theorem verbClass_predicts_highDegPAvailable :
 -- predicates (`long_w'` vs `long_w`), citing @cite{percus-2000} and
 -- Abusch 1994 (paper fn. 16). This is distinct from von Stechow 1984's
 -- own ACTUALLY-operator implementation, which the substrate
--- (`Theories/Semantics/Degree/Intensional.lean`) formalizes — see
+-- (`Semantics/Degree/Intensional.lean`) formalizes — see
 -- `VonStechow1984.lean` for the substrate use.
 --
 -- The two implementations agree on the diagnosis but differ on the LF
@@ -306,7 +306,7 @@ theorem verbClass_predicts_highDegPAvailable :
 -- complement `R` twice in the semantic calculation (paper ex. (59)),
 -- giving evidence for DegP-movement independent of VP-ellipsis. The
 -- semantic decomposition `λR. λx. max{d : R(x,d)} > max{d : ∃y ≠ x. R(y,d)}`
--- is formalized as `Theories.Semantics.Degree.Superlative.absoluteSuperlative`;
+-- is formalized as `Semantics.Degree.Superlative.absoluteSuperlative`;
 -- consumers should reference the substrate definition directly.
 --
 -- The contrast "Kim climbed the highest mountain" / "KIM climbed the

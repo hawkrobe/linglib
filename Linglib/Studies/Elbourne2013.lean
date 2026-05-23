@@ -2,12 +2,12 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Logic.Intensional.Rigidity
-import Linglib.Theories.Semantics.Questions.Partition.QUD
-import Linglib.Theories.Semantics.Questions.PrecisionProjection
+import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
-import Linglib.Theories.Semantics.Definiteness.Basic
-import Linglib.Theories.Semantics.Reference.Donnellan
+import Linglib.Semantics.Definiteness.Basic
+import Linglib.Semantics.Reference.Donnellan
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns

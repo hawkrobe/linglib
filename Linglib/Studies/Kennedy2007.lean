@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Degree.Basic
-import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Theories.Semantics.Degree.Kennedy
+import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Kennedy
 import Linglib.Core.Scales.Scale
 
 /-!

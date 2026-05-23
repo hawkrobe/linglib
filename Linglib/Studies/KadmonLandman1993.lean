@@ -1,10 +1,10 @@
 import Linglib.Core.Logic.NaturalLogic
-import Linglib.Theories.Semantics.Polarity.Licensing
+import Linglib.Semantics.Polarity.Licensing
 import Linglib.Typology.PolarityItem
-import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Theories.Semantics.Entailment.AntiAdditivity
-import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
-import Linglib.Theories.Semantics.Exhaustification.FreeChoice
+import Linglib.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Semantics.Entailment.StrawsonEntailment
+import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Studies.KadmonLandman1993Apparatus
 import Linglib.Studies.Ladusaw1979
 import Mathlib.Data.Set.Basic
@@ -846,7 +846,7 @@ makes explicit that the parameter is inherently vague, not merely unknown.
 /-- The traditional GEN operator: ∀s. normal(s) ∧ restrictor(s) → scope(s).
 
     This is the standard analysis of generic sentences (see
-    `Theories/Semantics/Lexical/Noun/Kind/Generics.lean`), defined locally
+    `Semantics/Lexical/Noun/Kind/Generics.lean`), defined locally
     to avoid import chain issues. K&L's contribution is explaining WHY
     the normalcy parameter is context-dependent: it is inherently vague. -/
 def gen {D : Type*} (domain : List D) (normal : D → Bool)

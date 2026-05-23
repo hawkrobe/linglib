@@ -1,8 +1,8 @@
 import Linglib.Fragments.Hausa.Determiners
 import Linglib.Fragments.Akan.Determiners
-import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
-import Linglib.Theories.Semantics.Quantification.ONEModifiers
-import Linglib.Theories.Semantics.Quantification.ChoiceFunction
+import Linglib.Semantics.Quantification.UnifiedUniversal
+import Linglib.Semantics.Quantification.ONEModifiers
+import Linglib.Semantics.Quantification.ChoiceFunction
 import Linglib.Studies.HaslingerHienEtAl2025
 
 /-!

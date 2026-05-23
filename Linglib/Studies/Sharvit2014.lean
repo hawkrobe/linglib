@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Tense.LexicalType
-import Linglib.Theories.Semantics.Tense.TemporalConnectives.Before
-import Linglib.Theories.Semantics.Tense.SOT.Decomposition
-import Linglib.Theories.Semantics.Tense.SOT.Ambiguity
+import Linglib.Semantics.Tense.LexicalType
+import Linglib.Semantics.Tense.TemporalConnectives.Before
+import Linglib.Semantics.Tense.SOT.Decomposition
+import Linglib.Semantics.Tense.SOT.Ambiguity
 
 /-!
 # @cite{sharvit-2014}: On the universal principles of tense embedding
@@ -16,9 +16,9 @@ explaining variation in *before*-clauses (English/Polish vs Japanese) and
 attitude reports (English vs Polish vs Japanese).
 
 The pronominal/quantificational substrate is in
-`Theories/Semantics/Tense/LexicalType.lean`; the
+`Semantics/Tense/LexicalType.lean`; the
 @cite{beaver-condoravdi-2003} `before` semantics + IPF mechanism is in
-`Theories/Semantics/Tense/TemporalConnectives/Before.lean`.
+`Semantics/Tense/TemporalConnectives/Before.lean`.
 
 ## Sharvit's parameter space (numbered example (98), p. 300)
 

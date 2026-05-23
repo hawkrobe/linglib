@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.ArgumentStructure.Alternation
-import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
-import Linglib.Theories.Semantics.Composition.TypeShifting
+import Linglib.Semantics.Modality.Kratzer.Flavor
+import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Studies.Landau2015
 import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Data.Fin.Basic

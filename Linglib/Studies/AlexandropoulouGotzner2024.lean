@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Gradability.Basic
-import Linglib.Theories.Semantics.Gradability.Antonymy
+import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Gradability.Antonymy
 import Linglib.Fragments.English.Predicates.Adjectival
 /-!
 # @cite{alexandropoulou-gotzner-2024} — Gradable Adjective Interpretation Under Negation: The Role of Competition
@@ -31,12 +31,12 @@ theorem (lexical commitment ↔ output of pragmatic strengthening) lives there.
 
 ## Substrate consumed
 
-- `Theories/Semantics/Degree/Basic.lean` — `positiveMeaning`, `antonymMeaning`,
+- `Semantics/Degree/Basic.lean` — `positiveMeaning`, `antonymMeaning`,
   `positiveMeaning_monotone` (all `Prop`-valued, decidable).
-- `Theories/Semantics/Gradability/Theory.lean` — `ThresholdPair`,
+- `Semantics/Gradability/Theory.lean` — `ThresholdPair`,
   `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`,
   `inGapRegion` (all `abbrev`s over the Core primitives).
-- `Theories/Semantics/Gradability/Antonymy.lean` — `contradictory_exhaustive`,
+- `Semantics/Gradability/Antonymy.lean` — `contradictory_exhaustive`,
   `contradictory_is_complement` (used in §4).
 - `Fragments/English/Predicates/Adjectival.lean` — `large/small/gigantic/tiny`
   and `clean/dirty/pristine/filthy` lexical entries.

@@ -2,10 +2,10 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Studies.Sauerland2003
-import Linglib.Theories.Semantics.Presupposition.PhiFeatures
-import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Theories.Semantics.Exhaustification.Presuppositional
-import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral
+import Linglib.Semantics.Presupposition.PhiFeatures
+import Linglib.Semantics.Presupposition.MaximizePresupposition
+import Linglib.Semantics.Exhaustification.Presuppositional
+import Linglib.Semantics.Dynamic.Effects.Bilateral
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FinCases

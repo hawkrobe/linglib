@@ -1,7 +1,7 @@
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.NormNum
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
-import Linglib.Theories.Semantics.Alternatives.Symmetric
+import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Alternatives.Symmetric
 import Linglib.Studies.Magri2009
 
 /-!

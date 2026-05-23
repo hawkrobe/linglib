@@ -1,6 +1,6 @@
 import Linglib.Studies.Pesetsky1995
-import Linglib.Theories.Semantics.Causation.Psych
-import Linglib.Theories.Semantics.Causation.PsychLink
+import Linglib.Semantics.Causation.Psych
+import Linglib.Semantics.Causation.PsychLink
 
 /-!
 # @cite{hartshorne-etal-2016} — Empirical Data

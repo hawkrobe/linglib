@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Quantification.ChoiceFunction
-import Linglib.Theories.Semantics.Definiteness.Basic
-import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
+import Linglib.Semantics.Quantification.ChoiceFunction
+import Linglib.Semantics.Definiteness.Basic
+import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.Maximality
 

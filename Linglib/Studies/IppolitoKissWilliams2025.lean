@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Questions.Probabilistic
-import Linglib.Theories.Semantics.Questions.Relevance
+import Linglib.Semantics.Questions.Probabilistic
+import Linglib.Semantics.Questions.Relevance
 import Linglib.Studies.IppolitoKissWilliams2022
 import Linglib.Studies.IppolitoKissWilliams2025.Data
 import Linglib.Core.Probability.Finite

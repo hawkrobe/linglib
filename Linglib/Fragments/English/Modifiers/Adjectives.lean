@@ -22,7 +22,7 @@ import Linglib.Core.Word
 import Linglib.Features.PropertyDomain
 import Linglib.Core.Morphology.Exponence
 import Linglib.Core.Morphology.DegreeContainment
-import Linglib.Theories.Semantics.Gradability.Basic
+import Linglib.Semantics.Gradability.Basic
 
 namespace Fragments.English.Modifiers.Adjectives
 

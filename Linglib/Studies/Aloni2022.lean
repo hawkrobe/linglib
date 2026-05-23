@@ -1,6 +1,6 @@
 import Linglib.Phenomena.FreeChoice.Atoms
 import Linglib.Phenomena.FreeChoice.Worlds
-import Linglib.Theories.Semantics.BSML.FreeChoice
+import Linglib.Semantics.BSML.FreeChoice
 
 /-!
 # @cite{aloni-2022}: BSML applied to permission disjunction
@@ -10,7 +10,7 @@ import Linglib.Theories.Semantics.BSML.FreeChoice
 Computational instantiation of NS FC, WS FC, Dual Prohibition, Double Negation
 FC, and Modal Disjunction (Facts 3, 4, 5, 11, 12) in BSML+ on a 4-world deontic
 model. Each result is a named theorem invoking the universal substrate theorem
-in `Theories/Semantics/BSML/FreeChoice.lean`, applied to the concrete model
+in `Semantics/BSML/FreeChoice.lean`, applied to the concrete model
 constructed below.
 
 ## Out of scope
@@ -20,7 +20,7 @@ constructed below.
 - BSML* (Fact 13–14, §6.3.1) and BSML◇ / BSML∅ (§7) interpretation strategies
 - §6.1 epistemic vs deontic contrast (this file is purely deontic)
 
-The universal results live in `Theories/Semantics/BSML/FreeChoice.lean`:
+The universal results live in `Semantics/BSML/FreeChoice.lean`:
 `narrowScopeFC`, `wideScopeFC`, `modalDisjunction`, `dualProhibition`,
 `doubleNegationFC`, `negativeFC_poss_fails_bsmlPlus`. The Negative FC failure
 (Fact 14) on a single Unit world is proved there.

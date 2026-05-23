@@ -166,7 +166,7 @@ theorem bounded_entries_telic :
       (λ e => (resultativeAspect e.rpBoundedness).telicity == .telic) = true := by
   native_decide
 
-/-! ### Theorems migrated from `Theories.Semantics.Causation.Resultatives`
+/-! ### Theorems migrated from `Semantics.Causation.Resultatives`
 
 These theorems quantify over `allEntries` (paper-specific data) and
 therefore belong with the paper, not in the Theory layer. -/

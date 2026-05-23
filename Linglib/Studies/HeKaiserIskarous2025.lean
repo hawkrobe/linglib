@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Intensional.Frame
-import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.Polarity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.FinEnum

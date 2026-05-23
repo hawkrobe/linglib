@@ -1,5 +1,5 @@
 import Linglib.Theories.Dialogue.KOS.Defs
-import Linglib.Theories.Semantics.TypeTheoretic.Discourse
+import Linglib.Semantics.TypeTheoretic.Discourse
 
 /-!
 # KOS-TIS ↔ Cooper-2023-InfoState Genealogy

@@ -31,7 +31,7 @@ truth and falsity, as in paraconsistent logic).
 
 @cite{cobreros-etal-2012} Theorem 3: in the restricted vocabulary,
 t-consequence = LP-consequence and s-consequence = K3-consequence.
-The correspondence is proved in `Theories/Semantics/Supervaluation/TCS.lean`.
+The correspondence is proved in `Semantics/Supervaluation/TCS.lean`.
 -/
 
 namespace Core.Logic.ThreeValuedLogic

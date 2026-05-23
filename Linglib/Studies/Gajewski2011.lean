@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
-import Linglib.Theories.Semantics.Polarity.Licensing
-import Linglib.Theories.Semantics.Entailment.Intolerance
-import Linglib.Theories.Semantics.Entailment.PresuppositionLicensing
-import Linglib.Theories.Semantics.Degree.Comparative
+import Linglib.Semantics.Entailment.StrawsonEntailment
+import Linglib.Semantics.Polarity.Licensing
+import Linglib.Semantics.Entailment.Intolerance
+import Linglib.Semantics.Entailment.PresuppositionLicensing
+import Linglib.Semantics.Degree.Comparative
 import Linglib.Studies.VonFintel1999
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Typology.PolarityItem
@@ -44,11 +44,11 @@ with "DE + scalar endpoint" (Conjecture 48).
   scale-theoretic and would need scale-side machinery to formalize.
 - `IsIntolerant` predicate (eq. 80) and the Appendix 2 result
   AA ⊆ DE + Intolerant — both formalized in
-  `Theories/Semantics/Entailment/Intolerance.lean`. Re-exported here as
+  `Semantics/Entailment/Intolerance.lean`. Re-exported here as
   `gaj2011_appendix2_AA_implies_intolerant`.
 - `wouldFull_isStrawsonAA` — Gajewski Appendix 1's actual `would`-with-
   non-vacuity-presupposition SAA result (in
-  `Theories/Semantics/Entailment/StrawsonEntailment.lean`).
+  `Semantics/Entailment/StrawsonEntailment.lean`).
 - Strong-NPI registry consistency theorem
   (`gaj2011_strongNPIs_excluded_from_strawson_only_contexts`) —
   Gajewski's headline empirical claim made `decide`-checkable over the
@@ -60,7 +60,7 @@ with "DE + scalar endpoint" (Conjecture 48).
 ## §4 framework — both halves now in skeleton
 
 - Conditions 1, 2 (eqs. 59, 66): formalized in
-  `Theories/Semantics/Entailment/PresuppositionLicensing.lean` using
+  `Semantics/Entailment/PresuppositionLicensing.lean` using
   `Exhaustification.exhMW` (Spector 2016) as the substrate's `O(F, G)`.
   Trivial-ALT bridges proved (`condition1_with_no_alts_iff_de`,
   `condition2_with_no_alts_iff_de`). `only`'s satisfaction of Cond 1, 2
@@ -97,14 +97,14 @@ open Semantics.Entailment.StrawsonEntailment
 
 The paper's §2 establishes:
 - `IsAntiAdditive f := ∀ p q, f (p ∪ q) ↔ f p ∧ f q`
-  (eq. 10; in linglib: `Theories/Semantics/Entailment/AntiAdditivity.lean`).
+  (eq. 10; in linglib: `Semantics/Entailment/AntiAdditivity.lean`).
 - `IsDownwardEntailing f := Antitone f` (eq. 4; in linglib:
-  `Theories/Semantics/Entailment/Polarity.lean`).
+  `Semantics/Entailment/Polarity.lean`).
 - AA ⇒ DE (eq. 11): standard textbook proof — already in linglib as
   `IsAntiAdditive.antitone`.
 - Zwarts: strong NPIs (`either`, `in weeks`, until) need AA licensers (eq. 8).
 - vF: presuppositions are factored out by replacing DE with **Strawson-DE**
-  (eq. 22; in linglib: `Theories/Semantics/Entailment/StrawsonEntailment.lean`).
+  (eq. 22; in linglib: `Semantics/Entailment/StrawsonEntailment.lean`).
 -/
 
 /-! ## §3.3 The puzzle — Strawson-AA is too weak
@@ -155,7 +155,7 @@ non-truth-conditional meaning.
 
 /-! ### Substrate index
 
-The four SAA proofs live in `Theories/Semantics/Entailment/StrawsonEntailment.lean`:
+The four SAA proofs live in `Semantics/Entailment/StrawsonEntailment.lean`:
 
 - `onlyFull_isStrawsonAA` — Gajewski body §3.3 eqs. 37-38 (p. 120).
   (Appendix 1 sketches `sorry` and `would`; the `only` case is body text.)
@@ -209,7 +209,7 @@ one side of the midpoint of its scale.
 The substrate-level definitions (`IsTrivial`, `IsIntolerant`,
 `IsAntiAdditiveGQ`, `IsDownwardEntailingGQ`) and the Appendix 2 proof
 (`antiAdditiveGQ_implies_intolerant`) live in
-`Theories/Semantics/Entailment/Intolerance.lean`.
+`Semantics/Entailment/Intolerance.lean`.
 
 The reverse strict inclusion (`AA ⊊ DE + Intolerant`, ex. 84) — i.e.
 exhibiting a DE+Intolerant function that is *not* AA — is asserted by
@@ -275,7 +275,7 @@ in the K&P two-dimensional ⟨truth, presup⟩ framework:
   operator's presupposition* must be DE.
 
 The substrate predicates `Condition3` and `Condition4` live in
-`Theories/Semantics/Entailment/PresuppositionLicensing.lean`. Here we apply
+`Semantics/Entailment/PresuppositionLicensing.lean`. Here we apply
 them to `only` and verify the empirical match: weak NPIs licensed
 (Condition 3 ✓), strong NPIs blocked (Condition 4 ✗).
 -/
@@ -344,7 +344,7 @@ Parallel to §4.4's K&P-based Conditions 3, 4: Conditions 1, 2 (eqs.
 59, 66) handle the implicature side via Spector 2016's `exhMW`
 operator, treated as Gajewski's `O(F, G)`. The substrate substrate's
 `Exhaustification.exhMW` lives in
-`Theories/Semantics/Exhaustification/Operators/Basic.lean`.
+`Semantics/Exhaustification/Operators/Basic.lean`.
 
 The substrate's trivial-ALT bridge theorem
 (`condition1_with_no_alts_iff_de`) shows: with no alternatives,
@@ -391,7 +391,7 @@ theorem only_satisfies_condition2_no_alts (x : World → Prop) :
 /-! ## Hoeksema S-comparative — the positive test case
 
 @cite{hoeksema-1983}'s S-comparative is *classically* anti-additive
-(`Theories/Semantics/Degree/Comparative.lean::sComparative_isAntiAdditive`),
+(`Semantics/Degree/Comparative.lean::sComparative_isAntiAdditive`),
 hence by `antiAdditive_implies_strawsonAA` it is also Strawson-AA.
 This is the **positive test** for Gajewski's framework: an AA operator
 licenses strong NPIs (Hoeksema's data confirms — "Mary is taller than

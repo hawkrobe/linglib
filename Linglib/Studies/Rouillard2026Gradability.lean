@@ -1,7 +1,7 @@
 import Linglib.Features.Aktionsart
-import Linglib.Theories.Semantics.Gradability.Basic
-import Linglib.Theories.Semantics.Gradability.MaximalInformativity
-import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
+import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Gradability.MaximalInformativity
+import Linglib.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Time.Interval.Basic

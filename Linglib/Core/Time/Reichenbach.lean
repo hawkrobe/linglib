@@ -96,7 +96,7 @@ theorem isPast_simpleCase (f : ReichenbachFrame Time) (h : f.isSimpleCase) :
 /-- Perfective: E ⊆ R (event contained in reference).
     Simplified to E = R for point-based times.
     TODO: proper interval-based perfective/imperfective distinction
-    lives in `Theories/Semantics/Lexical/Verb/ViewpointAspect.lean`. -/
+    lives in `Semantics/Lexical/Verb/ViewpointAspect.lean`. -/
 def isPerfective (f : ReichenbachFrame Time) : Prop :=
   f.eventTime = f.referenceTime
 
@@ -237,7 +237,7 @@ theorem isProspective_iff_relatedByName (f : ReichenbachFrame Time) :
 /-- `isPerfective` is exactly `situation equal topic` in the Allen
     algebra against the domain. (For the point-time approximation; the
     proper interval-based perfective/imperfective distinction lives in
-    `Theories/Semantics/Lexical/Verb/ViewpointAspect.lean`.) -/
+    `Semantics/Lexical/Verb/ViewpointAspect.lean`.) -/
 theorem isPerfective_iff_relatedByName (f : ReichenbachFrame Time) :
     f.isPerfective ↔ f.toDomain.relatedByName equalSet .situation .topic := by
   unfold isPerfective Domain.relatedByName Domain.relatedBy

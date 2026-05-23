@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Theories.Semantics.Quantification.BinominalDefs
+import Linglib.Semantics.Quantification.BinominalDefs
 
 /-!
 # NP-Ellipsis in Spanish Binominals @cite{saab-2026}

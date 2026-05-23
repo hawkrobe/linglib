@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Composition.MaybeMonad
+import Linglib.Semantics.Composition.MaybeMonad
 import Linglib.Studies.Heim1992Projection
 
 /-!

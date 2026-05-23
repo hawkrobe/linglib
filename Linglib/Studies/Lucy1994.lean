@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Yukatek.Operators
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
-import Linglib.Theories.Semantics.Lexical.Roots.SalienceClass
+import Linglib.Semantics.Lexical.Roots.SalienceClass
 
 /-!
 # Lucy 1994: The role of semantic value in lexical comparison
@@ -51,7 +51,7 @@ open Fragments.Mayan.Yukatek.Operators
 -- ════════════════════════════════════════════════════
 
 /-! `SalienceClass` and `classOfSignature` live in
-    `Theories/Semantics/Lexical/Roots/SalienceClass.lean`. This file
+    `Semantics/Lexical/Roots/SalienceClass.lean`. This file
     provides the full @cite{lucy-1994} analysis on top of them:
     operator-orbit characterizations and per-root sanity checks.
 

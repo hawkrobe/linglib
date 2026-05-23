@@ -1,10 +1,10 @@
-import Linglib.Theories.Semantics.Measurement
-import Linglib.Theories.Semantics.ArgumentStructure.Defs
-import Linglib.Theories.Semantics.ArgumentStructure.Properties
-import Linglib.Theories.Semantics.ArgumentStructure.LF
-import Linglib.Theories.Semantics.Aspect.Incremental
-import Linglib.Theories.Semantics.Aspect.Cumulativity
-import Linglib.Theories.Semantics.Degree.Comparative
+import Linglib.Semantics.Measurement
+import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.ArgumentStructure.Properties
+import Linglib.Semantics.ArgumentStructure.LF
+import Linglib.Semantics.Aspect.Incremental
+import Linglib.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Degree.Comparative
 import Linglib.Studies.Bresnan1973
 
 /-!

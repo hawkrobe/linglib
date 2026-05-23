@@ -29,8 +29,8 @@ Combined with assertion ∃x. P(x), this yields ⊥.
 
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
-import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Entailment.Polarity
 import Linglib.Studies.Chierchia2013
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Finite.Basic

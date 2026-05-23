@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Polarity.Operator
+import Linglib.Semantics.Polarity.Operator
 
 /-!
 # Turkish Question Particles

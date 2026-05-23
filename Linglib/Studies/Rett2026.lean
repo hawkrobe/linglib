@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Theories.Semantics.Tense.TemporalConnectives
+import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Tense.TemporalConnectives
 import Linglib.Studies.JinKoenig2021
 import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Fragments.English.Modifiers.Adjectives

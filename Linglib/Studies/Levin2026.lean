@@ -1,6 +1,6 @@
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Theories.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Theories.Semantics.Causation.Resultatives
+import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
+import Linglib.Semantics.Causation.Resultatives
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
@@ -49,7 +49,7 @@ isolation.
 
 This study connects four existing layers:
 - `Core.Lexical.LevinClass`: verb classes lack causative alternation (§12, §18)
-- `Theories.Semantics.Causation.Resultatives`: construction adds CAUSE;
+- `Semantics.Causation.Resultatives`: construction adds CAUSE;
   PCC maps onto the independent-source/tightness infrastructure
 - `Fragments.English.Predicates`: verb and adjective entries
 - `Phenomena.ArgumentStructure.DiathesisAlternations`: existing alternation data

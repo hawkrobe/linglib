@@ -1,9 +1,9 @@
 import Linglib.Studies.Hoeksema1983
-import Linglib.Theories.Semantics.Polarity.Licensing
+import Linglib.Semantics.Polarity.Licensing
 import Linglib.Studies.Heim2001
 import Linglib.Studies.Bresnan1973
 import Linglib.Theories.Syntax.Minimalist.DegreeMovement
-import Linglib.Theories.Semantics.Degree.ThanClause
+import Linglib.Semantics.Degree.ThanClause
 import Linglib.Typology.PolarityItem
 
 /-!
@@ -23,7 +23,7 @@ syntax–semantics interface module
 `Theories/Syntax/Minimalist/DegreeMovement.lean`,
 which itself imports `Theories/Syntax/Minimalism/LateMerger.lean`
 (generic late merger, polymorphic in admissibility) and
-`Theories/Semantics/Degree/Comparative.lean` (set-of-degrees comparative
+`Semantics/Degree/Comparative.lean` (set-of-degrees comparative
 operator). What this file *does* is instantiate that infrastructure for
 the empirical claims of B&P, and bridge to neighbouring studies.
 

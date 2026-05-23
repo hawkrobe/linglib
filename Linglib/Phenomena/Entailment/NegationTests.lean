@@ -3,8 +3,8 @@ Verification that formal negation predictions match empirical judgments
 from `Phenomena.Negation.Basic`. Tests DE, not-UE, and DE-comp-DE = UE.
 -/
 
-import Linglib.Theories.Semantics.Entailment.Basic
-import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Semantics.Entailment.Basic
+import Linglib.Semantics.Entailment.Polarity
 import Linglib.Phenomena.Negation.Basic
 import Mathlib.Data.Set.Basic
 

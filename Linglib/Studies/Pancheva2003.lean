@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Schema
-import Linglib.Theories.Semantics.Aspect.Basic
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Studies.Kiparsky2002
 
 /-!
@@ -42,7 +42,7 @@ inside the participial VP.
   Kiparsky's 4-reading enum (Kiparsky adds present-state, which
   Pancheva does not distinguish).
 
-The Lean substrate `Theories/Semantics/Aspect/Core.lean` already
+The Lean substrate `Semantics/Aspect/Core.lean` already
 provides `PerfectType` (Pancheva's 3-type enum) plus the
 `universalPerfect` / `experientialPerfect` / `resultativePerfect`
 operators built on `PERF_P` over `UNBOUNDED` / `INIT_OVERLAP` /

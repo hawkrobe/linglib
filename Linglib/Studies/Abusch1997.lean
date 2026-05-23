@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Theories.Semantics.Tense.DeRe
-import Linglib.Theories.Semantics.Dynamic.PLA.Belief
+import Linglib.Semantics.Tense.Basic
+import Linglib.Semantics.Tense.DeRe
+import Linglib.Semantics.Dynamic.PLA.Belief
 import Linglib.Data.Examples.Schema
 
 /-!
@@ -46,7 +46,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
    ("the now of an epistemic alternative is an upper limit for the
    denotation of tenses"); presuppositional construal due to
    @cite{heim-1994-comments}, endorsed by Abusch 1997 fn 20. Lives in
-   `Theories/Semantics/Tense/Basic.lean` as `upperLimitConstraint`,
+   `Semantics/Tense/Basic.lean` as `upperLimitConstraint`,
    formalized at the value level as `embeddedR ≤ matrixE`. **Note:**
    this value-level reduction strips the modal-alternative
    quantification the original formulation carries; making the modal
@@ -260,7 +260,7 @@ theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
 -- ════════════════════════════════════════════════════════════════
 
 /-- @cite{abusch-1997}'s temporal de re via the centered-world substrate
-    (`Theories/Semantics/Tense/DeRe.lean`): any `TemporalDeReReading`
+    (`Semantics/Tense/DeRe.lean`): any `TemporalDeReReading`
     whose actual res-time precedes the holder's now satisfies the past
     constraint. Value-level felicity reduces to the actualRes ordering;
     rigidity of the concept (= acquaintance-anchored res reading) is

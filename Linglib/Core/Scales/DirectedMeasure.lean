@@ -12,7 +12,7 @@ boundedness classification, and direction. The common algebraic core of
 
 The MIP domain framework operators (`numeral`, `adjective`,
 `rouillardETIA`, `rouillardGTIA`) currently live in this file. Per master
-plan v4 Phase B, these will move to `Theories/Semantics/Gradability/{Kennedy,Rouillard}.lean`.
+plan v4 Phase B, these will move to `Semantics/Gradability/{Kennedy,Rouillard}.lean`.
 
 This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
@@ -116,7 +116,7 @@ mechanism — it IS the MIP applied to "at least n".
 
 Per master plan v4, these MIP-domain operators (numeral, adjective,
 rouillardETIA, rouillardGTIA) are scheduled to move to
-`Theories/Semantics/Gradability/{Kennedy,Rouillard}.lean` in Phase B. -/
+`Semantics/Gradability/{Kennedy,Rouillard}.lean` in Phase B. -/
 
 namespace DirectedMeasure
 
@@ -152,7 +152,7 @@ theorem classA_blocked (μ : W → α) :
 end DirectedMeasure
 
 /-! Rouillard 2026's E-TIA / G-TIA MIP-domain operators (negative direction)
-    have moved to `Theories/Semantics/Gradability/MaximalInformativity.lean`
+    have moved to `Semantics/Gradability/MaximalInformativity.lean`
     per master plan v4 Phase B (idea-named: `etia`/`gtia`). The
     cross-framework licensing equivalence theorems also live there. -/
 

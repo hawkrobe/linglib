@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
-import Linglib.Theories.Semantics.Causation.Implicative
+import Linglib.Semantics.Causation.Implicative
 
 /-!
 # Finnish Verb Entries @cite{karlsson-2017}

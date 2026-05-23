@@ -4,9 +4,9 @@ import Linglib.Core.Mood.IllocutionaryMood
 import Linglib.Core.Mood.POSW
 import Linglib.Core.Mood.POSWTarget
 import Linglib.Core.Discourse.Scoreboard
-import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
-import Linglib.Theories.Semantics.Modality.Directive
-import Linglib.Theories.Semantics.Modality.Assert
+import Linglib.Semantics.Modality.Kratzer.Flavor
+import Linglib.Semantics.Modality.Directive
+import Linglib.Semantics.Modality.Assert
 import Linglib.Studies.RuytenbeekEtAl2017
 import Mathlib.Data.Fin.Basic
 
@@ -248,7 +248,7 @@ theorem disagrees_with_ruytenbeek_imperative_flavor :
     RuytenbeekEtAl2017.SentType.imperative.modalFlavor := by decide
 
 /-- @cite{kaufmann-2012}'s position is exposed in
-    `Theories/Semantics/Modality/Assert.lean` as
+    `Semantics/Modality/Assert.lean` as
     `primaryFlavor .imperative = .deontic`. Roberts disagrees.
 
     This subsumes a previous `roberts_fails_ruytenbeek_mechanism_one`
@@ -345,7 +345,7 @@ commands. The mood and semantic type are unchanged; the force
 difference lives in the **ordering source**, where the prejacent
 itself serves as a secondary ordering criterion (yielding weak
 necessity in the sense of @cite{von-fintel-iatridou-2008}, which
-linglib formalizes in `Theories/Semantics/Modality/Directive.lean`). -/
+linglib formalizes in `Semantics/Modality/Directive.lean`). -/
 
 open Semantics.Modality.Directive in
 /-- Weak (suggestion/advice) reading of an imperative character: weak

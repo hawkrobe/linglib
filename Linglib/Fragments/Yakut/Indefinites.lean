@@ -24,7 +24,7 @@ matching WALS's classification for `iso = "sah"` (verified in
 
 The Degano & Aloni 7-type classification of `ere` and `eme` (types ii and
 iii respectively, after @cite{bubnov-2026} Table 1) is theory-side
-projection — see `Theories/Semantics/Quantification/DeganoAloni2025.lean`.
+projection — see `Semantics/Quantification/DeganoAloni2025.lean`.
 The free-choice and polarity-sensitive series (`bayarar`, `da`) fall
 outside D&A's SK/SU/NS subdivision; their D&A surface-classification is
 `none` by design.

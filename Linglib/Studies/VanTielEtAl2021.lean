@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Quantification.Inventory
-import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Theories.Semantics.Probabilistic.PrototypeTheory
+import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -319,7 +319,7 @@ def allModelQuantityWords : List ModelQuantityWord := ModelQuantityWord.toList
 
 /-- Monotonicity of each model word (lifted from the canonical inventory). -/
 def modelMonotonicity (q : ModelQuantityWord) :
-    Theories.Semantics.Quantification.Lexicon.Monotonicity :=
+    Semantics.Quantification.Lexicon.Monotonicity :=
   q.monotonicity
 
 -- GQT Parameters (per-paper threshold settings, B&C-style)
@@ -337,7 +337,7 @@ def threshold : ModelQuantityWord → Nat
   | .all   => domainSize
 
 /-- GQT meaning via the parametric operator from
-    `Theories.Semantics.Quantification.Quantifier`. -/
+    `Semantics.Quantification.Quantifier`. -/
 def gqtMeaning (m : ModelQuantityWord) (t : WorldState) : Bool :=
   Semantics.Quantification.Quantifier.gqtMeaning
     domainSize m.monotonicity (threshold m) t
@@ -368,9 +368,9 @@ def spread : ModelQuantityWord → ℚ
   | .all   => 1
 
 /-- PT meaning via the parametric operator from
-    `Theories.Semantics.Probabilistic.PrototypeTheory`. -/
+    `Semantics.Probabilistic.PrototypeTheory`. -/
 def ptMeaning (m : ModelQuantityWord) (t : WorldState) : ℚ :=
-  Theories.Semantics.Probabilistic.PrototypeTheory.ptMeaning
+  Semantics.Probabilistic.PrototypeTheory.ptMeaning
     domainSize (prototype m) (spread m) t
 
 -- Salience: Lexical Accessibility
@@ -439,13 +439,13 @@ Note: "half" is classified as nonMonotone in the three-way system but as
 theorem monotonicity_matches_data_increasing
     (q : Phenomena.Quantification.Inventory.QuantityWord) :
     q ≠ .half →
-    (RSAModel.modelMonotonicity q = Theories.Semantics.Quantification.Lexicon.Monotonicity.increasing) ↔
+    (RSAModel.modelMonotonicity q = Semantics.Quantification.Lexicon.Monotonicity.increasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.increasing) := by
   cases q <;> native_decide
 
 theorem monotonicity_matches_data_decreasing
     (q : Phenomena.Quantification.Inventory.QuantityWord) :
-    (RSAModel.modelMonotonicity q = Theories.Semantics.Quantification.Lexicon.Monotonicity.decreasing) ↔
+    (RSAModel.modelMonotonicity q = Semantics.Quantification.Lexicon.Monotonicity.decreasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.decreasing) := by
   cases q <;> native_decide
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.Partition.Constructors
+import Linglib.Semantics.Questions.Partition.Constructors
 
 /-!
 # @cite{groenendijk-stokhof-1984}: Studies on the Semantics of Questions
@@ -8,7 +8,7 @@ Single-paper formalisation of the partition-semantics theorems from
 @cite{groenendijk-stokhof-1984} (Ch. I), formulated over the
 `GSQuestion W` substrate. The substrate primitive `ans` and its
 basic algebraic properties live in
-`Theories/Semantics/Questions/Partition/Cells.lean`; this file owns the paper-anchored
+`Semantics/Questions/Partition/Cells.lean`; this file owns the paper-anchored
 theorems about refinement, exhaustivity, and de dicto answers.
 
 ## Theorems

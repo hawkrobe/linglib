@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Lexical.VerbEntry
 
 /-!
 # Williams 2026: The Presuppositions of *forget*
@@ -30,7 +30,7 @@ to focus on presupposition; he does not refute it. The
 `implicativeNegative` field below records it for cross-paper consistency
 with the Karttunen tradition (formalized in
 `Studies/Karttunen1971.lean` and
-`Theories/Semantics/Causation/Implicative.lean`).
+`Semantics/Causation/Implicative.lean`).
 
 A second presupposition Williams identifies for the psych-action reading,
 the *necessity-and-sufficiency* presupposition (his (5b), citing Karttunen
@@ -43,7 +43,7 @@ The English Fragment splits *forget* into two `VerbEntry` records:
 `forget` (negative implicative, infinitival) and `forget_rog`
 (factive/rogative, finite). Williams argues these are *one* lexical item
 with uniform factivity and a frame-driven presupposition split (the
-pre-existence analysis is in `Theories/Semantics/Attitudes/PreExistence.lean`).
+pre-existence analysis is in `Semantics/Attitudes/PreExistence.lean`).
 The Fragment split is a practical separation of entailment patterns;
 `White2014.lean` makes the consistency claim formal.
 

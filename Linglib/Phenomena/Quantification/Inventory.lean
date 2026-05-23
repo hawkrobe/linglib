@@ -1,5 +1,5 @@
 import Linglib.Fragments.English.Determiners
-import Linglib.Theories.Semantics.Quantification.Quantifier
+import Linglib.Semantics.Quantification.Quantifier
 
 /-!
 # Canonical 6-Element Quantifier Paradigm
@@ -20,7 +20,7 @@ cross-paper data, not study-specific.
 - `QuantityWord.monotonicity` — convenience accessor
 - `QuantityWord.gqDenotation` — canonical model-theoretic denotation
   (B&C-style), built on `every_sem`/`some_sem`/`no_sem`/etc. from
-  `Theories.Semantics.Quantification.Quantifier`.
+  `Semantics.Quantification.Quantifier`.
 
 Per-paper PT/GQT parameter values (thresholds, prototypes, spreads)
 live in the relevant `Studies/` files, not here.
@@ -28,7 +28,7 @@ live in the relevant `Studies/` files, not here.
 
 namespace Phenomena.Quantification.Inventory
 
-open Theories.Semantics.Quantification.Lexicon (QuantifierEntry Monotonicity)
+open Semantics.Quantification.Lexicon (QuantifierEntry Monotonicity)
 open Core.Logic.Intensional
 open Semantics.Quantification.Quantifier
 

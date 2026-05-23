@@ -1,5 +1,5 @@
 import Linglib.Typology.ArgumentStructure
-import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 
 /-!
 # Siloni (2012): Reciprocal Verbs and Symmetry

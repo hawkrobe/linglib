@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Tense.DeRe
-import Linglib.Theories.Semantics.Reference.Acquaintance
+import Linglib.Semantics.Tense.DeRe
+import Linglib.Semantics.Reference.Acquaintance
 
 /-!
 # @cite{heim-1994-comments}: Comments on Abusch's Theory of Tense
@@ -182,7 +182,7 @@ theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
     [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
     Heim's presuppositional construal of @cite{abusch-1997}'s Upper
     Limit Constraint is already encoded in the substrate as
-    `Theories.Semantics.Tense.upperLimitConstraint` (typed `[LE Time]`,
+    `Semantics.Tense.upperLimitConstraint` (typed `[LE Time]`,
     anchored to @cite{heim-1994-comments} in its docstring). This
     bridge theorem projects the substrate's `TemporalDeReReading`
     `isFelicitousWith .past` (strict `<`) onto the substrate's ULC

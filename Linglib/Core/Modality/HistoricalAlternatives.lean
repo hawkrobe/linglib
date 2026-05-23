@@ -40,7 +40,7 @@ This file is foundational: it commits to no specific modal theory
 substrate that any modal theory referring to "historical
 alternatives" can use. The selectional semantics for *will*
 (@cite{cariani-santorio-2018}) lives in
-`Theories/Semantics/Modality/Selectional.lean`.
+`Semantics/Modality/Selectional.lean`.
 -/
 
 namespace Core.Modality.HistoricalAlternatives
@@ -284,7 +284,7 @@ per Klecha §4.2): both rely on the branching-futures motivation, but
 Klecha derives ULC from history structure while Abusch
 states it as a constraint on tense-node denotation. The
 Klecha-namespace dispatch on `ModalBaseKind` lives in
-`Theories/Semantics/Modality/TemporalConstraint.lean`.
+`Semantics/Modality/TemporalConstraint.lean`.
 
 **Note:** the modal-alternative quantification in Abusch's formulation
 ("the now of an *epistemic alternative*") is captured here at the
@@ -315,7 +315,7 @@ theorem actualHistoryBase_time_actual {W Time : Type*} [LE Time]
     (i.e., `s'` agrees with `s` on world history up to `s.time`, and
     `s'.time ≤ s.time`).
 
-    The value-level `Theories/Semantics/Tense/Basic.lean.upperLimitConstraint`
+    The value-level `Semantics/Tense/Basic.lean.upperLimitConstraint`
     is the `.2`-projection of this modal-layer formulation; the
     `world` component of the conjunction is what carries the
     doxastic-alternative quantification Abusch's original prose
@@ -329,7 +329,7 @@ def upperLimitConstraintModal {W Time : Type*} [LE Time]
     one (`embeddedSituation.time ≤ matrixSituation.time`). The proof
     is `.2` projection through the `actualHistoryBase` definition.
     This is the structural soundness lemma justifying the value-level
-    `Theories/Semantics/Tense/Basic.lean.upperLimitConstraint` as a
+    `Semantics/Tense/Basic.lean.upperLimitConstraint` as a
     faithful reduction of @cite{abusch-1997}'s modal formulation. -/
 theorem upperLimitConstraintModal_implies_value {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)

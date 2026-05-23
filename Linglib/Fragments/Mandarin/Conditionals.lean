@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Conditionals.ConditionalType
-import Linglib.Theories.Semantics.Conditionals.Marker
+import Linglib.Semantics.Conditionals.ConditionalType
+import Linglib.Semantics.Conditionals.Marker
 
 /-!
 # Mandarin Conditional Markers

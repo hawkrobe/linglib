@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
-import Linglib.Theories.Semantics.Quantification.ONEModifiers
-import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Theories.Semantics.Plurality.Trivalent
+import Linglib.Semantics.Quantification.UnifiedUniversal
+import Linglib.Semantics.Quantification.ONEModifiers
+import Linglib.Semantics.Plurality.Distributivity
+import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Fragments.German.Distributives
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Attitudes.Desire
+import Linglib.Semantics.Attitudes.Desire
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -16,7 +16,7 @@ world.
 This study file replicates the desire-semantics half of @cite{heim-1992}
 (the presupposition-projection half is at
 `Studies/Heim1992.lean`). Substrate is
-`Theories/Semantics/Attitudes/Desire.lean` (`wantHeim`,
+`Semantics/Attitudes/Desire.lean` (`wantHeim`,
 `wantHeimDefined`, `HeimDesireParams`, `wantHeim_no_simultaneous_pq_and_negpq`).
 
 ## §-by-§ map

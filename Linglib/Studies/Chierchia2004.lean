@@ -28,7 +28,7 @@ computed in tandem at every compositional step.
 
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Semantics.Exhaustification.Operators.Basic
 import Mathlib.Data.Set.Basic
 
 namespace Chierchia2004

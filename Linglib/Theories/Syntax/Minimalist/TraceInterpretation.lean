@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Theories.Semantics.Composition.Modification
+import Linglib.Semantics.Composition.Modification
 
 /-!
 # Trace Interpretation

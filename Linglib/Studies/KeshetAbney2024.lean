@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.PIP.Bridges
-import Linglib.Theories.Semantics.PIP.Connectives
-import Linglib.Theories.Semantics.PIP.Felicity
-import Linglib.Theories.Semantics.Dynamic.Connectives.Defs
-import Linglib.Theories.Semantics.Dynamic.Connectives.Assignment
+import Linglib.Semantics.PIP.Bridges
+import Linglib.Semantics.PIP.Connectives
+import Linglib.Semantics.PIP.Felicity
+import Linglib.Semantics.Dynamic.Connectives.Defs
+import Linglib.Semantics.Dynamic.Connectives.Assignment
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Mathlib.Data.Set.Basic
@@ -36,7 +36,7 @@ conditions, uniformly explains:
 ## Architecture
 
 This study file imports:
-- **Theory**: `Theories/Semantics/PIP/` (PIP mechanism)
+- **Theory**: `Semantics/PIP/` (PIP mechanism)
 - **Data**: `Phenomena/Anaphora/` (theory-neutral judgments)
 
 and proves that PIP's predictions match the empirical data via worked
@@ -1029,7 +1029,7 @@ anaphora.
 The following theorems make this architectural difference explicit.
 
 **Substrate names**: DPL relations are `DRS (Assignment E)` from
-`Theories/Semantics/Dynamic/Connectives/`. The DPL operator aliases are
+`Semantics/Dynamic/Connectives/`. The DPL operator aliases are
 substrate operations: `DPLRel.neg φ` is `test (dneg φ)`,
 `DPLRel.exists_ x φ` is `existsAt x φ`. -/
 

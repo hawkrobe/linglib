@@ -4,7 +4,7 @@ import Linglib.Core.Order.FeaturePreorder
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Scales.Roundness
 import Linglib.Fragments.English.NumeralModifiers
-import Linglib.Theories.Semantics.Numerals.Precision
+import Linglib.Semantics.Numerals.Precision
 
 /-!
 # @cite{cummins-2015}: OT Constraints, k-ness, NSAL, and RSA Cost

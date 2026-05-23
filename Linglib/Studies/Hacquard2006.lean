@@ -1,9 +1,9 @@
 import Linglib.Core.Modality.TemporalAxes
-import Linglib.Theories.Semantics.Modality.EventRelativity
-import Linglib.Theories.Semantics.Modality.Temporal
+import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.Temporal
 import Mathlib.Data.List.Defs
-import Linglib.Theories.Semantics.Aspect.Basic
-import Linglib.Theories.Semantics.Modality.ActualityEntailments
+import Linglib.Semantics.Aspect.Basic
+import Linglib.Semantics.Modality.ActualityEntailments
 import Linglib.Studies.Condoravdi2002
 
 /-!

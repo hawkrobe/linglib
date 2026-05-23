@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.BSML.Defs
-import Linglib.Theories.Semantics.BSML.Properties
-import Linglib.Theories.Semantics.BSML.Bisimulation
+import Linglib.Semantics.BSML.Defs
+import Linglib.Semantics.BSML.Properties
+import Linglib.Semantics.BSML.Bisimulation
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure

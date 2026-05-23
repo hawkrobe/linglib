@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.Typology
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Tlingit.Modals
 import Linglib.Fragments.Javanese.Modals

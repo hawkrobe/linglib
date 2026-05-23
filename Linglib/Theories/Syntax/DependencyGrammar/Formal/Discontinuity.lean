@@ -95,9 +95,11 @@ inductive RisingType where
 -- ============================================================================
 
 /-- Check if a list of node indices is contiguous (no gaps in the sequence).
-    Delegates to `isInterval` from Core/Basic.lean after sorting. -/
+    Delegates to `isInterval` from `Core/Dependency/Projection.lean` after
+    sorting. Uses `insertionSort` (not `mergeSort`) so downstream `decide`
+    proofs reduce in the kernel; see `Core/Dependency/Projection.projection`. -/
 def isContiguous (nodes : List Nat) : Bool :=
-  isInterval (nodes.mergeSort (· ≤ ·))
+  isInterval (nodes.insertionSort (· ≤ ·))
 
 /-- A **risen catena** (Ch 7 §7.10) is a catena whose string yield
     is not contiguous — the catena is connected in the dependency tree but its

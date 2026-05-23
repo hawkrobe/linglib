@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Reference.Basic
-import Linglib.Theories.Semantics.Reference.Kripke
+import Linglib.Semantics.Reference.Basic
+import Linglib.Semantics.Reference.Kripke
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Theories.Syntax.Minimalist.Economy
 import Linglib.Studies.Longobardi2001

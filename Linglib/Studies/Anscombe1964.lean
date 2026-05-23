@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.TemporalConnectives.EventBridge
+import Linglib.Semantics.Tense.TemporalConnectives.EventBridge
 
 /-!
 # @cite{anscombe-1964} / @cite{krifka-2010b}: Under-specification Semantics

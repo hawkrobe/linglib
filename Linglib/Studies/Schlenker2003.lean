@@ -1,8 +1,8 @@
-import Linglib.Theories.Semantics.Attitudes.ContextQuantification
-import Linglib.Theories.Semantics.Reference.ShiftedIndexicals
-import Linglib.Theories.Semantics.Reference.Kaplan
-import Linglib.Theories.Semantics.Reference.Monsters
-import Linglib.Theories.Semantics.Reference.PersonFeatures
+import Linglib.Semantics.Attitudes.ContextQuantification
+import Linglib.Semantics.Reference.ShiftedIndexicals
+import Linglib.Semantics.Reference.Kaplan
+import Linglib.Semantics.Reference.Monsters
+import Linglib.Semantics.Reference.PersonFeatures
 
 /-!
 # Schlenker (2003): A Plea for Monsters
@@ -25,13 +25,13 @@ Core.Context.Tower (ContextTower, push, origin, innermost)
     ↓
 Core.Context.Shifts (attitudeShift)
     ↓
-Theories.Semantics.Reference.Kaplan (pronI_access, origin-reading)
+Semantics.Reference.Kaplan (pronI_access, origin-reading)
     ↓
-Theories.Semantics.Reference.ShiftedIndexicals (amharic_pronI, local-reading)
+Semantics.Reference.ShiftedIndexicals (amharic_pronI, local-reading)
     ↓
-Theories.Semantics.Attitudes.ContextQuantification (ctxBox, Fixity)
+Semantics.Attitudes.ContextQuantification (ctxBox, Fixity)
     ↓
-Theories.Semantics.Reference.PersonFeatures (logophoric pronouns)
+Semantics.Reference.PersonFeatures (logophoric pronouns)
     ↓
 This file: concrete end-to-end verification
 ```

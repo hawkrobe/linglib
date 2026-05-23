@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Quantification.CovertQuantifier
-import Linglib.Theories.Semantics.Genericity.Generics
-import Linglib.Theories.Semantics.Aspect.Basic
+import Linglib.Semantics.Quantification.CovertQuantifier
+import Linglib.Semantics.Genericity.Generics
+import Linglib.Semantics.Aspect.Basic
 import Linglib.Features.Genericity
 
 /-!

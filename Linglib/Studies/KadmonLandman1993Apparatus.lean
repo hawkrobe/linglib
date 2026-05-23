@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Quantification.DomainRestriction
+import Linglib.Semantics.Quantification.DomainRestriction
 
 /-!
 # Domain Vagueness

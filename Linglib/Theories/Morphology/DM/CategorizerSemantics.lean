@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!
 # Categorizer Semantics @cite{adamson-2024} @cite{barker-2011}

@@ -1,9 +1,9 @@
 import Linglib.Core.Logic.Intensional.Rigidity
-import Linglib.Theories.Semantics.Degree.Abstraction
-import Linglib.Theories.Semantics.Degree.Basic
-import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Theories.Semantics.Degree.Differential
-import Linglib.Theories.Semantics.Gradability.Delineation
+import Linglib.Semantics.Degree.Abstraction
+import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Comparative
+import Linglib.Semantics.Degree.Differential
+import Linglib.Semantics.Gradability.Delineation
 import Linglib.Phenomena.Comparison.Compare
 import Mathlib.Tactic.Linarith
 
@@ -44,7 +44,7 @@ open Semantics.Degree.Abstraction (IsMaxDeg)
 open Semantics.Degree.Differential (differentialComparative factorEquative)
 /-! ### Intensional degree semantics
 
-Migrated from `Theories/Semantics/Degree/Intensional.lean` (single-paper
+Migrated from `Semantics/Degree/Intensional.lean` (single-paper
 substrate). World-indexed degree semantics for comparative constructions
 requiring intensional infrastructure: Russell's ambiguity, modal
 comparatives, ambiguous counterfactuals.

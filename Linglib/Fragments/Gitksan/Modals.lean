@@ -1,5 +1,5 @@
 import Linglib.Core.Modality.TemporalAxes
-import Linglib.Theories.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.Typology
 
 /-!
 # Gitksan Modal Inventory

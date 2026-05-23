@@ -1,8 +1,8 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Semantics.Presupposition.LocalContext
-import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
+import Linglib.Semantics.Presupposition.LocalContext
+import Linglib.Semantics.Presupposition.BeliefEmbedding
 
 /-!
 # Karttunen 1973: Presuppositions of Compound Sentences
@@ -193,7 +193,7 @@ theorem plug_vs_hole_diverge_at_actual :
 /-- Heim 1992 / @cite{schlenker-2009} resolve the dispute by attributing
     the presupposition to the *attitude holder*, not the speaker. The
     holder-attribution analysis lives in
-    `Theories/Semantics/Presupposition/BeliefEmbedding.lean` as
+    `Semantics/Presupposition/BeliefEmbedding.lean` as
     `presupAttributedToHolder`. K1973's flat hole-treatment differs from
     both Heim 1992's holder-attribution and K1973 §11's tentative plug
     verdict — three coexisting positions on the same data. -/

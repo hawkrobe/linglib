@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.TypeTheoretic.Discourse
-import Linglib.Theories.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.TypeTheoretic.Discourse
+import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
 # Cooper (2023) Ch. 6 — Modality and Intensionality without Possible Worlds
@@ -13,7 +13,7 @@ believe/know via long-term memory, points of view, and intensional
 transitive verbs.
 
 This study formalises Ch. 6 directly. It was formerly substrate at
-`Theories/Semantics/TypeTheoretic/Modality.lean` but is genuinely a
+`Semantics/TypeTheoretic/Modality.lean` but is genuinely a
 single-paper Cooper-textbook replication: only `ChatzikyriakidisEtAl2025`
 (intentional identity) consumed it externally.
 
@@ -780,7 +780,7 @@ TTR's know = believe ∧ IsTrue mirrors the standard doxastic classification:
 - `believe` is non-veridical (believe p ↛ p)
 
 This is the abstract pattern that connects to `Doxastic.veridical` in
-`Theories/Semantics.Intensional/Attitude/Doxastic.lean`. The full bridge
+`Semantics.Intensional/Attitude/Doxastic.lean`. The full bridge
 (importing Doxastic) is deferred to a future `Theories/TTR/` module. -/
 
 /-- know is exactly believe + veridicality: the two components are independent. -/
@@ -1213,7 +1213,7 @@ theorem cooperToGinzburg_always_true (ap : TrueAustinianProp) :
 
 -- ============================================================================
 -- § 7. Intensional Type Examples (Ch. 1 §1.3)
--- (extracted from former Theories/Semantics/TypeTheoretic/Core.lean)
+-- (extracted from former Semantics/TypeTheoretic/Core.lean)
 -- ============================================================================
 
 /-! Cooper's foundational examples motivating intensional type theory.
@@ -1268,7 +1268,7 @@ end CorePhenomena
 
 -- ============================================================================
 -- § 8. Compositional Derivation Examples (Ch. 3 §3.4)
--- (extracted from former Theories/Semantics/TypeTheoretic/Core.lean)
+-- (extracted from former Semantics/TypeTheoretic/Core.lean)
 -- ============================================================================
 
 section DerivationPhenomena

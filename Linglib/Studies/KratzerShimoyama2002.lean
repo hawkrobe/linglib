@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Composition.SetMonad
-import Linglib.Theories.Semantics.Exhaustification.FreeChoice
+import Linglib.Semantics.Composition.SetMonad
+import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.Latvian.IndeterminatePronouns

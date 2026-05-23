@@ -1,5 +1,5 @@
 import Linglib.Studies.Cooper2023Ch7
-import Linglib.Theories.Semantics.Composition.Scope
+import Linglib.Semantics.Composition.Scope
 import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
 
 /-!
@@ -11,7 +11,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
 contents with types whose witnesses are fully specified readings.
 
 This study formalises Ch. 8 directly. It was formerly substrate at
-`Theories/Semantics/TypeTheoretic/Underspecification.lean` but is genuinely
+`Semantics/TypeTheoretic/Underspecification.lean` but is genuinely
 a single-paper Cooper-textbook replication: only the sibling
 `Studies/Cooper2023.lean` (bridge theorems to anaphora
 data) consumed it externally. Companion to `Cooper2023.lean` in the same

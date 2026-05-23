@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Classifier.Defs
-import Linglib.Theories.Semantics.Classifier.TypeN
-import Linglib.Theories.Semantics.Classifier.Composition
+import Linglib.Semantics.Classifier.Defs
+import Linglib.Semantics.Classifier.TypeN
+import Linglib.Semantics.Classifier.Composition
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Studies.Chierchia1998

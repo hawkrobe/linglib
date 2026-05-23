@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Events.CEM
-import Linglib.Theories.Semantics.ArgumentStructure.Properties
-import Linglib.Theories.Semantics.Aspect.Incremental
-import Linglib.Theories.Semantics.Aspect.Cumulativity
+import Linglib.Semantics.Events.CEM
+import Linglib.Semantics.ArgumentStructure.Properties
+import Linglib.Semantics.Aspect.Incremental
+import Linglib.Semantics.Aspect.Cumulativity
 
 /-!
 # @cite{filip-2012}: "Lexical Aspect"
@@ -32,7 +32,7 @@ The third class's compositional behavior:
 ## TODO
 
 * The propagation-gap substrate (§ 2 below) was inlined from former
-  `Theories/Semantics/Events/PropagationGap.lean` in 0.231.55 as
+  `Semantics/Events/PropagationGap.lean` in 0.231.55 as
   single-consumer substrate. If a second paper-anchored Studies file
   consumes `middle_ground_stable`, lift back to substrate per CLAUDE.md
   Theories/ ≥ 2 consumers rule.

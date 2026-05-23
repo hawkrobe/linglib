@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Features.Register
-import Linglib.Theories.Semantics.Modality.Typology
+import Linglib.Semantics.Modality.Typology
 
 /-!
 # Modal Concord Bridge — Register Approach

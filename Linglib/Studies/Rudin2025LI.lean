@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Quotation.Demonstration
+import Linglib.Semantics.Quotation.Demonstration
 import Linglib.Theories.Dialogue.QuotationFBOntology
 import Linglib.Fragments.English.Predicates.Verbal
 

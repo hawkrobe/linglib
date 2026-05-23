@@ -272,7 +272,7 @@ This is because in DE contexts, the scale reverses:
 The empirical monotonicity judgments here are the foundation for
 understanding why scalar implicatures are blocked in certain contexts.
 
-Theories/Semantics/Entailment.lean should prove it predicts these patterns.
+Semantics/Entailment.lean should prove it predicts these patterns.
 Theories/NeoGricean/ScalarImplicatures.lean uses this to predict SI blocking.
 -/
 

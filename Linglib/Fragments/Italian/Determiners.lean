@@ -1,11 +1,11 @@
 import Linglib.Features.Gender
-import Linglib.Theories.Semantics.Quantification.Lexicon
+import Linglib.Semantics.Quantification.Lexicon
 
 /-! # Italian Determiners (Quantifiers)
 
 Quantifier lexicon with syntactic and semantic properties. Reuses the
 shared `QuantifierEntry` from
-`Theories/Semantics/Quantification/Lexicon.lean` and extends it with
+`Semantics/Quantification/Lexicon.lean` and extends it with
 gender agreement.
 
 Italian quantifiers agree in gender and/or number with their NP:
@@ -21,7 +21,7 @@ Italian quantifiers agree in gender and/or number with their NP:
 namespace Fragments.Italian.Determiners
 
 open Features (SurfaceGender)
-open Theories.Semantics.Quantification.Lexicon
+open Semantics.Quantification.Lexicon
   (QuantifierEntry QForce Monotonicity Strength)
 
 /-- Italian quantifier entry: shared `QuantifierEntry` + gender. -/

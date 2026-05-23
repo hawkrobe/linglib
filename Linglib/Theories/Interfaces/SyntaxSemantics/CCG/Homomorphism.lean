@@ -17,7 +17,7 @@ import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Theories.Syntax.CCG.Core.Combinators
 import Linglib.Core.Logic.Intensional.Frame
-import Linglib.Theories.Semantics.Composition.ToyDomain
+import Linglib.Semantics.Composition.ToyDomain
 
 namespace CCG.Homomorphism
 

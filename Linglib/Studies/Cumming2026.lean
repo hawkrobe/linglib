@@ -1,7 +1,7 @@
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
-import Linglib.Theories.Semantics.Modality.Kernel
+import Linglib.Semantics.Modality.Kernel
 import Linglib.Core.Epistemicity
 import Mathlib.Data.Fin.Basic
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Modality.BiasedPQ
 import Linglib.Studies.Stakov2026Typology
 
 /-!

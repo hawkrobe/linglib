@@ -19,7 +19,7 @@ canonicity-prediction function `predictCanonicity`.
 
 Split from `Core/Lexical/PolarityItem.lean` in the cleanup that
 dissolved `Core/Lexical/`. The companion file
-`Theories/Semantics/Polarity/Licensing.lean` holds the
+`Semantics/Polarity/Licensing.lean` holds the
 monotonicity-based licensing infrastructure (LicensingContext,
 LicensingMechanism, ContextProperties, contextProperties — the
 Ladusaw/Zwarts/K&L/von Fintel synthesis).
@@ -36,7 +36,7 @@ the choice between them explicit at the type level:
   (high/low + strengthening/attenuating) orthogonal to monotonicity.
 
 - **Monotonicity-based licensing** (in companion file
-  `Theories/Semantics/Polarity/Licensing.lean`): the
+  `Semantics/Polarity/Licensing.lean`): the
   @cite{ladusaw-1979} / @cite{kadmon-landman-1993} / @cite{zwarts-1998}
   / @cite{chierchia-2006} lineage. Treats polarity-sensitivity as a
   monotonicity-licensing phenomenon with widening + strengthening as
@@ -264,7 +264,7 @@ structure PolarityItemEntry where
   baseForce : BaseForce
   /-- Contexts where licensed (empty = needs positive). Refers to
       `LicensingContext` from the companion file
-      `Theories/Semantics/Polarity/Licensing.lean`. -/
+      `Semantics/Polarity/Licensing.lean`. -/
   licensingContexts : List LicensingContext
   /-- Scalar direction: strengthening, attenuating, or non-scalar -/
   scalarDirection : ScalarDirection := .unknown
@@ -310,8 +310,8 @@ Israel's main empirical claim — `predictCanonicity` (impeding role →
 canonical / facilitating role → inverted) and the
 `PolarityItemEntry.canonicityConsistent` validation predicate that
 checks whether stated canonicity matches the prediction — were moved
-to `Theories/Semantics/Polarity/Israel.lean` (sibling of
-`Theories/Semantics/Polarity/Licensing.lean`). This file holds only
+to `Semantics/Polarity/Israel.lean` (sibling of
+`Semantics/Polarity/Licensing.lean`). This file holds only
 the substrate enums Fragments populate, not Israel's predictions about
 how those enum-valued fields relate. -/
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.TypeTheoretic.Discourse
+import Linglib.Semantics.TypeTheoretic.Discourse
 import Linglib.Core.Logic.Quantification
 import Mathlib.Data.Finset.Card
 
@@ -12,7 +12,7 @@ import Mathlib.Data.Finset.Card
 individuals satisfying cardinality conditions specific to each quantifier.
 
 This study formalises Ch. 7 directly. It was formerly substrate at
-`Theories/Semantics/TypeTheoretic/Quantification.lean` but is genuinely
+`Semantics/TypeTheoretic/Quantification.lean` but is genuinely
 a single-paper Cooper-textbook replication: only `LuckingGinzburg2022`
 and `Studies/Cooper2023` consume it externally, and
 both are themselves Cooper-2023-anchored discussions.

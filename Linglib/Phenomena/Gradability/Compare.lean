@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Supervaluation.Basic
-import Linglib.Theories.Semantics.Supervaluation.TCS
+import Linglib.Semantics.Supervaluation.Basic
+import Linglib.Semantics.Supervaluation.TCS
 import Linglib.Studies.CobrerosEtAl2012
 
 /-!
@@ -113,7 +113,7 @@ def theoryProfiles : List TheoryPredictionProfile :=
 -- ════════════════════════════════════════════════════
 
 /-! The supervaluationism profile's claims are backed by formal proofs in
-    `Theories/Semantics/Supervaluation/Basic.lean`:
+    `Semantics/Supervaluation/Basic.lean`:
 
     - `preservesClassicalLogic = true`: super-validity ↔ classical validity
     - `allowsTruthValueGaps = true`: indefiniteness ↔ witnesses on both sides
@@ -162,7 +162,7 @@ theorem supervaluationism_D_verified {Spec : Type*}
 -- ════════════════════════════════════════════════════
 
 /-! The TCS profile's claims are backed by formal proofs in
-    `Theories/Semantics/Supervaluation/TCS.lean` (substrate) +
+    `Semantics/Supervaluation/TCS.lean` (substrate) +
     `Studies/CobrerosEtAl2012.lean` (worked
     4-element example):
 

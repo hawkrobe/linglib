@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Conditionals.Counterfactual
+import Linglib.Semantics.Conditionals.Counterfactual
 
 /-!
 # McKay & Van Inwagen 1977 @cite{mckay-vaninwagen-1977}

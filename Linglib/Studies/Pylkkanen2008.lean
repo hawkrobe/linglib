@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Theories.Syntax.Minimalist.VoiceProjection
-import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Studies.Polinsky2013
 import Linglib.Studies.Larson1988
 
@@ -781,7 +781,7 @@ object profile (`objectEntailments = none`) or an empty one
 (`pPatientScore = 0`). The composition theorem is structural — it
 does *not* re-derive the type clash from event-semantic λ-calculus
 (that requires the compositional type-driven semantics in
-`Theories/Semantics/Composition/`, not yet wired in here). The
+`Semantics/Composition/`, not yet wired in here). The
 substantive content captured: "low Appl needs a theme; unergative
 provides none; composition fails." -/
 
@@ -813,7 +813,7 @@ def applicativeComposition
     Note: this is structural, not a re-derivation of the eq. 103 type
     contradiction from event-semantic composition. The substantive
     semantic argument requires λ-calculus infrastructure not present
-    in `Theories/Semantics/Composition/` for applicatives. The theorem
+    in `Semantics/Composition/` for applicatives. The theorem
     captures the empirical content (low + unergative fails) without
     proving it from event-semantic types. -/
 theorem low_applicative_blocks_unergative (a : ApplType) (hLow : a.IsLow) :

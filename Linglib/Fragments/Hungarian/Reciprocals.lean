@@ -1,6 +1,6 @@
 import Linglib.Typology.Pronouns
-import Linglib.Theories.Semantics.Reference.Reciprocals
-import Linglib.Theories.Semantics.Reference.PluralityLicensing
+import Linglib.Semantics.Reference.Reciprocals
+import Linglib.Semantics.Reference.PluralityLicensing
 
 /-!
 # Hungarian Reciprocal Fragment

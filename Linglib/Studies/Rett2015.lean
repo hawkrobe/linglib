@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Semantics.Gradability.Basic
+import Linglib.Semantics.Gradability.Basic
 
 /-!
 # Evaluativity: Empirical Patterns
@@ -12,7 +12,7 @@ are evaluative, comparatives are not, equatives show asymmetry.
 
 `EvaluativityStatus`, `EvaluativityDatum`, `EvaluativityPrediction`
 
-`AdjectivalConstruction` is defined in `Theories.Semantics.Degree.Defs`.
+`AdjectivalConstruction` is defined in `Semantics.Degree.Defs`.
 
 -/
 

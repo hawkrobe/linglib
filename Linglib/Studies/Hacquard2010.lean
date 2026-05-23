@@ -1,5 +1,5 @@
 import Linglib.Fragments.Italian.Modals
-import Linglib.Theories.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.EventRelativity
 
 /-!
 # Event-Relative Modality

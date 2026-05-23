@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Modality.EventRelativity
-import Linglib.Theories.Semantics.Modality.Narrog
+import Linglib.Semantics.Modality.EventRelativity
+import Linglib.Semantics.Modality.Narrog
 
 /-!
 # @cite{cinque-1999} vs @cite{hacquard-2006}: Modal Position

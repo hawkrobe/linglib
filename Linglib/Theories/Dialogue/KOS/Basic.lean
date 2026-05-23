@@ -1,6 +1,6 @@
 import Linglib.Theories.Dialogue.KOS.Defs
-import Linglib.Theories.Semantics.Questions.Partition.QUD
-import Linglib.Theories.Semantics.Questions.Support
+import Linglib.Semantics.Questions.Partition.QUD
+import Linglib.Semantics.Questions.Support
 
 /-!
 # KOS: DGB Operations

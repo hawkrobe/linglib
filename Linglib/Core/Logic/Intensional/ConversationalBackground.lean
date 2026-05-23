@@ -13,7 +13,7 @@ A conversational background maps worlds to sets of propositions. Two roles:
 
 Despite being introduced by Kratzer for natural-language modality, these are
 generic IL primitives — no Kratzer-specific commitments live here. The
-Kratzer-flavored modality theory in `Theories/Semantics/Modality/Kratzer/`
+Kratzer-flavored modality theory in `Semantics/Modality/Kratzer/`
 re-exports these so that consumers can keep using either namespace.
 -/
 

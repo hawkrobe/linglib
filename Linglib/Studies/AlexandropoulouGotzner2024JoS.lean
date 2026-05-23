@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Gradability.Basic
-import Linglib.Theories.Semantics.Gradability.Antonymy
-import Linglib.Theories.Semantics.Gradability.AntonymPrediction
+import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Gradability.Antonymy
+import Linglib.Semantics.Gradability.AntonymPrediction
 import Linglib.Studies.Krifka2007
 import Linglib.Fragments.English.Predicates.Adjectival
 /-!
@@ -38,14 +38,14 @@ Glossa paper builds on the JoS findings as established results.
 
 ## Substrate consumed
 
-- `Theories/Semantics/Gradability/Theory.lean` — `ThresholdPair`,
+- `Semantics/Gradability/Theory.lean` — `ThresholdPair`,
   `positiveMeaning'`, `contraryNegMeaning`, `notContraryNegMeaning`.
-- `Theories/Semantics/Gradability/AntonymQuadruplet.lean` — `AntonymForm`
+- `Semantics/Gradability/AntonymQuadruplet.lean` — `AntonymForm`
   (the four-form quadruplet enum, theory-neutral substrate).
-- `Theories/Semantics/Gradability/AntonymPrediction.lean` —
+- `Semantics/Gradability/AntonymPrediction.lean` —
   `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot`,
   `predictionForAntonymy`, `predictionForEntry`, anchor theorems.
-- `Theories/Semantics/Degree/Basic.lean` — `antonymMeaning`.
+- `Semantics/Degree/Basic.lean` — `antonymMeaning`.
 - `Features/Antonymy.lean` — `NegationType`, `Asymmetry`.
 - `Fragments/English/Predicates/Adjectival.lean` — lexical entries
   (transitively, via the Glossa companion file).
@@ -102,7 +102,7 @@ inductive AGCase where
 /-! `Asymmetry` (asymmetric/symmetric direction enum), `predictionForAntonymy`
     (NegationType → Asymmetry skeleton), and `predictionForEntry`
     (GradableAdjEntry → Asymmetry projection) are now substrate, in
-    `Features/Antonymy.lean` and `Theories/Semantics/Gradability/AntonymPrediction.lean`
+    `Features/Antonymy.lean` and `Semantics/Gradability/AntonymPrediction.lean`
     respectively. The substrate-anchor theorems
     `Semantics.Gradability.contradictoryDenot_synonymy` and
     `Semantics.Gradability.strengthenedDenot_breaks_synonymy` make the
@@ -216,7 +216,7 @@ theorem krifka_agrees_with_horn_where_committed :
     fragility under substrate change *is* the point. If `contradictoryNeg`
     ever stops being a `def`-equal alias for `antonymMeaning` (e.g. through
     a regression of the Bool→Prop substrate evolution in
-    `Theories/Semantics/Gradability/Theory.lean`), these theorems will
+    `Semantics/Gradability/Theory.lean`), these theorems will
     break loudly — surfacing the substrate drift at the cross-paper bridge
     rather than letting it propagate silently. -/
 

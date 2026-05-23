@@ -1,5 +1,5 @@
 import Mathlib.Data.Setoid.Partition
-import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Basic
 import Linglib.Core.Mood.POSWQ
 
 /-!
@@ -209,7 +209,7 @@ namespace Core.Mood
 
 namespace POSWQ
 
--- open removed: Question is top-level after Theories/Semantics/Questions/ relocation
+-- open removed: Question is top-level after Semantics/Questions/ relocation
 
 universe u
 variable {W : Type u}

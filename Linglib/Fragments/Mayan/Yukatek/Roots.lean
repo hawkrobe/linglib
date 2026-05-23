@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Roots.Closure
+import Linglib.Semantics.Lexical.Roots.Closure
 
 /-!
 # Yukatek Maya Roots as B&K-G Entailment Sets

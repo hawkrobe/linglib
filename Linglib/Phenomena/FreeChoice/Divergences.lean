@@ -122,7 +122,7 @@ theorem bsml_plus_WS_FC_sensitive_to_indisputability
     incomparable types on the two sides.
 
     **What WOULD be needed**: a bridge module
-    (`Theories/Semantics/BSML/FoxBridge.lean` or similar) translating BSML
+    (`Semantics/BSML/FoxBridge.lean` or similar) translating BSML
     formulas to Fox-style alternative sets, OR a pointwise/set semantics for
     BSML formulas. Either is real engineering, deferred.
 -/
@@ -132,11 +132,11 @@ theorem bsml_plus_WS_FC_sensitive_to_indisputability
     Aloni 2022 Table 4 / §6.3.1 distinguishes BSML+ (where Negative FC ◇¬(α∧β)
     ⤳ ◇¬α ∧ ◇¬β fails) from BSML* (where it holds). The substrate proves the
     BSML+ failure side as `negativeFC_poss_fails_bsmlPlus` (in
-    `Theories/Semantics/BSML/FreeChoice.lean`). The BSML* prediction is not yet
+    `Semantics/BSML/FreeChoice.lean`). The BSML* prediction is not yet
     statable.
 
     **Why this is blocked at the substrate level**: the substrate's `supportStar`
-    (`Theories/Semantics/BSML/Defs.lean:242`) has `| .neg _, _ => True` —
+    (`Semantics/BSML/Defs.lean:242`) has `| .neg _, _ => True` —
     negation is treated as vacuously supported, which is not Aloni's actual
     BSML* semantics. Aloni's BSML* uses bilateral polarity, mirroring BSML
     proper. Stating "BSML* validates Negative FC" against the current

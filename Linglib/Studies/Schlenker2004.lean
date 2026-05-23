@@ -298,7 +298,7 @@ theorem schlenker_origin_supports_abusch_double_access
 
 /-! Substrate-level bridge from @cite{schlenker-2004-sot}'s tower-shift
     framework to @cite{abusch-1997}'s `TimeConcept` substrate
-    (`Theories/Semantics/Tense/DeRe.lean`). Both formalisms resolve
+    (`Semantics/Tense/DeRe.lean`). Both formalisms resolve
     against the same `KContext` substrate (= `TenseCtx`); the
     substrate's `Intension.IsRigid` predicate distinguishes
     Kaplan-stable readings (Schlenker's `presentAccess`, origin depth)

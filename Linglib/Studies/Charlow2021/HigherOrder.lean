@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Composition.Continuation
+import Linglib.Semantics.Composition.Continuation
 import Linglib.Studies.Charlow2021.Basic
 
 /-!

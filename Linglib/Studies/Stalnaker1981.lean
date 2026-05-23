@@ -1,5 +1,5 @@
 import Mathlib.Data.Finset.Card
-import Linglib.Theories.Semantics.Conditionals.Counterfactual
+import Linglib.Semantics.Conditionals.Counterfactual
 
 /-!
 # Stalnaker 1981 @cite{stalnaker-1981}

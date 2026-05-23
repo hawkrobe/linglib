@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Gradability.Classification
+import Linglib.Semantics.Gradability.Classification
 import Linglib.Core.Logic.Truth3
 import Mathlib.Data.Set.Basic
 
@@ -15,7 +15,7 @@ Kamp presents two theories of adjective semantics:
 **Theory 1 (§ 1–2)**: Adjectives as functions from properties to
 properties (type `⟨⟨e,t⟩,⟨e,t⟩⟩`). The classification hierarchy —
 intersective, subsective, privative, extensional — is formalized in
-`Theories/Semantics/Gradability/Classification.lean`.
+`Semantics/Gradability/Classification.lean`.
 
 **Theory 2 (§ 3–7)**: Vague/graded models. Kamp introduces *vague
 models* `⟨M, S, F, p⟩` (partial model + completions + σ-field +

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Composition.QuantifierComposition
+import Linglib.Semantics.Composition.QuantifierComposition
 
 /-!
 # Katzir 2007: Structurally-Defined Alternatives (End-to-End)

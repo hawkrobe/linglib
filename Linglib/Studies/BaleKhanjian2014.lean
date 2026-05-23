@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Core.Tree
-import Linglib.Theories.Semantics.Alternatives.Structural
+import Linglib.Semantics.Alternatives.Structural
 import Linglib.Fragments.Armenian.ClassifierSystem
 
 /-!
@@ -82,14 +82,14 @@ with classifiers).
   is *strictly larger* than indefinite singular (no Katzir competition);
   definite plural is *equal in size* to definite singular (Katzir
   competition applies).
-- A docstring-level pointer to `Theories/Semantics/Alternatives/Structural`
+- A docstring-level pointer to `Semantics/Alternatives/Structural`
   for the full Katzir 2007 competition machinery.
 
 ## Out of scope
 
 - Full derivation of the strict-singular meaning via local Maximize
   Presupposition (@cite{singh-2011} machinery in
-  `Theories/Semantics/Presupposition/MaximizePresupposition.lean` could be
+  `Semantics/Presupposition/MaximizePresupposition.lean` could be
   applied; deferred).
 - Korean / Turkish parallels (BK 2014 fn 14 + §2.3 cite Kim 2005 on Korean,
   @cite{bliss-2004} on Turkish; not formalized here).

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Lexical.VerbEntry
 import Linglib.Theories.Syntax.Minimalist.Applicative
 
 /-!

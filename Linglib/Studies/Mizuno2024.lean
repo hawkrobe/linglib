@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Exclusion
+import Linglib.Semantics.Modality.Exclusion
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Studies.Iatridou2000

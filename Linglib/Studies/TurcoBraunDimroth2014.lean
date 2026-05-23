@@ -8,7 +8,7 @@ import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.Italian.PolarityMarking
-import Linglib.Theories.Semantics.Focus.PolarityLevel
+import Linglib.Semantics.Focus.PolarityLevel
 
 /-!
 # @cite{turco-braun-dimroth-2014} — Polarity Marking in Dutch and German

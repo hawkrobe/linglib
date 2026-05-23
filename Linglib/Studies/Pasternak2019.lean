@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Gradability.StatesBased
-import Linglib.Theories.Semantics.Attitudes.Confidence
-import Linglib.Theories.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.Gradability.StatesBased
+import Linglib.Semantics.Attitudes.Confidence
+import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Studies.Wellwood2015
 import Linglib.Core.Mereology
 import Linglib.Fragments.English.Predicates.Verbal
@@ -70,7 +70,7 @@ do not exist. Corrected:
   `Semantics.Events.Basic.EventMereology` (which already provides the
   `Preorder (Event Time)` instance Pasternak's part-whole relation
   consumes). Not a substrate gap; a refinement.
-- §5 `want`/`wish`/`regret`: `Theories/Semantics/Attitudes/Desire.lean`
+- §5 `want`/`wish`/`regret`: `Semantics/Attitudes/Desire.lean`
   already provides `wantVF` (von Fintel-style) and
   `worldSatisfactionOrdering`. The Pasternak §5 integration is a
   composition with the new `MentalStateHomogeneity` discipline, not
@@ -340,7 +340,7 @@ theorem intensityComparative_max {Entity Time : Type*} [LinearOrder Time]
 
 `MentalStateHomogeneity` is `Mereology.DIV` over the ambient `[Preorder Event]`.
 When `Event = Event Time` and the preorder comes from
-`Theories/Semantics/Events/Basic.lean::EventMereology`, Pasternak's claim
+`Semantics/Events/Basic.lean::EventMereology`, Pasternak's claim
 becomes: vP-predicates respect the event-mereology part-of. We expose
 two substrate consequences below: a downward-closure inheritance lemma
 for sort-determined predicates (using `EventMereology.sort_preserved`),
@@ -431,7 +431,7 @@ entries with measure-function payloads.
 
 Pasternak's vertical altitude axis `K` (PDF p.288) extends rather than
 replaces the substrate's `EventMereology Time` preorder. A
-`Theories/Semantics/Events/VerticalDimension.lean` add-on with
+`Semantics/Events/VerticalDimension.lean` add-on with
 `κ : Event Time → Set Altitude` plus the DOG fineness lattice (which can
 consume `Core.Order.FeaturePreorder.coarsen_via_monotone`) is a clean
 follow-up. Out of scope here because it is not load-bearing for §1–§6.

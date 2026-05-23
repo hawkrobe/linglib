@@ -1,10 +1,10 @@
 import Mathlib.Order.Hom.BoundedLattice
-import Linglib.Theories.Semantics.Polarity.Licensing
+import Linglib.Semantics.Polarity.Licensing
 import Mathlib.Order.Hom.CompleteLattice
 import Mathlib.Order.Heyting.Hom
 import Linglib.Core.Order.SetPreimage
-import Linglib.Theories.Semantics.Entailment.AntiAdditivity
-import Linglib.Theories.Semantics.Degree.Comparative
+import Linglib.Semantics.Entailment.AntiAdditivity
+import Linglib.Semantics.Degree.Comparative
 import Linglib.Typology.PolarityItem
 
 /-!
@@ -44,7 +44,7 @@ homs.
 
 The S-comparative `sComparative` (originally @cite{hoeksema-1983} §3.8
 Def 7) and its anti-additivity (Fact 4) live in
-`Theories/Semantics/Degree/Comparative.lean` as the natural
+`Semantics/Degree/Comparative.lean` as the natural
 generalization of `comparativeSem` from a binary comparator to a
 degree-set comparator. This file imports them from there.
 
@@ -55,7 +55,7 @@ The §3 algebraic content is formalized in five layers:
   `μ b < μ a ↔ a ∈ f Q_b`, where `Q_b = {X | b ∈ X}` is the principal
   ultrafilter at `b` (`principalUltrafilter`).
 - **Definition 7/8** (`sComparative` in
-  `Theories/Semantics/Degree/Comparative.lean`): the S-comparative as
+  `Semantics/Degree/Comparative.lean`): the S-comparative as
   a set-of-degrees operator.
 - **Fact 1** (`fact1_agree_on_atoms`): two `>`-preserving functions
   coincide on every principal ultrafilter — a one-line chain of the
@@ -69,7 +69,7 @@ The §3 algebraic content is formalized in five layers:
   monotone increasing — disqualifies the NP-comparative as a Ladusaw
   NPI environment.
 - **Fact 4** (`sComparative_isAntiAdditive` in
-  `Theories/Semantics/Degree/Comparative.lean`, cited from
+  `Semantics/Degree/Comparative.lean`, cited from
   `IsAntiAdditive.antitone` in `AntiAdditivity.lean`): every
   anti-additive function is antitone — hence the S-comparative
   qualifies as an NPI environment.

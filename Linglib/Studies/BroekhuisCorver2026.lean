@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Typology.Adposition
 import Linglib.Studies.Dendikken1995ParticleVerbs
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
-import Linglib.Theories.Semantics.Spatial.Trace
+import Linglib.Semantics.Spatial.Trace
 
 /-!
 # Broekhuis & Corver (2026): Adpositions in Dutch
@@ -38,7 +38,7 @@ not whether F is overt. See `MovedConstituent`.
 - `Fragments.Dutch.Adpositions`: lexical inventory
 - `Minimalist.Formal.ExtendedProjection`: Place/Path in EP
 - `Semantics.Spatial.Path.PathShape`: bounded/unbounded/source classification
-- `Theories.Semantics.Spatial.Trace`: PathShape → telicity
+- `Semantics.Spatial.Trace`: PathShape → telicity
 - `Phenomena.AuxiliaryVerbs.Selection`: Dutch *zijn*/*hebben* split
 - `Dendikken1995`: particles as P heads
 - `Data.WALS.Features.F85A`: cross-linguistic adposition order

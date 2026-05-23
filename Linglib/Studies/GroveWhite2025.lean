@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Attitudes.Factivity
-import Linglib.Theories.Semantics.Probabilistic.ParamPred
+import Linglib.Semantics.Attitudes.Factivity
+import Linglib.Semantics.Probabilistic.ParamPred
 import Linglib.Phenomena.Presupposition.Gradience
 import Linglib.Studies.DegenTonhauser2022
 import Linglib.Studies.ScontrasTonhauser2025
@@ -69,7 +69,7 @@ Boolean predicate.
 ## Connection to @cite{scontras-tonhauser-2025}
 
 @cite{scontras-tonhauser-2025}'s RSA model uses the same `factivePos` /
-`nonFactivePos` foundation from `Theories.Semantics.Attitudes.Factivity`
+`nonFactivePos` foundation from `Semantics.Attitudes.Factivity`
 for `know` / `think`. The bridges
 `clauseEmbedding_factive_eq_st_know` and
 `clauseEmbedding_nonfactive_eq_st_think` make this explicit. The S&T binary
@@ -127,7 +127,7 @@ variable {W : Type*} [HasBelief W] [HasComplement W]
 
 /-- The Boolean denotation of a clause-embedding predicate, parameterized by
     the resolved reading. The two readings dispatch directly to
-    `Theories.Semantics.Attitudes.Factivity` — `factivePos` and
+    `Semantics.Attitudes.Factivity` — `factivePos` and
     `nonFactivePos` — so this study shares its foundations with
     @cite{scontras-tonhauser-2025}'s `know` / `think` denotations. -/
 def clauseEmbeddingSem : FactivityReading → W → Bool
@@ -331,7 +331,7 @@ section ScontrasTonhauserBridge
 
 /-- The `factive` reading of `clauseEmbeddingSem` is the same Boolean
     predicate as @cite{scontras-tonhauser-2025}'s `literalMeaning .knowPos`.
-    Both unfold to `factivePos` from `Theories.Semantics.Attitudes.Factivity`,
+    Both unfold to `factivePos` from `Semantics.Attitudes.Factivity`,
     so the equality is true by construction — a *grounding theorem* in the
     sense of `CLAUDE.md`, witnessing that two paper-specific lexical entries
     share their foundation. -/

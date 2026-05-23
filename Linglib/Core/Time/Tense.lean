@@ -27,8 +27,8 @@ unified type.
 
 ## Architecture
 
-This module lives in `Core/` because both `Theories/Semantics.Montague/Sentence/Tense/`
-and `Theories/Semantics.Intensional/Attitude/` need the shared infrastructure
+This module lives in `Core/` because both `Semantics.Montague/Sentence/Tense/`
+and `Semantics.Intensional/Attitude/` need the shared infrastructure
 (`GramTense`, `SOTParameter`, `TemporalAssignment`, etc.) without a cross-tree
 import.
 
@@ -192,8 +192,8 @@ temporal reasoning).
 
 A temporal predicate takes a situation and returns a truth value.
 This is what tense operators modify. Re-exported by
-`Theories/Semantics/Attitudes/SituationDependent.lean` and
-`Theories/Semantics/Tense/Compositional.lean` for downstream use.
+`Semantics/Attitudes/SituationDependent.lean` and
+`Semantics/Tense/Compositional.lean` for downstream use.
 -/
 abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
 

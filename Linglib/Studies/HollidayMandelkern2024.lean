@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Modality.Orthologic.Frames
-import Linglib.Theories.Semantics.Modality.Orthologic.Modal
-import Linglib.Theories.Semantics.Modality.Orthologic.RegularProp
-import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
+import Linglib.Semantics.Modality.Orthologic.Frames
+import Linglib.Semantics.Modality.Orthologic.Modal
+import Linglib.Semantics.Modality.Orthologic.RegularProp
+import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Studies.Yalcin2007
 import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.KlinedinstRothschild2012
@@ -15,7 +15,7 @@ Concrete instantiations and paper-specific theorems from H&M 2024
 "The Orthologic of Epistemic Modals" (JPL 2024). The general substrate
 (compatibility frames, ortholattice of regular sets, modal compat frames,
 T/epistemic frames) lives in
-`Linglib/Theories/Semantics/Modality/Orthologic/{Frames,Modal}.lean`
+`Linglib/Semantics/Modality/Orthologic/{Frames,Modal}.lean`
 (plus `Linglib/Core/Order/Ortholattice.lean` for the abstract typeclass);
 this file collects the paper's worked examples and the decide-checked
 predictions that depend on them.
@@ -45,7 +45,7 @@ predictions that depend on them.
 - General lifting from arbitrary Boolean algebra `B` (Definition 5.1).
   The current file specializes `B = ℘({0, 1})`; the construction
   `B^e = ⟨S, ◇, R⟩` for arbitrary `B` is unformalized and would belong
-  in `Theories/Semantics/Modality/Orthologic/Lifting.lean` once added.
+  in `Semantics/Modality/Orthologic/Lifting.lean` once added.
 - Theorem 5.7 (the embedding `e_B : B → O(B^e)` is a Boolean-algebra
   homomorphism into an epistemic ortholattice).
 - Lemma 5.8 (algebraic counterpart of Lemma 5.4 for arbitrary `B`).
@@ -781,7 +781,7 @@ theorem hm_predicts_disjSyll_failure :
     semantics.
 
     Veltman 1996's update semantics predicts the opposite: order MATTERS.
-    `Theories.Semantics.Dynamic.UpdateSemantics.Basic.might_order_matters`
+    `Semantics.Dynamic.UpdateSemantics.Basic.might_order_matters`
     proves that `p ∧ might ¬p` collapses to ∅ but `might ¬p ∧ p` does not,
     on any state with `Nontrivial W`.
 

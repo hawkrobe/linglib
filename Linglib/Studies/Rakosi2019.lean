@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Reference.Reciprocals
-import Linglib.Theories.Semantics.Reference.PluralityLicensing
-import Linglib.Theories.Semantics.Dynamic.PPCDRT.Anaphora
+import Linglib.Semantics.Reference.Reciprocals
+import Linglib.Semantics.Reference.PluralityLicensing
+import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Fragments.Hungarian.Reciprocals
 
 /-!
@@ -36,9 +36,9 @@ a morphosyntactic mechanism.
 
 ## Connections
 
-- `Theories/Semantics/Reference/PluralityLicensing.lean` — the
+- `Semantics/Reference/PluralityLicensing.lean` — the
   `PluralityRequirement` substrate (anchored on this paper).
-- `Theories/Semantics/Dynamic/PPCDRT/Anaphora.lean` — the formal-semantic
+- `Semantics/Dynamic/PPCDRT/Anaphora.lean` — the formal-semantic
   reciprocity / binding conditions over plural assignments.
 - `Fragments/Hungarian/Reciprocals.lean` — `AntecedentConfig`,
   `reciprocalLicensed`, `pluralReflexiveLicensed`, verification.
@@ -53,7 +53,7 @@ namespace Rakosi2019
 
 open Semantics.Reference.Reciprocals
 open Semantics.Reference.PluralityLicensing
-open Theories.Semantics.Dynamic.PPCDRT
+open Semantics.Dynamic.PPCDRT
 open Core
 open Fragments.Hungarian.Reciprocals
 

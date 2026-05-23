@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Composition.Layered
-import Linglib.Theories.Semantics.Highlighting
+import Linglib.Semantics.Composition.Layered
+import Linglib.Semantics.Highlighting
 
 /-!
 # Verum: theory-neutral substrate

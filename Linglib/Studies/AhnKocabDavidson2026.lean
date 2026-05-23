@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Composition.Modification
+import Linglib.Semantics.Composition.Modification
 import Linglib.Studies.Ariel2001
 import Linglib.Theories.Pragmatics.GriceanMaxims
 import Linglib.Theories.Pragmatics.Expressives.Basic

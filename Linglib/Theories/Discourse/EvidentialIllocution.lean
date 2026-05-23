@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Insert
-import Linglib.Theories.Semantics.Composition.Layered
+import Linglib.Semantics.Composition.Layered
 import Linglib.Features.Evidentiality
 import Linglib.Core.Discourse.Roles
 
@@ -22,7 +22,7 @@ evidentials in the Faller / Murray tradition:
 
 Both operators are *illocutionary* in the sense of
 @cite{martinez-vera-2026} Composition Rule III: they consume the full
-⟨at-issue, not-at-issue⟩ pair from `Theories/Semantics/Composition/Layered`
+⟨at-issue, not-at-issue⟩ pair from `Semantics/Composition/Layered`
 and produce a discourse update.
 
 ## What this module exposes

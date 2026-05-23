@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Mathlib.Tactic.DeriveFintype
 
 /-!

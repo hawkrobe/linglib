@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Gradability.Basic
-import Linglib.Theories.Semantics.Degree.Basic
-import Linglib.Theories.Semantics.Degree.Kennedy
+import Linglib.Semantics.Gradability.Basic
+import Linglib.Semantics.Degree.Basic
+import Linglib.Semantics.Degree.Kennedy
 import Linglib.Core.Scales.Scale
 
 /-!
@@ -29,7 +29,7 @@ Three hypothesis sets connect dimension binding to other properties:
 ## Formalization
 
 The dimension-binding operations and De Morgan theorems are in
-`Theories/Semantics/Lexical/Adjective/Theory.lean`. This file contains:
+`Semantics/Lexical/Adjective/Theory.lean`. This file contains:
 - The 18-adjective sample with empirical classifications from (36a–c), p. 359–360
 - Corpus data from Table 3 (conjunctivity/disjunctivity raw counts)
 - The 3:1 ratio criterion (p. 358) for classifying adjectives

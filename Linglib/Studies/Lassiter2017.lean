@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Attitudes.Desire
-import Linglib.Theories.Semantics.Attitudes.CondoravdiLauer
+import Linglib.Semantics.Attitudes.Desire
+import Linglib.Semantics.Attitudes.CondoravdiLauer
 
 /-!
 # @cite{lassiter-2017} (apparatus) / @cite{lassiter-2011} (want application) — Expected-value desire

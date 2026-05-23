@@ -44,7 +44,7 @@ family of systems differing in which closure properties their support
 relation satisfies (`IsLowerSet`, `SupClosed`, `⊥ ∈ ·`). This substrate
 provides the closure predicates each family's main theorems are stated
 in. Concrete families with formalised consumers: BSML and QBSML at
-`Theories/Semantics/BSML/`, `QBSML/`. A Layer-1 abstraction parametrising
+`Semantics/BSML/`, `QBSML/`. A Layer-1 abstraction parametrising
 over closure profiles should NOT be extracted until ≥ 3 distinct systems
 land — the mathlib pattern is to refactor backward from concrete
 instances, not design forward.

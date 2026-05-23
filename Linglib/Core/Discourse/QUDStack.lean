@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Semantics.Questions.Basic
 
 /-!
 # QUD Stack: Ordered Accepted-Unanswered Questions

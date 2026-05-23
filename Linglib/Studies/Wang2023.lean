@@ -1,7 +1,7 @@
 import Linglib.Features.PrivativePair
 import Linglib.Core.Constraint.OT.Basic
-import Linglib.Theories.Semantics.Presupposition.PhiFeatures
-import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
+import Linglib.Semantics.Presupposition.PhiFeatures
+import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Theories.Syntax.Minimalist.Features
 import Linglib.Phenomena.Politeness.Honorifics
 
@@ -37,7 +37,7 @@ semantics, plus a single pragmatic constraint (ToD).
 
 This file connects three layers:
 - `Features.PrivativePair`: the algebraic structure (specLevel ordering)
-- `Theories.Semantics.Presupposition.PhiFeatures`: presuppositional
+- `Semantics.Presupposition.PhiFeatures`: presuppositional
   denotations, semantic markedness, and presuppositional strength ordering
 - `Core.Constraint.OT`: constraint evaluation and factorial typology
 
@@ -152,7 +152,7 @@ cells, they prefer opposite directions. This is the structural heart
 of @cite{wang-r-2023}'s analysis.
 
 The constraints are defined in terms of `presupStrength` from
-`Theories.Semantics.Presupposition.PhiFeatures`, not reimplemented —
+`Semantics.Presupposition.PhiFeatures`, not reimplemented —
 ToD IS the presuppositional strength ordering.
 -/
 

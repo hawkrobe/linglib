@@ -1,7 +1,7 @@
 import Linglib.Features.Acceptability
 import Linglib.Fragments.English.Determiners
 import Linglib.Phenomena.Quantification.Inventory
-import Linglib.Theories.Semantics.Quantification.DomainRestriction
+import Linglib.Semantics.Quantification.DomainRestriction
 
 /-!
 # Quantifier Universals Bridge
@@ -9,7 +9,7 @@ import Linglib.Theories.Semantics.Quantification.DomainRestriction
 
 Bridges the English determiner fragment (`Fragments.English.Determiners.QuantityWord`)
 to the GQ property predicates in `Core.Quantification` and
-`Theories.Semantics.Quantification.Quantifier`.
+`Semantics.Quantification.Quantifier`.
 
 ## Empirical phenomena verified
 

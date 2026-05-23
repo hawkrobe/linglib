@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Quantification.BinominalDefs
+import Linglib.Semantics.Quantification.BinominalDefs
 
 /-!
 # French Binominal Nouns @cite{ten-wolde-2023}

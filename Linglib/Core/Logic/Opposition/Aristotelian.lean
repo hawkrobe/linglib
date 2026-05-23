@@ -156,7 +156,7 @@ and `W → Prop` predicates (and `Set W`, propositional fragments, sub-σ-algebr
 of measurable sets, etc.) via `Pi.instBooleanAlgebra` or other BA instances.
 
 **Why this matters**: closes the architectural gap identified in the audit
-between this file's `W → Bool` predicates and `Theories/Semantics/
+between this file's `W → Bool` predicates and `Semantics/
 Quantification/Quantifier.lean`'s `(F.Entity → Prop)`-valued GQ semantics
 (plus the 5 modality `theorem duality`s, BC1981 §8 GQ duality, etc.). All
 those Prop-valued statements can now instantiate the same BA-generic

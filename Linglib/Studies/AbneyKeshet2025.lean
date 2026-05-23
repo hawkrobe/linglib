@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.PIP.Composition
-import Linglib.Theories.Semantics.PIP.Bridges
+import Linglib.Semantics.PIP.Composition
+import Linglib.Semantics.PIP.Bridges
 import Linglib.Studies.KeshetAbney2024
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Kratzer.XMarking
+import Linglib.Semantics.Modality.Kratzer.XMarking
 import Linglib.Fragments.Portuguese.Modals
 import Linglib.Fragments.English.Auxiliaries
 import Mathlib.Data.Set.Basic

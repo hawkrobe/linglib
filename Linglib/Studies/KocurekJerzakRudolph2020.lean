@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Reference.Monsters
+import Linglib.Semantics.Reference.Monsters
 
 /-!
 # Kocurek, Jerzak & Rudolph 2020: Against Conventional Wisdom (c-monsters)
@@ -53,7 +53,7 @@ world-convention pair architecture. Does NOT formalise KJR's full
 semantics for counterfactuals over WC-pairs, nor the empirical data on
 embedding expressions identified as c-monsters.
 
-Imports `Theories/Semantics/Reference/Monsters.lean` to mark Kaplan's
+Imports `Semantics/Reference/Monsters.lean` to mark Kaplan's
 thesis as the prior commitment KJR also reject (Kaplan's thesis is the
 no-context-shifting variant; Conventional Wisdom is the
 no-convention-shifting variant — KJR reject the latter).

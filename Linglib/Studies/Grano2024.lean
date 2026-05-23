@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Mood.Basic
-import Linglib.Theories.Semantics.Mood.VerbalMood
-import Linglib.Theories.Semantics.Attitudes.RationalAttitude
+import Linglib.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.VerbalMood
+import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Studies.Noonan2007
 import Linglib.Fragments.Greek.StandardModern.MoodChoice
 import Linglib.Fragments.Romanian.MoodChoice

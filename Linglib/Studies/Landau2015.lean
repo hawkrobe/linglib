@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalist.MinimalPronoun
-import Linglib.Theories.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Lexical.VerbEntry
 import Linglib.Typology.Complementation
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.Noonan2007

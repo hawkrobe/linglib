@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.Resultatives
+import Linglib.Semantics.Causation.Resultatives
 import Linglib.Core.Morphology.MorphWord
 import Linglib.Studies.GoldbergJackendoff2004
 import Linglib.Fragments.Mandarin.Resultatives
@@ -37,7 +37,7 @@ arguments but **none** of V1's.  This predicts:
 ## Architecture
 
 Connects:
-- `Theories.Semantics.Causation.Resultatives`: causal dynamics, CC-selection,
+- `Semantics.Causation.Resultatives`: causal dynamics, CC-selection,
   tightness, cross-linguistic parameters (`ResultativeRealization`,
   `ResultOrientation`, `PhaseComplement`)
 - `Morphology.Core.WordStructure`: `MorphWord.compound` for V-V

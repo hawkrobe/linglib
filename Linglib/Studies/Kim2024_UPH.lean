@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.Cascade
-import Linglib.Theories.Semantics.Causation.Psych
-import Linglib.Theories.Semantics.Causation.PsychLink
-import Linglib.Theories.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.Causation.Psych
+import Linglib.Semantics.Causation.PsychLink
+import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Studies.Pesetsky1995
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.SolstadBott2022

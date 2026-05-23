@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Composition.TypeShifting
+import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Typology.Copulas
 import Linglib.Studies.Stassen2013
 

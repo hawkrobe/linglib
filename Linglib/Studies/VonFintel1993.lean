@@ -25,7 +25,7 @@ QForce values to QuantifierType, with `fragment_exceptive_bridge` showing
 the prediction agrees with the Fragment classification.
 
 The semantic operators (`ExcI`, `ExcE`, `ExcW`, `ExcS`) live in
-`Theories/Semantics/Quantification/Exceptive.lean`. The connection
+`Semantics/Quantification/Exceptive.lean`. The connection
 between this file's Fragment-derived predictions and those operators
 is not yet wired up — TODO.
 -/

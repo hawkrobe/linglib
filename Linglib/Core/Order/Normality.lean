@@ -8,13 +8,13 @@ A normality ordering is a preorder on worlds encoding relative normalcy.
 This structure appears in four places across formal semantics:
 
 1. **@cite{kratzer-1981}**: ordering sources induce normality orderings
-   for modal semantics (`Theories/Semantics/Modality/Kratzer.lean`)
+   for modal semantics (`Semantics/Modality/Kratzer.lean`)
 2. **@cite{kraus-magidor-1990}**: plausibility orderings interpret
    default consequence, System P (`Core/Logic/BeliefRevision.lean`)
 3. **@cite{veltman-1996}**: expectation patterns are normality orderings that
-   get dynamically refined (`Theories/Semantics/Dynamic/UpdateSemantics/`)
+   get dynamically refined (`Semantics/Dynamic/UpdateSemantics/`)
 4. **@cite{rudin-2025a}**: ordering-source updates for epistemic modals
-   (`Theories/Semantics/Dynamic/Epistemic/`)
+   (`Semantics/Dynamic/Epistemic/`)
 
 This module extracts the common mathematical core. The `PlausibilityOrder`
 in `BeliefRevision.lean` adds a smoothness condition (every satisfiable
