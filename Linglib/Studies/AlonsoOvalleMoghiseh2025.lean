@@ -41,21 +41,21 @@ with scalar exhaustification clause-bounded below the modal.
 * `single_exh_no_fc`, `above_only_all_alts_too_strong`,
   `two_ie_above_below_too_strong` — three non-split architectures fail.
 
-### Structural Prop-level proofs (`Generic` sub-namespace)
+### Structural Prop-level proofs (`Abstract` sub-namespace)
 
 These lift the paper claims to arbitrary `D : Type*` with `P : D → Prop`,
 plus arbitrary Kripke frames via `Acc : W → Prop` + `Q : D → W → Prop`.
 
-* `Generic.scalar_exh_uniqueness` — "at least one and not at least two" ↔ "exactly one"
-* `Generic.fc_two_element` — for |D|=2, ∃≥2 = ∀d
-* `Generic.root_full_exh_contradiction` — full exh on |D|=2 → ⊥
-* `Generic.full_exh_consistent_three` — root contradiction is |D|=2-specific
-* `Generic.modal_split_exh_fc`, `Generic.modal_split_exh_full` —
+* `Abstract.scalar_exh_uniqueness` — "at least one and not at least two" ↔ "exactly one"
+* `Abstract.fc_two_element` — for |D|=2, ∃≥2 = ∀d
+* `Abstract.root_full_exh_contradiction` — full exh on |D|=2 → ⊥
+* `Abstract.full_exh_consistent_three` — root contradiction is |D|=2-specific
+* `Abstract.modal_split_exh_fc`, `Abstract.modal_split_exh_full` —
   Kripke-frame lift of the deontic-possibility split-exh result
 
 (The Spector closure observation
 `Core.Quantification.exclusive_pairwise_inconsistent` lives in
-`Core/Logic/Quantification/Exclusive.lean` and is `open`'d in `Generic`.)
+`Core/Logic/Quantification/Exclusive.lean` and is `open`'d in `Abstract`.)
 
 Table 2 typology is canonicalized in `Fragments.Farsi.Determiners`
 (`EFCIRescue` enum, per-item `yeki`/`irgendein_de`/`vreun_ro` entries,
@@ -70,7 +70,7 @@ Two passes over the same content:
    close by `decide` over `Finset` substrate; the paper-equation-labelled
    ones derive from structural lemmas in
    `Linglib.Semantics.Exhaustification.Structural`.
-2. **Abstract structure** (`Generic` sub-namespace): Prop-level proofs
+2. **Abstract structure** (`Abstract` sub-namespace): Prop-level proofs
    over arbitrary `D : Type*` and Kripke frames. Lifts each finite-world
    result to its general form (`scalar_exh_uniqueness`,
    `root_full_exh_contradiction`, the modal-frame variants).
@@ -432,7 +432,10 @@ theorem below_modal_only_no_fc :
     this forbids it. -/
 theorem above_only_all_alts_too_strong :
     innocent.exh allModalAltsF canBuyAnyF
-      = canBuyAnyF.filter (fun w => (canB1 w == canB2 w) && !canJoint w) := by decide
+      = canBuyAnyF.filter (fun w => (canB1 w == canB2 w) && !canJoint w) := by
+  rw [innocent_exh_pairwise_disjoint_partial (φ := canBuyAnyF)
+        (ALT := allModalAltsF) (by decide)]
+  decide
 
 /-- **Two operators above+below ◇ too strong (eq. 144-145)**: two IE
     operators (O_σ below gives ◇(b₁⊻b₂), then full IE above) produces
@@ -444,7 +447,10 @@ theorem above_only_all_alts_too_strong :
     negations. -/
 theorem two_ie_above_below_too_strong :
     innocent.exh allModalAltsF canExOrF
-      = canExOrF.filter (fun w => (canB1 w == canB2 w) && !canJoint w) := by decide
+      = canExOrF.filter (fun w => (canB1 w == canB2 w) && !canJoint w) := by
+  rw [innocent_exh_pairwise_disjoint_partial (φ := canExOrF)
+        (ALT := allModalAltsF) (by decide)]
+  decide
 
 /-- Two-IE exhaustification is strictly stronger than split: it entails
     the split result but not vice versa. The difference is exactly
@@ -658,7 +664,7 @@ checked there:
 -/
 
 
-/-! ### Structural Prop-level proofs (`Generic`)
+/-! ### Structural Prop-level proofs (`Abstract`)
 
 These lift the paper claims to arbitrary `D : Type*` with `P : D → Prop`,
 plus arbitrary Kripke frames via `Acc : W → Prop` + `Q : D → W → Prop`.
@@ -667,7 +673,7 @@ answers on the paper's worked 2-book domain; this section proves *why*
 the results hold at full generality.
 -/
 
-namespace Generic
+namespace Abstract
 
 open Core.Quantification (neg_all_exclusive_alts exclusive_false_of_universal)
 
@@ -924,7 +930,7 @@ theorem modal_split_full_compatible_with_joint :
     · exact Or.inl ⟨rfl, by decide⟩
     · exact Or.inr ⟨rfl, by decide⟩
 
-end Generic
+end Abstract
 
 
 -- BEGIN GENERATED EXAMPLES
