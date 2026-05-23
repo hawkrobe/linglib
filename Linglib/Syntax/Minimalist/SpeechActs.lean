@@ -2,10 +2,10 @@ import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Core.Context.Basic
-import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Discourse.IllocutionaryForce
 import Linglib.Core.Mood.ClauseType
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Linglib.Features.Evidentiality
 import Linglib.Fragments.English.Pronouns
 
@@ -133,7 +133,7 @@ def seatOfKnowledge : SAPMood → PRole
 /-- Map P-roles to framework-agnostic discourse roles.
     SPEAKER → speaker, HEARER → addressee, SEAT OF KNOWLEDGE → speaker
     (default; use `seatOfKnowledge` for mood-sensitive resolution). -/
-def PRole.toDiscourseRole : PRole → Core.Discourse.DiscourseRole
+def PRole.toDiscourseRole : PRole → Discourse.DiscourseRole
   | .speaker         => .speaker
   | .hearer          => .addressee
   | .seatOfKnowledge => .speaker  -- default; varies by mood

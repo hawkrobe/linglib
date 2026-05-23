@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Discourse.IllocutionaryForce
 import Linglib.Semantics.Modality.Assert
 import Linglib.Fragments.French.Modals
 
@@ -70,7 +70,7 @@ regression coefficients.
   later sibling that contradicts the imperative's deontic-flavor
   assignment; the cross-paper wedge lives in Roberts2023.
 - `Studies/FrancikClark1985.lean`: another
-  consumer of `Core.Discourse.PreparatoryCondition`. Both that file's
+  consumer of `Discourse.PreparatoryCondition`. Both that file's
   `RequestForm.queriedCondition` and this file's `SentType.queriedPrep`
   are `Option PreparatoryCondition`-valued projections sharing the
   Searle/Francik substrate.
@@ -88,7 +88,7 @@ keeps the file independent of the Minimalist substrate.
 namespace RuytenbeekEtAl2017
 
 open Core.Modality (ModalFlavor ModalForce)
-open Core.Discourse (PreparatoryCondition SearleClass)
+open Discourse (PreparatoryCondition SearleClass)
 open Core.Mood (IllocutionaryMood)
 open Semantics.Modality.Assert (primaryFlavor)
 
@@ -208,7 +208,7 @@ instance : DecidablePred SentType.deonticMatch := fun _ => decEq _ _
 Per @cite{clark-1979}, asking about a preparatory condition for a
 request licenses the directive interpretation without sharing the
 imperative's modal semantics. The substrate
-`Core.Discourse.PreparatoryCondition` (Searle's hierarchy: ability /
+`Discourse.PreparatoryCondition` (Searle's hierarchy: ability /
 knowledge / memory / perception / permission / willingness) is the
 target type; the projection `SentType.queriedPrep` mirrors
 `Studies/FrancikClark1985.lean`'s

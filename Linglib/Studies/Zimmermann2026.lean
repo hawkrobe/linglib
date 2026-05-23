@@ -33,7 +33,7 @@ universal quantification, and number marking.
 
 - Cross-categorial DEF-markers (§3.2): Ga *lε* on VPs/TPs
 - Logophoric pronouns (§3.5): Ewe *yè* (infrastructure exists in
-  `Core/Discourse/Logophoricity.lean`)
+  `Discourse/Logophoricity.lean`)
 - Inverse number marking (§4.2): Dagaare *-ri*
 - DEF-INDEF co-occurrence (§3.4): compositional interaction of *bí* + *nó*
 

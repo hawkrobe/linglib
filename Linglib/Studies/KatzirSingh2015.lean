@@ -1,7 +1,7 @@
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Core.Discourse.QUDStack
-import Linglib.Core.Discourse.Strategy
+import Linglib.Discourse.QUDStack
+import Linglib.Discourse.Strategy
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Studies.Magri2009
 import Linglib.Semantics.Questions.Partition.Constructors

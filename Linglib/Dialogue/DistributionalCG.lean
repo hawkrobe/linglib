@@ -1,7 +1,7 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.Commitment
 import Linglib.Dialogue.CommitmentSpace
 
 /-!
@@ -44,8 +44,8 @@ frameworks.
 namespace Dialogue
 
 open Discourse.CommonGround (ContextSet HasContextSet)
-open Core.Discourse (DiscourseRole)
-open Core.Discourse.Commitment (HasSupport IndexedWeightedCommitment CommitmentForce)
+open Discourse (DiscourseRole)
+open Discourse.Commitment (HasSupport IndexedWeightedCommitment CommitmentForce)
 
 -- ════════════════════════════════════════════════════
 -- § 1. DistributionalCG

@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Discourse.IllocutionaryForce
 
 /-!
 # Intentional States: S in S(r)
@@ -19,7 +19,7 @@ identical logical structure:
 Performing F(p) sincerely *expresses* the corresponding S(r). The conditions
 of satisfaction of the speech act are identical to those of the expressed
 state. The illocutionary side (F, direction of fit, Searle taxonomy) lives
-in `Core/Discourse/IllocutionaryForce.lean`.
+in `Discourse/IllocutionaryForce.lean`.
 
 ## Organization
 
@@ -30,7 +30,7 @@ in `Core/Discourse/IllocutionaryForce.lean`.
 - **§ 5. Verification**
 -/
 
-namespace Core.Discourse
+namespace Discourse
 
 open Core.Mood (IllocutionaryMood)
 
@@ -214,4 +214,4 @@ theorem self_ref_independent_of_direction :
 theorem conditions_are_content {W : Type*} (s : IntentionalState W) :
     s.conditionsOfSatisfaction = s.content := rfl
 
-end Core.Discourse
+end Discourse

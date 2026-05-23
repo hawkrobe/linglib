@@ -24,7 +24,7 @@ to the addressee and invite confirmation or denial.
 namespace Gunlogson2001
 
 open Dialogue.Gunlogson
-open Core.Discourse.Commitment (CommitmentSource)
+open Discourse.Commitment (CommitmentSource)
 open Phenomena.Assertion
 
 -- ════════════════════════════════════════════════════

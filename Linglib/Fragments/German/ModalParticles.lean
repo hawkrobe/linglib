@@ -1,9 +1,9 @@
 import Linglib.Semantics.UseConditional.LTU
 import Linglib.Semantics.Mood.Gutzmann
 import Linglib.Fragments.German.ClauseTypes
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Linglib.Features.ClauseForm
 
 /-!

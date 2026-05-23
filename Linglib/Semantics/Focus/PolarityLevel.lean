@@ -1,5 +1,5 @@
 import Linglib.Features.Polarity
-import Linglib.Core.Discourse.Coherence
+import Linglib.Discourse.Coherence
 import Linglib.Typology.PolarityMarking
 import Linglib.Features.InformationStructure
 
@@ -30,7 +30,7 @@ namespace Semantics.Focus.PolarityLevel
 
 open Features (Polarity)
 open Typology.PolarityMarking (Strategy)
-open Core.Discourse.Coherence (CoherenceRelation)
+open Discourse.Coherence (CoherenceRelation)
 
 /-- The semantic level at which a polarity-marking device operates.
 

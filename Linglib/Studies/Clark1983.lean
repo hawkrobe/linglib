@@ -1,5 +1,5 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Discourse.IllocutionaryForce
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Pragmatics.RSA.LexicalUncertainty
@@ -46,7 +46,7 @@ in `§B` were corrected at the same time.
 
 ## Substrate hookup
 
-The `IndirectAct` structure in `§K` consumes `Core.Discourse.PreparatoryCondition`
+The `IndirectAct` structure in `§K` consumes `Discourse.PreparatoryCondition`
 (Searle's hierarchy: ability / knowledge / memory / perception / permission /
 willingness). Clark's canonical example *Do you know what time it is?* used
 as a request projects to `prepCondition := some .knowledge` — the same
@@ -68,7 +68,7 @@ level rather than a vacuous law-of-excluded-middle.
 namespace Clark1983
 
 open Discourse.CommonGround
-open Core.Discourse (PreparatoryCondition)
+open Discourse (PreparatoryCondition)
 open Morphology.DM (Categorizer Recategorization CategorizedRoot
   denominal_requires_n recategorization_changes_category)
 
@@ -622,7 +622,7 @@ hierarchy of goals (paper pp. 319–321).
 
 The substrate consolidation: the indirect-act side carries a typed
 `prepCondition : Option PreparatoryCondition` consuming
-`Core.Discourse.IllocutionaryForce`'s Searle hierarchy, and projects to
+`Discourse.IllocutionaryForce`'s Searle hierarchy, and projects to
 `GoalHierarchy` via `IndirectAct.toGoalHierarchy`. The "same mechanism"
 claim is then a structural identity: both `IndirectAct` and
 `DenominalVerbConvention` provide projections into the common

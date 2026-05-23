@@ -40,7 +40,7 @@ cases, while the quantificational analysis fails for distributive operators
 - `Fragments/Hungarian/Reciprocals.lean` — Hungarian *egymás* with
   singular null pronoun antecedent (§2, @cite{rakosi-2019})
 - `Fragments/Wan/Reciprocals.lean` — Wan logophoric reciprocal data (§6)
-- `Core/Discourse/Logophoricity.lean` — Sells (1987) logophoric roles
+- `Discourse/Logophoricity.lean` — Sells (1987) logophoric roles
 - `Studies/Landau2015.lean` — control tier distinction
   (exhaustive vs. partial) relevant to §4
 -/

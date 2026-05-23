@@ -3,8 +3,8 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Core.Discourse.QUDStack
-import Linglib.Core.Discourse.Strategy
+import Linglib.Discourse.QUDStack
+import Linglib.Discourse.Strategy
 import Linglib.Tactics.RSAPredict
 
 /-!
@@ -459,7 +459,7 @@ noncomputable def wRSABiased : RSA.RSAConfig CWSUtterance CWSWorld where
     Concretely: T(w_a) = 1/5 + 1/2 = 7/10 > 1/5 = T(w_ab).
 
     The QUD values correspond to `Discourse.QUD.trivial` (coarse, Q_A) and
-    `Discourse.QUD.exact` (fine, Q_fine) from `Core/Discourse/QUD.lean`.
+    `Discourse.QUD.exact` (fine, Q_fine) from `Discourse/QUD.lean`.
 
     svRSA1 and svRSA2 differ only at S2 (production); both block at L1. -/
 noncomputable def svRSABiased : RSA.RSAConfig CWSUtterance CWSWorld where

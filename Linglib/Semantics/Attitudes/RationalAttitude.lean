@@ -1,6 +1,6 @@
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Events.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
@@ -290,7 +290,7 @@ theorem diagnostics_distinguish_readings :
 -- § 6. Bridge: Reading → @cite{searle-1983} Direction of Fit
 -- ════════════════════════════════════════════════════════════════
 
-open Core.Discourse (DirectionOfFit PsychMode)
+open Discourse (DirectionOfFit PsychMode)
 
 /-- Map rational attitude readings to @cite{searle-1983}'s direction of fit.
 

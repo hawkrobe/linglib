@@ -1,6 +1,6 @@
 import Linglib.Core.Mood.Basic
 import Linglib.Core.Mood.IllocutionaryMood
-import Linglib.Core.Discourse.Roles
+import Linglib.Discourse.Roles
 import Linglib.Core.UD
 
 /-!
@@ -26,12 +26,12 @@ subjunctive question is [interrogative, subjunctive].
 `ClauseType` lives in `Core/Mood/` because the file is intrinsically about
 the mood-category cross-product. The discourse-act extensions of force
 (Searle classes, direction of fit, preparatory conditions) live in
-`Core/Discourse/IllocutionaryForce.lean`.
+`Discourse/IllocutionaryForce.lean`.
 -/
 
 namespace Core.Mood
 
-open Core.Discourse (DiscourseRole)
+open Discourse (DiscourseRole)
 
 /-- A clause's type: the independent pairing of illocutionary force
     with grammatical mood. -/

@@ -59,8 +59,8 @@ This is the substrate's `CommitmentForce` axis.
 namespace CondoravdiLauer2012
 
 open Dialogue.Krifka
-open Core.Discourse (DiscourseRole)
-open Core.Discourse.Commitment (IndexedCommitment IndexedWeightedCommitment CommitmentForce)
+open Discourse (DiscourseRole)
+open Discourse.Commitment (IndexedCommitment IndexedWeightedCommitment CommitmentForce)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Setup

@@ -1,7 +1,7 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 
 /-!
 # Commitment Space Semantics
@@ -28,7 +28,7 @@ the commitment/belief separation (lying, hedging).
 The paper's central primitive is the Frege turnstile `S⊢φ` (p. 332):
 assertion is responsibility-undertaking, so what enters the CG is
 "speaker S is committed to the truth of φ", not bare φ. The substrate uses
-`Core.Discourse.Commitment.IndexedCommitment` to model this — the root
+`Discourse.Commitment.IndexedCommitment` to model this — the root
 holds indexed commitments, projected to a flat context set via
 `IndexedCommitment.toCommitment` for the CG-as-set view.
 
@@ -70,10 +70,10 @@ re-audit if substrate operators are renamed or restructured.
 
 namespace Dialogue.Krifka
 
-open Core.Discourse.Commitment
+open Discourse.Commitment
   (CommitmentSlate IndexedCommitment IndexedWeightedCommitment CommitmentForce
    HasSupport CommitmentGrade)
-open Core.Discourse (DiscourseRole)
+open Discourse (DiscourseRole)
 open Discourse.CommonGround (ContextSet)
 open Core.Mood (IllocutionaryMood)
 
@@ -82,7 +82,7 @@ open Core.Mood (IllocutionaryMood)
 -- ════════════════════════════════════════════════════
 
 /-- Agent type for two-participant discourse — abbreviation for the
-    framework-agnostic `Core.Discourse.DiscourseRole`. The alias name
+    framework-agnostic `Discourse.DiscourseRole`. The alias name
     `KAgent` mirrors Krifka's `S₁`/`S₂` notation; semantically it IS
     `DiscourseRole` (no separate inductive, no bridge function). -/
 abbrev KAgent := DiscourseRole
@@ -309,7 +309,7 @@ theorem denegate_surviving_no_match (cs : CommitmentSpace W G)
 /-! ### Polymorphic operators via `[CommitmentGrade G]`
 
 The following operators are polymorphic in `G` via the
-`CommitmentGrade` typeclass (`Core/Discourse/Commitment.lean` §4):
+`CommitmentGrade` typeclass (`Discourse/Commitment.lean` §4):
 `bipolarQuestion` and `negatedQuestionLow` use `complement` to
 construct the "no" branch; `toContextSet` and the force-aware variants
 use `support` to project per-world weights to `Prop`.

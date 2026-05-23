@@ -1,7 +1,7 @@
 import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 
 /-!
 # The ASSERT Operator and Speech Act Phrase
@@ -51,7 +51,7 @@ open Core.Mood (IllocutionaryMood)
 @cite{hacquard-2006}: "The content of the speech event
 is different depending on the type of speech act."
 
-Now unified with `IllocutionaryMood` from `Core.Discourse`. The five
+Now unified with `IllocutionaryMood` from `Discourse`. The five
 constructors — declarative, interrogative, imperative, promissive,
 exclamative — classify the pragmatic act performed. -/
 abbrev SpeechActType := IllocutionaryMood

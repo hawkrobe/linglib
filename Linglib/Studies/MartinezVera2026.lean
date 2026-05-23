@@ -3,7 +3,7 @@ import Linglib.Semantics.Composition.Layered
 import Linglib.Semantics.Highlighting
 import Linglib.Discourse.EvidentialIllocution
 import Linglib.Features.Evidentiality
-import Linglib.Core.Discourse.Roles
+import Linglib.Discourse.Roles
 import Linglib.Semantics.Questions.Hamblin
 import Linglib.Phenomena.Verum.Basic
 import Linglib.Studies.Hohle1992
@@ -89,7 +89,7 @@ open Semantics.Composition.Layered (BiLayered)
 open Semantics.Highlighting (HighlightingContext Highlighted AddressesQUD addSalient)
 open Discourse.EvidentialIllocution (EvidentialAct assert present)
 open Features.Evidentiality (EvidentialSource)
-open Core.Discourse (DiscourseRole)
+open Discourse (DiscourseRole)
 
 variable {W : Type*}
 

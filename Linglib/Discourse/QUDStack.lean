@@ -7,7 +7,7 @@ import Linglib.Semantics.Questions.Basic
 A `QUDStack W` models the discourse-state component of @cite{roberts-2012} §2:
 the ordered list of questions that have been accepted as worth answering
 but have not yet been resolved. Subquestions are pushed on top; answers
-pop the immediate QUD. Strategies of inquiry (`Core/Discourse/Strategy.lean`)
+pop the immediate QUD. Strategies of inquiry (`Discourse/Strategy.lean`)
 are the rose-tree counterpart.
 
 Parameterized by `Question W` — the Set-based inquisitive-content lattice.

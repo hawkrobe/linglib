@@ -53,8 +53,8 @@ uses a 2-world Weather model and verifies a specific paper claim.
 namespace Krifka2015
 
 open Dialogue.Krifka
-open Core.Discourse (DiscourseRole)
-open Core.Discourse.Commitment (IndexedCommitment ContextualEvidence)
+open Discourse (DiscourseRole)
+open Discourse.Commitment (IndexedCommitment ContextualEvidence)
 open Features (Acceptability)
 
 -- ════════════════════════════════════════════════════
@@ -262,7 +262,7 @@ which READING is licensed when no negation is present:
 Cell values use `Features.Acceptability` (`ok` / `marginal` / `anomalous`).
 The paper's `(#)` parenthesised hash maps to `marginal`; bare `#` maps to
 `anomalous`. The `ContextualEvidence` enum is reused from
-`Core.Discourse.Commitment` (originally introduced for
+`Discourse.Commitment` (originally introduced for
 @cite{bring-gunlogson-2000}).
 -/
 

@@ -1,6 +1,6 @@
-import Linglib.Core.Discourse.Commitment
-import Linglib.Core.Discourse.Roles
-import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Discourse.Commitment
+import Linglib.Discourse.Roles
+import Linglib.Discourse.IllocutionaryForce
 import Linglib.Dialogue.Gunlogson
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Fragments.Marathi.Particles
@@ -29,11 +29,11 @@ beyond @cite{farkas-bruce-2010} / @cite{gunlogson-2001}:
 
 * Each interlocutor's discourse commitments split into doxastic vs
   preferential (eq. 17a–c) — formalized at
-  `Core.Discourse.Commitment.CommitmentForce`.
+  `Discourse.Commitment.CommitmentForce`.
 * The @cite{gunlogson-2001} source/dependent distinction lifts to
   *both* commitment forces — the 2×2 cross
   `CommitmentSource × CommitmentForce`. The four cells are exposed as
-  `Core.Discourse.Commitment.TaggedSlate.{dependent, independent,
+  `Discourse.Commitment.TaggedSlate.{dependent, independent,
   dependentDoxastic, dependentPreferential, independentDoxastic,
   independentPreferential}`.
 
@@ -59,8 +59,8 @@ commissive only.
 
 namespace Deo2025
 
-open Core.Discourse
-open Core.Discourse.Commitment
+open Discourse
+open Discourse.Commitment
 open Dialogue.Gunlogson (GunlogsonState)
 
 universe u
@@ -88,7 +88,7 @@ def baraMetaContent (p : W → Prop) (K : GunlogsonState W) : Prop :=
 
 /-- The illocutionary acts surveyed by @cite{deo-2025-bara}.
 
-    Refines `Core.Discourse.IllocutionaryForce.SearleClass` for the
+    Refines `Discourse.IllocutionaryForce.SearleClass` for the
     directive subset (warning/advice/reminder/command/strongRec/
     request/plea/offer/permission/concession/curse all `.directive`),
     plus `commissive` (`.commissive`) and `agreement` (`.assertive`).

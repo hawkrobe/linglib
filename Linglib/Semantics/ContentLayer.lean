@@ -33,9 +33,9 @@ existing linglib distinctions:
 ## Design Note
 
 `ContentLayer` lives in `Semantics/` because it generalizes `PrProp`.
-Bridges to `Core/Discourse/AtIssueness` and `Phenomena/Presupposition/
+Bridges to `Discourse/AtIssueness` and `Phenomena/Presupposition/
 ProjectiveContent.Challengeability` live downstream in bridge files,
-preserving the independence of `Semantics/` and `Core/Discourse/`.
+preserving the independence of `Semantics/` and `Discourse/`.
 
 ## Scope
 

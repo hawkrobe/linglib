@@ -1,7 +1,7 @@
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Core.Discourse.QUDStack
-import Linglib.Core.Discourse.Strategy
+import Linglib.Discourse.QUDStack
+import Linglib.Discourse.Strategy
 import Linglib.Core.Scales.Scale
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
@@ -32,7 +32,7 @@ infrastructure (order instances, smart constructors, etc.).
 
 -/
 
-namespace Core.Discourse.AtIssueness
+namespace Discourse.AtIssueness
 
 open Core.Scale (Boundedness Rat01)
 
@@ -166,4 +166,4 @@ def projectivityBoundedness : Boundedness := .closed
 def ofPercent (n : ℚ) (h0 : 0 ≤ n) (h1 : n ≤ 100) : Rat01 :=
   ⟨n / 100, div_nonneg h0 (by norm_num), by linarith⟩
 
-end Core.Discourse.AtIssueness
+end Discourse.AtIssueness

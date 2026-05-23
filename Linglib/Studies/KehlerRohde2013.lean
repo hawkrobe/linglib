@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.Coherence
+import Linglib.Discourse.Coherence
 import Linglib.Core.UD
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
@@ -57,7 +57,7 @@ set_option autoImplicit false
 
 namespace KehlerRohde2013
 
-open Core.Discourse.Coherence
+open Discourse.Coherence
 open UD (Voice)
 
 -- ════════════════════════════════════════════════════

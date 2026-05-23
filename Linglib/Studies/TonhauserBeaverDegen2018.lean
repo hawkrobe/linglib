@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.AtIssueness
+import Linglib.Discourse.AtIssueness
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
@@ -323,7 +323,7 @@ theorem establish_separated_from_top :
 -- § Bridge: Gradient At-Issueness ↔ Infrastructure
 -- ════════════════════════════════════════════════════
 
-open Core.Discourse.AtIssueness
+open Discourse.AtIssueness
 open Phenomena.Presupposition.ProjectiveContent
 
 /-- Lift an expression type's projectivity rating to a bounded degree. -/

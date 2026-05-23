@@ -1,6 +1,6 @@
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Linglib.Discourse.CommonGround
 import Mathlib.Data.Rat.Defs
 
@@ -22,7 +22,7 @@ preferential commitment split. The actual Lauer 2013 framework is
 substrate-supported elsewhere:
 
 - The doxastic / preferential force distinction lives in
-  `Core/Discourse/Commitment.lean` as `CommitmentForce` (with
+  `Discourse/Commitment.lean` as `CommitmentForce` (with
   `.doxastic` and `.preferential` cases).
 - Krifka-style commitment spaces consume it via
   `Dialogue/CommitmentSpace.lean` (the `force` parameter on
@@ -48,7 +48,7 @@ model lacks.
 
 namespace Dialogue.CredenceThreshold
 
-open Core.Discourse.Commitment (CommitmentSlate)
+open Discourse.Commitment (CommitmentSlate)
 open Discourse.CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════

@@ -211,7 +211,7 @@ backgroundedness and therefore worse extraction. -/
 their complements more strongly also show more degraded extraction.
 The model derives this from manner salience → QUD strength → backgroundedness.
 The conceptually-right substrate for "backgroundedness" is
-`Core.Discourse.AtIssuenessDegree`, not `BinaryGivenness` (which
+`Discourse.AtIssuenessDegree`, not `BinaryGivenness` (which
 orders by salience, given > new); future work could rephrase
 `complementStatus` over AtIssuenessDegree directly. -/
 theorem per_verb_correlation_predicted :

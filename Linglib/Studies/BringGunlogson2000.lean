@@ -28,7 +28,7 @@ This derivation is formalized in `Gunlogson.cbc_from_uninformativeness`.
 namespace BringGunlogson2000
 
 open Dialogue.Gunlogson
-open Core.Discourse.Commitment
+open Discourse.Commitment
 
 -- ════════════════════════════════════════════════════
 -- § 1. Felicity ↔ Evidence

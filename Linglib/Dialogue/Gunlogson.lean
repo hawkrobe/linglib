@@ -1,7 +1,7 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 
 /-!
 # @cite{gunlogson-2004}: Source-Marked Commitments
@@ -35,9 +35,9 @@ Source determines who can challenge:
 
 namespace Dialogue.Gunlogson
 
-open Core.Discourse.Commitment
+open Discourse.Commitment
 open Discourse.CommonGround (ContextSet CG)
-open Core.Discourse (DiscourseRole)
+open Discourse (DiscourseRole)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Gunlogson State
@@ -67,7 +67,7 @@ def empty : GunlogsonState W :=
     `K.slateOf .addressee = K.addresseeSlate`. Lifts the discourse-role
     enum into a uniform indexer. -/
 def slateOf (K : GunlogsonState W) :
-    Core.Discourse.DiscourseRole → TaggedSlate W
+    Discourse.DiscourseRole → TaggedSlate W
   | .speaker   => K.speakerSlate
   | .addressee => K.addresseeSlate
 

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Linglib.Core.Context.Basic
 import Linglib.Morphology.Exponence
 

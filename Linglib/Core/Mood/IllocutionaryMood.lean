@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.Roles
+import Linglib.Discourse.Roles
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -16,17 +16,17 @@ The pair `(IllocutionaryMood, GramMood)` is `Core.Mood.ClauseType`.
 This file contains only the *category* — the enum + its sole intrinsic
 property `moodAuthority` (which participant has epistemic authority). The
 *act-side* extensions (Searle classes, direction of fit, preparatory
-conditions) live in `Core/Discourse/IllocutionaryForce.lean`, which imports
+conditions) live in `Discourse/IllocutionaryForce.lean`, which imports
 this file. The split keeps `Core/Mood/` framework-agnostic and free of
 pragmatic-act commitments.
 
-The `DiscourseRole` type lives in `Core/Discourse/Roles.lean` because it is
+The `DiscourseRole` type lives in `Discourse/Roles.lean` because it is
 about discourse participants (speaker/addressee), not about mood.
 -/
 
 namespace Core.Mood
 
-open Core.Discourse (DiscourseRole)
+open Discourse (DiscourseRole)
 
 /-- Illocutionary mood — the speech-act force of an utterance.
 

@@ -3,7 +3,7 @@ import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Core.Mood.IllocutionaryMood
 import Linglib.Core.Mood.POSW
 import Linglib.Core.Mood.POSWTarget
-import Linglib.Core.Discourse.Scoreboard
+import Linglib.Discourse.Scoreboard
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
 import Linglib.Semantics.Modality.Assert
@@ -48,7 +48,7 @@ standalone formalization of an imperative mood ontology:
   instance — Roberts agrees with @cite{portner-2018} on the
   POSW component, disagrees with @cite{kaufmann-2012} only on
   the prejacent's modal flavor.
-- The scoreboard updates are `Core.Discourse.Scoreboard`'s
+- The scoreboard updates are `Discourse.Scoreboard`'s
   assertion/interrogation/direction; the *derivation* that
   `directionUpdate` factors as `POSW.star` lives in Scoreboard.lean
   (`toPOSW_direction_eq_star`).
@@ -66,7 +66,7 @@ conservativity. Example "Have a cookie" is (60) in §2.2 (not §3).
 namespace Roberts2023
 
 open Core (WorldTimeIndex)
-open Core.Discourse (forceLinkingPrinciple defaultSemanticType sincerityCondition Scoreboard)
+open Discourse (forceLinkingPrinciple defaultSemanticType sincerityCondition Scoreboard)
 open Core.Mood (POSW POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
 open Core.Modality.HistoricalAlternatives
 open Semantics.Modality.Kratzer

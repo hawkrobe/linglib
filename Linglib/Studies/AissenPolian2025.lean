@@ -85,7 +85,7 @@ alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 
 - `NominalPosition` / `PossessionType` from `NominalStructure.lean`
 - `SpecificityCondition` from `Core/SpecificityCondition.lean`
-- `JudgmentType` from `Core/Discourse/InformationStructure.lean`
+- `JudgmentType` from `Discourse/InformationStructure.lean`
 - `GramFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
 - `ABSPosition` from `Fragments/Mayan/Params.lean`
 - `ProbeProfile`, `closestGoalB`, `behindHorizonB`, `liftFM` from

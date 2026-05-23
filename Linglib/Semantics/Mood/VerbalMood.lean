@@ -51,7 +51,7 @@ component they consult differs.
 ## Connection to sentence mood
 
 The sentence-mood / discourse-update side of the same unification
-lives in `Core/Discourse/Scoreboard.lean`:
+lives in `Discourse/Scoreboard.lean`:
 
 | layer            | declarative                  | imperative                    | interrogative              |
 |------------------|------------------------------|-------------------------------|----------------------------|

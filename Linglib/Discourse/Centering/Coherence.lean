@@ -1,5 +1,5 @@
 import Linglib.Discourse.Centering.Transition
-import Linglib.Core.Discourse.Coherence
+import Linglib.Discourse.Coherence
 
 /-!
 # Centering — Coherence Relation Bridge
@@ -30,7 +30,7 @@ set_option autoImplicit false
 
 namespace Discourse.Centering
 
-open Core.Discourse.Coherence
+open Discourse.Coherence
 
 /-- The transition pattern that the given coherence relation most
     naturally licenses, on the canonical mapping shared between

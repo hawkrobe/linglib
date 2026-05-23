@@ -1,6 +1,6 @@
 import Linglib.Semantics.Focus.Particles
 import Linglib.Semantics.ContentLayer
-import Linglib.Core.Discourse.Coherence
+import Linglib.Discourse.Coherence
 import Linglib.Features.InformationStructure
 
 /-!
@@ -16,7 +16,7 @@ namespace Fragments.English.FocusParticles
 open Semantics.Focus.Particles (EvenThreshold)
 open Semantics.ContentLayer (ContentLayer)
 open Features.InformationStructure (FIPApplication)
-open Core.Discourse.Coherence (CoherenceRelation)
+open Discourse.Coherence (CoherenceRelation)
 
 /-- A focus-sensitive particle lexical entry. -/
 structure Entry where
@@ -33,7 +33,7 @@ structure Entry where
   /-- Discourse-relation flavor of exclusion (@cite{umbach-2004}): *only*
       excludes additional alternatives → `.contrast`; contrastive focus
       excludes by substitution → `.correction`. Encoded directly as
-      `Core.Discourse.Coherence.CoherenceRelation` (the IS-vocabulary
+      `Discourse.Coherence.CoherenceRelation` (the IS-vocabulary
       "additional vs substitution" is recoverable from CONTRAST/CORRECTION
       per Umbach 2004's own decomposition). `none` for non-exclusive
       particles like *even* and *also*. -/

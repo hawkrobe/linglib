@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Linking
-import Linglib.Core.Discourse.Coherence
+import Linglib.Discourse.Coherence
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.RosaArnold2017
 import Linglib.Studies.KehlerRohde2013
@@ -59,7 +59,7 @@ of grammatical position.
 namespace SolstadBott2022
 
 open Semantics.ArgumentStructure.EntailmentProfile
-open Core.Discourse.Coherence
+open Discourse.Coherence
 open Fragments.English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════

@@ -1,12 +1,12 @@
 import Linglib.Features.InformationStructure
 import Linglib.Semantics.Focus.Comparability
-import Linglib.Core.Discourse.Coherence
+import Linglib.Discourse.Coherence
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Relevance
 import Linglib.Core.Mood.PartitionAsInquiry
-import Linglib.Core.Discourse.QUDStack
-import Linglib.Core.Discourse.Strategy
+import Linglib.Discourse.QUDStack
+import Linglib.Discourse.Strategy
 import Linglib.Semantics.Focus.Interpretation
 import Linglib.Pragmatics.DecisionTheoretic.But
 import Linglib.Fragments.English.FocusParticles
@@ -51,7 +51,7 @@ three levels at which "contrast" appears:
 - Focus alternatives & FIP: `Semantics.Focus.Interpretation` (@cite{rooth-1992})
 - QUD / implicit questions: `Question`, `Question.isPartialAnswer` (@cite{roberts-2012})
 - DTS "but": `DTS.But` (@cite{merin-1999})
-- Coherence relations: `Core.Discourse.Coherence` (@cite{kehler-2002})
+- Coherence relations: `Discourse.Coherence` (@cite{kehler-2002})
 - Focus particles: `Fragments.English.FocusParticles`
 -/
 
@@ -59,7 +59,7 @@ namespace Umbach2004
 
 open Features.InformationStructure
 open Semantics.Focus.Comparability
-open Core.Discourse.Coherence
+open Discourse.Coherence
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  World Model
@@ -231,7 +231,7 @@ exclusion that cross-cut information structure and discourse structure:
 *only*-phrases exclude *additional* alternatives (mapping to the
 CONTRAST discourse relation), while contrastive focus excludes *by
 substitution* (mapping to the CORRECTION discourse relation). The
-two-cell IS taxonomy is recoverable from `Core.Discourse.Coherence.CoherenceRelation`'s
+two-cell IS taxonomy is recoverable from `Discourse.Coherence.CoherenceRelation`'s
 `.contrast` and `.correction` cases — Umbach's own decomposition makes
 the IS-side enum redundant once the discourse-side cases exist. The
 prior `ExclusionVariety` substrate enum was deleted in the
@@ -514,7 +514,7 @@ The taxonomy is represented in linglib's type system:
 - `CoherenceRelation.correction` = contrastive focus / CORRECTION (substitution)
 
 Both polarity-switch contexts and exclusion varieties are populated
-directly with `Core.Discourse.Coherence.CoherenceRelation`'s `.contrast`
+directly with `Discourse.Coherence.CoherenceRelation`'s `.contrast`
 and `.correction` cases — the prior IS-vocabulary parallel enums
 (`PolaritySwitchContext`, `ExclusionVariety`) were deleted in the
 0.230.488 cleanup as duplicates of the discourse-side primitive. -/

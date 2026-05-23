@@ -79,8 +79,8 @@ computation.
 namespace CohenKrifka2014
 
 open Dialogue.Krifka
-open Core.Discourse (DiscourseRole)
-open Core.Discourse.Commitment (IndexedCommitment IndexedWeightedCommitment CommitmentForce)
+open Discourse (DiscourseRole)
+open Discourse.Commitment (IndexedCommitment IndexedWeightedCommitment CommitmentForce)
 
 variable {W : Type*}
 

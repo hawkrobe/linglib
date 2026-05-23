@@ -1,5 +1,5 @@
 import Linglib.Core.Context.Tower
-import Linglib.Core.Discourse.Roles
+import Linglib.Discourse.Roles
 import Linglib.Core.Mood.IllocutionaryMood
 
 /-!
@@ -11,12 +11,12 @@ The pragmatic-act side of the Searlean parallel: direction of fit, the
 five-class taxonomy, and preparatory conditions. The Intentional-state
 counterpart S(r) — psychological mode, sincerity conditions, causal
 self-referentiality, and IntentionalState — lives in
-`Core/Discourse/Intentionality.lean`. Discourse commitments live in
-`Core/Discourse/Commitment.lean`.
+`Discourse/Intentionality.lean`. Discourse commitments live in
+`Discourse/Commitment.lean`.
 
 The mood-category material that used to live here was split out for
 mathlib-style cleanliness:
-- `Core/Discourse/Roles.lean` — `DiscourseRole`, `resolveRole`
+- `Discourse/Roles.lean` — `DiscourseRole`, `resolveRole`
 - `Core/Mood/IllocutionaryMood.lean` — `IllocutionaryMood`, `moodAuthority`
 
 This file extends `IllocutionaryMood` with `searleClass`/`directionOfFit`,
@@ -30,7 +30,7 @@ which depend on the act taxonomy below.
 - **§ 4. Verification**
 -/
 
-namespace Core.Discourse
+namespace Discourse
 
 open Core.Context
 open Core.Mood (IllocutionaryMood moodAuthority)
@@ -94,18 +94,18 @@ def SearleClass.directionOfFit : SearleClass → DirectionOfFit
   | .declaration  => .double
   | .expressive   => .null
 
-end Core.Discourse
+end Discourse
 
 namespace Core.Mood.IllocutionaryMood
 
-open Core.Discourse (SearleClass DirectionOfFit)
+open Discourse (SearleClass DirectionOfFit)
 
 /-- Map `IllocutionaryMood` to Searle class. Not injective: both directives
     (imperative) and commissives (promissive) share world-to-mind fit.
 
     Defined in the `Core.Mood.IllocutionaryMood` namespace so it is
     available via dot notation, even though the `SearleClass` taxonomy
-    lives in `Core.Discourse`. -/
+    lives in `Discourse`. -/
 def searleClass : IllocutionaryMood → SearleClass
   | .declarative   => .assertive
   | .interrogative  => .directive
@@ -119,7 +119,7 @@ def directionOfFit (m : IllocutionaryMood) : DirectionOfFit :=
 
 end Core.Mood.IllocutionaryMood
 
-namespace Core.Discourse
+namespace Discourse
 
 open Core.Mood (IllocutionaryMood moodAuthority)
 
@@ -225,4 +225,4 @@ theorem declaration_double :
 theorem expressive_null :
     SearleClass.expressive.directionOfFit = .null := rfl
 
-end Core.Discourse
+end Discourse

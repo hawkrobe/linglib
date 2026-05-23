@@ -40,12 +40,12 @@ Belief-Predicate Test (for OLE):
 -/
 
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Core.Discourse.AtIssueness
+import Linglib.Discourse.AtIssueness
 
 namespace Phenomena.Presupposition.ProjectiveContent
 
 open Semantics.Presupposition
-open Core.Discourse.AtIssueness
+open Discourse.AtIssueness
 
 
 /--
@@ -296,7 +296,7 @@ Discussion (QUD), while not-at-issue content is backgrounded.
 
 **Note:** @cite{tonhauser-beaver-degen-2018} show that at-issueness is
 *gradient*, not binary. For the gradient version, see
-`Core.Discourse.AtIssueness.AtIssuenessDegree`. This binary enum is
+`Discourse.AtIssueness.AtIssuenessDegree`. This binary enum is
 recoverable from a degree + threshold via `AtIssueness.ofDegree`.
 -/
 inductive AtIssueness where

@@ -1,6 +1,6 @@
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Linglib.Core.Modality.ModalTypes
 
 /-!
@@ -42,7 +42,7 @@ and willingness — plus speaker memory. Three experiments show:
 ## Connection to Preparatory Conditions
 
 The obstacle types formalized here derive from `PreparatoryCondition` in
-`Core.Discourse.SpeechActs`. Each obstacle IS a preparatory condition at
+`Discourse.SpeechActs`. Each obstacle IS a preparatory condition at
 risk. The specificity gradient (Can you? → Do you know? → Do you
 remember? → Did you happen to read...?) corresponds to descending the
 subsumption hierarchy.
@@ -52,7 +52,7 @@ set_option autoImplicit false
 
 namespace FrancikClark1985
 
-open Core.Discourse (PreparatoryCondition)
+open Discourse (PreparatoryCondition)
 open Core.Modality (ModalFlavor)
 
 

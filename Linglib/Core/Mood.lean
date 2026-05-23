@@ -23,7 +23,7 @@ The split mirrors mathlib's "one concept per file" discipline:
   bridge from `UD.Mood`
 
 The pragmatic-act extensions of force (Searle classes, direction of fit,
-preparatory conditions) live in `Core/Discourse/IllocutionaryForce.lean`
+preparatory conditions) live in `Discourse/IllocutionaryForce.lean`
 because they are pragmatic-theoretic, not mood-categorial. The
-`DiscourseRole` (speaker/addressee) lives in `Core/Discourse/Roles.lean`.
+`DiscourseRole` (speaker/addressee) lives in `Discourse/Roles.lean`.
 -/

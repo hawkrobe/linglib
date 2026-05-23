@@ -1,13 +1,13 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Discourse.Roles
+import Linglib.Discourse.Roles
 
 /-!
 # Discourse Commitments
 @cite{krifka-2015} @cite{brandom-1994} @cite{gunlogson-2001} @cite{bring-gunlogson-2000}
 
 The public trace of speech acts: commitment slates, source-tagged commitments,
-and contextual evidence bias. Pairs with `Core/Discourse/IllocutionaryForce.lean`
-(F in F(p)) and `Core/Discourse/Intentionality.lean` (S in S(r)).
+and contextual evidence bias. Pairs with `Discourse/IllocutionaryForce.lean`
+(F in F(p)) and `Discourse/Intentionality.lean` (S in S(r)).
 
 Where Intentional states are private, commitments are public — the
 publicly-tracked obligations created by performing speech acts. Asserting p
@@ -22,7 +22,7 @@ creates a mind-to-world commitment; promising p creates a world-to-mind one.
 - **§ 5. HasContextSet Instance**
 -/
 
-namespace Core.Discourse
+namespace Discourse
 
 namespace Commitment
 
@@ -493,4 +493,4 @@ open Discourse.CommonGround in
 instance {W : Type*} : HasContextSet (Commitment.CommitmentSlate W) W where
   toContextSet s := λ w => s.toContextSet w
 
-end Core.Discourse
+end Discourse

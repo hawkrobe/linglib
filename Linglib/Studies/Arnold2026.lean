@@ -254,7 +254,7 @@ theorem personal_has_stronger_precondition :
     representations — you use a pronoun for a referent that is already
     well-established in the discourse. The bridge function
     `AccessibilityLevel.toElaboration` is defined in
-    `Core.Discourse.Accessibility`. -/
+    `Discourse.Accessibility`. -/
 theorem pronoun_implies_elaborated :
     AccessibilityLevel.unstressedPron.toElaboration = .elaborated := rfl
 

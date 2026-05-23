@@ -30,7 +30,7 @@ set_option autoImplicit false
 namespace Discourse.Centering.Rule2Coherence
 
 open Discourse.Centering
-open Core.Discourse.Coherence
+open Discourse.Coherence
 
 /-- The Rule-2 score implied by a pair of consecutive coherence
     relations: convert each to its preferred transition and sum the

@@ -3,7 +3,7 @@ import Linglib.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 import Linglib.Studies.SolstadBott2022
 import Linglib.Fragments.German.Predicates
-import Linglib.Core.Discourse.AtIssueness
+import Linglib.Discourse.AtIssueness
 
 /-!
 # Solstad & Bott (2024): The occasion verb presupposition
@@ -63,7 +63,7 @@ open SolstadBott2022
 open Fragments.German.Predicates
 open Semantics.Presupposition
 open Discourse.CommonGround
-open Core.Discourse.AtIssueness
+open Discourse.AtIssueness
 
 -- ════════════════════════════════════════════════════
 -- § 1. Filtering Direction and Context Resolution

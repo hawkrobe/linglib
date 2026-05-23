@@ -7,14 +7,14 @@ The two fundamental discourse participants — speaker and addressee — and
 the function that resolves them through a `ContextTower` to concrete
 entities.
 
-This file exists separately from `Core/Discourse/IllocutionaryForce.lean`
+This file exists separately from `Discourse/IllocutionaryForce.lean`
 to break a would-be cycle between `Core/Mood/IllocutionaryMood.lean` (which
 needs `DiscourseRole` for `moodAuthority`) and the act-side material in
 `IllocutionaryForce.lean` (which extends `IllocutionaryMood` with Searle
 classes and direction of fit).
 -/
 
-namespace Core.Discourse
+namespace Discourse
 
 open Core.Context
 
@@ -50,4 +50,4 @@ theorem resolveRole_shift_invariant {W E P T : Type*}
     resolveRole (tower.push σ) r = resolveRole tower r := by
   cases r <;> simp only [resolveRole, ContextTower.push_origin]
 
-end Core.Discourse
+end Discourse

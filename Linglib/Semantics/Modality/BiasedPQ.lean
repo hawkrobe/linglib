@@ -1,8 +1,8 @@
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -78,7 +78,7 @@ inductive OriginalBias where
 
 -- Re-export `ContextualEvidence` from Core so that downstream files
 -- opening `Semantics.Modality.BiasedPQ` still find it here.
-export Core.Discourse.Commitment (ContextualEvidence)
+export Discourse.Commitment (ContextualEvidence)
 
 -- ============================================================================
 -- §3: Romero's Table 1 — Original Speaker Bias (@cite{ladd-1981}, @cite{romero-han-2004})

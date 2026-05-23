@@ -1,5 +1,5 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Discourse.Roles
+import Linglib.Discourse.Roles
 import Linglib.Dialogue.Stalnaker
 import Linglib.Dialogue.CommitmentSpace
 
@@ -69,7 +69,7 @@ via the existing `KrifkaState.hasNoOpenContinuations` and
 
 namespace Dialogue
 
-open Core.Discourse (DiscourseRole)
+open Discourse (DiscourseRole)
 open Discourse.CommonGround (ContextSet HasContextSet)
 
 -- ════════════════════════════════════════════════════════════════
@@ -174,7 +174,7 @@ instance instStalnaker {W : Type*} :
 -- § 3. Krifka (binary) instance
 -- ════════════════════════════════════════════════════════════════
 
-open Core.Discourse.Commitment (IndexedWeightedCommitment IndexedCommitment
+open Discourse.Commitment (IndexedWeightedCommitment IndexedCommitment
   CommitmentForce)
 
 /-- @cite{krifka-2015}'s commitment-space instance, binary case.

@@ -36,9 +36,9 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 
 -/
 
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Logic.Intensional.RestrictedModality
 import Linglib.Core.Causal.SEM.Bool
@@ -706,7 +706,7 @@ for the RSA treatment.
 -- Bridge: Veridicality → @cite{searle-1983} Causal Self-Referentiality
 -- ════════════════════════════════════════════════════════════════
 
-open Core.Discourse (PsychMode CausalSelfRef)
+open Discourse (PsychMode CausalSelfRef)
 
 /-- Map veridicality to @cite{searle-1983}'s psychological mode.
 

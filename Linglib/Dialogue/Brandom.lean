@@ -1,6 +1,6 @@
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Linglib.Discourse.CommonGround
 
 /-!
@@ -36,7 +36,7 @@ inferential role.
 
 namespace Dialogue.Brandom
 
-open Core.Discourse.Commitment (CommitmentSlate)
+open Discourse.Commitment (CommitmentSlate)
 open Discourse.CommonGround (ContextSet CG)
 
 -- ════════════════════════════════════════════════════

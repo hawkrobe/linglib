@@ -5,8 +5,8 @@ import Linglib.Discourse.CommonGround
 import Linglib.Tactics.RSAPredict
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Core.Discourse.QUDStack
-import Linglib.Core.Discourse.Strategy
+import Linglib.Discourse.QUDStack
+import Linglib.Discourse.Strategy
 import Linglib.Features.Subjectivity
 
 /-!

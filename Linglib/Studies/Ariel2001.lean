@@ -20,7 +20,7 @@ of multiple factors.
 
 ## The Accessibility Marking Scale
 
-The 18-level `AccessibilityLevel` type (defined in `Core/Discourse/Accessibility.lean`)
+The 18-level `AccessibilityLevel` type (defined in `Discourse/Accessibility.lean`)
 encodes Ariel's ordering. This study file adds the three form-function criteria
 (informativity, rigidity, attenuation), the multi-factor accessibility assessment,
 and comparisons with competing theories.

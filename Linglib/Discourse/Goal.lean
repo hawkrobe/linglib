@@ -28,7 +28,7 @@ interface (a `GoalSet` projects to a flat property list).
 3. Goal sets are **per-agent**: G = {G_i | i ∈ I}, one set per interlocutor.
 -/
 
-namespace Core.Discourse
+namespace Discourse
 
 variable {W : Type*}
 
@@ -136,4 +136,4 @@ def size (gs : GoalSet W) : Nat :=
 
 end GoalSet
 
-end Core.Discourse
+end Discourse

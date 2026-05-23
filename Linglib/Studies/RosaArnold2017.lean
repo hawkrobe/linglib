@@ -1,5 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.Linking
-import Linglib.Core.Discourse.Coherence
+import Linglib.Discourse.Coherence
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Studies.ArnoldEtAl2000
@@ -64,7 +64,7 @@ set_option autoImplicit false
 
 namespace RosaArnold2017
 
-open Core.Discourse.Coherence
+open Discourse.Coherence
 open Features
 open Features.Prominence
 

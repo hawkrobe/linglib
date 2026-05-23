@@ -1,5 +1,5 @@
 import Mathlib.Data.List.Basic
-import Linglib.Core.Discourse.Coherence
+import Linglib.Discourse.Coherence
 
 /-!
 # Segmented Discourse Representation Theory: Core Definitions
@@ -9,7 +9,7 @@ import Linglib.Core.Discourse.Coherence
 Theory-neutral types for SDRT (@cite{asher-lascarides-2003}, Ch. 4):
 the labelled discourse-structure record (Definition 13, p. 142), basic
 constructors, and SDRT-specific projections (`kind`, `veridicality`)
-on top of the framework-neutral `Core.Discourse.Coherence.CoherenceRelation`
+on top of the framework-neutral `Discourse.Coherence.CoherenceRelation`
 enum. The Right Frontier Constraint (Definition 14, p. 148) lives in
 the sibling `RightFrontier.lean`.
 
@@ -17,13 +17,13 @@ the sibling `RightFrontier.lean`.
 
 The original SDRT formalization landed (CHANGELOG 0.230.674) with a
 parallel `RhetoricalRelation` enum that overlapped 5-of-7 names with
-`Core.Discourse.Coherence.CoherenceRelation`. The audit (CHANGELOG
+`Discourse.Coherence.CoherenceRelation`. The audit (CHANGELOG
 0.230.677) flagged this as the textbook "reinvented infrastructure"
 anti-pattern. We now use Core's enum, extended with the genuine SDRT
 contributions (`background`, `consequence`, `alternation`), and keep
 Hobbs/Kehler's `occasion` as the canonical name for what
 @cite{asher-lascarides-2003} call "Narration" (alias
-`Narration := occasion` provided in `Core.Discourse.Coherence`).
+`Narration := occasion` provided in `Discourse.Coherence`).
 
 ## Substrate scope
 
@@ -57,7 +57,7 @@ conjunct in `F(γ)`.
 
 namespace Discourse.SDRT
 
-open Core.Discourse.Coherence (CoherenceRelation)
+open Discourse.Coherence (CoherenceRelation)
 
 /-- SDRT's rhetorical-relation type IS Core's coherence-relation enum.
     Provides paper-anchored vocabulary at the SDRT namespace level
@@ -90,7 +90,7 @@ inductive RelationKind where
 
 end Discourse.SDRT
 
-namespace Core.Discourse.Coherence
+namespace Discourse.Coherence
 
 /-- SDRT's structural kind of a coherence relation
     (@cite{asher-lascarides-2003}, §4.6–§4.7). Defined on
@@ -119,11 +119,11 @@ def CoherenceRelation.isSubordinating (R : CoherenceRelation) : Prop :=
 instance : DecidablePred CoherenceRelation.isSubordinating :=
   fun R => inferInstanceAs (Decidable (R.sdrtKind = _))
 
-end Core.Discourse.Coherence
+end Discourse.Coherence
 
 namespace Discourse.SDRT
 
-open Core.Discourse.Coherence (CoherenceRelation)
+open Discourse.Coherence (CoherenceRelation)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Veridicality
@@ -152,7 +152,7 @@ inductive Veridicality where
 
 end Discourse.SDRT
 
-namespace Core.Discourse.Coherence
+namespace Discourse.Coherence
 
 /-- Veridicality of each rhetorical relation per SDRT
     (@cite{asher-lascarides-2003}, preface "What's New" + §4.8). -/
@@ -169,11 +169,11 @@ def CoherenceRelation.veridicality :
   | .consequence  => .nonVeridical
   | .correction   => .denialBearing
 
-end Core.Discourse.Coherence
+end Discourse.Coherence
 
 namespace Discourse.SDRT
 
-open Core.Discourse.Coherence (CoherenceRelation)
+open Discourse.Coherence (CoherenceRelation)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. SDRS — Segmented Discourse Representation Structure

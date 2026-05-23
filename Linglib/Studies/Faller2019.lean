@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Discourse.Roles
+import Linglib.Discourse.Roles
 import Linglib.Semantics.Questions.Basic
 
 /-!
@@ -24,7 +24,7 @@ when they don't immediately disagree.
 
 ## Substrate consumed
 
-* `Core/Discourse/Roles.DiscourseRole` for binary speaker/addressee
+* `Discourse/Roles.DiscourseRole` for binary speaker/addressee
   (Faller adds Goffman's animator/author/principal — see § Goffman roles
   below; if a second study consumes these they graduate to substrate).
 * `Semantics/Questions/Basic.Question` is *not* directly used — Faller's
@@ -49,7 +49,7 @@ substrate when a second consumer needs them:
 
 1. **Goffman roles** (Animator/Author/Principal). Cited by AnderBois
    2014, Murray 2014, Bary 2025, MV 2026. If/when a second study file
-   imports them, promote to `Core/Discourse/GoffmanRoles.lean`.
+   imports them, promote to `Discourse/GoffmanRoles.lean`.
 2. **Multi-typed commitment sets** (TC, AeC, RepC, BpgC). The "open
    list of evidence-typed commitment sets per agent" pattern. Faller
    has 4 types; future papers may add more. If a second consumer wants
@@ -64,7 +64,7 @@ Each is currently inline in this study file.
 
 namespace Faller2019
 
-open Core.Discourse (DiscourseRole)
+open Discourse (DiscourseRole)
 
 variable {W : Type*}
 

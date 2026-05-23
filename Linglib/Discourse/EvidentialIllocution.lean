@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Insert
 import Linglib.Semantics.Composition.Layered
 import Linglib.Features.Evidentiality
-import Linglib.Core.Discourse.Roles
+import Linglib.Discourse.Roles
 
 /-!
 # Evidential Illocutionary Operators
@@ -46,7 +46,7 @@ and produce a discourse update.
   of re-stipulating discourse-update behaviour.
 
 Existing substrate:
-* `Core.Discourse.Commitment` provides commitment slates and
+* `Discourse.Commitment` provides commitment slates and
   `IndexedCommitment` (Krifka 2015's S⊢φ); `EvidentialAct` here is a
   thinner illocutionary-output type that any of the larger
   discourse-state trackers can ingest.
@@ -58,7 +58,7 @@ Existing substrate:
 namespace Discourse.EvidentialIllocution
 
 open Semantics.Composition.Layered (BiLayered)
-open Core.Discourse (DiscourseRole)
+open Discourse (DiscourseRole)
 open Features.Evidentiality (EvidentialSource)
 
 /-- The result of applying an illocutionary operator to a layered argument.

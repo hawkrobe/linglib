@@ -1,11 +1,11 @@
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Core.Discourse.QUDStack
-import Linglib.Core.Discourse.Strategy
+import Linglib.Discourse.QUDStack
+import Linglib.Discourse.Strategy
 import Linglib.Features.InformationStructure
 import Linglib.Features.Givenness
 import Linglib.Semantics.Focus.Comparability
-import Linglib.Core.Discourse.AtIssueness
+import Linglib.Discourse.AtIssueness
 import Linglib.Semantics.Focus.Interpretation
 
 /-!
@@ -55,7 +55,7 @@ other; backgrounded constituents resist wh-extraction.
 open Features.InformationStructure (FocusMark)
 open Features (BinaryGivenness)
 open Semantics.Focus.Comparability
-open Core.Discourse.AtIssueness
+open Discourse.AtIssueness
 
 namespace Semantics.Focus.BackgroundedIslands
 
@@ -976,7 +976,7 @@ prosodic conditions. The binary model predicts MoS = say+adverb (both `.given`)
 and cannot express this gradient.
 
 We lift the model to **gradient at-issueness** using `Rat01` from
-`Core/Discourse/AtIssueness.lean`. `MannerWeightSource` determines not just
+`Discourse/AtIssueness.lean`. `MannerWeightSource` determines not just
 whether the complement is backgrounded, but *how* backgrounded. Lexical manner
 (inherent to verb root) produces stronger backgroundedness than compositional
 manner (from adverb modification).

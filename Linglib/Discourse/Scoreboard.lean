@@ -1,11 +1,11 @@
-import Linglib.Core.Discourse.Goal
-import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Discourse.Intentionality
-import Linglib.Core.Discourse.Commitment
+import Linglib.Discourse.Goal
+import Linglib.Discourse.IllocutionaryForce
+import Linglib.Discourse.Intentionality
+import Linglib.Discourse.Commitment
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Core.Discourse.QUDStack
-import Linglib.Core.Discourse.Strategy
+import Linglib.Discourse.QUDStack
+import Linglib.Discourse.Strategy
 import Linglib.Core.Mood.POSW
 import Linglib.Core.Mood.POSWQ
 
@@ -42,7 +42,7 @@ into a single scoreboard and gives G richer internal structure
 (conditional goals with hierarchical priorities, following @cite{bratman-1987}).
 -/
 
-namespace Core.Discourse
+namespace Discourse
 
 open Core.Mood (IllocutionaryMood)
 
@@ -469,4 +469,4 @@ theorem boxAns_polar_after_interrogation (K : Scoreboard W)
   exact hwv.2
 
 end Scoreboard
-end Core.Discourse
+end Discourse
