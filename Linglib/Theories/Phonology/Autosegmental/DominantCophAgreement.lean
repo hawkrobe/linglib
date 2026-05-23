@@ -3,7 +3,6 @@ import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
 
 /-!
 # Dominant Cophonology ↔ Tonal Overwrite Agreement
-@cite{rolle-2018}
 
 This file proves the **general agreement** between the two parallel
 formalisms for dominant grammatical tone in @cite{rolle-2018}:
@@ -19,21 +18,25 @@ outputs. The per-tableau agreement theorems in study files (e.g.,
 `AkinboFwangwar2026.t24_winner_agrees_with_deriveVerb`) are instances
 of this general result.
 
-## Proof structure
+## Main results
 
-```
-optimal_zero_first (OT.lean)
-   "if any candidate has 0 violations on the top constraint,
-    every optimal candidate does too"
-         ↓
-dominant_coph_selects_basemap_faithful
-   "when MxBM-C is in the subranking, every optimal candidate
-    has extractTier c = basemapTier"
-         ↓
-dominant_coph_agrees_with_tonalOverwrite
-   "every optimal candidate under the dominant cophonology agrees
-    with tonalOverwrite — the two formalisms are equivalent"
-```
+* `dominant_coph_selects_basemap_faithful` — when MxBM-C is in the
+  subranking, every optimal candidate has `extractTier c = basemapTier`.
+* `dominant_coph_agrees_with_tonalOverwrite` — every optimal candidate
+  under the dominant cophonology agrees with `tonalOverwrite`; the two
+  formalisms are equivalent.
+
+## Implementation notes
+
+The proof chain proceeds via `optimal_zero_first` (from the OT substrate):
+if any candidate has 0 violations on the top constraint, every optimal
+candidate does too. This propagates through
+`dominant_coph_selects_basemap_faithful` to
+`dominant_coph_agrees_with_tonalOverwrite`.
+
+## References
+
+* @cite{rolle-2018}
 -/
 
 namespace Phonology.Autosegmental.DominantCophAgreement
@@ -44,9 +47,7 @@ open Phonology.Autosegmental.BasemapCorrespondence
 open Phonology.CophonologyTheory (mergeRanking cophonologicalEval)
 open Core.Constraint.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
 
--- ============================================================================
--- § 1: Dominant Cophonology Selects Basemap-Faithful Candidates
--- ============================================================================
+/-! ### Dominant cophonology selects basemap-faithful candidates -/
 
 /-- **The general agreement theorem**: when MxBM-C (basemap faithfulness)
     is in the cophonological subranking, every OT-optimal candidate is
@@ -83,9 +84,7 @@ theorem dominant_coph_selects_basemap_faithful
   exact basemapViolations_eq_zero_imp (extractTier c) basemapTier
     (hLen c (mkTableau_optimal_mem candidates _ h c hc)) hZero
 
--- ============================================================================
--- § 2: Agreement with tonalOverwrite
--- ============================================================================
+/-! ### Agreement with `tonalOverwrite` -/
 
 /-- **Dominant cophonology agrees with tonalOverwrite**: for whole-word
     single-tone replacement, OT evaluation under the dominant cophonology

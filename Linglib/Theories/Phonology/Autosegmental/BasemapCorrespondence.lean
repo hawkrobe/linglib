@@ -5,51 +5,48 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Matrix-Basemap Correspondence (MxBM-C)
-@cite{rolle-2018} @cite{benua-1997}
 
 Matrix-Basemap Correspondence is @cite{rolle-2018}'s central theoretical
 contribution (Ch 5). It extends Output-Output Correspondence
 (@cite{benua-1997}) to explain **dominant grammatical tone** as a special
 type of faithfulness rather than markedness.
 
-## The three problems
-
-Any theory of dominant vs. non-dominant GT must address:
-1. **Origin problem**: where does the grammatical tune come from?
-2. **Erasure problem**: why do the target's underlying tones go unrealized?
-3. **Scope problem**: what determines the domain of the GT operation?
-
-MxBM-C addresses the erasure problem. The origin problem is solved by
-floating tone representation (the tune is part of the trigger's UR);
-the scope problem by CoP-scope (`CoPScope.lean`).
-
-## Key insight: dominance as basemap faithfulness
+Any theory of dominant vs. non-dominant GT must address three problems:
+the **origin problem** (where does the grammatical tune come from?), the
+**erasure problem** (why do the target's underlying tones go unrealized?),
+and the **scope problem** (what determines the domain of the GT
+operation?). MxBM-C addresses the erasure problem. The origin problem is
+solved by floating tone representation (the tune is part of the trigger's
+UR); the scope problem by CoP-scope (`CoPScope.lean`).
 
 A **basemap** is an abstract I/O mapping derived from a "deficient
-projection" of the input: all valued (lexical) tones on the target
-are stripped, leaving only floating (grammatical) tones. The basemap
-output shows what the form would look like if the target had no
-underlying tones.
+projection" of the input: all valued (lexical) tones on the target are
+stripped, leaving only floating (grammatical) tones. The basemap output
+shows what the form would look like if the target had no underlying tones.
 
-**Dominant GT** = faithfulness to the basemap output. The matrix
-(actual) output must correspond to the basemap output. Since the
-basemap has no valued tones to preserve, its output is determined
-entirely by the grammatical tune. The matrix output must match,
-so the target's underlying tones are forced to go unrealized.
+**Dominant GT** = faithfulness to the basemap output. The matrix (actual)
+output must correspond to the basemap output. Since the basemap has no
+valued tones to preserve, its output is determined entirely by the
+grammatical tune. The matrix output must match, so the target's underlying
+tones are forced to go unrealized. **Non-dominant GT** = no basemap
+faithfulness; the matrix output is determined by the default constraint
+ranking, which may preserve underlying tones.
 
-**Non-dominant GT** = no basemap faithfulness. The matrix output
-is determined by the default constraint ranking, which may preserve
-underlying tones.
+## Main definitions
 
-## Connection to `tonalOverwrite`
+* `deficientProjection` — strip all tones from a host, replacing with a default
+* `basemapOutput` — apply the grammatical tune to the deficient projection
+* `tonalTier` — extract the tonal tier of a TBU list
+* `basemapViolations` — Hamming distance between matrix and basemap tonal tiers
+* `mkBasemapConstraint` — wrap basemap violations as a `NamedConstraint`
+
+## Implementation notes
 
 `tonalOverwrite` in `GrammaticalTone.lean` directly implements the
-computational result of replacive-dominant GT. Under MxBM-C, this
-result *emerges* from basemap faithfulness: `tonalOverwrite_basemap_faithful`
+computational result of replacive-dominant GT. Under MxBM-C, this result
+*emerges* from basemap faithfulness: `tonalOverwrite_basemap_faithful`
 proves that the overwrite function produces the same tonal output as
 basemap-faithful evaluation.
-
-## Connection to `Correspondence.lean`
 
 Matrix-Basemap Correspondence is the IDENT-OO correspondence relation of
 @cite{mccarthy-prince-1995} / @cite{benua-1997} specialized to the tonal
@@ -57,6 +54,13 @@ tier. `basemapViolations` is defined as `Corr.identViol` on the
 `(matrix, basemap)` edge of a binary correspondence diagram between the
 two tonal tiers — making the connection true by construction rather than
 via a separate Hamming-distance implementation.
+
+## References
+
+* @cite{rolle-2018}
+* @cite{benua-1997}
+* @cite{mccarthy-prince-1995}
+* @cite{goldsmith-1976}
 -/
 
 namespace Phonology.Autosegmental.BasemapCorrespondence
@@ -66,9 +70,7 @@ open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Correspondence (Corr)
 open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 
--- ============================================================================
--- § 1: Basemap — Deficient Projection
--- ============================================================================
+/-! ### Basemap — deficient projection -/
 
 /-- Strip all tones from a host word, replacing them with a default tone.
     The **deficient projection** of @cite{rolle-2018} Ch 5: the input with
@@ -89,9 +91,7 @@ theorem deficientProjection_uniform {S : Type}
     host.map fun _ => defaultTone := by
   simp only [deficientProjection, List.map_map]; congr 1
 
--- ============================================================================
--- § 2: Basemap Output
--- ============================================================================
+/-! ### Basemap output -/
 
 /-- Compute the basemap output: apply the grammatical tune to the
     deficient projection. This represents what the output would look
@@ -104,9 +104,7 @@ def basemapOutput {S : Type} [DecidableEq S] [BEq S] [Repr S]
     (host : List (TBU S)) (spec : Spec) (defaultTone : TRN) : List (TBU S) :=
   tonalOverwrite (deficientProjection host defaultTone) spec
 
--- ============================================================================
--- § 3: Tonal Tier Extraction
--- ============================================================================
+/-! ### Tonal tier extraction -/
 
 /-- Extract the tonal tier from a list of TBUs.
 
@@ -123,9 +121,7 @@ def tonalTier {S : Type} (tbus : List (TBU S)) : List TRN :=
     tonalTier tbus = tbus.map TBU.tone :=
   Phonology.Tier.apply_tonal tbus
 
--- ============================================================================
--- § 4: Matrix-Basemap Correspondence — derived from `Corr`
--- ============================================================================
+/-! ### Matrix-Basemap Correspondence — derived from `Corr` -/
 
 /-- Matrix-Basemap Correspondence violation count: Hamming distance between
     the matrix tonal tier and the basemap tonal tier.
@@ -168,9 +164,7 @@ theorem basemapViolations_eq_zero_imp
   rw [List.getElem?_eq_getElem hn₁, List.getElem?_eq_getElem hn₂] at this
   exact Option.some_inj.mp this
 
--- ============================================================================
--- § 5: NamedConstraint Bridge
--- ============================================================================
+/-! ### NamedConstraint bridge -/
 
 /-- Wrap `basemapViolations` as a `NamedConstraint` for use in OT
     tableaux and cophonological evaluation.
@@ -191,9 +185,7 @@ def mkBasemapConstraint {C : Type}
   family := .faithfulness
   eval c := basemapViolations (extractTier c) basemapTier
 
--- ============================================================================
--- § 6: Dominance as Basemap Faithfulness
--- ============================================================================
+/-! ### Dominance as basemap faithfulness -/
 
 /-- Helper: whole-word `tonalOverwrite` reduces to `List.map`. -/
 private theorem tonalOverwrite_whole_eq_map {S : Type}

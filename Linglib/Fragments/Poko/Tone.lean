@@ -36,12 +36,12 @@ demonstration: `kāk` (3sg.m possessive), `rī` (pig stem with `/M^H/`
 melody), `dō` (get verb with `/M^H/` melody). Promote to a fuller
 fragment when a second Poko paper arrives.
 
-## Morpheme IDs
+## Morphemes
 
-Each Poko stem is one morpheme. We assign Nat morpheme IDs in
-left-to-right order of first appearance in the fig. 3 input:
-`kāk = 0`, `rī = 1`, `dō = 2`. The IDs are consumed by *TAUTDOCK and
-*CROWD via the `SegSpec`/`ToneSpec` morpheme fields.
+Each Poko stem is one morpheme, keyed by the syllable's surface form
+via `Syll.morphemeId` (`{ form := "kak" }`, `{ form := "ri" }`, etc.).
+Consumed by *TAUTDOCK and *CROWD via the `SegSpec`/`ToneSpec` morpheme
+fields.
 -/
 
 namespace Fragments.Poko
@@ -72,17 +72,16 @@ inductive Syll
 -- § 2: Morpheme IDs
 -- ============================================================================
 
-/-- Stable morpheme ID per stem. IDs are assigned to keep inputs from
-    distinct paper examples non-overlapping. -/
-def Syll.morphemeId : Syll → MorphemeId
-  | .kak => 0
-  | .ri  => 1
-  | .do  => 2
-  | .nan => 3
-  | .na  => 4
-  | .ka  => 5
-  | .ili => 6
-  | .ne  => 7
+/-- Stable morpheme per stem, keyed by the syllable's surface form. -/
+def Syll.morphemeId : Syll → Morpheme
+  | .kak => { form := "kak" }
+  | .ri  => { form := "ri" }
+  | .do  => { form := "do" }
+  | .nan => { form := "nan" }
+  | .na  => { form := "na" }
+  | .ka  => { form := "ka" }
+  | .ili => { form := "ili" }
+  | .ne  => { form := "ne" }
 
 -- ============================================================================
 -- § 3: Convenience Constructors for SegSpec / ToneSpec

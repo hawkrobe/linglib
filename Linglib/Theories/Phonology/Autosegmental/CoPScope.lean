@@ -1,14 +1,11 @@
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 
 /-!
-# CoP-Scope: Cophonological Domain Scope Hierarchy
-@cite{rolle-2018}
+# CoP-scope: cophonological domain scope hierarchy
 
 The **CoP-scope hierarchy** is @cite{rolle-2018}'s solution to the
 **scope problem** for grammatical tone: what determines the domain over
 which a GT operation applies?
-
-## The hierarchy
 
 Within a cophonological domain (CoP), structural positions are ordered
 by scope:
@@ -20,12 +17,22 @@ position scopes over its complement. At spell-out, syntactic structure
 is mapped to a morpho-phonological tree via **hierarchy exchange**,
 which preserves this asymmetric c-command ordering.
 
-## Deriving the dominant GT asymmetry
+## Main definitions
 
-The **dominant GT asymmetry** (@cite{rolle-2018} §3.4.1) states
-that dominant GT triggers are always dependents (affixes, modifiers) and
-targets are always lexical heads. Here we **derive** it from the
-CoP-scope hierarchy rather than stipulating it:
+* `CoPPosition` — structural positions Spec / Head / Complement.
+* `CoPPosition.rank`, `scopesOver` — numeric rank and scope predicate.
+* `CoPPosition.isDependent` — dependency status derived from position.
+* `CoPNode` — morpho-phonological tree node.
+* `hierarchyExchange` — maps morpheme set to evaluation order.
+* `dominant_gt_asymmetry_from_scope` — derives the dominant GT
+  asymmetry from CoP-scope structure.
+
+## Implementation notes
+
+The **dominant GT asymmetry** states that dominant GT triggers are
+always dependents (affixes, modifiers) and targets are always lexical
+heads. Here we **derive** it from the CoP-scope hierarchy rather than
+stipulating it:
 
 1. Dominant GT requires the trigger to scope over the target
 2. The target occupies Head position (it's the lexical head)
@@ -37,15 +44,17 @@ CoP-scope hierarchy rather than stipulating it:
 The key non-trivial prediction: complements are dependents but CANNOT
 be dominant triggers, because Complement does not scope over Head.
 This rules out outward dominance from complements.
+
+## References
+
+* @cite{rolle-2018} — CoP-scope hierarchy and dominant GT asymmetry
 -/
 
 namespace Phonology.Autosegmental.CoPScope
 
 open Phonology.Autosegmental.GrammaticalTone
 
--- ============================================================================
--- § 1: CoP-Scope Positions
--- ============================================================================
+/-! ### CoP-scope positions -/
 
 /-- Structural positions within a cophonological domain (CoP), ordered
     by scope. The ordering Spec > Head > Complement determines which
@@ -66,9 +75,7 @@ inductive CoPPosition where
   | complement
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 2: Scope Ordering
--- ============================================================================
+/-! ### Scope ordering -/
 
 /-- Numeric rank for scope ordering: higher rank = wider scope.
     Spec (2) > Head (1) > Complement (0). -/
@@ -99,9 +106,7 @@ theorem head_not_over_spec : scopesOver .head .spec = false := rfl
 /-- Complements do not scope over heads (asymmetry). -/
 theorem complement_not_over_head : scopesOver .complement .head = false := rfl
 
--- ============================================================================
--- § 3: Dependency Status (Derived from Position)
--- ============================================================================
+/-! ### Dependency status (derived from position) -/
 
 /-- Whether a position is a dependent position. Derived from the CoP
     structure: specifiers and complements are dependents; heads are not.
@@ -123,9 +128,7 @@ theorem head_is_not_dependent : CoPPosition.isDependent .head = false := rfl
 /-- Complements are dependents. -/
 theorem complement_is_dependent : CoPPosition.isDependent .complement = true := rfl
 
--- ============================================================================
--- § 4: CoP Node — Morpho-Phonological Tree Node
--- ============================================================================
+/-! ### CoP node — morpho-phonological tree node -/
 
 /-- A node in a morpho-phonological tree within a cophonological domain.
     Each node represents a morpheme at a structural position, with an
@@ -149,9 +152,7 @@ structure CoPNode where
     is Spec or Complement. -/
 def CoPNode.isDependent (n : CoPNode) : Bool := n.position.isDependent
 
--- ============================================================================
--- § 5: Hierarchy Exchange
--- ============================================================================
+/-! ### Hierarchy exchange -/
 
 /-- **Hierarchy exchange**: map a set of morphemes (from syntactic
     structure) to a cophonological evaluation order. The result is
@@ -169,9 +170,7 @@ theorem hierarchyExchange_perm (nodes : List CoPNode) :
     (hierarchyExchange nodes).length = nodes.length := by
   simp [hierarchyExchange, List.length_mergeSort]
 
--- ============================================================================
--- § 6: Deriving the Dominant GT Asymmetry
--- ============================================================================
+/-! ### Deriving the dominant GT asymmetry -/
 
 /-- **The key lemma**: if a position scopes over Head, it must be Spec.
 

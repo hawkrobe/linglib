@@ -1,67 +1,75 @@
-import Linglib.Theories.Phonology.Autosegmental.RegisterTier
+import Linglib.Core.Morphology.MorphWord
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
-import Mathlib.Data.Finset.Insert
+import Linglib.Theories.Phonology.Autosegmental.NoCrossing
+import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Finset.Image
+import Mathlib.Data.Finset.Insert
+import Mathlib.Data.Finset.Prod
 
 /-!
-# Floating Tones — Autosegmental Forms with Multi-Tone TBUs
-@cite{goldsmith-1976} @cite{wolf-2007} @cite{mcpherson-lamont-2026}
+# Floating tones — autosegmental forms with multi-tone TBUs
 
 Goldsmith-style autosegmental representation: tones live on a tier above
 the segmental backbone, connected by **association lines** (links).
 Multiple tones can associate to one TBU (forming contours); a tone with
 no associations is **floating**.
 
-This refactor (over the prior overwrite-semantics encoding) is required
-by the @cite{mcpherson-lamont-2026} fig. 3 derivation: *CROWD penalises
-TBUs with too many associated tones, and *FALL penalises HM/HL/ML
-contours — both of which presuppose multi-tone-per-TBU representation.
+## Main definitions
 
-## Encoding
+* `Link` — an autosegmental link `(tone-index, TBU-index)`.
+* `ToneSpec`, `SegSpec` — tier elements carrying morpheme membership
+  via `Morphology.WordStructure.Morpheme` (re-exported into this
+  namespace).
+* `FloatingForm S` — autosegmental form with underlying/surface split.
+* `FloatingForm.IsAlive`, `IsLinked`, `IsFloating`, `IsTautomorphic`,
+  `Crosses` — decidable predicates on tones and links.
+* `FloatingForm.deleteTone`, `insertLink`, `deleteLink` — atomic GEN
+  operations (paper subset).
+* `FloatingForm.gen` — one-step GEN as a `Finset` of candidate forms.
+* `FloatingForm.floatIndicator`, `linksTo`, `toneSequence` — indicator
+  vectors for constraint evaluation.
 
-The form carries an immutable **underlying** state and a mutable
-**surface** state. GEN operations modify only the surface state.
+## Implementation notes
 
-Underlying (immutable):
-- `segs : List (SegSpec S)` — segmental backbone with morpheme membership
-- `ulTones : List ToneSpec` — tier elements with morpheme membership
-- `ulLinks : Finset Link` — input association lines
+The form carries an immutable **underlying** state (`segs`, `ulTones`,
+`ulLinks`) and a mutable **surface** state (`deletedTones`,
+`surfaceLinks`). GEN operations modify only the surface state. A tone
+is **floating** iff it is not deleted and no surface link references
+it.
 
-Surface (mutable):
-- `deletedTones : Finset ToneIdx` — set of GEN-deleted tone indices
-- `surfaceLinks : Finset Link` — current association lines
+The refactor over the prior overwrite-semantics encoding
+(`GrammaticalTone.tonalOverwrite`) is required by
+@cite{mcpherson-lamont-2026}: *CROWD penalises TBUs with too many
+associated tones, and *FALL penalises HM/HL/ML contours — both of
+which presuppose multi-tone-per-TBU representation.
 
-A tone is **floating** iff it is not deleted AND no surface link
-references it.
+A surface link `(k, i)` is **tautomorphic** iff
+`ulTones[k].morpheme = segs[i].morpheme`. *TAUTDOCK (after
+@cite{wolf-2007}) penalises tautomorphic links inserted by GEN.
 
-## Operations (paper, eq. 6 subset)
+`gen` implements a paper-subset of operations: delete tone, insert
+link, delete link. Insert-and-associate and shift operations are
+omitted (not needed for the fig. 3 derivation in the source paper).
+The no-crossing filter inside GEN enforces autosegmental
+well-formedness (@cite{goldsmith-1976}).
 
-- `deleteTone k` — paper (6c): mark tone `k` deleted; cascades to remove
-  any surface link referencing it
-- `insertLink k i` — paper (6a): add link `(k, i)` to surfaceLinks
-- `deleteLink k i` — paper (6b): remove link `(k, i)` from surfaceLinks
+## References
 
-The paper's GEN also includes (6d) insert+associate a new tone and (6e)
-shift a tone (the latter credited to Gietz et al. 2023 in the paper);
-both omitted here as they don't appear in the fig. 3 derivation.
-
-## Tautomorphic vs heteromorphic links
-
-A surface link `(k, i)` is **tautomorphic** iff `ulTones[k].morpheme =
-segs[i].morpheme`. The constraint *TAUTDOCK (paper, eq. 15, after
-@cite{wolf-2007}) penalises tautomorphic links inserted by GEN (i.e.,
-in `surfaceLinks` but not in `ulLinks`).
+* @cite{goldsmith-1976} — autosegmental phonology, no-crossing constraint
+* @cite{wolf-2007} — *TAUTDOCK
+* @cite{mcpherson-lamont-2026} — grammatical tone with multi-tone TBUs
 -/
 
 namespace Phonology.Autosegmental
 
 open Phonology.Autosegmental.RegisterTier (TRN)
 
--- ============================================================================
--- § 1: Tier and Link Primitives
--- ============================================================================
+-- Re-export `Morpheme` so autosegmental consumers see it unqualified
+-- after `open Phonology.Autosegmental`.
+export Morphology.WordStructure (Morpheme)
+
+/-! ### Tier and link primitives -/
 
 /-- Index into `ulTones`. -/
 abbrev ToneIdx := Nat
@@ -69,48 +77,27 @@ abbrev ToneIdx := Nat
 /-- Index into `segs`. -/
 abbrev SegIdx := Nat
 
-/-- Identifier for a morpheme. Concrete IDs are fragment-specific.
-    Opaque (`def`, not `abbrev`) so that arithmetic on Nat doesn't
-    silently leak through — only the operations declared below
-    (DecidableEq, Repr, OfNat literals) are exposed to consumers. -/
-def MorphemeId : Type := Nat
-
-namespace MorphemeId
-instance : DecidableEq MorphemeId := inferInstanceAs (DecidableEq Nat)
-instance : Repr MorphemeId := inferInstanceAs (Repr Nat)
-instance : ToString MorphemeId := inferInstanceAs (ToString Nat)
-instance (n : Nat) : OfNat MorphemeId n := inferInstanceAs (OfNat Nat n)
-end MorphemeId
-
 /-- An autosegmental link: tone `fst` is associated to TBU `snd`. -/
 abbrev Link := ToneIdx × SegIdx
 
 /-- A tonal-tier element: tone value plus morpheme membership. -/
 structure ToneSpec where
   tone : TRN
-  morpheme : MorphemeId
+  morpheme : Morpheme
   deriving DecidableEq, Repr
 
 /-- A segmental backbone element: segment plus morpheme membership.
     Generic over the segment type `S`. -/
-structure SegSpec (S : Type) where
+structure SegSpec (S : Type*) where
   seg : S
-  morpheme : MorphemeId
-  deriving Repr
+  morpheme : Morpheme
+  deriving DecidableEq, Repr
 
-instance {S : Type} [DecidableEq S] : DecidableEq (SegSpec S) := λ a b => by
-  rcases a with ⟨s1, m1⟩
-  rcases b with ⟨s2, m2⟩
-  exact decidable_of_iff (s1 = s2 ∧ m1 = m2)
-    ⟨λ ⟨rfl, rfl⟩ => rfl, λ h => by cases h; exact ⟨rfl, rfl⟩⟩
-
--- ============================================================================
--- § 2: FloatingForm
--- ============================================================================
+/-! ### `FloatingForm` -/
 
 /-- An autosegmental tonal form. See module docstring for the
     underlying-vs-surface convention. -/
-structure FloatingForm (S : Type) where
+structure FloatingForm (S : Type*) where
   /-- Segmental backbone (tier order). -/
   segs : List (SegSpec S)
   /-- UNDERLYING tonal tier (tier order; immutable). -/
@@ -121,27 +108,19 @@ structure FloatingForm (S : Type) where
   deletedTones : Finset ToneIdx
   /-- SURFACE association lines (current state). -/
   surfaceLinks : Finset Link
+  deriving DecidableEq
 
-/-- Repr drops Finset fields (mathlib's Finset.Repr is unsafe). Shows
-    only segs and ulTones for debugging. -/
-instance {S : Type} [Repr S] : Repr (FloatingForm S) := ⟨λ f _ =>
-  s!"⟨segs={repr (f.segs.map SegSpec.seg)}, ulTones={repr f.ulTones}⟩"⟩
-
-instance {S : Type} [DecidableEq S] : DecidableEq (FloatingForm S) := λ a b => by
-  rcases a with ⟨a1, a2, a3, a4, a5⟩
-  rcases b with ⟨b1, b2, b3, b4, b5⟩
-  exact decidable_of_iff
-    (a1 = b1 ∧ a2 = b2 ∧ a3 = b3 ∧ a4 = b4 ∧ a5 = b5)
-    ⟨λ ⟨rfl, rfl, rfl, rfl, rfl⟩ => rfl,
-     λ h => by cases h; exact ⟨rfl, rfl, rfl, rfl, rfl⟩⟩
+/-- Hides the `Finset` fields (mathlib's `Finset.Repr` is `unsafe`) and
+    prints only segments and underlying tones; debug-only. -/
+instance {S : Type*} [Repr S] : Repr (FloatingForm S) where
+  reprPrec f _ :=
+    f!"⟨segs={repr (f.segs.map SegSpec.seg)}, ulTones={repr f.ulTones}⟩"
 
 namespace FloatingForm
 
-variable {S : Type} [DecidableEq S]
+variable {S : Type*} [DecidableEq S]
 
--- ============================================================================
--- § 3: Construction
--- ============================================================================
+/-! ### Construction -/
 
 /-- Construct an input form: surface state mirrors underlying state,
     nothing deleted, all underlying links intact. -/
@@ -153,49 +132,33 @@ def mkInput (segs : List (SegSpec S)) (ulTones : List ToneSpec)
     deletedTones := ∅
     surfaceLinks := ulLinks }
 
--- ============================================================================
--- § 4: Predicates on Tones
--- ============================================================================
+/-! ### Predicates on tones and links -/
 
 /-- The tone at index `k` is alive (not deleted). The structural
     primitive; `IsDeleted` is its negation. -/
-def IsAlive (f : FloatingForm S) (k : ToneIdx) : Prop := k ∉ f.deletedTones
-
-instance (f : FloatingForm S) (k : ToneIdx) : Decidable (f.IsAlive k) :=
-  inferInstanceAs (Decidable (k ∉ f.deletedTones))
+abbrev IsAlive (f : FloatingForm S) (k : ToneIdx) : Prop := k ∉ f.deletedTones
 
 /-- The tone at index `k` is deleted. Sugar for `¬ IsAlive`. -/
 abbrev IsDeleted (f : FloatingForm S) (k : ToneIdx) : Prop := ¬ f.IsAlive k
 
 /-- The tone at index `k` is linked to some TBU on the surface. -/
-def IsLinked (f : FloatingForm S) (k : ToneIdx) : Prop :=
+abbrev IsLinked (f : FloatingForm S) (k : ToneIdx) : Prop :=
   ∃ l ∈ f.surfaceLinks, l.fst = k
 
-instance (f : FloatingForm S) (k : ToneIdx) : Decidable (f.IsLinked k) :=
-  decidable_of_iff (∃ l ∈ f.surfaceLinks, l.fst = k) Iff.rfl
-
 /-- The tone at index `k` is floating (alive but unlinked). -/
-def IsFloating (f : FloatingForm S) (k : ToneIdx) : Prop :=
+abbrev IsFloating (f : FloatingForm S) (k : ToneIdx) : Prop :=
   f.IsAlive k ∧ ¬ f.IsLinked k
-
-instance (f : FloatingForm S) (k : ToneIdx) : Decidable (f.IsFloating k) :=
-  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A surface link `(k, i)` is **tautomorphic** iff its tone and TBU
     share a morpheme. Out-of-range indices on either side make this
-    false. Used by *TAUTDOCK (paper, eq. 15) and the tautomorphic vs
-    heteromorphic distinction discussed in the module docstring. -/
-def IsTautomorphic (f : FloatingForm S) (l : Link) : Prop :=
+    false. Used by *TAUTDOCK and the tautomorphic vs heteromorphic
+    distinction discussed in the module docstring. -/
+abbrev IsTautomorphic (f : FloatingForm S) (l : Link) : Prop :=
   (f.ulTones[l.fst]?).map ToneSpec.morpheme =
     (f.segs[l.snd]?).map SegSpec.morpheme ∧
   (f.ulTones[l.fst]?).isSome
 
-instance (f : FloatingForm S) (l : Link) : Decidable (f.IsTautomorphic l) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
--- ============================================================================
--- § 5: Atomic Operations (paper, eq. 6 subset)
--- ============================================================================
+/-! ### Atomic GEN operations -/
 
 /-- (6c) Delete the underlying tone at index `k`. Cascades to remove
     any surface link referencing it. -/
@@ -212,26 +175,16 @@ def insertLink (f : FloatingForm S) (k : ToneIdx) (i : SegIdx) : FloatingForm S 
 def deleteLink (f : FloatingForm S) (k : ToneIdx) (i : SegIdx) : FloatingForm S :=
   { f with surfaceLinks := f.surfaceLinks.erase (k, i) }
 
--- ============================================================================
--- § 6: Well-Formedness — No Crossing Lines
--- ============================================================================
+/-! ### Well-formedness: no crossing lines -/
 
-/-- A candidate link `(k, i)` would **cross** an existing surface link
-    `(k', i')` iff tier order disagrees with segmental order:
-    `(k < k' ∧ i > i') ∨ (k > k' ∧ i < i')`. Crossing-association
-    candidates violate the No-Crossing Constraint of @cite{goldsmith-1976}
-    autosegmental phonology and are excluded from GEN. -/
-def Crosses (f : FloatingForm S) (k : ToneIdx) (i : SegIdx) : Prop :=
-  ∃ l ∈ f.surfaceLinks, (k < l.fst ∧ l.snd < i) ∨ (l.fst < k ∧ i < l.snd)
+/-- A candidate link `(k, i)` would **cross** an existing surface link.
+    Wraps the substrate `IndexCrosses` defined over `Finset (ℕ × ℕ)`;
+    `IsNoCrossing` (via mathlib's `MonovaryOn`) provides the set-level
+    NCC and inherits mathlib's lemma library. -/
+abbrev Crosses (f : FloatingForm S) (k : ToneIdx) (i : SegIdx) : Prop :=
+  IndexCrosses f.surfaceLinks k i
 
-instance (f : FloatingForm S) (k : ToneIdx) (i : SegIdx) :
-    Decidable (Crosses f k i) :=
-  decidable_of_iff (∃ l ∈ f.surfaceLinks,
-    (k < l.fst ∧ l.snd < i) ∨ (l.fst < k ∧ i < l.snd)) Iff.rfl
-
--- ============================================================================
--- § 7: GEN — One-Step Candidate Generation
--- ============================================================================
+/-! ### GEN: one-step candidate generation -/
 
 /-- One-step GEN. Enumerates: (a) the faithful candidate, (b) deleting
     each alive tone, (c) for each FLOATING tone, inserting a link to
@@ -250,9 +203,7 @@ def gen (f : FloatingForm S) : Finset (FloatingForm S) :=
     (λ ⟨k, i⟩ => ¬ f.Crosses k i)).image (λ ⟨k, i⟩ => f.insertLink k i)
   insert f (deleteOps ∪ insertOps)
 
--- ============================================================================
--- § 8: Indicator Vectors for Constraint Evaluation
--- ============================================================================
+/-! ### Indicator vectors for constraint evaluation -/
 
 /-- Indicator vector for floating-tone presence at each underlying-tone
     position, in tier order. Entry `k` is `1` iff `ulTones[k]` is
@@ -273,21 +224,19 @@ def linksTo (f : FloatingForm S) (i : SegIdx) : List ToneIdx :=
 def toneSequence (f : FloatingForm S) (i : SegIdx) : List TRN :=
   (f.linksTo i).filterMap λ k => f.ulTones[k]?.map ToneSpec.tone
 
--- ============================================================================
--- § 9: Tier and Morpheme Subsequences
--- ============================================================================
+/-! ### Tier and morpheme subsequences -/
 
 /-- Indices of alive (non-deleted) underlying tones, in tier order.
     Iterates `List.range f.ulTones.length` so the result is naturally
     sorted and reduces well via kernel `decide`. -/
 def aliveTones (f : FloatingForm S) : List ToneIdx :=
-  (List.range f.ulTones.length).filter (λ k => decide (f.IsAlive k))
+  (List.range f.ulTones.length).filter (λ k => f.IsAlive k)
 
 /-- Segment indices belonging to morpheme `m`, in segmental order.
     Out-of-range indices are excluded by construction. -/
-def segsOfMorpheme (f : FloatingForm S) (m : MorphemeId) : List SegIdx :=
+def segsOfMorpheme (f : FloatingForm S) (m : Morpheme) : List SegIdx :=
   (List.range f.segs.length).filter (λ i =>
-    decide ((f.segs[i]?).map SegSpec.morpheme = some m))
+    (f.segs[i]?).map SegSpec.morpheme = some m)
 
 end FloatingForm
 

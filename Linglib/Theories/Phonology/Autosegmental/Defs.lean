@@ -1,10 +1,10 @@
+import Linglib.Core.Time.Interval.Basic
 import Linglib.Theories.Phonology.Featural.Features
 import Linglib.Theories.Phonology.Featural.Geometry
-import Linglib.Core.Time.Interval.Basic
+import Mathlib.Data.Set.Pairwise.Basic
 
 /-!
 # Autosegmental Representations
-@cite{goldsmith-1976} @cite{sagey-1986}
 
 Autosegmental phonology adds **feature sharing** to segmental
 representations: when adjacent segments share a geometric node's features, they
@@ -13,8 +13,37 @@ builds on the feature geometry (`FeatureGeometry.lean`) and segment type
 (`Features.lean`) to provide feature agreement predicates,
 autosegmental representations with consistency checking, spread/delink
 operations, and a temporal derivation of the no-crossing constraint
-(@cite{sagey-1986} §5.3) including the negative argument against
-simultaneity (§5.2.2).
+including the negative argument against simultaneity.
+
+## Main definitions
+
+* `agreeAt`, `placeAssimilation`, `totalAssimilation` — feature agreement
+  predicates over a geometric node.
+* `Sharing`, `AutosegRep` — autosegmental representations as a segmental
+  backbone plus a list of feature-sharing specifications.
+* `AutosegRep.inBounds`, `AutosegRep.consistent` — well-formedness checks.
+* `AutosegRep.spread`, `AutosegRep.delink`, `AutosegRep.spreadFeatures` —
+  atomic operations on autosegmental representations.
+* `copyFeaturesUnder` — replace features under a geometric node.
+* `TierPosition`, `Association`, `validAssociation`, `crosses` — temporal
+  tier substrate for the no-crossing derivation.
+* `no_crossing`, `no_crossing_symm` — derivation of the NCC from temporal
+  precedence and overlap.
+* `geminate`, `contourTone` — concrete demonstrations that overlap (not
+  simultaneity) is the correct association relation.
+
+## Implementation notes
+
+The temporal NCC derivation chooses overlap (reflexive, symmetric, not
+transitive) over simultaneity as the association relation. Simultaneity
+would predict that contour segments and geminates are impossible, since
+two distinct elements cannot be identical to the same time point.
+
+## References
+
+* @cite{goldsmith-1976} — autosegmental phonology, original NCC.
+* @cite{sagey-1986} — temporal derivation of NCC and the negative
+  argument against simultaneity.
 -/
 
 namespace Phonology.Autosegmental
@@ -22,9 +51,7 @@ namespace Phonology.Autosegmental
 open Phonology (Segment Feature FeatureVal)
 open Phonology.FeatureGeometry (GeomNode)
 
--- ============================================================================
--- § 1: Feature Agreement
--- ============================================================================
+/-! ### Feature agreement -/
 
 /-- Do `s1` and `s2` agree on all features dominated by node `n`? -/
 def agreeAt (s1 s2 : Segment) (n : GeomNode) : Bool :=
@@ -36,9 +63,7 @@ def placeAssimilation (s1 s2 : Segment) : Bool := agreeAt s1 s2 .place
 /-- Total assimilation: agreement on all supralaryngeal features. -/
 def totalAssimilation (s1 s2 : Segment) : Bool := agreeAt s1 s2 .supralaryngeal
 
--- ============================================================================
--- § 2: Feature Sharing
--- ============================================================================
+/-! ### Feature sharing -/
 
 /-- Segments at positions `left` and `left + 1` share all features
     dominated by `node`. -/
@@ -47,9 +72,7 @@ structure Sharing where
   node : GeomNode
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 3: Autosegmental Representation
--- ============================================================================
+/-! ### Autosegmental representation -/
 
 /-- An autosegmental representation: a sequence of segments with an explicit
     record of which adjacent pairs share features under which geometric nodes. -/
@@ -68,9 +91,7 @@ def AutosegRep.consistent (r : AutosegRep) : Bool :=
     | some seg1, some seg2 => agreeAt seg1 seg2 sh.node
     | _, _ => false
 
--- ============================================================================
--- § 4: Operations
--- ============================================================================
+/-! ### Operations -/
 
 /-- Spread node `n` rightward from position `pos`. -/
 def AutosegRep.spread (r : AutosegRep) (pos : Nat) (n : GeomNode) :
@@ -83,9 +104,7 @@ def AutosegRep.delink (r : AutosegRep) (pos : Nat) (n : GeomNode) :
   { r with sharing := r.sharing.filter fun s =>
       !(s.left == pos && s.node == n) }
 
--- ============================================================================
--- § 4a: Feature Spreading
--- ============================================================================
+/-! ### Feature spreading -/
 
 /-- Replace all features under geometric node `n` in `tgt` with `src`'s values.
     This models autosegmental node replacement: when a place node spreads,
@@ -108,7 +127,7 @@ def AutosegRep.spreadFeatures (r : AutosegRep) (pos : Nat) (n : GeomNode) :
 
 /-- On a filtered list, if the filter predicate makes the if-branch select the
     same value being compared, every element passes BEq self-comparison. -/
-private theorem all_filter_if_beq_self {α β : Type} [BEq β] [LawfulBEq β]
+private theorem all_filter_if_beq_self {α β : Type*} [BEq β] [LawfulBEq β]
     (l : List α) (p : α → Bool) (g h : α → β) :
     (l.filter p).all (fun x => (if p x then g x else h x) == g x) = true := by
   induction l with
@@ -128,11 +147,9 @@ theorem copyFeaturesUnder_agreeAt (tgt src : Segment) (n : GeomNode) :
   exact all_filter_if_beq_self Feature.allFeatures
     (fun f => decide (f.DominatedBy n)) src.spec tgt.spec
 
--- ============================================================================
--- § 5: Verification Theorems
--- ============================================================================
+/-! ### Verification theorems -/
 
-private theorem list_all_beq_self {α : Type} [BEq α] [LawfulBEq α]
+private theorem list_all_beq_self {α : Type*} [BEq α] [LawfulBEq α]
     (l : List Feature) (f : Feature → α) :
     l.all (fun x => f x == f x) = true := by
   induction l with
@@ -146,12 +163,12 @@ theorem agreeAt_refl (s : Segment) (n : GeomNode) :
 
 /-- Place assimilation checks 14 features (the place node's natural class). -/
 theorem place_assimilation_checks_14 :
-    GeomNode.place.features.length = 14 := by native_decide
+    GeomNode.place.features.length = 14 := by decide
 
 /-- Total assimilation checks 16 features (the supralaryngeal node's natural class,
     including [nasal] via the soft palate node). -/
 theorem total_assimilation_checks_16 :
-    GeomNode.supralaryngeal.features.length = 16 := by native_decide
+    GeomNode.supralaryngeal.features.length = 16 := by decide
 
 private theorem filter_all_pass (l : List Sharing) (p : Sharing → Bool)
     (h : l.all p = true) : l.filter p = l := by
@@ -175,10 +192,6 @@ theorem spread_delink_not_present (r : AutosegRep) (pos : Nat) (n : GeomNode)
   have hcond : (!(pos == pos && n == n)) = false := by rw [beq_self_eq_true, hnn]; rfl
   rw [List.filter_cons, if_neg (by rw [hcond]; decide)]
   exact ⟨trivial, filter_all_pass shs _ h⟩
-
--- ============================================================================
--- § 6: Temporal Tiers and the No-Crossing Constraint
--- ============================================================================
 
 /-! ### Temporal derivation of the No-Crossing Constraint
 
@@ -280,9 +293,31 @@ theorem no_crossing_symm (a₁ a₂ : Association T)
     ¬ crosses a₂ a₁ :=
   no_crossing a₂ a₁ h₂ h₁
 
--- ────────────────────────────────────────────────────
--- § 6a: Concrete Demonstrations
--- ────────────────────────────────────────────────────
+/-! ### Set-level No-Crossing Constraint -/
+
+namespace Association
+
+/-- A set of associations satisfies the **No-Crossing Constraint** iff no two
+    associations in the set cross. Expressed via mathlib's `Set.Pairwise`. -/
+def IsNoCrossing (associations : Set (Association T)) : Prop :=
+  associations.Pairwise (fun a₁ a₂ => ¬ crosses a₁ a₂)
+
+/-- **Set-level lift of `no_crossing`**: any set of valid associations
+    automatically satisfies the No-Crossing Constraint. -/
+theorem IsNoCrossing.of_all_valid {associations : Set (Association T)}
+    (hValid : ∀ a ∈ associations, validAssociation a) :
+    IsNoCrossing associations :=
+  fun a₁ ha₁ a₂ ha₂ _ => no_crossing a₁ a₂ (hValid a₁ ha₁) (hValid a₂ ha₂)
+
+/-- A subset of a no-crossing association set is no-crossing.
+    Inherited from `Set.Pairwise.mono`. -/
+theorem IsNoCrossing.subset {s t : Set (Association T)} (hst : s ⊆ t)
+    (h : IsNoCrossing t) : IsNoCrossing s :=
+  Set.Pairwise.mono hst h
+
+end Association
+
+/-! ### Concrete demonstrations -/
 
 /-- Helper: build an interval from start and finish with a proof of validity. -/
 private def mkInterval (s f : T) (h : s ≤ f) : Interval T := ⟨s, f, h⟩

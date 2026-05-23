@@ -3,7 +3,6 @@ import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 
 /-!
 # Grammatical Tone
-@cite{rolle-2018} @cite{hyman-etal-2021}
 
 Grammatical tone (GT) is a tonological operation "restricted to a specific
 morpheme or construction... and not attributable to the general tonal
@@ -12,73 +11,62 @@ tonological operation which is not general across the phonological grammar,
 and is restricted to the context of a specific morpheme or construction, or
 a natural class of morphemes or constructions (@cite{rolle-2018} Def 5).
 
-## GT components (@cite{rolle-2018} §2.1.4, Defs 10–15)
+## Main definitions
+
+* `TBU` — a tone-bearing unit carrying a tonal specification, parameterized
+  over segmental content type.
+* `TonalValue`, `GTOperation`, `GTDominance`, `GTLevel`, `ExponenceType`,
+  `ValuationWindow`, `IndomitabilityType`, `GTRepair` — typological
+  classifications from @cite{rolle-2018} and @cite{hyman-etal-2021}.
+* `Spec`, `GTSpec` — grammatical tone specifications bundling the five
+  components (grammatical tune, trigger, target, host, valuation window).
+* `tonalOverwrite` — apply a grammatical tone to a host word, overwriting
+  lexical tones in the valuation window (replacive-dominant GT).
+* `DominantGTAsymmetry` — the typological generalization that dominant
+  GT triggers are always dependents (@cite{rolle-2018} §3.4.1).
+
+## Implementation notes
 
 @cite{rolle-2018} proposes a formal framework with five components for
-cross-linguistic classification:
-
-1. **Grammatical tune** (Def 10): the unique tone sequence (or set of
-   tone sequences) which covaries with the GT construction
-2. **Trigger** (Def 13): the morpheme or construction licensing the
-   tonological operation
-3. **Target** (Def 14): the morpheme(s) undergoing the tonal operation
-4. **Host** (Def 12): the morpheme(s) on which the tune is phonetically
-   realized
-5. **Valuation window** (Def 15): the portion of the target-host
-   evaluated for whether TBUs are valued or unvalued
-
-The **sponsor** (Def 11) is the morpheme (or natural class of morphemes)
-which covaries with the grammatical tune. In most cases, the trigger is
-coextensive with the sponsor and the target with the host.
-
-## GT dominance effects (@cite{rolle-2018} Ch 3, §3.1)
+cross-linguistic classification: grammatical tune, trigger, target, host,
+and valuation window. The **sponsor** is the morpheme (or natural class
+of morphemes) which covaries with the grammatical tune. In most cases,
+the trigger is coextensive with the sponsor and the target with the host.
 
 Interactions between the trigger-sponsor and the target-host based on
-their morphosyntactic identity and tonal value are **GT dominance effects**
+their morphosyntactic identity and tonal value are GT dominance effects
 (à la @cite{kiparsky-halle-1977}, @cite{kiparsky-1982},
-@cite{inkelas-1998}). These split into:
+@cite{inkelas-1998}). These split into dominant (replacive vs subtractive)
+and non-dominant (recessive vs neutral) types.
 
-- **Dominant GT**: the trigger imposes its pattern regardless of the
-  target's tonal content
-  - *Replacive-dominant* (Def 1): underlying tone of target-host is
-    replaced by the grammatical tune
-  - *Subtractive-dominant* (Def 2): underlying tone of target-host is
-    deleted WITHOUT revaluation by a grammatical tune
-- **Non-dominant GT**: the trigger's effect depends on whether the target
-  is tonally valued
-  - *Recessive* (Def 3): the grammatical tune applies only when the
-    target-host is unvalued within its valuation window
-  - *Neutral* (Def 4): the trigger concatenates with the target-host
-    without automatic replacement, deletion, or non-application
-
-@cite{hyman-etal-2021} distinguish two broad categories of GT:
-- **Word-level**: tone is the sole exponent of inflectional or derivational
-  morphology (e.g., Kalabari imperative: H-L melody)
-- **Phrase-level**: a phrasal construction triggers tonal modification of
-  its complement (e.g., Kalabari associative: L-H melody on nouns)
+@cite{hyman-etal-2021} distinguish two broad categories of GT: word-level
+(tone is the sole exponent of inflectional/derivational morphology, e.g.,
+Kalabari imperative H-L melody) and phrase-level (a phrasal construction
+triggers tonal modification of its complement, e.g., Kalabari associative
+L-H melody on nouns).
 
 This module provides the core types and operations. Language-specific
 instantiations live in `Fragments/`; empirical applications in `Phenomena/`.
+
+## References
+
+@cite{rolle-2018} @cite{hyman-etal-2021}
 -/
 
 namespace Phonology.Autosegmental.GrammaticalTone
 
 open Phonology.Autosegmental.RegisterTier (TRN)
 
--- ============================================================================
--- § 1: Tone-Bearing Units
--- ============================================================================
+/-! ### Tone-bearing units -/
 
 /-- A tone-bearing unit carrying a tonal specification. Parameterized over
     the segmental content type `S` (syllables, moras, etc.). -/
-structure TBU (S : Type) where
+structure TBU (S : Type*) where
   seg  : S
   tone : TRN
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 2: Tonal Values (@cite{rolle-2018} §2.1.1, Table 1)
--- ============================================================================
+/-! ### Tonal values -/
 
 /-- Whether a TBU is tonally **valued** (has a linked toneme T) or
     **unvalued** (a 'free TBU' — @cite{clements-goldsmith-1984}).
@@ -92,9 +80,7 @@ inductive TonalValue where
   | unvalued  -- TBU τ has no linked toneme (free TBU)
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 3: Tonological Operations (@cite{rolle-2018} §2.1.3, Table 3)
--- ============================================================================
+/-! ### Tonological operations -/
 
 /-- The inventory of grammatically-conditioned tonological operations
     (@cite{rolle-2018} Table 3). Each variant represents a distinct type
@@ -130,9 +116,7 @@ inductive GTOperation where
   | toneSpreading
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 4: GT Dominance Effects (@cite{rolle-2018} Ch 3, Defs 1–4)
--- ============================================================================
+/-! ### GT dominance effects -/
 
 /-- The four-way typology of GT dominance effects, based on the
     interaction between trigger-sponsor and target-host tonal values
@@ -197,18 +181,12 @@ inductive GTDominance where
     whether the target is valued or unvalued, the output is the same.
     This property is what @cite{rolle-2018} calls **dominance as
     transparadigmatic uniformity**. -/
-def GTDominance.IsDominant (d : GTDominance) : Prop :=
+abbrev GTDominance.IsDominant (d : GTDominance) : Prop :=
   d = .replaciveDominant ∨ d = .subtractiveDominant
-
-instance : DecidablePred GTDominance.IsDominant :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Non-dominant GT preserves the lexical tonal contrast: the output
     differs depending on whether the target is valued or unvalued. -/
-def GTDominance.IsNonDominant (d : GTDominance) : Prop := ¬ d.IsDominant
-
-instance : DecidablePred GTDominance.IsNonDominant :=
-  fun _ => inferInstanceAs (Decidable (¬ _))
+abbrev GTDominance.IsNonDominant (d : GTDominance) : Prop := ¬ d.IsDominant
 
 open Features.Prosody (ProsodicDominance)
 
@@ -226,9 +204,7 @@ theorem GTDominance.toProsodicDominance_preserves_isDominant (d : GTDominance) :
   cases d <;> simp [ProsodicDominance.IsDominant, GTDominance.IsDominant,
                     GTDominance.toProsodicDominance]
 
--- ============================================================================
--- § 5: GT Level (@cite{hyman-etal-2021})
--- ============================================================================
+/-! ### GT level -/
 
 /-- The morphosyntactic level at which the GT construction operates.
     @cite{hyman-etal-2021} distinguish word-level from phrase-level GT. -/
@@ -241,9 +217,7 @@ inductive GTLevel where
   | phrase
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 6: Exponence Types (@cite{rolle-2018} §2.2.1, Defs 16–17)
--- ============================================================================
+/-! ### Exponence types -/
 
 /-- How the GT construction relates to segmental exponence of
     grammatical meaning (@cite{rolle-2018} Defs 16–17). -/
@@ -259,9 +233,7 @@ inductive ExponenceType where
   | auxiliary
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 7: Valuation Window and Grammatical Tone Specification
--- ============================================================================
+/-! ### Valuation window and grammatical tone specification -/
 
 /-- A tonal melody: a sequence of tones to be associated with TBUs. -/
 abbrev TonalMelody := List TRN
@@ -315,9 +287,7 @@ structure GTSpec extends Spec where
   exponence : ExponenceType
   deriving Repr
 
--- ============================================================================
--- § 8: Tonal Overwrite (Replacive-Dominant GT)
--- ============================================================================
+/-! ### Tonal overwrite (replacive-dominant GT) -/
 
 /-- Apply a grammatical tone to a host word, overwriting lexical tones
     in the valuation window. This implements **replacive-dominant GT**
@@ -329,7 +299,7 @@ structure GTSpec extends Spec where
 
     Returns the input unchanged if the melody is empty or the window
     is `local` (local valuation requires language-specific logic). -/
-def tonalOverwrite {S : Type} [DecidableEq S] [BEq S] [Repr S]
+def tonalOverwrite {S : Type*} [DecidableEq S] [BEq S] [Repr S]
     (host : List (TBU S)) (spec : Spec) : List (TBU S) :=
   match spec.window, spec.melody with
   | .whole, [t] =>
@@ -342,9 +312,7 @@ def tonalOverwrite {S : Type} [DecidableEq S] [BEq S] [Repr S]
         ++ [{ last with tone := tFin }]
   | _, _ => host  -- no change if melody doesn't match window pattern
 
--- ============================================================================
--- § 9: Dominant GT Asymmetry (@cite{rolle-2018} §3.4.1)
--- ============================================================================
+/-! ### Dominant GT asymmetry -/
 
 /-- The **dominant GT asymmetry**: within a multi-morphemic constituent,
     dominant GT triggers are always **dependents** (affixes, modifiers,
@@ -375,9 +343,7 @@ structure DominantGTAsymmetry where
 def DominantGTAsymmetry.holds (a : DominantGTAsymmetry) : Bool :=
   a.triggerIsDependent && a.targetIsHead
 
--- ============================================================================
--- § 10: GT Indomitability (@cite{rolle-2018} §3.3.2)
--- ============================================================================
+/-! ### GT indomitability -/
 
 /-- Types of GT indomitability: exceptional targets that fail to undergo
     a tonological operation despite being within the scope of the trigger
@@ -400,9 +366,7 @@ inductive IndomitabilityType where
   | phonological
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 11: Repairs in GT Application (@cite{rolle-2018} §3.3.3)
--- ============================================================================
+/-! ### Repairs in GT application -/
 
 /-- Repair strategies when a grammatical tune cannot dock to its
     intended target (@cite{rolle-2018} §3.3.3). -/
@@ -420,19 +384,17 @@ inductive GTRepair where
   | tonalDefenestration
   deriving DecidableEq, Repr
 
--- ============================================================================
--- § 12: Verification
--- ============================================================================
+/-! ### Verification -/
 
 /-- Whole-word overwrite with a single tone produces uniform output. -/
-theorem tonalOverwrite_whole_uniform {S : Type} [DecidableEq S] [BEq S] [Repr S]
+theorem tonalOverwrite_whole_uniform {S : Type*} [DecidableEq S] [BEq S] [Repr S]
     (host : List (TBU S)) (t : TRN) :
     (tonalOverwrite host ⟨"", [t], .whole⟩).map TBU.tone =
     host.map (λ _ => t) := by
   simp [tonalOverwrite, List.map_map, Function.comp_def]
 
 /-- Overwrite of an empty host is empty. -/
-theorem tonalOverwrite_nil {S : Type} [DecidableEq S] [BEq S] [Repr S]
+theorem tonalOverwrite_nil {S : Type*} [DecidableEq S] [BEq S] [Repr S]
     (spec : Spec) : tonalOverwrite ([] : List (TBU S)) spec = [] := by
   simp [tonalOverwrite]
   split <;> simp_all

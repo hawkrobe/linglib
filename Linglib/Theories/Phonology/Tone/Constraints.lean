@@ -123,25 +123,25 @@ def starTautDock : DirectionalConstraint (FloatingForm S) where
 -- ============================================================================
 
 /-- The tone at index `k` belongs to morpheme `m`. -/
-def ToneInMorpheme (f : FloatingForm S) (k : ToneIdx) (m : MorphemeId) : Prop :=
+def ToneInMorpheme (f : FloatingForm S) (k : ToneIdx) (m : Morpheme) : Prop :=
   (f.ulTones[k]?).map ToneSpec.morpheme = some m
 
-instance (f : FloatingForm S) (k : ToneIdx) (m : MorphemeId) :
+instance (f : FloatingForm S) (k : ToneIdx) (m : Morpheme) :
     Decidable (ToneInMorpheme f k m) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The TBU at index `i` belongs to morpheme `m`. -/
-def SegInMorpheme (f : FloatingForm S) (i : SegIdx) (m : MorphemeId) : Prop :=
+def SegInMorpheme (f : FloatingForm S) (i : SegIdx) (m : Morpheme) : Prop :=
   (f.segs[i]?).map SegSpec.morpheme = some m
 
-instance (f : FloatingForm S) (i : SegIdx) (m : MorphemeId) :
+instance (f : FloatingForm S) (i : SegIdx) (m : Morpheme) :
     Decidable (SegInMorpheme f i m) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The set of tone indices counting toward morpheme `m`'s tonal mass:
     surviving underlying tones of `m`, plus tones surface-linked to
     TBUs of `m`. -/
-def tonesForMorpheme (f : FloatingForm S) (m : MorphemeId) : Finset ToneIdx :=
+def tonesForMorpheme (f : FloatingForm S) (m : Morpheme) : Finset ToneIdx :=
   let ownAlive := (Finset.range f.ulTones.length).filter fun k =>
     f.IsAlive k ∧ ToneInMorpheme f k m
   let docked := (f.surfaceLinks.filter fun l => SegInMorpheme f l.snd m).image Prod.fst
@@ -160,7 +160,7 @@ def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S) wh
   name := s!"*CROWD({threshold})"
   family := .markedness
   eval := fun f =>
-    let morphIds : Finset MorphemeId :=
+    let morphIds : Finset Morpheme :=
       (f.segs.map SegSpec.morpheme).toFinset ∪
       (f.ulTones.map ToneSpec.morpheme).toFinset
     [(morphIds.filter (fun m => (tonesForMorpheme f m).card > threshold)).card]
@@ -284,9 +284,9 @@ def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S) where
     Parameterised by the morpheme `m` and tone value `t` whose copies
     are being counted (typically the verbaliser's M or H). The paper's
     INTEGRITY-Mᵥ is `integrityTone vbzMorph .M`. -/
-def integrityTone (m : MorphemeId) (t : TRN) :
+def integrityTone (m : Morpheme) (t : TRN) :
     DirectionalConstraint (FloatingForm S) where
-  name := s!"INTEGRITY-{reprStr t}({m})"
+  name := s!"INTEGRITY-{reprStr t}({m.form})"
   family := .faithfulness
   eval := fun f =>
     let aliveCopies := (List.range f.ulTones.length).countP fun k =>

@@ -5,9 +5,6 @@ import Linglib.Theories.Phonology.Featural.Bundle
 
 /-!
 # Tonal Root Nodes and Subtonal Features
-@cite{lionnet-2022} @cite{pulleyblank-1986} @cite{yip-1980}
-@cite{snider-1990} @cite{snider-1999} @cite{snider-2020}
-@cite{lionnet-2025}
 
 Tone is paradigmatic. A **Tonal Root Node** (TRN) is a bundle of
 **subtonal features** `[±upper]` and `[±raised]` (@cite{yip-1980}
@@ -17,18 +14,42 @@ geometry: the four tier organisation (subtonal features → TRN → TBU)
 is shared with @cite{snider-1999}, but the features themselves are
 *paradigmatic* targets, not *syntagmatic* shifts.
 
-## Why paradigmatic, not syntagmatic
+## Main definitions
+
+* `Subtonal` — the two paradigmatic subtonal feature dimensions
+  `[±upper]` and `[±raised]`.
+* `TRN` — Tonal Root Node, a bundle of `Option Bool` values for the two
+  subtonal features. Linked to its `FeatureBundle Subtonal Bool` view by
+  `TRN.toBundle` / `TRN.ofBundle`.
+* `TRN.empty`, `TRN.downstep`, `TRN.upstep` — register-only TRNs for
+  Drubea/Numèè-style systems.
+* `TRN.H`, `TRN.M`, `TRN.L`, `TRN.superHigh` — the four `[±u, ±r]`
+  combinations underlying the Laal-style 3-tone system.
+* `realizePitch`, `pitchDeltas`, `realizePitchUtterance` — terracing
+  realisation (cumulative register shifts).
+* `TRN.absolutePitch` — paradigmatic Laal-style realisation.
+* `ThreeToneGap` — the four typological classes of 3-tone systems.
+* `TBUKind`, `WordProsodicType`, `DownstepProperties`,
+  `AnalysisInventory` — prosodic typology primitives.
+* `IsCulminative` — at most one `[-raised]` TRN per stem.
+* `hEpenthesis`, `hEpenthesisSpread` — postlexical operations.
+* `subtonalAssimilate`, `mergeTRN`, `deleteSubtonal`, `dockFloating` —
+  subtonal feature operations via the bundle view.
+
+## Implementation notes
+
+### Why paradigmatic, not syntagmatic
 
 @cite{snider-1999}'s `h`/`l` features are defined both paradigmatically
 (specifying register half) **and** syntagmatically ("higher / lower than
-the preceding register"). @cite{lionnet-2022} (§3) argues this dual
+the preceding register"). @cite{lionnet-2022} argues this dual
 definition is overloaded: the same feature does double duty as a
 representational primitive and as a phonological process trigger.
 Switching to purely paradigmatic `[±upper]`/`[±raised]` separates the
 two roles — the features are the representation, the operations
 (spreading, OCP merger, deletion) are the processes.
 
-## Geometry (@cite{lionnet-2022} ex. 52)
+### Geometry
 
 ```
     [±upper]    Register-half subtonal feature tier
@@ -42,10 +63,10 @@ A TRN is the structural node that gathers a `[±upper]` value and a
 `[±raised]` value and links them to a TBU. Either or both features may
 be **underspecified** (`none`), with surface values filled in by default.
 
-## Three-level systems and the Lionnet typology
+### Three-level systems and the Lionnet typology
 
 With binary `[±upper]` and `[±raised]`, four full specifications are
-possible. @cite{lionnet-2022} (§4) observes that *three-level* tone
+possible. @cite{lionnet-2022} observes that *three-level* tone
 systems pick three of these four, and the choice of which combination
 is the *gap* defines four typological classes:
 
@@ -57,7 +78,7 @@ the register-only TRNs (`empty`, `downstep`, `upstep`) used by Drubea
 and Numèè (@cite{lionnet-2025}), and the typology of all four 3-tone
 systems.
 
-## Two realisation modes
+### Two realisation modes
 
 A TRN sequence can be realised as pitch in two ways:
 
@@ -74,15 +95,28 @@ The choice is a property of the *language*, not the representation.
 Drubea/Numèè are register-only systems where the only feature that ever
 varies is `[raised]` — Lionnet 2022's framework subsumes them as a
 degenerate case.
+
+## References
+
+* @cite{yip-1980}, @cite{pulleyblank-1986} — `[±upper]` / `[±raised]`
+  subtonal features.
+* @cite{snider-1990}, @cite{snider-1999}, @cite{snider-2020} — four-tier
+  register-tier geometry.
+* @cite{lionnet-2022} — paradigmatic reformulation of register-tier
+  geometry.
+* @cite{lionnet-2025} — register-only systems (Drubea, Numèè) and
+  postlexical operations.
+* @cite{hyman-2006} — word-prosodic typology.
+* @cite{beckman-pierrehumbert-1986} — catathesis and register reset.
+* @cite{leben-2018} — downstep diagnostics.
+* @cite{goldsmith-1976}, @cite{mccarthy-1986} — two readings of the OCP.
 -/
 
 namespace Phonology.Autosegmental.RegisterTier
 
 open Phonology.Featural
 
--- ============================================================================
--- § 1: Subtonal Features (@cite{lionnet-2022} §3)
--- ============================================================================
+/-! ### Subtonal features -/
 
 section Subtonal
 
@@ -103,9 +137,7 @@ inductive Subtonal where
 
 end Subtonal
 
--- ============================================================================
--- § 2: Tonal Root Node (@cite{lionnet-2022} ex. 52)
--- ============================================================================
+/-! ### Tonal root node -/
 
 section TRN
 
@@ -193,9 +225,7 @@ end TRN
 
 end TRN
 
--- ============================================================================
--- § 3: Pitch Realisation
--- ============================================================================
+/-! ### Pitch realisation -/
 
 section Pitch
 
@@ -294,9 +324,7 @@ def TRN.absolutePitch (t : TRN) : Int :=
 
 end Pitch
 
--- ============================================================================
--- § 4: Lionnet's 3-Tone Typology (@cite{lionnet-2022} §4)
--- ============================================================================
+/-! ### Lionnet's 3-tone typology -/
 
 section Typology3Tone
 
@@ -328,9 +356,7 @@ theorem laalGap : ThreeToneGap.upperRaised.gap = TRN.superHigh := rfl
 
 end Typology3Tone
 
--- ============================================================================
--- § 5: TBU and Word-Prosodic Typology (@cite{hyman-2006} @cite{lionnet-2025})
--- ============================================================================
+/-! ### TBU and word-prosodic typology -/
 
 section TypologyProsody
 
@@ -388,9 +414,7 @@ structure AnalysisInventory where
 
 end TypologyProsody
 
--- ============================================================================
--- § 6: Culminativity (@cite{lionnet-2025} §3.10, §4.7)
--- ============================================================================
+/-! ### Culminativity -/
 
 section Culminativity
 
@@ -399,17 +423,12 @@ section Culminativity
     Holds for all native Drubea and Numèè stems
     (@cite{lionnet-2025} §3.10). The Lionnet 2022 framing: a stem
     contains at most one bundle whose `[raised]` value is `some false`. -/
-def IsCulminative (ts : List TRN) : Prop :=
+abbrev IsCulminative (ts : List TRN) : Prop :=
   (ts.countP (fun t => t.raised == some false)) ≤ 1
-
-instance : DecidablePred IsCulminative :=
-  fun _ => Nat.decLe _ _
 
 end Culminativity
 
--- ============================================================================
--- § 7: Postlexical Operations (@cite{lionnet-2025} §3.2, §4.4)
--- ============================================================================
+/-! ### Postlexical operations -/
 
 section Postlexical
 
@@ -445,9 +464,7 @@ def hEpenthesisSpread : List TRN → List TRN
 
 end Postlexical
 
--- ============================================================================
--- § 8: Subtonal Feature Operations (@cite{lionnet-2022} §5–6)
--- ============================================================================
+/-! ### Subtonal feature operations -/
 
 section Operations
 
@@ -501,9 +518,7 @@ def dockFloating (f : Subtonal) (v : Bool) (t : TRN) : TRN :=
 
 end Operations
 
--- ============================================================================
--- § 9: Verification — Laal Subtonal Identities
--- ============================================================================
+/-! ### Verification: Laal subtonal identities -/
 
 section LaalIdentities
 
@@ -546,9 +561,7 @@ theorem floating_minus_raised_lowers_m :
 
 end LaalIdentities
 
--- ============================================================================
--- § 10: Verification — Drubea/Numèè Register-Only Realisation
--- ============================================================================
+/-! ### Verification: Drubea/Numèè register-only realisation -/
 
 section RegisterOnlyRealisation
 
@@ -629,9 +642,7 @@ theorem double_l_not_culminative :
 
 end RegisterOnlyRealisation
 
--- ============================================================================
--- § 11: Monotonicity (catathesis-blocking, @cite{beckman-pierrehumbert-1986})
--- ============================================================================
+/-! ### Monotonicity (catathesis-blocking) -/
 
 section Monotonicity
 
