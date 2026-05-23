@@ -1,6 +1,6 @@
 import Linglib.Core.Mereology
 import Linglib.Typology.ClassifierSystem
-import Linglib.Theories.Semantics.Plurality.Link1983
+import Linglib.Theories.Semantics.Plurality.Algebra
 
 /-!
 # Classifier Semantics
@@ -9,7 +9,7 @@ import Linglib.Theories.Semantics.Plurality.Link1983
 Unified compositional semantics for classifier constructions, connecting
 the typological vocabulary in `Typology` to the mereological
 infrastructure in `Core.Mereology` and the materialization homomorphism
-in `Theories.Semantics.Plurality.Link1983`.
+in `Theories.Semantics.Plurality.Algebra`.
 
 ## Two Semantic Strategies
 
@@ -121,14 +121,14 @@ theorem clfForNum_qua {α : Type*} [SemilatticeSup α]
     We use `Atom x` instead of `μ(x) = 1` since atomicity is the
     mereological content of "counting as one group." -/
 def groupClf {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
-    (mat : Semantics.Plurality.Link1983.Materialization E D)
+    (mat : Semantics.Plurality.Algebra.Materialization E D)
     (P : E → Prop) (x : E) : Prop :=
-  Atom x ∧ ∃ y, P y ∧ mat.h y = mat.h x
+  Atom x ∧ ∃ y, P y ∧ mat y = mat x
 
 /-- Group classifier output is quantized: no proper part of a group
     is itself a group (since groups are atoms). -/
 theorem groupClf_qua {E D : Type*} [SemilatticeSup E] [SemilatticeSup D]
-    (mat : Semantics.Plurality.Link1983.Materialization E D)
+    (mat : Semantics.Plurality.Algebra.Materialization E D)
     {P : E → Prop} : QUA (groupClf mat P) := by
   intro x y ⟨hAtom, _⟩ hlt _
   exact absurd (hAtom y (le_of_lt hlt)) (ne_of_lt hlt)

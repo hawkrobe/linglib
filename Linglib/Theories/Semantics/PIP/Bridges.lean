@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.PIP.Connectives
 import Linglib.Theories.Semantics.PIP.Composition
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Theories.Semantics.Plurality.Link1983
+import Linglib.Theories.Semantics.Plurality.Algebra
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -307,7 +307,7 @@ is the join of a singleton set. If P is a distributive predicate and
 x satisfies P, then {x} is SINGLE and x is an Atom.
 -/
 theorem atom_iff_single_base {E : Type*} [SemilatticeSup E] {P : E → Prop}
-    (hDistr : Semantics.Plurality.Link1983.IsDistr P) {x : E} (hPx : P x) :
+    (hDistr : Semantics.Plurality.Algebra.IsDistr P) {x : E} (hPx : P x) :
     Mereology.Atom x := hDistr x hPx
 
 /--
