@@ -1,5 +1,6 @@
 import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.Tolerant
+import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Data.Examples.Schema
 import Mathlib.Tactic.DeriveFintype
@@ -79,7 +80,8 @@ the split-exhaustification architecture.
 
 namespace AlonsoOvalleMoghiseh2025
 
-open Exhaustification (innocent tolerant predToFinset altsFromPreds)
+open Exhaustification (innocent tolerant predToFinset altsFromPreds
+  tolerant_exh_eq_empty_of_covered innocent_exh_eq_phi_of_innocentlyExcludable_empty)
 open Data.Examples (LinguisticExample)
 export Fragments.Farsi.Determiners (EFCIRescue EFCIReading ModalFlavor)
 
@@ -144,9 +146,16 @@ theorem preExhDom_from_innocent_root :
     applied to all alternatives yields ⊥ — the assertion conjoined with
     negation of all non-entailed alternatives is unsatisfiable.
 
-    (b₁∨b₂) ∧ ¬(b₁∧b₂) ∧ ¬(b₁∧¬b₂) ∧ ¬(b₂∧¬b₁) ⟺ ⊥ -/
+    `(b₁∨b₂) ∧ ¬(b₁∧b₂) ∧ ¬(b₁∧¬b₂) ∧ ¬(b₂∧¬b₁) ⟺ ⊥`.
+
+    Derived from the structural substrate theorem
+    `tolerant_exh_eq_empty_of_covered`: every `assertionF`-world (each of
+    `pOnly`, `qOnly`, `both`) belongs to some non-entailed alternative
+    (`preExhDomAlt1F`, `preExhDomAlt2F`, or `scalarAltF` respectively),
+    so tolerant exhaustification has no surviving witness. -/
 theorem root_full_tolerant_contradiction :
-    tolerant.exh allAltsF assertionF = ∅ := by decide
+    tolerant.exh allAltsF assertionF = ∅ :=
+  tolerant_exh_eq_empty_of_covered (by decide)
 
 /-- With Fox's IE, full exhaustification is vacuous (IE = ∅, no
     alternative is in every MCE).
@@ -163,9 +172,15 @@ theorem root_full_tolerant_contradiction :
     yields ⊥ while `innocent` is vacuous — they differ maximally. The
     split exhaustification architecture (O_σ and O_EXH-D as independent
     operators) means the paper's predictions go through `innocent` on
-    each operator separately, not `tolerant` on the combined set. -/
+    each operator separately, not `tolerant` on the combined set.
+
+    Derived from `innocent_exh_eq_phi_of_innocentlyExcludable_empty`
+    (the substrate's IE-vacuity lemma): the IE algorithm returns the
+    empty set on this 3-alt configuration, so exhaustification reduces
+    to the identity. -/
 theorem root_full_innocent_vacuous :
-    innocent.exh allAltsF assertionF = assertionF := by decide
+    innocent.exh allAltsF assertionF = assertionF :=
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty (by decide)
 
 
 /-! #### Result 2: Scalar-only exhaustification yields uniqueness -/
@@ -173,7 +188,13 @@ theorem root_full_innocent_vacuous :
 /-- **Theorem (eq. 93a)**: O_σ (scalar-only exhaustification) yields
     uniqueness: (b₁ ∨ b₂) ∧ ¬(b₁ ∧ b₂) = "exactly one book."
 
-    This is yek-i's reading in root contexts via partial exhaustification. -/
+    This is yek-i's reading in root contexts via partial exhaustification.
+
+    **TODO**: derive from `Exhaustification.innocent_exh_singleton_proper`
+    in `Linglib/Semantics/Exhaustification/Structural.lean` once that
+    substrate theorem is closed (currently `sorry`). The structural
+    fact is: when `ALT = {α}` with `α ⊊ φ`, IE returns `{α}` (unique
+    MC-set is `{φ, univ\α}`) and so `innocent.exh = φ \ α`. -/
 theorem root_scalar_only_uniqueness :
     innocent.exh (altsFromPreds [scalarAlt]) assertionF
       = assertionF \ scalarAltF := by decide
@@ -190,7 +211,16 @@ theorem root_scalar_only_contingent :
     conjunction: (b₁ ∨ b₂) ∧ (b₁ ↔ b₂) ⟺ b₁ ∧ b₂.
 
     This is blocked by Chierchia's Economy Principle (the result is
-    equivalent to the scalar alternative). -/
+    equivalent to the scalar alternative).
+
+    **TODO**: derive from a substrate theorem characterizing IE on
+    a pairwise-disjoint alternative set whose union covers φ. The
+    structural fact: with ALT = pairwise-disjoint αᵢ ⊆ φ whose union
+    equals φ, IE returns ALT itself (every αᵢ is the unique MC-set
+    member excluded by negating all others), and so `innocent.exh = ∅`.
+    But here `α₁ = pOnly`, `α₂ = qOnly`, and `α₁ ∪ α₂ = {pOnly, qOnly}`
+    which is a *proper* subset of φ = {pOnly, qOnly, both} — so the
+    "world `both`" survives, giving exactly the scalar-alt prediction. -/
 theorem root_domain_only_conjunction :
     innocent.exh preExhDomAltsF assertionF = predToFinset pAndQ := by decide
 
