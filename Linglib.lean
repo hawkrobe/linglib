@@ -354,7 +354,7 @@ import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment
 import Linglib.Discourse.Roles
-import Linglib.Core.Mood
+import Linglib.Semantics.Mood
 import Linglib.Semantics.Modality.DeonticNecessity
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Phenomena.NullSubject.Basic

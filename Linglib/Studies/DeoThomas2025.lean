@@ -18,7 +18,7 @@ import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Granularity
-import Linglib.Core.Mood.PartitionAsInquiry
+import Linglib.Semantics.Mood.PartitionAsInquiry
 import Linglib.Phenomena.Focus.Exclusives
 import Linglib.Semantics.Degree.Granularity
 

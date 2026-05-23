@@ -6,8 +6,8 @@ import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUDStack
 import Linglib.Discourse.Strategy
-import Linglib.Core.Mood.POSW
-import Linglib.Core.Mood.POSWQ
+import Linglib.Semantics.Mood.POSW
+import Linglib.Semantics.Mood.POSWQ
 
 /-!
 # Scoreboard: Unified Discourse State
@@ -44,7 +44,7 @@ into a single scoreboard and gives G richer internal structure
 
 namespace Discourse
 
-open Core.Mood (IllocutionaryMood)
+open Semantics.Mood (IllocutionaryMood)
 
 variable {W : Type*}
 
@@ -235,7 +235,7 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 /-! ## POSW Substrate Bridge
 
 The scoreboard's CG and G components project jointly into a
-`Core.Mood.POSW` substrate (@cite{portner-2018}, eq. 1):
+`Semantics.Mood.POSW` substrate (@cite{portner-2018}, eq. 1):
 
 - The `cs` component is the scoreboard `contextSet` (∩ of CG).
 - The `le` component is the **goal-induced preference ordering**:
@@ -313,7 +313,7 @@ lemma mem_directionUpdate_goalContents (K : Scoreboard W) (p : W → Prop)
     `v` satisfies. The two POSW updates of @cite{portner-2018} target
     these two components (cf. `toPOSW_assertion_eq_plus` and
     `toPOSW_direction_eq_star`). -/
-def toPOSW (K : Scoreboard W) : Core.Mood.POSW W where
+def toPOSW (K : Scoreboard W) : Semantics.Mood.POSW W where
   cs := K.contextSet
   le := fun w v => ∀ p ∈ K.goalContents, p v → p w
   le_refl  := fun _ _ _ _ hp => hp
@@ -333,7 +333,7 @@ def toPOSW (K : Scoreboard W) : Core.Mood.POSW W where
     on the `cs` side. -/
 theorem toPOSW_assertion_eq_plus (K : Scoreboard W) (p : W → Prop) (a : Nat) (w : W) :
     (K.assertionUpdate p a).toPOSW.cs w ↔ (K.toPOSW.plus p).cs w := by
-  simp [toPOSW, contextSet, assertionUpdate, Core.Mood.POSW.plus]
+  simp [toPOSW, contextSet, assertionUpdate, Semantics.Mood.POSW.plus]
   exact And.comm
 
 /-- **Stalnakerian assertion principle** (@cite{stalnaker-1978}):
@@ -344,7 +344,7 @@ theorem boxCs_after_assertion (K : Scoreboard W) (p : W → Prop) (a : Nat) :
     (K.assertionUpdate p a).toPOSW.boxCs p := by
   intro w hw
   have hplus : (K.toPOSW.plus p).cs w := (toPOSW_assertion_eq_plus K p a w).mp hw
-  exact Core.Mood.POSW.boxCs_plus_self K.toPOSW p w hplus
+  exact Semantics.Mood.POSW.boxCs_plus_self K.toPOSW p w hplus
 
 /-- **Direction-as-`⋆`-update bridge** (@cite{portner-2018} eq. 2b,
     following @cite{portner-2004}). Issuing the directive `p` to a
@@ -359,7 +359,7 @@ theorem boxCs_after_assertion (K : Scoreboard W) (p : W → Prop) (a : Nat) :
 theorem toPOSW_direction_eq_star (K : Scoreboard W) (p : W → Prop)
     (s t pr : Nat) (hin : t < K.goals.length) (w v : W) :
     (K.directionUpdate p s t pr).toPOSW.le w v ↔ (K.toPOSW.star p).le w v := by
-  simp only [toPOSW_le, Core.Mood.POSW.star_le]
+  simp only [toPOSW_le, Semantics.Mood.POSW.star_le]
   constructor
   · intro h
     refine ⟨fun q hq => h q ?_, h p ?_⟩
@@ -387,7 +387,7 @@ theorem direction_demotes_violators (K : Scoreboard W) (p : W → Prop)
 /-! ## POSWQ Substrate Bridge
 
 The scoreboard's QUD component projects into the third POSW component
-of @cite{portner-2018} — the **inquiry partition** of `Core.Mood.POSWQ`.
+of @cite{portner-2018} — the **inquiry partition** of `Semantics.Mood.POSWQ`.
 Each yes/no question `q : W → Prop` on the QUD stack induces a binary
 partition (`q`-true worlds vs. `q`-false worlds); the joint inquiry
 is the meet of these binary partitions in the `Setoid W` lattice.
@@ -406,10 +406,10 @@ unification on the discourse-update side. -/
     inquiry (`⊤`) as identity. The fold convention places the new
     head's polar Setoid on the *right* of `⊓` so that consing reduces
     definitionally to the `inquire` update on `POSWQ`.
-    `polarSetoid` lives in `Core/Mood/POSWQ.lean` (the natural
+    `polarSetoid` lives in `Semantics/Mood/POSWQ.lean` (the natural
     primitive site — it is the partition substrate). -/
 def qudInquiry (K : Scoreboard W) : Setoid W :=
-  K.qud.foldr (fun q s => s ⊓ Core.Mood.POSWQ.polarSetoid q) ⊤
+  K.qud.foldr (fun q s => s ⊓ Semantics.Mood.POSWQ.polarSetoid q) ⊤
 
 @[simp] theorem qudInquiry_nil (K : Scoreboard W) (h : K.qud = []) :
     K.qudInquiry = (⊤ : Setoid W) := by
@@ -418,8 +418,8 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
 @[simp] theorem qudInquiry_cons (K : Scoreboard W) (q : W → Prop)
     (rest : List (W → Prop)) (h : K.qud = q :: rest) :
     K.qudInquiry =
-      (rest.foldr (fun q s => s ⊓ Core.Mood.POSWQ.polarSetoid q) ⊤) ⊓
-        Core.Mood.POSWQ.polarSetoid q := by
+      (rest.foldr (fun q s => s ⊓ Semantics.Mood.POSWQ.polarSetoid q) ⊤) ⊓
+        Semantics.Mood.POSWQ.polarSetoid q := by
   simp [qudInquiry, h]
 
 /-- Interrogation update preserves goal contents (since it doesn't
@@ -433,7 +433,7 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
 /-- Project the scoreboard into a POSWQ substrate: the underlying POSW
     plus the QUD-induced inquiry partition. The third row of the
     @cite{portner-2018} unification table. -/
-def toPOSWQ (K : Scoreboard W) : Core.Mood.POSWQ W :=
+def toPOSWQ (K : Scoreboard W) : Semantics.Mood.POSWQ W :=
   { K.toPOSW with inquiry := K.qudInquiry }
 
 @[simp] theorem toPOSWQ_toPOSW (K : Scoreboard W) :
@@ -452,7 +452,7 @@ def toPOSWQ (K : Scoreboard W) : Core.Mood.POSWQ W :=
 theorem toPOSWQ_interrogation_eq_inquire (K : Scoreboard W)
     (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).toPOSWQ.inquiry =
-      (K.toPOSWQ.inquire (Core.Mood.POSWQ.polarSetoid q)).inquiry := rfl
+      (K.toPOSWQ.inquire (Semantics.Mood.POSWQ.polarSetoid q)).inquiry := rfl
 
 /-- **Question-strengthening principle** (the inquiry analogue of
     `boxCs_after_assertion` and `direction_demotes_violators`):

@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Core.Context.Basic
 import Linglib.Discourse.IllocutionaryForce
-import Linglib.Core.Mood.ClauseType
+import Linglib.Semantics.Mood.ClauseType
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment
 import Linglib.Features.Evidentiality
@@ -88,7 +88,7 @@ def deriveMood (contentFinite hearerCCommandsContent : Bool) : SAPMood :=
 -- Section B2: Bridge to ClauseType
 -- ============================================================================
 
-open Core.Mood (IllocutionaryMood ClauseType)
+open Semantics.Mood (IllocutionaryMood ClauseType)
 
 /-- Map configurational mood to a framework-agnostic `ClauseType`
     (illocutionary force × grammatical mood). S&T's `.subjunctive`
@@ -139,7 +139,7 @@ def PRole.toDiscourseRole : PRole → Discourse.DiscourseRole
   | .seatOfKnowledge => .speaker  -- default; varies by mood
 
 /-- `seatOfKnowledge` (Speas & Tenny, configurational) agrees with
-    `ClauseType.authority` (Core/Mood/ClauseType.lean, framework-agnostic)
+    `ClauseType.authority` (Semantics/Mood/ClauseType.lean, framework-agnostic)
     via the `toClauseType` bridge. Both encode the same generalization:
     declarative/imperative/subjunctive → speaker, interrogative → addressee. -/
 theorem seat_of_knowledge_agrees_with_mood_authority (m : SAPMood) :

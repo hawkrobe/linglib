@@ -1,6 +1,6 @@
-import Linglib.Core.Mood.POSW
-import Linglib.Core.Mood.POSWQ
-import Linglib.Core.Mood.POSWTarget
+import Linglib.Semantics.Mood.POSW
+import Linglib.Semantics.Mood.POSWQ
+import Linglib.Semantics.Mood.POSWTarget
 import Linglib.Semantics.Mood.Basic
 
 /-!
@@ -60,7 +60,7 @@ lives in `Discourse/Scoreboard.lean`:
 | verbal mood      | `interp .indicative`         | `interp .subjunctive`         | `interp .interrogative`    |
 
 The first two columns are @cite{portner-2018}'s; the third column is
-this library's extension (see `Core/Mood/POSWQ.lean`). The shared
+this library's extension (see `Semantics/Mood/POSWQ.lean`). The shared
 substrate is `POSWQ`. Verbal mood is the *modal* row read as a
 complementizer-domain selector triggered by lexical class of the
 matrix predicate (`MoodSelector` for declarative-embedders;
@@ -69,7 +69,7 @@ matrix predicate (`MoodSelector` for declarative-embedders;
 
 namespace Semantics.Mood
 
-open Core.Mood
+open Semantics.Mood
 
 universe u
 variable {W : Type u}
@@ -207,25 +207,25 @@ theorem interrogative_ne_indicative :
 Each verbal-mood operator selects exactly one POSWQ component. That
 selection is the `HasPOSWTarget` instance below, packaged as the same
 typeclass that `GramMood` and `IllocutionaryMood` use in
-`Core/Mood/POSWTarget.lean`. With this in hand, `interp` factors as
+`Semantics/Mood/POSWTarget.lean`. With this in hand, `interp` factors as
 `boxOn ∘ target` — the verbal mood's interpretation is exactly "run
 the target component's necessity modal on the embedded
 proposition". -/
 
-instance : Core.Mood.HasPOSWTarget VerbalMoodOp where
+instance : Semantics.Mood.HasPOSWTarget VerbalMoodOp where
   target
     | .indicative    => .informational
     | .subjunctive   => .preferential
     | .interrogative => .partition
 
 @[simp] theorem target_indicative :
-    Core.Mood.target VerbalMoodOp.indicative = .informational := rfl
+    Semantics.Mood.target VerbalMoodOp.indicative = .informational := rfl
 
 @[simp] theorem target_subjunctive :
-    Core.Mood.target VerbalMoodOp.subjunctive = .preferential := rfl
+    Semantics.Mood.target VerbalMoodOp.subjunctive = .preferential := rfl
 
 @[simp] theorem target_interrogative :
-    Core.Mood.target VerbalMoodOp.interrogative = .partition := rfl
+    Semantics.Mood.target VerbalMoodOp.interrogative = .partition := rfl
 
 /-- **Operational factoring**: the verbal-mood interpretation is
     exactly the necessity modal selected by the operator's POSW
@@ -233,7 +233,7 @@ instance : Core.Mood.HasPOSWTarget VerbalMoodOp where
     it determines `interp` definitionally. -/
 @[simp] theorem interp_eq_target_boxOn (m : VerbalMoodOp) (c : POSWQ W)
     (p : W → Prop) :
-    m.interp c p = (Core.Mood.target m).boxOn c p := by
+    m.interp c p = (Semantics.Mood.target m).boxOn c p := by
   cases m <;> rfl
 
 /-! ## Verbal-mood biconditional characterization
@@ -246,15 +246,15 @@ Principles extended to interrogative — at the verbal-mood layer, mood
 selection and POSWQ-component selection are the same thing. -/
 
 theorem verbal_mood_target_informational_iff_indicative (m : VerbalMoodOp) :
-    Core.Mood.target m = .informational ↔ m = .indicative := by
+    Semantics.Mood.target m = .informational ↔ m = .indicative := by
   cases m <;> decide
 
 theorem verbal_mood_target_preferential_iff_subjunctive (m : VerbalMoodOp) :
-    Core.Mood.target m = .preferential ↔ m = .subjunctive := by
+    Semantics.Mood.target m = .preferential ↔ m = .subjunctive := by
   cases m <;> decide
 
 theorem verbal_mood_target_partition_iff_interrogative (m : VerbalMoodOp) :
-    Core.Mood.target m = .partition ↔ m = .interrogative := by
+    Semantics.Mood.target m = .partition ↔ m = .interrogative := by
   cases m <;> decide
 
 /-! ## §5. Bridge to `MoodSelector`
@@ -343,6 +343,6 @@ def QuestionEmbedder.toVerbalMood : QuestionEmbedder → VerbalMoodOp :=
     interrogative column are reached by *disjoint* lexical-class
     enums, with no overlap and no gap. -/
 theorem QuestionEmbedder.toVerbalMood_target (q : QuestionEmbedder) :
-    Core.Mood.target q.toVerbalMood = .partition := rfl
+    Semantics.Mood.target q.toVerbalMood = .partition := rfl
 
 end Semantics.Mood

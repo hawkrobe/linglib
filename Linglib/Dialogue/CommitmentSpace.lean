@@ -75,7 +75,7 @@ open Discourse.Commitment
    HasSupport CommitmentGrade)
 open Discourse (DiscourseRole)
 open Discourse.CommonGround (ContextSet)
-open Core.Mood (IllocutionaryMood)
+open Semantics.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Commitment Space: Tree Structure (@cite{krifka-2015}, eq. (2), p. 329)

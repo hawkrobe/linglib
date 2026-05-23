@@ -1,8 +1,8 @@
 import Linglib.Core.WorldTimeIndex
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Core.Mood.IllocutionaryMood
-import Linglib.Core.Mood.POSW
-import Linglib.Core.Mood.POSWTarget
+import Linglib.Semantics.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.POSW
+import Linglib.Semantics.Mood.POSWTarget
 import Linglib.Discourse.Scoreboard
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
@@ -44,7 +44,7 @@ standalone formalization of an imperative mood ontology:
   `TeleologicalFlavor` (no parallel types).
 - The architectural commitment "imperative force targets the
   preferential POSW component, not the informational" is
-  `Core.Mood.POSWTarget`'s `HasPOSWTarget IllocutionaryMood`
+  `Semantics.Mood.POSWTarget`'s `HasPOSWTarget IllocutionaryMood`
   instance — Roberts agrees with @cite{portner-2018} on the
   POSW component, disagrees with @cite{kaufmann-2012} only on
   the prejacent's modal flavor.
@@ -67,7 +67,7 @@ namespace Roberts2023
 
 open Core (WorldTimeIndex)
 open Discourse (forceLinkingPrinciple defaultSemanticType sincerityCondition Scoreboard)
-open Core.Mood (POSW POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
+open Semantics.Mood (POSW POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
 open Semantics.Modality.HistoricalAlternatives
 open Semantics.Modality.Kratzer
 

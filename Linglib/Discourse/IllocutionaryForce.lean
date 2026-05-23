@@ -1,6 +1,6 @@
 import Linglib.Core.Context.Tower
 import Linglib.Discourse.Roles
-import Linglib.Core.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.IllocutionaryMood
 
 /-!
 # Illocutionary Force: F in F(p)
@@ -17,7 +17,7 @@ self-referentiality, and IntentionalState — lives in
 The mood-category material that used to live here was split out for
 mathlib-style cleanliness:
 - `Discourse/Roles.lean` — `DiscourseRole`, `resolveRole`
-- `Core/Mood/IllocutionaryMood.lean` — `IllocutionaryMood`, `moodAuthority`
+- `Semantics/Mood/IllocutionaryMood.lean` — `IllocutionaryMood`, `moodAuthority`
 
 This file extends `IllocutionaryMood` with `searleClass`/`directionOfFit`,
 which depend on the act taxonomy below.
@@ -33,7 +33,7 @@ which depend on the act taxonomy below.
 namespace Discourse
 
 open Core.Context
-open Core.Mood (IllocutionaryMood moodAuthority)
+open Semantics.Mood (IllocutionaryMood moodAuthority)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Direction of Fit (@cite{searle-1983}, Ch. 1 §2)
@@ -96,14 +96,14 @@ def SearleClass.directionOfFit : SearleClass → DirectionOfFit
 
 end Discourse
 
-namespace Core.Mood.IllocutionaryMood
+namespace Semantics.Mood.IllocutionaryMood
 
 open Discourse (SearleClass DirectionOfFit)
 
 /-- Map `IllocutionaryMood` to Searle class. Not injective: both directives
     (imperative) and commissives (promissive) share world-to-mind fit.
 
-    Defined in the `Core.Mood.IllocutionaryMood` namespace so it is
+    Defined in the `Semantics.Mood.IllocutionaryMood` namespace so it is
     available via dot notation, even though the `SearleClass` taxonomy
     lives in `Discourse`. -/
 def searleClass : IllocutionaryMood → SearleClass
@@ -117,11 +117,11 @@ def searleClass : IllocutionaryMood → SearleClass
 def directionOfFit (m : IllocutionaryMood) : DirectionOfFit :=
   m.searleClass.directionOfFit
 
-end Core.Mood.IllocutionaryMood
+end Semantics.Mood.IllocutionaryMood
 
 namespace Discourse
 
-open Core.Mood (IllocutionaryMood moodAuthority)
+open Semantics.Mood (IllocutionaryMood moodAuthority)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Preparatory Conditions (@cite{searle-1969} @cite{francik-clark-1985})

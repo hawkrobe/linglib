@@ -1,6 +1,6 @@
 import Mathlib.Data.Setoid.Partition
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Core.Mood.PartitionAsInquiry
+import Linglib.Semantics.Mood.PartitionAsInquiry
 import Linglib.Semantics.Questions.Partition.QUD
 
 /-!
@@ -31,7 +31,7 @@ sense, plus a legacy bridge to the Bool-based `QUD W`.
   constructions yield partition issues under nontriviality / disjointness
   / cover hypotheses.
 - `toSetoid_fromSetoid` — `Setoid → Question → Setoid` is the identity
-  (round-trip with `fromSetoid` from `Core/Mood/PartitionAsInquiry.lean`).
+  (round-trip with `fromSetoid` from `Semantics/Mood/PartitionAsInquiry.lean`).
 -/
 
 
@@ -153,7 +153,7 @@ theorem cell_toQUD_eq {P : Question W} (h : P.IsPartition) {p : Set W}
 /-! ### Round-trip with `fromSetoid`
 
 The `Setoid → Question` embedding (`fromSetoid`, in
-`Core/Mood/PartitionAsInquiry.lean`) and `Question → Setoid` projection
+`Semantics/Mood/PartitionAsInquiry.lean`) and `Question → Setoid` projection
 (`toSetoid`) compose to the identity on partition-shaped issues. -/
 
 /-- Under `Nonempty W`, `fromSetoid r` is a partition issue. The

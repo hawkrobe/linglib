@@ -38,7 +38,7 @@ In CDRT, these operators compose dynamically:
 
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Core.Context.Shifts
-import Linglib.Core.Mood.Basic
+import Linglib.Semantics.Mood.Categories
 
 namespace Semantics.Mood
 
@@ -46,9 +46,6 @@ open Core (WorldTimeIndex)
 
 open Core.Time
 open Semantics.Modality.HistoricalAlternatives
-
--- Re-export Core.Mood types into this namespace for backward compatibility
-export Core.Mood (GramMood SubjunctiveType MoodEffect)
 
 
 /--

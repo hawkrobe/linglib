@@ -8,23 +8,23 @@ The category of speech-act force a clause is associated with: declarative,
 interrogative, imperative, promissive, exclamative. This is the F in F(p).
 
 Distinct from:
-- `Core.Mood.GramMood` (indicative/subjunctive morphology — see `Basic.lean`)
+- `Semantics.Mood.GramMood` (indicative/subjunctive morphology — see `Basic.lean`)
 - `Minimalist.SpeechActs.SAPMood` (Speas & Tenny's 2×2 configuration)
 
-The pair `(IllocutionaryMood, GramMood)` is `Core.Mood.ClauseType`.
+The pair `(IllocutionaryMood, GramMood)` is `Semantics.Mood.ClauseType`.
 
 This file contains only the *category* — the enum + its sole intrinsic
 property `moodAuthority` (which participant has epistemic authority). The
 *act-side* extensions (Searle classes, direction of fit, preparatory
 conditions) live in `Discourse/IllocutionaryForce.lean`, which imports
-this file. The split keeps `Core/Mood/` framework-agnostic and free of
+this file. The split keeps `Semantics/Mood/` framework-agnostic and free of
 pragmatic-act commitments.
 
 The `DiscourseRole` type lives in `Discourse/Roles.lean` because it is
 about discourse participants (speaker/addressee), not about mood.
 -/
 
-namespace Core.Mood
+namespace Semantics.Mood
 
 open Discourse (DiscourseRole)
 
@@ -52,4 +52,4 @@ def moodAuthority : IllocutionaryMood → DiscourseRole
   | .promissive     => .speaker
   | .exclamative    => .speaker
 
-end Core.Mood
+end Semantics.Mood

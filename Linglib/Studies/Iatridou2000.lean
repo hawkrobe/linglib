@@ -221,9 +221,9 @@ def iatridouSubjGeneralization (hasPastSubj requiresSubj : Bool) : Prop :=
   requiresSubj = hasPastSubj
 
 /-- All three counterfactual types collapse to the framework-agnostic
-`Core.Mood.SubjunctiveType.counterfactual` tag. -/
+`Semantics.Mood.SubjunctiveType.counterfactual` tag. -/
 def CounterfactualType.toSubjunctiveType (_ : CounterfactualType) :
-    Core.Mood.SubjunctiveType :=
+    Semantics.Mood.SubjunctiveType :=
   .counterfactual
 
 /-- Every @cite{iatridou-2000} counterfactual type maps to

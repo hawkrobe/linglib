@@ -50,7 +50,7 @@ When neither departure is present, only indicative mood is possible.
 namespace Grano2024
 
 open Semantics.Lexical
-open Core.Mood (GramMood MoodEffect)
+open Semantics.Mood (GramMood MoodEffect)
 open Semantics.Mood
 open Semantics.Attitudes.RationalAttitude
 
@@ -524,7 +524,7 @@ theorem hope_verbalMood :
     (`MoodSelector → VerbalMoodOp → POSWTarget`) makes the operational
     target explicit. -/
 theorem want_target :
-    Option.map (Core.Mood.target ·) (deriveMoodSelector want).toVerbalMood
+    Option.map (Semantics.Mood.target ·) (deriveMoodSelector want).toVerbalMood
       = some .preferential := by
   native_decide
 

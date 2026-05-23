@@ -1,5 +1,5 @@
-import Linglib.Core.Mood.Basic
-import Linglib.Core.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.IllocutionaryMood
 import Linglib.Discourse.Roles
 import Linglib.Core.UD
 
@@ -23,13 +23,13 @@ subjunctive question is [interrogative, subjunctive].
 | interrogative | subjunctive | "¿Que duerma?" (Sp. deliberative)    |
 | imperative    | —           | "Sleep!" (mood often neutralized)    |
 
-`ClauseType` lives in `Core/Mood/` because the file is intrinsically about
+`ClauseType` lives in `Semantics/Mood/` because the file is intrinsically about
 the mood-category cross-product. The discourse-act extensions of force
 (Searle classes, direction of fit, preparatory conditions) live in
 `Discourse/IllocutionaryForce.lean`.
 -/
 
-namespace Core.Mood
+namespace Semantics.Mood
 
 open Discourse (DiscourseRole)
 
@@ -67,7 +67,7 @@ theorem polarQuestion_addressee_authority :
 -- § Bridge to UD.Mood
 -- ════════════════════════════════════════════════════════════════
 
-end Core.Mood
+end Semantics.Mood
 
 -- ════════════════════════════════════════════════════════════════
 -- § Bridge to UD.Mood
@@ -75,7 +75,7 @@ end Core.Mood
 
 namespace UD.Mood
 
-/-- Project a `UD.Mood` feature value to a `Core.Mood.ClauseType`.
+/-- Project a `UD.Mood` feature value to a `Semantics.Mood.ClauseType`.
 
     `UD.Mood` is a flat enum that conflates illocutionary force
     (Imp, Jus, Adm) with grammatical mood (Ind, Sub) with finer
@@ -98,7 +98,7 @@ namespace UD.Mood
 
     The mapping is non-injective by design — UD.Mood draws finer
     distinctions on the irrealis side than (force × mood) records. -/
-def toClauseType : UD.Mood → Core.Mood.ClauseType
+def toClauseType : UD.Mood → Semantics.Mood.ClauseType
   | .Ind => { force := .declarative, mood := .indicative }
   | .Sub => { force := .declarative, mood := .subjunctive }
   | .Imp => { force := .imperative,  mood := .indicative }

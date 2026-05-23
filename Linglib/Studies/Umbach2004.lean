@@ -4,7 +4,7 @@ import Linglib.Discourse.Coherence
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Semantics.Questions.Relevance
-import Linglib.Core.Mood.PartitionAsInquiry
+import Linglib.Semantics.Mood.PartitionAsInquiry
 import Linglib.Discourse.QUDStack
 import Linglib.Discourse.Strategy
 import Linglib.Semantics.Focus.Interpretation

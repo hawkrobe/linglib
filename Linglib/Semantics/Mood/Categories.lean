@@ -14,14 +14,14 @@ The two dimensions are orthogonal: a clause can be
 See `Semantics/Mood/Basic.lean` for the semantic operators (SUBJ, IND)
 that interpret these categories.
 
-This file lives in `Core/Mood/` alongside `IllocutionaryMood.lean` (force) and
+This file lives in `Semantics/Mood/` alongside `IllocutionaryMood.lean` (force) and
 `ClauseType.lean` (force × mood); together they form the unified mood-category
-namespace `Core.Mood`. Discourse-act material (Searle classes, direction of
+namespace `Semantics.Mood`. Discourse-act material (Searle classes, direction of
 fit, preparatory conditions, discourse roles) lives in
 `Discourse/IllocutionaryForce.lean`.
 -/
 
-namespace Core.Mood
+namespace Semantics.Mood
 
 /--
 Grammatical mood categories.
@@ -93,4 +93,4 @@ theorem subj_opens_eventuality : GramMood.subjunctive.effect.eventualityOpen = t
 theorem mood_effects_differ :
     GramMood.indicative.effect ≠ GramMood.subjunctive.effect := by decide
 
-end Core.Mood
+end Semantics.Mood

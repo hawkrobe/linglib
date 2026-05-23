@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Negation.ExpletiveNegation
-import Linglib.Core.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.IllocutionaryMood
 
 /-!
 # Bias-Conditioned Negation: A Shared Licensing Predicate
@@ -75,7 +75,7 @@ commitment-update (@cite{farkas-bruce-2010}) reanalyses.
 namespace Pragmatics.Bias
 
 open Phenomena.Negation.ExpletiveNegation (PolarityLicensing weakENProfile)
-open Core.Mood (IllocutionaryMood)
+open Semantics.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The four licensing conditions

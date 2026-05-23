@@ -3,7 +3,7 @@ import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
 import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Fragments.Italian.PolarityItems
-import Linglib.Core.Mood.Basic
+import Linglib.Semantics.Mood.Basic
 
 /-!
 # Napoli & Nespor (1976): Negatives in Comparatives @cite{napoli-nespor-1976}
@@ -199,10 +199,10 @@ inductive CliticPresence where
 
 /-- §3.21: grammatical mood of the *than*-clause. Subjunctive surfaces
     iff *non₂* is underlyingly present (modulo lexical mood control by
-    *credere* etc., abstracted away here). Returning `Core.Mood.GramMood`
+    *credere* etc., abstracted away here). Returning `Semantics.Mood.GramMood`
     rather than `Bool` connects this prediction to the mood semantics in
     `Semantics/Mood/`. -/
-def predictsGramMood (p : BiasLicensingProfile) : Core.Mood.GramMood :=
+def predictsGramMood (p : BiasLicensingProfile) : Semantics.Mood.GramMood :=
   if p.licenses then .subjunctive else .indicative
 
 /-- §3.11 ex. 46–48: under bias-licensed negation the comparative admits

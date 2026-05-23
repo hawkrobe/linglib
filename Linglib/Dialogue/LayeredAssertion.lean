@@ -31,7 +31,7 @@ the other — and study files target whichever is appropriate:
 
 namespace Dialogue.Krifka
 
-open Core.Mood (IllocutionaryMood)
+open Semantics.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Commitment Strength

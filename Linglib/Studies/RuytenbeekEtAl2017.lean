@@ -77,7 +77,7 @@ regression coefficients.
 
 ## Mood substrate choice
 
-This file uses `Core.Mood.IllocutionaryMood` rather than the
+This file uses `Semantics.Mood.IllocutionaryMood` rather than the
 Minimalist-derived `SAPMood`. The two are isomorphic on the
 declarative/interrogative/imperative cases used here, and
 `IllocutionaryMood` is the canonical substrate (`SAPMood` adds
@@ -89,7 +89,7 @@ namespace RuytenbeekEtAl2017
 
 open Semantics.Modality (ModalFlavor ModalForce)
 open Discourse (PreparatoryCondition SearleClass)
-open Core.Mood (IllocutionaryMood)
+open Semantics.Mood (IllocutionaryMood)
 open Semantics.Modality.Assert (primaryFlavor)
 
 /-! ### Sentence types and modal projections -/

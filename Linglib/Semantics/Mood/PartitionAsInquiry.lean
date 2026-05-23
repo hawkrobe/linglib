@@ -1,6 +1,6 @@
 import Mathlib.Data.Setoid.Partition
 import Linglib.Semantics.Questions.Basic
-import Linglib.Core.Mood.POSWQ
+import Linglib.Semantics.Mood.POSWQ
 
 /-!
 # Partition as Inquiry — Setoid → Question embedding
@@ -205,7 +205,7 @@ automatically a consumer of the inquisitive-content API: `info`,
 mention-some/IE-question forcing arguments all become available
 without rewriting the underlying state. -/
 
-namespace Core.Mood
+namespace Semantics.Mood
 
 namespace POSWQ
 
@@ -229,4 +229,4 @@ def inquiryContent (c : POSWQ W) : Question W :=
 
 end POSWQ
 
-end Core.Mood
+end Semantics.Mood

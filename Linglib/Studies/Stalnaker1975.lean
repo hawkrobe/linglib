@@ -70,7 +70,7 @@ The two universal pragmatic postulates from the Appendix
 
 namespace Stalnaker1975
 
-open Core.Mood (GramMood)
+open Semantics.Mood (GramMood)
 open Discourse.CommonGround (ContextSet)
 open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Conditionals

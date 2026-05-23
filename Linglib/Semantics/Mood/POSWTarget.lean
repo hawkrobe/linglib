@@ -1,7 +1,7 @@
-import Linglib.Core.Mood.Basic
-import Linglib.Core.Mood.IllocutionaryMood
-import Linglib.Core.Mood.ClauseType
-import Linglib.Core.Mood.POSWQ
+import Linglib.Semantics.Mood.Basic
+import Linglib.Semantics.Mood.IllocutionaryMood
+import Linglib.Semantics.Mood.ClauseType
+import Linglib.Semantics.Mood.POSWQ
 
 /-!
 # POSWTarget: Which Component a Mood Targets
@@ -9,14 +9,14 @@ import Linglib.Core.Mood.POSWQ
 
 Each mood-bearing object (verbal mood, sentence mood, modal flavor)
 targets a specific component of a `POSW` (or, for the `partition`
-case, of our extended `POSWQ`; see `Core/Mood/POSWQ.lean`).
+case, of our extended `POSWQ`; see `Semantics/Mood/POSWQ.lean`).
 @cite{portner-2018}'s unification thesis says: the surface diversity
 of mood phenomena reduces to *which component gets touched*.
 
 This file packages that thesis as a type-level enum `POSWTarget` and
 a typeclass `HasPOSWTarget`, instantiated for `GramMood` (verbal
 mood) and `IllocutionaryMood` (sentence mood). The companion
-*value-level* implementation lives in `Core/Mood/POSWQ.lean`: the
+*value-level* implementation lives in `Semantics/Mood/POSWQ.lean`: the
 `POSWQ` structure exposes `cs`, `lt`, and `inquiry` as actual
 fields, and the updates `POSW.plus`/`POSW.star`/`POSWQ.inquire` do
 the work that this file's enum labels.
@@ -33,7 +33,7 @@ Modal flavors will get their own instance once
 `Semantics/Modality/` is rephrased over POSW.
 -/
 
-namespace Core.Mood
+namespace Semantics.Mood
 
 /-- The component of a `POSW` (or of `POSWQ`, for `.partition`) that a
     mood-bearing object operates on. @cite{portner-2018}, Ch. 4.
@@ -221,4 +221,4 @@ def POSWTarget.boxOn : POSWTarget → POSWQ W → (W → Prop) → Prop
 @[simp] theorem boxOn_partition (c : POSWQ W) (p : W → Prop) :
     POSWTarget.partition.boxOn c p = c.boxAns p := rfl
 
-end Core.Mood
+end Semantics.Mood

@@ -1,6 +1,6 @@
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Core.Mood.Basic
+import Linglib.Semantics.Mood.Basic
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Discourse.CommonGround
 
@@ -58,7 +58,7 @@ equivalence within an appropriate context (the
 namespace Semantics.Conditionals
 
 open Discourse.CommonGround (ContextSet)
-open Core.Mood (GramMood)
+open Semantics.Mood (GramMood)
 open _root_.Semantics.Conditionals (SelectionFunction selectionPrefers)
 open Core.Order (SimilarityOrdering)
 

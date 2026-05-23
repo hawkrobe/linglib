@@ -3,7 +3,7 @@ import Mathlib.Data.Setoid.Basic
 import Mathlib.Data.Setoid.Partition
 import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Core.Mood.PartitionAsInquiry
+import Linglib.Semantics.Mood.PartitionAsInquiry
 
 /-!
 # Theiler, Roelofsen & Aloni (2018) — A Uniform Semantics for Declarative and Interrogative Complements
@@ -36,7 +36,7 @@ example from Section 3.1, which justifies the existence of
    *no* `Setoid W` produces this content via `fromSetoid`.
 
    This is the forcing theorem for the architectural decision in the
-   "Architectural note" docstring of `Core/Mood/POSWQ.lean` (added
+   "Architectural note" docstring of `Semantics/Mood/POSWQ.lean` (added
    0.229.922) — it shows that `Setoid → Question` is a
    strictly weaker representation, and so the sibling-structure
    architecture is necessary rather than redundant.
@@ -55,7 +55,7 @@ This file does **not** formalize the rest of the paper:
 
 The point of this file is the existence theorem for the "more
 expressive than partitions" claim, which is what the
-`Semantics/Questions/Basic.lean`/`Core/Mood/PartitionAsInquiry.lean`
+`Semantics/Questions/Basic.lean`/`Semantics/Mood/PartitionAsInquiry.lean`
 pair was built to support.
 -/
 

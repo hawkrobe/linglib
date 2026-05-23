@@ -94,7 +94,7 @@ two updates all collapse to one-line invocations of `inf_right_comm`
 `boxLe` (§8) is the universal-quantification-preserves-inf pattern.
 -/
 
-namespace Core.Mood
+namespace Semantics.Mood
 
 universe u
 
@@ -478,4 +478,4 @@ instance (c : POSW W) : NormalModality W c.boxLe where
   K _ _ hpq hp w hbest := hpq w hbest (hp w hbest)
 
 end POSW
-end Core.Mood
+end Semantics.Mood

@@ -18,7 +18,7 @@ states over `W` (where an information state is a subset of `W`). This is
 mathematically a non-empty `LowerSet (Set W)`; in linguistic terms it is
 the umbrella structure for question-flavored content: it subsumes
 Hamblin alternative sets (`polar`, `which`), partition-style questions
-(via `Core/Mood/PartitionAsInquiry.lean`), and the inquisitive
+(via `Semantics/Mood/PartitionAsInquiry.lean`), and the inquisitive
 propositions of @cite{ciardelli-groenendijk-roelofsen-2018}. The name
 "Question" follows the decision-theoretic / discourse-semantic tradition
 (van Rooij, Westera) — neutral as to whether the consumer is doing
@@ -39,7 +39,7 @@ For Hamblin constructions (`polar`, `which`), see
 `Core/Question/Hamblin.lean`. For partial-answerhood and Roberts
 QUD-relevance predicates, see `Core/Question/Relevance.lean`. For
 the `Setoid → Question` embedding (used by `POSWQ`), see
-`Core/Mood/PartitionAsInquiry.lean`.
+`Semantics/Mood/PartitionAsInquiry.lean`.
 
 ## Mathlib alignment
 

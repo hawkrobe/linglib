@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Polarity
 import Linglib.Syntax.Minimalist.ClauseSpine
-import Linglib.Core.Mood.ClauseType
+import Linglib.Semantics.Mood.ClauseType
 
 /-!
 # Question Syntax: ForceP, FinP, PolP
@@ -48,7 +48,7 @@ unformalized — silent divergences, not committed disagreements.
 
 ## Connection to ClauseType
 
-A clause's `Core.Mood.ClauseType` (force × mood) is determined by
+A clause's `Semantics.Mood.ClauseType` (force × mood) is determined by
 the syntactic projections:
 - Force⁰[+Q] → `IllocutionaryMood.interrogative`
 - Force⁰[-Q] → `IllocutionaryMood.declarative`
@@ -58,7 +58,7 @@ the syntactic projections:
 namespace Minimalist.Questions
 
 open Minimalist
-open Core.Mood (ClauseType GramMood IllocutionaryMood)
+open Semantics.Mood (ClauseType GramMood IllocutionaryMood)
 
 /-- The Q-feature on Force⁰: [+Q] for interrogatives, [-Q] for declaratives. -/
 inductive QFeature where

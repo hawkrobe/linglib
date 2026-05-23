@@ -1,5 +1,5 @@
 import Mathlib.Data.Setoid.Basic
-import Linglib.Core.Mood.POSW
+import Linglib.Semantics.Mood.POSW
 
 /-!
 # POSW with Inquiry Partition (POSWQ)
@@ -46,7 +46,7 @@ extensions; they do not appear in @cite{portner-2018}.
   refinement (finer ≤ coarser).
 - The Setoid `≤` convention (`r ≤ s ↔ ∀ x y, r x y → s x y`) coincides
   with the POSW refinement preorder convention from
-  `Linglib/Core/Mood/POSW.lean` §4: finer ≤ coarser, more
+  `Linglib/Semantics/Mood/POSW.lean` §4: finer ≤ coarser, more
   discriminating ≤ less discriminating.
 - `extends POSW W` mirrors `Group extends Monoid`: a POSWQ *is* a POSW
   (via the auto-generated `POSWQ.toPOSW`) plus extra structure.
@@ -97,7 +97,7 @@ rather than a replacement — mirroring how mathlib keeps `Set`/`Finset`
 and `Filter`/`Ultrafilter` parallel rather than collapsing them.
 -/
 
-namespace Core.Mood
+namespace Semantics.Mood
 
 universe u
 
@@ -385,4 +385,4 @@ theorem boxAns_not_reducible_to_boxCs :
   ⟨sepPOSWQ, sepProp, boxAns_sepPOSWQ_sepProp, not_boxCs_sepPOSWQ_sepProp⟩
 
 end POSWQ
-end Core.Mood
+end Semantics.Mood

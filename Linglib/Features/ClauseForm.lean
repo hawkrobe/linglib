@@ -8,9 +8,9 @@ embedded question vs declarative) — what conditions inversion and other
 word-order alternations. Echo questions are *not* a constructor here;
 they are declarative-form sentences with question force in discourse,
 handled via `Features.InformationStructure`. Distinct from
-`Core.Mood.ClauseType`, which pairs illocutionary force with verbal
+`Semantics.Mood.ClauseType`, which pairs illocutionary force with verbal
 mood. The two complement each other: a polar question has
-`ClauseForm = matrixQuestion` and `Core.Mood.ClauseType =
+`ClauseForm = matrixQuestion` and `Semantics.Mood.ClauseType =
 ⟨interrogative, indicative⟩`.
 -/
 
