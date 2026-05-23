@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.KOS.Defs
+import Linglib.Dialogue.KOS.Defs
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.Support
 

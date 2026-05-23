@@ -1,7 +1,7 @@
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.Stalnaker
-import Linglib.Theories.Dialogue.ReasonableInference
-import Linglib.Theories.Dialogue.Assertable
+import Linglib.Dialogue.ReasonableInference
+import Linglib.Dialogue.Assertable
 
 /-!
 # Stalnaker 1975 @cite{stalnaker-1975}
@@ -231,7 +231,7 @@ theorem direct_argument_holds_under_indicative_selection :
 
 /-! Stalnaker 1975's change-function calculus uses `changeFn p k`
 (set intersection) as the post-assertion update operator. The
-`Theories/Dialogue/Assertable.lean` typeclass abstracts over
+`Dialogue/Assertable.lean` typeclass abstracts over
 *any* dialogue-state representation that admits Stalnakerian
 narrowing. This section shows that:
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.Assertable
+import Linglib.Dialogue.Assertable
 
 /-!
 # Assertion Theories: Cross-Theory Comparison

@@ -21,7 +21,7 @@ synthesises them with the commitment-space framework.
 JP and ComP are independent: "I think I swear p" vs "I swear I think p"
 both involve TP content p, but with different epistemic/commitment profiles.
 
-This file is sibling to `Theories/Dialogue/CommitmentSpace.lean` (the 2015
+This file is sibling to `Dialogue/CommitmentSpace.lean` (the 2015
 commitment-space framework). The two are independent — neither imports
 the other — and study files target whichever is appropriate:
 

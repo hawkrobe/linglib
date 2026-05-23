@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.SAL.Frame
+import Linglib.Dialogue.SAL.Frame
 import Linglib.Core.Logic.Intensional.RestrictedModality
 import Linglib.Semantics.Modality.EpistemicLogic
 
@@ -35,7 +35,7 @@ update* @cite{bary-2025} demanded.
 
 ## Deferred consolidation
 
-`Theories/Dialogue/CommitmentSpace.lean` houses Krifka 2015's
+`Dialogue/CommitmentSpace.lean` houses Krifka 2015's
 non-Kripke commitment-space substrate (states are lists of indexed
 commitments). `Theories/Discourse/EvidentialIllocution.lean` houses
 the Faller assert/present pair as a record. Both should eventually
@@ -102,7 +102,7 @@ def Competent (c : CommitmentState W A) : Prop :=
 /-! ### § Headline modal theorems
 
 These pre-stage the full SAL theorem battery in
-`Theories/Dialogue/SAL/Theorems.lean`; here we prove the
+`Dialogue/SAL/Theorems.lean`; here we prove the
 sincerity-and-competence transfer at the level of states, before
 discourse-update machinery is in scope.
 -/

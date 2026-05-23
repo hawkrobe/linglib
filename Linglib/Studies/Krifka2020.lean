@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.LayeredAssertion
+import Linglib.Dialogue.LayeredAssertion
 import Linglib.Phenomena.Assertion.Basic
 
 /-!

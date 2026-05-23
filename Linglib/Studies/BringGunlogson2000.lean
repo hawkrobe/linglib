@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Assertion.Basic
-import Linglib.Theories.Dialogue.Gunlogson
+import Linglib.Dialogue.Gunlogson
 import Mathlib.Data.Set.Basic
 
 /-!

@@ -1,5 +1,5 @@
-import Linglib.Theories.Dialogue.KOS.Defs
-import Linglib.Theories.Dialogue.KOS.Basic
+import Linglib.Dialogue.KOS.Defs
+import Linglib.Dialogue.KOS.Basic
 
 /-!
 # KOS: Self-Repair via MaxPending (= head of Pending)

@@ -33,12 +33,12 @@ when they don't immediately disagree.
 
 ## What this file does NOT consume
 
-* `Theories/Dialogue/SAL/*` (van der Leer 2026): SAL refines Faller
+* `Dialogue/SAL/*` (van der Leer 2026): SAL refines Faller
   by adding a Kripke layer inside each commitment-set. Faller's
   framework is the coarser set-of-propositions level. Faller and
   SAL relate by forgetful projection (SAL → Faller drops the Kripke
   structure inside states).
-* `Theories/Dialogue/CommitmentSpace.lean` (Krifka 2015): a different
+* `Dialogue/CommitmentSpace.lean` (Krifka 2015): a different
   framework (commitment-space tree of propositional states); Faller
   builds on Farkas-Bruce 2010 instead.
 

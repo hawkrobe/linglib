@@ -34,7 +34,7 @@ with existing RSA infrastructure.
 
 ## Architecture note
 
-`§ Bridge theorems` (formerly `Theories/Dialogue/FarkasAdapter.lean`,
+`§ Bridge theorems` (formerly `Dialogue/FarkasAdapter.lean`,
 dissolved per CLAUDE.md "no bridge files"): assertion vs acceptance
 properties — `assert_adds_to_dcS`, `assert_preserves_cg`,
 `assert_not_stable`, `accept_adds_to_cg`, `accept_restores_stability`.

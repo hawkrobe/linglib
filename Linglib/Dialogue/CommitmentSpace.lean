@@ -34,7 +34,7 @@ holds indexed commitments, projected to a flat context set via
 
 ## Sibling files
 
-`Theories/Dialogue/LayeredAssertion.lean` houses Krifka 2020's
+`Dialogue/LayeredAssertion.lean` houses Krifka 2020's
 TP/JP/ComP/ActP layered-clause framework. The two files are independent
 (neither imports the other); study files target whichever fits.
 

@@ -1,6 +1,6 @@
-import Linglib.Theories.Dialogue.FarkasBruce
-import Linglib.Theories.Dialogue.Gunlogson
-import Linglib.Theories.Dialogue.CommitmentSpace
+import Linglib.Dialogue.FarkasBruce
+import Linglib.Dialogue.Gunlogson
+import Linglib.Dialogue.CommitmentSpace
 import Linglib.Semantics.Highlighting
 
 /-!
@@ -63,7 +63,7 @@ to give a uniform account of the six sentence types in (3)–(8):
    predicate, anchored on the same Roelofsen-Farkas line of work
    (@cite{roelofsen-farkas-2015}, two years prior to F&R 2017).
 8. **Cross-framework divergences** (§8): formal contrasts with
-   `Theories/Dialogue/Gunlogson.lean` on rising declaratives (different
+   `Dialogue/Gunlogson.lean` on rising declaratives (different
    substrate, different state predictions) and Krifka 2015 on tag
    interrogatives (sequential composition vs conjunction/disjunction;
    see also `Studies/Krifka2015.lean` §5).
@@ -81,12 +81,12 @@ to give a uniform account of the six sentence types in (3)–(8):
 
 ## Substrate consumed
 
-- `Theories/Dialogue/FarkasBruce.lean` — `DiscourseState`,
+- `Dialogue/FarkasBruce.lean` — `DiscourseState`,
   `assertDeclarative`, `askPolarQuestion`, `pushIssue`, `addToDcS`.
 - `Semantics/Highlighting.lean` — `HighlightingContext`,
   `Highlighted`, `AddressesQUD`. Anchored on Roelofsen & Farkas (2015),
   which F&R 2017 cites and builds on.
-- `Theories/Dialogue/Gunlogson.lean` — the divergence in §8 (rising
+- `Dialogue/Gunlogson.lean` — the divergence in §8 (rising
   declarative writes to addressee slate vs. F&R + F&B's "no commitment
   write" prediction).
 
@@ -780,7 +780,7 @@ section makes two divergences Lean-checkable. -/
 -- ─────────────────────────────────────────────────────────────────
 
 /-! @cite{gunlogson-2008} (and earlier @cite{gunlogson-2001}, the work
-F&R 2017's footnote 13 cites), formalized in `Theories/Dialogue/Gunlogson.lean`,
+F&R 2017's footnote 13 cites), formalized in `Dialogue/Gunlogson.lean`,
 records rising-declarative information by writing to the **addressee's**
 slate as an other-generated commitment. F&R 2017 (threaded through F&B
 substrate) writes nothing to the speaker's `dcS` (only pushes an issue).
@@ -810,7 +810,7 @@ theorem fr_rising_dec_no_speaker_commitment {W : Type*}
 /-- Gunlogson 2008 prediction for rising declarative from the empty
     state: the addressee's slate gains exactly one commitment
     (other-generated). Restated from
-    `Theories/Dialogue/Gunlogson.lean` for the cross-framework comparison. -/
+    `Dialogue/Gunlogson.lean` for the cross-framework comparison. -/
 theorem gunlogson_rising_dec_writes_addressee {W : Type*} (content : Set W) :
     ((Dialogue.Gunlogson.GunlogsonState.empty :
         Dialogue.Gunlogson.GunlogsonState W).risingDeclarative
@@ -849,7 +849,7 @@ theorem fr_vs_gunlogson_rising_dec_state_shape {W : Type*} (content : Set W) :
 -- ─────────────────────────────────────────────────────────────────
 
 /-! @cite{krifka-2015} §5 (eqs. 44–45), with substrate in
-`Theories/Dialogue/CommitmentSpace.lean`, argues that tag interrogatives
+`Dialogue/CommitmentSpace.lean`, argues that tag interrogatives
 are a SINGLE complex speech act — `matchingTag` is a `ComplexSpeechAct.conj`
 of an assertion and a monopolar question (sharing content φ), `reverseTag`
 is a `ComplexSpeechAct.disj`. Krifka explicitly contrasts this with the
@@ -882,7 +882,7 @@ theorem fr_tag_table_forms {W : Type*} (content : Set W) :
 
 /-- Krifka 2015 prediction for a matching tag: a SINGLE
     `ComplexSpeechAct.conj` wrapper around two component speech acts.
-    Restated from `Theories/Dialogue/CommitmentSpace.lean` for the
+    Restated from `Dialogue/CommitmentSpace.lean` for the
     cross-framework comparison. -/
 theorem krifka_matching_tag_is_single_conjunction {W : Type*}
     (φ : W → Prop) :

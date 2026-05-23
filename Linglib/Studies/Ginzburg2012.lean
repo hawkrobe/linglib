@@ -1,16 +1,16 @@
-import Linglib.Theories.Dialogue.KOS.Defs
-import Linglib.Theories.Dialogue.KOS.Basic
-import Linglib.Theories.Dialogue.KOS.InquiryCycle
-import Linglib.Theories.Dialogue.KOS.Genre
-import Linglib.Theories.Dialogue.KOS.Grounding
-import Linglib.Theories.Dialogue.KOS.SelfRepair
-import Linglib.Theories.Dialogue.KOS.NSUTaxonomy
-import Linglib.Theories.Dialogue.KOS.Examples
-import Linglib.Theories.Dialogue.KOS.Grammar
-import Linglib.Theories.Dialogue.KOS.RepriseContent
-import Linglib.Theories.Dialogue.KOS.Austinian
-import Linglib.Theories.Dialogue.KOS.CooperInfoState
-import Linglib.Theories.Dialogue.FarkasBruce
+import Linglib.Dialogue.KOS.Defs
+import Linglib.Dialogue.KOS.Basic
+import Linglib.Dialogue.KOS.InquiryCycle
+import Linglib.Dialogue.KOS.Genre
+import Linglib.Dialogue.KOS.Grounding
+import Linglib.Dialogue.KOS.SelfRepair
+import Linglib.Dialogue.KOS.NSUTaxonomy
+import Linglib.Dialogue.KOS.Examples
+import Linglib.Dialogue.KOS.Grammar
+import Linglib.Dialogue.KOS.RepriseContent
+import Linglib.Dialogue.KOS.Austinian
+import Linglib.Dialogue.KOS.CooperInfoState
+import Linglib.Dialogue.FarkasBruce
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 
 /-!
@@ -20,7 +20,7 @@ import Linglib.Phenomena.Ellipsis.FragmentAnswers
 Canonical formalization of the KOS framework from
 *The Interactive Stance: Meaning for Conversation* (OUP 2012).
 
-This study consumes the KOS substrate at `Theories/Dialogue/KOS/`,
+This study consumes the KOS substrate at `Dialogue/KOS/`,
 which was rebuilt to faithfully match the book's Ch. 6 final shape
 (ex. 43 p. 175): `DGB` takes a `Cont` parameter, `pending` stores
 `LocProp Cont`, `qud` stores `InfoStruc QContent Cont`, `GenreType`
@@ -139,7 +139,7 @@ theorem turn_taking_puzzle_why_parakeet :
 - **Conversational rules** (Ch. 4): `ask`, `assertRule`/`assertWithQUD`,
   `accept`, `qspec`, `check`, `confirm`, `qcoord`, `greet` — TIS → TIS
 
-The substrate provides all of this in `Theories/Dialogue/KOS/`. This
+The substrate provides all of this in `Dialogue/KOS/`. This
 section just imports the conventions; subsequent sections exercise them. -/
 
 /-- The TIS type structure as a sanity check: a TIS bundles a DGB with

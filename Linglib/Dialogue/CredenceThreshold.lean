@@ -25,7 +25,7 @@ substrate-supported elsewhere:
   `Core/Discourse/Commitment.lean` as `CommitmentForce` (with
   `.doxastic` and `.preferential` cases).
 - Krifka-style commitment spaces consume it via
-  `Theories/Dialogue/CommitmentSpace.lean` (the `force` parameter on
+  `Dialogue/CommitmentSpace.lean` (the `force` parameter on
   `IndexedWeightedCommitment.commit/refuse` and the
   `toDoxasticContextSet` / `toPreferentialContextSet` projections).
 - The @cite{condoravdi-lauer-2012} imperative-as-PEP study lives in

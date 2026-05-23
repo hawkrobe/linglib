@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.KOS.InquiryCycle
+import Linglib.Dialogue.KOS.InquiryCycle
 import Linglib.Semantics.TypeTheoretic.Discourse
 
 /-!

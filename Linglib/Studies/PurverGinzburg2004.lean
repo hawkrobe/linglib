@@ -1,5 +1,5 @@
-import Linglib.Theories.Dialogue.KOS.Defs
-import Linglib.Theories.Dialogue.KOS.RepriseContent
+import Linglib.Dialogue.KOS.Defs
+import Linglib.Dialogue.KOS.RepriseContent
 
 /-!
 # Purver & Ginzburg (2004): Clarifying Noun Phrase Semantics

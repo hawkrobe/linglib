@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quotation.Demonstration
-import Linglib.Theories.Dialogue.FarkasBruce
+import Linglib.Dialogue.FarkasBruce
 
 /-!
 # Farkas-Bruce Performance Ontology Bridge

@@ -1,5 +1,5 @@
-import Linglib.Theories.Dialogue.KOS.Defs
-import Linglib.Theories.Dialogue.KOS.Grounding
+import Linglib.Dialogue.KOS.Defs
+import Linglib.Dialogue.KOS.Grounding
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 
 /-!

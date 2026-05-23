@@ -39,7 +39,7 @@ and the valuation, into one record per discourse state.
 
 ## Relation to existing dialogue substrate
 
-`Theories/Dialogue/CommitmentSpace.lean` (Krifka 2015) treats a
+`Dialogue/CommitmentSpace.lean` (Krifka 2015) treats a
 "commitment state" as a list of `IndexedCommitment`s (set-of-
 propositions). SAL refines this: each Krifka-state is now a full
 Kripke frame whose deontic relation is restricted to commitment-

@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Theories.Dialogue.FarkasBruce
+import Linglib.Dialogue.FarkasBruce
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Conditionals.Basic
 

@@ -1,7 +1,7 @@
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Discourse.Roles
 import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Theories.Dialogue.Gunlogson
+import Linglib.Dialogue.Gunlogson
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Fragments.Marathi.Particles
 

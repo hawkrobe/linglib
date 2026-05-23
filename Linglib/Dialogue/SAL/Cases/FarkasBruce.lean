@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.SAL.Theorems
+import Linglib.Dialogue.SAL.Theorems
 
 /-!
 # F&B 2010 as a SAL projection
@@ -29,7 +29,7 @@ modal axes (`B` vs `O`). The mediated update Bary demanded is
 distinct operations, separately projected.
 
 This file does NOT re-implement F&B's model (already in
-`Theories/Dialogue/FarkasBruce.lean`). It establishes the
+`Dialogue/FarkasBruce.lean`). It establishes the
 *projection map* from SAL to F&B-shaped data, with theorems showing
 F&B's ASSERT operator is the `cg`/`DC` projection of SAL's
 `apply (assert a b π)`.

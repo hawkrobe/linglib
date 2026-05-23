@@ -1,5 +1,5 @@
 import Mathlib.Order.Basic
-import Linglib.Theories.Dialogue.SAL.Modal
+import Linglib.Dialogue.SAL.Modal
 
 /-!
 # SAL Commitment Spaces

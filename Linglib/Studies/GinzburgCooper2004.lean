@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.KOS.Defs
+import Linglib.Dialogue.KOS.Defs
 import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
 
 /-!
@@ -39,7 +39,7 @@ open Phenomena.Ellipsis.ClarificationEllipsis
 
 /-! ## 1994/2004 Clarification Ellipsis Apparatus
 
-This section was previously in `Theories/Dialogue/KOS/Basic.lean`
+This section was previously in `Dialogue/KOS/Basic.lean`
 §§6, 7, 8, 9, 10, 12, 15. It is paper-specific to
 @cite{ginzburg-cooper-2004}: in @cite{ginzburg-2012}, the corresponding
 machinery uses dgb-params (record types built on the shared `CParam`)

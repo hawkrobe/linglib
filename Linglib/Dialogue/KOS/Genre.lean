@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.KOS.Basic
+import Linglib.Dialogue.KOS.Basic
 
 /-!
 # KOS: Genre Relevance & Outcome Fulfillment

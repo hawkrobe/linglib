@@ -2,7 +2,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.Commitment
-import Linglib.Theories.Dialogue.CommitmentSpace
+import Linglib.Dialogue.CommitmentSpace
 
 /-!
 # Distributional Common Ground

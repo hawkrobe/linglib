@@ -1,7 +1,7 @@
-import Linglib.Theories.Dialogue.CommitmentSpace
-import Linglib.Theories.Dialogue.KOS.Defs
-import Linglib.Theories.Dialogue.KOS.Basic
-import Linglib.Theories.Dialogue.FarkasBruce
+import Linglib.Dialogue.CommitmentSpace
+import Linglib.Dialogue.KOS.Defs
+import Linglib.Dialogue.KOS.Basic
+import Linglib.Dialogue.FarkasBruce
 import Linglib.Features.Acceptability
 
 /-!
@@ -336,7 +336,7 @@ theorem noNeg_licensing_distinguishes_contexts :
 Per @cite{krifka-2015} p. 342: matching tags are speech-act CONJUNCTION
 applied as ONE complex move — explicitly NOT sequential `assert; question`.
 The substrate's `Dialogue.Krifka.matchingTag` and `reverseTag`
-(`Theories/Dialogue/CommitmentSpace.lean` §4) capture this directly.
+(`Dialogue/CommitmentSpace.lean` §4) capture this directly.
 -/
 
 /-- Substrate's `matchingTag φ` is structurally a `conj` of two atomic
@@ -597,7 +597,7 @@ This file proves the conjecture's restriction to a 2-element framework
 class `{Krifka2015, FarkasBruce2010}` and a 2-event trace
 (`assert; accept`). The general statement requires:
 
-1. A `DialogueState` typeclass in `Theories/Dialogue/Common.lean`
+1. A `DialogueState` typeclass in `Dialogue/Common.lean`
    (does not yet exist) parameterising over the four operations above.
 2. Per-framework instances for Krifka, Farkas-Bruce, KOS, Stalnaker,
    Brandom, Gunlogson, Lauer.

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quotation.Demonstration
-import Linglib.Theories.Dialogue.QuotationFBOntology
+import Linglib.Dialogue.QuotationFBOntology
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!

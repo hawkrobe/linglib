@@ -1,6 +1,6 @@
-import Linglib.Theories.Dialogue.KOS.InquiryCycle
-import Linglib.Theories.Dialogue.KOS.Genre
-import Linglib.Theories.Dialogue.KOS.Grounding
+import Linglib.Dialogue.KOS.InquiryCycle
+import Linglib.Dialogue.KOS.Genre
+import Linglib.Dialogue.KOS.Grounding
 import Linglib.Semantics.Questions.Partition.QUD
 
 /-!

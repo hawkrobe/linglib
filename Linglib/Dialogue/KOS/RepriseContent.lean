@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.KOS.Defs
+import Linglib.Dialogue.KOS.Defs
 
 /-!
 # The Reprise Content Hypothesis (RCH)

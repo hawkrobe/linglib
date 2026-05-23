@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.SAL.SpeechAct
+import Linglib.Dialogue.SAL.SpeechAct
 
 /-!
 # SAL Headline Theorems

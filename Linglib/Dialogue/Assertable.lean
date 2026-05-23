@@ -1,7 +1,7 @@
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.Roles
-import Linglib.Theories.Dialogue.Stalnaker
-import Linglib.Theories.Dialogue.CommitmentSpace
+import Linglib.Dialogue.Stalnaker
+import Linglib.Dialogue.CommitmentSpace
 
 /-!
 # Assertable: a typeclass for commitment-tracking dialogue states

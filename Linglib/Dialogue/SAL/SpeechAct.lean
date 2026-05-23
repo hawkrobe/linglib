@@ -1,4 +1,4 @@
-import Linglib.Theories.Dialogue.SAL.CommitmentSpace
+import Linglib.Dialogue.SAL.CommitmentSpace
 
 /-!
 # SAL Speech-Act PDL
