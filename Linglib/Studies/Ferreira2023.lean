@@ -49,7 +49,7 @@ abbrev World := Fin 4
 open Semantics.Modality.Kratzer
 open Semantics.Modality.Kratzer.XMarking
 open Semantics.Modality.Directive
-open Core.Modality
+open Semantics.Modality
 
 /-! ## Portuguese modal typology -/
 

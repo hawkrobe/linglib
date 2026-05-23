@@ -37,7 +37,7 @@ namespace YingEtAl2025
 
 open Fragments.English.Auxiliaries
 open Semantics.Attitudes.EpistemicThreshold (EpistemicEntry)
-open Core.Modality (ModalForce ModalFlavor ForceFlavor)
+open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
 
 -- ============================================================================
 -- §1. Fragment → Theory Mapping

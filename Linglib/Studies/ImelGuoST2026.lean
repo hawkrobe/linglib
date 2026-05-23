@@ -36,7 +36,7 @@ https://clmbr.shane.st/modal-typology/
 
 namespace ImelGuoST2026
 
-open Core.Modality (ModalForce ModalFlavor ForceFlavor)
+open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression ModalInventory satisfiesIFF)
 
 /-! ## Abbreviations for the nine meaning points -/

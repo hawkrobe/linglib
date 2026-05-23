@@ -1,6 +1,6 @@
 import Linglib.Semantics.Modality.Selectional
 import Linglib.Semantics.Conditionals.WillConditional
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Core.Probability.Finite
 import Linglib.Fragments.English.Auxiliaries
 import Mathlib.Tactic.DeriveFintype

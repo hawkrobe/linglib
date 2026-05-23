@@ -9,7 +9,7 @@ Modal expressions from Hungarian (Uralic), based on
 
 namespace Fragments.Hungarian.Modals
 
-open Core.Modality (ForceFlavor)
+open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic

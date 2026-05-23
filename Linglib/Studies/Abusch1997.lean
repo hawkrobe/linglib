@@ -303,7 +303,7 @@ theorem abusch_derives_temporal_de_re_full_metaphysical
     {W E P Time : Type*} [LinearOrder Time]
     (dr : Semantics.Tense.DeRe.TemporalDeReReading W E P Time)
     (hRigid : Core.Intension.IsRigid dr.concept)
-    (history : Core.Modality.HistoricalAlternatives.WorldHistory W Time)
+    (history : Semantics.Modality.HistoricalAlternatives.WorldHistory W Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
     dr.isAbuschFelicitous (dr.metaphysicalAlternatives history) .past :=
   abusch_derives_temporal_de_re_full dr hRigid _ hBefore

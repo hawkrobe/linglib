@@ -35,7 +35,7 @@ canonical `TemporalOrientation` below is the strict superset; a
 Condoravdi-style 2-way `Orientation` would inject into it.
 -/
 
-namespace Core.Modality
+namespace Semantics.Modality
 
 /-- Temporal perspective: the time at which a modal base / ordering
     source is evaluated. -/
@@ -57,4 +57,4 @@ inductive TemporalOrientation where
   | future
   deriving DecidableEq, Repr, BEq, Inhabited
 
-end Core.Modality
+end Semantics.Modality

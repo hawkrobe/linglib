@@ -86,7 +86,7 @@ open JinKoenig2021
   (LicensingCondition TriggerSubclass DualInferenceProfile negativeValenceEntailsDual)
 open Semantics.Modality.Kratzer
   (bestWorlds necessity necessity_iff_all ModalBase OrderingSource)
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 
 abbrev World := Fin 4
 
@@ -486,7 +486,7 @@ but the **ordering source** g varies:
 /-- Each proper EN host category maps to a Kratzer modal flavor.
 
     NEG₂'s ordering source varies by host; the flavor tag is exactly
-    `Core.Modality.ModalFlavor`, reused here rather than duplicated.
+    `Semantics.Modality.ModalFlavor`, reused here rather than duplicated.
     "Habitual" (conditionals) maps to `.circumstantial` — both concern
     facts and what has happened, following Kratzer's subsumption. -/
 def ENHostCategory.orderingFlavor : ENHostCategory → Option ModalFlavor

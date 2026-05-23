@@ -1,6 +1,6 @@
 import Linglib.Semantics.Tense.Dynamic
 import Linglib.Semantics.Mood.Dynamic
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 
 /-!
 # Mendes (2025): The Subordinate Future
@@ -39,7 +39,7 @@ namespace Mendes2025
 
 open Core (Assignment WorldTimeIndex)
 open Core.Time
-open Core.Modality.HistoricalAlternatives
+open Semantics.Modality.HistoricalAlternatives
 open Semantics.Dynamic.Core
 open Semantics.Tense
 open Semantics.Mood

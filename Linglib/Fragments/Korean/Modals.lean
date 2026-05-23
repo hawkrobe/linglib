@@ -9,7 +9,7 @@ Modal expressions from Korean (Koreanic), based on
 
 namespace Fragments.Korean.Modals
 
-open Core.Modality (ForceFlavor)
+open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic

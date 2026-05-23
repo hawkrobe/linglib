@@ -36,7 +36,7 @@ explaining why certain pairs are systematically absent.
 namespace Hacquard2010
 
 open Semantics.Modality.EventRelativity
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 
 -- ============================================================================
 -- Part I: Italian Restructuring

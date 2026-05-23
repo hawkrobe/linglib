@@ -2,7 +2,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.List.Pairwise
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.Modality.ModalTypes
+import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -54,7 +54,7 @@ as Modals* (Natural Language Semantics 13:383–410). Following
 
 ## Implementation notes
 
-* Force is the project-canonical `Core.Modality.ModalForce` (necessity |
+* Force is the project-canonical `Semantics.Modality.ModalForce` (necessity |
   weakNecessity | possibility, @cite{von-fintel-iatridou-2008}). Geurts
   treats only ∃/∀; we route `weakNecessity` to the universal branch (every
   weak-necessity claim still quantifies universally over its refined
@@ -89,7 +89,7 @@ substantive move is the LF reanalysis (p.391), not a structural inference.
 
 namespace Geurts2005
 
-open Core.Modality
+open Semantics.Modality
 open Semantics.Presupposition
 
 variable {W : Type*}

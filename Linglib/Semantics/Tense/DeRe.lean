@@ -1,5 +1,5 @@
 import Linglib.Core.Context.Basic
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Reference.Acquaintance
 import Linglib.Semantics.Tense.Basic
 
@@ -50,7 +50,7 @@ live in `Studies/Abusch1997.lean`.
   shadow this file connects to (the deleted `TemporalDeRe` triple was a
   shadow of *this* shadow; see the `isFelicitousWith_iff_…` theorem
   below for the bridge).
-- `Core.Modality.HistoricalAlternatives.actualHistoryBase` —
+- `Semantics.Modality.HistoricalAlternatives.actualHistoryBase` —
   Klecha 2016 DOX substrate, available as the metaphysical instantiation
   via `metaphysicalAlternatives`.
 
@@ -101,7 +101,7 @@ namespace Semantics.Tense.DeRe
 
 open Core (Intension WorldTimeIndex)
 open Core.Context (KContext)
-open Core.Modality.HistoricalAlternatives (WorldHistory actualHistoryBase)
+open Semantics.Modality.HistoricalAlternatives (WorldHistory actualHistoryBase)
 open Core.Time.Tense (TensePronoun GramTense TemporalAssignment)
 
 

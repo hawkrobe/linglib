@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.DeonticNecessity
+import Linglib.Semantics.Modality.DeonticNecessity
 import Linglib.Semantics.Modality.Narrog
 import Linglib.Diachronic.ModalChange
 
@@ -7,7 +7,7 @@ import Linglib.Diachronic.ModalChange
 @cite{narrog-2010}
 
 Study file connecting @cite{narrog-2010}'s theoretical claims to the
-cross-linguistic data in `Core.Modality.DeonticNecessity`. The chapter argues
+cross-linguistic data in `Semantics.Modality.DeonticNecessity`. The chapter argues
 that strong obligation markers are cross-linguistically uncommon because
 obligation is inherently face-threatening and socially costly, so languages
 tend not to grammaticalize it — or to do so only indirectly.
@@ -29,14 +29,14 @@ speaker-orientation. Face-threat is derived from this decomposition (see
 
 ## Bridges
 
-- `Core.Modality.DeonticNecessity`: provides the 200-language data.
+- `Semantics.Modality.DeonticNecessity`: provides the 200-language data.
 - `Semantics.Modality.Narrog`: provides the theoretical framework
   (volitivity, speaker-orientation, performativity, directionality).
 -/
 
 namespace Narrog2010
 
-open Core.Modality.DeonticNecessity
+open Semantics.Modality.DeonticNecessity
 open Semantics.Modality.Narrog
 open Diachronic.ModalChange (commonChanges)
 

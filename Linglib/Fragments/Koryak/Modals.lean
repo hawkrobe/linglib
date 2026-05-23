@@ -23,7 +23,7 @@ distinction requires a finer-grained flavor type than `ModalFlavor`.
 
 namespace Fragments.Koryak.Modals
 
-open Core.Modality (ForceFlavor)
+open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic

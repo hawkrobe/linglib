@@ -60,7 +60,7 @@ Each flavor structure maps to the theory-neutral `ModalFlavor` enum from
 `Core.Logic.Intensional`, bridging Kratzer's parameterized semantics to the
 typological meaning space (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}). -/
 
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 
 /-- Epistemic modality maps to the epistemic flavor tag. -/
 def EpistemicFlavor.flavorTag : ModalFlavor := .epistemic
@@ -82,7 +82,7 @@ Each flavor structure maps to a `BackgroundClass` from
 traditional epistemic/circumstantial binary based on the **projection
 mode** of the conversational background (@cite{matthewson-2016} Table 18.3). -/
 
-open Core.Modality (BackgroundClass ProjectionMode)
+open Semantics.Modality (BackgroundClass ProjectionMode)
 
 /-- Epistemic modality: factual-evidential by default. -/
 def EpistemicFlavor.toBackgroundClass (_ : EpistemicFlavor W) : BackgroundClass :=

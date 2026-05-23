@@ -40,7 +40,7 @@ namespace RotterLiu2025Concord
 
 open Phenomena.Modality.ModalConcord
 open Fragments.English.Auxiliaries
-open Core.Modality (ModalForce ModalFlavor ForceFlavor)
+open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
 open Features.Register (Level areVariants)
 open Semantics.Modality.Typology (satisfiesIFF satisfiesSAV)
 

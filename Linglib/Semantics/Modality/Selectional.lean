@@ -1,5 +1,5 @@
 import Linglib.Semantics.Conditionals.SelectionFunction
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Core.Probability.Finite
 
 /-!
@@ -49,7 +49,7 @@ must satisfy three constraints:
   `valid2_negation_swap` recast the matrix theorems in this stronger
   validity notion.
 - `willHistorical`: `will` over the metaphysical modal base from
-  `Core/Modality/HistoricalAlternatives.lean` — the bridge to the
+  `Semantics/Modality/HistoricalAlternatives.lean` — the bridge to the
   branching-time substrate.
 - `universalWill`: the universal-quantifier reading used as a foil
   in @cite{cariani-santorio-2018}'s arguments. Shown to violate
@@ -64,7 +64,7 @@ set_option autoImplicit false
 namespace Semantics.Modality.Selectional
 
 open _root_.Semantics.Conditionals (SelectionFunction)
-open _root_.Core.Modality.HistoricalAlternatives
+open _root_.Semantics.Modality.HistoricalAlternatives
 open scoped ENNReal
 
 variable {W : Type*}
@@ -280,7 +280,7 @@ theorem postsemantic_will_excluded_middle (A : W → Prop)
 
 Selectional `will` parameterized by the metaphysical modal base of
 @cite{condoravdi-2002} — the historical-alternatives substrate from
-`Core/Modality/HistoricalAlternatives.lean`. -/
+`Semantics/Modality/HistoricalAlternatives.lean`. -/
 
 /-- **Selectional `will` over historical alternatives.** Evaluates
     the prejacent at the world selected from the metaphysical modal

@@ -9,7 +9,7 @@ Modal expressions from Javanese (Austronesian), based on
 
 namespace Fragments.Javanese.Modals
 
-open Core.Modality (ForceFlavor)
+open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic

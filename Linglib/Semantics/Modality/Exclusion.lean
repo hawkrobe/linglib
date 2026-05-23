@@ -1,7 +1,7 @@
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Mood.Basic
 import Linglib.Semantics.Reference.Kaplan
@@ -59,7 +59,7 @@ namespace Semantics.Modality.Exclusion
 
 open Core.Context (KContext ContextTower ContextShift RichContext
   hpShift xMarkingShift DomainExpanding temporalShift)
-open Core.Modality.HistoricalAlternatives (WorldHistory historicalBase)
+open Semantics.Modality.HistoricalAlternatives (WorldHistory historicalBase)
 open Semantics.Mood (subjShift)
 open Semantics.Reference.Kaplan (opActually_access opActually_shift_invariant)
 open Semantics.Tense (upperLimitConstraint)

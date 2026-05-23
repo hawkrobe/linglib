@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalTypes
+import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Phenomena.Modality.ModalConcord.Data
@@ -65,7 +65,7 @@ are vacuous. This yields Δ(A ∘ B), not ΔA ∘ ΔB.
 
 namespace CiardelliGuerrini2026
 
-open Core.Modality
+open Semantics.Modality
 open Exhaustification.FreeChoice (diamond diamond_distributes_iff FCAltSet free_choice_forward)
 open Fragments.English.Auxiliaries
 

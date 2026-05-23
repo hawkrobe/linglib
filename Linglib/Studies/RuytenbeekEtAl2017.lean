@@ -87,7 +87,7 @@ keeps the file independent of the Minimalist substrate.
 
 namespace RuytenbeekEtAl2017
 
-open Core.Modality (ModalFlavor ModalForce)
+open Semantics.Modality (ModalFlavor ModalForce)
 open Discourse (PreparatoryCondition SearleClass)
 open Core.Mood (IllocutionaryMood)
 open Semantics.Modality.Assert (primaryFlavor)
@@ -412,7 +412,7 @@ break these theorems. -/
 section FrenchFragmentBridge
 
 open Fragments.French.Modals (devoir pouvoir ilEstPossible)
-open Core.Modality (ForceFlavor)
+open Semantics.Modality (ForceFlavor)
 
 /-- *Vous devez VP* = deontic necessity, present in *devoir*'s
     force-flavor inventory. -/

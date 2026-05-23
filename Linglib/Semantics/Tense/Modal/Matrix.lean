@@ -41,7 +41,7 @@ readings (§5.3) are likewise out of scope.
 namespace Semantics.Tense.Modal.Matrix
 
 open Core.Time.Tense (GramTense)
-open Core.Modality (ModalBaseKind)
+open Semantics.Modality (ModalBaseKind)
 open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint)
 
 

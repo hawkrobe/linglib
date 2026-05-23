@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalTypes
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Portuguese Modal Verb Entries @cite{ferreira-2023}
@@ -22,7 +22,7 @@ X-marking does not change modal force — it shifts the modal parameters
 
 namespace Fragments.Portuguese.Modals
 
-open Core.Modality
+open Semantics.Modality
 
 /-! ## Helper -/
 

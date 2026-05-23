@@ -38,7 +38,7 @@ modal flavors — without lexical ambiguity in the modal.
 namespace Semantics.Modality.Assert
 
 open Semantics.Modality.EventRelativity
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 open Core.Mood (IllocutionaryMood)
 
 

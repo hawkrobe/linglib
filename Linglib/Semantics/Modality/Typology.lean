@@ -21,7 +21,7 @@ Single Axis of Variability (SAV) universal from cross-linguistic modal typology.
 
 namespace Semantics.Modality.Typology
 
-open Core.Modality (ModalForce ModalFlavor ForceFlavor)
+open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
 
 /-! ## Modal Meaning Projections -/
 
@@ -348,7 +348,7 @@ def inferForcePattern (m : List ForceFlavor) : ForcePattern :=
   | [f] => .singleForce f
   | _ => .multiForce
 
-open Core.Modality (ForceAnalysis)
+open Semantics.Modality (ForceAnalysis)
 
 /-- A `ForceAnalysis` is consistent with the observed `ForcePattern` when:
     - `fixed fo` requires `singleForce fo` (only one force attested)
@@ -372,7 +372,7 @@ structure ModalExpression where
 
 /-- Project to the shared modal item core. Register defaults to neutral
     since typological surveys don't annotate register. -/
-def ModalExpression.toModalItem (e : ModalExpression) : Core.Modality.ModalItem where
+def ModalExpression.toModalItem (e : ModalExpression) : Semantics.Modality.ModalItem where
   form := e.form
   meaning := e.meaning
 
@@ -461,7 +461,7 @@ compute the same property through different algorithms:
 
 Both reduce to: ∀ fo ∈ forces(m), ∀ fl ∈ flavors(m), ⟨fo, fl⟩ ∈ m. -/
 
-open Core.Modality (ModalItem ModalDecomposition)
+open Semantics.Modality (ModalItem ModalDecomposition)
 
 /-- `eraseDups` preserves list membership.
     Required because Lean 4 core lacks this lemma for `BEq`-based `eraseDups`. -/

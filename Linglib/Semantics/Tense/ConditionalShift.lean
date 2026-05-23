@@ -1,5 +1,5 @@
 import Linglib.Core.Context.Rich
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Basic
 
 /-!
@@ -37,7 +37,7 @@ open Core (WorldTimeIndex)
 open Core.Time
 open Core.Context (RichContext KContext ContextTower ContextShift
   hpShift DomainExpanding)
-open Core.Modality.HistoricalAlternatives
+open Semantics.Modality.HistoricalAlternatives
 open Semantics.Mood
 
 -- ════════════════════════════════════════════════════════════════

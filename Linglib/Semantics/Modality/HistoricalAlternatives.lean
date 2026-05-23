@@ -43,7 +43,9 @@ alternatives" can use. The selectional semantics for *will*
 `Semantics/Modality/Selectional.lean`.
 -/
 
-namespace Core.Modality.HistoricalAlternatives
+open Core (WorldTimeIndex)
+
+namespace Semantics.Modality.HistoricalAlternatives
 
 /-! ## Partial History Taxonomy
 
@@ -581,4 +583,4 @@ theorem diverse_of_witnesses
     diverse MB cg t P :=
   ⟨w, hwcg, w', hw', w'', hw'', hP, hnP⟩
 
-end Core.Modality.HistoricalAlternatives
+end Semantics.Modality.HistoricalAlternatives

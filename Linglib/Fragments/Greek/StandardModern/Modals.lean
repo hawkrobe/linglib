@@ -12,7 +12,7 @@ subsets of the meaning space.
 
 namespace Fragments.Greek.StandardModern.Modals
 
-open Core.Modality (ForceFlavor)
+open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic

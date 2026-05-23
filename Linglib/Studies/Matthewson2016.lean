@@ -49,7 +49,7 @@ St'át'imcets, Nez Perce, Niuean, and other languages.
 
 namespace Matthewson2016
 
-open Core.Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode)
+open Semantics.Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode)
 open Semantics.Modality.Typology (satisfiesIFF satisfiesSAV)
 
 -- ============================================================================
@@ -251,7 +251,7 @@ theorem imaa_past_present_no_dim :
     @cite{matthewson-2016} §18.4.3. -/
 structure TemporalMarkingMirror where
   /-- Which orientation is obligatorily marked. -/
-  obligatoryMarking : Core.Modality.TemporalOrientation
+  obligatoryMarking : Semantics.Modality.TemporalOrientation
   /-- Name of the marker. -/
   marker : String
 

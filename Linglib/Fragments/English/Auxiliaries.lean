@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Core.Modality.ModalTypes
+import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Register
 
 /-!
@@ -53,7 +53,7 @@ To find every claim made about a particular entry, grep for
 namespace Fragments.English.Auxiliaries
 
 section Modals
-open Core.Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
+open Semantics.Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
 open Features.Register (Level)
 
 /-- Auxiliary type -/
@@ -236,7 +236,7 @@ def AuxEntry.toWord (a : AuxEntry) : Word :=
   }
 
 /-- Project to the shared modal item core (form + meaning + register). -/
-def AuxEntry.toModalItem (a : AuxEntry) : Core.Modality.ModalItem where
+def AuxEntry.toModalItem (a : AuxEntry) : Semantics.Modality.ModalItem where
   form := a.form
   meaning := a.modalMeaning
   register := a.register
@@ -256,7 +256,7 @@ end Modals
 -- ============================================================================
 
 section ModalAdverbs
-open Core.Modality (ForceFlavor ModalForce ModalFlavor)
+open Semantics.Modality (ForceFlavor ModalForce ModalFlavor)
 open Features.Register (Level)
 
 /-- Modal adverb entry: an adverb expressing modal force and flavor
@@ -276,7 +276,7 @@ def ModalAdvEntry.toWord (a : ModalAdvEntry) : Word :=
   { form := a.form, cat := .ADV, features := {} }
 
 /-- Project to the shared modal item core (form + meaning + register). -/
-def ModalAdvEntry.toModalItem (a : ModalAdvEntry) : Core.Modality.ModalItem where
+def ModalAdvEntry.toModalItem (a : ModalAdvEntry) : Semantics.Modality.ModalItem where
   form := a.form
   meaning := a.modalMeaning
   register := a.register

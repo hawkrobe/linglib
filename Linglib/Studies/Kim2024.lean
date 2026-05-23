@@ -45,7 +45,7 @@ namespace Kim2024
 
 open Semantics.Causation.Psych
 open Semantics.Modality.EventRelativity
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

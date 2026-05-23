@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalTypes
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # German Modal Verb Fragment
@@ -24,7 +24,7 @@ Reference: Kratzer, A. (1981). The Notional Category of Modality.
 
 namespace Fragments.German.Predicates.Modal
 
-open Core.Modality (ForceFlavor ModalForce ModalFlavor)
+open Semantics.Modality (ForceFlavor ModalForce ModalFlavor)
 
 /-- German modal verb entry. -/
 structure GermanModalEntry where

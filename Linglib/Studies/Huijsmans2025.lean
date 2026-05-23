@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.Evidential
-import Linglib.Core.Modality.ModalTypes
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Huijsmans (2025) @cite{huijsmans-2025}
@@ -113,7 +113,7 @@ instance {Time : Type} [LinearOrder Time] [DecidableEq Time] (c : MBTProfile)
 structure Modal where
   label   : String
   /-- Modal flavor, or `none` for underspecified (Huijsmans p. 218). -/
-  flavor  : Option Core.Modality.ModalFlavor
+  flavor  : Option Semantics.Modality.ModalFlavor
   profile : MBTProfile
   deriving Repr
 

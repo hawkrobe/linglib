@@ -328,7 +328,7 @@ an accessibility relation under which the two scope readings diverge. -/
 
 section ScopeBridge
 
-open Core.Modality (ModalForce)
+open Semantics.Modality (ModalForce)
 open Core.Logic.Intensional (AccessRel boxR diamondR)
 
 abbrev World := Fin 4

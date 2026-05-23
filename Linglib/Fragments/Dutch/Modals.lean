@@ -12,7 +12,7 @@ Dutch has one non-IFF modal: zou/zouden...kunnen expresses
 
 namespace Fragments.Dutch.Modals
 
-open Core.Modality (ForceFlavor)
+open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic

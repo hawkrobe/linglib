@@ -1,11 +1,11 @@
-import Linglib.Core.Modality.ModalBaseKind
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.ModalBaseKind
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
-import Linglib.Core.Modality.ModalTypes
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Modal Base Temporal Constraints
@@ -17,7 +17,7 @@ bridges from `Attitude` / `ModalFlavor` to `ModalBaseKind`.
 
 The framework-neutral interval predicates (`isActualHistory`,
 `isFutureHistory`, etc.) and the situation-base derivation theorems live
-in `Core.Modality.HistoricalAlternatives`. This file's role is the
+in `Semantics.Modality.HistoricalAlternatives`. This file's role is the
 Klecha-specific projection: dispatch on `ModalBaseKind` to select between
 the actual-history (RT ≤ EvalT) and future-history (RT > EvalT)
 constraints.
@@ -33,15 +33,15 @@ in the modal base pronoun:
 
 The ULC is **derived** by `.2` projection from `actualHistoryBase`
 membership (see `actualHistoryBase_derives_ulc` in
-`Core.Modality.HistoricalAlternatives`); the dispatch theorem
+`Semantics.Modality.HistoricalAlternatives`); the dispatch theorem
 `attitudeTemporalConstraint_derived_doxastic` below makes the
 Klecha-namespace face of that derivation kernel-checked.
 -/
 
 namespace Semantics.Modality.TemporalConstraint
 
-open Core.Modality (ModalBaseKind)
-open Core.Modality.HistoricalAlternatives
+open Semantics.Modality (ModalBaseKind)
+open Semantics.Modality.HistoricalAlternatives
   (isActualHistory isFutureHistory actualHistoryBase futureHistoryBase
    actualHistoryBase_time_actual futureHistoryBase_time_future
    WorldHistory)
@@ -127,7 +127,7 @@ DOX, `futureHistoryBase` for CIR), not stipulated.
 This is the formal contrast with @cite{abusch-1997}'s ULC, which is
 stipulated as a presupposition on T-nodes; here, ULC follows by `.2`
 projection through the situation-base definition. The substrate
-derivation lives in `Core.Modality.HistoricalAlternatives` as
+derivation lives in `Semantics.Modality.HistoricalAlternatives` as
 `actualHistoryBase_time_actual` / `futureHistoryBase_time_future`;
 these theorems re-express it in the Klecha-namespace
 `attitudeTemporalConstraint` form. -/
@@ -189,10 +189,10 @@ theorem permitsCirc_iff_cir (a : Features.Attitude) :
 with its flavor. Epistemic modals are past/present-oriented (DOX-like);
 circumstantial, deontic, bouletic, and teleological modals are
 future-oriented (CIR-like). This function bridges the four-way
-`ModalFlavor` classification (from `Core.Modality`) to Klecha's binary
+`ModalFlavor` classification (from `Semantics.Modality`) to Klecha's binary
 `ModalBaseKind`. -/
 
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 
 /-- Map modal flavor to modal base kind.
     Epistemic → DOX (past/present orientation).

@@ -40,7 +40,7 @@ neg-raising asymmetries between *should* and *must*.
 
 namespace AghaJeretic2026
 
-open Core.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
+open Semantics.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
 open Semantics.Modality.Directive
 open Fragments.English.Auxiliaries
 

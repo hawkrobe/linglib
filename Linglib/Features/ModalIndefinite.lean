@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.ModalTypes
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Modal Indefinite Types
@@ -27,7 +27,7 @@ set_option autoImplicit false
 
 namespace Features.ModalIndefinite
 
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

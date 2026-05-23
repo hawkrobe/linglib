@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.TemporalAxes
+import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Modality.Typology
 
 /-!
@@ -39,7 +39,7 @@ but only weakly.
 
 namespace Fragments.Gitksan.Modals
 
-open Core.Modality (ForceFlavor ForceAnalysis BackgroundClass TemporalOrientation)
+open Semantics.Modality (ForceFlavor ForceAnalysis BackgroundClass TemporalOrientation)
 open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic

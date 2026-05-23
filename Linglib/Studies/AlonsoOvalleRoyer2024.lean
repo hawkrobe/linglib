@@ -66,7 +66,7 @@ speech event despite intervening projections.
 
 namespace AlonsoOvalleRoyer2024
 
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 open Features.ModalIndefinite
 open Semantics.Modality.EventRelativity
 open Fragments.Chuj.ModalIndefinites

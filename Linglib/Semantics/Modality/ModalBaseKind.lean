@@ -16,7 +16,7 @@ modules (`Modality.TemporalConstraint`, `Tense.ModalTense`) and by
 phenomena-layer study files. It depends only on `GramTense` from Core.
 -/
 
-namespace Core.Modality
+namespace Semantics.Modality
 
 open Core.Time.Tense (GramTense)
 
@@ -60,4 +60,4 @@ theorem ModalBaseKind.upper_limit_from_dox :
     ModalBaseKind.permitsOrientation .doxastic .future = false :=
   ⟨rfl, rfl, rfl⟩
 
-end Core.Modality
+end Semantics.Modality

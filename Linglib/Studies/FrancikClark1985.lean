@@ -1,7 +1,7 @@
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment
-import Linglib.Core.Modality.ModalTypes
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # @cite{francik-clark-1985} — How to Make Requests That Overcome
@@ -53,7 +53,7 @@ set_option autoImplicit false
 namespace FrancikClark1985
 
 open Discourse (PreparatoryCondition)
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

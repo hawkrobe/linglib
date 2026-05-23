@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.DeonticNecessity
+import Linglib.Semantics.Modality.DeonticNecessity
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Modality.Directive
 import Linglib.Fragments.English.Auxiliaries
@@ -79,7 +79,7 @@ abbrev World := Fin 4
 
 open Semantics.Modality.Kratzer
 open Semantics.Modality.Directive
-open Core.Modality (ModalForce)
+open Semantics.Modality (ModalForce)
 
 -- ============================================================================
 -- §1. Priority Reconceptualization (§3.2)
@@ -694,9 +694,9 @@ casts doubt on the universality of weak necessity as a grammatical category,
 and supports Rubinstein's claim that it surfaces through evaluative
 comparison when dedicated grammatical means are absent.
 
-Data imported from `Core.Modality.DeonticNecessity`. -/
+Data imported from `Semantics.Modality.DeonticNecessity`. -/
 
-open Core.Modality.DeonticNecessity in
+open Semantics.Modality.DeonticNecessity in
 /-- Only 62 of 200 surveyed languages grammaticalize weak deontic necessity.
     The total exceeds 200 because some languages have modals of multiple types. -/
 theorem weak_rarity : countOf .weak = 62 := by native_decide

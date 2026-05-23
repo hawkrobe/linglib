@@ -100,9 +100,9 @@ import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 import Linglib.Features.Valence
 import Linglib.Features.ModalIndefinite
-import Linglib.Core.Modality.ModalBaseKind
-import Linglib.Core.Modality.ModalTypes
-import Linglib.Core.Modality.TemporalAxes
+import Linglib.Semantics.Modality.ModalBaseKind
+import Linglib.Semantics.Modality.ModalTypes
+import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Conditionals.SelectionFunction
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
@@ -355,7 +355,7 @@ import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment
 import Linglib.Discourse.Roles
 import Linglib.Core.Mood
-import Linglib.Core.Modality.DeonticNecessity
+import Linglib.Semantics.Modality.DeonticNecessity
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.NullSubject.Defs
@@ -2268,7 +2268,7 @@ import Linglib.Semantics.Composition.MaybeMonad
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Entailment.Polarity
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Tense.Modal.AtOperator
 import Linglib.Semantics.Composition.PredicateTransfer
 import Linglib.Semantics.Composition.Scope

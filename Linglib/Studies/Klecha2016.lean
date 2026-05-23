@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Tense.Modal.Matrix
 import Linglib.Semantics.Modality.TemporalConstraint
@@ -55,8 +55,8 @@ can be future-oriented:
 namespace Klecha2016
 
 open Features (Attitude Preferential Veridicality)
-open Core.Modality (ModalBaseKind)
-open Core.Modality.HistoricalAlternatives
+open Semantics.Modality (ModalBaseKind)
+open Semantics.Modality.HistoricalAlternatives
   (WorldHistory actualHistoryBase futureHistoryBase
    upperLimitConstraintModal upperLimitConstraintModal_implies_value)
 open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
@@ -72,7 +72,7 @@ open Semantics.Tense.Modal.Matrix
   (dox_past_iff dox_npst_iff cir_npst_iff cir_past_iff_false)
 open Semantics.Tense (upperLimitConstraint)
 open Core.Time.Tense (GramTense)
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES
@@ -306,7 +306,7 @@ This is what differentiates Klecha's ULC from @cite{abusch-1997}'s
 stipulated one — the upper limit is a kernel-checked consequence of
 DOX-pronoun's lexical entry, not a separately-asserted presupposition
 on T-nodes. The substrate derivation lives in
-`Core.Modality.HistoricalAlternatives` (`actualHistoryBase_time_actual`,
+`Semantics.Modality.HistoricalAlternatives` (`actualHistoryBase_time_actual`,
 `futureHistoryBase_time_future`); the `attitudeTemporalConstraint`
 projection in `Semantics/Modality/TemporalConstraint.lean`
 delegates to it. -/
@@ -569,7 +569,7 @@ theorem klecha_predicts_imaa_no_future :
     configurations are felicitous, not blocked. -/
 theorem matthewson_imaa_future_attested :
     Matthewson2013.fig4Cells.filter (fun c =>
-      c.orientation == Core.Modality.TemporalOrientation.future)
+      c.orientation == Semantics.Modality.TemporalOrientation.future)
       = [⟨.present, .future, 42⟩, ⟨.past, .future, 44⟩] := rfl
 
 /-- The disagreement: Klecha predicts no felicitous future-oriented
@@ -636,7 +636,7 @@ theorem sharvit_klecha_agree_simultaneous_english (sayingTime sickTime : ℤ) :
 -- ════════════════════════════════════════════════════════════════
 
 /-! @cite{condoravdi-2002}'s metaphysical modal base (formalized in
-`Core/Modality/HistoricalAlternatives.lean` as `metaphysicalBase`)
+`Semantics/Modality/HistoricalAlternatives.lean` as `metaphysicalBase`)
 quantifies over historical alternatives at the eval time.
 @cite{klecha-2016}'s CIR modal base (`futureHistoryBase`) quantifies
 over future-history situations whose world-component lies in the same
@@ -658,7 +658,7 @@ theorem klecha_cir_world_in_condoravdi_metaphysical
     (s s' : Core.WorldTimeIndex W ℤ)
     (h : s' ∈ futureHistoryBase history s) :
     s'.world ∈
-      Core.Modality.HistoricalAlternatives.metaphysicalBase history s.world s.time :=
+      Semantics.Modality.HistoricalAlternatives.metaphysicalBase history s.world s.time :=
   h.1
 
 /-- Phase F bridge — Klecha-Condoravdi: the world-component of any
@@ -670,7 +670,7 @@ theorem klecha_dox_world_in_condoravdi_metaphysical
     (s s' : Core.WorldTimeIndex W ℤ)
     (h : s' ∈ actualHistoryBase history s) :
     s'.world ∈
-      Core.Modality.HistoricalAlternatives.metaphysicalBase history s.world s.time :=
+      Semantics.Modality.HistoricalAlternatives.metaphysicalBase history s.world s.time :=
   h.1
 
 
@@ -683,7 +683,7 @@ about being shallow: both sides reduce to `≤` at the value level, but
 the *modal layer* — quantification over doxastic alternatives that
 @cite{abusch-1997}'s prose statement requires — was stripped on both
 sides. With the new `upperLimitConstraintModal` substrate primitive
-(in `Core/Modality/HistoricalAlternatives.lean`, F4), the modal-layer
+(in `Semantics/Modality/HistoricalAlternatives.lean`, F4), the modal-layer
 bridge becomes statable.
 
 @cite{abusch-1997}'s modal-layer ULC: an embedded situation lies in

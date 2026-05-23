@@ -30,7 +30,7 @@ When non-restructured (high): epistemic readings available.
 
 namespace Fragments.Italian.Modals
 
-open Core.Modality (ModalForce ModalFlavor ForceFlavor)
+open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
 open Semantics.Modality.EventRelativity (ModalPosition EventBinder)
 
 

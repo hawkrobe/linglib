@@ -44,7 +44,7 @@ argument via an anchoring function.
 
 namespace Semantics.Modality.EventRelativity
 
-open Core.Modality (ModalFlavor)
+open Semantics.Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

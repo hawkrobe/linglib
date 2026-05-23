@@ -11,7 +11,7 @@ Mandarin has many modals, extensive synonymy, but all satisfy IFF.
 
 namespace Fragments.Mandarin.Modals
 
-open Core.Modality (ForceFlavor)
+open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic

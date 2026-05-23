@@ -27,7 +27,7 @@ diverse sample of 200 languages (@cite{narrog-2010} appendix;
   only aggregate counts are available.
 -/
 
-namespace Core.Modality.DeonticNecessity
+namespace Semantics.Modality.DeonticNecessity
 
 -- ============================================================================
 -- §1. Deontic Necessity Type Classification
@@ -141,4 +141,4 @@ theorem indeterminate_count : countOf .indeterminate = 32 := by native_decide
     @cite{narrog-2010} p. 406: 156 vs 131. -/
 theorem pot_more_common_than_nec : languagesWithPot > languagesWithNec := by native_decide
 
-end Core.Modality.DeonticNecessity
+end Semantics.Modality.DeonticNecessity

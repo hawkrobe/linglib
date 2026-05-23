@@ -1,5 +1,5 @@
 import Linglib.Core.WorldTimeIndex
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Core.Mood.IllocutionaryMood
 import Linglib.Core.Mood.POSW
 import Linglib.Core.Mood.POSWTarget
@@ -38,7 +38,7 @@ This file is a **configuration of existing infrastructure**, not a
 standalone formalization of an imperative mood ontology:
 
 - The futurate modal base reuses
-  `Core.Modality.HistoricalAlternatives.futureHistoryBase`.
+  `Semantics.Modality.HistoricalAlternatives.futureHistoryBase`.
 - The goal-based ordering and circumstantial modal base are
   `Kratzer.OrderingSource` / `ModalBase`, packaged as
   `TeleologicalFlavor` (no parallel types).
@@ -68,7 +68,7 @@ namespace Roberts2023
 open Core (WorldTimeIndex)
 open Discourse (forceLinkingPrinciple defaultSemanticType sincerityCondition Scoreboard)
 open Core.Mood (POSW POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
-open Core.Modality.HistoricalAlternatives
+open Semantics.Modality.HistoricalAlternatives
 open Semantics.Modality.Kratzer
 
 abbrev World := Fin 4
@@ -77,7 +77,7 @@ abbrev World := Fin 4
 
 Roberts's "circumstance" ⟨w, t⟩ (eq. 45), SameHistory (47), and FUT
 (48) all instantiate the canonical world-time substrate in
-`Core.WorldTimeIndex` and `Core.Modality.HistoricalAlternatives`:
+`Core.WorldTimeIndex` and `Semantics.Modality.HistoricalAlternatives`:
 
   Roberts                        Linglib substrate
   ────────────────────────────   ────────────────────────────
@@ -179,7 +179,7 @@ theorem pragmatic_deontic_routing
 /-! ## §1 Desideratum (h): Futurate Flavor
 
 Restated against `futureHistoryBase` (the canonical Condoravdi/CIR
-substrate in `Core.Modality.HistoricalAlternatives`) rather than a
+substrate in `Semantics.Modality.HistoricalAlternatives`) rather than a
 local `FUT` enumeration. -/
 
 /-- **(h) Futurate flavor** (@cite{roberts-2023} Table 1, §1, exx.
@@ -235,7 +235,7 @@ pattern with imperatives in directive force. -/
 
 /-- The flavor Roberts assigns to the imperative's prejacent-internal
     modal: teleological/circumstantial. -/
-def robertsImperativeFlavor : Core.Modality.ModalFlavor :=
+def robertsImperativeFlavor : Semantics.Modality.ModalFlavor :=
   TeleologicalFlavor.flavorTag
 
 /-- **Cross-paper disagreement** — @cite{ruytenbeek-etal-2017} Study 2

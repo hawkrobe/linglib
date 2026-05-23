@@ -1,5 +1,5 @@
 import Linglib.Semantics.Dynamic.Core.ContextFilter
-import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Basic
 
 /-!
@@ -75,7 +75,7 @@ operator and the modal donkey anaphora chain that consumes
 namespace Semantics.Mood
 
 open _root_.Core (Assignment WorldTimeIndex)
-open Core.Modality.HistoricalAlternatives
+open Semantics.Modality.HistoricalAlternatives
 open Semantics.Dynamic.Core
 
 

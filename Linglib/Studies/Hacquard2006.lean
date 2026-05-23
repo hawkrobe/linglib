@@ -1,4 +1,4 @@
-import Linglib.Core.Modality.TemporalAxes
+import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.Temporal
 import Mathlib.Data.List.Defs
@@ -38,7 +38,7 @@ namespace Hacquard2006
 
 open Semantics.Modality.EventRelativity
 open Semantics.Modality.Temporal
-open Core.Modality (TemporalOrientation)
+open Semantics.Modality (TemporalOrientation)
 
 
 -- ════════════════════════════════════════════════════
@@ -49,7 +49,7 @@ open Core.Modality (TemporalOrientation)
 (§ 3). @cite{klecha-2016} adds future: derived not from position but
 from the modal base kind (CIR permits future orientation). The
 canonical 3-value `TemporalOrientation` lives in
-`Core/Modality/TemporalAxes.lean` and is opened above. -/
+`Semantics/Modality/TemporalAxes.lean` and is opened above. -/
 
 /-- A time type for the orientation examples. -/
 inductive OTime where

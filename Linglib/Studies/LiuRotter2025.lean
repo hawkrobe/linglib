@@ -33,7 +33,7 @@ namespace LiuRotter2025
 
 open Phenomena.Modality.ModalConcord.LiuRotter2025
 open Fragments.English.Auxiliaries
-open Core.Modality (ModalForce ModalItem ConcordType ConcordType.fromModalForce)
+open Semantics.Modality (ModalForce ModalItem ConcordType ConcordType.fromModalForce)
 open Features.Register (SocialIndex)
 
 /-! ## Section A: Semantic overlap via ModalItem
