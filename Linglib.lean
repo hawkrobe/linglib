@@ -344,10 +344,7 @@ import Linglib.Core.Dependency.Basic
 import Linglib.Core.Dependency.Projection
 import Linglib.Core.Dependency.Dominance
 import Linglib.Core.Morphology.MorphProfile
-import Linglib.Core.Morphology.Wordhood
-import Linglib.Core.Morphology.FormMeaningMapping
 import Linglib.Core.Morphology.ConsonantalRoot
-import Linglib.Core.Morphology.Circumfix
 import Linglib.Core.Morphology.Exponence
 import Linglib.Core.Morphology.MorphWord
 import Linglib.Semantics.Lexical.Roots.Operators

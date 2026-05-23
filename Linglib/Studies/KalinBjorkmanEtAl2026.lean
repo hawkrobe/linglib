@@ -1,9 +1,7 @@
 import Linglib.Morphology.TheorySpace
-import Linglib.Core.Morphology.Wordhood
 import Linglib.Core.Morphology.MorphRule
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Phonology.Prosodic.Word
-import Linglib.Core.Morphology.FormMeaningMapping
 import Linglib.Morphology.Nanosyntax.Basic
 
 -- ============================================================================
@@ -94,13 +92,106 @@ def derive {Feature : Type} [BEq Feature]
 end Morphology.PFM
 
 -- ============================================================================
+-- § 0a: Wordhood Typology (was Core/Morphology/Wordhood.lean,
+--      inlined as sole consumer per CLAUDE.md anchoring rules)
+-- ============================================================================
+
+/-! @cite{kalin-bjorkman-etal-2026} (§3.2) argue that solving the wordhood
+problem requires distinguishing at minimum two notions of "word":
+
+- **ms-word** (morphosyntactic/grammatical word): a constituent containing
+  one or more morphemes, contained in a morphosyntactic phrase. Identified
+  by cohesiveness, fixed internal order, selectivity, and domainhood
+  for morphological operations (§3.2.1).
+
+- **p-word** (phonological/prosodic word): a constituent containing one or
+  more syllables grouped into feet, contained in a phonological phrase.
+  Identified by phonotactic bounding and edge phenomena (§3.2.2).
+
+Crossing ms-boundedness (bound vs free) with p-boundedness yields a
+four-way typology of morpheme attachment (Table 3). -/
+
+namespace Morphology.Wordhood
+
+/-- Morphosyntactic boundedness. @cite{kalin-bjorkman-etal-2026} §3.2.1. -/
+inductive MSBoundedness where
+  | free   -- independent ms-word (can stand alone, be reordered, etc.)
+  | bound  -- must be internal to a host ms-word
+  deriving DecidableEq, Repr
+
+/-- Phonological/prosodic boundedness. @cite{kalin-bjorkman-etal-2026} §3.2.2. -/
+inductive PBoundedness where
+  | free   -- forms its own p-word
+  | bound  -- must be internal to a host p-word
+  deriving DecidableEq, Repr
+
+/-- A morpheme's wordhood profile. @cite{kalin-bjorkman-etal-2026} Table 3. -/
+structure WordhoodProfile where
+  ms : MSBoundedness
+  p  : PBoundedness
+  deriving DecidableEq, Repr
+
+/-- The four-way classification of morpheme attachment.
+    @cite{kalin-bjorkman-etal-2026} §3.2.3. -/
+inductive WordhoodClass where
+  /-- ms-free, p-free: an independent word by both criteria. -/
+  | canonicalWord
+  /-- ms-free, p-bound: syntactically independent but phonologically
+      dependent. @cite{zwicky-1977} -/
+  | simpleClitic
+  /-- ms-bound, p-free: morphosyntactically part of a word but
+      phonologically independent. -/
+  | nonCoheringAffix
+  /-- ms-bound, p-bound: part of a word by both criteria. -/
+  | canonicalAffix
+  deriving DecidableEq, Repr
+
+/-- Classify a wordhood profile into the four-way typology. -/
+def WordhoodProfile.classify : WordhoodProfile → WordhoodClass
+  | ⟨.free,  .free⟩  => .canonicalWord
+  | ⟨.free,  .bound⟩ => .simpleClitic
+  | ⟨.bound, .free⟩  => .nonCoheringAffix
+  | ⟨.bound, .bound⟩ => .canonicalAffix
+
+theorem canonicalWord_is_doubly_free :
+    (WordhoodProfile.mk .free .free).classify = .canonicalWord := rfl
+
+theorem simpleClitic_is_ms_free_p_bound :
+    (WordhoodProfile.mk .free .bound).classify = .simpleClitic := rfl
+
+theorem nonCoheringAffix_is_ms_bound_p_free :
+    (WordhoodProfile.mk .bound .free).classify = .nonCoheringAffix := rfl
+
+theorem canonicalAffix_is_doubly_bound :
+    (WordhoodProfile.mk .bound .bound).classify = .canonicalAffix := rfl
+
+/-- The four classes are exhaustive. -/
+theorem classify_total (w : WordhoodProfile) :
+    w.classify = .canonicalWord ∨
+    w.classify = .simpleClitic ∨
+    w.classify = .nonCoheringAffix ∨
+    w.classify = .canonicalAffix := by
+  cases w with | mk ms p => cases ms <;> cases p <;> simp [WordhoodProfile.classify]
+
+/-- The four classes are mutually exclusive. -/
+theorem classify_injective (w₁ w₂ : WordhoodProfile)
+    (h : w₁.classify = w₂.classify) :
+    w₁ = w₂ := by
+  cases w₁ with | mk ms₁ p₁ =>
+  cases w₂ with | mk ms₂ p₂ =>
+  cases ms₁ <;> cases p₁ <;> cases ms₂ <;> cases p₂ <;>
+    simp [WordhoodProfile.classify] at h <;> rfl
+
+end Morphology.Wordhood
+
+-- ============================================================================
 -- § 0: Wordhood ↔ Clitic/Affix Diagnostic Bridge
 --     (was Morphology/Core/WordhoodBridge.lean — Bridge anti-pattern;
 --     relocated 0.230.455 to its sole consumer per CLAUDE.md "no Bridges")
 -- ============================================================================
 
 /-! Connects two independent formalizations:
-- **Wordhood typology** (`Core.Morphology.Wordhood`): K-B 2026 §3.2 two-
+- **Wordhood typology** (`Morphology.Wordhood`): K-B 2026 §3.2 two-
   dimensional classification (ms-boundedness × p-boundedness → 4 wordhood
   classes).
 - **Clitic vs. affix diagnostics** (`Morphology.Diagnostics`): @cite{zwicky-pullum-1983}'s
@@ -111,7 +202,7 @@ dimension is orthogonal (determined by prosodic diagnostics). -/
 
 namespace Morphology.WordhoodBridge
 
-open Core.Morphology.Wordhood
+open Morphology.Wordhood
 open Core.Morphology (MorphStatus)
 open Morphology.Diagnostics (CliticAffixProfile)
 
@@ -311,7 +402,7 @@ theorem mas_uniquely_incremental :
 -- §2: Wordhood Typology (Element §3)
 -- ============================================================================
 
-open Core.Morphology.Wordhood
+open Morphology.Wordhood
 open Morphology.WordhoodBridge
 
 /-! ### 2a. The 2×2 wordhood typology is exhaustive and injective -/
@@ -372,9 +463,49 @@ theorem zpAffix_plus_prWdExternal :
 
 -- ============================================================================
 -- §3: Form-Meaning Mapping (Element §4)
+--     (Inlined from former Core/Morphology/FormMeaningMapping.lean.)
 -- ============================================================================
 
-open Core.Morphology.FormMeaningMapping
+/-! §4 of @cite{kalin-bjorkman-etal-2026} identifies seven descriptive types
+of form-meaning mapping — the relationships between phonological exponents
+and morphosyntactic features/functions. -/
+
+namespace Morphology.FormMeaningMapping
+
+/-- The seven descriptive types of form-meaning mapping.
+    @cite{kalin-bjorkman-etal-2026} §4. -/
+inductive MappingType where
+  /-- One meaning/function ↔ one exponent, invariant.
+      Example: root *cat* is always `\/kæt\/`. -/
+  | oneToOne
+  /-- One meaning/function → multiple *competing* exponents
+      (context-sensitive selection).
+      Example: English plural *-z, -s, -ɪz, -ən, ∅*. §4.1. -/
+  | allomorphy
+  /-- One meaning/function → multiple *co-occurring* exponents
+      (non-competing, simultaneous expression).
+      Example: Amharic *k'al-at-otʃtʃ* 'words' (two plural markers). §4.2. -/
+  | multipleExponence
+  /-- Multiple related meanings/functions → one exponent
+      (non-co-occurring contexts share a form).
+      Example: English *-ed* for past tense and past participle. §4.3. -/
+  | syncretism
+  /-- Multiple co-occurring meanings/functions → one exponent
+      (bundled into a single form).
+      Example: French *du* = *de* + *le*. §4.4. -/
+  | portmanteau
+  /-- A meaning/function has no corresponding form — the paradigm
+      cell is empty.
+      Example: English *stride* lacks a standard past participle. §4.5.1. -/
+  | morphologicalGap
+  /-- A form has no corresponding meaning/function.
+      Example: Romance theme vowels, compound linkers. §4.5.2. -/
+  | emptyMorph
+  deriving DecidableEq, Repr
+
+end Morphology.FormMeaningMapping
+
+open Morphology.FormMeaningMapping
 
 /-! ### 3a. The seven descriptive types
 

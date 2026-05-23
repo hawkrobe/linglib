@@ -1,5 +1,4 @@
 import Linglib.Core.Morphology.MorphRule
-import Linglib.Core.Morphology.Circumfix
 
 /-!
 # Morphological Word Structure
@@ -33,6 +32,66 @@ positions are implicit between adjacent morphemes in the flattened list.
 | `converted`    | zero affixation / conversion  | noun *telephone* → verb       |
 
 -/
+
+-- ============================================================================
+-- Circumfixal Exponence
+--   (inlined from former Core/Morphology/Circumfix.lean, sole external
+--    consumer is Fragments/Tigrinya/ClausePrefixes.lean)
+-- ============================================================================
+
+/-! Circumfixal exponence wraps a stem with morphological material on both
+sides (prefix + suffix). Theory-neutral surface description; how a circumfix
+*arises* (head movement in DM, readjustment elsewhere) is theory-specific.
+
+Examples: German *ge-mach-t*, Tigrinya *ʔay-...-n*, Malay *ke-baik-an*. -/
+
+namespace Morphology.Circumfix
+
+open Core.Morphology (AttachmentSide)
+
+/-- Circumfixal exponence: a stem wrapped by a prefix and suffix. -/
+structure CircumfixExponence where
+  prefix_ : String
+  suffix_ : String
+  stem : String
+  gloss : String := ""
+  deriving Repr, DecidableEq
+
+/-- Apply circumfixal exponence to produce the surface form. -/
+def CircumfixExponence.realize (c : CircumfixExponence) : String :=
+  c.prefix_ ++ c.stem ++ c.suffix_
+
+/-- A circumfix is discontinuous: its exponents are separated by the stem. -/
+def CircumfixExponence.isDiscontinuous (_c : CircumfixExponence) : Bool := true
+
+/-- The attachment side of a circumfix is `AttachmentSide.circumfix`. -/
+def CircumfixExponence.attachmentSide (_c : CircumfixExponence) : AttachmentSide :=
+  .circumfix
+
+theorem circumfix_attachment (c : CircumfixExponence) :
+    c.attachmentSide = .circumfix := rfl
+
+theorem circumfix_discontinuous (c : CircumfixExponence) :
+    c.isDiscontinuous = true := rfl
+
+theorem circumfix_realize_concat (c : CircumfixExponence) :
+    c.realize = c.prefix_ ++ c.stem ++ c.suffix_ := rfl
+
+/-- German past participle ge-...-t. -/
+def germanPastParticiple (stem : String) : CircumfixExponence where
+  prefix_ := "ge-"
+  suffix_ := "-t"
+  stem := stem
+  gloss := "PTCP"
+
+theorem german_pp_example :
+    (germanPastParticiple "mach").realize = "ge-mach-t" := rfl
+
+end Morphology.Circumfix
+
+-- ============================================================================
+-- Morphological Word Structure
+-- ============================================================================
 
 namespace Morphology.WordStructure
 
