@@ -5,61 +5,48 @@ import Mathlib.Data.Fintype.Basic
 # Cumulative Predication
 @cite{krifka-1989} @cite{sternefeld-1998} @cite{beck-sauerland-2000}
 
-Formalises the cumulative operator `**`. The operator's lineage:
+Formalises the cumulative operator `**` in the bidirectional-coverage
+form. The operator originates with @cite{krifka-1989} §3 (the SUM
+property `D.29` for binary relations); @cite{sternefeld-1998} §3.1
+generalises to an n-ary closure operation (`***`); the
+bidirectional-coverage reformulation `(∀a∈x. ∃b∈y. R(a,b)) ∧
+(∀b∈y. ∃a∈x. R(a,b))` used here is from @cite{beck-sauerland-2000}.
+The two formulations are equivalent on Quine-innovation domains;
+`Studies/Sternefeld1998.lean::sternefeldStarStar_implies_cumulative`
+proves the forward direction.
 
-- **@cite{krifka-1989}**: original closure-form definition (smallest
-  relation closed under `⟨a,b⟩+⟨c,d⟩ → ⟨a∪c, b∪d⟩`).
-- **@cite{sternefeld-1998}**: extension to the n-ary case (paper §3.1
-  defines `***` for three-place relations) — formalised in
-  `Studies/Sternefeld1998.lean` (just the binary
-  closure form so far).
-- **@cite{beck-sauerland-2000}**: the bidirectional-coverage
-  reformulation `(∀a∈x. ∃b∈y. R(a,b)) ∧ (∀b∈y. ∃a∈x. R(a,b))`
-  that this file uses.
+## Main declarations
 
-The two formulations are equivalent on Quine-innovation domains; the
-forward direction `closure → coverage` is proven in
-`Studies/Sternefeld1998.lean::sternefeldStarStar_implies_cumulative`.
+* `Cumulative R x y` — bidirectional-coverage cumulative predication.
+* `LeftCoverage`, `RightCoverage` — the two conjuncts; their conjunction
+  IS `Cumulative` (`cumulative_iff_coverages`).
+* `cumulative_left_universal`, `cumulative_right_universal` —
+  per-argument distributive consequences.
+* `singleton_right_cumulative` — `**` on a singleton right argument
+  collapses to universal distribution.
 
-## Distinction from CUM Reference
+## Implementation notes
 
-Link's CUM (`Mereology.CUM`) is a *property* of denotations: a predicate
-P has cumulative reference iff P(x) ∧ P(y) → P(x ⊔ y). That is a
-closure condition on extensions.
+Link's `CUM` (`Mereology.CUM`) is a *property* of denotations:
+`P(x) ∧ P(y) → P(x ⊔ y)`. The `**` operator here takes a two-place
+predicate and returns a new predicate with cumulative truth conditions;
+the output of `**` applied to a non-cumulative predicate is itself
+cumulative.
 
-The `**` operator here takes a two-place predicate and returns a new
-predicate with cumulative truth conditions. The output of `**` applied
-to a non-cumulative predicate is itself cumulative.
+## Todo
 
-## Consumers
-
-- @cite{guerrini-2026} §4 uses `**` for cumulative kind predication:
-  "Elephants live in Africa and Asia" is true iff every elephant lives
-  in at least one of Africa/Asia, and each of Africa/Asia has at least
-  one elephant living in it.
-- @cite{haug-dalrymple-2020} consumes `**` indirectly via the bridge
-  theorem `groupIdentityCond_iff_cumulative_eq` in
-  `Theories/Semantics/Dynamic/PPCDRT/Cumulativity.lean`: H&D's group
-  identity condition is `**` applied to *equality* on the sum-dref
-  value-sets — formalising @cite{langendoen-1978}'s reciprocity-as-
-  cumulativity claim within PPCDRT.
-- @cite{beck-2001} §4.3 derives Weak Reciprocity from
-  `**(λxλy.[R(x,y) ∧ @(x ≠ y)])(A,A)` (paper eq 120) — `**` applied
-  to the verb relation strengthened by *presupposed* distinctness.
-  See `Studies/Beck2001.lean`.
-- @cite{sternefeld-1998} §3 derives Weak Reciprocity from
-  `⟨A, A⟩ ∈ **λxy[R(x,y) ∧ x ≠ y]` (paper eq 26b) — same shape as
-  Beck eq 120 but with *asserted* distinctness. In bivalent encoding
-  the two predicates coincide. See
-  `Studies/Sternefeld1998.lean` (which also
-  defines @cite{krifka-1989}'s closure form `**` and proves the
-  forward direction of its equivalence to the bidirectional-coverage
-  form here).
+* n-ary `***` (Sternefeld 1998 §3.1) currently lives in
+  `Studies/Sternefeld1998.lean`; promote when ≥ 2 consumers.
+* Schein (1993) *Plurals and Events* (bib entry pending) — the
+  event-quantification alternative to the `**`-relational treatment
+  of cumulativity — is not yet formalised.
 -/
 
 namespace Semantics.Plurality.Cumulativity
 
 variable {A B : Type*}
+
+/-! ### Bidirectional-coverage `**` -/
 
 /--
 The cumulative operator `**` in @cite{beck-sauerland-2000}'s
@@ -79,7 +66,7 @@ def Cumulative (R : A → B → Prop) (x : Finset A) (y : Finset B) : Prop :=
 
 instance Cumulative.instDecidable
     [DecidableEq A] [DecidableEq B] (R : A → B → Prop)
-    [∀ a b, Decidable (R a b)] (x : Finset A) (y : Finset B) :
+    [DecidableRel R] (x : Finset A) (y : Finset B) :
     Decidable (Cumulative R x y) := by
   unfold Cumulative; infer_instance
 
@@ -145,46 +132,5 @@ theorem singleton_right_cumulative (R : A → B → Prop) (x : Finset A) (y : B)
   rw [Finset.mem_singleton.mp hb]
   obtain ⟨a, ha⟩ := hne
   exact ⟨a, ha, h a ha⟩
-
--- Example: "Elephants live in Africa and Asia"
-
-section ElephantExample
-
-inductive Elephant where | dumbo | babar | tantor
-  deriving DecidableEq, Repr
-
-inductive Continent where | africa | asia
-  deriving DecidableEq, Repr
-
-instance : Fintype Elephant where
-  elems := {.dumbo, .babar, .tantor}
-  complete x := by cases x <;> simp
-
-instance : Fintype Continent where
-  elems := {.africa, .asia}
-  complete x := by cases x <;> simp
-
-def livesIn : Elephant → Continent → Prop
-  | .dumbo,  .africa => True
-  | .babar,  .africa => True
-  | .tantor, .asia   => True
-  | _,       _       => False
-
-instance : DecidableRel livesIn := fun a b => by
-  cases a <;> cases b <;> simp [livesIn] <;> infer_instance
-
-def allElephants : Finset Elephant := Finset.univ
-def africaAndAsia : Finset Continent := Finset.univ
-
-/-- "Elephants live in Africa and Asia" is true cumulatively:
-    every elephant lives in at least one continent, and each continent
-    has at least one elephant. -/
-example : Cumulative livesIn allElephants africaAndAsia := by decide
-
-/-- But Tantor doesn't live in Africa — the predicate doesn't hold
-    for every (elephant, continent) pair. -/
-example : ¬ livesIn .tantor .africa := by decide
-
-end ElephantExample
 
 end Semantics.Plurality.Cumulativity

@@ -9,56 +9,48 @@ import Linglib.Core.Mereology
 
 A *cover* of a plural entity `x` is a set of parts of `x` whose least
 upper bound is `x` itself. @cite{schwarzschild-1996} introduces covers
-to model nonatomic distributivity: when "the shoes cost fifty dollars"
-distributes over PAIRS of shoes (not individual shoes), the
-distributivity operator is anaphoric on a contextually-salient cover
-of *the shoes* by pairs.
+(building on Gillon 1987 — bib entry pending) to model nonatomic
+distributivity:
+when "the shoes cost fifty dollars" distributes over pairs of shoes
+(not individual shoes), the distributivity operator is anaphoric on a
+contextually-salient cover of *the shoes* by pairs.
+@cite{champollion-2017} adopts this strategy and extends it to the
+temporal domain via stratified reference.
 
-@cite{champollion-2017} Ch 8 §8.1: "[Schwarzschild] models this by
-making the distributivity operator anaphoric on such a cover, and
-renaming it the Part operator." Champollion adopts this strategy and
-extends it to the temporal domain in Ch 8 §8.3.
+## Main declarations
 
-## Mathlib grounding
+* `IsCover` — a set of parts whose least upper bound is the whole.
+  Mathematically `IsLUB`; renamed for linguistics-literature grounding.
+* `IsPartition` — a cover whose parts are pairwise disjoint.
+* `IsFinCover` — finite-cover specialisation via `Finset.sup'`.
+* `algClosure_of_finCover` — bridge from explicit Schwarzschild
+  decomposition to Champollion-style `AlgClosure`.
 
-A cover is mathematically just `IsLUB parts whole`: every member of
-`parts` is below `whole` (upper bound) and `whole` is the least such.
-The "cover" terminology is preserved here for direct grounding in the
-linguistics literature. Partitions add pairwise disjointness via
-`Set.PairwiseDisjoint`.
-
-For finite covers (the typical linguistic case where the salient set
-of parts is enumerable), use `IsFinCover` which avoids the LUB
-abstraction in favor of `Finset.sup'`.
-
-## Relation to `Mereology.AlgClosure`
+## Implementation notes
 
 A cover is an EXPLICIT decomposition; `AlgClosure` is the IMPLICIT
-closure. Champollion's stratified reference (`StratifiedReference.lean`)
+closure. Stratified reference (`Theories/Semantics/Aspect/Stratified.lean`)
 uses `AlgClosure` because the strata are existentially closed; covers
 are the right primitive when the parts must be supplied (anaphoric
-distributivity, contextually-salient partitions).
+distributivity, contextually-salient partitions). The reverse direction
+(`AlgClosure` → cover) is non-trivial: `AlgClosure` witnesses are not
+unique covers since the inductive `sum` constructor can be applied in
+many orders.
 
-## Consumer status
+## Todo
 
-This file currently has no Lean `import` consumers — only a docstring
-mention in `Studies/Sternefeld1998.lean`. The
-substrate is structurally sound (the
-@cite{schwarzschild-1996}-`AlgClosure` bridge `algClosure_of_finCover`
-is the natural API any anaphoric-distributivity Studies file would
-consume). Queued: a Studies file landing the Schwarzschild-style
-anaphoric distributivity examples would activate this substrate
-(@cite{champollion-2017} Ch 8 §8.1 on the *Part* operator is the
-natural anchor).
+* Bridge to @cite{brisson-1998}'s ill-fitting covers (non-maximality
+  via cover-cells with exceptions).
+* Bridge to `CandidateInterpretation.fullCandidateSet` — a candidate
+  is morally a cell of *some* cover, but the substrate-level
+  connection is not yet stated.
 -/
 
 namespace Semantics.Plurality.Cover
 
 open _root_.Mereology
 
--- ════════════════════════════════════════════════════
--- § 1. Cover (Schwarzschild 1996)
--- ════════════════════════════════════════════════════
+/-! ### Cover -/
 
 /-- @cite{schwarzschild-1996} *cover*: a set of parts whose least upper
     bound is the whole. Parts may overlap.
@@ -90,9 +82,7 @@ theorem isCover_pair {α : Type*} [SemilatticeSup α] (x y : α) :
     · exact hb (Set.mem_insert _ _)
     · exact hb (Set.mem_insert_of_mem _ rfl)
 
--- ════════════════════════════════════════════════════
--- § 2. Partition (cover + pairwise disjoint)
--- ════════════════════════════════════════════════════
+/-! ### Partition -/
 
 /-- @cite{schwarzschild-1996} *partition*: a cover whose parts are
     pairwise disjoint. Used by atomic distributivity (the special
@@ -105,9 +95,7 @@ def IsPartition {α : Type*} [Lattice α] [OrderBot α]
     (parts : Set α) (whole : α) : Prop :=
   IsCover parts whole ∧ parts.PairwiseDisjoint id
 
--- ════════════════════════════════════════════════════
--- § 3. Finite covers (computational, linguistic-typical case)
--- ════════════════════════════════════════════════════
+/-! ### Finite covers -/
 
 /-- Finite cover: the typical linguistic case where the contextually
     salient set of parts is enumerable. Uses `Finset.sup'` to avoid the
@@ -119,20 +107,11 @@ def IsFinCover {α : Type*} [SemilatticeSup α]
     (parts : Finset α) (h : parts.Nonempty) (whole : α) : Prop :=
   parts.sup' h id = whole
 
--- ════════════════════════════════════════════════════
--- § 4. Bridge to Mereology.AlgClosure
--- ════════════════════════════════════════════════════
+/-! ### Bridge to `Mereology.AlgClosure`
 
-/-! ### Cover-witness implies AlgClosure-membership
-
-If `parts` is a finite cover of `whole` and every part satisfies a
-predicate `P`, then `whole` is in the algebraic closure of `P`. This
-is the bridge from explicit Schwarzschild-style decomposition (covers)
-to Champollion-style implicit closure (`*P`).
-
-The reverse direction (AlgClosure → cover) is non-trivial — `AlgClosure`
-witnesses are not unique covers, since the inductive `sum` constructor
-can be applied in many orders. -/
+If `parts` is a finite cover of `whole` and every part satisfies `P`,
+then `whole` is in the algebraic closure of `P`. The reverse direction
+is non-trivial (see Implementation notes above). -/
 
 /-- A finite cover whose parts all satisfy `P` witnesses `AlgClosure P whole`. -/
 theorem algClosure_of_finCover {α : Type*} [SemilatticeSup α]
