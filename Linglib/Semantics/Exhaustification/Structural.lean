@@ -42,6 +42,12 @@ this specific value." That bridging layer is what this file provides.
   "tolerant excludes ≥ as much" lemma motivating the IE/tolerant
   divergence on EFCI alternative sets.
 
+* `innocent_exh_erase_entailed` — removing an alternative entailed
+  by the prejacent (`φ ⊆ a`) doesn't change `innocent.exh`. Drives
+  paper-side reductions: filter the trivial alts before invoking the
+  singleton / partial-cover theorems. Applied iteratively to drop
+  multiple entailed alts.
+
 ## Implementation notes
 
 The theorems here are stated against `innocent.exh` / `tolerant.exh`
@@ -208,6 +214,148 @@ theorem innocent_exh_singleton_proper {α φ : Finset W} (h : α ⊂ φ) :
     rw [hsup]; exact (Finset.exists_of_ssubset h).imp fun _ ⟨h₁, h₂⟩ =>
       Finset.mem_sdiff.mpr ⟨h₁, h₂⟩
   rw [innocent_exh_pairwise_disjoint_partial hcompat, hsup]
+
+/-- **Drop entailed alternative**: removing an alternative `a` that is
+entailed by the prejacent (`φ ⊆ a`) doesn't change `innocent.exh`.
+
+The entailed alt is never innocently excludable: its negation `aᶜ` is
+inconsistent with `φ` (the witness must satisfy both, but `φ ⊆ a`
+forces `u ∈ a`, hence `u ∉ aᶜ`). Furthermore, `aᶜ` is in no MC-set
+(same consistency argument), so the MC-set structure of `ALT` and
+`ALT.erase a` coincides — and therefore so do the `innocentlyExcludable`
+sets.
+
+Lets paper analyses reduce to the substrate's singleton / partial-cover
+theorems after filtering out trivial alts. Applied iteratively to drop
+multiple entailed alts. -/
+theorem innocent_exh_erase_entailed
+    {ALT : Finset (Finset W)} {a φ : Finset W}
+    (h_entails : φ ⊆ a) (hphi_nonempty : φ.Nonempty) :
+    innocent.exh ALT φ = innocent.exh (ALT.erase a) φ := by
+  -- Reduce to showing innocentlyExcludable sets coincide.
+  suffices h_ie_eq :
+      Innocent.innocentlyExcludable ALT φ
+        = Innocent.innocentlyExcludable (ALT.erase a) φ by
+    show φ \ ((Innocent.innocentlyExcludable ALT φ).biUnion id)
+      = φ \ ((Innocent.innocentlyExcludable (ALT.erase a) φ).biUnion id)
+    rw [h_ie_eq]
+  -- Pre-cook hypotheses used to invoke `not_isInnocentlyExcludable_of_phi_subset`.
+  have hsat : ∃ x : W, (↑φ : Set W) x := hphi_nonempty.imp (fun _ h => h)
+  have h_subset_set : (↑φ : Set W) ⊆ (↑a : Set W) := fun x hx => h_entails hx
+  -- IsCompatible E coincides between (ALT, φ) and (ALT.erase a, φ).
+  -- Forward direction uses the witness: the consistency witness satisfies
+  -- φ ⊆ a, so cannot satisfy aᶜ, hence aᶜ ∉ E and every bᶜ ∈ E has b ≠ a.
+  have h_compat_iff : ∀ E' : Finset (Finset W),
+      Innocent.IsCompatible ALT φ E' ↔ Innocent.IsCompatible (ALT.erase a) φ E' := by
+    intro E'
+    constructor
+    · intro ⟨hphi_mem, hform, hcons⟩
+      refine ⟨hphi_mem, ?_, hcons⟩
+      intro ψ hψ
+      rcases hform ψ hψ with hphi_case | ⟨c, hc_mem, hc_eq⟩
+      · exact Or.inl hphi_case
+      · rcases Innocent.mem_asSetOfSets.mp hc_mem with ⟨c', hc'_ALT, hc'_eq⟩
+        obtain ⟨u, hu⟩ := hcons
+        have hu_phi : (↑φ : Set W) u := hu φ hphi_mem
+        have hu_psi : ψ u := hu ψ hψ
+        -- hu_psi : ψ u, with ψ = cᶜ, so u ∉ c. Combined with c = ↑c', u ∉ ↑c'.
+        have hu_not_c : u ∉ c := by
+          intro h; apply (show u ∈ ψ → False from by rw [hc_eq]; exact fun h' => h' h)
+          exact hu_psi
+        have hu_not_c' : u ∉ (↑c' : Set W) := by rw [hc'_eq]; exact hu_not_c
+        have hc'_ne_a : c' ≠ a := by
+          intro heq; subst heq
+          exact hu_not_c' (h_subset_set hu_phi)
+        exact Or.inr ⟨c, Innocent.mem_asSetOfSets.mpr
+          ⟨c', Finset.mem_erase.mpr ⟨hc'_ne_a, hc'_ALT⟩, hc'_eq⟩, hc_eq⟩
+    · intro ⟨hphi_mem, hform, hcons⟩
+      refine ⟨hphi_mem, ?_, hcons⟩
+      intro ψ hψ
+      rcases hform ψ hψ with hphi_case | ⟨c, hc_mem, hc_eq⟩
+      · exact Or.inl hphi_case
+      · rcases Innocent.mem_asSetOfSets.mp hc_mem with ⟨c', hc'_erase, hc'_eq⟩
+        have hc'_ALT : c' ∈ ALT := (Finset.mem_erase.mp hc'_erase).2
+        exact Or.inr ⟨c, Innocent.mem_asSetOfSets.mpr ⟨c', hc'_ALT, hc'_eq⟩, hc_eq⟩
+  -- Hence IsMCSet coincides as well: maximality transports via h_compat_iff,
+  -- and the powerset bound is whichever excludables-set fits.
+  have h_mc_iff : ∀ E : Finset (Finset W),
+      Innocent.IsMCSet ALT φ E ↔ Innocent.IsMCSet (ALT.erase a) φ E := by
+    intro E
+    simp only [Innocent.isMCSet_iff_finset]
+    refine ⟨?_, ?_⟩
+    · rintro ⟨hE_compat, hmax⟩
+      refine ⟨(h_compat_iff E).mp hE_compat, ?_⟩
+      intro E' _ hE'_compat hE_sub
+      have hE'_compat_ALT : Innocent.IsCompatible ALT φ E' :=
+        (h_compat_iff E').mpr hE'_compat
+      have hE'_powerset_ALT : E' ∈ (Innocent.excludables ALT φ).powerset :=
+        Finset.mem_powerset.mpr
+          ((Innocent.isCompatible_iff_finset _ _ _).mp hE'_compat_ALT).1
+      exact hmax E' hE'_powerset_ALT hE'_compat_ALT hE_sub
+    · rintro ⟨hE_compat, hmax⟩
+      refine ⟨(h_compat_iff E).mpr hE_compat, ?_⟩
+      intro E' _ hE'_compat hE_sub
+      have hE'_compat_erase : Innocent.IsCompatible (ALT.erase a) φ E' :=
+        (h_compat_iff E').mp hE'_compat
+      have hE'_powerset_erase : E' ∈ (Innocent.excludables (ALT.erase a) φ).powerset :=
+        Finset.mem_powerset.mpr
+          ((Innocent.isCompatible_iff_finset _ _ _).mp hE'_compat_erase).1
+      exact hmax E' hE'_powerset_erase hE'_compat_erase hE_sub
+  -- Set equality by extensionality on the alternative b.
+  ext b
+  -- `a` is in neither innocentlyExcludable set: not in ALT.erase a (by erase),
+  -- and not in innocentlyExcludable ALT φ by `not_isInnocentlyExcludable_of_phi_subset`.
+  have h_a_not_ie_ALT : a ∉ Innocent.innocentlyExcludable ALT φ := by
+    intro h
+    have hSet : Exhaustification.IsInnocentlyExcludable
+        (Innocent.asSetOfSets ALT) (↑φ : Set W) (↑a : Set W) :=
+      (Innocent.isInnocentlyExcludable_iff ALT φ a).mpr h
+    have hfin : Set.Finite (Innocent.asSetOfSets ALT) := (Set.toFinite _).image _
+    exact Exhaustification.not_isInnocentlyExcludable_of_phi_subset
+      hfin hsat h_subset_set hSet
+  by_cases hba : b = a
+  · -- b = a: both sides are False.
+    subst hba
+    refine ⟨fun h => (h_a_not_ie_ALT h).elim, fun h => ?_⟩
+    have hmem : b ∈ ALT.erase b :=
+      Innocent.innocentlyExcludable_subset _ _ h
+    exact (Finset.notMem_erase _ _ hmem).elim
+  · -- b ≠ a: `b ∈ ALT ↔ b ∈ ALT.erase a`, and the IE filter conditions
+    -- coincide via h_mc_iff (and the underlying h_compat_iff for the
+    -- powerset/excludables bound).
+    simp only [Innocent.innocentlyExcludable, Finset.mem_filter, Innocent.IE]
+    have h_b_alt : b ∈ ALT ↔ b ∈ ALT.erase a :=
+      ⟨fun h => Finset.mem_erase.mpr ⟨hba, h⟩,
+       fun h => (Finset.mem_erase.mp h).2⟩
+    -- The two filter components (powerset bound + MC-set membership) transfer.
+    constructor
+    · rintro ⟨hb_ALT, hbex_ALT, hb_in_every_MC⟩
+      have hb_erase : b ∈ ALT.erase a := h_b_alt.mp hb_ALT
+      refine ⟨hb_erase, ?_, ?_⟩
+      · simp only [Innocent.excludables] at hbex_ALT ⊢
+        rcases Finset.mem_insert.mp hbex_ALT with heq | himg
+        · exact Finset.mem_insert.mpr (Or.inl heq)
+        · refine Finset.mem_insert_of_mem (Finset.mem_image.mpr ⟨b, hb_erase, rfl⟩)
+      · intro E _ hE_mc_erase
+        have hE_mc_ALT : Innocent.IsMCSet ALT φ E := (h_mc_iff E).mpr hE_mc_erase
+        have hE_pow_ALT : E ∈ (Innocent.excludables ALT φ).powerset :=
+          Finset.mem_powerset.mpr
+            ((Innocent.isCompatible_iff_finset _ _ _).mp hE_mc_ALT.1).1
+        exact hb_in_every_MC E hE_pow_ALT hE_mc_ALT
+    · rintro ⟨hb_erase, hbex_erase, hb_in_every_MC⟩
+      have hb_ALT : b ∈ ALT := h_b_alt.mpr hb_erase
+      refine ⟨hb_ALT, ?_, ?_⟩
+      · simp only [Innocent.excludables] at hbex_erase ⊢
+        rcases Finset.mem_insert.mp hbex_erase with heq | himg
+        · exact Finset.mem_insert.mpr (Or.inl heq)
+        · exact Finset.mem_insert_of_mem (Finset.mem_image.mpr ⟨b, hb_ALT, rfl⟩)
+      · intro E _ hE_mc_ALT
+        have hE_mc_erase : Innocent.IsMCSet (ALT.erase a) φ E :=
+          (h_mc_iff E).mp hE_mc_ALT
+        have hE_pow_erase : E ∈ (Innocent.excludables (ALT.erase a) φ).powerset :=
+          Finset.mem_powerset.mpr
+            ((Innocent.isCompatible_iff_finset _ _ _).mp hE_mc_erase.1).1
+        exact hb_in_every_MC E hE_pow_erase hE_mc_erase
 
 end Exhaustification
 

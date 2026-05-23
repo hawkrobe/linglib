@@ -3,6 +3,7 @@ import Linglib.Features.Polarity
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Semantics.Plurality.Implicature
 
 /-!
@@ -736,7 +737,8 @@ are *included in the list*. THE and SOME get different alternative lists:
 section FoxBridge
 
 open Exhaustification (innocent predToFinset altsFromPreds
-  innocent_exh_eq_phi_of_innocentlyExcludable_empty)
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty
+  innocent_exh_erase_entailed innocent_exh_singleton_proper)
 
 /-- Three worlds for a two-member plurality: none, one, or all satisfy. -/
 inductive Sat where | none | one | all
@@ -764,10 +766,20 @@ theorem fox_inner_exh_the :
       = predToFinset bSome :=
   innocent_exh_eq_phi_of_innocentlyExcludable_empty (by decide)
 
-/-- Inner EXH(SOME) = SOME ∧ ¬ALL: the standard "only some" SI. -/
+/-- Inner EXH(SOME) = SOME ∧ ¬ALL: the standard "only some" SI.
+
+    Derived through the substrate: drop the equivalent `bSome` alt
+    (entailed by φ = bSome) via `innocent_exh_erase_entailed`, then
+    apply `innocent_exh_singleton_proper` for the remaining `bAll ⊊ bSome`. -/
 theorem fox_inner_exh_some :
     innocent.exh (altsFromPreds someAlts) (predToFinset bSome)
-      = predToFinset (fun w => bSome w && !bAll w) := by decide
+      = predToFinset (fun w => bSome w && !bAll w) := by
+  rw [innocent_exh_erase_entailed (a := predToFinset bSome)
+        (fun _ h => h) (by decide),
+      show (altsFromPreds someAlts).erase (predToFinset bSome)
+        = ({predToFinset bAll} : Finset (Finset Sat)) from by decide,
+      innocent_exh_singleton_proper (α := predToFinset bAll) (by decide)]
+  decide
 
 /-- Inner results as named functions for the outer level. -/
 private def innerThe : Sat → Bool :=
@@ -786,10 +798,20 @@ private def outerAltsForThe : List (Sat → Bool) := [innerThe, innerSome]
 
     EXH(EXH(THE)) = EXH(THE) ∧ ¬EXH(SOME)
                    = SOME ∧ ¬(SOME ∧ ¬ALL)
-                   = ALL -/
+                   = ALL
+
+    Derived through the substrate: drop the equivalent `innerThe` alt
+    (`innerThe ≡ bSome ≡ φ`) via `innocent_exh_erase_entailed`, then
+    apply `innocent_exh_singleton_proper` for `innerSome ⊊ innerThe`. -/
 theorem fox_double_exh_yields_all :
     innocent.exh (altsFromPreds outerAltsForThe) (predToFinset innerThe)
-      = predToFinset bAll := by decide
+      = predToFinset bAll := by
+  rw [innocent_exh_erase_entailed (a := predToFinset innerThe)
+        (fun _ h => h) (by decide),
+      show (altsFromPreds outerAltsForThe).erase (predToFinset innerThe)
+        = ({predToFinset innerSome} : Finset (Finset Sat)) from by decide,
+      innocent_exh_singleton_proper (α := predToFinset innerSome) (by decide)]
+  decide
 
 end FoxBridge
 
@@ -896,7 +918,9 @@ behaves as disjunction: |||not·AND_unF||| = not·OR.
 section EnrichedConjunction
 
 open Exhaustification (innocent predToFinset altsFromPreds
-  innocent_exh_eq_phi_of_innocentlyExcludable_empty)
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty
+  innocent_exh_erase_entailed innocent_exh_singleton_proper
+  innocent_exh_pairwise_disjoint_partial)
 
 /-- Four worlds for two atomic propositions (saw Adam, saw Bill). -/
 inductive ConjW where
@@ -941,15 +965,37 @@ theorem exh_andF :
       = predToFinset cAnd :=
   innocent_exh_eq_phi_of_innocentlyExcludable_empty (by decide)
 
-/-- EXH(LEFT) = LEFT ∧ ¬RIGHT (RIGHT is the only IE alternative). -/
+/-- EXH(LEFT) = LEFT ∧ ¬RIGHT (RIGHT is the only IE alternative).
+
+    Derived through the substrate: cLeft ⊆ cOr (LEFT entails OR), so
+    drop the cOr alt via `innocent_exh_erase_entailed`. Remaining alts
+    {cAnd, cRight} are partial-cover (φ \ ALT.sup = {.onlyA} nonempty),
+    so `innocent_exh_pairwise_disjoint_partial` returns `φ \ (cAnd ∪ cRight)`. -/
 theorem exh_left :
     innocent.exh (altsFromPreds leftAlts) (predToFinset cLeft)
-      = predToFinset (fun w => cLeft w && !cRight w) := by decide
+      = predToFinset (fun w => cLeft w && !cRight w) := by
+  rw [innocent_exh_erase_entailed (a := predToFinset cOr)
+        (by decide) (by decide),
+      show (altsFromPreds leftAlts).erase (predToFinset cOr)
+        = ({predToFinset cAnd, predToFinset cRight} : Finset (Finset ConjW))
+          from by decide,
+      innocent_exh_pairwise_disjoint_partial (by decide)]
+  decide
 
-/-- EXH(RIGHT) = RIGHT ∧ ¬LEFT (symmetric). -/
+/-- EXH(RIGHT) = RIGHT ∧ ¬LEFT (symmetric).
+
+    Same derivation as `exh_left`: drop cOr (entailed by cRight),
+    then apply partial-cover to {cAnd, cLeft}. -/
 theorem exh_right :
     innocent.exh (altsFromPreds rightAlts) (predToFinset cRight)
-      = predToFinset (fun w => cRight w && !cLeft w) := by decide
+      = predToFinset (fun w => cRight w && !cLeft w) := by
+  rw [innocent_exh_erase_entailed (a := predToFinset cOr)
+        (by decide) (by decide),
+      show (altsFromPreds rightAlts).erase (predToFinset cOr)
+        = ({predToFinset cAnd, predToFinset cLeft} : Finset (Finset ConjW))
+          from by decide,
+      innocent_exh_pairwise_disjoint_partial (by decide)]
+  decide
 
 -- DE computation: negated meanings with per-prejacent alternative lists
 
@@ -978,20 +1024,50 @@ theorem de_exh_notAndUnF :
 
 /-- (71a) EXH(not·AND_F) = not·AND ∧ ¬not·OR = not·AND ∧ OR.
     not·OR is IE (the only alternative not entailed by not·AND_F
-    that can be consistently excluded). -/
+    that can be consistently excluded).
+
+    Derived through the substrate: drop the equivalent `nAnd` alt
+    (`a = φ` is the trivial entailed case) via `innocent_exh_erase_entailed`.
+    The remaining 3 alts {nOr, nLeft, nRight} aren't partial-cover
+    (`φ \ ALT.sup = ∅`); only `nOr` is IE, which a decide closes from there. -/
 theorem de_exh_notAndF :
     innocent.exh (altsFromPreds nAndFAlts) (predToFinset nAnd)
-      = predToFinset (fun w => nAnd w && cOr w) := by decide
+      = predToFinset (fun w => nAnd w && cOr w) := by
+  rw [innocent_exh_erase_entailed (a := predToFinset nAnd)
+        (fun _ h => h) (by decide)]
+  decide
 
-/-- (71c) EXH(not·LEFT) = not·LEFT ∧ OR ∧ RIGHT. -/
+/-- (71c) EXH(not·LEFT) = not·LEFT ∧ OR ∧ RIGHT.
+
+    Derived through the substrate: drop the entailed `nAnd` alt
+    (`nLeft ⊆ nAnd`) via `innocent_exh_erase_entailed`. Remaining
+    {nOr, nRight} are partial-cover (φ \ ALT.sup = {.onlyB} nonempty),
+    so `innocent_exh_pairwise_disjoint_partial` returns the residual. -/
 theorem de_exh_notLeft :
     innocent.exh (altsFromPreds nLeftAlts) (predToFinset nLeft)
-      = predToFinset (fun w => nLeft w && cOr w && cRight w) := by decide
+      = predToFinset (fun w => nLeft w && cOr w && cRight w) := by
+  rw [innocent_exh_erase_entailed (a := predToFinset nAnd)
+        (by decide) (by decide),
+      show (altsFromPreds nLeftAlts).erase (predToFinset nAnd)
+        = ({predToFinset nOr, predToFinset nRight} : Finset (Finset ConjW))
+          from by decide,
+      innocent_exh_pairwise_disjoint_partial (by decide)]
+  decide
 
-/-- (71d) EXH(not·RIGHT) = not·RIGHT ∧ OR ∧ LEFT. -/
+/-- (71d) EXH(not·RIGHT) = not·RIGHT ∧ OR ∧ LEFT.
+
+    Symmetric to `de_exh_notLeft`: drop `nAnd` (entailed by `nRight`),
+    then partial-cover for {nOr, nLeft}. -/
 theorem de_exh_notRight :
     innocent.exh (altsFromPreds nRightAlts) (predToFinset nRight)
-      = predToFinset (fun w => nRight w && cOr w && cLeft w) := by decide
+      = predToFinset (fun w => nRight w && cOr w && cLeft w) := by
+  rw [innocent_exh_erase_entailed (a := predToFinset nAnd)
+        (by decide) (by decide),
+      show (altsFromPreds nRightAlts).erase (predToFinset nAnd)
+        = ({predToFinset nOr, predToFinset nLeft} : Finset (Finset ConjW))
+          from by decide,
+      innocent_exh_pairwise_disjoint_partial (by decide)]
+  decide
 
 /-- Outer-level alternatives for not·AND_unF: the exhaustified forms
     of its Horn-mates {not·AND_F, not·LEFT, not·RIGHT}. -/
