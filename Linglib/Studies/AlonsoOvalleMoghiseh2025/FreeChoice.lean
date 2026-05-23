@@ -81,7 +81,8 @@ the split-exhaustification architecture.
 namespace AlonsoOvalleMoghiseh2025
 
 open Exhaustification (innocent tolerant predToFinset altsFromPreds
-  tolerant_exh_eq_empty_of_covered innocent_exh_eq_phi_of_innocentlyExcludable_empty
+  altsFromPreds_singleton tolerant_exh_eq_empty_of_covered
+  innocent_exh_eq_phi_of_innocentlyExcludable_empty
   innocent_exh_singleton_proper)
 open Data.Examples (LinguisticExample)
 export Fragments.Farsi.Determiners (EFCIRescue EFCIReading ModalFlavor)
@@ -198,9 +199,8 @@ theorem root_full_innocent_vacuous :
 theorem root_scalar_only_uniqueness :
     innocent.exh (altsFromPreds [scalarAlt]) assertionF
       = assertionF \ scalarAltF := by
-  show innocent.exh ({scalarAltF} : Finset (Finset PQWorld)) assertionF
-    = assertionF \ scalarAltF
-  exact innocent_exh_singleton_proper (by decide) (by decide)
+  simp only [altsFromPreds_singleton]
+  exact innocent_exh_singleton_proper (by decide)
 
 /-- Uniqueness is contingent (not contradictory). -/
 theorem root_scalar_only_contingent :

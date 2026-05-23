@@ -145,8 +145,7 @@ itself is innocently excludable, which follows from the Set-side
 `IsInnocentlyExcludable.of_full_exclusion_consistent` lemma — the
 witness is any element of `φ \ α`, which exists because `α ⊊ φ`).
 Then `({α}).biUnion id = α` (by `Finset.singleton_biUnion`). -/
-theorem innocent_exh_singleton_proper {α φ : Finset W}
-    (hsub : α ⊆ φ) (hne : α ≠ φ) :
+theorem innocent_exh_singleton_proper {α φ : Finset W} (h : α ⊂ φ) :
     innocent.exh ({α} : Finset (Finset W)) φ = φ \ α := by
   -- Step 1: innocentlyExcludable {α} φ = {α}.
   have h_ie_eq :
@@ -157,23 +156,18 @@ theorem innocent_exh_singleton_proper {α φ : Finset W}
     · -- ⊇ {α}: show α ∈ innocentlyExcludable {α} φ via the Set-side bridge.
       intro a ha
       rw [Finset.mem_singleton] at ha
-      rw [ha]
-      rw [← Innocent.isInnocentlyExcludable_iff]
+      rw [ha, ← Innocent.isInnocentlyExcludable_iff]
       -- Use of_full_exclusion_consistent on the Set side.
       apply Exhaustification.IsInnocentlyExcludable.of_full_exclusion_consistent
-      · -- ↑α ∈ asSetOfSets {α}: take α ∈ {α}.
-        exact Innocent.mem_asSetOfSets.mpr
+      · exact Innocent.mem_asSetOfSets.mpr
           ⟨α, Finset.mem_singleton_self α, rfl⟩
-      · -- ∃ w ∈ ↑φ ∧ every b ∈ asSetOfSets {α} is false at w.
-        -- Witness: any w ∈ φ \ α (exists since α ⊊ φ).
-        obtain ⟨w, hw_phi, hw_not_alpha⟩ :=
-          Finset.exists_of_ssubset (hsub.ssubset_of_ne hne)
+      · -- Witness: any w ∈ φ \ α (exists since α ⊊ φ).
+        obtain ⟨w, hw_phi, hw_not_alpha⟩ := Finset.exists_of_ssubset h
         refine ⟨w, hw_phi, ?_⟩
         intro b hb
         rcases Innocent.mem_asSetOfSets.mp hb with ⟨a, ha_mem, rfl⟩
         rw [Finset.mem_singleton] at ha_mem
         subst ha_mem
-        -- Now b = ↑α, need ¬ (↑α : Set W) w, i.e. w ∉ α.
         exact hw_not_alpha
   -- Step 2: unfold exh, rewrite with h_ie_eq, simplify singleton biUnion.
   show φ \ ((Innocent.innocentlyExcludable

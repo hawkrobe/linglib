@@ -41,6 +41,11 @@ def predToFinset (p : W → Bool) : Finset W :=
 def altsFromPreds (alts : List (W → Bool)) : Finset (Finset W) :=
   (alts.map predToFinset).toFinset
 
+/-- `altsFromPreds [p]` is the singleton `{predToFinset p}`. -/
+@[simp] theorem altsFromPreds_singleton (p : W → Bool) :
+    altsFromPreds [p] = ({predToFinset p} : Finset (Finset W)) := by
+  simp [altsFromPreds]
+
 /-- An exhaustification strategy: a choice, for each prejacent and
     alternative set, of which alternatives to negate.
 
