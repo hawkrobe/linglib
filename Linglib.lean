@@ -1470,8 +1470,7 @@ import Linglib.Studies.Kratzer2012Informational
 import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Studies.Alsop2024
 import Linglib.Studies.ChampollionAlsopGrosu2019
-import Linglib.Studies.AlonsoOvalleMoghiseh2025.FreeChoice
-import Linglib.Studies.AlonsoOvalleMoghiseh2025.Generic
+import Linglib.Studies.AlonsoOvalleMoghiseh2025
 import Linglib.Studies.Khoo2015
 import Linglib.Studies.Aikhenvald2004
 import Linglib.Studies.ImelGuoST2026

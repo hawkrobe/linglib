@@ -3,6 +3,7 @@ import Linglib.Semantics.Exhaustification.Tolerant
 import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Data.Examples.Schema
+import Linglib.Core.Logic.Quantification.Exclusive
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.Fintype.Fin
@@ -645,6 +646,277 @@ checked there:
 - `Fragments.Farsi.Determiners.irgendein_root : getReading irgendein_de rootContext = some .epistemicIgnorance`
 - `Fragments.Farsi.Determiners.vreun_root_ungrammatical : getReading vreun_ro rootContext = none`
 -/
+
+
+/-! ### Structural Prop-level proofs (`Generic`)
+
+These lift the paper claims to arbitrary `D : Type*` with `P : D → Prop`,
+plus arbitrary Kripke frames via `Acc : W → Prop` + `Q : D → W → Prop`.
+The computational sections above verify the algorithm computes the right
+answers on the paper's worked 2-book domain; this section proves *why*
+the results hold at full generality.
+-/
+
+namespace Generic
+
+open Core.Quantification (exclusive_pairwise_inconsistent neg_all_exclusive_alts
+  exclusive_false_of_universal uniqueness_precludes_universality)
+
+
+/-! #### Scalar exhaustification → uniqueness -/
+
+/-- **Scalar uniqueness**: "at least one and not at least two" is
+equivalent to "exactly one."
+
+This is the semantic content of O_σ: with a single scalar alternative
+(the next numeral on the Horn scale), innocent exclusion trivially
+returns that alternative (singleton MCE), and its negation gives
+uniqueness. General over any domain D — no finiteness needed. -/
+theorem scalar_exh_uniqueness {D : Type*} (P : D → Prop) :
+    ((∃ d, P d) ∧ ¬∃ d₁ d₂, d₁ ≠ d₂ ∧ P d₁ ∧ P d₂) ↔
+    ∃ d, P d ∧ ∀ e, P e → e = d := by
+  constructor
+  · rintro ⟨⟨d, hd⟩, hNotTwo⟩
+    exact ⟨d, hd, fun e he => by_contra fun hne =>
+      hNotTwo ⟨e, d, hne, he, hd⟩⟩
+  · rintro ⟨d, hd, huniq⟩
+    exact ⟨⟨d, hd⟩, fun ⟨d₁, d₂, hne, h1, h2⟩ =>
+      hne ((huniq d₁ h1).trans (huniq d₂ h2).symm)⟩
+
+
+/-! #### Domain exhaustification → free choice -/
+
+/-- **Two-element free choice**: for a two-element domain, existence plus
+negation of all exclusive alternatives forces every element to satisfy P.
+
+This completes the FC derivation for yek-i under deontic modals:
+O_EXH-D negates the two exclusive modal alternatives, and since |D| = 2,
+"at least 2 satisfy ◇P" becomes "both satisfy ◇P" — free choice. -/
+theorem fc_two_element (P : Fin 2 → Prop)
+    (hExist : ∃ d, P d)
+    (hNegExcl : ∀ d, ¬(P d ∧ ∀ e, e ≠ d → ¬P e)) :
+    ∀ d, P d := by
+  obtain ⟨d₁, d₂, hne, h1, h2⟩ := neg_all_exclusive_alts P hExist hNegExcl
+  intro d; fin_cases d <;> fin_cases d₁ <;> fin_cases d₂ <;> simp_all
+
+
+/-! #### Root contradiction -/
+
+/-- **Root contradiction**: asserting "at least one," negating "all"
+(scalar), and negating both exclusive domain alternatives yields ⊥
+for a two-element domain. -/
+theorem root_full_exh_contradiction (P : Fin 2 → Prop)
+    (hExist : ∃ d, P d)
+    (hNotAll : ¬∀ d, P d)
+    (hNegExcl : ∀ d, ¬(P d ∧ ∀ e, e ≠ d → ¬P e)) :
+    False :=
+  hNotAll (fc_two_element P hExist hNegExcl)
+
+/-- Uniqueness (from scalar-only exhaustification) is satisfiable:
+unlike full exhaustification, O_σ alone yields a consistent result.
+This witnesses that partial exhaustification is a genuine rescue. -/
+theorem uniqueness_satisfiable :
+    ∃ P : Fin 2 → Prop, ∃ d, P d ∧ ∀ e, P e → e = d :=
+  ⟨(· = 0), 0, rfl, fun _ h => h⟩
+
+
+/-! #### DE contexts -/
+
+/-- **Antecedent monotonicity**: strengthening a conditional's antecedent
+weakens the conditional. -/
+theorem antecedent_weakening {P Q R : Prop} (hQP : Q → P) :
+    (P → R) → (Q → R) :=
+  fun hPR hQ => hPR (hQP hQ)
+
+/-- **Strict weakening witness**: when Q ⊂ P strictly, there is a world
+where the weaker conditional P → R fails but the stronger conditional
+Q → R holds. -/
+theorem strict_antecedent_weakening {W : Type*} (P Q R : W → Prop)
+    (hWitness : ∃ w, P w ∧ ¬Q w ∧ ¬R w) :
+    ∃ w, ¬(P w → R w) ∧ (Q w → R w) := by
+  obtain ⟨w, hPw, hNQw, hNRw⟩ := hWitness
+  exact ⟨w, fun hPR => hNRw (hPR hPw), fun hQw => absurd hQw hNQw⟩
+
+/-- **Domain alternatives entailed in DE**: the full-domain conditional
+(∃x P(x)) → R entails each subdomain conditional P(d) → R. -/
+theorem de_domain_alt_entailed {D : Type*} (P : D → Prop) (R : Prop) (d : D) :
+    ((∃ x, P x) → R) → (P d → R) :=
+  fun h hPd => h ⟨d, hPd⟩
+
+
+/-! #### Why split exhaustification is necessary
+
+@cite{alonso-ovalle-moghiseh-2025} argue (§5, eqs. 143–146) that only
+split exhaustification derives the correct FC + embedded uniqueness for
+EFCIs under modals. The structural core:
+
+1. Domain-exh preserves scalar compatibility — when all elements satisfy
+   P, every exclusive alternative is false (`exclusive_false_of_universal`,
+   imported from `Core.Quantification`).
+2. Full exh contradicts for |D|=2 (`root_full_exh_contradiction`).
+3. Full exh is consistent for |D|≥3 (`full_exh_consistent_three`).
+-/
+
+/-- **Domain-exh result compatible with scalar**: there exists a model
+satisfying all three conditions simultaneously — assertion (∃d P d),
+domain-exh negations (∀d ¬exclusive(d)), AND scalar (∀d P d). -/
+theorem domain_exh_result_compatible_with_scalar {D : Type*} {a b : D}
+    (hab : a ≠ b) :
+    ∃ P : D → Prop,
+      (∃ d, P d) ∧
+      (∀ d, ¬(P d ∧ ∀ e, e ≠ d → ¬P e)) ∧
+      (∀ d, P d) := by
+  refine ⟨fun _ => True, ⟨a, trivial⟩, ?_, fun _ => trivial⟩
+  exact exclusive_false_of_universal hab _ (fun _ => trivial)
+
+/-- **Full exh consistent for 3-element domain**: unlike the 2-element
+case, for |D|=3 we can simultaneously have (∃d P d), ¬(∀d P d), and
+(∀d ¬exclusive(d)). The root contradiction is |D|=2-specific. -/
+theorem full_exh_consistent_three :
+    ∃ P : Fin 3 → Prop,
+      (∃ d, P d) ∧
+      ¬(∀ d, P d) ∧
+      (∀ d, ¬(P d ∧ ∀ e, e ≠ d → ¬P e)) := by
+  refine ⟨(· ≠ (2 : Fin 3)), ⟨0, by decide⟩, fun h => h 2 rfl, ?_⟩
+  intro d ⟨hPd, hexcl⟩
+  fin_cases d
+  · exact hexcl 1 (by decide) (by decide)
+  · exact hexcl 0 (by decide) (by decide)
+  · exact hPd rfl
+
+
+/-! #### Modal split exhaustification (Kripke-frame lift)
+
+All root-level results lift to arbitrary Kripke frames by instantiating
+`P : D → Prop` with `fun d => ∃ w, Acc w ∧ Q d w` where `Acc : W → Prop`
+is the accessibility predicate and `Q : D → W → Prop` is the base
+property. Modal operators: ◇φ ≡ `∃ w, Acc w ∧ φ w`; □φ ≡ `∀ w, Acc w → φ w`.
+-/
+
+/-- **◇ preserves existential**: if some accessible world satisfies
+∃x, Q x, then ∃d, ◇(Q d). -/
+theorem diamond_preserves_exist {W D : Type*}
+    (Acc : W → Prop) (Q : D → W → Prop)
+    (h : ∃ w, Acc w ∧ ∃ d, Q d w) :
+    ∃ d, ∃ w, Acc w ∧ Q d w := by
+  obtain ⟨w, hw, d, hd⟩ := h
+  exact ⟨d, w, hw, hd⟩
+
+/-- **◇ preserves existence from uniqueness**: ◇(∃!d, Q d) entails
+∃d, ◇(Q d). -/
+theorem diamond_uniqueness_implies_exist {W D : Type*}
+    (Acc : W → Prop) (Q : D → W → Prop)
+    (h : ∃ w, Acc w ∧ ∃ d, Q d w ∧ ∀ e, Q e w → e = d) :
+    ∃ d, ∃ w, Acc w ∧ Q d w := by
+  obtain ⟨w, hw, d, hd, _⟩ := h
+  exact ⟨d, w, hw, hd⟩
+
+/-- **Modal domain-exh gives plurality**: for any domain D, if
+◇(∃x, Q x) and domain-exh negates all exclusive modal alternatives, then
+at least two domain elements are possible. -/
+theorem modal_domain_exh_plurality {W D : Type*}
+    (Acc : W → Prop) (Q : D → W → Prop)
+    (hExist : ∃ d, ∃ w, Acc w ∧ Q d w)
+    (hNegExcl : ∀ d, ¬((∃ w, Acc w ∧ Q d w) ∧
+                        ∀ e, e ≠ d → ¬∃ w, Acc w ∧ Q e w)) :
+    ∃ d₁ d₂, d₁ ≠ d₂ ∧ (∃ w, Acc w ∧ Q d₁ w) ∧ (∃ w, Acc w ∧ Q d₂ w) :=
+  neg_all_exclusive_alts (fun d => ∃ w, Acc w ∧ Q d w) hExist hNegExcl
+
+/-- **Modal split exh gives FC (|D|=2)**: for a 2-element domain,
+domain-exh above ◇ gives full free choice: every element is permitted. -/
+theorem modal_split_exh_fc {W : Type*}
+    (Acc : W → Prop) (Q : Fin 2 → W → Prop)
+    (hExist : ∃ d, ∃ w, Acc w ∧ Q d w)
+    (hNegExcl : ∀ d, ¬((∃ w, Acc w ∧ Q d w) ∧
+                        ∀ e, e ≠ d → ¬∃ w, Acc w ∧ Q e w)) :
+    ∀ d, ∃ w, Acc w ∧ Q d w :=
+  fc_two_element (fun d => ∃ w, Acc w ∧ Q d w) hExist hNegExcl
+
+/-- **Full split exh composition**: O_σ below ◇ gives uniqueness;
+domain-exh above ◇ gives FC. Together: FC + embedded uniqueness. -/
+theorem modal_split_exh_full {W : Type*}
+    (Acc : W → Prop) (Q : Fin 2 → W → Prop)
+    (hUniq : ∃ w, Acc w ∧ ∃ d, Q d w ∧ ∀ e, Q e w → e = d)
+    (hNegExcl : ∀ d, ¬((∃ w, Acc w ∧ Q d w) ∧
+                        ∀ e, e ≠ d → ¬∃ w, Acc w ∧ Q e w)) :
+    (∀ d, ∃ w, Acc w ∧ Q d w) ∧
+    (∃ w, Acc w ∧ ∃ d, Q d w ∧ ∀ e, Q e w → e = d) :=
+  ⟨modal_split_exh_fc Acc Q
+    (diamond_uniqueness_implies_exist Acc Q hUniq) hNegExcl,
+   hUniq⟩
+
+/-- **◇(uniqueness) doesn't entail FC**: countermodel where only d=0
+satisfies Q in the unique accessible world. -/
+theorem modal_uniqueness_not_fc :
+    ∃ (W : Type) (Acc : W → Prop) (Q : Fin 2 → W → Prop),
+      (∃ w, Acc w ∧ ∃ d, Q d w ∧ ∀ e, Q e w → e = d) ∧
+      ¬(∀ d, ∃ w, Acc w ∧ Q d w) :=
+  ⟨Unit, fun _ => True, fun d _ => d = 0,
+   ⟨(), trivial, 0, rfl, fun _ h => h⟩,
+   fun h => by obtain ⟨_, _, h1⟩ := h 1; exact absurd h1 (by decide)⟩
+
+/-- **Full exh above ◇ contradicts FC (|D|=2)**: adding scalar
+negation ¬(∀d, ◇(Q d)) to domain-exh yields ⊥. -/
+theorem modal_full_exh_contradiction {W : Type*}
+    (Acc : W → Prop) (Q : Fin 2 → W → Prop)
+    (hExist : ∃ d, ∃ w, Acc w ∧ Q d w)
+    (hNotAll : ¬∀ d, ∃ w, Acc w ∧ Q d w)
+    (hNegExcl : ∀ d, ¬((∃ w, Acc w ∧ Q d w) ∧
+                        ∀ e, e ≠ d → ¬∃ w, Acc w ∧ Q e w)) :
+    False :=
+  root_full_exh_contradiction (fun d => ∃ w, Acc w ∧ Q d w)
+    hExist hNotAll hNegExcl
+
+/-- **∀d ◇(Q d) negates all exclusives**: if every element is possible,
+then no element is exclusively possible. -/
+theorem modal_exclusive_false_of_universal {W D : Type*} {a b : D}
+    (hab : a ≠ b) (Acc : W → Prop) (Q : D → W → Prop)
+    (hAll : ∀ d, ∃ w, Acc w ∧ Q d w) :
+    ∀ d, ¬((∃ w, Acc w ∧ Q d w) ∧ ∀ e, e ≠ d → ¬∃ w, Acc w ∧ Q e w) :=
+  exclusive_false_of_universal hab _ hAll
+
+/-- **Split exh compatible with ◇(∀d Q d)**: domain-exh premises, FC, and
+the modal scalar ◇(∀d Q d) hold simultaneously. -/
+theorem modal_split_compatible_with_joint :
+    ∃ (W : Type) (Acc : W → Prop) (Q : Fin 2 → W → Prop),
+      (∃ d, ∃ w, Acc w ∧ Q d w) ∧
+      (∀ d, ¬((∃ w, Acc w ∧ Q d w) ∧ ∀ e, e ≠ d → ¬∃ w, Acc w ∧ Q e w)) ∧
+      (∀ d, ∃ w, Acc w ∧ Q d w) ∧
+      (∃ w, Acc w ∧ ∀ d, Q d w) := by
+  refine ⟨Unit, fun _ => True, fun _ _ => True,
+    ⟨0, (), trivial, trivial⟩, ?_, fun _ => ⟨(), trivial, trivial⟩,
+    ⟨(), trivial, fun _ => trivial⟩⟩
+  intro d ⟨_, hall⟩
+  obtain ⟨e, hne⟩ := exists_ne d
+  exact hall e hne ⟨(), trivial, trivial⟩
+
+/-- **Full split exh with joint compatibility**: FC + embedded uniqueness
++ ◇(∀d Q d) all hold simultaneously. -/
+theorem modal_split_full_compatible_with_joint :
+    ∃ (W : Type) (Acc : W → Prop) (Q : Fin 2 → W → Prop),
+      (∃ w, Acc w ∧ ∃ d, Q d w ∧ ∀ e, Q e w → e = d) ∧
+      (∀ d, ¬((∃ w, Acc w ∧ Q d w) ∧ ∀ e, e ≠ d → ¬∃ w, Acc w ∧ Q e w)) ∧
+      (∀ d, ∃ w, Acc w ∧ Q d w) ∧
+      (∃ w, Acc w ∧ ∀ d, Q d w) := by
+  refine ⟨Fin 3, fun _ => True,
+    fun d w => (d = 0 ∧ w ≠ 1) ∨ (d = 1 ∧ w ≠ 0),
+    ?_, ?_, ?_, ?_⟩
+  · exact ⟨0, trivial, 0, Or.inl ⟨rfl, by decide⟩,
+      fun e he => by rcases he with ⟨rfl, _⟩ | ⟨rfl, h⟩ <;> [rfl; exact absurd rfl h]⟩
+  · intro d ⟨_, hall⟩
+    fin_cases d
+    · exact hall 1 (by decide) ⟨1, trivial, Or.inr ⟨rfl, by decide⟩⟩
+    · exact hall 0 (by decide) ⟨0, trivial, Or.inl ⟨rfl, by decide⟩⟩
+  · intro d; fin_cases d
+    · exact ⟨0, trivial, Or.inl ⟨rfl, by decide⟩⟩
+    · exact ⟨1, trivial, Or.inr ⟨rfl, by decide⟩⟩
+  · refine ⟨2, trivial, fun d => ?_⟩
+    fin_cases d
+    · exact Or.inl ⟨rfl, by decide⟩
+    · exact Or.inr ⟨rfl, by decide⟩
+
+end Generic
+
 
 -- BEGIN GENERATED EXAMPLES
 -- (Generated from Linglib/Data/Examples/AlonsoOvalleMoghiseh2025.json by scripts/gen_examples.py.
