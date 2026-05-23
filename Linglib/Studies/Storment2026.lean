@@ -84,7 +84,7 @@ theorem arrive_unaccusative : arrive.unaccusative = true := rfl
 Maps a `VerbCore` to its three-way transitivity classification used by
 the auxiliary-selection system (`Phenomena/AuxiliaryVerbs/Selection.lean`).
 Stays in this study file because `TransitivityClass` lives in `Phenomena/`
-and cannot be imported by `Theories/`. -/
+and cannot be imported by substrate (`Semantics/`, `Syntax/`, etc.). -/
 
 /-- Derive `TransitivityClass` from `VerbCore` fields. -/
 def deriveTransitivityClass (v : VerbCore) : TransitivityClass :=
@@ -107,8 +107,8 @@ theorem kick_transitive : deriveTransitivityClass kick.toVerbCore = .transitive 
 
 /-! ## §4. Voice bridge
 
-`VerbCore.voiceFor` (defined in `Theories/Interfaces/SyntaxSemantics/
-VerbSmuggling.lean`) maps unaccusative→non-thematic Voice and
+`VerbCore.voiceFor` (defined in `Semantics/Lexical/VerbSmuggling.lean`)
+maps unaccusative→non-thematic Voice and
 unergative→agentive Voice. Per @cite{storment-2026}'s §4.3, the Voice
 head is the smuggling projection (not the external-argument introducer
 of @cite{kratzer-1996}); permitting smuggling is equivalent to being
@@ -147,8 +147,8 @@ theorem speak_levinClass : speak.levinClass = some .mannerOfSpeaking := rfl
 
 /-! ## §8. Smuggling derivation of QI
 
-`VerbCore.derivedQI` (defined in `Theories/Interfaces/SyntaxSemantics/
-VerbSmuggling.lean`) derives QI licensing from two independently
+`VerbCore.derivedQI` (defined in `Semantics/Lexical/VerbSmuggling.lean`)
+derives QI licensing from two independently
 motivated properties: (1) Voice is non-phase (= unaccusative);
 (2) verb has a complement (the quote).
 
