@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Centering.Defs
+import Linglib.Discourse.Centering.Defs
 import Linglib.Features.Givenness
 import Mathlib.Order.Basic
 

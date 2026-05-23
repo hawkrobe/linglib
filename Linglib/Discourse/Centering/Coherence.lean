@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Centering.Transition
+import Linglib.Discourse.Centering.Transition
 import Linglib.Core.Discourse.Coherence
 
 /-!

@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Insert
 import Linglib.Semantics.Composition.Layered
 import Linglib.Semantics.Highlighting
-import Linglib.Theories.Discourse.EvidentialIllocution
+import Linglib.Discourse.EvidentialIllocution
 import Linglib.Features.Evidentiality
 import Linglib.Core.Discourse.Roles
 import Linglib.Semantics.Questions.Hamblin
@@ -49,7 +49,7 @@ Three empirical signatures:
   `EvidentialAct.raisedPropositions` to the salient set. No
   match-on-`commitsToScope` here: the substrate-level theorems
   `present_raises_polar_negation` and `assert_does_not_raise_polar_negation`
-  in `Theories/Discourse/EvidentialIllocution` carry the load.
+  in `Discourse/EvidentialIllocution` carry the load.
 * The headline contrast (paper exx. 47–50): `=mi` is felicitous after
   `present` (reportative `-shka`) and infelicitous after `assert`
   (direct `-rka`). Proofs project from substrate.
@@ -68,7 +68,7 @@ Three empirical signatures:
 |-----------|----------|
 | `Semantics/Composition/Layered` | `BiLayered W` ⟨A, N⟩ pair, three composition rules |
 | `Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
-| `Theories/Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
+| `Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
 | `Features/Evidentiality` | `EvidentialSource` (`direct`, `hearsay`, `inference`) |
 | `Semantics/Questions/Hamblin` | `Question.polar` for the polar QUD |
 

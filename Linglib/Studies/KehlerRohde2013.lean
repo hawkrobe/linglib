@@ -1,7 +1,7 @@
 import Linglib.Core.Discourse.Coherence
 import Linglib.Core.UD
-import Linglib.Theories.Discourse.Centering.Rule1
-import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Discourse.Centering.Rule1
+import Linglib.Discourse.Centering.Instances.GrammaticalRole
 
 /-!
 # @cite{kehler-rohde-2013}
@@ -574,7 +574,7 @@ theorem contiguity_class_splits :
     K&R 2013 IS the Bayesian-Centering reconciliation paper. To make
     that explicit at the type level, this section grounds the file's
     `topichood`/`bayesianPrediction` apparatus in the
-    `Theories/Discourse/Centering/` substrate (`cb`, `cp`, `Rule1Gordon`),
+    `Discourse/Centering/` substrate (`cb`, `cp`, `Rule1Gordon`),
     showing precisely *what Centering does and does not capture* from
     KR2013's empirical landscape.
 

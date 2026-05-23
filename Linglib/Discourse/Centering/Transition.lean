@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.Basic
 import Mathlib.Order.Basic
 import Mathlib.Order.Nat
 

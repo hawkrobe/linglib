@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.Basic
 
 /-!
 # Centering Theory — Constraint 1 and Its Decomposition

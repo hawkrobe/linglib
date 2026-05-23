@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.SDRT.Defs
+import Linglib.Discourse.SDRT.Defs
 
 /-!
 # Right Frontier Constraint

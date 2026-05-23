@@ -90,7 +90,7 @@ the right granularity.
 `Features/`. Importable from any Theories/, Phenomena/, or Fragments/
 consumer that needs to type a discourse referent's cognitive status.
 The Centering MEDIATED tier
-(`Theories/Discourse/Centering/Instances/InformationStatus.lean`) used
+(`Discourse/Centering/Instances/InformationStatus.lean`) used
 to lack a substrate source for the inferable / containing-inferable /
 anchored-brand-new tier; GHZ-6's `familiar` and `uniquelyIdentifiable`
 now supply it via `StrubeHahnInfoStatus.ofGivenness`.

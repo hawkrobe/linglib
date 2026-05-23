@@ -1,5 +1,5 @@
-import Linglib.Theories.Discourse.Centering.Basic
-import Linglib.Theories.Discourse.Centering.Transition
+import Linglib.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.Transition
 
 /-!
 # Centering Theory — Rule 2 (Transition Preference) and Variants

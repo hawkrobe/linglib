@@ -1,7 +1,7 @@
-import Linglib.Theories.Discourse.Centering.Coherence
-import Linglib.Theories.Discourse.Centering.Rule1
-import Linglib.Theories.Discourse.Centering.Rule2
-import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Discourse.Centering.Coherence
+import Linglib.Discourse.Centering.Rule1
+import Linglib.Discourse.Centering.Rule2
+import Linglib.Discourse.Centering.Instances.GrammaticalRole
 
 /-!
 # Centering ↔ Coherence Bridge — Combined Predictions
@@ -12,7 +12,7 @@ The connection between Centering's transition typology and
 of Rule 2's pair-of-transitions preference.
 
 The basic mapping `CoherenceRelation.preferredTransition` lives in
-`Theories/Discourse/Centering/Coherence.lean`. This bridge is one level
+`Discourse/Centering/Coherence.lean`. This bridge is one level
 up: it joins that mapping with the pair-of-transitions ranking from
 `Rules.lean` to give a *coherence-pair preference* prediction. The
 upshot: any pair of utterances connected by a continuation-licensing

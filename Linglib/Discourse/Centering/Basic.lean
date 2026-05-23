@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Centering.Defs
+import Linglib.Discourse.Centering.Defs
 import Mathlib.Data.List.Perm.Basic
 import Mathlib.Data.List.MinMax
 import Mathlib.Data.List.Dedup

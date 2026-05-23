@@ -99,7 +99,7 @@ def composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) :
 /-- @cite{martinez-vera-2026} Composition rule III: an illocutionary operator
     takes the full ⟨A, N⟩ pair from β and returns a new pair. This is the
     composition rule used for `assert` and `present` in
-    `Theories/Discourse/EvidentialIllocution.lean`. -/
+    `Discourse/EvidentialIllocution.lean`. -/
 def composeIII (op : BiLayered W → BiLayered W) (β : BiLayered W) : BiLayered W :=
   op β
 

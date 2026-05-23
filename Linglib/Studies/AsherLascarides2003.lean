@@ -1,5 +1,5 @@
-import Linglib.Theories.Discourse.SDRT.Defs
-import Linglib.Theories.Discourse.SDRT.RightFrontier
+import Linglib.Discourse.SDRT.Defs
+import Linglib.Discourse.SDRT.RightFrontier
 
 /-!
 # Asher & Lascarides 2003: SDRT Right Frontier Constraint worked example

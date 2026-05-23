@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.Basic
 import Linglib.Semantics.Dynamic.Boxes.Syntax
 
 /-!
@@ -20,7 +20,7 @@ list.
 
 This module provides the `Realizes DRSExpr Nat` instance: a DRS realizes
 a dref iff that dref *occurs* anywhere in the DRS (free or bound).
-With this instance, `cb prev cur` from `Theories/Discourse/Centering/Basic.lean`
+With this instance, `cb prev cur` from `Discourse/Centering/Basic.lean`
 applies directly to a `(Utterance Nat R, DRSExpr)` pair, no glue code.
 
 This bridge is for Cb computation. DRT abstracts away from surface

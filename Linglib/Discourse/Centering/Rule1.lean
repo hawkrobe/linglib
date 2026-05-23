@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.Basic
 
 /-!
 # Centering Theory — Rule 1 (Pronominalization Constraint) and Variants

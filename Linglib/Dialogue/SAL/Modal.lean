@@ -37,7 +37,7 @@ update* @cite{bary-2025} demanded.
 
 `Dialogue/CommitmentSpace.lean` houses Krifka 2015's
 non-Kripke commitment-space substrate (states are lists of indexed
-commitments). `Theories/Discourse/EvidentialIllocution.lean` houses
+commitments). `Discourse/EvidentialIllocution.lean` houses
 the Faller assert/present pair as a record. Both should eventually
 be presented as projections of the SAL substrate; this is queued for
 a follow-up consolidation pass once the SAL theorem battery is

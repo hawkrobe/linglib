@@ -1,6 +1,6 @@
-import Linglib.Theories.Discourse.Centering.Basic
-import Linglib.Theories.Discourse.Centering.Rule1
-import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.Rule1
+import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Core.Constraint.OT.Basic
 
 /-!

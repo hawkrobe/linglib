@@ -1,4 +1,4 @@
-import Linglib.Theories.Discourse.Centering.Defs
+import Linglib.Discourse.Centering.Defs
 import Mathlib.Order.Basic
 
 /-!

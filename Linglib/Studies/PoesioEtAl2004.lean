@@ -1,11 +1,11 @@
-import Linglib.Theories.Discourse.Centering.Basic
-import Linglib.Theories.Discourse.Centering.Constraints
-import Linglib.Theories.Discourse.Centering.Rule1
-import Linglib.Theories.Discourse.Centering.Rule2
-import Linglib.Theories.Discourse.Centering.Transition
-import Linglib.Theories.Discourse.Centering.Coherence
-import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Theories.Discourse.Centering.Instances.InformationStatus
+import Linglib.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.Constraints
+import Linglib.Discourse.Centering.Rule1
+import Linglib.Discourse.Centering.Rule2
+import Linglib.Discourse.Centering.Transition
+import Linglib.Discourse.Centering.Coherence
+import Linglib.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Discourse.Centering.Instances.InformationStatus
 import Linglib.Studies.Sidner1983
 import Linglib.Studies.Beaver2004
 

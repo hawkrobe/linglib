@@ -54,7 +54,7 @@ substrate when a second consumer needs them:
    list of evidence-typed commitment sets per agent" pattern. Faller
    has 4 types; future papers may add more. If a second consumer wants
    the same shape, promote a generic `EvidenceTypedCommitments` to
-   `Theories/Discourse/`.
+   `Discourse/`.
 3. **Collaborative Principle** as a defeasible discourse rule.
    Referenced by Walker 1996, Asher-Lascarides 2008, Geurts 2019,
    Bary 2025. Substrate candidate.

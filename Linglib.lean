@@ -2012,20 +2012,20 @@ import Linglib.Studies.ArregiPietraszko2021
 import Linglib.Studies.BroekhuisCorver2026
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Discourse — Centering Theory (Grosz, Joshi & Weinstein 1995)
-import Linglib.Theories.Discourse.Centering.Defs
-import Linglib.Theories.Discourse.Centering.Basic
-import Linglib.Theories.Discourse.Centering.Coherence
-import Linglib.Theories.Discourse.Centering.Constraints
-import Linglib.Theories.Discourse.Centering.Rule1
-import Linglib.Theories.Discourse.Centering.Rule2
-import Linglib.Theories.Discourse.Centering.Transition
-import Linglib.Theories.Discourse.Centering.Instances.GrammaticalRole
-import Linglib.Theories.Discourse.Centering.Instances.InformationStatus
+import Linglib.Discourse.Centering.Defs
+import Linglib.Discourse.Centering.Basic
+import Linglib.Discourse.Centering.Coherence
+import Linglib.Discourse.Centering.Constraints
+import Linglib.Discourse.Centering.Rule1
+import Linglib.Discourse.Centering.Rule2
+import Linglib.Discourse.Centering.Transition
+import Linglib.Discourse.Centering.Instances.GrammaticalRole
+import Linglib.Discourse.Centering.Instances.InformationStatus
 -- Theories: Discourse — SDRT
-import Linglib.Theories.Discourse.SDRT.Defs
-import Linglib.Theories.Discourse.SDRT.RightFrontier
+import Linglib.Discourse.SDRT.Defs
+import Linglib.Discourse.SDRT.RightFrontier
 -- Theories: Discourse — Faller/Murray illocutionary operators
-import Linglib.Theories.Discourse.EvidentialIllocution
+import Linglib.Discourse.EvidentialIllocution
 -- Theories: Interfaces — Centering ↔ DRT bridge
 import Linglib.Theories.Interfaces.SemanticsDiscourse.CenteringDRSExpr
 -- Theories: Dynamic Semantics
