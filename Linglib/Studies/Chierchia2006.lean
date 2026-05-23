@@ -6,7 +6,7 @@ import Linglib.Fragments.German.PolarityItems
 import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Semantics.Exhaustification.Operators.Antiexhaustive
-import Linglib.Studies.AlonsoOvalleMoghiseh2025
+import Linglib.Studies.AlonsoOvalleMoghiseh2025.Basic
 
 /-!
 # Chierchia 2006: Domain Widening and the PSI Typology
@@ -383,7 +383,7 @@ PSI profiles predict which EFCI rescue mechanism is available:
 /-- Map PSI profiles to EFCI rescue type (none if not an EFCI). -/
 def PSIProfile.toEFCIRescue (p : PSIProfile) : Option EFCIRescue :=
   if !p.hasScalarAlts then none
-  else if p.requiresProperStrengthening then some .partialExh
+  else if p.requiresProperStrengthening then some .partialExhaustification
   else some .both
 
 /-- Map PSI profiles to FCI flavor (none if not an FCI).

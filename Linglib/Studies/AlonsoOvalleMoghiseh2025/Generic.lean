@@ -9,9 +9,9 @@ Existential Free Choice Items (EFCIs). These results hold for arbitrary
 domains — not specific world types — capturing the logical core of
 the analysis at full generality.
 
-The companion file `AlonsoOvalleMoghiseh2025.lean` (same directory)
-verifies each result computationally via `native_decide` on 2-book worlds;
-this file proves them structurally, without `native_decide`.
+The companion file `FreeChoice.lean` (same directory) verifies each
+result computationally via `decide` on 2-book worlds; this file proves
+them structurally on arbitrary domains.
 
 ## Architecture
 

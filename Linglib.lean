@@ -1469,9 +1469,10 @@ import Linglib.Studies.Kratzer2012Informational
 import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Studies.Alsop2024
 import Linglib.Studies.ChampollionAlsopGrosu2019
-import Linglib.Studies.FreeChoiceFarsi
-import Linglib.Studies.AlonsoOvalleMoghiseh2025FreeChoice
-import Linglib.Studies.AlonsoOvalleMoghiseh2025Generic
+import Linglib.Studies.AlonsoOvalleMoghiseh2025.Basic
+import Linglib.Studies.AlonsoOvalleMoghiseh2025.Closure
+import Linglib.Studies.AlonsoOvalleMoghiseh2025.FreeChoice
+import Linglib.Studies.AlonsoOvalleMoghiseh2025.Generic
 import Linglib.Studies.Khoo2015
 import Linglib.Studies.Aikhenvald2004
 import Linglib.Studies.ImelGuoST2026
@@ -2011,6 +2012,7 @@ import Linglib.Studies.PullumGazdar1982
 import Linglib.Studies.ArregiPietraszko2021
 import Linglib.Studies.BroekhuisCorver2026
 import Linglib.Syntax.DependencyGrammar.LongDistance
+import Linglib.Studies.DeMarneffeNivre2019
 -- Theories: Discourse — Centering Theory (Grosz, Joshi & Weinstein 1995)
 import Linglib.Discourse.Centering.Defs
 import Linglib.Discourse.Centering.Basic
@@ -2585,8 +2587,6 @@ import Linglib.Studies.Enguehard2024
 import Linglib.Studies.Magri2014
 import Linglib.Studies.Sauerland2003
 import Linglib.Phenomena.Plurals.VerbalNumber
-import Linglib.Studies.AlonsoOvalleMoghiseh2025
-import Linglib.Studies.AlonsoOvalleMoghiseh2025Closure
 import Linglib.Studies.Gajewski2002
 import Linglib.Studies.Gajewski2011
 import Linglib.Studies.Israel2001

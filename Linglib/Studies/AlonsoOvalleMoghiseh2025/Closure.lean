@@ -17,10 +17,10 @@ This breaks closure and creates the need for rescue mechanisms.
 -/
 
 import Linglib.Semantics.Exhaustification.Operators.Basic
-import Linglib.Studies.AlonsoOvalleMoghiseh2025
+import Linglib.Studies.AlonsoOvalleMoghiseh2025.Basic
 import Mathlib.Data.Set.Basic
 
-namespace AlonsoOvalleMoghiseh2025Closure
+namespace AlonsoOvalleMoghiseh2025.Closure
 
 open Exhaustification
 open AlonsoOvalleMoghiseh2025
@@ -217,4 +217,4 @@ theorem unique_witness_falsifies_allNotPreExh
   exact hnotPreExh hpreExh
 
 
-end AlonsoOvalleMoghiseh2025Closure
+end AlonsoOvalleMoghiseh2025.Closure

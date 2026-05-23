@@ -10,35 +10,56 @@ import Mathlib.Tactic.DeriveFintype
 Existential free choice items: The case of Farsi *yek-i* DPs.
 *Semantics & Pragmatics* 18, Article 4.
 
-## Core Contribution
+Farsi *yek-i* DPs pattern with other EFCIs in DE and modal contexts
+but are grammatical, modality-free, and uniqueness-conveying in root
+contexts. The paper derives this profile from **split exhaustification**:
+scalar and domain alternatives are targeted by independent operators,
+with scalar exhaustification clause-bounded below the modal.
 
-Farsi *yek-i* DPs instantiate a new EFCI profile: they pattern with
-other EFCIs in DE and modal contexts (plain existential in DE, strengthened
-under modals), but in root contexts they are grammatical, have no modal
-component, and convey uniqueness. The paper argues this profile derives
-from **split exhaustification**: scalar and domain alternatives are
-exhaustified by independent operators, with scalar exhaustification
-clause-bounded below the modal.
+## Main declarations
 
-## Key Theoretical Results Formalized Here
+* `root_full_innocent_vacuous` — full IE on the 2-book root alternative
+  set is vacuous (3 MCEs, no shared alt; IE = ∅).
+* `root_full_tolerant_contradiction` — Chierchia's tolerant operator
+  yields ⊥ on the same set (paper eq. 92).
+* `root_scalar_only_uniqueness` — yek-i's partial scalar exhaustification
+  gives uniqueness (eq. 93a).
+* `root_domain_only_conjunction` — partial domain exhaustification gives
+  conjunction (eq. 93b), blocked by Chierchia's Economy Principle.
+* `deontic_poss_split_exh` — split exh under ◇ derives FC + embedded
+  uniqueness (eq. 119).
+* `deontic_nec_split_exh` — split exh under □ (eq. 120).
+* `de_scalar_exh_weakens` — scalar exh inside a DE conditional
+  strictly weakens the matrix (cf. eq. 129–135).
+* `single_exh_no_fc`, `above_only_all_alts_too_strong`,
+  `two_ie_above_below_too_strong` — three non-split architectures fail.
+* `rootReading` and `*_reading_agrees` — Table 2 typology and its
+  bridge to the `Fragments.Farsi.Determiners` lexicon.
 
-1. **Root + full exhaustification = ⊥** (motivates rescue mechanisms)
-2. **Root + scalar-only = uniqueness** (yek-i's partial exhaustification)
-3. **Root + domain-only = conjunction** (blocked by Economy Principle)
-4. **◇ + split exh = FC + embedded uniqueness** (yek-i under deontic ◇)
-5. **DE + scalar exh weakens** (Maximize Strength blocks it)
-6. **EFCI typology** (Table 2: modal insertion × partial exh)
-7. **Split necessity** (alternatives 143-146: single/two-operator alternatives fail)
+## Implementation notes
 
-## Relationship to `SplitExhaustification.lean`
+Three finite world types: `PQWorld` (4 worlds), `PermW` (8 worlds),
+`CondW` (8 worlds). Theorems close by `decide` over `Finset` substrate;
+`abbrev` aliases on the alternative-set Finsets drive reduction.
 
-Each result is verified computationally on small finite world types
-(`PQWorld`, `PermW`, `CondW`) via the `Excluder` API
-(`innocent.exh`/`tolerant.exh`). The companion module
-`Exhaustification.SplitExhaustification` proves the same results
-structurally at the Prop level for arbitrary domains. The two are
-complementary: the general module proves WHY the results hold; this
-file verifies the algorithm computes the right answers.
+The sibling module `Studies.AlonsoOvalleMoghiseh2025.Generic` proves
+the same results structurally at the `Prop` level for arbitrary domains
+and lifts them to arbitrary Kripke frames. The two are complementary:
+`Generic` proves *why* the results hold; this file checks that the
+algorithm computes the right answers.
+
+The 2-book root case exposes a counting subtlety: the paper's (101)
+lists 2 MCEs for the full alternative set, but there are actually 3
+(`{b₁∧b₂, b₁∧¬b₂}`, `{b₁∧b₂, b₂∧¬b₁}`, `{b₁∧¬b₂, b₂∧¬b₁}`), so IE = ∅
+and `innocent.exh` is vacuous (see `root_full_innocent_vacuous`). The
+paper's result (103) requires applying operators separately — exactly
+the split-exhaustification architecture.
+
+## Todo
+
+* The bridge theorems use a local `RootReading` enum mapped to
+  `Fragments.Farsi.Determiners.EFCIReading` via `RootReading.toDetReading`.
+  Using `EFCIReading` directly would eliminate the conversion.
 -/
 
 namespace AlonsoOvalleMoghiseh2025
@@ -46,12 +67,8 @@ namespace AlonsoOvalleMoghiseh2025
 open Exhaustification (innocent tolerant predToFinset altsFromPreds)
 
 
--- ============================================================
--- § 1. Root Context: Two-Book Domain
--- ============================================================
-
 /-!
-## Root Contexts (§4)
+### Root Contexts (§4)
 
 With a domain D = {b₁, b₂}, the assertion of unembedded *yek-i* is
 b₁ ∨ b₂ ("Forood bought a book"). `PQWorld` enumerates the four
@@ -76,10 +93,10 @@ def pOrQ  : PQWorld → Bool | .neither => false | _ => true
 def pAndQ : PQWorld → Bool | .both => true | _ => false
 
 /-- Assertion: ∃x ∈ {b₁,b₂}. bought(x) = b₁ ∨ b₂ -/
-private abbrev assertion : PQWorld → Bool := pOrQ
+private def assertion : PQWorld → Bool := pOrQ
 
 /-- Scalar alternative: bought ≥ 2 = b₁ ∧ b₂ -/
-private abbrev scalarAlt : PQWorld → Bool := pAndQ
+private def scalarAlt : PQWorld → Bool := pAndQ
 
 /-- Pre-exhaustified domain alternatives: {b₁ ∧ ¬b₂, b₂ ∧ ¬b₁}.
 
@@ -104,7 +121,7 @@ theorem preExhDom_from_innocent_root :
   refine ⟨?_, ?_⟩ <;> decide
 
 
--- ── Result 1: Full exhaustification yields contradiction ─────
+/-! #### Result 1: Full exhaustification yields contradiction -/
 
 /-- **Theorem (eq. 92)**: Chierchia's contradiction-tolerating operator
     applied to all alternatives yields ⊥ — the assertion conjoined with
@@ -134,7 +151,7 @@ theorem root_full_innocent_vacuous :
     innocent.exh allAltsF assertionF = assertionF := by decide
 
 
--- ── Result 2: Scalar-only exhaustification yields uniqueness ─
+/-! #### Result 2: Scalar-only exhaustification yields uniqueness -/
 
 /-- **Theorem (eq. 93a)**: O_σ (scalar-only exhaustification) yields
     uniqueness: (b₁ ∨ b₂) ∧ ¬(b₁ ∧ b₂) = "exactly one book."
@@ -150,7 +167,7 @@ theorem root_scalar_only_contingent :
     PQWorld.both ∉ innocent.exh (altsFromPreds [scalarAlt]) assertionF := by decide
 
 
--- ── Result 3: Domain-only exhaustification yields conjunction ─
+/-! #### Result 3: Domain-only exhaustification yields conjunction -/
 
 /-- **Theorem (eq. 93b)**: O_EXH-D (domain-only exhaustification) yields
     conjunction: (b₁ ∨ b₂) ∧ (b₁ ↔ b₂) ⟺ b₁ ∧ b₂.
@@ -168,12 +185,8 @@ theorem domain_exh_equiv_scalar_alt :
 end RootContext
 
 
--- ============================================================
--- § 2. Deontic Possibility: Split Exhaustification
--- ============================================================
-
 /-!
-## Deontic Possibility (§5, eq. 114–119)
+### Deontic Possibility (§5, eq. 114–119)
 
 LF: O_EXH-D ◇ O_σ [IP ye book-i ... Forood buy t₁]
 
@@ -206,7 +219,7 @@ inductive PermW where
   | w101  -- b₁-exclusive and joint accessible
   | w011  -- b₂-exclusive and joint accessible
   | w111  -- all three types accessible
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 -- Atomic modal propositions
 private def canExB1 : PermW → Bool  -- ◇(b₁ ∧ ¬b₂)
@@ -221,14 +234,6 @@ private def canB1 (w : PermW) : Bool := canExB1 w || canJoint w  -- ◇b₁
 private def canB2 (w : PermW) : Bool := canExB2 w || canJoint w  -- ◇b₂
 private def canExOr (w : PermW) : Bool := canExB1 w || canExB2 w  -- ◇(b₁⊻b₂)
 
-
--- ── Step 1: O_σ on IP (already proved in RootContext) ────────
--- Result: b₁ ⊻ b₂ = "exactly one book"
-
--- ── Step 2: ◇ applied ───────────────────────────────────────
--- Assertion at modal level: ◇(b₁⊻b₂) = canExOr
-
--- ── Step 3: O_EXH-D ─────────────────────────────────────────
 
 /-- Pre-exhaustified domain alternatives under ◇: {◇b₁ ∧ ¬◇b₂, ◇b₂ ∧ ¬◇b₁}.
 
@@ -277,13 +282,15 @@ theorem deontic_poss_embedded_uniqueness (w : PermW)
     canExOr w = true := by
   revert h; cases w <;> decide
 
-/-- The result is compatible with ◇(b₁∧b₂) being true (fn. 14):
-    Forood may be permitted to buy more than one book. -/
+/-- The result is compatible with ◇(b₁∧b₂) being true: Forood may be
+    permitted to buy more than one book (paper main text near eq. 60,
+    p. 21: "compatible with a scenario where he is allowed to buy one
+    book and he is allowed to buy more than one book"). -/
 theorem deontic_poss_compatible_with_joint :
     PermW.w111 ∈ innocent.exh modalPreExhDomAltsF canExOrF := by decide
 
 
--- ── Single IE without split: no FC ─────────────────────────
+/-! #### Without split: no FC -/
 
 /-- ◇(b₁ ∨ b₂): at least one book is permitted. -/
 private def canBuyAny (w : PermW) : Bool := canB1 w || canB2 w
@@ -315,10 +322,8 @@ theorem single_exh_not_fc_witness :
     canB1 PermW.w100 = true ∧ canB2 PermW.w100 = false := by decide
 
 
--- ── Why split is necessary (§5, eqs. 143-146) ────────────────
-
 /-!
-### Why Split Exhaustification Is Necessary
+#### Why Split Exhaustification Is Necessary
 
 The paper argues that only split exhaustification — two independent
 operators targeting different alternative classes — derives the correct
@@ -393,12 +398,8 @@ theorem split_allows_joint_two_ie_forbids :
 end DeonticPossibility
 
 
--- ============================================================
--- § 2b. Deontic Necessity: Split Exhaustification under □
--- ============================================================
-
 /-!
-## Deontic Necessity (§5, eq. 120)
+### Deontic Necessity (§5, eq. 120)
 
 LF: O_EXH-D □ O_σ [IP ye book-i ... Forood buy t₁]
 
@@ -417,10 +418,17 @@ The same split exhaustification structure under □ instead of ◇.
 
 section DeonticNecessity
 
--- Box operators derived from PermW's possibility atoms
-private def boxB1 (w : PermW) : Bool := !canExB2 w  -- □b₁ = ¬◇(b₂∧¬b₁)
-private def boxB2 (w : PermW) : Bool := !canExB1 w  -- □b₂ = ¬◇(b₁∧¬b₂)
-private def boxExOr (w : PermW) : Bool := !canJoint w  -- □(b₁⊻b₂) = ¬◇(b₁∧b₂)
+/-! Box operators derived from `PermW`'s possibility atoms. The
+encodings rely on the implicit constraint `□(b₁∨b₂)` — every accessible
+world has at least one book bought — which holds by construction of
+`PermW` since worlds with neither book are not in the state space. Under
+that constraint:
+- `□b₁` = ¬◇(b₂ ∧ ¬b₁), and
+- `□(b₁⊻b₂)` collapses to ¬◇(b₁∧b₂), since the only way to violate
+  exactly-one-per-world is via a joint-purchase world. -/
+private def boxB1 (w : PermW) : Bool := !canExB2 w  -- □b₁
+private def boxB2 (w : PermW) : Bool := !canExB1 w  -- □b₂
+private def boxExOr (w : PermW) : Bool := !canJoint w  -- □(b₁⊻b₂), given □(b₁∨b₂)
 
 /-- Pre-exhaustified domain alternatives under □: {□b₁ ∧ ¬□b₂, □b₂ ∧ ¬□b₁} -/
 private def necPreExhDomAlt1 : PermW → Bool := fun w => boxB1 w && !boxB2 w
@@ -463,12 +471,8 @@ theorem deontic_nec_embedded_uniqueness (w : PermW)
 end DeonticNecessity
 
 
--- ============================================================
--- § 3. Downward-Entailing Contexts: Maximize Strength
--- ============================================================
-
 /-!
-## DE Contexts (§5, eq. 129–135)
+### DE Contexts (§5, eq. 129–135)
 
 In DE contexts (e.g., conditional antecedents), scalar exhaustification
 below the operator is blocked by Maximize Strength: it globally weakens
@@ -489,20 +493,20 @@ inductive CondW where
   | b1g | b2g | bg | b1 | b2 | b | g | none
   deriving Repr, DecidableEq, Fintype
 
-private def cb1 : CondW → Bool
+private def condB1 : CondW → Bool
   | .b1g | .bg | .b1 | .b => true | _ => false
-private def cb2 : CondW → Bool
+private def condB2 : CondW → Bool
   | .b2g | .bg | .b2 | .b => true | _ => false
-private def cg : CondW → Bool
+private def condG : CondW → Bool
   | .b1g | .b2g | .bg | .g => true | _ => false
 
 /-- Without exhaustification: (b₁ ∨ b₂) → g -/
 private def condNoExh (w : CondW) : Bool :=
-  !(cb1 w || cb2 w) || cg w
+  !(condB1 w || condB2 w) || condG w
 
 /-- With scalar exhaustification: ((b₁ ∨ b₂) ∧ ¬(b₁ ∧ b₂)) → g -/
 private def condWithExh (w : CondW) : Bool :=
-  !((cb1 w || cb2 w) && !(cb1 w && cb2 w)) || cg w
+  !((condB1 w || condB2 w) && !(condB1 w && condB2 w)) || condG w
 
 private abbrev condNoExhF : Finset CondW := predToFinset condNoExh
 private abbrev condWithExhF : Finset CondW := predToFinset condWithExh
@@ -523,17 +527,11 @@ theorem de_no_exh_stronger : condNoExhF ⊆ condWithExhF := by decide
 theorem de_exh_weaker_witness : ∃ w, w ∈ condWithExhF ∧ w ∉ condNoExhF :=
   ⟨.b, by decide⟩
 
-/-- Domain alternatives in the conditional: subdomain conditionals
-    b₁→g and b₂→g. -/
-private def condDomAlts : List (CondW → Bool) :=
-  [ fun w => !cb1 w || cg w     -- b₁ → g
-  , fun w => !cb2 w || cg w ]   -- b₂ → g
-
 /-- Pre-exhaustified domain alternatives in the conditional:
     {(b₁→g) ∧ ¬(b₂→g), (b₂→g) ∧ ¬(b₁→g)} -/
 private def condPreExhDomAlts : List (CondW → Bool) :=
-  [ fun w => (!cb1 w || cg w) && !(!cb2 w || cg w)  -- (b₁→g) ∧ ¬(b₂→g)
-  , fun w => (!cb2 w || cg w) && !(!cb1 w || cg w)] -- (b₂→g) ∧ ¬(b₁→g)
+  [ fun w => (!condB1 w || condG w) && !(!condB2 w || condG w)
+  , fun w => (!condB2 w || condG w) && !(!condB1 w || condG w)]
 
 private abbrev condPreExhDomAltsF : Finset (Finset CondW) :=
   altsFromPreds condPreExhDomAlts
@@ -554,12 +552,8 @@ theorem de_domain_exh_vacuous :
 end DEContext
 
 
--- ============================================================
--- § 4. EFCI Typology (Table 2)
--- ============================================================
-
 /-!
-## EFCI Typology
+### EFCI Typology
 
 @cite{alonso-ovalle-moghiseh-2025} Table 2: EFCIs vary along two
 parameters — modal insertion and partial exhaustification.
@@ -581,7 +575,7 @@ section Typology
 structure EFCIParams where
   modalInsertion : Bool
   partialExh : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 def vreunParams : EFCIParams := ⟨false, false⟩
 def irgendeinParams : EFCIParams := ⟨true, false⟩
@@ -617,12 +611,8 @@ theorem yeki_root_reading : rootReading yekiParams = .uniqueness := rfl
 end Typology
 
 
--- ============================================================
--- § 5. Bridge: Study Typology ↔ Lexicon
--- ============================================================
-
 /-!
-## Bridge to Determiners Lexicon
+### Bridge to Determiners Lexicon
 
 The study's `EFCIParams`/`rootReading` and the Fragment lexicon's
 `IndefiniteEntry`/`getReading` are two views of the same typology.
