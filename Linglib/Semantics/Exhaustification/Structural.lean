@@ -139,13 +139,47 @@ exhaustification result (@cite{alonso-ovalle-moghiseh-2025} eq. 93a):
 with a single innocently-excludable alternative, IE returns it exactly,
 giving "exactly one" semantics.
 
-**TODO**: proof requires showing `innocentlyExcludable {α} φ = {α}`
-when `α ⊊ φ`, via the existing MCE characterization (the unique MCE is
-`{α}` itself; intersecting over a singleton family gives `{α}`). -/
+Strategy: `innocentlyExcludable {α} φ = {α}` (subset is automatic from
+`innocentlyExcludable_subset`; reverse direction reduces to showing `α`
+itself is innocently excludable, which follows from the Set-side
+`IsInnocentlyExcludable.of_full_exclusion_consistent` lemma — the
+witness is any element of `φ \ α`, which exists because `α ⊊ φ`).
+Then `({α}).biUnion id = α` (by `Finset.singleton_biUnion`). -/
 theorem innocent_exh_singleton_proper {α φ : Finset W}
-    (_hsub : α ⊆ φ) (_hne : α ≠ φ) :
+    (hsub : α ⊆ φ) (hne : α ≠ φ) :
     innocent.exh ({α} : Finset (Finset W)) φ = φ \ α := by
-  sorry
+  -- Step 1: innocentlyExcludable {α} φ = {α}.
+  have h_ie_eq :
+      Innocent.innocentlyExcludable ({α} : Finset (Finset W)) φ = {α} := by
+    apply Finset.Subset.antisymm
+    · -- ⊆ {α} follows from innocentlyExcludable_subset (image into ALT = {α}).
+      exact Innocent.innocentlyExcludable_subset _ _
+    · -- ⊇ {α}: show α ∈ innocentlyExcludable {α} φ via the Set-side bridge.
+      intro a ha
+      rw [Finset.mem_singleton] at ha
+      rw [ha]
+      rw [← Innocent.isInnocentlyExcludable_iff]
+      -- Use of_full_exclusion_consistent on the Set side.
+      apply Exhaustification.IsInnocentlyExcludable.of_full_exclusion_consistent
+      · -- ↑α ∈ asSetOfSets {α}: take α ∈ {α}.
+        exact Innocent.mem_asSetOfSets.mpr
+          ⟨α, Finset.mem_singleton_self α, rfl⟩
+      · -- ∃ w ∈ ↑φ ∧ every b ∈ asSetOfSets {α} is false at w.
+        -- Witness: any w ∈ φ \ α (exists since α ⊊ φ).
+        obtain ⟨w, hw_phi, hw_not_alpha⟩ :=
+          Finset.exists_of_ssubset (hsub.ssubset_of_ne hne)
+        refine ⟨w, hw_phi, ?_⟩
+        intro b hb
+        rcases Innocent.mem_asSetOfSets.mp hb with ⟨a, ha_mem, rfl⟩
+        rw [Finset.mem_singleton] at ha_mem
+        subst ha_mem
+        -- Now b = ↑α, need ¬ (↑α : Set W) w, i.e. w ∉ α.
+        exact hw_not_alpha
+  -- Step 2: unfold exh, rewrite with h_ie_eq, simplify singleton biUnion.
+  show φ \ ((Innocent.innocentlyExcludable
+            ({α} : Finset (Finset W)) φ).biUnion id) = φ \ α
+  rw [h_ie_eq, Finset.singleton_biUnion]
+  rfl
 
 end Exhaustification
 

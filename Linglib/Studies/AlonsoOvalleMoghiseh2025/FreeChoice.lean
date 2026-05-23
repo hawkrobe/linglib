@@ -81,7 +81,8 @@ the split-exhaustification architecture.
 namespace AlonsoOvalleMoghiseh2025
 
 open Exhaustification (innocent tolerant predToFinset altsFromPreds
-  tolerant_exh_eq_empty_of_covered innocent_exh_eq_phi_of_innocentlyExcludable_empty)
+  tolerant_exh_eq_empty_of_covered innocent_exh_eq_phi_of_innocentlyExcludable_empty
+  innocent_exh_singleton_proper)
 open Data.Examples (LinguisticExample)
 export Fragments.Farsi.Determiners (EFCIRescue EFCIReading ModalFlavor)
 
@@ -190,14 +191,16 @@ theorem root_full_innocent_vacuous :
 
     This is yek-i's reading in root contexts via partial exhaustification.
 
-    **TODO**: derive from `Exhaustification.innocent_exh_singleton_proper`
-    in `Linglib/Semantics/Exhaustification/Structural.lean` once that
-    substrate theorem is closed (currently `sorry`). The structural
-    fact is: when `ALT = {α}` with `α ⊊ φ`, IE returns `{α}` (unique
-    MC-set is `{φ, univ\α}`) and so `innocent.exh = φ \ α`. -/
+    Derived from `innocent_exh_singleton_proper`: when ALT is the
+    singleton `{scalarAltF}` and `scalarAltF ⊊ assertionF` (i.e.,
+    `{both} ⊊ {pOnly, qOnly, both}`), the substrate gives
+    `innocent.exh = assertionF \ scalarAltF`. -/
 theorem root_scalar_only_uniqueness :
     innocent.exh (altsFromPreds [scalarAlt]) assertionF
-      = assertionF \ scalarAltF := by decide
+      = assertionF \ scalarAltF := by
+  show innocent.exh ({scalarAltF} : Finset (Finset PQWorld)) assertionF
+    = assertionF \ scalarAltF
+  exact innocent_exh_singleton_proper (by decide) (by decide)
 
 /-- Uniqueness is contingent (not contradictory). -/
 theorem root_scalar_only_contingent :
