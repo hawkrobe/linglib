@@ -1,6 +1,6 @@
-import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
-import Linglib.Theories.Phonology.OptimalityTheory.Constraints
-import Linglib.Theories.Phonology.OptimalityTheory.Doubling
+import Linglib.Phonology.Prosodic.Syllable.Defs
+import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.OptimalityTheory.Doubling
 import Linglib.Core.Constraint.System
 
 /-!
@@ -27,7 +27,7 @@ algebraic, and amodal:
    onto novel ASL signs, with a phonology--morphology split (identity banned
    in phonological contexts, reduplication preferred in morphological
    contexts). Formalized as competing OT parses over `DoublingParse`
-   (see `Theories/Phonology/Doubling.lean`).
+   (see `Phonology/Doubling.lean`).
 
 ## Formalization strategy
 
@@ -44,7 +44,7 @@ already embodies the distinctions Berent draws:
   type, spoken or signed, by construction
 
 The doubling theory (types, constraints, L1-parameterized model) is
-factored into `Theories/Phonology/Doubling.lean`. The experimental
+factored into `Phonology/Doubling.lean`. The experimental
 data supporting the doubling reversal is in
 @cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}.
 
@@ -147,7 +147,7 @@ theorem ocp_passes_ab {α : Type} [DecidableEq α] (a b : α) (rest : List α)
 -- ============================================================================
 
 -- The doubling theory (DoublingParse, DoublingGrammar, OT constraints)
--- is defined in Theories/Phonology/Doubling.lean. The experimental
+-- is defined in Phonology/Doubling.lean. The experimental
 -- evidence for the doubling reversal and the L1-morphology dependency
 -- is formalized in BerentEtAl2016.lean, which provides the 2×2
 -- dissociation between English and Hebrew speakers.

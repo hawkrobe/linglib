@@ -1,8 +1,8 @@
-import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
-import Linglib.Theories.Phonology.OptimalityTheory.TCT
-import Linglib.Theories.Phonology.OptimalityTheory.Stratal
-import Linglib.Theories.Phonology.OptimalityTheory.StratalCorr
-import Linglib.Theories.Phonology.ParadigmUniformity.Transderivational
+import Linglib.Phonology.OptimalityTheory.Correspondence
+import Linglib.Phonology.OptimalityTheory.TCT
+import Linglib.Phonology.OptimalityTheory.Stratal
+import Linglib.Phonology.OptimalityTheory.StratalCorr
+import Linglib.Phonology.ParadigmUniformity.Transderivational
 import Linglib.Core.Constraint.OT.Basic
 
 /-!
@@ -49,10 +49,10 @@ markedness constraint M₂ is satisfied or violated by the base output.
 ## Architectural integration
 
 Consumes:
-- `Theories.Phonology.OptimalityTheory.TCT.Role` and `TetruSchema`
-- `Theories.Phonology.ParadigmUniformity.Transderivational.diagramWithEdge`
+- `Phonology.OptimalityTheory.TCT.Role` and `TetruSchema`
+- `Phonology.ParadigmUniformity.Transderivational.diagramWithEdge`
   (general 3-role correspondence with explicit OO alignment)
-- `Theories.Phonology.OptimalityTheory.Correspondence.Corr.identViol` (segmental)
+- `Phonology.OptimalityTheory.Correspondence.Corr.identViol` (segmental)
   and `Corr.identViolFeature` (featural)
 
 By construction, every claim about misapplication routes through the
@@ -361,7 +361,7 @@ end TiberianHebrew
     languages reduces to *which markedness constraint plays the M₂ role*
     in the TETRU schema, and *whether OO-Ident is segmental or featural*.
 
-    Under the TCT.TetruSchema substrate (`Theories/Phonology/OptimalityTheory/TCT.lean`):
+    Under the TCT.TetruSchema substrate (`Phonology/OptimalityTheory/TCT.lean`):
 
     - **Sundanese**: M₂ = `*NASAL-AFTER-ORAL`. OO-Ident is segmental (or
       restricted to `[nasal]`). Overapplication = the misapplied

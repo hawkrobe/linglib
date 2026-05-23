@@ -65,7 +65,7 @@ the substrate file's docstring for the full architectural argument.
 The DLM is the latest in a lineage of usage-based, gradient-weight
 theories. Adjacent linglib substrate:
 
-- `Theories/Phonology/ItemSpecificity/` — four phonological theories
+- `Phonology/ItemSpecificity/` — four phonological theories
   parameterised by lexical frequency (`UseListed.lean` @cite{zuraw-2000},
   `IndexedConstraints.lean` @cite{pater-2010},
   `RepresentationStrength.lean` @cite{moore-cantwell-2021},
@@ -88,7 +88,7 @@ its own object".
 
 ## Architectural note: tones as emergent vs stored
 
-The discrete-tone substrate in `Theories/Phonology/Tone/Constraints.lean`,
+The discrete-tone substrate in `Phonology/Tone/Constraints.lean`,
 `Studies/Hyman2006.lean` (@cite{hyman-2006}),
 `Studies/Lionnet2025.lean` (@cite{lionnet-2025}), and
 `Studies/AkinboFwangwar2026.lean`

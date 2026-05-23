@@ -2,7 +2,7 @@ import Linglib.Core.Constraint.Weighted
 import Linglib.Core.Constraint.System
 import Linglib.Core.Constraint.PartiallyOrderedConstraints
 import Linglib.Core.Constraint.PermSubsetCombinatorics
-import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Fragments.English.TDDeletion
 
 /-!

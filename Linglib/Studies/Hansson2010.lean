@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Theories.Phonology.Subregular.Agree
+import Linglib.Phonology.Subregular.Agree
 import Linglib.Core.Computability.Subregular.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.Multitier
 
@@ -43,7 +43,7 @@ work.
 Sibilant harmony is a *symmetric* dissimilation-style phonotactic — the
 forbidden pair is "tier-adjacent and *unequal*" — so this study is the
 canonical instance of the AGREE specialization in
-`Theories/Phonology/Subregular/Agree.lean`, the non-identity dual of the
+`Phonology/Subregular/Agree.lean`, the non-identity dual of the
 OCP (@cite{goldsmith-1976}, @cite{mccarthy-1986}). The Kikongo case in
 `RoseWalker2004.lean` is *asymmetric* and instantiates the generic
 forbidden-pair constructor directly rather than via AGREE.

@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.OptimalityTheory.Doubling
+import Linglib.Phonology.OptimalityTheory.Doubling
 
 /-!
 # Berent, Bat-El, Brentari, Dupuis & Vaknin-Nusbaum (2016) @cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}
@@ -41,7 +41,7 @@ advantage — not the continuous magnitude of the effect.
 ## Formalization
 
 The doubling framework (`DoublingParse`, `DoublingGrammar`,
-`realizeMorphAvailable`) is defined in `Theories/Phonology/Doubling.lean`.
+`realizeMorphAvailable`) is defined in `Phonology/Doubling.lean`.
 This file defines L1-specific `DoublingGrammar` instances for English and
 Hebrew and proves the four cells of the dissociation table as OT theorems.
 

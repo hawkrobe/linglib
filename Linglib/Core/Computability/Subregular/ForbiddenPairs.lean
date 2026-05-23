@@ -28,7 +28,7 @@ alphabet: \*Lapse and \*Clash are SL_2 over a *syllable*-level alphabet
 (carrying stress weight), and \*Coda is SL_1 over an alphabet that
 encodes syllable structure (e.g. CV templates with marked coda symbols).
 The OT-side helper for the SL_1 case is `mkForbidSingletonOnTier` in
-`Theories/Phonology/OptimalityTheory/Constraints.lean`; the language-side
+`Phonology/OptimalityTheory/Constraints.lean`; the language-side
 SL_1 substrate is in `Subregular/StrictlyLocal.lean` (the `k = 1` case).
 
 The single bridge theorem `mem_ofForbiddenPairs_lang_iff_filter_isChain`
@@ -36,7 +36,7 @@ characterizes language membership as an `IsChain` check on the projected
 string. This is the chain-side payoff of the boundary-vacuity machinery
 in `Subregular/Defs.lean`. Phonological-constraint bridges
 (`mkForbidPairsOnTier_zero_iff_in_lang`) layer on top in
-`Theories/Phonology/Subregular/`.
+`Phonology/Subregular/`.
 -/
 
 namespace Core.Computability.Subregular
@@ -146,7 +146,7 @@ lemma mem_ofForbiddenPairs_lang_iff_filter_isChain (R : α → α → Prop)
 
 /-! ### Adjacent-pair counting
 
-Promoted from `Theories/Phonology/OptimalityTheory/Constraints.lean`:
+Promoted from `Phonology/OptimalityTheory/Constraints.lean`:
 `countAdjacent R xs` counts the adjacent `(a, b)` pairs in `xs` with
 `R a b`. Alphabet-generic; nothing OT-specific. The OT-side
 `mkForbidPairsOnTier` constructor consumes this directly, and the

@@ -45,7 +45,7 @@ both this bridge and `ClassifierEntry` itself can be retired.
 
 - Phonological allomorphy (rendaku/sokuon: ippon/sanbon/roppon for
   `-hon`, ippiki/sanbiki/roppiki for `-hiki`) — would belong with
-  `Theories/Phonology/`.
+  `Phonology/`.
 - Native vs Sino-Japanese numeral series split (`tsu` selects native
   hitotsu/futatsu/...; Sino-classifiers select ichi/ni/san/...).
 - Inventory expansion to high-frequency classifiers not in Downing's

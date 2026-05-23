@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Process.LocalRewrite
+import Linglib.Phonology.Process.LocalRewrite
 import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.Korean.Phonology
 import Linglib.Phenomena.Phonology.Alternation

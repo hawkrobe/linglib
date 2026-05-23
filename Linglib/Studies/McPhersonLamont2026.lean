@@ -1,7 +1,7 @@
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Constraint.OT.HarmonicSerialism
-import Linglib.Theories.Phonology.Tone.Constraints
+import Linglib.Phonology.Tone.Constraints
 import Linglib.Fragments.Poko.Tone
 import Mathlib.Tactic.Linarith
 
@@ -793,7 +793,7 @@ end Eq27
 
     Substrate-substantive value: this is the first tableau requiring a
     constraint outside the fig. 3 ranking. *M<L (paper, eq. 29) was
-    added to `Theories/Phonology/Tone/Constraints.lean` for this case.
+    added to `Phonology/Tone/Constraints.lean` for this case.
     The *M<L analysis depends on the surviving-tier subsequence after
     deletions — exercising the substrate's `IsAlive`-filtered tier
     semantics (not just the surface link state). -/

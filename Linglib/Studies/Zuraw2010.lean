@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Core.Constraint.PartiallyOrderedConstraints
 import Linglib.Core.Constraint.PermSubsetCombinatorics
 

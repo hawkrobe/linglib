@@ -3,9 +3,9 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Theories.Phonology.Featural.ElementTheory
-import Linglib.Theories.Phonology.Government.StrictCV
-import Linglib.Theories.Phonology.OCPMerger
+import Linglib.Phonology.Featural.ElementTheory
+import Linglib.Phonology.Government.StrictCV
+import Linglib.Phonology.OCPMerger
 import Linglib.Fragments.Tigrinya.Phonology
 import Linglib.Fragments.Tigre.Phonology
 
@@ -57,7 +57,7 @@ Two co-equal headline contributions (paper §1, eq. 2):
 
 * The full GP/Strict-CV apparatus (Coda Mirror, lateral
   relation typology). The substrate definitions in
-  `Theories/Phonology/Government/StrictCV.lean` are *simplified*
+  `Phonology/Government/StrictCV.lean` are *simplified*
   versions per the paper's own n. 16.
 * The phonetic implementation of [ɨ] vs [a]/[ʌ] — see
   @cite{faust-2024} for the cross-linguistic theory.
@@ -270,7 +270,7 @@ theorem arifu_blocks_synersis :
 
 The "self-licensing domain" itself is paper-specific apparatus
 (paper n. 18: "this cannot be a general principle in Strict CV").
-The substrate `Theories/Phonology/Government/StrictCV.lean`
+The substrate `Phonology/Government/StrictCV.lean`
 deliberately does NOT define self-licensing — this study file is
 where the Faust-specific stipulation lives. T3 captures the
 *prediction* (V₂ full ⇒ no synersis) without committing the

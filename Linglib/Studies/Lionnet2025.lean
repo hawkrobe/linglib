@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Autosegmental.RegisterTier
 import Linglib.Fragments.Drubea.Prosody
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Studies.Hyman2006

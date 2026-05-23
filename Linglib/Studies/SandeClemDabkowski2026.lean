@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalist.Phase
 import Linglib.Theories.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Theories.Syntax.Minimalist.Movement.Remnant
-import Linglib.Theories.Phonology.OptimalityTheory.CophonologyByPhrase
+import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
 import Linglib.Theories.Syntax.Minimalist.Amalgamation
 
 /-!
@@ -98,7 +98,7 @@ empirically violated.
 
 Substrate consumed (additions landed in this same overhaul):
 
-- `Theories/Phonology/OptimalityTheory/CophonologyByPhrase.lean` —
+- `Phonology/OptimalityTheory/CophonologyByPhrase.lean` —
   @cite{sande-jenks-inkelas-2020}'s phrasal extension of
   @cite{sande-jenks-2017}'s VI-anchored cophonology.
 - `Theories/Syntax/Minimalist/Movement/Remnant.lean` —
@@ -396,7 +396,7 @@ def guebieVPPhaseSelector : SyntacticObject → Bool :=
 /-- The Guébie vP-cophonology bundle. The `subranking` is left as an
     empty list of constraints over `Unit` candidates because the
     ATR-harmony cophonology's actual constraints live in
-    `Theories/Phonology/Process/Harmony/OT.lean` and would require
+    `Phonology/Process/Harmony/OT.lean` and would require
     threading the OT-candidate type through this study file — out of
     scope. The substrate use is exhibited by the bundle's existence
     and the matched-phase predicate `appliesTo`. -/

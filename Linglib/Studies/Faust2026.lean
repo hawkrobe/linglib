@@ -1,5 +1,5 @@
-import Linglib.Theories.Phonology.Prosodic.Templates
-import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Prosodic.Templates
+import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Amharic.ConsonantalRoots
@@ -531,7 +531,7 @@ No-Crossing Constraint @cite{goldsmith-1976} discriminates by position
 relative to the rest of the association lines.
 
 The infrastructure for this analysis lives in
-`Theories/Phonology/Templates.lean`:
+`Phonology/Templates.lean`:
 `RootTemplateMatch.unfilledCSlots`, `RootTemplateMatch.violatesNCC`, and
 the `noCross` constraint. -/
 
@@ -658,7 +658,7 @@ that satisfies FILL. Sections 7–8 state this ranking via the joint
 `hebrew_klj_misalign_dominates_fill` predicate; here we make it
 explicit by building tableaux **directly over the `RootTemplateMatch`
 candidates defined in §3**, using the existing `starMisalign` and
-`fill` constraints from `Theories/Phonology/Templates.lean`.
+`fill` constraints from `Phonology/Templates.lean`.
 
 This is the "derive, don't stipulate" architecture: the OT verdicts
 follow from the *same* `isMisaligned` and `allCSlotsFilled` predicates

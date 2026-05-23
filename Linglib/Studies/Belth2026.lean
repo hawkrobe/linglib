@@ -1,6 +1,6 @@
-import Linglib.Theories.Phonology.Process.Alternation
-import Linglib.Theories.Phonology.OptimalityTheory.Constraints
-import Linglib.Theories.Phonology.Subregular.OCP
+import Linglib.Phonology.Process.Alternation
+import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Subregular.OCP
 import Linglib.Theories.Learning.TolerancePrinciple
 import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Computability.Subregular.Tier
@@ -20,9 +20,9 @@ deletion helps.
 
 The output of D2L is a tier-based alternation rule, modelled here by the
 canonical `Phonology.Alternation.TierRule` schema (in
-`Theories/Phonology/Alternation.lean`); the closely-related SPE
+`Phonology/Alternation.lean`); the closely-related SPE
 non-tier `Phonology.LocalRewrite.Rule` schema in
-`Theories/Phonology/Process/LocalRewrite.lean` is the right substrate
+`Phonology/Process/LocalRewrite.lean` is the right substrate
 when the alternation does not factor through a tier projection.
 The function-level subregular classification of D2L outputs lives in
 `Core/Computability/Subregular/Function/`: tier-mediated dissimilation

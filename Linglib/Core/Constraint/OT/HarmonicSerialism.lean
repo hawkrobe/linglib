@@ -24,9 +24,9 @@ field's current understanding. HS is one constraint-based serial framework
 with mixed empirical record; @cite{mcpherson-lamont-2026} is the
 motivating positive case for the directional variant of HS
 (@cite{lamont-2022b}). For counterfeeding cases linglib offers
-`Theories/Phonology/Process/LocalRewrite.lean` (extrinsic ordering of
+`Phonology/Process/LocalRewrite.lean` (extrinsic ordering of
 local rewrite rules; subregular-grounded per @cite{chandlee-heinz-2018})
-and `Theories/Phonology/OptimalityTheory/Stratal.lean` (cyclic ranking)
+and `Phonology/OptimalityTheory/Stratal.lean` (cyclic ranking)
 as architecturally-distinct alternatives.
 
 ## Sibling architectures

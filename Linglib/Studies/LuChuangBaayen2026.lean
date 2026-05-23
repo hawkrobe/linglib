@@ -76,8 +76,8 @@ The classical autosegmental account of Mandarin T3 sandhi
 (@cite{chen-2000}, @cite{duanmu-2007}, and the surrounding literature)
 posits a structural rule: an underlying `/T3 T3/` sequence undergoes
 spreading or delinking, surfacing as `[T2 T3]`. Linglib's existing
-discrete-tone substrate (`Theories/Phonology/Tone/Constraints.lean`,
-`Theories/Phonology/Autosegmental/Floating.lean`) is set up to express
+discrete-tone substrate (`Phonology/Tone/Constraints.lean`,
+`Phonology/Autosegmental/Floating.lean`) is set up to express
 such rule-based accounts, although no Mandarin-specific T3-sandhi
 fragment has been formalised in linglib to date.
 

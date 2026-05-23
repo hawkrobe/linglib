@@ -1,12 +1,12 @@
 import Linglib.Fragments.Japanese.Prosody
-import Linglib.Theories.Phonology.ItemSpecificity.Defs
-import Linglib.Theories.Phonology.ItemSpecificity.ScaledWeights
-import Linglib.Theories.Phonology.ItemSpecificity.RepresentationStrength
-import Linglib.Theories.Phonology.ItemSpecificity.IndexedConstraints
-import Linglib.Theories.Phonology.ItemSpecificity.UseListed
-import Linglib.Theories.Phonology.ParadigmUniformity.Defs
-import Linglib.Theories.Phonology.ParadigmUniformity.LexicalConservatism
-import Linglib.Theories.Phonology.ParadigmUniformity.OptimalParadigms
+import Linglib.Phonology.ItemSpecificity.Defs
+import Linglib.Phonology.ItemSpecificity.ScaledWeights
+import Linglib.Phonology.ItemSpecificity.RepresentationStrength
+import Linglib.Phonology.ItemSpecificity.IndexedConstraints
+import Linglib.Phonology.ItemSpecificity.UseListed
+import Linglib.Phonology.ParadigmUniformity.Defs
+import Linglib.Phonology.ParadigmUniformity.LexicalConservatism
+import Linglib.Phonology.ParadigmUniformity.OptimalParadigms
 import Linglib.Paradigms.WugTest
 
 /-!
@@ -83,7 +83,7 @@ The companion modelling paper (Breiss, Katsuda & Kawahara,
 lingbuzz/009508) fits a MaxEnt grammar with @cite{steriade-2000}'s
 Lexical Conservatism. We do not formalise the fitting routine here.
 The discrimination this study makes against the four siblings in
-`Theories/Phonology/ItemSpecificity/`:
+`Phonology/ItemSpecificity/`:
 
 - **ScaledWeights** (@cite{coetzee-pater-2008}): consistent with the
   data, with separate slopes per channel (positive on cpd freq,
@@ -241,7 +241,7 @@ theorem free_zone_freq_independent :
     structural rather than stipulated.
 
     Built via `lcParadigm` from
-    `Theories/Phonology/ParadigmUniformity/LexicalConservatism.lean`,
+    `Phonology/ParadigmUniformity/LexicalConservatism.lean`,
     making this file a downstream consumer of the LC anchored-paradigm
     primitive. The anchor-presence channel is exactly what
     @cite{steriade-2000} introduced, and BKK's bound/free split is the
@@ -253,7 +253,7 @@ def n2Paradigm (c : JCompound) : List String :=
     off-diagonal. A whole-string identity check; **not** a velar-
     feature comparison. The architecturally faithful version would
     be a tier-restricted segment-by-segment comparison at the velar
-    position routed through `Theories/Phonology/Featural/Geometry.lean`,
+    position routed through `Phonology/Featural/Geometry.lean`,
     but the qualitative architectural claims (sign of the channel,
     bound/free split) do not depend on the specific mismatch metric. -/
 def stringMismatch (a b : String) : Nat := if a = b then 0 else 1
@@ -263,7 +263,7 @@ def stringMismatch (a b : String) : Nat := if a = b then 0 else 1
 
 /-- The PU constraint **as a `NamedConstraint`** — derived from
     `mkLCFaith` from
-    `Theories/Phonology/ParadigmUniformity/LexicalConservatism.lean`.
+    `Phonology/ParadigmUniformity/LexicalConservatism.lean`.
     The structural connection to @cite{steriade-2000} is by
     *construction*: BKK's PU pressure IS LC-FAITH on the
     `lcParadigm`-built paradigm. The architectural difference from

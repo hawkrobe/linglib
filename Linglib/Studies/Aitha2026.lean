@@ -3,11 +3,11 @@ import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Order
 import Linglib.Core.Case.Allomorphy
 import Linglib.Core.Constraint.System
-import Linglib.Theories.Phonology.Prosodic.Syllable.Foot
+import Linglib.Phonology.Prosodic.Syllable.Foot
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Phonology.OptimalityTheory.Stratal
-import Linglib.Theories.Phonology.Prosodic.Word
-import Linglib.Theories.Phonology.Prosodic.Moraic.CompensatoryLengthening
+import Linglib.Phonology.OptimalityTheory.Stratal
+import Linglib.Phonology.Prosodic.Word
+import Linglib.Phonology.Prosodic.Moraic.CompensatoryLengthening
 open Core.Case.Allomorphy
 
 /-!

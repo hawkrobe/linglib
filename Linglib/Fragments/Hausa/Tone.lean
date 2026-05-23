@@ -1,5 +1,5 @@
-import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
-import Linglib.Theories.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Phonology.Autosegmental.RegisterTier
 
 /-!
 # Hausa Tone — mathlib-style

@@ -68,7 +68,7 @@ lives in study files (`Hyman2006.lean`, future work).
 
 WALS Chs 7 (glottalized), 8 (lateral), 9 (velar nasal), 11 (front rounded)
 are inventory-presence claims that could derive from the featural substrate
-in `Linglib/Theories/Phonology/Featural/Features.lean` (`[+constricted
+in `Linglib/Phonology/Featural/Features.lean` (`[+constricted
 glottis]`, `[+lateral]`, `[+nasal, +dorsal]`, `[+front, +round]`) applied
 to a PHOIBLE inventory. Bridge theorems are deferred to
 `Studies/Maddieson2013.lean`.
@@ -141,7 +141,7 @@ inductive UvularPresence where
   deriving DecidableEq, Repr
 
 /-- Glottalized consonant types (WALS Ch 7, @cite{maddieson-2013}). Could
-    derive from `Theories/Phonology/Featural/Features.lean` `[+constricted
+    derive from `Phonology/Featural/Features.lean` `[+constricted
     glottis]` applied to a PHOIBLE inventory; bridge in Maddieson2013.lean. -/
 inductive GlottalizedType where
   | none | ejectivesOnly | implosivesOnly | resonantsOnly

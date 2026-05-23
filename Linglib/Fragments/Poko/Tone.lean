@@ -1,6 +1,6 @@
-import Linglib.Theories.Phonology.Autosegmental.RegisterTier
-import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
-import Linglib.Theories.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Phonology.Autosegmental.Floating
 
 /-!
 # Poko Phonological Fragment — Tonal

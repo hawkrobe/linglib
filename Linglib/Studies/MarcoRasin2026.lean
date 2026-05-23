@@ -1,6 +1,6 @@
-import Linglib.Theories.Phonology.ParadigmUniformity.OptimalParadigms
-import Linglib.Theories.Phonology.OptimalityTheory.Constraints
-import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
+import Linglib.Phonology.ParadigmUniformity.OptimalParadigms
+import Linglib.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Prosodic.Syllable.Defs
 import Linglib.Core.Constraint.System
 
 /-!

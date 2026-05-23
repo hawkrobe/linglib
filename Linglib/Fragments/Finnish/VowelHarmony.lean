@@ -1,8 +1,8 @@
-import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.Featural.Geometry
-import Linglib.Theories.Phonology.Process.LocalRewrite
-import Linglib.Theories.Phonology.Autosegmental.Defs
-import Linglib.Theories.Phonology.Process.Harmony.Defs
+import Linglib.Phonology.Featural.Features
+import Linglib.Phonology.Featural.Geometry
+import Linglib.Phonology.Process.LocalRewrite
+import Linglib.Phonology.Autosegmental.Defs
+import Linglib.Phonology.Process.Harmony.Defs
 
 /-!
 # Finnish Vowel Harmony @cite{karlsson-2017}

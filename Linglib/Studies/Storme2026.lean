@@ -1,7 +1,7 @@
 import Linglib.Core.Constraint.MaxEnt
 import Linglib.Core.Constraint.System
 import Linglib.Core.Constraint.Weighted
-import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Fragments.Farsi.Phonology
 
 /-!

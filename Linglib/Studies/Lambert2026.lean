@@ -8,7 +8,7 @@ import Linglib.Core.Computability.Subregular.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Sandwich
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
-import Linglib.Theories.Phonology.SibilantTier
+import Linglib.Phonology.SibilantTier
 
 /-!
 # @cite{lambert-2026}: Multitier phonotactics with logic and algebra
@@ -70,19 +70,19 @@ than silently diverging from existing linglib formalizations):
 * OT: linglib's `NamedConstraint` framework places no complexity bound;
   Lambert says all phonotactics live in `IsBTC`. The supraregular
   counter-witness theorem and the positive `mkForbidPairsOnTier ⊆ TSL_2`
-  theorem are queued for a future `Theories/Phonology/Subregular/OTBound.lean`.
+  theorem are queued for a future `Phonology/Subregular/OTBound.lean`.
 * Harmonic Serialism: `Studies/McPhersonLamont2026.lean`
   proves Poko surface tone HS-derivable but parallel-OT-impossible.
   Lambert's static BTC characterization, applied to Poko's surface
   stringset, would clarify *static description ≠ alternation
   explanation*. Cross-reference to be added when Poko's surface
   stringset is independently classified.
-* Autosegmental: linglib's `Theories/Phonology/Autosegmental/{
+* Autosegmental: linglib's `Phonology/Autosegmental/{
   RegisterTier, GrammaticalTone}.lean` formalize multiply-linked tone
   representations. Lambert (2026) §5 self-confesses that string-based
   analysis loses information for tone; the loss theorem is stated as
   `lambert_string_input_loses_tone_associations` (sorry'd) below.
-* OCP: `Theories/Phonology/Subregular/OCP.lean` carries a
+* OCP: `Phonology/Subregular/OCP.lean` carries a
   prohibition-vs-merger distinction; `IsBTC` is the mathematical home of
   the prohibition family at scale. The OCP file's docstring should gain
   a "see also: BTC" link in a follow-up retrofit.
@@ -105,7 +105,7 @@ namespace Lambert2026
 
 open Core.Computability.Subregular
 open List  -- for `<+` (List.Sublist) infix in subseqSet equivalence proofs
-open Theories.Phonology.SibilantTier  -- for SibilantTierSeg constructors in tsuutina refutation
+open Phonology.SibilantTier  -- for SibilantTierSeg constructors in tsuutina refutation
 
 -- ============================================================================
 -- § 1. Iban (Austronesian): stress-final ∈ D_1
@@ -604,15 +604,15 @@ theorem karanga_shona_verb_stem_isBTLI :
 
 /-- The Tsuut'ina sibilant alphabet @cite{cook-1978} is the shared
 three-class `SibilantTierSeg` (anterior `s`, posterior `ʃ`, neutral
-non-sibilant) defined in `Theories/Phonology/SibilantTier.lean`. -/
-abbrev TsuutinaSeg := Theories.Phonology.SibilantTier.SibilantTierSeg
+non-sibilant) defined in `Phonology/SibilantTier.lean`. -/
+abbrev TsuutinaSeg := Phonology.SibilantTier.SibilantTierSeg
 
 /-- The TSL_2 grammar for Tsuut'ina asymmetric sibilant harmony
 @cite{cook-1978} @cite{lambert-2026} §4.2: anterior preceding posterior
 on the sibilant tier is forbidden. Reuses the shared substrate
-`asymmetricHarmonyAntFirst` from `Theories/Phonology/SibilantTier.lean`. -/
+`asymmetricHarmonyAntFirst` from `Phonology/SibilantTier.lean`. -/
 def tsuutinaTSLGrammar : TSLGrammar 2 TsuutinaSeg :=
-  Theories.Phonology.SibilantTier.asymmetricHarmonyAntFirst
+  Phonology.SibilantTier.asymmetricHarmonyAntFirst
 
 /-- The Tsuut'ina asymmetric sibilant harmony language. Defined as the
 language of the TSL_2 witness so that the membership theorem is
@@ -1330,10 +1330,10 @@ distinct autosegmental representations (e.g. multiply-linked vs. singly-
 linked-with-spread on a tone tier) can have the same surface string. The
 BTC classification of a string language therefore is *not* a faithful
 summary of an autosegmental analysis of the same surface tone pattern.
-Cross-references `Theories/Phonology/Autosegmental/RegisterTier.lean`,
+Cross-references `Phonology/Autosegmental/RegisterTier.lean`,
 `GrammaticalTone.lean`, and `Studies/Lionnet2025.lean`. -/
 theorem lambert_string_input_loses_tone_associations : True := trivial
--- TODO: state and prove via Theories.Phonology.Autosegmental.RegisterTier
+-- TODO: state and prove via Phonology.Autosegmental.RegisterTier
 -- representation distinctness with shared string projection.
 
 end Lambert2026

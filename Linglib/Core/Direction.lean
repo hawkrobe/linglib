@@ -10,7 +10,7 @@ Authors: Robert Hawkins
 A two-element enumeration shared across phonology and computability
 substrates that need a notion of left-vs-right (FST scan direction,
 context side, harmony spread direction, etc.). Promoted to `Core/` so
-that `Theories/Phonology/Process/Alternation.lean::Side` and
+that `Phonology/Process/Alternation.lean::Side` and
 `Core/Computability/Subregular/Function/Subsequential.lean::Direction`
 do not duplicate the same inductive type with the same case names.
 

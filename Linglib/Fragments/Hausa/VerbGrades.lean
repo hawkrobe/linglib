@@ -1,5 +1,5 @@
 import Linglib.Semantics.Lexical.VerbEntry
-import Linglib.Theories.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Autosegmental.RegisterTier
 
 /-!
 # Hausa Verb Grades (Parsons System) — mathlib-style
@@ -19,7 +19,7 @@ Hausa, not a parallel hierarchy:
 - `Semantics/Lexical/VerbEntry.VerbCore` carries argument
   structure, voice, and Vendler class. A Hausa verb is a `VerbCore`
   *plus* a Parsons grade.
-- `Theories/Phonology/Autosegmental/RegisterTier.TRN` carries
+- `Phonology/Autosegmental/RegisterTier.TRN` carries
   the autosegmental tone primitives. A grade's tone melody is a list
   of `TRN`s, not a fresh enum.
 

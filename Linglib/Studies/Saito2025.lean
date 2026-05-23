@@ -97,7 +97,7 @@ lemma layer. Defer until a second WEAVER-using study lands.
 
 Like the Chuang and Lu DLM Studies, this file's claims sit in tension
 with the **stored-lexicon** assumptions in:
-- `Theories/Phonology/ItemSpecificity/{UseListed, IndexedConstraints,
+- `Phonology/ItemSpecificity/{UseListed, IndexedConstraints,
   RepresentationStrength, ScaledWeights}.lean` — four phonological
   frequency-channel theories, all of which posit stored entries to
   attach frequency to. Saito's frequency × inflectional-status

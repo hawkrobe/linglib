@@ -1,5 +1,5 @@
-import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.Featural.Features
+import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
 # Slavic Verbalizer @cite{stojkovic-2026}

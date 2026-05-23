@@ -39,7 +39,7 @@ across all iterations. There is no `Nat → Eval` parameter that would
 let the EVAL function vary across steps. (Stratal architectures, where
 ranking changes between strata, get a separate cyclic wrapper *outside*
 the iteration loop — see
-`Theories/Phonology/OptimalityTheory/Stratal.lean`.)
+`Phonology/OptimalityTheory/Stratal.lean`.)
 -/
 
 namespace Core.Constraint.OT

@@ -1,5 +1,5 @@
 import Linglib.Features.Prosody
-import Linglib.Theories.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Syntax.CCG.Intonation
 import Linglib.Studies.KratzerSelkirk2020
 

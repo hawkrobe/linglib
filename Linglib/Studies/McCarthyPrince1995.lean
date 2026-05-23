@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.System
-import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
-import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Phonology.OptimalityTheory.Correspondence
+import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Fragments.Akan.Phonology
 
 /-!
@@ -117,7 +117,7 @@ counts are then **derived from `Corr.maxViol`** rather than stipulated.
 
 The 3-role substrate (`RedupRole`, `Corr.reduplication`,
 `Reduplication.maxIO`/`maxBR`) lives in
-`Theories/Phonology/OptimalityTheory/Correspondence.lean` — paper-agnostic
+`Phonology/OptimalityTheory/Correspondence.lean` — paper-agnostic
 and reusable across reduplicative studies (Balangao, Akan, Tagalog, …).
 This section supplies only the Javanese-specific data + agreement theorems.
 

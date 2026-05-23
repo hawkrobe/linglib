@@ -1,9 +1,9 @@
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Phonology.Autosegmental.CoPScope
-import Linglib.Theories.Phonology.Autosegmental.Floating
-import Linglib.Theories.Phonology.Tone.Constraints
+import Linglib.Phonology.Autosegmental.CoPScope
+import Linglib.Phonology.Autosegmental.Floating
+import Linglib.Phonology.Tone.Constraints
 import Linglib.Core.Constraint.OT.HarmonicSerialism
 import Linglib.Studies.Hyman2006
 
@@ -50,7 +50,7 @@ for the INTEGRITY-Mᵥ constraint that rules out the copying variant of
 Tableau 24's optimum (paper p. 26 eq. 22c).
 
 Constraint primitives come from
-`Theories/Phonology/Tone/Constraints.lean`, with Mwaghavul-specific
+`Phonology/Tone/Constraints.lean`, with Mwaghavul-specific
 anchor combinators defined in §2 below.
 
 ## Section structure

@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Autosegmental.RegisterTier
+import Linglib.Phonology.Autosegmental.RegisterTier
 
 /-!
 # Numèè Prosodic Fragment

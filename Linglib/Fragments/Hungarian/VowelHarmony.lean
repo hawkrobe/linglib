@@ -1,6 +1,6 @@
-import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.Process.LocalRewrite
-import Linglib.Theories.Phonology.Process.Harmony.Defs
+import Linglib.Phonology.Featural.Features
+import Linglib.Phonology.Process.LocalRewrite
+import Linglib.Phonology.Process.Harmony.Defs
 
 /-!
 # Hungarian Vowel Harmony

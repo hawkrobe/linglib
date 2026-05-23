@@ -65,9 +65,9 @@ mutually incompatible on cells with a non-vacuous factor space, so a
 study that adopts a typed `Cell` can pose the discrimination as a
 single bridge theorem at any factor type with `[LT]`.
 
-## Bridge to `Theories/Phonology/ItemSpecificity/HasTokenFreq`
+## Bridge to `Phonology/ItemSpecificity/HasTokenFreq`
 
-`HasTokenFreq` (in `Theories/Phonology/ItemSpecificity/Defs.lean`) is
+`HasTokenFreq` (in `Phonology/ItemSpecificity/Defs.lean`) is
 a *getter-only* class on fragment lexical entries — fragments are
 immutable data, so there is no setter. `HasFactor Cell ℝ` is a *lens*
 on paradigm cells, which the paradigm-level predicates below need to

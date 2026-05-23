@@ -33,7 +33,7 @@ autosegmental melody floating above it. The TSL definition specializes to
 the case where projection is `List.filter` over a tier predicate
 (equivalently, an erasing string homomorphism that keeps tier symbols and
 deletes off-tier symbols, with no relabeling). For autosegmental tiers
-(high/low tone, nasal melody, register), see `Theories/Phonology/Autosegmental/`.
+(high/low tone, nasal melody, register), see `Phonology/Autosegmental/`.
 
 ## Single source of truth: `Core.Tier`
 
