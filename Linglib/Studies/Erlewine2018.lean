@@ -1,10 +1,10 @@
-import Linglib.Theories.Syntax.Minimalist.HeadFunction
+import Linglib.Syntax.Minimalist.HeadFunction
 import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Typology.Relativization.ExtractionBridge
-import Linglib.Theories.Syntax.Minimalist.Position
-import Linglib.Theories.Syntax.Minimalist.Derivation
-import Linglib.Theories.Syntax.Minimalist.Movement.Remnant
+import Linglib.Syntax.Minimalist.Position
+import Linglib.Syntax.Minimalist.Derivation
+import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Studies.ColeHermon2008
 
 /-!
@@ -438,7 +438,7 @@ theorem same_vp :
     tobaBatakVOS.stageAt 1 = erlewineDerivation.stageAt 1 := by decide
 
 -- ============================================================================
--- § 11: Connection to `Theories/Syntax/Minimalist/Movement/Remnant.lean`
+-- § 11: Connection to `Syntax/Minimalist/Movement/Remnant.lean`
 -- ============================================================================
 
 /-! ### Erlewine's vP-to-Spec,CP fronting as a `RemnantFronting` instance

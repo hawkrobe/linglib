@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Features
+import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Taos Verbal Agreement Fragment

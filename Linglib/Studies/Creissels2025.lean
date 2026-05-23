@@ -1,7 +1,7 @@
-import Linglib.Theories.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
-import Linglib.Theories.Syntax.Minimalist.Applicative
+import Linglib.Syntax.Minimalist.Applicative
 
 /-!
 # Creissels (2025): Transitivity, Valency, and Voice

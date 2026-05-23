@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Aspect
+import Linglib.Syntax.Minimalist.Aspect
 
 /-!
 # Cantonese Resultative / Phase Complements

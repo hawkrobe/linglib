@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Mam.Agreement
-import Linglib.Theories.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree
 import Linglib.Morphology.DM.VocabSimple
-import Linglib.Theories.Syntax.Minimalist.ObligatoryOperations
+import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Morphology.DM.Impoverishment
 
 /-!

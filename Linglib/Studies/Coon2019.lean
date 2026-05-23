@@ -1,5 +1,5 @@
 import Linglib.Morphology.RootTypology
-import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Voice
 import Linglib.Fragments.Chuj.VerbBuilding
 
 /-!

@@ -1,7 +1,7 @@
 import Linglib.Typology.WordOrder
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
-import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Theories.Syntax.HPSG.Inversion
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.HPSG.Inversion
 import Linglib.Features.Givenness
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
@@ -531,7 +531,7 @@ theorem de_emb_no_v2 :
 -- § 7b  Bridge to HPSG Inversion (@cite{sag-wasow-bender-2003})
 -- ============================================================================
 
-/-! `Theories/Syntax/HPSG/Inversion.lean` derives English matrix/embedded
+/-! `Syntax/HPSG/Inversion.lean` derives English matrix/embedded
     question word-order asymmetries from an `[INV ±]` feature on clauses,
     with `matrixRequiresInvPlus` and `embeddedRequiresInvMinus` constraints.
     @cite{westergaard-2009}'s English profile commits to +Int° (matrix

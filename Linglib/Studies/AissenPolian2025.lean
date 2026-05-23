@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Morphology.DM.NominalStructure
-import Linglib.Theories.Syntax.Minimalist.Agree
-import Linglib.Theories.Syntax.Binding.SpecificityCondition
+import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.InformationStructure
 
 /-!
@@ -89,7 +89,7 @@ alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 - `GramFunction`, `absPosition` from `Fragments/Mayan/Tseltalan.lean`
 - `ABSPosition` from `Fragments/Mayan/Params.lean`
 - `ProbeProfile`, `closestGoalB`, `behindHorizonB`, `liftFM` from
-  `Theories/Syntax/Minimalist/{Agree, Basic}.lean`
+  `Syntax/Minimalist/{Agree, Basic}.lean`
 -/
 
 namespace AissenPolian2025

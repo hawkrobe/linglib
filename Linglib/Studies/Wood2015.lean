@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.Applicative
-import Linglib.Theories.Syntax.Minimalist.VerbalDecomposition
+import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Applicative
+import Linglib.Syntax.Minimalist.VerbalDecomposition
 import Linglib.Fragments.Icelandic.Predicates
 
 /-!
@@ -39,7 +39,7 @@ attributed ±θ/±D to @cite{schaefer-2008} alone, which was imprecise.
    @cite{cuervo-2003}'s VerbHead decomposition (@cite{wood-2015}
    himself uses a single v head; the multi-head decomposition is a
    linglib modeling convenience that captures the same independence
-   structurally — see `Theories/Syntax/Minimalist/Voice.lean` §5).
+   structurally — see `Syntax/Minimalist/Voice.lean` §5).
 
 2. **-st as elsewhere exponent of Voice** (Ch. 3, §3.3–3.5): -st
    spells out non-agentive Voice across anticausative, middle,

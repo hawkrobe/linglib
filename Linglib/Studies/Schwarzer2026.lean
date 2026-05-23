@@ -5,7 +5,7 @@ import Linglib.Fragments.German.WordOrder
 import Linglib.Typology.WordOrder
 import Linglib.Features.Coordination
 import Linglib.Studies.BrueningAlKhalaf2020
-import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # @cite{schwarzer-2026} — Selection-Violating Coordination in German

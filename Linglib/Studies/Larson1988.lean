@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.Basic
-import Linglib.Theories.Syntax.Minimalist.Derivation
+import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 
 /-!

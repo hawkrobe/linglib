@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.HPSG.Core.RelativeClauses
+import Linglib.Syntax.HPSG.Core.RelativeClauses
 
 /-!
 # Bridge: HPSG Relative Clauses to Filler-Gap Phenomena

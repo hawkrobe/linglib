@@ -479,7 +479,7 @@ inductive ComplementClauseStructure where
 
 /-! ### CP-external wrapping shells
 
-Where `ComplementSize` and `ClauseSpine` (Theories/Syntax/Minimalist/) record
+Where `ComplementSize` and `ClauseSpine` (Syntax/Minimalist/) record
 *internal* clause height (vP/TP/CP/NmlzP), `CPShell` records what wraps the CP
 *externally*. Deal 2026's Table 79 cross-classifies the two axes; this file
 houses the external axis as Fragment-importable substrate.

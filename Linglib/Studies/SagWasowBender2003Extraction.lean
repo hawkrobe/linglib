@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
+import Linglib.Syntax.HPSG.Core.HeadFiller
 import Linglib.Studies.Ross1967
 
 /-!

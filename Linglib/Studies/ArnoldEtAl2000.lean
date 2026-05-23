@@ -1,7 +1,7 @@
 import Linglib.Core.Constraint.MaxEnt
 import Linglib.Core.Constraint.Weighted
 import Linglib.Features.Givenness
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
+import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
 # Heaviness vs. Newness in Constituent Ordering @cite{arnold-wasow-losongco-ginstrom-2000}
@@ -75,7 +75,7 @@ contradicting the paper's findings.
   collapses @cite{prince-1981}'s three-way given/inferable/new into
   two categories (inferable → given). Focus marking is on a separate
   axis (`Features.InformationStructure.Focus`) and not consumed here.
-- `Theories.Syntax.DependencyGrammar.Formal.DependencyLength` —
+- `Syntax.DependencyGrammar.Formal.DependencyLength` —
   Dependency Locality (@cite{futrell-gibson-2020}) provides the
   *positive* derivation of the heaviness signal: §9 below shows
   `heavyDiff` is exactly the sign of the DLM cost difference between
@@ -574,7 +574,7 @@ independently-motivated processing cost already formalized in linglib:
 
 | Constraint | Bridge | Cost lives in |
 |---|---|---|
-| `*HEAVY-FIRST` | `heavyDiff_eq_dlm_signal` | `Theories.Syntax.DependencyGrammar.Formal.DependencyLength` |
+| `*HEAVY-FIRST` | `heavyDiff_eq_dlm_signal` | `Syntax.DependencyGrammar.Formal.DependencyLength` |
 | `*NEW-FIRST`   | `newDiff_pos_implies_uid_prefers_themeLast` | `Processing.MemorySurprisal` (information locality) |
 
 The two costs unify under @cite{futrell-2019}'s **information locality**

@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.Selection
-import Linglib.Theories.Syntax.Minimalist.CategorialFeatures
+import Linglib.Syntax.Minimalist.Selection
+import Linglib.Syntax.Minimalist.CategorialFeatures
 import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Semantics.Lexical.VerbEntry
@@ -76,7 +76,7 @@ complement *pu* from v_State.
   head-driven (the SUBCAT/COMPS list lives on the head); the
   paper's adjunct-selects-host machinery has no HPSG counterpart
   yet formalised in linglib. A future
-  `Theories/Syntax/HPSG/Complementation.lean` would let us state
+  `Syntax/HPSG/Complementation.lean` would let us state
   the cross-framework refutation directly.
 - **Silent divergence vs CCG:** CCG adjuncts are `X/X` modifiers
   that don't *probe* their host; the bidirectional-selection move
@@ -93,11 +93,11 @@ complement *pu* from v_State.
 - `vAspectHead` enum (vState / vEvent): per the @cite{borer-2005} /
   @cite{merchant-2019} light-v split. Not promoted to substrate
   yet — single paper-anchored consumer; promote to
-  `Theories/Syntax/Minimalist/LightV.lean` when ≥ 2 consumers.
+  `Syntax/Minimalist/LightV.lean` when ≥ 2 consumers.
 - `adjunctSelects` predicate: bidirectional selection per
   @cite{bruening-2013} / @cite{hewett-2023} / @cite{hunter-2015} /
   @cite{neeleman-philip-tanaka-vandekoot-2023}. Studies-local;
-  promote to `Theories/Syntax/Minimalist/AdjunctSelection.lean`
+  promote to `Syntax/Minimalist/AdjunctSelection.lean`
   when ≥ 2 consumers.
 - `hkIncorporable` predicate: @cite{hale-keyser-1993} noun-
   incorporation. Distinct from `Phase.lean` D-incorporation
@@ -234,7 +234,7 @@ inductive ExplanandumReading where
 -- incorporation MOVEMENT itself (paper trees 27-30). A faithful
 -- incorporation Step would require head-movement substrate
 -- (`Step.applyHeadMove`) that is currently absent from
--- `Theories/Syntax/Minimalist/Selection.lean`. The
+-- `Syntax/Minimalist/Selection.lean`. The
 -- `hkIncorporable` predicate above states which categories CAN
 -- host incorporation; the actual movement is asserted in prose,
 -- not derived. Refer to @cite{matushansky-2006} for an

@@ -18,7 +18,7 @@ operationalize them differently (LFG SUBJ ≠ Minimalist external argument
 `Core.Morphology.MorphCategory.agreement` records), the labels are
 reasonably consensual. Framework-specific projections
 (LFG analysis → Controller, Minimalist analysis → Controller) live in
-`Theories/Syntax/`.
+`Syntax/`.
 
 ## Cases derived from Corbett 2006
 

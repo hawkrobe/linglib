@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Semantics.Quantification.Binominal
-import Linglib.Theories.Syntax.ConstructionGrammar.Basic
+import Linglib.Syntax.ConstructionGrammar.Basic
 
 /-!
 # English Binominal Noun Phrases @cite{ten-wolde-2023}

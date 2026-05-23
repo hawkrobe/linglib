@@ -127,7 +127,7 @@ abbrev ArgPosition := Features.Prominence.ArgumentRole
 /-- Perfective (ergative) case assignment for Kaqchikel. Definitionally
     equal to `Fragments.Mayan.ergCaseKaqchikel`, which derives from
     `Alignment.ergative.assignCase` in
-    `Theories/Syntax/Case/Alignment.lean` — A → ERG, S/P → ABS. -/
+    `Syntax/Case/Alignment.lean` — A → ERG, S/P → ABS. -/
 abbrev ArgPosition.case : ArgPosition → Core.Case :=
   Fragments.Mayan.ergCaseKaqchikel
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.MinimalPronoun
+import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Semantics.Lexical.VerbEntry
 import Linglib.Typology.Complementation
 import Linglib.Fragments.English.Predicates.Verbal

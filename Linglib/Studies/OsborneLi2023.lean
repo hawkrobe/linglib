@@ -1,7 +1,7 @@
 import Linglib.Core.Dependency.Basic
 import Linglib.Core.Word
 import Linglib.Data.Examples.Schema
-import Linglib.Theories.Syntax.DependencyGrammar.Coordination
+import Linglib.Syntax.DependencyGrammar.Coordination
 
 /-!
 # CRDC: Conjunct Referential Dependency Constraint
@@ -62,7 +62,7 @@ The standard binding theories formalized elsewhere in linglib —
 @cite{chomsky-1981} (`Studies/Chomsky1981.lean`),
 @cite{hudson-1990} (`Studies/Hudson1990.lean`),
 @cite{pollard-sag-1994} / @cite{sag-wasow-bender-2003}
-(`Theories/Syntax/HPSG/Coreference.lean`,
+(`Syntax/HPSG/Coreference.lean`,
 `Studies/SagWasowBender2003.lean`) — make *categorical*
 predictions via `Bool`-valued `grammaticalForCoreference`. The CRDC
 contributes a *graded* prediction (`.questionable`) that those

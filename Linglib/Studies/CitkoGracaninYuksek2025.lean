@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalist.Economy
-import Linglib.Theories.Syntax.Minimalist.Multidominance
-import Linglib.Theories.Syntax.Minimalist.Ellipsis.FormalMatching
+import Linglib.Syntax.Minimalist.Economy
+import Linglib.Syntax.Minimalist.Multidominance
+import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Phenomena.Ellipsis.Sluicing
 import Linglib.Phenomena.Questions.MultipleWh
 import Linglib.Typology.Question
@@ -45,7 +45,7 @@ multidominance as the PF reduction mechanism.
 
 - MD primitives (`PFReductionMechanism`, `MDSharing`, `SharedNode`,
   `PFReducedCoordination`) are imported from
-  `Theories/Syntax/Minimalist/Multidominance.lean` (anchored on Citko
+  `Syntax/Minimalist/Multidominance.lean` (anchored on Citko
   2014). They were briefly inlined here while the substrate file was
   absent; restored to substrate for cross-paper reuse.
 - MWF parameter substrate (`MWFParameter`, `PhaseEdge`, `EdgeAsterisk`,
@@ -56,7 +56,7 @@ multidominance as the PF reduction mechanism.
   @cite{citko-gracanin-yuksek-2025} — stays here.
 - Pronunciation Economy is the **per-operation** primitive
   `pronunciationEconomy : List PFOperation → Prop` from
-  `Theories/Syntax/Minimalist/Economy.lean`. Paper p. 32 ex (45c) needs
+  `Syntax/Minimalist/Economy.lean`. Paper p. 32 ex (45c) needs
   per-op vacuity (a derivation with one real deletion + one vacuous
   deletion violates), which a whole-derivation `pfBefore ≠ pfAfter`
   check could not express.

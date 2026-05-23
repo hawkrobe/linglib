@@ -36,7 +36,7 @@ refinement of the Bobaljik 2012 framework:
    evidence for variation in the internal complexity / markedness of
    the number head — connecting suppletion theory to the feature
    recursion of @cite{harbour-2014} (already substrate in this
-   codebase, see `Theories/Syntax/Minimalist/Agreement/FeatureRecursion.lean`).
+   codebase, see `Syntax/Minimalist/Agreement/FeatureRecursion.lean`).
 
 This file formalizes (1) directly: the DM-derivation in
 `Morphology/DM/ContainmentVI.lean` predicts AAB exclusion in

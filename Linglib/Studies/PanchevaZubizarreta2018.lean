@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.PConstraint
+import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Features.Logophoricity
 import Linglib.Features.Person
 import Linglib.Fragments.Italian.Pronouns
@@ -15,7 +15,7 @@ The Person Case Constraint: The Syntactic Encoding of Perspective.
 ## Summary
 
 Empirical predictions of the P-Constraint theory (formalized in
-`Theories/Syntax/Minimalism/PConstraint.lean`) for the eight grammar
+`Syntax/Minimalism/PConstraint.lean`) for the eight grammar
 instances P&Z discuss: five attested PCC varieties (strong, ultra-strong,
 weak, super-strong, me-first) plus three predicted varieties (PG1, PG2,
 PG3) that the four-parameter space generates.

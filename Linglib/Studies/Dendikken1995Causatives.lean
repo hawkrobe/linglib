@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.Basic
-import Linglib.Theories.Syntax.Minimalist.SmallClause
+import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.SmallClause
 import Linglib.Studies.Dendikken1995
 
 /-!
@@ -82,7 +82,7 @@ for the Theme.
   simplex PVC formalisation (book ch. 2.4). Particles in PVCs
   ≡ affixal particles in causatives at the syntactic level
   (book p. 235 ex. 25).
-- `Theories/Syntax/Minimalism/Applicative.lean` — Pylkkänen's
+- `Syntax/Minimalism/Applicative.lean` — Pylkkänen's
   high/low applicative typology. Per chronological dependency, this
   1995 file does not import `Studies/Pylkkanen2008`;
   the reverse direction is appropriate.
@@ -312,7 +312,7 @@ Pylkkänen (2008) reanalyses as a low Applicative head — the two
 analyses agree on category P, despite different theoretical framings
 (particle vs. applicative). The bridge theorems below witness this
 categorial coincidence using the existing `ApplType.toSCPredCategory`
-API in `Theories/Syntax/Minimalism/SmallClause.lean`.
+API in `Syntax/Minimalism/SmallClause.lean`.
 
 Per chronological dependency (this is a 1995 file; Pylkkänen 2008 is
 later), the `ApplType` enum is referenced via the substrate, not via

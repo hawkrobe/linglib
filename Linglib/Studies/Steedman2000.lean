@@ -28,7 +28,7 @@ Both conjuncts have category S/NP, so they can coordinate normally.
 
 -/
 
-import Linglib.Theories.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 
 namespace Steedman2000

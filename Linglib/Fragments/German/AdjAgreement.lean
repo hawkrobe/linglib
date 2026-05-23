@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Modification
+import Linglib.Syntax.Minimalist.Modification
 
 /-!
 # German Adjective Agreement

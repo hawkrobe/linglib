@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Morphology.CategoryChanging
 import Linglib.Studies.McNallyDeSwart2011
-import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Properties
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 
 /-!
 # Categorial Features ↔ Category-Changing Morphology

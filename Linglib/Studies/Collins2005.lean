@@ -1,15 +1,15 @@
 import Linglib.Phenomena.ArgumentStructure.Passive
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.Movement.Smuggling
-import Linglib.Theories.Syntax.Minimalist.Movement.InverseVoice
+import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Movement.Smuggling
+import Linglib.Syntax.Minimalist.Movement.InverseVoice
 
 /-!
 # A Smuggling Approach to the Passive in English
 @cite{collins-2005} @cite{chomsky-2001} @cite{legate-2003} @cite{rizzi-1990}
 
 Connects the empirical passive data in `Phenomena.ArgumentStructure.Passive`
-to the smuggling theory in `Theories.Syntax.Minimalist.Movement.Smuggling`
-and the Voice/phase infrastructure in `Theories.Syntax.Minimalist.Voice`.
+to the smuggling theory in `Syntax.Minimalist.Movement.Smuggling`
+and the Voice/phase infrastructure in `Syntax.Minimalist.Voice`.
 
 ## Collins's central claims
 

@@ -1,0 +1,368 @@
+import Linglib.Syntax.CCG.Core.Basic
+import Linglib.Features.InformationStructure
+import Linglib.Features.Prosody
+
+/-!
+# CCG Intonation and Information Structure
+
+@cite{steedman-2000}'s theory of how prosodic structure aligns with CCG derivations.
+
+## Insight
+
+CCG's "spurious ambiguity" is not spurious: different derivations correspond to
+different Information Structures, disambiguated by intonation in speech.
+
+The sentence "Anna married Manny" has multiple CCG derivations:
+1. [Anna] [married Manny] — traditional subject-predicate
+2. [Anna married] [Manny] — via composition: theme "Anna married _", rheme "Manny"
+
+Intonation selects among these:
+- "ANNA married" (L+H* LH%) "MANNY" (H* LL%) → theme/rheme split at "married"
+
+## Prosodic Marking
+
+- Pitch accents (H*, L+H*): Mark focus/contrast at word level
+- Terminal contours (phrase accent + boundary tone): Mark prosodic phrase edges
+  (@cite{beckman-pierrehumbert-1986} §4)
+- Information feature (theta/rho): Projects theme/rheme through derivation
+
+-/
+
+namespace CCG.Intonation
+
+open CCG
+open Features.InformationStructure
+open Features.Prosody
+
+-- Information Feature
+
+/--
+The INFORMATION feature on CCG categories.
+
+Categories are marked as:
+- θ (theta): Part of the theme
+- ρ (rho): Part of the rheme
+- unmarked: Unspecified (can unify with either)
+- φ (phi): Phrasal (after boundary tone applies)
+-/
+inductive InfoFeature where
+  | θ         -- Theme
+  | ρ         -- Rheme
+  | unmarked  -- Unspecified
+  | φ         -- Phrasal (boundary applied)
+  deriving Repr, DecidableEq, Inhabited
+
+/-- Can two info features unify? -/
+def InfoFeature.unifies : InfoFeature → InfoFeature → Bool
+  | .unmarked, _ => true
+  | _, .unmarked => true
+  | .θ, .θ => true
+  | .ρ, .ρ => true
+  | .φ, .φ => true
+  | _, _ => false
+
+/-- Unify two info features -/
+def InfoFeature.unify : InfoFeature → InfoFeature → Option InfoFeature
+  | .unmarked, f => some f
+  | f, .unmarked => some f
+  | .θ, .θ => some .θ
+  | .ρ, .ρ => some .ρ
+  | .φ, .φ => some .φ
+  | _, _ => none
+
+-- Prosodic CCG Categories
+
+/--
+A CCG category with prosodic annotation.
+
+The INFORMATION feature projects through the category:
+- (Sθ\NPθ)/NPθ: All arguments and result share the same info value
+-/
+structure ProsodicCat where
+  cat : Cat
+  info : InfoFeature
+  deriving Repr, DecidableEq
+
+/-- Notation helpers -/
+def ProsodicCat.theme (c : Cat) : ProsodicCat := ⟨c, .θ⟩
+def ProsodicCat.rheme (c : Cat) : ProsodicCat := ⟨c, .ρ⟩
+def ProsodicCat.plain (c : Cat) : ProsodicCat := ⟨c, .unmarked⟩
+def ProsodicCat.phrasal (c : Cat) : ProsodicCat := ⟨c, .φ⟩
+
+-- Prosodic Lexical Entries
+
+/--
+A prosodic lexical entry: word + pitch accent → prosodic category.
+
+The pitch accent determines the INFORMATION feature:
+- H* → ρ (rheme)
+- L+H* → θ (theme)
+- null → unmarked
+- Other accents → ρ (default to rheme for non-theme accents)
+-/
+structure ProsodicLexEntry where
+  form : String
+  cat : Cat
+  accent : PitchAccent
+  deriving Repr
+
+/-- Get the prosodic category from a lexical entry -/
+def ProsodicLexEntry.prosodicCat (e : ProsodicLexEntry) : ProsodicCat :=
+  let info := match e.accent with
+    | .L_plus_H_star => .θ
+    | .null => .unmarked
+    | _ => .ρ  -- H*, L*, H*+L, H+L*, L*+H all mark rheme
+  ⟨e.cat, info⟩
+
+-- Intonational Tunes
+
+/--
+An intonational tune: pitch accent + terminal contour.
+
+The two main tunes in English (@cite{steedman-2000}):
+- L+H* L H%: Theme tune (fall-rise)
+- H* L L%: Rheme tune (fall)
+-/
+structure Tune where
+  accent : PitchAccent
+  terminal : TerminalContour
+  deriving Repr, DecidableEq
+
+/-- The canonical theme tune: L+H* with continuation rise (L H%) -/
+def themeTune : Tune := ⟨.L_plus_H_star, .continuation⟩
+
+/-- The canonical rheme tune: H* with declarative fall (L L%) -/
+def rhemeTune : Tune := ⟨.H_star, .declarative⟩
+
+/-- Is this a theme tune? -/
+def Tune.isTheme (t : Tune) : Bool :=
+  t.accent == .L_plus_H_star && t.terminal == .continuation
+
+/-- Is this a rheme tune? -/
+def Tune.isRheme (t : Tune) : Bool :=
+  t.accent == .H_star && t.terminal == .declarative
+
+-- Prosodic Combination Rules
+
+/--
+Prosodic forward application: X/Y + Y → X
+Only succeeds if INFORMATION features unify.
+-/
+def prosodicForwardApp : ProsodicCat → ProsodicCat → Option ProsodicCat
+  | ⟨.rslash x y, i1⟩, ⟨c2, i2⟩ =>
+    if y == c2 then
+      match i1.unify i2 with
+      | some i => some ⟨x, i⟩
+      | none => none
+    else none
+  | _, _ => none
+
+/--
+Prosodic backward application: Y + X\Y → X
+Only succeeds if INFORMATION features unify.
+-/
+def prosodicBackwardApp : ProsodicCat → ProsodicCat → Option ProsodicCat
+  | ⟨c1, i1⟩, ⟨.lslash x y, i2⟩ =>
+    if y == c1 then
+      match i1.unify i2 with
+      | some i => some ⟨x, i⟩
+      | none => none
+    else none
+  | _, _ => none
+
+/--
+Prosodic forward composition: X/Y + Y/Z → X/Z
+INFORMATION features must unify and project to result.
+-/
+def prosodicForwardComp : ProsodicCat → ProsodicCat → Option ProsodicCat
+  | ⟨.rslash x y, i1⟩, ⟨.rslash y' z, i2⟩ =>
+    if y == y' then
+      match i1.unify i2 with
+      | some i => some ⟨.rslash x z, i⟩
+      | none => none
+    else none
+  | _, _ => none
+
+/--
+Apply a terminal contour to a prosodic category.
+Converts θ/ρ marking to φ (phrasal).
+-/
+def applyBoundary : ProsodicCat → TerminalContour → ProsodicCat
+  | ⟨cat, info⟩, _ =>
+    match info with
+    | .θ | .ρ | .unmarked => ⟨cat, .φ⟩
+    | .φ => ⟨cat, .φ⟩  -- already phrasal
+
+-- Prosodic Derivations
+
+/--
+A prosodic derivation step.
+Extends CCG derivations with prosodic information.
+-/
+inductive ProsodicDeriv where
+  | lex : ProsodicLexEntry → ProsodicDeriv
+  | fapp : ProsodicDeriv → ProsodicDeriv → ProsodicDeriv
+  | bapp : ProsodicDeriv → ProsodicDeriv → ProsodicDeriv
+  | fcomp : ProsodicDeriv → ProsodicDeriv → ProsodicDeriv
+  | bcomp : ProsodicDeriv → ProsodicDeriv → ProsodicDeriv
+  | ftr : ProsodicDeriv → Cat → ProsodicDeriv  -- forward type-raise
+  | boundary : ProsodicDeriv → TerminalContour → ProsodicDeriv
+  deriving Repr
+
+/-- Get the prosodic category of a derivation -/
+def ProsodicDeriv.prosodicCat : ProsodicDeriv → Option ProsodicCat
+  | .lex e => some e.prosodicCat
+  | .fapp d1 d2 => do
+    let c1 ← d1.prosodicCat
+    let c2 ← d2.prosodicCat
+    prosodicForwardApp c1 c2
+  | .bapp d1 d2 => do
+    let c1 ← d1.prosodicCat
+    let c2 ← d2.prosodicCat
+    prosodicBackwardApp c1 c2
+  | .fcomp d1 d2 => do
+    let c1 ← d1.prosodicCat
+    let c2 ← d2.prosodicCat
+    prosodicForwardComp c1 c2
+  | .bcomp _ _ => none  -- TODO
+  | .ftr d t => do
+    let ⟨x, i⟩ ← d.prosodicCat
+    some ⟨forwardTypeRaise x t, i⟩
+  | .boundary d tc => do
+    let c ← d.prosodicCat
+    some (applyBoundary c tc)
+
+-- Information Structure Extraction
+
+/--
+A prosodic phrase: a derivation with a terminal contour applied.
+-/
+structure ProsodicPhrase where
+  deriv : ProsodicDeriv
+  tune : Tune
+  deriving Repr
+
+/--
+Extract Information Structure from a sequence of prosodic phrases.
+
+The phrase with theme tune (L+H* L H%) becomes the theme.
+The phrase with rheme tune (H* L L%) becomes the rheme.
+-/
+def extractInfoStructure (phrases : List ProsodicPhrase)
+    : Option (InfoStructure (ProsodicDeriv)) :=
+  let themes := phrases.filter (·.tune.isTheme)
+  let rhemes := phrases.filter (·.tune.isRheme)
+  match themes, rhemes with
+  | [t], [r] => some {
+      theme := ⟨t.deriv⟩
+      rheme := ⟨r.deriv⟩
+    }
+  | [], [r] => some {
+      theme := ⟨r.deriv⟩
+      rheme := ⟨r.deriv⟩
+    }
+  | _, _ => none  -- ambiguous or ill-formed
+
+-- Total IS extractor for CCG prosodic derivations
+
+/--
+Prosodic CCG derivations have Information Structure. Wraps
+`extractInfoStructure` (`Option`-typed because not every list of
+prosodic phrases yields a coherent Theme/Rheme partition) with a
+default-everything-rheme fallback.
+
+(The previous `instance : HasInfoStructure (List ProsodicPhrase) ProsodicDeriv`
+typeclass shape was deleted in the 0.230.489 cleanup since no caller
+dispatched on the typeclass — see Features/InformationStructure.lean
+for the rationale. Direct calls suffice.)
+-/
+def infoStructureTotal (phrases : List ProsodicPhrase) : InfoStructure ProsodicDeriv :=
+  match extractInfoStructure phrases with
+  | some info => info
+  | none => {  -- default: everything is rheme
+      theme := ⟨.lex ⟨"", S, .null⟩⟩
+      rheme := ⟨.lex ⟨"", S, .null⟩⟩
+    }
+
+-- Example: "FRED ate the BEANS"
+
+/-
+Context: "What did Fred eat?"
+Answer: "(FRED ate) (the BEANS)"
+         L+H* LH% H* LL%
+         Theme Rheme
+
+Derivation:
+1. FRED: NP with L+H* → NPθ
+2. Type-raise: NPθ → Sθ/(Sθ\NPθ)
+3. ate: (S\NP)/NP with null → unifies to θ
+4. Compose: Sθ/(Sθ\NPθ) + (Sθ\NPθ)/NPθ → Sθ/NPθ
+5. Boundary L H%: Sθ/NPθ → Sφ/NPφ (theme phrase)
+
+6. the BEANS: NP with H* → NPρ
+7. Boundary L L%: NPρ → NPφ (rheme phrase)
+
+8. Apply: Sφ/NPφ + NPφ → Sφ
+-/
+
+-- Lexical entries
+def fred_L : ProsodicLexEntry := ⟨"Fred", NP, .L_plus_H_star⟩
+def ate_null : ProsodicLexEntry := ⟨"ate", TV, .null⟩
+def the_null : ProsodicLexEntry := ⟨"the", Det, .null⟩
+def beans_H : ProsodicLexEntry := ⟨"beans", N, .H_star⟩
+
+-- Derivation of theme "FRED ate"
+def fred_tr : ProsodicDeriv := .ftr (.lex fred_L) S
+def fred_ate : ProsodicDeriv := .fcomp fred_tr (.lex ate_null)
+def fred_ate_phrase : ProsodicDeriv := .boundary fred_ate .continuation
+
+-- Derivation of rheme "the BEANS"
+def the_beans : ProsodicDeriv := .fapp (.lex the_null) (.lex beans_H)
+def the_beans_phrase : ProsodicDeriv := .boundary the_beans .declarative
+
+-- Example: "(ANNA married) (MANNY)" from Steedman Ch. 5
+
+def anna_L : ProsodicLexEntry := ⟨"Anna", NP, .L_plus_H_star⟩
+def married_null : ProsodicLexEntry := ⟨"married", TV, .null⟩
+def manny_H : ProsodicLexEntry := ⟨"Manny", NP, .H_star⟩
+
+-- Theme: "ANNA married" (L+H* L H%)
+def anna_tr : ProsodicDeriv := .ftr (.lex anna_L) S
+def anna_married : ProsodicDeriv := .fcomp anna_tr (.lex married_null)
+def anna_married_theme : ProsodicPhrase := ⟨.boundary anna_married .continuation, themeTune⟩
+
+-- Rheme: "MANNY" (H* L L%)
+def manny_rheme : ProsodicPhrase := ⟨.boundary (.lex manny_H) .declarative, rhemeTune⟩
+
+-- Full utterance
+def anna_married_manny : List ProsodicPhrase := [anna_married_theme, manny_rheme]
+
+-- Extract Information Structure
+-- #eval extractInfoStructure anna_married_manny
+-- Theme: "Anna married _" (λx. married x anna)
+-- Rheme: "Manny"
+
+-- Constraint: Prosody must align with CCG constituency
+
+/-
+Prosodic boundaries can only occur at CCG constituent boundaries. This explains Selkirk's "Sense Unit Condition" as a theorem.
+
+Allowed:
+  (FRED ate) (the BEANS) -- "Fred ate" is a CCG constituent (S/NP)
+
+Disallowed:
+  *(FRED ate the) (BEANS) -- "Fred ate the" is not a constituent
+  *(The beans that FRED) (ate were DELICIOUS) -- violates island
+-/
+
+/-- Check if a prosodic derivation is well-formed (simplified) -/
+def ProsodicDeriv.wellFormed : ProsodicDeriv → Bool
+  | .lex _ => true
+  | .fapp d1 d2 => d1.wellFormed && d2.wellFormed && d1.prosodicCat.isSome
+  | .bapp d1 d2 => d1.wellFormed && d2.wellFormed
+  | .fcomp d1 d2 => d1.wellFormed && d2.wellFormed && d1.prosodicCat.isSome
+  | .bcomp d1 d2 => d1.wellFormed && d2.wellFormed
+  | .ftr d _ => d.wellFormed
+  | .boundary d _ => d.wellFormed && d.prosodicCat.isSome
+
+end CCG.Intonation

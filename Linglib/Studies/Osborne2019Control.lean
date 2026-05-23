@@ -1,7 +1,7 @@
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.EnhancedDependencies
+import Linglib.Syntax.DependencyGrammar.Formal.EnhancedDependencies
 import Linglib.Typology.Complementation
 import Linglib.Studies.Noonan2007
 

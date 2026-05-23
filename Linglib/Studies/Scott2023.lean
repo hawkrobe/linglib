@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Case.Dependent
-import Linglib.Theories.Syntax.Case.Alignment
-import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Syntax.Case.Dependent
+import Linglib.Syntax.Case.Alignment
+import Linglib.Syntax.Minimalist.Voice
 import Linglib.Fragments.Mayan.Mam.Agreement
 
 /-!

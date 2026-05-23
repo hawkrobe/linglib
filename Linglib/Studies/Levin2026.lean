@@ -1,7 +1,7 @@
 import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Semantics.Causation.Resultatives
-import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
+import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.Mandarin.Resultatives

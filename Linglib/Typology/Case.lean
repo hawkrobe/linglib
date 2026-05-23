@@ -45,7 +45,7 @@ No Fragment imports (substrate discipline). Theory-specific apparatus
 agentivity lattice, Haspelmath 2021 form-frequency correspondences) lives
 in `Studies/`. Abstract-case theory (Marantz 1991, Pesetsky
 2013, Caha 2009 nanosyntax, Baker 2015 dependent case, Woolford 1997
-lexical case) lives in `Linglib/Theories/Syntax/Case/` over a different
+lexical case) lives in `Linglib/Syntax/Case/` over a different
 ontology and does NOT consume this WALS substrate.
 
 -/

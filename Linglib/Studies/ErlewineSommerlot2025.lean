@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalist.Linearization.Cyclic
+import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Fragments.Malayic.VoiceSystem
-import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Voice
 
 /-!
 # Voice and Extraction in Malayic
@@ -39,7 +39,7 @@ nominal A'-extraction from cyclic linearization (@cite{fox-pesetsky-2005}).
 @cite{erlewine-sommerlot-2025}'s analysis derives the meN-deletion
 constraint from cyclic linearization alone, without invoking the
 Phase Impenetrability Condition. This positions them at
-`PICStrength.linearizationBound` (per `Theories/Syntax/Minimalist/Phase.lean`):
+`PICStrength.linearizationBound` (per `Syntax/Minimalist/Phase.lean`):
 no opacity constraint per se, only ordering constraints from
 `SpelloutAndCheck`. Same regime adopted by
 @cite{sande-clem-dabkowski-2026} for Guébie discontinuous harmony,

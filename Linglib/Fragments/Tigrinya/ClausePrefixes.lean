@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Basic
 import Linglib.Core.Morphology.Circumfix
 
 /-!

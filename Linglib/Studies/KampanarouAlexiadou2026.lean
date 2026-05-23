@@ -1,8 +1,8 @@
 import Linglib.Typology.Possession
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.Allosemy
-import Linglib.Theories.Syntax.Minimalist.SmallClause
-import Linglib.Theories.Syntax.Minimalist.Applicative
+import Linglib.Syntax.Minimalist.SmallClause
+import Linglib.Syntax.Minimalist.Applicative
 import Linglib.Fragments.Greek.StandardModern.Possession
 import Linglib.Fragments.Greek.Grevena.Possession
 import Linglib.Fragments.Greek.Smyrna.Possession
@@ -508,7 +508,7 @@ theorem ka2026_smg_to_gg_not_in_heine_typology :
 /-- Local Distinctness predicate per @cite{horrocks-stavrou-1987} + Richards
     2010 framing in K&A §8. The Single Argument Restriction follows from
     Distinctness applied to the [+arg] feature within the DP.
-    TODO: promote to `Theories/Syntax/Minimalist/Distinctness.lean` when a
+    TODO: promote to `Syntax/Minimalist/Distinctness.lean` when a
     second Lean consumer (likely Wood 2023 Icelandic) materializes. The
     pattern matches the deferred-substrate convention used elsewhere
     (e.g., `SC particles`, `Indefinite paradigm`). -/

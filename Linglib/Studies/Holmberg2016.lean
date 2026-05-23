@@ -1,6 +1,6 @@
 import Linglib.Features.AnsweringSystem
 import Linglib.Semantics.Questions.Hamblin
-import Linglib.Theories.Syntax.Minimalist.Polarity
+import Linglib.Syntax.Minimalist.Polarity
 import Linglib.Features.Polarity
 import Linglib.Phenomena.Questions.PolarAnswerStructure
 

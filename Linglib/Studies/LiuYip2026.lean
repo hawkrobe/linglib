@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalist.Aspect
-import Linglib.Theories.Syntax.Minimalist.Probe
-import Linglib.Theories.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.Aspect
+import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.ClauseSpine
 import Linglib.Typology.Complementation
 import Linglib.Features.Aktionsart
 import Linglib.Fragments.Mandarin.Predicates
@@ -43,7 +43,7 @@ import Linglib.Fragments.Cantonese.ResultativeComplements
 
 - The substrate-level addition @cite{liu-yip-2026}'s analysis *does* motivate
   is the bipartite split-aspect typing: `AspFlavor` and `AspHead`, landed in
-  `Theories/Syntax/Minimalist/Aspect.lean` parallel to `VoiceHead { flavor }`.
+  `Syntax/Minimalist/Aspect.lean` parallel to `VoiceHead { flavor }`.
   That commitment is independent of the analytical claims of this paper —
   it is consumed by @cite{travis-2010}, @cite{macdonald-2008},
   @cite{tsai-2008}, @cite{sybesma-2017}, and @cite{liu-yip-2026} jointly —
@@ -78,7 +78,7 @@ import Linglib.Fragments.Cantonese.ResultativeComplements
 "you-skipping"), Dependency Grammar (no AspP, no ICH), CCG (forward
 composition), `Fragments/Italian/Modals.lean`'s @cite{hacquard-2006}
 restructuring substrate, `Studies/Landau2015.lean`'s
-`ControlTier`, and `Theories/Syntax/Minimalist/Phase.lean`. The
+`ControlTier`, and `Syntax/Minimalist/Phase.lean`. The
 @cite{cinque-2006} vs. @cite{wurmbrand-2001} restructuring rivalry is made
 explicit in §10 as a refutation theorem candidate.
 -/
@@ -117,7 +117,7 @@ theorem types_ordered :
 /-- The Implicational Complementation Hierarchy of @cite{wurmbrand-lohninger-2023}:
     proposition > situation > event in transparency-decreasing order.
 
-    Local to this Studies file; promotion to `Theories/Syntax/Complementation/`
+    Local to this Studies file; promotion to `Syntax/Complementation/`
     is contingent on a second paper-anchored consumer (see Phenomena/Control
     studies and Studies/Grano2024.lean as candidate
     second sites).
@@ -397,7 +397,7 @@ because:
 The sharp refutation theorem
 `¬ (Wurmbrand.truncated.projects .Asp ↔ Cinque.full.projects .Asp)` is
 contingent on a Cinque-style "always project" formalization landing in
-`Theories/Syntax/Minimalist/`. Until then, the rivalry is documented in
+`Syntax/Minimalist/`. Until then, the rivalry is documented in
 prose, not theorem. -/
 
 /-- A trivial Cinque-flavored "restructuring" (identity) for comparison
@@ -422,7 +422,7 @@ different mechanism. This section documents the divergences without
 attempting bridge theorems (which would require the sister frameworks to
 have Studies-level Chinese formalizations they currently lack):
 
-- **HPSG** (`Theories/Syntax/HPSG/Core/Basic.lean`): no clausal spine, no
+- **HPSG** (`Syntax/HPSG/Core/Basic.lean`): no clausal spine, no
   AspP, no ICH. The "you-skipping" pattern would naturally be a *lexical
   rule on argument structure* (compare `LexicalRules.lean:36-95`'s
   `passiveRule`, `dativeShiftRule`, `resultativeRule`). @cite{liu-yip-2026}'s
@@ -435,7 +435,7 @@ have Studies-level Chinese formalizations they currently lack):
   (irreconcilable at substrate level; bridgeable only at the empirical
   prediction level).
 
-- **CCG** (`Theories/Syntax/CCG/Core/Basic.lean`, `Scope.lean`): scope
+- **CCG** (`Syntax/CCG/Core/Basic.lean`, `Scope.lean`): scope
   mismatch is type-shifting + composition. *you*'s skipping naturally
   maps to forward composition; no movement+reconstruction needed. A
   bridge theorem `LiuYip.youSkipping iff CCG.derivableViaComposition`
@@ -457,7 +457,7 @@ have Studies-level Chinese formalizations they currently lack):
   both Studies files currently formalize their own complement-class
   projections without sharing substrate.
 
-- **`Theories/Syntax/Minimalist/Phase.lean`** has @cite{chomsky-2000}
+- **`Syntax/Minimalist/Phase.lean`** has @cite{chomsky-2000}
   / @cite{chomsky-2001} phase machinery (`PICStrength`).
   @cite{liu-yip-2026}'s intervention is by AspP_outer, a *non-phase*
   head — defective intervention is a third locality regime alongside

@@ -791,7 +791,7 @@ ergonomic field access (downstream `HeadFunction` etc. embed `section_ : Section
 as a single field rather than two).
 
 **Downstream uses** (forward references):
-- `Linglib/Theories/Syntax/Minimalist/HeadFunction.lean` uses `Section (LIToken ⊕ Nat)`
+- `Linglib/Syntax/Minimalist/HeadFunction.lean` uses `Section (LIToken ⊕ Nat)`
   as the substrate for MCB head functions
 - The `Section.σ_of` keystone lemma absorbs ~13 sites of singleton-class
   case-analysis into a single application

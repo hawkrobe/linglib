@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalist.PersonGeometry
-import Linglib.Theories.Syntax.Minimalist.Phase
-import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Voice
 import Linglib.Studies.Olivier2026Auxiliary
 
 /-!

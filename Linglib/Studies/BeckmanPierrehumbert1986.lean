@@ -1,6 +1,6 @@
 import Linglib.Features.Prosody
 import Linglib.Phonology.Autosegmental.RegisterTier
-import Linglib.Theories.Syntax.CCG.Intonation
+import Linglib.Syntax.CCG.Intonation
 import Linglib.Studies.KratzerSelkirk2020
 
 /-!

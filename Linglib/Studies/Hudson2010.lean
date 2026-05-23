@@ -1,7 +1,7 @@
 import Mathlib.Logic.Relation
 import Linglib.Core.Inheritance.Basic
 import Linglib.Core.Inheritance.Order
-import Linglib.Theories.Syntax.WordGrammar.Network
+import Linglib.Syntax.WordGrammar.Network
 
 /-!
 # Hudson 2010: kinship as an inheritance network @cite{hudson-2010}

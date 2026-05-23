@@ -199,7 +199,7 @@ symmetrically as V's selected arguments.
 
 ANALOGUE: Bruening's ι-head (def-implicit licensor) and ApplPass
 (licensor for implicit first object) have no current substrate primitives
-in `Theories/Syntax/Minimalist/`. `Voice.ExternalArgSemantics` includes
+in `Syntax/Minimalist/`. `Voice.ExternalArgSemantics` includes
 `thematicExistential` (the analogue of Bruening's ∃-head); a parallel
 `thematicIota` and a `Pass`-of-`Appl` head are substrate gaps. -/
 
@@ -232,7 +232,7 @@ theorem g3_base_transitive_constraint :
 -- G1 (sluicing asymmetry, §2.1): formalized as a sibling in
 -- `Studies/Bruening2021Sluicing.lean` via
 -- `g1_sluicing_asymmetry`. Substrate: `bruening2021Identity` in
--- `Theories/Syntax/Minimalist/Ellipsis/FormalMatching.lean` § 7.
+-- `Syntax/Minimalist/Ellipsis/FormalMatching.lean` § 7.
 --
 -- TODO(G4): Frame-conditioned implicit-arg licensing (§2.3.2 ex. 63-65).
 -- The Fragment carries `implicitObj : Option ImplicitInterp` globally,

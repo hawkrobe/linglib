@@ -1,5 +1,5 @@
 import Linglib.Studies.GoldbergJackendoff2004
-import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Basic
 import Linglib.Core.Dependency.Basic
 
 /-!

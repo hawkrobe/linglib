@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
+import Linglib.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Studies.Ross1967
 
 /-!

@@ -1,6 +1,6 @@
 import Linglib.Core.Time.Tense
 import Linglib.Core.Time.Reichenbach
-import Linglib.Theories.Syntax.Minimalist.Tense.AgreeSOT
+import Linglib.Syntax.Minimalist.Tense.AgreeSOT
 import Linglib.Fragments.Hungarian.Predicates
 import Linglib.Fragments.Hungarian.FunctionWords
 import Linglib.Fragments.Hungarian.TemporalDeictic

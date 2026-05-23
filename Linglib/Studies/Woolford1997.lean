@@ -1,6 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
-import Linglib.Theories.Syntax.Case.Dependent
+import Linglib.Syntax.Case.Dependent
 
 /-!
 # @cite{woolford-1997} — Four-Way Case Systems

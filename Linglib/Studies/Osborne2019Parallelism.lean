@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
+import Linglib.Syntax.DependencyGrammar.Formal.CoordinationParallelism
 import Linglib.Phenomena.Ellipsis.Gapping
 
 /-!

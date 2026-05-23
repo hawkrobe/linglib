@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.Features
-import Linglib.Theories.Syntax.Minimalist.ObligatoryOperations
+import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Features
+import Linglib.Syntax.Minimalist.ObligatoryOperations
 
 /-!
 # Newman (2024) — When Arguments Merge @cite{newman-2024}

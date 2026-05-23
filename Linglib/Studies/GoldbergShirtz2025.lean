@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
+import Linglib.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 
 /-!
 # @cite{goldberg-shirtz-2025}: PAL Constructions — Empirical Data

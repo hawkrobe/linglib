@@ -1,6 +1,6 @@
 import Linglib.Features.Acceptability
 import Linglib.Morphology.DM.Fission
-import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Voice
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
@@ -467,7 +467,7 @@ yet stated as a Lean theorem.
 
 * **vGO ⌒ vBE adjacency in `isInchoative` (Phase D — substrate).**
   Muñoz Pérez's Fission rule has the explicit context `/vGO __ vBE`,
-  but `Theories/Syntax/Minimalist/VerbalDecomposition.lean`'s
+  but `Syntax/Minimalist/VerbalDecomposition.lean`'s
   `isInchoative` checks only set-membership (`heads.contains .vGO`),
   not adjacency. Deferred because the refactor touches 8 downstream
   consumer files. A focused session should add an `applPos` field (or

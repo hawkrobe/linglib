@@ -1,6 +1,6 @@
 import Linglib.Features.Prominence
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Theories.Syntax.Case.Dependent
+import Linglib.Syntax.Case.Dependent
 
 /-!
 # @cite{aissen-2003}: Differential Object Marking @cite{aissen-2003}

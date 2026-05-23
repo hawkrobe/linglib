@@ -1,6 +1,6 @@
 import Linglib.Core.Dependency.Basic
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.CatenalConstruction
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
+import Linglib.Syntax.DependencyGrammar.Formal.CatenalConstruction
+import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 
 /-!
 # Osborne & Groß (2012): Constructions Are Catenae — Data

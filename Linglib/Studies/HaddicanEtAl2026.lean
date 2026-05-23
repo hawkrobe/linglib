@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.Basic
-import Linglib.Theories.Syntax.Minimalist.SmallClause
+import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.SmallClause
 import Linglib.Phenomena.Constructions.ParticleVerbs
 import Linglib.Studies.Bruening2021
 

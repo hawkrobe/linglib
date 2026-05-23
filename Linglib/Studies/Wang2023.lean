@@ -2,7 +2,7 @@ import Linglib.Features.PrivativePair
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Theories.Syntax.Minimalist.Features
+import Linglib.Syntax.Minimalist.Features
 import Linglib.Phenomena.Politeness.Honorifics
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.HPSG.Coreference
+import Linglib.Syntax.HPSG.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
@@ -18,7 +18,7 @@ Principles A/B/C) to two principles based on the `MODE` feature:
 - **Principle B**: `[MODE ref]` must NOT be outranked on ARG-ST by a coindexed element
 
 Both pronouns and R-expressions are `[MODE ref]`, so Principle B subsumes
-Principle C. See `Theories/Syntax/HPSG/Coreference.lean` for the
+Principle C. See `Syntax/HPSG/Coreference.lean` for the
 implementation; this file verifies it against the empirical minimal-pair
 data in `Phenomena/Anaphora/Coreference.lean` via the
 `Paradigms.AcceptabilityJudgment` contract.

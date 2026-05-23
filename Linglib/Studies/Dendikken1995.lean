@@ -1,9 +1,9 @@
-import Linglib.Theories.Syntax.Minimalist.Basic
-import Linglib.Theories.Syntax.Minimalist.SmallClause
+import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.SmallClause
 
 /-! # Complex LI formation — local primitives
 
-Inlined from the deleted `Theories/Syntax/Minimalist/HeadMovement/Basic.lean`
+Inlined from the deleted `Syntax/Minimalist/HeadMovement/Basic.lean`
 at 0.230.788 when the legacy `Movement` record was removed. This is the
 only file that uses `formComplexLI`, so the substrate is co-located here.
 If a second consumer arises, promote to its own file (most natural home:

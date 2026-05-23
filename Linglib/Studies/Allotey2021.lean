@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.MinimalPronoun
-import Linglib.Theories.Syntax.Minimalist.LongDistanceAgree
+import Linglib.Syntax.Minimalist.MinimalPronoun
+import Linglib.Syntax.Minimalist.LongDistanceAgree
 import Linglib.Fragments.Ga.Predicates
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Studies.Landau2015

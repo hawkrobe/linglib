@@ -1,8 +1,8 @@
 import Linglib.Core.Word
-import Linglib.Theories.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree
 import Linglib.Typology.Complementation
 import Linglib.Fragments.Tigrinya.ClausePrefixes
-import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # @cite{cacchioli-2025} — Empirical Data @cite{cacchioli-2025}

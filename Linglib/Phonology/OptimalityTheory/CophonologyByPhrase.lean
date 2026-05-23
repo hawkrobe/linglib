@@ -1,5 +1,5 @@
 import Linglib.Phonology.OptimalityTheory.CophonologyTheory
-import Linglib.Theories.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Phase
 
 /-!
 # Cophonologies by Ph(r)ase

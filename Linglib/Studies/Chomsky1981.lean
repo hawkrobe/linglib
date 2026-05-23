@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Coreference
+import Linglib.Syntax.Minimalist.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
@@ -20,7 +20,7 @@ distribution by c-command + a local binding domain:
 - **Principle C**: an R-expression must be free everywhere
 
 This file verifies the implementation in
-`Theories/Syntax/Minimalism/Coreference.lean` against the empirical
+`Syntax/Minimalism/Coreference.lean` against the empirical
 minimal-pair data in `Phenomena/Anaphora/Coreference.lean`.
 
 Companion to `Reinhart1976.lean` (which formalizes the c-command

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.VerbMovementParameter
+import Linglib.Syntax.Minimalist.VerbMovementParameter
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
@@ -6,7 +6,7 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 @cite{pollock-1989}
 
 Connects the Minimalist verb movement parameter
-(`Theories/Syntax/Minimalism/Formal/HeadMovement/VerbMovement.lean`) to the
+(`Syntax/Minimalism/Formal/HeadMovement/VerbMovement.lean`) to the
 theory-neutral verb movement and do-support data in SubjectAuxInversion.lean.
 
 ## Structure

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Studies.Landau2015

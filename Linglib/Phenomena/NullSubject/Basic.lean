@@ -9,10 +9,10 @@ This file is in `Core/` because the *parameter* is theory-neutral —
 any syntactic framework (Minimalism, HPSG, LFG, Construction Grammar)
 must engage with it. Theory-laden *explanations* of the parameter
 (rich-agreement licensing, the EPP, topic drop, etc.) belong in
-`Theories/Syntax/<framework>/`. Theory-laden *bridges* — e.g. a
+`Syntax/<framework>/`. Theory-laden *bridges* — e.g. a
 function that derives `hasOvertPRO` from a Minimalist minimal-pronoun
 inventory — likewise live with the theory they presuppose
-(`Theories/Syntax/Minimalism/MinimalPronoun.lean`).
+(`Syntax/Minimalism/MinimalPronoun.lean`).
 
 ## The implicational universal
 

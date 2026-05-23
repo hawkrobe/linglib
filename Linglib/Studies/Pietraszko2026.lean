@@ -1,8 +1,8 @@
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.Features
-import Linglib.Theories.Syntax.Minimalist.Agree
-import Linglib.Theories.Syntax.Minimalist.Phase
-import Linglib.Theories.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Features
+import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Probe
 import Linglib.Studies.ErlewineSommerlot2025
 import Linglib.Studies.Coon2019
 import Linglib.Studies.CoonMateoPedroPreminger2014
@@ -432,7 +432,7 @@ Pietraszko's data using the horizon framework — included for
 side-by-side comparison, not as the substrate's preferred encoding.
 
 Per linglib layer discipline, this lives here (study-local) rather
-than as a row in `Theories/Syntax/Minimalist/Probe.lean`'s
+than as a row in `Syntax/Minimalist/Probe.lean`'s
 `LanguageProbeConfig` table. -/
 
 /-- The horizon-based reduction of Pietraszko's account: Voice is the

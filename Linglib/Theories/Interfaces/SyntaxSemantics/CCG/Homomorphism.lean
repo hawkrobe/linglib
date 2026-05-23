@@ -13,9 +13,9 @@ corresponds to a semantic operation.
 
 -/
 
-import Linglib.Theories.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
-import Linglib.Theories.Syntax.CCG.Core.Combinators
+import Linglib.Syntax.CCG.Core.Combinators
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Semantics.Composition.ToyDomain
 

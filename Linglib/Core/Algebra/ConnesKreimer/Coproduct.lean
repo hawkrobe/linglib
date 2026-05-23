@@ -79,7 +79,7 @@ quotient by `(1 - α)` for `α ∈ SO_0` per Lemma 1.2.10.
 
 `[UPSTREAM]` candidate. Future home is something like
 `Mathlib.Combinatorics.HopfAlgebra.ConnesKreimer.Coproduct`. This file
-is part of the Stage 0.5 hoist out of `Theories/Syntax/Minimalist/Hopf/`
+is part of the Stage 0.5 hoist out of `Syntax/Minimalist/Hopf/`
 (per `scratch/mcb_stage1_plan.md`).
 
 ## Mathlib infra leveraged
@@ -358,7 +358,7 @@ noncomputable def comulTreeDel (T : TraceTree α Unit) :
 /-- The structural decomposition of `comulTreeDel T` into its primitive
     `T ⊗ 1` term and the sum of admissible-cut terms. Stated as a named
     `rfl` lemma so downstream proofs (e.g., the algebraic Merge bridge in
-    `Theories/Syntax/Minimalist/Merge/Action.lean`) are robust under
+    `Syntax/Minimalist/Merge/Action.lean`) are robust under
     refactors of `comulTreeDel`'s body. Lives in `ConnesKreimer` (where
     `deletionRightChannel` is in scope) rather than at the consumer. -/
 theorem comulTreeDel_eq_prim_add_sum (T : TraceTree α Unit) :
@@ -550,7 +550,7 @@ noncomputable def comulDelMonoidHom :
     for the future refactor.
 
     Δ^d is consumed by Minimalism's Merge operator
-    (`Theories/Syntax/Minimalist/Merge/Basic.lean`); it does NOT participate
+    (`Syntax/Minimalist/Merge/Basic.lean`); it does NOT participate
     in the Bialgebra typeclass mediation. -/
 noncomputable def comulDelAlgHom : Hc R α →ₐ[R] Hc R α ⊗[R] Hc R α :=
   AddMonoidAlgebra.lift R ((Hc R α) ⊗[R] (Hc R α)) (TraceForest α Unit)
@@ -577,7 +577,7 @@ theorem comulDelAlgHom_apply_single (F : TraceForest α Unit) :
 /-- **Δ^d on a 2-tree workspace** (M-C-B Def 1.2.8 with ω = d, applied
     to `F = {T1, T2}`). Multiplicativity of `comulDelAlgHom` gives
     `Δ^d({T1, T2}) = Δ^d(T1) · Δ^d(T2)` — the load-bearing fact for
-    the algebraic Merge bridge in `Theories/Syntax/Minimalist/Merge/External.lean`. -/
+    the algebraic Merge bridge in `Syntax/Minimalist/Merge/External.lean`. -/
 theorem comulDelAlgHom_pair (T1 T2 : TraceTree α Unit) :
     comulDelAlgHom (R := R) (α := α)
         (forestToHc ({T1, T2} : TraceForest α Unit))

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.NonProjective
+import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Phenomena.WordOrder.NonProjectivity
 
 /-!

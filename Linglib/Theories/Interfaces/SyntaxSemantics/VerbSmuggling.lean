@@ -1,13 +1,13 @@
 import Linglib.Semantics.Lexical.VerbEntry
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.Movement.Smuggling
+import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Movement.Smuggling
 
 /-!
 # Verb ↔ Smuggling Interface
 @cite{collins-2005} @cite{storment-2026} @cite{kratzer-1996}
 
 Promotes the bridge from `VerbCore`'s lexical fields to the smuggling
-operators in `Theories/Syntax/Minimalism/Movement/Smuggling.lean`. These
+operators in `Syntax/Minimalism/Movement/Smuggling.lean`. These
 are general operations on `VerbCore` reused across argument-structure
 studies (QI, locative inversion, passives), not study-local helpers.
 

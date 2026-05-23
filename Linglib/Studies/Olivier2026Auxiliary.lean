@@ -1,6 +1,6 @@
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
-import Linglib.Theories.Syntax.Minimalist.PersonGeometry
-import Linglib.Theories.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phase
 
 /-!
 # @cite{olivier-2026} — Auxiliary Switch in Romance restructuring

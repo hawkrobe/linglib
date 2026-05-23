@@ -2,7 +2,7 @@ import Linglib.Studies.Hoeksema1983
 import Linglib.Semantics.Polarity.Licensing
 import Linglib.Studies.Heim2001
 import Linglib.Studies.Bresnan1973
-import Linglib.Theories.Syntax.Minimalist.DegreeMovement
+import Linglib.Syntax.Minimalist.DegreeMovement
 import Linglib.Semantics.Degree.ThanClause
 import Linglib.Typology.PolarityItem
 
@@ -20,8 +20,8 @@ Rajesh Bhatt and Roumyana Pancheva. Late Merger of Degree Clauses.
 This file is a paper-faithful study of B&P 2004. It does **not** define
 late merger or the Heim-Kennedy Constraint — those live in the
 syntax–semantics interface module
-`Theories/Syntax/Minimalist/DegreeMovement.lean`,
-which itself imports `Theories/Syntax/Minimalism/LateMerger.lean`
+`Syntax/Minimalist/DegreeMovement.lean`,
+which itself imports `Syntax/Minimalism/LateMerger.lean`
 (generic late merger, polymorphic in admissibility) and
 `Semantics/Degree/Comparative.lean` (set-of-degrees comparative
 operator). What this file *does* is instantiate that infrastructure for

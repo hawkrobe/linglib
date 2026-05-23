@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Case.Dependent
-import Linglib.Theories.Syntax.Case.Alignment
+import Linglib.Syntax.Case.Dependent
+import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Hindi.Case
@@ -26,7 +26,7 @@ The algorithm:
    accusative, ABS in ergative
 4. **Default case** as last resort (not modeled here)
 
-This study file runs `Theories/Syntax/Case/Dependent.lean`'s
+This study file runs `Syntax/Case/Dependent.lean`'s
 `assignCases` over representative languages from each of Baker's
 typological columns and proves the output matches the surface case
 patterns documented in the Fragment inventories.

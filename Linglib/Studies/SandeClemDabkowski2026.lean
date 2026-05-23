@@ -1,8 +1,8 @@
-import Linglib.Theories.Syntax.Minimalist.Phase
-import Linglib.Theories.Syntax.Minimalist.Linearization.Cyclic
-import Linglib.Theories.Syntax.Minimalist.Movement.Remnant
+import Linglib.Syntax.Minimalist.Phase
+import Linglib.Syntax.Minimalist.Linearization.Cyclic
+import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Phonology.OptimalityTheory.CophonologyByPhrase
-import Linglib.Theories.Syntax.Minimalist.Amalgamation
+import Linglib.Syntax.Minimalist.Amalgamation
 
 /-!
 # Sande, Clem & Dąbkowski (2026): Discontinuous vowel harmony in Guébie
@@ -101,11 +101,11 @@ Substrate consumed (additions landed in this same overhaul):
 - `Phonology/OptimalityTheory/CophonologyByPhrase.lean` —
   @cite{sande-jenks-inkelas-2020}'s phrasal extension of
   @cite{sande-jenks-2017}'s VI-anchored cophonology.
-- `Theories/Syntax/Minimalist/Movement/Remnant.lean` —
+- `Syntax/Minimalist/Movement/Remnant.lean` —
   @cite{koopman-1997} predicate-cleft remnant-XP movement.
-- `Theories/Syntax/Minimalist/Phase.lean` — added
+- `Syntax/Minimalist/Phase.lean` — added
   `PICStrength.linearizationBound` and `admitsExtraction`.
-- `Theories/Syntax/Minimalist/Linearization/Cyclic.lean` — added
+- `Syntax/Minimalist/Linearization/Cyclic.lean` — added
   `FrozenFeature` / `frozenValue` for cross-phase feature preservation.
 - `Studies/HarizanovGribanova2019Amalgamation.lean`
   — refactored `axiom verb_doubling_implies_syntactic` to a

@@ -1,6 +1,6 @@
 import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Mandarin.Questions
-import Linglib.Theories.Syntax.Minimalist.Features
+import Linglib.Syntax.Minimalist.Features
 import Linglib.Typology.ExpressiveModifier
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Paradigms.AcceptabilityJudgment
@@ -77,7 +77,7 @@ behave like *the-hell*.
 
 Theory-neutral lexical entries (`theHell`, `daodi`) live in the
 respective Fragment files. The Minimalist analysis (POV features,
-Agree, the licensing predicate) lives in `Theories/Syntax/Minimalism/
+Agree, the licensing predicate) lives in `Syntax/Minimalism/
 Core/ANDL.lean`. The empirical 2×2 design uses
 `Paradigms/AcceptabilityJudgment.lean`. This study file only carries
 the paper's specific data (six conditions, two DD scores) and the

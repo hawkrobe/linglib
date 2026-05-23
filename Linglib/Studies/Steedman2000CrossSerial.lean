@@ -1,11 +1,11 @@
-import Linglib.Theories.Syntax.CCG.CrossSerial
+import Linglib.Syntax.CCG.CrossSerial
 import Linglib.Phenomena.WordOrder.CrossSerial
 
 /-!
 # CCG Cross-Serial Bridge
 @cite{bresnan-etal-1982} @cite{steedman-2000}
 
-Connects CCG derivations (from `Theories.Syntax.CCG.CrossSerial`) to
+Connects CCG derivations (from `Syntax.CCG.CrossSerial`) to
 empirical cross-serial dependency data (from `Phenomena.WordOrder.CrossSerial`).
 
 Proves that CCG derivations produce the correct cross-serial bindings

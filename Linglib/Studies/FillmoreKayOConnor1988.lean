@@ -1,6 +1,6 @@
 import Linglib.Core.Word
 import Linglib.Features.Acceptability
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
+import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Typology.PolarityItem
 
 /-!

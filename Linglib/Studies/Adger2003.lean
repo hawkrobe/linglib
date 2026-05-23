@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.Selection
-import Linglib.Theories.Syntax.Minimalist.FromFragments
+import Linglib.Syntax.Minimalist.Selection
+import Linglib.Syntax.Minimalist.FromFragments
 
 /-!
 # Adger 2003: C-Selection and Subcategorization @cite{adger-2003}
@@ -7,7 +7,7 @@ import Linglib.Theories.Syntax.Minimalist.FromFragments
 Replicates Adger's c-selection account of subcategorization
 (*Core Syntax* ch. 3 §3.5–§3.6) on linglib's Minimalism substrate via the
 `Derivation.WellFormed` predicate from
-`Theories/Syntax/Minimalism/Selection.lean`.
+`Syntax/Minimalism/Selection.lean`.
 
 ## Adger's apparatus (recap)
 
@@ -34,7 +34,7 @@ transitive verbs). Adger's checking system:
 | first Merge / complement | `Step.emR` (consumes one `pending` feature) |
 | second Merge / specifier | `Step.emL` (no consumption)                 |
 
-`verbToSelStack` (in `Theories/Syntax/Minimalism/Derivations.lean`) derives
+`verbToSelStack` (in `Syntax/Minimalism/Derivations.lean`) derives
 the SelStack from `VerbEntry.complementType`:
 
 | complementType | SelStack    | English class |
@@ -62,7 +62,7 @@ open Minimalist Minimalist.FromFragments
 
 /-! ## §0: Lexicon — Fragment-grounded SO building blocks
 
-Migrated from the deleted `Theories/Syntax/Minimalism/Derivations.lean`;
+Migrated from the deleted `Syntax/Minimalism/Derivations.lean`;
 instances belong in Phenomena per the architecture audit. Each SO is a
 leaf with `Cat` and `SelStack` derived from its Fragment lexical entry.
 
@@ -257,7 +257,7 @@ theorem subcategorization_data_match :
 /-! ### Bare common nouns under strict c-selection
 
 The existing `*_pizza` / `*_book` derivations in
-`Theories/Syntax/Minimalism/Derivations.lean` use bare common nouns
+`Syntax/Minimalism/Derivations.lean` use bare common nouns
 (`cat = .N` per `nounToSO` for non-proper entries) as direct objects of
 verbs that c-select [.D]. Per Adger ch. 7 *Functional Categories II — the
 DP*, bare common nouns require null-D wrapping to project as DPs and check

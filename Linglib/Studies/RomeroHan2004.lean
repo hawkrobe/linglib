@@ -42,7 +42,7 @@ with x's conversational goals, p is in the Common Ground." Short form:
   explain *which* polar question to use; R&H explain *why* certain
   forms have bias. (Apparatus deleted in Bool/List → Prop/Set
   migration; reinstate in Prop/Set form when needed.)
-- `Theories/Syntax/Minimalism/Polarity.lean` — the [±Pol] feature.
+- `Syntax/Minimalism/Polarity.lean` — the [±Pol] feature.
 -/
 
 namespace RomeroHan2004

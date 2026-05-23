@@ -1,9 +1,9 @@
-import Linglib.Theories.Syntax.Minimalist.HeadFunction
+import Linglib.Syntax.Minimalist.HeadFunction
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Order
 import Linglib.Fragments.Slavic.Russian.Case
 import Linglib.Morphology.DM.Categorizer
-import Linglib.Theories.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Basic
 
 /-!
 # @cite{pesetsky-2013} — Russian Case Morphology and the Syntactic Categories
@@ -32,7 +32,7 @@ picks DAT.
 
 This is a **Minimalist study**. Its tree is `SyntacticObject`
 (@cite{marcolli-chomsky-berwick-2025}, formalized in
-`Theories/Syntax/Minimalist/Basic.lean`); its structure-building
+`Syntax/Minimalist/Basic.lean`); its structure-building
 operation is `merge`; its categories are members of `Cat`. Per-leaf
 case stacks are a **derived structural property** of the
 `SyntacticObject` — `caseStackAt` walks the tree, treating left-Merge
@@ -120,10 +120,10 @@ agreement bridge with @cite{caha-2009}.
 
 ## Connections
 
-- `Theories/Syntax/Minimalist/Basic.lean` — the substrate. `Cat`,
+- `Syntax/Minimalist/Basic.lean` — the substrate. `Cat`,
   `SyntacticObject`, `LIToken`, `merge` all consumed here. The
   derivation-step infrastructure in
-  `Theories/Syntax/Minimalist/Derivation.lean` is the natural next
+  `Syntax/Minimalist/Derivation.lean` is the natural next
   layer once FA gating is modeled.
 - `Morphology/DM/Categorizer.lean` (@cite{harley-2014}) —
   the structural bridge `primevalN_via_dm_categorizer` connects

@@ -1,11 +1,11 @@
-import Linglib.Theories.Syntax.CCG.Scope
+import Linglib.Syntax.CCG.Scope
 import Linglib.Studies.Bruening2001
 
 /-!
 # CCG Scope Bridge
 @cite{steedman-2000}
 
-Connects CCG scope theory (from `Theories.Syntax.CCG.Scope`) to
+Connects CCG scope theory (from `Syntax.CCG.Scope`) to
 empirical scope-word-order data (from `Phenomena.Quantification.Bruening2001`).
 
 Proves that CCG derivation types correctly predict scope availability

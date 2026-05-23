@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.Agree
-import Linglib.Theories.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.PersonGeometry
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 
@@ -92,7 +92,7 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
 
 ## Cross-references
 
-- `Theories/Syntax/Minimalist/PersonGeometry.lean` — the substrate:
+- `Syntax/Minimalist/PersonGeometry.lean` — the substrate:
   `decomposePerson`, `probeResolutionRank`, multi-cited
   (@cite{harley-ritter-2002}, @cite{bejar-rezac-2003},
   @cite{preminger-2014}, @cite{pancheva-zubizarreta-2018}).

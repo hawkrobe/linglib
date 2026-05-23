@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Islands.Basic
-import Linglib.Theories.Syntax.SynGraph
-import Linglib.Theories.Syntax.Minimalist.Merge.MinimalYield
+import Linglib.Syntax.SynGraph
+import Linglib.Syntax.Minimalist.Merge.MinimalYield
 
 set_option autoImplicit false
 
@@ -19,7 +19,7 @@ crosses dimensions (mixed 1-part/2-part transitivity).
 ## Coverage of this file
 
 This is a thin study layer that re-exports the AL substrate derivations
-from `Theories/Syntax/SynGraph.lean` (§10) and frames cross-framework
+from `Syntax/SynGraph.lean` (§10) and frames cross-framework
 engagement. The substrate covers:
 
 - **Subject islands** (Ch 7 §7.7, book pp. 216–223): cross-dimensional path
@@ -77,7 +77,7 @@ Adger's classification:
   Adger on definite-nominal sources, arguing for a `[.syntactic, .semantic]`
   composite from English VOC effects + Mandarin wh-in-situ data.
 
-Phase Theory (`Theories/Syntax/Minimalist/Phase.lean`,
+Phase Theory (`Syntax/Minimalist/Phase.lean`,
 @cite{chomsky-2000}, @cite{chomsky-2008}) is the immediate theoretical
 rival — Adger's framing is to derive island effects "without stipulating
 phases, barriers, or subjacency." No formal cross-translation is provided
@@ -94,7 +94,7 @@ open Phenomena.Islands
 
 -- §1. Substrate re-export
 
-/-! Core AL derivations live in `Theories/Syntax/SynGraph.lean` (§10):
+/-! Core AL derivations live in `Syntax/SynGraph.lean` (§10):
 
 | Theorem | Phenomenon |
 |---|---|
@@ -183,7 +183,7 @@ def adgerDefiniteNominalSources : List IslandSource := [.syntactic]
 - **MCB**: Sideward operations 2(b), 3(a), 3(b) violate either
   `MinimalYieldWeak` (Δb₀ > 0 — workspace components increase) or
   `InducedMapNCL` (the canonical induced map decreases `leafCount`).
-  See `Theories/Syntax/Minimalist/Merge/MinimalYield.lean` and
+  See `Syntax/Minimalist/Merge/MinimalYield.lean` and
   `NoComplexityLoss.lean`.
 
 The two frameworks share NO structural lemma. AL reasons about

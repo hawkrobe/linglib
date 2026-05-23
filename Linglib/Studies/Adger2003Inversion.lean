@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Inversion
+import Linglib.Syntax.Minimalist.Inversion
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
@@ -6,7 +6,7 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 @cite{adger-2003}
 
 Connects the Minimalist T-to-C analysis of inversion
-(`Theories/Syntax/Minimalism/Inversion.lean`) to the theory-neutral SAI data
+(`Syntax/Minimalism/Inversion.lean`) to the theory-neutral SAI data
 (`Phenomena/WordOrder/SubjectAuxInversion.lean`).
 
 The Minimalist analysis derives SAI from head movement:

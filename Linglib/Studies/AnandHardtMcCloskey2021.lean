@@ -1,7 +1,7 @@
 import Linglib.Core.Word
 import Linglib.Phenomena.Ellipsis.Sluicing
-import Linglib.Theories.Syntax.Minimalist.Ellipsis.FormalMatching
-import Linglib.Theories.Syntax.Minimalist.Ellipsis.DeletionDomain
+import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
+import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
 
 /-!
 # @cite{anand-hardt-mccloskey-2021} — Corpus Data

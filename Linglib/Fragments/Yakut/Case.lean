@@ -1,5 +1,5 @@
 import Linglib.Core.Case.Basic
-import Linglib.Theories.Syntax.Case.Dependent
+import Linglib.Syntax.Case.Dependent
 
 /-!
 # Yakut (Sakha) Case System

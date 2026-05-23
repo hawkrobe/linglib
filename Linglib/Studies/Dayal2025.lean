@@ -28,15 +28,15 @@ This study file is the canonical home for:
 
 ## Cross-framework relations
 
-- **Rizzi 1997 / `Theories/Syntax/Minimalist/Questions.lean`** places
+- **Rizzi 1997 / `Syntax/Minimalist/Questions.lean`** places
   clause-typing at `Force⁰[+Q]`; Dayal places it at `C` with a downstream
   `PerspP` shift. The disagreement is real and not currently formalized as
-  a bridge theorem. See `Theories/Syntax/Minimalist/Questions.lean`.
+  a bridge theorem. See `Syntax/Minimalist/Questions.lean`.
 - **Holmberg 2016 / `Studies/Holmberg2016.lean`**
   places the polar-Q-typing locus at `PolP` (via the
   `Features/AnsweringSystem.lean` typological parameter). Holmberg's
   analysis competes with Dayal's for the same matrix-polar facts.
-- **Speas-Tenny / `Theories/Syntax/Minimalist/SpeechActs.lean`** derives
+- **Speas-Tenny / `Syntax/Minimalist/SpeechActs.lean`** derives
   `seatOfKnowledge` from a 2×2 feature matrix; Dayal places SoK in PerspP
   with PRO. Both predict the Newari conjunct/disjunct flip; the bridge
   theorem `SpeechActs.SoK ↔ PerspP-PRO over Newari` is unformalized.

@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.MinimalPronoun
-import Linglib.Theories.Syntax.Minimalist.Tense.InfinitivalTense
+import Linglib.Syntax.Minimalist.MinimalPronoun
+import Linglib.Syntax.Minimalist.Tense.InfinitivalTense
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Studies.Landau2015

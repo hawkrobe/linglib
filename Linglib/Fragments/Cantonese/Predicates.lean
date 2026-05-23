@@ -10,7 +10,7 @@ metadata: surface form, Noonan CTP class, and which complement sizes the
 predicate is reported to take per Liu & Yip 2026 §5–6 (Lists in (79) and (80)).
 
 The size labels (`vP`, `tP`, `cP`) are exposed through a small enum local to
-this file rather than imported from `Theories/Syntax/Minimalist/`, because
+this file rather than imported from `Syntax/Minimalist/`, because
 the size-classification is a *consensus typological* observation that any
 theory of Cantonese clausal complementation must respect, not an analytical
 projection. The Minimalist-internal `ComplementSize` substrate is consumed

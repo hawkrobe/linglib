@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalist.Agree
-import Linglib.Theories.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.ClauseSpine
 
 /-!
 # Selective Opacity @cite{keine-2019}
@@ -57,7 +57,7 @@ Key refinements in @cite{keine-2020}:
 
 The theory-layer infrastructure (`ProbeProfile`, `transparentTo`,
 `transparentToLabel`, `upward_entailment`, `height_locality_connection`)
-lives in `Theories/Syntax/Minimalism/Probe.lean`. This file
+lives in `Syntax/Minimalism/Probe.lean`. This file
 imports those definitions and verifies the paper's empirical predictions
 as concrete theorems using the simplified fValue model.
 -/

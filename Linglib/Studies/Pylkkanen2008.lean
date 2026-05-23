@@ -1,8 +1,8 @@
-import Linglib.Theories.Syntax.Minimalist.Basic
-import Linglib.Theories.Syntax.Minimalist.Applicative
-import Linglib.Theories.Syntax.Minimalist.ApplicativeDiagnostics
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.VoiceProjection
+import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Applicative
+import Linglib.Syntax.Minimalist.ApplicativeDiagnostics
+import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.VoiceProjection
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Studies.Polinsky2013
 import Linglib.Studies.Larson1988
@@ -51,7 +51,7 @@ Test 3 is *conditional* on the language having depictive secondary
 predicates with the English distribution. Korean lacks them entirely,
 and Venda/Albanian have too-broad depictives — in those languages
 Test 3 is *inapplicable*, not "fails." See `ApplDiagnosticResult`
-in `Theories/Syntax/Minimalism/ApplicativeDiagnostics.lean`.
+in `Syntax/Minimalism/ApplicativeDiagnostics.lean`.
 
 ## Cross-references
 
@@ -163,7 +163,7 @@ theorem eat_is_high_appl :
 -- ============================================================================
 
 /-! The lexical items `appl_low_t` and `appl_high_t` correspond to
-`ApplHead` instances from `Theories/Syntax/Minimalism/Applicative.lean`:
+`ApplHead` instances from `Syntax/Minimalism/Applicative.lean`:
 the ditransitive uses `applLowRecipient` (English DOC = transfer *to*);
 the benefactive uses `applHigh` (Chaga = individual-event relation). -/
 
@@ -372,7 +372,7 @@ the verb itself but by a separate Voice head, following
 the event described by the verb.
 
 This is one of the two competing views of Voice surveyed in
-`Theories/Syntax/Minimalism/VoiceProjection.lean`. The other view,
+`Syntax/Minimalism/VoiceProjection.lean`. The other view,
 defended by @cite{collins-2005} and @cite{storment-2026}, treats Voice
 as a *structural* head (the smuggling projection) and assigns
 external-argument introduction to *v* instead. The two views are
@@ -733,10 +733,10 @@ theorem luganda_phase_predictions :
 /-! ## §14. Broader Voice taxonomy under Pylkkänen's view
 
 Pylkkänen's Voice = external-argument introducer. Per
-`Theories/Syntax/Minimalism/VoiceProjection.lean`, this is one of two
+`Syntax/Minimalism/VoiceProjection.lean`, this is one of two
 competing views of Voice (the other being Collins/Storment's smuggling
 projection). Test Pylkkänen's view against the broader `VoiceHead`
-taxonomy in `Theories/Syntax/Minimalism/Voice.lean`: which Voice flavors
+taxonomy in `Syntax/Minimalism/Voice.lean`: which Voice flavors
 *do* introduce external arguments? -/
 
 /-- Pylkkänen's view of Voice tested against all 8 named canonical
@@ -870,7 +870,7 @@ theorem low_source_combines_with_transitive :
   exact themeBearingProfile_has_unsaturated_theme
 
 /-! ## §16. Voice × Appl licensing matrix
-    (`Theories/Syntax/Minimalism/Applicative.lean.licensedWith`)
+    (`Syntax/Minimalism/Applicative.lean.licensedWith`)
 
 `ApplHead.licensedWith` (in `Applicative.lean`) checks whether a
 particular Appl head is licensed with a given Voice head: high

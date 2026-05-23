@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.ConstructionGrammar.Resultatives
+import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Features.Acceptability
 
 /-!
@@ -8,7 +8,7 @@ import Linglib.Features.Acceptability
 Paper data and per-datum verifications for @cite{goldberg-jackendoff-2004}.
 The construction-theoretic primitives (`ResultativeSubconstruction`,
 `SubeventDesc`, the fusion machinery, the universal-quantifier theorems)
-live in `Theories/Syntax/ConstructionGrammar/Resultatives.lean`, which
+live in `Syntax/ConstructionGrammar/Resultatives.lean`, which
 this file imports.
 
 ## Key claims

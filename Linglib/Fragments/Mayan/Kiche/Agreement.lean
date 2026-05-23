@@ -205,7 +205,7 @@ def ArgPosition.agreementSet : ArgPosition → AgreementSet
 
 /-- The case associated with each argument position. Definitionally
     equal to `Fragments.Mayan.ergCaseKiche`, which derives from
-    `Alignment.ergative.assignCase` in `Theories/Syntax/Case/Alignment.lean`. -/
+    `Alignment.ergative.assignCase` in `Syntax/Case/Alignment.lean`. -/
 abbrev ArgPosition.case : ArgPosition → Core.Case :=
   Fragments.Mayan.ergCaseKiche
 

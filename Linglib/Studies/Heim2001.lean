@@ -1,7 +1,7 @@
 import Linglib.Studies.Kennedy1999
 import Linglib.Semantics.Degree.Abstraction
 import Linglib.Semantics.Degree.Comparative
-import Linglib.Theories.Syntax.Minimalist.DegreeMovement
+import Linglib.Syntax.Minimalist.DegreeMovement
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
 import Mathlib.Order.Interval.Set.Disjoint
 
@@ -35,7 +35,7 @@ behind @cite{fox-hackl-2006} negative islands.
 
 Kennedy's generalization (paper ex. (27)) is formalized via the
 Heim-Kennedy Constraint substrate
-(`Theories/Syntax/Minimalist/DegreeMovement.lean`),
+(`Syntax/Minimalist/DegreeMovement.lean`),
 re-exported below.
 
 ## Section map

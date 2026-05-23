@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.ConstructionGrammar.Resultatives
+import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Semantics.Causation.CCSelection
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Semantics.Causation.ProductionDependence

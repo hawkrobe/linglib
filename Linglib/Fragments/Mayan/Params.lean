@@ -1,7 +1,7 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.UD
 import Linglib.Features.Prominence
-import Linglib.Theories.Syntax.Case.Alignment
+import Linglib.Syntax.Case.Alignment
 
 /-!
 # Shared Mayan Fragment Infrastructure

@@ -60,7 +60,7 @@ positions i < j < k in `cells.length`, all in the same domain under
 `π`, such that `cells[i] = cells[k] ≠ cells[j]`." Decidability comes
 free via `Fintype (Fin n)` — no Bool-first decision procedure needed.
 
-## Why not import `Theories/Syntax/Minimalist/Phase.lean`?
+## Why not import `Syntax/Minimalist/Phase.lean`?
 
 `Phase.lean` operates on `SyntacticObject` trees with `isPhaseHeadOf`.
 The morphological "domain" is more abstract — it lives at the level

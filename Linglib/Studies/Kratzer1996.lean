@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Syntax.Minimalist.Basic
-import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Voice
 
 /-!
 # Linking Theory Predictions → Hand-Annotated θ-Roles
@@ -9,7 +9,7 @@ import Linglib.Theories.Syntax.Minimalist.Voice
 Two accounts of argument realization make predictions about external
 argument theta roles. The two predicates live next to the types they
 project from: severing in `VoiceFlavor.thetaRole`
-(`Theories/Syntax/Minimalist/Voice.lean`) and lexicalist in
+(`Syntax/Minimalist/Voice.lean`) and lexicalist in
 `VerbCore.predictedSubjectTheta`
 (`Semantics/Lexical/VerbEntry.lean`). Both operate over proto-role
 entailment profiles (`subjectEntailments` / `objectEntailments`) rather

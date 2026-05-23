@@ -1,8 +1,8 @@
 import Linglib.Fragments.NezPerce.ClausalEmbedding
 import Linglib.Typology.Complementation
-import Linglib.Theories.Syntax.Minimalist.Agree
-import Linglib.Theories.Syntax.Minimalist.Probe
-import Linglib.Theories.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Probe
+import Linglib.Syntax.Minimalist.ClauseSpine
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-! # Deal (2026): Clausal complementation as relativization, revisited
@@ -35,7 +35,7 @@ functional projection above TP*. Three primary conclusions:
   presence flag.
 - *ke*-agreement as `Minimalist.SatisfactionCond.disjunctive`
   (@cite{deal-2015a-nels}, @cite{deal-2024} framework; bridge to
-  `Theories/Syntax/Minimalist/Agree.lean` §14).
+  `Syntax/Minimalist/Agree.lean` §14).
 - Cross-classification theorems: factivity ⊥ RE-structure; factivity ⊥
   nominalization.
 - Cross-framework comparison notes (HPSG modifier-only RC; Cacchioli 2025
@@ -660,7 +660,7 @@ theorem reInternalAbar_isHigh : reInternalAbar.isHigh = true :=
 
 /-! ### Silent divergence with HPSG
 
-`Theories/Syntax/HPSG/Core/RelativeClauses.lean:87-93` hard-codes RC =
+`Syntax/HPSG/Core/RelativeClauses.lean:87-93` hard-codes RC =
 modifier (`isMod = true`, theorem `relClause_is_modifier`). @cite{deal-2026}'s
 analysis of Nez Perce REs as *complement* CPs (not modifier RCs) sits
 incompatibly with this Minimalist-only framing: HPSG would either need to

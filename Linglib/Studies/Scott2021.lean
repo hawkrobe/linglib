@@ -2,7 +2,7 @@ import Linglib.Core.Relativization.Basic
 import Linglib.Core.Tree
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Syntax.Minimalist.Features
+import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Scott 2021: Two Types of Resumptive Pronouns in Swahili

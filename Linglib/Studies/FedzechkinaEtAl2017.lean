@@ -1,5 +1,5 @@
 import Linglib.Processing.MemorySurprisal.Basic
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
+import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
 # Study 1: Artificial Language Learning (@cite{fedzechkina-newport-2012}/2017)

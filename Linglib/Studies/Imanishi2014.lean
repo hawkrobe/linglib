@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Case.Alignment
+import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Chol.Agreement
@@ -17,7 +17,7 @@ structural Case; the dissertation derives both sides from a single
 mechanism: the **Unaccusative Requirement on Nominalization (URN)**.
 
 This study file consumes the substrate primitives in
-`Theories/Syntax/Case/Alignment.lean`
+`Syntax/Case/Alignment.lean`
 (`Alignment.invertedErgative.assignCase`,
 `Alignment.ergative.assignCase`) and `Fragments/Mayan/Params.lean`
 (`caseKaqchikel`, `ergCaseKaqchikel`, `accCaseKaqchikel`,

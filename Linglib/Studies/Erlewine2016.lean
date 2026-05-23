@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
-import Linglib.Theories.Syntax.Minimalist.Position
+import Linglib.Syntax.Minimalist.Position
 import Linglib.Core.Constraint.OT.Basic
 
 /-!

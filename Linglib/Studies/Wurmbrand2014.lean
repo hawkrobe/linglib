@@ -1,7 +1,7 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Core.Time.Reichenbach
 import Linglib.Semantics.Tense.Basic
-import Linglib.Theories.Syntax.Minimalist.Tense.InfinitivalTense
+import Linglib.Syntax.Minimalist.Tense.InfinitivalTense
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!

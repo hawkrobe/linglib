@@ -1,6 +1,6 @@
 import Linglib.Core.Case.Basic
-import Linglib.Theories.Syntax.Case.Dependent
-import Linglib.Theories.Syntax.Minimalist.LateMerger
+import Linglib.Syntax.Case.Dependent
+import Linglib.Syntax.Minimalist.LateMerger
 
 /-!
 # Mongolian Case System

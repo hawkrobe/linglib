@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Case.Dependent
+import Linglib.Syntax.Case.Dependent
 
 /-!
 # Sakha Two-Modality Case Assignment @cite{baker-vinokurova-2010}

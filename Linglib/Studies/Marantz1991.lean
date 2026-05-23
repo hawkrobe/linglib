@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Case.Dependent
-import Linglib.Theories.Syntax.Minimalist.Voice
+import Linglib.Syntax.Case.Dependent
+import Linglib.Syntax.Minimalist.Voice
 import Linglib.Fragments.Georgian.Agreement
 
 /-!

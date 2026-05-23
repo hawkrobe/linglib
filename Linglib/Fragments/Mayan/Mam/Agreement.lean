@@ -145,7 +145,7 @@ abbrev ArgPosition := Features.Prominence.ArgumentRole
 /-- The case each argument position receives. Definitionally equal to
     `Fragments.Mayan.ergCaseMam`, which derives from
     `Alignment.tripartite.assignCase` in
-    `Theories/Syntax/Case/Alignment.lean`: A → ERG (inherent from Voice),
+    `Syntax/Case/Alignment.lean`: A → ERG (inherent from Voice),
     P → ACC (structural from Voice), S → ABS (structural from Infl).
     The three distinct cases are tripartite alignment per Scott's
     analysis (ch. 3 §3.4). -/

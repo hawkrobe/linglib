@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.HPSG.Inversion
+import Linglib.Syntax.HPSG.Inversion
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
@@ -6,7 +6,7 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 @cite{sag-wasow-bender-2003}
 
 Connects the HPSG [INV ±] analysis of inversion
-(`Theories/Syntax/HPSG/Inversion.lean`) to the theory-neutral SAI data
+(`Syntax/HPSG/Inversion.lean`) to the theory-neutral SAI data
 (`Phenomena/WordOrder/SubjectAuxInversion.lean`).
 
 The HPSG analysis uses a binary [INV] feature:

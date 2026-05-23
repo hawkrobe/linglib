@@ -53,7 +53,7 @@ definition with disjunction-update survival.
 - `PrProp.orFilter` (symmetric, positive-antecedent filtering of
   @cite{kalomoiros-schwarz-2021}): wrong presupposition
   (`filter_wrong_at_kingOpens`)
-- `PrProp.orKP` (symmetric, negative-antecedent K&P of Yagi Def 2):
+- `PrProp.orKPSymmetric` (symmetric, negative-antecedent K&P of Yagi Def 2):
   presupposition entails assertion (`kp_presup_entails_assertion`)
 - `Geurts2005.exhaustivity_implies_uninformative`:
   the *consequence* (not the derivation) of @cite{schlenker-2009} §2.4
@@ -180,14 +180,14 @@ theorem strong_kleene_never_false : ∀ w, skDisj w ≠ .false := by
 
 @cite{karttunen-peters-1979}, with @cite{yagi-2025}'s symmetric Definition 2
 (per fn 2, citing @cite{kalomoiros-schwarz-2021} for empirical support of
-symmetry). The substrate `PrProp.orKP` matches Yagi's Def 2 directly:
+symmetry). The substrate `PrProp.orKPSymmetric` matches Yagi's Def 2 directly:
 
   Π(φ ∨ ψ) = (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ))
 
 `PrProp.orFilter` is a *different* symmetric variant with positive-antecedent
 conditionals plus an extra `Π(φ) ∨ Π(ψ)` disjunct, which is **strictly
-stronger** than `orKP` (worked counterexample: at a world with `A(φ)=⊤`,
-`A(ψ)=⊥`, `Π(φ)=⊤`, `Π(ψ)=⊥`, `orKP` is defined, `orFilter` is not).
+stronger** than `orKPSymmetric` (worked counterexample: at a world with `A(φ)=⊤`,
+`A(ψ)=⊥`, `Π(φ)=⊤`, `Π(ψ)=⊥`, `orKPSymmetric` is defined, `orFilter` is not).
 The two are not predictionally equivalent, and neither is the asymmetric
 @cite{karttunen-1973} rule (24b) used as `PrProp.disjFilterLeft` —
 see `Studies/Karttunen1973.lean`. -/
@@ -202,7 +202,7 @@ theorem classical_never_defined : ∀ w, ¬classicalDisj.presup w := fun w h =>
 /-- The symmetric positive-antecedent filtering disjunction
 (`PrProp.orFilter`). Encodes
 `(A(φ) → Π(ψ)) ∧ (A(ψ) → Π(φ)) ∧ (Π(φ) ∨ Π(ψ))` — strictly stronger
-than `orKP`. The conjunct `Π(φ) ∨ Π(ψ)` matches the eq. (7) modification
+than `orKPSymmetric`. The conjunct `Π(φ) ∨ Π(ψ)` matches the eq. (7) modification
 discussed by @cite{yagi-2025} §2.2 (after Def 3) as a candidate fix. -/
 def filterDisj : PrProp W := PrProp.orFilter kingOpensParl presConductsCeremony
 
@@ -220,15 +220,15 @@ theorem filter_wrong_at_kingOpens : ¬filterDisj.presup W.kingOpens := by
 theorem expected_satisfied_at_kingOpens : expectedPresup W.kingOpens := Or.inl trivial
 
 /-- K&P two-dimensional disjunction applied to the Buganda scenario. -/
-def kpDisj : PrProp W := PrProp.orKP kingOpensParl presConductsCeremony
+def kpDisj : PrProp W := PrProp.orKPSymmetric kingOpensParl presConductsCeremony
 
 /-- K&P's presupposition entails the assertion when presuppositions conflict:
 whenever Π = 1, A = 1. Derived from the substrate
-`PrProp.orKP_presup_entails_when_conflicting`. @cite{yagi-2025} §2.2 (5)–(6). -/
+`PrProp.orKPSymmetric_presup_entails_when_conflicting`. @cite{yagi-2025} §2.2 (5)–(6). -/
 theorem kp_presup_entails_assertion :
     ∀ w, kpDisj.presup w → kpDisj.assertion w := by
   intro w h
-  exact PrProp.orKP_presup_entails_when_conflicting _ _ w (presups_conflict w) h
+  exact PrProp.orKPSymmetric_presup_entails_when_conflicting _ _ w (presups_conflict w) h
 
 
 /-! ## Failure 3: Update semantics (@cite{yagi-2025} §2.3)
@@ -605,7 +605,7 @@ Linglib's @cite{karttunen-1973} formalisation
 (`Studies/Karttunen1973.lean`) handles (18) via
 the **asymmetric** `disjFilterLeft` rule (24b): when `¬A` entails `Π(B)`,
 the presupposition is filtered. This is the principled alternative
-that the symmetric variants (`orKP`, `orFilter`) cannot offer. -/
+that the symmetric variants (`orKPSymmetric`, `orFilter`) cannot offer. -/
 
 /-- Worlds for example (18). -/
 inductive W18 where

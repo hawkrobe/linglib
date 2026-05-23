@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalist.HeadFunction
-import Linglib.Theories.Syntax.Minimalist.FromFragments
-import Linglib.Theories.Syntax.Minimalist.Derivation
+import Linglib.Syntax.Minimalist.HeadFunction
+import Linglib.Syntax.Minimalist.FromFragments
+import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Phenomena.WordOrder.Basic
 
 /-!

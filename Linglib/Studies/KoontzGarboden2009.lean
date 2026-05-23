@@ -1,7 +1,7 @@
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Fragments.Spanish.Predicates
-import Linglib.Theories.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.ArgumentStructure.Alternation
 
 -- ============================================================================
 -- § 0: Monotonicity Hypothesis Substrate

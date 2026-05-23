@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.NestedAgree
+import Linglib.Syntax.Minimalist.NestedAgree
 import Linglib.Studies.Marantz1991
 
 /-!
@@ -6,7 +6,7 @@ import Linglib.Studies.Marantz1991
 @cite{sigurdsson-holmberg-2008}
 
 @cite{amato-2025} (NLLT) advances *Nested Agree* — formalized at
-`Theories/Syntax/Minimalism/NestedAgree.lean` — as a unifying account
+`Syntax/Minimalism/NestedAgree.lean` — as a unifying account
 across at least six syntactic phenomena. This file collects the
 case studies whose primary phenomenon is **agreement**:
 

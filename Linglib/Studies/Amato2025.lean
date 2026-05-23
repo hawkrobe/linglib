@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.NestedAgree
+import Linglib.Syntax.Minimalist.NestedAgree
 
 /-!
 # @cite{amato-2025} — Filler-gap case studies via Nested Agree

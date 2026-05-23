@@ -73,7 +73,7 @@ We forward only `CommSemiring` (which auto-derives `Semiring`),
 
 `[UPSTREAM]` candidate. Future home is something like
 `Mathlib.Combinatorics.HopfAlgebra.ConnesKreimer.Defs`. This file is
-part of the Stage 0.5/0.7/1 hoist out of `Theories/Syntax/Minimalist/Hopf/`
+part of the Stage 0.5/0.7/1 hoist out of `Syntax/Minimalist/Hopf/`
 (per `scratch/mcb_stage1_plan.md`).
 
 **Naming TODO** (Stage 1.7 or upstream): the one-letter `Hc` violates

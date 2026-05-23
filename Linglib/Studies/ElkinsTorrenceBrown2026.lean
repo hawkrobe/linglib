@@ -1,9 +1,9 @@
 import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
-import Linglib.Theories.Syntax.Minimalist.ClauseSpine
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.ClauseSpine
+import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Agree
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Studies.Scott2023Agreement
 

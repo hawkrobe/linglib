@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.ConstructionGrammar.Slot
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
-import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
+import Linglib.Syntax.ConstructionGrammar.Slot
+import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
+import Linglib.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 
 /-!
 # Slot/Filler Verification

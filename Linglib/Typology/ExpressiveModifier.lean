@@ -40,7 +40,7 @@ competing classifications attach as separate predicates in
 This file does **not** commit to a syntactic framework. It carries no
 features, no Spec-CP, no Agree, no AttP. A Minimalist analysis (POV
 features [*ud*]/[+d], Spec-head Agree, parasitic adjunction) would live
-in `Theories/Syntax/Minimalist/ANDL.lean` (planned; not yet present).
+in `Syntax/Minimalist/ANDL.lean` (planned; not yet present).
 The semantic analysis (negative attitude, conventional implicature,
 possible-ignorance presupposition) lives in `Pragmatics/Expressives/`
 (currently `Basic.lean` + `OutlookMarker.lean`) and

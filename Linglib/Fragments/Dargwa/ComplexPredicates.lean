@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.ArgumentStructure.Alternation
+import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Lexical.Roots.RootFeatures
 
 /-!

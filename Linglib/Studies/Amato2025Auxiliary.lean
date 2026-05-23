@@ -1,6 +1,6 @@
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Studies.Olivier2026Auxiliary
-import Linglib.Theories.Syntax.Minimalist.NestedAgree
+import Linglib.Syntax.Minimalist.NestedAgree
 
 /-!
 # @cite{amato-2025} mechanism applied to Italian restructuring AS

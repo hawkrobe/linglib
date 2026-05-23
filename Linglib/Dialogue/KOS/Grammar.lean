@@ -1,6 +1,6 @@
 import Linglib.Dialogue.KOS.Defs
 import Linglib.Dialogue.KOS.Grounding
-import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
+import Linglib.Syntax.HPSG.Core.HeadFiller
 
 /-!
 # KOS–Grammar Integration

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.Agree
 
 /-!
 # VocabSimple: Minimalist-specific Vocabulary Insertion

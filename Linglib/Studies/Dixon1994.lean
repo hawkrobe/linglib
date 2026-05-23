@@ -3,7 +3,7 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Core.Case.Split
 import Linglib.Features.Prominence
-import Linglib.Theories.Syntax.Case.Alignment
+import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Hindi.Case
@@ -32,7 +32,7 @@ This study file holds:
    indirective/secundative/neutral sample.
 5. **Fragment bridges**: theorems verifying the per-language alignment
    classifications match the Fragment grammatical descriptions.
-6. **Bridges to `Theories/Syntax/Case/Alignment`**: theorems verifying
+6. **Bridges to `Syntax/Case/Alignment`**: theorems verifying
    `marksAgent`/`marksPatient` projections agree with the case-assignment
    functions on canonical S/A/P inputs.
 
@@ -616,12 +616,12 @@ theorem hindi_split_bridge :
       = hindiUrdu.pronAlignment := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- §9. Bridges to Theories/Syntax/Case/Alignment
+-- §9. Bridges to Syntax/Case/Alignment
 -- ============================================================================
 
 /-! The typology classifier `AlignmentType` (substrate) and the
     case-assignment functions `_root_.Alignment.X.assignCase`
-    (`Theories/Syntax/Case/Alignment.lean`) are two views of the same
+    (`Syntax/Case/Alignment.lean`) are two views of the same
     alignment dimension. The bridge theorems confirm that the typology's
     `marksAgent`/`marksPatient` Bool projections agree pointwise with what
     the case-assignment functions actually do on the canonical S/A/P inputs. -/

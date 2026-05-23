@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Agreement.GenderResolution
+import Linglib.Syntax.Minimalist.Agreement.GenderResolution
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Features.Gender

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Scope
+import Linglib.Syntax.Minimalist.Scope
 import Linglib.Features.ScopeTypes
 import Linglib.Studies.Pylkkanen2008
 

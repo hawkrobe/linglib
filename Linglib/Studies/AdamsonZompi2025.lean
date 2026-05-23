@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalist.PersonGeometry
-import Linglib.Theories.Syntax.Minimalist.PConstraint
-import Linglib.Theories.Syntax.Minimalist.Agree
+import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.PConstraint
+import Linglib.Syntax.Minimalist.Agree
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.PersonFeatures

@@ -1,7 +1,7 @@
 import Linglib.Features.Person
 import Linglib.Features.Number
-import Linglib.Theories.Syntax.Minimalist.CyclicAgree
-import Linglib.Theories.Syntax.Minimalist.Agreement.FeatureRecursion
+import Linglib.Syntax.Minimalist.CyclicAgree
+import Linglib.Syntax.Minimalist.Agreement.FeatureRecursion
 import Linglib.Studies.Corbett2000
 
 /-!

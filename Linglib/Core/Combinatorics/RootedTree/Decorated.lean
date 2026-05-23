@@ -10,7 +10,7 @@ import Linglib.Core.Algebra.Free
 This file was deleted at commit `e0876460` (0.230.913 — "MCB substrate Phase A.5-A.6
 + hard delete of legacy CK substrate") and restored on 2026-05-13 because the
 consumer migration that was supposed to follow the deletion never happened.
-Merge stack files (`Theories/Syntax/Minimalist/Merge/*`) and downstream consumers
+Merge stack files (`Syntax/Minimalist/Merge/*`) and downstream consumers
 broke on clean build for ~weeks; this restoration unblocks them.
 
 **Will be re-deleted when Phase D lands** per `scratch/mcb_full_architecture.md`:
@@ -102,7 +102,7 @@ through `.anon` to a scalar-trace `TraceTree α Unit`.
 
 `[UPSTREAM]` candidate. Future home is something like
 `Mathlib.Combinatorics.HopfAlgebra.ConnesKreimer.DecoratedTree`. This
-file is part of the Stage 0.5 hoist out of `Theories/Syntax/Minimalist/Hopf/`
+file is part of the Stage 0.5 hoist out of `Syntax/Minimalist/Hopf/`
 (per `scratch/mcb_stage1_plan.md`). Namespace is `ConnesKreimer`
 (renamed from `Minimalist.Hopf` in Stage 0.7).
 -/
@@ -595,7 +595,7 @@ Lemma 1.6.3 (book §1.6.2) supplies counting identities for these under
 `merge` (the `.node` constructor); the merge-side identities matching MCB
 eq. 1.6.5 / 1.6.6 are proven below. The cut-quotient identities (eq. 1.6.7-
 1.6.10) need substrate from `AdmissibleCut.lean` and live in
-`Theories/Syntax/Minimalist/Merge/MinimalYield.lean`.
+`Syntax/Minimalist/Merge/MinimalYield.lean`.
 
 Generic over leaf alphabet `α` and trace alphabet `β`. -/
 

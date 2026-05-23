@@ -104,7 +104,7 @@ abbrev ArgPosition := Features.Prominence.ArgumentRole
 /-- Perfective case assignment for Chol. Definitionally equal to
     `Fragments.Mayan.ergCaseChol`, which derives from
     `Alignment.ergative.assignCase` in
-    `Theories/Syntax/Case/Alignment.lean` — the foundation makes the
+    `Syntax/Case/Alignment.lean` — the foundation makes the
     pattern (A → ERG, S/P → ABS) explicit; the per-language wrapper
     preserves dot-notation `position.case` for consumers, uniform
     with the other Mayan fragments. -/

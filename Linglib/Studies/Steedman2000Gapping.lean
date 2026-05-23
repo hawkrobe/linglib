@@ -1,11 +1,11 @@
-import Linglib.Theories.Syntax.CCG.Gapping
+import Linglib.Syntax.CCG.Gapping
 import Linglib.Phenomena.Ellipsis.Gapping
 
 /-!
 # CCG Gapping Bridge
 @cite{ross-1970} @cite{steedman-2000}
 
-Connects CCG category theory (from `Theories.Syntax.CCG.Gapping`) to
+Connects CCG category theory (from `Syntax.CCG.Gapping`) to
 empirical gapping data (from `Phenomena.Ellipsis.Gapping`).
 
 Proves that:

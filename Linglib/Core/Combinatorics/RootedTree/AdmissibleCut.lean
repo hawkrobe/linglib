@@ -65,7 +65,7 @@ same root-leaf path) is baked in by construction.
 
 `[UPSTREAM]`. Future home is something like
 `Mathlib.Combinatorics.HopfAlgebra.ConnesKreimer.AdmissibleCut`. This
-file is part of the Stage 0.5 hoist out of `Theories/Syntax/Minimalist/Hopf/`
+file is part of the Stage 0.5 hoist out of `Syntax/Minimalist/Hopf/`
 (per `scratch/mcb_stage1_plan.md`).
 
 - **No sorries**, no `noncomputable`, no `decide`.
@@ -306,7 +306,7 @@ def remainderDeletion : ∀ {T : TraceTree α β},
 /-- Every subtree extracted by a cut on `T` is a proper subtree of `T` —
     its `size` is strictly less than `T.size`. Used to prove `T ∉ cutForest c`,
     which in turn drives the term-elimination in algebraic Merge bridge proofs
-    (`Theories/Syntax/Minimalist/Merge/Action.lean`). -/
+    (`Syntax/Minimalist/Merge/Action.lean`). -/
 theorem size_lt_of_mem_cutForest :
     ∀ {T : TraceTree α β} (c : CutShape T) (t : TraceTree α β),
       t ∈ CutShape.cutForest c → t.size < T.size
@@ -355,7 +355,7 @@ theorem cutForest_ne_singleton_self {T : TraceTree α β} (c : CutShape T) :
 /-- **Pair-cross elimination**: for cuts `c : CutShape S` and `c' : CutShape S'`,
     the multiset sum `cutForest c + cutForest c'` cannot equal `{S, S'}`.
 
-    Used in the algebraic Merge bridge (`Theories/Syntax/Minimalist/Merge/Action.lean`)
+    Used in the algebraic Merge bridge (`Syntax/Minimalist/Merge/Action.lean`)
     to eliminate cross-terms in the expansion of `Δ^d({S, S'})`: any cut on one
     side combined with any cut on the other side produces a cut-forest different
     from `{S, S'}`, so `δ_{S,S'}` zeroes that term.
@@ -686,7 +686,7 @@ the workspace F ∈ 𝔉_{SO_0} is a conserved quantity throughout all the
 forms of Merge described by (1.3.7)."
 
 Load-bearing for the IM positive direction of Prop 1.6.10
-(`im_satisfiesNCL` in `Theories/Syntax/Minimalist/Merge/NoComplexityLoss.lean`):
+(`im_satisfiesNCL` in `Syntax/Minimalist/Merge/NoComplexityLoss.lean`):
 the IM workspace
 transformation `{T} → {.node Q β}` preserves total leafCount because
 `β.leafCount + Q.leafCount = T.leafCount` for `Q = T/β` via this lemma. -/
@@ -789,7 +789,7 @@ theorem deletionLeafCount_eq_option_elim :
 
 /-- Corollary: when a cut has a non-trivial Δ^d remainder `some t`, the
     structural `deletionLeafCount` agrees with `t.leafCount`. The IM-NCL
-    theorem in `Theories/Syntax/Minimalist/Merge/NoComplexityLoss.lean` uses
+    theorem in `Syntax/Minimalist/Merge/NoComplexityLoss.lean` uses
     this to identify `Q.leafCount = deletionLeafCount c0` for
     `c0.remainderDeletion = some Q`. -/
 theorem deletionLeafCount_eq_of_remainderDeletion_some {T : TraceTree α β}

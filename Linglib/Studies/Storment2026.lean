@@ -1,10 +1,10 @@
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Interfaces.SyntaxSemantics.VerbSmuggling
-import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Syntax.Minimalist.Movement.Smuggling
-import Linglib.Theories.Syntax.Minimalist.Movement.InverseVoice
-import Linglib.Theories.Syntax.Minimalist.Probing.DefectiveCircumvention
+import Linglib.Syntax.Minimalist.Voice
+import Linglib.Syntax.Minimalist.Movement.Smuggling
+import Linglib.Syntax.Minimalist.Movement.InverseVoice
+import Linglib.Syntax.Minimalist.Probing.DefectiveCircumvention
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 
 /-!
@@ -202,7 +202,7 @@ Storment §6: QI and LI share the smuggling mechanism but differ in
 their inputs (quote vs. locative PP) and distribution. Both are subject
 to the transitivity constraint (§5). The shared inverse-voice family
 membership is captured by `Minimalist.qiCanonical` and `liCanonical` in
-`Theories/Syntax/Minimalism/Movement/InverseVoice.lean`. -/
+`Syntax/Minimalism/Movement/InverseVoice.lean`. -/
 
 /-- whisper passes QI but is only marginal in LI — same mechanism
     (smuggling), different inputs. -/
@@ -335,7 +335,7 @@ theorem vp_smuggling_ordering :
 /-! ## §13. Inverse-voice family membership
 
 QI is one instance of the inverse-voice family (§4.3 + §6 + §7). The
-canonical instance lives in `Theories/Syntax/Minimalism/Movement/
+canonical instance lives in `Syntax/Minimalism/Movement/
 InverseVoice.lean`; here we just affirm membership. -/
 
 theorem qi_is_inverse_voice :
@@ -353,7 +353,7 @@ Storment §3.1.4 (eq. 59): the difference between Setswana QI agreement
 (always SM17 default) and English QI agreement (optionally tracks the
 postverbal agent) reduces to a single parameter — whether the probe T⁰
 is allowed to re-probe past the defective quotative-theme operator. The
-defective-circumvention operation is in `Theories/Syntax/Minimalism/
+defective-circumvention operation is in `Syntax/Minimalism/
 Probing/DefectiveCircumvention.lean`; here we wire it to the QI
 agreement data.
 

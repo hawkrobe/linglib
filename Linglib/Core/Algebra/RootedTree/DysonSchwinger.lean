@@ -30,7 +30,7 @@ structural parallel between two recursive equations:
 This file provides the algebraic substrate (Eq 1.17.1 + 1.17.2 + an
 algebraic quadratic DS analog of Eq 1.17.3). The fully linguistic
 Eq 1.17.3 (interpreted as a type-level recursion on `SyntacticObject`)
-belongs in `Theories/Syntax/Minimalist/` — those Studies files
+belongs in `Syntax/Minimalist/` — those Studies files
 consume this substrate.
 
 ## §1.17.1: B+ as Hochschild 1-cocycle for Δ^ρ

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.Applicative
+import Linglib.Syntax.Minimalist.Applicative
 import Linglib.Studies.Pylkkanen2008
 
 /-!

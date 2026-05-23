@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation
+import Linglib.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Studies.Chierchia1998

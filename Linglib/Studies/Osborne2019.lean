@@ -3,8 +3,8 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Theories.Syntax.WordGrammar.LexicalRules
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
+import Linglib.Syntax.WordGrammar.LexicalRules
+import Linglib.Syntax.DependencyGrammar.Formal.Catena
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
 import Linglib.Phenomena.ArgumentStructure.Passive
 

@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import Linglib.Features.Acceptability
 import Linglib.Fragments.Japanese.Case
-import Linglib.Theories.Syntax.Case.Dependent
+import Linglib.Syntax.Case.Dependent
 import Linglib.Core.Case.Grammaticalization
 /-!
 # Sadakane & Koizumi 1995 @cite{sadakane-koizumi-1995} @cite{martin-1975}
@@ -88,7 +88,7 @@ correspondingly coarse.
 - Diagnostic acceptability scores use `Features.Acceptability` (the
   project canon), not a per-paper Grammaticality enum.
 - `Classification.marantz` aligns S&K's 4-way with @cite{baker-2015}'s
-  `Syntax.Case.CaseSource` from `Theories.Syntax.Case.Dependent`. The map
+  `Syntax.Case.CaseSource` from `Syntax.Case.Dependent`. The map
   is partial: copula *ni* lies outside Marantz's case-assignment domain.
   Note: `.niInsertion → .unmarked` (Marantz/Schütze's "default-case"
   fallback) rather than `.agree` — Takezawa's salvage operation is what
@@ -347,7 +347,7 @@ theorem fragment_ni_predicts_inconsistent_signatures :
 
 S&K's 4-way classification partially aligns with Marantz/Baker's
 `CaseSource` (`lexical | dependent | unmarked | agree`), encoded in
-`Theories.Syntax.Case.Dependent`. Per the cross-framework reasoning:
+`Syntax.Case.Dependent`. Per the cross-framework reasoning:
 
 - Dative case marker *ni* — assigned by structural configuration → `dependent`
 - Postposition *ni* — bears inherent meaning, attached to NP via P head → `lexical`

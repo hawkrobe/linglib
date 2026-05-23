@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
+import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Data.WALS.Features.F95A
 import Linglib.Core.Word
 
@@ -17,7 +17,7 @@ he uses (Tables 1–3, plus the Single-Word-Exceptions discussion at Table 4),
 the per-table harmonic-dominance theorems, the head-direction-generalization
 statement over those tables, and the DLM-vs-WALS consistency theorems that
 package the central claim. The DLM apparatus itself lives in
-`Theories/Syntax/DependencyGrammar/Formal/HarmonicOrder.lean`.
+`Syntax/DependencyGrammar/Formal/HarmonicOrder.lean`.
 
 ## Cross-tabulation apparatus
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalist.GenHM
+import Linglib.Syntax.Minimalist.GenHM
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!

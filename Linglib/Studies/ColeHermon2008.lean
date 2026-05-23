@@ -1,7 +1,7 @@
-import Linglib.Theories.Syntax.Minimalist.Basic
-import Linglib.Theories.Syntax.Minimalist.Derivation
-import Linglib.Theories.Syntax.Minimalist.Position
-import Linglib.Theories.Syntax.Minimalist.Movement.Remnant
+import Linglib.Syntax.Minimalist.Basic
+import Linglib.Syntax.Minimalist.Derivation
+import Linglib.Syntax.Minimalist.Position
+import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Fragments.TobaBatak.Basic
 
 /-!
@@ -465,7 +465,7 @@ to Spec,FP (a higher functional projection), past the fronted VP.
 This analysis connects to the claim in §6 that linear order within Merge
 is irrelevant — only c-command matters. This is precisely the content of
 the Linear Correspondence Axiom (LCA) formalized in
-`Theories.Syntax.Minimalist.Linearization.LCA`.
+`Syntax.Minimalist.Linearization.LCA`.
 -/
 
 /-- F head (higher functional projection above TP). -/
@@ -648,14 +648,14 @@ theorem cross_linguistic_binding_contrast :
 end ColeHermon2008
 
 -- ============================================================================
--- § 8: Connection to `Theories/Syntax/Minimalist/Movement/Remnant.lean`
+-- § 8: Connection to `Syntax/Minimalist/Movement/Remnant.lean`
 -- ============================================================================
 
 /-! ### Toba Batak VP-raising as a `RemnantFronting` instance
 
 @cite{cole-hermon-2008}'s VP-raising analysis is one of the canonical
 empirical motivations for remnant-XP movement substrate
-(`Theories/Syntax/Minimalist/Movement/Remnant.lean`). The full §4
+(`Syntax/Minimalist/Movement/Remnant.lean`). The full §4
 analysis has IO/Adv evacuating before VoiceP raises — making the
 fronted constituent a genuine remnant. The simplified §1 derivation
 formalised above keeps the IO/Adv inside vP for tractability, but the
