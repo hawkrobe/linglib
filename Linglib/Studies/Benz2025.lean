@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DM.Allosemy
+import Linglib.Morphology.DM.Allosemy
 import Linglib.Features.Acceptability
 import Linglib.Fragments.German.Predicates
 

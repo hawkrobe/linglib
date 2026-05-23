@@ -1,7 +1,7 @@
 import Linglib.Core.Morphology.DegreeContainment
 import Linglib.Core.Case.Allomorphy
 import Linglib.Core.Case.Order
-import Linglib.Theories.Morphology.DM.ContainmentVI
+import Linglib.Morphology.DM.ContainmentVI
 
 /-!
 # Smith, Moskal, Xu, Kang & Bobaljik (2019) — Case and Number Suppletion in Pronouns
@@ -39,7 +39,7 @@ refinement of the Bobaljik 2012 framework:
    codebase, see `Theories/Syntax/Minimalist/Agreement/FeatureRecursion.lean`).
 
 This file formalizes (1) directly: the DM-derivation in
-`Theories/Morphology/DM/ContainmentVI.lean` predicts AAB exclusion in
+`Morphology/DM/ContainmentVI.lean` predicts AAB exclusion in
 *every* domain it applies to (because `vi_cmpr_eq_sprl` forces the two
 inner cells to share a root); the empirical data the paper reports
 falsifies that prediction in case and number. (2) and (3) are stubbed
@@ -61,13 +61,13 @@ namespace SmithMoskalEtAl2019
 
 open Core.Morphology.DegreeContainment
 open Core.Case.Allomorphy
-open Theories.Morphology.DM.ContainmentVI.Degree
+open Morphology.DM.ContainmentVI.Degree
 
 -- ============================================================================
 -- § 1: Degree side — DM derivation excludes AAB unconditionally
 -- ============================================================================
 
-/-! The DM-flavored derivation of *ABA in `Theories/Morphology/DM/ContainmentVI.lean`
+/-! The DM-flavored derivation of *ABA in `Morphology/DM/ContainmentVI.lean`
 forces CMPR-cell = SPRL-cell for any VI-generated root pattern (the
 core theorem `vi_cmpr_eq_sprl`). This is strictly stronger than
 contiguity: it excludes both *ABA *and* *AAB.
@@ -148,7 +148,7 @@ theorem khinalugh_2sg_contiguous :
 
 /-- The defining AAB shape: cells 1 and 2 differ (suppletion in the
     third position but not the second). This is the structural feature
-    that the DM derivation in `Theories/Morphology/DM/ContainmentVI`
+    that the DM derivation in `Morphology/DM/ContainmentVI`
     excludes — `vi_cmpr_eq_sprl` forces the second and third cells to
     coincide for any VI-generated root pattern. -/
 theorem wardaman_3sg_is_aab :
@@ -158,7 +158,7 @@ theorem khinalugh_2sg_is_aab :
     khinalughSecondSg[1]? ≠ khinalughSecondSg[2]? := by decide
 
 /-- **§3.6 cross-domain divergence theorem.** The DM derivation in
-    `Degree.vi_cmpr_eq_sprl` (PART II of `Theories/Morphology/DM/ContainmentVI.lean`) predicts,
+    `Degree.vi_cmpr_eq_sprl` (PART II of `Morphology/DM/ContainmentVI.lean`) predicts,
     for any VI-generable root pattern, that the second and third
     cells coincide. Lifted to case (where the 3-cell projection is
     UNMARKED–DEPENDENT–OBLIQUE, e.g. ABS–ERG–DAT in ergative
@@ -282,7 +282,7 @@ case-hierarchy split, not threshold-on-cell-index"):
 
 The substrate's converse-direction theorem — "domain-aware DM
 generates AAB patterns when positions are split" — requires
-extending `LocalVIRule` (`Theories.Morphology.DM.ContainmentVI.Degree`)
+extending `LocalVIRule` (`Morphology.DM.ContainmentVI.Degree`)
 with a domain field so that a rule's locality bound becomes
 partition-aware rather than the unconditional Bobaljik bound
 `condGrade.rank ≤ DegreeGrade.cmpr.rank`. That's a separate substrate
@@ -352,7 +352,7 @@ The substrate above sets up the partition + the structural facts
 that the partitions split the relevant cells. The substantive
 converse-direction theorem — "under the case partition, there exist
 domain-aware VI rule lists generating Wardaman 3SG-shape patterns"
-— requires `Theories.Morphology.DM.ContainmentVI.Degree.LocalVIRule` to
+— requires `Morphology.DM.ContainmentVI.Degree.LocalVIRule` to
 be extended with a domain field so its locality bound becomes
 partition-relativized. The current `LocalVIRule.locality` field is structurally Bobaljik-style
 (`condGrade.rank ≤ cmpr.rank`, unconditional) and forces `vi_cmpr_eq_sprl`

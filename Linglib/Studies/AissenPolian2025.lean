@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Tseltalan
-import Linglib.Theories.Morphology.DM.NominalStructure
+import Linglib.Morphology.DM.NominalStructure
 import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Theories.Syntax.Binding.SpecificityCondition
 import Linglib.Features.InformationStructure

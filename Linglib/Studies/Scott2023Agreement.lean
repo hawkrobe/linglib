@@ -1,8 +1,8 @@
 import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Theories.Syntax.Minimalist.Agree
-import Linglib.Theories.Morphology.DM.VocabSimple
+import Linglib.Morphology.DM.VocabSimple
 import Linglib.Theories.Syntax.Minimalist.ObligatoryOperations
-import Linglib.Theories.Morphology.DM.Impoverishment
+import Linglib.Morphology.DM.Impoverishment
 
 /-!
 # Minimalism Agree-Conditioned Pronoun Spellout in Mam

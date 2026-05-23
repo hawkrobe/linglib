@@ -1,5 +1,5 @@
 import Linglib.Core.Morphology.MorphRule
-import Linglib.Theories.Morphology.UsageBased.Network
+import Linglib.Morphology.UsageBased.Network
 import Linglib.Fragments.English.Predicates.Verbal
 import Mathlib.Tactic.DeriveFintype
 
@@ -27,7 +27,7 @@ substrate's discrete `MorphStatus` enum — flagged for future work), Part
 II aspect/tense/mood detail (Ch 6-9). See `Studies/
 HahnDegenFutrell2021.lean` for a downstream consumer of the §6 ordering
 data via `RespectsRelevanceHierarchy`. Ch 5's **dynamic network model**
-substrate now lives in `Theories/Morphology/UsageBased/Network.lean`;
+substrate now lives in `Morphology/UsageBased/Network.lean`;
 §5 below uses it on an English sing/sang/sung instance.
 
 -/
@@ -297,11 +297,11 @@ Bybee-network claims is true by construction.
 
 Token frequencies default to 0 in the bridge — Bybee's verified per-
 lexeme counts (Francis & Kučera 1982) live in
-`Theories/Morphology/UsageBased/Network.lean`'s `strongStillStrong`
+`Morphology/UsageBased/Network.lean`'s `strongStillStrong`
 / `strongRegularized` datasets, which support the Ch 5 §6 irregularity-
 vs-frequency theorem. -/
 
-open Theories.Morphology.UsageBased
+open Morphology.UsageBased
 open Fragments.English.Predicates.Verbal
 
 /-- Extract a verb's five inflected forms as Bybee `LexicalEntry`

@@ -18,7 +18,7 @@ optimus` (ABC); the configuration `*good–better–goodest` (ABA) is
 unattested. This file supplies the pattern type and the *ABA
 detector. What *explains* the generalization (Containment Hypothesis +
 late insertion + Elsewhere ordering) is theory-laden and lives
-elsewhere — see `Theories/Morphology/DM/ContainmentVI.lean` for the
+elsewhere — see `Morphology/DM/ContainmentVI.lean` for the
 DM-flavored VI account and `Studies/Bobaljik2012.lean`
 for the bundle of CSG predictions and attested-pattern theorems.
 
@@ -55,7 +55,7 @@ def DegreeGrade.rank : DegreeGrade → Nat
 
 /-- The degree grade as a position index in the 3-cell hierarchy.
     Sibling of `rank` for callers that need a `Fin 3` directly (e.g.
-    indexing into `Theories.Morphology.DM.ContainmentVI`'s n-parametric
+    indexing into `Morphology.DM.ContainmentVI`'s n-parametric
     machinery at `n = 3`). -/
 def DegreeGrade.toFin : DegreeGrade → Fin 3
   | .pos  => 0
@@ -139,7 +139,7 @@ def abc : DegreePattern := ⟨0, 1, 2⟩
 def aba : DegreePattern := ⟨0, 1, 0⟩
 
 /-- *AAB: contiguous by the generic ABA checker, but excluded by VI
-    locality in the DM analysis (see `Theories/Morphology/DM/ContainmentVI.lean`). -/
+    locality in the DM analysis (see `Morphology/DM/ContainmentVI.lean`). -/
 def aab : DegreePattern := ⟨0, 0, 1⟩
 
 /-! Smoke tests confirming each named pattern resolves correctly.

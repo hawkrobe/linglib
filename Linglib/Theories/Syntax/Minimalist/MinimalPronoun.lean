@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Phenomena.NullSubject.Universals
 
 /-!
@@ -80,7 +80,7 @@ inductive BVAContext where
     apply, the most specific (first in the list) wins.
 
     This is a specialization of the general DM `Morphology.DM.VI.VocabItem`
-    in `Theories/Morphology/DM/VocabularyInsertion.lean`, restricted to
+    in `Morphology/DM/VocabularyInsertion.lean`, restricted to
     `BVAContext` matching with a parameterized `Form` type. -/
 structure VocabItem (Form : Type) where
   /-- The syntactic context this item is restricted to -/

@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.RootTypology
+import Linglib.Morphology.RootTypology
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!

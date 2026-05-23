@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Agree
 import Linglib.Theories.Syntax.Minimalist.PersonGeometry
-import Linglib.Theories.Morphology.DM.VocabSimple
+import Linglib.Morphology.DM.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 
 /-!
@@ -96,7 +96,7 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
   `decomposePerson`, `probeResolutionRank`, multi-cited
   (@cite{harley-ritter-2002}, @cite{bejar-rezac-2003},
   @cite{preminger-2014}, @cite{pancheva-zubizarreta-2018}).
-- `Theories/Morphology/DM/VocabSimple.lean` —
+- `Morphology/DM/VocabSimple.lean` —
   the substrate: `Vocabulary`, `VocabEntry`, `makePersonVocab`.
 - `Studies/Scott2023Agreement.lean` — parallel
   application of the same DM/Agree machinery to Mam (where Infl's

@@ -2,7 +2,7 @@ import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Features.Person
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.Categorizer
 
 /-!
 # Halpert & Hammerly 2026: Reconciling Animacy and Noun Class in Bantu

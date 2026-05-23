@@ -1,5 +1,5 @@
 import Linglib.Semantics.Lexical.VerbEntry
-import Linglib.Theories.Morphology.RootTypology
+import Linglib.Morphology.RootTypology
 
 /-!
 # German Predicate Lexicon Fragment

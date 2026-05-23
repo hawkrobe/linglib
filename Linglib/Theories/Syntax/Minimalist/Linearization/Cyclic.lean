@@ -40,7 +40,7 @@ requirements. All three are formalized as concrete theorems.
 
 The operation `extendOrderingTable` was previously named `spellout` and
 collided with `Minimalist.spellout` (the VI exponent-realization
-operation in `Theories/Morphology/DM/VocabSimple.lean`); the rename
+operation in `Morphology/DM/VocabSimple.lean`); the rename
 disambiguates.
 -/
 

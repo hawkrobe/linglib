@@ -8,7 +8,7 @@ A concrete Minimalist specialization of Vocabulary Insertion.
 `VocabEntry` carries `features : FeatureBundle` (the Minimalist
 global) + `exponent : String` + optional context restriction
 `Option Cat`. Sits alongside the more general parametric type
-`Theories.Morphology.DM.VI.VocabItem (Ctx Root : Type)` in
+`Morphology.DM.VI.VocabItem (Ctx Root : Type)` in
 `VocabularyInsertion.lean`: same Distributed Morphology mechanism
 (Halle-Marantz late insertion + Elsewhere Condition), specialized to
 Minimalist's feature-bundle ergonomics so downstream consumers don't

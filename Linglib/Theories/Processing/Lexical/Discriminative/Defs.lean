@@ -42,7 +42,7 @@ whether items are stored.
 This means `Phonology/ItemSpecificity/` (frequency channels
 parameterised by a stored lexicon: @cite{zuraw-2000}, @cite{pater-2010},
 @cite{coetzee-pater-2008}, @cite{moore-cantwell-2021}) and
-`Theories/Morphology/UsageBased/Network.lean` (Bybee 1985 dynamic
+`Morphology/UsageBased/Network.lean` (Bybee 1985 dynamic
 network: @cite{bybee-1985}) intentionally do **not** sit alongside
 DLM here — they make positive lexicon-architecture commitments and
 belong with the linguistic level whose generalisations they primarily

@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DM.Allosemy
+import Linglib.Morphology.DM.Allosemy
 import Linglib.Fragments.Icelandic.Nominalizations
 import Linglib.Fragments.Icelandic.Predicates
 import Linglib.Studies.Wood2015
@@ -362,7 +362,7 @@ ambiguous (CEN/SEN/RN/SimpleState/SimpleEntity). All readings stem from
 ONE structure; the *interpretive* variation comes from `n` (and `v`)
 having multiple **allosemes** — `n` can be `zero / sortal / relational /
 alienator / content / simpleEvent / result / state / entity` (9 cases per
-`Theories/Morphology/DM/Allosemy.lean`).
+`Morphology/DM/Allosemy.lean`).
 
 @cite{panagiotidis-2015} treats `n` as a uniform categoriser bearing the
 interpretable feature [N]. There is no alloseme machinery in

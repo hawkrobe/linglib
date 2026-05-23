@@ -7,7 +7,7 @@ Inlined from the deleted `Theories/Syntax/Minimalist/HeadMovement/Basic.lean`
 at 0.230.788 when the legacy `Movement` record was removed. This is the
 only file that uses `formComplexLI`, so the substrate is co-located here.
 If a second consumer arises, promote to its own file (most natural home:
-`Theories/Morphology/` per @cite{senturia-marcolli-2025} §1, where
+`Morphology/` per @cite{senturia-marcolli-2025} §1, where
 amalgamation operations live in MCB-aligned terms). -/
 
 namespace Minimalist

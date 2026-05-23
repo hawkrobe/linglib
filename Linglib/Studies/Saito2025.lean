@@ -103,7 +103,7 @@ with the **stored-lexicon** assumptions in:
   attach frequency to. Saito's frequency × inflectional-status
   interaction is *the* phenomenon those channels would compete to
   explain; the DLM offers a 5th, no-stored-entries account.
-- `Theories/Morphology/UsageBased/Network.lean` (@cite{bybee-1985}):
+- `Morphology/UsageBased/Network.lean` (@cite{bybee-1985}):
   Bybee's `tokenFreq : Nat` is the canonical stored-frequency primitive;
   the DLM's `production` linear map dispenses with it.
 

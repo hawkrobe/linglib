@@ -6,7 +6,7 @@ import Mathlib.Tactic.DeriveFintype
 
 This file formalizes the substrate of Bybee 1985 Ch 5 ("Two Principles in
 a Dynamic Model of Lexical Representation," pp. 111-135). It is a peer-
-framework directory alongside `Theories/Morphology/{DM, PFM, WP,
+framework directory alongside `Morphology/{DM, PFM, WP,
 Nanosyntax, FragmentGrammars}/` — Bybee's network model is *the*
 usage-based competitor to the realisational and generative camps, and the
 audit (4-agent, 0.230.453) flagged its absence as the most important
@@ -66,7 +66,7 @@ not silently coexist.
 
 -/
 
-namespace Theories.Morphology.UsageBased
+namespace Morphology.UsageBased
 
 -- ============================================================================
 -- §1: Lexical Entries (Bybee Ch 5 §4 — "lexical strength")
@@ -316,4 +316,4 @@ theorem strongStillStrong_nonempty : strongStillStrong.length > 0 := by decide
 
 theorem strongRegularized_nonempty : strongRegularized.length > 0 := by decide
 
-end Theories.Morphology.UsageBased
+end Morphology.UsageBased

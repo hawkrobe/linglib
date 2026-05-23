@@ -1,5 +1,5 @@
-import Linglib.Theories.Morphology.DM.Impoverishment
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DM.Impoverishment
+import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Basque.Postsyntax
 

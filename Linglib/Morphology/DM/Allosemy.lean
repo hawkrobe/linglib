@@ -1,6 +1,6 @@
-import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Morphology.DM.CategorizerSemantics
-import Linglib.Theories.Morphology.RootTypology
+import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.CategorizerSemantics
+import Linglib.Morphology.RootTypology
 import Linglib.Theories.Syntax.Minimalist.Voice
 
 /-!

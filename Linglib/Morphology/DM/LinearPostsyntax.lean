@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DM.Impoverishment
+import Linglib.Morphology.DM.Impoverishment
 
 /-!
 # Phrase-Level Postsyntactic Operations

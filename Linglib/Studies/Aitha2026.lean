@@ -4,7 +4,7 @@ import Linglib.Core.Case.Order
 import Linglib.Core.Case.Allomorphy
 import Linglib.Core.Constraint.System
 import Linglib.Phonology.Prosodic.Syllable.Foot
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosodic.Word
 import Linglib.Phonology.Prosodic.Moraic.CompensatoryLengthening

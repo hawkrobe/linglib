@@ -54,7 +54,7 @@ Candidate to upstream to mathlib alongside a proper
 
 ## Why split from `PolyaUrn.lean`
 
-Downstream consumers (`Theories/Morphology/FragmentGrammars/DMPCFG`,
+Downstream consumers (`Morphology/FragmentGrammars/DMPCFG`,
 `AdaptorGrammar`, `FragmentGrammar`) consume only
 `PolyaUrn.seqProb` — a corpus IS a labeled derivation sequence, not
 a draw from the unlabeled-count distribution. Bundling the PMF

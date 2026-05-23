@@ -1,7 +1,7 @@
 import Linglib.Core.Relativization.Basic
 import Linglib.Core.Tree
 import Linglib.Fragments.Swahili.Relativization
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Syntax.Minimalist.Features
 
 /-!

@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Copula
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Morphology.DM.NominalStructure
+import Linglib.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DM.NominalStructure
 import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!

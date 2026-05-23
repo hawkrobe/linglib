@@ -1,6 +1,6 @@
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Linglib.Core.Probability.Posterior
-import Linglib.Theories.Morphology.FragmentGrammars.FragmentGrammar
+import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 
 /-!
 # Operational fragment-lambda: a stochastic-lazy unfold sampler

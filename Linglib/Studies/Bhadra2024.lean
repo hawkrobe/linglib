@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.RootTypology
+import Linglib.Morphology.RootTypology
 import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
 import Linglib.Semantics.Events.Basic
 import Linglib.Fragments.English.Predicates.Verbal
@@ -30,7 +30,7 @@ The cardinality of this set determines affix compatibility:
 3. `LevinClass.forceTransmissionClass` bridges Levin classes to outcome classes
 4. Per-verb *un-* and *re-* predictions verified against empirical data from (12), (45)
 
-## Substrate (was Theories/Morphology/ReversalRestitution.lean, relocated 0.230.455)
+## Substrate (was Morphology/ReversalRestitution.lean, relocated 0.230.455)
 
 The §§1-14 substrate below was previously a separate top-level theory file;
 Bhadra 2024 is the originating paper, so the substrate now anchors here per

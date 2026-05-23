@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.ArgumentStructure.Alternation
 
 -- ============================================================================
 -- § 0: Monotonicity Hypothesis Substrate
---     (was Theories/Morphology/Core/Monotonicity.lean, relocated 0.230.455
+--     (was Morphology/Core/Monotonicity.lean, relocated 0.230.455
 --     — KoontzGarboden 2009 is the originating paper, so the substrate
 --     anchors here. Consumers: this file and HaninkKoontzGarboden2025.)
 -- ============================================================================

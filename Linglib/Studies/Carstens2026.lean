@@ -4,7 +4,7 @@ import Linglib.Fragments.Xhosa.Gender
 import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Shona.Gender
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.Categorizer
 import Linglib.Studies.Kramer2020
 import Linglib.Theories.Syntax.Minimalist.Agreement.GenderResolution
 import Linglib.Theories.Syntax.Minimalist.Agreement.CoordinateResolution

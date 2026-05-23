@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalist.Voice
-import Linglib.Theories.Morphology.DM.Allosemy
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DM.Allosemy
+import Linglib.Morphology.DM.VocabularyInsertion
 
 /-!
 # Copula Theory: HAVE, BE, and Delayed Gratification

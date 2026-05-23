@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.Categorizer
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
 import Mathlib.Data.Fintype.BigOperators
@@ -53,7 +53,7 @@ as a request projects to `prepCondition := some .knowledge` — the same
 substrate `Studies/FrancikClark1985.lean` and
 `Studies/RuytenbeekEtAl2017.lean` consume.
 
-The DM bridge in `§I` consumes `Theories.Morphology.DM.Categorizer`'s
+The DM bridge in `§I` consumes `Morphology.DM.Categorizer`'s
 `Recategorization.denominal` for the syntactic operation underlying nonce
 verbs. The LU-RSA bridge in `§H` consumes
 `Theories.Pragmatics.RSA.LexicalUncertainty.Lexicon`.

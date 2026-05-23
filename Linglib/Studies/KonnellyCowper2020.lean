@@ -1,5 +1,5 @@
-import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns

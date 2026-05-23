@@ -1,5 +1,5 @@
-import Linglib.Theories.Morphology.FragmentGrammars.DMPCFG
-import Linglib.Theories.Morphology.FragmentGrammars.MultinomialPCFG
+import Linglib.Morphology.FragmentGrammars.DMPCFG
+import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 
 /-!
 # FG-family cross-model comparisons

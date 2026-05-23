@@ -5,7 +5,7 @@ import Mathlib.Data.Fin.Basic
 
 -- ============================================================================
 -- §0: Six-Criteria Diagnostic Substrate
---     (was Theories/Morphology/Core/CliticVsAffix.lean, relocated 0.230.455 —
+--     (was Morphology/Core/CliticVsAffix.lean, relocated 0.230.455 —
 --     ZP 1983 is the originating paper, anchor lives here)
 -- ============================================================================
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.FragmentGrammars.AdaptorGrammar
+import Linglib.Morphology.FragmentGrammars.AdaptorGrammar
 
 /-!
 # Fragment grammars (FG) — the central proposal

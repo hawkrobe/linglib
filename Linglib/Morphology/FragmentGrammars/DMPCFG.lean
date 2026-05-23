@@ -1,7 +1,7 @@
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Weighted
 import Linglib.Core.Probability.PolyaUrn
-import Linglib.Theories.Morphology.FragmentGrammars.MultinomialPCFG
+import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
 

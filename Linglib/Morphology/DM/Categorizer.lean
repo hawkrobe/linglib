@@ -1,5 +1,5 @@
 import Linglib.Features.Gender
-import Linglib.Theories.Morphology.RootTypology
+import Linglib.Morphology.RootTypology
 import Linglib.Theories.Syntax.Minimalist.Basic
 import Linglib.Theories.Syntax.Minimalist.Features
 import Linglib.Theories.Syntax.Minimalist.Voice

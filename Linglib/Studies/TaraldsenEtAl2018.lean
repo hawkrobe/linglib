@@ -1,7 +1,7 @@
 import Linglib.Studies.Aikhenvald2000
 import Linglib.Studies.Carstens2026
-import Linglib.Theories.Morphology.Nanosyntax.TreeSpellout
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.Nanosyntax.TreeSpellout
+import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Bantu.Params
 

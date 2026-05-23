@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Morphology.Productivity.FrequencySpectrum
-import Linglib.Theories.Morphology.FragmentGrammars.FragmentGrammar
+import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 
 /-!
 # O'Donnell 2015: English derivational morphology
@@ -7,7 +7,7 @@ import Linglib.Theories.Morphology.FragmentGrammars.FragmentGrammar
 @cite{odonnell-2015}
 
 First study file using the FG-family substrate from
-`Theories/Morphology/FragmentGrammars/`. Demonstrates the API on
+`Morphology/FragmentGrammars/`. Demonstrates the API on
 the central empirical contrast of @cite{odonnell-2015} Chapter 7
 (Fig 7.3, p. 262 / Table 7.1, p. 265): the productivity contrast
 between the highly productive English nominaliser *-ness* and the

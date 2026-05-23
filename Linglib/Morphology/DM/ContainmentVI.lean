@@ -21,7 +21,7 @@ winners — giving plateau behavior, hence *ABA exclusion.
 This file is the DM-side derivation of substrate facts in
 `Core/Morphology/Containment.lean` and `Core/Morphology/DegreeContainment.lean`.
 The Nanosyntax-side derivation (Superset Principle on phrasal
-spellout) would live in `Theories/Morphology/Nanosyntax/`.
+spellout) would live in `Morphology/Nanosyntax/`.
 
 ## File layout — two layers
 
@@ -68,12 +68,12 @@ PART II's `vi_cmpr_eq_sprl` (n=3 case directly) or apply
 
 ## Future work
 
-The `Theories/Morphology/Nanosyntax/` parallel — phrasal spellout +
+The `Morphology/Nanosyntax/` parallel — phrasal spellout +
 Superset Principle deriving the same *ABA exclusion — is a separate
 file the substrate anticipates but does not yet exist.
 -/
 
-namespace Theories.Morphology.DM.ContainmentVI
+namespace Morphology.DM.ContainmentVI
 
 variable {n : Nat}
 
@@ -387,4 +387,4 @@ theorem vi_cmpr_eq_sprl_corollary (rules : List LocalVIRule) (defaultForm : Nat)
 
 end Degree
 
-end Theories.Morphology.DM.ContainmentVI
+end Morphology.DM.ContainmentVI

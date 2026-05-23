@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.Categorizer
 import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!

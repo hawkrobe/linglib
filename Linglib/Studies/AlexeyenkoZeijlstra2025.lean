@@ -42,7 +42,7 @@ connect to WALS F87A and Minimalist feature infrastructure.
 -- ============================================================================
 
 /-! @cite{ackema-neeleman-2004}'s ICP — used by AZ 2025 §5.2 as the
-morphophonological factor of the MAG. Was previously in `Theories/Morphology/
+morphophonological factor of the MAG. Was previously in `Morphology/
 Core/ICP.lean`; relocated 0.230.455 (sole consumer is this study file).
 
 The ICP constrains the phonological realization of affixes: an affix must

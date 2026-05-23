@@ -71,7 +71,7 @@ theories. Adjacent linglib substrate:
   `RepresentationStrength.lean` @cite{moore-cantwell-2021},
   `ScaledWeights.lean` @cite{coetzee-pater-2008}). All four presuppose
   a stored lexicon to which frequency attaches.
-- `Theories/Morphology/UsageBased/Network.lean` (@cite{bybee-1985}):
+- `Morphology/UsageBased/Network.lean` (@cite{bybee-1985}):
   Bybee's dynamic network — typed `LexicalEntry`s with `tokenFreq`
   strength + connection edges. Stores entries.
 

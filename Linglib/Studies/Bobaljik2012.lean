@@ -1,5 +1,5 @@
 import Linglib.Core.Morphology.DegreeContainment
-import Linglib.Theories.Morphology.DM.ContainmentVI
+import Linglib.Morphology.DM.ContainmentVI
 import Linglib.Core.Morphology.Exponence
 import Linglib.Semantics.Alternatives.Lexical
 import Linglib.Semantics.Degree.Superlative
@@ -47,13 +47,13 @@ encode empirically observed root-class patterns.
 -/
 
 -- ============================================================================
--- § 0: Scale-Generation Substrate (was Theories/Morphology/Core/ScaleFromParadigm.lean)
+-- § 0: Scale-Generation Substrate (was Morphology/Core/ScaleFromParadigm.lean)
 -- ============================================================================
 
 /-! Connects morphological infrastructure (`Core.Morphology`) to scalar-
 alternative infrastructure (`Semantics/Alternatives/HornScale.lean`),
 enabling automatic generation of the alternatives needed for scalar
-implicature computation. Was previously in `Theories/Morphology/Core/
+implicature computation. Was previously in `Morphology/Core/
 ScaleFromParadigm.lean`; relocated 0.230.455 (sole consumer is this study
 file). @cite{horn-1972} @cite{kennedy-2007} -/
 
@@ -146,7 +146,7 @@ theorem bad_csg_part2 : bad.suppletion.CmprSuppletive := by decide
 /-- All English root suppletion patterns satisfy both contiguity (no
     *ABA — `csg_part1`) and VI locality (CMPR cell = SPRL cell — the
     DM-locality conjunction `Degree.vi_cmpr_eq_sprl` of
-    `Theories/Morphology/DM/ContainmentVI.lean`). The conjunction restricts root patterns
+    `Morphology/DM/ContainmentVI.lean`). The conjunction restricts root patterns
     to AAA / ABB. Stated as the explicit conjunction so the underlying
     derivation is visible at use site, rather than packaged as a
     stipulated `isAttested` field. -/
@@ -290,7 +290,7 @@ theorem english_generic_contiguity :
 -- § 12: Scale Generation from Degree Paradigms
 -- ============================================================================
 
-/-! `Theories/Morphology/Core/ScaleFromParadigm.lean` derives Horn scales
+/-! `Morphology/Core/ScaleFromParadigm.lean` derives Horn scales
 from degree paradigms: a stem with comparative + superlative rules
 yields a 3-point scale `[positive, comparative, superlative]`. The tests
 below verify the extractor on the English adjective fragment. -/

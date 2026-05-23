@@ -1,6 +1,6 @@
 import Linglib.Typology.Possession
-import Linglib.Theories.Morphology.DM.NominalStructure
-import Linglib.Theories.Morphology.DM.Allosemy
+import Linglib.Morphology.DM.NominalStructure
+import Linglib.Morphology.DM.Allosemy
 import Linglib.Theories.Syntax.Minimalist.SmallClause
 import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Fragments.Greek.StandardModern.Possession

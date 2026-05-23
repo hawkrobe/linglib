@@ -1,13 +1,13 @@
-import Linglib.Theories.Morphology.TheorySpace
+import Linglib.Morphology.TheorySpace
 import Linglib.Core.Morphology.Wordhood
 import Linglib.Core.Morphology.MorphRule
 import Linglib.Studies.ZwickyPullum1983
 import Linglib.Phonology.Prosodic.Word
 import Linglib.Core.Morphology.FormMeaningMapping
-import Linglib.Theories.Morphology.Nanosyntax.Basic
+import Linglib.Morphology.Nanosyntax.Basic
 
 -- ============================================================================
--- § 0b: PFM Substrate (was Theories/Morphology/PFM/Core.lean,
+-- § 0b: PFM Substrate (was Morphology/PFM/Core.lean,
 --      relocated 0.230.455 — sole consumer is this study file; PFM dir dissolves)
 -- ============================================================================
 
@@ -95,7 +95,7 @@ end Morphology.PFM
 
 -- ============================================================================
 -- § 0: Wordhood ↔ Clitic/Affix Diagnostic Bridge
---     (was Theories/Morphology/Core/WordhoodBridge.lean — Bridge anti-pattern;
+--     (was Morphology/Core/WordhoodBridge.lean — Bridge anti-pattern;
 --     relocated 0.230.455 to its sole consumer per CLAUDE.md "no Bridges")
 -- ============================================================================
 

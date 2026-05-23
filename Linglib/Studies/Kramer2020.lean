@@ -1,7 +1,7 @@
 import Linglib.Features.Gender
 import Linglib.Typology.Gender
 import Linglib.Studies.Corbett1991
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.Categorizer
 import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Slavic.Russian.Gender
 import Linglib.Fragments.Hausa.Gender
@@ -32,7 +32,7 @@ assignment. Three main results:
 
 - **Typology ↔ DM bridge**: `SemanticBasis.toGenderDimension` connects the
   typological `SemanticBasis` (from `Phenomena/Gender/Typology.lean`) to
-  the DM `GenderDimension` (from `Theories/Morphology/DM/Categorizer.lean`),
+  the DM `GenderDimension` (from `Morphology/DM/Categorizer.lean`),
   making explicit that the semantic core properties are the *same things*
   parameterized as feature dimensions in the structural approach.
 

@@ -15,7 +15,7 @@ boundaries, AAB patterns are admitted.
 
 ## Motivation
 
-`Theories.Morphology.DM.ContainmentVI.Degree.vi_cmpr_eq_sprl` (the DM
+`Morphology.DM.ContainmentVI.Degree.vi_cmpr_eq_sprl` (the DM
 derivation, @cite{bobaljik-2012}) predicts CMPR-cell = SPRL-cell for
 any VI-generable root pattern. Lifted to case (Wardaman 3SG: ABS=
 narnaj, ERG=narnaj-(j)i, DAT=gunga; @cite{smith-moskal-xu-kang-bobaljik-2019}
@@ -67,7 +67,7 @@ The morphological "domain" is more abstract — it lives at the level
 of cell-position projections of paradigm tables, with no syntactic-
 tree commitment. A future cross-layer connection (showing that
 syntactic phases project to morphological domains under a
-DM-with-phase analysis) can be added in `Theories/Morphology/` once
+DM-with-phase analysis) can be added in `Morphology/` once
 a consumer requests it.
 -/
 

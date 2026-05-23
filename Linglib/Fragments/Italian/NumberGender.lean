@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DM.NominalStructure
+import Linglib.Morphology.DM.NominalStructure
 import Linglib.Fragments.Italian.Nouns
 
 /-!

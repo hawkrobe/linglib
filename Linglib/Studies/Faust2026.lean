@@ -1,6 +1,6 @@
 import Linglib.Phonology.Prosodic.Templates
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.Categorizer
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Amharic.ConsonantalRoots
 
@@ -818,7 +818,7 @@ Kramer's `CatHead` taxonomy changes. -/
 open Morphology.DM (CatHead)
 
 /-! The morphological-licensing predicate `CatHead.licensesIntrusion`
-itself lives in `Theories/Morphology/DM/Categorizer.lean` (alongside
+itself lives in `Morphology/DM/Categorizer.lean` (alongside
 the Kramer taxonomy it ranges over), together with its per-canonical-
 head verification theorems (`n_uFem_licenses_intrusion`,
 `v_plain_blocks_intrusion`, etc.) and the iff characterization

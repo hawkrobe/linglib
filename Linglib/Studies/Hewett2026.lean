@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.Categorizer
 import Linglib.Theories.Syntax.Minimalist.Applicative
 import Linglib.Theories.Syntax.Minimalist.Checking
 import Linglib.Theories.Syntax.Minimalist.Voice

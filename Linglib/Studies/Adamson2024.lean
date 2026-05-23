@@ -1,7 +1,7 @@
-import Linglib.Theories.Morphology.DM.NominalStructure
-import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Morphology.DM.CategorizerSemantics
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DM.NominalStructure
+import Linglib.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.CategorizerSemantics
+import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Italian.NumberGender
@@ -48,10 +48,10 @@ cannot affect gender assignment.
 
 ## Connection to Linglib
 
-This module uses types from `Theories/Morphology/DM/NominalStructure.lean`
+This module uses types from `Morphology/DM/NominalStructure.lean`
 (the GLH, `NominalPosition`, `PossessionType`), `CatHead` and `PhiBundle`
-from `Theories/Morphology/DM/Categorizer.lean` (@cite{kramer-2015}),
-`VocabItem` from `Theories/Morphology/DM/VocabularyInsertion.lean`,
+from `Morphology/DM/Categorizer.lean` (@cite{kramer-2015}),
+`VocabItem` from `Morphology/DM/VocabularyInsertion.lean`,
 and Fragment data from `Fragments/Teop/Nouns.lean` and
 `Fragments/Jarawara/PossessedNouns.lean`.
 -/

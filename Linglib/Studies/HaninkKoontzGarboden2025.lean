@@ -1,6 +1,6 @@
-import Linglib.Theories.Morphology.RootTypology
+import Linglib.Morphology.RootTypology
 import Linglib.Studies.KoontzGarboden2009
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.Categorizer
 import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!

@@ -24,7 +24,7 @@ context that licenses Fission), and an `Out` (the two-piece
 realization output). Conditions on `Person` and `Ctx` are `Prop`-valued
 with carried `DecidablePred` witnesses, matching the
 `ImpoverishmentRule` shape in
-`Linglib/Theories/Morphology/DM/Impoverishment.lean`.
+`Linglib/Morphology/DM/Impoverishment.lean`.
 
 ## Main declarations
 

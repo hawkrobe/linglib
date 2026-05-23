@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.FragmentGrammars.DMPCFG
+import Linglib.Morphology.FragmentGrammars.DMPCFG
 import Linglib.Core.Probability.PitmanYor
 import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
 

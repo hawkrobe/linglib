@@ -10,7 +10,7 @@ data from Chamorro, Quechua, and Bantu languages, as presented in
 
 ## Structure
 
-- **§0**: Mirror-Principle substrate (was `Theories/Morphology/Core/
+- **§0**: Mirror-Principle substrate (was `Morphology/Core/
   MirrorPrinciple.lean`; relocated 0.230.455 — Baker is the founding
   paper, anchor lives here per CLAUDE.md "every file is anchored").
 - **§1**: Chamorro — passive, causative, and number agreement

@@ -160,7 +160,7 @@ def runChain {R : Type} (apply : R → Neighborhood → FeatureBundle)
     the second chain starts where the first left off. The proof is
     `List.foldl_append`. This lemma underwrites the
     strict-vs-interleaved equivalence in
-    `Theories/Morphology/DM/PostsyntacticDerivation.lean`. -/
+    `Morphology/DM/PostsyntacticDerivation.lean`. -/
 theorem runChain_append {R : Type} (apply : R → Neighborhood → FeatureBundle)
     (rs₁ rs₂ : List R) (n : Neighborhood) :
     runChain apply (rs₁ ++ rs₂) n =

@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalist.HeadFunction
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Order
 import Linglib.Fragments.Slavic.Russian.Case
-import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Morphology.DM.Categorizer
 import Linglib.Theories.Syntax.Minimalist.Basic
 
 /-!
@@ -125,7 +125,7 @@ agreement bridge with @cite{caha-2009}.
   derivation-step infrastructure in
   `Theories/Syntax/Minimalist/Derivation.lean` is the natural next
   layer once FA gating is modeled.
-- `Theories/Morphology/DM/Categorizer.lean` (@cite{harley-2014}) —
+- `Morphology/DM/Categorizer.lean` (@cite{harley-2014}) —
   the structural bridge `primevalN_via_dm_categorizer` connects
   `POSCat.N` to DM `Categorizer.n` via `Cat.N`.
 - `Core.Case` (Blake) gives the cross-linguistic case inventory; we

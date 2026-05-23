@@ -1,5 +1,5 @@
 import Linglib.Features.Acceptability
-import Linglib.Theories.Morphology.DM.Fission
+import Linglib.Morphology.DM.Fission
 import Linglib.Theories.Syntax.Minimalist.Voice
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
@@ -17,7 +17,7 @@ A lens into the nature of anticausative SE" (*Glossa* 11(1)).
 
 * `Judgment`, `CliticPattern`, `DativeCliticPerson` — empirical data types
 * `spanishFissionRule` — instantiation of the generic Fission framework
-  (`Theories.Morphology.DM.Fission`) with Chilean-Spanish-specific data
+  (`Morphology.DM.Fission`) with Chilean-Spanish-specific data
 * `voice_semantically_vacuous` — re-export of
   `Minimalist.nonThematic_no_semantics`
 * `three_way_synonymy_from_vacuity`,
@@ -258,7 +258,7 @@ structure FissionOutput where
     (@cite{munoz-perez-2026} rule 55).
 
     Instantiates the generic Fission framework
-    (`Theories.Morphology.DM.Fission`) with Spanish-specific data:
+    (`Morphology.DM.Fission`) with Spanish-specific data:
     - Context: inchoative verbal-head sequence (vGO ⌒ vBE)
     - Person: [+PART, +SING] (1SG or 2SG)
     - Realization: Cl₁ = me/te (from [±AUTHOR]), Cl₂ = le (invariable) -/

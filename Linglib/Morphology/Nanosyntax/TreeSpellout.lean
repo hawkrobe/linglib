@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.Nanosyntax.Basic
+import Linglib.Morphology.Nanosyntax.Basic
 
 /-!
 # Nanosyntax: Tree-Based Spellout

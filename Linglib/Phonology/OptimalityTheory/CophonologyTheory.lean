@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Core.Constraint.OT.Basic
 
 /-!

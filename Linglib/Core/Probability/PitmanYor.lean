@@ -22,7 +22,7 @@ Process (the one-parameter Dirichlet process). The mathematical reference
 is @cite{pitman-2006} §3.2 (Saint-Flour lectures); the linguistic
 application that motivates this file is @cite{odonnell-2015} §3.1.6
 (memoization distribution for adaptor and fragment grammars in
-`Theories/Morphology/FragmentGrammars/`).
+`Morphology/FragmentGrammars/`).
 
 ## Naming convention
 

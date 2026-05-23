@@ -1,6 +1,6 @@
 import Linglib.Studies.DeganoAloni2025
 import Linglib.Studies.Haspelmath1997Polarity
-import Linglib.Theories.Morphology.Nanosyntax.Basic
+import Linglib.Morphology.Nanosyntax.Basic
 import Linglib.Studies.Dekier2021
 import Linglib.Fragments.Slavic.Russian.Indefinites
 import Linglib.Fragments.English.Indefinites
