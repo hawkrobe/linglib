@@ -2467,7 +2467,6 @@ import Linglib.Semantics.Modality.Kratzer.Background
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.Kratzer.Flavor
-import Linglib.Semantics.Modality.Kratzer.XMarking
 import Linglib.Semantics.Attitudes.Desire
 import Linglib.Semantics.Modality.EpistemicLogic
 import Linglib.Semantics.Modality.EpistemicProbability
