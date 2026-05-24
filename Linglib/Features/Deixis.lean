@@ -37,7 +37,7 @@ This is the centralized type referenced by `Core.Nominal.NominalKind.deictic`
 (forthcoming) and by demonstrative entries in `Fragments/`.
 -/
 
-namespace Core.Deixis
+namespace Features.Deixis
 
 /-- Deictic features carried by demonstratives. Minimal enum sufficient for
     two-way and three-way distance systems plus distance-neutral
@@ -70,4 +70,4 @@ instance : DecidablePred Feature.EncodesDistance :=
 theorem encodesDistance_iff (f : Feature) :
     f.EncodesDistance ↔ f ≠ .unspecified := Iff.rfl
 
-end Core.Deixis
+end Features.Deixis

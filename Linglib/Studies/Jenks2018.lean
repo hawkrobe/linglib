@@ -125,7 +125,7 @@ theorem anaphoric_licensed (R : DenotGS F .et) (d : Nat) :
     paper fn. 8: speakers prefer *na* 'that' to *zhe* 'this' in most
     simple anaphoric environments). -/
 theorem demonstrative_licensed
-    (R : DenotGS F .et) (deictic : Core.Deixis.Feature) (sIdx d : Nat) :
+    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
     mandarinInv.licensesKind (F := F)
       (.demonstrative R deictic sIdx d) := trivial
 
@@ -146,7 +146,7 @@ theorem bare_unique_agreement
     selector (paper §4.2 cited Hanink/Schwarz analysis). Parallels
     `Moroney2021.shan_demonstrative_anaphoric_agreement`. -/
 theorem demonstrative_anaphoric_agreement
-    (R : DenotGS F .et) (deictic : Core.Deixis.Feature) (sIdx d : Nat)
+    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
     (g : Core.Assignment F.Entity)
     (gs : SitAssignment F) :
     interpret (.demonstrative R deictic sIdx d) g gs =
@@ -442,7 +442,7 @@ properly). -/
     `NominalKind.anaphoric` flagged in §5 to express cleanly, and is
     deferred. -/
 theorem demonstrative_strict_under_situation_variation
-    (R : DenotGS F .et) (deictic : Core.Deixis.Feature)
+    (R : DenotGS F .et) (deictic : Features.Deixis.Feature)
     (sIdx d : Nat)
     (g : Core.Assignment F.Entity)
     (gs₁ gs₂ : SitAssignment F)

@@ -245,7 +245,7 @@ import Linglib.Features.Topic
 import Linglib.Semantics.Focus.Comparability
 import Linglib.Features.Prosody
 import Linglib.Features.Definiteness
-import Linglib.Core.Deixis.Feature
+import Linglib.Features.Deixis
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Nominal.Interpret

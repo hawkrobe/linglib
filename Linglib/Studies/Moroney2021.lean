@@ -49,7 +49,7 @@ type of definiteness.
 namespace Moroney2021
 
 open Features.Definiteness
-open Core.Deixis (Feature)
+open Features.Deixis (Feature)
 
 -- ============================================================================
 -- §1: Definiteness Marking Typology (Table 4.1, extended)
@@ -720,7 +720,7 @@ theorem shan_bare_licensed {F : Frame} (R : DenotGS F .et) :
     Combined with `shan_bare_licensed`, this gives the morphological
     inventory of strategies Shan deploys for definite reference. -/
 theorem shan_demonstrative_licensed {F : Frame}
-    (R : DenotGS F .et) (deictic : Core.Deixis.Feature) (sIdx d : Nat) :
+    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
     shanInv.licensesKind (F := F)
       (.demonstrative R deictic sIdx d) := trivial
 
@@ -775,7 +775,7 @@ theorem shan_bare_unique_agreement {F : Frame}
     This is the type-theoretic correlate of Moroney's claim that *nâj*/*nân*
     *add* spatial content rather than substituting a different selector. -/
 theorem shan_demonstrative_anaphoric_agreement {F : Frame}
-    (R : DenotGS F .et) (deictic : Core.Deixis.Feature) (sIdx d : Nat)
+    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat)
     (g : Core.Assignment F.Entity)
     (gs : SitAssignment F) :
     Core.Nominal.interpret (.demonstrative R deictic sIdx d) g gs =

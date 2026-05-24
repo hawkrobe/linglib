@@ -172,7 +172,7 @@ theorem unique_index_does_not_alter_referent_directly :
     pronoun. Anaphoric definites do not — they consult the entity
     assignment for an antecedent, not the situation assignment. -/
 theorem situation_binders_classified
-    (R : DenotGS F .et) (deictic : Core.Deixis.Feature) (sIdx d : Nat) :
+    (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
     (NominalKind.unique R sIdx).usesSituationPronoun = true ∧
     (NominalKind.demonstrative R deictic sIdx d).usesSituationPronoun = true ∧
     (NominalKind.anaphoric R d).usesSituationPronoun = false ∧

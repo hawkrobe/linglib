@@ -1,5 +1,5 @@
 import Linglib.Features.Definiteness
-import Linglib.Core.Deixis.Feature
+import Linglib.Features.Deixis
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Maximality
 import Linglib.Semantics.Presupposition.Basic
@@ -116,12 +116,12 @@ theorem all_shifts_available :
 
 /-- Shan demonstrative entry: form, gloss, and deictic content.
     Demonstratives in Shan appear in the structure [N Clf Dem].
-    The `spatial` field reuses the framework-agnostic `Core.Deixis.Feature`
+    The `spatial` field reuses the framework-agnostic `Features.Deixis.Feature`
     (promoted from the former local `SpatialRelation` enum, 0.229.890). -/
 structure ShanDemonstrative where
   form : String
   gloss : String
-  spatial : Core.Deixis.Feature
+  spatial : Features.Deixis.Feature
   deriving Repr
 
 /-- *nâj* — proximal demonstrative ('this'). -/
@@ -141,7 +141,7 @@ def nan : ShanDemonstrative :=
     (|P_s| = 1) is handled by `Core.Nominal.russellIotaList` returning
     `none` when no unique satisfier exists. -/
 def demDenotation {E : Type} (domain : List E) (dem : ShanDemonstrative)
-    (restrictor : E → Bool) (spatialPred : Core.Deixis.Feature → E → Bool) :
+    (restrictor : E → Bool) (spatialPred : Features.Deixis.Feature → E → Bool) :
     Option E :=
   Core.Nominal.russellIotaList domain
     (fun e => restrictor e && spatialPred dem.spatial e)
@@ -159,7 +159,7 @@ def bareDefinite {E : Type} (domain : List E) (restrictor : E → Bool) :
     multiple bare-restrictor satisfiers when the spatial filter narrows
     them to a singleton. -/
 theorem dem_refines_bare {E : Type} (domain : List E)
-    (restrictor : E → Bool) (spatialPred : Core.Deixis.Feature → E → Bool)
+    (restrictor : E → Bool) (spatialPred : Features.Deixis.Feature → E → Bool)
     (dem : ShanDemonstrative) (e : E)
     (hBare : bareDefinite domain restrictor = some e)
     (hSpatial : spatialPred dem.spatial e = true) :

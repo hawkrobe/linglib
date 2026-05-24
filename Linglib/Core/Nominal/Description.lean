@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Core.Deixis.Feature
+import Linglib.Features.Deixis
 import Linglib.Features.Definiteness
 
 /-!
@@ -42,7 +42,7 @@ unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
 - **`demonstrative` is a separate constructor.** @cite{patel-grosz-grosz-2017}
   and the Patel-Grosz–Grosz–Davis tradition reject the pure "demonstrative =
   strong article" identification. A demonstrative carries **both** a discourse
-  index *and* a deictic feature (`Core.Deixis.Feature`). Its restrictor is
+  index *and* a deictic feature (`Features.Deixis.Feature`). Its restrictor is
   also evaluated at a situation pronoun (the situation in which the deictic
   predicate is checked).
 
@@ -51,7 +51,7 @@ unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
   and the possessor is an `e`-type expression that may itself be derived
   from a `NominalKind` higher in the structure.
 
-- **Reuses `Core.Deixis.Feature`** for the deictic content, so
+- **Reuses `Features.Deixis.Feature`** for the deictic content, so
   Shan/English/Latin/German fragments share the same enum.
 
 - **No semantic interpretation here.** This file only declares the type and
@@ -92,7 +92,7 @@ inductive NominalKind (F : Frame) where
       checked at the resource situation pointed to by `situationIdx`. -/
   | demonstrative
       (restrictor : DenotGS F .et)
-      (deictic : Core.Deixis.Feature)
+      (deictic : Features.Deixis.Feature)
       (situationIdx : Nat)
       (discourseIdx : Nat)
   /-- Definite description via a possession relation: ⟦the N of x⟧ where the
