@@ -59,9 +59,9 @@ open Phonology.Autosegmental.RegisterTier (TRN)
     `(i, i)` connects them. All resulting links are tautomorphic. -/
 def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morpheme) :
     FloatingForm S TRN where
-  segs := host.map (fun tbu => { seg := tbu.seg, morpheme := m })
-  ulTier := host.map (fun tbu => { value := tbu.tone, morpheme := m })
-  ulLinks := ((List.range host.length).map (fun i => (i, i))).toFinset
+  lower := host.map (fun tbu => { seg := tbu.seg, morpheme := m })
+  upper := host.map (fun tbu => { value := tbu.tone, morpheme := m })
+  links := ((List.range host.length).map (fun i => (i, i))).toFinset
   deletedTier := ∅
   surfaceLinks := ((List.range host.length).map (fun i => (i, i))).toFinset
 
@@ -109,11 +109,11 @@ theorem FloatingForm.exists_multi_tone_TBU :
     ∃ f : FloatingForm Unit TRN, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
   refine ⟨?_, 0, ?_⟩
   · exact
-    { segs := [{ seg := (), morpheme := { form := "m" } }]
-      ulTier :=
+    { lower := [{ seg := (), morpheme := { form := "m" } }]
+      upper :=
         [{ value := TRN.H, morpheme := { form := "m" } },
          { value := TRN.L, morpheme := { form := "m" } }]
-      ulLinks := ∅
+      links := ∅
       deletedTier := ∅
       surfaceLinks := {(0, 0), (1, 0)} }
   · decide

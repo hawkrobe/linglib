@@ -1,4 +1,5 @@
 import Linglib.Morphology.MorphWord
+import Linglib.Phonology.Autosegmental.Graph
 import Linglib.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Phonology.Autosegmental.NoCrossing
 import Linglib.Phonology.Autosegmental.RegisterTier
@@ -52,7 +53,7 @@ contours — both of which presuppose multi-element-per-position
 representation.
 
 A surface link `(k, i)` is **tautomorphic** iff
-`ulTier[k].morpheme = segs[i].morpheme`. *TAUTDOCK (after
+`upper[k].morpheme = lower[i].morpheme`. *TAUTDOCK (after
 @cite{wolf-2007}) penalises tautomorphic links inserted by GEN.
 
 `gen` implements a paper-subset of operations: delete tier element,
@@ -80,10 +81,10 @@ export Morphology.WordStructure (Morpheme)
 
 /-! ### Tier and link primitives -/
 
-/-- Index into `ulTier`. -/
+/-- Index into the upper tier. -/
 abbrev TierIdx := Nat
 
-/-- Index into `segs`. -/
+/-- Index into the lower tier. -/
 abbrev SegIdx := Nat
 
 /-- An autosegmental link: tier element `fst` is associated to
@@ -112,46 +113,54 @@ structure SegSpec (S : Type*) where
 of type `S` and tier-value type `T`. Tonal use chooses `T := TRN`;
 non-tonal autosegmental work chooses other `T` values
 (@cite{laoide-kemp-2026}, @cite{lieber-1983}). The OT-style
-bookkeeping (`deletedTier`, `surfaceLinks` vs `ulLinks`) is
+bookkeeping (`deletedTier`, `surfaceLinks` vs underlying `links`) is
 language-independent.
 -/
 
-/-- An autosegmental form: segmental backbone of type `S`, tier of
-    values of type `T`, OT-style underlying-vs-surface link sets. -/
-structure FloatingForm (S T : Type*) where
-  /-- Segmental backbone (tier order). -/
-  segs : List (SegSpec S)
-  /-- UNDERLYING tier (tier order; immutable). -/
-  ulTier : List (TierSpec T)
-  /-- UNDERLYING association lines (immutable). -/
-  ulLinks : Finset Link
+/-- An autosegmental form: extends `Graph (TierSpec T) (SegSpec S)`
+    with OT-style surface bookkeeping. The inherited `Graph` is the
+    *underlying* representation; `deletedTier` and `surfaceLinks`
+    track the surface state separately. -/
+structure FloatingForm (S T : Type*)
+    extends Graph (TierSpec T) (SegSpec S) where
   /-- SURFACE deletion set on the upper tier (current state). -/
   deletedTier : Finset TierIdx
-  /-- SURFACE association lines (current state). -/
+  /-- SURFACE association lines (current state). May differ from
+      the inherited `links` (the underlying associations). -/
   surfaceLinks : Finset Link
   deriving DecidableEq
+
 
 /-- Hides the `Finset` fields (mathlib's `Finset.Repr` is `unsafe`) and
     prints only segments and underlying tier elements; debug-only. -/
 instance {S T : Type*} [Repr S] [Repr T] : Repr (FloatingForm S T) where
   reprPrec f _ :=
-    f!"⟨segs={repr (f.segs.map SegSpec.seg)}, ulTier={repr f.ulTier}⟩"
+    f!"⟨lower={repr (f.lower.map SegSpec.seg)}, upper={repr f.upper}⟩"
 
 namespace FloatingForm
 
 variable {S T : Type*} [DecidableEq S] [DecidableEq T]
 
+/-! ### Surface graph (derived view) -/
+
+/-- The **surface graph**: same tiers as the underlying graph but with
+    `surfaceLinks` in place of `links`. Makes the underlying/surface
+    duality explicit — both states are `Graph`s sharing tier data. -/
+@[reducible] def surfaceGraph (f : FloatingForm S T) :
+    Graph (TierSpec T) (SegSpec S) :=
+  { f.toGraph with links := f.surfaceLinks }
+
 /-! ### Construction -/
 
 /-- Construct an input form: surface state mirrors underlying state,
     nothing deleted, all underlying links intact. -/
-def mkInput (segs : List (SegSpec S)) (ulTier : List (TierSpec T))
-    (ulLinks : Finset Link) : FloatingForm S T :=
-  { segs := segs
-    ulTier := ulTier
-    ulLinks := ulLinks
+def mkInput (lower : List (SegSpec S)) (upper : List (TierSpec T))
+    (links : Finset Link) : FloatingForm S T :=
+  { lower := lower
+    upper := upper
+    links := links
     deletedTier := ∅
-    surfaceLinks := ulLinks }
+    surfaceLinks := links }
 
 /-! ### Predicates on tones and links -/
 
@@ -175,9 +184,9 @@ abbrev IsFloating (f : FloatingForm S T) (k : TierIdx) : Prop :=
     false. Used by *TAUTDOCK and the tautomorphic vs heteromorphic
     distinction discussed in the module docstring. -/
 abbrev IsTautomorphic (f : FloatingForm S T) (l : Link) : Prop :=
-  (f.ulTier[l.fst]?).map TierSpec.morpheme =
-    (f.segs[l.snd]?).map SegSpec.morpheme ∧
-  (f.ulTier[l.fst]?).isSome
+  (f.upper[l.fst]?).map TierSpec.morpheme =
+    (f.lower[l.snd]?).map SegSpec.morpheme ∧
+  (f.upper[l.fst]?).isSome
 
 /-! ### Atomic GEN operations -/
 
@@ -216,9 +225,9 @@ abbrev Crosses (f : FloatingForm S T) (k : TierIdx) (i : SegIdx) : Prop :=
     could dock across an intervening linked tone, which the paper's
     GEN implicitly forbids. -/
 def gen (f : FloatingForm S T) : Finset (FloatingForm S T) :=
-  let aliveIdxs := (Finset.range f.ulTier.length).filter (λ k => f.IsAlive k)
+  let aliveIdxs := (Finset.range f.upper.length).filter (λ k => f.IsAlive k)
   let floatIdxs := aliveIdxs.filter (λ k => ¬ f.IsLinked k)
-  let segIdxs := Finset.range f.segs.length
+  let segIdxs := Finset.range f.lower.length
   let deleteOps := aliveIdxs.image (λ k => f.deleteTierElem k)
   let insertOps := ((floatIdxs ×ˢ segIdxs).filter
     (λ ⟨k, i⟩ => ¬ f.Crosses k i)).image (λ ⟨k, i⟩ => f.insertLink k i)
@@ -231,34 +240,34 @@ def gen (f : FloatingForm S T) : Finset (FloatingForm S T) :=
     currently floating, else `0`. Used by directional `*FLOAT`
     (paper, eq. 16). -/
 def floatIndicator (f : FloatingForm S T) : List Nat :=
-  (List.range f.ulTier.length).map λ k => if f.IsFloating k then 1 else 0
+  (List.range f.upper.length).map λ k => if f.IsFloating k then 1 else 0
 
 /-- Surface tones linked to TBU `i`, returned in tier order (smallest
     tone index first). Used by *FALL and *CROWD. We iterate over
-    `List.range f.ulTier.length` so the result is naturally sorted
+    `List.range f.upper.length` so the result is naturally sorted
     and reduces well via kernel `decide` (avoiding `Finset.sort`,
     which doesn't unfold structurally). -/
 def linksTo (f : FloatingForm S T) (i : SegIdx) : List TierIdx :=
-  (List.range f.ulTier.length).filter λ k => (k, i) ∈ f.surfaceLinks
+  (List.range f.upper.length).filter λ k => (k, i) ∈ f.surfaceLinks
 
 /-- Sequence of tier values linked to backbone position `i`, in tier
     order. -/
 def tierValues (f : FloatingForm S T) (i : SegIdx) : List T :=
-  (f.linksTo i).filterMap λ k => f.ulTier[k]?.map TierSpec.value
+  (f.linksTo i).filterMap λ k => f.upper[k]?.map TierSpec.value
 
 /-! ### Tier and morpheme subsequences -/
 
 /-- Indices of alive (non-deleted) underlying tones, in tier order.
-    Iterates `List.range f.ulTier.length` so the result is naturally
+    Iterates `List.range f.upper.length` so the result is naturally
     sorted and reduces well via kernel `decide`. -/
 def aliveTierIdxs (f : FloatingForm S T) : List TierIdx :=
-  (List.range f.ulTier.length).filter (λ k => f.IsAlive k)
+  (List.range f.upper.length).filter (λ k => f.IsAlive k)
 
 /-- Segment indices belonging to morpheme `m`, in segmental order.
     Out-of-range indices are excluded by construction. -/
 def segsOfMorpheme (f : FloatingForm S T) (m : Morpheme) : List SegIdx :=
-  (List.range f.segs.length).filter (λ i =>
-    (f.segs[i]?).map SegSpec.morpheme = some m)
+  (List.range f.lower.length).filter (λ i =>
+    (f.lower[i]?).map SegSpec.morpheme = some m)
 
 end FloatingForm
 

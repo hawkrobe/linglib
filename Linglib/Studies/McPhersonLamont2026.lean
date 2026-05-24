@@ -300,9 +300,9 @@ abbrev PokoForm := FloatingForm Syll TRN
     floating H (no underlying link). -/
 def fig3Input : PokoForm :=
   FloatingForm.mkInput
-    (segs := [seg .kak, seg .ri, seg .do])
-    (ulTier := [mTone .kak, hTone .kak, mTone .ri, hTone .ri, mTone .do, hTone .do])
-    (ulLinks := {(0, 0), (2, 1), (4, 2)})
+    (lower := [seg .kak, seg .ri, seg .do])
+    (upper := [mTone .kak, hTone .kak, mTone .ri, hTone .ri, mTone .do, hTone .do])
+    (links := {(0, 0), (2, 1), (4, 2)})
 
 -- ============================================================================
 -- § 6.2: Ranking
@@ -594,9 +594,9 @@ abbrev PokoForm := FloatingForm Syll TRN
     floating tone. -/
 def eq24Input : PokoForm :=
   FloatingForm.mkInput
-    (segs := [seg .nan, seg .ri, seg .na])
-    (ulTier := [mTone .nan, mTone .ri, hTone .ri, mTone .na])
-    (ulLinks := {(0, 0), (1, 1), (3, 2)})
+    (lower := [seg .nan, seg .ri, seg .na])
+    (upper := [mTone .nan, mTone .ri, hTone .ri, mTone .na])
+    (links := {(0, 0), (1, 1), (3, 2)})
 
 /-- Same ranking as fig. 3 (paper, fig. 2 Hasse): `HAVETONE ≫
     *FLOAT^→ ≫ *CROWD ≫ *TAUTDOCK ≫ MAX(H) ≫ *FALL ≫ DEP(link)/H ≫
@@ -676,9 +676,9 @@ abbrev PokoForm := FloatingForm Syll TRN
     (phrase-final), so the H has no rightward landing site. -/
 def eq21Input : PokoForm :=
   FloatingForm.mkInput
-    (segs := [seg .nan, seg .ri])
-    (ulTier := [mTone .nan, mTone .ri, hTone .ri])
-    (ulLinks := {(0, 0), (1, 1)})
+    (lower := [seg .nan, seg .ri])
+    (upper := [mTone .nan, mTone .ri, hTone .ri])
+    (links := {(0, 0), (1, 1)})
 
 /-- Same fig. 2 ranking as fig. 3 / eq. (24). Eq. (20)'s minimal
     statement `*FLOAT, *TAUTDOCK ≫ MAX(H)` is a sub-ranking of this. -/
@@ -745,9 +745,9 @@ abbrev PokoForm := FloatingForm Syll TRN
     H-kāk is the only floating tone. -/
 def eq27Input : PokoForm :=
   FloatingForm.mkInput
-    (segs := [seg .kak, seg .ka])
-    (ulTier := [mTone .kak, hTone .kak, mTone .ka, hTone .ka])
-    (ulLinks := {(0, 0), (2, 1), (3, 1)})
+    (lower := [seg .kak, seg .ka])
+    (upper := [mTone .kak, hTone .kak, mTone .ka, hTone .ka])
+    (links := {(0, 0), (2, 1), (3, 1)})
 
 /-- Same fig. 2 ranking as fig. 3 / eq. (24). The relevant constraints
     for eq. (27) are *FLOAT, *CROWD, *TAUTDOCK, MAX(H), DEP(link)/H. -/
@@ -818,9 +818,9 @@ abbrev PokoForm := FloatingForm Syll TRN
     and only M-then-L pairs trigger *M<L). -/
 def eq30Input : PokoForm :=
   FloatingForm.mkInput
-    (segs := [seg .kak, seg .ili])
-    (ulTier := [mTone .kak, hTone .kak, lTone .ili, hTone .ili])
-    (ulLinks := {(0, 0), (2, 1), (3, 1)})
+    (lower := [seg .kak, seg .ili])
+    (upper := [mTone .kak, hTone .kak, lTone .ili, hTone .ili])
+    (links := {(0, 0), (2, 1), (3, 1)})
 
 /-- Eq. (30) ranking: `*M<L ≫ *FLOAT^→ ≫ *CROWD ≫ *TAUTDOCK ≫
     MAX(H) ≫ DEP(link)/H ≫ *FALL`. Note *M<L on top, ABOVE *TAUTDOCK
@@ -897,9 +897,9 @@ abbrev PokoForm := FloatingForm Syll TRN
     TBU 1; H-rī floating; TBU 2 (ne) starts toneless. -/
 def eq22Input : PokoForm :=
   FloatingForm.mkInput
-    (segs := [seg .nan, seg .ri, seg .ne])
-    (ulTier := [mTone .nan, mTone .ri, hTone .ri])
-    (ulLinks := {(0, 0), (1, 1)})
+    (lower := [seg .nan, seg .ri, seg .ne])
+    (upper := [mTone .nan, mTone .ri, hTone .ri])
+    (links := {(0, 0), (1, 1)})
 
 /-- Same fig. 2 ranking as fig. 3 / eq. (24). The relevant constraints
     are HAVETONE (drives docking onto ne), *FLOAT, *TAUTDOCK, MAX(H). -/

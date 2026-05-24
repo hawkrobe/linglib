@@ -140,26 +140,26 @@ section SingleRoot
 /-- Does TBU `i` bear a tone of value `t` from morpheme `m`? -/
 def isGramTbu (t : TRN) (m : Morpheme) (f : MwaghavulForm) (i : SegIdx) : Bool :=
   (f.linksTo i).any fun k =>
-    (f.ulTier[k]?).any fun ts => decide (ts.value = t ∧ ts.morpheme = m)
+    (f.upper[k]?).any fun ts => decide (ts.value = t ∧ ts.morpheme = m)
 
 /-- L-ANCHOR-`t`-from-`m`: number of TBUs (in tier order) before the
     leftmost gram-`t`-from-`m` TBU. If no such TBU exists, every TBU
     counts (full TBU count). -/
 def lAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
-  match (List.range f.segs.length).findIdx? (isGramTbu t m f) with
+  match (List.range f.lower.length).findIdx? (isGramTbu t m f) with
   | some i => i
-  | none   => f.segs.length
+  | none   => f.lower.length
 
 /-- R-ANCHOR-`t`-from-`m`: counted from the right edge. -/
 def rAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
-  match (List.range f.segs.length).reverse.findIdx? (isGramTbu t m f) with
+  match (List.range f.lower.length).reverse.findIdx? (isGramTbu t m f) with
   | some i => i
-  | none   => f.segs.length
+  | none   => f.lower.length
 
 /-- MAX-Tone (per autosegment): count of deleted ulTier entries.
     Matches paper p. 26 per-autosegment counting. -/
 def maxToneAuto (f : MwaghavulForm) : Nat :=
-  (List.range f.ulTier.length).countP (fun k => decide (f.IsDeleted k))
+  (List.range f.upper.length).countP (fun k => decide (f.IsDeleted k))
 
 /-- L-ANCHOR-Mᵥ as a `DirectionalConstraint`. -/
 def lAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm where
@@ -275,9 +275,9 @@ namespace Tableau24
 /-- Faithful input: ulTier = `[L_root (multi-linked), M_vbz (floating)]`. -/
 def input : MwaghavulForm :=
   FloatingForm.mkInput
-    (segs := [rootSeg ⟨"wù"⟩, rootSeg ⟨"làʃ"⟩])
-    (ulTier := [rootL, vbzM])
-    (ulLinks := {(0, 0), (0, 1)})
+    (lower := [rootSeg ⟨"wù"⟩, rootSeg ⟨"làʃ"⟩])
+    (upper := [rootL, vbzM])
+    (links := {(0, 0), (0, 1)})
 
 /-- (24a) `(wùlàʃ)₁ M₂`: M still floating; L unchanged. -/
 def candA : MwaghavulForm := input
@@ -302,7 +302,7 @@ def candE : MwaghavulForm :=
     INTEGRITY-Mᵥ fatally penalises this copying. -/
 def candF : MwaghavulForm :=
   { input with
-    ulTier := [rootL, vbzM, vbzM]
+    upper := [rootL, vbzM, vbzM]
     deletedTier := {0}
     surfaceLinks := {(1, 0), (2, 1)} }
 
@@ -368,9 +368,9 @@ namespace Tableau25
 /-- Faithful input: ulTier = `[H_root (multi-linked), M_vbz, H_vbz]`. -/
 def input : MwaghavulForm :=
   FloatingForm.mkInput
-    (segs := [rootSeg ⟨"haŋ"⟩, rootSeg ⟨"la"⟩, rootSeg ⟨"yap"⟩])
-    (ulTier := [{ value := TRN.H, morpheme := rootMorph }, vbzM, vbzH])
-    (ulLinks := {(0, 0), (0, 1), (0, 2)})
+    (lower := [rootSeg ⟨"haŋ"⟩, rootSeg ⟨"la"⟩, rootSeg ⟨"yap"⟩])
+    (upper := [{ value := TRN.H, morpheme := rootMorph }, vbzM, vbzH])
+    (links := {(0, 0), (0, 1), (0, 2)})
 
 /-- (25a) `(háŋláyáp)₁`: lex H linked; both vbz tones deleted. -/
 def candA : MwaghavulForm := input.deleteTierElem 1 |>.deleteTierElem 2
@@ -487,9 +487,9 @@ namespace Tableau26
     own root's 2 TBUs. -/
 def input : MwaghavulForm :=
   FloatingForm.mkInput
-    (segs := [redSeg ⟨"jàl"⟩, redSeg ⟨"pàt"⟩, baseSeg ⟨"jàl"⟩, baseSeg ⟨"pàt"⟩])
-    (ulTier := [lRed, lBase, vbzM, vbzH])
-    (ulLinks := {(0, 0), (0, 1), (1, 2), (1, 3)})
+    (lower := [redSeg ⟨"jàl"⟩, redSeg ⟨"pàt"⟩, baseSeg ⟨"jàl"⟩, baseSeg ⟨"pàt"⟩])
+    (upper := [lRed, lBase, vbzM, vbzH])
+    (links := {(0, 0), (0, 1), (1, 2), (1, 3)})
 
 /-- Per-root anchor instantiations for the two-root pluractional. -/
 def lAnchMv26 : DirectionalConstraint MwaghavulForm :=

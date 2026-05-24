@@ -200,6 +200,7 @@ structure Graph (α β : Type*) where
   /-- Association lines as a finite set of index pairs
       `(upper-index, lower-index)`. -/
   links : Finset (Nat × Nat)
+  deriving DecidableEq
 
 namespace Graph
 
