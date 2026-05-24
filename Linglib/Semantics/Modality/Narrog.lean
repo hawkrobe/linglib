@@ -1,4 +1,3 @@
-import Linglib.Semantics.Modality.DeonticNecessity
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Subjectivity
 
@@ -38,8 +37,8 @@ subjectivity cline fails to distinguish (§2.4, ch. 3).
 - `SpeakerOrientationLevel` → `SubjectivityLevel`: event-oriented = nonSubjective;
   speaker-oriented = subjective; mood = intersubjective. Note: @cite{narrog-2012}
   argues this bridge is an oversimplification — see `performativity_invisible_to_traugott`.
-- `Semantics.Modality.DeonticNecessity`: cross-linguistic data on obligation markers from
-  the same 200-language sample.
+- The 200-language sample's NEC/POT cross-linguistic data lives with
+  the formalised study at `Studies/Narrog2010.lean`.
 -/
 
 namespace Semantics.Modality.Narrog
