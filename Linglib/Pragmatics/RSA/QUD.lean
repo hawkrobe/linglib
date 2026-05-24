@@ -57,7 +57,7 @@ variable {W G β : Type*} [Fintype W] [DecidableEq β]
 /-- The world `w` is in its own QUD-equivalence class, so its weight
 provides a lower bound on the QUD-projected aggregation. -/
 theorem self_le_proj : weight w ≤ proj project weight g w :=
-  Finset.single_le_sum (f := weight) (fun _ _ => zero_le _)
+  Finset.single_le_sum (f := weight) (fun _ _ => zero_le)
     (Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩)
 
 /-- **Headline lemma**: the QUD-projected aggregation is positive iff
@@ -73,7 +73,7 @@ theorem proj_pos_iff_exists_class_member :
       ∃ w' ∈ (Finset.univ : Finset W).filter
               (fun w' => project g w' = project g w),
         0 < weight w' :=
-  Finset.sum_pos_iff_of_nonneg (fun _ _ => zero_le _)
+  Finset.sum_pos_iff_of_nonneg (fun _ _ => zero_le)
 
 /-- The QUD-projected aggregation is bounded by the total weight. -/
 theorem proj_le_total : proj project weight g w ≤ ∑ w' : W, weight w' :=

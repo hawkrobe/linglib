@@ -263,8 +263,15 @@ theorem nhg_probit_change_depends_on_h_init
     nhgProbitChange h₁ Δh σ_d σ_d' ≠ nhgProbitChange h₂ Δh σ_d σ_d' := by
   simp only [nhgProbitChange]
   intro heq
+  have hd : σ_d ≠ 0 := ne_of_gt hσ_pos
+  have hd' : σ_d' ≠ 0 := ne_of_gt hσ'_pos
+  have heq' : h₁ * σ_d - h₁ * σ_d' = h₂ * σ_d - h₂ * σ_d' := by
+    field_simp at heq; linarith
   have h_eq : h₁ * (1 / σ_d' - 1 / σ_d) = h₂ * (1 / σ_d' - 1 / σ_d) := by
-    field_simp at heq ⊢; linarith
+    rw [mul_sub, mul_sub, mul_one_div, mul_one_div, mul_one_div, mul_one_div,
+        div_sub_div _ _ hd' hd, div_sub_div _ _ hd' hd]
+    congr 1
+    linarith
   have h_ne : (1 : ℝ) / σ_d' - 1 / σ_d ≠ 0 := by
     rw [div_sub_div _ _ (ne_of_gt hσ'_pos) (ne_of_gt hσ_pos)]
     apply div_ne_zero _ (mul_ne_zero (ne_of_gt hσ'_pos) (ne_of_gt hσ_pos))

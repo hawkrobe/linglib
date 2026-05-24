@@ -147,7 +147,7 @@ theorem S1_c3_lt_S1_c2_for_two : S1 .c3 .two < S1 .c2 .two := by
       · rw [L0_apply_of_true (by decide), L0_apply_of_true (by decide)]
       · rw [L0_apply_of_true (by decide), L0_apply_of_true (by decide)]
       · rw [L0_apply_of_false (by decide : lbNuttMeaning .three .c2 ≠ true)]
-        exact zero_le _
+        exact zero_le
     · -- strict at .three: 0 < L0 .three .c3 = 1
       rw [L0_apply_of_false (by decide : lbNuttMeaning .three .c2 ≠ true),
           L0_apply_of_true (by decide : lbNuttMeaning .three .c3 = true)]
@@ -188,7 +188,7 @@ theorem S1_c2_lt_S1_c1_for_one : S1 .c2 .one < S1 .c1 .one := by
         rw [L0_apply_of_true (by decide), L0_apply_of_true (by decide)]
       · -- .two: 0 ≤ positive
         rw [L0_apply_of_false (by decide : lbNuttMeaning .two .c1 ≠ true)]
-        exact zero_le _
+        exact zero_le
       · -- .three: 0 ≤ 0
         rw [L0_apply_of_false (by decide : lbNuttMeaning .three .c1 ≠ true),
             L0_apply_of_false (by decide : lbNuttMeaning .three .c2 ≠ true)]

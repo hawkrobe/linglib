@@ -208,7 +208,7 @@ theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]
   · -- LHS = 0, and each q a * κ a b = 0 in the RHS (since their sum vanishes).
     rw [hbq_zero, zero_mul]
     -- Show RHS ≥ 0 (trivially from non-negativity).
-    refine zero_le _
+    exact zero_le
   · -- (q.bind κ) b ≠ 0. By h_κ_pos and h_q_pos, κ a b ≠ 0 for all a.
     have h_κ_ne : ∀ a, κ a b ≠ 0 := fun a =>
       h_κ_pos a b (h_q_pos a) hbq_zero

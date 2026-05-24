@@ -185,7 +185,7 @@ the projection from `MultinomialPCFG` into the new shared substrate.
 noncomputable def toWeightedCFG (W : MultinomialPCFG G) :
     WeightedCFG G ℝ≥0∞ where
   weight := W.ruleProb
-  weight_nonneg _ := zero_le _
+  weight_nonneg _ := zero_le
 
 mutual
 /-- Per-derivation probability under a multinomial PCFG

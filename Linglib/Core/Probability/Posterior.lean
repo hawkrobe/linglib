@@ -625,7 +625,7 @@ theorem toOuterMeasure_finset_sum_disjoint_le_one
   · -- no term is nonzero.
     rw [Finset.sum_eq_zero (fun i hi => Set.indicator_of_notMem
           (fun hxi => hx ⟨i, hi, hxi⟩) _)]
-    exact zero_le _
+    exact zero_le
 
 /-- `PMF.toOuterMeasure` is strictly positive on any set that intersects
 the support. This is the "lower-bound half" of intermediacy: a probabilistic

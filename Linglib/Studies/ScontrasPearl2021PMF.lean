@@ -185,7 +185,7 @@ theorem qudProjectE_self_ge {q : QUD} {f : JumpOutcome → ℝ≥0∞} (w : Jump
 theorem qudProjectE_ne_zero_of_self {q : QUD} {f : JumpOutcome → ℝ≥0∞} {w : JumpOutcome}
     (h : f w ≠ 0) : qudProjectE q f w ≠ 0 := by
   intro hp
-  exact h (le_antisymm (hp ▸ qudProjectE_self_ge w) (zero_le _))
+  exact h (le_antisymm (hp ▸ qudProjectE_self_ge w) zero_le)
 
 /-! ## §4. S1g — speaker conditional on (latent, world)
 
@@ -553,7 +553,7 @@ theorem S1g_one_gt_two_for_some_latent {α : ℝ} (hα : 0 < α) :
     intro lat hScore
     have : S1g hα lat .two .everyNot = 0 := by
       rw [S1g, PMF.normalize_apply, hScore, zero_mul]
-    rw [this]; exact zero_le _
+    rw [this]; exact zero_le
   -- Helper for equality cases (parallel to S1g_zero_gt_one)
   have h_eq_via : ∀ (lat : Latent),
       (∀ u, s1Score α lat .two u = s1Score α lat .one u) →

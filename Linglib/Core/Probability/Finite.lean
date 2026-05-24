@@ -134,7 +134,7 @@ theorem condProbSet_of_zero (p : PMF α) (cond target : Set α)
     (h : p.probOfSet cond = 0) :
     p.condProbSet cond target = 0 := by
   have hInter : p.probOfSet (cond ∩ target) = 0 :=
-    le_antisymm (h ▸ probOfSet_inter_le_left p cond target) (zero_le _)
+    le_antisymm (h ▸ probOfSet_inter_le_left p cond target) zero_le
   show p.toOuterMeasure (cond ∩ target) / p.toOuterMeasure cond = 0
   rw [show p.toOuterMeasure (cond ∩ target) = 0 from hInter,
       show p.toOuterMeasure cond = 0 from h, ENNReal.zero_div]
@@ -157,9 +157,9 @@ theorem probOfSet_pos_of_condProbSet_gt (p : PMF α) (cond target : Set α)
     p.probOfSet cond > 0 := by
   by_contra hle
   push Not at hle
-  have hZero : p.probOfSet cond = 0 := le_antisymm hle (zero_le _)
+  have hZero : p.probOfSet cond = 0 := le_antisymm hle zero_le
   rw [condProbSet_of_zero p cond target hZero] at h
-  exact absurd h (not_lt.mpr (zero_le _))
+  exact absurd h (not_lt.mpr zero_le)
 
 /-- The "impact" of evidence `R` on proposition `A`: `P(A | R) / P(A)`.
 The Bayes-factor face of conditional probability; equals `1` when `R`

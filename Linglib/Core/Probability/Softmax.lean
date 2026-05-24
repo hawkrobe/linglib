@@ -122,7 +122,7 @@ theorem softmax_partition_ne_zero [Fintype α] (score : α → EReal)
   obtain ⟨a₀, ha₀⟩ := h_some_finite
   intro h_sum
   exact (softmaxWeight_ne_zero_iff score a₀).mpr ha₀
-    (Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => zero_le _) |>.mp h_sum a₀
+    (Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => zero_le) |>.mp h_sum a₀
       (Finset.mem_univ _))
 
 /-- The partition function is finite. -/

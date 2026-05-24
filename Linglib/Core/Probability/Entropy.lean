@@ -511,7 +511,7 @@ theorem toReal_klDiv_eq_sum_log_div [MeasurableSpace α] [MeasurableSingletonCla
     rw [PMF.toMeasure_apply_fintype _ s] at hQs
     rw [PMF.toMeasure_apply_fintype _ s]
     have h_each_zero : ∀ y ∈ (Finset.univ : Finset α), s.indicator (⇑Q) y = 0 :=
-      (Finset.sum_eq_zero_iff_of_nonneg (fun y _ => zero_le _)).mp hQs
+      (Finset.sum_eq_zero_iff_of_nonneg (fun y _ => zero_le)).mp hQs
     have h_x_notin : ∀ x, x ∉ s := fun x hx_in => by
       have h := h_each_zero x (Finset.mem_univ x)
       rw [Set.indicator_of_mem hx_in] at h
@@ -728,7 +728,7 @@ theorem two_hellingerDistSq_le_klDiv [Nonempty α] [MeasurableSpace α]
     rw [PMF.toMeasure_apply_fintype _ s] at hQs
     rw [PMF.toMeasure_apply_fintype _ s]
     have h_each_zero : ∀ y ∈ (Finset.univ : Finset α), s.indicator (⇑Q) y = 0 :=
-      (Finset.sum_eq_zero_iff_of_nonneg (fun y _ => zero_le _)).mp hQs
+      (Finset.sum_eq_zero_iff_of_nonneg (fun y _ => zero_le)).mp hQs
     have h_x_notin : ∀ x, x ∉ s := fun x hx_in => by
       have h := h_each_zero x (Finset.mem_univ x)
       rw [Set.indicator_of_mem hx_in] at h
