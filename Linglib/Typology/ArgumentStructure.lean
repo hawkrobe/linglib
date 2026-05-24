@@ -1,3 +1,4 @@
+import Linglib.Data.WALS.Features.F100A
 import Linglib.Data.WALS.Features.F105A
 import Linglib.Data.WALS.Features.F106A
 import Linglib.Data.WALS.Features.F107A
@@ -5,6 +6,7 @@ import Linglib.Data.WALS.Features.F108A
 import Linglib.Data.WALS.Features.F108B
 import Linglib.Data.WALS.Features.F109A
 import Linglib.Data.WALS.Features.F109B
+import Linglib.Data.WALS.Features.F110A
 import Linglib.Data.WALS.Features.F111A
 import Linglib.Core.Case.Basic
 
@@ -61,20 +63,20 @@ Modality,Gender,Alignment}` substrate-extension pattern. Fragment-importable.
 
 ## Out of scope
 
-The 19-language `ValenceProfile` sample, cross-chapter correlations,
-the 47-language antipassive-alignment table (@cite{polinsky-2013-antipassive}
-Table 1), and Fragment-bridge theorems live in
-`Studies/Polinsky2013.lean`.
-Pylkkänen's structural Appl typology and its WALS divergence are in
-`Studies/Pylkkanen2008.lean`. Nordlinger's
-extended reciprocal apparatus (`RecipProfile`, strategy/valency
-correlations) is in `Studies/Nordlinger2023.lean`.
+Per-language WALS data is in `Data/WALS/Features/F106A.lean` etc., with
+converters above (`fromWALS106A`, `fromWALS108A`, `fromWALS109A`,
+`fromWALS111A`). Pylkkänen's structural Appl typology and its WALS
+divergence are in `Studies/Pylkkanen2008.lean`. Nordlinger's extended
+reciprocal apparatus (`RecipProfile`, strategy/valency correlations) is
+in `Studies/Nordlinger2023.lean`. Song's morphological-causative
+morpheme examples are in `Studies/Song2013.lean`.
 -/
 
 set_option autoImplicit false
 
 namespace Typology.ArgumentStructure
 
+private abbrev f100a := Data.WALS.F100A.allData
 private abbrev f105a := Data.WALS.F105A.allData
 private abbrev f106a := Data.WALS.F106A.allData
 private abbrev f107a := Data.WALS.F107A.allData
@@ -82,6 +84,7 @@ private abbrev f108a := Data.WALS.F108A.allData
 private abbrev f108b := Data.WALS.F108B.allData
 private abbrev f109a := Data.WALS.F109A.allData
 private abbrev f109b := Data.WALS.F109B.allData
+private abbrev f110a := Data.WALS.F110A.allData
 private abbrev f111a := Data.WALS.F111A.allData
 
 -- ============================================================================
@@ -491,5 +494,39 @@ theorem polysemy_percentage :
         (fun d => d.value == .mixed || d.value == .identicalToReflexive)).length
     polysemous * 3 > f106a.length ∧ polysemous * 2 < f106a.length := by
   native_decide
+
+/-- @cite{polinsky-2013-antipassive}'s headline data: WALS data refutes any
+    biconditional between antipassive (F108A) and ergative verbal person
+    marking (F100A). Lango (`laj`) is accusative-aligned and has an
+    implicit-patient antipassive — refuting "antipassive ⟹ ergative".
+    Abkhaz (`abk`) is ergative-aligned and has no antipassive — refuting
+    "ergative ⟹ antipassive". Cf. @cite{silverstein-1976}. -/
+theorem antipassive_alignment_independence :
+    (Data.WALS.F100A.lookupISO "laj").map (·.value) = some .accusative ∧
+    (Data.WALS.F108A.lookupISO "laj").map (·.value) = some .implicitPatient ∧
+    (Data.WALS.F100A.lookupISO "abk").map (·.value) = some .ergative ∧
+    (Data.WALS.F108A.lookupISO "abk").map (·.value) = some .noAntipassive := by
+  decide
+
+/-- @cite{song-2013-periphrastic}: in WALS Ch 110, the purposive type
+    (effect clause marked by future/irrealis or purposive particle) is
+    the dominant periphrastic causative strategy, more common than the
+    sequential type (cause and effect clauses in fixed temporal order). -/
+theorem periphrastic_purposive_dominant :
+    let sequential := (f110a.filter (·.value == .sequentialOnly)).length
+    let purposive := (f110a.filter (·.value == .purposiveOnly)).length
+    purposive > sequential := by decide
+
+/-- @cite{polinsky-2013-applicative}'s near-universal: applicatives formed
+    only from intransitive bases (`.nonBenefactiveIntransOnly`) are
+    vanishingly rare in WALS Ch 109, while applicatives on both bases
+    dominate by more than 10:1. The exceptions are Fijian and Wambaya. -/
+theorem applicative_both_dominates_intrans_only :
+    let intransOnly := (f109a.filter (·.value == .nonBenefactiveIntransOnly)).length
+    let bothBases := (f109a.filter fun d =>
+      d.value == .benefactiveBothBases ||
+      d.value == .benefactiveAndOtherBothBases ||
+      d.value == .nonBenefactiveBothBases).length
+    bothBases > 10 * intransOnly := by decide
 
 end Typology.ArgumentStructure

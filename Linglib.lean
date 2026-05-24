@@ -1155,8 +1155,8 @@ import Linglib.Studies.SagWasowBender2003
 import Linglib.Studies.BakayEtAl2026
 import Linglib.Studies.Charlow2014
 import Linglib.Studies.Chomsky1981
-import Linglib.Studies.Cooper2023
-import Linglib.Studies.Cooper2023Ch8
+import Linglib.Studies.Cooper2023.Basic
+import Linglib.Studies.Cooper2023.Ch8
 import Linglib.Studies.Heim1982.Basic
 import Linglib.Studies.KampReyle1993
 import Linglib.Studies.KeshetAbney2024
@@ -1186,7 +1186,6 @@ import Linglib.Studies.Scott2023Ergativity
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
-import Linglib.Studies.Polinsky2013
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Studies.Storment2026
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
@@ -1450,7 +1449,7 @@ import Linglib.Studies.BaleSchwarz2022
 import Linglib.Studies.BaleSchwarz2026
 import Linglib.Studies.Scontras2014
 import Linglib.Studies.Kratzer2012Conditionals
-import Linglib.Studies.Cooper2023Ch6
+import Linglib.Studies.Cooper2023.Ch6
 import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Studies.RotterLiu2025Concord
 import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
@@ -1664,7 +1663,7 @@ import Linglib.Phenomena.Quantification.Basic
 import Linglib.Studies.Bruening2001
 import Linglib.Phenomena.Quantification.Inventory
 import Linglib.Studies.BarwiseCooper1981
-import Linglib.Studies.Cooper2023Ch7
+import Linglib.Studies.Cooper2023.Ch7
 import Linglib.Studies.ScontrasPearl2021Quantification
 import Linglib.Studies.ScontrasPearl2021PMF
 import Linglib.Studies.RitchieSchiller2024
@@ -2101,6 +2100,7 @@ import Linglib.Pragmatics.RelevanceTheory.Comprehension
 -- Theories: TTR (Type Theory with Records)
 import Linglib.Semantics.TypeTheoretic.Basic
 import Linglib.Semantics.TypeTheoretic.Discourse
+import Linglib.Semantics.TypeTheoretic.WitnessQuantification
 -- Theories: Construction Grammar
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988

@@ -1,6 +1,5 @@
 import Linglib.Typology.ArgumentStructure
 import Linglib.Studies.Siloni2012
-import Linglib.Studies.Polinsky2013
 import Linglib.Data.WALS.Features.F106A
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.Swahili.Reciprocals
@@ -295,31 +294,6 @@ theorem rp_wambaya_wals :
       some rp_wambaya.reflexiveRelation := by native_decide
 
 -- ============================================================================
--- ValenceProfile-RecipProfile Cross-Validation
--- ============================================================================
-
-section ProfileAgreement
-open Polinsky2013
-
-/-- For languages with both a `ValenceProfile` (Polinsky2013) and a
-    `RecipProfile` (this file), the reflexive-reciprocal classification
-    must agree. -/
-theorem english_profiles_agree :
-    english.reciprocal = rp_english.reflexiveRelation := rfl
-theorem russian_profiles_agree :
-    russian.reciprocal = rp_russian.reflexiveRelation := rfl
-theorem swahili_profiles_agree :
-    swahili.reciprocal = rp_swahili.reflexiveRelation := rfl
-theorem french_profiles_agree :
-    french.reciprocal = rp_french.reflexiveRelation := rfl
-theorem german_profiles_agree :
-    german.reciprocal = rp_german.reflexiveRelation := rfl
-theorem modernGreek_profiles_agree :
-    modernGreek.reciprocal = rp_greek.reflexiveRelation := rfl
-
-end ProfileAgreement
-
--- ============================================================================
 -- Semantic Reciprocity Types (@cite{nordlinger-2023}, §4)
 -- ============================================================================
 
@@ -482,19 +456,17 @@ theorem reflexive_polysemy_tracks_wals :
 
 open Fragments.English.Pronouns in
 
-/-- The English profiles (both `Polinsky2013.english : ValenceProfile` and
-    `rp_english : RecipProfile`) are grounded in the Fragment: English has
+/-- The English `RecipProfile` is grounded in the Fragment: English has
     reciprocal pronouns that are categorically different from reflexive
     pronouns, and the profile records "each other" as a bipartite NP
-    strategy. -/
+    strategy. The WALS substrate anchor for the reflexive-reciprocal
+    distinction lives at `rp_english_wals`. -/
 theorem english_profile_grounded :
-    Polinsky2013.english.reciprocal
-        = ReciprocalType.distinctFromReflexive ∧
     rp_english.primaryStrategy = .bipartiteNP ∧
     rp_english.valency = .bivalent ∧
     eachOther.pronounType = .reciprocal ∧
     eachOther.pronounType ≠ PronounType.reflexive := by
-  exact ⟨rfl, rfl, rfl, rfl, by decide⟩
+  exact ⟨rfl, rfl, rfl, by decide⟩
 
 -- ============================================================================
 -- Cross-Paper Verification: Nordlinger 2023 vs Siloni 2012

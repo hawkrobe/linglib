@@ -4,7 +4,7 @@ import Linglib.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.VoiceProjection
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
-import Linglib.Studies.Polinsky2013
+import Linglib.Data.WALS.Features.F109A
 import Linglib.Studies.Larson1988
 
 /-!
@@ -914,19 +914,20 @@ Pylkkänen counts the structural ApplP projection regardless of
 morphological exponent. The substrate is designed to make this kind
 of cross-framework editorial disagreement visible. -/
 
-/-- WALS Ch 109 (per `Studies/Polinsky2013.lean`'s `english.applicative`)
-    and Pylkkänen's analysis (`english_appl.classification`) make
-    contradictory predictions about English: WALS says no applicative,
-    Pylkkänen says low recipient. Same for Japanese. The disagreement
-    is about the criterion for "applicative," not about the data. -/
+/-- WALS Ch 109 codes English as `.noApplicative` (no overt valence-increasing
+    morphology), while Pylkkänen's analysis (`english_appl.classification`)
+    classifies the English double-object construction as `.lowRecipient`.
+    The disagreement is about the criterion for "applicative," not the data. -/
 theorem wals_pylkkanen_diverge_on_english :
-    Polinsky2013.english.applicative
-        = .noApplicative ∧
-    english_appl.classification = .lowRecipient := ⟨rfl, rfl⟩
+    (Data.WALS.F109A.lookupISO "eng").map (·.value) = some .noApplicative ∧
+    english_appl.classification = .lowRecipient := by
+  refine ⟨?_, rfl⟩
+  decide
 
 theorem wals_pylkkanen_diverge_on_japanese :
-    Polinsky2013.japanese.applicative
-        = .noApplicative ∧
-    japanese_appl.classification = .lowRecipient := ⟨rfl, rfl⟩
+    (Data.WALS.F109A.lookupISO "jpn").map (·.value) = some .noApplicative ∧
+    japanese_appl.classification = .lowRecipient := by
+  refine ⟨?_, rfl⟩
+  decide
 
 end Pylkkanen2008
