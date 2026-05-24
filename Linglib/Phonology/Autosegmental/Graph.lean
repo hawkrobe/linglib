@@ -538,11 +538,19 @@ autosegmental graphs** for fixed tier-element types.
     indices to upper-tier indices, lower-tier indices to lower-tier
     indices, preserving labels and association lines.
 
-    The functions `fUpper` and `fLower` are defined on all of `Nat`
-    (not just on the relevant index ranges); only their behavior on
-    in-bounds indices is constrained by the structure. This matches
-    the categorical convention of treating ARs as graphs whose vertex
-    set is bounded but indexing extends. -/
+    The functions `fUpper` and `fLower` are defined on all of `Nat`,
+    but their behavior is fully determined: on in-bounds indices, by the
+    label-preservation conditions; on out-of-bounds indices, by the
+    `upper_canonical` / `lower_canonical` requirement that they perform
+    the **canonical shift** `i ↦ i - A.upper.length + B.upper.length`.
+
+    The canonical-shift constraint is what makes morphism equality
+    reflect the categorical notion: two homomorphisms agreeing on
+    in-range indices are forced to agree everywhere. Without it, the
+    monoidal-category coherence laws (right unitor naturality, pentagon,
+    triangle) cannot be closed because `tensorHom f (𝟙 empty)`'s
+    `concatMap`-induced behavior on out-of-range indices is the shift,
+    while `f.fUpper` on out-of-range would be free. -/
 structure Hom (A B : Graph α β) where
   /-- Vertex map on the upper tier. -/
   fUpper : Nat → Nat
@@ -556,6 +564,16 @@ structure Hom (A B : Graph α β) where
     fLower j < B.lower.length ∧ B.lower[fLower j]? = A.lower[j]?
   /-- Association lines are preserved. -/
   links_preserve : ∀ p ∈ A.links, (fUpper p.fst, fLower p.snd) ∈ B.links
+  /-- **Canonical-shift on out-of-range upper indices.** For
+      `i ≥ A.upper.length`, `fUpper i = i - A.upper.length + B.upper.length`.
+      This makes morphism equality reflect categorical equality: two
+      morphisms agreeing in-range must agree everywhere. -/
+  upper_canonical : ∀ i, A.upper.length ≤ i →
+    fUpper i = i - A.upper.length + B.upper.length
+  /-- **Canonical-shift on out-of-range lower indices.** For
+      `j ≥ A.lower.length`, `fLower j = j - A.lower.length + B.lower.length`. -/
+  lower_canonical : ∀ j, A.lower.length ≤ j →
+    fLower j = j - A.lower.length + B.lower.length
 
 namespace Hom
 
@@ -568,6 +586,8 @@ def id (A : Graph α β) : Hom A A where
   upper_label _ h := ⟨h, rfl⟩
   lower_label _ h := ⟨h, rfl⟩
   links_preserve _ hp := hp
+  upper_canonical i hi := by show i = _; omega
+  lower_canonical j hj := by show j = _; omega
 
 /-- Composition of homomorphisms (in diagrammatic order: `f.comp g`
     is "do `f` first, then `g`"). -/
@@ -586,6 +606,14 @@ def comp (f : Hom A B) (g : Hom B C) : Hom A C where
     rw [Function.comp_apply, hgl, hfl]
   links_preserve p hp :=
     g.links_preserve _ (f.links_preserve p hp)
+  upper_canonical i hi := by
+    show g.fUpper (f.fUpper i) = _
+    rw [f.upper_canonical i hi, g.upper_canonical _ (by omega)]
+    omega
+  lower_canonical j hj := by
+    show g.fLower (f.fLower j) = _
+    rw [f.lower_canonical j hj, g.lower_canonical _ (by omega)]
+    omega
 
 @[ext]
 theorem ext {f g : Hom A B} (hUp : f.fUpper = g.fUpper) (hLow : f.fLower = g.fLower) :
@@ -707,6 +735,25 @@ def concatMap {A A' B B' : Graph α β}
       have hsubu : q.fst + A.upper.length - A.upper.length = q.fst := by omega
       have hsubl : q.snd + A.lower.length - A.lower.length = q.snd := by omega
       simp [shiftLink, hgu, hgl, hsubu, hsubl]
+  upper_canonical i hi := by
+    -- For `i ≥ (A.concat B).upper.length = A.upper.length + B.upper.length`,
+    -- the else-branch fires (since `i ≥ A.upper.length`) and
+    -- `i - A.upper.length ≥ B.upper.length` triggers `g.upper_canonical`.
+    simp only [upper_concat, List.length_append] at hi
+    have hib : ¬ i < A.upper.length := by omega
+    show (if i < A.upper.length then _ else _) = _
+    simp only [hib, if_false]
+    rw [g.upper_canonical _ (by omega)]
+    simp only [upper_concat, List.length_append]
+    omega
+  lower_canonical j hj := by
+    simp only [lower_concat, List.length_append] at hj
+    have hjb : ¬ j < A.lower.length := by omega
+    show (if j < A.lower.length then _ else _) = _
+    simp only [hjb, if_false]
+    rw [g.lower_canonical _ (by omega)]
+    simp only [lower_concat, List.length_append]
+    omega
 
 /-! #### Functoriality of `concatMap` -/
 
