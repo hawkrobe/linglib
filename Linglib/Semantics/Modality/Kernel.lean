@@ -489,7 +489,7 @@ theorem kernelMust_eq_necessity (k : Kernel W) (φ : (W → Prop)) (w : W) :
     (kernelMust k φ).assertion w ↔
       necessity k.toModalBase emptyBackground φ w := by
   rw [kernelMust_eq_simpleNecessity]
-  exact (necessity_empty_eq_simple k.toModalBase _ w).symm
+  exact (necessity_empty_iff_simple k.toModalBase _ w).symm
 
 /-- Kernel must assertion ↔ Kratzer necessity evaluated via `EpistemicFlavor`.
 

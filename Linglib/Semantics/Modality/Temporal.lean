@@ -170,6 +170,6 @@ theorem future_eq_simple_necessity
     (circumstantial : ModalBase W) (p : W → Prop) (w : W) :
     futureAsModal circumstantial p w ↔
     simpleNecessity circumstantial p w := by
-  exact necessity_empty_eq_simple circumstantial p w
+  exact necessity_empty_iff_simple circumstantial p w
 
 end Semantics.Modality.Temporal
