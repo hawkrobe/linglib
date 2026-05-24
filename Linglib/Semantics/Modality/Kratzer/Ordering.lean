@@ -136,12 +136,6 @@ def accessibleWorlds (f : ModalBase W) (w : W) : Set W :=
   propIntersection (f w)
 
 /--
-**Accessibility predicate**: w' is accessible from w iff w' ∈ ⋂f(w).
--/
-def accessibleFrom (f : ModalBase W) (w w' : W) : Prop :=
-  ∀ p ∈ f w, p w'
-
-/--
 The **best** worlds among accessible worlds, according to ordering source g.
 
 These are the accessible worlds that are maximal under ≤_{g(w)}:
