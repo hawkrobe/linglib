@@ -588,12 +588,30 @@ theorem comp_assoc (f : Hom A B) (g : Hom B C) (h : Hom C D) :
 
 end Hom
 
-/-! ### Forbidden-subgraph embedding (@cite{jardine-2017}) -/
+/-! ### Forbidden-subgraph embedding (@cite{jardine-2017})
+
+Two notions of embedding are formalised:
+
+* **`Embeds F G`** — the weaker, *category-theoretic* notion: there is
+  a label-and-link-preserving injective `Hom F G`. The morphism need
+  not preserve precedence (list order); F's positions can be mapped to
+  any positions of G as long as labels and association lines match.
+* **`SubgraphEmbeds F G`** — the stronger, *autosegmental* notion that
+  @cite{jardine-2017} actually uses: there exist offsets `(δᵤ, δₗ)`
+  such that F's upper and lower tiers appear as a *contiguous block*
+  of G's tiers at those offsets, and F's links match G's links
+  shifted by the offset. Equivalently: the embedding is a *translation*
+  that preserves precedence edges (implicit in list order).
+
+For Jardine 2017-style forbidden-subgraph analyses
+(@cite{chandlee-jardine-2019}, @cite{burness-mcmullin-2020}), use
+`SubgraphEmbeds`. The weaker `Embeds` is the underlying category-
+theoretic structure.
+-/
 
 /-- `F` **embeds** into `G` iff there is an injective homomorphism
-    `F → G`. This is the formal counterpart of @cite{jardine-2017}'s
-    notion of a forbidden subgraph: an AR `G` violates the constraint
-    `¬ F` iff `F` embeds into `G`. -/
+    `F → G`. Category-theoretic notion: label-and-link-preserving
+    injection on indices. Does not preserve precedence. -/
 def Embeds (F G : Graph α β) : Prop :=
   ∃ h : Hom F G, Function.Injective h.fUpper ∧ Function.Injective h.fLower
 
@@ -611,6 +629,49 @@ theorem Embeds.trans {F G H : Graph α β}
   refine ⟨f.comp g, ?_, ?_⟩
   · exact hgU.comp hfU
   · exact hgL.comp hfL
+
+/-! ### Subgraph embedding (precedence-preserving translation)
+
+The autosegmental notion of "F is a connected subgraph of G" used in
+@cite{jardine-2017}: F appears as a contiguous block of G at some
+offset. Equivalently, the embedding is a translation by `(δᵤ, δₗ)`.
+-/
+
+/-- F's upper tier appears at offset `δᵤ` in G's upper tier, F's
+    lower tier appears at offset `δₗ` in G's lower tier, and all of
+    F's association lines are present in G at the appropriate offset.
+    The `IsSubgraphAt` formulation of @cite{jardine-2017}'s
+    connected-subgraph embedding. -/
+def IsSubgraphAt (F G : Graph α β) (δᵤ δₗ : Nat) : Prop :=
+  (∀ i, i < F.upper.length → G.upper[i + δᵤ]? = F.upper[i]?) ∧
+  (∀ j, j < F.lower.length → G.lower[j + δₗ]? = F.lower[j]?) ∧
+  (∀ p ∈ F.links, (p.fst + δᵤ, p.snd + δₗ) ∈ G.links)
+
+instance [DecidableEq α] [DecidableEq β] (F G : Graph α β) (δᵤ δₗ : Nat) :
+    Decidable (IsSubgraphAt F G δᵤ δₗ) := by
+  unfold IsSubgraphAt; infer_instance
+
+/-- `F` **subgraph-embeds** into `G` iff there is an offset
+    `(δᵤ, δₗ)` placing F as a contiguous block inside G. The
+    autosegmental connected-subgraph embedding of @cite{jardine-2017}. -/
+def SubgraphEmbeds (F G : Graph α β) : Prop :=
+  ∃ δᵤ ∈ Finset.range (G.upper.length + 1),
+  ∃ δₗ ∈ Finset.range (G.lower.length + 1),
+    IsSubgraphAt F G δᵤ δₗ
+
+instance [DecidableEq α] [DecidableEq β] (F G : Graph α β) :
+    Decidable (SubgraphEmbeds F G) := by
+  unfold SubgraphEmbeds; infer_instance
+
+/-- `SubgraphEmbeds` is reflexive: F is a subgraph of itself at
+    offset `(0, 0)`. -/
+theorem SubgraphEmbeds.refl (G : Graph α β) : SubgraphEmbeds G G := by
+  refine ⟨0, ?_, 0, ?_, ?_, ?_, ?_⟩
+  · simp
+  · simp
+  · intro i hi; simp
+  · intro j hj; simp
+  · intro p hp; simpa using hp
 
 end Graph
 
