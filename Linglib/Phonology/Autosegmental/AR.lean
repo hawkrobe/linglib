@@ -129,6 +129,35 @@ theorem comp_assoc (f : Hom A B) (g : Hom B C) (h : Hom C D) :
 
 end Hom
 
+/-! ### Tensor on morphisms (the bifunctor underlying `MonoidalCategory`) -/
+
+/-- The concatenation tensor on AR morphisms. Lifts
+    `Graph.Hom.concatMap` using the `inBounds` proof carried by the
+    AR object — so the `InBounds` hypothesis the underlying
+    `Graph.Hom.concatMap` requires is automatically supplied. This is
+    the bifunctor `(⊗) : Hom A A' → Hom B B' → Hom (A ⊗ B) (A' ⊗ B')`
+    of `MonoidalCategory (AR α β)`. -/
+def tensorHom {A A' B B' : AR α β}
+    (f : Hom A A') (g : Hom B B') : Hom (A.concat B) (A'.concat B') :=
+  Graph.Hom.concatMap A.inBounds f g
+
+/-! #### Functoriality of `tensorHom` -/
+
+/-- `tensorHom (id A) (id B) = id (A ⊗ B)` — the `tensor_id` law of
+    mathlib's `MonoidalCategory`. -/
+theorem tensorHom_id (A B : AR α β) :
+    tensorHom (Hom.id A) (Hom.id B) = Hom.id (A.concat B) :=
+  Graph.Hom.concatMap_id A.inBounds
+
+/-- `tensorHom (f₁ ; g₁) (f₂ ; g₂) = tensorHom f₁ f₂ ; tensorHom g₁ g₂`
+    — the `tensor_comp` law of mathlib's `MonoidalCategory`. -/
+theorem tensorHom_comp {A A' A'' B B' B'' : AR α β}
+    (f : Hom A A') (f' : Hom A' A'')
+    (g : Hom B B') (g' : Hom B' B'') :
+    (tensorHom f g).comp (tensorHom f' g') =
+      tensorHom (f.comp f') (g.comp g') :=
+  Graph.Hom.concatMap_comp A.inBounds A'.inBounds f f' g g'
+
 end AR
 
 end Phonology.Autosegmental

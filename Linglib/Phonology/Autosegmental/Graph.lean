@@ -604,6 +604,151 @@ theorem comp_assoc (f : Hom A B) (g : Hom B C) (h : Hom C D) :
     (f.comp g).comp h = f.comp (g.comp h) := by
   ext <;> rfl
 
+/-! #### Concatenation as a bifunctor (`concatMap`)
+
+Given homomorphisms `f : Hom A A'` and `g : Hom B B'`, the
+**concatenation tensor** `f ⊗ g` is a homomorphism
+`A.concat B → A'.concat B'`. The index maps split case-wise: an
+index `i < A.upper.length` routes through `f`; an index
+`≥ A.upper.length` (i.e., in B's part of `A.concat B`'s tier)
+routes through `g`, shifted by `A'.upper.length` to land in B's
+part of `A'.concat B`.
+
+The asymmetric `A.InBounds` hypothesis is necessary: the case-split
+on `p.fst < A.upper.length` for an A-link only matches the if-branch
+when `A` is in-bounds. Without it, an A-link with out-of-bounds first
+coordinate would route to the else-branch, which uses `g`, not `f` —
+breaking `links_preserve`. `B.InBounds` is *not* needed: shifted
+B-links have `p.fst ≥ A.upper.length` unconditionally, so the
+else-branch fires regardless of whether the underlying B-index was
+in-bounds.
+
+`concatMap` is the bifunctor underlying the `MonoidalCategory`
+structure on the autosegmental category (`AR α β`) — see
+`Phonology/Autosegmental/AR.lean`.
+-/
+
+/-- Concatenation tensor on homomorphisms: `f ⊗ g`. -/
+def concatMap {A A' B B' : Graph α β}
+    (hA : A.InBounds) (f : Hom A A') (g : Hom B B') :
+    Hom (A.concat B) (A'.concat B') where
+  fUpper i := if i < A.upper.length then f.fUpper i
+              else g.fUpper (i - A.upper.length) + A'.upper.length
+  fLower j := if j < A.lower.length then f.fLower j
+              else g.fLower (j - A.lower.length) + A'.lower.length
+  upper_label := by
+    intro i hi
+    simp only [upper_concat, List.length_append] at hi
+    by_cases hib : i < A.upper.length
+    · -- Case 1: i in A's part.
+      simp only [hib, if_true]
+      obtain ⟨h1, h2⟩ := f.upper_label i hib
+      refine ⟨by simp [upper_concat, List.length_append]; omega, ?_⟩
+      simp only [upper_concat]
+      rw [List.getElem?_append_left h1, List.getElem?_append_left hib]
+      exact h2
+    · -- Case 2: i in B's shifted part.
+      simp only [hib, if_false]
+      push_neg at hib
+      have hib' : i - A.upper.length < B.upper.length := by omega
+      obtain ⟨h1, h2⟩ := g.upper_label (i - A.upper.length) hib'
+      refine ⟨by simp [upper_concat, List.length_append]; omega, ?_⟩
+      simp only [upper_concat]
+      have hge_target : A'.upper.length ≤ g.fUpper (i - A.upper.length) + A'.upper.length := by omega
+      have hge_source : A.upper.length ≤ i := hib
+      rw [List.getElem?_append_right hge_target, List.getElem?_append_right hge_source]
+      have hsub : g.fUpper (i - A.upper.length) + A'.upper.length - A'.upper.length =
+                  g.fUpper (i - A.upper.length) := by omega
+      rw [hsub]
+      exact h2
+  lower_label := by
+    intro j hj
+    simp only [lower_concat, List.length_append] at hj
+    by_cases hjb : j < A.lower.length
+    · simp only [hjb, if_true]
+      obtain ⟨h1, h2⟩ := f.lower_label j hjb
+      refine ⟨by simp [lower_concat, List.length_append]; omega, ?_⟩
+      simp only [lower_concat]
+      rw [List.getElem?_append_left h1, List.getElem?_append_left hjb]
+      exact h2
+    · simp only [hjb, if_false]
+      push_neg at hjb
+      have hjb' : j - A.lower.length < B.lower.length := by omega
+      obtain ⟨h1, h2⟩ := g.lower_label (j - A.lower.length) hjb'
+      refine ⟨by simp [lower_concat, List.length_append]; omega, ?_⟩
+      simp only [lower_concat]
+      have hge_target : A'.lower.length ≤ g.fLower (j - A.lower.length) + A'.lower.length := by omega
+      have hge_source : A.lower.length ≤ j := hjb
+      rw [List.getElem?_append_right hge_target, List.getElem?_append_right hge_source]
+      have hsub : g.fLower (j - A.lower.length) + A'.lower.length - A'.lower.length =
+                  g.fLower (j - A.lower.length) := by omega
+      rw [hsub]
+      exact h2
+  links_preserve := by
+    intro p hp
+    rw [links_concat, Finset.mem_union] at hp
+    rw [links_concat, Finset.mem_union]
+    rcases hp with hp | hp
+    · -- Case A: p ∈ A.links. By A.InBounds the if-branches fire.
+      left
+      obtain ⟨hAu, hAl⟩ := hA p hp
+      show (if p.fst < A.upper.length then f.fUpper p.fst else _,
+            if p.snd < A.lower.length then f.fLower p.snd else _) ∈ A'.links
+      rw [if_pos hAu, if_pos hAl]
+      exact f.links_preserve p hp
+    · -- Case B: p is a shifted B-link.
+      right
+      rw [Finset.mem_image] at hp
+      obtain ⟨q, hq, rfl⟩ := hp
+      rw [Finset.mem_image]
+      refine ⟨(g.fUpper q.fst, g.fLower q.snd), g.links_preserve q hq, ?_⟩
+      have hgu : ¬ q.fst + A.upper.length < A.upper.length := by omega
+      have hgl : ¬ q.snd + A.lower.length < A.lower.length := by omega
+      have hsubu : q.fst + A.upper.length - A.upper.length = q.fst := by omega
+      have hsubl : q.snd + A.lower.length - A.lower.length = q.snd := by omega
+      simp [shiftLink, hgu, hgl, hsubu, hsubl]
+
+/-! #### Functoriality of `concatMap` -/
+
+/-- The identity on `A.concat B` factors through identities on `A` and
+    `B`: `concatMap (id A) (id B) = id (A.concat B)`. Foundational for
+    the bifunctor structure (`tensor_id` law of mathlib's
+    `MonoidalCategory`). -/
+theorem concatMap_id {A B : Graph α β} (hA : A.InBounds) :
+    concatMap hA (id A) (id B) = id (A.concat B) := by
+  ext i
+  · simp only [concatMap, id]
+    by_cases hi : i < A.upper.length
+    · simp [hi]
+    · simp [hi]; omega
+  · simp only [concatMap, id]
+    by_cases hi : i < A.lower.length
+    · simp [hi]
+    · simp [hi]; omega
+
+/-- Composition factors through `concatMap`:
+    `(concatMap f g).comp (concatMap f' g') = concatMap (f.comp f') (g.comp g')`.
+    The other half of the bifunctor laws (`tensor_comp` in mathlib's
+    `MonoidalCategory`). -/
+theorem concatMap_comp {A A' A'' B B' B'' : Graph α β}
+    (hA : A.InBounds) (hA' : A'.InBounds)
+    (f : Hom A A') (f' : Hom A' A'') (g : Hom B B') (g' : Hom B' B'') :
+    (concatMap hA f g).comp (concatMap hA' f' g') =
+      concatMap hA (f.comp f') (g.comp g') := by
+  ext i
+  · by_cases hi : i < A.upper.length
+    · obtain ⟨hf, _⟩ := f.upper_label i hi
+      simp [comp, concatMap, hi, hf]
+    · have hshift : ¬ g.fUpper (i - A.upper.length) + A'.upper.length < A'.upper.length := by
+        omega
+      simp [comp, concatMap, hi, hshift]
+  · by_cases hi : i < A.lower.length
+    · obtain ⟨hf, _⟩ := f.lower_label i hi
+      simp [comp, concatMap, hi, hf]
+    · have hshift : ¬ g.fLower (i - A.lower.length) + A'.lower.length < A'.lower.length := by
+        omega
+      simp [comp, concatMap, hi, hshift]
+
 end Hom
 
 /-! ### Forbidden-subgraph embedding (@cite{jardine-2017})
