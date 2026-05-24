@@ -853,13 +853,13 @@ private noncomputable def mulLeftHom (x : InsertionAlgebra α) :
     Direct corollary of `AddMonoidHom.map_zsmul` for `mulRightHom y`. -/
 private theorem smul_mul_left (c : ℤ) (x y : InsertionAlgebra α) :
     ((c • x : InsertionAlgebra α) * y) = c • (x * y) :=
-  (mulRightHom y).map_zsmul x c
+  (mulRightHom y).map_zsmul c x
 
 /-- Scalar pull-out on the RIGHT factor: `x * (c • y) = c • (x * y)`.
     Direct corollary of `AddMonoidHom.map_zsmul` for `mulLeftHom x`. -/
 private theorem mul_smul_right (x : InsertionAlgebra α) (c : ℤ) (y : InsertionAlgebra α) :
     (x * (c • y : InsertionAlgebra α)) = c • (x * y) :=
-  (mulLeftHom x).map_zsmul y c
+  (mulLeftHom x).map_zsmul c y
 
 /-! ### Pre-Lie identity
 
