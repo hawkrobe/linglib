@@ -353,7 +353,6 @@ import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment
 import Linglib.Discourse.Roles
-import Linglib.Semantics.Mood
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.NullSubject.Defs
