@@ -1,7 +1,7 @@
 import Linglib.Studies.KampReyle1993
 import Linglib.Semantics.Dynamic.DPL.Basic
 import Linglib.Semantics.Dynamic.CDRT.Basic
-import Linglib.Studies.Cooper2023
+import Linglib.Studies.Cooper2023.Basic
 import Linglib.Data.Examples.Schema
 
 /-!

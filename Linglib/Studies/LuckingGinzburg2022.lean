@@ -1,4 +1,4 @@
-import Linglib.Studies.Cooper2023Ch7
+import Linglib.Studies.Cooper2023.Ch7
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Core.Logic.Quantification.NumberTree
 import Mathlib.Data.Finset.Powerset
@@ -29,7 +29,7 @@ a **descriptive quantifier condition** (q-cond), and a **quantifier perspective*
 ## Thread map
 
 - **Ordered set bipartitions**: defined here (`BP`)
-- **Witness sets**: `Semantics.TypeTheoretic.Quantification` —
+- **Witness sets**: `Semantics.TypeTheoretic.WitnessQuantification` —
   `WitnessSet`, `IsExistW`, `AnaphoraRef`, `anaphoraAvailable`
 - **GQT properties**: `Semantics.Quantification.Quantifier` —
   `GQ`, `Conservative`

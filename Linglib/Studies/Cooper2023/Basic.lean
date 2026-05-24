@@ -1,5 +1,5 @@
-import Linglib.Studies.Cooper2023Ch8
-import Linglib.Studies.Cooper2023Ch7
+import Linglib.Studies.Cooper2023.Ch8
+import Linglib.Studies.Cooper2023.Ch7
 import Linglib.Semantics.Dynamic.CDRT.Basic
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Coreference
@@ -32,7 +32,7 @@ surveyed in @cite{sutton-2024}.
 namespace Cooper2023
 
 open Semantics.TypeTheoretic
-open Cooper2023.Ch8
+open Cooper2023Ch8
 open Phenomena.Anaphora.DonkeyAnaphora
 open Phenomena.Anaphora.Coreference
 
@@ -55,9 +55,9 @@ the theorems whose empirical predictions depend on it. -/
     for both farmers in the scenario. -/
 theorem geach_weak_available :
     geachDonkey.weakReading = true ∧
-    Nonempty (𝔏 farmerOwnsBeatsDonkey .farmer1) ∧
-    Nonempty (𝔏 farmerOwnsBeatsDonkey .farmer2) :=
-  ⟨rfl, ⟨farmer1_weak_donkey⟩, ⟨farmer2_weak_donkey⟩⟩
+    Nonempty (ℒ farmerOwnsBeatsDonkey .farmer1) ∧
+    Nonempty (ℒ farmerOwnsBeatsDonkey .farmer2) :=
+  ⟨rfl, ⟨farmer1WeakDonkey⟩, ⟨farmer2WeakDonkey⟩⟩
 
 /-- Geach donkey: bound reading — TTR confirms the pronoun depends on
     the indefinite via parametric background (the donkey is the Bg). -/
@@ -66,7 +66,7 @@ theorem geach_bound_reading :
     farmerOwnsBeatsDonkey.Bg = DonkeyBg :=
   ⟨rfl, rfl⟩
 
-/-- Strong dominant: TTR records the weak reading is available (𝔏 produces
+/-- Strong dominant: TTR records the weak reading is available (ℒ produces
     a witness). The conditional-strong reading via the formaliser-invented
     `localizeConditional` was deleted in 0.230.564 (per audit: Cooper's own
     strong-donkey mechanism is 𝔓^∀ over an indexed background, not a
@@ -75,8 +75,8 @@ theorem geach_bound_reading :
 theorem strongDominant_readings_available :
     strongDominant.strongAvailable = true ∧
     strongDominant.weakAvailable = true ∧
-    Nonempty (𝔏 farmerOwnsBeatsDonkey .farmer1) :=
-  ⟨rfl, rfl, ⟨farmer1_weak_donkey⟩⟩
+    Nonempty (ℒ farmerOwnsBeatsDonkey .farmer1) :=
+  ⟨rfl, rfl, ⟨farmer1WeakDonkey⟩⟩
 
 -- ============================================================================
 -- Bridge: TTR binding -> Phenomena/Anaphora/Coreference (bridge theorem 3)
