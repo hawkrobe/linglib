@@ -495,6 +495,23 @@ theorem isPlanar_concat (A B : Graph α β)
       have := hB b₁ hb₁ b₂ hb₂ hltB
       omega
 
+/-- Concatenation preserves in-bounds: links from `A` stay in `A`'s
+    tier range (which is a prefix of `(A.concat B)`'s range), and
+    shifted links from `B` land in the suffix `B`'s range adds. -/
+theorem inBounds_concat {A B : Graph α β}
+    (hA : A.InBounds) (hB : B.InBounds) : (A.concat B).InBounds := by
+  intro p hp
+  rw [links_concat, Finset.mem_union] at hp
+  simp only [upper_concat, lower_concat, List.length_append]
+  rcases hp with hp | hp
+  · have := hA p hp
+    refine ⟨?_, ?_⟩ <;> omega
+  · rw [Finset.mem_image] at hp
+    obtain ⟨q, hq, rfl⟩ := hp
+    have := hB q hq
+    simp only [shiftLink]
+    refine ⟨?_, ?_⟩ <;> omega
+
 /-! ### Graph homomorphisms (the category `Graph_AR`)
 
 A `Hom A B` is a label-preserving, link-preserving map between two
