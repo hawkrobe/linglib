@@ -2,7 +2,7 @@ import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.Japanese.Plurals
 import Linglib.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Features.Number
-import Linglib.Core.Agreement.Target
+import Linglib.Syntax.Agreement.Basic
 import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-!
@@ -314,13 +314,12 @@ theorem constraint_iii_holds :
 -- §4: The Agreement Hierarchy (Ch 6, §6.2)
 -- ============================================================================
 
--- AgreementTarget is now in Core/AgreementTarget.lean.
-open Core (AgreementTarget)
+open Syntax.Agreement (AgreementTarget)
 
 /-- Whether agreement is determined by morphological form (syntactic)
     or by referential meaning (semantic).
 
-    Distinct from `Core.AgreementType` (grammatical vs. pronominal,
+    Distinct from `Syntax.Agreement.AgreementType` (grammatical vs. pronominal,
     @cite{bickel-nichols-2001}), which is about whether the agreement
     marker has referential autonomy. This type is about what *controls*
     agreement — the formal features of the controller or its semantic
@@ -340,7 +339,7 @@ structure AgreementProfile where
 
 /-- The Agreement Hierarchy monotonicity constraint: once semantic agreement
     becomes possible at a target, it remains possible at all targets further
-    right (= lower `Core.AgreementTarget.rank`) on the hierarchy. -/
+    right (= lower `Syntax.Agreement.AgreementTarget.rank`) on the hierarchy. -/
 def AgreementProfile.respectsHierarchy (p : AgreementProfile) : Bool :=
   let targets := [AgreementTarget.attributive, .predicate,
                    .relativePronoun, .personalPronoun]
@@ -924,7 +923,7 @@ theorem japanese_count_mass_uniform :
 -- §17: Predicate Hierarchy Bridge
 -- ============================================================================
 
-open Core (PredicateTarget)
+open Syntax.Agreement (PredicateTarget)
 
 /-- Russian: predicate adjectives agree in gender/number, but past-tense
     verbs also do — illustrating the Predicate Hierarchy within the

@@ -1,5 +1,5 @@
 import Linglib.Typology.Gender
-import Linglib.Core.Agreement.Target
+import Linglib.Syntax.Agreement.Basic
 import Linglib.Fragments.English.Gender
 import Linglib.Fragments.Mandarin.Gender
 import Linglib.Fragments.Japanese.Gender
@@ -69,7 +69,7 @@ set_option autoImplicit false
 namespace Corbett1991
 
 open Typology.Gender
-open Core (AgreementTarget)
+open Syntax.Agreement (AgreementTarget)
 
 -- ============================================================================
 -- §1. The 22-language exemplar sample

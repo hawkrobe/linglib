@@ -275,8 +275,8 @@ import Linglib.Core.Case.Order
 import Linglib.Core.Case.Split
 import Linglib.Core.Case.Grammaticalization
 import Linglib.Core.Case.Comparative
-import Linglib.Core.Agreement.Controller
-import Linglib.Core.Agreement.Target
+import Linglib.Syntax.Agreement.Controller
+import Linglib.Syntax.Agreement.Basic
 import Linglib.Morphology.Containment
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.DM.DomainLocality

@@ -1,4 +1,4 @@
-import Linglib.Core.Agreement.Target
+import Linglib.Syntax.Agreement.Basic
 import Linglib.Features.Gender
 import Linglib.Data.WALS.Features.F30A
 import Linglib.Data.WALS.Features.F31A
@@ -52,7 +52,7 @@ set_option autoImplicit false
 
 namespace Typology.Gender
 
-open Core (AgreementTarget)
+open Syntax.Agreement (AgreementTarget)
 
 private abbrev ch30 := Data.WALS.F30A.allData
 private abbrev ch31 := Data.WALS.F31A.allData

@@ -2,7 +2,7 @@
 # Agreement Controller — Grammatical Role of the Controlling NP
 @cite{corbett-2006} ch 2 §2.1, ch 6 §6.6
 
-While `Core/Agreement/Target.lean` enumerates WHERE agreement morphology
+While `Syntax/Agreement/Basic.lean` enumerates WHERE agreement morphology
 surfaces (Corbett 1991 Agreement Hierarchy), this file enumerates WHICH
 GRAMMATICAL ROLE the controlling NP plays. The two axes are orthogonal:
 a language can have subject-controlled verb agreement
@@ -18,7 +18,7 @@ operationalize them differently (LFG SUBJ ≠ Minimalist external argument
 `Morphology.MorphCategory.agreement` records), the labels are
 reasonably consensual. Framework-specific projections
 (LFG analysis → Controller, Minimalist analysis → Controller) live in
-`Syntax/`.
+framework-specific subdirs like `Syntax/Minimalist/Agreement/`.
 
 ## Cases derived from Corbett 2006
 
@@ -64,7 +64,7 @@ With the parametric form, the projection round-trips:
   @cite{corbett-2006} ch 6, not controller-role labels.
 -/
 
-namespace Core.Agreement
+namespace Syntax.Agreement
 
 /-- Grammatical role of the agreement controller. Cross-linguistically
     motivated typological labels per @cite{corbett-2006} §6.6. -/
@@ -94,4 +94,4 @@ inductive Controller where
   | defaultAgr
   deriving DecidableEq, Repr, Inhabited
 
-end Core.Agreement
+end Syntax.Agreement

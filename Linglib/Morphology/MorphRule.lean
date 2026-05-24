@@ -1,5 +1,5 @@
 import Linglib.Core.Word
-import Linglib.Core.Agreement.Controller
+import Linglib.Syntax.Agreement.Controller
 
 /-!
 # Morphological Infrastructure
@@ -206,14 +206,14 @@ inductive MorphCategory where
   | mood          -- desiderative, subjunctive, imperative
   | negation      -- negation markers
   /-- Agreement morphology, parameterized by the grammatical role of
-      the controlling NP (`Core.Agreement.Controller`). The role
+      the controlling NP (`Syntax.Agreement.Controller`). The role
       distinction (subj vs obj vs poss vs ...) is what allows Anderson
       Ch 5 §5.2 split/doubled AVC typology to be Lean-checkable;
       Bybee 1985's `personAgr / personAgrObj / genderAgr` source
       distinctions also round-trip cleanly. See
       `scratch/morphcategory_agreement_split_plan.md` for the design
       rationale (0.230.578-0.230.584). -/
-  | agreement (controller : Core.Agreement.Controller)
+  | agreement (controller : Syntax.Agreement.Controller)
   | nonfinite     -- nonfinite markers, interrogative/relative
   | number        -- number marking on nouns (not verb agreement)
   | degree        -- comparative/superlative on adjectives
