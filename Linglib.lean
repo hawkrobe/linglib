@@ -1137,7 +1137,6 @@ import Linglib.Studies.BakerVinokurova2010
 import Linglib.Studies.Comrie1989
 import Linglib.Typology.ClauseChaining
 import Linglib.Studies.SarvasyAikhenvald2025
-import Linglib.Studies.Stassen2013
 import Linglib.Studies.Partee1987
 import Linglib.Studies.Elbourne2026
 import Linglib.Phenomena.Attitudes.ConjunctionDistribution
