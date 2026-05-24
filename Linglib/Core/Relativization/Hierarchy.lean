@@ -5,7 +5,7 @@ import Linglib.Core.Relativization.Basic
 @cite{keenan-comrie-1977}
 
 Defines the rank function and contiguity predicate for the Accessibility
-Hierarchy. Mirrors `Core.Case.Hierarchy` for Blake's case hierarchy.
+Hierarchy. Mirrors `Features.Case` for Blake's case hierarchy.
 -/
 
 namespace Core

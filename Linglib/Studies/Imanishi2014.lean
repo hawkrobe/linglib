@@ -202,12 +202,12 @@ theorem only_prog_inverts :
     languages (Chol, Q'anjob'al), the extended-ergative pattern
     surfaces. The substrate encodes this via `caseKaqchikel` vs
     `caseChol`/`caseQanjobalan`. -/
-def imanishiPredictedAccA (lang : URN) : Core.Case :=
+def imanishiPredictedAccA (lang : URN) : Features.Case :=
   match lang with
   | .required => .abs   -- Kaqchikel-type: A → ABS (matrix Infl)
   | .optional => .gen   -- Chol/Q'anjob'al-type: A → GEN (phase head D)
 
-def imanishiPredictedAccP (lang : URN) : Core.Case :=
+def imanishiPredictedAccP (lang : URN) : Features.Case :=
   match lang with
   | .required => .gen   -- Kaqchikel-type: P → GEN/ERG (phase head D)
   | .optional => .abs   -- Chol/Q'anjob'al-type: P → ABS

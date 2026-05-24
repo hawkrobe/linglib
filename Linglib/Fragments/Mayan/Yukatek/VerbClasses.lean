@@ -2,8 +2,8 @@ import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Lexical.EventStructure
 import Linglib.Semantics.Lexical.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Params
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Split
+import Linglib.Features.Case
+import Linglib.Typology.Alignment
 /-!
 # Yukatek Maya Verb Classes and Status System
 
@@ -302,9 +302,9 @@ theorem toSalienceClass_fiber_agentPatient (s : VerbStemClass) :
     imperfective status (incompletive) triggers accusative alignment.
     Imperative is treated as ergative (completive-like default).
 
-    This instantiates the same `Core.SplitErgativity` type used by Hindi
+    This instantiates the same `Typology.Alignment.SplitErgativity` type used by Hindi
     and Georgian, enabling cross-linguistic comparison. -/
-def yukatekSplit : Core.SplitErgativity StatusCategory :=
+def yukatekSplit : Typology.Alignment.SplitErgativity StatusCategory :=
   { ergCondition := λ s => match s.viewpointAspect with
       | some .perfective => true
       | some .imperfective => false
@@ -323,8 +323,8 @@ theorem yukatek_incompletive_acc :
     imperfective → accusative. This is @cite{bohnemeyer-2004}'s core insight
     that a single linking-by-viewpoint mechanism underlies both systems. -/
 theorem yukatek_hindi_same_split :
-    yukatekSplit.alignment .completive = Core.hindiSplit.alignment .perfective ∧
-    yukatekSplit.alignment .incompletive = Core.hindiSplit.alignment .imperfective :=
+    yukatekSplit.alignment .completive = Typology.Alignment.hindiSplit.alignment .perfective ∧
+    yukatekSplit.alignment .incompletive = Typology.Alignment.hindiSplit.alignment .imperfective :=
   ⟨rfl, rfl⟩
 
 end Fragments.Mayan.Yukatek

@@ -1,8 +1,8 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Grammaticalization
-import Linglib.Core.Case.Allomorphy
-open Core.Case.Allomorphy
+import Linglib.Features.Case
+import Linglib.Features.Case
+import Linglib.Diachronic.CaseGrammaticalization
+import Linglib.Morphology.Case.Allomorphy
+open Morphology.Case.Allomorphy
 
 /-!
 # Finnish Case Inventory @cite{blake-1994}
@@ -21,7 +21,7 @@ case systems in Europe:
   abessive (-ttA, 'without'), comitative (-ine-, 'with'),
   instructive (-n, 'by means of')
 
-Our 19-value `Core.Case` represents 12 of the 15 Finnish cases. The three
+Our 19-value `Features.Case` represents 12 of the 15 Finnish cases. The three
 Finnish-specific semantic cases (essive, translative, abessive) are included
 directly; the internal/external local pairs (inessive/adessive → LOC,
 elative/ablative → ABL, illative/allative → ALL) are collapsed into a
@@ -40,16 +40,16 @@ namespace Fragments.Finnish.Case
 -- § 1: Case Inventory
 -- ============================================================================
 
-/-- Finnish case inventory mapped to `Core.Case`.
+/-- Finnish case inventory mapped to `Features.Case`.
 
-    All 15 Finnish cases now have Core.Case equivalents (essive, translative,
-    abessive added to Core.Case; internal/external local pairs collapsed):
+    All 15 Finnish cases now have Features.Case equivalents (essive, translative,
+    abessive added to Features.Case; internal/external local pairs collapsed):
     - NOM →.nom, ACC →.acc (pronoun/total-object accusative)
     - GEN →.gen, PART →.part
     - INE/ADE →.loc, ELA/ABL →.abl, ILL/ALL →.all
     - ESS →.ess, TRANSL →.transl, ABESS →.abess
     - INSTR →.inst, COM →.com -/
-def caseInventory : Finset Core.Case :=
+def caseInventory : Finset Features.Case :=
   {.nom, .acc, .gen, .part, .loc, .abl, .all, .ess, .transl, .abess, .inst, .com}
 
 /-- Finnish's mapped inventory **fails** strict contiguity: GEN (rank 5)
@@ -58,14 +58,14 @@ def caseInventory : Finset Core.Case :=
 
     This illustrates Blake's hedge: the hierarchy holds "usually" but
     languages like Finnish fill the dative slot with a local case
-    extension (ALL → DAT, formalized in `Core.Case.Extends`). -/
+    extension (ALL → DAT, formalized in `Features.Case.Extends`). -/
 theorem inventory_fails_strict :
-    ¬ Core.Case.IsValidInventory caseInventory := by decide
+    ¬ Features.Case.IsValidInventory caseInventory := by decide
 
 /-- The allative-for-dative substitution is exactly the extension path
-    in @cite{heine-2009} Table 29.6, formalized in `Core.Case.Extends`. -/
+    in @cite{heine-2009} Table 29.6, formalized in `Features.Case.Extends`. -/
 theorem allative_extends_to_dative :
-    Core.Case.Extends .all .dat := by decide
+    Features.Case.Extends .all .dat := by decide
 
 -- ============================================================================
 -- § 2: Syncretism
@@ -73,7 +73,7 @@ theorem allative_extends_to_dative :
 
 /-- Finnish NOM/ACC syncretism: the accusative of non-pronominal singular
     nouns is identical to the nominative.
-    Uses the cross-linguistic pattern from `Core.Case.Allomorphy`. -/
+    Uses the cross-linguistic pattern from `Morphology.Case.Allomorphy`. -/
 def finnishNomAccSync : Syncretism := nomAccSyncretism
 
 /-- Finnish ABL/INST are not syncretic — ablative (-ltA) and instructive
@@ -105,13 +105,13 @@ inductive LocationType where
   deriving DecidableEq, Repr, Inhabited
 
 /-- A cell in the Finnish local case matrix: the case name, suffix,
-    directional coordinates, and mapping to `Core.Case`. -/
+    directional coordinates, and mapping to `Features.Case`. -/
 structure LocalCase where
   name : String
   suffix : String
   direction : Direction
   locationType : LocationType
-  coreCase : Core.Case
+  coreCase : Features.Case
   deriving DecidableEq, Repr, Inhabited
 
 /-- The 3×2 local case matrix.
@@ -122,7 +122,7 @@ structure LocalCase where
     | Source    | elative -stA  | ablative -ltA |
     | Goal      | illative -Vn  | allative -lle |
 
-    Core.Case collapses each row into a single value (static →.loc,
+    Features.Case collapses each row into a single value (static →.loc,
     source →.abl, goal →.all). The matrix reveals the full structure. -/
 def localCaseMatrix : Direction → LocationType → LocalCase
   | .static, .internal => ⟨"inessive",  "-ssA", .static, .internal, .loc⟩
@@ -144,7 +144,7 @@ def allLocalCases : List LocalCase :=
 /-- The matrix has exactly 6 cells. -/
 theorem localCases_count : allLocalCases.length = 6 := by native_decide
 
-/-- Core.Case collapses each direction row: both internal and external
+/-- Features.Case collapses each direction row: both internal and external
     static cases map to.loc. -/
 theorem static_collapses_to_loc :
     (localCaseMatrix .static .internal).coreCase =

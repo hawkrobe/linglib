@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Order
-import Linglib.Core.Case.Allomorphy
+import Linglib.Syntax.Case.Order
+import Linglib.Morphology.Case.Allomorphy
 
 /-!
 # Nanosyntax: Core
@@ -39,7 +39,7 @@ Because the tree is strictly right-branching, each case is fully
 characterized by its **rank** (depth): NOM = 0, ACC = 1, GEN = 2,
 DAT = 3, etc. A lexical entry storing a tree of rank r contains
 all sub-constituents of rank ≤ r. This is exactly the containment
-hierarchy formalized in `Core.Case.Allomorphy`.
+hierarchy formalized in `Morphology.Case.Allomorphy`.
 
 ## Deriving *ABA
 
@@ -55,13 +55,13 @@ Result: β–β–α. There is no way to get α–β–α, because any entry
 that beats α for the intermediate case Y also beats α for all
 cases below Y (it matches them too, and it's smaller).
 
-See `Core.Case.Allomorphy` for the *ABA constraint
+See `Morphology.Case.Allomorphy` for the *ABA constraint
 formalized independently via `AllomorphyPattern`.
 -/
 
 namespace Morphology.Nanosyntax
 
-open Core.Case.Allomorphy
+open Morphology.Case.Allomorphy
 
 -- ============================================================================
 -- §1: Lexical Entries on the fseq
@@ -78,7 +78,7 @@ open Core.Case.Allomorphy
     (not necessarily contiguous on the fseq). -/
 structure LexEntry where
   /-- The rank (depth) of the stored tree on the fseq.
-      Corresponds to `Core.Case.Order.containmentRank`. -/
+      Corresponds to `Syntax.Case.Order.containmentRank`. -/
   rank : Nat
   /-- The phonological exponent. -/
   exponent : String
@@ -275,18 +275,18 @@ theorem three_entry_is_aba :
 end CaseExamples
 
 -- ============================================================================
--- §6: Connection to Core.Case.Allomorphy
+-- §6: Connection to Morphology.Case.Allomorphy
 -- ============================================================================
 
-/-- Map a `Core.Case` to a Nanosyntax target rank via the existing
+/-- Map a `Features.Case` to a Nanosyntax target rank via the existing
     containment hierarchy. Returns `none` for cases not on the
     standard fseq (e.g., ERG/ABS). -/
-def caseToRank (c : Core.Case) : Option Nat :=
-  Core.Case.containmentRank c
+def caseToRank (c : Features.Case) : Option Nat :=
+  Syntax.Case.containmentRank c
 
 /-- Spellout a case directly: look up the case's rank, then
     apply phrasal spellout. -/
-def spelloutCase (entries : List LexEntry) (c : Core.Case) :
+def spelloutCase (entries : List LexEntry) (c : Features.Case) :
     Option String :=
   match caseToRank c with
   | some r => spellout entries r

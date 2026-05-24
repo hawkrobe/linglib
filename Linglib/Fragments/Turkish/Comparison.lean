@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Comparative
+import Linglib.Features.Case
+import Linglib.Typology.Comparison
 import Linglib.Typology.Comparison
 /-!
 # Turkish Comparative Construction @cite{stassen-1985}
@@ -21,7 +21,7 @@ The optional adverb *daha* ('more') may intensify but is not required.
 namespace Fragments.Turkish.Comparison
 
 /-- Turkish comparative: separative (ablative) standard marker `-dan`/`-den`. -/
-def entry : Core.ComparativeEntry :=
+def entry : Typology.Comparison.ComparativeEntry :=
   { standardCase := .abl
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial

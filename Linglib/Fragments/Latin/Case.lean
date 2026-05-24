@@ -1,8 +1,8 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Grammaticalization
-import Linglib.Core.Case.Allomorphy
-open Core.Case.Allomorphy
+import Linglib.Features.Case
+import Linglib.Features.Case
+import Linglib.Diachronic.CaseGrammaticalization
+import Linglib.Morphology.Case.Allomorphy
+open Morphology.Case.Allomorphy
 
 /-!
 # Latin Case Inventory @cite{blake-1994}
@@ -33,32 +33,32 @@ namespace Fragments.Latin.Case
 -- ============================================================================
 
 /-- Standard Latin 6-case inventory (NOM ACC GEN DAT ABL VOC). -/
-def caseInventory : Finset Core.Case :=
+def caseInventory : Finset Features.Case :=
   {.nom, .acc, .gen, .dat, .abl, .voc}
 
 /-- The hierarchy-relevant subset (excluding VOC at rank 0). -/
-def coreInventory : Finset Core.Case :=
+def coreInventory : Finset Features.Case :=
   {.nom, .acc, .gen, .dat, .abl}
 
 /-- Latin's 5-case core inventory **fails** strict contiguity: DAT (rank 4)
     and ABL (rank 2) have no LOC (rank 3) between them. -/
 theorem core_inventory_fails_strict :
-    ¬ Core.Case.IsValidInventory coreInventory := by decide
+    ¬ Features.Case.IsValidInventory coreInventory := by decide
 
 /-- With the vestigial locative, contiguous on ranks 6–2.
     VOC (rank 0) creates a gap at rank 1 under strict checking, so
     we validate the hierarchy-relevant subset without it. -/
-def inventoryWithLocative : Finset Core.Case :=
+def inventoryWithLocative : Finset Features.Case :=
   {.nom, .acc, .gen, .dat, .loc, .abl}
 
-example : Core.Case.IsValidInventory inventoryWithLocative := by decide
+example : Features.Case.IsValidInventory inventoryWithLocative := by decide
 
 -- ============================================================================
 -- § 2: Syncretism Patterns (@cite{blake-1994}, pp. 19–24)
 -- ============================================================================
 
 /-- NOM/ACC syncretism in neuter nouns (2nd, 3rd, 4th declension).
-    Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Allomorphy`. -/
+    Instantiates the cross-linguistic NOM/ACC pattern from `Morphology.Case.Allomorphy`. -/
 def neuterSyncretism : Syncretism := nomAccSyncretism
 
 /-- NOM/ACC is same-tier (both rank 6) — trivially adjacent. -/
@@ -86,11 +86,11 @@ theorem dat_abl_inventory_adjacent :
     morphological form covers source (ablativus separativus), instrumental
     (ablativus instrumenti), and causal (ablativus causae) functions.
     These are exactly the ablative extension targets in @cite{heine-2009}
-    Table 29.6, formalized in `Core.Case.Extends`. -/
+    Table 29.6, formalized in `Features.Case.Extends`. -/
 theorem abl_extends_to_inst :
-    Core.Case.Extends .abl .inst := by decide
+    Features.Case.Extends .abl .inst := by decide
 
 theorem abl_extends_to_caus :
-    Core.Case.Extends .abl .caus := by decide
+    Features.Case.Extends .abl .caus := by decide
 
 end Fragments.Latin.Case

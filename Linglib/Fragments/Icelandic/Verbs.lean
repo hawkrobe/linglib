@@ -44,12 +44,12 @@ Quirky case is **fixed** (lexical): it is preserved under raising and is
 not affected by passivization. Structural case (NOM, ACC in standard
 frames) is **derived**: it changes under passivization (ACC object →
 NOM subject in passive). This distinction is encoded via `CaseAssignment`
-from `Core.Case`.
+from `Features.Case`.
 -/
 
 namespace Fragments.Icelandic.Verbs
 
-open Core
+open Features (Case CaseAssignment)
 
 -- ============================================================================
 -- § 1: Verb Case Frames

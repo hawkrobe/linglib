@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Features.Case
+import Linglib.Features.Case
 import Linglib.Syntax.Case.Dependent
 
 /-!
@@ -51,8 +51,8 @@ with Nez Perce as the primary case study.
 
 ## Integration
 
-- Local `WCase` type adds OBJ (absent from `Core.Case`)
-- Bridge theorems connect to `Core.Case` hierarchy validation
+- Local `WCase` type adds OBJ (absent from `Features.Case`)
+- Bridge theorems connect to `Features.Case` hierarchy validation
 - Bridge theorems connect to dependent case algorithm (`DependentCase.lean`)
   showing where the theories agree and diverge
 -/
@@ -468,12 +468,12 @@ theorem all_predicted_ditrans_valid :
       (availableDitransPatterns params).all predictDitransitive) = true := by native_decide
 
 -- ============================================================================
--- § 13: Mapping to Core.Case
+-- § 13: Mapping to Features.Case
 -- ============================================================================
 
-/-- Map Woolford's cases to `Core.Case` for hierarchy validation.
+/-- Map Woolford's cases to `Features.Case` for hierarchy validation.
     OBJ maps to ACC (both are structural object cases). -/
-def WCase.toCore : WCase → Core.Case
+def WCase.toCore : WCase → Features.Case
   | .nom => .nom
   | .obj => .acc   -- OBJ is a structural object case; closest match
   | .acc => .acc
@@ -483,16 +483,16 @@ def WCase.toCore : WCase → Core.Case
 /-- Nez Perce structural case inventory (NOM + ACC/OBJ + ERG).
     Under Blake's hierarchy, these are all core cases (rank 6)
     plus DAT (rank 4), with GEN (rank 5) between. -/
-def npInventory : Finset Core.Case := {.nom, .acc, .erg}
+def npInventory : Finset Features.Case := {.nom, .acc, .erg}
 
 /-- The core-case subset is valid per Blake's hierarchy
     (all at rank 6, no gaps). -/
-theorem np_core_valid : Core.Case.IsValidInventory npInventory := by decide
+theorem np_core_valid : Features.Case.IsValidInventory npInventory := by decide
 
 /-- Full inventory including DAT requires GEN for contiguity. -/
-def npFullInventory : Finset Core.Case := {.nom, .acc, .erg, .gen, .dat}
+def npFullInventory : Finset Features.Case := {.nom, .acc, .erg, .gen, .dat}
 
-theorem np_full_valid : Core.Case.IsValidInventory npFullInventory := by decide
+theorem np_full_valid : Features.Case.IsValidInventory npFullInventory := by decide
 
 -- ============================================================================
 -- § 14: Bridge to Dependent Case Theory
@@ -506,8 +506,8 @@ transitives with two caseless NPs. Key disagreement: dependent case has
 no OBJ/ACC distinction — it assigns a single dependent case (ACC) to
 the lower NP, regardless of whether the higher NP has lexical case. -/
 
-/-- Map Woolford's cases to `Core.Case` for comparison with dependent case. -/
-def WCase.toCoreCase : WCase → Core.Case
+/-- Map Woolford's cases to `Features.Case` for comparison with dependent case. -/
+def WCase.toCoreCase : WCase → Features.Case
   | .nom => .nom
   | .obj => .acc   -- dependent case conflates OBJ/ACC
   | .acc => .acc

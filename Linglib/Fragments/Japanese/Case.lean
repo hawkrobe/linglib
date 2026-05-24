@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Features.Case
+import Linglib.Features.Case
 /-!
 # Japanese Case Inventory @cite{blake-1994} @cite{tsujimura-2014} @cite{sadakane-koizumi-1995} @cite{kuroda-1972} @cite{kuno-1987}
 
@@ -20,12 +20,12 @@ an `omissibleInCasual : Bool` field encoding Tsujimura's primitive
 diagnostic; the two enumerated lists (`caseParticles`, `postpositions`)
 realize Tsujimura's classification, with consistency theorems forcing the
 two encodings to agree. Both classes contribute to the language's
-`Core.Case` inventory under the UD/Blake typological framing this library
+`Features.Case` inventory under the UD/Blake typological framing this library
 uses (@cite{blake-1994} subsumes the postposition-marked roles
 LOC/ALL/ABL/COM/TER/INST under the case hierarchy alongside the case-
 particle-marked roles NOM/ACC/DAT/GEN).
 
-§1 declares the markers; §2 derives the `Core.Case` inventory and proves
+§1 declares the markers; §2 derives the `Features.Case` inventory and proves
 substantive properties (Blake-rank coverage, polysemy overlap).
 
 ## Theoretical commitments
@@ -102,7 +102,7 @@ namespace Fragments.Japanese.Case
 -- § 1: Case Markers
 -- ============================================================================
 
-/-- A Japanese case-marking morpheme. `cases` records which `Core.Case`
+/-- A Japanese case-marking morpheme. `cases` records which `Features.Case`
     categories the marker realizes — most markers map to a single case,
     but *-ni* and *-de* are polysemous. `omissibleInCasual` records
     Tsujimura's diagnostic (ch. 4 §1.6, p. 136, ex. 28–29): case particles
@@ -116,8 +116,8 @@ structure CaseMarker where
   romaji            : String
   /-- Hiragana form. -/
   kana              : String
-  /-- The `Core.Case` categories this marker realizes. -/
-  cases             : Finset Core.Case
+  /-- The `Features.Case` categories this marker realizes. -/
+  cases             : Finset Features.Case
   /-- Whether the marker can be dropped in casual speech (Tsujimura's
       diagnostic for case-particle status, p. 136, ex. 28–29). -/
   omissibleInCasual : Bool
@@ -201,7 +201,7 @@ def kara : CaseMarker :=
 /-- *-made* — terminative postposition ('until, as far as'). Tsujimura
     (p. 133, ex. 20d: *gozi-made* "until 5 o'clock"; p. 137: "*made* 'until,
     as far as'"). Marks the endpoint of a spatial or temporal extent. UD
-    `Core.Case` provides `.Ter` for this role (Hungarian *-ig*, Finnish
+    `Features.Case` provides `.Ter` for this role (Hungarian *-ig*, Finnish
     *-asti*). -/
 def made : CaseMarker :=
   { romaji := "made", kana := "まで", cases := {.Ter}, omissibleInCasual := false }
@@ -250,10 +250,10 @@ theorem postpositions_none_omissible :
 -- § 2: Case Inventory
 -- ============================================================================
 
-/-- The `Core.Case` categories realized by Japanese case markers, derived
+/-- The `Features.Case` categories realized by Japanese case markers, derived
     from `caseMarkers`. Changing a marker's `cases` field automatically
     propagates here — there is no separately stipulated set to drift from. -/
-def caseInventory : Finset Core.Case :=
+def caseInventory : Finset Features.Case :=
   (caseMarkers.map (·.cases)).foldr (· ∪ ·) ∅
 
 /-- Every Blake hierarchy rank from 0 to 6 is realized in the Japanese
@@ -267,7 +267,7 @@ theorem caseInventory_realizes_all_blake_ranks :
     `caseInventory_realizes_all_blake_ranks`, but stated separately so that
     consumers comparing inventories across Fragments can `exact` it.) -/
 theorem caseInventory_isValid :
-    Core.Case.IsValidInventory caseInventory := by decide
+    Features.Case.IsValidInventory caseInventory := by decide
 
 /-! ### Polysemy as theorems
 

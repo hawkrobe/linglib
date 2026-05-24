@@ -1,6 +1,6 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Split
+import Linglib.Features.Case
+import Linglib.Features.Case
+import Linglib.Typology.Alignment
 /-!
 # Hindi Case Inventory @cite{blake-1994}
 
@@ -18,7 +18,7 @@ cross-linguistically common patterns.
 ## Split-Ergative Connection
 
 This fragment connects to the `hindiSplit` already defined in
-`Core.Case.SplitConditions`, which formalizes the perfective to
+`Typology.Alignment.SplitErgativity`, which formalizes the perfective to
 ergative conditioning.
 
 -/
@@ -30,13 +30,13 @@ namespace Fragments.Hindi.Case
 -- ============================================================================
 
 /-- Hindi case inventory. ACC/DAT share -ko; ABL/INST share -se.
-    Both syncretic pairs are included as distinct Core.Case values since
+    Both syncretic pairs are included as distinct Features.Case values since
     they occupy different positions on Blake's hierarchy. -/
-def caseInventory : Finset Core.Case :=
+def caseInventory : Finset Features.Case :=
   {.nom, .erg, .acc, .dat, .gen, .loc, .abl, .inst}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 2, all present).
-example : Core.Case.IsValidInventory caseInventory := by decide
+example : Features.Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- Section 2: Syncretism
@@ -47,7 +47,7 @@ theorem acc_dat_syncretic_marker : True := trivial
 
 /-- ABL/INST syncretism (-se marks both). Same-tier adjacency. -/
 theorem abl_inst_same_tier :
-    Core.Case.hierarchyRank .abl = Core.Case.hierarchyRank .inst := rfl
+    Features.Case.hierarchyRank .abl = Features.Case.hierarchyRank .inst := rfl
 
 -- ============================================================================
 -- Section 3: Split-Ergative Connection
@@ -55,9 +55,9 @@ theorem abl_inst_same_tier :
 
 /-- The split-ergative system defined in `SplitConditions.lean`. -/
 theorem hindi_perfective_is_ergative :
-    Core.hindiSplit.alignment .perfective = .ergative := rfl
+    Typology.Alignment.hindiSplit.alignment .perfective = .ergative := rfl
 
 theorem hindi_imperfective_is_accusative :
-    Core.hindiSplit.alignment .imperfective = .accusative := rfl
+    Typology.Alignment.hindiSplit.alignment .imperfective = .accusative := rfl
 
 end Fragments.Hindi.Case

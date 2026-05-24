@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Features.Case
+import Linglib.Features.Case
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 
@@ -128,7 +128,7 @@ abbrev ArgPosition := Features.Prominence.ArgumentRole
     equal to `Fragments.Mayan.ergCaseKaqchikel`, which derives from
     `Alignment.ergative.assignCase` in
     `Syntax/Case/Alignment.lean` — A → ERG, S/P → ABS. -/
-abbrev ArgPosition.case : ArgPosition → Core.Case :=
+abbrev ArgPosition.case : ArgPosition → Features.Case :=
   Fragments.Mayan.ergCaseKaqchikel
 
 /-- Non-perfective (PROG `ajin`) case assignment for Kaqchikel.
@@ -141,7 +141,7 @@ abbrev ArgPosition.case : ArgPosition → Core.Case :=
     the only Case-less DP and receives ERG/GEN from D as phase head;
     the subject is base-generated in matrix Spec-PredP (with `ajin`)
     and gets ABS from matrix Infl. -/
-abbrev ArgPosition.accCase : ArgPosition → Core.Case :=
+abbrev ArgPosition.accCase : ArgPosition → Features.Case :=
   Fragments.Mayan.accCaseKaqchikel
 
 /-- Does this position participate in φ-Agree?
@@ -277,7 +277,7 @@ theorem trans_has_ergative :
 -- ============================================================================
 
 /-- Kaqchikel case inventory, derived from argument position case values. -/
-def caseInventory : Finset Core.Case := {.erg, .abs}
+def caseInventory : Finset Features.Case := {.erg, .abs}
 
 /-- The inventory covers all argument positions: every position's case
     is in the inventory. -/
@@ -286,6 +286,6 @@ theorem inventory_covers_positions :
 
 -- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy
 -- (both are core cases at rank 6, trivially no gaps).
-example : Core.Case.IsValidInventory caseInventory := by decide
+example : Features.Case.IsValidInventory caseInventory := by decide
 
 end Fragments.Mayan.Kaqchikel

@@ -37,7 +37,7 @@ The trigger is clause type, not aspect or person features:
 
 ## Why Not `SplitErgativity`?
 
-`Core.Case.SplitErgativity` models a binary toggle between ergative and
+`Syntax.Case.SplitErgativity` models a binary toggle between ergative and
 accusative alignment conditioned by some factor (e.g., aspect in Hindi).
 Mam's SEE split is not binary — it goes from tripartite (three distinct
 marking patterns) to neutral (one pattern for all). The custom

@@ -19,9 +19,10 @@ for keeping it in `Core/`.
 Morphological features are aliased to UD types:
 - `Number` = `UD.Number` (with compatibility constructors `sg`, `pl`)
 - `Person` = `UD.Person` (with compatibility constructors `first`, `second`, `third`)
-- `Case` = `UD.Case` (with compatibility constructors `nom`, `acc`, `gen`)
 - `Voice` = `UD.Voice` (with compatibility constructors `active`, `passive`)
 - `VForm` = `UD.VerbForm` (with compatibility constructors)
+
+The grammatical-case substrate lives separately at `Linglib/Features/Case.lean`.
 
 Syntactic categories use `UD.UPOS` directly (the 17 universal POS tags).
 
@@ -53,11 +54,6 @@ end Number
     Constructors are: `.first`, `.second`, `.third`, `.zero`
     (no compatibility aliases needed - names match) -/
 abbrev Person := UD.Person
-
-/-- Grammatical case. Aliased to UD.Case for cross-linguistic compatibility.
-    Lowercase `match_pattern` constructor aliases (`.nom`, `.acc`, `.gen`,
-    `.dat`, `.loc`, …) live in `UD.lean` and apply directly. -/
-abbrev Case := UD.Case
 
 /-- Voice: active vs passive. Aliased to UD.Voice. -/
 abbrev Voice := UD.Voice
@@ -140,7 +136,7 @@ structure Features where
   finite : Bool := true
   number : Option Number := none
   person : Option Person := none
-  case_ : Option Case := none
+  case_ : Option UD.Case := none
   valence : Option Valence := none
   voice : Option Voice := none
   vform : Option VForm := none

@@ -1,4 +1,4 @@
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 import Linglib.Features.Prominence
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Features.Prominence
 
 The SAP-indexed counterpart to `Syntax/Case/Dependent.lean`'s
 configural algorithm. Each `Alignment.X.assignCase` is a function from
-`Features.Prominence.ArgumentRole` to `Core.Case` capturing the canonical
+`Features.Prominence.ArgumentRole` to `Features.Case` capturing the canonical
 case pattern of alignment type X. The configural derivations in
 `Dependent.lean` (Marantz/Baker) and the typology classifier in
 `Linglib/Typology/Alignment.lean` (WALS-style observation) are checked
@@ -56,7 +56,7 @@ namespace ergative
 
 /-- Ergative-absolutive case assignment.
     Monotransitive: `A → ERG`, `S | P → ABS`. R/T default to ABS. -/
-def assignCase : ArgumentRole → Core.Case
+def assignCase : ArgumentRole → Features.Case
   | .A => .erg
   | .S | .P => .abs
   | .R | .T => .abs
@@ -71,7 +71,7 @@ namespace nominativeAccusative
     paradigms); T to ACC. **R → DAT is IE-biased** — secundative and
     double-accusative languages (English, many Bantu, Tagalog) assign
     R → ACC instead and would override this default. -/
-def assignCase : ArgumentRole → Core.Case
+def assignCase : ArgumentRole → Features.Case
   | .A | .S => .nom
   | .P | .T => .acc
   | .R => .dat
@@ -84,7 +84,7 @@ namespace extendedErgative
     nominalization), `P → ABS` (from Voice). Per @cite{coon-2013};
     @cite{imanishi-2020} parameterizes the same surface pattern via inherent
     vs structural Case. R/T default to ABS. -/
-def assignCase : ArgumentRole → Core.Case
+def assignCase : ArgumentRole → Features.Case
   | .A | .S => .gen
   | .P => .abs
   | .R | .T => .abs
@@ -102,7 +102,7 @@ namespace tripartite
     from agreement patterns (Set A on A, no agreement on P, Set B
     on S). R/T default to ACC (consistent with P) since Mam
     ditransitives aren't documented in the analyzed corpus. -/
-def assignCase : ArgumentRole → Core.Case
+def assignCase : ArgumentRole → Features.Case
   | .A => .erg
   | .P => .acc
   | .S => .abs
@@ -144,7 +144,7 @@ namespace invertedErgative
     varieties may not show the inverted pattern even in PROG sentences;
     @cite{garcia-matzar-rodriguez-guajan-1997} document broader patterns
     that Imanishi's consultants don't accept. R/T default to ABS. -/
-def assignCase : ArgumentRole → Core.Case
+def assignCase : ArgumentRole → Features.Case
   | .A | .S => .abs
   | .P => .gen
   | .R | .T => .abs

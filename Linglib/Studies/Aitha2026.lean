@@ -1,14 +1,14 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Order
-import Linglib.Core.Case.Allomorphy
+import Linglib.Features.Case
+import Linglib.Features.Case
+import Linglib.Syntax.Case.Order
+import Linglib.Morphology.Case.Allomorphy
 import Linglib.Core.Constraint.System
 import Linglib.Phonology.Prosodic.Syllable.Foot
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Phonology.OptimalityTheory.Stratal
 import Linglib.Phonology.Prosodic.Word
 import Linglib.Phonology.Prosodic.Moraic.CompensatoryLengthening
-open Core.Case.Allomorphy
+open Morphology.Case.Allomorphy
 
 /-!
 # The Nouns that Say *-ni* @cite{aitha-2026}
@@ -71,7 +71,7 @@ inductive TeluguCase where
   deriving DecidableEq, Repr
 
 /-- Map Telugu cases to the core `Case` type. -/
-def TeluguCase.toCore : TeluguCase → Core.Case
+def TeluguCase.toCore : TeluguCase → Features.Case
   | .nom => .nom
   | .acc => .acc
   | .gen => .gen
@@ -79,18 +79,18 @@ def TeluguCase.toCore : TeluguCase → Core.Case
   | .loc => .loc
 
 /-- Is this Telugu case nonnominative? Derived from
-    `Core.Case.IsNonnominative`, which is `(.acc : Case) ≤ c` under the
+    `Syntax.Case.IsNonnominative`, which is `(.acc : Case) ≤ c` under the
     @cite{caha-2009}/@cite{mcfadden-2018} containment ordering. The full
-    containment hierarchy lives at `Core.Case.Order` (`containmentRank`,
+    containment hierarchy lives at `Syntax.Case.Order` (`containmentRank`,
     `cahaLE`); Aitha's *n*-head VI rules condition on this binary
     projection of the hierarchy down to a NOM-vs-oblique contrast at
     the *n* head — the layered hierarchy is the substrate, the binary
     split is the Telugu-*n*-specific reduction. -/
 def TeluguCase.IsNonnom (c : TeluguCase) : Prop :=
-  Core.Case.IsNonnominative c.toCore
+  Syntax.Case.IsNonnominative c.toCore
 
 instance (c : TeluguCase) : Decidable (TeluguCase.IsNonnom c) :=
-  inferInstanceAs (Decidable (Core.Case.IsNonnominative c.toCore))
+  inferInstanceAs (Decidable (Syntax.Case.IsNonnominative c.toCore))
 
 -- ────────────────────────────────────────────────────────────────────
 -- Strong noun paradigm: *illu* 'house'
@@ -946,7 +946,7 @@ theorem weak_is_outward_sensitive :
 
 -- The Telugu 5-case inventory is contiguous on Blake's typological
 -- hierarchy (@cite{blake-1994}).
-example : Core.Case.IsValidInventory ({.nom, .acc, .gen, .dat, .loc} : Finset Core.Case) := by
+example : Features.Case.IsValidInventory ({.nom, .acc, .gen, .dat, .loc} : Finset Features.Case) := by
   decide
 
 /-- The strong alternation pattern derived from VI output matches the

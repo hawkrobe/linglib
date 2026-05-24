@@ -2,7 +2,7 @@ import Linglib.Core.Computability.ContextFreeGrammar.Closure
 import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 import Linglib.Fragments.SwissGerman.Case
 
 /-!
@@ -104,7 +104,8 @@ not duplicated here.
 
 namespace Shieber1985
 
-open Core (Case StringHom)
+open Features (Case)
+open Core (StringHom)
 open Fragments.SwissGerman.Case (CrossSerialVerb verbObjectCase)
 
 -- ============================================================================

@@ -1,7 +1,6 @@
 import Linglib.Typology.Alignment
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.FeatureBundle
-import Linglib.Core.Case.Split
+import Linglib.Features.Case
+import Linglib.Typology.Alignment
 import Linglib.Features.Prominence
 import Linglib.Syntax.Case.Alignment
 import Linglib.Fragments.Dargwa.Case
@@ -466,13 +465,13 @@ section SilversteinSplit
 open Features.Prominence (AnimacyLevel)
 
 /-- Map the binary Core alignment family to the full alignment type. -/
-private def toAlignmentType : Core.AlignmentFamily → AlignmentType
+private def toAlignmentType : Features.AlignmentFamily → AlignmentType
   | .accusative => .accusative
   | .ergative   => .ergative
 
 /-- Silverstein's hierarchy: NPs at or above the prominence threshold get
     accusative alignment; those below get ergative. -/
-def silverstein (threshold : Nat) (npProminence : Nat) : Core.AlignmentFamily :=
+def silverstein (threshold : Nat) (npProminence : Nat) : Features.AlignmentFamily :=
   if npProminence ≥ threshold then .accusative else .ergative
 
 /-- Silverstein is monotone: if prominence p₁ ≥ p₂ and p₂ gets accusative,
@@ -494,7 +493,7 @@ theorem silverstein_predicts_dixon :
 
 /-- @cite{dixon-1972} Dyirbal split: human/animate → accusative,
     inanimate → ergative. -/
-def dyirbalSplit : Core.SplitErgativity AnimacyLevel :=
+def dyirbalSplit : Typology.Alignment.SplitErgativity AnimacyLevel :=
   { ergCondition := fun a => a == .inanimate }
 
 theorem dyirbal_human_acc :
@@ -604,15 +603,15 @@ theorem japanese_fragment_bridge :
 /-- Hindi: Fragment split-ergative system perfective → ERG matches
     Typology's ergative NP alignment. -/
 theorem hindi_fragment_bridge :
-    Core.hindiSplit.alignment .perfective = .ergative ∧
-    toAlignmentType (Core.hindiSplit.alignment .perfective)
+    Typology.Alignment.hindiSplit.alignment .perfective = .ergative ∧
+    toAlignmentType (Typology.Alignment.hindiSplit.alignment .perfective)
       = hindiUrdu.npAlignment := ⟨rfl, rfl⟩
 
 /-- Hindi: Fragment imperfective → ACC matches Typology's accusative
     pronoun alignment. -/
 theorem hindi_split_bridge :
-    Core.hindiSplit.alignment .imperfective = .accusative ∧
-    toAlignmentType (Core.hindiSplit.alignment .imperfective)
+    Typology.Alignment.hindiSplit.alignment .imperfective = .accusative ∧
+    toAlignmentType (Typology.Alignment.hindiSplit.alignment .imperfective)
       = hindiUrdu.pronAlignment := ⟨rfl, rfl⟩
 
 -- ============================================================================

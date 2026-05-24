@@ -1,4 +1,5 @@
 import Linglib.Data.WALS.Features.F121A
+import Linglib.Features.Case
 
 /-!
 # Typology.Comparison
@@ -227,5 +228,23 @@ theorem locational_and_particle_dominant :
     let loc := (ch121.filter (·.value == .locational)).length
     let par := (ch121.filter (·.value == .particle)).length
     loc + par > ch121.length / 2 := by native_decide
+
+/-! ### Stassen 1985 — Comparative Entry @cite{stassen-1985}
+
+A typed record for the parameters of a comparative construction in a
+particular language: standard case, how that case is assigned, optional
+fixed-encoding role, the standard marker (e.g., *than*, *より*), and
+whether the construction has dedicated degree morphology. -/
+
+open Features (Case CaseAssignment FixedCaseEncoding)
+
+/-- A language's comparative construction entry (@cite{stassen-1985}). -/
+structure ComparativeEntry where
+  standardCase : Case
+  caseAssignment : CaseAssignment
+  fixedEncoding : Option FixedCaseEncoding
+  standardMarker : String
+  hasDegreeMorphology : Bool
+  deriving Repr, BEq
 
 end Typology.Comparison

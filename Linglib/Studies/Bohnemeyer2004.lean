@@ -425,6 +425,6 @@ theorem linking_consistent_with_split :
     (modulo language-specific factor types). -/
 theorem aspect_conditioned_split_family :
     yukatekSplit.alignment .completive =
-      Core.hindiSplit.alignment .perfective := rfl
+      Typology.Alignment.hindiSplit.alignment .perfective := rfl
 
 end Bohnemeyer2004

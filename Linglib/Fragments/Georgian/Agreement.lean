@@ -1,7 +1,7 @@
 import Linglib.Features.Prominence
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Split
+import Linglib.Features.Case
+import Linglib.Features.Case
+import Linglib.Typology.Alignment
 /-!
 # Georgian Agreement Fragment @cite{just-2024}
 @cite{harris-1981}
@@ -141,8 +141,8 @@ inductive TenseSeries where
     uses ergative alignment. Present uses NOM-DAT framing and evidential
     uses DAT-NOM "inversion" — both non-ergative.
 
-    This instantiates `Core.SplitErgativity` from @cite{blake-1994}'s typology of tense/aspect-conditioned splits. -/
-def georgianSplit : Core.SplitErgativity TenseSeries :=
+    This instantiates `Typology.Alignment.SplitErgativity` from @cite{blake-1994}'s typology of tense/aspect-conditioned splits. -/
+def georgianSplit : Typology.Alignment.SplitErgativity TenseSeries :=
   { ergCondition := fun ts => ts == .aorist }
 
 /-- Aorist triggers ergative alignment. -/
@@ -158,13 +158,13 @@ theorem evidential_accusative :
     georgianSplit.alignment .evidential = .accusative := rfl
 
 /-- Case frame for the subject (A/S) in each tense series. -/
-def subjectCase : TenseSeries → Core.Case
+def subjectCase : TenseSeries → Features.Case
   | .present    => .nom   -- A = NOM
   | .aorist     => .erg   -- A = ERG
   | .evidential => .dat   -- A = DAT (inversion)
 
 /-- Case frame for the object (P/R) in each tense series. -/
-def objectCase : TenseSeries → Core.Case
+def objectCase : TenseSeries → Features.Case
   | .present    => .dat   -- P = DAT
   | .aorist     => .nom   -- P = NOM
   | .evidential => .nom   -- P = NOM
@@ -175,7 +175,7 @@ def objectCase : TenseSeries → Core.Case
     and INST (instrumental), yielding {NOM, ERG, GEN, DAT, INST} which
     satisfies contiguity. Here we validate only the agreement-visible
     subset, which also satisfies contiguity (all rank ≥ 4). -/
-def caseInventory : Finset Core.Case := {.nom, .erg, .dat}
+def caseInventory : Finset Features.Case := {.nom, .erg, .dat}
 
 /-- The inventory covers all tense-series case frames. -/
 def allTenseSeries : List TenseSeries := [.present, .aorist, .evidential]
@@ -197,9 +197,9 @@ theorem inventory_covers_objects :
     part of the agreement system.
 
     We validate the full case system instead. -/
-def fullCaseInventory : Finset Core.Case := {.nom, .erg, .gen, .dat}
+def fullCaseInventory : Finset Features.Case := {.nom, .erg, .gen, .dat}
 
-example : Core.Case.IsValidInventory fullCaseInventory := by decide
+example : Features.Case.IsValidInventory fullCaseInventory := by decide
 
 -- ============================================================================
 -- § 6: Verb Classes (@cite{harris-1981}, @cite{marantz-1991})
@@ -240,7 +240,7 @@ theorem class4_no_erg : takesErgInAorist .class4 = false := rfl
     Present/aorist patterns from @cite{marantz-1991}. Evidential follows
     the general inversion pattern: all subjects surface as DAT
     (@cite{harris-1981}). -/
-def verbClassSubjectCase : VerbClass → TenseSeries → Core.Case
+def verbClassSubjectCase : VerbClass → TenseSeries → Features.Case
   | .class1, .present    => .nom
   | .class1, .aorist     => .erg
   | .class1, .evidential => .dat
@@ -254,7 +254,7 @@ def verbClassSubjectCase : VerbClass → TenseSeries → Core.Case
 
 /-- Object case by verb class and tense series.
     Classes 2 and 3 are intransitive (no direct object). -/
-def verbClassObjectCase : VerbClass → TenseSeries → Option Core.Case
+def verbClassObjectCase : VerbClass → TenseSeries → Option Features.Case
   | .class1, .present    => some .dat
   | .class1, .aorist     => some .nom
   | .class1, .evidential => some .nom

@@ -1,4 +1,4 @@
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 import Linglib.Typology.Case
 
 /-!
@@ -31,7 +31,7 @@ namespace Fragments.Arabic.ModernStandard.Case
 /-! ## Inventory -/
 
 /-- The three-case core: nominative, accusative, genitive (Ryding §5 p. 166). -/
-abbrev caseInventory : Finset Core.Case := {.nom, .acc, .gen}
+abbrev caseInventory : Finset Features.Case := {.nom, .acc, .gen}
 
 theorem caseInventory_card : caseInventory.card = 3 := by decide
 

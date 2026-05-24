@@ -1,4 +1,4 @@
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 /-!
 # Dependent Case Theory
 @cite{marantz-1991} @cite{baker-2015}
@@ -43,9 +43,9 @@ cross-linguistic validation, and competing analyses live in
   the source of dyadic unaccusatives, with lexical ABL from *kara*
   bleeding dependent case
 - `Studies/Caha2009.lean` — typological prediction at the inventory level,
-  using the `PartialOrder Core.Case` instance from `Core/Case/Order.lean`
+  using the `PartialOrder Features.Case` instance from `Core/Case/Order.lean`
   and the `RespectsCahaContainment` predicate now defined in `Caha2009.lean`
-  itself. The dependent case algorithm produces values in `Core.Case`;
+  itself. The dependent case algorithm produces values in `Features.Case`;
   their relative ranking is the canonical containment order, which
   Caha's *ABA constraint applies to.
 
@@ -61,14 +61,16 @@ cross-linguistic validation, and competing analyses live in
   licensers as a last-resort response to convergence failure, deriving
   DOM patterns as the surface signature of secondary-licenser activation
 - `Core/Case/Order.lean` — the containment hierarchy (`PartialOrder
-  Core.Case`); `Core/Case/Allomorphy.lean` — the framework-neutral
+  Features.Case`); `Core/Case/Allomorphy.lean` — the framework-neutral
   `AllomorphyPattern` and *ABA substrate; `Studies/
   Caha2009.lean` — the Caha-specific `RespectsCahaContainment`
-  predicate that consumes `Core.Case` values
+  predicate that consumes `Features.Case` values
 
 -/
 
 namespace Syntax.Case
+
+open Features (Case)
 
 -- ============================================================================
 -- § 1: Case Sources
@@ -113,7 +115,7 @@ structure NPInDomain where
   /-- Label identifying this NP -/
   label : String
   /-- Lexical case pre-assigned by a P or V head (e.g., ABL from *kara*) -/
-  lexicalCase : Option Core.Case
+  lexicalCase : Option Features.Case
   deriving DecidableEq, Repr
 
 -- ============================================================================
@@ -123,12 +125,12 @@ structure NPInDomain where
 /-- Result of case assignment: an NP with its case value and source. -/
 structure CasedNP where
   label : String
-  case : Core.Case
+  case : Features.Case
   source : CaseSource
   deriving DecidableEq, Repr
 
 /-- Look up the assigned case for an NP by label. -/
-def getCaseOf (label : String) (results : List CasedNP) : Option Core.Case :=
+def getCaseOf (label : String) (results : List CasedNP) : Option Features.Case :=
   (results.find? (·.label == label)).map (·.case)
 
 /-- Look up the case source for an NP by label. -/
@@ -150,7 +152,7 @@ def anyLacksCaseIn (nps : List NPInDomain) : Bool :=
     In our list representation, NP at index i is c-commanded by all NPs
     at index j < i. So NP_i gets ACC if it has no lexical case and
     some NP before it also has no lexical case. -/
-def dependentAccusative (higherNPs : List NPInDomain) (np : NPInDomain) : Option Core.Case :=
+def dependentAccusative (higherNPs : List NPInDomain) (np : NPInDomain) : Option Features.Case :=
   if np.lexicalCase.isNone && anyLacksCaseIn higherNPs then
     some .acc
   else
@@ -159,7 +161,7 @@ def dependentAccusative (higherNPs : List NPInDomain) (np : NPInDomain) : Option
 /-- Dependent ergative: assigned to an NP that c-commands another caseless NP.
     NP_i gets ERG if it has no lexical case and some NP after it also
     has no lexical case. -/
-def dependentErgative (np : NPInDomain) (lowerNPs : List NPInDomain) : Option Core.Case :=
+def dependentErgative (np : NPInDomain) (lowerNPs : List NPInDomain) : Option Features.Case :=
   if np.lexicalCase.isNone && anyLacksCaseIn lowerNPs then
     some .erg
   else
@@ -173,7 +175,7 @@ def dependentErgative (np : NPInDomain) (lowerNPs : List NPInDomain) : Option Co
     - Accusative languages: NOM
     - Ergative languages: ABS
     - Tripartite languages: ABS (only intransitive S gets unmarked case) -/
-def unmarkedCaseFor (lang : CaseLanguageType) : Core.Case :=
+def unmarkedCaseFor (lang : CaseLanguageType) : Features.Case :=
   match lang with
   | .accusative => .nom
   | .ergative => .abs
@@ -269,7 +271,7 @@ def ablVariantResult : List CasedNP :=
 
 /-- Lexical case bleeds dependent case: an NP with lexical case is never
     assigned dependent case, regardless of structural configuration. -/
-theorem lexical_bleeds_dependent (lang : CaseLanguageType) (c : Core.Case)
+theorem lexical_bleeds_dependent (lang : CaseLanguageType) (c : Features.Case)
     (higherNPs lowerNPs : List NPInDomain) :
     (assignOneCase lang higherNPs lowerNPs
       { label := "x", lexicalCase := some c }).source = .lexical := by
@@ -431,7 +433,7 @@ theorem case_is_configural :
 /-- The structural (non-lexical) cases that the dependent case algorithm
     can assign for each language type. These are exactly the cases that
     appear in the `none` (no lexical case) branch of `assignOneCase`. -/
-def structuralCasesFor : CaseLanguageType → List Core.Case
+def structuralCasesFor : CaseLanguageType → List Features.Case
   | .accusative => [.nom, .acc]
   | .ergative   => [.abs, .erg]
   | .tripartite => [.abs, .erg, .acc]
@@ -619,7 +621,7 @@ def PhasedNP.visibleOnCP (p : PhasedNP) : Bool :=
     pre-set. -/
 structure PhasedState where
   np : PhasedNP
-  case : Option (Core.Case × CaseSource)
+  case : Option (Features.Case × CaseSource)
   deriving Repr
 
 /-- An NP is "marked" iff its case has been valued (lexically,
@@ -634,7 +636,7 @@ def initStates (nps : List PhasedNP) : List PhasedState :=
                      case := p.lexicalCase.map (fun c => (c, .lexical)) }
 
 /-- Replace the case of the NP at index `i` with `(c, src)`. -/
-def setCaseAt (i : Nat) (c : Core.Case) (src : CaseSource)
+def setCaseAt (i : Nat) (c : Features.Case) (src : CaseSource)
     (states : List PhasedState) : List PhasedState :=
   states.zipIdx.map fun (s, j) =>
     if j == i then { s with case := some (c, src) } else s
@@ -770,7 +772,7 @@ theorem initStates_length (nps : List PhasedNP) :
     (initStates nps).length = nps.length := by
   unfold initStates; rw [List.length_map]
 
-theorem setCaseAt_length (i : Nat) (c : Core.Case) (src : CaseSource)
+theorem setCaseAt_length (i : Nat) (c : Features.Case) (src : CaseSource)
     (states : List PhasedState) :
     (setCaseAt i c src states).length = states.length := by
   unfold setCaseAt
@@ -878,7 +880,7 @@ a marked state) and use it to derive the bleeding theorem for
 arbitrary inputs. -/
 
 /-- `setCaseAt` at index `i` leaves every other index untouched. -/
-private theorem setCaseAt_get?_ne (i j : Nat) (c : Core.Case) (src : CaseSource)
+private theorem setCaseAt_get?_ne (i j : Nat) (c : Features.Case) (src : CaseSource)
     (states : List PhasedState) (h : i ≠ j) :
     (setCaseAt i c src states)[j]? = states[j]? := by
   unfold setCaseAt

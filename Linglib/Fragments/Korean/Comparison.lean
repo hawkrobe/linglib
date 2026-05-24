@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Comparative
+import Linglib.Features.Case
+import Linglib.Typology.Comparison
 import Linglib.Typology.Comparison
 /-!
 # Korean Comparative Construction @cite{stassen-1985}
@@ -22,7 +22,7 @@ typology.
 namespace Fragments.Korean.Comparison
 
 /-- Korean comparative: separative standard marker *-boda*. -/
-def entry : Core.ComparativeEntry :=
+def entry : Typology.Comparison.ComparativeEntry :=
   { standardCase := .abl
   , caseAssignment := .fixed
   , fixedEncoding := some .adverbial

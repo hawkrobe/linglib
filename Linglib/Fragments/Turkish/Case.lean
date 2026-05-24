@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Features.Case
+import Linglib.Features.Case
 /-!
 # Turkish Case Inventory @cite{blake-1994}
 @cite{goksel-kerslake-2005}
@@ -17,10 +17,10 @@ namespace Fragments.Turkish.Case
 
 /-- Turkish case inventory: NOM(∅), ACC(-I), GEN(-In), DAT(-A),
     LOC(-DA), ABL(-DAn). -/
-def caseInventory : Finset Core.Case :=
+def caseInventory : Finset Features.Case :=
   {.nom, .acc, .gen, .dat, .loc, .abl}
 
 -- Perfectly contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 3, 2).
-example : Core.Case.IsValidInventory caseInventory := by decide
+example : Features.Case.IsValidInventory caseInventory := by decide
 
 end Fragments.Turkish.Case

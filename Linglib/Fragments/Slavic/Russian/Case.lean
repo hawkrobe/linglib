@@ -15,6 +15,6 @@ reduction, see `Pesetsky2013`.
 
 namespace Fragments.Slavic.Russian.Case
 
-abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Russian.Case

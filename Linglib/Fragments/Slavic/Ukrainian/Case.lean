@@ -14,6 +14,6 @@ core; `Fragments.Slavic.Case.sevenCaseInventory` carries the +VOC form.
 
 namespace Fragments.Slavic.Ukrainian.Case
 
-abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Ukrainian.Case

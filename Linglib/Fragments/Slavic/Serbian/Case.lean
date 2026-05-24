@@ -14,6 +14,6 @@ Browne's chapter covers the unified Serbo-Croat standard.
 
 namespace Fragments.Slavic.Serbian.Case
 
-abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Serbian.Case

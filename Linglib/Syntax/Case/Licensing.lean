@@ -1,4 +1,4 @@
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 import Linglib.Syntax.Case.Dependent
 import Linglib.Syntax.Case.CaseFilter
 
@@ -102,7 +102,7 @@ condition on hybrid licensing rather than stipulating it.
 
 namespace Syntax.Case.Licensing
 
--- We qualify `Core.Case` everywhere because `Core/Lexical/Word.lean`
+-- We qualify `Features.Case` everywhere because `Core/Lexical/Word.lean`
 -- aliases a *different* `Case` (UD.Case) at root scope.
 open Minimalist (DPFeatures satisfiesCaseFilter)
 
@@ -127,7 +127,7 @@ inductive LicenserKind where
 structure Licenser where
   kind : LicenserKind
   head : String
-  assignedCase : Core.Case
+  assignedCase : Features.Case
   deriving DecidableEq, Repr
 
 /-- Is this licenser primary (obligatorily merged in every clause)? -/
@@ -161,7 +161,7 @@ structure LicensedNP extends Syntax.Case.NPInDomain where
     or its [Case] feature is interpretable (no licensing needed). The
     accessor exposes the Pesetsky-Torrego abstraction underlying
     `needsLicensing` + `lexicalCase`. -/
-def LicensedNP.caseFeature (np : LicensedNP) : Option Core.Case :=
+def LicensedNP.caseFeature (np : LicensedNP) : Option Features.Case :=
   match np.lexicalCase, np.needsLicensing with
   | some c, _      => some c
   | none,   false  => some .nom  -- interpretable in situ; nominative is
@@ -212,12 +212,12 @@ theorem ClauseLicensers.primary_isPrimary (cl : ClauseLicensers) :
 inductive LicensingOutcome where
   /-- Licensed by the obligatory primary head; records the head's name
       and the case it assigned. -/
-  | byPrimary (head : String) (c : Core.Case)
+  | byPrimary (head : String) (c : Features.Case)
   /-- Licensed by a last-resort secondary licenser. -/
-  | bySecondary (head : String) (c : Core.Case)
+  | bySecondary (head : String) (c : Features.Case)
   /-- Pre-licensed by P or V via lexical case (bleeds the Agree
       requirement). -/
-  | byLexical (c : Core.Case)
+  | byLexical (c : Features.Case)
   /-- Crash: no licenser available to value [Case]. -/
   | unlicensed
   deriving DecidableEq, Repr
@@ -229,7 +229,7 @@ inductive LicensingOutcome where
   | _ => true
 
 /-- The case value an outcome assigns, if any. -/
-def LicensingOutcome.assignedCase : LicensingOutcome → Option Core.Case
+def LicensingOutcome.assignedCase : LicensingOutcome → Option Features.Case
   | .byPrimary _ c    => some c
   | .bySecondary _ c  => some c
   | .byLexical c      => some c

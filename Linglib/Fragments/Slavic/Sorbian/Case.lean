@@ -26,6 +26,6 @@ robust).
 
 namespace Fragments.Slavic.Sorbian.Case
 
-abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Sorbian.Case

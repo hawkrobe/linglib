@@ -1,10 +1,10 @@
 import Mathlib.Order.Basic
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 /-!
 # Caha Containment Order on Case
 @cite{caha-2009} @cite{mcfadden-2018}
 
-The canonical order on `Core.Case`: state-of-the-art syntax
+The canonical order on `Features.Case`: state-of-the-art syntax
 (configurational case + nanosyntactic spellout) assumes Caha's
 containment as the default. Each case on the hierarchy literally
 *contains* the representations of all cases below it:
@@ -16,12 +16,14 @@ incomparable with on-hierarchy cases under `≤`, except for reflexivity.
 That silence is the theoretical content: Caha's hierarchy is silent on
 those cases, and the `PartialOrder` structure preserves the silence.
 
-Other orders (Blake's typological frequency in `Core/Case/Hierarchy.lean`,
+Other orders (Blake's typological frequency in `Features/Case.lean`,
 per-language syncretism graphs) live as named `def`s used locally via
 `letI` rather than as competing instances on `Case`.
 -/
 
-namespace Core
+open Features (Case)
+
+namespace Syntax
 namespace Case
 
 /-- Caha's containment rank (@cite{caha-2009}). Cases higher on the
@@ -204,4 +206,4 @@ theorem nom_incomparable_erg : ¬ ((.nom : Case) ≤ .erg) := by
   · exact (show False from h)
 
 end Case
-end Core
+end Syntax

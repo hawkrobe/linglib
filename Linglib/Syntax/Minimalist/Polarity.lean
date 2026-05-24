@@ -31,7 +31,6 @@ This file adds the feature infrastructure for what that head carries.
 namespace Minimalist.Polarity
 
 open Minimalist
-open Core
 
 /-- The polarity feature on Pol⁰, which may be valued or unvalued.
 

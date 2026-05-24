@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.HeadFunction
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Order
+import Linglib.Features.Case
+import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Slavic.Russian.Case
 import Linglib.Morphology.DM.Categorizer
 import Linglib.Syntax.Minimalist.Basic
@@ -128,10 +128,10 @@ agreement bridge with @cite{caha-2009}.
 - `Morphology/DM/Categorizer.lean` (@cite{harley-2014}) —
   the structural bridge `primevalN_via_dm_categorizer` connects
   `POSCat.N` to DM `Categorizer.n` via `Cat.N`.
-- `Core.Case` (Blake) gives the cross-linguistic case inventory; we
-  bridge `POSCat → Finset Core.Case` (`POSCat.cases`) so Pesetsky's
+- `Features.Case` (Blake) gives the cross-linguistic case inventory; we
+  bridge `POSCat → Finset Features.Case` (`POSCat.cases`) so Pesetsky's
   primitives plug into the existing typology.
-- `Core.Case.Order` provides Caha's `containmentRank`; the
+- `Syntax.Case.Order` provides Caha's `containmentRank`; the
   `pesetsky_caha_compatible_prefix` theorem records the cross-
   framework agreement (Pesetsky's on-Caha-hierarchy image equals
   Caha's full hierarchy).
@@ -192,12 +192,12 @@ instance : Coe POSCat Cat := ⟨toCat⟩
 theorem toCat_injective : Function.Injective toCat := by
   intro a b h; cases a <;> cases b <;> first | rfl | cases h
 
-/-- The cases each POSCat realizes as in `Core.Case`. N/D/V each map
+/-- The cases each POSCat realizes as in `Features.Case`. N/D/V each map
     to a singleton; P maps to the Russian productive oblique series
     (DAT/INS/LOC, matching `Fragments.Slavic.Russian.Case.caseInventory`)
     since @cite{pesetsky-2013} (p. 7) explicitly does *not* refine
     the obliques by POS. -/
-def cases : POSCat → Finset Core.Case
+def cases : POSCat → Finset Features.Case
   | .N => {.gen}
   | .D => {.nom}
   | .V => {.acc}
@@ -206,7 +206,7 @@ def cases : POSCat → Finset Core.Case
 /-- The canonical exemplar case Pesetsky uses when naming each POSCat.
     For P, the exemplar is DAT (p. 7); see `cases` for the full
     oblique series. -/
-def canonicalExemplar : POSCat → Core.Case
+def canonicalExemplar : POSCat → Features.Case
   | .N => .gen
   | .D => .nom
   | .V => .acc
@@ -293,7 +293,7 @@ where
     stratum (head of the stack) is realized as morphology; inner
     strata are deleted. Returns `none` for empty stacks (no overt
     case marker). Phase 1.0 noncomputable: depends on `caseStackAt`. -/
-noncomputable def surfaceCase (so : SyntacticObject) (tok : LIToken) : Option Core.Case :=
+noncomputable def surfaceCase (so : SyntacticObject) (tok : LIToken) : Option Features.Case :=
   (caseStackAt so tok).head?.map POSCat.canonicalExemplar
 
 -- ============================================================================
@@ -524,12 +524,12 @@ theorem POSCat.image_in_cat :
     an explicit literal so membership reduces under `decide` —
     `Finset.biUnion` (the conceptually purer form) blocks `decide` on
     its `Multiset.Quot.lift` reduction. -/
-def pesetskyCore : Finset Core.Case :=
+def pesetskyCore : Finset Features.Case :=
   {.gen, .nom, .acc, .dat, .inst, .loc}
 
 /-- `pesetskyCore` is the union of `POSCat.cases` over all four POS
     categories — the content the literal definition is shorthand for. -/
-theorem pesetskyCore_eq_biUnion_image (c : Core.Case) :
+theorem pesetskyCore_eq_biUnion_image (c : Features.Case) :
     c ∈ pesetskyCore ↔ ∃ p : POSCat, c ∈ p.cases := by
   constructor
   · intro hc
@@ -555,9 +555,9 @@ theorem canonicalExemplar_image_in_russian_inventory (p : POSCat) :
 /-- The three productive Russian obliques are all in `pesetskyCore`,
     contributed by the P category per @cite{pesetsky-2013} p. 7. -/
 theorem russian_obliques_in_pesetsky_core :
-    (.dat : Core.Case) ∈ pesetskyCore ∧
-    (.inst : Core.Case) ∈ pesetskyCore ∧
-    (.loc : Core.Case) ∈ pesetskyCore := by decide
+    (.dat : Features.Case) ∈ pesetskyCore ∧
+    (.inst : Features.Case) ∈ pesetskyCore ∧
+    (.loc : Features.Case) ∈ pesetskyCore := by decide
 
 /-- **Cross-framework agreement with @cite{caha-2009}**: Pesetsky's
     POS-as-case image, restricted to the cases that have a
@@ -572,8 +572,8 @@ theorem russian_obliques_in_pesetsky_core :
     identify the same five-case core, with Pesetsky adding INST
     outside the Caha hierarchy. -/
 theorem pesetsky_caha_compatible_prefix :
-    pesetskyCore.filter (fun c => (Core.Case.containmentRank c).isSome) =
-      ({.nom, .acc, .gen, .dat, .loc} : Finset Core.Case) := by
+    pesetskyCore.filter (fun c => (Syntax.Case.containmentRank c).isSome) =
+      ({.nom, .acc, .gen, .dat, .loc} : Finset Features.Case) := by
   decide
 
 end Pesetsky2013

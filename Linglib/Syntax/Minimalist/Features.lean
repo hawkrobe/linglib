@@ -1,4 +1,4 @@
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 import Linglib.Core.Word
 import Linglib.Features.Prominence
 
@@ -81,7 +81,7 @@ inductive HonLevel where
 /-- Feature values that can be checked via Agree -/
 inductive FeatureVal where
   | phi : PhiFeature → FeatureVal
-  | case : Core.Case → FeatureVal
+  | case : Features.Case → FeatureVal
   | wh : Bool → FeatureVal           -- [±wh]
   | q : Bool → FeatureVal            -- [±Q] (question)
   | epp : Bool → FeatureVal          -- EPP (needs specifier)
@@ -252,7 +252,7 @@ def FeatureVal.inherentInterpretability : FeatureVal → Option Interpretability
   | _ => none  -- host-dependent: phi, wh, q, tense, finite, foc, rel
 
 /-- Case is always uninterpretable. -/
-theorem case_always_uninterpretable (c : Core.Case) :
+theorem case_always_uninterpretable (c : Features.Case) :
     FeatureVal.inherentInterpretability (.case c) = some .uninterpretable := rfl
 
 /-- Categorial [N] is always interpretable. -/

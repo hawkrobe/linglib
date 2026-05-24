@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Features.Case
+import Linglib.Features.Case
 /-!
 # Hungarian Case Inventory @cite{kenesei-vago-fenyvesi-1998} @cite{rounds-2001} @cite{caha-2008}
 
@@ -36,7 +36,7 @@ Both reference grammars converge on three substantive points:
    accept Hungarian as a typological exception explained by the
    dative-as-possessor analysis, not as a falsifying datum.
 
-This Fragment exposes a 9-element `Finset Core.Case` capturing the
+This Fragment exposes a 9-element `Finset Features.Case` capturing the
 broad case-functions that participate in Blake's hierarchy:
 
 - **Grammatical**: NOM (∅), ACC (-t), DAT (-nak / -nek)
@@ -50,7 +50,7 @@ broad case-functions that participate in Blake's hierarchy:
 - **Other**: INST (-val / -vel), COM (= INS-form per @cite{kenesei-vago-fenyvesi-1998};
   separate Finset element here), CAUS (-ért, "causal-final")
 
-**What `Core.Case` can express but this inventory omits**:
+**What `Features.Case` can express but this inventory omits**:
 
 - `.Sup`, `.Sub`, `.Del` (PascalCase UD spatial constructors) would
   preserve Hungarian's surface-row local cases distinctly rather than
@@ -59,8 +59,8 @@ broad case-functions that participate in Blake's hierarchy:
   `.ter` (terminative -ig), `.tem` (temporal -kor) — all attested in
   both grammars, omitted here.
 - ESS-FOR (-ként, "essive-formal", listed separately by both grammars)
-  has no `Core.Case` constructor.
-- DISTR (-nként), per @cite{rounds-2001} §6.4, has no `Core.Case`
+  has no `Features.Case` constructor.
+- DISTR (-nként), per @cite{rounds-2001} §6.4, has no `Features.Case`
   constructor — the only Hungarian case the substrate genuinely cannot
   express.
 
@@ -68,11 +68,11 @@ broad case-functions that participate in Blake's hierarchy:
 
 namespace Fragments.Hungarian.Case
 
-/-- Hungarian case inventory: 9-element sample of `Core.Case`. The
+/-- Hungarian case inventory: 9-element sample of `Features.Case`. The
     omission of `.gen` reflects the descriptive-grammar consensus
     (@cite{kenesei-vago-fenyvesi-1998}, @cite{rounds-2001}) and
     @cite{caha-2008} §5 — Hungarian has no morphological genitive. -/
-def caseInventory : Finset Core.Case :=
+def caseInventory : Finset Features.Case :=
   {.nom, .acc, .dat, .loc, .abl, .all, .inst, .com, .caus}
 
 /-- Hungarian fails Blake's strict contiguity at rank 5 (GEN), since
@@ -82,6 +82,6 @@ def caseInventory : Finset Core.Case :=
     surface counterexample to Blake, resolved (per Blake fn. 8) by the
     dative-as-possessor syncretism. -/
 theorem inventory_fails_strict :
-    ¬ Core.Case.IsValidInventory caseInventory := by decide
+    ¬ Features.Case.IsValidInventory caseInventory := by decide
 
 end Fragments.Hungarian.Case

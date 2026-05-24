@@ -5,7 +5,7 @@ Lexical entries for English pronouns (personal, reflexive, wh-).
 -/
 
 import Linglib.Core.Word
-import Linglib.Typology.Pronouns
+import Linglib.Features.Case
 import Linglib.Typology.Pronouns
 
 namespace Fragments.English.Pronouns
@@ -79,7 +79,7 @@ structure PronounEntry where
   /-- Number -/
   number : Option Number := none
   /-- Case (for personal pronouns) -/
-  case_ : Option Case := none
+  case_ : Option Features.Case := none
   /-- Gender paradigm class (3rd-person singular agreement).
       Epicene covers singular *they*; `none` for 1st/2nd person,
       reciprocals, and wh-pronouns. -/

@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Order
+import Linglib.Features.Case
+import Linglib.Syntax.Case.Order
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.German.Case
@@ -56,7 +56,7 @@ Ch. 6), and Hungarian (GEN-less, dative-as-possessor syncretism per
 
 namespace Caha2009
 
-open Core
+open Features (Case)
 
 /-! ## Caha containment-respect predicate
 
@@ -88,7 +88,7 @@ predicate (which lives here in this study file, not in `Core/`). -/
 theorem slavicCore_respectsCaha :
     RespectsCahaContainment Fragments.Slavic.Case.coreInventory := by decide
 
-/-- Vacuous: `Core.Case.Order.containmentRank .voc = none` faithfully
+/-- Vacuous: `Syntax.Case.Order.containmentRank .voc = none` faithfully
     encodes Caha's own scope choice (@cite{caha-2009} §1.1 fn. 4,
     p. 9: "Vocatives ... are ignored throughout this dissertation"). -/
 theorem slavicSeven_respectsCaha :
@@ -237,11 +237,11 @@ namespace Slavic
 /-- Caha's Slavic-specific Case sequence (@cite{caha-2009} (16), p. 12
     for Russian; (7) p. 238 confirms the same for Serbian): NOM – ACC –
     GEN – PREP/LOC – DAT – INS. Re-export from
-    `Core.Case.Order.cahaSlavicRank` (the substrate definition). For
+    `Syntax.Case.Order.cahaSlavicRank` (the substrate definition). For
     the relationship to `containmentRank` (LOC at top, INST
-    off-hierarchy), see `Core.Case.Order.cahaSlavicRank_vs_containmentRank`. -/
-abbrev slavicRank : Core.Case → Option (Fin 6) :=
-  Core.Case.cahaSlavicRank
+    off-hierarchy), see `Syntax.Case.Order.cahaSlavicRank_vs_containmentRank`. -/
+abbrev slavicRank : Features.Case → Option (Fin 6) :=
+  Syntax.Case.cahaSlavicRank
 
 /-- A morphological paradigm encoded as a form-class index per cell.
     Indices correspond to the Slavic case sequence: 0=NOM, 1=ACC,
@@ -252,7 +252,7 @@ abbrev Paradigm := Fin 6 → Nat
 /-- Caha's Universal Contiguity (@cite{caha-2009} (10), p. 10) on a
     Slavic paradigm. Defers to the domain-independent
     `Morphology.Containment.isContiguous` substrate (which
-    `Core.Case.Allomorphy.AllomorphyPattern.IsContiguous` specializes
+    `Morphology.Case.Allomorphy.AllomorphyPattern.IsContiguous` specializes
     at n=4 — same engine, n=6 specialization here). -/
 def IsContiguous (p : Paradigm) : Prop :=
   Morphology.Containment.isContiguous [p 0, p 1, p 2, p 3, p 4, p 5] = true

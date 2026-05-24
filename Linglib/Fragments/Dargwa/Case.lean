@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Features.Case
+import Linglib.Features.Case
 /-!
 # Dargwa (Tanti) Case Inventory @cite{sumbatova-2021}
 
@@ -32,12 +32,12 @@ namespace Fragments.Dargwa.Case
 /-- Dargwa grammatical case inventory: ABS(∅), ERG(-li), GEN(-la, -lla),
     DAT(-ž), COM(-c:ele), ADV(-le).
 
-    We use `Core.Case` values. The adverbial case is mapped to `ess`
+    We use `Features.Case` values. The adverbial case is mapped to `ess`
     (essive) as the closest typological equivalent — it marks
     "being-in-a-state" predicates, analogous to the Finnish essive.
 
     Genitive has two allomorphs: -la and -lla. -/
-def caseInventory : Finset Core.Case :=
+def caseInventory : Finset Features.Case :=
   {.abs, .erg, .gen, .dat, .com, .ess}
 
 /-- Dargwa's grammatical case inventory violates strict contiguity
@@ -48,7 +48,7 @@ def caseInventory : Finset Core.Case :=
     encode in other languages. The grammatical vs. locative split is
     a structural feature of Nakh-Dagestanian languages. -/
 theorem inventory_not_strictly_contiguous :
-    ¬ Core.Case.IsValidInventory caseInventory := by decide
+    ¬ Features.Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- § 2: Consistent Ergative Alignment
@@ -57,13 +57,13 @@ theorem inventory_not_strictly_contiguous :
 /-- Dargwa alignment: consistently ergative — no tense/aspect split.
     Transitive A-arguments always take ergative *-li*;
     S and P arguments take unmarked absolutive. -/
-def alignment : Core.AlignmentFamily := .ergative
+def alignment : Features.AlignmentFamily := .ergative
 
 /-- Case of the transitive agent (A-argument): always ergative. -/
-def agentCase : Core.Case := .erg
+def agentCase : Features.Case := .erg
 
 /-- Case of the S-argument and P-argument: always absolutive. -/
-def patientCase : Core.Case := .abs
+def patientCase : Features.Case := .abs
 
 -- ============================================================================
 -- § 3: Verification

@@ -32,7 +32,7 @@ structure NounEntry where
 
 Case marking on the NP is not represented at this layer — the authoritative
 case-marker registry lives in `Fragments.Japanese.Case` (`CaseMarker` with
-fields `romaji`, `kana`, `cases : Finset Core.Case`, `omissibleInCasual`).
+fields `romaji`, `kana`, `cases : Finset Features.Case`, `omissibleInCasual`).
 A case-marked NP type is intentionally not introduced here; downstream
 consumers that need NP-with-case should pair `NP` with a `CaseMarker`
 explicitly rather than embedding a case slot of unknown semantics. -/

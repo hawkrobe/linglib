@@ -8,7 +8,7 @@ import Linglib.Data.WALS.Features.F109A
 import Linglib.Data.WALS.Features.F109B
 import Linglib.Data.WALS.Features.F110A
 import Linglib.Data.WALS.Features.F111A
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 
 /-!
 # Typology.ArgumentStructure
@@ -46,7 +46,7 @@ Modality,Gender,Alignment}` substrate-extension pattern. Fragment-importable.
 - `ApplicativeBase` × `AppliedObjectRole` × `ApplicativeType` (Ch 109).
 - `PeriphrasticCausativeType` (Ch 110), `NonperiphrCausativeType` (Ch 111).
 - `ValenceProfile` per-language struct (Ch 106--109 + Ch 111).
-- `AlignmentType` abbreviation pointing at `Core.AlignmentFamily` (the
+- `AlignmentType` abbreviation pointing at `Features.AlignmentFamily` (the
   accusative/ergative dichotomy used for the antipassive correlation;
   the richer 5-way typology lives in `Typology.Alignment.AlignmentType`).
 - WALS converters `fromWALS{105A,106A,108A,109A,109B,111A}`.
@@ -264,11 +264,11 @@ inductive AntipassiveProductivity where
   deriving DecidableEq, Repr
 
 /-- Morphological alignment system (simplified for antipassive correlation).
-    The canonical accusative/ergative dichotomy lives in `Core.AlignmentFamily`;
+    The canonical accusative/ergative dichotomy lives in `Features.AlignmentFamily`;
     this file uses that type directly rather than re-declaring it. A richer
     typology (active-stative, tripartite, hierarchical, etc.) is available in
     `Typology.Alignment.AlignmentType`. -/
-abbrev AlignmentType := Core.AlignmentFamily
+abbrev AlignmentType := Features.AlignmentFamily
 
 -- ============================================================================
 -- §4. Ditransitive Constructions (Ch 105)

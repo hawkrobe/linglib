@@ -1,6 +1,6 @@
 import Linglib.Morphology.DegreeContainment
-import Linglib.Core.Case.Allomorphy
-import Linglib.Core.Case.Order
+import Linglib.Morphology.Case.Allomorphy
+import Linglib.Syntax.Case.Order
 import Linglib.Morphology.DM.ContainmentVI
 
 /-!
@@ -60,7 +60,7 @@ as substrate-addition TODOs.
 namespace SmithMoskalEtAl2019
 
 open Morphology.DegreeContainment
-open Core.Case.Allomorphy
+open Morphology.Case.Allomorphy
 open Morphology.DM.ContainmentVI.Degree
 
 -- ============================================================================
@@ -301,20 +301,20 @@ open Morphology.DomainLocality
     ABS, position 1 is ERG, position 2 is DAT. Positions outside this
     range have no case interpretation (`none`); they default to the
     non-oblique domain in `caseDomainPartition`. -/
-def caseAtPos : Nat → Option Core.Case
+def caseAtPos : Nat → Option Features.Case
   | 0 => some .abs
   | 1 => some .erg
   | 2 => some .dat
   | _ => none
 
-/-- Case partition: derived from `Core.Case.IsOblique` via `caseAtPos`.
+/-- Case partition: derived from `Syntax.Case.IsOblique` via `caseAtPos`.
     ABS and ERG are off-hierarchy in `containmentRank` (`IsOblique` is
     `False` for them); DAT contains GEN's representation in the Caha
     order so `IsOblique .dat` is `True`. The boundary thus corresponds
     to @cite{caha-2009}'s Unmarked-Dependent vs Oblique split — *as a
     consequence* of the order substrate, not as a stipulated threshold. -/
 def caseDomainPartition : DomainPartition Bool := λ i =>
-  (caseAtPos i).elim false (λ c => decide (Core.Case.IsOblique c))
+  (caseAtPos i).elim false (λ c => decide (Syntax.Case.IsOblique c))
 
 /-- Number partition: SG (position 0) + PL (position 1) in domain
     `false` (non-dual); DL (position 2) in domain `true` (dual).

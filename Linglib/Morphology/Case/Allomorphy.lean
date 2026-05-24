@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Mathlib.Order.Fin.Basic
+import Linglib.Features.Case
 import Linglib.Morphology.Containment
 
 /-!
@@ -25,9 +25,9 @@ file commits to neither; per-paper analyses live in
 `Studies/`.
 -/
 
-namespace Core.Case.Allomorphy
+namespace Morphology.Case.Allomorphy
 
-open Core
+open Features
 
 -- ============================================================================
 -- § 1: AllomorphyPattern + *ABA
@@ -193,4 +193,4 @@ example : (AllomorphyPattern.mk 0 1 1 2).IsContiguous := by decide
 example : (AllomorphyPattern.mk 0 1 2 2).IsContiguous := by decide
 example : (AllomorphyPattern.mk 0 1 1 0).ViolatesABA := by decide
 
-end Core.Case.Allomorphy
+end Morphology.Case.Allomorphy

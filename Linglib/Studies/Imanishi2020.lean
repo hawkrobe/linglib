@@ -1,8 +1,8 @@
 import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Studies.CoonMateoPedroPreminger2014
 import Linglib.Syntax.Minimalist.Voice
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Split
+import Linglib.Features.Case
+import Linglib.Typology.Alignment
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
@@ -235,7 +235,7 @@ theorem shared_ergative :
     ERG and GEN are both realized by set A (they are homophonous in Mayan).
     ABS is realized by set B. The wildcard maps non-Mayan cases (NOM, ACC,
     DAT, etc.) to set A — these should never appear in Mayan fragments. -/
-def caseToMarker : Core.Case → MarkerSet
+def caseToMarker : Features.Case → MarkerSet
   | .erg => .setA
   | .gen => .setA
   | .abs => .setB
@@ -300,8 +300,8 @@ theorem end_to_end_all_languages :
 
 /-- The Mayan split is aspect-conditioned: perfective → ergative,
     non-perfective → accusative. Instantiates the same `SplitErgativity`
-    infrastructure as the Hindi example in `Core.Case.SplitConditions`. -/
-def mayanSplit : Core.SplitErgativity Core.Aspect :=
+    infrastructure as the Hindi example in `Typology.Alignment.SplitErgativity`. -/
+def mayanSplit : Typology.Alignment.SplitErgativity Typology.Alignment.Aspect :=
   { ergCondition := λ a => a == .perfective }
 
 theorem mayan_perfective_erg :
@@ -312,7 +312,7 @@ theorem mayan_imperfective_acc :
 
 /-- Mayan and Hindi have the same aspect-conditioned split direction:
     perfective triggers ergativity in both language families. -/
-theorem mayan_hindi_same_split : mayanSplit = Core.hindiSplit := rfl
+theorem mayan_hindi_same_split : mayanSplit = Typology.Alignment.hindiSplit := rfl
 
 -- ============================================================================
 -- § 11: Cross-Study Bridge (@cite{coon-mateo-pedro-preminger-2014})

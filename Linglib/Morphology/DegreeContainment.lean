@@ -6,7 +6,7 @@ import Linglib.Morphology.Containment
 
 Framework-neutral substrate for the three-grade degree hierarchy
 (positive, comparative, superlative) and the *ABA generalization that
-applies to it. Mirrors the structure of `Core.Case.Allomorphy` for
+applies to it. Mirrors the structure of `Morphology.Case.Allomorphy` for
 case morphology: an `AllomorphyPattern`-style record + decidable
 contiguity predicates derived from the generic
 `Morphology.Containment` substrate.

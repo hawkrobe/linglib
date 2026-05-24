@@ -1,6 +1,9 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.FeatureBundle
-import Linglib.Core.Case.Hierarchy
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Finset.Lattice.Fold
+import Mathlib.Data.Finset.Powerset
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Features.Case
+import Linglib.Features.Case
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Fragments.English.Predicates.Verbal
@@ -56,7 +59,175 @@ two-feature simplification).
 
 namespace AndersonJM2006
 
-open Core (CaseRelation Scenario Case)
+open Features (Case)
+open Semantics.ArgumentStructure.Linking (LinkingTheory ArgPosition)
+open Semantics.ArgumentStructure.EntailmentProfile
+open Fragments.English.Predicates.Verbal
+
+-- ============================================================================
+-- § 0: Anderson's Case Features — Substrate
+-- ============================================================================
+
+/-! Three first-order case features `[abs, src, loc]`, the 8 case relations
+that arise as their feature bundles, the subject-selection hierarchy over
+those bundles, predicate scenarios (argument-structure tuples of relations),
+and the morphological-case → relation map. Originally landed as standalone
+substrate in `Core/Case/FeatureBundle.lean`; inlined here because only this
+study consumes it. -/
+
+/-- Anderson's three first-order case features (Ch. 6). -/
+inductive CaseFeature where
+  | abs
+  | src
+  | loc
+  deriving DecidableEq, Repr, Fintype
+
+/-- An argument's case specification: a bundle of first-order features (Ch. 6).
+
+    A `CaseRelation` is a `Finset CaseFeature` — the powerset of the three
+    primitive features. The 8 possible bundles are exactly `Finset.powerset`
+    of `Finset.univ`. Containment (`⊆`), the empty bundle (`∅`), the full
+    bundle (`Finset.univ`), and meet/join are inherited from `Finset`'s
+    `BooleanAlgebra` instance. -/
+abbrev CaseRelation := Finset CaseFeature
+
+namespace CaseRelation
+
+@[reducible] def neutral    : CaseRelation := ∅
+@[reducible] def absolutive : CaseRelation := {.abs}
+@[reducible] def ergative   : CaseRelation := {.src}
+@[reducible] def locative   : CaseRelation := {.loc}
+@[reducible] def srcAbs     : CaseRelation := {.abs, .src}
+@[reducible] def srcLoc     : CaseRelation := {.src, .loc}
+@[reducible] def absLoc     : CaseRelation := {.abs, .loc}
+@[reducible] def absSrcLoc  : CaseRelation := {.abs, .src, .loc}
+
+/-- The full feature set is `Finset.univ` and equals the 3-feature top. -/
+theorem absSrcLoc_eq_univ :
+    absSrcLoc = (Finset.univ : Finset CaseFeature) := by decide
+
+/-- Convenience accessors for the three features. -/
+@[reducible] def abs (cr : CaseRelation) : Prop := .abs ∈ cr
+@[reducible] def src (cr : CaseRelation) : Prop := .src ∈ cr
+@[reducible] def loc (cr : CaseRelation) : Prop := .loc ∈ cr
+
+end CaseRelation
+
+/-- The subject selection rank (eq. 38').
+    src (agent) outranks abs (patient) outranks loc (spatial).
+
+    Codomain `Fin 3` — three tiers, type-level boundedness. -/
+def CaseRelation.subjectRank (cr : CaseRelation) : Fin 3 :=
+  if .src ∈ cr then 2 else if .abs ∈ cr then 1 else 0
+
+/-- The `src` feature alone determines subject rank 2 — regardless of other
+    features. This is why ergative, experiencer (srcLoc), and self-mover
+    (srcAbs) all tie for highest subject rank. -/
+theorem src_determines_subject_rank (cr : CaseRelation) (h : .src ∈ cr) :
+    cr.subjectRank = 2 := by simp [CaseRelation.subjectRank, h]
+
+/-- Without `src`, the `abs` feature determines rank 1. This is why
+    absolutive and contactive (absLoc) tie at the second tier. -/
+theorem abs_without_src_rank (cr : CaseRelation)
+    (h1 : .src ∉ cr) (h2 : .abs ∈ cr) :
+    cr.subjectRank = 1 := by simp [CaseRelation.subjectRank, h1, h2]
+
+/-- Anderson's `absSrcLoc` is the top of the feature lattice. -/
+theorem absSrcLoc_is_top (cr : CaseRelation) :
+    cr ⊆ CaseRelation.absSrcLoc := by
+  rw [CaseRelation.absSrcLoc_eq_univ]; exact Finset.subset_univ cr
+
+/-- Anderson's `neutral` (the empty bundle) is the bottom of the feature
+    lattice. -/
+theorem neutral_is_bottom (cr : CaseRelation) : CaseRelation.neutral ⊆ cr :=
+  Finset.empty_subset cr
+
+/-- The 8 possible case relations are exactly
+    `(Finset.univ : Finset CaseFeature).powerset`.
+    Cardinality follows from `Finset.card_powerset`. -/
+theorem CaseRelation.card_all :
+    (Finset.univ : Finset CaseFeature).powerset.card = 8 := by decide
+
+/-- A predicate's **scenario** (Ch. 6): the case relations assigned to its
+    arguments. -/
+structure Scenario where
+  relations : List CaseRelation
+
+def Scenario.arity (s : Scenario) : Nat := s.relations.length
+
+def Scenario.subjectRelation (s : Scenario) : Option CaseRelation :=
+  s.relations.head?
+
+def Scenario.objectRelation (s : Scenario) : Option CaseRelation :=
+  match s.relations with
+  | _ :: cr :: _ => some cr
+  | _ => none
+
+def Scenario.transitive   : Scenario := ⟨[.ergative, .absolutive]⟩
+def Scenario.unergative   : Scenario := ⟨[.ergative]⟩
+def Scenario.unaccusative : Scenario := ⟨[.absolutive, .locative]⟩
+def Scenario.selfMoving   : Scenario := ⟨[.srcAbs, .locative]⟩
+def Scenario.experiencer  : Scenario := ⟨[.srcLoc, .absolutive]⟩
+
+theorem transitive_subject_object :
+    Scenario.transitive.subjectRelation = some .ergative ∧
+    Scenario.transitive.objectRelation = some .absolutive := ⟨rfl, rfl⟩
+
+theorem unergative_subject_only :
+    Scenario.unergative.subjectRelation = some .ergative ∧
+    Scenario.unergative.objectRelation = none := ⟨rfl, rfl⟩
+
+theorem unaccusative_subject_loc :
+    Scenario.unaccusative.subjectRelation = some .absolutive ∧
+    Scenario.unaccusative.objectRelation = some .locative := ⟨rfl, rfl⟩
+
+theorem selfMoving_subject :
+    Scenario.selfMoving.subjectRelation = some .srcAbs ∧
+    Scenario.selfMoving.objectRelation = some .locative := ⟨rfl, rfl⟩
+
+theorem experiencer_subject_object :
+    Scenario.experiencer.subjectRelation = some .srcLoc ∧
+    Scenario.experiencer.objectRelation = some .absolutive := ⟨rfl, rfl⟩
+
+theorem transitive_subject_outranks_object :
+    CaseRelation.ergative.subjectRank > CaseRelation.absolutive.subjectRank := by
+  decide
+
+theorem unergative_unaccusative_differ :
+    Scenario.unergative.subjectRelation ≠
+    Scenario.unaccusative.subjectRelation := by decide
+
+end AndersonJM2006
+
+/-! Anderson's `Case → CaseRelation` map lives under `namespace Syntax` so
+it can be invoked via dot-notation on `c : Case` (mirroring how
+`Features.Case.hierarchyRank` and the Caha containment defs project onto
+the type). -/
+namespace Features
+
+/-- Canonical mapping from Blake's morphological cases to Anderson's
+    case-feature bundles (Ch. 6). -/
+def Case.toCaseRelation : Case → Option AndersonJM2006.CaseRelation
+  | .nom  => some .srcAbs
+  | .acc  => some .absolutive
+  | .erg  => some .srcAbs
+  | .abs  => some .absolutive
+  | .abl  => some .locative
+  | .loc  => some .locative
+  | .inst => some .ergative
+  | _     => none
+
+theorem Case.nom_erg_same_relation :
+    Case.toCaseRelation .nom = Case.toCaseRelation .erg := rfl
+
+theorem Case.acc_abs_same_relation :
+    Case.toCaseRelation .acc = Case.toCaseRelation .abs := rfl
+
+end Features
+
+namespace AndersonJM2006
+
+open Features (Case)
 open Semantics.ArgumentStructure.Linking (LinkingTheory ArgPosition)
 open Semantics.ArgumentStructure.EntailmentProfile
 open Fragments.English.Predicates.Verbal
@@ -71,11 +242,11 @@ open Fragments.English.Predicates.Verbal
     two-feature version: experiencer ({src, loc}) is now SEPARATE from
     agent ({src}). -/
 def CaseRelation.canonicalTheta (cr : CaseRelation) : Option ThetaRole :=
-  if Core.CaseFeature.src ∈ cr then
-    if Core.CaseFeature.loc ∈ cr then some .experiencer  -- srcLoc, absSrcLoc
-    else some .agent                                     -- ergative, srcAbs
-  else if Core.CaseFeature.abs ∈ cr then some .patient   -- absolutive, absLoc
-  else none                                              -- neutral, locative
+  if CaseFeature.src ∈ cr then
+    if CaseFeature.loc ∈ cr then some .experiencer  -- srcLoc, absSrcLoc
+    else some .agent                                 -- ergative, srcAbs
+  else if CaseFeature.abs ∈ cr then some .patient   -- absolutive, absLoc
+  else none                                          -- neutral, locative
 
 /-- Reverse mapping: from the Fragment's 8-role inventory to Anderson's
     case relations.
@@ -265,9 +436,9 @@ theorem experiencer_verbs_correct :
     (subjectRank 2 > 1). Both are inverse to Caha's containment
     hierarchy. -/
 theorem anderson_blake_concordant :
-    Core.Case.hierarchyRank .nom ≥ Core.Case.hierarchyRank .acc ∧
+    Features.Case.hierarchyRank .nom ≥ Features.Case.hierarchyRank .acc ∧
     CaseRelation.srcAbs.subjectRank > CaseRelation.absolutive.subjectRank ∧
-    Core.Case.hierarchyRank .nom = Core.Case.hierarchyRank .acc ∧
+    Features.Case.hierarchyRank .nom = Features.Case.hierarchyRank .acc ∧
     CaseRelation.srcAbs.subjectRank ≠ CaseRelation.absolutive.subjectRank := by
   exact ⟨by decide, by decide, rfl, by decide⟩
 
@@ -278,7 +449,7 @@ theorem anderson_blake_concordant :
 /-- Does a morphological case carry the spatial locative feature?
     ABL, LOC both map to {loc} — they share the locative feature
     because they involve spatial location. -/
-def HasSpatialLoc : Core.Case → Prop
+def HasSpatialLoc : Case → Prop
   | .abl  => True
   | .loc  => True
   | _     => False
@@ -288,20 +459,20 @@ instance : DecidablePred HasSpatialLoc := fun c => by
 
 /-- ABL and LOC both map to Anderson's locative case relation. -/
 theorem spatial_cases_are_locative :
-    Core.Case.toCaseRelation .abl = some .locative ∧
-    Core.Case.toCaseRelation .loc = some .locative := ⟨rfl, rfl⟩
+    Case.toCaseRelation .abl = some .locative ∧
+    Case.toCaseRelation .loc = some .locative := ⟨rfl, rfl⟩
 
 /-- INST maps to {src} (source of force), not {loc}. Anderson argues
     that instrumental is the same semantic relation as agent: both are
     sources of action. -/
 theorem inst_is_ergative :
-    Core.Case.toCaseRelation .inst = some .ergative := rfl
+    Case.toCaseRelation .inst = some .ergative := rfl
 
 /-- ABL and LOC share a case relation AND have an extension path
     between them. Anderson's explanation: a case marker conditioned
     on {loc} is polysemous across spatial functions. -/
 theorem abl_loc_share_feature :
-    Core.Case.toCaseRelation .abl = Core.Case.toCaseRelation .loc := rfl
+    Case.toCaseRelation .abl = Case.toCaseRelation .loc := rfl
 
 -- ============================================================================
 -- § 10: NOM/ERG and ACC/ABS Unification
@@ -312,9 +483,9 @@ theorem abl_loc_share_feature :
     NOM = ERG = src+abs,  ACC = ABS = abs.
     The case relations are identical; alignment is labeling. -/
 theorem alignment_is_labeling :
-    Core.Case.toCaseRelation .nom = Core.Case.toCaseRelation .erg ∧
-    Core.Case.toCaseRelation .acc = Core.Case.toCaseRelation .abs ∧
-    Core.Case.toCaseRelation .nom ≠ Core.Case.toCaseRelation .acc := by
+    Case.toCaseRelation .nom = Case.toCaseRelation .erg ∧
+    Case.toCaseRelation .acc = Case.toCaseRelation .abs ∧
+    Case.toCaseRelation .nom ≠ Case.toCaseRelation .acc := by
   exact ⟨rfl, rfl, by decide⟩
 
 -- ============================================================================

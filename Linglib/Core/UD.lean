@@ -179,7 +179,7 @@ infrastructure). This is the unification point: there is **one** `Case`
 type, exposed under two syntactic forms.
 
 The lowercase aliases also cover the two minor spelling differences between
-the UD spec and earlier `Core.Case` (`inst`/`Ins`, `part`/`Par`, `caus`/`Cau`,
+the UD spec and earlier `Features.Case` (`inst`/`Ins`, `part`/`Par`, `caus`/`Cau`,
 `transl`/`Tra`, `perl`/`Per`, `abess`/`Abe`). -/
 namespace Case
 

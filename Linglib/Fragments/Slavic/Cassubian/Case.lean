@@ -23,6 +23,6 @@ outliers in losing it.
 
 namespace Fragments.Slavic.Cassubian.Case
 
-abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Cassubian.Case

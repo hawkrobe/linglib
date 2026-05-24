@@ -57,8 +57,8 @@ evidential INFL. The algorithm covers present and aorist only.
 
 ## Abstract Case vs Morphological Case
 
-The dependent case algorithm produces *abstract* case values (`Core.Case`).
-These map to *morphological* surface forms (also `Core.Case`) via
+The dependent case algorithm produces *abstract* case values (`Features.Case`).
+These map to *morphological* surface forms (also `Features.Case`) via
 language-specific spell-out at Morphological Structure. In Georgian:
 abstract ACC → morphological DAT (dative and accusative case have fallen
 together), abstract ABS → morphological NOM (unmarked surface form).
@@ -293,9 +293,9 @@ open Fragments.Georgian.Agreement
 -- ============================================================================
 
 /-- Map alignment family to dependent case language type.
-    Bridges the typological description (`Core.SplitErgativity`) to
+    Bridges the typological description (`Typology.Alignment.SplitErgativity`) to
     the case algorithm (`DependentCase`). -/
-def alignmentToLangType : Core.AlignmentFamily → CaseLanguageType
+def alignmentToLangType : Features.AlignmentFamily → CaseLanguageType
   | .accusative => .accusative
   | .ergative   => .ergative
 
@@ -334,7 +334,7 @@ def georgianNPs : VerbClass → List NPInDomain
 def georgianCaseResult (vc : VerbClass) (ts : TenseSeries) : List CasedNP :=
   assignCases (georgianLangType ts) (georgianNPs vc)
 
-private def getCase! (label : String) (results : List CasedNP) : Core.Case :=
+private def getCase! (label : String) (results : List CasedNP) : Features.Case :=
   match getCaseOf label results with
   | some c => c
   | none   => .dat  -- placeholder; the algorithm always returns every NP
@@ -353,7 +353,7 @@ private def getCase! (label : String) (results : List CasedNP) : Core.Case :=
       is called "the dative case" — @cite{marantz-1991} p. 12)
     - Abstract ABS → morphological NOM (unmarked surface form)
     - Abstract ERG → morphological ERG -/
-def georgianSpellout : Core.Case → Core.Case
+def georgianSpellout : Features.Case → Features.Case
   | .nom => .nom
   | .acc => .dat   -- Georgian objects surface with the dative suffix
   | .erg => .erg
@@ -492,8 +492,8 @@ theorem anticausative_one_np : npCount voiceAnticausative 1 = 1 := rfl
     obligatory on transitives. The unaccusative prohibition follows from
     dependent case: a sole argument has no competitor. -/
 
-def hindiTransitive (aspect : Core.Aspect) : List CasedNP :=
-  assignCases (alignmentToLangType (Core.hindiSplit.alignment aspect))
+def hindiTransitive (aspect : Typology.Alignment.Aspect) : List CasedNP :=
+  assignCases (alignmentToLangType (Typology.Alignment.hindiSplit.alignment aspect))
     [⟨"agent", none⟩, ⟨"theme", none⟩]
 
 theorem hindi_perfective_erg :
@@ -515,7 +515,7 @@ theorem hindi_split_is_algorithmic :
     Derives *siitta (\*ne) aayii* — ERG is prohibited on unaccusatives
     because there is no caseless competitor for dependent case. -/
 theorem hindi_perfective_unaccusative_no_erg :
-    let result := assignCases (alignmentToLangType (Core.hindiSplit.alignment .perfective))
+    let result := assignCases (alignmentToLangType (Typology.Alignment.hindiSplit.alignment .perfective))
       [⟨"theme", none⟩]
     getCaseOf "theme" result = some .abs ∧
     getSourceOf "theme" result = some .unmarked := by
@@ -525,7 +525,7 @@ theorem hindi_perfective_unaccusative_no_erg :
     may or may not count as a competitor, yielding optional ERG.
     With a phantom position (Georgian-style), ERG appears. -/
 theorem hindi_perfective_unergative_with_phantom :
-    let result := assignCases (alignmentToLangType (Core.hindiSplit.alignment .perfective))
+    let result := assignCases (alignmentToLangType (Typology.Alignment.hindiSplit.alignment .perfective))
       [⟨"subj", none⟩, ⟨"empty", none⟩]
     getCaseOf "subj" result = some .erg := by
   native_decide
@@ -534,7 +534,7 @@ theorem hindi_perfective_unergative_with_phantom :
     (= no ERG). This models the optionality as a parameter: does the
     language count unfilled positions for dependent case? -/
 theorem hindi_perfective_unergative_without_phantom :
-    let result := assignCases (alignmentToLangType (Core.hindiSplit.alignment .perfective))
+    let result := assignCases (alignmentToLangType (Typology.Alignment.hindiSplit.alignment .perfective))
       [⟨"subj", none⟩]
     getCaseOf "subj" result = some .abs ∧
     getSourceOf "subj" result = some .unmarked := by

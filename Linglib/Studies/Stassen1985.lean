@@ -1,7 +1,6 @@
 import Linglib.Typology.Comparison
 import Linglib.Studies.SarvasyAikhenvald2025
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.FeatureBundle
+import Linglib.Features.Case
 import Linglib.Fragments.English.Comparison
 import Linglib.Fragments.German.Comparison
 import Linglib.Fragments.Japanese.Comparison
@@ -80,7 +79,8 @@ set_option autoImplicit false
 namespace Stassen1985
 
 open Typology.Comparison
-open Core (CaseAssignment FixedCaseEncoding)
+open Features (CaseAssignment FixedCaseEncoding)
+open Typology.Comparison (ComparativeEntry)
 
 -- ════════════════════════════════════════════════════
 -- § 0. The Stassen 1985 six-way typology
@@ -131,7 +131,7 @@ def ComparativeType1985.fixedEncoding :
 
 /-- Spatial case of the standard marker (only meaningful for adverbial types). -/
 def ComparativeType1985.spatialCase :
-    ComparativeType1985 → Option Core.Case
+    ComparativeType1985 → Option Features.Case
   | .separative => some .abl
   | .allative => some .all
   | .locative => some .loc

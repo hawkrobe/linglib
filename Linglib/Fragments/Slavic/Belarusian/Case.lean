@@ -19,6 +19,6 @@ Corbett 1993 volume use `Belorussian`.
 
 namespace Fragments.Slavic.Belarusian.Case
 
-abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Belarusian.Case

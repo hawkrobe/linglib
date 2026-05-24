@@ -1,4 +1,4 @@
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 import Linglib.Typology.Extraction
 import Linglib.Fragments.Mayan.Params
 
@@ -108,14 +108,14 @@ abbrev ArgPosition := Features.Prominence.ArgumentRole
     pattern (A → ERG, S/P → ABS) explicit; the per-language wrapper
     preserves dot-notation `position.case` for consumers, uniform
     with the other Mayan fragments. -/
-abbrev ArgPosition.case : ArgPosition → Core.Case := Fragments.Mayan.ergCaseChol
+abbrev ArgPosition.case : ArgPosition → Features.Case := Fragments.Mayan.ergCaseChol
 
 /-- Non-perfective case assignment for Chol. Definitionally equal to
     `Fragments.Mayan.accCaseChol`, derived from
     `Alignment.extendedErgative.assignCase`. The "extended ergative"
     pattern (S/A → GEN, P → ABS) is shared with Q'anjob'al — both
     fragments call into the same `caseExtErg` substrate. -/
-abbrev ArgPosition.accCase : ArgPosition → Core.Case := Fragments.Mayan.accCaseChol
+abbrev ArgPosition.accCase : ArgPosition → Features.Case := Fragments.Mayan.accCaseChol
 
 -- ============================================================================
 -- § 2: Absolutive Position (LOW-ABS)

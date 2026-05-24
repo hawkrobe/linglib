@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Linglib.Features.Acceptability
 import Linglib.Fragments.Japanese.Case
 import Linglib.Syntax.Case.Dependent
-import Linglib.Core.Case.Grammaticalization
+import Linglib.Diachronic.CaseGrammaticalization
 /-!
 # Sadakane & Koizumi 1995 @cite{sadakane-koizumi-1995} @cite{martin-1975}
 
@@ -75,7 +75,7 @@ acquired only after 3;0.
 ## Heine 2009 grammaticalization
 
 The four S&K classifications align partially with Heine's case
-grammaticalization cline (`Core.CaseGramStage`: lexical → adposition →
+grammaticalization cline (`Diachronic.CaseGramStage`: lexical → adposition →
 caseAffix → lost). Both case-marker *ni* and postposition *ni* are at
 `.adposition` stage in modern Japanese (morphologically free), but
 case-marker *ni* is more grammaticalized within that stage (no inherent
@@ -119,7 +119,7 @@ Sells (1995, *Journal of East Asian Linguistics*) documents the parallel
 case-particle/postposition split for Korean *-i*/*-eseo* but does not
 engage S&K's homophony move for Korean equivalents of *ni*. This gap
 cannot be Lean-formalised until `Fragments/Korean/Case.lean` adopts
-Pattern B (rich marker structure); currently it's a `Finset Core.Case`
+Pattern B (rich marker structure); currently it's a `Finset Features.Case`
 stipulation only. Documented here as future work.
 -/
 
@@ -181,14 +181,14 @@ def classify : MartinCategory → Option Classification
   | .H1 | .H2 | .H3 | .I  | .K  | .L1 | .M
   | .O2 | .R  | .T  | .U                     => some .postposition
 
-/-- Per-category footprint on the `Core.Case` lattice — what UD case
+/-- Per-category footprint on the `Features.Case` lattice — what UD case
     feature(s) the *ni*-use of this Martin category corresponds to most
     directly. Categories whose *ni*-use does NOT fit any UD case feature
     Tsujimura's Fragment recognises (`Fragments.Japanese.Case.ni.cases =
     {.dat, .loc, .all, .Tem}`) map to `∅`. This is study-internal
     stipulation (the lin agent verified F's mapping is empty per the
     *GB riron-ni motozuiteiru* example). -/
-def fragmentCases : MartinCategory → Finset Core.Case
+def fragmentCases : MartinCategory → Finset Features.Case
   | .A                  => {.dat}            -- goal indirect object
   | .O1                 => {.dat, .all}      -- change of position (riding ON something)
   | .L1                 => {.loc}            -- locative-of-existence
@@ -499,7 +499,7 @@ theorem case_marker_acquired_before_postposition :
 
 /-! ## §9 Heine grammaticalization stage projection
 
-Connects S&K's classification to `Core.CaseGramStage` (Heine 2009's
+Connects S&K's classification to `Diachronic.CaseGramStage` (Heine 2009's
 case grammaticalization cline: lexical → adposition → caseAffix → lost).
 Both case-marker *ni* and postposition *ni* are at `.adposition` stage
 in modern Japanese (morphologically free); the cline doesn't capture
@@ -514,7 +514,7 @@ namespace Classification
 /-- Heine grammaticalization stage projection. Both case-marker and
     postposition *ni* are at `.adposition` in modern Japanese; copula *ni*
     is outside the case cline (`none`). -/
-def gramStage : Classification → Option Core.CaseGramStage
+def gramStage : Classification → Option Diachronic.CaseGramStage
   | .dativeCaseMarker => some .adposition
   | .postposition     => some .adposition
   | .niInsertion      => some .adposition

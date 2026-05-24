@@ -103,8 +103,8 @@ theorem russian_no_containment :
     This asymmetry supports @cite{bubnov-2026}'s claim that nanosyntax
     is the right tool for case but not for indefinites. -/
 theorem case_has_containment_indefinites_dont :
-    (.nom : Core.Case) ≤ .acc ∧
-    (.acc : Core.Case) ≤ .gen ∧
+    (.nom : Features.Case) ≤ .acc ∧
+    (.acc : Features.Case) ≤ .gen ∧
     morphContains "-to" "-nibud'" = false ∧
     morphContains "koe-" "-to" = false :=
   ⟨by decide, by decide, by decide, by decide⟩

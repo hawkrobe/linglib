@@ -1,8 +1,8 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Order
-import Linglib.Core.Case.Allomorphy
-open Core.Case.Allomorphy
+import Linglib.Features.Case
+import Linglib.Features.Case
+import Linglib.Syntax.Case.Order
+import Linglib.Morphology.Case.Allomorphy
+open Morphology.Case.Allomorphy
 
 /-!
 # Telugu Case Inventory
@@ -33,22 +33,22 @@ namespace Fragments.Telugu.Case
 /-- Telugu 5-case core inventory.
     ACC, GEN, DAT are inflectional suffixes within the prosodic word;
     LOC is realized by a postposition (-lō) in a separate prosodic word. -/
-def caseInventory : Finset Core.Case :=
+def caseInventory : Finset Features.Case :=
   {.nom, .acc, .gen, .dat, .loc}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 3).
-example : Core.Case.IsValidInventory caseInventory := by decide
+example : Features.Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- § 2: Containment Properties
 -- ============================================================================
 
 /-- All nonnominative Telugu cases bear the ACC feature. -/
-theorem acc_nonnom : Core.Case.IsNonnominative .acc := by decide
-theorem gen_nonnom : Core.Case.IsNonnominative .gen := by decide
-theorem dat_nonnom : Core.Case.IsNonnominative .dat := by decide
-theorem loc_nonnom : Core.Case.IsNonnominative .loc := by decide
-theorem nom_not_nonnom : ¬ Core.Case.IsNonnominative .nom := by decide
+theorem acc_nonnom : Syntax.Case.IsNonnominative .acc := by decide
+theorem gen_nonnom : Syntax.Case.IsNonnominative .gen := by decide
+theorem dat_nonnom : Syntax.Case.IsNonnominative .dat := by decide
+theorem loc_nonnom : Syntax.Case.IsNonnominative .loc := by decide
+theorem nom_not_nonnom : ¬ Syntax.Case.IsNonnominative .nom := by decide
 
 /-- Telugu's NOM-vs-oblique split is an ABB pattern — contiguous on the
     containment hierarchy, consistent with case-conditioned VI. -/
@@ -62,7 +62,7 @@ theorem nom_vs_oblique_contiguous :
 /-- Telugu and Tamil share the same core case spine on Blake's hierarchy.
     Both have NOM, ACC, GEN, DAT, LOC (Tamil additionally has ABL, INST, COM). -/
 theorem telugu_subset_tamil :
-    caseInventory ⊆ ({.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com} : Finset Core.Case) := by
+    caseInventory ⊆ ({.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com} : Finset Features.Case) := by
   decide
 
 end Fragments.Telugu.Case

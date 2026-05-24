@@ -14,6 +14,6 @@ names. `caseInventory` aliases the shared 6-case core;
 
 namespace Fragments.Slavic.Polish.Case
 
-abbrev caseInventory : Finset Core.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
 
 end Fragments.Slavic.Polish.Case

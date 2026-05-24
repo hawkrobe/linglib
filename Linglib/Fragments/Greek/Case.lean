@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Features.Case
+import Linglib.Features.Case
 /-!
 # Greek Case Inventory @cite{blake-1994}
 
@@ -19,16 +19,16 @@ peripheral" inventory: core cases + genitive.
 namespace Fragments.Greek.Case
 
 /-- Modern Greek 3-case inventory (excluding VOC). -/
-def caseInventory : Finset Core.Case :=
+def caseInventory : Finset Features.Case :=
   {.nom, .acc, .gen}
 
 -- Contiguous on Blake's hierarchy (ranks 6, 6, 5).
-example : Core.Case.IsValidInventory caseInventory := by decide
+example : Features.Case.IsValidInventory caseInventory := by decide
 
 /-- Classical Greek with dative. -/
-def classicalInventory : Finset Core.Case :=
+def classicalInventory : Finset Features.Case :=
   {.nom, .acc, .gen, .dat}
 
-example : Core.Case.IsValidInventory classicalInventory := by decide
+example : Features.Case.IsValidInventory classicalInventory := by decide
 
 end Fragments.Greek.Case

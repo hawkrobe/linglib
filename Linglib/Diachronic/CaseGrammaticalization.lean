@@ -1,6 +1,6 @@
 import Mathlib.Order.Nat
 import Mathlib.Logic.Relation
-import Linglib.Core.Case.Basic
+import Linglib.Features.Case
 import Linglib.Core.Relation.ReflTransGen
 /-!
 # Case Grammaticalization
@@ -19,7 +19,11 @@ Table 29.6 row pattern). Multi-step extension is just
 two-step or n-step predicate to maintain.
 -/
 
-namespace Core
+namespace Diachronic
+
+open Features (Case)
+
+/-! ## Case-marker cline -/
 
 /-- Source category of a case marker on the grammaticalization cline
     (@cite{heine-2009} §29.1 eq. (1), §29.2).
@@ -55,6 +59,16 @@ theorem caseGramCline_ordered :
     CaseGramStage.adposition < CaseGramStage.caseAffix ∧
     CaseGramStage.caseAffix < CaseGramStage.lost :=
   ⟨by decide, by decide, by decide⟩
+
+end Diachronic
+
+/-! ## Case-extension dot-methods
+
+These live under `namespace Features` so they project onto the `Case`
+type via dot-notation (mirroring `Features.Case.hierarchyRank` in
+`Features/Case.lean`). -/
+
+namespace Features
 
 /-- Direct extension between case functions (@cite{heine-2009} Table 29.6).
 
@@ -132,4 +146,4 @@ theorem inst_reachable_from_loc : Case.ExtensionReachable .loc .inst :=
   .tail (.single (a := (.loc : Case)) (b := (.com : Case)) (by decide))
     (show Case.Extends .com .inst by decide)
 
-end Core
+end Features

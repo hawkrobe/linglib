@@ -11,6 +11,7 @@ import Linglib.Data.WALS.Features.F136B
 import Linglib.Data.WALS.Features.F137A
 import Linglib.Data.WALS.Features.F137B
 import Linglib.Core.Word
+import Linglib.Features.Case
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Gender
@@ -435,7 +436,7 @@ structure PronounEntry where
   /-- Grammatical number -/
   number : Option Number := none
   /-- Grammatical case -/
-  case_ : Option Case := none
+  case_ : Option Features.Case := none
   /-- Grammatical gender. For 3rd-person pronouns in gendered languages
       (French il/elle, German er/sie/es, etc.). 1st/2nd-person pronouns
       and languages without pronominal gender leave this as `none`. -/

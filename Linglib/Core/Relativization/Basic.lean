@@ -8,7 +8,7 @@ are used by language fragments to encode relative clause markers and their
 distributional properties, and by phenomenon studies to verify typological
 generalizations like the @cite{keenan-comrie-1977} Accessibility Hierarchy.
 
-Mirrors `Core.Case.Basic` / `Core.Case.Hierarchy` for case inventories.
+Mirrors `Features.Case` for case inventories.
 -/
 
 namespace Core

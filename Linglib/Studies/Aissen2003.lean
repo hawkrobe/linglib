@@ -540,7 +540,7 @@ open Syntax.Case
     to decide overt realization. -/
 structure ProminentNP where
   label : String
-  lexicalCase : Option Core.Case
+  lexicalCase : Option Features.Case
   animacy : AnimacyLevel
   definiteness : DefinitenessLevel
   deriving DecidableEq, Repr
@@ -564,7 +564,7 @@ def derivation (lang : CaseLanguageType) (tc : TransClause) : List CasedNP :=
   assignCases lang [tc.subject.toNP, tc.object.toNP]
 
 /-- Abstract case assigned to the object. -/
-def objectCase (lang : CaseLanguageType) (tc : TransClause) : Option Core.Case :=
+def objectCase (lang : CaseLanguageType) (tc : TransClause) : Option Features.Case :=
   getCaseOf tc.object.label (derivation lang tc)
 
 /-- Whether the object receives overt case morphology.

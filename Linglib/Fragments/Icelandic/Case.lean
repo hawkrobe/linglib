@@ -1,5 +1,5 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Features.Case
+import Linglib.Features.Case
 /-!
 # Icelandic Case Inventory
 @cite{thrainsson-2007}
@@ -13,7 +13,7 @@ Case frames, quirky subjects, verb data, and agreement are in
 
 namespace Fragments.Icelandic.Case
 
-open Core
+open Features
 
 /-- Icelandic 4-case inventory (@cite{thrainsson-2007} §4.1). -/
 def caseInventory : Finset Case := {.nom, .acc, .gen, .dat}
