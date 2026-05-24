@@ -28896,17 +28896,19 @@
 }
 
 % REF: Jardine (2017). The local nature of tone-association patterns.
-% Phonology 34, 385-405.
+% Phonology 34(3), 363-384.
 @article{jardine-2017,
   author    = {Jardine, Adam},
   year      = {2017},
   title     = {The local nature of tone-association patterns},
   journal   = {Phonology},
   volume    = {34},
-  pages     = {385--405},
-  doi       = {10.1017/S0952675717000197},
+  number    = {3},
+  pages     = {363--384},
+  doi       = {10.1017/S0952675717000185},
   subfield  = {phonology/subregular},
-  role      = {cited}
+  role      = {cited},
+  sources   = {Phonology/Autosegmental/Graph.lean}
 }
 
 % REF: Jardine (2020). Melody learning and long-distance phonotactics in tone.
@@ -28921,6 +28923,198 @@
   doi       = {10.1007/s11049-020-09466-y},
   subfield  = {phonology/subregular},
   role      = {cited}
+}
+
+% ──────────────────────────────────────────────────────────────────────────────
+%  phonology/autosegmental — formal substrate references for
+%  Linglib/Phonology/Autosegmental/Graph.lean (the AR object + monoid +
+%  Hom category) and downstream Celtic/tonal study files. Goldsmith
+%  founded the tradition (1976/1979); Pulleyblank 1986 reformulated the
+%  WFC; Coleman-Local 1991 distinguished ARs from diagrams; Jardine and
+%  collaborators (2014-2020) developed the formal/computational theory.
+% ──────────────────────────────────────────────────────────────────────────────
+
+% REF: Goldsmith (1979). Autosegmental Phonology. New York: Garland Press.
+% Published version of the 1976 MIT thesis. Cited via Leben 2018 p. 154 for
+% the original Well-Formedness Condition (p. 27).
+@book{goldsmith-1979,
+  author    = {Goldsmith, John A.},
+  year      = {1979},
+  title     = {Autosegmental Phonology},
+  publisher = {Garland Press},
+  address   = {New York},
+  note      = {Published version of the 1976 MIT dissertation},
+  subfield  = {phonology/autosegmental},
+  role      = {foundational},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Coleman & Local (1991). The 'No Crossing Constraint' in autosegmental
+% phonology. Linguistics and Philosophy 14, 295-338.
+@article{coleman-local-1991,
+  author    = {Coleman, John and Local, John},
+  year      = {1991},
+  title     = {The `No Crossing Constraint' in autosegmental phonology},
+  journal   = {Linguistics and Philosophy},
+  volume    = {14},
+  number    = {3},
+  pages     = {295--338},
+  doi       = {10.1007/BF00627405},
+  subfield  = {phonology/autosegmental},
+  role      = {foundational},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Bird (1966). Determination in Bambara. Journal of West African
+% Languages 3. Cited by Goldsmith 1976 and Leben 2018 as the original
+% identification of "floating tone" as a phonological object.
+@article{bird-1966,
+  author    = {Bird, Charles S.},
+  year      = {1966},
+  title     = {Determination in {B}ambara},
+  journal   = {Journal of West African Languages},
+  volume    = {3},
+  pages     = {5--11},
+  subfield  = {phonology/autosegmental},
+  role      = {foundational},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Yip (1988). Template morphology and the direction of association.
+% Natural Language and Linguistic Theory 6, 551-577. Introduces Edge-In
+% Association for root-to-template mapping.
+@article{yip-1988,
+  author    = {Yip, Moira},
+  year      = {1988},
+  title     = {Template morphology and the direction of association},
+  journal   = {Natural Language and Linguistic Theory},
+  volume    = {6},
+  number    = {4},
+  pages     = {551--577},
+  doi       = {10.1007/BF00134491},
+  subfield  = {phonology/autosegmental},
+  role      = {cited},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Leben (2018). Autosegmental Phonology. Oxford Research Encyclopedia
+% of Linguistics. Canonical reference article for the framework, used
+% throughout linglib as the modern survey. (Distinct from the existing
+% leben-2018 manuscript on downstep.)
+@article{leben-2018-autoseg,
+  author    = {Leben, William R.},
+  year      = {2018},
+  title     = {Autosegmental Phonology},
+  journal   = {Oxford Research Encyclopedia of Linguistics},
+  doi       = {10.1093/acrefore/9780199384655.013.365},
+  subfield  = {phonology/autosegmental},
+  role      = {foundational},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Jardine & Heinz (2015). A Concatenation Operation to Derive
+% Autosegmental Graphs. Proceedings of the 14th Meeting on the
+% Mathematics of Language (MoL 14), 139-151. Defines APG(Γ) as a free
+% monoid under graph concatenation; Theorems 1, 3, 4 establish the
+% identity, associativity, and NCC-preservation properties used in
+% Linglib/Phonology/Autosegmental/Graph.lean.
+@inproceedings{jardine-heinz-2015,
+  author    = {Jardine, Adam and Heinz, Jeffrey},
+  year      = {2015},
+  title     = {A Concatenation Operation to Derive Autosegmental Graphs},
+  booktitle = {Proceedings of the 14th Meeting on the Mathematics of Language (MoL 14)},
+  pages     = {139--151},
+  publisher = {Association for Computational Linguistics},
+  address   = {Chicago, USA},
+  url       = {https://aclanthology.org/W15-2312/},
+  subfield  = {phonology/autosegmental},
+  role      = {foundational},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Chandlee & Jardine (2019). Autosegmental Input Strictly Local
+% Functions. Transactions of the Association for Computational
+% Linguistics 7, 157-168. Names the A-ISL class; uses "AR" uniformly
+% as the type-name of autosegmental representations.
+@article{chandlee-jardine-2019,
+  author    = {Chandlee, Jane and Jardine, Adam},
+  year      = {2019},
+  title     = {Autosegmental Input Strictly Local Functions},
+  journal   = {Transactions of the Association for Computational Linguistics},
+  volume    = {7},
+  pages     = {157--168},
+  doi       = {10.1162/tacl_a_00267},
+  url       = {https://aclanthology.org/Q19-1010/},
+  subfield  = {phonology/autosegmental},
+  role      = {cited},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Burness & McMullin (2020). Multi-Tiered Strictly Local Functions.
+% Proceedings of the 17th SIGMORPHON Workshop on Computational Research
+% in Phonetics, Phonology, and Morphology, 245-255. Extends TSL to
+% multi-tier with strict superset-subset hierarchy on tier projections.
+@inproceedings{burness-mcmullin-2020,
+  author    = {Burness, Phillip and McMullin, Kevin},
+  year      = {2020},
+  title     = {Multi-Tiered Strictly Local Functions},
+  booktitle = {Proceedings of the 17th SIGMORPHON Workshop on Computational Research in Phonetics, Phonology, and Morphology},
+  pages     = {245--255},
+  publisher = {Association for Computational Linguistics},
+  doi       = {10.18653/v1/2020.sigmorphon-1.29},
+  url       = {https://aclanthology.org/2020.sigmorphon-1.29/},
+  subfield  = {phonology/autosegmental},
+  role      = {cited},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Bhaskar, Chandlee, Jardine, Oakden (2020). Boolean monadic
+% recursive schemes as a logical characterization of the subsequential
+% functions. Language and Automata Theory and Applications (LATA 2020),
+% LNCS 12038, 157-169. Formalizes MSO-definable AR-to-AR transductions.
+@inproceedings{bhaskar-jardine-chandlee-oakden-2020,
+  author    = {Bhaskar, Siddharth and Chandlee, Jane and Jardine, Adam and Oakden, Christopher},
+  year      = {2020},
+  title     = {Boolean monadic recursive schemes as a logical characterization of the subsequential functions},
+  booktitle = {Language and Automata Theory and Applications (LATA 2020)},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {12038},
+  pages     = {157--169},
+  publisher = {Springer},
+  doi       = {10.1007/978-3-030-40608-0_10},
+  subfield  = {phonology/autosegmental},
+  role      = {cited},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Shih & Inkelas (2014). Reframing the TBU in an ABC+Q approach
+% to tone. UC Berkeley Phonology Lab Annual Report. Subsegmental
+% Q-theory of tonal representation.
+@unpublished{shih-inkelas-2014,
+  author    = {Shih, Stephanie S. and Inkelas, Sharon},
+  year      = {2014},
+  title     = {Reframing the {TBU} in an {ABC+Q} approach to tone},
+  note      = {UC Berkeley Phonology Lab Annual Report},
+  subfield  = {phonology/autosegmental},
+  role      = {cited},
+  sources   = {Phonology/Autosegmental/Graph.lean}
+}
+
+% REF: Laoide-Kemp (2026). Strict modularity at the morphosyntax-phonology
+% interface: The case of Irish preverbal d'. Natural Language and
+% Linguistic Theory 44, Article 27. Floating-segment autosegmental
+% analysis of Irish historic tense marker.
+@article{laoide-kemp-2026,
+  author    = {Laoide-Kemp, Anna},
+  year      = {2026},
+  title     = {Strict modularity at the morphosyntax-phonology interface: The case of {I}rish preverbal {\textit{d'}}},
+  journal   = {Natural Language and Linguistic Theory},
+  volume    = {44},
+  number    = {27},
+  doi       = {10.1007/s11049-026-09712-9},
+  subfield  = {phonology/autosegmental},
+  role      = {formalized},
+  sources   = {Phonology/Autosegmental/Graph.lean;Studies/LaoideKemp2026.lean}
 }
 
 % REF: De Santo & Graf (2019). Structure sensitive tier projection: applications

@@ -8,7 +8,7 @@ import Linglib.Phonology.Autosegmental.NoCrossing
 /-!
 # Autosegmental graph (the AR object)
 @cite{goldsmith-1976} @cite{pulleyblank-1986} @cite{jardine-heinz-2015}
-@cite{jardine-2017} @cite{leben-2018} @cite{coleman-local-1991}
+@cite{jardine-2017} @cite{leben-2018-autoseg} @cite{coleman-local-1991}
 
 A `Phonology.Autosegmental.Graph α β` is a finite ordered bipartite
 labeled relation between two tiers: an `upper` sequence of `α`-elements,
@@ -75,8 +75,8 @@ relational composition `{(0,0), (0,1), (1,0), (1,1)}` has the crossing
 ## Bilateral as the substrate primitive
 
 Goldsmith's 1976 dissertation treated autosegmental tiers as
-"conceptually equal" (cf. @cite{leben-2018} §1). The modern picture
-(@cite{leben-2018} §3, after @cite{clements-1985}) privileges *one
+"conceptually equal" (cf. @cite{leben-2018-autoseg} §1). The modern picture
+(@cite{leben-2018-autoseg} §3, after @cite{clements-1985}) privileges *one
 basic tier* connected to multiple branch tiers (feature geometry,
 templatic CV-skeleton with root + vowel branches). A full multi-tier
 representation is then a paper-specific record of multiple `Graph`s
@@ -174,7 +174,7 @@ intuitive role of `upper`/`lower`; the type is just a list.
   to multiple upper-indices for contour tones). Operations like
   *spread-rightward* or *delink* are paper-specific applications of
   the atomic `insert`/`erase`.
-* **OCP** (@cite{leben-2018} §8). A constraint *within* a tier on
+* **OCP** (@cite{leben-2018-autoseg} §8). A constraint *within* a tier on
   adjacent identical elements; orthogonal to bipartite linking.
   Handled by `Phonology/OCPMerger.lean`.
 * **Feature-geometry hierarchy** (@cite{clements-1985},
