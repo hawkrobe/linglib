@@ -12,12 +12,23 @@ All types are polymorphic over the world type `W`. Propositions are
 - Kratzer, A. (1981). The Notional Category of Modality. de Gruyter. pp. 38-74.
 -/
 
-import Linglib.Semantics.Modality.Kratzer.Background
+import Linglib.Core.Logic.Intensional.ConversationalBackground
 import Linglib.Core.Order.Normality
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
 
 namespace Semantics.Modality.Kratzer
+
+/-! The conversational-background primitives live in
+`Core.Logic.Intensional`; re-export them under `Semantics.Modality.Kratzer`
+so the historical `Kratzer.foo` call style continues to work. -/
+
+export Core.Logic.Intensional.Premise
+  (propExtension propIntersection followsFrom isConsistent isCompatibleWith)
+
+export Core.Logic.Intensional
+  (ConvBackground ModalBase OrderingSource isRealistic isTotallyRealistic
+   emptyBackground)
 
 variable {W : Type*}
 

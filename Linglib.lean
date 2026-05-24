@@ -2462,7 +2462,6 @@ import Linglib.Semantics.Conditionals.WillConditional
 import Linglib.Semantics.Modality.Directive
 import Linglib.Semantics.Modality.Exclusion
 import Linglib.Semantics.Modality.BiasedPQ
-import Linglib.Semantics.Modality.Kratzer.Background
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Semantics.Modality.Kratzer.Flavor
