@@ -1563,6 +1563,7 @@ import Linglib.Phenomena.Negation.Denial
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
+import Linglib.Phenomena.Plurals.Projection
 import Linglib.Studies.HaslingerEtAl2025
 import Linglib.Studies.HaslingerHienEtAl2025
 import Linglib.Studies.QingEtAl2025

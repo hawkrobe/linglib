@@ -271,9 +271,14 @@ end Examples
 
 
 def find_target_file(author_year: str) -> Path:
-    """Locate the study file containing the marker block.
+    """Locate the file containing the marker block.
 
     Search order:
+      0. `Linglib/Data/Examples/{author_year}.target` sidecar — first
+         non-empty, non-comment line is the target path (relative to repo
+         root). Lets a paper route its generated block outside `Studies/`
+         (e.g., into a `Phenomena/X/Y.lean` test-suite hub when several
+         papers' examples are pooled there).
       1. `Linglib/Studies/{author_year}.lean` (flat single-file paper)
       2. Any `.lean` file under `Linglib/Studies/{author_year}/` that
          contains the BEGIN/END marker block (multi-file paper subdir;
@@ -282,6 +287,39 @@ def find_target_file(author_year: str) -> Path:
 
     Errors out if zero or multiple files match.
     """
+    sidecar = JSON_DIR / f"{author_year}.target"
+    if sidecar.exists():
+        target_path = None
+        for raw in sidecar.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#"):
+                continue
+            target_path = line
+            break
+        if not target_path:
+            sys.stderr.write(
+                f"FATAL: sidecar {sidecar.relative_to(ROOT)} contained no "
+                f"target path (expected a relative path on first non-empty "
+                f"non-comment line)\n"
+            )
+            sys.exit(1)
+        resolved = (ROOT / target_path).resolve()
+        if not resolved.exists():
+            sys.stderr.write(
+                f"FATAL: sidecar {sidecar.relative_to(ROOT)} pointed at "
+                f"{target_path}, which does not exist.\n"
+            )
+            sys.exit(1)
+        text = resolved.read_text(encoding="utf-8")
+        if BEGIN_MARKER not in text or END_MARKER not in text:
+            sys.stderr.write(
+                f"FATAL: target {target_path} (from sidecar "
+                f"{sidecar.relative_to(ROOT)}) is missing the marker block "
+                f"`{BEGIN_MARKER}` / `{END_MARKER}`.\n"
+            )
+            sys.exit(1)
+        return resolved
+
     flat_match = STUDIES / f"{author_year}.lean"
     subdir     = STUDIES / author_year
 
@@ -300,7 +338,9 @@ def find_target_file(author_year: str) -> Path:
             f"  Linglib/Studies/{author_year}.lean\n"
             f"  Linglib/Studies/{author_year}/*.lean\n"
             f"Add `-- BEGIN GENERATED EXAMPLES` / `-- END GENERATED EXAMPLES`\n"
-            f"markers to the file that should host the generated block.\n"
+            f"markers to the file that should host the generated block, or\n"
+            f"create `Linglib/Data/Examples/{author_year}.target` containing\n"
+            f"a path to the host file.\n"
         )
         sys.exit(1)
     if len(candidates) > 1:
