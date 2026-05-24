@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Phonology.Featural.ElementTheory
-import Linglib.Phonology.Government.StrictCV
 import Linglib.Phonology.OCPMerger
 import Linglib.Fragments.Tigrinya.Phonology
 import Linglib.Fragments.Tigre.Phonology
@@ -39,6 +38,9 @@ Two co-equal headline contributions (paper §1, eq. 2):
 * §1 ET decomposition of Tigrinya/Tigre vowels and gutturals (paper
   eq. 20-22), as a per-segment projection from the theory-neutral
   fragment files.
+* §0 The Strict-CV substrate (`StrictCV` namespace below): `VStatus`,
+  `CVSeq`, `ProperlyGoverned`, `ECPSatisfied`, `LicensesPrecedingC`.
+  Inlined here as a single-consumer concept (CLAUDE.md graduation rule).
 * §2 Strict-CV representations of the paper's worked examples,
   encoded as `CVSeq` values with per-V-slot melodic status.
 * §3 Five named theorems:
@@ -56,9 +58,8 @@ Two co-equal headline contributions (paper §1, eq. 2):
 ## What this file does NOT formalize
 
 * The full GP/Strict-CV apparatus (Coda Mirror, lateral
-  relation typology). The substrate definitions in
-  `Phonology/Government/StrictCV.lean` are *simplified*
-  versions per the paper's own n. 16.
+  relation typology). The `StrictCV` namespace below carries the
+  *simplified* form per the paper's n. 16.
 * The phonetic implementation of [ɨ] vs [a]/[ʌ] — see
   @cite{faust-2024} for the cross-linguistic theory.
 * Templatic morphology beyond bare CV patterns (see
@@ -85,7 +86,132 @@ appropriate.
 namespace FaustLampitelli2026
 
 open Phonology.ElementTheory
-open Phonology.Government
+
+/-! ## §0 Strict-CV Government Phonology substrate
+@cite{kaye-lowenstamm-vergnaud-1985} @cite{kaye-lowenstamm-vergnaud-1990}
+@cite{charette-1991} @cite{lowenstamm-1996} @cite{scheer-2004}
+@cite{scheer-segeral-2001}
+
+Inlined here as a `StrictCV` namespace; single-consumer concept per
+CLAUDE.md graduation rule. Government Phonology (GP) and its Strict-CV
+(CVCV) descendant (@cite{lowenstamm-1996}, @cite{scheer-2004}) build
+phonological representations as alternating C-V skeletal sequences,
+with three core lateral relations between V-slots:
+
+* **Proper Government** (@cite{kaye-lowenstamm-vergnaud-1990}): a
+  contentful nucleus governs a preceding empty nucleus, allowing the
+  empty nucleus to remain phonetically silent.
+* **Empty Category Principle** (ECP, simplified): an empty nucleus
+  may be phonetically non-interpreted iff it is properly governed.
+* **Licensing** (@cite{scheer-segeral-2001}): a contentful nucleus
+  licenses an adjacent position (typically the preceding onset).
+
+The substrate here gives the **simplified** form of these definitions
+used in @cite{faust-lampitelli-2026}, which acknowledges the
+simplification (paper n. 16).
+-/
+
+namespace StrictCV
+
+/-- A V-slot's melodic status. Per Strict CV (@cite{lowenstamm-1996}),
+    every consonant-cluster representation interpolates empty V-slots,
+    so the same skeletal position may surface silently if properly
+    governed, or with an epenthetic vowel if not. -/
+inductive VStatus where
+  /-- The V-slot has melodic content. -/
+  | full
+  /-- The V-slot has no melodic content. -/
+  | empty
+  deriving DecidableEq, Repr
+
+namespace VStatus
+
+def IsFull : VStatus → Prop
+  | .full  => True
+  | .empty => False
+
+instance : DecidablePred IsFull
+  | .full  => isTrue trivial
+  | .empty => isFalse not_false
+
+def IsEmpty : VStatus → Prop
+  | .empty => True
+  | .full  => False
+
+instance : DecidablePred IsEmpty
+  | .empty => isTrue trivial
+  | .full  => isFalse not_false
+
+end VStatus
+
+/-- A **Strict-CV sequence** is a list of V-slot statuses. C-slots are
+    implicit between each pair (@cite{lowenstamm-1996}). The list
+    `[v₁, v₂, v₃]` represents the skeleton `C₁ V₁ C₂ V₂ C₃ V₃`. -/
+structure CVSeq where
+  vStatus : List VStatus
+  deriving Repr, DecidableEq
+
+namespace CVSeq
+
+def vCount (s : CVSeq) : Nat := s.vStatus.length
+
+def vAt (s : CVSeq) (i : Nat) : Option VStatus := s.vStatus[i]?
+
+def ofList (vs : List VStatus) : CVSeq := ⟨vs⟩
+
+/-- **Proper Government** (@cite{kaye-lowenstamm-vergnaud-1990},
+    simplified per @cite{faust-lampitelli-2026} eq. 23a): V-slot at
+    index `i` is *properly governed* iff V-slot `i+1` exists and is
+    contentful. -/
+def ProperlyGoverned (s : CVSeq) (i : Nat) : Prop :=
+  s.vAt (i + 1) = some .full
+
+instance (s : CVSeq) (i : Nat) : Decidable (s.ProperlyGoverned i) :=
+  inferInstanceAs (Decidable (s.vAt (i + 1) = some .full))
+
+/-- **Empty Category Principle** (@cite{kaye-1992}, simplified per
+    @cite{faust-lampitelli-2026} eq. 23b): an empty V-slot may surface
+    silently iff it is properly governed; a full V-slot is always
+    realized; out-of-range positions vacuously hold. -/
+def ECPSatisfied (s : CVSeq) (i : Nat) : Prop :=
+  match s.vAt i with
+  | some .empty => s.ProperlyGoverned i
+  | _           => True
+
+instance (s : CVSeq) (i : Nat) : Decidable (s.ECPSatisfied i) := by
+  unfold CVSeq.ECPSatisfied
+  split <;> infer_instance
+
+/-- **Licensing** (@cite{scheer-segeral-2001}, simplified per
+    @cite{faust-lampitelli-2026} eq. 24): V-slot at index `i` licenses
+    its preceding C-position iff `i` is contentful. -/
+def LicensesPrecedingC (s : CVSeq) (i : Nat) : Prop :=
+  s.vAt i = some .full
+
+instance (s : CVSeq) (i : Nat) : Decidable (s.LicensesPrecedingC i) :=
+  inferInstanceAs (Decidable (s.vAt i = some .full))
+
+/-- An empty nucleus that is not properly governed violates ECP. -/
+theorem empty_not_governed_violates_ecp (s : CVSeq) (i : Nat)
+    (hempty : s.vAt i = some .empty) (hpg : ¬ s.ProperlyGoverned i) :
+    ¬ s.ECPSatisfied i := by
+  unfold ECPSatisfied
+  rw [hempty]
+  exact hpg
+
+/-- A full nucleus is always ECP-satisfied (vacuous). -/
+theorem full_ecp_satisfied (s : CVSeq) (i : Nat)
+    (hfull : s.vAt i = some .full) :
+    s.ECPSatisfied i := by
+  unfold ECPSatisfied
+  rw [hfull]
+  trivial
+
+end CVSeq
+
+end StrictCV
+
+open StrictCV
 
 /-! ## §1 Element-Theoretic decomposition of Tigrinya/Tigre segments
 -/
@@ -270,9 +396,9 @@ theorem arifu_blocks_synersis :
 
 The "self-licensing domain" itself is paper-specific apparatus
 (paper n. 18: "this cannot be a general principle in Strict CV").
-The substrate `Phonology/Government/StrictCV.lean`
-deliberately does NOT define self-licensing — this study file is
-where the Faust-specific stipulation lives. T3 captures the
+The inlined `StrictCV` substrate above deliberately does NOT define
+self-licensing — this study file is where the Faust-specific
+stipulation lives. T3 captures the
 *prediction* (V₂ full ⇒ no synersis) without committing the
 substrate to the stipulation that *generates* it.
 -/
