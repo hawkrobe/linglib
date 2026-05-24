@@ -1273,6 +1273,7 @@ import Linglib.Studies.Landau2015
 import Linglib.Studies.Ostrove2026
 import Linglib.Studies.Allotey2021
 import Linglib.Fragments.Tigrinya.ClausePrefixes
+import Linglib.Studies.FaginHalpern1994
 import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Studies.GoldbergShirtz2025
 import Linglib.Studies.KayFillmore1999
@@ -2470,7 +2471,6 @@ import Linglib.Semantics.Modality.Kratzer.XMarking
 import Linglib.Semantics.Attitudes.Desire
 import Linglib.Semantics.Modality.EpistemicLogic
 import Linglib.Semantics.Modality.EpistemicProbability
-import Linglib.Semantics.Modality.KnowledgeProbability
 import Linglib.Semantics.Modality.ProbabilityOrdering
 import Linglib.Semantics.Modality.ActualityEntailments
 import Linglib.Semantics.Modality.Assert

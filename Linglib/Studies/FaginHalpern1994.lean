@@ -45,7 +45,7 @@ The indirect path from Kratzer ordering to RSA worldPrior goes through
 
     Kratzer ordering → l-lifting → EpistemicSystemW → ... → RSA worldPrior
 
-`KnowledgeProbability` provides @cite{fagin-halpern-1994}'s more direct
+This formalization provides @cite{fagin-halpern-1994}'s more direct
 path: a `KripkeKP` structure already packages both the accessibility
 relation (for knowledge operators) and the probability assignment
 (for RSA). Under CONS, the two are coherently linked.
@@ -53,7 +53,7 @@ relation (for knowledge operators) and the probability assignment
 
 set_option autoImplicit false
 
-namespace Semantics.Modality.KnowledgeProbability
+namespace FaginHalpern1994
 
 open Core.Logic.Intensional
   (AgentAccessRel AccessRel boxR IsReflexive IsEuclidean refl_eucl_symm refl_eucl_trans)
@@ -361,7 +361,8 @@ theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [Fintype W]
   intro i hi
   simp only [nestedThreshold, decide_eq_true_eq]
   linarith [knows_implies_prob_one kp hCONS hNorm i φ w
-    (EpistemicLogic.everyoneKnows_implies_knows kp.accessRel group _ w i hi h)]
+    (Semantics.Modality.EpistemicLogic.everyoneKnows_implies_knows
+      kp.accessRel group _ w i hi h)]
 
 -- ============================================================================
 -- §7. UNIF and Introspection
@@ -655,4 +656,4 @@ theorem fig1_naive_vs_correct :
 
 end Figure1
 
-end Semantics.Modality.KnowledgeProbability
+end FaginHalpern1994
