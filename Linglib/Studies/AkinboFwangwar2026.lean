@@ -40,9 +40,9 @@ grammatical tones targeting ideophones in Mwaghavul. *Natural Language
 
 ## Substrate
 
-The OT analysis is built on `Phonology.Autosegmental.FloatingForm Syl`
+The OT analysis is built on `Phonology.Autosegmental.FloatingForm Syl TRN`
 (Goldsmith-style autosegmental representation; built originally for
-@cite{mcpherson-lamont-2026}). Each `ulTones` entry is one
+@cite{mcpherson-lamont-2026}). Each `ulTier` entry is one
 autosegment; `surfaceLinks` records associations between tier and
 TBUs. This represents spreading (one autosegment, multi-linked) and
 copying (multiple autosegments) as distinct objects — load-bearing
@@ -80,7 +80,7 @@ open Fragments.Mwaghavul
 -- ============================================================================
 
 /-- The Mwaghavul-instantiated autosegmental form. -/
-abbrev MwaghavulForm := FloatingForm Syl
+abbrev MwaghavulForm := FloatingForm Syl TRN
 
 /-- The ideophone root (wùlàʃ in Tableau 24, háŋláyáp in Tableau 25).
     Both single-root tableaux share this morpheme. -/
@@ -107,19 +107,19 @@ def redSeg (s : Syl) : SegSpec Syl := { seg := s, morpheme := rootRedMorph }
 def baseSeg (s : Syl) : SegSpec Syl := { seg := s, morpheme := rootBaseMorph }
 
 /-- L tone of the (single) ideophone root. -/
-def rootL : ToneSpec := { tone := TRN.L, morpheme := rootMorph }
+def rootL : TierSpec TRN := { value := TRN.L, morpheme := rootMorph }
 
 /-- M tone of the verbaliser. -/
-def vbzM : ToneSpec := { tone := TRN.M, morpheme := vbzMorph }
+def vbzM : TierSpec TRN := { value := TRN.M, morpheme := vbzMorph }
 
 /-- H tone of the verbaliser. -/
-def vbzH : ToneSpec := { tone := TRN.H, morpheme := vbzMorph }
+def vbzH : TierSpec TRN := { value := TRN.H, morpheme := vbzMorph }
 
 /-- L tone of the reduplicant root (Tableau 26). -/
-def lRed : ToneSpec := { tone := TRN.L, morpheme := rootRedMorph }
+def lRed : TierSpec TRN := { value := TRN.L, morpheme := rootRedMorph }
 
 /-- L tone of the base root (Tableau 26). -/
-def lBase : ToneSpec := { tone := TRN.L, morpheme := rootBaseMorph }
+def lBase : TierSpec TRN := { value := TRN.L, morpheme := rootBaseMorph }
 
 -- ============================================================================
 -- §2: Constraints over `MwaghavulForm`
@@ -140,7 +140,7 @@ section SingleRoot
 /-- Does TBU `i` bear a tone of value `t` from morpheme `m`? -/
 def isGramTbu (t : TRN) (m : Morpheme) (f : MwaghavulForm) (i : SegIdx) : Bool :=
   (f.linksTo i).any fun k =>
-    (f.ulTones[k]?).any fun ts => decide (ts.tone = t ∧ ts.morpheme = m)
+    (f.ulTier[k]?).any fun ts => decide (ts.value = t ∧ ts.morpheme = m)
 
 /-- L-ANCHOR-`t`-from-`m`: number of TBUs (in tier order) before the
     leftmost gram-`t`-from-`m` TBU. If no such TBU exists, every TBU
@@ -156,10 +156,10 @@ def rAnchTone (t : TRN) (m : Morpheme) (f : MwaghavulForm) : Nat :=
   | some i => i
   | none   => f.segs.length
 
-/-- MAX-Tone (per autosegment): count of deleted ulTones entries.
+/-- MAX-Tone (per autosegment): count of deleted ulTier entries.
     Matches paper p. 26 per-autosegment counting. -/
 def maxToneAuto (f : MwaghavulForm) : Nat :=
-  (List.range f.ulTones.length).countP (fun k => decide (f.IsDeleted k))
+  (List.range f.ulTier.length).countP (fun k => decide (f.IsDeleted k))
 
 /-- L-ANCHOR-Mᵥ as a `DirectionalConstraint`. -/
 def lAnchToneC (t : TRN) (m : Morpheme) : DirectionalConstraint MwaghavulForm where
@@ -272,18 +272,18 @@ end PerRoot
 
 namespace Tableau24
 
-/-- Faithful input: ulTones = `[L_root (multi-linked), M_vbz (floating)]`. -/
+/-- Faithful input: ulTier = `[L_root (multi-linked), M_vbz (floating)]`. -/
 def input : MwaghavulForm :=
   FloatingForm.mkInput
     (segs := [rootSeg ⟨"wù"⟩, rootSeg ⟨"làʃ"⟩])
-    (ulTones := [rootL, vbzM])
+    (ulTier := [rootL, vbzM])
     (ulLinks := {(0, 0), (0, 1)})
 
 /-- (24a) `(wùlàʃ)₁ M₂`: M still floating; L unchanged. -/
 def candA : MwaghavulForm := input
 
 /-- (24b) `(wùlàʃ)₁`: M deleted; L unchanged. -/
-def candB : MwaghavulForm := input.deleteTone 1
+def candB : MwaghavulForm := input.deleteTierElem 1
 
 /-- (24c) `(wù)₁(làʃ)₂`: L on σ0 only; M docked on σ1 only. -/
 def candC : MwaghavulForm := input.deleteLink 0 1 |>.insertLink 1 1
@@ -294,16 +294,16 @@ def candD : MwaghavulForm := input.deleteLink 0 0 |>.insertLink 1 0
 /-- (24e) ☞ `(wūlāʃ)₂` SPREADING: M multi-linked to both TBUs; L
     deleted. ONE M autosegment, two surface links. -/
 def candE : MwaghavulForm :=
-  input.deleteTone 0 |>.insertLink 1 0 |>.insertLink 1 1
+  input.deleteTierElem 0 |>.insertLink 1 0 |>.insertLink 1 1
 
 /-- (24f) `(wū)₂(lāʃ)₂` COPYING: TWO separate M autosegments, each
-    linked to one TBU. L deleted. Differs from (24a-e) in `ulTones`
+    linked to one TBU. L deleted. Differs from (24a-e) in `ulTier`
     — the autosegmental representation has an *extra* M autosegment.
     INTEGRITY-Mᵥ fatally penalises this copying. -/
 def candF : MwaghavulForm :=
   { input with
-    ulTones := [rootL, vbzM, vbzM]
-    deletedTones := {0}
+    ulTier := [rootL, vbzM, vbzM]
+    deletedTier := {0}
     surfaceLinks := {(1, 0), (2, 1)} }
 
 def candidates : Finset MwaghavulForm := {candA, candB, candC, candD, candE, candF}
@@ -365,44 +365,44 @@ end Tableau24
 
 namespace Tableau25
 
-/-- Faithful input: ulTones = `[H_root (multi-linked), M_vbz, H_vbz]`. -/
+/-- Faithful input: ulTier = `[H_root (multi-linked), M_vbz, H_vbz]`. -/
 def input : MwaghavulForm :=
   FloatingForm.mkInput
     (segs := [rootSeg ⟨"haŋ"⟩, rootSeg ⟨"la"⟩, rootSeg ⟨"yap"⟩])
-    (ulTones := [{ tone := TRN.H, morpheme := rootMorph }, vbzM, vbzH])
+    (ulTier := [{ value := TRN.H, morpheme := rootMorph }, vbzM, vbzH])
     (ulLinks := {(0, 0), (0, 1), (0, 2)})
 
 /-- (25a) `(háŋláyáp)₁`: lex H linked; both vbz tones deleted. -/
-def candA : MwaghavulForm := input.deleteTone 1 |>.deleteTone 2
+def candA : MwaghavulForm := input.deleteTierElem 1 |>.deleteTierElem 2
 
 /-- (25b) `(hāŋlā)₂(yáp)₁`: M on σ0-σ1; lex H on σ2; vbz H deleted. -/
 def candB : MwaghavulForm :=
   input.deleteLink 0 0 |>.deleteLink 0 1
     |>.insertLink 1 0 |>.insertLink 1 1
-    |>.deleteTone 2
+    |>.deleteTierElem 2
 
 /-- (25c) `(háŋláyáp)₃`: vbz H multi-linked to all TBUs; vbz M and lex H
     deleted. -/
 def candC : MwaghavulForm :=
-  input.deleteTone 0 |>.deleteTone 1
+  input.deleteTierElem 0 |>.deleteTierElem 1
     |>.insertLink 2 0 |>.insertLink 2 1 |>.insertLink 2 2
 
 /-- (25d) `(hāŋlāyāp)₂`: vbz M multi-linked to all TBUs; vbz H and lex H
     deleted. -/
 def candD : MwaghavulForm :=
-  input.deleteTone 0 |>.deleteTone 2
+  input.deleteTierElem 0 |>.deleteTierElem 2
     |>.insertLink 1 0 |>.insertLink 1 1 |>.insertLink 1 2
 
 /-- (25e) ☞ `(hāŋlā)₂(yáp)₃`: vbz M on σ0-σ1; vbz H on σ2; lex H
     deleted. The winner. -/
 def candE : MwaghavulForm :=
-  input.deleteTone 0
+  input.deleteTierElem 0
     |>.insertLink 1 0 |>.insertLink 1 1
     |>.insertLink 2 2
 
 /-- (25f) `(hāŋ)₂(láyáp)₃`: vbz M on σ0; vbz H on σ1-σ2; lex H deleted. -/
 def candF : MwaghavulForm :=
-  input.deleteTone 0
+  input.deleteTierElem 0
     |>.insertLink 1 0
     |>.insertLink 2 1 |>.insertLink 2 2
 
@@ -482,13 +482,13 @@ end Tableau25
 
 namespace Tableau26
 
-/-- Faithful input: ulTones = `[L_RED (multi-linked), L_BASE
+/-- Faithful input: ulTier = `[L_RED (multi-linked), L_BASE
     (multi-linked), M_vbz, H_vbz]`. Each lex L is multi-linked to its
     own root's 2 TBUs. -/
 def input : MwaghavulForm :=
   FloatingForm.mkInput
     (segs := [redSeg ⟨"jàl"⟩, redSeg ⟨"pàt"⟩, baseSeg ⟨"jàl"⟩, baseSeg ⟨"pàt"⟩])
-    (ulTones := [lRed, lBase, vbzM, vbzH])
+    (ulTier := [lRed, lBase, vbzM, vbzH])
     (ulLinks := {(0, 0), (0, 1), (1, 2), (1, 3)})
 
 /-- Per-root anchor instantiations for the two-root pluractional. -/
@@ -502,7 +502,7 @@ def lAnchHv26 : DirectionalConstraint MwaghavulForm :=
   lAnchToneCAcross TRN.H vbzMorph [rootRedMorph, rootBaseMorph]
 
 /-- (26a): both vbz tones deleted; both lex Ls survive. -/
-def candA : MwaghavulForm := input.deleteTone 2 |>.deleteTone 3
+def candA : MwaghavulForm := input.deleteTierElem 2 |>.deleteTierElem 3
 
 /-- (26b): vbz M on σ1 (rightmost of RED); vbz H on σ3 (rightmost of
     BASE); lex Ls survive on σ0 and σ2 respectively. -/
@@ -520,20 +520,20 @@ def candC : MwaghavulForm :=
     (both σ2, σ3); both lex Ls deleted. The winner — iconic M-on-RED
     + H-on-BASE pattern. -/
 def candD : MwaghavulForm :=
-  input.deleteTone 0 |>.deleteTone 1
+  input.deleteTierElem 0 |>.deleteTierElem 1
     |>.insertLink 2 0 |>.insertLink 2 1
     |>.insertLink 3 2 |>.insertLink 3 3
 
 /-- (26e): vbz M on σ0; vbz H on σ1 (both within RED); lex L of BASE
     survives multi-linked. Lex L of RED deleted. -/
 def candE : MwaghavulForm :=
-  input.deleteTone 0
+  input.deleteTierElem 0
     |>.insertLink 2 0
     |>.insertLink 3 1
 
 /-- (26f): vbz M spreading on RED + σ2 (first BASE TBU); vbz H on σ3. -/
 def candF : MwaghavulForm :=
-  input.deleteTone 0 |>.deleteLink 1 2
+  input.deleteTierElem 0 |>.deleteLink 1 2
     |>.insertLink 2 0 |>.insertLink 2 1 |>.insertLink 2 2
     |>.insertLink 3 3
 

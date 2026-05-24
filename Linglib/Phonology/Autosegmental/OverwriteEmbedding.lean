@@ -3,7 +3,7 @@ import Linglib.Phonology.Autosegmental.Floating
 /-!
 # Overwrite-to-Floating embedding and divergence theorem
 
-The McPherson–Lamont 2026 floating-tone encoding (`FloatingForm S`) is
+The McPherson–Lamont 2026 floating-tone encoding (`FloatingForm S TRN`) is
 strictly more expressive than the Rolle 2018 overwrite encoding
 (`List (TBU S)` via `tonalOverwrite`). This file makes the divergence
 explicit:
@@ -53,16 +53,16 @@ open Phonology.Autosegmental.RegisterTier (TRN)
 /-! ### Embedding -/
 
 /-- Embed a `List (TBU S)` (the output type of `tonalOverwrite`) into
-    `FloatingForm S`, assigning all TBUs and their tones the same
+    `FloatingForm S TRN`, assigning all TBUs and their tones the same
     morpheme `m`. Each TBU at position `i` becomes a `SegSpec`, each
-    tone becomes a `ToneSpec` at the same position, and surface link
+    tone becomes a `TierSpec TRN` at the same position, and surface link
     `(i, i)` connects them. All resulting links are tautomorphic. -/
 def FloatingForm.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morpheme) :
-    FloatingForm S where
+    FloatingForm S TRN where
   segs := host.map (fun tbu => { seg := tbu.seg, morpheme := m })
-  ulTones := host.map (fun tbu => { tone := tbu.tone, morpheme := m })
+  ulTier := host.map (fun tbu => { value := tbu.tone, morpheme := m })
   ulLinks := ((List.range host.length).map (fun i => (i, i))).toFinset
-  deletedTones := ∅
+  deletedTier := ∅
   surfaceLinks := ((List.range host.length).map (fun i => (i, i))).toFinset
 
 /-! ### Divergence theorems -/
@@ -106,15 +106,15 @@ theorem FloatingForm.ofTBUList_linksTo_subsingleton {S : Type*}
     the overwrite encoding (@cite{rolle-2018}) and the floating encoding
     (@cite{mcpherson-lamont-2026}). -/
 theorem FloatingForm.exists_multi_tone_TBU :
-    ∃ f : FloatingForm Unit, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
+    ∃ f : FloatingForm Unit TRN, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
   refine ⟨?_, 0, ?_⟩
   · exact
     { segs := [{ seg := (), morpheme := { form := "m" } }]
-      ulTones :=
-        [{ tone := TRN.H, morpheme := { form := "m" } },
-         { tone := TRN.L, morpheme := { form := "m" } }]
+      ulTier :=
+        [{ value := TRN.H, morpheme := { form := "m" } },
+         { value := TRN.L, morpheme := { form := "m" } }]
       ulLinks := ∅
-      deletedTones := ∅
+      deletedTier := ∅
       surfaceLinks := {(0, 0), (1, 0)} }
   · decide
 

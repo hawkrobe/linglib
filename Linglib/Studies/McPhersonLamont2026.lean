@@ -287,7 +287,7 @@ open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Fragments.Poko (Syll seg mTone hTone)
 
-abbrev PokoForm := FloatingForm Syll
+abbrev PokoForm := FloatingForm Syll TRN
 
 -- ============================================================================
 -- § 6.1: Input
@@ -295,13 +295,13 @@ abbrev PokoForm := FloatingForm Syll
 
 /-- Input form for paper fig. 3: `/kāk^H + rī^H + dō^H/`.
 
-    Tier order (`ulTones`): `[M-kak, H-kak, M-ri, H-ri, M-do, H-do]`.
+    Tier order (`ulTier`): `[M-kak, H-kak, M-ri, H-ri, M-do, H-do]`.
     Each stem contributes its lexical M (linked to its TBU) and its
     floating H (no underlying link). -/
 def fig3Input : PokoForm :=
   FloatingForm.mkInput
     (segs := [seg .kak, seg .ri, seg .do])
-    (ulTones := [mTone .kak, hTone .kak, mTone .ri, hTone .ri, mTone .do, hTone .do])
+    (ulTier := [mTone .kak, hTone .kak, mTone .ri, hTone .ri, mTone .do, hTone .do])
     (ulLinks := {(0, 0), (2, 1), (4, 2)})
 
 -- ============================================================================
@@ -341,9 +341,9 @@ def derivationRL : DirectionalHSDerivation PokoForm :=
     derivation. -/
 def attestedForm : PokoForm :=
   fig3Input
-    |>.deleteTone 1   -- delete H-kak
-    |>.deleteTone 3   -- delete H-ri
-    |>.deleteTone 5   -- delete H-do
+    |>.deleteTierElem 1   -- delete H-kak
+    |>.deleteTierElem 3   -- delete H-ri
+    |>.deleteTierElem 5   -- delete H-do
 
 /-- The starred surface form `*[kāk rī dó]` (H surfaces on dō).
     The RL derivation is 4 substantive steps:
@@ -361,10 +361,10 @@ def attestedForm : PokoForm :=
     fig. 3. -/
 def starredForm : PokoForm :=
   fig3Input
-    |>.deleteTone 5    -- step 1: delete H-do
+    |>.deleteTierElem 5    -- step 1: delete H-do
     |>.insertLink 3 2  -- step 2: dock H-ri to do (TBU 2)
-    |>.deleteTone 1    -- step 3: delete H-kak
-    |>.deleteTone 4    -- step 4: delete M-do (repair *FALL contour)
+    |>.deleteTierElem 1    -- step 3: delete H-kak
+    |>.deleteTierElem 4    -- step 4: delete M-do (repair *FALL contour)
 
 -- ============================================================================
 -- § 6.4: Per-Step Convergence Witnesses
@@ -385,7 +385,7 @@ def starredForm : PokoForm :=
     2 tones — own M + own floating H — adding kak's H gives 3,
     blocked by *CROWD); only deletion works. Paper, eq. (60b). -/
 theorem fig3_LR_step1 :
-    derivationLR.stepOptimum fig3Input = {fig3Input.deleteTone 1} := by decide
+    derivationLR.stepOptimum fig3Input = {fig3Input.deleteTierElem 1} := by decide
 
 /-- LR step 2: from state with H-kak deleted, *FLOAT^→ addresses the
     next floating H (rī's, idx 3). Rightward docking to dō blocked by
@@ -393,15 +393,15 @@ theorem fig3_LR_step1 :
     no-crossing (would cross the M-rī to TBU-rī link); tautomorphic
     blocked by *TAUTDOCK. Deletion wins. -/
 theorem fig3_LR_step2 :
-    derivationLR.stepOptimum (fig3Input.deleteTone 1) =
-      {(fig3Input.deleteTone 1).deleteTone 3} := by decide
+    derivationLR.stepOptimum (fig3Input.deleteTierElem 1) =
+      {(fig3Input.deleteTierElem 1).deleteTierElem 3} := by decide
 
 /-- LR step 3: only H-dō (idx 5) remains floating. Cannot dock
     tautomorphically (*TAUTDOCK); cannot dock leftward (no-crossing
     through M-do link). Deletion wins. -/
 theorem fig3_LR_step3 :
-    derivationLR.stepOptimum ((fig3Input.deleteTone 1).deleteTone 3) =
-      {((fig3Input.deleteTone 1).deleteTone 3).deleteTone 5} := by decide
+    derivationLR.stepOptimum ((fig3Input.deleteTierElem 1).deleteTierElem 3) =
+      {((fig3Input.deleteTierElem 1).deleteTierElem 3).deleteTierElem 5} := by decide
 
 /-- LR convergence: from the all-deletion state, GEN produces only the
     faithful candidate, so the optimum equals the input — fixed point. -/
@@ -414,7 +414,7 @@ theorem fig3_LR_converged : derivationLR.Converged attestedForm := by decide
     blocked by *TAUTDOCK; non-tautomorphic dockings of dō's H blocked
     by no-crossing. Deletion wins. -/
 theorem fig3_RL_step1 :
-    derivationRL.stepOptimum fig3Input = {fig3Input.deleteTone 5} := by decide
+    derivationRL.stepOptimum fig3Input = {fig3Input.deleteTierElem 5} := by decide
 
 /-- RL step 2 — **the wrong-form-seeding step**: from state with H-dō
     deleted, *FLOAT^← addresses next rightmost floating H (rī's, idx 3).
@@ -423,15 +423,15 @@ theorem fig3_RL_step1 :
     satisfying *CROWD. MAX(H) prefers docking over deletion (preserves
     the H), and DEP(link)/H is ranked low enough not to block it. -/
 theorem fig3_RL_step2 :
-    derivationRL.stepOptimum (fig3Input.deleteTone 5) =
-      {(fig3Input.deleteTone 5).insertLink 3 2} := by decide
+    derivationRL.stepOptimum (fig3Input.deleteTierElem 5) =
+      {(fig3Input.deleteTierElem 5).insertLink 3 2} := by decide
 
 /-- RL step 3: only H-kak (idx 1) remains floating. Tautomorphic
     blocked; non-tautomorphic dockings blocked by no-crossing through
     the new (3, 2) link. Deletion wins. -/
 theorem fig3_RL_step3 :
-    derivationRL.stepOptimum ((fig3Input.deleteTone 5).insertLink 3 2) =
-      {((fig3Input.deleteTone 5).insertLink 3 2).deleteTone 1} := by decide
+    derivationRL.stepOptimum ((fig3Input.deleteTierElem 5).insertLink 3 2) =
+      {((fig3Input.deleteTierElem 5).insertLink 3 2).deleteTierElem 1} := by decide
 
 /-- RL step 4 — **the *FALL repair step**: after step 2 docked H-rī to
     dō and step 3 deleted H-kāk, dō has the contour [H idx 3, M idx 4]
@@ -439,8 +439,8 @@ theorem fig3_RL_step3 :
     one tone; MAX(H) ≫ MAX(M) selects M for deletion. Falls out of
     the substrate without per-step intervention. -/
 theorem fig3_RL_step4 :
-    derivationRL.stepOptimum (((fig3Input.deleteTone 5).insertLink 3 2).deleteTone 1) =
-      {(((fig3Input.deleteTone 5).insertLink 3 2).deleteTone 1).deleteTone 4} := by decide
+    derivationRL.stepOptimum (((fig3Input.deleteTierElem 5).insertLink 3 2).deleteTierElem 1) =
+      {(((fig3Input.deleteTierElem 5).insertLink 3 2).deleteTierElem 1).deleteTierElem 4} := by decide
 
 /-- RL convergence: with the *FALL contour repaired (M-dō deleted), no
     further GEN move improves on any constraint. Each TBU has exactly
@@ -454,7 +454,7 @@ theorem fig3_RL_converged : derivationRL.Converged starredForm := by decide
 
 /-- **State-level asymmetry**: the LR final state `attestedForm`
     `[kāk rī dō]` and the RL final state `starredForm` `*[kāk rī dó]`
-    are NOT equal. They differ on `deletedTones` (LR {1, 3, 5}; RL
+    are NOT equal. They differ on `deletedTier` (LR {1, 3, 5}; RL
     {1, 5}) and on `surfaceLinks` (RL has the extra rightward dock
     (3, 2)).
 
@@ -465,7 +465,7 @@ theorem fig3_RL_converged : derivationRL.Converged starredForm := by decide
     form. -/
 theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
   intro h
-  exact absurd (congrArg FloatingForm.deletedTones h) (by decide)
+  exact absurd (congrArg FloatingForm.deletedTier h) (by decide)
 
 -- ============================================================================
 -- § 6.6: Regular HS Counter-Example — Divergent Ties
@@ -526,7 +526,7 @@ def derivationParallel : DirectionalHSDerivation PokoForm where
     constraint distinguishes them, so all three are optimal. -/
 theorem parallel_optimum_three_way_tie :
     derivationParallel.stepOptimum fig3Input =
-      {fig3Input.deleteTone 1, fig3Input.deleteTone 3, fig3Input.deleteTone 5} := by
+      {fig3Input.deleteTierElem 1, fig3Input.deleteTierElem 3, fig3Input.deleteTierElem 5} := by
   decide
 
 /-- Cardinality: the parallel optimum has exactly 3 elements. -/
@@ -587,15 +587,15 @@ open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Fragments.Poko (Syll seg mTone hTone)
 
-abbrev PokoForm := FloatingForm Syll
+abbrev PokoForm := FloatingForm Syll TRN
 
 /-- Input form for eq. (24): `/nãn + rī^H + nã/`. Tier order
-    (`ulTones`): `[M-nãn, M-rī, H-rī, M-nã]`. The H of rī is the only
+    (`ulTier`): `[M-nãn, M-rī, H-rī, M-nã]`. The H of rī is the only
     floating tone. -/
 def eq24Input : PokoForm :=
   FloatingForm.mkInput
     (segs := [seg .nan, seg .ri, seg .na])
-    (ulTones := [mTone .nan, mTone .ri, hTone .ri, mTone .na])
+    (ulTier := [mTone .nan, mTone .ri, hTone .ri, mTone .na])
     (ulLinks := {(0, 0), (1, 1), (3, 2)})
 
 /-- Same ranking as fig. 3 (paper, fig. 2 Hasse): `HAVETONE ≫
@@ -615,7 +615,7 @@ def derivationLR : DirectionalHSDerivation PokoForm where
 def attestedForm : PokoForm :=
   eq24Input
     |>.insertLink 2 2  -- step 1: dock H-rī rightward to nã
-    |>.deleteTone 3    -- step 2: delete M-nã (repair HM contour)
+    |>.deleteTierElem 3    -- step 2: delete M-nã (repair HM contour)
 
 
 /-- Eq. (24) step 1: H-rī docks rightward to nã. Tautomorphic dock
@@ -629,7 +629,7 @@ theorem eq24_step1 :
     MAX(M) selects M for deletion. Paper, candidate (24g). -/
 theorem eq24_step2 :
     derivationLR.stepOptimum (eq24Input.insertLink 2 2) =
-      {(eq24Input.insertLink 2 2).deleteTone 3} := by decide
+      {(eq24Input.insertLink 2 2).deleteTierElem 3} := by decide
 
 /-- Eq. (24) convergence: from the post-repair state, no GEN move
     improves on any constraint — the only remaining moves are
@@ -669,7 +669,7 @@ open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Fragments.Poko (Syll seg mTone hTone)
 
-abbrev PokoForm := FloatingForm Syll
+abbrev PokoForm := FloatingForm Syll TRN
 
 /-- Input form for eq. (21): `/nãn + rī^H/`. Tier order: `[M-nãn,
     M-rī, H-rī]`; H-rī is the only floating tone. No following stem
@@ -677,7 +677,7 @@ abbrev PokoForm := FloatingForm Syll
 def eq21Input : PokoForm :=
   FloatingForm.mkInput
     (segs := [seg .nan, seg .ri])
-    (ulTones := [mTone .nan, mTone .ri, hTone .ri])
+    (ulTier := [mTone .nan, mTone .ri, hTone .ri])
     (ulLinks := {(0, 0), (1, 1)})
 
 /-- Same fig. 2 ranking as fig. 3 / eq. (24). Eq. (20)'s minimal
@@ -693,7 +693,7 @@ def derivationLR : DirectionalHSDerivation PokoForm where
 
 /-- Attested surface form `[nãn rī]` — H deleted, both lexical Ms
     intact and linked. -/
-def attestedForm : PokoForm := eq21Input.deleteTone 2
+def attestedForm : PokoForm := eq21Input.deleteTierElem 2
 
 
 /-- Eq. (21) step 1: H-rī (idx 2) deletes. Tautomorphic dock blocked
@@ -701,7 +701,7 @@ def attestedForm : PokoForm := eq21Input.deleteTone 2
     cross the M-rī to TBU-rī link); no rightward stem to dock onto.
     Paper, candidate (21b). -/
 theorem eq21_step1 :
-    derivationLR.stepOptimum eq21Input = {eq21Input.deleteTone 2} := by decide
+    derivationLR.stepOptimum eq21Input = {eq21Input.deleteTierElem 2} := by decide
 
 /-- Eq. (21) convergence: from the post-deletion state, no GEN move
     improves on any constraint. Paper, candidate (21d). -/
@@ -737,7 +737,7 @@ open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Fragments.Poko (Syll seg mTone hTone)
 
-abbrev PokoForm := FloatingForm Syll
+abbrev PokoForm := FloatingForm Syll TRN
 
 /-- Input form for eq. (27): `/kāk^H + kā/`. Tier order: `[M-kāk,
     H-kāk, M-kā, H-kā]`. M-kāk linked to TBU 0 (kāk); M-kā and H-kā
@@ -746,7 +746,7 @@ abbrev PokoForm := FloatingForm Syll
 def eq27Input : PokoForm :=
   FloatingForm.mkInput
     (segs := [seg .kak, seg .ka])
-    (ulTones := [mTone .kak, hTone .kak, mTone .ka, hTone .ka])
+    (ulTier := [mTone .kak, hTone .kak, mTone .ka, hTone .ka])
     (ulLinks := {(0, 0), (2, 1), (3, 1)})
 
 /-- Same fig. 2 ranking as fig. 3 / eq. (24). The relevant constraints
@@ -762,14 +762,14 @@ def derivationLR : DirectionalHSDerivation PokoForm where
 
 /-- Attested surface form `[kāk kā]` — H-kāk deleted; kā retains its
     lexical MH contour. -/
-def attestedForm : PokoForm := eq27Input.deleteTone 1
+def attestedForm : PokoForm := eq27Input.deleteTierElem 1
 
 
 /-- Eq. (27) step 1: H-kāk (idx 1) deletes. Tautomorphic dock to kāk
     blocked by *TAUTDOCK; rightward dock to kā blocked by *CROWD
     (would create 3 tones on kā's morpheme). Paper, candidate (27b). -/
 theorem eq27_step1 :
-    derivationLR.stepOptimum eq27Input = {eq27Input.deleteTone 1} := by decide
+    derivationLR.stepOptimum eq27Input = {eq27Input.deleteTierElem 1} := by decide
 
 /-- Eq. (27) convergence: from the post-deletion state, no GEN move
     improves on any constraint. Paper, candidate (27e). -/
@@ -807,7 +807,7 @@ open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone starMlessL)
 open Fragments.Poko (Syll seg mTone hTone lTone)
 
-abbrev PokoForm := FloatingForm Syll
+abbrev PokoForm := FloatingForm Syll TRN
 
 /-- Input form for eq. (30): `/kāk^H + ìlí/`. Tier order: `[M-kāk,
     H-kāk, L-ìlí, H-ìlí]`. M-kāk linked to TBU 0, L-ìlí and H-ìlí
@@ -819,7 +819,7 @@ abbrev PokoForm := FloatingForm Syll
 def eq30Input : PokoForm :=
   FloatingForm.mkInput
     (segs := [seg .kak, seg .ili])
-    (ulTones := [mTone .kak, hTone .kak, lTone .ili, hTone .ili])
+    (ulTier := [mTone .kak, hTone .kak, lTone .ili, hTone .ili])
     (ulLinks := {(0, 0), (2, 1), (3, 1)})
 
 /-- Eq. (30) ranking: `*M<L ≫ *FLOAT^→ ≫ *CROWD ≫ *TAUTDOCK ≫
@@ -890,7 +890,7 @@ open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
 open Fragments.Poko (Syll seg mTone hTone)
 
-abbrev PokoForm := FloatingForm Syll
+abbrev PokoForm := FloatingForm Syll TRN
 
 /-- Input form for eq. (22a): `/nãn + rī^H + ne/`. Tier order:
     `[M-nãn, M-rī, H-rī]`. M-nãn linked to TBU 0, M-rī linked to
@@ -898,7 +898,7 @@ abbrev PokoForm := FloatingForm Syll
 def eq22Input : PokoForm :=
   FloatingForm.mkInput
     (segs := [seg .nan, seg .ri, seg .ne])
-    (ulTones := [mTone .nan, mTone .ri, hTone .ri])
+    (ulTier := [mTone .nan, mTone .ri, hTone .ri])
     (ulLinks := {(0, 0), (1, 1)})
 
 /-- Same fig. 2 ranking as fig. 3 / eq. (24). The relevant constraints
@@ -962,9 +962,9 @@ central trifecta argument. Coverage extensions not in this file:
   candidate that loses; we don't currently generate it. ~20 LOC
   substrate addition.
 - **GEN op (6d) insert+associate**: tone insertion (M-epenthesis used
-  in §3.4 toneless-stem analyses). Adds tones not in `ulTones`,
+  in §3.4 toneless-stem analyses). Adds tones not in `ulTier`,
   requires either a separate "epenthetic tones" list or relaxing the
-  immutable-`ulTones` invariant.
+  immutable-`ulTier` invariant.
 - **Boundary tone L%**: currently omitted (sits at right edge after
   existing L tones, doesn't affect the M-then-L adjacency analyses
   here). Needed for paper §3.3 LH-rising-tone tableaux (eq. 33–50).

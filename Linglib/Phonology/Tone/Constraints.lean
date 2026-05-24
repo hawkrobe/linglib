@@ -5,7 +5,7 @@ import Linglib.Core.Constraint.OT.DirectionalTableau
 # Tonal Constraints — Generic Constructors over `FloatingForm`
 @cite{wolf-2007} @cite{cahill-2004} @cite{mcpherson-lamont-2026}
 
-OT/HS constraint constructors over the `FloatingForm S` autosegmental
+OT/HS constraint constructors over the `FloatingForm S TRN` autosegmental
 representation (`Phonology/Autosegmental/Floating.lean`).
 Generic over the segment type `S`.
 
@@ -48,24 +48,24 @@ variable {S : Type} [DecidableEq S]
 -- ============================================================================
 
 /-- The link `(k, i)` was inserted by GEN (in surface but not in underlying). -/
-def IsInsertedLink (f : FloatingForm S) (l : Link) : Prop :=
+def IsInsertedLink (f : FloatingForm S TRN) (l : Link) : Prop :=
   l ∈ f.surfaceLinks ∧ l ∉ f.ulLinks
 
-instance (f : FloatingForm S) (l : Link) : Decidable (IsInsertedLink f l) :=
+instance (f : FloatingForm S TRN) (l : Link) : Decidable (IsInsertedLink f l) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The link `(k, i)` was deleted by GEN (in underlying but not in surface). -/
-def IsDeletedLink (f : FloatingForm S) (l : Link) : Prop :=
+def IsDeletedLink (f : FloatingForm S TRN) (l : Link) : Prop :=
   l ∈ f.ulLinks ∧ l ∉ f.surfaceLinks
 
-instance (f : FloatingForm S) (l : Link) : Decidable (IsDeletedLink f l) :=
+instance (f : FloatingForm S TRN) (l : Link) : Decidable (IsDeletedLink f l) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The tone at index `k` has value `t`. -/
-def ToneHasValue (f : FloatingForm S) (k : ToneIdx) (t : TRN) : Prop :=
-  (f.ulTones[k]?).map ToneSpec.tone = some t
+def ToneHasValue (f : FloatingForm S TRN) (k : TierIdx) (t : TRN) : Prop :=
+  (f.ulTier[k]?).map TierSpec.value = some t
 
-instance (f : FloatingForm S) (k : ToneIdx) (t : TRN) : Decidable (ToneHasValue f k t) :=
+instance (f : FloatingForm S TRN) (k : TierIdx) (t : TRN) : Decidable (ToneHasValue f k t) :=
   inferInstanceAs (Decidable (_ = _))
 
 -- ============================================================================
@@ -76,7 +76,7 @@ instance (f : FloatingForm S) (k : ToneIdx) (t : TRN) : Decidable (ToneHasValue 
     syllable. **Directional**: emits the indicator vector
     `floatIndicator`, with one entry per underlying tone position
     recording whether that tone is currently floating. -/
-def starFloat : DirectionalConstraint (FloatingForm S) where
+def starFloat : DirectionalConstraint (FloatingForm S TRN) where
   name := "*FLOAT"
   family := .markedness
   eval := FloatingForm.floatIndicator
@@ -101,7 +101,7 @@ def starFloat : DirectionalConstraint (FloatingForm S) where
     EVAL mode flag. The flag remains useful for documenting intent and
     for the right-to-left case (which uses `LexLE` on the *reversed*
     vector). -/
-def starFloatCount : DirectionalConstraint (FloatingForm S) where
+def starFloatCount : DirectionalConstraint (FloatingForm S TRN) where
   name := "*FLOAT (count)"
   family := .markedness
   eval := fun f => [f.floatIndicator.sum]
@@ -112,7 +112,7 @@ def starFloatCount : DirectionalConstraint (FloatingForm S) where
 
 /-- `*TAUTDOCK` (paper, eq. 15, after @cite{wolf-2007}): one violation
     per GEN-inserted tautomorphic surface link. -/
-def starTautDock : DirectionalConstraint (FloatingForm S) where
+def starTautDock : DirectionalConstraint (FloatingForm S TRN) where
   name := "*TAUTDOCK"
   family := .markedness
   eval := fun f =>
@@ -123,26 +123,26 @@ def starTautDock : DirectionalConstraint (FloatingForm S) where
 -- ============================================================================
 
 /-- The tone at index `k` belongs to morpheme `m`. -/
-def ToneInMorpheme (f : FloatingForm S) (k : ToneIdx) (m : Morpheme) : Prop :=
-  (f.ulTones[k]?).map ToneSpec.morpheme = some m
+def ToneInMorpheme (f : FloatingForm S TRN) (k : TierIdx) (m : Morpheme) : Prop :=
+  (f.ulTier[k]?).map TierSpec.morpheme = some m
 
-instance (f : FloatingForm S) (k : ToneIdx) (m : Morpheme) :
+instance (f : FloatingForm S TRN) (k : TierIdx) (m : Morpheme) :
     Decidable (ToneInMorpheme f k m) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The TBU at index `i` belongs to morpheme `m`. -/
-def SegInMorpheme (f : FloatingForm S) (i : SegIdx) (m : Morpheme) : Prop :=
+def SegInMorpheme (f : FloatingForm S TRN) (i : SegIdx) (m : Morpheme) : Prop :=
   (f.segs[i]?).map SegSpec.morpheme = some m
 
-instance (f : FloatingForm S) (i : SegIdx) (m : Morpheme) :
+instance (f : FloatingForm S TRN) (i : SegIdx) (m : Morpheme) :
     Decidable (SegInMorpheme f i m) :=
   inferInstanceAs (Decidable (_ = _))
 
 /-- The set of tone indices counting toward morpheme `m`'s tonal mass:
     surviving underlying tones of `m`, plus tones surface-linked to
     TBUs of `m`. -/
-def tonesForMorpheme (f : FloatingForm S) (m : Morpheme) : Finset ToneIdx :=
-  let ownAlive := (Finset.range f.ulTones.length).filter fun k =>
+def tonesForMorpheme (f : FloatingForm S TRN) (m : Morpheme) : Finset TierIdx :=
+  let ownAlive := (Finset.range f.ulTier.length).filter fun k =>
     f.IsAlive k ∧ ToneInMorpheme f k m
   let docked := (f.surfaceLinks.filter fun l => SegInMorpheme f l.snd m).image Prod.fst
   ownAlive ∪ docked
@@ -156,13 +156,13 @@ def tonesForMorpheme (f : FloatingForm S) (m : Morpheme) : Finset ToneIdx :=
     TBUs. This is how the paper (p. 32) blocks rightward docking onto
     `/rī^H/`: rī already has 2 tones (M + own H), so an external H
     docking would make 3. -/
-def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S) where
+def starCrowd (threshold : Nat := 2) : DirectionalConstraint (FloatingForm S TRN) where
   name := s!"*CROWD({threshold})"
   family := .markedness
   eval := fun f =>
     let morphIds : Finset Morpheme :=
       (f.segs.map SegSpec.morpheme).toFinset ∪
-      (f.ulTones.map ToneSpec.morpheme).toFinset
+      (f.ulTier.map TierSpec.morpheme).toFinset
     [(morphIds.filter (fun m => (tonesForMorpheme f m).card > threshold)).card]
 
 -- ============================================================================
@@ -198,14 +198,14 @@ instance decidableHasFall : (ts : List TRN) → Decidable (HasFall ts)
     a falling contour (HM, HL, ML).
 
     A TBU is checked by extracting its surface-linked tones in tier
-    order (via `toneSequence`) and scanning for falling adjacent pairs.
+    order (via `tierValues`) and scanning for falling adjacent pairs.
     Uses `List.range` + `countP` rather than `Finset.range` + `filter`
     + `card` so kernel `decide` reduces. -/
-def starFall : DirectionalConstraint (FloatingForm S) where
+def starFall : DirectionalConstraint (FloatingForm S TRN) where
   name := "*FALL"
   family := .markedness
   eval := fun f =>
-    [(List.range f.segs.length).countP (fun i => decide (HasFall (f.toneSequence i)))]
+    [(List.range f.segs.length).countP (fun i => decide (HasFall (f.tierValues i)))]
 
 -- ============================================================================
 -- § 5.5: *M<L (M-then-L adjacency on the tier)
@@ -213,7 +213,7 @@ def starFall : DirectionalConstraint (FloatingForm S) where
 
 /-- `*M<L` (paper, eq. 29): one violation per M tone that immediately
     precedes an L tone on the tonal tier. The "tier" is the sequence
-    of surviving (non-deleted) underlying tones in `ulTones` order;
+    of surviving (non-deleted) underlying tones in `ulTier` order;
     deletions skip positions, so adjacency is measured over the alive
     subsequence.
 
@@ -223,12 +223,12 @@ def starFall : DirectionalConstraint (FloatingForm S) where
     prefer H deletion, but that yields a surface ML adjacency which
     *M<L penalises. Tautomorphic docking of H breaks the ML adjacency,
     creating an MH contour rather than M-L. -/
-def starMlessL : DirectionalConstraint (FloatingForm S) where
+def starMlessL : DirectionalConstraint (FloatingForm S TRN) where
   name := "*M<L"
   family := .markedness
   eval := fun f =>
     let aliveValues : List TRN :=
-      f.aliveTones.filterMap fun k => (f.ulTones[k]?).map ToneSpec.tone
+      f.aliveTierIdxs.filterMap fun k => (f.ulTier[k]?).map TierSpec.value
     [aliveValues.zip aliveValues.tail
       |>.countP fun p => decide (p.1 = TRN.M ∧ p.2 = TRN.L)]
 
@@ -238,7 +238,7 @@ def starMlessL : DirectionalConstraint (FloatingForm S) where
 
 /-- `HAVETONE` (paper, eq. 17): one violation per syllable not
     associated to any tone. -/
-def haveTone : DirectionalConstraint (FloatingForm S) where
+def haveTone : DirectionalConstraint (FloatingForm S TRN) where
   name := "HAVETONE"
   family := .markedness
   eval := fun f =>
@@ -250,16 +250,16 @@ def haveTone : DirectionalConstraint (FloatingForm S) where
 
 /-- `MAX(T)` (paper, eq. 7c): one violation per underlying tone of
     value `t` deleted by GEN. -/
-def maxTone (t : TRN) : DirectionalConstraint (FloatingForm S) where
+def maxTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) where
   name := s!"MAX({reprStr t})"
   family := .faithfulness
   eval := fun f =>
-    [(List.range f.ulTones.length).countP
+    [(List.range f.ulTier.length).countP
       (fun k => decide (f.IsDeleted k ∧ ToneHasValue f k t))]
 
 /-- `DEP(link)/T` (paper, eq. 7a): one violation per surface link
     inserted by GEN whose linked tone has value `t`. -/
-def depLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S) where
+def depLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) where
   name := s!"DEP(link)/{reprStr t}"
   family := .faithfulness
   eval := fun f =>
@@ -267,7 +267,7 @@ def depLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S) where
 
 /-- `MAX(link)/T` (paper, eq. 7b): one violation per underlying link of
     value `t` deleted by GEN. -/
-def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S) where
+def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) where
   name := s!"MAX(link)/{reprStr t}"
   family := .faithfulness
   eval := fun f =>
@@ -276,20 +276,20 @@ def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S) where
 /-- `INTEGRITY` (paper, @cite{mccarthy-prince-1995}; @cite{akinbo-fwangwar-2026}
     eq. 22c): no input tone has multiple output correspondents. In our
     autosegmental encoding, an "output correspondent of an input tone"
-    is an alive ulTones entry sharing the input tone's value AND
-    morpheme. SPREADING (one alive ulTones entry, multi-linked) → 0
-    violations. COPYING (multiple alive ulTones entries with same
+    is an alive ulTier entry sharing the input tone's value AND
+    morpheme. SPREADING (one alive ulTier entry, multi-linked) → 0
+    violations. COPYING (multiple alive ulTier entries with same
     value+morpheme) → `(count - 1)` violations.
 
     Parameterised by the morpheme `m` and tone value `t` whose copies
     are being counted (typically the verbaliser's M or H). The paper's
     INTEGRITY-Mᵥ is `integrityTone vbzMorph .M`. -/
 def integrityTone (m : Morpheme) (t : TRN) :
-    DirectionalConstraint (FloatingForm S) where
+    DirectionalConstraint (FloatingForm S TRN) where
   name := s!"INTEGRITY-{reprStr t}({m.form})"
   family := .faithfulness
   eval := fun f =>
-    let aliveCopies := (List.range f.ulTones.length).countP fun k =>
+    let aliveCopies := (List.range f.ulTier.length).countP fun k =>
       decide (f.IsAlive k ∧ ToneInMorpheme f k m ∧ ToneHasValue f k t)
     [if aliveCopies = 0 then 0 else aliveCopies - 1]
 

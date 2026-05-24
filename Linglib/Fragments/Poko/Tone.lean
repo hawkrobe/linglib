@@ -40,7 +40,7 @@ fragment when a second Poko paper arrives.
 
 Each Poko stem is one morpheme, keyed by the syllable's surface form
 via `Syll.morphemeId` (`{ form := "kak" }`, `{ form := "ri" }`, etc.).
-Consumed by *TAUTDOCK and *CROWD via the `SegSpec`/`ToneSpec` morpheme
+Consumed by *TAUTDOCK and *CROWD via the `SegSpec`/`TierSpec TRN` morpheme
 fields.
 -/
 
@@ -84,7 +84,7 @@ def Syll.morphemeId : Syll → Morpheme
   | .ne  => { form := "ne" }
 
 -- ============================================================================
--- § 3: Convenience Constructors for SegSpec / ToneSpec
+-- § 3: Convenience Constructors for SegSpec / TierSpec TRN
 -- ============================================================================
 
 /-- Wrap a syllable as a `SegSpec` carrying its morpheme ID. -/
@@ -93,17 +93,17 @@ def seg (s : Syll) : SegSpec Syll :=
 
 /-- An M tone belonging to the morpheme of syllable `s` (the lexical M
     of an /M^H/ stem). -/
-def mTone (s : Syll) : ToneSpec :=
-  { tone := TRN.M, morpheme := s.morphemeId }
+def mTone (s : Syll) : TierSpec TRN :=
+  { value := TRN.M, morpheme := s.morphemeId }
 
 /-- An H tone belonging to the morpheme of syllable `s` (the floating
     H of an /M^H/ stem). -/
-def hTone (s : Syll) : ToneSpec :=
-  { tone := TRN.H, morpheme := s.morphemeId }
+def hTone (s : Syll) : TierSpec TRN :=
+  { value := TRN.H, morpheme := s.morphemeId }
 
 /-- An L tone belonging to the morpheme of syllable `s` (the L of an
     /LH/ lexical stem like `ìlí`). -/
-def lTone (s : Syll) : ToneSpec :=
-  { tone := TRN.L, morpheme := s.morphemeId }
+def lTone (s : Syll) : TierSpec TRN :=
+  { value := TRN.L, morpheme := s.morphemeId }
 
 end Fragments.Poko
