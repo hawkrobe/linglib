@@ -1312,6 +1312,7 @@ import Linglib.Studies.Landau2026
 import Linglib.Studies.CitkoGracaninYuksek2025
 import Linglib.Studies.Kalyakin2026
 import Linglib.Studies.Funakoshi2016
+import Linglib.Studies.FuscoSgrizzi2026
 import Linglib.Studies.Merchant2013
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
@@ -2476,7 +2477,6 @@ import Linglib.Semantics.Modality.Assert
 import Linglib.Semantics.Modality.Temporal
 import Linglib.Semantics.Modality.TemporalConstraint
 import Linglib.Semantics.Modality.Typology
-import Linglib.Semantics.Modality.Inertia
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.ModalIndefinites
 import Linglib.Semantics.Modality.Selectional
