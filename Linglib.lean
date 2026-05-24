@@ -1782,7 +1782,6 @@ import Linglib.Studies.Izvorski1997
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Studies.Greenberg1963
-import Linglib.Studies.DryerHaspelmath2013
 import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Studies.HahnDegenFutrell2021
 import Linglib.Studies.Rouillard2026
