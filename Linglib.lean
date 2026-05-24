@@ -1260,7 +1260,6 @@ import Linglib.Studies.TsvilodubEtAl2026
 import Linglib.Phenomena.Dialogue.Basic
 import Linglib.Studies.Anderson2021
 import Linglib.Studies.Noonan2007
-import Linglib.Studies.Dryer2013
 import Linglib.Studies.Cacchioli2025
 import Linglib.Studies.Grano2024
 import Linglib.Studies.Karttunen1971
