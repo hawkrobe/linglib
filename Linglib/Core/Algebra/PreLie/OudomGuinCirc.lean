@@ -5,9 +5,9 @@ Authors: Robert Hawkins
 -/
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCircTotal
-import Linglib.Core.RingTheory.Bialgebra.SymmetricAlgebra
 import Linglib.Core.RingTheory.Coalgebra.Convolution
 import Mathlib.LinearAlgebra.SymmetricAlgebra.Basic
+import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
 
 set_option autoImplicit false
 

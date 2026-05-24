@@ -14,8 +14,9 @@ require «doc-gen4» from git
   "https://github.com/leanprover/doc-gen4" @ "799154a6ee3cefd3c0c89a68a81911fb83b7755c"
 
 -- Mathlib last so its dependency versions take precedence
+-- Pinned past v4.30.0-rc2 to pick up #39483 (Bialgebra/SymmetricAlgebra).
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4" @ "v4.30.0-rc2"
+  "https://github.com/leanprover-community/mathlib4" @ "9dc39333aa89d5be59e8d7698237b31e496cf4ea"
 
 @[default_target]
 lean_lib Linglib where

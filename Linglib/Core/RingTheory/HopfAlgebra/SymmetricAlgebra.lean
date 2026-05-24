@@ -3,7 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.RingTheory.Bialgebra.SymmetricAlgebra
+import Mathlib.RingTheory.Bialgebra.SymmetricAlgebra
 import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 
 /-!
@@ -84,16 +84,8 @@ equations. Each axiom is checked on generators via
 
 instance instHopfAlgebra : HopfAlgebra R (SymmetricAlgebra R M) :=
   HopfAlgebra.ofAlgHom (antipodeAlgHom R M)
-    (by
-      apply algHom_ext
-      ext x
-      simp [Bialgebra.comulAlgHom_apply, Bialgebra.counitAlgHom_apply,
-            comul_ι, counit_ι])
-    (by
-      apply algHom_ext
-      ext x
-      simp [Bialgebra.comulAlgHom_apply, Bialgebra.counitAlgHom_apply,
-            comul_ι, counit_ι])
+    (by ext x; simp [algebraMapInv_ι])
+    (by ext x; simp [algebraMapInv_ι])
 
 end
 
