@@ -1,6 +1,5 @@
 import Linglib.Features.ModalIndefinite
 import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Semantics.Modality.ModalIndefinites
 import Linglib.Studies.Coon2019
 import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Spanish.ModalIndefinites
@@ -74,6 +73,83 @@ open Fragments.Spanish.ModalIndefinites
 open Fragments.German.ModalIndefinites
 open Fragments.French.ModalIndefinites
 open Fragments.Italian.ModalIndefinites
+
+
+-- ════════════════════════════════════════════════════════════════
+-- Part 0: Modal Indefinite Denotation (A-@cite{alonso-ovalle-royer-2024}, (59))
+-- ════════════════════════════════════════════════════════════════
+
+/-- The modal component of a modal indefinite (A-@cite{alonso-ovalle-royer-2024}, (59)):
+
+    `∀y[P(y)(w) → ◇_{f(e₁)}(Q(y)(w'))]`
+
+For every individual y satisfying restrictor P in the actual world, there
+exists an accessible world w' (via anchoring function f applied to event e₁)
+where y satisfies scope predicate Q. The "modal variation" inference:
+every domain member is a possible witness. -/
+def modalComponent {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Prop)
+    (w : W) : Prop :=
+  ∀ y ∈ domain, P y w → possibility f e allW (λ w' => Q y w') w
+
+instance {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Prop)
+    [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] (w : W) :
+    Decidable (modalComponent f e allW domain P Q w) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+
+/-- Full modal indefinite denotation (A-@cite{alonso-ovalle-royer-2024}, (59)):
+
+    `⟦MI⟧^{f,e₁} = λP.λQ.λw. ∃x[P(x)(w) ∧ Q(x)(w)] ∧ ∀y[P(y)(w) → ◇_{f(e₁)}(Q(y)(w'))]`
+
+Existential component: some individual satisfies both restrictor and scope.
+Universal modal component: every restrictor individual is a possible
+scope-satisfier in some accessible world (the free choice / modal variation
+effect). -/
+def modalIndefiniteSat {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Prop) (w : W) : Prop :=
+  (∃ x ∈ domain, P x w ∧ Q x w) ∧
+    modalComponent f e allW domain P Q w
+
+instance {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Prop)
+    [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] (w : W) :
+    Decidable (modalIndefiniteSat f e allW domain P Q w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- An upper-bounded modal indefinite additionally requires that NOT every
+    P is Q in the actual world — the speaker does not know/intend for all
+    domain members to satisfy Q.
+
+    `⟦MI_UB⟧ = ⟦MI⟧ ∧ ¬∀x[P(x)(w) → Q(x)(w)]`
+
+The anti-singleton inference of *algún*. Items like *yalnhej* lack this
+condition and are compatible with all P being Q. -/
+def upperBoundedSat {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Prop) (w : W) : Prop :=
+  modalIndefiniteSat f e allW domain P Q w ∧
+    ¬ (∀ x ∈ domain, P x w → Q x w)
+
+instance {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Prop)
+    [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] (w : W) :
+    Decidable (upperBoundedSat f e allW domain P Q w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Upper-boundedness strengthens the modal indefinite: if the UB version
+    holds, the plain MI version holds. -/
+theorem upperBounded_entails_plain {Event W Entity : Type*}
+    (f : AnchoringFn Event W) (e : Event) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Prop) (w : W)
+    (h : upperBoundedSat f e allW domain P Q w) :
+    modalIndefiniteSat f e allW domain P Q w :=
+  h.1
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -517,9 +593,6 @@ upper-bounded vs. non-upper-bounded contrast, and (c) the harmonic
 vs. non-harmonic anchoring distinction. The toy domains live here
 in the study file (per CLAUDE.md: examples that name a paper's analyses
 belong with the paper, not in the abstract theory file). -/
-
-open Semantics.Modality.ModalIndefinites
-
 
 -- ════════════════════════════════════════════════════
 -- § 13. Book Scenario: Non-Maximality and Upper-Boundedness

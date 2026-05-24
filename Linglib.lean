@@ -2478,7 +2478,6 @@ import Linglib.Semantics.Modality.Temporal
 import Linglib.Semantics.Modality.TemporalConstraint
 import Linglib.Semantics.Modality.Typology
 import Linglib.Semantics.Modality.EventRelativity
-import Linglib.Semantics.Modality.ModalIndefinites
 import Linglib.Semantics.Modality.Selectional
 import Linglib.Semantics.Modality.Narrog
 import Linglib.Semantics.Mood.Basic
