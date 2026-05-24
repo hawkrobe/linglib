@@ -3,6 +3,7 @@ import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Semantics.Plurality.Distributivity
 import Linglib.Features.Coordination
 import Linglib.Studies.Haspelmath2007
+import Linglib.Studies.MitrovicSauerland2016
 
 /-!
 # @cite{bill-etal-2025} — DP Conjunction Complexity
@@ -560,7 +561,8 @@ end MUDistributivity
 -- § Typological Challenges
 -- ============================================================================
 
-open Haspelmath2007 (hasAllThreeStrategies georgian hungarian) in
+open Haspelmath2007 (georgian hungarian) in
+open MitrovicSauerland2016 (hasAllThreeStrategies) in
 /--
 **M&S universality challenged.**
 
@@ -569,11 +571,11 @@ M&S + Transparency predicts J-MU should be easiest (most transparent).
 But Georgian children found J-MU significantly harder (more replays).
 -/
 theorem ms_universality_challenged :
-    hasAllThreeStrategies georgian = true ∧
+    hasAllThreeStrategies georgian ∧
     transparencyPredicts .jMu .jOnly = true ∧
     georgianChild_j_vs_jmu.significant = true ∧
     georgianChild_j_vs_jmu.estimate_thou < 0 := by
-  native_decide
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 open Haspelmath2007 (georgian hungarian) in
 open Typology.Coordination (ConjunctionSystem.muBoundness) in

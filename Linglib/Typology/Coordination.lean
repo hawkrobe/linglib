@@ -21,33 +21,35 @@ Per-language typological substrate for coordination across three frameworks:
 Mirrors the `Linglib/Typology/{Possession,Negation,Question,Comparison}.lean`
 substrate-extension pattern. Fragment-importable; cross-linguistic theorems
 live in `Studies/Haspelmath2007.lean` (structural typology + 19-language
-sample) and `Studies/Stassen2000.lean` (AND/WITH typology + 15-language
-WALS sample).
+sample), `Studies/MitrovicSauerland2016.lean` (J/MU framework + M&S
+generalisations), and `Studies/Stassen2000.lean` (AND/WITH typology + 15-
+language WALS sample).
 
-## What lives here
+## Main declarations
 
-- `Syndesis`, `CoordinatorPosition`, `CoordPattern`, `DiachronicSource`
-  enums (@cite{haspelmath-2007}).
-- `AndWithStatus` enum (@cite{stassen-2000}); derivation from WALS Ch 63.
-- WALS aliases: `ConjQuantRelation`, `ConjComitativeRelation`,
-  `NomVerbalConjRelation` for Chs 56/63/64.
-- `SourcedEntry`, `ConjunctionSystem` structs (M&S framework).
-- `CoordinationProfile` struct (WALS profile bundle).
-- Helper predicates: `hasStrategy`, `muIsAdditive`, `hasSource`,
-  `hasMonosyndetic`, `hasBisyndetic`, `muBoundness`.
-- WALS aggregate sample-size + corpus-only generalisations (Ch 56/63/64).
+* `Syndesis`, `CoordinatorPosition`, `CoordPattern`, `DiachronicSource` —
+  Haspelmath structural enums.
+* `AndWithStatus` — Stassen 2000 binary classification.
+* `ConjQuantRelation`, `ConjComitativeRelation`, `NomVerbalConjRelation` —
+  WALS Ch 56/63/64 aliases.
+* `SourcedEntry`, `ConjunctionSystem` — per-language structs.
+* `CoordinationProfile` — WALS profile bundle.
+* `ConjunctionSystem.hasStrategy`, `muIsAdditive`, `hasSource`,
+  `hasMonosyndetic`, `hasBisyndetic`, `muBoundness` — `Prop`-valued
+  decidable predicates.
 
-## Theory-laden caveats
+## Implementation notes
 
-- `DiachronicSource` collapses Heine's full grammaticalization-source
+* Helper predicates are `Prop` with explicit `Decidable` instances rather
+  than `Bool`-returning, so consumers can write `sys.hasStrategy s`
+  directly in theorem statements without `= true` boilerplate while
+  retaining `decide`-checkability over finite samples.
+* `DiachronicSource` collapses Heine's full grammaticalization-source
   taxonomy to two main pathways relevant for coordination (comitative,
-  focus particle); other pathways (e.g. coordinator from sequence
-  adverbial) are conflated under `.other`.
-- `AndWithStatus` is @cite{stassen-2000}'s binary classification; some
+  focus particle); other pathways are conflated under `.other`.
+* `AndWithStatus` is @cite{stassen-2000}'s binary classification; some
   authors (e.g. Mauri 2008) argue for a finer multi-way split.
 -/
-
-set_option autoImplicit false
 
 namespace Typology.Coordination
 
@@ -57,33 +59,35 @@ private abbrev ch56 := Data.WALS.F56A.allData
 private abbrev ch63 := Data.WALS.F63A.allData
 private abbrev ch64 := Data.WALS.F64A.allData
 
--- ============================================================================
--- §1. Haspelmath 2007 structural enums
--- ============================================================================
+/-! ### Haspelmath 2007 structural enums -/
 
-/-- Syndesis: presence and number of overt coordinators (Haspelmath §1). -/
+/-- Syndesis: presence and number of overt coordinators (@cite{haspelmath-2007} §1). -/
 inductive Syndesis where
-  | asyndetic      -- A B (juxtaposition, no overt linker)
-  | monosyndetic   -- A co-B (single coordinator)
-  | bisyndetic     -- co-A co-B (two coordinators, one per coordinand)
+  /-- A B (juxtaposition, no overt linker). -/
+  | asyndetic
+  /-- A co-B (single coordinator). -/
+  | monosyndetic
+  /-- co-A co-B (two coordinators, one per coordinand). -/
+  | bisyndetic
   deriving DecidableEq, BEq, Repr
 
-/-- Coordinator position relative to its coordinand (Haspelmath §1.2).
+/-- Coordinator position relative to its coordinand (@cite{haspelmath-2007} §1.2).
 
     @cite{haspelmath-2007} notes that **co-A B (prepositive on first
     coordinand only) is unattested** (cf. @cite{stassen-2000}, n=260). -/
 inductive CoordinatorPosition where
-  | prepositive    -- co precedes coordinand: "and A" / English "both X"
-  | postpositive   -- co follows coordinand: "A-and" / Latin "X-que"
+  /-- co precedes coordinand: "and A" / English "both X". -/
+  | prepositive
+  /-- co follows coordinand: "A-and" / Latin "X-que". -/
+  | postpositive
   deriving DecidableEq, BEq, Repr
 
-/-- Structural pattern for binary coordination (Haspelmath (17)).
+/-- Structural pattern for binary coordination (@cite{haspelmath-2007} (17)).
 
-    Monosyndetic: 3 attested patterns (of 4 logically possible).
-      A co-B (prepositive on 2nd: English "A and B")
-      A-co B (postpositive on 1st: Tibetan "A-daŋ B")
-      A B-co (postpositive on 2nd: Latin "A B-que")
-      co-A B — UNATTESTED (@cite{haspelmath-2007})
+    Monosyndetic: 3 attested patterns (of 4 logically possible). The fourth
+    monosyndetic pattern `co-A B` (prepositive on first coordinand only) is
+    unattested per @cite{stassen-2000}, n=260; the absence is encoded as a
+    theorem rather than by omission (see `Studies/Haspelmath2007.lean`).
 
     Bisyndetic: 4 attested patterns. -/
 inductive CoordPattern where
@@ -93,6 +97,9 @@ inductive CoordPattern where
   | a'co_b
   /-- A B-co: final postpositive (Latin "senatus populus-que"). -/
   | a_b'co
+  /-- co-A B: prepositive on first coordinand only — typologically
+      unattested for conjunction (@cite{stassen-2000}, n=260). -/
+  | co'a_b
   /-- co-A co-B: prepositive bisyndetic (Yoruba "àtí A àtí B"). -/
   | co'a_co'b
   /-- A-co B-co: postpositive bisyndetic (Martuthunira "A-thurti B-thurti"). -/
@@ -105,39 +112,41 @@ inductive CoordPattern where
 
 /-- Classify a pattern's syndesis. -/
 def CoordPattern.syndesis : CoordPattern → Syndesis
-  | .a_co_b | .a'co_b | .a_b'co => .monosyndetic
+  | .a_co_b | .a'co_b | .a_b'co | .co'a_b => .monosyndetic
   | .co'a_co'b | .a'co_b'co | .a'co_co'b | .co'a_b'co => .bisyndetic
 
-/-- Diachronic source of conjunction constructions (Haspelmath §5.1). -/
+/-- Diachronic source of conjunction constructions (@cite{haspelmath-2007} §5.1). -/
 inductive DiachronicSource where
-  | comitative      -- "with" → coordinator (gives A co-B or A-co B)
-  | focusParticle   -- "also/too" → coordinator (gives A-co B-co)
+  /-- "with" → coordinator (gives A co-B or A-co B). -/
+  | comitative
+  /-- "also/too" → coordinator (gives A-co B-co). -/
+  | focusParticle
+  /-- Other or unknown source. -/
   | other
   deriving DecidableEq, BEq, Repr
 
-/-- Haspelmath's key insight connecting diachronic source to structural
-    pattern. -/
-def DiachronicSource.expectedPattern : DiachronicSource → Syndesis
-  | .comitative    => .monosyndetic
-  | .focusParticle => .bisyndetic
-  | .other         => .monosyndetic  -- default
+/-- Haspelmath's link between diachronic source and structural syndesis.
+    Returns the syndesis pattern expected from the source pathway; `none`
+    for `.other` since we make no prediction there. -/
+def DiachronicSource.expectedSyndesis : DiachronicSource → Option Syndesis
+  | .comitative    => some .monosyndetic
+  | .focusParticle => some .bisyndetic
+  | .other         => none
 
--- ============================================================================
--- §2. Stassen 2000 AND/WITH classification
--- ============================================================================
+/-! ### Stassen 2000 AND/WITH classification -/
 
 /-- @cite{stassen-2000} AND/WITH classification of languages.
     AND-languages have structurally distinct coordinate and comitative
     strategies. WITH-languages use comitative encoding as the only strategy
     for NP conjunction (lexical identity of "and" and "with"). -/
 inductive AndWithStatus where
-  | andLang   -- Coordinate and comitative are structurally distinct
-  | withLang  -- Comitative marker = coordinator
+  /-- Coordinate and comitative are structurally distinct. -/
+  | andLang
+  /-- Comitative marker = coordinator. -/
+  | withLang
   deriving DecidableEq, BEq, Repr
 
--- ============================================================================
--- §3. WALS aliases (Chs 56/63/64)
--- ============================================================================
+/-! ### WALS aliases (Chs 56/63/64) -/
 
 /-- WALS Ch 56: conjunction-quantifier relation. -/
 abbrev ConjQuantRelation := Data.WALS.F56A.ConjunctionsAndUniversalQuantifiers
@@ -155,9 +164,7 @@ def ConjComitativeRelation.toAndWithStatus :
   | .andDifferentFromWith => .andLang
   | .andIdenticalToWith   => .withLang
 
--- ============================================================================
--- §4. Per-language structs
--- ============================================================================
+/-! ### Per-language structs -/
 
 /-- A coordination entry annotated with its diachronic source.
     Wraps `CoordEntry` (from `Features.Coordination`) with typological
@@ -172,12 +179,13 @@ structure SourcedEntry where
 
 /-- A language's conjunction system (M&S framework). -/
 structure ConjunctionSystem where
+  /-- Language name. -/
   language : String
   /-- Available conjunction morphemes (sourced entries). -/
   morphemes : List SourcedEntry
   /-- Which conjunction strategies are available (M&S classification). -/
   strategies : List ConjunctionStrategy
-  /-- Structural patterns attested (Haspelmath classification). -/
+  /-- Structural patterns attested (@cite{haspelmath-2007} classification). -/
   patterns : List CoordPattern := []
   /-- ISO 639-3 code. -/
   iso : String := ""
@@ -185,8 +193,11 @@ structure ConjunctionSystem where
 
 /-- A language's coordination typology profile across WALS Chs 56, 63, 64. -/
 structure CoordinationProfile where
+  /-- Language name. -/
   language : String
+  /-- ISO 639-3 code. -/
   iso : String := ""
+  /-- Language family. -/
   family : String := ""
   /-- Ch 56: conjunction-vs-universal-quantifier. -/
   conjQuant : Option ConjQuantRelation := none
@@ -194,6 +205,7 @@ structure CoordinationProfile where
   conjComitative : Option ConjComitativeRelation := none
   /-- Ch 64: NP-vs-VP conjunction. -/
   nomVerbalConj : Option NomVerbalConjRelation := none
+  /-- Free-form provenance notes. -/
   walsNotes : String := ""
   deriving Repr
 
@@ -202,36 +214,59 @@ def CoordinationProfile.andWithStatus (p : CoordinationProfile) :
     Option AndWithStatus :=
   p.conjComitative.map (·.toAndWithStatus)
 
--- ============================================================================
--- §5. Helper predicates
--- ============================================================================
+/-! ### Helper predicates
 
-/-- Does a language have a given strategy? -/
+The five `ConjunctionSystem.has*` predicates and `muIsAdditive` are
+`Prop`-valued for clean theorem statements (no `= true` boilerplate).
+Each has an explicit `Decidable` instance so concrete checks over finite
+language samples close by `decide`. -/
+
+/-- Does a language make a given conjunction strategy available? -/
 def ConjunctionSystem.hasStrategy (sys : ConjunctionSystem)
-    (s : ConjunctionStrategy) : Bool :=
-  sys.strategies.contains s
+    (s : ConjunctionStrategy) : Prop :=
+  s ∈ sys.strategies
 
-/-- Does a language have a MU morpheme that also serves as additive? -/
-def ConjunctionSystem.muIsAdditive (sys : ConjunctionSystem) : Bool :=
-  sys.morphemes.any fun m => m.entry.role == .mu && m.entry.alsoAdditive
+instance (sys : ConjunctionSystem) (s : ConjunctionStrategy) :
+    Decidable (sys.hasStrategy s) := by
+  unfold ConjunctionSystem.hasStrategy; infer_instance
 
-/-- Does a language have a morpheme with a given diachronic source? -/
+/-- Does a language have a MU morpheme that also serves as the additive
+    ("also/too") particle? Existential: at least one MU morpheme in the
+    language's inventory has `alsoAdditive = true`. -/
+def ConjunctionSystem.muIsAdditive (sys : ConjunctionSystem) : Prop :=
+  ∃ m ∈ sys.morphemes, m.entry.role = .mu ∧ m.entry.alsoAdditive = true
+
+instance (sys : ConjunctionSystem) : Decidable sys.muIsAdditive := by
+  unfold ConjunctionSystem.muIsAdditive; infer_instance
+
+/-- Does the language attest a morpheme with the given diachronic source? -/
 def ConjunctionSystem.hasSource (sys : ConjunctionSystem)
-    (s : DiachronicSource) : Bool :=
-  sys.morphemes.any fun m => m.source == some s
+    (s : DiachronicSource) : Prop :=
+  ∃ m ∈ sys.morphemes, m.source = some s
 
-/-- Does a language have at least one monosyndetic pattern? -/
-def ConjunctionSystem.hasMonosyndetic (sys : ConjunctionSystem) : Bool :=
-  sys.patterns.any fun p => p.syndesis == .monosyndetic
+instance (sys : ConjunctionSystem) (s : DiachronicSource) :
+    Decidable (sys.hasSource s) := by
+  unfold ConjunctionSystem.hasSource; infer_instance
 
-/-- Does a language have at least one bisyndetic pattern? -/
-def ConjunctionSystem.hasBisyndetic (sys : ConjunctionSystem) : Bool :=
-  sys.patterns.any fun p => p.syndesis == .bisyndetic
+/-- Does a language attest at least one monosyndetic pattern? -/
+def ConjunctionSystem.hasMonosyndetic (sys : ConjunctionSystem) : Prop :=
+  ∃ p ∈ sys.patterns, p.syndesis = .monosyndetic
 
-/-- Get the boundness of a language's MU particle, if it has one. -/
+instance (sys : ConjunctionSystem) : Decidable sys.hasMonosyndetic := by
+  unfold ConjunctionSystem.hasMonosyndetic; infer_instance
+
+/-- Does a language attest at least one bisyndetic pattern? -/
+def ConjunctionSystem.hasBisyndetic (sys : ConjunctionSystem) : Prop :=
+  ∃ p ∈ sys.patterns, p.syndesis = .bisyndetic
+
+instance (sys : ConjunctionSystem) : Decidable sys.hasBisyndetic := by
+  unfold ConjunctionSystem.hasBisyndetic; infer_instance
+
+/-- The boundness of a language's MU particle, if it has one. -/
 def ConjunctionSystem.muBoundness (sys : ConjunctionSystem) : Option Boundness :=
   (sys.morphemes.find? fun m => m.entry.role == .mu).map (·.entry.boundness)
 
+/-! ### WALS corpus generalisations -/
 
 /-- F63A: "and" being different from "with" is the majority pattern (131 > 103). -/
 theorem and_languages_majority :

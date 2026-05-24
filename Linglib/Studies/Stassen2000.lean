@@ -260,7 +260,7 @@ theorem attested_drift_is_comitative :
 /-- Comitative-sourced coordinators yield monosyndetic patterns:
     WITH→AND drift → comitative source → monosyndetic pattern. -/
 theorem drift_yields_monosyndetic :
-    DiachronicSource.expectedPattern .comitative = .monosyndetic := rfl
+    DiachronicSource.expectedSyndesis .comitative = some .monosyndetic := rfl
 
 -- ============================================================================
 -- §5. Correlational Parameters

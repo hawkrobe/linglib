@@ -1,0 +1,30 @@
+import Linglib.Features.Coordination
+
+/-!
+# Hausa Coordination Morphemes
+@cite{schwartz-1989} @cite{haspelmath-2007}
+
+Hausa (Chadic, Nigeria) uses *da* for both comitative ("with") and
+conjunction ("and") — a classic WITH-language in @cite{stassen-2000}'s
+classification. @cite{haspelmath-2007} (12) cites @cite{schwartz-1989}:32,36
+for the data.
+
+- *da* — J, free, prepositive medial: "A da B" = 'A and B' / 'A with B'
+
+Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.hausa`).
+-/
+
+namespace Fragments.Hausa.Coordination
+
+open Features.Coordination
+
+/-- *da* — J particle, also comitative marker. Free, prepositive.
+    Diachronic source: comitative ('with') → coordinator ('and'). -/
+def da : CoordEntry :=
+  { form := "da", gloss := "and; with"
+  , role := .j, boundness := .free
+  , note := "comitative-derived; identical form for 'with' and 'and'" }
+
+def allEntries : List CoordEntry := [da]
+
+end Fragments.Hausa.Coordination

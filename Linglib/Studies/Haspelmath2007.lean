@@ -1,73 +1,85 @@
 import Linglib.Typology.Coordination
+import Linglib.Fragments.English.Coordination
+import Linglib.Fragments.Farsi.Coordination
+import Linglib.Fragments.Finnish.Coordination
 import Linglib.Fragments.Georgian.Coordination
+import Linglib.Fragments.German.Coordination
+import Linglib.Fragments.Hausa.Coordination
+import Linglib.Fragments.HindiUrdu.Coordination
 import Linglib.Fragments.Hungarian.Coordination
-import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Japanese.Coordination
-import Linglib.Fragments.German.Coordination
+import Linglib.Fragments.Kannada.Coordination
+import Linglib.Fragments.Korean.Coordination
+import Linglib.Fragments.Lango.Coordination
+import Linglib.Fragments.Latin.Coordination
+import Linglib.Fragments.Tibetan.Coordination
+import Linglib.Fragments.Turkish.Coordination
+import Linglib.Fragments.Yoruba.Coordination
 
 /-!
 # Haspelmath (2007): Coordination — structural typology
-@cite{haspelmath-2007} @cite{stassen-2000} @cite{mitrovic-sauerland-2014}
-@cite{mitrovic-sauerland-2016} @cite{mitrovic-2021} @cite{noonan-1992}
-@cite{schwartz-1989} @cite{rowlands-1969} @cite{sridhar-1990}
-@cite{dench-1995} @cite{beyer-1992}
+@cite{haspelmath-2007} @cite{stassen-2000} @cite{noonan-1992} @cite{schwartz-1989}
+@cite{rowlands-1969} @cite{sridhar-1990} @cite{dench-1995} @cite{beyer-1992}
+@cite{kornfilt-1997}
 
 Martin Haspelmath. "Coordination." In *Language Typology and Syntactic
 Description, Vol. II*, ed. T. Shopen, 2007.
 
-Cross-linguistic typology of coordination: syndesis (asyndetic /
-monosyndetic / bisyndetic), structural patterns, and diachronic sources
-(comitative vs additive focus particle).
+Cross-linguistic typology of coordination — restricted here to **conjunctive**
+coordination. The chapter as a whole covers four semantic types (conjunction,
+disjunction, adversative, causal) plus emphatic and emphatic-negative variants;
+the formalisation below engages only conjunction (§1 *Types and positions of
+coordinators*, §5.1 *Diachronic sources*). Disjunction (§4), adversative,
+causal, ellipsis (§6), and subordination diagnostics (§7) are out of scope.
 
-## What lives here
+The companion file `Studies/MitrovicSauerland2016.lean` consumes the
+language sample below to formalise the J-μ predictions; the `iso` and
+`patterns` data sets are shared.
 
-- The 19-language exemplar sample (M&S focus + Haspelmath illustrations).
-- Structural / diachronic generalisations
-  (`comitative_source_monosyndetic`, `focus_particle_source_bisyndetic`).
-- @cite{mitrovic-sauerland-2016} M&S generalisations
-  (`mu_additive_generalization`, `j_is_universal`, `all_three_is_rare`,
-  `mu_boundness_asymmetry`).
+## Main declarations
 
-The structural enums (`Syndesis`, `CoordPattern`, `DiachronicSource`,
-etc.) live in the substrate `Linglib/Typology/Coordination.lean`.
+* `allLanguages` — 19-language sample (Haspelmath structural exemplars + M&S
+  focus languages).
+* `msLanguages` — M&S-focused sub-sample of 7 languages; consumed by
+  `MitrovicSauerland2016.lean`.
+* `coAB_unattested` — Haspelmath's structural generalisation that the
+  monosyndetic pattern `co-A B` (prepositive on first coordinand only) is
+  typologically absent (cf. @cite{stassen-2000}, n=260).
+* `comitative_source_monosyndetic`, `focus_particle_source_bisyndetic` —
+  the two diachronic-source / syndesis correlations Haspelmath proposes
+  in §5.1.
 
-## Sample composition
+## Implementation notes
 
-The 19 languages combine:
-- **M&S focus languages** (English, Japanese, Hungarian, Georgian, Latin,
-  Korean, Slovenian) where the J/MU/J-MU semantic decomposition is the
-  primary motivation.
-- **Haspelmath structural exemplars** (Lango, Hausa, Yoruba, Kannada,
-  Martuthunira, Classical Tibetan, Hindi-Urdu, Turkish, Irish, Persian,
-  Finnish, German) covering each structural pattern.
+* Records use the `ConjunctionSystem` struct from
+  `Typology/Coordination.lean`. All morphemes reference Fragment entries
+  except for Slovenian (*in*) and Martuthunira (*-thurti*), which remain
+  inline since the project has no `Fragments/{Slovenian,Martuthunira}/`
+  directory and creating one for a single morpheme is overkill.
+* Pattern data follow the cited primary sources, *not* the M&S analyses
+  layered on top — e.g., Turkish *de* is monosyndetic postpositive per
+  @cite{haspelmath-2007} (23), not bisyndetic.
 -/
-
-set_option autoImplicit false
 
 namespace Haspelmath2007
 
 open Typology.Coordination
 open Features.Coordination
 
--- ============================================================================
--- §1. M&S focus languages (Bill et al. 2025 / Mitrović & Sauerland 2016)
--- ============================================================================
+/-! ### M&S focus languages -/
 
 /-- English only has J ("and"). "Both...and" is sometimes analyzed as J-MU,
     but "both" is not productively used as an additive particle (*"John both
     slept") and English lacks MU-only conjunction (*"John both Mary both slept"). -/
 def english : ConjunctionSystem :=
   { language := "English"
-  , morphemes :=
-    [ { entry := { form := "and", gloss := "and", role := .j, boundness := .free } } ]
+  , morphemes := [ { entry := Fragments.English.Coordination.and_ } ]
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
   , iso := "eng" }
 
-/-- German uses "und" (J, free word), like English "and". J-only strategy.
-    Test language for @cite{schwarzer-2026}'s study of selection-violating
-    coordination in OV environments. -/
+/-- German uses "und" (J, free word), like English "and". J-only strategy. -/
 def german : ConjunctionSystem :=
   { language := "German"
   , morphemes :=
@@ -91,7 +103,9 @@ def japanese : ConjunctionSystem :=
 
 /-- Hungarian: "és" (J, free, prepositive), "is" (MU, free, postpositive).
     "is" is also the additive focus particle ("also").
-    One of two languages in the sample with all three strategies (J, MU, J-MU). -/
+    One of the languages in the M&S 2016 sample exhibiting triadic exponency
+    (all three of two μ heads + J head) — see @cite{mitrovic-sauerland-2016}
+    (28). -/
 def hungarian : ConjunctionSystem :=
   { language := "Hungarian"
   , morphemes :=
@@ -103,7 +117,10 @@ def hungarian : ConjunctionSystem :=
   , iso := "hun" }
 
 /-- Georgian: "da" (J, free), "-c" (MU, bound clitic).
-    "-c" is also the additive/focus particle. -/
+    "-c" is also the additive/focus particle. Classified as exhibiting all
+    three M&S strategies per @cite{mitrovic-2021}; @cite{mitrovic-sauerland-2016}
+    itself uses SE Macedonian, Hungarian, and Avar as the triadic-exponency
+    languages — Georgian's inclusion here is from the later literature. -/
 def georgian : ConjunctionSystem :=
   { language := "Georgian"
   , morphemes :=
@@ -127,13 +144,14 @@ def latin : ConjunctionSystem :=
   , patterns := [.a_co_b, .a_b'co, .co'a_b'co]
   , iso := "lat" }
 
-/-- Korean: "-(i)rang" (J, bound, postpositive) and "-to" (MU, bound, additive). -/
+/-- Korean: "-(i)rang" (J, bound, postpositive) and "-to" (MU, bound, additive).
+    Not discussed in @cite{haspelmath-2007}; classification follows
+    @cite{mitrovic-2021}. -/
 def korean : ConjunctionSystem :=
   { language := "Korean"
   , morphemes :=
-    [ { entry := { form := "-(i)rang", gloss := "and", role := .j, boundness := .bound } }
-    , { entry := { form := "-to", gloss := "also, too; and (MU)"
-                 , role := .mu, boundness := .bound, alsoAdditive := true }
+    [ { entry := Fragments.Korean.Coordination.irang }
+    , { entry := Fragments.Korean.Coordination.to_
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a'co_b, .a'co_b'co]
@@ -148,9 +166,7 @@ def slovenian : ConjunctionSystem :=
   , patterns := [.a_co_b]
   , iso := "slv" }
 
--- ============================================================================
--- §2. Haspelmath 2007 structural exemplars
--- ============================================================================
+/-! ### Haspelmath 2007 structural exemplars -/
 
 /-- Lango (Nilotic, Uganda): "kèdè" is a comitative marker that also serves
     as coordinator. Classic AND-language with comitative source giving
@@ -158,7 +174,7 @@ def slovenian : ConjunctionSystem :=
 def lango : ConjunctionSystem :=
   { language := "Lango"
   , morphemes :=
-    [ { entry := { form := "kèdè", gloss := "and; with", role := .j, boundness := .free }
+    [ { entry := Fragments.Lango.Coordination.kede
       , source := some .comitative } ]
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
@@ -169,7 +185,7 @@ def lango : ConjunctionSystem :=
 def hausa : ConjunctionSystem :=
   { language := "Hausa"
   , morphemes :=
-    [ { entry := { form := "da", gloss := "and; with", role := .j, boundness := .free }
+    [ { entry := Fragments.Hausa.Coordination.da
       , source := some .comitative } ]
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
@@ -179,8 +195,7 @@ def hausa : ConjunctionSystem :=
     bisyndetic coordination (@cite{rowlands-1969}:201ff, @cite{haspelmath-2007} (25)). -/
 def yoruba : ConjunctionSystem :=
   { language := "Yoruba"
-  , morphemes :=
-    [ { entry := { form := "àtí", gloss := "and", role := .j, boundness := .free } } ]
+  , morphemes := [ { entry := Fragments.Yoruba.Coordination.ati } ]
   , strategies := [.jOnly]
   , patterns := [.co'a_co'b]
   , iso := "yor" }
@@ -191,8 +206,7 @@ def yoruba : ConjunctionSystem :=
 def kannada : ConjunctionSystem :=
   { language := "Kannada"
   , morphemes :=
-    [ { entry := { form := "-u", gloss := "and; also", role := .mu, boundness := .bound
-                 , alsoAdditive := true }
+    [ { entry := Fragments.Kannada.Coordination.u
       , source := some .focusParticle } ]
   , strategies := [.muOnly]
   , patterns := [.a'co_b'co]
@@ -213,7 +227,7 @@ def martuthunira : ConjunctionSystem :=
 def classicalTibetan : ConjunctionSystem :=
   { language := "Classical Tibetan"
   , morphemes :=
-    [ { entry := { form := "-daŋ", gloss := "and; with", role := .j, boundness := .bound }
+    [ { entry := Fragments.Tibetan.Coordination.dang
       , source := some .comitative } ]
   , strategies := [.jOnly]
   , patterns := [.a'co_b]
@@ -224,24 +238,26 @@ def classicalTibetan : ConjunctionSystem :=
 def hindiUrdu : ConjunctionSystem :=
   { language := "Hindi-Urdu"
   , morphemes :=
-    [ { entry := { form := "aur", gloss := "and", role := .j, boundness := .free } }
-    , { entry := { form := "bhii", gloss := "also, too; and (MU)"
-                 , role := .mu, boundness := .free, alsoAdditive := true }
+    [ { entry := Fragments.HindiUrdu.Coordination.aur }
+    , { entry := Fragments.HindiUrdu.Coordination.bhii
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a_co_b, .a'co_b'co]
   , iso := "hin" }
 
-/-- Turkish: "ve" (J, free, prepositive) and "de/da" (MU, free, additive). -/
+/-- Turkish: "ve" (J, free, prepositive) and "de" (MU, bound enclitic,
+    postpositive on first word of second coordinand).
+    Per @cite{haspelmath-2007} (23) citing @cite{kornfilt-1997}:120, *de* is
+    monosyndetic postpositive (A B-co); *de…de* bisyndetic also exists as a
+    marked emphatic variant. -/
 def turkish : ConjunctionSystem :=
   { language := "Turkish"
   , morphemes :=
-    [ { entry := { form := "ve", gloss := "and", role := .j, boundness := .free } }
-    , { entry := { form := "de/da", gloss := "also; and (MU)"
-                 , role := .mu, boundness := .free, alsoAdditive := true }
+    [ { entry := Fragments.Turkish.Coordination.ve }
+    , { entry := Fragments.Turkish.Coordination.de
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
-  , patterns := [.a_co_b, .a'co_b'co]
+  , patterns := [.a_co_b, .a_b'co, .a'co_b'co]
   , iso := "tur" }
 
 /-- Irish: "agus" (J, free, prepositive). Pattern: A agus B (monosyndetic medial). -/
@@ -257,9 +273,8 @@ def irish : ConjunctionSystem :=
 def persian : ConjunctionSystem :=
   { language := "Persian"
   , morphemes :=
-    [ { entry := { form := "va", gloss := "and", role := .j, boundness := .free } }
-    , { entry := { form := "ham", gloss := "also, too; and (MU)"
-                 , role := .mu, boundness := .free, alsoAdditive := true }
+    [ { entry := Fragments.Farsi.Coordination.va }
+    , { entry := Fragments.Farsi.Coordination.ham
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a_co_b, .a'co_b'co]
@@ -270,89 +285,50 @@ def persian : ConjunctionSystem :=
 def finnish : ConjunctionSystem :=
   { language := "Finnish"
   , morphemes :=
-    [ { entry := { form := "ja", gloss := "and", role := .j, boundness := .free } }
-    , { entry := { form := "-kin", gloss := "also, too; and (MU)"
-                 , role := .mu, boundness := .bound, alsoAdditive := true }
+    [ { entry := Fragments.Finnish.Coordination.ja }
+    , { entry := Fragments.Finnish.Coordination.kin
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a_co_b, .a'co_b'co]
   , iso := "fin" }
 
-/-- All 19 ConjunctionSystem profiles. -/
+/-! ### Sample bundles -/
+
+/-- All 19 `ConjunctionSystem` profiles. -/
 def allLanguages : List ConjunctionSystem :=
   [ english, german, japanese, hungarian, georgian, latin, korean, slovenian
   , lango, hausa, yoruba, kannada, martuthunira, classicalTibetan
   , hindiUrdu, turkish, irish, persian, finnish ]
 
-/-- M&S focus languages (Bill et al. 2025 acquisition study sample). -/
+/-- M&S focus languages — the sub-sample consumed by
+    `Studies/MitrovicSauerland2016.lean`. -/
 def msLanguages : List ConjunctionSystem :=
   [english, japanese, hungarian, georgian, latin, korean, slovenian]
 
--- ============================================================================
--- §3. Sample-level statistics
--- ============================================================================
+/-! ### Structural / diachronic generalisations -/
 
-theorem sample_size : allLanguages.length = 19 := by native_decide
-
-theorem ms_sample_size : msLanguages.length = 7 := by native_decide
-
--- ============================================================================
--- §4. M&S generalisations (Mitrović & Sauerland 2016)
--- ============================================================================
-
-/-- Every language with a MU conjunction particle uses the same morpheme
-    as its additive ("also/too") particle. Core M&S prediction: MU is a
-    single lexical item with subset semantics that appears in both
-    conjunction and additive contexts. -/
-theorem mu_additive_generalization :
-    let withMu := allLanguages.filter fun sys =>
-      sys.morphemes.any (·.entry.role == .mu)
-    withMu.all (·.muIsAdditive) = true := by
-  native_decide
-
-/-- Every M&S-classified language has at least the J-only strategy. -/
-theorem j_is_universal :
-    msLanguages.all (·.hasStrategy .jOnly) = true := by
-  native_decide
-
-/-- Helper: does the system attest all three strategies (J, MU, J-MU)? -/
-def hasAllThreeStrategies (sys : ConjunctionSystem) : Bool :=
-  sys.hasStrategy .jOnly && sys.hasStrategy .muOnly && sys.hasStrategy .jMu
-
-/-- All three strategies (J, MU, J-MU) are attested only in Georgian and
-    Hungarian in the sample. Typologically rare. -/
-theorem all_three_is_rare :
-    let count := (allLanguages.filter hasAllThreeStrategies).length
-    count == 2 := by native_decide
-
-/-- Georgian MU is bound, Hungarian MU is free. @cite{bill-etal-2025}
-    @cite{mitrovic-2021} speculate this morphological difference may explain
-    the acquisition asymmetry: bound morphemes are harder to segment. -/
-theorem mu_boundness_asymmetry :
-    georgian.muBoundness = some .bound ∧
-    hungarian.muBoundness = some .free := by
-  native_decide
-
--- ============================================================================
--- §5. Haspelmath structural / diachronic generalisations
--- ============================================================================
+/-- @cite{haspelmath-2007}'s key structural generalisation: the monosyndetic
+    pattern `co-A B` (prepositive on first coordinand only) is unattested for
+    conjunction, per @cite{stassen-2000}'s 260-language sample. Verified over
+    the 19-language sample via `List.contains`, which uses the `BEq` instance
+    to sidestep `∈`'s `LawfulBEq` requirement. -/
+theorem coAB_unattested :
+    allLanguages.all (fun sys => ! sys.patterns.contains .co'a_b) := by decide
 
 /-- Every language with a known comitative-sourced morpheme has at least
     one monosyndetic structural pattern. Confirms: comitative "with" →
     monosyndetic A co-B / A-co B. Languages: Lango, Hausa, Japanese,
     Classical Tibetan. -/
 theorem comitative_source_monosyndetic :
-    let withComitative := allLanguages.filter (·.hasSource .comitative)
-    withComitative.all (·.hasMonosyndetic) = true := by
-  native_decide
+    ∀ sys ∈ allLanguages, sys.hasSource .comitative → sys.hasMonosyndetic := by
+  decide
 
 /-- Every language with a known focus-particle-sourced morpheme has at least
     one bisyndetic structural pattern. Confirms: additive focus particle
     "also" → bisyndetic A-co B-co. Languages: Japanese, Hungarian, Georgian,
     Latin, Korean, Kannada. -/
 theorem focus_particle_source_bisyndetic :
-    let withFocusParticle := allLanguages.filter (·.hasSource .focusParticle)
-    withFocusParticle.all (·.hasBisyndetic) = true := by
-  native_decide
+    ∀ sys ∈ allLanguages, sys.hasSource .focusParticle → sys.hasBisyndetic := by
+  decide
 
 end Haspelmath2007

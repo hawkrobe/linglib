@@ -1,0 +1,41 @@
+import Linglib.Features.Coordination
+
+/-!
+# Turkish Coordination Morphemes
+@cite{kornfilt-1997} @cite{haspelmath-2007}
+
+Turkish has:
+
+- *ve* — J, free, prepositive: "A ve B" (Arabic-origin loan)
+- *de* — MU, bound clitic, postpositive on first word of second coordinand:
+  "Hasan ıstakoz-u pisirdi, Ali de balığ-ı" — monosyndetic A B-co
+  (@cite{haspelmath-2007} (23), @cite{kornfilt-1997}:120). Also bisyndetic
+  *de…de* as a marked emphatic variant ('also A, also B').
+
+The original `Haspelmath2007.turkish` record had *de* as free; corrected
+here per @cite{kornfilt-1997}'s enclitic analysis.
+
+Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.turkish`).
+-/
+
+namespace Fragments.Turkish.Coordination
+
+open Features.Coordination
+
+/-- *ve* — J particle (Arabic loan). Free, prepositive medial. -/
+def ve : CoordEntry :=
+  { form := "ve", gloss := "and"
+  , role := .j, boundness := .free
+  , note := "Arabic-origin loan" }
+
+/-- *de* — MU clitic, also additive. Bound enclitic on first word of
+    non-initial coordinand (monosyndetic A B-co); bisyndetic *de…de* as
+    a marked emphatic variant. -/
+def de : CoordEntry :=
+  { form := "de", gloss := "also; and (MU)"
+  , role := .mu, boundness := .bound, alsoAdditive := true
+  , note := "enclitic per Kornfilt 1997; also vowel-harmony variant 'da'" }
+
+def allEntries : List CoordEntry := [ve, de]
+
+end Fragments.Turkish.Coordination

@@ -665,6 +665,8 @@ import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Dargwa.ComplexPredicates
 import Linglib.Fragments.Dargwa.Locatives
 import Linglib.Fragments.Dargwa.Coordination
+import Linglib.Fragments.English.Coordination
+import Linglib.Fragments.Farsi.Coordination
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.German.Case
@@ -688,7 +690,16 @@ import Linglib.Fragments.German.BodyParts
 import Linglib.Fragments.German.Color
 import Linglib.Fragments.German.Gender
 import Linglib.Fragments.German.Reference
+import Linglib.Fragments.Finnish.Coordination
+import Linglib.Fragments.Hausa.Coordination
 import Linglib.Fragments.Hausa.Determiners
+import Linglib.Fragments.HindiUrdu.Coordination
+import Linglib.Fragments.Kannada.Coordination
+import Linglib.Fragments.Korean.Coordination
+import Linglib.Fragments.Lango.Coordination
+import Linglib.Fragments.Tibetan.Coordination
+import Linglib.Fragments.Turkish.Coordination
+import Linglib.Fragments.Yoruba.Coordination
 import Linglib.Fragments.Hausa.Gender
 import Linglib.Fragments.Hausa.VerbGrades
 import Linglib.Fragments.Hausa.Tone
@@ -1294,6 +1305,7 @@ import Linglib.Studies.Bruening2025
 import Linglib.Studies.Schwarzer2026
 import Linglib.Studies.Stassen2000
 import Linglib.Studies.Haspelmath2007
+import Linglib.Studies.MitrovicSauerland2016
 import Linglib.Studies.OsborneLi2023
 import Linglib.Studies.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers

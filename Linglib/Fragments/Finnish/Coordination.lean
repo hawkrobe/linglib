@@ -1,0 +1,33 @@
+import Linglib.Features.Coordination
+
+/-!
+# Finnish Coordination Morphemes
+@cite{haspelmath-2007} @cite{mitrovic-sauerland-2016}
+
+Finnish has:
+
+- *ja* — J, free, prepositive: "A ja B"
+- *-kin* — MU, bound, additive ('also'): "koira-kin kissa-kin" = 'both the
+  dog and the cat' (bisyndetic postpositive)
+
+Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.finnish`).
+-/
+
+namespace Fragments.Finnish.Coordination
+
+open Features.Coordination
+
+/-- *ja* — J particle. Free, prepositive medial. -/
+def ja : CoordEntry :=
+  { form := "ja", gloss := "and"
+  , role := .j, boundness := .free }
+
+/-- *-kin* — MU particle, also additive. Bound, postpositive on each
+    coordinand for the bisyndetic 'both…and' pattern. -/
+def kin : CoordEntry :=
+  { form := "-kin", gloss := "also, too; and (MU)"
+  , role := .mu, boundness := .bound, alsoAdditive := true }
+
+def allEntries : List CoordEntry := [ja, kin]
+
+end Fragments.Finnish.Coordination
