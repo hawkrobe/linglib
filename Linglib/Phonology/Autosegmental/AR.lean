@@ -68,6 +68,7 @@ within tier lengths structurally; the subtype does).
     autosegmental representations; @cite{goldsmith-1979}'s additional
     saturation requirements are language-particular and live at the
     consumer level, not in this subtype. -/
+@[ext]
 structure AR (α β : Type*) extends Graph α β where
   inBounds : toGraph.InBounds
   planar : toGraph.IsPlanar
@@ -157,6 +158,44 @@ theorem tensorHom_comp {A A' A'' B B' B'' : AR α β}
     (tensorHom f g).comp (tensorHom f' g') =
       tensorHom (f.comp f') (g.comp g') :=
   Graph.Hom.concatMap_comp A.inBounds A'.inBounds f f' g g'
+
+/-! ### Strict monoid structure (associativity + unitors as equalities)
+
+The underlying `Graph` operations satisfy `concat_assoc`,
+`empty_concat`, `concat_empty` as *equalities* (@cite{jardine-heinz-2015}
+Theorems 1 + 3). The bundled `AR` lifts these directly: the underlying
+graphs are equal by `Graph.concat_assoc` etc., and the `inBounds` /
+`planar` proofs match by proof irrelevance (they're propositions of
+the same `Graph`).
+
+These strict equalities mean the `MonoidalCategory`'s associator and
+unitor natural isomorphisms can be constructed as `eqToIso`, which
+trivialises the naturality conditions.
+-/
+
+/-- Two ARs are equal iff their underlying `Graph`s are equal —
+    the `inBounds` and `planar` proofs match by proof irrelevance.
+    Cheap helper for lifting Graph-level equalities to AR. -/
+theorem ext_toGraph {A B : AR α β} (h : A.toGraph = B.toGraph) : A = B := by
+  cases A; cases B
+  simp only at h
+  subst h
+  rfl
+
+/-- Concatenation is associative on AR (lifted from `Graph.concat_assoc`). -/
+theorem concat_assoc (A B C : AR α β) :
+    (A.concat B).concat C = A.concat (B.concat C) :=
+  ext_toGraph (Graph.concat_assoc A.toGraph B.toGraph C.toGraph)
+
+/-- `empty` is a left identity for `concat` on AR (lifted from
+    `Graph.empty_concat`). -/
+theorem empty_concat (A : AR α β) : empty.concat A = A :=
+  ext_toGraph (Graph.empty_concat A.toGraph)
+
+/-- `empty` is a right identity for `concat` on AR (lifted from
+    `Graph.concat_empty`). -/
+theorem concat_empty (A : AR α β) : A.concat empty = A :=
+  ext_toGraph (Graph.concat_empty A.toGraph)
 
 end AR
 
