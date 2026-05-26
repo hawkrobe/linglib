@@ -116,7 +116,6 @@ import Linglib.Semantics.Questions.Granularity
 import Linglib.Semantics.Questions.Relevance
 import Linglib.Discourse.QUDStack
 import Linglib.Discourse.Strategy
-import Linglib.Discourse.Goal
 import Linglib.Discourse.Scoreboard
 import Linglib.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
@@ -2019,7 +2018,6 @@ import Linglib.Studies.DeMarneffeNivre2019
 -- Theories: Discourse — Centering Theory (Grosz, Joshi & Weinstein 1995)
 import Linglib.Discourse.Centering.Defs
 import Linglib.Discourse.Centering.Basic
-import Linglib.Discourse.Centering.Coherence
 import Linglib.Discourse.Centering.Constraints
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Rule2
@@ -2030,7 +2028,6 @@ import Linglib.Discourse.Centering.Instances.InformationStatus
 import Linglib.Discourse.SDRT.Defs
 import Linglib.Discourse.SDRT.RightFrontier
 -- Theories: Discourse — Faller/Murray illocutionary operators
-import Linglib.Discourse.EvidentialIllocution
 -- Theories: Interfaces — Centering ↔ DRT bridge
 import Linglib.Discourse.Centering.DRSExpr
 -- Theories: Dynamic Semantics

@@ -1,4 +1,4 @@
-import Linglib.Discourse.Goal
+import Mathlib.Data.List.Sort
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
@@ -47,6 +47,52 @@ namespace Discourse
 open Semantics.Mood (IllocutionaryMood)
 
 variable {W : Type*}
+
+/-! ### Goals (the G component) -/
+
+/-- A single goal: a proposition the agent is committed to realizing,
+    conditional on certain circumstances obtaining (@cite{roberts-2023}
+    §2.1.1). -/
+structure Goal (W : Type*) where
+  /-- The content: what the agent aims to bring about. -/
+  content : W → Prop
+  /-- Circumstances under which this goal is active.
+      `λ _ => True` for unconditional goals. -/
+  condition : W → Prop := λ _ => True
+  /-- Priority level: 0 = highest priority. -/
+  priority : Nat := 0
+  deriving Inhabited
+
+/-- An agent's goal set: publicly evident goals, plans, and priorities. -/
+structure GoalSet (W : Type*) where
+  goals : List (Goal W) := []
+  deriving Inhabited
+
+namespace GoalSet
+
+/-- The empty goal set. -/
+def empty : GoalSet W := ⟨[]⟩
+
+@[simp] theorem empty_goals : (empty : GoalSet W).goals = [] := rfl
+
+/-- Add a goal to the set. -/
+def add (gs : GoalSet W) (g : Goal W) : GoalSet W :=
+  ⟨g :: gs.goals⟩
+
+@[simp] theorem add_goals (gs : GoalSet W) (g : Goal W) :
+    (gs.add g).goals = g :: gs.goals := rfl
+
+/-- Project to a flat list of contents (@cite{portner-2004} ToDo list interface). -/
+def toPropertyList (gs : GoalSet W) : List (W → Prop) :=
+  gs.goals.map Goal.content
+
+@[simp] theorem toPropertyList_empty :
+    (empty : GoalSet W).toPropertyList = [] := rfl
+
+@[simp] theorem toPropertyList_add (gs : GoalSet W) (g : Goal W) :
+    (gs.add g).toPropertyList = g.content :: gs.toPropertyList := rfl
+
+end GoalSet
 
 /-- The semantic type of a clause, determining its default illocutionary force.
 

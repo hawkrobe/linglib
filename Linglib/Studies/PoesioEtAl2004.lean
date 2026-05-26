@@ -3,7 +3,7 @@ import Linglib.Discourse.Centering.Constraints
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Rule2
 import Linglib.Discourse.Centering.Transition
-import Linglib.Discourse.Centering.Coherence
+import Linglib.Discourse.Coherence
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Discourse.Centering.Instances.InformationStatus
 import Linglib.Studies.Sidner1983
@@ -680,5 +680,65 @@ theorem beaver_cohere_invariant_under_cb_equiv_candidates
       PSDH suggest "ensuring variety" as an additional principle in
       discourse production. Speaker-side claim, less amenable to
       substrate formalization. -/
+
+/-! ### Centering ↔ Coherence bridge
+
+PSDH's parametric framework includes the @cite{kehler-2002} coherence-
+relation axis. The mapping below was previously hosted in
+`Discourse/Centering/Coherence.lean` and `Rule2Coherence.lean`; per
+the audit's anchoring rule, that bridge content belongs in this study
+file (its sole consumer). -/
+
+open Discourse.Centering
+open Discourse.Coherence
+
+/-- The transition pattern that the given coherence relation most
+    naturally licenses (predictions, not entailments). -/
+def CoherenceRelation.preferredTransition : CoherenceRelation → Transition
+  | .elaboration  => .continuation
+  | .explanation  => .continuation
+  | .result       => .continuation
+  | .occasion     => .retaining
+  | .parallel     => .retaining
+  | .contrast     => .shifting
+  | .correction   => .shifting
+  -- SDRT additions, by analogy:
+  | .background   => .continuation
+  | .consequence  => .continuation
+  | .alternation  => .shifting
+
+theorem causeEffect_continuation :
+    CoherenceRelation.preferredTransition .explanation = .continuation ∧
+    CoherenceRelation.preferredTransition .result = .continuation := ⟨rfl, rfl⟩
+
+theorem substitution_shifts :
+    CoherenceRelation.preferredTransition .contrast = .shifting ∧
+    CoherenceRelation.preferredTransition .correction = .shifting := ⟨rfl, rfl⟩
+
+theorem coherence_respects_rule2 :
+    (CoherenceRelation.preferredTransition .explanation).rank >
+      (CoherenceRelation.preferredTransition .occasion).rank ∧
+    (CoherenceRelation.preferredTransition .occasion).rank >
+      (CoherenceRelation.preferredTransition .contrast).rank := by
+  refine ⟨?_, ?_⟩ <;> decide
+
+/-- Rule-2 score for a pair of consecutive coherence relations. -/
+def coherencePairScore (r₁ r₂ : CoherenceRelation) : Nat :=
+  pairRank (CoherenceRelation.preferredTransition r₁)
+           (CoherenceRelation.preferredTransition r₂)
+
+theorem causal_pair_max_score :
+    coherencePairScore .explanation .result =
+    pairRank .continuation .continuation := rfl
+
+theorem substitution_pair_min_score :
+    coherencePairScore .contrast .correction =
+    pairRank .shifting .shifting := rfl
+
+/-- Causal/elaborative coherence pairs are Rule-2-preferred over
+    substitution coherence pairs. -/
+theorem causal_pair_preferred_over_substitution :
+    coherencePairScore .explanation .result >
+    coherencePairScore .contrast .correction := by decide
 
 end PoesioEtAl2004

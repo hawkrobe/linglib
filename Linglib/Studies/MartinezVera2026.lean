@@ -1,7 +1,6 @@
 import Mathlib.Data.Set.Insert
 import Linglib.Semantics.Composition.Layered
 import Linglib.Semantics.Highlighting
-import Linglib.Discourse.EvidentialIllocution
 import Linglib.Features.Evidentiality
 import Linglib.Discourse.Roles
 import Linglib.Semantics.Questions.Hamblin
@@ -87,11 +86,130 @@ namespace MartinezVera2026
 
 open Semantics.Composition.Layered (BiLayered)
 open Semantics.Highlighting (HighlightingContext Highlighted AddressesQUD addSalient)
-open Discourse.EvidentialIllocution (EvidentialAct assert present)
 open Features.Evidentiality (EvidentialSource)
 open Discourse (DiscourseRole)
 
 variable {W : Type*}
+
+/-! ### § 0. Evidential illocutionary operators (Faller / Murray)
+
+Substrate previously hosted at `Discourse/EvidentialIllocution.lean`,
+inlined here per anchoring rule (sole consumer is this study file).
+The `assert`/`present` distinction is @cite{faller-2002} /
+@cite{murray-2014}; the `raisedPropositions` projection drives
+@cite{martinez-vera-2026}'s salience updates downstream. -/
+
+/-- Result of applying an illocutionary operator: speaker, addressee,
+    scope proposition, evidential (not-at-issue) proposition, and
+    commits-to-scope flag (`true` for `assert`, `false` for `present`). -/
+structure EvidentialAct (W : Type*) where
+  speaker : DiscourseRole
+  addressee : DiscourseRole
+  scope : Set W
+  evidentialContent : Set W
+  commitsToScope : Bool
+
+/-- @cite{faller-2002}/@cite{faller-2019a}: `assert(⟨A, N⟩)` commits the
+    speaker to both A and N. Used with direct evidentials. -/
+def assert (s a : DiscourseRole) (β : BiLayered W) : EvidentialAct W :=
+  { speaker := s
+  , addressee := a
+  , scope := { w | β.atIssue w }
+  , evidentialContent := { w | β.notAtIssue w }
+  , commitsToScope := true }
+
+/-- @cite{murray-2014}/@cite{faller-2019a}: `present(⟨A, N⟩)` brings A
+    to attention but does NOT commit to A; commits only to N. Used with
+    reportative/inferential evidentials. -/
+def present (s a : DiscourseRole) (β : BiLayered W) : EvidentialAct W :=
+  { speaker := s
+  , addressee := a
+  , scope := { w | β.atIssue w }
+  , evidentialContent := { w | β.notAtIssue w }
+  , commitsToScope := false }
+
+@[simp] theorem assert_commitsToScope (s a : DiscourseRole) (β : BiLayered W) :
+    (assert s a β).commitsToScope = true := rfl
+
+@[simp] theorem present_commitsToScope (s a : DiscourseRole) (β : BiLayered W) :
+    (present s a β).commitsToScope = false := rfl
+
+theorem assert_present_differ_only_in_scope_commitment
+    (s a : DiscourseRole) (β : BiLayered W) :
+    (assert s a β).scope = (present s a β).scope ∧
+    (assert s a β).evidentialContent = (present s a β).evidentialContent ∧
+    (assert s a β).commitsToScope ≠ (present s a β).commitsToScope := by
+  refine ⟨rfl, rfl, ?_⟩
+  simp only [assert_commitsToScope, present_commitsToScope]
+  decide
+
+/-- Propositions an act puts forward to the addressee. `assert` raises
+    the scope; `present` raises both scope and its complement (the open
+    polar issue). -/
+def EvidentialAct.raisedPropositions (a : EvidentialAct W) : Set (Set W) :=
+  if a.commitsToScope then {a.scope} else {a.scope, a.scopeᶜ}
+
+@[simp] theorem assert_raisedPropositions (s a : DiscourseRole) (β : BiLayered W) :
+    (assert s a β).raisedPropositions = {{ w | β.atIssue w }} := by
+  simp [EvidentialAct.raisedPropositions, assert]
+
+@[simp] theorem present_raisedPropositions (s a : DiscourseRole) (β : BiLayered W) :
+    (present s a β).raisedPropositions =
+      ({ { w | β.atIssue w }, { w | β.atIssue w }ᶜ } : Set (Set W)) := by
+  simp [EvidentialAct.raisedPropositions, present]
+
+theorem present_raises_polar_negation (s a : DiscourseRole) (β : BiLayered W) :
+    { w | β.atIssue w }ᶜ ∈ (present s a β).raisedPropositions := by
+  simp
+
+theorem assert_does_not_raise_polar_negation
+    (s a : DiscourseRole) (β : BiLayered W) (hne : ∃ w, β.atIssue w) :
+    { w | β.atIssue w }ᶜ ∉ (assert s a β).raisedPropositions := by
+  simp only [assert_raisedPropositions, Set.mem_singleton_iff]
+  intro h
+  obtain ⟨w, hw⟩ := hne
+  have : w ∉ ({ w | β.atIssue w }ᶜ : Set W) := by simp [hw]
+  rw [h] at this
+  exact this hw
+
+/-- Typological mapping from evidential source to illocutionary
+    operator flavour. -/
+inductive IllocutionaryFlavour where
+  | assertFlavour
+  | presentFlavour
+  deriving DecidableEq, Repr, Inhabited
+
+def IllocutionaryFlavour.ofEvidentialSource :
+    EvidentialSource → IllocutionaryFlavour
+  | .direct => .assertFlavour
+  | .hearsay => .presentFlavour
+  | .inference => .presentFlavour
+
+@[simp] theorem flavour_direct :
+    IllocutionaryFlavour.ofEvidentialSource .direct = .assertFlavour := rfl
+@[simp] theorem flavour_hearsay :
+    IllocutionaryFlavour.ofEvidentialSource .hearsay = .presentFlavour := rfl
+@[simp] theorem flavour_inference :
+    IllocutionaryFlavour.ofEvidentialSource .inference = .presentFlavour := rfl
+
+def applyDefault (src : EvidentialSource) (s a : DiscourseRole) (β : BiLayered W) :
+    EvidentialAct W :=
+  match IllocutionaryFlavour.ofEvidentialSource src with
+  | .assertFlavour => assert s a β
+  | .presentFlavour => present s a β
+
+@[simp] theorem applyDefault_direct (s a : DiscourseRole) (β : BiLayered W) :
+    applyDefault .direct s a β = assert s a β := rfl
+@[simp] theorem applyDefault_hearsay (s a : DiscourseRole) (β : BiLayered W) :
+    applyDefault .hearsay s a β = present s a β := rfl
+@[simp] theorem applyDefault_inference (s a : DiscourseRole) (β : BiLayered W) :
+    applyDefault .inference s a β = present s a β := rfl
+
+theorem direct_commits_indirect_does_not (s a : DiscourseRole) (β : BiLayered W) :
+    (applyDefault .direct s a β).commitsToScope = true ∧
+    (applyDefault .hearsay s a β).commitsToScope = false ∧
+    (applyDefault .inference s a β).commitsToScope = false :=
+  ⟨rfl, rfl, rfl⟩
 
 /-! ### § 1. The =mi denotation (paper eq. 37, polar reduction) -/
 
@@ -201,7 +319,7 @@ theorem mi_felicitous_after_present
   · -- pᶜ is in the salient set, via the substrate fact
     -- `present_raises_polar_negation`
     simp only [salient_updateAfterAct, polarQUD,
-      Discourse.EvidentialIllocution.present_raisedPropositions,
+      MartinezVera2026.present_raisedPropositions,
       BiLayered.ofProp_atIssue, Set.empty_union, Set.mem_insert_iff,
       Set.mem_singleton_iff]
     right; rfl
@@ -231,7 +349,7 @@ theorem mi_infelicitous_after_assert
   -- So hsalient says q = p. Combined with hsub : q ⊆ pᶜ, that forces p ⊆ pᶜ,
   -- which means p = ∅, contradicting `hne`.
   simp only [salient_updateAfterAct, polarQUD,
-    Discourse.EvidentialIllocution.assert_raisedPropositions,
+    MartinezVera2026.assert_raisedPropositions,
     BiLayered.ofProp_atIssue, Set.empty_union,
     Set.mem_singleton_iff] at hsalient
   -- hsalient : q = {w | w ∈ p}, which is just `q = p`
@@ -366,7 +484,7 @@ theorem mv_partition_can_diverge_from_romeroHan_partition :
 /-! ### § 7. The defining commitment contrast (corollary of substrate)
 
 Direct evidentials commit the speaker to scope; reportatives do not.
-This is `Discourse.EvidentialIllocution.assert_commitsToScope` and
+This is `MartinezVera2026.assert_commitsToScope` and
 `present_commitsToScope` packaged as a single statement. The reason
 `present` highlights `¬p` (and `assert` doesn't) is downstream of this
 commitment difference, formalised in the substrate's
