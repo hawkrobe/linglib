@@ -76,11 +76,6 @@ inductive CoherenceRelation where
   | alternation   -- @cite{asher-lascarides-2003} preface "What's New": discourse-level disjunction
   deriving DecidableEq, Repr
 
-/-- Asher-Lascarides "Narration" = Hobbs/Kehler "Occasion".
-    Provided so SDRT-flavored code can write `.Narration` if desired.
-    Both names refer to the same underlying relation (temporal succession). -/
-abbrev CoherenceRelation.Narration : CoherenceRelation := .occasion
-
 -- ════════════════════════════════════════════════════
 -- § 3. Properties
 -- ════════════════════════════════════════════════════

@@ -118,18 +118,6 @@ def present (s a : DiscourseRole) (β : BiLayered W) : EvidentialAct W :=
 @[simp] theorem present_commitsToScope (s a : DiscourseRole) (β : BiLayered W) :
     (present s a β).commitsToScope = false := rfl
 
-@[simp] theorem assert_scope (s a : DiscourseRole) (β : BiLayered W) :
-    (assert s a β).scope = { w | β.atIssue w } := rfl
-
-@[simp] theorem present_scope (s a : DiscourseRole) (β : BiLayered W) :
-    (present s a β).scope = { w | β.atIssue w } := rfl
-
-@[simp] theorem assert_evidentialContent (s a : DiscourseRole) (β : BiLayered W) :
-    (assert s a β).evidentialContent = { w | β.notAtIssue w } := rfl
-
-@[simp] theorem present_evidentialContent (s a : DiscourseRole) (β : BiLayered W) :
-    (present s a β).evidentialContent = { w | β.notAtIssue w } := rfl
-
 /-- The defining contrast between `assert` and `present`: they agree on
     speaker, addressee, scope, and evidential content, but disagree on
     whether the speaker commits to scope. -/

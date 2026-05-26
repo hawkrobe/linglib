@@ -259,9 +259,6 @@ We *derive* both consequences from `POSW.boxCs_plus_self` and the
 def goalContents (K : Scoreboard W) : List (W → Prop) :=
   K.goals.flatMap GoalSet.toPropertyList
 
-@[simp] theorem goalContents_def (K : Scoreboard W) :
-    K.goalContents = K.goals.flatMap GoalSet.toPropertyList := rfl
-
 /-- Assertion update preserves goal contents (since it doesn't touch G). -/
 @[simp] theorem assertion_preserves_goalContents (K : Scoreboard W)
     (p : W → Prop) (a : Nat) :

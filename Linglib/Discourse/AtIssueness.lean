@@ -55,6 +55,7 @@ abbrev AtIssuenessThreshold := Rat01
 /-- Contextual threshold for projectivity classification. -/
 abbrev ProjectivityThreshold := Rat01
 
+
 -- ════════════════════════════════════════════════════
 -- § Threshold Semantics
 -- ════════════════════════════════════════════════════

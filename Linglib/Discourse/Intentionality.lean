@@ -152,12 +152,6 @@ structure IntentionalState (W : Type*) where
   /-- The representative content -/
   content : W → Prop
 
-/-- Conditions of satisfaction: what must obtain for the state to be satisfied.
-    These are *identical* to the content — not a separate component. -/
-def IntentionalState.conditionsOfSatisfaction {W : Type*}
-    (s : IntentionalState W) : W → Prop :=
-  s.content
-
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Verification
 -- ════════════════════════════════════════════════════════════════
@@ -206,12 +200,5 @@ theorem self_ref_independent_of_direction :
     PsychMode.belief.directionOfFit = PsychMode.perception.directionOfFit ∧
     PsychMode.belief.causalSelfRef ≠ PsychMode.perception.causalSelfRef :=
   ⟨rfl, nofun⟩
-
-/-- Conditions of satisfaction are internal to the content — not a separate
-    component. This `rfl` proof IS the formalization of @cite{searle-1983}'s
-    claim (Ch. 1, p. 12): "the Intentional content determines the conditions
-    of satisfaction." -/
-theorem conditions_are_content {W : Type*} (s : IntentionalState W) :
-    s.conditionsOfSatisfaction = s.content := rfl
 
 end Discourse

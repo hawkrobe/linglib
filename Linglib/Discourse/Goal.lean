@@ -75,35 +75,6 @@ def add (gs : GoalSet W) (g : Goal W) : GoalSet W :=
 @[simp] theorem add_goals (gs : GoalSet W) (g : Goal W) :
     (gs.add g).goals = g :: gs.goals := rfl
 
-/-- Add an unconditional goal with given priority. -/
-def addSimple (gs : GoalSet W) (content : W → Prop) (priority : Nat := 0) : GoalSet W :=
-  gs.add { content, priority }
-
-/-- Remove goals whose content matches a predicate (e.g., realized or abandoned). -/
-def remove (gs : GoalSet W) (shouldRemove : Goal W → Bool) : GoalSet W :=
-  ⟨gs.goals.filter (λ g => !shouldRemove g)⟩
-
-@[simp] theorem remove_goals (gs : GoalSet W) (f : Goal W → Bool) :
-    (gs.remove f).goals = gs.goals.filter (fun g => !f g) := rfl
-
-open Classical in
-/-- Goals active in circumstance w (condition satisfied). -/
-noncomputable def activeGoals (gs : GoalSet W) (w : W) : List (Goal W) :=
-  gs.goals.filter (λ g => decide (g.condition w))
-
-@[simp] theorem activeGoals_empty (w : W) :
-    (empty : GoalSet W).activeGoals w = [] := rfl
-
-theorem mem_activeGoals_iff (gs : GoalSet W) (w : W) (g : Goal W) :
-    g ∈ gs.activeGoals w ↔ g ∈ gs.goals ∧ g.condition w := by
-  classical
-  simp only [activeGoals, List.mem_filter, decide_eq_true_eq]
-
-/-- Active goal contents at w, sorted by priority (ascending = most important first). -/
-noncomputable def activeContents (gs : GoalSet W) (w : W) : List (W → Prop) :=
-  (gs.activeGoals w |>.mergeSort (λ g₁ g₂ => g₁.priority ≤ g₂.priority))
-    |>.map Goal.content
-
 /-- Project to a flat list of contents (@cite{portner-2004} ToDo list interface). -/
 def toPropertyList (gs : GoalSet W) : List (W → Prop) :=
   gs.goals.map Goal.content
