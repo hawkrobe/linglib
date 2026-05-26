@@ -577,16 +577,14 @@ theorem stalnaker_eq_selectional_singleton {W : Type*} [DecidableEq W] [Fintype 
     have h1 : (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), B w') := by
       intro w' hw'; rw [Finset.mem_singleton] at hw'; rw [hw']; exact hB
     rw [if_pos h1]
-    show Truth3.true = Truth3.ofBool (decide _)
-    rw [decide_eq_true hB]; rfl
+    simp only [hB, decide_true, Truth3.ofBool]
   · -- Both sides equal .false
     have h1 : ¬ (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), B w') := by
       intro h; exact hB (h _ (Finset.mem_singleton.mpr rfl))
     have h2 : (∀ w' ∈ ({s.sel w {w' | A w'}} : Finset W), ¬ B w') := by
       intro w' hw'; rw [Finset.mem_singleton] at hw'; rw [hw']; exact hB
     rw [if_neg h1, if_pos h2]
-    show Truth3.false = Truth3.ofBool (decide _)
-    rw [decide_eq_false hB]; rfl
+    simp only [hB, decide_false, Truth3.ofBool]
 
 /-! ## Bridge: Stalnaker counterfactual = will-conditional over the universe
 

@@ -2,7 +2,7 @@ import Lake
 open Lake DSL
 
 package linglib where
-  version := v!"4.30.0-rc2"
+  version := v!"4.30.0"
   description := "A Lean 4 library for formal linguistics: semantics, syntax, pragmatics, morphology, phonology, and processing — formalized across competing frameworks for high interconnection density."
   homepage := "https://hawkrobe.github.io/linglib/"
   keywords := #["linguistics", "formal-semantics", "formal-syntax", "phonology", "pragmatics", "morphology", "lean4", "mathlib"]
@@ -14,9 +14,8 @@ require «doc-gen4» from git
   "https://github.com/leanprover/doc-gen4" @ "799154a6ee3cefd3c0c89a68a81911fb83b7755c"
 
 -- Mathlib last so its dependency versions take precedence
--- Pinned past v4.30.0-rc2 to pick up #39483 (Bialgebra/SymmetricAlgebra).
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4" @ "9dc39333aa89d5be59e8d7698237b31e496cf4ea"
+  "https://github.com/leanprover-community/mathlib4" @ "f1a41b158c7c0b0a63c9aaf451d07b8378531e3b"
 
 @[default_target]
 lean_lib Linglib where
