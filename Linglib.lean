@@ -351,10 +351,10 @@ import Linglib.Discourse.Coherence
 import Linglib.Features.Accessibility
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
-import Linglib.Discourse.CommitmentFrame
-import Linglib.Discourse.Table
+import Linglib.Discourse.Commitment.Frame
+import Linglib.Discourse.Commitment.Table
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.NullSubject.Defs

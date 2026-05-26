@@ -32,7 +32,7 @@ because the same `CommitmentState` may need partial properties —
 commitment is allowed to be non-serial (commitment violations).
 -/
 
-namespace Discourse.CommitmentFrame
+namespace Discourse.Commitment.Frame
 
 open Core.Logic.Intensional (AccessRel AgentAccessRel IsTransitive IsEuclidean IsSerial
   boxR diamondR boxR_K boxR_four)
@@ -213,4 +213,4 @@ theorem not_cooperativeExt_self (c : CommitmentState W A) :
 def MutuallyCommittedAt (c : CommitmentState W A) (π : Set W) (w : W) : Prop :=
   ∀ a b, Committed c a b π w
 
-end Discourse.CommitmentFrame
+end Discourse.Commitment.Frame

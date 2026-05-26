@@ -1,6 +1,6 @@
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.CommonGround
 
 /-!

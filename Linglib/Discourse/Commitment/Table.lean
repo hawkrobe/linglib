@@ -1,4 +1,4 @@
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Mood.IllocutionaryMood
 
@@ -22,7 +22,7 @@ commitment slates, and a common ground.
   item identity (for withdrawal).
 -/
 
-namespace Discourse.Table
+namespace Discourse.Commitment.Table
 
 open Discourse.Commitment (TaggedSlate CommitmentSource CommitmentForce)
 open Discourse.CommonGround (CG HasContextSet)
@@ -140,4 +140,4 @@ end DiscourseState
 instance {A W : Type*} : HasContextSet (DiscourseState A W) W where
   toContextSet := DiscourseState.contextSet
 
-end Discourse.Table
+end Discourse.Commitment.Table

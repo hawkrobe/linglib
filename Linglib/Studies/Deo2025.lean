@@ -1,4 +1,4 @@
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Dialogue.Gunlogson

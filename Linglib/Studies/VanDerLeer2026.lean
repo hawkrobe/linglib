@@ -1,5 +1,5 @@
 import Mathlib.Order.Basic
-import Linglib.Discourse.CommitmentFrame
+import Linglib.Discourse.Commitment.Frame
 
 /-!
 # Van der Leer 2026: Speech-Act Logic (SAL)
@@ -22,7 +22,7 @@ updates on commitment spaces (Definition 10+).
 
 namespace VanDerLeer2026
 
-open Discourse.CommitmentFrame
+open Discourse.Commitment.Frame
 
 variable {W : Type*} {A : Type*}
 

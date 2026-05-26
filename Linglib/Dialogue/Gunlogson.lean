@@ -1,7 +1,7 @@
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Modality.BiasedPQ
 
 /-!

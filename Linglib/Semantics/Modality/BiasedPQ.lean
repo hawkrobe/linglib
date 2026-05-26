@@ -2,7 +2,7 @@ import Linglib.Semantics.Modality.Kratzer.Flavor
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 import Mathlib.Data.Set.Basic
 
 /-!

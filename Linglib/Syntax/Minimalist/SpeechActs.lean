@@ -5,7 +5,7 @@ import Linglib.Core.Context.Basic
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Semantics.Mood.ClauseType
 import Linglib.Discourse.Intentionality
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 import Linglib.Features.Evidentiality
 import Linglib.Fragments.English.Pronouns
 

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 
 /-!
 # The ASSERT Operator and Speech Act Phrase

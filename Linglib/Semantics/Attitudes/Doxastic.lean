@@ -38,7 +38,7 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Logic.Intensional.RestrictedModality
 import Linglib.Core.Causal.SEM.Bool

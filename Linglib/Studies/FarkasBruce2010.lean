@@ -1,4 +1,4 @@
-import Linglib.Discourse.Table
+import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.Roles
 
 /-!
@@ -21,7 +21,7 @@ substrate (`Item`, `DiscourseState`, primitive updates) lives in
 namespace FarkasBruce2010
 
 open Discourse (DiscourseRole)
-open Discourse.Table (DiscourseState Item)
+open Discourse.Commitment.Table (DiscourseState Item)
 open Discourse.Commitment (TaggedSlate)
 open Semantics.Mood (IllocutionaryMood)
 

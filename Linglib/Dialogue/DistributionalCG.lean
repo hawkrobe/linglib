@@ -1,7 +1,7 @@
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 import Linglib.Discourse.CommonGround
-import Linglib.Discourse.Commitment
+import Linglib.Discourse.Commitment.Basic
 import Linglib.Dialogue.CommitmentSpace
 
 /-!
