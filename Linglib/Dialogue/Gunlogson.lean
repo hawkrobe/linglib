@@ -2,6 +2,7 @@ import Linglib.Discourse.CommonGround
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment
+import Linglib.Semantics.Modality.BiasedPQ
 
 /-!
 # @cite{gunlogson-2004}: Source-Marked Commitments
@@ -38,6 +39,7 @@ namespace Dialogue.Gunlogson
 open Discourse.Commitment
 open Discourse.CommonGround (ContextSet CG)
 open Discourse (DiscourseRole)
+open Semantics.Modality.BiasedPQ (ContextualEvidence)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Gunlogson State

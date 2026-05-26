@@ -6,12 +6,9 @@ import Linglib.Discourse.CommitmentFrame
 @cite{van-der-leer-2026}
 
 A propositional dynamic logic of speech acts over commitment-state
-Kripke frames (substrate: `Discourse/CommitmentFrame.lean`). Speech
-acts are *actions* (`α ::= assert | question | ~α | α;β | π ↪ α/β`)
-interpreted as updates on commitment spaces (Definition 10+).
-
-Anchored on a single paper but consumes the now-substrate doxastic-
-deontic frame from @cite{hintikka-1962} / @cite{stalnaker-1984}.
+Kripke frames. Speech acts are *actions*
+(`α ::= assert | question | ~α | α;β | π ↪ α/β`) interpreted as
+updates on commitment spaces (Definition 10+).
 
 ## Main definitions
 

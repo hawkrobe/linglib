@@ -14,10 +14,6 @@ serial — so commitment violations are expressible). The `Sincere`
 and `Competent` frame conditions (@cite{stalnaker-1984}) bridge
 commitment to belief.
 
-Used by @cite{van-der-leer-2026} SAL as the underlying frame for the
-speech-act PDL, but the operators here are framework-neutral —
-Hintikka 1962's standard doxastic substrate.
-
 ## Main definitions
 
 * `PairAccessRel W A` — pair-indexed deontic accessibility.

@@ -82,7 +82,7 @@ scope of this study file.
     commitments." This is the proposition the speaker preferentially
     commits to. @cite{deo-2025-bara} (20). -/
 def baraMetaContent (p : W → Prop) (K : GunlogsonState W) : Prop :=
-  p ∈ (K.slateOf .addressee).dependent
+  p ∈ (K.slateOf .addressee).otherGenerated
 
 /-! ## § 3. Empirical felicity profile (Deo § 2) -/
 

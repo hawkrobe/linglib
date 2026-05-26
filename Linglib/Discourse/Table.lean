@@ -7,14 +7,7 @@ import Linglib.Semantics.Mood.IllocutionaryMood
 @cite{farkas-bruce-2010}
 
 n-agent table-model substrate: a stack of at-issue items, per-agent
-commitment slates, and a common ground. Reuses `TaggedSlate` and
-`CG` from sibling files; carries `IllocutionaryMood` on each item.
-
-F&B's dynamics (assertion / question / confirmation / rejection)
-live in `Studies/FarkasBruce2010.lean`. Keeping them out of the
-substrate avoids forcing F&B's "assertion doesn't touch CG" thesis
-on rival accounts (Stalnaker, Krifka, Brandom, Anderson, SAL), each
-of which stays as its own separate substrate.
+commitment slates, and a common ground.
 
 ## Main definitions
 
@@ -23,15 +16,10 @@ of which stays as its own separate substrate.
 * `DiscourseState.IsStable` — empty-table predicate.
 * `pushItem`, `popItem`, `addCommit`, `addToCG` — primitive updates.
 
-## Implementation notes
+## TODO
 
-* `dc : A → TaggedSlate W` is total (absent agents → `empty`),
-  keeping `[DecidableEq A]` to `addCommit` only.
-* `IsStable` uses `List.isEmpty` so its `Decidable` instance does
-  not need `DecidableEq (Item A W)`.
 * Projected set `ps(CG)`, highlighting (@cite{farkas-roelofsen-2017}),
-  and item identity (for withdrawal) are deferred until a first
-  consumer needs them.
+  item identity (for withdrawal).
 -/
 
 namespace Discourse.Table

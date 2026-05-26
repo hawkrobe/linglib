@@ -76,9 +76,18 @@ inductive OriginalBias where
   | againstP
   deriving DecidableEq, Repr
 
--- Re-export `ContextualEvidence` from Core so that downstream files
--- opening `Semantics.Modality.BiasedPQ` still find it here.
-export Discourse.Commitment (ContextualEvidence)
+/-- Contextual evidence bias (@cite{bring-gunlogson-2000}): expectation
+    about `p` induced by evidence available in the current discourse
+    situation. A felicity condition on rising declaratives and a bias
+    dimension for polar questions. -/
+inductive ContextualEvidence where
+  /-- Current context provides evidence for `p`. -/
+  | forP
+  /-- No contextual evidence either way. -/
+  | neutral
+  /-- Current context provides evidence against `p`. -/
+  | againstP
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §3: Romero's Table 1 — Original Speaker Bias (@cite{ladd-1981}, @cite{romero-han-2004})

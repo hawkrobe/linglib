@@ -3,6 +3,7 @@ import Linglib.Dialogue.KOS.Defs
 import Linglib.Dialogue.KOS.Basic
 import Linglib.Dialogue.FarkasBruce
 import Linglib.Features.Acceptability
+import Linglib.Semantics.Modality.BiasedPQ
 
 /-!
 # Bias in Commitment Space Semantics
@@ -54,7 +55,8 @@ namespace Krifka2015
 
 open Dialogue.Krifka
 open Discourse (DiscourseRole)
-open Discourse.Commitment (IndexedCommitment ContextualEvidence)
+open Discourse.Commitment (IndexedCommitment)
+open Semantics.Modality.BiasedPQ (ContextualEvidence)
 open Features (Acceptability)
 
 -- ════════════════════════════════════════════════════
