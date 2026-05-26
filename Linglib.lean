@@ -353,6 +353,8 @@ import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment
 import Linglib.Discourse.Roles
+import Linglib.Discourse.CommitmentFrame
+import Linglib.Discourse.Table
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.NullSubject.Defs
@@ -2673,6 +2675,8 @@ import Linglib.Studies.Bubnov2026
 import Linglib.Studies.Dekier2021
 import Linglib.Studies.AhnKocabDavidson2026
 import Linglib.Studies.TenWolde2023
+import Linglib.Studies.FarkasBruce2010
+import Linglib.Studies.VanDerLeer2026
 import Linglib.Dialogue.Stalnaker
 import Linglib.Dialogue.ReasonableInference
 import Linglib.Dialogue.FarkasBruce
