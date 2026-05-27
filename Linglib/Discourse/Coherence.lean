@@ -28,18 +28,9 @@ inductive CoherenceClass where
 -- § 2. Coherence Relations
 -- ════════════════════════════════════════════════════
 
-/-- Individual discourse coherence relations.
-    Each relation specifies how the current segment connects to the prior one.
-
-    @cite{umbach-2004} §3: CONTRAST and CORRECTION are distinct resemblance
-    relations that both require similarity+dissimilarity in their alternatives
-    but differ in their exclusion type.
-
-    @cite{asher-lascarides-2003} §4.6 contributes BACKGROUND, CONSEQUENCE,
-    and ALTERNATION. SDRT's "Narration" relation is the same as Hobbs/Kehler's
-    `occasion` — both denote temporal succession of events. Use `occasion`
-    in code; the `Narration` alias below is provided for SDRT-flavored
-    code that prefers Asher-Lascarides terminology. -/
+/-- Discourse coherence relations: Kehler's tripartition plus SDRT
+    additions. CONTRAST and CORRECTION are distinguished per
+    @cite{umbach-2004} (additional vs substitutive exclusion). -/
 inductive CoherenceRelation where
   | explanation   -- "because": effect → cause (backward causal)
   | result        -- "so": cause → effect (forward causal)
@@ -57,13 +48,7 @@ inductive CoherenceRelation where
 -- § 3. Properties
 -- ════════════════════════════════════════════════════
 
-/-- Classify each relation into its coherence class.
-
-    SDRT additions: `background` is a contiguity relation (β provides
-    spatiotemporal setting for α); `consequence` is a causal relation
-    (the discourse-level analog of "if A then B"); `alternation` is
-    a resemblance relation (alternatives sharing a common integrator
-    but with exclusion). -/
+/-- Classify each relation into its coherence class. -/
 def CoherenceRelation.toClass : CoherenceRelation → CoherenceClass
   | .explanation  => .causeEffect
   | .result       => .causeEffect
@@ -165,10 +150,8 @@ theorem contrast_correction_same_class :
     CoherenceRelation.contrast.toClass =
     CoherenceRelation.correction.toClass := rfl
 
-/-- CONTRAST and CORRECTION are distinct relations despite sharing a class.
-    @cite{umbach-2004} §3.2: they differ in exclusion type (additional vs
-    substitution) and in the implicit question they respond to. German
-    lexicalizes the difference: *aber* (contrast) vs *sondern* (correction). -/
+/-- CONTRAST and CORRECTION are distinct despite sharing a class
+    (@cite{umbach-2004}). -/
 theorem contrast_ne_correction :
     CoherenceRelation.contrast ≠ CoherenceRelation.correction := by decide
 

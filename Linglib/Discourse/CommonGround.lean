@@ -17,10 +17,7 @@ are in `Semantics/Modality/EpistemicLogic.lean`.
 
 namespace Discourse.CommonGround
 
-/-- A context set is the set of worlds compatible with the common ground.
-
-Just `Set W`. The namespace `ContextSet.*` provides discourse-meaningful
-aliases (`entails`, `update`, `compatible`) backed by mathlib `Set` ops. -/
+/-- The set of worlds compatible with the common ground. -/
 abbrev ContextSet (W : Type*) := Set W
 
 namespace ContextSet
@@ -30,8 +27,7 @@ variable {W : Type*}
 /-- The trivial context: all worlds possible. Alias for `Set.univ`. -/
 abbrev trivial : ContextSet W := Set.univ
 
-/-- Entailment: every world in the context satisfies the proposition.
-Thin alias for `(· ⊆ ·)` so that the `⊧` notation reads naturally. -/
+/-- Entailment: every world in the context satisfies the proposition. -/
 abbrev entails (c : ContextSet W) (p : Set W) : Prop := c ⊆ p
 
 @[inherit_doc] notation:50 c " ⊧ " p => entails c p
@@ -117,28 +113,11 @@ theorem add_restricts (cg : CG W) (p : Set W) :
 
 end CG
 
--- ════════════════════════════════════════════════════════════════
--- Unified Common Ground Interface
--- ════════════════════════════════════════════════════════════════
-
-/-! ## HasContextSet: Uniform Access to Context Sets
-@cite{ginzburg-2012} @cite{stalnaker-2002} @cite{krifka-2015}
-
-Common ground appears in many guises across discourse theories:
-`CG W` (@cite{stalnaker-2002}), `CommitmentSlate W` (@cite{krifka-2015}),
-`CommitmentSpace W` (commitment trees), `DistributionalCG W` (probabilistic),
-`DGB` (dialogue gameboard FACTS), and `InfoState` (TTR gameboard).
-All of these induce a **context set** — the set of worlds compatible with
-accumulated information.
-
-`HasContextSet` provides uniform extraction, enabling framework-agnostic
-discourse operations and bridge theorems connecting the representations. -/
+/-! ### Uniform context-set extraction -/
 
 /-- A discourse state from which a context set can be extracted.
-
-Every discourse state representation (Stalnaker CG, Krifka commitment spaces,
-Ginzburg DGB, distributional CG, TTR gameboard) projects to a context set:
-the worlds compatible with the state's accumulated information. -/
+    Instanced by `CG`, `CommitmentSlate`, `CommitmentSpace`,
+    `DistributionalCG`, `DGB`, `InfoState`, etc. -/
 class HasContextSet (S : Type*) (W : outParam Type*) where
   toContextSet : S → ContextSet W
 

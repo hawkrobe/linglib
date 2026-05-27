@@ -18,38 +18,21 @@ open Semantics.Mood (IllocutionaryMood)
 -- § 1. Psychological Mode — S(r)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Named psychological modes: the "S" in @cite{searle-1983}'s S(r) notation.
-
-    Parallel to illocutionary force "F" in F(p) for speech acts. Each mode
-    has a direction of fit and may or may not be causally self-referential.
-
-    @cite{searle-1983}, Ch. 1: belief, desire, and intention are the
-    prototypical modes. Perception (Ch. 2) is a causally self-referential
-    mode that plays a key role in the theory's account of how the mind
-    relates to the world. -/
+/-- Psychological modes: the "S" in @cite{searle-1983}'s S(r). -/
 inductive PsychMode where
-  /-- Bel(p): satisfied iff p obtains. Not self-referential —
-      HOW p came to obtain is irrelevant (Ch. 1, p. 8). -/
+  /-- Bel(p): satisfied iff p obtains. -/
   | belief
-  /-- Des(p): satisfied iff p comes about. Not self-referential —
-      HOW p is brought about is irrelevant (Ch. 1, p. 8). -/
+  /-- Des(p): satisfied iff p comes about. -/
   | desire
-  /-- Int(p): satisfied iff p is brought about BY WAY OF carrying out
-      this intention. Self-referential: state→world (Ch. 3, pp. 85–86). -/
+  /-- Int(p): satisfied iff p is brought about by carrying out the intention. -/
   | intention
-  /-- Per(p): satisfied iff the object/state of affairs CAUSES this
-      experience. Self-referential: world→state (Ch. 2; Ch. 3, p. 91). -/
+  /-- Per(p): satisfied iff the object causes this experience. -/
   | perception
-  /-- Expressive states (pleasure, sorrow, etc.): presuppose the truth
-      of their content but impose no fit responsibility (Ch. 1, pp. 7–8). -/
+  /-- Expressive: presupposes truth, no fit responsibility. -/
   | expressive
   deriving DecidableEq, Repr, Inhabited
 
-/-- Direction of fit for each psychological mode.
-
-    Beliefs and perceptions: mind-to-world (the state must match reality).
-    Desires and intentions: world-to-mind (reality must match the state).
-    Expressives: null (presuppose truth, no fit responsibility). -/
+/-- Direction of fit for each psychological mode. -/
 def PsychMode.directionOfFit : PsychMode → DirectionOfFit
   | .belief     => .mindToWorld
   | .desire     => .worldToMind
@@ -61,14 +44,8 @@ def PsychMode.directionOfFit : PsychMode → DirectionOfFit
 -- § 2. Sincerity Conditions — the F→S bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- The sincerity condition: performing a speech act with mood F necessarily
-    expresses the corresponding Intentional state S, and the conditions of
-    satisfaction of the speech act are identical to those of the expressed state.
-
-    @cite{searle-1983}, Ch. 1 §3: you can't say "It's snowing but I don't
-    believe it's snowing" — the assertion *eo ipso* expresses the belief.
-    Ch. 6, p. 174: "the conditions of satisfaction of the sincerity condition"
-    are "identical with the conditions of satisfaction" of the speech act. -/
+/-- Sincerity condition: performing a speech act with mood F expresses
+    the corresponding Intentional state S. -/
 def sincerityCondition : IllocutionaryMood → PsychMode
   | .declarative   => .belief      -- asserting p expresses Bel(p)
   | .interrogative  => .desire     -- asking expresses Des(addressee answer)
@@ -80,34 +57,20 @@ def sincerityCondition : IllocutionaryMood → PsychMode
 -- § 3. Causal Self-Referentiality (@cite{searle-1983}, Ch. 3)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Causal self-referentiality: whether the Intentional state must itself
-    figure in the causal chain producing its conditions of satisfaction.
-
-    Beliefs: no self-referentiality — satisfied iff the state of affairs obtains.
-    Intentions: self-referential — "my arm goes up *as a result of* this intention."
-    Perceptions: self-referential in reverse — the object must *cause* the experience. -/
+/-- Whether an Intentional state must figure in the causal chain
+    producing its conditions of satisfaction (@cite{searle-1983} Ch. 3). -/
 inductive CausalSelfRef where
-  /-- Not self-referential: satisfaction depends only on the state of affairs
-      obtaining. Example: beliefs. -/
+  /-- Not self-referential (beliefs, desires). -/
   | none
-  /-- State-to-world: the state must cause its conditions of satisfaction.
-      Example: intentions — "by way of carrying out *this* intention." -/
+  /-- The state must cause its conditions of satisfaction (intentions). -/
   | stateToWorld
-  /-- World-to-state: the conditions of satisfaction must cause the state.
-      Example: perceptions — the object causes the visual experience. -/
+  /-- The conditions of satisfaction must cause the state (perceptions). -/
   | worldToState
   deriving DecidableEq, Repr
 
 /-- Causal self-referentiality for each psychological mode.
-
-    @cite{searle-1983}, Ch. 3 (table on p. 91): self-referentiality is NOT
-    determined by direction of fit alone. Both beliefs and perceptions have
-    mind-to-world fit, but only perceptions are self-referential. Both
-    desires and intentions have world-to-mind fit, but only intentions are.
-
-    - Perception: the object must *cause* the experience (world→state)
-    - Intention: the intention must *cause* its conditions of satisfaction (state→world)
-    - Belief/Desire: satisfaction depends only on whether the state of affairs obtains -/
+    Not determined by direction of fit alone: belief and perception
+    share mind-to-world fit, but only perception is self-referential. -/
 def PsychMode.causalSelfRef : PsychMode → CausalSelfRef
   | .belief     => .none
   | .desire     => .none
@@ -119,17 +82,9 @@ def PsychMode.causalSelfRef : PsychMode → CausalSelfRef
 -- § 4. Intentional State
 -- ════════════════════════════════════════════════════════════════
 
-/-- An Intentional state: psychological mode + representative content.
-
-    @cite{searle-1983}, Ch. 1: "every Intentional state consists of a
-    representative content in a psychological mode." Symbolized S(r).
-
-    Conditions of satisfaction are *determined by* the content under the
-    direction of fit given by the mode — they are internal to the state. -/
+/-- An Intentional state S(r): psychological mode + representative content. -/
 structure IntentionalState (W : Type*) where
-  /-- The psychological mode (belief, desire, intention, ...) -/
   mode : PsychMode
-  /-- The representative content -/
   content : W → Prop
 
 -- ════════════════════════════════════════════════════════════════
@@ -149,12 +104,8 @@ theorem sincerity_promise :
 theorem sincerity_exclamation :
     (sincerityCondition .exclamative).directionOfFit = .null := rfl
 
-/-- @cite{searle-1983}'s central parallel: the direction of fit of the
-    sincerity condition matches the direction of fit of the speech act class.
-
-    Asserting p expresses a mind-to-world state (belief); ordering p expresses
-    a world-to-mind state (desire); promising p expresses a world-to-mind
-    state (intention). This is constitutive (@cite{searle-1983}, Ch. 1 §3). -/
+/-- The sincerity condition's direction of fit matches the speech act's
+    (Searle's central parallel). -/
 theorem sincerity_direction_matches_class :
     ∀ m : IllocutionaryMood,
     (sincerityCondition m).directionOfFit = m.directionOfFit := by
@@ -173,9 +124,9 @@ theorem intentions_self_referential :
 theorem perceptions_self_referential :
     PsychMode.perception.causalSelfRef = .worldToState := rfl
 
-/-- @cite{searle-1983}'s key insight (Ch. 3, p. 91): causal self-referentiality
-    is NOT determined by direction of fit alone. Beliefs and perceptions
-    share mind-to-world fit, but only perceptions are self-referential. -/
+/-- Causal self-referentiality is not determined by direction of fit
+    alone: belief and perception share mind-to-world fit but differ in
+    self-referentiality. -/
 theorem self_ref_independent_of_direction :
     PsychMode.belief.directionOfFit = PsychMode.perception.directionOfFit ∧
     PsychMode.belief.causalSelfRef ≠ PsychMode.perception.causalSelfRef :=

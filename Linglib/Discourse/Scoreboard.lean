@@ -95,13 +95,8 @@ inductive SemanticType where
   | indexedProperty
   deriving DecidableEq, Repr
 
-/-- **Illocutionary Force Linking Principle** (@cite{roberts-2023} (56)):
-    the default illocutionary force of a root sentence is determined by
-    its semantic type.
-
-    (a) proposition → assertion
-    (b) set of propositions → interrogation
-    (c) indexed property → direction -/
+/-- Illocutionary Force Linking Principle: the default illocutionary
+    force of a root sentence is determined by its semantic type. -/
 def forceLinkingPrinciple : SemanticType → IllocutionaryMood
   | .proposition       => .declarative
   | .setOfPropositions  => .interrogative
@@ -143,24 +138,13 @@ theorem iflp_roundtrip_imp :
 
 /-! ## The Scoreboard -/
 
-/-- The scoreboard K for a language game.
-
-    @cite{roberts-2023} §2.1.1: K = ⟨I, M, ≺, CG, QUD, G⟩.
-    We represent ≺ implicitly via list order in `moves`. -/
+/-- The scoreboard K = ⟨I, M, ≺, CG, QUD, G⟩. The temporal order ≺
+    is implicit in list position of `moves`. -/
 structure Scoreboard (W : Type*) where
-  /-- I: the interlocutors (by index) -/
   numInterlocutors : Nat
-  /-- M: illocutionary moves in temporal order (≺ = list position) -/
   moves : List (Move W) := []
-  /-- CG: the common ground — propositions treated as mutually believed.
-      Represented as a list of propositions; the context set is their
-      intersection. -/
   cg : List (W → Prop) := []
-  /-- QUD: questions under discussion (as a stack of proposition-sets).
-      Simplified from the full `QUDStack` for composability. -/
   qud : List (W → Prop) := []
-  /-- G: per-agent goal sets. `goals[i]` is G_i.
-      Length should equal `numInterlocutors`. -/
   goals : List (GoalSet W) := []
   deriving Inhabited
 
@@ -174,24 +158,20 @@ def contextSet (K : Scoreboard W) : W → Prop :=
 def agentGoals (K : Scoreboard W) (i : Nat) : GoalSet W :=
   K.goals.getD i GoalSet.empty
 
-/-- **Assertion update** (@cite{roberts-2023} (57), following @cite{stalnaker-1978}):
-    If a proposition is asserted and accepted, it is added to CG_K. -/
+/-- Assertion update: accepted assertion of `p` adds `p` to CG. -/
 def assertionUpdate (K : Scoreboard W) (p : W → Prop) (agent : Nat) : Scoreboard W :=
   { K with
     cg := p :: K.cg
     moves := ⟨.declarative, p, agent, true⟩ :: K.moves }
 
-/-- **Interrogation update** (@cite{roberts-2023} (58), following @cite{roberts-2012}):
-    If a question is posed and accepted, it is added to QUD_K. -/
+/-- Interrogation update: accepted question `q` adds `q` to QUD. -/
 def interrogationUpdate (K : Scoreboard W) (q : W → Prop) (agent : Nat) : Scoreboard W :=
   { K with
     qud := q :: K.qud
     moves := ⟨.interrogative, q, agent, true⟩ :: K.moves }
 
-/-- Replace the `target`-th goal set in `xs` (walking from index `i`)
-    by adding `g`. Returns `xs` unchanged if `target` is out of range
-    (no implicit list extension). Used by `directionUpdate` and reasoned
-    about by `addGoalAt_out_of_range` and `mem_addGoalAt_flatMap`. -/
+/-- Add goal `g` to the agent at `target` index in `xs` (walking from `i`).
+    Identity when `target` is out of range. -/
 def addGoalAt : List (GoalSet W) → Nat → Nat → Goal W → List (GoalSet W)
   | [], _, _, _ => []
   | gs :: rest, target, i, g =>
@@ -207,10 +187,8 @@ lemma addGoalAt_out_of_range (xs : List (GoalSet W)) (target i : Nat) (g : Goal 
     simp only [addGoalAt, beq_iff_eq, if_neg hne, List.cons.injEq, true_and]
     exact ih (i + 1) (by omega)
 
-/-- **Direction update** (@cite{roberts-2023} (59)):
-    If a targeted property is issued to addressee i and accepted,
-    G_i is revised to include the realization of the property in any
-    applicable circumstances. -/
+/-- Direction update: targeted property issued to addressee `target` and
+    accepted; revises G_target to include the property's realization. -/
 def directionUpdate (K : Scoreboard W) (p : W → Prop)
     (speaker target : Nat) (priority : Nat := 0) : Scoreboard W :=
   let newGoal : Goal W := { content := p, priority }
@@ -250,30 +228,13 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 @[simp] theorem direction_preserves_qud (K : Scoreboard W) (p : W → Prop) (s t pr : Nat) :
     (K.directionUpdate p s t pr).qud = K.qud := rfl
 
-/-! ## POSW Substrate Bridge
+/-! ### POSW substrate bridge
 
 The scoreboard's CG and G components project jointly into a
-`Semantics.Mood.POSW` substrate (@cite{portner-2018}, eq. 1):
+`Semantics.Mood.POSW`: CG via `contextSet`, G via the goal-induced
+preference ordering. Assertion ↔ `plus`, direction ↔ `star`. -/
 
-- The `cs` component is the scoreboard `contextSet` (∩ of CG).
-- The `le` component is the **goal-induced preference ordering**:
-  `w` is at least as good as `v` iff every active goal content (across
-  every agent) that holds at `v` also holds at `w`. Equivalently,
-  `w` violates no goal that `v` doesn't already violate.
-
-This makes the two scoreboard updates that target the POSW substrate
-correspond, by construction, to the two POSW updates of @cite{portner-2018}:
-
-| scoreboard      | POSW    | informational consequence                  |
-|-----------------|---------|--------------------------------------------|
-| assertionUpdate | `plus`  | `boxCs_plus_self` (Stalnakerian principle) |
-| directionUpdate | `star`  | `le`-refinement: p-violators demoted       |
-
-We *derive* both consequences from `POSW.boxCs_plus_self` and the
-`star`-refinement via the bridge theorems below — not re-stipulate them. -/
-
-/-- The flat list of goal contents across all agents. The substrate of
-    the goal-induced preference ordering on `toPOSW`. -/
+/-- Flat list of goal contents across all agents. -/
 def goalContents (K : Scoreboard W) : List (W → Prop) :=
   K.goals.flatMap GoalSet.toPropertyList
 
@@ -282,9 +243,8 @@ def goalContents (K : Scoreboard W) : List (W → Prop) :=
     (p : W → Prop) (a : Nat) :
     (K.assertionUpdate p a).goalContents = K.goalContents := rfl
 
-/-- Membership in the flat goal-content list of a `directionUpdate`-modified
-    scoreboard: the directive's content is added; everything else is preserved.
-    Requires the target to be in bounds. -/
+/-- After a `directionUpdate`, the new directive's content joins the
+    flat goal-content list. Requires `target` in bounds. -/
 lemma mem_addGoalAt_flatMap (xs : List (GoalSet W)) (target i : Nat) (g : Goal W)
     (hin : i ≤ target) (hbd : target < i + xs.length) (q : W → Prop) :
     q ∈ (addGoalAt xs target i g).flatMap GoalSet.toPropertyList ↔
@@ -322,12 +282,8 @@ lemma mem_directionUpdate_goalContents (K : Scoreboard W) (p : W → Prop)
   exact mem_addGoalAt_flatMap K.goals t 0 ⟨p, fun _ => True, pr⟩
     (Nat.zero_le _) (by simpa using hin) q
 
-/-- Project the scoreboard into a POSW substrate. `cs` is the
-    scoreboard's `contextSet`; `le` is the **goal-induced** ordering —
-    `w` is at least as good as `v` iff `w` satisfies every goal
-    `v` satisfies. The two POSW updates of @cite{portner-2018} target
-    these two components (cf. `toPOSW_assertion_eq_plus` and
-    `toPOSW_direction_eq_star`). -/
+/-- Project the scoreboard into a POSW: `cs` from CG, `le` from
+    goal-induced preference. -/
 def toPOSW (K : Scoreboard W) : Semantics.Mood.POSW W where
   cs := K.contextSet
   le := fun w v => ∀ p ∈ K.goalContents, p v → p w
@@ -340,37 +296,24 @@ def toPOSW (K : Scoreboard W) : Semantics.Mood.POSW W where
 @[simp] theorem toPOSW_le (K : Scoreboard W) (w v : W) :
     K.toPOSW.le w v ↔ ∀ p ∈ K.goalContents, p v → p w := Iff.rfl
 
-/-- **Assertion-as-`+`-update bridge** (@cite{stalnaker-1978},
-    @cite{portner-2018} eq. 2a). Asserting `p` against scoreboard `K`
-    refines the projected POSW exactly the way `POSW.plus` does:
-    the new context set is the conjunction of the old context set with
-    `p`. The bridge is definitional — `assertionUpdate` is `+`-update
-    on the `cs` side. -/
+/-- Assertion-as-`+`-update bridge: `assertionUpdate` refines the
+    projected POSW's `cs` exactly as `POSW.plus` does. -/
 theorem toPOSW_assertion_eq_plus (K : Scoreboard W) (p : W → Prop) (a : Nat) (w : W) :
     (K.assertionUpdate p a).toPOSW.cs w ↔ (K.toPOSW.plus p).cs w := by
   simp [toPOSW, contextSet, assertionUpdate, Semantics.Mood.POSW.plus]
   exact And.comm
 
-/-- **Stalnakerian assertion principle** (@cite{stalnaker-1978}):
-    after asserting `p`, `p` is informationally necessary on the
-    projected POSW. *Derived* from `POSW.boxCs_plus_self` via the
-    `toPOSW_assertion_eq_plus` bridge — not re-stipulated. -/
+/-- After asserting `p`, `p` is informationally necessary on the
+    projected POSW (Stalnakerian assertion principle). -/
 theorem boxCs_after_assertion (K : Scoreboard W) (p : W → Prop) (a : Nat) :
     (K.assertionUpdate p a).toPOSW.boxCs p := by
   intro w hw
   have hplus : (K.toPOSW.plus p).cs w := (toPOSW_assertion_eq_plus K p a w).mp hw
   exact Semantics.Mood.POSW.boxCs_plus_self K.toPOSW p w hplus
 
-/-- **Direction-as-`⋆`-update bridge** (@cite{portner-2018} eq. 2b,
-    following @cite{portner-2004}). Issuing the directive `p` to a
-    target in bounds refines the projected POSW exactly the way
-    `POSW.star` does: the new ordering keeps the old ordering and
-    additionally requires that whenever the dominated world satisfies
-    `p`, the dominating world does too. The bridge mirrors the
-    assertion bridge — `directionUpdate` is `⋆`-update on the `le`
-    side, modulo the `t < K.goals.length` precondition (out-of-range
-    targets silently drop the directive; that's a stipulated property
-    of `directionUpdate`, not of POSW). -/
+/-- Direction-as-`⋆`-update bridge: `directionUpdate` refines the
+    projected POSW's `le` exactly as `POSW.star` does
+    (modulo target-in-bounds). -/
 theorem toPOSW_direction_eq_star (K : Scoreboard W) (p : W → Prop)
     (s t pr : Nat) (hin : t < K.goals.length) (w v : W) :
     (K.directionUpdate p s t pr).toPOSW.le w v ↔ (K.toPOSW.star p).le w v := by
@@ -385,11 +328,7 @@ theorem toPOSW_direction_eq_star (K : Scoreboard W) (p : W → Prop)
     · exact h2
     · exact h1 q hq'
 
-/-- **Goal-violator demotion** (corollary of the `⋆`-bridge):
-    after directing `p`, no `p`-violator can dominate a `p`-satisfier
-    in the goal-induced ordering. The directive update genuinely
-    refines the preference relation — the analogue, on the `le` side,
-    of `boxCs_after_assertion` on the `cs` side. -/
+/-- After `directionUpdate p`, no `p`-violator dominates a `p`-satisfier. -/
 theorem direction_demotes_violators (K : Scoreboard W) (p : W → Prop)
     (s t pr : Nat) (hin : t < K.goals.length) (w v : W)
     (hpv : p v) (hpw : ¬ p w) :
@@ -399,30 +338,14 @@ theorem direction_demotes_violators (K : Scoreboard W) (p : W → Prop)
     (toPOSW_direction_eq_star K p s t pr hin w v).mp hlt
   exact hpw (hstar.2 hpv)
 
-/-! ## POSWQ Substrate Bridge
+/-! ### POSWQ inquiry-partition bridge
 
-The scoreboard's QUD component projects into the third POSW component
-of @cite{portner-2018} — the **inquiry partition** of `Semantics.Mood.POSWQ`.
-Each yes/no question `q : W → Prop` on the QUD stack induces a binary
-partition (`q`-true worlds vs. `q`-false worlds); the joint inquiry
-is the meet of these binary partitions in the `Setoid W` lattice.
+QUD projects into POSWQ's inquiry partition: meet of polar Setoids
+over the QUD stack. Interrogation ↔ `inquire`. -/
 
-| scoreboard          | POSWQ               | informational consequence    |
-|---------------------|---------------------|------------------------------|
-| assertionUpdate     | `plus`              | `boxCs_plus_self`            |
-| directionUpdate     | `star`              | `le`-refinement              |
-| interrogationUpdate | `inquire` (`?`)     | `boxAns`-strengthening       |
-
-Together these three bridges complete the @cite{portner-2018} 3×3
-unification on the discourse-update side. -/
-
-/-- The inquiry partition projected from the QUD stack: the meet of
-    the polar Setoids of every question on the stack, with the trivial
-    inquiry (`⊤`) as identity. The fold convention places the new
-    head's polar Setoid on the *right* of `⊓` so that consing reduces
-    definitionally to the `inquire` update on `POSWQ`.
-    `polarSetoid` lives in `Semantics/Mood/POSWQ.lean` (the natural
-    primitive site — it is the partition substrate). -/
+/-- Inquiry partition from the QUD stack: meet of polar Setoids
+    (`⊤` as identity). Cons-right convention so that consing reduces
+    definitionally to `inquire`. -/
 def qudInquiry (K : Scoreboard W) : Setoid W :=
   K.qud.foldr (fun q s => s ⊓ Semantics.Mood.POSWQ.polarSetoid q) ⊤
 
@@ -437,17 +360,12 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
         Semantics.Mood.POSWQ.polarSetoid q := by
   simp [qudInquiry, h]
 
-/-- Interrogation update preserves goal contents (since it doesn't
-    touch G). Needed for the POSWQ bridge — `toPOSWQ` projects both
-    `le` (from `goalContents`) and `inquiry` (from `qud`), and the
-    interrogation update only refines the latter. -/
+/-- Interrogation update preserves goal contents (doesn't touch G). -/
 @[simp] theorem interrogation_preserves_goalContents (K : Scoreboard W)
     (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).goalContents = K.goalContents := rfl
 
-/-- Project the scoreboard into a POSWQ substrate: the underlying POSW
-    plus the QUD-induced inquiry partition. The third row of the
-    @cite{portner-2018} unification table. -/
+/-- Project the scoreboard into a POSWQ: underlying POSW + QUD inquiry. -/
 def toPOSWQ (K : Scoreboard W) : Semantics.Mood.POSWQ W :=
   { K.toPOSW with inquiry := K.qudInquiry }
 
@@ -457,30 +375,19 @@ def toPOSWQ (K : Scoreboard W) : Semantics.Mood.POSWQ W :=
 @[simp] theorem toPOSWQ_inquiry (K : Scoreboard W) :
     K.toPOSWQ.inquiry = K.qudInquiry := rfl
 
-/-- **Interrogation-as-`?`-update bridge** (@cite{portner-2018} on
-    questions; @cite{groenendijk-stokhof-1984} partitions). Posing a
-    question `q` against scoreboard `K` refines the projected POSWQ
-    exactly the way `POSWQ.inquire` does on the polar Setoid of `q`:
-    the new inquiry partition is the meet of the old inquiry with
-    the polar partition of `q`. The bridge is definitional —
-    `interrogationUpdate` is `?`-update on the `inquiry` side. -/
+/-- Interrogation-as-`?`-update bridge: `interrogationUpdate` refines
+    the projected POSWQ's `inquiry` exactly as `POSWQ.inquire` does. -/
 theorem toPOSWQ_interrogation_eq_inquire (K : Scoreboard W)
     (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).toPOSWQ.inquiry =
       (K.toPOSWQ.inquire (Semantics.Mood.POSWQ.polarSetoid q)).inquiry := rfl
 
-/-- **Question-strengthening principle** (the inquiry analogue of
-    `boxCs_after_assertion` and `direction_demotes_violators`):
-    after posing `q`, every proposition that is settled by `q`
-    *and* compatible with the prior inquiry is settled by the new
-    POSWQ. Concretely, the polar partition of `q` itself is settled.
-    Derived from `POSWQ.boxAns` over the meet — not re-stipulated. -/
+/-- After posing `q`, the polar partition of `q` is settled by
+    the new POSWQ (inquiry analogue of `boxCs_after_assertion`). -/
 theorem boxAns_polar_after_interrogation (K : Scoreboard W)
     (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).toPOSWQ.boxAns q := by
   intro w v _ _ hwv
-  -- (K.interrogationUpdate q a).toPOSWQ.inquiry = K.qudInquiry ⊓ polarSetoid q
-  -- meet's right component is exactly polarSetoid q, hence q w ↔ q v
   exact hwv.2
 
 end Scoreboard

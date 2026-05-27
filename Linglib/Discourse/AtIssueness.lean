@@ -44,8 +44,7 @@ abbrev ProjectivityThreshold := Rat01
 -- § Threshold Semantics
 -- ════════════════════════════════════════════════════
 
-/-- Content is at-issue when its at-issueness degree exceeds the threshold.
-    Mirrors `positiveMeaning` from `Adjective/Theory.lean`. -/
+/-- Content is at-issue when its degree exceeds the threshold. -/
 def isAtIssue (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) : Prop :=
   Rat01.exceeds d θ
 
@@ -65,8 +64,7 @@ instance (d : ProjectivityDegree) (θ : ProjectivityThreshold) :
 -- § Classical Recovery
 -- ════════════════════════════════════════════════════
 
-/-- Binary at-issueness, recoverable from gradient degree + threshold.
-    This is the same enum as in `ProjectiveContent.lean`, now derived. -/
+/-- Binary at-issueness, recoverable from gradient degree + threshold. -/
 inductive AtIssuenessClassical where
   | atIssue
   | notAtIssue
@@ -92,22 +90,11 @@ structure GradientPair where
   projectivity : ℚ
   deriving Repr
 
-/-- Anti-correlation property: across a list of expression ratings,
-    higher at-issueness systematically co-occurs with lower projectivity.
-
-    @cite{tonhauser-beaver-degen-2018} report r = .85 across 9 expression
-    types (Exp 1a) and r = .99 across 12 clause-embedding predicates
-    (Exp 1b), for the positive correlation between not-at-issueness and
-    projectivity. This is equivalent to an anti-correlation between
-    at-issueness and projectivity.
-
-    This structure captures the deterministic (monotone) version of the
-    Gradient Projection Principle. The statistical version uses Pearson r. -/
+/-- Deterministic (monotone) version of @cite{tonhauser-beaver-degen-2018}'s
+    Gradient Projection Principle: higher at-issueness co-occurs with
+    lower projectivity. -/
 structure AntiCorrelation where
-  /-- The paired ratings -/
   pairs : List GradientPair
-  /-- For any two items, if one has higher at-issueness, it should
-      have lower projectivity (qualitative anti-correlation). -/
   anticorrelated : ∀ (i j : Fin pairs.length),
     (pairs.get i).atIssueness < (pairs.get j).atIssueness →
     (pairs.get j).projectivity ≤ (pairs.get i).projectivity
@@ -116,15 +103,8 @@ structure AntiCorrelation where
 -- § QUD Connection
 -- ════════════════════════════════════════════════════
 
-/-- Qualitative connection between QUD and at-issueness: content that
-    doesn't distinguish QUD cells has low at-issueness.
-
-    @cite{roberts-2012}: at-issue content is content that addresses the QUD.
-    Content that yields the same truth value across all worlds within
-    each QUD cell is backgrounded (not at-issue).
-
-    The full measure-theoretic version would compute mutual information
-    between content and QUD partition. -/
+/-- Qualitative QUD-based at-issueness: content varying within QUD cells
+    counts as at-issue (@cite{roberts-2012}). -/
 def atIssuenessFromQUD {M : Type*} (q : QUD M)
     (content : M → Bool) (worlds : List M) : AtIssuenessDegree :=
   let varies := worlds.any λ w₁ =>
@@ -146,8 +126,7 @@ def projectivityBoundedness : Boundedness := .closed
 -- § Smart Constructors
 -- ════════════════════════════════════════════════════
 
-/-- Construct a degree from a rational in [0, 100], normalizing to [0, 1].
-    Useful for entering experimental ratings. -/
+/-- Construct a degree from [0, 100], normalizing to [0, 1]. -/
 def ofPercent (n : ℚ) (h0 : 0 ≤ n) (h1 : n ≤ 100) : Rat01 :=
   ⟨n / 100, div_nonneg h0 (by norm_num), by linarith⟩
 
