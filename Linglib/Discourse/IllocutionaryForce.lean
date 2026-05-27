@@ -13,9 +13,9 @@ The pragmatic-act side of the Searlean F(p) parallel: `DirectionOfFit`,
 namespace Discourse
 open Core.Context
 open Semantics.Mood (IllocutionaryMood moodAuthority)
-/-! ### Direction of Fit (@cite{searle-1983}, Ch. 1 §2) -/
+/-! ### Direction of Fit (@cite{searle-1983}) -/
 /-- Direction of fit: how responsibility for matching the state and
-    the world is distributed (@cite{searle-1983} Ch. 1 §2). -/
+    the world is distributed (@cite{searle-1983}). -/
 inductive DirectionOfFit where
   /-- State must match reality (beliefs, assertions). -/
   | mindToWorld
@@ -65,10 +65,11 @@ end Semantics.Mood.IllocutionaryMood
 namespace Discourse
 open Semantics.Mood (IllocutionaryMood moodAuthority)
 /-! ### Preparatory Conditions (@cite{searle-1969} @cite{francik-clark-1985}) -/
-/-- Preparatory conditions for directive speech acts
-    (@cite{searle-1969}, refined by @cite{francik-clark-1985}). Hierarchy:
-    ability subsumes knowledge (→ memory, perception) and permission;
-    willingness is independent. -/
+/-- Preparatory conditions for directive speech acts. @cite{searle-1969}
+    introduces the notion; the ability/knowledge/memory/perception/permission/
+    willingness inventory and the specificity subsumption used below are
+    consolidated in the analysis of @cite{francik-clark-1985} on indirect
+    requests. -- UNVERIFIED: the precise subsumption ordering attribution. -/
 inductive PreparatoryCondition where
   | ability
   | knowledge
@@ -78,29 +79,31 @@ inductive PreparatoryCondition where
   | willingness
   deriving DecidableEq, Repr
 /-- `c₁.subsumes c₂` iff satisfying c₂ entails satisfying c₁. -/
-def PreparatoryCondition.subsumes : PreparatoryCondition → PreparatoryCondition → Bool
+def PreparatoryCondition.subsumes : PreparatoryCondition → PreparatoryCondition → Prop
   -- reflexive
   | .ability, .ability | .knowledge, .knowledge | .memory, .memory
   | .perception, .perception | .permission, .permission
-  | .willingness, .willingness => true
+  | .willingness, .willingness => True
   -- ability subsumes its subtypes
   | .ability, .knowledge | .ability, .memory
-  | .ability, .perception | .ability, .permission => true
+  | .ability, .perception | .ability, .permission => True
   -- knowledge subsumes its subtypes
-  | .knowledge, .memory | .knowledge, .perception => true
-  | _, _ => false
+  | .knowledge, .memory | .knowledge, .perception => True
+  | _, _ => False
+instance : DecidableRel PreparatoryCondition.subsumes := fun c₁ c₂ => by
+  cases c₁ <;> cases c₂ <;> unfold PreparatoryCondition.subsumes <;> infer_instance
 theorem PreparatoryCondition.subsumes_refl (c : PreparatoryCondition) :
-    c.subsumes c = true := by cases c <;> rfl
+    c.subsumes c := by cases c <;> trivial
 /-- The specificity chain: memory/perception → knowledge → ability. -/
 theorem PreparatoryCondition.specificity_chain :
-    PreparatoryCondition.ability.subsumes .knowledge = true ∧
-    PreparatoryCondition.knowledge.subsumes .memory = true ∧
-    PreparatoryCondition.knowledge.subsumes .perception = true ∧
-    PreparatoryCondition.ability.subsumes .permission = true := ⟨rfl, rfl, rfl, rfl⟩
+    PreparatoryCondition.ability.subsumes .knowledge ∧
+    PreparatoryCondition.knowledge.subsumes .memory ∧
+    PreparatoryCondition.knowledge.subsumes .perception ∧
+    PreparatoryCondition.ability.subsumes .permission := ⟨trivial, trivial, trivial, trivial⟩
 /-- Willingness is independent of ability: neither subsumes the other. -/
 theorem PreparatoryCondition.willingness_independent :
-    PreparatoryCondition.ability.subsumes .willingness = false ∧
-    PreparatoryCondition.willingness.subsumes .ability = false := ⟨rfl, rfl⟩
+    ¬ PreparatoryCondition.ability.subsumes .willingness ∧
+    ¬ PreparatoryCondition.willingness.subsumes .ability := ⟨id, id⟩
 /-- Directives are the speech act class that has preparatory conditions
     on the hearer's ability and willingness. -/
 theorem directive_has_preparatory_conditions :

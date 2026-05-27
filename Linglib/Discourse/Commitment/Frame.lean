@@ -161,14 +161,15 @@ def Competent (c : CommitmentState W A) : Prop :=
   ∀ x y w v, c.belief y w v → c.belief x w v
 
 /-- In a Sincerity-satisfying state, commitment entails belief.
-    Hintikka 1962 / Stalnaker 1984 transfer (van der Leer 2026 T26.1). -/
+    @cite{hintikka-1962} / @cite{stalnaker-1984} transfer, used as a
+    lemma in @cite{van-der-leer-2026}. -/
 theorem committed_implies_believes_of_sincere
     {c : CommitmentState W A} (h : Sincere c) (a b : A) (π : Set W) (w : W) :
     Committed c a b π w → Believes c a π w :=
   fun hcom v hbel => hcom v (h a b w v hbel)
 
 /-- In a Competence-satisfying state, `a`'s belief entails `b`'s
-    belief. Van der Leer 2026 T26.2. -/
+    belief (@cite{van-der-leer-2026}). -/
 theorem believes_a_implies_believes_b_of_competent
     {c : CommitmentState W A} (h : Competent c) (a b : A) (π : Set W) (w : W) :
     Believes c a π w → Believes c b π w :=
@@ -176,7 +177,7 @@ theorem believes_a_implies_believes_b_of_competent
 
 /-- Composed: Sincerity + Competence ⇒ `a`'s commitment-to-`b` of `π`
     entails `b`'s belief in `π`. The mediated CG-update of
-    @cite{bary-2025}, derived not stipulated. Van der Leer 2026 T26.3. -/
+    @cite{bary-2025}, derived not stipulated (@cite{van-der-leer-2026}). -/
 theorem committed_implies_addressee_believes_of_sincere_competent
     {c : CommitmentState W A} (hsin : Sincere c) (hcomp : Competent c)
     (a b : A) (π : Set W) (w : W) :

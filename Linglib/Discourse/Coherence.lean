@@ -29,9 +29,9 @@ inductive CoherenceRelation where
   | parallel      -- structural similarity between segments
   | contrast      -- "but"/"although": similarity + dissimilarity + exclusion of additional alternative
   | correction    -- "but" (corrective) / German *sondern*: exclusion by substitution
-  | background    -- @cite{asher-lascarides-2003} §4.6: scene-setting; β provides setting for α
-  | consequence   -- @cite{asher-lascarides-2003} p. 150 ex. (23): discourse-level conditional
-  | alternation   -- @cite{asher-lascarides-2003} preface "What's New": discourse-level disjunction
+  | background    -- @cite{asher-lascarides-2003}: scene-setting; β provides setting for α
+  | consequence   -- @cite{asher-lascarides-2003}: discourse-level conditional
+  | alternation   -- @cite{asher-lascarides-2003}: discourse-level disjunction
   deriving DecidableEq, Repr
 /-! ### Properties -/
 /-- Classify each relation into its coherence class. -/
@@ -65,11 +65,15 @@ def CoherenceRelation.causalDirection : CoherenceRelation → CausalDirection
   | .consequence  => .forward     -- discourse-level conditional, hypothetical-causal
   | .alternation  => .none        -- discourse-level disjunction, not causal
 /-- Does this relation trigger a search for a cause? -/
-def CoherenceRelation.selectsCause (r : CoherenceRelation) : Bool :=
-  r.causalDirection == .backward
+def CoherenceRelation.selectsCause (r : CoherenceRelation) : Prop :=
+  r.causalDirection = .backward
+instance (r : CoherenceRelation) : Decidable r.selectsCause := by
+  unfold CoherenceRelation.selectsCause; infer_instance
 /-- Does this relation trigger a search for an effect? -/
-def CoherenceRelation.selectsEffect (r : CoherenceRelation) : Bool :=
-  r.causalDirection == .forward
+def CoherenceRelation.selectsEffect (r : CoherenceRelation) : Prop :=
+  r.causalDirection = .forward
+instance (r : CoherenceRelation) : Decidable r.selectsEffect := by
+  unfold CoherenceRelation.selectsEffect; infer_instance
 /-! ### Connective–Relation Mapping -/
 /-- German/English connective forms used as experimental stimuli
     (@cite{solstad-bott-2022}, Exps 1–4). -/
@@ -88,16 +92,16 @@ def Connective.toRelation : Connective → CoherenceRelation
 /-! ### Theorems -/
 /-- "because" selects for causes (backward causal). -/
 theorem because_selects_cause :
-    (Connective.toRelation .because).selectsCause = true := rfl
+    (Connective.toRelation .because).selectsCause := rfl
 /-- "and so" selects for effects (forward causal / I-Cons). -/
 theorem andSo_selects_effect :
-    (Connective.toRelation .andSo).selectsEffect = true := rfl
+    (Connective.toRelation .andSo).selectsEffect := rfl
 /-- "although" does not select for causes. -/
 theorem although_not_causal :
-    (Connective.toRelation .although).selectsCause = false := rfl
+    ¬ (Connective.toRelation .although).selectsCause := by decide
 /-- "and then" does not select for causes. -/
 theorem andThen_not_causal :
-    (Connective.toRelation .andThen).selectsCause = false := rfl
+    ¬ (Connective.toRelation .andThen).selectsCause := by decide
 /-- "because" and "and so" are both causal but in opposite directions: I-Caus is backward, I-Cons is forward. -/
 theorem because_andSo_opposite_directions :
     (Connective.toRelation .because).causalDirection = .backward ∧
@@ -111,7 +115,7 @@ theorem contiguity_relations_same_class :
     CoherenceRelation.occasion.toClass =
     CoherenceRelation.elaboration.toClass := rfl
 /-- CONTRAST and CORRECTION are both resemblance relations
-    (@cite{umbach-2004} §3.2, @cite{kehler-2002}). -/
+    (@cite{umbach-2004}, @cite{kehler-2002}). -/
 theorem contrast_correction_same_class :
     CoherenceRelation.contrast.toClass =
     CoherenceRelation.correction.toClass := rfl

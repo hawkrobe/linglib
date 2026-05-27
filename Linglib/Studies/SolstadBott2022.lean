@@ -365,7 +365,7 @@ theorem agPat_profile_matches_agent :
 
 /-- The Explanation relation (triggered by "because") selects for causes. -/
 theorem because_triggers_causal_search :
-    CoherenceRelation.explanation.selectsCause = true := rfl
+    CoherenceRelation.explanation.selectsCause := rfl
 
 /-- IC bias prediction: under Explanation (because), the continuation targets
     the STIMULUS argument — the participant whose entailment profile includes
@@ -449,7 +449,7 @@ theorem thematic_role_not_position_determines_bias :
     Occasion/Result asks "what happened next?" (→ endpoint). -/
 theorem coherence_selects_complementary_roles :
     -- Explanation selects causes (the IC mechanism)
-    CoherenceRelation.explanation.selectsCause = true ∧
+    CoherenceRelation.explanation.selectsCause ∧
     -- Occasion/Result is the coherence class that amplifies goal bias
     occasionResult_interaction.significant = true ∧
     other_interaction.significant = false ∧
@@ -471,7 +471,7 @@ open KehlerRohde2013
     causes, and IC bias tracks whichever argument carries the
     causation entailment — the stimulus. -/
 theorem ic_instantiates_KR_explanation_bias :
-    cr_explanation.cr.selectsCause = true ∧
+    cr_explanation.cr.selectsCause ∧
     cr_explanation.sourceGivenCR > 50 ∧
     predictICBias stimExpSubjectProfile = .np1 ∧
     predictICBias expStimSubjectProfile = .np2 := by
@@ -488,7 +488,7 @@ theorem ic_instantiates_KR_explanation_bias :
     - P(referent | Explanation) = whichever argument has causation -/
 theorem because_collapses_KR_mixture :
     (Connective.toRelation .because) = .explanation ∧
-    CoherenceRelation.explanation.selectsCause = true ∧
+    CoherenceRelation.explanation.selectsCause ∧
     predictICBias stimExpSubjectProfile = .np1 ∧
     predictICBias expStimSubjectProfile = .np2 := by
   exact ⟨rfl, rfl, by native_decide, by native_decide⟩

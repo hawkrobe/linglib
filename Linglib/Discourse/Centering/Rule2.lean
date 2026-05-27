@@ -11,7 +11,7 @@ distinction via `isCheap`. The BFP 87 4-way variant lives in
 -/
 set_option autoImplicit false
 namespace Discourse.Centering
-variable {E R : Type}
+variable {E R : Type*}
 /-! ### Rule 2 (GJW 1995): sequences of transitions -/
 /-- Rule 2 (GJW 95): sequence preference by sum-of-ranks. -/
 def pairRank (t₁ t₂ : Transition) : Nat := t₁.rank + t₂.rank
@@ -24,15 +24,15 @@ theorem rule2_continuations_preferred_over_shifts :
 /-! ### Rule 2 (Strube 1998): cheap vs expensive -/
 /-- A transition is *cheap* (@cite{strube-1998}) if `CB(U_n) = CP(U_{n-1})`:
     the previous utterance's preferred center predicts the current CB. -/
-def isCheap [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
+def isCheap [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
     (prev : Utterance E R) (cur : U) (prevCp : Option E) : Prop :=
   cb prev cur = prevCp ∧ (cb prev cur).isSome
-instance isCheap.decidable [DecidableEq E] [CfRankerOf E R] {U : Type}
+instance isCheap.decidable [DecidableEq E] [CfRankerOf E R] {U : Type*}
     [Realizes U E] (prev : Utterance E R) (cur : U) (prevCp : Option E) :
     Decidable (isCheap prev cur prevCp) :=
   inferInstanceAs (Decidable (cb prev cur = prevCp ∧ (cb prev cur).isSome))
 /-- Strube 1998 Rule 2 preference: cheap > expensive. -/
-def Rule2Strube1998Preferred [DecidableEq E] [CfRankerOf E R] {U : Type}
+def Rule2Strube1998Preferred [DecidableEq E] [CfRankerOf E R] {U : Type*}
     [Realizes U E]
     (prev : Utterance E R) (cur : U) (prevCp : Option E) : Prop :=
   isCheap prev cur prevCp

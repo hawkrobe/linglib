@@ -5,8 +5,6 @@ import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Move
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
-import Linglib.Discourse.QUDStack
-import Linglib.Discourse.Strategy
 import Linglib.Semantics.Mood.POSW
 import Linglib.Semantics.Mood.POSWQ
 
@@ -15,7 +13,7 @@ import Linglib.Semantics.Mood.POSWQ
 @cite{roberts-2023} @cite{roberts-2012} @cite{lewis-1979} @cite{portner-2004}
 
 The scoreboard K for a language game at time t is a tuple
-⟨I, M, ≺, CG, QUD, G⟩ (@cite{roberts-2023} §2.1.1), tracking:
+⟨I, M, ≺, CG, QUD, G⟩ (@cite{roberts-2023}), tracking:
 
 - **I**: the set of interlocutors
 - **M**: illocutionary moves made so far (with subsets A, Q, D, Acc)
@@ -39,8 +37,7 @@ variable {W : Type*}
 /-! ### Goals (the G component) -/
 
 /-- A single goal: a proposition the agent is committed to realizing,
-    conditional on certain circumstances obtaining (@cite{roberts-2023}
-    §2.1.1). -/
+    conditional on certain circumstances obtaining (@cite{roberts-2023}). -/
 structure Goal (W : Type*) where
   /-- The content: what the agent aims to bring about. -/
   content : W → Prop
@@ -84,7 +81,7 @@ end GoalSet
 
 /-- The semantic type of a clause, determining its default illocutionary force.
 
-    @cite{roberts-2023} (56): propositions → assertion, sets of propositions →
+    @cite{roberts-2023}: propositions → assertion, sets of propositions →
     interrogation, indexed properties → direction. -/
 inductive SemanticType where
   /-- Type ⟨s, t⟩: a proposition (set of worlds) -/
@@ -139,7 +136,10 @@ theorem iflp_roundtrip_imp :
 /-! ## The Scoreboard -/
 
 /-- The scoreboard K = ⟨I, M, ≺, CG, QUD, G⟩. The temporal order ≺
-    is implicit in list position of `moves`. -/
+    is implicit in list position of `moves`. `qud` is specialised to
+    polar-question content (`W → Prop`); the richer `Discourse.QUDStack`
+    over `Semantics.Questions.Basic.Question W` is consumed by other
+    files. Bridging the two is an open API-coherence item. -/
 structure Scoreboard (W : Type*) where
   numInterlocutors : Nat
   moves : List (Move W) := []
@@ -162,13 +162,13 @@ def agentGoals (K : Scoreboard W) (i : Nat) : GoalSet W :=
 def assertionUpdate (K : Scoreboard W) (p : W → Prop) (agent : Nat) : Scoreboard W :=
   { K with
     cg := p :: K.cg
-    moves := ⟨.declarative, p, agent, true⟩ :: K.moves }
+    moves := ⟨.declarative, p, agent, True⟩ :: K.moves }
 
 /-- Interrogation update: accepted question `q` adds `q` to QUD. -/
 def interrogationUpdate (K : Scoreboard W) (q : W → Prop) (agent : Nat) : Scoreboard W :=
   { K with
     qud := q :: K.qud
-    moves := ⟨.interrogative, q, agent, true⟩ :: K.moves }
+    moves := ⟨.interrogative, q, agent, True⟩ :: K.moves }
 
 /-- Add goal `g` to the agent at `target` index in `xs` (walking from `i`).
     Identity when `target` is out of range. -/
@@ -194,7 +194,7 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
   let newGoal : Goal W := { content := p, priority }
   { K with
     goals := addGoalAt K.goals target 0 newGoal
-    moves := ⟨.imperative, p, speaker, true⟩ :: K.moves }
+    moves := ⟨.imperative, p, speaker, True⟩ :: K.moves }
 
 /-- Assertion update adds to CG. -/
 @[simp] theorem assertion_adds_to_cg (K : Scoreboard W) (p : W → Prop) (a : Nat) :

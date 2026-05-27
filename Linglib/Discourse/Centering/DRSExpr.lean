@@ -9,8 +9,8 @@ A bridge between Centering Theory's notion of *realization* and the
 Discourse Representation Theory notion of *occurrence in a DRS*.
 
 Centering is normally presented with a list-of-realizations utterance
-representation. But the "realizes" relation is, in @cite{grosz-joshi-weinstein-1995}
-§3, deliberately abstracted from the underlying semantic theory:
+representation. But the "realizes" relation is, in @cite{grosz-joshi-weinstein-1995},
+deliberately abstracted from the underlying semantic theory:
 the paper allows any semantic representation that supplies a realizes
 relation. DRT's `DRSExpr` is one natural choice — its drefs are exactly
 the discourse entities that an utterance contributes — and using a DRS
@@ -29,8 +29,6 @@ Rule 1 is not directly applicable to DRSs without an additional layer
 that records which drefs are realized pronominally.
 -/
 
-set_option autoImplicit false
-
 namespace Discourse.Centering.DRSExpr
 
 open Discourse.Centering
@@ -38,15 +36,17 @@ open Semantics.Dynamic.Core.DRSExpr (DRSExpr occurs)
 
 /-- A DRS realizes a dref `e` iff `e` occurs anywhere in the DRS.
     This includes both freshly introduced drefs (in any `.box`) and
-    drefs referred to in atomic conditions (anaphoric uses). -/
+    drefs referred to in atomic conditions (anaphoric uses). The
+    underlying `occurs` predicate is `Bool`-valued; the instance lifts
+    it to `Prop` via `= true`. -/
 instance : Realizes DRSExpr Nat where
-  decide := fun K e => occurs e K
+  Rel K e := occurs e K = true
+  decRel _ _ := inferInstance
 
 /-- A `.box` realizes each of its newly introduced drefs. -/
 theorem box_realizes_new_dref (drefs : List Nat) (conds : List DRSExpr)
     (e : Nat) (h : e ∈ drefs) :
     realizes (DRSExpr.box drefs conds) e := by
-  unfold realizes
   show occurs e (DRSExpr.box drefs conds) = true
   unfold occurs
   exact Bool.or_eq_true_iff.mpr (Or.inl (List.contains_iff_mem.mpr h))

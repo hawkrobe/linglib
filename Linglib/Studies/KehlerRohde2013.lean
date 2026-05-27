@@ -551,7 +551,7 @@ theorem goal_biased_crs_are_endpoint_focused :
     For transfer verbs, the Source/initiator is the cause. For IC verbs,
     the stimulus is the cause — this is the bridge to IC bias studies. -/
 theorem explanation_source_and_backward :
-    cr_explanation.cr.selectsCause = true ∧
+    cr_explanation.cr.selectsCause ∧
     cr_explanation.sourceGivenCR > 50 := ⟨rfl, by decide⟩
 
 /-- Key insight: the contiguity class does NOT uniformly predict bias.

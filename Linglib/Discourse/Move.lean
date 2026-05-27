@@ -30,7 +30,7 @@ structure Move (W : Type*) where
   /-- Who made the move (agent index into interlocutors). -/
   agent : Nat
   /-- Whether this move has been accepted by the interlocutors. -/
-  accepted : Bool := false
+  accepted : Prop := False
   deriving Inhabited
 
 end Discourse

@@ -33,7 +33,7 @@ theorem continuation_gt_retaining :
 theorem retaining_gt_shifting :
     (Transition.retaining : Transition) > .shifting := by decide
 /-! ### Strict and Extended Classification -/
-variable {E R : Type}
+variable {E R : Type*}
 /-- Internal classifier given both Cbs: equal Cbs continue/retain
     by Cp alignment; unequal Cbs shift. -/
 def classifyTransitionInternal [DecidableEq E]
@@ -44,7 +44,7 @@ def classifyTransitionInternal [DecidableEq E]
 /-- Strict classification (faithful to GJW Def 4): returns `none` in
     the segment-initial case where the prior Cb is undefined. -/
 def classifyTransitionStrict
-    [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
+    [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
     (prev : Utterance E R) (cur : U) (curCp : Option E)
     (prevCb : Option E) : Option Transition :=
   match cb prev cur, prevCb with
@@ -55,7 +55,7 @@ def classifyTransitionStrict
     for the segment-initial case (treats missing prior Cb as if equal
     to current Cb). -/
 def classifyTransitionExtended
-    [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
+    [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
     (prev : Utterance E R) (cur : U) (curCp : Option E)
     (prevCb : Option E) : Transition :=
   match cb prev cur with
@@ -65,7 +65,7 @@ def classifyTransitionExtended
 /-- The two classifications agree whenever the strict variant is
     defined. -/
 theorem extended_eq_strict_when_defined
-    [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
+    [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
     (prev : Utterance E R) (cur : U) (curCp : Option E)
     (prevCb : Option E) (t : Transition)
     (h : classifyTransitionStrict prev cur curCp prevCb = some t) :

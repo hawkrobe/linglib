@@ -59,10 +59,16 @@ structure GradientPair where
   atIssueness : ℚ
   projectivity : ℚ
   deriving Repr
-/-- Deterministic (monotone) version of @cite{tonhauser-beaver-degen-2018}'s
-    Gradient Projection Principle: higher at-issueness co-occurs with
-    lower projectivity. -/
-structure AntiCorrelation where
+/-- A monotone-anti-correlation bundle: every pair ordering on at-issueness
+    forces the reverse weak ordering on projectivity. This is a *structural*
+    strengthening of the empirical Gradient Projection Principle of
+    @cite{tonhauser-beaver-degen-2018}, who establish a gradient negative
+    correlation across content classes (with substantial within-class and
+    item-level variance), not a deterministic monotone pairing across every
+    stimulus pair. Suitable for analytical scenarios where the strict-monotone
+    fragment is the object of study; not a faithful summary of the paper's
+    empirical claim. -/
+structure MonotoneAntiCorrelation where
   pairs : List GradientPair
   anticorrelated : ∀ (i j : Fin pairs.length),
     (pairs.get i).atIssueness < (pairs.get j).atIssueness →
