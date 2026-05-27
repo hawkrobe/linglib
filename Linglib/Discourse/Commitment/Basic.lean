@@ -5,20 +5,8 @@ import Linglib.Discourse.Roles
 # Discourse Commitments
 @cite{krifka-2015} @cite{brandom-1994} @cite{gunlogson-2001}
 
-The public trace of speech acts: commitment slates, source-tagged
-commitments, and the speaker-indexed `S⊢φ` constructor. Pairs with
-`Discourse/IllocutionaryForce.lean` (F in F(p)) and
-`Discourse/Intentionality.lean` (S in S(r)).
-
-Contextual evidence (Büring-Gunlogson 2000) lives at its consumer
-site in `Semantics/Modality/BiasedPQ.lean`.
-
-## Main definitions
-
-* `CommitmentSlate W`, `TaggedSlate W` — agent commitment slates.
-* `CommitmentSource`, `CommitmentForce` — source × force tagging.
-* `IndexedWeightedCommitment W G`, `IndexedCommitment W` — speaker-indexed `S⊢φ`.
-* `HasSupport`, `CommitmentGrade` — grade typeclasses.
+Commitment slates, source × force tagging, and the speaker-indexed
+`S⊢φ` constructor.
 -/
 
 namespace Discourse
