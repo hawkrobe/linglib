@@ -1,4 +1,5 @@
 import Mathlib.Logic.Basic
+import Mathlib.Order.Defs.Unbundled
 
 /-!
 # Polymorphic Kripke Foundation
@@ -41,68 +42,112 @@ def emptyR {W : Type*} : AccessRel W := fun _ _ => False
 def identityR {W : Type*} : AccessRel W := fun w v => w = v
 
 -- ────────────────────────────────────────────────────────────────
--- §2 Frame Conditions
+-- §2 Frame Conditions (typeclasses)
 -- ────────────────────────────────────────────────────────────────
 
 /-- Reflexivity: every world accesses itself. -/
-def IsReflexive {W : Type*} (R : AccessRel W) : Prop := ∀ w, R w w
+class IsReflexive {W : Type*} (R : AccessRel W) : Prop where
+  refl : ∀ w, R w w
 
 /-- Seriality: every world accesses at least one world. -/
-def IsSerial {W : Type*} (R : AccessRel W) : Prop := ∀ w, ∃ v, R w v
+class IsSerial {W : Type*} (R : AccessRel W) : Prop where
+  serial : ∀ w, ∃ v, R w v
 
 /-- Transitivity. -/
-def IsTransitive {W : Type*} (R : AccessRel W) : Prop := ∀ w v u, R w v → R v u → R w u
+class IsTransitive {W : Type*} (R : AccessRel W) : Prop where
+  trans : ∀ w v u, R w v → R v u → R w u
 
 /-- Symmetry. -/
-def IsSymmetric {W : Type*} (R : AccessRel W) : Prop := ∀ w v, R w v → R v w
+class IsSymmetric {W : Type*} (R : AccessRel W) : Prop where
+  symm : ∀ w v, R w v → R v w
 
 /-- Euclideanness. -/
-def IsEuclidean {W : Type*} (R : AccessRel W) : Prop := ∀ w v u, R w v → R w u → R v u
+class IsEuclidean {W : Type*} (R : AccessRel W) : Prop where
+  eucl : ∀ w v u, R w v → R w u → R v u
 
 -- ────────────────────────────────────────────────────────────────
--- §3 Frame Condition Relationships
+-- §3 Bundled Frame Classes
+-- ────────────────────────────────────────────────────────────────
+
+/-- S4 frame: reflexive + transitive. -/
+class IsS4Frame {W : Type*} (R : AccessRel W) : Prop extends IsReflexive R, IsTransitive R
+
+/-- S5 frame: reflexive + euclidean (implies symmetric + transitive). -/
+class IsS5Frame {W : Type*} (R : AccessRel W) : Prop extends IsReflexive R, IsEuclidean R
+
+/-- KD45 frame for textbook belief: serial + transitive + euclidean. -/
+class IsKD45Frame {W : Type*} (R : AccessRel W) : Prop
+  extends IsSerial R, IsTransitive R, IsEuclidean R
+
+/-- K4-Eucl frame: transitive + euclidean, NOT serial. The frame condition
+    for commitment in @cite{stalnaker-1984}-style discourse models, where
+    commitment violations (no accessible compliance world) must be
+    expressible. -/
+class IsK4EuclFrame {W : Type*} (R : AccessRel W) : Prop
+  extends IsTransitive R, IsEuclidean R
+
+/-- KT frame: reflexive. (T axiom alone.) -/
+class IsKTFrame {W : Type*} (R : AccessRel W) : Prop extends IsReflexive R
+
+/-- KTB frame: reflexive + symmetric. The natural setting for tolerance
+    semantics (@cite{cobreros-etal-2012}) where each predicate's
+    similarity relation is reflexive and symmetric but possibly
+    non-transitive. -/
+class IsKTBFrame {W : Type*} (R : AccessRel W) : Prop
+  extends IsReflexive R, IsSymmetric R
+
+/-- `Rb` is a *belief refinement* of `Rk`: every belief-accessible world is
+    knowledge-accessible. The pure subset condition; whether `Rk` is S5
+    and `Rb` is KD45 is asserted by separate instance declarations. -/
+class IsBeliefRefinementOf {W : Type*} (Rk Rb : AccessRel W) : Prop where
+  sub : ∀ w v, Rb w v → Rk w v
+
+-- ────────────────────────────────────────────────────────────────
+-- §4 Frame Condition Relationships and Instances
 -- ────────────────────────────────────────────────────────────────
 
 variable {W : Type*}
 
-theorem universalR_refl : IsReflexive (universalR (W := W)) := fun _ => trivial
-theorem universalR_serial : IsSerial (universalR (W := W)) := fun w => ⟨w, trivial⟩
-theorem universalR_trans : IsTransitive (universalR (W := W)) := fun _ _ _ _ _ => trivial
-theorem universalR_symm : IsSymmetric (universalR (W := W)) := fun _ _ _ => trivial
-theorem universalR_eucl : IsEuclidean (universalR (W := W)) := fun _ _ _ _ _ => trivial
+instance universalR_isReflexive : IsReflexive (universalR (W := W)) := ⟨fun _ => trivial⟩
+instance universalR_isSerial : IsSerial (universalR (W := W)) := ⟨fun w => ⟨w, trivial⟩⟩
+instance universalR_isTransitive : IsTransitive (universalR (W := W)) :=
+  ⟨fun _ _ _ _ _ => trivial⟩
+instance universalR_isSymmetric : IsSymmetric (universalR (W := W)) := ⟨fun _ _ _ => trivial⟩
+instance universalR_isEuclidean : IsEuclidean (universalR (W := W)) :=
+  ⟨fun _ _ _ _ _ => trivial⟩
 
-theorem refl_serial {R : AccessRel W} (h : IsReflexive R) : IsSerial R :=
-  fun w => ⟨w, h w⟩
+/-- Reflexive relations are serial. -/
+instance (priority := 100) IsReflexive.toIsSerial {R : AccessRel W} [h : IsReflexive R] :
+    IsSerial R := ⟨fun w => ⟨w, h.refl w⟩⟩
 
-theorem refl_eucl_symm {R : AccessRel W} (hR : IsReflexive R) (hE : IsEuclidean R) : IsSymmetric R :=
-  fun w v hwv => hE w v w hwv (hR w)
+/-- Reflexive + Euclidean implies symmetric. -/
+theorem IsReflexive.isSymmetric_of_isEuclidean {R : AccessRel W}
+    [hR : IsReflexive R] [hE : IsEuclidean R] : IsSymmetric R :=
+  ⟨fun w v hwv => hE.eucl w v w hwv (hR.refl w)⟩
 
-theorem refl_eucl_trans {R : AccessRel W} (hR : IsReflexive R) (hE : IsEuclidean R) : IsTransitive R :=
-  fun w v u hwv hvu => hE v w u (refl_eucl_symm hR hE w v hwv) hvu
+/-- Reflexive + Euclidean implies transitive. -/
+theorem IsReflexive.isTransitive_of_isEuclidean {R : AccessRel W}
+    [hR : IsReflexive R] [hE : IsEuclidean R] : IsTransitive R :=
+  haveI := IsReflexive.isSymmetric_of_isEuclidean (R := R)
+  ⟨fun w v u hwv hvu => hE.eucl v w u (IsSymmetric.symm w v hwv) hvu⟩
 
-theorem symm_trans_eucl {R : AccessRel W} (hS : IsSymmetric R) (hT : IsTransitive R) : IsEuclidean R :=
-  fun w v u hwv hwu => hT v w u (hS w v hwv) hwu
+/-- Symmetric + transitive implies euclidean. -/
+theorem IsSymmetric.isEuclidean_of_isTransitive {R : AccessRel W}
+    [hS : IsSymmetric R] [hT : IsTransitive R] : IsEuclidean R :=
+  ⟨fun w v u hwv hwu => hT.trans v w u (hS.symm w v hwv) hwu⟩
 
-/-- S5 frames are equivalence relations. -/
-theorem S5_equiv {R : AccessRel W} (hR : IsReflexive R) (hE : IsEuclidean R) :
-    IsReflexive R ∧ IsSymmetric R ∧ IsTransitive R :=
-  ⟨hR, refl_eucl_symm hR hE, refl_eucl_trans hR hE⟩
+-- ────────────────────────────────────────────────────────────────
+-- §5 Mathlib Bridge Instances
+-- ────────────────────────────────────────────────────────────────
 
-/-- S4 frames are preorders. -/
-theorem S4_preorder {R : AccessRel W} (hR : IsReflexive R) (hT : IsTransitive R) :
-    IsReflexive R ∧ IsTransitive R := ⟨hR, hT⟩
+/-- Linglib reflexivity gives mathlib's `Std.Refl`. -/
+instance (priority := low) {R : AccessRel W} [h : IsReflexive R] : Std.Refl R := ⟨h.refl⟩
 
-/-- M implies D (reflexive implies serial). -/
-theorem M_implies_D {R : AccessRel W} (hM : IsReflexive R) : IsSerial R :=
-  refl_serial hM
+/-- Linglib transitivity gives mathlib's `IsTrans`. -/
+instance (priority := low) {R : AccessRel W} [h : IsTransitive R] : IsTrans W R := ⟨h.trans⟩
 
-/-- M + 5 implies B. -/
-theorem M5_implies_B {R : AccessRel W} (hM : IsReflexive R) (h5 : IsEuclidean R) : IsSymmetric R :=
-  refl_eucl_symm hM h5
-
-/-- M + 5 implies 4. -/
-theorem M5_implies_4 {R : AccessRel W} (hM : IsReflexive R) (h5 : IsEuclidean R) : IsTransitive R :=
-  refl_eucl_trans hM h5
+/-- Linglib symmetry gives mathlib's `Std.Symm`. -/
+instance (priority := low) {R : AccessRel W} [h : IsSymmetric R] : Std.Symm R := ⟨h.symm⟩
 
 -- ────────────────────────────────────────────────────────────────
 -- §4 Restricted Box and Diamond

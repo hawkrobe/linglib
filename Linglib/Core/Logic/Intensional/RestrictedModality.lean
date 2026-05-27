@@ -67,46 +67,46 @@ theorem boxR_K (R : AccessRel W) (p q : W → Prop) (w : W)
 
 /-- **T axiom**: reflexive `R` gives `□_R p w → p w`.
     What is necessary is actual. -/
-theorem boxR_T (R : AccessRel W) (hR : IsReflexive R) (p : W → Prop) (w : W)
+theorem boxR_T (R : AccessRel W) [hR : IsReflexive R] (p : W → Prop) (w : W)
     (h : boxR R p w) : p w :=
-  h w (hR w)
+  h w (hR.refl w)
 
 /-- **D axiom**: serial `R` gives `□_R p w → ◇_R p w`.
     What is necessary is possible. -/
-theorem boxR_D (R : AccessRel W) (hS : IsSerial R) (p : W → Prop) (w : W)
+theorem boxR_D (R : AccessRel W) [hS : IsSerial R] (p : W → Prop) (w : W)
     (h : boxR R p w) : diamondR R p w :=
-  let ⟨v, hwv⟩ := hS w; ⟨v, hwv, h v hwv⟩
+  let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩
 
 /-- **4 axiom**: transitive `R` gives `□_R p → □_R □_R p`.
     Positive introspection. -/
-theorem boxR_four (R : AccessRel W) (hT : IsTransitive R) (p : W → Prop) (w : W)
+theorem boxR_four (R : AccessRel W) [hT : IsTransitive R] (p : W → Prop) (w : W)
     (h : boxR R p w) : boxR R (boxR R p) w :=
-  fun v hwv u hvu => h u (hT w v u hwv hvu)
+  fun v hwv u hvu => h u (hT.trans w v u hwv hvu)
 
 /-- **B axiom**: symmetric `R` gives `p w → □_R ◇_R p w`.
     What is actual is necessarily possible. -/
-theorem boxR_B (R : AccessRel W) (hS : IsSymmetric R) (p : W → Prop) (w : W)
+theorem boxR_B (R : AccessRel W) [hS : IsSymmetric R] (p : W → Prop) (w : W)
     (h : p w) : boxR R (diamondR R p) w :=
-  fun v hwv => ⟨w, hS w v hwv, h⟩
+  fun v hwv => ⟨w, hS.symm w v hwv, h⟩
 
 /-- **5 axiom**: euclidean `R` gives `◇_R p w → □_R ◇_R p w`.
     Positive possibility introspection. -/
-theorem boxR_five (R : AccessRel W) (hE : IsEuclidean R) (p : W → Prop) (w : W)
+theorem boxR_five (R : AccessRel W) [hE : IsEuclidean R] (p : W → Prop) (w : W)
     (h : diamondR R p w) : boxR R (diamondR R p) w :=
   let ⟨u, hwu, hpu⟩ := h
-  fun v hwv => ⟨u, hE w v u hwv hwu, hpu⟩
+  fun v hwv => ⟨u, hE.eucl w v u hwv hwu, hpu⟩
 
 /-- **Moore reductio for KD4**: no world satisfies `□_R (p ∧ ¬□_R p)` when
     `R` is serial and transitive. The content `p ∧ ¬□_R p` is itself
     satisfiable; what fails is *boxing* it. Specialise to belief
     (@cite{hintikka-1962}), knowledge, or any other KD4 modality. -/
-theorem boxR_not_moore (R : AccessRel W) (hS : IsSerial R) (hT : IsTransitive R)
+theorem boxR_not_moore (R : AccessRel W) [hS : IsSerial R] [IsTransitive R]
     (p : W → Prop) (w : W) :
     ¬ boxR R (fun v => p v ∧ ¬ boxR R p v) w := by
   intro h
   have hbp : boxR R p w := fun v hwv => (h v hwv).1
-  have hbbp : boxR R (boxR R p) w := boxR_four R hT p w hbp
-  obtain ⟨v, hv⟩ := hS w
+  have hbbp : boxR R (boxR R p) w := boxR_four R p w hbp
+  obtain ⟨v, hv⟩ := hS.serial w
   exact (h v hv).2 (hbbp v hv)
 
 -- ════════════════════════════════════════════════════════════════════════
@@ -174,18 +174,22 @@ theorem diamondR_restrict {R₁ R₂ : AccessRel W}
 
 /-- With reflexive + euclidean accessibility (= S5 frame conditions),
     `boxR` validates all of T, D, 4, B, 5. -/
-theorem S5_frame_all_axioms (R : AccessRel W)
-    (hR : IsReflexive R) (hE : IsEuclidean R) :
+theorem S5_frame_all_axioms (R : AccessRel W) [IsReflexive R] [IsEuclidean R] :
     (∀ p w, boxR R p w → p w) ∧                          -- T
     (∀ p w, boxR R p w → diamondR R p w) ∧               -- D
     (∀ p w, boxR R p w → boxR R (boxR R p) w) ∧          -- 4
     (∀ p w, p w → boxR R (diamondR R p) w) ∧             -- B
     (∀ p w, diamondR R p w → boxR R (diamondR R p) w) := -- 5
-  ⟨fun p w => boxR_T R hR p w,
-   fun p w => boxR_D R (refl_serial hR) p w,
-   fun p w => boxR_four R (refl_eucl_trans hR hE) p w,
-   fun p w => boxR_B R (refl_eucl_symm hR hE) p w,
-   fun p w => boxR_five R hE p w⟩
+  haveI := IsReflexive.isTransitive_of_isEuclidean (R := R)
+  haveI := IsReflexive.isSymmetric_of_isEuclidean (R := R)
+  ⟨boxR_T R, boxR_D R, boxR_four R, boxR_B R, boxR_five R⟩
+
+/-- KD45 frame conditions validate all three KD45 axioms (D, 4, 5). -/
+theorem KD45_frame_all_axioms (R : AccessRel W) [IsKD45Frame R] :
+    (∀ p w, boxR R p w → diamondR R p w) ∧               -- D
+    (∀ p w, boxR R p w → boxR R (boxR R p) w) ∧          -- 4
+    (∀ p w, diamondR R p w → boxR R (diamondR R p) w) := -- 5
+  ⟨boxR_D R, boxR_four R, boxR_five R⟩
 
 /-- `boxR R p i` is the infimum of `p v` over worlds `v` accessible from `w`. -/
 theorem boxR_eq_forall (R : AccessRel W) (p : W → Prop) (w : W) :
@@ -455,6 +459,25 @@ def frameConditions {W : Type*} (L : Logic) (R : AccessRel W) : Prop :=
   (L.hasAxiom .B → IsSymmetric R) ∧
   (L.hasAxiom .four → IsTransitive R) ∧
   (L.hasAxiom .five → IsEuclidean R)
+
+/-- The syntactic-semantic bridge for `S5`: `frameConditions Logic.S5 R`
+    iff `R` is an S5 frame. -/
+theorem frameConditions_S5_iff {W : Type*} (R : AccessRel W) :
+    frameConditions S5 R ↔ IsReflexive R ∧ IsEuclidean R := by
+  unfold frameConditions S5 hasAxiom
+  simp
+
+/-- The syntactic-semantic bridge for `KD45`. -/
+theorem frameConditions_KD45_iff {W : Type*} (R : AccessRel W) :
+    frameConditions KD45 R ↔ IsSerial R ∧ IsTransitive R ∧ IsEuclidean R := by
+  unfold frameConditions KD45 hasAxiom
+  simp
+
+/-- The syntactic-semantic bridge for `KTB`. -/
+theorem frameConditions_KTB_iff {W : Type*} (R : AccessRel W) :
+    frameConditions KTB R ↔ IsReflexive R ∧ IsSymmetric R := by
+  unfold frameConditions KTB hasAxiom
+  simp
 
 end Logic
 
