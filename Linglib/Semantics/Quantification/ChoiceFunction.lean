@@ -1,5 +1,6 @@
 import Mathlib.Init
 import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Core.Logic.Quantification.Basic
 
 /-!
 # Choice Functions for Indefinite Determiners
@@ -191,5 +192,68 @@ theorem SkolemCF.cross_world_variation {S E : Type*}
     f.evalAt .bound w₁ w₂ P ≠ f.evalAt .bound w₂ w₁ P := by
   simp [SkolemCF.evalAt]
   exact Ne.symm hVary
+
+/-! ### Bridge to B&C existential semantics
+
+The Reinhart 1997 vs B&C 1981 schism: indefinites can be analyzed as
+referential (CF, type *e*) or quantificational (`some_sem`, type
+⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩).
+
+The two analyses agree on the simple case (one-way bridge below) but
+diverge on island-escape and pseudo-de-dicto readings. The asymmetry is
+*deliberately exposed*, not collapsed: that visibility is the linglib
+thesis. -/
+
+open Core.Quantification
+
+/-- Forward bridge: a correct CF, applied to the noun property, witnesses
+    the corresponding `some_sem` reading whenever the restrictor is
+    non-empty. The CF-output `f N` is in `N` (by correctness) and satisfies
+    `VP` (by hypothesis), so it witnesses `∃ x, N x ∧ VP x`. -/
+theorem cfIndefSem_implies_some_sem {α : Type*}
+    (f : CF α) (hf : f.isCorrect)
+    (N VP : α → Prop) (hN : ∃ x, N x) :
+    VP (cfIndefSem f N) → some_sem N VP :=
+  fun hVP => ⟨f N, hf N hN, hVP⟩
+
+/-- Different correct CFs make different `some_sem`-predictions on the same
+    noun/VP pair. The CF must commit in advance to a specific element; this
+    commitment can disagree with the existential reading's witness.
+
+    Witness: domain `Bool`, with noun `N = ⊤` (both inhabitants count) and
+    `VP = (· = true)`. The CF `f₁` (prefer-true) hits the witness; the CF
+    `f₂` (prefer-false) does not. Both are correct.
+
+    This makes the framework asymmetry visible at the propositional level:
+    `some_sem` is existence-of-witness; CF is commitment-to-witness, and
+    multiple correct CFs commit differently. The deeper divergence —
+    island-escape and pseudo-de-dicto under intensional operators — is
+    out of scope here but motivated by the same structural gap. -/
+theorem correct_cfs_disagree_on_some_sem :
+    ∃ (f₁ f₂ : CF Bool), f₁.isCorrect ∧ f₂.isCorrect ∧
+      ∃ (N VP : Bool → Prop),
+        some_sem N VP ∧ VP (cfIndefSem f₁ N) ∧ ¬ VP (cfIndefSem f₂ N) := by
+  classical
+  -- f₁ prefers `true`: pick `true` whenever `P true`, else `false`.
+  -- f₂ prefers `false`: dual.
+  let f₁ : CF Bool := fun P => if P true then true else false
+  let f₂ : CF Bool := fun P => if P false then false else true
+  have hf₁ : f₁.isCorrect := by
+    intro P ⟨x, hPx⟩
+    show P (if P true then true else false)
+    by_cases h : P true
+    · simp [h]
+    · simp [h]; cases x; exacts [hPx, absurd hPx h]
+  have hf₂ : f₂.isCorrect := by
+    intro P ⟨x, hPx⟩
+    show P (if P false then false else true)
+    by_cases h : P false
+    · simp [h]
+    · simp [h]; cases x; exacts [absurd hPx h, hPx]
+  refine ⟨f₁, f₂, hf₁, hf₂, fun _ => True, (· = true), ⟨true, trivial, rfl⟩, ?_, ?_⟩
+  · show f₁ (fun _ => True) = true
+    simp [f₁]
+  · show ¬ f₂ (fun _ => True) = true
+    simp [f₂]
 
 end Semantics.Quantification.ChoiceFunction
