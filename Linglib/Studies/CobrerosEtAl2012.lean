@@ -122,8 +122,8 @@ def soritesModel : TModel Elt VPred where
     | .tall, .d => False
   decInterp P x := by cases P; cases x <;> simp only [] <;> infer_instance
   sim _ := soritesSim
-  sim_refl _ := ⟨fun x => by cases x <;> decide⟩
-  sim_symm _ := ⟨fun x y h => by cases x <;> cases y <;> first | decide | exact h⟩
+  sim_ktb _ := { refl := fun x => by cases x <;> decide
+                 symm := fun x y h => by cases x <;> cases y <;> first | decide | exact h }
 
 /-- Per-pair decidability of the model's sim relation. Needed for
     `decide`-style proofs of the extension theorems below. Since

@@ -129,7 +129,7 @@ namespace Semantics.Supervaluation.TCS
 
 open Core.Duality (Truth3)
 open Core.Logic.Intensional
-  (AccessRel IsSerial boxR diamondR boxR_T Logic)
+  (AccessRel IsKTBFrame IsSerial boxR diamondR boxR_T Logic)
 open Core.Logic.ThreeValuedLogic (PropFormula MVModel mvEval lpSat k3Sat
   isLPDesignated isK3Designated lpSat_neg_iff k3Sat_neg_iff
   lpSat_conj k3Sat_conj)
@@ -162,10 +162,8 @@ structure TModel (D Pred : Type*) where
   decInterp : ∀ P d, Decidable (interp P d)
   /-- Tolerance (indifference) relation `~_P` per predicate. -/
   sim : Pred → D → D → Prop
-  /-- Reflexivity: every individual is similar to itself. -/
-  sim_refl : ∀ P, Std.Refl (sim P)
-  /-- Symmetry: similarity is undirected. -/
-  sim_symm : ∀ P, Std.Symm (sim P)
+  /-- Each `~_P` is reflexive + symmetric (KTB frame). -/
+  sim_ktb : ∀ P, IsKTBFrame (sim P)
 
 /-- Per-`TModel` decidability instance for the classical interpretation,
     extracted from the bundled `decInterp` field. -/
@@ -182,19 +180,9 @@ variable {D Pred : Type*}
     reflexive + symmetric, i.e., a **KTB frame** (`Core.Logic.Intensional.Logic.KTB`). -/
 @[reducible] def simAccess (M : TModel D Pred) (P : Pred) : AccessRel D := M.sim P
 
-/-- T-models satisfy `frameConditions Logic.KTB` by construction.
-    The B axiom (Brouwersche, `□p → □◇p` from `p`) holds via `boxR_B`
-    + `M.sim_symm`; the T axiom (`□p → p`) via `boxR_T` + `M.sim_refl`. -/
-theorem simAccess_isReflexive (M : TModel D Pred) (P : Pred) :
-    Std.Refl (M.simAccess P) := M.sim_refl P
-
-theorem simAccess_isSymmetric (M : TModel D Pred) (P : Pred) :
-    Std.Symm (M.simAccess P) := M.sim_symm P
-
-theorem simAccess_isSerial (M : TModel D Pred) (P : Pred) :
-    IsSerial (M.simAccess P) :=
-  haveI := M.sim_refl P
-  inferInstance
+/-- Per-`(M, P)` KTB-frame instance: lets typeclass search reach
+    `Std.Refl` and `Std.Symm` on `M.sim P` from any call site. -/
+instance (M : TModel D Pred) (P : Pred) : IsKTBFrame (M.sim P) := M.sim_ktb P
 
 /-- **T-models are KTB frames by construction**: every per-predicate
     similarity relation `~_P` satisfies the frame conditions for the
@@ -204,9 +192,9 @@ theorem simAccess_isSerial (M : TModel D Pred) (P : Pred) :
 theorem satisfies_KTB (M : TModel D Pred) (P : Pred) :
     Logic.KTB.frameConditions (M.simAccess P) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · intro _; exact M.simAccess_isReflexive P
+  · intro _; exact inferInstance
   · intro h; exact absurd h (by decide)
-  · intro _; exact M.simAccess_isSymmetric P
+  · intro _; exact inferInstance
   · intro h; exact absurd h (by decide)
   · intro h; exact absurd h (by decide)
 
@@ -272,14 +260,13 @@ theorem tolerantAt_eq_diamondR (M : TModel D Pred) (P : Pred) (a : D) :
     `~_P`. This is the **T axiom** instantiated. -/
 theorem StrictAt.imp_classical (M : TModel D Pred) (P : Pred) (a : D)
     (hs : StrictAt M P a) : M.interp P a :=
-  haveI := M.simAccess_isReflexive P
   boxR_T (M.simAccess P) _ a hs
 
 /-- **Classical ⟹ tolerant** at the atomic level: `a` itself
     witnesses the existential by reflexivity of `~_P`. -/
 theorem TolerantAt.of_classical (M : TModel D Pred) (P : Pred) (a : D)
     (hc : M.interp P a) : TolerantAt M P a :=
-  ⟨a, (M.sim_refl P).refl a, hc⟩
+  ⟨a, Std.Refl.refl (r := M.sim P) a, hc⟩
 
 /-- **Strict ⟹ tolerant** (transitive from above). -/
 theorem StrictAt.imp_tolerant (M : TModel D Pred) (P : Pred) (a : D)
@@ -312,7 +299,7 @@ theorem tolerance_one_step (M : TModel D Pred) (P : Pred) (a b : D)
 theorem tolerance_two_step (M : TModel D Pred) (P : Pred) (a b c : D)
     (hs : StrictAt M P a) (hab : M.sim P a b) (hbc : M.sim P b c) :
     TolerantAt M P c :=
-  ⟨b, (M.sim_symm P).symm b c hbc, hs b hab⟩
+  ⟨b, Std.Symm.symm (r := M.sim P) b c hbc, hs b hab⟩
 
 -- ════════════════════════════════════════════════════
 -- § 6. Borderline (Definition 10, p. 355)
@@ -366,7 +353,8 @@ variable [Fintype D]
 def toleranceSpace (M : TModel D Pred) (P : Pred) (a : D)
     [DecidablePred (M.sim P a)] : SpecSpace D where
   admissible := Finset.univ.filter (M.sim P a)
-  nonempty := ⟨a, Finset.mem_filter.mpr ⟨Finset.mem_univ a, (M.sim_refl P).refl a⟩⟩
+  nonempty := ⟨a, Finset.mem_filter.mpr ⟨Finset.mem_univ a,
+    Std.Refl.refl (r := M.sim P) a⟩⟩
 
 /-- **Strict truth = super-truth** over the tolerance neighborhood.
     `P` is strict at `a` iff `P` is super-true (true at every spec point)
@@ -529,8 +517,7 @@ def identityModel (interp : Pred → D → Prop) [∀ P d, Decidable (interp P d
   interp := interp
   decInterp := inferInstance
   sim _ d₁ d₂ := d₁ = d₂
-  sim_refl _ := ⟨fun _ => rfl⟩
-  sim_symm _ := ⟨fun _ _ h => h.symm⟩
+  sim_ktb _ := { refl := fun _ => rfl, symm := fun _ _ h => h.symm }
 
 /-- In an identity model, tolerant atomic = classical. -/
 theorem identityModel.tolerantAt_iff (interp : Pred → D → Prop)
