@@ -135,9 +135,7 @@ theorem reduces_to_threshold (domain : List D)
     symm; rw [decide_eq_false_iff_not]
     intro hContra; linarith
 
--- ============================================================================
--- Montague-Typed Constructors
--- ============================================================================
+/-! ### Montague-Typed Constructors -/
 
 section Compositional
 

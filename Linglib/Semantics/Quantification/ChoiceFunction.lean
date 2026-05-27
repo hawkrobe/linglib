@@ -46,9 +46,7 @@ relative to the resource situation, which negation cannot shift.
 
 namespace Semantics.Quantification.ChoiceFunction
 
--- ════════════════════════════════════════════════════
--- § 1. Choice Functions
--- ════════════════════════════════════════════════════
+/-! ### Choice Functions -/
 
 /-- A choice function selects an individual from a property.
     @cite{reinhart-1997}: type `⟨⟨e,t⟩, e⟩`. -/
@@ -66,9 +64,7 @@ def CF.isCorrect {E : Type*} (f : CF E) : Prop :=
 def cfIndefSem {E : Type*} (f : CF E) (nounProp : E → Prop) : E :=
   f nounProp
 
--- ════════════════════════════════════════════════════
--- § 2. Skolemized Choice Functions
--- ════════════════════════════════════════════════════
+/-! ### Skolemized Choice Functions -/
 
 /-- A situation-indexed (skolemized) choice function.
 
@@ -92,9 +88,7 @@ def SkolemCF.apply {S E : Type*} (f : SkolemCF S E)
 def SkolemCF.isCorrect {S E : Type*} (f : SkolemCF S E) : Prop :=
   ∀ (s : S), (f s).isCorrect
 
--- ════════════════════════════════════════════════════
--- § 3. Indefinite Analysis Type
--- ════════════════════════════════════════════════════
+/-! ### Indefinite Analysis Type -/
 
 /-- The two main semantic analyses of indefinite determiners.
 
@@ -131,9 +125,7 @@ def IndefType.canPseudoDeDicto (t : IndefType) (hasWorldVar : Bool) : Bool :=
   | .choiceFunction => hasWorldVar
   | .existential    => false
 
--- ════════════════════════════════════════════════════
--- § 4. Scope via Situation Binding
--- ════════════════════════════════════════════════════
+/-! ### Scope via Situation Binding -/
 
 /-- When the situation variable is bound to the resource situation
     (not shifted by an intensional operator), the CF yields wide scope.
@@ -160,9 +152,7 @@ theorem exists_narrow_scope_under_negation {E : Type*}
     ¬∃ x, N x ∧ VP x :=
   fun ⟨x, hNx, hVPx⟩ => hNoMatch x hNx hVPx
 
--- ════════════════════════════════════════════════════
--- § 5. World Variable and De Re / De Dicto
--- ════════════════════════════════════════════════════
+/-! ### World Variable and De Re / De Dicto -/
 
 open Core.SitVarStatus (SitVarStatus)
 

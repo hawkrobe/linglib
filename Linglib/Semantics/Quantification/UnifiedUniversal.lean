@@ -37,9 +37,7 @@ namespace Semantics.Quantification.UnifiedUniversal
 
 open _root_.Mereology
 
--- ════════════════════════════════════════════════════
--- § 1. Maximal Non-Overlapping Elements
--- ════════════════════════════════════════════════════
+/-! ### Maximal Non-Overlapping Elements -/
 
 /--
 An element x is **maximal non-overlapping** in P iff x ∈ P and every
@@ -55,9 +53,7 @@ NP denotation (closed under sum), only the maximal sum does.
 def maxNonOverlap {α : Type*} [PartialOrder α] (P : α → Prop) (x : α) : Prop :=
   P x ∧ ∀ (y : α), P y → Overlap x y → y ≤ x
 
--- ════════════════════════════════════════════════════
--- § 2. The Unified Universal Quantifier
--- ════════════════════════════════════════════════════
+/-! ### The Unified Universal Quantifier -/
 
 /--
 **Q_∀**: the unified universal quantifier.
@@ -77,9 +73,7 @@ def QForall {α : Type*} [PartialOrder α]
     (P : α → Prop) (Q : α → Prop) : Prop :=
   ∀ (x : α), maxNonOverlap P x → Q x
 
--- ════════════════════════════════════════════════════
--- § 3. Properties of maxNonOverlap
--- ════════════════════════════════════════════════════
+/-! ### Properties of maxNonOverlap -/
 
 /-- maxNonOverlap implies isMaximal: if x absorbs all overlapping
     P-elements, it is certainly maximal (no proper P-extension). -/
@@ -117,9 +111,7 @@ theorem maxNonOverlap_of_cum_maximal {α : Type*} [SemilatticeSup α]
     have heq : x = x ⊔ y := hMax.2 (x ⊔ y) hxy hle
     exact heq ▸ le_sup_right⟩
 
--- ════════════════════════════════════════════════════
--- § 4. The Distributivity-Number Generalization (DNG)
--- ════════════════════════════════════════════════════
+/-! ### The Distributivity-Number Generalization (DNG) -/
 
 /--
 **DNG for singular complements** (atoms).
@@ -185,9 +177,7 @@ theorem dng_cum' {α : Type*} [SemilatticeSup α]
   dng_cum hCum hMax (λ _x hx =>
     maxNonOverlap_unique_of_cum hCum hx (maxNonOverlap_of_cum_maximal hCum hMax))
 
--- ════════════════════════════════════════════════════
--- § 5. Bridge to Standard GQ (every_sem)
--- ════════════════════════════════════════════════════
+/-! ### Bridge to Standard GQ (every_sem) -/
 
 /--
 Q_∀ on an atomic restrictor is equivalent to the standard generalized
@@ -205,9 +195,7 @@ theorem QForall_eq_standardGQ {α : Type*} [PartialOrder α]
     QForall P Q ↔ ∀ (x : α), P x → Q x :=
   dng_atoms hAtoms hDisj
 
--- ════════════════════════════════════════════════════
--- § 6. Decidable Finset Variant
--- ════════════════════════════════════════════════════
+/-! ### Decidable Finset Variant -/
 
 section Decidable
 

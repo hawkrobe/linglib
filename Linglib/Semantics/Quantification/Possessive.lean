@@ -1,5 +1,4 @@
 import Linglib.Core.Logic.Quantification
-import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!
 # Possessive Quantifiers
@@ -41,9 +40,7 @@ open Core.Quantification
 
 variable {α : Type*}
 
--- ============================================================================
--- §1 Domain Narrowing
--- ============================================================================
+/-! ### Domain Narrowing -/
 
 /-- Domain of R restricted to A: `dom_A(R) = {a : ∃b ∈ A, R(a,b)}`.
     The set of individuals who stand in relation R to some member of A.
@@ -53,9 +50,7 @@ variable {α : Type*}
 def domR (A : α → Prop) (R : α → α → Prop) : α → Prop :=
   λ a => ∃ b, A b ∧ R a b
 
--- ============================================================================
--- §2 Possessive Operators
--- ============================================================================
+/-! ### Possessive Operators -/
 
 /-- Possessive quantifier without domain narrowing.
 
@@ -80,9 +75,7 @@ def PossW (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop) : GQ α
 def Poss (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop) : GQ α :=
   λ A B => Q₁ (λ x => C x ∧ domR A R x) (λ x => Q₂ (λ y => A y ∧ R x y) B)
 
--- ============================================================================
--- §3 Monotonicity Inheritance
--- ============================================================================
+/-! ### Monotonicity Inheritance -/
 
 /-- If Q₁ is Mon↑ in scope and Q₂ is Mon↑ in scope, then
     PossW(Q₁, C, Q₂, R) is Mon↑ in scope.

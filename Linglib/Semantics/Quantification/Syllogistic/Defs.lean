@@ -21,9 +21,7 @@ Used by:
 
 namespace Semantics.Quantification.Syllogistic
 
--- ============================================================================
--- §1. Aristotelian Quantifiers (A/I/O/E square)
--- ============================================================================
+/-! ### Aristotelian Quantifiers (A/I/O/E square) -/
 
 /-- The four Aristotelian quantifiers. Names follow the medieval mnemonic:
     A = `all` (universal affirmative), I = `some` (particular affirmative),
@@ -32,9 +30,7 @@ inductive AristQuant where
   | all | some | someNot | no
   deriving DecidableEq, Repr, Inhabited, Fintype
 
--- ============================================================================
--- §2. Venn Diagram Regions
--- ============================================================================
+/-! ### Venn Diagram Regions -/
 
 /-- The 7 non-empty regions of a three-circle (A, B, C) Venn diagram.
     The empty region {¬A, ¬B, ¬C} is excluded because it does not affect
@@ -55,9 +51,7 @@ def hasB : Region → Bool | .B | .AB | .BC | .ABC => true | _ => false
 /-- Region predicate: does region r have property C? -/
 def hasC : Region → Bool | .C | .AC | .BC | .ABC => true | _ => false
 
--- ============================================================================
--- §3. Syllogisms and Conclusions
--- ============================================================================
+/-! ### Syllogisms and Conclusions -/
 
 /-- A syllogism is a pair of quantified premises sharing middle term B.
 

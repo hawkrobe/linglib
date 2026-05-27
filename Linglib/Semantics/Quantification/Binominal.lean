@@ -43,9 +43,7 @@ open Semantics.Gradability
 open Semantics.Gradability.GradableNouns (GradableNoun)
 open Semantics.Measurement (QuantizingNounClass)
 
--- ═══════════════════════════════════════════════════════════════
--- § 1: Evaluative BNP Semantics
--- ═══════════════════════════════════════════════════════════════
+/-! ### : Evaluative BNP Semantics -/
 
 /-- Evaluative BNP semantics: N₁ ascribes a gradable property to N₂.
 
@@ -75,9 +73,7 @@ theorem ebnp_requires_n₁_pos {Entity : Type} (n₁ : GradableNoun Entity)
   simp only [ebnpSemantics]
   exact (Bool.and_eq_true_iff.mp · |>.2)
 
--- ═══════════════════════════════════════════════════════════════
--- § 2: Quantizing → Pseudo-partitive Bridge
--- ═══════════════════════════════════════════════════════════════
+/-! ### : Quantizing → Pseudo-partitive Bridge -/
 
 /-- Map a `QuantizingNounClass` to the `OfBinominalType` it instantiates.
 
@@ -100,9 +96,7 @@ theorem quantizing_n₂_headed (c : QuantizingNounClass) :
     (quantizingToOfBinominal c).head = .n₂ := by
   cases c <;> rfl
 
--- ═══════════════════════════════════════════════════════════════
--- § 3: End-to-End Worked Example
--- ═══════════════════════════════════════════════════════════════
+/-! ### : End-to-End Worked Example -/
 
 /-! ### "That idiot of a doctor"
 
@@ -147,9 +141,7 @@ theorem floyd_not_idiot_doctor :
 theorem george_idiot_independent :
     exampleIdiot.pos .george = true := by native_decide
 
--- ═══════════════════════════════════════════════════════════════
--- § 4: Evaluative Modifier (EM) Semantics
--- ═══════════════════════════════════════════════════════════════
+/-! ### : Evaluative Modifier (EM) Semantics -/
 
 /-! ### Stage 5: Evaluative Modifier
 
@@ -187,9 +179,7 @@ theorem em_requires_n₂ {Entity : Type} {max : Nat}
   simp only [emSemantics]
   exact (Bool.and_eq_true_iff.mp · |>.1)
 
--- ═══════════════════════════════════════════════════════════════
--- § 5: Binominal Intensifier (BI) Semantics
--- ═══════════════════════════════════════════════════════════════
+/-! ### : Binominal Intensifier (BI) Semantics -/
 
 /-! ### Stage 6: Binominal Intensifier
 
@@ -240,9 +230,7 @@ theorem bi_entails_em {Entity : Type} {max : Nat}
 
 end EM
 
--- ═══════════════════════════════════════════════════════════════
--- § 6: EM / BI Worked Example
--- ═══════════════════════════════════════════════════════════════
+/-! ### : EM / BI Worked Example -/
 
 /-! ### "A hell of a doctor" / "A hell of a good doctor"
 
@@ -305,9 +293,7 @@ theorem george_bi_entails_em :
 
 end EMBIExample
 
--- ═══════════════════════════════════════════════════════════════
--- § 7: EBNP ≠ EM — Categorical Independence
--- ═══════════════════════════════════════════════════════════════
+/-! ### : EBNP ≠ EM — Categorical Independence -/
 
 /-! ### EBNP and EM are categorically independent
 

@@ -52,9 +52,7 @@ treating as authoritative.
 
 namespace Semantics.Quantification.Binominal
 
--- ═══════════════════════════════════════════════════════════════
--- § 1: Three-Way Classification (Spanish, cross-linguistic)
--- ═══════════════════════════════════════════════════════════════
+/-! ### : Three-Way Classification (Spanish, cross-linguistic) -/
 
 /-- The three-way binominal classification (@cite{saab-2026}).
 
@@ -88,9 +86,7 @@ theorem npe_iff_numE (b : BinominalType) :
     b.licensesNPE = b.hasNumE := by
   cases b <;> rfl
 
--- ═══════════════════════════════════════════════════════════════
--- § 2: Six-Way Classification (English, ten-Wolde 2023)
--- ═══════════════════════════════════════════════════════════════
+/-! ### : Six-Way Classification (English, ten-Wolde 2023) -/
 
 /-- Which noun is the semantic head of the binominal construction. -/
 inductive BNPHead where
@@ -279,9 +275,7 @@ def OfBinominalType.ofObligatory : OfBinominalType → Bool
   | .binominalIntensifier  => false
   | _                      => true
 
--- ═══════════════════════════════════════════════════════════════
--- § 3: Grammaticalization Cline
--- ═══════════════════════════════════════════════════════════════
+/-! ### : Grammaticalization Cline -/
 
 /-- Position on the grammaticalization cline (0 = most lexical, 5 = most grammatical).
 
@@ -385,9 +379,7 @@ theorem of_optional_only_at_bi (t : OfBinominalType) :
     t.ofObligatory = false → t.clinePosition = 5 := by
   cases t <;> simp [OfBinominalType.ofObligatory, OfBinominalType.clinePosition]
 
--- ═══════════════════════════════════════════════════════════════
--- § 4: Cross-Linguistic Mapping
--- ═══════════════════════════════════════════════════════════════
+/-! ### : Cross-Linguistic Mapping -/
 
 /-- Map the three-way Spanish type to the six-way English type.
 

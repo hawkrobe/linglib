@@ -39,18 +39,14 @@ namespace Semantics.Quantification.Syllogistic
 
 open Core.Opposition (AristotelianRel Diagram Contradictory)
 
--- ============================================================================
--- §1. Corner indexing
--- ============================================================================
+/-! ### Corner indexing -/
 
 /-- Square corners in A/E/I/O order. -/
 inductive Corner where
   | A | E | I | O
   deriving DecidableEq, Repr, Fintype
 
--- ============================================================================
--- §2. The AIEO Square as a Diagram
--- ============================================================================
+/-! ### The AIEO Square as a Diagram -/
 
 /-- The four syllogistic forms applied to `(X, Y)`, indexed by `Corner`. -/
 def cornerForm (X Y : Region → Bool) : Corner → VennState → Bool
@@ -68,9 +64,7 @@ def cornerRel : Corner → Corner → AristotelianRel
   | .E, .I | .I, .E => .contradictory
   | _, _ => .unconnected  -- subalternations + contrariety conditional on ∃R
 
--- ============================================================================
--- §3. Contradictory diagonal lemmas (modern reading, unconditional)
--- ============================================================================
+/-! ### Contradictory diagonal lemmas (modern reading, unconditional) -/
 
 /-- `syllAll` and `syllSomeNot` are contradictories at every state: exactly
     one is true. The "no clash" half follows from extracting the `syllSomeNot`
@@ -116,9 +110,7 @@ theorem syllNone_contradictory_syllSome (X Y : Region → Bool) :
       obtain ⟨r, hRX, hY⟩ := h
       exact ⟨r, hRX, hY⟩
 
--- ============================================================================
--- §4. The AIEO Square as a `Diagram` instance
--- ============================================================================
+/-! ### The AIEO Square as a `Diagram` instance -/
 
 /-- The AIEO Square as a `Diagram` instance over `Corner` corners.
     Discharges the `contradictory` cases via the lemmas above. The

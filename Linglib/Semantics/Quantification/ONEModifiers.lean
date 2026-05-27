@@ -25,9 +25,7 @@ namespace Semantics.Quantification.ONEModifiers
 open _root_.Mereology
 open Semantics.Quantification.UnifiedUniversal
 
--- ════════════════════════════════════════════════════
--- § 1. ONE Presuppositional Modifiers
--- ════════════════════════════════════════════════════
+/-! ### ONE Presuppositional Modifiers -/
 
 /--
 **ONE_∅**: presupposes that the restrictor contains at least two
@@ -68,9 +66,7 @@ theorem ONE_AT_implies_ONE_empty {α : Type*} [PartialOrder α]
     let hzy_eq := h.all_atomic y hPy z hzy  -- z = y
     hzx_eq.symm.trans hzy_eq
 
--- ════════════════════════════════════════════════════
--- § 2. English UQ Decomposition
--- ════════════════════════════════════════════════════
+/-! ### English UQ Decomposition -/
 
 /--
 **all = Q_∀**: bare universal quantifier, no ONE modifier.

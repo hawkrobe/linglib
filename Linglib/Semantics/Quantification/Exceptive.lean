@@ -34,9 +34,7 @@ open Core.Quantification
 
 variable {α : Type*}
 
--- ============================================================================
--- §1 Von Fintel (1993) Exceptive Operators
--- ============================================================================
+/-! ### Von Fintel (1993) Exceptive Operators -/
 
 /-- Inclusive exceptive (@cite{von-fintel-1993}): Q(A \ E, B) ∧ ¬Q(A, B).
 
@@ -57,9 +55,7 @@ def ExcI (Q : GQ α) (A E B : α → Prop) : Prop :=
 def ExcE (Q : GQ α) (A E B : α → Prop) : Prop :=
   Q (λ x => A x ∧ ¬ E x) B ∧ (∀ x, E x → A x → B x)
 
--- ============================================================================
--- §2 Peters & Westerståhl (2006) Exceptive Operators
--- ============================================================================
+/-! ### Peters & Westerståhl (2006) Exceptive Operators -/
 
 /-- Whether an element is an "exception" for a positive generalization Q₁(A, B):
     an element of A that is NOT in B (i.e., a counterexample to the generalization).
@@ -133,9 +129,7 @@ def ExcSNeg (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
   (∃ x, A x ∧ C x) ∧
   (∀ x, A x → C x → IsExceptionNeg x A B)
 
--- ============================================================================
--- §3 Compatibility (von Fintel 1993)
--- ============================================================================
+/-! ### Compatibility (von Fintel 1993) -/
 
 /-- A quantifier is exceptive-compatible iff there exist A, E, B such that
     ExcI(Q, A, E, B). @cite{von-fintel-1993}: only (variants of)
