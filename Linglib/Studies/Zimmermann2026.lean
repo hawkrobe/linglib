@@ -142,6 +142,48 @@ theorem wani_exists_narrow_scope {E : Type*}
     ¬∃ x, N x ∧ VP x :=
   exists_narrow_scope_under_negation N VP hNone
 
+/-! ### bí vs wani: empirical predictions diverge under negation
+
+The reason the African data is theoretically valuable: in a scenario where
+*some* N are VP and *some* are not, the CF reading of "*bí* N is not VP"
+(wide scope, ∃ > ¬: "this particular N is not VP'd") makes a *different*
+prediction from the ∃-narrow reading of "*wani* N is not VP"
+(¬ > ∃: "no N is VP'd"). The CF reading can be true while the ∃-narrow
+reading is false. -/
+
+open Core.Quantification (some_sem)
+
+/-- Empirical asymmetry: there is a scenario (two-element domain, mixed
+    VP-extension) and a correct CF where the *bí*-style reading ¬VP(f(N))
+    is TRUE while the *wani*-narrow-scope reading ¬∃x.N(x)∧VP(x) is FALSE.
+
+    Linguistic content (@cite{zimmermann-2026} §3.3): given a domain of
+    individuals where some VP and some don't, "bí N is not VP" can be
+    truthfully uttered (pointing at the non-VP'er) whereas "wani N is not
+    VP" *under its narrow-scope reading* is straightforwardly false (one
+    of them IS VP'ing). This is the asymmetry the framework rivalry
+    predicts and the African data corroborates.
+
+    The witness here is propositional (`Bool` domain, `(· = true)`-VP);
+    the deeper schism — island-escape and pseudo-de-dicto under
+    intensional operators — requires machinery not yet in place. But the
+    structural prediction is testable in this minimal setting. -/
+theorem bi_wani_divergence_under_negation :
+    ∃ (f : CF Bool) (_hf : f.isCorrect) (N VP : Bool → Prop),
+      ¬ VP (cfIndefSem f N) ∧ some_sem N VP := by
+  classical
+  -- Prefer-false CF: pick `false` whenever the predicate accepts it.
+  let f : CF Bool := fun P => if P false then false else true
+  have hf : f.isCorrect := by
+    intro P ⟨x, hPx⟩
+    show P (if P false then false else true)
+    by_cases h : P false
+    · simp [h]
+    · simp [h]; cases x; exacts [absurd hPx h, hPx]
+  refine ⟨f, hf, fun _ => True, (· = true), ?_, ⟨true, trivial, rfl⟩⟩
+  show ¬ (cfIndefSem f (fun _ => True) = true)
+  simp [cfIndefSem, f]
+
 -- ════════════════════════════════════════════════════
 -- § 4. Akan *nó*: The DEF-Marker Debate
 -- ════════════════════════════════════════════════════
