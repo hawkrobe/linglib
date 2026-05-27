@@ -97,11 +97,9 @@ theorem boxR_five (R : AccessRel W) (hE : IsEuclidean R) (p : W → Prop) (w : W
   fun v hwv => ⟨u, hE w v u hwv hwu, hpu⟩
 
 /-- **Moore reductio for KD4**: no world satisfies `□_R (p ∧ ¬□_R p)` when
-    `R` is serial and transitive. The propositional content `p ∧ ¬□_R p`
-    is itself satisfiable (it just says `p` holds at `w` while `R` permits
-    a non-`p` successor); what fails is *boxing* that content. Hintikka's
-    Moore-paradox lemma (Hintikka 1962 §4.7) at substrate level —
-    specialise to belief, knowledge, or any other KD4 modality. -/
+    `R` is serial and transitive. The content `p ∧ ¬□_R p` is itself
+    satisfiable; what fails is *boxing* it. Specialise to belief
+    (@cite{hintikka-1962}), knowledge, or any other KD4 modality. -/
 theorem boxR_not_moore (R : AccessRel W) (hS : IsSerial R) (hT : IsTransitive R)
     (p : W → Prop) (w : W) :
     ¬ boxR R (fun v => p v ∧ ¬ boxR R p v) w := by
