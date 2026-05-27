@@ -17,9 +17,7 @@ namespace Core.Quantification
 
 variable {α : Type*}
 
--- ============================================================================
--- §10 Number-Tree Impossibility Theorems (§3.2)
--- ============================================================================
+/-! ### Number-Tree Impossibility Theorems (§3.2) -/
 
 /-- Number-tree representation of a conservative, quantity-invariant GQ.
     Under CONSERV + QUANT, a quantifier's truth value depends only on
@@ -128,7 +126,7 @@ theorem no_euclidean (q : NumberTreeGQ) (hVar : q.Variety)
   -- Step 4: contradiction with Variety
   rw [step3] at hFalse; exact absurd hFalse (by decide)
 
--- §10b Number-tree representations of the Square of Opposition
+/-! ### Number-tree representations of the Square of Opposition -/
 
 /-- "all" on the number tree: Q(A,B) iff A ⊆ B iff |A\B| = 0. -/
 def allNT : NumberTreeGQ := λ _ b => b == 0
@@ -142,7 +140,7 @@ def noNT : NumberTreeGQ := λ a _ => a == 0
 /-- "not all" on the number tree: Q(A,B) iff A ⊄ B iff |A\B| ≥ 1. -/
 def notAllNT : NumberTreeGQ := λ _ b => decide (b ≥ 1)
 
--- §10c Additivity (§5.2, p.460)
+/-! ### Additivity (§5.2, p.460) -/
 
 /-- Additive: (a,b) ∈ Q and (a',b') ∈ Q implies (a+a', b+b') ∈ Q.
     p.460: all, some, no, not all are additive.
@@ -167,7 +165,7 @@ theorem notAllNT_additive : Additive notAllNT := by
   intro a b a' b' h1 h2
   simp only [notAllNT, decide_eq_true_eq] at *; omega
 
--- §10d Continuity, PLUS, UNIF (§4.3, §7)
+/-! ### Continuity, PLUS, UNIF (§4.3, §7) -/
 
 /-- Right continuity on the number tree (CONT): on each diagonal a+b = n,
     the true points form a contiguous interval.
@@ -290,7 +288,7 @@ theorem notAllNT_uniform : Uniform notAllNT := by
     simp only [decide_eq_false_iff_not, not_le] at h1 h2
     constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
 
--- §10e Theorem 7.1: Square of Opposition uniqueness
+/-! ### Theorem 7.1: Square of Opposition uniqueness -/
 
 /-- Two number-tree quantifiers that agree at (0,0) and satisfy the same
     row/column recurrence must be identical. Used to factor out the common
@@ -515,9 +513,7 @@ theorem square_uniqueness (q : NumberTreeGQ) (h : SixPostulates q) :
 
 end NumberTreeGQ
 
--- ============================================================================
--- §10f GQ → NumberTreeGQ Bridge
--- ============================================================================
+/-! ### GQ → NumberTreeGQ Bridge -/
 
 section NumberTreeBridge
 open Classical Finset
@@ -714,9 +710,7 @@ end ToNumberTree
 
 end NumberTreeBridge
 
--- ============================================================================
--- §11 Counting Quantifiers (§5.4)
--- ============================================================================
+/-! ### Counting Quantifiers (§5.4) -/
 
 /-- Thm 5.4: On a finite set with n individuals, there are
     exactly 2^((n+1)(n+2)/2) conservative quantifiers (satisfying QUANT).

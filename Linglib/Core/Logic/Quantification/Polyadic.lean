@@ -22,9 +22,7 @@ open Core.Quantification
 
 variable {α : Type*}
 
--- ============================================================================
--- §1 Core Operations
--- ============================================================================
+/-! ### Core Operations -/
 
 /-- Iteration: Q₁x Q₂y R(x,y). Nested quantification where Q₂ is in the
     scope of Q₁.
@@ -66,9 +64,7 @@ def branch (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Pr
     Q₁ A (λ x => B (f x) ∧ R x (f x)) ∧
     Q₂ B (λ y => A (g y) ∧ R (g y) y)
 
--- ============================================================================
--- §2 Scope Order and Iteration
--- ============================================================================
+/-! ### Scope Order and Iteration -/
 
 /-- Surface scope = iterate(Q₁, A, Q₂, B)(R).
     Inverse scope = iterate(Q₂, B, Q₁, A)(flip R).
@@ -80,9 +76,7 @@ def surfaceScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop
 def inverseScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   iterate Q₂ Q₁ B A (λ y x => R x y)
 
--- ============================================================================
--- §3 Monotonicity Inheritance
--- ============================================================================
+/-! ### Monotonicity Inheritance -/
 
 /-- Iteration preserves scope monotonicity: if both Q₁ and Q₂ are Mon↑,
     then iterate(Q₁, A, Q₂, B) is monotone in R (pointwise).

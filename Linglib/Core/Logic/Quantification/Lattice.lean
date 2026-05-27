@@ -15,9 +15,7 @@ namespace Core.Quantification
 
 variable {α : Type*}
 
--- ============================================================================
--- §12 — Conservative GQ Lattice (@cite{elliott-2025})
--- ============================================================================
+/-! ### Conservative GQ Lattice (@cite{elliott-2025}) -/
 
 /-- Conservative GQs form a sublattice of `GQ α`. The `DistribLattice`
     on `GQ α` is inherited from Mathlib's Pi instances (`Prop` is a

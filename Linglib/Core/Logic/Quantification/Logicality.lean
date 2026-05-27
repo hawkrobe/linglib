@@ -22,9 +22,7 @@ open Core.Quantification
 
 variable {α β : Type*}
 
--- ============================================================================
--- §1 Invariance Hierarchy
--- ============================================================================
+/-! ### Invariance Hierarchy -/
 
 /-- Homomorphism invariance (HOM): Q is preserved under surjective maps.
     @cite{feferman-1999}: HOM characterizes "absolutely logical" operations.
@@ -63,9 +61,7 @@ theorem hom_implies_isom_same_type (q : GQ α)
   rw [hAf, hBf] at h
   exact h.symm
 
--- ============================================================================
--- §2 INJ ≡ ISOM + EXT
--- ============================================================================
+/-! ### INJ ≡ ISOM + EXT -/
 
 /-- @cite{peters-westerstahl-2006} Ch 9 Prop 3 (one direction): ISOM → INJ
     for same-type quantifiers on a finite domain.

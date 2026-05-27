@@ -41,11 +41,9 @@ namespace Core.Quantification
 
 variable {α : Type*}
 
--- ============================================================================
--- §1 Property Definitions
--- ============================================================================
+/-! ### Property Definitions -/
 
--- §1.1 @cite{barwise-cooper-1981} --
+/-! #### @cite{barwise-cooper-1981} -/
 
 /--
 Conservativity: `Q(A, B) ↔ Q(A, A ∩ B)`.
@@ -103,18 +101,13 @@ def PositiveStrong (q : GQ α) : Prop :=
 def NegativeStrong (q : GQ α) : Prop :=
   ∀ (R : α → Prop), ¬ q R R
 
--- §1.2 @cite{peters-westerstahl-2006} --
+/-! #### @cite{peters-westerstahl-2006} -/
 
-/-- Extension (EXT): Q(A,B) depends only on A and B, not on the ambient
-    universe M. In model-theoretic GQ theory (where Q^M takes a universe),
-    EXT must be stated as an additional axiom. For `GQ α`, EXT holds
-    trivially since there is no universe parameter — it's a design theorem.
-
-    Significance: EXT + CONS characterize "well-behaved" determiners.
-    See `vanBenthem_cons_ext`.
-
-    Reference: Peters & Westerståhl Ch.4 Def 4.1. -/
-def Extension (_q : GQ α) : Prop := True
+/-! Extension (EXT) — `Q(A,B)` depends only on `A` and `B`, not on the ambient
+universe `M` — holds trivially for `GQ α` since the representation is
+universe-free. See @cite{peters-westerstahl-2006} Ch.4 Def 4.1. The
+EXT-conditional form of van Benthem's Cons ↔ LivesOn theorem collapses to
+`conservative_iff_livesOn` below. -/
 
 /-- Second conservativity: Q(A,B) ↔ Q(A∩B, B). P&W Ch.6. -/
 def CONS2 (q : GQ α) : Prop :=
@@ -183,7 +176,7 @@ def RightAntiAdditive (q : GQ α) : Prop :=
   ∀ (R S S' : α → Prop),
     q R (fun x => S x ∨ S' x) ↔ (q R S ∧ q R S')
 
--- §1.3 @cite{van-benthem-1984}: Relational properties --
+/-! #### @cite{van-benthem-1984}: Relational properties -/
 
 /-- Transitive: Q(A,B) ∧ Q(B,C) → Q(A,C). @cite{van-benthem-1984} §3.1.
     "all" is the prime transitive quantifier (inclusion is transitive). -/
@@ -222,16 +215,6 @@ def AlmostConnected (q : GQ α) : Prop :=
     non-trivial quantifier is asymmetric (P&W Ch 6.4). -/
 def QAsymmetric (q : GQ α) : Prop :=
   ∀ (A B : α → Prop), q A B → ¬ q B A
-
-/-- Reflexive (relational vocabulary): Q(A,A) for all A.
-    Definitionally equal to `PositiveStrong`; included for relational vocabulary
-    alignment with @cite{peters-westerstahl-2006} Ch 6.4 and @cite{van-benthem-1984}. -/
-abbrev QReflexive (q : GQ α) : Prop := PositiveStrong q
-
-/-- Irreflexive (relational vocabulary): ¬Q(A,A) for all A.
-    Definitionally equal to `NegativeStrong`; included for relational vocabulary
-    alignment with @cite{peters-westerstahl-2006} Ch 6.4. -/
-abbrev QIrreflexive (q : GQ α) : Prop := NegativeStrong q
 
 /-- Circular: Q(A,B) ∧ Q(B,C) → Q(C,A). @cite{peters-westerstahl-2006} Ch 6.4.
     No natural language quantifier is non-trivially circular (under CONSERV + ISOM).
@@ -285,7 +268,7 @@ def Filtrating (q : GQ α) : Prop :=
   ∀ (A B C : α → Prop),
     q A B → q A C → q A (fun x => B x ∧ C x)
 
--- §1.5 Monotonicity Universals (@cite{peters-westerstahl-2006} Ch 5.8) --
+/-! #### Monotonicity Universals (@cite{peters-westerstahl-2006} Ch 5.8) -/
 
 /-- MU1: All simple (lexicalized) determiners are monotone in scope.
     @cite{peters-westerstahl-2006} §5.8 Universal 1. -/
@@ -303,7 +286,7 @@ def MU3 (q : GQ α) : Prop := ScopeUpwardMono q → Smooth q
     @cite{peters-westerstahl-2006} §5.8 Universal 4. -/
 def MU4 (q : GQ α) : Prop := ScopeDownwardMono q → CoSmooth q
 
--- §1.6 @cite{mostowski-1957} --
+/-! #### @cite{mostowski-1957} -/
 
 /-- QUANT (Isomorphism closure): Q is invariant under permutations of the
     domain. Model-agnostic version: Q(A,B) depends only on the pointwise
@@ -326,11 +309,9 @@ def QuantityInvariant (q : GQ α) : Prop :=
     (∀ x, A (f x) ↔ A' x) → (∀ x, B (f x) ↔ B' x) →
     (q A B ↔ q A' B')
 
--- ============================================================================
--- §2 Operations
--- ============================================================================
+/-! ### Operations -/
 
--- §2.1 Duality (B&C §4.11) --
+/-! #### Duality (B&C §4.11) -/
 
 /-- Outer negation: `(~Q)(A,B) = ¬Q(A,B)` (B&C §4.11).
     Example: ~every = not-every ("Not every student passed"). -/
@@ -347,7 +328,7 @@ def innerNeg (q : GQ α) : GQ α :=
 def dualQ (q : GQ α) : GQ α :=
   outerNeg (innerNeg q)
 
--- §2.2 Boolean algebra (K&S §2.3) --
+/-! #### Boolean algebra (K&S §2.3) -/
 
 /-- Meet of two GQ denotations: (f ∧ g)(A,B) = f(A,B) ∧ g(A,B).
     K&S (20): conjunction of dets, e.g., "both John's and Mary's".
@@ -366,7 +347,7 @@ def gqJoin (f g : GQ α) : GQ α :=
 def adjRestrict (q : GQ α) (adj : α → Prop) : GQ α :=
   fun R S => q (fun x => R x ∧ adj x) S
 
--- §2.3 Type ⟨1⟩ shifts (P&W Ch.2-3) --
+/-! #### Type ⟨1⟩ shifts (P&W Ch.2-3) -/
 
 /-- NP denotation (type ⟨1⟩): a property of properties.
     This is the model-agnostic version of `Ty.ett` from TypeShifting.lean.
@@ -386,9 +367,7 @@ def LivesOn (Q : NPQ α) (A : α → Prop) : Prop :=
     P&W §3.2.3: an entity lifts to the principal ultrafilter it generates. -/
 def individual (a : α) : NPQ α := fun P => P a
 
--- ============================================================================
--- §3 Mathlib Bridge
--- ============================================================================
+/-! ### Mathlib Bridge -/
 
 /-- `ScopeUpwardMono q` is `∀ R, Monotone (q R)` under the Pi-of-Prop
     ordering (where `S ≤ S'` is `∀ x, S x → S' x` and `Prop`-valued

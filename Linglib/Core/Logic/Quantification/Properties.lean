@@ -13,9 +13,7 @@ namespace Core.Quantification
 
 variable {α : Type*}
 
--- ============================================================================
--- §4 Duality Theorems
--- ============================================================================
+/-! ### Duality Theorems -/
 
 /-- Outer negation reverses scope monotonicity: mon↑ → mon↓. B&C Theorem C9. -/
 theorem outerNeg_up_to_down (q : GQ α)
@@ -65,7 +63,7 @@ theorem innerNeg_involution (q : GQ α) : innerNeg (innerNeg q) = q := by
 theorem dualQ_involution (q : GQ α) : dualQ (dualQ q) = q := by
   funext R S; simp [dualQ, outerNeg, innerNeg]
 
--- §2.4 QuantityInvariant closure --
+/-! #### QuantityInvariant closure -/
 
 /-- Outer negation preserves QuantityInvariant: if Q is bijection-invariant,
     so is ~Q. -/
@@ -121,9 +119,7 @@ theorem co_property_mono (q : GQ α) :
     rw [innerNeg_involution] at h'
     exact h'
 
--- ============================================================================
--- §5 Conservativity, Symmetry, and Strength
--- ============================================================================
+/-! ### Conservativity, Symmetry, and Strength -/
 
 /-- Under conservativity, symmetric ↔ intersective (P&W Ch.6 Fact 1).
     This is the single most important bridge theorem — it explains why
@@ -173,19 +169,7 @@ theorem conservative_iff_livesOn (q : GQ α) :
   unfold Conservative LivesOn restrict
   exact ⟨fun h A B => h A B, fun h R S => h R S⟩
 
-/-- Every `GQ α` satisfies Extension: the representation is universe-free. -/
-theorem extension_trivial (q : GQ α) : Extension q := trivial
-
-/-- @cite{van-benthem-1984}: Under Extension (free for GQ α), Conservativity
-    is equivalent to LivesOn — the restricted quantifier depends only on
-    elements of its restrictor. -/
-theorem vanBenthem_cons_ext (q : GQ α) :
-    Extension q → (Conservative q ↔ ∀ A, LivesOn (restrict q A) A) :=
-  fun _ => conservative_iff_livesOn q
-
--- ============================================================================
--- §5b Basic Left Monotonicity and Smoothness (@cite{peters-westerstahl-2006} §5.5-5.6)
--- ============================================================================
+/-! ### Basic Left Monotonicity and Smoothness (@cite{peters-westerstahl-2006} §5.5-5.6) -/
 
 /-- Persistence → ↑_SE Mon. -/
 theorem restrictorUpMono_to_upSE (q : GQ α)
@@ -432,9 +416,7 @@ theorem symmetric_iff_upSW_downNE (q : GQ α) (hCons : Conservative q) :
   ⟨symmetric_to_upSW_downNE q hCons,
    fun ⟨h1, h2⟩ => upSW_downNE_to_symmetric q hCons h1 h2⟩
 
--- ============================================================================
--- §6 Boolean Closure (@cite{keenan-stavi-1986})
--- ============================================================================
+/-! ### Boolean Closure (@cite{keenan-stavi-1986}) -/
 
 /-- Conservativity is closed under complement. -/
 theorem conservative_outerNeg (q : GQ α) (h : Conservative q) :
@@ -511,9 +493,7 @@ theorem scopeDownMono_adjRestrict (q : GQ α) (adj : α → Prop)
   intro R S S' hSS' hAdj
   exact h _ S S' hSS' hAdj
 
--- ============================================================================
--- §7 Type ⟨1⟩ Theorems (P&W Ch.2-3)
--- ============================================================================
+/-! ### Type ⟨1⟩ Theorems (P&W Ch.2-3) -/
 
 /-- Montagovian individuals are upward closed (ultrafilter property). -/
 theorem individual_upward_closed (a : α) (P P' : α → Prop)
@@ -525,9 +505,7 @@ theorem individual_meet_closed (a : α) (P Q : α → Prop) :
     individual a P → individual a Q →
     individual a (fun x => P x ∧ Q x) := fun hP hQ => ⟨hP, hQ⟩
 
--- ============================================================================
--- §8 @cite{van-benthem-1984} Characterization
--- ============================================================================
+/-! ### @cite{van-benthem-1984} Characterization -/
 
 /-- @cite{van-benthem-1984} Theorem 3.1.1: Under conservativity, inclusion (⊆)
     is the only reflexive antisymmetric quantifier. -/
@@ -638,14 +616,13 @@ theorem irrefl_almostConn_restrictorUp (q : GQ α)
   by_contra h
   exact (hDown R R' S hRR' h) hQ
 
--- ============================================================================
--- §8b — Asymmetry and Circularity
--- @cite{peters-westerstahl-2006} Ch 6.4
--- ============================================================================
+/-! ### Asymmetry and circularity
 
-/-- Asymmetric quantifiers are irreflexive. -/
-theorem asymmetric_irreflexive (q : GQ α) (hAsym : QAsymmetric q) :
-    QIrreflexive q := fun A hQAA => hAsym A A hQAA hQAA
+@cite{peters-westerstahl-2006} Ch 6.4 -/
+
+/-- Asymmetric quantifiers are negative-strong (irreflexive). -/
+theorem asymmetric_negativeStrong (q : GQ α) (hAsym : QAsymmetric q) :
+    NegativeStrong q := fun A hQAA => hAsym A A hQAA hQAA
 
 /-- Asymmetric implies antisymmetric (vacuously). -/
 theorem asymmetric_antisymmetric (q : GQ α) (hAsym : QAsymmetric q) :
@@ -781,10 +758,9 @@ theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
       (swapDiff_preserves_AB A B e)
   exact hAsym A B hQAB (hAB_eq_BA.mp hQAB)
 
--- ============================================================================
--- §8c — "Aristotle Reversed": Square from Inferential Conditions
--- @cite{van-benthem-1984} §3.3
--- ============================================================================
+/-! ### "Aristotle reversed": square from inferential conditions
+
+@cite{van-benthem-1984} §3.3 -/
 
 /-- @cite{van-benthem-1984} Cor 3.3.2: Under conservativity, the ONLY
     symmetric quasi-reflexive quantifier is overlap (= "some"). -/
@@ -911,9 +887,7 @@ theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] 
     rw [hEmpty]
     exact empty_true
 
--- ============================================================================
--- §9 — Entailment Signature Bridge (@cite{icard-2012})
--- ============================================================================
+/-! ### Entailment Signature Bridge (@cite{icard-2012}) -/
 
 open Core.NaturalLogic (EntailmentSig ContextPolarity)
 

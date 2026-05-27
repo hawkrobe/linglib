@@ -46,9 +46,7 @@ namespace Core.Quantification
 
 variable {α : Type*}
 
--- ============================================================================
--- §1 Conjunction and Disjunction GQs
--- ============================================================================
+/-! ### Conjunction and Disjunction GQs -/
 
 /-- Conjunction GQ: iterated meet of individual quantifiers.
 
@@ -73,9 +71,7 @@ def conjGQ (X : List α) : NPQ α :=
 def disjGQ (X : List α) : NPQ α :=
   X.foldr (fun a acc => individual a ⊔ acc) ⊥
 
--- ============================================================================
--- §2 Recursive Decomposition
--- ============================================================================
+/-! ### Recursive Decomposition -/
 
 /-- ⊓(a::X) = individual(a) ⊓ ⊓(X): one step of the iterated meet. -/
 theorem conjGQ_cons (a : α) (X : List α) :
@@ -91,9 +87,7 @@ theorem conjGQ_nil : conjGQ ([] : List α) = ⊤ := rfl
 /-- ⊔(∅) = ⊥: empty disjunction is the contradictory quantifier. -/
 theorem disjGQ_nil : disjGQ ([] : List α) = ⊥ := rfl
 
--- ============================================================================
--- §3 Propositional Characterization
--- ============================================================================
+/-! ### Propositional Characterization -/
 
 /-! The lattice-based definitions compute as `∀ x ∈ X, P x` /
     `∃ x ∈ X, P x`. These theorems bridge the abstract lattice structure
@@ -148,9 +142,7 @@ theorem disjGQ_singleton (a : α) :
     disjGQ [a] = individual a := by
   funext P; exact or_false _
 
--- ============================================================================
--- §4 Lattice-Theoretic Characterization
--- ============================================================================
+/-! ### Lattice-Theoretic Characterization -/
 
 /-! `conjGQ X` is the greatest lower bound (infimum) and `disjGQ X` the
     least upper bound (supremum) of `{individual a | a ∈ X}` in the NPQ
@@ -190,9 +182,7 @@ theorem disjGQ_le (Q : NPQ α) (X : List α)
   obtain ⟨a, ha, hPa⟩ := (disjGQ_iff_exists X P).mp hDisj
   exact h a ha P hPa
 
--- ============================================================================
--- §5 Monotonicity
--- ============================================================================
+/-! ### Monotonicity -/
 
 /-- conjGQ is antimonotone in the subset ordering: more conjuncts produce
     a stronger (more restrictive) quantifier.
@@ -226,9 +216,7 @@ theorem conjGQ_le_disjGQ {X : List α} (hne : X ≠ [])
 theorem conjGQ_le_disjGQ' {X : List α} (hne : X ≠ []) :
     conjGQ X ≤ disjGQ X := fun P => conjGQ_le_disjGQ hne P
 
--- ============================================================================
--- §6 Join-Primality of Individuals
--- ============================================================================
+/-! ### Join-Primality of Individuals -/
 
 /-- Individual quantifiers are join-prime: individual(a) ≤ ⊔(X) iff a ∈ X.
 
@@ -260,9 +248,7 @@ theorem conjGQ_le_individual_iff [DecidableEq α] (a : α) (X : List α) :
   · intro ha P hP
     exact (conjGQ_iff_forall X P).mp hP a ha
 
--- ============================================================================
--- §7 De Morgan Duality
--- ============================================================================
+/-! ### De Morgan Duality -/
 
 /-! The GQ-level De Morgan laws: negating each argument of a conjunction
     GQ produces a disjunction GQ and vice versa. These are the
@@ -296,9 +282,7 @@ theorem deMorgan_disj (X : List α) (P : α → Prop) :
            by_contra hNPx
            exact hAll ⟨x, hx, hNPx⟩⟩
 
--- ============================================================================
--- §8 Compositionality
--- ============================================================================
+/-! ### Compositionality -/
 
 /-! Conjunction and disjunction GQs decompose over list append:
     ⊓(X ++ Y) = ⊓(X) ⊓ ⊓(Y) and ⊔(X ++ Y) = ⊔(X) ⊔ ⊔(Y). List
@@ -329,9 +313,7 @@ theorem disjGQ_append (X Y : List α) (P : α → Prop) :
     · exact ⟨x, List.mem_append.mpr (Or.inl hx), hPx⟩
     · exact ⟨x, List.mem_append.mpr (Or.inr hx), hPx⟩
 
--- ============================================================================
--- §9 Generators
--- ============================================================================
+/-! ### Generators -/
 
 /-- Power set of a list: all subsequences (order-preserving sublists). -/
 def powerset : List α → List (List α)
