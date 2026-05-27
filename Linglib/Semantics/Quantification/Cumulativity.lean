@@ -54,11 +54,11 @@ For now the file just guarantees the three accounts compile in the same
 import-graph, which is the precondition for stating bridge theorems.
 -/
 
-namespace Phenomena.Plurality.Cumulativity.CrossFramework
+namespace Semantics.Quantification.Cumulativity
 
 -- Stub: bridge theorems pending; see TODO in module docstring.
 -- TODO: prove `tower_eq_BeckSauerland_on_scenario`
 -- TODO: prove `BS_eq_Champollion_on_scenario`
 -- TODO: identify divergence scenario
 
-end Phenomena.Plurality.Cumulativity.CrossFramework
+end Semantics.Quantification.Cumulativity

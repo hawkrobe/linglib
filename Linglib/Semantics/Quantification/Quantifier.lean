@@ -189,6 +189,8 @@ concrete witness type. The witness is `ToyEntity`. -/
 
 /-- `m_sem` is not conservative: it inspects `B` outside `A`. -/
 theorem m_not_conservative : ¬ Conservative (m_sem (α := ToyEntity)) := by
+  -- TODO: pick A = `student_sem` and B chosen so |A| = |B| but |A ∩ B| < |A|,
+  -- giving M(A,B) ↔ false yet M(A, A ∩ B) ↔ true.
   sorry
 
 /-- `⟦every⟧` is NOT symmetric. Witness: R=students, S=things; every(students,
@@ -214,6 +216,9 @@ theorem every_not_existential : ¬ Existential (every_sem (α := ToyEntity)) := 
 
 /-- `⟦most⟧` is NOT existential (K&S §3.3). -/
 theorem most_not_existential : ¬ Existential (most_sem (α := ToyEntity)) := by
+  -- TODO: witness most(student, sleeps) on toy domain where |student ∩ sleeps|
+  -- = |student \ sleeps| = 1, then most(student ∩ sleeps, True) is true (1 > 0)
+  -- but most(student, sleeps) is false (1 > 1 fails).
   sorry
 
 /-! ## Generalized-Quantifier-Theoretic (GQT) meaning operator

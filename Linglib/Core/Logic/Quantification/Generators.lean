@@ -40,8 +40,6 @@ characterizations (`conjGQ X P ↔ ∀ x ∈ X, P x`,
 - `conjGQ_append` / `disjGQ_append` — compositionality
 -/
 
-set_option autoImplicit false
-
 namespace Core.Quantification
 
 variable {α : Type*}

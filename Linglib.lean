@@ -33,6 +33,8 @@ import Linglib.Core.Tree
 import Linglib.Features.Coordination
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Quantification
+import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Core.Logic.Quantification.Counting
 import Linglib.Core.Logic.Quantification.Defs
 import Linglib.Core.Logic.Quantification.Generators
 import Linglib.Core.Logic.Quantification.Properties

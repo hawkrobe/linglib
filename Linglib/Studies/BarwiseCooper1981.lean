@@ -113,35 +113,27 @@ theorem quantity_universal :
     rw [forall_bij_inv f hBij]
     exact forall_congr' fun x => by rw [show A (f x) ↔ A' x from hA x,
                                          show B (f x) ↔ B' x from hB x]
+  -- TODO: cardinality-based cases need `count_bij_inv` adapted to Prop predicates.
   case most => sorry
   case few => sorry
   case half => sorry
 
--- ============================================================================
--- §3. Extension: Domain independence
--- ============================================================================
+/-! ### Extension: domain independence
 
-/- Extension (EXT): all simple determiners are domain-independent.
-   For `GQ α`, this is a design theorem — our universe-free representation
-   automatically satisfies EXT. See `Core.Quantification.extension_trivial`.
-   No axiom needed — it holds by construction.
+EXT (`Q(A,B)` depends only on `A` and `B`, not on an ambient universe)
+holds trivially for `GQ α` since the representation is universe-free —
+no axiom needed. EXT + CONS together yield the @cite{van-benthem-1984}
+characterization: determiners can be represented as type ⟨1⟩ quantifiers
+that "live on" their restrictor; see `conservative_iff_livesOn`. -/
 
-   EXT + CONS together yield the @cite{van-benthem-1984} characterization:
-   determiners can be represented as type ⟨1⟩ quantifiers that "live on"
-   their restrictor. See `Core.Quantification.vanBenthem_cons_ext`. -/
+/-! ### @cite{barwise-cooper-1981} Table II: per-entry verification
 
--- ============================================================================
--- §4. @cite{barwise-cooper-1981} Table II: Per-Entry Verification
--- ============================================================================
-
-/- Table II per-entry verification (@cite{barwise-cooper-1981}, p.184).
-   Each theorem verifies one quantity word's strength and monotonicity
-   direction against the paper's classification. Changing a field in
-   the fragment entry breaks exactly one theorem.
-
-   B&C's Table II classifies: every/all (strong, ↑MON), some (weak, ↑MON),
-   no (weak, ↓MON), most (strong, ↑MON), many (weak, ↑MON), few (weak, ↓MON).
-   Our fragment omits "many" and adds "half" (not in original Table II). -/
+Each theorem verifies one quantity word's strength and monotonicity
+direction against the paper's classification (p.184). Changing a field in
+the fragment entry breaks exactly one theorem. B&C's Table II classifies:
+every/all (strong, ↑MON), some (weak, ↑MON), no (weak, ↓MON), most
+(strong, ↑MON), many (weak, ↑MON), few (weak, ↓MON). Our fragment omits
+"many" and adds "half" (not in original Table II). -/
 
 /-- every/all: strong, scope-↑MON (increasing). -/
 theorem table_II_all :
