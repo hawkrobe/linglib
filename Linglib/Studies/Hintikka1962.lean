@@ -42,25 +42,25 @@ theorem mooreContent_doxasticallyIndefensible
   fun w => boxR_not_moore (c.belief a) (c.belief_serial a) (c.belief_trans a)
     (fun v => v ∈ p) w
 
-/-- **Satisfiability of the Moore sentence** (the contrast that makes
-    Moore's paradox interesting). The propositional content `p ∧ ¬B_a p`
-    has models — witnessed here by `W := Bool`, `p := {true}`, and a
-    belief relation that always points to the `false`-world. So `true`
-    sits in `mooreContent`, while no world lies in its *believed* form. -/
-theorem mooreContent_nonempty :
-    ∃ (c : CommitmentState Bool Unit) (p : Set Bool) (w : Bool),
-      w ∈ mooreContent c () p := by
-  refine ⟨{
-    belief := fun _ _ v => v = false
-    commitment := fun _ _ _ _ => True
-    interp := fun _ => Set.univ
-    belief_trans := fun _ _ _ _ _ h => h
-    belief_eucl := fun _ _ _ _ _ h => h
-    belief_serial := fun _ _ => ⟨false, rfl⟩
-    commitment_trans := fun _ _ _ _ _ _ _ => True.intro
-    commitment_eucl := fun _ _ _ _ _ _ _ => True.intro
-  }, ({true} : Set Bool), true, rfl, fun hbel => ?_⟩
-  exact absurd (hbel false rfl) (by decide)
+/-- A two-world KD4 frame: every world treats only `false` as belief-
+    accessible. Used as a witness for `true_mem_mooreContent`. -/
+def mooreWitness : CommitmentState Bool Unit where
+  belief _ _ v := v = false
+  commitment _ _ _ _ := True
+  interp _ := Set.univ
+  belief_trans _ _ _ _ _ h := h
+  belief_eucl _ _ _ _ _ h := h
+  belief_serial _ _ := ⟨false, rfl⟩
+  commitment_trans _ _ _ _ _ _ _ := trivial
+  commitment_eucl _ _ _ _ _ _ _ := trivial
+
+/-- **Satisfiability of the Moore sentence**: with `p := {true}` over
+    `mooreWitness`, the world `true` lies in `mooreContent`. The
+    propositional content `p ∧ ¬B_a p` is consistent — contrast with
+    `p ∧ ¬p`, which has no models; only the *believed* form fails. -/
+theorem true_mem_mooreContent :
+    true ∈ mooreContent mooreWitness () {true} :=
+  ⟨rfl, fun h => Bool.false_ne_true (h false rfl)⟩
 
 /-- **Epistemic analogue** (Hintikka §4.11): under KD4 knowledge,
     "p but I don't know whether p" is unknowable. Direct corollary of
