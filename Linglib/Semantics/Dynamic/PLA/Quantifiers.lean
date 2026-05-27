@@ -43,6 +43,7 @@ to `Conservative` in Core — but typed for different downstream consumers.
 -/
 
 import Linglib.Semantics.Dynamic.PLA.Update
+import Linglib.Core.Logic.Quantification.Basic
 import Mathlib.Data.Set.Card
 import Mathlib.Order.SetNotation
 
@@ -186,6 +187,75 @@ theorem every_not_truthful : ¬IsTruthful (every : GQRel α) := by
   have hne := h ∅ ∅ this
   simp only [Set.inter_self] at hne
   exact Set.not_nonempty_empty hne
+
+/-! ### Bridge to `Core.Quantification`
+
+PLA's `GQRel α = Set α → Set α → Prop` and Core's
+`GQ α = (α → Prop) → (α → Prop) → Prop` carry the same content (`Set α`
+*is defined* as `α → Prop`). The property predicates align via the
+`A ∩ B = {x | A x ∧ B x}` set-vs-predicate shift. `toCoreGQ` is the
+canonical bridge; the bridges below let PLA consumers cash in Core's
+@cite{barwise-cooper-1981} / @cite{peters-westerstahl-2006} /
+@cite{van-benthem-1984} theorems instead of reproving them. -/
+
+/-- Bridge: a `GQRel` viewed as a `Core.Quantification.GQ`. -/
+def toCoreGQ (D : GQRel α) : Core.Quantification.GQ α :=
+  fun R S => D (setOf R) (setOf S)
+
+/-- A `GQRel` is conservative iff its `Core.GQ` projection is. -/
+theorem isConservative_iff_Core_Conservative (D : GQRel α) :
+    IsConservative D ↔ Core.Quantification.Conservative (toCoreGQ D) := by
+  unfold IsConservative Core.Quantification.Conservative toCoreGQ
+  refine ⟨fun h R S => ?_, fun h A B => ?_⟩
+  · -- forward: from set-shaped to predicate-shaped
+    have hAB : (setOf R) ∩ (setOf S) = {x | R x ∧ S x} := by
+      ext; simp [Set.mem_inter_iff, Set.mem_setOf_eq]
+    rw [← hAB]; exact h (setOf R) (setOf S)
+  · -- backward: from predicate-shaped to set-shaped
+    have key := h (fun x => x ∈ A) (fun x => x ∈ B)
+    have hAB : (setOf (fun x => x ∈ A)) = A := by ext; simp
+    have hAB' : (setOf (fun x => x ∈ B)) = B := by ext; simp
+    rw [hAB, hAB'] at key
+    have hRS : ({x | (fun y => y ∈ A) x ∧ (fun y => y ∈ B) x} : Set α) = A ∩ B := by
+      ext; simp [Set.mem_inter_iff]
+    rw [hRS] at key
+    exact key
+
+/-- A `GQRel` is scope-upward-monotone iff its `Core.GQ` projection is. -/
+theorem isUpwardMono_iff_Core_ScopeUpwardMono (D : GQRel α) :
+    IsUpwardMono D ↔ Core.Quantification.ScopeUpwardMono (toCoreGQ D) := by
+  unfold IsUpwardMono Core.Quantification.ScopeUpwardMono toCoreGQ
+  refine ⟨fun h R S S' hSS' hRS => h _ _ _ hSS' hRS,
+          fun h A B C hBC hAB => h _ _ _ hBC hAB⟩
+
+/-- A `GQRel` is scope-downward-monotone iff its `Core.GQ` projection is. -/
+theorem isDownwardMono_iff_Core_ScopeDownwardMono (D : GQRel α) :
+    IsDownwardMono D ↔ Core.Quantification.ScopeDownwardMono (toCoreGQ D) := by
+  unfold IsDownwardMono Core.Quantification.ScopeDownwardMono toCoreGQ
+  refine ⟨fun h R S S' hSS' hRS' => h _ _ _ hSS' hRS',
+          fun h A B C hCB hAB => h _ _ _ hCB hAB⟩
+
+/-- `GQRel.every` projects to `Core.Quantification.every_sem`. -/
+theorem toCoreGQ_every :
+    toCoreGQ (every : GQRel α) = Core.Quantification.every_sem (α := α) := by
+  funext R S; rfl
+
+/-- `GQRel.some` projects to `Core.Quantification.some_sem`. -/
+theorem toCoreGQ_some :
+    toCoreGQ (some : GQRel α) = Core.Quantification.some_sem (α := α) := by
+  funext R S
+  simp only [toCoreGQ, some, Core.Quantification.some_sem]
+  exact propext ⟨fun ⟨x, hx⟩ => ⟨x, hx⟩, fun ⟨x, hx⟩ => ⟨x, hx⟩⟩
+
+/-- `GQRel.no` projects to `Core.Quantification.no_sem`. -/
+theorem toCoreGQ_no :
+    toCoreGQ (no : GQRel α) = Core.Quantification.no_sem (α := α) := by
+  funext R S
+  simp only [toCoreGQ, no, Core.Quantification.no_sem]
+  refine propext ⟨fun h x hR hS => ?_, fun h => ?_⟩
+  · have : x ∈ ((setOf R) ∩ (setOf S) : Set α) := ⟨hR, hS⟩
+    rw [h] at this; exact this
+  · ext x; exact ⟨fun ⟨hR, hS⟩ => h x hR hS, fun h => h.elim⟩
 
 end GQRel
 
