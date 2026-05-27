@@ -356,7 +356,6 @@ import Linglib.Discourse.Commitment.Frame
 import Linglib.Discourse.Commitment.Table
 import Linglib.Discourse.Move
 import Linglib.Discourse.SpeechAct.Update
-import Linglib.Discourse.SpeechAct.Felicity
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.NullSubject.Defs
@@ -2347,7 +2346,6 @@ import Linglib.Studies.Montague1973Quantification
 import Linglib.Semantics.Entailment.AntiAdditivity
 import Linglib.Semantics.Entailment.Basic
 import Linglib.Semantics.Entailment.Intolerance
-import Linglib.Semantics.Entailment.Monotonicity
 import Linglib.Phenomena.Entailment.NegationTests
 import Linglib.Studies.Montague1973
 import Linglib.Semantics.Entailment.PresuppositionLicensing
