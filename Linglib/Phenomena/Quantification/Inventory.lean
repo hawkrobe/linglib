@@ -30,6 +30,7 @@ namespace Phenomena.Quantification.Inventory
 
 open Semantics.Quantification.Lexicon (QuantifierEntry Monotonicity)
 open Core.Logic.Intensional
+open Core.Quantification (GQ)
 open Semantics.Quantification.Quantifier
 
 /-- The canonical 6-element quantity scale. -/
@@ -59,14 +60,14 @@ def QuantityWord.toList : List QuantityWord :=
   [.none_, .few, .some_, .half, .most, .all]
 
 /-- Canonical model-theoretic generalized-quantifier denotation. -/
-def QuantityWord.gqDenotation (q : QuantityWord)
-    (m : Frame) [Fintype m.Entity] : m.Denot Ty.det :=
+noncomputable def QuantityWord.gqDenotation (q : QuantityWord)
+    {α : Type*} [Fintype α] : GQ α :=
   match q with
-  | .none_ => no_sem m
-  | .some_ => some_sem m
-  | .all   => every_sem m
-  | .most  => most_sem m
-  | .few   => few_sem m
-  | .half  => half_sem m
+  | .none_ => no_sem
+  | .some_ => some_sem
+  | .all   => every_sem
+  | .most  => most_sem
+  | .few   => few_sem
+  | .half  => half_sem
 
 end Phenomena.Quantification.Inventory

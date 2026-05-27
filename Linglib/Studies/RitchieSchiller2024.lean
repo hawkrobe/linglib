@@ -76,8 +76,6 @@ inductive Entity where
   | b4  -- bottle outside window (vista)
   deriving DecidableEq, Repr, Inhabited
 
-abbrev bottleModel : Frame := { Entity := Entity, Index := Unit }
-
 instance : Fintype Entity where
   elems := {Entity.b1, Entity.b2, Entity.b3, Entity.b4}
   complete := fun x => by cases x <;> simp
@@ -133,7 +131,7 @@ def emptyIn : World → Entity → Bool
   | .nearEmpty, _ => false
 
 /-- All entities are bottles in this scenario (trivial restrictor). -/
-def isBottle : bottleModel.Entity → Bool := λ _ => true
+def isBottle : Entity → Bool := λ _ => true
 
 -- ============================================================================
 -- §4. Truth Table: "Every bottle is empty" under each DDRP
@@ -219,18 +217,18 @@ theorem monotonicity_contrast :
 /-- ⟦every⟧ nesting (Prop level): truth under a larger scale entails truth under
     any smaller scale. Derives from `DDRP.every_nesting` via restrictor ↓MON. -/
 theorem every_nesting_prop {s₁ s₂ : SpatialScale} (h : s₁ ≤ s₂)
-    (R S : bottleModel.Entity → Prop) :
-    every_restricted bottleModel (sceneDDRP.region s₂) R S →
-    every_restricted bottleModel (sceneDDRP.region s₁) R S :=
-  DDRP.every_nesting (m := bottleModel) sceneDDRP R S h
+    (R S : Entity → Prop) :
+    every_restricted (sceneDDRP.region s₂) R S →
+    every_restricted (sceneDDRP.region s₁) R S :=
+  DDRP.every_nesting sceneDDRP R S h
 
 /-- ⟦some⟧ nesting (Prop level): truth under a smaller scale entails truth under
     any larger scale. Derives from `DDRP.some_nesting` via restrictor ↑MON. -/
 theorem some_nesting_prop {s₁ s₂ : SpatialScale} (h : s₁ ≤ s₂)
-    (R S : bottleModel.Entity → Prop) :
-    some_restricted bottleModel (sceneDDRP.region s₁) R S →
-    some_restricted bottleModel (sceneDDRP.region s₂) R S :=
-  DDRP.some_nesting (m := bottleModel) sceneDDRP R S h
+    (R S : Entity → Prop) :
+    some_restricted (sceneDDRP.region s₁) R S →
+    some_restricted (sceneDDRP.region s₂) R S :=
+  DDRP.some_nesting sceneDDRP R S h
 
 -- ============================================================================
 -- §8. RSA Connection: DDRPs as Latent Interpretation Variables

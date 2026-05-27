@@ -354,24 +354,24 @@ section GQTBridge
 open Classical Core.Logic.Intensional Semantics.Quantification
 
 /-- GQT "at least `n`" agrees with `atLeastMeaning` on intersection cardinality. -/
-theorem gqt_atLeast_agrees (m : Frame) [Fintype m.Entity]
-    (n : Nat) (R S : m.Entity → Prop) :
-    Quantifier.at_least_n_sem m n R S ↔
-    atLeastMeaning n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) :=
+theorem gqt_atLeast_agrees {α : Type*} [Fintype α]
+    (n : Nat) (R S : α → Prop) :
+    Quantifier.at_least_n_sem n R S ↔
+    atLeastMeaning n (Quantifier.count (fun x : α => R x ∧ S x)) :=
   Iff.rfl
 
 /-- GQT "at most `n`" agrees with `atMostMeaning` on intersection cardinality. -/
-theorem gqt_atMost_agrees (m : Frame) [Fintype m.Entity]
-    (n : Nat) (R S : m.Entity → Prop) :
-    Quantifier.at_most_n_sem m n R S ↔
-    atMostMeaning n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) :=
+theorem gqt_atMost_agrees {α : Type*} [Fintype α]
+    (n : Nat) (R S : α → Prop) :
+    Quantifier.at_most_n_sem n R S ↔
+    atMostMeaning n (Quantifier.count (fun x : α => R x ∧ S x)) :=
   Iff.rfl
 
 /-- GQT "exactly `n`" agrees with `bareMeaning` on intersection cardinality. -/
-theorem gqt_exactly_agrees (m : Frame) [Fintype m.Entity]
-    (n : Nat) (R S : m.Entity → Prop) :
-    Quantifier.exactly_n_sem m n R S ↔
-    bareMeaning n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) :=
+theorem gqt_exactly_agrees {α : Type*} [Fintype α]
+    (n : Nat) (R S : α → Prop) :
+    Quantifier.exactly_n_sem n R S ↔
+    bareMeaning n (Quantifier.count (fun x : α => R x ∧ S x)) :=
   Iff.rfl
 
 end GQTBridge

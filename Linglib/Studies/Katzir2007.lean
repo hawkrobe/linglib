@@ -73,13 +73,13 @@ def φ' : Tree Cat String := φ.leafSubst "some" "every" .Det
     the Prop level rather than via `evalTree` (which requires a blanket
     `Decidable` instance for all propositions). -/
 theorem some_student_sleeps :
-    some_sem toyModel student_sem sleeps_sem :=
+    some_sem student_sem sleeps_sem :=
   ⟨ToyEntity.john, trivial, trivial⟩
 
 /-- The scalar alternative "every student sleeps" is false:
 Mary is a student but doesn't sleep. -/
 theorem every_student_sleeps :
-    ¬ every_sem toyModel student_sem sleeps_sem := by
+    ¬ every_sem student_sem sleeps_sem := by
   intro h; exact h ToyEntity.mary trivial
 
 /-- The two readings differ: genuine scalar inference.
@@ -87,8 +87,8 @@ Asserting "some" when "every" was available implicates ¬"every".
 The asymmetry is witnessed: "some" is satisfiable (John), while
 "every" is refuted (Mary is a student who doesn't sleep). -/
 theorem readings_differ :
-    some_sem toyModel student_sem sleeps_sem ∧
-    ¬ every_sem toyModel student_sem sleeps_sem :=
+    some_sem student_sem sleeps_sem ∧
+    ¬ every_sem student_sem sleeps_sem :=
   ⟨some_student_sleeps, every_student_sleeps⟩
 
 -- ════════════════════════════════════════════════════════════════════

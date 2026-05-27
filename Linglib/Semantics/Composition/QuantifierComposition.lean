@@ -62,8 +62,8 @@ open Semantics.Quantification.Quantifier
 
 def quantLex : Lexicon toyModel := λ word =>
   match word with
-  | "every" => some ⟨Ty.det, every_sem toyModel⟩
-  | "some" => some ⟨Ty.det, some_sem toyModel⟩
+  | "every" => some ⟨Ty.det, (every_sem : toyModel.Denot Ty.det)⟩
+  | "some" => some ⟨Ty.det, (some_sem : toyModel.Denot Ty.det)⟩
   | "student" => some ⟨.e ⇒ .t, student_sem⟩
   | "person" => some ⟨.e ⇒ .t, person_sem⟩
   | "sleeps" => some ⟨.e ⇒ .t, ToyLexicon.sleeps_sem⟩
@@ -85,7 +85,7 @@ def tree_everyStudentSleeps : Tree Unit String :=
 
 /-- Every student sleeps is false (Mary is a student but doesn't sleep). -/
 theorem every_student_sleeps_false :
-    ¬(every_sem toyModel student_sem ToyLexicon.sleeps_sem) := by
+    ¬(every_sem student_sem ToyLexicon.sleeps_sem) := by
   intro h; exact h ToyEntity.mary trivial
 
 /-- QR tree: `[S [DP some student] [1 [S t₁ sleeps]]]` -/
@@ -96,7 +96,7 @@ def tree_someStudentSleeps : Tree Unit String :=
 
 /-- Some student sleeps = true (John is a student and sleeps). -/
 theorem some_student_sleeps_true :
-    some_sem toyModel student_sem ToyLexicon.sleeps_sem :=
+    some_sem student_sem ToyLexicon.sleeps_sem :=
   ⟨ToyEntity.john, trivial, trivial⟩
 
 -- ════════════════════════════════════════════════════════════════════
@@ -136,13 +136,13 @@ def tree_inverse : Tree Unit String :=
 
 /-- Surface scope Prop. -/
 abbrev surfaceScopeProp : Prop :=
-  every_sem toyModel person_sem
-    (λ x => some_sem toyModel person_sem (λ y => ToyLexicon.sees_sem y x))
+  every_sem person_sem
+    (λ x => some_sem person_sem (λ y => ToyLexicon.sees_sem y x))
 
 /-- Inverse scope Prop. -/
 abbrev inverseScopeProp : Prop :=
-  some_sem toyModel person_sem
-    (λ y => every_sem toyModel person_sem (λ x => ToyLexicon.sees_sem y x))
+  some_sem person_sem
+    (λ y => every_sem person_sem (λ x => ToyLexicon.sees_sem y x))
 
 /-- Surface scope is true in the toy model.
 (John sees Mary and Mary sees John — each person sees some person.) -/

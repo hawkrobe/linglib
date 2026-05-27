@@ -374,12 +374,12 @@ end EveryLovesSome
 open ToyLexicon
 
 def glue_surface_meaning : Prop :=
-  every_sem toyModel person_sem
-    (λ x => some_sem toyModel person_sem (λ y => sees_sem y x))
+  every_sem person_sem
+    (λ x => some_sem person_sem (λ y => sees_sem y x))
 
 def glue_inverse_meaning : Prop :=
-  some_sem toyModel person_sem
-    (λ y => every_sem toyModel person_sem (λ x => sees_sem y x))
+  some_sem person_sem
+    (λ y => every_sem person_sem (λ x => sees_sem y x))
 
 /-- The two Glue readings differ (genuine ambiguity). -/
 theorem glue_readings_differ :
@@ -435,8 +435,8 @@ open Core.Logic.Intensional.Variables
 /-- Lexicon for the QR bridge (matching QuantifierComposition). -/
 private def bridgeLex : Lexicon toyModel := λ word =>
   match word with
-  | "every" => some ⟨Ty.det, every_sem toyModel⟩
-  | "some" => some ⟨Ty.det, some_sem toyModel⟩
+  | "every" => some ⟨Ty.det, (every_sem : toyModel.Denot Ty.det)⟩
+  | "some" => some ⟨Ty.det, (some_sem : toyModel.Denot Ty.det)⟩
   | "person" => some ⟨.e ⇒ .t, person_sem⟩
   | "sees" => some ⟨.e ⇒ .e ⇒ .t, ToyLexicon.sees_sem⟩
   | _ => none
@@ -474,10 +474,10 @@ def glueReading : ScopeConfig → Prop
     (the same semantics computed by QR tree interpretation,
     @cite{heim-kratzer-1998} Ch. 5). -/
 def qrReading : ScopeConfig → Prop
-  | .surface => every_sem toyModel person_sem
-      (λ x => some_sem toyModel person_sem (λ y => sees_sem y x))
-  | .inverse => some_sem toyModel person_sem
-      (λ y => every_sem toyModel person_sem (λ x => sees_sem y x))
+  | .surface => every_sem person_sem
+      (λ x => some_sem person_sem (λ y => sees_sem y x))
+  | .inverse => some_sem person_sem
+      (λ y => every_sem person_sem (λ x => sees_sem y x))
 
 /-- QR surface scope produces the same Prop as Glue. -/
 theorem qr_surface_agrees :

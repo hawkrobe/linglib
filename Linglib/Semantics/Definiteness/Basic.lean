@@ -96,12 +96,12 @@ When exactly one entity satisfies the restrictor, "the φ is ψ" and
 "every φ is ψ" have the same truth value. This is the classical
 observation that the definite article is a universal quantifier
 restricted to singletons. -/
-theorem the_is_every_on_singletons (m : Frame) [Fintype m.Entity]
-    (restrictor scope : m.Entity → Prop)
-    (e : m.Entity)
+theorem the_is_every_on_singletons {α : Type*}
+    (restrictor scope : α → Prop)
+    (e : α)
     (h_restr : restrictor e)
     (h_unique : ∀ x, restrictor x → x = e) :
-    every_sem m restrictor scope ↔ scope e := by
+    every_sem restrictor scope ↔ scope e := by
   constructor
   · intro h; exact h e h_restr
   · intro hse x hRx; rw [h_unique x hRx]; exact hse

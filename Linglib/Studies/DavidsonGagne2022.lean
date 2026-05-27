@@ -99,8 +99,6 @@ inductive Entity where
   | p5 | p6             -- wider world
   deriving DecidableEq, Repr, Inhabited
 
-abbrev vampireModel : Frame := { Entity := Entity, Index := Unit }
-
 instance : Fintype Entity where
   elems := {Entity.f1, .f2, .f3, .f4, .p5, .p6}
   complete := λ x => by cases x <;> simp
@@ -217,28 +215,28 @@ theorem none_high_friendsOnly : ¬ noneBecomeVampire .high .friendsOnly := by
     lower height. Smaller domain → fewer entities to check → universal easier.
     Direct application of `DDRP.every_nesting`. -/
 theorem every_height_nesting {h₁ h₂ : VerticalHeight} (hle : h₁ ≤ h₂)
-    (R S : vampireModel.Entity → Prop) :
-    every_restricted vampireModel (vampireDDRP.region h₂) R S →
-    every_restricted vampireModel (vampireDDRP.region h₁) R S :=
-  DDRP.every_nesting (m := vampireModel) vampireDDRP R S hle
+    (R S : Entity → Prop) :
+    every_restricted (vampireDDRP.region h₂) R S →
+    every_restricted (vampireDDRP.region h₁) R S :=
+  DDRP.every_nesting vampireDDRP R S hle
 
 /-- ⟦some⟧ nesting: truth under a lower height entails truth under any
     higher height. Larger domain → more witnesses → existential easier.
     Direct application of `DDRP.some_nesting`. -/
 theorem some_height_nesting {h₁ h₂ : VerticalHeight} (hle : h₁ ≤ h₂)
-    (R S : vampireModel.Entity → Prop) :
-    some_restricted vampireModel (vampireDDRP.region h₁) R S →
-    some_restricted vampireModel (vampireDDRP.region h₂) R S :=
-  DDRP.some_nesting (m := vampireModel) vampireDDRP R S hle
+    (R S : Entity → Prop) :
+    some_restricted (vampireDDRP.region h₁) R S →
+    some_restricted (vampireDDRP.region h₂) R S :=
+  DDRP.some_nesting vampireDDRP R S hle
 
 /-- ⟦no⟧ nesting: truth under a higher height entails truth under any
     lower height. Same direction as ⟦every⟧ (both ↓MON in the restrictor).
     Direct application of `DDRP.no_nesting`. -/
 theorem no_height_nesting {h₁ h₂ : VerticalHeight} (hle : h₁ ≤ h₂)
-    (R S : vampireModel.Entity → Prop) :
-    no_restricted vampireModel (vampireDDRP.region h₂) R S →
-    no_restricted vampireModel (vampireDDRP.region h₁) R S :=
-  DDRP.no_nesting (m := vampireModel) vampireDDRP R S hle
+    (R S : Entity → Prop) :
+    no_restricted (vampireDDRP.region h₂) R S →
+    no_restricted (vampireDDRP.region h₁) R S :=
+  DDRP.no_nesting vampireDDRP R S hle
 
 /-- **Monotonicity contrast**: ALL and SOME react oppositely to height.
     In the friendsOnly world, ALL is true only under neutral height
@@ -270,9 +268,9 @@ theorem monotonicity_contrast :
 /-- Height widens existential domain: SOME-high is at least as easy to
     satisfy as SOME-neutral. If height were intensification, the opposite
     would hold for existentials. This is the formal refutation. -/
-theorem some_height_widens (R S : vampireModel.Entity → Prop) :
-    some_restricted vampireModel (vampireDDRP.region .neutral) R S →
-    some_restricted vampireModel (vampireDDRP.region .high) R S :=
+theorem some_height_widens (R S : Entity → Prop) :
+    some_restricted (vampireDDRP.region .neutral) R S →
+    some_restricted (vampireDDRP.region .high) R S :=
   some_height_nesting (by decide : VerticalHeight.neutral ≤ .high) R S
 
 -- ============================================================================
@@ -400,12 +398,12 @@ theorem uniform_nesting
     are definitionally equivalent: both express `∀ e, e ∈ region h → ...`.
     The grounding theorem below witnesses this structural alignment. -/
 def fsAllComposed (h : VerticalHeight) (w : World) : Prop :=
-  every_restricted vampireModel (vampireDDRP.region h)
+  every_restricted (vampireDDRP.region h)
     (λ _ => True) (λ e => becameVampire w e = true)
 
 /-- SOME composed through the theory-layer quantifier `some_restricted`. -/
 def fsSomeComposed (h : VerticalHeight) (w : World) : Prop :=
-  some_restricted vampireModel (vampireDDRP.region h)
+  some_restricted (vampireDDRP.region h)
     (λ _ => True) (λ e => becameVampire w e = true)
 
 /-- **Grounding theorem**: `fsAllBecomeVampire` agrees with the

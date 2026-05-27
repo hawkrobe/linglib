@@ -70,7 +70,7 @@ def licensingStrength (c : LicensingContext) : LicensingStrength :=
 -- §2. GQ monotonicity → NPI licensing (the Ladusaw bridge)
 -- ============================================================================
 
-variable {m : Frame} [Fintype m.Entity] [DecidableEq m.Entity]
+variable {α : Type*} [Fintype α] [DecidableEq α]
 
 /-- The core Ladusaw generalization: scope-DE quantifiers license weak NPIs
     in their scope. Formally: `ScopeDownwardMono q` implies that the scope
@@ -79,7 +79,7 @@ variable {m : Frame} [Fintype m.Entity] [DecidableEq m.Entity]
     Verified instances:
     - `no_scope_down`: "No student saw anyone" ✓
     - `few_scope_down`: "Few students saw anyone" ✓ -/
-structure ScopeDELicensesWeakNPIs (q : m.Denot Ty.det) where
+structure ScopeDELicensesWeakNPIs (q : Core.Quantification.GQ α) where
   scopeDE : ScopeDownwardMono q
   /-- The licensing context this corresponds to -/
   context : LicensingContext
@@ -89,14 +89,14 @@ structure ScopeDELicensesWeakNPIs (q : m.Denot Ty.det) where
 
 /-- "No" licenses weak NPIs in scope via scope-↓ monotonicity. -/
 def no_scope_licenses_weak :
-    ScopeDELicensesWeakNPIs (no_sem m) :=
+    ScopeDELicensesWeakNPIs (no_sem (α := α)) :=
   { scopeDE := no_scope_down
   , context := .nobody
   , isDE := Or.inr rfl }
 
 /-- "Few" licenses weak NPIs in scope via scope-↓ monotonicity. -/
 def few_scope_licenses_weak :
-    ScopeDELicensesWeakNPIs (few_sem m) :=
+    ScopeDELicensesWeakNPIs (few_sem (α := α)) :=
   { scopeDE := few_scope_down
   , context := .few
   , isDE := Or.inl rfl }
@@ -107,7 +107,7 @@ def few_scope_licenses_weak :
     Verified instances:
     - `every_restrictor_down`: "Everyone who saw anyone was questioned" ✓
     - `no_restrictor_down`: "No one who saw anyone was questioned" ✓ -/
-structure RestrictorDELicensesWeakNPIs (q : m.Denot Ty.det) where
+structure RestrictorDELicensesWeakNPIs (q : Core.Quantification.GQ α) where
   restrictorDE : RestrictorDownwardMono q
   context : LicensingContext
   isDE : licensingStrength context = .downwardEntailing ∨
@@ -115,14 +115,14 @@ structure RestrictorDELicensesWeakNPIs (q : m.Denot Ty.det) where
 
 /-- "Every" licenses weak NPIs in restrictor via restrictor-↓ monotonicity. -/
 def every_restrictor_licenses_weak :
-    RestrictorDELicensesWeakNPIs (every_sem m) :=
+    RestrictorDELicensesWeakNPIs (every_sem (α := α)) :=
   { restrictorDE := every_restrictor_down
   , context := .universalRestrictor
   , isDE := Or.inr rfl }
 
 /-- "No" licenses weak NPIs in restrictor via restrictor-↓ monotonicity. -/
 def no_restrictor_licenses_weak :
-    RestrictorDELicensesWeakNPIs (no_sem m) :=
+    RestrictorDELicensesWeakNPIs (no_sem (α := α)) :=
   { restrictorDE := no_restrictor_down
   , context := .nobody
   , isDE := Or.inr rfl }
@@ -141,7 +141,7 @@ def no_restrictor_licenses_weak :
 
     Counter-example: "few" is merely DE, not anti-additive:
     - *"Few people lifted a finger to help" ✗ -/
-structure AntiAddLicensesStrongNPIs (q : m.Denot Ty.det) where
+structure AntiAddLicensesStrongNPIs (q : Core.Quantification.GQ α) where
   laa : LeftAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
@@ -149,14 +149,14 @@ structure AntiAddLicensesStrongNPIs (q : m.Denot Ty.det) where
 /-- "Every" is left-anti-additive → licenses strong NPIs in restrictor.
     P&W Prop 13: the restrictor of "every" is anti-additive (not just DE). -/
 def every_laa_licenses_strong :
-    AntiAddLicensesStrongNPIs (every_sem m) :=
+    AntiAddLicensesStrongNPIs (every_sem (α := α)) :=
   { laa := every_laa
   , context := .universalRestrictor
   , isAA := rfl }
 
 /-- "No" is left-anti-additive → licenses strong NPIs in restrictor. -/
 def no_laa_licenses_strong :
-    AntiAddLicensesStrongNPIs (no_sem m) :=
+    AntiAddLicensesStrongNPIs (no_sem (α := α)) :=
   { laa := no_laa
   , context := .nobody
   , isAA := rfl }
@@ -164,7 +164,7 @@ def no_laa_licenses_strong :
 /-- Scope-level anti-additivity also licenses strong NPIs.
     `RightAntiAdditive q` means the scope of `q` is anti-additive.
     "Nobody lifted a finger" is licensed by scope-level AA of `no`. -/
-structure ScopeAALicensesStrongNPIs (q : m.Denot Ty.det) where
+structure ScopeAALicensesStrongNPIs (q : Core.Quantification.GQ α) where
   raa : RightAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
@@ -172,7 +172,7 @@ structure ScopeAALicensesStrongNPIs (q : m.Denot Ty.det) where
 /-- "No" is right-anti-additive → licenses strong NPIs in scope.
     "Nobody lifted a finger" / "Nobody saw anyone". -/
 def no_raa_licenses_strong :
-    ScopeAALicensesStrongNPIs (no_sem m) :=
+    ScopeAALicensesStrongNPIs (no_sem (α := α)) :=
   { raa := no_raa
   , context := .nobody
   , isAA := rfl }
@@ -201,8 +201,8 @@ set_option maxHeartbeats 400000 in
     - few(R, S) = (1 < 2) = true, few(R, S') = (1 < 2) = true
     - true ∧ true ≠ false -/
 theorem few_DE_not_RAA :
-    ScopeDownwardMono (few_sem (F := toyModel)) ∧
-    ¬RightAntiAdditive (few_sem (F := toyModel)) := by
+    ScopeDownwardMono (few_sem (α := ToyEntity)) ∧
+    ¬RightAntiAdditive (few_sem (α := ToyEntity)) := by
   refine ⟨few_scope_down, fun h => ?_⟩
   -- Witness: R = not-book, S = john-only, S' = mary-only
   let R : ToyEntity → Prop := fun | .book => False | _ => True

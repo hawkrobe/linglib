@@ -95,11 +95,11 @@ def passedAt (w : Fin 4) : studentModel.Denot (.e ⇒ .t) := λ s =>
 
 /-- "Some students passed" computed compositionally -/
 def somePassedMontague (w : Fin 4) : Prop :=
-  some_sem studentModel isStudent (passedAt w)
+  some_sem isStudent (passedAt w)
 
 /-- "All students passed" computed compositionally -/
 def allPassedMontague (w : Fin 4) : Prop :=
-  every_sem studentModel isStudent (passedAt w)
+  every_sem isStudent (passedAt w)
 
 -- Verify the compositional definitions match expectations
 example : ¬somePassedMontague ⟨0, by omega⟩ := by

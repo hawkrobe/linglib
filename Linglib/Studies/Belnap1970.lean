@@ -153,7 +153,7 @@ def restrictedExists {m : Frame} [Fintype m.Entity]
 theorem belnap_forall_content_eq_every {m : Frame} [Fintype m.Entity]
     (C B : m.Entity → Bool) :
     (restrictedForall C B).assertion () ↔
-      every_sem m (fun x => C x = true) (fun x => B x = true) := by
+      every_sem (fun x => C x = true) (fun x => B x = true) := by
   simp only [restrictedForall, every_sem]
 
 /-- **Content bridge (∃)**: what Belnap's ∃x(Cx/Bx) asserts (when
@@ -161,7 +161,7 @@ theorem belnap_forall_content_eq_every {m : Frame} [Fintype m.Entity]
 theorem belnap_exists_content_eq_some {m : Frame} [Fintype m.Entity]
     (C B : m.Entity → Bool) :
     (restrictedExists C B).assertion () ↔
-      some_sem m (fun x => C x = true) (fun x => B x = true) := by
+      some_sem (fun x => C x = true) (fun x => B x = true) := by
   simp only [restrictedExists, some_sem]
 
 /-- **Assertiveness = existential presupposition**: Belnap's

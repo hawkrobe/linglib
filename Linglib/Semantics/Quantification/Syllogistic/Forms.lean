@@ -37,22 +37,10 @@ for the full opposition diagram in the Demey–Smessaert sense.
 
 namespace Semantics.Quantification.Syllogistic
 
-open Core.Logic.Intensional (Frame)
 open Semantics.Quantification.Quantifier
   (every_sem some_sem no_sem subalternation_a_i)
 
--- ============================================================================
--- §1. Region Frame
--- ============================================================================
-
-/-- Regions as a Montague model, enabling reuse of `every_sem`/`some_sem`/`no_sem`
-    from the GQ theory layer. Index = `Unit` (extensional). `abbrev` so that
-    `regionModel.Entity` reduces transparently to `Region` for unification. -/
-abbrev regionModel : Frame := { Entity := Region, Index := Unit }
-
--- ============================================================================
--- §2. Syllogistic Forms (modern reading, no existential import)
--- ============================================================================
+/-! ### Syllogistic forms (modern reading, no existential import) -/
 
 /-- "All Xs are Ys" in state s (modern reading): every populated X-region
     also has Y. Vacuously true when no populated X-region exists. -/
@@ -72,14 +60,12 @@ def syllSomeNot (s : VennState) (X Y : Region → Bool) : Bool :=
 def syllNone (s : VennState) (X Y : Region → Bool) : Bool :=
   decide (∀ r : Region, (s r = true ∧ X r = true) → ¬(Y r = true))
 
--- ============================================================================
--- §3. Grounding in `every_sem` / `some_sem` / `no_sem`
--- ============================================================================
+/-! ### Grounding in `every_sem` / `some_sem` / `no_sem` -/
 
 /-- `syllAll` is exactly `every_sem` over the state-restricted restrictor. -/
 theorem syllAll_eq_true_iff (s : VennState) (X Y : Region → Bool) :
     syllAll s X Y = true ↔
-      every_sem regionModel (fun r => s r = true ∧ X r = true)
+      every_sem (fun r => s r = true ∧ X r = true)
         (fun r => Y r = true) := by
   unfold syllAll every_sem
   simp [decide_eq_true_eq]
@@ -87,7 +73,7 @@ theorem syllAll_eq_true_iff (s : VennState) (X Y : Region → Bool) :
 /-- `syllSome` is exactly `some_sem` over the state-restricted restrictor. -/
 theorem syllSome_eq_true_iff (s : VennState) (X Y : Region → Bool) :
     syllSome s X Y = true ↔
-      some_sem regionModel (fun r => s r = true ∧ X r = true)
+      some_sem (fun r => s r = true ∧ X r = true)
         (fun r => Y r = true) := by
   unfold syllSome some_sem
   simp [decide_eq_true_eq]
@@ -95,14 +81,12 @@ theorem syllSome_eq_true_iff (s : VennState) (X Y : Region → Bool) :
 /-- `syllNone` is exactly `no_sem` over the state-restricted restrictor. -/
 theorem syllNone_eq_true_iff (s : VennState) (X Y : Region → Bool) :
     syllNone s X Y = true ↔
-      no_sem regionModel (fun r => s r = true ∧ X r = true)
+      no_sem (fun r => s r = true ∧ X r = true)
         (fun r => Y r = true) := by
   unfold syllNone no_sem
   simp [decide_eq_true_eq]
 
--- ============================================================================
--- §4. Quantifier and Premise Evaluation
--- ============================================================================
+/-! ### Quantifier and premise evaluation -/
 
 /-- Evaluate a syllogistic quantifier on given terms in a Venn state. -/
 def syllQuantEval (q : AristQuant) (s : VennState) (X Y : Region → Bool) : Bool :=
@@ -139,9 +123,7 @@ def concMeaning : Conclusion → VennState → Bool
 @[simp] theorem nvc_always_true (s : VennState) :
     concMeaning .nvc s = true := rfl
 
--- ============================================================================
--- §5. Subalternation A → I (conditional on non-empty restrictor)
--- ============================================================================
+/-! ### Subalternation A → I (conditional on non-empty restrictor) -/
 
 /-- Subalternation in the modern reading: "All Xs are Ys" entails "Some Xs
     are Ys" only when at least one X-region is populated. Derived from
@@ -152,12 +134,10 @@ theorem syllAll_imp_syllSome (s : VennState) (X Y : Region → Bool)
     syllSome s X Y = true := by
   rw [syllAll_eq_true_iff] at h
   rw [syllSome_eq_true_iff]
-  exact subalternation_a_i (F := regionModel)
+  exact subalternation_a_i
     (fun r => s r = true ∧ X r = true) (fun r => Y r = true) hExists h
 
--- ============================================================================
--- §6. Named Syllogisms
--- ============================================================================
+/-! ### Named syllogisms -/
 
 /-- Barbara: All A-B, All B-C. Figure 1 — paradigmatic valid syllogism. -/
 def barbara : Syllogism := ⟨.all, true, .all, true⟩
@@ -168,9 +148,7 @@ def allAB_allCB : Syllogism := ⟨.all, true, .all, false⟩
 /-- Some A-B, Some B-C. Figure 1 (also invalid). -/
 def someSome : Syllogism := ⟨.some, true, .some, true⟩
 
--- ============================================================================
--- §7. Validity: Barbara
--- ============================================================================
+/-! ### Validity: Barbara -/
 
 /-- **Barbara** (All A-B, All B-C ⊢ All A-C). State-restricted transitivity
     of `every_sem`. Modern reading; existential import not required for the
@@ -204,9 +182,7 @@ theorem barbara_premises_imply_allAC (s : VennState) :
   simp only [premise1Truth, premise2Truth, barbara, ↓reduceIte, syllQuantEval] at h1 h2
   exact barbara_valid s h1 h2
 
--- ============================================================================
--- §8. Witness States and Invalidity
--- ============================================================================
+/-! ### Witness states and invalidity -/
 
 /-- Only AB and BC populated. Witnesses invalidity of certain syllogism
     patterns by falsifying A/I A-C and A/I C-A. -/

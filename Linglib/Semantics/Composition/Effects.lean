@@ -703,55 +703,55 @@ theorem gq_cont_roundtrip {F : Frame} (gq : (F.Entity → Prop) → Prop) :
 /-- `every_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
 def every_as_cont (restrictor : toyModel.Entity → Prop) :
     Cont Prop toyModel.Entity :=
-  gqAsCont (every_sem toyModel restrictor)
+  gqAsCont (every_sem restrictor)
 
 /-- `some_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
 def some_as_cont (restrictor : toyModel.Entity → Prop) :
     Cont Prop toyModel.Entity :=
-  gqAsCont (some_sem toyModel restrictor)
+  gqAsCont (some_sem restrictor)
 
 /-- Lowering a scope-taking quantifier = applying it to the scope. -/
 theorem scope_lower_eq_gq_id (restrictor scope' : toyModel.Entity → Prop) :
-    handleScope (gqAsCont (every_sem toyModel restrictor) |>.bind
+    handleScope (gqAsCont (every_sem restrictor) |>.bind
       (λ x => Cont.pure (scope' x))) =
-    every_sem toyModel restrictor scope' := rfl
+    every_sem restrictor scope' := rfl
 
 /-- Scope resolution via Cont agrees with direct GQ application for
     "every student sleeps": the Cont derivation produces the same Prop. -/
 theorem scope_agrees_with_qr_everyStudentSleeps :
-    handleScope (gqAsCont (every_sem toyModel student_sem) |>.bind
+    handleScope (gqAsCont (every_sem student_sem) |>.bind
       (λ x => Cont.pure (ToyLexicon.sleeps_sem x))) =
-    every_sem toyModel student_sem ToyLexicon.sleeps_sem := rfl
+    every_sem student_sem ToyLexicon.sleeps_sem := rfl
 
 /-- Scope resolution via Cont agrees with direct GQ application for
     "some student sleeps". -/
 theorem scope_agrees_with_qr_someStudentSleeps :
-    handleScope (gqAsCont (some_sem toyModel student_sem) |>.bind
+    handleScope (gqAsCont (some_sem student_sem) |>.bind
       (λ x => Cont.pure (ToyLexicon.sleeps_sem x))) =
-    some_sem toyModel student_sem ToyLexicon.sleeps_sem := rfl
+    some_sem student_sem ToyLexicon.sleeps_sem := rfl
 
 /-- Surface scope (∀>∃) via continuation composition agrees with direct
     GQ application. -/
 theorem scope_surface_agrees_with_qr :
-    handleScope (gqAsCont (every_sem toyModel person_sem) |>.bind
-      (λ x => gqAsCont (some_sem toyModel person_sem) |>.bind
+    handleScope (gqAsCont (every_sem person_sem) |>.bind
+      (λ x => gqAsCont (some_sem person_sem) |>.bind
         (λ y => Cont.pure (ToyLexicon.sees_sem y x)))) =
-    every_sem toyModel person_sem
-      (λ x => some_sem toyModel person_sem (λ y => ToyLexicon.sees_sem y x)) := rfl
+    every_sem person_sem
+      (λ x => some_sem person_sem (λ y => ToyLexicon.sees_sem y x)) := rfl
 
 /-- Inverse scope (∃>∀) via continuation composition agrees with direct
     GQ application. -/
 theorem scope_inverse_agrees_with_qr :
-    handleScope (gqAsCont (some_sem toyModel person_sem) |>.bind
-      (λ y => gqAsCont (every_sem toyModel person_sem) |>.bind
+    handleScope (gqAsCont (some_sem person_sem) |>.bind
+      (λ y => gqAsCont (every_sem person_sem) |>.bind
         (λ x => Cont.pure (ToyLexicon.sees_sem y x)))) =
-    some_sem toyModel person_sem
-      (λ y => every_sem toyModel person_sem (λ x => ToyLexicon.sees_sem y x)) := rfl
+    some_sem person_sem
+      (λ y => every_sem person_sem (λ x => ToyLexicon.sees_sem y x)) := rfl
 
 /-- Surface scope reading holds in the toy model. -/
 theorem surface_scope_via_cont :
-    handleScope (gqAsCont (every_sem toyModel person_sem) |>.bind
-      (λ x => gqAsCont (some_sem toyModel person_sem) |>.bind
+    handleScope (gqAsCont (every_sem person_sem) |>.bind
+      (λ x => gqAsCont (some_sem person_sem) |>.bind
         (λ y => Cont.pure (ToyLexicon.sees_sem y x)))) := by
   intro x hpx
   cases x with
@@ -761,8 +761,8 @@ theorem surface_scope_via_cont :
 
 /-- Inverse scope reading does not hold in the toy model. -/
 theorem inverse_scope_via_cont :
-    ¬handleScope (gqAsCont (some_sem toyModel person_sem) |>.bind
-      (λ y => gqAsCont (every_sem toyModel person_sem) |>.bind
+    ¬handleScope (gqAsCont (some_sem person_sem) |>.bind
+      (λ y => gqAsCont (every_sem person_sem) |>.bind
         (λ x => Cont.pure (ToyLexicon.sees_sem y x)))) := by
   intro ⟨y, _, hy⟩
   cases y with
@@ -773,11 +773,11 @@ theorem inverse_scope_via_cont :
 /-- The two scope orderings via Cont yield genuinely different readings,
     matching `scope_readings_differ` from `QuantifierComposition.lean`. -/
 theorem cont_scope_readings_differ :
-    (handleScope (gqAsCont (every_sem toyModel person_sem) |>.bind
-      (λ x => gqAsCont (some_sem toyModel person_sem) |>.bind
+    (handleScope (gqAsCont (every_sem person_sem) |>.bind
+      (λ x => gqAsCont (some_sem person_sem) |>.bind
         (λ y => Cont.pure (ToyLexicon.sees_sem y x))))) ≠
-    (handleScope (gqAsCont (some_sem toyModel person_sem) |>.bind
-      (λ y => gqAsCont (every_sem toyModel person_sem) |>.bind
+    (handleScope (gqAsCont (some_sem person_sem) |>.bind
+      (λ y => gqAsCont (every_sem person_sem) |>.bind
         (λ x => Cont.pure (ToyLexicon.sees_sem y x))))) := by
   intro h
   have hS := surface_scope_via_cont

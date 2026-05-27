@@ -424,17 +424,17 @@ def jumpIn_sem (w : JumpOutcome) : horseModel.Denot (.e ⇒ .t) :=
 
 /-- Surface scope: ⟦every⟧(horse)(λx.¬jump(x))(w). -/
 noncomputable def everyNotJumped_surface (w : JumpOutcome) : Prop :=
-  every_sem horseModel horse_sem (fun h => ¬ jumpIn_sem w h)
+  every_sem horse_sem (fun h => ¬ jumpIn_sem w h)
 
 /-- Inverse scope: ¬⟦every⟧(horse)(jump)(w). -/
 noncomputable def everyNotJumped_inverse (w : JumpOutcome) : Prop :=
-  ¬ (every_sem horseModel horse_sem (jumpIn_sem w))
+  ¬ (every_sem horse_sem (jumpIn_sem w))
 
 /-- Surface scope grounding: `scopeTruth.surface` derives from
     compositional ⟦every⟧(horse)(λx.¬jump(x)), not stipulation. -/
 theorem surface_from_every_sem :
     ∀ w, (scopeTruth .surface w = true) ↔
-      every_sem horseModel horse_sem (fun h => ¬ jumpIn_sem w h) := by
+      every_sem horse_sem (fun h => ¬ jumpIn_sem w h) := by
   intro w; unfold every_sem; cases w
   · exact ⟨fun _ _ _ h => by simp [jumpIn_sem, jumpIn] at h,
            fun _ => rfl⟩
@@ -447,7 +447,7 @@ theorem surface_from_every_sem :
     negating the compositional ⟦every⟧(horse)(jump). -/
 theorem inverse_from_every_sem :
     ∀ w, (scopeTruth .inverse w = true) ↔
-      ¬ (every_sem horseModel horse_sem (jumpIn_sem w)) := by
+      ¬ (every_sem horse_sem (jumpIn_sem w)) := by
   intro w; unfold every_sem; cases w
   · exact ⟨fun _ h => by have := h .h1 True.intro; simp [jumpIn_sem, jumpIn] at this,
            fun _ => rfl⟩
@@ -472,8 +472,8 @@ def readingToScopeConfig : ScopeReading → ScopeConfig
 noncomputable def everyHorseDidntJump (w : JumpOutcome) : ScopeDerivation horseModel .t where
   surface := "Every horse didn't jump"
   meaningAt
-    | .surface => every_sem horseModel horse_sem (fun h => ¬ jumpIn_sem w h)
-    | .inverse => ¬ (every_sem horseModel horse_sem (jumpIn_sem w))
+    | .surface => every_sem horse_sem (fun h => ¬ jumpIn_sem w h)
+    | .inverse => ¬ (every_sem horse_sem (jumpIn_sem w))
 
 /-- The `ScopeDerivation`'s `meaningAt` agrees with `scopeTruth` for both readings:
     when scopeTruth is true, the compositional derivation holds, and vice versa. -/
@@ -885,12 +885,12 @@ def jumpIn4_sem (w : JumpOutcome4) : horseModel4.Denot (.e ⇒ .t) :=
 /-- Exact surface scope: ⟦exactly 2⟧(horse)(λx.¬jump(x))(w).
     "There are exactly two horses that didn't jump." -/
 noncomputable def twoNotExact_surface (w : JumpOutcome4) : Prop :=
-  exactly_n_sem horseModel4 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
+  exactly_n_sem (α := Horse4) 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
 
 /-- Exact inverse scope: ¬⟦exactly 2⟧(horse)(jump)(w).
     "It's not the case that exactly two horses jumped." -/
 noncomputable def twoNotExact_inverse (w : JumpOutcome4) : Prop :=
-  ¬ (exactly_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+  ¬ (exactly_n_sem (α := Horse4) 2 horse4_sem (jumpIn4_sem w))
 
 /-- Exact surface grounding: `twoNotTruth .exact .surface` derives from
     compositional ⟦exactly 2⟧(horse)(λx.¬jump(x)), not stipulation. -/
@@ -911,12 +911,12 @@ theorem exact_inverse_from_exactly_n_sem :
 /-- At-least surface scope: ⟦at least 2⟧(horse)(λx.¬jump(x))(w).
     "There are at least two horses that didn't jump." -/
 noncomputable def twoNotAtLeast_surface (w : JumpOutcome4) : Prop :=
-  at_least_n_sem horseModel4 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
+  at_least_n_sem (α := Horse4) 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
 
 /-- At-least inverse scope: ¬⟦at least 2⟧(horse)(jump)(w).
     "It's not the case that at least two horses jumped." -/
 noncomputable def twoNotAtLeast_inverse (w : JumpOutcome4) : Prop :=
-  ¬ (at_least_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+  ¬ (at_least_n_sem (α := Horse4) 2 horse4_sem (jumpIn4_sem w))
 
 /-- At-least surface grounding: `twoNotTruth .atLeast .surface` derives from
     compositional ⟦at least 2⟧(horse)(λx.¬jump(x)). -/
@@ -988,15 +988,15 @@ def readingToScopeConfig : ScopeReading → ScopeConfig
 noncomputable def twoHorsesDidntJump_exact (w : JumpOutcome4) : ScopeDerivation horseModel4 .t where
   surface := "Two horses didn't jump"
   meaningAt
-    | .surface => exactly_n_sem horseModel4 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
-    | .inverse => ¬ (exactly_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+    | .surface => exactly_n_sem (α := Horse4) 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
+    | .inverse => ¬ (exactly_n_sem (α := Horse4) 2 horse4_sem (jumpIn4_sem w))
 
 /-- "Two horses didn't jump" as a `ScopeDerivation` under at-least semantics. -/
 noncomputable def twoHorsesDidntJump_atLeast (w : JumpOutcome4) : ScopeDerivation horseModel4 .t where
   surface := "Two horses didn't jump"
   meaningAt
-    | .surface => at_least_n_sem horseModel4 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
-    | .inverse => ¬ (at_least_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+    | .surface => at_least_n_sem (α := Horse4) 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
+    | .inverse => ¬ (at_least_n_sem (α := Horse4) 2 horse4_sem (jumpIn4_sem w))
 
 /-- The exact two-not scope pair has INDEPENDENT readings: neither entails
     the other. This independence makes exact numerals diagnostic for the
