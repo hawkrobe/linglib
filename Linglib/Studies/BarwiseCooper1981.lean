@@ -248,7 +248,7 @@ theorem strong_not_symmetric :
 theorem dual_all_eq_some {α : Type*} [Fintype α] [DecidableEq α] :
     dualQ (QuantityWord.all.gqDenotation (α := α)) = QuantityWord.some_.gqDenotation (α := α) := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Quantification.Quantifier.pdualQ_every_eq_some
+  exact Semantics.Quantification.Quantifier.dualQ_every_eq_some
 
 /-- Inner negation maps ⟦every⟧ to ⟦no⟧: every~ = no (@cite{barwise-cooper-1981} §4.11).
     ∀x. R(x) → ¬S(x) = ¬∃x. R(x) ∧ S(x).
@@ -256,7 +256,7 @@ theorem dual_all_eq_some {α : Type*} [Fintype α] [DecidableEq α] :
 theorem innerNeg_all_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
     innerNeg (QuantityWord.all.gqDenotation (α := α)) = QuantityWord.none_.gqDenotation (α := α) := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Quantification.Quantifier.pinnerNeg_every_eq_no
+  exact Semantics.Quantification.Quantifier.innerNeg_every_eq_no
 
 /-- Outer negation maps ⟦some⟧ to ⟦no⟧: ~some = no (@cite{barwise-cooper-1981} §4.11).
     ¬(∃x. R(x) ∧ S(x)) = ∀x. R(x) → ¬S(x).
@@ -264,7 +264,7 @@ theorem innerNeg_all_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
 theorem outerNeg_some_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
     outerNeg (QuantityWord.some_.gqDenotation (α := α)) = QuantityWord.none_.gqDenotation (α := α) := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Quantification.Quantifier.pouterNeg_some_eq_no
+  exact Semantics.Quantification.Quantifier.outerNeg_some_eq_no
 
 -- ============================================================================
 -- §9. Left anti-additivity → NPI licensing

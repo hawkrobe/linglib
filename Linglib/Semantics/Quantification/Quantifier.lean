@@ -1,46 +1,27 @@
 import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Quantification.Basic
+import Linglib.Core.Logic.Quantification.Counting
 import Linglib.Semantics.Composition.ToyDomain
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Quantification.Lexicon
-import Linglib.Core.Logic.Quantification
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.NormNum
-import Linglib.Core.Logic.Opposition.Aristotelian
 
 /-!
-# Generalized Quantifiers
-@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006} @cite{van-de-pol-etal-2023} @cite{mostowski-1957}
+# Generalized quantifiers: Frame bridge and toy-model examples
+@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006}
 
-Determiners have type `(e→t) → ((e→t) → t)`:
-- `⟦every⟧ = λR.λS. ∀x. R(x) → S(x)`
-- `⟦some⟧ = λR.λS. ∃x. R(x) ∧ S(x)`
-- `⟦no⟧ = λR.λS. ¬∃x. R(x) ∧ S(x)`
+The GQ substrate (concrete denotations like `every_sem`, `most_sem`, …
+plus their properties: conservativity, monotonicity, smoothness, quantity,
+proportionality, etc.) lives in `Core.Logic.Quantification.{Basic, Counting}`.
 
-## Semantic Universals
+This file is the **Frame layer**: the `Ty.det` semantic type, the
+Type-Shifting bridge `A_eq_some_sem`, the toy-model lexicon
+(`student_sem`, `person_sem`, `thing_sem`), the worked examples, and the
+`gqtMeaning` operator for quantity-implicature studies that plug
+threshold parameters into a uniform GQT signature.
 
-Three properties conjectured to hold of all simple (lexicalized) determiners:
-- **Conservativity**: `Q(A, B) ↔ Q(A, A ∩ B)` — only the restrictor matters
-- **Quantity** (isomorphism closure): meaning depends only on cardinalities
-  `|A ∩ B|`, `|A \ B|`, `|B \ A|`, `|M \ (A ∪ B)|`
-- **Monotonicity**: Q is either upward or downward monotone in scope
-
-@cite{van-de-pol-etal-2023} show quantifiers satisfying these universals have
-shorter minimal description length, suggesting a simplicity bias explains
-the universals.
-
-## Organization
-
-- **Generic GQ properties**: `Core.Quantification` — `Conservative`, `ScopeUpwardMono`,
-  `ScopeDownwardMono`, `outerNeg`, `innerNeg`, `dualQ`, etc. (model-agnostic, Bool-valued)
-- **Prop-valued GQ properties**: Defined locally in this file for Prop-valued denotations
-  (`Conservative`, `ScopeUpwardMono`, etc.)
-- **Concrete denotations**: `every_sem`, `some_sem`, etc. — Prop-valued, matching
-  `Denot .t = Prop`
-- **Counting quantifiers**: `most_sem`, `few_sem`, etc. — use `Finset.univ.filter`
-  for cardinality comparisons
-
+Toy-model counterexamples to non-properties (e.g. `every_not_symmetric`,
+`m_not_conservative`) also live here because they need a concrete
+witness type.
 -/
 
 namespace Semantics.Quantification.Quantifier
@@ -49,47 +30,62 @@ open Core.Logic.Intensional
 open Semantics.Montague (toyModel ToyEntity)
 open Core.Quantification
 
+export Core.Quantification
+  (every_sem some_sem no_sem
+   most_sem few_sem half_sem both_sem neither_sem
+   at_least_n_sem at_most_n_sem exactly_n_sem all_but_n_sem between_n_m_sem m_sem
+   count Quantity Proportional SatisfiesUniversals
+   every_conservative some_conservative no_conservative
+   most_conservative few_conservative half_conservative both_conservative
+   neither_conservative
+   at_least_n_conservative at_most_n_conservative exactly_n_conservative
+   all_but_n_conservative between_n_m_conservative
+   every_scope_up some_scope_up no_scope_down few_scope_down most_scope_up
+   at_least_n_scope_up at_most_n_scope_down
+   every_restrictor_down some_restrictor_up no_restrictor_down
+   at_least_n_restrictor_up at_most_n_restrictor_down
+   some_symmetric no_symmetric
+   some_intersective no_intersective
+   every_laa no_laa no_raa laa_characterization
+   innerNeg_every_eq_no dualQ_every_eq_some outerNeg_some_eq_no
+   every_positive_strong no_negative_strong_nonempty
+   some_existential no_existential
+   every_transitive every_antisymmetric some_quasi_reflexive no_quasi_universal
+   every_doubleMono some_doubleMono no_doubleMono notAll_doubleMono
+   every_filtrating
+   every_contradicts_notEvery no_contradicts_some
+   a_e_contrary subalternation_a_i subalternation_e_o subcontrariety_i_o
+   every_satisfies_isContradictory_pointwise
+   some_upSE some_upSW every_downNW every_downNE no_downNW no_downNE
+   some_downNE some_smooth every_upSE_direct every_smooth no_coSmooth_partial
+   most_downNE most_upSE most_smooth at_least_n_downNE at_least_n_smooth
+   at_most_n_coSmooth
+   forall_bij_inv exists_bij_inv count_bij_inv
+   quantity_outerNeg quantity_gqMeet
+   at_least_n_quantity at_most_n_quantity exactly_n_quantity
+   some_quantity no_quantity every_quantity
+   most_quantity few_quantity half_quantity
+   all_but_n_quantity between_n_m_quantity
+   some_eq_at_least_1 at_most_eq_outerNeg_at_least_succ no_eq_at_most_0
+   exactly_eq_meet_at_least_at_most all_but_0_eq_every
+   some_satisfiesUniversals every_satisfiesUniversals no_satisfiesUniversals
+   most_satisfiesUniversals few_satisfiesUniversals
+   at_least_n_satisfiesUniversals at_most_n_satisfiesUniversals
+   most_proportional few_proportional half_proportional
+   quantityInvariant_of_quantity quantity_of_quantityInvariant)
+
+/-! ### Semantic-type alias -/
+
+/-- The determiner type ⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩. -/
 def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
-/-! ### Local convenience over `Core.Quantification.GQ`
+/-! ### Frame bridge: `A` (Partee existential closure) = `some_sem`
 
-All `GQ` properties (`Conservative`, `ScopeUpwardMono`, …) and bridge lemmas
-(`outerNeg_*`, `restrictorUpMono_to_*`, `smooth_iff_outerNeg_coSmooth`,
-`zwarts_refl_trans_restrictorDown`, …) are imported from
-`Core.Logic.Quantification.{Defs, Properties}` via `open Core.Quantification`.
-The one piece without a Core analogue: a convenience conjunction. -/
+`A` (type-shifting bridge in `Composition.TypeShifting`) is Frame-typed;
+`some_sem` is `Type*`-polymorphic. The bridge is one direction. -/
 
-/-- A `GQ` satisfies the Barwise & Cooper monotonicity universals (CONS plus
-    monotone in scope in some direction). Convenience conjunction; Core has
-    `Conservative`, `ScopeUpwardMono`, `ScopeDownwardMono` separately. -/
-def SatisfiesUniversals {α : Type*} (q : GQ α) : Prop :=
-  Conservative q ∧ (ScopeUpwardMono q ∨ ScopeDownwardMono q)
-
-/-- Decidability of implication (not in Lean 4 core). -/
-instance decImpl {p q : Prop} [Decidable p] [Decidable q] : Decidable (p → q) :=
-  if hp : p then
-    if hq : q then .isTrue (fun _ => hq)
-    else .isFalse (fun h => hq (h hp))
-  else .isTrue (fun h => absurd h hp)
-
-
-/-- Count of elements satisfying a predicate, via `Finset.univ.filter`. -/
-def count {α : Type*} [Fintype α] (P : α → Prop) [DecidablePred P] : Nat :=
-  (Finset.univ.filter P).card
-
-/-! ### Denotations -/
-
-def every_sem {α : Type*} : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    ∀ x : α, R x → S x
-
-def some_sem {α : Type*} : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    ∃ x : α, R x ∧ S x
-
-/-- Partee's `A` (existential closure) = Barwise & Cooper's `⟦some⟧`.
-    Both compute `λR.λS. ∃x. R(x) ∧ S(x)` over a finite domain.
-    `A` takes the domain explicitly; `some_sem` uses `∃` over the entity type. -/
+/-- Partee's `A` (existential closure) equals B&C's ⟦some⟧ over a complete
+    finite domain. Both compute `λR.λS. ∃x. R(x) ∧ S(x)`. -/
 theorem A_eq_some_sem (F : Frame) (domain : List F.Entity)
     (hComplete : ∀ x : F.Entity, x ∈ domain) :
     Semantics.Composition.TypeShifting.A domain = (some_sem : GQ F.Entity) := by
@@ -98,82 +94,18 @@ theorem A_eq_some_sem (F : Frame) (domain : List F.Entity)
   exact propext ⟨fun ⟨x, _, hR, hS⟩ => ⟨x, hR, hS⟩,
                  fun ⟨x, hR, hS⟩ => ⟨x, hComplete x, hR, hS⟩⟩
 
-def no_sem {α : Type*} : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    ∀ x : α, R x → ¬S x
-
-open Classical in
-/-- `⟦most⟧(R)(S) = |R ∩ S| > |R \ S|` -/
-noncomputable def most_sem {α : Type*} [Fintype α] : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    count (fun x : α => R x ∧ S x) >
-    count (fun x : α => R x ∧ ¬S x)
-
-open Classical in
-/-- `⟦few⟧(R)(S) = |R ∩ S| < |R \ S|` — a minority of Rs are Ss.
-    Dual of `most_sem`: few(R,S) ↔ ¬most(R,S) ∧ ¬half(R,S). -/
-noncomputable def few_sem {α : Type*} [Fintype α] : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    count (fun x : α => R x ∧ S x) <
-    count (fun x : α => R x ∧ ¬S x)
-
-open Classical in
-/-- `⟦half⟧(R)(S) = 2 * |R ∩ S| = |R|` — exactly half of Rs are Ss. -/
-noncomputable def half_sem {α : Type*} [Fintype α] : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    2 * count (fun x : α => R x ∧ S x) =
-    count (fun x : α => R x)
-
-open Classical in
-/-- `⟦both⟧(R)(S) = ⟦every⟧(R)(S) ∧ |R| ≥ 2`.
-    K&S §2.3: `both` = `every` restricted to dual restrictors. -/
-noncomputable def both_sem {α : Type*} [Fintype α] : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    every_sem R S ∧ (Finset.univ.filter (fun x : α => R x)).card ≥ 2
-
-open Classical in
-/-- `⟦neither⟧` = `gqMeet ⟦no⟧ (|R| ≥ 2)` (K&S (83b)). -/
-noncomputable def neither_sem {α : Type*} [Fintype α] : GQ α :=
-  gqMeet no_sem
-    (fun (R : α → Prop) _ => (Finset.univ.filter (fun x : α => R x)).card ≥ 2)
-
-open Classical in
-/-- `⟦at least n⟧(R)(S) = |R ∩ S| ≥ n` -/
-noncomputable def at_least_n_sem {α : Type*} [Fintype α] (n : Nat) : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    count (fun x : α => R x ∧ S x) ≥ n
-
-open Classical in
-/-- `⟦at most n⟧(R)(S) = |R ∩ S| ≤ n` -/
-noncomputable def at_most_n_sem {α : Type*} [Fintype α] (n : Nat) : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    count (fun x : α => R x ∧ S x) ≤ n
-
-open Classical in
-/-- `⟦exactly n⟧(R)(S) = |R ∩ S| = n` -/
-noncomputable def exactly_n_sem {α : Type*} [Fintype α] (n : Nat) : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    count (fun x : α => R x ∧ S x) = n
-
-open Classical in
-/-- `⟦all but n⟧(R)(S) = |R \ S| = n` — exactly n R-elements are non-S.
-    Generalizes "every" (= all but 0). The exceptive counterpart of
-    `exactly_n_sem` (which counts |R ∩ S| = n). -/
-noncomputable def all_but_n_sem {α : Type*} [Fintype α] (n : Nat) : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    count (fun x : α => R x ∧ ¬S x) = n
-
-/-- `⟦between n and k⟧(R)(S) = n ≤ |R ∩ S| ≤ k` -/
-noncomputable def between_n_m_sem {α : Type*} [Fintype α] (n k : Nat) : GQ α :=
-  gqMeet (at_least_n_sem n) (at_most_n_sem k)
+/-! ### Toy-model `Fintype` instances -/
 
 instance : Fintype ToyEntity where
   elems := {.john, .mary, .pizza, .book}
   complete := fun x => by cases x <;> simp
 
-/-- Bridge: `toyModel.Entity = ToyEntity` is definitional but opaque to instance search. -/
+/-- Bridge: `toyModel.Entity = ToyEntity` is definitional but opaque to
+    instance search. -/
 instance : Fintype toyModel.Entity :=
   show Fintype ToyEntity by infer_instance
+
+/-! ### Toy lexicon -/
 
 section ToyLexicon
 
@@ -193,38 +125,42 @@ def thing_sem : toyModel.Denot (.e ⇒ .t) :=
   λ _ => True
 
 instance : DecidablePred student_sem :=
-  fun x => match x with | .john | .mary => .isTrue (by simp [student_sem])
-                        | .pizza | .book => .isFalse (by simp [student_sem])
+  fun x => match x with
+    | .john | .mary => .isTrue (by simp [student_sem])
+    | .pizza | .book => .isFalse (by simp [student_sem])
 
 instance : DecidablePred person_sem :=
-  fun x => match x with | .john | .mary => .isTrue (by simp [person_sem])
-                        | .pizza | .book => .isFalse (by simp [person_sem])
+  fun x => match x with
+    | .john | .mary => .isTrue (by simp [person_sem])
+    | .pizza | .book => .isFalse (by simp [person_sem])
 
 instance : DecidablePred thing_sem := fun _ => .isTrue trivial
 
 end ToyLexicon
 
+/-! ### Worked examples -/
+
 section Examples
 
 open Semantics.Montague.ToyLexicon
 
-/-- Not every student sleeps (john sleeps but mary doesn't). -/
-theorem not_everyStudentSleeps : ¬every_sem student_sem sleeps_sem := by
+/-- Not every student sleeps (John sleeps but Mary doesn't). -/
+theorem not_everyStudentSleeps : ¬ every_sem student_sem sleeps_sem := by
   intro h
   have := h ToyEntity.mary (by simp [student_sem])
   simp [sleeps_sem] at this
 
-/-- Some student sleeps (john does). -/
+/-- Some student sleeps (John does). -/
 theorem someStudentSleeps : some_sem student_sem sleeps_sem :=
   ⟨ToyEntity.john, by simp [student_sem], by simp [sleeps_sem]⟩
 
-/-- Not no student sleeps (john does). -/
-theorem not_noStudentSleeps : ¬no_sem student_sem sleeps_sem := by
+/-- Not no student sleeps (John does). -/
+theorem not_noStudentSleeps : ¬ no_sem student_sem sleeps_sem := by
   intro h
   have := h ToyEntity.john (by simp [student_sem])
   simp [sleeps_sem] at this
 
-/-- Every student laughs (john and mary both laugh). -/
+/-- Every student laughs (John and Mary both laugh). -/
 theorem everyStudentLaughs : every_sem student_sem laughs_sem := by
   intro x hR
   match x with
@@ -233,1060 +169,66 @@ theorem everyStudentLaughs : every_sem student_sem laughs_sem := by
   | .pizza => simp [student_sem] at hR
   | .book => simp [student_sem] at hR
 
-/-- Some student laughs. -/
 theorem someStudentLaughs : some_sem student_sem laughs_sem :=
   ⟨ToyEntity.john, by simp [student_sem], by simp [laughs_sem]⟩
 
-/-- Not every person sleeps. -/
-theorem not_everyPersonSleeps : ¬every_sem person_sem sleeps_sem := by
-  intro h; have := h ToyEntity.mary (by simp [person_sem]); simp [sleeps_sem] at this
+theorem not_everyPersonSleeps : ¬ every_sem person_sem sleeps_sem := by
+  intro h
+  have := h ToyEntity.mary (by simp [person_sem])
+  simp [sleeps_sem] at this
 
-/-- Some person sleeps. -/
 theorem somePersonSleeps : some_sem person_sem sleeps_sem :=
   ⟨ToyEntity.john, by simp [person_sem], by simp [sleeps_sem]⟩
 
 end Examples
 
-/-! ### Fintype model proofs
+/-! ### Toy-witnessed non-properties
 
-Require `Fintype` for decidable quantification. -/
+These counterexamples to non-properties of specific quantifiers require a
+concrete witness type. The witness is `ToyEntity`. -/
 
-section FintypeProofs
-
-open Classical Semantics.Montague.ToyLexicon
-
-variable {α : Type*} [Fintype α]
-
-/-! #### Bijection invariance (for `QuantityInvariant`) -/
-
-/-- `∀ x, P x` is invariant under bijective substitution. -/
-theorem forall_bij_inv (f : α → α) (hBij : Function.Bijective f)
-    (P : α → Prop) :
-    (∀ x, P x) ↔ (∀ x, P (f x)) := by
-  constructor
-  · intro h x; exact h (f x)
-  · intro h x; obtain ⟨y, rfl⟩ := hBij.surjective x; exact h y
-
-/-- `∃ x, P x` is invariant under bijective substitution. -/
-theorem exists_bij_inv (f : α → α) (hBij : Function.Bijective f)
-    (P : α → Prop) :
-    (∃ x, P x) ↔ (∃ x, P (f x)) := by
-  constructor
-  · intro ⟨x, hx⟩; obtain ⟨y, rfl⟩ := hBij.surjective x; exact ⟨y, hx⟩
-  · intro ⟨y, hy⟩; exact ⟨f y, hy⟩
-
-/-- `count P = count (P ∘ f)` when f is a bijection. -/
-theorem count_bij_inv (f : α → α) (hBij : Function.Bijective f)
-    {P : α → Prop} [DecidablePred P] :
-    count P = @count _ _ (P ∘ f) (fun x => ‹DecidablePred P› (f x)) := by
-  simp only [count, Function.comp]
-  symm; apply Finset.card_bij (fun x _ => f x)
-  · intro x hx; simp [Finset.mem_filter] at hx ⊢; exact hx
-  · intro x₁ _ x₂ _ h; exact hBij.injective h
-  · intro y hy
-    simp [Finset.mem_filter] at hy
-    obtain ⟨x, rfl⟩ := hBij.surjective y
-    exact ⟨x, by simp [Finset.mem_filter, hy], rfl⟩
-
-/-! #### Conservativity proofs -/
-
-/-- `⟦every⟧` is conservative: `∀x. R(x) → S(x)` iff `∀x. R(x) → (R(x) ∧ S(x))`. -/
-theorem every_conservative : Conservative (every_sem (α := α)) := by
-  intro R S; simp only [every_sem]
-  exact ⟨fun h x hR => ⟨hR, h x hR⟩, fun h x hR => (h x hR).2⟩
-
-/-- `⟦some⟧` is conservative: `∃x. R(x) ∧ S(x)` iff `∃x. R(x) ∧ (R(x) ∧ S(x))`. -/
-theorem some_conservative : Conservative (some_sem (α := α)) := by
-  intro R S; simp only [some_sem]
-  exact ⟨fun ⟨x, hR, hS⟩ => ⟨x, hR, hR, hS⟩, fun ⟨x, hR, _, hS⟩ => ⟨x, hR, hS⟩⟩
-
-/-- `⟦no⟧` is conservative: `∀x. R(x) → ¬S(x)` iff `∀x. R(x) → ¬(R(x) ∧ S(x))`. -/
-theorem no_conservative : Conservative (no_sem (α := α)) := by
-  intro R S; simp only [no_sem]
-  exact ⟨fun h x hR ⟨_, hS⟩ => h x hR hS, fun h x hR hS => h x hR ⟨hR, hS⟩⟩
-
-private theorem count_congr_iff {P Q : α → Prop}
-    [DecidablePred P] [DecidablePred Q]
-    (h : ∀ x, P x ↔ Q x) : count P = count Q := by
-  unfold count; congr 1; ext x
-  constructor
-  · intro hx; rw [Finset.mem_filter] at hx ⊢; exact ⟨hx.1, (h x).mp hx.2⟩
-  · intro hx; rw [Finset.mem_filter] at hx ⊢; exact ⟨hx.1, (h x).mpr hx.2⟩
-
-/-- Instance-polymorphic: `count(R∧S) = count(R∧(R∧S))` for any `DecidablePred` instances.
-    Universally quantifying over instances avoids the decidability diamond that arises
-    when counting quantifier definitions and proofs elaborate in different scopes. -/
-private theorem count_and_idem_any (R S : α → Prop)
-    (inst1 : DecidablePred (fun x : α => R x ∧ S x))
-    (inst2 : DecidablePred (fun x : α => R x ∧ (R x ∧ S x))) :
-    @count _ _ _ inst1 = @count _ _ _ inst2 := by
-  unfold count; congr 1; ext x
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  exact ⟨fun ⟨hR, hS⟩ => ⟨hR, hR, hS⟩, fun ⟨hR, _, hS⟩ => ⟨hR, hS⟩⟩
-
-/-- Instance-polymorphic: `count(R∧¬S) = count(R∧¬(R∧S))` for any `DecidablePred` instances. -/
-private theorem count_neg_idem_any (R S : α → Prop)
-    (inst1 : DecidablePred (fun x : α => R x ∧ ¬S x))
-    (inst2 : DecidablePred (fun x : α => R x ∧ ¬(R x ∧ S x))) :
-    @count _ _ _ inst1 = @count _ _ _ inst2 := by
-  unfold count; congr 1; ext x
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  exact ⟨fun ⟨hR, hNS⟩ => ⟨hR, fun ⟨_, hS⟩ => hNS hS⟩,
-         fun ⟨hR, hN⟩ => ⟨hR, fun hS => hN ⟨hR, hS⟩⟩⟩
-
-/-- `⟦most⟧` is conservative: the R-elements in S are the R-elements in R∩S. -/
-theorem most_conservative : Conservative (most_sem (α := α)) := by
-  intro R S; simp only [most_sem]
-  constructor <;> intro h
-  · rw [← count_and_idem_any R S _ _, ← count_neg_idem_any R S _ _]; exact h
-  · rw [count_and_idem_any R S _ _, count_neg_idem_any R S _ _]; exact h
-
-/-- `⟦few⟧` is conservative: the R-elements in S are the R-elements in R∩S. -/
-theorem few_conservative : Conservative (few_sem (α := α)) := by
-  intro R S; simp only [few_sem]
-  constructor <;> intro h
-  · rw [← count_and_idem_any R S _ _, ← count_neg_idem_any R S _ _]; exact h
-  · rw [count_and_idem_any R S _ _, count_neg_idem_any R S _ _]; exact h
-
-/-- `⟦half⟧` is conservative: depends only on R ∩ S within R. -/
-theorem half_conservative : Conservative (half_sem (α := α)) := by
-  intro R S; simp only [half_sem]
-  constructor <;> intro h
-  · rw [← count_and_idem_any R S _ _]; exact h
-  · rw [count_and_idem_any R S _ _]; exact h
-
-/-- `⟦both⟧` is conservative (inherits from `every_sem`). -/
-theorem both_conservative : Conservative (both_sem (α := α)) := by
-  intro R S
-  simp only [both_sem]
-  rw [every_conservative R S]
-
-/-- `⟦neither⟧` is conservative (inherits from `no_sem`). -/
-theorem neither_conservative : Conservative (neither_sem (α := α)) := by
-  intro R S
-  simp only [neither_sem, gqMeet]
-  rw [no_conservative R S]
-
-/-- `⟦at least n⟧` is conservative: |R ∩ S| = |R ∩ (R ∩ S)|. -/
-theorem at_least_n_conservative (n : Nat) : Conservative (at_least_n_sem (α := α) n) := by
-  intro R S; simp only [at_least_n_sem]
-  constructor <;> intro h
-  · rw [← count_and_idem_any R S _ _]; exact h
-  · rw [count_and_idem_any R S _ _]; exact h
-
-/-- `⟦at most n⟧` is conservative. -/
-theorem at_most_n_conservative (n : Nat) : Conservative (at_most_n_sem (α := α) n) := by
-  intro R S; simp only [at_most_n_sem]
-  constructor <;> intro h
-  · rw [← count_and_idem_any R S _ _]; exact h
-  · rw [count_and_idem_any R S _ _]; exact h
-
-/-- `⟦exactly n⟧` is conservative. -/
-theorem exactly_n_conservative (n : Nat) : Conservative (exactly_n_sem (α := α) n) := by
-  intro R S; simp only [exactly_n_sem]
-  constructor <;> intro h
-  · rw [← count_and_idem_any R S _ _]; exact h
-  · rw [count_and_idem_any R S _ _]; exact h
-
-/-! #### Scope monotonicity proofs -/
-
-/-- `⟦every⟧` is upward monotone in scope. -/
-theorem every_scope_up : ScopeUpwardMono (every_sem (α := α)) := by
-  intro R S S' hSS' h x hR; exact hSS' x (h x hR)
-
-/-- `⟦some⟧` is upward monotone in scope. -/
-theorem some_scope_up : ScopeUpwardMono (some_sem (α := α)) := by
-  intro R S S' hSS' ⟨x, hR, hS⟩; exact ⟨x, hR, hSS' x hS⟩
-
-/-- `⟦no⟧` is downward monotone in scope. -/
-theorem no_scope_down : ScopeDownwardMono (no_sem (α := α)) := by
-  intro R S S' hSS' h x hR hS; exact h x hR (hSS' x hS)
-
-/-- Finset.filter monotonicity: if P implies Q pointwise, then |filter P| ≤ |filter Q|. -/
-private theorem count_le_of_imp {P Q : α → Prop}
-    [DecidablePred P] [DecidablePred Q]
-    (h : ∀ x, P x → Q x) :
-    count P ≤ count Q := by
-  apply Finset.card_le_card
-  intro x
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  exact h x
-
-/-- `⟦few⟧` is downward monotone in scope: if S ⊆ S' and few(R,S'),
-    then few(R,S). Fewer Ss among Rs means even fewer S-subsets. -/
-theorem few_scope_down : ScopeDownwardMono (few_sem (α := α)) := by
-  intro R S S' hSS' h
-  simp only [few_sem] at *
-  have h1 : count (fun x : α => R x ∧ S x) ≤
-      count (fun x : α => R x ∧ S' x) :=
-    count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hR, hSS' x hS⟩
-  have h2 : count (fun x : α => R x ∧ ¬S' x) ≤
-      count (fun x : α => R x ∧ ¬S x) :=
-    count_le_of_imp fun x ⟨hR, hNS'⟩ => ⟨hR, fun hS => hNS' (hSS' x hS)⟩
-  omega
-
-/-- `⟦most⟧` is upward monotone in scope: if S ⊆ S' and most(R,S),
-    then most(R,S'). |R∩S'| ≥ |R∩S| > |R\S| ≥ |R\S'|. -/
-theorem most_scope_up : ScopeUpwardMono (most_sem (α := α)) := by
-  intro R S S' hSS' h
-  simp only [most_sem] at *
-  have h1 : count (fun x : α => R x ∧ S x) ≤
-      count (fun x : α => R x ∧ S' x) :=
-    count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hR, hSS' x hS⟩
-  have h2 : count (fun x : α => R x ∧ ¬S' x) ≤
-      count (fun x : α => R x ∧ ¬S x) :=
-    count_le_of_imp fun x ⟨hR, hNS'⟩ => ⟨hR, fun hS => hNS' (hSS' x hS)⟩
-  omega
-
-/-! #### Counting quantifier identities
-
-@cite{peters-westerstahl-2006} §4.3 -/
-
-/-- `⟦some⟧ = ⟦at least 1⟧`: existential quantification is "at least one". -/
-theorem some_eq_at_least_1 :
-    (some_sem (α := α) : GQ α) = (at_least_n_sem (α := α) 1 : GQ α) := by
-  funext R S
-  simp only [some_sem, at_least_n_sem]
-  exact propext ⟨
-    fun ⟨x, hR, hS⟩ => by
-      simp only [count]
-      exact Nat.one_le_iff_ne_zero.mpr (Finset.card_pos.mpr ⟨x, Finset.mem_filter.mpr
-        ⟨Finset.mem_univ _, hR, hS⟩⟩).ne',
-    fun h => by
-      simp only [count] at h
-      have hpos : 0 < (Finset.univ.filter (fun x : α => R x ∧ S x)).card := by omega
-      obtain ⟨x, hx⟩ := Finset.card_pos.mp hpos
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
-      exact ⟨x, hx.1, hx.2⟩⟩
-
-/-- `outerNeg ⟦some⟧ = ⟦no⟧`: negating existence gives universal negation. -/
-theorem pouterNeg_some_eq_no :
-    (outerNeg (some_sem (α := α)) : GQ α) = (no_sem (α := α) : GQ α) := by
-  funext R S; simp only [outerNeg, some_sem, no_sem]
-  exact propext ⟨
-    fun h x hR hS => h ⟨x, hR, hS⟩,
-    fun h ⟨x, hR, hS⟩ => h x hR hS⟩
-
-/-- `⟦at most n⟧ = outerNeg ⟦at least n+1⟧`: duality of lower and upper bounds.
-    This is the counting quantifier instance of the Square of Opposition. -/
-theorem at_most_eq_pouterNeg_at_least_succ (n : Nat) :
-    (at_most_n_sem (α := α) n : GQ α) =
-    (outerNeg (at_least_n_sem (α := α) (n + 1)) : GQ α) := by
-  funext R S; simp only [at_most_n_sem, at_least_n_sem, outerNeg]
-  exact propext ⟨fun h hGe => by omega, fun h => by omega⟩
-
-/-- `⟦no⟧ = ⟦at most 0⟧`. Derived algebraically:
-    no = outerNeg(some) = outerNeg(at_least 1) = at_most 0. -/
-theorem no_eq_at_most_0 :
-    (no_sem (α := α) : GQ α) = (at_most_n_sem (α := α) 0 : GQ α) := by
-  rw [← pouterNeg_some_eq_no, some_eq_at_least_1, at_most_eq_pouterNeg_at_least_succ]
-
-/-- `⟦exactly n⟧ = ⟦at least n⟧ ⊓ ⟦at most n⟧` in the GQ lattice.
-    "Exactly n" is the meet of a lower bound and an upper bound. -/
-theorem exactly_eq_meet_at_least_at_most (n : Nat) :
-    (exactly_n_sem (α := α) n : GQ α) =
-    (gqMeet (at_least_n_sem (α := α) n) (at_most_n_sem (α := α) n) : GQ α) := by
-  funext R S; simp only [exactly_n_sem, at_least_n_sem, at_most_n_sem, gqMeet]
-  exact propext ⟨fun h => ⟨by omega, by omega⟩, fun ⟨h1, h2⟩ => by omega⟩
-
-/-- `⟦at least n⟧` is Mon↑ in scope: enlarging B cannot decrease |A ∩ B|. -/
-theorem at_least_n_scope_up (n : Nat) : ScopeUpwardMono (at_least_n_sem (α := α) n) := by
-  intro R S S' hSS' h
-  simp only [at_least_n_sem] at *
-  exact le_trans h (count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hR, hSS' x hS⟩)
-
-/-- `⟦at most n⟧` is Mon↓ in scope. Derived from duality:
-    outerNeg flips Mon↑ to Mon↓, and `at_most = outerNeg(at_least)`. -/
-theorem at_most_n_scope_down (n : Nat) : ScopeDownwardMono (at_most_n_sem (α := α) n) := by
-  rw [at_most_eq_pouterNeg_at_least_succ]
-  exact outerNeg_up_to_down _ (at_least_n_scope_up _)
-
-/-! #### Quantity / isomorphism closure
-
-@cite{mostowski-1957} -/
-
-/--
-Quantity / Isomorphism closure:
-Q(A, B) depends only on the four cardinalities
-`|A ∩ B|`, `|A \ B|`, `|B \ A|`, `|M \ (A ∪ B)|`.
-
-Equivalently: permuting the domain does not change the quantifier's
-truth value. This is the type ⟨1,1⟩ (binary) generalization of
-@cite{mostowski-1957}'s permutation invariance for type ⟨1⟩ (unary)
-quantifiers; the extension to binary determiners is due to
-@cite{van-benthem-1984} (building on Lindström 1966).
--/
-def Quantity (q : GQ α) : Prop :=
-  ∀ (R₁ S₁ R₂ S₂ : α → Prop),
-    count (fun x => R₁ x ∧ S₁ x) =
-    count (fun x => R₂ x ∧ S₂ x) →
-    count (fun x => R₁ x ∧ ¬S₁ x) =
-    count (fun x => R₂ x ∧ ¬S₂ x) →
-    count (fun x => ¬R₁ x ∧ S₁ x) =
-    count (fun x => ¬R₂ x ∧ S₂ x) →
-    count (fun x => ¬R₁ x ∧ ¬S₁ x) =
-    count (fun x => ¬R₂ x ∧ ¬S₂ x) →
-    (q R₁ S₁ ↔ q R₂ S₂)
-
-/-- `Quantity → QuantityInvariant`: cardinality-dependence implies bijection-invariance.
-    TODO: proof requires adapting cell-bijection machinery to Prop predicates. -/
-theorem quantityInvariant_of_quantity (q : GQ α) (hQ : Quantity q) :
-    QuantityInvariant q := by
+/-- `m_sem` is not conservative: it inspects `B` outside `A`. -/
+theorem m_not_conservative : ¬ Conservative (m_sem (α := ToyEntity)) := by
   sorry
 
-variable [DecidableEq α]
-
-/-- `QuantityInvariant → Quantity`: bijection-invariance implies cardinality-dependence.
-    TODO: proof requires adapting cell-bijection machinery to Prop predicates. -/
-theorem quantity_of_quantityInvariant (q : GQ α)
-    (hQ : QuantityInvariant q) :
-    Quantity q := by
-  sorry
-
-/-! #### Non-conservative counterexample -/
-
-/-- A non-conservative quantifier for contrast: `⟦M⟧(A,B) = |A| > |B|`
-(van de Pol et al.'s hypothetical counterpart to "most"). -/
-noncomputable def m_sem {α : Type*} [Fintype α] : GQ α :=
-  fun (R : α → Prop) (S : α → Prop) =>
-    count (fun x : α => R x) > count (fun x : α => S x)
-
-/-- M is not conservative: it inspects B outside A. -/
-theorem m_not_conservative : ¬Conservative (m_sem (α := ToyEntity)) := by
-  intro h
-  have := (h student_sem (fun x => match x with | .john => True | .pizza => True | _ => False)).mp
-  simp only [m_sem, student_sem, count] at this
-  -- student_sem has 2 elements, the scope predicate also has 2, so ¬(2 > 2)
-  -- but student_sem ∧ scope has 1 element, so 2 > 1
-  sorry
-
-/-! #### Symmetry proofs (P&W Ch.6) -/
-
-/-- `⟦some⟧` is symmetric: ∃x.R(x)∧S(x) = ∃x.S(x)∧R(x). -/
-theorem some_symmetric : QSymmetric (some_sem (α := α)) := by
-  intro R S; simp only [some_sem]
-  exact ⟨fun ⟨x, hR, hS⟩ => ⟨x, hS, hR⟩, fun ⟨x, hS, hR⟩ => ⟨x, hR, hS⟩⟩
-
-/-- `⟦no⟧` is symmetric: ¬∃x.R(x)∧S(x) = ¬∃x.S(x)∧R(x). -/
-theorem no_symmetric : QSymmetric (no_sem (α := α)) := by
-  intro R S; simp only [no_sem]
-  exact ⟨fun h x hS hR => h x hR hS, fun h x hR hS => h x hS hR⟩
-
-/-- `⟦every⟧` is NOT symmetric. Witness: R=students, S=things (everything).
-    every(students)(things)=true but every(things)(students)=false. -/
-theorem every_not_symmetric : ¬QSymmetric (every_sem (α := ToyEntity)) := by
+/-- `⟦every⟧` is NOT symmetric. Witness: R=students, S=things; every(students,
+    things)=true but every(things,students)=false. -/
+theorem every_not_symmetric : ¬ QSymmetric (every_sem (α := ToyEntity)) := by
   intro h
   have := (h student_sem thing_sem).mp (fun x _ => trivial)
   exact absurd (this ToyEntity.pizza trivial) (by simp [student_sem])
 
-/-! #### Intersectivity via CONSERV+SYMM bridge -/
-
-/-- `⟦some⟧` is intersective (follows from CONSERV + SYMM). -/
-theorem some_intersective : IntersectionCondition (some_sem (α := α)) := by
-  intro R S R' S' hInt
-  simp only [some_sem]
-  exact ⟨fun ⟨x, hR, hS⟩ => let ⟨hR', hS'⟩ := (hInt x).mp ⟨hR, hS⟩; ⟨x, hR', hS'⟩,
-         fun ⟨x, hR', hS'⟩ => let ⟨hR, hS⟩ := (hInt x).mpr ⟨hR', hS'⟩; ⟨x, hR, hS⟩⟩
-
-/-- `⟦no⟧` is intersective. -/
-theorem no_intersective : IntersectionCondition (no_sem (α := α)) := by
-  intro R S R' S' hInt
-  simp only [no_sem]
-  constructor
-  · intro h x hR' hS'
-    have ⟨hR, hS⟩ := (hInt x).mpr ⟨hR', hS'⟩
-    exact h x hR hS
-  · intro h x hR hS
-    have ⟨hR', hS'⟩ := (hInt x).mp ⟨hR, hS⟩
-    exact h x hR' hS'
-
-/-! #### Left anti-additivity (P&W §5.8) -/
-
-/-- `⟦every⟧` is left anti-additive: every(A∪B, C) = every(A,C) ∧ every(B,C). -/
-theorem every_laa : LeftAntiAdditive (every_sem (α := α)) := by
-  intro R R' S; simp only [every_sem]
-  constructor
-  · intro h; exact ⟨fun x hR => h x (Or.inl hR), fun x hR' => h x (Or.inr hR')⟩
-  · intro ⟨h1, h2⟩ x hRR'
-    rcases hRR' with hR | hR'
-    · exact h1 x hR
-    · exact h2 x hR'
-
-/-- `⟦no⟧` is left anti-additive: no(A∪B, C) = no(A,C) ∧ no(B,C). -/
-theorem no_laa : LeftAntiAdditive (no_sem (α := α)) := by
-  intro R R' S; simp only [no_sem]
-  constructor
-  · intro h; exact ⟨fun x hR => h x (Or.inl hR), fun x hR' => h x (Or.inr hR')⟩
-  · intro ⟨h1, h2⟩ x hRR'
-    rcases hRR' with hR | hR'
-    · exact h1 x hR
-    · exact h2 x hR'
-
-/-- `⟦no⟧` is right anti-additive: no(A, B∪C) = no(A,B) ∧ no(A,C).
-    "Nobody saw A-or-B" ↔ "Nobody saw A and nobody saw B".
-    This licenses strong NPIs in scope: "Nobody lifted a finger." -/
-theorem no_raa : RightAntiAdditive (no_sem (α := α)) := by
-  intro R S S'; simp only [no_sem]
-  constructor
-  · intro h
-    exact ⟨fun x hR hS => h x hR (Or.inl hS),
-           fun x hR hS' => h x hR (Or.inr hS')⟩
-  · intro ⟨h1, h2⟩ x hR hSS'
-    rcases hSS' with hS | hS'
-    · exact h1 x hR hS
-    · exact h2 x hR hS'
-
-/-- @cite{peters-westerstahl-2006} Prop 13: the only non-trivial CONSERV, EXT,
-    and ISOM quantifiers satisfying LAA are `every` and `no` (and `A = ∅`). -/
-theorem laa_characterization :
-    LeftAntiAdditive (every_sem (α := α)) ∧
-    LeftAntiAdditive (no_sem (α := α)) := ⟨every_laa, no_laa⟩
-
-/-! #### Duality square (P&W §1.1.1) -/
-
-/-- Inner negation maps `every` to `no`: every...not = no.
-    `∀x. R(x) → ¬S(x)` = `¬∃x. R(x) ∧ S(x)`. -/
-theorem pinnerNeg_every_eq_no :
-    (innerNeg (every_sem (α := α)) : GQ α) = (no_sem (α := α) : GQ α) := by
-  funext R S; simp only [innerNeg, every_sem, no_sem]
-
-/-- The dual of `every` is `some`: Q̌(every) = some.
-    `¬(∀x. R(x) → ¬S(x))` = `∃x. R(x) ∧ S(x)`. -/
-theorem pdualQ_every_eq_some :
-    (dualQ (every_sem (α := α)) : GQ α) = (some_sem (α := α) : GQ α) := by
-  funext R S; simp only [dualQ, outerNeg, innerNeg, every_sem, some_sem]
-  exact propext ⟨
-    fun h => by push_neg at h; exact h,
-    fun ⟨x, hR, hS⟩ h => h x hR hS⟩
-
-/-! #### Extension: spectator irrelevance
-
-List-based proofs preserved for compatibility. -/
-
-/-- `every_sem` satisfies Extension: spectator elements
-    (outside the restrictor) don't affect truth values. -/
-theorem every_ext_spectator (es : List α) (e : α)
-    (R S : α → Bool) (hR : R e = false) :
-    (e :: es).all (λ x => !R x || S x) =
-    es.all (λ x => !R x || S x) := by
-  simp [List.all_cons, hR]
-
-/-- `some_sem` satisfies Extension. -/
-theorem some_ext_spectator (es : List α) (e : α)
-    (R S : α → Bool) (hR : R e = false) :
-    (e :: es).any (λ x => R x && S x) =
-    es.any (λ x => R x && S x) := by
-  simp [List.any_cons, hR]
-
-/-- `no_sem` satisfies Extension. -/
-theorem no_ext_spectator (es : List α) (e : α)
-    (R S : α → Bool) (hR : R e = false) :
-    (e :: es).all (λ x => !R x || !S x) =
-    es.all (λ x => !R x || !S x) := by
-  simp [List.all_cons, hR]
-
-/-- `most_sem` satisfies Extension: spectators don't enter
-    either R∩S or R\S, so the cardinality comparison is unchanged. -/
-theorem most_ext_spectator (es : List α) (e : α)
-    (R S : α → Bool) (hR : R e = false) :
-    (e :: es).filter (λ x => R x && S x) = es.filter (λ x => R x && S x) ∧
-    (e :: es).filter (λ x => R x && !S x) = es.filter (λ x => R x && !S x) := by
-  constructor <;> (simp [hR])
-
-/-! #### Positive/negative strong (P&W Ch.6) -/
-
-/-- `every_sem` is positive strong: every(A,A) = true for all A.
-    Proof: `R(x) → R(x)` for all x. -/
-theorem every_positive_strong : PositiveStrong (every_sem (α := α)) := by
-  intro R x hR; exact hR
-
-/-- `no_sem` is negative strong on non-empty restrictors:
-    no(A,A) = false for all non-empty A. -/
-theorem no_negative_strong_nonempty (R : α → Prop)
-    (hR : ∃ x : α, R x) :
-    ¬no_sem (α := α) R R := by
-  intro h
-  obtain ⟨x, hRx⟩ := hR
-  exact h x hRx hRx
-
-/-- `no_sem` is NOT positive strong: no(A,A) = false when A is non-empty.
-    Counterexample: R = {john}. -/
-theorem no_not_positive_strong : ¬PositiveStrong (no_sem (α := ToyEntity)) := by
+/-- `⟦no⟧` is NOT positive strong: no(A,A) = false when A is non-empty. -/
+theorem no_not_positive_strong : ¬ PositiveStrong (no_sem (α := ToyEntity)) := by
   intro h
   have := h student_sem
   exact this ToyEntity.john (by simp [student_sem]) (by simp [student_sem])
 
-/-! #### K&S existential det classification (§3.3, G3) -/
-
-/-- `⟦some⟧` is existential (K&S G3): some(A,B) = some(A∩B, everything).
-    some is natural in there-sentences: "There are some cats." -/
-theorem some_existential : Existential (some_sem (α := α)) := by
-  intro R S; simp only [some_sem]
-  exact ⟨fun ⟨x, hR, hS⟩ => ⟨x, ⟨hR, hS⟩, trivial⟩,
-         fun ⟨x, ⟨hR, hS⟩, _⟩ => ⟨x, hR, hS⟩⟩
-
-/-- `⟦no⟧` is existential (K&S G3): no(A,B) = no(A∩B, everything). -/
-theorem no_existential : Existential (no_sem (α := α)) := by
-  intro R S; simp only [no_sem]
-  exact ⟨fun h x ⟨hR, hS⟩ _ => h x hR hS,
-         fun h x hR hS => h x ⟨hR, hS⟩ trivial⟩
-
 /-- `⟦every⟧` is NOT existential (K&S §3.3). -/
-theorem every_not_existential : ¬Existential (every_sem (α := ToyEntity)) := by
+theorem every_not_existential : ¬ Existential (every_sem (α := ToyEntity)) := by
   intro h
-  -- every(thing, student) should be false (pizza is a thing but not a student)
-  -- but every(thing ∩ student, True) = every(student, True) = true
   have hFwd := (h thing_sem student_sem).mpr
   have : every_sem (fun x => thing_sem x ∧ student_sem x) (fun _ => True) := by
     intro x _; trivial
-  have := hFwd this
-  exact absurd (this ToyEntity.pizza trivial) (by simp [student_sem])
+  exact absurd (hFwd this ToyEntity.pizza trivial) (by simp [student_sem])
 
 /-- `⟦most⟧` is NOT existential (K&S §3.3). -/
-theorem most_not_existential : ¬Existential (most_sem (α := ToyEntity)) := by
-  -- most(student, sleeps): |{john}∩{john}|=1 vs |{mary}\{john}|=1, so 1 > 1 = false
-  -- most(student∩sleeps, True) = most({john}, True): |{john}|=1 vs |∅|=0, so 1 > 0 = true
+theorem most_not_existential : ¬ Existential (most_sem (α := ToyEntity)) := by
   sorry
-
-/-! ### Relational properties of concrete quantifiers
-
-@cite{van-benthem-1984} -/
-
-/-- `⟦every⟧` is transitive: A ⊆ B and B ⊆ C implies A ⊆ C. -/
-theorem every_transitive : QTransitive (every_sem (α := α)) := by
-  intro A B C hAB hBC x hA; exact hBC x (hAB x hA)
-
-/-- `⟦every⟧` is antisymmetric: A ⊆ B and B ⊆ A implies A = B. -/
-theorem every_antisymmetric : QAntisymmetric (every_sem (α := α)) := by
-  intro A B hAB hBA
-  funext x; exact propext ⟨fun hA => hAB x hA, fun hB => hBA x hB⟩
-
-/-- `⟦some⟧` is quasi-reflexive: A∩B ≠ ∅ implies A∩A ≠ ∅ (i.e., A ≠ ∅). -/
-theorem some_quasi_reflexive : QuasiReflexive (some_sem (α := α)) := by
-  intro A B ⟨x, hA, _⟩; exact ⟨x, hA, hA⟩
-
-/-- `⟦no⟧` is quasi-universal: A∩A = ∅ (i.e., A = ∅) implies A∩B = ∅ for all B. -/
-theorem no_quasi_universal : QuasiUniversal (no_sem (α := α)) := by
-  intro A B hAA x hA; exact absurd hA (hAA x hA)
-
-/-! ### Double monotonicity classification
-
-@cite{van-benthem-1984} -/
-
-/-- `⟦every⟧` is restrictor-↓ (anti-persistent).
-    Follows from Zwarts bridge: reflexive + transitive + CONSERV → ↓MON. -/
-theorem every_restrictor_down : RestrictorDownwardMono (every_sem (α := α)) :=
-  zwarts_refl_trans_restrictorDown _ every_conservative every_positive_strong every_transitive
-
-/-- `⟦some⟧` is restrictor-↑ (persistent): A ⊆ A' and some(A,B) → some(A',B). -/
-theorem some_restrictor_up : RestrictorUpwardMono (some_sem (α := α)) := by
-  intro R R' S hRR' ⟨x, hR, hS⟩; exact ⟨x, hRR' x hR, hS⟩
-
-/-- `⟦no⟧` is restrictor-↓ (anti-persistent): A ⊆ A' and no(A',B) → no(A,B). -/
-theorem no_restrictor_down : RestrictorDownwardMono (no_sem (α := α)) := by
-  intro R R' S hRR' hQ x hR; exact hQ x (hRR' x hR)
-
-/-- `⟦every⟧` has double monotonicity ↓MON↑ (@cite{van-benthem-1984} §4.2). -/
-theorem every_doubleMono :
-    RestrictorDownwardMono (every_sem (α := α)) ∧ ScopeUpwardMono (every_sem (α := α)) :=
-  ⟨every_restrictor_down, every_scope_up⟩
-
-/-- `⟦some⟧` has double monotonicity ↑MON↑. -/
-theorem some_doubleMono :
-    RestrictorUpwardMono (some_sem (α := α)) ∧ ScopeUpwardMono (some_sem (α := α)) :=
-  ⟨some_restrictor_up, some_scope_up⟩
-
-/-- `⟦no⟧` has double monotonicity ↓MON↓. -/
-theorem no_doubleMono :
-    RestrictorDownwardMono (no_sem (α := α)) ∧ ScopeDownwardMono (no_sem (α := α)) :=
-  ⟨no_restrictor_down, no_scope_down⟩
-
-/-- `outerNeg ⟦every⟧` (= "not all") has double monotonicity ↑MON↓. -/
-theorem notAll_doubleMono :
-    RestrictorUpwardMono (outerNeg (every_sem (α := α))) ∧
-    ScopeDownwardMono (outerNeg (every_sem (α := α))) :=
-  ⟨outerNeg_restrictorDown_to_up _ every_restrictor_down,
-   outerNeg_up_to_down _ every_scope_up⟩
-
-/-- `⟦every⟧` is filtrating: every(A,B) ∧ every(A,C) → every(A, B∩C). -/
-theorem every_filtrating : Filtrating (every_sem (α := α)) := by
-  intro A B C hAB hAC x hA; exact ⟨hAB x hA, hAC x hA⟩
-
-/-! ### Aristotelian square of opposition
-
-@cite{belnap-1970} @cite{strawson-1952}
-
-The six theorems below establish the four Aristotelian relations among
-GQ denotations `(every_sem, some_sem, no_sem, outerNeg every_sem)` at fixed
-restrictor `R`. They work over `Prop`-valued predicates, while
-`Core.Logic.Opposition.Aristotelian` formulates the same relations over
-`Bool`-valued predicates. The two frameworks are mathematically equivalent
-but type-different; bridging them at the predicate level would require either
-a `Prop`-valued version of the Aristotelian relations or a Bool-coercion of
-the GQ machinery — both architectural decisions beyond this section's scope.
-
-For consumers wanting to instantiate the abstract `Square (W → Bool)` from
-`Core.Opposition.Square`, pass `decide`-coerced versions of the GQ predicates.
-The downstream `Studies/BarwiseCooper1981.lean` duality theorems are the
-natural site to package this bridge. -/
-
-/-- **Contradiction (A vs O)**: the A-form and O-form are contradictories. -/
-theorem every_contradicts_notEvery (R S : α → Prop) :
-    every_sem (α := α) R S ↔ ¬(outerNeg (every_sem (α := α)) R S) := by
-  simp [outerNeg, Classical.not_not]
-
-/-- **Contradiction (E vs I)**: the E-form and I-form are contradictories. -/
-theorem no_contradicts_some (R S : α → Prop) :
-    no_sem (α := α) R S ↔ ¬(some_sem (α := α) R S) := by
-  simp only [no_sem, some_sem]; push_neg; rfl
-
-/-- **Contrariety (A ∧ E)**: the A-form and E-form can't both hold
-    unless the restrictor is empty. -/
-theorem a_e_contrary (R S : α → Prop) :
-    every_sem (α := α) R S → no_sem (α := α) R S →
-    ∀ x : α, ¬R x := by
-  intro hA hE x hR
-  exact hE x hR (hA x hR)
-
-/-- **Subalternation (A → I)**: the A-form entails the I-form when the
-    restrictor is non-empty. -/
-theorem subalternation_a_i (R S : α → Prop)
-    (hR : ∃ x : α, R x) :
-    every_sem (α := α) R S → some_sem (α := α) R S := by
-  intro hA; obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
-
-/-- **Subalternation (E → O)**: the E-form entails the O-form when the
-    restrictor is non-empty. -/
-theorem subalternation_e_o (R S : α → Prop)
-    (hR : ∃ x : α, R x) :
-    no_sem (α := α) R S → outerNeg (every_sem (α := α)) R S := by
-  intro hE hA
-  obtain ⟨x, hRx⟩ := hR
-  exact hE x hRx (hA x hRx)
-
-/-- **Subcontrariety (I ∨ O)**: the I-form and O-form can't both fail
-    when the restrictor is non-empty. -/
-theorem subcontrariety_i_o (R S : α → Prop)
-    (hR : ∃ x : α, R x) :
-    some_sem (α := α) R S ∨ outerNeg (every_sem (α := α)) R S := by
-  by_cases h : some_sem (α := α) R S
-  · exact Or.inl h
-  · right; intro hA
-    apply h; obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
-
-/-- **Bundled** (Prop↔Bool gap closure demo): the canonical A↔O contradiction
-    diagonal, packaged as `Core.Opposition.IsContradictory` over the
-    Pi-instance Boolean algebra on `(α → Prop) → Prop`. For a fixed
-    restrictor `R`, the GQ semantics `every_sem (α := α) R` and its outer-negation
-    `outerNeg (every_sem (α := α)) R` are pointwise contradictory in the BA-generic
-    sense.
-
-    This bundling demonstrates that `Aristotelian.lean`'s polymorphic
-    `IsContradictory`/`IsSubaltern`/etc. work uniformly on Prop-valued
-    predicates (the GQ convention) and Bool-valued predicates (the Tessler
-    convention), via `Pi.instBooleanAlgebra` for `Prop` and `Bool` respectively.
-    The audit's "Prop↔Bool gap" is closed at the type level. Bundling
-    theorems for the other 5 corners (E↔I, A∧E, A→I, E→O, I∨O) follow the
-    same template. -/
-theorem every_satisfies_isContradictory_pointwise (R : α → Prop) :
-    Core.Opposition.IsContradictory
-      ((every_sem (α := α) R) : (α → Prop) → Prop)
-      (outerNeg (every_sem (α := α)) R) := by
-  refine ⟨?_, ?_⟩
-  · funext S
-    apply propext
-    refine ⟨?_, fun h => h.elim⟩
-    rintro ⟨h1, h2⟩
-    exact h2 h1
-  · funext S
-    apply propext
-    refine ⟨fun _ => trivial, fun _ => ?_⟩
-    by_cases h : every_sem (α := α) R S
-    · exact Or.inl h
-    · exact Or.inr h
-
-/-! ### Basic left monotonicities (@cite{peters-westerstahl-2006} §5.5) -/
-
-/-- `⟦some⟧` is ↑_SE Mon: adding elements of B to A preserves some(A,B). -/
-theorem some_upSE : UpSEMon (some_sem (α := α)) :=
-  restrictorUpMono_to_upSE _ some_restrictor_up
-
-/-- `⟦some⟧` is ↑_SW Mon: adding elements outside B to A preserves some(A,B). -/
-theorem some_upSW : UpSWMon (some_sem (α := α)) :=
-  restrictorUpMono_to_upSW _ some_restrictor_up
-
-/-- `⟦every⟧` is ↓_NW Mon: removing elements of B from A preserves every(A,B). -/
-theorem every_downNW : DownNWMon (every_sem (α := α)) :=
-  restrictorDownMono_to_downNW _ every_restrictor_down
-
-/-- `⟦every⟧` is ↓_NE Mon: removing elements outside B from A preserves every(A,B). -/
-theorem every_downNE : DownNEMon (every_sem (α := α)) :=
-  restrictorDownMono_to_downNE _ every_restrictor_down
-
-/-- `⟦no⟧` is ↓_NW Mon. -/
-theorem no_downNW : DownNWMon (no_sem (α := α)) :=
-  restrictorDownMono_to_downNW _ no_restrictor_down
-
-/-- `⟦no⟧` is ↓_NE Mon. -/
-theorem no_downNE : DownNEMon (no_sem (α := α)) :=
-  restrictorDownMono_to_downNE _ no_restrictor_down
-
-/-! ### Smooth quantifiers (@cite{peters-westerstahl-2006} §5.6) -/
-
-/-- `⟦some⟧` is ↓_NE Mon (direct proof).
-    Removing non-S elements from A preserves ∃x.R(x)∧S(x) since the witness is in S. -/
-theorem some_downNE : DownNEMon (some_sem (α := α)) := by
-  intro R S R' hSub hKeep ⟨x, hR, hS⟩
-  exact ⟨x, hKeep x hR hS, hS⟩
-
-/-- `⟦some⟧` is smooth (↓_NE + ↑_SE). -/
-theorem some_smooth : Smooth (some_sem (α := α)) :=
-  ⟨some_downNE, restrictorUpMono_to_upSE _ some_restrictor_up⟩
-
-/-- `⟦every⟧` is ↑_SE Mon (direct proof).
-    Adding B-elements to A preserves ∀x.R(x)→S(x) since the new elements satisfy S. -/
-theorem every_upSE_direct : UpSEMon (every_sem (α := α)) := by
-  intro R S R' hSub hDiff hQ x hR'
-  by_cases hS : S x
-  · exact hS
-  · exact hQ x (hDiff x hR' hS)
-
-/-- `⟦every⟧` is smooth (↓_NE + ↑_SE). -/
-theorem every_smooth : Smooth (every_sem (α := α)) :=
-  ⟨every_downNE, every_upSE_direct⟩
-
-/-- `⟦no⟧` is co-smooth (↓_NW + ↑_SW). Follows from anti-persistence. -/
-theorem no_coSmooth_partial : DownNWMon (no_sem (α := α)) ∧ DownNEMon (no_sem (α := α)) :=
-  ⟨restrictorDownMono_to_downNW _ no_restrictor_down,
-   restrictorDownMono_to_downNE _ no_restrictor_down⟩
-
-/-- `⟦most⟧` is ↓_NE Mon (direct proof). -/
-theorem most_downNE : DownNEMon (most_sem (α := α)) := by
-  intro R S R' hSub hKeep hQ
-  simp only [most_sem] at *
-  have hEq : count (fun x : α => R' x ∧ S x) =
-      count (fun x : α => R x ∧ S x) := by
-    simp only [count]; congr 1; ext x; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨fun ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩, fun ⟨hR, hS⟩ => ⟨hKeep x hR hS, hS⟩⟩
-  have hLe : count (fun x : α => R' x ∧ ¬S x) ≤
-      count (fun x : α => R x ∧ ¬S x) :=
-    count_le_of_imp fun x ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩
-  omega
-
-/-- `⟦most⟧` is ↑_SE Mon (direct proof). -/
-theorem most_upSE : UpSEMon (most_sem (α := α)) := by
-  intro R S R' hSub hDiff hQ
-  simp only [most_sem] at *
-  have hEq : count (fun x : α => R' x ∧ ¬S x) =
-      count (fun x : α => R x ∧ ¬S x) := by
-    simp only [count]; congr 1; ext x; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨fun ⟨hR', hS⟩ => ⟨hDiff x hR' hS, hS⟩, fun ⟨hR, hS⟩ => ⟨hSub x hR, hS⟩⟩
-  have hLe : count (fun x : α => R x ∧ S x) ≤
-      count (fun x : α => R' x ∧ S x) :=
-    count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hSub x hR, hS⟩
-  omega
-
-/-- `⟦most⟧` is smooth. -/
-theorem most_smooth : Smooth (most_sem (α := α)) :=
-  ⟨most_downNE, most_upSE⟩
-
-/-! #### Counting quantifier smoothness -/
-
-/-- `⟦at least n⟧` is persistent (Mon↑ in restrictor). -/
-theorem at_least_n_restrictor_up (n : Nat) : RestrictorUpwardMono (at_least_n_sem (α := α) n) := by
-  intro R R' S hRR' h
-  simp only [at_least_n_sem] at *
-  exact le_trans h (count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hRR' x hR, hS⟩)
-
-/-- `⟦at least n⟧` is ↓_NE Mon. -/
-theorem at_least_n_downNE (n : Nat) : DownNEMon (at_least_n_sem (α := α) n) := by
-  intro R S R' hSub hKeep hQ
-  simp only [at_least_n_sem] at *
-  have hEq : count (fun x : α => R' x ∧ S x) =
-      count (fun x : α => R x ∧ S x) := by
-    simp only [count]; congr 1; ext x; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨fun ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩, fun ⟨hR, hS⟩ => ⟨hKeep x hR hS, hS⟩⟩
-  omega
-
-/-- `⟦at least n⟧` is smooth (↓_NE + ↑_SE). -/
-theorem at_least_n_smooth (n : Nat) : Smooth (at_least_n_sem (α := α) n) :=
-  ⟨at_least_n_downNE n, restrictorUpMono_to_upSE _ (at_least_n_restrictor_up n)⟩
-
-/-- `⟦at most n⟧` is anti-persistent (Mon↓ in restrictor). -/
-theorem at_most_n_restrictor_down (n : Nat) : RestrictorDownwardMono (at_most_n_sem (α := α) n) := by
-  rw [at_most_eq_pouterNeg_at_least_succ]
-  exact outerNeg_restrictorUp_to_down _ (at_least_n_restrictor_up _)
-
-/-- `⟦at most n⟧` is co-smooth (↓_NW + ↑_SW). -/
-theorem at_most_n_coSmooth (n : Nat) : CoSmooth (at_most_n_sem (α := α) n) := by
-  rw [at_most_eq_pouterNeg_at_least_succ]
-  exact (smooth_iff_outerNeg_coSmooth _).mp (at_least_n_smooth _)
-
-/-! ### Quantity / isomorphism closure proofs (@cite{mostowski-1957}) -/
-
-/-- `Quantity` is closed under outerNeg. -/
-theorem quantity_pouterNeg (q : GQ α) (h : Quantity q) :
-    Quantity (outerNeg q) := by
-  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
-  simp only [outerNeg]; exact Iff.not (h R₁ S₁ R₂ S₂ hTT hTF hFT hFF)
-
-/-- `Quantity` is closed under gqMeet. -/
-theorem quantity_pgqMeet (q₁ q₂ : GQ α)
-    (h₁ : Quantity q₁) (h₂ : Quantity q₂) :
-    Quantity (gqMeet q₁ q₂) := by
-  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
-  simp only [gqMeet]
-  exact Iff.and (h₁ R₁ S₁ R₂ S₂ hTT hTF hFT hFF) (h₂ R₁ S₁ R₂ S₂ hTT hTF hFT hFF)
-
-/-- `⟦at least n⟧` satisfies Quantity: truth depends only on |A ∩ B|. -/
-theorem at_least_n_quantity (n : Nat) : Quantity (at_least_n_sem (α := α) n) := by
-  intro R₁ S₁ R₂ S₂ hTT _ _ _
-  simp only [at_least_n_sem]; omega
-
-/-- `⟦at most n⟧` satisfies Quantity: truth depends only on |A ∩ B|. -/
-theorem at_most_n_quantity (n : Nat) : Quantity (at_most_n_sem (α := α) n) := by
-  intro R₁ S₁ R₂ S₂ hTT _ _ _
-  simp only [at_most_n_sem]; omega
-
-/-- `⟦exactly n⟧` satisfies Quantity. -/
-theorem exactly_n_quantity (n : Nat) : Quantity (exactly_n_sem (α := α) n) := by
-  rw [exactly_eq_meet_at_least_at_most]
-  exact quantity_pgqMeet _ _ (at_least_n_quantity n) (at_most_n_quantity n)
-
-/-- `⟦some⟧` satisfies Quantity. -/
-theorem some_quantity : Quantity (some_sem (α := α)) := by
-  rw [some_eq_at_least_1]; exact at_least_n_quantity 1
-
-/-- `⟦no⟧` satisfies Quantity. -/
-theorem no_quantity : Quantity (no_sem (α := α)) := by
-  rw [no_eq_at_most_0]; exact at_most_n_quantity 0
-
-/-- `⟦every⟧` satisfies Quantity. -/
-private theorem every_quantityInvariant :
-    QuantityInvariant (every_sem (α := α)) := by
-  intro A B A' B' f hBij hA hB
-  simp only [every_sem]
-  rw [forall_bij_inv f hBij]
-  exact forall_congr' fun x => by rw [show A (f x) ↔ A' x from hA x,
-                                       show B (f x) ↔ B' x from hB x]
-
-theorem every_quantity : Quantity (every_sem (α := α)) := by
-  sorry -- Requires quantity_of_quantityInvariant which itself is sorry'd
-
-/-- `⟦most⟧` satisfies Quantity. -/
-theorem most_quantity : Quantity (most_sem (α := α)) := by
-  intro R₁ S₁ R₂ S₂ hTT hTF _ _
-  simp only [most_sem]; omega
-
-/-- `⟦few⟧` satisfies Quantity. -/
-theorem few_quantity : Quantity (few_sem (α := α)) := by
-  intro R₁ S₁ R₂ S₂ hTT hTF _ _
-  simp only [few_sem]; omega
-
-/-- Count decomposition: |R| = |R∩S| + |R\S|. -/
-private theorem count_decompose (R S : α → Prop) [DecidablePred R] [DecidablePred S] :
-    count (fun x : α => R x) =
-    count (fun x : α => R x ∧ S x) +
-    count (fun x : α => R x ∧ ¬S x) := by
-  simp only [count]
-  rw [← Finset.card_union_of_disjoint]
-  · congr 1; ext x; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]
-    exact ⟨fun hR => by by_cases hS : S x <;> simp [hR, hS],
-           fun h => h.elim And.left And.left⟩
-  · simp only [Finset.disjoint_filter]
-    intro x _ ⟨_, h1⟩ ⟨_, h2⟩; exact h2 h1
-
-/-- `⟦half⟧` satisfies Quantity. -/
-theorem half_quantity : Quantity (half_sem (α := α)) := by
-  intro R₁ S₁ R₂ S₂ hTT hTF _ _
-  simp only [half_sem]
-  constructor <;> intro h
-  · have h₁ := count_decompose R₁ S₁; have h₂ := count_decompose R₂ S₂; omega
-  · have h₁ := count_decompose R₁ S₁; have h₂ := count_decompose R₂ S₂; omega
-
-/-! ### `SatisfiesUniversals` (@cite{van-de-pol-etal-2023}) -/
-
-/-- `⟦some⟧` satisfies CONSERV ∧ Mon↑. -/
-theorem some_satisfiesUniversals : SatisfiesUniversals (some_sem (α := α)) :=
-  ⟨some_conservative, Or.inl some_scope_up⟩
-
-/-- `⟦every⟧` satisfies CONSERV ∧ Mon↑. -/
-theorem every_satisfiesUniversals : SatisfiesUniversals (every_sem (α := α)) :=
-  ⟨every_conservative, Or.inl every_scope_up⟩
-
-/-- `⟦no⟧` satisfies CONSERV ∧ Mon↓. -/
-theorem no_satisfiesUniversals : SatisfiesUniversals (no_sem (α := α)) :=
-  ⟨no_conservative, Or.inr no_scope_down⟩
-
-/-- `⟦most⟧` satisfies CONSERV ∧ Mon↑. -/
-theorem most_satisfiesUniversals : SatisfiesUniversals (most_sem (α := α)) :=
-  ⟨most_conservative, Or.inl most_scope_up⟩
-
-/-- `⟦few⟧` satisfies CONSERV ∧ Mon↓. -/
-theorem few_satisfiesUniversals : SatisfiesUniversals (few_sem (α := α)) :=
-  ⟨few_conservative, Or.inr few_scope_down⟩
-
-/-- `⟦at least n⟧` satisfies CONSERV ∧ Mon↑. -/
-theorem at_least_n_satisfiesUniversals (n : Nat) :
-    SatisfiesUniversals (at_least_n_sem (α := α) n) :=
-  ⟨at_least_n_conservative n, Or.inl (at_least_n_scope_up n)⟩
-
-/-- `⟦at most n⟧` satisfies CONSERV ∧ Mon↓. -/
-theorem at_most_n_satisfiesUniversals (n : Nat) :
-    SatisfiesUniversals (at_most_n_sem (α := α) n) :=
-  ⟨at_most_n_conservative n, Or.inr (at_most_n_scope_down n)⟩
-
-/-- `⟦exactly n⟧` satisfies CONSERV (but not MON for n ≥ 1). -/
-theorem exactly_n_conservative_quantity (n : Nat) :
-    Conservative (exactly_n_sem (α := α) n) :=
-  exactly_n_conservative n
-
-/-! ### Exceptive quantifiers: "all but n" (@cite{peters-westerstahl-2006}) -/
-
-/-- `⟦all but 0⟧ = ⟦every⟧`: zero exceptions means universal. -/
-theorem all_but_0_eq_every :
-    (all_but_n_sem (α := α) 0 : GQ α) = (every_sem (α := α) : GQ α) := by
-  funext R S
-  simp only [all_but_n_sem, every_sem]
-  exact propext ⟨
-    fun h x hR => by
-      by_contra hS
-      have : 0 < count (fun x : α => R x ∧ ¬S x) :=
-        Finset.card_pos.mpr ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hR, hS⟩⟩
-      omega,
-    fun h => by
-      simp only [count, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-      intro x _ ⟨hR, hNS⟩; exact hNS (h x hR)⟩
-
-/-- `⟦all but n⟧` is conservative. -/
-theorem all_but_n_conservative (n : Nat) : Conservative (all_but_n_sem (α := α) n) := by
-  intro R S; simp only [all_but_n_sem]
-  constructor <;> intro h
-  · rw [← count_neg_idem_any R S _ _]; exact h
-  · rw [count_neg_idem_any R S _ _]; exact h
-
-/-- `⟦all but n⟧` satisfies Quantity. -/
-theorem all_but_n_quantity (n : Nat) : Quantity (all_but_n_sem (α := α) n) := by
-  intro R₁ S₁ R₂ S₂ _ hTF _ _
-  simp only [all_but_n_sem]; omega
-
-/-- `⟦between n and k⟧` is conservative. -/
-theorem between_n_m_conservative (n k : Nat) :
-    Conservative (between_n_m_sem (α := α) n k) := by
-  intro R S; simp only [between_n_m_sem, gqMeet]
-  exact Iff.and (at_least_n_conservative n R S) (at_most_n_conservative k R S)
-
-/-- `⟦between n and k⟧` satisfies Quantity. -/
-theorem between_n_m_quantity (n k : Nat) : Quantity (between_n_m_sem (α := α) n k) :=
-  quantity_pgqMeet _ _ (at_least_n_quantity n) (at_most_n_quantity k)
-
-/-! ### Proportional quantifiers (@cite{peters-westerstahl-2006} §4.3) -/
-
-/-- Proportional: Q's truth value depends only on the ratio |A∩B|/|A\B|. -/
-def Proportional (q : GQ α) : Prop :=
-  ∀ (R₁ S₁ R₂ S₂ : α → Prop),
-    let tt₁ := count (fun x : α => R₁ x ∧ S₁ x)
-    let tf₁ := count (fun x : α => R₁ x ∧ ¬S₁ x)
-    let tt₂ := count (fun x : α => R₂ x ∧ S₂ x)
-    let tf₂ := count (fun x : α => R₂ x ∧ ¬S₂ x)
-    0 < tt₁ + tf₁ → 0 < tt₂ + tf₂ →
-    tt₁ * tf₂ = tt₂ * tf₁ →
-    (q R₁ S₁ ↔ q R₂ S₂)
-
-/-- Cross-ratio preserves strict inequality. -/
-private theorem cross_ratio_preserves_gt (a₁ b₁ a₂ b₂ : Nat)
-    (hne₂ : 0 < a₂ + b₂)
-    (hcross : a₁ * b₂ = a₂ * b₁)
-    (hgt : a₁ > b₁) :
-    a₂ > b₂ := by
-  by_contra hle
-  push Not at hle
-  rcases Nat.eq_zero_or_pos b₂ with rfl | hb₂pos
-  · omega
-  · have h1 : (b₁ + 1) * b₂ ≤ a₁ * b₂ := Nat.mul_le_mul_right b₂ hgt
-    have h3 : a₂ * b₁ ≤ b₂ * b₁ := Nat.mul_le_mul_right b₁ hle
-    rw [Nat.add_mul] at h1; rw [Nat.mul_comm b₂ b₁] at h3; omega
-
-/-- Cross-ratio preserves strict inequality (biconditional). -/
-private theorem cross_ratio_gt_iff (a₁ b₁ a₂ b₂ : Nat)
-    (hne₁ : 0 < a₁ + b₁) (hne₂ : 0 < a₂ + b₂)
-    (hcross : a₁ * b₂ = a₂ * b₁) :
-    a₁ > b₁ ↔ a₂ > b₂ :=
-  ⟨cross_ratio_preserves_gt a₁ b₁ a₂ b₂ hne₂ hcross,
-   cross_ratio_preserves_gt a₂ b₂ a₁ b₁ hne₁ hcross.symm⟩
-
-/-- Cross-ratio preserves strict `<` inequality. -/
-private theorem cross_ratio_lt_iff (a₁ b₁ a₂ b₂ : Nat)
-    (hne₁ : 0 < a₁ + b₁) (hne₂ : 0 < a₂ + b₂)
-    (hcross : a₁ * b₂ = a₂ * b₁) :
-    a₁ < b₁ ↔ a₂ < b₂ := by
-  have hcross' : b₁ * a₂ = b₂ * a₁ := by
-    rw [Nat.mul_comm b₁ a₂, Nat.mul_comm b₂ a₁]; exact hcross.symm
-  exact cross_ratio_gt_iff b₁ a₁ b₂ a₂ (by omega) (by omega) hcross'
-
-/-- Cross-ratio preserves equality. -/
-private theorem cross_ratio_eq_iff (a₁ b₁ a₂ b₂ : Nat)
-    (hne₁ : 0 < a₁ + b₁) (hne₂ : 0 < a₂ + b₂)
-    (hcross : a₁ * b₂ = a₂ * b₁) :
-    a₁ = b₁ ↔ a₂ = b₂ := by
-  constructor
-  · intro heq
-    rw [heq] at hcross hne₁
-    rw [Nat.mul_comm a₂ b₁] at hcross
-    exact (Nat.mul_left_cancel (by omega) hcross).symm
-  · intro heq
-    rw [heq] at hcross hne₂
-    rw [Nat.mul_comm a₁ b₂] at hcross
-    exact Nat.mul_left_cancel (by omega) hcross
-
-/-- `⟦most⟧` is proportional. -/
-theorem most_proportional : Proportional (most_sem (α := α)) := by
-  intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
-  simp only [most_sem]
-  exact cross_ratio_gt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
-
-/-- `⟦few⟧` is proportional. -/
-theorem few_proportional : Proportional (few_sem (α := α)) := by
-  intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
-  simp only [few_sem]
-  exact cross_ratio_lt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
-
-/-- Core arithmetic for half_proportional. -/
-private theorem half_prop_core (a₁ b₁ a₂ b₂ : Nat)
-    (hNE₁ : 0 < a₁ + b₁) (hNE₂ : 0 < a₂ + b₂)
-    (hCross : a₁ * b₂ = a₂ * b₁) :
-    (2 * a₁ = a₁ + b₁) ↔ (2 * a₂ = a₂ + b₂) := by
-  constructor
-  · intro h
-    have := (cross_ratio_eq_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross).mp (by omega)
-    omega
-  · intro h
-    have := (cross_ratio_eq_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross).mpr (by omega)
-    omega
-
-theorem half_proportional : Proportional (half_sem (α := α)) := by
-  intro R₁ S₁ R₂ S₂
-  dsimp only []
-  intro hNE₁ hNE₂ hCross
-  simp only [half_sem]
-  rw [count_decompose R₁ S₁, count_decompose R₂ S₂]
-  exact half_prop_core _ _ _ _ hNE₁ hNE₂ hCross
-
-end FintypeProofs
 
 /-! ## Generalized-Quantifier-Theoretic (GQT) meaning operator
 
-A parametric truth-conditional GQT operator: given a monotonicity
-direction and a numerical threshold, `gqtMeaning` returns the literal
-GQT denotation as a `Bool` over a finite "intersection-count" world.
-Used by quantity-implicature studies (e.g., van Tiel et al. 2021) that
-plug per-paper threshold parameters into the same GQT machinery.
--/
+A parametric truth-conditional GQT operator: given a monotonicity direction
+and a numerical threshold, `gqtMeaning` returns the literal GQT denotation
+as a `Bool` over a finite "intersection-count" world. Used by
+quantity-implicature studies (e.g., van Tiel et al. 2021) that plug
+per-paper threshold parameters into the same GQT machinery. -/
 
 open Semantics.Quantification.Lexicon (Monotonicity) in
 /-- GQT meaning: at threshold `θ`, with monotonicity `mono`, in a domain of
-size `n`, is the count `t` true? -/
-def gqtMeaning (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) : Bool :=
+    size `n`, is the count `t` true? -/
+def gqtMeaning (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) :
+    Bool :=
   match mono with
   | .increasing  => t.val ≥ θ
   | .decreasing  => t.val ≤ θ
@@ -1294,28 +236,13 @@ def gqtMeaning (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) : Bo
 
 open Semantics.Quantification.Lexicon (Monotonicity) in
 /-- Rational version of `gqtMeaning` (1 if true, 0 if false). -/
-def gqtMeaningRat (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) : ℚ :=
+def gqtMeaningRat (n : Nat) (mono : Monotonicity) (θ : Nat) (t : Fin (n + 1)) :
+    ℚ :=
   if gqtMeaning n mono θ t then 1 else 0
 
 open Semantics.Quantification.Lexicon (Monotonicity) in
 theorem gqtMeaningRat_nonneg (n : Nat) (mono : Monotonicity) (θ : Nat)
     (t : Fin (n + 1)) : 0 ≤ gqtMeaningRat n mono θ t := by
   simp only [gqtMeaningRat]; split_ifs <;> norm_num
-
-/-! ## Open conjectures (van de Pol et al. 2023)
-
-`TODO`: Quantifiers satisfying the B&C semantic universals
-(conservativity, quantity, monotonicity) have *strictly lower*
-complexity (Lempel-Ziv on truth-table representations, or MDL in a
-language-of-thought grammar) than violators.
-
-`TODO`: Among the three universals, **monotonicity** is the strongest
-predictor of complexity reduction; conservativity is intermediate;
-quantity shows a weaker but robust effect.
-
-Both were previously stubbed in the deleted `Core/Conjectures.lean`.
-Formal content depends on choosing canonical complexity measures (LZ
-over Boolean truth tables; MDL over LoT grammars) and connecting them
-to the existing `SatisfiesUniversals` predicate. -/
 
 end Semantics.Quantification.Quantifier
