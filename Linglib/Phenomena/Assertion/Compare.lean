@@ -1,4 +1,6 @@
-import Linglib.Dialogue.Assertable
+import Linglib.Discourse.SpeechAct.Update
+import Linglib.Dialogue.Stalnaker
+import Linglib.Dialogue.CommitmentSpace
 
 /-!
 # Assertion Theories: Cross-Theory Comparison
@@ -94,7 +96,7 @@ theorem only_cohen_krifka_has_meta_speech_acts :
 -- ════════════════════════════════════════════════════
 
 /-! The matrix in §1 is hand-stipulated. The substrate's
-`Dialogue.Assertable` typeclass lets us derive cross-framework
+`Discourse.SpeechAct.Assertable` typeclass lets us derive cross-framework
 agreement *structurally*: any framework satisfying the
 `speakerAssert_subset_prior` and `speakerAssert_narrows` laws must
 agree with every other such framework on the projected context set
@@ -110,7 +112,7 @@ missing — without it, the typeclass's cross-framework theorems
 (`speakerAssert_initial_subset`, `speakerAssert_twice_narrows`,
 `speakerAssert_twice_subset_prior`) were dead code. -/
 
-open Dialogue (Assertable)
+open Discourse.SpeechAct (Assertable)
 open Discourse.CommonGround (HasContextSet)
 
 /-- **Polymorphic assertion-narrowing**: any `Assertable` framework

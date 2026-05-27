@@ -1,7 +1,9 @@
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.Stalnaker
 import Linglib.Dialogue.ReasonableInference
-import Linglib.Dialogue.Assertable
+import Linglib.Discourse.SpeechAct.Update
+import Linglib.Dialogue.Stalnaker
+import Linglib.Dialogue.CommitmentSpace
 
 /-!
 # Stalnaker 1975 @cite{stalnaker-1975}
@@ -33,7 +35,7 @@ import Linglib.Dialogue.Assertable
    the formal point is that constructive dilemma is valid only for
    entailments, not for reasonable inferences.
 
-6. **Polymorphic lift via `Dialogue.Assertable`** (§ 4 below): the
+6. **Polymorphic lift via `Discourse.SpeechAct.Assertable`** (§ 4 below): the
    Stalnaker-1975 change-function calculus is shown to be the
    Stalnaker-instance projection of the framework-generic
    `Assertable.speakerAssert`. The direct-argument theorem then lifts
@@ -245,13 +247,13 @@ narrowing. This section shows that:
    commitment-space representation with a radically different
    internal structure but the same projected context-set behavior).
 
-This is the consumer that earns the `Dialogue.Assertable`
+This is the consumer that earns the `Discourse.SpeechAct.Assertable`
 typeclass's existence: a substantive philosophical claim
 (reasonable inference is framework-generic) given a
 substrate-level proof (the typeclass's narrowing law is
 sufficient). -/
 
-open Dialogue (Assertable)
+open Discourse.SpeechAct (Assertable)
 open Discourse.CommonGround (HasContextSet)
 
 /-- **Bridge theorem**: Stalnaker's `changeFn` operator equals the

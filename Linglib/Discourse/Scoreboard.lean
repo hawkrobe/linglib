@@ -2,6 +2,7 @@ import Mathlib.Data.List.Sort
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
+import Linglib.Discourse.Move
 import Linglib.Semantics.Questions.Partition.QUD
 import Linglib.Semantics.Questions.PrecisionProjection
 import Linglib.Discourse.QUDStack
@@ -154,22 +155,6 @@ theorem iflp_roundtrip_imp :
     forceLinkingPrinciple (defaultSemanticType .imperative) = .imperative := rfl
 
 /-! ## The Scoreboard -/
-
-/-- An illocutionary move on the scoreboard.
-
-    @cite{roberts-2023} §2.1.1: M is the set of moves, with distinguished
-    subsets A (assertions), Q (questions), D (directions), Acc (accepted). -/
-structure Move (W : Type*) where
-  /-- Which kind of speech act -/
-  mood : IllocutionaryMood
-  /-- Propositional content (for assertions and questions; for directions,
-      the propositional closure of the targeted property) -/
-  content : W → Prop
-  /-- Who made the move -/
-  agent : Nat  -- agent index into interlocutors
-  /-- Whether this move has been accepted by the interlocutors -/
-  accepted : Bool := false
-  deriving Inhabited
 
 /-- The scoreboard K for a language game.
 

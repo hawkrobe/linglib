@@ -354,6 +354,9 @@ import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
 import Linglib.Discourse.Commitment.Frame
 import Linglib.Discourse.Commitment.Table
+import Linglib.Discourse.Move
+import Linglib.Discourse.SpeechAct.Update
+import Linglib.Discourse.SpeechAct.Felicity
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Phenomena.NullSubject.Basic
 import Linglib.Phenomena.NullSubject.Defs
@@ -2680,7 +2683,6 @@ import Linglib.Dialogue.FarkasBruce
 import Linglib.Dialogue.QuotationFBOntology
 import Linglib.Dialogue.CommitmentSpace
 import Linglib.Dialogue.DistributionalCG
-import Linglib.Dialogue.Assertable
 import Linglib.Dialogue.LayeredAssertion
 import Linglib.Dialogue.Brandom
 import Linglib.Dialogue.Gunlogson

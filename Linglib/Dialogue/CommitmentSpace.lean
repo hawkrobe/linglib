@@ -2,6 +2,7 @@ import Linglib.Discourse.CommonGround
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
+import Linglib.Discourse.SpeechAct.Update
 
 /-!
 # Commitment Space Semantics
@@ -774,5 +775,27 @@ open Discourse.CommonGround in
 /-- KrifkaState context set agrees with CommitmentSpace context set. -/
 theorem krifkaState_contextSet_eq_space {W : Type*} (s : KrifkaState W) :
     HasContextSet.toContextSet s = HasContextSet.toContextSet s.space := rfl
+
+open Discourse.Commitment (IndexedWeightedCommitment)
+
+/-- Krifka commitment-space instance for `Assertable`: assertion prepends
+    `commit speaker doxastic φ` to the root; narrowing and monotonicity
+    follow from the projection of root commitments through `HasSupport`. -/
+instance instAssertable {W : Type*} :
+    Discourse.SpeechAct.Assertable (KrifkaState W) W where
+  initial := KrifkaState.empty
+  speakerAssert s φ := s.assert φ
+  speakerAssert_subset_prior s φ w h := by
+    intro ic hic
+    have shifted : ic ∈ (s.assert φ).space.root := by
+      simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons]
+      exact Or.inr hic
+    exact h ic shifted
+  speakerAssert_narrows s φ w h := by
+    have head_mem :
+        IndexedWeightedCommitment.commit (G := Prop) .speaker .doxastic φ ∈
+          (s.assert φ).space.root := by
+      simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons, true_or]
+    exact h _ head_mem
 
 end Dialogue.Krifka
