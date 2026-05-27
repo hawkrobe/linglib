@@ -5,27 +5,11 @@ import Mathlib.Data.List.Dedup
 
 /-!
 # Centering Theory — Cb, Cf, Cp
-@cite{grosz-joshi-weinstein-1995} §3
+@cite{grosz-joshi-weinstein-1995}
 
-The basic forward/backward-looking center operations, parameterized by
-the role type (via `[CfRankerOf E R]`) and the realizes-semantics
-(via `[Realizes U E]`).
-
-* `Utterance.cf` — forward-looking centers, ordered by role rank
-  (descending), with surface order as tie-breaker. Implemented by
-  insertion sort so that `decide` reduces it in the kernel for the
-  paper's worked examples.
-
-* `Utterance.cp` — preferred (top-ranked) Cf element.
-
-* `cb prev cur` — backward-looking center: highest-ranked element of
-  `prev.cf` realized in `cur`. The current utterance type is generic
-  via `[Realizes U E]`, so the same `cb` works for an `Utterance E R`,
-  a `DRSExpr`, or any future representation that supplies a `Realizes`
-  instance.
-
-The "unique Cb" claim of @cite{grosz-joshi-weinstein-1995} §3 is
-enforced by the type `Option E`, not by a separate theorem.
+Forward- and backward-looking center operations, parameterized by
+role ranker (`[CfRankerOf E R]`) and realizes-semantics (`[Realizes U E]`).
+GJW's "unique Cb" claim is enforced by `cb`'s `Option E` return type.
 -/
 
 set_option autoImplicit false
@@ -50,14 +34,8 @@ instance utterancePronominalizes [DecidableEq E] :
   decide u e :=
     u.realizations.any (fun r => r.entity == e && r.isPronoun)
 
-/-- A flat list of entities also realizes — an entity `e` is realized by
-    `es : List E` iff it appears in `es`. This is the minimal "bag of
-    referents" representation, useful when role/pronoun annotations are
-    unavailable (corpus-extracted referent traces, simple toy examples).
-
-    Together with `utteranceRealizes` and the `DRSExpr` instance in the
-    DRT bridge, this confirms that the `Realizes` typeclass abstracts
-    cleanly over multiple representations. -/
+/-- A flat list of entities realizes by membership (minimal
+    "bag of referents" representation). -/
 instance listRealizes [DecidableEq E] : Realizes (List E) E where
   decide es e := es.contains e
 
@@ -90,17 +68,8 @@ theorem pronominalizes_iff (u : Utterance E R) (e : E) :
 -- § 2. Cf, Cp via insertion sort on rank
 -- ════════════════════════════════════════════════════
 
-/-- Insert `r` into a Cf list (ordered by `CfRankerOf.rank` descending),
-    placing `r` after any equally-ranked elements so the original
-    surface order acts as a stable tiebreaker.
-
-    Concretely: walk the list, insert `r` at the first position where
-    the existing element has *strictly smaller* rank.
-
-    Uses the generalized `CfRankerOf E R` (per-realization) typeclass
-    rather than `CfRanker R` (per-role); when only the role matters,
-    the default instance `cfRankerOf_of_role` (in `Defs.lean`) lifts
-    automatically. -/
+/-- Insert `r` into a rank-descending Cf list, after any equally-ranked
+    elements (surface order as stable tiebreaker). -/
 def cfInsert [CfRankerOf E R]
     (r : Realization E R) : List (Realization E R) → List (Realization E R)
   | []      => [r]
@@ -110,10 +79,7 @@ def cfInsert [CfRankerOf E R]
     else
       x :: cfInsert r xs
 
-/-- Forward-looking centers, ranked highest-first by role rank with
-    surface order as tiebreaker. Implemented by `foldr cfInsert []` —
-    insertion sort — so that `decide` reduces it in the kernel for
-    the paper's worked examples. -/
+/-- Forward-looking centers via insertion-sort by rank (decide-reducible). -/
 def cf [CfRankerOf E R] (u : Utterance E R) : List E :=
   (u.realizations.foldr cfInsert []).map (·.entity)
 
@@ -190,21 +156,14 @@ end Utterance
 -- § 3. Cb (backward-looking center)
 -- ════════════════════════════════════════════════════
 
-/-- Backward-looking center of `cur` with respect to `prev`: the
-    highest-ranked element of `prev.cf` that is realized in `cur`.
-    `none` if no such element exists.
-
-    The current utterance `cur` can be anything with a `Realizes U E`
-    instance — including a `DRSExpr` via the DRT bridge. -/
+/-- Backward-looking center: the highest-ranked element of `prev.cf`
+    realized in `cur`. Polymorphic in `cur`'s type via `Realizes U E`. -/
 def cb [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (prev : Utterance E R) (cur : U) : Option E :=
   prev.cf.find? (Realizes.decide cur)
 
-/-- **Locality of Cb** (@cite{grosz-joshi-weinstein-1995} §4, claim 5):
-    when `cb prev cur` returns some entity, that entity is in
-    `prev.cf` — the backward-looking center is strictly local, drawn
-    only from the previous utterance's forward-looking centers, never
-    from `Cf(U_{n-2})` or earlier. -/
+/-- Locality of Cb (@cite{grosz-joshi-weinstein-1995}): `cb prev cur`
+    is always drawn from `prev.cf`, never further back. -/
 theorem cb_mem_prev_cf [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     {prev : Utterance E R} {cur : U} {e : E} (h : cb prev cur = some e) :
     e ∈ prev.cf :=
@@ -217,10 +176,8 @@ theorem decide_of_cb [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     Realizes.decide cur e = true :=
   List.find?_eq_some_iff_append.mp h |>.1
 
-/-- **Characterization of `cb`**: `cb prev cur = some e` iff `e` is in
-    `prev.cf` realized in `cur`, and *no earlier* element of `prev.cf`
-    (i.e., none more highly ranked) is realized in `cur`. This is the
-    "first realized in cf-order" definition unfolded. -/
+/-- `cb prev cur = some e` iff `e ∈ prev.cf` is realized in `cur` with
+    no higher-ranked element of `prev.cf` also realized in `cur`. -/
 theorem cb_eq_some_iff [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     {prev : Utterance E R} {cur : U} {e : E} :
     cb prev cur = some e ↔
@@ -257,32 +214,9 @@ theorem cb_eq_none_iff [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E
 -- § 4. cbAll (multi-CB under partial ranking)
 -- ════════════════════════════════════════════════════
 
-/-- All entities tied at the highest rank-among-realized, deduplicated.
-
-    Under a **total** ranking, this list has length ≤ 1 (one CB or zero,
-    matching `cb`'s `Option E` typing). Under a **partial** ranking, two
-    realizations can tie at the maximum and both qualify as CBs — the
-    case that drives @cite{poesio-stevenson-eugenio-hitzeman-2004} §5.3.4
-    (their two-CB corner-cupboard / Branicki example, paper §4.1.1
-    example (10)). PSDH propose decomposing Constraint 1 into "CB
-    Uniqueness" (this list has length ≤ 1) and "Entity Continuity"
-    (this list has length ≥ 1) — the substrate decomposition theorem
-    lives in `Constraints.lean`.
-
-    **Structural identity with single-constraint OT** (cf.
-    `Core.Constraint.OT.Tableau.optimal`): the realizations realized in
-    `cur` form the candidate set; `CfRankerOf.rank` is a single (sign-
-    flipped) violation profile; `cbAll` returns the entity-projection
-    of the OT-optimal candidates. @cite{poesio-stevenson-eugenio-hitzeman-2004}
-    §3.1 fn 12 endorses this reformulation, citing Beaver 2004's
-    "The Optimization of Discourse Anaphora." Both substrates here use
-    `List.argmax` from `Mathlib.Data.List.MinMax` as the underlying
-    extremum-selection primitive; the bridge theorem connecting them
-    will live in `Studies/Beaver2004.lean` (a
-    future commit). The deliberate non-bridging follows mathlib's
-    `PMF` vs `Measure` precedent: each substrate keeps its own
-    vocabulary, with cross-framework identities anchored in the paper
-    that argues them. -/
+/-- Multi-CB: entities tied at the highest rank-among-realized,
+    deduplicated. Length ≤ 1 under total rankings; can exceed 1
+    under partial rankings (PSDH §5.3.4). -/
 def cbAll [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (prev : Utterance E R) (cur : U) : List E :=
   let realized := prev.realizations.filter (fun r => Realizes.decide cur r.entity)
@@ -297,10 +231,8 @@ def cbAll [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
 @[simp] theorem cbAll_empty_prev [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     (cur : U) : cbAll (Utterance.mk [] : Utterance E R) cur = [] := rfl
 
-/-- Every entity in `cbAll prev cur` corresponds to some realization in
-    `prev` whose entity is realized in `cur`. The substantive
-    characterization of `cbAll` (modulo argmax-rank reasoning, which
-    a future commit can expose via `mem_cbAll_iff`). -/
+/-- Every entity in `cbAll prev cur` corresponds to some realization
+    in `prev` realized in `cur`. -/
 theorem mem_cbAll_exists_realization [DecidableEq E] [CfRankerOf E R]
     {U : Type} [Realizes U E]
     {prev : Utterance E R} {cur : U} {e : E} (h : e ∈ cbAll prev cur) :
@@ -323,9 +255,7 @@ theorem mem_cbAll_realized [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes
   obtain ⟨r, _, hr_eq, hr_real⟩ := mem_cbAll_exists_realization h
   exact hr_eq ▸ hr_real
 
-/-- Every entity in `cbAll prev cur` is in `prev.cf` — the multi-CB
-    set is a subset of the previous utterance's forward-looking
-    centers, mirroring `cb_mem_prev_cf` for the single-CB case. -/
+/-- The multi-CB set is a subset of `prev.cf` (locality for `cbAll`). -/
 theorem mem_cbAll_mem_prev_cf [DecidableEq E] [CfRankerOf E R] {U : Type} [Realizes U E]
     {prev : Utterance E R} {cur : U} {e : E} (h : e ∈ cbAll prev cur) :
     e ∈ prev.cf := by

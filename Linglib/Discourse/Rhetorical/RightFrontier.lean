@@ -19,16 +19,8 @@ variable {L : Type*} {α : Type*} [DecidableEq L]
 -- § 1. The single-step "<" relation (Def 14 conditions 2a + 2b)
 -- ════════════════════════════════════════════════════════════════
 
-/-- `dominatesOneStep s α' γ` (the book's `α < γ` notation,
-    @cite{asher-lascarides-2003} Def 14 p. 148): γ dominates α' in
-    one step, either via outscoping (condition 2a) or via a
-    subordinating relation pointing into α' (condition 2b).
-
-    Condition (2a): `iOutscopes(γ, α')` — γ outscopes α'.
-    Condition (2b): there exists a container λ and a subordinating
-    relation R such that `R(γ, α')` is a conjunct in `F(λ)`.
-    In our `container`-tagged edges this is: there exists an edge
-    `⟨_, γ, α', R⟩` with R subordinating. -/
+/-- γ dominates α' in one step: γ outscopes α' (2a) or there is a
+    subordinating-relation edge from γ to α' (2b). -/
 def dominatesOneStep (s : SDRS L α) (α' γ : L) : Prop :=
   iOutscopes s γ α' ∨
   ∃ e ∈ s.edges, e.source = γ ∧ e.target = α' ∧
@@ -60,18 +52,8 @@ instance (s : SDRS L α) (α' γ : L) (n : Nat) :
     unfold availableViaChain
     exact instDecidableOr
 
-/-- `availableAttachmentPoints s` — the set of labels available for
-    new attachment from `s.last`, as a `List L`
-    (@cite{asher-lascarides-2003}, Def 14 p. 148).
-
-    Implementation: starting from `s.last`, walk up the
-    `dominatesOneStep` relation. The chain length is bounded by
-    `s.labels.length` because the labels are finite and each step
-    moves to a different label (well-foundedness from Def 13 L3'
-    rules out cycles).
-
-    Returns the labels γ such that `availableViaChain s s.last γ k`
-    holds for some `k ≤ s.labels.length`. -/
+/-- Labels available for new attachment from `s.last`: those reachable
+    via `dominatesOneStep` within `s.labels.length` steps. -/
 def availableAttachmentPoints (s : SDRS L α) : List L :=
   s.labels.filter
     (fun γ => decide (availableViaChain s s.last γ s.labels.length))
