@@ -2,35 +2,12 @@
 # Discourse Coherence Relations
 @cite{hobbs-1979} @cite{kehler-2002} @cite{umbach-2004}
 
-Coherence relations classify how adjacent discourse
-segments connect. Each relation belongs to one of three classes (resemblance,
-cause–effect, contiguity) and has a directionality that determines which segment
-provides the cause/explanation.
-
-## Key insight for IC bias
-
-@cite{kehler-2002} argues that coherence relations determine which participant
-listeners seek as a cause/explanation in sentence continuations:
-- **Explanation** ("because"): backward causal — listeners seek the *cause* of the
-  event described in the first clause
-- **Result** ("so"): forward causal — listeners infer the *effect*
-- **Occasion** ("and then"): temporal contiguity — no causal search
-
-This interacts with verb semantics to produce implicit causality (IC) bias. @cite{solstad-bott-2022} @cite{solstad-bott-2024}
-
-## Contrast vs Correction
-
-@cite{umbach-2004} argues that both CONTRAST and CORRECTION are resemblance
-relations requiring alternatives that are similar (common integrator) and
-dissimilar (semantically independent). They differ in their type of exclusion:
-- **CONTRAST**: excludes *additional* alternatives (the second alternative holds
-  *in addition to* the first; "but" with confirm+deny)
-- **CORRECTION**: excludes *by substitution* (the second alternative holds
-  *instead of* the first; German *sondern*, English corrective "but")
-
-Both are distinct from PARALLEL/SEQUENCE ("and"-coordination), which requires
-similarity+dissimilarity but no exclusion.
-
+Coherence relations classifying how adjacent discourse segments
+connect (resemblance / cause–effect / contiguity), with directionality
+and projections to coherence class. Kehler 2002's tripartition,
+extended with SDRT additions (`background`, `consequence`,
+`alternation`); CONTRAST / CORRECTION distinguished per
+@cite{umbach-2004}.
 -/
 
 namespace Discourse.Coherence

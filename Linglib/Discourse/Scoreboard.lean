@@ -24,23 +24,10 @@ The scoreboard K for a language game at time t is a tuple
 - **QUD**: the ordered set of questions under discussion
 - **G**: the interlocutors' publicly evident goals, plans, and priorities
 
-The three central elements — CG, QUD, G — are updated by the three
-canonical speech acts via the **Illocutionary Force Linking Principle**
-(@cite{roberts-2023} (56)):
+The three central elements — CG, QUD, G — are updated by assertion,
+interrogation, and direction respectively, via the Illocutionary
+Force Linking Principle (@cite{roberts-2023}).
 
-| Clause type  | Semantic type      | Default force | Updates |
-|-------------|-------------------|---------------|---------|
-| declarative  | proposition        | assertion     | CG      |
-| interrogative| set of propositions| interrogation | QUD     |
-| imperative   | indexed property   | direction     | G       |
-
-## Relation to Prior Work
-
-@cite{lewis-1979}'s "scorekeeping in a language game" introduced the
-metaphor. @cite{roberts-2012} formalized CG + QUD. @cite{portner-2004}
-added the addressee's ToDo list. @cite{roberts-2023} unifies all three
-into a single scoreboard and gives G richer internal structure
-(conditional goals with hierarchical priorities, following @cite{bratman-1987}).
 -/
 
 namespace Discourse

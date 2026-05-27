@@ -2,57 +2,13 @@ import Mathlib.Data.List.Basic
 import Linglib.Discourse.Coherence
 
 /-!
-# Segmented Discourse Representation Theory: Core Definitions
-
+# Rhetorical-Structure Substrate (SDRT core)
 @cite{asher-lascarides-2003}
 
-Theory-neutral types for SDRT (@cite{asher-lascarides-2003}, Ch. 4):
-the labelled discourse-structure record (Definition 13, p. 142), basic
-constructors, and SDRT-specific projections (`kind`, `veridicality`)
-on top of the framework-neutral `Discourse.Coherence.CoherenceRelation`
-enum. The Right Frontier Constraint (Definition 14, p. 148) lives in
-the sibling `RightFrontier.lean`.
-
-## Why we use Core's CoherenceRelation
-
-The original SDRT formalization landed (CHANGELOG 0.230.674) with a
-parallel `RhetoricalRelation` enum that overlapped 5-of-7 names with
-`Discourse.Coherence.CoherenceRelation`. The audit (CHANGELOG
-0.230.677) flagged this as the textbook "reinvented infrastructure"
-anti-pattern. We now use Core's enum, extended with the genuine SDRT
-contributions (`background`, `consequence`, `alternation`), and keep
-Hobbs/Kehler's `occasion` as the canonical name for what
-@cite{asher-lascarides-2003} call "Narration" (alias
-`Narration := occasion` provided in `Discourse.Coherence`).
-
-## Substrate scope
-
-- **In scope**: the labelled-structure shape ⟨A, F⟩ (Def 13 reformulated
-  as a Lean structure with labels, content function, and edges).
-- **In scope**: SDRT-specific `kind` (subordinating / coordinating /
-  structural per §4.7) and `veridicality` (veridical / nonVeridical /
-  denialBearing per preface "What's New") projections on
-  `CoherenceRelation`.
-- **Out of scope** (defer to consumers / future files):
-  - The full glue logic (Ch. 5) — discourse update operation.
-  - The cognitive-modelling axioms (Ch. 9) — Rationality + Cooperativity.
-  - DRT-specific content language (the substrate is content-polymorphic).
-  - Question/request-bearing relations (Ch. 7) — separate file when
-    the first consumer demands them.
-
-## The book's two equivalent representations
-
-@cite{asher-lascarides-2003} p. 144: "Specifying a discourse structure
-in terms of ⟨A, F⟩ is equivalent to giving a labelled structure
-⟨U_D, Succ_D, I_D⟩." We adopt the ⟨A, F⟩ shape because it's the one
-the book uses operationally (the Succ_D form is shown to be
-inter-derivable but more verbose).
-
-The book's `Succ_D` partial-order is recovered here via the `edges`
-field: an edge `⟨π, π', R⟩` says `R(π, π')` is a conjunct in the
-labelling of some constituent. The `outscopes` relation derives from
-edges (§4.7): `outscopes(γ, α)` iff `R(δ, α)` or `R(α, δ)` is a
-conjunct in `F(γ)`.
+The labelled discourse-structure record + SDRT-specific projections
+(`kind`, `veridicality`) on top of the framework-neutral
+`Discourse.Coherence.CoherenceRelation` enum. The Right Frontier
+Constraint lives in the sibling `RightFrontier.lean`.
 -/
 
 namespace Discourse.Rhetorical

@@ -2,44 +2,13 @@ import Linglib.Discourse.Rhetorical.Defs
 
 /-!
 # Right Frontier Constraint
+@cite{asher-lascarides-2003}
 
-@cite{asher-lascarides-2003}, §4.7 Definition 14, p. 148.
-
-The Right Frontier Constraint (RFC) — originally Polanyi 1985,
-formalized in SDRT as `availableAttachmentPoints` — restricts where
-new discourse units can attach in an SDRS. The set of available
-attachment points consists of:
-
-1. The label `α = LAST` (the most recent attachment)
-2. Any label `γ` such that either
-   (a) `iOutscopes(γ, α)` (γ outscopes α structurally), or
-   (b) `R(γ, α)` is a conjunct in some constituent's content where
-       `R` is a subordinating relation (Elaboration, Explanation)
-3. The transitive closure of (1)+(2) under the `<` relation
-   (where `α < γ` means γ is reachable from α via 2a or 2b)
-
-In words (book p. 149): "the available nodes are the previous clause
-α and any label γ that dominates α via a series of outscopings and/or
-subordinating relations."
-
-## Worked example (book p. 149)
-
-Given the SDRS in Figure 4.5 (the John-evening-meal-cheese-salmon
-discourse) with LAST = π₂, the available attachment sites are
-{π₂, π₄, π₃, π₀}. Notably, π₁ is NOT available — its constituent
-has been "closed off" by the Elaboration.
-
-The substrate captures this via the `availableAttachmentPoints`
-function below; consumers can decide-check the worked example by
-constructing the SDRS literally and confirming the result.
-
-## Why this matters
-
-The RFC is the central structural constraint on anaphora resolution
-in SDRT (book Ch. 4 Definition 15). A pronoun in the NEW unit β can
-only be resolved to a discourse referent in a unit α that's available
-at attachment time. Without the RFC, anaphora resolution would
-overgenerate.
+Available-attachment-points constraint restricting where new
+discourse units attach in an SDRS. `α = LAST` is always available;
+labels `γ` that outscope `α` structurally or are connected via a
+subordinating relation are also available, transitively closed.
+The central structural constraint on SDRT anaphora resolution.
 -/
 
 namespace Discourse.Rhetorical

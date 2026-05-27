@@ -10,26 +10,10 @@ import Mathlib.Tactic.Linarith
 # Gradient At-Issueness and Projectivity
 @cite{roberts-2012} @cite{tonhauser-beaver-degen-2018}
 
-At-issueness and projectivity are **gradient**, not binary, and **anti-correlated**.
-@cite{tonhauser-beaver-degen-2018} report r = .85 (9 expression types) and
-r = .99 (12 predicates) for the positive correlation between not-at-issueness
-and projectivity, equivalently a negative correlation between at-issueness
-and projectivity. This module lifts at-issueness from a binary enum
-to a bounded rational degree with threshold semantics, mirroring the pattern
-used for gradable adjectives (degree > θ → positive meaning).
-
-## Design
-
-All four degree/threshold types are `Rat01` (= `↥(Set.Icc (0 : ℚ) 1)`)
-from `Core.Scales.Scale`. The type aliases document intent but share
-infrastructure (order instances, smart constructors, etc.).
-
-| Adjective               | At-issueness                   |
-|--------------------------|--------------------------------|
-| `Degree max` (Fin)       | `AtIssuenessDegree` (`Rat01`)  |
-| `Threshold max`          | `AtIssuenessThreshold` (`Rat01`) |
-| `positiveMeaning d θ`    | `isAtIssue d θ`                |
-
+Tonhauser-Beaver-Degen 2018's gradient at-issueness model: degrees
+and thresholds in `Rat01`, with at-issueness anti-correlated with
+projectivity. Mirrors the gradable-adjective pattern (degree > θ →
+positive meaning).
 -/
 
 namespace Discourse.AtIssueness

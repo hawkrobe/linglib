@@ -4,30 +4,13 @@ import Linglib.Semantics.Mood.IllocutionaryMood
 
 /-!
 # Illocutionary Force: F in F(p)
-@cite{searle-1969} @cite{searle-1979} @cite{searle-1983} @cite{lakoff-1970}
+@cite{searle-1969} @cite{searle-1979} @cite{searle-1983}
 @cite{francik-clark-1985}
 
-The pragmatic-act side of the Searlean parallel: direction of fit, the
-five-class taxonomy, and preparatory conditions. The Intentional-state
-counterpart S(r) — psychological mode, sincerity conditions, causal
-self-referentiality, and IntentionalState — lives in
-`Discourse/Intentionality.lean`. Discourse commitments live in
-`Discourse/Commitment.lean`.
-
-The mood-category material that used to live here was split out for
-mathlib-style cleanliness:
-- `Discourse/Roles.lean` — `DiscourseRole`, `resolveRole`
-- `Semantics/Mood/IllocutionaryMood.lean` — `IllocutionaryMood`, `moodAuthority`
-
-This file extends `IllocutionaryMood` with `searleClass`/`directionOfFit`,
-which depend on the act taxonomy below.
-
-## Organization
-
-- **§ 1. Direction of Fit**: Searle's key classification principle
-- **§ 2. Illocutionary Taxonomy**: the five classes derived from direction of fit
-- **§ 3. Preparatory Conditions**: Searle's felicity conditions on directives
-- **§ 4. Verification**
+The pragmatic-act side of the Searlean F(p) parallel: `DirectionOfFit`,
+`SearleClass` taxonomy, and `PreparatoryCondition`. The S(r) side
+(psychological mode, sincerity, Intentional state) lives in
+`Discourse/Intentionality.lean`.
 -/
 
 namespace Discourse

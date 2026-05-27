@@ -4,30 +4,10 @@ import Linglib.Discourse.IllocutionaryForce
 # Intentional States: S in S(r)
 @cite{searle-1983}
 
-The Intentional-state side of the Searlean parallel: psychological mode,
-sincerity conditions linking speech acts to states, causal self-referentiality,
-and the `IntentionalState` type.
-
-## The Central Parallel (@cite{searle-1983})
-
-Intentional states (beliefs, desires, intentions) and speech acts share
-identical logical structure:
-
-- **Speech acts**: F(p) — illocutionary force F + propositional content p
-- **Intentional states**: S(r) — psychological mode S + representative content r
-
-Performing F(p) sincerely *expresses* the corresponding S(r). The conditions
-of satisfaction of the speech act are identical to those of the expressed
-state. The illocutionary side (F, direction of fit, Searle taxonomy) lives
-in `Discourse/IllocutionaryForce.lean`.
-
-## Organization
-
-- **§ 1. Psychological Mode** — the S in S(r)
-- **§ 2. Sincerity Conditions** — the F→S bridge
-- **§ 3. Causal Self-Referentiality** — the "by way of" requirement
-- **§ 4. Intentional State** — S(r) as a type
-- **§ 5. Verification**
+The Intentional-state side of the Searlean F(p) / S(r) parallel:
+`PsychMode`, `sincerityCondition` (the F → S bridge), `CausalSelfRef`,
+and `IntentionalState`. Performing F(p) sincerely expresses the
+corresponding S(r); conditions of satisfaction transfer.
 -/
 
 namespace Discourse

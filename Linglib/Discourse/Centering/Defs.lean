@@ -7,42 +7,10 @@ import Mathlib.Tactic.DeriveFintype
 # Centering Theory — Core Definitions
 @cite{grosz-joshi-weinstein-1995} @cite{kameyama-1986} @cite{sidner-1979}
 
-Theory-neutral types for Centering Theory: realizations, utterances,
-and the typeclass plug-in points that let one set of definitions serve
-multiple ranking schemes (grammatical role, thematic role) and multiple
-"realizes" semantics (list-based, DRT, situations).
-
-The shape of Centering as a framework:
-
-* An `Utterance E R` carries a list of `Realization E R` — entity, role,
-  pronoun-flag triples. The role type `R` is a parameter, instantiated
-  by `GrammaticalRole` (@cite{kameyama-1986}) in the `Instances/`
-  module. @cite{sidner-1979}'s focus-based account does not fit a
-  ranker shape and is formalized as its own architecture in
-  `Studies/Sidner1983.lean`.
-
-* `[CfRankerOf E R]` provides the per-realization rank used to order
-  Cf. Higher rank = more prominent. The simpler `[CfRanker R]` (rank
-  by role only) is sugar — every `CfRanker R` lifts automatically to
-  a `CfRankerOf E R` via the low-priority `cfRankerOf_of_role` default
-  instance, projecting through `.role`. Rankers that depend on the
-  full realization (linear order @cite{rambow-1993}, info-status
-  @cite{strube-hahn-1999}) provide `CfRankerOf` directly.
-
-* `[Realizes U E]` is the plug-in semantics of "u realizes e". The
-  `outParam` on `E` lets Lean infer the entity type from the utterance.
-  An instance for `Utterance E R` is provided in `Basic.lean`; the
-  DRT bridge in `Discourse/Centering/DRSExpr.lean`
-  provides an instance for `DRSExpr`, so Cb computation works on either
-  representation.
-
-* `[Pronominalizes U E]` is the analogous plug-in for "u pronominalizes e",
-  used by Rule 1.
-
-This is mathlib-style: small typeclass interfaces, instances supplied
-where they belong, no premature bundling. Per CLAUDE.md's grounding
-discipline, these definitions are imported by the GroszJoshiWeinstein1995
-study file rather than re-stipulated there.
+Theory-neutral types for Centering: realizations, utterances, and
+typeclass plug-ins for ranking schemes (`CfRanker`/`CfRankerOf`),
+realization (`Realizes`), and pronominalization (`Pronominalizes`).
+Role type `R` is a parameter; `Instances/` provides per-paper rankers.
 -/
 
 set_option autoImplicit false
