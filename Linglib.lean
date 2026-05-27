@@ -2677,6 +2677,7 @@ import Linglib.Studies.AhnKocabDavidson2026
 import Linglib.Studies.TenWolde2023
 import Linglib.Studies.FarkasBruce2010
 import Linglib.Studies.VanDerLeer2026
+import Linglib.Studies.Hintikka1962
 import Linglib.Dialogue.Stalnaker
 import Linglib.Dialogue.ReasonableInference
 import Linglib.Dialogue.FarkasBruce
