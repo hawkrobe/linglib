@@ -280,7 +280,7 @@ end Properties
 -- Grounding: PIP modals ↔ Core.Logic.Intensional.boxR/diamondR
 -- ============================================================
 
-open Core.Logic.Intensional (boxR diamondR IsReflexive boxR_T)
+open Core.Logic.Intensional (boxR diamondR boxR_T)
 
 /-- Lift a Bool-valued accessibility to its Prop-valued equivalent. -/
 private def liftR {W : Type*} (R : BAccessRel W) : W → W → Prop :=
@@ -347,13 +347,13 @@ modal base guarantees the description holds at the evaluation world — from
 `Core.Logic.Intensional.boxR_T`.
 -/
 theorem must_realistic_of_refl [Fintype W]
-    (R : BAccessRel W) (hRefl : IsReflexive (liftR R))
+    (R : BAccessRel W) [Std.Refl (liftR R)]
     (p : ICDRTAssignment W E → W → Bool)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info)
     (hmust : (g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) :
     p g w₀ = true :=
-  boxR_T (liftR R) hRefl (liftP (p g)) w₀
+  boxR_T (liftR R) (liftP (p g)) w₀
     ((must_truth_agrees_boxR R p d g w₀ hd).mp hmust)
 
 /--

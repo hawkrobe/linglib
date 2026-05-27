@@ -39,7 +39,6 @@ namespace Semantics.PIP.Bridges
 
 open Semantics.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
-open Core.Logic.Intensional (IsReflexive)
 open Core.Logic.Intensional.Logic (frameConditions)
 
 
@@ -357,7 +356,7 @@ Stated for the Prop-valued `AccessRel`/`IsReflexive`/`frameConditions` API in
 `BAccessRel R`, lift via `liftR R = fun a b => R a b = true`.
 -/
 theorem reflexive_satisfies_T {W : Type*}
-    (R : Core.Logic.Intensional.AccessRel W) (hRefl : IsReflexive R) :
+    (R : Core.Logic.Intensional.AccessRel W) [hRefl : Std.Refl R] :
     frameConditions Core.Logic.Intensional.Logic.T R := by
   unfold frameConditions Core.Logic.Intensional.Logic.hasAxiom
     Core.Logic.Intensional.Logic.T

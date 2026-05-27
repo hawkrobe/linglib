@@ -121,19 +121,19 @@ theorem necessity_empty_iff_simple (f : ModalBase W) (p : W → Prop) (w : W) :
 
 /-- A realistic modal base gives reflexive accessibility. -/
 theorem realistic_refl (f : ModalBase W) (hReal : isRealistic f) :
-    IsReflexive (kratzerR f) :=
-  fun w p hp => hReal w p hp
+    Std.Refl (kratzerR f) :=
+  ⟨fun w p hp => hReal w p hp⟩
 
 /-- Realistic base: the evaluation world is itself accessible. -/
 theorem realistic_gives_reflexive_access (f : ModalBase W)
     (hReal : isRealistic f) (w : W) :
     w ∈ accessibleWorlds f w :=
-  realistic_refl f hReal w
+  (realistic_refl f hReal).refl w
 
 /-- Realistic ⟹ serial. -/
 theorem realistic_is_serial (f : ModalBase W) (hReal : isRealistic f) :
     IsSerial (kratzerR f) :=
-  fun w => ⟨w, realistic_refl f hReal w⟩
+  ⟨fun w => ⟨w, (realistic_refl f hReal).refl w⟩⟩
 
 /-- Empty modal base gives universal accessibility. -/
 theorem empty_base_universal_access (w : W) :

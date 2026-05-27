@@ -138,7 +138,7 @@ theorem commit_implies_commit_believe_of_sincere
   intro hcom v hcom_wv v' hbel_vv'
   have hcom_vv' : c.commitment a b v v' := hsin a b v v' hbel_vv'
   have hcom_wv' : c.commitment a b w v' :=
-    c.commitment_trans a b w v v' hcom_wv hcom_vv'
+    IsTrans.trans w v v' hcom_wv hcom_vv'
   exact hcom v' hcom_wv'
 
 /-- **T27.2** — non-converse: there exist sincere states where

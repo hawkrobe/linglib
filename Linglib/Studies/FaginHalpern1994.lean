@@ -56,7 +56,7 @@ set_option autoImplicit false
 namespace FaginHalpern1994
 
 open Core.Logic.Intensional
-  (AgentAccessRel AccessRel boxR IsReflexive IsEuclidean refl_eucl_symm refl_eucl_trans)
+  (AgentAccessRel AccessRel boxR IsEuclidean)
 open Semantics.Modality.EpistemicLogic (knows everyoneKnows)
 open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
 
@@ -318,15 +318,13 @@ theorem probCKIter_monotone {W E : Type*}
     that makes S5 relations equivalence relations: accessibility classes
     are either identical or disjoint. -/
 private theorem s5_access_eq {W : Type*} {R : AccessRel W}
-    (hRefl : IsReflexive R) (hEucl : IsEuclidean R)
+    [Std.Refl R] [IsEuclidean R]
     {w w' : W} (hAcc : R w w') :
     ∀ v, R w v ↔ R w' v := by
-  have hSymm := refl_eucl_symm hRefl hEucl
-  have hTrans := refl_eucl_trans hRefl hEucl
   intro v
   refine ⟨fun hR => ?_, fun hR' => ?_⟩
-  · exact hTrans w' w v (hSymm w w' hAcc) hR
-  · exact hTrans w w' v hAcc hR'
+  · exact IsTrans.trans w' w v (Std.Symm.symm w w' hAcc) hR
+  · exact IsTrans.trans w w' v hAcc hR'
 
 /-- SDP implies UNIF under S5 accessibility.
 
@@ -340,10 +338,10 @@ private theorem s5_access_eq {W : Type*} {R : AccessRel W}
 theorem sdp_implies_unif {W E : Type*}
     (kp : KripkeKP W E)
     (hSDP : SDP kp)
-    (hS5 : ∀ i, IsReflexive (kp.accessRel i) ∧ IsEuclidean (kp.accessRel i)) :
+    [∀ i, Std.Refl (kp.accessRel i)] [∀ i, IsEuclidean (kp.accessRel i)] :
     UNIF kp := by
   intro i w w' hAcc φ
-  exact hSDP i i w w' (s5_access_eq (hS5 i).1 (hS5 i).2 hAcc) φ
+  exact hSDP i i w w' (s5_access_eq hAcc) φ
 
 -- ============================================================================
 -- §6. Boolean-Probabilistic Bridge

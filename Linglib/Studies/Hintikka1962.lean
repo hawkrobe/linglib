@@ -17,7 +17,7 @@ the same substrate lemma to epistemic accessibility.
 namespace Hintikka1962
 
 open Discourse.Commitment.Frame
-open Core.Logic.Intensional (boxR_not_moore AgentAccessRel IsSerial IsTransitive)
+open Core.Logic.Intensional (boxR_not_moore AgentAccessRel IsSerial)
 open Semantics.Modality.EpistemicLogic (knows)
 
 variable {W A : Type*}
@@ -39,8 +39,7 @@ def DoxasticallyIndefensible (c : CommitmentState W A) (a : A) (P : Set W) : Pro
 theorem mooreContent_doxasticallyIndefensible
     (c : CommitmentState W A) (a : A) (p : Set W) :
     DoxasticallyIndefensible c a (mooreContent c a p) :=
-  fun w => boxR_not_moore (c.belief a) (c.belief_serial a) (c.belief_trans a)
-    (fun v => v ∈ p) w
+  fun w => boxR_not_moore (c.belief a) (fun v => v ∈ p) w
 
 /-- A two-world KD4 frame: every world treats only `false` as belief-
     accessible. Used as a witness for `true_mem_mooreContent`. -/
@@ -48,11 +47,11 @@ def mooreWitness : CommitmentState Bool Unit where
   belief _ _ v := v = false
   commitment _ _ _ _ := True
   interp _ := Set.univ
-  belief_trans _ _ _ _ _ h := h
-  belief_eucl _ _ _ _ _ h := h
-  belief_serial _ _ := ⟨false, rfl⟩
-  commitment_trans _ _ _ _ _ _ _ := trivial
-  commitment_eucl _ _ _ _ _ _ _ := trivial
+  belief_kd45 _ := { serial := fun _ => ⟨false, rfl⟩
+                     trans := fun _ _ _ _ h => h
+                     eucl := fun _ _ _ _ h => h }
+  commitment_k4eucl _ _ := { trans := fun _ _ _ _ _ => trivial
+                             eucl := fun _ _ _ _ _ => trivial }
 
 /-- **Satisfiability of the Moore sentence**: with `p := {true}` over
     `mooreWitness`, the world `true` lies in `mooreContent`. The
@@ -67,10 +66,10 @@ theorem true_mem_mooreContent :
     `boxR_not_moore` for `knows`. -/
 theorem knowledge_unknowable
     {E : Type*} (Rs : AgentAccessRel W E) (i : E)
-    (hS : IsSerial (Rs i)) (hT : IsTransitive (Rs i))
+    [IsSerial (Rs i)] [IsTrans W (Rs i)]
     (p : W → Prop) (w : W) :
     ¬ knows Rs i (fun v => p v ∧ ¬ knows Rs i p v) w :=
-  boxR_not_moore (Rs i) hS hT p w
+  boxR_not_moore (Rs i) p w
 
 /-- **Performatory corollary** (state-theoretic restatement of Hintikka
     §4.10): under sincerity, no commitment state hosts a self-commitment

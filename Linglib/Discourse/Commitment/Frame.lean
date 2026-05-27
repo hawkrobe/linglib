@@ -18,24 +18,18 @@ commitment to belief.
 
 * `PairAccessRel W A` — pair-indexed deontic accessibility.
 * `CommitmentState W A` — frame: belief + commitment + valuation +
-  frame conditions.
+  bundled per-agent KD45 and per-pair K4-Euclidean frame conditions.
 * `Believes`, `Committed` — modal operators.
 * `Sincere`, `Competent` — frame conditions linking belief and
   commitment.
 * `committed_implies_believes_of_sincere` and corollaries —
   the @cite{hintikka-1962}/@cite{stalnaker-1984} transfer theorems.
-
-## Implementation notes
-
-Frame conditions are `Prop`-valued struct fields (not typeclasses)
-because the same `CommitmentState` may need partial properties —
-commitment is allowed to be non-serial (commitment violations).
 -/
 
 namespace Discourse.Commitment.Frame
 
-open Core.Logic.Intensional (AccessRel AgentAccessRel IsTransitive IsEuclidean IsSerial
-  boxR diamondR boxR_K boxR_four)
+open Core.Logic.Intensional (AccessRel AgentAccessRel IsKD45Frame IsK4EuclFrame
+  IsEuclidean boxR diamondR boxR_K boxR_four)
 open Semantics.Modality.EpistemicLogic (knows)
 
 /-- Pair-indexed deontic accessibility: `commitment a b w v` means at
@@ -53,26 +47,32 @@ structure CommitmentState (W : Type*) (A : Type*) where
   commitment : PairAccessRel W A
   /-- Atomic-proposition valuation. -/
   interp : String → Set W
-  belief_trans : ∀ a, IsTransitive (belief a)
-  belief_eucl : ∀ a, IsEuclidean (belief a)
-  belief_serial : ∀ a, IsSerial (belief a)
-  commitment_trans : ∀ a b, IsTransitive (commitment a b)
-  commitment_eucl : ∀ a b, IsEuclidean (commitment a b)
+  /-- Belief is KD45 (serial + transitive + euclidean) per agent. -/
+  belief_kd45 : ∀ a, IsKD45Frame (belief a)
+  /-- Commitment is K4-Euclidean (no seriality — violations are
+      expressible) per pair. -/
+  commitment_k4eucl : ∀ a b, IsK4EuclFrame (commitment a b)
 
 namespace CommitmentState
 variable {W : Type*} {A : Type*}
 
+instance (c : CommitmentState W A) (a : A) : IsKD45Frame (c.belief a) :=
+  c.belief_kd45 a
+
+instance (c : CommitmentState W A) (a b : A) : IsK4EuclFrame (c.commitment a b) :=
+  c.commitment_k4eucl a b
+
 /-- The trivial state: every world doxastically/commitmentally
     accessible from every world; every atom true everywhere. -/
 def trivial : CommitmentState W A where
-  belief := fun _ _ _ => True
-  commitment := fun _ _ _ _ => True
-  interp := fun _ => Set.univ
-  belief_trans := fun _ _ _ _ _ _ => True.intro
-  belief_eucl := fun _ _ _ _ _ _ => True.intro
-  belief_serial := fun _ w => ⟨w, True.intro⟩
-  commitment_trans := fun _ _ _ _ _ _ _ => True.intro
-  commitment_eucl := fun _ _ _ _ _ _ _ => True.intro
+  belief _ _ _ := True
+  commitment _ _ _ _ := True
+  interp _ := Set.univ
+  belief_kd45 _ := { serial := fun w => ⟨w, _root_.trivial⟩
+                     trans := fun _ _ _ _ _ => _root_.trivial
+                     eucl := fun _ _ _ _ _ => _root_.trivial }
+  commitment_k4eucl _ _ := { trans := fun _ _ _ _ _ => _root_.trivial
+                             eucl := fun _ _ _ _ _ => _root_.trivial }
 
 /-- `a`'s commitment-towards-`b` is empty — operationally, `a` is
     committed to a contradiction. -/
@@ -85,20 +85,18 @@ def commitmentEmpty (c : CommitmentState W A) (a b : A) : Prop :=
 def restrictCommitment (c : CommitmentState W A) (a b : A) (π : Set W) :
     CommitmentState W A where
   belief := c.belief
-  commitment := fun a' b' w v =>
-    c.commitment a' b' w v ∧ ((a' = a ∧ b' = b) → v ∈ π)
+  commitment a' b' w v := c.commitment a' b' w v ∧ ((a' = a ∧ b' = b) → v ∈ π)
   interp := c.interp
-  belief_trans := c.belief_trans
-  belief_eucl := c.belief_eucl
-  belief_serial := c.belief_serial
-  commitment_trans := by
-    intro a' b' w v u hwv hvu
-    refine ⟨c.commitment_trans a' b' w v u hwv.1 hvu.1, ?_⟩
-    intro h; exact hvu.2 h
-  commitment_eucl := by
-    intro a' b' w v u hwv hwu
-    refine ⟨c.commitment_eucl a' b' w v u hwv.1 hwu.1, ?_⟩
-    intro h; exact hwu.2 h
+  belief_kd45 := c.belief_kd45
+  commitment_k4eucl a' b' :=
+    { trans := by
+        intro w v u hwv hvu
+        refine ⟨IsTrans.trans w v u hwv.1 hvu.1, ?_⟩
+        intro h; exact hvu.2 h
+      eucl := by
+        intro w v u hwv hwu
+        refine ⟨IsEuclidean.eucl w v u hwv.1 hwu.1, ?_⟩
+        intro h; exact hwu.2 h }
 
 @[simp] theorem restrictCommitment_other
     (c : CommitmentState W A) (a b : A) (π : Set W) (a' b' : A)
@@ -138,13 +136,13 @@ def Committed (c : CommitmentState W A) (a b : A) (π : Set W) (w : W) : Prop :=
 theorem believes_four (c : CommitmentState W A) (a : A) (π : Set W) (w : W)
     (h : Believes c a π w) :
     Believes c a (fun v => Believes c a π v) w :=
-  boxR_four (c.belief a) (c.belief_trans a) (fun v => v ∈ π) w h
+  boxR_four (c.belief a) (fun v => v ∈ π) w h
 
 /-- Commitment satisfies the 4 axiom. -/
 theorem committed_four (c : CommitmentState W A) (a b : A) (π : Set W) (w : W)
     (h : Committed c a b π w) :
     Committed c a b (fun v => Committed c a b π v) w :=
-  boxR_four (c.commitment a b) (c.commitment_trans a b) (fun v => v ∈ π) w h
+  boxR_four (c.commitment a b) (fun v => v ∈ π) w h
 
 /-! ### Frame conditions linking belief and commitment -/
 

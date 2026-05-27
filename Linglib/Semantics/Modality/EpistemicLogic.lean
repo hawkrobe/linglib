@@ -38,7 +38,7 @@ on finite worlds goes through `Decidable` instances + `decide`.
 namespace Semantics.Modality.EpistemicLogic
 
 open Core.Logic.Intensional
-  (AccessRel AgentAccessRel boxR diamondR IsReflexive IsSerial IsTransitive IsSymmetric IsEuclidean
+  (AccessRel AgentAccessRel boxR diamondR IsSerial IsEuclidean
    boxR_T boxR_D boxR_four boxR_B boxR_five)
 open Discourse.CommonGround (CG)
 
@@ -219,26 +219,26 @@ theorem knows_implies_believes {W E : Type*}
 /-- Belief is consistent: Bᵢ(φ) → ◇ᵢφ (the D axiom).
     Follows from seriality of the belief accessibility relation. -/
 theorem believes_consistent {W E : Type*}
-    {Rs : AgentAccessRel W E} (i : E) (hSerial : IsSerial (Rs i))
+    {Rs : AgentAccessRel W E} (i : E) [IsSerial (Rs i)]
     (φ : W → Prop) (w : W) (h : believes Rs i φ w) :
     diamondR (Rs i) φ w :=
-  boxR_D (Rs i) hSerial φ w h
+  boxR_D (Rs i) φ w h
 
 /-- Positive introspection: Bᵢ(φ) → Bᵢ(Bᵢ(φ)) (the 4 axiom).
     Follows from transitivity of the belief accessibility relation. -/
 theorem believes_positive_introspection {W E : Type*}
-    {Rs : AgentAccessRel W E} (i : E) (hTrans : IsTransitive (Rs i))
+    {Rs : AgentAccessRel W E} (i : E) [IsTrans W (Rs i)]
     (φ : W → Prop) (w : W) (h : believes Rs i φ w) :
     believes Rs i (believes Rs i φ) w :=
-  boxR_four (Rs i) hTrans φ w h
+  boxR_four (Rs i) φ w h
 
 /-- Negative introspection: ◇Bφ → □◇Bφ (the 5 axiom).
     Follows from Euclideanness of the belief accessibility relation. -/
 theorem believes_negative_introspection {W E : Type*}
-    {Rs : AgentAccessRel W E} (i : E) (hEucl : IsEuclidean (Rs i))
+    {Rs : AgentAccessRel W E} (i : E) [IsEuclidean (Rs i)]
     (φ : W → Prop) (w : W) (h : diamondR (Rs i) φ w) :
     boxR (Rs i) (diamondR (Rs i) φ) w :=
-  boxR_five (Rs i) hEucl φ w h
+  boxR_five (Rs i) φ w h
 
 /-- Belief is not veridical: there exist frames where Bᵢ(φ) ∧ ¬φ.
     Unlike knowledge (which requires reflexivity), belief frames are
@@ -285,8 +285,8 @@ def s5ToWorldOrder {W : Type*} (R : AccessRel W) (w v : W) : Prop :=
 
     The reflexivity of R gives reflexivity of the world ordering;
     `halpernSystemW` does the rest. -/
-def s5ToSystemW {W : Type*} (R : AccessRel W) (hRefl : IsReflexive R) :
+def s5ToSystemW {W : Type*} (R : AccessRel W) [hRefl : Std.Refl R] :
     Core.Scale.EpistemicSystemW W :=
-  Core.Scale.halpernSystemW (s5ToWorldOrder R) (fun w => hRefl w)
+  Core.Scale.halpernSystemW (s5ToWorldOrder R) (fun w => hRefl.refl w)
 
 end Semantics.Modality.EpistemicLogic
