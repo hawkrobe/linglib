@@ -1,25 +1,17 @@
 import Linglib.Discourse.Centering.Basic
 import Mathlib.Order.Basic
 import Mathlib.Order.Nat
-
 /-!
 # Centering Theory — Transitions
 @cite{grosz-joshi-weinstein-1995}
-
 The three transition types (continuation / retaining / shifting) and
 their classification. `classifyTransitionStrict` is faithful to GJW
 Def 4; `classifyTransitionExtended` applies the worked-example
 convention for the segment-initial case.
 -/
-
 set_option autoImplicit false
-
 namespace Discourse.Centering
-
--- ════════════════════════════════════════════════════
--- § 1. Transition Type
--- ════════════════════════════════════════════════════
-
+/-! ### Transition Type -/
 /-- Three transition types between consecutive utterances
     (@cite{grosz-joshi-weinstein-1995} Def 4). -/
 inductive Transition where
@@ -27,30 +19,21 @@ inductive Transition where
   | retaining
   | shifting
   deriving DecidableEq, Repr
-
 /-- Rule 2 preference order: continuation > retaining > shifting. -/
 @[simp] def Transition.rank : Transition → Nat
   | .continuation => 2
   | .retaining    => 1
   | .shifting     => 0
-
 /-- LinearOrder via rank, exposing `<`, `≤`, `max` for Rule 2 statements. -/
 instance : LinearOrder Transition :=
   LinearOrder.lift' Transition.rank
     (fun a b h => by cases a <;> cases b <;> simp_all [Transition.rank])
-
 theorem continuation_gt_retaining :
     (Transition.continuation : Transition) > .retaining := by decide
-
 theorem retaining_gt_shifting :
     (Transition.retaining : Transition) > .shifting := by decide
-
--- ════════════════════════════════════════════════════
--- § 2. Strict and Extended Classification
--- ════════════════════════════════════════════════════
-
+/-! ### Strict and Extended Classification -/
 variable {E R : Type}
-
 /-- Internal classifier given both Cbs: equal Cbs continue/retain
     by Cp alignment; unequal Cbs shift. -/
 def classifyTransitionInternal [DecidableEq E]
@@ -58,7 +41,6 @@ def classifyTransitionInternal [DecidableEq E]
   if prevCb = curCb then
     if curCp = some curCb then .continuation else .retaining
   else .shifting
-
 /-- Strict classification (faithful to GJW Def 4): returns `none` in
     the segment-initial case where the prior Cb is undefined. -/
 def classifyTransitionStrict
@@ -69,7 +51,6 @@ def classifyTransitionStrict
   | none, _      => some .shifting
   | _, none      => none  -- segment-initial: paper Def 4 is silent
   | some curCb, some pcb => some (classifyTransitionInternal curCb curCp pcb)
-
 /-- Extended classification: applies the worked-example convention
     for the segment-initial case (treats missing prior Cb as if equal
     to current Cb). -/
@@ -81,7 +62,6 @@ def classifyTransitionExtended
   | none => .shifting
   | some curCb =>
     classifyTransitionInternal curCb curCp (prevCb.getD curCb)
-
 /-- The two classifications agree whenever the strict variant is
     defined. -/
 theorem extended_eq_strict_when_defined
@@ -103,5 +83,4 @@ theorem extended_eq_strict_when_defined
   | some _, some _ =>
     simp only [hcb] at h ⊢
     exact Option.some.inj h
-
 end Discourse.Centering

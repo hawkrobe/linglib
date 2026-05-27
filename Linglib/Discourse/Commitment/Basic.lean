@@ -13,7 +13,7 @@ namespace Discourse
 
 namespace Commitment
 
-/-! ### §1 Commitment Slates -/
+/-! ### Commitment Slates -/
 
 /-- An agent's public discourse commitments (@cite{krifka-2015},
     @cite{brandom-1994}): a list of propositions the agent has
@@ -57,7 +57,7 @@ theorem add_entails (s : CommitmentSlate W) (p : W → Prop) (w : W) :
 
 end CommitmentSlate
 
-/-! ### §2 Source-Marked Commitments -/
+/-! ### Source-Marked Commitments -/
 
 /-- The source of a discourse commitment: self-generated commitments
     can be challenged by the addressee; other-generated commitments
@@ -125,7 +125,7 @@ def toContextSet (s : TaggedSlate W) : W → Prop :=
 
 end TaggedSlate
 
-/-! ### §3 Grade typeclasses -/
+/-! ### Grade typeclasses -/
 
 /-- The support predicate of a commitment grade `G`: which grades count
     as "actively committing". For `Prop`: identity. For `Bool`:
@@ -148,7 +148,7 @@ instance : CommitmentGrade Prop where
 -- declare locally. Anderson 2021's distributional CG provides
 -- `HasSupport ℝ` at its own site.
 
-/-! ### §4 Speaker-Indexed Commitments -/
+/-! ### Speaker-Indexed Commitments -/
 
 /-! `IndexedWeightedCommitment W G` is the polymorphic
 commitment type. Three axes:
@@ -244,7 +244,7 @@ end IndexedCommitment
 
 end Commitment
 
-/-! ### §5 HasContextSet Instance -/
+/-! ### HasContextSet Instance -/
 
 open Discourse.CommonGround in
 /-- A commitment slate projects to a context set. -/
