@@ -2028,8 +2028,8 @@ import Linglib.Discourse.Centering.Transition
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Discourse.Centering.Instances.InformationStatus
 -- Theories: Discourse — SDRT
-import Linglib.Discourse.SDRT.Defs
-import Linglib.Discourse.SDRT.RightFrontier
+import Linglib.Discourse.Rhetorical.Defs
+import Linglib.Discourse.Rhetorical.RightFrontier
 -- Theories: Discourse — Faller/Murray illocutionary operators
 -- Theories: Interfaces — Centering ↔ DRT bridge
 import Linglib.Discourse.Centering.DRSExpr

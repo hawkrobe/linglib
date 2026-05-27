@@ -55,7 +55,7 @@ edges (§4.7): `outscopes(γ, α)` iff `R(δ, α)` or `R(α, δ)` is a
 conjunct in `F(γ)`.
 -/
 
-namespace Discourse.SDRT
+namespace Discourse.Rhetorical
 
 open Discourse.Coherence (CoherenceRelation)
 
@@ -88,7 +88,7 @@ inductive RelationKind where
   | structural
   deriving DecidableEq, Repr, Inhabited
 
-end Discourse.SDRT
+end Discourse.Rhetorical
 
 namespace Discourse.Coherence
 
@@ -98,7 +98,7 @@ namespace Discourse.Coherence
     projection `R.sdrtKind` works for consumers anywhere in the
     codebase, including outside SDRT. -/
 def CoherenceRelation.sdrtKind :
-    CoherenceRelation → Discourse.SDRT.RelationKind
+    CoherenceRelation → Discourse.Rhetorical.RelationKind
   | .elaboration  => .subordinating
   | .explanation  => .subordinating
   | .occasion     => .coordinating  -- = SDRT's Narration
@@ -121,7 +121,7 @@ instance : DecidablePred CoherenceRelation.isSubordinating :=
 
 end Discourse.Coherence
 
-namespace Discourse.SDRT
+namespace Discourse.Rhetorical
 
 open Discourse.Coherence (CoherenceRelation)
 
@@ -150,14 +150,14 @@ inductive Veridicality where
   | denialBearing
   deriving DecidableEq, Repr, Inhabited
 
-end Discourse.SDRT
+end Discourse.Rhetorical
 
 namespace Discourse.Coherence
 
 /-- Veridicality of each rhetorical relation per SDRT
     (@cite{asher-lascarides-2003}, preface "What's New" + §4.8). -/
 def CoherenceRelation.veridicality :
-    CoherenceRelation → Discourse.SDRT.Veridicality
+    CoherenceRelation → Discourse.Rhetorical.Veridicality
   | .occasion     => .veridical    -- = SDRT's Narration
   | .elaboration  => .veridical
   | .explanation  => .veridical
@@ -171,7 +171,7 @@ def CoherenceRelation.veridicality :
 
 end Discourse.Coherence
 
-namespace Discourse.SDRT
+namespace Discourse.Rhetorical
 
 open Discourse.Coherence (CoherenceRelation)
 
@@ -291,4 +291,4 @@ instance {L : Type*} {α : Type*} [DecidableEq L]
   unfold iOutscopes
   exact List.decidableBEx _ _
 
-end Discourse.SDRT
+end Discourse.Rhetorical

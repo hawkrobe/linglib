@@ -1,5 +1,5 @@
-import Linglib.Discourse.SDRT.Defs
-import Linglib.Discourse.SDRT.RightFrontier
+import Linglib.Discourse.Rhetorical.Defs
+import Linglib.Discourse.Rhetorical.RightFrontier
 
 /-!
 # Asher & Lascarides 2003: SDRT Right Frontier Constraint worked example
@@ -62,7 +62,7 @@ with a hypothetical `.topic` constructor.
 
 namespace AsherLascarides2003
 
-open Discourse.SDRT
+open Discourse.Rhetorical
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. The Example (21) SDRS

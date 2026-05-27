@@ -1,4 +1,4 @@
-import Linglib.Discourse.SDRT.Defs
+import Linglib.Discourse.Rhetorical.Defs
 
 /-!
 # Right Frontier Constraint
@@ -42,7 +42,7 @@ at attachment time. Without the RFC, anaphora resolution would
 overgenerate.
 -/
 
-namespace Discourse.SDRT
+namespace Discourse.Rhetorical
 
 variable {L : Type*} {α : Type*} [DecidableEq L]
 
@@ -134,4 +134,4 @@ theorem oneStep_available (s : SDRS L α) (α' γ : L)
   refine Or.inr ⟨γ, hγ, h, ?_⟩
   rfl
 
-end Discourse.SDRT
+end Discourse.Rhetorical
