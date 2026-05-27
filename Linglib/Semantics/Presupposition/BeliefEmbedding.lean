@@ -297,59 +297,41 @@ Both represent the same concept (agent-indexed world accessibility). The
 
 section BoolPropBridge
 
-open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
-open Core.Logic.Intensional (AgentAccessRel)
+open Core.Logic.Intensional (AgentAccessRel IsBeliefRefinementOf)
 
 variable {W E : Type*}
 
 /-- Reinterpret an `AgentAccessRel` as a `DoxasticAccessibility`. Since both are
     `E → W → W → Prop` up to currying, this is essentially the identity. -/
-def doxOfAccessRel (Rs : AgentAccessRel W E) : DoxasticAccessibility W E :=
+@[reducible] def doxOfAccessRel (Rs : AgentAccessRel W E) : DoxasticAccessibility W E :=
   fun i w v => Rs i w v
 
-/-- Construct a `BeliefLocalCtx` from a `KnowledgeBeliefFrame` using the
-    belief relation. This connects the KD45 belief operator from
-    `CommonGround.lean` to the local context machinery in this file. -/
-def beliefLocalCtxOfFrame (frame : KnowledgeBeliefFrame W E)
-    (ctx : ContextSet W) (i : E) : BeliefLocalCtx W E :=
+/-- Build a `BeliefLocalCtx` from an agent-indexed accessibility relation. -/
+def localCtxOf (Rs : AgentAccessRel W E) (ctx : ContextSet W) (i : E) :
+    BeliefLocalCtx W E :=
   { globalCtx := ctx
-  , dox := doxOfAccessRel frame.believesRel
+  , dox := doxOfAccessRel Rs
   , agent := i }
 
-/-- Construct a `BeliefLocalCtx` from a `KnowledgeBeliefFrame` using the
-    knowledge relation. S5 knowledge is reflexive, so the local context
-    includes the evaluation world itself. -/
-def knowledgeLocalCtxOfFrame (frame : KnowledgeBeliefFrame W E)
-    (ctx : ContextSet W) (i : E) : BeliefLocalCtx W E :=
-  { globalCtx := ctx
-  , dox := doxOfAccessRel frame.knowsRel
-  , agent := i }
-
-/-- Belief-accessible worlds are a subset of knowledge-accessible worlds.
-
-    Since `R_B ⊆ R_K` (from `KnowledgeBeliefFrame.believes_sub_knows`),
-    the belief local context at any world is contained in the knowledge
-    local context. -/
-theorem beliefLocal_sub_knowledgeLocal (frame : KnowledgeBeliefFrame W E)
-    (ctx : ContextSet W) (i : E) (w_star : W) :
-    ∀ w, (beliefLocalCtxOfFrame frame ctx i).atWorld w_star w →
-         (knowledgeLocalCtxOfFrame frame ctx i).atWorld w_star w := by
+/-- Belief-accessible worlds are a subset of knowledge-accessible worlds
+    when belief refines knowledge pointwise. -/
+theorem localCtx_sub_of_refinement (Rk Rb : AgentAccessRel W E)
+    (ctx : ContextSet W) (i : E) [hRef : IsBeliefRefinementOf (Rk i) (Rb i)]
+    (w_star : W) :
+    ∀ w, (localCtxOf Rb ctx i).atWorld w_star w →
+         (localCtxOf Rk ctx i).atWorld w_star w := by
   intro w ⟨hctx, hbel⟩
-  exact ⟨hctx, frame.believes_sub_knows i w_star w hbel⟩
+  exact ⟨hctx, hRef.sub w_star w hbel⟩
 
-/-- If a presupposition is filtered under knowledge embedding (S5), it is
-    also filtered under belief embedding (KD45).
-
-    The belief local context is a subset of the knowledge local context
-    (since R_B ⊆ R_K). If p holds at all knowledge-accessible worlds,
-    it holds at all belief-accessible worlds a fortiori. -/
+/-- If a presupposition is filtered under knowledge embedding, it is also
+    filtered under any belief embedding that refines knowledge. -/
 theorem knowledge_filtered_implies_belief_filtered
-    (frame : KnowledgeBeliefFrame W E)
-    (ctx : ContextSet W) (i : E) (p : PrProp W) (w_star : W) :
-    ContextSet.entails ((knowledgeLocalCtxOfFrame frame ctx i).atWorld w_star) p.presup →
-    ContextSet.entails ((beliefLocalCtxOfFrame frame ctx i).atWorld w_star) p.presup := by
+    (Rk Rb : AgentAccessRel W E) (ctx : ContextSet W) (i : E)
+    [IsBeliefRefinementOf (Rk i) (Rb i)] (p : PrProp W) (w_star : W) :
+    ContextSet.entails ((localCtxOf Rk ctx i).atWorld w_star) p.presup →
+    ContextSet.entails ((localCtxOf Rb ctx i).atWorld w_star) p.presup := by
   intro h_know w h_bel
-  exact h_know (beliefLocal_sub_knowledgeLocal frame ctx i w_star w h_bel)
+  exact h_know (localCtx_sub_of_refinement Rk Rb ctx i w_star w h_bel)
 
 end BoolPropBridge
 

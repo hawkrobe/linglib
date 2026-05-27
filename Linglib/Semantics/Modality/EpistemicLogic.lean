@@ -38,7 +38,7 @@ on finite worlds goes through `Decidable` instances + `decide`.
 namespace Semantics.Modality.EpistemicLogic
 
 open Core.Logic.Intensional
-  (AccessRel AgentAccessRel boxR diamondR IsSerial IsEuclidean
+  (AccessRel AgentAccessRel boxR diamondR IsSerial IsEuclidean IsBeliefRefinementOf
    boxR_T boxR_D boxR_four boxR_B boxR_five)
 open Discourse.CommonGround (CG)
 
@@ -189,32 +189,15 @@ def distributedBelief {W E : Type*} (Rs : AgentAccessRel W E)
     (group : List E) (φ : W → Prop) (w : W) : Prop :=
   boxR (groupAccessRel Rs group) φ w
 
-/-- A knowledge-belief frame bundles S5 knowledge relations and KD45
-    belief relations for each agent, with the constraint that belief
-    accessibility is a subset of knowledge accessibility.
-
-    R_B(i) ⊆ R_K(i) ensures Kφ → Bφ: if φ holds at all
-    knowledge-accessible worlds (a superset), it holds at all
-    belief-accessible worlds. -/
-structure KnowledgeBeliefFrame (W E : Type*) where
-  /-- Knowledge accessibility relations (should satisfy S5: reflexive + Euclidean) -/
-  knowsRel : AgentAccessRel W E
-  /-- Belief accessibility relations (should satisfy KD45: serial + transitive + Euclidean) -/
-  believesRel : AgentAccessRel W E
-  /-- Belief accessibility implies knowledge accessibility -/
-  believes_sub_knows : ∀ i w v, believesRel i w v → knowsRel i w v
-
-/-- Knowledge implies belief: Kᵢ(φ) → Bᵢ(φ).
-
-    Since every belief-accessible world is knowledge-accessible
-    (R_B ⊆ R_K), if φ holds at all knowledge-accessible worlds
-    then it holds at all belief-accessible worlds. -/
+/-- Knowledge implies belief: Kᵢ(φ) → Bᵢ(φ), given that every
+    belief-accessible world is knowledge-accessible. The
+    `[IsBeliefRefinementOf (Rk i) (Rb i)]` constraint encodes the
+    pointwise refinement; whether `Rk` is S5 and `Rb` is KD45 is
+    a separate stipulation (cf. Hintikka 1962). -/
 theorem knows_implies_believes {W E : Type*}
-    (frame : KnowledgeBeliefFrame W E) (i : E) (φ : W → Prop) (w : W)
-    (h : knows frame.knowsRel i φ w) :
-    believes frame.believesRel i φ w := by
-  intro v hv
-  exact h v (frame.believes_sub_knows i w v hv)
+    (Rk Rb : AgentAccessRel W E) (i : E) [hRef : IsBeliefRefinementOf (Rk i) (Rb i)]
+    (φ : W → Prop) (w : W) (h : knows Rk i φ w) :
+    believes Rb i φ w := fun v hv => h v (hRef.sub w v hv)
 
 /-- Belief is consistent: Bᵢ(φ) → ◇ᵢφ (the D axiom).
     Follows from seriality of the belief accessibility relation. -/

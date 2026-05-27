@@ -38,8 +38,8 @@ namespace Heim1992
 
 open Semantics.Presupposition (PrProp)
 open Discourse.CommonGround (ContextSet)
-open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
-open Core.Logic.Intensional (IsSerial IsEuclidean)
+open Core.Logic.Intensional (IsSerial IsEuclidean IsS5Frame IsKD45Frame
+  IsBeliefRefinementOf)
 open Semantics.Presupposition.LocalContext (presupFiltered)
 open Semantics.Presupposition.BeliefEmbedding
 
@@ -83,6 +83,10 @@ def believesRBool : AttWorld → AttWorld → Bool
 /-- Knowledge relation is reflexive. -/
 instance knowsR_isRefl : Std.Refl knowsR := ⟨fun _ => trivial⟩
 
+/-- Knowledge relation is euclidean (trivially: knowsR is the universal
+    relation, so any pair of successors satisfies the goal). -/
+instance knowsR_isEucl : IsEuclidean knowsR := ⟨fun _ _ _ _ _ => trivial⟩
+
 /-- Belief relation is serial (every world accesses some world). -/
 instance believesR_isSerial : IsSerial believesR :=
   ⟨fun w => ⟨.believed, by cases w <;> trivial⟩⟩
@@ -107,24 +111,23 @@ instance believesR_isEucl : IsEuclidean believesR := by
   | believed => cases v <;> trivial
   | actual => exact hwu.elim
 
-/-- R_B ⊆ R_K: belief-accessible worlds are knowledge-accessible. -/
-theorem believes_sub_knows :
-    ∀ (w v : AttWorld), believesR w v → knowsR w v :=
-  fun _ _ _ => trivial
-
 /-- The agent-indexed knowledge relation. -/
-def agentKnowsR : Holder → AttWorld → AttWorld → Prop
+@[reducible] def agentKnowsR : Holder → AttWorld → AttWorld → Prop
   | .john => knowsR
 
 /-- The agent-indexed belief relation. -/
-def agentBelievesR : Holder → AttWorld → AttWorld → Prop
+@[reducible] def agentBelievesR : Holder → AttWorld → AttWorld → Prop
   | .john => believesR
 
-/-- The knowledge-belief frame bundling S5 knowledge and KD45 belief. -/
-def frame : KnowledgeBeliefFrame AttWorld Holder :=
-  { knowsRel := agentKnowsR
-  , believesRel := agentBelievesR
-  , believes_sub_knows := fun i w v h => by cases i; exact believes_sub_knows w v h }
+/-- John's knowledge is S5. -/
+instance : IsS5Frame (agentKnowsR .john) where
+
+/-- John's belief is KD45. -/
+instance : IsKD45Frame (agentBelievesR .john) where
+
+/-- Belief refines knowledge for John: R_B ⊆ R_K. -/
+instance : IsBeliefRefinementOf (agentKnowsR .john) (agentBelievesR .john) :=
+  ⟨fun _ _ _ => trivial⟩
 
 /-! ## Presupposition -/
 
@@ -141,13 +144,13 @@ def globalCtx : ContextSet AttWorld := fun _ => True
 
 /-! ## Local Contexts -/
 
-/-- Knowledge local context constructed via the bridge. -/
+/-- Knowledge local context. -/
 def knowledgeLocal : BeliefLocalCtx AttWorld Holder :=
-  knowledgeLocalCtxOfFrame frame globalCtx .john
+  localCtxOf agentKnowsR globalCtx .john
 
-/-- Belief local context constructed via the bridge. -/
+/-- Belief local context. -/
 def beliefLocal : BeliefLocalCtx AttWorld Holder :=
-  beliefLocalCtxOfFrame frame globalCtx .john
+  localCtxOf agentBelievesR globalCtx .john
 
 /-! ## @cite{heim-1992} Asymmetry Theorems -/
 
@@ -161,9 +164,7 @@ theorem reflexivity_forces_actual_truth
     (h : ContextSet.entails (knowledgeLocal.atWorld .actual) presup.presup) :
     presup.presup .actual := by
   refine @h .actual ?_
-  refine ⟨trivial, ?_⟩
-  show doxOfAccessRel frame.knowsRel .john .actual .actual
-  simp [doxOfAccessRel, frame, agentKnowsR, knowsR]
+  exact ⟨trivial, knowsR_isRefl.refl AttWorld.actual⟩
 
 /-- KD45 non-reflexivity permits false presuppositions under belief embedding.
 
