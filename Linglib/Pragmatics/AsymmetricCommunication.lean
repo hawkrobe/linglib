@@ -95,11 +95,11 @@ def ofCommChannels {C W : Type} [Fintype C] [Fintype W]
 
 /-- An asymmetric model is symmetric iff its two channels coincide as
     functions. -/
-def IsSymmetric (m : AsymmetricCommModel C W) : Prop :=
+def IsChannelSymmetric (m : AsymmetricCommModel C W) : Prop :=
   m.produce = m.comprehend
 
-@[simp] theorem symmetric_isSymmetric (ch : ChannelAccess C W) :
-    (symmetric ch).IsSymmetric := rfl
+@[simp] theorem symmetric_isChannelSymmetric (ch : ChannelAccess C W) :
+    (symmetric ch).IsChannelSymmetric := rfl
 
 @[simp] theorem symmetric_produce (ch : ChannelAccess C W) :
     (symmetric ch).produce = ch := rfl

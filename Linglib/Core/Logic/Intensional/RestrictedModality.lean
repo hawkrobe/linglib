@@ -453,19 +453,19 @@ def frameConditions {W : Type*} (L : Logic) (R : AccessRel W) : Prop :=
 
 /-- The syntactic-semantic bridge for `S5`: `frameConditions Logic.S5 R`
     iff `R` is an S5 frame. -/
-theorem frameConditions_S5_iff {W : Type*} (R : AccessRel W) :
+@[simp] theorem frameConditions_S5_iff {W : Type*} (R : AccessRel W) :
     frameConditions S5 R ↔ Std.Refl R ∧ IsEuclidean R := by
   unfold frameConditions S5 hasAxiom
   simp
 
 /-- The syntactic-semantic bridge for `KD45`. -/
-theorem frameConditions_KD45_iff {W : Type*} (R : AccessRel W) :
+@[simp] theorem frameConditions_KD45_iff {W : Type*} (R : AccessRel W) :
     frameConditions KD45 R ↔ IsSerial R ∧ IsTrans W R ∧ IsEuclidean R := by
   unfold frameConditions KD45 hasAxiom
   simp
 
 /-- The syntactic-semantic bridge for `KTB`. -/
-theorem frameConditions_KTB_iff {W : Type*} (R : AccessRel W) :
+@[simp] theorem frameConditions_KTB_iff {W : Type*} (R : AccessRel W) :
     frameConditions KTB R ↔ Std.Refl R ∧ Std.Symm R := by
   unfold frameConditions KTB hasAxiom
   simp
