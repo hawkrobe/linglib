@@ -58,7 +58,7 @@ you nothing about whether it entails change, and vice versa.
   40, 225–276.
 -/
 
-open Features.EventStructure
+open Semantics.Lexical.EventStructure
 open Semantics.ArgumentStructure.EntailmentProfile
 open Features.ChangeOfState
 open Semantics.Lexical.Roots

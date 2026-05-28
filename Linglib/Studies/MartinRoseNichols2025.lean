@@ -264,7 +264,7 @@ end MartinRoseNichols2025.ThickThin
 namespace MartinRoseNichols2025.Compare
 
 open Minimalist
-open Features.EventStructure
+open Semantics.Lexical.EventStructure
 open Semantics.Causation.ProductionDependence
 open MartinRoseNichols2025.ThickThin
 

@@ -359,36 +359,25 @@ theorem cost_reflects_polarity :
 
 section CompositionalGrounding
 
-open Core.Logic.Intensional
-
 /-- A simple model for part-whole relations. -/
 inductive PWEntity where
   | house | classroom | bathroom | stove
   deriving DecidableEq, Repr
 
-/-- Part-whole frame. -/
-def pwFrame : Frame where
-  Entity := PWEntity
-  Index := Unit
-
 /-- The "has" relation: which containers have which parts. -/
-def has_sem : pwFrame.Denot (.e ⇒ .e ⇒ .t) :=
+def has_sem : PWEntity → PWEntity → Prop :=
   λ part container => match container, part with
     | .house, .bathroom => True
     | .classroom, .stove => False
     | _, _ => False
 
 /-- Positive sentence meaning: "A has B". -/
-def posMeaning (container part : PWEntity) : pwFrame.Denot .t :=
+def posMeaning (container part : PWEntity) : Prop :=
   has_sem part container
 
-/-- Negative sentence meaning: "A doesn't have B" = neg(has(A, B)). -/
-def negMeaning (container part : PWEntity) : pwFrame.Denot .t :=
-  neg (posMeaning container part)
-
-/-- Key theorem: negative meaning is compositionally derived via `neg`. -/
-theorem neg_is_compositional (container part : PWEntity) :
-    negMeaning container part = neg (posMeaning container part) := rfl
+/-- Negative sentence meaning: "A doesn't have B". -/
+def negMeaning (container part : PWEntity) : Prop :=
+  ¬ posMeaning container part
 
 theorem house_has_bathroom : posMeaning .house .bathroom := trivial
 theorem house_doesnt_have_bathroom : ¬ negMeaning .house .bathroom := fun h => h trivial

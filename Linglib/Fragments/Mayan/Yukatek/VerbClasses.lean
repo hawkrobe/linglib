@@ -42,7 +42,7 @@ S marked like A (accusative).
 namespace Fragments.Mayan.Yukatek
 
 open Semantics.Aspect (ViewpointAspectB)
-open Features.EventStructure (EventType CausationType)
+open Semantics.Lexical.EventStructure (EventType InternalExternalCause)
 open Fragments.Mayan (MarkerSet)
 
 -- ════════════════════════════════════════════════════
@@ -141,7 +141,7 @@ theorem imperfective_accusative :
 structure YukatekVerb where
   gloss : String
   stemClass : VerbStemClass
-  causationType : CausationType
+  causationType : InternalExternalCause
   deriving BEq, Repr
 
 -- Active verbs (internally caused processes)
@@ -202,7 +202,7 @@ def haats : YukatekVerb := ⟨"hit", .transitiveActive, .internal⟩
 -- § 5. Bridge to Event Structure Templates
 -- ════════════════════════════════════════════════════
 
-open Features.EventStructure (Template)
+open Semantics.Lexical.EventStructure (Template)
 
 /-- Map Yukatek verb stem classes to R&H event structure templates.
     This connects the language-specific classification to the

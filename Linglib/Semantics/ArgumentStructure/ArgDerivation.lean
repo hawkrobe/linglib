@@ -48,7 +48,7 @@ adds information beyond what root entailments + template predict:
 namespace Semantics.ArgumentStructure.ArgDerivation
 
 open Semantics.Lexical
-open Features.EventStructure (Template)
+open Semantics.Lexical.EventStructure (Template)
 open Features.LevinClassProfiles
 open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.Lexical.Roots
@@ -74,15 +74,12 @@ open Semantics.Lexical.Roots
     - **achievement** `[BECOME [x STATE]]`: root provides state for
       BECOME to apply to (template adds the change)
     - **accomplishment** `[[x ACT] CAUSE [BECOME [y STATE]]]`: root
-      provides state for the caused result
-    - **motionContact** `[x MOVE y] WHILE [x CONTACT y]`: root must
-      describe manner (motion + contact are manner-based) -/
+      provides state for the caused result -/
 def RootLicensesTemplate (re : RootEntailments) : Template → Prop
   | .state         => re.state = true
   | .activity      => re.manner = true
   | .achievement   => re.state = true
   | .accomplishment => re.state = true
-  | .motionContact => re.manner = true
 
 instance (re : RootEntailments) (t : Template) :
     Decidable (RootLicensesTemplate re t) := by
@@ -90,7 +87,7 @@ instance (re : RootEntailments) (t : Template) :
 
 /-- All templates licensed by a root (captures alternation). -/
 def licensedTemplates (re : RootEntailments) : List Template :=
-  [.state, .activity, .achievement, .accomplishment, .motionContact].filter
+  [.state, .activity, .achievement, .accomplishment].filter
     (λ t => decide (RootLicensesTemplate re t))
 
 -- § 1a. Licensing verification for canonical root types
@@ -103,11 +100,10 @@ theorem pc_licenses :
     RootLicensesTemplate .propertyConcept .accomplishment ∧
     ¬ RootLicensesTemplate .propertyConcept .activity := by decide
 
-/-- Pure manner roots (JOG) license activity and motionContact only.
+/-- Pure manner roots (JOG) license activity only.
     Not state-based templates (no state entailment). -/
 theorem pureManner_licenses :
     RootLicensesTemplate .pureManner .activity ∧
-    RootLicensesTemplate .pureManner .motionContact ∧
     ¬ RootLicensesTemplate .pureManner .state ∧
     ¬ RootLicensesTemplate .pureManner .achievement ∧
     ¬ RootLicensesTemplate .pureManner .accomplishment := by decide
@@ -127,14 +123,13 @@ theorem causativeResult_licenses :
     RootLicensesTemplate .causativeResult .accomplishment ∧
     ¬ RootLicensesTemplate .causativeResult .activity := by decide
 
-/-- Full-spec roots (CUT) license ALL five templates — they have
+/-- Full-spec roots (CUT) license all four templates — they have
     both state and manner, so they can fill any structural position. -/
 theorem fullSpec_licenses :
     RootLicensesTemplate .fullSpec .state ∧
     RootLicensesTemplate .fullSpec .activity ∧
     RootLicensesTemplate .fullSpec .achievement ∧
-    RootLicensesTemplate .fullSpec .accomplishment ∧
-    RootLicensesTemplate .fullSpec .motionContact := by decide
+    RootLicensesTemplate .fullSpec .accomplishment := by decide
 
 -- § 1b. Alternation predictions
 
@@ -144,15 +139,15 @@ theorem fullSpec_licenses :
 theorem pc_alternation_count :
     (licensedTemplates .propertyConcept).length = 3 := by native_decide
 
-/-- Pure manner roots license 2 templates — no alternation into
+/-- Pure manner roots license 1 template — no alternation into
     state-based frames (*"Kim jogged the ball broken"). -/
 theorem pureManner_alternation_count :
-    (licensedTemplates .pureManner).length = 2 := by native_decide
+    (licensedTemplates .pureManner).length = 1 := by native_decide
 
-/-- Full-spec roots license all 5 templates — maximal flexibility
+/-- Full-spec roots license all 4 templates — maximal flexibility
     (conative, causative/inchoative, locative, etc.). -/
 theorem fullSpec_alternation_count :
-    (licensedTemplates .fullSpec).length = 5 := by native_decide
+    (licensedTemplates .fullSpec).length = 4 := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. Template → ArgTemplate
@@ -256,9 +251,9 @@ def deriveAll (re : RootEntailments) : List ArgTemplate :=
 theorem causativeResult_derives_three :
     (deriveAll .causativeResult).length = 3 := by native_decide
 
-/-- fullSpec roots derive 5 ArgTemplates (all templates). -/
-theorem fullSpec_derives_five :
-    (deriveAll .fullSpec).length = 5 := by native_decide
+/-- fullSpec roots derive 4 ArgTemplates (all templates). -/
+theorem fullSpec_derives_four :
+    (deriveAll .fullSpec).length = 4 := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Root-Enriched Derivation
@@ -304,7 +299,7 @@ def deriveEnriched (re : RootEntailments) (mc : MeaningComponents) : Option ArgT
     | .activity =>
       if mc.contact then
         -- Transitive activity: subject gets C from causal interaction
-        some { subjectProfile := ⟨true, true, true, true, true, false, false, false, false, false⟩,
+        some { subjectProfile := Semantics.ArgumentStructure.EntailmentProfile.accomplishmentSubjectProfile,
                objectProfile := some ⟨false, false, false, false, false, false, false, true, true, false⟩ }
       else
         some base

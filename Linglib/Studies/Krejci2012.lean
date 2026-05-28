@@ -50,7 +50,7 @@ namespace Krejci2012
 open Semantics.Lexical
 open Semantics.Lexical.Roots
 open Semantics.Causation.Morphological
-open Features.EventStructure
+open Semantics.Lexical.EventStructure
 open Semantics.ArgumentStructure.ArgDerivation
 
 -- ════════════════════════════════════════════════════
