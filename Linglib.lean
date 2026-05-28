@@ -2279,7 +2279,6 @@ import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Tense.Modal.AtOperator
 import Linglib.Semantics.Composition.PredicateTransfer
 import Linglib.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
