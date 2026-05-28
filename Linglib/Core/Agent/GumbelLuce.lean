@@ -144,8 +144,8 @@ noncomputable def mcfaddenIntegral {ι : Type*} [Fintype ι]
     `gumbelMaxProb_is_mcfaddenIntegral`. -/
 theorem mcfaddenIntegral_eq_softmax {ι : Type*} [Fintype ι] [Nonempty ι]
     (u : ι → ℝ) {β : ℝ} (_hβ : 0 < β) (i : ι) :
-    mcfaddenIntegral u β i = softmax u (1 / β) i := by
-  simp only [mcfaddenIntegral, softmax]
+    mcfaddenIntegral u β i = softmax ((1 / β) • u) i := by
+  simp only [mcfaddenIntegral, softmax, Pi.smul_apply, smul_eq_mul]
   have hS : 0 < ∑ j : ι, exp (u j / β) :=
     Finset.sum_pos (λ j _ => exp_pos _) ⟨Classical.arbitrary ι, mem_univ _⟩
   rw [integral_exp_neg_mul_Ioi_zero hS]
@@ -161,14 +161,14 @@ theorem mcfaddenIntegral_sum {ι : Type*} [Fintype ι] [Nonempty ι]
     (u : ι → ℝ) {β : ℝ} (hβ : 0 < β) :
     ∑ i : ι, mcfaddenIntegral u β i = 1 := by
   simp_rw [mcfaddenIntegral_eq_softmax u hβ]
-  exact softmax_sum_eq_one u (1 / β)
+  exact softmax_sum_eq_one ((1 / β) • u)
 
 /-- Each McFadden integral is positive. -/
 theorem mcfaddenIntegral_pos {ι : Type*} [Fintype ι] [Nonempty ι]
     (u : ι → ℝ) {β : ℝ} (hβ : 0 < β) (i : ι) :
     0 < mcfaddenIntegral u β i := by
   rw [mcfaddenIntegral_eq_softmax u hβ]
-  exact softmax_pos u (1 / β) i
+  exact softmax_pos ((1 / β) • u) i
 
 -- ============================================================================
 -- §5. Binary Case: McFadden = Logistic
@@ -177,21 +177,21 @@ theorem mcfaddenIntegral_pos {ι : Type*} [Fintype ι] [Nonempty ι]
 /-- **Binary McFadden = Logistic**: For two alternatives, the McFadden integral
     reduces to the logistic function.
 
-    `mcfaddenIntegral([u₁, u₂], β)(0) = logistic((u₁ - u₂) / β)`
+    `mcfaddenIntegral([u₁, u₂], β)(0) = Real.sigmoid((u₁ - u₂) / β)`
 
     This is the exact Gumbel-Luce result for binary choice: if `ε₁, ε₂` are
-    i.i.d. Gumbel(0, β), then `P(u₁+ε₁ > u₂+ε₂) = logistic((u₁-u₂)/β)`.
+    i.i.d. Gumbel(0, β), then `P(u₁+ε₁ > u₂+ε₂) = Real.sigmoid((u₁-u₂)/β)`.
 
     Compare with Thurstone Case V (`Thurstone.lean`):
     `P(u₁+η₁ > u₂+η₂) = Φ((u₁-u₂)/(σ√2))` for Gaussian noise η. -/
 theorem mcfaddenIntegral_binary (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
-    mcfaddenIntegral u β 0 = logistic ((u 0 - u 1) / β) := by
+    mcfaddenIntegral u β 0 = Real.sigmoid ((u 0 - u 1) / β) := by
   rw [mcfaddenIntegral_eq_softmax u hβ, softmax_binary]
   congr 1; ring
 
 /-- The binary McFadden integral for alternative 1 is the complement. -/
 theorem mcfaddenIntegral_binary_one (u : Fin 2 → ℝ) {β : ℝ} (hβ : 0 < β) :
-    mcfaddenIntegral u β 1 = 1 - logistic ((u 0 - u 1) / β) := by
+    mcfaddenIntegral u β 1 = 1 - Real.sigmoid ((u 0 - u 1) / β) := by
   have hsum := mcfaddenIntegral_sum u hβ (ι := Fin 2)
   rw [Fin.sum_univ_two] at hsum
   linarith [mcfaddenIntegral_binary u hβ]
@@ -217,7 +217,7 @@ theorem RationalAction.fromGumbelRUM_policy {ι : Type*} [Fintype ι] [Nonempty 
     mcfaddenIntegral u β i := by
   rw [mcfaddenIntegral_eq_softmax u hβ]
   simp only [RationalAction.policy, RationalAction.fromGumbelRUM,
-             RationalAction.totalScore, softmax]
+             RationalAction.totalScore, softmax, Pi.smul_apply, smul_eq_mul]
   have hne : ∑ j : ι, exp (u j / β) ≠ 0 :=
     ne_of_gt (Finset.sum_pos (λ j _ => exp_pos _) ⟨Classical.arbitrary ι, mem_univ _⟩)
   rw [if_neg hne]

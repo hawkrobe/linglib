@@ -101,7 +101,7 @@ theorem softmax_concentrates_unique [Fintype W] [DecidableEq W] [Nonempty W]
     (κ : RankingFunction W) (w₀ : W)
     (h_zero : κ.rank w₀ = 0)
     (h_unique : ∀ v, v ≠ w₀ → 0 < κ.rank v) (w : W) :
-    Tendsto (fun α => softmax (rankToScore κ) α w) atTop
+    Tendsto (fun (α : ℝ) => softmax (α • rankToScore κ) w) atTop
       (𝓝 (if w = w₀ then 1 else 0)) :=
   Softmax.tendsto_softmax_infty_unique_max (rankToScore κ) w₀
     (fun j hj => (rankToScore_lt_iff κ j w₀).mpr (h_zero ▸ h_unique j hj)) w
@@ -112,7 +112,7 @@ theorem entropy_vanishes_unique [Fintype W] [DecidableEq W] [Nonempty W]
     (κ : RankingFunction W) (w₀ : W)
     (h_zero : κ.rank w₀ = 0)
     (h_unique : ∀ v, v ≠ w₀ → 0 < κ.rank v) :
-    Tendsto (fun α => Softmax.entropy (softmax (rankToScore κ) α)) atTop
+    Tendsto (fun (α : ℝ) => Softmax.entropy (softmax (α • rankToScore κ))) atTop
       (𝓝 0) :=
   Softmax.entropy_tendsto_zero (rankToScore κ) w₀
     (fun j hj => (rankToScore_lt_iff κ j w₀).mpr (h_zero ▸ h_unique j hj))
@@ -267,9 +267,9 @@ theorem rankToPrior_lt_iff (κ : RankingFunction W) (w v : W) :
     softmax(rankToScore κ, α)(w) = exp(-α·κ(w)) / Σ_v exp(-α·κ(v)). -/
 theorem softmax_rankToScore_eq_normalized_prior [Fintype W] [Nonempty W]
     (κ : RankingFunction W) (w : W) :
-    softmax (rankToScore κ) 1 w =
+    softmax (rankToScore κ) w =
     rankToPrior κ w / ∑ v : W, rankToPrior κ v := by
-  simp only [softmax, rankToScore, rankToPrior, one_mul]
+  simp only [softmax, rankToScore, rankToPrior]
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 6. The Exact Tropical Homomorphism (@cite{spohn-1988} §7)
@@ -351,9 +351,9 @@ theorem independent_iff_tropical_mul [Fintype W] (κ : RankingFunction W)
     and Bayesian inference becomes ranking-based reasoning. -/
 theorem softmax_eq_tropical_ratio [Fintype W] [Nonempty W]
     (κ : RankingFunction W) (α : ℝ) (w : W) :
-    softmax (rankToScore κ) α w =
+    softmax (α • rankToScore κ) w =
     exp (-α) ^ κ.rank w / ∑ v : W, exp (-α) ^ κ.rank v := by
-  simp only [softmax, rankToScore]
+  simp only [softmax, rankToScore, Pi.smul_apply, smul_eq_mul]
   have key : ∀ n : ℕ, exp (α * -(↑n : ℝ)) = exp (-α) ^ n := by
     intro n
     rw [show α * -(↑n : ℝ) = ↑n * (-α) from by ring, Real.exp_nat_mul]

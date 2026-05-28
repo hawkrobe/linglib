@@ -102,7 +102,7 @@ theorem s1_weak_weakOnly (α : ℝ) (hα : 0 < α) :
 theorem s1_weak_both_tendsto_zero :
     Tendsto (fun α => s1 α .both .weak) atTop (nhds 0) := by
   have heq : (fun α => s1 α .both .weak) =
-      fun α => softmax (fun u : ScaleU => log (l0 u .both)) α .weak := by
+      fun (α : ℝ) => softmax (α • fun u : ScaleU => log (l0 u .both)) .weak := by
     funext α; simp only [s1]
     exact rpow_luce_eq_softmax (fun u => l0 u .both) α
       (by intro u; cases u <;> simp [l0]) .weak

@@ -43,7 +43,7 @@ RSA S1 is exactly softmax over log-informativity scores:
 noncomputable def rsaS1Real (G : InterpGame) (α : ℝ) (s : G.State) : G.Message → ℝ :=
   let score := λ m =>
     if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G
-  softmax score α
+  softmax (α • score)
 
 /-- **The Limit Theorem** (@cite{franke-2011}, formalized):
 

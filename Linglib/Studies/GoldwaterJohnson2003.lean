@@ -56,7 +56,7 @@ open Core.Constraint Core Finset Real
     pragmatic inference are log-linear models over weighted features. -/
 theorem eq1_is_softmax {I O : Type} [Fintype O] [Nonempty O]
     (g : MaxEntGrammar I O) (i : I) (o : O) :
-    g.prob i o = softmax (fun o' => harmonyScoreR g.constraints (i, o')) 1 o := rfl
+    g.prob i o = softmax (fun o' => harmonyScoreR g.constraints (i, o')) o := rfl
 
 -- ============================================================================
 -- § 2: Log-Likelihood and Concavity
@@ -97,7 +97,7 @@ noncomputable def regularizedObjective {I O : Type} [Fintype O] [Nonempty O]
     This is `logConditional_concaveOn` from `Core.Agent.RationalAction`. -/
 theorem concavity {ι : Type*} [Fintype ι] [Nonempty ι] (s r : ι → ℝ) (y : ι) :
     ConcaveOn ℝ Set.univ
-      (fun wⱼ => (wⱼ * s y + r y) - logSumExpOffset s r wⱼ) :=
+      (fun wⱼ => (wⱼ * s y + r y) - logSumExp (wⱼ • s + r)) :=
   logConditional_concaveOn s r y
 
 -- ============================================================================
@@ -118,8 +118,8 @@ theorem concavity {ι : Type*} [Fintype ι] [Nonempty ι] (s r : ι → ℝ) (y 
     This is `hasDerivAt_logConditional` from `Core.Agent.RationalAction`. -/
 theorem gradient {ι : Type*} [Fintype ι] [Nonempty ι]
     (s r : ι → ℝ) (y : ι) (wⱼ : ℝ) :
-    HasDerivAt (fun w => (w * s y + r y) - logSumExpOffset s r w)
-      (s y - ∑ i : ι, softmaxOffset s r wⱼ i * s i) wⱼ :=
+    HasDerivAt (fun w => (w * s y + r y) - logSumExp (w • s + r))
+      (s y - ∑ i : ι, softmax (wⱼ • s + r) i * s i) wⱼ :=
   hasDerivAt_logConditional s r y wⱼ
 
 -- ============================================================================

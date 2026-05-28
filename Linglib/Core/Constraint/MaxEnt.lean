@@ -63,7 +63,7 @@ structure MaxEntGrammar (Input Output : Type*) where
     constraints. Uses `softmax` from `RationalAction` with α = 1. -/
 noncomputable def MaxEntGrammar.prob {I O : Type*} [Fintype O]
     (g : MaxEntGrammar I O) (i : I) (o : O) : ℝ :=
-  softmax (λ o' => harmonyScoreR g.constraints (i, o')) 1 o
+  softmax (λ o' => harmonyScoreR g.constraints (i, o')) o
 
 -- ============================================================================
 -- § 2: Systemic Constraints
@@ -201,7 +201,7 @@ theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type*}
     (h_zero : ∀ sc ∈ systemicConstraints, sc.weight = 0)
     (i : Fin n) (o : O) :
     marginalProb inputs classicalConstraints systemicConstraints i o =
-    softmax (λ o' => harmonyScoreR classicalConstraints (inputs i, o')) 1 o :=
+    softmax (λ o' => harmonyScoreR classicalConstraints (inputs i, o')) o :=
   (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal_eq_independent_when_uncoupled
     ⟨0, systemicScoreR_zero h_zero⟩ i o
 
@@ -230,7 +230,7 @@ theorem MaxEntGrammar.prob_eq_toSystem_predict {I O : Type*} [Fintype O] [Nonemp
     (g : MaxEntGrammar I O) (i : I) (o : O) :
     g.prob i o = (g.toSystem i).predict o := by
   classical
-  show softmax _ 1 o = (softmaxDecoder 1).decode Finset.univ _ o
-  simp [softmaxDecoder, softmax, Finset.mem_univ, MaxEntGrammar.toSystem]
+  show softmax _ o = (softmaxDecoder 1).decode Finset.univ _ o
+  simp [softmaxDecoder, softmax, Finset.mem_univ, MaxEntGrammar.toSystem, one_mul]
 
 end Core.Constraint

@@ -480,8 +480,8 @@ theorem exp_harmonyScoreR_eq_me_separable {C : Type*}
     Composition: `logit_uniformity` → `harmonyScoreR_as_finsum` → algebra. -/
 theorem maxent_logit_as_finsum {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
-    log (softmax (harmonyScoreR constraints) 1 a /
-         softmax (harmonyScoreR constraints) 1 b) =
+    log (softmax (harmonyScoreR constraints) a /
+         softmax (harmonyScoreR constraints) b) =
     -(∑ i : Fin constraints.length,
       ((constraints.get i).weight : ℝ) *
       (((constraints.get i).eval a : ℝ) - ((constraints.get i).eval b : ℝ))) := by

@@ -358,7 +358,7 @@ theorem maxent_concentrates_on_hg_winner {C : Type} [Fintype C] [Nonempty C]
     (h_opt : ∀ c, c ≠ c_opt →
       harmonyScoreR constraints c < harmonyScoreR constraints c_opt) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
-      |softmax (harmonyScoreR constraints) α c_opt - 1| < ε :=
+      |softmax (α • harmonyScoreR constraints) c_opt - 1| < ε :=
   softmax_argmax_limit (harmonyScoreR constraints) c_opt h_opt
 
 /-- **MaxEnt → OT limit** (@cite{smolensky-legendre-2006}): as α → ∞,
@@ -379,7 +379,7 @@ theorem maxent_ot_limit {C : Type} [Fintype C] [Nonempty C] [DecidableEq C]
       (fun i : Fin ranking.length => (ranking.get i).eval c_opt)
       (fun i : Fin ranking.length => (ranking.get i).eval c)) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ →
-      |softmax (harmonyScoreR (otToWeighted ranking M)) α c_opt - 1| < ε := by
+      |softmax (α • harmonyScoreR (otToWeighted ranking M)) c_opt - 1| < ε := by
   apply softmax_argmax_limit
   intro c hc
   exact ot_lex_imp_higher_harmony ranking M hM c_opt c
