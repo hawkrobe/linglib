@@ -38,6 +38,7 @@ content (singularProp = false), but is used referentially.
 -/
 
 import Linglib.Semantics.Reference.Basic
+import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.Basic
 
 namespace Semantics.Reference.Donnellan
@@ -120,6 +121,25 @@ theorem definitePrProp_eq_presupOfReferent {W E : Type*} (domain : List E)
     (restrictor : E → W → Bool) (predicate : E → W → Bool) (w : W) :
     (definitePrProp domain restrictor predicate).presup w =
     (attributiveContent domain restrictor w).isSome := rfl
+
+/-- The definite description as a `NominalDenot`: the selector is the
+Russellian iota (`attributiveContent`); there is no intrinsic presupposition
+beyond definedness of that selector. -/
+def definiteNominal {W E : Type*} (domain : List E) (restrictor : E → W → Bool) :
+    NominalDenot PUnit W E where
+  presup := fun _ _ => True
+  selector := fun _ w => attributiveContent domain restrictor w
+
+/-- `definitePrProp` is the `resolve` of `definiteNominal` against the
+predicate scope: the canonical definite denotation folds into the unified
+`NominalDenot` core by `rfl`, with no change to any consumer. A pronoun's
+denotation (`Pronoun.Entry.denote`) is the same construction with a variable
+selector and a φ-feature presupposition. -/
+theorem definitePrProp_eq_resolve {W E : Type*} (domain : List E)
+    (restrictor predicate : E → W → Bool) :
+    definitePrProp domain restrictor predicate
+      = (definiteNominal domain restrictor).resolve
+          (fun e _ w => predicate e w = true) ⟨⟩ := rfl
 
 /-! ## Referential Semantics -/
 

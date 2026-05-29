@@ -2498,6 +2498,8 @@ import Linglib.Semantics.Mood.VerbalMood
 import Linglib.Semantics.UseConditional.LTU
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.Kaplan
+import Linglib.Semantics.Reference.Nominal
+import Linglib.Semantics.Reference.PronounDenotation
 import Linglib.Semantics.Reference.Donnellan
 import Linglib.Semantics.Reference.Almog2014
 import Linglib.Semantics.Reference.Demonstratives

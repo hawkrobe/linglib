@@ -961,6 +961,25 @@ theorem presupOfReferent_assertion_none {E : Type*}
     (presupOfReferent referent scope).assertion w = False := by
   simp only [presupOfReferent, h]
 
+/-- Context/assignment-relative generalization of `presupOfReferent`: the
+    referent selector and scope are relative to a context `c : Ctx` — an
+    assignment for pronouns/bound variables, a discourse context for
+    definites/demonstratives. `presupOfReferent` is the context-independent
+    (`Ctx = PUnit`) special case; see `presupOfReferent_eq_G`. -/
+def presupOfReferentG {Ctx E : Type*} (referent : Ctx → W → Option E)
+    (scope : E → Ctx → W → Prop) (c : Ctx) : PrProp W where
+  presup := fun w => (referent c w).isSome
+  assertion := fun w => match referent c w with
+    | some e => scope e c w
+    | none => False
+
+/-- `presupOfReferent` is the context-independent (`Ctx = PUnit`) instance of
+    `presupOfReferentG` — definitional, so it carries no migration cost. -/
+theorem presupOfReferent_eq_G {E : Type*} (referent : W → Option E)
+    (scope : E → W → Prop) :
+    presupOfReferent referent scope
+      = presupOfReferentG (fun _ : PUnit => referent) (fun e _ => scope e) ⟨⟩ := rfl
+
 end PrProp
 
 end Semantics.Presupposition
