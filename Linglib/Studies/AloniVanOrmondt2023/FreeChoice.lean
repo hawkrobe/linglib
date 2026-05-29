@@ -1,4 +1,4 @@
-import Linglib.Semantics.QBSML.Enrichment
+import Linglib.Core.Logic.Modal.QBSML.Enrichment
 
 /-!
 # QBSML free-choice theorems — Aloni & van Ormondt 2023 §5
@@ -43,7 +43,9 @@ M, s ⊨ [¬(Pa ∨ Pb)]⁺. This means that s ≠ ∅ and M, s ⊧ [Pa ∨ Pb]�
    `enrichment_strengthens_antiSupport`.
 -/
 
-namespace Semantics.QBSML
+namespace AloniVanOrmondt2023
+
+open Core.Logic.Modal.QBSML
 
 variable {W Var Domain Pred : Type*}
 variable [DecidableEq W] [Fintype W]
@@ -330,4 +332,4 @@ theorem narrowScopeFC_Q (M : QBSMLModel W Domain Pred)
     · rw [ht₂_modal]
       exact enrichment_strengthens_support M β t₂ hβ h₂
 
-end Semantics.QBSML
+end AloniVanOrmondt2023

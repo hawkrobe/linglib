@@ -1,6 +1,6 @@
-import Linglib.Semantics.BSML.Defs
-import Linglib.Semantics.BSML.Properties
-import Linglib.Semantics.BSML.Bisimulation
+import Linglib.Core.Logic.Modal.BSML.Defs
+import Linglib.Core.Logic.Modal.BSML.Properties
+import Linglib.Core.Logic.Modal.BSML.Bisimulation
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
@@ -98,7 +98,7 @@ namespace AloniAnttilaYang2024
 variable {W W' : Type*} [DecidableEq W] [Fintype W] [DecidableEq W'] [Fintype W']
 variable {Atom : Type*}
 
-open Semantics.BSML (BSMLModel BSMLFormula StateBisim WorldBisim)
+open Core.Logic.Modal.BSML (BSMLModel BSMLFormula StateBisim WorldBisim)
 
 /-! ### BSMLOr — BSML with global disjunction `⨼` -/
 
@@ -436,7 +436,7 @@ theorem isBilateral (M : BSMLModel W Atom) :
 /-! ### Fact 2.7: BSMLEmpty is union-closed -/
 
 /-- Joint sup-closure for both polarities of BSMLEmpty. The structure
-    mirrors `Semantics.BSML.support_and_antiSupport_unionClosed` — every
+    mirrors `Core.Logic.Modal.BSML.support_and_antiSupport_unionClosed` — every
     clause in BSMLEmpty's `eval` preserves binary union, including the new
     `empt` clause: support of `⊘φ` is `support φ ∨ s = ∅`, which is
     preserved by binary union because the `s = ∅` case forces both
@@ -721,26 +721,26 @@ def BSMLEmpty.ofBSML : BSMLFormula Atom → BSMLEmpty.Formula Atom
     evaluation: BSMLOr is a faithful extension of BSML. -/
 theorem BSMLOr.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
     (φ : BSMLFormula Atom) (t : Finset W) :
-    BSMLOr.eval M b (BSMLOr.ofBSML φ) t ↔ Semantics.BSML.eval M b φ t := by
+    BSMLOr.eval M b (BSMLOr.ofBSML φ) t ↔ Core.Logic.Modal.BSML.eval M b φ t := by
   induction φ generalizing b t with
   | atom p => cases b <;> rfl
   | ne => cases b <;> rfl
   | neg ψ ih =>
-    cases b <;> simp only [BSMLOr.ofBSML, BSMLOr.eval, Semantics.BSML.eval, ih]
+    cases b <;> simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval, ih]
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
     · -- antiSupport conj: split-existential, IH applied to both halves
-      simp only [BSMLOr.ofBSML, BSMLOr.eval, Semantics.BSML.eval]
+      simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval]
       constructor
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mp h₁, (ih₂ false t₂).mp h₂⟩
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mpr h₁, (ih₂ false t₂).mpr h₂⟩
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Semantics.BSML.eval, ih₁, ih₂]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval, ih₁, ih₂]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Semantics.BSML.eval, ih₁, ih₂]
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Semantics.BSML.eval]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval, ih₁, ih₂]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval]
       constructor
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mp h₁, (ih₂ true t₂).mp h₂⟩
@@ -748,11 +748,11 @@ theorem BSMLOr.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
         exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mpr h₁, (ih₂ true t₂).mpr h₂⟩
   | poss ψ ih =>
     cases b
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Semantics.BSML.eval]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval]
       constructor
       · intro h w hw; exact (ih false (M.access w)).mp (h w hw)
       · intro h w hw; exact (ih false (M.access w)).mpr (h w hw)
-    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Semantics.BSML.eval]
+    · simp only [BSMLOr.ofBSML, BSMLOr.eval, Core.Logic.Modal.BSML.eval]
       constructor
       · intro h w hw
         obtain ⟨s, hsub, hne, hsupp⟩ := h w hw
@@ -765,25 +765,25 @@ theorem BSMLOr.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
     evaluation. -/
 theorem BSMLEmpty.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
     (φ : BSMLFormula Atom) (t : Finset W) :
-    BSMLEmpty.eval M b (BSMLEmpty.ofBSML φ) t ↔ Semantics.BSML.eval M b φ t := by
+    BSMLEmpty.eval M b (BSMLEmpty.ofBSML φ) t ↔ Core.Logic.Modal.BSML.eval M b φ t := by
   induction φ generalizing b t with
   | atom p => cases b <;> rfl
   | ne => cases b <;> rfl
   | neg ψ ih =>
-    cases b <;> simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Semantics.BSML.eval, ih]
+    cases b <;> simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval, ih]
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Semantics.BSML.eval]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval]
       constructor
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mp h₁, (ih₂ false t₂).mp h₂⟩
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ false t₁).mpr h₁, (ih₂ false t₂).mpr h₂⟩
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Semantics.BSML.eval, ih₁, ih₂]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval, ih₁, ih₂]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
     cases b
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Semantics.BSML.eval, ih₁, ih₂]
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Semantics.BSML.eval]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval, ih₁, ih₂]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval]
       constructor
       · rintro ⟨t₁, t₂, hsplit, h₁, h₂⟩
         exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mp h₁, (ih₂ true t₂).mp h₂⟩
@@ -791,8 +791,8 @@ theorem BSMLEmpty.eval_ofBSML (M : BSMLModel W Atom) (b : Bool)
         exact ⟨t₁, t₂, hsplit, (ih₁ true t₁).mpr h₁, (ih₂ true t₂).mpr h₂⟩
   | poss ψ ih =>
     cases b
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Semantics.BSML.eval, ih]
-    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Semantics.BSML.eval]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval, ih]
+    · simp only [BSMLEmpty.ofBSML, BSMLEmpty.eval, Core.Logic.Modal.BSML.eval]
       constructor
       · intro h w hw
         obtain ⟨s, hsub, hne, hsupp⟩ := h w hw

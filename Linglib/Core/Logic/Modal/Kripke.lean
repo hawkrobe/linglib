@@ -25,9 +25,9 @@ the AAY-2024 extensions BSMLOr/BSMLEmpty, modal dependence logic in
 
 ## Consumers
 
-* `Semantics/BSML/Defs.lean` — `BSMLModel` is an `abbrev` of
+* `Core/Logic/Modal/BSML/Defs.lean` — `BSMLModel` is an `abbrev` of
   this type.
-* `Semantics/QBSML/Defs.lean` — `QBSMLModel` parameterises
+* `Core/Logic/Modal/QBSML/Defs.lean` — `QBSMLModel` parameterises
   this carrier with an assignment type.
 * `Core/Logic/Modal/Dependence.lean` — modal dependence logic (MDL).
 * `Studies/AloniAnttilaYang2024.lean` — BSMLOr,
@@ -36,7 +36,7 @@ the AAY-2024 extensions BSMLOr/BSMLEmpty, modal dependence logic in
 ## Todo
 
 * Lift bisimulation infrastructure currently at
-  `Semantics/BSML/Bisimulation.lean` to a sibling
+  `Core/Logic/Modal/BSML/Bisimulation.lean` to a sibling
   `Core/Logic/Modal/Bisimulation.lean` once a non-BSML consumer
   (MDL bisim invariance, modal inclusion logic) lands.
 -/

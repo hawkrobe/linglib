@@ -1,6 +1,7 @@
 import Linglib.Core.Logic.Modal.Kripke
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
+import Linglib.Core.Logic.Team.Definability
 
 /-!
 # Modal Inclusion Logic (MIL)
@@ -196,7 +197,7 @@ def Formula.modalDepth : Formula Atom → ℕ
 /-- Every MIL formula has sup-closed support. Single-polarity induction
     is cleaner than BSML's joint-bilateral form because there's no
     antiSupport to track. -/
-theorem support_supClosed (M : KripkeModel W Atom) (φ : Formula Atom) :
+theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } := by
   induction φ with
   | atom p =>
@@ -336,5 +337,33 @@ theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W}
   simp only at hag
   rw [hw'] at hag
   exact hwit hag
+
+/-! ### Soundness for the closure cell (Definability bridge) -/
+
+open Core.Logic.Team in
+/-- **MIL is sound for its closure cell**: every MIL-definable team property is
+    union-closed and has the empty-team property. This is the soundness half of
+    the expressive-completeness theorem for ML(⊆) (@cite{anttila-haggblom-yang-2024};
+    @cite{anttila-2025} Ch 5 shows ML(⊆) is complete for the union-closed modal
+    properties with the empty-team property, modulo bounded bisimulation).
+
+    Composes `supClosed_support` and `support_empty` through the
+    `Team/Definability.lean` bridge — the first consumer of that substrate. The
+    converse (every such property is MIL-definable, via the inclusion normal
+    form) is the open half. -/
+theorem soundFor_unionClosed_inter_empty (M : KripkeModel W Atom) :
+    SoundFor (support M) (unionClosedProperties ∩ emptyTeamProperties) := by
+  unfold SoundFor
+  apply Set.subset_inter
+  · intro P hP
+    simp only [mem_definableClass] at hP
+    obtain ⟨φ, rfl⟩ := hP
+    show SupClosed (definedBy (support M) φ)
+    exact supClosed_support M φ
+  · intro P hP
+    simp only [mem_definableClass] at hP
+    obtain ⟨φ, rfl⟩ := hP
+    show ∅ ∈ definedBy (support M) φ
+    exact support_empty M φ
 
 end Core.Logic.Modal.Inclusion
