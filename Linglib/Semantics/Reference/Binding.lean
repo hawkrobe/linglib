@@ -2,14 +2,16 @@
 # Anaphora and Binding
 @cite{barker-shan-2014}
 
-Assignment-based binding (@cite{heim-kratzer-1998} Ch. 5) and its equivalence
-with the continuation approach.
+The continuation approach to binding and its equivalence with assignment-based
+binding (@cite{heim-kratzer-1998} Ch. 5).
 
 Per @cite{buring-2012} §3, a bound pronoun has the *same* denotation as a free
 one — the variable `g(i)` — with binding supplied externally by the β-operator.
-Accordingly `interpretBoundPronoun`/`interpretBinder` reduce to the canonical
-`interpPronoun`/`lambdaAbsG`, which is also the selector of the unified pronoun
-denotation `Pronoun.Entry.denote`.
+That assignment-based binding is the project-canonical `interpPronoun` /
+`lambdaAbsG` (`Core.Logic.Intensional.Variables`), also the selector of the
+unified pronoun denotation `Pronoun.Entry.denote`; this file develops the
+continuation rendering (`W`, `hkBinding`/`bsBinding`) and the cylindric-algebra
+view of the assignment update.
 
 -/
 
@@ -17,89 +19,13 @@ import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Semantics.Composition.ToyDomain
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Syntax.Binding.Semantics
 
 namespace Semantics.Reference.Binding
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Semantics.Montague
-open BindingSemantics
 
-
-section InterpretationState
-
-/-- Semantic interpretation state: current assignment + pending abstractions. -/
-structure InterpState (F : Frame) where
-  assignment : Core.Assignment F.Entity
-  abstractionStack : List Nat
-
-/-- Initial interpretation state with a given assignment. -/
-def InterpState.initial {F : Frame} (g : Core.Assignment F.Entity) : InterpState F :=
-  { assignment := g, abstractionStack := [] }
-
-/-- Push an abstraction index onto the stack. -/
-def InterpState.pushAbstraction {F : Frame}
-    (state : InterpState F) (idx : Nat) : InterpState F :=
-  { state with abstractionStack := idx :: state.abstractionStack }
-
-/-- Interpret a bound pronoun: read from assignment at the variable index. -/
-def interpretBoundPronoun {F : Frame}
-    (state : InterpState F) (varIdx : Nat) : F.Entity :=
-  state.assignment varIdx
-
-/-- Interpret a binder: create a function that updates the assignment. -/
-def interpretBinder {F : Frame} {τ : Ty}
-    (varIdx : Nat) (body : InterpState F → F.Denot τ)
-    (state : InterpState F) : F.Denot (.e ⇒ τ) :=
-  λ x => body { state with assignment := state.assignment[varIdx ↦ x] }
-
-
-end InterpretationState
-
-section CanonicalVariable
-
-/-! ### Coincidence with the canonical variable denotation
-
-@cite{buring-2012} §3: bound, anaphoric, and deictic pronouns share one
-denotation, the variable `g(i)` of his (14). The `InterpState` machinery above
-*is* that denotation — `interpretBoundPronoun` reads the assignment exactly as
-`interpPronoun`, and `interpretBinder` is the predicate abstraction
-`lambdaAbsG`. Since `interpPronoun` is also the selector of
-`Pronoun.Entry.denote`, the bound pronoun and the unified pronoun denotation
-coincide by construction, not by a bridge theorem. -/
-
-/-- A bound pronoun reads the assignment exactly as the project-canonical
-variable denotation `interpPronoun` (@cite{buring-2012}'s (14)). -/
-theorem interpretBoundPronoun_eq_interpPronoun {F : Frame}
-    (state : InterpState F) (i : Nat) :
-    interpretBoundPronoun state i = interpPronoun i state.assignment := rfl
-
-/-- The `InterpState` binder is the canonical predicate abstraction
-`lambdaAbsG` (@cite{buring-2012}'s β-operator) when the body depends only on
-the assignment. -/
-theorem interpretBinder_eq_lambdaAbsG {F : Frame} {τ : Ty} (i : Nat)
-    (body : Core.Assignment F.Entity → F.Denot τ) (state : InterpState F) :
-    interpretBinder i (fun s => body s.assignment) state
-      = lambdaAbsG i body state.assignment := rfl
-
-end CanonicalVariable
-
-section BindingConditions
-
-/-- A binding is semantically well-formed if the binder's scope includes the bindee. -/
-def bindingWellFormed {F : Frame}
-    (state : InterpState F) (varIdx : Nat) : Prop :=
-  varIdx ∈ state.abstractionStack
-
-/-- Interpret a binding configuration as a semantic check. -/
-def interpretBindingConfig {F : Frame}
-    (bc : BindingConfig) (_g : Core.Assignment F.Entity) : Prop :=
-  -- All bindings must have consistent indices
-  bc.wellFormed = true
-
-
-end BindingConditions
 
 section Continuations
 
@@ -224,17 +150,6 @@ the cylindric set algebra's coordinate update, and their quantifier
 scope `∃x.φ(g[n↦x])` IS cylindrification `cₙ(φ)`. -/
 
 section CylindricAlgebra
-
-/-- Existential quantifier scope at index n is cylindrification.
-
-`(∃n.φ)(g) = ∃x. φ(g[n↦x])` where the binder at n creates the
-scope via `interpretBinder`. -/
-theorem binder_scope_is_existsClosure {F : Frame} (n : Nat)
-    (body : InterpState F → Prop) (state : InterpState F) :
-    (∃ x : F.Entity, body { state with assignment := state.assignment[n ↦ x] }) ↔
-    existsClosure n
-      (fun g => body { state with assignment := g }) state.assignment := by
-  simp only [existsClosure, Core.Assignment.update]
 
 /-- Binding links pronoun κ to binder l by substituting g(l) for g(κ).
 
