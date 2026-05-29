@@ -633,6 +633,7 @@ import Linglib.Fragments.English.Numerals
 import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.English.Reference
 import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.PropositionalLexemes
 import Linglib.Fragments.English.QuestionParticles
 import Linglib.Fragments.English.Scales
@@ -1391,6 +1392,7 @@ import Linglib.Studies.Wellwood2015
 import Linglib.Studies.FoxHackl2006
 import Linglib.Studies.VonStechow1984
 import Linglib.Studies.Buring2007
+import Linglib.Studies.Buring2012
 import Linglib.Studies.Bobaljik2012
 import Linglib.Studies.BhattPancheva2004
 import Linglib.Studies.Lechner2004

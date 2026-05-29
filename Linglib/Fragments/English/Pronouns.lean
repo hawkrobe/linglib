@@ -1,13 +1,13 @@
-/-
-# English Pronoun Lexicon Fragment
-
-Lexical entries for English pronouns (personal, reflexive, wh-).
--/
-
 import Linglib.Core.Word
 import Linglib.Features.Case
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
+
+/-!
+# English Pronoun Lexicon Fragment
+
+Lexical entries for English pronouns (personal, reflexive, wh-).
+-/
 
 namespace Fragments.English.Pronouns
 
@@ -69,18 +69,20 @@ inductive PronounType where
 
 /--
 A lexical entry for a pronoun.
--/
-structure PronounEntry where
-  /-- Surface form -/
-  form : String
+
+Extends the cross-linguistic `Pronoun.Entry` core (`form`, `person`, `number`,
+`case_`, `gender`, …): the shared lexical fields are the object's fields *by
+construction*, not via a mapping. The three additional fields below are the
+English-specific extensions the `Pronoun.Entry` docstring anticipates
+(`pronounType`, `wh`) plus the epicene-aware `genderParadigm`, which is finer
+than the inherited `Pronoun.Entry.gender : Option SurfaceGender` (it
+distinguishes singular *they* from genuinely genderless forms). The inherited
+`gender` is left at its default in the literals; `PronounEntry.entry` fills it
+from `genderParadigm` so the object's denotation (`Pronoun.Entry.denote`,
+`Pronoun.Entry.phiPresup`) can be taken without storing gender twice. -/
+structure PronounEntry extends Pronoun.Entry where
   /-- Pronoun type -/
   pronounType : PronounType
-  /-- Person (for personal/reflexive) -/
-  person : Option Person := none
-  /-- Number -/
-  number : Option Number := none
-  /-- Case (for personal pronouns) -/
-  case_ : Option Features.Case := none
   /-- Gender paradigm class (3rd-person singular agreement).
       Epicene covers singular *they*; `none` for 1st/2nd person,
       reciprocals, and wh-pronouns. -/
@@ -88,6 +90,13 @@ structure PronounEntry where
   /-- Is this a wh-word? -/
   wh : Bool := false
   deriving Repr, BEq
+
+/-- The canonical `Pronoun.Entry` for this English entry: the inherited core
+with `gender` derived from the epicene-aware `genderParadigm` (epicene and
+unspecified contribute no `SurfaceGender`). Routes English pronouns into
+`Pronoun.Entry.denote`/`phiPresup`. -/
+def PronounEntry.entry (p : PronounEntry) : Pronoun.Entry :=
+  { p.toEntry with gender := p.genderParadigm.bind GenderParadigm.toSurfaceGender }
 
 -- ============================================================================
 -- Personal Pronouns

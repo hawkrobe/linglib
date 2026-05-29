@@ -12,7 +12,6 @@ traditional Japanese relies heavily on null reference.
 
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
-import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Japanese.Pronouns
 
