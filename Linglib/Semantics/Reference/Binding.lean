@@ -5,6 +5,12 @@
 Assignment-based binding (@cite{heim-kratzer-1998} Ch. 5) and its equivalence
 with the continuation approach.
 
+Per @cite{buring-2012} §3, a bound pronoun has the *same* denotation as a free
+one — the variable `g(i)` — with binding supplied externally by the β-operator.
+Accordingly `interpretBoundPronoun`/`interpretBinder` reduce to the canonical
+`interpPronoun`/`lambdaAbsG`, which is also the selector of the unified pronoun
+denotation `Pronoun.Entry.denote`.
+
 -/
 
 import Linglib.Core.Logic.Intensional.Frame
@@ -50,6 +56,34 @@ def interpretBinder {F : Frame} {τ : Ty}
 
 
 end InterpretationState
+
+section CanonicalVariable
+
+/-! ### Coincidence with the canonical variable denotation
+
+@cite{buring-2012} §3: bound, anaphoric, and deictic pronouns share one
+denotation, the variable `g(i)` of his (14). The `InterpState` machinery above
+*is* that denotation — `interpretBoundPronoun` reads the assignment exactly as
+`interpPronoun`, and `interpretBinder` is the predicate abstraction
+`lambdaAbsG`. Since `interpPronoun` is also the selector of
+`Pronoun.Entry.denote`, the bound pronoun and the unified pronoun denotation
+coincide by construction, not by a bridge theorem. -/
+
+/-- A bound pronoun reads the assignment exactly as the project-canonical
+variable denotation `interpPronoun` (@cite{buring-2012}'s (14)). -/
+theorem interpretBoundPronoun_eq_interpPronoun {F : Frame}
+    (state : InterpState F) (i : Nat) :
+    interpretBoundPronoun state i = interpPronoun i state.assignment := rfl
+
+/-- The `InterpState` binder is the canonical predicate abstraction
+`lambdaAbsG` (@cite{buring-2012}'s β-operator) when the body depends only on
+the assignment. -/
+theorem interpretBinder_eq_lambdaAbsG {F : Frame} {τ : Ty} (i : Nat)
+    (body : Core.Assignment F.Entity → F.Denot τ) (state : InterpState F) :
+    interpretBinder i (fun s => body s.assignment) state
+      = lambdaAbsG i body state.assignment := rfl
+
+end CanonicalVariable
 
 section BindingConditions
 

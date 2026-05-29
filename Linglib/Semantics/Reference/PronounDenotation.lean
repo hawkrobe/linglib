@@ -15,6 +15,12 @@ theorem. The intrinsic presupposition is the φ-feature presupposition read
 off the entry's person/number/gender via the @cite{sauerland-2003}-style
 cells in `Semantics.Presupposition.PhiFeatures`.
 
+This follows @cite{buring-2012}'s survey: the assignment lookup (his (14)), the
+feature presuppositions (his (49)/(50)), and the absence-of-features treatment
+of unmarked values. The same `interpPronoun` selector serves bound, anaphoric,
+and deictic uses (his §2.1.1); binding is the external β-operator
+(`Semantics.Reference.Binding`).
+
 ## Main definitions
 
 * `Pronoun.Entry.phiPresup` — the conjoined φ-feature presupposition of an
