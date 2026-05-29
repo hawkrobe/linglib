@@ -9,9 +9,14 @@ on:
 env:
   ELAN_NO_OVERRIDE_NOTICE: 1
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v4
