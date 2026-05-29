@@ -9,22 +9,22 @@ freely embeddable.
 
 -/
 
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Hindi.Pronouns
 
-open Typology
+open Pronoun
 
 -- ============================================================================
 -- First Person
 -- ============================================================================
 
 /-- *maiṃ* — 1sg. -/
-def maiN : PronounEntry :=
+def maiN : Entry :=
   { form := "maiṃ", person := some .first, number := some .sg }
 
 /-- *ham* — 1pl. -/
-def ham : PronounEntry :=
+def ham : Entry :=
   { form := "ham", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -32,15 +32,15 @@ def ham : PronounEntry :=
 -- ============================================================================
 
 /-- *tuu* — 2sg non-honorific (intimate/inferior). -/
-def tuu : PronounEntry :=
+def tuu : Entry :=
   { form := "tuu", person := some .second, number := some .sg, register := .informal }
 
 /-- *tum* — 2sg honorific (neutral). -/
-def tum : PronounEntry :=
+def tum : Entry :=
   { form := "tum", person := some .second, number := some .sg, register := .neutral }
 
 /-- *aap* — 2sg high-honorific (respectful). -/
-def aap : PronounEntry :=
+def aap : Entry :=
   { form := "aap", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -48,20 +48,20 @@ def aap : PronounEntry :=
 -- ============================================================================
 
 /-- *vah* — 3sg (distal demonstrative, standard pronoun). -/
-def vah : PronounEntry :=
+def vah : Entry :=
   { form := "vah", person := some .third, number := some .sg }
 
 /-- *ve* — 3pl (distal demonstrative plural). -/
-def ve : PronounEntry :=
+def ve : Entry :=
   { form := "ve", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List PronounEntry := [tuu, tum, aap]
+def secondPersonPronouns : List Entry := [tuu, tum, aap]
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [maiN, ham] ++ secondPersonPronouns ++ [vah, ve]
 
 -- ============================================================================

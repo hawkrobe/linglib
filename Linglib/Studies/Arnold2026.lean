@@ -1,5 +1,5 @@
 import Linglib.Features.Gender
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 import Linglib.Discourse.CommonGround
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns
@@ -40,7 +40,7 @@ We model the distinction using three components:
 
 - `DiscourseElaboration`: how developed the referent's discourse
   representation is (underspecified vs. elaborated)
-- `Typology.PronounSpec`: what personal pronouns the referent uses
+- `Pronoun.Spec`: what personal pronouns the referent uses
   (if known)
 - `Features.GenderInfo`: what gender information is available in the discourse
 
@@ -63,7 +63,7 @@ set_option autoImplicit false
 namespace Arnold2026
 
 open Features (GenderInfo SurfaceGender)
-open Typology (PronounSpec)
+open Pronoun (Spec)
 open Features (DiscourseElaboration AccessibilityLevel)
 open Fragments.English.Pronouns (GenderParadigm)
 
@@ -106,13 +106,13 @@ def licensesUnderspecified (de : DiscourseElaboration) : Bool :=
     @cite{arnold-2026} §3: "the pragmatic condition for using personal
     *they* is knowing that the referent's personal pronouns are
     *they/them*." This knowledge must be in common ground. -/
-def licensesPersonal (spec : Option PronounSpec) : Bool :=
+def licensesPersonal (spec : Option Spec) : Bool :=
   match spec with
   | some .theyThem => true
   | _ => false
 
 /-- Classify a singular *they* use given the discourse state. -/
-def classifyUse (de : DiscourseElaboration) (spec : Option PronounSpec) :
+def classifyUse (de : DiscourseElaboration) (spec : Option Spec) :
     Option SingTheyKind :=
   if licensesPersonal spec then some .personal
   else if licensesUnderspecified de then some .underspecified
@@ -129,7 +129,7 @@ def classifyUse (de : DiscourseElaboration) (spec : Option PronounSpec) :
     an elaborated discourse representation (the typical case for personal
     *they*), underspecified *they* is NOT licensed. -/
 theorem personal_excludes_underspecified
-    (spec : PronounSpec) (hspec : spec = .theyThem)
+    (spec : Spec) (hspec : spec = .theyThem)
     (de : DiscourseElaboration) (hde : de = .elaborated) :
     licensesPersonal (some spec) = true ∧
     licensesUnderspecified de = false := by
@@ -141,7 +141,7 @@ theorem personal_excludes_underspecified
     to know their pronouns. -/
 theorem underspecified_excludes_personal
     (de : DiscourseElaboration) (hde : de = .underspecified)
-    (spec : Option PronounSpec) (hspec : spec = none) :
+    (spec : Option Spec) (hspec : spec = none) :
     licensesUnderspecified de = true ∧
     licensesPersonal spec = false := by
   subst hde; subst hspec; exact ⟨rfl, rfl⟩
@@ -152,7 +152,7 @@ theorem underspecified_excludes_personal
     discourse model is necessarily elaborated (you know enough about
     them to know their pronouns). -/
 theorem no_simultaneous_licensing
-    (de : DiscourseElaboration) (spec : Option PronounSpec)
+    (de : DiscourseElaboration) (spec : Option Spec)
     (_h : licensesPersonal spec = true) :
     -- Personal they fires → elaboration must not be underspecified
     -- (a referent whose pronouns you know has a rich representation)
@@ -241,9 +241,9 @@ theorem personal_has_stronger_precondition :
     licensesUnderspecified DiscourseElaboration.underspecified = true ∧
     -- Personal they: requires specific pronoun knowledge
     licensesPersonal none = false ∧
-    licensesPersonal (some PronounSpec.heHim) = false ∧
-    licensesPersonal (some PronounSpec.sheHer) = false ∧
-    licensesPersonal (some PronounSpec.theyThem) = true := by
+    licensesPersonal (some Spec.heHim) = false ∧
+    licensesPersonal (some Spec.sheHer) = false ∧
+    licensesPersonal (some Spec.theyThem) = true := by
   exact ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

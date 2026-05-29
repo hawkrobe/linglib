@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Hindi/Urdu pronoun profile (WALS Chs 39, 40, 44–48)
@@ -13,7 +13,7 @@ namespace Fragments.HindiUrdu
     (tu/tum/aap); special indefinite forms (koi, kuch); intensifier
     and reflexive identical (apne-aap/khud); no person marking on
     adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Hindi"
   , family := "Indo-European"
   , iso := "hin"
@@ -28,7 +28,7 @@ def pronounProfile : Typology.PronounProfile :=
 /-- Hindi-Urdu pronoun phonological shape (WALS Chs 136–137): paradigmatic
     M-T (*main*/*tum* show m/t); 1SG has /m/ in *main*; no N-M;
     no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Hindi-Urdu"
   , iso := "hin"
   , mtPronouns := some .paradigmatic

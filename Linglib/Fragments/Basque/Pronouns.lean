@@ -8,11 +8,11 @@ plural *zuek* is distinct from formal singular *zu*.
 
 -/
 
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Basque.Pronouns
 
-open Typology
+open Pronoun
 open Features.Register (Level)
 
 -- ============================================================================
@@ -20,11 +20,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *ni* — 1sg. -/
-def ni : PronounEntry :=
+def ni : Entry :=
   { form := "ni", person := some .first, number := some .sg }
 
 /-- *gu* — 1pl. -/
-def gu : PronounEntry :=
+def gu : Entry :=
   { form := "gu", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -32,15 +32,15 @@ def gu : PronounEntry :=
 -- ============================================================================
 
 /-- *hi* — 2sg familiar (T form). -/
-def hi : PronounEntry :=
+def hi : Entry :=
   { form := "hi", person := some .second, number := some .sg, register := .informal }
 
 /-- *zu* — 2sg formal (V form). -/
-def zu : PronounEntry :=
+def zu : Entry :=
   { form := "zu", person := some .second, number := some .sg, register := .formal }
 
 /-- *zuek* — 2pl. -/
-def zuek : PronounEntry :=
+def zuek : Entry :=
   { form := "zuek", person := some .second, number := some .pl }
 
 -- ============================================================================
@@ -48,20 +48,20 @@ def zuek : PronounEntry :=
 -- ============================================================================
 
 /-- *hura* — 3sg. -/
-def hura : PronounEntry :=
+def hura : Entry :=
   { form := "hura", person := some .third, number := some .sg }
 
 /-- *haiek* — 3pl. -/
-def haiek : PronounEntry :=
+def haiek : Entry :=
   { form := "haiek", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List PronounEntry := [hi, zu]
+def secondPersonPronouns : List Entry := [hi, zu]
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [ni, gu] ++ secondPersonPronouns ++ [zuek, hura, haiek]
 
 -- ============================================================================

@@ -10,11 +10,11 @@ AA is Fin-based and freely embeddable.
 
 -/
 
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Galician.Pronouns
 
-open Typology
+open Pronoun
 open Features.Register (Level)
 
 -- ============================================================================
@@ -22,11 +22,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *eu* — 1sg. -/
-def eu : PronounEntry :=
+def eu : Entry :=
   { form := "eu", person := some .first, number := some .sg }
 
 /-- *nós* — 1pl. -/
-def nos : PronounEntry :=
+def nos : Entry :=
   { form := "nós", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -34,19 +34,19 @@ def nos : PronounEntry :=
 -- ============================================================================
 
 /-- *ti* — 2sg familiar (T form). -/
-def ti : PronounEntry :=
+def ti : Entry :=
   { form := "ti", person := some .second, number := some .sg, register := .informal }
 
 /-- *vostede* — 2sg formal (V form). -/
-def vostede : PronounEntry :=
+def vostede : Entry :=
   { form := "vostede", person := some .second, number := some .sg, register := .formal }
 
 /-- *vós* — 2pl familiar. -/
-def vos_pl : PronounEntry :=
+def vos_pl : Entry :=
   { form := "vós", person := some .second, number := some .pl, register := .informal }
 
 /-- *vostedes* — 2pl formal. -/
-def vostedes : PronounEntry :=
+def vostedes : Entry :=
   { form := "vostedes", person := some .second, number := some .pl, register := .formal }
 
 -- ============================================================================
@@ -54,28 +54,28 @@ def vostedes : PronounEntry :=
 -- ============================================================================
 
 /-- *el* — 3sg masculine. -/
-def el : PronounEntry :=
+def el : Entry :=
   { form := "el", person := some .third, number := some .sg }
 
 /-- *ela* — 3sg feminine. -/
-def ela : PronounEntry :=
+def ela : Entry :=
   { form := "ela", person := some .third, number := some .sg }
 
 /-- *eles* — 3pl masculine. -/
-def eles : PronounEntry :=
+def eles : Entry :=
   { form := "eles", person := some .third, number := some .pl }
 
 /-- *elas* — 3pl feminine. -/
-def elas : PronounEntry :=
+def elas : Entry :=
   { form := "elas", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List PronounEntry := [ti, vostede]
+def secondPersonPronouns : List Entry := [ti, vostede]
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [eu, nos] ++ secondPersonPronouns ++ [vos_pl, vostedes, el, ela, eles, elas]
 
 -- ============================================================================

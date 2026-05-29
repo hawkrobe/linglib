@@ -8,22 +8,22 @@ forms (*uh* for both sg and pl). AA is Fin-based with limited embeddability.
 
 -/
 
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Punjabi.Pronouns
 
-open Typology
+open Pronoun
 
 -- ============================================================================
 -- First Person
 -- ============================================================================
 
 /-- *maiṃ* — 1sg. -/
-def maiN : PronounEntry :=
+def maiN : Entry :=
   { form := "maiṃ", person := some .first, number := some .sg }
 
 /-- *asiiṃ* — 1pl. -/
-def asiiN : PronounEntry :=
+def asiiN : Entry :=
   { form := "asiiṃ", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -31,11 +31,11 @@ def asiiN : PronounEntry :=
 -- ============================================================================
 
 /-- *tũ* — 2sg non-honorific. -/
-def tuN : PronounEntry :=
+def tuN : Entry :=
   { form := "tũ", person := some .second, number := some .sg, register := .informal }
 
 /-- *tusii* — 2sg honorific (also 2pl). -/
-def tusii : PronounEntry :=
+def tusii : Entry :=
   { form := "tusii", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -43,20 +43,20 @@ def tusii : PronounEntry :=
 -- ============================================================================
 
 /-- *uh* — 3sg (distal demonstrative). -/
-def uh_sg : PronounEntry :=
+def uh_sg : Entry :=
   { form := "uh", person := some .third, number := some .sg }
 
 /-- *uh* — 3pl (same form as 3sg in standard Punjabi). -/
-def uh_pl : PronounEntry :=
+def uh_pl : Entry :=
   { form := "uh", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List PronounEntry := [tuN, tusii]
+def secondPersonPronouns : List Entry := [tuN, tusii]
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [maiN, asiiN] ++ secondPersonPronouns ++ [uh_sg, uh_pl]
 
 -- ============================================================================

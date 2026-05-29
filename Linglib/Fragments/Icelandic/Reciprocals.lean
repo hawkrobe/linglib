@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Icelandic Reciprocal Fragment
@@ -17,16 +17,16 @@ preserving transitivity. Formally distinct from the reflexive "sig".
 
 namespace Fragments.Icelandic.Reciprocals
 
-open Typology
+open Pronoun
 
 /-- hvor...annad — bipartite reciprocal NP 'each other'.
 
     Each part inflects independently for case.  -/
-def hvorAnnad : PronounEntry :=
+def hvorAnnad : Entry :=
   { form := "hvor...annad", person := some .third, number := some .pl }
 
 /-- sig — reflexive pronoun (for contrast). -/
-def sig : PronounEntry :=
+def sig : Entry :=
   { form := "sig", person := some .third }
 
 /-- Icelandic reciprocal is formally distinct from reflexive. -/

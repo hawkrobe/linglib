@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Arabic (Egyptian) pronoun profile (WALS Chs 39, 40, 44–48)
@@ -13,7 +13,7 @@ namespace Fragments.Arabic.Egyptian
     (hadd 'person' = 'someone'); intensifier/reflexive: WALS Ch 47 has
     no datum; person marking on adpositions for pronouns only (fi-ya
     'in-me'). -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Arabic (Egyptian)"
   , family := "Afro-Asiatic"
   , iso := "arz"
@@ -27,7 +27,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- Arabic (Egyptian) pronoun phonological shape (WALS Chs 136–137): no M-T;
     no /m/ in 1SG (*ana*); no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Arabic (Egyptian)"
   , iso := "arz"
   , mtPronouns := some .absent

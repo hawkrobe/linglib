@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Czech Reciprocal Fragment
@@ -16,10 +16,10 @@ reflexive and reciprocal uses, consistent with "identical to reflexive."
 
 namespace Fragments.Slavic.Czech.Reciprocals
 
-open Typology
+open Pronoun
 
 /-- se — reflexive/reciprocal clitic. -/
-def se : PronounEntry :=
+def se : Entry :=
   { form := "se", person := some .third }
 
 /-- The same form serves both reciprocal and reflexive functions. -/

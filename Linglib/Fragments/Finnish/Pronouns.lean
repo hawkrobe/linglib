@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Finnish pronoun profile (WALS Chs 39, 40, 44–48)
@@ -12,7 +12,7 @@ namespace Fragments.Finnish
     forms (joku, jokin); intensifier and reflexive identical (itse);
     person marking on adpositions for pronouns only (kanssa-ni
     'with-me'). -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Finnish"
   , family := "Uralic"
   , iso := "fin"
@@ -26,7 +26,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- Finnish pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
     (*minä*/*sinä*); 1SG has /m/; no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Finnish"
   , iso := "fin"
   , mtPronouns := some .paradigmatic

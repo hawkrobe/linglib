@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Swahili pronoun profile (WALS Chs 39, 40, 44–48)
@@ -12,7 +12,7 @@ namespace Fragments.Swahili
     politeness distinction in pronouns; generic-noun-based indefinites
     (mtu 'person' = 'someone'); intensifier (mwenyewe) differentiated
     from reflexive (ji-); no person marking on adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Swahili"
   , family := "Niger-Congo"
   , iso := "swh"
@@ -26,7 +26,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- Swahili pronoun phonological shape (WALS Chs 136–137): no M-T pattern;
     1SG has /m/ in *mimi*; no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Swahili"
   , iso := "swh"
   , mtPronouns := some .absent

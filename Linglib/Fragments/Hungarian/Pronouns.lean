@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Hungarian pronoun profile (WALS Chs 39, 40, 44–48)
@@ -12,7 +12,7 @@ namespace Fragments.Hungarian
     interrogative-based indefinites (valaki from val- 'some' + ki
     'who'); intensifier and reflexive identical (maga); person marking
     on adpositions for pronouns only (velem 'with-me'). -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Hungarian"
   , family := "Uralic"
   , iso := "hun"
@@ -26,7 +26,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- Hungarian pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
     (Uralic pattern, like Finnish); 1SG has /m/; no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Hungarian"
   , iso := "hun"
   , mtPronouns := some .paradigmatic

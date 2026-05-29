@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # French pronoun profile (WALS Chs 39, 40, 44–48)
@@ -11,7 +11,7 @@ namespace Fragments.French
     (il/elle); binary politeness (tu/vous); generic-noun-based
     indefinites (quelqu'un); intensifier (même) differentiated from
     reflexive (se); no person marking on adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "French"
   , family := "Indo-European"
   , iso := "fra"
@@ -25,7 +25,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- French pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
     (*moi*/*toi*); 1SG has /m/; no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "French"
   , iso := "fra"
   , mtPronouns := some .paradigmatic

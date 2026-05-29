@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Turkish pronoun profile (WALS Chs 39, 40, 44–48)
@@ -11,7 +11,7 @@ namespace Fragments.Turkish
     genders); binary politeness (sen/siz); generic-noun-based
     indefinites (birisi from bir 'one'); intensifier and reflexive
     identical (kendi); no person marking on adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Turkish"
   , family := "Turkic"
   , iso := "tur"
@@ -26,7 +26,7 @@ def pronounProfile : Typology.PronounProfile :=
 /-- Turkish pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
     (*ben*/*sen* with older forms showing m/t); 1SG has /m/; no N-M;
     no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Turkish"
   , iso := "tur"
   , mtPronouns := some .paradigmatic

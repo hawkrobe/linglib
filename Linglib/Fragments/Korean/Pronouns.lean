@@ -39,12 +39,12 @@ much of the linguistics literature) appear in docstrings only.
 
 -/
 
-import Linglib.Typology.Pronouns
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Korean.Pronouns
 
-open Typology
+open Pronoun
 open Features.Register (Level)
 
 -- ============================================================================
@@ -52,15 +52,15 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- 나 *na* — 1sg plain. -/
-def na : PronounEntry :=
+def na : Entry :=
   { form := "na", script := some "나", person := some .first, number := some .sg, register := .informal }
 
 /-- 저 *jeo* — 1sg humble. -/
-def jeo : PronounEntry :=
+def jeo : Entry :=
   { form := "jeo", script := some "저", person := some .first, number := some .sg, register := .formal }
 
 /-- 우리 *uri* — 1pl. -/
-def uri : PronounEntry :=
+def uri : Entry :=
   { form := "uri", script := some "우리", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -68,11 +68,11 @@ def uri : PronounEntry :=
 -- ============================================================================
 
 /-- 너 *neo* — 2sg plain. -/
-def neo : PronounEntry :=
+def neo : Entry :=
   { form := "neo", script := some "너", person := some .second, number := some .sg, register := .informal }
 
 /-- 당신 *dangsin* — 2sg polite. -/
-def dangsin : PronounEntry :=
+def dangsin : Entry :=
   { form := "dangsin", script := some "당신", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -81,14 +81,14 @@ def dangsin : PronounEntry :=
 
 /-- 그 *geu* (Yale: *ku*) — 3sg masculine, **literary** register.
     76,235 written vs 145 oral tokens (@cite{kwon-lee-2026} fn. 2). -/
-def geu : PronounEntry :=
+def geu : Entry :=
   { form := "geu", script := some "그", person := some .third, number := some .sg
   , gender := some .masculine, register := .formal }
 
 /-- 그녀 *geunyeo* (Yale: *kunye*) — 3sg feminine, **literary** register.
     Compound of *ku* ('that') + *nye* ('female'). 25,085 written vs
     9 oral tokens (@cite{kwon-lee-2026} fn. 2). -/
-def geunyeo : PronounEntry :=
+def geunyeo : Entry :=
   { form := "geunyeo", script := some "그녀", person := some .third, number := some .sg
   , gender := some .feminine, register := .formal }
 
@@ -98,13 +98,13 @@ def geunyeo : PronounEntry :=
     *geu*/*geunyeo*. Implies familiarity between speaker and referent
     (@cite{kwon-lee-2026} §5). The overt-pronoun referential form
     tested in @cite{kwon-lee-2026}'s experiments. -/
-def gyae : PronounEntry :=
+def gyae : Entry :=
   { form := "gyae", script := some "걔", person := some .third, number := some .sg
   , register := .informal }
 
 /-- 그들 *geudeul* — 3pl. Plural of *geu*; literary in register
     (the colloquial plural is the proximal demonstrative + *ai-tul*). -/
-def geudeul : PronounEntry :=
+def geudeul : Entry :=
   { form := "geudeul", script := some "그들", person := some .third, number := some .pl
   , register := .formal }
 
@@ -112,14 +112,14 @@ def geudeul : PronounEntry :=
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List PronounEntry := [neo, dangsin]
+def secondPersonPronouns : List Entry := [neo, dangsin]
 
 /-- 3rd-person pronouns: literary *geu*/*geunyeo*/*geudeul* and
     colloquial *gyae*. Yale-romanization variants (*ku*/*kunye*/*kutul*/
     *kyay*) refer to the same lexical items. -/
-def thirdPersonPronouns : List PronounEntry := [geu, geunyeo, geudeul, gyae]
+def thirdPersonPronouns : List Entry := [geu, geunyeo, geudeul, gyae]
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [na, jeo, uri] ++ secondPersonPronouns ++ thirdPersonPronouns
 
 -- ============================================================================
@@ -214,7 +214,7 @@ namespace Fragments.Korean
     titles/names instead); interrogative-based indefinites (nuguinka
     from nugu 'who'); intensifier and reflexive identical (caki); no
     person marking on adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Korean"
   , family := "Koreanic"
   , iso := "kor"
@@ -228,7 +228,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- Korean pronoun phonological shape (WALS Chs 136–137): no M-T; no /m/ in
     1SG (*na*/*jeo*); no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Korean"
   , iso := "kor"
   , mtPronouns := some .absent

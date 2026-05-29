@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Mandarin pronoun profile (WALS Chs 39, 40, 44–48)
@@ -12,7 +12,7 @@ namespace Fragments.Mandarin
     gender in 3rd sg only (ta with different characters); binary
     politeness (ni/nin); mixed indefinite strategy; intensifier and
     reflexive identical (ziji); no person marking on adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Mandarin"
   , family := "Sino-Tibetan"
   , iso := "cmn"
@@ -26,7 +26,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- Mandarin pronoun phonological shape (WALS Chs 136–137): no M-T pattern;
     no /m/ in 1SG (*wo*); no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Mandarin"
   , iso := "cmn"
   , mtPronouns := some .absent

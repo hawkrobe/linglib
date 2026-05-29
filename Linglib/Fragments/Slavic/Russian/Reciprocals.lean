@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Russian Reciprocal Fragment
@@ -15,15 +15,15 @@ takes the case assigned by the verb.
 
 namespace Fragments.Slavic.Russian.Reciprocals
 
-open Typology
+open Pronoun
 
 /-- друг друга *drug druga* — reciprocal pronoun 'each other'. -/
-def drugDruga : PronounEntry :=
+def drugDruga : Entry :=
   { form := "drug druga", script := some "друг друга"
   , person := some .third, number := some .pl }
 
 /-- себя *sebja* — reflexive pronoun (for contrast). -/
-def sebja : PronounEntry :=
+def sebja : Entry :=
   { form := "sebja", script := some "себя"
   , person := some .third }
 

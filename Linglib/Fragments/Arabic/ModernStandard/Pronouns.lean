@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Modern Standard Arabic Pronoun Profile (WALS Chs 39, 40, 44–48; Chs 136–137)
@@ -31,7 +31,7 @@ namespace Fragments.Arabic.ModernStandard
     matches Egyptian on every WALS dimension surveyed here except for the
     presence of the dual: MSA marks 2DU (*ʾantumaa*) and 3DU (*humaa*),
     which Egyptian has lost. Per Ryding §12.1 (p. 298). -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Arabic (Modern Standard)"
   , family := "Afro-Asiatic"
   , iso := "arb"
@@ -48,7 +48,7 @@ def pronounProfile : Typology.PronounProfile :=
     2SG *ʾanta* has /t/, not /m/), no N-M pattern (2SG has /t/, not /m/).
     1SG *ʾanaa* contains /n/ but the diagnostic requires the
     /n/ ~ /m/ pair, which is not present. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Arabic (Modern Standard)"
   , iso := "arb"
   , mtPronouns := some .absent

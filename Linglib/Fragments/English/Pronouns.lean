@@ -6,7 +6,7 @@ Lexical entries for English pronouns (personal, reflexive, wh-).
 
 import Linglib.Core.Word
 import Linglib.Features.Case
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.English.Pronouns
 
@@ -45,7 +45,7 @@ def GenderParadigm.toSurfaceGender : GenderParadigm → Option Features.SurfaceG
   | .unspecified => none
 
 /-- Map a personal pronoun specification to its English gender paradigm. -/
-def Typology.PronounSpec.toGenderParadigm : Typology.PronounSpec → GenderParadigm
+def Pronoun.Spec.toGenderParadigm : Pronoun.Spec → GenderParadigm
   | .heHim   => .masculine
   | .sheHer  => .feminine
   | .theyThem => .epicene
@@ -253,7 +253,7 @@ namespace Fragments.English
     generic-noun-based indefinites (somebody, something); intensifier
     and reflexive identical (himself); no person marking on
     adpositions. (WALS Chs 39, 40, 44–48.) -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "English"
   , family := "Indo-European"
   , iso := "eng"
@@ -268,7 +268,7 @@ def pronounProfile : Typology.PronounProfile :=
 /-- English pronoun phonological shape (WALS Chs 136–137,
     @cite{nichols-peterson-2013}): no M-T pattern (1SG *I*/*me*, 2SG *you*),
     but 1SG has /m/ in *me*/*my*; no N-M pattern; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "English"
   , iso := "eng"
   , mtPronouns := some .absent

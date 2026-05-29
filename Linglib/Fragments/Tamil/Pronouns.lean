@@ -10,26 +10,26 @@ exclusive (*naangaL*). 3rd person distinguishes masculine (*avan*), feminine
 
 -/
 
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Tamil.Pronouns
 
-open Typology
+open Pronoun
 
 -- ============================================================================
 -- First Person
 -- ============================================================================
 
 /-- *naan* — 1sg. -/
-def naan : PronounEntry :=
+def naan : Entry :=
   { form := "naan", person := some .first, number := some .sg }
 
 /-- *naam* — 1pl inclusive (speaker + addressee). -/
-def naam : PronounEntry :=
+def naam : Entry :=
   { form := "naam", person := some .first, number := some .pl }
 
 /-- *naangaL* — 1pl exclusive (speaker + others, not addressee). -/
-def naangaL : PronounEntry :=
+def naangaL : Entry :=
   { form := "naangaL", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -37,11 +37,11 @@ def naangaL : PronounEntry :=
 -- ============================================================================
 
 /-- *nii* — 2sg non-honorific. -/
-def nii : PronounEntry :=
+def nii : Entry :=
   { form := "nii", person := some .second, number := some .sg, register := .informal }
 
 /-- *niingaL* — 2sg honorific (also 2pl). -/
-def niingaL : PronounEntry :=
+def niingaL : Entry :=
   { form := "niingaL", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -49,28 +49,28 @@ def niingaL : PronounEntry :=
 -- ============================================================================
 
 /-- *avan* — 3sg masculine. -/
-def avan : PronounEntry :=
+def avan : Entry :=
   { form := "avan", person := some .third, number := some .sg }
 
 /-- *avaL* — 3sg feminine. -/
-def avaL : PronounEntry :=
+def avaL : Entry :=
   { form := "avaL", person := some .third, number := some .sg }
 
 /-- *avar* — 3sg honorific. -/
-def avar : PronounEntry :=
+def avar : Entry :=
   { form := "avar", person := some .third, number := some .sg, register := .formal }
 
 /-- *avarkaL* — 3pl (human). -/
-def avarkaL : PronounEntry :=
+def avarkaL : Entry :=
   { form := "avarkaL", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List PronounEntry := [nii, niingaL]
+def secondPersonPronouns : List Entry := [nii, niingaL]
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [naan, naam, naangaL] ++ secondPersonPronouns ++ [avan, avaL, avar, avarkaL]
 
 -- ============================================================================
