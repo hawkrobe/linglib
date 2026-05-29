@@ -1,4 +1,5 @@
 import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.WALS
 import Linglib.Core.Word
 
 /-! # Italian Pronoun and Clitic Fragment
@@ -220,3 +221,20 @@ theorem has_both_numbers :
     allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
 
 end Fragments.Italian.Pronouns
+
+namespace Fragments.Italian
+
+/-- Italian (Indo-European, Romance) pronoun typology profile, read off this
+    fragment's lexical inventory: no inclusive/exclusive distinction (*noi* is
+    a single 1pl), a binary T/V politeness distinction (*tu*/*Lei*), and gender
+    in the 3rd-person singular (*lui*/*lei*). Fields not evidenced by the
+    inventory are left unsurveyed (`.none`). -/
+def pronounProfile : Pronoun.Profile :=
+  { language := "Italian"
+  , family := "Indo-European"
+  , iso := "ita"
+  , inclusiveExclusive := some .noDistinction
+  , politeness := some .binary
+  , genderInPronouns := some .in3rdPersonSgOnly }
+
+end Fragments.Italian

@@ -1,6 +1,5 @@
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
-import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Spanish Pronoun Fragment
