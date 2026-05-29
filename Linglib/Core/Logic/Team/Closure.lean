@@ -1,11 +1,12 @@
 import Mathlib.Order.UpperLower.Basic
 import Mathlib.Order.SupClosed
 import Mathlib.Order.Ideal
+import Mathlib.Order.Interval.Set.OrdConnected
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Lattice.Union
 
 /-!
-# Flatness of team-sets
+# Closure properties of team-sets
 
 A team-set `T : Set (Finset α)` is *flat* if its membership reduces
 pointwise: `s ∈ T ↔ ∀ w ∈ s, {w} ∈ T`. This file states Anttila's
@@ -30,6 +31,12 @@ infrastructure to consumers of `IsFlat`.
 * `Core.Logic.Team.isFlat_iff` — Anttila Proposition 2.2.2.
 * `Core.Logic.Team.isFlat_iff_isIdeal` — flat team-sets are precisely
   the carriers of order-ideals of `Finset α`.
+* `Core.Logic.Team.isLowerSet_iff_ordConnected_of_empty` — given the
+  empty-team property, downward closure coincides with **convexity**
+  (`Set.OrdConnected`). Convexity (@cite{anttila-2025}) is the closure
+  invariant that survives in the NE-bearing setting where the empty-team
+  property fails. We reuse mathlib's `Set.OrdConnected` rather than a
+  bespoke predicate, mirroring the `IsFlat ↔ Order.IsIdeal` bridge.
 
 ## References
 
@@ -127,5 +134,41 @@ theorem isFlat_iff_isIdeal (T : Set (Finset α)) :
   intro a ha b hb
   obtain ⟨c, hc, hac, hbc⟩ := hd a ha b hb
   exact hL (sup_le hac hbc) hc
+
+/-! ### Convexity
+
+Convexity — `Set.OrdConnected` on `(Finset α, ⊆)`, i.e. `s ⊆ t ⊆ u` with
+`s, u ∈ T` forces `t ∈ T` — is @cite{anttila-2025}'s generalization of
+downward closure to the NE-bearing setting where the empty-team property
+may fail. Mathlib's `Set.OrdConnected` is exactly this predicate
+(`Set.Icc s u ⊆ T`), so we reuse it rather than introduce a bespoke
+`IsConvex`, mirroring the `IsFlat ↔ Order.IsIdeal` reuse above. The forward
+bridge `IsLowerSet.ordConnected` is already in mathlib. -/
+
+omit [DecidableEq α] in
+/-- A convex team-set with the empty-team property is downward-closed — the
+    reverse of mathlib's `IsLowerSet.ordConnected`. Together they give
+    `isLowerSet_iff_ordConnected_of_empty`. -/
+theorem isLowerSet_of_ordConnected_empty {T : Set (Finset α)}
+    (hConv : T.OrdConnected) (hEmpty : ∅ ∈ T) : IsLowerSet T := by
+  intro a b hab hb
+  -- `IsLowerSet`: `hab : b ≤ a`, `hb : a ∈ T`, goal `b ∈ T`; `∅ ≤ b ≤ a`.
+  have hmem : b ∈ Set.Icc (∅ : Finset α) a := by
+    rw [Set.mem_Icc]; exact ⟨Finset.empty_subset b, hab⟩
+  exact hConv.out hEmpty hb hmem
+
+omit [DecidableEq α] in
+/-- **Given the empty-team property, downward closure and convexity coincide**
+    (@cite{anttila-2025}). For NE-bearing team-sets — which break the
+    empty-team property — convexity is the invariant that survives where
+    downward closure does not. -/
+theorem isLowerSet_iff_ordConnected_of_empty {T : Set (Finset α)}
+    (hEmpty : ∅ ∈ T) : IsLowerSet T ↔ T.OrdConnected :=
+  ⟨IsLowerSet.ordConnected, fun h => isLowerSet_of_ordConnected_empty h hEmpty⟩
+
+/-- Flat team-sets are convex (`IsFlat → IsLowerSet → OrdConnected`). -/
+theorem IsFlat.ordConnected {T : Set (Finset α)} (h : IsFlat T) :
+    T.OrdConnected :=
+  h.isLowerSet.ordConnected
 
 end Core.Logic.Team

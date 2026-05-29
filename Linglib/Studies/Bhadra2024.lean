@@ -41,7 +41,7 @@ a second consumer materialises.
 -/
 
 open Semantics.Lexical
-open Features.EventStructure
+open Semantics.Lexical.EventStructure
 open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.ArgumentStructure.Affectedness.Profile
 
@@ -198,7 +198,7 @@ theorem bend_cos_per_levin_pfc_per_bhadra :
     LevinClass.forceTransmissionClass .bend = .potentialForChange := ⟨rfl, rfl⟩
 
 theorem ie_templates :
-    LevinClass.eventTemplate .wipe = .motionContact ∧
+    LevinClass.eventTemplate .wipe = .accomplishment ∧
     LevinClass.eventTemplate .hit = .activity := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
@@ -503,14 +503,16 @@ theorem bend_reclassification :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 8. Bridge: motionContact Template = IE Verbs
+-- § 8. Bridge: Wiping verbs ↔ IE classification
 -- ════════════════════════════════════════════════════
 
-/-- @cite{rappaport-hovav-levin-2024}'s motionContact template corresponds
-    exactly to @cite{bhadra-2024}'s IE class. The wipe class (10.4)
-    has the motionContact template and is classified as IE. -/
-theorem motionContact_is_ie :
-    LevinClass.eventTemplate .wipe = .motionContact ∧
+/-- The wiping-verbs class (Levin 10.4) is classified as IE in
+@cite{bhadra-2024}. Its event-structure template is `.accomplishment`
+(via the standard decision tree); the deeper two-predicate motion+contact
+substructure of these verbs (@cite{rappaport-hovav-levin-2024}) is at
+`Studies/RappaportHovavLevin2024.lean`. -/
+theorem wipe_is_ie :
+    LevinClass.eventTemplate .wipe = .accomplishment ∧
     LevinClass.forceTransmissionClass .wipe = .impingementEffecting := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════

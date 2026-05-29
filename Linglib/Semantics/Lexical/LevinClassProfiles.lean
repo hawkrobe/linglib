@@ -65,15 +65,15 @@ def mannerContact : ArgTemplate where
     a definite change of state (the object reaches an end state).
     @cite{beavers-koontz-garboden-2020}: result verbs entail CoS. -/
 def resultChange : ArgTemplate where
-  subjectProfile := ⟨true, true, true, true, true,  false, false, false, false, false⟩
-  objectProfile  := some ⟨false, false, false, false, false, true, false, true, false, false⟩
+  subjectProfile := accomplishmentSubjectProfile
+  objectProfile  := some accomplishmentObjectProfile
 
 /-- Full agent creating an entity (object comes into existence).
     Subject: V+S+C+M+IE. Object: CoS+IT+CA+DE.
     @cite{beavers-2010}: quantized affectedness + dependent existence.
     The object is an incremental theme whose extent measures the event. -/
 def creation : ArgTemplate where
-  subjectProfile := ⟨true, true, true, true, true,  false, false, false, false, false⟩
+  subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some ⟨false, false, false, false, false, true, true, true, false, true⟩
 
 /-- Agent consuming/destroying an incremental theme.
@@ -81,38 +81,38 @@ def creation : ArgTemplate where
     Like creation but without dependent existence (the object
     pre-exists the event). -/
 def consumption : ArgTemplate where
-  subjectProfile := ⟨true, true, true, true, true,  false, false, false, false, false⟩
+  subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some ⟨false, false, false, false, false, true, true, true, false, false⟩
 
 /-- Self-propelled motion (no caused result, no object).
     Subject: V+S+M+IE (no causation — the mover doesn't cause
     a change in another participant). -/
 def selfMotion : ArgTemplate where
-  subjectProfile := ⟨true, true, false, true, true,  false, false, false, false, false⟩
+  subjectProfile := activitySubjectProfile
 
 /-- Perception / experiencer-subject.
     Subject: S+IE (sentient, independently existing, but not
     volitional or causal). -/
 def perception : ArgTemplate where
-  subjectProfile := ⟨false, true, false, false, true,  false, false, false, false, false⟩
+  subjectProfile := stateSubjectProfile
   objectProfile  := some ⟨false, false, false, false, true, false, false, false, false, false⟩
 
 /-- Stimulus-experiencer (Class II psych, @cite{belletti-rizzi-1988}).
     Subject: C+IE (causal stimulus). Object: S+IE (experiencer). -/
 def psychCausal : ArgTemplate where
   subjectProfile := ⟨false, false, true, false, true,  false, false, false, false, false⟩
-  objectProfile  := some ⟨false, true, false, false, true, false, false, false, false, false⟩
+  objectProfile  := some stateSubjectProfile
 
 /-- Unaccusative change of state (inchoative).
     Subject: CoS+CA (undergoes change, no agentive features).
     No external argument. -/
 def unaccusativeCoS : ArgTemplate where
-  subjectProfile := ⟨false, false, false, false, false, true, false, true, false, false⟩
+  subjectProfile := accomplishmentObjectProfile
 
 /-- Directed motion (unaccusative).
     Subject: M+IE+CoS (moves, changes location). -/
 def directedMotion : ArgTemplate where
-  subjectProfile := ⟨false, false, false, true, true, true, false, false, false, false⟩
+  subjectProfile := achievementSubjectProfile
 
 -- ════════════════════════════════════════════════════
 -- § 3. LevinClass → ArgTemplate

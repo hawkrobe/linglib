@@ -30,7 +30,7 @@ proper Lean theorem.
 
 namespace Phenomena.FreeChoice.Divergences
 
-open Semantics.BSML
+open Core.Logic.Modal.BSML
 open Semantics.Modality.Orthologic
 open Aloni2022
 open HollidayMandelkern2024
@@ -62,7 +62,7 @@ open HollidayMandelkern2024
 
     BSML+ side: the FC consequence (`mayCoffee` and `mayTea` supported on the
     team) is a Lean theorem given the FC enriched premise — proved by
-    `aloni2022_fact4_NS_FC` invoking the universal `Semantics.BSML.narrowScopeFC`.
+    `aloni2022_fact4_NS_FC` invoking the universal `Core.Logic.Modal.BSML.narrowScopeFC`.
 
     HM 2024 side: at `x₁`, `◇(p ∨ ¬p)` is true (tautologously) but
     `◇p ∧ ◇¬p` is false (since `x₁` knows `p`, only `p`-worlds are accessible) —
@@ -107,7 +107,7 @@ theorem bsml_plus_WS_FC_sensitive_to_indisputability
 /-! ### #3 BSML+ vs Fox 2007 on Dual Prohibition (BLOCKED — structural)
 
     Aloni 2022 §8 Table 8 contrasts BSML+ and Fox 2007 (recursive EXH) on Dual
-    Prohibition: BSML+ proves it (substrate's `Semantics.BSML.dualProhibition`),
+    Prohibition: BSML+ proves it (substrate's `Core.Logic.Modal.BSML.dualProhibition`),
     Fox 2007's recursive-EXH derivation famously fails it without modification
     (the paper's central argument for moving beyond grammatical exhaustification).
 
@@ -122,7 +122,7 @@ theorem bsml_plus_WS_FC_sensitive_to_indisputability
     incomparable types on the two sides.
 
     **What WOULD be needed**: a bridge module
-    (`Semantics/BSML/FoxBridge.lean` or similar) translating BSML
+    (`Core/Logic/Modal/BSML/FoxBridge.lean` or similar) translating BSML
     formulas to Fox-style alternative sets, OR a pointwise/set semantics for
     BSML formulas. Either is real engineering, deferred.
 -/
@@ -132,11 +132,11 @@ theorem bsml_plus_WS_FC_sensitive_to_indisputability
     Aloni 2022 Table 4 / §6.3.1 distinguishes BSML+ (where Negative FC ◇¬(α∧β)
     ⤳ ◇¬α ∧ ◇¬β fails) from BSML* (where it holds). The substrate proves the
     BSML+ failure side as `negativeFC_poss_fails_bsmlPlus` (in
-    `Semantics/BSML/FreeChoice.lean`). The BSML* prediction is not yet
+    `Studies/Aloni2022/FreeChoice.lean`). The BSML* prediction is not yet
     statable.
 
     **Why this is blocked at the substrate level**: the substrate's `supportStar`
-    (`Semantics/BSML/Defs.lean:242`) has `| .neg _, _ => True` —
+    (`Core/Logic/Modal/BSML/Defs.lean:242`) has `| .neg _, _ => True` —
     negation is treated as vacuously supported, which is not Aloni's actual
     BSML* semantics. Aloni's BSML* uses bilateral polarity, mirroring BSML
     proper. Stating "BSML* validates Negative FC" against the current
@@ -151,7 +151,7 @@ theorem bsml_plus_WS_FC_sensitive_to_indisputability
 /-! ### #5 BSML+ vs Fox 2007 on Modal Disjunction (BLOCKED — structural)
 
     Aloni 2022 §8 Table 8: BSML+ predicts Modal Disjunction (`α ∨ β ⤳ ◇α ∧ ◇β`
-    when R is state-based — see `Semantics.BSML.modalDisjunction`); Fox 2007's
+    when R is state-based — see `Core.Logic.Modal.BSML.modalDisjunction`); Fox 2007's
     alternative-based account does not address plain (non-modal) disjunction
     deriving modal force at all.
 

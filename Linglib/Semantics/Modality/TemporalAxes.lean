@@ -21,18 +21,9 @@ Klecha 2016 (CIR-based future orientation), Matthewson 2013 (Gitksan
 `dim`-based future orientation), and any other modal-temporal theory.
 
 This file is the canonical home; downstream modules import from here
-rather than redeclaring local copies.
-
-## Note on @cite{condoravdi-2002}'s narrower local enums
-
-`Studies/Condoravdi2002.lean` carries its own
-2-element `Perspective` (matching `TemporalPerspective` here) and a
-2-element `Orientation` (`future | past` only — Condoravdi's 4-reading
-typology has no present-orientation cell). Those local enums are
-tightly coupled with `ModalReading`, `projectedRegion`, and
-`FrameAdverb.compatible` machinery and are not migrated here. The
-canonical `TemporalOrientation` below is the strict superset; a
-Condoravdi-style 2-way `Orientation` would inject into it.
+rather than redeclaring local copies. @cite{condoravdi-2002} uses only
+the `future`/`past` orientations — the `present` cell of
+`TemporalOrientation` goes unused there.
 -/
 
 namespace Semantics.Modality

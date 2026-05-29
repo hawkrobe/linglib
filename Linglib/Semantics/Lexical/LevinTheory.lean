@@ -4,6 +4,7 @@ import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Semantics.Lexical.Roots.RootFeatures
+import Linglib.Semantics.Lexical.EventStructure
 
 /-!
 # Levin Verb Class Theory
@@ -397,5 +398,18 @@ theorem root_cause_accounted_for (c : LevinClass) :
     c.meaningComponents.causation = true ∨
     c.causationSource = .rootNonDetachable := by
   cases c <;> decide
+
+/-- `.stateChange` resultKind implies Template-level result-state. -/
+theorem resultKind_stateChange_imp_template_resultState (c : LevinClass) :
+    c.resultKind = .stateChange → c.eventTemplate.HasResultState := by
+  cases c <;> decide
+
+/-- The converse fails: aspectual verbs have HasResultState (via the
+achievement template) but `resultKind ≠ .stateChange`. -/
+theorem template_resultState_not_iff_resultKind_stateChange :
+    ∃ c : LevinClass,
+      c.eventTemplate.HasResultState ∧ c.resultKind ≠ .stateChange := by
+  refine ⟨.aspectual, ?_⟩
+  decide
 
 end Semantics.Lexical

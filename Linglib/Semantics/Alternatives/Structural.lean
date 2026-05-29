@@ -773,29 +773,33 @@ content dimension, (b) φ' is contextually relevant, and (c) ¬φ' is innocently
 excludable.
 
 `contentFn` maps each tree to its content along the relevant dimension.
+The content dimension is a `Prop`-valued predicate (felicity, entailment,
+or CI satisfaction), aligning with the `W → Prop` shape of
+`Pragmatics.Expressives.TwoDimProp.ci` so a single CI content function can
+flow from a Pottsian compositional interpretation into the operator.
 
 The competitor set is supplied as an `AlternativeSource` parameter so
 that the same operator works for Katzir alternatives
 (`katzirSource lex`), indirect alternatives
 (`Indirect.indirectFromKatzir`, @cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}),
 or any other source. -/
-def violatesMaximize {C W World : Type}
+def violatesMaximize {C W : Type} {World : Type*}
     (src : Alternatives.AlternativeSource (Tree C W))
-    (contentFn : Tree C W → World → Bool)
+    (contentFn : Tree C W → World → Prop)
     (φ : Tree C W)
-    (weaklyAssertable : Tree C W → Bool) : Prop :=
+    (weaklyAssertable : Tree C W → Prop) : Prop :=
   ∃ φ' ∈ src φ,
-    (∀ w, contentFn φ' w = true → contentFn φ w = true) ∧
-    (∃ w, contentFn φ w = true ∧ contentFn φ' w = false) ∧
-    weaklyAssertable φ' = true
+    (∀ w, contentFn φ' w → contentFn φ w) ∧
+    (∃ w, contentFn φ w ∧ ¬ contentFn φ' w) ∧
+    weaklyAssertable φ'
 
 /-- The neo-Gricean conversational principle: `violatesMaximize` applied
 to at-issue (truth-conditional) content. @cite{katzir-2007} def 21. -/
-abbrev violatesConversationalPrinciple {C W World : Type}
+abbrev violatesConversationalPrinciple {C W : Type} {World : Type*}
     (src : Alternatives.AlternativeSource (Tree C W))
-    (meaning : Tree C W → World → Bool)
+    (meaning : Tree C W → World → Prop)
     (φ : Tree C W)
-    (weaklyAssertable : Tree C W → Bool) : Prop :=
+    (weaklyAssertable : Tree C W → Prop) : Prop :=
   violatesMaximize src meaning φ weaklyAssertable
 
 /-- Maximize Presupposition (@cite{schlenker-2012}): `violatesMaximize`
@@ -806,32 +810,65 @@ presupposition.
 Pass `katzirSource lex` for Katzir alternatives;
 `Indirect.indirectFromKatzir lex pron` for indirect alternatives
 (@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}). -/
-def violatesMP {C W World : Type}
+def violatesMP {C W : Type} {World : Type*}
     (src : Alternatives.AlternativeSource (Tree C W))
-    (presupFn : Tree C W → World → Bool)
-    (assertionFn : Tree C W → World → Bool)
+    (presupFn : Tree C W → World → Prop)
+    (assertionFn : Tree C W → World → Prop)
     (φ : Tree C W)
-    (weaklyAssertable : Tree C W → Bool) : Prop :=
+    (weaklyAssertable : Tree C W → Prop) : Prop :=
   ∃ φ' ∈ src φ,
-    (∀ w, assertionFn φ' w = assertionFn φ w) ∧
-    (∀ w, presupFn φ' w = true → presupFn φ w = true) ∧
-    (∃ w, presupFn φ w = true ∧ presupFn φ' w = false) ∧
-    weaklyAssertable φ' = true
+    (∀ w, assertionFn φ' w ↔ assertionFn φ w) ∧
+    (∀ w, presupFn φ' w → presupFn φ w) ∧
+    (∃ w, presupFn φ w ∧ ¬ presupFn φ' w) ∧
+    weaklyAssertable φ'
 
 /-- Maximize Conventional Implicatures (@cite{lo-guercio-2025} def 15):
 `violatesMaximize` applied to CI content. Unlike MP!, does NOT require
 the same assertive content — CI content is independent of truth conditions.
 
 Do not use φ if there is a formal alternative φ' ∈ F(φ) such that:
-a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ (CI-stronger)
+a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ (CI-stronger, in @cite{gutzmann-2015}/@cite{kaplan-1999}
+   felicity-set semantics: the set of contexts where φ' is felicitously
+   usable is a strict subset of those where φ is)
 b. φ' ∈ C (contextually relevant)
 c. ¬⟦φ'⟧ᵘ doesn't contradict the negation of CI content of any element in C -/
-abbrev violatesMCIs {C W World : Type}
+abbrev violatesMCIs {C W : Type} {World : Type*}
     (src : Alternatives.AlternativeSource (Tree C W))
-    (ciContentFn : Tree C W → World → Bool)
+    (ciContentFn : Tree C W → World → Prop)
     (φ : Tree C W)
-    (weaklyAssertable : Tree C W → Bool) : Prop :=
+    (weaklyAssertable : Tree C W → Prop) : Prop :=
   violatesMaximize src ciContentFn φ weaklyAssertable
+
+/-! ### Structural relationships between MP and Maximize
+
+`violatesMP` differs from `violatesMaximize` on the same `presupFn` only
+by the additional same-assertion clause. The two theorems below make the
+relationship Lean-checkable, discharging the diagnostic prose in
+@cite{lo-guercio-2025} §4 that "ACIs do not require same assertive content,
+unlike antipresuppositions." -/
+
+/-- Every `violatesMP` violation is also a `violatesMaximize` violation
+on the presuppositional axis (drops the same-assertion clause). -/
+theorem violatesMaximize_of_violatesMP {C W : Type} {World : Type*}
+    (src : Alternatives.AlternativeSource (Tree C W))
+    (presupFn assertionFn : Tree C W → World → Prop)
+    (φ : Tree C W) (weaklyAssertable : Tree C W → Prop) :
+    violatesMP src presupFn assertionFn φ weaklyAssertable →
+    violatesMaximize src presupFn φ weaklyAssertable := by
+  rintro ⟨φ', hφ', _hassert, himp, hstrict, hwa⟩
+  exact ⟨φ', hφ', himp, hstrict, hwa⟩
+
+/-- Conversely, a `violatesMaximize` violation on `presupFn` combined with
+same-assertion at every alternative gives a `violatesMP` violation. -/
+theorem violatesMP_of_violatesMaximize_sameAssertion {C W : Type} {World : Type*}
+    (src : Alternatives.AlternativeSource (Tree C W))
+    (presupFn assertionFn : Tree C W → World → Prop)
+    (φ : Tree C W) (weaklyAssertable : Tree C W → Prop)
+    (h_max : violatesMaximize src presupFn φ weaklyAssertable)
+    (h_assert : ∀ φ' ∈ src φ, ∀ w, assertionFn φ' w ↔ assertionFn φ w) :
+    violatesMP src presupFn assertionFn φ weaklyAssertable := by
+  rcases h_max with ⟨φ', hφ', himp, hstrict, hwa⟩
+  exact ⟨φ', hφ', h_assert φ' hφ', himp, hstrict, hwa⟩
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §10  Bridge to Economy of Structure (@cite{katzir-singh-2015})

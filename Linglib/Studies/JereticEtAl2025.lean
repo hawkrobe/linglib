@@ -532,14 +532,17 @@ private def meaning (t : Tree Cat String) (w : WorldEx) : Bool :=
     true
 
 /-- Presupposition function: same as `meaning` in this toy model
-(the "definedness" of the sentence). -/
-private def presupFn : Tree Cat String → WorldEx → Bool := meaning
+(the "definedness" of the sentence), lifted from `Bool` to `Prop` for
+the `violatesMP` substrate (which works in `Prop`-land so a single CI
+predicate can flow from a Pottsian `TwoDimProp`). -/
+private def presupFn : Tree Cat String → WorldEx → Prop :=
+  fun t w => meaning t w = true
 
 /-- At-issue assertion: "all cups are full". Uniform across the three
 sentences in this toy model — they share at-issue content and differ
 only in presupposition (the precondition for MP to apply). -/
-private def assertionFn : Tree Cat String → WorldEx → Bool :=
-  fun _ _ => true
+private def assertionFn : Tree Cat String → WorldEx → Prop :=
+  fun _ _ => True
 
 /-- The French indirect-alternative source: Katzir alternatives
 filtered by pronounceability and meaning equivalence. This is the
@@ -589,15 +592,18 @@ alternative, deriving the paper's anti-duality of *tous* (paper §4.1
 ex. 25, paper Fig. 1). -/
 theorem tous_violatesMP_via_indirect :
     violatesMP frenchIndirectSrc presupFn assertionFn
-               tousVerres (fun _ => true) := by
-  refine ⟨lesDeuxVerres, lesDeux_indirectAlt_tous, ?_, ?_, ?_, rfl⟩
-  · -- ∀ w, assertionFn lesDeuxVerres w = assertionFn tousVerres w
-    intro _; rfl
+               tousVerres (fun _ => True) := by
+  refine ⟨lesDeuxVerres, lesDeux_indirectAlt_tous, ?_, ?_, ?_, trivial⟩
+  · -- ∀ w, assertionFn lesDeuxVerres w ↔ assertionFn tousVerres w
+    intro _; exact Iff.rfl
   · -- ∀ w, presupFn lesDeuxVerres w → presupFn tousVerres w
     intro w _
+    show meaning tousVerres w = true
     cases w <;> rfl
-  · -- ∃ w, presupFn tousVerres w ∧ presupFn lesDeuxVerres w = false
-    exact ⟨WorldEx.w3, rfl, rfl⟩
+  · -- ∃ w, presupFn tousVerres w ∧ ¬ presupFn lesDeuxVerres w
+    refine ⟨WorldEx.w3, ?_, ?_⟩
+    · show meaning tousVerres .w3 = true; rfl
+    · show ¬ (meaning lesDeuxVerres .w3 = true); decide
 
 end WorkedExample
 

@@ -1,5 +1,6 @@
 import Linglib.Core.Logic.Modal.Kripke
 import Linglib.Core.Logic.Team.Closure
+import Linglib.Core.Logic.Team.Definability
 
 /-!
 # Inquisitive Modal Logic (InqML)
@@ -58,7 +59,7 @@ flavored (InqML) or dependence-flavored (MDL).
 * `Formula.neg`, `Formula.polarQ` — standard inquisitive abbreviations
   (`¬φ := φ → ⊥`, `?φ := φ \\/ ¬φ`).
 * `Formula.modalDepth` — depth of nested `□`.
-* `support_isLowerSet` — persistence property (Ciardelli §3 Lemma).
+* `isLowerSet_support` — persistence property (Ciardelli §3 Lemma).
 * `support_empty` — every formula supported on the empty team.
 * `not_supClosed_inqDisj_of_witness` — constructive witness that
   inquisitive disjunction `\\/` breaks union closure.
@@ -187,7 +188,7 @@ def Formula.modalDepth : Formula Atom → ℕ
 /-- **Persistence**: every InqML formula's support is downward-closed
     under `⊆`. Ciardelli §3 (propositional case) + §8.2 (modal
     extension); the key structural property of inquisitive semantics. -/
-theorem support_isLowerSet (M : KripkeModel W Atom) (φ : Formula Atom) :
+theorem isLowerSet_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     IsLowerSet { s : Finset W | support M φ s } := by
   induction φ with
   | atom p =>
@@ -270,5 +271,33 @@ theorem not_supClosed_inqDisj_of_witness {p q : Atom} {w₁ w₂ : W}
       rw [Finset.mem_union, Finset.mem_singleton, Finset.mem_singleton]
       exact Or.inl rfl)
     rw [hq₁] at this; exact Bool.noConfusion this
+
+/-! ### Soundness for the closure cell (Definability bridge) -/
+
+open Core.Logic.Team in
+/-- **InqML is sound for its closure cell**: every InqML-definable team property
+    is downward-closed (persistent) and has the empty-team property. InqML shares
+    the downward-closed, empty-team cell with dependence logic (@cite{ciardelli-2022};
+    @cite{anttila-2025}) — but breaks union closure via inquisitive disjunction
+    `\\/` (see `not_supClosed_inqDisj_of_witness`) rather than via a dependence
+    atom.
+
+    Composes `isLowerSet_support` (persistence) and `support_empty` through the
+    `Team/Definability.lean` bridge. The converse (every such property is
+    InqML-definable) is the open half. -/
+theorem soundFor_downwardClosed_inter_empty (M : KripkeModel W Atom) :
+    SoundFor (support M) (downwardClosedProperties ∩ emptyTeamProperties) := by
+  unfold SoundFor
+  apply Set.subset_inter
+  · intro P hP
+    simp only [mem_definableClass] at hP
+    obtain ⟨φ, rfl⟩ := hP
+    show IsLowerSet (definedBy (support M) φ)
+    exact isLowerSet_support M φ
+  · intro P hP
+    simp only [mem_definableClass] at hP
+    obtain ⟨φ, rfl⟩ := hP
+    show ∅ ∈ definedBy (support M) φ
+    exact support_empty M φ
 
 end Core.Logic.Modal.Inquisitive

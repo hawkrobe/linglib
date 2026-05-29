@@ -158,8 +158,8 @@ theorem normalMaxEnt_choiceProb_eq {C : Type*}
     that independent violation differences yield HZ's generalization. -/
 theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
     (s : ι → ℝ) (a b : ι) :
-    log (softmax s 1 a / softmax s 1 b) = s a - s b := by
-  rw [log_softmax_odds]; ring
+    log (softmax s a / softmax s b) = s a - s b := by
+  rw [log_softmax_odds]
 
 /-- **MaxEnt logit-harmony identity**: the log-odds ratio between two
     candidates equals their harmony score difference.
@@ -169,8 +169,8 @@ theorem logit_uniformity {ι : Type*} [Fintype ι] [Nonempty ι]
     Instantiation of `logit_uniformity` with harmony scores. -/
 theorem maxent_logit_harmony {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
-    log (softmax (harmonyScoreR constraints) 1 a /
-         softmax (harmonyScoreR constraints) 1 b) =
+    log (softmax (harmonyScoreR constraints) a /
+         softmax (harmonyScoreR constraints) b) =
     harmonyScoreR constraints a - harmonyScoreR constraints b :=
   logit_uniformity (harmonyScoreR constraints) a b
 
@@ -183,10 +183,10 @@ theorem maxent_logit_harmony {C : Type*} [Fintype C] [Nonempty C]
     change the ratio. Corollary of `softmax_odds` with α = 1. -/
 theorem maxent_iia {C : Type*} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
-    softmax (harmonyScoreR constraints) 1 a /
-    softmax (harmonyScoreR constraints) 1 b =
+    softmax (harmonyScoreR constraints) a /
+    softmax (harmonyScoreR constraints) b =
     exp (harmonyScoreR constraints a - harmonyScoreR constraints b) := by
-  rw [softmax_odds]; congr 1; ring
+  rw [softmax_odds]
 
 -- ============================================================================
 -- § 5: Harmony Difference Decomposition

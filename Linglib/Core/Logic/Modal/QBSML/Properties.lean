@@ -1,5 +1,6 @@
-import Linglib.Semantics.QBSML.Defs
+import Linglib.Core.Logic.Modal.QBSML.Defs
 import Linglib.Core.Logic.Team.Closure
+import Linglib.Core.Logic.Team.Definability
 
 /-!
 # QBSML formula properties — Anttila 2021 Proposition 2.2.8 (substrate test)
@@ -9,7 +10,7 @@ import Linglib.Core.Logic.Team.Closure
 **Substrate test**: prove the three structural properties from Anttila 2021
 Proposition 2.2.8 for QBSML's `support` relation, using the SAME
 `Core.Logic.Team.flat_iff_downwardClosed_unionClosed_emptyTeam` template that
-BSML uses (via `Semantics/BSML/Properties.lean`).
+BSML uses (via `Core/Logic/Modal/BSML/Properties.lean`).
 
 The substrate composes for first-order team semantics: the bilateral mutual
 induction pattern from BSML carries over directly, with additional cases for
@@ -46,7 +47,7 @@ NE-free anyway.
   `Core.Logic.Team.flat_of_downwardClosed_unionClosed_emptyTeam`.
 -/
 
-namespace Semantics.QBSML
+namespace Core.Logic.Modal.QBSML
 
 open Core.Logic.Team
 
@@ -404,4 +405,26 @@ theorem isFlat_support_of_isNEFree {φ : QBSMLFormula Var Pred}
     (supClosed_support_of_isNEFree hNE M)
     (support_empty_of_isNEFree hNE M)
 
-end Semantics.QBSML
+/-! ### Soundness for the closure cell (Definability bridge) -/
+
+/-- **The NE-free fragment of QBSML is sound for the flat cell**: every team
+    property definable by an NE-free QBSML formula is flat (downward-closed,
+    union-closed, empty-team). This restates @cite{aloni-vanormondt-2023}
+    Proposition 4.1 / Fact 2 — NE-free QBSML reduces to classical first-order
+    modal logic, whose support is flat — in the `Team/Definability.lean`
+    vocabulary.
+
+    The restriction to the NE-free fragment is essential, not incidental: NE is
+    the only source of non-classical behaviour (op. cit. Fact 1), and union
+    closure of `exi` already needs downward closure of the subformula as IH (see
+    the file docstring), which NE breaks. So QBSML has no unconditional
+    all-formula cell — unlike BSML, whose NE-bearing formulas still land in the
+    convex, union-closed cell. -/
+theorem soundFor_flat_neFree (M : QBSMLModel W Domain Pred) :
+    definableClassWhere (support M)
+      (fun φ : QBSMLFormula Var Pred => φ.isNEFree = true) ⊆ flatProperties := by
+  unfold flatProperties
+  exact definableClassWhere_subset (C := IsFlat)
+    fun _φ hφ => isFlat_support_of_isNEFree hφ M
+
+end Core.Logic.Modal.QBSML

@@ -26,7 +26,7 @@ open Semantics.Lexical
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
 open Semantics.Aspect.Incremental (VerbIncClass)
-open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
+open Semantics.ArgumentStructure.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § English Morphophonological Rules
@@ -126,7 +126,7 @@ def run : VerbEntry where
   formPastPart := "run"
   formPresPart := "running"
   complementType := .none
-  subjectEntailments := some ⟨true, true, false, true, true, false, false, false, false, false⟩
+  subjectEntailments := some activitySubjectProfile
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion
@@ -140,7 +140,7 @@ def run : VerbEntry where
 def arrive : VerbEntry := .mkRegular {
   form := "arrive"
   complementType := .none
-  subjectEntailments := some ⟨false, false, false, true, true, true, false, false, false, false⟩
+  subjectEntailments := some achievementSubjectProfile
   unaccusative := true
   passivizable := false
   vendlerClass := some .achievement
@@ -154,7 +154,7 @@ def eat : VerbEntry where
   formPastPart := "eaten"
   formPresPart := "eating"
   complementType := .np
-  subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
+  subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, false⟩
   implicitObj := some .indef
   vendlerClass := some .accomplishment
@@ -170,7 +170,7 @@ def eat : VerbEntry where
 def kick : VerbEntry := .mkRegular {
   form := "kick"
   complementType := .np
-  subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
+  subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some ⟨false, false, false, false, false, true, false, true, true, false⟩
   vendlerClass := some .activity
   levinClass := some .hit
@@ -287,7 +287,7 @@ def see : VerbEntry where
   formPresPart := "seeing"
   complementType := .np
   altComplementType := some .finiteClause
-  subjectEntailments := some ⟨false, true, false, false, true, false, false, false, false, false⟩
+  subjectEntailments := some stateSubjectProfile
   vendlerClass := some .state
   attitude := some (.doxastic .veridical)
   levinClass := some .see
@@ -1151,7 +1151,7 @@ def build : VerbEntry where
   formPastPart := "built"
   formPresPart := "building"
   complementType := .np
-  subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
+  subjectEntailments := some accomplishmentSubjectProfile
   objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, true⟩
   implicitObj := some .indef
   vendlerClass := some .accomplishment
@@ -1202,7 +1202,7 @@ def sweep_instr : VerbEntry where
   formPresPart := "sweeping"
   complementType := .np
   vendlerClass := some .activity
-  subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
+  subjectEntailments := some accomplishmentSubjectProfile
   passivizable := true
   senseTag := .instrumental
   levinClass := some .wipe

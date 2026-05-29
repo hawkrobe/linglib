@@ -10,49 +10,41 @@ argument realization) filled by **roots** (idiosyncratic content).
 Templates compose via CAUSE; which sub-predicate determines argument
 realization yields different syntactic frames.
 
-Key insight from @cite{rappaport-hovav-levin-2024}: verbs of motion + sustained contact (sweep,
-rub, scrape) have two grammatically relevant predicates — MOVE and CONTACT.
-Which predicate determines argument realization yields variable agentivity
-and distinct syntactic frames.
+The four templates here are @cite{rappaport-hovav-levin-1998}'s; the
+enriched two-predicate event structure for the wiping-verbs class
+(@cite{rappaport-hovav-levin-2024}) is paper-anchored at
+`Studies/RappaportHovavLevin2024.lean`.
 
 ## Bridges
 
 - `Template.toAspectualProfile` → `AspectualProfile` (aspect)
-- `motionContact_variable_agentivity` → `sweepBasicSubjectProfile` (proto-roles)
-- `contact_determines_implies_effector_subject` → `isEffector` (proto-roles)
-- `lexicalize_increases_agentivity` → `pAgentScore` ordering (proto-roles)
-- `HasResultState` → bieventive sub-event boundary (@cite{krejci-2012}; @cite{dowty-1979})
+- `HasResultState` → bieventive sub-event boundary (@cite{krejci-2012}; @cite{dowty-1979}; structural-scope alternative: @cite{von-stechow-1996}, @cite{beck-2005})
 - `cause_implies_resultState` → CAUSE entails result state
 - `intransitiveVariant` → causative/inchoative alternation (@cite{krejci-2012}; @cite{rappaport-hovav-levin-1998})
 
 -/
 
-namespace Features.EventStructure
+namespace Semantics.Lexical.EventStructure
 
 open Semantics.Lexical
 open Semantics.ArgumentStructure.EntailmentProfile
 open Features
 
--- ════════════════════════════════════════════════════
--- § 1. Event Structure Templates (@cite{rappaport-hovav-levin-1998} + 2024)
--- ════════════════════════════════════════════════════
+/-! ### Event structure templates -/
 
-/-- Canonical event structure templates.
-    The first four are from @cite{rappaport-hovav-levin-1998}. `motionContact` is from @cite{rappaport-hovav-levin-2024}
-    for the sweep/rub/scrape class: [x MOVE y] WHILE [x CONTACT y]. -/
+/-- Canonical event structure templates per @cite{rappaport-hovav-levin-1998}. -/
 inductive Template where
   | state          -- [x ⟨STATE⟩]
   | activity       -- [x ACT]
   | achievement    -- [BECOME [x ⟨STATE⟩]]
   | accomplishment -- [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]
-  | motionContact  -- [x MOVE y] WHILE [x CONTACT y]
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 2. Template Properties
--- ════════════════════════════════════════════════════
+/-! ### Template properties -/
 
-/-- Does the template involve CAUSE? -/
+/-- Does the template involve CAUSE? At the template level this coincides
+with having an external causer position: only `.accomplishment` decomposes
+as `[[x ACT] CAUSE [BECOME [y STATE]]]` per @cite{rappaport-hovav-levin-1998}. -/
 def Template.HasCause : Template → Prop
   | .accomplishment => True
   | _ => False
@@ -60,13 +52,9 @@ def Template.HasCause : Template → Prop
 instance (t : Template) : Decidable t.HasCause := by
   cases t <;> unfold Template.HasCause <;> infer_instance
 
-/-- Does the template have an external causer position? -/
-def Template.HasExternalCauser : Template → Prop
-  | .accomplishment => True
-  | _ => False
-
-instance (t : Template) : Decidable t.HasExternalCauser := by
-  cases t <;> unfold Template.HasExternalCauser <;> infer_instance
+/-- The external-causer position is present iff the template has CAUSE
+in its decomposition. -/
+abbrev Template.HasExternalCauser : Template → Prop := Template.HasCause
 
 /-- How many grammatically relevant predicates? -/
 def Template.predicateCount : Template → Nat
@@ -74,7 +62,6 @@ def Template.predicateCount : Template → Nat
   | .activity => 1
   | .achievement => 1
   | .accomplishment => 2  -- ACT + BECOME
-  | .motionContact => 2   -- MOVE + CONTACT
 
 /-- Predicted aspectual profile for each template. -/
 def Template.toAspectualProfile : Template → AspectualProfile
@@ -82,16 +69,12 @@ def Template.toAspectualProfile : Template → AspectualProfile
   | .activity => activityProfile
   | .achievement => achievementProfile
   | .accomplishment => accomplishmentProfile
-  | .motionContact => activityProfile  -- Atelic by default (sweep is an activity)
 
 /-- Predicted Vendler class for each template (derived from profile). -/
 def Template.vendlerClass (t : Template) : VendlerClass :=
   t.toAspectualProfile.toVendlerClass
 
--- ════════════════════════════════════════════════════
--- § 3. Bieventive Structure Diagnostics
--- (@cite{krejci-2012}; @cite{dowty-1979}; @cite{koontz-garboden-2009})
--- ════════════════════════════════════════════════════
+/-! ### Bieventive structure diagnostics -/
 
 /-! Templates with complex internal structure — multiple sub-events connected
     by CAUSE or embedding BECOME — license scopal ambiguities that
@@ -102,7 +85,11 @@ def Template.vendlerClass (t : Template) : VendlerClass :=
 
     1. ***again*/*re-* ambiguity** tracks `HasResultState`: templates
        embedding [BECOME [STATE]] allow restitutive readings where a
-       scopal modifier targets just the result sub-event.
+       scopal modifier targets just the result sub-event. The
+       structural-scope rival (@cite{von-stechow-1996}, @cite{beck-2005})
+       derives restitutive readings from adverbial attachment levels
+       rather than lexical entailment; the lexical-decomposition account
+       encoded here is one of two live analyses.
     2. **Negation over CAUSE** (@cite{koontz-garboden-2009}) tracks
        `HasCause`: negation can scope narrowly over CAUSE, denying
        the causal link while maintaining the result.
@@ -144,9 +131,14 @@ theorem cause_implies_resultState (t : Template) :
     Instead, the reflexive clitic (*se*, *sich*) identifies the EFFECTOR
     with the THEME: the derived inchoative retains the full causative
     structure [∃v[CAUSE(v,e) ∧ EFFECTOR(v,x) ∧ BECOME(e,s) ∧ THEME(s,x)]].
-    This preserves the Monotonicity Hypothesis and explains why
-    anticausative morphology cross-linguistically coincides with reflexive
-    morphology (Haspelmath 1990: 9/13 languages).
+    This preserves the Monotonicity Hypothesis and explains the
+    cross-linguistic tendency for anticausative morphology to coincide
+    with reflexive morphology (Haspelmath's typological work on the
+    causative-anticausative alternation; see @cite{alexiadou-schaefer-2015}
+    for the modern cross-linguistic picture). -- UNVERIFIED: original
+    text cited "Haspelmath 1990: 9/13 languages" — Haspelmath 1990 is on
+    passives; the typology of C/I alternation is in Haspelmath 1993,
+    figure unverified.
 
     `Template.intransitiveVariant` below implements the deletion view at the
     template level. The reflexivization analysis is formalized in
@@ -184,104 +176,29 @@ theorem only_accomplishment_alternates (t : Template) :
     t.intransitiveVariant.isSome → t = .accomplishment := by
   cases t <;> simp [Template.intransitiveVariant]
 
--- ════════════════════════════════════════════════════
--- § 4. Argument Realization from Templates
--- ════════════════════════════════════════════════════
+/-! ### Argument realization from templates -/
 
 /-- Predicted subject entailment profile for each template. -/
 def Template.subjectProfile : Template → EntailmentProfile
-  | .state =>
-    -- State holder: sentience + IE only
-    ⟨false, true, false, false, true, false, false, false, false, false⟩
-  | .activity =>
-    -- Activity: V+S+M+IE (no causation — the template [x ACT] does not
-    -- entail causing a change in another participant; Dowty P-Agent #3
-    -- requires "another participant"). Transitive activities (hit) add
-    -- C at the class level via root-contributed objects.
-    ⟨true, true, false, true, true, false, false, false, false, false⟩
-  | .achievement =>
-    -- Achievement subject: M+IE+CoS (undergoes change)
-    ⟨false, false, false, true, true, true, false, false, false, false⟩
-  | .accomplishment =>
-    -- Accomplishment subject: V+S+C+M+IE (full proto-agent, causes result)
-    ⟨true, true, true, true, true, false, false, false, false, false⟩
-  | .motionContact =>
-    -- Motion+contact subject: M+IE only (underspecified for agentivity)
-    sweepBasicSubjectProfile
+  | .state          => stateSubjectProfile
+  | .activity       => activitySubjectProfile
+  | .achievement    => achievementSubjectProfile
+  | .accomplishment => accomplishmentSubjectProfile
 
-/-- Predicted object entailment profile (if any). -/
+/-- Predicted object entailment profile (if any). The accomplishment
+default carries no IT; per-verb IT additions live at the Fragment level. -/
 def Template.objectProfile : Template → Option EntailmentProfile
-  | .state => none
-  | .activity => none
-  | .achievement => none
-  | .accomplishment =>
-    -- Result patient: CoS+CA (undergoes caused change).
-    -- IT (incremental theme) is NOT included in the template default —
-    -- not all accomplishment objects measure the event. Verbs with IT
-    -- (eat, build) add it at the class level.
-    some ⟨false, false, false, false, false, true, false, true, false, false⟩
-  | .motionContact =>
-    -- Force recipient: CA+St (causally affected, stationary surface)
-    some ⟨false, false, false, false, false, false, false, true, true, false⟩
+  | .accomplishment => some accomplishmentObjectProfile
+  | _ => none
 
 /-- Accomplishment subject is a full agent (5 P-Agent entailments). -/
 theorem accomplishment_subject_is_agent :
-    (Template.subjectProfile .accomplishment).pAgentScore = 5 := by native_decide
+    (Template.subjectProfile .accomplishment).pAgentScore = 5 := by decide
 
-/-- motionContact subject has the same profile as basic sweep
-    (movement + IE, underspecified for agentivity). -/
-theorem motionContact_variable_agentivity :
-    Template.subjectProfile .motionContact = sweepBasicSubjectProfile := rfl
+/-! ### Bridge to @cite{levin-1993} verb classes -/
 
--- ════════════════════════════════════════════════════
--- § 5. Which Predicate Determines Argument Realization
--- ════════════════════════════════════════════════════
-
-/-- For motionContact verbs, which sub-predicate determines argument
-    realization (@cite{rappaport-hovav-levin-2024} §3.3–3.4). -/
-inductive DeterminingPredicate where
-  | motion   -- MOVE determines: unaccusative/transitive+PP frames
-  | contact  -- CONTACT determines: simple transitive frame
-  deriving DecidableEq, Repr
-
-/-- When CONTACT determines argument realization, the subject is an
-    effector (movement + IE → external argument). This yields the simple
-    transitive frame: "The wind swept the deck". -/
-theorem contact_determines_implies_effector_subject :
-    IsEffector (Template.subjectProfile .motionContact) := by decide
-
-/-- The motionContact object profile exists and is a force recipient. -/
-theorem motionContact_object_is_forceRecipient :
-    ∃ p, Template.objectProfile .motionContact = some p ∧
-    IsForceRecipient p := ⟨_, rfl, by decide⟩
-
--- ════════════════════════════════════════════════════
--- § 6. Instrument Lexicalization (@cite{rappaport-hovav-levin-2024} §3.5)
--- ════════════════════════════════════════════════════
-
-/-- Instrument lexicalization adds agentivity to a template by restricting
-    the moving entity to a specific instrument, forcing volition + sentience
-    + causation. The result is the broom-sweep subject profile. -/
-def Template.lexicalizeInstrument : Template → EntailmentProfile
-  | .motionContact => sweepBroomSubjectProfile
-  | t => t.subjectProfile  -- No-op for other templates
-
-/-- Instrument lexicalization strictly increases agentivity for motionContact
-    templates (@cite{rappaport-hovav-levin-2024} §3.5: broom-sweep is more agentive than basic sweep). -/
-theorem lexicalize_increases_agentivity :
-    (Template.lexicalizeInstrument .motionContact).pAgentScore >
-    (Template.subjectProfile .motionContact).pAgentScore := by native_decide
-
-/-- Lexicalized motionContact has full proto-agent profile (5 entailments). -/
-theorem lexicalized_is_full_agent :
-    (Template.lexicalizeInstrument .motionContact).pAgentScore = 5 := by native_decide
-
--- ════════════════════════════════════════════════════
--- § 7. Bridge to @cite{levin-1993} Verb Classes
--- ════════════════════════════════════════════════════
-
-/-! Levin classes map to event structure templates via meaning components.
-    The core correspondence (@cite{rappaport-hovav-levin-1998} §3; @cite{rappaport-hovav-levin-2010} §2):
+/-! Levin classes map to event structure templates via meaning components
+    (@cite{rappaport-hovav-levin-1998}; @cite{rappaport-hovav-levin-2010}):
 
     | Meaning component pattern | Template | Example class |
     |---|---|---|
@@ -290,19 +207,19 @@ theorem lexicalized_is_full_agent :
     | No CoS, no motion | state | exist (47.1), admire (31.2) |
     | Otherwise | activity | hit (18.1), run (51.3) |
 
-    The `motionContact` template is specific to the sweep/rub/scrape
-    class and requires a class-specific override. -/
+    The wiping-verbs class (10.4) gets the activity template via the
+    decision tree, with its motion-and-sustained-contact substructure
+    formalized at `Studies/RappaportHovavLevin2024.lean`. -/
 
--- ════════════════════════════════════════════════════
--- § 8. Process vs State-Change (@cite{bohnemeyer-2004})
--- ════════════════════════════════════════════════════
+/-! ### Process vs state-change (@cite{bohnemeyer-2004}) -/
 
 /-- The fundamental binary distinction in event types: whether a predicate
     encodes a process (PROC only) or a state change (involves CHANGE).
 
     This crosscuts Vendler's four-way classification: degree achievements
     are Vendler activities or accomplishments depending on scale boundedness
-    but are event-structurally state-change predicates (@cite{bohnemeyer-2004} §5).
+    but are event-structurally state-change predicates (@cite{bohnemeyer-2004}
+    on degree achievements within the Yukatek transitivity system).
 
     @cite{bohnemeyer-2004} argues this is the primary semantic distinction
     governing verb classification in Yukatek Maya — more fundamental than
@@ -312,12 +229,10 @@ inductive EventType where
   | stateChange -- Involves CHANGE: die, break, grow, darken, sit
   deriving DecidableEq, Repr
 
-/-- Derive event type from template.
-    Activities and motionContact are processes; states, achievements, and
-    accomplishments involve state change. -/
+/-- Derive event type from template. Activities are processes; states,
+    achievements, and accomplishments involve state change. -/
 def Template.eventType : Template → EventType
   | .activity => .process
-  | .motionContact => .process
   | _ => .stateChange
 
 /-- Whether a process is internally caused — the event is instigated by
@@ -327,60 +242,52 @@ def Template.eventType : Template → EventType
     This is a per-verb property of the ROOT, not of the template.
     Two activity verbs can differ: *sing* (internal) vs *roll* (external).
 
-    @cite{levin-hovav-1995} §4; @cite{bohnemeyer-2004} §2,6.
+    @cite{levin-hovav-1995} on the internal/external causation distinction
+    in Unaccusativity; @cite{bohnemeyer-2004} on internal/external
+    causation in Yukatek argument linking.
 
-    @cite{koontz-garboden-2009} §4.1: externally caused COS verbs have
+    @cite{koontz-garboden-2009}: externally caused COS verbs have
     CAUSE+EFFECTOR in their LSR and license *por sí solo* 'by itself'.
     Internally caused COS verbs (*empeorar*, *hervir*, *crecer*) lack CAUSE
     in their LSR and reject *por sí solo*. -/
-inductive CausationType where
+inductive InternalExternalCause where
   | internal   -- instigated by a participant (sing, walk, write, play)
   | external   -- no instigator; "spontaneous" (break, fall, roll, buzz)
   deriving DecidableEq, Repr
 
 /-- Externally caused COS verbs have CAUSE in their LSR;
-    internally caused COS verbs do not (@cite{koontz-garboden-2009} §4.1;
-    @cite{levin-hovav-1995} §4).
+    internally caused COS verbs do not (@cite{koontz-garboden-2009};
+    @cite{levin-hovav-1995}). Per @cite{koontz-garboden-2009}, this
+    licenses *por sí solo* / *by itself* modification on externally
+    caused inchoatives and rejects it on internally caused ones.
 
     This determines whether derived inchoatives (on the reflexivization
     analysis) retain a CAUSE operator. -/
-def CausationType.HasCauseInLSR : CausationType → Prop
+def InternalExternalCause.HasCauseInLSR : InternalExternalCause → Prop
   | .external => True
   | .internal => False
 
-instance (c : CausationType) : Decidable c.HasCauseInLSR := by
-  cases c <;> unfold CausationType.HasCauseInLSR <;> infer_instance
+instance (c : InternalExternalCause) : Decidable c.HasCauseInLSR := by
+  cases c <;> unfold InternalExternalCause.HasCauseInLSR <;> infer_instance
 
-/-- *por sí solo* / *by itself* is licensed iff CAUSE is present in the
-    LSR (@cite{koontz-garboden-2009} §4.1). Stative predicates and
-    internally caused COS verbs reject it. -/
-def CausationType.LicensesBySelf : CausationType → Prop
-  | .external => True
-  | .internal => False
-
-instance (c : CausationType) : Decidable c.LicensesBySelf := by
-  cases c <;> unfold CausationType.LicensesBySelf <;> infer_instance
-
-end Features.EventStructure
+end Semantics.Lexical.EventStructure
 
 namespace Semantics.Lexical
 
 /-- Predicted event structure template from meaning components. -/
-def MeaningComponents.predictedTemplate : MeaningComponents → Features.EventStructure.Template
+def MeaningComponents.predictedTemplate : MeaningComponents → Semantics.Lexical.EventStructure.Template
   | mc => if mc.changeOfState && mc.causation then .accomplishment
     else if mc.changeOfState then .achievement
     else if !mc.motion && !mc.contact then .state
     else .activity
 
-/-- Predicted template for a Levin class, with class-specific overrides. -/
-def LevinClass.eventTemplate : LevinClass → Features.EventStructure.Template
-  -- motionContact is class-specific (sweep/rub/scrape)
-  | .wipe => .motionContact
+/-- Predicted template for a Levin class. -/
+def LevinClass.eventTemplate : LevinClass → Semantics.Lexical.EventStructure.Template
   | c => c.meaningComponents.predictedTemplate
 
 end Semantics.Lexical
 
-namespace Features.EventStructure
+namespace Semantics.Lexical.EventStructure
 open Semantics.Lexical
 
 /-! ### Verification: canonical quadruple -/
@@ -436,11 +343,13 @@ theorem appear_is_achievement :
 theorem calve_is_achievement :
     LevinClass.calve.eventTemplate = .achievement := rfl
 
-/-! ### Special: motionContact -/
+/-! ### Wiping verbs (Levin 10.4) -/
 
-/-- Wipe class → motionContact (class-specific override). -/
-theorem wipe_is_motionContact :
-    LevinClass.wipe.eventTemplate = .motionContact := rfl
+/-- Wipe class → accomplishment (changeOfState + causation per
+its MeaningComponents). The two-predicate (motion + sustained contact)
+substructure is at `Studies/RappaportHovavLevin2024.lean`. -/
+theorem wipe_is_accomplishment :
+    LevinClass.wipe.eventTemplate = .accomplishment := rfl
 
 /-! ### Template → aspectual class consistency -/
 
@@ -456,7 +365,7 @@ theorem hit_atelic :
 theorem exist_stative :
     LevinClass.exist.eventTemplate.vendlerClass = .state := rfl
 
-/-! ### § 9. Bridge: Event Structure ↔ Diathesis Alternation
+/-! ### Bridge: Event Structure ↔ Diathesis Alternation
 
 `predictedTemplate` and `predictedAlternation` are two predictions computed from the
 same `MeaningComponents` feature vector. This section proves their agreement and shows
@@ -531,7 +440,9 @@ theorem fuse_vendler_class_shift (v c : MeaningComponents)
   rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; rfl
 
 /-- Fusion with CoS + causation yields result state, enabling *again*/*re-*
-    restitutive readings (@cite{dowty-1979}). -/
+    restitutive readings on the lexical-decomposition account
+    (@cite{dowty-1979}; cf. structural-scope rival @cite{von-stechow-1996},
+    @cite{beck-2005}). -/
 theorem fuse_cos_caus_has_result_state (v c : MeaningComponents)
     (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
     (v.fuse c).predictedTemplate.HasResultState := by
@@ -545,4 +456,4 @@ theorem fuse_cos_caus_has_cause (v c : MeaningComponents)
     (v.fuse c).predictedTemplate.HasCause := by
   rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; decide
 
-end Features.EventStructure
+end Semantics.Lexical.EventStructure

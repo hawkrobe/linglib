@@ -273,16 +273,8 @@ theorem _root_.Multiset.antidiagonal_swap {α : Type*} (s : Multiset α) :
   induction s using Multiset.induction_on with
   | empty => rfl
   | cons a t ih =>
-    rw [Multiset.antidiagonal_cons, Multiset.map_add, Multiset.map_map, Multiset.map_map]
-    -- Each summand has shape `(antidiagonal t).map (Prod.swap ∘ Prod.map _ _)`.
-    -- Pull `Prod.swap` to the right via the funext identities below, then
-    -- apply `ih` to absorb it. The two summands then swap roles, recovered by `add_comm`.
-    rw [show (Prod.swap ∘ Prod.map (id : Multiset α → Multiset α) (Multiset.cons a)) =
-            ((Prod.map (Multiset.cons a) id) ∘ Prod.swap) from funext fun _ => rfl]
-    rw [show (Prod.swap ∘ Prod.map (Multiset.cons a) (id : Multiset α → Multiset α)) =
-            ((Prod.map id (Multiset.cons a)) ∘ Prod.swap) from funext fun _ => rfl]
-    rw [← Multiset.map_map _ Prod.swap, ← Multiset.map_map _ Prod.swap, ih]
-    exact add_comm _ _
+    simp only [Multiset.antidiagonal_cons, Multiset.map_add, Multiset.map_map,
+      ← Prod.map_comp_swap, ← Multiset.map_map _ Prod.swap, ih, add_comm]
 
 /-- Reindex a partition-sum over `C.powerset` using the involution
     `C₁ ↦ C - C₁`. Specialisation of `antidiagonal_swap` to a

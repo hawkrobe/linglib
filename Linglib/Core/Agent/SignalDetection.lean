@@ -463,14 +463,13 @@ theorem SDTModel.toLuceAt_signal_prob (m : SDTModel) (x : ℝ) :
   rw [SDTModel.toLuceAt, RationalAction.fromGumbelRUM_policy _ one_pos,
       mcfaddenIntegral_binary _ one_pos]
   have h01 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
-  simp only [Fin.isValue, ↓reduceIte, h01, sub_zero, div_one, logistic,
+  simp only [Fin.isValue, ↓reduceIte, h01, sub_zero, div_one, Real.sigmoid_def,
              SDTModel.likelihoodRatioAt, likelihoodRatio]
   rw [show m.dPrime * x = -(-(m.dPrime * x)) from by ring,
       show -(-(m.dPrime * x)) = -(-1 * (m.dPrime * x)) from by ring,
       neg_mul, one_mul, neg_neg]
-  -- Goal: 1 / (1 + exp(-(d'·x))) = exp(d'·x) / (exp(d'·x) + 1)
+  -- Goal: (1 + exp(-(d'·x)))⁻¹ = exp(d'·x) / (exp(d'·x) + 1)
   have hpos : (0 : ℝ) < Real.exp (m.dPrime * x) := exp_pos _
-  field_simp
   rw [Real.exp_neg]
   field_simp
 

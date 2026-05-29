@@ -1,50 +1,61 @@
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+import Mathlib.Analysis.SpecialFunctions.Sigmoid
 import Mathlib.InformationTheory.KullbackLeibler.KLFun
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.BigOperators.Field
-import Mathlib.Analysis.Convex.Mul
-import Mathlib.InformationTheory.KullbackLeibler.KLFun
-import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+import Mathlib.Analysis.MeanInequalities
+import Mathlib.Probability.Moments.Basic
+import Mathlib.MeasureTheory.Measure.Tilted
+import Mathlib.MeasureTheory.Measure.Count
+import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 
 /-!
-# Rational Action @cite{luce-1959}
-@cite{cover-thomas-2006} @cite{zaslavsky-hu-levy-2020} @cite{adams-messick-1958}The mathematical foundation for all soft-rational agents: RSA speakers/listeners,
-BToM agents, and decision-theoretic actors.
+# Rational action
 
-## Architecture
+@cite{luce-1959} @cite{cover-thomas-2006} @cite{zaslavsky-hu-levy-2020} @cite{adams-messick-1958}
 
-A `RationalAction` agent selects actions with probability proportional to a
-non-negative score function — the **Luce choice rule**. This is the
-unique choice rule satisfying IIA (independence of irrelevant alternatives):
-the relative probability of two actions depends only on their scores.
+The mathematical foundation for all soft-rational agents: RSA speakers and
+listeners, BToM agents, and decision-theoretic actors. A `RationalAction` agent
+selects actions with probability proportional to a non-negative score — the
+**Luce choice rule**, the unique rule satisfying independence of irrelevant
+alternatives (IIA): the relative probability of two actions depends only on their
+scores.
 
-The key mathematical results characterizing this choice rule are:
+## Main definitions
 
-1. **Softmax** (§2): The exponential parameterization `score = exp(α · utility)`
-   gives `policy = softmax(utility, α)`. This is the standard form in RSA.
+* `RationalAction`, `RationalAction.policy` — the Luce choice rule.
+* `softmax`, `partitionFn`, `logSumExp` — the exponential parameterization.
+* `RationalAction.fromSoftmax` — build an agent from a utility via `exp(α · u)`.
+* `ChoiceFn` and `ChoiceFn.hasRatioScale` / `hasProductRule` / `hasPairwiseIIA` —
+  the choice-axiom forms.
 
-2. **Gibbs Variational Principle** (§3): Softmax uniquely maximizes
-   `H(p) + α · ⟨p, s⟩` on the probability simplex. This is the mathematical
-   foundation for RSA convergence.
+## Main results
 
-3. **Maximum Entropy** (§4): Softmax is the max-entropy distribution subject
-   to an expected-utility constraint. Equivalently, it minimizes free energy
-   (the Boltzmann distribution from statistical mechanics).
+* `gibbs_variational` — softmax uniquely maximizes `H(p) + α · ⟨p, s⟩` on the
+  probability simplex.
+* `softmax_minimizes_freeEnergy`, `max_entropy_duality`, `entropy_le_log_card` —
+  the maximum-entropy / minimum-free-energy characterization.
+* `bayesian_maximizes` — the Bayesian posterior maximizes expected log-likelihood.
+* `cauchy_mul_exp`, `luce_fechnerian_exp` — the exponential form is forced by a
+  Cauchy functional equation, the Fechnerian bridge from a ratio scale to an
+  interval (utility) scale.
+* `axiom1_ratio_iff_pairwiseIIA` — equivalence of the choice-axiom forms.
 
-4. **Bayesian Optimality** (§5): The Bayesian posterior maximizes expected
-   log-likelihood. This is the listener half of RSA convergence.
+## Implementation notes
 
+Softmax and entropy are stated over `ι → ℝ` with `[Fintype ι]` rather than over
+`PMF`, since the consumers (RSA operators) work directly with score vectors; the
+KL-divergence and entropy helpers are inlined privately where mathlib provides
+only the `PMF` form.
 -/
 
 namespace Core
 
-open Real BigOperators Finset
+open Real Finset
 
--- ============================================================================
--- §1. RationalAction: Score-Based Agents
--- ============================================================================
+/-! ### Score-based agents (Luce choice rule) -/
 
 /-- A rational action agent: selects actions with probability ∝ score(state, action).
 
@@ -120,27 +131,20 @@ theorem RationalAction.policy_eq_of_score_eq (ra : RationalAction S A) (s : S)
     ra.policy s a₁ = ra.policy s a₂ := by
   simp only [policy, h]
 
-/-- When totalScore equals the score of action `a`, the policy for `a` is 1.
-    Used by the compositional proof builder when all other scores are zero,
-    so `totalScore = score a + 0 +... + 0 = score a`, making `policy = 1`. -/
+/-- When `totalScore` equals the score of action `a`, the policy for `a` is 1. -/
 theorem RationalAction.policy_eq_one_of_totalScore_eq (ra : RationalAction S A) (s : S)
     (a : A) (h_sum : ra.totalScore s = ra.score s a) (h_pos : 0 < ra.score s a) :
     ra.policy s a = 1 := by
   simp only [policy, h_sum, ne_of_gt h_pos, ↓reduceIte, div_self (ne_of_gt h_pos)]
 
-/-- Score ordering implies ¬(policy strict ordering). Used by compositional proof
-    builder for ¬(L1 w₁ < L1 w₂) goals. -/
+/-- Score ordering implies the negation of the strict policy ordering. -/
 theorem RationalAction.policy_not_lt_of_score_le (ra : RationalAction S A) (s : S)
     (a₁ a₂ : A) (h : ra.score s a₂ ≤ ra.score s a₁) :
     ¬(ra.policy s a₁ < ra.policy s a₂) :=
   not_lt_of_ge (ra.policy_monotone s a₂ a₁ h)
 
-/-- Strict policy monotonicity: strictly higher score → strictly higher probability.
-
-    Used by `rsa_decide` to eliminate shared denominator computations: when
-    comparing `policy s a₁ < policy s a₂` (same state), it suffices to show
-    `score s a₁ < score s a₂`, skipping the expensive `totalScore` computation
-    in the proof term. -/
+/-- Strict policy monotonicity: strictly higher score gives strictly higher
+    probability. -/
 @[gcongr]
 theorem RationalAction.policy_lt_of_score_lt (ra : RationalAction S A) (s : S)
     (a₁ a₂ : A) (hlt : ra.score s a₁ < ra.score s a₂) :
@@ -160,17 +164,13 @@ theorem RationalAction.policy_lt_iff_score_lt (ra : RationalAction S A) (s : S)
     (a₁ a₂ : A) :
     ra.policy s a₁ < ra.policy s a₂ ↔ ra.score s a₁ < ra.score s a₂ :=
   ⟨fun h => by
-    by_contra hle; push_neg at hle
+    by_contra hle; push Not at hle
     exact absurd h (not_lt.mpr (ra.policy_monotone s a₂ a₁ hle)),
    ra.policy_lt_of_score_lt s a₁ a₂⟩
 
-/-- Cross-state policy comparison: compares policy values at different states
-    (different denominators). Used for S2 cross-world comparisons where
-    S2(u|w₁) vs S2(u|w₂) have different normalization constants.
-
-    The cross-product condition `score(s₁,a) * total(s₂) < score(s₂,a) * total(s₁)`
-    is equivalent to `score(s₁,a)/total(s₁) < score(s₂,a)/total(s₂)` when both
-    totals are positive. -/
+/-- Cross-state policy comparison (states with different normalization
+    constants): the cross-product `score(s₁,a) · total(s₂) < score(s₂,a) · total(s₁)`
+    is equivalent to `policy s₁ a < policy s₂ a` when both totals are positive. -/
 theorem RationalAction.policy_lt_cross (ra : RationalAction S A) (s₁ s₂ : S) (a : A)
     (h_pos₁ : 0 < ra.totalScore s₁) (h_pos₂ : 0 < ra.totalScore s₂)
     (h_cross : ra.score s₁ a * ra.totalScore s₂ < ra.score s₂ a * ra.totalScore s₁) :
@@ -178,15 +178,9 @@ theorem RationalAction.policy_lt_cross (ra : RationalAction S A) (s₁ s₂ : S)
   simp only [policy, ne_of_gt h_pos₁, ne_of_gt h_pos₂, ↓reduceIte]
   exact (div_lt_div_iff₀ h_pos₁ h_pos₂).mpr h_cross
 
-/-- Cross-state policy comparison with positivity derived from the cross-product.
-
-    Like `policy_lt_cross` but derives the `totalScore > 0` conditions from the
-    cross-product inequality itself: if `0 ≤ score(s₁,a) * total(s₂) < score(s₂,a) * total(s₁)`,
-    then `score(s₂,a) * total(s₁) > 0`, so both `score(s₂,a) > 0` and `total(s₁) > 0`.
-    And `score(s₂,a) ≤ total(s₂)`, so `total(s₂) > 0`.
-
-    Used by `rsa_predict` for cross-utterance L1 comparisons where the two sides
-    have different normalization constants. -/
+/-- Cross-state policy comparison, with the `totalScore > 0` hypotheses derived
+    from the cross-product inequality itself (so no positivity hypothesis is
+    needed). -/
 @[gcongr]
 theorem RationalAction.policy_lt_cross_of_cross_lt (ra : RationalAction S A)
     (s₁ s₂ : S) (a : A)
@@ -211,8 +205,7 @@ theorem RationalAction.policy_lt_cross_of_cross_lt (ra : RationalAction S A)
   exact ra.policy_lt_cross s₁ s₂ a h_tot1_pos h_tot2_pos h_cross
 
 /-- Score-sum ordering implies policy-sum ordering when both sides share the same
-    state (same denominator). Used by `rsa_predict` for marginal L1 comparisons
-    where the worlds being summed differ but the utterance and config are shared. -/
+    state (same denominator). -/
 theorem RationalAction.policy_list_sum_lt (ra : RationalAction S A) (s : S)
     (as₁ as₂ : List A)
     (h : (as₁.map (ra.score s)).sum < (as₂.map (ra.score s)).sum)
@@ -230,13 +223,8 @@ theorem RationalAction.policy_list_sum_lt (ra : RationalAction S A) (s : S)
   exact div_lt_div_of_pos_right h htot
 
 /-- Finset-sum ordering implies policy-sum ordering when both sides share the
-    same state (same denominator). Like `policy_list_sum_lt` but for Finset.sum.
-
-    Derives totalScore positivity from the score ordering itself, so no extra
-    hypothesis is needed: if 0 ≤ Σ_{F₁} score < Σ_{F₂} score, then some score
-    is positive, so totalScore > 0.
-
-    Used by `rsa_predict` for denominator cancellation in marginal comparisons. -/
+    same state (same denominator); the `Finset.sum` analogue of
+    `policy_list_sum_lt`, with positivity derived from the score ordering. -/
 theorem RationalAction.finset_sum_policy_lt_of_sum_score_lt
     (ra : RationalAction S A) (s : S) (F₁ F₂ : Finset A)
     (h : F₁.sum (ra.score s) < F₂.sum (ra.score s)) :
@@ -257,32 +245,27 @@ theorem RationalAction.finset_sum_policy_lt_of_sum_score_lt
   rw [hconv, hconv]
   exact div_lt_div_of_pos_right h htot_pos
 
--- ============================================================================
--- §1a. Luce's Choice Axiom (IIA)
--- ============================================================================
+/-! ### Luce's choice axiom (IIA)
 
-/-!
-## Luce's Choice Axiom
-
-showed that the ratio rule `P(a|s) = v(a)/Σv(b)` is
+@cite{luce-1959} showed that the ratio rule `P(a|s) = v(a)/Σv(b)` is
 characterized by the **independence of irrelevant alternatives** (IIA): the
 relative probability of two actions depends only on their scores, not on what
 other actions are available.
 
 We formalize:
-- The **constant ratio rule** (Theorem 2): `policy(a₁) · score(a₂) = policy(a₂) · score(a₁)`
+- The **constant ratio rule**: `policy(a₁) · score(a₂) = policy(a₂) · score(a₁)`
 - **Choice from subsets** (`pChoice`): restriction of the choice rule to a `Finset`
-- **IIA** (Axiom 1): ratios in any subset equal score ratios
-- The **product rule** (Theorem 1): `P(a,T) = P(a,S) · P(S,T)` for `S ⊆ T`
-- **Scale invariance** (Theorem 5): multiplying all scores by `k > 0` preserves policy
-- **Uniqueness** (Theorem 4, forward): proportional scores yield the same policy
+- **IIA**: ratios in any subset equal score ratios
+- The **product rule**: `P(a,T) = P(a,S) · P(S,T)` for `S ⊆ T`
+- **Scale invariance**: multiplying all scores by `k > 0` preserves policy
+- **Uniqueness** (forward direction): proportional scores yield the same policy
 -/
 
 section LuceChoiceAxiom
 
 variable {S A : Type*} [Fintype A]
 
-/-- Constant Ratio Rule (Theorem 2):
+/-- Constant ratio rule:
     `policy(a₁) · score(a₂) = policy(a₂) · score(a₁)`.
     The odds ratio policy(a₁)/policy(a₂) = score(a₁)/score(a₂). -/
 theorem RationalAction.policy_ratio (ra : RationalAction S A) (s : S) (a₁ a₂ : A) :
@@ -335,7 +318,7 @@ theorem RationalAction.pChoice_sum_eq_one [DecidableEq A] (ra : RationalAction S
 
 /-- IIA core: the ratio of `pChoice` values in any subset equals the score ratio.
     For `a₁, a₂ ∈ T` with `score(a₂) > 0`:
-    `pChoice(a₁, T) · score(a₂) = pChoice(a₂, T) · score(a₁)` (Axiom 1). -/
+    `pChoice(a₁, T) · score(a₂) = pChoice(a₂, T) · score(a₁)`. -/
 theorem RationalAction.pChoice_ratio [DecidableEq A] (ra : RationalAction S A) (s : S)
     (T : Finset A) (a₁ a₂ : A) (h₁ : a₁ ∈ T) (h₂ : a₂ ∈ T) :
     ra.pChoice s T a₁ * ra.score s a₂ = ra.pChoice s T a₂ * ra.score s a₁ := by
@@ -350,7 +333,7 @@ private theorem RationalAction.pChoice_mem [DecidableEq A] (ra : RationalAction 
     ra.pChoice s T a = ra.score s a / ∑ b ∈ T, ra.score s b := by
   simp only [pChoice, ha, hT, ↓reduceIte]
 
-/-- IIA (Axiom 1): `P(a, S) = P(a, T) / Σ_{b∈S} P(b, T)` for `S ⊆ T`.
+/-- IIA: `P(a, S) = P(a, T) / Σ_{b∈S} P(b, T)` for `S ⊆ T`.
     Choice probability from a subset is the conditional probability. -/
 theorem RationalAction.iia [DecidableEq A] (ra : RationalAction S A) (s : S)
     (S' T : Finset A) (hST : S' ⊆ T)
@@ -367,7 +350,7 @@ theorem RationalAction.iia [DecidableEq A] (ra : RationalAction S A) (s : S)
   rw [hsum]
   field_simp
 
-/-- Product rule (Theorem 1):
+/-- Product rule:
     `P(a, T) = P(a, S) · P(S, T)` for `a ∈ S ⊆ T`,
     where `P(S, T) = Σ_{b∈S} score(b) / Σ_{b∈T} score(b)`. -/
 theorem RationalAction.product_rule [DecidableEq A] (ra : RationalAction S A) (s : S)
@@ -389,7 +372,7 @@ noncomputable def RationalAction.scaleBy (ra : RationalAction S A) (k : ℝ) (hk
   score s a := k * ra.score s a
   score_nonneg s a := mul_nonneg (le_of_lt hk) (ra.score_nonneg s a)
 
-/-- Scale invariance (Theorem 5): scaling scores by `k > 0` preserves policy. -/
+/-- Scale invariance: scaling scores by `k > 0` preserves policy. -/
 theorem RationalAction.scaleBy_policy (ra : RationalAction S A) (s : S) (a : A)
     (k : ℝ) (hk : 0 < k) :
     (ra.scaleBy k hk).policy s a = ra.policy s a := by
@@ -401,7 +384,7 @@ theorem RationalAction.scaleBy_policy (ra : RationalAction S A) (s : S) (a : A)
     simp [hs0, hne]
     field_simp
 
-/-- Uniqueness (forward direction, Theorem 4):
+/-- Uniqueness (forward direction):
     If scores are proportional (`score'(s,a) = k · score(s,a)` for some `k > 0`),
     then both agents have the same policy. -/
 theorem RationalAction.policy_eq_of_proportional (ra ra' : RationalAction S A) (s : S)
@@ -418,108 +401,99 @@ theorem RationalAction.policy_eq_of_proportional (ra ra' : RationalAction S A) (
 
 end LuceChoiceAxiom
 
--- ============================================================================
--- §2. Softmax Function
--- ============================================================================
-
-/-!
-## Softmax Function
+/-! ### The softmax function
 
 The softmax function `σ(s, α)ᵢ = exp(α · sᵢ) / Σⱼ exp(α · sⱼ)` is the
-exponential parameterization of the Luce choice rule. Following Franke & Degen
-(submitted), we establish Facts 1–8.
+exponential parameterization of the Luce choice rule; its elementary properties
+are surveyed in @cite{franke-degen-2023}.
 -/
 
-/-- The softmax function: softmax(s, α)ᵢ = exp(α · sᵢ) / Σⱼ exp(α · sⱼ). -/
-noncomputable def softmax {ι : Type*} [Fintype ι] (s : ι → ℝ) (α : ℝ) : ι → ℝ :=
-  λ i => exp (α * s i) / ∑ j : ι, exp (α * s j)
+/-- The softmax function: `softmax(s)ᵢ = exp(sᵢ) / Σⱼ exp(sⱼ)`. The
+inverse-temperature / rationality parameter enters by scaling the argument:
+`softmax (α • s)`. -/
+noncomputable def softmax {ι : Type*} [Fintype ι] (s : ι → ℝ) : ι → ℝ :=
+  λ i => exp (s i) / ∑ j : ι, exp (s j)
 
-/-- The partition function (normalizing constant) Z = Σⱼ exp(α · sⱼ). -/
-noncomputable def partitionFn {ι : Type*} [Fintype ι] (s : ι → ℝ) (α : ℝ) : ℝ :=
-  ∑ j : ι, exp (α * s j)
+/-- The partition function (normalizing constant) `Z = Σⱼ exp(sⱼ)`. -/
+noncomputable def partitionFn {ι : Type*} [Fintype ι] (s : ι → ℝ) : ℝ :=
+  ∑ j : ι, exp (s j)
 
-/-- Log-sum-exp: log of partition function. -/
-noncomputable def logSumExp {ι : Type*} [Fintype ι] (s : ι → ℝ) (α : ℝ) : ℝ :=
-  log (∑ j : ι, exp (α * s j))
+/-- Log-sum-exp: log of the partition function. -/
+noncomputable def logSumExp {ι : Type*} [Fintype ι] (s : ι → ℝ) : ℝ :=
+  log (∑ j : ι, exp (s j))
 
 section SoftmaxBasic
 
 variable {ι : Type*} [Fintype ι]
 
 /-- The partition function is always positive. -/
-theorem partitionFn_pos [Nonempty ι] (s : ι → ℝ) (α : ℝ) :
-    0 < partitionFn s α := by
+theorem partitionFn_pos [Nonempty ι] (s : ι → ℝ) :
+    0 < partitionFn s := by
   apply Finset.sum_pos
   · intro i _; exact exp_pos _
   · exact Finset.univ_nonempty
 
-theorem partitionFn_ne_zero [Nonempty ι] (s : ι → ℝ) (α : ℝ) :
-    partitionFn s α ≠ 0 :=
-  ne_of_gt (partitionFn_pos s α)
+theorem partitionFn_ne_zero [Nonempty ι] (s : ι → ℝ) :
+    partitionFn s ≠ 0 :=
+  ne_of_gt (partitionFn_pos s)
 
-/-- Each softmax probability is positive. (Fact 1, part 1) -/
-theorem softmax_pos [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i : ι) :
-    0 < softmax s α i := by
+/-- Each softmax probability is positive. -/
+theorem softmax_pos [Nonempty ι] (s : ι → ℝ) (i : ι) :
+    0 < softmax s i := by
   simp only [softmax]
-  exact div_pos (exp_pos _) (partitionFn_pos s α)
+  exact div_pos (exp_pos _) (partitionFn_pos s)
 
-/-- Softmax probabilities sum to 1. (Fact 1, part 2) -/
-theorem softmax_sum_eq_one [Nonempty ι] (s : ι → ℝ) (α : ℝ) :
-    ∑ i : ι, softmax s α i = 1 := by
+/-- Softmax probabilities sum to 1. -/
+theorem softmax_sum_eq_one [Nonempty ι] (s : ι → ℝ) :
+    ∑ i : ι, softmax s i = 1 := by
   simp only [softmax]
-  have h : ∑ x : ι, exp (α * s x) / ∑ j : ι, exp (α * s j) =
-           (∑ x : ι, exp (α * s x)) / ∑ j : ι, exp (α * s j) := by
-    rw [Finset.sum_div]
-  rw [h]
-  exact div_self (partitionFn_ne_zero s α)
+  rw [← Finset.sum_div]
+  exact div_self (partitionFn_ne_zero s)
 
 /-- Softmax is non-negative. -/
-theorem softmax_nonneg [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i : ι) :
-    0 ≤ softmax s α i :=
-  le_of_lt (softmax_pos s α i)
+theorem softmax_nonneg [Nonempty ι] (s : ι → ℝ) (i : ι) :
+    0 ≤ softmax s i :=
+  le_of_lt (softmax_pos s i)
 
 /-- Softmax is at most 1. -/
-theorem softmax_le_one [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i : ι) :
-    softmax s α i ≤ 1 := by
-  have h := softmax_sum_eq_one s α
-  have hpos : ∀ j, 0 ≤ softmax s α j := λ j => softmax_nonneg s α j
-  calc softmax s α i
-      ≤ ∑ j : ι, softmax s α j := Finset.single_le_sum (λ j _ => hpos j) (Finset.mem_univ i)
-    _ = 1 := h
+theorem softmax_le_one [Nonempty ι] (s : ι → ℝ) (i : ι) :
+    softmax s i ≤ 1 := by
+  calc softmax s i
+      ≤ ∑ j : ι, softmax s j :=
+        Finset.single_le_sum (λ j _ => softmax_nonneg s j) (Finset.mem_univ i)
+    _ = 1 := softmax_sum_eq_one s
 
-/-- Fact 2: Odds are determined by score differences: pᵢ/pⱼ = exp(α(sᵢ - sⱼ)). -/
-theorem softmax_odds [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i j : ι) :
-    softmax s α i / softmax s α j = exp (α * (s i - s j)) := by
+/-- Odds are determined by score differences: `pᵢ/pⱼ = exp(sᵢ - sⱼ)`. -/
+theorem softmax_odds [Nonempty ι] (s : ι → ℝ) (i j : ι) :
+    softmax s i / softmax s j = exp (s i - s j) := by
   simp only [softmax]
-  have hZ : (∑ k : ι, exp (α * s k)) ≠ 0 := partitionFn_ne_zero s α
-  have hj : exp (α * s j) ≠ 0 := ne_of_gt (exp_pos _)
+  have hZ : (∑ k : ι, exp (s k)) ≠ 0 := partitionFn_ne_zero s
+  have hj : exp (s j) ≠ 0 := ne_of_gt (exp_pos _)
   field_simp
-  have key : α * s j + α * (s i - s j) = α * s i := by ring
+  have key : s j + (s i - s j) = s i := by ring
   rw [← exp_add, key]
 
-/-- Log-odds equal scaled score difference. -/
-theorem log_softmax_odds [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i j : ι) :
-    log (softmax s α i / softmax s α j) = α * (s i - s j) := by
+/-- Log-odds equal the score difference. -/
+theorem log_softmax_odds [Nonempty ι] (s : ι → ℝ) (i j : ι) :
+    log (softmax s i / softmax s j) = s i - s j := by
   rw [softmax_odds, log_exp]
 
-/-- Ratio form of Fact 2. -/
-theorem softmax_ratio [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i j : ι) :
-    softmax s α i = softmax s α j * exp (α * (s i - s j)) := by
-  have h := softmax_odds s α i j
-  have hne : softmax s α j ≠ 0 := ne_of_gt (softmax_pos s α j)
+/-- Ratio form of the odds identity. -/
+theorem softmax_ratio [Nonempty ι] (s : ι → ℝ) (i j : ι) :
+    softmax s i = softmax s j * exp (s i - s j) := by
+  have h := softmax_odds s i j
+  have hne : softmax s j ≠ 0 := ne_of_gt (softmax_pos s j)
   field_simp at h ⊢
   linarith [h]
 
-/-- The logistic (sigmoid) function: `S(x) = 1 / (1 + exp(−x))`. -/
-noncomputable def logistic (x : ℝ) : ℝ := 1 / (1 + exp (-x))
-
-/-- The logit function: `L(p) = log(p / (1 − p))`.
-    Inverse of `logistic` on (0, 1). -/
+/-- The logit function `L(p) = log(p / (1 - p))` — the inverse of `Real.sigmoid`
+    on `(0, 1)` (mathlib provides `Real.sigmoid` but not its inverse). -/
 noncomputable def logit (p : ℝ) : ℝ := log (p / (1 - p))
 
-/-- `logit` inverts `logistic`: `logit(logistic(x)) = x`. -/
-theorem logit_logistic (x : ℝ) : logit (logistic x) = x := by
-  simp only [logit, logistic]
+/-- `logit` inverts `Real.sigmoid`. -/
+theorem logit_sigmoid (x : ℝ) : logit (Real.sigmoid x) = x := by
+  rw [Real.sigmoid_def, ← one_div]
+  simp only [logit]
   have hdenom_ne : (1 + exp (-x)) ≠ 0 := ne_of_gt (by linarith [exp_pos (-x)])
   have hexp_ne : exp (-x) ≠ 0 := ne_of_gt (exp_pos _)
   have key : 1 / (1 + exp (-x)) / (1 - 1 / (1 + exp (-x))) = exp x := by
@@ -528,10 +502,11 @@ theorem logit_logistic (x : ℝ) : logit (logistic x) = x := by
     rw [← Real.exp_add]; simp
   rw [key, Real.log_exp]
 
-/-- `logistic` inverts `logit` for `0 < p < 1`: `logistic(logit(p)) = p`. -/
-theorem logistic_logit {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
-    logistic (logit p) = p := by
-  simp only [logistic, logit]
+/-- `Real.sigmoid` inverts `logit` for `0 < p < 1`. -/
+theorem sigmoid_logit {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
+    Real.sigmoid (logit p) = p := by
+  rw [Real.sigmoid_def, ← one_div]
+  simp only [logit]
   have h1mp : 0 < 1 - p := by linarith
   have hfrac : 0 < p / (1 - p) := div_pos hp0 h1mp
   have hinv : 0 < (p / (1 - p))⁻¹ := inv_pos.mpr hfrac
@@ -542,10 +517,11 @@ theorem logistic_logit {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
   field_simp
   linarith
 
-/-- Fact 3: For n = 2, softmax reduces to logistic. -/
+/-- For `n = 2`, softmax reduces to `Real.sigmoid`. -/
 theorem softmax_binary (s : Fin 2 → ℝ) (α : ℝ) :
-    softmax s α 0 = logistic (α * (s 0 - s 1)) := by
-  simp only [softmax, logistic, Fin.sum_univ_two]
+    softmax (α • s) 0 = Real.sigmoid (α * (s 0 - s 1)) := by
+  rw [Real.sigmoid_def, ← one_div]
+  simp only [softmax, Fin.sum_univ_two, Pi.smul_apply, smul_eq_mul]
   have key : α * s 0 + (-(α * (s 0 - s 1))) = α * s 1 := by ring
   have h : exp (α * s 0) + exp (α * s 1) =
            exp (α * s 0) * (1 + exp (-(α * (s 0 - s 1)))) := by
@@ -555,100 +531,61 @@ theorem softmax_binary (s : Fin 2 → ℝ) (α : ℝ) :
 /-- Softmax log-odds equals `logit` of the binary softmax probability
     (when there are exactly two alternatives). -/
 theorem logit_softmax_binary (s : Fin 2 → ℝ) (α : ℝ) :
-    logit (softmax s α 0) = α * (s 0 - s 1) := by
-  rw [softmax_binary, logit_logistic]
+    logit (softmax (α • s) 0) = α * (s 0 - s 1) := by
+  rw [softmax_binary, logit_sigmoid]
 
-/-- Fact 6: Softmax is translation invariant. -/
-theorem softmax_add_const (s : ι → ℝ) (α c : ℝ) :
-    softmax (λ i => s i + c) α = softmax s α := by
+/-- Softmax is translation invariant. -/
+theorem softmax_add_const (s : ι → ℝ) (c : ℝ) :
+    softmax (λ i => s i + c) = softmax s := by
   funext i
   simp only [softmax]
-  have hexp : ∀ j, exp (α * (s j + c)) = exp (α * s j) * exp (α * c) := by
-    intro j; rw [← exp_add]; ring_nf
+  have hexp : ∀ j, exp (s j + c) = exp (s j) * exp c := fun j => by rw [exp_add]
   simp_rw [hexp, ← Finset.sum_mul]
   rw [mul_div_mul_right _ _ (ne_of_gt (exp_pos _))]
 
-/-- Fact 8: Multiplicative scaling can be absorbed into α. -/
-theorem softmax_scale (s : ι → ℝ) (α a : ℝ) (ha : a ≠ 0) :
-    softmax (λ i => a * s i) (α / a) = softmax s α := by
-  funext i
+/-- Higher scores get higher probabilities. -/
+theorem softmax_mono [Nonempty ι] (s : ι → ℝ) (i j : ι) (hij : s i ≤ s j) :
+    softmax s i ≤ softmax s j := by
   simp only [softmax]
-  congr 1
-  · congr 1; field_simp
-  · apply Finset.sum_congr rfl; intro j _; congr 1; field_simp
-
-/-- Higher scores get higher probabilities (for α > 0). -/
-theorem softmax_mono [Nonempty ι] (s : ι → ℝ) {α : ℝ} (hα : 0 < α) (i j : ι)
-    (hij : s i ≤ s j) :
-    softmax s α i ≤ softmax s α j := by
-  simp only [softmax]
-  apply div_le_div_of_nonneg_right _ (le_of_lt (partitionFn_pos s α))
-  apply exp_le_exp.mpr
-  exact mul_le_mul_of_nonneg_left hij (le_of_lt hα)
+  apply div_le_div_of_nonneg_right _ (le_of_lt (partitionFn_pos s))
+  exact exp_le_exp.mpr hij
 
 /-- Strict monotonicity. -/
-theorem softmax_strict_mono [Nonempty ι] (s : ι → ℝ) {α : ℝ} (hα : 0 < α)
-    (i j : ι) (hij : s i < s j) :
-    softmax s α i < softmax s α j := by
+theorem softmax_strict_mono [Nonempty ι] (s : ι → ℝ) (i j : ι) (hij : s i < s j) :
+    softmax s i < softmax s j := by
   simp only [softmax]
-  apply div_lt_div_of_pos_right _ (partitionFn_pos s α)
-  apply exp_lt_exp.mpr
-  exact mul_lt_mul_of_pos_left hij hα
+  apply div_lt_div_of_pos_right _ (partitionFn_pos s)
+  exact exp_lt_exp.mpr hij
 
-/-- At α = 0, softmax is uniform. -/
-theorem softmax_zero [Nonempty ι] (s : ι → ℝ) :
-    softmax s 0 = λ _ => 1 / (Fintype.card ι : ℝ) := by
+/-- Constant scores give the uniform distribution (the `α = 0` case of
+`softmax (α • s)`). -/
+theorem softmax_zero : softmax (0 : ι → ℝ) = λ _ => 1 / (Fintype.card ι : ℝ) := by
   funext i
-  simp only [softmax, zero_mul, exp_zero, Finset.sum_const, Finset.card_univ,
+  simp only [softmax, Pi.zero_apply, exp_zero, Finset.sum_const, Finset.card_univ,
              nsmul_eq_mul, mul_one]
 
-/-- For α < 0, lower scores get higher probabilities. -/
-theorem softmax_neg_mono [Nonempty ι] (s : ι → ℝ) {α : ℝ} (hα : α < 0) (i j : ι)
-    (hij : s i ≤ s j) :
-    softmax s α j ≤ softmax s α i := by
-  simp only [softmax]
-  apply div_le_div_of_nonneg_right _ (le_of_lt (partitionFn_pos s α))
-  apply exp_le_exp.mpr
-  exact mul_le_mul_of_nonpos_left hij (le_of_lt hα)
-
 /-- Log of softmax = score minus log partition function. -/
-theorem log_softmax [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i : ι) :
-    Real.log (softmax s α i) = α * s i - Real.log (partitionFn s α) := by
+theorem log_softmax [Nonempty ι] (s : ι → ℝ) (i : ι) :
+    Real.log (softmax s i) = s i - Real.log (partitionFn s) := by
   simp only [softmax, partitionFn]
   rw [Real.log_div (ne_of_gt (Real.exp_pos _)) (ne_of_gt (Finset.sum_pos
     (fun j _ => Real.exp_pos _) Finset.univ_nonempty))]
   rw [Real.log_exp]
 
-/-- Softmax with default α = 1. -/
-noncomputable def softmax1 (s : ι → ℝ) : ι → ℝ := softmax s 1
-
-/-- Temperature form: τ = 1/α. -/
-noncomputable def softmaxTemp (s : ι → ℝ) (τ : ℝ) : ι → ℝ :=
-  softmax s (1 / τ)
-
 /-- Softmax is an exponential family distribution. -/
-theorem softmax_exponential_family (s : ι → ℝ) (α : ℝ) (i : ι) [Nonempty ι] :
-    softmax s α i = exp (α * s i - logSumExp s α) := by
+theorem softmax_exponential_family [Nonempty ι] (s : ι → ℝ) (i : ι) :
+    softmax s i = exp (s i - logSumExp s) := by
   simp only [softmax, logSumExp]
-  rw [exp_sub]
-  have h : exp (log (∑ j : ι, exp (α * s j))) = ∑ j : ι, exp (α * s j) :=
-    exp_log (partitionFn_pos s α)
-  rw [h]
+  rw [exp_sub, exp_log (Finset.sum_pos (fun j _ => exp_pos _) Finset.univ_nonempty)]
 
-/-- Luce choice with rpow scores equals softmax over log scores.
-
-    f(i)^α / Σⱼ f(j)^α = softmax(log ∘ f, α)(i)  when all f(i) > 0.
-
-    This is the general identity connecting belief-based RSA (which uses
-    rpow) to the softmax framework (which uses exp). Every S1 model with
-    `s1Score = rpow(l0, α)` inherits all softmax limit theorems via this
-    identity: as α → ∞, rpow-based Luce choice concentrates on the
-    argmax of f, i.e., the most informative utterance. -/
+/-- Luce choice with rpow scores equals softmax over scaled log scores:
+    `f(i)^α / Σⱼ f(j)^α = softmax (α • (log ∘ f)) i` when all `f(i) > 0`. This
+    connects belief-based RSA (which uses `rpow`) to the softmax framework. -/
 theorem rpow_luce_eq_softmax [Nonempty ι] (f : ι → ℝ) (α : ℝ)
     (hf : ∀ i, 0 < f i) (i : ι) :
     f i ^ α / ∑ j : ι, f j ^ α =
-    softmax (fun j => log (f j)) α i := by
-  simp only [softmax]
+    softmax (α • (fun j => log (f j))) i := by
+  simp only [softmax, Pi.smul_apply, smul_eq_mul]
   congr 1
   · rw [rpow_def_of_pos (hf i), mul_comm]
   · apply Finset.sum_congr rfl
@@ -657,19 +594,14 @@ theorem rpow_luce_eq_softmax [Nonempty ι] (f : ι → ℝ) (α : ℝ)
 
 end SoftmaxBasic
 
--- ============================================================================
--- §2a. Fechnerian Characterization & Softmax Bridge
--- ============================================================================
-
-/-!
-## Why Softmax? The Fechnerian Characterization
+/-! ### Why softmax? The Fechnerian characterization
 
 The exponential parameterization `score = exp(α · utility)` is not a design
 choice — it is the **unique** transformation connecting Luce's ratio scale to
-a utility (interval) scale (§2.A; @cite{adams-messick-1958}).
+a utility (interval) scale (@cite{adams-messick-1958}).
 
 **Ratio vs interval scales.** Luce's Axiom 1 (IIA) yields a **ratio scale**
-`v`: only ratios `v(a)/v(b)` are meaningful (Theorem 4). Fechner's
+`v`: only ratios `v(a)/v(b)` are meaningful. Fechner's
 psychophysics requires an **interval scale** `u`: only differences
 `u(a) - u(b)` are meaningful. The question: how are `v` and `u` related?
 
@@ -709,7 +641,7 @@ private theorem cauchy_g_pos (g : ℝ → ℝ)
   have hg0 := cauchy_g0_eq_one g hg_mul hg_mono
   have hsq : g x = g (x / 2) * g (x / 2) := by
     have := hg_mul (x / 2) (x / 2); rw [add_halves] at this; exact this
-  by_contra h; push_neg at h
+  by_contra h; push Not at h
   have hgx_zero : g x = 0 := le_antisymm h (by rw [hsq]; exact mul_self_nonneg _)
   have hx2_zero : g (x / 2) = 0 := by rwa [hsq, mul_self_eq_zero] at hgx_zero
   have hg0' : g 0 = g x * g (-x) := by
@@ -775,17 +707,9 @@ private theorem cauchy_monotone_additive_linear (h : ℝ → ℝ)
       have := (lt_div_iff₀ h1_pos).mp hq2; linarith
     linarith [hmono hq1]
 
-/-- **Cauchy's multiplicative functional equation** (classical):
-    If `g : ℝ → ℝ` satisfies `g(s + t) = g(s) · g(t)` and is strictly
-    monotone increasing, then `g(s) = exp(k · s)` for some `k > 0`.
-
-    The proof reduces to the additive Cauchy equation via `log`: setting
-    `h = log ∘ g`, the multiplicative equation becomes `h(s+t) = h(s) + h(t)`.
-    The key lemma (`cauchy_monotone_additive_linear`) shows that a strictly
-    monotone additive function must be linear, by density of ℚ in ℝ:
-    `h` agrees with `x ↦ k·x` on rationals (by induction), and any
-    deviation on an irrational `x` would violate monotonicity via a
-    rational witness between `x` and `h(x)/k`. -/
+/-- **Cauchy's multiplicative functional equation** (classical): if `g : ℝ → ℝ`
+    satisfies `g(s + t) = g(s) · g(t)` and is strictly monotone increasing, then
+    `g(s) = exp(k · s)` for some `k > 0`. -/
 theorem cauchy_mul_exp (g : ℝ → ℝ)
     (hg_mul : ∀ s t, g (s + t) = g s * g t)
     (hg_mono : StrictMono g) :
@@ -806,15 +730,10 @@ theorem cauchy_mul_exp (g : ℝ → ℝ)
   simp only [h] at this
   rw [← exp_log (hg_pos s), this, mul_comm]
 
-/-- **Fechnerian uniqueness** (§2.A; @cite{adams-messick-1958}):
-    If a ratio scale `v` and interval scale `u` represent the same
-    ordering via `v(x)/v(y) = g(u(x) - u(y))` for a strictly monotone
-    multiplicative `g`, then `v` is the exponential of `u`.
-
-    This is WHY `fromSoftmax` uses `exp(α · utility)`: the exponential
-    is **forced** by the requirement that log-odds be linear in utility
-    differences. It is the unique bridge between Luce's ratio scale
-    (Chapter 1) and Fechner's interval scale (Chapter 2). -/
+/-- **Fechnerian uniqueness** (@cite{adams-messick-1958}): if a ratio scale `v`
+    and interval scale `u` represent the same ordering via
+    `v(x)/v(y) = g(u(x) - u(y))` for a strictly monotone multiplicative `g`, then
+    `v` is the exponential of `u`. -/
 theorem luce_fechnerian_exp {X : Type*} (v u : X → ℝ) (g : ℝ → ℝ)
     (hv_pos : ∀ x, 0 < v x)
     (h_ratio : ∀ x y, v x / v y = g (u x - u y))
@@ -827,12 +746,8 @@ theorem luce_fechnerian_exp {X : Type*} (v u : X → ℝ) (g : ℝ → ℝ)
     rw [hg_exp (u x - u x₀)] at h
     rwa [div_eq_iff (ne_of_gt (hv_pos x₀)), mul_comm] at h⟩
 
-/-- Construct a RationalAction from a utility function via softmax.
-
-The score is `exp(α · utility(s, a))`, so `policy = softmax(utility, α)`.
-The exponential parameterization is forced by the Fechnerian characterization
-(`luce_fechnerian_exp`): it is the unique bridge from Luce's ratio scale
-to an additive utility scale. -/
+/-- Construct a `RationalAction` from a utility function via softmax: the score
+is `exp(α · utility(s, a))`, so `policy = softmax(utility, α)`. -/
 noncomputable def RationalAction.fromSoftmax
     (utility : S → A → ℝ) (α : ℝ) : RationalAction S A where
   score s a := exp (α * utility s a)
@@ -841,37 +756,24 @@ noncomputable def RationalAction.fromSoftmax
 /-- The policy of a softmax agent equals the softmax function. -/
 theorem RationalAction.fromSoftmax_policy_eq [Nonempty A]
     (utility : S → A → ℝ) (α : ℝ) (s : S) (a : A) :
-    (RationalAction.fromSoftmax utility α).policy s a = softmax (utility s) α a := by
-  simp only [policy, fromSoftmax, totalScore, softmax]
-  have hpos : 0 < ∑ j : A, exp (α * utility s j) := partitionFn_pos (utility s) α
-  have hne : ∑ j : A, exp (α * utility s j) ≠ 0 := ne_of_gt hpos
+    (RationalAction.fromSoftmax utility α).policy s a = softmax (α • utility s) a := by
+  simp only [policy, fromSoftmax, totalScore, softmax, Pi.smul_apply, smul_eq_mul]
+  have hne : ∑ j : A, exp (α * utility s j) ≠ 0 :=
+    ne_of_gt (Finset.sum_pos (fun j _ => exp_pos _) Finset.univ_nonempty)
   simp only [hne, ↓reduceIte]
 
-/-!
-## Gibbs Variational Principle
+/-! ### Gibbs variational principle
 
-The softmax distribution uniquely maximizes entropy + expected score
-on the probability simplex. This is the mathematical foundation for
-RSA convergence (@cite{zaslavsky-hu-levy-2020}, Proposition 1).
+The softmax distribution uniquely maximizes entropy plus expected score on the
+probability simplex — the mathematical foundation for RSA convergence
+(@cite{zaslavsky-hu-levy-2020}).
 
-### Proof strategy
-
-The Gibbs VP reduces to KL non-negativity via three identities:
-
-1. H(p) + KL(p‖q) = -∑ pᵢ log qᵢ (negMulLog + KL term telescope)
-2. -∑ pᵢ log qᵢ = -α⟨p,s⟩ + log Z (substitute log qᵢ = α sᵢ - log Z)
-3. H(q) + α⟨q,s⟩ = log Z (softmax self-information)
-
-Combining: H(p) + α⟨p,s⟩ + KL = log Z = H(q) + α⟨q,s⟩, so KL ≥ 0 ⟹ LHS ≤ RHS.
-
-The KL machinery used here — `klFinite`, `kl_eq_sum_klFun`, `kl_nonneg` —
-is inlined as private (ι→ℝ) helpers in this file (mathlib gap; the PMF
-form lives at `PMF.klDiv` / `PMF.toReal_klDiv_eq_sum_log_div`).
-
+The KL machinery used here — `klFinite`, `kl_eq_sum_klFun`, `kl_nonneg` — is
+inlined as private `ι → ℝ` helpers, since mathlib provides only the `PMF` form
+(`PMF.klDiv` / `PMF.toReal_klDiv_eq_sum_log_div`).
 -/
 
-/-- **Private (ι→ℝ) discrete KL** for the Gibbs proofs in this section.
-    Inlined from the deleted `Core.InformationTheory.klFinite`. -/
+/-- Private `ι → ℝ` discrete KL divergence for the Gibbs proofs in this section. -/
 private noncomputable def klFinite {ι : Type*} [Fintype ι] (p q : ι → ℝ) : ℝ :=
   ∑ i, if p i = 0 then 0 else p i * Real.log (p i / q i)
 
@@ -921,14 +823,9 @@ private theorem kl_nonneg' {ι : Type*} [Fintype ι] [Nonempty ι] {p q : ι →
     0 ≤ klFinite p q :=
   kl_nonneg p q hq_pos hp_nonneg (by rw [hp_sum, hq_sum])
 
-/-- **Private (ι→ℝ) Shannon entropy** for the Gibbs proofs in this section.
-    Inlined from the deleted `entropy`. -/
+/-- Private `ι → ℝ` Shannon entropy for the Gibbs proofs in this section. -/
 private noncomputable def entropy {α : Type*} (s : Finset α) (p : α → ℝ) : ℝ :=
   ∑ a ∈ s, Real.negMulLog (p a)
-
--- ============================================================================
--- §3a. Gibbs Variational Principle
--- ============================================================================
 
 section GibbsVariational
 
@@ -943,40 +840,39 @@ noncomputable def speakerObj (v : ι → ℝ) (α : ℝ) (s : ι → ℝ) : ℝ 
 
 /-- The softmax achieves f(s*) = log Z, where Z is the partition function. -/
 theorem speakerObj_at_softmax [Nonempty ι] (v : ι → ℝ) (α : ℝ) :
-    speakerObj v α (softmax v α) = logSumExp v α := by
+    speakerObj v α (softmax (α • v)) = logSumExp (α • v) := by
   unfold speakerObj logSumExp
-  have hZ_pos : 0 < partitionFn v α := partitionFn_pos v α
-  have hlog_softmax : ∀ u, log (softmax v α u) = α * v u - log (partitionFn v α) := by
+  have hlog_softmax : ∀ u, log (softmax (α • v) u) =
+      α * v u - log (partitionFn (α • v)) := by
     intro u
-    simp only [softmax, partitionFn]
+    simp only [softmax, partitionFn, Pi.smul_apply, smul_eq_mul]
     rw [log_div (ne_of_gt (exp_pos _)) (ne_of_gt (Finset.sum_pos
       (fun j _ => exp_pos _) Finset.univ_nonempty)), log_exp]
-  have hterm : ∀ u, Real.negMulLog (softmax v α u) + α * softmax v α u * v u =
-      softmax v α u * log (partitionFn v α) := by
+  have hterm : ∀ u, Real.negMulLog (softmax (α • v) u) + α * softmax (α • v) u * v u =
+      softmax (α • v) u * log (partitionFn (α • v)) := by
     intro u; unfold Real.negMulLog; rw [hlog_softmax]; ring
   simp_rw [hterm]
   rw [← Finset.sum_mul, softmax_sum_eq_one, one_mul]
-  rfl
+  simp only [partitionFn, Pi.smul_apply, smul_eq_mul]
 
 /-- Key identity: speakerObj(s) + KL(s ‖ s*) = logSumExp (= speakerObj(s*)). -/
 private theorem speakerObj_plus_kl [Nonempty ι] (v : ι → ℝ) (α : ℝ)
     (s : ι → ℝ) (_hs_nonneg : ∀ i, 0 ≤ s i) (hs_sum : ∑ i, s i = 1) :
-    speakerObj v α s + klFinite s (softmax v α) = logSumExp v α := by
+    speakerObj v α s + klFinite s (softmax (α • v)) = logSumExp (α • v) := by
   unfold speakerObj klFinite logSumExp
+  simp only [Pi.smul_apply, smul_eq_mul]
   rw [← Finset.sum_add_distrib]
-  have hZ_pos : 0 < ∑ j : ι, exp (α * v j) := partitionFn_pos v α
-  have hZ_ne : (∑ j : ι, exp (α * v j)) ≠ 0 := ne_of_gt hZ_pos
   have hterm : ∀ u, (Real.negMulLog (s u) + α * s u * v u) +
-      (if s u = 0 then (0 : ℝ) else s u * log (s u / softmax v α u)) =
+      (if s u = 0 then (0 : ℝ) else s u * log (s u / softmax (α • v) u)) =
       s u * log (∑ j : ι, exp (α * v j)) := by
     intro u
     by_cases hs0 : s u = 0
     · simp [hs0, Real.negMulLog]
     · simp only [hs0, ↓reduceIte]
-      have hs_pos : 0 < softmax v α u := softmax_pos v α u
+      have hs_pos : 0 < softmax (α • v) u := softmax_pos (α • v) u
       rw [log_div hs0 (ne_of_gt hs_pos)]
-      have hlog_sm : log (softmax v α u) = α * v u - log (∑ j : ι, exp (α * v j)) := by
-        simp only [softmax]
+      have hlog_sm : log (softmax (α • v) u) = α * v u - log (∑ j : ι, exp (α * v j)) := by
+        simp only [softmax, Pi.smul_apply, smul_eq_mul]
         rw [log_div (ne_of_gt (exp_pos _)) (ne_of_gt (Finset.sum_pos
           (fun j _ => exp_pos _) Finset.univ_nonempty)), log_exp]
       rw [hlog_sm]; unfold Real.negMulLog; ring
@@ -990,12 +886,12 @@ where q = softmax(s, α) and H(p) = Σ negMulLog(pᵢ). -/
 theorem gibbs_variational [Nonempty ι] (s : ι → ℝ) (α : ℝ) (p : ι → ℝ)
     (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i, p i = 1) :
     (∑ i, Real.negMulLog (p i)) + α * ∑ i, p i * s i ≤
-    (∑ i, Real.negMulLog (softmax s α i)) + α * ∑ i, softmax s α i * s i := by
-  set q := softmax s α
-  have hq_pos : ∀ i, 0 < q i := fun i => softmax_pos s α i
-  have hq_sum : ∑ i, q i = 1 := softmax_sum_eq_one s α
+    (∑ i, Real.negMulLog (softmax (α • s) i)) + α * ∑ i, softmax (α • s) i * s i := by
+  set q := softmax (α • s)
+  have hq_pos : ∀ i, 0 < q i := fun i => softmax_pos (α • s) i
+  have hq_sum : ∑ i, q i = 1 := softmax_sum_eq_one (α • s)
   have hkl := kl_nonneg' hp_nonneg hq_pos hp_sum hq_sum
-  have h_logq : ∀ i, Real.log (q i) = α * s i - logSumExp s α := fun i => log_softmax s α i
+  have h_logq : ∀ i, Real.log (q i) = α * s i - logSumExp (α • s) := fun i => log_softmax (α • s) i
   have h_combine : ∀ i,
       Real.negMulLog (p i) +
         (if p i = 0 then (0 : ℝ) else p i * Real.log (p i / q i)) =
@@ -1012,29 +908,24 @@ theorem gibbs_variational [Nonempty ι] (s : ι → ℝ) (α : ℝ) (p : ι → 
     unfold klFinite
     rw [← Finset.sum_add_distrib]
     simp_rw [h_combine, Finset.sum_neg_distrib]
-  have h2 : -(∑ i, p i * Real.log (q i)) = -(α * ∑ i, p i * s i) + logSumExp s α := by
-    have : ∑ i, p i * Real.log (q i) = α * ∑ i, p i * s i - logSumExp s α := by
+  have h2 : -(∑ i, p i * Real.log (q i)) = -(α * ∑ i, p i * s i) + logSumExp (α • s) := by
+    have : ∑ i, p i * Real.log (q i) = α * ∑ i, p i * s i - logSumExp (α • s) := by
       simp_rw [h_logq]
-      rw [show ∑ i : ι, p i * (α * s i - logSumExp s α) =
-          ∑ i, (α * (p i * s i) - logSumExp s α * p i) from
+      rw [show ∑ i : ι, p i * (α * s i - logSumExp (α • s)) =
+          ∑ i, (α * (p i * s i) - logSumExp (α • s) * p i) from
         Finset.sum_congr rfl fun i _ => by ring]
       rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum, hp_sum, mul_one]
     linarith
-  have h3 : (∑ i, Real.negMulLog (q i)) + α * ∑ i, q i * s i = logSumExp s α := by
+  have h3 : (∑ i, Real.negMulLog (q i)) + α * ∑ i, q i * s i = logSumExp (α • s) := by
     rw [Finset.mul_sum, ← Finset.sum_add_distrib]
-    rw [show ∑ i : ι, (Real.negMulLog (q i) + α * (q i * s i)) = ∑ i, logSumExp s α * q i from
+    rw [show ∑ i : ι, (Real.negMulLog (q i) + α * (q i * s i)) = ∑ i, logSumExp (α • s) * q i from
       Finset.sum_congr rfl fun i _ => by simp only [Real.negMulLog, h_logq i]; ring]
     rw [← Finset.mul_sum, hq_sum, mul_one]
   linarith
 
 end GibbsVariational
 
--- ============================================================================
--- §3b. Softmax → Argmax Limit (OT ↔ MaxEnt Connection)
--- ============================================================================
-
-/-!
-## Softmax Concentration at High Rationality
+/-! ### Softmax concentration at high rationality
 
 As the rationality parameter α → ∞, softmax concentrates all probability mass
 on the action with highest utility — i.e., softmax converges to argmax. This
@@ -1044,13 +935,6 @@ connects:
   categorical (OT-like) as temperature → 0 (equivalently α → ∞).
 - **RSA ↔ neo-Gricean pragmatics**: a soft-rational RSA speaker becomes a
   hard-rational Gricean reasoner in the α → ∞ limit.
-
-### Proof sketch
-
-From `softmax_odds`, we have `σᵢ / σⱼ = exp(α(sᵢ − sⱼ))`. When `sᵢ > sⱼ`,
-this ratio → ∞ as α → ∞, so `σⱼ / σᵢ → 0`. Since `Σ σₖ = 1`, the maximizer's
-probability → 1 by squeezing: `1 - σ_max = Σ_{k≠max} σₖ`, and each non-maximal
-term → 0 (bounded by `exp(-α · gap)` where gap = sᵢ - sⱼ > 0).
 -/
 
 section SoftmaxLimit
@@ -1061,8 +945,8 @@ omit [Nonempty ι] [DecidableEq ι] in
 /-- Each softmax component is bounded by `exp(α(sⱼ - s_{i_max}))`, obtained
     by dropping all but the `i_max` term from the partition function. -/
 private theorem softmax_le_exp_diff (s : ι → ℝ) (α : ℝ) (j i_max : ι) :
-    softmax s α j ≤ exp (α * (s j - s i_max)) := by
-  simp only [softmax]
+    softmax (α • s) j ≤ exp (α * (s j - s i_max)) := by
+  simp only [softmax, Pi.smul_apply, smul_eq_mul]
   rw [show α * (s j - s i_max) = α * s j - α * s i_max from by ring, exp_sub]
   exact div_le_div_of_nonneg_left (exp_pos _).le (exp_pos _)
     (single_le_sum (f := fun k => exp (α * s k)) (fun k _ => (exp_pos _).le) (mem_univ i_max))
@@ -1085,7 +969,7 @@ private theorem exp_mul_neg_lt (x : ℝ) (hx : x < 0) (ε : ℝ) (hε : 0 < ε)
     (hard optimization): OT is the α → ∞ limit of MaxEnt. -/
 theorem softmax_argmax_limit (s : ι → ℝ) (i_max : ι)
     (h_max : ∀ j, j ≠ i_max → s j < s i_max) :
-    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → |softmax s α i_max - 1| < ε := by
+    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → |softmax (α • s) i_max - 1| < ε := by
   intro ε hε
   set n := Fintype.card ι
   have hn_pos : (0 : ℝ) < n := Nat.cast_pos.mpr Fintype.card_pos
@@ -1094,7 +978,7 @@ theorem softmax_argmax_limit (s : ι → ℝ) (i_max : ι)
   let threshFn : ι → ℝ := fun j =>
     if j = i_max then (0 : ℝ) else log εn / (s j - s i_max)
   refine ⟨univ.sup' ⟨i_max, mem_univ _⟩ threshFn, fun α hα => ?_⟩
-  have hbound : ∀ j ≠ i_max, softmax s α j < εn := by
+  have hbound : ∀ j ≠ i_max, softmax (α • s) j < εn := by
     intro j hj
     apply lt_of_le_of_lt (softmax_le_exp_diff s α j i_max)
     apply exp_mul_neg_lt _ (sub_neg.mpr (h_max j hj)) εn hεn
@@ -1102,15 +986,15 @@ theorem softmax_argmax_limit (s : ι → ℝ) (i_max : ι)
       le_sup' _ (mem_univ j)
     simp only [threshFn, hj, ↓reduceIte] at h1
     linarith
-  have htail : 1 - softmax s α i_max = ∑ j ∈ univ.erase i_max, softmax s α j := by
-    rw [← softmax_sum_eq_one (ι := ι) s α, ← add_sum_erase _ _ (mem_univ i_max)]; ring
-  have htail_nonneg : 0 ≤ 1 - softmax s α i_max := by
-    rw [htail]; exact sum_nonneg fun j _ => le_of_lt (softmax_pos s α j)
-  have htail_strict : 1 - softmax s α i_max < ε := by
+  have htail : 1 - softmax (α • s) i_max = ∑ j ∈ univ.erase i_max, softmax (α • s) j := by
+    rw [← softmax_sum_eq_one (α • s), ← add_sum_erase _ _ (mem_univ i_max)]; ring
+  have htail_nonneg : 0 ≤ 1 - softmax (α • s) i_max := by
+    rw [htail]; exact sum_nonneg fun j _ => le_of_lt (softmax_pos (α • s) j)
+  have htail_strict : 1 - softmax (α • s) i_max < ε := by
     rw [htail]
     rcases (univ.erase i_max : Finset ι).eq_empty_or_nonempty with hempty | ⟨j, hj⟩
     · simp [hempty]; exact hε
-    · calc ∑ k ∈ univ.erase i_max, softmax s α k
+    · calc ∑ k ∈ univ.erase i_max, softmax (α • s) k
           < ∑ _ ∈ univ.erase i_max, εn :=
             sum_lt_sum (fun k hk => le_of_lt (hbound k (mem_erase.mp hk).1))
               ⟨j, hj, hbound j (mem_erase.mp hj).1⟩
@@ -1124,7 +1008,7 @@ omit [Nonempty ι] [DecidableEq ι] in
 /-- Complement of the limit: non-maximal actions get probability → 0. -/
 theorem softmax_nonmax_limit (s : ι → ℝ) (i_max : ι)
     (h_max : ∀ j, j ≠ i_max → s j < s i_max) (j : ι) (hj : j ≠ i_max) :
-    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → softmax s α j < ε := by
+    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → softmax (α • s) j < ε := by
   intro ε hε
   exact ⟨log ε / (s j - s i_max), fun α hα =>
     lt_of_le_of_lt (softmax_le_exp_diff s α j i_max)
@@ -1132,28 +1016,18 @@ theorem softmax_nonmax_limit (s : ι → ℝ) (i_max : ι)
 
 end SoftmaxLimit
 
--- ============================================================================
--- §4. Shannon Entropy and Maximum Entropy
--- ============================================================================
-
 section Entropy
 
-/-! ## Entropy + softmax interactions
+/-! ### Shannon entropy and maximum entropy
 
-The (ι→ℝ)-typed Shannon entropy lives in `Core/InformationTheory.lean` as
-`entropy : Finset α → (α → ℝ) → ℝ`. The PMF-typed
-canonical form is `PMF.entropy : PMF α → ℝ`; the two agree by definition
-on `(ofRealWeightFn p).toRealFn = p` for normalized `p` (see
-`PMF.ofRealWeightFn_toRealFn_eq`). This section uses the (ι→ℝ) form because
-softmax is a real-arithmetic construction; consumers wanting the PMF form
-can wrap via `PMF.ofRealWeightFn`. -/
+This section uses the private `ι → ℝ` Shannon entropy (`entropy`, above), since
+softmax is a real-arithmetic construction; consumers wanting the `PMF`-typed form
+can convert via `Core.Probability.Entropy`. -/
 
 variable {ι : Type*} [Fintype ι] [Nonempty ι]
 
 
-/-- Maximum entropy is achieved by uniform distribution.
-
-Proof: KL(p ‖ uniform) ≥ 0, and KL(p ‖ uniform) = log n - H(p). -/
+/-- Maximum entropy is achieved by the uniform distribution. -/
 theorem entropy_le_log_card (p : ι → ℝ)
     (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
     entropy Finset.univ p ≤ log (Fintype.card ι) := by
@@ -1188,11 +1062,11 @@ theorem entropy_le_log_card (p : ι → ℝ)
 
 /-- Entropy of softmax: H(softmax(s, α)) = log Z - α · 𝔼[s]. -/
 theorem entropy_softmax (s : ι → ℝ) (α : ℝ) :
-    entropy Finset.univ (softmax s α) =
-    log (partitionFn s α) - α * ∑ i : ι, softmax s α i * s i := by
-  simp only [entropy, softmax, partitionFn, Real.negMulLog]
-  have hZ : 0 < ∑ j : ι, exp (α * s j) := partitionFn_pos s α
-  have hne : (∑ j : ι, exp (α * s j)) ≠ 0 := ne_of_gt hZ
+    entropy Finset.univ (softmax (α • s)) =
+    log (partitionFn (α • s)) - α * ∑ i : ι, softmax (α • s) i * s i := by
+  simp only [entropy, softmax, partitionFn, Real.negMulLog, Pi.smul_apply, smul_eq_mul]
+  have hne : (∑ j : ι, exp (α * s j)) ≠ 0 :=
+    ne_of_gt (Finset.sum_pos (fun j _ => exp_pos _) Finset.univ_nonempty)
   have hlog : ∀ i, log (exp (α * s i) / ∑ j : ι, exp (α * s j)) =
                    α * s i - log (∑ j : ι, exp (α * s j)) := by
     intro i; rw [log_div (ne_of_gt (exp_pos _)) hne, log_exp]
@@ -1227,19 +1101,16 @@ noncomputable def entropyRegObjective (s : ι → ℝ) (α : ℝ) (p : ι → �
 
 /-- The maximum value of the entropy-regularized objective. -/
 theorem entropyRegObjective_softmax (s : ι → ℝ) (α : ℝ) (hα : 0 < α) :
-    entropyRegObjective s α (softmax s α) = (1 / α) * log (partitionFn s α) := by
+    entropyRegObjective s α (softmax (α • s)) = (1 / α) * log (partitionFn (α • s)) := by
   simp only [entropyRegObjective, entropy_softmax]
   have hne : α ≠ 0 := ne_of_gt hα
   field_simp
   ring
 
-/-- Fact 5: Softmax maximizes the entropy-regularized objective.
-
-Proof: `gibbs_variational` gives `H(p) + α⟨p,s⟩ ≤ H(q) + α⟨q,s⟩`;
-dividing by `α > 0` yields the result. -/
+/-- Softmax maximizes the entropy-regularized objective. -/
 theorem softmax_maximizes_entropyReg (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (p : ι → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
-    entropyRegObjective s α p ≤ entropyRegObjective s α (softmax s α) := by
+    entropyRegObjective s α p ≤ entropyRegObjective s α (softmax (α • s)) := by
   -- entropyRegObjective unfolds to ∑ pᵢsᵢ + (1/α) · entropy Finset.univ p
   -- and entropy Finset.univ p = ∑ negMulLog (p i), exactly what gibbs_variational uses
   simp only [entropyRegObjective, entropy]
@@ -1275,17 +1146,14 @@ private theorem kl_eq_zero_imp_eq (p q : ι → ℝ) (hq_pos : ∀ i, 0 < q i)
   · rw [InformationTheory.klFun_eq_zero_iff hpi_div_qi_nonneg] at hkl0
     exact div_eq_one_iff_eq (ne_of_gt hqi_pos) |>.mp hkl0
 
-/-- Softmax is the unique maximizer.
-
-Proof: equality in the objective ⟹ KL(p ‖ softmax) = 0 (via `speakerObj_plus_kl`),
-hence p = softmax (via `kl_eq_zero_imp_eq`). -/
+/-- Softmax is the unique maximizer of the entropy-regularized objective. -/
 theorem softmax_unique_maximizer (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (p : ι → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1)
-    (h_max : entropyRegObjective s α p = entropyRegObjective s α (softmax s α)) :
-    p = softmax s α := by
-  set q := softmax s α with hq_def
-  have hq_pos : ∀ i, 0 < q i := fun i => softmax_pos s α i
-  have hq_sum : ∑ i, q i = 1 := softmax_sum_eq_one s α
+    (h_max : entropyRegObjective s α p = entropyRegObjective s α (softmax (α • s))) :
+    p = softmax (α • s) := by
+  set q := softmax (α • s) with hq_def
+  have hq_pos : ∀ i, 0 < q i := fun i => softmax_pos (α • s) i
+  have hq_sum : ∑ i, q i = 1 := softmax_sum_eq_one (α • s)
   -- From speakerObj_plus_kl: speakerObj(p) + KL(p ‖ q) = logSumExp = speakerObj(q) + 0
   have h_p := speakerObj_plus_kl s α p hp_nonneg hp_sum
   have h_q := speakerObj_plus_kl s α q (fun i => le_of_lt (hq_pos i)) hq_sum
@@ -1332,25 +1200,21 @@ noncomputable def freeEnergy (s : ι → ℝ) (α : ℝ) (p : ι → ℝ) : ℝ 
 /-- Softmax is the Boltzmann distribution: minimizes free energy. -/
 theorem softmax_minimizes_freeEnergy (s : ι → ℝ) (α : ℝ) (hα : 0 < α)
     (p : ι → ℝ) (hp_nonneg : ∀ i, 0 ≤ p i) (hp_sum : ∑ i : ι, p i = 1) :
-    freeEnergy s α (softmax s α) ≤ freeEnergy s α p := by
+    freeEnergy s α (softmax (α • s)) ≤ freeEnergy s α p := by
   simp only [freeEnergy]
   have h := softmax_maximizes_entropyReg s α hα p hp_nonneg hp_sum
   simp only [entropyRegObjective] at h
   linarith
 
-/-- The log-partition function is convex in α.
-
-Proof: By Hölder's inequality. For `0 < a, b` with `a + b = 1`:
-  `∑ exp(x·sᵢ)^a · exp(y·sᵢ)^b ≤ (∑ exp(x·sᵢ))^a · (∑ exp(y·sᵢ))^b`
-Since `exp(x·sᵢ)^a · exp(y·sᵢ)^b = exp((ax+by)·sᵢ)`, taking logs gives
-  `logSumExp(s, ax+by) ≤ a·logSumExp(s, x) + b·logSumExp(s, y)`. -/
+/-- The log-partition function is convex in α. -/
 theorem logSumExp_convex (s : ι → ℝ) :
-    ConvexOn ℝ Set.univ (λ α => logSumExp s α) := by
+    ConvexOn ℝ Set.univ (fun α : ℝ => logSumExp (α • s)) := by
   constructor
   · exact convex_univ
   · intro x _ y _ a b ha hb hab
     simp only [smul_eq_mul]
     unfold logSumExp
+    simp only [Pi.smul_apply, smul_eq_mul]
     -- Edge cases: a = 0 or b = 0
     rcases eq_or_lt_of_le ha with rfl | ha_pos
     · simp [show b = 1 from by linarith]
@@ -1386,23 +1250,24 @@ theorem logSumExp_convex (s : ι → ℝ) :
     -- The RHS of holder uses (1 / a⁻¹) and (1 / b⁻¹); simplify to a and b
     simp only [one_div, inv_inv] at holder
     -- Take log of both sides (both are positive)
-    have hZ_x : (0 : ℝ) < ∑ i : ι, exp (x * s i) := partitionFn_pos s x
-    have hZ_y : (0 : ℝ) < ∑ i : ι, exp (y * s i) := partitionFn_pos s y
-    have hZ_mid : 0 < ∑ j : ι, exp ((a * x + b * y) * s j) := partitionFn_pos s (a * x + b * y)
+    have hZ_x : (0 : ℝ) < ∑ i : ι, exp (x * s i) :=
+      Finset.sum_pos (fun i _ => exp_pos _) Finset.univ_nonempty
+    have hZ_y : (0 : ℝ) < ∑ i : ι, exp (y * s i) :=
+      Finset.sum_pos (fun i _ => exp_pos _) Finset.univ_nonempty
+    have hZ_mid : 0 < ∑ j : ι, exp ((a * x + b * y) * s j) :=
+      Finset.sum_pos (fun j _ => exp_pos _) Finset.univ_nonempty
     have hlog_le := log_le_log hZ_mid holder
     rw [log_mul (ne_of_gt (rpow_pos_of_pos hZ_x a)) (ne_of_gt (rpow_pos_of_pos hZ_y b)),
         log_rpow hZ_x, log_rpow hZ_y] at hlog_le
     linarith
 
 /-- Derivative of log-partition gives expected value:
-    `d/dα log(Σ exp(α sᵢ)) = Σ softmax(s,α)ᵢ · sᵢ`.
-
-    Proof via chain rule on `log ∘ Σ exp(α · sᵢ)`, then `hasDerivAt_finset_sum`. -/
+    `d/dα log(Σ exp(α sᵢ)) = Σ softmax(s,α)ᵢ · sᵢ`. -/
 theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
-    deriv (λ α => logSumExp s α) α = ∑ i : ι, softmax s α i * s i := by
-  simp only [logSumExp, softmax]
-  have hZ_pos : 0 < ∑ j : ι, exp (α * s j) := partitionFn_pos s α
-  have hZ_ne : (∑ j : ι, exp (α * s j)) ≠ 0 := ne_of_gt hZ_pos
+    deriv (fun α => logSumExp (α • s)) α = ∑ i : ι, softmax (α • s) i * s i := by
+  simp only [logSumExp, softmax, Pi.smul_apply, smul_eq_mul]
+  have hZ_ne : (∑ j : ι, exp (α * s j)) ≠ 0 :=
+    ne_of_gt (Finset.sum_pos (fun j _ => exp_pos _) Finset.univ_nonempty)
   -- Derivative of each exp(α * s j) w.r.t. α
   have hexp : ∀ j : ι, HasDerivAt (fun a => exp (a * s j))
       (exp (α * s j) * s j) α := by
@@ -1422,39 +1287,23 @@ theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
   intro i _
   ring
 
--- ── Offset generalizations ──────────────────────────────────────────────
--- These generalize logSumExp/softmax to include per-element offsets rᵢ:
---   logSumExpOffset s r α = log Σ exp(α·sᵢ + rᵢ)
--- This form appears when differentiating the log-partition w.r.t. a single
--- weight wⱼ in a multi-constraint grammar, where
---   sᵢ = contribution of constraint j to candidate i
---   rᵢ = contribution of all other constraints (constant w.r.t. wⱼ)
--- ────────────────────────────────────────────────────────────────────────
+/-! ### Per-element offsets
 
-/-- Partition function with per-element offsets: `Z(α) = Σⱼ exp(α · sⱼ + rⱼ)`. -/
-noncomputable def partitionFnOffset (s r : ι → ℝ) (α : ℝ) : ℝ :=
-  ∑ j : ι, exp (α * s j + r j)
-
-theorem partitionFnOffset_pos (s r : ι → ℝ) (α : ℝ) :
-    0 < partitionFnOffset s r α :=
-  Finset.sum_pos (fun i _ => exp_pos _) Finset.univ_nonempty
-
-/-- Log-sum-exp with offsets: `log Σ exp(α · sᵢ + rᵢ)`. -/
-noncomputable def logSumExpOffset (s r : ι → ℝ) (α : ℝ) : ℝ :=
-  log (partitionFnOffset s r α)
-
-/-- Softmax with offsets: `exp(α · sᵢ + rᵢ) / Z(α)`. -/
-noncomputable def softmaxOffset (s r : ι → ℝ) (α : ℝ) (i : ι) : ℝ :=
-  exp (α * s i + r i) / partitionFnOffset s r α
+These instantiate the plain `logSumExp`/`softmax` at the shifted argument
+`α • s + r`, i.e. `logSumExp (α • s + r) = log Σ exp(α·sᵢ + rᵢ)`. This form
+appears when differentiating the log-partition with respect to a single weight
+`wⱼ` in a multi-constraint grammar, where `sᵢ` is constraint `j`'s contribution
+to candidate `i` and `rᵢ` the contribution of all other constraints (constant in
+`wⱼ`). -/
 
 /-- Derivative of offset log-partition gives weighted expected value:
-    `d/dα log(Σ exp(α·sᵢ + rᵢ)) = Σ softmaxOffset(s,r,α)ᵢ · sᵢ`. -/
+    `d/dα log(Σ exp(α·sᵢ + rᵢ)) = Σ softmax(α•s + r)ᵢ · sᵢ`. -/
 theorem hasDerivAt_logSumExpOffset (s r : ι → ℝ) (α : ℝ) :
-    HasDerivAt (logSumExpOffset s r)
-      (∑ i : ι, softmaxOffset s r α i * s i) α := by
-  unfold logSumExpOffset partitionFnOffset softmaxOffset
+    HasDerivAt (fun w => logSumExp (w • s + r))
+      (∑ i : ι, softmax (α • s + r) i * s i) α := by
+  simp only [logSumExp, softmax, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   have hZ_ne : (∑ j : ι, exp (α * s j + r j)) ≠ 0 :=
-    ne_of_gt (partitionFnOffset_pos s r α)
+    ne_of_gt (Finset.sum_pos (fun _ _ => exp_pos _) Finset.univ_nonempty)
   have hexp : ∀ j : ι, HasDerivAt (fun a => exp (a * s j + r j))
       (exp (α * s j + r j) * s j) α := by
     intro j
@@ -1466,24 +1315,20 @@ theorem hasDerivAt_logSumExpOffset (s r : ι → ℝ) (α : ℝ) :
       (∑ j : ι, exp (α * s j + r j) * s j) α :=
     HasDerivAt.fun_sum fun j _ => hexp j
   convert hsum.log hZ_ne using 1
-  simp only [partitionFnOffset]
   rw [Finset.sum_div]
   apply Finset.sum_congr rfl
   intro i _
   ring
 
-/-- The offset log-partition function is convex in α.
-
-Same Hölder argument as `logSumExp_convex`: the key factoring
-`exp((ax+by)·sᵢ + rᵢ) = exp(x·sᵢ + rᵢ)^a · exp(y·sᵢ + rᵢ)^b`
-holds because `a + b = 1`, absorbing the offset. -/
+/-- The offset log-partition function is convex in α. -/
 theorem logSumExpOffset_convex (s r : ι → ℝ) :
-    ConvexOn ℝ Set.univ (logSumExpOffset s r) := by
+    ConvexOn ℝ Set.univ (fun α : ℝ => logSumExp (α • s + r)) := by
   constructor
   · exact convex_univ
   · intro x _ y _ a b ha hb hab
     simp only [smul_eq_mul]
-    unfold logSumExpOffset partitionFnOffset
+    unfold logSumExp
+    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
     rcases eq_or_lt_of_le ha with rfl | ha_pos
     · simp [show b = 1 from by linarith]
     rcases eq_or_lt_of_le hb with rfl | hb_pos
@@ -1511,20 +1356,22 @@ theorem logSumExpOffset_convex (s r : ι → ℝ) :
       rw [← rpow_mul (le_of_lt (exp_pos _)), mul_inv_cancel₀ hb_ne, rpow_one]
     simp_rw [hsimp_f, hsimp_g] at holder
     simp only [one_div, inv_inv] at holder
-    have hZ_x : (0 : ℝ) < ∑ i : ι, exp (x * s i + r i) := partitionFnOffset_pos s r x
-    have hZ_y : (0 : ℝ) < ∑ i : ι, exp (y * s i + r i) := partitionFnOffset_pos s r y
+    have hZ_x : (0 : ℝ) < ∑ i : ι, exp (x * s i + r i) :=
+      Finset.sum_pos (fun _ _ => exp_pos _) Finset.univ_nonempty
+    have hZ_y : (0 : ℝ) < ∑ i : ι, exp (y * s i + r i) :=
+      Finset.sum_pos (fun _ _ => exp_pos _) Finset.univ_nonempty
     have hZ_mid : 0 < ∑ j : ι, exp ((a * x + b * y) * s j + r j) :=
-      partitionFnOffset_pos s r (a * x + b * y)
+      Finset.sum_pos (fun _ _ => exp_pos _) Finset.univ_nonempty
     have hlog_le := log_le_log hZ_mid holder
     rw [log_mul (ne_of_gt (rpow_pos_of_pos hZ_x a)) (ne_of_gt (rpow_pos_of_pos hZ_y b)),
         log_rpow hZ_x, log_rpow hZ_y] at hlog_le
     linarith
 
-/-- The log conditional likelihood `α ↦ (α · sᵧ + rᵧ) − logSumExpOffset(s,r,α)`
+/-- The log conditional likelihood `α ↦ (α · sᵧ + rᵧ) − logSumExp(α•s + r)`
     is concave (affine minus convex). -/
 theorem logConditional_concaveOn (s r : ι → ℝ) (y : ι) :
     ConcaveOn ℝ Set.univ
-      (fun α => (α * s y + r y) - logSumExpOffset s r α) := by
+      (fun α => (α * s y + r y) - logSumExp (α • s + r)) := by
   apply ConcaveOn.sub
   · constructor
     · exact convex_univ
@@ -1533,12 +1380,12 @@ theorem logConditional_concaveOn (s r : ι → ℝ) (y : ι) :
       nlinarith [show a * r y + b * r y = r y from by linear_combination (r y) * hab]
   · exact logSumExpOffset_convex s r
 
-/-- The derivative of log conditional likelihood `α ↦ (α·sᵧ + rᵧ) − logSumExpOffset`
+/-- The derivative of log conditional likelihood `α ↦ (α·sᵧ + rᵧ) − logSumExp(α•s + r)`
     is the observed feature value minus the expected value:
-    `d/dα = sᵧ − Σᵢ softmaxOffset(s,r,α)ᵢ · sᵢ`. -/
+    `d/dα = sᵧ − Σᵢ softmax(α•s + r)ᵢ · sᵢ`. -/
 theorem hasDerivAt_logConditional (s r : ι → ℝ) (y : ι) (α : ℝ) :
-    HasDerivAt (fun w => (w * s y + r y) - logSumExpOffset s r w)
-      (s y - ∑ i : ι, softmaxOffset s r α i * s i) α := by
+    HasDerivAt (fun w => (w * s y + r y) - logSumExp (w • s + r))
+      (s y - ∑ i : ι, softmax (α • s + r) i * s i) α := by
   have h_affine : HasDerivAt (fun a => a * s y + r y) (s y) α := by
     have := ((hasDerivAt_id α).mul_const (s y)).add_const (r y)
     simpa using this
@@ -1546,31 +1393,23 @@ theorem hasDerivAt_logConditional (s r : ι → ℝ) (y : ι) (α : ℝ) :
 
 /-- Strong duality: max entropy = min free energy. -/
 theorem max_entropy_duality (s : ι → ℝ) (c : ℝ)
-    (α : ℝ) (_hα : 0 < α) (h_constraint : ∑ i : ι, softmax s α i * s i = c) :
-    entropy Finset.univ (softmax s α) =
-    log (partitionFn s α) - α * c := by
+    (α : ℝ) (_hα : 0 < α) (h_constraint : ∑ i : ι, softmax (α • s) i * s i = c) :
+    entropy Finset.univ (softmax (α • s)) =
+    log (partitionFn (α • s)) - α * c := by
   rw [entropy_softmax, h_constraint]
 
 end Entropy
 
--- ============================================================================
--- §5. Bayesian Optimality
--- ============================================================================
+/-! ### Bayesian optimality -/
 
 section BayesianOptimality
 
 variable {ι : Type*} [Fintype ι]
 
-/-- **Bayesian optimality**: The normalized posterior maximizes weighted log-likelihood
-on the probability simplex.
-
-For weights wᵢ ≥ 0 with C = Σwᵢ > 0, and any distribution L on the simplex
-(Lᵢ > 0, Σ Lᵢ = 1), the normalized posterior p*ᵢ = wᵢ/C satisfies:
-
-  Σᵢ wᵢ · log(Lᵢ) ≤ Σᵢ wᵢ · log(p*ᵢ)
-
-This is used for listener optimality: with wᵢ = P(m)·S(u|m), the
-Bayesian listener L*(m|u) = wᵢ/C maximizes Σ_m P(m)·S(u|m)·log L(m|u). -/
+/-- **Bayesian optimality**: the normalized posterior maximizes weighted
+log-likelihood on the probability simplex. For weights `wᵢ ≥ 0` with
+`C = Σ wᵢ > 0` and any distribution `L` on the simplex, the normalized posterior
+`p*ᵢ = wᵢ / C` satisfies `Σᵢ wᵢ · log Lᵢ ≤ Σᵢ wᵢ · log p*ᵢ`. -/
 theorem bayesian_maximizes (w : ι → ℝ) (hw_nonneg : ∀ i, 0 ≤ w i)
     (hC_pos : 0 < ∑ i, w i)
     (L : ι → ℝ) (hL_pos : ∀ i, 0 < L i) (hL_sum : ∑ i, L i = 1) :
@@ -1600,30 +1439,24 @@ theorem bayesian_maximizes (w : ι → ℝ) (hw_nonneg : ∀ i, 0 ≤ w i)
 
 end BayesianOptimality
 
--- ============================================================================
--- §6. Uniqueness Characterization (converse of Theorem 4)
--- ============================================================================
+/-! ### Uniqueness of the ratio scale
 
-/-!
-## Uniqueness of the Ratio Scale
+`policy_eq_of_proportional` (proved earlier) shows that proportional scores
+yield the same policy. The converse — that identical policies force proportional
+scores — completes the uniqueness characterization: **same policy ↔ proportional
+scores**, with proportionality constant `k = totalScore₂/totalScore₁`.
 
-Theorem 4 (proved earlier as `policy_eq_of_proportional`) shows that
-proportional scores yield the same policy. The converse — that identical
-policies force proportional scores — completes the uniqueness characterization:
-**same policy ↔ proportional scores**, with proportionality constant
-`k = totalScore₂/totalScore₁`.
-
-Note: This is distinct from the "Independence-of-Unit Condition" in §1.F
-(pp. 28–33), which concerns state-dependent transformations f satisfying
-f(kv) = kf(v). That condition addresses how scale values transform across
-experimental conditions, not the uniqueness of the scale within a condition.
+This is distinct from the independence-of-unit condition, which concerns
+state-dependent transformations `f` satisfying `f(kv) = kf(v)` — how scale values
+transform across experimental conditions, not the uniqueness of the scale within
+a condition.
 -/
 
 section UniquenessCharacterization
 
 variable {S A : Type*} [Fintype A]
 
-/-- Converse of Theorem 4 (uniqueness of ratio scale):
+/-- Converse direction (uniqueness of ratio scale):
     If two agents with positive total scores have the same policy,
     then their scores are proportional with constant `k = total₂/total₁`. -/
 theorem RationalAction.proportional_of_policy_eq
@@ -1642,7 +1475,7 @@ theorem RationalAction.proportional_of_policy_eq
   field_simp [h₁_ne]
   linarith
 
-/-- Full uniqueness characterization (Theorem 4 and its converse):
+/-- Full uniqueness characterization:
     Two agents with positive total scores have the same policy if and only if
     their scores are proportional. -/
 theorem RationalAction.policy_eq_iff_proportional
@@ -1661,15 +1494,9 @@ theorem RationalAction.policy_eq_iff_proportional
 
 end UniquenessCharacterization
 
--- ============================================================================
--- §7. Appendix 1: Alternative Forms of Axiom 1 (pp. 129–132)
--- ============================================================================
+/-! ### Alternative forms of the choice axiom
 
-/-!
-## Alternative Forms of Axiom 1
-
-proves three equivalent formulations of the choice
-axiom:
+@cite{luce-1959} proves three equivalent formulations of the choice axiom:
 
 **(a) Ratio form**: There exists a positive function `v` such that
 `P(x, T) = v(x) / Σ_{y∈T} v(y)` for all `x ∈ T`.
@@ -1688,22 +1515,11 @@ section Appendix1
 
 variable {A : Type*} [DecidableEq A]
 
-/-- A choice function on finite subsets — the canonical Luce 1959 form
-    (Definition 1, p. 5: "P(a, T) … is a probability distribution on T").
-
+/-- A choice function on finite subsets — the canonical @cite{luce-1959} form.
     For each non-empty subset `T ⊆ A`, `prob T : A → ℝ` is a probability
-    distribution: non-negative, vanishes outside `T`, sums to 1 inside.
-    Specializes to:
-
-    - **Binary choice** via `cf.binary x y := cf.prob {x, y} x` (see
-      `ChoiceFn.binary`). Complementarity follows from `prob_sum_eq_one`
-      (see `binary_complement`); no separate `BinaryChoiceFn` structure needed.
-    - **Mathlib `PMF`** when restricted to a fixed support: `prob T : A → ℝ`
-      is a probability distribution conditioned on choice from `T`.
-
-    The Luce axioms (`hasRatioScale`, `hasProductRule`, `hasPairwiseIIA`)
-    are stated as properties below, asserting structural facts about which
-    choice functions admit ratio-scale representations. -/
+    distribution: non-negative, vanishing outside `T`, summing to 1 inside. The
+    Luce-axiom forms (`hasRatioScale`, `hasProductRule`, `hasPairwiseIIA`) are
+    stated as predicates below. -/
 structure ChoiceFn (A : Type*) [DecidableEq A] where
   /-- P(a, T): probability of choosing `a` from set `T` -/
   prob : Finset A → A → ℝ
@@ -1711,19 +1527,16 @@ structure ChoiceFn (A : Type*) [DecidableEq A] where
   prob_nonneg : ∀ (T : Finset A) (a : A), 0 ≤ prob T a
   /-- Zero probability outside the choice set -/
   prob_zero_outside : ∀ (T : Finset A) (a : A), a ∉ T → prob T a = 0
-  /-- Probabilities sum to 1 within the choice set (Luce 1959 Def 1) -/
+  /-- Probabilities sum to 1 within the choice set (@cite{luce-1959}) -/
   prob_sum_eq_one : ∀ (T : Finset A), T.Nonempty → ∑ a ∈ T, prob T a = 1
 
 namespace ChoiceFn
 
 variable {A : Type*} [DecidableEq A]
 
-/-- **Binary choice view**: `binary cf x y` is the probability of choosing
-    `x` over `y` in the binary forced choice between them.
-
-    Defined via `cf.prob {x, y} x`. Replaces the legacy `BinaryChoiceFn`
-    structure in `UtilityTheory.lean` (see `binary_complement` for
-    complementarity). -/
+/-- **Binary choice view**: `binary cf x y` is the probability of choosing `x`
+    over `y` in the binary forced choice between them, defined via
+    `cf.prob {x, y} x`. -/
 def binary (cf : ChoiceFn A) (x y : A) : ℝ := cf.prob {x, y} x
 
 /-- Binary choice probabilities are non-negative. -/
@@ -1782,7 +1595,7 @@ def ChoiceFn.hasPairwiseIIA (cf : ChoiceFn A) : Prop :=
   ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
     cf.prob T a * cf.prob {a, b} b = cf.prob T b * cf.prob {a, b} a
 
-/-- (a) → (b): Ratio form implies product rule (Appendix 1). -/
+/-- (a) → (b): the ratio form implies the product rule. -/
 theorem ratio_implies_product (cf : ChoiceFn A)
     (h : cf.hasRatioScale) : cf.hasProductRule := by
   intro S T hST hS _hT a ha
@@ -1797,7 +1610,7 @@ theorem ratio_implies_product (cf : ChoiceFn A)
     exact Finset.sum_congr rfl (λ b hb => hv_rule T b (hST hb))
   rw [hsum]; field_simp
 
-/-- (a) → (c): Ratio form implies pairwise IIA (Appendix 1). -/
+/-- (a) → (c): the ratio form implies pairwise IIA. -/
 theorem ratio_implies_pairwiseIIA (cf : ChoiceFn A)
     (h : cf.hasRatioScale) : cf.hasPairwiseIIA := by
   intro T a b ha hb
@@ -1808,11 +1621,10 @@ theorem ratio_implies_pairwiseIIA (cf : ChoiceFn A)
       hv_rule {a, b} b hab_b, hv_rule {a, b} a hab_a]
   ring
 
-/-- (c) → (a): Pairwise IIA implies ratio form (Appendix 1).
-    The ratio scale is constructed by fixing a reference element x₀ and
-    setting v(x) = P(x, {x, x₀}) / P(x₀, {x, x₀}). Requires strict positivity
-    for elements in the choice set; normalization (probabilities sum to 1)
-    is now structural (via `prob_sum_eq_one`). -/
+/-- (c) → (a): pairwise IIA implies the ratio form. The ratio scale is
+    constructed by fixing a reference element `x₀` and setting
+    `v(x) = P(x, {x, x₀}) / P(x₀, {x, x₀})` (requires strict positivity on the
+    choice set). -/
 theorem pairwiseIIA_implies_ratio [Inhabited A] (cf : ChoiceFn A)
     (hIIA : cf.hasPairwiseIIA)
     (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
@@ -1869,14 +1681,51 @@ theorem pairwiseIIA_implies_ratio [Inhabited A] (cf : ChoiceFn A)
     _ = v a * 1 := by rw [hsum T hT_ne]
     _ = v a := mul_one _
 
-/-- **Axiom 1 equivalence** (Appendix 1):
-    Ratio form ↔ pairwise IIA (under strict positivity; normalization is
-    now structural via `prob_sum_eq_one`). -/
+/-- **Axiom 1 equivalence**: the ratio form ↔ pairwise IIA, under strict
+    positivity on each choice set. -/
 theorem axiom1_ratio_iff_pairwiseIIA [Inhabited A] (cf : ChoiceFn A)
     (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
     cf.hasRatioScale ↔ cf.hasPairwiseIIA :=
   ⟨ratio_implies_pairwiseIIA cf, fun h => pairwiseIIA_implies_ratio cf h hpos⟩
 
 end Appendix1
+
+/-! ### Connection to exponential tilting and the cumulant generating function
+
+Softmax is the finite/counting-measure case of mathlib's exponential-family
+machinery: the partition function is the moment generating function, log-sum-exp
+is the cumulant generating function, and softmax is the density of the
+exponentially-tilted (Esscher / Boltzmann–Gibbs) counting measure. -/
+
+section Tilting
+
+open MeasureTheory ProbabilityTheory
+
+variable {ι : Type*} [Fintype ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
+
+/-- The partition function `∑ exp(α·sᵢ)` is the moment generating function of the
+scores under the counting measure. -/
+theorem partitionFn_eq_mgf (s : ι → ℝ) (α : ℝ) :
+    partitionFn (α • s) = mgf s Measure.count α := by
+  simp only [partitionFn, mgf, integral_count, Pi.smul_apply, smul_eq_mul]
+
+/-- Log-sum-exp is the cumulant generating function of the scores under the
+counting measure. -/
+theorem logSumExp_eq_cgf (s : ι → ℝ) (α : ℝ) :
+    logSumExp (α • s) = cgf s Measure.count α := by
+  simp only [logSumExp, cgf, mgf, integral_count, Pi.smul_apply, smul_eq_mul]
+
+/-- Softmax is the density of the exponentially-tilted counting measure: tilting
+the counting measure by the scores `α·s` yields the measure whose density is
+`softmax (α•s)`. -/
+theorem tilted_count_eq_withDensity_softmax (s : ι → ℝ) (α : ℝ) :
+    Measure.count.tilted (fun i => α * s i) =
+      Measure.count.withDensity (fun i => ENNReal.ofReal (softmax (α • s) i)) := by
+  simp only [Measure.tilted]
+  congr 1
+  funext i
+  simp only [softmax, integral_count, Pi.smul_apply, smul_eq_mul]
+
+end Tilting
 
 end Core

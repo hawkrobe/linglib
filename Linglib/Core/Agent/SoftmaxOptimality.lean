@@ -79,7 +79,8 @@ theorem fromDP_policy_mono {W A : Type*} [Fintype W] [Fintype A] [Nonempty A]
     (RationalAction.fromDecisionProblem dp α).policy () a₂ := by
   simp only [RationalAction.fromDecisionProblem,
              RationalAction.fromSoftmax_policy_eq]
-  exact softmax_mono _ hα a₁ a₂ h
+  exact softmax_mono _ a₁ a₂ (by
+    simpa only [Pi.smul_apply, smul_eq_mul] using mul_le_mul_of_nonneg_left h hα.le)
 
 /-- Strict version: strictly higher EU implies strictly higher probability. -/
 theorem fromDP_policy_strict_mono {W A : Type*} [Fintype W] [Fintype A] [Nonempty A]
@@ -89,7 +90,8 @@ theorem fromDP_policy_strict_mono {W A : Type*} [Fintype W] [Fintype A] [Nonempt
     (RationalAction.fromDecisionProblem dp α).policy () a₂ := by
   simp only [RationalAction.fromDecisionProblem,
              RationalAction.fromSoftmax_policy_eq]
-  exact softmax_strict_mono _ hα a₁ a₂ h
+  exact softmax_strict_mono _ a₁ a₂ (by
+    simpa only [Pi.smul_apply, smul_eq_mul] using mul_lt_mul_of_pos_left h hα)
 
 -- ============================================================================
 -- §3. Entropy-Regularized EU Maximality
@@ -110,11 +112,11 @@ theorem softmax_maximizes_EU_plus_entropy {W A : Type*}
       ((RationalAction.fromDecisionProblem dp α).policy () ·) := by
   -- The policy of fromDecisionProblem equals softmax over EU
   have hpol : ∀ a, (RationalAction.fromDecisionProblem dp α).policy () a =
-      softmax (fun a => expectedUtilityR dp a) α a := by
+      softmax (α • fun a => expectedUtilityR dp a) a := by
     intro a
     exact RationalAction.fromSoftmax_policy_eq _ α () a
   simp_rw [show (fun a => (RationalAction.fromDecisionProblem dp α).policy () a) =
-    softmax (fun a => expectedUtilityR dp a) α from funext hpol]
+    softmax (α • fun a => expectedUtilityR dp a) from funext hpol]
   exact softmax_maximizes_entropyReg _ α hα p hp_nn hp_sum
 
 /-- The softmax agent is the UNIQUE maximizer: any distribution achieving
@@ -125,8 +127,8 @@ theorem softmax_unique_EU_maximizer {W A : Type*}
     (p : A → ℝ) (hp_nn : ∀ a, 0 ≤ p a) (hp_sum : ∑ a, p a = 1)
     (h_max : entropyRegObjective (fun a => expectedUtilityR dp a) α p =
              entropyRegObjective (fun a => expectedUtilityR dp a) α
-               (softmax (fun a => expectedUtilityR dp a) α)) :
-    p = softmax (fun a => expectedUtilityR dp a) α :=
+               (softmax (α • fun a => expectedUtilityR dp a))) :
+    p = softmax (α • fun a => expectedUtilityR dp a) :=
   softmax_unique_maximizer _ α hα p hp_nn hp_sum h_max
 
 -- ============================================================================
@@ -145,7 +147,7 @@ theorem fromDP_converges_to_optimal {W A : Type*}
     Tendsto (fun α => (RationalAction.fromDecisionProblem dp α).policy () a_opt)
       atTop (𝓝 1) := by
   have hpol : ∀ α, (RationalAction.fromDecisionProblem dp α).policy () a_opt =
-      softmax (fun a => expectedUtilityR dp a) α a_opt :=
+      softmax (α • fun a => expectedUtilityR dp a) a_opt :=
     fun α => RationalAction.fromSoftmax_policy_eq _ α () a_opt
   simp_rw [hpol]
   exact Softmax.tendsto_softmax_infty_at_max _ a_opt h_opt
@@ -159,7 +161,7 @@ theorem fromDP_nonoptimal_vanishes {W A : Type*}
     Tendsto (fun α => (RationalAction.fromDecisionProblem dp α).policy () a)
       atTop (𝓝 0) := by
   have hpol : ∀ α', (RationalAction.fromDecisionProblem dp α').policy () a =
-      softmax (fun a => expectedUtilityR dp a) α' a :=
+      softmax (α' • fun a => expectedUtilityR dp a) a :=
     fun α' => RationalAction.fromSoftmax_policy_eq _ α' () a
   simp_rw [hpol]
   have hlim := Softmax.tendsto_softmax_infty_unique_max _ a_opt h_opt a

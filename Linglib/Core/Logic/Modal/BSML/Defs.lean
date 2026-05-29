@@ -68,7 +68,7 @@ two applications of the negation clause).
 computational verification via `#guard decide (...)`.
 -/
 
-namespace Semantics.BSML
+namespace Core.Logic.Modal.BSML
 
 -- ============================================================================
 -- §1: Formulas (Definition 1)
@@ -374,4 +374,4 @@ def decidableEval (M : BSMLModel W Atom) :
 instance instDecidableEval (M : BSMLModel W Atom) (pol : Bool) (φ : BSMLFormula Atom)
     (t : Finset W) : Decidable (eval M pol φ t) := decidableEval M pol φ t
 
-end Semantics.BSML
+end Core.Logic.Modal.BSML
