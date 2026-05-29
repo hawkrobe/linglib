@@ -1495,6 +1495,7 @@ import Linglib.Studies.HerbstrittFranke2019PMF
 import Linglib.Studies.Huijsmans2025
 import Linglib.Core.Logic.Modal.BSML.Bisimulation
 import Linglib.Core.Logic.Modal.BSML.Bridge
+import Linglib.Core.Logic.Modal.BSML.Characteristic
 import Linglib.Core.Logic.Modal.BSML.ClassicalValidities
 import Linglib.Core.Logic.Modal.BSML.Defs
 import Linglib.Core.Logic.Modal.BSML.Enrichment
@@ -2527,7 +2528,6 @@ import Linglib.Studies.Sharvit2014
 import Linglib.Studies.Giannakidou2002
 import Linglib.Typology.TemporalConnectives
 import Linglib.Studies.Zeijlstra2012
-import Linglib.Syntax.Minimalist.Tense.InfinitivalTense
 -- Theories: Semantics.Questions
 import Linglib.Semantics.Questions.Partition.Constructors
 import Linglib.Studies.GroenendijkStokhof1984
