@@ -13,9 +13,7 @@ and @cite{cardinaletti-starke-1999}'s `Strength` deficiency classification.
 
 Cross-categorial features a pronoun carries — `Person`, `Number`, `Gender`,
 `Case` — are not redefined here; they live under `Features/` and are composed
-in as `Entry` fields. The cross-linguistic WALS typological survey (per-language
-`Profile`, phonological-shape patterns) is a separately-importable facet in
-`Typology/Pronoun/Survey.lean`.
+in as `Entry` fields.
 
 ## Main declarations
 
