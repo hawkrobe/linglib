@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # German Reciprocal Fragment
@@ -20,14 +20,14 @@ between reflexive and reciprocal uses.
 
 namespace Fragments.German.Reciprocals
 
-open Typology
+open Pronoun
 
 /-- sich — reflexive/reciprocal pronoun (3rd person). -/
-def sich : PronounEntry :=
+def sich : Entry :=
   { form := "sich", person := some .third }
 
 /-- einander — dedicated reciprocal pronoun. -/
-def einander : PronounEntry :=
+def einander : Entry :=
   { form := "einander", person := some .third, number := some .pl }
 
 /-- The dedicated reciprocal form is distinct from the reflexive. -/

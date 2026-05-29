@@ -13,7 +13,7 @@ import Linglib.Typology.Negation
 import Linglib.Features.ClauseForm
 import Linglib.Features.Clusivity
 import Linglib.Syntax.Common.Inversion
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
@@ -232,7 +232,6 @@ import Linglib.Typology.Numerals
 import Linglib.Typology.Plurals
 import Linglib.Typology.PolarityMarking
 import Linglib.Typology.Possession
-import Linglib.Typology.Pronouns
 import Linglib.Typology.Question
 import Linglib.Typology.Reference
 import Linglib.Typology.TenseAspect
@@ -312,7 +311,6 @@ import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.PrivativePair
 import Linglib.Features.Person
-import Linglib.Features.PronounStrength
 import Linglib.Features.Number
 import Linglib.Core.CoreConcept
 import Linglib.Morphology.MorphRule

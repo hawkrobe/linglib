@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Russian pronoun profile (WALS Chs 39, 40, 44–48)
@@ -11,7 +11,7 @@ namespace Fragments.Slavic.Russian
     (on/ona/ono); binary politeness (ty/vy); interrogative-based
     indefinites (kto-to, kto-nibud'); intensifier (sam) differentiated
     from reflexive (sebja); no person marking on adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Russian"
   , family := "Indo-European"
   , iso := "rus"
@@ -25,7 +25,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- Russian pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
     (*menja*/*tebja*); 1SG has /m/; no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Russian"
   , iso := "rus"
   , mtPronouns := some .paradigmatic

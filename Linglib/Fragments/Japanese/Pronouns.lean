@@ -10,12 +10,12 @@ traditional Japanese relies heavily on null reference.
 
 -/
 
-import Linglib.Typology.Pronouns
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Japanese.Pronouns
 
-open Typology
+open Pronoun
 open Features.Register (Level)
 
 -- ============================================================================
@@ -23,21 +23,21 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- 私 *watashi* — 1sg neutral/polite. -/
-def watashi : PronounEntry :=
+def watashi : Entry :=
   { form := "watashi", script := some "私", person := some .first, number := some .sg, register := .formal }
 
 /-- 僕 *boku* — 1sg informal, masculine-associated via register
     (no inherent gender feature; cf. @cite{ochs-1992}). -/
-def boku : PronounEntry :=
+def boku : Entry :=
   { form := "boku", script := some "僕", person := some .first, number := some .sg, register := .informal }
 
 /-- 俺 *ore* — 1sg male very informal. Strongly indexes masculine identity
     through assertive/coarse interactional stance (@cite{ochs-1992}). -/
-def ore : PronounEntry :=
+def ore : Entry :=
   { form := "ore", script := some "俺", person := some .first, number := some .sg, register := .informal }
 
 /-- 私たち *watashitachi* — 1pl. -/
-def watashitachi : PronounEntry :=
+def watashitachi : Entry :=
   { form := "watashitachi", script := some "私たち", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -45,11 +45,11 @@ def watashitachi : PronounEntry :=
 -- ============================================================================
 
 /-- 君 *kimi* — 2sg plain. -/
-def kimi : PronounEntry :=
+def kimi : Entry :=
   { form := "kimi", script := some "君", person := some .second, number := some .sg, register := .informal }
 
 /-- あなた *anata* — 2sg polite. -/
-def anata : PronounEntry :=
+def anata : Entry :=
   { form := "anata", script := some "あなた", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -57,15 +57,15 @@ def anata : PronounEntry :=
 -- ============================================================================
 
 /-- 彼 *kare* — 3sg masculine. -/
-def kare : PronounEntry :=
+def kare : Entry :=
   { form := "kare", script := some "彼", person := some .third, number := some .sg }
 
 /-- 彼女 *kanojo* — 3sg feminine. -/
-def kanojo : PronounEntry :=
+def kanojo : Entry :=
   { form := "kanojo", script := some "彼女", person := some .third, number := some .sg }
 
 /-- 彼ら *karera* — 3pl. -/
-def karera : PronounEntry :=
+def karera : Entry :=
   { form := "karera", script := some "彼ら", person := some .third, number := some .pl }
 
 -- ============================================================================
@@ -76,16 +76,16 @@ def karera : PronounEntry :=
     Formally distinct from the reflexive *jibun* (自分). This is an
     NP/argument reciprocal strategy (reciprocal pronoun), unlike
     languages that mark reciprocity on the verb. -/
-def otagai : PronounEntry :=
+def otagai : Entry :=
   { form := "otagai", script := some "互い", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List PronounEntry := [kimi, anata]
+def secondPersonPronouns : List Entry := [kimi, anata]
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [watashi, boku, ore, watashitachi] ++ secondPersonPronouns ++ [kare, kanojo, karera, otagai]
 
 -- ============================================================================
@@ -157,7 +157,7 @@ namespace Fragments.Japanese
     politeness; interrogative-based indefinites (dare-ka 'who-Q' =
     'someone'); intensifier and reflexive identical (jibun); no person
     marking on adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Japanese"
   , family := "Japonic"
   , iso := "jpn"
@@ -172,7 +172,7 @@ def pronounProfile : Typology.PronounProfile :=
 /-- Japanese pronoun phonological shape (WALS Chs 136–137): no M-T pattern;
     no /m/ in 1SG (*watashi*/*boku*/*ore*); no N-M; /m/ present in 2SG
     (*omae*). -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Japanese"
   , iso := "jpn"
   , mtPronouns := some .absent

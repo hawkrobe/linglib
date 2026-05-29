@@ -1,6 +1,6 @@
 import Linglib.Core.Word
 import Linglib.Features.Definiteness
-import Linglib.Features.PronounStrength
+import Linglib.Typology.Pronoun.Basic
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Studies.Schwarz2013
@@ -30,8 +30,8 @@ on @cite{schwarz-2009}/@cite{schwarz-2013}'s weak/strong article typology
 
 ## Substrate consumed
 
-- `Features.PronounStrength` (Cardinaletti-Starke 1999) — three-way strength
-  enum (strong/weak/clitic), shared with `Reference/Studies/Ariel2001.lean`.
+- `Pronoun.Strength` (Cardinaletti-Starke 1999) — three-way strength
+  enum (strong/weak/clitic), shared with `Studies/Ariel2001.lean`.
 
 ## Gradient Component
 
@@ -45,7 +45,7 @@ namespace PatelGroszGrosz2017
 
 open Phenomena.Anaphora.Coreference
 
-open Features (PronounStrength)
+open Pronoun (Strength)
 open Features.Definiteness (ArticleType DefiniteUseType BridgingSubtype WeakArticleStrategy
   useTypeToPresupType bridgingPresupType DefPresupType)
 open Core.Nominal (ArticleInventory)
@@ -85,7 +85,7 @@ structure PronounForm where
   pronClass : PronounClass
   gender : Option String := none  -- "m"/"f"/"n" or none
   number : Option Number := none
-  strengths : List PronounStrength := [.strong]
+  strengths : List Strength := [.strong]
   deriving Repr, BEq
 
 /-- Per-language pronoun system datum (@cite{patel-grosz-grosz-2017} + @cite{cardinaletti-starke-1999}).
@@ -316,7 +316,7 @@ structure PronounComplexityProfile where
 def PronounSystemDatum.toProfile (d : PronounSystemDatum) : PronounComplexityProfile :=
   let perForms := d.forms.filter (·.pronClass == .per)
   let demForms := d.forms.filter (·.pronClass == .dem)
-  let allStrengths : List PronounStrength := d.forms.flatMap (·.strengths)
+  let allStrengths : List Strength := d.forms.flatMap (·.strengths)
   let hasClitic : Bool := allStrengths.any (· == .clitic)
   let hasWeak : Bool := allStrengths.any (· == .weak)
   let levels := 1 + (if hasWeak then 1 else 0) + (if hasClitic then 1 else 0)

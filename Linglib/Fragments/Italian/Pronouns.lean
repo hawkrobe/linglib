@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 import Linglib.Core.Word
 
 /-! # Italian Pronoun and Clitic Fragment
@@ -29,7 +29,7 @@ and reflexive cases, while 3sg/3pl are not.
 
 namespace Fragments.Italian.Pronouns
 
-open Typology
+open Pronoun
 open Features.Register (Level)
 
 -- ============================================================================
@@ -37,11 +37,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *io* — 1sg. -/
-def io : PronounEntry :=
+def io : Entry :=
   { form := "io", person := some .first, number := some .sg }
 
 /-- *tu* — 2sg familiar (T form). -/
-def tu : PronounEntry :=
+def tu : Entry :=
   { form := "tu", person := some .second, number := some .sg, register := .informal }
 
 /-- *Lei* — polite 2sg (V form). Formally 3rd person: triggers 3sg verbal
@@ -49,37 +49,37 @@ def tu : PronounEntry :=
     Interpretably 2nd person: triggers PCC effects, Fancy Constraint effects,
     2PL resolved agreement in coordination.
     @cite{adamson-zompi-2025} -/
-def lei_formal : PronounEntry :=
+def lei_formal : Entry :=
   { form := "Lei", person := some .third, number := some .sg, register := .formal,
     referentialPerson := some .second }
 
 /-- *lui* — 3sg masculine. -/
-def lui : PronounEntry :=
+def lui : Entry :=
   { form := "lui", person := some .third, number := some .sg }
 
 /-- *lei* — 3sg feminine. -/
-def lei : PronounEntry :=
+def lei : Entry :=
   { form := "lei", person := some .third, number := some .sg }
 
 /-- *noi* — 1pl. -/
-def noi : PronounEntry :=
+def noi : Entry :=
   { form := "noi", person := some .first, number := some .pl }
 
 /-- *voi* — 2pl (familiar; also used as general 2pl in modern Italian). -/
-def voi : PronounEntry :=
+def voi : Entry :=
   { form := "voi", person := some .second, number := some .pl, register := .informal }
 
 /-- *Loro* — 2pl formal (archaic, largely replaced by *voi*). -/
-def loro_formal : PronounEntry :=
+def loro_formal : Entry :=
   { form := "Loro", person := some .second, number := some .pl, register := .formal }
 
 /-- *loro* — 3pl. -/
-def loro : PronounEntry :=
+def loro : Entry :=
   { form := "loro", person := some .third, number := some .pl }
 
-def secondPersonPronouns : List PronounEntry := [tu, lei_formal]
+def secondPersonPronouns : List Entry := [tu, lei_formal]
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [io] ++ secondPersonPronouns ++ [lui, lei, noi, voi, loro_formal, loro]
 
 -- ============================================================================

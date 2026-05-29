@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 import Linglib.Features.Clusivity
 import Linglib.Features.Person
 
@@ -62,7 +62,7 @@ namespace Fragments.Tagalog
     politeness distinctions (ikaw/kayo/po); existential construction
     for indefinite reference; intensifier (mismo) differentiated from
     reflexive (sarili); no adpositions per WALS Ch 48. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Tagalog"
   , family := "Austronesian"
   , iso := "tgl"
@@ -76,7 +76,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- Tagalog pronoun phonological shape (WALS Chs 136–137): no M-T; no /m/
     in 1SG (*ako*); no N-M; /m/ present in 2SG (*mo*). -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Tagalog"
   , iso := "tgl"
   , mtPronouns := some .absent
@@ -147,6 +147,6 @@ theorem clusivity_system_consistent_with_paradigm :
     catches drift if either commitment changes without the other. -/
 theorem wals_clusivity_consistent :
     pronounProfile.inclusiveExclusive =
-      some (Typology.InclusiveExclusive.fromClusivity clusivitySystem) := rfl
+      some (Pronoun.InclusiveExclusive.fromClusivity clusivitySystem) := rfl
 
 end Fragments.Tagalog

@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 import Linglib.Features.Logophoricity
 
 /-!
@@ -33,7 +33,7 @@ hierarchy: it refers to the individual whose mental state is reported.
 
 namespace Fragments.Wan.Reciprocals
 
-open Typology
+open Pronoun
 open Features.Logophoricity
 
 -- ════════════════════════════════════════════════════════════════
@@ -50,17 +50,17 @@ open Features.Logophoricity
     Note: *ē* in the same example is the reflexive marker (REFL), not the
     logophoric pronoun. The reciprocal reading arises from the combination
     of REFL *ē* + RECIP *ɔ̄ŋ*. -/
-def logPl : PronounEntry :=
+def logPl : Entry :=
   { form := "mɔ̄", person := some .third, number := some .pl }
 
 /-- Wan reflexive marker *ē* (REFL). Combines with reciprocal marker
     *ɔ̄ŋ* to form the reciprocal construction. -/
-def refl : PronounEntry :=
+def refl : Entry :=
   { form := "ē", person := some .third }
 
 /-- Wan reciprocal marker *ɔ̄ŋ* (RECIP). Appears after reflexive *ē*
     to yield the reciprocal reading. -/
-def recip : PronounEntry :=
+def recip : Entry :=
   { form := "ɔ̄ŋ", person := some .third, number := some .pl }
 
 /-- Wan 3pl ordinary (non-logophoric) pronoun *à* (low tone).
@@ -72,7 +72,7 @@ def recip : PronounEntry :=
     Note: *tú* in the same example is an adverb 'completely', not a
     pronoun. The 3PL pronoun is *à* (grave accent), tonally distinct
     from copula *á* (acute accent) in (28). -/
-def ordinaryPl : PronounEntry :=
+def ordinaryPl : Entry :=
   { form := "à", person := some .third, number := some .pl }
 
 -- ════════════════════════════════════════════════════════════════

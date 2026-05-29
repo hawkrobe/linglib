@@ -16,32 +16,42 @@ import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Gender
 import Linglib.Features.Clusivity
+import Mathlib.Order.Basic
 
 /-!
-# Pronoun typology — substrate types
-@cite{wals-2013} (Chs 39, 39B, 40, 44–48)
+# Pronoun
 
-Type-level enums + per-language profile struct for pronoun systems
-across @cite{wals-2013} chapters 39–40 and 44–48: inclusive/exclusive
-distinctions, gender, politeness, indefinite-pronoun strategy,
-intensifier–reflexive relationship, person marking on adpositions.
+Descriptive substrate for the pronoun as a grammatical object, gathering its
+facets: the lexical `Entry` schema fragments instantiate, the structural
+`Strength` (deficiency) classification, and the cross-linguistic typological
+survey (per-language `Profile` + phonological-shape patterns).
 
-## Schema
+Cross-categorial features a pronoun carries — `Person`, `Number`, `Gender`,
+`Case` — are not redefined here; they live under `Features/` and are composed
+in as `Entry` fields.
 
-- `InclusiveExclusive` (Ch 39): incl/excl in independent pronouns
-- `InclusiveExclusivePamaNyungan` (Ch 39B): areal sub-feature for Pama-Nyungan
-- `InclusiveExclusiveVerbal` (Ch 40): incl/excl in verbal inflection
-- `GenderInPronouns` (Ch 44): gender distinctions in personal pronouns
-- `PolitenessDistinction` (Ch 45): T/V and broader politeness contrasts
-- `IndefinitePronounType` (Ch 46): morphological source of indefinites
-- `IntensifierReflexive` (Ch 47): intensifier ↔ reflexive identity
-- `PersonMarkingOnAdpositions` (Ch 48): adpositional person marking
-- `PronounProfile`: per-language bundle (all WALS chapters as Option fields)
+## Main declarations
+
+* `Pronoun.Entry` — cross-linguistic lexical pronoun entry (form + features).
+* `Pronoun.Strength` — @cite{cardinaletti-starke-1999} strong/weak/clitic
+  deficiency order. Orthogonal to @cite{dechaine-wiltschko-2002}'s categorial
+  pro-DP/φP/NP axis; a framework's structural account of the order stays in its
+  study file.
+* `Pronoun.Profile` — per-language pronoun-system survey across @cite{wals-2013}
+  Chs 39–48 (incl/excl, gender, politeness, indefinite strategy,
+  intensifier–reflexive, adpositional person marking).
+* `Pronoun.AllocutiveEntry` — speaker–addressee (allocutive) markers.
+
+## Implementation notes
+
+The typological survey is a *facet* of the pronoun object, hence `Pronoun.Profile`
+rather than a parent `Typology.` namespace. Phonological-shape patterns (M-T, N-M;
+@cite{nichols-peterson-2013}) and allocutive markers are likewise co-located facets.
 -/
 
 set_option autoImplicit false
 
-namespace Typology
+namespace Pronoun
 
 /-- WALS Ch 39: inclusive/exclusive distinction in independent pronouns. -/
 inductive InclusiveExclusive where
@@ -81,7 +91,7 @@ inductive InclusiveExclusiveVerbal where
   deriving DecidableEq, Repr
 
 /-- WALS Ch 44: where gender distinctions appear in the pronoun paradigm. -/
-inductive GenderInPronouns where
+inductive GenderDistinction where
   /-- Gender in 3rd person AND in 1st/2nd person (e.g., Arabic, Hebrew). -/
   | in3rdAndOtherPersons
   /-- Gender in 3rd person only, including non-singular forms
@@ -111,7 +121,7 @@ inductive PolitenessDistinction where
   deriving DecidableEq, Repr
 
 /-- WALS Ch 46: morphological source of indefinite pronouns. -/
-inductive IndefinitePronounType where
+inductive IndefiniteType where
   /-- Based on interrogative forms (e.g., Japanese dare-ka 'who-Q' = 'someone'). -/
   | interrogativeBased
   /-- Based on generic nouns (e.g., English 'somebody' = 'some' + 'body'). -/
@@ -148,7 +158,7 @@ inductive PersonMarkingOnAdpositions where
 /-- A language's pronoun-system profile across WALS Chs 39–40, 44–48.
     Not all chapters have data for every language (sample varies by
     chapter), so each field is `Option`. -/
-structure PronounProfile where
+structure Profile where
   language : String
   family : String
   iso : String := ""
@@ -157,24 +167,60 @@ structure PronounProfile where
   /-- Ch 40: incl/excl in verbal inflection. -/
   inclusiveExclusiveVerbal : Option InclusiveExclusiveVerbal := .none
   /-- Ch 44: gender distinctions. -/
-  genderInPronouns : Option GenderInPronouns := .none
+  genderInPronouns : Option GenderDistinction := .none
   /-- Ch 45: politeness distinctions. -/
   politeness : Option PolitenessDistinction := .none
   /-- Ch 46: indefinite pronoun strategy. -/
-  indefiniteType : Option IndefinitePronounType := .none
+  indefiniteType : Option IndefiniteType := .none
   /-- Ch 47: intensifier-reflexive relationship. -/
   intensifierReflexive : Option IntensifierReflexive := .none
   /-- Ch 48: person marking on adpositions. -/
   personMarkingAdpositions : Option PersonMarkingOnAdpositions := .none
   deriving Repr, DecidableEq
 
-end Typology
+end Pronoun
+
+/-! ### Structural deficiency (@cite{cardinaletti-starke-1999}) -/
+
+namespace Pronoun
+
+/-- @cite{cardinaletti-starke-1999}'s three pronoun classes, ordered by
+    structural deficiency (strong > weak > clitic). Framework-neutral: only the
+    ranking lives here, and it is orthogonal to @cite{dechaine-wiltschko-2002}'s
+    pro-DP/pro-φP/pro-NP categorial axis. A framework's structural account of
+    the ranking stays in its study file (e.g. @cite{patel-grosz-grosz-2017}). -/
+inductive Strength where
+  /-- Full, stressed forms (e.g., English *me*, French *moi*). -/
+  | strong
+  /-- Reduced, unstressed but phonologically independent (e.g., German *es*). -/
+  | weak
+  /-- Phonologically deficient, attached to a host (e.g., French *me*, *te*, *le*). -/
+  | clitic
+  deriving DecidableEq, Repr
+
+/-- Structural-richness rank: 2 (strong, least deficient) to 0 (clitic, most
+    deficient). The @cite{cardinaletti-starke-1999} deficiency hierarchy is the
+    reverse order. -/
+def Strength.rank : Strength → Nat
+  | .strong => 2
+  | .weak   => 1
+  | .clitic => 0
+
+theorem Strength.rank_injective : Function.Injective Strength.rank := by
+  intro a b h; cases a <;> cases b <;> simp_all [Strength.rank]
+
+/-- Total order via the rank pullback (clitic < weak < strong), mirroring
+    `LinearOrder AccessibilityLevel` in `Features/Accessibility.lean`. -/
+instance : LinearOrder Strength :=
+  LinearOrder.lift' Strength.rank Strength.rank_injective
+
+end Pronoun
 
 -- ============================================================================
 -- WALS converters (Chs 39, 39B, 40, 44–48)
 -- ============================================================================
 
-namespace Typology
+namespace Pronoun
 
 def fromWALS39A : Data.WALS.F39A.InclusiveExclusiveDistinctionInIndependentPronouns →
     InclusiveExclusive
@@ -198,7 +244,7 @@ def fromWALS40A : Data.WALS.F40A.InclusiveExclusiveDistinctionInVerbalInflection
   | .inclusiveExclusive => .inclusiveExclusive
 
 def fromWALS44A : Data.WALS.F44A.GenderDistinctionsInIndependentPersonalPronouns →
-    GenderInPronouns
+    GenderDistinction
   | .in3rdPerson1stAndOr2ndPerson => .in3rdAndOtherPersons
   | .v3rdPersonOnlyButAlsoNonSingular => .in3rdPersonIncludingNonSg
   | .v3rdPersonSingularOnly => .in3rdPersonSgOnly
@@ -213,7 +259,7 @@ def fromWALS45A : Data.WALS.F45A.PolitenessDistinctionsInPronouns →
   | .multiplePolitenessDistinctions => .multiple
   | .pronounsAvoidedForPoliteness => .pronounsAvoided
 
-def fromWALS46A : Data.WALS.F46A.IndefinitePronouns → IndefinitePronounType
+def fromWALS46A : Data.WALS.F46A.IndefinitePronouns → IndefiniteType
   | .interrogativeBased => .interrogativeBased
   | .genericNounBased => .genericNounBased
   | .special => .special
@@ -266,18 +312,18 @@ theorem noPoliteness_is_majority_ch45 :
     (ch45.filter (·.value == .multiplePolitenessDistinctions)).length +
     (ch45.filter (·.value == .pronounsAvoidedForPoliteness)).length := by decide
 
-end Typology
+end Pronoun
 
 -- ============================================================================
 -- Pronoun phonological shape — WALS Chs 136, 137 @cite{nichols-peterson-2013}
 -- ============================================================================
 
-namespace Typology
+namespace Pronoun
 
 /-- M-T pronoun pattern (WALS Ch 136A, @cite{nichols-peterson-2013}):
     whether 1SG has /m/ and 2SG has /t/, a widespread cross-linguistic
     pattern hypothesized to reflect deep genealogical signal. -/
-inductive MTPronounPattern where
+inductive MTPattern where
   /-- No M-T pattern in the pronoun paradigm. -/
   | absent
   /-- M-T pattern is paradigmatic (systematic across forms). -/
@@ -294,7 +340,7 @@ inductive MIn1SG where
 
 /-- N-M pronoun pattern (WALS Ch 137A, @cite{nichols-peterson-2013}):
     whether 1SG has /n/ and 2SG has /m/. -/
-inductive NMPronounPattern where
+inductive NMPattern where
   | absent
   | paradigmatic
   | nonParadigmatic
@@ -307,25 +353,25 @@ inductive MIn2SG where
   deriving DecidableEq, Repr
 
 /-- A language's pronoun-shape profile across @cite{wals-2013} Chs 136–137.
-    Sister to `PronounProfile` (Chs 39–48). Kept as a separate struct to
+    Sister to `Profile` (Chs 39–48). Kept as a separate struct to
     avoid contaminating the feature-system bundle with phonological-shape
     fields. -/
-structure PronounShapeProfile where
+structure ShapeProfile where
   language : String
   iso : String := ""
   /-- Ch 136A: M-T pronoun pattern. -/
-  mtPronouns : Option MTPronounPattern := none
+  mtPronouns : Option MTPattern := none
   /-- Ch 136B: M in 1SG. -/
   mIn1sg : Option MIn1SG := none
   /-- Ch 137A: N-M pronoun pattern. -/
-  nmPronouns : Option NMPronounPattern := none
+  nmPronouns : Option NMPattern := none
   /-- Ch 137B: M in 2SG. -/
   mIn2sg : Option MIn2SG := none
   deriving Repr
 
 -- WALS converters for the four shape features.
 
-def fromWALS136A : Data.WALS.F136A.MTPronouns → MTPronounPattern
+def fromWALS136A : Data.WALS.F136A.MTPronouns → MTPattern
   | .noMTPronouns              => .absent
   | .mTPronounsParadigmatic    => .paradigmatic
   | .mTPronounsNonParadigmatic => .nonParadigmatic
@@ -334,7 +380,7 @@ def fromWALS136B : Data.WALS.F136B.MInFirstPersonSingular → MIn1SG
   | .noMInFirstPersonSingular => .absent
   | .mInFirstPersonSingular   => .present
 
-def fromWALS137A : Data.WALS.F137A.NMPronouns → NMPronounPattern
+def fromWALS137A : Data.WALS.F137A.NMPronouns → NMPattern
   | .noNMPronouns              => .absent
   | .nMPronounsParadigmatic    => .paradigmatic
   | .nMPronounsNonParadigmatic => .nonParadigmatic
@@ -366,7 +412,7 @@ def walsMT : MTCounts :=
 theorem mt_pronouns_minority :
     walsMT.absent > walsMT.paradigmatic + walsMT.nonParadigmatic := by decide
 
-end Typology
+end Pronoun
 
 -- ════════════════════════════════════════════════════
 -- § N. Cross-linguistic Pronoun Entry Schemas
@@ -383,7 +429,7 @@ dissolved `Core/Lexical/`. The 21-consumer footprint (20 Fragments + 1
 Phenomena study) is precisely the per-language entry-schema pattern
 this file already serves for WALS-anchored substrate enums.
 
-### PronounEntry
+### Entry
 
 Covers the union of fields needed by all language fragments:
 - Core: form, person, number (all fragments)
@@ -391,7 +437,7 @@ Covers the union of fields needed by all language fragments:
 - Sociolinguistic: register (all SA-based fragments)
 - Orthographic: script (Korean hangul, Japanese kanji)
 
-### PronounSpec
+### Spec
 
 Personal pronoun specification — which pronouns a person uses. A
 social-linguistic fact independent of grammatical gender.
@@ -404,7 +450,7 @@ Verbal suffixes (Hindi, Magahi, Maithili, Punjabi, Tamil, Basque),
 particles (Korean, Japanese), or clitics (Galician) realising
 speaker-addressee agreement. -/
 
-namespace Typology
+namespace Pronoun
 
 open Features.Register (Level)
 open Features (SurfaceGender)
@@ -417,7 +463,7 @@ open Features (SurfaceGender)
     @cite{arnold-2026}: the pragmatic condition for *personal*
     singular *they* is knowing that the referent's personal pronouns
     are *they/them*. -/
-inductive PronounSpec where
+inductive Spec where
   | heHim      -- he/him/his
   | sheHer     -- she/her/hers
   | theyThem   -- they/them/theirs
@@ -428,7 +474,7 @@ inductive PronounSpec where
 Covers personal pronouns across all Fragment languages. Language-specific
 extensions (e.g., English PronounType/wh) remain in their respective
 Fragment files. -/
-structure PronounEntry where
+structure Entry where
   /-- Surface form (romanization or orthographic) -/
   form : String
   /-- Grammatical person (UD.Person via Core.Word abbrev) -/
@@ -465,7 +511,7 @@ agreement across all Fragment languages. -/
 structure AllocutiveEntry where
   /-- Surface form of the marker -/
   form : String
-  /-- Register level (matching PronounEntry.register scale) -/
+  /-- Register level (matching Entry.register scale) -/
   register : Level
   /-- Gloss string (e.g., "IMP.NH", "POL", "2sg.DAT.fam") -/
   gloss : String
@@ -483,5 +529,5 @@ def InclusiveExclusive.fromClusivity : Features.Clusivity.System → InclusiveEx
   | .unitAugmented      => .inclusiveExclusive
   | .numberIndifferent  => .weEqualsI
 
-end Typology
+end Pronoun
 

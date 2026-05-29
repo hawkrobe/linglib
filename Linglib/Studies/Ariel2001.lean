@@ -1,5 +1,5 @@
 import Linglib.Features.Accessibility
-import Linglib.Features.PronounStrength
+import Linglib.Typology.Pronoun.Basic
 import Linglib.Features.Givenness
 
 /-!
@@ -203,26 +203,28 @@ theorem coarsening_not_monotone :
   decide
 
 -- ════════════════════════════════════════════════════
--- § 4. PronounStrength Bridge
+-- § 4. Strength Bridge
 -- ════════════════════════════════════════════════════
 
-open Features (PronounStrength)
+open Pronoun (Strength)
 
 /-- @cite{cardinaletti-starke-1999}'s three-way pronoun strength maps to
     positions on the accessibility scale.
     strong → stressedPron, weak → unstressedPron, clitic → cliticizedPron. -/
-def strengthToAccessibility : PronounStrength → AccessibilityLevel
+def strengthToAccessibility : Strength → AccessibilityLevel
   | .strong => .stressedPron
   | .weak   => .unstressedPron
   | .clitic => .cliticizedPron
 
-/-- Pronoun strength ordering matches accessibility ordering:
-    clitic > weak > strong in accessibility. -/
-theorem strength_matches_accessibility :
-    (strengthToAccessibility .clitic).rank >
-    (strengthToAccessibility .weak).rank ∧
-    (strengthToAccessibility .weak).rank >
-    (strengthToAccessibility .strong).rank := by decide
+/-- `strengthToAccessibility` is antitone in structural strength: a more
+    deficient pronoun (lower `rank`) marks higher accessibility, so the
+    clitic > weak > strong accessibility ordering follows from the intrinsic
+    deficiency order rather than being restated. -/
+theorem strengthToAccessibility_antitone {a b : Strength}
+    (h : a.rank < b.rank) :
+    (strengthToAccessibility b).rank < (strengthToAccessibility a).rank := by
+  cases a <;> cases b <;>
+    simp_all [Strength.rank, strengthToAccessibility, AccessibilityLevel.rank]
 
 /-- All three pronoun strengths coarsen to the same definiteness level. -/
 theorem strength_coarsening_agrees :

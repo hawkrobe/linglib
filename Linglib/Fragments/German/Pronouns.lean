@@ -1,5 +1,5 @@
-import Linglib.Typology.Pronouns
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # German Pronoun Fragment
@@ -29,7 +29,7 @@ in assumed-identity copular constructions (@cite{keine-et-al-2019},
 
 namespace Fragments.German.Pronouns
 
-open Typology
+open Pronoun
 open Features.Register (Level)
 
 -- ============================================================================
@@ -37,11 +37,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *ich* — 1sg. -/
-def ich : PronounEntry :=
+def ich : Entry :=
   { form := "ich", person := some .first, number := some .sg }
 
 /-- *du* — 2sg familiar (T form). -/
-def du : PronounEntry :=
+def du : Entry :=
   { form := "du", person := some .second, number := some .sg, register := .informal }
 
 /-- *Sie* — polite 2nd person (V form, triggers 3pl agreement).
@@ -49,35 +49,35 @@ def du : PronounEntry :=
     the 3pl series. Agreement person is 3rd (plural), interpretable person
     is 2nd. Can refer to singular or plural addressees.
     @cite{adamson-zompi-2025} -/
-def sie_polite : PronounEntry :=
+def sie_polite : Entry :=
   { form := "Sie", person := some .third, number := some .pl, register := .formal,
     referentialPerson := some .second }
 
 /-- *er* — 3sg masculine. -/
-def er : PronounEntry :=
+def er : Entry :=
   { form := "er", person := some .third, number := some .sg }
 
 /-- *sie* — 3sg feminine. -/
-def sie_f : PronounEntry :=
+def sie_f : Entry :=
   { form := "sie", person := some .third, number := some .sg }
 
 /-- *es* — 3sg neuter. -/
-def es : PronounEntry :=
+def es : Entry :=
   { form := "es", person := some .third, number := some .sg }
 
 /-- *wir* — 1pl. -/
-def wir : PronounEntry :=
+def wir : Entry :=
   { form := "wir", person := some .first, number := some .pl }
 
 /-- *ihr* — 2pl familiar. -/
-def ihr : PronounEntry :=
+def ihr : Entry :=
   { form := "ihr", person := some .second, number := some .pl, register := .informal }
 
 /-- *sie* — 3pl. -/
-def sie_pl : PronounEntry :=
+def sie_pl : Entry :=
   { form := "sie", person := some .third, number := some .pl }
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [ich, du, sie_polite, er, sie_f, es, wir, ihr, sie_pl]
 
 -- ============================================================================
@@ -112,7 +112,7 @@ namespace Fragments.German
     (du/Sie); mixed indefinite strategy (jemand special, irgendwer
     interrogative-based); intensifier (selbst) differentiated from
     reflexive (sich); no person marking on adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "German"
   , family := "Indo-European"
   , iso := "deu"
@@ -126,7 +126,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- German pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
     (*mich*/*dich*); 1SG has /m/; no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "German"
   , iso := "deu"
   , mtPronouns := some .paradigmatic

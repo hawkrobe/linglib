@@ -1,5 +1,5 @@
-import Linglib.Typology.Pronouns
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Spanish Pronoun Fragment
@@ -29,7 +29,7 @@ Unlike Italian LEI, USTED can also be used in *laísta* varieties where
 
 namespace Fragments.Spanish.Pronouns
 
-open Typology
+open Pronoun
 open Features.Register (Level)
 
 -- ============================================================================
@@ -37,11 +37,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *yo* — 1sg. -/
-def yo : PronounEntry :=
+def yo : Entry :=
   { form := "yo", person := some .first, number := some .sg }
 
 /-- *tú* — 2sg familiar (T form). -/
-def tu : PronounEntry :=
+def tu : Entry :=
   { form := "tú", person := some .second, number := some .sg, register := .informal }
 
 /-- *usted* — polite 2sg (V form, triggers 3sg agreement).
@@ -49,36 +49,36 @@ def tu : PronounEntry :=
     effects: *la* as USTED.ACC is banned in 3>USTED configurations
     (@cite{rezac-2011}, @cite{adamson-zompi-2025} §6.1).
     @cite{adamson-zompi-2025} -/
-def usted : PronounEntry :=
+def usted : Entry :=
   { form := "usted", person := some .third, number := some .sg, register := .formal,
     referentialPerson := some .second }
 
 /-- *él* — 3sg masculine. -/
-def el : PronounEntry :=
+def el : Entry :=
   { form := "él", person := some .third, number := some .sg }
 
 /-- *ella* — 3sg feminine. -/
-def ella : PronounEntry :=
+def ella : Entry :=
   { form := "ella", person := some .third, number := some .sg }
 
 /-- *nosotros* — 1pl. -/
-def nosotros : PronounEntry :=
+def nosotros : Entry :=
   { form := "nosotros", person := some .first, number := some .pl }
 
 /-- *vosotros* — 2pl familiar (Peninsular). -/
-def vosotros : PronounEntry :=
+def vosotros : Entry :=
   { form := "vosotros", person := some .second, number := some .pl, register := .informal }
 
 /-- *ustedes* — 2pl formal / general (triggers 3pl agreement). -/
-def ustedes : PronounEntry :=
+def ustedes : Entry :=
   { form := "ustedes", person := some .third, number := some .pl, register := .formal,
     referentialPerson := some .second }
 
 /-- *ellos* — 3pl masculine. -/
-def ellos : PronounEntry :=
+def ellos : Entry :=
   { form := "ellos", person := some .third, number := some .pl }
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [yo, tu, usted, el, ella, nosotros, vosotros, ustedes, ellos]
 
 -- ============================================================================
@@ -115,7 +115,7 @@ namespace Fragments.Spanish
     etc.); binary politeness (tú/usted); special indefinite forms
     (alguien, algo); intensifier (mismo) differentiated from reflexive
     (se); no person marking on adpositions. -/
-def pronounProfile : Typology.PronounProfile :=
+def pronounProfile : Pronoun.Profile :=
   { language := "Spanish"
   , family := "Indo-European"
   , iso := "spa"
@@ -129,7 +129,7 @@ def pronounProfile : Typology.PronounProfile :=
 
 /-- Spanish pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
     (*me*/*te*); 1SG has /m/; no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Typology.PronounShapeProfile :=
+def pronounShapeProfile : Pronoun.ShapeProfile :=
   { language := "Spanish"
   , iso := "spa"
   , mtPronouns := some .paradigmatic

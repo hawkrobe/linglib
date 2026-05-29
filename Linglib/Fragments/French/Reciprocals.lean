@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # French Reciprocal Fragment
@@ -19,14 +19,14 @@ WALS Ch 106 classifying French as "mixed."
 
 namespace Fragments.French.Reciprocals
 
-open Typology
+open Pronoun
 
 /-- se — reflexive/reciprocal clitic (monovalent strategy). -/
-def se : PronounEntry :=
+def se : Entry :=
   { form := "se", person := some .third }
 
 /-- l'un l'autre — bipartite reciprocal NP (bivalent strategy). -/
-def lunLautre : PronounEntry :=
+def lunLautre : Entry :=
   { form := "l'un l'autre", person := some .third, number := some .pl }
 
 /-- The bipartite NP form is distinct from the clitic. -/

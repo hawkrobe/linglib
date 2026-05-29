@@ -8,22 +8,22 @@ forms (*i* proximal / *ũ* distal). AA is Fin-based and freely embeddable.
 
 -/
 
-import Linglib.Typology.Pronouns
+import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Magahi.Pronouns
 
-open Typology
+open Pronoun
 
 -- ============================================================================
 -- First Person
 -- ============================================================================
 
 /-- *hum* — 1sg. -/
-def hum : PronounEntry :=
+def hum : Entry :=
   { form := "hum", person := some .first, number := some .sg }
 
 /-- *hum sab* — 1pl. -/
-def humSab : PronounEntry :=
+def humSab : Entry :=
   { form := "hum sab", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -31,15 +31,15 @@ def humSab : PronounEntry :=
 -- ============================================================================
 
 /-- *tõ* — 2sg non-honorific. -/
-def toN : PronounEntry :=
+def toN : Entry :=
   { form := "tõ", person := some .second, number := some .sg, register := .informal }
 
 /-- *tũ* — 2sg honorific. -/
-def tuN : PronounEntry :=
+def tuN : Entry :=
   { form := "tũ", person := some .second, number := some .sg, register := .neutral }
 
 /-- *apne* — 2sg high-honorific. -/
-def apne : PronounEntry :=
+def apne : Entry :=
   { form := "apne", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -47,24 +47,24 @@ def apne : PronounEntry :=
 -- ============================================================================
 
 /-- *i* — 3sg proximal. -/
-def i_prox : PronounEntry :=
+def i_prox : Entry :=
   { form := "i", person := some .third, number := some .sg }
 
 /-- *ũ* — 3sg distal. -/
-def uN : PronounEntry :=
+def uN : Entry :=
   { form := "ũ", person := some .third, number := some .sg }
 
 /-- *ũ sab* — 3pl distal. -/
-def uNSab : PronounEntry :=
+def uNSab : Entry :=
   { form := "ũ sab", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List PronounEntry := [toN, tuN, apne]
+def secondPersonPronouns : List Entry := [toN, tuN, apne]
 
-def allPronouns : List PronounEntry :=
+def allPronouns : List Entry :=
   [hum, humSab] ++ secondPersonPronouns ++ [i_prox, uN, uNSab]
 
 -- ============================================================================

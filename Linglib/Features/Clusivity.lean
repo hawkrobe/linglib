@@ -18,7 +18,7 @@ property of Tagalog (*kata* / *tayo*), several other Philippine languages,
 and many Australian languages.
 
 Scope: pronominal clusivity (independent personal pronouns). Verbal
-clusivity (WALS Ch 40, `Typology.Pronouns.InclusiveExclusiveVerbal`) is a
+clusivity (WALS Ch 40, `Pronoun.InclusiveExclusiveVerbal`) is a
 separately-marked phenomenon that may dissociate from pronominal clusivity
 (e.g. some Athabaskan languages). The five-value enum here is a first-cut
 typology; @cite{cysouw-2009} discusses additional minor types
