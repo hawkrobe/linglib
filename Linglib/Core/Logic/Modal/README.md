@@ -130,11 +130,16 @@ the harder half tracked in phase 5.
    re-anchored on it; `AloniAnttilaYang2024` kept zero-edit via `export`. Second
    consumer landed: **MDL** (`Dependence.bisim_invariant_eval`) — which is what
    licensed the lift.
-3. **Close the BSML cell.** Soundness half ✅ **done**: `ordConnected_support`
-   discharged (Anttila Prop 3.3.1, split-disjunction convexity via union
-   closure), and `soundFor_convex_inter_unionClosed` wired. **Open:** the
-   converse `convex ∧ union-closed ⊆ ⟦BSML⟧` (normal forms), where *uniform
-   definability* emerges as lemmas.
+3. **Close the BSML cell.** Soundness half ✅ **done in full**
+   (`BSML/ExpressiveCompleteness.lean`): `⟦BSML⟧ ⊆ convex ∩ union-closed ∩
+   bisim-closed`, assembling `ordConnected_support` (Prop 3.3.1),
+   `supClosed_support`, and `bisimClosed_definedBy` (Theorem 3.8 — the first
+   use of the lifted bisimulation invariance). `expressivelyComplete` states
+   the headline equality. **Open:** the converse `cell ⊆ ⟦BSML⟧`
+   (`expressiveCompleteness_converse`, `sorry`) — needs characteristic
+   (Hintikka) formulas + the Knudstorp/Anttila Ch 3 normal form, where *uniform
+   definability* emerges. Immediate prerequisite: the Hennessy-Milner direction
+   (characteristic formulas), deferred in `BSML/Bisimulation.lean`.
 4. **Stratify + rename.** Regroup as `TeamSemantics/{…}`, namespace
    `TeamSemantics.*` (shed `Core.Logic.`). *Gate:* only after 1–3 — it touches
    14+ consumers, so land it on a proven structure. (High churn; lowest urgency.)
@@ -180,7 +185,11 @@ extended with fragment-relative `definableClassWhere`, and the closure-lemma
 naming unified property-first. Carrier-level bisimulation lifted with two
 invariance consumers (BSML, MDL). The converse (full expressive completeness
 via normal forms) and the axiomatization / proof-theory program remain
-unbuilt. **Next deep step:** a BSML normal-form / converse theorem (phase 3
-open half) — where bisimulation invariance and `Definability` finally combine,
-and *uniform definability* emerges. Beyond that: the QBSML / MDL / InqML
-converses, then graduating BSMLOr / BSMLEmpty out of `Studies/`.
+unbuilt **except** BSML's soundness direction, now complete: `⟦BSML⟧ ⊆ convex
+∩ union-closed ∩ bisim-closed` is proved and `expressivelyComplete` pins the
+headline equality (converse `sorry`'d). **Next deep step:** characteristic
+(Hintikka) formulas + Hennessy-Milner (the prerequisite for *every* converse),
+then the BSML normal form discharging `expressiveCompleteness_converse`. Beyond
+that: the QBSML / MDL / InqML converses, then graduating BSMLOr / BSMLEmpty out
+of `Studies/`. NB: the Hintikka construction needs a closed `⊤`, which BSML
+lacks without an atom — handle via `[Nonempty Atom]` or a fold base case.

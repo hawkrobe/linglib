@@ -1498,6 +1498,7 @@ import Linglib.Core.Logic.Modal.BSML.Bridge
 import Linglib.Core.Logic.Modal.BSML.ClassicalValidities
 import Linglib.Core.Logic.Modal.BSML.Defs
 import Linglib.Core.Logic.Modal.BSML.Enrichment
+import Linglib.Core.Logic.Modal.BSML.ExpressiveCompleteness
 import Linglib.Core.Logic.Modal.BSML.Properties
 import Linglib.Core.Logic.Modal.QBSML.Defs
 import Linglib.Core.Logic.Modal.QBSML.Enrichment
@@ -2525,7 +2526,7 @@ import Linglib.Semantics.Tense.Modal.Matrix
 import Linglib.Studies.Sharvit2014
 import Linglib.Studies.Giannakidou2002
 import Linglib.Typology.TemporalConnectives
-import Linglib.Syntax.Minimalist.Tense.AgreeSOT
+import Linglib.Studies.Zeijlstra2012
 import Linglib.Syntax.Minimalist.Tense.InfinitivalTense
 -- Theories: Semantics.Questions
 import Linglib.Semantics.Questions.Partition.Constructors
