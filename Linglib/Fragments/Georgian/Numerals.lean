@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Georgian numeral profile (WALS Chs 53–56, 131)
@@ -12,7 +12,7 @@ namespace Fragments.Georgian
     suffix *-agan* (*or-agan* 'two each'). No numeral classifiers. *Da* (and)
     differs from *q'vela* (all). Obligatory plural; hybrid vigesimal-decimal
     base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Georgian"
   , iso := "kat"
   , ordinal := .firstSuppletion

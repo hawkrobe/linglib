@@ -18,6 +18,11 @@ suppletion hierarchy for ordinal formation.
 `ClassifierStatus` (WALS Ch 55) and `fromWALS55A` live in
 `Typology/ClassifierSystem.lean` and are re-imported here.
 
+The lexical numeral object (`Numeral.Comparison`, `Numeral.Entry`) that
+Fragments instantiate, and its denotation, live in the sibling
+`Typology/Numeral/Basic.lean` + `Semantics/Numerals/`. This file is the WALS
+typological survey.
+
 ## Schema
 
 - `OrdinalFormation` (Ch 53): ordinal numeral formation
@@ -26,14 +31,16 @@ suppletion hierarchy for ordinal formation.
 - `Region`: areal grouping (for cross-linguistic generalizations)
 - `PluralMarking`: nominal plural status (Sanches-Slobin)
 - `NumeralBase` (Ch 131): decimal/vigesimal/etc.
-- `NumeralProfile`: per-language bundle
+- `Profile`: per-language bundle
 
 Per-language data lives in `Fragments/{Lang}/Numerals.lean`.
 -/
 
 set_option autoImplicit false
 
-namespace Typology
+namespace Numeral
+
+open Typology (ClassifierStatus)
 
 /-- WALS Ch 53: how a language forms ordinal numerals from cardinals.
     The dominant pattern is "first" suppletive + higher ordinals regular. -/
@@ -114,7 +121,7 @@ inductive NumeralBase where
 
 /-- A language's numeral typology profile across all four WALS dimensions
     + areal region + plural-marking status. -/
-structure NumeralProfile where
+structure Profile where
   language : String
   /-- ISO 639-3 code. -/
   iso : String
@@ -135,27 +142,27 @@ structure NumeralProfile where
   deriving Repr, DecidableEq
 
 /-- Does a language have obligatory numeral classifiers? -/
-def NumeralProfile.hasObligatoryClassifiers (p : NumeralProfile) : Bool :=
+def Profile.hasObligatoryClassifiers (p : Profile) : Bool :=
   p.classifier == .obligatory
 
 /-- Does a language have any numeral classifiers (obligatory or optional)? -/
-def NumeralProfile.hasClassifiers (p : NumeralProfile) : Bool :=
+def Profile.hasClassifiers (p : Profile) : Bool :=
   p.classifier != .absent
 
 /-- Does a language have obligatory plural marking on common nouns? -/
-def NumeralProfile.hasObligatoryPlural (p : NumeralProfile) : Bool :=
+def Profile.hasObligatoryPlural (p : Profile) : Bool :=
   p.pluralMarking == .obligatory
 
 /-- Does a language form "first" by suppletion? -/
-def NumeralProfile.hasFirstSuppletion (p : NumeralProfile) : Bool :=
+def Profile.hasFirstSuppletion (p : Profile) : Bool :=
   p.ordinal == .firstSuppletion || p.ordinal == .firstSecondSuppletion
 
 /-- Does a language have a morphological distributive numeral form? -/
-def NumeralProfile.hasDistributive (p : NumeralProfile) : Bool :=
+def Profile.hasDistributive (p : Profile) : Bool :=
   p.distributive != .noDistributive
 
 /-- Is a language in the East/Southeast Asian region? -/
-def NumeralProfile.isEastSoutheastAsian (p : NumeralProfile) : Bool :=
+def Profile.isEastSoutheastAsian (p : Profile) : Bool :=
   p.region == .eastAsia || p.region == .southeastAsia
 
 -- ============================================================================
@@ -369,4 +376,4 @@ theorem suppletion_frequency_matches_hierarchy :
     ch53Distribution.firstSecondSuppletion > ch53Distribution.allFromCardinals := by
   decide
 
-end Typology
+end Numeral

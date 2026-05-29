@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Hungarian numeral profile (WALS Chs 53–56, 131)
@@ -12,7 +12,7 @@ namespace Fragments.Hungarian
     reduplication (*ket-ket* 'two-two'). No numeral classifiers. *És* (and)
     differs from *minden* (all/every). Obligatory plural with *-k*;
     decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Hungarian"
   , iso := "hun"
   , ordinal := .firstSuppletion

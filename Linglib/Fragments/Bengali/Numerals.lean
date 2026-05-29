@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Bengali numeral profile (WALS Chs 53–56, 131)
@@ -11,7 +11,7 @@ namespace Fragments.Bengali
     suppletive. Distributive by reduplication. Optional classifiers (*tin-ta
     boi* 'three-CL book', but bare *tin boi* also grammatical). *Ebong* (and)
     differs from *sob* (all). Optional plural; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Bengali"
   , iso := "ben"
   , ordinal := .firstSuppletion

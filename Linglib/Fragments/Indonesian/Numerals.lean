@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Indonesian numeral profile (WALS Chs 53–56, 131)
@@ -12,7 +12,7 @@ namespace Fragments.Indonesian
     morphological distributive. Obligatory numeral classifiers (*tiga orang
     murid* 'three CL student'). *Dan* (and) differs from *semua* (all).
     Optional plural by reduplication; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Indonesian"
   , iso := "ind"
   , ordinal := .various

@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Finnish numeral profile (WALS Chs 53–56, 131)
@@ -11,7 +11,7 @@ namespace Fragments.Finnish
     'different', higher ordinals regular with *-(n)s* suffix (*kolmas* 'third').
     No morphological distributive. No classifiers. *Ja* (and) differs from
     *kaikki* (all). Obligatory plural with *-t*; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Finnish"
   , iso := "fin"
   , ordinal := .firstSecondSuppletion

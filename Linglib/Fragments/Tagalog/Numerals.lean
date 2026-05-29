@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Tagalog numeral profile (WALS Chs 53–56, 131)
@@ -12,7 +12,7 @@ namespace Fragments.Tagalog
     (*dalawa-dalawa* 'two-two'). No obligatory numeral classifiers (linkers
     *na*/*ng* serve a different function). *At* (and) and *lahat* (all) are
     differentiated. Optional plural (*mga*); decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Tagalog"
   , iso := "tgl"
   , ordinal := .various

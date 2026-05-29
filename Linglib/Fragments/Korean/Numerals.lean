@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Korean numeral profile (WALS Chs 53–56, 131)
@@ -12,7 +12,7 @@ namespace Fragments.Korean
     each'). Optional numeral classifiers (*se myeong-ui haksaeng* 'three CL
     student'). *Gwa*/*wa* (and) differs from *modu* (all). Optional plural
     with *-deul*; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Korean"
   , iso := "kor"
   , ordinal := .firstSuppletion

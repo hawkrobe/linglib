@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Burmese numeral profile (WALS Chs 53–56, 131)
@@ -11,7 +11,7 @@ namespace Fragments.Burmese
     Pali; modern ordinals use *tha-* prefix); various pattern. Numeral
     classifiers obligatory (*lu thon yauk* 'person three CL'). No
     morphological distributive. No grammatical plural; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Burmese"
   , iso := "mya"
   , ordinal := .various

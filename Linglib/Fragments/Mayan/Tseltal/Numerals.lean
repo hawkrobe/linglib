@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Tseltal numeral profile (WALS Chs 53–56, 131)
@@ -11,7 +11,7 @@ namespace Fragments.Mayan.Tseltal
     classifiers obligatory (distinct from Mayan noun classifiers). No
     morphological distributive. Conjunction and universal quantifier are
     differentiated. No obligatory plural on nouns; vigesimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Tseltal"
   , iso := "tzh"
   , ordinal := .noOrdinals

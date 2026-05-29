@@ -1,5 +1,6 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Semantics.Quantification.Quantifier
+import Linglib.Typology.Numeral.Basic
 
 /-!
 # Unified Numeral Semantics
@@ -375,5 +376,56 @@ theorem gqt_exactly_agrees {α : Type*} [Fintype α]
   Iff.rfl
 
 end GQTBridge
+
+/-! ### Denotation of the `Typology.Numeral` object
+
+The lexical numeral object (`Numeral.Comparison`, `Numeral.Entry`) is owned by
+`Typology/Numeral/Basic.lean`; this section is the *semantics* side — it imports
+that object and provides its `relationalGQ` denotation, mirroring how
+`Semantics/Reference/PronounDenotation.lean` denotes the `Pronoun.Entry` object.
+The denotation is **by construction** a `Core.Scale.relationalGQ`, so every lemma
+about `relationalGQ` transfers to every numeral entry. -/
+
+/-- The order relation a `Comparison` stands for — @cite{kennedy-2015}'s `REL`.
+    Lives on the semantics side: it is the interpretation of the theory-neutral
+    `Numeral.Comparison` symbol. -/
+def _root_.Numeral.Comparison.rel {α : Type*} [LinearOrder α] :
+    Numeral.Comparison → α → α → Prop
+  | .eq => (· = ·) | .ge => (· ≥ ·) | .gt => (· > ·)
+  | .le => (· ≤ ·) | .lt => (· < ·)
+
+/-- Denotation of a numeral entry against a measure `μ : E → α` and a magnitude
+    `m`: @cite{kennedy-2015}'s de-Fregean GQ `λx. REL (μ x) m`. The measure and
+    magnitude are supplied compositionally; bare cardinals take `μ = id`,
+    `α = ℕ`. -/
+def _root_.Numeral.Entry.denote {E α : Type*} [LinearOrder α]
+    (e : Numeral.Entry) (μ : E → α) (m : α) : E → Prop :=
+  Core.Scale.relationalGQ e.comparison.rel μ m
+
+/-- Bare cardinal denotation: count with `μ = id` and the entry's own argument. -/
+def _root_.Numeral.Entry.denoteCard (e : Numeral.Entry) : Nat → Prop :=
+  e.denote id e.argument
+
+/-- The bare-comparison cardinal recovers `bareMeaning` (definitionally). -/
+theorem denoteCard_eq_bareMeaning (e : Numeral.Entry) (h : e.comparison = .eq) :
+    e.denoteCard = bareMeaning e.argument := by
+  simp only [Numeral.Entry.denoteCard, Numeral.Entry.denote, h]; rfl
+
+/-- The "at least" cardinal recovers `atLeastMeaning`. -/
+theorem denoteCard_eq_atLeastMeaning (e : Numeral.Entry) (h : e.comparison = .ge) :
+    e.denoteCard = atLeastMeaning e.argument := by
+  simp only [Numeral.Entry.denoteCard, Numeral.Entry.denote, h]; rfl
+
+/-- **Class A/B boundary behaviour, free for every numeral entry.** At an entity
+    whose measure equals the magnitude, the numeral holds iff its comparison is
+    non-strict (bare `=`, Class B `≥`/`≤`) and fails for the strict Class A
+    comparisons (`>`/`<`). Inherited from `relationalGQ`, no per-entry proof. -/
+theorem denote_at_boundary {E α : Type*} [LinearOrder α]
+    (e : Numeral.Entry) (μ : E → α) (m : α) {x : E} (h : μ x = m) :
+    e.denote μ m x ↔ ¬ e.comparison.isStrict := by
+  obtain ⟨_, c, _⟩ := e
+  cases c <;>
+    simp [Numeral.Entry.denote, Numeral.Comparison.rel, Numeral.Comparison.isStrict,
+      Core.Scale.relationalGQ, h]
 
 end Semantics.Numerals

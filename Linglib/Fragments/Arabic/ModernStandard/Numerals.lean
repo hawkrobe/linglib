@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Modern Standard Arabic Numeral Profile (WALS Chs 53–56, 131)
@@ -9,7 +9,7 @@ per Ryding ch 15 (pp. 329–365).
 
 ## What's encoded vs documented
 
-The substrate `Typology.NumeralProfile` records a small set of
+The substrate `Numeral.Profile` records a small set of
 typological dimensions (ordinal-formation strategy, distributive
 marking, classifier presence, conjunction–quantifier identity, plural
 marking, base). The arithmetically richer phenomena MSA is famous for
@@ -46,7 +46,7 @@ namespace Fragments.Arabic.ModernStandard
     classifiers. *wa-* 'and' and *kull* 'all/every' are morphologically
     distinct. Dual + plural marking on counted nouns is obligatory.
     Decimal base (Ryding §15.1). -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Arabic (Modern Standard)"
   , iso := "arb"
   , ordinal := .firstSuppletion

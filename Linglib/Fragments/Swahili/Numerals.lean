@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Swahili numeral profile (WALS Chs 53–56, 131)
@@ -12,7 +12,7 @@ namespace Fragments.Swahili
     distributive. No numeral classifiers (noun class system serves a different
     function). *Na* (and) differs from *-ote* (all). Obligatory plural via
     noun class prefixes; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Swahili"
   , iso := "swh"
   , ordinal := .firstSuppletion

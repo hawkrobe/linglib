@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Vietnamese numeral profile (WALS Chs 53–56, 131)
@@ -11,7 +11,7 @@ namespace Fragments.Vietnamese
     *thu hai* 'second') — regular. No morphological distributive. Obligatory
     classifiers (*ba con meo* 'three CL cat'). No grammatical plural;
     decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
+def numeralProfile : Numeral.Profile :=
   { language := "Vietnamese"
   , iso := "vie"
   , ordinal := .allFromCardinals
