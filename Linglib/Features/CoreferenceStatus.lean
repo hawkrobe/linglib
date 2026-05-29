@@ -22,4 +22,20 @@ inductive CoreferenceStatus where
   | unspecified
   deriving Repr, DecidableEq
 
+/-- The binding-theoretic class of a nominal expression, shared across the
+    syntactic frameworks (HPSG, Dependency Grammar, Minimalism) so their
+    `classifyNominal` functions return the same type. The per-language
+    realization (which forms are which) lives in a Fragment helper (e.g.
+    `Fragments.English.NominalClassification`). -/
+inductive NominalType where
+  /-- Reflexive anaphor (*himself*, *herself*, *themselves*). -/
+  | reflexive
+  /-- Reciprocal anaphor (*each other*, *one another*). -/
+  | reciprocal
+  /-- Personal/other pronoun (*he*, *she*, *they*, …). -/
+  | pronoun
+  /-- Referring expression (proper name, full NP). -/
+  | rExpression
+  deriving Repr, DecidableEq
+
 end Features

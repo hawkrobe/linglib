@@ -366,9 +366,14 @@ theorem smpm_no_scope_operator :
 theorem smpm_copy_cannot_bear_focus :
     (copyControlProfile smpmCopyControlType).copyCanBearFocus = false := rfl
 
-/-- The clitic requirement is derived from the fragment. -/
+/-- The clitic requirement, derived from the fragment and routed through the
+    Cardinaletti–Starke deficiency ranking: the required controlled-subject form
+    is strictly more deficient (lower `Strength.rank`) than the nonclitic strong
+    alternative. -/
 theorem smpm_controlled_must_be_clitic :
-    Fragments.Mixtec.SMPM.controlledSubjectMustBeClitic = true := rfl
+    Pronoun.Strength.rank Fragments.Mixtec.SMPM.controlledSubjectStrength
+      < Pronoun.Strength.rank Fragments.Mixtec.SMPM.PronounForm.noncliticStrength :=
+  Fragments.Mixtec.SMPM.controlledSubject_is_most_deficient
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9: Exempt Anaphor Argument (§6)
