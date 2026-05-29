@@ -19,54 +19,34 @@ section QuantifierSemantics
 /-! ## Bridge to Canonical GQ Denotations
 
 The 4-element `World` type used in the entailment domain doubles as an
-entity domain. We create a `Frame` + `Fintype` instance so that the
-canonical GQ denotations from `Semantics.Quantification.Quantifier`
-(`every_sem`, `some_sem`, `no_sem`) can be instantiated here.
+entity domain, so the canonical GQ denotations from
+`Semantics.Quantification.Quantifier` (`every_sem`, `some_sem`, `no_sem`),
+which are polymorphic over any entity type, instantiate at `World`
+directly.
 
 This bridges the entailment-testing infrastructure (finite, decidable)
 with the model-theoretic GQ definitions (proved conservative and monotone
 for arbitrary finite models).
 
-**Relation to general monotonicity theorems.** The `decide` proofs
-below verify monotonicity over the 4-element `World` model. The general
+**Relation to general monotonicity theorems.** The monotonicity theorems
+below verify the property over the 4-element `World` model. The general
 theorems — `every_scope_up`, `no_scope_down`, `every_restrictor_down`,
 `some_scope_up` — are proved for arbitrary `Fintype` in
 `Quantifier.lean` and `Core.Logic.Quantification`. The results here are
 consistent instances of those general proofs.
 -/
 
-/-- The entailment World type, viewed as a Frame entity domain. -/
-def entailmentModel : Core.Logic.Intensional.Frame :=
-  { Entity := World, Index := Unit }
-
-instance : Fintype entailmentModel.Entity where
-  elems := ({World.w0, World.w1, World.w2, World.w3} : Finset World)
-  complete := fun x => by cases x <;> (unfold entailmentModel; simp)
-
-
-instance (R S : entailmentModel.Entity → Prop) [DecidablePred R] [DecidablePred S] :
-    Decidable (every_sem entailmentModel R S) := by
-  unfold every_sem; exact inferInstance
-
-instance (R S : entailmentModel.Entity → Prop) [DecidablePred R] [DecidablePred S] :
-    Decidable (some_sem entailmentModel R S) := by
-  unfold some_sem; exact inferInstance
-
-instance (R S : entailmentModel.Entity → Prop) [DecidablePred R] [DecidablePred S] :
-    Decidable (no_sem entailmentModel R S) := by
-  unfold no_sem; exact inferInstance
-
 /-- "Every A is B" — delegates to canonical `every_sem`. -/
 def every (a b : Set World) : Prop :=
-  every_sem entailmentModel a b
+  every_sem a b
 
 /-- "Some A is B" — delegates to canonical `some_sem`. -/
 def some' (a b : Set World) : Prop :=
-  some_sem entailmentModel a b
+  some_sem a b
 
 /-- "No A is B" — delegates to canonical `no_sem`. -/
 def no (a b : Set World) : Prop :=
-  no_sem entailmentModel a b
+  no_sem a b
 
 def fixedRestr : Set World := p01
 
