@@ -24,20 +24,24 @@ existing files in the same area.
 ### Formalize a paper
 
 Most contributions start by picking a paper from a subfield you know
-and writing a study file under `Linglib/Phenomena/{Phenomenon}/Studies/{AuthorYear}.lean`.
+and writing a study file at `Linglib/Studies/{AuthorYear}.lean` (study
+files are flat, named author-year).
 
 A study file typically:
-- Imports the relevant theory from `Linglib/Theories/`.
+- Imports the relevant theory layer (`Linglib/Semantics/`,
+  `Linglib/Syntax/`, `Linglib/Pragmatics/`, …).
 - Imports any cross-linguistic data needed from `Linglib/Fragments/`.
 - Encodes the paper's model — definitions, denotations, constraint
   ranking, whatever the paper specifies — in Lean syntax.
 - Proves the predictions the paper claims, using the encoded model.
 - Cites the paper in the module docstring with `@cite{key}` (add the
-  BibTeX entry to `blog/data/references.bib` first).
+  BibTeX entry to `blog/references.bib` first).
 
-Look at any existing file under `Linglib/Phenomena/*/Studies/` for a
-template. `Phenomena/Definiteness/Studies/Jenks2018.lean` and
-`Phenomena/Implicatures/Studies/` are reasonable starting points.
+Look at any existing file under `Linglib/Studies/` for a template —
+`Studies/Jenks2018.lean` (definiteness) and
+`Studies/FrankGoodman2012PMF.lean` (an RSA implicature model) are
+reasonable starting points. Theory-neutral empirical data lives
+separately under `Linglib/Phenomena/{Phenomenon}/`.
 
 ### Add a Fragment
 
@@ -54,7 +58,7 @@ fragment (e.g. `Fragments/Mayan/Tseltalan.lean`) for the schema.
 
 ### Pick something off the wishlist
 
-The [wishlist](https://hawkrobe.github.io/linglib/wishlist/) is a
+The [wishlist](https://linglib.io/wishlist/) is a
 curated list of theorems, papers, languages, and tools we'd love to
 see formalized — modeled on Lean's
 [1000+ theorems](https://leanprover-community.github.io/1000.html).
@@ -95,9 +99,10 @@ module docstring placed *after* the `import` statements (Lean
 requires imports to come first).
 
 **Citations.** Cite papers with `@cite{key}`; never inline
-`Author (Year)`. Add the BibTeX entry to `blog/data/references.bib`
-first using `lastname-lastname-year` keys, then regenerate the
-rendered bibliography via `python3 blog/scripts/gen_bibliography.py`.
+`Author (Year)`. Add the BibTeX entry to `blog/references.bib` first
+using `lastname-lastname-year` keys, and validate with
+`python3 blog/scripts/gen_bibliography.py --check`. The rendered
+bibliography is a build artifact (regenerated in CI) — don't commit it.
 
 **Proof style.** Prefer structural tactics (`exact`, `simp only`,
 `decide`, `omega`, `linarith`) over bare `simp` or `native_decide`.
@@ -118,16 +123,16 @@ explicitly). Use `Type*` not `Type 0`. Prefer `Prop` with
 blanket. Cite the leaf file. Unnecessary imports slow builds and
 create false dependency edges.
 
-**Changelog.** Bump `CHANGELOG.md` via
-`python3 scripts/changelog_add.py` (not direct edits — the file is
-large and concurrent edits race).
-
 ## Pull requests
 
 - Branch from `main`, push to a fork, open a PR.
 - One coherent change per PR. Small is good.
-- Keep commit messages short (~50–120 chars).
-- The CHANGELOG entry tells the longer story (10–30 lines).
+- The repo is **squash-merge only**, so the PR title becomes the commit
+  on `main` — write it in mathlib's `type(scope): subject` form
+  (lowercase imperative, ≤ 72 chars), e.g.
+  `feat(Studies): formalize Jenks 2018 definiteness`.
+- Put the longer story in the PR description; declare cross-PR
+  dependencies with a `Depends on #NNNN` line.
 
 If you're not sure whether a contribution makes sense, open an issue
 first to discuss. Substantive feedback on direction is welcome before
