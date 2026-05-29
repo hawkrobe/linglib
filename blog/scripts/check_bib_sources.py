@@ -9,7 +9,7 @@ import re, os, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent  # scripts/ → blog/ → repo root
-BIB = ROOT / "blog" / "data" / "references.bib"
+BIB = ROOT / "blog" / "references.bib"
 LINGLIB = ROOT / "Linglib"
 
 def parse_entries(text):

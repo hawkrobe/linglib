@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate blog/content/bibliography.md from blog/data/references.bib.
+"""Generate blog/content/bibliography.md from blog/references.bib.
 
 Also scans Lean source files for @cite{key} references, validates them
 against the .bib, and appends a "cited in" reverse index to each entry.
@@ -19,7 +19,7 @@ REPO = "https://github.com/hawkrobe/linglib/blob/main/Linglib"
 ROOT = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = ROOT.parent
 LEAN_DIR = PROJECT_ROOT / "Linglib"
-BIB_PATH = ROOT / "data" / "references.bib"
+BIB_PATH = ROOT / "references.bib"
 OUT_PATH = ROOT / "content" / "bibliography.md"
 
 # Maps each bib subfield value to a top-level tag.

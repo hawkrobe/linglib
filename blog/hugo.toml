@@ -3,10 +3,10 @@ languageCode = "en-us"
 title = "Linglib"
 theme = "PaperMod"
 
-# Most files under data/ are not Hugo data sources — references.bib is consumed
-# by scripts/gen_bibliography.py, the audit notes are workflow artifacts, and
-# zotero.py is tooling. Hugo only needs the .toml files.
-ignoreFiles = ['\.py~?$', '\.bib$', '/data/audit.*\.md$', '/data/AUDIT_.*\.md$']
+# references.bib and the .py scripts live under the Hugo root but are tooling,
+# not content or site data — keep Hugo from rendering them. (data/ now holds
+# only genuine site data, e.g. stats.toml.)
+ignoreFiles = ['\.py~?$', '\.bib$']
 
 [params]
   description = "A community library for formal linguistics in Lean 4."
