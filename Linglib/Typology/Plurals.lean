@@ -1,3 +1,5 @@
+import Linglib.Typology.Pronoun.WALS
+
 /-!
 # Plural-marking typology — substrate types
 @cite{wals-2013} (Chs 33-36)
@@ -9,7 +11,8 @@ plurality across @cite{wals-2013} chapters 33–36.
 
 - `PluralCoding` (Ch 33): how plurality is morphologically realized
 - `PluralOccurrence` (Ch 34): when plural marking occurs (animacy + obligatoriness)
-- `PronounPlurality` (Ch 35): how independent pronouns encode number
+- `Pronoun.Plurality` (Ch 35): how independent pronouns encode number —
+  the canonical type lives in `Typology/Pronoun/WALS.lean`; this file bundles it
 - `AssociativePlural` (Ch 36): "X and associates" construction
 - `PluralityProfile`: per-language bundle of the four
 
@@ -73,26 +76,6 @@ inductive PluralOccurrence where
   | allNounsAlwaysObligatory
   deriving DecidableEq, Repr
 
-/-- WALS Ch 35: how independent personal pronouns encode number. -/
-inductive PronounPlurality where
-  /-- No independent subject pronouns (e.g., Acoma). -/
-  | noIndependentPronouns
-  /-- Same form for sg and pl (e.g., Pirahã ti 'I/we'). -/
-  | numberIndifferent
-  /-- Both person and number are affixal. -/
-  | personNumberAffixes
-  /-- Person+number fused in stem (e.g., Dogon mi/emme). -/
-  | personNumberStem
-  /-- Person-number stem + pronominal plural affix. -/
-  | pnStemPronominalAffix
-  /-- Person-number stem + nominal plural affix (e.g., Russian). -/
-  | pnStemNominalAffix
-  /-- Person stem + pronominal plural affix (e.g., Chuvash). -/
-  | personStemPronominalAffix
-  /-- Person stem + nominal plural affix (e.g., Mandarin -men). -/
-  | personStemNominalAffix
-  deriving DecidableEq, Repr
-
 /-- WALS Ch 36: associative plural marking ("X and associates").
     The typological split is between marker-overlap with additive
     plural vs dedicated associative form. -/
@@ -117,8 +100,8 @@ structure PluralityProfile where
   coding : PluralCoding
   /-- Ch 34: when plural marking occurs. -/
   occurrence : PluralOccurrence
-  /-- Ch 35: pronoun plurality type. -/
-  pronounPlurality : PronounPlurality
+  /-- Ch 35: pronoun plurality type (canonical type in `Typology/Pronoun/WALS.lean`). -/
+  pronounPlurality : Pronoun.Plurality
   /-- Ch 36: associative plural strategy. -/
   associativePlural : AssociativePlural
   deriving Repr, DecidableEq

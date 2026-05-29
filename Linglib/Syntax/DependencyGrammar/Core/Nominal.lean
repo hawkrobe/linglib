@@ -5,6 +5,8 @@ Used by d-command (Coreference.lean) binding analyses.
 -/
 
 import Linglib.Core.Word
+import Linglib.Features.CoreferenceStatus
+import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
@@ -12,56 +14,15 @@ import Linglib.Fragments.English.Predicates.Verbal
 namespace DepGrammar.Nominal
 
 -- ============================================================================
--- Nominal Classification
+-- Nominal Classification (shared helper)
 -- ============================================================================
 
-/-- Types of nominal expressions for coreference. -/
-inductive NominalType where
-  | reflexive   -- himself, herself, themselves
-  | reciprocal  -- each other, one another
-  | pronoun     -- he, she, they, him, her, them
-  | rExpression -- John, Mary, the cat
-  deriving Repr, DecidableEq
-
-/-- Is this a nominal category? -/
-def isNominalCat (c : UD.UPOS) : Bool :=
-  c == .PROPN || c == .NOUN || c == .PRON
-
-/-- Classify a word as a nominal type. -/
-def classifyNominal (w : Word) : Option NominalType :=
-  if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
-    some .reflexive
-  else if w.form ∈ ["each other", "one another"] then
-    some .reciprocal
-  else if w.form ∈ ["he", "she", "they", "him", "her", "them", "it"] then
-    some .pronoun
-  else if isNominalCat w.cat then
-    some .rExpression
-  else
-    none
-
--- ============================================================================
--- Phi-Feature Agreement
--- ============================================================================
-
-/-- Check phi-feature agreement (person, number, gender) between two nominals. -/
-def phiAgree (w1 w2 : Word) : Bool :=
-  let personMatch := match w1.features.person, w2.features.person with
-    | some p1, some p2 => p1 == p2
-    | _, _ => true
-  let numberMatch := match w1.features.number, w2.features.number with
-    | some n1, some n2 => n1 == n2
-    | _, _ => true
-  let genderMatch :=
-    if w2.form == "himself" then
-      w1.form ∈ ["John", "he", "him"]
-    else if w2.form == "herself" then
-      w1.form ∈ ["Mary", "she", "her"]
-    else if w2.form ∈ ["themselves", "ourselves"] then
-      w1.features.number == some .pl
-    else
-      true
-  personMatch && numberMatch && genderMatch
+-- Nominal classification and φ-agreement are the shared, lexicon-driven
+-- `Fragments.English.NominalClassification` definitions, re-exported here so
+-- the d-command binding analyses (`Coreference.lean`) keep referring to them
+-- through `DepGrammar.Nominal`.
+export Features (NominalType)
+export Fragments.English.NominalClassification (isNominalCat classifyNominal phiAgree)
 
 -- ============================================================================
 -- Shared Test Words (from Fragments, used by Coreference.lean)

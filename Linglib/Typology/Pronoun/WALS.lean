@@ -1,3 +1,4 @@
+import Linglib.Data.WALS.Features.F35A
 import Linglib.Data.WALS.Features.F39A
 import Linglib.Data.WALS.Features.F39B
 import Linglib.Data.WALS.Features.F40A
@@ -27,6 +28,10 @@ feature-system `Profile` (Chs 39–48) and phonological `ShapeProfile`
   marking), WALS Chs 39–48.
 * `Pronoun.ShapeProfile` — per-language M-T / N-M phonological-shape survey,
   WALS Chs 136–137 (@cite{nichols-peterson-2013}).
+* `Pronoun.Plurality` — how independent personal pronouns encode number,
+  WALS Ch 35. The canonical home for this pronoun-paradigm feature; the
+  per-language values are carried by `Typology.PluralityProfile` (which bundles
+  it with the nominal-plurality Chs 33/34/36).
 -/
 
 set_option autoImplicit false
@@ -367,6 +372,55 @@ def InclusiveExclusive.fromClusivity : Features.Clusivity.System → InclusiveEx
   | .minimalAugmented   => .inclusiveExclusive
   | .unitAugmented      => .inclusiveExclusive
   | .numberIndifferent  => .weEqualsI
+
+end Pronoun
+
+/-! ### Pronoun plurality (WALS Ch 35) -/
+
+namespace Pronoun
+
+/-- WALS Ch 35: how independent personal pronouns encode number. The canonical
+    home for this pronoun-paradigm feature; `Typology.PluralityProfile` carries
+    the per-language values alongside the nominal-plurality chapters (33/34/36). -/
+inductive Plurality where
+  /-- No independent subject pronouns (e.g., Acoma). -/
+  | noIndependentPronouns
+  /-- Same form for sg and pl (e.g., Pirahã ti 'I/we'). -/
+  | numberIndifferent
+  /-- Both person and number are affixal. -/
+  | personNumberAffixes
+  /-- Person+number fused in stem (e.g., Dogon mi/emme). -/
+  | personNumberStem
+  /-- Person-number stem + pronominal plural affix. -/
+  | pnStemPronominalAffix
+  /-- Person-number stem + nominal plural affix (e.g., Russian). -/
+  | pnStemNominalAffix
+  /-- Person stem + pronominal plural affix (e.g., Chuvash). -/
+  | personStemPronominalAffix
+  /-- Person stem + nominal plural affix (e.g., Mandarin -men). -/
+  | personStemNominalAffix
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Ch 35 raw values → the friendly `Plurality` labels. -/
+def fromWALS35A : Data.WALS.F35A.PronounPlurality → Plurality
+  | .noIndependentSubjectPronouns          => .noIndependentPronouns
+  | .numberIndifferentPronouns             => .numberIndifferent
+  | .personNumberAffixes                   => .personNumberAffixes
+  | .personNumberStem                      => .personNumberStem
+  | .personNumberStemPronominalPluralAffix => .pnStemPronominalAffix
+  | .personNumberStemNominalPluralAffix    => .pnStemNominalAffix
+  | .personStemPronominalPluralAffix       => .personStemPronominalAffix
+  | .personStemNominalPluralAffix          => .personStemNominalAffix
+
+private abbrev ch35 := Data.WALS.F35A.allData
+
+set_option maxRecDepth 8192 in
+/-- A fused person-number stem is the single most common pronoun-plurality
+    strategy cross-linguistically (114/261 languages in WALS Ch 35). -/
+theorem personNumberStem_is_plurality (other : Data.WALS.F35A.PronounPlurality) :
+    (ch35.filter (·.value == .personNumberStem)).length ≥
+    (ch35.filter (·.value == other)).length := by
+  cases other <;> decide
 
 end Pronoun
 

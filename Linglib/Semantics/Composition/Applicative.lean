@@ -1,3 +1,4 @@
+import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Composition.Continuation
 import Linglib.Core.Assignment
 
@@ -190,49 +191,49 @@ section SetApplicative
 
 variable {A B C : Type}
 
-/-- Set ρ: the singleton set `{x}`. -/
-def setPure (x : A) : A → Prop := fun y => y = x
+/-- Set ρ: the singleton set `{x}`. mathlib's `Set` applicative `pure`. -/
+def setPure (x : A) : Set A := pure x
 
-/-- Set ⊛: pointwise function application across sets.
-    `{f x | f ∈ m, x ∈ n}` -/
-def setAp (m : (A → B) → Prop) (n : A → Prop) : B → Prop :=
-  fun b => ∃ f, m f ∧ ∃ x, n x ∧ f x = b
+/-- Set ⊛: pointwise function application across sets, `{f x | f ∈ m, x ∈ n}`.
+    mathlib's `Set` applicative `<*>` (`Set.seq`). -/
+def setAp (m : Set (A → B)) (n : Set A) : Set B := m <*> n
 
-/-- **Homomorphism**: `{f} ⊛ {x} = {f x}`. -/
+@[simp] theorem mem_setPure (x y : A) : y ∈ setPure x ↔ y = x := Iff.rfl
+
+/-- Application-form characterisation of `setPure` (consumers treat
+    `Set A = A → Prop`). -/
+@[simp] theorem setPure_apply (x y : A) : setPure x y ↔ y = x := Iff.rfl
+
+@[simp] theorem mem_setAp (m : Set (A → B)) (n : Set A) (b : B) :
+    b ∈ setAp m n ↔ ∃ f, f ∈ m ∧ ∃ x, x ∈ n ∧ f x = b := by
+  simp only [setAp, Set.seq_eq_set_seq, Set.mem_seq_iff]
+
+/-- Application-form characterisation of `setAp`. -/
+@[simp] theorem setAp_apply (m : Set (A → B)) (n : Set A) (b : B) :
+    setAp m n b ↔ ∃ f, m f ∧ ∃ x, n x ∧ f x = b := mem_setAp m n b
+
+/-- **Homomorphism**: `{f} ⊛ {x} = {f x}`. mathlib's applicative homomorphism
+    law for `Set`. -/
 theorem set_homomorphism (f : A → B) (x : A) :
     setAp (setPure f) (setPure x) = setPure (f x) := by
-  funext b; apply propext; simp only [setAp, setPure]; constructor
-  · rintro ⟨g, rfl, y, rfl, rfl⟩; rfl
-  · intro hb; exact ⟨f, rfl, x, rfl, hb.symm⟩
+  ext b; simp only [mem_setAp, mem_setPure]; aesop
 
 /-- **Identity**: `{id} ⊛ v = v`. -/
-theorem set_identity (v : A → Prop) :
+theorem set_identity (v : Set A) :
     setAp (setPure id) v = v := by
-  funext b; apply propext; simp only [setAp, setPure]; constructor
-  · rintro ⟨g, rfl, x, hx, rfl⟩; exact hx
-  · intro hb; exact ⟨id, rfl, b, hb, rfl⟩
+  ext b; simp only [mem_setAp, mem_setPure]; aesop
 
 /-- **Interchange**: `u ⊛ {y} = {(fun f => f y)} ⊛ u`. -/
-theorem set_interchange (u : (A → B) → Prop) (y : A) :
+theorem set_interchange (u : Set (A → B)) (y : A) :
     setAp u (setPure y) = setAp (setPure (fun f => f y)) u := by
-  funext b; apply propext; simp only [setAp, setPure]; constructor
-  · intro ⟨f, hf, x, hxy, hfxb⟩
-    exact ⟨fun f => f y, rfl, f, hf, hxy ▸ hfxb⟩
-  · intro ⟨g, hgy, f, hf, hgfb⟩
-    subst hgy; exact ⟨f, hf, y, rfl, hgfb⟩
+  ext b; simp only [mem_setAp, mem_setPure]; aesop
 
 /-- **Composition**: `{∘} ⊛ u ⊛ v ⊛ w = u ⊛ (v ⊛ w)`. -/
-theorem set_composition (u : (B → C) → Prop) (v : (A → B) → Prop)
-    (w : A → Prop) :
+theorem set_composition (u : Set (B → C)) (v : Set (A → B))
+    (w : Set A) :
     setAp (setAp (setAp (setPure Function.comp) u) v) w =
     setAp u (setAp v w) := by
-  funext c; apply propext; simp only [setAp, setPure]; constructor
-  · rintro ⟨k, ⟨h, ⟨co, rfl, g, hg, rfl⟩, f, hf, rfl⟩, x, hx, rfl⟩
-    exact ⟨g, hg, f x, ⟨f, hf, x, hx, rfl⟩, rfl⟩
-  · rintro ⟨g, hg, _, ⟨f, hf, x, hx, rfl⟩, rfl⟩
-    exact ⟨fun x => g (f x),
-      ⟨Function.comp g, ⟨Function.comp, rfl, g, hg, rfl⟩, f, hf, rfl⟩,
-      x, hx, rfl⟩
+  ext c; simp only [mem_setAp, mem_setPure]; aesop
 
 end SetApplicative
 

@@ -1011,14 +1011,17 @@ section IndeterminacyBridge
 
 open Semantics.Composition.SetMonad
 
-/-- The set monad's η is the indeterminacy effect's `pure`. -/
+/-- The set monad's η is the indeterminacy effect's `pure` — mathlib's
+    `Set` singleton `{x}`. -/
 theorem indeterminacy_pure_is_eta {A : Type} (x : A) :
     eta x = fun y => y = x := rfl
 
-/-- The set monad's ⫝̸ is the indeterminacy effect's `bind`. -/
+/-- The set monad's ⫝̸ is the indeterminacy effect's `bind` — mathlib's
+    `Set` monad bind. -/
 theorem indeterminacy_bind_is_setBind {A B : Type}
     (m : A → Prop) (f : A → B → Prop) :
-    setBind m f = fun b => ∃ a, m a ∧ f a b := rfl
+    setBind m f = fun b => ∃ a, m a ∧ f a b := by
+  funext b; exact propext (setBind_apply m f b)
 
 /-- **Indeterminacy obeys ASSOCIATIVITY.** Re-export from `SetMonad.lean`.
 
