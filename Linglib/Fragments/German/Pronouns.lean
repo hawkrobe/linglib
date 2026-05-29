@@ -1,5 +1,5 @@
 import Linglib.Typology.Pronoun.Basic
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.WALS
 
 /-!
 # German Pronoun Fragment

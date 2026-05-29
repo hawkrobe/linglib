@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.WALS
 import Linglib.Features.Clusivity
 import Linglib.Features.Person
 

@@ -26,7 +26,7 @@ import urllib.error
 import urllib.parse
 from pathlib import Path
 
-BIB_PATH = Path(__file__).resolve().parent.parent / "data" / "references.bib"
+BIB_PATH = Path(__file__).resolve().parent.parent / "references.bib"
 
 # CrossRef polite pool: include contact email for higher rate limits
 HEADERS = {
