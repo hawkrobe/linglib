@@ -3,6 +3,7 @@ import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Core.Assignment
+import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
 
 /-!
 # The denotation of a pronoun
@@ -79,6 +80,23 @@ def Entry.denote {F : Frame} [PartialOrder F.Entity] (e : Entry) (i : ℕ)
     NominalDenot (Assignment F.Entity) PUnit F.Entity where
   presup := fun g _ => (e.phiPresup speaker addressee isFemale isInanimate).presup (g i)
   selector := fun g _ => some (interpPronoun (F := F) i g)
+
+/-! ### Fusion seam with the dynamic lookup interface -/
+
+/-- The pronoun's canonical variable selector `interpPronoun i` is exactly the
+`M = Id` extensional-baseline instance of the dynamic-anaphora lookup interface
+`HasFiberedLookup.iLookup` (`Semantics.Dynamic.Effects.HasFiberedLookup`,
+`instAssignmentHasFiberedLookup`). So static reference and dynamic (`Set`/`PMF`)
+anaphora already agree at the static fiber — modulo the `Option` partiality
+layer `Entry.denote` adds. This discharges the first step of the functor-
+parametric `NominalDenot` consolidation (`Nominal.lean`'s `Todo`): the remaining,
+higher-blast-radius stage makes `selector` itself functor-valued and *be*
+`iLookup`. -/
+theorem interpPronoun_eq_iLookup {F : Frame} (i : ℕ) (g : Assignment F.Entity)
+    (w : PUnit) :
+    interpPronoun (F := F) i g
+      = Semantics.Dynamic.Context.HasFiberedLookup.iLookup (M := Id) g i w :=
+  rfl
 
 /-! ### Featural definedness tests -/
 

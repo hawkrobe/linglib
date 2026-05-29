@@ -32,13 +32,24 @@ a context, so that the existing `presupOfReferent`-built definite denotations
 fold into a `NominalDenot` by `rfl` without migrating any consumer; the
 intrinsic presupposition is layered on separately in `toPrProp`.
 
-## Todo
+## Relation to the dynamic lookup interface
 
-* Generalise `selector` to a functor-valued `Ctx → W → M (Option E)` and have
-  the static (`Id`) case *be* `Semantics.Dynamic.Context.HasFiberedLookup`'s
-  `iLookup` rather than restate it — fusing static reference with dynamic
-  (`Set`/`PMF`) anaphora under one lookup. Lift `lambdaAbsG` to supply the
-  bound-variable selector.
+The unification this core was built toward is realized by the seam lemma
+`PronounDenotation.interpPronoun_eq_iLookup`: the pronoun's static
+`interpPronoun` selector *is* the `M = Id` extensional-baseline instance of
+`Semantics.Dynamic.Context.HasFiberedLookup.iLookup`, modulo the `Option`
+partiality layer this signature adds. Static reference and dynamic
+(`Set`/`PMF`) anaphora therefore meet at one lookup interface on the static
+fiber, and bound pronouns share that selector with binding supplied externally
+(`Semantics.Reference.Binding`).
+
+Carrying the effect functor `M` *in this structure* (so `selector` is
+`Ctx → W → M (Option E)` and literally `iLookup`) is deliberately **not** done
+here: with only `Id` exercised it would be the same un-exercised generality
+PR1 removed, and a faithful `resolve`/`toPrProp` for `M ≠ Id` needs a
+dynamic-semantic commitment (a nonempty-set / distribution presupposition) that
+belongs with the first dynamic consumer that requires it. Until then the seam
+lemma carries the connection.
 -/
 
 set_option autoImplicit false
