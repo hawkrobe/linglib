@@ -625,9 +625,10 @@ theorem complement_size_ordering :
 /-! ### Infinitival tense classes (@cite{wurmbrand-2014}) -/
 
 /-- @cite{wurmbrand-2014}'s three-way classification of infinitival complements
-    by tense behavior. Substrate consumed by `Studies/Wurmbrand2014` and
-    `Studies/Ostrove2026`; the paper's woll decomposition, temporal orientation,
-    and episodic predictions live in `Studies/Wurmbrand2014`. -/
+    by tense behavior. The type is consumed by `Studies/Wurmbrand2014` and
+    `Studies/Ostrove2026`; its `toComplementSize` map and the paper's woll
+    decomposition, temporal orientation, and episodic predictions live in
+    `Studies/Wurmbrand2014`. -/
 inductive InfinitivalTenseClass where
   /-- *decide*, *want*, *plan*: tenseless + woll → future-oriented. -/
   | futureIrrealis

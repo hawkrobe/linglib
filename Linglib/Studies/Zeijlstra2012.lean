@@ -40,6 +40,9 @@ reversing its c-command direction.
 * `zeijlstra_derives_shifted` derives the back-shifted reading from an
   *independent* embedded `[iPAST]` — one source of back-shift, distinct from the
   fn. 9 `[uPAST]`-as-non-future route.
+* Zeijlstra's parameter — whether embedded `T` may carry `[uPAST]` — is the
+  substrate `SOTParameter`; that SOT languages (`relative`) license the
+  simultaneous reading is `Semantics.Tense.sot_simultaneous_available`.
 
 ## Todo
 
@@ -127,18 +130,6 @@ theorem sotConfig_only_matrix_active (cfg : SOTAgreeConfig) :
     ∀ t ∈ cfg.embeddedTs, ¬ t.IsSemanticallyActive := by
   refine ⟨cfg.matrix_is_interpretable, fun t ht => ?_⟩
   simp [TenseHead.IsSemanticallyActive, cfg.embedded_all_uninterpretable t ht]
-
-/-! ### The SOT parameter -/
-
-/-- Zeijlstra's parameter — whether embedded `T` may carry `[uPAST]` — lines up
-    with the substrate `SOTParameter`: SOT languages (`relative`) make the
-    simultaneous reading available. -/
-theorem relative_allows_simultaneous :
-    EmbeddedTenseReading.simultaneous ∈ availableReadings .relative := by decide
-
-/-- Non-SOT languages (`absolute`) lack the simultaneous reading. -/
-theorem absolute_no_simultaneous :
-    EmbeddedTenseReading.simultaneous ∉ availableReadings .absolute := by decide
 
 /-! ### Derivation theorems -/
 

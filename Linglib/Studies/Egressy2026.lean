@@ -221,7 +221,7 @@ theorem all_tp_simultaneous :
 -- ════════════════════════════════════════════════════════════════
 
 open Minimalist (ComplementSize fValue Cat)
-open Semantics.Tense (EmbeddedTenseReading)
+open Semantics.Tense (EmbeddedTenseReading availableReadings)
 open Fragments.Hungarian.Predicates
 open Fragments.Hungarian.FunctionWords
 open Fragments.Hungarian.TemporalDeictic
@@ -254,6 +254,14 @@ def readingsByStage (stage : WilliamsCycleStage) (cs : ComplementSize) :
   | .noSOT => [.shifted]
   | .partialSOT => availableReadingsBySize cs
   | .fullSOT => [.shifted, .simultaneous]
+
+/-- The Williams Cycle endpoints reproduce the binary SOT parameter's
+    predictions: at `noSOT`/`fullSOT`, `readingsByStage` ignores complement size
+    and agrees with the substrate `availableReadings`. Only `partialSOT` (the
+    Hungarian case) needs the finer, size-sensitive map. -/
+theorem readingsByStage_ofSOTParameter (p : SOTParameter) (cs : ComplementSize) :
+    readingsByStage (WilliamsCycleStage.ofSOTParameter p) cs = availableReadings p := by
+  cases p <;> rfl
 
 
 -- ════════════════════════════════════════════════════════════════

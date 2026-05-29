@@ -132,18 +132,11 @@ inductive WilliamsCycleStage where
   deriving DecidableEq, Repr
 
 /-- The binary `SOTParameter` embeds as the Williams Cycle endpoints:
-    `absolute ↦ noSOT`, `relative ↦ fullSOT`. -/
+    `absolute ↦ noSOT`, `relative ↦ fullSOT`. (No inverse: `partialSOT` has no
+    binary image — it is the stage the binary parameter cannot express.) -/
 def WilliamsCycleStage.ofSOTParameter : SOTParameter → WilliamsCycleStage
   | .absolute => .noSOT
   | .relative => .fullSOT
-
-/-- Recover the binary `SOTParameter` from a stage when one exists.
-    `partialSOT` returns `none`: it is the third option the binary parameter
-    cannot express. -/
-def WilliamsCycleStage.toSOTParameter? : WilliamsCycleStage → Option SOTParameter
-  | .noSOT => some .absolute
-  | .partialSOT => none
-  | .fullSOT => some .relative
 
 
 -- ════════════════════════════════════════════════════════════════
