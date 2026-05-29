@@ -1391,6 +1391,7 @@ import Linglib.Studies.Wellwood2015
 import Linglib.Studies.FoxHackl2006
 import Linglib.Studies.VonStechow1984
 import Linglib.Studies.Buring2007
+import Linglib.Studies.Buring2012
 import Linglib.Studies.Bobaljik2012
 import Linglib.Studies.BhattPancheva2004
 import Linglib.Studies.Lechner2004
