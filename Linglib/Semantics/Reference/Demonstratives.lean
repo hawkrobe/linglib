@@ -23,6 +23,7 @@ demonstrative has no content.
 import Linglib.Core.Context.Basic
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.KaplanLD
+import Linglib.Semantics.Reference.Nominal
 
 namespace Semantics.Reference.Demonstratives
 
@@ -147,6 +148,45 @@ def TrueDemonstrative.toReferringExpression {C W E : Type*} [Inhabited E]
     (td : TrueDemonstrative C W E) : ReferringExpression C W E :=
   { character := td.character
   , profile := ⟨true, true, true⟩ }
+
+/-! ### Bridge to `NominalDenot`
+
+A demonstrative is the third instance of the unified presuppositional nominal
+(@cite{buring-2012} §1.2): like a pronoun or definite, it is a selector plus a
+presupposition. Its selector is the demonstratum (`C → Option E`, fixed by the
+context's demonstration); its intrinsic presupposition is the sortal
+restriction ("that *planet*"). What distinguishes it is that the selector
+ignores the world — Kaplan's direct reference — where a definite's selector
+(`Donnellan.attributiveContent`) varies by world. -/
+
+/-- A true demonstrative as a `NominalDenot`: selector = the demonstratum,
+intrinsic presup = the sortal restriction (if any). -/
+def TrueDemonstrative.toNominal {C W E : Type*} (td : TrueDemonstrative C W E) :
+    NominalDenot C W E where
+  presup := fun c w =>
+    match td.sortal, td.demonstration.demonstratum c with
+    | some S, some e => S e w
+    | _, _ => True
+  selector := fun c _ => td.demonstration.demonstratum c
+
+/-- Direct reference (@cite{kaplan-1989} Principle 2): the demonstrative's
+selector is world-invariant — the referent is fixed by the context, not the
+world of evaluation. (Contrast a definite, whose `attributiveContent` selector
+varies by world.) -/
+theorem toNominal_selector_world_invariant {C W E : Type*}
+    (td : TrueDemonstrative C W E) (c : C) (w₁ w₂ : W) :
+    (td.toNominal).selector c w₁ = (td.toNominal).selector c w₂ := rfl
+
+/-- The `NominalDenot` selector agrees with the Kaplanian `character`: when the
+demonstration succeeds, the selector yields the demonstratum and the character
+rigidly designates it. -/
+theorem toNominal_selector_eq_character {C W E : Type*} [Inhabited E]
+    (td : TrueDemonstrative C W E) (c : C) (w : W) (e : E)
+    (h : td.demonstration.demonstratum c = some e) :
+    (td.toNominal).selector c w = some e ∧ td.character c = rigid e := by
+  refine ⟨?_, ?_⟩
+  · simp only [TrueDemonstrative.toNominal, h]
+  · simp only [TrueDemonstrative.character, h]
 
 /-!
 ### Bridge to RSA Reference Games
