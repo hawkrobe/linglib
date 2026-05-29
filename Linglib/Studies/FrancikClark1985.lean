@@ -476,7 +476,7 @@ theorem form_targets_match_obstacle :
     is why "Do you know?" is specific to ability scenarios: it queries a
     SUBTYPE of the ability preparatory condition. -/
 theorem knowledge_is_ability_subtype :
-    PreparatoryCondition.ability.subsumes .knowledge = true := rfl
+    PreparatoryCondition.ability.subsumes .knowledge := trivial
 
 /-- Can/Could query the general `.ability` condition, which subsumes both
     `.knowledge` and `.permission`. This structural property explains
@@ -484,8 +484,8 @@ theorem knowledge_is_ability_subtype :
 theorem general_forms_query_broad_condition :
     RequestForm.queriedCondition .canYouTellMe = some .ability ∧
     RequestForm.queriedCondition .couldYouTellMe = some .ability ∧
-    PreparatoryCondition.ability.subsumes .knowledge = true ∧
-    PreparatoryCondition.ability.subsumes .permission = true := ⟨rfl, rfl, rfl, rfl⟩
+    PreparatoryCondition.ability.subsumes .knowledge ∧
+    PreparatoryCondition.ability.subsumes .permission := ⟨rfl, rfl, trivial, trivial⟩
 
 /-- Ability obstacles map to circumstantial modality: "Can you?" questions
     the addressee's circumstances. Willingness maps to deontic as the
@@ -501,9 +501,9 @@ theorem obstacle_modal_flavors :
 
     More specific obstacles → deeper in the hierarchy → less direct forms. -/
 theorem specificity_is_subsumption_depth :
-    PreparatoryCondition.ability.subsumes .knowledge = true ∧
-    PreparatoryCondition.knowledge.subsumes .memory = true ∧
-    PreparatoryCondition.knowledge.subsumes .perception = true := ⟨rfl, rfl, rfl⟩
+    PreparatoryCondition.ability.subsumes .knowledge ∧
+    PreparatoryCondition.knowledge.subsumes .memory ∧
+    PreparatoryCondition.knowledge.subsumes .perception := ⟨trivial, trivial, trivial⟩
 
 
 -- ════════════════════════════════════════════════════
@@ -520,12 +520,12 @@ theorem specificity_is_subsumption_depth :
     scenarios. The subsumption hierarchy predicts the data. -/
 theorem endToEnd_know_ability :
     RequestForm.queriedCondition .doYouKnow = some .knowledge ∧
-    PreparatoryCondition.ability.subsumes .knowledge = true ∧
+    PreparatoryCondition.ability.subsumes .knowledge ∧
     (app_know_ab_hi.rating + app_know_ab_lo.rating) >
     (app_know_wi_hi.rating + app_know_wi_lo.rating) ∧
     (app_know_ab_hi.rating + app_know_ab_lo.rating) >
     (app_know_me_hi.rating + app_know_me_lo.rating) := by
-  exact ⟨rfl, rfl, by native_decide, by native_decide⟩
+  exact ⟨rfl, trivial, by native_decide, by native_decide⟩
 
 /-- End-to-end: "Would you mind?" queries `.willingness`, and the data
     confirms it is rated highest in willingness scenarios. -/

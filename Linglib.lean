@@ -2524,8 +2524,7 @@ import Linglib.Semantics.Tense.Modal.Matrix
 import Linglib.Studies.Sharvit2014
 import Linglib.Studies.Giannakidou2002
 import Linglib.Typology.TemporalConnectives
-import Linglib.Syntax.Minimalist.Tense.AgreeSOT
-import Linglib.Syntax.Minimalist.Tense.InfinitivalTense
+import Linglib.Studies.Zeijlstra2012
 -- Theories: Semantics.Questions
 import Linglib.Semantics.Questions.Partition.Constructors
 import Linglib.Studies.GroenendijkStokhof1984

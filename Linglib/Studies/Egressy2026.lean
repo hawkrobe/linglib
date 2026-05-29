@@ -1,6 +1,7 @@
 import Linglib.Core.Time.Tense
 import Linglib.Core.Time.Reichenbach
-import Linglib.Syntax.Minimalist.Tense.AgreeSOT
+import Linglib.Semantics.Tense.Basic
+import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Fragments.Hungarian.Predicates
 import Linglib.Fragments.Hungarian.FunctionWords
 import Linglib.Fragments.Hungarian.TemporalDeictic
@@ -204,15 +205,15 @@ theorem bareTP_tudta_simultaneous :
 
 /-- All judgments have the shifted reading available. -/
 theorem all_shifted_available :
-    allJudgments.all (·.shiftedAvailable) = true := by native_decide
+    allJudgments.all (·.shiftedAvailable) = true := by decide
 
 /-- No CP judgment has the simultaneous reading. -/
 theorem no_cp_simultaneous :
-    cpJudgments.all (fun j => !j.simultaneousAvailable) = true := by native_decide
+    cpJudgments.all (fun j => !j.simultaneousAvailable) = true := by decide
 
 /-- All bare TP judgments have the simultaneous reading. -/
 theorem all_tp_simultaneous :
-    tpJudgments.all (·.simultaneousAvailable) = true := by native_decide
+    tpJudgments.all (·.simultaneousAvailable) = true := by decide
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -220,11 +221,58 @@ theorem all_tp_simultaneous :
 -- ════════════════════════════════════════════════════════════════
 
 open Minimalist (ComplementSize fValue Cat)
-open Minimalist.Tense.AgreeSOT
-open Semantics.Tense (EmbeddedTenseReading)
+open Semantics.Tense (EmbeddedTenseReading availableReadings)
 open Fragments.Hungarian.Predicates
 open Fragments.Hungarian.FunctionWords
 open Fragments.Hungarian.TemporalDeictic
+
+/-! ### Size-sensitive SOT predictions (@cite{egressy-2026})
+
+The available readings factor into two parts: **which complement boundaries a
+language leaves transparent** to upward tense Agree (`stageTransparent` — the
+only language-varying piece, which is exactly what `WilliamsCycleStage`
+classifies), and a **uniform, language-independent rule** mapping transparency
+to readings (a transparent boundary licenses both readings, an opaque one only
+the back-shifted reading). The binary `SOTParameter` is the `noSOT`/`fullSOT`
+special case (`readingsByStage_ofSOTParameter`); `partialSOT` is the genuinely
+size-sensitive Hungarian profile.
+
+Note: @cite{zeijlstra-2012} (§5.3) takes SOT to cross a CP freely — unlike
+Negative Concord — because the embedding C bears `[uT]`. Egressy's CP-opacity is
+therefore a *departure* from Zeijlstra's upward-Agree system, not a consequence
+of it. The "Williams Cycle" framing (`WilliamsCycleStage`, §E) is Egressy's; its
+diachronic interpretation is **UNVERIFIED** against the paper text here. -/
+
+/-- Which complement sizes a stage leaves transparent to upward tense Agree —
+    the only language-varying piece, and the content `WilliamsCycleStage`
+    classifies. `noSOT` (Japanese): nothing transparent; `fullSOT` (English):
+    everything, including CP (SOT crosses CP, @cite{zeijlstra-2012} §5.3);
+    `partialSOT` (Hungarian): only sub-CP, read off `transparentToTenseAgree`. -/
+def stageTransparent : WilliamsCycleStage → ComplementSize → Bool
+  | .noSOT, _ => false
+  | .fullSOT, _ => true
+  | .partialSOT, cs => cs.transparentToTenseAgree
+
+/-- Available embedded-tense readings as a uniform function of boundary
+    transparency: a transparent boundary licenses both readings, an opaque one
+    only the back-shifted reading. The stage contributes only the transparency
+    profile (`stageTransparent`); this rule is language-independent. -/
+def readingsByStage (stage : WilliamsCycleStage) (cs : ComplementSize) :
+    List EmbeddedTenseReading :=
+  if stageTransparent stage cs then [.shifted, .simultaneous] else [.shifted]
+
+/-- The partial-SOT (Hungarian) row: readings by complement size alone.
+    Definitionally `readingsByStage .partialSOT`. -/
+def availableReadingsBySize (cs : ComplementSize) : List EmbeddedTenseReading :=
+  readingsByStage .partialSOT cs
+
+/-- The Williams Cycle endpoints reproduce the binary SOT parameter's
+    predictions: at `noSOT`/`fullSOT`, `readingsByStage` ignores complement size
+    and agrees with the substrate `availableReadings`. Only `partialSOT` (the
+    Hungarian case) needs the finer, size-sensitive map. -/
+theorem readingsByStage_ofSOTParameter (p : SOTParameter) (cs : ComplementSize) :
+    readingsByStage (WilliamsCycleStage.ofSOTParameter p) cs = availableReadings p := by
+  cases p <;> rfl
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -298,18 +346,12 @@ theorem bareTP_transparent :
 
 /-- Predicted readings for *hogy*-CP: shifted only. -/
 theorem hogyCP_predicted_readings :
-    availableReadingsBySize (complementTypeToSize .hogyCP) = [.shifted] := by
-  simp [complementTypeToSize, availableReadingsBySize,
-    ComplementSize.transparentToTenseAgree, ComplementSize.fLevel,
-    ComplementSize.cP, fValue]
+    availableReadingsBySize (complementTypeToSize .hogyCP) = [.shifted] := by decide
 
 /-- Predicted readings for bare TP: both shifted and simultaneous. -/
 theorem bareTP_predicted_readings :
     availableReadingsBySize (complementTypeToSize .bareTP) =
-    [.shifted, .simultaneous] := by
-  simp [complementTypeToSize, availableReadingsBySize,
-    ComplementSize.transparentToTenseAgree, ComplementSize.fLevel,
-    ComplementSize.tP, fValue]
+    [.shifted, .simultaneous] := by decide
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -329,23 +371,23 @@ def judgmentMatchesPrediction (j : SOTJudgment) : Bool :=
 
 /-- *tudta* + *hogy*-CP: no simultaneous reading, as predicted. -/
 theorem tudta_hogyCP_matches :
-    judgmentMatchesPrediction pastUnderPast_hogyCP_tudta = true := by native_decide
+    judgmentMatchesPrediction pastUnderPast_hogyCP_tudta = true := by decide
 
 /-- *mondta* + *hogy*-CP: no simultaneous reading, as predicted. -/
 theorem mondta_hogyCP_matches :
-    judgmentMatchesPrediction pastUnderPast_hogyCP_mondta = true := by native_decide
+    judgmentMatchesPrediction pastUnderPast_hogyCP_mondta = true := by decide
 
 /-- *hitte* + *hogy*-CP: no simultaneous reading, as predicted. -/
 theorem hitte_hogyCP_matches :
-    judgmentMatchesPrediction pastUnderPast_hogyCP_hitte = true := by native_decide
+    judgmentMatchesPrediction pastUnderPast_hogyCP_hitte = true := by decide
 
 /-- *tudta* + bare TP: simultaneous reading available, as predicted. -/
 theorem tudta_bareTP_matches :
-    judgmentMatchesPrediction pastUnderPast_bareTP_tudta = true := by native_decide
+    judgmentMatchesPrediction pastUnderPast_bareTP_tudta = true := by decide
 
 /-- All judgments match predictions. -/
 theorem all_judgments_match :
-    allJudgments.all judgmentMatchesPrediction = true := by native_decide
+    allJudgments.all judgmentMatchesPrediction = true := by decide
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -361,14 +403,7 @@ theorem hungarian_partial_sot :
     readingsByStage hungarianStage (complementTypeToSize .bareTP) =
       [.shifted, .simultaneous] ∧
     readingsByStage hungarianStage (complementTypeToSize .hogyCP) =
-      [.shifted] := by
-  constructor
-  · simp [hungarianStage, readingsByStage, complementTypeToSize,
-      availableReadingsBySize, ComplementSize.transparentToTenseAgree,
-      ComplementSize.fLevel, ComplementSize.tP, fValue]
-  · simp [hungarianStage, readingsByStage, complementTypeToSize,
-      availableReadingsBySize, ComplementSize.transparentToTenseAgree,
-      ComplementSize.fLevel, ComplementSize.cP, fValue]
+      [.shifted] := by decide
 
 /-- English, by contrast, is full SOT — both readings in all complement types. -/
 def englishStage : WilliamsCycleStage := .fullSOT
