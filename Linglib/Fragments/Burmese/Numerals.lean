@@ -12,14 +12,6 @@ namespace Fragments.Burmese
     classifiers obligatory (*lu thon yauk* 'person three CL'). No
     morphological distributive. No grammatical plural; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Burmese"
-  , iso := "mya"
-  , ordinal := .various
-  , distributive := .noDistributive
-  , classifier := .obligatory
-  , conjQuant := .differentiation
-  , region := .southeastAsia
-  , pluralMarking := .none
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Burmese" "mya" (region := .southeastAsia) (pluralMarking := .none)
 
 end Fragments.Burmese

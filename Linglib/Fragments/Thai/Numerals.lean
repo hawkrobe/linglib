@@ -12,14 +12,6 @@ namespace Fragments.Thai
     Obligatory numeral classifiers (*maa sam tua* 'dog three CL.animal').
     No grammatical plural; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Thai"
-  , iso := "tha"
-  , ordinal := .allFromCardinals
-  , distributive := .noDistributive
-  , classifier := .obligatory
-  , conjQuant := .differentiation
-  , region := .southeastAsia
-  , pluralMarking := .none
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Thai" "tha" (region := .southeastAsia) (pluralMarking := .none)
 
 end Fragments.Thai

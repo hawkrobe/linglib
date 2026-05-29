@@ -12,14 +12,6 @@ namespace Fragments.Finnish
     No morphological distributive. No classifiers. *Ja* (and) differs from
     *kaikki* (all). Obligatory plural with *-t*; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Finnish"
-  , iso := "fin"
-  , ordinal := .firstSecondSuppletion
-  , distributive := .noDistributive
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .europe
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Finnish" "fin" (region := .europe) (pluralMarking := .obligatory)
 
 end Fragments.Finnish

@@ -13,14 +13,6 @@ namespace Fragments.Slavic.Russian
     *po + dative*). No numeral classifiers. *I* (and) differs from *vse*
     (all). Obligatory plural; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Russian"
-  , iso := "rus"
-  , ordinal := .firstSecondSuppletion
-  , distributive := .noDistributive
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .europe
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Russian" "rus" (region := .europe) (pluralMarking := .obligatory)
 
 end Fragments.Slavic.Russian

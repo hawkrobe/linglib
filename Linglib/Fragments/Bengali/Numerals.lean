@@ -12,14 +12,9 @@ namespace Fragments.Bengali
     boi* 'three-CL book', but bare *tin boi* also grammatical). *Ebong* (and)
     differs from *sob* (all). Optional plural; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Bengali"
-  , iso := "ben"
-  , ordinal := .firstSuppletion
-  , distributive := .markedByReduplication
-  , classifier := .optional
-  , conjQuant := .differentiation
-  , region := .southAsia
-  , pluralMarking := .optional
-  , numeralBase := some .decimal }
+  -- Bengali (iso `ben`) is absent from WALS Ch 131; decimal base is curated.
+  { Numeral.Profile.fromWALS "Bengali" "ben" (region := .southAsia)
+      (pluralMarking := .optional) with
+    numeralBase := some .decimal }
 
 end Fragments.Bengali

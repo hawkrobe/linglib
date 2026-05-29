@@ -13,14 +13,6 @@ namespace Fragments.Tagalog
     *na*/*ng* serve a different function). *At* (and) and *lahat* (all) are
     differentiated. Optional plural (*mga*); decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Tagalog"
-  , iso := "tgl"
-  , ordinal := .various
-  , distributive := .markedByReduplication
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .southeastAsia
-  , pluralMarking := .optional
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Tagalog" "tgl" (region := .southeastAsia) (pluralMarking := .optional)
 
 end Fragments.Tagalog

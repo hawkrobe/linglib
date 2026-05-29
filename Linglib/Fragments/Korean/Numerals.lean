@@ -7,20 +7,15 @@ import Linglib.Typology.Numeral.WALS
 
 namespace Fragments.Korean
 
-/-- Korean: ordinals use native numerals + *-jjae* suffix (*cheot-jjae* 'first'
-    partially suppletive). Distributive by suffix *-ssik* (*du-ssik* 'two
-    each'). Optional numeral classifiers (*se myeong-ui haksaeng* 'three CL
-    student'). *Gwa*/*wa* (and) differs from *modu* (all). Optional plural
-    with *-deul*; decimal base. -/
+/-- Korean. Coded after @cite{wals-2013}: WALS 53A codes Korean
+    "one-th, two-th, three-th" (Sino-Korean *je-* + cardinal, fully regular) →
+    `allFromCardinals`; the native paradigm's *cheot-jjae* 'first' suppletion is
+    a secondary system not picked up by the WALS coding. WALS 55A codes numeral
+    classifiers Obligatory (counting requires a classifier: *haksaeng se myeong*
+    'three CL student'). Distributive by suffix *-ssik* (*du-ssik* 'two each',
+    WALS 54A). *Gwa*/*wa* (and) differs from *modu* (all). Optional plural with
+    *-deul*; decimal base (WALS 131A). -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Korean"
-  , iso := "kor"
-  , ordinal := .firstSuppletion
-  , distributive := .markedBySuffix
-  , classifier := .optional
-  , conjQuant := .differentiation
-  , region := .eastAsia
-  , pluralMarking := .optional
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Korean" "kor" (region := .eastAsia) (pluralMarking := .optional)
 
 end Fragments.Korean

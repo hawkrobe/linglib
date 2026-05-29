@@ -13,14 +13,6 @@ namespace Fragments.Japanese
     'three-CL.person'). Conjunction *to* differs from universal *subete*. No
     grammatical plural on common nouns; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Japanese"
-  , iso := "jpn"
-  , ordinal := .allFromCardinals
-  , distributive := .markedByReduplication
-  , classifier := .obligatory
-  , conjQuant := .differentiation
-  , region := .eastAsia
-  , pluralMarking := .none
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Japanese" "jpn" (region := .eastAsia) (pluralMarking := .none)
 
 end Fragments.Japanese

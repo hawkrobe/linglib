@@ -12,14 +12,6 @@ namespace Fragments.Yoruba
     Conjunction *ati* and universal quantifier *gbogbo* are distinct. Plural
     marked optionally (*awon*); vigesimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Yoruba"
-  , iso := "yor"
-  , ordinal := .various
-  , distributive := .noDistributive
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .africa
-  , pluralMarking := .optional
-  , numeralBase := some .vigesimal }
+  Numeral.Profile.fromWALS "Yoruba" "yor" (region := .africa) (pluralMarking := .optional)
 
 end Fragments.Yoruba

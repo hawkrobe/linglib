@@ -47,14 +47,12 @@ namespace Fragments.Arabic.ModernStandard
     distinct. Dual + plural marking on counted nouns is obligatory.
     Decimal base (Ryding §15.1). -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Arabic (Modern Standard)"
-  , iso := "arb"
-  , ordinal := .firstSuppletion
-  , distributive := .markedByReduplication
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .westAsia
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+  -- MSA (iso `arb`) is absent from WALS Chs 53/131; curated values kept for
+  -- those. Ch 54 defaults to `noDistributive`, matching the docstring (the
+  -- reduplication is intensifying, not a productive distributive).
+  { Numeral.Profile.fromWALS "Arabic (Modern Standard)" "arb"
+      (region := .westAsia) (pluralMarking := .obligatory) with
+    ordinal := .firstSuppletion
+    numeralBase := some .decimal }
 
 end Fragments.Arabic.ModernStandard

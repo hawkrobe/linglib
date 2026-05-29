@@ -13,14 +13,6 @@ namespace Fragments.Georgian
     differs from *q'vela* (all). Obligatory plural; hybrid vigesimal-decimal
     base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Georgian"
-  , iso := "kat"
-  , ordinal := .firstSuppletion
-  , distributive := .markedBySuffix
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .westAsia
-  , pluralMarking := .obligatory
-  , numeralBase := some .hybridVigesimalDecimal }
+  Numeral.Profile.fromWALS "Georgian" "kat" (region := .westAsia) (pluralMarking := .obligatory)
 
 end Fragments.Georgian

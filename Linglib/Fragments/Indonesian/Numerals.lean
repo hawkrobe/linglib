@@ -13,14 +13,6 @@ namespace Fragments.Indonesian
     murid* 'three CL student'). *Dan* (and) differs from *semua* (all).
     Optional plural by reduplication; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Indonesian"
-  , iso := "ind"
-  , ordinal := .various
-  , distributive := .noDistributive
-  , classifier := .obligatory
-  , conjQuant := .differentiation
-  , region := .southeastAsia
-  , pluralMarking := .optional
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Indonesian" "ind" (region := .southeastAsia) (pluralMarking := .optional)
 
 end Fragments.Indonesian

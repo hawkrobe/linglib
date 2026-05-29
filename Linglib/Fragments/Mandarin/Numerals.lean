@@ -13,14 +13,6 @@ namespace Fragments.Mandarin
     *he* and universal *dou* are distinct morphemes. No grammatical plural on
     common nouns; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Mandarin"
-  , iso := "cmn"
-  , ordinal := .allFromCardinals
-  , distributive := .noDistributive
-  , classifier := .obligatory
-  , conjQuant := .differentiation
-  , region := .eastAsia
-  , pluralMarking := .none
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Mandarin" "cmn" (region := .eastAsia) (pluralMarking := .none)
 
 end Fragments.Mandarin

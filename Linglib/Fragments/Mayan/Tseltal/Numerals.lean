@@ -12,14 +12,11 @@ namespace Fragments.Mayan.Tseltal
     morphological distributive. Conjunction and universal quantifier are
     differentiated. No obligatory plural on nouns; vigesimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Tseltal"
-  , iso := "tzh"
-  , ordinal := .noOrdinals
-  , distributive := .noDistributive
-  , classifier := .obligatory
-  , conjQuant := .differentiation
-  , region := .mesoamerica
-  , pluralMarking := .none
-  , numeralBase := some .vigesimal }
+  -- Tseltal (iso `tzh`) is in WALS only for Ch 55 (classifiers); ordinal and
+  -- base are curated (absent from Chs 53/131).
+  { Numeral.Profile.fromWALS "Tseltal" "tzh" (region := .mesoamerica)
+      (pluralMarking := .none) with
+    ordinal := .noOrdinals
+    numeralBase := some .vigesimal }
 
 end Fragments.Mayan.Tseltal

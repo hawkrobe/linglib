@@ -13,14 +13,6 @@ namespace Fragments.Hungarian
     differs from *minden* (all/every). Obligatory plural with *-k*;
     decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Hungarian"
-  , iso := "hun"
-  , ordinal := .firstSuppletion
-  , distributive := .markedByReduplication
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .europe
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Hungarian" "hun" (region := .europe) (pluralMarking := .obligatory)
 
 end Fragments.Hungarian

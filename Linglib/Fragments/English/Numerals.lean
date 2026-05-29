@@ -12,14 +12,6 @@ namespace Fragments.English
     classifiers, conjunction *and* differs from universal *all*. Obligatory
     plural on nouns; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "English"
-  , iso := "eng"
-  , ordinal := .firstSecondSuppletion
-  , distributive := .noDistributive
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .europe
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "English" "eng" (region := .europe) (pluralMarking := .obligatory)
 
 end Fragments.English

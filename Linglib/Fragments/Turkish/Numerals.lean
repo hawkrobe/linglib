@@ -13,14 +13,6 @@ namespace Fragments.Turkish
     exist (*iki tane kitap* 'two CL book'). *Ve* (and) differs from *hepsi*
     (all). Obligatory plural with *-ler*/*-lar*; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Turkish"
-  , iso := "tur"
-  , ordinal := .allFromCardinals
-  , distributive := .markedBySuffix
-  , classifier := .optional
-  , conjQuant := .differentiation
-  , region := .westAsia
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Turkish" "tur" (region := .westAsia) (pluralMarking := .obligatory)
 
 end Fragments.Turkish

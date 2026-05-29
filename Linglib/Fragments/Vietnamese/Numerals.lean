@@ -12,14 +12,6 @@ namespace Fragments.Vietnamese
     classifiers (*ba con meo* 'three CL cat'). No grammatical plural;
     decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Vietnamese"
-  , iso := "vie"
-  , ordinal := .allFromCardinals
-  , distributive := .noDistributive
-  , classifier := .obligatory
-  , conjQuant := .differentiation
-  , region := .southeastAsia
-  , pluralMarking := .none
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Vietnamese" "vie" (region := .southeastAsia) (pluralMarking := .none)
 
 end Fragments.Vietnamese

@@ -13,14 +13,6 @@ namespace Fragments.Swahili
     function). *Na* (and) differs from *-ote* (all). Obligatory plural via
     noun class prefixes; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Swahili"
-  , iso := "swh"
-  , ordinal := .firstSuppletion
-  , distributive := .noDistributive
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .africa
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Swahili" "swh" (region := .africa) (pluralMarking := .obligatory)
 
 end Fragments.Swahili

@@ -1,6 +1,8 @@
 import Linglib.Typology.ClassifierSystem
 import Linglib.Data.WALS.Features.F53A
 import Linglib.Data.WALS.Features.F54A
+import Linglib.Data.WALS.Features.F55A
+import Linglib.Data.WALS.Features.F56A
 import Linglib.Data.WALS.Features.F131A
 
 /-!
@@ -40,7 +42,7 @@ set_option autoImplicit false
 
 namespace Numeral
 
-open Typology (ClassifierStatus)
+open Typology (ClassifierStatus fromWALS55A)
 
 /-- WALS Ch 53: how a language forms ordinal numerals from cardinals.
     The dominant pattern is "first" suppletive + higher ordinals regular. -/
@@ -203,6 +205,47 @@ def fromWALS131A : Data.WALS.F131A.NumeralBases → NumeralBase
   | .otherBase => .otherBase
   | .extendedBodyPartSystem => .bodyPartSystem
   | .restricted => .restricted
+
+/-- Convert WALS 56A (3-way) to the coarser binary `ConjunctionQuantifier`.
+    Both "formally similar" values (with and without the interrogative) collapse
+    to `identity` — the conjunction and the universal share form; "formally
+    different" maps to `differentiation`. The interrogative distinction
+    (@cite{wals-2013} Ch 56) is finer than the binary substrate. -/
+def fromWALS56A : Data.WALS.F56A.ConjunctionsAndUniversalQuantifiers → ConjunctionQuantifier
+  | .different => .differentiation
+  | .similarWithoutInterrogative => .identity
+  | .similarWithInterrogative => .identity
+
+/-- Build a `Profile` by **inheriting** the WALS numeral-chapter codings for
+    `iso` — Ch 53 ordinal, Ch 54 distributive, Ch 55 classifier, Ch 56
+    conjunction/quantifier, Ch 131 base — via `Datapoint.lookupISO` + the
+    `fromWALS*` converters. `region` and `pluralMarking` are not numeral-chapter
+    features, so the caller supplies them. A language absent from a chapter falls
+    back to the documented neutral value (`.various` / `.noDistributive` /
+    `.absent` / `.differentiation` / `none`). This makes WALS ground-truth: the
+    chapter fields cannot drift from the dataset. -/
+def Profile.fromWALS (language iso : String) (region : Region)
+    (pluralMarking : PluralMarking) : Profile :=
+  { language, iso, region, pluralMarking
+  , ordinal :=
+      match Data.WALS.Datapoint.lookupISO Data.WALS.F53A.allData iso with
+      | some d => fromWALS53A d.value
+      | none => .various
+  , distributive :=
+      match Data.WALS.Datapoint.lookupISO Data.WALS.F54A.allData iso with
+      | some d => fromWALS54A d.value
+      | none => .noDistributive
+  , classifier :=
+      match Data.WALS.Datapoint.lookupISO Data.WALS.F55A.allData iso with
+      | some d => fromWALS55A d.value
+      | none => .absent
+  , conjQuant :=
+      match Data.WALS.Datapoint.lookupISO Data.WALS.F56A.allData iso with
+      | some d => fromWALS56A d.value
+      | none => .differentiation
+  , numeralBase :=
+      (Data.WALS.Datapoint.lookupISO Data.WALS.F131A.allData iso).map
+        (fun d => fromWALS131A d.value) }
 
 -- ============================================================================
 -- WALS distribution data (Ch 53, 54, 56)

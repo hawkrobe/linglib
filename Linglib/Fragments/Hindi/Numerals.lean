@@ -12,14 +12,6 @@ namespace Fragments.Hindi
     reduplication (*do-do* 'two-two'). No numeral classifiers. *Aur* (and)
     differs from *sab* (all). Obligatory plural; decimal base. -/
 def numeralProfile : Numeral.Profile :=
-  { language := "Hindi"
-  , iso := "hin"
-  , ordinal := .firstSecondSuppletion
-  , distributive := .markedByReduplication
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .southAsia
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+  Numeral.Profile.fromWALS "Hindi" "hin" (region := .southAsia) (pluralMarking := .obligatory)
 
 end Fragments.Hindi
