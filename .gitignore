@@ -22,6 +22,9 @@ Thumbs.db
 
 # Generated files
 *.dot
+# Rendered bibliography — generated from blog/data/references.bib by
+# gen_bibliography.py (run in the docs workflow before the Hugo build).
+blog/content/bibliography.md
 
 # Claude Code
 CLAUDE.md

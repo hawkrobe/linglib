@@ -113,6 +113,9 @@ jobs:
           hugo-version: 'latest'
           extended: true
 
+      - name: Generate bibliography
+        run: python3 blog/scripts/gen_bibliography.py
+
       - name: Build blog
         working-directory: blog
         run: hugo --minify
