@@ -129,7 +129,10 @@ theorem island_eq_wide : conditionalMeaning = wideScope := by
 /-- The exceptional scope reading is satisfiable: there exists a
     member of the result set (since r₁ is a relative). -/
 theorem exceptional_scope_satisfiable :
-    ∃ p, wideScope p := ⟨dies .r₁ → house, .r₁, trivial, rfl⟩
+    ∃ p, wideScope p := by
+  refine ⟨dies .r₁ → house, ?_⟩
+  simp only [wideScope, setBind_apply, eta_apply]
+  exact ⟨.r₁, trivial, rfl⟩
 
 end ConditionalIsland
 
@@ -199,6 +202,7 @@ theorem intermediate_escapes_rc :
 theorem intermediate_has_alternatives :
     matrixMeaning (isWrong .c₁) ∧ matrixMeaning (isWrong .c₂) := by
   rw [intermediate_escapes_rc]
+  simp only [setBind_apply, eta_apply]
   exact ⟨⟨.c₁, trivial, rfl⟩, ⟨.c₂, trivial, rfl⟩⟩
 
 end IntermediateScope
@@ -265,8 +269,9 @@ def higherOrderIsland : (Prop → Prop) → Prop :=
     distinct inner sets, one per lawyer. -/
 theorem higherOrder_has_layers :
     higherOrderIsland (setBind isRelative (fun r => eta (visits .l₁ r))) ∧
-    higherOrderIsland (setBind isRelative (fun r => eta (visits .l₂ r))) :=
-  ⟨⟨.l₁, trivial, rfl⟩, ⟨.l₂, trivial, rfl⟩⟩
+    higherOrderIsland (setBind isRelative (fun r => eta (visits .l₂ r))) := by
+  simp only [higherOrderIsland, setBind_apply, eta_apply]
+  exact ⟨⟨.l₁, trivial, rfl⟩, ⟨.l₂, trivial, rfl⟩⟩
 
 /-- **Flattening** (monadic join `μ`): collapsing the two layers via
     `⫝̸ id` recovers the flat island where both indefinites scope at
@@ -304,8 +309,9 @@ def lawyerWide : Prop → Prop :=
     alternatives for each (lawyer, relative) pair, while `lawyerWide`
     has alternatives only for each lawyer. -/
 theorem selectivity_produces_distinct_readings :
-    (∃ p, bothWide p) ∧ (∃ p, lawyerWide p) :=
-  ⟨⟨_, .l₁, trivial, .r₁, trivial, rfl⟩, ⟨_, .l₁, trivial, rfl⟩⟩
+    (∃ p, bothWide p) ∧ (∃ p, lawyerWide p) := by
+  simp only [bothWide, lawyerWide, setBind_apply, eta_apply]
+  exact ⟨⟨_, .l₁, trivial, .r₁, trivial, rfl⟩, ⟨_, .l₁, trivial, rfl⟩⟩
 
 end Selectivity
 
