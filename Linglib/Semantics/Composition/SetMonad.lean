@@ -186,16 +186,11 @@ theorem eta_eq_setPure (x : A) : eta x = setPure x := rfl
 
     The set applicative `setAp` from Applicative.lean agrees with the
     derived applicative from the set monad. -/
-theorem setAp_from_setBind (m : (A → B) → Prop) (n : A → Prop) :
+theorem setAp_from_setBind (m : Set (A → B)) (n : Set A) :
     setAp m n = setBind m (fun f => setBind n (fun x => eta (f x))) := by
-  funext b
-  apply propext
-  show (∃ f, m f ∧ ∃ x, n x ∧ f x = b)
-      ↔ b ∈ setBind m (fun f => setBind n (fun x => eta (f x)))
-  simp only [mem_setBind, mem_eta]
-  constructor
-  · rintro ⟨f, hf, x, hx, rfl⟩; exact ⟨f, hf, x, hx, rfl⟩
-  · rintro ⟨f, hf, x, hx, rfl⟩; exact ⟨f, hf, x, hx, rfl⟩
+  ext b
+  simp only [Applicative.mem_setAp, mem_setBind, mem_eta]
+  aesop
 
 end ApplicativeBridge
 
