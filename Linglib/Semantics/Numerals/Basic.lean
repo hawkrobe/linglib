@@ -123,7 +123,7 @@ instance (m n : Nat) : Decidable (atMostMeaning m n) :=
   inferInstanceAs (Decidable (n ≤ m))
 
 -- ============================================================================
--- Section 3: BareNumeral and NumeralExpr
+-- Section 3: BareNumeral and Comparison interpretation
 -- ============================================================================
 
 /-- Bare numeral utterances (one through five). -/
@@ -148,60 +148,45 @@ instance : ToString BareNumeral where
     | .one => "one" | .two => "two" | .three => "three"
     | .four => "four" | .five => "five"
 
-/-- A numeral expression: a bare numeral or one of the four modifications.
-    Used both as a surface form and (via `kennedyAlternatives`) as an
-    element of Kennedy's single alternative set. -/
-inductive NumeralExpr where
-  | bare (n : Nat)
-  | atLeast (n : Nat)
-  | moreThan (n : Nat)
-  | atMost (n : Nat)
-  | fewerThan (n : Nat)
-  deriving Repr, DecidableEq
+/-! The five numeral forms are the five `Numeral.Comparison`s applied to an
+    argument; the object lives in `Typology/Numeral/Basic.lean`. Here we give the
+    semantics: the order relation each comparison names, and the theory-choice
+    meaning. -/
 
-/-- The numeric argument: the `m` in "more than `m`", "exactly `m`", etc. -/
-def NumeralExpr.argument : NumeralExpr → Nat
-  | .bare m | .atLeast m | .moreThan m | .atMost m | .fewerThan m => m
+/-- The order relation a `Comparison` stands for — @cite{kennedy-2015}'s `REL`.
+    Interpretation of the theory-neutral `Numeral.Comparison` symbol. -/
+def _root_.Numeral.Comparison.rel {α : Type*} [LinearOrder α] :
+    Numeral.Comparison → α → α → Prop
+  | .eq => (· = ·) | .ge => (· ≥ ·) | .gt => (· > ·)
+  | .le => (· ≤ ·) | .lt => (· < ·)
 
-/-- Strict (Class A) vs. non-strict (Class B) classification per
-    @cite{geurts-nouwen-2007} / @cite{nouwen-2010}. Bare numerals carry
-    no modifier and return `none`. -/
-def NumeralExpr.modifierClass : NumeralExpr → Option ModifierClass
-  | .bare _ => none
-  | .moreThan _ | .fewerThan _ => some .classA
-  | .atLeast _ | .atMost _ => some .classB
+/-- Meaning of a numeral form, parameterized by the bare-numeral semantics
+    (theory choice: Kennedy exact `bareMeaning` or Horn lower-bound
+    `atLeastMeaning`). Only the bare (`.eq`) form consults `bare`; the four
+    modified forms are theory-independent `relationalGQ` denotations. -/
+def _root_.Numeral.Comparison.meaning (c : Numeral.Comparison)
+    (bare : Nat → Nat → Prop) (m : Nat) : Nat → Prop :=
+  match c with
+  | .eq => bare m
+  | c   => Core.Scale.relationalGQ c.rel id m
 
-/-- Lower-bound vs. upper-bound modifier direction. Bare numerals return `none`. -/
-def NumeralExpr.boundDirection : NumeralExpr → Option BoundDirection
-  | .bare _ => none
-  | .atLeast _ | .moreThan _ => some .lower
-  | .atMost _ | .fewerThan _ => some .upper
-
-/-- Meaning of a numeral expression, parameterized by the bare-numeral
-    semantics (theory choice: Kennedy `bareMeaning` or Horn `atLeastMeaning`). -/
-def NumeralExpr.meaning (bare : Nat → Nat → Prop) : NumeralExpr → Nat → Prop
-  | .bare m, n => bare m n
-  | .atLeast m, n => atLeastMeaning m n
-  | .moreThan m, n => moreThanMeaning m n
-  | .atMost m, n => atMostMeaning m n
-  | .fewerThan m, n => fewerThanMeaning m n
-
-instance (bare : Nat → Nat → Prop) [∀ m n, Decidable (bare m n)]
-    (e : NumeralExpr) (n : Nat) : Decidable (e.meaning bare n) := by
-  cases e <;> unfold NumeralExpr.meaning <;> infer_instance
+instance (c : Numeral.Comparison) (bare : Nat → Nat → Prop)
+    [∀ m n, Decidable (bare m n)] (m n : Nat) : Decidable (c.meaning bare m n) := by
+  cases c <;>
+    simp only [Numeral.Comparison.meaning, Numeral.Comparison.rel, Core.Scale.relationalGQ] <;>
+    infer_instance
 
 -- ============================================================================
 -- Section 4: Alternative Set (@cite{kennedy-2015} §4.1)
 -- ============================================================================
 
-/-- @cite{kennedy-2015}'s single alternative set for numeral `n` —
-    bare plus all four surface modifications. The point is
-    **anti-Horn-scale**: there is no fixed scale direction. The
-    Class A / Class B split is read off asymmetric entailment
-    (cf. `classA_excludes_bare_world`, `classB_includes_bare_world`),
-    not from membership in a pre-split sublist. -/
-def kennedyAlternatives (n : Nat) : List NumeralExpr :=
-  [.bare n, .moreThan n, .fewerThan n, .atLeast n, .atMost n]
+/-- @cite{kennedy-2015}'s single alternative set — the five numeral forms (bare
+    plus four modifications) as `Numeral.Comparison`s. The point is
+    **anti-Horn-scale**: there is no fixed scale direction. The Class A / Class B
+    split is read off asymmetric entailment (cf. `classA_excludes_bare_world`,
+    `classB_includes_bare_world`), not from membership in a pre-split sublist. -/
+def kennedyAlternatives : List Numeral.Comparison :=
+  [.eq, .gt, .lt, .ge, .le]
 
 -- ============================================================================
 -- Section 5: Class A/B Corollaries and Anti-Horn-Scale Corollaries
@@ -215,37 +200,33 @@ def kennedyAlternatives (n : Nat) : List NumeralExpr :=
     `Core.Scale.relationalGQ_irrefl_at_boundary` and
     `Core.Scale.relationalGQ_refl_at_boundary`, instantiated at `μ = id`. -/
 
-/-- **Class A excludes the bare-numeral world** (universal). For every
-    `e : NumeralExpr` whose modifier class is A, the meaning fails at
-    `n = e.argument`, regardless of which bare-numeral semantics is chosen.
-
-    Each non-vacuous branch delegates to
+/-- **Class A excludes the bare-numeral world** (universal). A strict comparison
+    (`>`, `<`) fails at the boundary `n = m`, regardless of which bare-numeral
+    semantics is chosen. Each non-vacuous branch delegates to
     `Core.Scale.relationalGQ_irrefl_at_boundary` at `μ = id`. -/
-theorem classA_excludes_bare_world (bare : Nat → Nat → Prop) (e : NumeralExpr)
-    (h : e.modifierClass = some .classA) :
-    ¬ e.meaning bare e.argument := by
-  cases e with
-  | bare _      => simp [NumeralExpr.modifierClass] at h
-  | atLeast _   => simp [NumeralExpr.modifierClass] at h
-  | atMost _    => simp [NumeralExpr.modifierClass] at h
-  | moreThan _  => exact Core.Scale.relationalGQ_irrefl_at_boundary (rel := (· > ·)) id rfl
-  | fewerThan _ => exact Core.Scale.relationalGQ_irrefl_at_boundary (rel := (· < ·)) id rfl
+theorem classA_excludes_bare_world (bare : Nat → Nat → Prop) (c : Numeral.Comparison)
+    (m : Nat) (h : c.isStrict) :
+    ¬ c.meaning bare m m := by
+  cases c with
+  | eq => simp [Numeral.Comparison.isStrict] at h
+  | ge => simp [Numeral.Comparison.isStrict] at h
+  | le => simp [Numeral.Comparison.isStrict] at h
+  | gt => exact Core.Scale.relationalGQ_irrefl_at_boundary (rel := (· > ·)) id rfl
+  | lt => exact Core.Scale.relationalGQ_irrefl_at_boundary (rel := (· < ·)) id rfl
 
-/-- **Class B includes the bare-numeral world** (universal). For every
-    `e : NumeralExpr` whose modifier class is B, the meaning holds at
-    `n = e.argument`, regardless of which bare-numeral semantics is chosen.
-
-    Each non-vacuous branch delegates to
+/-- **Class B includes the bare-numeral world** (universal). A non-strict
+    *modifier* (`≥`, `≤`) holds at the boundary `n = m`, regardless of which
+    bare-numeral semantics is chosen. Each branch delegates to
     `Core.Scale.relationalGQ_refl_at_boundary` at `μ = id`. -/
-theorem classB_includes_bare_world (bare : Nat → Nat → Prop) (e : NumeralExpr)
-    (h : e.modifierClass = some .classB) :
-    e.meaning bare e.argument := by
-  cases e with
-  | bare _      => simp [NumeralExpr.modifierClass] at h
-  | moreThan _  => simp [NumeralExpr.modifierClass] at h
-  | fewerThan _ => simp [NumeralExpr.modifierClass] at h
-  | atLeast _   => exact Core.Scale.relationalGQ_refl_at_boundary (rel := (· ≥ ·)) id rfl
-  | atMost _    => exact Core.Scale.relationalGQ_refl_at_boundary (rel := (· ≤ ·)) id rfl
+theorem classB_includes_bare_world (bare : Nat → Nat → Prop) (c : Numeral.Comparison)
+    (m : Nat) (h : ¬ c.isStrict) (hne : c ≠ .eq) :
+    c.meaning bare m m := by
+  cases c with
+  | eq => exact absurd rfl hne
+  | gt => simp [Numeral.Comparison.isStrict] at h
+  | lt => simp [Numeral.Comparison.isStrict] at h
+  | ge => exact Core.Scale.relationalGQ_refl_at_boundary (rel := (· ≥ ·)) id rfl
+  | le => exact Core.Scale.relationalGQ_refl_at_boundary (rel := (· ≤ ·)) id rfl
 
 /-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization
     of `Core.Scale.eqDeg_imp_atLeastDeg`. -/
@@ -384,15 +365,8 @@ The lexical numeral object (`Numeral.Comparison`, `Numeral.Entry`) is owned by
 that object and provides its `relationalGQ` denotation, mirroring how
 `Semantics/Reference/PronounDenotation.lean` denotes the `Pronoun.Entry` object.
 The denotation is **by construction** a `Core.Scale.relationalGQ`, so every lemma
-about `relationalGQ` transfers to every numeral entry. -/
-
-/-- The order relation a `Comparison` stands for — @cite{kennedy-2015}'s `REL`.
-    Lives on the semantics side: it is the interpretation of the theory-neutral
-    `Numeral.Comparison` symbol. -/
-def _root_.Numeral.Comparison.rel {α : Type*} [LinearOrder α] :
-    Numeral.Comparison → α → α → Prop
-  | .eq => (· = ·) | .ge => (· ≥ ·) | .gt => (· > ·)
-  | .le => (· ≤ ·) | .lt => (· < ·)
+about `relationalGQ` transfers to every numeral entry. `Comparison.rel`/`.meaning`
+are defined in Section 3. -/
 
 /-- Denotation of a numeral entry against a measure `μ : E → α` and a magnitude
     `m`: @cite{kennedy-2015}'s de-Fregean GQ `λx. REL (μ x) m`. The measure and
