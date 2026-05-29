@@ -1,5 +1,6 @@
 import Linglib.Features.Gender
 import Linglib.Core.Word
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # San Martín Peras Mixtec (SMPM) Fragment
@@ -82,11 +83,21 @@ def Gender.toSurfaceGender : Gender → Features.SurfaceGender
     SMPM distinguishes clitic and nonclitic pronouns
     (@cite{cardinaletti-starke-1999}). Clitics cannot be coordinated,
     cannot occur on their own, and may have impersonal readings.
-    Nonclitic forms can bear focus (e.g., with *íntàà* 'only'). -/
+    Nonclitic forms can bear focus (e.g., with *íntàà* 'only'). The two
+    variants instantiate two of Cardinaletti–Starke's deficiency classes,
+    routed through the shared `Pronoun.Strength` type below. -/
 structure PronounForm where
   clitic : String
   nonclitic : Option String  -- `none` if no distinct nonclitic form exists
   deriving Repr, DecidableEq
+
+/-- The Cardinaletti–Starke deficiency class of the `clitic` field: the
+    maximally deficient `.clitic` class. -/
+def PronounForm.cliticStrength : Pronoun.Strength := .clitic
+
+/-- The deficiency class of the `nonclitic` field, where present: the full
+    `.strong` form (focusable, coordinable). -/
+def PronounForm.noncliticStrength : Pronoun.Strength := .strong
 
 /-- Local person clitic pronouns (tables 4, 61). -/
 def pron1sg     : PronounForm := ⟨"=ì",    some "yù'u"⟩
@@ -107,9 +118,18 @@ def pron3sgAml     : String := "=rí"
 def pron3plNeutral : String := "=nà"
 def pron3plFem     : String := "=ná"
 
-/-- Controlled subjects in untensed subjunctives must be CLITIC pronouns.
-    Nonclitic forms are ungrammatical in this position (67). -/
-def controlledSubjectMustBeClitic : Bool := true
+/-- The Cardinaletti–Starke deficiency class required of a controlled subject
+    in an untensed subjunctive: the clitic (most deficient). Nonclitic (strong)
+    forms are ungrammatical in this position (67). -/
+def controlledSubjectStrength : Pronoun.Strength := PronounForm.cliticStrength
+
+/-- SMPM's ban on nonclitic controlled subjects (67) realizes the
+    Cardinaletti–Starke prediction: the required form is strictly more
+    deficient (lower `Strength.rank`) than the nonclitic strong alternative.
+    Derived from the shared deficiency ranking, not stipulated. -/
+theorem controlledSubject_is_most_deficient :
+    Pronoun.Strength.rank controlledSubjectStrength
+      < Pronoun.Strength.rank PronounForm.noncliticStrength := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: Embedded Clause Typology (table 26)

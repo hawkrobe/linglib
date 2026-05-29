@@ -1,5 +1,6 @@
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.NominalClassification
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Features.CoreferenceStatus
 
@@ -17,31 +18,8 @@ Coreference constraints via c-command and locality following @cite{chomsky-1981}
 
 namespace Minimalist.Coreference
 
-/-- Types of nominal expressions for coreference -/
-inductive NominalType where
-  | reflexive
-  | reciprocal
-  | pronoun
-  | rExpression
-  deriving Repr, DecidableEq
-
-/-- Is this a nominal category? -/
-def isNominalCat (c : UD.UPOS) : Bool :=
-  c == .PROPN || c == .NOUN || c == .PRON
-
-/-- Classify a word as a nominal type.
-    Derives classification from `Fragments.English.Pronouns` rather than
-    hardcoding string lists. Falls back to UPOS for R-expressions. -/
-def classifyNominal (w : Word) : Option NominalType :=
-  match Fragments.English.Pronouns.lookup w.form with
-  | some entry => match entry.pronounType with
-    | .reflexive => some .reflexive
-    | .reciprocal => some .reciprocal
-    | .personal => some .pronoun
-    | _ => some .pronoun  -- wh, relative, demonstrative treated as pronominal
-  | none =>
-    if isNominalCat w.cat then some .rExpression
-    else none
+open Features (NominalType)
+open Fragments.English.NominalClassification (isNominalCat classifyNominal phiAgree)
 
 /-- Simple clause structure for coreference checking.
     `semanticPl` tracks whether the subject denotes a plurality,
@@ -146,34 +124,6 @@ def inSameBindingDomain (_clause : SimpleClause) (_pos1 _pos2 : String) : Prop :
 instance (clause : SimpleClause) (pos1 pos2 : String) :
     Decidable (inSameBindingDomain clause pos1 pos2) := by
   unfold inSameBindingDomain; infer_instance
-
-/-- Phi-feature agreement for coreference.
-    Checks person, number, and gender agreement between antecedent and
-    anaphor. Person and number come from `Word.Features`; gender uses
-    `Fragments.English.Pronouns.genderAgrees` since `Word` currently
-    lacks a gender field. -/
-def phiAgree (w1 w2 : Word) : Prop :=
-  (match w1.features.person, w2.features.person with
-    | some p1, some p2 => p1 = p2
-    | _, _ => True) ∧
-  (match w1.features.number, w2.features.number with
-    | some n1, some n2 => n1 = n2
-    | _, _ => True) ∧
-  Fragments.English.Pronouns.genderAgrees w1.form w2.form = true
-
-instance (w1 w2 : Word) : Decidable (phiAgree w1 w2) := by
-  unfold phiAgree
-  have d1 : Decidable
-      (match w1.features.person, w2.features.person with
-       | some p1, some p2 => p1 = p2
-       | _, _ => True) := by
-    split <;> infer_instance
-  have d2 : Decidable
-      (match w1.features.number, w2.features.number with
-       | some n1, some n2 => n1 = n2
-       | _, _ => True) := by
-    split <;> infer_instance
-  exact inferInstance
 
 /-- Principle A: Reflexives must be bound locally -/
 def reflexiveLicensed (clause : SimpleClause) : Prop :=
