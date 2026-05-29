@@ -40,6 +40,7 @@ much of the linguistics literature) appear in docstrings only.
 -/
 
 import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.WALS
 import Linglib.Typology.Pronoun.Basic
 
 namespace Fragments.Korean.Pronouns

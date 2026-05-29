@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.WALS
 
 /-!
 # Arabic (Egyptian) pronoun profile (WALS Chs 39, 40, 44–48)

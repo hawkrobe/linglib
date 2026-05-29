@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.WALS
 
 /-!
 # Modern Standard Arabic Pronoun Profile (WALS Chs 39, 40, 44–48; Chs 136–137)
