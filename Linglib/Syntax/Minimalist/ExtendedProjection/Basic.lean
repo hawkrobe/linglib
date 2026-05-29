@@ -590,6 +590,7 @@ def ComplementSize.transparentToTenseAgree (cs : ComplementSize) : Bool :=
 /-- Standard complement sizes. -/
 def ComplementSize.vP : ComplementSize := ⟨.v⟩
 def ComplementSize.tP : ComplementSize := ⟨.T⟩
+def ComplementSize.modP : ComplementSize := ⟨.Mod⟩
 def ComplementSize.finP : ComplementSize := ⟨.Fin⟩
 def ComplementSize.cP : ComplementSize := ⟨.C⟩
 def ComplementSize.forceP : ComplementSize := ⟨.Force⟩
@@ -620,6 +621,32 @@ theorem complement_size_ordering :
     ComplementSize.vP.fLevel < ComplementSize.tP.fLevel ∧
     ComplementSize.tP.fLevel < ComplementSize.finP.fLevel ∧
     ComplementSize.finP.fLevel < ComplementSize.cP.fLevel := by decide
+
+/-! ### Infinitival tense classes (@cite{wurmbrand-2014}) -/
+
+/-- @cite{wurmbrand-2014}'s three-way classification of infinitival complements
+    by tense behavior. Substrate consumed by `Studies/Wurmbrand2014` and
+    `Studies/Ostrove2026`; the paper's woll decomposition, temporal orientation,
+    and episodic predictions live in `Studies/Wurmbrand2014`. -/
+inductive InfinitivalTenseClass where
+  /-- *decide*, *want*, *plan*: tenseless + woll → future-oriented. -/
+  | futureIrrealis
+  /-- *believe*, *claim*: NOW-anchored → simultaneous with the attitude time. -/
+  | propositional
+  /-- *try*, *begin*, *seem*: no attitude holder; reference time = matrix
+      reference time (restructuring/raising). -/
+  | restructuring
+  deriving DecidableEq, Repr, Inhabited
+
+/-- The structural complement size of each infinitival class: future irrealis
+    projects a modal (wollP ≈ ModP), propositional a TP, restructuring a bare
+    vP (@cite{wurmbrand-2014} §5; @cite{wurmbrand-2001}). The paper's strict
+    wollP > TP > vP *ordering* is theory-internal and lives in
+    `Studies/Wurmbrand2014` (ModP and TP share an fseq tier here). -/
+def InfinitivalTenseClass.toComplementSize : InfinitivalTenseClass → ComplementSize
+  | .futureIrrealis => .modP
+  | .propositional => .tP
+  | .restructuring => .vP
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 10: Split ForceP (@cite{westergaard-2009})
