@@ -32,8 +32,8 @@ content (singularProp = false), but is used referentially.
 - `referentialExpression`: A referentially-used description
 - `donnellanDivergence`: The two uses come apart when the description
   fails to apply to the intended referent
-- `definitePrProp`: Attributive semantics with presupposition (bridges
-  to `Semantics.Presupposition.PrProp`)
+- `definiteNominal`: Attributive semantics as a `NominalDenot` (selector =
+  the Russellian iota; `resolve` it for a `PrProp`)
 
 -/
 
@@ -103,30 +103,6 @@ familiarity-based, anaphoric, and discourse-restricted variants are
 def definiteNominal {W E : Type*} (domain : List E) (restrictor : E → W → Bool) :
     NominalDenot Unit W E :=
   NominalDenot.ofReferent (attributiveContent domain restrictor)
-
-/-- Attributive semantics as a `PrProp`: existence and uniqueness are
-presupposed, the assertion is the predicate applied to the unique satisfier.
-This is `definiteNominal` resolved against the predicate — so the canonical
-definite denotation *is* a `NominalDenot.resolve` by construction. -/
-def definitePrProp {W E : Type*} (domain : List E) (restrictor : E → W → Bool)
-    (predicate : E → W → Bool) : PrProp W :=
-  (definiteNominal domain restrictor).resolve (fun e w => predicate e w = true) ⟨⟩
-
-/-- Unfolding lemma: `definitePrProp` reduces to the canonical
-    `presupOfReferent ∘ attributiveContent`. Regression guard for the
-    `NominalDenot` migration. -/
-theorem definitePrProp_eq_presupOfReferent {W E : Type*} (domain : List E)
-    (restrictor : E → W → Bool) (predicate : E → W → Bool) :
-    definitePrProp domain restrictor predicate =
-    presupOfReferent (attributiveContent domain restrictor)
-      (fun e w => predicate e w = true) := rfl
-
-/-- Direct presupposition characterization: `definitePrProp` presupposes
-    that `attributiveContent` returns `some` referent. -/
-@[simp] theorem definitePrProp_presup {W E : Type*} (domain : List E)
-    (restrictor : E → W → Bool) (predicate : E → W → Bool) (w : W) :
-    (definitePrProp domain restrictor predicate).presup w =
-    (attributiveContent domain restrictor w).isSome := rfl
 
 /-! ## Referential Semantics -/
 

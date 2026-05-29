@@ -71,7 +71,7 @@ open Core.Nominal (russellIotaList)
 open Features.Definiteness (DefPresupType)
 open Core.SitVarStatus (SitVarStatus)
 open Semantics.Definiteness (qforceToPresupType)
-open Semantics.Reference.Donnellan (definitePrProp UseMode attributiveContent)
+open Semantics.Reference.Donnellan (UseMode definiteNominal)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -142,8 +142,8 @@ def the_sit (F : SituationFrame) (domain : List F.Ent)
                    (fun e s => scope e s = true)
 
 /-- `the_sit` instantiated with bare type parameters (no SituationFrame).
-    Coincides with `Donnellan.definitePrProp` — the same Russellian iota
-    factored through `presupOfReferent`. -/
+    Coincides with the canonical definite (`Donnellan.definiteNominal`
+    resolved) — the same Russellian iota factored through `presupOfReferent`. -/
 def the_sit' {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
   presupOfReferent (fun w => russellIotaList domain (fun e => restrictor e w))
@@ -151,18 +151,20 @@ def the_sit' {W E : Type} (domain : List E)
 
 
 -- ════════════════════════════════════════════════════════════════
--- §3: Bridge to Donnellan's `definitePrProp`
+-- §3: Bridge to the canonical definite (`Donnellan.definiteNominal`)
 -- ════════════════════════════════════════════════════════════════
 
-/-- `the_sit'` and `Donnellan.definitePrProp` denote the same `PrProp`:
-    both factor through `presupOfReferent` applied to a Russellian iota
-    over the domain. The two names reflect different theoretical lineages
+/-- `the_sit'` and the canonical definite (`definiteNominal` resolved) denote
+    the same `PrProp`: both factor through `presupOfReferent` applied to a
+    Russellian iota over the domain. The two names reflect different lineages
     (Elbourne's situation semantics vs. Donnellan's attributive use); the
     denotation is one and the same. -/
-theorem the_sit'_eq_definitePrProp
+theorem the_sit'_eq_definite
     {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool) :
-    the_sit' domain restrictor scope = definitePrProp domain restrictor scope :=
+    the_sit' domain restrictor scope
+      = (definiteNominal domain restrictor).resolve
+          (fun e w => scope e w = true) ⟨⟩ :=
   rfl
 
 /-- The presupposition of `the_sit'` is determined solely by the filter result. -/
@@ -189,12 +191,12 @@ theorem the_sit_assertion_implies_presup
 -- §4: Referential vs Attributive (@cite{elbourne-2013}, Ch 5)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Donnellan's attributive semantics IS `the_sit'` with a bound situation
-variable. -/
+/-- Donnellan's attributive semantics (the canonical `definiteNominal`
+resolved) IS `the_sit'` with a bound situation variable. -/
 theorem attributive_is_the_sit_bound
     {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool) :
-    definitePrProp domain restrictor scope =
+    (definiteNominal domain restrictor).resolve (fun e w => scope e w = true) ⟨⟩ =
     the_sit' domain restrictor scope := rfl
 
 
@@ -466,7 +468,7 @@ section RefAttr
 -- isDonkey/isBeaten/isPresident/isSpy/isGhost/isQuiet cascades to
 -- Linglib/Semantics/Presupposition/Basic.lean (presupOfReferent : (W → Option E) → ...)
 -- and Linglib/Core/Nominal/Maximality.lean (russellIotaList : List E → (E → Bool) → Option E).
--- These predicates feed into the_sit'/the_sit/definitePrProp which require E → W → Bool.
+-- These predicates feed into the_sit'/the_sit/definiteNominal which require E → W → Bool.
 -- Migration deferred until those external Core APIs migrate to Prop with [DecidablePred].
 
 inductive Sit where
