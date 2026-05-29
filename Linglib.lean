@@ -14,6 +14,7 @@ import Linglib.Features.ClauseForm
 import Linglib.Features.Clusivity
 import Linglib.Syntax.Common.Inversion
 import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.WALS
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
