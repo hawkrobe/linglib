@@ -57,27 +57,50 @@ def Cont.lower (m : Cont A A) : A := m id
 abbrev Tower (C : Type u) (B : Type v) (A : Type w) := (A → B) → C
 
 -- ════════════════════════════════════════════════════
--- § Monad Laws
+-- § Monad instance
 -- ════════════════════════════════════════════════════
 
-/-- Left identity: `pure a >>= f = f a` -/
-theorem Cont.bind_left_id (a : A) (f : A → Cont R B) :
-    Cont.bind (Cont.pure a) f = f a := rfl
+/-! The continuation monad's laws (left/right identity, associativity, and the
+functor laws) are exactly those of `LawfulMonad`, so we register `Cont R` as a
+lawful monad rather than restating them as standalone `rfl` theorems. `R` is
+fixed to `Type` (not universe-polymorphic) for Lean's `Monad` class. -/
 
-/-- Right identity: `m >>= pure = m` -/
-theorem Cont.bind_right_id (m : Cont R A) :
-    Cont.bind m Cont.pure = m := rfl
+section Instances
 
-/-- Associativity: `(m >>= f) >>= g = m >>= (λa. f a >>= g)` -/
-theorem Cont.bind_assoc {C : Type*} (m : Cont R A) (f : A → Cont R B)
-    (g : B → Cont R C) :
-    Cont.bind (Cont.bind m f) g = Cont.bind m (λ a => Cont.bind (f a) g) := rfl
+variable {R : Type}
 
-/-- Map can be defined via bind and pure. -/
-theorem Cont.map_via_bind (f : A → B) (m : Cont R A) :
-    Cont.map f m = Cont.bind m (λ a => Cont.pure (f a)) := rfl
+instance : Functor (Cont R) where
+  map := Cont.map
 
-/-- Lower of pure is identity. -/
+instance : Pure (Cont R) where
+  pure := Cont.pure
+
+instance : Bind (Cont R) where
+  bind := Cont.bind
+
+instance : Seq (Cont R) where
+  seq mf mx := Cont.bind mf (λ f => Cont.map f (mx ()))
+
+instance : Monad (Cont R) where
+
+instance : LawfulMonad (Cont R) where
+  map_const := rfl
+  id_map _ := rfl
+  comp_map _ _ _ := rfl
+  bind_pure_comp _ _ := rfl
+  pure_bind _ _ := rfl
+  bind_assoc _ _ _ := rfl
+  bind_map _ _ := rfl
+  pure_seq _ _ := rfl
+  seq_pure _ _ := rfl
+  seq_assoc _ _ _ := rfl
+  seqLeft_eq _ _ := rfl
+  seqRight_eq _ _ := rfl
+  map_pure _ _ := rfl
+
+end Instances
+
+/-- Lower of pure is identity. (Not a monad law — a fact about `Cont.lower`.) -/
 theorem Cont.lower_pure (a : A) : Cont.lower (Cont.pure a) = a := rfl
 
 end Semantics.Composition.Continuation
