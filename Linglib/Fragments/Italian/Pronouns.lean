@@ -220,6 +220,24 @@ theorem has_both_numbers :
     allPronouns.any (·.number == some .sg) = true ∧
     allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
 
+-- ============================================================================
+-- § 5: Cardinaletti–Starke deficiency classes
+-- ============================================================================
+
+/-- Italian's two pronoun series instantiate two Cardinaletti–Starke deficiency
+    classes (@cite{cardinaletti-starke-1999}): the strong forms (`allPronouns`)
+    are `.strong`; the object clitics (`paradigm`) are `.clitic`. -/
+def strongStrength : Strength := .strong
+
+/-- The object-clitic series is the maximally deficient `.clitic` class. -/
+def cliticStrength : Strength := .clitic
+
+/-- The clitic series is structurally more deficient than the strong series
+    (lower `Strength.rank`): the deficiency ordering behind their complementary
+    distribution (clitics host-adjacent and unfocusable, strong forms free). -/
+theorem clitics_more_deficient :
+    Strength.rank cliticStrength < Strength.rank strongStrength := by decide
+
 end Fragments.Italian.Pronouns
 
 namespace Fragments.Italian
