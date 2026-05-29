@@ -563,7 +563,7 @@ noncomputable def l0Score (prior : Prevalence → ℝ) (u : Utterance) (p : Prev
 theorem endorsement_eq_softmax (prior : Prevalence → ℝ) (p : Prevalence) (α : ℝ)
     (hl0 : ∀ u, 0 < l0Score prior u p) :
     (l0Score prior .generic p) ^ α / ∑ u : Utterance, (l0Score prior u p) ^ α =
-    softmax (fun u : Utterance => log (l0Score prior u p)) α .generic :=
+    softmax (α • fun u : Utterance => log (l0Score prior u p)) .generic :=
   rpow_luce_eq_softmax (fun u => l0Score prior u p) α hl0 .generic
 
 /-- When l0_gen > l0_sil (endorsed generic), the endorsement rate → 1
@@ -571,7 +571,7 @@ theorem endorsement_eq_softmax (prior : Prevalence → ℝ) (p : Prevalence) (α
 theorem endorsement_tendsto_one (prior : Prevalence → ℝ) (p : Prevalence)
     (hs : 0 < l0Score prior .silent p)
     (h : l0Score prior .silent p < l0Score prior .generic p) :
-    Tendsto (fun α => softmax (fun u : Utterance => log (l0Score prior u p)) α .generic)
+    Tendsto (fun (α : ℝ) => softmax (α • fun u : Utterance => log (l0Score prior u p)) .generic)
       atTop (nhds 1) := by
   apply Softmax.tendsto_softmax_infty_at_max
   intro j hj
@@ -583,7 +583,7 @@ theorem endorsement_tendsto_one (prior : Prevalence → ℝ) (p : Prevalence)
 theorem endorsement_tendsto_zero (prior : Prevalence → ℝ) (p : Prevalence)
     (hg : 0 < l0Score prior .generic p)
     (h : l0Score prior .generic p < l0Score prior .silent p) :
-    Tendsto (fun α => softmax (fun u : Utterance => log (l0Score prior u p)) α .generic)
+    Tendsto (fun (α : ℝ) => softmax (α • fun u : Utterance => log (l0Score prior u p)) .generic)
       atTop (nhds 0) := by
   have hlim := Softmax.tendsto_softmax_infty_unique_max
     (fun u : Utterance => log (l0Score prior u p)) .silent

@@ -1,4 +1,4 @@
-import Linglib.Semantics.BSML.Defs
+import Linglib.Core.Logic.Modal.BSML.Defs
 
 /-!
 # BSML Pragmatic Enrichment
@@ -24,7 +24,7 @@ the combination with split disjunction forces both disjuncts to have
 non-empty witnesses — yielding free choice.
 -/
 
-namespace Semantics.BSML
+namespace Core.Logic.Modal.BSML
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
@@ -421,4 +421,4 @@ theorem enrichment_not_vacuous_under_double_negation :
   · -- ¬support M (¬¬(p ∧ NE)) ∅ = ¬(∅.Nonempty) (NE fails on ∅)
     intro h; exact Finset.not_nonempty_empty h.2
 
-end Semantics.BSML
+end Core.Logic.Modal.BSML

@@ -86,7 +86,7 @@ noncomputable def CoupledSoftmax.totalScore (cs : CoupledSoftmax I V)
 /-- Joint probability: softmax over the space of all assignments `I → V`. -/
 noncomputable def CoupledSoftmax.jointProb [Nonempty V]
     (cs : CoupledSoftmax I V) (f : I → V) : ℝ :=
-  softmax cs.totalScore 1 f
+  softmax cs.totalScore f
 
 -- ============================================================================
 -- § 2: Marginalization
@@ -110,7 +110,7 @@ theorem CoupledSoftmax.marginal_sum_eq_one [Nonempty V]
   rw [Finset.sum_comm]
   suffices h : ∑ f : I → V, ∑ v : V, (if f i = v then cs.jointProb f else 0) =
       ∑ f : I → V, cs.jointProb f by
-    rw [h]; exact softmax_sum_eq_one cs.totalScore 1
+    rw [h]; exact softmax_sum_eq_one cs.totalScore
   apply Finset.sum_congr rfl; intro f _
   calc ∑ v : V, (if f i = v then cs.jointProb f else 0)
       = ∑ v : V, (if v = f i then cs.jointProb f else 0) := by
@@ -124,7 +124,7 @@ theorem CoupledSoftmax.marginal_nonneg [Nonempty V]
     0 ≤ cs.marginal i v :=
   Finset.sum_nonneg fun f _ => by
     split
-    · exact le_of_lt (softmax_pos cs.totalScore 1 f)
+    · exact le_of_lt (softmax_pos cs.totalScore f)
     · exact le_refl 0
 
 -- ============================================================================
@@ -135,7 +135,7 @@ theorem CoupledSoftmax.marginal_nonneg [Nonempty V]
     were no coupling. `P_indep(i, v) = softmax(componentScore(i, ·), 1)(v)`. -/
 noncomputable def CoupledSoftmax.independentProb [Nonempty V]
     (cs : CoupledSoftmax I V) (i : I) (v : V) : ℝ :=
-  softmax (cs.componentScore i) 1 v
+  softmax (cs.componentScore i) v
 
 -- ============================================================================
 -- § 4: Factorization Theorem
@@ -184,13 +184,13 @@ theorem CoupledSoftmax.marginal_eq_independent_when_uncoupled [Nonempty V]
   obtain ⟨c, hc⟩ := h_const
   set comp := cs.componentScore with hcomp
   -- Step 1: Remove coupling constant from jointProb
-  have h_joint : cs.jointProb = softmax (fun f : I → V => ∑ j, comp j (f j)) 1 := by
-    show softmax cs.totalScore 1 = _
+  have h_joint : cs.jointProb = softmax (fun f : I → V => ∑ j, comp j (f j)) := by
+    show softmax cs.totalScore = _
     have h_ts : cs.totalScore = fun f => (∑ j, comp j (f j)) + c := by
       funext f; simp [CoupledSoftmax.totalScore, ← hcomp, hc]
     rw [h_ts, softmax_add_const]
   -- Step 2: Unfold to exp/sum form
-  simp only [marginal, independentProb, h_joint, softmax, one_mul]
+  simp only [marginal, independentProb, h_joint, softmax]
   simp_rw [exp_sum univ]
   rw [sum_ite_div]
   -- Step 3: Compute numerator via filter trick + Fubini

@@ -1,7 +1,9 @@
 import Linglib.Core.Logic.Modal.Kripke
+import Linglib.Core.Logic.Modal.Bisimulation
 import Linglib.Core.Logic.Bilateral.Defs
 import Linglib.Core.Logic.Team.Algebra
 import Linglib.Core.Logic.Team.Closure
+import Linglib.Core.Logic.Team.Definability
 
 /-!
 # Modal Dependence Logic (MDL)
@@ -105,7 +107,7 @@ infrastructure but differ in atom flavor:
   graduation) — BSML's bilateral negation + NE atom.
 
 The bisimulation substrate currently lives at
-`Semantics/BSML/Bisimulation.lean` for historical reasons; a
+`Core/Logic/Modal/BSML/Bisimulation.lean` for historical reasons; a
 future refactor lifts it to `Core/Logic/Modal/Bisimulation.lean`.
 
 ## Todo
@@ -424,5 +426,198 @@ theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
     rw [hx]
     exact _hp
   exact hq (hSC' w₁ hmem₁ w₂ hmem₂ hagree)
+
+/-! ### Soundness for the closure cell (Definability bridge) -/
+
+open Core.Logic.Team in
+/-- **MDL is sound for its closure cell**: every MDL-definable team property is
+    downward-closed and has the empty-team property. The dependence family
+    occupies the downward-closed, empty-team cell (@cite{vaananen-2008};
+    @cite{anttila-2025}) — `dep` breaks union closure (see
+    `not_supClosed_dep_of_witness`) but preserves downward closure.
+
+    Composes `isLowerSet_support` (Lemma 4.2) and `support_empty` through the
+    `Team/Definability.lean` bridge. The converse (every such property is
+    MDL-definable) is the open half. -/
+theorem soundFor_downwardClosed_inter_empty (M : KripkeModel W Atom) :
+    SoundFor (support M) (downwardClosedProperties ∩ emptyTeamProperties) := by
+  unfold SoundFor
+  apply Set.subset_inter
+  · intro P hP
+    simp only [mem_definableClass] at hP
+    obtain ⟨φ, rfl⟩ := hP
+    show IsLowerSet (definedBy (support M) φ)
+    exact isLowerSet_support M φ
+  · intro P hP
+    simp only [mem_definableClass] at hP
+    obtain ⟨φ, rfl⟩ := hP
+    show ∅ ∈ definedBy (support M) φ
+    exact support_empty M φ
+
+/-! ### Bisimulation invariance (Väänänen-style ◇)
+
+MDL's modality differs from BSML's: anti-`◇` uses the union of accessibility
+images (clause (T9)), and `◇`-support a single witness team (clause (T8)),
+rather than BSML's per-world sub-witnesses. The invariance proof therefore
+recurses through `StateBisim.biUnionAccess` and `StateBisim.possWitness`
+(the carrier-level Lemma 3.7 analogues in `Core/Logic/Modal/Bisimulation.lean`)
+at the modal step, where BSML uses `StateBisim.accessImage` /
+`exists_image_subset`. The dependence-atom case is depth-0 and turns on
+`WorldBisim.val_eq`: state bisim preserves the set of atom-valuation profiles
+realised in a team, and functional dependence is a property of that set. -/
+
+section Bisimulation
+
+open Core.Logic.Modal
+
+variable {W' : Type*} [DecidableEq W'] [Fintype W']
+
+/-- **Bisimulation invariance for MDL** (the @cite{aloni-anttila-yang-2024}
+    Theorem 3.8 analogue for @cite{vaananen-2008}'s modal dependence logic):
+    if `s ⇌_k s'` and `φ` has modal depth `≤ k`, then `eval M b φ s ↔
+    eval M' b φ s'` for both polarities.
+
+    Second consumer of the carrier-level bisimulation substrate (after BSML),
+    which is what licensed lifting it out of `BSML/`. -/
+theorem bisim_invariant_eval (φ : Formula Atom) :
+    ∀ {k : ℕ}, φ.modalDepth ≤ k →
+    ∀ {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
+      {s : Finset W} {s' : Finset W'},
+    StateBisim k M s M' s' →
+    ∀ b : Bool, eval M b φ s ↔ eval M' b φ s' := by
+  induction φ with
+  | atom p =>
+    intro k _ M M' s s' hbisim b
+    cases b <;>
+    · constructor
+      · intro h w' hw'
+        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
+        rw [← hbw.val_eq]; exact h w hw
+      · intro h w hw
+        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
+        rw [hbw.val_eq]; exact h w' hw'
+  | dep xs y =>
+    intro k _ M M' s s' hbisim b
+    cases b
+    · -- antiSupport (dep xs y) s = (s = ∅)
+      exact hbisim.eq_empty_iff
+    · -- support (dep xs y): functional dependence, a property of the
+      -- valuation profiles, which bisim preserves (`val_eq`).
+      constructor
+      · intro h w₁' hw₁' w₂' hw₂' hagree'
+        obtain ⟨w₁, hw₁, hb₁⟩ := hbisim.2 w₁' hw₁'
+        obtain ⟨w₂, hw₂, hb₂⟩ := hbisim.2 w₂' hw₂'
+        have hagree : ∀ x ∈ xs, M.val x w₁ = M.val x w₂ := by
+          intro x hx; rw [hb₁.val_eq x, hagree' x hx, ← hb₂.val_eq x]
+        rw [← hb₁.val_eq y, ← hb₂.val_eq y]; exact h w₁ hw₁ w₂ hw₂ hagree
+      · intro h w₁ hw₁ w₂ hw₂ hagree
+        obtain ⟨w₁', hw₁', hb₁⟩ := hbisim.1 w₁ hw₁
+        obtain ⟨w₂', hw₂', hb₂⟩ := hbisim.1 w₂ hw₂
+        have hagree' : ∀ x ∈ xs, M'.val x w₁' = M'.val x w₂' := by
+          intro x hx; rw [← hb₁.val_eq x, hagree x hx, hb₂.val_eq x]
+        rw [hb₁.val_eq y, hb₂.val_eq y]; exact h w₁' hw₁' w₂' hw₂' hagree'
+  | neg ψ ih =>
+    intro k hd M M' s s' hbisim b
+    cases b
+    · exact ih hd hbisim true
+    · exact ih hd hbisim false
+  | conj ψ₁ ψ₂ ih₁ ih₂ =>
+    intro k hd M M' s s' hbisim b
+    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
+    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    cases b
+    · -- antiSupport (conj): split into (t, u)
+      constructor
+      · rintro ⟨t, u, hsplit, h₁, h₂⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
+          hbisim.splitPreserve hsplit
+            (Core.Logic.Team.splitsAs_left_subset hsplit)
+            (Core.Logic.Team.splitsAs_right_subset hsplit)
+        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt false).mp h₁,
+               (ih₂ hd₂ hbu false).mp h₂⟩
+      · rintro ⟨t', u', hsplit', h₁, h₂⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
+          StateBisim.splitPreserve hbisim.symm hsplit'
+            (Core.Logic.Team.splitsAs_left_subset hsplit')
+            (Core.Logic.Team.splitsAs_right_subset hsplit')
+        exact ⟨t, u, hsplit, (ih₁ hd₁ hbt.symm false).mpr h₁,
+               (ih₂ hd₂ hbu.symm false).mpr h₂⟩
+    · -- support (conj) = support ψ₁ ∧ support ψ₂
+      constructor
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim true).mp h₁, (ih₂ hd₂ hbisim true).mp h₂⟩
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim true).mpr h₁, (ih₂ hd₂ hbisim true).mpr h₂⟩
+  | disj ψ₁ ψ₂ ih₁ ih₂ =>
+    intro k hd M M' s s' hbisim b
+    have hd₁ : ψ₁.modalDepth ≤ k := le_trans (le_max_left _ _) hd
+    have hd₂ : ψ₂.modalDepth ≤ k := le_trans (le_max_right _ _) hd
+    cases b
+    · -- antiSupport (disj) = antiSupport ψ₁ ∧ antiSupport ψ₂
+      constructor
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim false).mp h₁, (ih₂ hd₂ hbisim false).mp h₂⟩
+      · rintro ⟨h₁, h₂⟩
+        exact ⟨(ih₁ hd₁ hbisim false).mpr h₁, (ih₂ hd₂ hbisim false).mpr h₂⟩
+    · -- support (disj): split into (t, u)
+      constructor
+      · rintro ⟨t, u, hsplit, h₁, h₂⟩
+        obtain ⟨t', u', hsplit', hbt, hbu⟩ :=
+          hbisim.splitPreserve hsplit
+            (Core.Logic.Team.splitsAs_left_subset hsplit)
+            (Core.Logic.Team.splitsAs_right_subset hsplit)
+        exact ⟨t', u', hsplit', (ih₁ hd₁ hbt true).mp h₁,
+               (ih₂ hd₂ hbu true).mp h₂⟩
+      · rintro ⟨t', u', hsplit', h₁, h₂⟩
+        obtain ⟨t, u, hsplit, hbt, hbu⟩ :=
+          StateBisim.splitPreserve hbisim.symm hsplit'
+            (Core.Logic.Team.splitsAs_left_subset hsplit')
+            (Core.Logic.Team.splitsAs_right_subset hsplit')
+        exact ⟨t, u, hsplit, (ih₁ hd₁ hbt.symm true).mpr h₁,
+               (ih₂ hd₂ hbu.symm true).mpr h₂⟩
+  | poss ψ ih =>
+    intro k hd M M' s s' hbisim b
+    obtain ⟨k, rfl⟩ : ∃ k', k = k' + 1 := by
+      cases k with
+      | zero => exact absurd hd (by simp [Formula.modalDepth])
+      | succ k => exact ⟨k, rfl⟩
+    have hdψ : ψ.modalDepth ≤ k := by
+      have := hd; simp only [Formula.modalDepth] at this; omega
+    cases b
+    · -- antiSupport (poss ψ) s = antiSupport ψ (s.biUnion R), evaluated on the
+      -- union of images; `biUnionAccess` transports it.
+      show eval M false ψ (s.biUnion M.access) ↔ eval M' false ψ (s'.biUnion M'.access)
+      exact ih hdψ hbisim.biUnionAccess false
+    · -- support (poss ψ): single witness team Y. Shrink to its reachable part,
+      -- transport via `possWitness`, recurse.
+      constructor
+      · rintro ⟨Y, hwit, hYsupp⟩
+        show ∃ Y' : Finset W',
+          (∀ w' ∈ s', ∃ y' ∈ Y', y' ∈ M'.access w') ∧ eval M' true ψ Y'
+        obtain ⟨Y', _hY'sub, hY'wit, hYbisim⟩ :=
+          hbisim.possWitness (Y := Y ∩ s.biUnion M.access)
+            Finset.inter_subset_right
+            (fun w hw => by
+              obtain ⟨y, hyY, hyw⟩ := hwit w hw
+              exact ⟨y, Finset.mem_inter.mpr
+                ⟨hyY, Finset.mem_biUnion.mpr ⟨w, hw, hyw⟩⟩, hyw⟩)
+        exact ⟨Y', hY'wit,
+          (ih hdψ hYbisim true).mp
+            (isLowerSet_support M ψ Finset.inter_subset_left hYsupp)⟩
+      · rintro ⟨Y', hwit', hY'supp⟩
+        show ∃ Y : Finset W,
+          (∀ w ∈ s, ∃ y ∈ Y, y ∈ M.access w) ∧ eval M true ψ Y
+        obtain ⟨Y, _hYsub, hYwit, hYbisim⟩ :=
+          hbisim.symm.possWitness (Y := Y' ∩ s'.biUnion M'.access)
+            Finset.inter_subset_right
+            (fun w' hw' => by
+              obtain ⟨y', hy'Y, hy'w⟩ := hwit' w' hw'
+              exact ⟨y', Finset.mem_inter.mpr
+                ⟨hy'Y, Finset.mem_biUnion.mpr ⟨w', hw', hy'w⟩⟩, hy'w⟩)
+        exact ⟨Y, hYwit,
+          (ih hdψ hYbisim.symm true).mpr
+            (isLowerSet_support M' ψ Finset.inter_subset_left hY'supp)⟩
+
+end Bisimulation
 
 end Core.Logic.Modal.Dependence

@@ -343,6 +343,52 @@ def sweepBasicSubjectProfile : EntailmentProfile :=
 def sweepBroomSubjectProfile : EntailmentProfile :=
   ⟨true, true, true, true, true, false, false, false, false, false⟩
 
+/-! ### Template-level proto-role defaults (@cite{rappaport-hovav-levin-1998} + @cite{dowty-1991})
+
+Per-template canonical subject/object profiles consumed by
+`Template.subjectProfile` / `Template.objectProfile` in `EventStructure.lean`
+and by Fragment-level verb entries. Named-field syntax. -/
+
+/-- State template subject: S + IE only. Psych-state holder
+(*admire*, *want*). -/
+def stateSubjectProfile : EntailmentProfile :=
+  { volition := false, sentience := true, causation := false, movement := false,
+    independentExistence := true,
+    changeOfState := false, incrementalTheme := false, causallyAffected := false,
+    stationary := false, dependentExistence := false }
+
+/-- Activity template subject: V + S + M + IE (no causation; transitive
+activities like *hit* add C at the class level via root-contributed objects). -/
+def activitySubjectProfile : EntailmentProfile :=
+  { volition := true, sentience := true, causation := false, movement := true,
+    independentExistence := true,
+    changeOfState := false, incrementalTheme := false, causallyAffected := false,
+    stationary := false, dependentExistence := false }
+
+/-- Achievement template subject: M + IE + CoS (undergoes change). -/
+def achievementSubjectProfile : EntailmentProfile :=
+  { volition := false, sentience := false, causation := false, movement := true,
+    independentExistence := true,
+    changeOfState := true, incrementalTheme := false, causallyAffected := false,
+    stationary := false, dependentExistence := false }
+
+/-- Accomplishment template subject: V + S + C + M + IE (full proto-agent,
+5 P-Agent entailments per @cite{dowty-1991}). -/
+def accomplishmentSubjectProfile : EntailmentProfile :=
+  { volition := true, sentience := true, causation := true, movement := true,
+    independentExistence := true,
+    changeOfState := false, incrementalTheme := false, causallyAffected := false,
+    stationary := false, dependentExistence := false }
+
+/-- Accomplishment template object default: CoS + CA (result patient).
+IT (incremental theme) is NOT included — not all accomplishment objects
+measure the event. Verbs with IT (*eat*, *build*) add it per-verb. -/
+def accomplishmentObjectProfile : EntailmentProfile :=
+  { volition := false, sentience := false, causation := false, movement := false,
+    independentExistence := false,
+    changeOfState := true, incrementalTheme := false, causallyAffected := true,
+    stationary := false, dependentExistence := false }
+
 -- ════════════════════════════════════════════════════
 -- § 10. Verification Theorems
 -- ════════════════════════════════════════════════════

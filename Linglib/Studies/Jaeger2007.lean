@@ -74,7 +74,7 @@ theorem gla_is_sga (r_j η : ℝ) (obs hyp : ℕ) :
 theorem maxent_convergence_guarantee {ι : Type*} [Fintype ι] [Nonempty ι]
     (s r : ι → ℝ) (y : ι) :
     ConcaveOn ℝ Set.univ
-      (fun wⱼ => (wⱼ * s y + r y) - logSumExpOffset s r wⱼ) :=
+      (fun wⱼ => (wⱼ * s y + r y) - logSumExp (wⱼ • s + r)) :=
   logConditional_concaveOn s r y
 
 -- ============================================================================

@@ -1,4 +1,4 @@
-import Linglib.Semantics.BSML.Defs
+import Linglib.Core.Logic.Modal.BSML.Defs
 import Linglib.Core.Logic.Intensional.RestrictedModality
 
 /-!
@@ -23,7 +23,7 @@ worlds, □ is universal. For NE-free formulas, this agrees with BSML's
 team semantics restricted to singleton teams.
 -/
 
-namespace Semantics.BSML
+namespace Core.Logic.Modal.BSML
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
@@ -243,4 +243,4 @@ theorem classicalEval_agrees_diamondR_poss
     diamondR M.toAccessRel (fun v => classicalEval M φ v = true) w := by
   simp only [classicalEval, decide_eq_true_eq, diamondR, BSMLModel.toAccessRel]
 
-end Semantics.BSML
+end Core.Logic.Modal.BSML

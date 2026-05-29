@@ -199,7 +199,7 @@ Hovav & Levin's event structure templates: causative → accomplishment template
 noncausative → achievement template. The hasCause/hasBecome features of
 SubeventDesc are exactly Template.HasCause/Template.HasResultState. -/
 
-open Features.EventStructure (Template)
+open Semantics.Lexical.EventStructure (Template)
 
 /-- Map subconstruction to the constructional subevent's event template. -/
 def ResultativeSubconstruction.constructionalTemplate :

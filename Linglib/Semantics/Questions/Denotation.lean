@@ -60,7 +60,7 @@ variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
     team `t : Finset W` coerces to `s`.
 
     Downward closure follows from InqML's persistence
-    (`support_isLowerSet`); empty-team property follows from
+    (`isLowerSet_support`); empty-team property follows from
     `support_empty`. -/
 def ofInqML (M : KripkeModel W Atom) (φ : Formula Atom) : Question W where
   props := (fun t : Finset W => (↑t : Set W)) '' { t : Finset W | support M φ t }
@@ -68,7 +68,7 @@ def ofInqML (M : KripkeModel W Atom) (φ : Formula Atom) : Question W where
   downward_closed := fun p ⟨t, ht_supp, ht_eq⟩ q hq => by
     have hqfin : q.Finite := Set.toFinite q
     refine ⟨hqfin.toFinset, ?_, by simp⟩
-    apply support_isLowerSet M φ _ ht_supp
+    apply isLowerSet_support M φ _ ht_supp
     intro w hw
     rw [Set.Finite.mem_toFinset] at hw
     have : w ∈ p := hq hw

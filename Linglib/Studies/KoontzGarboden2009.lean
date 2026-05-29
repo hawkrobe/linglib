@@ -144,7 +144,7 @@ inchoatives have CAUSE.
 ## Bridges
 
 - `CauserSpec` (Spanish fragment) — EFFECTOR vs AGENT verb taxonomy
-- `CausationType.HasCauseInLSR` — internally vs externally caused distinction
+- `InternalExternalCause.HasCauseInLSR` — internally vs externally caused distinction
 - `IntransitivizationType` — competing structural analysis (@cite{krejci-2012})
 - `reflexivization` / `decausativization` — valency alternation types
 -/
@@ -153,7 +153,7 @@ namespace KoontzGarboden2009
 
 open Fragments.Spanish.Predicates
 open Semantics.Causation.Morphological
-open Features.EventStructure
+open Semantics.Lexical.EventStructure
 open KoontzGarboden2009.Monotonicity
 open Minimalist (VerbHead)
 open Syntax.ArgumentStructure.Alternation
@@ -362,11 +362,11 @@ theorem causative_does_not_entail_inchoative :
 /-- Externally caused COS verbs have CAUSE in their LSR and
     license *por sí solo*. -/
 theorem external_has_cause :
-    CausationType.HasCauseInLSR .external := by decide
+    InternalExternalCause.HasCauseInLSR .external := by decide
 
 /-- Internally caused COS verbs lack CAUSE and reject *por sí solo*. -/
 theorem internal_no_cause :
-    ¬ CausationType.HasCauseInLSR .internal := by decide
+    ¬ InternalExternalCause.HasCauseInLSR .internal := by decide
 
 /-- The Albanian "feel like" construction (§4.2) provides independent
     evidence: its "unintended cause" reading (Kallulli 2006b) is
@@ -374,8 +374,8 @@ theorem internal_no_cause :
     like *break* get the reading; non-causative verbs like *eat* do not.
     This is the same structural property that `HasCauseInLSR` tests. -/
 theorem feel_like_requires_cause :
-    CausationType.HasCauseInLSR .external ∧
-    ¬ CausationType.HasCauseInLSR .internal := ⟨by decide, by decide⟩
+    InternalExternalCause.HasCauseInLSR .external ∧
+    ¬ InternalExternalCause.HasCauseInLSR .internal := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 7. Monotonicity Hypothesis (§1, §4)
@@ -476,6 +476,15 @@ theorem krejci_reflexive_bieventive :
     Monotonicity Hypothesis), against deletion analyses which violate
     it. The structural content lives in `reflexivize` above and the
     `causative_does_not_entail_inchoative` theorem below. -/
+
+/-- Deletion (@cite{krejci-2012}) and reflexivization (this file) make
+opposing predictions about whether *romperse* retains CAUSE: deletion
+maps `.accomplishment` to `.achievement` (no CAUSE); reflexivization
+preserves the LSR of an externally-caused verb (CAUSE retained). *por
+sí solo* licensing (§6) supports reflexivization. -/
+theorem deletion_vs_reflexivization_diverge_on_romper :
+    ¬ (Template.HasCause (Template.accomplishment.intransitiveVariant.getD .state) ↔
+       InternalExternalCause.HasCauseInLSR .external) := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Cross-Linguistic Morphological Evidence (§3.3)

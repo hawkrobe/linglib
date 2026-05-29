@@ -376,17 +376,17 @@ theorem trajectoryProbFrom_nonneg (cfg : RSAConfig U W) (ctx : cfg.Ctx)
     reporting beliefs directly (@cite{qing-franke-2015}). Provides an additional
     degree of freedom (α_L) for fitting listener data. -/
 noncomputable def L1_action (cfg : RSAConfig U W) (αL : ℝ) (u : U) (w : W) : ℝ :=
-  softmax (cfg.L1 u) αL w
+  softmax (αL • cfg.L1 u) w
 
 /-- The action-oriented listener always assigns positive probability. -/
 theorem L1_action_pos [Nonempty W] (cfg : RSAConfig U W) (αL : ℝ) (u : U) (w : W) :
     0 < cfg.L1_action αL u w :=
-  softmax_pos _ _ _
+  softmax_pos _ _
 
 /-- The action-oriented listener produces a valid probability distribution. -/
 theorem L1_action_sum_eq_one [Nonempty W] (cfg : RSAConfig U W) (αL : ℝ) (u : U) :
     ∑ w : W, cfg.L1_action αL u w = 1 :=
-  softmax_sum_eq_one _ _
+  softmax_sum_eq_one _
 
 /-- Higher α_L sharpens the action-oriented listener's distribution:
     if L1 prefers w₁ over w₂, ρ_a amplifies this preference. -/
@@ -394,7 +394,9 @@ theorem L1_action_amplifies [Nonempty W] (cfg : RSAConfig U W)
     {αL : ℝ} (hα : 0 < αL) (u : U) (w₁ w₂ : W)
     (h : cfg.L1 u w₁ > cfg.L1 u w₂) :
     cfg.L1_action αL u w₁ > cfg.L1_action αL u w₂ :=
-  softmax_strict_mono _ hα _ _ h
+  softmax_strict_mono _ _ _ (by
+    simpa only [Pi.smul_apply, smul_eq_mul] using
+      (mul_lt_mul_of_pos_left h hα))
 
 end RSAConfig
 

@@ -69,9 +69,9 @@ open Core.Constraint Core Real
 theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (c : C) :
     mcfaddenIntegral (harmonyScoreR constraints) 1 c =
-    softmax (harmonyScoreR constraints) 1 c := by
+    softmax (harmonyScoreR constraints) c := by
   rw [mcfaddenIntegral_eq_softmax _ one_pos]
-  simp only [div_one]
+  simp only [div_one, one_smul]
 
 -- ============================================================================
 -- § 2: MaxEnt Logit Uniformity (eq (10))
@@ -81,8 +81,8 @@ theorem maxent_eq_gumbelRUM {C : Type} [Fintype C] [Nonempty C]
     The MaxEnt logit-harmony identity. Alias for `maxent_logit_harmony`. -/
 theorem eq10_logit_harmony {C : Type} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
-    log (softmax (harmonyScoreR constraints) 1 a /
-         softmax (harmonyScoreR constraints) 1 b) =
+    log (softmax (harmonyScoreR constraints) a /
+         softmax (harmonyScoreR constraints) b) =
     harmonyScoreR constraints a - harmonyScoreR constraints b :=
   maxent_logit_harmony constraints a b
 
@@ -91,8 +91,8 @@ theorem eq10_logit_harmony {C : Type} [Fintype C] [Nonempty C]
     not on any other candidates. Corollary of `softmax_odds` with α = 1. -/
 theorem iia {C : Type} [Fintype C] [Nonempty C]
     (constraints : List (WeightedConstraint C)) (a b : C) :
-    softmax (harmonyScoreR constraints) 1 a /
-    softmax (harmonyScoreR constraints) 1 b =
+    softmax (harmonyScoreR constraints) a /
+    softmax (harmonyScoreR constraints) b =
     exp (harmonyScoreR constraints a - harmonyScoreR constraints b) :=
   maxent_iia constraints a b
 
@@ -100,14 +100,16 @@ theorem iia {C : Type} [Fintype C] [Nonempty C]
     with two candidates, MaxEnt probability is the logistic function
     of the harmony difference.
 
-    `P(0) = 1 / (1 + e^{-(H(0) − H(1))})` = `logistic(H(0) − H(1))`
+    `P(0) = 1 / (1 + e^{-(H(0) − H(1))})` = `Real.sigmoid(H(0) − H(1))`
 
     Corollary of `softmax_binary` with α = 1. -/
 theorem eq9_maxent_binary_logistic
     (constraints : List (WeightedConstraint (Fin 2))) :
-    softmax (harmonyScoreR constraints) 1 0 =
-    logistic (harmonyScoreR constraints 0 - harmonyScoreR constraints 1) := by
-  rw [softmax_binary, one_mul]
+    softmax (harmonyScoreR constraints) 0 =
+    Real.sigmoid (harmonyScoreR constraints 0 - harmonyScoreR constraints 1) := by
+  have h := softmax_binary (harmonyScoreR constraints) 1
+  rw [one_smul, one_mul] at h
+  rw [h]
 
 -- ============================================================================
 -- § 3: French Schwa Data (Table (35))
@@ -332,8 +334,8 @@ theorem table45_nhg_variance_differs :
     P(b) = P(c) (both have H = −16), while NHG assigns P(b) ≠ P(c)
     because their noise variances differ (`table45_nhg_variance_differs`). -/
 theorem table45_maxent_equal_prob :
-    softmax (harmonyScoreR table45C) 1 Cand3.b =
-    softmax (harmonyScoreR table45C) 1 Cand3.c := by
+    softmax (harmonyScoreR table45C) Cand3.b =
+    softmax (harmonyScoreR table45C) Cand3.c := by
   simp only [softmax]
   have h : harmonyScoreR table45C Cand3.b = harmonyScoreR table45C Cand3.c := by
     simp only [harmonyScoreR]; exact_mod_cast table45_equal_harmony

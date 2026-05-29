@@ -212,7 +212,7 @@ it equates the variances `σ² · 2` (Gaussian difference) and `β² · π²/3`
     when the variance-matched scale `β = σ√6/π` (see `thurstoneLuceK`). -/
 theorem gumbelRUM_binary_eq_logistic (d' β : ℝ) (hβ : 0 < β) :
     mcfaddenIntegral (λ i : Fin 2 => if i = 0 then d' / 2 else -(d' / 2)) β 0
-    = logistic (d' / β) := by
+    = Real.sigmoid (d' / β) := by
   rw [mcfaddenIntegral_binary _ hβ]
   congr 1
   simp only [↓reduceIte]

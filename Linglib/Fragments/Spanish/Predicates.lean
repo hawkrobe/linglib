@@ -30,6 +30,7 @@ namespace Fragments.Spanish.Predicates
 
 open Minimalist
 open Semantics.Lexical
+open Semantics.ArgumentStructure.EntailmentProfile
 
 -- ============================================================================
 -- § 1: Anticausative Marking
@@ -214,8 +215,7 @@ def asesinar : SpanishVerbEntry :=
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := false, causerSpec := some .agent,
-    subjectEntailments := some ⟨true, true, true, true, true,
-                                 false, false, false, false, false⟩ }
+    subjectEntailments := some accomplishmentSubjectProfile }
 
 /-- *cortar* "cut" — AGENT causer required. No anticausative.
     @cite{koontz-garboden-2009} ex. 26. -/
@@ -224,8 +224,7 @@ def cortar : SpanishVerbEntry :=
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := false, causerSpec := some .agent,
-    subjectEntailments := some ⟨true, true, true, true, true,
-                                 false, false, false, false, false⟩ }
+    subjectEntailments := some accomplishmentSubjectProfile }
 
 /-- *ahogar* "drown" — EFFECTOR causer, but animate theme undergoers
     are typical. Alternates: *ahogarse* is a derived inchoative.

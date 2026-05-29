@@ -191,7 +191,7 @@ template shift: manner verbs (activity template) become accomplishments
 inside the resultative. This connects to telicity, result state
 diagnostics (*again*/*re-* ambiguity), and CAUSE structure. -/
 
-open Features.EventStructure
+open Semantics.Lexical.EventStructure
 
 /-- PushPull alone is an activity (no CoS, no CAUSE). -/
 theorem pushPull_is_activity :

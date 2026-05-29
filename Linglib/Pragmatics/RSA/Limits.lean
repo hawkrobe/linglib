@@ -39,36 +39,36 @@ noncomputable def minScore [Nonempty ι] (s : ι → ℝ) : ℝ :=
 
 /-- Fact 4: As α → 0, softmax converges to uniform distribution. -/
 theorem tendsto_softmax_zero [Nonempty ι] (s : ι → ℝ) (i : ι) :
-    Tendsto (λ α => softmax s α i) (𝓝 0) (𝓝 (1 / Fintype.card ι)) := by
-  have h : softmax s 0 i = 1 / Fintype.card ι := by
-    have := softmax_zero s
-    simp only [this]
+    Tendsto (λ (α : ℝ) => softmax (α • s) i) (𝓝 0) (𝓝 (1 / Fintype.card ι)) := by
+  have h : softmax ((0 : ℝ) • s) i = 1 / Fintype.card ι := by
+    rw [zero_smul]; simp only [softmax_zero]
   rw [← h]
-  apply Continuous.tendsto
   -- softmax α i = exp(α * s i) / Σⱼ exp(α * s j) is continuous in α
   -- Numerator: exp is continuous, mul is continuous
   -- Denominator: finite sum of continuous functions, always positive
-  simp only [softmax]
-  apply Continuous.div
-  · exact continuous_exp.comp (continuous_mul_right (s i))
-  · apply continuous_finset_sum
-    intro j _
-    exact continuous_exp.comp (continuous_mul_right (s j))
-  · intro α
-    exact partitionFn_ne_zero s α
+  have hcont : Continuous (λ (α : ℝ) => softmax (α • s) i) := by
+    simp only [softmax, Pi.smul_apply, smul_eq_mul]
+    apply Continuous.div
+    · exact continuous_exp.comp (continuous_mul_right (s i))
+    · apply continuous_finset_sum
+      intro j _
+      exact continuous_exp.comp (continuous_mul_right (s j))
+    · intro α
+      exact partitionFn_ne_zero (α • s)
+  exact hcont.tendsto 0
 
 /-- The ratio of non-max to max probability vanishes as α → ∞. -/
 theorem softmax_ratio_tendsto_zero [Nonempty ι] (s : ι → ℝ)
     (i j : ι) (hij : s i < s j) :
-    Tendsto (λ α => softmax s α i / softmax s α j) atTop (𝓝 0) := by
-  simp only [softmax_odds]
-  -- exp(α * (s_i - s_j)) → 0 when s_i < s_j
+    Tendsto (λ (α : ℝ) => softmax (α • s) i / softmax (α • s) j) atTop (𝓝 0) := by
+  simp only [softmax_odds, Pi.smul_apply, smul_eq_mul]
+  -- exp(α * s_i - α * s_j) → 0 when s_i < s_j
   have h : s i - s j < 0 := by linarith
   -- Use Mathlib: exp(x) → 0 as x → -∞, and c * α → -∞ when c < 0
   have hconv : Tendsto (λ α => (s i - s j) * α) atTop atBot :=
     tendsto_id.const_mul_atTop_of_neg h
-  -- Rewrite to match: α * (s i - s j) = (s i - s j) * α
-  have heq : (λ α => exp (α * (s i - s j))) = (λ α => exp ((s i - s j) * α)) := by
+  -- Rewrite to match: α * s i - α * s j = (s i - s j) * α
+  have heq : (λ α => exp (α * s i - α * s j)) = (λ α => exp ((s i - s j) * α)) := by
     ext α; ring_nf
   rw [heq]
   exact tendsto_exp_atBot.comp hconv
@@ -76,13 +76,13 @@ theorem softmax_ratio_tendsto_zero [Nonempty ι] (s : ι → ℝ)
 /-- At the maximum, softmax → 1 as α → ∞. Helper lemma. -/
 theorem tendsto_softmax_infty_at_max [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_unique : ∀ j, j ≠ i_max → s j < s i_max) :
-    Tendsto (λ α => softmax s α i_max) atTop (𝓝 1) := by
+    Tendsto (λ (α : ℝ) => softmax (α • s) i_max) atTop (𝓝 1) := by
   -- Simple proof: softmax sums to 1, and all non-max terms → 0
   -- So: softmax_max = 1 - Σ_{j≠max} softmax_j → 1 - 0 = 1
   set S := Finset.univ.filter (λ j : ι => j ≠ i_max) with hS
-  have hsum : ∀ α, softmax s α i_max = 1 - ∑ j ∈ S, softmax s α j := by
+  have hsum : ∀ (α : ℝ), softmax (α • s) i_max = 1 - ∑ j ∈ S, softmax (α • s) j := by
     intro α
-    have h := softmax_sum_eq_one s α
+    have h := softmax_sum_eq_one (α • s)
     rw [← Finset.sum_filter_add_sum_filter_not (s := Finset.univ) (p := (· = i_max))] at h
     have hsimp : Finset.filter (· = i_max) Finset.univ = {i_max} := by
       ext x
@@ -94,30 +94,30 @@ theorem tendsto_softmax_infty_at_max [Nonempty ι] (s : ι → ℝ)
     rw [hne] at h
     linarith
   -- First show each softmax_j → 0 for j ≠ max
-  have heach : ∀ j ∈ S, Tendsto (λ α => softmax s α j) atTop (𝓝 0) := by
+  have heach : ∀ j ∈ S, Tendsto (λ (α : ℝ) => softmax (α • s) j) atTop (𝓝 0) := by
     intro j hj
     rw [hS, Finset.mem_filter] at hj
     -- softmax_j ≤ (softmax_j / softmax_max) because softmax_max ≤ 1
     have hratio := softmax_ratio_tendsto_zero s j i_max (h_unique j hj.2)
-    have hbound : ∀ α, softmax s α j ≤ softmax s α j / softmax s α i_max := by
+    have hbound : ∀ (α : ℝ), softmax (α • s) j ≤ softmax (α • s) j / softmax (α • s) i_max := by
       intro α
-      have h1 : softmax s α i_max ≤ 1 := softmax_le_one s α i_max
-      have hpos : 0 < softmax s α i_max := softmax_pos s α i_max
-      have hinv : 1 ≤ 1 / softmax s α i_max := (one_le_div hpos).mpr h1
-      calc softmax s α j = softmax s α j * 1 := by ring
-        _ ≤ softmax s α j * (1 / softmax s α i_max) :=
-            mul_le_mul_of_nonneg_left hinv (softmax_nonneg s α j)
-        _ = softmax s α j / softmax s α i_max := by ring
+      have h1 : softmax (α • s) i_max ≤ 1 := softmax_le_one (α • s) i_max
+      have hpos : 0 < softmax (α • s) i_max := softmax_pos (α • s) i_max
+      have hinv : 1 ≤ 1 / softmax (α • s) i_max := (one_le_div hpos).mpr h1
+      calc softmax (α • s) j = softmax (α • s) j * 1 := by ring
+        _ ≤ softmax (α • s) j * (1 / softmax (α • s) i_max) :=
+            mul_le_mul_of_nonneg_left hinv (softmax_nonneg (α • s) j)
+        _ = softmax (α • s) j / softmax (α • s) i_max := by ring
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hratio
-      (λ α => softmax_nonneg s α j) hbound
+      (λ (α : ℝ) => softmax_nonneg (α • s) j) hbound
   -- Sum of terms each → 0 is → 0
-  have hsum_zero : Tendsto (λ α => ∑ j ∈ S, softmax s α j) atTop (𝓝 0) := by
+  have hsum_zero : Tendsto (λ (α : ℝ) => ∑ j ∈ S, softmax (α • s) j) atTop (𝓝 0) := by
     have h := tendsto_finset_sum S (λ j hj => heach j hj)
     simp only [Finset.sum_const_zero] at h
     exact h
   -- 1 - sum → 1 - 0 = 1
-  have hmain : Tendsto (λ α => 1 - ∑ j ∈ S, softmax s α j) atTop (𝓝 (1 : ℝ)) := by
-    have htend : Tendsto (λ α => (1 : ℝ) - ∑ j ∈ S, softmax s α j) atTop (𝓝 ((1 : ℝ) - 0)) :=
+  have hmain : Tendsto (λ (α : ℝ) => 1 - ∑ j ∈ S, softmax (α • s) j) atTop (𝓝 (1 : ℝ)) := by
+    have htend : Tendsto (λ (α : ℝ) => (1 : ℝ) - ∑ j ∈ S, softmax (α • s) j) atTop (𝓝 ((1 : ℝ) - 0)) :=
       tendsto_const_nhds.sub hsum_zero
     simp only [sub_zero] at htend
     exact htend
@@ -126,7 +126,7 @@ theorem tendsto_softmax_infty_at_max [Nonempty ι] (s : ι → ℝ)
 /-- When there's a unique maximum, softmax concentrates on it as α → ∞. -/
 theorem tendsto_softmax_infty_unique_max [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_unique : ∀ j, j ≠ i_max → s j < s i_max) (i : ι) :
-    Tendsto (λ α => softmax s α i) atTop
+    Tendsto (λ (α : ℝ) => softmax (α • s) i) atTop
       (𝓝 (if i = i_max then 1 else 0)) := by
   by_cases h : i = i_max
   · -- i = i_max, so we need softmax → 1
@@ -136,27 +136,27 @@ theorem tendsto_softmax_infty_unique_max [Nonempty ι] (s : ι → ℝ)
     rw [if_neg h]
     have hi : s i < s i_max := h_unique i h
     have hratio := softmax_ratio_tendsto_zero s i i_max hi
-    have hbound : ∀ α, softmax s α i ≤ softmax s α i / softmax s α i_max := by
+    have hbound : ∀ (α : ℝ), softmax (α • s) i ≤ softmax (α • s) i / softmax (α • s) i_max := by
       intro α
-      have h1 : softmax s α i_max ≤ 1 := softmax_le_one s α i_max
-      have hpos : 0 < softmax s α i_max := softmax_pos s α i_max
-      have hinv : 1 ≤ 1 / softmax s α i_max := (one_le_div hpos).mpr h1
-      calc softmax s α i = softmax s α i * 1 := by ring
-        _ ≤ softmax s α i * (1 / softmax s α i_max) :=
-            mul_le_mul_of_nonneg_left hinv (softmax_nonneg s α i)
-        _ = softmax s α i / softmax s α i_max := by ring
+      have h1 : softmax (α • s) i_max ≤ 1 := softmax_le_one (α • s) i_max
+      have hpos : 0 < softmax (α • s) i_max := softmax_pos (α • s) i_max
+      have hinv : 1 ≤ 1 / softmax (α • s) i_max := (one_le_div hpos).mpr h1
+      calc softmax (α • s) i = softmax (α • s) i * 1 := by ring
+        _ ≤ softmax (α • s) i * (1 / softmax (α • s) i_max) :=
+            mul_le_mul_of_nonneg_left hinv (softmax_nonneg (α • s) i)
+        _ = softmax (α • s) i / softmax (α • s) i_max := by ring
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hratio
-      (λ α => softmax_nonneg s α i) hbound
+      (λ (α : ℝ) => softmax_nonneg (α • s) i) hbound
 
 /-- Log-probability difference grows unboundedly. -/
 theorem log_softmax_ratio_tendsto [Nonempty ι] (s : ι → ℝ)
     (i j : ι) (hij : s i < s j) :
-    Tendsto (λ α => log (softmax s α j / softmax s α i)) atTop atTop := by
-  simp only [log_softmax_odds]
-  -- α * (s_j - s_i) → ∞ when s_j > s_i
+    Tendsto (λ (α : ℝ) => log (softmax (α • s) j / softmax (α • s) i)) atTop atTop := by
+  simp only [log_softmax_odds, Pi.smul_apply, smul_eq_mul]
+  -- α * s_j - α * s_i → ∞ when s_j > s_i
   have h : 0 < s j - s i := by linarith
-  -- Rewrite: α * (s j - s i) = (s j - s i) * α
-  have heq : (λ α => α * (s j - s i)) = (λ α => (s j - s i) * α) := by
+  -- Rewrite: α * s j - α * s i = (s j - s i) * α
+  have heq : (λ α => α * s j - α * s i) = (λ α => (s j - s i) * α) := by
     ext α; ring
   rw [heq]
   exact tendsto_id.const_mul_atTop h
@@ -164,18 +164,18 @@ theorem log_softmax_ratio_tendsto [Nonempty ι] (s : ι → ℝ)
 /-- As α → -∞, softmax concentrates on the minimum. -/
 theorem tendsto_softmax_neg_infty_unique_min [Nonempty ι] (s : ι → ℝ)
     (i_min : ι) (h_unique : ∀ j, j ≠ i_min → s i_min < s j) (i : ι) :
-    Tendsto (λ α => softmax s α i) atBot
+    Tendsto (λ (α : ℝ) => softmax (α • s) i) atBot
       (𝓝 (if i = i_min then 1 else 0)) := by
-  -- Use: softmax(s, α) = softmax(-s, -α)
-  -- As α → -∞, this is like softmax(-s, β) as β → ∞
+  -- Use: softmax(α • s) = softmax((-α) • (-s))
+  -- As α → -∞, this is like softmax(β • (-s)) as β → ∞
   -- And -s has unique max at i_min (where s has unique min)
-  have hconv : ∀ α, softmax s α = softmax (λ j => -s j) (-α) := by
+  have hconv : ∀ (α : ℝ), softmax (α • s) = softmax ((-α) • (λ j => -s j)) := by
     intro α
     funext j
     unfold Core.softmax
     congr 1
-    · congr 1; ring
-    · apply Finset.sum_congr rfl; intro k _; congr 1; ring
+    · simp only [Pi.smul_apply, smul_eq_mul]; ring
+    · apply Finset.sum_congr rfl; intro k _; simp only [Pi.smul_apply, smul_eq_mul]; ring
   simp_rw [hconv]
   have hneg : ∀ j, j ≠ i_min → -s j < -s i_min := by
     intro j hj
@@ -191,7 +191,7 @@ noncomputable def hardmax [Nonempty ι] (s : ι → ℝ)
 /-- Softmax converges to hardmax as α → ∞ (when maximum is unique). -/
 theorem softmax_tendsto_hardmax [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_unique : ∀ j, j ≠ i_max → s j < s i_max) :
-    ∀ i, Tendsto (λ α => softmax s α i) atTop
+    ∀ i, Tendsto (λ (α : ℝ) => softmax (α • s) i) atTop
       (𝓝 (hardmax s i_max h_unique i)) := by
   intro i
   simp only [hardmax]
@@ -207,44 +207,46 @@ noncomputable def maxEntropy (ι : Type*) [Fintype ι] : ℝ :=
 
 /-- As α → 0, entropy of softmax approaches maximum. -/
 theorem entropy_tendsto_max [Nonempty ι] (s : ι → ℝ) :
-    Tendsto (λ α => entropy (softmax s α)) (𝓝 0) (𝓝 (maxEntropy ι)) := by
+    Tendsto (λ (α : ℝ) => entropy (softmax (α • s))) (𝓝 0) (𝓝 (maxEntropy ι)) := by
   -- entropy ∘ softmax is continuous in α, so the limit equals the value at α = 0
-  have hval : entropy (softmax s 0) = maxEntropy ι := by
+  have hval : entropy (softmax ((0 : ℝ) • s)) = maxEntropy ι := by
     unfold entropy maxEntropy
-    simp_rw [softmax_zero s]
+    rw [zero_smul]
+    simp_rw [softmax_zero]
     simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, one_div,
                Real.log_inv, neg_neg]
     have hn : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
     field_simp
   rw [← hval]
-  apply Continuous.tendsto
-  -- entropy(softmax s α) = -∑ i, softmax(i) * log(softmax(i))
+  -- entropy(softmax (α • s)) = -∑ i, softmax(i) * log(softmax(i))
   -- Each softmax component is continuous in α, and x * log x is continuous
-  unfold entropy
-  apply Continuous.neg; apply continuous_finset_sum; intro i _
-  have hcont_sm : Continuous (fun α => softmax s α i) := by
-    simp only [softmax]
-    exact (continuous_exp.comp (continuous_mul_right (s i))).div
-      (continuous_finset_sum _ (fun j _ => continuous_exp.comp (continuous_mul_right (s j))))
-      (fun α => partitionFn_ne_zero s α)
-  have hcont_log : Continuous (fun α => Real.log (softmax s α i)) :=
-    Real.continuousOn_log.comp_continuous hcont_sm (fun α => ne_of_gt (softmax_pos s α i))
-  exact hcont_sm.mul hcont_log
+  have hcont : Continuous (fun (α : ℝ) => entropy (softmax (α • s))) := by
+    unfold entropy
+    apply Continuous.neg; apply continuous_finset_sum; intro i _
+    have hcont_sm : Continuous (fun (α : ℝ) => softmax (α • s) i) := by
+      simp only [softmax, Pi.smul_apply, smul_eq_mul]
+      exact (continuous_exp.comp (continuous_mul_right (s i))).div
+        (continuous_finset_sum _ (fun j _ => continuous_exp.comp (continuous_mul_right (s j))))
+        (fun α => partitionFn_ne_zero (α • s))
+    have hcont_log : Continuous (fun α => Real.log (softmax (α • s) i)) :=
+      Real.continuousOn_log.comp_continuous hcont_sm (fun α => ne_of_gt (softmax_pos (α • s) i))
+    exact hcont_sm.mul hcont_log
+  exact hcont.tendsto 0
 
 /-- As α → ∞ (with unique max), entropy approaches 0. -/
 theorem entropy_tendsto_zero [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_unique : ∀ j, j ≠ i_max → s j < s i_max) :
-    Tendsto (λ α => entropy (softmax s α)) atTop (𝓝 0) := by
+    Tendsto (λ (α : ℝ) => entropy (softmax (α • s))) atTop (𝓝 0) := by
   -- entropy p = ∑ i, negMulLog(p i), and negMulLog is continuous
   -- softmax(i) → (if i = i_max then 1 else 0), negMulLog(0) = negMulLog(1) = 0
   -- So each term → 0, and the finite sum → 0
-  have hrewrite : (fun α => entropy (softmax s α)) =
-      fun α => ∑ i, Real.negMulLog (softmax s α i) := by
+  have hrewrite : (fun (α : ℝ) => entropy (softmax (α • s))) =
+      fun α => ∑ i, Real.negMulLog (softmax (α • s) i) := by
     ext α; unfold entropy Real.negMulLog
     simp only [neg_mul, Finset.sum_neg_distrib, neg_neg]
   rw [hrewrite, show (0 : ℝ) = ∑ _i : ι, (0 : ℝ) from by simp]
   apply tendsto_finset_sum; intro i _
-  -- negMulLog(softmax s α i) → negMulLog(limit_i) = 0
+  -- negMulLog(softmax (α • s) i) → negMulLog(limit_i) = 0
   have hlim := tendsto_softmax_infty_unique_max s i_max h_unique i
   have hval : Real.negMulLog (if i = i_max then 1 else 0) = 0 := by
     split_ifs <;> simp
@@ -254,20 +256,20 @@ theorem entropy_tendsto_zero [Nonempty ι] (s : ι → ℝ)
 /-- Exponential rate of concentration. -/
 theorem softmax_exponential_decay [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_max : ∀ j, s j ≤ s i_max) (i : ι) (hi : s i < s i_max) :
-    ∃ C > 0, ∀ α > 0, softmax s α i ≤ C * exp (-α * (s i_max - s i)) := by
+    ∃ C > 0, ∀ α > 0, softmax (α • s) i ≤ C * exp (-α * (s i_max - s i)) := by
   use 1
   constructor
   · exact one_pos
   · intro α _
     -- softmax i = softmax i_max * exp(α(s_i - s_i_max))
-    have hratio := softmax_ratio s α i i_max
+    have hratio := softmax_ratio (α • s) i i_max
     rw [hratio]
-    have hle : softmax s α i_max ≤ 1 := softmax_le_one s α i_max
-    calc softmax s α i_max * exp (α * (s i - s i_max))
-        ≤ 1 * exp (α * (s i - s i_max)) := by
+    simp only [Pi.smul_apply, smul_eq_mul]
+    have hle : softmax (α • s) i_max ≤ 1 := softmax_le_one (α • s) i_max
+    calc softmax (α • s) i_max * exp (α * s i - α * s i_max)
+        ≤ 1 * exp (α * s i - α * s i_max) := by
             apply mul_le_mul_of_nonneg_right hle (le_of_lt (exp_pos _))
-      _ = exp (α * (s i - s i_max)) := one_mul _
-      _ = exp (-(α * (s i_max - s i))) := by ring_nf
+      _ = exp (α * s i - α * s i_max) := one_mul _
       _ = exp (-α * (s i_max - s i)) := by ring_nf
       _ = 1 * exp (-α * (s i_max - s i)) := (one_mul _).symm
 
@@ -276,7 +278,7 @@ theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
     (i_max : ι) (h_max : ∀ j, s j ≤ s i_max) (ε : ℝ) (hε : 0 < ε)
     (gap : ℝ) (hgap : 0 < gap) (h_gap_bound : ∀ j, j ≠ i_max → s i_max - s j ≥ gap) :
     ∀ α, α > (1/gap) * |log ε| →
-      ∀ j, j ≠ i_max → softmax s α j < ε := by
+      ∀ j, j ≠ i_max → softmax (α • s) j < ε := by
   intro α hα j hj
   have hgap_j : s i_max - s j ≥ gap := h_gap_bound j hj
   have hsj : s j < s i_max := by linarith
@@ -284,14 +286,15 @@ theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
     have h : 0 ≤ (1/gap) * |log ε| := by positivity
     linarith
   -- Direct bound: softmax j = softmax i_max * exp(α(s_j - s_i_max)) ≤ exp(-α * gap)
-  have hratio := softmax_ratio s α j i_max
-  have hle_max : softmax s α i_max ≤ 1 := softmax_le_one s α i_max
-  have hbound : softmax s α j ≤ exp (-α * (s i_max - s j)) := by
+  have hratio := softmax_ratio (α • s) j i_max
+  have hle_max : softmax (α • s) i_max ≤ 1 := softmax_le_one (α • s) i_max
+  have hbound : softmax (α • s) j ≤ exp (-α * (s i_max - s j)) := by
     rw [hratio]
-    calc softmax s α i_max * exp (α * (s j - s i_max))
-        ≤ 1 * exp (α * (s j - s i_max)) := by
+    simp only [Pi.smul_apply, smul_eq_mul]
+    calc softmax (α • s) i_max * exp (α * s j - α * s i_max)
+        ≤ 1 * exp (α * s j - α * s i_max) := by
             apply mul_le_mul_of_nonneg_right hle_max (le_of_lt (exp_pos _))
-      _ = exp (α * (s j - s i_max)) := one_mul _
+      _ = exp (α * s j - α * s i_max) := one_mul _
       _ = exp (-α * (s i_max - s j)) := by ring_nf
   -- softmax j ≤ exp(-α * (s i_max - s j)) ≤ exp(-α * gap)
   have hexp_mono : exp (-α * (s i_max - s j)) ≤ exp (-α * gap) := by
@@ -319,7 +322,7 @@ theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
       rw [habs] at h1
       have : -α * gap < 0 := by linarith
       linarith
-  calc softmax s α j ≤ exp (-α * (s i_max - s j)) := hbound
+  calc softmax (α • s) j ≤ exp (-α * (s i_max - s j)) := hbound
     _ ≤ exp (-α * gap) := hexp_mono
     _ < ε := hexp_lt
 
@@ -332,19 +335,19 @@ theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
     maximum, just that i is beaten by some j. -/
 theorem tendsto_softmax_infty_not_max [Nonempty ι] (s : ι → ℝ)
     (i j : ι) (hij : s i < s j) :
-    Tendsto (fun α => softmax s α i) atTop (nhds 0) := by
+    Tendsto (fun (α : ℝ) => softmax (α • s) i) atTop (nhds 0) := by
   have hratio := softmax_ratio_tendsto_zero s i j hij
-  have hbound : ∀ α, softmax s α i ≤ softmax s α i / softmax s α j := by
+  have hbound : ∀ (α : ℝ), softmax (α • s) i ≤ softmax (α • s) i / softmax (α • s) j := by
     intro α
-    have h1 : softmax s α j ≤ 1 := softmax_le_one s α j
-    have hpos : 0 < softmax s α j := softmax_pos s α j
-    have hinv : 1 ≤ 1 / softmax s α j := (one_le_div hpos).mpr h1
-    calc softmax s α i = softmax s α i * 1 := by ring
-      _ ≤ softmax s α i * (1 / softmax s α j) :=
-          mul_le_mul_of_nonneg_left hinv (softmax_nonneg s α i)
-      _ = softmax s α i / softmax s α j := by ring
+    have h1 : softmax (α • s) j ≤ 1 := softmax_le_one (α • s) j
+    have hpos : 0 < softmax (α • s) j := softmax_pos (α • s) j
+    have hinv : 1 ≤ 1 / softmax (α • s) j := (one_le_div hpos).mpr h1
+    calc softmax (α • s) i = softmax (α • s) i * 1 := by ring
+      _ ≤ softmax (α • s) i * (1 / softmax (α • s) j) :=
+          mul_le_mul_of_nonneg_left hinv (softmax_nonneg (α • s) i)
+      _ = softmax (α • s) i / softmax (α • s) j := by ring
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hratio
-    (fun α => softmax_nonneg s α i) hbound
+    (fun (α : ℝ) => softmax_nonneg (α • s) i) hbound
 
 variable {σ : Type*} [Fintype σ] [DecidableEq σ]
 
@@ -357,8 +360,8 @@ variable {σ : Type*} [Fintype σ] [DecidableEq σ]
     infers the world w. This is `L1(w | u)` parameterized by α for limits. -/
 noncomputable def softmaxObserver [Nonempty ι]
     (score : ι → σ → ℝ) (prior : σ → ℝ) (α : ℝ) (i : ι) (s : σ) : ℝ :=
-  softmax (fun j => score j s) α i * prior s /
-  ∑ s' : σ, softmax (fun j => score j s') α i * prior s'
+  softmax (α • fun j => score j s) i * prior s /
+  ∑ s' : σ, softmax (α • fun j => score j s') i * prior s'
 
 /-- BToM inference about a softmax agent concentrates on the optimal state.
 
@@ -381,28 +384,28 @@ theorem softmaxObserver_tendsto_one [Nonempty ι] [Nonempty σ]
     (h_opt : ∀ j, j ≠ i₀ → score j s₀ < score i₀ s₀)
     (h_nonopt : ∀ s, s ≠ s₀ → ∃ j, score i₀ s < score j s)
     (h_prior : 0 < prior s₀) :
-    Tendsto (fun α => softmaxObserver score prior α i₀ s₀) atTop (nhds 1) := by
+    Tendsto (fun (α : ℝ) => softmaxObserver score prior α i₀ s₀) atTop (nhds 1) := by
   simp only [softmaxObserver]
   -- Step 1: numerator → prior(s₀)
-  have hnum : Tendsto (fun α => softmax (fun j => score j s₀) α i₀ * prior s₀)
+  have hnum : Tendsto (fun (α : ℝ) => softmax (α • fun j => score j s₀) i₀ * prior s₀)
       atTop (nhds (1 * prior s₀)) :=
     (tendsto_softmax_infty_at_max _ i₀ h_opt).mul tendsto_const_nhds
   rw [one_mul] at hnum
   -- Step 2: each term in the sum converges
-  have hterm : ∀ s : σ, Tendsto (fun α => softmax (fun j => score j s) α i₀ * prior s)
+  have hterm : ∀ s : σ, Tendsto (fun (α : ℝ) => softmax (α • fun j => score j s) i₀ * prior s)
       atTop (nhds (if s = s₀ then prior s₀ else 0)) := by
     intro s
     by_cases hs : s = s₀
     · rw [if_pos hs, hs]; exact hnum
     · rw [if_neg hs]
       obtain ⟨j, hj⟩ := h_nonopt s hs
-      have : Tendsto (fun α => softmax (fun k => score k s) α i₀) atTop (nhds 0) :=
+      have : Tendsto (fun (α : ℝ) => softmax (α • fun k => score k s) i₀) atTop (nhds 0) :=
         tendsto_softmax_infty_not_max _ i₀ j hj
       have := this.mul tendsto_const_nhds (b := prior s)
       simp only [zero_mul] at this
       exact this
   -- Step 3: denominator → prior(s₀)
-  have hden : Tendsto (fun α => ∑ s : σ, softmax (fun j => score j s) α i₀ * prior s)
+  have hden : Tendsto (fun (α : ℝ) => ∑ s : σ, softmax (α • fun j => score j s) i₀ * prior s)
       atTop (nhds (prior s₀)) := by
     have h := tendsto_finset_sum Finset.univ (fun s _ => hterm s)
     simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
@@ -423,9 +426,13 @@ theorem softmaxObserver_add_const [Nonempty ι]
     softmaxObserver (fun j t => score j t + c t) prior α i s =
     softmaxObserver score prior α i s := by
   simp only [softmaxObserver]
-  have h : ∀ (t : σ) (k : ι), softmax (fun j => score j t + c t) α k =
-      softmax (fun j => score j t) α k :=
-    fun t k => congr_fun (softmax_add_const (fun j => score j t) α (c t)) k
+  have h : ∀ (t : σ), softmax (α • fun j => score j t + c t) =
+      softmax (α • fun j => score j t) := by
+    intro t
+    rw [show (α • fun j => score j t + c t) =
+        (fun j => (α • fun j => score j t) j + α * c t) from by
+      funext j; simp only [Pi.smul_apply, smul_eq_mul]; ring]
+    exact softmax_add_const (α • fun j => score j t) (α * c t)
   simp_rw [h]
 
 /-! ## Open conjectures

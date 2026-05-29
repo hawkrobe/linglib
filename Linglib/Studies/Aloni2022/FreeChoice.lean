@@ -1,4 +1,4 @@
-import Linglib.Semantics.BSML.Enrichment
+import Linglib.Core.Logic.Modal.BSML.Enrichment
 
 /-!
 # BSML Free Choice Theorems
@@ -27,20 +27,22 @@ Free choice is DERIVED from three independent principles:
 3. **NE non-flatness**: empty teams fail NE, so both parts must be non-empty
 -/
 
-namespace Semantics.BSML
+namespace Aloni2022
+
+open Core.Logic.Modal.BSML
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
 /-! ### Downward closure of atom and NE primitives -/
 
--- `Semantics.BSML.isFlat_support_of_isNEFree` (in `Properties.lean`) gives
+-- `Core.Logic.Modal.BSML.isFlat_support_of_isNEFree` (in `Properties.lean`) gives
 -- true pointwise-iff flatness for all NE-free formulas via the substrate.
 -- The two per-primitive theorems below isolate the *downward closure*
 -- clause that splits atom from NE: atoms have it, NE doesn't, and the FC
 -- arguments below depend only on this restriction, not on full flatness.
 
 /-- Atoms are downward-closed. Per-primitive isolation of the atom case of
-    `Semantics.BSML.isLowerSet_support_of_isNEFree`. -/
+    `Core.Logic.Modal.BSML.isLowerSet_support_of_isNEFree`. -/
 theorem atom_downwardClosed (M : BSMLModel W Atom) (p : Atom) :
     ∀ t t' : Finset W, t' ⊆ t → support M (.atom p) t → support M (.atom p) t' :=
   fun _ _ hSub hSupp w hw => hSupp w (hSub hw)
@@ -300,4 +302,4 @@ theorem negativeFC_nec_fails_bsmlPlus :
 
 end NegativeFC
 
-end Semantics.BSML
+end Aloni2022

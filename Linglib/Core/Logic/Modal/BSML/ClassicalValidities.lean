@@ -1,4 +1,4 @@
-import Linglib.Semantics.BSML.Defs
+import Linglib.Core.Logic.Modal.BSML.Defs
 
 /-!
 # BSML Classical Validities
@@ -47,7 +47,7 @@ identification.
   (already wired via `BSML.isBilateral` in `Defs.lean`).
 -/
 
-namespace Semantics.BSML
+namespace Core.Logic.Modal.BSML
 
 variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 
@@ -192,4 +192,4 @@ theorem replacement_failure_counterexample :
        fun w hw => absurd hw (Finset.notMem_empty w)⟩
     exact Finset.not_nonempty_empty hne
 
-end Semantics.BSML
+end Core.Logic.Modal.BSML

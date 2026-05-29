@@ -4,7 +4,6 @@ import Linglib.Semantics.Modality.Temporal
 import Mathlib.Data.List.Defs
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Modality.ActualityEntailments
-import Linglib.Studies.Condoravdi2002
 
 /-!
 # Event Projection → Temporal Orientation
@@ -38,7 +37,7 @@ namespace Hacquard2006
 
 open Semantics.Modality.EventRelativity
 open Semantics.Modality.Temporal
-open Semantics.Modality (TemporalOrientation)
+open Semantics.Modality (TemporalOrientation TemporalPerspective)
 
 
 -- ════════════════════════════════════════════════════
@@ -220,19 +219,21 @@ theorem future_not_from_position :
 (via event projection); @cite{condoravdi-2002} determines what modal base
 types are available at that time (via settledness and diversity).
 
-The bridge: position determines perspective (Hacquard), and perspective
-determines available modal base types (Condoravdi). High modals get
-present perspective → MODAL > PERF scope → `settled_not_diverse` blocks
-metaphysical. Low modals get past perspective → PERF > MODAL scope →
-`counterfactual_widens_domain` widens the metaphysical domain. -/
+The half proved here is Hacquard's: position fixes the temporal
+*perspective* and the modal/aspect *scope* (`position_determines_modal_base_type`).
+On Condoravdi's account this feeds the second half — present perspective +
+MODAL > PERF yields a settled, non-diverse past property (epistemic only);
+past perspective + PERF > MODAL yields an unsettled future property
+(metaphysical available). That machinery lives in
+`Semantics/Modality/HistoricalAlternatives.lean`; chaining the two halves
+into one composition theorem is left as follow-up. -/
 
-open Condoravdi2002 (Perspective)
 open Semantics.Modality.ActualityEntailments (AspectModalScope toAspectScope)
 
 /-- Map Hacquard's temporal orientation to Condoravdi's temporal
     perspective. Future orientation (Klecha 2016) has no Condoravdi
     analogue — it is orthogonal to the scope–modality correlation. -/
-def toPerspective : TemporalOrientation → Option Perspective
+def toPerspective : TemporalOrientation → Option TemporalPerspective
   | .present => some .present
   | .past    => some .past
   | .future  => none

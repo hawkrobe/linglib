@@ -115,10 +115,10 @@ theorem gumbel_eq_softmaxDecoder {Cand : Type*} (α : ℝ) :
     candidate, when the candidate set is the full type. -/
 theorem gumbel_decoder_eq_softmax {ι : Type*} [Fintype ι] [Nonempty ι]
     (α : ℝ) (s : ι → ℝ) (i : ι) :
-    (NoiseKernel.gumbel α).toDecoder.decode Finset.univ s i = softmax s α i := by
+    (NoiseKernel.gumbel α).toDecoder.decode Finset.univ s i = softmax (α • s) i := by
   classical
-  show (softmaxDecoder α).decode Finset.univ s i = softmax s α i
-  simp [softmaxDecoder, softmax, Finset.mem_univ]
+  show (softmaxDecoder α).decode Finset.univ s i = softmax (α • s) i
+  simp [softmaxDecoder, softmax, Finset.mem_univ, Pi.smul_apply, smul_eq_mul]
 
 end NoiseKernel
 

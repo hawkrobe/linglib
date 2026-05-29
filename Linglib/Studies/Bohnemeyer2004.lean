@@ -40,7 +40,7 @@ linking-relevant property. Two classes of counterevidence:
 
 namespace Bohnemeyer2004
 
-open Features.EventStructure (EventType CausationType Template)
+open Semantics.Lexical.EventStructure (EventType InternalExternalCause Template)
 open Semantics.Aspect (ViewpointAspectB)
 open Fragments.Mayan (MarkerSet)
 open Fragments.Mayan.Yukatek
@@ -127,7 +127,7 @@ inductive TransitivizationType where
       an applied object. The original S keeps its position.
     - Externally caused base (die, fall, roll): *-s* causative, adding
       an instigator as A. The original S is reassigned to U. -/
-def predictTransitivization : CausationType → TransitivizationType
+def predictTransitivization : InternalExternalCause → TransitivizationType
   | .internal => .applicative
   | .external => .causative
 
@@ -296,7 +296,7 @@ open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 
     §2: internal causation is "closely correlated
     with the properties of control and agentivity." -/
-def CausationType.impliesCausationEntailment : CausationType → Bool
+def InternalExternalCause.impliesCausationEntailment : InternalExternalCause → Bool
   | .internal => true   -- instigator causes the event
   | .external => false  -- no instigator
 
@@ -305,10 +305,10 @@ def CausationType.impliesCausationEntailment : CausationType → Bool
     (lacks causation entailment). This connects Bohnemeyer's event-structure
     analysis to Dowty's ASP. -/
 theorem internal_implies_agent_causation :
-    CausationType.impliesCausationEntailment .internal = true := rfl
+    InternalExternalCause.impliesCausationEntailment .internal = true := rfl
 
 theorem external_lacks_causation :
-    CausationType.impliesCausationEntailment .external = false := rfl
+    InternalExternalCause.impliesCausationEntailment .external = false := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 9. Bridge to Detransitivization

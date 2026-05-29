@@ -39,15 +39,22 @@ a set of (world, assignment) pairs (QBSML), a set of assignments
 
 ## Family roadmap
 
-Team-semantic logics in Anttila's (@cite{anttila-2025}) taxonomy form a
-family of systems differing in which closure properties their support
-relation satisfies (`IsLowerSet`, `SupClosed`, `⊥ ∈ ·`). This substrate
-provides the closure predicates each family's main theorems are stated
-in. Concrete families with formalised consumers: BSML and QBSML at
-`Semantics/BSML/`, `QBSML/`. A Layer-1 abstraction parametrising
-over closure profiles should NOT be extracted until ≥ 3 distinct systems
-land — the mathlib pattern is to refactor backward from concrete
-instances, not design forward.
+Team-semantic logics form a family along two axes (@cite{anttila-2025}):
+a *signature* axis (propositional, modal, first-order) and a
+*closure-class* axis over team properties (`∅ ∈ ·`, `IsLowerSet`,
+`SupClosed`, `Set.OrdConnected`, with `DC = convex + empty`). Each logic
+is pinned to a cell by an expressive-completeness theorem (`⟦L⟧` = the
+properties in that cell), so the cell is a theorem about a logic, not a
+directory. This substrate provides the closure predicates those theorems
+are stated in; formalised consumers so far are BSML, QBSML, MDL, MIL,
+InqML under `Core/Logic/Modal/`.
+
+The shared abstraction is a `Definability` plus uniform-definability
+*lemma layer*, not a bundled `TeamLogic` class — no closure law is shared
+across cells. Refactor backward from concrete instances; do not extract
+the abstraction forward (cf. the ≥ 3-systems rule). Full long-run shape,
+target tree, and dependency-ordered build phases:
+`Core/Logic/Modal/README.md`.
 -/
 
 namespace Core.Logic.Team

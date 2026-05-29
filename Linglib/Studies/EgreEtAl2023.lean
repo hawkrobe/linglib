@@ -678,10 +678,11 @@ By A-6, U¹(·, d₂, i) = U¹(·, d₁, i) + K for some constant K.
 By A-5 (translation invariance), softmax(u + K, α) = softmax(u, α). -/
 theorem same_support_implies_equal_S1 {M : Type} [Fintype M]
     (u₁ u₂ : M → ℝ) (α : ℝ) (h_shift : ∃ K, ∀ m, u₂ m = u₁ m + K) :
-    Core.softmax u₂ α = Core.softmax u₁ α := by
+    Core.softmax (α • u₂) = Core.softmax (α • u₁) := by
   obtain ⟨K, hK⟩ := h_shift
   have : u₂ = fun m => u₁ m + K := funext hK
-  rw [this, Core.softmax_add_const]
+  rw [this, show (α • fun m => u₁ m + K) = (fun m => (α • u₁) m + α * K) from by
+    funext m; simp only [Pi.smul_apply, smul_eq_mul]; ring, Core.softmax_add_const]
 
 /-- (A-8) LU Limitation over ℝ: same support → Sⁿ(m|o₁) = Sⁿ(m|o₂) for all n ≥ 1.
 At level 1, this is a direct corollary of A-7. The paper's full inductive argument
@@ -690,7 +691,7 @@ which are equal by inductive hypothesis, so Uⁿ differs by a constant, so Sⁿ 
 equal by softmax translation invariance. -/
 theorem lu_limitation {M : Type} [Fintype M]
     (u₁ u₂ : M → ℝ) (α : ℝ) (h_shift : ∃ K, ∀ m, u₂ m = u₁ m + K) :
-    Core.softmax u₂ α = Core.softmax u₁ α :=
+    Core.softmax (α • u₂) = Core.softmax (α • u₁) :=
   same_support_implies_equal_S1 u₁ u₂ α h_shift
 
 -- ============================================================================
