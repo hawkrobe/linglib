@@ -228,10 +228,14 @@ open Fragments.Hungarian.TemporalDeictic
 
 /-! ### Size-sensitive SOT predictions (@cite{egressy-2026})
 
-Available readings as a function of complement size, and of the three-way
-`WilliamsCycleStage` (from `Core.Time.Tense`). A `partialSOT` language reads
-simultaneity off complement transparency; the `noSOT`/`fullSOT` endpoints
-ignore size.
+The available readings factor into two parts: **which complement boundaries a
+language leaves transparent** to upward tense Agree (`stageTransparent` — the
+only language-varying piece, which is exactly what `WilliamsCycleStage`
+classifies), and a **uniform, language-independent rule** mapping transparency
+to readings (a transparent boundary licenses both readings, an opaque one only
+the back-shifted reading). The binary `SOTParameter` is the `noSOT`/`fullSOT`
+special case (`readingsByStage_ofSOTParameter`); `partialSOT` is the genuinely
+size-sensitive Hungarian profile.
 
 Note: @cite{zeijlstra-2012} (§5.3) takes SOT to cross a CP freely — unlike
 Negative Concord — because the embedding C bears `[uT]`. Egressy's CP-opacity is
@@ -239,21 +243,28 @@ therefore a *departure* from Zeijlstra's upward-Agree system, not a consequence
 of it. The "Williams Cycle" framing (`WilliamsCycleStage`, §E) is Egressy's; its
 diachronic interpretation is **UNVERIFIED** against the paper text here. -/
 
-/-- Available embedded-tense readings given complement size: a transparent
-    (sub-CP) complement permits both readings, an opaque (CP) complement only
-    the back-shifted one. -/
-def availableReadingsBySize (cs : ComplementSize) : List EmbeddedTenseReading :=
-  if cs.transparentToTenseAgree then [.shifted, .simultaneous] else [.shifted]
+/-- Which complement sizes a stage leaves transparent to upward tense Agree —
+    the only language-varying piece, and the content `WilliamsCycleStage`
+    classifies. `noSOT` (Japanese): nothing transparent; `fullSOT` (English):
+    everything, including CP (SOT crosses CP, @cite{zeijlstra-2012} §5.3);
+    `partialSOT` (Hungarian): only sub-CP, read off `transparentToTenseAgree`. -/
+def stageTransparent : WilliamsCycleStage → ComplementSize → Bool
+  | .noSOT, _ => false
+  | .fullSOT, _ => true
+  | .partialSOT, cs => cs.transparentToTenseAgree
 
-/-- Available readings given Williams Cycle stage and complement size: `noSOT`
-    is always shifted-only, `fullSOT` always both, `partialSOT` reads off
-    complement transparency. -/
+/-- Available embedded-tense readings as a uniform function of boundary
+    transparency: a transparent boundary licenses both readings, an opaque one
+    only the back-shifted reading. The stage contributes only the transparency
+    profile (`stageTransparent`); this rule is language-independent. -/
 def readingsByStage (stage : WilliamsCycleStage) (cs : ComplementSize) :
     List EmbeddedTenseReading :=
-  match stage with
-  | .noSOT => [.shifted]
-  | .partialSOT => availableReadingsBySize cs
-  | .fullSOT => [.shifted, .simultaneous]
+  if stageTransparent stage cs then [.shifted, .simultaneous] else [.shifted]
+
+/-- The partial-SOT (Hungarian) row: readings by complement size alone.
+    Definitionally `readingsByStage .partialSOT`. -/
+def availableReadingsBySize (cs : ComplementSize) : List EmbeddedTenseReading :=
+  readingsByStage .partialSOT cs
 
 /-- The Williams Cycle endpoints reproduce the binary SOT parameter's
     predictions: at `noSOT`/`fullSOT`, `readingsByStage` ignores complement size
