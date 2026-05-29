@@ -40,6 +40,7 @@ content (singularProp = false), but is used referentially.
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.Basic
+import Linglib.Core.Nominal.Maximality
 
 namespace Semantics.Reference.Donnellan
 
@@ -48,6 +49,7 @@ open Core.Intension (rigid IsRigid rigid_isRigid)
 open Semantics.Presupposition (PrProp)
 open Semantics.Presupposition.PrProp (presupOfReferent)
 open Semantics.Reference.Basic
+open Core.Nominal (russellIotaList)
 
 /-! ## Use Modes -/
 
@@ -84,13 +86,11 @@ structure DefiniteDescription (W : Type*) (E : Type*) where
 /-- Attributive content: at each world, the unique satisfier of the restrictor.
 
 This is the Russellian analysis: "the φ" denotes, at world w, the unique
-entity satisfying φ at w. The referent can vary across worlds. -/
+entity satisfying φ at w — the canonical iota `russellIotaList` applied
+pointwise. The referent can vary across worlds. -/
 def attributiveContent {W E : Type*} (domain : List E) (restrictor : E → W → Bool)
     : W → Option E :=
-  λ w =>
-    match domain.filter (λ e => restrictor e w) with
-    | [e] => some e
-    | _ => none
+  fun w => russellIotaList domain (fun e => restrictor e w)
 
 /-- The definite description as a `NominalDenot`: the selector is the
 Russellian iota (`attributiveContent`); there is no intrinsic presupposition
@@ -174,18 +174,12 @@ theorem donnellanDivergence {W E : Type*} (d : DonnellanDivergence W E)
 
 /-! ## Bridge to Partee's Type-Shifting Triangle -/
 
-/-- Connection to `TypeShifting.iota`: the attributive semantics of "the φ"
-is Partee's `iota` applied at each world. Both compute the unique satisfier
-of a predicate in a domain.
-
-`TypeShifting.iota domain P` returns the unique `e` with `P e = true`.
-`attributiveContent domain restrictor w` returns the unique `e` with
-`restrictor e w = true`. These coincide when we fix the world parameter. -/
+/-- `attributiveContent` is the canonical Russellian iota `russellIotaList`
+applied pointwise: "the φ" picks, at each world `w`, the unique `e` in the
+domain with `restrictor e w = true`. -/
 theorem attributive_is_pointwise_iota {W E : Type*} (domain : List E)
     (restrictor : E → W → Bool) (w : W) :
     attributiveContent domain restrictor w =
-    (match domain.filter (λ e => restrictor e w) with
-     | [e] => some e
-     | _ => none) := rfl
+    russellIotaList domain (fun e => restrictor e w) := rfl
 
 end Semantics.Reference.Donnellan
