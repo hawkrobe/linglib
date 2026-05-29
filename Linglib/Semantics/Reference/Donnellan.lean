@@ -92,23 +92,29 @@ def attributiveContent {W E : Type*} (domain : List E) (restrictor : E → W →
     | [e] => some e
     | _ => none
 
-/-- Attributive semantics wrapped in `PrProp`: existence and uniqueness
-are presupposed, the assertion is the predicate applied to the unique
-satisfier.
+/-- The definite description as a `NominalDenot`: the selector is the
+Russellian iota (`attributiveContent`); there is no intrinsic presupposition
+beyond definedness of that selector.
 
-Factored as `presupOfReferent ∘ attributiveContent`: the referent selector
-is `attributiveContent` (Russellian iota at each world), and the canonical
-`PrProp.presupOfReferent` combinator lifts it to a presupposition+assertion
-bundle. This is the single source of truth for definite descriptions in the
-library; familiarity-based, anaphoric, and discourse-restricted variants all
-use `presupOfReferent` with different referent selectors. -/
+This is the single source of truth for definite descriptions in the library;
+familiarity-based, anaphoric, and discourse-restricted variants are
+`NominalDenot`s with different selectors, and pronouns add a φ-feature presup
+(see `Pronoun.Entry.denote`). -/
+def definiteNominal {W E : Type*} (domain : List E) (restrictor : E → W → Bool) :
+    NominalDenot Unit W E :=
+  NominalDenot.ofReferent (attributiveContent domain restrictor)
+
+/-- Attributive semantics as a `PrProp`: existence and uniqueness are
+presupposed, the assertion is the predicate applied to the unique satisfier.
+This is `definiteNominal` resolved against the predicate — so the canonical
+definite denotation *is* a `NominalDenot.resolve` by construction. -/
 def definitePrProp {W E : Type*} (domain : List E) (restrictor : E → W → Bool)
     (predicate : E → W → Bool) : PrProp W :=
-  presupOfReferent (attributiveContent domain restrictor)
-    (fun e w => predicate e w = true)
+  (definiteNominal domain restrictor).resolve (fun e w => predicate e w = true) ⟨⟩
 
-/-- Unfolding lemma: `definitePrProp` is `presupOfReferent` applied to
-    `attributiveContent`. By definition. -/
+/-- Unfolding lemma: `definitePrProp` reduces to the canonical
+    `presupOfReferent ∘ attributiveContent`. Regression guard for the
+    `NominalDenot` migration. -/
 theorem definitePrProp_eq_presupOfReferent {W E : Type*} (domain : List E)
     (restrictor : E → W → Bool) (predicate : E → W → Bool) :
     definitePrProp domain restrictor predicate =
@@ -121,25 +127,6 @@ theorem definitePrProp_eq_presupOfReferent {W E : Type*} (domain : List E)
     (restrictor : E → W → Bool) (predicate : E → W → Bool) (w : W) :
     (definitePrProp domain restrictor predicate).presup w =
     (attributiveContent domain restrictor w).isSome := rfl
-
-/-- The definite description as a `NominalDenot`: the selector is the
-Russellian iota (`attributiveContent`); there is no intrinsic presupposition
-beyond definedness of that selector. -/
-def definiteNominal {W E : Type*} (domain : List E) (restrictor : E → W → Bool) :
-    NominalDenot PUnit W E where
-  presup := fun _ _ => True
-  selector := fun _ w => attributiveContent domain restrictor w
-
-/-- `definitePrProp` is the `resolve` of `definiteNominal` against the
-predicate scope: the canonical definite denotation folds into the unified
-`NominalDenot` core by `rfl`, with no change to any consumer. A pronoun's
-denotation (`Pronoun.Entry.denote`) is the same construction with a variable
-selector and a φ-feature presupposition. -/
-theorem definitePrProp_eq_resolve {W E : Type*} (domain : List E)
-    (restrictor predicate : E → W → Bool) :
-    definitePrProp domain restrictor predicate
-      = (definiteNominal domain restrictor).resolve
-          (fun e w => predicate e w = true) ⟨⟩ := rfl
 
 /-! ## Referential Semantics -/
 

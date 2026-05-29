@@ -63,6 +63,14 @@ namespace NominalDenot
 
 variable {Ctx : Type*} {W : Type*} {E : Type*}
 
+/-- The simplest nominal: a context-free referent selector with no intrinsic
+presupposition — a bare iota/definite. `(ofReferent r).resolve scope ⟨⟩`
+unfolds to `presupOfReferent r scope`, so any `presupOfReferent`-built
+denotation is an `ofReferent` resolved (`ofReferent_resolve`). -/
+def ofReferent (referent : W → Option E) : NominalDenot Unit W E where
+  presup := fun _ _ => True
+  selector := fun _ => referent
+
 /-- Resolve a nominal against a `scope` at context `c`: the presuppositional
 proposition whose presupposition is definedness of the selected referent and
 whose assertion applies `scope` to it. This is just `presupOfReferent` over
@@ -71,6 +79,12 @@ whose assertion applies `scope` to it. This is just `presupOfReferent` over
 def resolve (nd : NominalDenot Ctx W E) (scope : E → W → Prop)
     (c : Ctx) : PrProp W :=
   PrProp.presupOfReferent (nd.selector c) scope
+
+/-- An `ofReferent` resolved is exactly the canonical `presupOfReferent` — the
+bridge every definite denotation folds across. -/
+theorem ofReferent_resolve (referent : W → Option E) (scope : E → W → Prop) :
+    (ofReferent referent).resolve scope ⟨⟩ = PrProp.presupOfReferent referent scope :=
+  rfl
 
 /-- The full denotation: `resolve` conjoined with the intrinsic
 presupposition. For a definite the intrinsic presupposition is vacuous, so
