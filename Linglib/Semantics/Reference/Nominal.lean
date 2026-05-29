@@ -20,17 +20,17 @@ generalisation of this signature, to be added when a dynamic study needs it.
 * `NominalDenot Ctx W E` — intrinsic presupposition plus a partial referent
   selector.
 * `NominalDenot.resolve` — resolve a nominal against a scope, as
-  `PrProp.presupOfReferentG` over the selector. Existing definite denotations
-  *are* this, by `rfl` (see `Semantics.Reference.Donnellan`).
+  `PrProp.presupOfReferent` applied to the selector at a context. Existing
+  definite denotations *are* this, by `rfl` (see `Semantics.Reference.Donnellan`).
 * `NominalDenot.toPrProp` — the full denotation: `resolve` conjoined with the
   intrinsic presupposition, so a pronoun's φ-features project.
 
 ## Implementation notes
 
-`resolve` is deliberately *just* `presupOfReferentG` so that the existing
-`presupOfReferent`-built definite denotations fold into a `NominalDenot` by
-`rfl` without migrating any consumer; the intrinsic presupposition is layered
-on separately in `toPrProp`.
+`resolve` is deliberately *just* `presupOfReferent` applied to the selector at
+a context, so that the existing `presupOfReferent`-built definite denotations
+fold into a `NominalDenot` by `rfl` without migrating any consumer; the
+intrinsic presupposition is layered on separately in `toPrProp`.
 
 ## Todo
 
@@ -63,20 +63,20 @@ namespace NominalDenot
 
 variable {Ctx : Type*} {W : Type*} {E : Type*}
 
-/-- Resolve a nominal against a `scope`: the presuppositional proposition
-whose presupposition is definedness of the selector and whose assertion
-applies `scope` to the resolved referent. This is exactly `presupOfReferentG`
-over the selector, so any denotation built from
-`presupOfReferent`/`presupOfReferentG` is a `resolve`, by `rfl`. -/
-def resolve (nd : NominalDenot Ctx W E) (scope : E → Ctx → W → Prop)
+/-- Resolve a nominal against a `scope` at context `c`: the presuppositional
+proposition whose presupposition is definedness of the selected referent and
+whose assertion applies `scope` to it. This is just `presupOfReferent` over
+`nd.selector c`, so any `presupOfReferent`-built denotation is a `resolve`, by
+`rfl`. -/
+def resolve (nd : NominalDenot Ctx W E) (scope : E → W → Prop)
     (c : Ctx) : PrProp W :=
-  PrProp.presupOfReferentG nd.selector scope c
+  PrProp.presupOfReferent (nd.selector c) scope
 
 /-- The full denotation: `resolve` conjoined with the intrinsic
 presupposition. For a definite the intrinsic presupposition is vacuous, so
 `toPrProp` and `resolve` agree; for a pronoun the conjoined presupposition is
 where the φ-features project. -/
-def toPrProp (nd : NominalDenot Ctx W E) (scope : E → Ctx → W → Prop)
+def toPrProp (nd : NominalDenot Ctx W E) (scope : E → W → Prop)
     (c : Ctx) : PrProp W :=
   PrProp.and { presup := nd.presup c, assertion := fun _ => True }
     (nd.resolve scope c)

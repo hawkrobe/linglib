@@ -139,7 +139,7 @@ theorem definitePrProp_eq_resolve {W E : Type*} (domain : List E)
     (restrictor predicate : E → W → Bool) :
     definitePrProp domain restrictor predicate
       = (definiteNominal domain restrictor).resolve
-          (fun e _ w => predicate e w = true) ⟨⟩ := rfl
+          (fun e w => predicate e w = true) ⟨⟩ := rfl
 
 /-! ## Referential Semantics -/
 

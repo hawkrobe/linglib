@@ -98,7 +98,7 @@ example {E : Type*} [PartialOrder E] (speaker addressee : E)
 defined (its presupposition holds). -/
 example {F : Frame} [PartialOrder F.Entity] (g : Assignment F.Entity) (i : ℕ)
     (speaker addressee : F.Entity) (isFemale isInanimate : F.Entity → Prop)
-    (scope : F.Entity → Assignment F.Entity → PUnit → Prop)
+    (scope : F.Entity → PUnit → Prop)
     (hFem : isFemale (g i)) :
     ((ellas.denote i speaker addressee isFemale isInanimate).toPrProp scope g).presup ⟨⟩ := by
   refine ⟨⟨trivial, trivial, hFem⟩, ?_⟩
