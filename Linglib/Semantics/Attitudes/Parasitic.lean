@@ -291,7 +291,7 @@ theorem parasitic_uses_belief_local_context {W E : Type*}
     presupAttributedToHolder blc p ↔
     ∀ w_star, globalCtx w_star → ∀ w', dox agent w_star w' → p.presup w' := by
   simp only [toBeliefLocalCtx, presupAttributedToHolder, BeliefLocalCtx.atWorld,
-        Discourse.CommonGround.ContextSet.entails]
+        CommonGround.ContextSet.entails]
   constructor
   · intro h w_star hw_star w' hdox
     exact h w_star hw_star (And.intro hw_star hdox)

@@ -73,7 +73,7 @@ The two universal pragmatic postulates from the Appendix
 namespace Stalnaker1975
 
 open Semantics.Mood (GramMood)
-open Discourse.CommonGround (ContextSet)
+open CommonGround (ContextSet)
 open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Conditionals
 open Dialogue.ReasonableInference
@@ -254,7 +254,7 @@ substrate-level proof (the typeclass's narrowing law is
 sufficient). -/
 
 open Discourse.SpeechAct (Assertable)
-open Discourse.CommonGround (HasContextSet)
+open CommonGround (HasContextSet)
 
 /-- **Bridge theorem**: Stalnaker's `changeFn` operator equals the
     `HasContextSet`-projection of `Assertable.speakerAssert` at the

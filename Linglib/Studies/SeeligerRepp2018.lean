@@ -206,9 +206,9 @@ def DeclQuestionType.declPolarity : DeclQuestionType → Features.Polarity
       [ForceP FALSUM/VERUM [Force' REJECTQ [TP ...]]]
 
     FALSUM signals zero commitment to the proposition (the speaker is
-    essentially not committed to adding q to the CG). Used in NRQs.
+    essentially not committed to adding q to the CommonGround). Used in NRQs.
     VERUM signals full commitment (the speaker is sure q should be in
-    the CG). Used in PRQs. In PRQs, Swedish *visst*/*nog* or an
+    the CommonGround). Used in PRQs. In PRQs, Swedish *visst*/*nog* or an
     evidential version of VERUM may appear.
 
     These correspond to the operators defined in
@@ -217,8 +217,8 @@ inductive IllocutionaryModifier where
   /-- FALSUM: zero commitment to q (non-propositional negation).
       @cite{repp-2013}: speaker is not committed to q at issue. -/
   | falsum
-  /-- VERUM: full commitment to q (q should be in the CG).
-      @cite{romero-han-2004}: for-sure-CG that q should be added. -/
+  /-- VERUM: full commitment to q (q should be in the CommonGround).
+      @cite{romero-han-2004}: for-sure-CommonGround that q should be added. -/
   | verum
   deriving DecidableEq, Repr
 
@@ -270,7 +270,7 @@ def IllocutionaryModifier.evidentialBias : IllocutionaryModifier → BiasValue
 /-- Derive the epistemic bias from the IM choice in REJECTQ.
 
     The epistemic presupposition is [IM(q)]^epist:
-    - IM = VERUM: speaker is epistemically sure q should be in CG
+    - IM = VERUM: speaker is epistemically sure q should be in CommonGround
       → epistemic [+positive] (speaker assumed q)
     - IM = FALSUM: speaker has zero epistemic commitment to q
       → epistemic [+negative] (by pragmatic strengthening in the

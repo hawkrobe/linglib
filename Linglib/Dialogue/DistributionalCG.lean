@@ -11,7 +11,7 @@ import Linglib.Dialogue.CommitmentSpace
 
 A non-negative real-valued weight function over worlds, refining
 @cite{stalnaker-2002}'s sharp set-membership context set with graded
-plausibility. The probabilistic counterpart of `Discourse.CommonGround.CG W`.
+plausibility. The probabilistic counterpart of `CommonGround W`.
 
 ## Substrate role
 
@@ -43,7 +43,7 @@ frameworks.
 
 namespace Dialogue
 
-open Discourse.CommonGround (ContextSet HasContextSet)
+open CommonGround (ContextSet HasContextSet)
 open Discourse (DiscourseRole)
 open Discourse.Commitment (HasSupport IndexedWeightedCommitment CommitmentForce)
 
@@ -54,7 +54,7 @@ open Discourse.Commitment (HasSupport IndexedWeightedCommitment CommitmentForce)
 /-- A distributional common ground: a non-negative weight function
     over worlds (@cite{anderson-2021}). The probabilistic
     counterpart of @cite{stalnaker-2002}'s context set — instead of
-    a sharp membership predicate (`W → Prop`), the CG assigns graded
+    a sharp membership predicate (`W → Prop`), the CommonGround assigns graded
     plausibility (`W → ℝ`). -/
 structure DistributionalCG (W : Type*) where
   weight : W → ℝ
@@ -64,7 +64,7 @@ namespace DistributionalCG
 
 variable {W : Type*}
 
-/-- Uniform distributional CG: all worlds equally plausible (empty CG). -/
+/-- Uniform distributional CommonGround: all worlds equally plausible (empty CommonGround). -/
 noncomputable def uniform : DistributionalCG W where
   weight _ := 1
   weight_nonneg _ := le_of_lt one_pos
@@ -75,7 +75,7 @@ noncomputable def uniform : DistributionalCG W where
 def toContextSet (cg : DistributionalCG W) : ContextSet W :=
   λ w => 0 < cg.weight w
 
-/-- Uniform distributional CG maps to the trivial context set. -/
+/-- Uniform distributional CommonGround maps to the trivial context set. -/
 theorem uniform_toContextSet :
     (uniform : DistributionalCG W).toContextSet = ContextSet.trivial := by
   funext w
@@ -91,7 +91,7 @@ theorem zero_weight_excluded (cg : DistributionalCG W) (w : W)
 
 end DistributionalCG
 
-/-- A distributional CG projects to a context set: worlds with
+/-- A distributional CommonGround projects to a context set: worlds with
     positive weight. -/
 instance {W : Type*} : HasContextSet (DistributionalCG W) W where
   toContextSet := DistributionalCG.toContextSet
@@ -102,7 +102,7 @@ instance {W : Type*} : HasContextSet (DistributionalCG W) W where
 
 /-- `[HasSupport ℝ]` instance for distributional CGs.
     `support g := 0 < g` matches Anderson's "world has positive weight
-    iff in CG" projection (cf. `DistributionalCG.toContextSet`).
+    iff in CommonGround" projection (cf. `DistributionalCG.toContextSet`).
 
     Provides ONLY `HasSupport ℝ`, NOT `CommitmentGrade ℝ`: the latter
     would require the involution law on `complement`, which fails on
@@ -114,7 +114,7 @@ instance : HasSupport ℝ where
 -- § 3. Bridge to polymorphic CommitmentSpace W ℝ
 -- ════════════════════════════════════════════════════
 
-/-- Bridge: a distributional CG embeds into a commitment space at
+/-- Bridge: a distributional CommonGround embeds into a commitment space at
     `G = ℝ`. The speaker's distributional weights become a single
     `commit speaker .doxastic weight` entry in the root.
 
@@ -129,10 +129,10 @@ noncomputable def DistributionalCG.toCommitmentSpace {W : Type*}
   root := [IndexedWeightedCommitment.commit .speaker .doxastic cg.weight]
   continuations := []
 
-/-- Bridge theorem: the support of a distributional CG equals the
+/-- Bridge theorem: the support of a distributional CommonGround equals the
     `toContextSet` projection of the bridged commitment space.
     Demonstrates that the polymorphic substrate at `G = ℝ`
-    faithfully captures Anderson's distributional CG when projected
+    faithfully captures Anderson's distributional CommonGround when projected
     to its support. -/
 theorem DistributionalCG.toCommitmentSpace_support {W : Type*}
     (cg : DistributionalCG W) (w : W) :

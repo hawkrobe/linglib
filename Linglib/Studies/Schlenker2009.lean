@@ -77,7 +77,7 @@ example : ProjectiveTrigger.appositive.toClass.ole = .notObligatory := rfl
 from the SCF x OLE feature space. -/
 
 open Semantics.Presupposition
-open Discourse.CommonGround
+open CommonGround
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.TonhauserDerivation
 

@@ -273,7 +273,7 @@ public component of a participant's conversational state.
 
 The type parameters make content types explicit:
 - `Participant`: type of participant identifiers (e.g., `String`, `Fin 2`)
-- `Fact`: type of accumulated facts (e.g., `Set W` for typed CG access)
+- `Fact`: type of accumulated facts (e.g., `Set W` for typed CommonGround access)
 - `QContent`: type of QUD questions (e.g., partition-based `QUD W`)
 - `Cont`: type of locutionary content (e.g., `String` for surface form
   or `BCheckableAustinian S` for TTR-typed propositions)

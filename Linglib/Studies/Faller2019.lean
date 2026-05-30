@@ -128,7 +128,7 @@ namespace DiscourseState
 
 variable {A W : Type*}
 
-/-- The empty discourse state: no commitments, empty Table, trivial CG. -/
+/-- The empty discourse state: no commitments, empty Table, trivial CommonGround. -/
 def empty : DiscourseState A W :=
   { Discourse.Commitment.Table.DiscourseState.empty with
     evidCommit := fun _ _ => CommitmentSlate.empty }

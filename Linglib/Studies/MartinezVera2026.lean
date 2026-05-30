@@ -59,7 +59,7 @@ Three empirical signatures:
   divergence theorem showing MV's polar partition `{p, pᶜ}` is in
   general distinct from Romero & Han's verum partition
   `{forSureCG p, ¬forSureCG p}`. Makes the line-a (focus) vs line-b
-  (CG-modal verum operator) split visible at the type level.
+  (CommonGround-modal verum operator) split visible at the type level.
 
 ## Substrate consumed
 
@@ -370,7 +370,7 @@ For the polar alternative-set case `{β.atIssue, β.atIssueᶜ}`, MV's
 `¬β.atIssue` be highlighted in the context. This makes the agreement
 between the focus-on-polarity (Höhle) and focus-marker (MV) accounts
 explicit at the type level. The disagreement with @cite{romero-han-2004}'s
-CG-modal verum surfaces as the partition divergence in §6 below.
+CommonGround-modal verum surfaces as the partition divergence in §6 below.
 -/
 
 /-- For the polar alternative-set case **with contingent scope**, MV's
@@ -434,7 +434,7 @@ theorem mi_eq_hohle_as_verumOperator
 
 /-! ### § 6. Cross-framework divergence: MV's partition vs R&H's verum partition
 
-Romero & Han 2004 analyse verum as a CG-modal operator `forSureCG`
+Romero & Han 2004 analyse verum as a CommonGround-modal operator `forSureCG`
 producing an *unbalanced* polar partition `{forSureCG p, ¬forSureCG p}`
 (line-b account). MV implicitly takes a line-a (focus over polarity)
 position: the partition over which `=mi` operates is the standard polar

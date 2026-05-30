@@ -51,7 +51,7 @@ import Linglib.Semantics.Modality.EpistemicLogic
 namespace Semantics.Presupposition.BeliefEmbedding
 
 open Semantics.Presupposition
-open Discourse.CommonGround
+open CommonGround
 open Semantics.Presupposition.Context
 open Semantics.Presupposition.LocalContext
 

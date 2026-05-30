@@ -106,10 +106,10 @@ instance diaAt_decidable {W E : Type*} (R : AccessRel W E) [∀ a w w', Decidabl
 @cite{glass-2025} proposes a typology of belief verbs based on their
 presuppositional profile — what they require of the Common Ground:
 
-- **Factive** (know): presupposes p — CG must entail p
-- **Nonfactive** (think): no presupposition — no CG requirement
+- **Factive** (know): presupposes p — CommonGround must entail p
+- **Nonfactive** (think): no presupposition — no CommonGround requirement
 - **Contrafactive** (hypothetical *contra*): would presuppose ¬p — UNATTESTED
-- **Weak contrafactive** (Mandarin yǐwéi): postsupposition ◇¬p — CG compatible with ¬p
+- **Weak contrafactive** (Mandarin yǐwéi): postsupposition ◇¬p — CommonGround compatible with ¬p
 
 The key insight: this classification is DERIVED from the `PrProp` produced by
 `DoxasticPredicate.toPrProp`, not stipulated as a separate type. The presup
@@ -126,9 +126,9 @@ This emerges from the presup field of the `PrProp` produced by
 `DoxasticPredicate.toPrProp`. Not a primitive — a derived label.
 -/
 inductive PresupClass where
-  | factive         -- presup = p (know: CG must entail p)
-  | contrafactive   -- presup = ¬p (hypothetical *contra*: CG must entail ¬p — UNATTESTED)
-  | nonfactive      -- presup = true (believe/think: no CG requirement)
+  | factive         -- presup = p (know: CommonGround must entail p)
+  | contrafactive   -- presup = ¬p (hypothetical *contra*: CommonGround must entail ¬p — UNATTESTED)
+  | nonfactive      -- presup = true (believe/think: no CommonGround requirement)
   | other           -- none of the above
   deriving DecidableEq, Repr
 
@@ -356,10 +356,10 @@ their projective content is fundamentally different:
    is a postsupposition (about output context) not presupposition (input).
    Postsuppositions are formalized in `Semantics.Dynamic.Postsupposition`.
 
-2. **Different requirement**: yǐwéi requires CG ◇ ¬p (CG compatible with ¬p),
-   not CG ⊨ ¬p (CG entails ¬p)
+2. **Different requirement**: yǐwéi requires CommonGround ◇ ¬p (CommonGround compatible with ¬p),
+   not CommonGround ⊨ ¬p (CommonGround entails ¬p)
 
-3. **No causal incoherence**: "p is unsettled in CG" is compatible with
+3. **No causal incoherence**: "p is unsettled in CommonGround" is compatible with
    "there's evidence for p that x acquired" — these are about different
    epistemic states (communal knowledge vs individual belief)
 

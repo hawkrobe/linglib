@@ -8,7 +8,7 @@ import Linglib.Core.Word
 ## Core Contribution
 
 Preposed negation in yes/no questions forces an epistemic implicature via
-the VERUM operator (FOR-SURE-CG). Ladd's PI/NI ambiguity is scope ambiguity:
+the VERUM operator (FOR-SURE-CommonGround). Ladd's PI/NI ambiguity is scope ambiguity:
 
 - PI: [Q [not [VERUM [p]]]] → speaker believes p, double-checking
 - NI: [Q [VERUM [not [p]]]] → speaker believes ¬p, double-checking
@@ -19,16 +19,16 @@ The VERUM operator is the conversational-epistemic mechanism:
 
 "For all worlds compatible with x's knowledge, for all worlds compatible
 with x's conversational goals, p is in the Common Ground." Short form:
-"It is for sure that we should add p to the CG."
+"It is for sure that we should add p to the CommonGround."
 
 ## Results
 
-1. VERUM creates unbalanced partitions: {FOR-SURE-CG(p), ¬FOR-SURE-CG(p)}
+1. VERUM creates unbalanced partitions: {FOR-SURE-CommonGround(p), ¬FOR-SURE-CommonGround(p)}
    rather than {p, ¬p}.
 2. Ladd's PI/NI ambiguity is scope ambiguity over VERUM and negation.
 3. Epistemic implicature follows from intent/pronunciation:
-   - Asserting ¬FOR-SURE-CG(p) (PI) implicates belief in p
-   - Asserting FOR-SURE-CG(¬p) (NI) implicates belief in ¬p
+   - Asserting ¬FOR-SURE-CommonGround(p) (PI) implicates belief in p
+   - Asserting FOR-SURE-CommonGround(¬p) (NI) implicates belief in ¬p
 
 ## Related Work
 
@@ -76,19 +76,19 @@ structure VerumFrame (W : Type*) where
   epiAccessible : EpistemicAccessibility W
   /-- Conversational accessibility (Conv_x) -/
   convAccessible : ConversationalAccessibility W
-  /-- Common Ground function: for each world, what's in the CG -/
+  /-- Common Ground function: for each world, what's in the CommonGround -/
   commonGround : W → List (W → Bool)
 
 -- Part 1.2: The VERUM Operator
 
-/-- FOR-SURE-CG: The VERUM operator.
+/-- FOR-SURE-CommonGround: The VERUM operator.
 
 ∀w' ∈ Epi_x(w)[∀w'' ∈ Conv_x(w')[p ∈ CG_w'']]
 
 For all epistemic alternatives w', for all conversational alternatives w'',
 p is in the Common Ground at w''.
 
-This captures: "It is for sure that we should add p to the CG."
+This captures: "It is for sure that we should add p to the CommonGround."
 -/
 def forSureCG {W : Type*} (frame : VerumFrame W)
     (w : W) (p : W → Bool) : Bool :=
@@ -97,13 +97,13 @@ def forSureCG {W : Type*} (frame : VerumFrame W)
       frame.worlds.all λ w'' =>
         if frame.convAccessible w' w'' then
           (frame.commonGround w'').any λ q =>
-            frame.worlds.all λ v => p v == q v  -- p ∈ CG means p equals some CG proposition
+            frame.worlds.all λ v => p v == q v  -- p ∈ CommonGround means p equals some CommonGround proposition
         else true
     else true
 
 /-- Simplified VERUM for finite models -/
 def verum {W : Type*} [DecidableEq W]
-    (cgMembership : W → (W → Bool) → Bool)  -- Is p in CG at w?
+    (cgMembership : W → (W → Bool) → Bool)  -- Is p in CommonGround at w?
     (epiWorlds : W → List W)                 -- Epi_x(w)
     (convWorlds : W → List W)                -- Conv_x(w')
     (w : W) (p : W → Bool) : Bool :=
@@ -128,10 +128,10 @@ def balancedQuestion {W : Type*} (p : W → Bool) : QuestionPartition W := {
   pronounced := p
 }
 
-/-- Unbalanced VERUM question: {FOR-SURE-CG(p), ¬FOR-SURE-CG(p)}
+/-- Unbalanced VERUM question: {FOR-SURE-CommonGround(p), ¬FOR-SURE-CommonGround(p)}
 
 When VERUM is present, the partition is about epistemic commitment
-to CG membership, not about p's truth directly.
+to CommonGround membership, not about p's truth directly.
 -/
 def verumQuestion {W : Type*} [DecidableEq W]
     (cgMembership : W → (W → Bool) → Bool)
@@ -143,8 +143,8 @@ def verumQuestion {W : Type*} [DecidableEq W]
   cell1 := λ w => verum cgMembership epiWorlds convWorlds w p
   cell2 := λ w => !verum cgMembership epiWorlds convWorlds w p
   pronounced := if pronounceNeg
-    then λ w => !verum cgMembership epiWorlds convWorlds w p  -- PI: ¬FOR-SURE-CG(p)
-    else λ w => verum cgMembership epiWorlds convWorlds w p   -- NI: FOR-SURE-CG(p)
+    then λ w => !verum cgMembership epiWorlds convWorlds w p  -- PI: ¬FOR-SURE-CommonGround(p)
+    else λ w => verum cgMembership epiWorlds convWorlds w p   -- NI: FOR-SURE-CommonGround(p)
 }
 
 -- Part 1.4: Ladd's Ambiguity (PI vs NI)
@@ -174,8 +174,8 @@ def NegQuestionLF.reading {W : Type*} : NegQuestionLF W → NegQuestionReading
 
 /-- Interpret a negative question LF as a partition
 
-- PI: {¬FOR-SURE-CG(p), FOR-SURE-CG(p)}
-- NI: {FOR-SURE-CG(¬p), ¬FOR-SURE-CG(¬p)}
+- PI: {¬FOR-SURE-CommonGround(p), FOR-SURE-CommonGround(p)}
+- NI: {FOR-SURE-CommonGround(¬p), ¬FOR-SURE-CommonGround(¬p)}
 -/
 def interpretNegQuestion {W : Type*} [DecidableEq W]
     (cgMembership : W → (W → Bool) → Bool)
@@ -184,10 +184,10 @@ def interpretNegQuestion {W : Type*} [DecidableEq W]
     (lf : NegQuestionLF W) : QuestionPartition W :=
   match lf with
   | .piLF p =>
-    -- PI: asking about ¬FOR-SURE-CG(p)
+    -- PI: asking about ¬FOR-SURE-CommonGround(p)
     verumQuestion cgMembership epiWorlds convWorlds p true
   | .niLF p =>
-    -- NI: VERUM scopes over negation, asking about FOR-SURE-CG(¬p)
+    -- NI: VERUM scopes over negation, asking about FOR-SURE-CommonGround(¬p)
     let notP : W → Bool := λ w => !p w
     verumQuestion cgMembership epiWorlds convWorlds notP false
 
@@ -204,8 +204,8 @@ structure SpeakerEpistemicState (W : Type*) where
 
 The pronounced cell of a VERUM question implicates the speaker's
 prior belief:
-- PI pronounces ¬FOR-SURE-CG(p) → implicates belief in p
-- NI pronounces FOR-SURE-CG(¬p) → implicates belief in ¬p
+- PI pronounces ¬FOR-SURE-CommonGround(p) → implicates belief in p
+- NI pronounces FOR-SURE-CommonGround(¬p) → implicates belief in ¬p
 -/
 def epistemicImplicature {W : Type*}
     (reading : NegQuestionReading)
@@ -230,7 +230,7 @@ inductive PolarityItem where
 
 /-- Check if polarity item is licensed under a reading
 
-- PPIs licensed under PI reading (in scope of ¬FOR-SURE-CG)
+- PPIs licensed under PI reading (in scope of ¬FOR-SURE-CommonGround)
 - NPIs licensed under NI reading (in scope of VERUM over negation)
 -/
 def isLicensed (item : PolarityItem) (reading : NegQuestionReading) : Bool :=
@@ -475,8 +475,8 @@ def generalization2 : String :=
 /-- Example: "Doesn't John drink?" (PI reading)
 
 LF: [Q [not [VERUM [John drinks]]]]
-Partition: {¬FOR-SURE-CG(drinks(j)), FOR-SURE-CG(drinks(j))}
-Pronounced: ¬FOR-SURE-CG(drinks(j))
+Partition: {¬FOR-SURE-CommonGround(drinks(j)), FOR-SURE-CommonGround(drinks(j))}
+Pronounced: ¬FOR-SURE-CommonGround(drinks(j))
 Implicature: Speaker believes John drinks
 -/
 def examplePI : NegQuestionLF Unit := .piLF (λ () => true)
@@ -484,8 +484,8 @@ def examplePI : NegQuestionLF Unit := .piLF (λ () => true)
 /-- Example: "Doesn't John drink?" (NI reading, with "either")
 
 LF: [Q [VERUM [not [John drinks]]]]
-Partition: {FOR-SURE-CG(¬drinks(j)), ¬FOR-SURE-CG(¬drinks(j))}
-Pronounced: FOR-SURE-CG(¬drinks(j))
+Partition: {FOR-SURE-CommonGround(¬drinks(j)), ¬FOR-SURE-CommonGround(¬drinks(j))}
+Pronounced: FOR-SURE-CommonGround(¬drinks(j))
 Implicature: Speaker believes John doesn't drink
 -/
 def exampleNI : NegQuestionLF Unit := .niLF (λ () => true)

@@ -22,13 +22,13 @@ The paper's headline claims that our list-shape substrate can support:
 
 1. **GRANT definition** (paper eq. 38, p. 53): `GRANT(φ) := ~ASSERT(¬φ)`.
    Trivially via the substrate's `denegate` operator.
-2. **GRANT structural properties**: preserves CG (substrate's
+2. **GRANT structural properties**: preserves CommonGround (substrate's
    `denegate_preserves_root`), doesn't grow continuations
    (`denegate_continuation_count_le`), filters precisely the
    speaker-asserts-¬φ paths (`denegate_surviving_no_match`).
 3. **ASSERT entails GRANT** (paper p. 54 prose): ASSERT(φ) and GRANT(φ)
-   project to context sets in subset relation — asserted CG is a subset
-   of granted CG. This is the paper's "GRANT is weaker than ASSERT" at
+   project to context sets in subset relation — asserted CommonGround is a subset
+   of granted CommonGround. This is the paper's "GRANT is weaker than ASSERT" at
    the observable resolution.
 
 ## What the substrate cannot capture (✗) — explicit deferrals
@@ -127,7 +127,7 @@ noncomputable def grant (cs : CommitmentSpace W Prop) (φ : W → Prop) :
 -- § 2. GRANT structural properties
 -- ════════════════════════════════════════════════════
 
-/-- GRANT preserves the root (CG unchanged). Krifka 2015 p. 330:
+/-- GRANT preserves the root (CommonGround unchanged). Krifka 2015 p. 330:
     "denegation does not change the root of the commitment space, but
     prunes its legal developments". For any cs and φ. -/
 theorem grant_preserves_root (cs : CommitmentSpace W Prop) (φ : W → Prop) :
@@ -188,7 +188,7 @@ theorem assert_contextSet_subset_grant_contextSet
   exact h ic (List.mem_cons_of_mem _ hic)
 
 /-- The strict-stronger direction: there exist `cs`, `φ`, and `w` such
-    that `w` is in the granted CG but NOT in the asserted CG. The
+    that `w` is in the granted CommonGround but NOT in the asserted CommonGround. The
     asymmetry that makes ASSERT genuinely stronger than GRANT
     (not just ≤). -/
 theorem assert_strictly_stronger_witness :
@@ -196,11 +196,11 @@ theorem assert_strictly_stronger_witness :
       (grant cs φ).toContextSet w ∧ ¬ (cs.assert .speaker φ).toContextSet w := by
   -- Witness: empty cs, content φ that is False at some world.
   refine ⟨Bool, CommitmentSpace.empty, fun b => b = true, false, ?_, ?_⟩
-  · -- Granted CG: empty root, no constraint, every world survives.
+  · -- Granted CommonGround: empty root, no constraint, every world survives.
     intro ic hic
     rw [grant_preserves_root] at hic
     exact absurd hic (List.not_mem_nil)
-  · -- Asserted CG: root contains `commit speaker (· = true)`. The
+  · -- Asserted CommonGround: root contains `commit speaker (· = true)`. The
     -- `toCommitment` projection of this commit at world `false` is
     -- `(fun b => b = true) false = (false = true) = False`.
     intro h

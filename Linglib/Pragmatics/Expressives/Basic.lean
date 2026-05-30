@@ -423,11 +423,11 @@ theorem ciStrongerThan_asymm {W : Type*} (φ ψ : TwoDimProp W)
 presuppositional meaning into two dimensions using @cite{potts-2005}'s CI type system:
 
 - **At-issue**: the assertion component (identity function on the propositional content)
-- **CI**: the presupposition (projects to root, evaluated against CG)
+- **CI**: the presupposition (projects to root, evaluated against CommonGround)
 
 This derives de re readings: when a presuppositional expression appears under
 an attitude verb, the presupposition can be evaluated against the common ground
-(CG) rather than the attitude holder's beliefs, because it projects as CI content.
+(CommonGround) rather than the attitude holder's beliefs, because it projects as CI content.
 
 ### Bridge: PrProp ↔ TwoDimProp
 
@@ -463,8 +463,8 @@ theorem ciLift_ci {W : Type*} (presup assertion : W → Prop) :
     (ciLift presup assertion).ci = presup := rfl
 
 /--
-De re reading: when CG entails the presupposition, the CI dimension is satisfied
-at all CG worlds. This means the presupposition is resolved against the CG
+De re reading: when CommonGround entails the presupposition, the CI dimension is satisfied
+at all CommonGround worlds. This means the presupposition is resolved against the CommonGround
 regardless of what is embedded under an attitude verb.
 -/
 theorem deRe_from_ciLift {W : Type*} (presup : W → Prop)

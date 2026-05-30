@@ -41,7 +41,7 @@ substrate-supported elsewhere:
   maps to the rationality parameter
 
 Closest to Stalnaker in structure (no explicit commitment/belief
-separation), but adds a probabilistic dimension that the bare CG
+separation), but adds a probabilistic dimension that the bare CommonGround
 model lacks.
 
 -/
@@ -49,7 +49,7 @@ model lacks.
 namespace Dialogue.CredenceThreshold
 
 open Discourse.Commitment (CommitmentSlate)
-open Discourse.CommonGround (ContextSet)
+open CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Credence Functions
@@ -166,7 +166,7 @@ theorem always_stable {W : Type*} (s : State W) :
 -- HasContextSet instance
 -- ════════════════════════════════════════════════════
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- Credence-threshold states project to a context set via the
     asserted-list intersection (`contextSet`). The credence + threshold
     machinery gates *which* assertions can occur; once asserted, the

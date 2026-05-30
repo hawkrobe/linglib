@@ -52,7 +52,7 @@ def bara : ParticleEntry where
   carriesPreferentialCommitment := True
 
 /-- *na* — utterance-final particle analyzed in @cite{deo-2023} as
-    signalling preference for *independent* shared commitment (CG
+    signalling preference for *independent* shared commitment (CommonGround
     update; doxastic sourcehood mirror of `bərə`'s dependent-uptake
     convention).
 
@@ -64,7 +64,7 @@ def bara : ParticleEntry where
     declarative/interrogative pattern is unverified pending the
     @cite{deo-2023} formalization.
     `carriesPreferentialCommitment := false` reflects @cite{deo-2023}'s
-    framing as a *doxastic* (CG-update) particle, not preferential. -/
+    framing as a *doxastic* (CommonGround-update) particle, not preferential. -/
 def na : ParticleEntry where
   form  := "na"
   gloss := "NA"

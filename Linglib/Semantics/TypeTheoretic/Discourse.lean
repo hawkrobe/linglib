@@ -17,7 +17,7 @@ declarative/interrogative/imperative slice plus a backchannel constructor;
 true backchannels live in `Pragmatics/Dialogue/KOS/`).
 
 **Information States**: InfoState (gameboard), agenda operations,
-  bridge to Discourse.CommonGround (§2.6).
+  bridge to CommonGround (§2.6).
 
 **Parametric Content**: Parametric bg/fg, PPpty, PQuant, PQuantDet, PRel2 (§4.2–4.3).
   Bridge to Semantics.Presupposition.PrProp.
@@ -150,17 +150,17 @@ def InfoState.pushAgenda {SignT CommT : Type}
     InfoState SignT CommT :=
   { s with agenda := signType :: s.agenda }
 
-/-! ## Bridge to Discourse.CommonGround -/
+/-! ## Bridge to CommonGround -/
 
-/-- Bridge: a `Set W`-based information state's commitments form a CG. -/
+/-- Bridge: a `Set W`-based information state's commitments form a CommonGround. -/
 def InfoState.toCG {W SignT : Type}
     (s : InfoState SignT (List (Set W))) :
-    Discourse.CommonGround.CG W where
+    CommonGround W where
   propositions := s.commitments
 
-/-- InfoState with `Set W` commitments projects to a context set via CG. -/
+/-- InfoState with `Set W` commitments projects to a context set via CommonGround. -/
 instance {W SignT : Type} :
-    Discourse.CommonGround.HasContextSet
+    CommonGround.HasContextSet
       (InfoState SignT (List (Set W))) W where
   toContextSet s := s.toCG.contextSet
 
@@ -168,7 +168,7 @@ instance {W SignT : Type} :
 theorem infoState_initial_eq_empty_cg (W SignT : Type) :
     (InfoState.initial (SignT := SignT)
       ([] : List (Set W))).toCG =
-    Discourse.CommonGround.CG.empty := rfl
+    CommonGround.empty := rfl
 
 /-- Bridge: integrating a commitment = adding to common ground. -/
 theorem integrate_comm_eq_cg_add {W SignT : Type}
