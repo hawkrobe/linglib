@@ -17,7 +17,7 @@ following @cite{knick-sharf-2026}.
 ## Compositional Architecture
 
 ```
-EventPred ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[TENSE]──▷ Prop
+Event Time → Prop ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[TENSE]──▷ Prop
 ```
 
 Equations (verified against the @cite{knick-sharf-2026} proceedings PDF):
@@ -60,7 +60,6 @@ namespace Semantics.Aspect
 open _root_.Core (WorldTimeIndex)
 open Core.Time
 open Features
-open Semantics.Events
 
 -- ════════════════════════════════════════════════════
 -- § Core Types
@@ -68,7 +67,7 @@ open Semantics.Events
 
 /-! Event predicates and the `Event` type are imported from
     `Semantics/Events/Basic.lean` — the unified event ontology.
-    Tense-aspect code uses `Event Time` and `EventPred W Time` without
+    Tense-aspect code uses `Event Time` and `W → Event Time → Prop` without
     referencing `.sort` (the field exists for Krifka-style consumers but
     is irrelevant for Klein-style tense composition). -/
 
@@ -97,7 +96,7 @@ inductive ViewpointType where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Bool-level viewpoint aspect, capturing the perfective/imperfective distinction
-    without the full interval-based `EventPred`/`IntervalPred` machinery.
+    without the full interval-based `Event Time → Prop`/`IntervalPred` machinery.
 
     Used by `Modal/Ability.lean` (actuality inferences) and
     `Phenomena/ActualityInferences/Data.lean` where the key insight is simply
@@ -141,18 +140,18 @@ variable {Time : Type*} [LinearOrder Time] {W : Type*}
 
 /-- **IMPERFECTIVE**: reference time properly contained in event runtime.
     @cite{klein-1994}: TT INCL TSit. @cite{knick-sharf-2026} eq. 25. -/
-def IMPF (P : EventPred W Time) : IntervalPred W Time :=
+def IMPF (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, t.properSubinterval e.τ ∧ P w e
 
 /-- **PERFECTIVE**: event runtime contained in reference time.
     @cite{klein-1994}: TT AT TSit (simplified to TSit ⊆ TT, following @cite{smith-1997}).
     @cite{knick-sharf-2026} eq. 28. -/
-def PRFV (P : EventPred W Time) : IntervalPred W Time :=
+def PRFV (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, e.τ.subinterval t ∧ P w e
 
 /-- **PROSPECTIVE**: reference time before situation time.
     @cite{klein-1994}: TT BEFORE TSit. -/
-def PROSP (P : EventPred W Time) : IntervalPred W Time :=
+def PROSP (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, t.isBefore e.τ ∧ P w e
 
 /-- **INIT_OVERLAP**: initial overlap between reference time and event runtime.
@@ -164,7 +163,7 @@ def PROSP (P : EventPred W Time) : IntervalPred W Time :=
     neutral viewpoint (`ViewpointType.neutral`), which is a different concept.
     Pancheva's operator is an inner Asp₂ head; Smith's neutral viewpoint is
     a default viewpoint type. -/
-def INIT_OVERLAP (P : EventPred W Time) : IntervalPred W Time :=
+def INIT_OVERLAP (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, t.initialOverlap e.τ ∧ P w e
 
 
@@ -221,12 +220,12 @@ def PERF_XN (p : IntervalPred W Time) (tᵣ : Set Time) : PointPred W Time :=
 -- ════════════════════════════════════════════════════
 
 /-- IMPF matches Klein's IMPERFECTIVE: ∃e where TT ⊂ TSit. -/
-theorem impf_is_klein_imperfective (P : EventPred W Time) (w : W) (t : Interval Time) :
+theorem impf_is_klein_imperfective (P : W → Event Time → Prop) (w : W) (t : Interval Time) :
     IMPF P w t ↔ ∃ e, ViewpointType.ttTSitRelation .imperfective t e.τ ∧ P w e := by
   simp only [IMPF, ViewpointType.ttTSitRelation, Event.τ]
 
 /-- PRFV matches Klein's PERFECTIVE: ∃e where TSit ⊆ TT. -/
-theorem prfv_is_klein_perfective (P : EventPred W Time) (w : W) (t : Interval Time) :
+theorem prfv_is_klein_perfective (P : W → Event Time → Prop) (w : W) (t : Interval Time) :
     PRFV P w t ↔ ∃ e, ViewpointType.ttTSitRelation .perfective t e.τ ∧ P w e := by
   simp only [PRFV, ViewpointType.ttTSitRelation, Event.τ]
 
@@ -235,16 +234,16 @@ theorem prfv_is_klein_perfective (P : EventPred W Time) (w : W) (t : Interval Ti
 -- ════════════════════════════════════════════════════
 
 /-- "has been V-ing" = PERF(IMPF(V)). -/
-abbrev perfProg (P : EventPred W Time) : PointPred W Time :=
+abbrev perfProg (P : W → Event Time → Prop) : PointPred W Time :=
   PERF (IMPF P)
 
 /-- "has V-ed" = PERF(PRFV(V)). -/
-abbrev perfSimple (P : EventPred W Time) : PointPred W Time :=
+abbrev perfSimple (P : W → Event Time → Prop) : PointPred W Time :=
   PERF (PRFV P)
 
 /-- PERF(IMPF(P)) unfolds: ∃ PTS and event, with PTS right-bounded at t,
     the PTS properly inside the event, and P holds of the event. -/
-theorem perf_impf_unfold (P : EventPred W Time) (w : W) (t : Time) :
+theorem perf_impf_unfold (P : W → Event Time → Prop) (w : W) (t : Time) :
     perfProg P ⟨w, t⟩ ↔
     ∃ pts : Interval Time, ∃ e : Event Time,
       RB pts t ∧ pts.properSubinterval e.τ ∧ P w e := by
@@ -256,7 +255,7 @@ theorem perf_impf_unfold (P : EventPred W Time) (w : W) (t : Time) :
 
 /-- PERF(PRFV(P)) unfolds: ∃ PTS and event, with PTS right-bounded at t,
     the event inside the PTS, and P holds of the event. -/
-theorem perf_prfv_unfold (P : EventPred W Time) (w : W) (t : Time) :
+theorem perf_prfv_unfold (P : W → Event Time → Prop) (w : W) (t : Time) :
     perfSimple P ⟨w, t⟩ ↔
     ∃ pts : Interval Time, ∃ e : Event Time,
       RB pts t ∧ e.τ.subinterval pts ∧ P w e := by
@@ -297,12 +296,12 @@ theorem perf_xn_monotone (p : IntervalPred W Time) (tᵣ₁ tᵣ₂ : Set Time)
 -- ════════════════════════════════════════════════════
 
 /-- IMPF entails an event exists. -/
-theorem impf_entails_event (P : EventPred W Time) (w : W) (t : Interval Time) :
+theorem impf_entails_event (P : W → Event Time → Prop) (w : W) (t : Interval Time) :
     IMPF P w t → ∃ e, P w e :=
   λ ⟨e, _, hP⟩ => ⟨e, hP⟩
 
 /-- PRFV entails an event exists. -/
-theorem prfv_entails_event (P : EventPred W Time) (w : W) (t : Interval Time) :
+theorem prfv_entails_event (P : W → Event Time → Prop) (w : W) (t : Interval Time) :
     PRFV P w t → ∃ e, P w e :=
   λ ⟨e, _, hP⟩ => ⟨e, hP⟩
 
@@ -314,7 +313,7 @@ theorem perf_monotone (p q : IntervalPred W Time)
 
 /-- IMPF and PRFV impose opposite containment directions.
     IMPF: reference ⊂ event runtime. PRFV: event runtime ⊆ reference. -/
-theorem impf_prfv_opposite_containment (P : EventPred W Time) (w : W) (t : Interval Time) :
+theorem impf_prfv_opposite_containment (P : W → Event Time → Prop) (w : W) (t : Interval Time) :
     (IMPF P w t → ∃ e, P w e ∧ t.properSubinterval e.τ) ∧
     (PRFV P w t → ∃ e, P w e ∧ e.τ.subinterval t) :=
   ⟨λ ⟨e, hSub, hP⟩ => ⟨e, hP, hSub⟩,
@@ -333,22 +332,22 @@ theorem impf_prfv_opposite_containment (P : EventPred W Time) (w : W) (t : Inter
 /-- Pancheva's UNBOUNDED (Asp₂): non-strict ⊆ variant of IMPF.
     ⟦UNBOUNDED⟧ = λP.λi.∃e[i ⊆ τ(e) & P(e)] (@cite{pancheva-2003}: 282, eq. 7b).
     Differs from IMPF in using non-strict ⊆ rather than strict ⊂. -/
-def UNBOUNDED (P : EventPred W Time) : IntervalPred W Time :=
+def UNBOUNDED (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, t.subinterval e.τ ∧ P w e
 
 /-- Pancheva's BOUNDED (Asp₂): strict ⊂ variant of PRFV.
     ⟦BOUNDED⟧ = λP.λi.∃e[τ(e) ⊂ i & P(e)] (@cite{pancheva-2003}: 282, eq. 7b).
     Differs from PRFV in using strict ⊂ rather than non-strict ⊆. -/
-def BOUNDED (P : EventPred W Time) : IntervalPred W Time :=
+def BOUNDED (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, e.τ.properSubinterval t ∧ P w e
 
 /-- IMPF (strict ⊂) entails UNBOUNDED (non-strict ⊆). -/
-theorem impf_entails_unbounded (P : EventPred W Time) (w : W) (t : Interval Time) :
+theorem impf_entails_unbounded (P : W → Event Time → Prop) (w : W) (t : Interval Time) :
     IMPF P w t → UNBOUNDED P w t :=
   λ ⟨e, hSub, hP⟩ => ⟨e, hSub.1, hP⟩
 
 /-- BOUNDED (strict ⊂) entails PRFV (non-strict ⊆). -/
-theorem bounded_entails_prfv (P : EventPred W Time) (w : W) (t : Interval Time) :
+theorem bounded_entails_prfv (P : W → Event Time → Prop) (w : W) (t : Interval Time) :
     BOUNDED P w t → PRFV P w t :=
   λ ⟨e, hSub, hP⟩ => ⟨e, hSub.1, hP⟩
 
@@ -390,25 +389,25 @@ inductive PerfectType where
 /-- Universal perfect: PERF_P(UNBOUNDED(V)).
     "has been running" — event ongoing throughout PTS.
     @cite{pancheva-2003}: explains why universal reading requires imperfective. -/
-abbrev universalPerfect (P : EventPred W Time) : IntervalPred W Time :=
+abbrev universalPerfect (P : W → Event Time → Prop) : IntervalPred W Time :=
   PERF_P (UNBOUNDED P)
 
 /-- Experiential perfect: PERF_P(INIT_OVERLAP(V)).
     "has visited Paris" — event began within PTS.
     @cite{pancheva-2003}: initial-overlap aspect allows event to extend beyond PTS. -/
-abbrev experientialPerfect (P : EventPred W Time) : IntervalPred W Time :=
+abbrev experientialPerfect (P : W → Event Time → Prop) : IntervalPred W Time :=
   PERF_P (INIT_OVERLAP P)
 
 /-- Resultative perfect: PERF_P(BOUNDED(V)).
     "has broken the vase" — event completed within PTS.
     Simplified: properly involves result state (@cite{pancheva-2003}: 288). -/
-abbrev resultativePerfect (P : EventPred W Time) : IntervalPred W Time :=
+abbrev resultativePerfect (P : W → Event Time → Prop) : IntervalPred W Time :=
   PERF_P (BOUNDED P)
 
 /-- perfProg at a point entails universalPerfect at that point.
     Since IMPF (strict ⊂) entails UNBOUNDED (non-strict ⊆),
     PERF(IMPF(V)) entails PERF(UNBOUNDED(V)) = universalPerfect. -/
-theorem perf_prog_entails_universal_at_point (P : EventPred W Time) (w : W) (t : Time) :
+theorem perf_prog_entails_universal_at_point (P : W → Event Time → Prop) (w : W) (t : Time) :
     perfProg P ⟨w, t⟩ → universalPerfect P w (Interval.point t) :=
   λ h => (perf_p_at_point_iff_perf (UNBOUNDED P) w t).mpr
     (perf_monotone (IMPF P) (UNBOUNDED P) (impf_entails_unbounded P) w t h)

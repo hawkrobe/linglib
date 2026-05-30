@@ -398,7 +398,6 @@ theorem logical_property_asymmetry :
 -- ════════════════════════════════════════════════════════════════
 
 open Semantics.Tense.TemporalConnectives
-open Semantics.Events
 open Fragments.English.TemporalExpressions
 
 -- ════════════════════════════════════════════════════════════════
@@ -429,7 +428,7 @@ theorem fragment_veridicality_asymmetry :
 
     This is not a stipulation in the Fragment — it follows from the semantics. -/
 theorem after_veridicality_derived :
-    ∀ (P Q : EvPred ℤ), AnscombeEvent.after P Q → ∃ e : Event ℤ, Q e :=
+    ∀ (P Q : Event ℤ → Prop), AnscombeEvent.after P Q → ∃ e : Event ℤ, Q e :=
   fun P Q h => AnscombeEvent.after_veridical P Q h
 
 /-- O&ST's theory derives *before*'s non-veridicality from the universal
@@ -438,7 +437,7 @@ theorem after_veridicality_derived :
 
     Concretely: any P-event with an empty Q yields `before(P, Q)`. -/
 theorem before_nonveridicality_derived :
-    ∃ (P Q : EvPred ℤ), AnscombeEvent.before P Q ∧ ¬∃ e : Event ℤ, Q e :=
+    ∃ (P Q : Event ℤ → Prop), AnscombeEvent.before P Q ∧ ¬∃ e : Event ℤ, Q e :=
   AnscombeEvent.before_nonveridical
 
 -- ════════════════════════════════════════════════════════════════
@@ -450,10 +449,10 @@ theorem before_nonveridicality_derived :
     - arriving event at time 0
     O&ST predicts: after(leave, arrive) holds (τ(arrive) ≺ τ(leave)). -/
 theorem scenario_after_punctual :
-    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
-    let arrive : Event ℤ := ⟨⟨0, 0, le_refl _⟩, .action⟩
+    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .dynamic⟩
+    let arrive : Event ℤ := ⟨⟨0, 0, le_refl _⟩, .dynamic⟩
     AnscombeEvent.after (· = leave) (· = arrive) := by
-  refine ⟨⟨⟨1, 1, le_refl _⟩, .action⟩, ⟨⟨0, 0, le_refl _⟩, .action⟩, rfl, rfl, ?_⟩
+  refine ⟨⟨⟨1, 1, le_refl _⟩, .dynamic⟩, ⟨⟨0, 0, le_refl _⟩, .dynamic⟩, rfl, rfl, ?_⟩
   simp [Core.Time.Interval.precedes, Event.τ]
 
 /-- Scenario: "He left₁ before she arrived₃" with punctual events.
@@ -461,19 +460,19 @@ theorem scenario_after_punctual :
     - arriving event at time 3
     O&ST predicts: before(leave, arrive) holds (τ(leave) ≺ τ(arrive)). -/
 theorem scenario_before_punctual :
-    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
-    let arrive : Event ℤ := ⟨⟨3, 3, le_refl _⟩, .action⟩
+    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .dynamic⟩
+    let arrive : Event ℤ := ⟨⟨3, 3, le_refl _⟩, .dynamic⟩
     AnscombeEvent.before (· = leave) (· = arrive) := by
-  refine ⟨⟨⟨1, 1, le_refl _⟩, .action⟩, rfl, ?_⟩
+  refine ⟨⟨⟨1, 1, le_refl _⟩, .dynamic⟩, rfl, ?_⟩
   intro e₂ rfl
   simp [Core.Time.Interval.precedes, Event.τ]
 
 /-- Scenario: "The bomb exploded₅ before anyone defused it" (nobody defused it).
     O&ST predicts: before(explode, defuse) holds vacuously (no defuse-events). -/
 theorem scenario_before_counterfactual :
-    let explode : Event ℤ := ⟨⟨5, 5, le_refl _⟩, .action⟩
+    let explode : Event ℤ := ⟨⟨5, 5, le_refl _⟩, .dynamic⟩
     AnscombeEvent.before (· = explode) (fun _ => False) := by
-  exact ⟨⟨⟨5, 5, le_refl _⟩, .action⟩, rfl, fun _ h => h.elim⟩
+  exact ⟨⟨⟨5, 5, le_refl _⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13: Cross-Level Projection Verification
@@ -482,15 +481,15 @@ theorem scenario_before_counterfactual :
 /-- The punctual after-scenario projects correctly through eventDenotation:
     O&ST.after implies Anscombe.after on the projected interval sets. -/
 theorem scenario_after_projects :
-    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
-    let arrive : Event ℤ := ⟨⟨0, 0, le_refl _⟩, .action⟩
+    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .dynamic⟩
+    let arrive : Event ℤ := ⟨⟨0, 0, le_refl _⟩, .dynamic⟩
     Anscombe.after (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   AnscombeEvent.after_implies_anscombe _ _ scenario_after_punctual
 
 /-- The punctual before-scenario projects correctly through eventDenotation. -/
 theorem scenario_before_projects :
-    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .action⟩
-    let arrive : Event ℤ := ⟨⟨3, 3, le_refl _⟩, .action⟩
+    let leave : Event ℤ := ⟨⟨1, 1, le_refl _⟩, .dynamic⟩
+    let arrive : Event ℤ := ⟨⟨3, 3, le_refl _⟩, .dynamic⟩
     Anscombe.before (eventDenotation (· = leave)) (eventDenotation (· = arrive)) :=
   AnscombeEvent.before_implies_anscombe _ _ scenario_before_punctual
 
@@ -701,7 +700,7 @@ The following theorems make this structural parallel precise. -/
     `impf_entails_prfv_of_csip` from SubintervalProperty.lean. -/
 theorem csip_entails_completion
     {W Time : Type*} [LinearOrder Time]
-    (P : EventPred W Time) (hCSIP : HasClosedSubintervalProp P)
+    (P : W → Event Time → Prop) (hCSIP : HasClosedSubintervalProp P)
     (w : W) (t : Core.Time.Interval Time) :
     IMPF P w t → PRFV P w t :=
   fun h => impf_entails_prfv_of_csip P hCSIP w t h
@@ -716,7 +715,7 @@ theorem csip_entails_completion
     `imperfective_paradox_possible` from SubintervalProperty.lean. -/
 theorem non_csip_lacks_completion
     {W : Type*} (w : W) (t₁ t₂ : ℤ) (hlt : t₁ < t₂) :
-    ¬ (∀ (P : EventPred W ℤ), HasSubintervalProp P) :=
+    ¬ (∀ (P : W → Event ℤ → Prop), HasSubintervalProp P) :=
   imperfective_paradox_possible w t₁ t₂ hlt
 
 /-- **Progressive–before modal resolution**: When P lacks CSIP (accomplishment),
@@ -731,7 +730,7 @@ theorem non_csip_lacks_completion
     event whose continuation satisfies Q in accessible worlds. -/
 theorem progressive_before_modal_resolution
     {W Time : Type*} [LinearOrder Time]
-    (P Q : EventPred W Time)
+    (P Q : W → Event Time → Prop)
     (alternatives : Event Time → Set W)
     (w : W) (t : Core.Time.Interval Time)
     (hIMPF : IMPF P w t)
@@ -754,7 +753,7 @@ theorem progressive_before_modal_resolution
     resolution (the progressive / anti-veridical *before*). -/
 theorem csip_determines_modal_need
     {W Time : Type*} [LinearOrder Time]
-    (P : EventPred W Time) (w : W) (t : Core.Time.Interval Time) :
+    (P : W → Event Time → Prop) (w : W) (t : Core.Time.Interval Time) :
     (HasClosedSubintervalProp P → IMPF P w t → PRFV P w t) ∧
     (IMPF P w t → ¬HasClosedSubintervalProp P →
       ¬(∀ (t' : Core.Time.Interval Time), t'.subinterval t →

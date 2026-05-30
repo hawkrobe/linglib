@@ -28,7 +28,6 @@ type/structure declarations and the Fragment ↔ Theory bridge.
 
 namespace Semantics.ArgumentStructure
 
-open Semantics.Events
 open Core.Time
 
 /-- A thematic relation: a two-place predicate relating an entity to an event.

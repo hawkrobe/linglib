@@ -260,7 +260,7 @@ true when no Q-event exists). The same ` /` pattern present in
 
 ## Level
 
-**Level 3 (event predicates)**: operates on `EvPred Time`. Projects to
+**Level 3 (event predicates)**: operates on `Event Time → Prop`. Projects to
 Level 2 via `eventDenotation` (EventBridge.lean).
 
 ## Cross-Level Comparison
@@ -275,7 +275,6 @@ namespace Semantics.Tense.TemporalConnectives
 
 open Core.Time
 open Core.Time.Interval
-open Semantics.Events
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -290,7 +289,7 @@ variable {Time : Type*} [LinearOrder Time]
     the main event's runtime.
 
     This is @cite{anscombe-1964}'s `` lifted from points to event runtimes. -/
-def AnscombeEvent.after (P Q : EvPred Time) : Prop :=
+def AnscombeEvent.after (P Q : Event Time → Prop) : Prop :=
   ∃ e₁ e₂ : Event Time, P e₁ ∧ Q e₂ ∧ e₂.τ.precedes e₁.τ
 
 /-- Event-level *before*: `e`[P(e`) `  `e`[Q(e`) ` `(e`) ` `(e`)]].
@@ -301,7 +300,7 @@ def AnscombeEvent.after (P Q : EvPred Time) : Prop :=
     non-veridical.
 
     This is @cite{anscombe-1964}'s `` lifted from points to event runtimes. -/
-def AnscombeEvent.before (P Q : EvPred Time) : Prop :=
+def AnscombeEvent.before (P Q : Event Time → Prop) : Prop :=
   ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ → e₁.τ.precedes e₂.τ
 
 -- ============================================================================
@@ -312,13 +311,13 @@ def AnscombeEvent.before (P Q : EvPred Time) : Prop :=
 
     This follows directly from the double-existential structure: the
     definition asserts `e`, Q(e`), which witnesses the complement. -/
-theorem AnscombeEvent.after_veridical (P Q : EvPred Time) :
+theorem AnscombeEvent.after_veridical (P Q : Event Time → Prop) :
     AnscombeEvent.after P Q → ∃ e : Event Time, Q e := by
   rintro ⟨_, e₂, _, hq, _⟩
   exact ⟨e₂, hq⟩
 
 /-- *After* is veridical w.r.t. the main clause too: both events must exist. -/
-theorem AnscombeEvent.after_veridical_main (P Q : EvPred Time) :
+theorem AnscombeEvent.after_veridical_main (P Q : Event Time → Prop) :
     AnscombeEvent.after P Q → ∃ e : Event Time, P e := by
   rintro ⟨e₁, _, hp, _, _⟩
   exact ⟨e₁, hp⟩
@@ -329,13 +328,13 @@ theorem AnscombeEvent.after_veridical_main (P Q : EvPred Time) :
     Concretely: if P has a witness and Q is empty, then `e`, Q(e`) `... is
     vacuously true. -/
 theorem AnscombeEvent.before_nonveridical :
-    ∃ (P Q : EvPred ℤ), AnscombeEvent.before P Q ∧ ¬∃ e : Event ℤ, Q e := by
-  refine ⟨fun e => e = ⟨⟨0, 1, by omega⟩, .action⟩, fun _ => False, ?_, ?_⟩
-  · exact ⟨⟨⟨0, 1, by omega⟩, .action⟩, rfl, fun _ h => h.elim⟩
+    ∃ (P Q : Event ℤ → Prop), AnscombeEvent.before P Q ∧ ¬∃ e : Event ℤ, Q e := by
+  refine ⟨fun e => e = ⟨⟨0, 1, by omega⟩, .dynamic⟩, fun _ => False, ?_, ?_⟩
+  · exact ⟨⟨⟨0, 1, by omega⟩, .dynamic⟩, rfl, fun _ h => h.elim⟩
   · rintro ⟨_, h⟩; exact h
 
 /-- *Before* is still veridical w.r.t. its main clause: the P-event must exist. -/
-theorem AnscombeEvent.before_veridical_main (P Q : EvPred Time) :
+theorem AnscombeEvent.before_veridical_main (P Q : Event Time → Prop) :
     AnscombeEvent.before P Q → ∃ e : Event Time, P e := by
   rintro ⟨e₁, hp, _⟩
   exact ⟨e₁, hp⟩
@@ -349,7 +348,7 @@ theorem AnscombeEvent.before_veridical_main (P Q : EvPred Time) :
 
     Proof: from `e`.`.precedes e`.`  (i.e., `e`.`.finish < e`.`.start`),
     take `t = e`.`.start` and `t' = e`.`.finish`. -/
-theorem AnscombeEvent.after_implies_anscombe (P Q : EvPred Time) :
+theorem AnscombeEvent.after_implies_anscombe (P Q : Event Time → Prop) :
     AnscombeEvent.after P Q → Anscombe.after (eventDenotation P) (eventDenotation Q) := by
   rintro ⟨e₁, e₂, hp, hq, hprec⟩
   refine ⟨e₁.τ.start, ?_, e₂.τ.finish, ?_, hprec⟩
@@ -364,7 +363,7 @@ theorem AnscombeEvent.after_implies_anscombe (P Q : EvPred Time) :
     `t = e`.`.finish`. For any `t' ` timeTrace(eventDenotation Q)`,
     some `e`` has `Q(e`)` and `e`.`.start ` t'`, so
     `t = e`.`.finish < e`.`.start ` t'`. -/
-theorem AnscombeEvent.before_implies_anscombe (P Q : EvPred Time) :
+theorem AnscombeEvent.before_implies_anscombe (P Q : Event Time → Prop) :
     AnscombeEvent.before P Q → Anscombe.before (eventDenotation P) (eventDenotation Q) := by
   rintro ⟨e₁, hp, hall⟩
   refine ⟨e₁.τ.finish, ?_, ?_⟩
@@ -389,13 +388,13 @@ theorem AnscombeEvent.before_implies_anscombe (P Q : EvPred Time) :
     The point-level theory sees a point in A before all of B; the event-level
     theory requires the entire A-runtime to precede the entire B-runtime. -/
 theorem anscombe_before_not_implies_event :
-    ¬∀ (P Q : EvPred ℤ),
+    ¬∀ (P Q : Event ℤ → Prop),
       Anscombe.before (eventDenotation P) (eventDenotation Q) → AnscombeEvent.before P Q := by
   intro h
-  let eP : Event ℤ := ⟨⟨1, 5, by omega⟩, .action⟩
-  let eQ : Event ℤ := ⟨⟨3, 8, by omega⟩, .action⟩
-  let P : EvPred ℤ := fun e => e = eP
-  let Q : EvPred ℤ := fun e => e = eQ
+  let eP : Event ℤ := ⟨⟨1, 5, by omega⟩, .dynamic⟩
+  let eQ : Event ℤ := ⟨⟨3, 8, by omega⟩, .dynamic⟩
+  let P : Event ℤ → Prop := fun e => e = eP
+  let Q : Event ℤ → Prop := fun e => e = eQ
   have hansc : Anscombe.before (eventDenotation P) (eventDenotation Q) := by
     refine ⟨1, ?_, ?_⟩
     · rw [timeTrace_eventDenotation]
@@ -417,13 +416,13 @@ theorem anscombe_before_not_implies_event :
     - Anscombe: t=5, t'=1, 1 < 5. `
     - Event-level: `(eQ).finish = 8 > 5 = `(eP).start, so `precedes. ` -/
 theorem anscombe_after_not_implies_event :
-    ¬∀ (P Q : EvPred ℤ),
+    ¬∀ (P Q : Event ℤ → Prop),
       Anscombe.after (eventDenotation P) (eventDenotation Q) → AnscombeEvent.after P Q := by
   intro h
-  let eP : Event ℤ := ⟨⟨5, 5, by omega⟩, .action⟩
-  let eQ : Event ℤ := ⟨⟨1, 8, by omega⟩, .action⟩
-  let P : EvPred ℤ := fun e => e = eP
-  let Q : EvPred ℤ := fun e => e = eQ
+  let eP : Event ℤ := ⟨⟨5, 5, by omega⟩, .dynamic⟩
+  let eQ : Event ℤ := ⟨⟨1, 8, by omega⟩, .dynamic⟩
+  let P : Event ℤ → Prop := fun e => e = eP
+  let Q : Event ℤ → Prop := fun e => e = eQ
   have hansc : Anscombe.after (eventDenotation P) (eventDenotation Q) := by
     refine ⟨5, ?_, 1, ?_, by omega⟩
     · rw [timeTrace_eventDenotation]

@@ -912,7 +912,6 @@ end K98PropositionalSubstrate
 
 section SpatialTracePullback
 
-open Semantics.Events
 open Semantics.Events.CEM
 open Semantics.Spatial.Path
 
@@ -941,7 +940,6 @@ end SpatialTracePullback
 
 section Expansiveness
 
-open Semantics.Events
 open Semantics.Events.CEM
 
 variable {α : Type*} [SemilatticeSup α]
@@ -962,7 +960,6 @@ end Expansiveness
 
 section MovementInstances
 
-open Semantics.Events
 open Semantics.Events.CEM
 open Semantics.Spatial.Path
 

@@ -18,8 +18,6 @@ are consumed by:
   convex-time derivation)
 -/
 
-namespace Semantics.Events
-
 /-- Two events are temporally adjacent (`∞_E` in @cite{krifka-1998}'s
     notation) if their runtime intervals meet: one's finish equals
     the other's start. The natural concrete instance of K98's
@@ -42,5 +40,3 @@ theorem Event.adjacent_symm {Time : Type*} [LinearOrder Time]
     e1.adjacent e2 ↔ e2.adjacent e1 := by
   unfold Event.adjacent
   exact ⟨Or.symm, Or.symm⟩
-
-end Semantics.Events
