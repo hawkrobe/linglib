@@ -11,7 +11,7 @@ Multi-agent epistemic operators from @cite{halpern-2003}: individual
 knowledge (Kᵢ), everyone knows (E_G), common knowledge (C_G),
 distributed knowledge (D_G), and their doxastic (KD45 belief) counterparts.
 
-Connects to Stalnaker's common ground via `CG.groundedIn`: a common
+Connects to Stalnaker's common ground via `CommonGround.groundedIn`: a common
 ground is grounded when its context set equals what is commonly known.
 
 ## Operators
@@ -28,7 +28,7 @@ ground is grounded when its context set equals what is commonly known.
 This file lives in `Semantics/Modality/` because it makes
 substantive theoretical commitments (S5 for knowledge, KD45 for belief,
 fixed-point characterization of common knowledge). The framework-agnostic
-context management (`ContextSet`, `CG`) lives in
+context management (`ContextSet`, `CommonGround`) lives in
 `Discourse/CommonGround.lean`.
 
 Following mathlib style, all operators are `Prop`-valued; computation
@@ -40,7 +40,6 @@ namespace Semantics.Modality.EpistemicLogic
 open Core.Logic.Intensional
   (AccessRel AgentAccessRel boxR diamondR IsSerial IsEuclidean IsBeliefRefinementOf
    boxR_T boxR_D boxR_four boxR_B boxR_five)
-open Discourse.CommonGround (CG)
 
 /-! ## Individual Knowledge
 
@@ -245,8 +244,8 @@ are common knowledge among the discourse participants. -/
 
 /-- A common ground is grounded in common knowledge when its context
     set equals the intersection of what is commonly known. -/
-def _root_.Discourse.CommonGround.CG.groundedIn {W E : Type*}
-    (cg : CG W) (Rs : AgentAccessRel W E) (group : List E)
+def _root_.CommonGround.groundedIn {W E : Type*}
+    (cg : CommonGround W) (Rs : AgentAccessRel W E) (group : List E)
     (bound : ℕ) : Prop :=
   ∀ w, cg.contextSet w ↔
     ∀ p ∈ cg.propositions, commonKnowledge Rs group p bound w

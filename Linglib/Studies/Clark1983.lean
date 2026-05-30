@@ -67,7 +67,7 @@ level rather than a vacuous law-of-excluded-middle.
 
 namespace Clark1983
 
-open Discourse.CommonGround
+open CommonGround
 open Discourse (PreparatoryCondition)
 open Morphology.DM (Categorizer Recategorization CategorizedRoot
   denominal_requires_n recategorization_changes_category)
@@ -300,7 +300,7 @@ structure GoalHierarchy (W : Type*) where
   /-- Subgoal (1): the intended meaning on this occasion. -/
   intendedMeaning : W → Prop
   /-- The common ground used for the inference. -/
-  commonGround : CG W
+  commonGround : CommonGround W
   /-- Subgoal (2): the meta-recognition that the speaker invokes a
       convention licensing the direct → intended inference. For
       conventional uses this is `True` (no specific convention required).
@@ -335,7 +335,7 @@ in @cite{clark-1983} p. 321):
 >     and the remaining surface arguments of the denominal verb denote
 >     other roles in the situation.
 
-Conditions (b)–(e) are unified as CG-entailment: the CG uniquely determines
+Conditions (b)–(e) are unified as CommonGround-entailment: the CommonGround uniquely determines
 the situation. Condition (f) requires the parent noun's denotation to hold
 in every situation-world. -/
 
@@ -355,10 +355,10 @@ structure DenominalVerbConvention (W : Type*) where
   /-- The conventional denotation of the parent noun. -/
   nounDenotation : W → Prop
   /-- (e) The common ground of speaker and listener. -/
-  commonGround : CG W
+  commonGround : CommonGround W
   /-- (b–d) The speaker has good reason to believe the listener can
       readily compute the situation uniquely from mutual knowledge.
-      Operationalized as: every CG-compatible world satisfies the
+      Operationalized as: every CommonGround-compatible world satisfies the
       situation. -/
   cgDeterminesSituation : ∀ w, commonGround.contextSet w → situation w
   /-- (f, extensional) The noun's denotation is realized in every
@@ -387,7 +387,7 @@ def DenominalVerbConvention.toGoalHierarchy {W : Type*}
   intendedMeaning := conv.situation
   commonGround := conv.commonGround
   invokesConvention :=
-    -- (b–d): CG uniquely determines the situation
+    -- (b–d): CommonGround uniquely determines the situation
     -- (f, extensional): noun denotation realized in every situation-world
     -- (f, role-distinctness): parent noun role differs from other surface args' roles
     (∀ w, conv.commonGround.contextSet w → conv.situation w) ∧
@@ -439,12 +439,12 @@ def teapotSituation (w : TeapotWorld) : Prop :=
 def teapotNoun (w : TeapotWorld) : Prop := w.teapot = true
 
 /-- Common ground: shared knowledge about Max's odd habits with teapots.
-    For the worked example we model the CG as already entailing the
-    rubbing-with-teapot situation; in a fuller formalization the CG
+    For the worked example we model the CommonGround as already entailing the
+    rubbing-with-teapot situation; in a fuller formalization the CommonGround
     would entail the relevant odd-habit knowledge from which the
     listener derives the situation. -/
-def teapotCG : CG TeapotWorld :=
-  CG.empty.add { w | w.rubbing = true ∧ w.teapot = true }
+def teapotCG : CommonGround TeapotWorld :=
+  CommonGround.empty.add { w | w.rubbing = true ∧ w.teapot = true }
 
 /-- The Innovative Denominal Verb Convention (paper p. 321) instantiated
     for *Max teapotted a policeman* (paper pp. 320–321, 325–326).
@@ -590,9 +590,9 @@ def arlenesGoalHierarchy : GoalHierarchy StereosWorld where
   commonGround := .empty
   invokesConvention := True
 
-/-- Bombeck's CG: discourse context establishes "owners are common." -/
-def bombecksCG : CG StereosWorld :=
-  CG.empty.add { w | w.ownersCommon = true }
+/-- Bombeck's CommonGround: discourse context establishes "owners are common." -/
+def bombecksCG : CommonGround StereosWorld :=
+  CommonGround.empty.add { w | w.ownersCommon = true }
 
 /-- Bombeck's goal hierarchy: innovative use. The intended meaning is the
     nonce reading (owners are common). `invokesConvention` is left at `True`
@@ -645,7 +645,7 @@ structure IndirectAct (W : Type*) where
       condition). -/
   prepCondition : Option PreparatoryCondition
   /-- Common ground licensing the inference. -/
-  commonGround : CG W
+  commonGround : CommonGround W
 
 /-- Project an indirect act to a goal hierarchy.
 
@@ -740,7 +740,7 @@ The question reflects subgoal (5); answering with just *yes* satisfies
 
 These are NOT preparatory-condition-based indirect acts (Searle 1975 /
 Clark 1979's mechanism), so `prepCondition := none`. The convention
-invoked is goal-hierarchy reconstruction from NP content + CG. -/
+invoked is goal-hierarchy reconstruction from NP content + CommonGround. -/
 
 /-- AmEx case: the question is interpreted as direct only (paper p. 322:
     100% gave yes-answers; restaurateurs construed as direct question).
@@ -829,41 +829,41 @@ theorem shared_innovativeness_criterion {W : Type*}
 
 The deeper formal principle: a contextual expression's meaning is a function
 from common ground to denotation, not a static denotation. The `GoalHierarchy`
-of `§F` is what you get by **evaluating** this function at a specific CG. -/
+of `§F` is what you get by **evaluating** this function at a specific CommonGround. -/
 
 /-- A contextual meaning: meaning is a function from common ground to
     denotation. `directMeaning` is the conventional denotation; `compute`
-    maps a CG to the **intended** meaning on a given occasion. -/
+    maps a CommonGround to the **intended** meaning on a given occasion. -/
 structure ContextualMeaning (W : Type*) where
   directMeaning : W → Prop
-  compute : CG W → (W → Prop)
+  compute : CommonGround W → (W → Prop)
 
-/-- Evaluate a contextual meaning at a specific CG, producing a goal
+/-- Evaluate a contextual meaning at a specific CommonGround, producing a goal
     hierarchy. The convention-recognition is left at `True` here — the
-    fuller treatment exposes a CG-dependence witness via the source-class
+    fuller treatment exposes a CommonGround-dependence witness via the source-class
     projections (`DenominalVerbConvention.toGoalHierarchy` etc.). -/
 def ContextualMeaning.evaluate {W : Type*}
-    (cm : ContextualMeaning W) (cg : CG W) : GoalHierarchy W where
+    (cm : ContextualMeaning W) (cg : CommonGround W) : GoalHierarchy W where
   directMeaning := cm.directMeaning
   intendedMeaning := cm.compute cg
   commonGround := cg
   invokesConvention := True
 
-/-- A contextual meaning is **CG-independent** when the CG makes no
+/-- A contextual meaning is **CommonGround-independent** when the CommonGround makes no
     difference. This is sense-selection. -/
 def ContextualMeaning.isCGIndependent {W : Type*}
     (cm : ContextualMeaning W) : Prop :=
-  ∀ cg : CG W, cm.compute cg = cm.directMeaning
+  ∀ cg : CommonGround W, cm.compute cg = cm.directMeaning
 
-/-- A contextual meaning is **CG-dependent** when there exists a CG that
+/-- A contextual meaning is **CommonGround-dependent** when there exists a CommonGround that
     shifts the intended meaning away from the direct meaning. This is
     sense-creation. -/
 def ContextualMeaning.isCGDependent {W : Type*}
     (cm : ContextualMeaning W) : Prop :=
-  ∃ cg : CG W, cm.compute cg ≠ cm.directMeaning
+  ∃ cg : CommonGround W, cm.compute cg ≠ cm.directMeaning
 
 theorem cg_independent_conventional {W : Type*}
-    (cm : ContextualMeaning W) (h : cm.isCGIndependent) (cg : CG W) :
+    (cm : ContextualMeaning W) (h : cm.isCGIndependent) (cg : CommonGround W) :
     (cm.evaluate cg).isConventional := h cg
 
 theorem cg_dependent_innovative {W : Type*}
@@ -875,8 +875,8 @@ open Classical
 
 /-- The contextual meaning of *stereos*: the SAME meaning function
     underlies both Arlene's and Bombeck's uses. The `compute` function
-    models the inference from CG to intended meaning:
-    if the CG entails owners-are-common, the intended meaning is
+    models the inference from CommonGround to intended meaning:
+    if the CommonGround entails owners-are-common, the intended meaning is
     `ownersCommon`; otherwise it falls back to the direct meaning.
 
     This is a simplified model of the pragmatic computation — the
@@ -898,7 +898,7 @@ private theorem bombecksCG_entails_owners :
   exact h.1
 
 private theorem emptyCG_not_entails_owners :
-    ¬ ∀ w, (CG.empty : CG StereosWorld).contextSet w → w.ownersCommon = true := by
+    ¬ ∀ w, (CommonGround.empty : CommonGround StereosWorld).contextSet w → w.ownersCommon = true := by
   intro h
   have := h ⟨true, false⟩ (by trivial)
   exact absurd this (by decide)

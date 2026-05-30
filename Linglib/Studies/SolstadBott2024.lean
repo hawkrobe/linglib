@@ -62,7 +62,7 @@ open Phenomena.Presupposition.ProjectiveContent
 open SolstadBott2022
 open Fragments.German.Predicates
 open Semantics.Presupposition
-open Discourse.CommonGround
+open CommonGround
 open Discourse.AtIssueness
 
 -- ════════════════════════════════════════════════════

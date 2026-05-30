@@ -146,7 +146,7 @@ is observable independent of any contrast manipulation.
   `LookProportion` satisfies the pattern — this would derive the
   Ronderos effects from the noise-discrimination ordering rather than
   observing structural alignment between two independently stipulated
-  orderings. The CG-style vanilla `IncrementalSemantics` (no noise
+  orderings. The CommonGround-style vanilla `IncrementalSemantics` (no noise
   channel) cannot satisfy `SatisfiesRonderosPattern` because it would
   predict equal contrast effects for all adjective types — a useful
   negative result that could itself be a theorem.

@@ -171,7 +171,7 @@ observe : Bool → P Unit
 observe true continues; observe false blocks
 ```
 
-This is the mechanism for assertion: update the CG by observing the asserted
+This is the mechanism for assertion: update the CommonGround by observing the asserted
 proposition is true.
 -/
 

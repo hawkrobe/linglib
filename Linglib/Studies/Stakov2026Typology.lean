@@ -48,7 +48,7 @@ def NegPosition.biasStrength : NegPosition → EvidentialBiasStrength
 /-- Whether the negation position requires obligatory focus.
 
 Only outer negation (FALSUM) is obligatorily focused — it targets discourse
-polarity and generates alternatives on whether p is or isn't in the CG
+polarity and generates alternatives on whether p is or isn't in the CommonGround
 (Staňková §3.2, §4). -/
 def NegPosition.requiresFocus : NegPosition → Bool
   | .outer  => true

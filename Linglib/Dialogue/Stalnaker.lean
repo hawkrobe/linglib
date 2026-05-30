@@ -12,9 +12,9 @@ and the baseline against which richer theories are compared.
 
 - **No commitment/belief separation**: assertion IS adding to shared beliefs.
   There is no intermediate "commitment" stage.
-- **No retraction**: the CG is monotonically updated (worlds are eliminated,
+- **No retraction**: the CommonGround is monotonically updated (worlds are eliminated,
   never restored).
-- **No source marking**: all CG updates are symmetric between participants.
+- **No source marking**: all CommonGround updates are symmetric between participants.
 
 ## Stalnaker's Norm
 
@@ -23,14 +23,14 @@ and the baseline against which richer theories are compared.
 2. The speaker believes the proposition (knowledge)
 3. The proposition is not already in the common ground (informativity)
 
-This module models the EFFECT of assertion (CG update), not the norms.
+This module models the EFFECT of assertion (CommonGround update), not the norms.
 The norms are relevant to Krifka's separation of commitment from belief.
 
 -/
 
 namespace Dialogue.Stalnaker
 
-open Discourse.CommonGround (CG ContextSet)
+open CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════
 -- § 1. State = Common Ground
@@ -38,17 +38,17 @@ open Discourse.CommonGround (CG ContextSet)
 
 /-- Stalnaker's discourse state IS the common ground.
     No separate commitment layer; assertion directly updates shared beliefs. -/
-abbrev StalnakerState (W : Type*) := CG W
+abbrev StalnakerState (W : Type*) := CommonGround W
 
 /-- Initial state: empty common ground (all worlds possible). -/
-def initial {W : Type*} : StalnakerState W := CG.empty
+def initial {W : Type*} : StalnakerState W := CommonGround.empty
 
 /-- Assert p: add it to the common ground.
     This IS the full effect of assertion — no intermediate step. -/
 def assert {W : Type*} (s : StalnakerState W) (p : Set W) : StalnakerState W :=
   s.add p
 
-/-- Context set: directly from CG. -/
+/-- Context set: directly from CommonGround. -/
 def contextSet {W : Type*} (s : StalnakerState W) : ContextSet W :=
   s.contextSet
 
@@ -63,14 +63,14 @@ instance {W : Type*} (s : StalnakerState W) : Decidable (isStable s) :=
 -- § 2. Verification
 -- ════════════════════════════════════════════════════
 
-/-- Empty CG gives trivial context set. -/
+/-- Empty CommonGround gives trivial context set. -/
 theorem initial_trivial {W : Type*} :
-    contextSet (initial (W := W)) = ContextSet.trivial := CG.empty_contextSet
+    contextSet (initial (W := W)) = ContextSet.trivial := CommonGround.empty_contextSet
 
 /-- Assertion restricts the context set. -/
 theorem assert_restricts {W : Type*} (s : StalnakerState W) (p : Set W) :
     contextSet (assert s p) ⊆ contextSet s :=
-  CG.add_restricts s p
+  CommonGround.add_restricts s p
 
 /-- Stalnaker states are always stable. -/
 theorem always_stable {W : Type*} (s : StalnakerState W) : isStable s := trivial
@@ -79,14 +79,14 @@ theorem always_stable {W : Type*} (s : StalnakerState W) : isStable s := trivial
 -- HasContextSet (re-export via abbrev)
 -- ════════════════════════════════════════════════════
 
-/-- Theorem (not instance — the `CG W` instance from `Discourse.CommonGround`
-    already resolves through the `StalnakerState W := CG W` abbrev): the
+/-- Theorem (not instance — the `CommonGround W` instance from `CommonGround`
+    already resolves through the `StalnakerState W := CommonGround W` abbrev): the
     `HasContextSet` projection on a Stalnaker state agrees with the
     local `Stalnaker.contextSet` def. Documents the bridge for grep. -/
 theorem hasContextSet_eq_contextSet {W : Type*} (s : StalnakerState W) :
-    Discourse.CommonGround.HasContextSet.toContextSet s = Stalnaker.contextSet s := rfl
+    CommonGround.HasContextSet.toContextSet s = Stalnaker.contextSet s := rfl
 
-/-- Stalnaker's CG-as-context-set instances `Assertable`: assertion is
+/-- Stalnaker's CommonGround-as-context-set instances `Assertable`: assertion is
     `s.add φ` (set intersection); the two laws are the two halves of
     intersection membership. -/
 instance instAssertable {W : Type*} :

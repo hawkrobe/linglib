@@ -113,7 +113,7 @@ missing — without it, the typeclass's cross-framework theorems
 `speakerAssert_twice_subset_prior`) were dead code. -/
 
 open Discourse.SpeechAct (Assertable)
-open Discourse.CommonGround (HasContextSet)
+open CommonGround (HasContextSet)
 
 /-- **Polymorphic assertion-narrowing**: any `Assertable` framework
     narrows the context set by the asserted proposition. The

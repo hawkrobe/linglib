@@ -14,7 +14,7 @@ substrate (`Item`, `DiscourseState`, primitive updates) lives in
 
 * `assert`, `polarQuestion`, `acceptTop` — F&B moves over
   `FBState W`.
-* `assert_preserves_cg` — F&B's assertion does not touch CG (the
+* `assert_preserves_cg` — F&B's assertion does not touch CommonGround (the
   load-bearing thesis that diverges from @cite{stalnaker-1978}).
 -/
 
@@ -44,7 +44,7 @@ def polarQuestion (ds : FBState W) (p : W → Prop) :
   ds.pushItem ⟨.speaker, .addressee, .interrogative, [p, fun w => ¬ p w]⟩
 
 /-- Addressee accepts the head alternative of the top item:
-    other-generated doxastic commit, add to CG, pop. -/
+    other-generated doxastic commit, add to CommonGround, pop. -/
 def acceptTop (ds : FBState W) :
     FBState W :=
   match ds.table with
@@ -99,7 +99,7 @@ theorem accept_after_assert_cg (ds : FBState W) (p : W → Prop) :
 /-! ### Divergence from Stalnaker -/
 
 /-- F&B's assertion does **not** narrow the common ground, in
-    contrast to @cite{stalnaker-1978} where assertion is direct CG
+    contrast to @cite{stalnaker-1978} where assertion is direct CommonGround
     update. The pre-assertion `cg` is preserved exactly; acceptance
     is a separate move (`acceptTop`). -/
 theorem assert_preserves_cg (ds : FBState W) (p : W → Prop) :

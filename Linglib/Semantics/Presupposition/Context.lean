@@ -36,7 +36,7 @@ world in the context set satisfying it.
 namespace Semantics.Presupposition.Context
 
 open Semantics.Presupposition
-open Discourse.CommonGround
+open CommonGround
 
 variable {W : Type*}
 
@@ -130,7 +130,7 @@ theorem accommodate_eq_defined (c : ContextSet W) (p : PrProp W) (w : W) :
 -- ════════════════════════════════════════════════════════════════
 
 /-- Presupposition satisfied relative to any discourse state with a
-    context set. Works with `CG W`, `Commitment.CommitmentSlate W`,
+    context set. Works with `CommonGround W`, `Commitment.CommitmentSlate W`,
     `LocalCtx W`, and any other state implementing `HasContextSet`. -/
 abbrev presupSatisfiedIn {S : Type*} [HasContextSet S W] (s : S) (p : PrProp W) : Prop :=
   presupSatisfied (HasContextSet.toContextSet s) p

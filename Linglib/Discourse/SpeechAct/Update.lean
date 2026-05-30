@@ -29,7 +29,7 @@ Instances live with the framework types (e.g. `Dialogue/Stalnaker.lean`,
 
 namespace Discourse.SpeechAct
 
-open Discourse.CommonGround (HasContextSet)
+open CommonGround (HasContextSet)
 
 /-- A dialogue-state type that admits a Stalnakerian one-step
     assertion: `speakerAssert s φ` is monotone (never adds worlds)

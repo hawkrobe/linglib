@@ -30,7 +30,7 @@ This is the substrate's `CommitmentForce` axis.
 - §1 — World fixture and propositions
 - §2 — Declarative-as-doxastic baseline (Krifka 2015 default)
 - §3 — Imperative-as-preferential (the paper's central claim)
-- §4 — Doxastic vs preferential CG divergence (the two projections
+- §4 — Doxastic vs preferential CommonGround divergence (the two projections
        see different things)
 - §5 — vs Krifka 2015: same substrate, different force; Krifka's
        framework was purely doxastic
@@ -177,8 +177,8 @@ theorem dox_pref_dual (w : AddrPosture) :
 
 /-- The conflated `toContextSet` is the conjunction of both projections
     (substrate-level theorem `toContextSet_eq_doxastic_and_preferential`).
-    Specialised to `imperativeState`: the conflated CG narrows to
-    sitting-worlds even though only the preferential-CG component is
+    Specialised to `imperativeState`: the conflated CommonGround narrows to
+    sitting-worlds even though only the preferential-CommonGround component is
     really committed. The conflated view loses information. -/
 theorem imperative_conflated_loses_distinction (w : AddrPosture) :
     imperativeState.space.toContextSet w ↔ isSitting w := by

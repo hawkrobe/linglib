@@ -15,7 +15,7 @@ extension-based incremental semantics ⟦pfx⟧(r), the chain-rule speaker,
 the literal-listener categorical L0^UTT, and the full `RSAConfig` — is
 *derived* rather than re-stipulated per study.
 
-This consolidates what was previously triplicated across CG's Figure 1
+This consolidates what was previously triplicated across CommonGround's Figure 1
 scene, the @cite{sedivy-2007} reference-game scene, and the
 @cite{rubio-fernandez-2016} display: each becomes a single
 `IncrementalSemantics` value, with `toRSAConfig` producing the model.

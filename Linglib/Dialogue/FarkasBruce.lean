@@ -43,7 +43,7 @@ properties — `assert_adds_to_dcS`, `assert_preserves_cg`,
 
 namespace Dialogue.FarkasBruce
 
-open Discourse.CommonGround
+open CommonGround
 
 
 /--
@@ -124,7 +124,7 @@ def empty : DiscourseState W := ⟨[], [], [], []⟩
 /--
 Convert common ground to a ContextSet (worlds where all cg props hold).
 
-Bridges to the existing `Discourse.CommonGround` infrastructure as the
+Bridges to the existing `CommonGround` infrastructure as the
 fold-intersection of the cg list.
 -/
 def toContextSet (ds : DiscourseState W) : ContextSet W :=
@@ -251,17 +251,17 @@ def acceptTop (ds : DiscourseState W) : DiscourseState W :=
 
 
 /--
-Convert the common ground component to a `CG` structure.
+Convert the common ground component to a `CommonGround` structure.
 -/
-def toCG (ds : DiscourseState W) : CG W :=
+def toCG (ds : DiscourseState W) : CommonGround W :=
   { propositions := ds.cg }
 
 /--
-Create a discourse state from a `CG` structure.
+Create a discourse state from a `CommonGround` structure.
 
-Sets cg, dcS, and dcL all to the CG propositions (everyone agrees).
+Sets cg, dcS, and dcL all to the CommonGround propositions (everyone agrees).
 -/
-def fromCG (cg : CG W) : DiscourseState W :=
+def fromCG (cg : CommonGround W) : DiscourseState W :=
   { dcS := cg.propositions
     dcL := cg.propositions
     cg := cg.propositions
@@ -341,7 +341,7 @@ end DiscourseState
 -- HasContextSet instance
 -- ════════════════════════════════════════════════════
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- F&B states project to a context set via `cg`-only intersection
     (`toContextSet`). Note: this projection deliberately ignores
     `dcS`/`dcL` and `table` — F&B's whole point is that assertion

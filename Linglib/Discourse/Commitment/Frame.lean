@@ -174,7 +174,7 @@ theorem believes_a_implies_believes_b_of_competent
   fun hbel v hbelB => hbel v (h a b w v hbelB)
 
 /-- Composed: Sincerity + Competence ⇒ `a`'s commitment-to-`b` of `π`
-    entails `b`'s belief in `π`. The mediated CG-update of
+    entails `b`'s belief in `π`. The mediated CommonGround-update of
     @cite{bary-2025}, derived not stipulated (@cite{van-der-leer-2026}). -/
 theorem committed_implies_addressee_believes_of_sincere_competent
     {c : CommitmentState W A} (hsin : Sincere c) (hcomp : Competent c)

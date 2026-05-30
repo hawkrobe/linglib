@@ -121,7 +121,7 @@ theorem assert_creates_commitment
   exact hcom.2 ⟨rfl, rfl⟩
 
 /-- **T26** — under Sincerity + Competence, commitment transfers to
-    the addressee's belief. The mediated CG-update of @cite{bary-2025}. -/
+    the addressee's belief. The mediated CommonGround-update of @cite{bary-2025}. -/
 theorem committed_implies_belief_under_sincerity_competence
     {c : CommitmentState W A} (hsin : Sincere c) (hcomp : Competent c)
     (a b : A) (π : Set W) (w : W) :
@@ -196,7 +196,7 @@ theorem assert_adds_to_DC
   assert_creates_commitment a b π C w
 
 /-- Under sincerity+competence, the addressee believes the asserted
-    `π` — the F&B "ASSERT enters CG" effect, mediated. -/
+    `π` — the F&B "ASSERT enters CommonGround" effect, mediated. -/
 theorem assert_enters_CG_under_sincerity_competence
     (a b : A) (π : Set W) (C : CommitmentSpace W A) (w : W)
     (hsin : Sincere (apply (SpeechAct.assert a b π) C).root)

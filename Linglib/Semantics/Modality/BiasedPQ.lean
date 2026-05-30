@@ -37,7 +37,7 @@ for Czech.
 namespace Semantics.Modality.BiasedPQ
 
 open Semantics.Modality.Kratzer
-open Discourse.CommonGround
+open CommonGround
 
 variable {W : Type*}
 
@@ -161,34 +161,34 @@ theorem hiNQ_evidence_neutral_ok :
 
 /-- VERUM operator (@cite{romero-han-2004}, line b).
 
-⟦VERUM_x⟧ = λp. λw. ∀w' ∈ Epi_x(w). ∀w'' ∈ Conv_x(w'). [p ∈ CG]
+⟦VERUM_x⟧ = λp. λw. ∀w' ∈ Epi_x(w). ∀w'' ∈ Conv_x(w'). [p ∈ CommonGround]
 
 "x is sure that p should be added to the Common Ground."
 
 We model this as: in all epistemically accessible worlds where the speaker's
-conversational goals are fulfilled, p is in the CG. This is a double universal:
+conversational goals are fulfilled, p is in the CommonGround. This is a double universal:
 necessity over epistemic alternatives, then necessity over conversational goals. -/
 def verum (epistemic : ModalBase W) (conversational : OrderingSource W)
     (cg p : Set W) (w : W) : Prop :=
-  -- For all best epistemic worlds w': in the CG induced at w', p holds
+  -- For all best epistemic worlds w': in the CommonGround induced at w', p holds
   ∀ w' ∈ bestWorlds epistemic conversational w, cg w' ∧ p w'
 
 /-- FALSUM operator (@cite{repp-2013}, @cite{romero-2019}, @cite{romero-2024} def. 33).
 
 At-issue content: ¬p
-CG-management content: ∀w' ∈ Epi(w). ∀w'' ∈ Conv(w'). [p ∉ CG]
+CommonGround-management content: ∀w' ∈ Epi(w). ∀w'' ∈ Conv(w'). [p ∉ CommonGround]
 
 "x is sure that p should NOT be added to the Common Ground."
 
-FALSUM is the CG-management negation of VERUM. The at-issue content
-is simply ¬p, while the non-at-issue content (CG-management) expresses
+FALSUM is the CommonGround-management negation of VERUM. The at-issue content
+is simply ¬p, while the non-at-issue content (CommonGround-management) expresses
 that p is not to become common ground. -/
 structure FalsumContent (W : Type*) where
   /-- At-issue content: ¬p -/
   atIssue : Set W
-  /-- CG-management: p should not be added to CG.
+  /-- CommonGround-management: p should not be added to CommonGround.
       Modeled as: the speaker considers it epistemically possible that p,
-      but p is not CG-entailed. -/
+      but p is not CommonGround-entailed. -/
   cgManagement : Set W
 
 /-- Construct FALSUM content for a proposition p. -/
@@ -198,7 +198,7 @@ def mkFalsum (epistemic : ModalBase W) (conversational : OrderingSource W)
   cgManagement := fun w =>
     -- Speaker considers p epistemically possible
     (∃ w' ∈ bestWorlds epistemic conversational w, p w') ∧
-    -- But p is not entailed by the CG
+    -- But p is not entailed by the CommonGround
     ¬(∀ w', cg w' → p w')
 
 /-- FALSUM's at-issue content is propositional negation. -/
@@ -232,7 +232,7 @@ structure FalsumCZ (W : Type*) where
       This is the definedness condition — the question is defined only if
       the attitude holder considers the positive prejacent possible. -/
   definedness : Set W
-  /-- CG-management: p is not part of the common ground at w. -/
+  /-- CommonGround-management: p is not part of the common ground at w. -/
   cgContent : Set W
 
 /-- Construct @cite{simik-2024}'s FALSUM^CZ for a proposition p.
@@ -375,9 +375,9 @@ theorem inner_entails_medial (f : EvidentialBiasFlavor W) (p : Set W) (w : W)
 
 /-! Outer negation (FALSUM) is obligatorily focused (Staňková 2026 §3.2, §4).
 
-FALSUM targets discourse polarity — whether p *is* or *is not* in the CG.
+FALSUM targets discourse polarity — whether p *is* or *is not* in the CommonGround.
 Focus on FALSUM generates Rooth alternatives on polarity. The focus
-semantic value of FALSUM is `{λw[p ∉ CG], λw[p ∈ CG]}`, computed by
+semantic value of FALSUM is `{λw[p ∉ CommonGround], λw[p ∈ CommonGround]}`, computed by
 `falsumAlternatives` below. -/
 
 /-- FALSUM generates exactly two alternatives (polarity contrast). -/

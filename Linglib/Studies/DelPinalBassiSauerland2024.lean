@@ -40,7 +40,7 @@ set_option autoImplicit false
 namespace DelPinalBassiSauerland2024
 
 open Semantics.Presupposition (PrProp)
-open Discourse.CommonGround (ContextSet)
+open CommonGround (ContextSet)
 open Exhaustification.Presuppositional
 open BarLevFox2020
 open Exhaustification

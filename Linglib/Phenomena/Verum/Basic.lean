@@ -54,7 +54,7 @@ following felicity profile:
    Saraguro Kichwa — a reportative-evidential antecedent).
 
 Theories disagree on the *mechanism* (focus over polarity, VERUM
-operator over CG membership, focus + discourse-management); they agree
+operator over CommonGround membership, focus + discourse-management); they agree
 on the *licensing profile*. This file documents the agreement via the
 shared `VerumOperator` abstraction; the disagreement lives in the
 `Studies/` files as different `VerumOperator`-instantiating predicates.

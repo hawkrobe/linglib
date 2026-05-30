@@ -291,7 +291,7 @@ The two readings are distinguished by the PerspectiveP layer:
 | 2 | `Expressives/Basic` | Incredulity is CI content (projects through negation) |
 | 3 | `Semantics.Questions/Hamblin` | Literal = standard `which`; incredulity = degenerate Q |
 | 4 | `Semantics.ArgumentStructure.Linking/LeftPeriphery` | PerspP disambiguates the two readings |
-| 5 | `Core/CommonGround` | Presupposition requires CG entailment |
+| 5 | `Core/CommonGround` | Presupposition requires CommonGround entailment |
 | 6 | `Verb/Aspect` | Progressive requirement (durative ∧ dynamic) |
 | 7 | `Focus/DomainWidening` | Incongruity = normative expectation violation |
 | 8 | `Semantics.Questions/Polarity` | Incredulity = rhetorical question |
@@ -553,14 +553,14 @@ theorem perspP_disambiguates_wxdy {W : Type*}
 -- H. Common ground bridge (Core/CommonGround.lean)
 -- ============================================================================
 
-open Discourse.CommonGround
+open CommonGround
 
 /-- The WXDY presupposition must be entailed by the common ground.
-For "What's this fly doing in my soup?", the CG must already entail
+For "What's this fly doing in my soup?", the CommonGround must already entail
 that there is a fly in the soup (the speaker sees it). -/
 theorem wxdy_presup_requires_cg {W : Type*}
     (c : ContextSet W) (embeddedProp : W → Prop)
-    (h : c ⊧ (wxdyPresup embeddedProp).presup) (w : W) (hw : c w) :
+    (h : ContextSet.entails c (wxdyPresup embeddedProp).presup) (w : W) (hw : c w) :
     (wxdyPresup embeddedProp).presup w :=
   h hw
 

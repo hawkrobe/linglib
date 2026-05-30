@@ -39,7 +39,7 @@ import Linglib.Core.Context.Tower
 namespace Semantics.Presupposition.LocalContext
 
 open Semantics.Presupposition
-open Discourse.CommonGround
+open CommonGround
 open Semantics.Presupposition.Context
 
 variable {W : Type*}

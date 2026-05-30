@@ -537,7 +537,7 @@ def ResourceCondition.fromNoContraction : List ResourceCondition :=
     1. **Interpretive** (H&K/QR): Syntax produces LF, which is
        directly interpreted. Scope ambiguity requires a syntactic
        operation (QR/covert movement) — two distinct LF trees.
-    2. **Parallel** (CG/CCG): Syntax and semantics computed in
+    2. **Parallel** (CommonGround/CCG): Syntax and semantics computed in
        lockstep. Scope ambiguity requires type-shifting operations
        and corresponding categorial modifications.
     3. **Glue** (separable logic): Syntax produces meaning
@@ -550,14 +550,14 @@ def ResourceCondition.fromNoContraction : List ResourceCondition :=
 
 inductive CompositionApproach where
   | interpretive   -- H&K: syntax → LF → interpretation
-  | parallel       -- CG/CCG: syntax ∥ semantics
+  | parallel       -- CommonGround/CCG: syntax ∥ semantics
   | glueSeparable  -- Glue: syntax → premises → proof search
   deriving DecidableEq, Repr
 
 /-- How each approach handles scope ambiguity. -/
 inductive ScopeAmbiguityMechanism where
   | covertMovement   -- QR: syntactic operation producing distinct LFs
-  | typeShifting      -- CG/CCG: type-raising / scope-shifting
+  | typeShifting      -- CommonGround/CCG: type-raising / scope-shifting
   | proofSearch       -- Glue: multiple ∀-instantiations → multiple proofs
   deriving DecidableEq, Repr
 

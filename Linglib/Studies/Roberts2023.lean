@@ -138,7 +138,7 @@ restipulated) here. -/
     @cite{portner-2018}'s `HasPOSWTarget IllocutionaryMood`
     instance: the imperative targets the preferential POSW
     component (= the addressee's preference structure), not the
-    informational component (= CG).
+    informational component (= CommonGround).
 
     This is the type-level shadow of "deontic force is pragmatic,
     not LF": deontic-style content lives where the preference
@@ -157,7 +157,7 @@ theorem imperative_targets_preferential :
     (`¬ (· ).toPOSW.le w v`).
 
     The dual negative claim — that the **informational** component
-    (CG) is untouched — is `Scoreboard.direction_preserves_cg` (a
+    (CommonGround) is untouched — is `Scoreboard.direction_preserves_cg` (a
     `@[simp]` lemma). The two together discharge Roberts's claim
     that deontic content arises pragmatically via the preference
     structure rather than via assertion to common ground.

@@ -493,9 +493,9 @@ def evalMCond {I W Pred Entity : Type} [Fintype I]
 -- § 6. Connection to Common Ground
 -- ════════════════════════════════════════════════════════════════
 
-open Discourse.CommonGround (ContextSet HasContextSet)
+open CommonGround (ContextSet HasContextSet)
 
-/-- An ordering-world pair: the enriched index for metalinguistic CG.
+/-- An ordering-world pair: the enriched index for metalinguistic CommonGround.
 
 The common ground is a set of ordering-world pairs ⟨≤, w⟩ compatible
 with speakers' factual AND interpretive commitments. -/
@@ -516,7 +516,7 @@ variable {I W : Type}
 
 /-- Project to a classical context set by existentially quantifying
 over semantic orderings. A world w is in the context set iff some
-ordering paired with w is in the metalinguistic CG. -/
+ordering paired with w is in the metalinguistic CommonGround. -/
 def toContextSet (cg : MetalinguisticCG I W) : ContextSet W :=
   λ w => ∃ ord, cg ⟨ord, w⟩
 

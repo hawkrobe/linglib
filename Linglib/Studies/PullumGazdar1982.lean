@@ -200,7 +200,7 @@ open Symbol in
 
     Syntactic rules (29a):
     - A → BCD | CE
-    - C → BCF | CG | BH | I
+    - C → BCF | CommonGround | BH | I
 
     The grammar ensures each transitive verb has an NP argument and each
     intransitive verb does not, producing cross-serial NP-verb dependencies
@@ -217,7 +217,7 @@ def dutchGrammar : ContextFreeGrammar DutchT where
   rules := { ⟨.A, [terminal .np, nonterminal .C, terminal .transInf]⟩,   -- A → BCD
              ⟨.A, [nonterminal .C, terminal .intrans]⟩,                   -- A → CE
              ⟨.C, [terminal .np, nonterminal .C, terminal .trVPInf]⟩,     -- C → BCF
-             ⟨.C, [nonterminal .C, terminal .inVPInf]⟩,                   -- C → CG
+             ⟨.C, [nonterminal .C, terminal .inVPInf]⟩,                   -- C → CommonGround
              ⟨.C, [terminal .np, terminal .trVPFin]⟩,                     -- C → BH
              ⟨.C, [terminal .inVPFin]⟩ }                                  -- C → I
 

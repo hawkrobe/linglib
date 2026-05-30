@@ -145,7 +145,7 @@ instance : CommitmentGrade Prop where
   complement := Not
 
 -- No `Bool` instance by default — consumers needing decidable grades
--- declare locally. Anderson 2021's distributional CG provides
+-- declare locally. Anderson 2021's distributional CommonGround provides
 -- `HasSupport ℝ` at its own site.
 
 /-! ### Speaker-Indexed Commitments -/
@@ -246,7 +246,7 @@ end Commitment
 
 /-! ### HasContextSet Instance -/
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- A commitment slate projects to a context set. -/
 instance {W : Type*} : HasContextSet (Commitment.CommitmentSlate W) W where
   toContextSet s := λ w => s.toContextSet w

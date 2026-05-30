@@ -32,7 +32,7 @@ namespace Karttunen1973
 
 open Semantics.Presupposition
 open Semantics.Lexical (ProjectionBehavior VerbCore)
-open Discourse.CommonGround (ContextSet)
+open CommonGround (ContextSet)
 open Fragments.English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════════════════

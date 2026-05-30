@@ -37,7 +37,7 @@ formalized; the substrate splits along the natural Phenomena boundary
 namespace Heim1992
 
 open Semantics.Presupposition (PrProp)
-open Discourse.CommonGround (ContextSet)
+open CommonGround (ContextSet)
 open Core.Logic.Intensional (IsSerial IsEuclidean IsS5Frame IsKD45Frame
   IsBeliefRefinementOf)
 open Semantics.Presupposition.LocalContext (presupFiltered)

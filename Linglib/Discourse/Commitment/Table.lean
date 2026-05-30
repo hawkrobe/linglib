@@ -19,14 +19,14 @@ commitment slates, and a common ground.
 
 ## TODO
 
-* Projected set `ps(CG)`, highlighting (@cite{farkas-roelofsen-2017}),
+* Projected set `ps(CommonGround)`, highlighting (@cite{farkas-roelofsen-2017}),
   item identity (for withdrawal).
 -/
 
 namespace Discourse.Commitment.Table
 
 open Discourse.Commitment (TaggedSlate CommitmentSource CommitmentForce)
-open Discourse.CommonGround (CG HasContextSet)
+open CommonGround (HasContextSet)
 open Semantics.Mood (IllocutionaryMood)
 
 /-- An at-issue item on the conversational table. -/
@@ -49,14 +49,14 @@ structure DiscourseState (A W I : Type*) where
   /-- Per-agent discourse commitments. -/
   dc : A → TaggedSlate W
   /-- The common ground. -/
-  cg : CG W
+  cg : CommonGround W
 
 namespace DiscourseState
 variable {A W I : Type*}
 
-/-- Initial state: empty table, empty commitments, trivial CG. -/
+/-- Initial state: empty table, empty commitments, trivial CommonGround. -/
 def empty : DiscourseState A W I :=
-  ⟨[], fun _ => TaggedSlate.empty, CG.empty⟩
+  ⟨[], fun _ => TaggedSlate.empty, CommonGround.empty⟩
 
 instance : Inhabited (DiscourseState A W I) := ⟨empty⟩
 
@@ -93,7 +93,7 @@ def addCommit [DecidableEq A] (s : DiscourseState A W I) (a : A)
 @[simp] theorem empty_table : (empty : DiscourseState A W I).table = [] := rfl
 @[simp] theorem empty_dc (a : A) :
     (empty : DiscourseState A W I).dc a = TaggedSlate.empty := rfl
-@[simp] theorem empty_cg : (empty : DiscourseState A W I).cg = CG.empty := rfl
+@[simp] theorem empty_cg : (empty : DiscourseState A W I).cg = CommonGround.empty := rfl
 @[simp] theorem empty_isStable : (empty : DiscourseState A W I).IsStable := rfl
 
 @[simp] theorem pushItem_table (s : DiscourseState A W I) (i : I) :
