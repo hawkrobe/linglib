@@ -58,7 +58,7 @@ variable {W : Type u} {E : Type v} [PartialOrder E]
     `⟨s,n⟩ → ⟨s,⟨e,t⟩⟩`. -/
 def upNum (atomic : Core.Intension W (E → Prop)) (n : NumeralIntens W) :
     Core.Intension W (E → Prop) :=
-  fun w x => {y : E | y ≤ x ∧ atomic w y}.ncard = n w
+  fun w x => atomCount atomic w x = n w
 
 @[simp] lemma upNum_apply (atomic : Core.Intension W (E → Prop))
     (n : NumeralIntens W) (w : W) (x : E) :
@@ -77,7 +77,7 @@ noncomputable def downNum (atomic P : Core.Intension W (E → Prop)) (w : W) :
     Option ℕ :=
   open Classical in
   if h : ∃ x, P w x then
-    some {y : E | y ≤ h.choose ∧ atomic w y}.ncard
+    some (atomCount atomic w h.choose)
   else none
 
 /-- Whether the silent ∪-shift on numerals is available in a language.

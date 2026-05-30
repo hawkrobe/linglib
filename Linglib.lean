@@ -290,6 +290,9 @@ import Linglib.Typology.Relativization.ExtractionBridge
 import Linglib.Core.Relativization.Hierarchy
 import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Scales.Roundness
+import Linglib.Core.Scales.Predicate
+import Linglib.Core.Scales.Comparison
+import Linglib.Core.Scales.Scale
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Linglib.Core.Scales.EpistemicScale.Entailments
 import Linglib.Core.Scales.EpistemicScale.FinsetBridge
