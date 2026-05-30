@@ -10,7 +10,7 @@ import Linglib.Dialogue.KOS.Grammar
 import Linglib.Dialogue.KOS.RepriseContent
 import Linglib.Dialogue.KOS.Austinian
 import Linglib.Dialogue.KOS.CooperInfoState
-import Linglib.Dialogue.FarkasBruce
+import Linglib.Discourse.Commitment.Table
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 
 /-!
@@ -650,6 +650,7 @@ The architectures are *both* per-participant, but F&B treats it as
 three slates inside one "current discourse state" while KOS treats it
 as one slate per participant. -/
 
+open Discourse.Commitment.Table in
 /-- The same dialogue trace ("A asserts p") in both frameworks: F&B
 puts p in dcS (one of three slates within the shared discourse state);
 KOS puts p in A's DGB.facts (one of two coupled DGBs). The architectural
@@ -657,13 +658,11 @@ shape differs even though predictions about "is p committed by A?"
 agree. -/
 theorem kos_vs_farkasbruce_architecture_differs
     (p : Set RainW) :
-    -- F&B: a single DiscourseState has dcS, dcL, cg as separate fields
-    let fb : Dialogue.FarkasBruce.DiscourseState RainW :=
-      Dialogue.FarkasBruce.DiscourseState.empty.addToDcS p
-    p ∈ fb.dcS ∧ fb.cg = [] ∧ fb.dcL = [] := by
-  refine ⟨by simp [Dialogue.FarkasBruce.DiscourseState.addToDcS], ?_, ?_⟩
-  · rfl
-  · rfl
+    -- F&B: a single discourse state keeps speaker/listener commitments and
+    -- the common ground as separate per-agent slates
+    let fb : State RainW := DiscourseState.empty.addCommit .speaker p
+    p ∈ fb.dcS ∧ fb.cgPropositions = [] ∧ fb.dcL = [] :=
+  ⟨List.mem_cons_self, rfl, rfl⟩
 
 /-- The deeper architectural disagreement: **F&B can model retraction**
 (content moves dcS → cg → dcS, e.g. "I take that back"); **KOS's facts
@@ -679,13 +678,12 @@ theorem kos_facts_monotone_under_addFact
   intro q hq
   simp [DGB.addFact, hq]
 
+open Discourse.Commitment.Table in
 /-- F&B explicitly supports the inverse: `addToCG` then can be reversed
 by re-introducing to dcS. The substrate-level disagreement: KOS's
 type-level commitment to monotonicity. -/
-theorem farkasbruce_cg_can_be_emptied
-    (ds : Dialogue.FarkasBruce.DiscourseState RainW) :
-    (Dialogue.FarkasBruce.DiscourseState.empty
-     : Dialogue.FarkasBruce.DiscourseState RainW).cg = [] := rfl
+theorem farkasbruce_cg_can_be_emptied :
+    (DiscourseState.empty : State RainW).cgPropositions = [] := rfl
 
 /-! ### vs Roberts 1996/2012 (partition-stack QUD)
 

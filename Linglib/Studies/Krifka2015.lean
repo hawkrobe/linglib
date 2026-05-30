@@ -1,7 +1,7 @@
 import Linglib.Dialogue.CommitmentSpace
 import Linglib.Dialogue.KOS.Defs
 import Linglib.Dialogue.KOS.Basic
-import Linglib.Dialogue.FarkasBruce
+import Linglib.Discourse.Commitment.Table
 import Linglib.Features.Acceptability
 import Linglib.Semantics.Modality.BiasedPQ
 
@@ -467,7 +467,7 @@ speaker indexing — see the Dialogue Completeness observation below.
 
 section vsFarkasBruce2010
 
-open Dialogue.FarkasBruce
+open Discourse.Commitment.Table
 
 /-- Divergence at the assert-only intermediate state: Krifka's CommonGround
     narrows immediately (one indexed entry in `root`); F&B's joint CommonGround
@@ -475,18 +475,18 @@ open Dialogue.FarkasBruce
     acceptance. The two frameworks DISAGREE on what's "in CommonGround" mid-trace.
 
     @cite{krifka-2015} p. 332 eq. (14) puts `S₁⊢φ` directly in the
-    commitment state; @cite{farkas-bruce-2010}'s `assertDeclarative`
+    commitment state; @cite{farkas-bruce-2010}'s `assert`
     only updates `dcS` and pushes a table issue. -/
 theorem krifka_eager_vs_farkasBruce_lazy_intermediate :
     -- Krifka: speaker assert immediately puts speaker-indexed entry in root
     (s₀.assert isRaining).space.root =
       [IndexedCommitment.commit .speaker isRaining] ∧
-    -- F&B: assertDeclarative leaves cg untouched; commitment is on
+    -- F&B: assert leaves cg untouched; commitment is on
     -- speaker's slate + table only
-    (DiscourseState.empty.assertDeclarative isRaining).cg = [] ∧
-    (DiscourseState.empty.assertDeclarative isRaining).dcS = [isRaining] ∧
-    (DiscourseState.empty.assertDeclarative isRaining).table.length = 1 := by
-  refine ⟨rfl, rfl, rfl, rfl⟩
+    (assert (DiscourseState.empty : State Weather) isRaining).cgPropositions = [] ∧
+    (assert (DiscourseState.empty : State Weather) isRaining).dcS = [isRaining] ∧
+    (assert (DiscourseState.empty : State Weather) isRaining).table.length = 1 := by
+  refine ⟨rfl, ?_, ?_, ?_⟩ <;> simp
 
 /-- Bridge at the completed-trace state: after the addressee accepts the
     assertion, both frameworks have φ in the joint CommonGround (modulo Krifka's
@@ -494,11 +494,11 @@ theorem krifka_eager_vs_farkasBruce_lazy_intermediate :
 
     Krifka's "addressee accepts" pathway is `assert φ .addressee`
     (the `Yes` reaction, paper p. 334 eq. 21). F&B's pathway is
-    `acceptTop` after `assertDeclarative`. Both end with φ in the
+    `acceptTop` after `assert`. Both end with φ in the
     common ground at the propositional level. -/
 theorem krifka_double_assert_eq_farkasBruce_assert_accept :
     let kState  := (s₀.assert isRaining).assert isRaining .addressee
-    let fbState := (DiscourseState.empty.assertDeclarative isRaining).acceptTop
+    let fbState := acceptTop (assert (DiscourseState.empty : State Weather) isRaining)
     -- Krifka: both speakers' commitments visible in their slates
     kState.speakerCS.commitments   = [isRaining] ∧
     kState.addresseeCS.commitments = [isRaining] ∧
@@ -507,11 +507,12 @@ theorem krifka_double_assert_eq_farkasBruce_assert_accept :
       [IndexedCommitment.commit .addressee isRaining,
        IndexedCommitment.commit .speaker isRaining] ∧
     -- F&B: assertion has migrated from table → cg, with dcS/dcL also updated
-    fbState.cg    = [isRaining] ∧
+    fbState.cgPropositions = [isRaining] ∧
     fbState.dcS   = [isRaining] ∧
     fbState.dcL   = [isRaining] ∧
     fbState.table = [] := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  refine ⟨rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩ <;> simp
+  rfl
 
 /-- The headline observation: at a completed assertion+acceptance trace,
     the two frameworks agree on the **context-set projection** —

@@ -48,7 +48,7 @@ namespace Rudin2025LI
 
 open Semantics.Quotation.Demonstration
 open Dialogue.QuotationFBOntology
-open Dialogue.FarkasBruce
+open Discourse.Commitment.Table
 open Semantics.Events
 
 -- ════════════════════════════════════════════════════
@@ -224,7 +224,7 @@ def rudinWhisper (e : Event ℕ) : Prop :=
 
 /-- A non-LINGMAT RESP performance: a non-linguistic, non-rising
     interrogative (e.g., a wordless interrogative gesture). Its
-    update is `askPolarQuestion`, which pushes an issue without
+    update is `polarQuestion`, which pushes an issue without
     committing. Used to falsify `SAY` for ASK-class events. -/
 def respNonLingmat : FBPerformance Bool :=
   { form := .interrogative, content := fun _ => true,
@@ -263,9 +263,8 @@ theorem committingDecl_lingmat : (fbOntology Bool).LINGMAT committingDecl :=
 
 theorem committingDecl_commits : (fbOntology Bool).Commits committingDecl := by
   show committingDecl.content ∈ (committingDecl.update DiscourseState.empty).dcS
-  simp [FBPerformance.update, DiscourseState.assertDeclarative,
-        DiscourseState.addToDcS, DiscourseState.pushIssue,
-        DiscourseState.empty, committingDecl]
+  simp [FBPerformance.update, committingDecl]
+  exact List.mem_cons_self
 
 /-- A loud committing declarative performance. -/
 def committingLoud : FBPerformance Bool :=
@@ -279,9 +278,8 @@ theorem committingLoud_loud : (fbOntology Bool).Loud committingLoud := rfl
 
 theorem committingLoud_commits : (fbOntology Bool).Commits committingLoud := by
   show committingLoud.content ∈ (committingLoud.update DiscourseState.empty).dcS
-  simp [FBPerformance.update, DiscourseState.assertDeclarative,
-        DiscourseState.addToDcS, DiscourseState.pushIssue,
-        DiscourseState.empty, committingLoud]
+  simp [FBPerformance.update, committingLoud]
+  exact List.mem_cons_self
 
 /-- A whispered committing declarative performance. -/
 def committingWhispered : FBPerformance Bool :=
@@ -298,9 +296,8 @@ theorem committingWhispered_commits :
     (fbOntology Bool).Commits committingWhispered := by
   show committingWhispered.content ∈
        (committingWhispered.update DiscourseState.empty).dcS
-  simp [FBPerformance.update, DiscourseState.assertDeclarative,
-        DiscourseState.addToDcS, DiscourseState.pushIssue,
-        DiscourseState.empty, committingWhispered]
+  simp [FBPerformance.update, committingWhispered]
+  exact List.mem_cons_self
 
 /-- A rising-declarative performance (RESP, not committing). -/
 def risingDecl : FBPerformance Bool :=
