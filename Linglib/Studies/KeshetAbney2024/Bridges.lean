@@ -305,10 +305,10 @@ theorem properPlural_implies_plural {α : Type*} {a b : α}
 
 PIP's must allows anaphora because of a **realistic modal base**
 (@cite{kratzer-1991}): the evaluation world w* is accessible from
-itself (R w* w* = true). This is exactly the T axiom (`□p → p`,
+itself (`R w* w*`). This is exactly the T axiom (`□p → p`,
 frame condition: reflexivity).
 
-The `must_truth_agrees_kripkeEval` and `must_realistic_of_refl`
+The `must_truth_agrees_boxR` and `must_realistic_of_refl`
 theorems in `Connectives.lean` already prove this correspondence.
 This section classifies PIP's modal operators in the lattice of
 normal modal logics from `Core.Logic.Intensional`.
@@ -329,9 +329,9 @@ theorem pip_anaphora_requires_T :
 /--
 A reflexive accessibility relation satisfies Logic.T's frame condition.
 
-Stated for the Prop-valued `AccessRel`/`IsReflexive`/`frameConditions` API in
-`Core.Logic.Intensional`. To apply this to a PIP
-`BAccessRel R`, lift via `liftR R = fun a b => R a b = true`.
+Stated for the Prop-valued `AccessRel`/`Std.Refl`/`frameConditions` API in
+`Core.Logic.Intensional` — the same accessibility type PIP's modal
+operators now use directly.
 -/
 theorem reflexive_satisfies_T {W : Type*}
     (R : Core.Logic.Intensional.AccessRel W) [hRefl : Std.Refl R] :
@@ -362,21 +362,21 @@ This is structurally identical to @cite{kratzer-1991}'s analysis where:
 The formal connection is established via `Core.Logic.Intensional.boxR`:
 `must_truth_agrees_boxR` (in Connectives.lean) proves that PIP's
 `must R allWorlds (atom p)` produces the same truth conditions as
-`boxR (liftR R) (liftP (p g))`.
+`boxR R (p g)`.
 
 Direct import of `Semantics/Modality/Kratzer/` is not possible
 because Kratzer's implementation is monomorphic over `World4`. The
-correspondence is structural (via `BAccessRel` ≅ `ModalBase`) rather
+correspondence is structural (via `AccessRel` ≅ `ModalBase`) rather
 than definitional.
 -/
 
 /--
 Full Kratzer bridge: PIP's three-argument `mustBase` agrees with
-`boxR` when the modal base comes from a BAccessRel and the restriction
+`boxR` when the modal base comes from an `AccessRel` and the restriction
 is tautological.
 
-The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ w' = true}` ↔
-`boxR (fun a b => R a b = true) (fun w' => φ w' = true) w`. Both express
+The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ.truth w'}` ↔
+`boxR R φ.truth w`. Both express
 "the body holds at every R-accessible world from w".
 -/
 theorem mustBase_agrees_boxR {W D : Type*}
@@ -412,7 +412,7 @@ a substantial model-theoretic argument. We mark these with `sorry`.
 Static atom truth agrees with dynamic `atom` filtering.
 
 For an atomic predicate p, `PIPExprF.pred p` has truth value `p w`,
-and `atom p` filters the info state to pairs where `p g w = true`.
+and `atom p` filters the info state to pairs where `p g w`.
 When the info state is a singleton, the dynamic update is non-empty
 iff the static truth value is true.
 

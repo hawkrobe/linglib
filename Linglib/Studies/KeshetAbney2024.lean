@@ -36,11 +36,11 @@ conditions, uniformly explains:
 ## Architecture
 
 This study file imports:
-- **Theory**: `Semantics/PIP/` (PIP mechanism)
+- **Framework**: the PIP mechanism in `Studies/KeshetAbney2024/`
 - **Data**: `Phenomena/Anaphora/` (theory-neutral judgments)
 
-and proves that PIP's predictions match the empirical data via worked
-finite models with `decide` verification.
+and proves that PIP's predictions match the empirical data on worked
+finite models.
 
 -/
 
@@ -588,11 +588,11 @@ instance : Fintype IBWorld where
 
 /--
 Might blocks anaphora NOT because of non-reflexive access, but because the
-burger **description** is world-dependent: `isBurgerAt g .actual = false`
+burger **description** is world-dependent: `¬ isBurgerAt g .actual`
 for all g (burger_desc_fails_at_actual). Even with a reflexive modal base,
 the description Σb(BURGER_w([b])) is empty at .actual — no burger there.
 
-The accessibility IS reflexive at .actual (ibAccess .actual .actual = true),
+The accessibility IS reflexive at .actual (ibAccess .actual .actual),
 confirming that the blocking mechanism is about description content, not
 accessibility structure.
 -/
@@ -820,8 +820,8 @@ def candidateSentence : PUpdate PCWorld PCEntity :=
 /-- The winner description is empty at the actual world — no winner declared yet. -/
 theorem winner_desc_empty_at_actual :
     ∀ g : ICDRTAssignment PCWorld PCEntity,
-    isWinner g .actual = false := by
-  intro g; simp [isWinner]
+    ¬ isWinner g .actual := by
+  intro g h; exact h
 
 /--
 Contrast with Stone/Brasoveanu: the entities EXIST in the actual world
@@ -831,7 +831,7 @@ DESCRIPTION yields nothing at actual → infelicitous.
 -/
 theorem candidates_exist_but_description_fails :
     ({.alice, .bob} : Set PCEntity).Nonempty ∧
-    (∀ g : ICDRTAssignment PCWorld PCEntity, isWinner g .actual = false) :=
+    (∀ g : ICDRTAssignment PCWorld PCEntity, ¬ isWinner g .actual) :=
   ⟨⟨.alice, Set.mem_insert _ _⟩, winner_desc_empty_at_actual⟩
 
 /-- The label is registered (the mechanism works), but the description

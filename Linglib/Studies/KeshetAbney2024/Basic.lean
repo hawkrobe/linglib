@@ -237,7 +237,7 @@ def retrieveDef {W E : Type*} (α : FLabel) : PUpdate W E :=
 /--
 PIP truth relative to a world and a plural context.
 
-A predicate P holds at world w in context c iff P(g, w) = true
+A predicate P holds at world w in context c iff P(g, w)
 for ALL assignments g paired with w in c.
 
 This "plural" evaluation is what gives PIP its power: different

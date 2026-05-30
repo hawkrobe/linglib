@@ -150,7 +150,7 @@ theorem every_farmer_bought_donkey :
       (sigmaEval farmerBody W1.w0)
       (sigmaEval (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0) := by
   intro d hd
-  -- d ∈ sigmaEval farmerBody means (farmerBody d).truth w0 = true
+  -- d ∈ sigmaEval farmerBody means (farmerBody d).truth w0 holds
   -- For alice and bob, boughtDonkeyBody also returns true
   cases d with
   | alice => exact ⟨trivial, trivial⟩
