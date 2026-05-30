@@ -31,7 +31,7 @@ proper Lean theorem.
 namespace Phenomena.FreeChoice.Divergences
 
 open Core.Logic.Modal.BSML
-open Semantics.Modality.Orthologic
+open Orthologic
 open Aloni2022
 open HollidayMandelkern2024
 

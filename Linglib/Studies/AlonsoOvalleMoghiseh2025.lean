@@ -2,6 +2,7 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Semantics.Exhaustification.Tolerant
 import Linglib.Semantics.Exhaustification.Structural
 import Linglib.Fragments.Farsi.Determiners
+import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Data.Examples.Schema
 import Linglib.Core.Logic.Quantification.Exclusive
 import Mathlib.Tactic.DeriveFintype
@@ -101,7 +102,8 @@ open Exhaustification (innocent tolerant predToFinset altsFromPreds
   innocent_exh_singleton_proper
   innocent_exh_pairwise_disjoint_partial)
 open Data.Examples (LinguisticExample)
-export Fragments.Farsi.Determiners (EFCIRescue EFCIReading ModalFlavor)
+export Fragments.Farsi.Determiners (EFCIRescue EFCIReading)
+export Semantics.Modality (ModalFlavor)
 
 
 /-!

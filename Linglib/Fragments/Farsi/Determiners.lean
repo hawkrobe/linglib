@@ -1,5 +1,6 @@
 import Linglib.Core.Word
 import Linglib.Semantics.Quantification.ChoiceFunction
+import Linglib.Semantics.Modality.ModalTypes
 import Mathlib.Data.Rat.Defs
 
 /-! # Farsi Determiner and Indefinite Lexicon
@@ -136,16 +137,13 @@ def indef_i : IndefiniteEntry :=
   }
 
 
-/--
-Modal flavor type for context specification.
--/
-inductive ModalFlavor where
-  | deontic   -- Permission, obligation
-  | epistemic -- Knowledge, belief
-  deriving DecidableEq, Repr
+open Semantics.Modality (ModalFlavor)
 
 /--
-Context for determining EFCI reading.
+Context for determining EFCI reading. Uses the project-canonical
+`Semantics.Modality.ModalFlavor`; @cite{alonso-ovalle-moghiseh-2025} only
+distinguishes deontic (free choice) from epistemic (modal variation), so the
+other canonical flavors are not licensing-relevant here (see `getReading`).
 -/
 structure EFCIContext where
   /-- Is the context downward-entailing? -/
@@ -191,6 +189,9 @@ def getReading (entry : IndefiniteEntry) (ctx : EFCIContext) : Option EFCIReadin
   else match ctx.modalFlavor with
     | some .deontic => some .freeChoice
     | some .epistemic => some .modalVariation
+    -- @cite{alonso-ovalle-moghiseh-2025} specifies only deontic/epistemic;
+    -- other flavors do not license an EFCI reading.
+    | some .bouletic | some .circumstantial => some .plainExistential
     | none =>
       -- Root context: depends on rescue mechanism
       match entry.efciRescue with
