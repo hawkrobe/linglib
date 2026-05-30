@@ -1,4 +1,4 @@
-import Linglib.Semantics.PIP.Basic
+import Linglib.Studies.KeshetAbney2024.Basic
 import Linglib.Core.Logic.Intensional.RestrictedModality
 import Mathlib.Data.Fintype.Basic
 
@@ -24,14 +24,14 @@ PIP's modals are generalized quantifiers over worlds (paper Section 2.5):
 - MIGHT^β_w(W₁, W₂) ≜ SOME(β_w ∩ W₁, W₂)
 - MUST^β_w(W₁, W₂) ≜ EVERY(β_w ∩ W₁, W₂)
 
-Our encoding parameterizes by an accessibility relation (`Semantics.PIP.BAccessRel`,
+Our encoding parameterizes by an accessibility relation (`KeshetAbney2024.PIP.BAccessRel`,
 equivalent to a Kratzer modal base β) and quantifies over accessible worlds.
 The grounding theorem `must_truth_agrees_boxR` proves that PIP's `must`
 produces the same truth conditions as `Core.Logic.Intensional.boxR`.
 
 -/
 
-namespace Semantics.PIP
+namespace KeshetAbney2024.PIP
 
 open Semantics.Dynamic.Core
 
@@ -415,4 +415,4 @@ theorem forall_eq_neg_exists_neg {W E : Type*} (v : IVar) (domain : Set E)
     forall_ v domain body = negation (exists_ v domain (negation body)) := rfl
 
 
-end Semantics.PIP
+end KeshetAbney2024.PIP

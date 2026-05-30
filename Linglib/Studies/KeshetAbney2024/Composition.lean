@@ -1,4 +1,4 @@
-import Linglib.Semantics.PIP.Expr
+import Linglib.Studies.KeshetAbney2024.Expr
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -24,7 +24,7 @@ value (type t). It is therefore defined externally from the `PIPExprF` inductive
 type and connected to it via bridge theorems.
 -/
 
-namespace Semantics.PIP
+namespace KeshetAbney2024.PIP
 
 
 -- ============================================================
@@ -410,4 +410,4 @@ theorem sigmaEval_labelDef_subordination (α : FLabel) (φ ψ : D → PIPExprF W
 end Subordination
 
 
-end Semantics.PIP
+end KeshetAbney2024.PIP

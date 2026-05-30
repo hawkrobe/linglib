@@ -1,4 +1,4 @@
-import Linglib.Semantics.PIP.Basic
+import Linglib.Studies.KeshetAbney2024.Basic
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -38,7 +38,7 @@ label definitions are tautologies that float freely, this function collects
 all `X ≡ φ` definitions regardless of their structural position.
 -/
 
-namespace Semantics.PIP
+namespace KeshetAbney2024.PIP
 
 /-- A finite domain of individuals for PIP quantifier evaluation. -/
 class FiniteDomain (D : Type*) where
@@ -241,4 +241,4 @@ theorem felicitousF_must (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
 end Properties
 
 
-end Semantics.PIP
+end KeshetAbney2024.PIP

@@ -1,7 +1,7 @@
-import Linglib.Semantics.PIP.Expr
-import Linglib.Semantics.PIP.Felicity
-import Linglib.Semantics.PIP.Connectives
-import Linglib.Semantics.PIP.Composition
+import Linglib.Studies.KeshetAbney2024.Expr
+import Linglib.Studies.KeshetAbney2024.Felicity
+import Linglib.Studies.KeshetAbney2024.Connectives
+import Linglib.Studies.KeshetAbney2024.Composition
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Plurality.Algebra
@@ -35,9 +35,9 @@ the Brasoveanu equivalence (which requires a non-trivial model theory
 argument).
 -/
 
-namespace Semantics.PIP.Bridges
+namespace KeshetAbney2024.PIP.Bridges
 
-open Semantics.PIP
+open KeshetAbney2024.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
 open Core.Logic.Intensional.Logic (frameConditions)
 
@@ -461,4 +461,4 @@ theorem static_neg_agrees_dynamic {W E : Type*}
   exact ⟨fun ⟨_, hneg⟩ => hneg, fun hneg => ⟨hd, hneg⟩⟩
 
 
-end Semantics.PIP.Bridges
+end KeshetAbney2024.PIP.Bridges

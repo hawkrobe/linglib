@@ -1,4 +1,4 @@
-import Linglib.Semantics.PIP.Expr
+import Linglib.Studies.KeshetAbney2024.Expr
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -55,7 +55,7 @@ world and assignment consistent with γ.
 
 -/
 
-namespace Semantics.PIP.Felicity
+namespace KeshetAbney2024.PIP.Felicity
 
 variable {W : Type*}
 
@@ -464,4 +464,4 @@ theorem sigma_body_felicitous_iff (body : D → PIPExprF W D) (w : W) :
 end FullFelicity
 
 
-end Semantics.PIP.Felicity
+end KeshetAbney2024.PIP.Felicity

@@ -1,6 +1,6 @@
-import Linglib.Semantics.PIP.Bridges
-import Linglib.Semantics.PIP.Connectives
-import Linglib.Semantics.PIP.Felicity
+import Linglib.Studies.KeshetAbney2024.Bridges
+import Linglib.Studies.KeshetAbney2024.Connectives
+import Linglib.Studies.KeshetAbney2024.Felicity
 import Linglib.Semantics.Dynamic.Connectives.Defs
 import Linglib.Semantics.Dynamic.Connectives.Assignment
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
@@ -46,9 +46,9 @@ finite models with `decide` verification.
 
 namespace KeshetAbney2024
 
-open Semantics.PIP
+open KeshetAbney2024.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
--- `BAccessRel` is re-exported by `Semantics.PIP` (opened above);
+-- `BAccessRel` is re-exported by `KeshetAbney2024.PIP` (opened above);
 -- `BRefl` / `kripkeEval` were Bool-internal modal infrastructure that has
 -- been replaced by the Prop-valued `Refl`/`boxR` API in
 -- `Core.Logic.Intensional` and isn't needed here.

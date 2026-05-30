@@ -45,7 +45,7 @@ external/local variable distinction) are faithfully preserved.
 
 -/
 
-namespace Semantics.PIP
+namespace KeshetAbney2024.PIP
 
 open Semantics.Dynamic.Core
 
@@ -330,4 +330,4 @@ theorem summation_nonempty {W E : Type*}
   ⟨gw.1, gw.2, h, rfl⟩
 
 
-end Semantics.PIP
+end KeshetAbney2024.PIP

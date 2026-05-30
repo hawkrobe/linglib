@@ -1,5 +1,5 @@
-import Linglib.Semantics.PIP.Composition
-import Linglib.Semantics.PIP.Bridges
+import Linglib.Studies.KeshetAbney2024.Composition
+import Linglib.Studies.KeshetAbney2024.Bridges
 import Linglib.Studies.KeshetAbney2024
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
@@ -34,8 +34,8 @@ anaphora, modal subordination, and the exists/sigma bridge.
 
 namespace AbneyKeshet2025
 
-open Semantics.PIP
-open Semantics.PIP.Bridges (single plural setEvery_eq_pipEvery)
+open KeshetAbney2024.PIP
+open KeshetAbney2024.PIP.Bridges (single plural setEvery_eq_pipEvery)
 
 
 -- ============================================================
