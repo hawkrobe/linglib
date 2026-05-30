@@ -8,6 +8,7 @@ modal base and ordering source for different types of modality.
 -/
 
 import Linglib.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.Modality.ModalTypes
 
 namespace Semantics.Modality.Kratzer
 

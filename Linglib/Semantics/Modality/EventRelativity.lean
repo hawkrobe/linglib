@@ -1,4 +1,5 @@
 import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Event-Relative Modality
