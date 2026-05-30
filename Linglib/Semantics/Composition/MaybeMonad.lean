@@ -149,23 +149,16 @@ standard intensional types (`i → t` becomes `i → t_#`). -/
 
 section IMonad
 
-variable {I : Type}
+/-- `Iₚ I α = I → Option α`: the Reader monad transformer over the Maybe
+    monad. An expression of type `Iₚ I α` reads an index `i` (world,
+    world-assignment pair, etc.) and returns `some v` if defined at `i`,
+    or `none` on presupposition failure — Grove §4.1's uniform treatment
+    of intensionality and presupposition (replacing `t` with `t_#` in the
+    intensional type `i → t`).
 
-/-- `Iₚ I α`: the intensional-presuppositional monad.
-
-    An expression of type `Iₚ I α` reads an index `i` and returns
-    `some v` if defined at `i`, or `none` if presupposition failure
-    occurs at `i`. -/
-abbrev Iₚ (I : Type) (α : Type) := I → Option α
-
-/-- `ηI`: unit for `Iₚ`. Makes a value trivially index-sensitive
-    (ignores the index, always defined). Grove eq. 19, first line. -/
-def ηI {α : Type} (v : α) : Iₚ I α := λ _ => some v
-
-/-- `bindI`: bind for `Iₚ`. Evaluates `m` at index `i`; if defined,
-    feeds the result to `k` at the same index. Grove eq. 19, second line. -/
-def bindI {α β : Type} (m : Iₚ I α) (k : α → Iₚ I β) : Iₚ I β :=
-  λ i => m i >>= (λ v => k v i)
+    Defining `Iₚ` as `ReaderT I Option` makes `pure`/`>>=` Grove's
+    `η_#`/`⋆_#` and inherits `Monad`/`LawfulMonad` from mathlib. -/
+abbrev Iₚ (I : Type) := ReaderT I Option
 
 end IMonad
 
@@ -175,45 +168,13 @@ end IMonad
 
 /-! ### §3 Monad laws
 
-The three laws from Figure 7 hold for `Iₚ`. Left Identity and
-Associativity are the key properties for scope-taking: Left Identity
-ensures that `η` + `⋆` = reconstruction (no scope), and Associativity
-ensures that cyclic scope-taking (roll-up pied-piping) works. -/
-
-section MonadLaws
-
-variable {I α β γ : Type}
-
-/-- **Left Identity**: lifting a value into the monad and immediately
-    binding is the same as applying the continuation directly.
-
-    This is why global scope for a presupposition trigger that has been
-    locally `η`-shifted reconstructs to the local meaning (Grove fn. 13). -/
-theorem left_identity (v : α) (k : α → Iₚ I β) :
-    bindI (ηI v) k = k v := rfl
-
-/-- **Right Identity**: binding with `ηI` is a no-op. -/
-theorem right_identity (m : Iₚ I α) : bindI m ηI = m := by
-  funext i; simp [bindI, ηI]
-
-/-- **Associativity**: sequential scope-taking = direct wide scope.
-
-    This is the presuppositional analog of @cite{charlow-2020}'s
-    ASSOCIATIVITY theorem for the set monad. It guarantees that
-    roll-up pied-piping (taking scope at an island edge, then further)
-    yields the same result as direct scope-taking. -/
-theorem assoc (m : Iₚ I α) (f : α → Iₚ I β) (g : β → Iₚ I γ) :
-    bindI (bindI m f) g = bindI m (λ x => bindI (f x) g) := by
-  funext i; simp [bindI]; cases m i <;> rfl
-
-/-- **Backward compatibility**: non-presuppositional expressions (those
-    wrapped in `some`) compose the same way they do without the monad.
-    This means traditional satisfaction-theoretic analyses that use only
-    defined values are preserved inside the monadic setting (Grove §5). -/
-theorem backward_compat (f : α → β) (v : α) :
-    bindI (ηI v) (λ x => ηI (f x)) = (ηI (f v) : Iₚ I β) := rfl
-
-end MonadLaws
+`Iₚ = ReaderT I Option` is a `LawfulMonad`, so the three laws of Grove's
+Figure 7 hold via `pure_bind`, `bind_pure`, and `bind_assoc` rather than
+standalone `rfl` theorems. Left Identity and Associativity are the
+scope-taking properties: Left Identity gives reconstruction (`η` + `⋆` =
+no scope; Grove fn. 13), and Associativity makes cyclic scope-taking
+(roll-up pied-piping) sound (the presuppositional analog of
+@cite{charlow-2020}'s ASSOCIATIVITY theorem for the set monad). -/
 
 -- ════════════════════════════════════════════════════════════════
 -- §4 Semantic Operations

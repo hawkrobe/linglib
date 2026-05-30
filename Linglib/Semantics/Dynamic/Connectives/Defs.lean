@@ -216,6 +216,20 @@ theorem test_dseq (C : Condition S) (D : DRS S) (hC : ∀ i, C i) :
   · intro hD
     exact ⟨i, ⟨rfl, hC i⟩, hD⟩
 
+/-- Test is right identity for sequencing (when condition holds everywhere).
+Together with `test_dseq` and `dseq_assoc`, this makes `(DRS S, ⨟, test ⊤)`
+a monoid. -/
+theorem dseq_test (D : DRS S) (C : Condition S) (hC : ∀ i, C i) :
+    D ⨟ test C = D := by
+  funext i j
+  simp only [dseq, test, eq_iff_iff]
+  constructor
+  · intro ⟨h, hD, hhj, _⟩
+    subst hhj
+    exact hD
+  · intro hD
+    exact ⟨j, hD, rfl, hC j⟩
+
 /-- Double negation for tests. -/
 theorem dneg_dneg_test (C : Condition S) :
     dneg (test (dneg (test C))) = C := by
