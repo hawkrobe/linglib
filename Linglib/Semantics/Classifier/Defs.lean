@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Card
 import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Core.Scales.Comparison
 
 /-!
 # Classifier Denotations à la Sudo (2016)
@@ -63,15 +64,18 @@ def ofSortal (P : Core.Intension W (E → Prop)) : ClassifierDenot W E where
   sortal := P
   counted := P
 
-/-- The body of Sudo's denotation (eq. 4):
-    `apply cl w n x` iff `sortal_w(x)` AND the cardinality of
-    `{y ⊑ x : counted_w(y)}` equals `n`.
+/-- The body of Sudo's denotation (eq. 4): `apply cl w n x` iff `sortal_w(x)`
+    AND the count of `x`'s ⊑-atomic `counted`-parts equals `n`.
 
-    Uses `Set.ncard` so the formalization works for infinite domains
-    (where `Set.ncard` returns 0 for infinite sets). For Sudo's analysis
-    of natural-language counting, the relevant sets are always finite. -/
+    The counting clause is the **exact (`=`) case of the shared
+    comparison-over-a-measure primitive** `Core.Scale.Comparison.over`, with the
+    measure being the atom-count `λx. |{y ⊑ x : counted_w(y)}|` — classifier
+    counting *is* numeral comparison with `μ = atom-count`, the same primitive
+    measure phrases and bare cardinals use. (`Set.ncard` returns 0 on infinite
+    sets; for natural-language counting the relevant sets are finite.) -/
 def apply (cl : ClassifierDenot W E) (w : W) (n : ℕ) (x : E) : Prop :=
-  cl.sortal w x ∧ {y : E | y ≤ x ∧ cl.counted w y}.ncard = n
+  cl.sortal w x ∧
+    x ∈ Core.Scale.Comparison.eq.over (fun y => {z : E | z ≤ y ∧ cl.counted w z}.ncard) n
 
 @[simp] lemma ofSortal_sortal (P : Core.Intension W (E → Prop)) :
     (ofSortal P).sortal = P := rfl

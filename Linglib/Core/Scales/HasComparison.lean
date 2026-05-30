@@ -1,5 +1,6 @@
 import Mathlib.Order.Basic
 import Linglib.Core.Scales.HasMeasure
+import Linglib.Core.Scales.Comparison
 
 /-!
 # Core/Scales/HasComparison.lean — primitive comparison typeclass
@@ -43,6 +44,6 @@ class HasComparison (α : Type*) where
 @[reducible]
 def HasComparison.ofMeasure {α δ : Type} [Preorder δ] (m : HasMeasure α δ) :
     HasComparison α where
-  comparativeGreater a b := m.degree a > m.degree b
+  comparativeGreater a b := Comparison.gt.rel (m.degree a) (m.degree b)
 
 end Core.Scale

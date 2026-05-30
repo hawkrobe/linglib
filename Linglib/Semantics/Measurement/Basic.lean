@@ -116,16 +116,21 @@ instance {E : Type*} : CoeFun (MeasureFn E) (fun _ => E → ℚ) where
 
 @cite{scontras-2014}: measure terms are nouns that name specific measure
 functions. Their type is ⟨n, ⟨e,t⟩⟩ — they take a numeral and return a
-predicate. The exact-equality reading is the lexical meaning; pragmatic
-strengthening to lower-bound or at-most readings happens at the numeral
-level (see `bareMeaning` / `atLeastMeaning` / `atMostMeaning` in
-`Semantics.Numerals`), not on the measure term itself. -/
+predicate. This is the **exact (`=`) case of the shared comparison-over-a-
+measure primitive** `Core.Scale.Comparison.over`: `⟦kilo⟧(n)` is
+`Comparison.eq.over μ_kg n`. Modified readings (`> n`, `≥ n`, …) are the other
+`Comparison`s over the same `μ`. -/
 def MeasureFn.applyNumeral {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) : Prop :=
-  μ.apply x = n
+  x ∈ Core.Scale.Comparison.eq.over μ.apply n
+
+/-- `applyNumeral` is exact measure predication: `μ(x) = n` (definitionally,
+    the `.eq` interval-membership). -/
+@[simp] theorem MeasureFn.applyNumeral_iff {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
+    μ.applyNumeral n x ↔ μ.apply x = n := Iff.rfl
 
 instance {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
-    Decidable (μ.applyNumeral n x) := by
-  unfold MeasureFn.applyNumeral; infer_instance
+    Decidable (μ.applyNumeral n x) :=
+  inferInstanceAs (Decidable (μ.apply x = n))
 
 -- ============================================================================
 -- § 3. CARD: Cardinality as a Measure Function
@@ -382,6 +387,6 @@ same condition `μ(x) = n` when QMOD's restrictor is taken to be trivial. -/
 theorem MeasureFn.applyNumeral_iff_qmod {E : Type*}
     (μ : MeasureFn E) (n : ℚ) (x : E) :
     μ.applyNumeral n x ↔ Mereology.QMOD (fun _ => True) μ.apply n x := by
-  simp [MeasureFn.applyNumeral, Mereology.QMOD]
+  simp [MeasureFn.applyNumeral_iff, Mereology.QMOD]
 
 end Semantics.Measurement
