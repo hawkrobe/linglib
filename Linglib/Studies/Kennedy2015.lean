@@ -50,10 +50,10 @@ distinct: §2 follows Kennedy directly; §3 shows the same qualitative
 predictions emerge from a soft-max listener over the same alternative set
 and bare-numeral semantics.
 
-The formalization consumes `Numeral.Comparison.meaning` from
+The formalization consumes `Core.Scale.Comparison.meaning` from
 `Semantics/Numerals/Basic.lean` directly — there is no separate
 "Kennedy meaning" function (Kennedy's alternative set is *which*
-`Numeral.Comparison`s to consider, not *what they mean*).
+`Core.Scale.Comparison`s to consider, not *what they mean*).
 
 Domain: cardinality 0–5 (`Fin 6`, wide enough that Class A "more than 3"
 needs `w = 4` to be non-trivial).
@@ -81,8 +81,8 @@ inductive KUtt where
   | bare3 | moreThan3 | fewerThan3 | atLeast3 | atMost3
   deriving DecidableEq, Repr, Fintype
 
-/-- The `Numeral.Comparison` a Kennedy alternative expresses (all at argument 3). -/
-def KUtt.comparison : KUtt → Numeral.Comparison
+/-- The `Core.Scale.Comparison` a Kennedy alternative expresses (all at argument 3). -/
+def KUtt.comparison : KUtt → Core.Scale.Comparison
   | .bare3      => .eq
   | .moreThan3  => .gt
   | .fewerThan3 => .lt
@@ -90,7 +90,7 @@ def KUtt.comparison : KUtt → Numeral.Comparison
   | .atMost3    => .le
 
 /-- Prop-valued meaning of any Kennedy alternative under bilateral
-    (exact) bare semantics — derived from `Numeral.Comparison.meaning bareMeaning`. -/
+    (exact) bare semantics — derived from `Core.Scale.Comparison.meaning bareMeaning`. -/
 def kMean (u : KUtt) (w : KCard) : Prop :=
   u.comparison.meaning bareMeaning 3 w.val
 
