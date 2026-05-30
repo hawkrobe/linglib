@@ -42,7 +42,7 @@ namespace Semantics.Dynamic.Core
 export DynProp (DRS Condition
   dseq test dneg dimpl ddisj closure
   trueAt valid entails
-  dseq_assoc test_dseq dneg_dneg_test closure_closure dseq_closure)
+  dseq_assoc test_dseq dseq_test dneg_dneg_test closure_closure dseq_closure)
 
 /-!
 Dynamic Ty2 is parameterized by:

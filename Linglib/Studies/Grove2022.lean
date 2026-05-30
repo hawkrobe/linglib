@@ -280,7 +280,7 @@ theorem believe_local_always_defined (w : AttWorld) :
 def believeGlobal : Iₚ AttWorld Bool :=
   λ i => lostWetsuit i >>= (λ b =>
     believe (λ _ => believesRBool) [AttWorld.actual, AttWorld.believed]
-      (ηI b) () i)
+      (pure b) () i)
 
 /-- Global reading at `actual`: complement is undefined → `none`.
 
