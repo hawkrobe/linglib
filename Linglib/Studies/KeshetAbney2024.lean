@@ -48,10 +48,7 @@ namespace KeshetAbney2024
 
 open KeshetAbney2024.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
--- `BAccessRel` is re-exported by `KeshetAbney2024.PIP` (opened above);
--- `BRefl` / `kripkeEval` were Bool-internal modal infrastructure that has
--- been replaced by the Prop-valued `Refl`/`boxR` API in
--- `Core.Logic.Intensional` and isn't needed here.
+open Core.Logic.Intensional (AccessRel)
 open Phenomena.Anaphora
 
 
@@ -82,16 +79,16 @@ def αWolf : FLabel := ⟨0⟩
 def vWolf : IVar := ⟨0⟩
 
 /-- Epistemic accessibility from actual world. -/
-def sAccess : BAccessRel SWorld
-  | .actual, .wolfIn => true
-  | .actual, .noWolf => true
-  | _, _ => false
+def sAccess : AccessRel SWorld
+  | .actual, .wolfIn => True
+  | .actual, .noWolf => True
+  | _, _ => False
 
-def isWolf (g : ICDRTAssignment SWorld SEntity) (w : SWorld) : Bool :=
-  g.indiv vWolf w == .some .wolf
+def isWolf (g : ICDRTAssignment SWorld SEntity) (w : SWorld) : Prop :=
+  g.indiv vWolf w = .some .wolf
 
-def comesIn (g : ICDRTAssignment SWorld SEntity) (w : SWorld) : Bool :=
-  g.indiv vWolf w == .some .wolf && w == .wolfIn
+def comesIn (g : ICDRTAssignment SWorld SEntity) (w : SWorld) : Prop :=
+  g.indiv vWolf w = .some .wolf ∧ w = .wolfIn
 
 /--
 "A wolf might come in." (paper item 59a)
@@ -104,7 +101,7 @@ def stoneSentence1 : PUpdate SWorld SEntity :=
   might sAccess sWorlds
     (existsLabeled αWolf vWolf {.wolf}
       isWolf
-      (atom (λ g w => isWolf g w && comesIn g w)))
+      (atom (λ g w => isWolf g w ∧ comesIn g w)))
 
 /-- After "A wolf might come in", the label αWolf is registered. -/
 theorem stone_label_registered (d : Discourse SWorld SEntity)
@@ -123,7 +120,7 @@ def stoneSentence2 : PUpdate SWorld SEntity :=
   conj
     (retrieveDef αWolf)
     (would sAccess sWorlds
-      (atom (λ g w => g.indiv vWolf w != .star)))
+      (atom (λ g w => g.indiv vWolf w ≠ .star)))
 
 def stoneDiscourse : PUpdate SWorld SEntity :=
   conj stoneSentence1 stoneSentence2
@@ -154,14 +151,14 @@ private theorem g_wolf_in_sentence1 :
   · exact Set.mem_univ _
   · refine ⟨SWorld.wolfIn, ?_, ?_, ?_⟩
     · simp [sWorlds]
-    · rfl
+    · trivial
     · unfold existsLabeled atom Discourse.mapInfo
       constructor
       · refine ⟨g₀_stone, SEntity.wolf, ?_, ?_, ?_⟩
         · left; exact Set.mem_univ _
         · rfl
         · rfl
-      · rfl
+      · exact ⟨rfl, rfl, rfl⟩
 
 private theorem g_wolf_in_retrieve :
     (g_wolf, SWorld.actual) ∈ (retrieveDef αWolf (stoneSentence1 stone_d₀)).info := by
@@ -169,7 +166,7 @@ private theorem g_wolf_in_retrieve :
   simp only [stoneSentence1, might, modalExpand, existsLabeled, atom,
              Discourse.mapInfo, LabelStore.register, LabelStore.lookup, αWolf,
              vWolf, isWolf]
-  refine ⟨g_wolf_in_sentence1, ?_, ?_⟩ <;> decide
+  refine ⟨g_wolf_in_sentence1, ?_, ?_⟩ <;> first | rfl | decide | trivial
 
 /--
 End-to-end test: Stone's discourse is consistent on a concrete model.
@@ -188,7 +185,9 @@ theorem stone_discourse_consistent :
     unfold atom Discourse.mapInfo
     constructor
     · right; exact ⟨SWorld.actual, g_wolf_in_retrieve, hacc⟩
-    · rfl
+    · intro h
+      have h1 : g_wolf.indiv vWolf w₁ = .some .wolf := rfl
+      rw [h1] at h; exact absurd h (by decide)
 
 /-- Negative test: unbound wolf variable is rejected. -/
 theorem stone_discourse_rejects_unbound :
@@ -222,11 +221,11 @@ inductive BEntity where
 def αBath : FLabel := ⟨1⟩
 def vBath : IVar := ⟨1⟩
 
-def isBathroom (g : ICDRTAssignment BWorld BEntity) (w : BWorld) : Bool :=
-  g.indiv vBath w == .some .bathroom
+def isBathroom (g : ICDRTAssignment BWorld BEntity) (w : BWorld) : Prop :=
+  g.indiv vBath w = .some .bathroom
 
-def isUpstairs (g : ICDRTAssignment BWorld BEntity) (w : BWorld) : Bool :=
-  g.indiv vBath w == .some .bathroom && w == .bath
+def isUpstairs (g : ICDRTAssignment BWorld BEntity) (w : BWorld) : Prop :=
+  g.indiv vBath w = .some .bathroom ∧ w = .bath
 
 /--
 "Either there's no bathroom, or it's upstairs." (paper item 92b)
@@ -326,11 +325,11 @@ inductive PWorld where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Relational paycheck predicate: depends on both paycheck and possessor. -/
-def isPaycheckOf (g : ICDRTAssignment PWorld PEntity) (w : PWorld) : Bool :=
+def isPaycheckOf (g : ICDRTAssignment PWorld PEntity) (w : PWorld) : Prop :=
   match g.indiv vPaycheck w, g.indiv vPossessor w with
-  | .some .johnsPaycheck, .some .john => true
-  | .some .billsPaycheck, .some .bill => true
-  | _, _ => false
+  | .some .johnsPaycheck, .some .john => True
+  | .some .billsPaycheck, .some .bill => True
+  | _, _ => False
 
 /-- Re-evaluation yields Bill's paycheck when possessor = Bill. -/
 theorem paycheck_needs_descriptions :
@@ -340,7 +339,7 @@ theorem paycheck_needs_descriptions :
           else if v == vPossessor then .some .bill
           else .star
         prop := λ _ => ∅ }
-    isPaycheckOf g .w0 = true := by decide
+    isPaycheckOf g .w0 := by trivial
 
 end Paycheck
 
@@ -556,14 +555,14 @@ def ibWorlds : List IBWorld := [.actual, .burgerW]
 def αBurger : FLabel := ⟨10⟩
 def vBurger : IVar := ⟨10⟩
 
-def ibAccess : BAccessRel IBWorld
-  | .actual, .actual => true
-  | .actual, .burgerW => true
-  | _, _ => false
+def ibAccess : AccessRel IBWorld
+  | .actual, .actual => True
+  | .actual, .burgerW => True
+  | _, _ => False
 
 /-- World-dependent predicate: burger exists only at burgerW. -/
-def isBurgerAt (g : ICDRTAssignment IBWorld IBEntity) (w : IBWorld) : Bool :=
-  g.indiv vBurger w == .some .burger && w == .burgerW
+def isBurgerAt (g : ICDRTAssignment IBWorld IBEntity) (w : IBWorld) : Prop :=
+  g.indiv vBurger w = .some .burger ∧ w = .burgerW
 
 def burgerSentence : PUpdate IBWorld IBEntity :=
   might ibAccess ibWorlds
@@ -580,10 +579,8 @@ theorem burger_label_registered (d : Discourse IBWorld IBEntity) :
 /-- The burger description fails at actual — presupposition failure. -/
 theorem burger_desc_fails_at_actual :
     ∀ g : ICDRTAssignment IBWorld IBEntity,
-    isBurgerAt g .actual = false := by
-  intro g; unfold isBurgerAt
-  have : (IBWorld.actual == IBWorld.burgerW) = false := by decide
-  simp [this]
+    ¬ isBurgerAt g .actual := by
+  intro g h; exact absurd h.2 (by decide)
 
 instance : Fintype IBWorld where
   elems := {.actual, .burgerW}
@@ -600,11 +597,11 @@ confirming that the blocking mechanism is about description content, not
 accessibility structure.
 -/
 theorem burger_desc_world_dependent :
-    isBurgerAt
+    ¬ isBurgerAt
       { indiv := λ _ _ => .some .burger, prop := λ _ => ∅ }
-      .actual = false ∧
-    ibAccess .actual .actual = true :=
-  ⟨rfl, rfl⟩
+      .actual ∧
+    ibAccess .actual .actual :=
+  ⟨fun h => absurd h.2 (by decide), trivial⟩
 
 end IntensionalBurger
 
@@ -639,14 +636,14 @@ def αAnimal : FLabel := ⟨11⟩
 def vAnimal : IVar := ⟨11⟩
 
 /-- Realistic epistemic: actual accessible from itself. -/
-def iaAccess : BAccessRel IAWorld
-  | .actual, .actual => true
-  | .actual, .shedW => true
-  | _, _ => false
+def iaAccess : AccessRel IAWorld
+  | .actual, .actual => True
+  | .actual, .shedW => True
+  | _, _ => False
 
 /-- World-INdependent predicate: holds at ALL worlds. -/
-def isAnimalInShed (g : ICDRTAssignment IAWorld IAEntity) (w : IAWorld) : Bool :=
-  g.indiv vAnimal w == .some .animal
+def isAnimalInShed (g : ICDRTAssignment IAWorld IAEntity) (w : IAWorld) : Prop :=
+  g.indiv vAnimal w = .some .animal
 
 def animalSentence : PUpdate IAWorld IAEntity :=
   must iaAccess iaWorlds
@@ -662,8 +659,8 @@ theorem animal_label_registered (d : Discourse IAWorld IAEntity) :
 
 theorem animal_desc_succeeds :
     ∀ (g : ICDRTAssignment IAWorld IAEntity) (w : IAWorld),
-    g.indiv vAnimal w == .some .animal → isAnimalInShed g w = true := by
-  intro g w h; simp [isAnimalInShed, h]
+    g.indiv vAnimal w = .some .animal → isAnimalInShed g w := by
+  intro g w h; exact h
 
 instance : Fintype IAWorld where
   elems := {.actual, .shedW}
@@ -678,7 +675,7 @@ description predicate holds at .actual. This is the Kripke-semantic
 grounding of why must enables intensional anaphora.
 -/
 theorem animal_must_realistic :
-    iaAccess .actual .actual = true := rfl
+    iaAccess .actual .actual := trivial
 
 end IntensionalAnimal
 
@@ -720,17 +717,17 @@ def αMA : FLabel := ⟨12⟩
 def vMA : IVar := ⟨12⟩
 
 /-- Realistic epistemic: actual accessible from itself, plus two alternatives. -/
-def maAccess : BAccessRel MAWorld
-  | .actual, _ => true
-  | _, _ => false
+def maAccess : AccessRel MAWorld
+  | .actual, _ => True
+  | _, _ => False
 
 /-- World-dependent predicate: different animal in each world. -/
-def isAnimalInShedMA (g : ICDRTAssignment MAWorld MAEntity) (w : MAWorld) : Bool :=
+def isAnimalInShedMA (g : ICDRTAssignment MAWorld MAEntity) (w : MAWorld) : Prop :=
   match g.indiv vMA w, w with
-  | .some .cat, .actual => true
-  | .some .dog, .shedW1 => true
-  | .some .raccoon, .shedW2 => true
-  | _, _ => false
+  | .some .cat, .actual => True
+  | .some .dog, .shedW1 => True
+  | .some .raccoon, .shedW2 => True
+  | _, _ => False
 
 /-- At the actual world, only one entity satisfies the description. -/
 private def maG (e : MAEntity) : ICDRTAssignment MAWorld MAEntity :=
@@ -739,33 +736,33 @@ private def maG (e : MAEntity) : ICDRTAssignment MAWorld MAEntity :=
 
 /-- At actual, only cat satisfies the description (SINGLE). -/
 theorem ma_single_at_actual :
-    isAnimalInShedMA (maG .cat) .actual = true ∧
-    isAnimalInShedMA (maG .dog) .actual = false ∧
-    isAnimalInShedMA (maG .raccoon) .actual = false :=
-  ⟨rfl, rfl, rfl⟩
+    isAnimalInShedMA (maG .cat) .actual ∧
+    ¬ isAnimalInShedMA (maG .dog) .actual ∧
+    ¬ isAnimalInShedMA (maG .raccoon) .actual :=
+  ⟨trivial, id, id⟩
 
 /-- Different entities satisfy the description at different worlds. -/
 theorem ma_different_animals_per_world :
     isAnimalInShedMA
       { indiv := λ v _w => if v == vMA then .some .cat else .star
-        prop := λ _ => ∅ } .actual = true ∧
+        prop := λ _ => ∅ } .actual ∧
     isAnimalInShedMA
       { indiv := λ v _w => if v == vMA then .some .dog else .star
-        prop := λ _ => ∅ } .shedW1 = true ∧
+        prop := λ _ => ∅ } .shedW1 ∧
     isAnimalInShedMA
       { indiv := λ v _w => if v == vMA then .some .raccoon else .star
-        prop := λ _ => ∅ } .shedW2 = true := by
-  exact ⟨rfl, rfl, rfl⟩
+        prop := λ _ => ∅ } .shedW2 :=
+  ⟨trivial, trivial, trivial⟩
 
 /-- Cross-world summation yields PLURAL — Stone/Brasoveanu would incorrectly
     predict plurality here since they sum across all accessible worlds.
     Different animals satisfy the description at different worlds: cat at
     actual, dog at shedW1. -/
 theorem ma_cross_world_plural :
-    isAnimalInShedMA (maG .cat) .actual = true ∧
-    isAnimalInShedMA (maG .dog) .shedW1 = true ∧
+    isAnimalInShedMA (maG .cat) .actual ∧
+    isAnimalInShedMA (maG .dog) .shedW1 ∧
     MAEntity.cat ≠ MAEntity.dog :=
-  ⟨rfl, rfl, by decide⟩
+  ⟨trivial, trivial, by decide⟩
 
 end MultiAnimal
 
@@ -803,16 +800,16 @@ def αWinner : FLabel := ⟨20⟩
 def vWinner : IVar := ⟨20⟩
 
 /-- Epistemic: speaker considers all outcomes possible. -/
-def pcAccess : BAccessRel PCWorld
-  | .actual, _ => true
-  | _, _ => false
+def pcAccess : AccessRel PCWorld
+  | .actual, _ => True
+  | _, _ => False
 
 /-- World-dependent predicate: winner only at resolution worlds. -/
-def isWinner (g : ICDRTAssignment PCWorld PCEntity) (w : PCWorld) : Bool :=
+def isWinner (g : ICDRTAssignment PCWorld PCEntity) (w : PCWorld) : Prop :=
   match g.indiv vWinner w, w with
-  | .some .alice, .aliceWins => true
-  | .some .bob, .bobWins => true
-  | _, _ => false
+  | .some .alice, .aliceWins => True
+  | .some .bob, .bobWins => True
+  | _, _ => False
 
 /-- "There may already be a winner." -/
 def candidateSentence : PUpdate PCWorld PCEntity :=
@@ -864,9 +861,9 @@ Since the pronoun's existential presupposition (paper item 9) requires
 the description to hold at the evaluation world, might fails and must succeeds.
 -/
 theorem pip_intensional_anaphora_contrast :
-    (∀ g : ICDRTAssignment IBWorld IBEntity, isBurgerAt g .actual = false) ∧
+    (∀ g : ICDRTAssignment IBWorld IBEntity, ¬ isBurgerAt g .actual) ∧
     (∀ (g : ICDRTAssignment IAWorld IAEntity) (w : IAWorld),
-     g.indiv vAnimal w == .some .animal → isAnimalInShed g w = true) :=
+     g.indiv vAnimal w = .some .animal → isAnimalInShed g w) :=
   ⟨burger_desc_fails_at_actual, animal_desc_succeeds⟩
 
 /-- Labels are registered in BOTH cases — the asymmetry is about
@@ -880,12 +877,12 @@ theorem labels_registered_in_both_cases :
 
 /-- Static felicity operator F distinguishes might from must. -/
 theorem felicity_might_blocks :
-    (Felicity.singlePresup (W := IBWorld) (λ w => w == .burgerW)).felicitous .actual = false := by
-  decide
+    ¬ (Felicity.singlePresup (W := IBWorld) (λ w => w = .burgerW)).felicitous .actual := by
+  intro h; exact absurd h.2 (by decide)
 
 theorem felicity_must_allows :
-    (Felicity.singlePresup (W := IAWorld) (λ _ => true)).felicitous .actual = true := by
-  decide
+    (Felicity.singlePresup (W := IAWorld) (λ _ => True)).felicitous .actual := by
+  exact ⟨trivial, trivial⟩
 
 
 -- ============================================================
@@ -951,12 +948,12 @@ itself must hold there.
 -/
 theorem intensional_anaphora_is_T_axiom :
     -- Must's accessibility is reflexive at actual
-    iaAccess .actual .actual = true ∧
+    iaAccess .actual .actual ∧
     -- Might's accessibility is ALSO reflexive at actual
-    ibAccess .actual .actual = true ∧
+    ibAccess .actual .actual ∧
     -- But the burger description fails at actual (world-dependent)
-    (∀ g : ICDRTAssignment IBWorld IBEntity, isBurgerAt g .actual = false) :=
-  ⟨animal_must_realistic, rfl, burger_desc_fails_at_actual⟩
+    (∀ g : ICDRTAssignment IBWorld IBEntity, ¬ isBurgerAt g .actual) :=
+  ⟨animal_must_realistic, trivial, burger_desc_fails_at_actual⟩
 
 
 -- ============================================================
@@ -1161,29 +1158,29 @@ def αDonkey : FLabel := ⟨30⟩
 def vFarmer : IVar := ⟨30⟩
 def vDonkey : IVar := ⟨31⟩
 
-def isFarmer (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Bool :=
+def isFarmer (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Prop :=
   match g.indiv vFarmer w with
-  | .some .farmer1 | .some .farmer2 => true
-  | _ => false
+  | .some .farmer1 | .some .farmer2 => True
+  | _ => False
 
-def isDonkey (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Bool :=
+def isDonkey (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Prop :=
   match g.indiv vDonkey w with
-  | .some .donkey1 | .some .donkey2 => true
-  | _ => false
+  | .some .donkey1 | .some .donkey2 => True
+  | _ => False
 
 /-- Ownership: farmer1 owns donkey1, farmer2 owns donkey2. -/
-def owns (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Bool :=
+def owns (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Prop :=
   match g.indiv vFarmer w, g.indiv vDonkey w with
-  | .some .farmer1, .some .donkey1 => true
-  | .some .farmer2, .some .donkey2 => true
-  | _, _ => false
+  | .some .farmer1, .some .donkey1 => True
+  | .some .farmer2, .some .donkey2 => True
+  | _, _ => False
 
 /-- Beating: every farmer who owns a donkey beats it. -/
-def beats (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Bool :=
+def beats (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Prop :=
   match g.indiv vFarmer w, g.indiv vDonkey w with
-  | .some .farmer1, .some .donkey1 => true
-  | .some .farmer2, .some .donkey2 => true
-  | _, _ => false
+  | .some .farmer1, .some .donkey1 => True
+  | .some .farmer2, .some .donkey2 => True
+  | _, _ => False
 
 /--
 "Every farmer who owns a donkey beats it."
@@ -1200,7 +1197,7 @@ def donkeySentence : PUpdate DWorld DEntity :=
       (conj
         (existsLabeled αDonkey vDonkey {.donkey1, .donkey2}
           isDonkey
-          (atom (λ g w => isDonkey g w && owns g w)))
+          (atom (λ g w => isDonkey g w ∧ owns g w)))
         (conj
           (retrieveDef αDonkey)
           (atom beats))))
@@ -1257,17 +1254,17 @@ def αWitch : FLabel := ⟨40⟩
 def vWitch : IVar := ⟨40⟩
 
 /-- Hob's doxastic accessibility: Hob believes from actual to hobBelief. -/
-def hobAccess : BAccessRel HNWorld
-  | .actual, .hobBelief => true
-  | _, _ => false
+def hobAccess : AccessRel HNWorld
+  | .actual, .hobBelief => True
+  | _, _ => False
 
 /-- Nob's bouletic accessibility: Nob wonders from actual to nobWonder. -/
-def nobAccess : BAccessRel HNWorld
-  | .actual, .nobWonder => true
-  | _, _ => false
+def nobAccess : AccessRel HNWorld
+  | .actual, .nobWonder => True
+  | _, _ => False
 
-def isWitch (g : ICDRTAssignment HNWorld HNEntity) (w : HNWorld) : Bool :=
-  g.indiv vWitch w == .some .witch
+def isWitch (g : ICDRTAssignment HNWorld HNEntity) (w : HNWorld) : Prop :=
+  g.indiv vWitch w = .some .witch
 
 /-- Hob's belief: "a witch blighted his mare" -/
 def hobBelief : PUpdate HNWorld HNEntity :=
@@ -1281,7 +1278,7 @@ def nobWonder : PUpdate HNWorld HNEntity :=
   conj
     (retrieveDef αWitch)
     (might nobAccess hnWorlds
-      (atom (λ g w => g.indiv vWitch w != .star)))
+      (atom (λ g w => g.indiv vWitch w ≠ .star)))
 
 /-- The full Hob-Nob discourse. -/
 def hobNobDiscourse : PUpdate HNWorld HNEntity :=

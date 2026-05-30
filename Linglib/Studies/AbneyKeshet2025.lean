@@ -69,31 +69,34 @@ section SigmaFinite
 
 /-- Farmer predicate: true for alice and bob. -/
 def farmerBody : Ent → PIPExprF W1 Ent
-  | .alice | .bob => .pred (λ _ => true)
-  | .spot | .rex => .pred (λ _ => false)
+  | .alice | .bob => .pred (λ _ => True)
+  | .spot | .rex => .pred (λ _ => False)
 
 /-- Donkey predicate: true for spot and rex. -/
 def donkeyBody : Ent → PIPExprF W1 Ent
-  | .spot | .rex => .pred (λ _ => true)
-  | .alice | .bob => .pred (λ _ => false)
+  | .spot | .rex => .pred (λ _ => True)
+  | .alice | .bob => .pred (λ _ => False)
 
 /-- Alice is a farmer (in the sigma set). -/
-theorem sigma_farmer_alice : Ent.alice ∈ sigmaEval farmerBody W1.w0 := rfl
+theorem sigma_farmer_alice : Ent.alice ∈ sigmaEval farmerBody W1.w0 := by
+  simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
 
 /-- Bob is a farmer. -/
-theorem sigma_farmer_bob : Ent.bob ∈ sigmaEval farmerBody W1.w0 := rfl
+theorem sigma_farmer_bob : Ent.bob ∈ sigmaEval farmerBody W1.w0 := by
+  simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
 
 /-- Spot is not a farmer. -/
-theorem sigma_farmer_not_spot : Ent.spot ∉ sigmaEval farmerBody W1.w0 := Bool.false_ne_true
+theorem sigma_farmer_not_spot : Ent.spot ∉ sigmaEval farmerBody W1.w0 := by simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
 
 /-- Rex is not a farmer. -/
-theorem sigma_farmer_not_rex : Ent.rex ∉ sigmaEval farmerBody W1.w0 := Bool.false_ne_true
+theorem sigma_farmer_not_rex : Ent.rex ∉ sigmaEval farmerBody W1.w0 := by simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
 
 /-- Spot is a donkey. -/
-theorem sigma_donkey_spot : Ent.spot ∈ sigmaEval donkeyBody W1.w0 := rfl
+theorem sigma_donkey_spot : Ent.spot ∈ sigmaEval donkeyBody W1.w0 := by
+  simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
 
 /-- Alice is not a donkey. -/
-theorem sigma_donkey_not_alice : Ent.alice ∉ sigmaEval donkeyBody W1.w0 := Bool.false_ne_true
+theorem sigma_donkey_not_alice : Ent.alice ∉ sigmaEval donkeyBody W1.w0 := by simp [sigmaEval, farmerBody, donkeyBody, PIPExprF.truth]
 
 end SigmaFinite
 
@@ -119,7 +122,7 @@ theorem sigma_disj_farmer_donkey :
 /-- Verify: the farmer∧donkey intersection is empty. -/
 theorem farmer_donkey_disjoint (d : Ent) :
     d ∉ sigmaEval (λ d => PIPExprF.conj (farmerBody d) (donkeyBody d)) W1.w0 := by
-  cases d <;> exact Bool.false_ne_true
+  cases d <;> rintro ⟨h1, h2⟩ <;> first | exact h1 | exact h2
 
 end SigmaAlgebra
 
@@ -132,8 +135,8 @@ section GQSigma
 
 /-- "Bought a donkey" predicate: alice and bob each bought one. -/
 def boughtDonkeyBody : Ent → PIPExprF W1 Ent
-  | .alice | .bob => .pred (λ _ => true)
-  | .spot | .rex => .pred (λ _ => false)
+  | .alice | .bob => .pred (λ _ => True)
+  | .spot | .rex => .pred (λ _ => False)
 
 /--
 EVERY(Σf farmer, Σf (farmer ∧ boughtDonkey)) — via `setEvery`.
@@ -150,10 +153,10 @@ theorem every_farmer_bought_donkey :
   -- d ∈ sigmaEval farmerBody means (farmerBody d).truth w0 = true
   -- For alice and bob, boughtDonkeyBody also returns true
   cases d with
-  | alice => rfl
-  | bob => rfl
-  | spot => exact absurd hd Bool.false_ne_true
-  | rex => exact absurd hd Bool.false_ne_true
+  | alice => exact ⟨trivial, trivial⟩
+  | bob => exact ⟨trivial, trivial⟩
+  | spot => exact hd.elim
+  | rex => exact hd.elim
 
 /--
 SOME(Σf donkey, Σf farmerBody) — no donkey is a farmer.
@@ -163,10 +166,10 @@ theorem no_donkey_is_farmer :
     ¬setSome (sigmaEval donkeyBody W1.w0) (sigmaEval farmerBody W1.w0) := by
   intro ⟨d, hd, hf⟩
   cases d with
-  | alice => exact absurd hd Bool.false_ne_true
-  | bob => exact absurd hd Bool.false_ne_true
-  | spot => exact absurd hf Bool.false_ne_true
-  | rex => exact absurd hf Bool.false_ne_true
+  | alice => exact hd.elim
+  | bob => exact hd.elim
+  | spot => exact hf.elim
+  | rex => exact hf.elim
 
 end GQSigma
 
@@ -193,11 +196,12 @@ theorem farmer_buyer_subordination :
 
 /-- All farmer-buyers are indeed farmers (pointwise verification). -/
 theorem farmer_buyer_alice :
-    Ent.alice ∈ sigmaEval (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0 := rfl
+    Ent.alice ∈ sigmaEval (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0 := by
+  simp [sigmaEval, farmerBody, boughtDonkeyBody, PIPExprF.truth]
 
 theorem farmer_buyer_spot_excluded :
-    Ent.spot ∉ sigmaEval (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0 :=
-  Bool.false_ne_true
+    Ent.spot ∉ sigmaEval (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0 := by
+  rintro ⟨h, _⟩; exact h
 
 end Subordination
 
@@ -209,17 +213,17 @@ end Subordination
 section ExistsSigma
 
 /-- ∃x(farmer(x)) is true (at least one farmer exists). -/
-theorem exists_farmer : (PIPExprF.exists_ farmerBody).truth W1.w0 = true := by decide
+theorem exists_farmer : (PIPExprF.exists_ farmerBody).truth W1.w0 := ⟨.alice, trivial⟩
 
 /-- The sigma bridge: ∃x(farmer(x)) ↔ nonempty sigma set. -/
 theorem exists_farmer_bridge :
-    (PIPExprF.exists_ farmerBody).truth W1.w0 = true ↔
+    (PIPExprF.exists_ farmerBody).truth W1.w0 ↔
     (sigmaEval farmerBody W1.w0).Nonempty :=
   exists_iff_sigma_nonempty farmerBody W1.w0
 
 /-- ∀x(farmer(x)) is false (donkeys are not farmers). -/
 theorem forall_farmer_false :
-    (PIPExprF.forall_ farmerBody).truth W1.w0 = false := by decide
+    ¬ (PIPExprF.forall_ farmerBody).truth W1.w0 := fun h => h .spot
 
 end ExistsSigma
 
@@ -245,16 +249,18 @@ handled by `PIP.Bridges.plural`.
 /-- Both alice and bob are in the sigma set — exhaustive, not a single witness. -/
 theorem strong_donkey_alice :
     Ent.alice ∈ sigmaEval
-      (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0 := rfl
+      (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0 := by
+  simp [sigmaEval, farmerBody, boughtDonkeyBody, PIPExprF.truth]
 
 theorem strong_donkey_bob :
     Ent.bob ∈ sigmaEval
-      (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0 := rfl
+      (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0 := by
+  simp [sigmaEval, farmerBody, boughtDonkeyBody, PIPExprF.truth]
 
 /-- The sigma set has 2+ elements → plural presupposition satisfied. -/
 theorem strong_donkey_plural :
     plural (sigmaEval (λ d => PIPExprF.conj (farmerBody d) (boughtDonkeyBody d)) W1.w0) :=
-  ⟨.alice, .bob, Ent.noConfusion, rfl, rfl⟩
+  ⟨.alice, .bob, by decide, ⟨trivial, trivial⟩, ⟨trivial, trivial⟩⟩
 
 end StrongDonkey
 
@@ -266,31 +272,31 @@ end StrongDonkey
 section FXRoles
 
 /-- AGENT role predicate: alice and bob are agents. -/
-def agentRole : Ent → W1 → Bool
-  | .alice, _ | .bob, _ => true
-  | .spot, _ | .rex, _ => false
+def agentRole : Ent → W1 → Prop
+  | .alice, _ | .bob, _ => True
+  | .spot, _ | .rex, _ => False
 
 /-- PATIENT role predicate: spot and rex are patients. -/
-def patientRole : Ent → W1 → Bool
-  | .spot, _ | .rex, _ => true
-  | .alice, _ | .bob, _ => false
+def patientRole : Ent → W1 → Prop
+  | .spot, _ | .rex, _ => True
+  | .alice, _ | .bob, _ => False
 
-def buyEvent : W1 → Bool := λ _ => true
+def buyEvent : W1 → Prop := λ _ => True
 
 /-- ↑AGENT(buy)(alice) = true — alice is an agent of buying. -/
-theorem fx_agent_alice : fxApply agentRole buyEvent Ent.alice W1.w0 = true := by decide
+theorem fx_agent_alice : fxApply agentRole buyEvent Ent.alice W1.w0 := ⟨trivial, trivial⟩
 
 /-- ↑AGENT(buy)(spot) = false — spot is not an agent. -/
-theorem fx_agent_spot : fxApply agentRole buyEvent Ent.spot W1.w0 = false := by decide
+theorem fx_agent_spot : ¬ fxApply agentRole buyEvent Ent.spot W1.w0 := fun h => h.1
 
 /-- Iterated FX: ↑PATIENT(↑AGENT(buy))(spot) = false — agent fails for spot. -/
 theorem fx_double_spot :
-    fxApply patientRole (fxApply agentRole buyEvent Ent.spot) Ent.spot W1.w0 = false := by decide
+    ¬ fxApply patientRole (fxApply agentRole buyEvent Ent.spot) Ent.spot W1.w0 := fun h => h.2.1
 
 /-- ↑PATIENT(↑AGENT(buy))(alice, alice) — decomposes by fxApply_twice. -/
 theorem fx_double_decomposes :
     fxApply patientRole (fxApply agentRole buyEvent Ent.alice) Ent.alice W1.w0 =
-    (patientRole Ent.alice W1.w0 && agentRole Ent.alice W1.w0 && buyEvent W1.w0) :=
+    (patientRole Ent.alice W1.w0 ∧ agentRole Ent.alice W1.w0 ∧ buyEvent W1.w0) :=
   fxApply_twice agentRole patientRole buyEvent Ent.alice W1.w0
 
 end FXRoles
@@ -322,9 +328,9 @@ already quantified over, not formulas with free variables.
 
 /-- Diorama predicate: d1 and d2 are dioramas. -/
 def dioramaBody : Ent → PIPExprF W1 Ent
-  | .spot => .pred (λ _ => true)   -- spot = "diorama d1"
-  | .rex  => .pred (λ _ => true)   -- rex  = "diorama d2"
-  | .alice | .bob => .pred (λ _ => false)
+  | .spot => .pred (λ _ => True)   -- spot = "diorama d1"
+  | .rex  => .pred (λ _ => True)   -- rex  = "diorama d2"
+  | .alice | .bob => .pred (λ _ => False)
 
 /--
 "Made" relation parameterized by maker (external free variable x):
@@ -332,9 +338,9 @@ alice made spot (d1), bob made rex (d2).
 -/
 def madeBody (maker : Ent) : Ent → PIPExprF W1 Ent
   | d => .pred (λ _ => match maker, d with
-    | .alice, .spot => true   -- alice made d1
-    | .bob, .rex   => true    -- bob made d2
-    | _, _         => false)
+    | .alice, .spot => True   -- alice made d1
+    | .bob, .rex   => True    -- bob made d2
+    | _, _         => False)
 
 /--
 Paycheck body: `D ≡ DIORAMA([d]) ∧ MADE(x, d)` with x as free variable.
@@ -345,17 +351,19 @@ def paycheckBody (maker : Ent) (d : Ent) : PIPExprF W1 Ent :=
 
 /-- When x = alice, ΣdD = {spot} (alice's diorama). -/
 theorem paycheck_alice_spot :
-    Ent.spot ∈ sigmaEval (paycheckBody .alice) W1.w0 := rfl
+    Ent.spot ∈ sigmaEval (paycheckBody .alice) W1.w0 := by
+  simp [sigmaEval, paycheckBody, dioramaBody, madeBody, PIPExprF.truth]
 
 theorem paycheck_alice_not_rex :
-    Ent.rex ∉ sigmaEval (paycheckBody .alice) W1.w0 := Bool.false_ne_true
+    Ent.rex ∉ sigmaEval (paycheckBody .alice) W1.w0 := by simp [sigmaEval, paycheckBody, dioramaBody, madeBody, PIPExprF.truth]
 
 /-- When x = bob, ΣdD = {rex} (bob's diorama). -/
 theorem paycheck_bob_rex :
-    Ent.rex ∈ sigmaEval (paycheckBody .bob) W1.w0 := rfl
+    Ent.rex ∈ sigmaEval (paycheckBody .bob) W1.w0 := by
+  simp [sigmaEval, paycheckBody, dioramaBody, madeBody, PIPExprF.truth]
 
 theorem paycheck_bob_not_spot :
-    Ent.spot ∉ sigmaEval (paycheckBody .bob) W1.w0 := Bool.false_ne_true
+    Ent.spot ∉ sigmaEval (paycheckBody .bob) W1.w0 := by simp [sigmaEval, paycheckBody, dioramaBody, madeBody, PIPExprF.truth]
 
 /--
 The paycheck property: the sigma set varies with the external free
@@ -372,14 +380,16 @@ theorem paycheck_varies :
 
 /-- Each maker's sigma set is a singleton — satisfying the SG presupposition. -/
 theorem paycheck_alice_single :
-    single (sigmaEval (paycheckBody .alice) W1.w0) :=
-  ⟨.spot, Set.eq_singleton_iff_unique_mem.mpr
-    ⟨rfl, fun d hd => by cases d <;> first | rfl | exact absurd hd Bool.false_ne_true⟩⟩
+    single (sigmaEval (paycheckBody .alice) W1.w0) := by
+  refine ⟨.spot, ?_⟩
+  ext d
+  cases d <;> simp [sigmaEval, paycheckBody, dioramaBody, madeBody, PIPExprF.truth]
 
 theorem paycheck_bob_single :
-    single (sigmaEval (paycheckBody .bob) W1.w0) :=
-  ⟨.rex, Set.eq_singleton_iff_unique_mem.mpr
-    ⟨rfl, fun d hd => by cases d <;> first | rfl | exact absurd hd Bool.false_ne_true⟩⟩
+    single (sigmaEval (paycheckBody .bob) W1.w0) := by
+  refine ⟨.rex, ?_⟩
+  ext d
+  cases d <;> simp [sigmaEval, paycheckBody, dioramaBody, madeBody, PIPExprF.truth]
 
 end PaycheckPronouns
 
