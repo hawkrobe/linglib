@@ -1,163 +1,52 @@
-import Linglib.Semantics.Quantification.UnifiedUniversal
-import Linglib.Semantics.Quantification.ONEModifiers
-import Linglib.Semantics.Quantification.ChoiceFunction
-import Linglib.Features.Definiteness
-
 /-!
-# Hausa Determiners
-@cite{zimmermann-2008} @cite{zimmermann-2014} @cite{zimmermann-2026}
+# Hausa determiner inventory
 
-Fragment entries for the Hausa (Chadic, West Africa) determiner system,
-covering universal quantifiers and indefinite markers.
+Textbook-consensus types for the Hausa (Chadic) determiner system, with
+no analytical denotations. Sources: @cite{newman-2000} §17.5, §20, §21
+and @cite{jaggar-2001} §9.5, §12.3. Paper-specific denotations (Q_∀ +
+ONE decomposition, choice-function vs. ∃-quantifier analysis of *wani*,
+etc.) live in Studies files that consume these entries.
 
-## Universal Quantification
+## Main declarations
 
-Hausa has a 2-form UQ system (@cite{zimmermann-2008}):
+* `Fragments.Hausa.Determiners.UniversalQuantifier` — the two
+  morphologically distinct Hausa universal quantifiers.
+* `Fragments.Hausa.Determiners.Indefinite` — bare vs. *wani*-series.
 
-| Form       | Type      | Complement       | Reading     |
-|------------|-----------|------------------|-------------|
-| *koo-wane* | [+dist]   | SG count without DEF | each    |
-| *duk(a)*   | [−dist]   | DEF PL count + mass  | all     |
+## Implementation notes
 
-The *koo*-quantifier shows phi-agreement with the NP and combines only
-with bare SG count NPs. The *duka*-expressions do not agree and select
-for definite plural NPs and mass NPs.
-
-This maps to the Haslinger et al. Q_∀ + ONE decomposition:
-- *koo-wane* = Q_∀[ONE_∅] (distributive, non-overlapping complement)
-- *duk(a)* = bare Q_∀ (non-distributive, CUM complement)
-
-## Indefiniteness
-
-Hausa has two indefinite strategies:
-
-| Form          | Analysis        | Scope potential    |
-|---------------|-----------------|-------------------|
-| *wani/wata*   | ∃-quantifier    | Wide + narrow     |
-| bare NP       | covert ∃        | Narrow only       |
-
-*wani/wata* can take exceptional wide scope, even out of relative
-clauses (@cite{zimmermann-2014}), motivating an analysis as either
-a contextually bound choice function variable or an ∃-quantifier
-with singleton restriction (@cite{schwarzschild-2002}).
-
-@cite{zimmermann-2008} @cite{zimmermann-2014} analyse *wani/wata* as
-∃-quantifiers, in complementary distribution with the distributive
-universal *koo-wane/koo-wace*.
+The *kō*-*wh* universal is morphologically productive — *kō* + any of
+the *wh*-determiners from the *wa*- paradigm (Newman §21 Table 2,
+Jaggar §9.5.1 Table 24). The `UniversalQuantifier.kowWh` constructor abstracts
+over this productivity rather than enumerating each surface form.
 -/
 
 namespace Fragments.Hausa.Determiners
 
-open Semantics.Quantification.UnifiedUniversal
-open Semantics.Quantification.ONEModifiers
-open Semantics.Quantification.ChoiceFunction
-open Features.Definiteness
-
--- ════════════════════════════════════════════════════
--- § 1. UQ System Classification
--- ════════════════════════════════════════════════════
-
-/-- Hausa has a 2-form universal quantifier system:
-    *koo-wane* (distributive) vs *duk(a)* (non-distributive).
-    @cite{zimmermann-2008}, confirmed by @cite{zimmermann-2026} §4.1. -/
-inductive HausaUQ where
-  | koo   -- *koo-wane(m.)* / *koo-wace(f.)* — distributive [+dist]
-  | duk   -- *duk(a)* — non-distributive [−dist]
+/-- The two morphologically distinct Hausa adnominal universal
+quantifiers (@cite{newman-2000} §17.5; @cite{jaggar-2001} §9.5). -/
+inductive UniversalQuantifier where
+  /-- *kō-*+*wh* productive paradigm: *kōwā* 'everyone', *kōmē*
+      'everything', *kōwānè* / *kōwàcè* / *kōwàdànnè* 'every X (m./f./pl.)',
+      *kō'inā* 'everywhere', *kōyàushē* 'always'. Singulative-
+      distributive: quantifies the individual members of the NP set
+      unit-by-unit (@cite{jaggar-2001} §9.5.1 p.370). -/
+  | kowWh
+  /-- *DUK* 'all', allomorphs *duk* and *dukà*. Collective "single set"
+      scope; does not inflect for gender or number; can quantify SG
+      count, PL count, or mass NPs (@cite{jaggar-2001} §9.5.4 p.376). -/
+  | duk
   deriving DecidableEq, Repr
 
-/-- *koo* shows phi-agreement and takes bare SG count NPs.
-    *duk* does not agree and takes DEF PL/mass NPs. -/
-def HausaUQ.takesSGCount : HausaUQ → Bool
-  | .koo => true
-  | .duk => false
-
-def HausaUQ.takesDEFPlural : HausaUQ → Bool
-  | .koo => false
-  | .duk => true
-
-/-- The *koo*/*duk* split instantiates the DNG (@cite{haslinger-etal-2025-nllt}):
-    same Q_∀, different complement structure. -/
-def HausaUQ.isDistributive : HausaUQ → Bool
-  | .koo => true
-  | .duk => false
-
--- ════════════════════════════════════════════════════
--- § 2. Semantic Entries: Universals
--- ════════════════════════════════════════════════════
-
-/-- ⟦koo-wane⟧ = Q_∀[ONE_∅]: distributive universal.
-
-    *koo-wane* distributes over the individual atoms of the SG NP
-    denotation. Because it selects for SG count NPs (atoms only),
-    ONE_∅ (non-overlap) is automatically satisfied.
-
-    Equivalent to English *every* in the Haslinger et al. decomposition.
-    @cite{zimmermann-2008}. -/
-def kooSem {α : Type*} [PartialOrder α]
-    (P : α → Prop) (Q : α → Prop) : Prop :=
-  everyPresup P Q
-
-/-- ⟦duk(a)⟧ = bare Q_∀: non-distributive universal.
-
-    *duk(a)* applies the scope predicate to the maximal element of
-    the DEF PL/mass NP denotation (the sum of all individuals).
-
-    Equivalent to English *all* in the Haslinger et al. decomposition.
-    @cite{zimmermann-2008}. -/
-def dukSem {α : Type*} [PartialOrder α]
-    (P : α → Prop) (Q : α → Prop) : Prop :=
-  QForall P Q
-
--- ════════════════════════════════════════════════════
--- § 3. Indefinites: Analysis Type → Scope
--- ════════════════════════════════════════════════════
-
-/-- Hausa indefinite marker type: bare NP vs *wani/wata*-marked.
-
-    Both are ∃-quantifiers (@cite{zimmermann-2014}). The difference
-    is that *wani* is an overt ∃ that can QR, while bare NPs have
-    a covert ∃ that is locally bound. -/
-inductive HausaIndef where
-  | bare    -- unmarked bare NP: covert ∃, narrow scope
-  | wani    -- *wani(m.)/wata(f.)*: overt ∃, flexible scope
+/-- The two Hausa adnominal indefinite strategies
+(@cite{jaggar-2001} §12.3). -/
+inductive Indefinite where
+  /-- Bare NP indefinite. -/
+  | bare
+  /-- *wani* (m.) / *wata* (f.) / *wa(dan)su* (pl.), the marked
+      indefinite determiner from the *wa*-paradigm
+      (@cite{newman-2000} §21.1 row 8). -/
+  | wani
   deriving DecidableEq, Repr
-
-/-- Both Hausa indefinite strategies use ∃-quantification, not
-    choice functions. @cite{zimmermann-2014}. -/
-def HausaIndef.indefType : HausaIndef → IndefType
-  | .bare => .existential
-  | .wani => .existential
-
-/-- *wani/wata* satisfies Matthewson's diagnostics for marked indefinites:
-    occurrence in existential sentences, introduction of new discourse
-    referents, serving as antecedents for sluicing.
-    @cite{matthewson-1999}, @cite{zimmermann-2026} §3.3 ex. (12). -/
-def HausaIndef.isMarkedIndefinite : HausaIndef → Bool
-  | .bare => false
-  | .wani => true
-
--- ════════════════════════════════════════════════════
--- § 4. Bridge Theorems
--- ════════════════════════════════════════════════════
-
-/-- *koo-wane* is distributive: its complement must be non-overlapping. -/
-theorem koo_is_distributive : HausaUQ.koo.isDistributive = true := rfl
-
-/-- *duk(a)* is non-distributive: it applies to the maximal sum. -/
-theorem duk_is_nondistributive : HausaUQ.duk.isDistributive = false := rfl
-
-/-- *koo* selects SG count NPs (atoms).
-    @cite{zimmermann-2008}, @cite{haslinger-etal-2025-nllt}. -/
-theorem koo_takes_sg_count : HausaUQ.koo.takesSGCount = true := rfl
-
-/-- *duk* selects DEF PL/mass NPs.
-    @cite{zimmermann-2008}, @cite{haslinger-etal-2025-nllt}. -/
-theorem duk_takes_def_plural : HausaUQ.duk.takesDEFPlural = true := rfl
-
-/-- Bare NPs are ∃-quantifier indefinites. @cite{zimmermann-2014}. -/
-theorem bare_is_existential : HausaIndef.bare.indefType = .existential := rfl
-
-/-- *wani/wata* are ∃-quantifier indefinites. @cite{zimmermann-2014}. -/
-theorem wani_is_existential : HausaIndef.wani.indefType = .existential := rfl
 
 end Fragments.Hausa.Determiners
