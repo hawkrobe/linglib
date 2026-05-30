@@ -92,7 +92,6 @@ their own performance type.
 
 namespace Semantics.Quotation.Demonstration
 
-open Semantics.Events
 open Semantics.ArgumentStructure (EventRel)
 open Core.Time
 

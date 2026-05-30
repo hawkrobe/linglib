@@ -410,9 +410,9 @@ the others wire through substrate theorems directly. -/
 theorem confidence_comparative_reduces
     {E : Type*} {Time : Type*} [LinearOrder Time]
     {frame : Semantics.ArgumentStructure.ThematicFrame E Time}
-    {P : Semantics.Events.EvPred Time}
-    {μ : Semantics.Events.Event Time → ℚ}
-    {a b : E} {sa sb : Semantics.Events.Event Time}
+    {P : Event Time → Prop}
+    {μ : Event Time → ℚ}
+    {a b : E} {sa sb : Event Time}
     (ha : frame.holder a sa ∧ P sa)
     (ha_unique : ∀ s, frame.holder a s → P s → s = sa)
     (hb : frame.holder b sb ∧ P sb)

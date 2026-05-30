@@ -8,7 +8,7 @@ import Linglib.Semantics.Events.Basic
 The projection from event predicates (Level 3) to interval sets (Level 2):
 
 ```
-Level 3: EvPred Time (event predicates — O&ST, future theories)
+Level 3: Event Time → Prop (event predicates — O&ST, future theories)
     ↓ eventDenotation (this file)
 Level 2: SentDenotation Time (interval sets — Anscombe, Rett)
     ↓ timeTrace (Basic.lean)
@@ -33,7 +33,6 @@ namespace Semantics.Tense.TemporalConnectives
 
 open Core.Time
 open Core.Time.Interval
-open Semantics.Events
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -47,7 +46,7 @@ variable {Time : Type*} [LinearOrder Time]
     interval-set semantics (Level 2). Every event-level temporal connective
     theory can be projected down to the interval level through this map, then
     compared with Anscombe and Rett. -/
-def eventDenotation (P : EvPred Time) : SentDenotation Time :=
+def eventDenotation (P : Event Time → Prop) : SentDenotation Time :=
   { i | ∃ e, P e ∧ e.τ = i }
 
 -- ============================================================================
@@ -60,7 +59,7 @@ theorem eventDenotation_empty :
   ext i; simp [eventDenotation]
 
 /-- Nonempty predicate gives nonempty denotation (if there exists a witness). -/
-theorem eventDenotation_nonempty (P : EvPred Time) (e : Event Time) (he : P e) :
+theorem eventDenotation_nonempty (P : Event Time → Prop) (e : Event Time) (he : P e) :
     e.τ ∈ eventDenotation P :=
   ⟨e, he, rfl⟩
 
@@ -74,7 +73,7 @@ theorem eventDenotation_nonempty (P : EvPred Time) (e : Event Time) (he : P e) :
 
     This is the composition `timeTrace ∘ eventDenotation`, showing that
     the full projection chain Level 3 → Level 1 can be stated directly. -/
-theorem timeTrace_eventDenotation (P : EvPred Time) :
+theorem timeTrace_eventDenotation (P : Event Time → Prop) :
     timeTrace (eventDenotation P) = { t | ∃ e, P e ∧ e.τ.contains t } := by
   ext t
   simp only [timeTrace, eventDenotation, Set.mem_setOf_eq]
@@ -103,7 +102,7 @@ theorem eventDenotation_singleton (e₀ : Event Time) :
 
     Note: this is a subset, not equality, because `stativeDenotation i` contains
     all subintervals including those that might not be runtimes of any event. -/
-theorem eventDenotation_sub_stative (i : Interval Time) (P : EvPred Time)
+theorem eventDenotation_sub_stative (i : Interval Time) (P : Event Time → Prop)
     (hP : ∀ e, P e → e.τ.subinterval i) :
     eventDenotation P ⊆ stativeDenotation i := by
   intro j ⟨e, he, hj⟩

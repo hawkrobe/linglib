@@ -328,7 +328,6 @@ theorem warm_pipeline_converge :
     self-contained. The fragment-level §1-4 results above are
     independent of this substrate work. -/
 
-open Semantics.Events
 open Semantics.ArgumentStructure.Affectedness
 open Semantics.ArgumentStructure.Affectedness.Hierarchy
 open Semantics.Degree.MeasureFunction

@@ -43,7 +43,6 @@ and is marginal for others.
 
 namespace Cruse1973
 
-open Semantics.Events
 open Semantics.ArgumentStructure
 open Semantics.Causation.CoerciveImplication
 open Features (Causative)
@@ -190,7 +189,7 @@ theorem agent_is_agentive_subfeature {Entity Time : Type*} [LinearOrder Time]
     [ax : ThematicAxioms Entity Time frame]
     (x : Entity) (e : Event Time)
     (h : frame.agent x e) :
-    profile.hasAgentive x e ∧ e.sort = .action :=
+    profile.hasAgentive x e ∧ e.sort = .dynamic :=
   ⟨link.agent_implies_agentive x e h, ax.agent_selects_action x e h⟩
 
 -- ════════════════════════════════════════════════════
@@ -287,10 +286,10 @@ theorem make_lexicalizes_sufficient_initiative :
     role, which requires e.sort =.action. -/
 theorem stative_can_pass_doTest :
     ∃ (profile : AgentivityProfile Unit ℤ) (x : Unit) (e : Event ℤ),
-      e.sort = .state ∧ passesDoTest x e profile := by
+      e.sort = .stative ∧ passesDoTest x e profile := by
   -- Witness: a profile where () has volitive in a stative event
   refine ⟨⟨λ _ _ => True, λ _ _ => False, λ _ _ => False, λ _ _ => False⟩,
-          (), ⟨⟨0, 10, by omega⟩, .state⟩, rfl, ?_⟩
+          (), ⟨⟨0, 10, by omega⟩, .stative⟩, rfl, ?_⟩
   exact Or.inl trivial
 
 /-- Parsons' `agent_selects_action` is NOT contradicted by stative
@@ -307,7 +306,7 @@ theorem agent_selects_action_consistent {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     [ax : ThematicAxioms Entity Time frame]
     (x : Entity) (e : Event Time)
-    (hState : e.sort = .state)
+    (hState : e.sort = .stative)
     (hAgent : frame.agent x e) :
     False := by
   have hAction := ax.agent_selects_action x e hAgent

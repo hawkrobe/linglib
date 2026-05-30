@@ -26,7 +26,6 @@ PFV/IMPF opposition rather than Tagalog's finer-grained system.
 
 namespace Fragments.Slavic.Serbian.TemporalConnectives
 
-open Semantics.Events
 open Semantics.Aspect
 open Fragments.English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
 

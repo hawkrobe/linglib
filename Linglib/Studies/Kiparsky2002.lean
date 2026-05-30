@@ -65,7 +65,6 @@ open Core.Time.Reichenbach
 open Features
 open Semantics.Aspect
 open Semantics.Aspect.SubeventStructure
-open Semantics.Events
 
 -- ════════════════════════════════════════════════════
 -- § 1. Perfect Readings (@cite{kiparsky-2002})
@@ -262,7 +261,7 @@ theorem existential_eq_perf_prfv {Time : Type*} [LinearOrder Time]
   constructor
   · rintro ⟨pts, hR, hSub⟩
     -- sort defaults to .action; the proof doesn't reference .sort
-    exact ⟨pts, hR, ⟨d.runtime, .action⟩, hSub, rfl⟩
+    exact ⟨pts, hR, ⟨d.runtime, .dynamic⟩, hSub, rfl⟩
   · rintro ⟨pts, hR, e, hSub, heq⟩
     exact ⟨pts, hR, heq ▸ hSub⟩
 
@@ -278,7 +277,7 @@ theorem universal_eq_perf_unbounded {Time : Type*} [LinearOrder Time]
   constructor
   · rintro ⟨pts, hR, hSub⟩
     -- sort defaults to .action; the proof doesn't reference .sort
-    exact ⟨pts, hR, ⟨d.runtime, .action⟩, hSub, rfl⟩
+    exact ⟨pts, hR, ⟨d.runtime, .dynamic⟩, hSub, rfl⟩
   · rintro ⟨pts, hR, e, hSub, heq⟩
     exact ⟨pts, hR, heq ▸ hSub⟩
 

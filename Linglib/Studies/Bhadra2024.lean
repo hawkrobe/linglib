@@ -230,7 +230,6 @@ theorem pc_roots_allow_restitutive_again :
 
 section CompositionalVRO
 
-open Semantics.Events
 open Core.Time
 
 variable {Entity State Time : Type*} [LinearOrder Time]
@@ -554,8 +553,7 @@ theorem break_end_to_end :
 
 section CompositionalExamples
 
-open Semantics.Events Core.Time
-
+open Core.Time
 /-- VRO for "fold": PFC verb with multi-membered outcome set.
     The parchment can end up in any of several states after folding.
     Outcome set = {slightlyCreased, folded, tightlyFolded} (3 members).
@@ -655,17 +653,16 @@ end CompositionalExamples
 
 section StressTests
 
-open Semantics.Events Core.Time
-
+open Core.Time
 /-- Event from t=0 to t=5 (the base event, e.g. folding). -/
 private def ev₁ : Event ℤ where
   runtime := ⟨0, 5, by omega⟩
-  sort := .action
+  sort := .dynamic
 
 /-- Event from t=10 to t=15 (the reversal/restitution event, e.g. unfolding). -/
 private def ev₂ : Event ℤ where
   runtime := ⟨10, 15, by omega⟩
-  sort := .action
+  sort := .dynamic
 
 /-- ev₁ temporally precedes ev₂: τ(ev₁).finish < τ(ev₂).start. -/
 private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂) := by
@@ -707,7 +704,7 @@ theorem fold_un_satisfiable :
 /-- Event from t=20 to t=25 (the re-event, e.g. re-folding). -/
 private def ev₃ : Event ℤ where
   runtime := ⟨20, 25, by omega⟩
-  sort := .action
+  sort := .dynamic
 
 /-- State function for fold/unfold/refold scenario:
     - t ≤ 0: flat (pre-state of first fold)

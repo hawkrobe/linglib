@@ -18,7 +18,6 @@ Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
 
 namespace Semantics.Events.CEM
 
-open Semantics.Events
 open Core.Time
 open Features
 open _root_.Mereology
@@ -30,11 +29,11 @@ open _root_.Mereology
 
 /-! ### Event CEM (Classical Extensional Mereology) -/
 
-/-- Classical Extensional Mereology for events: enriches `EventMereology`
+/-- Classical Extensional Mereology for events: enriches `Event.Mereology`
     with binary sum (⊔) via `SemilatticeSup (Event Time)`.
     @cite{champollion-2017} Ch. 2: event domain forms a join semilattice. -/
 class EventCEM (Time : Type*) [LinearOrder Time]
-    extends EventMereology Time where
+    extends Event.Mereology Time where
   /-- Events form a join semilattice (binary sum ⊕ exists). -/
   evSemilatticeSup : SemilatticeSup (Event Time)
   /-- ≤ from SemilatticeSup agrees with partOf. -/
@@ -60,14 +59,14 @@ noncomputable instance eventCEMSemilatticeSup (Time : Type*) [LinearOrder Time]
     iff for any two V-events, their sum is also a V-event.
     @cite{champollion-2017} §3.2: activities and states are lexically cumulative. -/
 def LexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
-    (P : EvPred Time) : Prop :=
+    (P : Event Time → Prop) : Prop :=
   ∀ (e₁ e₂ : Event Time), P e₁ → P e₂ →
     P (@SemilatticeSup.sup _ cem.evSemilatticeSup e₁ e₂)
 
-/-- LexCum is exactly CUM specialized to EvPred.
+/-- LexCum is exactly CUM specialized to event predicates.
     This bridges the abstract and event-specific formulations. -/
 theorem cum_iff_lexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
-    (P : EvPred Time) :
+    (P : Event Time → Prop) :
     @CUM _ cem.evSemilatticeSup P ↔ LexCum Time P := by
   constructor
   · intro h e₁ e₂ h₁ h₂; exact h e₁ e₂ h₁ h₂

@@ -49,7 +49,6 @@ namespace Rudin2025LI
 open Semantics.Quotation.Demonstration
 open Dialogue.QuotationFBOntology
 open Discourse.Commitment.Table
-open Semantics.Events
 
 -- ════════════════════════════════════════════════════
 -- § 1. Empirical Taxonomy
@@ -184,7 +183,7 @@ postulates hold by `rfl`. The discriminator for verb classes is
 witnesses and exclusions. -/
 
 /-- A canonical event for each verb class, indexed by `runtime.start`. -/
-def E (n : ℕ) : Event ℕ := ⟨⟨n, n, le_refl _⟩, .action⟩
+def E (n : ℕ) : Event ℕ := ⟨⟨n, n, le_refl _⟩, .dynamic⟩
 
 /-- The REENACT relation: per verb-class events have different REENACT
     targets, chosen so the postulates' universal quantifiers reduce to

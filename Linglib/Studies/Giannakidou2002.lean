@@ -42,7 +42,7 @@ Uses `Aspect.Core.UNBOUNDED` (= non-strict IMPF, @cite{pancheva-2003}) projected
 to `SentDenotation` for the imperfective denotation:
 
 ```
-EventPred Unit Time ──[UNBOUNDED]──▷ IntervalPred ──[fix w=()]──▷ SentDenotation
+Unit → Event Time → Prop ──[UNBOUNDED]──▷ IntervalPred ──[fix w=()]──▷ SentDenotation
 ```
 
 The key property — subinterval-closure — holds for both `UNBOUNDED` (⊆) and
@@ -68,7 +68,6 @@ namespace Giannakidou2002
 
 open Core.Time
 open Core.Time.Interval
-open Semantics.Events
 open Semantics.Aspect
 open Semantics.Tense.TemporalConnectives
 
@@ -84,7 +83,7 @@ variable {Time : Type*} [LinearOrder Time]
     rather than `IMPF` (which requires strict ⊂) because the homogeneity
     argument is identical and the non-strict version connects cleanly to
     `stativeDenotation`. -/
-abbrev impfDen (P : EventPred Unit Time) : SentDenotation Time :=
+abbrev impfDen (P : Unit → Event Time → Prop) : SentDenotation Time :=
   { i | UNBOUNDED P () i }
 
 /-- PRFV denotation: the set of exact event runtimes.
@@ -92,7 +91,7 @@ abbrev impfDen (P : EventPred Unit Time) : SentDenotation Time :=
     the runtime: TSit ⊆ TT), this gives the τ-image {τ(e) | P(e)} — the
     interval set that directly characterizes the event's temporal extent.
     This matches the `eventDenotation` pattern from `EventBridge.lean`. -/
-def prfvDen (P : EventPred Unit Time) : SentDenotation Time :=
+def prfvDen (P : Unit → Event Time → Prop) : SentDenotation Time :=
   { i | ∃ e : Event Time, P () e ∧ e.τ = i }
 
 -- ============================================================================
@@ -111,7 +110,7 @@ def IsHomogeneous (D : SentDenotation Time) : Prop :=
     of the main clause of durative *until*. The imperfective viewpoint
     provides this automatically: since the event extends beyond any reference
     interval, every sub-window into the event is equally valid. -/
-theorem impfDen_subinterval_closed (P : EventPred Unit Time)
+theorem impfDen_subinterval_closed (P : Unit → Event Time → Prop)
     (t : Interval Time) (ht : t ∈ impfDen P)
     (t' : Interval Time) (ht' : t'.subinterval t) :
     t' ∈ impfDen P := by
@@ -119,7 +118,7 @@ theorem impfDen_subinterval_closed (P : EventPred Unit Time)
   exact ⟨e, ⟨le_trans hSub.1 ht'.1, le_trans ht'.2 hSub.2⟩, hP⟩
 
 /-- IMPF denotation contains the event runtime itself (the maximal interval). -/
-theorem impfDen_contains_runtime (P : EventPred Unit Time)
+theorem impfDen_contains_runtime (P : Unit → Event Time → Prop)
     (e : Event Time) (hP : P () e) :
     e.τ ∈ impfDen P :=
   ⟨e, subinterval_refl _, hP⟩
@@ -133,12 +132,12 @@ theorem impfDen_contains_runtime (P : EventPred Unit Time)
     This is why perfective clauses cannot be main clauses of durative
     *until*: they lack the homogeneity that *until* requires. -/
 theorem prfvDen_not_subinterval_closed :
-    ¬ ∀ (P : EventPred Unit ℤ) (t : Interval ℤ),
+    ¬ ∀ (P : Unit → Event ℤ → Prop) (t : Interval ℤ),
       t ∈ prfvDen P → ∀ t', t'.subinterval t → t' ∈ prfvDen P := by
   intro h
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨0, 5, by omega⟩, .action⟩
-  let P : EventPred Unit ℤ := fun _ e => e = e₀
+  let e₀ : Event ℤ := ⟨⟨0, 5, by omega⟩, .dynamic⟩
+  let P : Unit → Event ℤ → Prop := fun _ e => e = e₀
   let sub : Interval ℤ := ⟨1, 3, by omega⟩
   have hrt : e₀.τ ∈ prfvDen P := ⟨e₀, rfl, rfl⟩
   have hsub : sub.subinterval e₀.τ := by
@@ -157,7 +156,7 @@ theorem prfvDen_not_subinterval_closed :
 -- ============================================================================
 
 /-- IMPF denotation is homogeneous — wide scope is available. -/
-theorem impfDen_homogeneous (P : EventPred Unit Time) :
+theorem impfDen_homogeneous (P : Unit → Event Time → Prop) :
     IsHomogeneous (impfDen P) :=
   impfDen_subinterval_closed P
 
@@ -165,7 +164,7 @@ theorem impfDen_homogeneous (P : EventPred Unit Time) :
     available. This is derived from the subinterval-closure failure, not
     stipulated as a Bool field. -/
 theorem prfvDen_not_always_homogeneous :
-    ¬ ∀ (P : EventPred Unit ℤ), IsHomogeneous (prfvDen P) := by
+    ¬ ∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (prfvDen P) := by
   intro h
   exact prfvDen_not_subinterval_closed fun P t ht t' ht' => h P t ht t' ht'
 
@@ -175,9 +174,9 @@ theorem prfvDen_not_always_homogeneous :
     PRFV's failure of subinterval-closure, not from a stipulated constraint. -/
 theorem scope_pattern_derived :
     -- IMPF always permits wide scope (homogeneous)
-    (∀ (P : EventPred Unit Time), IsHomogeneous (impfDen P)) ∧
+    (∀ (P : Unit → Event Time → Prop), IsHomogeneous (impfDen P)) ∧
     -- PRFV does not always permit wide scope (not always homogeneous)
-    ¬ (∀ (P : EventPred Unit ℤ), IsHomogeneous (prfvDen P)) :=
+    ¬ (∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (prfvDen P)) :=
   ⟨impfDen_homogeneous, prfvDen_not_always_homogeneous⟩
 
 -- ============================================================================
@@ -197,7 +196,7 @@ theorem impfDen_singleton_eq_stativeDenotation
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
     -- sort defaults to .action; the proof doesn't reference .sort
-  · intro h; exact ⟨⟨i, .action⟩, h, rfl⟩
+  · intro h; exact ⟨⟨i, .dynamic⟩, h, rfl⟩
 
 /-- For a single event, the PRFV denotation is exactly the accomplishment
     denotation (singleton containing just the runtime). -/
@@ -211,7 +210,7 @@ theorem prfvDen_singleton_eq_accomplishmentDenotation
   constructor
   · rintro ⟨e, rfl, rfl⟩; rfl
     -- sort defaults to .action; the proof doesn't reference .sort
-  · intro h; exact ⟨⟨i, .action⟩, rfl, h.symm⟩
+  · intro h; exact ⟨⟨i, .dynamic⟩, rfl, h.symm⟩
 
 -- ============================================================================
 -- § 5: Time Traces Coincide
@@ -223,7 +222,7 @@ theorem prfvDen_singleton_eq_accomplishmentDenotation
     This is why Karttunen's Level 1 (point-set) definitions cannot distinguish
     imperfective from perfective clauses — the difference is only visible
     at Level 2 (interval sets). -/
-theorem timeTrace_impf_eq_prfv (P : EventPred Unit Time) :
+theorem timeTrace_impf_eq_prfv (P : Unit → Event Time → Prop) :
     timeTrace (impfDen P) = timeTrace (prfvDen P) := by
   ext t
   simp only [timeTrace, prfvDen, UNBOUNDED, Set.mem_setOf_eq, Event.τ]
@@ -248,7 +247,7 @@ theorem timeTrace_impf_eq_prfv (P : EventPred Unit Time) :
     Available when A is imperfective: the main clause denotes a homogeneous
     interval set via IMPF, so *until* can take it as an argument.
     Negation scopes over the entire *until*-clause. -/
-def wideScopeNotUntil (A : EventPred Unit Time) (B : SentDenotation Time) : Prop :=
+def wideScopeNotUntil (A : Unit → Event Time → Prop) (B : SentDenotation Time) : Prop :=
   ¬ Karttunen.when_ (impfDen A) B
 
 /-- **Narrow-scope negation** under *until* (= Karttunen's ¬*before*):
@@ -260,13 +259,13 @@ def wideScopeNotUntil (A : EventPred Unit Time) (B : SentDenotation Time) : Prop
     This is the only reading available with perfective main clauses:
     since PRFV gives a bounded event, *until* reduces to temporal ordering
     and negation gives Karttunen's notUntil = ¬before. -/
-def narrowScopeNotUntil (A : EventPred Unit Time) (B : SentDenotation Time) : Prop :=
+def narrowScopeNotUntil (A : Unit → Event Time → Prop) (B : SentDenotation Time) : Prop :=
   Karttunen.notUntil (prfvDen A) B
 
 /-- Narrow-scope ¬*until* is exactly ¬*before* (by definition).
     This is @cite{karttunen-1974}'s identity, now made explicit in the
     aspectual decomposition. -/
-theorem narrowScope_eq_not_before (A : EventPred Unit Time) (B : SentDenotation Time) :
+theorem narrowScope_eq_not_before (A : Unit → Event Time → Prop) (B : SentDenotation Time) :
     narrowScopeNotUntil A B ↔ ¬ Anscombe.before (prfvDen A) B :=
   Iff.rfl
 
@@ -278,11 +277,11 @@ theorem narrowScope_eq_not_before (A : EventPred Unit Time) (B : SentDenotation 
     - Narrow scope: ¬(A happened before B). FALSE — time 0 < 7, so A
       precedes B and `Anscombe.before` holds. -/
 theorem scope_readings_distinct :
-    ∃ (A : EventPred Unit ℤ) (B : SentDenotation ℤ),
+    ∃ (A : Unit → Event ℤ → Prop) (B : SentDenotation ℤ),
       wideScopeNotUntil A B ∧ ¬ narrowScopeNotUntil A B := by
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨0, 5, by omega⟩, .action⟩
-  let A : EventPred Unit ℤ := fun _ e => e = e₀
+  let e₀ : Event ℤ := ⟨⟨0, 5, by omega⟩, .dynamic⟩
+  let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
   let iB : Interval ℤ := ⟨7, 7, by omega⟩
   let B : SentDenotation ℤ := {iB}
   refine ⟨A, B, ?_, ?_⟩
@@ -305,11 +304,11 @@ theorem scope_readings_distinct :
     but wide-scope fails. This confirms the two readings are genuinely
     independent. -/
 theorem scope_readings_independent :
-    ∃ (A : EventPred Unit ℤ) (B : SentDenotation ℤ),
+    ∃ (A : Unit → Event ℤ → Prop) (B : SentDenotation ℤ),
       ¬ wideScopeNotUntil A B ∧ narrowScopeNotUntil A B := by
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨5, 10, by omega⟩, .action⟩
-  let A : EventPred Unit ℤ := fun _ e => e = e₀
+  let e₀ : Event ℤ := ⟨⟨5, 10, by omega⟩, .dynamic⟩
+  let A : Unit → Event ℤ → Prop := fun _ e => e = e₀
   let iB : Interval ℤ := ⟨3, 7, by omega⟩
   let B : SentDenotation ℤ := {iB}
   refine ⟨A, B, ?_, ?_⟩
@@ -407,9 +406,9 @@ theorem notUntil_not_implies_eventiveUntil :
     (imperfective *mexri* + continuation asserting no event) and ex. (57)
     (perfective *para monon* + contradictory continuation). -/
 theorem wideScopeNotUntil_compatible_with_empty_main :
-    ∃ (A : EventPred Unit ℤ) (B : SentDenotation ℤ),
+    ∃ (A : Unit → Event ℤ → Prop) (B : SentDenotation ℤ),
       wideScopeNotUntil A B ∧ ¬ ∃ t, t ∈ timeTrace (impfDen A) := by
-  let A : EventPred Unit ℤ := fun _ _ => False
+  let A : Unit → Event ℤ → Prop := fun _ _ => False
   let B : SentDenotation ℤ := { Interval.point 0 }
   refine ⟨A, B, ?_, ?_⟩
   · intro ⟨t, ⟨i, ⟨e, _, habs⟩, _⟩, _⟩; exact habs
@@ -536,7 +535,7 @@ theorem veridicality_split :
     would always be homogeneous. But we proved in §2 that PRFV is NOT
     always homogeneous (`prfvDen_not_subinterval_closed`). -/
 theorem stativizer_false_for_perfective :
-    ¬ (∀ (P : EventPred Unit ℤ), IsHomogeneous (prfvDen P)) :=
+    ¬ (∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (prfvDen P)) :=
   prfvDen_not_always_homogeneous
 
 /-- The five stativizer diagnostics and their results for negated
@@ -606,9 +605,9 @@ theorem stativizer_all_wrong :
     from PRFV (not IMPF), which is why wide-scope is unavailable. -/
 theorem english_past_perfective_default :
     -- PRFV lacks homogeneity → wide scope unavailable
-    ¬ (∀ (P : EventPred Unit ℤ), IsHomogeneous (prfvDen P)) ∧
+    ¬ (∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (prfvDen P)) ∧
     -- IMPF has homogeneity → wide scope would be available if past were imperfective
-    (∀ (P : EventPred Unit ℤ), IsHomogeneous (impfDen P)) :=
+    (∀ (P : Unit → Event ℤ → Prop), IsHomogeneous (impfDen P)) :=
   ⟨prfvDen_not_always_homogeneous, impfDen_homogeneous⟩
 
 -- ============================================================================

@@ -2344,6 +2344,7 @@ import Linglib.Studies.Krifka2004
 import Linglib.Semantics.Kinds.Subkinds
 import Linglib.Semantics.Homogeneity.Basic
 import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Plurality.Cover

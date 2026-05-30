@@ -7,7 +7,7 @@ evaluation, following @cite{knick-sharf-2026}.
 ## The Pipeline
 
 ```
-EventPred ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[eval*]──▷ Prop
+Event Time → Prop ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[eval*]──▷ Prop
 ```
 
 The aspect chain produces `PointPred W Time = WorldTimeIndex W Time → Prop`.
@@ -41,7 +41,6 @@ namespace Semantics.Tense.TenseAspectComposition
 open Core (WorldTimeIndex)
 
 open Core.Time
-open Semantics.Events
 open Semantics.Aspect
 
 variable {W Time : Type*} [LinearOrder Time]
@@ -73,33 +72,33 @@ def evalFut (p : PointPred W Time) (tc : Time) (w : W) : Prop :=
     "John runs" = at speech time, ∃e with tc ⊂ τ(e) and V(e).
     Since atPoint evaluates at [tc, tc], this gives:
     ∃e, [tc,tc] ⊂ τ(e) ∧ V(e). -/
-def simplePresent (V : EventPred W Time) (tc : Time) (w : W) : Prop :=
+def simplePresent (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
   evalPres (IntervalPred.atPoint (IMPF V)) tc w
 
 /-- **Simple past**: PAST(PRFV(V).atPoint).
     "John ran" = ∃t < tc, ∃e with τ(e) ⊆ [t,t] and V(e). -/
-def simplePast (V : EventPred W Time) (tc : Time) (w : W) : Prop :=
+def simplePast (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
   evalPast (IntervalPred.atPoint (PRFV V)) tc w
 
 /-- **Present perfect progressive**: PRES(PERF(IMPF(V))).
     "John has been running" = at tc, ∃PTS with RB(PTS, tc) and IMPF(V)(PTS). -/
-def presPerfProg (V : EventPred W Time) (tc : Time) (w : W) : Prop :=
+def presPerfProg (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
   evalPres (PERF (IMPF V)) tc w
 
 /-- **Present perfect simple**: PRES(PERF(PRFV(V))).
     "John has run" = at tc, ∃PTS with RB(PTS, tc) and PRFV(V)(PTS). -/
-def presPerfSimple (V : EventPred W Time) (tc : Time) (w : W) : Prop :=
+def presPerfSimple (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
   evalPres (PERF (PRFV V)) tc w
 
 /-- **Present perfect progressive with Extended Now**: PRES(PERF_XN(IMPF(V), tᵣ)).
     @cite{knick-sharf-2026} eq. 39b: the U-perf reading.
     "John has been running (since Monday)" with domain restriction tᵣ on LB. -/
-def presPerfProgXN (V : EventPred W Time) (tᵣ : Set Time) (tc : Time) (w : W) : Prop :=
+def presPerfProgXN (V : W → Event Time → Prop) (tᵣ : Set Time) (tc : Time) (w : W) : Prop :=
   evalPres (PERF_XN (IMPF V) tᵣ) tc w
 
 /-- **Past perfect progressive**: PAST(PERF(IMPF(V))).
     "John had been running" = ∃t < tc, PERF(IMPF(V))(w)(t). -/
-def pastPerfProg (V : EventPred W Time) (tc : Time) (w : W) : Prop :=
+def pastPerfProg (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
   evalPast (PERF (IMPF V)) tc w
 
 -- ════════════════════════════════════════════════════
@@ -107,14 +106,14 @@ def pastPerfProg (V : EventPred W Time) (tc : Time) (w : W) : Prop :=
 -- ════════════════════════════════════════════════════
 
 /-- Simple present unfolds to: ∃e, [tc,tc] ⊂ τ(e) ∧ V(w)(e). -/
-theorem simplePresent_unfold (V : EventPred W Time) (tc : Time) (w : W) :
+theorem simplePresent_unfold (V : W → Event Time → Prop) (tc : Time) (w : W) :
     simplePresent V tc w ↔
     ∃ e : Event Time, (Interval.point tc).properSubinterval e.τ ∧ V w e := by
   rfl
 
 /-- Present perfect progressive with XN unfolds to K&S eq. 39b:
     ∃PTS, ∃tLB ∈ tᵣ, LB(tLB, PTS) ∧ RB(PTS, tc) ∧ IMPF(V)(w)(PTS). -/
-theorem presPerfProgXN_unfold (V : EventPred W Time) (tᵣ : Set Time)
+theorem presPerfProgXN_unfold (V : W → Event Time → Prop) (tᵣ : Set Time)
     (tc : Time) (w : W) :
     presPerfProgXN V tᵣ tc w ↔
     ∃ pts : Interval Time, ∃ tLB ∈ tᵣ,
@@ -135,7 +134,7 @@ theorem presPerfProgXN_unfold (V : EventPred W Time) (tᵣ : Set Time)
     Proof sketch: Given PERF_XN(IMPF(V), tᵣ)(w)(tc), we have PTS with
     RB(PTS, tc) and ∃e with PTS ⊂ τ(e). Since [tc,tc] ⊆ PTS (because
     tc = PTS.finish) and PTS ⊂ τ(e), we get [tc,tc] ⊂ τ(e). -/
-theorem u_perf_entails_simple_present (V : EventPred W Time)
+theorem u_perf_entails_simple_present (V : W → Event Time → Prop)
     (tᵣ : Set Time) (tc : Time) (w : W) :
     presPerfProgXN V tᵣ tc w → simplePresent V tc w := by
   intro ⟨pts, _, _, _, hRB, e, ⟨⟨hS1, hS2⟩, hOr⟩, hV⟩
@@ -155,7 +154,7 @@ theorem u_perf_entails_simple_present (V : EventPred W Time)
     ∃e with [tc,tc] ⊂ τ(e). Construct PTS = [e.τ.start, tc]. Then
     LB(e.τ.start, PTS) ∈ Set.univ, RB(PTS, tc), and PTS ⊆ τ(e) with
     PTS ⊂ τ(e) (since tc < e.τ.finish by properSubinterval). -/
-theorem broad_focus_equiv (V : EventPred W Time) (tc : Time) (w : W) :
+theorem broad_focus_equiv (V : W → Event Time → Prop) (tc : Time) (w : W) :
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w := by
   constructor
   · exact u_perf_entails_simple_present V Set.univ tc w
@@ -175,7 +174,7 @@ theorem broad_focus_equiv (V : EventPred W Time) (tc : Time) (w : W) :
     Proof sketch: Given PTS₁ = [tLB₁, tc] with e.τ ⊃ PTS₁ and V(e),
     construct PTS₂ = [tLB₂, tc]. Since tLB₁ < tLB₂ ≤ tc, PTS₂ is valid.
     PTS₂ ⊆ PTS₁ ⊆ τ(e), and PTS₂ ⊂ τ(e) follows from PTS₁ ⊂ τ(e). -/
-theorem earlier_lb_stronger_impf (V : EventPred W Time)
+theorem earlier_lb_stronger_impf (V : W → Event Time → Prop)
     (tLB₁ tLB₂ : Time) (tc : Time) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
     PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, ⟨⟨hS1, hS2⟩, _hOr⟩, hV⟩
@@ -205,7 +204,7 @@ theorem earlier_lb_stronger_impf (V : EventPred W Time)
     Proof sketch: Given PTS₂ = [tLB₂, tc] with τ(e) ⊆ PTS₂,
     construct PTS₁ = [tLB₁, tc]. Since tLB₁ < tLB₂, PTS₂ ⊆ PTS₁,
     so τ(e) ⊆ PTS₁. -/
-theorem later_lb_stronger_prfv (V : EventPred W Time)
+theorem later_lb_stronger_prfv (V : W → Event Time → Prop)
     (tLB₁ tLB₂ : Time) (tc : Time) (w : W) (h : tLB₁ < tLB₂) :
     PERF_XN (PRFV V) {tLB₂} ⟨w, tc⟩ → PERF_XN (PRFV V) {tLB₁} ⟨w, tc⟩ := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, ⟨hS1, hS2⟩, hV⟩
@@ -231,14 +230,14 @@ theorem later_lb_stronger_prfv (V : EventPred W Time)
     but does NOT satisfy IMPF for PTS = [0, 4] (since [0,4] ⊄ [1,5]:
     the event hadn't started at time 0). -/
 theorem earlier_lb_not_weaker_impf :
-    ¬ ∀ (V : EventPred Unit ℤ) (tLB₁ tLB₂ : ℤ) (tc : ℤ) (w : Unit),
+    ¬ ∀ (V : Unit → Event ℤ → Prop) (tLB₁ tLB₂ : ℤ) (tc : ℤ) (w : Unit),
       tLB₁ < tLB₂ →
       PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ := by
   intro hall
   -- Counterexample: event runtime [1,5], tLB₁=0, tLB₂=2, tc=4
   -- sort defaults to .action; the proof doesn't reference .sort
-  let e₀ : Event ℤ := ⟨⟨1, 5, by omega⟩, .action⟩
-  let V : EventPred Unit ℤ := fun _ e => e = e₀
+  let e₀ : Event ℤ := ⟨⟨1, 5, by omega⟩, .dynamic⟩
+  let V : Unit → Event ℤ → Prop := fun _ e => e = e₀
   -- Premise: PERF_XN(IMPF(V), {2})(⟨(), 4⟩)
   -- PTS = [2,4], event [1,5]: [2,4] ⊂ [1,5] ✓
   have prem : PERF_XN (IMPF V) {(2 : ℤ)} ⟨(), 4⟩ := by

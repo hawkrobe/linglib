@@ -76,7 +76,6 @@ atelicity diagnostic; CUM is the NP→VP propagation property.
 
 namespace Semantics.Aspect.Stratified
 
-open Semantics.Events
 open Semantics.Events.CEM
 open _root_.Mereology
 open Core.Time

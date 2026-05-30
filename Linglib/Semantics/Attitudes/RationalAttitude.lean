@@ -37,7 +37,6 @@ The parameter P is determined by complement size:
 
 namespace Semantics.Attitudes.RationalAttitude
 
-open Semantics.Events (Event EventPred existsClosureW EventSort)
 open Minimalist (ComplementSize fValue)
 
 -- ════════════════════════════════════════════════════════════════
@@ -95,9 +94,10 @@ theorem size_determines_reading (cs : ComplementSize) :
     For CP complements, CLOSURE converts an event predicate P(e) into a
     proposition ∃e. P(e), yielding a belief-compatible propositional content.
 
-    This is `existsClosureW` from event semantics, re-exported under the
-    name used in @cite{fusco-sgrizzi-2026}. -/
-abbrev closure {W Time : Type*} [LinearOrder Time] := @existsClosureW W Time _
+    This is pointwise Davidsonian existential closure (`Event.existsClosure`),
+    re-exported under the name used in @cite{fusco-sgrizzi-2026}. -/
+abbrev closure {W Time : Type*} [LinearOrder Time] (P : W → Event Time → Prop) : W → Prop :=
+  fun w => Event.existsClosure (P w)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Causative Attitude Verb (convincere-type)
@@ -141,7 +141,7 @@ def CausativeAttitude.denote {E Time : Type*} [LinearOrder Time]
     v.isAgent e v.agent ∧
     v.isPatient e v.experiencer ∧
     v.cause e e' ∧
-    e'.sort = .state ∧  -- Rational attitudes are stative
+    e'.sort = .stative ∧  -- Rational attitudes are stative
     v.isExperiencer e' v.experiencer ∧
     P e'
 
@@ -208,7 +208,7 @@ def intentionHolds {E W Time : Type*} [LinearOrder Time]
     (causeStar : CauseStar W Time)
     (agent : E) (P : E → W → Event Time → Prop) (w : W) : Prop :=
   ∃ s : Event Time,
-    s.sort = .state ∧
+    s.sort = .stative ∧
     isIntention s w ∧
     holder agent s w ∧
     ∀ p ∈ content s, ∃ e : Event Time, causeStar s e p.1 ∧ P p.2 p.1 e
