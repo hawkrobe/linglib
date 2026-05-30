@@ -1,4 +1,4 @@
-import Linglib.Semantics.Events.Defs
+import Linglib.Semantics.Events.Basic
 import Linglib.Core.Word
 import Linglib.Semantics.ArgumentStructure.Linking
 
