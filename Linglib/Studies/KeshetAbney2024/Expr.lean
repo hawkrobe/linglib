@@ -1,4 +1,5 @@
 import Linglib.Studies.KeshetAbney2024.Basic
+import Linglib.Core.Logic.Intensional.Defs
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -40,6 +41,8 @@ all `X ≡ φ` definitions regardless of their structural position.
 
 namespace KeshetAbney2024.PIP
 
+open Core.Logic.Intensional (AccessRel boxR diamondR)
+
 /-- A finite domain of individuals for PIP quantifier evaluation. -/
 class FiniteDomain (D : Type*) where
   elements : List D
@@ -62,7 +65,7 @@ constructors extend it to the full system.
 -/
 inductive PIPExprF (W : Type*) (D : Type*) where
   /-- Atomic predicate: P_w(x₁, ..., xₙ). Always felicitous. -/
-  | pred (p : W → Bool)
+  | pred (p : W → Prop)
   /-- Conjunction: φ ∧ ψ. Felicity is asymmetric (Karttunen). -/
   | conj (φ ψ : PIPExprF W D)
   /-- Negation: ¬φ. Felicity passes through. -/
@@ -72,7 +75,7 @@ inductive PIPExprF (W : Type*) (D : Type*) where
   /-- Implication: φ → ψ. -/
   | impl (φ ψ : PIPExprF W D)
   /-- Presupposition: φ|ψ. Assert φ, presuppose ψ. -/
-  | presup (φ : PIPExprF W D) (ψ : W → Bool)
+  | presup (φ : PIPExprF W D) (ψ : W → Prop)
   /-- Existential quantification: ∃x.φ (paper item 43).
       `body` takes a domain element and returns a formula. -/
   | exists_ (body : D → PIPExprF W D)
@@ -84,10 +87,10 @@ inductive PIPExprF (W : Type*) (D : Type*) where
   | labelDef (label : FLabel) (φ : PIPExprF W D)
   /-- Modal necessity: □_R φ (paper item 28, MUST).
       Universal quantification over R-accessible worlds. -/
-  | must (R : BAccessRel W) (φ : PIPExprF W D)
+  | must (R : AccessRel W) (φ : PIPExprF W D)
   /-- Modal possibility: ◇_R φ (paper item 28, MIGHT).
       Existential quantification over R-accessible worlds. -/
-  | might (R : BAccessRel W) (φ : PIPExprF W D)
+  | might (R : AccessRel W) (φ : PIPExprF W D)
 
 
 -- ============================================================
@@ -104,21 +107,19 @@ standard first-order quantification over domains and worlds.
 Requires `[Fintype D]` for quantifier evaluation and `[Fintype W]`
 for modal evaluation.
 -/
-noncomputable def PIPExprF.truth {W D : Type*} [FiniteDomain D] [Fintype W] :
-    PIPExprF W D → (W → Bool)
+def PIPExprF.truth {W D : Type*} :
+    PIPExprF W D → (W → Prop)
   | .pred p => p
-  | .conj φ ψ => λ w => φ.truth w && ψ.truth w
-  | .neg φ => λ w => (φ.truth w).not
-  | .disj φ ψ => λ w => φ.truth w || ψ.truth w
-  | .impl φ ψ => λ w => (φ.truth w).not || ψ.truth w
+  | .conj φ ψ => λ w => φ.truth w ∧ ψ.truth w
+  | .neg φ => λ w => ¬ φ.truth w
+  | .disj φ ψ => λ w => φ.truth w ∨ ψ.truth w
+  | .impl φ ψ => λ w => φ.truth w → ψ.truth w
   | .presup φ _ψ => φ.truth
-  | .exists_ body => λ w => FiniteDomain.elements.any (λ d => (body d).truth w)
-  | .forall_ body => λ w => FiniteDomain.elements.all (λ d => (body d).truth w)
+  | .exists_ body => λ w => ∃ d, (body d).truth w
+  | .forall_ body => λ w => ∀ d, (body d).truth w
   | .labelDef _label φ => φ.truth  -- label defs are tautological wrt truth
-  | .must R φ => λ w =>
-      (((Finset.univ : Finset W).toList.filter (R w))).all φ.truth
-  | .might R φ => λ w =>
-      (((Finset.univ : Finset W).toList.filter (R w))).any φ.truth
+  | .must R φ => boxR R φ.truth
+  | .might R φ => diamondR R φ.truth
 
 
 -- ============================================================
@@ -139,32 +140,30 @@ The universal quantification in the quantifier/modal felicity clauses is
 the key insight: an expression is felicitous only if its presuppositions
 are met for EVERY possible witness/world, not just some.
 -/
-noncomputable def PIPExprF.felicitous {W D : Type*} [FiniteDomain D] [Fintype W] :
-    PIPExprF W D → (W → Bool)
-  -- F(P(α₁,...,αₙ)) = true (atoms are always felicitous)
-  | .pred _ => λ _ => true
+def PIPExprF.felicitous {W D : Type*} :
+    PIPExprF W D → (W → Prop)
+  -- F(P(α₁,...,αₙ)) = ⊤ (atoms are always felicitous)
+  | .pred _ => λ _ => True
   -- F(φ ∧ ψ) iff Fφ ∧ (φ → Fψ)  [Karttunen's asymmetric conjunction]
-  | .conj φ ψ => λ w => φ.felicitous w && ((φ.truth w).not || ψ.felicitous w)
+  | .conj φ ψ => λ w => φ.felicitous w ∧ (φ.truth w → ψ.felicitous w)
   -- F(¬φ) iff Fφ
   | .neg φ => φ.felicitous
   -- F(φ ∨ ψ) iff Fφ ∧ (¬φ → Fψ)
-  | .disj φ ψ => λ w => φ.felicitous w && (φ.truth w || ψ.felicitous w)
+  | .disj φ ψ => λ w => φ.felicitous w ∧ (¬ φ.truth w → ψ.felicitous w)
   -- F(φ → ψ) iff Fφ ∧ (φ → Fψ)
-  | .impl φ ψ => λ w => φ.felicitous w && ((φ.truth w).not || ψ.felicitous w)
+  | .impl φ ψ => λ w => φ.felicitous w ∧ (φ.truth w → ψ.felicitous w)
   -- F(φ|ψ) iff Fφ ∧ ψ  [presupposition must hold]
-  | .presup φ ψ => λ w => φ.felicitous w && ψ w
+  | .presup φ ψ => λ w => φ.felicitous w ∧ ψ w
   -- F(∃xφ) iff ∀x.Fφ  [felicity universal over witnesses, item 43]
-  | .exists_ body => λ w => FiniteDomain.elements.all (λ d => (body d).felicitous w)
+  | .exists_ body => λ w => ∀ d, (body d).felicitous w
   -- F(∀xφ) iff ∀x.Fφ
-  | .forall_ body => λ w => FiniteDomain.elements.all (λ d => (body d).felicitous w)
+  | .forall_ body => λ w => ∀ d, (body d).felicitous w
   -- F(X≡φ) iff Fφ  [labels don't affect felicity]
   | .labelDef _label φ => φ.felicitous
   -- F(□φ) iff ∀w'.Fφ  [item 47: felicity universal over accessible worlds]
-  | .must R φ => λ w =>
-      (((Finset.univ : Finset W).toList.filter (R w))).all φ.felicitous
+  | .must R φ => boxR R φ.felicitous
   -- F(◇φ) iff ∀w'.Fφ  [item 47: felicity universal, NOT existential]
-  | .might R φ => λ w =>
-      (((Finset.univ : Finset W).toList.filter (R w))).all φ.felicitous
+  | .might R φ => boxR R φ.felicitous
 
 
 -- ============================================================
@@ -201,22 +200,22 @@ def PIPExprF.labelDefs {W D : Type*} : PIPExprF W D → List (FLabel × PIPExprF
 
 section Properties
 
-variable {W D : Type*} [FiniteDomain D] [Fintype W]
+variable {W D : Type*}
 
 /-- F(¬φ) iff Fφ — negation preserves felicity. -/
 theorem felicitousF_neg (φ : PIPExprF W D) (w : W) :
     (PIPExprF.neg φ).felicitous w = φ.felicitous w := rfl
 
 /-- F(φ|ψ) iff Fφ ∧ ψ(w) — presupposition must hold. -/
-theorem felicitousF_presup (φ : PIPExprF W D) (ψ : W → Bool) (w : W) :
-    (PIPExprF.presup φ ψ).felicitous w = (φ.felicitous w && ψ w) := rfl
+theorem felicitousF_presup (φ : PIPExprF W D) (ψ : W → Prop) (w : W) :
+    (PIPExprF.presup φ ψ).felicitous w = (φ.felicitous w ∧ ψ w) := rfl
 
 /-- F(X≡φ) iff Fφ — label definitions don't affect felicity. -/
 theorem felicitousF_labelDef (α : FLabel) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.labelDef α φ).felicitous w = φ.felicitous w := rfl
 
 /-- Presupposition truth-independence: φ|ψ is true iff φ is true. -/
-theorem presupF_truth_independent (φ : PIPExprF W D) (ψ : W → Bool) (w : W) :
+theorem presupF_truth_independent (φ : PIPExprF W D) (ψ : W → Prop) (w : W) :
     (PIPExprF.presup φ ψ).truth w = φ.truth w := rfl
 
 /-- Label definitions are truth-transparent: X≡φ is true iff φ is true. -/
@@ -226,17 +225,18 @@ theorem labelDef_truth_transparent (α : FLabel) (φ : PIPExprF W D) (w : W) :
 /-- Conjunction felicity is asymmetric (Karttunen). -/
 theorem felicitousF_conj (φ ψ : PIPExprF W D) (w : W) :
     (PIPExprF.conj φ ψ).felicitous w =
-    (φ.felicitous w && ((φ.truth w).not || ψ.felicitous w)) := rfl
+    (φ.felicitous w ∧ (φ.truth w → ψ.felicitous w)) := rfl
 
 /-- Existential felicity is universal over witnesses. -/
 theorem felicitousF_exists (body : D → PIPExprF W D) (w : W) :
     (PIPExprF.exists_ body).felicitous w =
-    FiniteDomain.elements.all (λ d => (body d).felicitous w) := rfl
+    (∀ d, (body d).felicitous w) := rfl
 
 /-- Modal necessity felicity is universal over accessible worlds. -/
-theorem felicitousF_must (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
+theorem felicitousF_must (R : AccessRel W) (φ : PIPExprF W D)
+    (w : W) :
     (PIPExprF.must R φ).felicitous w =
-    (((Finset.univ : Finset W).toList.filter (R w))).all φ.felicitous := rfl
+    boxR R φ.felicitous w := rfl
 
 end Properties
 
