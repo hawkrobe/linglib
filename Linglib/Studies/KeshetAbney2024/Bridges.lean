@@ -3,6 +3,7 @@ import Linglib.Studies.KeshetAbney2024.Felicity
 import Linglib.Studies.KeshetAbney2024.Connectives
 import Linglib.Studies.KeshetAbney2024.Composition
 import Linglib.Semantics.Presupposition.Basic
+import Linglib.Core.Logic.Quantification.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Plurality.Algebra
 import Mathlib.Data.Fintype.Basic
@@ -29,10 +30,12 @@ companion paper (@cite{abney-keshet-2025}) are in `PIP.Composition`.
 ## Design
 
 Each section is self-contained: it imports what it needs and states
-the correspondence as a theorem or definition. The presupposition and
-modal bridges are proved; the static↔dynamic bridge uses `sorry` for
-the Brasoveanu equivalence (which requires a non-trivial model theory
-argument).
+the correspondence as a theorem or definition. The presupposition,
+modal, and static↔dynamic bridges are all proved (atomic and negation
+cases for the last); the *full* Brasoveanu model-equivalence — a
+bijection between PIP models and ICDRT information states — is a
+non-trivial model-theoretic argument left as future work, not
+formalized here.
 -/
 
 namespace KeshetAbney2024.PIP.Bridges
@@ -133,102 +136,38 @@ are sets (extensional GQs). The GQ type `(α → Prop) → (α → Prop) → Pro
 is the predicate-based version.
 -/
 
-/-- PIP's EVERY as a GQ: ∀x, R(x) → S(x) (= set inclusion). -/
-def pipEvery {α : Type*} : Core.Quantification.GQ α :=
-  λ R S => ∀ x, R x → S x
-
-/-- PIP's SOME as a GQ: ∃x, R(x) ∧ S(x) (= non-empty intersection). -/
-def pipSome {α : Type*} : Core.Quantification.GQ α :=
-  λ R S => ∃ x, R x ∧ S x
-
-/-- PIP's EVERY is conservative: EVERY(R, S) ↔ EVERY(R, R ∩ S). -/
-theorem pipEvery_conservative {α : Type*} :
-    Core.Quantification.Conservative (pipEvery (α := α)) := by
-  intro R S
-  simp only [pipEvery]
-  constructor
-  · intro h x hR; exact ⟨hR, h x hR⟩
-  · intro h x hR; exact (h x hR).2
-
-/-- PIP's EVERY is scope-upward-monotone (right upward monotone). -/
-theorem pipEvery_scope_upward_mono {α : Type*} :
-    Core.Quantification.ScopeUpwardMono (pipEvery (α := α)) := by
-  intro R S S' hSS' h x hR
-  exact hSS' x (h x hR)
-
-/-- PIP's SOME is conservative: SOME(R, S) ↔ SOME(R, R ∩ S). -/
-theorem pipSome_conservative {α : Type*} :
-    Core.Quantification.Conservative (pipSome (α := α)) := by
-  intro R S
-  simp only [pipSome]
-  constructor
-  · intro ⟨x, hR, hS⟩; exact ⟨x, hR, ⟨hR, hS⟩⟩
-  · intro ⟨x, hR, _, hS⟩; exact ⟨x, hR, hS⟩
-
-/-- PIP's SOME is scope-upward-monotone (right upward monotone). -/
-theorem pipSome_scope_upward_mono {α : Type*} :
-    Core.Quantification.ScopeUpwardMono (pipSome (α := α)) := by
-  intro R S S' hSS' ⟨x, hR, hS⟩
-  exact ⟨x, hR, hSS' x hS⟩
-
--- Bridge: set-based GQs (Composition.lean) ↔ predicate-based GQ
-
 /--
-`setEvery` from `PIP.Composition` agrees with `pipEvery` (and hence `every_sem`).
+`setEvery` (from `PIP.Composition`, = set inclusion `R ⊆ S`) agrees with
+`Core.Quantification.every_sem` (= `∀ x, R x → S x`).
 
-Both express universal GQ as set inclusion / pointwise implication.
-This bridge lets `setEvery` inherit all `GQ` property proofs
-(conservativity, monotonicity) from `pipEvery_conservative` etc.
+This is the genuine, load-bearing bridge: `setEvery` is `Set`-typed while
+`every_sem` is predicate-typed (defeq, but the binder annotations differ,
+so a named lemma earns its keep). PIP's set-GQ therefore *consumes* Core's
+quantifier theory directly — conservativity, the Zwarts monotonicity
+hierarchy, duality — with no PIP-local re-derivation.
 -/
-theorem setEvery_eq_pipEvery {α : Type*} (R S : Set α) :
-    setEvery R S ↔ pipEvery R S :=
+theorem setEvery_eq_every_sem {α : Type*} (R S : Set α) :
+    setEvery R S ↔ Core.Quantification.every_sem R S :=
   ⟨fun h x hx => h hx, fun h x hx => h x hx⟩
 
-/--
-`setSome` from `PIP.Composition` agrees with `pipSome` (and hence `some_sem`).
--/
-theorem setSome_eq_pipSome {α : Type*} (R S : Set α) :
-    setSome R S ↔ pipSome R S :=
+/-- `setSome` agrees with `Core.Quantification.some_sem`. -/
+theorem setSome_eq_some_sem {α : Type*} (R S : Set α) :
+    setSome R S ↔ Core.Quantification.some_sem R S :=
   ⟨fun ⟨x, hx⟩ => ⟨x, hx.1, hx.2⟩, fun ⟨x, hr, hs⟩ => ⟨x, hr, hs⟩⟩
 
-/--
-Conservativity of `setEvery` derived from the GQ proof.
--/
+/-- Conservativity of `setEvery`, inherited from
+    `Core.Quantification.every_conservative` (not re-proved). -/
 theorem setEvery_conservative' {α : Type*} (R S : Set α) :
     setEvery R S ↔ setEvery R (R ∩ S) := by
-  rw [setEvery_eq_pipEvery, setEvery_eq_pipEvery]
-  exact pipEvery_conservative R S
+  rw [setEvery_eq_every_sem, setEvery_eq_every_sem]
+  exact Core.Quantification.every_conservative R S
 
-/--
-Conservativity of `setSome` derived from the GQ proof.
--/
+/-- Conservativity of `setSome`, inherited from
+    `Core.Quantification.some_conservative` (not re-proved). -/
 theorem setSome_conservative' {α : Type*} (R S : Set α) :
     setSome R S ↔ setSome R (R ∩ S) := by
-  rw [setSome_eq_pipSome, setSome_eq_pipSome]
-  exact pipSome_conservative R S
-
--- Bridge: PIP's GQ ↔ model-theoretic GQ from Quantifier.lean
-
-/--
-PIP's EVERY is definitionally equal to `every_sem` from `Quantifier.lean`.
-
-This closes the full bridge chain:
-  `setEvery R S` ↔ `pipEvery R S` = `every_sem m R S`
-
-All GQ property proofs in Quantifier.lean (duality, monotonicity,
-Zwarts monotonicity hierarchy, quantity invariance, etc.) apply
-directly to PIP's quantifiers.
--/
-theorem pipEvery_eq_every_sem {α : Type*} :
-    (pipEvery : Core.Quantification.GQ α) =
-    Semantics.Quantification.Quantifier.every_sem := rfl
-
-/--
-PIP's SOME is definitionally equal to `some_sem` from `Quantifier.lean`.
--/
-theorem pipSome_eq_some_sem {α : Type*} :
-    (pipSome : Core.Quantification.GQ α) =
-    Semantics.Quantification.Quantifier.some_sem := rfl
+  rw [setSome_eq_some_sem, setSome_eq_some_sem]
+  exact Core.Quantification.some_conservative R S
 
 
 -- ============================================================
@@ -314,17 +253,15 @@ This section classifies PIP's modal operators in the lattice of
 normal modal logics from `Core.Logic.Intensional`.
 -/
 
-/--
-PIP's anaphora-enabling modality requires at least Logic.T.
-
-The might/must asymmetry for intensional anaphora reduces to whether
-the accessibility relation satisfies the T axiom (reflexivity). Must
-with a reflexive R guarantees the description holds at the evaluation
-world; might with a non-reflexive R does not.
+/-!
+PIP's anaphora-enabling modality needs the **T axiom** (reflexivity): a
+realistic modal base guarantees the description holds at the evaluation
+world. The content of that claim is carried by `reflexive_satisfies_T`
+below (reflexivity ⟹ T's frame condition) together with
+`Connectives.must_realistic_of_refl` (which consumes `Std.Refl R` to
+derive `p g w₀`). A bare `K ≤ T` lemma would be vacuous — `K = ⊥` — so
+it is intentionally omitted.
 -/
-theorem pip_anaphora_requires_T :
-    Core.Logic.Intensional.Logic.K ≤ Core.Logic.Intensional.Logic.T :=
-  Core.Logic.Intensional.Logic.K_bot ▸ OrderBot.bot_le _
 
 /--
 A reflexive accessibility relation satisfies Logic.T's frame condition.
@@ -399,13 +336,13 @@ in `Basic.lean` / `Connectives.lean` encodes PIP as a dynamic update
 system over `IContext W E`. @cite{brasoveanu-2010} shows the equivalence
 between plural predicate calculi and dynamic plural logics.
 
-The following theorems state that the static system (`PIPExprF.truth`)
+The following theorems prove that the static system (`PIPExprF.truth`)
 and the dynamic encoding (`PUpdate` operators) compute the same thing
-for atomic formulas, conjunction, negation, and presupposition.
+for the atomic and negation cases (the proofs are complete).
 
-Full proof of the Brasoveanu equivalence requires establishing a
-bijection between PIP models and ICDRT information states, which is
-a substantial model-theoretic argument. We mark these with `sorry`.
+The *full* Brasoveanu equivalence requires establishing a bijection
+between PIP models and ICDRT information states — a substantial
+model-theoretic argument left as future work, not formalized here.
 -/
 
 /--

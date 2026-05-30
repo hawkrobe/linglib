@@ -20,7 +20,7 @@ This file provides:
 `PIPExprF W D` in `Expr.lean` is the **full** PIP expression type with
 quantifiers (`∃x`, `∀x`), modals (`□`, `◇`), and label definitions.
 It defines its own `truth` and `felicitous` functions covering all
-constructors, including the quantifier felicity clauses (items 35, 39d).
+constructors, including the quantifier and modal felicity clauses.
 The propositional `PIPExpr W` here is the restriction to `D = Empty`.
 
 ## The F Operator (Propositional)
@@ -37,7 +37,7 @@ This file covers the propositional fragment (items 40–42, 44–45c):
 
 The full quantifier/modal clauses are in `PIPExprF.felicitous` (`Expr.lean`):
 - F(∃xφ) iff ∀x.Fφ — felicity universal over witnesses (item 43)
-- F(□φ) iff ∀w'.Fφ — felicity universal over accessible worlds (item 47)
+- F(□φ) iff ∀w'.Fφ — felicity universal over accessible worlds
 
 The asymmetric conjunction clause (Karttunen's insight) allows the first
 conjunct to satisfy presuppositions of the second. This is what makes
@@ -268,8 +268,8 @@ universally as usual. This asymmetry is PIP's mechanism for
 presupposition projection.
 
 The felicity clauses (in `PIPExprF.felicitous`):
-- F(∃xφ) = ∀x.Fφ — universal over witnesses (item 39d)
-- F(∀xφ) = ∀x.Fφ — (item 35)
+- F(∃xφ) = ∀x.Fφ — universal over witnesses (universal over the domain)
+- F(∀xφ) = ∀x.Fφ — (same felicity clause as ∃)
 - F(□φ) = ∀w'.Fφ — universal over accessible worlds
 - F(◇φ) = ∀w'.Fφ — ALSO universal (truth differs: existential)
 
@@ -291,12 +291,12 @@ variable {W D : Type*}
 -- ======== Prop-level iff characterizations ========
 
 /-- F(∃xφ) iff ∀d, F(φ(d)) — existential felicity is universal
-    over the domain (item 39d). Holds by definition. -/
+    over the domain (universal over the domain). Holds by definition. -/
 theorem existsF_felicitous_iff (body : D → PIPExprF W D) (w : W) :
     (PIPExprF.exists_ body).felicitous w ↔ ∀ d, (body d).felicitous w :=
   Iff.rfl
 
-/-- F(∀xφ) iff ∀d, F(φ(d)) (item 35). Holds by definition. -/
+/-- F(∀xφ) iff ∀d, F(φ(d)) (same felicity clause as ∃). Holds by definition. -/
 theorem forallF_felicitous_iff (body : D → PIPExprF W D) (w : W) :
     (PIPExprF.forall_ body).felicitous w ↔ ∀ d, (body d).felicitous w :=
   Iff.rfl
@@ -422,7 +422,7 @@ theorem mightF_presup_at_accessible
   (mightF_presup_factored R φ ψ w).mp hF |>.2 w' hR
 
 
--- ======== Sigma body felicity (item 39f) ========
+-- ======== Sigma body felicity (sigma body felicity) ========
 
 /-- Sigma body felicity: for Σxφ to appear felicitously in a discourse,
     φ must be felicitous for every witness d. This is item (39f) in the

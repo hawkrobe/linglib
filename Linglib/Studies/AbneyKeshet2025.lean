@@ -35,7 +35,7 @@ anaphora, modal subordination, and the exists/sigma bridge.
 namespace AbneyKeshet2025
 
 open KeshetAbney2024.PIP
-open KeshetAbney2024.PIP.Bridges (single plural setEvery_eq_pipEvery)
+open KeshetAbney2024.PIP.Bridges (single plural)
 
 
 -- ============================================================
@@ -143,7 +143,7 @@ EVERY(Σf farmer, Σf (farmer ∧ boughtDonkey)) — via `setEvery`.
 
 "Every farmer bought a donkey" modeled as: the set of farmers is a
 subset of the set of farmer-buyers. This connects to the GQ bridge
-in `Bridges.lean` via `setEvery_eq_pipEvery`.
+in `Bridges.lean` via `setEvery_eq_every_sem`.
 -/
 theorem every_farmer_bought_donkey :
     setEvery

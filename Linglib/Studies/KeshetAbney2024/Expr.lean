@@ -76,19 +76,19 @@ inductive PIPExprF (W : Type*) (D : Type*) where
   | impl (φ ψ : PIPExprF W D)
   /-- Presupposition: φ|ψ. Assert φ, presuppose ψ. -/
   | presup (φ : PIPExprF W D) (ψ : W → Prop)
-  /-- Existential quantification: ∃x.φ (paper item 43).
+  /-- Existential quantification: ∃x.φ.
       `body` takes a domain element and returns a formula. -/
   | exists_ (body : D → PIPExprF W D)
-  /-- Universal quantification: ∀x.φ (paper item 43).
+  /-- Universal quantification: ∀x.φ.
       `body` takes a domain element and returns a formula. -/
   | forall_ (body : D → PIPExprF W D)
   /-- Formula label definition: X ≡ φ (paper item 17.3).
       Tautological — always true. Registers the label for later retrieval. -/
   | labelDef (label : FLabel) (φ : PIPExprF W D)
-  /-- Modal necessity: □_R φ (paper item 28, MUST).
+  /-- Modal necessity: □_R φ (MUST).
       Universal quantification over R-accessible worlds. -/
   | must (R : AccessRel W) (φ : PIPExprF W D)
-  /-- Modal possibility: ◇_R φ (paper item 28, MIGHT).
+  /-- Modal possibility: ◇_R φ (MIGHT).
       Existential quantification over R-accessible worlds. -/
   | might (R : AccessRel W) (φ : PIPExprF W D)
 
@@ -133,8 +133,8 @@ Extends the propositional fragment with:
 - F(∃xφ) iff ∀x.Fφ — felicity is universal over witnesses (item 43)
 - F(∀xφ) iff ∀x.Fφ — felicity is universal over witnesses (item 43)
 - F(X≡φ) iff Fφ — labels don't affect felicity
-- F(□φ) iff ∀w'.Fφ — felicity universal over accessible worlds (item 47)
-- F(◇φ) iff ∀w'.Fφ — felicity universal over accessible worlds (item 47)
+- F(□φ) iff ∀w'.Fφ — felicity universal over accessible worlds
+- F(◇φ) iff ∀w'.Fφ — felicity universal over accessible worlds
 
 The universal quantification in the quantifier/modal felicity clauses is
 the key insight: an expression is felicitous only if its presuppositions
@@ -160,9 +160,9 @@ def PIPExprF.felicitous {W D : Type*} :
   | .forall_ body => λ w => ∀ d, (body d).felicitous w
   -- F(X≡φ) iff Fφ  [labels don't affect felicity]
   | .labelDef _label φ => φ.felicitous
-  -- F(□φ) iff ∀w'.Fφ  [item 47: felicity universal over accessible worlds]
+  -- F(□φ) iff ∀w'.Fφ  [felicity universal over accessible worlds]
   | .must R φ => boxR R φ.felicitous
-  -- F(◇φ) iff ∀w'.Fφ  [item 47: felicity universal, NOT existential]
+  -- F(◇φ) iff ∀w'.Fφ  [felicity universal, NOT existential]
   | .might R φ => boxR R φ.felicitous
 
 

@@ -166,7 +166,9 @@ private theorem g_wolf_in_retrieve :
   simp only [stoneSentence1, might, modalExpand, existsLabeled, atom,
              Discourse.mapInfo, LabelStore.register, LabelStore.lookup, αWolf,
              vWolf, isWolf]
-  refine ⟨g_wolf_in_sentence1, ?_, ?_⟩ <;> first | rfl | decide | trivial
+  refine ⟨g_wolf_in_sentence1, ?_, ?_⟩
+  · decide   -- (g_wolf.indiv vWolf actual).isSome
+  · rfl      -- isWolf g_wolf actual  (= g_wolf.indiv vWolf actual = some wolf)
 
 /--
 End-to-end test: Stone's discourse is consistent on a concrete model.
