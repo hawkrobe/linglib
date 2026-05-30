@@ -39,6 +39,7 @@ namespace KeshetAbney2024.PIP.Bridges
 
 open KeshetAbney2024.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
+open Core.Logic.Intensional (AccessRel boxR diamondR)
 open Core.Logic.Intensional.Logic (frameConditions)
 
 
@@ -69,23 +70,11 @@ and `felicitous` as `presup`.
 -/
 theorem pip_felicity_agrees_with_andFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.conj φ ψ).felicitous w = true) ↔
+    (Felicity.PIPExpr.conj φ ψ).felicitous w ↔
     (Semantics.Presupposition.PrProp.andFilter
-      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Semantics.Presupposition.PrProp _))
-      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Semantics.Presupposition.PrProp _))).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Semantics.Presupposition.PrProp.andFilter,
-    Bool.and_eq_true, Bool.or_eq_true]
-  constructor
-  · intro ⟨h1, h2⟩
-    exact ⟨h1, fun ht => by
-      rcases h2 with h | h
-      · exact absurd ht (by simp [Bool.not_eq_true'] at h; rw [h]; decide)
-      · exact h⟩
-  · intro ⟨h1, h2⟩
-    refine ⟨h1, ?_⟩
-    by_cases ht : φ.truth w = true
-    · exact Or.inr (h2 ht)
-    · simp [Bool.not_eq_true, ht]
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))
+      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+  Iff.rfl
 
 /--
 PIP's negation felicity agrees with `PrProp.neg`: both preserve the
@@ -93,10 +82,10 @@ presupposition/felicity of the negated expression unchanged.
 -/
 theorem pip_felicity_agrees_with_neg {W : Type*}
     (φ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.neg φ).felicitous w = true) ↔
+    (Felicity.PIPExpr.neg φ).felicitous w ↔
     (Semantics.Presupposition.PrProp.neg
-      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Semantics.Presupposition.PrProp _))).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Semantics.Presupposition.PrProp.neg]
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+  Iff.rfl
 
 /--
 PIP's implication felicity agrees with `PrProp.impFilter`.
@@ -108,23 +97,11 @@ the antecedent can satisfy the consequent's presupposition.
 -/
 theorem pip_felicity_agrees_with_impFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.impl φ ψ).felicitous w = true) ↔
+    (Felicity.PIPExpr.impl φ ψ).felicitous w ↔
     (Semantics.Presupposition.PrProp.impFilter
-      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Semantics.Presupposition.PrProp _))
-      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Semantics.Presupposition.PrProp _))).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Semantics.Presupposition.PrProp.impFilter,
-    Bool.and_eq_true, Bool.or_eq_true]
-  constructor
-  · intro ⟨h1, h2⟩
-    exact ⟨h1, fun ht => by
-      rcases h2 with h | h
-      · exact absurd ht (by simp [Bool.not_eq_true'] at h; rw [h]; decide)
-      · exact h⟩
-  · intro ⟨h1, h2⟩
-    refine ⟨h1, ?_⟩
-    by_cases ht : φ.truth w = true
-    · exact Or.inr (h2 ht)
-    · simp [Bool.not_eq_true, ht]
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))
+      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+  Iff.rfl
 
 /--
 PIP's disjunction felicity agrees with a one-sided filtering disjunction:
@@ -132,9 +109,12 @@ PIP's disjunction felicity agrees with a one-sided filtering disjunction:
 -/
 theorem pip_felicity_agrees_with_orFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.disj φ ψ).felicitous w = true) ↔
-    (φ.felicitous w = true ∧ (φ.truth w = true ∨ ψ.felicitous w = true)) := by
-  simp only [Felicity.PIPExpr.felicitous, Bool.and_eq_true, Bool.or_eq_true]
+    (Felicity.PIPExpr.disj φ ψ).felicitous w ↔
+    (φ.felicitous w ∧ (φ.truth w ∨ ψ.felicitous w)) := by
+  simp only [Felicity.PIPExpr.felicitous]
+  constructor
+  · rintro ⟨h1, h2⟩; exact ⟨h1, (Classical.em (φ.truth w)).imp id h2⟩
+  · rintro ⟨h1, h2⟩; exact ⟨h1, fun hn => h2.resolve_left hn⟩
 
 
 -- ============================================================
@@ -399,13 +379,12 @@ The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ w' = true}` ↔
 `boxR (fun a b => R a b = true) (fun w' => φ w' = true) w`. Both express
 "the body holds at every R-accessible world from w".
 -/
-theorem mustBase_agrees_boxR {W D : Type*} [FiniteDomain D] [Fintype W]
-    (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
-    mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } ↔
-    Core.Logic.Intensional.boxR
-      (fun a b => R a b = true) (fun w' => φ.truth w' = true) w := by
+theorem mustBase_agrees_boxR {W D : Type*}
+    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } ↔
+    boxR R φ.truth w := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def,
-    Set.mem_setOf_eq, Core.Logic.Intensional.boxR]
+    Set.mem_setOf_eq, boxR]
 
 
 -- ============================================================
@@ -440,9 +419,9 @@ iff the static truth value is true.
 TODO: Full proof requires reasoning about `Set.sep` over singleton IContext.
 -/
 theorem static_atom_agrees_dynamic {W E : Type*}
-    (p : ICDRTAssignment W E → W → Bool) (g : ICDRTAssignment W E) (w : W)
+    (p : ICDRTAssignment W E → W → Prop) (g : ICDRTAssignment W E) (w : W)
     (d : Discourse W E) (hd : (g, w) ∈ d.info) :
-    (g, w) ∈ (atom p d).info ↔ p g w = true := by
+    (g, w) ∈ (atom p d).info ↔ p g w := by
   unfold atom Discourse.mapInfo
   exact ⟨fun ⟨_, hp⟩ => hp, fun hp => ⟨hd, hp⟩⟩
 
