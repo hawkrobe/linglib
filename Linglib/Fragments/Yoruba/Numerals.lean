@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Yoruba numeral profile (WALS Chs 53–56, 131)
@@ -11,15 +11,7 @@ namespace Fragments.Yoruba
     across the paradigm. No morphological distributive. No numeral classifiers.
     Conjunction *ati* and universal quantifier *gbogbo* are distinct. Plural
     marked optionally (*awon*); vigesimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
-  { language := "Yoruba"
-  , iso := "yor"
-  , ordinal := .various
-  , distributive := .noDistributive
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .africa
-  , pluralMarking := .optional
-  , numeralBase := some .vigesimal }
+def numeralProfile : Numeral.Profile :=
+  Numeral.Profile.fromWALS "Yoruba" "yor" (region := .africa) (pluralMarking := .optional)
 
 end Fragments.Yoruba

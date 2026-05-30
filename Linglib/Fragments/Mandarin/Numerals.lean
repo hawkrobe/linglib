@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Mandarin numeral profile (WALS Chs 53–56, 131)
@@ -12,15 +12,7 @@ namespace Fragments.Mandarin
     Obligatory numeral classifiers (*san ge ren* 'three CL person'). Conjunction
     *he* and universal *dou* are distinct morphemes. No grammatical plural on
     common nouns; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
-  { language := "Mandarin"
-  , iso := "cmn"
-  , ordinal := .allFromCardinals
-  , distributive := .noDistributive
-  , classifier := .obligatory
-  , conjQuant := .differentiation
-  , region := .eastAsia
-  , pluralMarking := .none
-  , numeralBase := some .decimal }
+def numeralProfile : Numeral.Profile :=
+  Numeral.Profile.fromWALS "Mandarin" "cmn" (region := .eastAsia) (pluralMarking := .none)
 
 end Fragments.Mandarin

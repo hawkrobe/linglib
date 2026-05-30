@@ -229,7 +229,8 @@ import Linglib.Typology.Directives
 import Linglib.Typology.Indefinite
 import Linglib.Typology.Profile
 import Linglib.Typology.Universal
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.Basic
+import Linglib.Typology.Numeral.WALS
 import Linglib.Typology.Plurals
 import Linglib.Typology.PolarityMarking
 import Linglib.Typology.Possession
