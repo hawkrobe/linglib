@@ -1,5 +1,6 @@
 import Linglib.Studies.JinKoenig2021
 import Linglib.Semantics.Modality.Kratzer.Operators
+import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Fragments.Greek.StandardModern.Negation
 import Linglib.Fragments.Italian.Negation
 import Mathlib.Data.Fin.Basic

@@ -1,7 +1,6 @@
 import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Quantification
 import Linglib.Core.Logic.Intensional.Algebra
-import Linglib.Semantics.Modality.ModalTypes
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.Lattice
