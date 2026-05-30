@@ -50,6 +50,30 @@ theorem isState_iff_not_isAction {Time : Type*} [LinearOrder Time] (e : Event Ti
   simp only [Event.isAction, Event.isState]
   cases e.sort <;> decide
 
+/-! ### Duration predicates -/
+
+/-- Is this event punctual (instantaneous)? Its runtime is a single point.
+    The temporal-extent counterpart of the dynamicity sort; derived from the
+    runtime via `Interval.IsPoint`. -/
+def Event.isPunctual {Time : Type*} [LinearOrder Time] (e : Event Time) : Prop :=
+  e.τ.IsPoint
+
+/-- Is this event durative (temporally extended)? -/
+def Event.isDurative {Time : Type*} [LinearOrder Time] (e : Event Time) : Prop :=
+  ¬ e.isPunctual
+
+instance {Time : Type*} [LinearOrder Time] :
+    DecidablePred (Event.isPunctual (Time := Time)) :=
+  fun e => by unfold Event.isPunctual Interval.IsPoint; infer_instance
+
+instance {Time : Type*} [LinearOrder Time] :
+    DecidablePred (Event.isDurative (Time := Time)) :=
+  fun e => by unfold Event.isDurative; infer_instance
+
+/-- `isDurative` and `isPunctual` are complementary. -/
+theorem isDurative_iff_not_isPunctual {Time : Type*} [LinearOrder Time] (e : Event Time) :
+    e.isDurative ↔ ¬ e.isPunctual := Iff.rfl
+
 /-! ### Concrete examples (ℤ-time events) -/
 
 /-- Example: a running event from time 1 to 5. -/
