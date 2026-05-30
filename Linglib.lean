@@ -1294,6 +1294,7 @@ import Linglib.Studies.Ostrove2026
 import Linglib.Studies.Allotey2021
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Studies.FaginHalpern1994
+import Linglib.Studies.Faller2019
 import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Studies.GoldbergShirtz2025
 import Linglib.Studies.KayFillmore1999
@@ -2041,7 +2042,6 @@ import Linglib.Discourse.Centering.Instances.InformationStatus
 -- Theories: Discourse — SDRT
 import Linglib.Discourse.Rhetorical.Defs
 import Linglib.Discourse.Rhetorical.RightFrontier
--- Theories: Discourse — Faller/Murray illocutionary operators
 -- Theories: Interfaces — Centering ↔ DRT bridge
 import Linglib.Discourse.Centering.DRSExpr
 -- Theories: Dynamic Semantics
