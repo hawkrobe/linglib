@@ -2691,7 +2691,6 @@ import Linglib.Studies.VanDerLeer2026
 import Linglib.Studies.Hintikka1962
 import Linglib.Dialogue.Stalnaker
 import Linglib.Dialogue.ReasonableInference
-import Linglib.Dialogue.FarkasBruce
 import Linglib.Dialogue.QuotationFBOntology
 import Linglib.Dialogue.CommitmentSpace
 import Linglib.Dialogue.DistributionalCG
