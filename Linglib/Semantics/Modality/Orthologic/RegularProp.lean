@@ -44,7 +44,7 @@ future ortholattice consumer (BSML, inquisitive semantics, truthmaker
 semantics — all of which traffic in non-Boolean propositional algebras).
 -/
 
-namespace Semantics.Modality.Orthologic
+namespace Orthologic
 
 variable {S : Type*} {F : CompatFrame S}
 
@@ -250,4 +250,4 @@ instance instOrthocomplementedLattice : OrthocomplementedLattice (RegularProp F)
 
 end RegularProp
 
-end Semantics.Modality.Orthologic
+end Orthologic
