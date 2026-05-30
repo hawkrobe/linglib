@@ -1,320 +1,363 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Discourse.Roles
-import Linglib.Semantics.Questions.Basic
+import Linglib.Discourse.Commitment.Basic
+import Linglib.Discourse.Commitment.Table
 
 /-!
 # Faller (2019): The discourse commitments of illocutionary reportatives
+
 @cite{faller-2019a} @cite{farkas-bruce-2010} @cite{stalnaker-1978}
 @cite{walker-1996} @cite{krifka-2014} @cite{anderbois-2014}
 @cite{gunlogson-2008} @cite{murray-2014} @cite{goffman-1979}
 
-Faller's discourse-update framework for the Cuzco Quechua reportative
-`=si`. The empirical puzzle (her eq. 1):
+Faller's discourse-update account of the Cuzco Quechua reportative `=si`.
+The puzzle (her display (1)): a speaker of a reportative declarative need
+not be committed to the reported proposition `φ` — they may even deny it
+(1a) — yet often intends `φ` to resolve the QUD (1b). Faller's solution
+splits Goffman's *animator* from *principal*: the reportative commits the
+animator only to having reportative evidence, while the distinct principal
+carries the truth commitment. The Collaborative Principle (@cite{walker-1996})
+then derives the animator's *dependent* truth commitment when they do not
+disagree.
 
-* (a) Speakers of CQ uttering a declarative with `=si` need NOT be
-  committed to the reported proposition φ — they may even deny it.
-* (b) Despite (a), they often INTEND φ to resolve the QUD.
+## Main declarations
 
-Faller's solution: separate **animator** from **principal** (Goffman
-1979). The reportative encodes that the animator's commitment is to
-HAVING REPORTATIVE EVIDENCE, while the principal — distinct from the
-animator — is the one committed to truth. The Collaborative Principle
-(Walker 1996) then derives the animator's *dependent* truth commitment
-when they don't immediately disagree.
+* `GoffmanRole`, `RoleAssignment` — animator / author / principal (her (30)).
+* `EvidenceType` — adequate / reportative / bpg (her (24)–(25)), with an
+  `inferential` extension.
+* `DiscourseState` — the Farkas-Bruce table state extended with
+  per-evidence-type commitment sets.
+* `PRESENT`, `reportativePRESENT` — the speech-act operators (her (34), (35)).
 
-## Substrate consumed
+## Implementation notes
 
-* `Discourse/Roles.DiscourseRole` for binary speaker/addressee
-  (Faller adds Goffman's animator/author/principal — see § Goffman roles
-  below; if a second study consumes these they graduate to substrate).
-* `Semantics/Questions/Basic.Question` is *not* directly used — Faller's
-  Table is a stack of pushed propositions (her T_i), simpler than
-  the inquisitive substrate.
+* Built over `Discourse.Commitment.Table.DiscourseState A W (Set W)`: truth
+  commitments live in the inherited per-agent slate `dc`, the Table is the
+  proposition stack (`I := Set W`), and the common ground is `cg`. Only the
+  evidence-type family `evidCommit` is Faller-specific.
+* Faller numbers her framework as displays `(24)`, `(34)`, `(35)` — not
+  equations.
 
-## What this file does NOT consume
+## Todo
 
-* `Dialogue/SAL/*` (van der Leer 2026): SAL refines Faller
-  by adding a Kripke layer inside each commitment-set. Faller's
-  framework is the coarser set-of-propositions level. Faller and
-  SAL relate by forgetful projection (SAL → Faller drops the Kripke
-  structure inside states).
-* `Dialogue/CommitmentSpace.lean` (Krifka 2015): a different
-  framework (commitment-space tree of propositional states); Faller
-  builds on Farkas-Bruce 2010 instead.
-
-## Notes for future substrate promotion
-
-Three patterns arise in this file that may eventually graduate to
-substrate when a second consumer needs them:
-
-1. **Goffman roles** (Animator/Author/Principal). Cited by AnderBois
-   2014, Murray 2014, Bary 2025, MV 2026. If/when a second study file
-   imports them, promote to `Discourse/GoffmanRoles.lean`.
-2. **Multi-typed commitment sets** (TC, AeC, RepC, BpgC). The "open
-   list of evidence-typed commitment sets per agent" pattern. Faller
-   has 4 types; future papers may add more. If a second consumer wants
-   the same shape, promote a generic `EvidenceTypedCommitments` to
-   `Discourse/`.
-3. **Collaborative Principle** as a defeasible discourse rule.
-   Referenced by Walker 1996, Asher-Lascarides 2008, Geurts 2019,
-   Bary 2025. Substrate candidate.
-
-Each is currently inline in this study file.
+* Model the (1b) half of the puzzle: the Collaborative Principle
+  (@cite{walker-1996}, her (29)) deriving the animator's *dependent* truth
+  commitment when they do not disagree (her Figure 6). Only the (1a)
+  Absence-of-Commitment half is formalized here.
+* Promote `GoffmanRole` / `EvidenceType` to `Discourse/` once a second
+  consumer (e.g. @cite{anderbois-2014}, @cite{murray-2014}) imports them.
 -/
 
 namespace Faller2019
 
-open Discourse (DiscourseRole)
+open Discourse.Commitment (CommitmentSlate TaggedSlate CommitmentSource)
 
-variable {W : Type*}
+/-! ### Goffman 1979 speaker roles -/
 
-/-! ### § Goffman 1979 speaker roles (inline; promote to substrate when 2nd consumer arrives) -/
-
-/-- @cite{goffman-1979} Frame Analysis distinguishes three roles within
-    "speaker": the **animator** physically utters; the **author** chose
-    the words; the **principal** is committed by the words.
-
-    In standard cases all three coincide; reportatives (Faller 2019),
-    quotations, messengers, and spokespersons separate them. -/
+/-- @cite{goffman-1979} "Footing" distinguishes three roles within
+    "speaker": the **animator** physically utters; the **author** chose the
+    words; the **principal** is committed by the words. In standard cases all
+    three coincide; reportatives, quotations, and messengers separate them. -/
 inductive GoffmanRole where
   /-- The individual physically producing the utterance (sound waves). -/
   | animator
   /-- The individual who selected the words and sentiments expressed. -/
   | author
-  /-- The individual whose position is established by the words —
-      whose commitment is conveyed. -/
+  /-- The individual whose position is established by the words. -/
   | principal
   deriving DecidableEq, Repr, Inhabited
 
-/-- A Goffman-role assignment: who fills each of the three roles in a
-    given utterance. In default cases (`a = author = principal`), this
-    collapses to the standard speaker. Reportatives require
-    `animator ≠ principal`. -/
+/-- A Goffman-role assignment: who fills each role in an utterance. In default
+    cases (`animator = author = principal`) it collapses to the standard
+    speaker; reportatives require `animator ≠ principal`. -/
 structure RoleAssignment (E : Type*) where
   animator : E
   author : E
   principal : E
 
+namespace RoleAssignment
+
+variable {E : Type*}
+
 /-- The canonical-speaker assignment: animator = author = principal. -/
-def RoleAssignment.canonical {E : Type*} (e : E) : RoleAssignment E :=
-  { animator := e, author := e, principal := e }
+def canonical (e : E) : RoleAssignment E := ⟨e, e, e⟩
 
-@[simp] theorem canonical_animator {E : Type*} (e : E) :
-    (RoleAssignment.canonical e).animator = e := rfl
+/-- A messenger-style assignment: animator and principal distinct. This is
+    the configuration the CQ reportative `=si` requires (her (35ii)). -/
+def messenger (anim prin : E) : RoleAssignment E := ⟨anim, anim, prin⟩
 
-@[simp] theorem canonical_principal {E : Type*} (e : E) :
-    (RoleAssignment.canonical e).principal = e := rfl
+@[simp] theorem canonical_animator (e : E) : (canonical e).animator = e := rfl
+@[simp] theorem canonical_author (e : E) : (canonical e).author = e := rfl
+@[simp] theorem canonical_principal (e : E) : (canonical e).principal = e := rfl
 
-@[simp] theorem canonical_author {E : Type*} (e : E) :
-    (RoleAssignment.canonical e).author = e := rfl
+@[simp] theorem messenger_animator (anim prin : E) :
+    (messenger anim prin).animator = anim := rfl
+@[simp] theorem messenger_principal (anim prin : E) :
+    (messenger anim prin).principal = prin := rfl
 
-/-- A messenger-style role assignment: animator and principal are distinct.
-    This is the configuration the CQ reportative `=si` requires
-    (Faller 2019 eq. 35.ii). -/
-def RoleAssignment.messenger {E : Type*} (anim prin : E) : RoleAssignment E :=
-  { animator := anim, author := anim, principal := prin }
+end RoleAssignment
 
-/-! ### § Faller's commitment-typed discourse state -/
+/-! ### Commitment-typed discourse state -/
 
-/-- @cite{faller-2019a} eqs. 24-25: the per-agent commitment sets.
-    Open-ended; Faller introduces TC, AeC, RepC, BpgC explicitly and
-    notes "other types of evidential commitment sets" can be added.
-
-    A `Set (Set W)` per evidence type per agent: the set of propositions
-    (modelled as `Set W`) the agent has committed to *of that type*.
-
-    `truthCommit a` = TC_a : "x is committed to the truth of φ"
-    `evidCommit .adequate a` = AeC_a : "x has adequate evidence for φ"
-    `evidCommit .reportative a` = RepC_a : "x has reportative evidence"
-    `evidCommit .bpg a` = BpgC_a : "x has best possible grounds"
-    Future cases extend `EvidenceType`. -/
+/-- The evidence types Faller tracks in distinct commitment sets. Her (24)–(25)
+    define exactly the first three (AeC, RepC, BpgC); `inferential` is an
+    extension — Faller mentions inferential commitment in prose but defines no
+    `InfC` set. -/
 inductive EvidenceType where
-  /-- Adequate evidence (Grice 1989: p. 29). The default for unmarked
-      assertions per Faller 2019 §4.2. -/
+  /-- Adequate evidence (@cite{faller-2019a}, after Grice): the default for
+      unmarked assertions. -/
   | adequate
   /-- Reportative evidence (hearsay). The CQ `=si` adds to this. -/
   | reportative
-  /-- Best possible grounds (the strongest perceptual / first-hand
-      evidence type). The CQ `=mi` adds to this. -/
+  /-- Best possible grounds (strongest first-hand evidence). The CQ `=mi`
+      adds to this. -/
   | bpg
-  /-- Inferential evidence (the CQ `-chá` conjectural). -/
+  /-- Inferential evidence (the CQ `-chá` conjectural). Extension; not one of
+      Faller's defined commitment sets. -/
   | inferential
   deriving DecidableEq, Repr, Inhabited
 
-/-- Faller 2019's discourse state: per-agent typed commitment sets
-    plus a Table (stack of issues) and Common Ground.
-
-    Genericised over agent type `E` and world type `W`. -/
-structure DiscourseState (W : Type*) (E : Type*) where
-  /-- TC_x : truth commitments per agent. -/
-  truthCommit : E → Set (Set W)
-  /-- Per-evidence-type commitment sets per agent. -/
-  evidCommit : EvidenceType → E → Set (Set W)
-  /-- Faller's Table T: a stack of propositions pushed by speech acts. -/
-  table : List (Set W)
-  /-- Common Ground: jointly accepted propositions. -/
-  commonGround : Set (Set W)
+/-- Faller's discourse structure: the Farkas-Bruce table state — truth
+    commitments in the inherited slate `dc`, a proposition-stack Table, and a
+    common ground — extended with per-evidence-type commitment sets. -/
+structure DiscourseState (A W : Type*)
+    extends Discourse.Commitment.Table.DiscourseState A W (Set W) where
+  /-- Per-evidence-type commitment sets per agent (AeC, RepC, BpgC, ...). -/
+  evidCommit : EvidenceType → A → CommitmentSlate W
 
 namespace DiscourseState
 
-variable {E : Type*}
+variable {A W : Type*}
 
-/-- The empty discourse state: no commitments, no table, no CG. -/
-def empty : DiscourseState W E where
-  truthCommit := fun _ => ∅
-  evidCommit := fun _ _ => ∅
-  table := []
-  commonGround := ∅
+/-- The empty discourse state: no commitments, empty Table, trivial CG. -/
+def empty : DiscourseState A W :=
+  { Discourse.Commitment.Table.DiscourseState.empty with
+    evidCommit := fun _ _ => CommitmentSlate.empty }
 
-/-- Add a proposition to an agent's truth commitments.
+/-- Agent `a` is truth-committed to `φ` (φ ∈ TC_a). -/
+def CommittedTrue (s : DiscourseState A W) (a : A) (φ : Set W) : Prop :=
+  φ ∈ (s.dc a).toSlate.commitments
 
-    Encoded propositionally (no `if`) to avoid requiring `DecidableEq E`:
-    every other agent's commitments stay the same because the
-    "added when `a' = a`" disjunct is only satisfied at the target
-    agent. -/
-def addTruthCommit (s : DiscourseState W E) (a : E) (φ : Set W) :
-    DiscourseState W E :=
-  { s with truthCommit := fun a' =>
-      { ψ | ψ ∈ s.truthCommit a' ∨ (a' = a ∧ ψ = φ) } }
+/-- Agent `a` holds `φ` as evidence of type `et` (φ ∈ et-C_a). -/
+def CommittedEvid (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) :
+    Prop :=
+  φ ∈ (s.evidCommit et a).commitments
 
-/-- Add a proposition to an agent's typed evidential commitments.
-    Same propositional encoding as `addTruthCommit`. -/
-def addEvidCommit (s : DiscourseState W E) (et : EvidenceType) (a : E) (φ : Set W) :
-    DiscourseState W E :=
-  { s with evidCommit := fun et' a' =>
-      { ψ | ψ ∈ s.evidCommit et' a' ∨ (et' = et ∧ a' = a ∧ ψ = φ) } }
+/-- Push a proposition onto the Table. -/
+def pushTable (s : DiscourseState A W) (φ : Set W) : DiscourseState A W :=
+  { s with toDiscourseState := s.toDiscourseState.pushItem φ }
 
-/-- Push a proposition on top of the Table. -/
-def pushTable (s : DiscourseState W E) (φ : Set W) : DiscourseState W E :=
-  { s with table := φ :: s.table }
+/-- Add `φ` to agent `a`'s truth commitments (the inherited slate `dc`), with
+    provenance `src` (default self-generated — the plain-assertion case;
+    `reportativePRESENT` marks the principal's animator-introduced commitment
+    other-generated, per @cite{faller-2019a} fn. 30 / §6.1). -/
+def addTruthCommit [DecidableEq A] (s : DiscourseState A W) (a : A) (φ : Set W)
+    (src : CommitmentSource := .selfGenerated) : DiscourseState A W :=
+  { s with toDiscourseState := s.toDiscourseState.addCommit a φ src }
 
-@[simp] theorem empty_truthCommit (a : E) :
-    (empty : DiscourseState W E).truthCommit a = ∅ := rfl
+/-- Add `φ` to agent `a`'s type-`et` evidential commitments. -/
+def addEvidCommit [DecidableEq A] (s : DiscourseState A W)
+    (et : EvidenceType) (a : A) (φ : Set W) : DiscourseState A W where
+  toDiscourseState := s.toDiscourseState
+  evidCommit :=
+    Function.update s.evidCommit et
+      (Function.update (s.evidCommit et) a ((s.evidCommit et a).add φ))
 
-@[simp] theorem empty_evidCommit (et : EvidenceType) (a : E) :
-    (empty : DiscourseState W E).evidCommit et a = ∅ := rfl
+/-! #### Update API
 
-@[simp] theorem empty_table : (empty : DiscourseState W E).table = [] := rfl
+Per-operator `@[simp]` lemmas, so the headline proofs reduce through this API
+rather than reaching into substrate slate internals.
+-/
+
+@[simp] theorem pushTable_toDiscourseState (s : DiscourseState A W) (φ : Set W) :
+    (s.pushTable φ).toDiscourseState = s.toDiscourseState.pushItem φ := rfl
+
+@[simp] theorem addTruthCommit_toDiscourseState [DecidableEq A]
+    (s : DiscourseState A W) (a : A) (φ : Set W) (src : CommitmentSource) :
+    (s.addTruthCommit a φ src).toDiscourseState =
+      s.toDiscourseState.addCommit a φ src := rfl
+
+@[simp] theorem addEvidCommit_toDiscourseState [DecidableEq A]
+    (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) :
+    (s.addEvidCommit et a φ).toDiscourseState = s.toDiscourseState := rfl
+
+@[simp] theorem addTruthCommit_evidCommit [DecidableEq A]
+    (s : DiscourseState A W) (a : A) (φ : Set W) (src : CommitmentSource) :
+    (s.addTruthCommit a φ src).evidCommit = s.evidCommit := rfl
+
+@[simp] theorem pushTable_evidCommit (s : DiscourseState A W) (φ : Set W) :
+    (s.pushTable φ).evidCommit = s.evidCommit := rfl
+
+@[simp] theorem addEvidCommit_evidCommit_self [DecidableEq A]
+    (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) :
+    (s.addEvidCommit et a φ).evidCommit et a = (s.evidCommit et a).add φ := by
+  simp [addEvidCommit]
+
+@[simp] theorem addEvidCommit_evidCommit_of_ne_agent [DecidableEq A]
+    (s : DiscourseState A W) (et : EvidenceType) {a b : A} (h : b ≠ a) (φ : Set W) :
+    (s.addEvidCommit et a φ).evidCommit et b = s.evidCommit et b := by
+  simp [addEvidCommit, Function.update_of_ne h]
+
+@[simp] theorem addEvidCommit_evidCommit_of_ne_type [DecidableEq A]
+    (s : DiscourseState A W) {et et' : EvidenceType} (h : et' ≠ et) (a : A)
+    (φ : Set W) :
+    (s.addEvidCommit et a φ).evidCommit et' = s.evidCommit et' := by
+  simp [addEvidCommit, Function.update_of_ne h]
+
+/-! #### Commitment-membership API -/
+
+@[simp] theorem committedTrue_addTruthCommit_self [DecidableEq A]
+    (s : DiscourseState A W) (a : A) (φ : Set W) (src : CommitmentSource) :
+    (s.addTruthCommit a φ src).CommittedTrue a φ := by
+  simp [CommittedTrue, TaggedSlate.toSlate, TaggedSlate.add]
+  exact List.mem_cons_self
+
+@[simp] theorem committedTrue_addTruthCommit_of_ne [DecidableEq A]
+    (s : DiscourseState A W) {a b : A} (h : b ≠ a) (φ ψ : Set W)
+    (src : CommitmentSource) :
+    (s.addTruthCommit a φ src).CommittedTrue b ψ ↔ s.CommittedTrue b ψ := by
+  simp [CommittedTrue, h]
+
+@[simp] theorem committedTrue_pushTable (s : DiscourseState A W) (φ ψ : Set W)
+    (a : A) : (s.pushTable φ).CommittedTrue a ψ ↔ s.CommittedTrue a ψ := by
+  simp [CommittedTrue]
+
+@[simp] theorem committedTrue_addEvidCommit [DecidableEq A]
+    (s : DiscourseState A W) (et : EvidenceType) (a b : A) (φ ψ : Set W) :
+    (s.addEvidCommit et a φ).CommittedTrue b ψ ↔ s.CommittedTrue b ψ := by
+  simp [CommittedTrue]
+
+@[simp] theorem committedEvid_addEvidCommit_self [DecidableEq A]
+    (s : DiscourseState A W) (et : EvidenceType) (a : A) (φ : Set W) :
+    (s.addEvidCommit et a φ).CommittedEvid et a φ := by
+  simp [CommittedEvid, CommitmentSlate.add]
+  exact List.mem_cons_self
+
+@[simp] theorem committedEvid_addTruthCommit [DecidableEq A]
+    (s : DiscourseState A W) (et : EvidenceType) (a b : A) (φ ψ : Set W)
+    (src : CommitmentSource) :
+    (s.addTruthCommit b φ src).CommittedEvid et a ψ ↔ s.CommittedEvid et a ψ := by
+  simp [CommittedEvid]
+
+@[simp] theorem committedEvid_pushTable (s : DiscourseState A W) (et : EvidenceType)
+    (a : A) (φ ψ : Set W) :
+    (s.pushTable φ).CommittedEvid et a ψ ↔ s.CommittedEvid et a ψ := by
+  simp [CommittedEvid]
+
+@[simp] theorem not_committedTrue_empty (a : A) (φ : Set W) :
+    ¬ (empty : DiscourseState A W).CommittedTrue a φ := by
+  simp [CommittedTrue, empty, TaggedSlate.toSlate, TaggedSlate.empty]
+  exact List.not_mem_nil
 
 end DiscourseState
 
-/-! ### § PRESENT and =si
+/-! ### PRESENT and =si
 
-Faller 2019 eq. 27 (initial), revised at eq. 34 with role assignments:
+Faller's final PRESENT, her display (34) (revising the initial three-clause
+(27), which committed the speaker's own `TC` and `AeC`):
 
 ```
 PRESENT(φ, a, K_i) = K_{i+1} such that
-  (i)   T_{i+1} = push(φ, T_i)               -- always: scope on Table
-  (ii)  TC_{p, i+1} = TC_{p, i} ∪ {φ}        -- DEFAULT: principal commits to truth
-  (iii) AeC_{a, i+1} = AeC_{a, i} ∪ {φ}      -- DEFAULT: animator commits to evidence
-  (iv)  a_{i+1} = p_{i+1}                    -- DEFAULT: animator = principal
+  (i)   T_{i+1}   = push(φ, T_i)            -- always: scope on Table
+  (ii)  TC_{p,i+1} = TC_{p,i} ∪ {φ}         -- principal commits to truth
+  (iii) AeC_{a,i+1} = AeC_{a,i} ∪ {φ}       -- animator commits to evidence
+  (iv)  a_{i+1}    = p_{i+1}                -- default: animator = principal
 ```
 
-The reportative `=si` (Faller 2019 eq. 35) is a modifier on PRESENT:
+The reportative `=si` (her (35)) is a modifier on PRESENT:
 
 ```
 =si(PRESENT)(φ, a, K_i) = PRESENT(φ, a, K_i) such that
-  (i)  RepC_{a, i+1} = RepC_{a, i} ∪ {φ}    -- override (iii): RepC, not AeC
-  (ii) a_{i+1} ≠ p_{i+1}                    -- override (iv): animator ≠ principal
+  (i)  RepC_{a,i+1} = RepC_{a,i} ∪ {φ}      -- override (34iii): RepC, not AeC
+  (ii) a_{i+1} ≠ p_{i+1}                    -- override (34iv): animator ≠ principal
 ```
 -/
 
-variable {E : Type*}
+namespace DiscourseState
 
-/-- @cite{faller-2019a} eq. 34 (final PRESENT): with all defaults active,
-    PRESENT updates Table + TC_principal + AeC_animator + sets
-    animator = principal.
+variable {A W : Type*}
 
-    The `roles : RoleAssignment E` argument carries Faller's eq. 34.iv
-    flexibility: the canonical speaker uses `RoleAssignment.canonical`;
-    a messenger or reportative use the explicit assignment. -/
-def PRESENT (φ : Set W) (roles : RoleAssignment E) (s : DiscourseState W E) :
-    DiscourseState W E :=
+/-- @cite{faller-2019a} (34): with defaults active, PRESENT pushes `φ` to the
+    Table, commits the principal to truth, and the animator to adequate
+    evidence. The `roles` argument carries (34iv) flexibility: the canonical
+    speaker uses `RoleAssignment.canonical`; a messenger uses the explicit
+    assignment. -/
+def PRESENT [DecidableEq A] (φ : Set W) (roles : RoleAssignment A)
+    (s : DiscourseState A W) : DiscourseState A W :=
   s.pushTable φ
     |>.addTruthCommit roles.principal φ
     |>.addEvidCommit .adequate roles.animator φ
 
-/-- @cite{faller-2019a} eq. 35 (CQ `=si` modifier on PRESENT): override
-    eq. 34.iii (commit to RepC instead of AeC) and require eq. 35.ii
-    (animator ≠ principal).
-
-    The role-distinctness requirement is encoded as a precondition: the
-    operator only updates the state when `roles.animator ≠ roles.principal`.
-    Otherwise it returns the input state unchanged (a defective speech
-    act, per Faller's analysis). Requires `DecidableEq E` to test the
-    role-distinctness premise — agents in any concrete discourse model
-    are decidable-equal. -/
-def reportativePRESENT [DecidableEq E] (φ : Set W) (roles : RoleAssignment E)
-    (s : DiscourseState W E) : DiscourseState W E :=
+/-- @cite{faller-2019a} (35): the CQ `=si` modifier on PRESENT overrides
+    (34iii) (commit to RepC, not AeC) and requires (35ii) (animator ≠
+    principal). The distinctness requirement is a precondition: the operator
+    updates only when `roles.animator ≠ roles.principal`, else returns the
+    input unchanged (a defective speech act). -/
+def reportativePRESENT [DecidableEq A] (φ : Set W) (roles : RoleAssignment A)
+    (s : DiscourseState A W) : DiscourseState A W :=
   if roles.animator = roles.principal then s
   else
     s.pushTable φ
-      |>.addTruthCommit roles.principal φ
+      |>.addTruthCommit roles.principal φ .otherGenerated
       |>.addEvidCommit .reportative roles.animator φ
 
-/-! ### § Headline theorems
+/-! ### Headline theorems
 
-These lift Faller's verbal claims to provable statements.
+These lift Faller's verbal claims to provable statements over the substrate
+discourse state.
 -/
 
-/-- @cite{faller-2019a} default-PRESENT puts φ in the principal's TC.
-    The headline (i) consequence of PRESENT — the speaker (=principal,
-    canonically) commits to truth. -/
-theorem present_commits_principal_to_truth
-    (φ : Set W) (e : E) (s : DiscourseState W E) :
-    φ ∈ (PRESENT φ (RoleAssignment.canonical e) s).truthCommit e := by
-  -- After PRESENT, the principal's TC is `s.truthCommit e ∪ {φ}` modulo
-  -- the propositional encoding. Witness via the `(a' = a ∧ ψ = φ)` disjunct.
-  show φ ∈ { ψ | ψ ∈ _ ∨ (e = e ∧ ψ = φ) }
-  exact Or.inr ⟨rfl, rfl⟩
+/-- @cite{faller-2019a} (34ii): default PRESENT puts `φ` in the principal's
+    truth commitments. -/
+theorem present_commits_principal_to_truth [DecidableEq A]
+    (φ : Set W) (e : A) (s : DiscourseState A W) :
+    (PRESENT φ (RoleAssignment.canonical e) s).CommittedTrue e φ := by
+  simp [PRESENT]
 
-/-- @cite{faller-2019a} default-PRESENT puts φ in the animator's AeC. -/
-theorem present_commits_animator_to_adequate_evidence
-    (φ : Set W) (e : E) (s : DiscourseState W E) :
-    φ ∈ (PRESENT φ (RoleAssignment.canonical e) s).evidCommit .adequate e := by
-  show φ ∈ { ψ | ψ ∈ _ ∨ (EvidenceType.adequate = .adequate ∧ e = e ∧ ψ = φ) }
-  exact Or.inr ⟨rfl, rfl, rfl⟩
+/-- @cite{faller-2019a} (34iii): default PRESENT puts `φ` in the animator's
+    adequate-evidence commitments. -/
+theorem present_commits_animator_to_adequate_evidence [DecidableEq A]
+    (φ : Set W) (e : A) (s : DiscourseState A W) :
+    (PRESENT φ (RoleAssignment.canonical e) s).CommittedEvid .adequate e φ := by
+  simp [PRESENT]
 
-/-- @cite{faller-2019a} eq. 35.i: `=si` adds to RepC. The animator's
-    RepC for φ DOES include φ after `=si(PRESENT(φ))` — the headline
-    finding that reportatives flag the evidence type. -/
-theorem reportative_commits_animator_to_reportative_evidence
-    [DecidableEq E] (φ : Set W) (anim prin : E) (h : anim ≠ prin)
-    (s : DiscourseState W E) :
-    φ ∈ (reportativePRESENT φ (RoleAssignment.messenger anim prin) s).evidCommit
-        .reportative anim := by
-  simp only [reportativePRESENT, RoleAssignment.messenger, if_neg h]
-  show φ ∈ { ψ | ψ ∈ _ ∨ (EvidenceType.reportative = .reportative ∧ anim = anim ∧ ψ = φ) }
-  exact Or.inr ⟨rfl, rfl, rfl⟩
+/-- @cite{faller-2019a} (35i): `=si` adds `φ` to the animator's reportative
+    commitments — the headline that reportatives flag the evidence type. -/
+theorem reportative_commits_animator_to_reportative_evidence [DecidableEq A]
+    (φ : Set W) (anim prin : A) (h : anim ≠ prin) (s : DiscourseState A W) :
+    (reportativePRESENT φ (RoleAssignment.messenger anim prin) s).CommittedEvid
+        .reportative anim φ := by
+  simp [reportativePRESENT, if_neg h]
 
-/-- @cite{faller-2019a} eq. 35: `=si` commits the *principal* (not the
-    animator) to truth. The headline finding: the reportative shifts
-    truth-commitment to the third-party principal. -/
-theorem reportative_commits_principal_to_truth
-    [DecidableEq E] (φ : Set W) (anim prin : E) (h : anim ≠ prin)
-    (s : DiscourseState W E) :
-    φ ∈ (reportativePRESENT φ (RoleAssignment.messenger anim prin) s).truthCommit
-        prin := by
-  simp only [reportativePRESENT, RoleAssignment.messenger, if_neg h]
-  show φ ∈ { ψ | ψ ∈ _ ∨ (prin = prin ∧ ψ = φ) }
-  exact Or.inr ⟨rfl, rfl⟩
+/-- @cite{faller-2019a} (35): `=si` commits the *principal* (not the animator)
+    to truth — the reportative shifts truth-commitment to the third party. -/
+theorem reportative_commits_principal_to_truth [DecidableEq A]
+    (φ : Set W) (anim prin : A) (h : anim ≠ prin) (s : DiscourseState A W) :
+    (reportativePRESENT φ (RoleAssignment.messenger anim prin) s).CommittedTrue
+        prin φ := by
+  simp [reportativePRESENT, if_neg h]
 
-/-- @cite{faller-2019a} *Absence of Commitment* (eq. 1.a, headline):
-    after `=si(PRESENT(φ))` with distinct animator and principal, the
-    ANIMATOR is NOT committed to truth of φ.
+/-- @cite{faller-2019a} *Absence of Commitment* (1a): after `=si(PRESENT(φ))`
+    with distinct animator and principal, the animator is *not* truth-committed
+    to `φ`. Starting from `empty`, the animator's truth commitments stay empty
+    because `=si`'s truth update fires only on the principal. -/
+theorem reportative_does_not_commit_animator_to_truth [DecidableEq A]
+    (φ : Set W) (anim prin : A) (h : anim ≠ prin) :
+    ¬ (reportativePRESENT φ (RoleAssignment.messenger anim prin)
+          DiscourseState.empty).CommittedTrue anim φ := by
+  simp [reportativePRESENT, h]
 
-    Formal version: starting from the empty state, `=si(PRESENT(φ))`
-    does not put φ in the animator's TC. -/
-theorem reportative_does_not_commit_animator_to_truth
-    [DecidableEq E] (φ : Set W) (anim prin : E) (h : anim ≠ prin) :
-    φ ∉ (reportativePRESENT φ (RoleAssignment.messenger anim prin)
-          DiscourseState.empty).truthCommit anim := by
-  simp only [reportativePRESENT, RoleAssignment.messenger, if_neg h]
-  -- The animator's TC update only fires on the principal's TC (per eq. 35),
-  -- so the only φ-witness branch requires `anim = prin`, contradicting `h`.
-  show ¬ φ ∈ { ψ | ψ ∈ _ ∨ (anim = prin ∧ ψ = φ) }
-  rintro (hempty | ⟨heq, _⟩)
-  · exact (hempty : φ ∈ (∅ : Set (Set W))).elim
-  · exact h heq
+/-- @cite{faller-2019a} (25): truth and evidential commitments are formally
+    independent — witnessed by the reportative configuration, where the animator
+    holds `φ` as reportative evidence yet is *not* truth-committed to it. -/
+theorem reportative_evidence_without_truth [DecidableEq A]
+    (φ : Set W) (anim prin : A) (h : anim ≠ prin) :
+    (reportativePRESENT φ (RoleAssignment.messenger anim prin)
+        DiscourseState.empty).CommittedEvid .reportative anim φ ∧
+      ¬ (reportativePRESENT φ (RoleAssignment.messenger anim prin)
+          DiscourseState.empty).CommittedTrue anim φ :=
+  ⟨reportative_commits_animator_to_reportative_evidence φ anim prin h _,
+   reportative_does_not_commit_animator_to_truth φ anim prin h⟩
+
+end DiscourseState
 
 end Faller2019
