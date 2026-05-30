@@ -49,17 +49,6 @@ namespace KeshetAbney2024.PIP
 
 open Semantics.Dynamic.Core
 
-/-- Local Bool-valued accessibility for PIP's computational modal evaluation.
-    PIP's modal operators use Bool predicates throughout for `List.all`/`List.any`
-    computation; this is not the parallel-universe pattern (we are not shadowing
-    Prop infrastructure with Bool versions), it is a legitimate Bool-internal
-    framework over which PIP's discourse-update operators compute. The Prop-valued
-    `Core.Logic.Intensional.AccessRel` is the canonical type for
-    Kripke-style modal logic; PIP needs the Bool variant for its `List.all`/`List.any`
-    truth-value pipeline. Lifted to Prop via `fun a b => R a b = true` when bridging
-    to `boxR`/`diamondR`. -/
-abbrev BAccessRel (W : Type*) := W → W → Bool
-
 
 -- ============================================================
 -- Formula Labels
@@ -88,7 +77,7 @@ structure Description (W : Type*) (E : Type*) where
   /-- The variable being described -/
   var : IVar
   /-- The constraining predicate (per assignment and world) -/
-  predicate : ICDRTAssignment W E → W → Bool
+  predicate : ICDRTAssignment W E → W → Prop
 
 
 -- ============================================================
@@ -211,7 +200,7 @@ In PIP, presuppositions are used for:
 2. Pronominal anaphora (presupposes antecedent is accessible)
 -/
 def presuppose {W E : Type*}
-    (pred : ICDRTAssignment W E → W → Bool) : PUpdate W E :=
+    (pred : ICDRTAssignment W E → W → Prop) : PUpdate W E :=
   λ d => d.mapInfo (λ c => { gw ∈ c | pred gw.1 gw.2 })
 
 
@@ -256,7 +245,7 @@ assignments may bind different entities to the same variable, and
 truth requires the predicate to hold across all of them.
 -/
 def pluralTruth {W E : Type*}
-    (c : IContext W E) (w : W) (pred : ICDRTAssignment W E → W → Bool) : Prop :=
+    (c : IContext W E) (w : W) (pred : ICDRTAssignment W E → W → Prop) : Prop :=
   ∀ g, (g, w) ∈ c → pred g w
 
 
@@ -308,8 +297,8 @@ This is a core PIP operation (paper items 25–27), not study-specific.
 GQ arguments in PIP take two summation terms: restrictor and scope.
 -/
 def summationFiltered {W E : Type*} (c : IContext W E) (v : IVar)
-    (φ : ICDRTAssignment W E → W → Bool) : Set (Entity E) :=
-  { e | ∃ g w, (g, w) ∈ c ∧ φ g w = true ∧ g.indiv v w = e }
+    (φ : ICDRTAssignment W E → W → Prop) : Set (Entity E) :=
+  { e | ∃ g w, (g, w) ∈ c ∧ φ g w ∧ g.indiv v w = e }
 
 /-- Summation without filtering: collects all values of variable v. -/
 def summationValues {W E : Type*} (c : IContext W E) (v : IVar) : Set (Entity E) :=
@@ -318,7 +307,7 @@ def summationValues {W E : Type*} (c : IContext W E) (v : IVar) : Set (Entity E)
 /-- Unfiltered summation equals trivially filtered summation. -/
 theorem summationValues_eq_trivial_filter {W E : Type*}
     (c : IContext W E) (v : IVar) :
-    summationValues c v = summationFiltered c v (λ _ _ => true) := by
+    summationValues c v = summationFiltered c v (λ _ _ => True) := by
   ext e; simp [summationValues, summationFiltered]
 
 /-- Any assignment in a non-empty context contributes to summation. -/

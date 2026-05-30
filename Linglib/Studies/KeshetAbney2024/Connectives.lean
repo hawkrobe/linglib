@@ -24,7 +24,7 @@ PIP's modals are generalized quantifiers over worlds (paper Section 2.5):
 - MIGHT^β_w(W₁, W₂) ≜ SOME(β_w ∩ W₁, W₂)
 - MUST^β_w(W₁, W₂) ≜ EVERY(β_w ∩ W₁, W₂)
 
-Our encoding parameterizes by an accessibility relation (`KeshetAbney2024.PIP.BAccessRel`,
+Our encoding parameterizes by an accessibility relation (`KeshetAbney2024.PIP.AccessRel`,
 equivalent to a Kratzer modal base β) and quantifies over accessible worlds.
 The grounding theorem `must_truth_agrees_boxR` proves that PIP's `must`
 produces the same truth conditions as `Core.Logic.Intensional.boxR`.
@@ -34,6 +34,7 @@ produces the same truth conditions as `Core.Logic.Intensional.boxR`.
 namespace KeshetAbney2024.PIP
 
 open Semantics.Dynamic.Core
+open Core.Logic.Intensional (AccessRel boxR diamondR boxR_T)
 
 variable {W E : Type*}
 
@@ -46,7 +47,7 @@ variable {W E : Type*}
 Atomic predicate: filters the info state to pairs satisfying the predicate.
 Labels are preserved.
 -/
-def atom (pred : ICDRTAssignment W E → W → Bool) : PUpdate W E :=
+def atom (pred : ICDRTAssignment W E → W → Prop) : PUpdate W E :=
   λ d => d.mapInfo (λ c => { gw ∈ c | pred gw.1 gw.2 })
 
 /--
@@ -115,7 +116,7 @@ negation and modal operators. This is what enables:
 - Paycheck pronouns: "John spent his paycheck. Bill saved it."
 -/
 def existsLabeled (α : FLabel) (v : IVar) (domain : Set E)
-    (bodyPred : ICDRTAssignment W E → W → Bool)
+    (bodyPred : ICDRTAssignment W E → W → Prop)
     (body : PUpdate W E) : PUpdate W E :=
   λ d =>
     let extended : IContext W E :=
@@ -163,18 +164,18 @@ would produce no accessible-world pairs for universal modals to check,
 making must/would vacuously satisfied and losing the modal subordination
 mechanism.
 -/
-def modalExpand (c : IContext W E) (access : BAccessRel W) : IContext W E :=
-  c ∪ { gw | ∃ w₀, (gw.1, w₀) ∈ c ∧ access w₀ gw.2 = true }
+def modalExpand (c : IContext W E) (access : AccessRel W) : IContext W E :=
+  c ∪ { gw | ∃ w₀, (gw.1, w₀) ∈ c ∧ access w₀ gw.2 }
 
 /-- Modal expansion includes all original pairs. -/
-theorem modalExpand_superset (c : IContext W E) (access : BAccessRel W) :
+theorem modalExpand_superset (c : IContext W E) (access : AccessRel W) :
     c ⊆ modalExpand c access := by
   intro x hx; left; exact hx
 
 /-- Modal expansion adds accessible-world pairs. -/
-theorem modalExpand_adds_accessible (c : IContext W E) (access : BAccessRel W)
+theorem modalExpand_adds_accessible (c : IContext W E) (access : AccessRel W)
     (g : ICDRTAssignment W E) (w₀ w₁ : W)
-    (hc : (g, w₀) ∈ c) (hacc : access w₀ w₁ = true) :
+    (hc : (g, w₀) ∈ c) (hacc : access w₀ w₁) :
     (g, w₁) ∈ modalExpand c access := by
   right; exact ⟨w₀, hc, hacc⟩
 
@@ -197,13 +198,13 @@ subordination work: "A wolf might come in" introduces the wolf (local)
 under the modal's world quantification (external). The wolf's descriptive
 content (via the label) is accessible in subsequent discourse.
 -/
-def must (access : BAccessRel W) (allWorlds : List W)
+def must (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) : PUpdate W E :=
   λ d =>
     let bodyResult := body { d with info := modalExpand d.info access }
     let result : IContext W E :=
       { gw ∈ d.info |
-        ∀ w₁ ∈ allWorlds, access gw.2 w₁ = true → (gw.1, w₁) ∈ bodyResult.info }
+        ∀ w₁ ∈ allWorlds, access gw.2 w₁ → (gw.1, w₁) ∈ bodyResult.info }
     -- Labels from the body propagate outward
     { info := result, labels := bodyResult.labels }
 
@@ -216,13 +217,13 @@ Modal possibility (might): existential quantification over accessible worlds.
 Like `must`, the body is evaluated on an expanded context (via `modalExpand`)
 and the world variable is external.
 -/
-def might (access : BAccessRel W) (allWorlds : List W)
+def might (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) : PUpdate W E :=
   λ d =>
     let bodyResult := body { d with info := modalExpand d.info access }
     let result : IContext W E :=
       { gw ∈ d.info |
-        ∃ w₁ ∈ allWorlds, access gw.2 w₁ = true ∧ (gw.1, w₁) ∈ bodyResult.info }
+        ∃ w₁ ∈ allWorlds, access gw.2 w₁ ∧ (gw.1, w₁) ∈ bodyResult.info }
     { info := result, labels := bodyResult.labels }
 
 /--
@@ -233,7 +234,7 @@ In the paper's modal subordination analysis, "It would eat you first" is
 analyzed as MUST with the same accessibility relation from "might" in the
 preceding sentence. So `would` = `must` with the inherited modal base.
 -/
-def would (access : BAccessRel W) (allWorlds : List W)
+def would (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) : PUpdate W E :=
   must access allWorlds body
 
@@ -263,12 +264,12 @@ Labels survive modal operators.
 Labels registered inside a modal scope propagate to the outer
 discourse state. This is what enables modal subordination.
 -/
-theorem labels_survive_must (access : BAccessRel W) (allWorlds : List W)
+theorem labels_survive_must (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) (desc : Description W E)
     (h : (body { d with info := modalExpand d.info access }).labels.lookup α = some desc) :
     (must access allWorlds body d).labels.lookup α = some desc := h
 
-theorem labels_survive_might (access : BAccessRel W) (allWorlds : List W)
+theorem labels_survive_might (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) (desc : Description W E)
     (h : (body { d with info := modalExpand d.info access }).labels.lookup α = some desc) :
     (might access allWorlds body d).labels.lookup α = some desc := h
@@ -280,36 +281,23 @@ end Properties
 -- Grounding: PIP modals ↔ Core.Logic.Intensional.boxR/diamondR
 -- ============================================================
 
-open Core.Logic.Intensional (boxR diamondR boxR_T)
-
-/-- Lift a Bool-valued accessibility to its Prop-valued equivalent. -/
-private def liftR {W : Type*} (R : BAccessRel W) : W → W → Prop :=
-  fun a b => R a b = true
-
-/-- Lift a Bool-valued world predicate to its Prop-valued equivalent. -/
-private def liftP {W : Type*} (p : W → Bool) : W → Prop :=
-  fun w => p w = true
-
 /--
 PIP's `must` produces the same truth conditions as `Core.Logic.Intensional.boxR`.
 
 Specifically: a pair (g, w₀) survives `must R allWorlds (atom p)` iff
-`boxR R (fun w => p g w = true) w₀` — the body predicate holds at
-all R-accessible worlds. This connects PIP's discourse-update modals to the
-standard Kripke semantics used throughout `Semantics/Modality/`.
+`boxR R (p g) w₀` — the body predicate holds at all R-accessible worlds.
+This connects PIP's discourse-update modals to the standard Kripke semantics
+used throughout `Semantics/Modality/`. Since accessibility is now the
+project-canonical Prop-valued `AccessRel`, the identity is direct — no lift.
 -/
 theorem must_truth_agrees_boxR [Fintype W]
-    (R : BAccessRel W) (p : ICDRTAssignment W E → W → Bool)
+    (R : AccessRel W) (p : ICDRTAssignment W E → W → Prop)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
     ((g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) ↔
-    boxR (liftR R) (liftP (p g)) w₀ := by
+    boxR R (p g) w₀ := by
   constructor
-  · intro ⟨_, h⟩
-    intro v hRv
-    have hmem : v ∈ (Finset.univ : Finset W).toList.filter (R w₀) := by
-      simp only [List.mem_filter]
-      exact ⟨Finset.mem_toList.mpr (Finset.mem_univ v), hRv⟩
+  · intro ⟨_, h⟩ v hRv
     have := h v (Finset.mem_toList.mpr (Finset.mem_univ v)) hRv
     unfold atom Discourse.mapInfo at this
     exact this.2
@@ -317,18 +305,17 @@ theorem must_truth_agrees_boxR [Fintype W]
     refine ⟨hd, ?_⟩
     intro w₁ _hw₁ hacc
     unfold atom Discourse.mapInfo
-    refine ⟨modalExpand_adds_accessible d.info R g w₀ w₁ hd hacc, ?_⟩
-    exact hbox w₁ hacc
+    exact ⟨modalExpand_adds_accessible d.info R g w₀ w₁ hd hacc, hbox w₁ hacc⟩
 
 /--
 PIP's `might` agrees with `diamondR`.
 -/
 theorem might_truth_agrees_diamondR [Fintype W]
-    (R : BAccessRel W) (p : ICDRTAssignment W E → W → Bool)
+    (R : AccessRel W) (p : ICDRTAssignment W E → W → Prop)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
     ((g, w₀) ∈ (might R (Finset.univ : Finset W).toList (atom p) d).info) ↔
-    diamondR (liftR R) (liftP (p g)) w₀ := by
+    diamondR R (p g) w₀ := by
   constructor
   · intro ⟨_, w₁, _, hacc, hmem⟩
     unfold atom Discourse.mapInfo at hmem
@@ -340,24 +327,23 @@ theorem might_truth_agrees_diamondR [Fintype W]
 
 /--
 Realistic modal base (T axiom) for PIP: if R is reflexive and `must R (atom p)`
-holds at (g, w₀), then p g w₀ = true.
+holds at (g, w₀), then `p g w₀`.
 
 This derives PIP's key insight — must allows anaphora because a realistic
 modal base guarantees the description holds at the evaluation world — from
 `Core.Logic.Intensional.boxR_T`.
 -/
 theorem must_realistic_of_refl [Fintype W]
-    (R : BAccessRel W) [Std.Refl (liftR R)]
-    (p : ICDRTAssignment W E → W → Bool)
+    (R : AccessRel W) [Std.Refl R]
+    (p : ICDRTAssignment W E → W → Prop)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info)
     (hmust : (g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) :
-    p g w₀ = true :=
-  boxR_T (liftR R) (liftP (p g)) w₀
-    ((must_truth_agrees_boxR R p d g w₀ hd).mp hmust)
+    p g w₀ :=
+  boxR_T R (p g) w₀ ((must_truth_agrees_boxR R p d g w₀ hd).mp hmust)
 
 /--
-Pointwise realistic base: if R w₀ w₀ = true and must holds at w₀,
+Pointwise realistic base: if `R w₀ w₀` and must holds at w₀,
 the body predicate holds at w₀.
 
 This is the version that applies to non-globally-reflexive relations
@@ -365,11 +351,11 @@ This is the version that applies to non-globally-reflexive relations
 @cite{kratzer-1991}'s realistic modal base without requiring global reflexivity.
 -/
 theorem must_realistic_at [Fintype W]
-    (R : BAccessRel W) (p : ICDRTAssignment W E → W → Bool)
+    (R : AccessRel W) (p : ICDRTAssignment W E → W → Prop)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
-    (hRefl_at : R w₀ w₀ = true)
+    (hRefl_at : R w₀ w₀)
     (hmust : (g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) :
-    p g w₀ = true := by
+    p g w₀ := by
   obtain ⟨_, h⟩ := hmust
   have := h w₀ (Finset.mem_toList.mpr (Finset.mem_univ w₀)) hRefl_at
   unfold atom Discourse.mapInfo at this

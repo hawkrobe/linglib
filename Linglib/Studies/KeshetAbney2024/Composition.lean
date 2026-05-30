@@ -26,6 +26,8 @@ type and connected to it via bridge theorems.
 
 namespace KeshetAbney2024.PIP
 
+open Core.Logic.Intensional (AccessRel boxR diamondR)
+
 
 -- ============================================================
 -- §1: Sigma Evaluation (paper's Σ operator and ZF expansion)
@@ -33,7 +35,7 @@ namespace KeshetAbney2024.PIP
 
 section Sigma
 
-variable {W D : Type*} [FiniteDomain D] [Fintype W]
+variable {W D : Type*}
 
 /--
 Sigma evaluation: Σxφ = {d ∈ D | ⟦φ(d)⟧^w = 1}.
@@ -48,85 +50,62 @@ performs the same collection on the dynamic `IContext` level. Agreement
 between the two is part of the static↔dynamic correspondence.
 -/
 def sigmaEval (body : D → PIPExprF W D) (w : W) : Set D :=
-  { d | (body d).truth w = true }
+  { d | (body d).truth w }
 
 @[simp]
 theorem sigmaEval_mem (body : D → PIPExprF W D) (w : W) (d : D) :
-    d ∈ sigmaEval body w ↔ (body d).truth w = true :=
+    d ∈ sigmaEval body w ↔ (body d).truth w :=
   Iff.rfl
 
 /-- ∃xφ is true iff the sigma set is nonempty. -/
 theorem exists_iff_sigma_nonempty (body : D → PIPExprF W D) (w : W) :
-    (PIPExprF.exists_ body).truth w = true ↔ (sigmaEval body w).Nonempty := by
-  simp only [PIPExprF.truth, sigmaEval, Set.Nonempty, Set.mem_setOf_eq]
-  constructor
-  · intro h
-    rw [List.any_eq_true] at h
-    obtain ⟨d, _, hd⟩ := h
-    exact ⟨d, hd⟩
-  · intro ⟨d, hd⟩
-    rw [List.any_eq_true]
-    exact ⟨d, FiniteDomain.complete d, hd⟩
+    (PIPExprF.exists_ body).truth w ↔ (sigmaEval body w).Nonempty :=
+  Iff.rfl
 
 /-- ∀xφ is true iff every individual is in the sigma set. -/
 theorem forall_iff_sigma_univ (body : D → PIPExprF W D) (w : W) :
-    (PIPExprF.forall_ body).truth w = true ↔ sigmaEval body w = Set.univ := by
-  simp only [PIPExprF.truth, sigmaEval, Set.eq_univ_iff_forall, Set.mem_setOf_eq]
-  constructor
-  · intro h d
-    rw [List.all_eq_true] at h
-    exact h d (FiniteDomain.complete d)
-  · intro h
-    rw [List.all_eq_true]
-    intro d _
-    exact h d
+    (PIPExprF.forall_ body).truth w ↔ sigmaEval body w = Set.univ := by
+  rw [Set.eq_univ_iff_forall]; rfl
 
 /-- Σx(φ ∧ ψ) = Σxφ ∩ Σxψ. -/
 theorem sigmaEval_conj (φ ψ : D → PIPExprF W D) (w : W) :
     sigmaEval (λ d => PIPExprF.conj (φ d) (ψ d)) w =
     sigmaEval φ w ∩ sigmaEval ψ w := by
   ext d
-  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_inter_iff]
-  show ((φ d).truth w && (ψ d).truth w) = true ↔ (φ d).truth w = true ∧ (ψ d).truth w = true
-  simp only [Bool.and_eq_true]
+  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_inter_iff, PIPExprF.truth]
 
 /-- Σx(φ ∨ ψ) = Σxφ ∪ Σxψ. -/
 theorem sigmaEval_disj (φ ψ : D → PIPExprF W D) (w : W) :
     sigmaEval (λ d => PIPExprF.disj (φ d) (ψ d)) w =
     sigmaEval φ w ∪ sigmaEval ψ w := by
   ext d
-  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_union]
-  show ((φ d).truth w || (ψ d).truth w) = true ↔ (φ d).truth w = true ∨ (ψ d).truth w = true
-  simp only [Bool.or_eq_true]
+  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_union, PIPExprF.truth]
 
 /-- Σx(¬φ) = (Σxφ)ᶜ. -/
 theorem sigmaEval_neg (φ : D → PIPExprF W D) (w : W) :
     sigmaEval (λ d => PIPExprF.neg (φ d)) w = (sigmaEval φ w)ᶜ := by
   ext d
-  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_compl_iff]
-  show (!(φ d).truth w) = true ↔ ¬((φ d).truth w = true)
-  cases (φ d).truth w <;> simp
+  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_compl_iff, PIPExprF.truth]
 
 /-- Σx(⊤) = D (everything satisfies a tautology). -/
 theorem sigmaEval_true (w : W) :
-    sigmaEval (D := D) (λ _ => PIPExprF.pred (λ _ => true)) w = Set.univ := by
-  ext d; simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_univ, iff_true]; rfl
+    sigmaEval (D := D) (λ _ => PIPExprF.pred (λ _ => True)) w = Set.univ := by
+  ext d; simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_univ, iff_true, PIPExprF.truth]
 
 /-- Σx(⊥) = ∅ (nothing satisfies a contradiction). -/
 theorem sigmaEval_false (w : W) :
-    sigmaEval (D := D) (λ _ => PIPExprF.pred (λ _ => false)) w = ∅ := by
-  ext d; simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]; exact
-    Bool.false_ne_true
+    sigmaEval (D := D) (λ _ => PIPExprF.pred (λ _ => False)) w = ∅ := by
+  ext d
+  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, PIPExprF.truth,
+    not_false_iff]
 
 /-- Label definitions are truth-transparent for sigma. -/
 theorem sigmaEval_labelDef (α : FLabel) (φ : D → PIPExprF W D) (w : W) :
-    sigmaEval (λ d => PIPExprF.labelDef α (φ d)) w = sigmaEval φ w := by
-  ext d; show (φ d).truth w = true ↔ (φ d).truth w = true; exact Iff.rfl
+    sigmaEval (λ d => PIPExprF.labelDef α (φ d)) w = sigmaEval φ w := rfl
 
 /-- Presuppositions are truth-transparent for sigma. -/
-theorem sigmaEval_presup (φ : D → PIPExprF W D) (ψ : W → Bool) (w : W) :
-    sigmaEval (λ d => PIPExprF.presup (φ d) ψ) w = sigmaEval φ w := by
-  ext d; show (φ d).truth w = true ↔ (φ d).truth w = true; exact Iff.rfl
+theorem sigmaEval_presup (φ : D → PIPExprF W D) (ψ : W → Prop) (w : W) :
+    sigmaEval (λ d => PIPExprF.presup (φ d) ψ) w = sigmaEval φ w := rfl
 
 end Sigma
 
@@ -181,18 +160,18 @@ theorem gq_duality (R S : Set α) :
 
 -- Sigma bridge: connecting set-based GQs to PIPExprF quantifiers
 
-variable {W D : Type*} [FiniteDomain D] [Fintype W]
+variable {W D : Type*}
 
 /-- EVERY over sigma sets ↔ pointwise universal implication. -/
 theorem setEvery_sigma (body_R body_S : D → PIPExprF W D) (w : W) :
     setEvery (sigmaEval body_R w) (sigmaEval body_S w) ↔
-    ∀ d, (body_R d).truth w = true → (body_S d).truth w = true := by
+    ∀ d, (body_R d).truth w → (body_S d).truth w := by
   simp [setEvery, Set.subset_def, sigmaEval]
 
 /-- SOME over sigma sets ↔ pointwise existential conjunction. -/
 theorem setSome_sigma (body_R body_S : D → PIPExprF W D) (w : W) :
     setSome (sigmaEval body_R w) (sigmaEval body_S w) ↔
-    ∃ d, (body_R d).truth w = true ∧ (body_S d).truth w = true := by
+    ∃ d, (body_R d).truth w ∧ (body_S d).truth w := by
   simp [setSome, Set.Nonempty, sigmaEval]
 
 end GQ
@@ -213,7 +192,7 @@ Three-argument necessity: the modal base β restricted by W₁ is
 included in W₂. When W₁ = ⊤, reduces to β ⊆ W₂.
 
 The modal base β corresponds to `accessRelToBase R w` for an
-`BAccessRel W` from `Core.Logic.Intensional`. `PIP.Connectives.must`
+`AccessRel W` from `Core.Logic.Intensional`. `PIP.Connectives.must`
 provides the dynamic implementation; `must_truth_iff_mustBase` below
 bridges the static `PIPExprF.must` to this set-based formulation.
 Cf. `Semantics.Modality.Kratzer.simpleNecessity` for the
@@ -258,37 +237,25 @@ theorem modal_duality (β W₁ W₂ : Set W) :
   exact gq_duality (β ∩ W₁) W₂
 
 /-- Convert an accessibility relation to a modal base at world w. -/
-def accessRelToBase (R : BAccessRel W) (w : W) : Set W :=
-  { w' | R w w' = true }
+def accessRelToBase (R : AccessRel W) (w : W) : Set W :=
+  { w' | R w w' }
 
-/-- `PIPExprF.must R φ` truth agrees with three-argument `mustBase`. -/
-theorem must_truth_iff_mustBase {D : Type*} [FiniteDomain D] [Fintype W]
-    (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
-    (PIPExprF.must R φ).truth w = true ↔
-    mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } := by
-  simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def, Set.mem_setOf_eq]
-  constructor
-  · intro h w' hw'
-    exact List.all_eq_true.mp h w' (List.mem_filter.mpr ⟨Finset.mem_toList.mpr (Finset.mem_univ w'), hw'⟩)
-  · intro h
-    apply List.all_eq_true.mpr
-    intro w' hw'
-    exact h w' (List.mem_filter.mp hw').2
+/-- `PIPExprF.must R φ` truth agrees with three-argument `mustBase`.
+    Direct, since `must` truth is `boxR` and `mustBase` is set inclusion. -/
+theorem must_truth_iff_mustBase {D : Type*}
+    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (PIPExprF.must R φ).truth w ↔
+    mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } := by
+  simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def, Set.mem_setOf_eq,
+    PIPExprF.truth, boxR]
 
 /-- `PIPExprF.might R φ` truth agrees with three-argument `mightBase`. -/
-theorem might_truth_iff_mightBase {D : Type*} [FiniteDomain D] [Fintype W]
-    (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
-    (PIPExprF.might R φ).truth w = true ↔
-    mightBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } := by
+theorem might_truth_iff_mightBase {D : Type*}
+    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (PIPExprF.might R φ).truth w ↔
+    mightBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } := by
   simp only [mightBase, accessRelToBase, Set.inter_univ, Set.Nonempty,
-             Set.mem_inter_iff, Set.mem_setOf_eq]
-  constructor
-  · intro h
-    obtain ⟨w', hw'_mem, hw'_sat⟩ := List.any_eq_true.mp h
-    exact ⟨w', (List.mem_filter.mp hw'_mem).2, hw'_sat⟩
-  · intro ⟨w', hw'R, hw'φ⟩
-    apply List.any_eq_true.mpr
-    exact ⟨w', List.mem_filter.mpr ⟨Finset.mem_toList.mpr (Finset.mem_univ w'), hw'R⟩, hw'φ⟩
+    Set.mem_inter_iff, Set.mem_setOf_eq, PIPExprF.truth, diamondR]
 
 end ThreeArgModals
 
@@ -306,7 +273,7 @@ FX (↑f): lift a thematic-role predicate into a formula modifier.
 
   ↑f = λφλx. f(x) ∧ φ     (base case, when f : ⟨e, t⟩)
 
-Given a predicate `f : D → W → Bool` (e.g., AGENT, PATIENT),
+Given a predicate `f : D → W → Prop` (e.g., AGENT, PATIENT),
 `fxApply f φ x` conjoins `f(x)` with formula `φ`, producing a
 restricted variable: x is constrained to satisfy both `f` and `φ`.
 
@@ -319,27 +286,24 @@ Cf. `Semantics.ArgumentStructure.ThematicRel` for the
 general Davidsonian role type `Entity → Event → Prop`; FX is PIP's
 mechanism for composing such roles with restricted variables.
 -/
-def fxApply (f : D → W → Bool) (φ : W → Bool) (x : D) : W → Bool :=
-  λ w => f x w && φ w
+def fxApply (f : D → W → Prop) (φ : W → Prop) (x : D) : W → Prop :=
+  λ w => f x w ∧ φ w
 
 /-- FX entails the role predicate. -/
-theorem fxApply_entails_role (f : D → W → Bool) (φ : W → Bool) (x : D) (w : W)
-    (h : fxApply f φ x w = true) : f x w = true := by
-  simp only [fxApply, Bool.and_eq_true] at h; exact h.1
+theorem fxApply_entails_role (f : D → W → Prop) (φ : W → Prop) (x : D) (w : W)
+    (h : fxApply f φ x w) : f x w := h.1
 
 /-- FX entails the formula body. -/
-theorem fxApply_entails_body (f : D → W → Bool) (φ : W → Bool) (x : D) (w : W)
-    (h : fxApply f φ x w = true) : φ w = true := by
-  simp only [fxApply, Bool.and_eq_true] at h; exact h.2
+theorem fxApply_entails_body (f : D → W → Prop) (φ : W → Prop) (x : D) (w : W)
+    (h : fxApply f φ x w) : φ w := h.2
 
 /-- Iterated FX accumulates assertions: ↑g(↑f(φ))(x) = g(x) ∧ f(x) ∧ φ. -/
-theorem fxApply_twice (f g : D → W → Bool) (φ : W → Bool) (x : D) (w : W) :
-    fxApply g (fxApply f φ x) x w = (g x w && f x w && φ w) := by
-  simp [fxApply, Bool.and_assoc]
+theorem fxApply_twice (f g : D → W → Prop) (φ : W → Prop) (x : D) (w : W) :
+    fxApply g (fxApply f φ x) x w = (g x w ∧ f x w ∧ φ w) := rfl
 
-/-- FX with tautological formula: ↑f(⊤)(x) = f(x). -/
-theorem fxApply_true (f : D → W → Bool) (x : D) (w : W) :
-    fxApply f (λ _ => true) x w = f x w := by
+/-- FX with tautological formula: ↑f(⊤)(x) ↔ f(x). -/
+theorem fxApply_true (f : D → W → Prop) (x : D) (w : W) :
+    fxApply f (λ _ => True) x w ↔ f x w := by
   simp [fxApply]
 
 end FX
@@ -378,11 +342,11 @@ denotation = `sigmaEval` by the paper's own analysis.
 
 section Subordination
 
-variable {W D : Type*} [FiniteDomain D] [Fintype W]
+variable {W D : Type*}
 
 /-- Sigma is monotone: stronger body conditions produce smaller sets. -/
 theorem sigma_monotone (φ ψ : D → PIPExprF W D) (w : W)
-    (h : ∀ d, (ψ d).truth w = true → (φ d).truth w = true) :
+    (h : ∀ d, (ψ d).truth w → (φ d).truth w) :
     sigmaEval ψ w ⊆ sigmaEval φ w :=
   λ _ hd => h _ hd
 
