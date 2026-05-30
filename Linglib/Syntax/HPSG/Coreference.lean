@@ -15,6 +15,7 @@ the Chomskyan Principle C. No separate "Principle C" is needed.
 import Linglib.Syntax.HPSG.Core.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Features.CoreferenceStatus
 import Linglib.Paradigms.AcceptabilityJudgment
@@ -36,30 +37,27 @@ private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
 namespace HPSG.Coreference
 
+open Features (NominalType)
+open Fragments.English.NominalClassification (isNominalCat classifyNominal phiAgree)
+
 -- ============================================================================
 -- MODE Classification
 -- ============================================================================
 
 section ModeClassification
 
-/-- Is this a nominal category? -/
-def isNominalCat (c : UD.UPOS) : Bool :=
-  c == .PROPN || c == .NOUN || c == .PRON
-
-/-- Derive MODE feature from a word.
+/-- Derive MODE feature from a word, via the shared `classifyNominal`.
 
     Per @cite{sag-wasow-bender-2003} Ch. 7:
     - Reflexives and reciprocals → [MODE ana]
     - Personal pronouns and R-expressions → [MODE ref] -/
 def classifyMode (w : Word) : Option HPSG.Mode :=
-  if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
-    some .ana
-  else if w.form ∈ ["each other", "one another"] then
-    some .ana
-  else if isNominalCat w.cat then
-    some .ref
-  else
-    none
+  match classifyNominal w with
+  | some .reflexive   => some .ana
+  | some .reciprocal  => some .ana
+  | some .pronoun     => some .ref
+  | some .rExpression => some .ref
+  | none              => none
 
 /-- Is this word an anaphor ([MODE ana])? -/
 def isAnaphor (w : Word) : Bool :=
@@ -67,42 +65,15 @@ def isAnaphor (w : Word) : Bool :=
 
 /-- Is this word a reflexive specifically? -/
 def isReflexive (w : Word) : Bool :=
-  w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"]
+  match classifyNominal w with
+  | some .reflexive => true
+  | _               => false
 
 /-- Is this word a reciprocal? -/
 def isReciprocal (w : Word) : Bool :=
-  w.form ∈ ["each other", "one another"]
-
-/-- Types of nominal expressions for coreference.
-
-    Implementation convenience for dispatching agreement checks.
-    Both `pronoun` and `rExpression` map to [MODE ref] in SWB2003. -/
-inductive NominalType where
-  | reflexive   -- himself, herself, themselves
-  | reciprocal  -- each other, one another
-  | pronoun     -- he, she, they, him, her, them
-  | rExpression -- John, Mary, the cat
-  deriving Repr, DecidableEq
-
-/-- Classify a word as a nominal type.
-
-    This maps to MODE as follows:
-    - reflexive, reciprocal → [MODE ana]
-    - pronoun, rExpression → [MODE ref]
-
-    The pronoun/rExpression distinction is useful for implementation
-    (e.g., agreement checks) but both are [MODE ref] in SWB2003. -/
-def classifyNominal (w : Word) : Option NominalType :=
-  if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
-    some .reflexive
-  else if w.form ∈ ["each other", "one another"] then
-    some .reciprocal
-  else if w.form ∈ ["he", "she", "they", "him", "her", "them", "it"] then
-    some .pronoun
-  else if isNominalCat w.cat then
-    some .rExpression
-  else
-    none
+  match classifyNominal w with
+  | some .reciprocal => true
+  | _                => false
 
 end ModeClassification
 
@@ -172,31 +143,6 @@ end ArgStOutranking
 -- Anaphoric Agreement Principle
 -- ============================================================================
 
-section Agreement
-
-/-- Anaphoric Agreement Principle (AAP): coindexed elements must agree.
-
-    Per @cite{sag-wasow-bender-2003} Ch. 7: "Coindexed NPs agree." -/
-def phiAgree (w1 w2 : Word) : Bool :=
-  let personMatch := match w1.features.person, w2.features.person with
-    | some p1, some p2 => p1 == p2
-    | _, _ => true  -- Compatible if unspecified
-  let numberMatch := match w1.features.number, w2.features.number with
-    | some n1, some n2 => n1 == n2
-    | _, _ => true
-  let genderMatch :=
-    if w2.form == "himself" then
-      w1.form ∈ ["John", "he", "him"]  -- masculine antecedents
-    else if w2.form == "herself" then
-      w1.form ∈ ["Mary", "she", "her"]  -- feminine antecedents
-    else if w2.form ∈ ["themselves", "ourselves"] then
-      w1.features.number == some .pl  -- plural
-    else
-      true
-  personMatch && numberMatch && genderMatch
-
-end Agreement
-
 -- ============================================================================
 -- Binding Principles
 -- ============================================================================
@@ -215,7 +161,7 @@ def reflexiveLicensed (clause : SimpleClause) : Bool :=
     | some .reflexive =>
       subjectOutranksObject clause &&
       sameArgSt clause &&
-      phiAgree clause.subject obj
+      decide (phiAgree clause.subject obj)
     | _ => true
 
 /-- Principle A for reciprocals: a reciprocal ([MODE ana]) must be outranked
@@ -385,7 +331,7 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Features.Core
       match classifyMode obj with
       | some .ana =>
         -- Principle A: anaphor must be outranked — check agreement
-        if subjectOutranksObject clause && sameArgSt clause && phiAgree clause.subject obj
+        if subjectOutranksObject clause && sameArgSt clause && decide (phiAgree clause.subject obj)
         then .obligatory
         else .blocked
       | some .ref =>

@@ -1,4 +1,5 @@
 import Linglib.Typology.Pronoun.Basic
+import Linglib.Typology.Pronoun.WALS
 import Linglib.Core.Word
 
 /-! # Italian Pronoun and Clitic Fragment
@@ -219,4 +220,39 @@ theorem has_both_numbers :
     allPronouns.any (·.number == some .sg) = true ∧
     allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
 
+-- ============================================================================
+-- § 5: Cardinaletti–Starke deficiency classes
+-- ============================================================================
+
+/-- Italian's two pronoun series instantiate two Cardinaletti–Starke deficiency
+    classes (@cite{cardinaletti-starke-1999}): the strong forms (`allPronouns`)
+    are `.strong`; the object clitics (`paradigm`) are `.clitic`. -/
+def strongStrength : Strength := .strong
+
+/-- The object-clitic series is the maximally deficient `.clitic` class. -/
+def cliticStrength : Strength := .clitic
+
+/-- The clitic series is structurally more deficient than the strong series
+    (lower `Strength.rank`): the deficiency ordering behind their complementary
+    distribution (clitics host-adjacent and unfocusable, strong forms free). -/
+theorem clitics_more_deficient :
+    Strength.rank cliticStrength < Strength.rank strongStrength := by decide
+
 end Fragments.Italian.Pronouns
+
+namespace Fragments.Italian
+
+/-- Italian (Indo-European, Romance) pronoun typology profile, read off this
+    fragment's lexical inventory: no inclusive/exclusive distinction (*noi* is
+    a single 1pl), a binary T/V politeness distinction (*tu*/*Lei*), and gender
+    in the 3rd-person singular (*lui*/*lei*). Fields not evidenced by the
+    inventory are left unsurveyed (`.none`). -/
+def pronounProfile : Pronoun.Profile :=
+  { language := "Italian"
+  , family := "Indo-European"
+  , iso := "ita"
+  , inclusiveExclusive := some .noDistinction
+  , politeness := some .binary
+  , genderInPronouns := some .in3rdPersonSgOnly }
+
+end Fragments.Italian

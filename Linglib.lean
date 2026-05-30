@@ -229,7 +229,8 @@ import Linglib.Typology.Directives
 import Linglib.Typology.Indefinite
 import Linglib.Typology.Profile
 import Linglib.Typology.Universal
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.Basic
+import Linglib.Typology.Numeral.WALS
 import Linglib.Typology.Plurals
 import Linglib.Typology.PolarityMarking
 import Linglib.Typology.Possession
@@ -289,6 +290,9 @@ import Linglib.Typology.Relativization.ExtractionBridge
 import Linglib.Core.Relativization.Hierarchy
 import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Scales.Roundness
+import Linglib.Core.Scales.Predicate
+import Linglib.Core.Scales.Comparison
+import Linglib.Core.Scales.Scale
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Linglib.Core.Scales.EpistemicScale.Entailments
 import Linglib.Core.Scales.EpistemicScale.FinsetBridge
@@ -633,6 +637,7 @@ import Linglib.Fragments.English.Numerals
 import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.English.Reference
 import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.PropositionalLexemes
 import Linglib.Fragments.English.QuestionParticles
 import Linglib.Fragments.English.Scales
@@ -1289,6 +1294,7 @@ import Linglib.Studies.Ostrove2026
 import Linglib.Studies.Allotey2021
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Studies.FaginHalpern1994
+import Linglib.Studies.Faller2019
 import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Studies.GoldbergShirtz2025
 import Linglib.Studies.KayFillmore1999
@@ -1391,6 +1397,7 @@ import Linglib.Studies.Wellwood2015
 import Linglib.Studies.FoxHackl2006
 import Linglib.Studies.VonStechow1984
 import Linglib.Studies.Buring2007
+import Linglib.Studies.Buring2012
 import Linglib.Studies.Bobaljik2012
 import Linglib.Studies.BhattPancheva2004
 import Linglib.Studies.Lechner2004
@@ -2035,7 +2042,6 @@ import Linglib.Discourse.Centering.Instances.InformationStatus
 -- Theories: Discourse — SDRT
 import Linglib.Discourse.Rhetorical.Defs
 import Linglib.Discourse.Rhetorical.RightFrontier
--- Theories: Discourse — Faller/Murray illocutionary operators
 -- Theories: Interfaces — Centering ↔ DRT bridge
 import Linglib.Discourse.Centering.DRSExpr
 -- Theories: Dynamic Semantics
@@ -2079,12 +2085,12 @@ import Linglib.Studies.Charlow2021.UpdateTheoretic
 import Linglib.Studies.Charlow2021.HigherOrder
 import Linglib.Studies.Charlow2021.SubtypePolymorphism
 import Linglib.Studies.Charlow2021.PostSuppositional
-import Linglib.Semantics.PIP.Basic
-import Linglib.Semantics.PIP.Bridges
-import Linglib.Semantics.PIP.Composition
-import Linglib.Semantics.PIP.Connectives
-import Linglib.Semantics.PIP.Expr
-import Linglib.Semantics.PIP.Felicity
+import Linglib.Studies.KeshetAbney2024.Basic
+import Linglib.Studies.KeshetAbney2024.Bridges
+import Linglib.Studies.KeshetAbney2024.Composition
+import Linglib.Studies.KeshetAbney2024.Connectives
+import Linglib.Studies.KeshetAbney2024.Expr
+import Linglib.Studies.KeshetAbney2024.Felicity
 import Linglib.Semantics.Dynamic.PLA.Basic
 import Linglib.Semantics.Dynamic.PLA.Belief
 import Linglib.Semantics.Dynamic.PLA.DeepTheorems

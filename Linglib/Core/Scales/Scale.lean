@@ -3,6 +3,7 @@ import Linglib.Core.Scales.Rat01
 import Linglib.Core.Scales.Comparative
 import Linglib.Core.Scales.DirectedMeasure
 import Linglib.Core.Scales.Predicate
+import Linglib.Core.Scales.Comparison
 import Linglib.Core.Scales.Bounds
 import Linglib.Core.Scales.HasMeasure
 import Linglib.Core.Scales.HasComparison

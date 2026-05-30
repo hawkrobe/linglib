@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # English numeral profile (WALS Chs 53–56, 131)
@@ -11,15 +11,7 @@ namespace Fragments.English
     suffix). No morphological distributive numerals (*two-each*), no numeral
     classifiers, conjunction *and* differs from universal *all*. Obligatory
     plural on nouns; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
-  { language := "English"
-  , iso := "eng"
-  , ordinal := .firstSecondSuppletion
-  , distributive := .noDistributive
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .europe
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+def numeralProfile : Numeral.Profile :=
+  Numeral.Profile.fromWALS "English" "eng" (region := .europe) (pluralMarking := .obligatory)
 
 end Fragments.English

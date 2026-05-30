@@ -1,8 +1,9 @@
-import Linglib.Semantics.PIP.Expr
-import Linglib.Semantics.PIP.Felicity
-import Linglib.Semantics.PIP.Connectives
-import Linglib.Semantics.PIP.Composition
+import Linglib.Studies.KeshetAbney2024.Expr
+import Linglib.Studies.KeshetAbney2024.Felicity
+import Linglib.Studies.KeshetAbney2024.Connectives
+import Linglib.Studies.KeshetAbney2024.Composition
 import Linglib.Semantics.Presupposition.Basic
+import Linglib.Core.Logic.Quantification.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Plurality.Algebra
 import Mathlib.Data.Fintype.Basic
@@ -29,16 +30,19 @@ companion paper (@cite{abney-keshet-2025}) are in `PIP.Composition`.
 ## Design
 
 Each section is self-contained: it imports what it needs and states
-the correspondence as a theorem or definition. The presupposition and
-modal bridges are proved; the static↔dynamic bridge uses `sorry` for
-the Brasoveanu equivalence (which requires a non-trivial model theory
-argument).
+the correspondence as a theorem or definition. The presupposition,
+modal, and static↔dynamic bridges are all proved (atomic and negation
+cases for the last); the *full* Brasoveanu model-equivalence — a
+bijection between PIP models and ICDRT information states — is a
+non-trivial model-theoretic argument left as future work, not
+formalized here.
 -/
 
-namespace Semantics.PIP.Bridges
+namespace KeshetAbney2024.PIP.Bridges
 
-open Semantics.PIP
+open KeshetAbney2024.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
+open Core.Logic.Intensional (AccessRel boxR diamondR)
 open Core.Logic.Intensional.Logic (frameConditions)
 
 
@@ -69,23 +73,11 @@ and `felicitous` as `presup`.
 -/
 theorem pip_felicity_agrees_with_andFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.conj φ ψ).felicitous w = true) ↔
+    (Felicity.PIPExpr.conj φ ψ).felicitous w ↔
     (Semantics.Presupposition.PrProp.andFilter
-      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Semantics.Presupposition.PrProp _))
-      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Semantics.Presupposition.PrProp _))).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Semantics.Presupposition.PrProp.andFilter,
-    Bool.and_eq_true, Bool.or_eq_true]
-  constructor
-  · intro ⟨h1, h2⟩
-    exact ⟨h1, fun ht => by
-      rcases h2 with h | h
-      · exact absurd ht (by simp [Bool.not_eq_true'] at h; rw [h]; decide)
-      · exact h⟩
-  · intro ⟨h1, h2⟩
-    refine ⟨h1, ?_⟩
-    by_cases ht : φ.truth w = true
-    · exact Or.inr (h2 ht)
-    · simp [Bool.not_eq_true, ht]
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))
+      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+  Iff.rfl
 
 /--
 PIP's negation felicity agrees with `PrProp.neg`: both preserve the
@@ -93,10 +85,10 @@ presupposition/felicity of the negated expression unchanged.
 -/
 theorem pip_felicity_agrees_with_neg {W : Type*}
     (φ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.neg φ).felicitous w = true) ↔
+    (Felicity.PIPExpr.neg φ).felicitous w ↔
     (Semantics.Presupposition.PrProp.neg
-      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Semantics.Presupposition.PrProp _))).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Semantics.Presupposition.PrProp.neg]
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+  Iff.rfl
 
 /--
 PIP's implication felicity agrees with `PrProp.impFilter`.
@@ -108,23 +100,11 @@ the antecedent can satisfy the consequent's presupposition.
 -/
 theorem pip_felicity_agrees_with_impFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.impl φ ψ).felicitous w = true) ↔
+    (Felicity.PIPExpr.impl φ ψ).felicitous w ↔
     (Semantics.Presupposition.PrProp.impFilter
-      (({ presup w := φ.felicitous w = true, assertion w := φ.truth w = true } : Semantics.Presupposition.PrProp _))
-      (({ presup w := ψ.felicitous w = true, assertion w := ψ.truth w = true } : Semantics.Presupposition.PrProp _))).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Semantics.Presupposition.PrProp.impFilter,
-    Bool.and_eq_true, Bool.or_eq_true]
-  constructor
-  · intro ⟨h1, h2⟩
-    exact ⟨h1, fun ht => by
-      rcases h2 with h | h
-      · exact absurd ht (by simp [Bool.not_eq_true'] at h; rw [h]; decide)
-      · exact h⟩
-  · intro ⟨h1, h2⟩
-    refine ⟨h1, ?_⟩
-    by_cases ht : φ.truth w = true
-    · exact Or.inr (h2 ht)
-    · simp [Bool.not_eq_true, ht]
+      (({ presup w := φ.felicitous w, assertion w := φ.truth w } : Semantics.Presupposition.PrProp _))
+      (({ presup w := ψ.felicitous w, assertion w := ψ.truth w } : Semantics.Presupposition.PrProp _))).presup w :=
+  Iff.rfl
 
 /--
 PIP's disjunction felicity agrees with a one-sided filtering disjunction:
@@ -132,9 +112,12 @@ PIP's disjunction felicity agrees with a one-sided filtering disjunction:
 -/
 theorem pip_felicity_agrees_with_orFilter {W : Type*}
     (φ ψ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.disj φ ψ).felicitous w = true) ↔
-    (φ.felicitous w = true ∧ (φ.truth w = true ∨ ψ.felicitous w = true)) := by
-  simp only [Felicity.PIPExpr.felicitous, Bool.and_eq_true, Bool.or_eq_true]
+    (Felicity.PIPExpr.disj φ ψ).felicitous w ↔
+    (φ.felicitous w ∧ (φ.truth w ∨ ψ.felicitous w)) := by
+  simp only [Felicity.PIPExpr.felicitous]
+  constructor
+  · rintro ⟨h1, h2⟩; exact ⟨h1, (Classical.em (φ.truth w)).imp id h2⟩
+  · rintro ⟨h1, h2⟩; exact ⟨h1, fun hn => h2.resolve_left hn⟩
 
 
 -- ============================================================
@@ -153,102 +136,38 @@ are sets (extensional GQs). The GQ type `(α → Prop) → (α → Prop) → Pro
 is the predicate-based version.
 -/
 
-/-- PIP's EVERY as a GQ: ∀x, R(x) → S(x) (= set inclusion). -/
-def pipEvery {α : Type*} : Core.Quantification.GQ α :=
-  λ R S => ∀ x, R x → S x
-
-/-- PIP's SOME as a GQ: ∃x, R(x) ∧ S(x) (= non-empty intersection). -/
-def pipSome {α : Type*} : Core.Quantification.GQ α :=
-  λ R S => ∃ x, R x ∧ S x
-
-/-- PIP's EVERY is conservative: EVERY(R, S) ↔ EVERY(R, R ∩ S). -/
-theorem pipEvery_conservative {α : Type*} :
-    Core.Quantification.Conservative (pipEvery (α := α)) := by
-  intro R S
-  simp only [pipEvery]
-  constructor
-  · intro h x hR; exact ⟨hR, h x hR⟩
-  · intro h x hR; exact (h x hR).2
-
-/-- PIP's EVERY is scope-upward-monotone (right upward monotone). -/
-theorem pipEvery_scope_upward_mono {α : Type*} :
-    Core.Quantification.ScopeUpwardMono (pipEvery (α := α)) := by
-  intro R S S' hSS' h x hR
-  exact hSS' x (h x hR)
-
-/-- PIP's SOME is conservative: SOME(R, S) ↔ SOME(R, R ∩ S). -/
-theorem pipSome_conservative {α : Type*} :
-    Core.Quantification.Conservative (pipSome (α := α)) := by
-  intro R S
-  simp only [pipSome]
-  constructor
-  · intro ⟨x, hR, hS⟩; exact ⟨x, hR, ⟨hR, hS⟩⟩
-  · intro ⟨x, hR, _, hS⟩; exact ⟨x, hR, hS⟩
-
-/-- PIP's SOME is scope-upward-monotone (right upward monotone). -/
-theorem pipSome_scope_upward_mono {α : Type*} :
-    Core.Quantification.ScopeUpwardMono (pipSome (α := α)) := by
-  intro R S S' hSS' ⟨x, hR, hS⟩
-  exact ⟨x, hR, hSS' x hS⟩
-
--- Bridge: set-based GQs (Composition.lean) ↔ predicate-based GQ
-
 /--
-`setEvery` from `PIP.Composition` agrees with `pipEvery` (and hence `every_sem`).
+`setEvery` (from `PIP.Composition`, = set inclusion `R ⊆ S`) agrees with
+`Core.Quantification.every_sem` (= `∀ x, R x → S x`).
 
-Both express universal GQ as set inclusion / pointwise implication.
-This bridge lets `setEvery` inherit all `GQ` property proofs
-(conservativity, monotonicity) from `pipEvery_conservative` etc.
+This is the genuine, load-bearing bridge: `setEvery` is `Set`-typed while
+`every_sem` is predicate-typed (defeq, but the binder annotations differ,
+so a named lemma earns its keep). PIP's set-GQ therefore *consumes* Core's
+quantifier theory directly — conservativity, the Zwarts monotonicity
+hierarchy, duality — with no PIP-local re-derivation.
 -/
-theorem setEvery_eq_pipEvery {α : Type*} (R S : Set α) :
-    setEvery R S ↔ pipEvery R S :=
+theorem setEvery_eq_every_sem {α : Type*} (R S : Set α) :
+    setEvery R S ↔ Core.Quantification.every_sem R S :=
   ⟨fun h x hx => h hx, fun h x hx => h x hx⟩
 
-/--
-`setSome` from `PIP.Composition` agrees with `pipSome` (and hence `some_sem`).
--/
-theorem setSome_eq_pipSome {α : Type*} (R S : Set α) :
-    setSome R S ↔ pipSome R S :=
+/-- `setSome` agrees with `Core.Quantification.some_sem`. -/
+theorem setSome_eq_some_sem {α : Type*} (R S : Set α) :
+    setSome R S ↔ Core.Quantification.some_sem R S :=
   ⟨fun ⟨x, hx⟩ => ⟨x, hx.1, hx.2⟩, fun ⟨x, hr, hs⟩ => ⟨x, hr, hs⟩⟩
 
-/--
-Conservativity of `setEvery` derived from the GQ proof.
--/
+/-- Conservativity of `setEvery`, inherited from
+    `Core.Quantification.every_conservative` (not re-proved). -/
 theorem setEvery_conservative' {α : Type*} (R S : Set α) :
     setEvery R S ↔ setEvery R (R ∩ S) := by
-  rw [setEvery_eq_pipEvery, setEvery_eq_pipEvery]
-  exact pipEvery_conservative R S
+  rw [setEvery_eq_every_sem, setEvery_eq_every_sem]
+  exact Core.Quantification.every_conservative R S
 
-/--
-Conservativity of `setSome` derived from the GQ proof.
--/
+/-- Conservativity of `setSome`, inherited from
+    `Core.Quantification.some_conservative` (not re-proved). -/
 theorem setSome_conservative' {α : Type*} (R S : Set α) :
     setSome R S ↔ setSome R (R ∩ S) := by
-  rw [setSome_eq_pipSome, setSome_eq_pipSome]
-  exact pipSome_conservative R S
-
--- Bridge: PIP's GQ ↔ model-theoretic GQ from Quantifier.lean
-
-/--
-PIP's EVERY is definitionally equal to `every_sem` from `Quantifier.lean`.
-
-This closes the full bridge chain:
-  `setEvery R S` ↔ `pipEvery R S` = `every_sem m R S`
-
-All GQ property proofs in Quantifier.lean (duality, monotonicity,
-Zwarts monotonicity hierarchy, quantity invariance, etc.) apply
-directly to PIP's quantifiers.
--/
-theorem pipEvery_eq_every_sem {α : Type*} :
-    (pipEvery : Core.Quantification.GQ α) =
-    Semantics.Quantification.Quantifier.every_sem := rfl
-
-/--
-PIP's SOME is definitionally equal to `some_sem` from `Quantifier.lean`.
--/
-theorem pipSome_eq_some_sem {α : Type*} :
-    (pipSome : Core.Quantification.GQ α) =
-    Semantics.Quantification.Quantifier.some_sem := rfl
+  rw [setSome_eq_some_sem, setSome_eq_some_sem]
+  exact Core.Quantification.some_conservative R S
 
 
 -- ============================================================
@@ -325,33 +244,31 @@ theorem properPlural_implies_plural {α : Type*} {a b : α}
 
 PIP's must allows anaphora because of a **realistic modal base**
 (@cite{kratzer-1991}): the evaluation world w* is accessible from
-itself (R w* w* = true). This is exactly the T axiom (`□p → p`,
+itself (`R w* w*`). This is exactly the T axiom (`□p → p`,
 frame condition: reflexivity).
 
-The `must_truth_agrees_kripkeEval` and `must_realistic_of_refl`
+The `must_truth_agrees_boxR` and `must_realistic_of_refl`
 theorems in `Connectives.lean` already prove this correspondence.
 This section classifies PIP's modal operators in the lattice of
 normal modal logics from `Core.Logic.Intensional`.
 -/
 
-/--
-PIP's anaphora-enabling modality requires at least Logic.T.
-
-The might/must asymmetry for intensional anaphora reduces to whether
-the accessibility relation satisfies the T axiom (reflexivity). Must
-with a reflexive R guarantees the description holds at the evaluation
-world; might with a non-reflexive R does not.
+/-!
+PIP's anaphora-enabling modality needs the **T axiom** (reflexivity): a
+realistic modal base guarantees the description holds at the evaluation
+world. The content of that claim is carried by `reflexive_satisfies_T`
+below (reflexivity ⟹ T's frame condition) together with
+`Connectives.must_realistic_of_refl` (which consumes `Std.Refl R` to
+derive `p g w₀`). A bare `K ≤ T` lemma would be vacuous — `K = ⊥` — so
+it is intentionally omitted.
 -/
-theorem pip_anaphora_requires_T :
-    Core.Logic.Intensional.Logic.K ≤ Core.Logic.Intensional.Logic.T :=
-  Core.Logic.Intensional.Logic.K_bot ▸ OrderBot.bot_le _
 
 /--
 A reflexive accessibility relation satisfies Logic.T's frame condition.
 
-Stated for the Prop-valued `AccessRel`/`IsReflexive`/`frameConditions` API in
-`Core.Logic.Intensional`. To apply this to a PIP
-`BAccessRel R`, lift via `liftR R = fun a b => R a b = true`.
+Stated for the Prop-valued `AccessRel`/`Std.Refl`/`frameConditions` API in
+`Core.Logic.Intensional` — the same accessibility type PIP's modal
+operators now use directly.
 -/
 theorem reflexive_satisfies_T {W : Type*}
     (R : Core.Logic.Intensional.AccessRel W) [hRefl : Std.Refl R] :
@@ -382,30 +299,29 @@ This is structurally identical to @cite{kratzer-1991}'s analysis where:
 The formal connection is established via `Core.Logic.Intensional.boxR`:
 `must_truth_agrees_boxR` (in Connectives.lean) proves that PIP's
 `must R allWorlds (atom p)` produces the same truth conditions as
-`boxR (liftR R) (liftP (p g))`.
+`boxR R (p g)`.
 
 Direct import of `Semantics/Modality/Kratzer/` is not possible
 because Kratzer's implementation is monomorphic over `World4`. The
-correspondence is structural (via `BAccessRel` ≅ `ModalBase`) rather
+correspondence is structural (via `AccessRel` ≅ `ModalBase`) rather
 than definitional.
 -/
 
 /--
 Full Kratzer bridge: PIP's three-argument `mustBase` agrees with
-`boxR` when the modal base comes from a BAccessRel and the restriction
+`boxR` when the modal base comes from an `AccessRel` and the restriction
 is tautological.
 
-The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ w' = true}` ↔
-`boxR (fun a b => R a b = true) (fun w' => φ w' = true) w`. Both express
+The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ.truth w'}` ↔
+`boxR R φ.truth w`. Both express
 "the body holds at every R-accessible world from w".
 -/
-theorem mustBase_agrees_boxR {W D : Type*} [FiniteDomain D] [Fintype W]
-    (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
-    mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } ↔
-    Core.Logic.Intensional.boxR
-      (fun a b => R a b = true) (fun w' => φ.truth w' = true) w := by
+theorem mustBase_agrees_boxR {W D : Type*}
+    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } ↔
+    boxR R φ.truth w := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def,
-    Set.mem_setOf_eq, Core.Logic.Intensional.boxR]
+    Set.mem_setOf_eq, boxR]
 
 
 -- ============================================================
@@ -420,29 +336,29 @@ in `Basic.lean` / `Connectives.lean` encodes PIP as a dynamic update
 system over `IContext W E`. @cite{brasoveanu-2010} shows the equivalence
 between plural predicate calculi and dynamic plural logics.
 
-The following theorems state that the static system (`PIPExprF.truth`)
+The following theorems prove that the static system (`PIPExprF.truth`)
 and the dynamic encoding (`PUpdate` operators) compute the same thing
-for atomic formulas, conjunction, negation, and presupposition.
+for the atomic and negation cases (the proofs are complete).
 
-Full proof of the Brasoveanu equivalence requires establishing a
-bijection between PIP models and ICDRT information states, which is
-a substantial model-theoretic argument. We mark these with `sorry`.
+The *full* Brasoveanu equivalence requires establishing a bijection
+between PIP models and ICDRT information states — a substantial
+model-theoretic argument left as future work, not formalized here.
 -/
 
 /--
 Static atom truth agrees with dynamic `atom` filtering.
 
 For an atomic predicate p, `PIPExprF.pred p` has truth value `p w`,
-and `atom p` filters the info state to pairs where `p g w = true`.
+and `atom p` filters the info state to pairs where `p g w`.
 When the info state is a singleton, the dynamic update is non-empty
 iff the static truth value is true.
 
 TODO: Full proof requires reasoning about `Set.sep` over singleton IContext.
 -/
 theorem static_atom_agrees_dynamic {W E : Type*}
-    (p : ICDRTAssignment W E → W → Bool) (g : ICDRTAssignment W E) (w : W)
+    (p : ICDRTAssignment W E → W → Prop) (g : ICDRTAssignment W E) (w : W)
     (d : Discourse W E) (hd : (g, w) ∈ d.info) :
-    (g, w) ∈ (atom p d).info ↔ p g w = true := by
+    (g, w) ∈ (atom p d).info ↔ p g w := by
   unfold atom Discourse.mapInfo
   exact ⟨fun ⟨_, hp⟩ => hp, fun hp => ⟨hd, hp⟩⟩
 
@@ -461,4 +377,4 @@ theorem static_neg_agrees_dynamic {W E : Type*}
   exact ⟨fun ⟨_, hneg⟩ => hneg, fun hneg => ⟨hd, hneg⟩⟩
 
 
-end Semantics.PIP.Bridges
+end KeshetAbney2024.PIP.Bridges

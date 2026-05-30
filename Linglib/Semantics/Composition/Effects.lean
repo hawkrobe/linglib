@@ -74,45 +74,11 @@ open Semantics.Montague
 /-! ### §1 Typeclass instances for existing types
 
 Register `Functor`, `Applicative`, and `Monad` instances for linglib's
-`Cont R` and `Writer P` types, delegating to existing operations.
+`Writer P` type, delegating to existing operations. The `Cont R` instances
+live with the type in `Composition/Continuation.lean`.
 
-Note: `Cont R A := (A → R) → R` requires `R : Type` (not
-universe-polymorphic) for Lean's `Monad` class. -/
-
-section ContInstances
-
-variable {R : Type}
-
-instance : Functor (Cont R) where
-  map := Cont.map
-
-instance : Pure (Cont R) where
-  pure := Cont.pure
-
-instance : Bind (Cont R) where
-  bind := Cont.bind
-
-instance : Seq (Cont R) where
-  seq mf mx := Cont.bind mf (λ f => Cont.map f (mx ()))
-
-instance : Monad (Cont R) where
-
-instance : LawfulMonad (Cont R) where
-  map_const := rfl
-  id_map _ := rfl
-  comp_map _ _ _ := rfl
-  bind_pure_comp _ _ := rfl
-  pure_bind _ _ := rfl
-  bind_assoc _ _ _ := rfl
-  bind_map _ _ := rfl
-  pure_seq _ _ := rfl
-  seq_pure _ _ := rfl
-  seq_assoc _ _ _ := rfl
-  seqLeft_eq _ _ := rfl
-  seqRight_eq _ _ := rfl
-  map_pure _ _ := rfl
-
-end ContInstances
+Note: `Writer P` requires `P : Type` (not universe-polymorphic) for Lean's
+`Monad` class. -/
 
 section WriterInstances
 
@@ -1045,14 +1011,17 @@ section IndeterminacyBridge
 
 open Semantics.Composition.SetMonad
 
-/-- The set monad's η is the indeterminacy effect's `pure`. -/
+/-- The set monad's η is the indeterminacy effect's `pure` — mathlib's
+    `Set` singleton `{x}`. -/
 theorem indeterminacy_pure_is_eta {A : Type} (x : A) :
     eta x = fun y => y = x := rfl
 
-/-- The set monad's ⫝̸ is the indeterminacy effect's `bind`. -/
+/-- The set monad's ⫝̸ is the indeterminacy effect's `bind` — mathlib's
+    `Set` monad bind. -/
 theorem indeterminacy_bind_is_setBind {A B : Type}
     (m : A → Prop) (f : A → B → Prop) :
-    setBind m f = fun b => ∃ a, m a ∧ f a b := rfl
+    setBind m f = fun b => ∃ a, m a ∧ f a b := by
+  funext b; exact propext (setBind_apply m f b)
 
 /-- **Indeterminacy obeys ASSOCIATIVITY.** Re-export from `SetMonad.lean`.
 

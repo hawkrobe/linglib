@@ -1,3 +1,4 @@
+import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Composition.Applicative
 import Linglib.Semantics.Composition.TypeShifting
 
@@ -52,23 +53,37 @@ section Operations
 
 variable {A B C : Type}
 
+attribute [local instance] Set.monad
+
 /-- **η** (unit): inject a value into a singleton set.
 
-    eq. (16): `η := λp. {p}`. Equivalent to
-    `setPure` from `Applicative.lean` (shown in `eta_eq_setPure`). -/
-def eta (x : A) : A → Prop := fun y => y = x
+    eq. (16): `η := λp. {p}`. This is mathlib's `Set`-monad `pure` (the
+    singleton `{x}`); the monad is not re-implemented here. -/
+def eta (x : A) : Set A := pure x
 
 /-- **⫝̸** (bind): monadic bind for sets.
 
-    eq. (27): `m ⫝̸ f := ⋃_{x ∈ m} f(x)`.
-    For each element `a` in the set `m`, apply `f` to get a new set,
-    then take the union of all results. -/
-def setBind (m : A → Prop) (f : A → B → Prop) : B → Prop :=
-  fun b => ∃ a, m a ∧ f a b
+    eq. (27): `m ⫝̸ f := ⋃_{x ∈ m} f(x)`. This is mathlib's `Set`-monad
+    bind (`Mathlib.Data.Set.Functor`'s `Set.monad`). -/
+def setBind (m : Set A) (f : A → Set B) : Set B := m >>= f
 
-/-- `map` for the set functor, derived from `η` and `⫝̸`. -/
-def setMap (f : A → B) (m : A → Prop) : B → Prop :=
-  setBind m (fun a => eta (f a))
+/-- `map` for the set functor: mathlib's `Functor.map` (`Set.image`). -/
+def setMap (f : A → B) (m : Set A) : Set B := f <$> m
+
+@[simp] theorem mem_eta (x y : A) : y ∈ eta x ↔ y = x := Iff.rfl
+
+@[simp] theorem mem_setBind (m : Set A) (f : A → Set B) (b : B) :
+    b ∈ setBind m f ↔ ∃ a, a ∈ m ∧ b ∈ f a := by
+  simp only [setBind, Set.bind_def, Set.mem_iUnion, exists_prop]
+
+/-- Application-form characterisation of `eta` (for consumers that treat
+    `Set A = A → Prop` and apply `eta x` as a function). -/
+@[simp] theorem eta_apply (x y : A) : eta x y ↔ y = x := Iff.rfl
+
+/-- Application-form characterisation of `setBind` (for consumers that apply
+    `setBind m f` as a function `B → Prop`). -/
+@[simp] theorem setBind_apply (m : Set A) (f : A → Set B) (b : B) :
+    setBind m f b ↔ ∃ a, m a ∧ f a b := mem_setBind m f b
 
 end Operations
 
@@ -87,43 +102,29 @@ section MonadLaws
 
 variable {A B C : Type}
 
-/-- **LEFT IDENTITY**: `η x ⫝̸ f = f x`.
+attribute [local instance] Set.monad
 
-    Applying the singleton `{x}` to a function `f` yields exactly `f x`.
+/-- **LEFT IDENTITY**: `η x ⫝̸ f = f x`. mathlib's `pure_bind` for `Set`.
     eq. (42), first law. -/
-theorem set_left_identity (x : A) (f : A → B → Prop) :
-    setBind (eta x) f = f x := by
-  funext b; apply propext; simp only [setBind, eta]; constructor
-  · rintro ⟨a, rfl, h⟩; exact h
-  · intro h; exact ⟨x, rfl, h⟩
+theorem set_left_identity (x : A) (f : A → Set B) :
+    setBind (eta x) f = f x := pure_bind x f
 
-/-- **RIGHT IDENTITY**: `m ⫝̸ η = m`.
-
-    Binding a set with the singleton constructor recovers the original set.
+/-- **RIGHT IDENTITY**: `m ⫝̸ η = m`. mathlib's `bind_pure` for `Set`.
     eq. (42), second law. -/
-theorem set_right_identity (m : A → Prop) :
-    setBind m eta = m := by
-  funext a; apply propext; simp only [setBind, eta]; constructor
-  · rintro ⟨_, hm, rfl⟩; exact hm
-  · intro h; exact ⟨a, h, rfl⟩
+theorem set_right_identity (m : Set A) :
+    setBind m eta = m := bind_pure m
 
-/-- **ASSOCIATIVITY**: `(m ⫝̸ f) ⫝̸ g = m ⫝̸ (λx. f x ⫝̸ g)`.
+/-- **ASSOCIATIVITY**: `(m ⫝̸ f) ⫝̸ g = m ⫝̸ (λx. f x ⫝̸ g)`. mathlib's
+    `bind_assoc` for `Set`.
 
-    The central theorem of §4.2. Because `⫝̸` is
-    associative, taking scope at the edge of an island (one application
-    of `⫝̸`) and then taking scope at the next level (another `⫝̸`) is
-    equivalent to taking scope directly out of the island. This is what
-    generates exceptional scope readings without island-violating movement.
-
-    Concretely (eq. 34): `(m ⫝̸ λx. f x) ⫝̸ g = m ⫝̸ (λx. f x ⫝̸ g)`
-    guarantees that the tree on the left of Figure 7 (local scope at the
-    island edge, then further scope) equals the tree on the right (direct
-    wide scope). -/
-theorem set_associativity (m : A → Prop) (f : A → B → Prop) (g : B → C → Prop) :
-    setBind (setBind m f) g = setBind m (fun a => setBind (f a) g) := by
-  funext c; apply propext; simp only [setBind]; constructor
-  · rintro ⟨b, ⟨a, hma, hfab⟩, hgbc⟩; exact ⟨a, hma, b, hfab, hgbc⟩
-  · rintro ⟨a, hma, b, hfab, hgbc⟩; exact ⟨b, ⟨a, hma, hfab⟩, hgbc⟩
+    The central theorem of §4.2: because `⫝̸` is associative (a monad law
+    `Set` already satisfies via `LawfulMonad Set`), taking scope at the edge
+    of an island and then taking scope again equals taking scope directly out
+    of the island — generating exceptional scope without island-violating
+    movement (eq. 34, Figure 7). -/
+theorem set_associativity (m : Set A) (f : A → Set B) (g : B → Set C) :
+    setBind (setBind m f) g = setBind m (fun a => setBind (f a) g) :=
+  bind_assoc m f g
 
 end MonadLaws
 
@@ -185,13 +186,11 @@ theorem eta_eq_setPure (x : A) : eta x = setPure x := rfl
 
     The set applicative `setAp` from Applicative.lean agrees with the
     derived applicative from the set monad. -/
-theorem setAp_from_setBind (m : (A → B) → Prop) (n : A → Prop) :
+theorem setAp_from_setBind (m : Set (A → B)) (n : Set A) :
     setAp m n = setBind m (fun f => setBind n (fun x => eta (f x))) := by
-  funext b; apply propext
-  -- setAp: ∃ f, m f ∧ ∃ x, n x ∧ f x = b
-  -- setBind: ∃ f, m f ∧ ∃ x, n x ∧ b = f x  (eta reverses eq order)
-  exact ⟨fun ⟨f, hf, x, hx, h⟩ => ⟨f, hf, x, hx, h.symm⟩,
-         fun ⟨f, hf, x, hx, h⟩ => ⟨f, hf, x, hx, h.symm⟩⟩
+  ext b
+  simp only [Applicative.mem_setAp, mem_setBind, mem_eta]
+  aesop
 
 end ApplicativeBridge
 
@@ -265,7 +264,8 @@ section HigherOrder
     outer set is a singleton containing one alternative. -/
 theorem higher_order_from_eta {A B : Type} (m : A → Prop) (f : A → B) :
     setBind m (fun x => eta (eta (f x))) =
-    (fun (s : B → Prop) => ∃ a, m a ∧ s = eta (f a)) := rfl
+    (fun (s : B → Prop) => ∃ a, m a ∧ s = eta (f a)) := by
+  ext s; simp only [mem_setBind, mem_eta]; rfl
 
 end HigherOrder
 

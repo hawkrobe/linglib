@@ -83,7 +83,9 @@ def hamblinFA {A B : Type} (funSet : HamblinDen (A → B)) (argSet : HamblinDen 
 
 /-- **Bridge**: Hamblin FA = the set applicative from `Applicative.lean`. -/
 theorem hamblinFA_eq_setAp {A B : Type} (m : HamblinDen (A → B)) (n : HamblinDen A) :
-    hamblinFA m n = setAp m n := rfl
+    hamblinFA m n = setAp m n := by
+  funext b
+  simp only [hamblinFA, Semantics.Composition.Applicative.setAp_apply]
 
 
 -- ════════════════════════════════════════════════════════════════

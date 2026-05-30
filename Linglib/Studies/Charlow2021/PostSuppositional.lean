@@ -31,20 +31,14 @@ structure PostSupp (S : Type*) (A : Type*) where
   /-- Accumulated post-suppositional content -/
   postsup : DRS S
 
-/-- Pure: trivial post-supposition (equation 120).
-    The post-suppositional DRS is the identity (test True). -/
-def PostSupp.pure {S A : Type*} (a : A) : PostSupp S A :=
-  ⟨a, test (λ _ => True)⟩
-
-/-- Bind: sequence post-suppositions via dseq (equation 121).
-    Post-suppositional content accumulates via dynamic conjunction. -/
-def PostSupp.bind {S A B : Type*} (m : PostSupp S A) (f : A → PostSupp S B) : PostSupp S B :=
-  let result := f m.val
-  ⟨result.val, dseq m.postsup result.postsup⟩
-
-/-- Map: apply a function to the at-issue value, preserving post-suppositions. -/
-def PostSupp.map {S A B : Type*} (f : A → B) (m : PostSupp S A) : PostSupp S B :=
-  ⟨f m.val, m.postsup⟩
+/-- `PostSupp S` is the Writer monad over the monoid `(DRS S, ⨟, test ⊤)`
+    (@cite{charlow-2021} equations 120–121): `pure` carries the trivial
+    post-supposition (the `True`-test identity) and `bind` sequences
+    post-suppositional content via dynamic conjunction (`dseq`). Independent
+    composition of post-suppositions is what yields cumulative readings. -/
+instance : Monad (PostSupp S) where
+  pure a := ⟨a, test (λ _ => True)⟩
+  bind m f := ⟨(f m.val).val, dseq m.postsup (f m.val).postsup⟩
 
 /-- Reify (bullet operator, equation 58): conjoin value and post-supposition.
     For a `PostSupp S (DRS S)`, this produces a single DRS by sequencing
@@ -72,20 +66,30 @@ def exactlyN_postsup {S E : Type*} [AssignmentStructure S E] [PartialOrder E] [F
 -- § Monad Laws
 -- ════════════════════════════════════════════════════
 
-/-- Left identity for PostSupp bind. -/
-theorem PostSupp.bind_left_id {S A B : Type*} (a : A) (f : A → PostSupp S B) :
-    PostSupp.bind (PostSupp.pure a) f = f a := by
-  simp only [PostSupp.bind, PostSupp.pure]
-  -- dseq (test fun _ => True) (f a).postsup = (f a).postsup
-  -- because ∃ h, (i = h ∧ True) ∧ D h j  ↔  D i j
-  have : dseq (test λ _ => True) (f a).postsup = (f a).postsup := by
-    funext i j; simp [dseq, test]
-  simp [this]
+/-- The monad laws are exactly the monoid laws of `(DRS S, ⨟, test ⊤)`
+    (`test_dseq`, `dseq_test`, `dseq_assoc`), so we register `PostSupp S`
+    as a lawful monad rather than re-proving them standalone. -/
+instance : LawfulMonad (PostSupp S) := LawfulMonad.mk' (PostSupp S)
+  (id_map := by
+    rintro α ⟨a, d⟩
+    show (⟨a, dseq d (test (λ _ => True))⟩ : PostSupp S α) = ⟨a, d⟩
+    rw [dseq_test d (λ _ => True) (λ _ => trivial)])
+  (pure_bind := by
+    intro α β x f
+    show (⟨(f x).val, dseq (test (λ _ => True)) (f x).postsup⟩ : PostSupp S β) = f x
+    rw [test_dseq (λ _ => True) (f x).postsup (λ _ => trivial)])
+  (bind_assoc := by
+    intro α β γ x f g
+    show (⟨(g (f x.val).val).val,
+          dseq (dseq x.postsup (f x.val).postsup) (g (f x.val).val).postsup⟩ : PostSupp S γ)
+       = ⟨(g (f x.val).val).val,
+          dseq x.postsup (dseq (f x.val).postsup (g (f x.val).val).postsup)⟩
+    rw [dseq_assoc])
 
 /-- Reify of a pure post-supposition recovers the original DRS
     (modulo the trivial True test). -/
 theorem PostSupp.reify_pure {S : Type*} (D : DRS S) :
-    PostSupp.reify (PostSupp.pure D) = dseq D (test (λ _ => True)) := by
+    PostSupp.reify (pure D) = dseq D (test (λ _ => True)) := by
   rfl
 
 /-- Post-suppositional combination yields cumulative readings.

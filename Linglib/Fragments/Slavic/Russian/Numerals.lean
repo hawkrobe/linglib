@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Russian numeral profile (WALS Chs 53–56, 131)
@@ -12,15 +12,7 @@ namespace Fragments.Slavic.Russian
     'fourth'). No morphological distributive (uses prepositional phrase
     *po + dative*). No numeral classifiers. *I* (and) differs from *vse*
     (all). Obligatory plural; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
-  { language := "Russian"
-  , iso := "rus"
-  , ordinal := .firstSecondSuppletion
-  , distributive := .noDistributive
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .europe
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+def numeralProfile : Numeral.Profile :=
+  Numeral.Profile.fromWALS "Russian" "rus" (region := .europe) (pluralMarking := .obligatory)
 
 end Fragments.Slavic.Russian

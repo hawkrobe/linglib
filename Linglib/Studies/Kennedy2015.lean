@@ -50,10 +50,10 @@ distinct: §2 follows Kennedy directly; §3 shows the same qualitative
 predictions emerge from a soft-max listener over the same alternative set
 and bare-numeral semantics.
 
-The formalization consumes `NumeralExpr.meaning` from
+The formalization consumes `Numeral.Entry.denoteUnder` from
 `Semantics/Numerals/Basic.lean` directly — there is no separate
-"Kennedy meaning" function (Kennedy's alternative set is *which*
-`NumeralExpr` values to consider, not *what they mean*).
+"Kennedy meaning" function (Kennedy's alternative set is *which* numeral
+words to consider, not *what they mean*).
 
 Domain: cardinality 0–5 (`Fin 6`, wide enough that Class A "more than 3"
 needs `w = 4` to be non-trivial).
@@ -76,26 +76,27 @@ abbrev KCard : Type := Fin 6
 /-- Kennedy's alternative set members for `n = 3`. One enum unifying
     bare and all four modifications — Class A vs Class B is read off
     asymmetric-entailment, not from membership in a pre-split sublist.
-    The pattern-match `expr` keeps `rsa_predict` reflection cheap. -/
+    The pattern-match `comparison` keeps `rsa_predict` reflection cheap. -/
 inductive KUtt where
   | bare3 | moreThan3 | fewerThan3 | atLeast3 | atMost3
   deriving DecidableEq, Repr, Fintype
 
-/-- Embed a Kennedy alternative into the unified `NumeralExpr`. -/
-def KUtt.expr : KUtt → NumeralExpr
-  | .bare3      => .bare 3
-  | .moreThan3  => .moreThan 3
-  | .fewerThan3 => .fewerThan 3
-  | .atLeast3   => .atLeast 3
-  | .atMost3    => .atMost 3
+/-- The numeral word (`Numeral.Entry`) a Kennedy alternative is — all at
+    argument 3, with their surface forms. -/
+def KUtt.entry : KUtt → Numeral.Entry
+  | .bare3      => ⟨"three", .eq, 3⟩
+  | .moreThan3  => ⟨"more than three", .gt, 3⟩
+  | .fewerThan3 => ⟨"fewer than three", .lt, 3⟩
+  | .atLeast3   => ⟨"at least three", .ge, 3⟩
+  | .atMost3    => ⟨"at most three", .le, 3⟩
 
-/-- Prop-valued meaning of any Kennedy alternative under bilateral
-    (exact) bare semantics — derived from `NumeralExpr.meaning bareMeaning`. -/
+/-- Prop-valued meaning of any Kennedy alternative under bilateral (exact) bare
+    semantics — `Numeral.Entry.denoteUnder` with `bare := bareMeaning`. -/
 def kMean (u : KUtt) (w : KCard) : Prop :=
-  u.expr.meaning bareMeaning w.val
+  u.entry.denoteUnder bareMeaning w.val
 
 noncomputable instance (u : KUtt) : DecidablePred (kMean u) :=
-  fun w => inferInstanceAs (Decidable (u.expr.meaning bareMeaning w.val))
+  fun w => inferInstanceAs (Decidable (u.entry.denoteUnder bareMeaning w.val))
 
 -- ============================================================================
 -- §2: Symbolic neo-Gricean derivation (@cite{sauerland-2004} on Kennedy's alts)

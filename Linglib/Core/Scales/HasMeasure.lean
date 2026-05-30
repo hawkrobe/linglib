@@ -129,21 +129,21 @@ abbrev thr (n : Nat) {max : Nat} (h : n < max := by omega) : Threshold max :=
     Renamed from `HasDegree` (legacy name) per master plan v4 Phase A.7.
     Field name kept as `degree` for one-version migration compatibility;
     `HasMeasure.measure` is provided as the v4-canonical alias. -/
-class HasMeasure (E : Type) (α : Type) where
+class HasMeasure (E : Type*) (α : Type*) where
   degree : E → α
 
 /-- v4-canonical name for the measurement function. Aliased to the
     legacy field name `degree` for one-version migration. -/
-abbrev HasMeasure.measure {E α : Type} [HasMeasure E α] : E → α :=
+abbrev HasMeasure.measure {E α : Type*} [HasMeasure E α] : E → α :=
   HasMeasure.degree
 
 /-- Deprecation alias: `HasDegree` is the legacy name for `HasMeasure`.
     One-version migration alias; will be removed in a follow-up refactor. -/
-abbrev HasDegree (E : Type) (α : Type) := HasMeasure E α
+abbrev HasDegree (E : Type*) (α : Type*) := HasMeasure E α
 
 /-- Explicit alias for the legacy field projection `HasDegree.degree`.
     Needed because Lean does not auto-derive projection names through abbrevs. -/
-abbrev HasDegree.degree {E α : Type} [HasDegree E α] : E → α :=
+abbrev HasDegree.degree {E α : Type*} [HasDegree E α] : E → α :=
   HasMeasure.degree
 
 end Core.Scale
