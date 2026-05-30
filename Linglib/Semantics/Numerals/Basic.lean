@@ -1,6 +1,7 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Typology.Numeral.Basic
+import Mathlib.Order.Interval.Set.Basic
 
 /-!
 # Unified Numeral Semantics
@@ -176,6 +177,63 @@ instance (c : Numeral.Comparison) (bare : Nat → Nat → Prop)
     simp only [Numeral.Comparison.meaning, Numeral.Comparison.rel, Core.Scale.relationalGQ] <;>
     infer_instance
 
+/-! ### Interval / preimage form
+
+A numeral-modified predicate is, set-theoretically, the **preimage of an
+order-interval under a measure**: `μ ⁻¹' (c.interval n)`. The `Comparison`
+selects the interval; the measure `μ` selects what is counted or measured
+(`id` for bare cardinals, a `MeasureFn` for measure phrases, atom-cardinality
+for classifier counting). This is `relationalGQ` read through `Set`, and the
+Class A/B split becomes a one-liner about whether the interval is closed at its
+endpoint (`boundary_mem`). -/
+
+/-- The order-interval a comparison selects: `{n}`, `[n,∞)`, `(n,∞)`, `(-∞,n]`,
+    `(-∞,n)`. The set-theoretic interpretation of the comparison symbol. -/
+def _root_.Numeral.Comparison.interval {α : Type*} [Preorder α] :
+    Numeral.Comparison → α → Set α
+  | .eq => fun n => {n}
+  | .ge => Set.Ici
+  | .gt => Set.Ioi
+  | .le => Set.Iic
+  | .lt => Set.Iio
+
+/-- The interval form coincides with the relational form (`Comparison.rel`). -/
+theorem _root_.Numeral.Comparison.mem_interval {α : Type*} [LinearOrder α]
+    (c : Numeral.Comparison) (a n : α) : a ∈ c.interval n ↔ c.rel a n := by
+  cases c <;> simp [Numeral.Comparison.interval, Numeral.Comparison.rel]
+
+/-- **The unifying numeral-predication operation**: the set of entities whose
+    measure `μ` lands in the comparison's interval. Bare cardinals (`μ = id`),
+    measure phrases (`μ` a `MeasureFn`), and classifier counting (`μ` an
+    atom-cardinality) are all instances. -/
+def _root_.Numeral.over {E α : Type*} [Preorder α]
+    (c : Numeral.Comparison) (μ : E → α) (n : α) : Set E :=
+  μ ⁻¹' c.interval n
+
+/-- `Numeral.over` coincides with the `relationalGQ` denotation. -/
+theorem _root_.Numeral.mem_over {E α : Type*} [LinearOrder α]
+    (c : Numeral.Comparison) (μ : E → α) (n : α) (x : E) :
+    x ∈ Numeral.over c μ n ↔ Core.Scale.relationalGQ c.rel μ n x := by
+  simp [Numeral.over, Numeral.Comparison.mem_interval]; rfl
+
+/-- **Class A/B is interval-endpoint membership.** A non-strict comparison
+    (bare `=`, Class B `≥`/`≤`) keeps the boundary `n`; a strict one (Class A
+    `>`/`<`) drops it. This is the whole Class A/B generalization
+    (@cite{geurts-nouwen-2007}, @cite{nouwen-2010}) in one lemma. -/
+theorem _root_.Numeral.Comparison.boundary_mem {α : Type*} [Preorder α]
+    (c : Numeral.Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.isStrict := by
+  cases c <;> simp [Numeral.Comparison.interval, Numeral.Comparison.isStrict]
+
+/-- The bare-world meaning of a *modified* numeral (`c ≠ .eq`) is endpoint
+    membership in the comparison's interval — connecting `meaning` to the
+    interval form. -/
+theorem _root_.Numeral.Comparison.meaning_boundary (bare : Nat → Nat → Prop)
+    (c : Numeral.Comparison) (m : Nat) (h : c ≠ .eq) :
+    c.meaning bare m m ↔ m ∈ c.interval m := by
+  cases c <;>
+    simp_all [Numeral.Comparison.meaning, Numeral.Comparison.interval,
+      Core.Scale.relationalGQ, Numeral.Comparison.rel]
+
 -- ============================================================================
 -- Section 4: Alternative Set (@cite{kennedy-2015} §4.1)
 -- ============================================================================
@@ -194,39 +252,28 @@ def kennedyAlternatives : List Numeral.Comparison :=
 
 /-! Class A/B is the central typological generalization (@cite{geurts-nouwen-2007},
     @cite{nouwen-2010}): strict modifiers (`>`, `<`) exclude the bare-numeral
-    world; non-strict modifiers (`≥`, `≤`) include it. The classification is
-    derived from `NumeralExpr.modifierClass`; the inclusion/exclusion theorems
-    below apply the corresponding general lemmas
-    `Core.Scale.relationalGQ_irrefl_at_boundary` and
-    `Core.Scale.relationalGQ_refl_at_boundary`, instantiated at `μ = id`. -/
+    world; non-strict modifiers (`≥`, `≤`) include it. Both theorems below are
+    now corollaries of `Numeral.Comparison.boundary_mem` (Class A/B = whether the
+    comparison's interval is closed at its endpoint) via `meaning_boundary`. -/
 
 /-- **Class A excludes the bare-numeral world** (universal). A strict comparison
     (`>`, `<`) fails at the boundary `n = m`, regardless of which bare-numeral
-    semantics is chosen. Each non-vacuous branch delegates to
-    `Core.Scale.relationalGQ_irrefl_at_boundary` at `μ = id`. -/
+    semantics is chosen. Corollary of `boundary_mem`. -/
 theorem classA_excludes_bare_world (bare : Nat → Nat → Prop) (c : Numeral.Comparison)
     (m : Nat) (h : c.isStrict) :
     ¬ c.meaning bare m m := by
-  cases c with
-  | eq => simp [Numeral.Comparison.isStrict] at h
-  | ge => simp [Numeral.Comparison.isStrict] at h
-  | le => simp [Numeral.Comparison.isStrict] at h
-  | gt => exact Core.Scale.relationalGQ_irrefl_at_boundary (rel := (· > ·)) id rfl
-  | lt => exact Core.Scale.relationalGQ_irrefl_at_boundary (rel := (· < ·)) id rfl
+  have hne : c ≠ .eq := by cases c <;> simp_all [Numeral.Comparison.isStrict]
+  rw [Numeral.Comparison.meaning_boundary bare c m hne, Numeral.Comparison.boundary_mem]
+  exact not_not_intro h
 
 /-- **Class B includes the bare-numeral world** (universal). A non-strict
     *modifier* (`≥`, `≤`) holds at the boundary `n = m`, regardless of which
-    bare-numeral semantics is chosen. Each branch delegates to
-    `Core.Scale.relationalGQ_refl_at_boundary` at `μ = id`. -/
+    bare-numeral semantics is chosen. Corollary of `boundary_mem`. -/
 theorem classB_includes_bare_world (bare : Nat → Nat → Prop) (c : Numeral.Comparison)
     (m : Nat) (h : ¬ c.isStrict) (hne : c ≠ .eq) :
     c.meaning bare m m := by
-  cases c with
-  | eq => exact absurd rfl hne
-  | gt => simp [Numeral.Comparison.isStrict] at h
-  | lt => simp [Numeral.Comparison.isStrict] at h
-  | ge => exact Core.Scale.relationalGQ_refl_at_boundary (rel := (· ≥ ·)) id rfl
-  | le => exact Core.Scale.relationalGQ_refl_at_boundary (rel := (· ≤ ·)) id rfl
+  rw [Numeral.Comparison.meaning_boundary bare c m hne, Numeral.Comparison.boundary_mem]
+  exact h
 
 /-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization
     of `Core.Scale.eqDeg_imp_atLeastDeg`. -/
