@@ -1,138 +1,171 @@
+import Linglib.Fragments.Hausa.Determiners
 import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Quantification.ONEModifiers
-import Linglib.Semantics.Quantification.ChoiceFunction
+import Linglib.Core.Logic.Quantification.Basic
 
 /-!
 # @cite{zimmermann-2008}: Quantification in Hausa
 
-Formalization of the Hausa quantifier system from Zimmermann's handbook
-chapter in @cite{matthewson-2008}, *Quantification: A Cross-Linguistic
-Perspective*. Hausa is a Chadic (Afro-Asiatic) language with three
-syntactic classes of adnominal quantifiers (Z. §3): class-A modifiers
-(numerals, quantity expressions), class-B prenominal functional heads
-(*wani*-existentials and *koo*+*wh*-universals), and class-C nominal
-heads (proportional quantifiers).
+Selected formalization from Zimmermann's handbook chapter in
+@cite{matthewson-2008}, the first formal-semantic treatment of the
+Hausa quantifier system whose textbook description is given in
+@cite{newman-2000} and @cite{jaggar-2001}. The two reference grammars
+fix the inventory typed in `Fragments.Hausa.Determiners`; this file
+consumes those entries, states Zimmermann's predicted denotations, and
+checks their consequences on a small concrete model.
 
-This study file formalizes the class-B contrasts that ground later work
-on African quantification, including @cite{haslinger-etal-2025-nllt}
-(which adopts Q_∀ + ONE as the cross-linguistic substrate) and
-@cite{owusu-2022} (which contrasts the Hausa *wani* analysis with the
-Akan *bí* choice function).
+## Main declarations
 
-## Main contributions formalized here
+* `Fragments.Hausa.Determiners.UniversalQuantifier.z2008Denot` —
+  the predicted denotation each Hausa universal entry receives under
+  Zimmermann 2008's GQ analysis, reframed via the
+  @cite{haslinger-etal-2025-nllt} Q_∀ + ONE decomposition.
+* `Zimmermann2008.Faasinjee` — a 3-passenger SG-count domain
+  instantiating the *kō-wh* restrictor case
+  (@cite{jaggar-2001} ex. *faasinjojî-n* p.376).
+* `Zimmermann2008.kowWh_buckled_false` — *kō-wh*'s singulative-
+  distributive prediction on a model where one passenger falsifies
+  the scope.
+* `Zimmermann2008.wani_ambiguity_witness` — *wani* under VP-negation
+  is ambiguous (Jaggar §9.5.3 p.374, Z2008 §3.2.4 ex. 69); on this
+  model the ∃¬ reading is true while the ¬∃ reading is false.
 
-* **The *koo*+*wh* construction is productive, not a flat lexeme.**
-  Hausa universals are built from the disjunction-marker *koo* plus a
-  *wh*-word (Z. §3.2.1): *koo-waa* 'everyone' (*wh* = *waa* 'who'),
-  *koo-mee* 'everything' (*wh* = *mee* 'what'), *koo-`ìnaa* 'everywhere'
-  (*wh* = *`ìnaa* 'where'), *koo-wànè/koo-wàcè/koo-wàdànnè*
-  'each m./f./pl.' (*wh* = *wànè/wàcè/wàdànnè* 'which.m/f/pl').
+## Implementation notes
 
-* **The *koo*+*wh* / *duk(à)* contrast instantiates the Q_∀ + ONE
-  decomposition** later articulated by @cite{haslinger-etal-2025-nllt}.
-  *koo*+*wh* is a prenominal D-head with phi-agreement that selects
-  bare SG count NPs and yields distributive readings (Z. §4.1, §4.2.1).
-  *duk(à)* is an unagreeing modifier that combines with DEF PL / mass
-  NPs and yields collective readings.
+`z2008Denot` extends the Fragment's `UniversalQuantifier` namespace
+with Zimmermann 2008's analytical bridge to substrate denotations.
+The denotation is paper-specific (Z2008 §3.2.5 leaves the choice open
+between GQ, indeterminate-pronoun, and choice-function); housing it on
+the Fragment type via the Studies file follows the project pattern of
+paper-specific methods on consensus typological entries. The
+denotation for `kowWh` is `everyPresup` (Q_∀ + ONE_∅); for `duk` it is
+bare `QForall` on a CUM lattice, but no concrete CUM-lattice model is
+exhibited here (see Todo).
 
-* **Scope contrast between *wani* and *koo*+*wh* under negation.**
-  *wani*-NPs allow both narrow (¬∃) and wide (∃¬) scope under VP
-  negation (Z. §3.2.4 ex. 69). *koo*+*wh* allows only narrow scope
-  under VP negation (Z. §3.2.4 ex. 73); the *not-every* reading
-  requires focus and sentence negation (ex. 74). Bare indefinite NPs
-  always take narrow scope (Z. §2.1.3 ex. 14).
+## References
 
-## Architecture
+* @cite{newman-2000} §17.5, §20, §21 — Hausa reference grammar.
+* @cite{jaggar-2001} §9.5 — Hausa universal quantifiers.
 
-Following the project's Layered Grounding discipline, this file does
-not introduce paper-specific wrappers around substrate operators.
-*koo*+*wh* is `everyPresup` (Q_∀ + ONE_∅) applied with Hausa-flavored
-docstring rationale; *duk(à)* is `QForall` (bare Q_∀) on a CUM
-lattice. The theorems below name the Hausa predictions and reduce
-them to substrate identities.
+## Todo
 
-## What is left for future work
-
-* Other sources of universal force (Z. §4.4): verbal grade-4 *totality*
-  morphology, adverbial *duk* 'completely', reduplicated numerals
-  yielding distance-distributivity.
-* Class-C proportional quantifiers (*yawancin* 'most of', Z. §3.3).
-* The free-choice reading of *koo*+*wh* in modal/intensional contexts
-  (Z. §3.2.3 ex. 68), which depends on alternative-sensitivity
-  machinery formalized for Akan *bi-ara* in @cite{philipp-2022}.
+* CUM-lattice concrete model for *DUK* (Jaggar §9.5.4).
+* *kō-wh* under VP-negation yielding negative-existential readings
+  (Jaggar §9.5.3 p.374): *bàn gayà wà kōwā ba* 'I told no one'.
+* Free-choice *kō-wh* in modal/intensional contexts (Z2008 §3.2.3).
+* The Chadic typology of class-B universals (Z2008 §3.4).
 -/
-
-namespace Zimmermann2008
 
 open Semantics.Quantification.UnifiedUniversal
 open Semantics.Quantification.ONEModifiers
-open Semantics.Quantification.ChoiceFunction
+
+namespace Fragments.Hausa.Determiners.UniversalQuantifier
+
+/-- @cite{zimmermann-2008}'s predicted denotation for each Hausa
+universal entry, reframed via the @cite{haslinger-etal-2025-nllt}
+Q_∀ + ONE decomposition. *kō-wh* receives Q_∀ + ONE_∅ (atom-by-atom
+distributivity, Jaggar §9.5.1); *DUK* receives bare Q_∀ on a CUM
+restrictor (collective single-set scope, Jaggar §9.5.4). -/
+def z2008Denot {α : Type*} [PartialOrder α] :
+    UniversalQuantifier → (α → Prop) → (α → Prop) → Prop
+  | .kowWh => everyPresup
+  | .duk   => QForall
+
+end Fragments.Hausa.Determiners.UniversalQuantifier
+
+namespace Zimmermann2008
+
+open Fragments.Hausa.Determiners
 open Core.Quantification (some_sem)
 
-/-! ### *koo*+*wh*: distributive universal via Q_∀ + ONE_∅
+/-! ### A 3-passenger SG-count Hausa domain
 
-In Hausa, the universal *koo*+*wh* selects bare SG count NPs. On the
-project's mereological substrate, this means the restrictor is atomic
-and pairwise non-overlapping — precisely the `ONE_empty` presupposition
-of @cite{haslinger-etal-2025-nllt}. Under this presupposition,
-`QForall` (the unified mereological universal) collapses to pointwise
-universal quantification — the distributive prediction of Z. §4.2.1. -/
+Three passengers (*faasinjojî* @cite{jaggar-2001} §9.5.4 p.376) —
+*Audù*, *Bàlki*, *Càdi* — board a plane; *Audù* and *Bàlki* buckle
+their seatbelts, *Càdi* does not. The minimal SG-count atomic domain
+on which *UniversalQuantifier.kowWh*'s atom-by-atom predication and
+*Indefinite.wani*'s scope ambiguity under negation are observable. -/
 
-/-- *koo*+*wh* distributes over the atoms of its restrictor.
+/-- *faasinjèe* 'passenger'; *faasinjojî* PL.
+@cite{jaggar-2001} §9.5.4 p.376. -/
+inductive Faasinjee where | audu | balki | cadi
+  deriving DecidableEq, Repr
 
-The Hausa prediction (Z. §4.2.1 ex. 89a): *koo-wànè daalìbii yáa
-tàaru à gàba-n makàrantaa* is ungrammatical — *koo*+*wh* cannot
-co-occur with the collective predicate *tàaru* 'gather' precisely
-because it forces a distributive construal.
+/-- Flat order: every passenger is an atom; distinct passengers do
+not overlap. -/
+instance : PartialOrder Faasinjee where
+  le x y := x = y
+  le_refl _ := rfl
+  le_trans _ _ _ h1 h2 := h1.trans h2
+  le_antisymm _ _ h _ := h
 
-The formal content is `every_distributes`: under `ONE_empty P`, the
-mereological `QForall P Q` reduces to `∀ x, P x → Q x`. -/
-theorem koo_distributes {α : Type*} [PartialOrder α]
-    {P Q : α → Prop} (hONE : ONE_empty P) :
-    QForall P Q ↔ ∀ x, P x → Q x :=
-  every_distributes hONE
+/-- *yā daurà wàndà* 'buckled their seatbelt'. -/
+def Daura : Faasinjee → Prop
+  | .audu => True
+  | .balki => True
+  | .cadi => False
 
-/-! ### *duk(à)*: collective universal via bare Q_∀
+instance : DecidablePred Daura := fun x => match x with
+  | .audu => isTrue trivial
+  | .balki => isTrue trivial
+  | .cadi => isFalse id
 
-In Hausa, *duk(à)* is a modifier (not a D-head): it follows or precedes
-the NP without agreement and selects DEF PL count NPs or mass NPs
-(Z. §4.1). The restrictor is therefore CUM (closed under sum) with a
-unique maximal element — the plural-DEF sum. On the substrate,
-`QForall` on such a restrictor reduces to predication of the maximal
-sum — the collective prediction of Z. §4.2.1 ex. 90. -/
+/-! ### Mereological structure -/
 
-/-- *duk(à)* applies its scope to the maximal element of a CUM restrictor.
+theorem atom_of_faasinjee (x : Faasinjee) : Mereology.Atom x := by
+  intro z hz; exact hz
 
-The Hausa prediction (Z. §4.2.1 ex. 90a): *duk daalìbâ-n sun tàaru à
-gàba-n makàrantaa* 'all the students gathered at the front of the
-school' is grammatical — *duk* freely co-occurs with collective
-predicates because it predicates the scope of the maximal plural sum
-rather than distributing over atoms.
+theorem faasinjee_disjoint (x y : Faasinjee) (h : Mereology.Overlap x y) :
+    x = y := by obtain ⟨z, hzx, hzy⟩ := h; exact hzx.symm.trans hzy
 
-The formal content is `dng_cum'` from `UnifiedUniversal.lean`. -/
-theorem duk_collective {α : Type*} [SemilatticeSup α]
-    {P Q : α → Prop} (hCum : Mereology.CUM P)
-    {m : α} (hMax : Mereology.isMaximal P m) :
-    QForall P Q ↔ Q m :=
-  dng_cum' hCum hMax
+/-- `ONE_empty` holds of the universal *faasinjèe* predicate. This is
+the presupposition Z2008's *kō-wh* analysis (via Q_∀ + ONE_∅) places
+on its SG-count restrictor. -/
+theorem faasinjee_ONE_empty : ONE_empty (fun _ : Faasinjee => True) where
+  has_two := ⟨.audu, .balki, trivial, trivial, by decide⟩
+  pairwise_disjoint := fun x y _ _ h => faasinjee_disjoint x y h
 
-/-! ### *wani/wata/wa(`dan)su*: existential quantifier with flexible scope
+/-! ### *UniversalQuantifier.kowWh* distributivity (Jaggar §9.5.1, Z2008 §4.2.1) -/
 
-Z. §3.2.4 ex. (69) shows that *wani* under VP-negation is ambiguous
-between ¬∃ ('I didn't see anyone', preferred) and ∃¬ ('there is
-someone I didn't see'). The narrow-scope (¬∃) reading is the one
-that justifies an existential analysis: a *wani*-NP in the scope of
-negation can simply assert the non-existence of a satisfier. -/
+/-- *kōwānè faasinjèe yā daurà wàndà* 'every passenger buckled their
+seatbelt' is false on this model: the *kowWh*-entry's denotation forces
+atom-by-atom predication (Jaggar p.370), and *Càdi* falsifies the
+scope. -/
+theorem kowWh_daura_false :
+    ¬ UniversalQuantifier.kowWh.z2008Denot (fun _ : Faasinjee => True) Daura := by
+  intro ⟨_, hAll⟩
+  exact (every_distributes faasinjee_ONE_empty).mp hAll .cadi trivial
 
-/-- *wani* can take narrow scope under negation: ¬∃x[N(x) ∧ VP(x)]
-is satisfiable when no N is VP'd.
+/-! ### *Indefinite.wani* scope ambiguity under negation
+(Jaggar §9.5.3, Z2008 §3.2.4 ex. 69)
 
-The formal content is `exists_narrow_scope_under_negation` from
-`ChoiceFunction.lean` (which lives there as a control case for the
-choice-function/∃-quantifier contrast in @cite{owusu-2022}). -/
-theorem wani_narrow_scope {E : Type*}
-    {N VP : E → Prop} (hNone : ∀ x, N x → ¬ VP x) :
-    ¬ ∃ x, N x ∧ VP x :=
-  exists_narrow_scope_under_negation N VP hNone
+The marked indefinite *wani faasinjèe bài daurà wàndà ba* '*wani*
+passenger didn't buckle their seatbelt' is ambiguous between the
+¬∃ reading ('no passenger buckled', preferred) and the ∃¬ reading
+('some passenger didn't buckle'). On the 3-passenger model the
+readings have *different truth values*: the ∃¬ reading is true
+(*Càdi* witnesses), the ¬∃ reading is false (*Audù* and *Bàlki* did
+buckle). Both readings are linguistically available; their truth
+values diverge on this scenario. -/
+
+/-- The wide-scope (∃¬) reading: ∃x. Faasinjèe(x) ∧ ¬Daura(x).
+Witnessed by *Càdi*. -/
+theorem wani_wide_scope :
+    some_sem (fun _ : Faasinjee => True) (¬ Daura ·) :=
+  ⟨.cadi, trivial, id⟩
+
+/-- The narrow-scope (¬∃) reading: ¬∃x. Faasinjèe(x) ∧ Daura(x).
+False on this model — *Audù* witnesses the negated existential. -/
+theorem wani_narrow_scope_false :
+    ¬ ¬ ∃ x : Faasinjee, Daura x := by
+  intro h; exact h ⟨.audu, trivial⟩
+
+/-- *Indefinite.wani* scope ambiguity, witnessed on a single model:
+the ∃¬ reading is true and the ¬∃ reading is false simultaneously.
+The empirical content of Z2008's ex. 69. -/
+theorem wani_ambiguity_witness :
+    some_sem (fun _ : Faasinjee => True) (¬ Daura ·) ∧
+      ¬ ¬ ∃ x : Faasinjee, Daura x :=
+  ⟨wani_wide_scope, wani_narrow_scope_false⟩
 
 end Zimmermann2008

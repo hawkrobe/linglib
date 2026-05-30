@@ -697,6 +697,7 @@ import Linglib.Fragments.German.Gender
 import Linglib.Fragments.German.Reference
 import Linglib.Fragments.Finnish.Coordination
 import Linglib.Fragments.Hausa.Coordination
+import Linglib.Fragments.Hausa.Determiners
 import Linglib.Fragments.HindiUrdu.Coordination
 import Linglib.Fragments.Kannada.Coordination
 import Linglib.Fragments.Korean.Coordination
