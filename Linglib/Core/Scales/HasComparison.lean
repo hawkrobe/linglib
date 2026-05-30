@@ -42,7 +42,7 @@ class HasComparison (α : Type*) where
     `HasMeasure.measure`). `@[reducible]` is required for class-type
     `def`s (Lean elaboration hygiene). -/
 @[reducible]
-def HasComparison.ofMeasure {α δ : Type} [Preorder δ] (m : HasMeasure α δ) :
+def HasComparison.ofMeasure {α δ : Type*} [Preorder δ] (m : HasMeasure α δ) :
     HasComparison α where
   comparativeGreater a b := Comparison.gt.rel (m.degree a) (m.degree b)
 

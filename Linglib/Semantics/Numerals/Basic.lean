@@ -159,30 +159,33 @@ instance : ToString BareNumeral where
     semantics: the order relation each comparison names, and the theory-choice
     meaning. -/
 
-/-- Meaning of a numeral form, parameterized by the bare-numeral semantics
-    (theory choice: Kennedy exact `bareMeaning` or Horn lower-bound
-    `atLeastMeaning`). Only the bare (`.eq`) form consults `bare`; the four
-    modified forms are theory-independent `relationalGQ` denotations. -/
-def _root_.Core.Scale.Comparison.meaning (c : Core.Scale.Comparison)
-    (bare : Nat → Nat → Prop) (m : Nat) : Nat → Prop :=
-  match c with
-  | .eq => bare m
-  | c   => Core.Scale.relationalGQ c.rel id m
+/-- Denotation of a numeral word `e`: the predicate over cardinalities it is true
+    of, under a choice of bare-numeral semantics (`bareMeaning` exact vs.
+    `atLeastMeaning` lower-bound — only the bare `.eq` form consults `bare`; the
+    four modified forms are theory-independent `relationalGQ` denotations). A
+    method on the numeral object, mirroring `Pronoun.Entry.denote`. -/
+def _root_.Numeral.Entry.meaning (e : Numeral.Entry) (bare : Nat → Nat → Prop) :
+    Nat → Prop :=
+  match e.comparison with
+  | .eq => bare e.argument
+  | c   => Core.Scale.relationalGQ c.rel id e.argument
 
-instance (c : Core.Scale.Comparison) (bare : Nat → Nat → Prop)
-    [∀ m n, Decidable (bare m n)] (m n : Nat) : Decidable (c.meaning bare m n) := by
+instance (e : Numeral.Entry) (bare : Nat → Nat → Prop)
+    [∀ m n, Decidable (bare m n)] (n : Nat) : Decidable (e.meaning bare n) := by
+  obtain ⟨_, c, _⟩ := e
   cases c <;>
-    simp only [Core.Scale.Comparison.meaning, Core.Scale.Comparison.rel, Core.Scale.relationalGQ] <;>
+    simp only [Numeral.Entry.meaning, Core.Scale.Comparison.rel, Core.Scale.relationalGQ] <;>
     infer_instance
 
-/-- The bare-world meaning of a *modified* numeral (`c ≠ .eq`) is endpoint
-    membership in the comparison's interval — connecting `meaning` to the
-    interval form. -/
-theorem _root_.Core.Scale.Comparison.meaning_boundary (bare : Nat → Nat → Prop)
-    (c : Core.Scale.Comparison) (m : Nat) (h : c ≠ .eq) :
-    c.meaning bare m m ↔ m ∈ c.interval m := by
+/-- The bare-world meaning of a *modified* numeral word (`comparison ≠ .eq`) is
+    endpoint membership in the comparison's interval — connecting `meaning` to
+    the interval form. -/
+theorem _root_.Numeral.Entry.meaning_boundary (e : Numeral.Entry) (bare : Nat → Nat → Prop)
+    (h : e.comparison ≠ .eq) :
+    e.meaning bare e.argument ↔ e.argument ∈ e.comparison.interval e.argument := by
+  obtain ⟨_, c, _⟩ := e
   cases c <;>
-    simp_all [Core.Scale.Comparison.meaning, Core.Scale.Comparison.interval,
+    simp_all [Numeral.Entry.meaning, Core.Scale.Comparison.interval,
       Core.Scale.relationalGQ, Core.Scale.Comparison.rel]
 
 -- ============================================================================
@@ -210,20 +213,20 @@ def kennedyAlternatives : List Core.Scale.Comparison :=
 /-- **Class A excludes the bare-numeral world** (universal). A strict comparison
     (`>`, `<`) fails at the boundary `n = m`, regardless of which bare-numeral
     semantics is chosen. Corollary of `boundary_mem`. -/
-theorem classA_excludes_bare_world (bare : Nat → Nat → Prop) (c : Core.Scale.Comparison)
-    (m : Nat) (h : c.isStrict) :
-    ¬ c.meaning bare m m := by
-  have hne : c ≠ .eq := by cases c <;> simp_all [Core.Scale.Comparison.isStrict]
-  rw [Core.Scale.Comparison.meaning_boundary bare c m hne, Core.Scale.Comparison.boundary_mem]
+theorem classA_excludes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → Prop)
+    (h : e.comparison.isStrict) :
+    ¬ e.meaning bare e.argument := by
+  have hne : e.comparison ≠ .eq := by intro heq; rw [heq] at h; exact h
+  rw [e.meaning_boundary bare hne, Core.Scale.Comparison.boundary_mem]
   exact not_not_intro h
 
 /-- **Class B includes the bare-numeral world** (universal). A non-strict
     *modifier* (`≥`, `≤`) holds at the boundary `n = m`, regardless of which
     bare-numeral semantics is chosen. Corollary of `boundary_mem`. -/
-theorem classB_includes_bare_world (bare : Nat → Nat → Prop) (c : Core.Scale.Comparison)
-    (m : Nat) (h : ¬ c.isStrict) (hne : c ≠ .eq) :
-    c.meaning bare m m := by
-  rw [Core.Scale.Comparison.meaning_boundary bare c m hne, Core.Scale.Comparison.boundary_mem]
+theorem classB_includes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → Prop)
+    (h : ¬ e.comparison.isStrict) (hne : e.comparison ≠ .eq) :
+    e.meaning bare e.argument := by
+  rw [e.meaning_boundary bare hne, Core.Scale.Comparison.boundary_mem]
   exact h
 
 /-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization

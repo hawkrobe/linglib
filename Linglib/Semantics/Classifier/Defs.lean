@@ -52,6 +52,14 @@ structure ClassifierDenot (W : Type u) (E : Type v) [PartialOrder E] where
       For atomic-sortal classifiers, `counted = sortal` (see `ofSortal`). -/
   counted : Core.Intension W (E → Prop)
 
+/-- The atom-count measure: the number of ⊑-atomic `P`-parts of `x` in world
+    `w`. Noncomputable (`Set.ncard`); this is the `μ` over which classifier
+    counting is ordinary numeral comparison (`Comparison.eq.over`), and the same
+    set the Sudo ∪/∩ operators (`upNum`/`downNum`) count. -/
+noncomputable def atomCount {W : Type u} {E : Type v} [PartialOrder E]
+    (P : Core.Intension W (E → Prop)) (w : W) (x : E) : ℕ :=
+  {y : E | y ≤ x ∧ P w y}.ncard
+
 namespace ClassifierDenot
 
 variable {W : Type u} {E : Type v} [PartialOrder E]
@@ -74,8 +82,7 @@ def ofSortal (P : Core.Intension W (E → Prop)) : ClassifierDenot W E where
     measure phrases and bare cardinals use. (`Set.ncard` returns 0 on infinite
     sets; for natural-language counting the relevant sets are finite.) -/
 def apply (cl : ClassifierDenot W E) (w : W) (n : ℕ) (x : E) : Prop :=
-  cl.sortal w x ∧
-    x ∈ Core.Scale.Comparison.eq.over (fun y => {z : E | z ≤ y ∧ cl.counted w z}.ncard) n
+  cl.sortal w x ∧ x ∈ Core.Scale.Comparison.eq.over (atomCount cl.counted w) n
 
 @[simp] lemma ofSortal_sortal (P : Core.Intension W (E → Prop)) :
     (ofSortal P).sortal = P := rfl

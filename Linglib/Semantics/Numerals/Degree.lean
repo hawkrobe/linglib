@@ -20,15 +20,9 @@ namespace Semantics.Numerals
 
 open Core.Scale
 
-/-- Cardinality (`Nat`) participates in the `HasDegree` framework via the
-    canonical embedding into ℚ. -/
+/-- Cardinality (`Nat`) participates in the `HasMeasure`/`HasDegree` framework
+    via the canonical embedding into ℚ. -/
 instance CardinalityDegree : HasDegree Nat ℚ where
   degree := λ n => (n : ℚ)
-
-/-- Literal/exact numeral semantics over `HasDegree`. "Six feet" is true of
-    `x` iff `μ_height(x) = 6`. -/
-def numeralExact {E α : Type} [HasDegree E α] [BEq α]
-    (stated : α) (entity : E) : Bool :=
-  HasDegree.degree entity == stated
 
 end Semantics.Numerals
