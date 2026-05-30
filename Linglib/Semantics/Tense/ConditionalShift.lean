@@ -37,7 +37,7 @@ open Core (WorldTimeIndex)
 open Core.Time
 open Core.Context (RichContext KContext ContextTower ContextShift
   hpShift DomainExpanding)
-open Semantics.Modality.HistoricalAlternatives
+open HistoricalAlternatives
 open Semantics.Mood
 
 -- ════════════════════════════════════════════════════════════════
@@ -95,7 +95,7 @@ variable {W : Type*} {T : Type*} [Preorder T]
     O-marking (Non-Past / HP) in Japanese Anderson conditionals expands
     the domain without X-marking. -/
 theorem hp_achieves_expansion
-    (history : WorldHistory W T)
+    (history : HistoricalAlternatives W T)
     (h_bc : history.backwardsClosed)
     (s₀ : WorldTimeIndex W T) (t' : T) (h_earlier : t' ≤ s₀.time)
     (w : W) (hw : w ∈ history s₀) :
@@ -111,7 +111,7 @@ theorem hp_achieves_expansion
     evaluation time backward, and backward time yields more historical
     alternatives, i.e., domain expansion. -/
 theorem history_monotone_set
-    (history : WorldHistory W T)
+    (history : HistoricalAlternatives W T)
     (h_bc : history.backwardsClosed)
     (s₀ : WorldTimeIndex W T) (t' : T) (h_earlier : t' ≤ s₀.time) :
     (history s₀ : Set W) ⊆ (history ⟨s₀.world, t'⟩ : Set W) :=
@@ -121,7 +121,7 @@ theorem history_monotone_set
     situations with the same worlds as the later base, plus potentially more.
     This is the situation-level version of domain expansion. -/
 theorem historicalBase_monotone
-    (history : WorldHistory W T)
+    (history : HistoricalAlternatives W T)
     (h_bc : history.backwardsClosed)
     (s₀ : WorldTimeIndex W T) (t' : T) (h_earlier : t' ≤ s₀.time)
     (s₁ : WorldTimeIndex W T) (h_s₁ : s₁ ∈ historicalBase history s₀)
@@ -252,7 +252,7 @@ variable {W : Type*} {T : Type*} [Preorder T]
     When the history is backwards-closed, SUBJ at an earlier time introduces
     a situation whose world is in the expanded historical alternatives. -/
 theorem subj_subsumes_hp_expansion
-    (history : WorldHistory W T)
+    (history : HistoricalAlternatives W T)
     (P : WorldTimeIndex W T → WorldTimeIndex W T → Prop)
     (s : WorldTimeIndex W T)
     (h : SUBJ history P s) :

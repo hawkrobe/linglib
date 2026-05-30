@@ -392,7 +392,7 @@ ULC: embedded R' ≤ matrix E (= embedded P).
 **Note on faithfulness:** the value-level reduction `embeddedR ≤ matrixE`
 strips the modal-alternative quantification Abusch's formulation
 carries (the "now of an epistemic alternative" quantifies over
-doxastic alternatives). A modal-layer formulation (over `WorldHistory
+doxastic alternatives). A modal-layer formulation (over `HistoricalAlternatives
 W Time`, à la @cite{klecha-2016}'s `actualHistoryBase`) would be more
 faithful to the original; deferred future work.
 -/

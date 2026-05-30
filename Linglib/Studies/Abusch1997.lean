@@ -50,7 +50,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
    formalized at the value level as `embeddedR ≤ matrixE`. **Note:**
    this value-level reduction strips the modal-alternative
    quantification the original formulation carries; making the modal
-   layer explicit (over `WorldHistory W Time` à la @cite{klecha-2016})
+   layer explicit (over `HistoricalAlternatives W Time` à la @cite{klecha-2016})
    is deferred.
 3. **Temporal de re**: tense variable in the res position of an
    attitude. The value-level shadow uses `TensePronoun.fullPresupposition`:
@@ -296,14 +296,14 @@ theorem abusch_derives_temporal_de_re_full
 
 /-- **Metaphysical-instantiation specialization** of
     `abusch_derives_temporal_de_re_full`. Recovers the legacy
-    `WorldHistory`-based formulation as a corollary at the
+    `HistoricalAlternatives`-based formulation as a corollary at the
     `metaphysicalAlternatives` instance, demonstrating backward
     compatibility with Klecha 2016 DOX-shaped reasoning. -/
 theorem abusch_derives_temporal_de_re_full_metaphysical
     {W E P Time : Type*} [LinearOrder Time]
     (dr : Semantics.Tense.DeRe.TemporalDeReReading W E P Time)
     (hRigid : Core.Intension.IsRigid dr.concept)
-    (history : Semantics.Modality.HistoricalAlternatives.WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (hBefore : dr.actualRes < dr.holderContext.time) :
     dr.isAbuschFelicitous (dr.metaphysicalAlternatives history) .past :=
   abusch_derives_temporal_de_re_full dr hRigid _ hBefore

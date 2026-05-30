@@ -59,7 +59,7 @@ namespace Semantics.Modality.Exclusion
 
 open Core.Context (KContext ContextTower ContextShift RichContext
   hpShift xMarkingShift DomainExpanding temporalShift)
-open Semantics.Modality.HistoricalAlternatives (WorldHistory historicalBase)
+open HistoricalAlternatives (historicalBase)
 open Semantics.Mood (subjShift)
 open Semantics.Reference.Kaplan (opActually_access opActually_shift_invariant)
 open Semantics.Tense (upperLimitConstraint)
@@ -394,12 +394,12 @@ theorem domain_expansion_avoids_triviality
 backward time shift → the HP-shifted domain contains the original.
 
 Connects three layers:
-1. `BranchingTime.WorldHistory.backwardsClosed` (semantic property)
+1. `BranchingTime.HistoricalAlternatives.backwardsClosed` (semantic property)
 2. `ConditionalShift.history_monotone_set` (set-level monotonicity)
 3. `hpShift` installs the expanded domain -/
 theorem oMarking_hpShift_expanding
     {W : Type*} {T : Type*} [Preorder T]
-    (history : WorldHistory W T) (h_bc : history.backwardsClosed)
+    (history : HistoricalAlternatives W T) (h_bc : history.backwardsClosed)
     (w₀ : W) (t₀ t' : T) (h_earlier : t' ≤ t₀)
     (D : Set W) (h_domain : D ⊆ history ⟨w₀, t₀⟩) :
     D ⊆ history ⟨w₀, t'⟩ :=
