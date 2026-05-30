@@ -4,8 +4,8 @@ import Linglib.Features.Aktionsart
 /-!
 # Neo-Davidsonian Event Semantics — basic API
 
-API on top of `Events/Defs.lean`'s foundational types: sort predicates over
-the `Features.Dynamicity` event sort, and concrete examples on `ℤ`-time.
+API on top of `Events/Defs.lean`'s foundational types: sort and duration
+predicates on the `Event` token, and concrete examples on `ℤ`-time.
 
 Files that only need to *talk about* events should import `Defs.lean`
 directly.
@@ -14,41 +14,69 @@ directly.
 
 * `Event.isAction` / `Event.isState` — decidable `Prop` sort predicates
   (the `dynamic` / `stative` poles of `Features.Dynamicity`)
+* `Event.isPunctual` / `Event.isDurative` — decidable `Prop` duration
+  predicates (whether the runtime is a point)
 * `exampleRun` / `exampleKnow` — concrete `Event ℤ` instances
 -/
 
 open Core.Time
 open Features
 
+namespace Event
+
+variable {Time : Type*} [LinearOrder Time]
+
 /-! ### Sort predicates -/
 
 /-- Is this event an action (dynamic event)? -/
-def Event.isAction {Time : Type*} [LinearOrder Time] (e : Event Time) : Prop :=
+def isAction (e : Event Time) : Prop :=
   e.sort = .dynamic
 
 /-- Is this event a state (stative event)? -/
-def Event.isState {Time : Type*} [LinearOrder Time] (e : Event Time) : Prop :=
+def isState (e : Event Time) : Prop :=
   e.sort = .stative
 
-instance {Time : Type*} [LinearOrder Time] :
-    DecidablePred (Event.isAction (Time := Time)) :=
+instance : DecidablePred (isAction (Time := Time)) :=
   fun e => decEq e.sort .dynamic
 
-instance {Time : Type*} [LinearOrder Time] :
-    DecidablePred (Event.isState (Time := Time)) :=
+instance : DecidablePred (isState (Time := Time)) :=
   fun e => decEq e.sort .stative
 
 /-- `isAction` and `isState` are complementary. -/
-theorem isAction_iff_not_isState {Time : Type*} [LinearOrder Time] (e : Event Time) :
+theorem isAction_iff_not_isState (e : Event Time) :
     e.isAction ↔ ¬ e.isState := by
   simp only [Event.isAction, Event.isState]
   cases e.sort <;> decide
 
 /-- `isState` and `isAction` are complementary. -/
-theorem isState_iff_not_isAction {Time : Type*} [LinearOrder Time] (e : Event Time) :
+theorem isState_iff_not_isAction (e : Event Time) :
     e.isState ↔ ¬ e.isAction := by
   simp only [Event.isAction, Event.isState]
   cases e.sort <;> decide
+
+/-! ### Duration predicates -/
+
+/-- Is this event punctual (instantaneous)? Its runtime is a single point.
+    The temporal-extent counterpart of the dynamicity sort; derived from the
+    runtime via `Interval.IsPoint`. -/
+def isPunctual (e : Event Time) : Prop :=
+  e.τ.IsPoint
+
+/-- Is this event durative (temporally extended)? -/
+def isDurative (e : Event Time) : Prop :=
+  ¬ e.isPunctual
+
+instance : DecidablePred (isPunctual (Time := Time)) :=
+  fun e => by unfold Event.isPunctual Interval.IsPoint; infer_instance
+
+instance : DecidablePred (isDurative (Time := Time)) :=
+  fun e => by unfold Event.isDurative; infer_instance
+
+/-- `isDurative` and `isPunctual` are complementary. -/
+theorem isDurative_iff_not_isPunctual (e : Event Time) :
+    e.isDurative ↔ ¬ e.isPunctual := Iff.rfl
+
+end Event
 
 /-! ### Concrete examples (ℤ-time events) -/
 
@@ -71,6 +99,9 @@ theorem exampleRun_not_state : ¬ exampleRun.isState := by decide
 
 /-- The know event is not an action. -/
 theorem exampleKnow_not_action : ¬ exampleKnow.isAction := by decide
+
+/-- The run event is durative. -/
+theorem exampleRun_isDurative : exampleRun.isDurative := by decide
 
 /-- The run event starts at 1. -/
 theorem exampleRun_start : exampleRun.τ.start = 1 := rfl
