@@ -45,7 +45,7 @@ open Core.Time
 open Features (Dynamicity)
 open Semantics.Events
 open Semantics.Aspect
-open Semantics.Modality.HistoricalAlternatives
+open HistoricalAlternatives
 open Semantics.Modality (TemporalPerspective TemporalOrientation)
 
 /-! ## The AT relation
@@ -323,7 +323,7 @@ variable {W Time : Type*} [LinearOrder Time]
     past properties are), then a metaphysical modal base cannot satisfy
     diversity — restricting MODAL > PERF to epistemic modality. -/
 theorem modal_over_perf_blocks_metaphysical
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (MB : W → Time → Set W)
     (cg : Set W) (now : Time)
     (P : EventPred W Time)
@@ -338,7 +338,7 @@ theorem modal_over_perf_blocks_metaphysical
     base wider. This is the structural source of the counterfactual
     reading's "could have been otherwise" force. -/
 theorem counterfactual_widens_domain
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (hBC : history.backwardsClosed) (w : W)
     {t' now : Time} (hle : t' ≤ now) :
     metaphysicalBase history w now ⊆ metaphysicalBase history w t' :=

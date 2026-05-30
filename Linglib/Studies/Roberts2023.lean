@@ -38,7 +38,7 @@ This file is a **configuration of existing infrastructure**, not a
 standalone formalization of an imperative mood ontology:
 
 - The futurate modal base reuses
-  `Semantics.Modality.HistoricalAlternatives.futureHistoryBase`.
+  `HistoricalAlternatives.futureHistoryBase`.
 - The goal-based ordering and circumstantial modal base are
   `Kratzer.OrderingSource` / `ModalBase`, packaged as
   `TeleologicalFlavor` (no parallel types).
@@ -68,7 +68,7 @@ namespace Roberts2023
 open Core (WorldTimeIndex)
 open Discourse (forceLinkingPrinciple defaultSemanticType sincerityCondition Scoreboard)
 open Semantics.Mood (POSW POSWQ POSWTarget IllocutionaryMood HasPOSWTarget)
-open Semantics.Modality.HistoricalAlternatives
+open HistoricalAlternatives
 open Semantics.Modality.Kratzer
 
 abbrev World := Fin 4
@@ -77,12 +77,12 @@ abbrev World := Fin 4
 
 Roberts's "circumstance" ⟨w, t⟩ (eq. 45), SameHistory (47), and FUT
 (48) all instantiate the canonical world-time substrate in
-`Core.WorldTimeIndex` and `Semantics.Modality.HistoricalAlternatives`:
+`Core.WorldTimeIndex` and `HistoricalAlternatives`:
 
   Roberts                        Linglib substrate
   ────────────────────────────   ────────────────────────────
   ⟨w, t⟩ circumstance            `WorldTimeIndex W T`
-  SameHistory(w', w, t)          `WorldHistory W T` predicate
+  SameHistory(w', w, t)          `HistoricalAlternatives W T` predicate
   FUT(⟨w, t⟩)                    `futureHistoryBase history s`
 
 No new types are introduced for these. -/
@@ -179,7 +179,7 @@ theorem pragmatic_deontic_routing
 /-! ## §1 Desideratum (h): Futurate Flavor
 
 Restated against `futureHistoryBase` (the canonical Condoravdi/CIR
-substrate in `Semantics.Modality.HistoricalAlternatives`) rather than a
+substrate in `HistoricalAlternatives`) rather than a
 local `FUT` enumeration. -/
 
 /-- **(h) Futurate flavor** (@cite{roberts-2023} Table 1, §1, exx.
@@ -187,7 +187,7 @@ local `FUT` enumeration. -/
     ⟨w, t⟩ has a strictly later time than t. Direct consequence of
     `futureHistoryBase`'s definition. -/
 theorem futurate {W T : Type*} [LT T]
-    (history : WorldHistory W T)
+    (history : HistoricalAlternatives W T)
     (s s' : WorldTimeIndex W T) (h : s' ∈ futureHistoryBase history s) :
     s.time < s'.time := h.2
 

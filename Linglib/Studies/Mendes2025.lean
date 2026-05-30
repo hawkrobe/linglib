@@ -39,7 +39,7 @@ namespace Mendes2025
 
 open Core (Assignment WorldTimeIndex)
 open Core.Time
-open Semantics.Modality.HistoricalAlternatives
+open HistoricalAlternatives
 open Semantics.Dynamic.Core
 open Semantics.Tense
 open Semantics.Mood
@@ -66,7 +66,7 @@ This is the compositional derivation:
 ⟦SF⟧ = ⟦SUBJ⟧ ∘ ⟦FUT⟧
 -/
 def subordinateFuture {W Time : Type*} [LE Time] [LT Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (newSitVar : SVar)   -- Fresh variable for introduced situation
     (refSitVar : SVar)   -- Variable for reference situation
     (c : SitContext W Time) : SitContext W Time :=
@@ -85,7 +85,7 @@ Conditional with SF antecedent (dynamic version).
 3. Consequent: temporally anchored to s₁ (future relative to s₀)
 -/
 def conditionalWithSF {W Time : Type*} [LE Time] [LT Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (antecedentVar : SVar)  -- Situation introduced by SF
     (speechVar : SVar)      -- Speech time situation
     (antecedent : SitContext W Time → SitContext W Time)  -- "Maria is home"
@@ -110,7 +110,7 @@ Structure:
 3. Nuclear scope (get cookie) evaluated with temporal anchor from s₁
 -/
 def relativeClauseSF {W Time : Type*} [LE Time] [LT Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (rcVar : SVar)           -- Situation variable for relative clause
     (speechVar : SVar)       -- Speech time situation
     (c : SitContext W Time) : SitContext W Time :=
@@ -128,7 +128,7 @@ The SF in the restrictor:
 3. Nuclear scope inherits temporal anchor from s₁
 -/
 def everyWithSFRestrictor {W Time : Type*} [LE Time] [LT Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (rcVar speechVar : SVar)
     (restrictor : SitContext W Time → SitContext W Time)  -- "book that M reads"
     (nuclear : SitContext W Time → SitContext W Time)     -- "is interesting"
@@ -151,7 +151,7 @@ SF introduces a future situation.
 The subordinate future always introduces a situation with time ≥ current.
 -/
 theorem sf_introduces_future {W Time : Type*} [Preorder Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (newVar refVar : SVar)
     (c : SitContext W Time)
     (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
@@ -180,7 +180,7 @@ Modal donkey anaphora explains
 why subjunctive mood enables future reference in subordinate clauses.
 -/
 theorem temporal_shift_parasitic_on_modal {W Time : Type*} [Preorder Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (sfVar speechVar : SVar)
     (c : SitContext W Time)
     -- For any situation in the output of SF application...
@@ -230,7 +230,7 @@ Restrictor and nuclear must be context filters (`IsContextFilter`).
 Linguistically, predicates filter contexts without modifying assignments.
 -/
 theorem sf_restrictor_future_reference {W Time : Type*} [Preorder Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (rcVar speechVar : SVar)
     (restrictor nuclear : SitContext W Time → SitContext W Time)
     (c : SitContext W Time)
@@ -253,7 +253,7 @@ theorem sf_restrictor_future_reference {W Time : Type*} [Preorder Time]
 -- ════════════════════════════════════════════════════════════════
 
 variable {W Time E : Type*} [LE Time] [LT Time]
-variable (history : WorldHistory W Time)
+variable (history : HistoricalAlternatives W Time)
 
 /--
 Maria — proper name.
@@ -461,7 +461,7 @@ def deriveCounterfactual
 SF constrains to future; counterfactual allows past/present.
 -/
 theorem sf_vs_counterfactual_temporal {W Time : Type*} [Preorder Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     {E : Type*}
     (maria : E)
     (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
@@ -509,7 +509,7 @@ SF restrictor: quantifies over historical alternatives.
 "Every book that Maria reads.SF..." → no categorical existence presupposition.
 -/
 def sfRestrictor {W Time E : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (restrictor : E → WorldTimeIndex W Time → Prop)
     (s₀ : WorldTimeIndex W Time) : E → Prop :=
   λ x => ∃ s₁ ∈ historicalBase history s₀, restrictor x s₁
@@ -529,7 +529,7 @@ SF weakens existential presupposition: even without actual existence at s₀,
 the SF restrictor can be satisfied in alternative situations.
 -/
 theorem sf_weakens_presup {W Time E : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (restrictor : E → WorldTimeIndex W Time → Prop)
     (s₀ : WorldTimeIndex W Time)
     (h_no_actual : ¬∃ x, restrictor x s₀)
@@ -544,7 +544,7 @@ theorem sf_weakens_presup {W Time E : Type*} [LE Time]
 SF makes strong quantifiers felicitous under uncertainty.
 -/
 theorem sf_felicitous_under_uncertainty {W Time E : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (restrictor : E → WorldTimeIndex W Time → Prop)
     (s₀ : WorldTimeIndex W Time)
     (h_uncertainty : (∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁) ∧
@@ -564,14 +564,14 @@ Relative clause with SF weakens strong quantifier presupposition.
 This is the formal version of the indicative-vs-SF contrast in restrictors.
 -/
 def relClauseSF {W Time E : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (noun : E → WorldTimeIndex W Time → Prop)
     (relClause : E → WorldTimeIndex W Time → Prop)
     (s₀ : WorldTimeIndex W Time) : E → Prop :=
   λ x => ∃ s₁ ∈ historicalBase history s₀, noun x s₁ ∧ relClause x s₁
 
 theorem relClause_sf_weakens_quantifier {W Time E : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (noun relClause : E → WorldTimeIndex W Time → Prop)
     (s₀ : WorldTimeIndex W Time)
     (h_none_actual : ¬∃ x, noun x s₀ ∧ relClause x s₀)
@@ -587,7 +587,7 @@ Modal displacement: SF introduces quantification over situations,
 "displacing" the existential presupposition to be local within each situation.
 -/
 def modalDisplacement {W Time E : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (restrictor nuclear : E → WorldTimeIndex W Time → Prop)
     (s₀ : WorldTimeIndex W Time) : Prop :=
   ∀ s₁ ∈ historicalBase history s₀,
@@ -598,7 +598,7 @@ def modalDisplacement {W Time E : Type*} [LE Time]
 SF semantics is equivalent to modal displacement.
 -/
 theorem sf_is_modal_displacement {W Time E : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (restrictor nuclear : E → WorldTimeIndex W Time → Prop)
     (s₀ : WorldTimeIndex W Time) :
     modalDisplacement history restrictor nuclear s₀ ↔
@@ -617,7 +617,7 @@ theorem sf_is_modal_displacement {W Time E : Type*} [LE Time]
 Modal displacement is weaker than global accommodation.
 -/
 theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (restrictor : E → WorldTimeIndex W Time → Prop)
     (s₀ : WorldTimeIndex W Time)
     (h_global : ∀ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁)
@@ -661,7 +661,7 @@ Example:
        ↑ SUBJ introduces s₁ ↑ IND retrieves s₁
 -/
 def crossClausalBinding {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (antecedentVar _consequentVar : SVar)
     (c : SitContext W Time) : SitContext W Time :=
   dynIND antecedentVar (dynSUBJ history antecedentVar c)
@@ -672,7 +672,7 @@ introduced in the antecedent and retrieved in the consequent, the two
 clauses are evaluated at the same world.
 -/
 theorem cross_clausal_same_world {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (c : SitContext W Time)
     (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
@@ -688,7 +688,7 @@ predicate filters at `s₁`, IND retrieves `s₁` (same-world check), and
 the consequent inherits the temporal anchor from `s₁`.
 -/
 def subjIndChain {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (antecedentPred : SitContext W Time → SitContext W Time)
     (consequentPred : SitContext W Time → SitContext W Time)
@@ -703,7 +703,7 @@ is evaluated at a world that agrees with the bound situation's world.
 modifying assignments.
 -/
 theorem subj_ind_chain_modal_donkey {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (P Q : SitContext W Time → SitContext W Time)
     (c : SitContext W Time)
@@ -723,7 +723,7 @@ universally over situations satisfying the antecedent — the modal
 analog of donkey universals.
 -/
 theorem unselective_universal_force {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (antecedent consequent : WorldTimeIndex W Time → Prop)
     (c : SitContext W Time) :
@@ -754,7 +754,7 @@ characterizes the static existential conjunction
 `∃ s₁ ∈ historicalBase(s₀), P(s₁) ∧ Q(s₁)`.
 -/
 theorem subjIndChain_singleton {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (g : Assignment (WorldTimeIndex W Time))
     (s₀ : WorldTimeIndex W Time)
@@ -779,7 +779,7 @@ Conjunction is stronger than implication: if the dynamic pipeline finds
 an `s₁` satisfying both `P` and `Q`, then `P(s₁) → Q(s₁)` holds trivially.
 -/
 theorem subjIndChain_entails_conditionalSF {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (g : Assignment (WorldTimeIndex W Time))
     (s₀ : WorldTimeIndex W Time)

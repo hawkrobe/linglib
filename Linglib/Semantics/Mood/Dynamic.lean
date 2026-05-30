@@ -75,7 +75,7 @@ operator and the modal donkey anaphora chain that consumes
 namespace Semantics.Mood
 
 open _root_.Core (Assignment WorldTimeIndex)
-open Semantics.Modality.HistoricalAlternatives
+open HistoricalAlternatives
 open Semantics.Dynamic.Core
 
 
@@ -102,7 +102,7 @@ every `s₁ ∈ historicalBase history s₀`. The current situation is
 updated to the freshly drawn `s₁`, and `v` is bound to it.
 -/
 def dynSUBJ {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar) : SitContext W Time → SitContext W Time :=
   dynIntroduce (historicalBase history) v
 
@@ -117,7 +117,7 @@ theorem dynIND_eq_dynRelationOn_sameWorld {W Time : Type*}
       dynRelationOn (fun gs => gs.2) (fun gs => gs.1 v) sameWorld c := rfl
 
 theorem dynSUBJ_eq_dynIntroduce_historicalBase {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time) (v : SVar) (c : SitContext W Time) :
+    (history : HistoricalAlternatives W Time) (v : SVar) (c : SitContext W Time) :
     dynSUBJ history v c =
       dynIntroduce (historicalBase history) v c := rfl
 
@@ -153,7 +153,7 @@ theorem dynIND_idempotent {W Time : Type*}
 /-- SUBJ is existential over the historical base. Inherited from
 `dynIntroduce_current_in_gen`. -/
 theorem dynSUBJ_existential {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (c : SitContext W Time)
     (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
@@ -164,7 +164,7 @@ theorem dynSUBJ_existential {W Time : Type*} [LE Time]
 /-- After `dynSUBJ`, looking up `v` always returns the current
 situation. Inherited from `dynIntroduce_binds_current`. -/
 theorem dynSUBJ_binds_current {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (c : SitContext W Time)
     (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
@@ -212,7 +212,7 @@ set rather than just an existential iff. The output of `dynSUBJ` on
 `s₁ ∈ historicalBase history s₀`.
 -/
 theorem dynSUBJ_singleton_eq {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (g : Assignment (WorldTimeIndex W Time))
     (s₀ : WorldTimeIndex W Time) :
@@ -236,7 +236,7 @@ For a singleton context `{(g, s₀)}`, the set of situations reachable via
 `SUBJ` existentially quantifies over.
 -/
 theorem dynSUBJ_realizes_SUBJ {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (g : Assignment (WorldTimeIndex W Time))
     (s₀ : WorldTimeIndex W Time)
@@ -265,7 +265,7 @@ on `v` is trivially satisfied — `gs.2 = s₁ = gs.1 v` by
 shared variables preserves the full SUBJ output.
 -/
 theorem dynIND_after_dynSUBJ_same_var {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (v : SVar)
     (c : SitContext W Time) :
     dynIND v (dynSUBJ history v c) = dynSUBJ history v c := by

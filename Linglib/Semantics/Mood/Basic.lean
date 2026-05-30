@@ -45,7 +45,7 @@ namespace Semantics.Mood
 open Core (WorldTimeIndex)
 
 open Core.Time
-open Semantics.Modality.HistoricalAlternatives
+open HistoricalAlternatives
 
 
 /--
@@ -86,7 +86,7 @@ The subjunctive:
 Analogous to an indefinite for situations.
 -/
 def SUBJ {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (P : SitPred W Time)
     (s₀ : WorldTimeIndex W Time) : Prop :=
   ∃ s₁ : WorldTimeIndex W Time,
@@ -220,7 +220,7 @@ This explains why SF enables future reference: the subjunctive
 introduces a future situation that the main clause can refer back to.
 -/
 def conditionalSF {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (antecedent : WorldTimeIndex W Time → Prop)  -- "Maria is home"
     (consequent : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)  -- "she answers"
     (s₀ : WorldTimeIndex W Time) : Prop :=
@@ -245,7 +245,7 @@ def conditionalIND {W Time : Type*}
 SUBJ is existential: it introduces a situation.
 -/
 theorem subj_is_existential {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (P : SitPred W Time)
     (s₀ : WorldTimeIndex W Time) :
     SUBJ history P s₀ → ∃ s₁, P s₁ s₀ := by
@@ -257,7 +257,7 @@ SUBJ constrains to historical base: the introduced situation
 is in the historical alternatives.
 -/
 theorem subj_in_hist {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (P : SitPred W Time)
     (s₀ : WorldTimeIndex W Time) :
     SUBJ history P s₀ → ∃ s₁, s₁ ∈ historicalBase history s₀ ∧ P s₁ s₀ := by
@@ -279,7 +279,7 @@ SUBJ with reflexive history: if the history is reflexive,
 the current situation is always an option.
 -/
 theorem subj_current_option {W Time : Type*} [Preorder Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (h_refl : history.reflexive)
     (P : SitPred W Time)
     (s₀ : WorldTimeIndex W Time)
@@ -313,7 +313,7 @@ This follows from the existential nature of SUBJ: it quantifies over
 situations in the historical base, which includes non-actual futures.
 -/
 theorem subj_nonveridical {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     -- Need: history has an option distinct from the evaluation point
     (h_branching : ∃ s₀ s₁ : WorldTimeIndex W Time,
       s₁ ∈ historicalBase history s₀ ∧ s₀ ≠ s₁) :
@@ -359,7 +359,7 @@ section AttitudeTemporalAnchor
     perspective time shifts to the matrix event time. Both mechanisms
     create a new temporal reference point for embedded evaluation. -/
 theorem subj_temporal_anchor {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (P : SitPred W Time)
     (s₀ : WorldTimeIndex W Time)
     (h : SUBJ history P s₀) :
@@ -428,7 +428,7 @@ theorem subjShift_preserves_agent {E P : Type*}
 
     This is the bridge between the existential `SUBJ` and the tower `push`. -/
 theorem subj_as_tower_push [LE Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (Q : SitPred W Time)
     (s₀ : WorldTimeIndex W Time) :
     SUBJ history Q s₀ ↔
