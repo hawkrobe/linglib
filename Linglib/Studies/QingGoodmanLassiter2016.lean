@@ -161,10 +161,10 @@ theorem always_matches_continuation (w : WorldState) :
     (eq. 8). The paper's full model uses 15 non-empty subsets with 5% noise;
     the omitted 6 (e.g., `change = {(T,F),(F,T)}`) have negligible prior. -/
 inductive ContextSet where
-  | pastTrue           -- +past: CG entails John smoked
-  | pastFalse          -- -past: CG entails John didn't smoke
-  | nowTrue            -- +now: CG entails John smokes
-  | nowFalse           -- -now: CG entails John doesn't smoke
+  | pastTrue           -- +past: CommonGround entails John smoked
+  | pastFalse          -- -past: CommonGround entails John didn't smoke
+  | nowTrue            -- +now: CommonGround entails John smokes
+  | nowFalse           -- -now: CommonGround entails John doesn't smoke
   | pastTrueNowTrue    -- +past+now
   | pastTrueNowFalse   -- +past-now
   | pastFalseNowTrue   -- -past+now
@@ -236,9 +236,9 @@ def utterancePrior : Utterance → ℚ
 theorem utterancePrior_nonneg (u : Utterance) : 0 ≤ utterancePrior u := by
   cases u <;> simp [utterancePrior]
 
-/-- Context set prior (eq. 8): Pr(C) ∝ Σ_{CG⊆Obs} P(CG) · δ_{C=∩CG}.
-    Each observation enters CG independently with probability 0.4.
-    P(CG) = 0.4^|CG| × 0.6^(4-|CG|).
+/-- Context set prior (eq. 8): Pr(C) ∝ Σ_{CommonGround⊆Obs} P(CommonGround) · δ_{C=∩CommonGround}.
+    Each observation enters CommonGround independently with probability 0.4.
+    P(CommonGround) = 0.4^|CommonGround| × 0.6^(4-|CommonGround|).
     - 0 observations (universe): 0.6^4 ∝ 9
     - 1 observation (single): 0.4 × 0.6^3 ∝ 6
     - 2 observations (pair): 0.4^2 × 0.6^2 ∝ 4 -/
@@ -256,7 +256,7 @@ theorem contextPrior_pos (cs : ContextSet) : 0 < contextPrior cs := by
 -- ============================================================================
 
 /-- RSA model parameterized by QUD. The paper's final model uses QUD_now with
-    CG prior.
+    CommonGround prior.
 
     - L0: meaning = compatibility ∧ literal truth (eq. 5)
     - S1: utterancePrior × rpow(qudAggregate(L0), α) (eq. 6)
@@ -278,13 +278,13 @@ noncomputable def cfg (qud : QUD) : RSA.RSAConfig Utterance WorldState where
   latentPrior _ cs := (contextPrior cs : ℝ)
   latentPrior_nonneg _ cs := Rat.cast_nonneg.mpr (le_of_lt (contextPrior_pos cs))
 
-/-- Final model: CG prior + QUD_now (paper's main prediction). -/
+/-- Final model: CommonGround prior + QUD_now (paper's main prediction). -/
 noncomputable abbrev cfgNow := cfg .now
 
-/-- Comparison model: CG prior + QUD_max. -/
+/-- Comparison model: CommonGround prior + QUD_max. -/
 noncomputable abbrev cfgMax := cfg .max
 
-/-- Comparison model: CG prior + QUD_past. -/
+/-- Comparison model: CommonGround prior + QUD_past. -/
 noncomputable abbrev cfgPast := cfg .past
 
 -- ============================================================================
@@ -381,7 +381,7 @@ the speaker is much more likely to use "didn't stop" when the +past context
 holds, and L1 infers this.
 
 Figure 3 shows that (T,T) with context set +past is the unique maximum of the
-joint distribution under CG prior + QUD_now. -/
+joint distribution under CommonGround prior + QUD_now. -/
 
 set_option maxHeartbeats 3200000 in
 /-- **Context set projection**: L1 infers +past context over -past context. -/

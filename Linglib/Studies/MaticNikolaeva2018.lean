@@ -265,7 +265,7 @@ M&N §2 explicitly target three sibling frameworks beyond the substrate's
 form-class encoding. Two of them are formalized in linglib:
 
 - `Studies/RomeroHan2004.lean` formalizes
-  @cite{romero-han-2004}'s **FOR-SURE-CG** epistemic-conjunction
+  @cite{romero-han-2004}'s **FOR-SURE-CommonGround** epistemic-conjunction
   operator. M&N call this "Lexical Operator Theory" (LOT) and
   reject it on the same form-meaning grounds (M&N §2 "epistemic
   account").
@@ -287,14 +287,14 @@ mappings as separate `def`s for now so each framework's coverage
 profile stays visible at the def-site. -/
 
 /-- Romero & Han's framework offers exactly one analytic option for
-    salient polarity: the FOR-SURE-CG operator. M&N call this LOT. -/
+    salient polarity: the FOR-SURE-CommonGround operator. M&N call this LOT. -/
 inductive RHAnalysis where
   /-- @cite{romero-han-2004}'s `forSureCG` operator analyzes the
-      structure as expressing speaker certainty about CG-addition. -/
+      structure as expressing speaker certainty about CommonGround-addition. -/
   | epistemicVerum
   deriving DecidableEq, Repr
 
-/-- R&H's FOR-SURE-CG analysis is canonically motivated by — and
+/-- R&H's FOR-SURE-CommonGround analysis is canonically motivated by — and
     arguably restricted to — accent on finite verbs / auxiliaries
     (the prosodic-on-finite-verb subset). For M&N's other 11
     structures (periphrastic *tun*, VP fronting, discourse particles,
@@ -309,7 +309,7 @@ def romeroHanBestEffort : MNAttestedStructure → Option RHAnalysis
   | .serbianAccentedAuxiliary      => some .epistemicVerum
   | _                              => none
 
-/-- R&H's FOR-SURE-CG analysis cannot encode at least 11 of M&N's 18
+/-- R&H's FOR-SURE-CommonGround analysis cannot encode at least 11 of M&N's 18
     attested salient-polarity structures. The framework's analytic
     scope is the prosodic-on-finite-verb subset; everything else falls
     outside. -/
@@ -348,7 +348,7 @@ theorem gutzmann_2015_framework_does_not_apply :
 
 /-- The M&N argument is universal: at least 10 attested structures fall
     outside the substrate enum, at least 11 fall outside R&H's
-    FOR-SURE-CG, and all 18 fall outside Gutzmann 2015's sentence-mood
+    FOR-SURE-CommonGround, and all 18 fall outside Gutzmann 2015's sentence-mood
     UCIs. The structures inside the *intersection* of all three
     frameworks — the canonical prosodic verum focus on finite verbs —
     are exactly the cases all four traditions agree about; the

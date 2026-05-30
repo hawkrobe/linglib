@@ -112,7 +112,7 @@ def PresupTriggerType.isSoft : PresupTriggerType → Bool
 Postsupposition type: output-context constraint distinct from presuppositions.
 
 @cite{glass-2025} argues that Mandarin yǐwéi has a postsupposition ◇¬p —
-after accepting "x yǐwéi p", the CG must be compatible with ¬p.
+after accepting "x yǐwéi p", the CommonGround must be compatible with ¬p.
 This cannot be derived from veridicality alone.
 
 The concrete `Semantics.Dynamic.Postsupposition.Postsupposition W` is parameterized

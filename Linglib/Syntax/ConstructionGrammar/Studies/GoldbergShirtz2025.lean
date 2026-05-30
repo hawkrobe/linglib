@@ -28,7 +28,7 @@ namespace ConstructionGrammar.Studies.GoldbergShirtz2025
 
 open ConstructionGrammar
 open Semantics.Presupposition
-open Discourse.CommonGround
+open CommonGround
 open Pragmatics.Expressives
 
 /-! ## Section 1: PAL Construction definitions -/
@@ -154,7 +154,7 @@ def palConstructicon : Constructicon :=
 /-! ## Section 2: Presupposition bridge
 
 Connect PAL's familiarity presupposition to Semantics.Presupposition and
-Discourse.CommonGround infrastructure. -/
+CommonGround infrastructure. -/
 
 /-- PAL presupposes the situation type is in the common ground.
 
@@ -180,7 +180,7 @@ def palTwoDim (W : Type*) (atIssue : W → Prop) (familiar : W → Prop) :
 is satisfied. -/
 theorem pal_presup_satisfied_by_cg (W : Type*)
     (situationType : W → Prop) (c : ContextSet W)
-    (h : c ⊧ situationType) :
+    (h : ContextSet.entails c situationType) :
     ∀ w, c w → (palPresupposition W situationType).presup w :=
   h
 

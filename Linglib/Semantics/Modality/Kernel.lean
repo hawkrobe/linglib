@@ -923,7 +923,7 @@ The felicity condition has three parts: (i) evidence in K supports the prejacent
 settled in K. Condition (iii) is the same presupposition as `kernelMust`. -/
 
 /-- Prior information state (beliefs, norms, desires) before encountering
-evidence. Distinct from the kernel (direct evidence) and the CG (shared). -/
+evidence. Distinct from the kernel (direct evidence) and the CommonGround (shared). -/
 abbrev Background (W : Type*) := List ((W → Prop))
 
 /-- B_U = ⋂U: worlds compatible with the prior information state. -/

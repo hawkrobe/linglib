@@ -15,20 +15,20 @@ Semantics and Pragmatics 18, Article 8: 1-17.
 ## Key Claims
 
 1. **Two ways to negate the factive presupposition**: A contrafactive could
-   *require* ¬p (all CG worlds are ¬p worlds) or require *compatibility*
-   with ¬p (some CG world is a ¬p world).
+   *require* ¬p (all CommonGround worlds are ¬p worlds) or require *compatibility*
+   with ¬p (some CommonGround world is a ¬p world).
 
 2. **Strong contrafactives are unattested**: No verb presupposes ¬p (requiring
-   CG ⊨ ¬p). This follows from the Predicate Lexicalization Constraint
+   CommonGround ⊨ ¬p). This follows from the Predicate Lexicalization Constraint
    (@cite{roberts-ozyildiz-2025}): ¬p cannot causally support B(x)(p).
 
 3. **Weak contrafactives exist**: Mandarin yǐwéi (@cite{glass-2023}) has a
-   postsupposition ◇¬p — after utterance, the CG must be compatible with ¬p.
+   postsupposition ◇¬p — after utterance, the CommonGround must be compatible with ¬p.
    This is a definedness condition on the *output* context, not a presupposition
    on the input context.
 
-4. **Revised question**: "Why are there belief verbs like *know* (CG ⊨ p)
-   and yǐwéi (CG ◇ ¬p), but none like *contra* (CG ⊨ ¬p)?"
+4. **Revised question**: "Why are there belief verbs like *know* (CommonGround ⊨ p)
+   and yǐwéi (CommonGround ◇ ¬p), but none like *contra* (CommonGround ⊨ ¬p)?"
 
 ## Formalization Strategy
 
@@ -66,13 +66,13 @@ private def prop : MiniWorld → Bool
   | .w0 => true
   | .w1 => false
 
-/-- Factive context: all worlds satisfy p (CG ⊨ p). -/
+/-- Factive context: all worlds satisfy p (CommonGround ⊨ p). -/
 private def factiveCtx : List MiniWorld := [.w0]
 
-/-- Neutral context: p is open (CG ◇ p ∧ CG ◇ ¬p). -/
+/-- Neutral context: p is open (CommonGround ◇ p ∧ CommonGround ◇ ¬p). -/
 private def neutralCtx : List MiniWorld := [.w0, .w1]
 
-/-- Contrafactive context: no world satisfies p (CG ⊨ ¬p). -/
+/-- Contrafactive context: no world satisfies p (CommonGround ⊨ ¬p). -/
 private def contrafactiveCtx : List MiniWorld := [.w1]
 
 -- ============================================================================
@@ -109,7 +109,7 @@ private def yiweiPresup : PrProp MiniWorld where
   presup := λ _ => True
   assertion := λ _ => True
 
-/-- yǐwéi's postsupposition: CG must be compatible with ¬p. -/
+/-- yǐwéi's postsupposition: CommonGround must be compatible with ¬p. -/
 private def yiweiPostsup : Postsupposition MiniWorld :=
   Postsupposition.weakContrafactive
 

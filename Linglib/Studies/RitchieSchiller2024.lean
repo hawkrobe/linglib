@@ -419,7 +419,7 @@ speaker and hearer derive the same DDRP. Different perceptual access yields
 different DDRPs, motivating R&S's requirement of perceptual co-presence. -/
 
 open Core
-open Discourse.CommonGround
+open CommonGround
 
 /-- The RSA-BToM bridge applies to the domain restriction RSA config. -/
 theorem rsa_btom_bridge (u : Utterance) (w : World) :

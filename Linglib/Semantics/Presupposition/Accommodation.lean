@@ -39,7 +39,7 @@ namespace Semantics.Presupposition.Accommodation
 
 open Classical
 open Semantics.Presupposition
-open Discourse.CommonGround
+open CommonGround
 open Semantics.Presupposition.Context
 
 variable {W : Type*}

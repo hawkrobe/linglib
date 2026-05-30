@@ -88,7 +88,7 @@ import Linglib.Semantics.Presupposition.BeliefEmbedding
 namespace Semantics.Presupposition.TonhauserDerivation
 
 open Semantics.Presupposition
-open Discourse.CommonGround
+open CommonGround
 open Semantics.Presupposition.Context
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.BeliefEmbedding

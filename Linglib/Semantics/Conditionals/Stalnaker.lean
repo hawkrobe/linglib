@@ -57,7 +57,7 @@ equivalence within an appropriate context (the
 
 namespace Semantics.Conditionals
 
-open Discourse.CommonGround (ContextSet)
+open CommonGround (ContextSet)
 open Semantics.Mood (GramMood)
 open _root_.Semantics.Conditionals (SelectionFunction selectionPrefers)
 open Core.Order (SimilarityOrdering)

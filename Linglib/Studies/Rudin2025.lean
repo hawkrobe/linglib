@@ -30,7 +30,7 @@ predicates carry `[DecidablePred p]` constraints.
 
 namespace Rudin2025
 
-open Discourse.CommonGround
+open CommonGround
 
 abbrev World := Fin 4
 

@@ -11,7 +11,7 @@ or information-structural.
 1. **Common ground development**: shared beliefs become more specific
 2. **Belief convergence**: participants learn from each other
 3. **Cooperative contributions**: speakers are informative and non-redundant
-4. **Contradiction resistance**: CG resists contradictory updates
+4. **Contradiction resistance**: CommonGround resists contradictory updates
 -/
 
 namespace Phenomena.Dialogue

@@ -58,7 +58,7 @@ sequential update = single conjunctive update — apply directly.
 
 namespace Dialogue.DisjunctiveUpdate
 
-open Discourse.CommonGround (ContextSet)
+open CommonGround (ContextSet)
 open Semantics.Dynamic.ParameterizedUpdate
 
 

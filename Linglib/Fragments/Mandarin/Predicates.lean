@@ -69,7 +69,7 @@ formalized as `Semantics.Dynamic.Postsupposition.weakContrafactive`, and exercis
 
 /-- 以为 "yǐwéi" — be under the impression that (weak contrafactive).
 
-Has postsupposition ◇¬p (CG compatible with ¬p after utterance).
+Has postsupposition ◇¬p (CommonGround compatible with ¬p after utterance).
 This cannot be derived from veridicality; see @cite{glass-2025} and @cite{glass-2023}.
 The postsupposition is recorded structurally via `postsupType` and exercised
 in `Glass2025`.

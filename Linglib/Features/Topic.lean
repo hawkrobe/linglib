@@ -15,9 +15,9 @@ follows Krifka in treating topic as a primitive notion, defined per
 
 > The topic constituent identifies the entity or set of entities
 > under which the information expressed in the comment constituent
-> should be stored in the CG content.
+> should be stored in the CommonGround content.
 
-Following @cite{reinhart-1981}'s file-card metaphor: the CG is
+Following @cite{reinhart-1981}'s file-card metaphor: the CommonGround is
 organized like a subject-oriented library catalogue indexed by
 topics; each new proposition is filed under the topic it is about.
 
@@ -62,7 +62,7 @@ set_option autoImplicit false
 namespace Features
 
 /-- @cite{reinhart-1981} aboutness topic: whether a constituent is
-    the entity under which the proposition is filed in the CG.
+    the entity under which the proposition is filed in the CommonGround.
     Binary by design — degree-of-topicality theories belong in their
     own files. -/
 inductive TopicMark where

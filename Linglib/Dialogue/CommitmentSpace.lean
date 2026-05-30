@@ -10,7 +10,7 @@ import Linglib.Discourse.SpeechAct.Update
 @cite{krifka-2015} @cite{cohen-krifka-2014}
 
 Krifka's commitment-space framework: the discourse state is a tree — the
-root (√C) is the current CG holding speaker-indexed commitments `S⊢φ`,
+root (√C) is the current CommonGround holding speaker-indexed commitments `S⊢φ`,
 and continuations are proposed future states from questions.
 
 - Assertion narrows every state with `commit speaker φ`.
@@ -27,11 +27,11 @@ the commitment/belief separation (lying, hedging).
 ## Speaker indexing
 
 The paper's central primitive is the Frege turnstile `S⊢φ` (p. 332):
-assertion is responsibility-undertaking, so what enters the CG is
+assertion is responsibility-undertaking, so what enters the CommonGround is
 "speaker S is committed to the truth of φ", not bare φ. The substrate uses
 `Discourse.Commitment.IndexedCommitment` to model this — the root
 holds indexed commitments, projected to a flat context set via
-`IndexedCommitment.toCommitment` for the CG-as-set view.
+`IndexedCommitment.toCommitment` for the CommonGround-as-set view.
 
 ## Sibling files
 
@@ -54,7 +54,7 @@ Out of scope (would need substrate extensions):
 - **Time-indexed commitments** (Lauer 2013 PB/PEP carry a `t` index): the
   substrate has no time index; `rejectFirst` is the closest proxy for
   rescission. True time-indexed commitment dynamics need a separate layer.
-- **Anderson 2021 distributional CG**: requires `weight_nonneg` on the
+- **Anderson 2021 distributional CommonGround**: requires `weight_nonneg` on the
   per-world weight. Hosting Anderson via `CommitmentSpace W ℝ` would need
   an `[OrderedAddCommMonoid G]` constraint or an Anderson wrapper —
   current substrate does not enforce non-negativity.
@@ -75,7 +75,7 @@ open Discourse.Commitment
   (CommitmentSlate IndexedCommitment IndexedWeightedCommitment CommitmentForce
    HasSupport CommitmentGrade)
 open Discourse (DiscourseRole)
-open Discourse.CommonGround (ContextSet)
+open CommonGround (ContextSet)
 open Semantics.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════
@@ -125,10 +125,10 @@ abbrev KAgent := DiscourseRole
     - Reject: prune a continuation (= return to `{√C}` disjunct).
 
     The tree structure captures the assertion/question asymmetry:
-    assertions modify the root (the CG changes), while questions only
-    add continuations (the CG is preserved until acceptance). -/
+    assertions modify the root (the CommonGround changes), while questions only
+    add continuations (the CommonGround is preserved until acceptance). -/
 structure CommitmentSpace (W : Type*) (G : Type*) where
-  /-- Root commitment state √C: indexed commitments currently in the CG.
+  /-- Root commitment state √C: indexed commitments currently in the CommonGround.
       The grade type `G` lets the same shape host binary (G = Prop),
       distributional (G = ℝ), or credence-bounded (G = ℚ) commitments. -/
   root : List (IndexedWeightedCommitment W G)
@@ -165,7 +165,7 @@ def assert (cs : CommitmentSpace W G) (committer : DiscourseRole)
 
     `C + ?φ = {√C} ∪ (C + S₂⊢φ)`
 
-    The root stays unchanged (CG preserved). A new continuation is added
+    The root stays unchanged (CommonGround preserved). A new continuation is added
     where the addressee has committed to `weight`. Existing continuations
     are also extended by the addressee-commitment. The committer is
     hardcoded to `.addressee` per Krifka's discussion of (30), p. 337:
@@ -213,13 +213,13 @@ instance : DecidablePred (@hasNoOpenContinuations W G) := fun cs => by
     cases conts <;> (unfold hasNoOpenContinuations; infer_instance)
 
 /-- Accept the first continuation: it becomes the new root.
-    The CG is updated to the accepted proposal's content. -/
+    The CommonGround is updated to the accepted proposal's content. -/
 def acceptFirst : CommitmentSpace W G → CommitmentSpace W G
   | ⟨_, c :: rest⟩ => ⟨c, rest⟩
   | cs => cs
 
 /-- Reject the first continuation: prune it.
-    The CG is unchanged; the proposal is discarded. -/
+    The CommonGround is unchanged; the proposal is discarded. -/
 def rejectFirst : CommitmentSpace W G → CommitmentSpace W G
   | ⟨r, _ :: rest⟩ => ⟨r, rest⟩
   | cs => cs
@@ -249,7 +249,7 @@ def denegate (actMarker : IndexedWeightedCommitment W G → Prop)
     continuations := cs.continuations.filter
       (fun cont => decide (¬ ∃ ic ∈ cont, actMarker ic)) }
 
-/-- Denegation preserves the root (CG unchanged) — Krifka 2015 p. 330:
+/-- Denegation preserves the root (CommonGround unchanged) — Krifka 2015 p. 330:
     "denegation does not change the root of the commitment space, but
     prunes its legal developments." -/
 @[simp]
@@ -449,13 +449,13 @@ theorem assert_in_root (cs : CommitmentSpace W Prop) (s : DiscourseRole)
     IndexedCommitment.commit s φ ∈ (cs.assert s φ).root := by
   simp only [assert, IndexedCommitment.commit, List.mem_cons, true_or]
 
-/-- Monopolar question preserves the root (CG unchanged). -/
+/-- Monopolar question preserves the root (CommonGround unchanged). -/
 @[simp]
 theorem monopolarQuestion_preserves_root (cs : CommitmentSpace W G)
     (weight : W → G) :
     (cs.monopolarQuestion weight).root = cs.root := rfl
 
-/-- Bipolar question preserves the root (CG unchanged). -/
+/-- Bipolar question preserves the root (CommonGround unchanged). -/
 @[simp]
 theorem bipolarQuestion_preserves_root [CommitmentGrade G]
     (cs : CommitmentSpace W G) (φ : W → G) :
@@ -467,7 +467,7 @@ end CommitmentSpace
     commitment space (tree).
 
     The commitment space tracks the shared discourse structure: what's in
-    the CG (root) and what's been proposed (continuations). Per-agent
+    the CommonGround (root) and what's been proposed (continuations). Per-agent
     slates track individual public commitments, enabling the
     commitment/belief separation central to Krifka's theory. -/
 structure KrifkaState (W : Type*) where
@@ -475,7 +475,7 @@ structure KrifkaState (W : Type*) where
   speakerCS : CommitmentSlate W
   /-- Addressee's individual commitment slate. -/
   addresseeCS : CommitmentSlate W
-  /-- Shared commitment space (tree): CG + proposed updates.
+  /-- Shared commitment space (tree): CommonGround + proposed updates.
       Binary specialisation `CommitmentSpace W Prop` of the polymorphic
       `CommitmentSpace W G`. Future graded-state extensions
       (Lauer-credence, Anderson-distributional) belong in a separate
@@ -528,7 +528,7 @@ def negatedQuestionLow (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
 def negatedQuestionHigh (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
   { s with space := s.space.negatedQuestionHigh φ }
 
-/-- Accept the first continuation: it becomes the new CG root. -/
+/-- Accept the first continuation: it becomes the new CommonGround root. -/
 def acceptContinuation (s : KrifkaState W) : KrifkaState W :=
   { s with space := s.space.acceptFirst }
 
@@ -536,7 +536,7 @@ def acceptContinuation (s : KrifkaState W) : KrifkaState W :=
 def rejectContinuation (s : KrifkaState W) : KrifkaState W :=
   { s with space := s.space.rejectFirst }
 
-/-- Context set: from the commitment space root (= CG), via
+/-- Context set: from the commitment space root (= CommonGround), via
     `IndexedCommitment.toCommitment` projection. -/
 def contextSet (s : KrifkaState W) : ContextSet W :=
   s.space.toContextSet
@@ -566,12 +566,12 @@ theorem commitment_closure {W : Type*} (s : KrifkaState W) (p : W → Prop)
       IndexedCommitment.commit committer p :: s.space.root := by
   cases committer <;> rfl
 
-/-- Questions don't change the CG: the root is preserved. -/
+/-- Questions don't change the CommonGround: the root is preserved. -/
 theorem monopolarQuestion_preserves_cg {W : Type*} (s : KrifkaState W) (p : W → Prop) :
     (s.monopolarQuestion p).space.root = s.space.root := rfl
 
 /-- Question then accept ≈ assert (on the root): accepting a monopolar
-    question's sole continuation yields the same CG as the addressee
+    question's sole continuation yields the same CommonGround as the addressee
     directly asserting φ.
 
     This connects the two modes of updating: direct assertion (committer
@@ -756,22 +756,22 @@ end KrifkaState
 -- § 5. HasContextSet Instances
 -- ════════════════════════════════════════════════════
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- A polymorphic commitment space projects to a context set via its root,
     using the `[HasSupport G]` typeclass's `support` projection. Recovers
     the binary case at `G = Prop` definitionally (via `support := id` in
-    the `Prop` instance). Anderson 2021's distributional CG (`G = ℝ`)
+    the `Prop` instance). Anderson 2021's distributional CommonGround (`G = ℝ`)
     becomes a consumer via `HasSupport ℝ` provided in `Anderson2021.lean`. -/
 instance {W G : Type*} [HasSupport G] :
     HasContextSet (CommitmentSpace W G) W where
   toContextSet := CommitmentSpace.toContextSet
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- A Krifka state projects to a context set via the commitment space root. -/
 instance {W : Type*} : HasContextSet (KrifkaState W) W where
   toContextSet := KrifkaState.contextSet
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- KrifkaState context set agrees with CommitmentSpace context set. -/
 theorem krifkaState_contextSet_eq_space {W : Type*} (s : KrifkaState W) :
     HasContextSet.toContextSet s = HasContextSet.toContextSet s.space := rfl
