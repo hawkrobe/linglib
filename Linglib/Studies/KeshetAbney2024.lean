@@ -821,7 +821,7 @@ def candidateSentence : PUpdate PCWorld PCEntity :=
 theorem winner_desc_empty_at_actual :
     ∀ g : ICDRTAssignment PCWorld PCEntity,
     ¬ isWinner g .actual := by
-  intro g h; exact h
+  intro g; simp [isWinner]
 
 /--
 Contrast with Stone/Brasoveanu: the entities EXIST in the actual world
