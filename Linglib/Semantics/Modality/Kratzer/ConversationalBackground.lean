@@ -10,14 +10,11 @@ A conversational background maps worlds to sets of propositions. Two roles:
 - **Modal base** (`ModalBase`) determines accessibility — `R_f(w, w') ≡ w' ∈ ⋂f(w)`.
 - **Ordering source** (`OrderingSource`) ranks accessible worlds by how many
   ordering propositions they satisfy.
-
-Despite being introduced by Kratzer for natural-language modality, these are
-generic IL primitives — no Kratzer-specific commitments live here. The
-Kratzer-flavored modality theory in `Semantics/Modality/Kratzer/`
-re-exports these so that consumers can keep using either namespace.
 -/
 
-namespace Core.Logic.Intensional
+open Core.Logic.Intensional.Premise (propIntersection)
+
+namespace Semantics.Modality.Kratzer
 
 variable {W : Type*}
 
@@ -45,11 +42,11 @@ def isRealistic (f : ConvBackground W) : Prop :=
     `⋂f(w) = {w}`. The strongest form: only the actual world is accessible.
     UNVERIFIED page reference. -/
 def isTotallyRealistic (f : ConvBackground W) : Prop :=
-  ∀ w : W, Premise.propIntersection (f w) = {w}
+  ∀ w : W, propIntersection (f w) = {w}
 
 /-- The **empty** conversational background: `f(w) = ∅` for all w.
     `⋂f(w) = W` (vacuous intersection), so the empty background is itself
     trivially realistic. UNVERIFIED page reference. -/
 def emptyBackground : ConvBackground W := λ _ => []
 
-end Core.Logic.Intensional
+end Semantics.Modality.Kratzer

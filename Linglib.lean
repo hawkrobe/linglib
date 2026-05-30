@@ -66,9 +66,9 @@ import Linglib.Core.Logic.Intensional.Algebra
 import Linglib.Core.Logic.Intensional.CategoryType
 import Linglib.Core.Logic.Intensional.RestrictedModality
 import Linglib.Core.Logic.Intensional.Premise
-import Linglib.Core.Logic.Intensional.ConversationalBackground
+import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
 import Linglib.Core.Logic.Intensional.Situations
-import Linglib.Core.Logic.Intensional.Lumping
+import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.Command

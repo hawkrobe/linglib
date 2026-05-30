@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.Lumping
+import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 
 /-!
 # Kratzer 2012 Premise-Semantic Counterfactuals
@@ -76,7 +76,7 @@ three, the lumping CF does NOT use `SimilarityOrdering` /
 namespace Semantics.Conditionals.PremiseSemantic
 
 open Core.Logic.Intensional
-open Core.Logic.Intensional.Lumping (Lumps IsConsistent IsCompatible Follows)
+open Semantics.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
 
 variable {F : SituationFrame}
 
