@@ -2398,7 +2398,6 @@ import Linglib.Semantics.Aspect.ChangeOfState
 -- Theories: Semantics.Iconic (Iconological Semantics for sign language)
 import Linglib.Semantics.Iconic.Basic
 -- Theories: Semantics.Events (neo-Davidsonian)
-import Linglib.Semantics.Events.Defs
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Semantics.Events.CEM
