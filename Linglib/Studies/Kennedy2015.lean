@@ -50,7 +50,7 @@ distinct: §2 follows Kennedy directly; §3 shows the same qualitative
 predictions emerge from a soft-max listener over the same alternative set
 and bare-numeral semantics.
 
-The formalization consumes `Numeral.Entry.meaning` from
+The formalization consumes `Numeral.Entry.denoteUnder` from
 `Semantics/Numerals/Basic.lean` directly — there is no separate
 "Kennedy meaning" function (Kennedy's alternative set is *which* numeral
 words to consider, not *what they mean*).
@@ -91,12 +91,12 @@ def KUtt.entry : KUtt → Numeral.Entry
   | .atMost3    => ⟨"at most three", .le, 3⟩
 
 /-- Prop-valued meaning of any Kennedy alternative under bilateral (exact) bare
-    semantics — `Numeral.Entry.meaning` with `bare := bareMeaning`. -/
+    semantics — `Numeral.Entry.denoteUnder` with `bare := bareMeaning`. -/
 def kMean (u : KUtt) (w : KCard) : Prop :=
-  u.entry.meaning bareMeaning w.val
+  u.entry.denoteUnder bareMeaning w.val
 
 noncomputable instance (u : KUtt) : DecidablePred (kMean u) :=
-  fun w => inferInstanceAs (Decidable (u.entry.meaning bareMeaning w.val))
+  fun w => inferInstanceAs (Decidable (u.entry.denoteUnder bareMeaning w.val))
 
 -- ============================================================================
 -- §2: Symbolic neo-Gricean derivation (@cite{sauerland-2004} on Kennedy's alts)

@@ -34,7 +34,7 @@ underlying relation; see `Core.Scale.relationalGQ_refl_at_boundary` and
 
 1. Modifier classification (Class A/B, Bound direction)
 2. Numeral meaning functions (5 `def`s over `Core.Scale.{...}Deg id`)
-3. `BareNumeral` and `NumeralExpr`
+3. `BareNumeral`; `Comparison` interpretation (`Entry.denoteUnder`)
 4. Alternative sets (Kennedy §4.1)
 5. Class A/B corollaries, anti-Horn-scale corollaries
 6. Type-shifting (Kennedy §3.1)
@@ -164,28 +164,28 @@ instance : ToString BareNumeral where
     `atLeastMeaning` lower-bound — only the bare `.eq` form consults `bare`; the
     four modified forms are theory-independent `relationalGQ` denotations). A
     method on the numeral object, mirroring `Pronoun.Entry.denote`. -/
-def _root_.Numeral.Entry.meaning (e : Numeral.Entry) (bare : Nat → Nat → Prop) :
+def _root_.Numeral.Entry.denoteUnder (e : Numeral.Entry) (bare : Nat → Nat → Prop) :
     Nat → Prop :=
   match e.comparison with
   | .eq => bare e.argument
   | c   => Core.Scale.relationalGQ c.rel id e.argument
 
 instance (e : Numeral.Entry) (bare : Nat → Nat → Prop)
-    [∀ m n, Decidable (bare m n)] (n : Nat) : Decidable (e.meaning bare n) := by
+    [∀ m n, Decidable (bare m n)] (n : Nat) : Decidable (e.denoteUnder bare n) := by
   obtain ⟨_, c, _⟩ := e
   cases c <;>
-    simp only [Numeral.Entry.meaning, Core.Scale.Comparison.rel, Core.Scale.relationalGQ] <;>
+    simp only [Numeral.Entry.denoteUnder, Core.Scale.Comparison.rel, Core.Scale.relationalGQ] <;>
     infer_instance
 
 /-- The bare-world meaning of a *modified* numeral word (`comparison ≠ .eq`) is
     endpoint membership in the comparison's interval — connecting `meaning` to
     the interval form. -/
-theorem _root_.Numeral.Entry.meaning_boundary (e : Numeral.Entry) (bare : Nat → Nat → Prop)
+theorem _root_.Numeral.Entry.denoteUnder_boundary (e : Numeral.Entry) (bare : Nat → Nat → Prop)
     (h : e.comparison ≠ .eq) :
-    e.meaning bare e.argument ↔ e.argument ∈ e.comparison.interval e.argument := by
+    e.denoteUnder bare e.argument ↔ e.argument ∈ e.comparison.interval e.argument := by
   obtain ⟨_, c, _⟩ := e
   cases c <;>
-    simp_all [Numeral.Entry.meaning, Core.Scale.Comparison.interval,
+    simp_all [Numeral.Entry.denoteUnder, Core.Scale.Comparison.interval,
       Core.Scale.relationalGQ, Core.Scale.Comparison.rel]
 
 -- ============================================================================
@@ -215,9 +215,9 @@ def kennedyAlternatives : List Core.Scale.Comparison :=
     semantics is chosen. Corollary of `boundary_mem`. -/
 theorem classA_excludes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → Prop)
     (h : e.comparison.isStrict) :
-    ¬ e.meaning bare e.argument := by
+    ¬ e.denoteUnder bare e.argument := by
   have hne : e.comparison ≠ .eq := by intro heq; rw [heq] at h; exact h
-  rw [e.meaning_boundary bare hne, Core.Scale.Comparison.boundary_mem]
+  rw [e.denoteUnder_boundary bare hne, Core.Scale.Comparison.boundary_mem]
   exact not_not_intro h
 
 /-- **Class B includes the bare-numeral world** (universal). A non-strict
@@ -225,8 +225,8 @@ theorem classA_excludes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → P
     bare-numeral semantics is chosen. Corollary of `boundary_mem`. -/
 theorem classB_includes_bare_world (e : Numeral.Entry) (bare : Nat → Nat → Prop)
     (h : ¬ e.comparison.isStrict) (hne : e.comparison ≠ .eq) :
-    e.meaning bare e.argument := by
-  rw [e.meaning_boundary bare hne, Core.Scale.Comparison.boundary_mem]
+    e.denoteUnder bare e.argument := by
+  rw [e.denoteUnder_boundary bare hne, Core.Scale.Comparison.boundary_mem]
   exact h
 
 /-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization
@@ -366,8 +366,9 @@ The lexical numeral object (`Core.Scale.Comparison`, `Numeral.Entry`) is owned b
 that object and provides its `relationalGQ` denotation, mirroring how
 `Semantics/Reference/PronounDenotation.lean` denotes the `Pronoun.Entry` object.
 The denotation is **by construction** a `Core.Scale.relationalGQ`, so every lemma
-about `relationalGQ` transfers to every numeral entry. `Comparison.rel`/`.meaning`
-are defined in Section 3. -/
+about `relationalGQ` transfers to every numeral entry. `Comparison.rel` lives in
+`Core.Scale`; `Entry.denoteUnder` (the cardinal, theory-parameterized reading) is
+in Section 3. -/
 
 /-- Denotation of a numeral entry against a measure `μ : E → α` and a magnitude
     `m`: @cite{kennedy-2015}'s de-Fregean GQ `λx. REL (μ x) m`. The measure and
