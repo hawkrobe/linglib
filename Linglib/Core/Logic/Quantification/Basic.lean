@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Quantification.Defs
 import Linglib.Core.Logic.Quantification.Properties
-import Linglib.Core.Logic.Opposition.Aristotelian
+import Linglib.Core.Logic.Aristotelian.Basic
 
 /-!
 # Concrete propositional generalized quantifiers
@@ -230,7 +230,7 @@ theorem every_filtrating : Filtrating (every_sem (α := α)) := by
 The six theorems below establish the four Aristotelian relations among GQ
 denotations `(every_sem, some_sem, no_sem, outerNeg every_sem)` at fixed
 restrictor `R`. They work over `Prop`-valued predicates, while
-`Core.Logic.Opposition.Aristotelian` formulates the same relations over
+`Core.Logic.Aristotelian.Basic` formulates the same relations over
 `Bool`-valued predicates. The two frameworks are mathematically equivalent
 but type-different. -/
 
@@ -276,12 +276,14 @@ theorem subcontrariety_i_o (R S : α → Prop)
     obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
 
 /-- The canonical A↔O contradiction diagonal, packaged as
-    `Core.Opposition.IsContradictory` over the Pi-instance Boolean algebra
+    `Aristotelian.IsContradictory` over the Pi-instance Boolean algebra
     on `(α → Prop) → Prop`. -/
 theorem every_satisfies_isContradictory_pointwise (R : α → Prop) :
-    Core.Opposition.IsContradictory
+    Aristotelian.IsContradictory
       ((every_sem (α := α) R) : (α → Prop) → Prop)
       (outerNeg (every_sem (α := α)) R) := by
+  unfold Aristotelian.IsContradictory
+  rw [isCompl_iff, disjoint_iff, codisjoint_iff]
   refine ⟨?_, ?_⟩
   · funext S
     exact propext ⟨fun ⟨h1, h2⟩ => h2 h1, fun h => h.elim⟩

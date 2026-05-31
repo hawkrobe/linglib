@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Core.Logic.Opposition.Square
+import Linglib.Core.Logic.Aristotelian.Square
 import Linglib.Semantics.Quantification.Quantifier
 import Mathlib.Data.Fintype.Basic
 
@@ -42,7 +42,7 @@ black" = "Consider the crows: each one is black."
   condition that Belnap derives is exactly what @cite{strawson-1952}
   stipulated as a presupposition of universals
 - `content_square_relations`: concrete `SquareRelations` instance from
-  `Core.Opposition.Square`, connecting to the abstract algebraic framework
+  `Aristotelian.Square`, connecting to the abstract algebraic framework
 - `contrapositive_different_assertiveness`: ∀x(Cx/Bx) and ∀x(¬Bx/¬Cx)
   have different assertiveness conditions — relevant to the confirmation
   paradox
@@ -72,7 +72,7 @@ namespace Belnap1970
 
 open Semantics.Presupposition (PrProp)
 open Core.Duality (Truth3)
-open Core.Opposition (Square SquareRelations)
+open Aristotelian (Square SquareRelations)
 open Semantics.Quantification.Quantifier
 open Core.Logic.Intensional (Frame)
 open Semantics.Montague (toyModel ToyEntity)
@@ -182,7 +182,7 @@ theorem assertive_iff_restrictor_nonempty {m : Frame} [Fintype m.Entity]
 -- ════════════════════════════════════════════════════════════════
 
 /-- The **Belnap square**: the four Aristotelian forms as Belnap
-    restricted quantification, packaged as a `Core.Opposition.Square`
+    restricted quantification, packaged as a `Aristotelian.Square`
     of partial propositions (`PrProp Unit`).
 
     A: ∀x(Cx/Bx)   "All C are B"
@@ -255,31 +255,57 @@ theorem content_square_relations {m : Frame} [Fintype m.Entity] [DecidableEq m.E
     (C B : m.Entity → Bool)
     (hR : ∃ x : m.Entity, C x = true) :
     SquareRelations (contentSquare C B) where
-  contradAO := a_o_contradictory C B
-  contradEI := e_i_contradictory C B
-  contraryAE := λ w hA => by
-    have hEI := e_i_contradictory C B w
-    rw [hEI]; simp only [Bool.not_eq_false']
-    simp only [contentSquare] at *
+  subalternAI := Aristotelian.le_iff_forall.mpr fun w hA => by
+    simp only [contentSquare] at hA ⊢
     rw [decide_eq_true_eq] at hA ⊢
     obtain ⟨x, hCx⟩ := hR
     exact ⟨x, hCx, hA x hCx⟩
-  subalternAI := λ w hA => by
-    simp only [contentSquare] at *
-    rw [decide_eq_true_eq] at hA ⊢
-    obtain ⟨x, hCx⟩ := hR
-    exact ⟨x, hCx, hA x hCx⟩
-  subalternEO := λ w hE => by
-    simp only [contentSquare] at *
+  subalternEO := Aristotelian.le_iff_forall.mpr fun w hE => by
+    simp only [contentSquare] at hE ⊢
     rw [decide_eq_true_eq] at hE ⊢
     obtain ⟨x, hCx⟩ := hR
     exact ⟨x, hCx, hE x hCx⟩
-  subcontrIO := λ w hI => by
-    simp only [contentSquare] at *
-    rw [decide_eq_false_iff_not] at hI; push Not at hI
-    obtain ⟨x, hCx⟩ := hR
-    have hBf := hI x hCx
-    exact decide_eq_true_eq.mpr ⟨x, hCx, by simp [hBf]⟩
+  contradAO := Aristotelian.isContradictory_iff_forall.mpr
+    ⟨fun w hand => by
+        have h := a_o_contradictory C B w
+        rw [hand.1, hand.2] at h; simp at h,
+     fun w => by
+        by_cases hO : (contentSquare C B).O w = true
+        · exact Or.inr hO
+        · left
+          have h := a_o_contradictory C B w
+          rw [show (contentSquare C B).O w = false by simpa using hO] at h
+          simpa using h⟩
+  contradEI := Aristotelian.isContradictory_iff_forall.mpr
+    ⟨fun w hand => by
+        have h := e_i_contradictory C B w
+        rw [hand.1, hand.2] at h; simp at h,
+     fun w => by
+        by_cases hI : (contentSquare C B).I w = true
+        · exact Or.inr hI
+        · left
+          have h := e_i_contradictory C B w
+          rw [show (contentSquare C B).I w = false by simpa using hI] at h
+          simpa using h⟩
+  contraryAE := Aristotelian.disjoint_iff_forall.mpr fun w hand => by
+    obtain ⟨hA, hE⟩ := hand
+    have hI : (contentSquare C B).I w = true := by
+      simp only [contentSquare] at hA ⊢
+      rw [decide_eq_true_eq] at hA ⊢
+      obtain ⟨x, hCx⟩ := hR
+      exact ⟨x, hCx, hA x hCx⟩
+    have hEI := e_i_contradictory C B w
+    rw [hI, hE] at hEI; simp at hEI
+  subcontrIO := Aristotelian.codisjoint_iff_forall.mpr fun w => by
+    by_cases hI : (contentSquare C B).I w = true
+    · exact Or.inl hI
+    · right
+      have hIf : (contentSquare C B).I w = false := by simpa using hI
+      simp only [contentSquare] at hIf ⊢
+      rw [decide_eq_false_iff_not] at hIf; push Not at hIf
+      obtain ⟨x, hCx⟩ := hR
+      have hBf := hIf x hCx
+      exact decide_eq_true_eq.mpr ⟨x, hCx, by simp [hBf]⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- §5. Obversion

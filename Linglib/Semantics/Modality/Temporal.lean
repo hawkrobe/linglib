@@ -98,7 +98,7 @@ theorem temporal_eq_static {Time : Type*}
 
 /-- Temporal duality: □ₜp ↔ ¬◇ₜ¬p. One of five sibling `theorem duality`s
     (see `Modality/Kratzer/Operators.lean::duality` for the unification
-    opportunity via `Core.Logic.Opposition.Square.fromBox`). -/
+    opportunity via `Core.Logic.Aristotelian.Square.fromBox`). -/
 theorem temporal_duality {Time : Type*}
     (f : TemporalModalBase W Time) (g : TemporalOrderingSource W Time)
     (t : Time) (p : W → Prop) (w : W) :

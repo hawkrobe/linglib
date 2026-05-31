@@ -329,7 +329,7 @@ def evidentialPossibility (f : EvidentialBiasFlavor W) (p : Set W) (w : W) : Pro
 
 /-- □_ev satisfies modal duality. One of five sibling `theorem duality`s
     (see `Modality/Kratzer/Operators.lean::duality` for the unification
-    opportunity via `Core.Logic.Opposition.Square.fromBox`). -/
+    opportunity via `Core.Logic.Aristotelian.Square.fromBox`). -/
 theorem evidentialBias_duality (f : EvidentialBiasFlavor W) (p : Set W) (w : W) :
     evidentialNecessity f p w ↔ ¬ evidentialPossibility f (fun w' => ¬ p w') w := by
   unfold evidentialNecessity evidentialPossibility

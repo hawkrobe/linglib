@@ -38,7 +38,6 @@ Sources:
 
 import Linglib.Semantics.Modality.Kratzer.Ordering
 import Linglib.Core.Logic.Intensional.RestrictedModality
-import Linglib.Core.Logic.Opposition.Aristotelian
 
 namespace Semantics.Modality.Kratzer
 

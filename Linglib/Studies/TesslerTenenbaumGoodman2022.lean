@@ -1,6 +1,6 @@
 import Linglib.Semantics.Quantification.Syllogistic.Forms
 import Linglib.Pragmatics.RSA.Channel
-import Linglib.Core.Logic.Opposition.Probabilistic
+import Linglib.Core.Logic.Aristotelian.Probabilistic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -56,7 +56,7 @@ in this paper, so the asymmetric stance is encoded honestly.
 
 ## See also
 
-- `Core.Opposition.Probabilistic` — the Bayesian listener's posterior
+- `Aristotelian.Probabilistic` — the Bayesian listener's posterior
   probabilities `P_μ[c]` jointly satisfy the probabilistic Aristotelian
   inequalities (subalternation `P[A] ≤ P[I]`, contradiction `P[A]+P[O]=1`,
   etc.). Tessler's speaker models are functionals of these probabilities;
@@ -387,7 +387,8 @@ theorem allAB_allCB_l0_does_not_concentrate :
     reading: All entails Some (via existential import in `tesslerAll`), and
     `state_A_AC` witnesses that the converse fails (Some without All). -/
 theorem allAC_subaltern_someAC :
-    Core.Opposition.Subaltern (concMeaning .allAC) (concMeaning .someAC) := by
+    Aristotelian.IsSubaltern (concMeaning .allAC) (concMeaning .someAC) := by
+  rw [Aristotelian.isSubaltern_iff_forall]
   refine ⟨fun s h => all_entails_some_AC s h, ?_⟩
   intro hConv
   have hSome : concMeaning .someAC state_A_AC = true :=
@@ -403,13 +404,13 @@ theorem allAC_subaltern_someAC :
     `μ({s | concMeaning c s = true})`. Aristotelian subalternation lifts to
     this probabilistic level: under any μ, `P_μ[allAC] ≤ P_μ[someAC]`.
 
-    The lift is automatic via `Core.Opposition.Subaltern.toProb` once
+    The lift is automatic via `Aristotelian.ProbSubaltern.of_isSubaltern` once
     `allAC_subaltern_someAC` is established. The probabilistic Aristotelian
     diagram (Demey-Smessaert 2018-style, with the convex generalization in
     `Probabilistic.lean`) is implicitly the framework Tessler's Bayesian
     listener computes within. -/
 theorem prob_subaltern_allAC_someAC (μ : PMF VennState) :
-    Core.Opposition.ProbSubaltern μ (concMeaning .allAC) (concMeaning .someAC) :=
-  allAC_subaltern_someAC.toProb μ
+    Aristotelian.ProbSubaltern μ (concMeaning .allAC) (concMeaning .someAC) :=
+  Aristotelian.ProbSubaltern.of_isSubaltern allAC_subaltern_someAC μ
 
 end TesslerTenenbaumGoodman2022

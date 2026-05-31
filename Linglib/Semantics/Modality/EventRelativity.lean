@@ -140,7 +140,7 @@ instance {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
 
 /-- Duality: □_{f(e)} p ↔ ¬◇_{f(e)} ¬p. One of five sibling `theorem duality`s
     (see `Semantics/Modality/Kratzer/Operators.lean::duality` for the
-    unification opportunity via `Core.Logic.Opposition.Square.fromBox`). -/
+    unification opportunity via `Core.Logic.Aristotelian.Square.fromBox`). -/
 theorem duality {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
     (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
     necessity f e allW p w ↔ ¬ possibility f e allW (λ w' => ¬ p w') w := by
