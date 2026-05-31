@@ -1878,7 +1878,6 @@ import Linglib.Studies.LuChuangBaayen2026
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Combinators
 import Linglib.Syntax.CCG.Interface
-import Linglib.Syntax.CCG.Homomorphism
 import Linglib.Studies.Cysouw2009
 import Linglib.Studies.Scott2023Agreement
 import Linglib.Phenomena.Agreement.DifferentialIndexing
