@@ -139,13 +139,13 @@ inductive NPRelType where
       is partially pronounced rather than fully deleted. Featurally
       reduced relative to a bound resumptive (e.g., personless in
       Swahili). Diagnosed by parasitic gap constructions.
-      @cite{scott-2021} @cite{sichel-2014} -/
+      @cite{scott-2021} -/
   | resumptiveMovement
   /-- Bound resumptive: a base-generated pronoun syntactically bound
       by the head of the relative clause. Not a movement copy — immune
       to chain reduction. Retains full person features. Diagnosed by
       obligatory presence inside adjunct islands.
-      @cite{scott-2021} @cite{sichel-2014} -/
+      @cite{scott-2021} -/
   | resumptiveBound
   /-- Relative pronoun: NP_rel is a dedicated relative pronoun that
       typically fronts to clause-initial position and bears case.
@@ -156,15 +156,28 @@ inductive NPRelType where
   | nonReduction
   deriving DecidableEq, Repr
 
-/-- Whether a resumptive pronoun type is a movement copy, a bound
-    pronoun, or unspecified. For languages where the two types coexist
-    and are morphologically distinct (@cite{scott-2021} for Swahili,
-    @cite{sichel-2014} for Hebrew). -/
-def NPRelType.isMovementCopy : NPRelType → Option Bool
-  | .resumptiveMovement => some true
-  | .resumptiveBound => some false
-  | .resumptive => none   -- unspecified (pre-Scott typology)
-  | _ => none             -- non-resumptive
+/-- The movement/base-generation status of a resumptive pronoun, for
+    languages where the two coexist morphologically (@cite{scott-2021} for
+    Swahili, @cite{sichel-2014} for Hebrew). -/
+inductive ResumptiveKind where
+  /-- A partially-pronounced lower copy of an Ā-movement chain. -/
+  | movementCopy
+  /-- A base-generated pronoun bound by the relative-clause head. -/
+  | bound
+  /-- A resumptive whose movement-vs-base-generation status is unspecified
+      (pre-@cite{scott-2021} typology). -/
+  | unspecified
+  deriving DecidableEq, Repr
+
+/-- The resumptive kind of an `NPRelType`, or `none` for non-resumptive
+    types. Refines the movement-vs-bound contrast; unlike a tri-state
+    `Option Bool`, it keeps "unspecified resumptive" and "not a resumptive"
+    as genuinely distinct outcomes. -/
+def NPRelType.resumptiveKind : NPRelType → Option ResumptiveKind
+  | .resumptiveMovement => some .movementCopy
+  | .resumptiveBound    => some .bound
+  | .resumptive         => some .unspecified
+  | _                   => none
 
 /-! ### Relative-clause marker -/
 
@@ -213,8 +226,8 @@ structure Marker where
 def Marker.Covers (m : Marker) (p : AHPosition) : Prop :=
   p ∈ m.positions
 
-instance (m : Marker) (p : AHPosition) : Decidable (m.Covers p) := by
-  unfold Marker.Covers; infer_instance
+instance (m : Marker) (p : AHPosition) : Decidable (m.Covers p) :=
+  inferInstanceAs (Decidable (p ∈ m.positions))
 
 /-! ### Accessibility-Hierarchy contiguity (HC₂) -/
 

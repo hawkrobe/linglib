@@ -171,7 +171,7 @@ theorem tb_distinguishes :
 /-! Connects three independent data sources through the AH bridge:
 1. Individual extraction datums (from @cite{erlewine-2018})
 2. The ExtractionProfile summary (markedPositions)
-3. RelClauseMarkers (from @cite{keenan-comrie-1977})
+3. Relative-clause markers (from @cite{keenan-comrie-1977})
 
 If any link is wrong — e.g., listing `.directObject` as extractable when
 relativization markers don't cover DO — the chain breaks.
