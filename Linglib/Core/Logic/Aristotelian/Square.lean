@@ -58,23 +58,4 @@ theorem SquareRelations.toContraryAE {α : Type*} [BooleanAlgebra α] {sq : Squa
     (rel : SquareRelations sq) (hne : sq.A ⊔ sq.E ≠ ⊤) : IsContrary sq.A sq.E :=
   ⟨rel.contraryAE, fun hc => hne (codisjoint_iff.mp hc)⟩
 
-/-! ### The box-derived square -/
-
-/-- The square of propositions from a box-like operator `box`: `A = box p`,
-`E = box pᶜ`, `I = (box pᶜ)ᶜ`, `O = (box p)ᶜ`. -/
-def Square.fromBox {α : Type*} [BooleanAlgebra α] (box : α → α) (p : α) :
-    Square α where
-  A := box p
-  E := box pᶜ
-  I := (box pᶜ)ᶜ
-  O := (box p)ᶜ
-
-theorem fromBox_contradAO {α : Type*} [BooleanAlgebra α] (box : α → α) (p : α) :
-    (Square.fromBox box p).A = (Square.fromBox box p).Oᶜ := by
-  simp [Square.fromBox]
-
-theorem fromBox_contradEI {α : Type*} [BooleanAlgebra α] (box : α → α) (p : α) :
-    (Square.fromBox box p).E = (Square.fromBox box p).Iᶜ := by
-  simp [Square.fromBox]
-
 end Aristotelian
