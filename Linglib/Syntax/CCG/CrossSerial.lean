@@ -70,23 +70,23 @@ def dutchLexicon : List LexEntry := [
 
 /-! ### Lexical entries -/
 
-def jan_lex : RDeriv := .lex NP "Jan"
-def piet_lex : RDeriv := .lex NP "Piet"
-def marie_lex : RDeriv := .lex NP "Marie"
-def zag_lex : RDeriv := .lex PercV "zag"
+def jan_lex : Derivation := .lex NP "Jan"
+def piet_lex : Derivation := .lex NP "Piet"
+def marie_lex : Derivation := .lex NP "Marie"
+def zag_lex : Derivation := .lex PercV "zag"
 /-- `zwemmen` in its verb-raising category `(S\NP)/NP`. -/
-def zwemmen_vr : RDeriv := .lex InfSubj "zwemmen"
+def zwemmen_vr : Derivation := .lex InfSubj "zwemmen"
 /-- `helpen` in its verb-raising category `((S\NP)/NP)/(S\NP)`. -/
-def helpen_vr : RDeriv := .lex ControlVR "helpen"
+def helpen_vr : Derivation := .lex ControlVR "helpen"
 
 /-! ### Derivation: "Jan Piet zag zwemmen" (2 NPs, 2 Vs) -/
 
 /-- `zag >B zwemmen`: `(S\NP)/(S\NP) ∘ (S\NP)/NP = (S\NP)/NP`. -/
-def zag_comp_zwemmen : RDeriv := .fc1 zag_lex zwemmen_vr
+def zag_comp_zwemmen : Derivation := .fc1 zag_lex zwemmen_vr
 /-- `(zag zwemmen) Piet`: `(S\NP)/NP NP = S\NP`. -/
-def zag_zwemmen_piet : RDeriv := .fa zag_comp_zwemmen piet_lex
+def zag_zwemmen_piet : Derivation := .fa zag_comp_zwemmen piet_lex
 /-- `Jan (zag zwemmen Piet)`: `NP S\NP = S`. -/
-def jan_zag_zwemmen_piet : RDeriv := .ba jan_lex zag_zwemmen_piet
+def jan_zag_zwemmen_piet : Derivation := .ba jan_lex zag_zwemmen_piet
 
 /-! ### Derivation: "Jan Piet Marie zag helpen zwemmen" (3 NPs, 3 Vs)
 
@@ -95,15 +95,15 @@ The cross-serial bindings are Jan→zag, Piet→helpen, Marie→zwemmen. `helpen
 Piet's and Marie's slots through the cluster into `((S\NP)/NP)/NP`. -/
 
 /-- `helpen >B zwemmen`: `((S\NP)/NP)/(S\NP) ∘ (S\NP)/NP = ((S\NP)/NP)/NP`. -/
-def helpen_comp_zwemmen : RDeriv := .fc1 helpen_vr zwemmen_vr
+def helpen_comp_zwemmen : Derivation := .fc1 helpen_vr zwemmen_vr
 /-- `zag >B² (helpen zwemmen)`: `(S\NP)/(S\NP) ∘² ((S\NP)/NP)/NP = ((S\NP)/NP)/NP`. -/
-def zag_comp2_helpen_zwemmen : RDeriv := .fc2 zag_lex helpen_comp_zwemmen
+def zag_comp2_helpen_zwemmen : Derivation := .fc2 zag_lex helpen_comp_zwemmen
 /-- verb cluster + Marie: `((S\NP)/NP)/NP NP = (S\NP)/NP`. -/
-def verbs_marie : RDeriv := .fa zag_comp2_helpen_zwemmen marie_lex
+def verbs_marie : Derivation := .fa zag_comp2_helpen_zwemmen marie_lex
 /-- + Piet: `(S\NP)/NP NP = S\NP`. -/
-def verbs_marie_piet : RDeriv := .fa verbs_marie piet_lex
+def verbs_marie_piet : Derivation := .fa verbs_marie piet_lex
 /-- + Jan: `NP S\NP = S`. -/
-def jan_piet_marie_zag_helpen_zwemmen_deriv : RDeriv := .ba jan_lex verbs_marie_piet
+def jan_piet_marie_zag_helpen_zwemmen_deriv : Derivation := .ba jan_lex verbs_marie_piet
 
 /-! ### Verification -/
 

@@ -23,7 +23,7 @@ capacity, not syntax.
 
 ## Main definitions
 
-- `build` — the `n`-indexed `CCG.Classical.RDeriv` of `aⁿbⁿcⁿ` (cluster of degree-2
+- `build` — the `n`-indexed `CCG.Classical.Derivation` of `aⁿbⁿcⁿ` (cluster of degree-2
   compositions, peeled to `S` by crossed-composition with `c` and backward-application
   with `a`).
 
@@ -57,9 +57,9 @@ abbrev Ccat : Cat := PP
 /-! ### The grammar `G₁` of Example 2 -/
 
 /-- `a := A`. -/
-def aLex : RDeriv := .lex Acat "a"
+def aLex : Derivation := .lex Acat "a"
 /-- `c := C\A`. -/
-def cLex : RDeriv := .lex (Ccat \ Acat) "c"
+def cLex : Derivation := .lex (Ccat \ Acat) "c"
 
 /-- The cluster category `S/C/…/C` with `n` forward `C`-arguments. -/
 def clusterCat : Nat → Cat
@@ -68,27 +68,27 @@ def clusterCat : Nat → Cat
 
 /-- Chain of degree-2 compositions: `b₁ = S/C/B` composed with `j` copies of
 `B/C/B`, giving `S/Cʲ⁺¹/B` and yield `bʲ⁺¹`. -/
-def fc2Chain : Nat → RDeriv
+def fc2Chain : Nat → Derivation
   | 0 => .lex ((S / Ccat) / Bcat) "b"
   | j + 1 => .fc2 (fc2Chain j) (.lex ((Bcat / Ccat) / Bcat) "b")
 
 /-- The `b`-cluster derivation for `n ≥ 1`, with category `clusterCat n`, yield `bⁿ`. -/
-def clusterDeriv : Nat → RDeriv
+def clusterDeriv : Nat → Derivation
   | 0 => .lex S "b"            -- unused (the construction starts at n = 1)
   | 1 => .lex (S / Ccat) "b"
   | n + 2 => .fc1 (fc2Chain n) (.lex (Bcat / Ccat) "b")
 
 /-- One peel: crossed-compose with a `c` on the right, then backward-apply an `a` on the
 left — wrapping the yield with `a … c` and removing one `C` argument. -/
-def peelStep (d : RDeriv) : RDeriv := .ba aLex (.fcx1 d cLex)
+def peelStep (d : Derivation) : Derivation := .ba aLex (.fcx1 d cLex)
 
 /-- Peel `k` times. -/
-def peel : Nat → RDeriv → RDeriv
+def peel : Nat → Derivation → Derivation
   | 0, d => d
   | k + 1, d => peel k (peelStep d)
 
 /-- The full derivation of `aⁿbⁿcⁿ`. -/
-def build (n : Nat) : RDeriv := peel n (clusterDeriv n)
+def build (n : Nat) : Derivation := peel n (clusterDeriv n)
 
 /-! ### Target invariant -/
 
@@ -106,21 +106,21 @@ theorem fc2Chain_cat (j : Nat) :
   induction j with
   | zero => rfl
   | succ j ih =>
-    simp [fc2Chain, RDeriv.cat, ih, fcomp2, targetIsS_clusterCat, clusterCat]
+    simp [fc2Chain, Derivation.cat, ih, fcomp2, targetIsS_clusterCat, clusterCat]
 
 /-- The cluster derivation has category `clusterCat n` for `n ≥ 1`. -/
 theorem clusterDeriv_cat : ∀ {n : Nat}, 1 ≤ n → (clusterDeriv n).cat = some (clusterCat n)
   | 1, _ => rfl
   | n + 2, _ => by
-    simp [clusterDeriv, RDeriv.cat, fc2Chain_cat, fcomp1, targetIsS_clusterCat, clusterCat]
+    simp [clusterDeriv, Derivation.cat, fc2Chain_cat, fcomp1, targetIsS_clusterCat, clusterCat]
 
 /-- One peel removes one `C` argument from a cluster. -/
-theorem peelStep_cat {d : RDeriv} {k : Nat} (h : d.cat = some (clusterCat (k + 1))) :
+theorem peelStep_cat {d : Derivation} {k : Nat} (h : d.cat = some (clusterCat (k + 1))) :
     (peelStep d).cat = some (clusterCat k) := by
-  simp [peelStep, RDeriv.cat, aLex, cLex, h, fcompX1, bapp, clusterCat, targetIsS_clusterCat]
+  simp [peelStep, Derivation.cat, aLex, cLex, h, fcompX1, bapp, clusterCat, targetIsS_clusterCat]
 
 /-- Peeling `k` times turns a `clusterCat k` derivation into one of category `S`. -/
-theorem peel_cat : ∀ (k : Nat) (d : RDeriv), d.cat = some (clusterCat k) →
+theorem peel_cat : ∀ (k : Nat) (d : Derivation), d.cat = some (clusterCat k) →
     (peel k d).cat = some S
   | 0, d, h => by simpa [peel, clusterCat] using h
   | k + 1, d, h => by
@@ -142,21 +142,21 @@ private theorem replicate_cons_comm {α : Type*} (k : Nat) (a : α) (X : List α
 theorem fc2Chain_yield (j : Nat) : (fc2Chain j).yield = List.replicate (j + 1) "b" := by
   induction j with
   | zero => rfl
-  | succ j ih => simp [fc2Chain, RDeriv.yield, ih, List.replicate_succ']
+  | succ j ih => simp [fc2Chain, Derivation.yield, ih, List.replicate_succ']
 
 theorem clusterDeriv_yield : ∀ {n : Nat}, 1 ≤ n →
     (clusterDeriv n).yield = List.replicate n "b"
   | 1, _ => rfl
-  | n + 2, _ => by simp [clusterDeriv, RDeriv.yield, fc2Chain_yield, List.replicate_succ']
+  | n + 2, _ => by simp [clusterDeriv, Derivation.yield, fc2Chain_yield, List.replicate_succ']
 
-theorem peel_yield : ∀ (k : Nat) (d : RDeriv),
+theorem peel_yield : ∀ (k : Nat) (d : Derivation),
     (peel k d).yield = List.replicate k "a" ++ d.yield ++ List.replicate k "c"
   | 0, d => by simp [peel]
   | k + 1, d => by
     simp only [peel]
     rw [peel_yield k (peelStep d)]
     have hy : (peelStep d).yield = "a" :: (d.yield ++ ["c"]) := by
-      simp [peelStep, RDeriv.yield, aLex, cLex]
+      simp [peelStep, Derivation.yield, aLex, cLex]
     rw [hy, List.replicate_succ, List.replicate_succ]
     simp only [List.cons_append, List.append_assoc, List.singleton_append]
     exact replicate_cons_comm k "a" _
@@ -177,7 +177,7 @@ every string in the non-context-free language is the yield of a well-formed (tar
 restricted) CCG derivation. This is the completeness half of CCG ⊋ CFG; the language
 `anbnc` it covers is not context-free (`AnBnCn.anbnc_not_contextFree`). -/
 theorem ccg_generates_anbnc (w : List String) (hw : w ∈ anbncStrings) :
-    ∃ d : RDeriv, d.cat = some S ∧ d.yield = w := by
+    ∃ d : Derivation, d.cat = some S ∧ d.yield = w := by
   obtain ⟨n, hn, rfl⟩ := hw
   exact ⟨build n, build_cat hn, build_yield hn⟩
 

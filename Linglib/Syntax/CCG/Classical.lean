@@ -19,7 +19,7 @@ show is strictly weaker than TAG.
 - `CCG.Classical.target` / `targetIsS` — the target of a category, and the restriction.
 - `fapp`, `bapp`, `fcomp1`, `fcomp2`, `fcompX1` — application and (harmonic/crossed)
   composition, each gated on `target (primary) = S`.
-- `CCG.Classical.RDeriv` — a derivation under these restricted rules, with `cat`/`yield`.
+- `CCG.Classical.Derivation` — a derivation under these restricted rules, with `cat`/`yield`.
 
 ## Implementation notes
 
@@ -86,18 +86,18 @@ def fcompX1 : Cat → Cat → Option Cat
 /-! ### Derivations -/
 
 /-- A derivation under the rule-restricted rules. -/
-inductive RDeriv where
-  | lex : Cat → String → RDeriv
-  | fa : RDeriv → RDeriv → RDeriv
-  | ba : RDeriv → RDeriv → RDeriv
-  | fc1 : RDeriv → RDeriv → RDeriv
-  | fc2 : RDeriv → RDeriv → RDeriv
-  | fcx1 : RDeriv → RDeriv → RDeriv
+inductive Derivation where
+  | lex : Cat → String → Derivation
+  | fa : Derivation → Derivation → Derivation
+  | ba : Derivation → Derivation → Derivation
+  | fc1 : Derivation → Derivation → Derivation
+  | fc2 : Derivation → Derivation → Derivation
+  | fcx1 : Derivation → Derivation → Derivation
   deriving Repr
 
 /-- The category derived, threading the restricted rules (`none` if any rule is illegal,
 e.g. its target restriction fails). -/
-def RDeriv.cat : RDeriv → Option Cat
+def Derivation.cat : Derivation → Option Cat
   | .lex c _ => some c
   | .fa l r => do let a ← l.cat; let b ← r.cat; fapp a b
   | .ba l r => do let a ← l.cat; let b ← r.cat; bapp a b
@@ -106,7 +106,7 @@ def RDeriv.cat : RDeriv → Option Cat
   | .fcx1 l r => do let a ← l.cat; let b ← r.cat; fcompX1 a b
 
 /-- Surface string: leaf forms left to right. -/
-def RDeriv.yield : RDeriv → List String
+def Derivation.yield : Derivation → List String
   | .lex _ s => [s]
   | .fa l r => l.yield ++ r.yield
   | .ba l r => l.yield ++ r.yield
