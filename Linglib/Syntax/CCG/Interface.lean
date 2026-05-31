@@ -15,6 +15,7 @@ to function application and composition.
 import Linglib.Syntax.CCG.Core.Basic
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Conjunction
+import Linglib.Core.Combinator.Basic
 import Linglib.Semantics.Composition.ToyDomain
 
 namespace CCG
@@ -22,16 +23,7 @@ namespace CCG
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Conjunction
 open Semantics.Montague
-
--- Combinators (defined locally to avoid circular import)
-
-/-- B combinator (composition): B f g x = f (g x) -/
-private def B {α β γ : Type} (f : β → γ) (g : α → β) : α → γ :=
-  λ x => f (g x)
-
-/-- T combinator (type-raising): T x f = f x -/
-private def T {α β : Type} (x : α) : (α → β) → β :=
-  λ f => f x
+open Combinator
 
 -- Type Correspondence
 

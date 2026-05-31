@@ -1,116 +1,33 @@
-/-
-# CCG Combinators: B, T, S, C
-
-CCG combinatory rules correspond to combinators from combinatory logic.
-T = CI, C is definable from B and T, and BTS is equivalent to the lambda-I calculus.
-
-- @cite{curry-feys-1958}. Combinatory Logic.
-- @cite{steedman-2000}. The Syntactic Process, Chapters 3 and 8.
-- @cite{smullyan-1985}. To Mock a Mockingbird.
--/
-
 import Linglib.Syntax.CCG.Core.Basic
 import Linglib.Syntax.CCG.Interface
 import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Combinator.Basic
+
+/-!
+# CCG combinatory rules as combinatory-logic combinators
+
+CCG's combinatory rules correspond to the basis combinators of combinatory logic
+(@cite{curry-feys-1958}, @cite{smullyan-1985}): forward and backward composition to
+`B`, type-raising to `T`, the substitution rule to `S`. The combinator algebra itself
+lives in `Core/Combinator/Basic.lean`; this file establishes the correspondence between
+those combinators and the *types* CCG assigns (`catToTy`), so that each rule's semantic
+action is literally a combinator acting on `Frame.Denot` meanings.
+
+## References
+
+- @cite{steedman-2000}, The Syntactic Process, Chapters 3 and 8.
+-/
 
 namespace CCG.Combinators
 
 open CCG
 open Core.Logic.Intensional
+open Combinator
 
-section Combinators
-
-/-- B combinator (composition): B f g x = f (g x). -/
-def B {α β γ : Type} (f : β → γ) (g : α → β) : α → γ :=
-  λ x => f (g x)
-
-/-- T combinator (type-raising): T x f = f x. -/
-def T {α β : Type} (x : α) : (α → β) → β :=
-  λ f => f x
-
-/-- S combinator (substitution): S f g x = f x (g x). -/
-def S {α β γ : Type} (f : α → β → γ) (g : α → β) : α → γ :=
-  λ x => f x (g x)
-
-/-- I combinator (identity): I x = x. -/
-def I {α : Type} : α → α :=
-  λ x => x
-
-/-- K combinator (constant): K x y = x. -/
-def K {α β : Type} (x : α) : β → α :=
-  λ _ => x
-
-/-- C combinator (commutation): C f x y = f y x. -/
-def C {α β γ : Type} (f : α → β → γ) (x : β) (y : α) : γ :=
-  f y x
-
-end Combinators
-
-section BTS
-
-/-- T = CI: type-raising equals C applied to I (Steedman p. 206-207). -/
-theorem T_eq_CI {α β : Type} (x : α) :
-    @T α β x = @C (α → β) α β (@I (α → β)) x := by
-  ext f
-  rfl
-
-/-- CI is T. -/
-theorem CI_is_T {α β : Type} :
-    (λ x => @C (α → β) α β (@I (α → β)) x) = @T α β := by
-  ext x f
-  rfl
-
-/-- C = B(T_) pointwise: C f x y = B (T x) f y (Church's result via Steedman p. 207). -/
-theorem C_eq_B_T {α β γ : Type} (f : α → β → γ) (x : β) (y : α) :
-    C f x y = B (T x) f y := rfl
-
-/-- C from B and T pointwise. -/
-theorem C_from_B_T {α β γ : Type} (f : α → β → γ) (x : β) (y : α) :
-    let Tx : (β → γ) → γ := T x
-    let fy : β → γ := f y
-    C f x y = Tx fy := rfl
-
-end BTS
-
-section CombinatorLaws
-
-/-- B is function composition. -/
-theorem B_comp {α β γ : Type} (f : β → γ) (g : α → β) :
-    B f g = f ∘ g := rfl
-
-/-- B f g x = f (g x). -/
-theorem B_apply {α β γ : Type} (f : β → γ) (g : α → β) (x : α) :
-    B f g x = f (g x) := rfl
-
-/-- T x f = f x. -/
-theorem T_apply {α β : Type} (x : α) (f : α → β) :
-    T x f = f x := rfl
-
-/-- S f g x = f x (g x). -/
-theorem S_apply {α β γ : Type} (f : α → β → γ) (g : α → β) (x : α) :
-    S f g x = f x (g x) := rfl
-
-/-- I x = x. -/
-theorem I_apply {α : Type} (x : α) :
-    I x = x := rfl
-
-/-- K x y = x. -/
-theorem K_apply {α β : Type} (x : α) (y : β) :
-    K x y = x := rfl
-
-/-- I = SKK. -/
-theorem I_eq_SKK {α : Type} :
-    @I α = @S α (α → α) α (@K α (α → α)) (@K α α) := by
-  ext x
-  rfl
-
-/-- B f g = S (K f) g. -/
-theorem B_eq_S_KS_K {α β γ : Type} (f : β → γ) (g : α → β) :
-    B f g = @S α β γ (K f) g := by
-  ext x
-  rfl
-
-end CombinatorLaws
+-- The `B`/`T`/`S`/`I`/`K`/`C` algebra now lives in `Core/Combinator/Basic.lean`.
+-- Re-export it under this namespace so existing `open CCG.Combinators` consumers
+-- continue to resolve the bare combinator names.
+export Combinator (B T S I K C)
 
 section CCGCorrespondence
 
