@@ -28,7 +28,7 @@ structure AnnotatedDerivation where
   /-- Number of NP-verb pairs -/
   n : Nat
   /-- The derivation -/
-  deriv : ExtDerivStep
+  deriv : CCG.Classical.RDeriv
   /-- Surface words -/
   words : List String
   /-- The NP-verb binding permutation -/

@@ -93,6 +93,7 @@ inductive RDeriv where
   | fc1 : RDeriv → RDeriv → RDeriv
   | fc2 : RDeriv → RDeriv → RDeriv
   | fcx1 : RDeriv → RDeriv → RDeriv
+  deriving Repr
 
 /-- The category derived, threading the restricted rules (`none` if any rule is illegal,
 e.g. its target restriction fails). -/
