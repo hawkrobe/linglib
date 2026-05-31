@@ -24,9 +24,10 @@ modeling phonological variation, illustrated with English t/d-deletion.
    More expressive than POC — can encode arbitrary probability distributions
    over outputs.
 
-3. **Bridge**: the OT limit theorem (`maxent_ot_limit`) shows that as
-   α → ∞, MaxEnt recovers OT's categorical optimization, connecting
-   the two frameworks.
+3. **Categorical OT bookends**: `max_dominates_implies_no_deletion`
+   and `ct_dominates_implies_deletion` exhibit the two extreme rankings
+   whose categorical OT optima bracket the variation that POC and
+   MaxEnt distribute over.
 
 ## Key results
 
@@ -142,19 +143,20 @@ theorem semiWeak_ge_regular (d : MorphDialect) :
     morphDeletionRate d .semiWeakPast ≥ morphDeletionRate d .regularPast := by
   cases d <;> decide
 
--- ============================================================================
--- § 1: Candidate Type
--- ============================================================================
+/-- Monomorpheme deletion ≥ semi-weak past in every dialect with data.
+    Together with `semiWeak_ge_regular`, this discharges Guy 1991b's
+    three-way ordering monomorpheme ≥ semi-weak ≥ regular past. -/
+theorem mono_ge_semiWeak (d : MorphDialect) :
+    morphDeletionRate d .monomorpheme ≥ morphDeletionRate d .semiWeakPast := by
+  cases d <;> decide
+
+/-! ### Candidate type -/
 
 /-- Output form for t/d-deletion: either retain or delete. -/
 inductive TDOutput where
   | retain   -- faithful: cluster preserved (*west*)
   | delete   -- deletion: t/d removed (*wes*)
-  deriving DecidableEq, Repr, Inhabited
-
-instance : Fintype TDOutput where
-  elems := {.retain, .delete}
-  complete := fun x => by cases x <;> simp
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- A candidate pairs a phonological context with an output form. -/
 structure TDCandidate where
@@ -168,9 +170,7 @@ instance : Inhabited TDCandidate := ⟨⟨default, default⟩⟩
 def candidatesFor (ctx : Context) : List TDCandidate :=
   [⟨ctx, .retain⟩, ⟨ctx, .delete⟩]
 
--- ============================================================================
--- § 2: Constraints (§3.2, example 11)
--- ============================================================================
+/-! ### Constraints (example 11) -/
 
 /-- *CT (markedness): penalizes word-final consonant clusters ending in a
     coronal stop. Violated by the faithful (retaining) candidate.
@@ -200,9 +200,7 @@ def maxFinal : NamedConstraint TDCandidate :=
 def constraints : List (NamedConstraint TDCandidate) :=
   [starCT, maxC, maxPreV, maxFinal]
 
--- ============================================================================
--- § 3: Constraint Classification
--- ============================================================================
+/-! ### Constraint classification -/
 
 /-- *CT is a markedness constraint. -/
 theorem starCT_markedness : starCT.family = .markedness :=
@@ -231,9 +229,7 @@ theorem all_violations_bounded (con : NamedConstraint TDCandidate)
   · exact mkMaxCtx_bounded _ _ _ _
   · exact mkMaxCtx_bounded _ _ _ _
 
--- ============================================================================
--- § 4: Violation Profiles
--- ============================================================================
+/-! ### Violation profiles -/
 
 /-- Violation profile for a candidate under the 4 constraints.
     Order: [*CT, MAX, MAX-PRE-V, MAX-FINAL]. -/
@@ -257,9 +253,7 @@ theorem delete_preV_profile :
 theorem delete_pause_profile :
     violationProfile ⟨.pause, .delete⟩ = [0, 1, 0, 1] := by decide
 
--- ============================================================================
--- § 4b: POC adapter — `tdCands` and `tdVp` for `pocPredict` consumption
--- ============================================================================
+/-! ### POC adapter: `tdCands` and `tdVp` for `pocPredict` consumption -/
 
 /-- Candidate set per context for POC: both retain and delete are available
     in every context. Required by `PartialOrderConstraints.pocPredict`. -/
@@ -275,9 +269,7 @@ def tdVp : Context → TDOutput → Fin 4 → ℕ
   | .pause, .delete, ⟨3, _⟩ => 1
   | _,      _,       _      => 0
 
--- ============================================================================
--- § 5: POC Model (§3.2) — substrate-derived
--- ============================================================================
+/-! ### POC model — substrate-derived -/
 
 /-! @cite{coetzee-pater-2011} §3.2 explicitly adopts the POC framework:
     "the grammar states a partial, rather than a total, order on the constraint
@@ -302,59 +294,38 @@ def deletionProb (ctx : Context) : ℚ :=
   PartialOrderConstraints.pocPredict tdCands tdVp
     (PartialOrderConstraints.discrete 4) ctx .delete
 
-/-- Local wrapper around substrate `PartialOrderConstraints.picksAt_rate_eq`
-    with `tdCands`/`tdVp` baked in. The substrate handles the bridge from
-    `PicksAt` to head-of-`permDList` and the closed-form combinatorics; the
-    file-local arguments are: `cands ctx = {.delete, .retain}` and the two
-    output values are distinct. -/
-private theorem picksAt_rate_eq (ctx : Context)
-    (D Y : Finset (Fin 4))
+/-- Local specialisation of `pocPredict_discrete_binary_rate` to t/d-deletion:
+    bakes in `tdCands ctx = {.delete, .retain}` and `delete ≠ retain`. -/
+private theorem deletionProb_eq (ctx : Context) (D Y : Finset (Fin 4))
     (h_D : ∀ k, k ∈ D ↔ tdVp ctx .delete k ≠ tdVp ctx .retain k)
     (h_Y : ∀ k, k ∈ Y ↔ tdVp ctx .delete k < tdVp ctx .retain k) :
-    ((Finset.univ.filter (fun σ : Equiv.Perm (Fin 4) =>
-      PartialOrderConstraints.PicksAt tdCands tdVp σ ctx .delete)).card : ℚ) /
-      (Nat.factorial 4 : ℚ) =
-    ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
-  PartialOrderConstraints.picksAt_rate_eq tdCands tdVp ctx .delete .retain
+    deletionProb ctx = ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
+  PartialOrderConstraints.pocPredict_discrete_binary_rate
+    tdCands tdVp ctx .delete .retain
     (by unfold tdCands; ext o; cases o <;> simp)
     (fun heq => TDOutput.noConfusion heq) D Y h_D h_Y
 
-/-- Pre-vocalic deletion probability: 8/24 = 1/3.
-    Closed form via `picksAt_rate_eq`: `count / 4! = |Y ∩ D| / |D|` with
-    `D = {*CT, MAX, MAX-PRE-V}` (3 distinguishing) and `Y ∩ D = {*CT}`
-    (only *CT favors delete) → `1/3`. -/
+/-- Pre-vocalic deletion probability: `D = {*CT, MAX, MAX-PRE-V}` (3
+    distinguishing), `Y ∩ D = {*CT}` (only *CT favors delete) → `1/3`. -/
 theorem deletionProb_preV : deletionProb .preV = 1/3 := by
-  unfold deletionProb PartialOrderConstraints.pocPredict
-  rw [PartialOrderConstraints.consistentTotalOrders_discrete, Finset.card_univ,
-      Fintype.card_perm, Fintype.card_fin]
-  rw [picksAt_rate_eq .preV ({0, 1, 2} : Finset (Fin 4))
-      ({0} : Finset (Fin 4)) (by decide) (by decide)]
-  rw [show (({0} : Finset (Fin 4)) ∩ {0, 1, 2}).card = 1 from by decide,
+  rw [deletionProb_eq .preV {0, 1, 2} {0} (by decide) (by decide),
+      show (({0} : Finset (Fin 4)) ∩ {0, 1, 2}).card = 1 from by decide,
       show ({0, 1, 2} : Finset (Fin 4)).card = 3 from by decide]
   norm_num
 
-/-- Phrase-final deletion probability: 8/24 = 1/3. Same closed form as preV
-    with `D = {*CT, MAX, MAX-FINAL}`, `Y ∩ D = {*CT}`. -/
+/-- Phrase-final deletion probability: `D = {*CT, MAX, MAX-FINAL}`,
+    `Y ∩ D = {*CT}` → `1/3`. -/
 theorem deletionProb_pause : deletionProb .pause = 1/3 := by
-  unfold deletionProb PartialOrderConstraints.pocPredict
-  rw [PartialOrderConstraints.consistentTotalOrders_discrete, Finset.card_univ,
-      Fintype.card_perm, Fintype.card_fin]
-  rw [picksAt_rate_eq .pause ({0, 1, 3} : Finset (Fin 4))
-      ({0} : Finset (Fin 4)) (by decide) (by decide)]
-  rw [show (({0} : Finset (Fin 4)) ∩ {0, 1, 3}).card = 1 from by decide,
+  rw [deletionProb_eq .pause {0, 1, 3} {0} (by decide) (by decide),
+      show (({0} : Finset (Fin 4)) ∩ {0, 1, 3}).card = 1 from by decide,
       show ({0, 1, 3} : Finset (Fin 4)).card = 3 from by decide]
   norm_num
 
-/-- Pre-consonantal deletion probability: 12/24 = 1/2 (the highest, since
-    no positional faithfulness applies). `D = {*CT, MAX}`, `Y ∩ D = {*CT}` →
-    `1/2`. -/
+/-- Pre-consonantal deletion probability: `D = {*CT, MAX}`, `Y ∩ D = {*CT}`
+    → `1/2` (highest — no positional faithfulness applies). -/
 theorem deletionProb_preC : deletionProb .preC = 1/2 := by
-  unfold deletionProb PartialOrderConstraints.pocPredict
-  rw [PartialOrderConstraints.consistentTotalOrders_discrete, Finset.card_univ,
-      Fintype.card_perm, Fintype.card_fin]
-  rw [picksAt_rate_eq .preC ({0, 1} : Finset (Fin 4))
-      ({0} : Finset (Fin 4)) (by decide) (by decide)]
-  rw [show (({0} : Finset (Fin 4)) ∩ {0, 1}).card = 1 from by decide,
+  rw [deletionProb_eq .preC {0, 1} {0} (by decide) (by decide),
+      show (({0} : Finset (Fin 4)) ∩ {0, 1}).card = 1 from by decide,
       show ({0, 1} : Finset (Fin 4)).card = 2 from by decide]
   norm_num
 
@@ -371,9 +342,7 @@ theorem deletionProb_preC_gt :
 theorem deletionProb_preV_eq_pause : deletionProb .preV = deletionProb .pause := by
   rw [deletionProb_preV, deletionProb_pause]
 
--- ============================================================================
--- § 6: Factorial Typology (table 12) — POC-native
--- ============================================================================
+/-! ### Factorial typology (table 12) — POC-native -/
 
 /-! The factorial typology over `Equiv.Perm (Fin 4)` rankings, using POC's
     `PicksAt` for the per-context deletion check. Per-σ pattern is
@@ -432,9 +401,7 @@ theorem no_preV_only :
     (Finset.univ.filter (fun σ : Equiv.Perm (Fin 4) =>
       deletionPattern σ = (true, false, false))).card = 0 := by decide
 
--- ============================================================================
--- § 7: Structural Implication (key POC typological prediction)
--- ============================================================================
+/-! ### Structural implication (key POC typological prediction) -/
 
 /-- Every ranking that produces pre-V deletion also produces pre-C deletion.
     This is the structural reason POC cannot generate reversed rates:
@@ -462,9 +429,7 @@ theorem preC_always_ge :
   rw [deletionProb_preC, deletionProb_preV, deletionProb_pause]
   refine ⟨?_, ?_⟩ <;> norm_num
 
--- ============================================================================
--- § 8: MaxEnt Model (§4.3-4.4)
--- ============================================================================
+/-! ### MaxEnt model -/
 
 /-- Weighted version of the t/d-deletion constraints for MaxEnt.
     Weight parameterization enables dialect-specific fitting. -/
@@ -496,9 +461,8 @@ theorem maxent_aave_ordering :
     harmonyScore w ⟨.pause, .delete⟩ > harmonyScore w ⟨.preV, .delete⟩ := by
   refine ⟨?_, ?_⟩ <;>
     (simp only [harmonyScore, mkWeightedConstraints, starCT, mkMark, maxC, mkMax,
-       maxPreV, mkMaxCtx, maxFinal, List.foldl, beq_iff_eq, decide_true, decide_false,
-       Bool.true_and, Bool.false_and, and_true, and_false, ↓reduceIte,
-       Nat.cast_zero, Nat.cast_one]
+       maxPreV, mkMaxCtx, maxFinal, List.foldl, beq_iff_eq, and_true, ↓reduceIte,
+       Nat.cast_one]
      norm_num)
 
 /-- With non-negative MAX-PRE-V weight, harmony of pre-C deletion ≥ pre-V
@@ -519,7 +483,7 @@ theorem nonneg_weights_preserve_ordering
   have h4 : (Context.preC == Context.pause) = false := by decide
   have h5 : (Context.preV == Context.preV) = true := by decide
   have h6 : (Context.preV == Context.pause) = false := by decide
-  simp only [h1, h2, h3, h4, h5, h6, Bool.true_and, Bool.false_and,
+  simp only [h1, h2, h3, h4, h5, h6,
     Bool.false_eq_true, and_true, and_false, ↓reduceIte,
     Nat.cast_zero, Nat.cast_one, mul_zero, mul_one, sub_zero, zero_sub]
   exact sub_le_self _ hPreV
@@ -538,14 +502,12 @@ theorem nonneg_weights_preserve_ordering_pause
   have h4 : (Context.preC == Context.pause) = false := by decide
   have h5 : (Context.pause == Context.preV) = false := by decide
   have h6 : (Context.pause == Context.pause) = true := by decide
-  simp only [h1, h2, h3, h4, h5, h6, Bool.true_and, Bool.false_and,
+  simp only [h1, h2, h3, h4, h5, h6,
     Bool.false_eq_true, and_true, and_false, ↓reduceIte,
     Nat.cast_zero, Nat.cast_one, mul_zero, mul_one, sub_zero, zero_sub]
   exact sub_le_self _ hFin
 
--- ============================================================================
--- § 9: Tejano' Impossibility (§4.4)
--- ============================================================================
+/-! ### Tejano' impossibility -/
 
 /-- Tejano' is a hypothetical dialect with reversed pre-C/pre-V rates:
     lowest deletion in pre-consonantal position.
@@ -596,9 +558,8 @@ theorem maxent_can_generate_tejanoPrime :
     wMaxPreV < 0 := by
   refine ⟨994/10, 1006/10, -16/10, -8/10, ?_, ?_, by norm_num⟩ <;>
     (simp only [harmonyScore, mkWeightedConstraints, starCT, mkMark, maxC, mkMax,
-       maxPreV, mkMaxCtx, maxFinal, List.foldl, beq_iff_eq, decide_true, decide_false,
-       Bool.true_and, Bool.false_and, and_true, and_false, ↓reduceIte,
-       Nat.cast_zero, Nat.cast_one]
+       maxPreV, mkMaxCtx, maxFinal, List.foldl, beq_iff_eq, and_true, ↓reduceIte,
+       Nat.cast_one]
      norm_num)
 
 /-- Framework separation: POC/StOT and MaxEnt have different typological
@@ -617,18 +578,11 @@ theorem framework_separation :
         ⟨.preC, .retain⟩ >
       harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)
         ⟨.preC, .delete⟩) := by
-  refine ⟨?_, 994/10, 1006/10, -16/10, -8/10, ?_, ?_⟩
-  · rw [deletionProb_preC, deletionProb_preV]; norm_num
-  all_goals
-    simp only [harmonyScore, mkWeightedConstraints, starCT, mkMark, maxC, mkMax,
-      maxPreV, mkMaxCtx, maxFinal, List.foldl, beq_iff_eq, decide_true, decide_false,
-      Bool.true_and, Bool.false_and, and_true, and_false, ↓reduceIte,
-      Nat.cast_zero, Nat.cast_one]
-    norm_num
+  refine ⟨poc_cannot_generate_tejanoPrime, ?_⟩
+  obtain ⟨wCT, wMax, wMaxPreV, wMaxFin, h1, h2, _⟩ := maxent_can_generate_tejanoPrime
+  exact ⟨wCT, wMax, wMaxPreV, wMaxFin, h1, h2⟩
 
--- ============================================================================
--- § 10: OT Limit Bridge
--- ============================================================================
+/-! ### Categorical OT bookends -/
 
 /-- When MAX >> *CT, the categorical OT prediction is retention
     (no deletion) in all contexts. -/
@@ -650,9 +604,7 @@ theorem ct_dominates_implies_deletion :
     tab.optimal = {⟨ctx, .delete⟩} := by
   intro ctx; cases ctx <;> decide
 
--- ============================================================================
--- § 11: Generic ConstraintSystem Predictions (per-context MaxEnt)
--- ============================================================================
+/-! ### Generic ConstraintSystem predictions (per-context MaxEnt) -/
 
 /-! At each context, the AAVE MaxEnt model is a per-context
 `ConstraintSystem TDOutput ℝ`: candidates = `{retain, delete}`, score =
@@ -682,9 +634,8 @@ theorem aave_preC_prefers_delete :
     (harmonyScoreR_lt_of_dominates (by
       unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
         starCT mkMark maxC mkMax maxPreV mkMaxCtx maxFinal
-      simp only [List.foldl, beq_iff_eq, decide_true, decide_false,
-        Bool.true_and, Bool.false_and, and_true, and_false,
-        ↓reduceIte, Nat.cast_zero, Nat.cast_one]
+      simp only [List.foldl, beq_iff_eq,
+        ↓reduceIte, Nat.cast_one]
       norm_num :
       harmonyDominates aaveWeights ⟨.preC, .delete⟩ ⟨.preC, .retain⟩))
 
@@ -700,9 +651,8 @@ theorem aave_preV_prefers_retain :
     (harmonyScoreR_lt_of_dominates (by
       unfold harmonyDominates aaveWeights mkWeightedConstraints harmonyScore
         starCT mkMark maxC mkMax maxPreV mkMaxCtx maxFinal
-      simp only [List.foldl, beq_iff_eq, decide_true, decide_false,
-        Bool.true_and, Bool.false_and, and_true, and_false,
-        ↓reduceIte, Nat.cast_zero, Nat.cast_one]
+      simp only [List.foldl, beq_iff_eq,
+        and_true, ↓reduceIte, Nat.cast_one]
       norm_num :
       harmonyDominates aaveWeights ⟨.preV, .retain⟩ ⟨.preV, .delete⟩))
 
