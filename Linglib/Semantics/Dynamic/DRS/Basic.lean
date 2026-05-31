@@ -123,4 +123,30 @@ def DRS.IsProper (K : DRS L V) : Prop := DRS.Bound ∅ K
 
 end Proper
 
+/-! ### Occurring referents -/
+
+section Occ
+variable [DecidableEq V]
+
+mutual
+/-- Occurring referents (free or bound) in a condition, as a `Finset` — the DRS
+analogue of mathlib's `Term.varFinset`. Membership `x ∈ occ c` is decidable, so
+downstream consumers get decidable occurrence for free. -/
+def Condition.occ : Condition L V → Finset V
+  | .rel _ args => Finset.image args Finset.univ
+  | .eq u v => {u, v}
+  | .neg K => DRS.occ K
+  | .imp a c => DRS.occ a ∪ DRS.occ c
+  | .dis l r => DRS.occ l ∪ DRS.occ r
+/-- Occurring referents in a DRS (its universe and those of its conditions). -/
+def DRS.occ : DRS L V → Finset V
+  | .mk U conds => U ∪ Condition.occL conds
+/-- Occurring referents in a list of conditions. -/
+def Condition.occL : List (Condition L V) → Finset V
+  | [] => ∅
+  | c :: cs => Condition.occ c ∪ Condition.occL cs
+end
+
+end Occ
+
 end DRT
