@@ -499,9 +499,9 @@ theorem fragment_consistency_1sg :
 
 /-- The movement marker in the Fragment is correctly classified. -/
 theorem marker_classification :
-    ambaMovement.npRel.isMovementCopy = some true ∧
-    ambaBound.npRel.isMovementCopy = some false ∧
-    ambaGap.npRel.isMovementCopy = none := by
+    ambaMovement.npRel.resumptiveKind = some .movementCopy ∧
+    ambaBound.npRel.resumptiveKind = some .bound ∧
+    ambaGap.npRel.resumptiveKind = none := by
   exact ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
