@@ -8,15 +8,15 @@ import Linglib.Studies.Charlow2021.Basic
 @cite{charlow-2021}'s first solution to cumulative readings: higher-order
 dynamic GQs using a "tower" continuation type. A modified numeral like
 "exactly 3" denotes a *scope-taking* dynamic meaning — type
-`((DRS S → DRS S) → DRS S) → DRS S` — rather than a flat `DRS S`.
+`((Update S → Update S) → Update S) → Update S` — rather than a flat `Update S`.
 
 The key insight: the tower structure allows the nuclear scope (VP body) to
 be placed INSIDE maximization while the cardinality test escapes OUTSIDE,
 producing genuine cumulative readings via LOWER.
 
-The simpler `HODGQ` type `(DRS S → DRS S) → DRS S` (= `Cont (DRS S) (DRS S)`)
+The simpler `HODGQ` type `(Update S → Update S) → Update S` (= `Cont (Update S) (Update S)`)
 cannot achieve this because its continuation receives an already-maximized
-flat DRS — the nuclear scope can only be placed outside maximization.
+flat Update — the nuclear scope can only be placed outside maximization.
 
 -/
 
@@ -33,19 +33,19 @@ variable {S E : Type*}
 -- § Flat higher-order GQs (HODGQ)
 -- ════════════════════════════════════════════════════
 
-/-- Higher-order dynamic GQ: a continuized DRS.
-    Type: `(DRS S → DRS S) → DRS S`.
-    This is `Cont (DRS S) (DRS S)`, useful for scope-taking in general
+/-- Higher-order dynamic GQ: a continuized Update.
+    Type: `(Update S → Update S) → Update S`.
+    This is `Cont (Update S) (Update S)`, useful for scope-taking in general
     but insufficient for cumulative readings (see `TowerGQ` below). -/
-abbrev HODGQ (S : Type*) := Cont (DRS S) (DRS S)
+abbrev HODGQ (S : Type*) := Cont (Update S) (Update S)
 
-/-- Lift a flat DRS to higher-order (trivially scope-taking).
-    This is Cont.pure specialized to DRS. -/
-def liftGQ (D : DRS S) : HODGQ S := Cont.pure D
+/-- Lift a flat Update to higher-order (trivially scope-taking).
+    This is Cont.pure specialized to Update. -/
+def liftGQ (D : Update S) : HODGQ S := Cont.pure D
 
-/-- Lower a higher-order GQ back to flat DRS.
+/-- Lower a higher-order GQ back to flat Update.
     Applies the identity continuation. -/
-def lowerGQ (m : HODGQ S) : DRS S := Cont.lower m
+def lowerGQ (m : HODGQ S) : Update S := Cont.lower m
 
 -- ════════════════════════════════════════════════════
 -- § Tower GQs for cumulative readings
@@ -53,14 +53,14 @@ def lowerGQ (m : HODGQ S) : DRS S := Cont.lower m
 
 /-- Tower-type dynamic GQ (@cite{charlow-2021} §3, equation 24).
 
-    The continuation receives a *scope-taking function* `DRS S → DRS S`
-    rather than a flat DRS. This allows the nuclear scope (VP body) to be
+    The continuation receives a *scope-taking function* `Update S → Update S`
+    rather than a flat Update. This allows the nuclear scope (VP body) to be
     placed INSIDE maximization while the cardinality test escapes outside.
 
-    In Barker & Shan's tower notation, this is `[DRS S | DRS S → DRS S]`,
-    the type of an expression that contributes a `DRS S → DRS S` at the
-    local level but produces a `DRS S` at the top level. -/
-abbrev TowerGQ (S : Type*) := ((DRS S → DRS S) → DRS S) → DRS S
+    In Barker & Shan's tower notation, this is `[Update S | Update S → Update S]`,
+    the type of an expression that contributes a `Update S → Update S` at the
+    local level but produces a `Update S` at the top level. -/
+abbrev TowerGQ (S : Type*) := ((Update S → Update S) → Update S) → Update S
 
 /-- "Exactly N" as tower GQ (equation 24):
     `λk. k(λbody. M_v(E^v P; body)); n_v`
@@ -83,7 +83,7 @@ def exactlyN_tower [AssignmentStructure S E] [PartialOrder E] [Fintype E]
     This is the derivation that ONLY the tower system can produce;
     the pointwise system from `Basic.lean` is limited to pseudo-cumulative. -/
 def cumulativeTower [AssignmentStructure S E] [PartialOrder E] [Fintype E]
-    (v u : Dref S E) (boys movies : E → Prop) (saw' : E → E → Prop) : DRS S :=
+    (v u : Dref S E) (boys movies : E → Prop) (saw' : E → E → Prop) : Update S :=
   (exactlyN_tower v boys 3) (λ fv =>
     (exactlyN_tower u movies 5) (λ fu =>
       fv (fu (sawDRS u v saw'))))

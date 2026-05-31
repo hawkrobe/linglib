@@ -15,7 +15,7 @@ Muskens' CDRT:
 
 ## Semantic Architecture
 
-Instead of DRS boxes, CDRT uses:
+Instead of Update boxes, CDRT uses:
 - State type: assignment sequences
 - Dynamic propositions: relations between states
 - Compositional combination rules
@@ -183,7 +183,7 @@ theorem DProp.ofStatic_true_at {E : Type*} (p : SProp E) (i : Register E) :
 
 CDRT's `Register E = Nat → E` is the same type as @cite{muskens-1996}'s
 state space `S` in Dynamic Ty2 with discourse referents `Dref S E = S → E`.
-Drefs in CDRT are register-lookups; `DProp E` and `DRS (Register E)` are
+Drefs in CDRT are register-lookups; `DProp E` and `Update (Register E)` are
 *the same type*, so the embedding is a pair of identity functions.
 -/
 
@@ -191,8 +191,8 @@ Drefs in CDRT are register-lookups; `DProp E` and `DRS (Register E)` are
 def dref {E : Type*} (n : Nat) : Semantics.Dynamic.Core.Dref (Register E) E :=
   λ r => r n
 
-/-- `DProp E` IS a DRS over `Register E`. -/
+/-- `DProp E` IS an Update over `Register E`. -/
 def toDRS {E : Type*} (φ : DProp E) :
-    Semantics.Dynamic.Core.DynProp.DRS (Register E) := φ
+    Semantics.Dynamic.Core.DynProp.Update (Register E) := φ
 
 end Semantics.Dynamic.CDRT

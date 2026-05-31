@@ -3,7 +3,7 @@
 @cite{muskens-1996} @cite{brasoveanu-2007}
 
 The compositional layer that @cite{muskens-1996} adds on top of the
-core dynamic algebra (defined in `Core.DRS`): discourse referents as
+core dynamic algebra (defined in `Core.Update`): discourse referents as
 functions from states (`Dref S E = S → E`), the `AssignmentStructure`
 class for random assignment, and atomic condition constructors.
 
@@ -22,7 +22,7 @@ dref's as functions taking info states as arguments.
 | `e` | Individuals | `E` parameter |
 | `t` | Truth values | `Prop` |
 | `sτ` | Drefs (for static τ) | `S → τ` |
-| `s(st)` | DRS meanings | `DRS S` (from `Core.DRS`) |
+| `s(st)` | Update meanings | `Update S` (from `Core.Update`) |
 
 ## Embeddings
 
@@ -37,9 +37,9 @@ import Linglib.Semantics.Dynamic.Connectives.Defs
 
 namespace Semantics.Dynamic.Core
 
--- Re-export the DRS algebra so downstream code that opens
--- Semantics.Dynamic.Core continues to see DRS, Condition, dseq, test, etc.
-export DynProp (DRS Condition
+-- Re-export the Update algebra so downstream code that opens
+-- Semantics.Dynamic.Core continues to see Update, Condition, dseq, test, etc.
+export DynProp (Update Condition
   dseq test dneg dimpl ddisj closure
   trueAt valid entails
   dseq_assoc test_dseq dseq_test dneg_dneg_test closure_closure dseq_closure)
@@ -79,20 +79,20 @@ namespace AssignmentStructure
 
 variable {S E : Type*} [AssignmentStructure S E]
 
-/-- Random assignment DRS: [u] introduces dref u -/
-def randomAssign (u : S → E) : DRS S :=
+/-- Random assignment Update: [u] introduces dref u -/
+def randomAssign (u : S → E) : Update S :=
   λ i j => ∃ e : E, j = extend i u e
 
 notation "[" u "]ᵈʳᵉᶠ" => randomAssign u
 
-/-- Existential DRS: ∃u(D) = [u]; D -/
-def dexists (u : S → E) (D : DRS S) : DRS S :=
+/-- Existential Update: ∃u(D) = [u]; D -/
+def dexists (u : S → E) (D : Update S) : Update S :=
   dseq (randomAssign u) D
 
 notation "∃'" u "(" D ")" => dexists u D
 
 /-- Universal condition: ∀u(D) = ~∃u(~D) -/
-def dforall (u : S → E) (D : DRS S) : Condition S :=
+def dforall (u : S → E) (D : Update S) : Condition S :=
   dneg (dexists u (test (dneg D)))
 
 notation "∀'" u "(" D ")" => dforall u D
@@ -160,7 +160,7 @@ Johnu ↝ [u | u = John]
 
 This introduces an unspecific dref constrained to equal the specific one.
 -/
-def properName [AssignmentStructure S E] (u : S → E) (e : E) : DRS S :=
+def properName [AssignmentStructure S E] (u : S → E) (e : E) : Update S :=
   AssignmentStructure.dexists u (test (eq' u (specificDref e)))
 
 end ProperNames

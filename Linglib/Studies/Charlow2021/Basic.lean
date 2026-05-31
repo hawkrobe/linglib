@@ -6,7 +6,7 @@ import Linglib.Core.Mereology
 @cite{brasoveanu-2007} @cite{charlow-2021}
 
 @cite{muskens-1996}/@cite{brasoveanu-2007}-style dynamic GQ operators defined over the pointwise
-`DRS S := S → S → Prop` type. These correspond to @cite{charlow-2021} §2.
+`Update S := S → S → Prop` type. These correspond to @cite{charlow-2021} §2.
 
 The key operators:
 - `Evar`: existential dref introduction (equation 17)
@@ -28,9 +28,9 @@ They are not ranked or ordered; downstream consumers must pick by hand.
 |---------|-----------|-------------|------|
 | Pointwise (this file) | `S → S → Prop` | ✗ pseudo-cumulative only | `Quantification/Dynamic/Basic.lean` |
 | Update-theoretic | `State W E → State W E` | ✓ via non-distributive `Mvar_u` | `Quantification/Dynamic/UpdateTheoretic.lean` |
-| Higher-order tower | `((DRS S → DRS S) → DRS S) → DRS S` | ✓ via `LOWER` placement | `Quantification/Dynamic/HigherOrder.lean` |
-| Post-suppositional | `Writer (DRS S) A` | ✓ via deferred cardinality tests | `Quantification/Dynamic/PostSuppositional.lean` |
-| Subtype-polymorphic | `DRS S` with `Completeness` enum | rules out pseudo-cumulative by typing | `Quantification/Dynamic/SubtypePolymorphism.lean` |
+| Higher-order tower | `((Update S → Update S) → Update S) → Update S` | ✓ via `LOWER` placement | `Quantification/Dynamic/HigherOrder.lean` |
+| Post-suppositional | `Writer (Update S) A` | ✓ via deferred cardinality tests | `Quantification/Dynamic/PostSuppositional.lean` |
+| Subtype-polymorphic | `Update S` with `Completeness` enum | rules out pseudo-cumulative by typing | `Quantification/Dynamic/SubtypePolymorphism.lean` |
 
 All five are @cite{charlow-2021}'s work — the paper canvasses them as
 alternative repairs to the pointwise system's failure on
@@ -58,35 +58,35 @@ variable {S E : Type*}
 /-- Existential dref introduction (equation 17): introduce a new referent
     satisfying P into the assignment at dref v.
     `Evar v P i j ⟺ ∃x. P(x) ∧ j = extend(i, v, x)` -/
-def Evar [AssignmentStructure S E] (v : Dref S E) (P : E → Prop) : DRS S :=
+def Evar [AssignmentStructure S E] (v : Dref S E) (P : E → Prop) : Update S :=
   λ i j => ∃ (x : E), P x ∧ j = AssignmentStructure.extend i v x
 
 /-- Mereological maximization (equation 18): retain only assignments where v
     is maximal in the output set of D.
     In the pointwise setting, this checks maximality of v(j) among all
     j reachable from i via D. -/
-def Mvar (v : Dref S E) (D : DRS S) [PartialOrder E] : DRS S :=
+def Mvar (v : Dref S E) (D : Update S) [PartialOrder E] : Update S :=
   λ i j => D i j ∧ Mereology.isMaximal (λ x => ∃ (k : S), D i k ∧ v k = x) (v j)
 
 /-- Cardinality test (equation 19): test that atomCount of v equals n.
     Identity on assignments (a test in the dynamic sense). -/
-def CardTest (v : Dref S E) (n : Nat) [PartialOrder E] [Fintype E] : DRS S :=
+def CardTest (v : Dref S E) (n : Nat) [PartialOrder E] [Fintype E] : Update S :=
   λ i j => i = j ∧ Mereology.atomCount E (v j) = n
 
-/-- Transitive verb as DRS: test that R holds between two drefs. -/
-def sawDRS (u v : Dref S E) (R : E → E → Prop) : DRS S :=
+/-- Transitive verb as Update: test that R holds between two drefs. -/
+def sawDRS (u v : Dref S E) (R : E → E → Prop) : Update S :=
   test (λ i => R (u i) (v i))
 
 /-- Composed pointwise "exactly N": E^v; M_v; n_v (equation 20). -/
 def exactlyN_pw [AssignmentStructure S E] [PartialOrder E] [Fintype E]
-    (v : Dref S E) (P : E → Prop) (n : Nat) : DRS S :=
+    (v : Dref S E) (P : E → Prop) (n : Nat) : Update S :=
   dseq (dseq (Evar v P) (Mvar v (Evar v P))) (CardTest v n)
 
 /-- Pseudo-cumulative formula (5): M_v scopes over the cardinality test on u.
     "Exactly 3 boys saw exactly 5 movies" with pseudo-cumulative reading:
     M_v(E^v boys; M_u(E^u movies; saw u v); 5_u); 3_v -/
 def pseudoCumulative [AssignmentStructure S E] [PartialOrder E] [Fintype E]
-    (v u : Dref S E) (boys movies : E → Prop) (saw' : E → E → Prop) : DRS S :=
+    (v u : Dref S E) (boys movies : E → Prop) (saw' : E → E → Prop) : Update S :=
   dseq
     (Mvar v (dseq (dseq (Evar v boys) (Mvar u (dseq (Evar u movies) (sawDRS u v saw'))))
                    (CardTest u 5)))
@@ -95,7 +95,7 @@ def pseudoCumulative [AssignmentStructure S E] [PartialOrder E] [Fintype E]
 /-- Cumulative formula (6): cardinality tests scope outside both M operators.
     M_v(E^v boys; M_u(E^u movies; saw u v)); 5_u; 3_v -/
 def cumulative [AssignmentStructure S E] [PartialOrder E] [Fintype E]
-    (v u : Dref S E) (boys movies : E → Prop) (saw' : E → E → Prop) : DRS S :=
+    (v u : Dref S E) (boys movies : E → Prop) (saw' : E → E → Prop) : Update S :=
   dseq (dseq
     (Mvar v (dseq (Evar v boys) (Mvar u (dseq (Evar u movies) (sawDRS u v saw')))))
     (CardTest u 5))

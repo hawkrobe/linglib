@@ -210,7 +210,7 @@ end Projection
 
 section DPLBridge
 
-open Semantics.Dynamic.Core.DynProp (DRS dneg test)
+open Semantics.Dynamic.Core.DynProp (Update dneg test)
 open _root_.Core (Assignment)
 
 variable {W E : Type*}
@@ -221,9 +221,9 @@ variable {W E : Type*}
 def embedAssign (g : Assignment E) : HAssign W E :=
   λ n => .entity (g n)
 
-/-- Lift a DPL-style relation (`DRS (Assignment E)`) to operate on
+/-- Lift a DPL-style relation (`Update (Assignment E)`) to operate on
     heterogeneous assignments via the entity embedding. -/
-def liftDPL (φ : DRS (Assignment E)) : DSent W E :=
+def liftDPL (φ : Update (Assignment E)) : DSent W E :=
   λ g h => ∃ g' h' : Assignment E, embedAssign g' = g ∧ embedAssign h' = h ∧ φ g' h'
 
 /-- `dNeg` and `test (dneg φ)` (the substrate form of @cite{groenendijk-stokhof-1991}'s
@@ -237,7 +237,7 @@ theorem dNeg_structure (φ : DSent W E) (g h : HAssign W E) :
     dNeg φ g h ↔ (g = h ∧ ¬∃ k, φ g k) :=
   Iff.rfl
 
-theorem dplNeg_structure (φ : DRS (Assignment E)) (g h : Assignment E) :
+theorem dplNeg_structure (φ : Update (Assignment E)) (g h : Assignment E) :
     test (dneg φ) g h ↔ (g = h ∧ ¬∃ k, φ g k) := by
   simp only [test, dneg]
   exact ⟨fun ⟨heq, hneg⟩ => ⟨heq, heq ▸ hneg⟩,
@@ -247,7 +247,7 @@ theorem dplNeg_structure (φ : DRS (Assignment E)) (g h : Assignment E) :
 
     Lifting a DPL-style negation produces the same result as negating the
     lifted relation, modulo the entity-only constraint on assignments. -/
-theorem liftDPL_neg (φ : DRS (Assignment E)) (g h : HAssign W E) :
+theorem liftDPL_neg (φ : Update (Assignment E)) (g h : HAssign W E) :
     liftDPL (W := W) (test (dneg φ)) g h →
     dNeg (liftDPL (W := W) φ) g h := by
   intro ⟨g', h', hg, hh, hEq, hNex⟩

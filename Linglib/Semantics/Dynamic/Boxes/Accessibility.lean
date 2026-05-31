@@ -9,23 +9,22 @@ import Mathlib.Tactic.SimpRw
 # DRS Interpretation and Accessibility
 @cite{muskens-1996}
 
-Semantic interpretation bridge: maps `DRSExpr` syntax (from `Core.DRSExpr`)
-to `DRS (Assignment E)` semantics, connecting the pure syntactic representation
+Semantic interpretation bridge: maps `DRS` syntax (from `Boxes/Syntax.lean`)
+to `Update (Assignment E)` semantics, connecting the pure syntactic representation
 to the dynamic semantic algebra.
 
 ## Key Results
 
-- `interp`: maps `DRSExpr → DRS (Assignment E)` (ABB1–ABB4)
+- `interp`: maps `DRS → Update (Assignment E)` (ABB1–ABB4)
 - `mergingLemma`: sequenced boxes with fresh drefs merge into one box
 - `reduce`/`reduce_sound`: iterative reduction to canonical form
 - Proposition 1 (@cite{muskens-1996}, p. 174): proper DRS ↔ closed wp
 -/
 
-namespace Semantics.Dynamic.Core.Accessibility
+namespace DRS
 
-export Semantics.Dynamic.Core.DRSExpr (DRSExpr adr occurs acc allOccurring isFree isProper
-  exManAdoresWoman exDonkey exFree)
-open Semantics.Dynamic.Core.DRSExpr
+open Semantics.Dynamic.Core
+open Semantics.Dynamic.Core.WeakestPrecondition
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Semantic Interpretation
@@ -34,12 +33,12 @@ open Semantics.Dynamic.Core.DRSExpr
 /-- Interpretation of relation symbols. -/
 abbrev RelInterp (E : Type*) := Nat → List E → Prop
 
-/-- Semantic interpretation: maps DRS syntax to DRS semantics.
+/-- Semantic interpretation: maps DRS syntax to Update semantics.
 
 Each syntactic DRS expression denotes a binary relation on assignments
-(type `DRS (Assignment E)`), following the abbreviation clauses
+(type `Update (Assignment E)`), following the abbreviation clauses
 ABB1–ABB4 (@cite{muskens-1996}, p. 157). -/
-def interp {E : Type*} (rels : RelInterp E) : DRSExpr → DRS (Assignment E)
+def interp {E : Type*} (rels : RelInterp E) : DRS → Update (Assignment E)
   | .atom rel drefs =>
     test (λ g => rels rel (drefs.map (λ i => g i)))
   | .is u v =>
@@ -57,7 +56,7 @@ def interp {E : Type*} (rels : RelInterp E) : DRSExpr → DRS (Assignment E)
   | .seq K₁ K₂ =>
     dseq (interp rels K₁) (interp rels K₂)
 where
-  interpConds (rels : RelInterp E) : List DRSExpr → DRS (Assignment E)
+  interpConds (rels : RelInterp E) : List DRS → Update (Assignment E)
     | [] => λ i j => i = j
     | c :: cs => dseq (interp rels c) (interpConds rels cs)
 
@@ -88,22 +87,22 @@ theorem update_projDref_ne {E : Type*} (g : Assignment E) (n m : Nat) (e : E) (h
   simp [projDref, Assignment.update, h.symm]
 
 -- ════════════════════════════════════════════════════════════════
--- § 3. Structural Lemmas for DRS Composition
+-- § 3. Structural Lemmas for Update Composition
 -- ════════════════════════════════════════════════════════════════
 
-private theorem dseq_id_right {S : Type*} (D : DRS S) :
+private theorem dseq_id_right {S : Type*} (D : Update S) :
     dseq D (λ i j => i = j) = D := by
   funext i j; simp only [dseq, eq_iff_iff]
   exact ⟨λ ⟨_, h, rfl⟩ => h, λ h => ⟨j, h, rfl⟩⟩
 
-private theorem id_dseq {S : Type*} (D : DRS S) :
+private theorem id_dseq {S : Type*} (D : Update S) :
     dseq (λ i j => i = j) D = D := by
   funext i j; simp only [dseq, eq_iff_iff]
   exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
 
 /-- `interpConds` distributes over list concatenation. -/
 theorem interpConds_append {E : Type*} (rels : RelInterp E)
-    (cs1 cs2 : List DRSExpr) :
+    (cs1 cs2 : List DRS) :
     interp.interpConds rels (cs1 ++ cs2) =
     dseq (interp.interpConds rels cs1) (interp.interpConds rels cs2) := by
   induction cs1 with
@@ -112,7 +111,7 @@ theorem interpConds_append {E : Type*} (rels : RelInterp E)
 
 /-- The dref introduction foldl distributes through `dseq`:
 `foldl f A drefs = dseq A (foldl f id drefs)`. -/
-private theorem foldl_dseq_shift {E : Type*} (A : DRS (Assignment E)) (drefs : List Nat) :
+private theorem foldl_dseq_shift {E : Type*} (A : Update (Assignment E)) (drefs : List Nat) :
     List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assignment.update i n e)) A drefs =
     dseq A (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assignment.update i n e))
       (λ i j => i = j) drefs) := by
@@ -138,7 +137,7 @@ theorem foldl_append_introduce {E : Type*} (drefs1 drefs2 : List Nat) :
 -- § 3b. Freshness Invariance (FreshInv)
 -- ════════════════════════════════════════════════════════════════
 
-/-! When dref `n` does not occur in expression `K`, the DRS
+/-! When dref `n` does not occur in expression `K`, the Update
 `interp rels K` is semantically invariant under `Assignment.update` at
 slot `n`: updating slot `n` in both input and output preserves the
 relation (FreshFwd), and any output from an updated input factors
@@ -152,7 +151,7 @@ private theorem update_comm (g : Assignment E) (n m : Nat) (e₁ e₂ : E) (h : 
     (g.update n e₁).update m e₂ = (g.update m e₂).update n e₁ := by
   funext k; simp only [Assignment.update]; split <;> split <;> simp_all
 
-private theorem occursAny_false (n : Nat) (cs : List DRSExpr)
+private theorem occursAny_false (n : Nat) (cs : List DRS)
     (h : occurs.occursAny n cs = false) : ∀ c ∈ cs, occurs n c = false := by
   induction cs with
   | nil => intro c hc; nomatch hc
@@ -163,14 +162,14 @@ private theorem occursAny_false (n : Nat) (cs : List DRSExpr)
     | head => exact h.1
     | tail _ hm => exact ih h.2 c' hm
 
-private theorem freshFwd_dseq {D₁ D₂ : DRS (Assignment E)} {n : Nat}
+private theorem freshFwd_dseq {D₁ D₂ : Update (Assignment E)} {n : Nat}
     (h₁ : ∀ g k e, D₁ g k → D₁ (g.update n e) (k.update n e))
     (h₂ : ∀ g k e, D₂ g k → D₂ (g.update n e) (k.update n e)) :
     ∀ g k : Assignment E, ∀ e : E,
     dseq D₁ D₂ g k → dseq D₁ D₂ (g.update n e) (k.update n e) :=
   fun _ _ e ⟨m, hD₁, hD₂⟩ => ⟨m.update n e, h₁ _ m e hD₁, h₂ m _ e hD₂⟩
 
-private theorem freshBack_dseq {D₁ D₂ : DRS (Assignment E)} {n : Nat}
+private theorem freshBack_dseq {D₁ D₂ : Update (Assignment E)} {n : Nat}
     (h₁ : ∀ g k e, D₁ (g.update n e) k → ∃ k', D₁ g k' ∧ k = k'.update n e)
     (h₂ : ∀ g k e, D₂ (g.update n e) k → ∃ k', D₂ g k' ∧ k = k'.update n e) :
     ∀ g k : Assignment E, ∀ e : E,
@@ -181,7 +180,7 @@ private theorem freshBack_dseq {D₁ D₂ : DRS (Assignment E)} {n : Nat}
   obtain ⟨k', hD₂', rfl⟩ := h₂ m' k e hD₂
   exact ⟨k', ⟨m', hD₁', hD₂'⟩, rfl⟩
 
-private theorem freshInvConds (rels : RelInterp E) (cs : List DRSExpr) (n : Nat)
+private theorem freshInvConds (rels : RelInterp E) (cs : List DRS) (n : Nat)
     (hfwd : ∀ c ∈ cs, ∀ g k : Assignment E, ∀ e,
       interp rels c g k → interp rels c (g.update n e) (k.update n e))
     (hback : ∀ c ∈ cs, ∀ g k : Assignment E, ∀ e,
@@ -255,7 +254,7 @@ private theorem introFreshInv (n : Nat) (drefs : List Nat)
            freshBack_dseq (fun g k e h => freshBack_assign n d hd g k e h) ihb⟩
 
 set_option maxHeartbeats 800000 in
-private theorem freshInv (rels : RelInterp E) (K : DRSExpr) (n : Nat)
+private theorem freshInv (rels : RelInterp E) (K : DRS) (n : Nat)
     (h : occurs n K = false) :
     (∀ g k : Assignment E, ∀ e, interp rels K g k →
       interp rels K (g.update n e) (k.update n e)) ∧
@@ -379,9 +378,9 @@ termination_by sizeOf K
 -- § 3c. Commuting Lemma
 -- ════════════════════════════════════════════════════════════════
 
-/-- A DRS commutes with a single random assignment when FreshFwd
+/-- A Update commutes with a single random assignment when FreshFwd
 and FreshBack hold for the assigned slot. -/
-private theorem drs_comm_assign (D : DRS (Assignment E)) (d : Nat)
+private theorem drs_comm_assign (D : Update (Assignment E)) (d : Nat)
     (hfwd : ∀ g k : Assignment E, ∀ e, D g k → D (g.update d e) (k.update d e))
     (hback : ∀ g k : Assignment E, ∀ e, D (g.update d e) k →
       ∃ k', D g k' ∧ k = k'.update d e) :
@@ -395,7 +394,7 @@ private theorem drs_comm_assign (D : DRS (Assignment E)) (d : Nat)
     exact ⟨k', hD', e, rfl⟩
 
 private theorem interpConds_comm_assign (rels : RelInterp E)
-    (conds : List DRSExpr) (d : Nat)
+    (conds : List DRS) (d : Nat)
     (hfresh : ∀ c ∈ conds, occurs d c = false) :
     dseq (interp.interpConds rels conds) (λ i j => ∃ e : E, j = i.update d e) =
     dseq (λ i j => ∃ e : E, j = i.update d e) (interp.interpConds rels conds) := by
@@ -407,7 +406,7 @@ private theorem interpConds_comm_assign (rels : RelInterp E)
 /-- `interpConds` commutes with a full dref introduction chain when
 the introduced drefs do not occur in any condition. -/
 private theorem interpConds_comm_introChain (rels : RelInterp E)
-    (conds : List DRSExpr) (drefs : List Nat)
+    (conds : List DRS) (drefs : List Nat)
     (hfresh : ∀ n ∈ drefs, ∀ c ∈ conds, occurs n c = false) :
     dseq (interp.interpConds rels conds)
       (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = i.update n e))
@@ -465,10 +464,10 @@ This is used throughout §III.4 to simplify compositional derivations.
 The proof reduces (via `foldl_append_introduce`, `interpConds_append`,
 and `dseq_assoc`) to showing that condition tests commute with fresh
 dref introductions. This commuting step requires a mutual induction
-on `DRSExpr` proving that `interp rels c` is semantically invariant
+on `DRS` proving that `interp rels c` is semantically invariant
 under `Assignment.update` at slots not mentioned in `c`. -/
 theorem mergingLemma {E : Type*} (rels : RelInterp E)
-    (drefs1 drefs2 : List Nat) (conds1 conds2 : List DRSExpr)
+    (drefs1 drefs2 : List Nat) (conds1 conds2 : List DRS)
     (hfresh : ∀ n ∈ drefs2, ∀ c ∈ conds1, occurs n c = false) :
     interp rels (.seq (.box drefs1 conds1) (.box drefs2 conds2)) =
     interp rels (.box (drefs1 ++ drefs2) (conds1 ++ conds2)) := by
@@ -478,10 +477,10 @@ theorem mergingLemma {E : Type*} (rels : RelInterp E)
   rw [← dseq_assoc, interpConds_comm_introChain rels conds1 drefs2 hfresh, dseq_assoc]
 
 -- ════════════════════════════════════════════════════════════════
--- § 4b. DRS Reduction (Merging to Canonical Form)
+-- § 4b. Update Reduction (Merging to Canonical Form)
 -- ════════════════════════════════════════════════════════════════
 
-/-! Kamp & Reyle's *DRS reduction* — the operation that collapses
+/-! Kamp & Reyle's *Update reduction* — the operation that collapses
 compositional `.seq (.box …) (.box …)` derivations into canonical
 single-box form. This is Muskens's T₅ rule applied iteratively.
 
@@ -492,7 +491,7 @@ invariant: `interp rels (reduce K) = interp rels K`. -/
 
 /-- Try to merge two DRS expressions. If both are boxes and the
 freshness condition is met, fuse them; otherwise leave as `.seq`. -/
-private def tryMerge : DRSExpr → DRSExpr → DRSExpr
+private def tryMerge : DRS → DRS → DRS
   | .box d1 c1, .box d2 c2 =>
       if d2.all (fun n => c1.all (fun c => !occurs n c))
       then .box (d1 ++ d2) (c1 ++ c2)
@@ -504,12 +503,12 @@ private def tryMerge : DRSExpr → DRSExpr → DRSExpr
 Only reduces `.seq` chains (the discourse-composition spine).
 Conditions inside boxes are left structurally intact — they don't
 contain `.seq` in well-formed DRT derivations. -/
-def reduce : DRSExpr → DRSExpr
+def reduce : DRS → DRS
   | .seq K₁ K₂ => tryMerge (reduce K₁) (reduce K₂)
   | K => K
 
 private theorem tryMerge_sound {E : Type*} (rels : RelInterp E)
-    (K₁ K₂ : DRSExpr) :
+    (K₁ K₂ : DRS) :
     interp rels (tryMerge K₁ K₂) = interp rels (.seq K₁ K₂) := by
   unfold tryMerge
   split
@@ -525,7 +524,7 @@ private theorem tryMerge_sound {E : Type*} (rels : RelInterp E)
 
 /-- DRS reduction preserves interpretation. -/
 theorem reduce_sound {E : Type*} (rels : RelInterp E) :
-    ∀ K : DRSExpr, interp rels (reduce K) = interp rels K
+    ∀ K : DRS, interp rels (reduce K) = interp rels K
   | .atom _ _ | .is _ _ | .neg _ | .disj _ _ | .impl _ _ | .box _ _ => rfl
   | .seq K₁ K₂ => by
       show interp rels (tryMerge (reduce K₁) (reduce K₂)) = _
@@ -540,7 +539,7 @@ theorem reduce_sound {E : Type*} (rels : RelInterp E) :
 
 /-! ### Contextual properness
 
-The syntactic `isProper` function (from `DRSExpr.lean`) has a soundness
+The syntactic `isProper` function (from `DRS.lean`) has a soundness
 gap: it conflates accessibility across disjunction branches, allowing
 expressions like `[u₁|P(u₁)] ∨ [|Q(u₁)]` to pass even though `u₁` is
 free in the second disjunct. The `allBound` check defined here tracks
@@ -549,7 +548,7 @@ well-bound. -/
 
 /-- Context-sensitive properness: every dref used in `K` must appear
 in the bound set `B`. -/
-def allBound : List Nat → DRSExpr → Bool
+def allBound : List Nat → DRS → Bool
   | bound, .atom _ drefs => drefs.all (bound.contains ·)
   | bound, .is u v => bound.contains u && bound.contains v
   | bound, .neg K => allBound bound K
@@ -558,13 +557,19 @@ def allBound : List Nat → DRSExpr → Bool
   | bound, .box drefs conds => allBoundConds (bound ++ drefs) conds
   | bound, .seq K₁ K₂ => allBound bound K₁ && allBound (bound ++ adr K₁) K₂
 where
-  allBoundConds : List Nat → List DRSExpr → Bool
+  allBoundConds : List Nat → List DRS → Bool
     | _, [] => true
     | bound, c :: cs => allBound bound c && allBoundConds (bound ++ adr c) cs
 
 example : allBound [] exManAdoresWoman = true := by decide
 example : allBound [] exDonkey = true := by decide
 example : allBound [] exFree = false := by decide
+
+/-- Soundness-certified properness: every discourse referent is bound in context.
+Correct across disjunction branches (unlike `DRS.locallyProper` in
+`Boxes/Syntax.lean`), and equivalent to a closed weakest-precondition by
+`proposition_1`. -/
+def isProper (K : DRS) : Bool := allBound [] K
 
 section Proposition1
 
@@ -627,7 +632,7 @@ private theorem intro_rebase (drefs : List Nat) (B : List Nat)
 omit [Nonempty E] in
 /-- Condition list rebase: if a per-condition rebase hypothesis holds,
 then `interpConds` transfers from `g₁` to `g₂` preserving agreement on `B`. -/
-private theorem rebaseConds (rels : RelInterp E) (conds : List DRSExpr)
+private theorem rebaseConds (rels : RelInterp E) (conds : List DRS)
     (hRebase : ∀ c ∈ conds, ∀ (B : List Nat), allBound B c = true →
       ∀ g₁ g₂ : Assignment E, Agree g₁ g₂ B →
       ∀ j₁, interp rels c g₁ j₁ →
@@ -656,7 +661,7 @@ private theorem rebaseConds (rels : RelInterp E) (conds : List DRSExpr)
     exact ⟨j₂, ⟨mid₂, hc₂, hcs₂⟩, agree_of_append_left hagree_j⟩
 
 omit [Nonempty E] in
-private theorem rebase_main (rels : RelInterp E) (K : DRSExpr) (B : List Nat)
+private theorem rebase_main (rels : RelInterp E) (K : DRS) (B : List Nat)
     (hB : allBound B K = true) (g₁ g₂ : Assignment E) (hagree : Agree g₁ g₂ B)
     (j₁ : Assignment E) (hinterp : interp rels K g₁ j₁) :
     ∃ j₂, interp rels K g₂ j₂ ∧ Agree j₁ j₂ (B ++ adr K) := by
@@ -749,7 +754,7 @@ This bridges syntactic properness (`allBound`) with semantic
 properness (`WeakestPrecondition.isProper`). The proof uses a
 rebase lemma: if all drefs in `K` are bound, then satisfaction
 can be transferred between any two assignments. -/
-theorem proposition_1 {E : Type*} [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
+theorem proposition_1 {E : Type*} [Nonempty E] (rels : RelInterp E) (K : DRS)
     (hproper : allBound [] K = true) :
     WeakestPrecondition.isProper (interp rels K) := by
   intro g₁ g₂
@@ -781,12 +786,12 @@ section CylindricBridge
 
 variable {E : Type*}
 
-/-- The truth condition of a DRS with `allBound B K` is invariant on
+/-- The truth condition of a Update with `allBound B K` is invariant on
 `B`: it only depends on the registers that `K` is allowed to read.
 
 This is the support theorem: syntactic bound-checking (`allBound`)
 correctly over-approximates semantic support. -/
-theorem allBound_invariantOn [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
+theorem allBound_invariantOn [Nonempty E] (rels : RelInterp E) (K : DRS)
     (B : List Nat) (hB : allBound B K = true) :
     invariantOn (closure (interp rels K)) B := by
   intro g₁ g₂ hagree
@@ -808,7 +813,7 @@ then the truth condition of `K` is cylindrification-closed at `n`.
 This connects `freshInv` (§3b) to the cylindric algebra vocabulary.
 `occurs` is the per-register support checker, and `allBound` is
 the global version. -/
-theorem cylClosed_of_not_occurs [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
+theorem cylClosed_of_not_occurs [Nonempty E] (rels : RelInterp E) (K : DRS)
     (n : Nat) (h : occurs n K = false) :
     cylClosed n (closure (interp rels K)) := by
   obtain ⟨fwd, back⟩ := freshInv rels K n h
@@ -819,7 +824,7 @@ theorem cylClosed_of_not_occurs [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
   · rintro ⟨k, hk⟩
     exact ⟨g n, k, by rw [update_self']; exact hk⟩
 
-/-- The DRS identity condition `is u v` denotes the diagonal element. -/
+/-- The Update identity condition `is u v` denotes the diagonal element. -/
 theorem interp_is_eq_diagonal (rels : RelInterp E) (u v : Nat) :
     closure (interp rels (.is u v)) = @diagonal E u v := by
   ext g; simp only [closure, interp, test, diagonal]
@@ -827,12 +832,12 @@ theorem interp_is_eq_diagonal (rels : RelInterp E) (u v : Nat) :
 
 /-- **Register introduction + D under closure = cylindrification.**
 
-The DRS `[n]; D` (introduce dref `n` then continue with `D`),
+The Update `[n]; D` (introduce dref `n` then continue with `D`),
 under `closure`, equals `cₙ(closure(D))`: cylindrification at `n`.
 
-This is the DRS-level analog of the DPL theorem
+This is the Update-level analog of the DPL theorem
 `closure(∃x.φ) = cₓ(closure(φ))`. -/
-theorem closure_introReg_seq (n : Nat) (D : DRS (Assignment E)) :
+theorem closure_introReg_seq (n : Nat) (D : Update (Assignment E)) :
     closure (dseq (fun g h => ∃ e : E, h = g.update n e) D) =
     cylindrify n (closure D) := by
   ext g; simp only [closure, dseq, cylindrify]; constructor
@@ -852,4 +857,4 @@ theorem closure_introReg [Nonempty E] (n : Nat) :
 
 end CylindricBridge
 
-end Semantics.Dynamic.Core.Accessibility
+end DRS

@@ -43,7 +43,7 @@ functions used by the Dalrymple–Haug 2024 cross-construction survey.
 
 @cite{haug-dalrymple-2020} §3.3 (p. 24) makes the reciprocal-scope
 classification two-dimensional: the locus of the reciprocal in the matrix
-DRS (high or low) crossed with the type of anaphoric relation between the
+Update (high or low) crossed with the type of anaphoric relation between the
 matrix subject and the embedded local antecedent (binding or group
 identity). Three of the four cells are attested; the (low, bound) cell is
 empty (paper p. 24: "the bound reading of the reciprocal's antecedent
@@ -92,13 +92,13 @@ inductive AnaphoricRelation where
 -- (@cite{haug-dalrymple-2020} §3, §3.3)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Locus of the reciprocal in the matrix DRS. @cite{haug-dalrymple-2020}
+/-- Locus of the reciprocal in the matrix Update. @cite{haug-dalrymple-2020}
     §3.3 (p. 24): the reciprocal is either interpreted in-situ inside the
-    embedded clause (`low` locus) or lifted to the matrix DRS (`high`
+    embedded clause (`low` locus) or lifted to the matrix Update (`high`
     locus). The locus is one of the two parameters in the §3.3
     classification of reciprocal readings. -/
 inductive RecipLocus where
-  /-- High locus: reciprocal lifted to matrix DRS. Required for
+  /-- High locus: reciprocal lifted to matrix Update. Required for
       wide scope and for the crossed reading. -/
   | high
   /-- Low locus: reciprocal interpreted in-situ inside the embedded
@@ -244,7 +244,7 @@ theorem SMH_diverges_from_relational :
     `crossedReading`; the fourth cell (low locus + bound antecedent) is
     empirically empty per paper p. 24. -/
 structure RecipReading where
-  /-- Locus of the reciprocal in the matrix DRS. -/
+  /-- Locus of the reciprocal in the matrix Update. -/
   locus : RecipLocus
   /-- Anaphoric relation between the matrix subject and the embedded
       local antecedent. -/
@@ -266,7 +266,7 @@ def wideScopeReading : RecipReading :=
 
 /-- Crossed reading (paper §3.3, eq 56): high locus, group-identity
     antecedent, group-identity reciprocal slot — reciprocity is contributed
-    by the DRS distinctness presupposition `∂(u₃ ≠ u₂)`, not by an
+    by the Update distinctness presupposition `∂(u₃ ≠ u₂)`, not by an
     anaphoric reciprocity relation. -/
 def crossedReading : RecipReading :=
   { locus := .high, antecedentRel := .groupIdentity, reciprocalRel := .groupIdentity }

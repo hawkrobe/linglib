@@ -551,7 +551,7 @@ theorem counterfactual_veridical_impossible
 
 /-! ### "It's not the case that there isn't a bathroom." (§4.1, Figure 8)
 
-DRS (43): `DEC_S(NOT(NOT(there is [a bathroom]^v)))`
+Update (43): `DEC_S(NOT(NOT(there is [a bathroom]^v)))`
 
 Double complementation: φ₁ ≡ φ̄₂, φ₂ ≡ φ̄₃ ⟹ φ₁ = φ₃.
 The dref v is introduced relative to φ₃ = φ₁ = {w_bu, w_b}.
@@ -594,7 +594,7 @@ theorem double_neg_accessible :
 
 /-! ### "Either there isn't a bathroom, or it's upstairs." (§4.2, Figure 9)
 
-DRS (44): φ₁ ≡ φ₂ ∪ φ₃ (disjunction). The second disjunct φ₃ = {w_bu}
+Update (44): φ₁ ≡ φ₂ ∪ φ₃ (disjunction). The second disjunct φ₃ = {w_bu}
 is the local context for the pronoun. v exists in φ₃ (v(w_bu) = b ≠ ⋆).
 Disjunction does NOT require overlap between disjunct propositions,
 so φ₃ ⊆ φ₄ (bathroom worlds) is compatible with φ₂ (no-bathroom worlds)
