@@ -1,4 +1,3 @@
-import Linglib.Semantics.Composition.Modification
 import Linglib.Studies.Ariel2001
 import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Pragmatics.Expressives.Basic
@@ -49,10 +48,23 @@ set_option autoImplicit false
 
 namespace AhnKocabDavidson2026
 
-open Semantics.Composition.Modification (predMod truePred predMod_true_left predMod_comm)
 open Features (AccessibilityLevel)
 open Pragmatics.GriceanMaxims
 open Pragmatics.Expressives (TwoDimProp)
+
+/-! Local `Bool`-valued predicate conjunction (transitional: this file's
+    `Bool`/`native_decide` computational layer is being retired; the canonical
+    intersective modifier is `Modifier.intersective`, Prop-valued). -/
+
+private def predMod {E : Type*} (p q : E → Bool) : E → Bool := fun x => p x && q x
+
+private def truePred {E : Type*} : E → Bool := fun _ => true
+
+private theorem predMod_comm {E : Type*} (p q : E → Bool) : predMod p q = predMod q p := by
+  funext x; simp only [predMod, Bool.and_comm]
+
+private theorem predMod_true_left {E : Type*} (p : E → Bool) : predMod truePred p = p := by
+  funext x; simp only [predMod, truePred, Bool.true_and]
 
 /-- Basic semantic classes for NP entities (inlined from substrate;
     @cite{resnik-1996} / @cite{erk-2007} style selectional classes).

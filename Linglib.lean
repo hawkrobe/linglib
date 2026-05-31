@@ -2321,7 +2321,9 @@ import Linglib.Core.Categorical.ScaleCat
 import Linglib.Semantics.Composition.SyntaxInterface
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
-import Linglib.Semantics.Composition.Modification
+import Linglib.Semantics.Composition.Abstraction
+import Linglib.Semantics.Modification.Basic
+import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Quantification.CovertQuantifier
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Semantics.Classifier.Basic

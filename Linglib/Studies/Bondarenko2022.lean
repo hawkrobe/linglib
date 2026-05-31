@@ -570,8 +570,8 @@ theorem nominalizedCP_satisfies_every_theta :
 -- ════════════════════════════════════════════════════════════════
 --
 -- Per Layered Grounding obligation (cross-framework auditor):
--- consume `Semantics.Composition.Modification`'s
--- `predicateModification` (`⊓ₚ`) — DO NOT redefine PM here. The
+-- consume `Modifier.intersective` (the intersective-modification
+-- substrate) — DO NOT redefine PM here. The
 -- substrate operates over `Frame.Denot (.e ⇒ .t)` typed-semantics
 -- predicates; this Studies file states only the abstract
 -- compositional fact (bare CP composes via PM with v's situation
@@ -589,10 +589,9 @@ theorem nominalizedCP_satisfies_every_theta :
     situation argument iff it has predicate type (⟨s,t⟩ after lifting
     the individual variable in Bondarenko's lift; substantively, both
     arguments are situation-predicates and intersect by PM). The
-    `predicateModification` substrate at
-    `Semantics/Composition/Modification.lean` is the typed
-    realisation; this Studies-level predicate is its qualitative
-    projection. -/
+    `Modifier.intersective` substrate at
+    `Semantics/Modification/Basic.lean` is the typed realisation; this
+    Studies-level predicate is its qualitative projection. -/
 def composesViaPM : ClauseType → Prop
   | .predicateOfIndividuals => False  -- nominalised, no PM compatibility
   | .predicateOfSituations  => True   -- bare, PM-compatible

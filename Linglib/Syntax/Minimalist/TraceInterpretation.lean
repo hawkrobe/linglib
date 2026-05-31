@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Semantics.Composition.Modification
+import Linglib.Semantics.Composition.Abstraction
 
 /-!
 # Trace Interpretation
@@ -15,9 +15,10 @@ Traces left by movement are interpreted as variables bound by
 1. Trace Interpretation: a trace t_n is interpreted as g(n)
    ⟦t_n⟧^g = g(n)
 
-2. Predicate Abstraction: at the landing site of movement,
-   λ-abstract over the trace's index
-   ⟦[CP Op_n ... t_n ...]⟧^g = λx. ⟦... t_n ...⟧^{g[n↦x]}
+2. Predicate Abstraction (the λ-abstraction at the landing site) and the
+   relative-clause denotation it feeds are framework-neutral composition rules,
+   so they live in `Semantics/Composition/Abstraction.lean`; this file is the
+   Minimalist trace machinery that applies them.
 
 ## Trace convention
 
@@ -29,7 +30,8 @@ detected via `isTrace so`.
 
 namespace Minimalist
 
-open Core.Logic.Intensional Core.Logic.Intensional.Variables Semantics.Composition.Modification
+open Core.Logic.Intensional Core.Logic.Intensional.Variables
+open Semantics.Composition.Abstraction
 
 -- ============================================================================
 -- Trace Interpretation (H&K Ch. 5, 7)
@@ -48,37 +50,6 @@ abbrev interpTrace {F : Frame} (n : ℕ) : DenotG F .e :=
   interpPronoun n
 
 -- ============================================================================
--- Predicate Abstraction (H&K Ch. 7)
--- ============================================================================
-
-/--
-Predicate Abstraction: λ-bind at the landing site of movement.
-
-When a moved element lands at a position, it creates a λ-abstractor
-that binds the trace it left behind:
-
-  ⟦[XP Op_n YP]⟧^g = λx. ⟦YP⟧^{g[n↦x]}
-
-where Op_n is the moved operator and YP contains the trace t_n.
-
-This rule creates a predicate (type ⟨e,t⟩) from a proposition (type t)
-by abstracting over the trace's index.
--/
-def predicateAbstraction {F : Frame} (n : ℕ) (body : DenotG F .t)
-    : DenotG F (.e ⇒ .t) :=
-  lambdaAbsG n body
-
-/--
-Generalized predicate abstraction for any result type.
-
-This handles cases like "the book that John said Mary read _"
-where the trace is embedded and the result may need further composition.
--/
-def predicateAbstractionGen {F : Frame} {τ : Ty} (n : ℕ) (body : DenotG F τ)
-    : DenotG F (.e ⇒ τ) :=
-  lambdaAbsG n body
-
--- ============================================================================
 -- Composition of Movement Chains
 -- ============================================================================
 
@@ -92,16 +63,6 @@ Returns the predicate λx. ⟦body(t_n := x)⟧
 def interpMovement {F : Frame} (n : ℕ)
     (bodyWithTrace : DenotG F .t) : DenotG F (.e ⇒ .t) :=
   predicateAbstraction n bodyWithTrace
-
-/--
-The binding relationship: predicate abstraction at index n binds traces at n.
-
-When we apply a predicate-abstracted meaning to an entity,
-that entity becomes the value of all traces with the same index.
--/
-theorem binding_correct {F : Frame} (n : ℕ) (body : DenotG F .t)
-    (x : F.Entity) (g : Core.Assignment F.Entity)
-    : (predicateAbstraction n body g) x = body (g[n ↦ x]) := rfl
 
 -- ============================================================================
 -- Connection to Syntactic Objects
@@ -204,34 +165,5 @@ theorem abstraction_binds_correct_variable {F : Frame} (n : ℕ)
     : interpTrace n (g[n ↦ x]) = x := by
   simp only [interpTrace, interpPronoun]
   exact update_same g n x
-
--- ============================================================================
--- Integration with Predicate Modification
--- ============================================================================
-
-/--
-Relative clause interpretation combines predicate abstraction with PM.
-
-For "the N that... t..."":
-1. Interpret the relative clause as λx. ⟦... t_n...⟧^{g[n↦x]}
-2. Combine with the head noun via Predicate Modification
-
-Result: λx. N(x) ∧ ⟦relative clause⟧(x)
--/
-def relativePM {F : Frame} (n : ℕ)
-    (headNoun : DenotG F (.e ⇒ .t))
-    (relClauseBody : DenotG F .t)
-    : DenotG F (.e ⇒ .t) :=
-  λ g => predicateModification (headNoun g) (predicateAbstraction n relClauseBody g)
-
-/-- Relative PM is commutative (the order of N and RC doesn't matter) -/
-theorem relativePM_comm {F : Frame} (n : ℕ)
-    (headNoun : DenotG F (.e ⇒ .t))
-    (relClauseBody : DenotG F .t)
-    (g : Core.Assignment F.Entity)
-    : relativePM n headNoun relClauseBody g =
-      predicateModification (predicateAbstraction n relClauseBody g) (headNoun g) := by
-  simp only [relativePM, predicateModification_comm]
-
 
 end Minimalist

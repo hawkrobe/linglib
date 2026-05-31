@@ -17,11 +17,11 @@ import Linglib.Core.Tree
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Semantics.Composition.LexEntry
-import Linglib.Semantics.Composition.Modification
+import Linglib.Semantics.Modification.Basic
 
 namespace Semantics.Composition.Tree
 
-open Core.Logic.Intensional Semantics.Composition.Modification
+open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Semantics.Montague (Lexicon)
 
@@ -119,7 +119,7 @@ def tryPM {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
   | .fn .e .t, .fn .e .t =>
     let p1 : F.Denot (.e ⇒ .t) := h1 ▸ d1.val
     let p2 : F.Denot (.e ⇒ .t) := h2 ▸ d2.val
-    some ⟨.fn .e .t, predicateModification p1 p2⟩
+    some ⟨.fn .e .t, Modifier.intersective p1 p2⟩
   | _, _ => none
 
 /-- Binary node: try FA, then IFA, then PM. -/

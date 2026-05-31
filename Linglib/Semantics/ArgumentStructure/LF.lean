@@ -1,4 +1,5 @@
 import Linglib.Semantics.ArgumentStructure.Defs
+import Linglib.Semantics.Modification.Basic
 
 /-!
 # Thematic Roles — Davidsonian logical forms + axioms
@@ -27,6 +28,7 @@ forms, and adverbial modification (Davidson's key payoff).
 namespace Semantics.ArgumentStructure
 
 open Core.Time
+open Modifier (intersective intersective_apply)
 
 /-! ### Thematic axioms (Aktionsart selection + uniqueness) -/
 
@@ -71,17 +73,20 @@ abbrev EventModifier (Time : Type*) [LinearOrder Time] := Event Time → Prop
 /-- Apply a modifier to an event predicate via conjunction.
     @cite{davidson-1967}: adverbial modification is conjunction of event
     predicates. "John kicked the ball quickly" = ∃e. kick(e) ∧
-    Agent(j,e) ∧ Patient(b,e) ∧ quickly(e). -/
+    Agent(j,e) ∧ Patient(b,e) ∧ quickly(e).
+
+    Davidson's adverbial modification is the intersective modifier
+    (`Semantics.Modification.intersective`) at event-predicate type. -/
 def modify {Time : Type*} [LinearOrder Time]
     (P : Event Time → Prop) (M : EventModifier Time) : Event Time → Prop :=
-  λ e => P e ∧ M e
+  intersective P M
 
 /-- Modification is commutative: "quickly and loudly" = "loudly and quickly". -/
 theorem modify_comm {Time : Type*} [LinearOrder Time]
     (P : Event Time → Prop) (M₁ M₂ : EventModifier Time) :
     modify (modify P M₁) M₂ = modify (modify P M₂) M₁ := by
   funext e
-  simp only [modify]
+  simp only [modify, intersective_apply]
   exact propext ⟨λ ⟨⟨hp, hm1⟩, hm2⟩ => ⟨⟨hp, hm2⟩, hm1⟩,
                 λ ⟨⟨hp, hm2⟩, hm1⟩ => ⟨⟨hp, hm1⟩, hm2⟩⟩
 
@@ -90,7 +95,7 @@ theorem modify_assoc {Time : Type*} [LinearOrder Time]
     (P : Event Time → Prop) (M₁ M₂ : EventModifier Time) :
     modify (modify P M₁) M₂ = modify P (λ e => M₁ e ∧ M₂ e) := by
   funext e
-  simp only [modify]
+  simp only [modify, intersective_apply]
   exact propext ⟨λ ⟨⟨hp, hm1⟩, hm2⟩ => ⟨hp, hm1, hm2⟩,
                 λ ⟨hp, hm1, hm2⟩ => ⟨⟨hp, hm1⟩, hm2⟩⟩
 
@@ -119,7 +124,7 @@ theorem modified_stative_is_pm {Entity Time : Type*} [LinearOrder Time]
     (x : Entity) (M : EventModifier Time) :
     modifiedStativeLogicalForm P frame x M ↔
       stativeLogicalForm (modify P M) frame x := by
-  simp only [modifiedStativeLogicalForm, stativeLogicalForm, modify]
+  simp only [modifiedStativeLogicalForm, stativeLogicalForm, modify, intersective_apply]
   exact ⟨fun ⟨s, hp, hh, hm⟩ => ⟨s, ⟨hp, hm⟩, hh⟩,
          fun ⟨s, ⟨hp, hm⟩, hh⟩ => ⟨s, hp, hh, hm⟩⟩
 
