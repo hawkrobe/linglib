@@ -24,9 +24,8 @@ conditions. Relation symbols come arity-indexed from a `FirstOrder.Language`.
 * `DRS.merge` — the `⊕` operation (set-union referents, concatenate conditions).
 * `DirectlySubordinate`, `Subordinate`, `WeakSubordinate` — immediate
   subordination (Def. 1.4.10(i), extended to `⇒`/`∨` in Ch. 2) and its
-  `Relation.TransGen` / `ReflTransGen` closures (Def. 1.4.10(ii)).
-* `Accessible` — Def. 1.4.11: a referent is accessible at a sub-DRS iff it lies in
-  the universe of some weakly-superordinate DRS.
+  `Relation.TransGen` / `ReflTransGen` closures (Def. 1.4.10(ii)). Accessibility
+  (Def. 1.4.11) is host-relative and lives in `DRS/Basic.lean` (`accessibleFrom`).
 
 ## Implementation notes
 
@@ -129,11 +128,5 @@ abbrev Subordinate {L : Language.{u, v}} {V : Type w} : DRS L V → DRS L V → 
 (@cite{kamp-reyle-1993}; the `≤` of Def. 1.4.10). -/
 abbrev WeakSubordinate {L : Language.{u, v}} {V : Type w} : DRS L V → DRS L V → Prop :=
   Relation.ReflTransGen DirectlySubordinate
-
-/-- A discourse referent `u` is *accessible* at a sub-DRS `K` iff it lies in the
-referents of `K` itself or of some DRS weakly-superordinate to `K` — the "left
-and up" geometry (@cite{kamp-reyle-1993}, Def. 1.4.11). -/
-def Accessible {L : Language.{u, v}} {V : Type w} (u : V) (K : DRS L V) : Prop :=
-  ∃ D, WeakSubordinate K D ∧ u ∈ D.referents
 
 end DRT

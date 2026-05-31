@@ -149,4 +149,64 @@ end
 
 end Occ
 
+/-! ### Accessibility (decidable, host-relative)
+
+Accessibility (@cite{kamp-reyle-1993}, Def. 1.4.11) is intrinsically *relative to a
+host DRS*: "`u` accessible at box `B`" means `u` lies in the universe of `B` or of
+a box on the path from the host down to `B`. A host-free `∃ D, WeakSubordinate K D
+∧ u ∈ D.referents` is **vacuous** — a superordinate `D` introducing any referent
+can always be manufactured. So accessibility is computed *top-down*, threading the
+in-scope referents (the same threading as `DRS.Bound`), which is also decidable. -/
+
+section Accessibility
+variable [DecidableEq V]
+
+mutual
+/-- Descend `T`, accumulating in-scope referents `s` ("left and up"); on reaching
+the box introducing `x`, return that box's in-scope set `s ∪ U`. The `⇒`-consequent
+additionally sees the antecedent's universe. -/
+def DRS.accScope (s : Finset V) : DRS L V → V → Option (Finset V)
+  | .mk U conds, x => if x ∈ U then some (s ∪ U) else Condition.accScopeL (s ∪ U) conds x
+/-- Accessibility threading through a condition. -/
+def Condition.accScope (s : Finset V) : Condition L V → V → Option (Finset V)
+  | .rel _ _, _ => none
+  | .eq _ _, _ => none
+  | .neg K, x => DRS.accScope s K x
+  | .imp a c, x =>
+      match DRS.accScope s a x with
+      | some r => some r
+      | none => DRS.accScope (s ∪ a.referents) c x
+  | .dis l r, x =>
+      match DRS.accScope s l x with
+      | some r => some r
+      | none => DRS.accScope s r x
+/-- Accessibility threading through a list of conditions (mutual helper). -/
+def Condition.accScopeL (s : Finset V) : List (Condition L V) → V → Option (Finset V)
+  | [], _ => none
+  | c :: cs, x =>
+      match Condition.accScope s c x with
+      | some r => some r
+      | none => Condition.accScopeL s cs x
+end
+
+/-- The referents accessible from `u`'s introduction in `T` (@cite{kamp-reyle-1993},
+Def. 1.4.11), as a decidable `Finset`; `∅` if `u` is not introduced in `T`. -/
+def DRS.accessibleFrom (T : DRS L V) (u : V) : Finset V := (DRS.accScope ∅ T u).getD ∅
+
+/-- `v` is accessible from `u`'s position in `T`. Decidable (Finset membership). -/
+def DRS.Accessible (T : DRS L V) (u v : V) : Prop := v ∈ DRS.accessibleFrom T u
+
+instance (T : DRS L V) (u v : V) : Decidable (DRS.Accessible T u v) :=
+  inferInstanceAs (Decidable (v ∈ _))
+
+end Accessibility
+
+open FirstOrder in
+/-- Non-vacuity guard: in `[1 | ¬[2 | ]]`, `1` is accessible from `2` but `2` is
+not accessible from `1` — the subordination asymmetry, now decidable (contrast the
+old host-free `Accessible`, which was provable for *all* referents). -/
+example :
+    DRS.Accessible (L := Language.empty) (.mk {1} [.neg (.mk {2} [])]) 2 1 ∧
+      ¬ DRS.Accessible (L := Language.empty) (.mk {1} [.neg (.mk {2} [])]) 1 2 := by decide
+
 end DRT
