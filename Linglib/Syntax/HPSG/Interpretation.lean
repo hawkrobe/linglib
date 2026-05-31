@@ -1,5 +1,7 @@
 import Linglib.Syntax.HPSG.Signature
 import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
+import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # RSRL interpretations
@@ -58,6 +60,32 @@ def denot (I : Interpretation Sig) : Path Sig → I.U → Option I.U
 
 @[simp] theorem denot_cons (I : Interpretation Sig) (a : Sig.Attr) (rest : Path Sig)
     (u : I.U) : I.denot (a :: rest) u = (I.A a u).bind (denot I rest) := rfl
+
+/-- Term denotation under a variable assignment (@cite{richter-2000}, Def. 53): `colon`
+denotes the described entity `u`, `var n` the assigned entity `ass n`, and `feat t α` follows
+attribute `α` (partially) from `t`'s denotation. -/
+def termDenot (I : Interpretation Sig) (ass : Nat → I.U) : Term Sig → I.U → Option I.U
+  | .colon, u => some u
+  | .var n, _ => some (ass n)
+  | .feat t a, u => (termDenot I ass t u).bind (I.A a)
+
+/-- The attribute-successor relation: `y` is an attribute value of `x`. Its
+reflexive-transitive closure is the *component-of* relation that bounds quantification. -/
+def attrSucc (I : Interpretation Sig) (x y : I.U) : Prop := ∃ α : Sig.Attr, I.A α x = some y
+
+instance (I : Interpretation Sig) [Fintype Sig.Attr] [DecidableEq I.U] :
+    DecidableRel I.attrSucc := fun _ _ => by unfold attrSucc; infer_instance
+
+/-- `v` is a **component of** `u` — reachable from `u` by following attributes (reflexively).
+RSRL component quantification ranges over exactly these (@cite{richter-2024}, Ch. 3). -/
+abbrev IsComponentOf (I : Interpretation Sig) (u v : I.U) : Prop :=
+  Relation.ReflTransGen I.attrSucc u v
+
+/-- Component-of is decidable on a finite interpretation (so `∃`-component quantification
+reduces by `decide`). Reuses the finite-carrier reachability decision procedure. -/
+instance (I : Interpretation Sig) [Fintype I.U] [DecidableEq I.U] [Fintype Sig.Attr]
+    (u v : I.U) : Decidable (I.IsComponentOf u v) :=
+  Relation.ReflTransGen.decidable_of_fintype u v
 
 /-- The totally-well-typed, sort-resolved condition on a model (@cite{richter-2000}, Def. 48):
 the species assignment lands in species, and every attribute is defined exactly on the

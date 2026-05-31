@@ -106,13 +106,18 @@ instance search; the models below are plain `def`s. -/
   approp := happrop
   approp_inherits := fun {σ₁ σ₂ α τ₁} => happrop_inh σ₁ σ₂ α τ₁
 
+/-- `hpsgSig` has no relations, so relation membership is vacuously decidable — needed by the
+`satisfies`/`Models` decision procedure. -/
+instance (I : Interpretation hpsgSig) : ∀ ρ, DecidablePred (I.R ρ) := fun ρ => nomatch ρ
+
 /-! ### The Head Feature Principle -/
 
 /-- The **Head Feature Principle** (@cite{pollard-sag-1994}; @cite{richter-2024}, Ch. 3, (3a)),
 at CAT granularity: a headed phrase shares its category (path `CAT`) with its head daughter
-(path `HD CAT`), as token identity (`pathEq`). -/
+(path `HD CAT`), as token identity (`pathEq`). The mother is the described entity `:`; `CAT`
+and `HD CAT` are `:`-rooted paths (`Term.path`). -/
 def hfp : Desc hpsgSig :=
-  .imp (.sortAssign [] .headedPhrase) (.pathEq [.CAT] [.HD, .CAT])
+  .imp (.sortAssign .colon .headedPhrase) (.pathEq (.path [.CAT]) (.path [.HD, .CAT]))
 
 /-- The one-principle grammar of the worked fragment. -/
 def hpsgGrammar : Grammar hpsgSig := [hfp]
@@ -140,11 +145,17 @@ def posModel : Interpretation hpsgSig where
     | _, _ => none
   R := fun e => e.elim
 
+-- Explicit `Fintype`/`DecidableEq` on the carrier so `decide` resolves the decision instances
+-- *without* unfolding `posModel` (which would reduce `.R` and unmatch the empty-relation
+-- instance below). The kernel still unfolds `posModel` when evaluating `decide`.
+instance : Fintype posModel.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq posModel.U := inferInstanceAs (DecidableEq Ent)
+
 /-- The well-formed structure satisfies the Head Feature Principle. -/
-example : posModel.Models hpsgGrammar := by unfold posModel; decide
+example : posModel.Models hpsgGrammar := by decide
 
 /-- The well-formed structure is totally well-typed. -/
-example : posModel.WellTyped := by unfold posModel; decide
+example : posModel.WellTyped := by decide
 
 /-- An ill-formed structure: the head daughter's category differs from the mother's, so the
 HFP fails — the principle is a genuine filter, not vacuously satisfied. -/
@@ -162,11 +173,14 @@ def negModel : Interpretation hpsgSig where
     | _, _ => none
   R := fun e => e.elim
 
+instance : Fintype negModel.U := inferInstanceAs (Fintype Ent)
+instance : DecidableEq negModel.U := inferInstanceAs (DecidableEq Ent)
+
 /-- The ill-formed structure violates the Head Feature Principle. -/
-example : ¬ negModel.Models hpsgGrammar := by unfold negModel; decide
+example : ¬ negModel.Models hpsgGrammar := by decide
 
 /-- It is nonetheless well-typed: it only violates the *principle*, not the signature. -/
-example : negModel.WellTyped := by unfold negModel; decide
+example : negModel.WellTyped := by decide
 
 /-! ### A partial bridge to the computational HPSG core -/
 
@@ -203,9 +217,10 @@ so this does NOT establish `(toInterp r).Models hpsgGrammar`: `toInterp` gives t
 head daughter *distinct* category entities (`catM`/`catH`), which the grammar's `pathEq` HFP
 rejects even when their sorts agree. A faithful computational↔token-identity bridge (where the
 induced model structure-shares the category object) is future work. -/
-theorem toInterp_categoryAgreement_of_hfp (r : HPSG.HeadCompRule) :
-    (toInterp r).satisfies .mother
-      (.sortAssign [.HD, .CAT] (catSpecies r.result.synsem.cat)) := by
+theorem toInterp_categoryAgreement_of_hfp (r : HPSG.HeadCompRule)
+    (ass : Nat → (toInterp r).U) :
+    (toInterp r).satisfies ass .mother
+      (.sortAssign (.path [.HD, .CAT]) (catSpecies r.result.synsem.cat)) := by
   show catSpecies r.head.synsem.cat ≤ catSpecies r.result.synsem.cat
   rw [r.hfp]
 

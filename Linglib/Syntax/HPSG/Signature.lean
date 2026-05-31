@@ -75,4 +75,21 @@ end Signature
 attribute `α` and then the rest of the path. -/
 abbrev Path {Srt : Type u} [PartialOrder Srt] (Sig : Signature Srt) := List Sig.Attr
 
+/-- An RSRL **term** (@cite{richter-2000}, Def. 52): rooted at either the described entity
+(`colon`, the reserved `:`) or a variable (`var n`), then extended by attributes (`feat t α`).
+Variables are needed for relational formulae and component quantification (Def. 54). -/
+inductive Term {Srt : Type u} [PartialOrder Srt] (Sig : Signature Srt) where
+  /-- The described entity itself (RSRL `:`). -/
+  | colon : Term Sig
+  /-- A variable (de Bruijn-free; `n : ℕ` names it). -/
+  | var : Nat → Term Sig
+  /-- Follow attribute `α` from the term `t` (RSRL `tα`). -/
+  | feat : Term Sig → Sig.Attr → Term Sig
+
+/-- The `:`-rooted term following a path of attributes — bridges the PR1 `Path` notation
+(`[α, β]`) into the term language: `Term.path [α, β] = (colon.feat α).feat β`. -/
+def Term.path {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt}
+    (p : Path Sig) : Term Sig :=
+  p.foldl Term.feat Term.colon
+
 end HPSG.RSRL

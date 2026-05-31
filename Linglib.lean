@@ -2139,6 +2139,7 @@ import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.LexicalRules
 import Linglib.Syntax.HPSG.RelativeClauses
 import Linglib.Syntax.HPSG.Coreference
+import Linglib.Syntax.HPSG.Binding
 -- Theories: Minimalism
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Checking
