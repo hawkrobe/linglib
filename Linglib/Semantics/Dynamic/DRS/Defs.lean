@@ -86,8 +86,10 @@ def conditions : DRS L V → List (Condition L V)
 /-- The empty DRS `⟨∅, []⟩`. -/
 def empty : DRS L V := .mk ∅ []
 
-/-- Merge (Kamp & Reyle's `⊕`): set-union the referents, concatenate the
-conditions. An *operation*, not a syntactic constructor. -/
+/-- Merge `⊕`: set-union the referents, concatenate the conditions. The binary
+DRS merge is @cite{muskens-1996}'s compositional operation — Kamp & Reyle
+themselves combine DRSs incrementally via the construction algorithm, not a
+symmetric binary `⊕`. An operation, not a syntactic constructor. -/
 def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
   .mk (K₁.referents ∪ K₂.referents) (K₁.conditions ++ K₂.conditions)
 
