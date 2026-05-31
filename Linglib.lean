@@ -2039,7 +2039,7 @@ import Linglib.Discourse.Centering.Instances.InformationStatus
 import Linglib.Discourse.Rhetorical.Defs
 import Linglib.Discourse.Rhetorical.RightFrontier
 -- Theories: Interfaces — Centering ↔ DRT bridge
-import Linglib.Discourse.Centering.DRSExpr
+import Linglib.Discourse.Centering.DRS
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
 import Linglib.Semantics.Dynamic.Connectives.Assignment
