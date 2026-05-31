@@ -145,6 +145,16 @@ def ExtDerivStep.cat : ExtDerivStep → Option Cat
     let x ← d.cat
     some (forwardTypeRaise x t)
 
+/-- The surface string an extended derivation spells out: leaf forms, left to right. -/
+def ExtDerivStep.yield : ExtDerivStep → List String
+  | .lex e => [e.form]
+  | .fapp d1 d2 => d1.yield ++ d2.yield
+  | .bapp d1 d2 => d1.yield ++ d2.yield
+  | .fcomp d1 d2 => d1.yield ++ d2.yield
+  | .fcomp2 d1 d2 => d1.yield ++ d2.yield
+  | .fcomp3 d1 d2 => d1.yield ++ d2.yield
+  | .ftr d _ => d.yield
+
 -- Dutch Lexicon
 
 def dutchLexicon : List LexEntry := [
@@ -298,15 +308,18 @@ theorem three_np_derives_S :
 theorem verb_cluster_cat :
     zag_comp2_helpen_zwemmen.cat = some (((S \ NP) / NP) / NP) := by decide
 
--- Generative Capacity: Beyond CFG
+-- Surface yield
 
-/--
-The cross-serial language {aⁿbⁿcⁿ | n ≥ 1} is NOT context-free.
+/-- The 2-verb derivation's surface yield.
 
-CCG can generate this via generalized composition, proving
-CCG is mildly context-sensitive.
--/
-def crossSerialLanguage (n : Nat) : List String :=
-  List.replicate n "a" ++ List.replicate n "b" ++ List.replicate n "c"
+    **This does not match Dutch surface order** ("Jan Piet zag zwemmen"): the
+    verb-cluster category `(S\NP)/NP` looks rightward for its arguments, so the
+    derivation tree spells out "Jan zag zwemmen Piet" instead. A surface-order-
+    faithful cross-serial derivation requires type-raising the preverbal NPs and
+    composing them into the verb cluster; that construction is not yet formalized
+    (see the TODO in `Formal/GenerativeCapacity`). The categories here capture the
+    cross-serial *binding* pattern but not the *linear order*. -/
+theorem jan_zag_zwemmen_piet_yield :
+    jan_zag_zwemmen_piet.yield = ["Jan", "zag", "zwemmen", "Piet"] := by decide
 
 end CCG.CrossSerial

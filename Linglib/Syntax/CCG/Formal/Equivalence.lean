@@ -263,32 +263,32 @@ countBracketings n = catalan (n-1) for n >= 1.
 
 Verified computationally for small values.
 -/
-theorem catalan_counts_bracketings_1 : countBracketings 1 = catalan 0 := by native_decide
-theorem catalan_counts_bracketings_2 : countBracketings 2 = catalan 1 := by native_decide
-theorem catalan_counts_bracketings_3 : countBracketings 3 = catalan 2 := by native_decide
-theorem catalan_counts_bracketings_4 : countBracketings 4 = catalan 3 := by native_decide
-theorem catalan_counts_bracketings_5 : countBracketings 5 = catalan 4 := by native_decide
-theorem catalan_counts_bracketings_6 : countBracketings 6 = catalan 5 := by native_decide
+theorem catalan_counts_bracketings_1 : countBracketings 1 = catalan 0 := by decide
+theorem catalan_counts_bracketings_2 : countBracketings 2 = catalan 1 := by decide
+theorem catalan_counts_bracketings_3 : countBracketings 3 = catalan 2 := by decide
+theorem catalan_counts_bracketings_4 : countBracketings 4 = catalan 3 := by decide
+theorem catalan_counts_bracketings_5 : countBracketings 5 = catalan 4 := by decide
+theorem catalan_counts_bracketings_6 : countBracketings 6 = catalan 5 := by decide
 
 /--
 allTreesWithLeaves generates exactly countBracketings trees.
 
 The tree enumeration function produces the correct count.
 -/
-theorem tree_count_eq_bracketings_1 : (allTreesWithLeaves 1).length = countBracketings 1 := by native_decide
-theorem tree_count_eq_bracketings_2 : (allTreesWithLeaves 2).length = countBracketings 2 := by native_decide
-theorem tree_count_eq_bracketings_3 : (allTreesWithLeaves 3).length = countBracketings 3 := by native_decide
-theorem tree_count_eq_bracketings_4 : (allTreesWithLeaves 4).length = countBracketings 4 := by native_decide
-theorem tree_count_eq_bracketings_5 : (allTreesWithLeaves 5).length = countBracketings 5 := by native_decide
+theorem tree_count_eq_bracketings_1 : (allTreesWithLeaves 1).length = countBracketings 1 := by decide
+theorem tree_count_eq_bracketings_2 : (allTreesWithLeaves 2).length = countBracketings 2 := by decide
+theorem tree_count_eq_bracketings_3 : (allTreesWithLeaves 3).length = countBracketings 3 := by decide
+theorem tree_count_eq_bracketings_4 : (allTreesWithLeaves 4).length = countBracketings 4 := by decide
+theorem tree_count_eq_bracketings_5 : (allTreesWithLeaves 5).length = countBracketings 5 := by decide
 
 /--
 Combined: tree count equals Catalan number.
 -/
-theorem tree_count_eq_catalan_1 : (allTreesWithLeaves 1).length = catalan 0 := by native_decide
-theorem tree_count_eq_catalan_2 : (allTreesWithLeaves 2).length = catalan 1 := by native_decide
-theorem tree_count_eq_catalan_3 : (allTreesWithLeaves 3).length = catalan 2 := by native_decide
-theorem tree_count_eq_catalan_4 : (allTreesWithLeaves 4).length = catalan 3 := by native_decide
-theorem tree_count_eq_catalan_5 : (allTreesWithLeaves 5).length = catalan 4 := by native_decide
+theorem tree_count_eq_catalan_1 : (allTreesWithLeaves 1).length = catalan 0 := by decide
+theorem tree_count_eq_catalan_2 : (allTreesWithLeaves 2).length = catalan 1 := by decide
+theorem tree_count_eq_catalan_3 : (allTreesWithLeaves 3).length = catalan 2 := by decide
+theorem tree_count_eq_catalan_4 : (allTreesWithLeaves 4).length = catalan 3 := by decide
+theorem tree_count_eq_catalan_5 : (allTreesWithLeaves 5).length = catalan 4 := by decide
 
 /--
 The number of bracketings of n items equals the (n-1)th Catalan number.
@@ -297,11 +297,11 @@ def bracketings (n : Nat) : Nat :=
   if n ≤ 1 then 1 else catalan (n - 1)
 
 -- Verify bracketings matches tree count
-theorem bracketings_eq_tree_count_1 : bracketings 1 = (allTreesWithLeaves 1).length := by native_decide
-theorem bracketings_eq_tree_count_2 : bracketings 2 = (allTreesWithLeaves 2).length := by native_decide
-theorem bracketings_eq_tree_count_3 : bracketings 3 = (allTreesWithLeaves 3).length := by native_decide
-theorem bracketings_eq_tree_count_4 : bracketings 4 = (allTreesWithLeaves 4).length := by native_decide
-theorem bracketings_eq_tree_count_5 : bracketings 5 = (allTreesWithLeaves 5).length := by native_decide
+theorem bracketings_eq_tree_count_1 : bracketings 1 = (allTreesWithLeaves 1).length := by decide
+theorem bracketings_eq_tree_count_2 : bracketings 2 = (allTreesWithLeaves 2).length := by decide
+theorem bracketings_eq_tree_count_3 : bracketings 3 = (allTreesWithLeaves 3).length := by decide
+theorem bracketings_eq_tree_count_4 : bracketings 4 = (allTreesWithLeaves 4).length := by decide
+theorem bracketings_eq_tree_count_5 : bracketings 5 = (allTreesWithLeaves 5).length := by decide
 
 -- Examples: Enumerate Bracketings
 
