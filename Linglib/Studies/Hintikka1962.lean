@@ -9,7 +9,7 @@ import Linglib.Discourse.Commitment.Frame
 worlds where `p` holds while the speaker fails to believe `p`. But its
 would-be-believed form `B_a (p ∧ ¬ B_a p)` is *indefensible* in any KD4
 doxastic model: a 1-line specialisation of
-`Core.Logic.Intensional.boxR_not_moore` to the agent-indexed belief
+`Core.Logic.Modal.box_not_moore` to the agent-indexed belief
 accessibility of `CommitmentState`. The knowledge analogue specialises
 the same substrate lemma to epistemic accessibility.
 -/
@@ -17,7 +17,7 @@ the same substrate lemma to epistemic accessibility.
 namespace Hintikka1962
 
 open Discourse.Commitment.Frame
-open Core.Logic.Intensional (boxR_not_moore AgentAccessRel IsSerial)
+open Core.Logic.Modal (box_not_moore AgentAccessRel IsSerial)
 open Semantics.Modality.EpistemicLogic (knows)
 
 variable {W A : Type*}
@@ -39,7 +39,7 @@ def DoxasticallyIndefensible (c : CommitmentState W A) (a : A) (P : Set W) : Pro
 theorem mooreContent_doxasticallyIndefensible
     (c : CommitmentState W A) (a : A) (p : Set W) :
     DoxasticallyIndefensible c a (mooreContent c a p) :=
-  fun w => boxR_not_moore (c.belief a) (fun v => v ∈ p) w
+  fun w => box_not_moore (c.belief a) (fun v => v ∈ p) w
 
 /-- A two-world KD4 frame: every world treats only `false` as belief-
     accessible. Used as a witness for `true_mem_mooreContent`. -/
@@ -63,13 +63,13 @@ theorem true_mem_mooreContent :
 
 /-- **Epistemic analogue** (Hintikka §4.11): under KD4 knowledge,
     "p but I don't know whether p" is unknowable. Direct corollary of
-    `boxR_not_moore` for `knows`. -/
+    `box_not_moore` for `knows`. -/
 theorem knowledge_unknowable
     {E : Type*} (Rs : AgentAccessRel W E) (i : E)
     [IsSerial (Rs i)] [IsTrans W (Rs i)]
     (p : W → Prop) (w : W) :
     ¬ knows Rs i (fun v => p v ∧ ¬ knows Rs i p v) w :=
-  boxR_not_moore (Rs i) p w
+  box_not_moore (Rs i) p w
 
 /-- **Performatory corollary** (state-theoretic restatement of Hintikka
     §4.10): under sincerity, no commitment state hosts a self-commitment

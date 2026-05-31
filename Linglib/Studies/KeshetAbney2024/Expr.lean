@@ -1,5 +1,5 @@
 import Linglib.Studies.KeshetAbney2024.Basic
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Core.Logic.Modal.Defs
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -41,7 +41,7 @@ all `X ≡ φ` definitions regardless of their structural position.
 
 namespace KeshetAbney2024.PIP
 
-open Core.Logic.Intensional (AccessRel boxR diamondR)
+open Core.Logic.Modal (AccessRel box diamond)
 
 /-- A finite domain of individuals for PIP quantifier evaluation. -/
 class FiniteDomain (D : Type*) where
@@ -118,8 +118,8 @@ def PIPExprF.truth {W D : Type*} :
   | .exists_ body => λ w => ∃ d, (body d).truth w
   | .forall_ body => λ w => ∀ d, (body d).truth w
   | .labelDef _label φ => φ.truth  -- label defs are tautological wrt truth
-  | .must R φ => boxR R φ.truth
-  | .might R φ => diamondR R φ.truth
+  | .must R φ => box R φ.truth
+  | .might R φ => diamond R φ.truth
 
 
 -- ============================================================
@@ -161,9 +161,9 @@ def PIPExprF.felicitous {W D : Type*} :
   -- F(X≡φ) iff Fφ  [labels don't affect felicity]
   | .labelDef _label φ => φ.felicitous
   -- F(□φ) iff ∀w'.Fφ  [felicity universal over accessible worlds]
-  | .must R φ => boxR R φ.felicitous
+  | .must R φ => box R φ.felicitous
   -- F(◇φ) iff ∀w'.Fφ  [felicity universal, NOT existential]
-  | .might R φ => boxR R φ.felicitous
+  | .might R φ => box R φ.felicitous
 
 
 -- ============================================================
@@ -236,7 +236,7 @@ theorem felicitousF_exists (body : D → PIPExprF W D) (w : W) :
 theorem felicitousF_must (R : AccessRel W) (φ : PIPExprF W D)
     (w : W) :
     (PIPExprF.must R φ).felicitous w =
-    boxR R φ.felicitous w := rfl
+    box R φ.felicitous w := rfl
 
 end Properties
 

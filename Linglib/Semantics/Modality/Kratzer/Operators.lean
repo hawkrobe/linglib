@@ -1,7 +1,7 @@
 /-
 @cite{kratzer-1981} Modal Operators — IL Foundation
 
-Kratzer-style necessity and possibility, defined as `boxR`/`diamondR` from
+Kratzer-style necessity and possibility, defined as `box`/`diamond` from
 `Core.Logic.Intensional` over conversational-background-derived accessibility
 relations. Frame conditions on the accessibility relation are derived from
 conversational-background properties; modal-axiom derivations then follow from
@@ -13,7 +13,7 @@ the polymorphic correspondence theorems in `RestrictedModality`.
   and from a modal base together with an ordering source.
 * `simpleNecessity`, `simplePossibility`: `□`/`◇` over `kratzerR`.
 * `necessity`, `possibility`: `□`/`◇` over `kratzerBestR`.
-* `duality`: `□p ↔ ¬◇¬p`, delegating to `boxR_neg_diamondR`.
+* `duality`: `□p ↔ ¬◇¬p`, delegating to `box_neg_diamond`.
 * `K_axiom`, `totally_realistic_gives_T`: instances of generic axioms applied
   to Kratzer-specific accessibility.
 * `restrictedBase`: conditional-as-restrictor on the modal base.
@@ -37,11 +37,11 @@ Sources:
 -/
 
 import Linglib.Semantics.Modality.Kratzer.Ordering
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 
 namespace Semantics.Modality.Kratzer
 
-open Core.Logic.Intensional
+open Core.Logic.Modal
 
 variable {W : Type*}
 
@@ -73,24 +73,24 @@ theorem kratzerBestR_empty (f : ModalBase W) (w w' : W) :
 /-- **Simple f-necessity**: `p` holds at every accessible world.
     `⟦must⟧_f(p)(w) = ∀w' ∈ ⋂f(w). p(w')`. -/
 def simpleNecessity (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
-  boxR (kratzerR f) p w
+  box (kratzerR f) p w
 
 /-- **Simple f-possibility**: `p` holds at some accessible world.
     `⟦can⟧_f(p)(w) = ∃w' ∈ ⋂f(w). p(w')`. -/
 def simplePossibility (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
-  diamondR (kratzerR f) p w
+  diamond (kratzerR f) p w
 
 /-- **Necessity with ordering**: `p` holds at every best world.
     `⟦must⟧_{f,g}(p)(w) = ∀w' ∈ Best(f,g,w). p(w')`.
 
     Adopts the Limit-Assumption-collapsed form. -/
 def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
-  boxR (kratzerBestR f g) p w
+  box (kratzerBestR f g) p w
 
 /-- **Possibility with ordering**: `p` holds at some best world.
     `⟦can⟧_{f,g}(p)(w) = ∃w' ∈ Best(f,g,w). p(w')`. -/
 def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
-  diamondR (kratzerBestR f g) p w
+  diamond (kratzerBestR f g) p w
 
 /-! ### Characterization lemmas -/
 
@@ -144,19 +144,19 @@ theorem empty_base_universal_access (w : W) :
 
 /-! ### Modal axioms (from `RestrictedModality`) -/
 
-/-- **Modal duality**: `□p ↔ ¬◇¬p`. Since `necessity = boxR (kratzerBestR f g)`,
+/-- **Modal duality**: `□p ↔ ¬◇¬p`. Since `necessity = box (kratzerBestR f g)`,
     this is the box–diamond duality of the modal square of opposition
-    (`Core.Logic.Intensional.modalSquare_relations`). -/
+    (`Core.Logic.Modal.modalSquare_relations`). -/
 theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) :
     necessity f g p w ↔ ¬ possibility f g (fun w' => ¬ p w') w := by
-  rw [necessity, possibility, boxR_neg_diamondR]
+  rw [necessity, possibility, box_neg_diamond]
 
 /-- **K (Distribution)**: `□(p → q) → □p → □q`. -/
 theorem K_axiom (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w : W)
     (hImpl : necessity f g (fun w' => p w' → q w') w)
     (hP : necessity f g p w) :
     necessity f g q w :=
-  boxR_K (kratzerBestR f g) p q w hImpl hP
+  box_K (kratzerBestR f g) p q w hImpl hP
 
 /-- Totally realistic base: simple T holds for full necessity. -/
 theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)

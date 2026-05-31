@@ -26,7 +26,7 @@ type and connected to it via bridge theorems.
 
 namespace KeshetAbney2024.PIP
 
-open Core.Logic.Intensional (AccessRel boxR diamondR)
+open Core.Logic.Modal (AccessRel box diamond)
 
 
 -- ============================================================
@@ -241,13 +241,13 @@ def accessRelToBase (R : AccessRel W) (w : W) : Set W :=
   { w' | R w w' }
 
 /-- `PIPExprF.must R φ` truth agrees with three-argument `mustBase`.
-    Direct, since `must` truth is `boxR` and `mustBase` is set inclusion. -/
+    Direct, since `must` truth is `box` and `mustBase` is set inclusion. -/
 theorem must_truth_iff_mustBase {D : Type*}
     (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.must R φ).truth w ↔
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def, Set.mem_setOf_eq,
-    PIPExprF.truth, boxR]
+    PIPExprF.truth, box]
 
 /-- `PIPExprF.might R φ` truth agrees with three-argument `mightBase`. -/
 theorem might_truth_iff_mightBase {D : Type*}
@@ -255,7 +255,7 @@ theorem might_truth_iff_mightBase {D : Type*}
     (PIPExprF.might R φ).truth w ↔
     mightBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } := by
   simp only [mightBase, accessRelToBase, Set.inter_univ, Set.Nonempty,
-    Set.mem_inter_iff, Set.mem_setOf_eq, PIPExprF.truth, diamondR]
+    Set.mem_inter_iff, Set.mem_setOf_eq, PIPExprF.truth, diamond]
 
 end ThreeArgModals
 

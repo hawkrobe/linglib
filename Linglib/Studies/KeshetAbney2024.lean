@@ -48,7 +48,7 @@ namespace KeshetAbney2024
 
 open KeshetAbney2024.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
-open Core.Logic.Intensional (AccessRel)
+open Core.Logic.Modal (AccessRel)
 open Phenomena.Anaphora
 
 

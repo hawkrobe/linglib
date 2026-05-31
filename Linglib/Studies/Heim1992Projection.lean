@@ -38,7 +38,7 @@ namespace Heim1992
 
 open Semantics.Presupposition (PrProp)
 open CommonGround (ContextSet)
-open Core.Logic.Intensional (IsSerial IsEuclidean IsS5Frame IsKD45Frame
+open Core.Logic.Modal (IsSerial IsEuclidean IsS5Frame IsKD45Frame
   IsBeliefRefinementOf)
 open Semantics.Presupposition.LocalContext (presupFiltered)
 open Semantics.Presupposition.BeliefEmbedding

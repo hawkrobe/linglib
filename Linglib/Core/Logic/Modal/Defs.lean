@@ -6,19 +6,22 @@ import Mathlib.Order.Defs.Unbundled
 
 @cite{kripke-1963}
 
-The bare foundation for accessibility-restricted modal logic, parameterised
-by `{W : Type*}` — no Frame, no Entity, no type system. This file holds the
-definitions and very simple lemmas that the rest of `Core.Logic.Intensional`
-(including Montague's S5 `box`/`diamond` in `Quantification.lean` and the
-modal-axiom theorems in `RestrictedModality.lean`) builds on.
+The bare foundation for accessibility-restricted modal logic, parameterised by
+`{W : Type*}` — no Frame, no Entity, no type system: accessibility relations,
+frame conditions, and the relational `box`/`diamond`. The modal-axiom theorems
+(`RestrictedModality.lean`) build on it.
+
+Montague's S5 `box`/`diamond` in `Core.Logic.Intensional.Quantification` is the
+universal-accessibility special case (`box universalR`), but it lives in the
+typed IL layer and is developed independently there.
 
 `Defs.lean` is the foundation file in mathlib's sense: just the data and the
-relationships among frame conditions. Modal axiom correspondence theorems
-(K/T/D/4/B/5), monotonicity, distribution, restriction, the Logic lattice,
-and the Gallin hierarchy live in `RestrictedModality.lean`.
+relationships among frame conditions. Modal axiom correspondence (K/T/D/4/B/5),
+monotonicity, distribution, restriction, the Logic lattice, and the `PropOp`
+("Gallin") hierarchy live in `RestrictedModality.lean`.
 -/
 
-namespace Core.Logic.Intensional
+namespace Core.Logic.Modal
 
 -- ────────────────────────────────────────────────────────────────
 -- §1 Accessibility Relations
@@ -141,14 +144,14 @@ instance (priority := 100) {R : AccessRel W} [hS : Std.Symm R] [hT : IsTrans W R
     `⟦□_R φ⟧^w = 1` iff `⟦φ⟧^v = 1` for all `v` with `R(w,v)`.
 
     This is the Kripke generalization of DWP's Rule B.13 (`box`); the
-    `Core.Logic.Intensional.box` operator in `Quantification.lean` is the
+    `Core.Logic.Modal.box` operator in `Quantification.lean` is the
     universal-accessibility special case. -/
-def boxR (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
+def box (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
   ∀ v, R w v → p v
 
 /-- Restricted possibility: `◇_R p` at world `w` holds iff `p v` for some
-    `v` accessible from `w`. Dual of `boxR`. -/
-def diamondR (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
+    `v` accessible from `w`. Dual of `box`. -/
+def diamond (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
   ∃ v, R w v ∧ p v
 
 -- ────────────────────────────────────────────────────────────────
@@ -156,18 +159,18 @@ def diamondR (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
 -- ────────────────────────────────────────────────────────────────
 
 /-- `□_R p ↔ ¬◇_R ¬p` — restricted modal duality. -/
-theorem boxR_neg_diamondR (R : AccessRel W) (p : W → Prop) (w : W) :
-    boxR R p w = ¬(diamondR R (fun v => ¬(p v)) w) := by
-  simp only [boxR, diamondR, not_exists, not_and, not_not]
+theorem box_neg_diamond (R : AccessRel W) (p : W → Prop) (w : W) :
+    box R p w = ¬(diamond R (fun v => ¬(p v)) w) := by
+  simp only [box, diamond, not_exists, not_and, not_not]
 
 /-- `◇_R p ↔ ¬□_R ¬p` — dual form. -/
-theorem diamondR_neg_boxR (R : AccessRel W) (p : W → Prop) (w : W) :
-    diamondR R p w = ¬(boxR R (fun v => ¬(p v)) w) := by
-  simp only [diamondR, boxR]
+theorem diamond_neg_box (R : AccessRel W) (p : W → Prop) (w : W) :
+    diamond R p w = ¬(box R (fun v => ¬(p v)) w) := by
+  simp only [diamond, box]
   exact propext ⟨
     fun ⟨v, hwv, hpv⟩ h => h v hwv hpv,
     fun h => Classical.byContradiction fun hne => by
       simp only [not_exists, not_and] at hne
       exact h (fun v hwv => hne v hwv)⟩
 
-end Core.Logic.Intensional
+end Core.Logic.Modal

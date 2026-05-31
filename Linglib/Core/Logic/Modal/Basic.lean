@@ -1,6 +1,4 @@
-import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Intensional.Quantification
-import Linglib.Core.Logic.Intensional.Algebra
+import Linglib.Core.Logic.Modal.Defs
 import Linglib.Core.Logic.Aristotelian.Square
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
@@ -8,21 +6,21 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 
 /-!
-# Restricted Modality: Modal Axioms, Decidability, Logic Lattice, Gallin Hierarchy
+# Modal logic: axioms, the lattice of normal logics, and the modal square
 
 @cite{dowty-wall-peters-1981} @cite{kratzer-1981} @cite{kripke-1963}
 
 Builds on the polymorphic Kripke foundation in `Defs.lean`. This file adds:
 
 1. **Modal axiom correspondence** (T, D, 4, B, 5): which frame conditions on
-   `R` validate which modal axioms when interpreted via `boxR`/`diamondR`.
+   `R` validate which modal axioms when interpreted via `box`/`diamond`.
    The K axiom holds for any `R`.
 
 2. **Monotonicity, distribution, restriction**: standard properties of
-   normal modal operators. Restriction (`boxR_restrict`) is Kratzer's
+   normal modal operators. Restriction (`box_restrict`) is Kratzer's
    insight that conversational backgrounds *strengthen* necessity.
 
-3. **Decidable instances**: `boxR R p w`, `diamondR R p w` are decidable
+3. **Decidable instances**: `box R p w`, `diamond R p w` are decidable
    over finite worlds with decidable accessibility and propositions.
 
 4. **Logic lattice**: `Axiom`, `Logic`, named logics (K, T, D, S4, S5, KD45),
@@ -35,9 +33,9 @@ Builds on the polymorphic Kripke foundation in `Defs.lean`. This file adds:
    of the polymorphic theory, and that non-Kripke operators (tense,
    progressive) live outside `IsIndicial`.
 
-6. **IL Frame specialization**: with universal accessibility, `boxR`/`diamondR`
-   recover S5 `box`/`diamond` from `Quantification.lean` — the formal
-   bridge that the polymorphic theory contains classical IL as a special case.
+6. **Modal square of opposition** (`modalSquare`, @cite{carnielli-pizzi-2008}):
+   under seriality the `box`/`diamond` corners satisfy all six Aristotelian
+   relations — `subalternAI` is the D axiom, `contradEI` the box–diamond duality.
 
 ## Connection to Kratzer semantics
 
@@ -45,12 +43,12 @@ Kratzer's conversational backgrounds derive accessibility from a modal base:
 `R_f(w, w') ≡ w' ∈ ⋂f(w)`. The ordering source further restricts to "best"
 worlds. In IL terms:
 
-- Simple Kratzer necessity = `boxR R_f` (no ordering source)
-- Full Kratzer necessity = `boxR R_{f,g}` where `R_{f,g}` restricts to best worlds
-- S5 necessity = `boxR (fun _ _ => True)` = `box`
+- Simple Kratzer necessity = `box R_f` (no ordering source)
+- Full Kratzer necessity = `box R_{f,g}` where `R_{f,g}` restricts to best worlds
+- S5 necessity = `box universalR`
 -/
 
-namespace Core.Logic.Intensional
+namespace Core.Logic.Modal
 
 variable {W : Type*}
 
@@ -60,39 +58,39 @@ variable {W : Type*}
 
 /-- **K axiom**: `□_R(p → q) → (□_R p → □_R q)`.
     Holds for any accessibility relation. -/
-theorem boxR_K (R : AccessRel W) (p q : W → Prop) (w : W)
-    (hpq : boxR R (fun v => p v → q v) w)
-    (hp : boxR R p w) : boxR R q w :=
+theorem box_K (R : AccessRel W) (p q : W → Prop) (w : W)
+    (hpq : box R (fun v => p v → q v) w)
+    (hp : box R p w) : box R q w :=
   fun v hwv => hpq v hwv (hp v hwv)
 
 /-- **T axiom**: reflexive `R` gives `□_R p w → p w`.
     What is necessary is actual. -/
-theorem boxR_T (R : AccessRel W) [Std.Refl R] (p : W → Prop) (w : W)
-    (h : boxR R p w) : p w :=
+theorem box_T (R : AccessRel W) [Std.Refl R] (p : W → Prop) (w : W)
+    (h : box R p w) : p w :=
   h w (Std.Refl.refl w)
 
 /-- **D axiom**: serial `R` gives `□_R p w → ◇_R p w`.
     What is necessary is possible. -/
-theorem boxR_D (R : AccessRel W) [hS : IsSerial R] (p : W → Prop) (w : W)
-    (h : boxR R p w) : diamondR R p w :=
+theorem box_D (R : AccessRel W) [hS : IsSerial R] (p : W → Prop) (w : W)
+    (h : box R p w) : diamond R p w :=
   let ⟨v, hwv⟩ := hS.serial w; ⟨v, hwv, h v hwv⟩
 
 /-- **4 axiom**: transitive `R` gives `□_R p → □_R □_R p`.
     Positive introspection. -/
-theorem boxR_four (R : AccessRel W) [IsTrans W R] (p : W → Prop) (w : W)
-    (h : boxR R p w) : boxR R (boxR R p) w :=
+theorem box_four (R : AccessRel W) [IsTrans W R] (p : W → Prop) (w : W)
+    (h : box R p w) : box R (box R p) w :=
   fun v hwv u hvu => h u (IsTrans.trans w v u hwv hvu)
 
 /-- **B axiom**: symmetric `R` gives `p w → □_R ◇_R p w`.
     What is actual is necessarily possible. -/
-theorem boxR_B (R : AccessRel W) [Std.Symm R] (p : W → Prop) (w : W)
-    (h : p w) : boxR R (diamondR R p) w :=
+theorem box_B (R : AccessRel W) [Std.Symm R] (p : W → Prop) (w : W)
+    (h : p w) : box R (diamond R p) w :=
   fun v hwv => ⟨w, Std.Symm.symm w v hwv, h⟩
 
 /-- **5 axiom**: euclidean `R` gives `◇_R p w → □_R ◇_R p w`.
     Positive possibility introspection. -/
-theorem boxR_five (R : AccessRel W) [hE : IsEuclidean R] (p : W → Prop) (w : W)
-    (h : diamondR R p w) : boxR R (diamondR R p) w :=
+theorem box_five (R : AccessRel W) [hE : IsEuclidean R] (p : W → Prop) (w : W)
+    (h : diamond R p w) : box R (diamond R p) w :=
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv => ⟨u, hE.eucl w v u hwv hwu, hpu⟩
 
@@ -100,12 +98,12 @@ theorem boxR_five (R : AccessRel W) [hE : IsEuclidean R] (p : W → Prop) (w : W
     `R` is serial and transitive. The content `p ∧ ¬□_R p` is itself
     satisfiable; what fails is *boxing* it. Specialise to belief
     (@cite{hintikka-1962}), knowledge, or any other KD4 modality. -/
-theorem boxR_not_moore (R : AccessRel W) [hS : IsSerial R] [IsTrans W R]
+theorem box_not_moore (R : AccessRel W) [hS : IsSerial R] [IsTrans W R]
     (p : W → Prop) (w : W) :
-    ¬ boxR R (fun v => p v ∧ ¬ boxR R p v) w := by
+    ¬ box R (fun v => p v ∧ ¬ box R p v) w := by
   intro h
-  have hbp : boxR R p w := fun v hwv => (h v hwv).1
-  have hbbp : boxR R (boxR R p) w := boxR_four R p w hbp
+  have hbp : box R p w := fun v hwv => (h v hwv).1
+  have hbbp : box R (box R p) w := box_four R p w hbp
   obtain ⟨v, hv⟩ := hS.serial w
   exact (h v hv).2 (hbbp v hv)
 
@@ -113,12 +111,12 @@ theorem boxR_not_moore (R : AccessRel W) [hS : IsSerial R] [IsTrans W R]
 
 @cite{carnielli-pizzi-2008}. The `□`/`◇` pair forms an Aristotelian square
 (`A = □p`, `E = □¬p`, `I = ◇p`, `O = ¬□p`). Under seriality — the modal D axiom
-(`boxR_D`) — it satisfies all six relations of the square of opposition, so every
+(`box_D`) — it satisfies all six relations of the square of opposition, so every
 serial modality (epistemic, deontic, temporal, doxastic) inherits the square. -/
 
 /-- Under seriality, `□p` and `□¬p` are incompatible: no world satisfies both. -/
-theorem boxR_disjoint_compl (R : AccessRel W) [hS : IsSerial R] (p : W → Prop) :
-    Disjoint (boxR R p) (boxR R pᶜ) := by
+theorem box_disjoint_compl (R : AccessRel W) [hS : IsSerial R] (p : W → Prop) :
+    Disjoint (box R p) (box R pᶜ) := by
   rw [Pi.disjoint_iff]
   intro w
   rw [disjoint_iff_inf_le]
@@ -127,8 +125,8 @@ theorem boxR_disjoint_compl (R : AccessRel W) [hS : IsSerial R] (p : W → Prop)
   exact hnp v hwv (hp v hwv)
 
 /-- Box–diamond duality as an equation of predicates: `◇p = ¬□¬p`. -/
-theorem diamondR_eq_compl_boxR_compl (R : AccessRel W) (p : W → Prop) :
-    diamondR R p = (boxR R pᶜ)ᶜ := by
+theorem diamond_eq_compl_box_compl (R : AccessRel W) (p : W → Prop) :
+    diamond R p = (box R pᶜ)ᶜ := by
   funext w
   apply propext
   constructor
@@ -141,43 +139,43 @@ theorem diamondR_eq_compl_boxR_compl (R : AccessRel W) (p : W → Prop) :
 /-- The **modal square of opposition** over an accessibility relation `R`
 (@cite{carnielli-pizzi-2008}): `A = □p`, `E = □¬p`, `I = ◇p`, `O = ¬□p`. -/
 def modalSquare (R : AccessRel W) (p : W → Prop) : Aristotelian.Square (W → Prop) where
-  A := boxR R p
-  E := boxR R pᶜ
-  I := diamondR R p
-  O := (boxR R p)ᶜ
+  A := box R p
+  E := box R pᶜ
+  I := diamond R p
+  O := (box R p)ᶜ
 
 /-- The modal square satisfies all six Aristotelian relations whenever `R` is
-**serial**. `subalternAI` is exactly the D axiom (`boxR_D` : `□p → ◇p`); the two
+**serial**. `subalternAI` is exactly the D axiom (`box_D` : `□p → ◇p`); the two
 contradiction diagonals combine `isCompl_compl` with box–diamond duality; and
-contrariety/subcontrariety reduce to `boxR_disjoint_compl`. -/
+contrariety/subcontrariety reduce to `box_disjoint_compl`. -/
 theorem modalSquare_relations (R : AccessRel W) [IsSerial R] (p : W → Prop) :
     Aristotelian.SquareRelations (modalSquare R p) where
-  subalternAI := by rw [Pi.le_def]; exact fun w => boxR_D R p w
-  subalternEO := le_compl_iff_disjoint_right.mpr (boxR_disjoint_compl R p).symm
+  subalternAI := by rw [Pi.le_def]; exact fun w => box_D R p w
+  subalternEO := le_compl_iff_disjoint_right.mpr (box_disjoint_compl R p).symm
   contradAO := isCompl_compl
   contradEI := by
-    show IsCompl (boxR R pᶜ) (diamondR R p)
-    rw [diamondR_eq_compl_boxR_compl]; exact isCompl_compl
-  contraryAE := boxR_disjoint_compl R p
+    show IsCompl (box R pᶜ) (diamond R p)
+    rw [diamond_eq_compl_box_compl]; exact isCompl_compl
+  contraryAE := box_disjoint_compl R p
   subcontrIO := by
-    show Codisjoint (diamondR R p) ((boxR R p)ᶜ)
-    rw [diamondR_eq_compl_boxR_compl, codisjoint_iff, ← compl_inf,
-        disjoint_iff.mp (boxR_disjoint_compl R p).symm, compl_bot]
+    show Codisjoint (diamond R p) ((box R p)ᶜ)
+    rw [diamond_eq_compl_box_compl, codisjoint_iff, ← compl_inf,
+        disjoint_iff.mp (box_disjoint_compl R p).symm, compl_bot]
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 2. Monotonicity
 -- ════════════════════════════════════════════════════════════════════════
 
-/-- `boxR R` is monotone: if `p ≤ q` pointwise, then `□_R p ≤ □_R q`. -/
-theorem boxR_mono (R : AccessRel W) {p q : W → Prop}
+/-- `box R` is monotone: if `p ≤ q` pointwise, then `□_R p ≤ □_R q`. -/
+theorem box_mono (R : AccessRel W) {p q : W → Prop}
     (h : ∀ v, p v → q v) (w : W)
-    (hb : boxR R p w) : boxR R q w :=
+    (hb : box R p w) : box R q w :=
   fun v hwv => h v (hb v hwv)
 
-/-- `diamondR R` is monotone. -/
-theorem diamondR_mono (R : AccessRel W) {p q : W → Prop}
+/-- `diamond R` is monotone. -/
+theorem diamond_mono (R : AccessRel W) {p q : W → Prop}
     (h : ∀ v, p v → q v) (w : W)
-    (hd : diamondR R p w) : diamondR R q w :=
+    (hd : diamond R p w) : diamond R q w :=
   let ⟨v, hwv, hpv⟩ := hd; ⟨v, hwv, h v hpv⟩
 
 -- ════════════════════════════════════════════════════════════════════════
@@ -185,24 +183,24 @@ theorem diamondR_mono (R : AccessRel W) {p q : W → Prop}
 -- ════════════════════════════════════════════════════════════════════════
 
 /-- `□_R` distributes over `∧`. -/
-theorem boxR_conj (R : AccessRel W) (p q : W → Prop) (w : W) :
-    boxR R (fun v => p v ∧ q v) w =
-    (boxR R p w ∧ boxR R q w) := by
+theorem box_conj (R : AccessRel W) (p q : W → Prop) (w : W) :
+    box R (fun v => p v ∧ q v) w =
+    (box R p w ∧ box R q w) := by
   exact propext ⟨fun h => ⟨fun v hwv => (h v hwv).1, fun v hwv => (h v hwv).2⟩,
                   fun ⟨hp, hq⟩ v hwv => ⟨hp v hwv, hq v hwv⟩⟩
 
 /-- `◇_R` distributes over `∨`. -/
-theorem diamondR_disj (R : AccessRel W) (p q : W → Prop) (w : W) :
-    diamondR R (fun v => p v ∨ q v) w =
-    (diamondR R p w ∨ diamondR R q w) := by
+theorem diamond_disj (R : AccessRel W) (p q : W → Prop) (w : W) :
+    diamond R (fun v => p v ∨ q v) w =
+    (diamond R p w ∨ diamond R q w) := by
   exact propext ⟨
     fun ⟨v, hwv, h⟩ => h.elim (fun hp => .inl ⟨v, hwv, hp⟩) (fun hq => .inr ⟨v, hwv, hq⟩),
     fun h => h.elim (fun ⟨v, hwv, hp⟩ => ⟨v, hwv, .inl hp⟩)
                      (fun ⟨v, hwv, hq⟩ => ⟨v, hwv, .inr hq⟩)⟩
 
 /-- Necessitation: if `p` holds at every world, then `□_R p` holds everywhere. -/
-theorem boxR_necessitation (R : AccessRel W) (p : W → Prop)
-    (h : ∀ v, p v) (w : W) : boxR R p w :=
+theorem box_necessitation (R : AccessRel W) (p : W → Prop)
+    (h : ∀ v, p v) (w : W) : box R p w :=
   fun v _ => h v
 
 -- ════════════════════════════════════════════════════════════════════════
@@ -211,16 +209,16 @@ theorem boxR_necessitation (R : AccessRel W) (p : W → Prop)
 
 /-- Restricting accessibility strengthens necessity:
     if `R₂ ⊆ R₁`, then `□_{R₁} p → □_{R₂} p`. -/
-theorem boxR_restrict {R₁ R₂ : AccessRel W}
+theorem box_restrict {R₁ R₂ : AccessRel W}
     (h : ∀ w v, R₂ w v → R₁ w v) (p : W → Prop) (w : W)
-    (hb : boxR R₁ p w) : boxR R₂ p w :=
+    (hb : box R₁ p w) : box R₂ p w :=
   fun v hwv => hb v (h w v hwv)
 
 /-- Restricting accessibility weakens possibility:
     if `R₂ ⊆ R₁`, then `◇_{R₂} p → ◇_{R₁} p`. -/
-theorem diamondR_restrict {R₁ R₂ : AccessRel W}
+theorem diamond_restrict {R₁ R₂ : AccessRel W}
     (h : ∀ w v, R₂ w v → R₁ w v) (p : W → Prop) (w : W)
-    (hd : diamondR R₂ p w) : diamondR R₁ p w :=
+    (hd : diamond R₂ p w) : diamond R₁ p w :=
   let ⟨v, hwv, hpv⟩ := hd; ⟨v, h w v hwv, hpv⟩
 
 -- ════════════════════════════════════════════════════════════════════════
@@ -228,29 +226,29 @@ theorem diamondR_restrict {R₁ R₂ : AccessRel W}
 -- ════════════════════════════════════════════════════════════════════════
 
 /-- With reflexive + euclidean accessibility (= S5 frame conditions),
-    `boxR` validates all of T, D, 4, B, 5. -/
+    `box` validates all of T, D, 4, B, 5. -/
 theorem S5_frame_all_axioms (R : AccessRel W) [Std.Refl R] [IsEuclidean R] :
-    (∀ p w, boxR R p w → p w) ∧                          -- T
-    (∀ p w, boxR R p w → diamondR R p w) ∧               -- D
-    (∀ p w, boxR R p w → boxR R (boxR R p) w) ∧          -- 4
-    (∀ p w, p w → boxR R (diamondR R p) w) ∧             -- B
-    (∀ p w, diamondR R p w → boxR R (diamondR R p) w) := -- 5
-  ⟨boxR_T R, boxR_D R, boxR_four R, boxR_B R, boxR_five R⟩
+    (∀ p w, box R p w → p w) ∧                          -- T
+    (∀ p w, box R p w → diamond R p w) ∧               -- D
+    (∀ p w, box R p w → box R (box R p) w) ∧          -- 4
+    (∀ p w, p w → box R (diamond R p) w) ∧             -- B
+    (∀ p w, diamond R p w → box R (diamond R p) w) := -- 5
+  ⟨box_T R, box_D R, box_four R, box_B R, box_five R⟩
 
 /-- KD45 frame conditions validate all three KD45 axioms (D, 4, 5). -/
 theorem KD45_frame_all_axioms (R : AccessRel W) [IsKD45Frame R] :
-    (∀ p w, boxR R p w → diamondR R p w) ∧               -- D
-    (∀ p w, boxR R p w → boxR R (boxR R p) w) ∧          -- 4
-    (∀ p w, diamondR R p w → boxR R (diamondR R p) w) := -- 5
-  ⟨boxR_D R, boxR_four R, boxR_five R⟩
+    (∀ p w, box R p w → diamond R p w) ∧               -- D
+    (∀ p w, box R p w → box R (box R p) w) ∧          -- 4
+    (∀ p w, diamond R p w → box R (diamond R p) w) := -- 5
+  ⟨box_D R, box_four R, box_five R⟩
 
-/-- `boxR R p i` is the infimum of `p v` over worlds `v` accessible from `w`. -/
-theorem boxR_eq_forall (R : AccessRel W) (p : W → Prop) (w : W) :
-    boxR R p w = (∀ v, R w v → p v) := rfl
+/-- `box R p i` is the infimum of `p v` over worlds `v` accessible from `w`. -/
+theorem box_eq_forall (R : AccessRel W) (p : W → Prop) (w : W) :
+    box R p w = (∀ v, R w v → p v) := rfl
 
-/-- `diamondR R p w` is the supremum of `p v` over worlds `v` accessible from `w`. -/
-theorem diamondR_eq_exists (R : AccessRel W) (p : W → Prop) (w : W) :
-    diamondR R p w = (∃ v, R w v ∧ p v) := rfl
+/-- `diamond R p w` is the supremum of `p v` over worlds `v` accessible from `w`. -/
+theorem diamond_eq_exists (R : AccessRel W) (p : W → Prop) (w : W) :
+    diamond R p w = (∃ v, R w v ∧ p v) := rfl
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 6. Gallin's Hierarchy of Propositional Operators
@@ -264,8 +262,8 @@ In IL/ML_p, propositional operators form a three-level hierarchy:
    properties of propositions, varying by world.
 
 2. **Indicial** (= Kripke-type): Operators definable via an accessibility
-   relation `R`. The necessity variant is `∀ v, R w v → p v` (= `boxR`);
-   the possibility variant is `∃ v, R w v ∧ p v` (= `diamondR`).
+   relation `R`. The necessity variant is `∀ v, R w v → p v` (= `box`);
+   the possibility variant is `∃ v, R w v ∧ p v` (= `diamond`).
 
 3. **S5**: The indicial case with `R = universalR` — IL's `box`/`diamond`.
 
@@ -277,10 +275,10 @@ All PropOps  ⊋  Indicial (Kripke)  ⊋  S5 (IL's □)
 theorems are the *architectural anchor* for the design choice that
 restricted modality lives in `Core/Logic/Intensional/`: they prove that
 classical IL S5 is exactly the universal-accessibility special case of
-the polymorphic theory, and that every `boxR R` is a normal modal
+the polymorphic theory, and that every `box R` is a normal modal
 operator (monotone, distribConj). Non-indicial PropOps (e.g., tense,
 present progressive) are the formal extension point for tense /
-non-Kripke modal operators that *cannot* be expressed as `boxR R` for
+non-Kripke modal operators that *cannot* be expressed as `box R` for
 any `R`. Removing this section would erase the formal record of why
 the directory layout is what it is.
 -/
@@ -293,7 +291,7 @@ the directory layout is what it is.
     parametrized by world. This is Gallin's most general level —
     an arbitrary property of propositions varying by index.
 
-    Examples: necessity (`boxR R`), possibility (`diamondR R`),
+    Examples: necessity (`box R`), possibility (`diamond R`),
     past tense (`∃ v, v < w ∧ p v`), present progressive, habituals. -/
 abbrev PropOp (W : Type*) := (W → Prop) → W → Prop
 
@@ -316,7 +314,7 @@ def PropOp.DistribConj {W : Type*} (N : PropOp W) : Prop :=
     operators definable via an accessibility relation.
     `indicialNec R p w ↔ ∀ v, R w v → p v`.
 
-    This is `boxR` viewed as a member of the Gallin hierarchy. -/
+    This is `box` viewed as a member of the Gallin hierarchy. -/
 def indicialNec {W : Type*} (R : AccessRel W) : PropOp W :=
   fun p w => ∀ v, R w v → p v
 
@@ -325,13 +323,13 @@ def indicialNec {W : Type*} (R : AccessRel W) : PropOp W :=
 def indicialPoss {W : Type*} (R : AccessRel W) : PropOp W :=
   fun p w => ∃ v, R w v ∧ p v
 
-/-- `boxR` IS `indicialNec` — definitional equality. -/
-theorem boxR_eq_indicialNec (R : AccessRel W) :
-    boxR R = indicialNec R := rfl
+/-- `box` IS `indicialNec` — definitional equality. -/
+theorem box_eq_indicialNec (R : AccessRel W) :
+    box R = indicialNec R := rfl
 
-/-- `diamondR` IS `indicialPoss` — definitional equality. -/
-theorem diamondR_eq_indicialPoss (R : AccessRel W) :
-    diamondR R = indicialPoss R := rfl
+/-- `diamond` IS `indicialPoss` — definitional equality. -/
+theorem diamond_eq_indicialPoss (R : AccessRel W) :
+    diamond R = indicialPoss R := rfl
 
 /-- A propositional operator is **indicial** if there exists an accessibility
     relation `R` such that `N = indicialNec R`. The non-indicial case is
@@ -339,8 +337,8 @@ theorem diamondR_eq_indicialPoss (R : AccessRel W) :
 def IsIndicial {W : Type*} (N : PropOp W) : Prop :=
   ∃ R : AccessRel W, N = indicialNec R
 
-/-- Every `boxR R` is indicial. -/
-theorem boxR_isIndicial (R : AccessRel W) : IsIndicial (boxR R) :=
+/-- Every `box R` is indicial. -/
+theorem box_isIndicial (R : AccessRel W) : IsIndicial (box R) :=
   ⟨R, rfl⟩
 
 /-- Every indicial operator is monotone (every Kripke operator is a
@@ -403,21 +401,21 @@ theorem indicialNec_emptyR (p : W → Prop) (w : W) :
 
 /-! ### Decidability over finite worlds -/
 
-/-- `boxR R p w` is decidable when worlds enumerate, accessibility is decidable,
+/-- `box R p w` is decidable when worlds enumerate, accessibility is decidable,
     and the proposition is decidable. -/
-instance boxR_decidable {W : Type*} [Fintype W]
+instance box_decidable {W : Type*} [Fintype W]
     (R : AccessRel W) (p : W → Prop) (w : W)
     [∀ v, Decidable (R w v)] [DecidablePred p] :
-    Decidable (boxR R p w) :=
+    Decidable (box R p w) :=
   decidable_of_iff (∀ v ∈ (Finset.univ : Finset W), R w v → p v)
     ⟨fun h v hwv => h v (Finset.mem_univ v) hwv,
      fun h v _ hwv => h v hwv⟩
 
-/-- `diamondR R p w` is decidable under the same conditions as `boxR`. -/
-instance diamondR_decidable {W : Type*} [Fintype W]
+/-- `diamond R p w` is decidable under the same conditions as `box`. -/
+instance diamond_decidable {W : Type*} [Fintype W]
     (R : AccessRel W) (p : W → Prop) (w : W)
     [∀ v, Decidable (R w v)] [DecidablePred p] :
-    Decidable (diamondR R p w) :=
+    Decidable (diamond R p w) :=
   decidable_of_iff (∃ v ∈ (Finset.univ : Finset W), R w v ∧ p v)
     ⟨fun ⟨v, _, hwv, hpv⟩ => ⟨v, hwv, hpv⟩,
      fun ⟨v, hwv, hpv⟩ => ⟨v, Finset.mem_univ v, hwv, hpv⟩⟩
@@ -527,61 +525,4 @@ def frameConditions {W : Type*} (L : Logic) (R : AccessRel W) : Prop :=
 
 end Logic
 
--- ════════════════════════════════════════════════════════════════════════
--- § 9. IL Frame Specialization
--- ════════════════════════════════════════════════════════════════════════
-
-/-! Bridge theorems connecting the polymorphic infrastructure to Montague's IL.
-With universal accessibility, `boxR`/`diamondR` recover S5 `box`/`diamond`
-from `Quantification.lean`. These would all be `rfl` if `box`/`diamond` were
-definitionally `boxR universalR ∘ pick-an-index` — see the Quantification module
-for the layering question. As stated they're one-step `simp` proofs. -/
-
-section FrameSpecialization
-
-variable {F : Frame}
-
-/-- S5 necessity (`box`) is restricted necessity with universal accessibility. -/
-theorem boxR_universal (p : F.Denot .prop) :
-    (fun i => boxR (universalR (W := F.Index)) p i) = (fun _ => box (F := F) p) := by
-  ext i
-  simp only [boxR, universalR, box, forall_true_left]
-
-/-- S5 possibility (`diamond`) is restricted possibility with universal accessibility. -/
-theorem diamondR_universal (p : F.Denot .prop) :
-    (fun i => diamondR (universalR (W := F.Index)) p i) = (fun _ => diamond (F := F) p) := by
-  ext i
-  simp only [diamondR, universalR, diamond, true_and]
-
-/-- S5 box implies any restricted box. -/
-theorem box_implies_boxR (R : AccessRel F.Index) (p : F.Denot .prop)
-    (h : box (F := F) p) (i : F.Index) : boxR R p i :=
-  fun v _ => h v
-
-/-- Any restricted diamond implies S5 diamond. -/
-theorem diamondR_implies_diamond (R : AccessRel F.Index) (p : F.Denot .prop) (i : F.Index)
-    (h : diamondR R p i) : diamond (F := F) p :=
-  let ⟨v, _, hpv⟩ := h; ⟨v, hpv⟩
-
--- ────────────────────────────────────────────────────────────────
--- §9.1 Entailment with Restricted Modality
--- ────────────────────────────────────────────────────────────────
-
-open Algebra (valid entails trueAt)
-
-/-- A valid proposition is R-necessary at every world (for any R). -/
-theorem valid_boxR (R : AccessRel F.Index) (p : F.Denot .prop)
-    (hv : valid (F := F) p) (i : F.Index) : boxR R p i :=
-  fun v _ => hv v
-
-/-- Semantic entailment lifts to restricted modality:
-    if `p ⊨ q` then `□_R p ⊨ □_R q`. -/
-theorem boxR_entailment_lift (R : AccessRel F.Index)
-    (p q : F.Denot .prop)
-    (h : ∀ v, p v → q v)
-    (i : F.Index) (hb : boxR R p i) : boxR R q i :=
-  boxR_mono R h i hb
-
-end FrameSpecialization
-
-end Core.Logic.Intensional
+end Core.Logic.Modal

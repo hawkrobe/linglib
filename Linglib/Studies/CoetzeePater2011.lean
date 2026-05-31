@@ -3,7 +3,6 @@ import Linglib.Core.Constraint.System
 import Linglib.Core.Constraint.PartiallyOrderedConstraints
 import Linglib.Core.Constraint.PermSubsetCombinatorics
 import Linglib.Phonology.OptimalityTheory.Constraints
-import Linglib.Fragments.English.TDDeletion
 
 /-!
 # Coetzee & Pater (2011): The Place of Variation in Phonological Theory
@@ -52,7 +51,96 @@ namespace CoetzeePater2011
 open Core.Constraint.OT Core.Constraint.Evaluation
 open Core.Constraint
 open Phonology.Constraints
-open Fragments.English.TDDeletion
+
+/-! ### Empirical data (tables 7 and 10) -/
+
+/-- External phonological context following the word-final cluster.
+    @cite{coetzee-pater-2011} table (10), p. 410. -/
+inductive Context where
+  | preV   -- pre-vocalic (*west end*)
+  | pause  -- pre-pausal (*west*)
+  | preC   -- pre-consonantal (*west side*)
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- English dialects with t/d-deletion data, per @cite{coetzee-pater-2011}
+    footnote 3: AAVE (Fasold 1972), Chicano (Santa Ana 1992), Jamaican
+    (Patrick 1992), Trinidad (Kang 1994), Tejano (Bayley 1995). -/
+inductive Dialect where
+  | aave
+  | chicano
+  | jamaican
+  | trinidad
+  | tejano
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Observed deletion rate as a percentage (integer).
+    From @cite{coetzee-pater-2011} table (10), p. 410. -/
+def deletionRate : Dialect → Context → Nat
+  | .aave,    .preV => 29 | .aave,    .pause => 73 | .aave,    .preC => 76
+  | .chicano, .preV => 45 | .chicano, .pause => 37 | .chicano, .preC => 62
+  | .jamaican,.preV => 63 | .jamaican,.pause => 71 | .jamaican,.preC => 85
+  | .trinidad,.preV => 21 | .trinidad,.pause => 31 | .trinidad,.preC => 81
+  | .tejano,  .preV => 25 | .tejano,  .pause => 46 | .tejano,  .preC => 62
+
+/-- Pre-consonantal deletion ≥ pre-vocalic in every dialect. -/
+theorem preC_ge_preV (d : Dialect) :
+    deletionRate d .preC ≥ deletionRate d .preV := by
+  cases d <;> decide
+
+/-- Pre-consonantal deletion ≥ pre-pausal in every dialect (Chicano included:
+    62 ≥ 37). -/
+theorem preC_ge_pause (d : Dialect) :
+    deletionRate d .preC ≥ deletionRate d .pause := by
+  cases d <;> decide
+
+/-- Chicano is exceptional: pre-vocalic > pre-pausal. -/
+theorem chicano_preV_gt_pause :
+    deletionRate .chicano .preV > deletionRate .chicano .pause := by
+  decide
+
+/-- In all non-Chicano dialects, pre-pausal ≥ pre-vocalic. -/
+theorem pause_ge_preV_non_chicano (d : Dialect) (h : d ≠ .chicano) :
+    deletionRate d .pause ≥ deletionRate d .preV := by
+  cases d <;> simp_all <;> decide
+
+/-! ### Morphological conditioning (table 7) -/
+
+/-- Morphological status of the word-final t/d.
+    @cite{coetzee-pater-2011} table (7), p. 407. -/
+inductive MorphStatus where
+  | regularPast   -- *missed* (past tense suffix)
+  | semiWeakPast  -- *kept* (semi-weak past)
+  | monomorpheme  -- *mist* (monomorphemic)
+  deriving DecidableEq, Repr, Fintype
+
+/-- Dialect labels for table (7) morphological data.
+    Table (7) uses different dialects than table (10) — Philadelphia
+    English replaces AAVE; Jamaican and Trinidad have no morph data. -/
+inductive MorphDialect where
+  | philadelphia  -- Philadelphia English (Guy 1991b)
+  | chicano       -- Chicano English (Santa Ana 1992)
+  | tejano        -- Tejano English (Bayley 1995)
+  deriving DecidableEq, Repr, Fintype
+
+/-- Deletion rate by morphological status and dialect (percentages).
+    From @cite{coetzee-pater-2011} table (7). -/
+def morphDeletionRate : MorphDialect → MorphStatus → Nat
+  | .philadelphia, .regularPast => 17 | .philadelphia, .semiWeakPast => 34
+  | .philadelphia, .monomorpheme => 38
+  | .chicano,      .regularPast => 26 | .chicano,      .semiWeakPast => 41
+  | .chicano,      .monomorpheme => 58
+  | .tejano,       .regularPast => 24 | .tejano,       .semiWeakPast => 34
+  | .tejano,       .monomorpheme => 56
+
+/-- Monomorpheme deletion ≥ regular past in every dialect with data. -/
+theorem mono_ge_regular (d : MorphDialect) :
+    morphDeletionRate d .monomorpheme ≥ morphDeletionRate d .regularPast := by
+  cases d <;> decide
+
+/-- Semi-weak past ≥ regular past in every dialect with data. -/
+theorem semiWeak_ge_regular (d : MorphDialect) :
+    morphDeletionRate d .semiWeakPast ≥ morphDeletionRate d .regularPast := by
+  cases d <;> decide
 
 -- ============================================================================
 -- § 1: Candidate Type
@@ -571,14 +659,6 @@ theorem ct_dominates_implies_deletion :
 harmony of `(ctx, ·)`, decoder = `softmaxDecoder 1`. The two-candidate
 softmax is the logistic function, so `predict .delete` is genuine
 conditional probability `P(delete | ctx)`. -/
-
-instance : Fintype TDOutput where
-  elems := {.retain, .delete}
-  complete := fun x => by cases x <;> simp
-
-instance : Fintype Context where
-  elems := {.preV, .pause, .preC}
-  complete := fun x => by cases x <;> simp
 
 /-- The AAVE constraint weights from table (23) ME-HG row. -/
 def aaveWeights : List (WeightedConstraint TDCandidate) :=
