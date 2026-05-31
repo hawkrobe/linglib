@@ -47,7 +47,6 @@ import Linglib.Core.Logic.Quantification.Logicality
 import Linglib.Core.Logic.Quantification.Polyadic
 import Linglib.Core.Logic.Quantification.Exclusive
 import Linglib.Core.Logic.Aristotelian.Basic
-import Linglib.Core.Logic.Aristotelian.Atoms
 import Linglib.Core.Logic.Aristotelian.Bitstring
 import Linglib.Core.Logic.Aristotelian.Diagram
 import Linglib.Core.Logic.Aristotelian.Partition

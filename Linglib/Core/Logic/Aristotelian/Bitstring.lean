@@ -1,6 +1,5 @@
 import Linglib.Core.Logic.Aristotelian.Basic
 import Linglib.Core.Logic.Aristotelian.Partition
-import Linglib.Core.Logic.Aristotelian.Atoms
 import Mathlib.Data.Fintype.Order
 import Mathlib.Order.BooleanSubalgebra
 
@@ -34,8 +33,7 @@ variable {W : Type*}
 /-! ### Anchor-decidedness -/
 
 /-- Lemma 6 for the indexed-family `anchor`: every closure element is entailed by
-an anchor or by its complement (@cite{demey-smessaert-2018}). The BA-generic form
-is `Atoms.lean::anchorBA_le_or_le_compl_mem_closure`. -/
+an anchor or by its complement (@cite{demey-smessaert-2018}). -/
 theorem anchor_le_or_le_compl_mem_closure
     {ι : Type*} [Fintype ι] (φ : ι → W → Bool) (σ : ι → Bool) {ψ : W → Bool}
     (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ)) :

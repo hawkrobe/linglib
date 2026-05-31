@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Aristotelian.Basic
-import Mathlib.Data.Fintype.Card
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Aristotelian diagrams
@@ -33,14 +33,5 @@ structure Diagram (ι : Type*) [Fintype ι] (α : Type*) [BooleanAlgebra α] whe
     (relation i j = AristotelianRel.contrary → IsContrary (φ i) (φ j)) ∧
     (relation i j = AristotelianRel.subcontrary → IsSubcontrary (φ i) (φ j)) ∧
     (relation i j = AristotelianRel.subaltern → IsSubaltern (φ i) (φ j))
-
-namespace Diagram
-
-variable {ι : Type*} [Fintype ι]
-
-/-- The number of corners in the diagram. -/
-def size (_ : Diagram ι α) : ℕ := Fintype.card ι
-
-end Diagram
 
 end Aristotelian
