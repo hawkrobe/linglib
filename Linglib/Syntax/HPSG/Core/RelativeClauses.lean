@@ -1,4 +1,5 @@
 import Linglib.Syntax.HPSG.Core.HeadFiller
+import Linglib.Typology.RelativeClause.Basic
 
 /-!
 # Relative Clauses in HPSG
@@ -24,6 +25,16 @@ combine with a head noun via the Head-Modifier Schema.
 - `RelClauseDerivation` — end-to-end derivation of a relative clause
 - `relClauseModifies` — the Head-Modifier step
 
+## Connection to the `RelativeClause` substrate
+
+This HPSG derivation projects to the framework-neutral descriptive profile in
+`Typology/RelativeClause/Basic.lean`: `Relativizer.npRel` reads off the
+`RelativeClause.NPRelType` (complementizer → gap, relative pronoun →
+`relPronoun`), and `RelClauseDerivation.realization` exposes the
+`RelativeClause.Realization` a derivation realizes. This is the shared
+*descriptive* projection only — the GAP/MOD *mechanism* is HPSG-specific and is
+not unified with other frameworks' derivations.
+
 ## Connection to @cite{sag-wasow-bender-2003} Ch. 14
 
 SWB2003 explicitly defers relative clause analysis ("beyond the scope
@@ -35,6 +46,7 @@ mechanism from SWB2003 Ch. 14 combined with the MOD feature.
 namespace HPSG.RelativeClauses
 
 open HPSG
+open RelativeClause (NPRelType AHPosition Realization)
 
 -- ============================================================================
 -- Relativizers
@@ -57,6 +69,14 @@ def relWho : Relativizer := { word := ⟨"who", .PRON, { wh := true }⟩ }
 def relWhich : Relativizer := { word := ⟨"which", .PRON, { wh := true }⟩ }
 def relWhom : Relativizer := { word := ⟨"whom", .PRON, { wh := true }⟩ }
 
+/-- The `RelativeClause.NPRelType` this relativizer realizes: a `wh`-pronoun
+    (who/which/whom) is a relative pronoun; the complementizer "that"/∅ leaves
+    a gap. Projects the HPSG relativizer onto the framework-neutral substrate. -/
+def Relativizer.npRel (r : Relativizer) : NPRelType :=
+  match r.word.cat with
+  | .PRON => .relPronoun
+  | _     => .gap
+
 -- ============================================================================
 -- Relative Clause Derivation
 -- ============================================================================
@@ -72,6 +92,9 @@ This models the two-step process:
 structure RelClauseDerivation where
   /-- The relativizer (who/which/that) -/
   rel : Relativizer
+  /-- The relativized grammatical position (which AH slot the gap sits in:
+      subject relative, object relative, …). -/
+  position : AHPosition
   /-- The gapped clause (e.g., "John read ___") -/
   gappedClause : TrackedSign
   /-- The gap in the clause must be compatible with the relativizer -/
@@ -91,6 +114,13 @@ def RelClauseDerivation.result (d : RelClauseDerivation) : TrackedSign :=
 /-- A relative clause has MOD set (it's a modifier). -/
 def RelClauseDerivation.isMod (d : RelClauseDerivation) : Bool :=
   d.result.sign.synsem.mod.isSome
+
+/-- The framework-neutral `RelativeClause.Realization` this derivation projects
+    to: the relativized AH position paired with the NP_rel type. The shared hook
+    onto the substrate — comparable across frameworks, even though the GAP/MOD
+    derivation itself is HPSG-specific. -/
+def RelClauseDerivation.realization (d : RelClauseDerivation) : Realization :=
+  { position := d.position, npRel := d.rel.npRel }
 
 -- ============================================================================
 -- Head-Modifier Combination
@@ -158,12 +188,16 @@ private def clause_tracked : TrackedSign :=
 -- Step 3: Relativizer "that" discharges the gap
 private def relClause : RelClauseDerivation :=
   { rel := relThat
+    position := .directObject
     gappedClause := clause_tracked
     gapCompatible := .inr (by decide) }
 
 -- The result is a modifier with MOD = NOUN
 #guard relClause.isMod
 #guard relClause.result.sign.synsem.mod == some .NOUN
+
+/-- Object relative ("the book that John read ___") realizes a directObject gap. -/
+example : relClause.realization = { position := .directObject, npRel := .gap } := rfl
 
 -- The gap is discharged (SLASH empty after relativizer fills it)
 -- Note: "that" is SCONJ, not compatible with NOUN gap via categoriesMatch,
@@ -210,6 +244,7 @@ private def subj_gapped_clause : TrackedSign :=
 -- "who" as relativizer with [MOD NP]
 private def who_relClause : RelClauseDerivation :=
   { rel := relWho
+    position := .subject
     gappedClause := subj_gapped_clause
     gapCompatible := .inr (by decide) }
 
@@ -223,6 +258,9 @@ private def modified_boy : Option Sign :=
   relClauseModifies boy_sign who_relClause.result
 
 #guard modified_boy.isSome
+
+/-- Subject relative ("the boy who saw Mary") realizes a subject relative-pronoun. -/
+example : who_relClause.realization = { position := .subject, npRel := .relPronoun } := rfl
 
 end SubjectRelative
 
