@@ -1,7 +1,7 @@
 import Linglib.Syntax.CCG.Basic
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Conjunction
-import Linglib.Core.Combinator.Basic
+import Linglib.Semantics.Composition.Combinator
 import Linglib.Semantics.Composition.ToyDomain
 
 /-!

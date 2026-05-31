@@ -125,7 +125,7 @@ import Linglib.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Core.CombinationKind
-import Linglib.Core.Combinator.Basic
+import Linglib.Semantics.Composition.Combinator
 import Linglib.Features.ScopeTypes
 import Linglib.Typology.Extraction
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem

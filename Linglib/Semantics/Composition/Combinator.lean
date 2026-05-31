@@ -6,11 +6,11 @@ import Mathlib.Logic.Function.Basic
 The basis combinators `B`, `T`, `S`, `I`, `K`, `C` of combinatory logic, with the
 standard identities relating them (`I = S K K`, `B = S (K _) _`, `T = C I`).
 
-These are framework-agnostic substrate: CCG's combinatory rules correspond to them
-(forward composition to `B`, type-raising to `T`, the substitution rule to `S`;
-@cite{steedman-2000}), but variable-free composition elsewhere — continuation and
-applicative composition, Jacobson-style binding — uses the same algebra, so it lives
-in `Core/` rather than inside the CCG files.
+These are the substrate of variable-free / combinatory semantics: CCG's combinatory rules
+correspond to them (forward composition to `B`, type-raising to `T`, the substitution rule
+to `S`; @cite{steedman-2000}), and continuation/applicative composition and Jacobson-style
+binding use the same algebra. They live here in `Semantics/Composition/` alongside the
+other composition primitives rather than inside the CCG files.
 
 ## Main definitions
 

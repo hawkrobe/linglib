@@ -1,7 +1,7 @@
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Interface
 import Linglib.Core.Logic.Intensional.Frame
-import Linglib.Core.Combinator.Basic
+import Linglib.Semantics.Composition.Combinator
 
 /-!
 # CCG combinatory rules as combinatory-logic combinators
@@ -9,7 +9,7 @@ import Linglib.Core.Combinator.Basic
 CCG's combinatory rules correspond to the basis combinators of combinatory logic
 (@cite{curry-feys-1958}, @cite{smullyan-1985}): forward and backward composition to
 `B`, type-raising to `T`, the substitution rule to `S`. The combinator algebra itself
-lives in `Core/Combinator/Basic.lean`; this file establishes the correspondence between
+lives in `Semantics/Composition/Combinator.lean`; this file establishes the correspondence between
 those combinators and the *types* CCG assigns (`catToTy`), so that each rule's semantic
 action is literally a combinator acting on `Frame.Denot` meanings.
 
@@ -24,9 +24,9 @@ open CCG
 open Core.Logic.Intensional
 open Combinator
 
--- The `B`/`T`/`S`/`I`/`K`/`C` algebra lives in `Core/Combinator/Basic.lean` (namespace
--- `Combinator`). `B`/`T` are used bare via `open Combinator`; the combinator `S` is written
--- `Combinator.S` to keep it distinct from the sentence category `CCG.S`.
+-- The `B`/`T`/`S`/`I`/`K`/`C` algebra lives in `Semantics/Composition/Combinator.lean`
+-- (namespace `Combinator`). `B`/`T` are used bare via `open Combinator`; the combinator `S`
+-- is written `Combinator.S` to keep it distinct from the sentence category `CCG.S`.
 
 section CCGCorrespondence
 
