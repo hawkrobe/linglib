@@ -30,8 +30,8 @@ combine with a head noun via the Head-Modifier Schema.
 This HPSG derivation projects to the framework-neutral descriptive profile in
 `Typology/RelativeClause/Basic.lean`: `Relativizer.npRel` reads off the
 `RelativeClause.NPRelType` (complementizer → gap, relative pronoun →
-`relPronoun`), and `RelClauseDerivation.profile` exposes the
-`(AHPosition × NPRelType)` a derivation realizes. This is the shared
+`relPronoun`), and `RelClauseDerivation.realization` exposes the
+`RelativeClause.Realization` a derivation realizes. This is the shared
 *descriptive* projection only — the GAP/MOD *mechanism* is HPSG-specific and is
 not unified with other frameworks' derivations.
 
@@ -46,7 +46,7 @@ mechanism from SWB2003 Ch. 14 combined with the MOD feature.
 namespace HPSG.RelativeClauses
 
 open HPSG
-open RelativeClause (NPRelType AHPosition)
+open RelativeClause (NPRelType AHPosition Realization)
 
 -- ============================================================================
 -- Relativizers
@@ -115,12 +115,12 @@ def RelClauseDerivation.result (d : RelClauseDerivation) : TrackedSign :=
 def RelClauseDerivation.isMod (d : RelClauseDerivation) : Bool :=
   d.result.sign.synsem.mod.isSome
 
-/-- The framework-neutral descriptive profile this derivation realizes:
-    the relativized AH position paired with the NP_rel type. This is the
-    shared projection onto `RelativeClause` — comparable across frameworks,
-    even though the GAP/MOD derivation itself is HPSG-specific. -/
-def RelClauseDerivation.profile (d : RelClauseDerivation) : AHPosition × NPRelType :=
-  (d.position, d.rel.npRel)
+/-- The framework-neutral `RelativeClause.Realization` this derivation projects
+    to: the relativized AH position paired with the NP_rel type. The shared hook
+    onto the substrate — comparable across frameworks, even though the GAP/MOD
+    derivation itself is HPSG-specific. -/
+def RelClauseDerivation.realization (d : RelClauseDerivation) : Realization :=
+  { position := d.position, npRel := d.rel.npRel }
 
 -- ============================================================================
 -- Head-Modifier Combination
@@ -196,9 +196,8 @@ private def relClause : RelClauseDerivation :=
 #guard relClause.isMod
 #guard relClause.result.sign.synsem.mod == some .NOUN
 
-/-- Object relative ("the book that John read ___") projects to the
-    `(directObject, gap)` profile on the `RelativeClause` substrate. -/
-example : relClause.profile = (.directObject, .gap) := rfl
+/-- Object relative ("the book that John read ___") realizes a directObject gap. -/
+example : relClause.realization = { position := .directObject, npRel := .gap } := rfl
 
 -- The gap is discharged (SLASH empty after relativizer fills it)
 -- Note: "that" is SCONJ, not compatible with NOUN gap via categoriesMatch,
@@ -260,9 +259,8 @@ private def modified_boy : Option Sign :=
 
 #guard modified_boy.isSome
 
-/-- Subject relative ("the boy who saw Mary") projects to the
-    `(subject, relPronoun)` profile on the `RelativeClause` substrate. -/
-example : who_relClause.profile = (.subject, .relPronoun) := rfl
+/-- Subject relative ("the boy who saw Mary") realizes a subject relative-pronoun. -/
+example : who_relClause.realization = { position := .subject, npRel := .relPronoun } := rfl
 
 end SubjectRelative
 

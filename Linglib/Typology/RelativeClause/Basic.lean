@@ -21,6 +21,8 @@ Accessibility Hierarchy. Mirrors `Features.Case` for case inventories.
   to the head noun (post-nominal, pre-nominal, internally-headed, correlative).
 * `RelativeClause.NPRelType` — what occupies the relativized position
   (gap, resumptive, relative pronoun, …).
+* `RelativeClause.Realization` — what one derivation realizes (AH position +
+  NP_rel type); the framework-neutral hook a syntactic account projects to.
 * `RelativeClause.Marker` — a relative-clause marker or construction, with
   the `Covers` / `IsContinuous` / `IsPrimary` predicates fragments and studies
   consume.
@@ -178,6 +180,25 @@ def NPRelType.resumptiveKind : NPRelType → Option ResumptiveKind
   | .resumptiveBound    => some .bound
   | .resumptive         => some .unspecified
   | _                   => none
+
+/-! ### Realization -/
+
+/-- What a single relative-clause derivation *realizes*, stated
+    framework-neutrally: the relativized @cite{keenan-comrie-1977} AH position
+    and the NP_rel type occupying it.
+
+    This is the hook by which a syntactic framework's derivation connects to the
+    shared relativization substrate: HPSG's GAP/MOD derivation, Minimalism's
+    trace + predicate-abstraction, etc. each *project* to a `Realization`, even
+    though their derivation mechanisms are framework-specific and not unified.
+    Distinct from the per-language WALS `Profile` (a typological survey of a
+    language's strategies); a `Realization` describes one derivation. -/
+structure Realization where
+  /-- The relativized position on the Accessibility Hierarchy. -/
+  position : AHPosition
+  /-- What occupies the relativized position (gap, resumptive, …). -/
+  npRel : NPRelType
+  deriving DecidableEq, Repr
 
 /-! ### Relative-clause marker -/
 

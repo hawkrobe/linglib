@@ -39,7 +39,7 @@ namespace Minimalist.RelativeClauses
 
 open Core.Logic.Intensional Core.Logic.Intensional.Variables Semantics.Composition.Modification
 open Minimalist
-open RelativeClause (AHPosition NPRelType)
+open RelativeClause (AHPosition NPRelType Realization)
 
 -- ============================================================================
 -- Example Model: Reading Scenario
@@ -166,17 +166,15 @@ theorem cp_meaning_correct (g : Core.Assignment readModel.Entity) (x : ReadEntit
              ip_johnReadTrace, applyG, vp_readTrace, constDenot, john_sem,
              trace1, interpTrace, interpPronoun, update_same]
 
-/-- The framework-neutral descriptive profile this Minimalist derivation
-    realizes, projected onto `Typology/RelativeClause/Basic.lean`. The trace
-    `t₁` sits in the *object* slot of `read` (`vp_readTrace` feeds `trace1` as
-    `read_sem`'s first argument) → `directObject`; it is a fully-interpreted
-    bound trace, not a resumptive pronoun → `gap`. The trace+predicate-abstraction
-    *mechanism* is Minimalism-specific; only this profile is shared. -/
-def cp_relativeClause_profile : AHPosition × NPRelType := (.directObject, .gap)
-
-/-- "The book that John read ___" is an object-relative gap. -/
-theorem cp_relativeClause_profile_eq :
-    cp_relativeClause_profile = (.directObject, .gap) := rfl
+/-- The `RelativeClause.Realization` this Minimalist worked example projects to.
+    The trace `t₁` sits in the *object* slot of `read` (`vp_readTrace` feeds
+    `trace1` as `read_sem`'s first argument) → `directObject`; it is a
+    fully-interpreted bound trace, not a resumptive pronoun → `gap`. The
+    trace + predicate-abstraction *mechanism* is Minimalism-specific; only this
+    realization is the shared hook onto the substrate. (Minimalism reifies the
+    derivation as a bare denotation, so this is a documented annotation of the
+    worked example rather than a computed projection.) -/
+def cp_relativeClause_realization : Realization := { position := .directObject, npRel := .gap }
 
 -- ============================================================================
 -- Combining with Head Noun: "book that John read"
