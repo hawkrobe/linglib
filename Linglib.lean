@@ -1649,6 +1649,7 @@ import Linglib.Studies.HarrisPotts2009
 import Linglib.Studies.LoGuercio2025
 import Linglib.Studies.KirkGiannini2024
 import Linglib.Studies.Maier2014
+import Linglib.Studies.Maier2015
 import Linglib.Studies.Rudin2025LI
 import Linglib.Studies.ScontrasTonhauser2025
 import Linglib.Studies.Wang2025
@@ -2430,7 +2431,6 @@ import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Semantics.Attitudes.ContextQuantification
 import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Semantics.Attitudes.Parasitic
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.SituationDependent
 import Linglib.Semantics.Attitudes.NegRaising

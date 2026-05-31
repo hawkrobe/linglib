@@ -1009,7 +1009,7 @@ theorem pip_quantifier_blocking :
 section DPLComparison
 
 open Semantics.Dynamic.Core (existsAt existsAt_iff)
-open Semantics.Dynamic.Core.DynProp (DRS dneg test)
+open Semantics.Dynamic.Core.DynProp (Update dneg test)
 open _root_.Core (Assignment)
 
 /-!
@@ -1027,7 +1027,7 @@ anaphora.
 
 The following theorems make this architectural difference explicit.
 
-**Substrate names**: DPL relations are `DRS (Assignment E)` from
+**Substrate names**: DPL relations are `Update (Assignment E)` from
 `Semantics/Dynamic/Connectives/`. The DPL operator aliases are
 substrate operations: `DPLRel.neg φ` is `test (dneg φ)`,
 `DPLRel.exists_ x φ` is `existsAt x φ`. -/
@@ -1040,7 +1040,7 @@ anaphora: after `¬φ` (`test (dneg φ)`), the output assignment equals the
 input, so any variables bound inside φ are inaccessible.
 -/
 theorem dpl_neg_is_test :
-    ∀ (E : Type*) (φ : DRS (Assignment E)) (g h : Assignment E),
+    ∀ (E : Type*) (φ : Update (Assignment E)) (g h : Assignment E),
     test (dneg φ) g h → g = h :=
   λ _ _ _ _ h => h.1
 
@@ -1062,7 +1062,7 @@ theorem pip_neg_preserves_labels :
 /--
 DPL double negation does not recover anaphora.
 
-For `Nontrivial E`, there exist `x : Nat` and `φ : DRS (Assignment E)` such
+For `Nontrivial E`, there exist `x : Nat` and `φ : Update (Assignment E)` such
 that `test (dneg (test (dneg (existsAt x φ))))` ≠ `existsAt x φ`. The
 substrate-name restatement of @cite{groenendijk-stokhof-1991}'s observation
 that DPL negation collapses positive update information.
@@ -1071,7 +1071,7 @@ that DPL negation collapses positive update information.
 `Studies/GroenendijkStokhof1991.lean`, the canonical home
 for DPL theorems in substrate form. -/
 private theorem dpl_dne_fails_anaphora {E : Type*} [Nontrivial E] :
-    ∃ (x : Nat) (φ : DRS (Assignment E)),
+    ∃ (x : Nat) (φ : Update (Assignment E)),
       test (dneg (test (dneg (existsAt x φ)))) ≠ existsAt x φ := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
   refine ⟨0, fun g h => g = h, fun heq => hne ?_⟩
@@ -1097,7 +1097,7 @@ Concretely:
 -/
 theorem pip_solves_dpl_negation_problem :
     -- DPL: ¬¬∃xφ ≠ ∃xφ (double negation fails for anaphora)
-    (∃ (x : Nat) (φ : DRS (Assignment Nat)),
+    (∃ (x : Nat) (φ : Update (Assignment Nat)),
       test (dneg (test (dneg (existsAt x φ)))) ≠ existsAt x φ) ∧
     -- PIP: labels survive negation (bathroom sentences work)
     (∀ d : Discourse BWorld BEntity,

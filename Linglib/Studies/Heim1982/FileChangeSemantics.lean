@@ -463,12 +463,12 @@ def resultSat (φ : FCP W E) (F : HeimFile W E) : Option (InfoState W E) :=
 
 -- ─── DynProp bridge ───
 
-/-- Lift a DRS (relational meaning) to an FCP via the relational image.
+/-- Lift an Update (relational meaning) to an FCP via the relational image.
 
 This connects FCPs to the relational algebra
 in `Core.DynProp`. The resulting FCP preserves domain and is always
 defined (total). -/
-def liftDRS (R : DynProp.DRS (Possibility W E)) : FCP W E :=
+def liftDRS (R : DynProp.Update (Possibility W E)) : FCP W E :=
   liftCCP (lift R)
 
 /-- `liftDRS` preserves sequential composition: lifting a relational
@@ -476,7 +476,7 @@ sequence equals sequencing lifted FCPs.
 
 This shows the FCS algebra homomorphically embeds the DynProp
 algebra — the unification underlying @cite{muskens-1996}. -/
-theorem liftDRS_seq (R₁ R₂ : DynProp.DRS (Possibility W E)) :
+theorem liftDRS_seq (R₁ R₂ : DynProp.Update (Possibility W E)) :
     liftDRS (DynProp.dseq R₁ R₂) = FCP.seq (liftDRS R₁) (liftDRS R₂) := by
   simp only [liftDRS]
   rw [lift_dseq]

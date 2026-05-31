@@ -49,7 +49,7 @@ namespace VanDerSandtMaier2003
 
 open Semantics.ContentLayer
 open Semantics.Dynamic.DRT
-open Semantics.Dynamic.Core.DRSExpr (DRSExpr)
+open DRS
 open Phenomena.Negation.Denial
 
 -- ════════════════════════════════════════════════════

@@ -6,7 +6,7 @@ import Linglib.Semantics.Dynamic.DRT.Basic
 @cite{kamp-reyle-1993}
 
 End-to-end DRS analyses connecting the dynamic semantic formalism
-from `Core.Accessibility` to empirical anaphora phenomena.
+from `Boxes/Accessibility.lean` to empirical anaphora phenomena.
 
 ## Examples
 
@@ -28,10 +28,10 @@ from `Core.Accessibility` to empirical anaphora phenomena.
 namespace KampReyle1993
 
 open Semantics.Dynamic.Core
-open Semantics.Dynamic.Core.Accessibility
+open DRS
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core.WeakestPrecondition
-open Semantics.Dynamic.Core.DRSExpr
+open DRS
 open Semantics.Dynamic.DRT
 
 variable {E : Type*}
@@ -49,11 +49,11 @@ After T₅ REDUCTION:
 
 Rels: 0=man, 1=walked_in, 2=sat_down -/
 
-def exPersistence_compositional : DRSExpr :=
+def exPersistence_compositional : DRS :=
   .seq (.box [1] [.atom 0 [1], .atom 1 [1]])
        (.box [] [.atom 2 [1]])
 
-def exPersistence : DRSExpr :=
+def exPersistence : DRS :=
   .box [1] [.atom 0 [1], .atom 1 [1], .atom 2 [1]]
 
 /-- Cross-sentential anaphora: indefinite's dref persists. -/
@@ -97,7 +97,7 @@ E-type pronouns or syntactic movement.
 
 Rels: 0=farmer, 1=donkey, 2=owns, 3=beats -/
 
-def exDonkeyStandalone : DRSExpr :=
+def exDonkeyStandalone : DRS :=
   .box [] [.impl
     (.box [1, 2] [.atom 0 [1], .atom 1 [2], .atom 2 [1, 2]])
     (.box [] [.atom 3 [1, 2]])]
@@ -146,7 +146,7 @@ Dref 1 occurs only inside the negated box and is NOT free in the
 overall DRS — the box binds it within the scope of negation. But
 critically, it is not accessible from outside the negation. -/
 
-def exNegationBlocking : DRSExpr :=
+def exNegationBlocking : DRS :=
   .box [] [.neg (.box [1] [.atom 0 [1], .atom 1 [1]])]
 
 /-- The negated DRS is proper (dref 1 is bound by its box). -/
@@ -185,7 +185,7 @@ Multiple drefs from a single sentence persist into the continuation.
 
 Rels: 0=man, 1=woman, 2=met, 3=greeted -/
 
-def exMultipleDrefs_compositional : DRSExpr :=
+def exMultipleDrefs_compositional : DRS :=
   .seq (.box [1, 2] [.atom 0 [1], .atom 1 [2], .atom 2 [1, 2]])
        (.box [] [.atom 3 [1, 2]])
 
@@ -277,11 +277,11 @@ of two boxes. The derivation tree yields:
   `[u₁ | man u₁] ; [u₂ | woman u₂, u₁ adores u₂]`
 
 T₅ REDUCTION (the merging lemma) collapses this into the standard
-single-box DRS `exManAdoresWoman` from `Core.DRSExpr`.
+single-box DRS `exManAdoresWoman` from `Boxes/Syntax.lean`.
 
 Rels: 0=man, 1=woman, 2=adores -/
 
-def exManAdoresWoman_compositional : DRSExpr :=
+def exManAdoresWoman_compositional : DRS :=
   .seq (.box [1] [.atom 0 [1]])
        (.box [2] [.atom 1 [2], .atom 2 [1, 2]])
 
@@ -337,12 +337,12 @@ and multi-sentence discourses.  Every merge theorem is a one-liner:
 -- Rels: 0=man, 1=woman, 2=book, 3=gives
 -- ──────────────────────────────────────────────────────────────
 
-def exDitransitive_compositional : DRSExpr :=
+def exDitransitive_compositional : DRS :=
   .seq (.seq (.box [1] [.atom 0 [1]])
              (.box [2] [.atom 1 [2]]))
        (.box [3] [.atom 2 [3], .atom 3 [1, 2, 3]])
 
-def exDitransitive : DRSExpr :=
+def exDitransitive : DRS :=
   .box [1, 2, 3] [.atom 0 [1], .atom 1 [2], .atom 2 [3], .atom 3 [1, 2, 3]]
 
 /-- Three-box merge via `reduce`. -/
@@ -379,11 +379,11 @@ theorem exDitransitive_truthConditions (rels : RelInterp E) (g : Assignment E) :
 -- Rels: 0=man, 1=smoke, 2=woman, 3=meets
 -- ──────────────────────────────────────────────────────────────
 
-def exNegation_compositional : DRSExpr :=
+def exNegation_compositional : DRS :=
   .seq (.box [1] [.atom 0 [1], .neg (.box [2] [.atom 1 [2], .is 2 1])])
        (.box [3] [.atom 2 [3], .atom 3 [1, 3]])
 
-def exNegation : DRSExpr :=
+def exNegation : DRS :=
   .box [1, 3] [.atom 0 [1], .neg (.box [2] [.atom 1 [2], .is 2 1]),
                .atom 2 [3], .atom 3 [1, 3]]
 
@@ -398,13 +398,13 @@ theorem exNegation_merge (rels : RelInterp E) :
 -- Rels: 0=farmer, 1=donkey, 2=owns, 3=beats, 4=vet, 5=arrives
 -- ──────────────────────────────────────────────────────────────
 
-def exDonkey_compositional : DRSExpr :=
+def exDonkey_compositional : DRS :=
   .seq (.box [] [.impl
           (.box [1, 2] [.atom 0 [1], .atom 1 [2], .atom 2 [1, 2]])
           (.box [] [.atom 3 [1, 2]])])
        (.box [3] [.atom 4 [3], .atom 5 [3]])
 
-def exDonkey_merged : DRSExpr :=
+def exDonkey_merged : DRS :=
   .box [3] [.impl
           (.box [1, 2] [.atom 0 [1], .atom 1 [2], .atom 2 [1, 2]])
           (.box [] [.atom 3 [1, 2]]),
@@ -421,11 +421,11 @@ theorem exDonkey_merge (rels : RelInterp E) :
 -- Rels: 0=Jones, 1=book, 2=Smith, 3=adores, 4=owns
 -- ──────────────────────────────────────────────────────────────
 
-def exRelClause_compositional : DRSExpr :=
+def exRelClause_compositional : DRS :=
   .seq (.box [1] [.atom 0 [1]])
        (.box [2, 3] [.atom 1 [2], .atom 2 [3], .atom 3 [3, 2], .atom 4 [1, 2]])
 
-def exRelClause : DRSExpr :=
+def exRelClause : DRS :=
   .box [1, 2, 3] [.atom 0 [1], .atom 1 [2], .atom 2 [3],
                    .atom 3 [3, 2], .atom 4 [1, 2]]
 
@@ -440,7 +440,7 @@ theorem exRelClause_merge (rels : RelInterp E) :
 -- Rels: 0=cat, 1=mouse, 2=caught, 3=ate, 4=dog, 5=watched, 6=barked
 -- ──────────────────────────────────────────────────────────────
 
-def exFourSentence_compositional : DRSExpr :=
+def exFourSentence_compositional : DRS :=
   .seq (.seq (.seq (.seq
     (.box [1] [.atom 0 [1]])
     (.box [2] [.atom 1 [2], .atom 2 [1, 2]]))
@@ -448,7 +448,7 @@ def exFourSentence_compositional : DRSExpr :=
     (.box [3] [.atom 4 [3], .atom 5 [3]]))
     (.box [] [.atom 6 [3]])
 
-def exFourSentence : DRSExpr :=
+def exFourSentence : DRS :=
   .box [1, 2, 3] [.atom 0 [1], .atom 1 [2], .atom 2 [1, 2],
                    .atom 3 [1, 2], .atom 4 [3], .atom 5 [3], .atom 6 [3]]
 
@@ -463,7 +463,7 @@ theorem exFourSentence_merge (rels : RelInterp E) :
 -- Rels: 0=student, 1=passed, 2=failed, 3=teacher, 4=noticed
 -- ──────────────────────────────────────────────────────────────
 
-def exDisjunction_compositional : DRSExpr :=
+def exDisjunction_compositional : DRS :=
   .seq (.box [1] [.atom 0 [1], .disj (.box [] [.atom 1 [1]]) (.box [] [.atom 2 [1]])])
        (.box [2] [.atom 3 [2], .atom 4 [2, 1]])
 

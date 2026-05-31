@@ -9,21 +9,21 @@ import Mathlib.Data.Set.Basic
 Discourse Representation Theory (DRT), the pioneering framework for dynamic
 semantics using Discourse Representation Structures (DRSs).
 
-## Unified DRS Representation
+## Unified Update Representation
 
-This module builds on the canonical `DRSExpr` type from
-`Core.DRSExpr`, which captures the full recursive syntax of
+This module builds on the canonical `DRS` type from
+`Boxes/Syntax.lean`, which captures the full recursive syntax of
 @cite{kamp-reyle-1993} Def 1.4.1:
 
-- `DRSExpr.box` = K&R's `⟨U, Con⟩` (universe + conditions)
-- `DRSExpr.neg` = negated condition (`¬K`)
-- `DRSExpr.impl` = implicative condition (`K₁ ⇒ K₂`)
-- `DRSExpr.disj` = disjunctive condition (`K₁ ∨ K₂`)
-- `DRSExpr.seq` = discourse sequencing (`K₁ ; K₂`)
+- `DRS.box` = K&R's `⟨U, Con⟩` (universe + conditions)
+- `DRS.neg` = negated condition (`¬K`)
+- `DRS.impl` = implicative condition (`K₁ ⇒ K₂`)
+- `DRS.disj` = disjunctive condition (`K₁ ∨ K₂`)
+- `DRS.seq` = discourse sequencing (`K₁ ; K₂`)
 
 Syntactic operations (`adr`, `occurs`, `acc`, `isFree`, `isProper`) are
-defined in `Core.DRSExpr`. Semantic interpretation (`interp`,
-`mergingLemma`, `reduce`) is defined in `Core.Accessibility`.
+defined in `Boxes/Syntax.lean`. Semantic interpretation (`interp`,
+`mergingLemma`, `reduce`) is defined in `Boxes/Accessibility.lean`.
 
 ## K&R Model Theory (Def 1.2.1)
 
@@ -33,13 +33,13 @@ extensions for evaluating DRSs.
 
 ## Subordination (Def 2.1.2)
 
-The `subordinate` relation captures when one DRS is structurally embedded
+The `subordinate` relation captures when one Update is structurally embedded
 inside another — the key structural relation governing anaphoric accessibility
 in @cite{kamp-reyle-1993} Ch 2.
 
 ## Layered DRT (LDRT)
 
-@cite{van-der-sandt-maier-2003} extend DRT with content layers: each DRS
+@cite{van-der-sandt-maier-2003} extend DRT with content layers: each Update
 condition carries a label (`pr`, `fr`, `imp`) indicating whether it
 contributes presuppositional, at-issue, or implicature content. This
 enables a unified treatment of denial.
@@ -47,7 +47,7 @@ enables a unified treatment of denial.
 
 namespace Semantics.Dynamic.DRT
 
-open Semantics.Dynamic.Core.Accessibility
+open DRS
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core (Assignment)
 open Semantics.Dynamic.Core.WeakestPrecondition
@@ -57,7 +57,7 @@ open Semantics.ContentLayer
 -- § 1. K&R Model Theory (@cite{kamp-reyle-1993}, Def 1.2.1)
 -- ════════════════════════════════════════════════════
 
-/-- A model for a DRS vocabulary, following @cite{kamp-reyle-1993} Def 1.2.1.
+/-- A model for a Update vocabulary, following @cite{kamp-reyle-1993} Def 1.2.1.
 
 A model M for vocabulary V is a triple ⟨U_M, Name_M, Pred_M⟩:
 - `U_M`: a non-empty set of individuals (the universe)
@@ -65,9 +65,9 @@ A model M for vocabulary V is a triple ⟨U_M, Name_M, Pred_M⟩:
 - `Pred_M`: maps predicate constants to their extensions
 
 In our formalization, names and predicates are both identified by `Nat`
-indices (matching `DRSExpr`'s `atom` constructor). -/
+indices (matching `DRS`'s `atom` constructor). -/
 structure KRModel (E : Type*) where
-  /-- Name interpretation: maps name indices (from `DRSExpr.atom` constructors)
+  /-- Name interpretation: maps name indices (from `DRS.atom` constructors)
       to their bearers in `U_M`. This is K&R's `Name_M`, a model-theoretic
       *constant interpretation function* — NOT a Tarski-style variable
       assignment, despite the shared `Nat → E` shape. (The variable-assignment
@@ -75,15 +75,15 @@ structure KRModel (E : Type*) where
       below.) Therefore deliberately not typed as `Core.Assignment E`. -/
   names : Nat → E
   /-- Predicate interpretation: maps relation indices to truth on entity lists.
-      This is exactly a `RelInterp E` from `Core.Accessibility`. -/
+      This is exactly a `RelInterp E` from `Boxes/Accessibility.lean`. -/
   preds : RelInterp E
 
 /-- Extract a `RelInterp` from a K&R model for use with `interp`. -/
 def KRModel.toRelInterp {E : Type*} (M : KRModel E) : RelInterp E := M.preds
 
-/-- A DRS K is true in model M iff there is an embedding (assignment) that
+/-- A Update K is true in model M iff there is an embedding (assignment) that
 verifies all conditions (@cite{kamp-reyle-1993} Def 1.4.5). -/
-def trueIn {E : Type*} (M : KRModel E) (K : DRSExpr) : Prop :=
+def trueIn {E : Type*} (M : KRModel E) (K : DRS) : Prop :=
   ∃ g : Assignment E, wp (interp M.preds K) (λ _ => True) g
 
 -- ════════════════════════════════════════════════════
@@ -93,57 +93,57 @@ def trueIn {E : Type*} (M : KRModel E) (K : DRSExpr) : Prop :=
 /-- `K₁` is *immediately subordinate* to `K₂` if `K₂`'s conditions contain
 `K₁` as a component of a complex condition (negation, implication, or
 disjunction). Matches @cite{kamp-reyle-1993} Def 2.1.2(i). -/
-inductive ImmSubordinate : DRSExpr → DRSExpr → Prop where
+inductive ImmSubordinate : DRS → DRS → Prop where
   /-- K is immediately subordinate to [... | ¬K, ...] -/
-  | neg (K : DRSExpr) (drefs : List Nat) (pre post : List DRSExpr) :
+  | neg (K : DRS) (drefs : List Nat) (pre post : List DRS) :
       ImmSubordinate K (.box drefs (pre ++ [.neg K] ++ post))
   /-- K₁ is immediately subordinate to [... | K₁ ⇒ K₂, ...] -/
-  | implLeft (K₁ K₂ : DRSExpr) (drefs : List Nat) (pre post : List DRSExpr) :
+  | implLeft (K₁ K₂ : DRS) (drefs : List Nat) (pre post : List DRS) :
       ImmSubordinate K₁ (.box drefs (pre ++ [.impl K₁ K₂] ++ post))
   /-- K₂ is immediately subordinate to [... | K₁ ⇒ K₂, ...] -/
-  | implRight (K₁ K₂ : DRSExpr) (drefs : List Nat) (pre post : List DRSExpr) :
+  | implRight (K₁ K₂ : DRS) (drefs : List Nat) (pre post : List DRS) :
       ImmSubordinate K₂ (.box drefs (pre ++ [.impl K₁ K₂] ++ post))
   /-- K₁ is immediately subordinate to [... | K₁ ∨ K₂, ...] -/
-  | disjLeft (K₁ K₂ : DRSExpr) (drefs : List Nat) (pre post : List DRSExpr) :
+  | disjLeft (K₁ K₂ : DRS) (drefs : List Nat) (pre post : List DRS) :
       ImmSubordinate K₁ (.box drefs (pre ++ [.disj K₁ K₂] ++ post))
   /-- K₂ is immediately subordinate to [... | K₁ ∨ K₂, ...] -/
-  | disjRight (K₁ K₂ : DRSExpr) (drefs : List Nat) (pre post : List DRSExpr) :
+  | disjRight (K₁ K₂ : DRS) (drefs : List Nat) (pre post : List DRS) :
       ImmSubordinate K₂ (.box drefs (pre ++ [.disj K₁ K₂] ++ post))
 
 /-- `K₁` is *subordinate* to `K₂` (written K₁ < K₂) if there is a chain
 of immediate subordination from K₁ to K₂. This is the transitive closure
 of `ImmSubordinate`. Matches @cite{kamp-reyle-1993} Def 2.1.2(ii). -/
-inductive Subordinate : DRSExpr → DRSExpr → Prop where
+inductive Subordinate : DRS → DRS → Prop where
   /-- One step of immediate subordination. -/
-  | imm {K₁ K₂ : DRSExpr} : ImmSubordinate K₁ K₂ → Subordinate K₁ K₂
+  | imm {K₁ K₂ : DRS} : ImmSubordinate K₁ K₂ → Subordinate K₁ K₂
   /-- Transitivity: if K₁ < K₃ and K₃ < K₂, then K₁ < K₂. -/
-  | trans {K₁ K₂ K₃ : DRSExpr} : Subordinate K₁ K₃ → Subordinate K₃ K₂ → Subordinate K₁ K₂
+  | trans {K₁ K₂ K₃ : DRS} : Subordinate K₁ K₃ → Subordinate K₃ K₂ → Subordinate K₁ K₂
 
 /-- `K₁` is *weakly subordinate* to `K₂` (written K₁ ≤ K₂) iff K₁ = K₂
 or K₁ < K₂. Matches @cite{kamp-reyle-1993} Def 2.1.2(iii). -/
-def WeakSubordinate (K₁ K₂ : DRSExpr) : Prop :=
+def WeakSubordinate (K₁ K₂ : DRS) : Prop :=
   K₁ = K₂ ∨ Subordinate K₁ K₂
 
 -- ════════════════════════════════════════════════════
 -- § 3. Layered DRT (@cite{van-der-sandt-maier-2003})
 -- ════════════════════════════════════════════════════
 
-/-- A DRS condition tagged with its content layer.
+/-- A Update condition tagged with its content layer.
 
 @cite{van-der-sandt-maier-2003}: in LDRT, every condition carries a
-label indicating its discourse role. Uses `DRSExpr` as the condition type,
-unifying with the canonical DRS representation from `Core.Accessibility`. -/
+label indicating its discourse role. Uses `DRS` as the condition type,
+unifying with the canonical DRS representation from `Boxes/Accessibility.lean`. -/
 structure TaggedCondition where
   /-- The content layer this condition contributes to. -/
   layer : ContentLayer
-  /-- The underlying DRS condition. -/
-  condition : DRSExpr
+  /-- The underlying Update condition. -/
+  condition : DRS
   deriving Repr
 
 /-- A Layered DRS (LDRS): a DRS whose conditions carry content-layer tags.
 
 This is the core data structure of @cite{van-der-sandt-maier-2003}'s
-LDRT. A standard DRS is the special case where all conditions are
+LDRT. A standard Update is the special case where all conditions are
 tagged `atIssue`. -/
 structure LDRS where
   /-- Universe: discourse referent indices. -/
@@ -152,19 +152,19 @@ structure LDRS where
   conditions : List TaggedCondition
   deriving Repr
 
-/-- Convert an LDRS to a plain `DRSExpr` by stripping layer tags. -/
-def LDRS.toDRSExpr (k : LDRS) : DRSExpr :=
+/-- Convert an LDRS to a plain `DRS` by stripping layer tags. -/
+def LDRS.toDRSExpr (k : LDRS) : DRS :=
   .box k.drefs (k.conditions.map (·.condition))
 
-/-- Lift a `DRSExpr.box` to an LDRS by tagging all conditions as at-issue.
+/-- Lift a `DRS.box` to an LDRS by tagging all conditions as at-issue.
 
-A plain DRS is an LDRS where everything is `atIssue`. -/
-def DRSExpr.toLDRS : DRSExpr → LDRS
+A plain Update is an LDRS where everything is `atIssue`. -/
+def DRS.toLDRS : DRS → LDRS
   | .box drefs conds => { drefs, conditions := conds.map (⟨.atIssue, ·⟩) }
   | K => { drefs := [], conditions := [⟨.atIssue, K⟩] }
 
 /-- Extract all conditions at a given layer. -/
-def LDRS.atLayer (k : LDRS) (l : ContentLayer) : List DRSExpr :=
+def LDRS.atLayer (k : LDRS) (l : ContentLayer) : List DRS :=
   (k.conditions.filter (·.layer == l)).map (·.condition)
 
 /-- LDRS merge: combine two layered DRSs, preserving layer tags. -/
@@ -226,18 +226,18 @@ theorem denial_nonmonotonic (k : LDRS)
 -- ════════════════════════════════════════════════════
 
 /-- Interpret an LDRS by stripping tags and using `interp` from
-`Core.Accessibility`. This gives the at-issue truth conditions;
+`Boxes/Accessibility.lean`. This gives the at-issue truth conditions;
 presuppositional and implicature content must be handled separately
 by the content-layer machinery. -/
 def LDRS.interp {E : Type*} (rels : RelInterp E) (k : LDRS) :
-    DRS (Assignment E) :=
-  Semantics.Dynamic.Core.Accessibility.interp rels k.toDRSExpr
+    Update (Assignment E) :=
+  DRS.interp rels k.toDRSExpr
 
 /-- Round-trip: `box → toLDRS → toDRSExpr` preserves conditions. -/
-theorem toLDRS_toDRSExpr_conditions (drefs : List Nat) (conds : List DRSExpr) :
-    (DRSExpr.toLDRS (.box drefs conds)).toDRSExpr =
+theorem toLDRS_toDRSExpr_conditions (drefs : List Nat) (conds : List DRS) :
+    (DRS.toLDRS (.box drefs conds)).toDRSExpr =
     .box drefs conds := by
-  simp only [DRSExpr.toLDRS, LDRS.toDRSExpr, List.map_map]
+  simp only [DRS.toLDRS, LDRS.toDRSExpr, List.map_map]
   congr 1
   exact List.map_id _
 
@@ -248,7 +248,7 @@ theorem toLDRS_toDRSExpr_conditions (drefs : List Nat) (conds : List DRSExpr) :
 /-! @cite{van-der-sandt-maier-2003} §4.3: given a set of offensive
 layers (computed by `Off` from `Semantics.ContentLayer`), RA*
 partitions the LDRS conditions: surviving conditions remain in the
-main DRS, offensive conditions are moved under negation. -/
+main Update, offensive conditions are moved under negation. -/
 
 /-- Directed reverse anaphora (RA*): move offensive-layer conditions
 under negation, preserving non-offensive conditions.

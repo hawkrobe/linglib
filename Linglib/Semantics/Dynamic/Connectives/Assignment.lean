@@ -20,10 +20,10 @@ because they're fully generic over `E`, taking any `Nat` index.
 
 | Operator | Paper-anchored alias | Type |
 |---|---|---|
-| `randomAssignAt n` | DPL `[x_n]`, FCS file-card opening | `DRS (Assignment E)` |
-| `existsAt n φ` | DPL `∃x_n.φ`, CDRT `[u_n]; φ` | `DRS (Assignment E) → DRS (Assignment E)` |
-| `forallAt n φ` | DPL `∀x_n.φ` | `DRS (Assignment E) → DRS (Assignment E)` |
-| `closeAt φ` | DPL `◇φ`, K&R existential closure | `DRS (Assignment E) → DRS (Assignment E)` |
+| `randomAssignAt n` | DPL `[x_n]`, FCS file-card opening | `Update (Assignment E)` |
+| `existsAt n φ` | DPL `∃x_n.φ`, CDRT `[u_n]; φ` | `Update (Assignment E) → Update (Assignment E)` |
+| `forallAt n φ` | DPL `∀x_n.φ` | `Update (Assignment E) → Update (Assignment E)` |
+| `closeAt φ` | DPL `◇φ`, K&R existential closure | `Update (Assignment E) → Update (Assignment E)` |
 
 The `existsAt` / `forallAt` decomposition is mathlib-style: `existsAt n` is
 `dseq` after `randomAssignAt n`; `forallAt n` is `test ∘ dneg ∘ existsAt n ∘ test ∘ dneg`.
@@ -42,7 +42,7 @@ variable {E : Type*}
 -- ════════════════════════════════════════════════════════════════
 
 /-- The "open file card n" operation: `g[n↦?]` non-deterministically. -/
-def randomAssignAt (n : Nat) : DRS (Assignment E) :=
+def randomAssignAt (n : Nat) : Update (Assignment E) :=
   fun g h => ∃ d : E, h = g.update n d
 
 -- ════════════════════════════════════════════════════════════════
@@ -51,15 +51,15 @@ def randomAssignAt (n : Nat) : DRS (Assignment E) :=
 
 /-- `existsAt n φ` is `dseq (randomAssignAt n) φ`. Holds at `(g, h)` iff
 some witness `d : E` makes `φ` accept the input `g[n↦d]` and produce `h`. -/
-def existsAt (n : Nat) (φ : DRS (Assignment E)) : DRS (Assignment E) :=
+def existsAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
   dseq (randomAssignAt n) φ
 
 /-- The decomposition: `existsAt = dseq ∘ randomAssignAt`. -/
-@[simp] theorem existsAt_eq_dseq (n : Nat) (φ : DRS (Assignment E)) :
+@[simp] theorem existsAt_eq_dseq (n : Nat) (φ : Update (Assignment E)) :
     existsAt n φ = dseq (randomAssignAt n) φ := rfl
 
 /-- Direct unfolding: `existsAt n φ g h ↔ ∃ d : E, φ (g.update n d) h`. -/
-theorem existsAt_iff (n : Nat) (φ : DRS (Assignment E)) (g h : Assignment E) :
+theorem existsAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
     existsAt n φ g h ↔ ∃ d : E, φ (g.update n d) h := by
   simp only [existsAt, dseq, randomAssignAt]
   constructor
@@ -73,11 +73,11 @@ theorem existsAt_iff (n : Nat) (φ : DRS (Assignment E)) (g h : Assignment E) :
 /-- `forallAt n φ`: a test that requires `φ` to succeed for every value at `n`.
 Definitionally `test (dneg (existsAt n (test (dneg φ))))` — the standard
 DPL/Muskens reduction `∀ ≈ ¬∃¬`. -/
-def forallAt (n : Nat) (φ : DRS (Assignment E)) : DRS (Assignment E) :=
+def forallAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
   test (dneg (existsAt n (test (dneg φ))))
 
 /-- Direct truth condition: `forallAt n φ g h ↔ g = h ∧ ∀ d, ∃ k, φ (g.update n d) k`. -/
-theorem forallAt_iff (n : Nat) (φ : DRS (Assignment E)) (g h : Assignment E) :
+theorem forallAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
     forallAt n φ g h ↔ g = h ∧ ∀ d : E, ∃ k, φ (g.update n d) k := by
   simp only [forallAt, test, dneg, existsAt, dseq, randomAssignAt]
   constructor
@@ -97,10 +97,10 @@ theorem forallAt_iff (n : Nat) (φ : DRS (Assignment E)) (g h : Assignment E) :
 
 /-- `closeAt φ`: a test that succeeds iff `φ` has any output. Equals
 `test (closure φ)` from `Connectives.Defs`. -/
-def closeAt (φ : DRS (Assignment E)) : DRS (Assignment E) :=
+def closeAt (φ : Update (Assignment E)) : Update (Assignment E) :=
   test (closure φ)
 
-@[simp] theorem closeAt_eq (φ : DRS (Assignment E)) :
+@[simp] theorem closeAt_eq (φ : Update (Assignment E)) :
     closeAt φ = test (closure φ) := rfl
 
 end Semantics.Dynamic.Core

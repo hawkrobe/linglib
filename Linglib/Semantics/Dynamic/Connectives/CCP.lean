@@ -17,7 +17,7 @@ Abstract foundations shared by PLA, DRT, DPL, CDRT, and other dynamic semantics 
 
 ## Relationship to `DynProp`
 
-The relational type `DRS S = S → S → Prop` (@cite{groenendijk-stokhof-1991},
+The relational type `Update S = S → S → Prop` (@cite{groenendijk-stokhof-1991},
 @cite{muskens-1996}) is the primary dynamic semantic type. `CCP S` is the
 derived set-transformer view, connected via `lift`/`lower`:
 
@@ -658,14 +658,14 @@ theorem might_not_isDistributive :
 
 -- ═══ Relational ↔ CCP Correspondence ═══
 
-/-! The relational type `DRS S = S → S → Prop` from `DynProp` is the
-primary dynamic semantic type. Every `DRS` gives rise to a distributive
+/-! The relational type `Update S = S → S → Prop` from `DynProp` is the
+primary dynamic semantic type. Every `Update` gives rise to a distributive
 `CCP` via the relational image (`lift`), and every distributive CCP
 arises this way (`lower`). The round-trip is the identity in both
 directions (for distributive CCPs).
 
 Non-distributive CCP operations (`neg`, `might`, `must`) test the
-*whole* input state and have no direct `DRS` counterpart — they are
+*whole* input state and have no direct `Update` counterpart — they are
 genuine additions of the set-transformer perspective. -/
 
 section RelationalBridge
@@ -674,24 +674,24 @@ open DynProp
 
 variable {S : Type*}
 
-/-- Lift a relational DRS meaning to a CCP (set transformer).
+/-- Lift a relational Update meaning to a CCP (set transformer).
 
 This is the relational image: given input state `σ`, collect all
 outputs reachable from any element of `σ`. The resulting CCP is
 always distributive (`lift_isDistributive`). -/
-def lift (R : DRS S) : CCP S :=
+def lift (R : Update S) : CCP S :=
   λ σ => { j | ∃ i ∈ σ, R i j }
 
-/-- Lower a CCP to a relational DRS meaning.
+/-- Lower a CCP to a relational Update meaning.
 
 `lower φ i j` holds iff `j` is in the output of the singleton `{i}`.
 This is the inverse of `lift` for distributive CCPs. -/
-def lower (φ : CCP S) : DRS S :=
+def lower (φ : CCP S) : Update S :=
   λ i j => j ∈ φ {i}
 
 /-- Lifting preserves sequential composition:
 `lift (R₁ ⨟ R₂) = lift R₁ ;; lift R₂`. -/
-theorem lift_dseq (R₁ R₂ : DRS S) :
+theorem lift_dseq (R₁ R₂ : Update S) :
     lift (dseq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) := by
   funext σ; ext k; simp only [lift, CCP.seq, dseq, Set.mem_setOf_eq]
   constructor
@@ -710,7 +710,7 @@ theorem lift_test (C : Condition S) :
   · rintro ⟨hj, hC⟩; exact ⟨j, hj, rfl, hC⟩
 
 /-- Lifted CCPs are always distributive. -/
-theorem lift_isDistributive (R : DRS S) : IsDistributive (lift R) := by
+theorem lift_isDistributive (R : Update S) : IsDistributive (lift R) := by
   intro σ; ext j; simp only [lift, Set.mem_setOf_eq]
   constructor
   · rintro ⟨i, hi, hR⟩
@@ -720,7 +720,7 @@ theorem lift_isDistributive (R : DRS S) : IsDistributive (lift R) := by
 
 /-- Round-trip: `lower (lift R) = R`. The relational type loses no
 information when lifted and lowered. -/
-theorem lower_lift (R : DRS S) : lower (lift R) = R := by
+theorem lower_lift (R : Update S) : lower (lift R) = R := by
   funext i j; simp only [lower, lift, Set.mem_setOf_eq, eq_iff_iff]
   constructor
   · rintro ⟨i', hi', hR⟩; rwa [hi'] at hR
