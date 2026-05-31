@@ -5,41 +5,16 @@ import Linglib.Syntax.HPSG.Basic
 # A worked HPSG signature, the Head Feature Principle, and a computational bridge
 @cite{richter-2000}, @cite{richter-2024}, @cite{pollard-sag-1994}
 
-A small HPSG signature fragment in the RSRL substrate (`Signature.lean`, `Interpretation.lean`,
-`Description.lean`), the **Head Feature Principle** as a description, worked head-complement
-models showing the principle is a genuine constraint (one satisfying, one violating it), and a
-lemma relating the project's *computational* HPSG core (`HPSG.HeadCompRule.hfp`) to a sort-level
-description in the induced model — a deliberately partial bridge (the grammar's HFP is token
-identity, which value equality does not entail; see below).
+A minimal HPSG signature fragment over the RSRL substrate, the **Head Feature Principle** as a
+description, two worked head-complement models (one satisfying, one violating the HFP) showing
+the principle genuinely filters, and a deliberately partial bridge from the project's
+*computational* HPSG core (`HPSG.HeadCompRule.hfp`) to a sort-agreement description.
 
-## Main declarations
-
-* `HPSG.RSRL.hpsgSig` — a minimal HPSG signature over the sort hierarchy `HSort`, with
-  attributes `CAT`/`HD` and appropriateness `happrop`.
-* `HPSG.RSRL.hfp` / `hpsgGrammar` — the Head Feature Principle and the one-principle grammar.
-* `HPSG.RSRL.posModel` / `negModel` — head-complement structures that satisfy / violate the
-  HFP (both well-typed): the principle filters.
-* `HPSG.RSRL.toInterp_categoryAgreement_of_hfp` — from the computational `HeadCompRule.hfp`, the
-  induced model satisfies a category sort-agreement description (strictly weaker than the
-  grammar's token-identity HFP; see Implementation notes).
-
-## Implementation notes
-
-* **Granularity.** The canonical HFP (@cite{pollard-sag-1994}; @cite{richter-2024}, Ch. 3, (3a))
-  shares the **HEAD** value along `SYNSEM|LOC|CAT|HEAD` and is **token identity**. PR1 works at
-  the **CAT** granularity along a flattened `CAT`/`HD` path, because that is what the project's
-  computational `HPSG.HeadCompRule.hfp` (`result.synsem.cat = head.synsem.cat`) exposes; the
-  worked models still use token identity (`pathEq`). Note CAT-sharing is a valence-free
-  *fragment stand-in*, not a faithful coarsening: full CAT contains the valence features, so
-  sharing all of CAT mother-to-head would wrongly force valence identity (the Valence
-  Principle's job). The fragment has no valence attribute, so nothing breaks here; refining to
-  the HEAD value under the full feature geometry is later work.
-* **The computational bridge is partial.** `toInterp_categoryAgreement_of_hfp` reflects the
-  value-equality `HeadCompRule.hfp` only as a sort-agreement, not as the grammar's
-  token-identity `pathEq` HFP — value equality and token identity are genuinely different
-  notions. A faithful bridge is deferred (see that theorem's docstring).
-* Only `hpsgSig` is `@[reducible]` (so its projections resolve in instance search); the models
-  are plain `def`s, and the `decide`-checked examples expose their carriers with `unfold`.
+The HFP here works at **CAT** granularity (what `HeadCompRule.hfp` exposes), a valence-free
+stand-in for the canonical **HEAD**-value sharing (@cite{pollard-sag-1994}). The bridge is
+partial: `HeadCompRule.hfp` is value equality, the grammar's `pathEq` HFP is token identity —
+genuinely different notions, so the bridge proves only sort-agreement (see that theorem). Only
+`hpsgSig` is `@[reducible]`; the models are plain `def`s with explicit carrier instances.
 -/
 
 namespace HPSG.RSRL
@@ -70,17 +45,9 @@ def hleB : HSort → HSort → Bool
   | .otherCat, .category => true
   | a, b => decide (a = b)
 
-private theorem hleB_refl : ∀ a, hleB a a = true := by decide
-private theorem hleB_trans :
-    ∀ a b c, hleB a b = true → hleB b c = true → hleB a c = true := by decide
-private theorem hleB_antisymm : ∀ a b, hleB a b = true → hleB b a = true → a = b := by decide
-
 /-- The sort hierarchy as a `PartialOrder` (`a ≤ b` = "`a` at least as specific as `b`"). -/
-instance : PartialOrder HSort where
-  le a b := hleB a b = true
-  le_refl := hleB_refl
-  le_trans := hleB_trans
-  le_antisymm := hleB_antisymm
+instance : PartialOrder HSort :=
+  partialOrderOfBool hleB (by decide) (by decide) (by decide)
 
 instance : DecidableLE HSort := fun a b => inferInstanceAs (Decidable (hleB a b = true))
 
