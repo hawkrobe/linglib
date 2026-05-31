@@ -2181,7 +2181,6 @@ import Linglib.Syntax.Minimalist.Modification
 import Linglib.Syntax.Minimalist.Scope
 import Linglib.Syntax.Minimalist.TraceInterpretation
 import Linglib.Syntax.Minimalist.CombinationSchemata
-import Linglib.Syntax.Minimalist.RelativeClauses
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
@@ -2321,7 +2320,9 @@ import Linglib.Core.Categorical.ScaleCat
 import Linglib.Semantics.Composition.SyntaxInterface
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
-import Linglib.Semantics.Composition.Modification
+import Linglib.Semantics.Composition.Abstraction
+import Linglib.Semantics.Modification.Basic
+import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Quantification.CovertQuantifier
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Semantics.Classifier.Basic

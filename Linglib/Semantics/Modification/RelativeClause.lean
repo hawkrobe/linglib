@@ -1,0 +1,76 @@
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Core.Logic.Intensional.Variables
+import Linglib.Semantics.Composition.Abstraction
+import Linglib.Semantics.Modification.Basic
+
+/-!
+# Relative-clause denotation
+@cite{heim-kratzer-1998}
+
+The framework-neutral meaning of a head noun combined with a (restrictive)
+relative clause: an RC is an **intersective clausal modifier** of the head. Its
+modifier-property is the relative clause abstracted over its gap (Predicate
+Abstraction, @cite{heim-kratzer-1998} Ch. 5); modifying the head with it is the
+intersective modification shared with adjectives and PPs. This is the
+adnominal-modifier diagnostic (a relative clause's framework-neutral essence is
+clausal modification of a nominal head) made compositional: the syntactic
+frameworks differ in how they derive the gap abstraction (a Minimalist trace, an
+HPSG `SLASH` discharge, a CCG type-raised argument) but converge on this
+denotation.
+
+This is the **semantic half of the `RelativeClause` API**; the classification half
+(`Realization`, `AHPosition`, `NPRelType`, …) lives in `Typology/RelativeClause/`,
+sharing the root `RelativeClause` namespace without either importing the other.
+
+## Main declarations
+
+* `RelativeClause.denote` — the relative-clause denotation, built *by construction*
+  as `Modification.intersective` applied to the gap-abstracted clause.
+* `RelativeClause.denote_comm` — head and clause modify symmetrically.
+
+## Implementation notes
+
+Only the restrictive (intersective) denotation is provided; the non-restrictive
+(appositive) denotation is a distinct, non-intersective mechanism and is deferred
+until a study reifies it.
+-/
+
+namespace RelativeClause
+
+open Core.Logic.Intensional Core.Logic.Intensional.Variables
+open Semantics.Composition.Abstraction (predicateAbstraction)
+open Modifier (intersective intersective_comm)
+
+/--
+The framework-neutral relative-clause denotation: the head modified by the
+relative clause, qua intersective modifier.
+
+For "the N that ... t_n ...":
+1. abstract the relative clause over its gap, `λx. ⟦... t_n ...⟧^{g[n ↦ x]}`
+   (Predicate Abstraction) — this is the RC's modifier-property;
+2. modify the head noun with it intersectively (`Modification.intersective`).
+
+Result: `λx. ⟦relative clause⟧(x) ∧ N(x)` — the head property intersected with the
+abstracted clause property (the restrictive case; see the implementation note).
+That the RC is an intersective modifier is true by construction.
+-/
+def denote {F : Frame} (n : ℕ)
+    (headNoun : DenotG F (.e ⇒ .t))
+    (relClauseBody : DenotG F .t)
+    : DenotG F (.e ⇒ .t) :=
+  fun g => intersective (predicateAbstraction n relClauseBody g) (headNoun g)
+
+/-- Head and relative clause modify symmetrically: the head noun and the
+    gap-abstracted clause intersect in either order (intersective modification is
+    commutative). -/
+theorem denote_comm {F : Frame} (n : ℕ)
+    (headNoun : DenotG F (.e ⇒ .t))
+    (relClauseBody : DenotG F .t)
+    (g : Core.Assignment F.Entity)
+    : denote n headNoun relClauseBody g =
+      intersective (headNoun g) (predicateAbstraction n relClauseBody g) := by
+  show intersective (predicateAbstraction n relClauseBody g) (headNoun g) =
+       intersective (headNoun g) (predicateAbstraction n relClauseBody g)
+  exact intersective_comm _ _
+
+end RelativeClause
