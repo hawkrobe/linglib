@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.Syllogistic.Forms
-import Linglib.Core.Logic.Opposition.Diagram
+import Linglib.Core.Logic.Aristotelian.Diagram
 
 /-!
 # AIEO Square as a Diagram instance
@@ -37,7 +37,7 @@ the natural follow-up in `Aristotelian.lean` (TODO).
 
 namespace Semantics.Quantification.Syllogistic
 
-open Core.Opposition (AristotelianRel Diagram Contradictory)
+open Aristotelian (AristotelianRel Diagram IsContradictory isContradictory_iff_forall)
 
 /-! ### Corner indexing -/
 
@@ -71,7 +71,8 @@ def cornerRel : Corner → Corner → AristotelianRel
     witness and applying `syllAll`'s universal; the "exhaustion" half is
     classical LEM on the existence of a Y-counterexample restrictor element. -/
 theorem syllAll_contradictory_syllSomeNot (X Y : Region → Bool) :
-    Contradictory (fun s => syllAll s X Y) (fun s => syllSomeNot s X Y) := by
+    IsContradictory (fun s => syllAll s X Y) (fun s => syllSomeNot s X Y) := by
+  rw [isContradictory_iff_forall]
   refine ⟨?_, ?_⟩
   · intro s ⟨hAll, hSomeNot⟩
     rw [syllAll_eq_true_iff] at hAll
@@ -85,14 +86,15 @@ theorem syllAll_contradictory_syllSomeNot (X Y : Region → Bool) :
     · right
       unfold syllSomeNot
       apply decide_eq_true
-      push_neg at h
+      push Not at h
       obtain ⟨r, hRX, hNotY⟩ := h
       exact ⟨r, hRX, hNotY⟩
 
 /-- `syllNone` and `syllSome` are contradictories at every state. Symmetric
     structure to `syllAll_contradictory_syllSomeNot`. -/
 theorem syllNone_contradictory_syllSome (X Y : Region → Bool) :
-    Contradictory (fun s => syllNone s X Y) (fun s => syllSome s X Y) := by
+    IsContradictory (fun s => syllNone s X Y) (fun s => syllSome s X Y) := by
+  rw [isContradictory_iff_forall]
   refine ⟨?_, ?_⟩
   · intro s ⟨hNone, hSome⟩
     rw [syllNone_eq_true_iff] at hNone
@@ -106,7 +108,7 @@ theorem syllNone_contradictory_syllSome (X Y : Region → Bool) :
     · right
       unfold syllSome
       apply decide_eq_true
-      push_neg at h
+      push Not at h
       obtain ⟨r, hRX, hY⟩ := h
       exact ⟨r, hRX, hY⟩
 
@@ -116,7 +118,7 @@ theorem syllNone_contradictory_syllSome (X Y : Region → Bool) :
     Discharges the `contradictory` cases via the lemmas above. The
     `contrary`/`subcontrary`/`subaltern` cases are vacuous because
     `cornerRel` labels all non-A↔O / non-E↔I pairs as `unconnected`. -/
-noncomputable def aieoSquare (X Y : Region → Bool) : Diagram Corner VennState where
+noncomputable def aieoSquare (X Y : Region → Bool) : Diagram Corner (VennState → Bool) where
   φ := cornerForm X Y
   relation := cornerRel
   relation_correct := by
