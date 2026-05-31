@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 123A: Relativization on Obliques
-@cite{comrie-2013}
+@cite{comrie-kuteva-2013b}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 123A`.
