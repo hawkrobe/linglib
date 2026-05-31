@@ -34,7 +34,9 @@ def DRS.Realize (v : V → M) : DRS L V → Prop
   | .mk _ conds => Condition.RealizeAll v conds
 /-- `v` verifies a condition (Def. 1.4.4(ii)). A sub-DRS `K` is entered by
 existentially (re)assigning the referents of its universe (`v'` agrees with `v`
-off `K.referents`). -/
+off `K.referents`). For `imp`, the consequent witness `v''` extends the
+*antecedent* assignment `v'` (not the host `v`): antecedent referents are visible
+in the consequent — the `⇒` accessibility asymmetry. -/
 def Condition.Realize (v : V → M) : Condition L V → Prop
   | .rel R args => Structure.RelMap R (fun i => v (args i))
   | .eq a b => v a = v b
@@ -45,7 +47,9 @@ def Condition.Realize (v : V → M) : Condition L V → Prop
   | .dis l r =>
       (∃ v' : V → M, (∀ x, x ∉ l.referents → v' x = v x) ∧ DRS.Realize v' l) ∨
       (∃ v' : V → M, (∀ x, x ∉ r.referents → v' x = v x) ∧ DRS.Realize v' r)
-/-- Every condition in the list is verified by `v` (mutual helper). -/
+/-- Every condition in the list is verified by `v`. A `List` helper (not
+`List.Forall (Condition.Realize v)`) because Lean's structural-recursion checker
+for the nested `List (Condition …)` rejects the higher-order argument. -/
 def Condition.RealizeAll (v : V → M) : List (Condition L V) → Prop
   | [] => True
   | c :: cs => Condition.Realize v c ∧ Condition.RealizeAll v cs

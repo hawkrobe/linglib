@@ -35,7 +35,9 @@ def Condition.map [DecidableEq W] (f : V → W) : Condition L V → Condition L 
   | .neg K => .neg (DRS.map f K)
   | .imp a c => .imp (DRS.map f a) (DRS.map f c)
   | .dis l r => .dis (DRS.map f l) (DRS.map f r)
-/-- Rename along `f` throughout a list of conditions (mutual helper). -/
+/-- Rename along `f` throughout a list of conditions. A `List` helper (not
+`conds.map (Condition.map f)`) because the higher-order form fails the
+nested-inductive structural-recursion checker. -/
 def Condition.mapList [DecidableEq W] (f : V → W) : List (Condition L V) → List (Condition L W)
   | [] => []
   | c :: cs => Condition.map f c :: Condition.mapList f cs
@@ -106,7 +108,9 @@ def Condition.Bound (b : Finset V) : Condition L V → Prop
   | .neg K => DRS.Bound b K
   | .imp a c => DRS.Bound b a ∧ DRS.Bound (b ∪ a.referents) c
   | .dis l r => DRS.Bound b l ∧ DRS.Bound b r
-/-- `b`-boundedness of a list of conditions (mutual helper). -/
+/-- `b`-boundedness of a list of conditions. A `List` helper (not
+`List.Forall (Condition.Bound b)`) — the higher-order form fails the
+nested-inductive structural-recursion checker. -/
 def Condition.BoundAll (b : Finset V) : List (Condition L V) → Prop
   | [] => True
   | c :: cs => Condition.Bound b c ∧ Condition.BoundAll b cs
