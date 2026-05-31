@@ -1152,6 +1152,7 @@ import Linglib.Studies.Marantz1991
 import Linglib.Studies.Pesetsky2013
 import Linglib.Studies.BakerVinokurova2010
 import Linglib.Studies.Comrie1989
+import Linglib.Studies.Cinque2020
 import Linglib.Typology.ClauseChaining
 import Linglib.Studies.SarvasyAikhenvald2025
 import Linglib.Studies.Partee1987
@@ -2181,7 +2182,6 @@ import Linglib.Syntax.Minimalist.Modification
 import Linglib.Syntax.Minimalist.Scope
 import Linglib.Syntax.Minimalist.TraceInterpretation
 import Linglib.Syntax.Minimalist.CombinationSchemata
-import Linglib.Syntax.Minimalist.RelativeClauses
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
