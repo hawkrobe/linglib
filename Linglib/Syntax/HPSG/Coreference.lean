@@ -12,7 +12,7 @@ Both pronouns and R-expressions are [MODE ref], so Principle B subsumes
 the Chomskyan Principle C. No separate "Principle C" is needed.
 -/
 
-import Linglib.Syntax.HPSG.Core.Basic
+import Linglib.Syntax.HPSG.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.NominalClassification

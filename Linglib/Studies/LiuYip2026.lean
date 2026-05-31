@@ -422,7 +422,7 @@ different mechanism. This section documents the divergences without
 attempting bridge theorems (which would require the sister frameworks to
 have Studies-level Chinese formalizations they currently lack):
 
-- **HPSG** (`Syntax/HPSG/Core/Basic.lean`): no clausal spine, no
+- **HPSG** (`Syntax/HPSG/Basic.lean`): no clausal spine, no
   AspP, no ICH. The "you-skipping" pattern would naturally be a *lexical
   rule on argument structure* (compare `LexicalRules.lean:36-95`'s
   `passiveRule`, `dativeShiftRule`, `resultativeRule`). @cite{liu-yip-2026}'s

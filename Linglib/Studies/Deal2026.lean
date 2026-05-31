@@ -48,7 +48,7 @@ functional projection above TP*. Three primary conclusions:
   reference theory). Existing `deal-2020` bib entry but no implementation
   module.
 - A full HPSG-side bridge theorem: documented as silent divergence;
-  formalisation requires updating `HPSG/Core/RelativeClauses.lean` to
+  formalisation requires updating `HPSG/RelativeClauses.lean` to
   parameterise its currently-hardcoded `MOD NP` analysis.
 - A `commentative`-emitting fix to `deriveCTPClass` in
   `Studies/Noonan2007.lean:570`: blocked on
@@ -660,7 +660,7 @@ theorem reInternalAbar_isHigh : reInternalAbar.isHigh = true :=
 
 /-! ### Silent divergence with HPSG
 
-`Syntax/HPSG/Core/RelativeClauses.lean:87-93` hard-codes RC =
+`Syntax/HPSG/RelativeClauses.lean:87-93` hard-codes RC =
 modifier (`isMod = true`, theorem `relClause_is_modifier`). @cite{deal-2026}'s
 analysis of Nez Perce REs as *complement* CPs (not modifier RCs) sits
 incompatibly with this Minimalist-only framing: HPSG would either need to
