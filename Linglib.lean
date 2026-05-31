@@ -2067,6 +2067,7 @@ import Linglib.Semantics.Dynamic.DRS.Defs
 import Linglib.Semantics.Dynamic.DRS.Basic
 import Linglib.Semantics.Dynamic.DRS.Semantics
 import Linglib.Semantics.Dynamic.DRS.Reduction
+import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.DRT.Basic
 import Linglib.Semantics.Dynamic.Effects.Bilateral
 import Linglib.Semantics.Dynamic.Bilateral.BUS
