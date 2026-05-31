@@ -138,9 +138,9 @@ instance {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
     Decidable (necessity f e allW p w) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- Duality: □_{f(e)} p ↔ ¬◇_{f(e)} ¬p. One of five sibling `theorem duality`s
-    (see `Semantics/Modality/Kratzer/Operators.lean::duality` for the
-    unification opportunity via `Core.Logic.Aristotelian.Square.fromBox`). -/
+/-- Duality: □_{f(e)} p ↔ ¬◇_{f(e)} ¬p. One of five sibling `theorem duality`s —
+    the box–diamond duality underlying the modal square of opposition
+    (`Core.Logic.Intensional.modalSquare_relations`). -/
 theorem duality {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
     (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
     necessity f e allW p w ↔ ¬ possibility f e allW (λ w' => ¬ p w') w := by
