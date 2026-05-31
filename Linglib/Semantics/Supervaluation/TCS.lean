@@ -2,7 +2,7 @@ import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Logic.Function.Basic
@@ -48,12 +48,12 @@ relation `~_P`. The strict and tolerant satisfaction operators are
 exactly the modal `□` and `◇` over `~_P`, applied to the classical
 extension of `P`:
 
-- `strict P at a` ≡ `boxR (~_P) I(P) a` (Definition 9)
-- `tolerant P at a` ≡ `diamondR (~_P) I(P) a` (Definition 9)
+- `strict P at a` ≡ `box (~_P) I(P) a` (Definition 9)
+- `tolerant P at a` ≡ `diamond (~_P) I(P) a` (Definition 9)
 
-The s ⊆ c ⊆ t hierarchy is the **T axiom** instantiated at `boxR`
-(`Core.Logic.Intensional.boxR_T`); the t/s duality is the standard
-modal de Morgan `boxR R ¬p ↔ ¬diamondR R p`. T-models satisfy
+The s ⊆ c ⊆ t hierarchy is the **T axiom** instantiated at `box`
+(`Core.Logic.Modal.box_T`); the t/s duality is the standard
+modal de Morgan `box R ¬p ↔ ¬diamond R p`. T-models satisfy
 `frameConditions Logic.KTB` by construction (Definition 4 of
 @cite{cobreros-etal-2012}); see `TModel.satisfies_KTB` for the explicit
 witness. The Brouwersche axiom B / symmetric-frame correspondence is
@@ -128,8 +128,8 @@ is addressed in that Studies file's §8-§9.
 namespace Semantics.Supervaluation.TCS
 
 open Core.Duality (Truth3)
-open Core.Logic.Intensional
-  (AccessRel IsKTBFrame IsSerial boxR diamondR boxR_T Logic)
+open Core.Logic.Modal
+  (AccessRel IsKTBFrame IsSerial box diamond box_T Logic)
 open Core.Logic.ThreeValuedLogic (PropFormula MVModel mvEval lpSat k3Sat
   isLPDesignated isK3Designated lpSat_neg_iff k3Sat_neg_iff
   lpSat_conj k3Sat_conj)
@@ -152,7 +152,7 @@ open Semantics.Supervaluation (SpecSpace superTrue
     look like c, but a need not look like c.
 
     Following the modal-logic tradition, the similarity relation is
-    `Prop`-valued so that it integrates directly with `boxR`/`diamondR`.
+    `Prop`-valued so that it integrates directly with `box`/`diamond`.
     Decidability is added per-model where computation is needed. -/
 structure TModel (D Pred : Type*) where
   /-- Classical interpretation `I : Pred → D → Prop`. -/
@@ -177,7 +177,7 @@ variable {D Pred : Type*}
 
 /-- The similarity relation as an `AccessRel` — the Kripke frame
     associated with each predicate. By construction this frame is
-    reflexive + symmetric, i.e., a **KTB frame** (`Core.Logic.Intensional.Logic.KTB`). -/
+    reflexive + symmetric, i.e., a **KTB frame** (`Core.Logic.Modal.Logic.KTB`). -/
 @[reducible] def simAccess (M : TModel D Pred) (P : Pred) : AccessRel D := M.sim P
 
 /-- Per-`(M, P)` KTB-frame instance: lets typeclass search reach
@@ -230,26 +230,26 @@ variable {D Pred : Type*}
 
 /-- **Strict** atomic satisfaction: `P` holds at every `~_P`-neighbour
     of `a`. Definition 9, atomic clause for `⊨ˢ`. Modal-logic-wise,
-    this is `boxR (M.simAccess P)` over the classical extension. -/
+    this is `box (M.simAccess P)` over the classical extension. -/
 def StrictAt (M : TModel D Pred) (P : Pred) (a : D) : Prop :=
   ∀ d, M.sim P a d → M.interp P d
 
 /-- **Tolerant** atomic satisfaction: `P` holds at some `~_P`-neighbour
     of `a`. Definition 9, atomic clause for `⊨ᵗ`. Modal-logic-wise,
-    this is `diamondR (M.simAccess P)` over the classical extension. -/
+    this is `diamond (M.simAccess P)` over the classical extension. -/
 def TolerantAt (M : TModel D Pred) (P : Pred) (a : D) : Prop :=
   ∃ d, M.sim P a d ∧ M.interp P d
 
-/-- **Strict atom = `boxR` over the similarity frame.** This is
+/-- **Strict atom = `box` over the similarity frame.** This is
     definitionally true; the lemma exists to expose the modal-logic
-    framing and to let downstream proofs invoke `boxR_T`/`boxR_B`
+    framing and to let downstream proofs invoke `box_T`/`box_B`
     directly. -/
-theorem strictAt_eq_boxR (M : TModel D Pred) (P : Pred) (a : D) :
-    StrictAt M P a = boxR (M.simAccess P) (λ d => M.interp P d) a := rfl
+theorem strictAt_eq_box (M : TModel D Pred) (P : Pred) (a : D) :
+    StrictAt M P a = box (M.simAccess P) (λ d => M.interp P d) a := rfl
 
-/-- **Tolerant atom = `diamondR` over the similarity frame.** Definitional. -/
-theorem tolerantAt_eq_diamondR (M : TModel D Pred) (P : Pred) (a : D) :
-    TolerantAt M P a = diamondR (M.simAccess P) (λ d => M.interp P d) a := rfl
+/-- **Tolerant atom = `diamond` over the similarity frame.** Definitional. -/
+theorem tolerantAt_eq_diamond (M : TModel D Pred) (P : Pred) (a : D) :
+    TolerantAt M P a = diamond (M.simAccess P) (λ d => M.interp P d) a := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. Lemma 1 atomic (extension hierarchy, p. 357)
@@ -260,7 +260,7 @@ theorem tolerantAt_eq_diamondR (M : TModel D Pred) (P : Pred) (a : D) :
     `~_P`. This is the **T axiom** instantiated. -/
 theorem StrictAt.imp_classical (M : TModel D Pred) (P : Pred) (a : D)
     (hs : StrictAt M P a) : M.interp P a :=
-  boxR_T (M.simAccess P) _ a hs
+  box_T (M.simAccess P) _ a hs
 
 /-- **Classical ⟹ tolerant** at the atomic level: `a` itself
     witnesses the existential by reflexivity of `~_P`. -/

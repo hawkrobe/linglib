@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Logic.Intensional.Defs
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Defs
+import Linglib.Core.Logic.Modal.Basic
 import Linglib.Semantics.Modality.EpistemicLogic
 
 /-!
@@ -28,8 +28,8 @@ commitment to belief.
 
 namespace Discourse.Commitment.Frame
 
-open Core.Logic.Intensional (AccessRel AgentAccessRel IsKD45Frame IsK4EuclFrame
-  IsEuclidean boxR diamondR boxR_K boxR_four)
+open Core.Logic.Modal (AccessRel AgentAccessRel IsKD45Frame IsK4EuclFrame
+  IsEuclidean box diamond box_K box_four)
 open Semantics.Modality.EpistemicLogic (knows)
 
 /-- Pair-indexed deontic accessibility: `commitment a b w v` means at
@@ -124,25 +124,25 @@ variable {W : Type*} {A : Type*}
 def Believes (c : CommitmentState W A) (a : A) (π : Set W) (w : W) : Prop :=
   knows c.belief a (fun v => v ∈ π) w
 
-theorem Believes_eq_boxR (c : CommitmentState W A) (a : A) (π : Set W) (w : W) :
-    Believes c a π w ↔ boxR (c.belief a) (fun v => v ∈ π) w := Iff.rfl
+theorem Believes_eq_box (c : CommitmentState W A) (a : A) (π : Set W) (w : W) :
+    Believes c a π w ↔ box (c.belief a) (fun v => v ∈ π) w := Iff.rfl
 
 /-- `a` committed towards `b` to `π` at `w`: every `O_{a,b}`-accessible
     world from `w` lies in `π`. K4 + Eucl. (Stalnaker 1984). -/
 def Committed (c : CommitmentState W A) (a b : A) (π : Set W) (w : W) : Prop :=
-  boxR (c.commitment a b) (fun v => v ∈ π) w
+  box (c.commitment a b) (fun v => v ∈ π) w
 
 /-- Belief satisfies the 4 axiom (positive introspection). -/
 theorem believes_four (c : CommitmentState W A) (a : A) (π : Set W) (w : W)
     (h : Believes c a π w) :
     Believes c a (fun v => Believes c a π v) w :=
-  boxR_four (c.belief a) (fun v => v ∈ π) w h
+  box_four (c.belief a) (fun v => v ∈ π) w h
 
 /-- Commitment satisfies the 4 axiom. -/
 theorem committed_four (c : CommitmentState W A) (a b : A) (π : Set W) (w : W)
     (h : Committed c a b π w) :
     Committed c a b (fun v => Committed c a b π v) w :=
-  boxR_four (c.commitment a b) (fun v => v ∈ π) w h
+  box_four (c.commitment a b) (fun v => v ∈ π) w h
 
 /-! ### Frame conditions linking belief and commitment -/
 

@@ -1432,7 +1432,7 @@ section TtrKratzerBridge
 
 open Semantics.Modality.Kratzer (ModalBase OrderingSource bestWorlds
   necessity possibility)
-open Core.Logic.Intensional (boxR diamondR)
+open Core.Logic.Modal (box diamond)
 
 variable {W : Type}
 
@@ -1453,7 +1453,7 @@ Kratzer-derived topos coincides with Kratzer's `necessity f g p w`. -/
 theorem kratzer_topos_nec_iff (f : ModalBase W) (g : OrderingSource W)
     (w : W) (p : W → Prop) :
     (kratzerToTopos f g w p).inducedNec ↔ necessity f g p w := by
-  unfold Topos.inducedNec necessity boxR
+  unfold Topos.inducedNec necessity box
   refine ⟨fun h v hv => ?_, fun h s => ?_⟩
   · exact (h ⟨v, hv⟩).some.down
   · exact ⟨PLift.up (h s.val s.property)⟩
@@ -1463,7 +1463,7 @@ Kratzer-derived topos coincides with Kratzer's `possibility f g p w`. -/
 theorem kratzer_topos_poss_iff (f : ModalBase W) (g : OrderingSource W)
     (w : W) (p : W → Prop) :
     (kratzerToTopos f g w p).inducedPoss ↔ possibility f g p w := by
-  unfold Topos.inducedPoss possibility diamondR
+  unfold Topos.inducedPoss possibility diamond
   refine ⟨fun ⟨s, h⟩ => ⟨s.val, s.property, h.some.down⟩,
           fun ⟨v, hv, hp⟩ => ⟨⟨v, hv⟩, ⟨PLift.up hp⟩⟩⟩
 

@@ -40,7 +40,7 @@ import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Features.Aktionsart

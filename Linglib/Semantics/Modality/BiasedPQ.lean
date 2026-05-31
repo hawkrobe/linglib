@@ -329,7 +329,7 @@ def evidentialPossibility (f : EvidentialBiasFlavor W) (p : Set W) (w : W) : Pro
 
 /-- □_ev satisfies modal duality. One of five sibling `theorem duality`s — the
     box–diamond duality underlying the modal square of opposition
-    (`Core.Logic.Intensional.modalSquare_relations`). -/
+    (`Core.Logic.Modal.modalSquare_relations`). -/
 theorem evidentialBias_duality (f : EvidentialBiasFlavor W) (p : Set W) (w : W) :
     evidentialNecessity f p w ↔ ¬ evidentialPossibility f (fun w' => ¬ p w') w := by
   unfold evidentialNecessity evidentialPossibility

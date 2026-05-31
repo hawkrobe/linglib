@@ -1,6 +1,6 @@
 import Linglib.Morphology.MorphRule
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Mathlib.Data.Fin.Basic
 
 -- ============================================================================
@@ -322,14 +322,14 @@ if *-n't* is an affix, it forms a lexical unit with the auxiliary, and
 lexical items can have idiosyncratic scope properties. If *-n't* were
 a clitic (a reduced form of *not*), its scope should always match *not*.
 
-We formalize this using `boxR`/`diamondR` from
+We formalize this using `box`/`diamond` from
 `Core.Logic.Intensional`: a Kripke countermodel exhibits
 an accessibility relation under which the two scope readings diverge. -/
 
 section ScopeBridge
 
 open Semantics.Modality (ModalForce)
-open Core.Logic.Intensional (AccessRel boxR diamondR)
+open Core.Logic.Modal (AccessRel box diamond)
 
 abbrev World := Fin 4
 
@@ -416,11 +416,11 @@ accesses worlds where P differs, ◇P and ◇¬P are both true, so
 theorem neg_over_poss_ne_poss_over_neg :
     ∃ (R : AccessRel World),
     ¬(∀ (p : World → Prop) (w : World),
-      ¬ diamondR R p w ↔ diamondR R (fun w' => ¬ p w') w) := by
+      ¬ diamond R p w ↔ diamond R (fun w' => ¬ p w') w) := by
   refine ⟨kripkeR, ?_⟩
   intro h
   have := h witnessP (0 : World)
-  simp [diamondR, kripkeR, witnessP] at this
+  simp [diamond, kripkeR, witnessP] at this
 
 /-- NOT(MUST(P)) and MUST(NOT(P)) are not equivalent in general.
 
@@ -430,11 +430,11 @@ necessarily false (□¬P = false when P holds at w1). -/
 theorem neg_over_nec_ne_nec_over_neg :
     ∃ (R : AccessRel World),
     ¬(∀ (p : World → Prop) (w : World),
-      ¬ boxR R p w ↔ boxR R (fun w' => ¬ p w') w) := by
+      ¬ box R p w ↔ box R (fun w' => ¬ p w') w) := by
   refine ⟨kripkeR, ?_⟩
   intro h
   have := h witnessP (0 : World)
-  simp [boxR, kripkeR, witnessP] at this
+  simp [box, kripkeR, witnessP] at this
 
 end ScopeBridge
 

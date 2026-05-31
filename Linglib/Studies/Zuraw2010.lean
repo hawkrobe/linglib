@@ -294,14 +294,11 @@ def subProb (c : StemC) : ℚ :=
 -- ============================================================================
 
 /-- The substrate-derived closed-form rate: `subProb c = |Y_c ∩ D_c| / |D_c|`,
-    where `Y_c = yesFav c` and `D_c = relevant c`. Combines `pocPredict`'s
-    discrete-PO unfolding with `picksAt_rate_eq` (substrate). -/
+    where `Y_c = yesFav c` and `D_c = relevant c`. Direct application of
+    `pocPredict_discrete_binary_rate`. -/
 private theorem subProb_eq_rate (c : StemC) :
-    subProb c = ((yesFav c ∩ relevant c).card : ℚ) / (relevant c).card := by
-  unfold subProb pocPredict
-  rw [consistentTotalOrders_discrete, Finset.card_univ,
-      Fintype.card_perm, Fintype.card_fin]
-  exact picksAt_rate_eq nsCands vp c .yes .no
+    subProb c = ((yesFav c ∩ relevant c).card : ℚ) / (relevant c).card :=
+  pocPredict_discrete_binary_rate nsCands vp c .yes .no
     (nsCands_two c) (fun heq => SubSt.noConfusion heq)
     (relevant c) (yesFav c)
     (fun k => by simp [relevant])

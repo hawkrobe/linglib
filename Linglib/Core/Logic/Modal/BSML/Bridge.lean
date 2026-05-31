@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Modal.BSML.Defs
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 
 /-!
 # BSML–CML Bridge
@@ -217,7 +217,7 @@ theorem neFree_flat (M : BSMLModel W Atom)
 -- §5: BSML–CML Type Bridge
 -- ============================================================================
 
-open Core.Logic.Intensional (diamondR)
+open Core.Logic.Modal (diamond)
 
 /-!
 ### Accessibility Type Bridge
@@ -231,16 +231,16 @@ canonical accessibility-relation type in
 /-- Convert BSML accessibility (`Finset`-valued) to a classical Prop-valued
     accessibility relation. -/
 def BSMLModel.toAccessRel (M : BSMLModel W Atom) :
-    Core.Logic.Intensional.AccessRel W :=
+    Core.Logic.Modal.AccessRel W :=
   fun w v => v ∈ M.access w
 
-/-- `classicalEval` of ◇φ agrees with `diamondR` (Prop-valued possibility),
+/-- `classicalEval` of ◇φ agrees with `diamond` (Prop-valued possibility),
     connecting BSML's classical evaluation to the shared modal logic
     infrastructure from `Core.Logic.Intensional`. -/
-theorem classicalEval_agrees_diamondR_poss
+theorem classicalEval_agrees_diamond_poss
     (M : BSMLModel W Atom) (φ : BSMLFormula Atom) (w : W) :
     classicalEval M (.poss φ) w = true ↔
-    diamondR M.toAccessRel (fun v => classicalEval M φ v = true) w := by
-  simp only [classicalEval, decide_eq_true_eq, diamondR, BSMLModel.toAccessRel]
+    diamond M.toAccessRel (fun v => classicalEval M φ v = true) w := by
+  simp only [classicalEval, decide_eq_true_eq, diamond, BSMLModel.toAccessRel]
 
 end Core.Logic.Modal.BSML

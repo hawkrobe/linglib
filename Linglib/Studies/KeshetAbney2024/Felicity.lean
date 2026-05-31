@@ -57,7 +57,7 @@ world and assignment consistent with γ.
 
 namespace KeshetAbney2024.PIP.Felicity
 
-open Core.Logic.Intensional (AccessRel boxR diamondR)
+open Core.Logic.Modal (AccessRel box diamond)
 
 variable {W : Type*}
 
@@ -308,7 +308,7 @@ theorem existsF_forallF_felicity_agree (body : D → PIPExprF W D) (w : W) :
     (PIPExprF.forall_ body).felicitous w := rfl
 
 /-- F(□_R φ) iff φ is felicitous at every R-accessible world.
-    Holds by definition (`must` felicity is `boxR`). -/
+    Holds by definition (`must` felicity is `box`). -/
 theorem mustF_felicitous_iff (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.must R φ).felicitous w ↔ ∀ w', R w w' → φ.felicitous w' :=
   Iff.rfl
@@ -371,7 +371,7 @@ theorem mustF_presup_factored
     (PIPExprF.must R (PIPExprF.presup φ ψ)).felicitous w ↔
     (∀ w', R w w' → φ.felicitous w') ∧
     (∀ w', R w w' → ψ w') := by
-  simp only [PIPExprF.felicitous, boxR]
+  simp only [PIPExprF.felicitous, box]
   exact ⟨fun h => ⟨fun w' hw' => (h w' hw').1, fun w' hw' => (h w' hw').2⟩,
          fun ⟨h1, h2⟩ w' hw' => ⟨h1 w' hw', h2 w' hw'⟩⟩
 
@@ -381,7 +381,7 @@ theorem mightF_presup_factored
     (PIPExprF.might R (PIPExprF.presup φ ψ)).felicitous w ↔
     (∀ w', R w w' → φ.felicitous w') ∧
     (∀ w', R w w' → ψ w') := by
-  simp only [PIPExprF.felicitous, boxR]
+  simp only [PIPExprF.felicitous, box]
   exact ⟨fun h => ⟨fun w' hw' => (h w' hw').1, fun w' hw' => (h w' hw').2⟩,
          fun ⟨h1, h2⟩ w' hw' => ⟨h1 w' hw', h2 w' hw'⟩⟩
 

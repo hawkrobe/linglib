@@ -524,6 +524,27 @@ theorem picksAt_rate_eq
   rw [h_D_eq, h_Y_eq]
   exact Core.Constraint.PermSubsetCombinatorics.perm_filter_head_in_rate _ _
 
+/-- **Closed-form rate for `pocPredict` under the discrete partial order**
+    with binary candidate sets: `pocPredict cands vp (.discrete n) i chosen
+    = |Y ∩ D| / |D|`. Composes `pocPredict_discrete` with `picksAt_rate_eq`,
+    absorbing the `Fintype.card_perm`/`Fintype.card_fin` arithmetic bridge.
+
+    This is the user-facing rate identity every binary-candidate POC study
+    wants. Consumed by `Studies/CoetzeePater2011.lean` (3 contexts),
+    `Studies/Anttila1997.lean` (2 grammar tiers), and
+    `Studies/Zuraw2010.lean`. -/
+theorem pocPredict_discrete_binary_rate
+    (cands : Input → Finset Output) (vp : Input → Output → Fin n → ℕ)
+    (i : Input) (chosen other : Output)
+    (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
+    (D Y : Finset (Fin n))
+    (h_D : ∀ k, k ∈ D ↔ vp i chosen k ≠ vp i other k)
+    (h_Y : ∀ k, k ∈ Y ↔ vp i chosen k < vp i other k) :
+    pocPredict cands vp (discrete n) i chosen =
+    ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
+  rw [pocPredict_discrete, Finset.card_univ, Fintype.card_perm, Fintype.card_fin]
+  exact picksAt_rate_eq cands vp i chosen other h_two h_ne D Y h_D h_Y
+
 end PartialOrderConstraints
 
 end Core.Constraint

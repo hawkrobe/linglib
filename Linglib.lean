@@ -59,11 +59,11 @@ import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Core.Logic.Intensional.Conjunction
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Core.Logic.Modal.Defs
 import Linglib.Core.Logic.Intensional.Quantification
 import Linglib.Core.Logic.Intensional.Algebra
 import Linglib.Core.Logic.Intensional.CategoryType
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Linglib.Core.Logic.Intensional.Premise
 import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
 import Linglib.Core.Logic.Intensional.Situations
@@ -644,7 +644,6 @@ import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Conditionals
 import Linglib.Fragments.English.Phonology
-import Linglib.Fragments.English.TDDeletion
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.Morph
 import Linglib.Fragments.English.Negation
