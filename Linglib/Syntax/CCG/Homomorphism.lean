@@ -1,4 +1,10 @@
-/-
+import Linglib.Syntax.CCG.Basic
+import Linglib.Syntax.CCG.Interface
+import Linglib.Syntax.CCG.Combinators
+import Linglib.Core.Logic.Intensional.Frame
+import Linglib.Semantics.Composition.ToyDomain
+
+/-!
 # CCG-Montague Homomorphism
 
 Syntax-semantics mapping in CCG is structure-preserving: every syntactic rule
@@ -10,14 +16,7 @@ corresponds to a semantic operation.
 - `fappSem`, `bappSem`: Semantic rules for application
 - `fcompSem`: Semantic rule for composition (B combinator)
 - `HomomorphismProperty`: Structure encoding rule-to-rule correspondence
-
 -/
-
-import Linglib.Syntax.CCG.Basic
-import Linglib.Syntax.CCG.Interface
-import Linglib.Syntax.CCG.Combinators
-import Linglib.Core.Logic.Intensional.Frame
-import Linglib.Semantics.Composition.ToyDomain
 
 namespace CCG.Homomorphism
 
@@ -170,37 +169,6 @@ example :
     let sees_meaning : toyModel.Denot (catToTy TV) := ToyLexicon.sees_sem
     let mary_meaning : toyModel.Denot (catToTy NP) := ToyEntity.mary
     fappSem sees_meaning mary_meaning = sees_meaning mary_meaning := rfl
-
-/-- "John sees Mary" derivation structure. -/
-example :
-    let john_meaning : toyModel.Denot (catToTy NP) := ToyEntity.john
-    let sees_meaning : toyModel.Denot (catToTy TV) := ToyLexicon.sees_sem
-    let mary_meaning : toyModel.Denot (catToTy NP) := ToyEntity.mary
-    let sees_mary := fappSem sees_meaning mary_meaning
-    let john_sees_mary := bappSem john_meaning sees_mary
-    john_sees_mary := trivial
-
-/-- Rule-to-rule relation: each syntactic rule has unique semantic rule. -/
-structure RuleToRuleRelation where
-  fapp_rule : ∀ {F : Frame} {x y : Cat}
-    (f : F.Denot (catToTy (x.rslash y)))
-    (a : F.Denot (catToTy y)),
-    ∃! (result : F.Denot (catToTy x)), result = f a
-  bapp_rule : ∀ {F : Frame} {x y : Cat}
-    (a : F.Denot (catToTy y))
-    (f : F.Denot (catToTy (x.lslash y))),
-    ∃! (result : F.Denot (catToTy x)), result = f a
-  comp_rule : ∀ {F : Frame} {x y z : Cat}
-    (f : F.Denot (catToTy (x.rslash y)))
-    (g : F.Denot (catToTy (y.rslash z))),
-    ∃! (result : F.Denot (catToTy (x.rslash z))),
-      ∀ arg, result arg = f (g arg)
-
-/-- CCG satisfies rule-to-rule. -/
-def ccgRuleToRule : RuleToRuleRelation where
-  fapp_rule := λ f a => ⟨f a, rfl, λ _ h => h⟩
-  bapp_rule := λ a f => ⟨f a, rfl, λ _ h => h⟩
-  comp_rule := λ f g => ⟨λ arg => f (g arg), λ _ => rfl, λ _ h => funext h⟩
 
 /-- Monotonic grammars preserve well-formedness. -/
 def Monotonic (combine : DerivStep → DerivStep → Option DerivStep) : Prop :=
