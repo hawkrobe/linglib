@@ -1,16 +1,16 @@
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Mandarin relativization profile
 
-Typological-summary `RelativizationProfile` for Mandarin (ISO `cmn`).
+Typological-summary `RelativeClause.Profile` for Mandarin (ISO `cmn`).
 -/
 
 namespace Fragments.Mandarin
 
 /-- Mandarin relativization: gap + relativizer *de*; pre-nominal RC
     (SVO main clause but RC-N order). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .gap
   , rcPosition := .preNominal

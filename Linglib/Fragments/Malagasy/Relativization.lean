@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Malagasy Relativization Fragment
@@ -18,12 +18,12 @@ Data from @cite{keenan-comrie-1977} Table 1.
 
 namespace Fragments.Malagasy
 
-open Core
+open RelativeClause
 
 /-- Gap construction. Postnominal RC. Only the pivot (subject) can be
     relativized. Voice alternation required for underlying non-subjects.
     E.g., "ny lehilahy [izay nandao _]" 'the man [that left _]'. -/
-def relGap : RelClauseMarker :=
+def relGap : Marker :=
   { form := "izay/∅"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -32,10 +32,10 @@ def relGap : RelClauseMarker :=
   , notes := "Only pivot (subject) relativizable; voice alternation for non-SU" }
 
 /-- All Malagasy relative clause markers. -/
-def relMarkers : List RelClauseMarker := [relGap]
+def relMarkers : List Marker := [relGap]
 
 /-- Malagasy relativization profile (typological summary). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .notRelativizable
   , rcPosition := .postNominal

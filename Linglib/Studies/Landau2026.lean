@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Basic
+import Linglib.Typology.RelativeClause.Basic
 import Linglib.Fragments.Hebrew.Relativization
 
 /-!
@@ -49,7 +49,7 @@ EIR diagnoses contested "mixed anaphors" as deep:
 
 namespace Landau2026
 
-open Core
+open RelativeClause
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 1: Types
@@ -412,7 +412,7 @@ theorem mixed_anaphors_deep :
 
 /-- Hebrew has a productive resumptive strategy in relativization
     — the prerequisite for applying the EIR test. The same
-    resumptive pronoun type that `Core.NPRelType.resumptive` models
+    resumptive pronoun type that `RelativeClause.NPRelType.resumptive` models
     for relative clauses is what the EIR test probes for inside
     ellipsis sites. -/
 theorem hebrew_has_resumptive_strategy :
@@ -423,12 +423,12 @@ theorem hebrew_has_resumptive_strategy :
     where possessive resumptive pronouns (the most common type
     in the EIR data) sit. -/
 theorem resumptive_covers_genitive :
-    Fragments.Hebrew.relSheResumptive.covers .genitive = true := rfl
+    Fragments.Hebrew.relSheResumptive.Covers .genitive := by decide
 
 /-- The gap strategy does NOT cover genitive — this is why
     possessive dependencies in Hebrew require resumption, making
     the EIR test applicable. -/
 theorem gap_excludes_genitive :
-    Fragments.Hebrew.relSheGap.covers .genitive = false := rfl
+    ¬ Fragments.Hebrew.relSheGap.Covers .genitive := by decide
 
 end Landau2026
