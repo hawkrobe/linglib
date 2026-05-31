@@ -1,11 +1,21 @@
-/-
+/-!
 # Combinatory Categorial Grammar (CCG)
 
-Lexicalized grammar with categories encoding argument structure and
-combinatory rules (>, <, B, T, S) deriving phrases.
+A lexicalized grammar in which categories encode argument structure and a small fixed
+set of combinatory rules (`>`, `<`, `B`, `T`, `S`) derive phrases (@cite{steedman-2000}).
 
-- @cite{steedman-2000}. The Syntactic Process.
--. Combinatory Categorial Grammar.
+## Main definitions
+
+- `CCG.Cat` — categories: atoms plus the directional slashes `/` and `\`
+- `CCG.combine` — try every combinatory rule on a pair of categories
+- `CCG.DerivStep` — a derivation tree; `DerivStep.cat` reads off its category and
+  `DerivStep.yield` the surface string it spells out
+
+## Notation
+
+`/` and `\` build directional slash categories. Because `/` overloads Lean's
+division, categories are written fully parenthesized (`(S \ NP) / NP`) rather than
+relying on the Steedman left-to-right reading.
 -/
 
 namespace CCG
@@ -162,6 +172,22 @@ def DerivStep.cat : DerivStep → Option Cat
     let c2 ← d2.cat
     coordinate c1 c2
 
+/-- The surface string a derivation spells out: its leaf forms, left to right.
+
+Combinatory rules concatenate their daughters and type-raising leaves the string
+untouched, so the yield is independent of the derivation's combinatory structure —
+the property that lets a CCG derivation witness a string language. (Coordination
+elides the conjunction word, which `DerivStep.coord` does not carry.) -/
+def DerivStep.yield : DerivStep → List String
+  | .lex e => [e.form]
+  | .fapp d1 d2 => d1.yield ++ d2.yield
+  | .bapp d1 d2 => d1.yield ++ d2.yield
+  | .fcomp d1 d2 => d1.yield ++ d2.yield
+  | .bcomp d1 d2 => d1.yield ++ d2.yield
+  | .ftr d _ => d.yield
+  | .btr d _ => d.yield
+  | .coord d1 d2 => d1.yield ++ d2.yield
+
 end Derivations
 
 section Examples
@@ -221,6 +247,10 @@ example : derivesS john_sees_mary = true := rfl
 example : derivesS the_cat_sleeps = true := rfl
 example : derivesS the_big_cat_sleeps = true := rfl
 
+-- The yield reads the surface string off a derivation.
+example : john_sees_mary.yield = ["John", "sees", "Mary"] := rfl
+example : the_big_cat_sleeps.yield = ["the", "big", "cat", "sleeps"] := rfl
+
 end Examples
 
 section NonConstituentCoordination
@@ -238,6 +268,11 @@ def john_likes_and_mary_hates_beans : DerivStep :=
   .fapp john_likes_and_mary_hates (.lex ⟨"beans", NP⟩)
 
 example : derivesS john_likes_and_mary_hates_beans = true := rfl
+
+-- Non-constituent coordination still spells out the full surface string
+-- (the conjunction is elided in the `coord` representation).
+example : john_likes_and_mary_hates_beans.yield
+            = ["John", "likes", "Mary", "hates", "beans"] := rfl
 
 end NonConstituentCoordination
 

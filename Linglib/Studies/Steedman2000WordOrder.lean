@@ -1,4 +1,4 @@
-import Linglib.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Basic
 import Linglib.Phenomena.WordOrder.Basic
 
 /-!

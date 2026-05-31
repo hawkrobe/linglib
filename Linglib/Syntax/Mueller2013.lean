@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.CombinationSchemata
 import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.HPSG.Core.HeadFiller
 import Linglib.Syntax.HPSG.Core.LexicalRules
-import Linglib.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 
