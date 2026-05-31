@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.TraceInterpretation
 import Linglib.Syntax.Minimalist.Basic
+import Linglib.Typology.RelativeClause.Basic
 
 /-!
 # Relative Clause Semantics: A Worked Example
@@ -38,6 +39,7 @@ namespace Minimalist.RelativeClauses
 
 open Core.Logic.Intensional Core.Logic.Intensional.Variables Semantics.Composition.Modification
 open Minimalist
+open RelativeClause (AHPosition NPRelType)
 
 -- ============================================================================
 -- Example Model: Reading Scenario
@@ -163,6 +165,18 @@ theorem cp_meaning_correct (g : Core.Assignment readModel.Entity) (x : ReadEntit
   simp only [cp_relativeClause, predicateAbstraction, lambdaAbsG,
              ip_johnReadTrace, applyG, vp_readTrace, constDenot, john_sem,
              trace1, interpTrace, interpPronoun, update_same]
+
+/-- The framework-neutral descriptive profile this Minimalist derivation
+    realizes, projected onto `Typology/RelativeClause/Basic.lean`. The trace
+    `t₁` sits in the *object* slot of `read` (`vp_readTrace` feeds `trace1` as
+    `read_sem`'s first argument) → `directObject`; it is a fully-interpreted
+    bound trace, not a resumptive pronoun → `gap`. The trace+predicate-abstraction
+    *mechanism* is Minimalism-specific; only this profile is shared. -/
+def cp_relativeClause_profile : AHPosition × NPRelType := (.directObject, .gap)
+
+/-- "The book that John read ___" is an object-relative gap. -/
+theorem cp_relativeClause_profile_eq :
+    cp_relativeClause_profile = (.directObject, .gap) := rfl
 
 -- ============================================================================
 -- Combining with Head Noun: "book that John read"
