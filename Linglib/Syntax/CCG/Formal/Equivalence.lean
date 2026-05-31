@@ -35,6 +35,7 @@ namespace CCG.Equivalence
 
 open CCG
 open CCG.Combinators
+open Combinator (B T)
 open Core.Logic.Intensional
 
 -- Semantic Equivalence

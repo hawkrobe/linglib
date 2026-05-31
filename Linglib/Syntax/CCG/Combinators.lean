@@ -24,10 +24,9 @@ open CCG
 open Core.Logic.Intensional
 open Combinator
 
--- The `B`/`T`/`S`/`I`/`K`/`C` algebra now lives in `Core/Combinator/Basic.lean`.
--- Re-export it under this namespace so existing `open CCG.Combinators` consumers
--- continue to resolve the bare combinator names.
-export Combinator (B T S I K C)
+-- The `B`/`T`/`S`/`I`/`K`/`C` algebra lives in `Core/Combinator/Basic.lean` (namespace
+-- `Combinator`). `B`/`T` are used bare via `open Combinator`; the combinator `S` is written
+-- `Combinator.S` to keep it distinct from the sentence category `CCG.S`.
 
 section CCGCorrespondence
 
@@ -65,7 +64,7 @@ theorem btr_type_is_T (x t : Cat) :
 theorem crossed_comp_is_S {F : Frame} {x y z : Cat}
     (f_sem : F.Denot (catToTy ((x.rslash y).rslash z)))
     (g_sem : F.Denot (catToTy (y.rslash z))) :
-    (λ arg => f_sem arg (g_sem arg)) = S f_sem g_sem := rfl
+    (λ arg => f_sem arg (g_sem arg)) = Combinator.S f_sem g_sem := rfl
 
 /-- Forward application via T: f a = T a f. -/
 theorem fapp_via_T {F : Frame} {x y : Cat}
@@ -164,7 +163,7 @@ structure CombinatorCorrespondence where
   ftr_T : ∀ {α β : Type} (a : α) (f : α → β), T a f = f a
   /-- Crossed composition is S -/
   xcomp_S : ∀ {α β γ : Type} (f : α → β → γ) (g : α → β) (x : α),
-    (λ z => f z (g z)) x = S f g x
+    (λ z => f z (g z)) x = Combinator.S f g x
 
 /-- The CCG-combinator correspondence holds -/
 def ccgCombinatorCorrespondence : CombinatorCorrespondence where
@@ -318,11 +317,11 @@ This rule handles parasitic gaps: "articles which I will file without reading"
 
 /-- Steedman's definition of S (p. 57): Sfgx ≡ fx(gx) -/
 theorem steedman_S_def {α β γ : Type} (f : α → β → γ) (g : α → β) (x : α) :
-    S f g x = f x (g x) := rfl
+    Combinator.S f g x = f x (g x) := rfl
 
 /-- S distributes the argument to both functions -/
 theorem S_distributes {α β γ : Type} (f : α → β → γ) (g : α → β) :
-    S f g = λ x => f x (g x) := rfl
+    Combinator.S f g = λ x => f x (g x) := rfl
 
 /-
 ## The Complete Combinatory Rule System

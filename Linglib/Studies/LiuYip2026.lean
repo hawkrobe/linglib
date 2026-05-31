@@ -435,7 +435,7 @@ have Studies-level Chinese formalizations they currently lack):
   (irreconcilable at substrate level; bridgeable only at the empirical
   prediction level).
 
-- **CCG** (`Syntax/CCG/Core/Basic.lean`, `Scope.lean`): scope
+- **CCG** (`Syntax/CCG/Basic.lean`, `Scope.lean`): scope
   mismatch is type-shifting + composition. *you*'s skipping naturally
   maps to forward composition; no movement+reconstruction needed. A
   bridge theorem `LiuYip.youSkipping iff CCG.derivableViaComposition`

@@ -22,10 +22,13 @@ aⁿbⁿcⁿ and aⁿbⁿcⁿdⁿ, which are not context-free.
 The "CCG generates a non-context-free language" direction depends critically on the form
 of CCG. @cite{kuhlmann-koller-satta-2015} show that the CCG≡TAG equivalence holds for
 *classical* CCG, where combinatory rules may be **restricted per grammar** (e.g. fired
-only when the target of the primary input category is `S`). *Modern, universal-rule* CCG
-— which is what this subsystem's `CCG.DerivStep` models (unrestricted application,
-composition and type-raising, no rule restrictions) — is strictly *weaker than TAG* and
-does **not** generate these languages.
+only when the target of the primary input category is `S`). For *lexicalized CCG without
+target restrictions* they prove the generative power is strictly *below TAG*. The key
+point is about generating a language *exactly*: without target restrictions a CCG that
+covers `aⁿbⁿcⁿ` also admits extra permuted strings, so it does not generate the language
+`aⁿbⁿcⁿ` itself — it is the target restriction that filters these out. This subsystem's
+`CCG.DerivStep` models the unrestricted, universal-rule variant (no rule restrictions), so
+it is the wrong model for the exact-language construction.
 
 A fully-proven construction of a rule-restricted (classical) CCG that generates aⁿbⁿcⁿ
 is therefore *not* expressible over `DerivStep`; it lives in

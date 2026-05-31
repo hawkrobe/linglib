@@ -23,11 +23,15 @@ show is strictly weaker than TAG.
 
 ## Implementation notes
 
-The rule set here (application; harmonic composition of degree 1–2; crossed composition
-of degree 1) is the fragment used by the constructions in `Studies/KuhlmannKollerSatta2015`
-and `Syntax/CCG/CrossSerial`. The target restriction is fixed to `S`, the common case in
-@cite{kuhlmann-koller-satta-2015} Example 2 and in @cite{steedman-2000}; general VW-CCG
-permits other per-grammar restrictions.
+These rules are the fragment of @cite{kuhlmann-koller-satta-2015}'s rule schema exercised
+by the constructions in `Studies/KuhlmannKollerSatta2015` and `Syntax/CCG/CrossSerial`:
+forward/backward application, forward harmonic composition of degree 1–2, and forward
+crossed composition of degree 1. (The full schema also permits backward composition and
+degree-2 crossed composition; the harmonic/crossed distinction is a consequence of the
+slash directions, not a separate rule class. Those instances are simply not needed here.)
+The target restriction is fixed to `S`, the common case in @cite{kuhlmann-koller-satta-2015}
+Example 2 and in @cite{steedman-2000}; general VW-CCG permits other per-grammar
+restrictions.
 -/
 
 namespace CCG.Classical

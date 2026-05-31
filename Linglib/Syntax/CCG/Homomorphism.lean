@@ -22,6 +22,7 @@ namespace CCG.Homomorphism
 
 open CCG
 open CCG.Combinators
+open Combinator (B T)
 open Core.Logic.Intensional
 open Semantics.Montague
 

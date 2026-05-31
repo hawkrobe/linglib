@@ -1,5 +1,6 @@
 import Linglib.Syntax.CCG.Classical
-import Linglib.Core.Computability.NonContextFree.AnBnCn
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.List.Basic
 
 /-!
 # Classical CCG generates a non-context-free language
@@ -12,10 +13,11 @@ non-context-free language `aⁿbⁿcⁿ`.
 The point is theoretical. @cite{kuhlmann-koller-satta-2015} show that the CCG≡TAG weak
 equivalence holds for *classical* CCG, where combinatory rules may be restricted per
 grammar (here, via the target restriction modelled in `Syntax/CCG/Classical`: every rule
-fires only when the *target* of its primary input category is `S`). Modern universal-rule
-CCG — `Syntax/CCG/Basic`'s `CCG.DerivStep` — is strictly weaker (they prove pure CCG
-without target restrictions is properly below TAG). So this construction genuinely needs
-the restricted model `CCG.Classical`.
+fires only when the *target* of its primary input category is `S`). For lexicalized CCG
+*without* target restrictions they prove the power is strictly below TAG: such a CCG that
+covers `aⁿbⁿcⁿ` also admits extra permuted strings, so it cannot generate the language
+*exactly*. `Syntax/CCG/Basic`'s `CCG.DerivStep` models exactly that unrestricted variant,
+so this construction genuinely needs the restricted model `CCG.Classical`.
 
 Atoms follow the paper (`A, B, C, S`); we realise them with the project's `CCG.Cat` atoms
 as `A = NP`, `B = N`, `C = PP`, `S = S` — abstract placeholders, the content is generative
@@ -158,7 +160,7 @@ theorem peel_yield : ∀ (k : Nat) (d : Derivation),
     have hy : (peelStep d).yield = "a" :: (d.yield ++ ["c"]) := by
       simp [peelStep, Derivation.yield, aLex, cLex]
     rw [hy, List.replicate_succ, List.replicate_succ]
-    simp only [List.cons_append, List.append_assoc, List.singleton_append]
+    simp only [List.cons_append, List.append_assoc]
     exact replicate_cons_comm k "a" _
 
 /-- **Completeness, yield part.** The construction spells out `aⁿbⁿcⁿ`. -/
