@@ -104,12 +104,15 @@ inductive Strategy
   | verbCoding
   deriving DecidableEq, Repr
 
-/-- Does this strategy realize the internal Head by *deleting* it (leaving no
-    overt internal element)? Only the invariant-relativizer strategy and PRO do. -/
-def Strategy.deletesInternalHead : Strategy → Bool
-  | .invariantRelativizer => true
-  | .pro                  => true
-  | _                     => false
+/-- Does this strategy realize the internal Head by *deleting* it under identity
+    with the external Head (the gap + invariant-relativizer case)? Only the
+    invariant-relativizer strategy does. PRO is a null *proform*, not deletion:
+    @cite{cinque-2020} keeps deletion / non-pronunciation distinct from
+    proform-replacement, so PRO is not subject to the exact-match licensing. -/
+def Strategy.DeletesInternalHead (s : Strategy) : Prop := s = .invariantRelativizer
+
+instance (s : Strategy) : Decidable s.DeletesInternalHead := by
+  unfold Strategy.DeletesInternalHead; infer_instance
 
 /-- Project a Cinque strategy onto the substrate `NPRelType`. PRO and
     verb-coding have no exact counterpart in the substrate inventory and are
@@ -134,12 +137,15 @@ inductive RCType
   | nonRestrictive
   deriving DecidableEq, Repr
 
-/-- Relative merge height (bigger external Head = higher). Participials have the
-    smallest external Head; non-restrictives the biggest (above DP). -/
+/-- Relative merge height (bigger external Head = higher), per @cite{cinque-2020}
+    §3.5: participials lowest (smallest external Head); amount/maximalizing below
+    ordinary restrictives (§3.5.5, presented as a tentative refinement of the
+    §1.5 simplification that they merge alike); kind-defining between restrictives
+    and non-restrictives (§3.5.3); non-restrictives highest (above DP). -/
 def RCType.mergeHeight : RCType → Nat
   | .participial    => 0
-  | .restrictive    => 1
-  | .maximalizing   => 2
+  | .maximalizing   => 1
+  | .restrictive    => 2
   | .kindDefining   => 3
   | .nonRestrictive => 4
 
@@ -164,18 +170,18 @@ def RC.overtHead (r : RC) : HeadChoice := r.derivation.overtHead
 /-- Reconstruction / island effects are detectable iff the overt Head is the
     *internal* one (raising) — it is then in a chain with the RC-internal
     position (@cite{cinque-2020} §1.5). -/
-def RC.reconstructs (r : RC) : Bool :=
-  match r.derivation with
-  | .raising  => true
-  | .matching => false
+def RC.Reconstructs (r : RC) : Prop := r.derivation = .raising
+
+instance (r : RC) : Decidable r.Reconstructs := by
+  unfold RC.Reconstructs; infer_instance
 
 /-- @cite{cinque-2020}'s deletion-licensing condition: the internal Head may be
-    deleted (the gap, invariant-relativizer / PRO strategies) only when it
-    exactly matches the external Head (an indefinite `dP`). A bigger internal
-    Head (oblique DP/KP, or DP/KP in a PP) must be spelled out — a relative
-    pronoun or resumptive. (Stated as the decidable `¬deletes ∨ matches`.) -/
+    deleted (the gap + invariant-relativizer strategy) only when it exactly
+    matches the external Head (an indefinite `dP`). A bigger internal Head
+    (oblique DP/KP, or DP/KP in a PP) must be spelled out — a relative pronoun
+    or a resumptive. -/
 def RC.WellFormed (r : RC) : Prop :=
-  r.strategy.deletesInternalHead = false ∨ r.internalHeadCategory = .indefiniteDP
+  r.strategy.DeletesInternalHead → r.internalHeadCategory = .indefiniteDP
 
 instance (r : RC) : Decidable r.WellFormed := by
   unfold RC.WellFormed; infer_instance
@@ -189,16 +195,10 @@ def RC.realization (r : RC) : Realization :=
 
 /-! ### Consequences -/
 
-/-- Raising makes the *internal* Head overt. -/
-theorem overtHead_raising : Derivation.raising.overtHead = .internal := rfl
-
-/-- Matching makes the *external* Head overt. -/
-theorem overtHead_matching : Derivation.matching.overtHead = .external := rfl
-
-/-- A matching derivation shows no reconstruction. -/
-theorem matching_no_reconstruction (r : RC) (h : r.derivation = .matching) :
-    r.reconstructs = false := by
-  unfold RC.reconstructs; rw [h]
+/-- A matching derivation shows no reconstruction (@cite{cinque-2020} §1.5). -/
+theorem matching_not_reconstructs (r : RC) (h : r.derivation = .matching) :
+    ¬ r.Reconstructs := by
+  unfold RC.Reconstructs; rw [h]; decide
 
 /-- **Deletion licensing.** A well-formed RC whose relativized internal Head is
     bigger than an indefinite `dP` cannot use the gap-deletion (invariant
@@ -207,9 +207,10 @@ theorem bigger_head_no_gap_deletion (r : RC) (h : r.WellFormed)
     (hbig : r.internalHeadCategory = .biggerDPKP) :
     r.strategy ≠ .invariantRelativizer := by
   intro hs
-  rcases h with hf | hi
-  · rw [hs] at hf; exact absurd hf (by decide)
-  · rw [hbig] at hi; exact absurd hi (by decide)
+  have hd : r.strategy.DeletesInternalHead := hs
+  have hmatch : r.internalHeadCategory = .indefiniteDP := h hd
+  rw [hbig] at hmatch
+  exact absurd hmatch (by decide)
 
 /-- Non-restrictive RCs merge higher than restrictives (@cite{cinque-2020} §3.5). -/
 theorem nonRestrictive_above_restrictive :
@@ -219,6 +220,12 @@ theorem nonRestrictive_above_restrictive :
 theorem participial_lowest (t : RCType) :
     RCType.participial.mergeHeight ≤ t.mergeHeight := by
   cases t <;> decide
+
+/-- Amount/maximalizing RCs merge lower (closer to the Head) than ordinary
+    restrictives — @cite{cinque-2020} §3.5.5, presented there as a tentative
+    refinement of the §1.5 simplification that they merge in the same position. -/
+theorem maximalizing_below_restrictive :
+    RCType.maximalizing.mergeHeight < RCType.restrictive.mergeHeight := by decide
 
 /-! ### Worked examples -/
 
@@ -235,7 +242,8 @@ example : englishThatObject.WellFormed := by decide
 /-- It **computes** to the substrate realization `(directObject, gap)` — the same
     value HPSG's `RelClauseDerivation.realization` computes for this sentence,
     now from Cinque's derivation rather than stipulated. -/
-example : englishThatObject.realization = { position := .directObject, npRel := .gap } := rfl
+theorem englishThatObject_realization :
+    englishThatObject.realization = { position := .directObject, npRel := .gap } := rfl
 
 /-- "the man to whom I spoke": oblique relativization. The internal Head is
     bigger than `dP` (a PP-internal DP/KP), so deletion is barred and a relative
@@ -251,7 +259,7 @@ example :
 
 /-- The deletion-licensing bite: an oblique (bigger) internal Head *cannot* be
     deleted via the invariant relativizer — that derivation is ill-formed. -/
-example :
+theorem oblique_gap_deletion_illFormed :
     ¬ ({ rcType := .restrictive, derivation := .matching,
          internalHeadCategory := .biggerDPKP, strategy := .invariantRelativizer,
          position := .oblique, rcPosition := .postNominal } : RC).WellFormed := by decide
@@ -272,7 +280,8 @@ def englishRaisingObject : RC :=
     internalHeadCategory := .indefiniteDP, strategy := .invariantRelativizer,
     position := .directObject, rcPosition := .postNominal }
 
-example : englishRaisingObject.reconstructs = true := rfl
-example : englishThatObject.reconstructs = false := rfl
+example : englishRaisingObject.overtHead = .internal := rfl
+example : englishRaisingObject.Reconstructs := by decide
+example : ¬ englishThatObject.Reconstructs := by decide
 
 end Cinque2020
