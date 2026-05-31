@@ -12,7 +12,6 @@ import Linglib.Typology.PolarityItem
 import Linglib.Typology.Negation
 import Linglib.Features.ClauseForm
 import Linglib.Features.Clusivity
-import Linglib.Syntax.Common.Inversion
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Core.Logic.FactorsThroughOn
@@ -2015,8 +2014,6 @@ import Linglib.Studies.KuhlmannNivre2006
 import Linglib.Studies.HarizanovGribanova2019
 import Linglib.Studies.Steedman2000WordOrder
 import Linglib.Studies.Chomsky1995
-import Linglib.Studies.SagWasowBender2003Inversion
-import Linglib.Studies.Adger2003Inversion
 import Linglib.Studies.Pollock1989
 import Linglib.Studies.ColeHermon2008
 import Linglib.Studies.Westergaard2009
@@ -2140,7 +2137,6 @@ import Linglib.Syntax.HPSG.Core.HeadFiller
 import Linglib.Syntax.HPSG.Core.LexicalRules
 import Linglib.Syntax.HPSG.Core.RelativeClauses
 import Linglib.Syntax.HPSG.Coreference
-import Linglib.Syntax.HPSG.Inversion
 -- Theories: Minimalism
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Checking
@@ -2177,7 +2173,6 @@ import Linglib.Studies.Eckert2008
 import Linglib.Studies.Labov2006
 import Linglib.Studies.Labov2012
 import Linglib.Studies.Ochs1992
-import Linglib.Syntax.Minimalist.Inversion
 import Linglib.Syntax.Minimalist.SpeechActs
 import Linglib.Syntax.Minimalist.Polarity
 import Linglib.Syntax.Minimalist.Questions

@@ -3,7 +3,7 @@ HPSG formalization: typed feature structures, signs, and phrase structure schema
 @cite{pollard-sag-1994}, @cite{sag-wasow-bender-2003}, @cite{ginzburg-sag-2000}.
 -/
 
-import Linglib.Syntax.Common.Inversion
+import Linglib.Core.Word
 
 namespace HPSG
 
@@ -162,33 +162,5 @@ structure HeadModRule where
   hfp : result.synsem.cat = headSign.synsem.cat
 
 end Schemata
-
-section InversionConstraint
-
-/-- [INV +] requires aux-initial; [INV -] requires subject-initial. -/
-def satisfiesInversionConstraint (s : Sign) : Prop :=
-  match s with
-  | .phrase children ss =>
-    if ss.head.inv = .plus then
-      match children.head? with
-      | some first => first.synsem.head.aux
-      | none => False
-    else
-      True
-  | .word _ _ => True
-
-end InversionConstraint
-
-section WordOrder
-
-/-- [INV +] correlates with aux-before-subject order. -/
-def invPlusImpliesAuxFirst (inv : Inv) (ws : List Word) : Prop :=
-  inv = .plus → Inversion.auxPrecedesSubject ws = true
-
-/-- [INV -] correlates with subject-before-aux order. -/
-def invMinusImpliesSubjectFirst (inv : Inv) (ws : List Word) : Prop :=
-  inv = .minus → Inversion.subjectPrecedesAux ws = true
-
-end WordOrder
 
 end HPSG
