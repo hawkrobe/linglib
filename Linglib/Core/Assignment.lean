@@ -28,8 +28,7 @@ happens for an unrelated reason — e.g., model-theoretic name
 interpretation functions (`Name_M` in Kamp & Reyle), arity-indexed
 interpretation tables, lookup arrays, or any `Nat → α` that doesn't
 participate in variable-binding semantics. Renaming those would conflate
-distinct primitives. (`KRModel.names : Nat → E` in
-`Semantics/Dynamic/DRT/Basic.lean` documents one such case.)
+distinct primitives.
 
 ## Out of scope
 
