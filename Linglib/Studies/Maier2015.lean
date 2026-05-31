@@ -1,11 +1,13 @@
-import Linglib.Semantics.Dynamic.Boxes.Syntax
+import Linglib.Semantics.Dynamic.DRS.Basic
+import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Maier (2015), *Parasitic Attitudes*
 
 @cite{maier-2015}'s solution to the @cite{karttunen-1973} attitude-projection
 puzzle, formalized as Maier actually states it: **a DRT mechanism**, not a
-world-accessibility abstraction.
+world-accessibility abstraction — now over the faithful model-theoretic DRS core
+(`Semantics/Dynamic/DRS/`).
 
 ## The puzzle
 
@@ -37,51 +39,46 @@ presupposition-as-anaphora) to the now-accessible believed event (his
 ## Main declarations
 
 * `MentalState`, `MentalState.flatten` — a belief layer with embedded labeled
-  compartments, flattened to a nested `DRS.box`.
-* `parasitic_asymmetry` / `presup_binds_after_merge` — the substrate's `acc`
-  (Muskens) gives Maier's accessibility asymmetry; the believed event becomes an
-  accessible antecedent for the desire-compartment presupposition only after
-  merge.
+  compartments, flattened to a `DRS maierLang ℕ`.
+* `parasitic_asymmetry` / `presup_binds_after_merge` — the core's decidable
+  `DRS.Accessible` gives Maier's accessibility asymmetry; the believed event
+  becomes an accessible antecedent for the desire-compartment presupposition only
+  after merge.
 * `MentalState.merge` — Maier's attitude-merge (his (58)).
-* `MentalState.bind` — presupposition resolution by binding to an accessible
-  antecedent.
+* `MentalState.bind` — presupposition resolution by renaming to an accessible
+  antecedent (via the core's functorial `Condition.map`).
 * `presup_resolved_after_binding` — the worked Karttunen derivation ((53)→(60))
-  yields a proper DRS, i.e. the cheating presupposition is filtered.
+  resolves the cheating presupposition by binding (filtered, not projected).
 
-## Substrate gaps (this file is a stress test of the DRT substrate)
+## Substrate fit (what the faithful core does and does not provide)
 
-Building Maier's mechanism on `Semantics/Dynamic/` surfaced what the DRT
-substrate does and does not provide:
-
-* **Strength.** `DRS.acc` (`Boxes/Syntax.lean`, after @cite{muskens-1996})
-  on a nested box *already* yields Maier's parasitic accessibility asymmetry —
-  no new accessibility relation was needed; `parasitic_asymmetry` is `decide`d
-  against it. `isProper` correctly flags unresolved (free) presupposition
-  referents.
-* **Gap 1 — no labeled attitude compartment.** `DRS.box` is unlabeled and
-  there is no `Att(x):K` condition. Modeled paper-locally via `MentalState` /
-  `Compartment` + `flatten`; the labels live outside `DRS`.
-* **Gap 2 — no attitude-merge.** `dseq` / `LDRS.merge` are flat conjunction /
-  concatenation; they do not merge belief layers and like-mode compartments
-  separately (Maier (58)). Built here as `MentalState.merge`.
-* **Gap 3 — presupposition-as-anaphora binding (partially closed).** The
-  renaming primitive now lives in the substrate as `DRS.rename`; what is still
-  missing is the van der Sandt bind-*vs*-accommodate resolution
-  (`Accommodation.lean` is world-set CCP), so `MentalState.bind` (bind-only,
-  antecedent supplied by hand) remains paper-local.
-* **Gap 4 — no intensional belief/desire model semantics.** `KRModel` / `interp`
-  is extensional first-order DRT; it lacks Maier's contexts (Lewis de se
-  triples), the `Dox` / `Bul*` functions, the indexical anchors, and the capture
-  conditions (his (33)/(36)/(37)). The structural mechanism is modeled; its
-  model-theoretic justification is documented, not built.
-* **Gap 5 — LDRT labels are content-layers, not attitude-modes.**
-  `ContentLayer` is presupposition/atIssue/implicature; there is no DES/IMG/INT
-  attitude-mode label or label algebra for attitude embedding.
+* **Accessibility / occurrence.** `DRS.Accessible`/`DRS.accessibleFrom` and
+  `DRS.occ` (`DRS/Basic.lean`) are decidable, host-relative, and reproduce Maier's
+  parasitic asymmetry — the four theorems below are `decide`d against them.
+  (`DRS.Accessible` is the *fixed* notion: an earlier host-free `∃`-over-
+  superordinates formulation was vacuous.)
+* **Gap 1 — labeled attitude compartment.** Standard DRT (the core) has no
+  labeled / operator-free embedded-box condition (Maier fn. 11: `DES` is a label,
+  not an operator). Modeled paper-locally via `MentalState`/`Compartment`;
+  `flatten` uses `neg` purely as a *subordination device* — `accScope` descends
+  into any complex condition identically, so the accessibility geometry the
+  theorems test is exactly Maier's, while `neg`'s truth-semantics is immaterial
+  (Maier gives the labels no extensional truth-conditions; gap 4).
+* **Gap 2 — attitude-merge.** The core `merge`/`toRel_merge` is flat conjunction;
+  Maier's belief-and-like-mode-compartment merge (his (58)) is `MentalState.merge`.
+* **Gap 3 — presupposition binding.** Renaming is the core's `Condition.map`
+  (capture-free since the DRSs are proper — no bespoke capture-aware rename, the
+  mathlib `relabel`/`subst` discipline). The van der Sandt bind-vs-accommodate
+  choice remains paper-local (bind-only, antecedent supplied by hand).
+* **Gap 4 — intensional model semantics.** The core is extensional first-order
+  DRT; Maier's contexts (Lewisian de se triples), `Dox`/`Bul*`, indexical anchors
+  and capture conditions (his (33)/(36)/(37)) are documented, not built. The
+  structural mechanism is modeled.
 -/
 
-namespace Maier2015
+open FirstOrder DRT
 
-open DRS
+namespace Maier2015
 
 /-! ### Empirical projection facts -/
 
@@ -160,14 +157,29 @@ theorem projection_asymmetry_data :
     nonFilteringCases.all (·.presupProjectsToSpeaker == true) = true := by
   decide
 
+/-! ### The DRS language of the Karttunen example (Maier §5.3) -/
+
+/-- Relations of the Karttunen example: `sue`/`jane` (1-ary), `husband` (2-ary,
+`husband(h, j)`), event-style `cheat(e, j, h)` (3-ary, event + cheater + victim),
+`stop(j, e')` (2-ary, agent + event). -/
+inductive MaierRel : ℕ → Type
+  | sue : MaierRel 1
+  | jane : MaierRel 1
+  | husband : MaierRel 2
+  | cheat : MaierRel 3
+  | stop : MaierRel 2
+
+/-- The first-order language of the example (no functions). -/
+def maierLang : Language := ⟨fun _ => Empty, MaierRel⟩
+
+/-- Conditions over `maierLang` with `ℕ` discourse referents. -/
+abbrev MCond := Condition maierLang ℕ
+
 /-! ### Mental-state descriptions (Maier §3.1) -/
 
 /-- Attitude-mode labels for non-doxastic compartments. Per Maier (fn. 11) these
 are labels, not intensional operators — they do not affect DRT accessibility,
-only which compartment an ascription contributes to under merge.
-
-SUBSTRATE GAP 5: the substrate's `ContentLayer` (presupposition/atIssue/
-implicature) is a different axis; there is no attitude-mode label. -/
+only which compartment an ascription contributes to under merge. -/
 inductive AttMode
   | des
   | imgn
@@ -178,28 +190,30 @@ inductive AttMode
 referents and conditions) under an attitude-mode label. -/
 structure Compartment where
   mode : AttMode
-  drefs : List Nat
-  conds : List DRS
+  drefs : List ℕ
+  conds : List MCond
 
 /-- Maier's mental-state description: a global belief layer (discourse referents
-+ conditions) with embedded labeled compartments. The structure mirrors his (32)
-`K = K_BEL` with `DES-K_DES` embedded.
-
-SUBSTRATE GAP 1: `DRS` has an unlabeled `box` but no labeled compartment or
-`Att(x):K` condition, so this structuring lives outside `DRS`. -/
++ conditions) with embedded labeled compartments. Mirrors his (32) `K = K_BEL`
+with `DES-K_DES` embedded. -/
 structure MentalState where
-  beliefDrefs : List Nat
-  beliefConds : List DRS
+  beliefDrefs : List ℕ
+  beliefConds : List MCond
   compartments : List Compartment
 
-/-- Flatten a mental state to a single `DRS`: the belief box containing the
-belief conditions plus, for each compartment, a nested box. Because each
-compartment becomes a box *inside* the belief box, the substrate's `acc` makes
-belief referents accessible from a compartment but not conversely — Maier's
-parasitism, for free. -/
-def MentalState.flatten (K : MentalState) : DRS :=
-  .box K.beliefDrefs
-    (K.beliefConds ++ K.compartments.map (fun c => .box c.drefs c.conds))
+/-- Flatten a mental state to a single `DRS maierLang ℕ`: the belief box
+containing the belief conditions plus, for each compartment, a *subordinate*
+sub-box. Because each compartment is embedded inside the belief box, the core's
+`accessibleFrom` makes belief referents accessible from a compartment but not
+conversely — Maier's parasitism, for free.
+
+Standard DRT (the core) has no labeled / operator-free embedded-box condition
+(Maier fn. 11), so `neg` stands in purely as the subordination device: `accScope`
+descends into any complex condition identically, so the accessibility geometry the
+theorems test is exactly Maier's; `neg`'s truth-semantics is immaterial here. -/
+def MentalState.flatten (K : MentalState) : DRS maierLang ℕ :=
+  .mk K.beliefDrefs.toFinset
+    (K.beliefConds ++ K.compartments.map (fun c => .neg (.mk c.drefs.toFinset c.conds)))
 
 /-! ### Attitude merge (Maier §5.2, (58)) -/
 
@@ -217,8 +231,8 @@ def mergeCompartments (cs cs' : List Compartment) : List Compartment :=
 
 /-- Maier's attitude-merge (his (58)): combine two partial descriptions of one
 agent's mental state by merging the belief layers and merging like-mode
-compartments. This is the operation the substrate lacks (Gap 2): `dseq` /
-`LDRS.merge` are flat and do not respect the belief/compartment structure. -/
+compartments. The core's `merge` is flat concatenation (gap 2); this respects the
+belief/compartment structure. -/
 def MentalState.merge (K K' : MentalState) : MentalState :=
   { beliefDrefs := K.beliefDrefs ++ K'.beliefDrefs
     beliefConds := K.beliefConds ++ K'.beliefConds
@@ -227,29 +241,30 @@ def MentalState.merge (K K' : MentalState) : MentalState :=
 /-! ### Presupposition binding (Maier §4.2, van der Sandt) -/
 
 /-- Resolve a presupposition by binding its referent `presup` to an accessible
-antecedent: identify the two referents (drop `presup` from the universe) and
-rename it to `antecedent` throughout, via the substrate's `DRS.rename`. Licensed
-only when `antecedent` is accessible from `presup` (checked separately via
-`acc`). -/
-def MentalState.bind (presup antecedent : Nat) (K : MentalState) : MentalState :=
+antecedent: drop `presup` from the universes and rename it to `antecedent`
+throughout, via the core's functorial `Condition.map` (capture-free since the DRS
+is proper). Licensed only when `antecedent` is accessible from `presup` (checked
+separately via `DRS.Accessible`). -/
+def MentalState.bind (presup antecedent : ℕ) (K : MentalState) : MentalState :=
   { beliefDrefs := K.beliefDrefs.filter (· != presup)
-    beliefConds := K.beliefConds.map (DRS.rename presup antecedent)
+    beliefConds := K.beliefConds.map (Condition.map (fun d => if d = presup then antecedent else d))
     compartments := K.compartments.map (fun c =>
       { mode := c.mode
         drefs := c.drefs.filter (· != presup)
-        conds := c.conds.map (DRS.rename presup antecedent) }) }
+        conds := c.conds.map (Condition.map (fun d => if d = presup then antecedent else d)) }) }
 
 /-! ### Solving Karttunen's puzzle (Maier §5.3, (53)–(60))
 
 "Sue thinks that Jane has been cheating on her husband. She hopes that Jane will
-stop cheating on him."  Relation indices: cheat = 0, stop = 1, sue = 2,
-jane = 3, husband = 4. Referents: s = 10, j = 11, h = 12, e = 20 (the believed
+stop cheating on him." Referents: s = 10, j = 11, h = 12, e = 20 (the believed
 cheating event), e' = 21 (the cheating event presupposed by *stop*). -/
 
-/-- After sentence 1: Sue believes there is a cheating event `e`. -/
+/-- After sentence 1: Sue believes there is a cheating event `e` (Maier (59),
+belief layer). -/
 def sueBelief : MentalState :=
   { beliefDrefs := [10, 11, 12, 20]
-    beliefConds := [.atom 2 [10], .atom 3 [11], .atom 4 [12, 11], .atom 0 [11, 20]]
+    beliefConds := [.rel .sue ![10], .rel .jane ![11], .rel .husband ![12, 11],
+                    .rel .cheat ![20, 11, 12]]
     compartments := [] }
 
 /-- After sentence 2 (in isolation): Sue's desire compartment contains
@@ -258,7 +273,8 @@ antecedent of its own. -/
 def sueHope : MentalState :=
   { beliefDrefs := []
     beliefConds := []
-    compartments := [{ mode := .des, drefs := [21], conds := [.atom 1 [11, 21], .atom 0 [11, 21]] }] }
+    compartments := [{ mode := .des, drefs := [21],
+                       conds := [.rel .stop ![11, 21], .rel .cheat ![21, 11, 12]] }] }
 
 /-- The two ascriptions merged into one mental-state description (Maier (59)). -/
 def sueMerged : MentalState := sueBelief.merge sueHope
@@ -270,29 +286,22 @@ def sueBound : MentalState := sueMerged.bind 21 20
 /-- Before merge, the believed cheating event does not even occur in the lone
 hope description, so the *stop* presupposition has no antecedent to bind to —
 only (dispreferred) accommodation is available. -/
-theorem believed_event_absent_before_merge :
-    occurs 20 sueHope.flatten = false := by decide
+theorem believed_event_absent_before_merge : 20 ∉ DRS.occ sueHope.flatten := by decide
 
 /-- After merge, the believed cheating event `e` (20) is accessible from the
 desire-compartment presupposition `e'` (21): binding `e' = e` is licensed. This
-is the filtering, and it reuses the substrate's `acc` unchanged. -/
-theorem presup_binds_after_merge :
-    (acc 21 sueMerged.flatten).contains 20 = true := by decide
+is the filtering, reusing the core's `DRS.Accessible` unchanged. -/
+theorem presup_binds_after_merge : DRS.Accessible sueMerged.flatten 21 20 := by decide
 
 /-- The dependence is asymmetric (Maier §3.1, fn. 11): the believed event in the
 belief layer does *not* see the desire-compartment referent. Belief can filter
 desire's presupposition, not conversely. -/
-theorem parasitic_asymmetry :
-    (acc 20 sueMerged.flatten).contains 21 = false := by decide
+theorem parasitic_asymmetry : ¬ DRS.Accessible sueMerged.flatten 20 21 := by decide
 
 /-- After binding, the presupposed cheating referent `e'` (21) no longer occurs:
 it has been identified with the believed event `e` (20), so the presupposition is
-resolved by binding (filtered), not accommodated or projected (Maier's (60)).
-
-Resolution is witnessed by the disappearance of the presupposed referent: it has
-been renamed to the believed event, so it no longer occurs. -/
+resolved by binding (filtered), not accommodated or projected (Maier's (60)). -/
 theorem presup_resolved_after_binding :
-    occurs 21 sueBound.flatten = false ∧ occurs 20 sueBound.flatten = true := by
-  decide
+    21 ∉ DRS.occ sueBound.flatten ∧ 20 ∈ DRS.occ sueBound.flatten := by decide
 
 end Maier2015

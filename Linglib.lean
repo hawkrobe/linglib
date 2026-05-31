@@ -2039,15 +2039,13 @@ import Linglib.Discourse.Centering.Instances.InformationStatus
 import Linglib.Discourse.Rhetorical.Defs
 import Linglib.Discourse.Rhetorical.RightFrontier
 -- Theories: Interfaces — Centering ↔ DRT bridge
-import Linglib.Discourse.Centering.DRSExpr
+import Linglib.Discourse.Centering.DRS
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
 import Linglib.Semantics.Dynamic.Connectives.Assignment
 import Linglib.Semantics.Dynamic.Connectives.CCP
 import Linglib.Semantics.Dynamic.Core.ContextFilter
 import Linglib.Semantics.Dynamic.DiscourseRef
-import Linglib.Semantics.Dynamic.Boxes.Accessibility
-import Linglib.Semantics.Dynamic.Boxes.Syntax
 import Linglib.Semantics.Dynamic.Connectives.Defs
 import Linglib.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
@@ -2067,7 +2065,7 @@ import Linglib.Semantics.Dynamic.DRS.Defs
 import Linglib.Semantics.Dynamic.DRS.Basic
 import Linglib.Semantics.Dynamic.DRS.Semantics
 import Linglib.Semantics.Dynamic.DRS.Reduction
-import Linglib.Semantics.Dynamic.DRT.Basic
+import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.Effects.Bilateral
 import Linglib.Semantics.Dynamic.Bilateral.BUS
 import Linglib.Semantics.Dynamic.Bilateral.ICDRT

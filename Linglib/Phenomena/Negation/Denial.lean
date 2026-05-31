@@ -43,9 +43,8 @@ scalar implicature.
 
 This module captures theory-neutral denial data and the `DenialType →
 ContentLayer` mapping. The directed reverse anaphora (RA*) mechanism
-is formalized in `Semantics.Dynamic.DRT.Basic` (`LDRS.directedRA`),
-with worked examples and Off→DenialDatum agreement proofs in
-`VanDerSandtMaier2003`.
+(`LDRS.directedRA`), worked examples, and Off→DenialDatum agreement
+proofs are in `Studies/VanDerSandtMaier2003.lean`.
 -/
 
 namespace Phenomena.Negation.Denial
