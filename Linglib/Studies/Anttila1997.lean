@@ -178,11 +178,8 @@ private theorem subProb_3_eq_rate (v : Variant)
     (D Y : Finset (Fin 3))
     (h_D : ∀ k, k ∈ D ↔ m3Vp () v k ≠ m3Vp () v.other k)
     (h_Y : ∀ k, k ∈ Y ↔ m3Vp () v k < m3Vp () v.other k) :
-    subProb_3 v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
-  unfold subProb_3 pocPredict
-  rw [consistentTotalOrders_discrete, Finset.card_univ,
-      Fintype.card_perm, Fintype.card_fin]
-  exact picksAt_rate_eq m3Cands m3Vp () v v.other
+    subProb_3 v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
+  pocPredict_discrete_binary_rate m3Cands m3Vp () v v.other
     (m3Cands_eq_pair v) (Variant.ne_other v) D Y h_D h_Y
 
 /-- **Strong `L.TÍI` wins 1/3 of Set-3 rankings**. Closed form via
@@ -280,11 +277,8 @@ private theorem subProb_45_eq_rate (m : Set4Motif) (v : Variant)
     (D Y : Finset (Fin 6))
     (h_D : ∀ k, k ∈ D ↔ m45Vp m v k ≠ m45Vp m v.other k)
     (h_Y : ∀ k, k ∈ Y ↔ m45Vp m v k < m45Vp m v.other k) :
-    subProb_45 m v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) := by
-  unfold subProb_45 pocPredict
-  rw [consistentTotalOrders_discrete, Finset.card_univ,
-      Fintype.card_perm, Fintype.card_fin]
-  exact picksAt_rate_eq m45Cands m45Vp m v v.other
+    subProb_45 m v = ((Y ∩ D).card : ℚ) / (D.card : ℚ) :=
+  pocPredict_discrete_binary_rate m45Cands m45Vp m v v.other
     (m45Cands_eq_pair m v) (Variant.ne_other v) D Y h_D h_Y
 
 /-- **Motif 4ab strong `H.TÁA` wins 1/2 of Set-4 rankings**. Closed form
