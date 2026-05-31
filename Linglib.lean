@@ -1904,6 +1904,7 @@ import Linglib.Studies.Keine2020
 import Linglib.Studies.Preminger2014
 import Linglib.Studies.Pietraszko2026
 import Linglib.Studies.Steedman2000
+import Linglib.Syntax.CCG.Classical
 import Linglib.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
 import Linglib.Syntax.CCG.Gapping
@@ -1959,6 +1960,7 @@ import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc
 import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
 import Linglib.Syntax.CCG.Formal.GenerativeCapacity
+import Linglib.Studies.KuhlmannKollerSatta2015
 import Linglib.Syntax.CCG.Scope
 import Linglib.Syntax.CCG.Intonation
 -- Cross-theory comparisons (distributed into theory directories)

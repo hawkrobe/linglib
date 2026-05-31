@@ -34,6 +34,7 @@ For "Jan Piet zag zwemmen" (Jan saw Piet swim):
 -/
 
 import Linglib.Syntax.CCG.Basic
+import Linglib.Syntax.CCG.Classical
 
 namespace CCG.CrossSerial
 
@@ -321,5 +322,25 @@ theorem verb_cluster_cat :
     cross-serial *binding* pattern but not the *linear order*. -/
 theorem jan_zag_zwemmen_piet_yield :
     jan_zag_zwemmen_piet.yield = ["Jan", "zag", "zwemmen", "Piet"] := by decide
+
+/-! ### The derivation in the rule-restricted (classical) model
+
+`CCG.Classical` (the classical / VW-CCG model with a target restriction) renders the same
+2-verb verb-raising derivation as a sequence of *valid* rule instances: every step here
+has primary target `S`, so each composition and application is licensed. `zag` composes
+(`>B`) into `zwemmen`, gives `Piet` (`>`), and `Jan` closes the clause (`<`).
+
+This is the principled model the cross-serial categories belong to (the ad-hoc
+`forwardComp2/3` above predate it). The surface-order caveat of
+`jan_zag_zwemmen_piet_yield` still applies — the categories encode the cross-serial
+*binding*, not the linear order. -/
+def janZagZwemmenPietClassical : CCG.Classical.RDeriv :=
+  .ba (.lex NP "Jan")
+    (.fa (.fc1 (.lex PercV "zag") (.lex InfSubj "zwemmen")) (.lex NP "Piet"))
+
+/-- The classical-model derivation is well-formed (reaches `S` under the target
+restriction). -/
+theorem janZagZwemmenPietClassical_cat :
+    janZagZwemmenPietClassical.cat = some S := by decide
 
 end CCG.CrossSerial

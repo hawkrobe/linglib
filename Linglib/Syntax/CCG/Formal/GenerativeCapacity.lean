@@ -7,9 +7,10 @@ import Linglib.Syntax.CCG.Basic
 /-!
 # CCG Generative Capacity
 
-CCG is mildly context-sensitive: strictly more powerful than context-free grammars,
-yet still polynomially parsable (@cite{steedman-2000}). The classic witness is the
-counting / cross-serial language aⁿbⁿcⁿdⁿ, which is not context-free.
+CCG is mildly context-sensitive: classical CCG is weakly equivalent to TAG, hence
+strictly more powerful than context-free grammars (@cite{vijay-shanker-weir-1994},
+@cite{weir-joshi-1988}). The classic witnesses are the counting / cross-serial languages
+aⁿbⁿcⁿ and aⁿbⁿcⁿdⁿ, which are not context-free.
 
 ## What is established here
 
@@ -17,41 +18,32 @@ counting / cross-serial language aⁿbⁿcⁿdⁿ, which is not context-free.
   aⁿbⁿcⁿdⁿ is not context-free (re-using the pumping-lemma proof in
   `Core.Computability.NonContextFree`).
 
-## What is *not* yet established (TODO)
+## Restrictions matter: which CCG generates these languages
 
-- `ccg_generates_abcd` (below, `sorry`) — that a CCG actually *derives* aⁿbⁿcⁿdⁿ for
-  every `n`. This is the other half of the proper inclusion CFG ⊊ CCG. It needs a
-  uniform lexicon plus an `n`-indexed, surface-order-faithful derivation built by
-  recursion on `n`, with the yield computed by induction. The concrete Dutch
-  derivations in `CCG.CrossSerial` are 2- and 3-verb instances and are *not*
-  surface-order-faithful (their categories encode the cross-serial binding but not the
-  linear order;
-  see `CCG.CrossSerial.jan_zag_zwemmen_piet_yield`), so they do not discharge this
-  claim. The precise position of CCG in the hierarchy (weak equivalence to TAG/LIG/Head
-  grammar) depends on the rule restrictions: @cite{vijay-shanker-weir-1994},
-  @cite{kuhlmann-koller-satta-2010}.
+The "CCG generates a non-context-free language" direction depends critically on the form
+of CCG. @cite{kuhlmann-koller-satta-2015} show that the CCG≡TAG equivalence holds for
+*classical* CCG, where combinatory rules may be **restricted per grammar** (e.g. fired
+only when the target of the primary input category is `S`). *Modern, universal-rule* CCG
+— which is what this subsystem's `CCG.DerivStep` models (unrestricted application,
+composition and type-raising, no rule restrictions) — is strictly *weaker than TAG* and
+does **not** generate these languages.
+
+A fully-proven construction of a rule-restricted (classical) CCG that generates aⁿbⁿcⁿ
+is therefore *not* expressible over `DerivStep`; it lives in
+`Studies/KuhlmannKollerSatta2015` (`ccg_generates_anbnc`), which models the target
+restriction explicitly. The concrete Dutch derivations in `CCG.CrossSerial` are 2- and
+3-verb instances and are *not* surface-order-faithful (their categories encode the
+cross-serial binding but not the linear order; see
+`CCG.CrossSerial.jan_zag_zwemmen_piet_yield`), so they do not establish a capacity claim.
 -/
 
 namespace CCG.GenerativeCapacity
 
 open FourSymbol
 
-/-- The four-block counting string aⁿbⁿcⁿdⁿ, as a list of surface symbols. -/
-def abcdString (n : Nat) : List String :=
-  List.replicate n "a" ++ List.replicate n "b" ++
-    List.replicate n "c" ++ List.replicate n "d"
-
-/-- **TODO (research-grade).** For every `n` there is a well-formed CCG derivation of
-category `S` whose surface yield is aⁿbⁿcⁿdⁿ — the "CCG generates a non-context-free
-language" direction of CFG ⊊ CCG. Stated in full rather than weakened; the proof
-requires the uniform-lexicon, `n`-indexed construction described in the module
-docstring and is not yet formalized. -/
-theorem ccg_generates_abcd :
-    ∀ n, ∃ d : CCG.DerivStep, d.cat = some CCG.S ∧ d.yield = abcdString n := by
-  sorry
-
-/-- The witness language aⁿbⁿcⁿdⁿ is not context-free. With `ccg_generates_abcd` this
-would give the proper inclusion CFG ⊊ CCG; on its own it establishes only that the
+/-- The witness language aⁿbⁿcⁿdⁿ is not context-free. Together with the rule-restricted
+construction in `Studies/KuhlmannKollerSatta2015` (for the simpler witness aⁿbⁿcⁿ) this is
+the non-context-free side of CFG ⊊ classical-CCG; on its own it establishes only that the
 target language lies beyond the context-free tier. -/
 theorem ccg_exceeds_cfg : ¬ Language.IsContextFree anbncndn :=
   anbncndn_not_contextFree
