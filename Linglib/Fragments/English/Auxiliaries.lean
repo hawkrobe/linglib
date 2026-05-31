@@ -31,9 +31,6 @@ specific entries from here and contribute precondition theorems that
 break if the morphological classification changes. Consumers (as of
 the last audit):
 
-- Word-order / inversion: `Studies/{SagWasowBender2003,
-  Adger2003}`, `Syntax/Minimalism/Inversion.lean`,
-  `Syntax/HPSG/Inversion.lean`
 - Modality: `Studies/{Ferreira2023, Rubinstein2014,
   CarianiSantorio2018, AghaJeretic2022, AghaJeretic2026,
   CiardelliGuerrini2026, ImelGuoST2026, LiuRotter2025,
