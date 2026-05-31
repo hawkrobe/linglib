@@ -241,8 +241,8 @@ AUTO_FEATURES = {
 
     # ── Comparatives/Relatives (Ch 121–123) ────────────────────────────
     "121A": {"enum": "ComparativeType",    "author": "stassen-2013"},
-    "122A": {"enum": "SubjectRelativization", "author": "comrie-2013"},
-    "123A": {"enum": "ObliqueRelativization", "author": "comrie-2013"},
+    "122A": {"enum": "SubjectRelativization", "author": "comrie-kuteva-2013a"},
+    "123A": {"enum": "ObliqueRelativization", "author": "comrie-kuteva-2013b"},
 
     # ── Morphology (Ch 20–22, 26–27) ──────────────────────────────────
     "20A": {"enum": "FusionType",          "author": "bickel-nichols-2013a"},
@@ -720,7 +720,7 @@ def generate_languages(langs, used_ids):
     return "\n".join(lines)
 
 
-REFERENCES_BIB = ROOT / "blog" / "data" / "references.bib"
+REFERENCES_BIB = ROOT / "blog" / "references.bib"
 
 def load_bib_keys():
     """Return the set of bibkeys defined in blog/data/references.bib."""

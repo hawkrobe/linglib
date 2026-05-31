@@ -5,7 +5,7 @@ import Linglib.Data.WALS.Features.F123A
 
 /-!
 # Relative clauses: typological survey (WALS)
-@cite{comrie-1989} @cite{keenan-comrie-1977} @cite{comrie-2013}
+@cite{comrie-1989} @cite{keenan-comrie-1977} @cite{comrie-kuteva-2013a} @cite{comrie-kuteva-2013b} @cite{dryer-2013-wals}
 
 The cross-linguistic WALS-survey facet of the relative clause: the per-language
 `Profile` summarizing relativization strategies (WALS Chs 122/123/90D), the RC
@@ -122,8 +122,8 @@ structure Profile where
       to `.absent`, since most languages outside East Asia, Mesoamerica, and a
       few isolates lack this construction. -/
   internallyHeaded : InternallyHeadedStrategy := .absent
-  /-- Free-text notes on the relativization system, including
-      `@cite{...}` keys for hand-coded values. -/
+  /-- Free-text notes on the relativization system, including citation
+      keys for hand-coded values. -/
   notes : String := ""
   deriving Repr, DecidableEq
 
@@ -165,7 +165,8 @@ def fromWALS90D : Data.WALS.F90D.InternallyHeadedRelativeClauses →
 /-! ### Distribution theorems
 
 WALS-aggregate findings on relative-clause formation strategies
-(@cite{comrie-2013}). Ch 122 (subjects): 166 languages; gap dominates,
+(@cite{comrie-kuteva-2013a} @cite{comrie-kuteva-2013b} @cite{dryer-2013-wals}).
+Ch 122 (subjects): 166 languages; gap dominates,
 reflecting subjects' high accessibility on the @cite{keenan-comrie-1977}
 hierarchy. Ch 123 (obliques): 112 languages; gap remains most common, but
 pronoun retention is far more frequent than for subjects, and a sizeable
