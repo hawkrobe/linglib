@@ -327,9 +327,9 @@ def evidentialNecessity (f : EvidentialBiasFlavor W) (p : Set W) (w : W) : Prop 
 def evidentialPossibility (f : EvidentialBiasFlavor W) (p : Set W) (w : W) : Prop :=
   possibility f.contextBase f.stereotypical p w
 
-/-- □_ev satisfies modal duality. One of five sibling `theorem duality`s
-    (see `Modality/Kratzer/Operators.lean::duality` for the unification
-    opportunity via `Core.Logic.Aristotelian.Square.fromBox`). -/
+/-- □_ev satisfies modal duality. One of five sibling `theorem duality`s — the
+    box–diamond duality underlying the modal square of opposition
+    (`Core.Logic.Intensional.modalSquare_relations`). -/
 theorem evidentialBias_duality (f : EvidentialBiasFlavor W) (p : Set W) (w : W) :
     evidentialNecessity f p w ↔ ¬ evidentialPossibility f (fun w' => ¬ p w') w := by
   unfold evidentialNecessity evidentialPossibility
