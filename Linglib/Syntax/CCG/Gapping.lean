@@ -1,4 +1,6 @@
-/-
+import Linglib.Syntax.CCG.Basic
+
+/-!
 # CCG Analysis of Gapping
 
 CCG categories for gapping constructions, proving that:
@@ -25,8 +27,6 @@ This leftward-looking function can only combine with a verb to its LEFT.
 Hence: forward gapping in SVO/VSO, backward gapping in SOV.
 
 -/
-
-import Linglib.Syntax.CCG.Basic
 
 namespace CCG.Gapping
 

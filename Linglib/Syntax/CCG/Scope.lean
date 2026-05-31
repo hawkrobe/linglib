@@ -1,11 +1,11 @@
-/-
+import Linglib.Syntax.CCG.Basic
+import Linglib.Features.ScopeTypes
+
+/-!
 # CCG Scope Theory
 
 CCG derivational structure determines available scope readings (@cite{steedman-2000} Ch. 6).
 -/
-
-import Linglib.Syntax.CCG.Basic
-import Linglib.Features.ScopeTypes
 
 namespace CCG.Scope
 
