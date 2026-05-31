@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Korean Relativization Fragment
@@ -18,14 +18,14 @@ Data from @cite{keenan-comrie-1977} Table 1.
 
 namespace Fragments.Korean
 
-open Core
+open RelativeClause
 
 /-- Adnominal verb suffix. The verb takes an adnominal (relative) form:
     *-(n)ɨn* (present), *-n* (past), *-l* (prospective/future).
     No relative pronoun or complementizer. NP_rel + case marker deleted.
     Prenominal RC. Covers SU, DO, IO, OBL.
     E.g., "[ _ tteonagan] saram" '[ _ left] person'. -/
-def relAdnominal : RelClauseMarker :=
+def relAdnominal : Marker :=
   { form := "-(n)ɨn, -n, -l"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -36,7 +36,7 @@ def relAdnominal : RelClauseMarker :=
 /-- Genitive construction. The possessor position is relativized using
     the genitive marker *-uy*. Prenominal RC.
     Covers GEN only. -/
-def relGenitive : RelClauseMarker :=
+def relGenitive : Marker :=
   { form := "-uy"
   , npRel := .gap
   , bearsCaseMarking := true
@@ -45,10 +45,10 @@ def relGenitive : RelClauseMarker :=
   , notes := "Genitive marker; covers GEN only" }
 
 /-- All Korean relative clause markers. -/
-def relMarkers : List RelClauseMarker := [relAdnominal, relGenitive]
+def relMarkers : List Marker := [relAdnominal, relGenitive]
 
 /-- Korean relativization profile (typological summary). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .gap
   , rcPosition := .preNominal

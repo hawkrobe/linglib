@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Hebrew Relativization Fragment
@@ -31,12 +31,12 @@ Data from @cite{keenan-comrie-1977} Table 1 and §1.3.2.
 
 namespace Fragments.Hebrew
 
-open Core
+open RelativeClause
 
 /-- Complementizer *she-*. NP_rel is deleted (gap).
     Covers subject and direct object.
     E.g., "ha-ish [she-halakh _]" 'the-man [that-left _]'. -/
-def relSheGap : RelClauseMarker :=
+def relSheGap : Marker :=
   { form := "she-"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -48,7 +48,7 @@ def relSheGap : RelClauseMarker :=
     introduces the RC, but NP_rel is a resumptive personal pronoun.
     Covers DO–OCOMP (DO shared with gap construction).
     E.g., "ha-ir [she-garti ba-h]" 'the-city [that-lived-I in-it]'. -/
-def relSheResumptive : RelClauseMarker :=
+def relSheResumptive : Marker :=
   { form := "she- + pronoun"
   , npRel := .resumptive
   , bearsCaseMarking := true
@@ -61,7 +61,7 @@ def relSheResumptive : RelClauseMarker :=
     reconstruction effects, indicating movement copy.
     @cite{sichel-2014}: "ha-ec she-hu tipes alav" 'the tree that he
     climbed on.it' — idiomatic reading preserved = reconstruction. -/
-def relSheMovementResumptive : RelClauseMarker :=
+def relSheMovementResumptive : Marker :=
   { form := "she- + movement RP"
   , npRel := .resumptiveMovement
   , bearsCaseMarking := true
@@ -74,7 +74,7 @@ def relSheMovementResumptive : RelClauseMarker :=
     pronoun (no reconstruction, weak crossover sensitivity).
     @cite{sichel-2014}: "ze ha-yeled she-imo šelo ohevet oto"
     'this is the boy who his mother loves him' — oto is bound. -/
-def relSheBoundResumptive : RelClauseMarker :=
+def relSheBoundResumptive : Marker :=
   { form := "she- + bound RP"
   , npRel := .resumptiveBound
   , bearsCaseMarking := true
@@ -86,14 +86,14 @@ def relSheBoundResumptive : RelClauseMarker :=
     marker is retained for backward compatibility with
     @cite{keenan-comrie-1977}-level typology. The Sichel markers
     provide finer-grained two-type classification. -/
-def relMarkers : List RelClauseMarker := [relSheGap, relSheResumptive]
+def relMarkers : List Marker := [relSheGap, relSheResumptive]
 
 /-- Sichel-refined markers distinguishing bound vs. movement resumption. -/
-def relMarkersSichel : List RelClauseMarker :=
+def relMarkersSichel : List Marker :=
   [relSheGap, relSheBoundResumptive, relSheMovementResumptive]
 
 /-- Hebrew relativization profile (typological summary). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .pronounRetention
   , rcPosition := .postNominal

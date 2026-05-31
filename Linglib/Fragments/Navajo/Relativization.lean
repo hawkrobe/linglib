@@ -1,16 +1,16 @@
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Navajo relativization profile
 
-Typological-summary `RelativizationProfile` for Navajo (ISO `nav`).
+Typological-summary `RelativeClause.Profile` for Navajo (ISO `nav`).
 -/
 
 namespace Fragments.Navajo
 
 /-- Navajo relativization: gap on subject and direct object; limited
     relativization on lower AH positions; pre-nominal RC; SOV. -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .notRelativizable
   , rcPosition := .preNominal

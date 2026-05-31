@@ -127,8 +127,8 @@ inductive Extractee where
     which positions are marked, and whether the marking distinguishes
     between different extracted positions.
 
-    Follows the `RelativizationProfile` pattern from
-    `Typology/Relativization/Defs.lean`. -/
+    Follows the `RelativeClause.Profile` pattern from
+    `Typology/RelativeClause/WALS.lean`. -/
 structure ExtractionProfile where
   /-- Language name -/
   language : String

@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Welsh Relativization Fragment
@@ -14,12 +14,12 @@ Data from @cite{keenan-comrie-1977} Table 1 and §1.3.2.
 
 namespace Fragments.Welsh
 
-open Core
+open RelativeClause
 
 /-- Relative particle *a*. Introduces postnominal RCs with gap in NP_rel.
     Covers subject and direct object.
     E.g., "Y dyn [a adawodd _]" 'the man [PRT left _]'. -/
-def relParticleA : RelClauseMarker :=
+def relParticleA : Marker :=
   { form := "a"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -32,7 +32,7 @@ def relParticleA : RelClauseMarker :=
     Covers IO–OCOMP.
     E.g., "Y dyn [y rhoddais i'r llyfr iddo]"
     'the man [PRT I-gave the book to-him]'. -/
-def relParticleY : RelClauseMarker :=
+def relParticleY : Marker :=
   { form := "y"
   , npRel := .resumptive
   , bearsCaseMarking := true
@@ -41,10 +41,10 @@ def relParticleY : RelClauseMarker :=
   , notes := "Relative particle; resumptive pronoun in NP_rel; §1.3.2" }
 
 /-- All Welsh relative clause markers. -/
-def relMarkers : List RelClauseMarker := [relParticleA, relParticleY]
+def relMarkers : List Marker := [relParticleA, relParticleY]
 
 /-- Welsh relativization profile (typological summary). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .pronounRetention
   , rcPosition := .postNominal

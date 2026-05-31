@@ -285,9 +285,8 @@ import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.DM.DomainLocality
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.DM.ContainmentVI
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.ExtractionBridge
-import Linglib.Core.Relativization.Hierarchy
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Scales.Roundness
 import Linglib.Core.Scales.Predicate
@@ -1340,8 +1339,6 @@ import Linglib.Studies.Merchant2013
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.WordOrder.CrossSerial
-import Linglib.Typology.Relativization.Defs
-import Linglib.Typology.Relativization.Basic
 import Linglib.Phenomena.Focus.Basic
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.Roberts2012

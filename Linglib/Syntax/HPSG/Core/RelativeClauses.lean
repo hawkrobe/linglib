@@ -159,7 +159,7 @@ private def clause_tracked : TrackedSign :=
 private def relClause : RelClauseDerivation :=
   { rel := relThat
     gappedClause := clause_tracked
-    gapCompatible := .inr (by native_decide) }
+    gapCompatible := .inr (by decide) }
 
 -- The result is a modifier with MOD = NOUN
 #guard relClause.isMod
@@ -211,7 +211,7 @@ private def subj_gapped_clause : TrackedSign :=
 private def who_relClause : RelClauseDerivation :=
   { rel := relWho
     gappedClause := subj_gapped_clause
-    gapCompatible := .inr (by native_decide) }
+    gapCompatible := .inr (by decide) }
 
 #guard who_relClause.isMod
 #guard who_relClause.result.sign.synsem.mod == some .NOUN
@@ -237,7 +237,7 @@ theorem relClause_is_modifier (d : RelClauseDerivation) :
 
 /-- Any category matches itself under `categoriesMatch`. -/
 private theorem categoriesMatch_refl (c : UD.UPOS) : categoriesMatch c c = true := by
-  cases c <;> native_decide
+  cases c <;> decide
 
 /-- Head-Modifier succeeds when MOD matches the head's category. -/
 theorem headMod_succeeds_when_mod_matches (headNoun : Sign) (relClause : TrackedSign)

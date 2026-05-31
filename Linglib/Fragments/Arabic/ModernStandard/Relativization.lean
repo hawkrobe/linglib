@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Modern Standard Arabic Relativization Fragment
@@ -35,7 +35,7 @@ already mixed; a future split into `Fragments/StandardArabic/` and
 
 namespace Fragments.Arabic.ModernStandard
 
-open Core
+open RelativeClause
 
 /-- Relative pronoun *alladhī* (masc.sg.) / *allatii* (fem.sg.) — head of a
     nine-form paradigm marked for number/gender (and, in the dual, case);
@@ -47,7 +47,7 @@ open Core
 
     E.g., "hiya llatii ʾarsalat-i l-duktuur-a"
           'she is the one who sent the doctor' (Ryding §14.2). -/
-def relAlladhi : RelClauseMarker :=
+def relAlladhi : Marker :=
   { form := "alladhī/allatii"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -68,7 +68,7 @@ def relAlladhi : RelClauseMarker :=
 
     E.g., "al-kitaab-u alladhii qaraʾ-naa-hu"
           'the book that we read (it)' (Ryding §14.4). -/
-def relResumptive : RelClauseMarker :=
+def relResumptive : Marker :=
   { form := "alladhī/allatii + resumptive"
   , npRel := .resumptive
   , bearsCaseMarking := true
@@ -86,7 +86,7 @@ def relResumptive : RelClauseMarker :=
 
     E.g., "fii ziyaarat-in li-dimashq-a ta-staghriq-u ʾusbuuʿ-an"
           'on a visit to Damascus [which] lasts a week' (Ryding §14.3). -/
-def relAsyndeticGap : RelClauseMarker :=
+def relAsyndeticGap : Marker :=
   { form := "∅"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -113,7 +113,7 @@ def relAsyndeticGap : RelClauseMarker :=
     E.g., "wa-qaal-a fii muʾtamar-in SiHaafiyy-in ʿaqad-a-hu ʾams-i"
           'he said in a press conference [which] he held (it) yesterday'
           (Ryding §14.4.2). -/
-def relAsyndeticResumptive : RelClauseMarker :=
+def relAsyndeticResumptive : Marker :=
   { form := "∅ + resumptive"
   , npRel := .resumptive
   , bearsCaseMarking := true
@@ -130,7 +130,7 @@ def relAsyndeticResumptive : RelClauseMarker :=
     indefinite-headed pair (`relAsyndeticGap`, `relAsyndeticResumptive`).
     The free relatives *maa* / *man* of §14.5 are a separate construction
     (no head NP) and are not included. -/
-def relMarkers : List RelClauseMarker :=
+def relMarkers : List Marker :=
   [relAlladhi, relResumptive, relAsyndeticGap, relAsyndeticResumptive]
 
 /-- Arabic relativization profile (WALS-style summary).
@@ -147,7 +147,7 @@ def relMarkers : List RelClauseMarker :=
     `arabic_kc_covers_deeper_than_wals` in
     `Studies/KeenanComrie1977.lean` documents
     the systematic K&C-vs-WALS asymmetry. -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .pronounRetention
   , rcPosition := .postNominal

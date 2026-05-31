@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Toba Batak Relativization Fragment
@@ -17,12 +17,12 @@ Data from @cite{keenan-comrie-1977} Table 1 and §1.3.2.
 
 namespace Fragments.TobaBatak
 
-open Core
+open RelativeClause
 
 /-- Gap construction. NP_rel is deleted. Postnominal RC.
     Covers subject only.
     The -case strategy is maximally restricted (like Arabic). -/
-def relGap : RelClauseMarker :=
+def relGap : Marker :=
   { form := "∅"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -34,7 +34,7 @@ def relGap : RelClauseMarker :=
     bearing case. Postnominal RC. Covers IO, OBL, GEN.
     Crucially does NOT cover DO — neither strategy can relativize
     direct objects in Toba Batak. -/
-def relResumptive : RelClauseMarker :=
+def relResumptive : Marker :=
   { form := "pronoun"
   , npRel := .resumptive
   , bearsCaseMarking := true
@@ -43,13 +43,13 @@ def relResumptive : RelClauseMarker :=
   , notes := "Resumptive; IO/OBL/GEN; DO gap genuine; §1.3.2" }
 
 /-- All Toba Batak relative clause markers. -/
-def relMarkers : List RelClauseMarker := [relGap, relResumptive]
+def relMarkers : List Marker := [relGap, relResumptive]
 
 /-- Toba Batak relativization profile (typological summary). The
     `subjStrategy = .gap` + `oblStrategy = .pronounRetention` pair is
     K&C's canonical "DO-gap-with-resumptive-elsewhere" datapoint; DO is
     a genuine gap in AH coverage (neither strategy can relativize it). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .pronounRetention
   , rcPosition := .postNominal
