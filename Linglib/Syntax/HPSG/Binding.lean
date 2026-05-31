@@ -3,33 +3,19 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # HPSG Binding Theory (Principles A & B) in RSRL
-@cite{pollard-sag-1994}, @cite{richter-2000}, @cite{richter-2024}
+@cite{pollard-sag-1994}, @cite{richter-2000}, @cite{muller-2024-binding}
 
 The first *relational, quantified* HPSG principles in the RSRL substrate, exercising the
-`rel`/`ex`/`all` machinery of `Description.lean`. Following the HPSG Binding Theory
-(@cite{pollard-sag-1994}; @cite{muller-2024-binding}, Ch. 20):
+`rel`/`ex`/`all` machinery of `Description.lean`. Following HPSG Binding Theory
+(@cite{muller-2024-binding}, Ch. 20): **local o-command** ("less oblique, same ARG-ST", the
+relation `locO`), **o-bind** (coindexed ∧ o-commands), **Principle A** (a locally o-commanded
+anaphor is locally o-bound), **Principle B** (a pronoun is locally o-free).
 
-* **local o-command** ((11)): `Y` locally o-commands `Z` iff `Y` is less oblique than `Z` —
-  precedes it on the same ARG-ST list. Here it is the relation `locO` (interpreted per model).
-* **o-bind** ((13)): `Y` o-binds `Z` iff coindexed *and* o-commands. **Coindexation is token
-  identity** of the `INDEX` objects (`pathEq` on `INDEX`), the RSRL-faithful reading.
-* **Principle A** ((15)): a locally o-commanded anaphor must be locally o-bound.
-* **Principle B** ((15)): a personal pronoun must be locally o-free (not locally o-bound).
-
-## Implementation notes
-
-* **Simplification.** ARG-ST is modeled via `SUBJ`/`OBJ` attributes on the sign (its argument
-  synsems are components of the sign, so component quantification reaches them) and `locO` is
-  interpreted directly per model. Deriving `locO` from a `FIRST`/`REST` list and the obliqueness
-  order is a faithful refinement (the `list`/`nelist` machinery); `locO`-as-a-relation already
-  exercises the relational+quantified description language on real binding content.
-* The nom-obj hierarchy (`ana`/`ppro`/`npro` ⊑ `synsem`) keys the principles by sort.
-* **Computational bridge deferred.** A bridge to the project's computational binding
-  (`Syntax/HPSG/Coreference.lean`'s `computeCoreferenceStatus`) is future work: that layer
-  encodes coindexation as `index : Option Nat` *value* equality over `Word`-based clauses,
-  whereas the RSRL principles here use *token identity* (`pathEq` on `INDEX`) over abstract
-  entities — the same value-vs-token gap flagged for the HFP bridge. Aligning them needs the
-  computational layer to encode structure-sharing.
+Coindexation is **token identity** of `INDEX` (`pathEq`), the RSRL-faithful reading. ARG-ST is
+modeled via `SUBJ`/`OBJ` attributes and `locO` interpreted per model (deriving `locO` from a
+`FIRST`/`REST` list is a refinement). A bridge to the computational binding
+(`Coreference.lean`, coindexation as `index : Option Nat` value equality) is deferred — the same
+value-vs-token gap as the HFP bridge.
 -/
 
 namespace HPSG.RSRL.Binding
@@ -56,19 +42,12 @@ def bleB : BSort → BSort → Bool
   | .npro, .synsem => true
   | a, b => decide (a = b)
 
-private theorem bleB_refl : ∀ a, bleB a a = true := by decide
-private theorem bleB_trans :
-    ∀ a b c, bleB a b = true → bleB b c = true → bleB a c = true := by decide
-private theorem bleB_antisymm : ∀ a b, bleB a b = true → bleB b a = true → a = b := by decide
-
-instance : PartialOrder BSort where
-  le a b := bleB a b = true
-  le_refl := bleB_refl
-  le_trans := bleB_trans
-  le_antisymm := bleB_antisymm
+instance : PartialOrder BSort :=
+  partialOrderOfBool bleB (by decide) (by decide) (by decide)
 
 instance : DecidableLE BSort := fun a b => inferInstanceAs (Decidable (bleB a b = true))
 
+/-- Appropriateness: a sign has `SUBJ`/`OBJ` synsems; every synsem species has an `IDX`. -/
 def bapprop : BSort → BAttr → Option BSort
   | .sign, .SUBJ => some .synsem
   | .sign, .OBJ => some .synsem
@@ -90,8 +69,7 @@ private theorem bapprop_inh : ∀ (σ₁ σ₂ : BSort) (α : BAttr) (τ₁ : BS
 
 /-! ### Principles A and B as descriptions
 
-Variables: `0` is the bound synsem `x`; `1` is the candidate binder `y`. `IDX(x) ≈ IDX(y)` is
-coindexation (token identity). -/
+Variable `0` is the bound synsem `x`; `1` is the candidate binder `y`. -/
 
 /-- Coindexation of the entities at variables `x` and `y`: token identity of their `INDEX`. -/
 def coindexed (x y : Nat) : Desc bindingSig :=
@@ -101,9 +79,7 @@ def coindexed (x y : Nat) : Desc bindingSig :=
 def locallyOBinds (y x : Nat) : Desc bindingSig :=
   .and (.rel .locO [.var y, .var x]) (coindexed x y)
 
-/-- **Principle A**: a locally o-commanded anaphor must be locally o-bound. For every
-component `x`: if `x` is an anaphor and some component `y` locally o-commands it, then some
-component `y` locally o-binds it. -/
+/-- **Principle A**: a locally o-commanded anaphor must be locally o-bound. -/
 def principleA : Desc bindingSig :=
   .all 0 (.imp
     (.and (.sortAssign (.var 0) .ana) (.ex 1 (.rel .locO [.var 1, .var 0])))
@@ -118,100 +94,47 @@ def principleB : Desc bindingSig :=
 /-- The binding fragment's grammar. -/
 def bindingGrammar : Grammar bindingSig := [principleA, principleB]
 
-/-! ### Worked model: *Mary likes herself* (grammatical) -/
+/-! ### Worked models
 
-/-- Entities of *Mary likes herself*: the verb sign, the subject (`mary`, an `npro`), the
-object (`herself`, an `ana`), and one shared index `i`. -/
-inductive GEnt | s | mary | herself | i deriving DecidableEq, Fintype, Repr
+One transitive-clause carrier and one builder `clause`; the three binding configurations are
+instantiations differing only in the object's sort and index. -/
 
-/-- *Mary likes herself*: `mary` and `herself` share the index `i` (coindexed), and `mary`
-locally o-commands `herself` (it is less oblique). -/
-def maryLikesHerself : Interpretation bindingSig where
-  U := GEnt
+/-- Entities of a transitive clause: the verb sign, subject, object, and two indices. -/
+inductive BindEnt | s | subj | obj | i1 | i2 deriving DecidableEq, Fintype, Repr
+
+/-- A transitive clause "`subj` V `obj`": the subject is an `npro` indexed `i1` and locally
+o-commands the object; the object has sort `objSort` and index `objIdx`. Coindexation is
+`objIdx = i1`. -/
+@[reducible] def clause (objSort : BSort) (objIdx : BindEnt) : Interpretation bindingSig where
+  U := BindEnt
   S := fun
     | .s => .sign
-    | .mary => .npro
-    | .herself => .ana
-    | .i => .idx
+    | .subj => .npro
+    | .obj => objSort
+    | .i1 => .idx
+    | .i2 => .idx
   A := fun a u => match a, u with
-    | .SUBJ, .s => some .mary
-    | .OBJ, .s => some .herself
-    | .IDX, .mary => some .i
-    | .IDX, .herself => some .i
+    | .SUBJ, .s => some .subj
+    | .OBJ, .s => some .obj
+    | .IDX, .subj => some .i1
+    | .IDX, .obj => some objIdx
     | _, _ => none
-  R := fun _ args => args = [GEnt.mary, GEnt.herself]
+  R := fun _ args => args = [BindEnt.subj, BindEnt.obj]
 
-instance : Fintype maryLikesHerself.U := inferInstanceAs (Fintype GEnt)
-instance : DecidableEq maryLikesHerself.U := inferInstanceAs (DecidableEq GEnt)
-instance (ρ : bindingSig.Rel) : DecidablePred (maryLikesHerself.R ρ) :=
-  fun args => inferInstanceAs (Decidable (args = [GEnt.mary, GEnt.herself]))
+instance (objSort : BSort) (objIdx : BindEnt) (ρ : bindingSig.Rel) :
+    DecidablePred ((clause objSort objIdx).R ρ) :=
+  fun args => inferInstanceAs (Decidable (args = [BindEnt.subj, BindEnt.obj]))
 
-/-- *Mary likes herself* satisfies Principle A: `herself` (an anaphor) is locally o-commanded
-by `mary`, and `mary` locally o-binds it (coindexed via the shared index `i`). -/
-example : maryLikesHerself.Models [principleA] := by decide
+/-- *Mary likes herself*: a coindexed anaphor object (`objIdx = i1`) is locally o-bound by the
+subject — Principle A satisfied, and the whole grammar (Principle B vacuous: no pronoun). -/
+example : (clause .ana .i1).Models bindingGrammar := by decide
 
-/-- It also satisfies the whole binding grammar (Principle B is vacuous: no pronoun). -/
-example : maryLikesHerself.Models bindingGrammar := by decide
+/-- *Mary likes himself* (gender clash): the anaphor object has a *distinct* index (`i2`), so it
+is locally o-commanded but not locally o-bound — Principle A violated (a genuine filter). -/
+example : ¬ (clause .ana .i2).Models [principleA] := by decide
 
-/-! ### Worked model: *Mary likes himself* (gender clash — Principle A violated) -/
-
-/-- Entities with two *distinct* indices `iM`, `iH`: `mary` and `himself` are not coindexed. -/
-inductive HEnt | s | mary | himself | iM | iH deriving DecidableEq, Fintype, Repr
-
-/-- *Mary likes himself*: `mary` locally o-commands the anaphor `himself`, but their indices
-differ (gender clash), so `himself` is not locally o-bound — Principle A is violated. -/
-def maryLikesHimself : Interpretation bindingSig where
-  U := HEnt
-  S := fun
-    | .s => .sign
-    | .mary => .npro
-    | .himself => .ana
-    | .iM => .idx
-    | .iH => .idx
-  A := fun a u => match a, u with
-    | .SUBJ, .s => some .mary
-    | .OBJ, .s => some .himself
-    | .IDX, .mary => some .iM
-    | .IDX, .himself => some .iH
-    | _, _ => none
-  R := fun _ args => args = [HEnt.mary, HEnt.himself]
-
-instance : Fintype maryLikesHimself.U := inferInstanceAs (Fintype HEnt)
-instance : DecidableEq maryLikesHimself.U := inferInstanceAs (DecidableEq HEnt)
-instance (ρ : bindingSig.Rel) : DecidablePred (maryLikesHimself.R ρ) :=
-  fun args => inferInstanceAs (Decidable (args = [HEnt.mary, HEnt.himself]))
-
-/-- *Mary likes himself* violates Principle A — a genuine filter, not vacuously satisfied. -/
-example : ¬ maryLikesHimself.Models [principleA] := by decide
-
-/-! ### Worked model: *Mary likes her* coindexed (Principle B violated) -/
-
-/-- Entities with `her` a personal pronoun (`ppro`) sharing the index `i` with `mary`. -/
-inductive PEnt | s | mary | her | i deriving DecidableEq, Fintype, Repr
-
-/-- *Mary likes her_i* with `her` coindexed with `mary`: `mary` locally o-binds the pronoun
-`her`, so `her` is not locally o-free — Principle B is violated. -/
-def maryLikesHer : Interpretation bindingSig where
-  U := PEnt
-  S := fun
-    | .s => .sign
-    | .mary => .npro
-    | .her => .ppro
-    | .i => .idx
-  A := fun a u => match a, u with
-    | .SUBJ, .s => some .mary
-    | .OBJ, .s => some .her
-    | .IDX, .mary => some .i
-    | .IDX, .her => some .i
-    | _, _ => none
-  R := fun _ args => args = [PEnt.mary, PEnt.her]
-
-instance : Fintype maryLikesHer.U := inferInstanceAs (Fintype PEnt)
-instance : DecidableEq maryLikesHer.U := inferInstanceAs (DecidableEq PEnt)
-instance (ρ : bindingSig.Rel) : DecidablePred (maryLikesHer.R ρ) :=
-  fun args => inferInstanceAs (Decidable (args = [PEnt.mary, PEnt.her]))
-
-/-- A coindexed pronoun violates Principle B. -/
-example : ¬ maryLikesHer.Models [principleB] := by decide
+/-- *Mary likes her_i* coindexed: a coindexed pronoun object is locally o-bound, so not locally
+o-free — Principle B violated. -/
+example : ¬ (clause .ppro .i1).Models [principleB] := by decide
 
 end HPSG.RSRL.Binding

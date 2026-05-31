@@ -5,32 +5,14 @@ import Mathlib.Data.Fintype.Basic
 # RSRL descriptions
 @cite{richter-2000}, @cite{richter-2024}
 
-A native Lean rendering of the **description language** of RSRL — the formulae that state the
-principles of an HPSG grammar (@cite{richter-2000}, Def. 54; satisfaction is Def. 58;
-@cite{richter-2024}, Ch. 3 §2). This now includes **relational formulae** and **component
-quantification** (∃/∀ over the components of the described entity), the features that make RSRL
-strictly richer than first-order logic. Chains (list-valued *relation arguments*, Def. 49–50)
-remain deferred.
+The **description language** of RSRL — the formulae stating an HPSG grammar's principles (Def.
+54; satisfaction Def. 58). Includes relational formulae and **component quantification** (∃/∀
+over the components of the described entity), the features making RSRL richer than FOL. Chains
+(list-valued relation arguments, Def. 49–50) are deferred.
 
-## Main declarations
-
-* `HPSG.RSRL.Desc` — descriptions over `Term`s (with variables): `sortAssign` (`τ ~ σ`),
-  `pathEq` (`τ₁ ≈ τ₂`, token identity), `rel` (relational formula `ρ(τ₁,…)`), `neg`/`and`/
-  `or`/`imp`, and `ex`/`all` (component quantification).
-* `HPSG.RSRL.Interpretation.satisfies` — satisfaction under a variable assignment
-  (@cite{richter-2000}, Def. 58). `ex`/`all` quantify over `IsComponentOf u` — RSRL's bounded
-  (component) quantification, *not* the whole universe. Decidable on finite models.
-* `HPSG.RSRL.Grammar` / `Interpretation.Models` — a grammar's principles; a model satisfies
-  every (variable-free) principle of every entity.
-
-## Implementation notes
-
-* `ex`/`all` are **component-bounded** (`I.IsComponentOf u w`, i.e. `w` reachable from `u` by
-  attributes). On finite models this is decidable (`Interpretation.lean`), so `∃`-quantified
-  worked examples reduce by `decide`. Universal component quantification (`all`) is decidable
-  too, but `decide` on it can be kernel-heavy; such principles are better checked structurally.
-* `Models` evaluates principles under the assignment `fun _ => u`; grammar descriptions are
-  variable-free (Def. 54), so the choice of assignment is irrelevant.
+`ex`/`all` are bounded by `IsComponentOf` (reachability by attributes), decidable on finite
+models, so `∃`-worked examples reduce by `decide`. `Models` evaluates the (variable-free)
+principles under the assignment `fun _ => u`.
 -/
 
 namespace HPSG.RSRL
