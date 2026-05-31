@@ -1,5 +1,7 @@
 import Linglib.Semantics.Dynamic.DRS.Basic
 import Linglib.Semantics.Dynamic.DRS.Reduction
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 
 /-!
 # Relational (dynamic) semantics of DRSs, and its equivalence with verifying embeddings
@@ -39,6 +41,26 @@ open FirstOrder FirstOrder.Language
 namespace DRT
 
 universe u v w x
+
+/-! ### Reindexing concrete atomic arguments
+
+A concrete DRS atom `.rel R ![k₁, …]` interprets (via `holds`/`Realize`) to
+`RelMap R (fun i => v (![k₁, …] i))`. These `@[simp]` lemmas reindex that to
+`![v k₁, …]`, so truth-condition proofs over concrete DRSs work with the atom's
+assigned values directly. (No general mathlib form exists — Loogle finds only a
+buried `comp_fin3` in the elliptic-curve files.) -/
+section Reindex
+variable {α β : Type*}
+
+@[simp] theorem vecArg₁ (v : α → β) (k : α) : (fun i => v (![k] i)) = ![v k] := by
+  funext i; fin_cases i; rfl
+@[simp] theorem vecArg₂ (v : α → β) (j k : α) : (fun i => v (![j, k] i)) = ![v j, v k] := by
+  funext i; fin_cases i <;> rfl
+@[simp] theorem vecArg₃ (v : α → β) (j k l : α) :
+    (fun i => v (![j, k, l] i)) = ![v j, v k, v l] := by
+  funext i; fin_cases i <;> rfl
+
+end Reindex
 
 variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
