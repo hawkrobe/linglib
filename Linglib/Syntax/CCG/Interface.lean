@@ -1,22 +1,22 @@
-/-
-# CCG Syntax-Semantics Interface
-
-Syntactic categories directly encode semantic types. Combinatory rules correspond
-to function application and composition.
-
-## Main definitions
-
-- `catToTy`: Maps CCG categories to semantic types
-- `SemLexEntry`: Lexical entry with semantics
-- `DerivStep.interp`: Computes meaning from derivation compositionally
-
--/
-
 import Linglib.Syntax.CCG.Basic
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Core.Combinator.Basic
 import Linglib.Semantics.Composition.ToyDomain
+
+/-!
+# CCG Syntax-Semantics Interface
+
+Syntactic categories directly encode semantic types and the combinatory rules
+correspond to function application and composition (@cite{steedman-2000}), so a
+derivation's meaning is read off compositionally from its structure.
+
+## Main definitions
+
+- `catToTy` — maps CCG categories to semantic types
+- `SemLexEntry` — a lexical entry with semantics
+- `DerivStep.interp` — computes a meaning from a derivation compositionally
+-/
 
 namespace CCG
 
@@ -81,8 +81,6 @@ def sleeps_sem' : toyModel.Denot (catToTy IV) := ToyLexicon.sleeps_sem
 def john_sleeps_sem : toyModel.Denot (catToTy S) :=
   sleeps_sem' john_sem'
 
-example : john_sleeps_sem := trivial
-
 -- Example: "John sees Mary"
 
 -- Syntactically:
@@ -106,14 +104,10 @@ def sees_mary_sem : toyModel.Denot (catToTy IV) :=
 def john_sees_mary_sem : toyModel.Denot (catToTy S) :=
   sees_mary_sem john_sem'  -- function application
 
-example : john_sees_mary_sem := trivial
-
 -- Example: "Mary sees John"
 
 def mary_sees_john_sem : toyModel.Denot (catToTy S) :=
   (sees_sem' john_sem') mary_sem'
-
-example : mary_sees_john_sem := trivial
 
 -- Example: "John eats pizza"
 
@@ -123,18 +117,11 @@ def pizza_sem' : toyModel.Denot (catToTy NP) := ToyEntity.pizza
 def john_eats_pizza_sem : toyModel.Denot (catToTy S) :=
   (eats_sem' pizza_sem') john_sem'
 
-example : john_eats_pizza_sem := trivial
-
 -- Truth Conditions from CCG Derivations
 
-/-- A sentence is true if its meaning holds -/
+/-- A sentence is true if its meaning holds. -/
 def sentenceTrue (meaning : toyModel.Denot .t) : Prop :=
   meaning
-
--- Prove truth conditions
-example : sentenceTrue john_sleeps_sem := trivial
-example : sentenceTrue john_sees_mary_sem := trivial
-example : sentenceTrue john_eats_pizza_sem := trivial
 
 -- Derivation-Driven Semantic Composition
 
@@ -529,7 +516,7 @@ All four operations must compose correctly for the derivation to succeed.
 -/
 theorem coordination_semantics_well_formed :
     (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome = true := by
-  native_decide
+  decide
 
 /--
 Extract the meaning of a coordination derivation as a function.
