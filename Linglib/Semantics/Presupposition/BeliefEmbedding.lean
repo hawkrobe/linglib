@@ -297,7 +297,7 @@ Both represent the same concept (agent-indexed world accessibility). The
 
 section BoolPropBridge
 
-open Core.Logic.Intensional (AgentAccessRel IsBeliefRefinementOf)
+open Core.Logic.Modal (AgentAccessRel IsBeliefRefinementOf)
 
 variable {W E : Type*}
 

@@ -20,7 +20,7 @@ between PIP's formulation and the standard treatments in:
 1. **Presupposition projection** — PIP's F operator ↔ `PrProp.andFilter`
 2. **Generalized quantifiers** — PIP's EVERY/SOME ↔ `GQ`
 3. **Plural semantics** — PIP's SINGLE/PLURAL ↔ Link's Atom/properPlural
-4. **Modal logic** — PIP's must/might ↔ `Core.Logic.Intensional.boxR/diamondR`
+4. **Modal logic** — PIP's must/might ↔ `Core.Logic.Intensional.box/diamond`
 5. **Static↔dynamic agreement** — `PIPExprF.truth` ↔ `PUpdate` filtering
 
 The set-based GQ operations (`setEvery`/`setSome`), three-argument modals
@@ -42,8 +42,8 @@ namespace KeshetAbney2024.PIP.Bridges
 
 open KeshetAbney2024.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
-open Core.Logic.Intensional (AccessRel boxR diamondR)
-open Core.Logic.Intensional.Logic (frameConditions)
+open Core.Logic.Modal (AccessRel box diamond)
+open Core.Logic.Modal.Logic (frameConditions)
 
 
 -- ============================================================
@@ -247,7 +247,7 @@ PIP's must allows anaphora because of a **realistic modal base**
 itself (`R w* w*`). This is exactly the T axiom (`□p → p`,
 frame condition: reflexivity).
 
-The `must_truth_agrees_boxR` and `must_realistic_of_refl`
+The `must_truth_agrees_box` and `must_realistic_of_refl`
 theorems in `Connectives.lean` already prove this correspondence.
 This section classifies PIP's modal operators in the lattice of
 normal modal logics from `Core.Logic.Intensional`.
@@ -271,10 +271,10 @@ Stated for the Prop-valued `AccessRel`/`Std.Refl`/`frameConditions` API in
 operators now use directly.
 -/
 theorem reflexive_satisfies_T {W : Type*}
-    (R : Core.Logic.Intensional.AccessRel W) [hRefl : Std.Refl R] :
-    frameConditions Core.Logic.Intensional.Logic.T R := by
-  unfold frameConditions Core.Logic.Intensional.Logic.hasAxiom
-    Core.Logic.Intensional.Logic.T
+    (R : Core.Logic.Modal.AccessRel W) [hRefl : Std.Refl R] :
+    frameConditions Core.Logic.Modal.Logic.T R := by
+  unfold frameConditions Core.Logic.Modal.Logic.hasAxiom
+    Core.Logic.Modal.Logic.T
   refine ⟨fun _ => hRefl, fun h => ?_, fun h => ?_, fun h => ?_, fun h => ?_⟩ <;>
     simp_all [Finset.mem_singleton]
 
@@ -296,10 +296,10 @@ This is structurally identical to @cite{kratzer-1991}'s analysis where:
 - The ordering source (for graded modality) is not used in PIP's
   simple must/might
 
-The formal connection is established via `Core.Logic.Intensional.boxR`:
-`must_truth_agrees_boxR` (in Connectives.lean) proves that PIP's
+The formal connection is established via `Core.Logic.Intensional.box`:
+`must_truth_agrees_box` (in Connectives.lean) proves that PIP's
 `must R allWorlds (atom p)` produces the same truth conditions as
-`boxR R (p g)`.
+`box R (p g)`.
 
 Direct import of `Semantics/Modality/Kratzer/` is not possible
 because Kratzer's implementation is monomorphic over `World4`. The
@@ -309,19 +309,19 @@ than definitional.
 
 /--
 Full Kratzer bridge: PIP's three-argument `mustBase` agrees with
-`boxR` when the modal base comes from an `AccessRel` and the restriction
+`box` when the modal base comes from an `AccessRel` and the restriction
 is tautological.
 
 The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ.truth w'}` ↔
-`boxR R φ.truth w`. Both express
+`box R φ.truth w`. Both express
 "the body holds at every R-accessible world from w".
 -/
-theorem mustBase_agrees_boxR {W D : Type*}
+theorem mustBase_agrees_box {W D : Type*}
     (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } ↔
-    boxR R φ.truth w := by
+    box R φ.truth w := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def,
-    Set.mem_setOf_eq, boxR]
+    Set.mem_setOf_eq, box]
 
 
 -- ============================================================

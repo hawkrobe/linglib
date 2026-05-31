@@ -55,8 +55,8 @@ set_option autoImplicit false
 
 namespace FaginHalpern1994
 
-open Core.Logic.Intensional
-  (AgentAccessRel AccessRel boxR IsEuclidean)
+open Core.Logic.Modal
+  (AgentAccessRel AccessRel box IsEuclidean)
 open Semantics.Modality.EpistemicLogic (knows everyoneKnows)
 open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
 

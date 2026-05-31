@@ -1,5 +1,5 @@
 import Linglib.Studies.KeshetAbney2024.Basic
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
@@ -26,15 +26,15 @@ PIP's modals are generalized quantifiers over worlds (paper Section 2.5):
 
 Our encoding parameterizes by an accessibility relation (`KeshetAbney2024.PIP.AccessRel`,
 equivalent to a Kratzer modal base β) and quantifies over accessible worlds.
-The grounding theorem `must_truth_agrees_boxR` proves that PIP's `must`
-produces the same truth conditions as `Core.Logic.Intensional.boxR`.
+The grounding theorem `must_truth_agrees_box` proves that PIP's `must`
+produces the same truth conditions as `Core.Logic.Intensional.box`.
 
 -/
 
 namespace KeshetAbney2024.PIP
 
 open Semantics.Dynamic.Core
-open Core.Logic.Intensional (AccessRel boxR diamondR boxR_T)
+open Core.Logic.Modal (AccessRel box diamond box_T)
 
 variable {W E : Type*}
 
@@ -278,24 +278,24 @@ end Properties
 
 
 -- ============================================================
--- Grounding: PIP modals ↔ Core.Logic.Intensional.boxR/diamondR
+-- Grounding: PIP modals ↔ Core.Logic.Intensional.box/diamond
 -- ============================================================
 
 /--
-PIP's `must` produces the same truth conditions as `Core.Logic.Intensional.boxR`.
+PIP's `must` produces the same truth conditions as `Core.Logic.Intensional.box`.
 
 Specifically: a pair (g, w₀) survives `must R allWorlds (atom p)` iff
-`boxR R (p g) w₀` — the body predicate holds at all R-accessible worlds.
+`box R (p g) w₀` — the body predicate holds at all R-accessible worlds.
 This connects PIP's discourse-update modals to the standard Kripke semantics
 used throughout `Semantics/Modality/`. Since accessibility is now the
 project-canonical Prop-valued `AccessRel`, the identity is direct — no lift.
 -/
-theorem must_truth_agrees_boxR [Fintype W]
+theorem must_truth_agrees_box [Fintype W]
     (R : AccessRel W) (p : ICDRTAssignment W E → W → Prop)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
     ((g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) ↔
-    boxR R (p g) w₀ := by
+    box R (p g) w₀ := by
   constructor
   · intro ⟨_, h⟩ v hRv
     have := h v (Finset.mem_toList.mpr (Finset.mem_univ v)) hRv
@@ -308,14 +308,14 @@ theorem must_truth_agrees_boxR [Fintype W]
     exact ⟨modalExpand_adds_accessible d.info R g w₀ w₁ hd hacc, hbox w₁ hacc⟩
 
 /--
-PIP's `might` agrees with `diamondR`.
+PIP's `might` agrees with `diamond`.
 -/
-theorem might_truth_agrees_diamondR [Fintype W]
+theorem might_truth_agrees_diamond [Fintype W]
     (R : AccessRel W) (p : ICDRTAssignment W E → W → Prop)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
     ((g, w₀) ∈ (might R (Finset.univ : Finset W).toList (atom p) d).info) ↔
-    diamondR R (p g) w₀ := by
+    diamond R (p g) w₀ := by
   constructor
   · intro ⟨_, w₁, _, hacc, hmem⟩
     unfold atom Discourse.mapInfo at hmem
@@ -331,7 +331,7 @@ holds at (g, w₀), then `p g w₀`.
 
 This derives PIP's key insight — must allows anaphora because a realistic
 modal base guarantees the description holds at the evaluation world — from
-`Core.Logic.Intensional.boxR_T`.
+`Core.Logic.Modal.box_T`.
 -/
 theorem must_realistic_of_refl [Fintype W]
     (R : AccessRel W) [Std.Refl R]
@@ -340,7 +340,7 @@ theorem must_realistic_of_refl [Fintype W]
     (hd : (g, w₀) ∈ d.info)
     (hmust : (g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) :
     p g w₀ :=
-  boxR_T R (p g) w₀ ((must_truth_agrees_boxR R p d g w₀ hd).mp hmust)
+  box_T R (p g) w₀ ((must_truth_agrees_box R p d g w₀ hd).mp hmust)
 
 /--
 Pointwise realistic base: if `R w₀ w₀` and must holds at w₀,

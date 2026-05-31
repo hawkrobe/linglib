@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Linglib.Semantics.Modality.ModalTypes
 
 /-!
@@ -140,7 +140,7 @@ instance {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
 
 /-- Duality: □_{f(e)} p ↔ ¬◇_{f(e)} ¬p. One of five sibling `theorem duality`s —
     the box–diamond duality underlying the modal square of opposition
-    (`Core.Logic.Intensional.modalSquare_relations`). -/
+    (`Core.Logic.Modal.modalSquare_relations`). -/
 theorem duality {Event W : Type*} (f : AnchoringFn Event W) (e : Event)
     (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
     necessity f e allW p w ↔ ¬ possibility f e allW (λ w' => ¬ p w') w := by
