@@ -88,4 +88,35 @@ theorem merge_assoc (K₁ K₂ K₃ : DRS L V) :
 
 end DRS
 
+/-! ### Properness (no free discourse referent) -/
+
+section Proper
+variable [DecidableEq V]
+
+mutual
+/-- `Bound b K`: every discourse referent occurring in `K` is bound — present in
+`b` or introduced by `K`'s universe or by an ancestor reachable "left and up"
+(the antecedent of a `⇒` threads its referents into the consequent). -/
+def DRS.Bound (b : Finset V) : DRS L V → Prop
+  | .mk U conds => Condition.BoundAll (b ∪ U) conds
+/-- `b`-boundedness of a condition. -/
+def Condition.Bound (b : Finset V) : Condition L V → Prop
+  | .rel _ args => ∀ i, args i ∈ b
+  | .eq u v => u ∈ b ∧ v ∈ b
+  | .neg K => DRS.Bound b K
+  | .imp a c => DRS.Bound b a ∧ DRS.Bound (b ∪ a.referents) c
+  | .dis l r => DRS.Bound b l ∧ DRS.Bound b r
+/-- `b`-boundedness of a list of conditions (mutual helper). -/
+def Condition.BoundAll (b : Finset V) : List (Condition L V) → Prop
+  | [] => True
+  | c :: cs => Condition.Bound b c ∧ Condition.BoundAll b cs
+end
+
+/-- A DRS is *proper* iff it has no free discourse referent
+(@cite{kamp-reyle-1993}, Def. 1.4.2–1.4.3): every occurring referent is bound at
+its position. -/
+def DRS.IsProper (K : DRS L V) : Prop := DRS.Bound ∅ K
+
+end Proper
+
 end DRT
