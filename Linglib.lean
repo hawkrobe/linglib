@@ -1878,7 +1878,6 @@ import Linglib.Studies.LuChuangBaayen2026
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Combinators
 import Linglib.Syntax.CCG.Interface
-import Linglib.Syntax.CCG.Homomorphism
 import Linglib.Studies.Cysouw2009
 import Linglib.Studies.Scott2023Agreement
 import Linglib.Phenomena.Agreement.DifferentialIndexing
@@ -1909,7 +1908,7 @@ import Linglib.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
 import Linglib.Syntax.CCG.Gapping
 import Linglib.Studies.ScontrasPearl2021
-import Linglib.Syntax.CCG.Formal.Equivalence
+import Linglib.Syntax.CCG.Equivalence
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Pumping
 import Linglib.Core.Computability.ContextFreeGrammar.Map
@@ -1959,7 +1958,7 @@ import Linglib.Core.RingTheory.HopfAlgebra.SymmetricAlgebra
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc
 import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
-import Linglib.Syntax.CCG.Formal.GenerativeCapacity
+import Linglib.Syntax.CCG.GenerativeCapacity
 import Linglib.Studies.KuhlmannKollerSatta2015
 import Linglib.Syntax.CCG.Scope
 import Linglib.Syntax.CCG.Intonation
