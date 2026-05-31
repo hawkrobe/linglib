@@ -1875,8 +1875,8 @@ import Linglib.Studies.McPhersonLamont2026
 import Linglib.Studies.ChuangEtAl2026
 import Linglib.Studies.LuChuangBaayen2026
 -- Theories: CCG
-import Linglib.Syntax.CCG.Core.Basic
-import Linglib.Syntax.CCG.Core.Combinators
+import Linglib.Syntax.CCG.Basic
+import Linglib.Syntax.CCG.Combinators
 import Linglib.Syntax.CCG.Interface
 import Linglib.Syntax.CCG.Homomorphism
 import Linglib.Studies.Cysouw2009

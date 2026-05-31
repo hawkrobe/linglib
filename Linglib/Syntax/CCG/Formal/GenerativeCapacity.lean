@@ -31,7 +31,7 @@ import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
 import Linglib.Syntax.CCG.CrossSerial
-import Linglib.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Basic
 
 namespace CCG.GenerativeCapacity
 

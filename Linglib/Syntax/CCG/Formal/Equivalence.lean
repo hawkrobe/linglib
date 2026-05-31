@@ -26,9 +26,9 @@ since all derivations in an equivalence class have the same meaning.
 
 -/
 
-import Linglib.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Interface
-import Linglib.Syntax.CCG.Core.Combinators
+import Linglib.Syntax.CCG.Combinators
 import Linglib.Core.Logic.Intensional.Frame
 
 namespace CCG.Equivalence

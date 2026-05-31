@@ -26,7 +26,7 @@ Hence: forward gapping in SVO/VSO, backward gapping in SOV.
 
 -/
 
-import Linglib.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Basic
 
 namespace CCG.Gapping
 

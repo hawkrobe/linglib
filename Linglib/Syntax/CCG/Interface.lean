@@ -12,7 +12,7 @@ to function application and composition.
 
 -/
 
-import Linglib.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Basic
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Conjunction
 import Linglib.Core.Combinator.Basic

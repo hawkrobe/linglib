@@ -33,7 +33,7 @@ For "Jan Piet zag zwemmen" (Jan saw Piet swim):
 
 -/
 
-import Linglib.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Basic
 
 namespace CCG.CrossSerial
 
