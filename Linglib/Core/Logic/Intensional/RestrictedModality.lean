@@ -1,6 +1,7 @@
 import Linglib.Core.Logic.Intensional.Defs
 import Linglib.Core.Logic.Intensional.Quantification
 import Linglib.Core.Logic.Intensional.Algebra
+import Linglib.Core.Logic.Aristotelian.Square
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.Lattice
@@ -107,6 +108,61 @@ theorem boxR_not_moore (R : AccessRel W) [hS : IsSerial R] [IsTrans W R]
   have hbbp : boxR R (boxR R p) w := boxR_four R p w hbp
   obtain ⟨v, hv⟩ := hS.serial w
   exact (h v hv).2 (hbbp v hv)
+
+/-! ### Modal square of opposition
+
+@cite{carnielli-pizzi-2008}. The `□`/`◇` pair forms an Aristotelian square
+(`A = □p`, `E = □¬p`, `I = ◇p`, `O = ¬□p`). Under seriality — the modal D axiom
+(`boxR_D`) — it satisfies all six relations of the square of opposition, so every
+serial modality (epistemic, deontic, temporal, doxastic) inherits the square. -/
+
+/-- Under seriality, `□p` and `□¬p` are incompatible: no world satisfies both. -/
+theorem boxR_disjoint_compl (R : AccessRel W) [hS : IsSerial R] (p : W → Prop) :
+    Disjoint (boxR R p) (boxR R pᶜ) := by
+  rw [Pi.disjoint_iff]
+  intro w
+  rw [disjoint_iff_inf_le]
+  rintro ⟨hp, hnp⟩
+  obtain ⟨v, hwv⟩ := hS.serial w
+  exact hnp v hwv (hp v hwv)
+
+/-- Box–diamond duality as an equation of predicates: `◇p = ¬□¬p`. -/
+theorem diamondR_eq_compl_boxR_compl (R : AccessRel W) (p : W → Prop) :
+    diamondR R p = (boxR R pᶜ)ᶜ := by
+  funext w
+  apply propext
+  constructor
+  · rintro ⟨v, hv, hpv⟩ hbox
+    exact hbox v hv hpv
+  · intro h
+    by_contra hne
+    exact h (fun v hv hpv => hne ⟨v, hv, hpv⟩)
+
+/-- The **modal square of opposition** over an accessibility relation `R`
+(@cite{carnielli-pizzi-2008}): `A = □p`, `E = □¬p`, `I = ◇p`, `O = ¬□p`. -/
+def modalSquare (R : AccessRel W) (p : W → Prop) : Aristotelian.Square (W → Prop) where
+  A := boxR R p
+  E := boxR R pᶜ
+  I := diamondR R p
+  O := (boxR R p)ᶜ
+
+/-- The modal square satisfies all six Aristotelian relations whenever `R` is
+**serial**. `subalternAI` is exactly the D axiom (`boxR_D` : `□p → ◇p`); the two
+contradiction diagonals combine `isCompl_compl` with box–diamond duality; and
+contrariety/subcontrariety reduce to `boxR_disjoint_compl`. -/
+theorem modalSquare_relations (R : AccessRel W) [IsSerial R] (p : W → Prop) :
+    Aristotelian.SquareRelations (modalSquare R p) where
+  subalternAI := by rw [Pi.le_def]; exact fun w => boxR_D R p w
+  subalternEO := le_compl_iff_disjoint_right.mpr (boxR_disjoint_compl R p).symm
+  contradAO := isCompl_compl
+  contradEI := by
+    show IsCompl (boxR R pᶜ) (diamondR R p)
+    rw [diamondR_eq_compl_boxR_compl]; exact isCompl_compl
+  contraryAE := boxR_disjoint_compl R p
+  subcontrIO := by
+    show Codisjoint (diamondR R p) ((boxR R p)ᶜ)
+    rw [diamondR_eq_compl_boxR_compl, codisjoint_iff, ← compl_inf,
+        disjoint_iff.mp (boxR_disjoint_compl R p).symm, compl_bot]
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 2. Monotonicity
