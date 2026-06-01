@@ -6,6 +6,7 @@ import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F143A
 import Linglib.Data.WALS.Features.F144A
 import Linglib.Data.WALS.Features.F144B
+import Linglib.Typology.NegativeConcord
 
 /-!
 # Typology.Negation
@@ -380,6 +381,37 @@ def countByMorphemeType (langs : List NegationProfile)
 /-- Count of languages in a sample with a given symmetry type. -/
 def countBySymmetry (langs : List NegationProfile) (s : NegSymmetry) : Nat :=
   (langs.filter (·.symmetry == s)).length
+
+-- ============================================================================
+-- §6. Negative concord: bridge WALS 115A strategy ↔ item-level n-word status
+--     (@cite{giannakidou-2000}, @cite{van-der-auwera-van-alsenoy-2016})
+-- ============================================================================
+
+open Typology.NegativeConcord (NWordStatus)
+
+/-- Whether the negative-indefinite system shows negative concord
+    (@cite{van-der-auwera-van-alsenoy-2016}): WALS 115A `cooccur` (concord) and `mixed`
+    (position-dependent) do; `preclude` (double negation) and `negExistential` do not.
+    Broader than `NegationProfile.hasNegConcord`, which tests `cooccur` only. -/
+def NegIndefiniteStrategy.hasNegativeConcord : NegIndefiniteStrategy → Bool
+  | .cooccur | .mixed => true
+  | .preclude | .negExistential => false
+
+/-- Whether an item-level n-word status is consistent with a language's WALS 115A
+    negative-indefinite strategy: an n-word needs a concord system, an inherently
+    negative quantifier a non-concord (double-negation / neg-existential) one, an NPI
+    any (@cite{van-der-auwera-van-alsenoy-2016}). -/
+def NegIndefiniteStrategy.admits : NegIndefiniteStrategy → NWordStatus → Bool
+  | strat, .nWord => strat.hasNegativeConcord
+  | strat, .negQuantifier => !strat.hasNegativeConcord
+  | _, .npi => true
+
+/-- N-words live in negative-concord systems, inherently negative quantifiers in
+    double-negation ones (@cite{van-der-auwera-van-alsenoy-2016}). -/
+theorem nWord_vs_negQuantifier :
+    (NegIndefiniteStrategy.cooccur).admits .nWord = true ∧
+    (NegIndefiniteStrategy.preclude).admits .nWord = false ∧
+    (NegIndefiniteStrategy.preclude).admits .negQuantifier = true := by decide
 
 -- ============================================================================
 -- §7. Theory-neutral WALS distribution facts (corpus-only generalisations)
