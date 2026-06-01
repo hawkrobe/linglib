@@ -8,14 +8,9 @@ import Linglib.Typology.Color
 namespace German
 
 /-- German: 6 non-derived basic colors, 11 total basic colors; green (*grün*)
-    vs blue (*blau*) distinct; red vs yellow distinct. -/
+    vs blue (*blau*) distinct; red vs yellow distinct.
+    Derived from the WALS Chs 132–135 rows for `deu`. -/
 def colorProfile : Typology.ColorProfile :=
-  { language := "German"
-  , iso := "deu"
-  , family := "Indo-European"
-  , nonDerived := some .six
-  , basic := some .v11
-  , greenBlue := some .distinct
-  , redYellow := some .distinct }
+  Typology.ColorProfile.fromWALS "German" "deu" "Indo-European"
 
 end German

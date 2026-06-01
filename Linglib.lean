@@ -1434,6 +1434,7 @@ import Linglib.Phenomena.Iconicity.Basic
 import Linglib.Studies.SchlenkerEtAl2026
 import Linglib.Studies.MajidBosterBowerman2008
 import Linglib.Studies.ZaslavskyEtAl2019
+import Linglib.Studies.ZaslavskyKempRegierTishby2018
 import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Studies.Lucy1994
 import Linglib.Phenomena.Islands.MannerOfSpeaking
