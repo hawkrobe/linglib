@@ -123,8 +123,8 @@ def lowestCovered (markers : List Marker) : AHPosition :=
 8-language sample from the paper plus Yoruba (added later via
 @cite{awobuluyi-1978} + @cite{keenan-comrie-1979}). -/
 
-abbrev english   := Fragments.English.relMarkers
-abbrev welsh     := Fragments.Welsh.relMarkers
+abbrev english   := English.relMarkers
+abbrev welsh     := Welsh.relMarkers
 /- The two MSA markers @cite{keenan-comrie-1977} Table 1 records: the
    definite-headed pair (`relAlladhi` + `relResumptive`). MSA additionally
    has indefinite-headed asyndetic markers per @cite{ryding-2005} §14.3,
@@ -132,14 +132,14 @@ abbrev welsh     := Fragments.Welsh.relMarkers
    `relAsyndeticResumptive` — but K&C 1977 does not record them, so this
    study works with the K&C-documented subset. -/
 abbrev arabic    : List Marker :=
-  [Fragments.Arabic.ModernStandard.relAlladhi,
-   Fragments.Arabic.ModernStandard.relResumptive]
-abbrev hebrew    := Fragments.Hebrew.relMarkers
-abbrev tobaBatak := Fragments.TobaBatak.relMarkers
-abbrev korean    := Fragments.Korean.relMarkers
-abbrev finnish   := Fragments.Finnish.relMarkers
-abbrev malagasy  := Fragments.Malagasy.relMarkers
-abbrev yoruba    := Fragments.Yoruba.relMarkers
+  [Arabic.ModernStandard.relAlladhi,
+   Arabic.ModernStandard.relResumptive]
+abbrev hebrew    := Hebrew.relMarkers
+abbrev tobaBatak := TobaBatak.relMarkers
+abbrev korean    := Korean.relMarkers
+abbrev finnish   := Finnish.relMarkers
+abbrev malagasy  := Malagasy.relMarkers
+abbrev yoruba    := Yoruba.relMarkers
 
 /-- The 8-language sub-sample from the original paper Table 1 (pp. 76-79). -/
 def originalSample : List (List Marker) :=
@@ -303,49 +303,49 @@ the K&C `lowestCovered` is at least as deep as the WALS
 
 theorem english_kc_matches_wals :
     lowestCovered english = .objComparison ∧
-    Fragments.English.relativization.lowestRelativizable = .objComparison := by decide
+    English.relativization.lowestRelativizable = .objComparison := by decide
 
 theorem welsh_kc_covers_deeper_than_wals :
     lowestCovered welsh = .objComparison ∧
-    Fragments.Welsh.relativization.lowestRelativizable = .oblique ∧
+    Welsh.relativization.lowestRelativizable = .oblique ∧
     AHPosition.moreAccessible .oblique .objComparison := by decide
 
 theorem korean_kc_covers_deeper_than_wals :
     lowestCovered korean = .genitive ∧
-    Fragments.Korean.relativization.lowestRelativizable = .oblique := by decide
+    Korean.relativization.lowestRelativizable = .oblique := by decide
 
 theorem malagasy_kc_matches_wals :
     lowestCovered malagasy = .subject ∧
-    Fragments.Malagasy.relativization.lowestRelativizable = .subject := by decide
+    Malagasy.relativization.lowestRelativizable = .subject := by decide
 
 theorem finnish_kc_matches_wals :
     lowestCovered finnish = .genitive ∧
-    Fragments.Finnish.relativization.lowestRelativizable = .oblique := by decide
+    Finnish.relativization.lowestRelativizable = .oblique := by decide
 
 theorem hebrew_kc_covers_deeper_than_wals :
     lowestCovered hebrew = .objComparison ∧
-    Fragments.Hebrew.relativization.lowestRelativizable = .oblique := by decide
+    Hebrew.relativization.lowestRelativizable = .oblique := by decide
 
 theorem arabic_kc_covers_deeper_than_wals :
     lowestCovered arabic = .objComparison ∧
-    Fragments.Arabic.ModernStandard.relativization.lowestRelativizable = .oblique := by decide
+    Arabic.ModernStandard.relativization.lowestRelativizable = .oblique := by decide
 
 theorem yoruba_kc_matches_wals :
     lowestCovered yoruba = .genitive ∧
-    Fragments.Yoruba.relativization.lowestRelativizable = .genitive := by decide
+    Yoruba.relativization.lowestRelativizable = .genitive := by decide
 
 /-- **Systematic coverage agreement**: K&C is at least as detailed as
     WALS for every sample language. The WALS profile never claims a
     language can relativize a position that K&C Table 1 doesn't cover. -/
 theorem kc_at_least_as_detailed_as_wals :
-    (lowestCovered english).rank   ≤ Fragments.English.relativization.lowestRelativizable.rank ∧
-    (lowestCovered welsh).rank     ≤ Fragments.Welsh.relativization.lowestRelativizable.rank ∧
-    (lowestCovered korean).rank    ≤ Fragments.Korean.relativization.lowestRelativizable.rank ∧
-    (lowestCovered malagasy).rank  ≤ Fragments.Malagasy.relativization.lowestRelativizable.rank ∧
-    (lowestCovered finnish).rank   ≤ Fragments.Finnish.relativization.lowestRelativizable.rank ∧
-    (lowestCovered hebrew).rank    ≤ Fragments.Hebrew.relativization.lowestRelativizable.rank ∧
-    (lowestCovered arabic).rank    ≤ Fragments.Arabic.ModernStandard.relativization.lowestRelativizable.rank ∧
-    (lowestCovered yoruba).rank    ≤ Fragments.Yoruba.relativization.lowestRelativizable.rank :=
+    (lowestCovered english).rank   ≤ English.relativization.lowestRelativizable.rank ∧
+    (lowestCovered welsh).rank     ≤ Welsh.relativization.lowestRelativizable.rank ∧
+    (lowestCovered korean).rank    ≤ Korean.relativization.lowestRelativizable.rank ∧
+    (lowestCovered malagasy).rank  ≤ Malagasy.relativization.lowestRelativizable.rank ∧
+    (lowestCovered finnish).rank   ≤ Finnish.relativization.lowestRelativizable.rank ∧
+    (lowestCovered hebrew).rank    ≤ Hebrew.relativization.lowestRelativizable.rank ∧
+    (lowestCovered arabic).rank    ≤ Arabic.ModernStandard.relativization.lowestRelativizable.rank ∧
+    (lowestCovered yoruba).rank    ≤ Yoruba.relativization.lowestRelativizable.rank :=
   by decide
 
 -- ============================================================================

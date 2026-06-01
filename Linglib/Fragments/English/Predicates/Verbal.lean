@@ -12,10 +12,10 @@ defines `VerbEntry extends VerbCore` with English-specific inflectional fields
 and provides smart constructors for regular verbs.
 -/
 
-namespace Fragments.English.Predicates.Verbal
+namespace English.Predicates.Verbal
 
 -- Re-export verb-entry vocabulary so downstream files that open this
--- namespace (e.g., `open Fragments.English.Predicates.Verbal (ComplementType ...)`)
+-- namespace (e.g., `open English.Predicates.Verbal (ComplementType ...)`)
 -- continue to find them.
 export Features (Preferential Attitude Causative Implicative)
 export Semantics.Lexical (PresupTriggerType ProjectionBehavior ComplementType
@@ -3608,4 +3608,4 @@ theorem fail_semantics_implicative :
 
 end V2
 
-end Fragments.English.Predicates.Verbal
+end English.Predicates.Verbal

@@ -37,7 +37,7 @@ this pattern. Data from @cite{akinbo-fwangwar-2026} and
 @cite{fwangwar-2018}.
 -/
 
-namespace Fragments.Mwaghavul
+namespace Mwaghavul
 
 open Phonology.Autosegmental.RegisterTier (TRN TBUKind
   WordProsodicType)
@@ -189,4 +189,4 @@ theorem mh_verb_bisyllabic_pattern (i : Ideophone)
   | ⟨_, _, [_, _], _⟩, _ =>
     simp [Phonology.Autosegmental.GrammaticalTone.tonalOverwrite]
 
-end Fragments.Mwaghavul
+end Mwaghavul

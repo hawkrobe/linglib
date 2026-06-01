@@ -73,7 +73,7 @@ open Core.Constraint.OT
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (integrityTone)
-open Fragments.Mwaghavul
+open Mwaghavul
 
 -- ============================================================================
 -- §1: Substrate Setup

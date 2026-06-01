@@ -7,7 +7,7 @@ Modal expressions from Korean (Koreanic), based on
 @cite{qing-uegaki-2025}.
 -/
 
-namespace Fragments.Korean.Modals
+namespace Korean.Modals
 
 open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
@@ -33,4 +33,4 @@ def toToy : ModalExpression := ⟨"-to + toy-", [pd, pc]⟩
 def allExpressions : List ModalExpression :=
   [napo, keyss, yaHa, ke, they, yaKeyss, kesiCoh, ciMolun, swuIss, toToy]
 
-end Fragments.Korean.Modals
+end Korean.Modals

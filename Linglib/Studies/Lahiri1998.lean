@@ -794,7 +794,7 @@ def subjectNPI : SubjectNPIContrast :=
 -- §13. Connection to Existing Fragment Entries
 -- ============================================================================
 
-/-! The fragment entry `Fragments.Hindi.PolarityItems.koiiBhii` stores
+/-! The fragment entry `Hindi.PolarityItems.koiiBhii` stores
     licensing contexts as a list. @cite{lahiri-1998}'s contribution is
     showing that these contexts are not arbitrary — they are exactly the
     DE environments (for NPI readings) and generic/modal environments
@@ -803,7 +803,7 @@ def subjectNPI : SubjectNPIContrast :=
     The study file derives this; the fragment file stores it.
     A future refactoring should make the fragment derive from the theory. -/
 
-open Fragments.Hindi.PolarityItems (koiiBhii koiiNahiin)
+open Hindi.PolarityItems (koiiBhii koiiNahiin)
 
 theorem koiiBhii_is_fci : koiiBhii.polarityType = .fci := rfl
 theorem koiiNahiin_is_npi : koiiNahiin.polarityType = .npiWeak := rfl

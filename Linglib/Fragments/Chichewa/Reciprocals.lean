@@ -14,7 +14,7 @@ Example: @cite{nordlinger-2023} ex. 20 (citing Dalrymple et al. 1994).
 The reciprocal affix is distinct from the reflexive prefix "dzi-".
 -/
 
-namespace Fragments.Chichewa.Reciprocals
+namespace Chichewa.Reciprocals
 
 open Morphology
 
@@ -40,4 +40,4 @@ def reflexivePrefix : MorphRule Bool :=
 theorem recip_distinct_from_reflexive :
     reciprocalAffix.value ≠ reflexivePrefix.value := by decide
 
-end Fragments.Chichewa.Reciprocals
+end Chichewa.Reciprocals

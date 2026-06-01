@@ -26,7 +26,7 @@ lacks. The clause structure itself does not change (no constructional
 asymmetry).
 -/
 
-namespace Fragments.Quechua.Negation
+namespace Quechua.Negation
 
 open Typology.Negation
 
@@ -119,4 +119,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Quechua.Negation
+end Quechua.Negation

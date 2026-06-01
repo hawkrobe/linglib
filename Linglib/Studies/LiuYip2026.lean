@@ -260,12 +260,12 @@ theorem zai_no_requirement :
     AspP_outer-associated but, unlike Mandarin *you*, does NOT carry a [+D]
     selectional restriction (it is compatible with stative *jau* 'have' per
     @cite{liu-yip-2026}). -/
-def faanAspHead : AspHead := Fragments.Cantonese.Aspect.faan.toAspHead
+def faanAspHead : AspHead := Cantonese.Aspect.faan.toAspHead
 
 /-- Studies-side projection: Cantonese *-gwo* (repetitive use) is
     AspP_inner-associated. Its experiential use is also AspP_inner per the
     lexical entry, but pragmatically distinct. -/
-def gwoAspHead : AspHead := Fragments.Cantonese.Aspect.gwo.toAspHead
+def gwoAspHead : AspHead := Cantonese.Aspect.gwo.toAspHead
 
 theorem faan_outer_no_dyn :
     faanAspHead.flavor = .outer ∧ faanAspHead.selectsDynamicity = none := by
@@ -352,16 +352,16 @@ assertion that every nonfinite-clause-taking predicate in the Mandarin and
 Cantonese fragments selects a complement of size ≥ vP. Falsifiable by a
 single new datum. -/
 
-open Fragments.Mandarin.Predicates in
+open Mandarin.Predicates in
 /-- All Mandarin nonfinite-takers (xiang, rang, quan, bi, dasuan, shefa)
     have `complementType = .infinitival`, consistent with vP-as-floor and
     falsifiable by a single new datum. The Fragment-side companion is
-    `Fragments.Mandarin.Predicates.liuyip_partition`. -/
+    `Mandarin.Predicates.liuyip_partition`. -/
 theorem mandarin_nonfinite_takers_min_vP :
     [xiang, rang, quan, bi, dasuan, shefa].all
       (·.complementType = .infinitival) = true := by decide
 
-open Fragments.Cantonese.Predicates in
+open Cantonese.Predicates in
 /-- All Cantonese nonfinite-takers select `[.vP]` per the per-language
     fragment classification (@cite{liu-yip-2026}). -/
 theorem cantonese_nonfinite_takers_min_vP :

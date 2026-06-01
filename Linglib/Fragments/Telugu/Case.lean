@@ -24,7 +24,7 @@ See `Studies/Aitha2026.lean` for
 the full analysis of Telugu stem allomorphy patterns.
 -/
 
-namespace Fragments.Telugu.Case
+namespace Telugu.Case
 
 -- ============================================================================
 -- § 1: Case Inventory
@@ -65,4 +65,4 @@ theorem telugu_subset_tamil :
     caseInventory ⊆ ({.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com} : Finset Features.Case) := by
   decide
 
-end Fragments.Telugu.Case
+end Telugu.Case

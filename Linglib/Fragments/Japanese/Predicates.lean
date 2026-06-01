@@ -8,7 +8,7 @@ Japanese predicates relevant to @cite{qing-uegaki-2025}. Properties like
 C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
-namespace Fragments.Japanese.Predicates
+namespace Japanese.Predicates
 
 open Semantics.Lexical
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
@@ -152,4 +152,4 @@ def allVerbs : List JapaneseVerbEntry :=
 def lookup (form : String) : Option JapaneseVerbEntry :=
   allVerbs.find? (·.form == form)
 
-end Fragments.Japanese.Predicates
+end Japanese.Predicates

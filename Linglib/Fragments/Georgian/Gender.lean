@@ -12,7 +12,7 @@ agreement targets. The Corbett 1991 view is a per-Study override at
 `Studies/Corbett1991.lean`.
 -/
 
-namespace Fragments.Georgian.Gender
+namespace Georgian.Gender
 
 open Typology.Gender
 
@@ -25,4 +25,4 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "kat" ∧ genderTypology.name = "Georgian" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Georgian.Gender
+end Georgian.Gender

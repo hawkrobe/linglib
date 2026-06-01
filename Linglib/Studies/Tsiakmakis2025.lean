@@ -325,36 +325,36 @@ structure NegatorDatum where
 /-- Greek *dhen* in exclamatives: ⟦dhen⟧ = λp.¬p, masked by extreme-degree
     semantics (§3.1, ex. 22–24). -/
 def greekDhenExclamative : NegatorDatum :=
-  { language := "Greek", form := Fragments.Greek.StandardModern.Negation.dhen.form, negType := .neg1
+  { language := "Greek", form := Greek.StandardModern.Negation.dhen.form, negType := .neg1
   , hostCategory := .exclamatives
   , construction := "negative exclamatives (§3.1, ex. 22–24)" }
 
 /-- Greek *dhen* in negative rhetorical questions: ⟦dhen⟧ = λp.¬p,
     masked by rhetoricity / polarity reversal (§3.2, ex. 26–29; eq. 30). -/
 def greekDhenRhetoricalQ : NegatorDatum :=
-  { language := "Greek", form := Fragments.Greek.StandardModern.Negation.dhen.form, negType := .neg1
+  { language := "Greek", form := Greek.StandardModern.Negation.dhen.form, negType := .neg1
   , hostCategory := .rhetoricalQuestions
   , construction := "negative rhetorical questions (§3.2, ex. 26–29)" }
 
 /-- Greek *dhen* in preposed negation questions: ⟦dhen⟧ = λp.¬p,
     masked by speaker's epistemic bias (§3.3, ex. 31–36; eq. 36–37). -/
 def greekDhenPolarQ : NegatorDatum :=
-  { language := "Greek", form := Fragments.Greek.StandardModern.Negation.dhen.form, negType := .neg1
+  { language := "Greek", form := Greek.StandardModern.Negation.dhen.form, negType := .neg1
   , hostCategory := .optionallyBiasedPolarQs
   , construction := "preposed negation questions (§3.3, ex. 31–36)" }
 
 def greekMinFear : NegatorDatum :=
-  { language := "Greek", form := Fragments.Greek.StandardModern.Negation.min.form, negType := .neg2
+  { language := "Greek", form := Greek.StandardModern.Negation.min.form, negType := .neg2
   , hostCategory := .emotiveDoxasticPredicates
   , construction := "fear-predicate complements (§4.1, ex. 38)" }
 
 def greekMinConditional : NegatorDatum :=
-  { language := "Greek", form := Fragments.Greek.StandardModern.Negation.min.form, negType := .neg2
+  { language := "Greek", form := Greek.StandardModern.Negation.min.form, negType := .neg2
   , hostCategory := .conditionals
   , construction := "conditional antecedents (§4.2, ex. 45)" }
 
 def greekMinQuestion : NegatorDatum :=
-  { language := "Greek", form := Fragments.Greek.StandardModern.Negation.min.form, negType := .neg2
+  { language := "Greek", form := Greek.StandardModern.Negation.min.form, negType := .neg2
   , hostCategory := .biasedQuestions
   , construction := "biased polar questions (§4.3, ex. 51)" }
 
@@ -369,12 +369,12 @@ def frenchNeForbid : NegatorDatum :=
   , construction := "negative-predicate complements: défendre que...ne (§5.2, ex. 62)" }
 
 def italianNonTemporal : NegatorDatum :=
-  { language := "Italian", form := Fragments.Italian.Negation.non.form, negType := .neg1
+  { language := "Italian", form := Italian.Negation.non.form, negType := .neg1
   , hostCategory := .temporalExpressions
   , construction := "finché non (until; §5.4, ex. 68)" }
 
 def italianNonComparative : NegatorDatum :=
-  { language := "Italian", form := Fragments.Italian.Negation.non.form, negType := .neg1
+  { language := "Italian", form := Italian.Negation.non.form, negType := .neg1
   , hostCategory := .comparatives
   , construction := "più...di quanto non (more...than; §5.7, ex. 77)" }
 
@@ -725,20 +725,20 @@ theorem expletive_from_negative_double_neg (f : ModalBase World) (g : OrderingSo
 /-! ### Greek and Italian data derive from fragment entries
 
 The `NegatorDatum` records for Greek and Italian derive their surface
-forms from `Fragments.Greek.StandardModern.Negation` and `Fragments.Italian.Negation`
+forms from `Greek.StandardModern.Negation` and `Italian.Negation`
 respectively — the connection is true by construction, not by bridge
 theorem. -/
 
 /-- Greek *dhen* data derives its form from the Greek negation fragment. -/
 theorem greek_dhen_form_grounded :
-    greekDhenExclamative.form = Fragments.Greek.StandardModern.Negation.dhen.form := rfl
+    greekDhenExclamative.form = Greek.StandardModern.Negation.dhen.form := rfl
 
 /-- Greek *min* data derives its form from the Greek negation fragment. -/
 theorem greek_min_form_grounded :
-    greekMinFear.form = Fragments.Greek.StandardModern.Negation.min.form := rfl
+    greekMinFear.form = Greek.StandardModern.Negation.min.form := rfl
 
 /-- Italian *non* data derives its form from the Italian negation fragment. -/
 theorem italian_non_form_grounded :
-    italianNonTemporal.form = Fragments.Italian.Negation.non.form := rfl
+    italianNonTemporal.form = Italian.Negation.non.form := rfl
 
 end Tsiakmakis2025

@@ -100,7 +100,7 @@ def Attitude.nvpClass : Attitude → Option NVPClass
 
 -- VerbEntry Derived Properties
 
-open Fragments.English.Predicates.Verbal (VerbEntry)
+open English.Predicates.Verbal (VerbEntry)
 
 /-- C-distributivity is derived from the attitude builder -/
 def VerbEntry.cDistributive (v : VerbEntry) : Option Bool :=
@@ -151,7 +151,7 @@ def VerbEntry.canEmbedQuestion (v : VerbEntry) : Bool :=
 
 -- Filtered Verb Lists (Derived)
 
-open Fragments.English.Predicates.Verbal (allVerbs)
+open English.Predicates.Verbal (allVerbs)
 
 /--
 Get all anti-rogative verbs (Class 3 NVPs).

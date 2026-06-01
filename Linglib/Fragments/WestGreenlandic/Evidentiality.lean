@@ -8,7 +8,7 @@ Inferential mood via verbal suffix; no dedicated direct-evidence marker.
 WALS and Aikhenvald agree.
 -/
 
-namespace Fragments.WestGreenlandic.Evidentiality
+namespace WestGreenlandic.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -25,4 +25,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "kal" ∧
     evidentialityProfile.language = "West Greenlandic" := ⟨rfl, rfl⟩
 
-end Fragments.WestGreenlandic.Evidentiality
+end WestGreenlandic.Evidentiality

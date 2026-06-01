@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.German.Phonology
+namespace German.Phonology
 
 /-- Canonical German phoneme inventory: first PHOIBLE inventory for ISO `deu`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.German.deu
 
-end Fragments.German.Phonology
+end German.Phonology

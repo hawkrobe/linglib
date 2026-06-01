@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Korean.Possession
+namespace Korean.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["na-ege chaek-i iss-da", "Yeonghui-ui chaek"]
   , notes := "Dative possessor + existential iss-da; genitive -ui for adnominal possession" }
 
-end Fragments.Korean.Possession
+end Korean.Possession

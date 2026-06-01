@@ -19,11 +19,11 @@ German's strategy is non-particulate.
 
 - `Semantics.Questions.VerumFocus`: VERUM in questions — a
   different phenomenon from the declarative Verum focus encoded here
-- `Fragments.German.QuestionParticles`: German *denn* (question-flavoring)
+- `German.QuestionParticles`: German *denn* (question-flavoring)
 
 -/
 
-namespace Fragments.German.PolarityMarking
+namespace German.PolarityMarking
 
 open Typology.PolarityMarking (Entry Strategy Env)
 
@@ -66,4 +66,4 @@ theorem doch_not_contrastOk : Env.contrast ∉ dochPreUtterance.environments := 
 theorem doch_correctionOk : Env.correction ∈ dochPreUtterance.environments := by decide
 theorem doch_strategy : dochPreUtterance.strategy = .polarityReversal := rfl
 
-end Fragments.German.PolarityMarking
+end German.PolarityMarking

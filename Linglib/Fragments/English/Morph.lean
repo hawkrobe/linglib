@@ -9,7 +9,7 @@ in the "agglutinating" cell (concatenative + nonflexive + separative)
 despite its small inflectional inventory; cf. @cite{bickel-nichols-2001}.
 -/
 
-namespace Fragments.English
+namespace English
 
 open Morphology
 
@@ -30,4 +30,4 @@ example : morphProfile.iso = "eng" ∧ morphProfile.language = "English" := ⟨r
 /-- B&N 2001 places English in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
-end Fragments.English
+end English

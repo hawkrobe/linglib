@@ -30,11 +30,11 @@ fragment schema.
   doubles as adverbial / relative / interrogative pronoun *where*.
   Bears the same [n]-feature as *oti*.
 - *na* — subjunctive (@cite{grano-2024}). Already covered in
-  `Fragments.Greek.StandardModern.MoodChoice`; referenced here
+  `Greek.StandardModern.MoodChoice`; referenced here
   for completeness, not redefined.
 -/
 
-namespace Fragments.Greek.StandardModern.Complementizers
+namespace Greek.StandardModern.Complementizers
 
 open Semantics.Lexical (VerbCore)
 
@@ -223,4 +223,4 @@ theorem oti_verbs_stativity_split :
     pistevo.vendlerClass = some .state ∧
     ksero.vendlerClass = some .state := ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.Greek.StandardModern.Complementizers
+end Greek.StandardModern.Complementizers

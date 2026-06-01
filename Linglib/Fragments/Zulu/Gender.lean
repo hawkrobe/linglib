@@ -7,7 +7,7 @@ import Linglib.Typology.Gender
 ~15 noun classes. Bantu noun-class system parallel to Swahili.
 -/
 
-namespace Fragments.Zulu.Gender
+namespace Zulu.Gender
 
 open Typology.Gender
 
@@ -28,4 +28,4 @@ example : genderTypology.iso639 = "zul" ∧ genderTypology.name = "Zulu" :=
 /-- Zulu is a noun-class system (5+ classes per @cite{corbett-1991}). -/
 example : genderTypology.IsNounClassSystem := by decide
 
-end Fragments.Zulu.Gender
+end Zulu.Gender

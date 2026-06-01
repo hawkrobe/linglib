@@ -6,7 +6,7 @@ import Linglib.Typology.RelativeClause.WALS
 Typological-summary `RelativeClause.Profile` for Japanese (ISO `jpn`).
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese relativization: gap throughout; pre-nominal RC; no relative
     pronoun; genitive position relativizable but rare. -/
@@ -18,4 +18,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Gap strategy throughout; pre-nominal RC; no relative "
           ++ "pronoun; genitive relativization possible but rare" }
 
-end Fragments.Japanese
+end Japanese

@@ -285,14 +285,14 @@ private def cliticLevel? (p : UD.Person) : Option PersonLevel :=
     PCC prediction ⟨3,2⟩ ⇒ illicit is therefore satisfied at these two
     actual clitic forms. -/
 theorem italian_weak_glidat_tiacc :
-    cliticLevel? Fragments.Italian.Pronouns.gli_dat.person = some .third ∧
-    cliticLevel? Fragments.Italian.Pronouns.ti_acc.person = some .second ∧
+    cliticLevel? Italian.Pronouns.gli_dat.person = some .third ∧
+    cliticLevel? Italian.Pronouns.ti_acc.person = some .second ∧
     ¬ IsLicit weakGrammar .third .second := ⟨rfl, rfl, by decide⟩
 
 /-- The Italian licit pair *ti la* (2.DAT > 3.ACC) under weak PCC. -/
 theorem italian_weak_tidat_lacl :
-    cliticLevel? Fragments.Italian.Pronouns.ti_dat.person = some .second ∧
-    cliticLevel? Fragments.Italian.Pronouns.la_cl.person = some .third ∧
+    cliticLevel? Italian.Pronouns.ti_dat.person = some .second ∧
+    cliticLevel? Italian.Pronouns.la_cl.person = some .third ∧
     IsLicit weakGrammar .second .third := ⟨rfl, rfl, by decide⟩
 
 -- ── Spanish (weak PCC dialect, paper §4.1.3, ex. 23–24) ──
@@ -301,20 +301,20 @@ theorem italian_weak_tidat_lacl :
     interpretable persons are read off the actual `te_dat`/`me_acc` clitic
     forms in `Fragments/Spanish/Clitics.lean`. -/
 theorem spanish_weak_tedat_meacc :
-    cliticLevel? Fragments.Spanish.Clitics.te_dat.person = some .second ∧
-    cliticLevel? Fragments.Spanish.Clitics.me_acc.person = some .first ∧
+    cliticLevel? Spanish.Clitics.te_dat.person = some .second ∧
+    cliticLevel? Spanish.Clitics.me_acc.person = some .first ∧
     IsLicit weakGrammar .second .first := ⟨rfl, rfl, by decide⟩
 
 /-- Spanish *me te* (1.DAT > 2.ACC) is also licit (weak PCC ⟨1,2⟩). -/
 theorem spanish_weak_medat_teacc :
-    cliticLevel? Fragments.Spanish.Clitics.me_dat.person = some .first ∧
-    cliticLevel? Fragments.Spanish.Clitics.te_acc.person = some .second ∧
+    cliticLevel? Spanish.Clitics.me_dat.person = some .first ∧
+    cliticLevel? Spanish.Clitics.te_acc.person = some .second ∧
     IsLicit weakGrammar .first .second := ⟨rfl, rfl, by decide⟩
 
 /-- Spanish *le me* (3.DAT > 1.ACC) is illicit (paper ex. 24). -/
 theorem spanish_weak_ledat_meacc_banned :
-    cliticLevel? Fragments.Spanish.Clitics.le_dat.person = some .third ∧
-    cliticLevel? Fragments.Spanish.Clitics.me_acc.person = some .first ∧
+    cliticLevel? Spanish.Clitics.le_dat.person = some .third ∧
+    cliticLevel? Spanish.Clitics.me_acc.person = some .first ∧
     ¬ IsLicit weakGrammar .third .first := ⟨rfl, rfl, by decide⟩
 
 -- ── French / Catalan / Kambera / Bulgarian (no Fragment yet) ──

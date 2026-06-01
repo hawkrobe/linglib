@@ -18,7 +18,7 @@ preverbal neg-words). Mood-conditioned variants: vera-vin (modal), nura-vin
 
 -/
 
-namespace Fragments.Georgian.PolarityItems
+namespace Georgian.PolarityItems
 
 open Typology.PolarityItem
 
@@ -56,4 +56,4 @@ def nebismieri : PolarityItemEntry :=
 theorem aravin_nebismieri_distinct :
     aravin.polarityType ≠ nebismieri.polarityType := by decide
 
-end Fragments.Georgian.PolarityItems
+end Georgian.PolarityItems

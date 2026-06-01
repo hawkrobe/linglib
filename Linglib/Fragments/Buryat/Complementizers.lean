@@ -49,7 +49,7 @@ The verbs that anchor Bondarenko's bare-vs-nominalized arguments:
 
 -/
 
-namespace Fragments.Buryat.Complementizers
+namespace Buryat.Complementizers
 
 open Semantics.Lexical (VerbCore)
 
@@ -165,4 +165,4 @@ theorem only_xanaxa_alternates :
     medexe.altComplementType.isSome = false ∧
     xelexe.altComplementType.isSome = false := ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.Buryat.Complementizers
+end Buryat.Complementizers

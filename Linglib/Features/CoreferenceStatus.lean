@@ -26,7 +26,7 @@ inductive CoreferenceStatus where
     syntactic frameworks (HPSG, Dependency Grammar, Minimalism) so their
     `classifyNominal` functions return the same type. The per-language
     realization (which forms are which) lives in a Fragment helper (e.g.
-    `Fragments.English.NominalClassification`). -/
+    `English.NominalClassification`). -/
 inductive NominalType where
   /-- Reflexive anaphor (*himself*, *herself*, *themselves*). -/
   | reflexive

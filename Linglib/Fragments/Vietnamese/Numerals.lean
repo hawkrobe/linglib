@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Vietnamese
+namespace Vietnamese
 
 /-- Vietnamese: ordinals formed with *thu* prefix (*thu nhat* 'first',
     *thu hai* 'second') — regular. No morphological distributive. Obligatory
@@ -14,4 +14,4 @@ namespace Fragments.Vietnamese
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Vietnamese" "vie" (region := .southeastAsia) (pluralMarking := .none)
 
-end Fragments.Vietnamese
+end Vietnamese

@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Quechua
+namespace Quechua
 
 /-- Quechua (Quechuan): no grammatical perfective/imperfective; inflectional
     past with 2–3 remoteness distinctions (direct vs indirect past);
@@ -18,4 +18,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , perfect := .other, affixPosition := .suffixing
   , evidentialityCoding := some .verbalAffix }
 
-end Fragments.Quechua
+end Quechua

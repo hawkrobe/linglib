@@ -9,7 +9,7 @@ WALS @cite{de-haan-2013} F77A: `indirectOnly` (de Haan classifies *soo da*,
 modal rather than evidential; Studies-side override.
 -/
 
-namespace Fragments.Japanese.Evidentiality
+namespace Japanese.Evidentiality
 
 open Typology.Modality
 
@@ -22,4 +22,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "jpn" ∧ evidentialityProfile.language = "Japanese" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Japanese.Evidentiality
+end Japanese.Evidentiality

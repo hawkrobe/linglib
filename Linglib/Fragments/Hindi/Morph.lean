@@ -8,7 +8,7 @@ WALS-derived profile for Hindi-Urdu (ISO `hin`). B&N 2001 places Hindi-Urdu
 in the "fusional" cell (concatenative + flexive + cumulative).
 -/
 
-namespace Fragments.Hindi
+namespace Hindi
 
 open Morphology
 
@@ -29,4 +29,4 @@ example : morphProfile.iso = "hin" âˆ§ morphProfile.language = "Hindi-Urdu" := â
 /-- B&N 2001 places Hindi-Urdu in the "fusional" cell. -/
 example : morphProfile.IsFusional := by decide
 
-end Fragments.Hindi
+end Hindi

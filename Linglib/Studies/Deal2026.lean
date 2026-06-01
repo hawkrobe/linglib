@@ -82,7 +82,7 @@ predicate-modification mechanism may not directly apply.
 
 namespace Deal2026
 
-open Fragments.NezPerce.ClausalEmbedding
+open NezPerce.ClausalEmbedding
 open Typology.Complementation
 open Phenomena.Presupposition.ProjectiveContent (ProjectiveClass)
 open Minimalist (Cat SatisfactionCond AbarDep keineĀProbe ClauseSpine

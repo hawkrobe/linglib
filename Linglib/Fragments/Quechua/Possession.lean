@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Quechua.Possession
+namespace Quechua.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["Hwan-pa wasi-n ka-n", "mama-y", "Hwan-pa wasi-n"]
   , notes := "Possessive suffixes obligatory on kinship/body-part nouns; -yuq 'having' for predicative; GEN + POSS double-marking" }
 
-end Fragments.Quechua.Possession
+end Quechua.Possession

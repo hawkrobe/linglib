@@ -462,39 +462,39 @@ theorem relational_superior :
     per the fragment data. This distinction matters: reflexives and
     reciprocals have different scope possibilities. -/
 theorem hungarian_recip_not_reflexive :
-    Fragments.Hungarian.Reciprocals.egymas.form ≠
-    Fragments.Hungarian.Reciprocals.maga.form := by decide
+    Hungarian.Reciprocals.egymas.form ≠
+    Hungarian.Reciprocals.maga.form := by decide
 
 /-- Hungarian allows singular antecedents for the reciprocal
     (@cite{rakosi-2019}), which forces wide scope (the singular null
     pronoun must be bound). All four singular construction types
     license the reciprocal. -/
 theorem hungarian_singular_forces_wide :
-    Fragments.Hungarian.Reciprocals.singularConstructions.map
-      Fragments.Hungarian.Reciprocals.reciprocalLicensed = [true, true, true, true] ∧
-    Fragments.Hungarian.Reciprocals.singularAntecedentForcesWideScope = true := ⟨rfl, rfl⟩
+    Hungarian.Reciprocals.singularConstructions.map
+      Hungarian.Reciprocals.reciprocalLicensed = [true, true, true, true] ∧
+    Hungarian.Reciprocals.singularAntecedentForcesWideScope = true := ⟨rfl, rfl⟩
 
 /-- Wan logophoric pronoun *mɔ̄* is formally distinct from the ordinary
     3pl pronoun *tú*. The scope constraint is specific to logophoric
     antecedents — wide scope IS available with the ordinary pronoun. -/
 theorem wan_log_distinct :
-    Fragments.Wan.Reciprocals.logPl.form ≠
-    Fragments.Wan.Reciprocals.ordinaryPl.form := by decide
+    Wan.Reciprocals.logPl.form ≠
+    Wan.Reciprocals.ordinaryPl.form := by decide
 
 /-- Wan reflexive *ē* is distinct from the logophoric pronoun *mɔ̄*.
     The reciprocal construction uses REFL + RECIP morphology (*ē ɔ̄ŋ*),
     while the logophoric pronoun (*mɔ̄*) is the subject of the embedded
     clause. -/
 theorem wan_refl_distinct_from_log :
-    Fragments.Wan.Reciprocals.refl.form ≠
-    Fragments.Wan.Reciprocals.logPl.form := by decide
+    Wan.Reciprocals.refl.form ≠
+    Wan.Reciprocals.logPl.form := by decide
 
 /-- The Wan logophoric pronoun satisfies at least the pivot role in
     @cite{sells-1987}'s hierarchy, connecting this fragment to the
     logophoricity theory in `Features/Logophoricity.lean`. -/
 theorem wan_log_is_at_least_pivot :
     Features.Logophoricity.LogophoricRole.pivot ≤
-    Fragments.Wan.Reciprocals.logophoricRole := by decide
+    Wan.Reciprocals.logophoricRole := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 11: Connection to Formal Semantics (@cite{haug-dalrymple-2020})

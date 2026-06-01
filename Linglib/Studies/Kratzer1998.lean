@@ -464,8 +464,8 @@ Predictions tested:
 
 section KratzerChain
 
-open Fragments.English.Tense (kratzerSimplePast)
-open Fragments.German.Tense (kratzerPreterit kratzerPerfekt)
+open English.Tense (kratzerSimplePast)
+open German.Tense (kratzerPreterit kratzerPerfekt)
 open Paradigms.AcceptabilityJudgment (Judgment)
 
 /-- **English simple past = perfect + present.** Per Kratzer §7

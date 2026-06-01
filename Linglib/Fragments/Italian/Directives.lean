@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Italian
+namespace Italian
 
 /-- Italian: second-person morphological imperative (2SG *va'!*, 2PL *andate!*);
     Type 3 prohibitive (*Non andare!* — regular *non* negation, but with
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "2SG prohibitive uses infinitive (not imperative): " ++
              "non andare, not *non va'; 2PL retains imperative: non andate." }
 
-end Fragments.Italian
+end Italian

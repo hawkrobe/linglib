@@ -411,7 +411,7 @@ end Kennedy2007Licensing
 namespace Kennedy2007Licensing.Bridge
 
 open Semantics.Gradability
-open Fragments.English.Predicates.Adjectival
+open English.Predicates.Adjectival
 open Core.Scale
 open Kennedy2007Licensing
 

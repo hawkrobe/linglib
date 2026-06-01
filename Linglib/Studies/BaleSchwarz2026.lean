@@ -48,7 +48,7 @@ namespace Phenomena.Quantification.BaleSchwarz2026
 
 open Phenomena
 open Features.Dimension (Dimension QuotientDimension DimensionType)
-open Fragments.English.MeasurePhrases (PerInterpretation)
+open English.MeasurePhrases (PerInterpretation)
 
 -- ============================================================================
 -- Section 2: Per-Phrase Classification

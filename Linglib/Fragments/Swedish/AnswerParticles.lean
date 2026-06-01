@@ -20,7 +20,7 @@ Swedish is polarity-based: "Dricker han inte?" → "Ja" = "He does drink."
 Swedish also allows verb-echo answers alongside particles (mixed strategy).
 -/
 
-namespace Fragments.Swedish.AnswerParticles
+namespace Swedish.AnswerParticles
 
 open Features.Polarity
 open Typology.PolarityMarking (Entry Strategy Env)
@@ -129,4 +129,4 @@ theorem swedish_polarity_based : profile.system = .polarityBased := rfl
 /-- Swedish has polarity reversal. -/
 theorem swedish_has_reversal : profile.hasPolarityReversal = true := rfl
 
-end Fragments.Swedish.AnswerParticles
+end Swedish.AnswerParticles

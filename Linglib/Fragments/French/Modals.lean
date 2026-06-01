@@ -11,7 +11,7 @@ impersonal construction *il est possible de* ('it is possible to').
 ## Semantic Properties
 
 *Devoir* and *pouvoir* are the French counterparts of Italian *dovere*
-and *potere* (see `Fragments.Italian.Modals`). Like their Italian
+and *potere* (see `Italian.Modals`). Like their Italian
 cognates, both are polysemous across epistemic, deontic, and
 circumstantial readings.
 
@@ -38,7 +38,7 @@ in position-sensitive flavor selection (@cite{hacquard-2006}).
 
 -/
 
-namespace Fragments.French.Modals
+namespace French.Modals
 
 open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
 open Semantics.Modality.Assert (primaryFlavor)
@@ -245,4 +245,4 @@ theorem devoir_pouvoir_same_flavors :
     devoir.flavors = pouvoir.flavors := rfl
 
 
-end Fragments.French.Modals
+end French.Modals

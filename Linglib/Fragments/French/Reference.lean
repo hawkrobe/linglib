@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.French
+namespace French
 
 /-- French (Indo-European, Romance): definite article *le*/*la*/*les* distinct
     from demonstratives; indefinite *un*/*une* (historically from numeral 'one'
@@ -24,4 +24,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .differentStems
   , pronDemRelation := some .unrelated }
 
-end Fragments.French
+end French

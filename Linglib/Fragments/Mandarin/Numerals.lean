@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin Chinese: ordinals formed regularly with *di-* prefix (*di-yi*
     'first', *di-er* 'second') — no suppletion. No morphological distributive.
@@ -15,4 +15,4 @@ namespace Fragments.Mandarin
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Mandarin" "cmn" (region := .eastAsia) (pluralMarking := .none)
 
-end Fragments.Mandarin
+end Mandarin

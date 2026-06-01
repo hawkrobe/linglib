@@ -8,7 +8,7 @@ Turkish predicates relevant to @cite{qing-uegaki-2025}. Properties like
 C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
-namespace Fragments.Turkish.Predicates
+namespace Turkish.Predicates
 
 open Semantics.Lexical
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
@@ -110,4 +110,4 @@ def allVerbs : List TurkishVerbEntry := [kork, um, merakEt, endiselen, ol_dur, y
 def lookup (form : String) : Option TurkishVerbEntry :=
   allVerbs.find? (·.form == form)
 
-end Fragments.Turkish.Predicates
+end Turkish.Predicates

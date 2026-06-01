@@ -253,18 +253,18 @@ end EnglishDecomposition
 /-- German jeder's DistMaxClass matches the ONE_∅ prediction:
     [+dist] (ONE forces atom complement) and [+max] (atoms are vacuously maximal). -/
 theorem jeder_matches_ONE_prediction :
-    Fragments.German.Distributives.jederEntry.distMaxClass = .distMax := rfl
+    German.Distributives.jederEntry.distMaxClass = .distMax := rfl
 
 /-- German alle's DistMaxClass matches bare Q_∀ prediction:
     [−dist] (no ONE, CUM complement → collective) and [+max]. -/
 theorem alle_matches_bare_QForall :
-    Fragments.German.Distributives.alleEntry.distMaxClass = .nonDistMax := rfl
+    German.Distributives.alleEntry.distMaxClass = .nonDistMax := rfl
 
 /-- The DNG explains the dist/non-dist split between jeder and alle:
     same Q_∀ semantics, different complement structure. -/
 theorem german_dng_explained :
-    Fragments.German.Distributives.jederEntry.distMaxClass.isDistributive ∧
-    ¬ Fragments.German.Distributives.alleEntry.distMaxClass.isDistributive := by
+    German.Distributives.jederEntry.distMaxClass.isDistributive ∧
+    ¬ German.Distributives.alleEntry.distMaxClass.isDistributive := by
   decide
 
 -- ════════════════════════════════════════════════════

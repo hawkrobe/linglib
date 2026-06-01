@@ -8,7 +8,7 @@ Lexical entry for Japanese その時 "sono-toki" (that time), typed by `ThenAdve
 
 -/
 
-namespace Fragments.Japanese.TemporalDeictic
+namespace Japanese.TemporalDeictic
 
 open Semantics.Tense
 
@@ -19,4 +19,4 @@ def sonotoki : ThenAdverb where
   gloss := "that time"
   shiftsPerspective := true
 
-end Fragments.Japanese.TemporalDeictic
+end Japanese.TemporalDeictic

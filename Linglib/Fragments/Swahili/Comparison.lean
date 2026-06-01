@@ -14,7 +14,7 @@ this profile live in `Studies/Stassen2013Comparison.lean`. The
 
 set_option autoImplicit false
 
-namespace Fragments.Swahili.Comparison
+namespace Swahili.Comparison
 
 open _root_.Typology.Comparison
 
@@ -30,4 +30,4 @@ def comparison : ComparativeProfile :=
   , degreeMarker := ""
   , basicOrder := "SVO" }
 
-end Fragments.Swahili.Comparison
+end Swahili.Comparison

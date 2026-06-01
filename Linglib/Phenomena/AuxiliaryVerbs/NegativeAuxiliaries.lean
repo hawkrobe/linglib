@@ -88,11 +88,11 @@ structure NegAuxDatum where
   deriving Repr, BEq
 
 /-- Finnish *ei* — negative auxiliary verb (inflects for person/number).
-    The 3sg citation form derives from `Fragments.Finnish.Negation.negParadigm`. -/
+    The 3sg citation form derives from `Finnish.Negation.negParadigm`. -/
 def finnish : NegAuxDatum :=
   { language := "Finnish"
   , strategy := .negVerb
-  , form := match Fragments.Finnish.Negation.negParadigm.find?
+  , form := match Finnish.Negation.negParadigm.find?
       (fun f => f.person == 3 && f.number == "sg") with
     | some f => f.form
     | none => "ei"
@@ -136,11 +136,11 @@ def englishNot : NegAuxDatum :=
   , gloss := "does not go" }
 
 /-- Italian *non* — preverbal negative particle (symmetric negation).
-    Form derived from `Fragments.Italian.Negation.non.form`. -/
+    Form derived from `Italian.Negation.non.form`. -/
 def italianNon : NegAuxDatum :=
   { language := "Italian"
   , strategy := .negParticle
-  , form := Fragments.Italian.Negation.non.form
+  , form := Italian.Negation.non.form
   , gloss := "non mangia 'NEG eats' (he doesn't eat)" }
 
 def allData : List NegAuxDatum :=
@@ -180,7 +180,7 @@ theorem finnish_form_from_fragment :
 
 /-- The Italian negative particle form derives from the Fragment negation marker. -/
 theorem italian_form_from_fragment :
-    italianNon.form = Fragments.Italian.Negation.non.form := rfl
+    italianNon.form = Italian.Negation.non.form := rfl
 
 /-! ## Bridge to Negation Typology (WALS Ch 112)
 

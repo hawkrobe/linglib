@@ -10,7 +10,7 @@ stricter criterion treats German as having no grammatical evidentials;
 Studies-side override in `Studies/Aikhenvald2004.lean`.
 -/
 
-namespace Fragments.German.Evidentiality
+namespace German.Evidentiality
 
 open Typology.Modality
 
@@ -22,4 +22,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "deu" ∧ evidentialityProfile.language = "German" :=
   ⟨rfl, rfl⟩
 
-end Fragments.German.Evidentiality
+end German.Evidentiality

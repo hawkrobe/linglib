@@ -352,53 +352,53 @@ theorem particle_no_spatial :
 
 /-- Japanese Fragment standard case matches 1985 spatial case prediction. -/
 theorem japanese_fragment_case :
-    some Fragments.Japanese.Comparison.entry.standardCase =
+    some Japanese.Comparison.entry.standardCase =
     japanese1985.spatialCase := rfl
 
 /-- Korean Fragment standard case matches 1985 spatial case prediction. -/
 theorem korean_fragment_case :
-    some Fragments.Korean.Comparison.entry.standardCase =
+    some Korean.Comparison.entry.standardCase =
     korean1985.spatialCase := rfl
 
 /-- Turkish Fragment standard case matches 1985 spatial case prediction. -/
 theorem turkish_fragment_case :
-    some Fragments.Turkish.Comparison.entry.standardCase =
+    some Turkish.Comparison.entry.standardCase =
     turkish1985.spatialCase := rfl
 
 /-- Japanese Fragment standard marker matches the Fragment profile. -/
 theorem japanese_marker_match :
-    Fragments.Japanese.Comparison.entry.standardMarker =
-    Fragments.Japanese.Comparison.comparison.standardMarker := rfl
+    Japanese.Comparison.entry.standardMarker =
+    Japanese.Comparison.comparison.standardMarker := rfl
 
 /-- Korean Fragment standard marker matches the Fragment profile. -/
 theorem korean_marker_match :
-    Fragments.Korean.Comparison.entry.standardMarker =
-    Fragments.Korean.Comparison.comparison.standardMarker := rfl
+    Korean.Comparison.entry.standardMarker =
+    Korean.Comparison.comparison.standardMarker := rfl
 
 /-- Turkish Fragment standard marker matches the Fragment profile. -/
 theorem turkish_marker_match :
-    Fragments.Turkish.Comparison.entry.standardMarker =
-    Fragments.Turkish.Comparison.comparison.standardMarker := rfl
+    Turkish.Comparison.entry.standardMarker =
+    Turkish.Comparison.comparison.standardMarker := rfl
 
 /-- All three separative Fragment entries use fixed case assignment. -/
 theorem all_separative_fixed_case :
-    Fragments.Japanese.Comparison.entry.caseAssignment = .fixed ∧
-    Fragments.Korean.Comparison.entry.caseAssignment = .fixed ∧
-    Fragments.Turkish.Comparison.entry.caseAssignment = .fixed :=
+    Japanese.Comparison.entry.caseAssignment = .fixed ∧
+    Korean.Comparison.entry.caseAssignment = .fixed ∧
+    Turkish.Comparison.entry.caseAssignment = .fixed :=
   ⟨rfl, rfl, rfl⟩
 
 /-- All three separative Fragment entries use adverbial encoding. -/
 theorem all_separative_adverbial :
-    Fragments.Japanese.Comparison.entry.fixedEncoding = some .adverbial ∧
-    Fragments.Korean.Comparison.entry.fixedEncoding = some .adverbial ∧
-    Fragments.Turkish.Comparison.entry.fixedEncoding = some .adverbial :=
+    Japanese.Comparison.entry.fixedEncoding = some .adverbial ∧
+    Korean.Comparison.entry.fixedEncoding = some .adverbial ∧
+    Turkish.Comparison.entry.fixedEncoding = some .adverbial :=
   ⟨rfl, rfl, rfl⟩
 
 /-- Separative languages lack degree morphology (p. 28). -/
 theorem separative_no_degree_morphology :
-    Fragments.Japanese.Comparison.entry.hasDegreeMorphology = false ∧
-    Fragments.Korean.Comparison.entry.hasDegreeMorphology = false ∧
-    Fragments.Turkish.Comparison.entry.hasDegreeMorphology = false :=
+    Japanese.Comparison.entry.hasDegreeMorphology = false ∧
+    Korean.Comparison.entry.hasDegreeMorphology = false ∧
+    Turkish.Comparison.entry.hasDegreeMorphology = false :=
   ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
@@ -408,30 +408,30 @@ theorem separative_no_degree_morphology :
 /-- Japanese: Fragment (ablative) ↔ 1985 type (separative) ↔ chaining type
     (absolute deranking). All three layers agree. -/
 theorem japanese_three_layer :
-    some Fragments.Japanese.Comparison.entry.standardCase =
+    some Japanese.Comparison.entry.standardCase =
       japanese1985.spatialCase ∧
     japanese1985.toWALS =
-      Fragments.Japanese.Comparison.comparison.comparativeType ∧
+      Japanese.Comparison.comparison.comparativeType ∧
     japaneseCT = .absoluteDeranking ∧
     universal2B japanese1985 japaneseCT :=
   ⟨rfl, rfl, rfl, by intro _; rfl⟩
 
 /-- Korean: three-layer consistency. -/
 theorem korean_three_layer :
-    some Fragments.Korean.Comparison.entry.standardCase =
+    some Korean.Comparison.entry.standardCase =
       korean1985.spatialCase ∧
     korean1985.toWALS =
-      Fragments.Korean.Comparison.comparison.comparativeType ∧
+      Korean.Comparison.comparison.comparativeType ∧
     koreanCT = .absoluteDeranking ∧
     universal2B korean1985 koreanCT :=
   ⟨rfl, rfl, rfl, by intro _; rfl⟩
 
 /-- Turkish: three-layer consistency. -/
 theorem turkish_three_layer :
-    some Fragments.Turkish.Comparison.entry.standardCase =
+    some Turkish.Comparison.entry.standardCase =
       turkish1985.spatialCase ∧
     turkish1985.toWALS =
-      Fragments.Turkish.Comparison.comparison.comparativeType ∧
+      Turkish.Comparison.comparison.comparativeType ∧
     turkishCT = .absoluteDeranking ∧
     universal2B turkish1985 turkishCT :=
   ⟨rfl, rfl, rfl, by intro _; rfl⟩

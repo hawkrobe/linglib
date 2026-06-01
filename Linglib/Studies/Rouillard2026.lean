@@ -92,7 +92,7 @@ open Semantics.Aspect.SubintervalProperty
 open Features
 open Core.Scale
 open Semantics.Entailment.Extremum
-open Fragments.English.TemporalExpressions
+open English.TemporalExpressions
 
 variable {W Time : Type*} [LinearOrder Time]
 

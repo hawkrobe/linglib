@@ -35,7 +35,7 @@ are skipped by `triggerValue` (not triggers) and `harmonizeOne` (not targets).
 
 -/
 
-namespace Fragments.Finnish.VowelHarmony
+namespace Finnish.VowelHarmony
 
 open Phonology (Segment Feature FeatureVal)
 open Phonology.FeatureGeometry (GeomNode)
@@ -196,4 +196,4 @@ theorem a_o_dorsal_agree_on_back :
     o_vowel.HasValue .back true = true := by
   exact ⟨by native_decide, by native_decide⟩
 
-end Fragments.Finnish.VowelHarmony
+end Finnish.VowelHarmony

@@ -584,21 +584,21 @@ theorem animacy_rank_ordering_consistent :
   decide
 
 /-- Bridge: English `NumberSystem` matches the English plurality profile in
-    `Fragments.English.Plurals` — both record a 2-value obligatory system. -/
+    `English.Plurals` — both record a 2-value obligatory system. -/
 theorem english_matches_plurals_typology :
     englishNS.size = 2 ∧
     englishNS.hasGeneral = false ∧
-    Fragments.English.pluralityProfile.occurrence =
+    English.pluralityProfile.occurrence =
       .allNounsAlwaysObligatory := by
   decide
 
 /-- Bridge: Japanese general number in Corbett's analysis corresponds to the
-    `noPlural` coding in `Fragments.Japanese.Plurals`. WALS and Corbett
+    `noPlural` coding in `Japanese.Plurals`. WALS and Corbett
     describe the same facts differently: WALS says "no nominal plural,"
     Corbett says "general number exists (form outside the system)." -/
 theorem japanese_general_vs_wals :
     japaneseNS.hasGeneral = true ∧
-    Fragments.Japanese.pluralityProfile.coding = .noPlural := by
+    Japanese.pluralityProfile.coding = .noPlural := by
   decide
 
 /-- Bridge: Bayso's general number explains its "no nominal plural"

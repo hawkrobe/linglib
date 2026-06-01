@@ -28,7 +28,7 @@ The system demonstrates two key typological properties:
 | ka-...-a  | circumfix   | circumstantial | possibility      |
 -/
 
-namespace Fragments.Statimcets.Modals
+namespace Statimcets.Modals
 
 open Semantics.Modality (ForceFlavor ForceAnalysis)
 open Semantics.Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
@@ -90,4 +90,4 @@ theorem kaCircumfix_satisfies_iff :
 theorem all_satisfy_iff :
     allExpressions.all (fun e => satisfiesIFF e.meaning) = true := by decide
 
-end Fragments.Statimcets.Modals
+end Statimcets.Modals

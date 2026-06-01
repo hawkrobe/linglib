@@ -92,7 +92,7 @@ open Semantics.Gradability.Aggregation (weightedScore boolMeasures
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Lexical
 open Semantics.Degree (interpretiveEconomy)
-open Fragments.English.Predicates
+open English.Predicates
 
 -- ════════════════════════════════════════════════════
 -- § 1. Disturbance predicate schema + data

@@ -48,7 +48,7 @@ namespace ClemDeal2024
 open Features.Prominence (PersonLevel)
 open Deal2024 (DealGrammar isLicit strictlyDescending dpBears
   sd_off_diagonal_iff_outranks)
-open Fragments.Kawapanan.Shawi (ObjectPosition ObjectSyntax Phi mustBeHigh
+open Kawapanan.Shawi (ObjectPosition ObjectSyntax Phi mustBeHigh
   ergativeMarker oagrOnSMarker objectSyntaxLicit)
 
 -- ============================================================================

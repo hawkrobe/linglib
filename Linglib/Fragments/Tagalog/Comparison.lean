@@ -14,7 +14,7 @@ this profile live in `Studies/Stassen2013Comparison.lean`. The
 
 set_option autoImplicit false
 
-namespace Fragments.Tagalog.Comparison
+namespace Tagalog.Comparison
 
 open _root_.Typology.Comparison
 
@@ -30,4 +30,4 @@ def comparison : ComparativeProfile :=
   , degreeMarker := "mas (< Spanish) / higit"
   , basicOrder := "VSO" }
 
-end Fragments.Tagalog.Comparison
+end Tagalog.Comparison

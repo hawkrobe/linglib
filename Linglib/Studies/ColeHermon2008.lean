@@ -242,7 +242,7 @@ Subject Constraint / Condition on Extraction Domain). The predictions:
 - **Adverbials**: likewise escape before VP raises → can extract
 
 These predictions match the Toba Batak extraction data formalized in
-`Fragments.TobaBatak.Basic` and verified in
+`TobaBatak.Basic` and verified in
 `Erlewine2018`.
 -/
 
@@ -270,15 +270,15 @@ theorem subject_outside_fronted_vp :
     - Agent (= subject/pivot, outside VP): grammatical
     - Patient (= DO, inside VP): ungrammatical
 
-    This matches `Fragments.TobaBatak.avAgentExtraction` (grammatical)
-    and `Fragments.TobaBatak.avPatientExtraction` (ungrammatical). -/
+    This matches `TobaBatak.avAgentExtraction` (grammatical)
+    and `TobaBatak.avPatientExtraction` (ungrammatical). -/
 theorem extraction_matches_vp_containment :
     -- Agent is outside VP → extractable (matches AV agent = grammatical)
     ¬ contains vp n_dakdanakan ∧
-    Fragments.TobaBatak.avAgentExtraction.judgment = .grammatical ∧
+    TobaBatak.avAgentExtraction.judgment = .grammatical ∧
     -- Object is inside VP → frozen (matches AV patient = ungrammatical)
     contains vp n_biangi ∧
-    Fragments.TobaBatak.avPatientExtraction.judgment = .ungrammatical := by
+    TobaBatak.avPatientExtraction.judgment = .ungrammatical := by
   refine ⟨?_, rfl, ?_, rfl⟩ <;> decide
 
 -- ============================================================================
@@ -405,7 +405,7 @@ theorem object_does_not_ccommand_subject :
 /-! ### Connecting to Toba Batak extraction infrastructure
 
 The VP-raising analysis's extraction predictions are independently
-formalized in `Fragments.TobaBatak.Basic` (empirical extraction data)
+formalized in `TobaBatak.Basic` (empirical extraction data)
 and `Erlewine2018` (verification theorems).
 This section bridges the derivational analysis to that data.
 -/
@@ -415,7 +415,7 @@ This section bridges the derivational analysis to that data.
     for the extraction restriction. -/
 theorem vp_raising_drives_extraction :
     tobaBatak_wo.eppStrategy = .vpRaising ∧
-    Fragments.TobaBatak.tbExtractionProfile.strategy = .voiceAlternation :=
+    TobaBatak.tbExtractionProfile.strategy = .voiceAlternation :=
   ⟨rfl, rfl⟩
 
 /-- The extraction profile marks only the subject position as extractable.
@@ -423,13 +423,13 @@ theorem vp_raising_drives_extraction :
     fronted predicate: the pivot in Spec,TP (or Spec,FP in the full
     analysis). -/
 theorem only_subject_extractable :
-    Fragments.TobaBatak.tbExtractionProfile.markedPositions = [.subject] := rfl
+    TobaBatak.tbExtractionProfile.markedPositions = [.subject] := rfl
 
 /-- The voice system is two-way (AV/OV), determining which thematic
     role occupies the extractable pivot position. -/
 theorem voice_determines_pivot :
-    Fragments.TobaBatak.Voice.av.pivotRole = .agent ∧
-    Fragments.TobaBatak.Voice.ov.pivotRole = .patient := ⟨rfl, rfl⟩
+    TobaBatak.Voice.av.pivotRole = .agent ∧
+    TobaBatak.Voice.ov.pivotRole = .patient := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 10: Decidable C-Command

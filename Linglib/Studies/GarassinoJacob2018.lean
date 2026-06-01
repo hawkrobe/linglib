@@ -11,9 +11,9 @@ Clitic left dislocation and sì che / sí que-constructions.*
 In @cite{dimroth-sudhoff-2018}, pp. 227–254. DOI 10.1075/la.249.08gar.
 
 This study file anchors three Fragment entries —
-`Fragments.Italian.PolarityMarking.siChe`,
-`Fragments.Spanish.PolarityMarking.siQue`, and
-`Fragments.French.PolarityMarking.si` — to the chapter that compares them
+`Italian.PolarityMarking.siChe`,
+`Spanish.PolarityMarking.siQue`, and
+`French.PolarityMarking.si` — to the chapter that compares them
 as Romance polarity-focus (PF) realization strategies.
 
 ## Three substantive contributions of the chapter
@@ -57,9 +57,9 @@ namespace GarassinoJacob2018
 
 open Typology.PolarityMarking (Entry Strategy
   Env)
-open Fragments.Italian.PolarityMarking (siChe)
-open Fragments.Spanish.PolarityMarking (siQue)
-open Fragments.French.PolarityMarking (si)
+open Italian.PolarityMarking (siChe)
+open Spanish.PolarityMarking (siQue)
+open French.PolarityMarking (si)
 
 /-! ## §1 G&J's PF-marking strategy taxonomy
 

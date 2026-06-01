@@ -10,13 +10,13 @@ Japanese-specific noun entries and NP structure. Japanese is [+arg, -pred]:
 no articles, optional number morphology, classifiers for counting, bare
 nouns freely occur as arguments with multiple interpretations.
 
-Classifier handles are typed `Fragments.Japanese.Classifier` constructors
-from the enum-as-source-of-truth fragment (`Fragments.Japanese.Classifier`).
+Classifier handles are typed `Japanese.Classifier` constructors
+from the enum-as-source-of-truth fragment (`Japanese.Classifier`).
 -/
 
-namespace Fragments.Japanese.Nouns
+namespace Japanese.Nouns
 
-open Fragments.Japanese (Classifier)
+open Japanese (Classifier)
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 
 /-- A lexical entry for a Japanese noun. -/
@@ -31,7 +31,7 @@ structure NounEntry where
 /-- Japanese NP structure (no articles).
 
 Case marking on the NP is not represented at this layer — the authoritative
-case-marker registry lives in `Fragments.Japanese.Case` (`CaseMarker` with
+case-marker registry lives in `Japanese.Case` (`CaseMarker` with
 fields `romaji`, `kana`, `cases : Finset Features.Case`, `omissibleInCasual`).
 A case-marked NP type is intentionally not introduced here; downstream
 consumers that need NP-with-case should pair `NP` with a `CaseMarker`
@@ -147,4 +147,4 @@ def konoInu : NP := konoNP inu
 example : inuNP.isBare = true := rfl
 example : konoInu.isBare = false := rfl
 
-end Fragments.Japanese.Nouns
+end Japanese.Nouns

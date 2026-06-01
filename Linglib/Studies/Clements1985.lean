@@ -21,7 +21,7 @@ namespace Clements1985
 open Phonology
 open Phonology.FeatureGeometry (GeomNode)
 open Phonology.Autosegmental
-open Fragments.English.Phonology
+open English.Phonology
 
 -- ============================================================================
 -- § 1: Velar Assimilation (/n/ + /k/ → [ŋk])

@@ -53,7 +53,7 @@ namespace Schwarzer2026
 open Features
 open Features.Coordination
 open Semantics.Lexical (ComplementType VerbCore)
-open Fragments.German.Predicates
+open German.Predicates
 open Typology.WordOrder
 open BrueningAlKhalaf2020
 
@@ -79,7 +79,7 @@ The competing analyses make different predictions for the preverbal
 -/
 
 open Minimalist (ForceHead)
-open Fragments.German (german)
+open German (german)
 
 /-- German has V2 in root declaratives: the finite verb moves to C°,
     placing it in second position. Complements follow the verb. -/
@@ -441,7 +441,7 @@ theorem selecting_nonselecting_disjoint :
     clause type: root V2 → postverbal, embedded verb-final → preverbal
     (§ 1). -/
 theorem german_wals_vs_clausetype :
-    Fragments.German.wordOrder.ovOrder = .noDominant ∧
+    German.wordOrder.ovOrder = .noDominant ∧
     germanRootComplementPosition = .postverbal ∧
     germanEmbeddedComplementPosition = .preverbal :=
   ⟨rfl, rfl, rfl⟩
@@ -486,10 +486,10 @@ theorem experimental_verbs_in_allVerbs :
 /-- The coordination particle used in the experiments is German *und*,
     which is the J particle in the Mitrović & Sauerland decomposition. -/
 theorem experimental_conjunction_is_j :
-    Fragments.German.Coordination.und.role = .j := rfl
+    German.Coordination.und.role = .j := rfl
 
 /-- German uses J-only conjunction strategy (overt *und*, covert MU). -/
 theorem german_j_only :
-    Fragments.German.Coordination.conjunctionStrategy = .jOnly := rfl
+    German.Coordination.conjunctionStrategy = .jOnly := rfl
 
 end Schwarzer2026

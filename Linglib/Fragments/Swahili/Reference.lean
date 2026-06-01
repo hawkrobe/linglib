@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 /-- Swahili (Niger-Congo, Bantu): demonstrative used as definite marker
     (precedes noun for definiteness, follows for deictic use; WALS Ch 37
@@ -24,4 +24,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .relatedGender }
 
-end Fragments.Swahili
+end Swahili

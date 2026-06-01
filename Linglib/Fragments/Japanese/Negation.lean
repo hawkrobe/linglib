@@ -33,7 +33,7 @@ category marking.
 | Conditional | *tabe-reba* | *tabe-nake-reba* |
 -/
 
-namespace Fragments.Japanese.Negation
+namespace Japanese.Negation
 
 open Morphology (MorphCategory)
 open Typology.Negation
@@ -159,4 +159,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Japanese.Negation
+end Japanese.Negation

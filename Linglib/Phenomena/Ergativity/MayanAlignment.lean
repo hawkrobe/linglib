@@ -11,7 +11,7 @@ import Linglib.Fragments.Mayan.Kiche.Agreement
 @cite{kaufman-norman-1984} @cite{coon-mateo-pedro-preminger-2014}
 @cite{aissen-polian-2025} @cite{polian-2013}
 
-Cross-Mayan typology theorems quantified over `Fragments.Mayan.MayanLang`,
+Cross-Mayan typology theorems quantified over `Mayan.MayanLang`,
 made statable by the per-language Fragment shape consolidation
 (Phases 1–6 of the Mayan agreement refactor). Each theorem replaces
 what previously had to be enumerated as parallel `rfl` facts in
@@ -44,7 +44,7 @@ empirical literature, not an editorial synthesis.
 
 namespace Phenomena.Ergativity.MayanAlignment
 
-open Fragments.Mayan (MayanLang PersonNumber MarkerLinearity ABSPosition)
+open Mayan (MayanLang PersonNumber MarkerLinearity ABSPosition)
 
 -- ============================================================================
 -- § 1: Per-Language Dispatchers
@@ -52,37 +52,37 @@ open Fragments.Mayan (MayanLang PersonNumber MarkerLinearity ABSPosition)
 
 /-- Set B exponent table indexed by Mayan language. Routes to the
     per-language `setBExponent` defined in each Fragment. Return type
-    is `Fragments.Mayan.ExponentTable` (not the unfolded function type)
+    is `Mayan.ExponentTable` (not the unfolded function type)
     to enable `.IsThirdSgZero` dot-notation. -/
-def setBExponentOf : MayanLang → Fragments.Mayan.ExponentTable
-  | .Chol      => Fragments.Mayan.Chol.setBExponent
-  | .Qanjobal  => Fragments.Mayan.Qanjobal.setBExponent
-  | .Kaqchikel => Fragments.Mayan.Kaqchikel.setBExponent
-  | .Tseltal   => Fragments.Mayan.Tseltal.setBExponent
-  | .Tsotsil   => Fragments.Mayan.Tsotsil.setBExponent
-  | .Mam       => Fragments.Mayan.Mam.setBExponent
-  | .Kiche     => Fragments.Mayan.Kiche.setBExponent
+def setBExponentOf : MayanLang → Mayan.ExponentTable
+  | .Chol      => Chol.setBExponent
+  | .Qanjobal  => Qanjobal.setBExponent
+  | .Kaqchikel => Kaqchikel.setBExponent
+  | .Tseltal   => Tseltal.setBExponent
+  | .Tsotsil   => Tsotsil.setBExponent
+  | .Mam       => Mam.setBExponent
+  | .Kiche     => Kiche.setBExponent
 
 /-- Set A exponent table (canonical / pre-consonantal allomorph) indexed
     by Mayan language. -/
-def setAExponentOf : MayanLang → Fragments.Mayan.ExponentTable
-  | .Chol      => Fragments.Mayan.Chol.setAExponent
-  | .Qanjobal  => Fragments.Mayan.Qanjobal.setAExponent
-  | .Kaqchikel => Fragments.Mayan.Kaqchikel.setAExponent
-  | .Tseltal   => Fragments.Mayan.Tseltal.setAExponent
-  | .Tsotsil   => Fragments.Mayan.Tsotsil.setAExponent
-  | .Mam       => Fragments.Mayan.Mam.setAExponent
-  | .Kiche     => Fragments.Mayan.Kiche.setAExponent
+def setAExponentOf : MayanLang → Mayan.ExponentTable
+  | .Chol      => Chol.setAExponent
+  | .Qanjobal  => Qanjobal.setAExponent
+  | .Kaqchikel => Kaqchikel.setAExponent
+  | .Tseltal   => Tseltal.setAExponent
+  | .Tsotsil   => Tsotsil.setAExponent
+  | .Mam       => Mam.setAExponent
+  | .Kiche     => Kiche.setAExponent
 
 /-- Set A linearity (uniformly prefixal across Mayan; see theorem below). -/
 def setALinearityOf : MayanLang → MarkerLinearity
   | .Chol      => .prefixal
   | .Qanjobal  => .prefixal
   | .Kaqchikel => .prefixal
-  | .Tseltal   => Fragments.Mayan.Tseltal.setALinearity
-  | .Tsotsil   => Fragments.Mayan.Tsotsil.setALinearity
-  | .Mam       => Fragments.Mayan.Mam.setALinearity
-  | .Kiche     => Fragments.Mayan.Kiche.setALinearity
+  | .Tseltal   => Tseltal.setALinearity
+  | .Tsotsil   => Tsotsil.setALinearity
+  | .Mam       => Mam.setALinearity
+  | .Kiche     => Kiche.setALinearity
 
 /-- Set B linearity. Varies across Mayan: suffixal in Cholan, Q'anjob'alan,
     and Tseltal; prefixal in Kaqchikel and K'iche' (HIGH-ABS K'ichean) and
@@ -92,21 +92,21 @@ def setBLinearityOf : MayanLang → MarkerLinearity
   | .Chol      => .suffixal
   | .Qanjobal  => .suffixal
   | .Kaqchikel => .prefixal
-  | .Tseltal   => Fragments.Mayan.Tseltal.setBLinearity
-  | .Tsotsil   => Fragments.Mayan.Tsotsil.setBLinearity
-  | .Mam       => Fragments.Mayan.Mam.setBLinearity
-  | .Kiche     => Fragments.Mayan.Kiche.setBLinearity
+  | .Tseltal   => Tseltal.setBLinearity
+  | .Tsotsil   => Tsotsil.setBLinearity
+  | .Mam       => Mam.setBLinearity
+  | .Kiche     => Kiche.setBLinearity
 
 /-- Absolutive structural position (HIGH-ABS / LOW-ABS) indexed by
     Mayan language. The substantive parameter for Tada's Generalization. -/
 def absPositionOf : MayanLang → ABSPosition
-  | .Chol      => Fragments.Mayan.Chol.absPosition
-  | .Qanjobal  => Fragments.Mayan.Qanjobal.absPosition
-  | .Kaqchikel => Fragments.Mayan.Kaqchikel.absPosition
-  | .Tseltal   => Fragments.Mayan.Tseltal.absPosition
-  | .Tsotsil   => Fragments.Mayan.Tsotsil.absPosition
-  | .Mam       => Fragments.Mayan.Mam.absPosition
-  | .Kiche     => Fragments.Mayan.Kiche.absPosition
+  | .Chol      => Chol.absPosition
+  | .Qanjobal  => Qanjobal.absPosition
+  | .Kaqchikel => Kaqchikel.absPosition
+  | .Tseltal   => Tseltal.absPosition
+  | .Tsotsil   => Tsotsil.absPosition
+  | .Mam       => Mam.absPosition
+  | .Kiche     => Kiche.absPosition
 
 -- ============================================================================
 -- § 2: Pan-Mayan Set B 3sg Null Invariant (@cite{kaufman-norman-1984})
@@ -166,14 +166,14 @@ theorem mayan_set_a_uniformly_prefixal (lang : MayanLang) :
 theorem mayan_perfective_ergative
     (lang : MayanLang) (h : lang.isStandard = true)
     (r : Features.Prominence.ArgumentRole) :
-    Fragments.Mayan.caseAt lang .Perf r =
+    Mayan.caseAt lang .Perf r =
       Alignment.ergative.assignCase r := by
   cases lang <;> first | rfl | (simp [MayanLang.isStandard] at h)
 
 /-- The Mam exception to pan-Mayan ergative perfective alignment:
     `caseMam .Perf .P = .acc` (tripartite, not ergative). -/
 theorem mam_is_tripartite_in_perfective :
-    Fragments.Mayan.caseAt .Mam .Perf .P =
+    Mayan.caseAt .Mam .Perf .P =
       Alignment.tripartite.assignCase .P := rfl
 
 -- ============================================================================

@@ -54,7 +54,7 @@ historical/textbook system; modern colloquial Manila Tagalog effectively
 collapses to plain inclExcl.
 -/
 
-namespace Fragments.Tagalog
+namespace Tagalog
 
 /-- Tagalog (Austronesian, Philippine). Inclusive/exclusive in
     independent pronouns (kami vs tayo); no person marking on verbs
@@ -149,4 +149,4 @@ theorem wals_clusivity_consistent :
     pronounProfile.inclusiveExclusive =
       some (Pronoun.InclusiveExclusive.fromClusivity clusivitySystem) := rfl
 
-end Fragments.Tagalog
+end Tagalog

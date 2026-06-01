@@ -8,7 +8,7 @@ WALS @cite{de-haan-2013} F77A: `noGrammaticalEvidentials`. Lexical
 strategies: *tinshuo* (听说), *juede* (觉得), sentence-final *ba* (吧).
 -/
 
-namespace Fragments.Mandarin.Evidentiality
+namespace Mandarin.Evidentiality
 
 open Typology.Modality
 
@@ -20,4 +20,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "cmn" ∧ evidentialityProfile.language = "Mandarin" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Mandarin.Evidentiality
+end Mandarin.Evidentiality

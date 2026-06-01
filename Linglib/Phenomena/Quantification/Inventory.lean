@@ -44,12 +44,12 @@ instance : Fintype QuantityWord where
 
 /-- Lexical entry for each quantity word, drawn from the English fragment. -/
 def QuantityWord.entry : QuantityWord → QuantifierEntry
-  | .none_ => Fragments.English.Determiners.none_
-  | .few   => Fragments.English.Determiners.few
-  | .some_ => Fragments.English.Determiners.some_
-  | .half  => Fragments.English.Determiners.half
-  | .most  => Fragments.English.Determiners.most
-  | .all   => Fragments.English.Determiners.all
+  | .none_ => English.Determiners.none_
+  | .few   => English.Determiners.few
+  | .some_ => English.Determiners.some_
+  | .half  => English.Determiners.half
+  | .most  => English.Determiners.most
+  | .all   => English.Determiners.all
 
 /-- Convenience accessor. -/
 def QuantityWord.monotonicity (q : QuantityWord) : Monotonicity :=

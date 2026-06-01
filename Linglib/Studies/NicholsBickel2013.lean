@@ -39,7 +39,7 @@ semantic content (`oceanic_have_classification`, `head_marking_mostly_complex`,
 distribution claims that depend on filtering by chapter value.
 
 Per-language Fragment-vs-WALS data-equality theorems are **deliberately
-absent** — verifying that `Fragments.X.Possession.possession.field` equals
+absent** — verifying that `X.Possession.possession.field` equals
 `Data.WALS.lookup "iso"` is "encoding conclusions as definitions": the
 two would have to silently diverge for the theorem to fail, and the typed
 Fragment value already encodes the WALS coding at definition site.
@@ -64,25 +64,25 @@ private abbrev ch59 := Data.WALS.F59A.allData
 
 /-- The 19-language sample drawn from per-language Fragment Possession files. -/
 def allLanguages : List PossessionProfile :=
-  [ Fragments.English.Possession.possession
-  , Fragments.Slavic.Russian.Possession.possession
-  , Fragments.Japanese.Possession.possession
-  , Fragments.Turkish.Possession.possession
-  , Fragments.HindiUrdu.Possession.possession
-  , Fragments.Mandarin.Possession.possession
-  , Fragments.Finnish.Possession.possession
-  , Fragments.Hungarian.Possession.possession
-  , Fragments.Irish.Possession.possession
-  , Fragments.Swahili.Possession.possession
-  , Fragments.Korean.Possession.possession
-  , Fragments.Arabic.ModernStandard.Possession.possession
-  , Fragments.Quechua.Possession.possession
-  , Fragments.Yoruba.Possession.possession
-  , Fragments.Georgian.Possession.possession
-  , Fragments.Hawaiian.Possession.possession
-  , Fragments.Fijian.Possession.possession
-  , Fragments.Mayan.Tsotsil.Possession.possession
-  , Fragments.Mayan.Tseltal.Possession.possession ]
+  [ English.Possession.possession
+  , Russian.Possession.possession
+  , Japanese.Possession.possession
+  , Turkish.Possession.possession
+  , HindiUrdu.Possession.possession
+  , Mandarin.Possession.possession
+  , Finnish.Possession.possession
+  , Hungarian.Possession.possession
+  , Irish.Possession.possession
+  , Swahili.Possession.possession
+  , Korean.Possession.possession
+  , Arabic.ModernStandard.Possession.possession
+  , Quechua.Possession.possession
+  , Yoruba.Possession.possession
+  , Georgian.Possession.possession
+  , Hawaiian.Possession.possession
+  , Fijian.Possession.possession
+  , Tsotsil.Possession.possession
+  , Tseltal.Possession.possession ]
 
 /-- Count of languages in the sample with a given predicative strategy. -/
 def countByPredicative (langs : List PossessionProfile)
@@ -251,8 +251,8 @@ theorem locational_count :
     classification is an areal feature of the Pacific: the
     alienable/inalienable distinction is nearly universal in Oceanic. -/
 def oceanicLanguages : List PossessionProfile :=
-  [ Fragments.Hawaiian.Possession.possession
-  , Fragments.Fijian.Possession.possession ]
+  [ Hawaiian.Possession.possession
+  , Fijian.Possession.possession ]
 
 theorem oceanic_have_classification :
     oceanicLanguages.all (·.hasClassification) = true := by

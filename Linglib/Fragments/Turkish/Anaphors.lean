@@ -31,7 +31,7 @@ but can also function as an intensifier or logophor. Not formalized here.
 
 set_option autoImplicit false
 
-namespace Fragments.Turkish.Anaphors
+namespace Turkish.Anaphors
 
 /-- Type of Turkish local anaphor. -/
 inductive AnaphorType where
@@ -95,6 +95,6 @@ def experimentalCases : List Features.Case :=
 
 /-- All experimental cases are in the Turkish case inventory -/
 theorem experimental_cases_valid :
-    ∀ c ∈ experimentalCases, c ∈ Fragments.Turkish.Case.caseInventory := by decide
+    ∀ c ∈ experimentalCases, c ∈ Turkish.Case.caseInventory := by decide
 
-end Fragments.Turkish.Anaphors
+end Turkish.Anaphors

@@ -23,7 +23,7 @@ The rich locative system (8 localizations × 4 orientations × 4 directions)
 is in `Dargwa/Locatives.lean`.
 -/
 
-namespace Fragments.Dargwa.Case
+namespace Dargwa.Case
 
 -- ============================================================================
 -- § 1: Grammatical Case Inventory
@@ -78,4 +78,4 @@ theorem has_core_ergative :
 theorem consistently_ergative :
     alignment = .ergative := rfl
 
-end Fragments.Dargwa.Case
+end Dargwa.Case

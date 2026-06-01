@@ -397,7 +397,7 @@ these verbs or the Pasternak-side claim that state-class admire-class
 verbs are gradable in intensity will surface as a type error or
 broken proof. -/
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- Fragment-substrate agreement: the seven English psych verbs with
     Levin class 31.2 ("admire") share the state-class + admire-class
     profile Pasternak's intensity framework predicts for gradable

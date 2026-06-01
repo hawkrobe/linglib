@@ -13,7 +13,7 @@ inventory below records both [j]-final triradicals (the case at issue) and
 non-glide-final triradicals as the contrast class.
 -/
 
-namespace Fragments.Hebrew
+namespace Hebrew
 
 open Morphology
 
@@ -87,4 +87,4 @@ theorem klt_final_is_t : klt.finalSegment = some "t" := rfl
     spreading the final /l/ to template-final is legitimate. -/
 theorem kll_final_is_l : kll.finalSegment = some "l" := rfl
 
-end Fragments.Hebrew
+end Hebrew

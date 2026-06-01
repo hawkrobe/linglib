@@ -50,7 +50,7 @@ refuted.
 
 namespace Kiss1998
 
-open Fragments.Hungarian.Focus
+open Hungarian.Focus
 
 /-! ## Cells (paper §1, eq. 5a/5b, 8a/8b, 17b, 19b) -/
 

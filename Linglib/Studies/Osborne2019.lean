@@ -60,27 +60,27 @@ open DepGrammar WordGrammar Catena
 -- ============================================================================
 
 -- Nouns (from Fragments/English/Nouns.lean)
-private abbrev john := Fragments.English.Nouns.john.toWordSg
-private abbrev mary := Fragments.English.Nouns.mary.toWordSg
-private abbrev ball := Fragments.English.Nouns.ball.toWordSg
-private abbrev book := Fragments.English.Nouns.book.toWordSg
-private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
+private abbrev john := English.Nouns.john.toWordSg
+private abbrev mary := English.Nouns.mary.toWordSg
+private abbrev ball := English.Nouns.ball.toWordSg
+private abbrev book := English.Nouns.book.toWordSg
+private abbrev pizza := English.Nouns.pizza.toWordSg
 
 -- Determiner, auxiliary, preposition (from Fragments/English/)
-private abbrev the_ := Fragments.English.Determiners.the.toWord
-private abbrev was_ := Fragments.English.Auxiliaries.was.toWord
-private abbrev by_ := Fragments.English.FunctionWords.by_.toWord
+private abbrev the_ := English.Determiners.the.toWord
+private abbrev was_ := English.Auxiliaries.was.toWord
+private abbrev by_ := English.FunctionWords.by_.toWord
 
 -- Active verbs in 3sg present (valence from Fragment complementType)
-private abbrev sleeps := Fragments.English.Predicates.Verbal.sleep.toWord3sg
-private abbrev devours := Fragments.English.Predicates.Verbal.devour.toWord3sg
-private abbrev gives := Fragments.English.Predicates.Verbal.give.toWord3sg
+private abbrev sleeps := English.Predicates.Verbal.sleep.toWord3sg
+private abbrev devours := English.Predicates.Verbal.devour.toWord3sg
+private abbrev gives := English.Predicates.Verbal.give.toWord3sg
 
 -- Active "kicked" in past tense (valence derived from Fragment complementType)
-private abbrev kicked := Fragments.English.Predicates.Verbal.kick.toWordPast
+private abbrev kicked := English.Predicates.Verbal.kick.toWordPast
 
 -- Passive "kicked" (past participle + passive valence change)
-private abbrev kicked_pass := Fragments.English.Predicates.Verbal.kick.toWordPastPart.asPassive
+private abbrev kicked_pass := English.Predicates.Verbal.kick.toWordPastPart.asPassive
 
 /-- "kicked" - transitive verb as a DG lexical entry.
     Features derived from Fragment kick.toWordPast. -/

@@ -27,7 +27,7 @@ and the cited W&W p. 75 example does not appear in any of Anderson's
 Doyayo passages (Anderson cites W&W pp. 55, 77, 217, 221, 222).
 -/
 
-namespace Fragments.Doyayo.AuxiliaryVerbs
+namespace Doyayo.AuxiliaryVerbs
 
 open Morphology (InflDistribution MorphCategory)
 
@@ -94,4 +94,4 @@ def form : String := lexHeadedForm
 def gloss : String := lexHeadedGloss
 def inflDistribution : InflDistribution := lexHeadedDistribution
 
-end Fragments.Doyayo.AuxiliaryVerbs
+end Doyayo.AuxiliaryVerbs

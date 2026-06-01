@@ -16,9 +16,9 @@ Key typological properties:
 
 -/
 
-namespace Fragments.Japanese.Determiners
+namespace Japanese.Determiners
 
-open Fragments.English.Determiners (QForce Monotonicity Strength)
+open English.Determiners (QForce Monotonicity Strength)
 
 /-- Japanese quantifier entry. Extends the English pattern with
     indeterminate/particle morphology and floating quantifier properties. -/
@@ -173,4 +173,4 @@ theorem ryoho_universal_strong :
 /-- Fragment has 7 entries. -/
 theorem fragment_size : allQuantifiers.length = 7 := rfl
 
-end Fragments.Japanese.Determiners
+end Japanese.Determiners

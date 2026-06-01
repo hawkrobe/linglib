@@ -5,7 +5,7 @@ import Linglib.Typology.Color
 @cite{wals-2013}
 -/
 
-namespace Fragments.German
+namespace German
 
 /-- German: 6 non-derived basic colors, 11 total basic colors; green (*grün*)
     vs blue (*blau*) distinct; red vs yellow distinct. -/
@@ -18,4 +18,4 @@ def colorProfile : Typology.ColorProfile :=
   , greenBlue := some .distinct
   , redYellow := some .distinct }
 
-end Fragments.German
+end German

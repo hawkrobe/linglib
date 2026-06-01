@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Georgian
+namespace Georgian
 
 /-- Georgian: second-and-other-person morphological imperative within a
     complex verbal system featuring imperative, optative, and conjunctive
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Complex verbal morphology with multiple mood series; " ++
              "dedicated optative mood; prohibitive uses conjunctive." }
 
-end Fragments.Georgian
+end Georgian

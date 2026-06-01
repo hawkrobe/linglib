@@ -19,7 +19,7 @@ Data from @cite{lionnet-2025}, building on @cite{rivierre-1973} and
 @cite{shintani-paita-1990b}.
 -/
 
-namespace Fragments.Drubea.Prosody
+namespace Drubea.Prosody
 
 open Phonology.Autosegmental.RegisterTier
 
@@ -184,4 +184,4 @@ def drubeaBoundary : BoundaryFeature := .h_pct
 /-- Numèè uses utterance-final lowering (l%). -/
 def numeeBoundary : BoundaryFeature := .l_pct
 
-end Fragments.Drubea.Prosody
+end Drubea.Prosody

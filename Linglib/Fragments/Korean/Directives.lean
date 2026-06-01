@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Korean
+namespace Korean
 
 /-- Korean: second-person morphological imperative with speech-level
     distinctions (*-a*/*-eo* plain, *-seyo* polite, *-(eu)sipsiyo* formal);
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Multiple speech levels for imperative; hortative -ja; " ++
              "prohibitive -ji mal- retains imperative construction." }
 
-end Fragments.Korean
+end Korean

@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin Chinese (Sino-Tibetan): no definite or indefinite articles
     (bare nouns are ambiguous for definiteness); two-way demonstrative
@@ -23,4 +23,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .unrelated }
 
-end Fragments.Mandarin
+end Mandarin

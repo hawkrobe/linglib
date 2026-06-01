@@ -20,7 +20,7 @@ X-marking does not change modal force — it shifts the modal parameters
 (modal base or ordering source), signaling presupposition suspension.
 -/
 
-namespace Fragments.Portuguese.Modals
+namespace Portuguese.Modals
 
 open Semantics.Modality
 
@@ -116,4 +116,4 @@ theorem xMarking_preserves_pos_force :
 theorem portuguese_dever_weaker_than_spanish :
     ModalForce.weakNecessity.atLeastAsStrong .necessity = false := rfl
 
-end Fragments.Portuguese.Modals
+end Portuguese.Modals

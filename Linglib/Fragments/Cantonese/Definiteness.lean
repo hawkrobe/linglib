@@ -25,7 +25,7 @@ contrast with Mandarin is theoremed in
 `Studies/Jenks2018.lean`.
 -/
 
-namespace Fragments.Cantonese.Definiteness
+namespace Cantonese.Definiteness
 
 open Core.Nominal (ArticleInventory)
 open Features.Definiteness (DefMarkingStrategy)
@@ -47,4 +47,4 @@ def articleInventory : ArticleInventory :=
 theorem articleInventory_marking :
     articleInventory.toMarkingStrategy = .generallyMarked := rfl
 
-end Fragments.Cantonese.Definiteness
+end Cantonese.Definiteness

@@ -15,7 +15,7 @@ where the additive particle iterates on each coordinand.
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.hindiUrdu`).
 -/
 
-namespace Fragments.HindiUrdu.Coordination
+namespace HindiUrdu.Coordination
 
 open Features.Coordination
 
@@ -33,4 +33,4 @@ def bhii : CoordEntry :=
 
 def allEntries : List CoordEntry := [aur, bhii]
 
-end Fragments.HindiUrdu.Coordination
+end HindiUrdu.Coordination

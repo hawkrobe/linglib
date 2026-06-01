@@ -243,8 +243,8 @@ theorem prior_modulates_all (p : Predicate) :
 
 section FragmentBridge
 
-open Fragments.English.Predicates.Verbal
-open Fragments.English.Predicates.Copular
+open English.Predicates.Verbal
+open English.Predicates.Copular
 
 /-- Map each D&T predicate to its Fragment verb entry (18 of 20).
     "be annoyed" and "be right" are copular — use `toPredicateCore` for

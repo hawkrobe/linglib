@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Slavic.Russian
+namespace Russian
 
 /-- Russian (Indo-European, Slavic): no definite or indefinite articles;
     two-way demonstrative distance: *этот* (proximal) vs *тот* (distal); same
@@ -22,4 +22,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .unrelated }
 
-end Fragments.Slavic.Russian
+end Russian

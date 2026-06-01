@@ -13,7 +13,7 @@ the copular realization ("be" + adjective) is English-specific. The
 that need a uniform `VerbCore` interface.
 -/
 
-namespace Fragments.English.Predicates.Copular
+namespace English.Predicates.Copular
 
 open Semantics.Gradability (ClauseEmbeddingAdj)
 open Semantics.Lexical
@@ -46,7 +46,7 @@ def beAble : VerbCore where
   complementType := .infinitival
   controlType := .subjectControl
 
-end Fragments.English.Predicates.Copular
+end English.Predicates.Copular
 
 -- ════════════════════════════════════════════════════
 -- § English copular realization

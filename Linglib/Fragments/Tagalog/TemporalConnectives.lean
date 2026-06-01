@@ -20,10 +20,10 @@ overt aspect markers in Tagalog.
 
 -/
 
-namespace Fragments.Tagalog.TemporalConnectives
+namespace Tagalog.TemporalConnectives
 
 open Semantics.Aspect
-open Fragments.English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
+open English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
 
 -- ============================================================================
 -- § 1: Tagalog Aspect–Reading Mapping
@@ -176,7 +176,7 @@ theorem npi_asymmetry :
 -- § 6: Cross-Linguistic Agreement
 -- ============================================================================
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Tagalog *bago* and English *before* agree on all semantic properties. -/
 theorem bago_matches_before :
     bago.order = before_.order ∧
@@ -186,7 +186,7 @@ theorem bago_matches_before :
     bago.complementVeridical = before_.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Tagalog *pagkatapos* and English *after* agree on all semantic properties. -/
 theorem pagkatapos_matches_after :
     pagkatapos.order = after_.order ∧
@@ -196,4 +196,4 @@ theorem pagkatapos_matches_after :
     pagkatapos.complementVeridical = after_.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-end Fragments.Tagalog.TemporalConnectives
+end Tagalog.TemporalConnectives

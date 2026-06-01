@@ -9,7 +9,7 @@ retrospective as grammatical evidential). @cite{aikhenvald-2004} treats it
 as not classified as grammatical evidential; Studies-side override.
 -/
 
-namespace Fragments.Korean.Evidentiality
+namespace Korean.Evidentiality
 
 open Typology.Modality
 
@@ -22,4 +22,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "kor" ∧ evidentialityProfile.language = "Korean" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Korean.Evidentiality
+end Korean.Evidentiality

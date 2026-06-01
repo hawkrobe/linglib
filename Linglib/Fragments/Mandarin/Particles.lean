@@ -31,7 +31,7 @@ experimental data (@cite{wang-2025} Experiments 1-3).
 
 -/
 
-namespace Fragments.Mandarin.Particles
+namespace Mandarin.Particles
 
 open Semantics.Presupposition.TriggerTypology (PresupTrigger AltStructure PresupTriggerEntry)
 
@@ -158,4 +158,4 @@ theorem ye_data_link : ye.dataTrigger = .ye := rfl
 theorem jiu_data_link : jiu.dataTrigger = .jiu := rfl
 
 
-end Fragments.Mandarin.Particles
+end Mandarin.Particles

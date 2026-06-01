@@ -11,7 +11,7 @@ domain-widening indefinite (@cite{kratzer-shimoyama-2002}).
 
 set_option autoImplicit false
 
-namespace Fragments.German.ModalIndefinites
+namespace German.ModalIndefinites
 
 open Features.ModalIndefinite
 
@@ -39,4 +39,4 @@ def irgendeinEntry : ModalIndefiniteEntry where
 def paradigm : List ModalIndefiniteEntry := [irgendeinEntry]
 
 
-end Fragments.German.ModalIndefinites
+end German.ModalIndefinites

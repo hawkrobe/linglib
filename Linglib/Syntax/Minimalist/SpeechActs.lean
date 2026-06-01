@@ -267,29 +267,29 @@ def personToRole : Person → Option PRole
 
 /-- Discourse role of a pronoun entry (theory-side, not baked into fragment).
     Determined entirely by the person feature. -/
-def pronounDiscourseRole (p : Fragments.English.Pronouns.PronounEntry) : Option PRole :=
+def pronounDiscourseRole (p : English.Pronouns.PronounEntry) : Option PRole :=
   p.person.bind personToRole
 
-open Fragments.English.Pronouns in
+open English.Pronouns in
 theorem first_person_are_speakers :
     (pronounDiscourseRole i = some .speaker) ∧
     (pronounDiscourseRole me = some .speaker) ∧
     (pronounDiscourseRole we = some .speaker) ∧
     (pronounDiscourseRole us = some .speaker) := ⟨rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.Pronouns in
+open English.Pronouns in
 theorem second_person_are_hearers :
     (pronounDiscourseRole you = some .hearer) ∧
     (pronounDiscourseRole you_pl = some .hearer) := ⟨rfl, rfl⟩
 
-open Fragments.English.Pronouns in
+open English.Pronouns in
 theorem third_person_no_role :
     (pronounDiscourseRole he = none) ∧
     (pronounDiscourseRole she = none) ∧
     (pronounDiscourseRole it = none) := ⟨rfl, rfl, rfl⟩
 
 /-- Discourse role is determined entirely by person feature. -/
-theorem discourse_role_from_person (p : Fragments.English.Pronouns.PronounEntry)
+theorem discourse_role_from_person (p : English.Pronouns.PronounEntry)
     (per : Person) (hp : p.person = some per) :
     pronounDiscourseRole p = personToRole per := by
   simp [pronounDiscourseRole, hp]

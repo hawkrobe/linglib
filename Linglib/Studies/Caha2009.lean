@@ -86,54 +86,54 @@ substrate file does not pull in the Caha-specific containment
 predicate (which lives here in this study file, not in `Core/`). -/
 
 theorem slavicCore_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Case.coreInventory := by decide
+    RespectsCahaContainment Slavic.Case.coreInventory := by decide
 
 /-- Vacuous: `Syntax.Case.Order.containmentRank .voc = none` faithfully
     encodes Caha's own scope choice (@cite{caha-2009} §1.1 fn. 4,
     p. 9: "Vocatives ... are ignored throughout this dissertation"). -/
 theorem slavicSeven_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Case.sevenCaseInventory := by decide
+    RespectsCahaContainment Slavic.Case.sevenCaseInventory := by decide
 
 /-! ## § 1: Conformers (non-Slavic) -/
 
 theorem german_respectsCaha :
-    RespectsCahaContainment Fragments.German.Case.caseInventory := by decide
+    RespectsCahaContainment German.Case.caseInventory := by decide
 
 theorem greek_respectsCaha :
-    RespectsCahaContainment Fragments.Greek.Case.caseInventory := by decide
+    RespectsCahaContainment Greek.Case.caseInventory := by decide
 
 theorem hindi_respectsCaha :
-    RespectsCahaContainment Fragments.Hindi.Case.caseInventory := by decide
+    RespectsCahaContainment Hindi.Case.caseInventory := by decide
 
 theorem icelandic_respectsCaha :
-    RespectsCahaContainment Fragments.Icelandic.Case.caseInventory := by decide
+    RespectsCahaContainment Icelandic.Case.caseInventory := by decide
 
 theorem japanese_respectsCaha :
-    RespectsCahaContainment Fragments.Japanese.Case.caseInventory := by decide
+    RespectsCahaContainment Japanese.Case.caseInventory := by decide
 
 theorem korean_respectsCaha :
-    RespectsCahaContainment Fragments.Korean.Case.caseInventory := by decide
+    RespectsCahaContainment Korean.Case.caseInventory := by decide
 
 theorem latin_respectsCaha :
-    RespectsCahaContainment Fragments.Latin.Case.caseInventory := by decide
+    RespectsCahaContainment Latin.Case.caseInventory := by decide
 
 theorem mongolian_respectsCaha :
-    RespectsCahaContainment Fragments.Mongolian.Case.caseInventory := by decide
+    RespectsCahaContainment Mongolian.Case.caseInventory := by decide
 
 theorem swissgerman_respectsCaha :
-    RespectsCahaContainment Fragments.SwissGerman.Case.caseInventory := by decide
+    RespectsCahaContainment SwissGerman.Case.caseInventory := by decide
 
 theorem tamil_respectsCaha :
-    RespectsCahaContainment Fragments.Tamil.Case.caseInventory := by decide
+    RespectsCahaContainment Tamil.Case.caseInventory := by decide
 
 theorem telugu_respectsCaha :
-    RespectsCahaContainment Fragments.Telugu.Case.caseInventory := by decide
+    RespectsCahaContainment Telugu.Case.caseInventory := by decide
 
 theorem turkish_respectsCaha :
-    RespectsCahaContainment Fragments.Turkish.Case.caseInventory := by decide
+    RespectsCahaContainment Turkish.Case.caseInventory := by decide
 
 theorem yakut_respectsCaha :
-    RespectsCahaContainment Fragments.Yakut.Case.caseInventory := by decide
+    RespectsCahaContainment Yakut.Case.caseInventory := by decide
 
 /-! ## § 2: Slavic conformers (one substrate proof, ten aliases)
 
@@ -145,43 +145,43 @@ every modern Slavic language with productive case morphology
 no `Case.lean` file). -/
 
 theorem belarusian_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Belarusian.Case.caseInventory :=
+    RespectsCahaContainment Belarusian.Case.caseInventory :=
   slavicCore_respectsCaha
 
 theorem cassubian_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Cassubian.Case.caseInventory :=
+    RespectsCahaContainment Cassubian.Case.caseInventory :=
   slavicCore_respectsCaha
 
 theorem czech_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Czech.Case.caseInventory :=
+    RespectsCahaContainment Czech.Case.caseInventory :=
   slavicCore_respectsCaha
 
 theorem polish_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Polish.Case.caseInventory :=
+    RespectsCahaContainment Polish.Case.caseInventory :=
   slavicCore_respectsCaha
 
 theorem russian_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Russian.Case.caseInventory :=
+    RespectsCahaContainment Russian.Case.caseInventory :=
   slavicCore_respectsCaha
 
 theorem serbian_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Serbian.Case.caseInventory :=
+    RespectsCahaContainment Serbian.Case.caseInventory :=
   slavicCore_respectsCaha
 
 theorem slovak_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Slovak.Case.caseInventory :=
+    RespectsCahaContainment Slovak.Case.caseInventory :=
   slavicCore_respectsCaha
 
 theorem slovenian_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Slovenian.Case.caseInventory :=
+    RespectsCahaContainment Slovenian.Case.caseInventory :=
   slavicCore_respectsCaha
 
 theorem sorbian_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Sorbian.Case.caseInventory :=
+    RespectsCahaContainment Sorbian.Case.caseInventory :=
   slavicCore_respectsCaha
 
 theorem ukrainian_respectsCaha :
-    RespectsCahaContainment Fragments.Slavic.Ukrainian.Case.caseInventory :=
+    RespectsCahaContainment Ukrainian.Case.caseInventory :=
   slavicCore_respectsCaha
 
 /-! ## § 3: Predicted violators -/
@@ -191,14 +191,14 @@ theorem ukrainian_respectsCaha :
     Dargwa's `[abs, erg, gen, dat, com, ess]` fails downward closure
     (GEN/DAT present without NOM/ACC). -/
 theorem dargwa_not_respectsCaha :
-    ¬ RespectsCahaContainment Fragments.Dargwa.Case.caseInventory := by decide
+    ¬ RespectsCahaContainment Dargwa.Case.caseInventory := by decide
 
 /-- Finnish has no dedicated dative — the allative (-lle) covers
     recipient function (@cite{blake-1994} Ch. 6, ALL → DAT extension;
     @cite{karlsson-2017} confirms). The inventory has rank 4 (LOC)
     without rank 3 (DAT). -/
 theorem finnish_not_respectsCaha :
-    ¬ RespectsCahaContainment Fragments.Finnish.Case.caseInventory := by decide
+    ¬ RespectsCahaContainment Finnish.Case.caseInventory := by decide
 
 /-- Hungarian has no morphological genitive — both standard reference
     grammars (@cite{kenesei-vago-fenyvesi-1998} §1.10, @cite{rounds-2001}
@@ -214,7 +214,7 @@ theorem finnish_not_respectsCaha :
     to Caha 2008's (28), which is about suffix-vs-postposition ordering
     and holds vacuously here since Hungarian marks all cases suffixally.) -/
 theorem hungarian_not_respectsCaha :
-    ¬ RespectsCahaContainment Fragments.Hungarian.Case.caseInventory := by decide
+    ¬ RespectsCahaContainment Hungarian.Case.caseInventory := by decide
 
 /-! ## § 4: Slavic paradigm-shape syncretism (Caha §§8.3.1-4)
 

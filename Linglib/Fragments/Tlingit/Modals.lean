@@ -7,7 +7,7 @@ Modal expressions from Tlingit (Athabaskan-Eyak-Tlingit), based on
 @cite{cable-2017}.
 -/
 
-namespace Fragments.Tlingit.Modals
+namespace Tlingit.Modals
 
 open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
@@ -25,4 +25,4 @@ def potentialMode : ModalExpression := ⟨"potential mode", [pc]⟩
 def allExpressions : List ModalExpression :=
   [gwal, giwe, shákdé, futureMode, potentialMode]
 
-end Fragments.Tlingit.Modals
+end Tlingit.Modals

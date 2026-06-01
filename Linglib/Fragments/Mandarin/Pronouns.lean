@@ -5,7 +5,7 @@ import Linglib.Typology.Pronoun.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin (Sino-Tibetan). Inclusive/exclusive distinction in
     independent pronouns (women vs zanmen); no person marking on verbs;
@@ -34,4 +34,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Mandarin
+end Mandarin

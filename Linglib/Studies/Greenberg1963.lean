@@ -87,28 +87,28 @@ structure SampleEntry where
     data attested in WALS. Used for stating cross-linguistic Greenbergian
     universals via `Typology.ImplicationalUniversal`. -/
 def fragmentSample : Finset SampleEntry :=
-  { ⟨ "eng", "English",    Fragments.English.wordOrder,         Fragments.English.adposition ⟩
-  , ⟨ "jpn", "Japanese",   Fragments.Japanese.wordOrder,        Fragments.Japanese.adposition ⟩
-  , ⟨ "cmn", "Mandarin",   Fragments.Mandarin.wordOrder,        Fragments.Mandarin.adposition ⟩
-  , ⟨ "kor", "Korean",     Fragments.Korean.wordOrder,          Fragments.Korean.adposition ⟩
-  , ⟨ "arb", "Arabic",     Fragments.Arabic.ModernStandard.wordOrder,          Fragments.Arabic.ModernStandard.adposition ⟩
+  { ⟨ "eng", "English",    English.wordOrder,         English.adposition ⟩
+  , ⟨ "jpn", "Japanese",   Japanese.wordOrder,        Japanese.adposition ⟩
+  , ⟨ "cmn", "Mandarin",   Mandarin.wordOrder,        Mandarin.adposition ⟩
+  , ⟨ "kor", "Korean",     Korean.wordOrder,          Korean.adposition ⟩
+  , ⟨ "arb", "Arabic",     Arabic.ModernStandard.wordOrder,          Arabic.ModernStandard.adposition ⟩
   -- VSO + prepositional (Celtic):
-  , ⟨ "cym", "Welsh",      Fragments.Welsh.wordOrder,           Fragments.Welsh.adposition ⟩
-  , ⟨ "gle", "Irish",      Fragments.Irish.wordOrder,           Fragments.Irish.adposition ⟩
+  , ⟨ "cym", "Welsh",      Welsh.wordOrder,           Welsh.adposition ⟩
+  , ⟨ "gle", "Irish",      Irish.wordOrder,           Irish.adposition ⟩
   -- Additional SOV + postpositional:
-  , ⟨ "tur", "Turkish",    Fragments.Turkish.wordOrder,         Fragments.Turkish.adposition ⟩
-  , ⟨ "hin", "Hindi",      Fragments.HindiUrdu.wordOrder,       Fragments.HindiUrdu.adposition ⟩
-  , ⟨ "eus", "Basque",     Fragments.Basque.wordOrder,          Fragments.Basque.adposition ⟩
+  , ⟨ "tur", "Turkish",    Turkish.wordOrder,         Turkish.adposition ⟩
+  , ⟨ "hin", "Hindi",      HindiUrdu.wordOrder,       HindiUrdu.adposition ⟩
+  , ⟨ "eus", "Basque",     Basque.wordOrder,          Basque.adposition ⟩
   -- Additional SVO + prepositional:
-  , ⟨ "rus", "Russian",    Fragments.Slavic.Russian.wordOrder,  Fragments.Slavic.Russian.adposition ⟩
-  , ⟨ "swh", "Swahili",    Fragments.Swahili.wordOrder,         Fragments.Swahili.adposition ⟩
-  , ⟨ "ind", "Indonesian", Fragments.Indonesian.wordOrder,      Fragments.Indonesian.adposition ⟩
+  , ⟨ "rus", "Russian",    Russian.wordOrder,  Russian.adposition ⟩
+  , ⟨ "swh", "Swahili",    Swahili.wordOrder,         Swahili.adposition ⟩
+  , ⟨ "ind", "Indonesian", Indonesian.wordOrder,      Indonesian.adposition ⟩
   -- Object-initial / verb-final-object orders for shape diversity:
-  , ⟨ "tzo", "Tzotzil",    Fragments.Tzotzil.wordOrder,         Fragments.Tzotzil.adposition ⟩    -- VOS
-  , ⟨ "hix", "Hixkaryana", Fragments.Hixkaryana.wordOrder,      Fragments.Hixkaryana.adposition ⟩ -- OVS
+  , ⟨ "tzo", "Tzotzil",    Tzotzil.wordOrder,         Tzotzil.adposition ⟩    -- VOS
+  , ⟨ "hix", "Hixkaryana", Hixkaryana.wordOrder,      Hixkaryana.adposition ⟩ -- OVS
   -- K'iche' (Mayan, ergative, VOS, prepositional per @cite{mondloch-2017} Ch 85
   -- absence; classification contested per @cite{clemens-coon-2018}):
-  , ⟨ "quc", "K'iche'",    Fragments.Mayan.Kiche.wordOrder,     Fragments.Mayan.Kiche.adposition ⟩ -- VOS
+  , ⟨ "quc", "K'iche'",    Kiche.wordOrder,     Kiche.adposition ⟩ -- VOS
   }
 
 -- ============================================================================

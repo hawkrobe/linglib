@@ -65,7 +65,7 @@ the strategy taxonomy, and the explicit endorsement of Matić & Nikolaeva's
 `Studies/GarassinoJacob2018.lean`.
 -/
 
-namespace Fragments.Italian.PolarityMarking
+namespace Italian.PolarityMarking
 
 open Typology.PolarityMarking (Entry Strategy Env)
 
@@ -96,4 +96,4 @@ theorem siChe_contrastOk : Env.contrast ∈ siChe.environments := by decide
 theorem siChe_correctionOk : Env.correction ∈ siChe.environments := by decide
 theorem siChe_strategy : siChe.strategy = .polarityReversal := rfl
 
-end Fragments.Italian.PolarityMarking
+end Italian.PolarityMarking

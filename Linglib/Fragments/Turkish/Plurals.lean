@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Turkish
+namespace Turkish
 
 /-- Turkish: suffix plural (`-ler`, `-lar` with vowel harmony), obligatory on
     all nouns (except after numerals); person-number stems in pronouns
@@ -19,4 +19,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .sameAsAdditive }
 
-end Fragments.Turkish
+end Turkish

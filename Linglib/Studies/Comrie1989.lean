@@ -350,7 +350,7 @@ theorem causeeDemotion_maps_to_ah :
 
 Dargwa (Tanti) has a productive causative morpheme *-aq*
 (@cite{sumbatova-2021} §4.5.7). The Dargwa fragment
-(`Fragments.Dargwa.ComplexPredicates`) records:
+(`Dargwa.ComplexPredicates`) records:
 
 - Intransitive base: causee appears in **absolutive** = direct object slot
 - Transitive base: causee appears in **elative** = oblique slot
@@ -361,7 +361,7 @@ This is consistent with monotonicity — the actual slot is at most
 as high as the predicted slot — but represents a language-specific
 choice to use a spatial case rather than a dative/IO. -/
 
-open Fragments.Dargwa.ComplexPredicates (causStandUp causDig CausativeEntry)
+open Dargwa.ComplexPredicates (causStandUp causDig CausativeEntry)
 
 /-- Map Dargwa causee case to CauseeSlot based on base verb transitivity.
     Intransitive base → DO (absolutive in Dargwa);

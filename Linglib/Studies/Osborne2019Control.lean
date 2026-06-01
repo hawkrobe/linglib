@@ -54,20 +54,20 @@ open DepGrammar DepGrammar.EnhancedDependencies
 -- ============================================================================
 
 -- Nouns
-private abbrev john := Fragments.English.Nouns.john.toWordSg
-private abbrev mary := Fragments.English.Nouns.mary.toWordSg
+private abbrev john := English.Nouns.john.toWordSg
+private abbrev mary := English.Nouns.mary.toWordSg
 
 -- Control/raising verbs (valence derived from complementType via complementToValence)
-private abbrev manages := Fragments.English.Predicates.Verbal.manage.toWord3sg
-private abbrev persuaded := Fragments.English.Predicates.Verbal.persuade.toWordPast
-private abbrev seems := Fragments.English.Predicates.Verbal.seem.toWord3sg
+private abbrev manages := English.Predicates.Verbal.manage.toWord3sg
+private abbrev persuaded := English.Predicates.Verbal.persuade.toWordPast
+private abbrev seems := English.Predicates.Verbal.seem.toWord3sg
 
 -- Complement verbs (intransitive, base form for infinitival)
-private abbrev sleep_ := Fragments.English.Predicates.Verbal.sleep.toWordBase
-private abbrev run_ := Fragments.English.Predicates.Verbal.run.toWordBase
+private abbrev sleep_ := English.Predicates.Verbal.sleep.toWordBase
+private abbrev run_ := English.Predicates.Verbal.run.toWordBase
 
 -- Infinitival marker "to" (from Fragment)
-private abbrev to_ := Fragments.English.Auxiliaries.toInf
+private abbrev to_ := English.Auxiliaries.toInf
 
 -- ============================================================================
 -- §2: Fragment Grounding Theorems
@@ -75,15 +75,15 @@ private abbrev to_ := Fragments.English.Auxiliaries.toInf
 
 /-- manage is subject control in the Fragment. -/
 theorem manage_is_subject_control :
-    Fragments.English.Predicates.Verbal.manage.controlType = .subjectControl := rfl
+    English.Predicates.Verbal.manage.controlType = .subjectControl := rfl
 
 /-- persuade is object control in the Fragment. -/
 theorem persuade_is_object_control :
-    Fragments.English.Predicates.Verbal.persuade.controlType = .objectControl := rfl
+    English.Predicates.Verbal.persuade.controlType = .objectControl := rfl
 
 /-- seem is raising in the Fragment. -/
 theorem seem_is_raising :
-    Fragments.English.Predicates.Verbal.seem.controlType = .raising := rfl
+    English.Predicates.Verbal.seem.controlType = .raising := rfl
 
 -- ============================================================================
 -- §3: DG Trees — Basic (unique heads) and Enhanced (shared dependents)
@@ -241,7 +241,7 @@ theorem control_raising_same_enhancement :
 
 open Typology.Complementation
 open Noonan2007
-open Fragments.English.Predicates.Verbal (manage persuade want hope stop start continue_ seem)
+open English.Predicates.Verbal (manage persuade want hope stop start continue_ seem)
 
 /-- Control verbs in the Fragment have corresponding CTPDatum entries
     with hasEquiDeletion = true (@cite{noonan-2007} §2.1).

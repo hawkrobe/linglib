@@ -6,7 +6,7 @@ import Linglib.Typology.RelativeClause.WALS
 Typological-summary `RelativeClause.Profile` for Hindi (ISO `hin`).
 -/
 
-namespace Fragments.HindiUrdu
+namespace HindiUrdu
 
 /-- Hindi/Urdu relativization: correlative *jo...vo*; declining relative
     pronoun *jo*; correlative position; postnominal RC also possible in
@@ -19,4 +19,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Correlative jo...vo; rel pronoun jo declines; "
           ++ "post-nominal RC also possible in formal register" }
 
-end Fragments.HindiUrdu
+end HindiUrdu

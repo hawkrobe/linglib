@@ -10,7 +10,7 @@ plural *zuek* is distinct from formal singular *zu*.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Basque.Pronouns
+namespace Basque.Pronouns
 
 open Pronoun
 open Features.Register (Level)
@@ -123,4 +123,4 @@ theorem tv_distinction :
 theorem verb_register_matches_pronouns :
     duk.register = hi.register ∧ duzu.register = zu.register := ⟨rfl, rfl⟩
 
-end Fragments.Basque.Pronouns
+end Basque.Pronouns

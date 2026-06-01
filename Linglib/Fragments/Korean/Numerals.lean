@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Korean
+namespace Korean
 
 /-- Korean. Coded after @cite{wals-2013}: WALS 53A codes Korean
     "one-th, two-th, three-th" (Sino-Korean *je-* + cardinal, fully regular) →
@@ -18,4 +18,4 @@ namespace Fragments.Korean
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Korean" "kor" (region := .eastAsia) (pluralMarking := .optional)
 
-end Fragments.Korean
+end Korean

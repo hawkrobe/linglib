@@ -5,7 +5,7 @@ import Linglib.Typology.Pronoun.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Slavic.Russian
+namespace Russian
 
 /-- Russian (Indo-European, Slavic). No incl/excl; gender in 3rd sg
     (on/ona/ono); binary politeness (ty/vy); interrogative-based
@@ -33,4 +33,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Slavic.Russian
+end Russian

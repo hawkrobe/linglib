@@ -37,7 +37,7 @@ membership alone cannot determine unaccusativity for §37.3 verbs.
 
 namespace Phenomena.ArgumentStructure.Unaccusativity.VerbClasses
 
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Semantics.Lexical
 
 /-! ## §1. Aligned classes

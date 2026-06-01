@@ -12,7 +12,7 @@ Russian indefinite pronoun polarity items, typed by the categories from
 - **кто угодно** (kto ugodno): Free choice item
 -/
 
-namespace Fragments.Slavic.Russian.PolarityItems
+namespace Russian.PolarityItems
 
 open Typology.PolarityItem
 
@@ -94,4 +94,4 @@ theorem russian_npis_strengthening :
     [ktoLibo, nikto, nichego, nikogda].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
 
-end Fragments.Slavic.Russian.PolarityItems
+end Russian.PolarityItems

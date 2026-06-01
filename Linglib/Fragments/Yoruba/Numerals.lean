@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Yoruba
+namespace Yoruba
 
 /-- Yoruba: ordinals formed with *(i)keji* prefix system, varying patterns
     across the paradigm. No morphological distributive. No numeral classifiers.
@@ -14,4 +14,4 @@ namespace Fragments.Yoruba
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Yoruba" "yor" (region := .africa) (pluralMarking := .optional)
 
-end Fragments.Yoruba
+end Yoruba

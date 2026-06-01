@@ -19,7 +19,7 @@ subjects and all transitive clauses require overt objects.
 - Complement-taking predicate classification by clause type selected
 -/
 
-namespace Fragments.Mixtec.SMPM
+namespace Mixtec.SMPM
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Morpho-Aspectual System
@@ -287,4 +287,4 @@ def naDisjointReferenceMarker : Bool := true
     This argues against a movement analysis of left-dislocation. -/
 def cliticLeftDislocationIslandSensitive : Bool := false
 
-end Fragments.Mixtec.SMPM
+end Mixtec.SMPM

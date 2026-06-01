@@ -10,7 +10,7 @@ forms (*uh* for both sg and pl). AA is Fin-based with limited embeddability.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Punjabi.Pronouns
+namespace Punjabi.Pronouns
 
 open Pronoun
 
@@ -105,4 +105,4 @@ theorem markers_match_2p :
 theorem third_person_homophony :
     uh_sg.form = uh_pl.form := rfl
 
-end Fragments.Punjabi.Pronouns
+end Punjabi.Pronouns

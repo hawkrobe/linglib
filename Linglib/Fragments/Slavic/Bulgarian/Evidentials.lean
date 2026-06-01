@@ -16,7 +16,7 @@ Table 17. The -l participle interacts with tense to encode evidential perspectiv
 
 -/
 
-namespace Fragments.Slavic.Bulgarian.Evidentials
+namespace Bulgarian.Evidentials
 
 open Semantics.Tense.Evidential
 
@@ -36,4 +36,4 @@ def futL : TAMEEntry where
 def allEntries : List TAMEEntry :=
   [nfutL, futL]
 
-end Fragments.Slavic.Bulgarian.Evidentials
+end Bulgarian.Evidentials

@@ -8,7 +8,7 @@ Three-or-more system: direct, reportative, non-personal/inferential. Andean
 areal feature shared with Quechua. WALS Ch 77 has no entry; fallback fires.
 -/
 
-namespace Fragments.Aymara.Evidentiality
+namespace Aymara.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -25,4 +25,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "aym" ∧ evidentialityProfile.language = "Aymara" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Aymara.Evidentiality
+end Aymara.Evidentiality

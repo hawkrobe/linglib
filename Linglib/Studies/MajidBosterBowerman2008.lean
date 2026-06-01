@@ -502,15 +502,15 @@ theorem cut_break_same_template :
 -- ════════════════════════════════════════════════════
 
 /-! Rather than defining inline profiles, we derive them from the actual
-    Fragment entries in `Fragments.English.Predicates.Verbal`. This
+    Fragment entries in `English.Predicates.Verbal`. This
     ensures that compatibility theorems test the real lexical data. -/
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- Extract the root profile from a Fragment verb entry. -/
 private def fragmentProfile (v : VerbEntry) : RootProfile :=
   v.rootProfile.getD {}
 
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 /-- The tear cloth event is compatible with the Fragment *tear* entry. -/
 theorem tearCloth_compatible_tear :

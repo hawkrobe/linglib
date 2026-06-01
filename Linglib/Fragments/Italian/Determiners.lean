@@ -18,7 +18,7 @@ Italian quantifiers agree in gender and/or number with their NP:
 - *pochi/poche* (few): gender-variable, plural
 -/
 
-namespace Fragments.Italian.Determiners
+namespace Italian.Determiners
 
 open Features (SurfaceGender)
 open Semantics.Quantification.Lexicon
@@ -176,4 +176,4 @@ theorem tutti_tutte_gender :
     tutte.gender = some .feminine ∧
     tutti.qforce = tutte.qforce := ⟨rfl, rfl, rfl⟩
 
-end Fragments.Italian.Determiners
+end Italian.Determiners

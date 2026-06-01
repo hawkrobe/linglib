@@ -40,11 +40,11 @@ namespace Ozaki2026
 -- ============================================================================
 
 /-! Case marking on the source argument of alternation verbs is recorded
-as a `Fragments.Japanese.Case.CaseMarker` (the authoritative case-marker
+as a `Japanese.Case.CaseMarker` (the authoritative case-marker
 registry per @cite{tsujimura-2014}), not as a parallel local enum. -/
 
-open Fragments.Japanese.Case (CaseMarker o kara ga ni)
-open Fragments.Japanese.Passive (PassiveType)
+open Japanese.Case (CaseMarker o kara ga ni)
+open Japanese.Passive (PassiveType)
 
 /-- Diagnostics for argumenthood (vs. adjuncthood). -/
 inductive ArgumenthoodDiagnostic where
@@ -267,9 +267,9 @@ theorem unaccusativity_count : unaccusativityData.length = 3 := rfl
 /-! ### Provenance: source markers come from the Fragment
 
 These four `rfl` theorems tie each alternation datum's `sourceMarker` to
-the corresponding `Fragments.Japanese.Case` entry — the dissolution of
+the corresponding `Japanese.Case` entry — the dissolution of
 this file's prior local `CaseMarking` enum (which re-stipulated four
-particles already present in `Fragments.Japanese.Case`) is now mechanically
+particles already present in `Japanese.Case`) is now mechanically
 auditable: editing the Fragment's `o` or `kara` definitions will cascade
 through these provenance theorems.
 -/
@@ -294,7 +294,7 @@ theorem alternation_crosses_tsujimura_split :
 
 open Minimalist
 open Syntax.Case
-open Fragments.Japanese.Predicates
+open Japanese.Predicates
 
 /-- Departure verbs predict no external argument: non-thematic Voice
     does not assign a θ-role (@cite{kratzer-1996}, @cite{schaefer-2025}). -/
@@ -351,37 +351,37 @@ theorem accusative_unaccusative_paradox :
 
 /-- Fragment entry for *hanareru* is marked unaccusative. -/
 theorem hanareru_is_unaccusative :
-    Fragments.Japanese.Predicates.hanareru.unaccusative = true := rfl
+    Japanese.Predicates.hanareru.unaccusative = true := rfl
 
 /-- Fragment entry for *deru* is marked unaccusative. -/
 theorem deru_is_unaccusative :
-    Fragments.Japanese.Predicates.deru.unaccusative = true := rfl
+    Japanese.Predicates.deru.unaccusative = true := rfl
 
 /-- Fragment entry for *hanareru* is not passivizable. -/
 theorem hanareru_not_passivizable :
-    Fragments.Japanese.Predicates.hanareru.passivizable = false := rfl
+    Japanese.Predicates.hanareru.passivizable = false := rfl
 
 /-- Fragment entry for *deru* is not passivizable. -/
 theorem deru_not_passivizable :
-    Fragments.Japanese.Predicates.deru.passivizable = false := rfl
+    Japanese.Predicates.deru.passivizable = false := rfl
 
 /-- Non-passivizability aligns with direct passive being ungrammatical. -/
 theorem passive_data_matches_fragment :
     hanareru_direct_passive.grammatical = false ∧
-    Fragments.Japanese.Predicates.hanareru.passivizable = false := ⟨rfl, rfl⟩
+    Japanese.Predicates.hanareru.passivizable = false := ⟨rfl, rfl⟩
 
 /-- Non-passivizability follows from Voice theory. -/
 theorem passive_follows_from_voice :
     ¬ voiceAnticausative.AssignsTheta ∧
-    Fragments.Japanese.Predicates.hanareru.passivizable = false := by
+    Japanese.Predicates.hanareru.passivizable = false := by
   refine ⟨?_, rfl⟩; decide
 
 /-- Verb forms in Data match Fragment entries. -/
 theorem hanareru_form_matches :
-    hanareru_acc.verb = Fragments.Japanese.Predicates.hanareru.form := rfl
+    hanareru_acc.verb = Japanese.Predicates.hanareru.form := rfl
 
 theorem deru_form_matches :
-    deru_acc.verb = Fragments.Japanese.Predicates.deru.form := rfl
+    deru_acc.verb = Japanese.Predicates.deru.form := rfl
 
 /-- All argumenthood diagnostics succeed. -/
 theorem source_is_argument_both_frames :
@@ -395,22 +395,22 @@ theorem source_is_argument_both_frames :
     `derivedUnaccusative` uses the `voiceType` field to compute unaccusativity
     via `VoiceType.assignsTheta`. -/
 theorem hanareru_unaccusative_derived :
-    Fragments.Japanese.Predicates.hanareru.toVerbCore.derivedUnaccusative = true := rfl
+    Japanese.Predicates.hanareru.toVerbCore.derivedUnaccusative = true := rfl
 
 /-- Deru's unaccusativity is DERIVED from its voice type. -/
 theorem deru_unaccusative_derived :
-    Fragments.Japanese.Predicates.deru.toVerbCore.derivedUnaccusative = true := rfl
+    Japanese.Predicates.deru.toVerbCore.derivedUnaccusative = true := rfl
 
 /-- The stored `unaccusative` flag agrees with the derived value.
     This consistency check ensures that the stipulated field and the
     Voice-based derivation produce the same answer. -/
 theorem hanareru_stored_matches_derived :
-    Fragments.Japanese.Predicates.hanareru.unaccusative =
-    Fragments.Japanese.Predicates.hanareru.toVerbCore.derivedUnaccusative := rfl
+    Japanese.Predicates.hanareru.unaccusative =
+    Japanese.Predicates.hanareru.toVerbCore.derivedUnaccusative := rfl
 
 theorem deru_stored_matches_derived :
-    Fragments.Japanese.Predicates.deru.unaccusative =
-    Fragments.Japanese.Predicates.deru.toVerbCore.derivedUnaccusative := rfl
+    Japanese.Predicates.deru.unaccusative =
+    Japanese.Predicates.deru.toVerbCore.derivedUnaccusative := rfl
 
 /-- Direct passive requires thematic Voice, which departure verbs lack. -/
 theorem direct_passive_requires_voice :

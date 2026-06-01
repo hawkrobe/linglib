@@ -56,21 +56,21 @@ open Typology.Negation
     Sample shrunk from the dissolved file's 19 (dropped Izi, KolymaYukaghir,
     Rama, Nelemwa — none of which had Fragment files in the project). -/
 def allLanguages : List NegationProfile :=
-  [ Fragments.English.Negation.negationProfile
-  , Fragments.German.Negation.negationProfile
-  , Fragments.French.Negation.negationProfile
-  , Fragments.Slavic.Russian.Negation.negationProfile
-  , Fragments.Finnish.Negation.negationProfile
-  , Fragments.Japanese.Negation.negationProfile
-  , Fragments.Mandarin.Negation.negationProfile
-  , Fragments.Turkish.Negation.negationProfile
-  , Fragments.Slavic.Czech.Negation.negationProfile
-  , Fragments.Spanish.Negation.negationProfile
-  , Fragments.Italian.Negation.negationProfile
-  , Fragments.Burmese.Negation.negationProfile
-  , Fragments.Maori.Negation.negationProfile
-  , Fragments.Hixkaryana.Negation.negationProfile
-  , Fragments.Quechua.Negation.negationProfile ]
+  [ English.Negation.negationProfile
+  , German.Negation.negationProfile
+  , French.Negation.negationProfile
+  , Russian.Negation.negationProfile
+  , Finnish.Negation.negationProfile
+  , Japanese.Negation.negationProfile
+  , Mandarin.Negation.negationProfile
+  , Turkish.Negation.negationProfile
+  , Czech.Negation.negationProfile
+  , Spanish.Negation.negationProfile
+  , Italian.Negation.negationProfile
+  , Burmese.Negation.negationProfile
+  , Maori.Negation.negationProfile
+  , Hixkaryana.Negation.negationProfile
+  , Quechua.Negation.negationProfile ]
 
 -- ============================================================================
 -- §2. Sample-level distributions
@@ -137,8 +137,8 @@ theorem aux_verb_implies_afin :
 
 /-- All Slavic languages in the sample (Russian, Czech) show negative concord. -/
 theorem slavic_neg_concord :
-    Fragments.Slavic.Russian.Negation.negationProfile.hasNegConcord = true ∧
-    Fragments.Slavic.Czech.Negation.negationProfile.hasNegConcord = true := by
+    Russian.Negation.negationProfile.hasNegConcord = true ∧
+    Czech.Negation.negationProfile.hasNegConcord = true := by
   exact ⟨by native_decide, by native_decide⟩
 
 end Dryer2013Negation

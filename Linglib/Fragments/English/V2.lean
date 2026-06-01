@@ -7,7 +7,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 V2 micro-parameter profiles for English varieties (Table 3.1).
 -/
 
-namespace Fragments.English
+namespace English
 
 open Minimalist (ForceHead V2Profile)
 
@@ -30,4 +30,4 @@ abbrev stdEnglish : V2Profile :=
 abbrev belfastEnglish : V2Profile :=
   {.Int, .Pol, .Imp, .Wh}
 
-end Fragments.English
+end English

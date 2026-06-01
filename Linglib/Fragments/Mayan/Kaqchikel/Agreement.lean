@@ -59,16 +59,16 @@ deliberately avoids picking sides on that question.
 
 -/
 
-namespace Fragments.Mayan.Kaqchikel
+namespace Kaqchikel
 
-open Fragments.Mayan (PersonNumber)
+open Mayan (PersonNumber)
 
 -- ============================================================================
 -- § 1: Person-Number Inventory
 -- ============================================================================
 
 -- Person-number combinations for Kaqchikel agreement paradigms come from
--- the pan-Mayan `Fragments.Mayan.PersonNumber` enum (six cells: three
+-- the pan-Mayan `Mayan.PersonNumber` enum (six cells: three
 -- persons × two numbers). Projections `.person`, `.isPlural`, and the
 -- full inventory `PersonNumber.all` live in `Mayan/Params.lean`.
 
@@ -79,7 +79,7 @@ open Fragments.Mayan (PersonNumber)
 /-- Kaqchikel's absolutive morphemes appear in HIGH position (between
     aspect marker and the verb stem, pre-stem). Morpheme order:
     ASP-ABS-ERG-Stem (per `## The System` table above). -/
-def absPosition : Fragments.Mayan.ABSPosition := .high
+def absPosition : Mayan.ABSPosition := .high
 
 -- ============================================================================
 -- § 2: Set A (ERG) Vocabulary
@@ -125,14 +125,14 @@ def setBExponent : PersonNumber → String
 abbrev ArgPosition := Features.Prominence.ArgumentRole
 
 /-- Perfective (ergative) case assignment for Kaqchikel. Definitionally
-    equal to `Fragments.Mayan.ergCaseKaqchikel`, which derives from
+    equal to `Mayan.ergCaseKaqchikel`, which derives from
     `Alignment.ergative.assignCase` in
     `Syntax/Case/Alignment.lean` — A → ERG, S/P → ABS. -/
 abbrev ArgPosition.case : ArgPosition → Features.Case :=
-  Fragments.Mayan.ergCaseKaqchikel
+  Mayan.ergCaseKaqchikel
 
 /-- Non-perfective (PROG `ajin`) case assignment for Kaqchikel.
-    Definitionally equal to `Fragments.Mayan.accCaseKaqchikel`, derived
+    Definitionally equal to `Mayan.accCaseKaqchikel`, derived
     from `Alignment.invertedErgative.assignCase`. The
     construction-specific inverted pattern (S/A → ABS, P → ERG/GEN)
     documented by @cite{imanishi-2014} §3.3.1 and @cite{imanishi-2020}.
@@ -142,7 +142,7 @@ abbrev ArgPosition.case : ArgPosition → Features.Case :=
     the subject is base-generated in matrix Spec-PredP (with `ajin`)
     and gets ABS from matrix Infl. -/
 abbrev ArgPosition.accCase : ArgPosition → Features.Case :=
-  Fragments.Mayan.accCaseKaqchikel
+  Mayan.accCaseKaqchikel
 
 /-- Does this position participate in φ-Agree?
     In Kaqchikel, ALL core argument positions trigger agreement:
@@ -288,4 +288,4 @@ theorem inventory_covers_positions :
 -- (both are core cases at rank 6, trivially no gaps).
 example : Features.Case.IsValidInventory caseInventory := by decide
 
-end Fragments.Mayan.Kaqchikel
+end Kaqchikel

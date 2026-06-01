@@ -36,9 +36,9 @@ clauses use `.D` rather than a dedicated predicational head).
 namespace Minimalist.FromFragments
 
 open Minimalist
-open Fragments.English.Predicates.Verbal (VerbEntry ComplementType)
-open Fragments.English.Pronouns (PronounEntry PronounType)
-open Fragments.English.Nouns (NounEntry)
+open English.Predicates.Verbal (VerbEntry ComplementType)
+open English.Pronouns (PronounEntry PronounType)
+open English.Nouns (NounEntry)
 open Semantics.Quantification.Lexicon (QuantifierEntry)
 
 section SelectionalEncoding
@@ -94,11 +94,11 @@ end EntryProjections
 
 section Sanity
 
-example : verbToSelStack Fragments.English.Predicates.Verbal.sleep = [] := rfl
-example : verbToSelStack Fragments.English.Predicates.Verbal.eat = [.D] := rfl
-example : verbToSelStack Fragments.English.Predicates.Verbal.give = [.D, .D] := rfl
-example : (nounToSO Fragments.English.Nouns.john 1).isLeaf := by decide
-example : (nounToSO Fragments.English.Nouns.cat 1).isLeaf := by decide
+example : verbToSelStack English.Predicates.Verbal.sleep = [] := rfl
+example : verbToSelStack English.Predicates.Verbal.eat = [.D] := rfl
+example : verbToSelStack English.Predicates.Verbal.give = [.D, .D] := rfl
+example : (nounToSO English.Nouns.john 1).isLeaf := by decide
+example : (nounToSO English.Nouns.cat 1).isLeaf := by decide
 
 end Sanity
 

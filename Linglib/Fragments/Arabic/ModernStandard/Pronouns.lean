@@ -25,7 +25,7 @@ phonologically reduced clitics on nouns / verbs / prepositions
 said it').
 -/
 
-namespace Fragments.Arabic.ModernStandard
+namespace Arabic.ModernStandard
 
 /-- Modern Standard Arabic (Afro-Asiatic, Semitic, ISO `arb`). MSA
     matches Egyptian on every WALS dimension surveyed here except for the
@@ -56,4 +56,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Arabic.ModernStandard
+end Arabic.ModernStandard

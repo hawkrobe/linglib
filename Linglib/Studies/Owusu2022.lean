@@ -13,7 +13,7 @@ where it will sit alongside the rival analyses in @cite{bombi-2018},
 
 ## Main declarations
 
-* `Fragments.Akan.Determiners.Indefinite.bi_wide_scope_under_negation`
+* `Akan.Determiners.Indefinite.bi_wide_scope_under_negation`
   — Owusu's prediction that *bí* under negation takes wide scope,
   derived from the substrate's `cf_wide_scope_under_negation` applied
   at a fixed situation of a `SkolemCF`.
@@ -61,7 +61,7 @@ machinery beyond the present scope.
 
 open Semantics.Quantification.ChoiceFunction
 
-namespace Fragments.Akan.Determiners.Indefinite
+namespace Akan.Determiners.Indefinite
 
 /-- @cite{owusu-2022}'s wide-scope-under-negation prediction for the
 *bí* entry. Given a `SkolemCF` evaluated at situation `s₀` and a
@@ -77,11 +77,11 @@ theorem bi_wide_scope_under_negation {S E : Type*}
     VP (f.apply s₀ N) :=
   cf_wide_scope_under_negation (f s₀) hf N VP hN hAll
 
-end Fragments.Akan.Determiners.Indefinite
+end Akan.Determiners.Indefinite
 
 namespace Owusu2022
 
-open Fragments.Akan.Determiners
+open Akan.Determiners
 
 /-! ### A 2-person Akan-flavored domain
 

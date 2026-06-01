@@ -23,7 +23,7 @@ The partitive articles (di + definite article) serve as the obligatory
 indefinite plural — Italian has no bare plural arguments.
 -/
 
-namespace Fragments.Italian.Nouns
+namespace Italian.Nouns
 
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 open Features (SurfaceGender)
@@ -231,4 +231,4 @@ example : laRagazza.determiner = some .la := rfl
 example : delVino.determiner = some .del := rfl
 example : deiLibri.determiner = some .dei := rfl
 
-end Fragments.Italian.Nouns
+end Italian.Nouns

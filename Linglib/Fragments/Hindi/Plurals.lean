@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hindi
+namespace Hindi
 
 /-- Hindi: suffix plural (*-e*, *-en*, *-iya*), obligatory on all nouns;
     person-number stems in pronouns (*main* vs *ham*); associative plural
@@ -18,4 +18,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .sameAsAdditive }
 
-end Fragments.Hindi
+end Hindi

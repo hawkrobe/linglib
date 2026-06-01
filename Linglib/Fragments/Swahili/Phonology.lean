@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Swahili.Phonology
+namespace Swahili.Phonology
 
 /-- Canonical Swahili phoneme inventory: first PHOIBLE inventory for ISO `swh`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Swahili.swh
 
-end Fragments.Swahili.Phonology
+end Swahili.Phonology

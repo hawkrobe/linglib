@@ -51,7 +51,7 @@ namespace Gong2022
 
 open Minimalist
 open Syntax.Case
-open Fragments.Mongolian.Case
+open Mongolian.Case
 
 -- ============================================================================
 -- S 1: Scrambling Scenarios

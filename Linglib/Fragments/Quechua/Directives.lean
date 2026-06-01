@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Quechua
+namespace Quechua
 
 /-- Quechua (Cuzco): rich morphological imperative paradigm (2SG *-y* in
     *ri-y!*, 2PL *-ychis*; hortative *-sun* in *ri-sun*; jussive *-chun* in
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Rich imperative paradigm; hortative -sun; jussive -chun; " ++
              "prohibitive ama...chu is doubly special." }
 
-end Fragments.Quechua
+end Quechua

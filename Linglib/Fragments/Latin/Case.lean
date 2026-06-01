@@ -26,7 +26,7 @@ Latin syncretism patterns divide into two groups:
 
 -/
 
-namespace Fragments.Latin.Case
+namespace Latin.Case
 
 -- ============================================================================
 -- § 1: Case Inventory
@@ -93,4 +93,4 @@ theorem abl_extends_to_inst :
 theorem abl_extends_to_caus :
     Features.Case.Extends .abl .caus := by decide
 
-end Fragments.Latin.Case
+end Latin.Case

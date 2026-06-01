@@ -47,7 +47,7 @@ exception) verified at Wade §6397; *znamja* (-мя neuter) is the textbook
 Class III neuter group.
 -/
 
-namespace Fragments.Slavic.Russian.Gender
+namespace Russian.Gender
 
 open Features (SurfaceGender)
 
@@ -210,4 +210,4 @@ example : genderTypology.iso639 = "rus" ∧ genderTypology.name = "Russian" :=
 /-- Russian is in @cite{corbett-1991}'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.Slavic.Russian.Gender
+end Russian.Gender

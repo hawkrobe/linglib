@@ -16,7 +16,7 @@ umlaut (`Bruder` ~ `Brüder`); a process-based treatment would not classify
 German as exclusively concatenative.
 -/
 
-namespace Fragments.German
+namespace German
 
 open Morphology
 
@@ -42,4 +42,4 @@ example : morphProfile.iso = "deu" ∧ morphProfile.language = "German" := ⟨rf
     `BickelNichols2013.lean`'s 18-language aggregate. -/
 example : morphProfile.IsFusional := by decide
 
-end Fragments.German
+end German

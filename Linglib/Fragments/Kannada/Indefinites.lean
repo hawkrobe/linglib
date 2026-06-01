@@ -18,7 +18,7 @@ but unknown." This conjunctive type is cross-linguistically rare
 
 set_option autoImplicit false
 
-namespace Fragments.Kannada.Indefinites
+namespace Kannada.Indefinites
 
 open Typology.Indefinite
 
@@ -52,4 +52,4 @@ def paradigm : IndefiniteParadigm where
 theorem kannada_paradigm_is_interrogativeBased :
     paradigm.toWALS46A = some .interrogativeBased := rfl
 
-end Fragments.Kannada.Indefinites
+end Kannada.Indefinites

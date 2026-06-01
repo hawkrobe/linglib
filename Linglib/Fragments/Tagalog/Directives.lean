@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Tagalog
+namespace Tagalog
 
 /-- Tagalog: no morphological imperative in the strict sense (commands use
     the basic/infinitive verb form); Type 2 prohibitive (*Huwag kang
@@ -22,4 +22,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Imperative = basic/infinitive verb form; special prohibitive " ++
              "huwag (not hindi); no morphological hortative." }
 
-end Fragments.Tagalog
+end Tagalog

@@ -8,7 +8,7 @@ import Linglib.Semantics.Reference.PronounDenotation
 @cite{buring-2012}'s handbook survey of pronoun semantics makes several claims
 this file states as theorems about the *unified* pronoun denotation
 (`Pronoun.Entry.denote` / `Pronoun.Entry.phiPresup`) applied to the English
-Fragment's lexical entries (`Fragments.English.Pronouns`) — not about a local
+Fragment's lexical entries (`English.Pronouns`) — not about a local
 re-implementation. This is the "theory-hub denotation as study-file constraint":
 the object the rest of the codebase attributes to pronouns is the object these
 theorems are about.
@@ -38,7 +38,7 @@ set_option autoImplicit false
 
 namespace Buring2012
 
-open Fragments.English.Pronouns (she they)
+open English.Pronouns (she they)
 open Core (Assignment)
 open Core.Logic.Intensional (Frame)
 open Core.Logic.Intensional.Variables (interpPronoun)

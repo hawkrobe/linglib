@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Burmese
+namespace Burmese
 
 /-- Burmese: ordinals formed with prefix (*pa-hta-ma* 'first' from inherited
     Pali; modern ordinals use *tha-* prefix); various pattern. Numeral
@@ -14,4 +14,4 @@ namespace Fragments.Burmese
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Burmese" "mya" (region := .southeastAsia) (pluralMarking := .none)
 
-end Fragments.Burmese
+end Burmese

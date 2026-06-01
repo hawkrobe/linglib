@@ -8,7 +8,7 @@ Classifier-system metadata for Xhosa (ISO `xho`): Bantu noun-class
 system with 11 classes and pervasive concord.
 -/
 
-namespace Fragments.Xhosa
+namespace Xhosa
 
 /-- Xhosa Bantu noun-class system: 11-class inventory, prefix
     realization, agreement-rich. -/
@@ -26,4 +26,4 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , hasObligatoryNumber := true  -- singular/plural class pairs (e.g. cl1/cl2)
   , source := "@cite{carstens-2026}; @cite{taraldsen-et-al-2018}" }
 
-end Fragments.Xhosa
+end Xhosa

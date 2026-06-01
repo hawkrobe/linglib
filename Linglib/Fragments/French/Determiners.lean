@@ -6,7 +6,7 @@ import Linglib.Semantics.Quantification.Lexicon
 @cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}
 
 A small lexicon of French determiners and quantifiers, structured to
-parallel `Fragments.English.Determiners` so that the two can be
+parallel `English.Determiners` so that the two can be
 compared directly in cross-linguistic studies. The shape `QuantifierEntry`
 is reused; only `form` and language-specific feature combinations
 differ.
@@ -20,7 +20,7 @@ nearest equivalent and is encoded here, with `numberRestriction := some
 realizes the dual core concept (`Core.CoreConcept.Id.dual`).
 -/
 
-namespace Fragments.French.Determiners
+namespace French.Determiners
 
 open Semantics.Quantification.Lexicon
   (QuantifierEntry QForce Monotonicity Strength)
@@ -112,4 +112,4 @@ def toujours : QuantifierEntry :=
 def allQuantifiers : List QuantifierEntry :=
   [tous, chaque, aucun, les_deux, quelques, un, les, toujours]
 
-end Fragments.French.Determiners
+end French.Determiners

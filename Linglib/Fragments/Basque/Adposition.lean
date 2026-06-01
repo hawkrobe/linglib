@@ -7,10 +7,10 @@ WALS-derived adposition order for Basque (ISO `eus`). WALS Ch 85
 classifies Basque as postpositional.
 -/
 
-namespace Fragments.Basque
+namespace Basque
 
 /-- Basque adposition order (WALS Ch 85 by ISO lookup). -/
 def adposition : Typology.Adposition.AdpositionOrder :=
   Typology.Adposition.AdpositionOrder.ofWALS "eus"
 
-end Fragments.Basque
+end Basque

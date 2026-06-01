@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.French
+namespace French
 
 /-- French (Indo-European, Romance): *imparfait*/*passé composé* aspect
     distinction; inflectional past (*passé simple*); inflectional future
@@ -16,4 +16,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .marked, future := .inflectional
   , perfect := .fromPossessive, affixPosition := .suffixing }
 
-end Fragments.French
+end French

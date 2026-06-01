@@ -222,9 +222,9 @@ theorem all_tp_simultaneous :
 
 open Minimalist (ComplementSize fValue Cat)
 open Semantics.Tense (EmbeddedTenseReading availableReadings)
-open Fragments.Hungarian.Predicates
-open Fragments.Hungarian.FunctionWords
-open Fragments.Hungarian.TemporalDeictic
+open Hungarian.Predicates
+open Hungarian.FunctionWords
+open Hungarian.TemporalDeictic
 
 /-! ### Size-sensitive SOT predictions (@cite{egressy-2026})
 

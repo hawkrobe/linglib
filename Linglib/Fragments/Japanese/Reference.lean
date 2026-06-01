@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese (Japonic): no definite or indefinite articles; three-way
     person-oriented demonstrative system (*ko-* near speaker, *so-* near hearer,
@@ -24,4 +24,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .differentStems
   , pronDemRelation := some .unrelated }
 
-end Fragments.Japanese
+end Japanese

@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Indonesian
+namespace Indonesian
 
 /-- Indonesian: complete reduplication (*rumah-rumah* 'houses'); plural marking
     optional on all nouns; person-number stems in pronouns (*saya*/*kami*);
@@ -18,4 +18,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .absent }
 
-end Fragments.Indonesian
+end Indonesian

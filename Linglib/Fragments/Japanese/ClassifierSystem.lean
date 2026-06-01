@@ -11,7 +11,7 @@ this file aggregates that inventory into the typological-system summary
 (`NounCategorizationSystem`).
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese numeral classifier system: obligatory CL suffixing on
     numerals; default つ tsu; preferred semantics derived from the
@@ -29,4 +29,4 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , preferredSemantics := Classifier.allEncodedParams
   , source := "@cite{aikhenvald-2000}; @cite{downing-1996}" }
 
-end Fragments.Japanese
+end Japanese

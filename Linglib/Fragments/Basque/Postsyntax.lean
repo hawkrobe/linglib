@@ -36,7 +36,7 @@ live in `Studies/Middleton2026.lean`.
   referenced by either rule, and including it would add noise.
 -/
 
-namespace Fragments.Basque.Postsyntax
+namespace Basque.Postsyntax
 
 open Minimalist
 
@@ -126,4 +126,4 @@ theorem tPast_not_isErgClitic : isErgClitic tPast = false := by decide
 /-- ERG is not a T head. -/
 theorem erg2s_not_isT : isT erg2s = false := by decide
 
-end Fragments.Basque.Postsyntax
+end Basque.Postsyntax

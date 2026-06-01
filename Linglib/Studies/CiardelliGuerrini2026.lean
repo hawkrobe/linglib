@@ -67,7 +67,7 @@ namespace CiardelliGuerrini2026
 
 open Semantics.Modality
 open Exhaustification.FreeChoice (diamond diamond_distributes_iff FCAltSet free_choice_forward)
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 
 -- ============================================================================
 -- §1. Semantic Equivalence: ◇(A∨B) ↔ ◇A ∨ ◇B
@@ -386,7 +386,7 @@ Modal auxiliaries ("may", "must", "can") carry **uninterpretable**
 features and CAN participate in concord → FC available.
 
 The auxiliary status of "may", "must", "can", "need" is derived from
-`Fragments.English.FunctionWords` — they are all `.modal` entries.
+`English.FunctionWords` — they are all `.modal` entries.
 -/
 
 /-- Fragment-derived: all English modals used by C&G are modal auxiliaries

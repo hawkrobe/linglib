@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Spanish
+namespace Spanish
 
 /-- Spanish (Indo-European, Romance): *imperfecto*/*pretérito*; inflectional
     past and future; 'have'-perfect (*haber* + participle); suffixing. -/
@@ -14,4 +14,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .marked, future := .inflectional
   , perfect := .fromPossessive, affixPosition := .suffixing }
 
-end Fragments.Spanish
+end Spanish

@@ -106,7 +106,7 @@ namespace Shieber1985
 
 open Features (Case)
 open Core (StringHom)
-open Fragments.SwissGerman.Case (CrossSerialVerb verbObjectCase)
+open SwissGerman.Case (CrossSerialVerb verbObjectCase)
 
 -- ============================================================================
 -- §1: Swiss German Subordinate Clause Tokens

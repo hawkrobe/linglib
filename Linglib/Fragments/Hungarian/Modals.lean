@@ -7,7 +7,7 @@ Modal expressions from Hungarian (Uralic), based on
 @cite{qing-uegaki-2025}.
 -/
 
-namespace Fragments.Hungarian.Modals
+namespace Hungarian.Modals
 
 open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
@@ -31,4 +31,4 @@ def kép : ModalExpression := ⟨"kép-", [pc]⟩
 def allExpressions : List ModalExpression :=
   [kell, kellene, muszáj, valószínűleg, lehet, hatHet, tud, kép]
 
-end Fragments.Hungarian.Modals
+end Hungarian.Modals

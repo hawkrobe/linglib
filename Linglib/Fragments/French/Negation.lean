@@ -26,7 +26,7 @@ The *ne*-drop is sociolinguistically conditioned: near-categorical in
 informal speech, variable in formal registers.
 -/
 
-namespace Fragments.French.Negation
+namespace French.Negation
 
 open Typology.Negation
 
@@ -230,4 +230,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := some true
   , enAttested := some true }
 
-end Fragments.French.Negation
+end French.Negation

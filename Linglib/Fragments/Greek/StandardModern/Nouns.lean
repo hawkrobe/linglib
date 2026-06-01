@@ -12,7 +12,7 @@ Greek differs from Romance in DP-internal syntax: adjectives are prenominal
 and must instead appear with an overt definite article.
 -/
 
-namespace Fragments.Greek.StandardModern.Nouns
+namespace Greek.StandardModern.Nouns
 
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 
@@ -38,4 +38,4 @@ def bareSingularLicensed : Bool := false
 example : barePluralLicensed = false := rfl
 example : bareSingularLicensed = false := rfl
 
-end Fragments.Greek.StandardModern.Nouns
+end Greek.StandardModern.Nouns

@@ -95,7 +95,7 @@ Part II (§4 movement):
 
 namespace Krifka1998
 
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Features
 open Semantics.Lexical
 open _root_.Mereology

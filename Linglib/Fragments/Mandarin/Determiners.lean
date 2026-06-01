@@ -25,11 +25,11 @@ Key typological properties:
 
 -/
 
-namespace Fragments.Mandarin.Determiners
+namespace Mandarin.Determiners
 
-open Fragments.English.Determiners (QForce Monotonicity Strength)
+open English.Determiners (QForce Monotonicity Strength)
 open Typology (ClassifierEntry)
-open Fragments.Mandarin.Classifiers (ge)
+open Mandarin.Classifiers (ge)
 
 /-- Mandarin quantifier entry. Extends the English pattern with
     classifier requirements (Mandarin-specific morphosyntax). -/
@@ -150,4 +150,4 @@ theorem typical_classifier_is_default :
     (allQuantifiers.filterMap (·.typicalClassifier)).all
       (·.isDefault) = true := by native_decide
 
-end Fragments.Mandarin.Determiners
+end Mandarin.Determiners

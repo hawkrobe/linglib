@@ -16,7 +16,7 @@ the preceding consonant — under this analysis Amharic has no OCP-violating
 roots after all.
 -/
 
-namespace Fragments.Amharic
+namespace Amharic
 
 open Morphology
 
@@ -86,4 +86,4 @@ theorem wd_biradical : wd.biradical = true := rfl
 theorem wd_no_adjacent_identical :
     Phonology.Constraints.adjacentIdentical wd.segments = 0 := rfl
 
-end Fragments.Amharic
+end Amharic

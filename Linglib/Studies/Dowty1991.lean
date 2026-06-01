@@ -32,7 +32,7 @@ namespace Dowty1991
 open Semantics.Lexical
 open Semantics.ArgumentStructure.EntailmentProfile
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
 -- § 0. Dowty's Original Flat-Counting ASP (@cite{dowty-1991} p.576)
@@ -335,7 +335,7 @@ theorem arrive_prediction_matches_fragment :
 /-- Agreement: run prediction matches the fragment annotation. -/
 theorem run_prediction_matches_fragment :
     decide (PredictsUnaccusative runSubjectProfile) =
-    Fragments.English.Predicates.Verbal.run.unaccusative := by decide
+    English.Predicates.Verbal.run.unaccusative := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Cross-Theory: @cite{grimm-2011} Lattice Predictions

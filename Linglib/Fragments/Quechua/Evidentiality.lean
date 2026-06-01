@@ -12,7 +12,7 @@ The local `EvidentialSystem` enum extends WALS Ch 77's 3-way to a 4-way
 by adding `threeOrMore` precisely to capture this Andean pattern.
 -/
 
-namespace Fragments.Quechua.Evidentiality
+namespace Quechua.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -30,4 +30,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "quz" ∧
     evidentialityProfile.language = "Quechua (Cuzco)" := ⟨rfl, rfl⟩
 
-end Fragments.Quechua.Evidentiality
+end Quechua.Evidentiality

@@ -60,7 +60,7 @@ open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.OntologicalPreconditions
 open Phenomena.Presupposition.ProjectiveContent
 open SolstadBott2022
-open Fragments.German.Predicates
+open German.Predicates
 open Semantics.Presupposition
 open CommonGround
 open Discourse.AtIssueness

@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Maori.Phonology
+namespace Maori.Phonology
 
 /-- Canonical Maori phoneme inventory: first PHOIBLE inventory for ISO `mri`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Maori.mri
 
-end Fragments.Maori.Phonology
+end Maori.Phonology

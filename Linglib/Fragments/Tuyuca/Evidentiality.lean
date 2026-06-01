@@ -15,7 +15,7 @@ enum's `threeOrMore` value is the per-Aikhenvald override (Studies-side).
 The `markers` field below preserves the full 5-term inventory.
 -/
 
-namespace Fragments.Tuyuca.Evidentiality
+namespace Tuyuca.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -35,4 +35,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "tue" ∧ evidentialityProfile.language = "Tuyuca" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Tuyuca.Evidentiality
+end Tuyuca.Evidentiality

@@ -56,13 +56,13 @@ namespace TurcoBraunDimroth2014
 
 open Typology.PolarityMarking (Strategy Entry Env)
 open Discourse.Coherence (CoherenceRelation)
-open Fragments.Dutch.Particles (wel)
-open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
-open Fragments.French.PolarityMarking (si)
-open Fragments.Swedish.AnswerParticles (joMarking)
-open Fragments.English.PolarityMarking (emphaticDo)
-open Fragments.Spanish.PolarityMarking (siQue)
-open Fragments.Italian.PolarityMarking (siChe)
+open Dutch.Particles (wel)
+open German.PolarityMarking (verumFocus dochPreUtterance)
+open French.PolarityMarking (si)
+open Swedish.AnswerParticles (joMarking)
+open English.PolarityMarking (emphaticDo)
+open Spanish.PolarityMarking (siQue)
+open Italian.PolarityMarking (siChe)
 open Semantics.Focus.PolarityLevel (PolarityMarkingLevel strategyLevel)
 
 /-! ## Types -/

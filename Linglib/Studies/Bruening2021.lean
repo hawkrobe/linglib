@@ -90,7 +90,7 @@ angle on the same paper.
 
 namespace Bruening2021
 
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Semantics.Lexical
 
 /-! ### Bruening's Table (56) — encoded as a row table -/

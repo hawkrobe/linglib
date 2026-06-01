@@ -23,7 +23,7 @@ ergative conditioning.
 
 -/
 
-namespace Fragments.Hindi.Case
+namespace Hindi.Case
 
 -- ============================================================================
 -- Section 1: Case Inventory
@@ -60,4 +60,4 @@ theorem hindi_perfective_is_ergative :
 theorem hindi_imperfective_is_accusative :
     Typology.Alignment.hindiSplit.alignment .imperfective = .accusative := rfl
 
-end Fragments.Hindi.Case
+end Hindi.Case

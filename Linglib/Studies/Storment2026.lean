@@ -48,7 +48,7 @@ claims. They live in topic-named files alongside this study:
 namespace Storment2026
 
 open Semantics.Lexical
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Phenomena.ArgumentStructure.Unaccusativity.Data
 open Phenomena.AuxiliaryVerbs.Selection (TransitivityClass canonicalSelection)
 open Minimalist (VoiceFlavor VoiceHead voiceAnticausative voiceAgent)

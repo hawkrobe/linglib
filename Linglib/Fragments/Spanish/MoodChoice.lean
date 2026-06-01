@@ -17,7 +17,7 @@ and 'make' — all four take subjunctive or nonfinite complements.
 - (40) Hice que Juan **fuera**/\*fue al parque. (SBJV/\*IND)
 -/
 
-namespace Fragments.Spanish.MoodChoice
+namespace Spanish.MoodChoice
 
 open Semantics.Lexical
 
@@ -104,4 +104,4 @@ theorem spanish_mood_asymmetry :
     esperar.levinClass ≠ some .want := by
   exact ⟨rfl, rfl, by decide⟩
 
-end Fragments.Spanish.MoodChoice
+end Spanish.MoodChoice

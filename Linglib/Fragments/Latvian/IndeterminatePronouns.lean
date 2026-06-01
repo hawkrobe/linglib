@@ -22,7 +22,7 @@ Diacritics omitted following @cite{kratzer-shimoyama-2002}.
 
 set_option autoImplicit false
 
-namespace Fragments.Latvian.IndeterminatePronouns
+namespace Latvian.IndeterminatePronouns
 
 /-- A row in a cross-linguistic indeterminate paradigm table.
     Each row represents one semantic domain (person, thing, place, ...)
@@ -84,4 +84,4 @@ theorem exist_prefix :
     paradigm.all (fun e => e.existential.startsWith "kaut ") = true := by
   native_decide
 
-end Fragments.Latvian.IndeterminatePronouns
+end Latvian.IndeterminatePronouns

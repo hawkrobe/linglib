@@ -19,7 +19,7 @@ both *na* and *oti* (IND/SBJV). Causatives take *na* (SBJV).
 - (45a) Evala ton Jani **na** pai sto parko. ('make': SBJV)
 -/
 
-namespace Fragments.Greek.StandardModern.MoodChoice
+namespace Greek.StandardModern.MoodChoice
 
 open Semantics.Lexical
 
@@ -88,4 +88,4 @@ theorem greek_all_finite :
     protithete.complementType = .finiteClause ∧
     vazo.complementType = .finiteClause := ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.Greek.StandardModern.MoodChoice
+end Greek.StandardModern.MoodChoice

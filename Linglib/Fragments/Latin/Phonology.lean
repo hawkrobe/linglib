@@ -50,7 +50,7 @@ Latin would either add a separate segment or override the spec.
 
 **Namespace shadowing.** Because the file's namespace ends with `.Phonology`,
 `open Phonology (...)` would resolve to the current namespace
-(`Fragments.Latin.Phonology`) rather than the substrate root. The
+(`Latin.Phonology`) rather than the substrate root. The
 `_root_.` prefix forces resolution to the top-level `Phonology`.
 
 **Deferred:** the labio-velars /kʷ/ ⟨qu⟩, /gʷ/ ⟨gu⟩; the rare /h/ and /y/;
@@ -67,7 +67,7 @@ land when the first consumer needs them.
 * Labio-velars /kʷ/, /gʷ/; rare segments /h/, /y/; diphthongs.
 -/
 
-namespace Fragments.Latin.Phonology
+namespace Latin.Phonology
 
 open _root_.Phonology (Segment Feature)
 
@@ -246,4 +246,4 @@ theorem liquids_are_liquids :
 `Segment.IsGlide`. -/
 theorem v_is_glide : v.IsGlide := by decide
 
-end Fragments.Latin.Phonology
+end Latin.Phonology

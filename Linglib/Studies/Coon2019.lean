@@ -53,7 +53,7 @@ so only the later paper may reference the earlier).
 
 namespace Coon2019
 
-open Fragments.Chuj
+open Chuj
 
 -- ════════════════════════════════════════════════════
 -- § 1. Paradigm Examples (§§2–5)
@@ -70,7 +70,7 @@ structure ChujExample where
   /-- English translation -/
   english : String
   /-- Root used (from the Chuj fragment lexicon) -/
-  verb : Fragments.Chuj.ChujRoot
+  verb : Chuj.ChujRoot
   /-- Voice suffix -/
   voice : ChujVoiceSuffix
   /-- Whether the example is grammatical -/

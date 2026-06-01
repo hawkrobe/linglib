@@ -32,7 +32,7 @@ the Erlewine2016 study file.
 
 -/
 
-namespace Fragments.Mayan.Kaqchikel
+namespace Kaqchikel
 
 -- ============================================================================
 -- § 1: Morphological Forms
@@ -184,4 +184,4 @@ theorem kaq_both_promote_agent :
 theorem kaq_not_active_passive :
     ¬ kaqVoiceSystem.isActivePassive := by decide
 
-end Fragments.Mayan.Kaqchikel
+end Kaqchikel

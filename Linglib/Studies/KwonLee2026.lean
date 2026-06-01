@@ -95,17 +95,17 @@ theorem overt_lt_nullPro : (KoreanRefForm.overt : KoreanRefForm) < .nullPro := b
 
 /-- Bridge to the Korean fragment: the *overt* form's surface realization
     is the colloquial pronoun *gyae* (Yale: *kyay*) in
-    `Fragments.Korean.Pronouns`. Derived from the fragment field — not
+    `Korean.Pronouns`. Derived from the fragment field — not
     duplicated. -/
 def KoreanRefForm.surface : KoreanRefForm → Option String
   | .nullPro => none
-  | .overt   => some Fragments.Korean.Pronouns.gyae.form
+  | .overt   => some Korean.Pronouns.gyae.form
   | .fullNP  => some "ku chinkwu"  -- "that friend", representative; the
                                     -- experimental stimuli vary the noun
 
 @[simp] theorem nullPro_surface : KoreanRefForm.nullPro.surface = none := rfl
 @[simp] theorem overt_surface :
-    KoreanRefForm.overt.surface = some Fragments.Korean.Pronouns.gyae.form := rfl
+    KoreanRefForm.overt.surface = some Korean.Pronouns.gyae.form := rfl
 @[simp] theorem fullNP_surface :
     KoreanRefForm.fullNP.surface = some "ku chinkwu" := rfl
 

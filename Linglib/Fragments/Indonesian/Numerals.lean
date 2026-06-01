@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Indonesian
+namespace Indonesian
 
 /-- Indonesian: ordinals with *ke-* prefix (*ke-satu* 'first' regular;
     *pertama* 'first' from Sanskrit also used) — various pattern. No
@@ -15,4 +15,4 @@ namespace Fragments.Indonesian
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Indonesian" "ind" (region := .southeastAsia) (pluralMarking := .optional)
 
-end Fragments.Indonesian
+end Indonesian

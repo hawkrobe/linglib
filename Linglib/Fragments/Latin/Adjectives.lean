@@ -17,7 +17,7 @@ Latin exhibits all three attested degree suppletion patterns:
 No Latin adjective shows an *ABA pattern.
 -/
 
-namespace Fragments.Latin.Adjectives
+namespace Latin.Adjectives
 
 open Morphology.DegreeContainment
 
@@ -121,4 +121,4 @@ theorem latin_has_aaa : allEntries.any (λ e => e.suppletion == aaa) = true := b
 theorem latin_has_abb : allEntries.any (λ e => e.suppletion == abb) = true := by native_decide
 theorem latin_has_abc : allEntries.any (λ e => e.suppletion == abc) = true := by native_decide
 
-end Fragments.Latin.Adjectives
+end Latin.Adjectives

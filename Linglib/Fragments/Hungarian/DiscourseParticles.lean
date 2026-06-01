@@ -6,7 +6,7 @@ Lexical entry for Hungarian *csak* — the discourse *only* connective. Allows a
 
 -/
 
-namespace Fragments.Hungarian.DiscourseParticles
+namespace Hungarian.DiscourseParticles
 
 /-- A discourse *only* particle entry. -/
 structure DiscourseOnlyParticle where
@@ -21,4 +21,4 @@ def csak : DiscourseOnlyParticle where
   nativeForm := "csak"
   gloss := "only"
 
-end Fragments.Hungarian.DiscourseParticles
+end Hungarian.DiscourseParticles

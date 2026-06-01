@@ -17,7 +17,7 @@ Portuguese 'want' robustly takes SBJV; 'hope' allows both IND and SBJV;
 - (41) Eu fiz com que João **fosse**/\*foi ao parque. (SBJV/\*IND)
 -/
 
-namespace Fragments.Portuguese.MoodChoice
+namespace Portuguese.MoodChoice
 
 open Semantics.Lexical
 
@@ -80,4 +80,4 @@ theorem pretender_is_want_class :
 theorem fazer_is_causative :
     fazer.causative.isSome = true := rfl
 
-end Fragments.Portuguese.MoodChoice
+end Portuguese.MoodChoice

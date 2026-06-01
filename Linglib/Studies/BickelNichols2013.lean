@@ -76,24 +76,24 @@ open Morphology
     via `Morphology.wals*` lookup helpers. Aliases here for concise
     reference in theorems below. -/
 
-private abbrev englishMorph    := Fragments.English.morphProfile
-private abbrev mandarinMorph   := Fragments.Mandarin.morphProfile
-private abbrev japaneseMorph   := Fragments.Japanese.morphProfile
-private abbrev turkishMorph    := Fragments.Turkish.morphProfile
-private abbrev finnishMorph    := Fragments.Finnish.morphProfile
-private abbrev russianMorph    := Fragments.Slavic.Russian.morphProfile
-private abbrev swahiliMorph    := Fragments.Swahili.morphProfile
-private abbrev arabicMorph     := Fragments.Arabic.Egyptian.morphProfile
-private abbrev hindiMorph      := Fragments.Hindi.morphProfile
-private abbrev tagalogMorph    := Fragments.Tagalog.morphProfile
-private abbrev quechuaMorph    := Fragments.Quechua.morphProfile
-private abbrev hungarianMorph  := Fragments.Hungarian.morphProfile
-private abbrev georgianMorph   := Fragments.Georgian.morphProfile
-private abbrev thaiMorph       := Fragments.Thai.morphProfile
-private abbrev indonesianMorph := Fragments.Indonesian.morphProfile
-private abbrev koreanMorph     := Fragments.Korean.morphProfile
-private abbrev germanMorph     := Fragments.German.morphProfile
-private abbrev spanishMorph    := Fragments.Spanish.morphProfile
+private abbrev englishMorph    := English.morphProfile
+private abbrev mandarinMorph   := Mandarin.morphProfile
+private abbrev japaneseMorph   := Japanese.morphProfile
+private abbrev turkishMorph    := Turkish.morphProfile
+private abbrev finnishMorph    := Finnish.morphProfile
+private abbrev russianMorph    := Russian.morphProfile
+private abbrev swahiliMorph    := Swahili.morphProfile
+private abbrev arabicMorph     := Arabic.Egyptian.morphProfile
+private abbrev hindiMorph      := Hindi.morphProfile
+private abbrev tagalogMorph    := Tagalog.morphProfile
+private abbrev quechuaMorph    := Quechua.morphProfile
+private abbrev hungarianMorph  := Hungarian.morphProfile
+private abbrev georgianMorph   := Georgian.morphProfile
+private abbrev thaiMorph       := Thai.morphProfile
+private abbrev indonesianMorph := Indonesian.morphProfile
+private abbrev koreanMorph     := Korean.morphProfile
+private abbrev germanMorph     := German.morphProfile
+private abbrev spanishMorph    := Spanish.morphProfile
 
 /-- 18-language morphological sample. -/
 def allMorphProfiles : List MorphProfile :=

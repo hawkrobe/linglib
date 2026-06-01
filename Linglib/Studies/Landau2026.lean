@@ -416,19 +416,19 @@ theorem mixed_anaphors_deep :
     for relative clauses is what the EIR test probes for inside
     ellipsis sites. -/
 theorem hebrew_has_resumptive_strategy :
-    Fragments.Hebrew.relSheResumptive.npRel = .resumptive := rfl
+    Hebrew.relSheResumptive.npRel = .resumptive := rfl
 
 /-- The resumptive strategy in Hebrew relativization covers the
     genitive position on the Accessibility Hierarchy, which is
     where possessive resumptive pronouns (the most common type
     in the EIR data) sit. -/
 theorem resumptive_covers_genitive :
-    Fragments.Hebrew.relSheResumptive.Covers .genitive := by decide
+    Hebrew.relSheResumptive.Covers .genitive := by decide
 
 /-- The gap strategy does NOT cover genitive — this is why
     possessive dependencies in Hebrew require resumption, making
     the EIR test applicable. -/
 theorem gap_excludes_genitive :
-    ¬ Fragments.Hebrew.relSheGap.Covers .genitive := by decide
+    ¬ Hebrew.relSheGap.Covers .genitive := by decide
 
 end Landau2026

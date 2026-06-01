@@ -25,7 +25,7 @@ cases in Russian will fail to correspond to a traditional
 part-of-speech distinction" — P_OBL is canonical, P_DAT is one
 exemplar with additional features. `POSCat.cases` returns the Russian
 oblique series for `.P` (DAT/INS/LOC, matching
-`Fragments.Slavic.Russian.Case.caseInventory`); `POSCat.canonicalExemplar`
+`Russian.Case.caseInventory`); `POSCat.canonicalExemplar`
 picks DAT.
 
 ## Architecture: layered grounding on Minimalism
@@ -194,7 +194,7 @@ theorem toCat_injective : Function.Injective toCat := by
 
 /-- The cases each POSCat realizes as in `Features.Case`. N/D/V each map
     to a singleton; P maps to the Russian productive oblique series
-    (DAT/INS/LOC, matching `Fragments.Slavic.Russian.Case.caseInventory`)
+    (DAT/INS/LOC, matching `Russian.Case.caseInventory`)
     since @cite{pesetsky-2013} (p. 7) explicitly does *not* refine
     the obliques by POS. -/
 def cases : POSCat → Finset Features.Case
@@ -549,7 +549,7 @@ theorem canonicalExemplar_mem_pesetskyCore (p : POSCat) :
 
 /-- The canonical-exemplar image sits inside the Russian inventory. -/
 theorem canonicalExemplar_image_in_russian_inventory (p : POSCat) :
-    p.canonicalExemplar ∈ Fragments.Slavic.Russian.Case.caseInventory := by
+    p.canonicalExemplar ∈ Russian.Case.caseInventory := by
   cases p <;> decide
 
 /-- The three productive Russian obliques are all in `pesetskyCore`,

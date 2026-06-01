@@ -388,7 +388,7 @@ def unattestedCount : Nat := (allEntries.filter (!·.attested)).length
 /-- Look up the Fragment adjective entry for an intensifier's adjectival base. -/
 def IntensifierEntry.fragmentEntry (e : IntensifierEntry) :
     Option Semantics.Gradability.GradableAdjEntry :=
-  Fragments.English.Predicates.Adjectival.lookup e.adjBase
+  English.Predicates.Adjectival.lookup e.adjBase
 
 /-- Bridge: pleasant's Fragment entry has positive evaluative valence,
     matching the intensifier layer's valence for pleasantly. -/
@@ -584,7 +584,7 @@ theorem goldilocks_exceptions_are_positive_H :
 theorem antonym_pairs_resolve :
     allEntries.all (λ e =>
       match e.fragmentEntry.bind (·.antonymForm) with
-      | some ant => (Fragments.English.Predicates.Adjectival.lookup ant).isSome
+      | some ant => (English.Predicates.Adjectival.lookup ant).isSome
       | none => true) = true := by
   native_decide
 

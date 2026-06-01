@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Tagalog
+namespace Tagalog
 
 /-- Tagalog (Austronesian, Philippine): definite/indefinite distinction via
     case markers — *ang* (definite-like topic marker) vs *ng* (indefinite-like);
@@ -24,4 +24,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .unrelated }
 
-end Fragments.Tagalog
+end Tagalog

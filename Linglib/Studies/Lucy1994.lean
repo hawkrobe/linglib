@@ -43,8 +43,8 @@ namespace Lucy1994
 
 open Semantics.Lexical.Roots
 open Morphology.Derivation
-open Fragments.Mayan.Yukatek.Roots
-open Fragments.Mayan.Yukatek.Operators
+open Yukatek.Roots
+open Yukatek.Operators
 
 -- ════════════════════════════════════════════════════
 -- § 1. Salience Classes (re-exported from Theory)
@@ -245,7 +245,7 @@ theorem predictedClass_closure_invariant (r : Root) :
     `Roots.lean`, Lucy's predicted class agrees with the Bohnemeyer
     stem-class label converted via `toSalienceClass`. -/
 
-open Fragments.Mayan.Yukatek (VerbStemClass)
+open Yukatek (VerbStemClass)
 
 /-- Agent-salient Lucy roots map to Bohnemeyer's `active` stem class. -/
 theorem siit_lucy_agrees_active :

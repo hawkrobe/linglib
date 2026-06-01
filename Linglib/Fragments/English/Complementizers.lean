@@ -15,7 +15,7 @@ preposition *to* and the infinitival particle *to* live in
 `Auxiliaries.lean` and `FunctionWords.lean` respectively.
 -/
 
-namespace Fragments.English.Complementizers
+namespace English.Complementizers
 
 structure CompEntry where
   form : String
@@ -39,4 +39,4 @@ def allComplementizers : List CompEntry := [that, if_, whether, because, althoug
 def CompEntry.toWord (c : CompEntry) : Word :=
   { form := c.form, cat := .SCONJ, features := {} }
 
-end Fragments.English.Complementizers
+end English.Complementizers

@@ -60,7 +60,7 @@ open Core.Scale
 open Core.Time
 open Semantics.Gradability
 open Features
-open Fragments.English.Predicates.Adjectival
+open English.Predicates.Adjectival
 
 -- ════════════════════════════════════════════════════
 -- § 1. Six Sources Agree on "Closed → Licensed"

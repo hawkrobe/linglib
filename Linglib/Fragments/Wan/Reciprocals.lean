@@ -31,7 +31,7 @@ The logophoric pronoun in Wan satisfies the `self` role in @cite{sells-1987}'s
 hierarchy: it refers to the individual whose mental state is reported.
 -/
 
-namespace Fragments.Wan.Reciprocals
+namespace Wan.Reciprocals
 
 open Pronoun
 open Features.Logophoricity
@@ -94,4 +94,4 @@ theorem logophoric_forces_narrow_scope :
     LogophoricRole.pivot ≤ logophoricRole := by
   exact ⟨by decide, pivot_le _⟩
 
-end Fragments.Wan.Reciprocals
+end Wan.Reciprocals

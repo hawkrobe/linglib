@@ -17,7 +17,7 @@ WALS Ch. 52).
 
 -/
 
-namespace Fragments.Tamil.Case
+namespace Tamil.Case
 
 /-- Tamil 7-case core inventory (excluding VOC). -/
 def caseInventory : Finset Features.Case :=
@@ -34,4 +34,4 @@ def tamilComInstSync : Syncretism := comInstSyncretism
 theorem com_inst_adjacent :
     HierarchyAdjacent .com .inst := by decide
 
-end Fragments.Tamil.Case
+end Tamil.Case

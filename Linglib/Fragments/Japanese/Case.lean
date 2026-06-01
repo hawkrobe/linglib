@@ -96,7 +96,7 @@ which are standard descriptive consensus from other sources (Shibatani
 1990, *The Languages of Japan*, CUP — not yet in the linglib bib).
 -/
 
-namespace Fragments.Japanese.Case
+namespace Japanese.Case
 
 -- ============================================================================
 -- § 1: Case Markers
@@ -298,4 +298,4 @@ theorem ni_e_share_all :
 theorem kara_yori_share_abl :
     .abl ∈ kara.cases ∧ .abl ∈ yori.cases := by decide
 
-end Fragments.Japanese.Case
+end Japanese.Case

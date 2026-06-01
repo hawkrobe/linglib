@@ -44,7 +44,7 @@ feature in Lucy's analysis).
 `hàan` "eat" differ in vowel tone (high vs. low). They are distinct
 roots with distinct lexical content. We disambiguate by suffixing the
 gloss: `haanCease` here is the patient-salient cessation root;
-`Fragments.Mayan.Yukatek.haanEat` (in `VerbClasses.lean`) is the
+`Yukatek.haanEat` (in `VerbClasses.lean`) is the
 inactive-class but internally-caused "eat" verb that
 @cite{bohnemeyer-2004} ex. (9) takes as the key applicative exception.
 
@@ -52,7 +52,7 @@ The transcription uses ASCII glosses (no IPA diacritics) for ease of
 identifier use; original orthography is preserved in docstrings.
 -/
 
-namespace Fragments.Mayan.Yukatek.Roots
+namespace Yukatek.Roots
 
 open Semantics.Lexical.Roots
 
@@ -343,4 +343,4 @@ def motionRoots : List Root := [luub, ok, maan, taal, bin, naak, liik]
 /-- The positional roots: pure stative roots, expected to take `-tal`. -/
 def positionalRoots : List Root := [cin, kul]
 
-end Fragments.Mayan.Yukatek.Roots
+end Yukatek.Roots

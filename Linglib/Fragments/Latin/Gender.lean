@@ -8,7 +8,7 @@ import Linglib.Typology.Gender
 attributive + predicate adjectives, relative + personal pronouns.
 -/
 
-namespace Fragments.Latin.Gender
+namespace Latin.Gender
 
 open Typology.Gender
 
@@ -28,4 +28,4 @@ example : genderTypology.iso639 = "lat" ∧ genderTypology.name = "Latin" := ⟨
 /-- Latin is in @cite{corbett-1991}'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.Latin.Gender
+end Latin.Gender
