@@ -36,7 +36,7 @@ clauses use `.D` rather than a dedicated predicational head).
 namespace Minimalist.FromFragments
 
 open Minimalist
-open English.Predicates.Verbal (VerbEntry ComplementType)
+open English.Predicates.Verbal (VerbEntry)
 open English.Pronouns (PronounEntry PronounType)
 open English.Nouns (NounEntry)
 open Semantics.Quantification.Lexicon (QuantifierEntry)

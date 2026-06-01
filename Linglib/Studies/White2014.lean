@@ -30,7 +30,6 @@ a known overprediction of the original MCA.
 
 namespace White2014
 
-open Semantics.Lexical (ComplementType)
 open Williams2026
 open Semantics.Attitudes.PreExistence
 open English.Predicates.Verbal

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Attitudes.Preferential
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Japanese Predicate Lexicon Fragment

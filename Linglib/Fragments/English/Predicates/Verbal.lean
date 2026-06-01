@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.Interpretation
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 import Linglib.Morphology.MorphRule
 
 /-! # Verbal Predicate Lexicon Fragment
@@ -15,12 +15,10 @@ and provides smart constructors for regular verbs.
 
 namespace English.Predicates.Verbal
 
--- Re-export verb-entry vocabulary so downstream files that open this
--- namespace (e.g., `open English.Predicates.Verbal (ComplementType ...)`)
--- continue to find them.
+-- Re-export Features verb-entry vocabulary so downstream files that open this
+-- namespace continue to find it. The `VerbCore`/`ComplementType`/… types now
+-- live at the root namespace (`Semantics/Verb/Defs`), so they need no re-export.
 export Features (Preferential Attitude Causative Implicative)
-export Semantics.Lexical (PresupTriggerType ProjectionBehavior ComplementType
-  ControlType VerbCore ImplicitInterp complementToValence)
 
 open Features
 open Semantics.Lexical

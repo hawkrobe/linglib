@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 import Linglib.Phonology.Autosegmental.RegisterTier
 
 /-!
@@ -36,7 +36,6 @@ Per-cell verifications appear as `example`s.
 namespace Hausa.VerbGrades
 
 open Phonology.Autosegmental.RegisterTier (TRN)
-open Semantics.Lexical (VerbCore VoiceType ComplementType)
 
 -- ============================================================================
 -- § 1: Form Inventory (A/B/C/D — @cite{newman-2000} §74.2)

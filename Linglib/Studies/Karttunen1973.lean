@@ -31,7 +31,6 @@ Heim-1992-era hole consensus.
 namespace Karttunen1973
 
 open Semantics.Presupposition
-open Semantics.Lexical (ProjectionBehavior VerbCore)
 open CommonGround (ContextSet)
 open English.Predicates.Verbal
 
