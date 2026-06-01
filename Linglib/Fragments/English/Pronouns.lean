@@ -70,17 +70,17 @@ inductive PronounType where
 /--
 A lexical entry for a pronoun.
 
-Extends the cross-linguistic `Pronoun.Entry` core (`form`, `person`, `number`,
+Extends the cross-linguistic `PersonalPronoun` core (`form`, `person`, `number`,
 `case_`, `gender`, …): the shared lexical fields are the object's fields *by
 construction*, not via a mapping. The three additional fields below are the
-English-specific extensions the `Pronoun.Entry` docstring anticipates
+English-specific extensions the `PersonalPronoun` docstring anticipates
 (`pronounType`, `wh`) plus the epicene-aware `genderParadigm`, which is finer
-than the inherited `Pronoun.Entry.gender : Option SurfaceGender` (it
+than the inherited `PersonalPronoun.gender : Option SurfaceGender` (it
 distinguishes singular *they* from genuinely genderless forms). The inherited
 `gender` is left at its default in the literals; `PronounEntry.entry` fills it
-from `genderParadigm` so the object's denotation (`Pronoun.Entry.denote`,
-`Pronoun.Entry.phiPresup`) can be taken without storing gender twice. -/
-structure PronounEntry extends Pronoun.Entry where
+from `genderParadigm` so the object's denotation (`PersonalPronoun.denote`,
+`PersonalPronoun.phiPresup`) can be taken without storing gender twice. -/
+structure PronounEntry extends PersonalPronoun where
   /-- Pronoun type -/
   pronounType : PronounType
   /-- Gender paradigm class (3rd-person singular agreement).
@@ -91,12 +91,12 @@ structure PronounEntry extends Pronoun.Entry where
   wh : Bool := false
   deriving Repr, BEq
 
-/-- The canonical `Pronoun.Entry` for this English entry: the inherited core
+/-- The canonical `PersonalPronoun` for this English entry: the inherited core
 with `gender` derived from the epicene-aware `genderParadigm` (epicene and
 unspecified contribute no `SurfaceGender`). Routes English pronouns into
-`Pronoun.Entry.denote`/`phiPresup`. -/
-def PronounEntry.entry (p : PronounEntry) : Pronoun.Entry :=
-  { p.toEntry with gender := p.genderParadigm.bind GenderParadigm.toSurfaceGender }
+`PersonalPronoun.denote`/`phiPresup`. -/
+def PronounEntry.entry (p : PronounEntry) : PersonalPronoun :=
+  { p.toPersonalPronoun with gender := p.genderParadigm.bind GenderParadigm.toSurfaceGender }
 
 -- ============================================================================
 -- Personal Pronouns

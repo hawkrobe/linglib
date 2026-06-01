@@ -99,7 +99,7 @@ beyond definedness of that selector.
 This is the single source of truth for definite descriptions in the library;
 familiarity-based, anaphoric, and discourse-restricted variants are
 `NominalDenot`s with different selectors, and pronouns add a φ-feature presup
-(see `Pronoun.Entry.denote`). -/
+(see `PersonalPronoun.denote`). -/
 def definiteNominal {W E : Type*} (domain : List E) (restrictor : E → W → Bool) :
     NominalDenot Unit W E :=
   NominalDenot.ofReferent (attributiveContent domain restrictor)

@@ -20,11 +20,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *ni* — 1sg. -/
-def ni : Entry :=
+def ni : PersonalPronoun :=
   { form := "ni", person := some .first, number := some .sg }
 
 /-- *gu* — 1pl. -/
-def gu : Entry :=
+def gu : PersonalPronoun :=
   { form := "gu", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -32,15 +32,15 @@ def gu : Entry :=
 -- ============================================================================
 
 /-- *hi* — 2sg familiar (T form). -/
-def hi : Entry :=
+def hi : PersonalPronoun :=
   { form := "hi", person := some .second, number := some .sg, register := .informal }
 
 /-- *zu* — 2sg formal (V form). -/
-def zu : Entry :=
+def zu : PersonalPronoun :=
   { form := "zu", person := some .second, number := some .sg, register := .formal }
 
 /-- *zuek* — 2pl. -/
-def zuek : Entry :=
+def zuek : PersonalPronoun :=
   { form := "zuek", person := some .second, number := some .pl }
 
 -- ============================================================================
@@ -48,20 +48,20 @@ def zuek : Entry :=
 -- ============================================================================
 
 /-- *hura* — 3sg. -/
-def hura : Entry :=
+def hura : PersonalPronoun :=
   { form := "hura", person := some .third, number := some .sg }
 
 /-- *haiek* — 3pl. -/
-def haiek : Entry :=
+def haiek : PersonalPronoun :=
   { form := "haiek", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List Entry := [hi, zu]
+def secondPersonPronouns : List PersonalPronoun := [hi, zu]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [ni, gu] ++ secondPersonPronouns ++ [zuek, hura, haiek]
 
 -- ============================================================================

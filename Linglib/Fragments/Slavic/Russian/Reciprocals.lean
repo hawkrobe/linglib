@@ -18,12 +18,12 @@ namespace Russian.Reciprocals
 open Pronoun
 
 /-- друг друга *drug druga* — reciprocal pronoun 'each other'. -/
-def drugDruga : Entry :=
+def drugDruga : PersonalPronoun :=
   { form := "drug druga", script := some "друг друга"
   , person := some .third, number := some .pl }
 
 /-- себя *sebja* — reflexive pronoun (for contrast). -/
-def sebja : Entry :=
+def sebja : PersonalPronoun :=
   { form := "sebja", script := some "себя"
   , person := some .third }
 

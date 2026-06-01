@@ -52,15 +52,15 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- 나 *na* — 1sg plain. -/
-def na : Entry :=
+def na : PersonalPronoun :=
   { form := "na", script := some "나", person := some .first, number := some .sg, register := .informal }
 
 /-- 저 *jeo* — 1sg humble. -/
-def jeo : Entry :=
+def jeo : PersonalPronoun :=
   { form := "jeo", script := some "저", person := some .first, number := some .sg, register := .formal }
 
 /-- 우리 *uri* — 1pl. -/
-def uri : Entry :=
+def uri : PersonalPronoun :=
   { form := "uri", script := some "우리", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -68,11 +68,11 @@ def uri : Entry :=
 -- ============================================================================
 
 /-- 너 *neo* — 2sg plain. -/
-def neo : Entry :=
+def neo : PersonalPronoun :=
   { form := "neo", script := some "너", person := some .second, number := some .sg, register := .informal }
 
 /-- 당신 *dangsin* — 2sg polite. -/
-def dangsin : Entry :=
+def dangsin : PersonalPronoun :=
   { form := "dangsin", script := some "당신", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -81,14 +81,14 @@ def dangsin : Entry :=
 
 /-- 그 *geu* (Yale: *ku*) — 3sg masculine, **literary** register.
     76,235 written vs 145 oral tokens (@cite{kwon-lee-2026} fn. 2). -/
-def geu : Entry :=
+def geu : PersonalPronoun :=
   { form := "geu", script := some "그", person := some .third, number := some .sg
   , gender := some .masculine, register := .formal }
 
 /-- 그녀 *geunyeo* (Yale: *kunye*) — 3sg feminine, **literary** register.
     Compound of *ku* ('that') + *nye* ('female'). 25,085 written vs
     9 oral tokens (@cite{kwon-lee-2026} fn. 2). -/
-def geunyeo : Entry :=
+def geunyeo : PersonalPronoun :=
   { form := "geunyeo", script := some "그녀", person := some .third, number := some .sg
   , gender := some .feminine, register := .formal }
 
@@ -98,13 +98,13 @@ def geunyeo : Entry :=
     *geu*/*geunyeo*. Implies familiarity between speaker and referent
     (@cite{kwon-lee-2026} §5). The overt-pronoun referential form
     tested in @cite{kwon-lee-2026}'s experiments. -/
-def gyae : Entry :=
+def gyae : PersonalPronoun :=
   { form := "gyae", script := some "걔", person := some .third, number := some .sg
   , register := .informal }
 
 /-- 그들 *geudeul* — 3pl. Plural of *geu*; literary in register
     (the colloquial plural is the proximal demonstrative + *ai-tul*). -/
-def geudeul : Entry :=
+def geudeul : PersonalPronoun :=
   { form := "geudeul", script := some "그들", person := some .third, number := some .pl
   , register := .formal }
 
@@ -112,14 +112,14 @@ def geudeul : Entry :=
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List Entry := [neo, dangsin]
+def secondPersonPronouns : List PersonalPronoun := [neo, dangsin]
 
 /-- 3rd-person pronouns: literary *geu*/*geunyeo*/*geudeul* and
     colloquial *gyae*. Yale-romanization variants (*ku*/*kunye*/*kutul*/
     *kyay*) refer to the same lexical items. -/
-def thirdPersonPronouns : List Entry := [geu, geunyeo, geudeul, gyae]
+def thirdPersonPronouns : List PersonalPronoun := [geu, geunyeo, geudeul, gyae]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [na, jeo, uri] ++ secondPersonPronouns ++ thirdPersonPronouns
 
 -- ============================================================================

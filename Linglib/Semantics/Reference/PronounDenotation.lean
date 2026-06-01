@@ -8,7 +8,7 @@ import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
 /-!
 # The denotation of a pronoun
 
-Gives the `Pronoun.Entry` lexical record a meaning, as a `NominalDenot`: the
+Gives the `PersonalPronoun` lexical record a meaning, as a `NominalDenot`: the
 selector is the project-canonical variable denotation `interpPronoun`
 (`g ↦ g i`), so the pronoun-as-object and the bare assignment-indexed
 variable are the same individual *by construction* — not via a bridge
@@ -24,9 +24,9 @@ and deictic uses (his §2.1.1); binding is the external β-operator
 
 ## Main definitions
 
-* `Pronoun.Entry.phiPresup` — the conjoined φ-feature presupposition of an
+* `PersonalPronoun.phiPresup` — the conjoined φ-feature presupposition of an
   entry (absent or featurally-uncovered values contribute `PrProp.top`).
-* `Pronoun.Entry.denote` — the pronoun's `NominalDenot` (static case).
+* `PersonalPronoun.denote` — the pronoun's `NominalDenot` (static case).
 
 ## Implementation notes
 
@@ -37,8 +37,6 @@ bridges plus `PhiFeatures.toPair`, deferred until a study needs them.
 -/
 
 set_option autoImplicit false
-
-namespace Pronoun
 
 open Semantics.Presupposition (PrProp)
 open Semantics.Presupposition.PhiFeatures
@@ -52,7 +50,7 @@ domain `E`. The model supplies the entity-level predicates the cells need
 (`speaker`/`addressee` for person, `isFemale`/`isInanimate` for gender;
 number atomicity comes from the `PartialOrder`). A feature that is absent —
 or present but outside the cells' coverage — contributes `PrProp.top`. -/
-def Entry.phiPresup {E : Type*} [PartialOrder E] (e : Entry)
+def PersonalPronoun.phiPresup {E : Type*} [PartialOrder E] (e : PersonalPronoun)
     (speaker addressee : E) (isFemale isInanimate : E → Prop) : PrProp E :=
   PrProp.and
     (match e.person with
@@ -75,7 +73,7 @@ def Entry.phiPresup {E : Type*} [PartialOrder E] (e : Entry)
 variable denotation `interpPronoun i` (always defined under a total
 assignment), and the intrinsic presupposition is the φ-feature presupposition
 imposed on the resolved referent `g i`. The static case; world is trivial. -/
-def Entry.denote {F : Frame} [PartialOrder F.Entity] (e : Entry) (i : ℕ)
+def PersonalPronoun.denote {F : Frame} [PartialOrder F.Entity] (e : PersonalPronoun) (i : ℕ)
     (speaker addressee : F.Entity) (isFemale isInanimate : F.Entity → Prop) :
     NominalDenot (Assignment F.Entity) PUnit F.Entity where
   presup := fun g _ => (e.phiPresup speaker addressee isFemale isInanimate).presup (g i)
@@ -102,7 +100,7 @@ theorem interpPronoun_eq_iLookup {F : Frame} (i : ℕ) (g : Assignment F.Entity)
 
 /-- A 3rd-person plural feminine entry (Spanish *ellas*), used to exercise
 the φ-feature presupposition. -/
-private def ellas : Entry :=
+private def ellas : PersonalPronoun :=
   { form := "ellas", person := some .third, number := some .Plur,
     gender := some .feminine }
 
@@ -121,5 +119,3 @@ example {F : Frame} [PartialOrder F.Entity] (g : Assignment F.Entity) (i : ℕ)
     ((ellas.denote i speaker addressee isFemale isInanimate).toPrProp scope g).presup ⟨⟩ := by
   refine ⟨⟨trivial, trivial, hFem⟩, ?_⟩
   rfl
-
-end Pronoun

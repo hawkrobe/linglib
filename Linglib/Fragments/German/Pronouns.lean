@@ -37,11 +37,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *ich* — 1sg. -/
-def ich : Entry :=
+def ich : PersonalPronoun :=
   { form := "ich", person := some .first, number := some .sg }
 
 /-- *du* — 2sg familiar (T form). -/
-def du : Entry :=
+def du : PersonalPronoun :=
   { form := "du", person := some .second, number := some .sg, register := .informal }
 
 /-- *Sie* — polite 2nd person (V form, triggers 3pl agreement).
@@ -49,35 +49,35 @@ def du : Entry :=
     the 3pl series. Agreement person is 3rd (plural), interpretable person
     is 2nd. Can refer to singular or plural addressees.
     @cite{adamson-zompi-2025} -/
-def sie_polite : Entry :=
+def sie_polite : PersonalPronoun :=
   { form := "Sie", person := some .third, number := some .pl, register := .formal,
     referentialPerson := some .second }
 
 /-- *er* — 3sg masculine. -/
-def er : Entry :=
+def er : PersonalPronoun :=
   { form := "er", person := some .third, number := some .sg }
 
 /-- *sie* — 3sg feminine. -/
-def sie_f : Entry :=
+def sie_f : PersonalPronoun :=
   { form := "sie", person := some .third, number := some .sg }
 
 /-- *es* — 3sg neuter. -/
-def es : Entry :=
+def es : PersonalPronoun :=
   { form := "es", person := some .third, number := some .sg }
 
 /-- *wir* — 1pl. -/
-def wir : Entry :=
+def wir : PersonalPronoun :=
   { form := "wir", person := some .first, number := some .pl }
 
 /-- *ihr* — 2pl familiar. -/
-def ihr : Entry :=
+def ihr : PersonalPronoun :=
   { form := "ihr", person := some .second, number := some .pl, register := .informal }
 
 /-- *sie* — 3pl. -/
-def sie_pl : Entry :=
+def sie_pl : PersonalPronoun :=
   { form := "sie", person := some .third, number := some .pl }
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [ich, du, sie_polite, er, sie_f, es, wir, ihr, sie_pl]
 
 -- ============================================================================

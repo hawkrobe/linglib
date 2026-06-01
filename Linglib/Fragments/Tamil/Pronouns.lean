@@ -22,15 +22,15 @@ open Pronoun
 -- ============================================================================
 
 /-- *naan* — 1sg. -/
-def naan : Entry :=
+def naan : PersonalPronoun :=
   { form := "naan", person := some .first, number := some .sg }
 
 /-- *naam* — 1pl inclusive (speaker + addressee). -/
-def naam : Entry :=
+def naam : PersonalPronoun :=
   { form := "naam", person := some .first, number := some .pl }
 
 /-- *naangaL* — 1pl exclusive (speaker + others, not addressee). -/
-def naangaL : Entry :=
+def naangaL : PersonalPronoun :=
   { form := "naangaL", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -38,11 +38,11 @@ def naangaL : Entry :=
 -- ============================================================================
 
 /-- *nii* — 2sg non-honorific. -/
-def nii : Entry :=
+def nii : PersonalPronoun :=
   { form := "nii", person := some .second, number := some .sg, register := .informal }
 
 /-- *niingaL* — 2sg honorific (also 2pl). -/
-def niingaL : Entry :=
+def niingaL : PersonalPronoun :=
   { form := "niingaL", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -50,28 +50,28 @@ def niingaL : Entry :=
 -- ============================================================================
 
 /-- *avan* — 3sg masculine. -/
-def avan : Entry :=
+def avan : PersonalPronoun :=
   { form := "avan", person := some .third, number := some .sg }
 
 /-- *avaL* — 3sg feminine. -/
-def avaL : Entry :=
+def avaL : PersonalPronoun :=
   { form := "avaL", person := some .third, number := some .sg }
 
 /-- *avar* — 3sg honorific. -/
-def avar : Entry :=
+def avar : PersonalPronoun :=
   { form := "avar", person := some .third, number := some .sg, register := .formal }
 
 /-- *avarkaL* — 3pl (human). -/
-def avarkaL : Entry :=
+def avarkaL : PersonalPronoun :=
   { form := "avarkaL", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List Entry := [nii, niingaL]
+def secondPersonPronouns : List PersonalPronoun := [nii, niingaL]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [naan, naam, naangaL] ++ secondPersonPronouns ++ [avan, avaL, avar, avarkaL]
 
 -- ============================================================================

@@ -19,7 +19,7 @@ namespace Czech.Reciprocals
 open Pronoun
 
 /-- se — reflexive/reciprocal clitic. -/
-def se : Entry :=
+def se : PersonalPronoun :=
   { form := "se", person := some .third }
 
 /-- The same form serves both reciprocal and reflexive functions. -/

@@ -16,7 +16,7 @@ goals, as in @cite{yoon-etal-2020} for politeness).
 
 ## Connections
 
-* `Pronoun.Entry.register`: pronoun register (T/V/honorific)
+* `PersonalPronoun.register`: pronoun register (T/V/honorific)
 * `Pronoun.AllocutiveEntry.register`: allocutive marker register
 * `English.Auxiliaries.AuxEntry.register`: modal register
 * `Pragmatics.Expressives.OutlookMarker.ModalCompatibility`: outlook marker selectional restrictions

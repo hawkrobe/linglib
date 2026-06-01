@@ -23,21 +23,21 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- 私 *watashi* — 1sg neutral/polite. -/
-def watashi : Entry :=
+def watashi : PersonalPronoun :=
   { form := "watashi", script := some "私", person := some .first, number := some .sg, register := .formal }
 
 /-- 僕 *boku* — 1sg informal, masculine-associated via register
     (no inherent gender feature; cf. @cite{ochs-1992}). -/
-def boku : Entry :=
+def boku : PersonalPronoun :=
   { form := "boku", script := some "僕", person := some .first, number := some .sg, register := .informal }
 
 /-- 俺 *ore* — 1sg male very informal. Strongly indexes masculine identity
     through assertive/coarse interactional stance (@cite{ochs-1992}). -/
-def ore : Entry :=
+def ore : PersonalPronoun :=
   { form := "ore", script := some "俺", person := some .first, number := some .sg, register := .informal }
 
 /-- 私たち *watashitachi* — 1pl. -/
-def watashitachi : Entry :=
+def watashitachi : PersonalPronoun :=
   { form := "watashitachi", script := some "私たち", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -45,11 +45,11 @@ def watashitachi : Entry :=
 -- ============================================================================
 
 /-- 君 *kimi* — 2sg plain. -/
-def kimi : Entry :=
+def kimi : PersonalPronoun :=
   { form := "kimi", script := some "君", person := some .second, number := some .sg, register := .informal }
 
 /-- あなた *anata* — 2sg polite. -/
-def anata : Entry :=
+def anata : PersonalPronoun :=
   { form := "anata", script := some "あなた", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -57,15 +57,15 @@ def anata : Entry :=
 -- ============================================================================
 
 /-- 彼 *kare* — 3sg masculine. -/
-def kare : Entry :=
+def kare : PersonalPronoun :=
   { form := "kare", script := some "彼", person := some .third, number := some .sg }
 
 /-- 彼女 *kanojo* — 3sg feminine. -/
-def kanojo : Entry :=
+def kanojo : PersonalPronoun :=
   { form := "kanojo", script := some "彼女", person := some .third, number := some .sg }
 
 /-- 彼ら *karera* — 3pl. -/
-def karera : Entry :=
+def karera : PersonalPronoun :=
   { form := "karera", script := some "彼ら", person := some .third, number := some .pl }
 
 -- ============================================================================
@@ -76,16 +76,16 @@ def karera : Entry :=
     Formally distinct from the reflexive *jibun* (自分). This is an
     NP/argument reciprocal strategy (reciprocal pronoun), unlike
     languages that mark reciprocity on the verb. -/
-def otagai : Entry :=
+def otagai : PersonalPronoun :=
   { form := "otagai", script := some "互い", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List Entry := [kimi, anata]
+def secondPersonPronouns : List PersonalPronoun := [kimi, anata]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [watashi, boku, ore, watashitachi] ++ secondPersonPronouns ++ [kare, kanojo, karera, otagai]
 
 -- ============================================================================

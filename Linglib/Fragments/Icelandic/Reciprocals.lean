@@ -22,11 +22,11 @@ open Pronoun
 /-- hvor...annad — bipartite reciprocal NP 'each other'.
 
     Each part inflects independently for case.  -/
-def hvorAnnad : Entry :=
+def hvorAnnad : PersonalPronoun :=
   { form := "hvor...annad", person := some .third, number := some .pl }
 
 /-- sig — reflexive pronoun (for contrast). -/
-def sig : Entry :=
+def sig : PersonalPronoun :=
   { form := "sig", person := some .third }
 
 /-- Icelandic reciprocal is formally distinct from reflexive. -/

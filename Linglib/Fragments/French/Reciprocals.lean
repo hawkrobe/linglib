@@ -22,11 +22,11 @@ namespace French.Reciprocals
 open Pronoun
 
 /-- se — reflexive/reciprocal clitic (monovalent strategy). -/
-def se : Entry :=
+def se : PersonalPronoun :=
   { form := "se", person := some .third }
 
 /-- l'un l'autre — bipartite reciprocal NP (bivalent strategy). -/
-def lunLautre : Entry :=
+def lunLautre : PersonalPronoun :=
   { form := "l'un l'autre", person := some .third, number := some .pl }
 
 /-- The bipartite NP form is distinct from the clitic. -/

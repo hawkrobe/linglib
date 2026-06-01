@@ -8,10 +8,10 @@ import Linglib.Features.Gender
 # Pronoun
 
 Lexical core for the pronoun as a grammatical object: the general `Pronoun`
-structure (the morphosyntactic core every pronoun type shares), the `Entry`
-schema for personal/referential pronouns (which `extends Pronoun`), allocutive
-markers, the `Spec` referent-preference type, and @cite{cardinaletti-starke-1999}'s
-`Strength` deficiency classification.
+structure (the morphosyntactic core every pronoun type shares), the
+`PersonalPronoun` schema for personal/referential pronouns (which `extends Pronoun`),
+allocutive markers, the `Spec` referent-preference type, and
+@cite{cardinaletti-starke-1999}'s `Strength` deficiency classification.
 
 Cross-categorial features a pronoun carries — `Person`, `Number`, `Gender`,
 `Case` — are not redefined here; they live under `Features/` and are composed
@@ -22,7 +22,7 @@ in as fields of the general `Pronoun`.
 * `Pronoun` — the general pronoun object: surface form + agreement φ-features,
   everything true of *all* pronouns. Specializations `extends` it (mathlib-style:
   the general concept gets the plain name).
-* `Pronoun.Entry` — personal/referential pronoun entry: `extends Pronoun` with the
+* `PersonalPronoun` — personal/referential pronoun: `extends Pronoun` with the
   register and referential-person features specific to deictic pronouns.
 * `Pronoun.Strength` — @cite{cardinaletti-starke-1999} strong/weak/clitic
   deficiency order (via `Strength.rank`). Orthogonal to
@@ -38,7 +38,7 @@ set_option autoImplicit false
 /-- The general pronoun object: the morphosyntactic core shared by every pronoun
     type (personal, indefinite, demonstrative, interrogative, …). Carries only what
     is true of *all* pronouns — surface form and agreement φ-features — and has no
-    denotation of its own; each specialization (`Pronoun.Entry` for personal/
+    denotation of its own; each specialization (`PersonalPronoun` for personal/
     referential pronouns, and future `IndefinitePronoun` etc.) `extends` this and
     supplies its own meaning. Coexists with `namespace Pronoun` (a type and a
     namespace may share a name, cf. `List`). -/
@@ -57,6 +57,27 @@ structure Pronoun where
   gender : Option Features.SurfaceGender := none
   /-- Native script form (hangul, kanji, Devanagari, …). -/
   script : Option String := none
+  deriving Repr, BEq
+
+/-- Cross-linguistic *personal/referential* pronoun: the general `Pronoun` object
+(form + φ-features) plus the register and referential-person features specific to
+deictic pronouns. Covers personal pronouns across all Fragment languages;
+language-specific extensions (e.g., English PronounType/wh) remain in their
+respective Fragment files. -/
+structure PersonalPronoun extends Pronoun where
+  /-- Register level (formality/honorifics). Binary T/V systems use
+      `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
+      Maithili, Korean) use all three levels. -/
+  register : Features.Register.Level := .informal
+  /-- Referential person — who the pronoun refers to in terms of discourse
+      role — when it diverges from formal/agreement person. For polite
+      pronouns (Italian LEI, Spanish USTED, German SIE), the formal `person`
+      field is 3rd (governing agreement, clitic allomorphy, reflexive binding),
+      while `referentialPerson` is 2nd (governing the PCC, Fancy Constraint,
+      resolved agreement). For ordinary pronouns, leave as `none` —
+      referential person coincides with formal person.
+      @cite{adamson-zompi-2025} -/
+  referentialPerson : Option Features.Prominence.PersonLevel := none
   deriving Repr, BEq
 
 namespace Pronoun
@@ -104,27 +125,6 @@ inductive Spec where
   | theyThem   -- they/them/theirs
   deriving DecidableEq, Repr, BEq
 
-/-- Cross-linguistic *personal/referential* pronoun entry: the general `Pronoun`
-object (form + φ-features) plus the register and referential-person features
-specific to deictic pronouns. Covers personal pronouns across all Fragment
-languages; language-specific extensions (e.g., English PronounType/wh) remain in
-their respective Fragment files. -/
-structure Entry extends _root_.Pronoun where
-  /-- Register level (formality/honorifics). Binary T/V systems use
-      `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
-      Maithili, Korean) use all three levels. -/
-  register : Level := .informal
-  /-- Referential person — who the pronoun refers to in terms of discourse
-      role — when it diverges from formal/agreement person. For polite
-      pronouns (Italian LEI, Spanish USTED, German SIE), the formal `person`
-      field is 3rd (governing agreement, clitic allomorphy, reflexive binding),
-      while `referentialPerson` is 2nd (governing the PCC, Fancy Constraint,
-      resolved agreement). For ordinary pronouns, leave as `none` —
-      referential person coincides with formal person.
-      @cite{adamson-zompi-2025} -/
-  referentialPerson : Option Features.Prominence.PersonLevel := none
-  deriving Repr, BEq
-
 /-- Cross-linguistic allocutive marker entry.
 
 Covers verbal suffixes, particles, and clitics that realize allocutive
@@ -132,7 +132,7 @@ agreement across all Fragment languages. -/
 structure AllocutiveEntry where
   /-- Surface form of the marker -/
   form : String
-  /-- Register level (matching Entry.register scale) -/
+  /-- Register level (matching PersonalPronoun.register scale) -/
   register : Level
   /-- Gloss string (e.g., "IMP.NH", "POL", "2sg.DAT.fam") -/
   gloss : String
