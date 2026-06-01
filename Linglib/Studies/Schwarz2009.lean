@@ -1,5 +1,5 @@
 import Linglib.Features.Definiteness
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
 import Linglib.Fragments.German.Definiteness
@@ -36,9 +36,9 @@ The split is operationalized in the Core layer by:
   `.anaphoric` carries a *discourse* index for antecedent lookup).
 - **`Core.Nominal.NominalKind.expectedPresupType`** — projects each kind
   to the @cite{schwarz-2009} presupposition type it expresses.
-- **`Core.Nominal.ArticleInventory`** — records the morphological
-  inventory; `uniqueAnaphoricSyncretism` is the bool that distinguishes
-  English-style syncretism from German-style bipartition.
+- **`Core.Nominal.Determiner`** — the declared determiner set records the
+  morphological inventory; `Determiner.IsSyncretic` is the predicate that
+  distinguishes English-style syncretism from German-style bipartition.
 
 We verify:
 
@@ -160,33 +160,29 @@ theorem situation_binding_classifies_articles
 
 /-! @cite{schwarz-2009} reads the two-article distinction off German
 morphology. English collapses both into *the*; the contrast is masked at
-the surface but recoverable via the inventory's `uniqueAnaphoricSyncretism`
-bool. -/
+the surface but recoverable via `Determiner.IsSyncretic`. -/
 
 /-- German has both articles overtly, with no syncretism — the structural
     @cite{schwarz-2009} contrast is morphologically visible. -/
 theorem german_two_articles :
-    German.Definiteness.articleInventory.hasUniqueArticle ∧
-    German.Definiteness.articleInventory.hasAnaphoricArticle ∧
-    ¬ German.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
-  ⟨trivial, trivial, id⟩
+    Determiner.MarksPresup German.Definiteness.determiners .uniqueness ∧
+    Determiner.MarksPresup German.Definiteness.determiners .familiarity ∧
+    ¬ Determiner.IsSyncretic German.Definiteness.determiners := by decide
 
 /-- English has both articles, but they are syncretic — *the* covers both.
     The @cite{schwarz-2009} contrast is real but morphologically invisible. -/
 theorem english_syncretic_articles :
-    English.Definiteness.articleInventory.hasUniqueArticle ∧
-    English.Definiteness.articleInventory.hasAnaphoricArticle ∧
-    English.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
-  ⟨trivial, trivial, trivial⟩
+    Determiner.MarksPresup English.Definiteness.determiners .uniqueness ∧
+    Determiner.MarksPresup English.Definiteness.determiners .familiarity ∧
+    Determiner.IsSyncretic English.Definiteness.determiners := by decide
 
 /-- The morphological discriminator: German is `.bipartite` (two distinct
     forms), English is `.generallyMarked` (one syncretic form). Both
     distinguish the same semantic types — the surface morphology differs. -/
 theorem strategy_split :
-    German.Definiteness.articleInventory.toMarkingStrategy
-      = .bipartite ∧
-    English.Definiteness.articleInventory.toMarkingStrategy
-      = .generallyMarked := ⟨rfl, rfl⟩
+    Determiner.markingStrategy German.Definiteness.determiners = .bipartite ∧
+    Determiner.markingStrategy English.Definiteness.determiners = .generallyMarked :=
+  ⟨German.Definiteness.marking, English.Definiteness.marking⟩
 
 /-- The number of morphologically distinguished presupposition types
     differs across the two languages, even though the underlying
@@ -197,10 +193,10 @@ theorem strategy_split :
     the article system. -/
 theorem morphological_distinction_count :
     (articleTypeToDistinguishedPresup
-      German.Definiteness.articleInventory.toArticleType).length = 2 ∧
+      (Determiner.articleType German.Definiteness.determiners)).length = 2 ∧
     (articleTypeToDistinguishedPresup
-      English.Definiteness.articleInventory.toArticleType).length = 1
-  := ⟨rfl, rfl⟩
+      (Determiner.articleType English.Definiteness.determiners)).length = 1
+  := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- §5: Hawkins use types map onto the Schwarz split (§3.1)

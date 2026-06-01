@@ -1,6 +1,6 @@
 import Linglib.Core.Word
 import Linglib.Features.Definiteness
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
 import Linglib.Fragments.German.Definiteness
 import Linglib.Fragments.Thai.Definiteness
 import Linglib.Fragments.Mandarin.Definiteness
@@ -269,7 +269,6 @@ This parallels the general pattern for anaphoric definites in
 
 open Features.Definiteness (DefiniteUseType DefPresupType useTypeToPresupType
   ArticleType)
-open Core.Nominal (ArticleInventory)
 
 /-- Donkey anaphora is classified as its own use type in the definiteness
 typology, distinct from regular anaphora but sharing the same
@@ -295,40 +294,40 @@ morphologically. This connects the abstract `DefiniteUseType.donkey`
 to concrete article forms.
 
 The article system (`articleSystem`) is *derived* from the language's
-fragment-level `articleInventory`, not stipulated independently —
-`ArticleInventory` is the single source of truth. -/
+fragment-level `determiners`, not stipulated independently — the declared
+`Determiner.Entry` list is the single source of truth. -/
 structure DonkeyArticleDatum where
   language : String
   isoCode : String
   /-- Morphological form used for donkey pronouns -/
   form : String
-  /-- Morphological article inventory (single source of truth from which
+  /-- Declared determiner set (single source of truth from which
       `articleSystem` is derived). -/
-  articleInventory : ArticleInventory
+  determiners : List Determiner.Entry
 
-/-- Schwarz `ArticleType` classification, derived from `articleInventory`. -/
+/-- Schwarz `ArticleType` classification, derived from `determiners`. -/
 def DonkeyArticleDatum.articleSystem (d : DonkeyArticleDatum) : ArticleType :=
-  d.articleInventory.toArticleType
+  Determiner.articleType d.determiners
 
 def germanDonkey : DonkeyArticleDatum :=
   { language := "German", isoCode := "deu"
     form := "strong article (von dem)"
-    articleInventory := German.Definiteness.articleInventory }
+    determiners := German.Definiteness.determiners }
 
 def thaiDonkey : DonkeyArticleDatum :=
   { language := "Thai", isoCode := "tha"
     form := "demonstrative"
-    articleInventory := Thai.Definiteness.articleInventory }
+    determiners := Thai.Definiteness.determiners }
 
 def mandarinDonkey : DonkeyArticleDatum :=
   { language := "Mandarin", isoCode := "cmn"
     form := "demonstrative"
-    articleInventory := Mandarin.Definiteness.articleInventory }
+    determiners := Mandarin.Definiteness.determiners }
 
 def shanDonkey : DonkeyArticleDatum :=
   { language := "Shan", isoCode := "shn"
     form := "bare noun"
-    articleInventory := Shan.Definiteness.articleInventory }
+    determiners := Shan.Definiteness.determiners }
 
 /-- All cross-linguistic donkey article data. -/
 def donkeyArticleData : List DonkeyArticleDatum :=
