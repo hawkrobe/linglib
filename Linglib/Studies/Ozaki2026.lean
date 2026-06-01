@@ -395,22 +395,22 @@ theorem source_is_argument_both_frames :
     `derivedUnaccusative` uses the `voiceType` field to compute unaccusativity
     via `VoiceType.assignsTheta`. -/
 theorem hanareru_unaccusative_derived :
-    Japanese.Predicates.hanareru.toVerbCore.derivedUnaccusative = true := rfl
+    Japanese.Predicates.hanareru.toVerb.derivedUnaccusative = true := rfl
 
 /-- Deru's unaccusativity is DERIVED from its voice type. -/
 theorem deru_unaccusative_derived :
-    Japanese.Predicates.deru.toVerbCore.derivedUnaccusative = true := rfl
+    Japanese.Predicates.deru.toVerb.derivedUnaccusative = true := rfl
 
 /-- The stored `unaccusative` flag agrees with the derived value.
     This consistency check ensures that the stipulated field and the
     Voice-based derivation produce the same answer. -/
 theorem hanareru_stored_matches_derived :
     Japanese.Predicates.hanareru.unaccusative =
-    Japanese.Predicates.hanareru.toVerbCore.derivedUnaccusative := rfl
+    Japanese.Predicates.hanareru.toVerb.derivedUnaccusative := rfl
 
 theorem deru_stored_matches_derived :
     Japanese.Predicates.deru.unaccusative =
-    Japanese.Predicates.deru.toVerbCore.derivedUnaccusative := rfl
+    Japanese.Predicates.deru.toVerb.derivedUnaccusative := rfl
 
 /-- Direct passive requires thematic Voice, which departure verbs lack. -/
 theorem direct_passive_requires_voice :

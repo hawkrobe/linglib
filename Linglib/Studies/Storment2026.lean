@@ -81,13 +81,13 @@ theorem arrive_unaccusative : arrive.unaccusative = true := rfl
 
 /-! ## §3. TransitivityClass derivation
 
-Maps a `VerbCore` to its three-way transitivity classification used by
+Maps a `Verb` to its three-way transitivity classification used by
 the auxiliary-selection system (`Phenomena/AuxiliaryVerbs/Selection.lean`).
 Stays in this study file because `TransitivityClass` lives in `Phenomena/`
 and cannot be imported by substrate (`Semantics/`, `Syntax/`, etc.). -/
 
-/-- Derive `TransitivityClass` from `VerbCore` fields. -/
-def deriveTransitivityClass (v : VerbCore) : TransitivityClass :=
+/-- Derive `TransitivityClass` from `Verb` fields. -/
+def deriveTransitivityClass (v : Verb) : TransitivityClass :=
   if v.unaccusative then .unaccusative
   else match v.complementType with
     | .none => .unergative
@@ -95,19 +95,19 @@ def deriveTransitivityClass (v : VerbCore) : TransitivityClass :=
 
 theorem mos_unaccusatives_transitivity :
     ∀ v ∈ mosUnaccusatives,
-      deriveTransitivityClass v.toVerbCore = .unaccusative := by
+      deriveTransitivityClass v.toVerb = .unaccusative := by
   intro v hv; fin_cases hv <;> rfl
 
 theorem communication_unergatives_transitivity :
     ∀ v ∈ communicationUnergatives,
-      deriveTransitivityClass v.toVerbCore = .unergative := by
+      deriveTransitivityClass v.toVerb = .unergative := by
   intro v hv; fin_cases hv <;> rfl
 
-theorem kick_transitive : deriveTransitivityClass kick.toVerbCore = .transitive := rfl
+theorem kick_transitive : deriveTransitivityClass kick.toVerb = .transitive := rfl
 
 /-! ## §4. Voice bridge
 
-`VerbCore.voiceFor` (defined in `Semantics/Lexical/VerbSmuggling.lean`)
+`Verb.voiceFor` (defined in `Semantics/Lexical/VerbSmuggling.lean`)
 maps unaccusative→non-thematic Voice and
 unergative→agentive Voice. Per @cite{storment-2026}'s §4.3, the Voice
 head is the smuggling projection (not the external-argument introducer
@@ -115,11 +115,11 @@ of @cite{kratzer-1996}); permitting smuggling is equivalent to being
 non-phase, which is equivalent to not introducing an external argument. -/
 
 theorem mos_unaccusatives_nonThematic_voice :
-    ∀ v ∈ mosUnaccusatives, v.toVerbCore.voiceFor = voiceAnticausative := by
+    ∀ v ∈ mosUnaccusatives, v.toVerb.voiceFor = voiceAnticausative := by
   intro v hv; fin_cases hv <;> rfl
 
 theorem communication_unergatives_agentive_voice :
-    ∀ v ∈ communicationUnergatives, v.toVerbCore.voiceFor = voiceAgent := by
+    ∀ v ∈ communicationUnergatives, v.toVerb.voiceFor = voiceAgent := by
   intro v hv; fin_cases hv <;> rfl
 
 /-! ## §5. Auxiliary selection bridge
@@ -129,12 +129,12 @@ select *be* and unergatives select *have*. -/
 
 theorem mos_unaccusatives_select_be :
     ∀ v ∈ mosUnaccusatives,
-      canonicalSelection (deriveTransitivityClass v.toVerbCore) = .be := by
+      canonicalSelection (deriveTransitivityClass v.toVerb) = .be := by
   intro v hv; fin_cases hv <;> rfl
 
 theorem communication_unergatives_select_have :
     ∀ v ∈ communicationUnergatives,
-      canonicalSelection (deriveTransitivityClass v.toVerbCore) = .have := by
+      canonicalSelection (deriveTransitivityClass v.toVerb) = .have := by
   intro v hv; fin_cases hv <;> rfl
 
 /-! ## §6. Levin §37.3 mannerOfSpeaking class membership
@@ -147,7 +147,7 @@ theorem speak_levinClass : speak.levinClass = some .mannerOfSpeaking := rfl
 
 /-! ## §8. Smuggling derivation of QI
 
-`VerbCore.derivedQI` (defined in `Semantics/Lexical/VerbSmuggling.lean`)
+`Verb.derivedQI` (defined in `Semantics/Lexical/VerbSmuggling.lean`)
 derives QI licensing from two independently
 motivated properties: (1) Voice is non-phase (= unaccusative);
 (2) verb has a complement (the quote).
@@ -159,40 +159,40 @@ to block QI; unaccusative `arrive` (no complement) is correctly
 predicted not to license QI (it requires LI, not QI). -/
 
 theorem mos_unaccusatives_derivedQI :
-    ∀ v ∈ mosUnaccusatives, v.toVerbCore.derivedQI = true := by
+    ∀ v ∈ mosUnaccusatives, v.toVerb.derivedQI = true := by
   intro v hv; fin_cases hv <;> rfl
 
 theorem communication_unergatives_derivedQI :
-    ∀ v ∈ communicationUnergatives, v.toVerbCore.derivedQI = false := by
+    ∀ v ∈ communicationUnergatives, v.toVerb.derivedQI = false := by
   intro v hv; fin_cases hv <;> rfl
 
 /-- `arrive` is unaccusative but has no complement: doesn't license QI.
     This is correct — `*"arrived Mary"` requires a fronted locative
     (LI), not a fronted quote (QI). -/
-theorem arrive_no_qi : arrive.toVerbCore.derivedQI = false := rfl
+theorem arrive_no_qi : arrive.toVerb.derivedQI = false := rfl
 
 /-- Consistency: each (verb, QI-datum) pair has its empirical result
     matching `derivedQI`. Pairs the diagnostic data in
     `Unaccusativity/Data.lean` with the smuggling prediction. -/
 theorem qi_data_matches_derivedQI :
-    ∀ p ∈ ([(qi_whisper,    whisper.toVerbCore),
-            (qi_murmur,     murmur.toVerbCore),
-            (qi_shout,      shout.toVerbCore),
-            (qi_cry,        cry.toVerbCore),
-            (qi_scream,     scream.toVerbCore),
-            (qi_mumble,     mumble.toVerbCore),
-            (qi_mutter,     mutter.toVerbCore),
-            (qi_shriek,     shriek.toVerbCore),
-            (qi_yell,       yell.toVerbCore),
-            (qi_groan,      groan.toVerbCore),
-            (qi_grumble,    grumble.toVerbCore),
-            (qi_hiss,       hiss.toVerbCore),
-            (qi_sigh,       sigh.toVerbCore),
-            (qi_whimper,    whimper.toVerbCore),
-            (qi_snap,       snap.toVerbCore),
-            (qi_speak,      speak.toVerbCore),
-            (qi_talk,       talk.toVerbCore)] :
-            List (DiagnosticDatum × VerbCore)),
+    ∀ p ∈ ([(qi_whisper,    whisper.toVerb),
+            (qi_murmur,     murmur.toVerb),
+            (qi_shout,      shout.toVerb),
+            (qi_cry,        cry.toVerb),
+            (qi_scream,     scream.toVerb),
+            (qi_mumble,     mumble.toVerb),
+            (qi_mutter,     mutter.toVerb),
+            (qi_shriek,     shriek.toVerb),
+            (qi_yell,       yell.toVerb),
+            (qi_groan,      groan.toVerb),
+            (qi_grumble,    grumble.toVerb),
+            (qi_hiss,       hiss.toVerb),
+            (qi_sigh,       sigh.toVerb),
+            (qi_whimper,    whimper.toVerb),
+            (qi_snap,       snap.toVerb),
+            (qi_speak,      speak.toVerb),
+            (qi_talk,       talk.toVerb)] :
+            List (DiagnosticDatum × Verb)),
       (p.1.result = .passes) ↔ (p.2.derivedQI = true) := by
   intro p hp; fin_cases hp <;> decide
 
@@ -231,7 +231,7 @@ theorem li_blocks_transitive : li_kick.result = .fails := rfl
     arrive projects non-thematic Voice, permitting VP-smuggling — the
     same mechanism that licenses QI. -/
 theorem li_arrive_smuggling_unified :
-    arrive.toVerbCore.voiceFor = voiceAnticausative ∧
+    arrive.toVerb.voiceFor = voiceAnticausative ∧
     loc_arrive.result = .passes :=
   ⟨rfl, rfl⟩
 

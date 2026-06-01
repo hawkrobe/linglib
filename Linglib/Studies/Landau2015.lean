@@ -25,7 +25,7 @@ OC in complement clauses divides into two subtypes:
 - `agrBlocksControl`: The OC-NC generalization — [+Agr] blocks logophoric
   control but not predicative control (70)
 - `TTCContrast`: The six empirical contrasts between the two tiers (table (80))
-- `derivedLandauClass`: Maps VerbCore fields to Landau predicate classes
+- `derivedLandauClass`: Maps Verb fields to Landau predicate classes
 - `DeSeReading`: Object control *de se*/*de te* distinction (table (36))
 
 ## Core Claims
@@ -614,10 +614,10 @@ theorem communicative_deTe :
     objectControlReading .communicative = .deTe := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § 12: Derived Landau Class from VerbCore
+-- § 12: Derived Landau Class from Verb
 -- ════════════════════════════════════════════════════════════════
 
-/-- Derive @cite{landau-2015}'s predicate class from VerbCore fields.
+/-- Derive @cite{landau-2015}'s predicate class from Verb fields.
 
     This creates a bridge from Fragment verb entries to the TTC by
     deriving the predicate classification from existing semantic fields
@@ -636,7 +636,7 @@ theorem communicative_deTe :
     - `attitude.doxastic` → `.propositional` (believe, think, ...)
     - `attitude.preferential` → `.desiderative` (want, hope, ...)
     - `takesQuestionBase` without attitude → `.interrogative` (wonder, ask) -/
-def derivedLandauClass (v : VerbCore) : Option LandauPredicateClass :=
+def derivedLandauClass (v : Verb) : Option LandauPredicateClass :=
   if v.cosType.isSome then some .aspectual
   else if v.implicative.isSome then some .implicative
   else if v.causative.isSome then some .implicative
@@ -647,7 +647,7 @@ def derivedLandauClass (v : VerbCore) : Option LandauPredicateClass :=
     | some (.preferential _) => some .desiderative
     | none                   => none
 
-/-- Derive control tier from VerbCore fields.
+/-- Derive control tier from Verb fields.
 
     A verb induces logophoric control iff it selects an attitude
     complement — detected by the presence of `attitude`,
@@ -655,7 +655,7 @@ def derivedLandauClass (v : VerbCore) : Option LandauPredicateClass :=
     predicative control.
 
     Returns `none` for verbs that are not control verbs. -/
-def derivedControlTier (v : VerbCore) : Option ControlTier :=
+def derivedControlTier (v : Verb) : Option ControlTier :=
   if v.controlType == ControlType.none && v.altControlType == ControlType.none then Option.none
   else match derivedLandauClass v with
     | some cls => some cls.controlTier
@@ -677,81 +677,81 @@ open English.Predicates.Verbal
 
 /-- "stop" (CoS cessation) → aspectual → predicative -/
 theorem stop_aspectual :
-    derivedLandauClass stop.toVerbCore = some .aspectual := rfl
+    derivedLandauClass stop.toVerb = some .aspectual := rfl
 
 /-- "start" (CoS inception) → aspectual → predicative -/
 theorem start_aspectual :
-    derivedLandauClass start.toVerbCore = some .aspectual := rfl
+    derivedLandauClass start.toVerb = some .aspectual := rfl
 
 /-- "begin" (CoS inception) → aspectual → predicative -/
 theorem begin_aspectual :
-    derivedLandauClass begin_.toVerbCore = some .aspectual := rfl
+    derivedLandauClass begin_.toVerb = some .aspectual := rfl
 
 /-- "continue" (CoS continuation) → aspectual → predicative -/
 theorem continue_aspectual :
-    derivedLandauClass continue_.toVerbCore = some .aspectual := rfl
+    derivedLandauClass continue_.toVerb = some .aspectual := rfl
 
 /-- "manage" (positive implicative) → implicative → predicative -/
 theorem manage_implicative :
-    derivedLandauClass manage.toVerbCore = some .implicative := rfl
+    derivedLandauClass manage.toVerb = some .implicative := rfl
 
 /-- "fail" (negative implicative) → implicative → predicative -/
 theorem fail_implicative :
-    derivedLandauClass fail.toVerbCore = some .implicative := rfl
+    derivedLandauClass fail.toVerb = some .implicative := rfl
 
 /-- "remember" (positive implicative) → implicative → predicative -/
 theorem remember_implicative :
-    derivedLandauClass remember.toVerbCore = some .implicative := rfl
+    derivedLandauClass remember.toVerb = some .implicative := rfl
 
 /-- "forget" (negative implicative) → implicative → predicative -/
 theorem forget_implicative :
-    derivedLandauClass forget.toVerbCore = some .implicative := rfl
+    derivedLandauClass forget.toVerb = some .implicative := rfl
 
 /-- "force" (coercive causative) → implicative → predicative -/
 theorem force_implicative :
-    derivedLandauClass force.toVerbCore = some .implicative := rfl
+    derivedLandauClass force.toVerb = some .implicative := rfl
 
 -- Logophoric (PC) verbs: derived class → logophoric tier
 
 /-- "want" (preferential attitude) → desiderative → logophoric -/
 theorem want_desiderative :
-    derivedLandauClass want.toVerbCore = some .desiderative := rfl
+    derivedLandauClass want.toVerb = some .desiderative := rfl
 
 /-- "hope" (preferential attitude) → desiderative → logophoric -/
 theorem hope_desiderative :
-    derivedLandauClass hope.toVerbCore = some .desiderative := rfl
+    derivedLandauClass hope.toVerb = some .desiderative := rfl
 
 /-- "promise" (preferential attitude) → desiderative → logophoric.
     Previously unclassified; fixed by adding `attitude` to the
     Fragment entry per @cite{landau-2015} (5c). -/
 theorem promise_desiderative :
-    derivedLandauClass promise.toVerbCore = some .desiderative := rfl
+    derivedLandauClass promise.toVerb = some .desiderative := rfl
 
 /-- "persuade" (preferential attitude, object control) → desiderative → logophoric.
     Previously unclassified; fixed by adding `attitude` per
     @cite{landau-2015} table (36). -/
 theorem persuade_desiderative :
-    derivedLandauClass persuade.toVerbCore = some .desiderative := rfl
+    derivedLandauClass persuade.toVerb = some .desiderative := rfl
 
 /-- "regret" (factive) → factive → logophoric -/
 theorem regret_factive :
-    derivedLandauClass regret.toVerbCore = some .factive := rfl
+    derivedLandauClass regret.toVerb = some .factive := rfl
 
 /-- "know" (factive + question) → factive → logophoric -/
 theorem know_factive :
-    derivedLandauClass know.toVerbCore = some .factive := rfl
+    derivedLandauClass know.toVerb = some .factive := rfl
 
 /-- "believe" (doxastic attitude) → propositional → logophoric -/
 theorem believe_propositional :
-    derivedLandauClass believe.toVerbCore = some .propositional := rfl
+    derivedLandauClass believe.toVerb = some .propositional := rfl
 
 /-- "think" (doxastic attitude) → propositional → logophoric -/
 theorem think_propositional :
-    derivedLandauClass think.toVerbCore = some .propositional := rfl
+    derivedLandauClass think.toVerb = some .propositional := rfl
 
 /-- "wonder" (question-embedding, non-attitude) → interrogative → logophoric -/
 theorem wonder_interrogative :
-    derivedLandauClass wonder.toVerbCore = some .interrogative := rfl
+    derivedLandauClass wonder.toVerb = some .interrogative := rfl
 
 -- Negative test: verbs that should NOT be classifiable
 
@@ -760,33 +760,33 @@ theorem wonder_interrogative :
     `derivedLandauClass`. This is correct: "try" is not implicative (trying
     doesn't entail succeeding) and not clearly attitudinal. -/
 theorem try_unclassifiable :
-    derivedLandauClass try_.toVerbCore = none := rfl
+    derivedLandauClass try_.toVerb = none := rfl
 
 -- Control tier verification: derived tier matches expected tier
 
 theorem stop_predicative_tier :
-    (derivedLandauClass stop.toVerbCore).map (·.controlTier) = some .predicative := rfl
+    (derivedLandauClass stop.toVerb).map (·.controlTier) = some .predicative := rfl
 
 theorem manage_predicative_tier :
-    (derivedLandauClass manage.toVerbCore).map (·.controlTier) = some .predicative := rfl
+    (derivedLandauClass manage.toVerb).map (·.controlTier) = some .predicative := rfl
 
 theorem want_logophoric_tier :
-    (derivedLandauClass want.toVerbCore).map (·.controlTier) = some .logophoric := rfl
+    (derivedLandauClass want.toVerb).map (·.controlTier) = some .logophoric := rfl
 
 theorem regret_logophoric_tier :
-    (derivedLandauClass regret.toVerbCore).map (·.controlTier) = some .logophoric := rfl
+    (derivedLandauClass regret.toVerb).map (·.controlTier) = some .logophoric := rfl
 
 theorem believe_logophoric_tier :
-    (derivedLandauClass believe.toVerbCore).map (·.controlTier) = some .logophoric := rfl
+    (derivedLandauClass believe.toVerb).map (·.controlTier) = some .logophoric := rfl
 
 theorem wonder_logophoric_tier :
-    (derivedLandauClass wonder.toVerbCore).map (·.controlTier) = some .logophoric := rfl
+    (derivedLandauClass wonder.toVerb).map (·.controlTier) = some .logophoric := rfl
 
 theorem promise_logophoric_tier :
-    (derivedLandauClass promise.toVerbCore).map (·.controlTier) = some .logophoric := rfl
+    (derivedLandauClass promise.toVerb).map (·.controlTier) = some .logophoric := rfl
 
 theorem persuade_logophoric_tier :
-    (derivedLandauClass persuade.toVerbCore).map (·.controlTier) = some .logophoric := rfl
+    (derivedLandauClass persuade.toVerb).map (·.controlTier) = some .logophoric := rfl
 
 -- Object control de se/de te: per-verb bridge
 

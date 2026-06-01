@@ -15,7 +15,7 @@ semantics. Provides:
    list of named entries, replacing the hand-written match-on-strings pattern
    that Studies currently use.
 
-3. **Entry construction** (`mkLexEntry`): given a VerbCore and a
+3. **Entry construction** (`mkLexEntry`): given a Verb and a
    denotation of the appropriate type, produce a `LexEntry F`.
 
 ## Design
@@ -23,7 +23,7 @@ semantics. Provides:
 The dispatch layer does NOT generate denotations from features — that would
 be too theory-laden. It provides the *type* and the *scaffolding*; the Study
 still supplies the denotation. Domain-specific denotation builders
-(`VerbCore.getCoSSemantics`, `VerbCore.veridicality`, etc.) remain in
+(`Verb.getCoSSemantics`, `Verb.veridicality`, etc.) remain in
 `Semantics/Lexical/Verb/VerbEntry.lean`.
 
 ## Usage pattern
@@ -75,7 +75,7 @@ def ComplementType.toTy : ComplementType → Ty
   | .question      => (.e ⇒ .t) ⇒ .e ⇒ .t
 
 /-- The semantic type of a verb, determined by its complement type. -/
-def VerbCore.semanticType (v : VerbCore) : Ty :=
+def Verb.semanticType (v : Verb) : Ty :=
   v.complementType.toTy
 
 namespace Semantics.Composition.LexiconBuilder
@@ -116,7 +116,7 @@ def mergeLexicons {F : Frame} (lex1 lex2 : Lexicon F) : Lexicon F :=
 
     This ensures the entry's type tag matches the verb's argument structure
     by construction. -/
-def mkLexEntry (v : VerbCore) (F : Frame) (denot : F.Denot v.semanticType)
+def mkLexEntry (v : Verb) (F : Frame) (denot : F.Denot v.semanticType)
     : LexEntry F :=
   ⟨v.semanticType, denot⟩
 

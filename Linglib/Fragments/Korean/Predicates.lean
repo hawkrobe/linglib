@@ -17,8 +17,8 @@ namespace Korean.Predicates
 open Semantics.Lexical
 open Features (Causative)
 
-/-- Korean verb entry: extends VerbCore with Korean inflectional paradigm. -/
-structure KoreanVerbEntry extends VerbCore where
+/-- Korean verb entry: extends Verb with Korean inflectional paradigm. -/
+structure KoreanVerbEntry extends Verb where
   /-- Declarative form (-ta) -/
   formDecl : String
   /-- Past form (-əss-ta) -/

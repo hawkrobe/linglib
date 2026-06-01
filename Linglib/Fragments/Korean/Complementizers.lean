@@ -106,14 +106,14 @@ def kes : { form : String // form = "kes" } :=
 
 /-- *yukamsulewehay-ta* — 'regret'. Preferential negative, stative.
     @cite{bondarenko-2022} §4.3.2. -/
-def yukamsulewehayta : VerbCore where
+def yukamsulewehayta : Verb where
   form := "yukamsulewehay-ta"
   complementType := .finiteClause
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
 
 /-- *mit-ta* — 'believe'. Doxastic non-veridical, stative. -/
-def mitta : VerbCore where
+def mitta : Verb where
   form := "mit-ta"
   complementType := .finiteClause
   attitude := some (.doxastic .nonVeridical)
@@ -122,7 +122,7 @@ def mitta : VerbCore where
   opaqueContext := true
 
 /-- *sayngkakha-ta* — 'think'. Doxastic non-veridical, activity. -/
-def sayngkakhata : VerbCore where
+def sayngkakhata : Verb where
   form := "sayngkakha-ta"
   complementType := .finiteClause
   attitude := some (.doxastic .nonVeridical)
@@ -130,7 +130,7 @@ def sayngkakhata : VerbCore where
   opaqueContext := true
 
 /-- *haysekha-ta* — 'interpret'. -/
-def haysekhata : VerbCore where
+def haysekhata : Verb where
   form := "haysekha-ta"
   complementType := .finiteClause
   vendlerClass := some .activity
@@ -138,7 +138,7 @@ def haysekhata : VerbCore where
 
 /-- *selmyengha-ta* — 'explain'. Accomplishment; central to
     @cite{bondarenko-2022} §4.4.2 theme-argument analysis. -/
-def selmyenghata : VerbCore where
+def selmyenghata : Verb where
   form := "selmyengha-ta"
   complementType := .finiteClause
   vendlerClass := some .accomplishment

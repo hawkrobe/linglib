@@ -57,9 +57,9 @@ def InfComplementizer.reading : InfComplementizer → Reading :=
 -- § 2. Italian Verb Entry
 -- ════════════════════════════════════════════════════════════════
 
-/-- An Italian verb entry extending `VerbCore` with the infinitival
+/-- An Italian verb entry extending `Verb` with the infinitival
     complementizer alternation. -/
-structure ItalianVerbEntry extends VerbCore where
+structure ItalianVerbEntry extends Verb where
   /-- Which infinitival complementizers the verb selects -/
   infComplements : List InfComplementizer := []
   deriving Repr, BEq

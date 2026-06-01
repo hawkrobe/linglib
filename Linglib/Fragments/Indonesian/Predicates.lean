@@ -145,7 +145,7 @@ def TerClass.retainsSuffix : TerClass → Bool
 -- § 2: Indonesian Verb Entry
 -- ============================================================================
 
-/-- An Indonesian verb entry extending VerbCore with voice paradigm forms.
+/-- An Indonesian verb entry extending Verb with voice paradigm forms.
 
     Voice prefixes follow @cite{sneddon-1996} (§1.167–177 for *ber-*,
     §1.265–275 for *ter-*, §3.26–40 for active/passive voice):
@@ -156,7 +156,7 @@ def TerClass.retainsSuffix : TerClass → Bool
     - *ter-*: stative / accidental / abilitative (@cite{sneddon-1996} §1.265–275);
       analyzed as anticausative for causer-unspecified roots by
       @cite{beavers-udayana-2022} -/
-structure IndonesianVerbEntry extends VerbCore where
+structure IndonesianVerbEntry extends Verb where
   /-- Active voice *meN-* form (with allomorph selection). -/
   formMeN : Option String := none
   /-- Middle voice *ber-* form. -/
@@ -466,7 +466,7 @@ theorem cukur_predicted_reading :
 /-- *pecah* is a break-class verb → participates in middle alternation
     (change-of-state) and causative/inchoative alternation. -/
 theorem pecah_levin_class :
-    pecah.toVerbCore.levinClass = some .break_ := rfl
+    pecah.toVerb.levinClass = some .break_ := rfl
 
 -- § 5f: ter- class verification (@cite{sneddon-1996} §1.265–1.275)
 

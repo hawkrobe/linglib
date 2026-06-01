@@ -111,7 +111,7 @@ theorem verbal_xor_participial (c : BuryatComplementizer) :
 
     Citation form is the eventive/cognition sense; the
     polysemy is tracked via `altComplementType`. -/
-def xanaxa : VerbCore where
+def xanaxa : Verb where
   form := "xanaxa"
   complementType := .finiteClause
   altComplementType := some .finiteClause
@@ -122,14 +122,14 @@ def xanaxa : VerbCore where
 /-- *boloxo* — 'happen / become'. Eventive change-of-state verb.
     Selects situation-typed argument; relevant to §4.3.3 cross-
     linguistic-occurrence-verb generalization. -/
-def boloxo : VerbCore where
+def boloxo : Verb where
   form := "boloxo"
   complementType := .finiteClause
   vendlerClass := some .achievement
   unaccusative := true
 
 /-- *medexe* — 'know'. Factive doxastic; stative. -/
-def medexe : VerbCore where
+def medexe : Verb where
   form := "medexe"
   complementType := .finiteClause
   attitude := some (.doxastic .veridical)
@@ -137,7 +137,7 @@ def medexe : VerbCore where
 
 /-- *xelexe* — 'say'. Speech-act verb; selects bare *gɔ*-marked
     complement per @cite{bondarenko-2022} §4.3.1. -/
-def xelexe : VerbCore where
+def xelexe : Verb where
   form := "xelexe"
   complementType := .finiteClause
   speechActVerb := true

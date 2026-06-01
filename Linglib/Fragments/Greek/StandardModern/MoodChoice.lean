@@ -26,7 +26,7 @@ open Semantics.Lexical
 /-- *thélo* (θέλω) 'want' — robustly subjunctive-selecting via *na*.
     @cite{grano-2024}, (5): *na* (SBJV) required, *oti* (IND) rejected.
     Cited from @cite{giannakidou-mari-2021}. -/
-def thelo : VerbCore where
+def thelo : Verb where
   form := "thélo"
   complementType := .finiteClause
   passivizable := false
@@ -37,7 +37,7 @@ def thelo : VerbCore where
 /-- *elpízo* (ελπίζω) 'hope' — accepts both *na* (SBJV) and *oti* (IND).
     @cite{grano-2024}, (13): both complementizers accepted.
     Cited from @cite{giannakidou-mari-2021}. -/
-def elpizo : VerbCore where
+def elpizo : Verb where
   form := "elpízo"
   complementType := .finiteClause
   passivizable := false
@@ -47,7 +47,7 @@ def elpizo : VerbCore where
 /-- *protíthete* (προτίθεται) 'intend' — robustly rejects indicative.
     @cite{grano-2024}, (22): *na* (SBJV) required, *oti* (IND) rejected.
     Cited from @cite{giannakidou-mari-2021}. -/
-def protithete : VerbCore where
+def protithete : Verb where
   form := "protíthete"
   complementType := .finiteClause
   passivizable := false
@@ -58,7 +58,7 @@ def protithete : VerbCore where
 /-- *vázo* (βάζω) 'put/make' — causative, subjunctive-selecting via *na*.
     @cite{grano-2024}, (45): *na* (SBJV) required, *oti* (IND) rejected.
     Past tense form *évala* used in the paper's examples. -/
-def vazo : VerbCore where
+def vazo : Verb where
   form := "vázo"
   complementType := .finiteClause
   controlType := .objectControl

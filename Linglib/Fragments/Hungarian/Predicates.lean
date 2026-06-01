@@ -4,7 +4,7 @@ import Linglib.Semantics.Verb.Basic
 # Hungarian Predicate Lexicon Fragment
 @cite{egressy-2026}
 
-Hungarian attitude verb entries, extending `VerbCore` with the
+Hungarian attitude verb entries, extending `Verb` with the
 Hungarian inflectional paradigm. Hungarian has a distinctive
 **definite/indefinite conjugation** split: verbs agree not just with
 the subject but also with the definiteness of the object.
@@ -34,9 +34,9 @@ namespace Hungarian.Predicates
 
 open Semantics.Lexical
 
-/-- Hungarian verb entry: extends VerbCore with the definite/indefinite
+/-- Hungarian verb entry: extends Verb with the definite/indefinite
     conjugation paradigm. -/
-structure HungarianVerbEntry extends VerbCore where
+structure HungarianVerbEntry extends Verb where
   /-- English gloss -/
   gloss : String
   /-- 3sg present definite conjugation -/

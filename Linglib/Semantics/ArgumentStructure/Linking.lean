@@ -110,7 +110,7 @@ namespace Semantics.ArgumentStructure.EntailmentProfile
     Note: instrument and stimulus have identical canonical profiles
     ({causation, IE}), as do goal and source ({IE}). The function
     defaults to stimulus and goal respectively. Disambiguation requires
-    external context (e.g., `VerbCore.causalSource`). -/
+    external context (e.g., `Verb.causalSource`). -/
 def EntailmentProfile.toRole (p : EntailmentProfile) : Option ThetaRole :=
   if p.volition then some .agent
   else if p.sentience && !p.causation then some .experiencer
@@ -276,7 +276,7 @@ inductive ArgPosition where
     context type.
 
     - `Verb`: what the theory needs to know about the verb. Typically
-      `VerbCore`, but could be `EntailmentProfile` (Dowty) or
+      `Verb`, but could be `EntailmentProfile` (Dowty) or
       `EventTemplate` (Rappaport Hovav & Levin).
     - `Ctx`: what the theory considers relevant about the syntactic
       structure beyond the verb itself:

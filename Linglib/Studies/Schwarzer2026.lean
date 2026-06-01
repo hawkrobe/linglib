@@ -127,37 +127,37 @@ theorem german_vfinal_grounds_preverbal :
 
 /-- *beenden* "end" does not take a *dass*-clause complement. -/
 theorem beenden_nonselecting :
-    beenden.toVerbCore.canTakeClausalComplement = false := rfl
+    beenden.toVerb.canTakeClausalComplement = false := rfl
 
 /-- *streichen* "cancel" does not take a *dass*-clause complement. -/
 theorem streichen_nonselecting :
-    streichen.toVerbCore.canTakeClausalComplement = false := rfl
+    streichen.toVerb.canTakeClausalComplement = false := rfl
 
 /-- *übereilen* "rush" does not take a *dass*-clause complement. -/
 theorem uebereilen_nonselecting :
-    uebereilen.toVerbCore.canTakeClausalComplement = false := rfl
+    uebereilen.toVerb.canTakeClausalComplement = false := rfl
 
 /-- *entwickeln* "develop" does not take a *dass*-clause complement. -/
 theorem entwickeln_nonselecting :
-    entwickeln.toVerbCore.canTakeClausalComplement = false := rfl
+    entwickeln.toVerb.canTakeClausalComplement = false := rfl
 
 -- CP-and-DP-selecting verbs
 
 /-- *veranlassen* "induce" takes both DP and *dass*-clause. -/
 theorem veranlassen_selecting :
-    veranlassen.toVerbCore.canTakeClausalComplement = true := rfl
+    veranlassen.toVerb.canTakeClausalComplement = true := rfl
 
 /-- *vergessen* "forget" takes both DP and *dass*-clause. -/
 theorem vergessen_selecting :
-    vergessen.toVerbCore.canTakeClausalComplement = true := rfl
+    vergessen.toVerb.canTakeClausalComplement = true := rfl
 
 /-- *erwarten* "expect" takes both DP and *dass*-clause. -/
 theorem erwarten_selecting :
-    erwarten.toVerbCore.canTakeClausalComplement = true := rfl
+    erwarten.toVerb.canTakeClausalComplement = true := rfl
 
 /-- *beschließen* "decide" takes both DP and *dass*-clause. -/
 theorem beschliessen_selecting :
-    beschliessen.toVerbCore.canTakeClausalComplement = true := rfl
+    beschliessen.toVerb.canTakeClausalComplement = true := rfl
 
 -- ============================================================================
 -- § 3: Competing Analyses & Structural Predictions
@@ -419,12 +419,12 @@ def selectingVerbs : List GermanVerbEntry :=
 /-- All non-selecting verbs lack clausal complement capability. -/
 theorem nonSelecting_all_false :
     nonSelectingVerbs.all
-      (λ v => !v.toVerbCore.canTakeClausalComplement) = true := by native_decide
+      (λ v => !v.toVerb.canTakeClausalComplement) = true := by native_decide
 
 /-- All selecting verbs have clausal complement capability. -/
 theorem selecting_all_true :
     selectingVerbs.all
-      (λ v => v.toVerbCore.canTakeClausalComplement) = true := by native_decide
+      (λ v => v.toVerb.canTakeClausalComplement) = true := by native_decide
 
 /-- No verb is in both lists. -/
 theorem selecting_nonselecting_disjoint :

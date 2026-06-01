@@ -21,8 +21,8 @@ open Features (Causative)
 open Semantics.ArgumentStructure.EntailmentProfile
   (EntailmentProfile kickSubjectProfile seeSubjectProfile runSubjectProfile)
 
-/-- French verb entry: extends VerbCore with French inflectional paradigm. -/
-structure FrenchVerbEntry extends VerbCore where
+/-- French verb entry: extends Verb with French inflectional paradigm. -/
+structure FrenchVerbEntry extends Verb where
   /-- 3sg present -/
   form3sg : String
   /-- Passé simple -/

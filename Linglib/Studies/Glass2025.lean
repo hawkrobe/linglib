@@ -213,43 +213,43 @@ veridicality in the Fragment entry. These theorems will BREAK if:
 -- Factive verbs → .factive
 
 theorem know_is_factive :
-    know.toVerbCore.veridicality.map classifyVeridicality = some .factive := by
+    know.toVerb.veridicality.map classifyVeridicality = some .factive := by
   native_decide
 
 theorem realize_is_factive :
-    realize.toVerbCore.veridicality.map classifyVeridicality = some .factive := by
+    realize.toVerb.veridicality.map classifyVeridicality = some .factive := by
   native_decide
 
 theorem discover_is_factive :
-    discover.toVerbCore.veridicality.map classifyVeridicality = some .factive := by
+    discover.toVerb.veridicality.map classifyVeridicality = some .factive := by
   native_decide
 
 theorem notice_is_factive :
-    notice.toVerbCore.veridicality.map classifyVeridicality = some .factive := by
+    notice.toVerb.veridicality.map classifyVeridicality = some .factive := by
   native_decide
 
 -- Non-factive verbs → .nonfactive
 
 theorem believe_is_nonfactive :
-    believe.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    believe.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 theorem think_is_nonfactive :
-    think.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    think.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 theorem hope_is_nonfactive :
-    hope.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    hope.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 theorem fear_is_nonfactive :
-    fear.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    fear.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 -- yǐwéi: classified as nonfactive by veridicality alone
 
 theorem yiwei_veridicality_nonfactive :
-    yiwei.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    yiwei.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 -- ============================================================================
@@ -281,7 +281,7 @@ def yiweiPostsupType : PostsupType := .weakContrafactive
 
 /-- yǐwéi's veridicality gives nonfactive — no presupposition. -/
 theorem yiwei_derived_nonfactive :
-    yiwei.toVerbCore.veridicality = some .nonVeridical := by native_decide
+    yiwei.toVerb.veridicality = some .nonVeridical := by native_decide
 
 /-- The postsupposition IS necessary: veridicality alone gives .nonfactive
     (no presupposition), but yǐwéi actually has a weak contrafactive
@@ -289,7 +289,7 @@ theorem yiwei_derived_nonfactive :
     Glass's postsupposition classification shows the two diverge — veridicality
     is blind to the postsupposition. -/
 theorem yiwei_postsup_not_from_veridicality :
-    yiwei.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive ∧
+    yiwei.toVerb.veridicality.map classifyVeridicality = some .nonfactive ∧
     yiweiPostsupType = .weakContrafactive :=
   ⟨by native_decide, rfl⟩
 
@@ -320,7 +320,7 @@ theorem contrafactive_gap :
 theorem all_english_attitude_verbs_valid :
     [know, realize, discover, notice, believe, think, want, hope,
      expect, wish, fear, dread, worry].all (fun v =>
-      v.toVerbCore.veridicality.map classifyVeridicality |>.map
+      v.toVerb.veridicality.map classifyVeridicality |>.map
         presupClassIsValid |>.getD true) = true := by
   native_decide
 
@@ -338,12 +338,12 @@ This section exercises the complete pipeline for representative verbs.
 
 /-- End-to-end: "know" is factive, and factive presuppositions are valid. -/
 theorem know_endtoend_valid :
-    (know.toVerbCore.veridicality.map classifyVeridicality).map
+    (know.toVerb.veridicality.map classifyVeridicality).map
       presupClassIsValid = some true := by native_decide
 
 /-- End-to-end: "believe" is nonfactive, and nonfactive is valid. -/
 theorem believe_endtoend_valid :
-    (believe.toVerbCore.veridicality.map classifyVeridicality).map
+    (believe.toVerb.veridicality.map classifyVeridicality).map
       presupClassIsValid = some true := by native_decide
 
 /-- End-to-end: know's presupposition is satisfied in a factive context. -/

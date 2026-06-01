@@ -15,8 +15,8 @@ open Semantics.Lexical
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 open Features (Causative)
 
-/-- Japanese verb entry: extends VerbCore with Japanese inflectional paradigm. -/
-structure JapaneseVerbEntry extends VerbCore where
+/-- Japanese verb entry: extends Verb with Japanese inflectional paradigm. -/
+structure JapaneseVerbEntry extends Verb where
   /-- Nonpast finite form -/
   form3sg : String
   /-- Past form (-ta) -/
