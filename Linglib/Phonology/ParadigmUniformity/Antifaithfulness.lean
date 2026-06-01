@@ -61,7 +61,7 @@ variable {Role : Type*} {α : Type*}
     paradigmatically related forms are pushed apart rather than together. -/
 def antifaithViol [DecidableEq α] (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂).filter fun p =>
-    (c.form r₁)[p.1]? = (c.form r₂)[p.2]?).card
+    (c.form r₁)[p.1] = (c.form r₂)[p.2]).card
 
 -- ============================================================================
 -- § 2: Polarity duality with IDENT
@@ -79,7 +79,7 @@ theorem antifaith_plus_ident_eq_edge_card [DecidableEq α]
     antifaithViol c r₁ r₂ + Corr.identViol c r₁ r₂ = (c.edge r₁ r₂).card :=
   Finset.card_filter_add_card_filter_not
     (s := c.edge r₁ r₂)
-    (fun p => (c.form r₁)[p.1]? = (c.form r₂)[p.2]?)
+    (fun p => (c.form r₁)[p.1] = (c.form r₂)[p.2])
 
 -- ============================================================================
 -- § 3: Identity correspondence is maximally antifaith-violating
@@ -94,14 +94,10 @@ theorem identity_antifaith_max [DecidableEq α] (s : List α) :
   have hAdd := antifaith_plus_ident_eq_edge_card (Corr.identity s)
                   Phonology.Correspondence.Side.lhs
                   Phonology.Correspondence.Side.rhs
-  rw [Corr.identity_ident_zero] at hAdd
-  rw [Nat.add_zero] at hAdd
+  rw [Corr.identity_ident_zero, Nat.add_zero] at hAdd
   rw [hAdd]
-  show ((Corr.identity s).edge .lhs .rhs).card = s.length
-  show ((Corr.parallel s s).edge .lhs .rhs).card = s.length
-  rw [Corr.parallel_edge_lhs_rhs]
-  rw [Finset.card_image_of_injective _ (fun _ _ h => (Prod.mk.injEq _ _ _ _).mp h |>.1)]
-  simp
+  simp only [Corr.identity, Corr.parallel_edge_lhs_rhs]
+  exact (Corr.diagDiag_card s.length s.length).trans (min_self s.length)
 
 -- ============================================================================
 -- § 4: NamedConstraint bridge

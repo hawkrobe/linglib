@@ -98,17 +98,11 @@ def StratalRole.label : StratalRole → String
 /-- Build the parallel-pair edge between two equal-or-shorter forms:
     `(0, 0), (1, 1), …` up to the shorter length. The substrate edge
     type for both within-stratum (IO-correspondence) and cross-stratum
-    (feeding) relations. -/
-def parallelEdge {α : Type*} (s₁ s₂ : List α) : Finset (ℕ × ℕ) :=
-  (Finset.range (min s₁.length s₂.length)).image fun i => (i, i)
-
-theorem parallelEdge_wf {α : Type*} (s₁ s₂ : List α) :
-    ∀ p ∈ parallelEdge s₁ s₂, p.1 < s₁.length ∧ p.2 < s₂.length := by
-  intro p hmem
-  simp only [parallelEdge, Finset.mem_image, Finset.mem_range] at hmem
-  obtain ⟨i, hi, rfl⟩ := hmem
-  exact ⟨lt_of_lt_of_le hi (min_le_left _ _),
-         lt_of_lt_of_le hi (min_le_right _ _)⟩
+    (feeding) relations. The in-range bound is carried by the `Fin`-indexed
+    type (`Corr.diagDiag`), so no separate well-formedness lemma is needed. -/
+def parallelEdge {α : Type*} (s₁ s₂ : List α) :
+    Finset (Fin s₁.length × Fin s₂.length) :=
+  Corr.diagDiag s₁.length s₂.length
 
 -- ============================================================================
 -- § 3: StratalDerivation → Corr StratalRole α
@@ -174,7 +168,7 @@ end Phonology.Stratal
 namespace Phonology.StratalToTCT
 
 open Phonology.Correspondence (Corr)
-open Phonology.Stratal (StratalRole stratalDerivToCorr parallelEdge parallelEdge_wf)
+open Phonology.Stratal (StratalRole stratalDerivToCorr parallelEdge)
 open Phonology.TCT (Role)
 
 /-- The canonical projection from stratal roles to TCT roles, encoding

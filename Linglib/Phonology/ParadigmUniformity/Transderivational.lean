@@ -64,32 +64,12 @@ def diagramWithEdge {α : Type}
   form := Role.formOf input base derivative
   edge r₁ r₂ :=
     match r₁, r₂ with
-    | .base, .derivative => ooEdge
-    | .input, .base       =>
-        (Finset.range (min input.length base.length)).image fun i => (i, i)
-    | .input, .derivative =>
-        (Finset.range (min input.length derivative.length)).image fun i => (i, i)
+    | .base, .derivative =>
+        -- Lift the ℕ-indexed `ooEdge` into the `Fin`-indexed storage using `hOO`.
+        ooEdge.attach.image fun p => (⟨p.1.1, (hOO p.1 p.2).1⟩, ⟨p.1.2, (hOO p.1 p.2).2⟩)
+    | .input, .base       => Corr.diagDiag input.length base.length
+    | .input, .derivative => Corr.diagDiag input.length derivative.length
     | _, _ => ∅
-  edge_lt_length := by
-    intro r₁ r₂ p hmem
-    match r₁, r₂, hmem with
-    | .base, .derivative, h => exact hOO p h
-    | .input, .base, h =>
-        simp only [Finset.mem_image, Finset.mem_range] at h
-        obtain ⟨i, hi, rfl⟩ := h
-        exact ⟨lt_of_lt_of_le hi (min_le_left _ _),
-               lt_of_lt_of_le hi (min_le_right _ _)⟩
-    | .input, .derivative, h =>
-        simp only [Finset.mem_image, Finset.mem_range] at h
-        obtain ⟨i, hi, rfl⟩ := h
-        exact ⟨lt_of_lt_of_le hi (min_le_left _ _),
-               lt_of_lt_of_le hi (min_le_right _ _)⟩
-    | .input, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .base, .base, h => exact absurd h (Finset.notMem_empty _)
-    | .base, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .derivative, .base, h => exact absurd h (Finset.notMem_empty _)
-    | .derivative, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .derivative, .derivative, h => exact absurd h (Finset.notMem_empty _)
 
 /-- The parallel-pair specialization: the OO edge is the parallel `(i, i)`
     correspondence up to `min base.length derivative.length`. For
@@ -150,14 +130,14 @@ theorem identOO_when_equal {α : Type} [DecidableEq α]
     (input shared : List α) :
     identOOViol (diagram input shared shared) = 0 := by
   have hedge : (diagram input shared shared).edge Role.base Role.derivative =
-      (Finset.range (min shared.length shared.length)).image (fun i => (i, i)) := by
+      Corr.diagDiag shared.length shared.length := by
     simp only [diagram]
     exact Corr.diagram_edge_pos _ _ (by decide)
   unfold identOOViol Corr.identViol
   rw [hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   intro p hp
-  rw [Finset.mem_image] at hp
-  obtain ⟨i, _, rfl⟩ := hp
-  exact fun h => h rfl
+  have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (Corr.mem_diagDiag p.1 p.2).mp hp
+  simp only [not_not]
+  exact congrArg (fun i : Fin shared.length => shared[i]) (Fin.ext hpq)
 
 end Phonology.ParadigmUniformity.Transderivational

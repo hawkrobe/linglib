@@ -153,16 +153,13 @@ theorem basemapViolations_eq_zero_imp
   rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff] at hZero
   apply List.ext_getElem hLen
   intro n hn₁ hn₂
-  have hmem : (n, n) ∈ (Corr.parallel t₁ t₂).edge .lhs .rhs := by
-    rw [Corr.parallel_edge_lhs_rhs, Finset.mem_image]
-    refine ⟨n, ?_, rfl⟩
-    rw [Finset.mem_range, Nat.lt_min]
-    exact ⟨hn₁, hn₂⟩
-  have := hZero hmem
-  simp only [Corr.parallel_form_lhs, Corr.parallel_form_rhs,
-             not_not] at this
-  rw [List.getElem?_eq_getElem hn₁, List.getElem?_eq_getElem hn₂] at this
-  exact Option.some_inj.mp this
+  have hmem : ((⟨n, hn₁⟩ : Fin t₁.length), (⟨n, hn₂⟩ : Fin t₂.length)) ∈
+      (Corr.parallel t₁ t₂).edge .lhs .rhs := by
+    rw [Corr.parallel_edge_lhs_rhs]
+    exact (Corr.mem_diagDiag _ _).mpr rfl
+  have hne := hZero hmem
+  simp only [Corr.parallel_form_lhs, Corr.parallel_form_rhs, not_not] at hne
+  simpa using hne
 
 /-! ### NamedConstraint bridge -/
 
