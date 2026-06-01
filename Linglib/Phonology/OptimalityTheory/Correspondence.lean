@@ -427,34 +427,22 @@ structure IsFaithful (c : Corr Role α) (r₁ r₂ : Role) : Prop where
   uniformity : c.uniformityViol r₁ r₂ = 0
   linearity : c.linearityViol r₁ r₂ = 0
 
-/-- MAX + INTEGRITY: the edge is the graph of a function `Fin n → Fin m`. The
-    `Fin`-typed storage means `p ∈ edge` already gives `p : Fin n × Fin m`, so
-    no in-range packaging is needed. -/
+/-- MAX + INTEGRITY: the edge is the graph of a function `Fin n → Fin m` — each
+    `form r₁` position has exactly one correspondent (MAX: at least one; INTEGRITY:
+    at most one). `Fin`-typed storage means `p ∈ edge` already gives `p : Fin n × Fin m`,
+    with no in-range packaging. -/
 private theorem exists_corrFun (c : Corr Role α) (r₁ r₂ : Role)
     (hmax : c.maxViol r₁ r₂ = 0) (hint : c.integrityViol r₁ r₂ = 0) :
     ∃ f : Fin (c.form r₁).length → Fin (c.form r₂).length,
       ∀ i j, (i, j) ∈ c.edge r₁ r₂ ↔ f i = j := by
-  set E := c.edge r₁ r₂ with hE
-  have hsubL : Finset.univ ⊆ E.image Prod.fst := (maxViol_eq_zero_iff c r₁ r₂).mp hmax
-  have hfunL : ∀ i, (E.filter (fun p => p.1 = i)).card ≤ 1 :=
-    (integrityViol_eq_zero_iff c r₁ r₂).mp hint
-  have hexU : ∀ i, ∃! j, (i, j) ∈ E := by
-    intro i
-    have hmem : i ∈ E.image Prod.fst := hsubL (Finset.mem_univ i)
-    rw [Finset.mem_image] at hmem
-    obtain ⟨p, hp, hp1⟩ := hmem
-    have hpE : (i, p.2) ∈ E := by simpa [← hp1] using hp
-    refine ⟨p.2, hpE, fun j hj => ?_⟩
-    have hcard := hfunL i
-    rw [Finset.card_le_one] at hcard
-    have h1 : (i, p.2) ∈ E.filter (fun q => q.1 = i) := Finset.mem_filter.mpr ⟨hpE, rfl⟩
-    have h2 : (i, j) ∈ E.filter (fun q => q.1 = i) := Finset.mem_filter.mpr ⟨hj, rfl⟩
-    simpa using hcard _ h2 _ h1
-  choose f hf _ using fun i => hexU i
-  refine ⟨f, fun i j => ⟨fun hmem => ?_, ?_⟩⟩
-  · obtain ⟨_, _, huniq⟩ := hexU i
-    exact (huniq (f i) (hf i)).trans (huniq j hmem).symm
-  · rintro rfl; exact hf i
+  have hexU : ∀ i, ∃! j, (i, j) ∈ c.edge r₁ r₂ := fun i => by
+    obtain ⟨⟨a, b⟩, hp, rfl⟩ :=
+      Finset.mem_image.mp ((maxViol_eq_zero_iff c r₁ r₂).mp hmax (Finset.mem_univ i))
+    have hone := Finset.card_le_one.mp ((integrityViol_eq_zero_iff c r₁ r₂).mp hint a)
+    exact ⟨b, hp, fun j hj => congrArg Prod.snd
+      (hone _ (Finset.mem_filter.mpr ⟨hj, rfl⟩) _ (Finset.mem_filter.mpr ⟨hp, rfl⟩))⟩
+  choose f hf huniq using hexU
+  exact ⟨f, fun i j => ⟨fun h => (huniq i j h).symm, fun h => h ▸ hf i⟩⟩
 
 /-- **Faithful ⟺ order-isomorphism.** A correspondence is faithful (no MAX,
     DEP, INTEGRITY, UNIFORMITY, or LINEARITY violation) iff its edge is the
@@ -465,82 +453,52 @@ theorem isFaithful_iff_exists_orderIso (c : Corr Role α) (r₁ r₂ : Role) :
     c.IsFaithful r₁ r₂ ↔
       ∃ e : Fin (c.form r₁).length ≃o Fin (c.form r₂).length,
         ∀ i j, (i, j) ∈ c.edge r₁ r₂ ↔ e i = j := by
-  set n := (c.form r₁).length with hn
-  set m := (c.form r₂).length with hm
-  set E := c.edge r₁ r₂ with hE
+  set E := c.edge r₁ r₂
   constructor
   · rintro ⟨hmax, hdep, hint, huni, hlin⟩
     obtain ⟨f, mem_iff⟩ := exists_corrFun c r₁ r₂ hmax hint
-    have hfunR : ∀ j, (E.filter (fun p => p.2 = j)).card ≤ 1 :=
-      (uniformityViol_eq_zero_iff c r₁ r₂).mp huni
-    have hnoinv : ∀ p ∈ E, ∀ q ∈ E, p.1 < q.1 → ¬ q.2 < p.2 :=
-      (linearityViol_eq_zero_iff c r₁ r₂).mp hlin
-    -- UNIFORMITY: `f` is injective.
-    have hinj : Function.Injective f := by
-      intro a b hab
-      have ha : (a, f a) ∈ E := (mem_iff a (f a)).mpr rfl
-      have hb : (b, f b) ∈ E := (mem_iff b (f b)).mpr rfl
-      rw [hab] at ha
-      have hcard := hfunR (f b)
-      rw [Finset.card_le_one] at hcard
-      have h1 : (a, f b) ∈ E.filter (fun p => p.2 = f b) := Finset.mem_filter.mpr ⟨ha, rfl⟩
-      have h2 : (b, f b) ∈ E.filter (fun p => p.2 = f b) := Finset.mem_filter.mpr ⟨hb, rfl⟩
-      exact (Prod.ext_iff.mp (hcard _ h1 _ h2)).1
-    -- DEP: `f` is surjective.
-    have hsubR : Finset.univ ⊆ E.image Prod.snd := (depViol_eq_zero_iff c r₁ r₂).mp hdep
-    have hsurj : Function.Surjective f := by
-      intro j
-      have hmem : j ∈ E.image Prod.snd := hsubR (Finset.mem_univ j)
-      rw [Finset.mem_image] at hmem
-      obtain ⟨p, hp, hp2⟩ := hmem
-      exact ⟨p.1, (mem_iff p.1 j).mp (by simpa [← hp2] using hp)⟩
-    -- LINEARITY = 0: `f` is strictly monotone.
+    have memf : ∀ i, (i, f i) ∈ E := fun i => (mem_iff i (f i)).mpr rfl
+    -- UNIFORMITY rules out collisions, LINEARITY rules out inversions: `f` is strictly
+    -- monotone (whence injective for free).
     have hmono : StrictMono f := by
       intro a b hab
-      have ha : (a, f a) ∈ E := (mem_iff a (f a)).mpr rfl
-      have hb : (b, f b) ∈ E := (mem_iff b (f b)).mpr rfl
-      rcases lt_or_gt_of_ne (fun h => (ne_of_lt hab) (hinj h)) with h | h
+      rcases lt_trichotomy (f a) (f b) with h | h | h
       · exact h
-      · exact absurd h (hnoinv _ ha _ hb hab)
-    refine ⟨StrictMono.orderIsoOfSurjective f hmono hsurj, fun i j => ?_⟩
-    rw [mem_iff, StrictMono.coe_orderIsoOfSurjective]
-  · rintro ⟨e, he⟩
-    -- The edge is `{(i, e i)}`; each zero follows from `e` being a bijection.
-    have hmem : ∀ i j, (i, j) ∈ E ↔ e i = j := he
-    refine ⟨?_, ?_, ?_, ?_, ?_⟩
-    · rw [maxViol_eq_zero_iff]
-      intro i _
-      rw [Finset.mem_image]
-      exact ⟨(i, e i), (hmem i (e i)).mpr rfl, rfl⟩
-    · rw [depViol_eq_zero_iff]
-      intro j _
-      rw [Finset.mem_image]
-      exact ⟨(e.symm j, j), (hmem (e.symm j) j).mpr (e.apply_symm_apply j), rfl⟩
-    · rw [integrityViol_eq_zero_iff]
-      intro i
-      rw [Finset.card_le_one]
-      intro p hp q hq
-      rw [Finset.mem_filter] at hp hq
-      have hp' := (hmem p.1 p.2).mp hp.1
-      have hq' := (hmem q.1 q.2).mp hq.1
-      apply Prod.ext (hp.2.trans hq.2.symm)
-      rw [← hp', ← hq', hp.2, hq.2]
-    · rw [uniformityViol_eq_zero_iff]
+      · have hu := Finset.card_le_one.mp ((uniformityViol_eq_zero_iff c r₁ r₂).mp huni (f b))
+        exact absurd (congrArg Prod.fst <| hu _ (Finset.mem_filter.mpr ⟨memf a, h⟩)
+          _ (Finset.mem_filter.mpr ⟨memf b, rfl⟩)) (ne_of_lt hab)
+      · exact absurd h ((linearityViol_eq_zero_iff c r₁ r₂).mp hlin _ (memf a) _ (memf b) hab)
+    -- DEP makes `f` surjective.
+    have hsurj : Function.Surjective f := by
       intro j
-      rw [Finset.card_le_one]
-      intro p hp q hq
+      obtain ⟨p, hp, hp2⟩ := Finset.mem_image.mp
+        ((depViol_eq_zero_iff c r₁ r₂).mp hdep (Finset.mem_univ j))
+      exact ⟨p.1, (mem_iff p.1 j).mp (by simpa [← hp2] using hp)⟩
+    exact ⟨StrictMono.orderIsoOfSurjective f hmono hsurj,
+      fun i j => by rw [mem_iff, StrictMono.coe_orderIsoOfSurjective]⟩
+  · -- The edge is the graph `{(i, e i)}`; each zero is a face of `e` being an order iso.
+    rintro ⟨e, he⟩
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · exact (maxViol_eq_zero_iff c r₁ r₂).mpr fun i _ =>
+        Finset.mem_image.mpr ⟨(i, e i), (he i (e i)).mpr rfl, rfl⟩
+    · exact (depViol_eq_zero_iff c r₁ r₂).mpr fun j _ =>
+        Finset.mem_image.mpr ⟨(e.symm j, j), (he _ j).mpr (e.apply_symm_apply j), rfl⟩
+    · refine (integrityViol_eq_zero_iff c r₁ r₂).mpr fun i =>
+        Finset.card_le_one.mpr fun p hp q hq => ?_
       rw [Finset.mem_filter] at hp hq
-      have hp' := (hmem p.1 p.2).mp hp.1
-      have hq' := (hmem q.1 q.2).mp hq.1
-      have hpj : e p.1 = j := hp'.trans hp.2
-      have hqj : e q.1 = j := hq'.trans hq.2
-      have : p.1 = q.1 := e.injective (hpj.trans hqj.symm)
-      exact Prod.ext this (hp.2.trans hq.2.symm)
-    · rw [linearityViol_eq_zero_iff]
-      intro p hp q hq hpq
-      have hp' := (hmem p.1 p.2).mp hp
-      have hq' := (hmem q.1 q.2).mp hq
-      rw [← hp', ← hq']
+      exact Prod.ext (hp.2.trans hq.2.symm) <| calc
+        p.2 = e p.1 := ((he p.1 p.2).mp hp.1).symm
+        _   = e q.1 := by rw [hp.2.trans hq.2.symm]
+        _   = q.2   := (he q.1 q.2).mp hq.1
+    · refine (uniformityViol_eq_zero_iff c r₁ r₂).mpr fun j =>
+        Finset.card_le_one.mpr fun p hp q hq => ?_
+      rw [Finset.mem_filter] at hp hq
+      refine Prod.ext (e.injective ?_) (hp.2.trans hq.2.symm)
+      calc e p.1 = p.2 := (he p.1 p.2).mp hp.1
+        _ = q.2   := hp.2.trans hq.2.symm
+        _ = e q.1 := ((he q.1 q.2).mp hq.1).symm
+    · refine (linearityViol_eq_zero_iff c r₁ r₂).mpr fun p hp q hq hpq => ?_
+      rw [← (he p.1 p.2).mp hp, ← (he q.1 q.2).mp hq]
       exact not_lt.mpr (le_of_lt (e.lt_iff_lt.mpr hpq))
 
 /-- **Faithful ⟹ order-isomorphism** (the forward direction of
