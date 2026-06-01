@@ -28,7 +28,7 @@ inductive DistributiveNumerals where
   | markedByFollowingWord
   /-- Marked by mixed or other strategies (23 languages). -/
   | markedByMixedOrOtherStrategies
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 54A dataset (251 languages). -/
 def allData : List (Datapoint DistributiveNumerals) :=
@@ -286,9 +286,9 @@ def allData : List (Datapoint DistributiveNumerals) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint DistributiveNumerals) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint DistributiveNumerals) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F54A

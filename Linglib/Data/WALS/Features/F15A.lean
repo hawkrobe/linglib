@@ -30,7 +30,7 @@ inductive WeightSensitiveStress where
   | notPredictable
   /-- Fixed stress (no weight-sensitivity) (281 languages). -/
   | fixedStress
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 15A dataset (500 languages). -/
 def allData : List (Datapoint WeightSensitiveStress) :=
@@ -537,9 +537,9 @@ def allData : List (Datapoint WeightSensitiveStress) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint WeightSensitiveStress) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint WeightSensitiveStress) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F15A

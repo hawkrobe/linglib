@@ -24,7 +24,7 @@ inductive OrderOfPersonMarkersOnTheVerb where
   | bothOrdersOfAAndPOccur
   /-- A and P are fused (20 languages). -/
   | aAndPAreFused
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 104A dataset (379 languages). -/
 def allData : List (Datapoint OrderOfPersonMarkersOnTheVerb) :=
@@ -410,9 +410,9 @@ def allData : List (Datapoint OrderOfPersonMarkersOnTheVerb) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint OrderOfPersonMarkersOnTheVerb) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint OrderOfPersonMarkersOnTheVerb) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F104A

@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 76A: Overlap between Situational and Epistemic Modal Marking
-@cite{vanbogaert-2013}
+@cite{vanderauwera-ammann-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 76A`.
@@ -20,7 +20,7 @@ inductive ModalOverlap where
   | overlapForEitherPossibilityOrNecessity
   /-- No overlap (105 languages). -/
   | noOverlap
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 76A dataset (207 languages). -/
 def allData : List (Datapoint ModalOverlap) :=
@@ -234,9 +234,9 @@ def allData : List (Datapoint ModalOverlap) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ModalOverlap) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ModalOverlap) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F76A

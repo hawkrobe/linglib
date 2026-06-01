@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 90F: Adjoined relative clauses
-@cite{wals-2013}
+@cite{dryer-2013-wals}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 90F`.
@@ -18,7 +18,7 @@ inductive AdjoinedRelativeClauses where
   | relativeClauseDominant
   /-- Adjoined or correlative (2 languages). -/
   | orCorrelative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 90F dataset (10 languages). -/
 def allData : List (Datapoint AdjoinedRelativeClauses) :=
@@ -35,9 +35,9 @@ def allData : List (Datapoint AdjoinedRelativeClauses) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint AdjoinedRelativeClauses) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint AdjoinedRelativeClauses) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F90F

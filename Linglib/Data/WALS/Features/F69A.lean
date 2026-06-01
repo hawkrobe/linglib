@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 69A: Position of Tense-Aspect Affixes
-@cite{dahl-2013}
+@cite{dryer-2013-wals}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 69A`.
@@ -24,7 +24,7 @@ inductive TenseAspectAffixPosition where
   | mixedType
   /-- No tense-aspect inflection (152 languages). -/
   | noTenseAspectInflection
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint TenseAspectAffixPosition) :=
   [ { walsCode := "ani", iso := "hnh", value := .tenseAspectSuffixes }
@@ -1170,9 +1170,9 @@ private def allData_2 : List (Datapoint TenseAspectAffixPosition) :=
 def allData : List (Datapoint TenseAspectAffixPosition) := allData_0 ++ allData_1 ++ allData_2
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint TenseAspectAffixPosition) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint TenseAspectAffixPosition) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F69A

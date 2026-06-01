@@ -24,7 +24,7 @@ inductive ConsonantVowelRatio where
   | moderatelyHigh
   /-- High (69 languages). -/
   | high
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint ConsonantVowelRatio) :=
   [ { walsCode := "xoo", iso := "nmn", value := .high }
@@ -600,9 +600,9 @@ private def allData_1 : List (Datapoint ConsonantVowelRatio) :=
 def allData : List (Datapoint ConsonantVowelRatio) := allData_0 ++ allData_1
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ConsonantVowelRatio) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ConsonantVowelRatio) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F3A

@@ -108,7 +108,7 @@ FEATURES = {
         "name": "Antipassive Constructions",
         "chapter": 108,
         "enum": "AntipassiveType",
-        "author": "polinsky-2013",
+        "author": "polinsky-2013-antipassive",
         "values": {
             1: ("implicitPatient", "Implicit patient"),
             2: ("obliquePatient", "Oblique patient"),
@@ -119,7 +119,7 @@ FEATURES = {
         "name": "Productivity of the Antipassive Construction",
         "chapter": 108,
         "enum": "AntipassiveProductivity",
-        "author": "polinsky-2013",
+        "author": "polinsky-2013-antipassive",
         "values": {
             1: ("productive", "Productive"),
             2: ("partiallyProductive", "Partially productive"),
@@ -131,7 +131,7 @@ FEATURES = {
         "name": "Applicative Constructions",
         "chapter": 109,
         "enum": "ApplicativeType",
-        "author": "polinsky-2013",
+        "author": "polinsky-2013-applicative",
         "values": {
             1: ("benefactiveBothBases", "Benefactive object; both bases"),
             2: ("benefactiveTransOnly", "Benefactive object; only transitive"),
@@ -147,7 +147,7 @@ FEATURES = {
         "name": "Other Roles of Applied Objects",
         "chapter": 109,
         "enum": "AppliedObjectRole",
-        "author": "polinsky-2013",
+        "author": "polinsky-2013-applicative",
         "values": {
             1: ("instrument", "Instrument"),
             2: ("locative", "Locative"),
@@ -160,7 +160,7 @@ FEATURES = {
         "name": "Periphrastic Causative Constructions",
         "chapter": 110,
         "enum": "PeriphrasticCausativeType",
-        "author": "song-2013",
+        "author": "song-2013-periphrastic",
         "values": {
             1: ("sequentialOnly", "Sequential but no purposive"),
             2: ("purposiveOnly", "Purposive but no sequential"),
@@ -171,7 +171,7 @@ FEATURES = {
         "name": "Nonperiphrastic Causative Constructions",
         "chapter": 111,
         "enum": "NonperiphrCausativeType",
-        "author": "song-2013",
+        "author": "song-2013-nonperiphrastic",
         "values": {
             1: ("neither", "Neither"),
             2: ("morphologicalOnly", "Morphological but no compound"),
@@ -210,14 +210,14 @@ AUTO_FEATURES = {
     "66A": {"enum": "PastTenseType",       "author": "dahl-2013"},
     "67A": {"enum": "FutureTenseType",     "author": "dahl-2013"},
     "68A": {"enum": "PerfectType",         "author": "dahl-2013"},
-    "69A": {"enum": "TenseAspectAffixPosition", "author": "dahl-2013"},
+    "69A": {"enum": "TenseAspectAffixPosition", "author": "dryer-2013-wals"},
 
     # ── Modality/Evidentiality (Ch 74–78) ──────────────────────────────
-    "74A": {"enum": "SituationalPossibility", "author": "vanbogaert-2013"},
-    "75A": {"enum": "EpistemicPossibility", "author": "vanbogaert-2013"},
-    "76A": {"enum": "ModalOverlap",        "author": "vanbogaert-2013"},
-    "77A": {"enum": "EvidentialityDistinctions", "author": "deandradedehaanValenzuela-2013"},
-    "78A": {"enum": "EvidentialityCoding", "author": "deandradedehaanValenzuela-2013"},
+    "74A": {"enum": "SituationalPossibility", "author": "vanderauwera-ammann-2013"},
+    "75A": {"enum": "EpistemicPossibility", "author": "vanderauwera-ammann-2013"},
+    "76A": {"enum": "ModalOverlap",        "author": "vanderauwera-ammann-2013"},
+    "77A": {"enum": "EvidentialityDistinctions", "author": "de-haan-2013"},
+    "78A": {"enum": "EvidentialityCoding", "author": "de-haan-2013b"},
 
     # ── Negation (Ch 112–115, 143) ─────────────────────────────────────
     "112A": {"enum": "NegativeMorphemeType", "author": "dryer-2013-wals"},
@@ -232,9 +232,9 @@ AUTO_FEATURES = {
     # ── Gender/Number (Ch 30–31, 33–35) ────────────────────────────────
     "30A": {"enum": "GenderCount",         "author": "corbett-2013"},
     "31A": {"enum": "GenderBasis",         "author": "corbett-2013"},
-    "33A": {"enum": "PluralityCoding",     "author": "haspelmath-2013b"},
+    "33A": {"enum": "PluralityCoding",     "author": "dryer-2013-wals"},
     "34A": {"enum": "PluralityOccurrence", "author": "haspelmath-2013b"},
-    "35A": {"enum": "PronounPlurality",    "author": "haspelmath-2013b"},
+    "35A": {"enum": "PronounPlurality",    "author": "daniel-2013"},
 
     # ── Reflexives (Ch 47) ─────────────────────────────────────────────
     "47A": {"enum": "IntensifierReflexive", "author": "koenig-siemund-2013"},
@@ -444,16 +444,16 @@ _WARNED_CHAPTERS = set()
 def chapter_author(chapter):
     """Look up the bibkey for the author of a WALS chapter.
 
-    Falls back to `dryer-2013-wals` (the umbrella WALS entry) and prints a
+    Falls back to `wals-2013` (the generic WALS Online citation) and prints a
     one-time warning for any chapter without a curated author. Add the chapter
     to FEATURES or AUTO_FEATURES with an `author` field to silence the warning.
     """
     if chapter in _CHAPTER_AUTHOR:
         return _CHAPTER_AUTHOR[chapter]
     if chapter not in _WARNED_CHAPTERS:
-        print(f"  ⚠ chapter {chapter}: no curated author, using dryer-2013-wals fallback")
+        print(f"  ⚠ chapter {chapter}: no curated author, using wals-2013 fallback")
         _WARNED_CHAPTERS.add(chapter)
-    return "dryer-2013-wals"
+    return "wals-2013"
 
 
 def resolve_feature(feature_id, codes, params):
@@ -583,7 +583,7 @@ def generate_feature(feature_id, cfg, langs):
         ctor, desc = cfg["values"][num]
         lines.append(f'  /-- {desc} ({counts.get(num, 0)} languages). -/')
         lines.append(f'  | {ctor}')
-    lines.append(f'  deriving DecidableEq, BEq, Repr')
+    lines.append(f'  deriving DecidableEq, Repr')
     lines.append(f'')
 
     # Data — split into chunks of 500 for large features to avoid maxRecDepth
@@ -628,10 +628,10 @@ def generate_feature(feature_id, cfg, langs):
 
     # Lookup wrappers (delegate to generic Datapoint.lookup / Datapoint.lookupISO)
     lines.append(f'/-- Look up a language by WALS code. -/')
-    lines.append(f'def lookup (code : String) := Datapoint.lookup allData code')
+    lines.append(f'def lookup (code : String) : Option ({dp_type}) := Datapoint.lookup allData code')
     lines.append(f'')
     lines.append(f'/-- Look up a language by ISO 639-3 code. -/')
-    lines.append(f'def lookupISO (iso : String) := Datapoint.lookupISO allData iso')
+    lines.append(f'def lookupISO (iso : String) : Option ({dp_type}) := Datapoint.lookupISO allData iso')
     lines.append(f'')
 
     lines.append(f'end Data.WALS.F{fid_clean}')
@@ -673,7 +673,7 @@ def generate_languages(langs, used_ids):
     lines.append('  iso : String')
     lines.append('  family : String')
     lines.append('  genus : String')
-    lines.append('  deriving Repr, BEq, DecidableEq')
+    lines.append('  deriving DecidableEq, Repr')
     lines.append('')
 
     # Split into chunks

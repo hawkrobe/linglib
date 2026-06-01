@@ -28,7 +28,7 @@ inductive GreenAndBlue where
   | yellowGreenVsBlue
   /-- None (2 languages). -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 134A dataset (120 languages). -/
 def allData : List (Datapoint GreenAndBlue) :=
@@ -155,9 +155,9 @@ def allData : List (Datapoint GreenAndBlue) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint GreenAndBlue) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint GreenAndBlue) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F134A

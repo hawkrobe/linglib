@@ -18,7 +18,7 @@ inductive ObligatoryPossessiveInflection where
   | exists
   /-- Absent (201 languages). -/
   | absent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 58A dataset (244 languages). -/
 def allData : List (Datapoint ObligatoryPossessiveInflection) :=
@@ -269,9 +269,9 @@ def allData : List (Datapoint ObligatoryPossessiveInflection) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ObligatoryPossessiveInflection) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ObligatoryPossessiveInflection) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F58A

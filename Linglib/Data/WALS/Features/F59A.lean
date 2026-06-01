@@ -22,7 +22,7 @@ inductive PossessiveClassification where
   | threeToFiveClasses
   /-- More than five classes (4 languages). -/
   | moreThanFiveClasses
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 59A dataset (243 languages). -/
 def allData : List (Datapoint PossessiveClassification) :=
@@ -272,9 +272,9 @@ def allData : List (Datapoint PossessiveClassification) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PossessiveClassification) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PossessiveClassification) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F59A

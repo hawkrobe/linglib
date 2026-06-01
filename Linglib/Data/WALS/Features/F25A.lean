@@ -24,7 +24,7 @@ inductive LocusOfMarkingWholeLanguageTypology where
   | zeroMarking
   /-- Inconsistent or other (121 languages). -/
   | inconsistentOrOther
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 25A dataset (236 languages). -/
 def allData : List (Datapoint LocusOfMarkingWholeLanguageTypology) :=
@@ -267,9 +267,9 @@ def allData : List (Datapoint LocusOfMarkingWholeLanguageTypology) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint LocusOfMarkingWholeLanguageTypology) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint LocusOfMarkingWholeLanguageTypology) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F25A

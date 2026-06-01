@@ -22,7 +22,7 @@ inductive NumeralNounOrder where
   | noDominantOrder
   /-- Numeral only modifies verb (2 languages). -/
   | numeralOnlyModifiesVerb
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint NumeralNounOrder) :=
   [ { walsCode := "ani", iso := "hnh", value := .numeralNoun }
@@ -1191,9 +1191,9 @@ private def allData_2 : List (Datapoint NumeralNounOrder) :=
 def allData : List (Datapoint NumeralNounOrder) := allData_0 ++ allData_1 ++ allData_2
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint NumeralNounOrder) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint NumeralNounOrder) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F89A

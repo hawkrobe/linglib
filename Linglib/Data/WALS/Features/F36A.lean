@@ -22,7 +22,7 @@ inductive AssociativePlural where
   | uniquePeriphrasticAssociativePlural
   /-- No associative plural (37 languages). -/
   | noAssociativePlural
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 36A dataset (236 languages). -/
 def allData : List (Datapoint AssociativePlural) :=
@@ -265,9 +265,9 @@ def allData : List (Datapoint AssociativePlural) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint AssociativePlural) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint AssociativePlural) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F36A

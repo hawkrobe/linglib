@@ -26,7 +26,7 @@ inductive WritingSystems where
   | logographic
   /-- Mixed logographic–syllabic (0 languages). -/
   | mixedLogographicSyllabic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 141A dataset (6 languages). -/
 def allData : List (Datapoint WritingSystems) :=
@@ -39,9 +39,9 @@ def allData : List (Datapoint WritingSystems) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint WritingSystems) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint WritingSystems) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F141A

@@ -22,7 +22,7 @@ inductive PastTenseType where
   | present4OrMoreRemotenessDistinctions
   /-- No past tense (88 languages). -/
   | noPastTense
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 66A dataset (222 languages). -/
 def allData : List (Datapoint PastTenseType) :=
@@ -251,9 +251,9 @@ def allData : List (Datapoint PastTenseType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PastTenseType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PastTenseType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F66A

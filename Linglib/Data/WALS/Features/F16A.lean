@@ -28,7 +28,7 @@ inductive WeightFactorsInWeightSensitiveStressSystems where
   | lexicalStress
   /-- Combined (42 languages). -/
   | combined
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 16A dataset (500 languages). -/
 def allData : List (Datapoint WeightFactorsInWeightSensitiveStressSystems) :=
@@ -535,9 +535,9 @@ def allData : List (Datapoint WeightFactorsInWeightSensitiveStressSystems) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint WeightFactorsInWeightSensitiveStressSystems) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint WeightFactorsInWeightSensitiveStressSystems) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F16A

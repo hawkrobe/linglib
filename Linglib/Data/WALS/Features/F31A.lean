@@ -20,7 +20,7 @@ inductive GenderBasis where
   | sexBased
   /-- Non-sex-based (28 languages). -/
   | nonSexBased
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 31A dataset (257 languages). -/
 def allData : List (Datapoint GenderBasis) :=
@@ -284,9 +284,9 @@ def allData : List (Datapoint GenderBasis) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint GenderBasis) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint GenderBasis) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F31A

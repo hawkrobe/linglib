@@ -22,7 +22,7 @@ inductive SnegovOrder where
   | onlywithanotherneg
   /-- No SNegOV (368 languages). -/
   | noSnegov
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144Q dataset (408 languages). -/
 def allData : List (Datapoint SnegovOrder) :=
@@ -437,9 +437,9 @@ def allData : List (Datapoint SnegovOrder) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SnegovOrder) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SnegovOrder) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F144Q

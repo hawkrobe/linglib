@@ -24,7 +24,7 @@ inductive LocusOfMarkingInTheClause where
   | noMarking
   /-- Other (2 languages). -/
   | other
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 23A dataset (236 languages). -/
 def allData : List (Datapoint LocusOfMarkingInTheClause) :=
@@ -267,9 +267,9 @@ def allData : List (Datapoint LocusOfMarkingInTheClause) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint LocusOfMarkingInTheClause) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint LocusOfMarkingInTheClause) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F23A

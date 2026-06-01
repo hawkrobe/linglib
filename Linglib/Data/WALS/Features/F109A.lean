@@ -30,7 +30,7 @@ inductive ApplicativeType where
   | nonBenefactiveIntransOnly
   /-- No applicative construction (100 languages). -/
   | noApplicative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 109A dataset (183 languages). -/
 def allData : List (Datapoint ApplicativeType) :=
@@ -220,9 +220,9 @@ def allData : List (Datapoint ApplicativeType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ApplicativeType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ApplicativeType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F109A

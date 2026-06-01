@@ -70,7 +70,7 @@ inductive MultipleNegativeConstructionsInSvoLanguages where
   | svoVosNegv
   /-- SVO/SOV & NegV/VNeg (1 languages). -/
   | svoSovNegvVneg
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144E dataset (48 languages). -/
 def allData : List (Datapoint MultipleNegativeConstructionsInSvoLanguages) :=
@@ -125,9 +125,9 @@ def allData : List (Datapoint MultipleNegativeConstructionsInSvoLanguages) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint MultipleNegativeConstructionsInSvoLanguages) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint MultipleNegativeConstructionsInSvoLanguages) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F144E

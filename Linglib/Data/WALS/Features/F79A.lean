@@ -22,7 +22,7 @@ inductive SuppletionAccordingToTenseAndAspect where
   | tenseAndAspect
   /-- None (123 languages). -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 79A dataset (193 languages). -/
 def allData : List (Datapoint SuppletionAccordingToTenseAndAspect) :=
@@ -222,9 +222,9 @@ def allData : List (Datapoint SuppletionAccordingToTenseAndAspect) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SuppletionAccordingToTenseAndAspect) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SuppletionAccordingToTenseAndAspect) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F79A

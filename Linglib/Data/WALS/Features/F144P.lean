@@ -22,7 +22,7 @@ inductive NegsovOrder where
   | onlywithanotherneg
   /-- No NegSOV (381 languages). -/
   | noNegsov
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144P dataset (408 languages). -/
 def allData : List (Datapoint NegsovOrder) :=
@@ -437,9 +437,9 @@ def allData : List (Datapoint NegsovOrder) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint NegsovOrder) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint NegsovOrder) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F144P

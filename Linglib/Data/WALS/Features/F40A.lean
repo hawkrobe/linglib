@@ -24,7 +24,7 @@ inductive InclusiveExclusiveDistinctionInVerbalInflection where
   | onlyInclusive
   /-- Inclusive/exclusive (30 languages). -/
   | inclusiveExclusive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 40A dataset (200 languages). -/
 def allData : List (Datapoint InclusiveExclusiveDistinctionInVerbalInflection) :=
@@ -231,9 +231,9 @@ def allData : List (Datapoint InclusiveExclusiveDistinctionInVerbalInflection) :
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint InclusiveExclusiveDistinctionInVerbalInflection) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint InclusiveExclusiveDistinctionInVerbalInflection) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F40A

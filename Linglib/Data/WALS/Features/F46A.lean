@@ -24,7 +24,7 @@ inductive IndefinitePronouns where
   | mixed
   /-- Existential construction (2 languages). -/
   | existentialConstruction
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 46A dataset (326 languages). -/
 def allData : List (Datapoint IndefinitePronouns) :=
@@ -357,9 +357,9 @@ def allData : List (Datapoint IndefinitePronouns) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint IndefinitePronouns) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint IndefinitePronouns) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F46A

@@ -22,7 +22,7 @@ inductive SvonegOrder where
   | onlywithanotherneg
   /-- No SVONeg (304 languages). -/
   | noSvoneg
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144K dataset (446 languages). -/
 def allData : List (Datapoint SvonegOrder) :=
@@ -475,9 +475,9 @@ def allData : List (Datapoint SvonegOrder) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SvonegOrder) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SvonegOrder) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F144K

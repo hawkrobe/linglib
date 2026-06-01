@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 143C: Optional Double Negation
-@cite{wals-2013}
+@cite{dryer-2013-wals}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 143C`.
@@ -60,7 +60,7 @@ inductive OptionalDoubleNegation where
   | negvNegVNegNegV
   /-- OptDoubleNeg&OptTripleNeg (1 languages). -/
   | optdoublenegOpttripleneg
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 143C dataset (81 languages). -/
 def allData : List (Datapoint OptionalDoubleNegation) :=
@@ -148,9 +148,9 @@ def allData : List (Datapoint OptionalDoubleNegation) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint OptionalDoubleNegation) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint OptionalDoubleNegation) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F143C

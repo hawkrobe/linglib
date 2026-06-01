@@ -24,7 +24,7 @@ inductive IndefiniteArticleType where
   | noIndefiniteButDefiniteArticle
   /-- No definite or indefinite article (198 languages). -/
   | noDefiniteOrIndefiniteArticle
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint IndefiniteArticleType) :=
   [ { walsCode := "aar", iso := "aiw", value := .noIndefiniteButDefiniteArticle }
@@ -570,9 +570,9 @@ private def allData_1 : List (Datapoint IndefiniteArticleType) :=
 def allData : List (Datapoint IndefiniteArticleType) := allData_0 ++ allData_1
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint IndefiniteArticleType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint IndefiniteArticleType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F38A

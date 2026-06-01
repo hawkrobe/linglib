@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 77A: Semantic Distinctions of Evidentiality
-@cite{deandradedehaanValenzuela-2013}
+@cite{de-haan-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 77A`.
@@ -20,7 +20,7 @@ inductive EvidentialityDistinctions where
   | indirectOnly
   /-- Direct and indirect (71 languages). -/
   | directAndIndirect
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 77A dataset (418 languages). -/
 def allData : List (Datapoint EvidentialityDistinctions) :=
@@ -445,9 +445,9 @@ def allData : List (Datapoint EvidentialityDistinctions) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint EvidentialityDistinctions) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint EvidentialityDistinctions) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F77A
