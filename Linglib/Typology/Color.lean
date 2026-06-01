@@ -22,16 +22,13 @@ the Berlin & Kay tradition.
 - `RedYellowRelation` (Ch 135): red/yellow boundary
 - `ColorProfile`: per-language bundle (all four chapters)
 
-Per-language data lives in `Fragments/{Lang}/Color.lean`.
+Per-language data lives in `Fragments/{Lang}/Color.lean`, derived from the
+WALS rows via `ColorProfile.fromWALS` rather than hand-transcribed.
 -/
-
-set_option autoImplicit false
 
 namespace Typology
 
--- ============================================================================
--- WALS Ch 132: Number of non-derived basic color categories
--- ============================================================================
+/-! ### WALS Ch 132: Number of non-derived basic color categories -/
 
 /-- Number of non-derived basic color categories (WALS Ch 132,
     @cite{kay-maffi-2013}). Ranges from 3 to 6 along the Berlin & Kay
@@ -47,13 +44,12 @@ inductive NonDerivedColorCount where
   | six
   deriving DecidableEq, Repr
 
--- ============================================================================
--- WALS Ch 133: Total number of basic color categories
--- ============================================================================
+/-! ### WALS Ch 133: Total number of basic color categories -/
 
 /-- Total number of basic color categories including derived ones
-    (WALS Ch 133, @cite{kay-maffi-2013}). Ranges from 3–4 (minimal systems)
-    to 11 (maximal, e.g., English, Russian). -/
+    (WALS Ch 133, @cite{kay-maffi-2013a}). Ranges from 3–4 (minimal systems)
+    to the top bucket, WALS's "more than 10" — canonically 11 basic terms,
+    the Berlin & Kay Stage-VII maximum (e.g., English, Russian). -/
 inductive BasicColorCount where
   | v3to4
   | v4to5
@@ -64,12 +60,10 @@ inductive BasicColorCount where
   | v11
   deriving DecidableEq, Repr
 
--- ============================================================================
--- WALS Ch 134: Green and blue
--- ============================================================================
+/-! ### WALS Ch 134: Green and blue -/
 
 /-- How a language treats the green-blue region of color space
-    (WALS Ch 134, @cite{kay-maffi-2013}). The classic *grue* / green-blue
+    (WALS Ch 134, @cite{kay-maffi-2013b}). The classic *grue* / green-blue
     composite distinction, with several other composite patterns
     (with black, with yellow). -/
 inductive GreenBlueRelation where
@@ -89,12 +83,10 @@ inductive GreenBlueRelation where
   | noTerm
   deriving DecidableEq, Repr
 
--- ============================================================================
--- WALS Ch 135: Red and yellow
--- ============================================================================
+/-! ### WALS Ch 135: Red and yellow -/
 
 /-- How a language treats the red-yellow region of color space
-    (WALS Ch 135, @cite{kay-maffi-2013}). -/
+    (WALS Ch 135, @cite{kay-maffi-2013c}). -/
 inductive RedYellowRelation where
   /-- Separate terms for red and yellow. -/
   | distinct
@@ -108,9 +100,7 @@ inductive RedYellowRelation where
   | noTerm
   deriving DecidableEq, Repr
 
--- ============================================================================
--- Per-language profile
--- ============================================================================
+/-! ### Per-language profile -/
 
 /-- A language's color-naming profile across @cite{wals-2013} Chs 132–135.
     Coverage is sparse (~120 languages); fields are optional. -/
@@ -128,9 +118,7 @@ structure ColorProfile where
   redYellow : Option RedYellowRelation := none
   deriving Repr
 
--- ============================================================================
--- WALS converters
--- ============================================================================
+/-! ### WALS converters -/
 
 /-- Convert WALS 132A non-derived-color-count values into the substrate enum. -/
 def fromWALS132A : Data.WALS.F132A.NumberOfNonDerivedBasicColourCategories → NonDerivedColorCount
@@ -170,12 +158,24 @@ def fromWALS135A : Data.WALS.F135A.RedAndYellow → RedYellowRelation
   | .yellowGreenVsRed     => .yellowGreenVsRed
   | .none                 => .noTerm
 
--- ============================================================================
--- WALS distribution data
--- ============================================================================
+/-- Build a `ColorProfile` from the WALS Chs 132–135 rows for an ISO 639-3
+    code, mapping each chapter's datapoint through its converter; a field for
+    which WALS has no row is `none`. Makes the per-language Fragment profiles
+    true-by-construction from the auto-generated WALS tables rather than
+    hand-transcribed literals. -/
+def ColorProfile.fromWALS (language iso family : String) : ColorProfile :=
+  { language := language
+  , iso := iso
+  , family := family
+  , nonDerived := (Data.WALS.F132A.lookupISO iso).map (λ d => fromWALS132A d.value)
+  , basic := (Data.WALS.F133A.lookupISO iso).map (λ d => fromWALS133A d.value)
+  , greenBlue := (Data.WALS.F134A.lookupISO iso).map (λ d => fromWALS134A d.value)
+  , redYellow := (Data.WALS.F135A.lookupISO iso).map (λ d => fromWALS135A d.value) }
+
+/-! ### WALS distribution data -/
 
 /-- WALS Ch 134 distribution: green-blue boundary patterns
-    (@cite{kay-maffi-2013}, n = 120). -/
+    (@cite{kay-maffi-2013b}, n = 120). -/
 structure GreenBlueCounts where
   distinct : Nat
   merged : Nat
@@ -192,7 +192,7 @@ def walsGreenBlue : GreenBlueCounts :=
   , other := 22 }
 
 /-- WALS Ch 135 distribution: red-yellow boundary patterns
-    (@cite{kay-maffi-2013}, n = 120). -/
+    (@cite{kay-maffi-2013c}, n = 120). -/
 structure RedYellowCounts where
   distinct : Nat
   merged : Nat
@@ -208,9 +208,7 @@ def walsRedYellow : RedYellowCounts :=
   , merged := 15
   , other := 7 }
 
--- ============================================================================
--- Cross-linguistic generalizations
--- ============================================================================
+/-! ### Cross-linguistic generalizations -/
 
 /-- The *grue* pattern (merged green/blue) is the majority for the green-blue
     dimension (68 of 120 = 57%), more than double the distinct-terms pattern

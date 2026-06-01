@@ -8,14 +8,9 @@ import Linglib.Typology.Color
 namespace Spanish
 
 /-- Spanish: 6 non-derived basic colors, 11 total basic colors; green (*verde*)
-    vs blue (*azul*) distinct; red vs yellow distinct. -/
+    vs blue (*azul*) distinct; red vs yellow distinct.
+    Derived from the WALS Chs 132–135 rows for `spa`. -/
 def colorProfile : Typology.ColorProfile :=
-  { language := "Spanish"
-  , iso := "spa"
-  , family := "Indo-European"
-  , nonDerived := some .six
-  , basic := some .v11
-  , greenBlue := some .distinct
-  , redYellow := some .distinct }
+  Typology.ColorProfile.fromWALS "Spanish" "spa" "Indo-European"
 
 end Spanish
