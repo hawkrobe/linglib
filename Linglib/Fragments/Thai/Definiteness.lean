@@ -1,4 +1,4 @@
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
 
 /-!
 # Thai Definiteness Fragment
@@ -12,22 +12,15 @@ the @cite{moroney-2021} typology this is the `.markedAnaphoric` strategy.
 
 namespace Thai.Definiteness
 
-open Core.Nominal (ArticleInventory)
-open Features.Definiteness (DefMarkingStrategy)
+/-- Thai @cite{jenks-2015}: same definite-marking pattern as Mandarin — the
+    demonstrative (*nán* 'that') obligatorily expones anaphoric definites;
+    uniqueness is bare; possessives via *khɔ̌ɔng*. -/
+def determiners : List Determiner.Entry :=
+  [ .demonstrative { form := "nan", deictic := .distal, definiteUses := [.anaphoric] },
+    .possessive { form := "khong" } ]
 
-/-- Thai @cite{jenks-2015}: same definite-marking pattern as Mandarin —
-    bare nouns for uniqueness contexts, demonstratives for anaphoric
-    contexts. -/
-def articleInventory : ArticleInventory :=
-  { hasIndefinite             := False
-    hasUniqueArticle          := False
-    hasAnaphoricArticle       := True
-    hasDemonstrative          := True
-    hasPossessive             := True }
-
-/-- Thai's inventory derives the `.markedAnaphoric` Moroney cell — same
-    cell as Mandarin (same definite-marking pattern). -/
-theorem articleInventory_marking :
-    articleInventory.toMarkingStrategy = .markedAnaphoric := rfl
+/-- Thai's inventory derives the `.markedAnaphoric` Moroney cell — same cell as
+    Mandarin (same definite-marking pattern). -/
+theorem marking : Determiner.markingStrategy determiners = .markedAnaphoric := by decide
 
 end Thai.Definiteness

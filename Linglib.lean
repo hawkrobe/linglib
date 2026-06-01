@@ -255,7 +255,8 @@ import Linglib.Features.Deixis
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Nominal.Interpret
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
+import Linglib.Core.Nominal.DeterminerLicensing
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
 import Linglib.Features.OntologicalCategory

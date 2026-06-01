@@ -1,6 +1,6 @@
 import Linglib.Features.Definiteness
 import Linglib.Features.Deixis
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
 import Linglib.Core.Nominal.Maximality
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Kinds.NominalMappingParameter
@@ -51,22 +51,21 @@ def blocking : NMP.BlockingPrinciple :=
   , existsBlocked := false
   , downBlocked := false }
 
-/-- Shan @cite{moroney-2021}: no overt definite or indefinite article.
-    Demonstratives *nâj/nân* are optional in anaphoric contexts; bare nouns
-    can express both unique and anaphoric definiteness. `articleInventory`
-    is the canonical upstream object from which both `DefMarkingStrategy`
-    (Moroney cell) and `ArticleType` (Schwarz cell) are derived — see
-    `toMarkingStrategy` / `toArticleType`. -/
-def articleInventory : Core.Nominal.ArticleInventory :=
-  { hasIndefinite             := False
-    hasUniqueArticle          := False
-    hasAnaphoricArticle       := False
-    hasDemonstrative          := True
-    hasPossessive             := True }
+/-- Shan @cite{moroney-2021}: no overt definite or indefinite article — no
+    `.article` entries. Demonstratives *nâj/nân* are *optional* in anaphoric
+    contexts (their `definiteUses` are empty: they obligatorily expone nothing),
+    so bare nouns can express both unique and anaphoric definiteness. The
+    declared determiner set is the canonical upstream object from which both
+    `DefMarkingStrategy` (Moroney cell) and `ArticleType` (Schwarz cell) are
+    derived — see `Determiner.markingStrategy` / `Determiner.articleType`. -/
+def determiners : List Determiner.Entry :=
+  [ .demonstrative { form := "nâj", deictic := .proximal, definiteUses := [] },
+    .demonstrative { form := "nân", deictic := .distal, definiteUses := [] },
+    .possessive { form := "POSS" } ]
 
-/-- Shan's inventory projects to the `.unmarked` Moroney cell. -/
-theorem articleInventory_marking :
-    articleInventory.toMarkingStrategy = .unmarked := rfl
+/-- Shan's determiner set projects to the `.unmarked` Moroney cell. -/
+theorem marking :
+    Determiner.markingStrategy determiners = .unmarked := by decide
 
 -- ============================================================================
 -- §2: Type-Shift Contexts

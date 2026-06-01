@@ -1,7 +1,7 @@
 import Linglib.Core.Word
 import Linglib.Features.Definiteness
 import Linglib.Typology.Pronoun.Basic
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Studies.Schwarz2013
 import Linglib.Phenomena.Reference.DirectReference
@@ -48,7 +48,6 @@ open Phenomena.Anaphora.Coreference
 open Pronoun (Strength)
 open Features.Definiteness (ArticleType DefiniteUseType BridgingSubtype WeakArticleStrategy
   useTypeToPresupType bridgingPresupType DefPresupType)
-open Core.Nominal (ArticleInventory)
 
 -- ============================================================================
 -- §A: Inductive Types
@@ -90,19 +89,19 @@ structure PronounForm where
 
 /-- Per-language pronoun system datum (@cite{patel-grosz-grosz-2017} + @cite{cardinaletti-starke-1999}).
 
-Each datum records the full 3rd-person pronoun inventory, article inventory,
-D-layer count, DEM licensing contexts, and DEM productivity. The article
-system type (`articleType`) is *derived* from `articleInventory` rather than
-stipulated — `Core.Nominal.ArticleInventory` is the single source of truth
-for definiteness data. -/
+Each datum records the full 3rd-person pronoun inventory, declared determiner
+set, D-layer count, DEM licensing contexts, and DEM productivity. The article
+system type (`articleType`) is *derived* from `determiners` rather than
+stipulated — the declared `Determiner.Entry` list is the single source of
+truth for definiteness data. -/
 structure PronounSystemDatum where
   language : String
   isoCode : String
   /-- Available 3rd-person pronoun forms -/
   forms : List PronounForm
-  /-- Morphological article inventory (single source of truth from which
+  /-- Declared determiner set (single source of truth from which
       `articleType` is derived). -/
-  articleInventory : ArticleInventory
+  determiners : List Determiner.Entry
   /-- Number of D-layers: 1 = D_det only (PER), 2 = D_deix + D_det (PER+DEM) -/
   dLayers : Nat
   /-- Pragmatic contexts licensing DEM use (empty for PER-only languages) -/
@@ -111,44 +110,51 @@ structure PronounSystemDatum where
   demProductive : Bool
 
 /-- Schwarz/Patel-Grosz–Grosz `ArticleType` classification, derived from the
-    morphological inventory. Not stipulated — this is the projection of the
-    inventory bools through `ArticleInventory.toArticleType`. -/
+    declared determiner set. Not stipulated — this is the projection through
+    `Determiner.articleType`. -/
 def PronounSystemDatum.articleType (d : PronounSystemDatum) : ArticleType :=
-  d.articleInventory.toArticleType
+  Determiner.articleType d.determiners
 
 -- ============================================================================
 -- §C: Language Data (~11 languages from @cite{patel-grosz-grosz-2017})
 -- ============================================================================
 
-/-- Inventory shorthand: bipartite (German/Bavarian/Portuguese — distinct
+/-- Determiner-set shorthand: bipartite (German/Bavarian/Portuguese — distinct
     weak vs strong articles, no syncretism). Derives `.weakAndStrong`. -/
-private def bipartiteInv : ArticleInventory :=
-  { hasIndefinite := True, hasUniqueArticle := True
-    hasAnaphoricArticle := True, uniqueAnaphoricSyncretism := False
-    hasDemonstrative := True, hasPossessive := True }
+private def bipartiteDets : List Determiner.Entry :=
+  [ .article { form := "weak", definiteness := .definite, exponent := .dedicatedMorpheme,
+               uses := [.immediateSituation, .largerSituation] },
+    .article { form := "strong", definiteness := .definite, exponent := .dedicatedMorpheme,
+               uses := [.anaphoric, .donkey] },
+    .article { form := "indef", definiteness := .indefinite, exponent := .dedicatedMorpheme },
+    .demonstrative { form := "dem", deictic := .unspecified },
+    .possessive { form := "poss" } ]
 
-/-- Inventory shorthand: syncretic single article (English/Romance — *the*,
+/-- Determiner-set shorthand: syncretic single article (English/Romance — *the*,
     *le/la*, *il*, *el*, *o/a*, *ell*). Derives `.weakOnly` via
     `.generallyMarked`. -/
-private def syncreticInv : ArticleInventory :=
-  { hasIndefinite := True, hasUniqueArticle := True
-    hasAnaphoricArticle := True, uniqueAnaphoricSyncretism := True
-    hasDemonstrative := True, hasPossessive := True }
+private def syncreticDets : List Determiner.Entry :=
+  [ .article { form := "the", definiteness := .definite, exponent := .dedicatedMorpheme,
+               uses := [.immediateSituation, .largerSituation, .anaphoric, .donkey] },
+    .article { form := "indef", definiteness := .indefinite, exponent := .dedicatedMorpheme },
+    .demonstrative { form := "dem", deictic := .unspecified },
+    .possessive { form := "poss" } ]
 
-/-- Inventory shorthand: no overt articles (Hebrew/Czech/Finnish — no
-    article paradigm). Derives `.none_` via `.unmarked`. -/
-private def noArticleInv : ArticleInventory :=
-  { hasIndefinite := False, hasUniqueArticle := False
-    hasAnaphoricArticle := False, uniqueAnaphoricSyncretism := False
-    hasDemonstrative := True, hasPossessive := True }
+/-- Determiner-set shorthand: no overt articles (Hebrew/Czech/Finnish — no
+    article paradigm; the demonstrative is optional). Derives `.none_` via
+    `.unmarked`. -/
+private def noArticleDets : List Determiner.Entry :=
+  [ .demonstrative { form := "dem", deictic := .unspecified },
+    .possessive { form := "poss" } ]
 
-/-- Inventory shorthand: weak only (Kutchi Gujarati — single postnominal
-    definite marker, no separate anaphoric form). Derives `.weakOnly` via
-    `.generallyMarked`. -/
-private def weakOnlyInv : ArticleInventory :=
-  { hasIndefinite := False, hasUniqueArticle := True
-    hasAnaphoricArticle := False, uniqueAnaphoricSyncretism := False
-    hasDemonstrative := True, hasPossessive := True }
+/-- Determiner-set shorthand: weak only (Kutchi Gujarati — single postnominal
+    definite marker exponing only uniqueness, no separate anaphoric form).
+    Derives `.weakOnly` via `.generallyMarked`. -/
+private def weakOnlyDets : List Determiner.Entry :=
+  [ .article { form := "def", definiteness := .definite, exponent := .dedicatedMorpheme,
+               uses := [.immediateSituation, .largerSituation] },
+    .demonstrative { form := "dem", deictic := .unspecified },
+    .possessive { form := "poss" } ]
 
 def germanData : PronounSystemDatum :=
   { language := "German", isoCode := "de"
@@ -158,7 +164,7 @@ def germanData : PronounSystemDatum :=
              , ⟨"der", .dem, some "m", some .sg, [.strong]⟩
              , ⟨"die", .dem, some "f", some .sg, [.strong]⟩
              , ⟨"das", .dem, some "n", some .sg, [.strong]⟩ ]
-    articleInventory := bipartiteInv
+    determiners := bipartiteDets
     dLayers := 2
     demLicensing := [.emotivity, .disambiguation, .register, .deixis, .contrast]
     demProductive := true }
@@ -171,7 +177,7 @@ def bavarianData : PronounSystemDatum :=
              , ⟨"der", .dem, some "m", some .sg, [.strong]⟩
              , ⟨"die", .dem, some "f", some .sg, [.strong]⟩
              , ⟨"des", .dem, some "n", some .sg, [.strong]⟩ ]
-    articleInventory := bipartiteInv
+    determiners := bipartiteDets
     dLayers := 2
     demLicensing := [.emotivity, .disambiguation, .register, .deixis, .contrast]
     demProductive := true }
@@ -182,7 +188,7 @@ def portugueseData : PronounSystemDatum :=
              , ⟨"ela",    .per, some "f", some .sg, [.strong]⟩
              , ⟨"esse",   .dem, some "m", some .sg, [.strong]⟩
              , ⟨"aquele", .dem, some "m", some .sg, [.strong]⟩ ]
-    articleInventory := bipartiteInv
+    determiners := bipartiteDets
     dLayers := 2
     demLicensing := [.deixis, .contrast]
     demProductive := false }
@@ -193,7 +199,7 @@ def hebrewData : PronounSystemDatum :=
              , ⟨"hi", .per, some "f", some .sg, [.strong]⟩
              , ⟨"ze", .dem, some "m", some .sg, [.strong]⟩
              , ⟨"zo", .dem, some "f", some .sg, [.strong]⟩ ]
-    articleInventory := noArticleInv
+    determiners := noArticleDets
     dLayers := 2
     demLicensing := [.deixis, .disambiguation]
     demProductive := false }
@@ -206,7 +212,7 @@ def czechData : PronounSystemDatum :=
              , ⟨"ten", .dem, some "m", some .sg, [.strong]⟩
              , ⟨"ta",  .dem, some "f", some .sg, [.strong]⟩
              , ⟨"to",  .dem, some "n", some .sg, [.strong]⟩ ]
-    articleInventory := noArticleInv
+    determiners := noArticleDets
     dLayers := 2
     demLicensing := [.emotivity, .disambiguation, .contrast]
     demProductive := false }
@@ -215,7 +221,7 @@ def frenchData : PronounSystemDatum :=
   { language := "French", isoCode := "fr"
     forms := [ ⟨"il",   .per, some "m", some .sg, [.strong, .weak, .clitic]⟩
              , ⟨"elle", .per, some "f", some .sg, [.strong, .weak, .clitic]⟩ ]
-    articleInventory := syncreticInv
+    determiners := syncreticDets
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -224,7 +230,7 @@ def italianData : PronounSystemDatum :=
   { language := "Italian", isoCode := "it"
     forms := [ ⟨"lui", .per, some "m", some .sg, [.strong, .weak, .clitic]⟩
              , ⟨"lei", .per, some "f", some .sg, [.strong, .weak, .clitic]⟩ ]
-    articleInventory := syncreticInv
+    determiners := syncreticDets
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -233,7 +239,7 @@ def spanishData : PronounSystemDatum :=
   { language := "Spanish", isoCode := "es"
     forms := [ ⟨"él",   .per, some "m", some .sg, [.strong, .weak, .clitic]⟩
              , ⟨"ella", .per, some "f", some .sg, [.strong, .weak, .clitic]⟩ ]
-    articleInventory := syncreticInv
+    determiners := syncreticDets
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -242,7 +248,7 @@ def catalanData : PronounSystemDatum :=
   { language := "Catalan", isoCode := "ca"
     forms := [ ⟨"ell",  .per, some "m", some .sg, [.strong, .weak, .clitic]⟩
              , ⟨"ella", .per, some "f", some .sg, [.strong, .weak, .clitic]⟩ ]
-    articleInventory := syncreticInv
+    determiners := syncreticDets
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -251,7 +257,7 @@ def kutchiGujaratiData : PronounSystemDatum :=
   { language := "Kutchi Gujarati", isoCode := "gju"
     forms := [ ⟨"a",  .per, none, some .sg, [.strong]⟩
              , ⟨"ā",  .per, none, some .pl, [.strong]⟩ ]
-    articleInventory := weakOnlyInv
+    determiners := weakOnlyDets
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -261,7 +267,7 @@ def englishData : PronounSystemDatum :=
     forms := [ ⟨"he",  .per, some "m", some .sg, [.strong]⟩
              , ⟨"she", .per, some "f", some .sg, [.strong]⟩
              , ⟨"it",  .per, some "n", some .sg, [.strong]⟩ ]
-    articleInventory := syncreticInv
+    determiners := syncreticDets
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -287,7 +293,7 @@ def finnishData : PronounSystemDatum :=
              , ⟨"se",   .dem, none, some .sg, [.strong]⟩
              , ⟨"tämä", .dem, none, some .sg, [.strong]⟩
              , ⟨"tuo",  .dem, none, some .sg, [.strong]⟩ ]
-    articleInventory := noArticleInv
+    determiners := noArticleDets
     dLayers := 2
     demLicensing := [.deixis, .contrast]
     demProductive := true }

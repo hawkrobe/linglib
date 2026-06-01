@@ -1,4 +1,4 @@
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
 
 /-!
 # German Definiteness Fragment
@@ -14,22 +14,19 @@ typology this is the `.bipartite` strategy: distinct forms for each
 
 namespace German.Definiteness
 
-open Core.Nominal (ArticleInventory)
-open Features.Definiteness (DefMarkingStrategy)
-
-/-- German: indefinite *ein-*; *distinct* weak (contracted, e.g., *im*) and
-    strong (*dem*) definite articles; demonstratives; possessives. The
-    unique vs anaphoric distinction is morphologically marked. -/
-def articleInventory : ArticleInventory :=
-  { hasIndefinite             := True
-    hasUniqueArticle          := True
-    hasAnaphoricArticle       := True
-    uniqueAnaphoricSyncretism := False
-    hasDemonstrative          := True
-    hasPossessive             := True }
+/-- German: *distinct* weak (uniqueness, e.g. contracted *im*) and strong
+    (anaphoric, *dem*) definite articles; indefinite *ein-*; demonstratives;
+    possessives. The unique vs anaphoric distinction is morphologically marked. -/
+def determiners : List Determiner.Entry :=
+  [ .article { form := "im/weak", definiteness := .definite, exponent := .dedicatedMorpheme,
+               uses := [.immediateSituation, .largerSituation] },
+    .article { form := "dem/strong", definiteness := .definite, exponent := .dedicatedMorpheme,
+               uses := [.anaphoric, .donkey] },
+    .article { form := "ein", definiteness := .indefinite, exponent := .dedicatedMorpheme },
+    .demonstrative { form := "dieser", deictic := .unspecified },
+    .possessive { form := "mein" } ]
 
 /-- German's inventory derives the `.bipartite` Moroney cell. -/
-theorem articleInventory_marking :
-    articleInventory.toMarkingStrategy = .bipartite := rfl
+theorem marking : Determiner.markingStrategy determiners = .bipartite := by decide
 
 end German.Definiteness
