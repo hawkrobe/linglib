@@ -1,3 +1,4 @@
+import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Lexical.VerbEntry
 import Linglib.Morphology.MorphRule
 

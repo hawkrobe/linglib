@@ -5,18 +5,12 @@ import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
 import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
-import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Semantics.Aspect.ChangeOfState
 import Linglib.Features.Dimension
-import Linglib.Semantics.Measurement.Basic
-import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Semantics.Attitudes.Preferential
-import Linglib.Semantics.Causation.Interpretation
 import Linglib.Semantics.Causation.Implicative
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.Causation.Psych
-import Linglib.Features.Aktionsart
 import Linglib.Semantics.Aspect.DegreeAchievement
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Lexical.LevinClassProfiles
@@ -57,7 +51,6 @@ open Semantics.Lexical
 open Semantics.Lexical.Roots
 open Features.ChangeOfState
 open Features.Dimension (Dimension)
-open Semantics.Attitudes.Preferential (NVPClass PreferentialPredicate)
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)
 open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
