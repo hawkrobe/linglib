@@ -28,7 +28,7 @@ inductive InternallyHeadedRelativeClauses where
   | occursAsNondominantType
   /-- Internally-headed exists (4 languages). -/
   | exists_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 90D dataset (63 languages). -/
 def allData : List (Datapoint InternallyHeadedRelativeClauses) :=
@@ -98,9 +98,9 @@ def allData : List (Datapoint InternallyHeadedRelativeClauses) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint InternallyHeadedRelativeClauses) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint InternallyHeadedRelativeClauses) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F90D

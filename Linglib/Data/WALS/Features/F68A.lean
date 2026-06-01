@@ -22,7 +22,7 @@ inductive PerfectType where
   | otherPerfect
   /-- No perfect (114 languages). -/
   | noPerfect
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 68A dataset (222 languages). -/
 def allData : List (Datapoint PerfectType) :=
@@ -251,9 +251,9 @@ def allData : List (Datapoint PerfectType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PerfectType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PerfectType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F68A

@@ -24,7 +24,7 @@ inductive AppliedObjectRole where
   | onlyBenefactive
   /-- No applicative construction (100 languages). -/
   | noApplicative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 109B dataset (183 languages). -/
 def allData : List (Datapoint AppliedObjectRole) :=
@@ -214,9 +214,9 @@ def allData : List (Datapoint AppliedObjectRole) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint AppliedObjectRole) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint AppliedObjectRole) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F109B

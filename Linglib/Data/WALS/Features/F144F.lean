@@ -60,7 +60,7 @@ inductive ObligatoryDoubleNegationInSvoLanguages where
   | svoNegvneg
   /-- S[Neg-V]O & NegV (1 languages). -/
   | sNegVONegv
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144F dataset (56 languages). -/
 def allData : List (Datapoint ObligatoryDoubleNegationInSvoLanguages) :=
@@ -123,9 +123,9 @@ def allData : List (Datapoint ObligatoryDoubleNegationInSvoLanguages) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ObligatoryDoubleNegationInSvoLanguages) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ObligatoryDoubleNegationInSvoLanguages) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F144F

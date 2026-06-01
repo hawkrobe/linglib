@@ -16,7 +16,7 @@ structure Language where
   iso : String
   family : String
   genus : String
-  deriving Repr, BEq, DecidableEq
+  deriving DecidableEq, Repr
 
 private def languages_0 : List Language :=
   [ { walsCode := "xun", name := "!Xun (Ekoka)", iso := "knw", family := "Kxa", genus := "Ju-Kung" }
@@ -1728,7 +1728,7 @@ private def languages_3 : List Language :=
   , { walsCode := "nav", name := "Navajo", iso := "nav", family := "Na-Dene", genus := "Athapaskan" }
   , { walsCode := "nax", name := "Naxi", iso := "nxq", family := "Sino-Tibetan", genus := "Na-Qiangic" }
   , { walsCode := "ncm", name := "Ncàm", iso := "bud", family := "Niger-Congo", genus := "Oti-Volta" }
-  , { walsCode := "ndb", name := "Northern Ndebele", iso := "nde", family := "Niger-Congo", genus := "Bantu" }
+  , { walsCode := "ndb", name := "Ndebele", iso := "nde", family := "Niger-Congo", genus := "Bantu" }
   , { walsCode := "ndj", name := "Ndjébbana", iso := "djj", family := "Mangrida", genus := "Ndjébbana" }
   , { walsCode := "ndg", name := "Ndogo", iso := "ndz", family := "Niger-Congo", genus := "Ubangi" }
   , { walsCode := "ndo", name := "Ndonga", iso := "ndo", family := "Niger-Congo", genus := "Bantu" }

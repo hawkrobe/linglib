@@ -26,7 +26,7 @@ inductive AsymmetricalCaseMarking where
   | qualitativelyAsymmetrical
   /-- Syncretism in relevant NP-types (21 languages). -/
   | syncretismInRelevantNpTypes
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 50A dataset (261 languages). -/
 def allData : List (Datapoint AsymmetricalCaseMarking) :=
@@ -294,9 +294,9 @@ def allData : List (Datapoint AsymmetricalCaseMarking) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint AsymmetricalCaseMarking) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint AsymmetricalCaseMarking) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F50A

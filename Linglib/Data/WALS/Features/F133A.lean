@@ -28,7 +28,7 @@ inductive NumberOfBasicColourCategories where
   | v910
   /-- 11 (11 languages). -/
   | v11
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 133A dataset (119 languages). -/
 def allData : List (Datapoint NumberOfBasicColourCategories) :=
@@ -154,9 +154,9 @@ def allData : List (Datapoint NumberOfBasicColourCategories) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint NumberOfBasicColourCategories) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint NumberOfBasicColourCategories) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F133A

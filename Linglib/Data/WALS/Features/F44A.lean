@@ -26,7 +26,7 @@ inductive GenderDistinctionsInIndependentPersonalPronouns where
   | v3rdPersonNonSingularOnly
   /-- No gender distinctions (254 languages). -/
   | noGenderDistinctions
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 44A dataset (378 languages). -/
 def allData : List (Datapoint GenderDistinctionsInIndependentPersonalPronouns) :=
@@ -411,9 +411,9 @@ def allData : List (Datapoint GenderDistinctionsInIndependentPersonalPronouns) :
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint GenderDistinctionsInIndependentPersonalPronouns) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint GenderDistinctionsInIndependentPersonalPronouns) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F44A

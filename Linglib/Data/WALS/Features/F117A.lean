@@ -24,7 +24,7 @@ inductive PredicativePossession where
   | conjunctional
   /-- 'Have' (63 languages). -/
   | have
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 117A dataset (240 languages). -/
 def allData : List (Datapoint PredicativePossession) :=
@@ -271,9 +271,9 @@ def allData : List (Datapoint PredicativePossession) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PredicativePossession) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PredicativePossession) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F117A

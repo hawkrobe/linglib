@@ -22,7 +22,7 @@ inductive NumberOfPossessiveNouns where
   | twoToFour
   /-- Five or more (3 languages). -/
   | fiveOrMore
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 58B dataset (243 languages). -/
 def allData : List (Datapoint NumberOfPossessiveNouns) :=
@@ -272,9 +272,9 @@ def allData : List (Datapoint NumberOfPossessiveNouns) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint NumberOfPossessiveNouns) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint NumberOfPossessiveNouns) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F58B

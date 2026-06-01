@@ -46,7 +46,7 @@ inductive DoubleNegationInVerbInitialLanguages where
   | vosNegvneg
   /-- VSO/SVO & (Neg)V(Neg) (1 languages). -/
   | vsoSvoV
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144U dataset (17 languages). -/
 def allData : List (Datapoint DoubleNegationInVerbInitialLanguages) :=
@@ -70,9 +70,9 @@ def allData : List (Datapoint DoubleNegationInVerbInitialLanguages) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint DoubleNegationInVerbInitialLanguages) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint DoubleNegationInVerbInitialLanguages) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F144U

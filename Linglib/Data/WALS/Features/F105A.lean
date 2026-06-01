@@ -22,7 +22,7 @@ inductive DitransitiveConstructionsTheVerbGive where
   | secondaryObjectConstruction
   /-- Mixed (40 languages). -/
   | mixed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 105A dataset (378 languages). -/
 def allData : List (Datapoint DitransitiveConstructionsTheVerbGive) :=
@@ -407,9 +407,9 @@ def allData : List (Datapoint DitransitiveConstructionsTheVerbGive) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint DitransitiveConstructionsTheVerbGive) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint DitransitiveConstructionsTheVerbGive) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F105A

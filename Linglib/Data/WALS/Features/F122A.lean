@@ -22,7 +22,7 @@ inductive SubjectRelativization where
   | pronounRetention
   /-- Gap (125 languages). -/
   | gap
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 122A dataset (166 languages). -/
 def allData : List (Datapoint SubjectRelativization) :=
@@ -195,9 +195,9 @@ def allData : List (Datapoint SubjectRelativization) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SubjectRelativization) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SubjectRelativization) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F122A

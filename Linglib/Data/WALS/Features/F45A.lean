@@ -22,7 +22,7 @@ inductive PolitenessDistinctionsInPronouns where
   | multiplePolitenessDistinctions
   /-- Pronouns avoided for politeness (7 languages). -/
   | pronounsAvoidedForPoliteness
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 45A dataset (207 languages). -/
 def allData : List (Datapoint PolitenessDistinctionsInPronouns) :=
@@ -236,9 +236,9 @@ def allData : List (Datapoint PolitenessDistinctionsInPronouns) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PolitenessDistinctionsInPronouns) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PolitenessDistinctionsInPronouns) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F45A

@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 143E: Preverbal Negative Morphemes
-@cite{wals-2013}
+@cite{dryer-2013-wals}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 143E`.
@@ -22,7 +22,7 @@ inductive PreverbalNegativeMorphemes where
   | negvNegV
   /-- None (390 languages). -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PreverbalNegativeMorphemes) :=
   [ { walsCode := "ani", iso := "hnh", value := .none }
@@ -1362,9 +1362,9 @@ private def allData_2 : List (Datapoint PreverbalNegativeMorphemes) :=
 def allData : List (Datapoint PreverbalNegativeMorphemes) := allData_0 ++ allData_1 ++ allData_2
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PreverbalNegativeMorphemes) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PreverbalNegativeMorphemes) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F143E

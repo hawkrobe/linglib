@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 35A: Plurality in Independent Personal Pronouns
-@cite{haspelmath-2013b}
+@cite{daniel-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 35A`.
@@ -30,7 +30,7 @@ inductive PronounPlurality where
   | personStemPronominalPluralAffix
   /-- Person stem + nominal plural affix (19 languages). -/
   | personStemNominalPluralAffix
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 35A dataset (261 languages). -/
 def allData : List (Datapoint PronounPlurality) :=
@@ -298,9 +298,9 @@ def allData : List (Datapoint PronounPlurality) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PronounPlurality) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PronounPlurality) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F35A

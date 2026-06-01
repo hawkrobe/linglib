@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 21B: Exponence of Tense-Aspect-Mood Inflection
-@cite{wals-2013}
+@cite{bickel-nichols-2013b}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 21B`.
@@ -26,7 +26,7 @@ inductive ExponenceOfTenseAspectMoodInflection where
   | tamPolarity
   /-- no TAM (4 languages). -/
   | noTam
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 21B dataset (160 languages). -/
 def allData : List (Datapoint ExponenceOfTenseAspectMoodInflection) :=
@@ -193,9 +193,9 @@ def allData : List (Datapoint ExponenceOfTenseAspectMoodInflection) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ExponenceOfTenseAspectMoodInflection) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ExponenceOfTenseAspectMoodInflection) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F21B

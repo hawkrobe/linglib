@@ -24,7 +24,7 @@ inductive SuppletionInImperativesAndHortatives where
   | imperativeAndHortative
   /-- None (= no suppletive imperatives reported in the reference material) (153 languages). -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 79B dataset (193 languages). -/
 def allData : List (Datapoint SuppletionInImperativesAndHortatives) :=
@@ -224,9 +224,9 @@ def allData : List (Datapoint SuppletionInImperativesAndHortatives) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SuppletionInImperativesAndHortatives) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SuppletionInImperativesAndHortatives) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F79B
