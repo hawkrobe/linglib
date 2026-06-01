@@ -214,7 +214,6 @@ def weigh : VerbEntry := .mkRegular {
   form := "weigh"
   complementType := .np
   vendlerClass := some .state
-  selectsDimension := some .mass
   levinClass := some .measure }
 
 /-- "cover" — motion/extent predicate selecting for distance. -/
@@ -222,8 +221,7 @@ def cover : VerbEntry := .mkRegular {
   form := "cover"
   complementType := .np
   vendlerClass := some .accomplishment
-  verbIncClass := some .sinc
-  selectsDimension := some .distance }
+  verbIncClass := some .sinc }
 
 /-- "measure" — general measurement predicate. -/
 def measure : VerbEntry := .mkRegular {

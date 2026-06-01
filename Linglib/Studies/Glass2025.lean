@@ -259,12 +259,25 @@ theorem yiwei_veridicality_nonfactive :
 /-!
 yǐwéi is classified as nonfactive by veridicality (§4), but it has an
 additional postsupposition ◇¬p that is NOT derivable from veridicality.
-This postsupposition is flagged in the Fragment layer and interpreted here.
+Veridicality is a derivable property of the canonical Mandarin entry; the
+postsupposition is @cite{glass-2025}'s paper-specific overlay, recorded here
+in the study rather than as a field on the Fragment entry.
 -/
 
-/-- yǐwéi carries a weak contrafactive postsupposition structurally. -/
-theorem yiwei_has_postsupposition :
-    yiwei.toVerbCore.postsupType = some .weakContrafactive := by native_decide
+/-- Postsupposition type: output-context constraint distinct from
+    presuppositions (@cite{glass-2025}). The world-type-independent tag; the
+    concrete construct is `Semantics.Dynamic.Postsupposition`. -/
+inductive PostsupType where
+  /-- Output context must be compatible with ¬p: ◇¬p (@cite{glass-2025}). -/
+  | weakContrafactive
+  /-- Output context must entail ¬p: ⊨¬p (hypothetical, UNATTESTED). -/
+  | strongContrafactive
+  deriving DecidableEq, Repr
+
+/-- @cite{glass-2025} classifies yǐwéi as carrying a weak contrafactive
+    postsupposition. This is the paper's analytical claim about the canonical
+    Mandarin `yiwei` entry — not a field on that entry. -/
+def yiweiPostsupType : PostsupType := .weakContrafactive
 
 /-- yǐwéi's veridicality gives nonfactive — no presupposition. -/
 theorem yiwei_derived_nonfactive :
@@ -272,11 +285,13 @@ theorem yiwei_derived_nonfactive :
 
 /-- The postsupposition IS necessary: veridicality alone gives .nonfactive
     (no presupposition), but yǐwéi actually has a weak contrafactive
-    postsupposition. Without `postsupType`, this would be invisible. -/
+    postsupposition. Pairing the canonical entry's derivable veridicality with
+    Glass's postsupposition classification shows the two diverge — veridicality
+    is blind to the postsupposition. -/
 theorem yiwei_postsup_not_from_veridicality :
     yiwei.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive ∧
-    yiwei.toVerbCore.postsupType = some .weakContrafactive :=
-  ⟨by native_decide, by native_decide⟩
+    yiweiPostsupType = .weakContrafactive :=
+  ⟨by native_decide, rfl⟩
 
 -- ============================================================================
 -- §6. The Contrafactive Gap
