@@ -16,7 +16,7 @@ Conditional morphemes in Japanese and their HC/PC restrictions.
   Non-Past consequent (@cite{mizuno-2024}, ex. 4a).
 -/
 
-namespace Fragments.Japanese.Conditionals
+namespace Japanese.Conditionals
 
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 
@@ -54,4 +54,4 @@ def eba : ConditionalMarker where
   markerType := .both
   notes := "Anderson conditionals use this form (Mizuno 2024)"
 
-end Fragments.Japanese.Conditionals
+end Japanese.Conditionals

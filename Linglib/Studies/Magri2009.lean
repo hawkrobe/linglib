@@ -1104,13 +1104,13 @@ order contrast (BPS left vs right of *ja doch*) follows from BH+MH:
 - I-predicate BPS left only → BH+MH: right-of-*ja doch* = VP-internal =
   existential reading only → mismatch with homogeneity → odd
 
-The data in `Fragments.German.BarePluralWordOrder` independently records
+The data in `German.BarePluralWordOrder` independently records
 this pattern. The bridge theorem confirms that the oddness pattern in
 the German data aligns with the model scenarios. -/
 
 section GermanBridge
 
-open Fragments.German.BarePluralWordOrder
+open German.BarePluralWordOrder
 
 /-- The German *ja doch* data confirms the same ILP/SLP split:
 the ONLY unacceptable configuration is ILP + right of *ja doch*

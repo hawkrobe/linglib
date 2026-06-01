@@ -24,7 +24,7 @@ German preferential attitudes pattern with other Indo-European languages:
 
 -/
 
-namespace Fragments.German.Predicates
+namespace German.Predicates
 
 open Semantics.Lexical
 open Features (Causative)
@@ -719,4 +719,4 @@ theorem sorgen_matches_crosslinguistic :
 theorem lassen_matches_french_laisser :
     lassen.causative = some .enable := rfl
 
-end Fragments.German.Predicates
+end German.Predicates

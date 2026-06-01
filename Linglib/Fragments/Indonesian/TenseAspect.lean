@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Indonesian
+namespace Indonesian
 
 /-- Indonesian (Austronesian, Malayo-Polynesian): no grammatical aspect, no
     past marking, no inflectional future, no perfect (classic tenselessness:
@@ -17,4 +17,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .none, past := .none, future := .none
   , perfect := .none, affixPosition := .suffixing }
 
-end Fragments.Indonesian
+end Indonesian

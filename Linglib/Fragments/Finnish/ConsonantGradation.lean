@@ -29,7 +29,7 @@ right context: a following consonant signals a closed syllable.
 
 -/
 
-namespace Fragments.Finnish.ConsonantGradation
+namespace Finnish.ConsonantGradation
 
 open Phonology (Segment Feature Segment.ofSpecs)
 open Phonology.LocalRewrite
@@ -192,4 +192,4 @@ theorem t_gradation_voices :
 /-- k → ∅ rule deletes. -/
 theorem k_gradation_deletes : kGradation.effect = .delete := rfl
 
-end Fragments.Finnish.ConsonantGradation
+end Finnish.ConsonantGradation

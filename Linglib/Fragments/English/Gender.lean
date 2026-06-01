@@ -12,7 +12,7 @@ English from the gender typology. The Corbett 1991 view is a per-Study
 override at `Studies/Corbett1991.lean`.
 -/
 
-namespace Fragments.English.Gender
+namespace English.Gender
 
 open Typology.Gender
 
@@ -31,4 +31,4 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "eng" ∧ genderTypology.name = "English" :=
   ⟨rfl, rfl⟩
 
-end Fragments.English.Gender
+end English.Gender

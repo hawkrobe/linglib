@@ -672,7 +672,7 @@ def derivedControlTier (v : VerbCore) : Option ControlTier :=
 -- ════════════════════════════════════════════════════════════════
 
 section VerbVerification
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- Predicative (EC) verbs: derived class → predicative tier
 

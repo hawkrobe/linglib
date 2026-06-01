@@ -17,7 +17,7 @@ Italian: no polar Q particle, wh-fronting (not in WALS Ch 93A sample, so
 
 set_option autoImplicit false
 
-namespace Fragments.Italian.Questions
+namespace Italian.Questions
 
 open _root_.Typology.Question
 
@@ -29,4 +29,4 @@ def question : QuestionProfile :=
   , whMovement := none  -- Italian not in WALS Ch 93A sample
   , polarStrategy := some .intonationOnly }
 
-end Fragments.Italian.Questions
+end Italian.Questions

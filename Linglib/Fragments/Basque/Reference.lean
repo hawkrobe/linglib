@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Basque
+namespace Basque
 
 /-- Basque (language isolate): definite suffix *-a*/*-ak* (definite affix);
     no indefinite article (bare nouns are indefinite); three-way distance-
@@ -24,4 +24,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .relatedAll }
 
-end Fragments.Basque
+end Basque

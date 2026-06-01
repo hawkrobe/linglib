@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.English
+namespace English
 
 /-- English (Indo-European, Germanic): periphrastic perfective (simple past
     vs progressive); inflectional past (*-ed*); no inflectional future
@@ -17,4 +17,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , perfect := .fromPossessive, affixPosition := .suffixing
   , evidentialityCoding := some .none }
 
-end Fragments.English
+end English

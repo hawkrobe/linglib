@@ -65,7 +65,7 @@ namespace Arnold2026
 open Features (GenderInfo SurfaceGender)
 open Pronoun (Spec)
 open Features (DiscourseElaboration AccessibilityLevel)
-open Fragments.English.Pronouns (GenderParadigm)
+open English.Pronouns (GenderParadigm)
 
 -- ============================================================================
 -- § 2: The Two-Kinds Taxonomy
@@ -202,9 +202,9 @@ theorem table1_all_license_underspecified (a : AntecedentType) :
 /-- Singular *they* (both kinds) maps to the epicene gender paradigm
     in the English pronoun system. -/
 theorem singThey_is_epicene :
-    Fragments.English.Pronouns.genderOf "they" = .epicene ∧
-    Fragments.English.Pronouns.genderOf "them" = .epicene ∧
-    Fragments.English.Pronouns.genderOf "themself" = .epicene := by
+    English.Pronouns.genderOf "they" = .epicene ∧
+    English.Pronouns.genderOf "them" = .epicene ∧
+    English.Pronouns.genderOf "themself" = .epicene := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-- The epicene paradigm has no single `SurfaceGender` equivalent —
@@ -266,7 +266,7 @@ theorem fullName_implies_underspecified :
 /-- Singular and plural *they* share the same gender paradigm — the
     structural `genderParadigm` field agrees across number. -/
 theorem structural_gender_consistency :
-    Fragments.English.Pronouns.they_sg.genderParadigm =
-    Fragments.English.Pronouns.they.genderParadigm := rfl
+    English.Pronouns.they_sg.genderParadigm =
+    English.Pronouns.they.genderParadigm := rfl
 
 end Arnold2026

@@ -19,7 +19,7 @@ places Korean firmly in the separative class in @cite{stassen-1985}'s
 typology.
 -/
 
-namespace Fragments.Korean.Comparison
+namespace Korean.Comparison
 
 /-- Korean comparative: separative standard marker *-boda*. -/
 def entry : Typology.Comparison.ComparativeEntry :=
@@ -51,4 +51,4 @@ def comparison : Typology.Comparison.ComparativeProfile :=
   , degreeMarker := ""
   , basicOrder := "SOV" }
 
-end Fragments.Korean.Comparison
+end Korean.Comparison

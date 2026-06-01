@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
 /-- Finnish: suffix plural (*-t* nominative, *-i-* oblique), obligatory on all
     nouns; person-number stem + pronominal affix in pronouns (*minä*/*me*);
@@ -18,4 +18,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .pnStemPronominalAffix
   , associativePlural := .absent }
 
-end Fragments.Finnish
+end Finnish

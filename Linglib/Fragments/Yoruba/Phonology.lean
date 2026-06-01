@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Yoruba.Phonology
+namespace Yoruba.Phonology
 
 /-- Canonical Yoruba phoneme inventory: first PHOIBLE inventory for ISO `yor`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Yoruba.yor
 
-end Fragments.Yoruba.Phonology
+end Yoruba.Phonology

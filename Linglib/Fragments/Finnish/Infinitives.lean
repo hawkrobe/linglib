@@ -16,7 +16,7 @@ each built from the verb stem plus a characteristic marker and case suffix:
 The **III infinitive** is linguistically remarkable: it takes **local case
 suffixes** on verbal stems, mirroring the nominal local case system. Four of
 its five case forms correspond exactly to cells in the 3×2 local case matrix
-(see `Fragments.Finnish.Case.localCaseMatrix`):
+(see `Finnish.Case.localCaseMatrix`):
 
 - inessive -massa = static + internal
 - elative -masta = source + internal
@@ -32,9 +32,9 @@ morphosyntactic features, not frozen adverbial suffixes.
 
 -/
 
-namespace Fragments.Finnish.Infinitives
+namespace Finnish.Infinitives
 
-open Fragments.Finnish.Case (Direction LocationType LocalCase localCaseMatrix)
+open Finnish.Case (Direction LocationType LocalCase localCaseMatrix)
 
 -- ============================================================================
 -- § 1: Infinitive Types
@@ -165,4 +165,4 @@ theorem inf3_covers_internal_column :
       (lc.direction == .static && lc.locationType == .external)) = true := by
   native_decide
 
-end Fragments.Finnish.Infinitives
+end Finnish.Infinitives

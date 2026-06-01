@@ -9,7 +9,7 @@ Cross-linguistic evidence for the then-present incompatibility.
 
 -/
 
-namespace Fragments.Hebrew.TemporalDeictic
+namespace Hebrew.TemporalDeictic
 
 open Semantics.Tense
 
@@ -20,4 +20,4 @@ def az : ThenAdverb where
   gloss := "then"
   shiftsPerspective := true
 
-end Fragments.Hebrew.TemporalDeictic
+end Hebrew.TemporalDeictic

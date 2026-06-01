@@ -23,7 +23,7 @@ target feature for the nasalization rule.
 open Phonology
 open Phonology.LocalRewrite
 
-namespace Fragments.Korean.Phonology
+namespace Korean.Phonology
 
 -- ============================================================================
 -- § 1: Segment Inventory
@@ -119,4 +119,4 @@ theorem a_not_nasalization_target :
 theorem m_not_nasalization_target :
     m.Specified Feature.delayedRelease = false := by native_decide
 
-end Fragments.Korean.Phonology
+end Korean.Phonology

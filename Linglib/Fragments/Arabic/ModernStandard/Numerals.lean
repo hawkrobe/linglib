@@ -34,7 +34,7 @@ would belong in a separate file (or a future Studies engagement).
   *faaʿil* pattern from the cardinal root.
 -/
 
-namespace Fragments.Arabic.ModernStandard
+namespace Arabic.ModernStandard
 
 /-- MSA: "first" *ʾawwal* fully suppletive (unrelated root w-ḥ-d vs ʾ-w-l);
     "second" *thaanin* and onward are regular *faaʿil*-pattern derivations
@@ -55,4 +55,4 @@ def numeralProfile : Numeral.Profile :=
     ordinal := .firstSuppletion
     numeralBase := some .decimal }
 
-end Fragments.Arabic.ModernStandard
+end Arabic.ModernStandard

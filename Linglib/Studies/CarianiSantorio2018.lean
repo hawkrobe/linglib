@@ -377,8 +377,8 @@ theorem no_unconditional_one_half (S : Set W) [DecidablePred (· ∈ S)] :
 
 /-! ## Fragment binding
 
-C&S analyse the English auxiliaries `Fragments.English.Auxiliaries.will`
-and `Fragments.English.Auxiliaries.would`. The Fragment is the source
+C&S analyse the English auxiliaries `English.Auxiliaries.will`
+and `English.Auxiliaries.would`. The Fragment is the source
 of truth for those entries' morphology; this section records the
 morphological facts the C&S analysis depends on, as per-entry `rfl`
 preconditions. If anyone later changes the morphological classification
@@ -391,7 +391,7 @@ The Auxiliaries Fragment is a hub: other studies that analyse the
 same entries (@cite{condoravdi-2002}, @cite{kratzer-1981}, etc.) record
 their own morphological preconditions parallel to these. To enumerate
 every analysis that touches a given entry, grep for
-`Fragments.English.Auxiliaries.<entry>` across `Phenomena/`.
+`English.Auxiliaries.<entry>` across `Phenomena/`.
 
 This section records *morphological* preconditions only. The C&S
 semantic clauses (`willSem`, `wouldSem`) and their downstream theorems
@@ -407,15 +407,15 @@ compared by direct equation; a divergence-witness theorem against
     constraint #1 (modal character) requires *will* to embed, scope,
     and interact with negation/quantifiers. -/
 theorem cs_assumes_will_is_modal_aux :
-    Fragments.English.Auxiliaries.will.auxType =
-      Fragments.English.Auxiliaries.AuxType.modal := rfl
+    English.Auxiliaries.will.auxType =
+      English.Auxiliaries.AuxType.modal := rfl
 
 /-- **C&S precondition**: the Fragment marks *will* as morphologically
     non-past (`tense = none`). C&S analyse *will* as the present-tense
     member of the future-modal pair; the `wouldSem`-as-past-shifted-
     `willSem` argument (§5.3.2) presumes this. -/
 theorem cs_assumes_will_no_past_morph :
-    Fragments.English.Auxiliaries.will.tense = none := rfl
+    English.Auxiliaries.will.tense = none := rfl
 
 /-- **C&S precondition**: the Fragment marks *would* as morphologically
     past (`tense = some .Past`). C&S §5.3.2 derives the *would* clause
@@ -423,7 +423,7 @@ theorem cs_assumes_will_no_past_morph :
     later reclassified *would* as non-past, the §5.3.2 argument would
     no longer apply at the surface-form level. -/
 theorem cs_assumes_would_past_morph :
-    Fragments.English.Auxiliaries.would.tense =
+    English.Auxiliaries.would.tense =
       some UD.Tense.Past := rfl
 
 /-- **C&S precondition**: *will* and *would* are morphologically
@@ -431,7 +431,7 @@ theorem cs_assumes_would_past_morph :
     would collapse vacuously if the Fragment treated them as
     morphologically identical. -/
 theorem cs_will_would_morph_distinct :
-    Fragments.English.Auxiliaries.will.tense ≠
-      Fragments.English.Auxiliaries.would.tense := by decide
+    English.Auxiliaries.will.tense ≠
+      English.Auxiliaries.would.tense := by decide
 
 end CarianiSantorio2018

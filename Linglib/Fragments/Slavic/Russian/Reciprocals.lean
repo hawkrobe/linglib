@@ -13,7 +13,7 @@ The first element "drug" agrees in case with the subject, while "druga"
 takes the case assigned by the verb.
 -/
 
-namespace Fragments.Slavic.Russian.Reciprocals
+namespace Russian.Reciprocals
 
 open Pronoun
 
@@ -31,4 +31,4 @@ def sebja : Entry :=
 theorem recip_distinct_from_reflexive :
     drugDruga.form ≠ sebja.form := by decide
 
-end Fragments.Slavic.Russian.Reciprocals
+end Russian.Reciprocals

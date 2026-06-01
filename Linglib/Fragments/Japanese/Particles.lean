@@ -23,7 +23,7 @@ discourse stances, following @cite{kubota-2026}.
 
 -/
 
-namespace Fragments.Japanese.Particles
+namespace Japanese.Particles
 
 /-- A Japanese particle entry. -/
 structure ParticleEntry where
@@ -75,7 +75,7 @@ def daroo : ParticleEntry :=
 
 def allParticles : List ParticleEntry := [ka, no_, koto, kke, daroo]
 
-end Fragments.Japanese.Particles
+end Japanese.Particles
 
 
 /-! ## Part 2: Outlook Markers
@@ -96,7 +96,7 @@ express the speaker's evaluative stance toward that counterstance.
 - (2) *nanka* 'anything like', *kurai* 'at least', *koso* 'precisely'
 -/
 
-namespace Fragments.Japanese.OutlookMarkers
+namespace Japanese.OutlookMarkers
 
 open Pragmatics.Expressives.OutlookMarker
 
@@ -255,4 +255,4 @@ theorem nanka_is_negative : nanka.stance = .negative := rfl
 theorem kurai_is_minimum : kurai.stance = .minimum := rfl
 theorem koso_is_emphasis : koso.stance = .emphasis := rfl
 
-end Fragments.Japanese.OutlookMarkers
+end Japanese.OutlookMarkers

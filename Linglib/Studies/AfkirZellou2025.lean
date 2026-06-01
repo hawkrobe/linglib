@@ -59,7 +59,7 @@ namespace AfkirZellou2025
 
 open Core.Constraint Phonology.Constraints
 open Phonology.Syllable
-open Fragments.Tarifit.Inventory
+open Tarifit.Inventory
 open Core.Constraint.OT
 
 -- ============================================================================

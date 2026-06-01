@@ -5,7 +5,7 @@ import Linglib.Typology.Pronoun.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Turkish
+namespace Turkish
 
 /-- Turkish (Turkic). No incl/excl; no gender distinctions (o for all
     genders); binary politeness (sen/siz); generic-noun-based
@@ -34,4 +34,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Turkish
+end Turkish

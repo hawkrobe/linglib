@@ -6,7 +6,7 @@ Lexical entry for Italian *solo che* — the discourse *only* connective. The mo
 
 -/
 
-namespace Fragments.Italian.DiscourseParticles
+namespace Italian.DiscourseParticles
 
 /-- A discourse *only* particle entry. -/
 structure DiscourseOnlyParticle where
@@ -21,4 +21,4 @@ def soloChe : DiscourseOnlyParticle where
   nativeForm := "solo che"
   gloss := "only (that)"
 
-end Fragments.Italian.DiscourseParticles
+end Italian.DiscourseParticles

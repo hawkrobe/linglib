@@ -34,7 +34,7 @@ namespace AspectualConsistency
 
 open Semantics.Lexical
 open Features
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Semantics.Aspect.Incremental (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)

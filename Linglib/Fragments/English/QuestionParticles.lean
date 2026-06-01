@@ -22,7 +22,7 @@ information request, but are ungrammatical in any embedded position
 (@cite{dayal-2025} ex. (19)).
 -/
 
-namespace Fragments.English.QuestionParticles
+namespace English.QuestionParticles
 
 /-- An English MQP-like question adverb entry. -/
 structure QParticleEntry where
@@ -58,4 +58,4 @@ theorem quick_matrix_only :
     quick.inQuasiSub = false ∧ quick.inQuotation = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.English.QuestionParticles
+end English.QuestionParticles

@@ -22,7 +22,7 @@ is a syntactic fact about the marker–n-word interaction, not a
 lexical-feature distinction across n-words.
 -/
 
-namespace Fragments.Spanish.PolarityItems
+namespace Spanish.PolarityItems
 
 open Typology.PolarityItem
 
@@ -92,4 +92,4 @@ theorem all_npis_licensed_by_negation :
     items.all (fun e => e.licensingContexts.contains .negation) = true := by
   native_decide
 
-end Fragments.Spanish.PolarityItems
+end Spanish.PolarityItems

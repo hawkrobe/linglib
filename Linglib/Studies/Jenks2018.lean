@@ -41,8 +41,8 @@ open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Core.Nominal
 
-abbrev mandarinInv := Fragments.Mandarin.Definiteness.articleInventory
-abbrev cantoneseInv := Fragments.Cantonese.Definiteness.articleInventory
+abbrev mandarinInv := Mandarin.Definiteness.articleInventory
+abbrev cantoneseInv := Cantonese.Definiteness.articleInventory
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: The Jenks Four-Cell Typology and Mandarin's Cell
@@ -79,7 +79,7 @@ theorem jenks_attested_distinct :
     Jenks (2018) Table 2 cell. -/
 theorem mandarin_jenks_cell :
     mandarinInv.toMarkingStrategy = .markedAnaphoric :=
-  Fragments.Mandarin.Definiteness.articleInventory_marking
+  Mandarin.Definiteness.articleInventory_marking
 
 /-- Mandarin's strategy is in the Jenks-attested set. -/
 theorem mandarin_attested :
@@ -91,7 +91,7 @@ theorem mandarin_attested :
     English *the*, covering both unique and anaphoric environments. -/
 theorem cantonese_jenks_cell :
     cantoneseInv.toMarkingStrategy = .generallyMarked :=
-  Fragments.Cantonese.Definiteness.articleInventory_marking
+  Cantonese.Definiteness.articleInventory_marking
 
 /-- Mandarin and Cantonese instantiate distinct Jenks cells — the
     central typological contrast of paper §6. -/

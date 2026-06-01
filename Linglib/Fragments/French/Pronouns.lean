@@ -5,7 +5,7 @@ import Linglib.Typology.Pronoun.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.French
+namespace French
 
 /-- French (Indo-European, Romance). No incl/excl; gender in 3rd sg
     (il/elle); binary politeness (tu/vous); generic-noun-based
@@ -33,4 +33,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.French
+end French

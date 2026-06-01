@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Slavic.Russian
+namespace Russian
 
 /-- Russian: second-person-only morphological imperative (*idi!*, *idite!*);
     Type 1 prohibitive (*ne idi!* — regular *ne* negation with imperative);
@@ -22,4 +22,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Imperative suffix -i/-'te; prohibitive = ne + imperative; " ++
              "periphrastic hortative davaj(te)." }
 
-end Fragments.Slavic.Russian
+end Russian

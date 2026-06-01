@@ -34,7 +34,7 @@ strict contiguity.
 
 -/
 
-namespace Fragments.Finnish.Case
+namespace Finnish.Case
 
 -- ============================================================================
 -- § 1: Case Inventory
@@ -169,4 +169,4 @@ theorem internal_external_distinct (d : Direction) :
     (localCaseMatrix d .internal).suffix ≠ (localCaseMatrix d .external).suffix := by
   cases d <;> decide
 
-end Fragments.Finnish.Case
+end Finnish.Case

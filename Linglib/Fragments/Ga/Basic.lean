@@ -37,7 +37,7 @@ diagnostic requires a free Neg head; Gã `-ee` and `-ko` appear
 suffixal) that is orthogonal to the OC story.
 -/
 
-namespace Fragments.Ga
+namespace Ga
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Person and Number
@@ -197,4 +197,4 @@ def basicWordOrder : String := "SVO"
     ungrammatical in this position. -/
 def controlledSubjectMustBeOvert : Bool := true
 
-end Fragments.Ga
+end Ga

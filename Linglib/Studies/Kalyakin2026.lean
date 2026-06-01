@@ -271,16 +271,16 @@ theorem again_distinguishes_vVPE_from_englishVPE :
 -- § 8. Fragment Integration: NV Root Position → vVPE
 -- ════════════════════════════════════════════════════
 
-open Fragments.Dargwa.ComplexPredicates in
+open Dargwa.ComplexPredicates in
 
 /-- Is a CPr's NV inside vVPE's deletion domain?
     The fragment's `AnnotatedCPr` stores `RootPosition` (from
     `Core.Lexical.LevinClass`); this function bridges to the
     Minimalist `rootInVVPEDomain` from `DeletionDomain.lean`. -/
-def cprInVVPEDomain (cpr : Fragments.Dargwa.ComplexPredicates.AnnotatedCPr) : Bool :=
+def cprInVVPEDomain (cpr : Dargwa.ComplexPredicates.AnnotatedCPr) : Bool :=
   rootInVVPEDomain cpr.rootPosition
 
-open Fragments.Dargwa.ComplexPredicates in
+open Dargwa.ComplexPredicates in
 
 /-- Change-of-state NVs (complement position) are inside vVPE's
     deletion domain: they can be elided. -/
@@ -289,7 +289,7 @@ theorem cos_in_domain :
     cprInVVPEDomain calmCPr = true ∧ cprInVVPEDomain praiseCPr = true ∧
     cprInVVPEDomain repairCPr = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-open Fragments.Dargwa.ComplexPredicates in
+open Dargwa.ComplexPredicates in
 
 /-- Manner/activity NVs (adjoined position) are outside vVPE's
     deletion domain: they survive ellipsis. This is why antipassive

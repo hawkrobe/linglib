@@ -10,7 +10,7 @@ forms (*i* proximal / *ũ* distal). AA is Fin-based and freely embeddable.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Magahi.Pronouns
+namespace Magahi.Pronouns
 
 open Pronoun
 
@@ -112,4 +112,4 @@ theorem three_levels :
 theorem markers_three_levels :
     allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
-end Fragments.Magahi.Pronouns
+end Magahi.Pronouns

@@ -83,14 +83,14 @@ open Typology.Modality
     first-class divergence theorems. -/
 
 -- Languages where Fragment WALS values match Aikhenvald: pass through directly.
-private abbrev english := Fragments.English.Evidentiality.evidentialityProfile
-private abbrev mandarin := Fragments.Mandarin.Evidentiality.evidentialityProfile
-private abbrev turkish := Fragments.Turkish.Evidentiality.evidentialityProfile
-private abbrev bulgarian := Fragments.Slavic.Bulgarian.Evidentiality.evidentialityProfile
-private abbrev tibetan := Fragments.Tibetan.Evidentiality.evidentialityProfile
-private abbrev quechua := Fragments.Quechua.Evidentiality.evidentialityProfile
-private abbrev aymara := Fragments.Aymara.Evidentiality.evidentialityProfile
-private abbrev westGreenlandic := Fragments.WestGreenlandic.Evidentiality.evidentialityProfile
+private abbrev english := English.Evidentiality.evidentialityProfile
+private abbrev mandarin := Mandarin.Evidentiality.evidentialityProfile
+private abbrev turkish := Turkish.Evidentiality.evidentialityProfile
+private abbrev bulgarian := Bulgarian.Evidentiality.evidentialityProfile
+private abbrev tibetan := Tibetan.Evidentiality.evidentialityProfile
+private abbrev quechua := Quechua.Evidentiality.evidentialityProfile
+private abbrev aymara := Aymara.Evidentiality.evidentialityProfile
+private abbrev westGreenlandic := WestGreenlandic.Evidentiality.evidentialityProfile
 
 -- Aikhenvald-overrides: where Aikhenvald disagrees with WALS, record-update.
 -- The WALS originals remain accessible at the Fragment paths.
@@ -98,63 +98,63 @@ private abbrev westGreenlandic := Fragments.WestGreenlandic.Evidentiality.eviden
 /-- Aikhenvald 2004: French has no grammatical evidentials. WALS @cite{de-haan-2013}
     codes the journalistic-conditional reportative as `indirectOnly`. -/
 private def french : EvidentialityProfile :=
-  { Fragments.French.Evidentiality.evidentialityProfile with
+  { French.Evidentiality.evidentialityProfile with
     system := .noGrammatical, coding := .notApplicable }
 
 /-- Aikhenvald 2004: German has no grammatical evidentials. WALS counts modal
     verbs *sollen*/*wollen* as `indirectOnly`. -/
 private def german : EvidentialityProfile :=
-  { Fragments.German.Evidentiality.evidentialityProfile with
+  { German.Evidentiality.evidentialityProfile with
     system := .noGrammatical, coding := .notApplicable }
 
 /-- Aikhenvald 2004: Japanese has no grammatical evidentials. WALS counts
     *soo da* / *rashii* as `indirectOnly` with `verbalAffix` coding. -/
 private def japanese : EvidentialityProfile :=
-  { Fragments.Japanese.Evidentiality.evidentialityProfile with
+  { Japanese.Evidentiality.evidentialityProfile with
     system := .noGrammatical, coding := .notApplicable }
 
 /-- Aikhenvald 2004: Korean has no grammatical evidentials. WALS counts
     *-deo-* retrospective as `indirectOnly`. -/
 private def korean : EvidentialityProfile :=
-  { Fragments.Korean.Evidentiality.evidentialityProfile with
+  { Korean.Evidentiality.evidentialityProfile with
     system := .noGrammatical, coding := .notApplicable }
 
 /-- Aikhenvald 2004: Finnish has no grammatical evidentials (modal verbs only).
     WALS counts these as `indirectOnly`. -/
 private def finnish : EvidentialityProfile :=
-  { Fragments.Finnish.Evidentiality.evidentialityProfile with
+  { Finnish.Evidentiality.evidentialityProfile with
     system := .noGrammatical, coding := .notApplicable }
 
 /-- Aikhenvald 2004: Georgian has indirect-only evidentials (the evidential
     perfect marks inference/report only). WALS codes as `directAndIndirect`. -/
 private def georgian : EvidentialityProfile :=
-  { Fragments.Georgian.Evidentiality.evidentialityProfile with
+  { Georgian.Evidentiality.evidentialityProfile with
     system := .indirectOnly }
 
 /-- Aikhenvald 2004: Abkhaz has 2-way direct/indirect via TAM-fused finite vs
     nonfinite-plus-copula. WALS codes as `indirectOnly`/`verbalAffix`. -/
 private def abkhaz : EvidentialityProfile :=
-  { Fragments.Abkhaz.Evidentiality.evidentialityProfile with
+  { Abkhaz.Evidentiality.evidentialityProfile with
     system := .directAndIndirect, coding := .partOfTAM }
 
 /-- Aikhenvald 2004: Tuyuca has 5-term system (visual/nonvisual/apparent/
     secondhand/assumed) per @cite{barnes-1984}. WALS lumps into `directAndIndirect`
     with `partOfTAM` coding. -/
 private def tuyuca : EvidentialityProfile :=
-  { Fragments.Tuyuca.Evidentiality.evidentialityProfile with
+  { Tuyuca.Evidentiality.evidentialityProfile with
     system := .threeOrMore, coding := .verbalAffix }
 
 /-- Aikhenvald 2004: Kashaya has 5-term system distinguishing visual from
     auditory direct evidence per @cite{oswalt-1986}. WALS lumps into
     `directAndIndirect`. -/
 private def kashaya : EvidentialityProfile :=
-  { Fragments.Kashaya.Evidentiality.evidentialityProfile with
+  { Kashaya.Evidentiality.evidentialityProfile with
     system := .threeOrMore }
 
 /-- Aikhenvald 2004: Tariana has 5-term system (Vaupés multilingual area).
     WALS lumps into `directAndIndirect` with `partOfTAM` coding. -/
 private def tariana : EvidentialityProfile :=
-  { Fragments.Tariana.Evidentiality.evidentialityProfile with
+  { Tariana.Evidentiality.evidentialityProfile with
     system := .threeOrMore, coding := .verbalAffix }
 
 /-- 18-language Aikhenvald sample. -/
@@ -285,50 +285,50 @@ theorem complex_systems_use_affixes :
     `indirectOnly`. -/
 theorem french_aikhenvald_vs_de_haan :
     french.system = .noGrammatical ∧
-    Fragments.French.Evidentiality.evidentialityProfile.system = .indirectOnly := by
+    French.Evidentiality.evidentialityProfile.system = .indirectOnly := by
   decide
 
 /-- Aikhenvald vs de Haan: German. Aikhenvald excludes modal *sollen*/*wollen*
     from grammatical evidentials; WALS counts them. -/
 theorem german_aikhenvald_vs_de_haan :
     german.system = .noGrammatical ∧
-    Fragments.German.Evidentiality.evidentialityProfile.system = .indirectOnly := by
+    German.Evidentiality.evidentialityProfile.system = .indirectOnly := by
   decide
 
 /-- Aikhenvald vs de Haan: Japanese. Aikhenvald treats *soo da*/*rashii* as
     modal, not evidential; WALS classifies them as `indirectOnly`. -/
 theorem japanese_aikhenvald_vs_de_haan :
     japanese.system = .noGrammatical ∧
-    Fragments.Japanese.Evidentiality.evidentialityProfile.system = .indirectOnly := by
+    Japanese.Evidentiality.evidentialityProfile.system = .indirectOnly := by
   decide
 
 /-- Aikhenvald vs de Haan: Korean. Aikhenvald excludes *-deo-* from
     grammatical evidentials. -/
 theorem korean_aikhenvald_vs_de_haan :
     korean.system = .noGrammatical ∧
-    Fragments.Korean.Evidentiality.evidentialityProfile.system = .indirectOnly := by
+    Korean.Evidentiality.evidentialityProfile.system = .indirectOnly := by
   decide
 
 /-- Aikhenvald vs de Haan: Finnish. Aikhenvald excludes modal verbs from
     grammatical evidentials. -/
 theorem finnish_aikhenvald_vs_de_haan :
     finnish.system = .noGrammatical ∧
-    Fragments.Finnish.Evidentiality.evidentialityProfile.system = .indirectOnly := by
+    Finnish.Evidentiality.evidentialityProfile.system = .indirectOnly := by
   decide
 
 /-- Aikhenvald vs de Haan: Georgian. Aikhenvald says indirect-only;
     WALS Ch 77 codes as direct-and-indirect. -/
 theorem georgian_aikhenvald_vs_de_haan :
     georgian.system = .indirectOnly ∧
-    Fragments.Georgian.Evidentiality.evidentialityProfile.system =
+    Georgian.Evidentiality.evidentialityProfile.system =
       .directAndIndirect := by decide
 
 /-- Aikhenvald vs de Haan: Abkhaz. Aikhenvald says direct-and-indirect with
     TAM-fusion; WALS codes as indirect-only with verbal-affix coding. -/
 theorem abkhaz_aikhenvald_vs_de_haan :
     abkhaz.system = .directAndIndirect ∧ abkhaz.coding = .partOfTAM ∧
-    Fragments.Abkhaz.Evidentiality.evidentialityProfile.system = .indirectOnly ∧
-    Fragments.Abkhaz.Evidentiality.evidentialityProfile.coding = .verbalAffix := by
+    Abkhaz.Evidentiality.evidentialityProfile.system = .indirectOnly ∧
+    Abkhaz.Evidentiality.evidentialityProfile.coding = .verbalAffix := by
   decide
 
 /-- Aikhenvald vs de Haan: Tuyuca. Aikhenvald distinguishes 5-term system
@@ -336,23 +336,23 @@ theorem abkhaz_aikhenvald_vs_de_haan :
     the `directAndIndirect` 2-way bucket and Ch 78 codes as `partOfTAM`. -/
 theorem tuyuca_aikhenvald_vs_de_haan :
     tuyuca.system = .threeOrMore ∧ tuyuca.coding = .verbalAffix ∧
-    Fragments.Tuyuca.Evidentiality.evidentialityProfile.system = .directAndIndirect ∧
-    Fragments.Tuyuca.Evidentiality.evidentialityProfile.coding = .partOfTAM := by
+    Tuyuca.Evidentiality.evidentialityProfile.system = .directAndIndirect ∧
+    Tuyuca.Evidentiality.evidentialityProfile.coding = .partOfTAM := by
   decide
 
 /-- Aikhenvald vs de Haan: Kashaya. Aikhenvald distinguishes 4-or-5-way
     system; WALS lumps into `directAndIndirect`. -/
 theorem kashaya_aikhenvald_vs_de_haan :
     kashaya.system = .threeOrMore ∧
-    Fragments.Kashaya.Evidentiality.evidentialityProfile.system =
+    Kashaya.Evidentiality.evidentialityProfile.system =
       .directAndIndirect := by decide
 
 /-- Aikhenvald vs de Haan: Tariana. Aikhenvald distinguishes 5-term system
     (Vaupés area); WALS lumps into `directAndIndirect` and codes as `partOfTAM`. -/
 theorem tariana_aikhenvald_vs_de_haan :
     tariana.system = .threeOrMore ∧ tariana.coding = .verbalAffix ∧
-    Fragments.Tariana.Evidentiality.evidentialityProfile.system = .directAndIndirect ∧
-    Fragments.Tariana.Evidentiality.evidentialityProfile.coding = .partOfTAM := by
+    Tariana.Evidentiality.evidentialityProfile.system = .directAndIndirect ∧
+    Tariana.Evidentiality.evidentialityProfile.coding = .partOfTAM := by
   decide
 
 end Aikhenvald2004

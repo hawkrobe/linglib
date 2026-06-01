@@ -31,7 +31,7 @@ classifier. @cite{moroney-2021} analyzes this as NP-movement from a base
 position below ClfP to a position above the numeral and classifier.
 -/
 
-namespace Fragments.Shan.Classifiers
+namespace Shan.Classifiers
 
 open Typology (ClassifierEntry SemanticParameter ShapeDimension)
 
@@ -93,4 +93,4 @@ theorem specific_classifiers_motivated :
 theorem classifiers_are_free :
     allClassifiers.all (!·.form.startsWith "-") = true := by native_decide
 
-end Fragments.Shan.Classifiers
+end Shan.Classifiers

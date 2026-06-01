@@ -8,7 +8,7 @@ WALS-derived profile for Spanish (ISO `spa`). B&N 2001 places Spanish in
 the "fusional" cell (concatenative + flexive + cumulative).
 -/
 
-namespace Fragments.Spanish
+namespace Spanish
 
 open Morphology
 
@@ -29,4 +29,4 @@ example : morphProfile.iso = "spa" ∧ morphProfile.language = "Spanish" := ⟨r
 /-- B&N 2001 places Spanish in the "fusional" cell. -/
 example : morphProfile.IsFusional := by decide
 
-end Fragments.Spanish
+end Spanish

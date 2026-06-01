@@ -4,7 +4,7 @@ import Linglib.Semantics.Modality.ModalTypes
 # German Modal Verb Fragment
 
 Lexical entries for German modal verbs, following the pattern of English
-`AuxEntry` from `Fragments.English.FunctionWords`.
+`AuxEntry` from `English.FunctionWords`.
 
 German has six core modals, each with fixed force and contextually variable
 flavor. All modal meanings are Cartesian products (force × flavors), so
@@ -22,7 +22,7 @@ they all satisfy IFF.
 Reference: Kratzer, A. (1981). The Notional Category of Modality.
 -/
 
-namespace Fragments.German.Predicates.Modal
+namespace German.Predicates.Modal
 
 open Semantics.Modality (ForceFlavor ModalForce ModalFlavor)
 
@@ -122,4 +122,4 @@ theorem sollte_wider_than_sollen :
 /-- Seven modals total (including *sollte* as distinct from *sollen*). -/
 theorem allModals_size : allModals.length = 7 := rfl
 
-end Fragments.German.Predicates.Modal
+end German.Predicates.Modal

@@ -81,7 +81,7 @@ theoretical architecture of §6.1.
 
 set_option autoImplicit false
 
-namespace Fragments.Hungarian.VowelHarmony
+namespace Hungarian.VowelHarmony
 
 open Phonology (Segment Feature FeatureVal)
 open Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
@@ -681,4 +681,4 @@ theorem spread_preserves_length :
     (spreadSuffix palatalHarmony_eBlocks true [e_vowel, archiphoneU]).length = 2 := by
   native_decide
 
-end Fragments.Hungarian.VowelHarmony
+end Hungarian.VowelHarmony

@@ -611,7 +611,7 @@ theorem akan_underapplication :
 /-! ### Grounding the Akan tableau in phonological features
 
 The violation counts in §5 are grounded in the featural representations
-from `Fragments.Akan.Phonology`. The key connection: palatalization is
+from `Akan.Phonology`. The key connection: palatalization is
 a [coronal] feature change (/k/ [−cor] → /tɕ/ [+cor]), and the four
 constraints target exactly this feature dimension.
 
@@ -625,7 +625,7 @@ constraints target exactly this feature dimension.
   [coronal] value. Only `over` (input /k/ → output /tɕ/ in base). -/
 
 section AkanGrounding
-open Fragments.Akan.Phonology
+open Akan.Phonology
 open Phonology
 
 /-- The `over` candidate's OCP violation is grounded: /tɕ/ is [+coronal],

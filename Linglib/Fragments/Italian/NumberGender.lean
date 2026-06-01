@@ -17,7 +17,7 @@ This is the same locality logic as possession–gender interaction: features
 within nP can condition gender; features outside nP cannot.
 -/
 
-namespace Fragments.Italian.NumberGender
+namespace Italian.NumberGender
 
 open Morphology.DM
 open Features (SurfaceGender)
@@ -190,4 +190,4 @@ theorem aPlural_body_part_count :
       ["arm", "finger", "knee", "lip", "bone", "eyebrow"].contains n.gloss)).length = 6 := by
   native_decide
 
-end Fragments.Italian.NumberGender
+end Italian.NumberGender

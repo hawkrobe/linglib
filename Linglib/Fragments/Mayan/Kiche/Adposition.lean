@@ -26,7 +26,7 @@ head-initial profile (`.headInitial` either way under
 `AdpositionOrder.headDirection`).
 -/
 
-namespace Fragments.Mayan.Kiche
+namespace Kiche
 
 /-- K'iche' adposition order, grammar-grounded from
     @cite{mondloch-2017} (prepositional constructions). Not in WALS
@@ -35,4 +35,4 @@ namespace Fragments.Mayan.Kiche
     contested across Mayanist literature; see module docstring. -/
 def adposition : Typology.Adposition.AdpositionOrder := .prepositional
 
-end Fragments.Mayan.Kiche
+end Kiche

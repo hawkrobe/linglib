@@ -397,7 +397,7 @@ verb whose implicit-argument profile licenses Bruening's Table (56)
 classification. If `Verbal.lean` ever moves `give` to a different
 complement type or implicit-arg profile, this bridge fails — alerting
 both files. -/
-open Fragments.English.Predicates.Verbal Semantics.Lexical in
+open English.Predicates.Verbal Semantics.Lexical in
 theorem bruening_give_field_consistent :
     give.complementType = ComplementType.np_np
     ∧ give.altComplementType = some ComplementType.np_pp

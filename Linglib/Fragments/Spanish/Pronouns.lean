@@ -27,7 +27,7 @@ Unlike Italian LEI, USTED can also be used in *laísta* varieties where
 3rd person clitics for animates are *le* (syncretic with dative).
 -/
 
-namespace Fragments.Spanish.Pronouns
+namespace Spanish.Pronouns
 
 open Pronoun
 open Features.Register (Level)
@@ -106,9 +106,9 @@ theorem has_all_persons :
     allPronouns.any (·.person == some .second) = true ∧
     allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
-end Fragments.Spanish.Pronouns
+end Spanish.Pronouns
 
-namespace Fragments.Spanish
+namespace Spanish
 
 /-- Spanish (Indo-European, Romance) WALS pronoun typology profile.
     No incl/excl; gender in 3rd AND 1st/2nd person (nosotros/nosotras
@@ -137,4 +137,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Spanish
+end Spanish

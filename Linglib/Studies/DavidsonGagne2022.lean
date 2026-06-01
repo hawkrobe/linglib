@@ -76,7 +76,7 @@ namespace DavidsonGagne2022
 open Core.Logic.Intensional (Frame)
 open Semantics.Quantification.Quantifier (every_sem some_sem)
 open Semantics.Quantification.DomainRestriction
-open Fragments.ASL.Height
+open ASL.Height
 
 -- ============================================================================
 -- §1. Domain Types: Vampire Scenario

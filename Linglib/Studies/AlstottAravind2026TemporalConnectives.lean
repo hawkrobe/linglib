@@ -54,7 +54,7 @@ namespace AlstottAravind2026TemporalConnectives
 
 open Features
 open Semantics.Tense.TemporalConnectives
-open Fragments.English.TemporalExpressions
+open English.TemporalExpressions
 open Phenomena.TemporalConnectives.AspectInteractionData
 open Core.Time
 open Core.Time.Interval

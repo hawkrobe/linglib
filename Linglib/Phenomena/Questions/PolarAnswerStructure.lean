@@ -124,9 +124,9 @@ def japaneseProfile : PolarAnswerProfile :=
   }
 
 /-- Swedish polar answer profile (three-way: ja/nej/jo).
-    Derived from `Fragments.Swedish.AnswerParticles.profile`. -/
+    Derived from `Swedish.AnswerParticles.profile`. -/
 def swedishProfile : PolarAnswerProfile :=
-  Fragments.Swedish.AnswerParticles.profile
+  Swedish.AnswerParticles.profile
 
 /-- Finnish polar answer profile (mixed: verb echo + *kyllä*, polarity-based). -/
 def finnishProfile : PolarAnswerProfile :=

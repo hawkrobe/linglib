@@ -42,7 +42,7 @@ namespace AghaJeretic2026
 
 open Semantics.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
 open Semantics.Modality.Directive
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 
 abbrev World := Fin 4
 

@@ -5,7 +5,7 @@ import Linglib.Typology.Pronoun.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hungarian
+namespace Hungarian
 
 /-- Hungarian (Uralic). No incl/excl; no gender distinctions (ő for
     all genders); multiple politeness distinctions (te/Ön/maga);
@@ -34,4 +34,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Hungarian
+end Hungarian

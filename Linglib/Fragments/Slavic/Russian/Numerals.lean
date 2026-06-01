@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Slavic.Russian
+namespace Russian
 
 /-- Russian: "first" (*pervyj*) suppletive, "second" (*vtoroj*) also
     suppletive, higher ordinals regular (*tretij* 'third', *chetvertyj*
@@ -15,4 +15,4 @@ namespace Fragments.Slavic.Russian
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Russian" "rus" (region := .europe) (pluralMarking := .obligatory)
 
-end Fragments.Slavic.Russian
+end Russian

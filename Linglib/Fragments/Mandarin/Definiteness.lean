@@ -11,7 +11,7 @@ bare nouns serve unique definites. Possession is via *de*. Under the
 only the anaphoric type has a dedicated form.
 -/
 
-namespace Fragments.Mandarin.Definiteness
+namespace Mandarin.Definiteness
 
 open Core.Nominal (ArticleInventory)
 open Features.Definiteness (DefMarkingStrategy)
@@ -29,4 +29,4 @@ def articleInventory : ArticleInventory :=
 theorem articleInventory_marking :
     articleInventory.toMarkingStrategy = .markedAnaphoric := rfl
 
-end Fragments.Mandarin.Definiteness
+end Mandarin.Definiteness

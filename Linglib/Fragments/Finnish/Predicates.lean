@@ -25,7 +25,7 @@ Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
 
 -/
 
-namespace Fragments.Finnish.Predicates
+namespace Finnish.Predicates
 
 open Minimalist (VoiceFlavor VoiceHead voiceAgent voiceImpersonal)
 
@@ -439,4 +439,4 @@ def FinnishImplicativeVerb.toImplicativeClass (v : FinnishImplicativeVerb) : Imp
 theorem uskaltaa_matches_dare :
     uskaltaa.toImplicativeClass = ImplicativeClass.dare := rfl
 
-end Fragments.Finnish.Predicates
+end Finnish.Predicates

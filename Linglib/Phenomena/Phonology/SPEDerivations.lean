@@ -24,7 +24,7 @@ open Phonology.LocalRewrite (derive)
 -- ============================================================================
 
 section EnglishPreglottalization
-open Fragments.English.Phonology
+open English.Phonology
 
 /-- Expected surface form: /t/ with [+c.g.] added. -/
 def t_cg : Segment := Segment.ofSpecs
@@ -50,7 +50,7 @@ end EnglishPreglottalization
 -- ============================================================================
 
 section EnglishPostnasalDeletion
-open Fragments.English.Phonology
+open English.Phonology
 
 /-- UR /wɪntər/ → derive [postnasalDeletion] → [wɪnər].
     /t/ deletes between /n/ ([+nasal]) and /ə/ ([+syll]). -/
@@ -69,7 +69,7 @@ end EnglishPostnasalDeletion
 -- ============================================================================
 
 section KoreanNasalization
-open Fragments.Korean.Phonology
+open Korean.Phonology
 
 /-- Expected surface form: /k/ nasalized to [+nasal, +voice, +son].
     Preserves all other features of underlying /k/. -/

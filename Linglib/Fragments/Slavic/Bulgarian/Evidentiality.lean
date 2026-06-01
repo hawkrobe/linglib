@@ -12,7 +12,7 @@ Sister to `Fragments/Slavic/Bulgarian/Evidentials.lean` which holds the
 @cite{cumming-2026} tense-evidential paradigm data.
 -/
 
-namespace Fragments.Slavic.Bulgarian.Evidentiality
+namespace Bulgarian.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -30,4 +30,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "bul" ∧ evidentialityProfile.language = "Bulgarian" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Slavic.Bulgarian.Evidentiality
+end Bulgarian.Evidentiality

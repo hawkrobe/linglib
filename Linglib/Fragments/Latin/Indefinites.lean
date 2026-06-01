@@ -17,7 +17,7 @@ comparison anyway.
 
 set_option autoImplicit false
 
-namespace Fragments.Latin.Indefinites
+namespace Latin.Indefinites
 
 open Typology.Indefinite
 
@@ -53,4 +53,4 @@ def paradigm : IndefiniteParadigm where
     coexpressed (`aliquis`), SK distinct (`quidam`). -/
 theorem latin_paradigm_is_AAB : paradigm.syncretism = some .AAB := rfl
 
-end Fragments.Latin.Indefinites
+end Latin.Indefinites

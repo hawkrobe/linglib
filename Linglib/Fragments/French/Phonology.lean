@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.French.Phonology
+namespace French.Phonology
 
 /-- Canonical French phoneme inventory: first PHOIBLE inventory for ISO `fra`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.French.fra
 
-end Fragments.French.Phonology
+end French.Phonology

@@ -12,7 +12,7 @@ realizes the J (set intersection) operator.
 are adversative.
 -/
 
-namespace Fragments.German.Coordination
+namespace German.Coordination
 
 open Features.Coordination
 
@@ -53,4 +53,4 @@ def conjunctionStrategy : ConjunctionStrategy := .jOnly
 /-- German J-only strategy realizes exactly 1 overt morpheme. -/
 theorem german_overt_count : conjunctionStrategy.overtMorphemeCount = 1 := rfl
 
-end Fragments.German.Coordination
+end German.Coordination

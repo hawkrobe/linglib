@@ -37,7 +37,7 @@ typological claim: strength is encoded in the circumstantial domain,
 but only weakly.
 -/
 
-namespace Fragments.Gitksan.Modals
+namespace Gitksan.Modals
 
 open Semantics.Modality (ForceFlavor ForceAnalysis BackgroundClass TemporalOrientation)
 open Semantics.Modality.Typology (ModalExpression)
@@ -212,4 +212,4 @@ theorem epistemics_nonuniform_dim :
       [TemporalOrientation.past, .present].any (fun o =>
         !requiresDim e o)) = true := by decide
 
-end Fragments.Gitksan.Modals
+end Gitksan.Modals

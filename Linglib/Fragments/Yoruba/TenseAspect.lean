@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Yoruba
+namespace Yoruba
 
 /-- Yoruba (Niger-Congo, Atlantic-Congo): perfective/imperfective distinction;
     no past tense marking; no inflectional future; perfect from 'already'
@@ -15,4 +15,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .none, future := .none
   , perfect := .fromFinishAlready, affixPosition := .noInflection }
 
-end Fragments.Yoruba
+end Yoruba

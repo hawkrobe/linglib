@@ -19,7 +19,7 @@ The evaluative BNP may have entered English from French or Latin
 - EM: *un sacré de boulot* 'a hell of a job' (informal)
 -/
 
-namespace Fragments.French.Binominals
+namespace French.Binominals
 
 open Semantics.Quantification.Binominal
 
@@ -71,4 +71,4 @@ theorem verre_n₂_headed :
 theorem idiot_n₂_headed :
     (OfBinominalType.evaluative).head = .n₂ := rfl
 
-end Fragments.French.Binominals
+end French.Binominals

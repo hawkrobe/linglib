@@ -63,7 +63,7 @@ open Core.Scale (Boundedness Degree Threshold deg thr)
 open Semantics.Gradability (GradableAdjEntry ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning)
 open Semantics.Degree (positiveMeaning antonymMeaning positiveMeaning_monotone)
-open Fragments.English.Predicates.Adjectival
+open English.Predicates.Adjectival
   (large small gigantic tiny clean dirty pristine filthy)
 
 -- ============================================================================

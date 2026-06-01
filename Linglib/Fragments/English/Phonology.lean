@@ -23,7 +23,7 @@ Core inventory for demo alternations: /p t k b d m n ŋ s w r æ ɪ ə/.
 open Phonology
 open Phonology.LocalRewrite
 
-namespace Fragments.English.Phonology
+namespace English.Phonology
 
 -- ============================================================================
 -- § 1: Segment Inventory
@@ -191,4 +191,4 @@ theorem k_is_voiceless_velar_stop :
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.English.eng
 
-end Fragments.English.Phonology
+end English.Phonology

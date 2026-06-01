@@ -37,12 +37,12 @@ types, connecting the LNC empirical data to the marker typology.
 -/
 
 -- PC-compatible markers → acceptable LNCs
-#guard Fragments.Japanese.Conditionals.nara.markerType == .both
-#guard Fragments.German.Conditionals.wenn.markerType == .both
+#guard Japanese.Conditionals.nara.markerType == .both
+#guard German.Conditionals.wenn.markerType == .both
 
 -- HC-only markers → degraded LNCs
-#guard Fragments.Japanese.Conditionals.ra.markerType == .hcOnly
-#guard Fragments.German.Conditionals.falls.markerType == .hcOnly
+#guard Japanese.Conditionals.ra.markerType == .hcOnly
+#guard German.Conditionals.falls.markerType == .hcOnly
 
 -- ════════════════════════════════════════════════════════════════
 -- § Acceptability–Marker Type Correlation
@@ -51,25 +51,25 @@ types, connecting the LNC empirical data to the marker typology.
 /-- Japanese nara (PC-compatible) yields acceptable LNC. -/
 theorem nara_ok_and_pc_compatible :
     ex15_japaneseNara.acceptability == "ok" ∧
-    Fragments.Japanese.Conditionals.nara.markerType == .both :=
+    Japanese.Conditionals.nara.markerType == .both :=
   ⟨rfl, rfl⟩
 
 /-- Japanese -ra (HC-only) yields degraded LNC. -/
 theorem ra_odd_and_hc_only :
     ex16_japaneseRa.acceptability == "odd" ∧
-    Fragments.Japanese.Conditionals.ra.markerType == .hcOnly :=
+    Japanese.Conditionals.ra.markerType == .hcOnly :=
   ⟨rfl, rfl⟩
 
 /-- German wenn (PC-compatible) yields acceptable LNC. -/
 theorem wenn_ok_and_pc_compatible :
     ex20_germanWenn.acceptability == "ok" ∧
-    Fragments.German.Conditionals.wenn.markerType == .both :=
+    German.Conditionals.wenn.markerType == .both :=
   ⟨rfl, rfl⟩
 
 /-- German falls (HC-only) yields degraded LNC. -/
 theorem falls_marginal_and_hc_only :
     ex21_germanFalls.acceptability == "marginal" ∧
-    Fragments.German.Conditionals.falls.markerType == .hcOnly :=
+    German.Conditionals.falls.markerType == .hcOnly :=
   ⟨rfl, rfl⟩
 
 end Lassiter2025

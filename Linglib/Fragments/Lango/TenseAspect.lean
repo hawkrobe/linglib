@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Lango
+namespace Lango
 
 /-- Lango (Nilotic, Eastern Sudanic): perfective/imperfective/progressive
     marked primarily by tone; past tense marking; no inflectional future;
@@ -15,4 +15,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .marked, future := .none
   , perfect := .other, affixPosition := .tonal }
 
-end Fragments.Lango
+end Lango

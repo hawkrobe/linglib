@@ -33,7 +33,7 @@ ergative-particle / SC-head proposal.
 
 -/
 
-namespace Fragments.German.VerbParticles
+namespace German.VerbParticles
 
 /-- German affix class: separable particles split under V2 and trigger
     *ge-*/*-zu-* insertion; inseparable prefixes never split. -/
@@ -190,4 +190,4 @@ theorem inventory_citation_concat
     IsCitationConcat e := by
   fin_cases he <;> rfl
 
-end Fragments.German.VerbParticles
+end German.VerbParticles

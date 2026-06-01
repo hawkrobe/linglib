@@ -8,7 +8,7 @@ Classifier-system data for French (ISO `fra`): masculine/feminine
 noun-class system per @cite{aikhenvald-2000} §2.
 -/
 
-namespace Fragments.French
+namespace French
 
 /-- French noun-class system: 2-class gender (masculine/feminine),
     obligatory agreement, mostly semantic + morphological residue. -/
@@ -26,4 +26,4 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , hasObligatoryNumber := true  -- le/les, un/des
   , source := "@cite{aikhenvald-2000} §2" }
 
-end Fragments.French
+end French

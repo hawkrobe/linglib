@@ -23,7 +23,7 @@ lexical-reactive split documented in `Core/Lexical/NegMarker.lean`. The
 the n-word system at the sentence level.
 -/
 
-namespace Fragments.Slavic.Czech.Negation
+namespace Czech.Negation
 
 open Typology.Negation
 
@@ -158,4 +158,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Slavic.Czech.Negation
+end Czech.Negation

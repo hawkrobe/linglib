@@ -19,7 +19,7 @@ Caha-containment lemmas live in `Studies/Caha2009.lean`
 (paper-anchored, keeps this substrate file Theory-import-free).
 -/
 
-namespace Fragments.Slavic.Case
+namespace Slavic.Case
 
 /-! ## Inventories -/
 
@@ -49,4 +49,4 @@ theorem coreInventory_isValid :
 theorem sevenCaseInventory_not_isValid :
     ¬ Features.Case.IsValidInventory sevenCaseInventory := by decide
 
-end Fragments.Slavic.Case
+end Slavic.Case

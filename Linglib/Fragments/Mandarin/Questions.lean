@@ -31,7 +31,7 @@ in `Syntax/Minimalism/ANDL.lean`; this file only carries
 the lexical entries with their typological parameters.
 -/
 
-namespace Fragments.Mandarin.Questions
+namespace Mandarin.Questions
 
 open Typology.Question (WhInterpMechanism WhMovementStrategy)
 open Typology.ExpressiveModifier
@@ -92,4 +92,4 @@ def question : Typology.Question.QuestionProfile :=
   , whMovement := some .inSitu
   , polarStrategy := some .particle }
 
-end Fragments.Mandarin.Questions
+end Mandarin.Questions

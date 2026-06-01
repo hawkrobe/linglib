@@ -45,7 +45,7 @@ would be predicted to block QI as well — they don't.
 namespace Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity
 
 open Phenomena.Islands.MannerOfSpeaking (mosIslandSources)
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Semantics.Lexical
 
 /-! ## §1. The two empirical observations

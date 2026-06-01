@@ -15,7 +15,7 @@ AH coverage, noted explicitly in the paper.
 Data from @cite{keenan-comrie-1977} Table 1 and §1.3.2.
 -/
 
-namespace Fragments.TobaBatak
+namespace TobaBatak
 
 open RelativeClause
 
@@ -57,4 +57,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Gap on subject; resumptive on IO/OBL/GEN; "
           ++ "DO genuinely cannot be relativized; @cite{keenan-comrie-1977} §1.3.2" }
 
-end Fragments.TobaBatak
+end TobaBatak

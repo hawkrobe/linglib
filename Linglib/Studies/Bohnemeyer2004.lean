@@ -42,8 +42,8 @@ namespace Bohnemeyer2004
 
 open Semantics.Lexical.EventStructure (EventType InternalExternalCause Template)
 open Semantics.Aspect (ViewpointAspectB)
-open Fragments.Mayan (MarkerSet)
-open Fragments.Mayan.Yukatek
+open Mayan (MarkerSet)
+open Yukatek
 
 -- ════════════════════════════════════════════════════
 -- § 1. Causal Chain and Thematic Hierarchy

@@ -10,7 +10,7 @@ Consistent with the Imbabura data used in the Negation and PolarityItems
 fragments in this directory.
 -/
 
-namespace Fragments.Quechua
+namespace Quechua
 
 open Morphology
 
@@ -32,4 +32,4 @@ example : morphProfile.iso = "qvi" ∧ morphProfile.language = "Quechua (Imbabur
 /-- B&N 2001 places Quechua in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
-end Fragments.Quechua
+end Quechua

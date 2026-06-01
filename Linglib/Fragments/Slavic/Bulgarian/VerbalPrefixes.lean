@@ -44,9 +44,9 @@ Bulgarian-specific facts (@cite{istratkova-2004} abstract):
 
 -/
 
-namespace Fragments.Slavic.Bulgarian.VerbalPrefixes
+namespace Bulgarian.VerbalPrefixes
 
-open Fragments.Slavic (Aspect SuperlexicalSubtype PrefixClass)
+open Slavic (Aspect SuperlexicalSubtype PrefixClass)
 
 /-- A Bulgarian prefixed-verb entry. The `prefixChain` is a list of
     `(morpheme, class)` pairs in **surface order** (outermost /
@@ -182,4 +182,4 @@ theorem inventory_nonempty_chain
     e.prefixChain ≠ [] := by
   fin_cases he <;> decide
 
-end Fragments.Slavic.Bulgarian.VerbalPrefixes
+end Bulgarian.VerbalPrefixes

@@ -21,7 +21,7 @@ vs *că* = IND) and verb morphology. 'want' and 'intend' take *să* (SBJV);
 - (46a) L-am făcut pe Ion **să** meargă în parc. ('make': SBJV)
 -/
 
-namespace Fragments.Romanian.MoodChoice
+namespace Romanian.MoodChoice
 
 open Semantics.Lexical
 
@@ -78,4 +78,4 @@ theorem a_intentiona_is_want_class :
 theorem a_face_is_causative :
     a_face.causative.isSome = true := rfl
 
-end Fragments.Romanian.MoodChoice
+end Romanian.MoodChoice

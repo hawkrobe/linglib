@@ -61,16 +61,16 @@ theorem captures_pronominal_disjoint_reference :
     capturesCoreferenceData pronominalDisjointReferenceData := by
   decide
 
-private abbrev john := Fragments.English.Nouns.john.toWordSg
-private abbrev mary := Fragments.English.Nouns.mary.toWordSg
-private abbrev they := Fragments.English.Pronouns.they.toWord
-private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
-private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
-private abbrev himself := Fragments.English.Pronouns.himself.toWord
-private abbrev herself := Fragments.English.Pronouns.herself.toWord
-private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
-private abbrev them := Fragments.English.Pronouns.them.toWord
-private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
+private abbrev john := English.Nouns.john.toWordSg
+private abbrev mary := English.Nouns.mary.toWordSg
+private abbrev they := English.Pronouns.they.toWord
+private abbrev sees := English.Predicates.Verbal.see.toWord3sg
+private abbrev see := English.Predicates.Verbal.see.toWordPl
+private abbrev himself := English.Pronouns.himself.toWord
+private abbrev herself := English.Pronouns.herself.toWord
+private abbrev themselves := English.Pronouns.themselves.toWord
+private abbrev them := English.Pronouns.them.toWord
+private abbrev eachOther := English.Pronouns.eachOther.toWord
 
 /-- Per-pair verification of reflexive binding judgments. -/
 theorem reflexive_pairs_captured :

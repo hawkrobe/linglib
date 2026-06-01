@@ -22,7 +22,7 @@ Connection to BillEtAl2025: Hungarian is one of two test languages.
 
 -/
 
-namespace Fragments.Hungarian.Coordination
+namespace Hungarian.Coordination
 
 open Features.Coordination
 
@@ -77,4 +77,4 @@ theorem mu_is_additive :
     (allEntries.filter (·.role == .mu)).all (·.alsoAdditive) = true := by
   native_decide
 
-end Fragments.Hungarian.Coordination
+end Hungarian.Coordination

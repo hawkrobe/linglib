@@ -34,10 +34,10 @@ ill-licensed example used to prove the predicate non-vacuous. The
 one takes a proof obligation that licenses what it builds.
 -/
 
-namespace Fragments.Hausa.Focus
+namespace Hausa.Focus
 
-open Fragments.Hausa.Inflection (TAM Mode Subject PAC)
-open Fragments.Hausa.Tone (polarOf)
+open Hausa.Inflection (TAM Mode Subject PAC)
+open Hausa.Tone (polarOf)
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Features (SurfaceGender)
 
@@ -152,7 +152,7 @@ theorem mkExSitu_licensed (p : PAC) (g : SurfaceGender) (sg : Bool)
 -- § 6: Examples and Registry
 -- ============================================================================
 
-open Fragments.Hausa.Inflection
+open Hausa.Inflection
 
 /-- Ex-situ focus of a feminine singular NP with the relative completive:
     fully licensed; surfaces with *cē*. -/
@@ -228,6 +228,6 @@ theorem stabilizer_tone_is_polar (s : Stabilizer) (host : TRN) :
 theorem stabilizer_toneAfter_involutive (s : Stabilizer)
     (h : TRN) (hh : h ∈ ([.H, .L] : List TRN)) :
     polarOf (s.toneAfter h) = h :=
-  Fragments.Hausa.Tone.polarOf_involutive_on_HL h hh
+  Hausa.Tone.polarOf_involutive_on_HL h hh
 
-end Fragments.Hausa.Focus
+end Hausa.Focus

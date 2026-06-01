@@ -15,9 +15,9 @@ as unrealized, *ato* as realized.
 
 -/
 
-namespace Fragments.Japanese.TemporalConnectives
+namespace Japanese.TemporalConnectives
 
-open Fragments.English.TemporalExpressions
+open English.TemporalExpressions
 
 -- ============================================================================
 -- § 1: Entries
@@ -90,4 +90,4 @@ theorem npi_asymmetry :
     mae.licensesNPI = true ∧ ato.licensesNPI = false :=
   ⟨rfl, rfl⟩
 
-end Fragments.Japanese.TemporalConnectives
+end Japanese.TemporalConnectives

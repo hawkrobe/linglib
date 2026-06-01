@@ -43,7 +43,7 @@ tolerance modifier:
 - `Core.Roundness.roundnessScore`: 49 → 0, 50 → 4
 - `Semantics.Numerals.Precision.inferPrecisionMode`: 49 →.exact,
   50 →.approximate
-- `Fragments.English.NumeralModifiers.about`: tolerance modifier
+- `English.NumeralModifiers.about`: tolerance modifier
 
 -/
 
@@ -94,7 +94,7 @@ open Semantics.Numerals.Precision in
 theorem round_stim_is_approximate :
     inferPrecisionMode stimRound = .approximate := by native_decide
 
-open Fragments.English.NumeralModifiers in
+open English.NumeralModifiers in
 /-- The Fragment entry "about" is a tolerance modifier that forces an
     approximate reading and conveys a peaked distribution shape. -/
 theorem about_is_tolerance_modifier :

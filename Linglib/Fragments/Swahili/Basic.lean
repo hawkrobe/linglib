@@ -22,9 +22,9 @@ expresses the combination of number and gender. Classes come in singular/plural
 pairs that define a "gender" (e.g., gender A = cl1/cl2 = human sg/pl).
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
-open Fragments.Bantu
+open Bantu
 
 -- ============================================================================
 -- § 1: Noun Classes
@@ -148,4 +148,4 @@ def Gender.toSurfaceGender : Gender → Features.SurfaceGender
   | .genderA => .animate
   | _ => .inanimate
 
-end Fragments.Swahili
+end Swahili

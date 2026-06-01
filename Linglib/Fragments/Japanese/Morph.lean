@@ -8,7 +8,7 @@ WALS-derived profile for Japanese (ISO `jpn`). B&N 2001 places Japanese
 in the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 open Morphology
 
@@ -29,4 +29,4 @@ example : morphProfile.iso = "jpn" ∧ morphProfile.language = "Japanese" := ⟨
 /-- B&N 2001 places Japanese in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
-end Fragments.Japanese
+end Japanese

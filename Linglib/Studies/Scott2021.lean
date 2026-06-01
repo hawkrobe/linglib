@@ -56,7 +56,7 @@ default matches.
 
 namespace Scott2021
 
-open Core Fragments.Swahili
+open Core Swahili
 open Minimalist (FeatureBundle FeatureVal PhiFeature)
 open Features.Prominence (PersonLevel)
 

@@ -11,7 +11,7 @@ Case frames, quirky subjects, verb data, and agreement are in
 `Icelandic/Verbs.lean`.
 -/
 
-namespace Fragments.Icelandic.Case
+namespace Icelandic.Case
 
 open Features
 
@@ -22,4 +22,4 @@ example : Case.IsValidInventory caseInventory := by decide
 
 theorem icelandic_has_four_cases : caseInventory.card = 4 := by decide
 
-end Fragments.Icelandic.Case
+end Icelandic.Case

@@ -39,7 +39,7 @@ can be future-oriented:
 
 ## What this file verifies
 
-- Attitude verb classifications from `Fragments.English` derive the correct
+- Attitude verb classifications from `English` derive the correct
   modal base compatibility
 - *think*/*believe* are DOX-only (block future)
 - *hope*/*pray* permit CIR (allow future)
@@ -67,7 +67,7 @@ open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
   non_epistemic_is_cir
   attitudeTemporalConstraint_derived_doxastic
   attitudeTemporalConstraint_derived_circumstantial)
-open Fragments.English.Predicates.Verbal (think believe hope pray)
+open English.Predicates.Verbal (think believe hope pray)
 open Semantics.Tense.Modal.Matrix
   (dox_past_iff dox_npst_iff cir_npst_iff cir_past_iff_false)
 open Semantics.Tense (upperLimitConstraint)
@@ -552,7 +552,7 @@ not reconciliation: the two analyses return different Bool values for
 the (epistemic, future) cell, and there is no flavor-keyed
 `ProspectiveMarkerPolicy` that would unify them. -/
 
-open Fragments.Gitksan.Modals (imaa requiresDim)
+open Gitksan.Modals (imaa requiresDim)
 
 /-- Klecha's universal applied to imaa: the flavor on every meaning
     cell of imaa is epistemic, so the modal base is DOX, so future

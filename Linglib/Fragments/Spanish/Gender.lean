@@ -42,7 +42,7 @@ extrapolations from Kramer's framework, anchored on the
 textbook-consensus genders documented in @cite{butt-benjamin-2019}.
 -/
 
-namespace Fragments.Spanish.Gender
+namespace Spanish.Gender
 
 open Features (SurfaceGender)
 
@@ -182,4 +182,4 @@ example : genderTypology.iso639 = "spa" ∧ genderTypology.name = "Spanish" :=
 /-- Spanish is in @cite{corbett-1991}'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.Spanish.Gender
+end Spanish.Gender

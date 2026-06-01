@@ -51,13 +51,13 @@ do not is in `Studies/Scott2021.lean`.
 Auxiliary types specific to the relativization paradigm carry the
 `Rel` prefix (`RelPerson`, `RelGramNum`, `RelMonosyllabicWord`,
 `RelNonTriggeringWord`) so they can live at top-level
-`Fragments.Swahili` without colliding with morphology-side `Person` or
+`Swahili` without colliding with morphology-side `Person` or
 number features defined in sibling Swahili Fragment files. This follows
 the mathlib convention of prefix-disambiguating small support types
 rather than nesting them under a sub-namespace.
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 open RelativeClause
 
@@ -118,7 +118,7 @@ def relativization : RelativeClause.Profile :=
 
 /-- Person feature in the Swahili relativization paradigm
     (@cite{scott-2021} Table 1). Prefixed `Rel` so it can live at
-    top-level `Fragments.Swahili` without colliding with morphology-side
+    top-level `Swahili` without colliding with morphology-side
     person features. -/
 inductive RelPerson where | first | second | third
   deriving DecidableEq, Repr
@@ -217,4 +217,4 @@ def RelMonosyllabicWord.triggersResumption : RelMonosyllabicWord → Bool
 def RelNonTriggeringWord.triggersResumption : RelNonTriggeringWord → Bool
   | _ => false
 
-end Fragments.Swahili
+end Swahili

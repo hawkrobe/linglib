@@ -51,7 +51,7 @@ namespace Phenomena.Quantification.BaleSchwarz2022
 
 open Semantics.Measurement
 open Features.Dimension (Dimension QuotientDimension quotient_components_distinct)
-open Fragments.English.MeasurePhrases (gram kilo milliliter liter MeasureTermEntry)
+open English.MeasurePhrases (gram kilo milliliter liter MeasureTermEntry)
 open Semantics.Presupposition (PrProp PrValue)
 open Features (Acceptability)
 

@@ -5,7 +5,7 @@ import Linglib.Typology.Color
 @cite{wals-2013}
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin Chinese: 6 non-derived basic colors, 8–8.5 total basic colors;
     green (*lü*) vs blue (*lan*) distinct; red (*hong*) vs yellow (*huang*)
@@ -19,4 +19,4 @@ def colorProfile : Typology.ColorProfile :=
   , greenBlue := some .distinct
   , redYellow := some .distinct }
 
-end Fragments.Mandarin
+end Mandarin

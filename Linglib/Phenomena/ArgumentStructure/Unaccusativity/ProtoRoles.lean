@@ -32,7 +32,7 @@ proto-role/diagnostic mismatch. This file makes the contrast explicit.
 namespace Phenomena.ArgumentStructure.Unaccusativity.ProtoRoles
 
 open Semantics.ArgumentStructure.EntailmentProfile
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 /-! ## §1. Canonical alignment cases
 

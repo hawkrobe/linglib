@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hawaiian
+namespace Hawaiian
 
 /-- Hawaiian: plural word (*mau*, prenominal), optional on all nouns;
     person-number stems in pronouns; associative plural absent. -/
@@ -17,4 +17,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .absent }
 
-end Fragments.Hawaiian
+end Hawaiian

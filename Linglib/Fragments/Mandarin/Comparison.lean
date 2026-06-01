@@ -14,7 +14,7 @@ this profile live in `Studies/Stassen2013Comparison.lean`. The
 
 set_option autoImplicit false
 
-namespace Fragments.Mandarin.Comparison
+namespace Mandarin.Comparison
 
 open _root_.Typology.Comparison
 
@@ -30,4 +30,4 @@ def comparison : ComparativeProfile :=
   , degreeMarker := "geng"
   , basicOrder := "SVO" }
 
-end Fragments.Mandarin.Comparison
+end Mandarin.Comparison

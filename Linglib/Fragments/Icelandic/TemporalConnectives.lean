@@ -24,9 +24,9 @@ lexicalizes the durative/eventive distinction: Icelandic has no overt
 perfective/imperfective marking but still distinguishes the two *until*s.
 -/
 
-namespace Fragments.Icelandic.TemporalConnectives
+namespace Icelandic.TemporalConnectives
 
-open Fragments.English.TemporalExpressions (TemporalExprEntry Reading TemporalOrder ComplementType)
+open English.TemporalExpressions (TemporalExprEntry Reading TemporalOrder ComplementType)
 
 -- ============================================================================
 -- § 1: Connective Entries
@@ -93,7 +93,7 @@ theorem punctuality_split :
 -- § 3: Cross-Linguistic Agreement
 -- ============================================================================
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Icelandic *flanga til* matches English durative *until*. -/
 theorem flangaTil_matches_until :
     flangaTil.order = until_.order ∧
@@ -101,18 +101,18 @@ theorem flangaTil_matches_until :
     flangaTil.defaultReading = until_.defaultReading :=
   ⟨rfl, rfl, rfl⟩
 
-open Fragments.Greek.StandardModern.TemporalConnectives in
+open Greek.StandardModern.TemporalConnectives in
 /-- Icelandic *flanga til* matches Greek *mexri* on key properties. -/
 theorem flangaTil_matches_mexri :
     flangaTil.complementVeridical = mexri.complementVeridical ∧
     flangaTil.forcesPunctual = mexri.forcesPunctual :=
   ⟨rfl, rfl⟩
 
-open Fragments.Greek.StandardModern.TemporalConnectives in
+open Greek.StandardModern.TemporalConnectives in
 /-- Icelandic *fyrr en* matches Greek *para monon* on key properties. -/
 theorem fyrrEn_matches_paraMonon :
     fyrrEn.complementVeridical = paraMonon.complementVeridical ∧
     fyrrEn.forcesPunctual = paraMonon.forcesPunctual :=
   ⟨rfl, rfl⟩
 
-end Fragments.Icelandic.TemporalConnectives
+end Icelandic.TemporalConnectives

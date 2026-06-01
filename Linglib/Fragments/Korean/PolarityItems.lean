@@ -13,7 +13,7 @@ Korean, like Japanese, builds polarity items from wh-words + particles:
 - **nwukwu-na**: wh + na → FCI (anyone)
 -/
 
-namespace Fragments.Korean.PolarityItems
+namespace Korean.PolarityItems
 
 open Typology.PolarityItem
 
@@ -63,4 +63,4 @@ theorem korean_npis_strengthening :
     [nwukwu, nwukwuTo].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
 
-end Fragments.Korean.PolarityItems
+end Korean.PolarityItems

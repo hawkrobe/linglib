@@ -15,7 +15,7 @@ Italian lexicalizes the NPI/FCI distinction that English *any* collapses:
 - **un N qualsiasi**: Existential FCIs (FC under modals)
 -/
 
-namespace Fragments.Italian.PolarityItems
+namespace Italian.PolarityItems
 
 open Typology.PolarityItem
 
@@ -222,4 +222,4 @@ theorem italian_npis_strengthening :
     [nessuno, niente, mai, alcuno, neanche].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
 
-end Fragments.Italian.PolarityItems
+end Italian.PolarityItems

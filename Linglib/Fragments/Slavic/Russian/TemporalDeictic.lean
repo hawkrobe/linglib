@@ -9,7 +9,7 @@ Cross-linguistic evidence for the then-present incompatibility.
 
 -/
 
-namespace Fragments.Slavic.Russian.TemporalDeictic
+namespace Russian.TemporalDeictic
 
 open Semantics.Tense
 
@@ -20,4 +20,4 @@ def togda : ThenAdverb where
   gloss := "then"
   shiftsPerspective := true
 
-end Fragments.Slavic.Russian.TemporalDeictic
+end Russian.TemporalDeictic

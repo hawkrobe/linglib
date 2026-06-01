@@ -85,7 +85,7 @@ open Semantics.Gradability (GradableAdjEntry ThresholdPair positiveMeaning'
   contraryNegMeaning notContraryNegMeaning AntonymForm
   predictionForAntonymy predictionForEntry)
 open Semantics.Degree (antonymMeaning)
-open Fragments.English.Predicates.Adjectival
+open English.Predicates.Adjectival
   (large clean gigantic)
 
 -- ============================================================================

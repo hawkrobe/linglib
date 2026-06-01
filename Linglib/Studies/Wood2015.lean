@@ -15,7 +15,7 @@ or "anticausative" morpheme.
 ## Layer position
 
 This file is the canonical Wood-2015 study site. The Icelandic
-Fragment (`Fragments.Icelandic.Predicates`) carries only consensus
+Fragment (`Icelandic.Predicates`) carries only consensus
 lexical data — verb forms, glosses, presence/absence of an active
 variant. Wood's analytical apparatus lives here:
 
@@ -67,7 +67,7 @@ attributed ±θ/±D to @cite{schaefer-2008} alone, which was imprecise.
 namespace Wood2015
 
 open Minimalist
-open Fragments.Icelandic.Predicates
+open Icelandic.Predicates
 
 -- ============================================================================
 -- § 0: Wood-Apparatus (the analytical layer over the Fragment)

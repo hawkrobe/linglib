@@ -26,7 +26,7 @@ parameters that distinguish these categories are formalized in the
 Wood2015 study file, not here.
 -/
 
-namespace Fragments.Icelandic.Predicates
+namespace Icelandic.Predicates
 
 -- ============================================================================
 -- § 1: Verb Entry
@@ -153,4 +153,4 @@ theorem alternating_have_active :
     (allStVerbs.filter (·.hasActiveVariant)).all
       (fun v => v.activeForm.isSome) = true := by decide
 
-end Fragments.Icelandic.Predicates
+end Icelandic.Predicates

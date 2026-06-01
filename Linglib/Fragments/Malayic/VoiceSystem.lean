@@ -36,7 +36,7 @@ and *v*, not in the underlying clause structure:
 `*` = linear adjacency required; `·P` = structural adjacency to vP.
 -/
 
-namespace Fragments.Malayic.VoiceSystem
+namespace Malayic.VoiceSystem
 
 -- ============================================================================
 -- § 1: Head Flavors
@@ -221,4 +221,4 @@ theorem sism_loses_n_in_extraction :
 theorem obj_extraction_uses_vACT :
     VoiceConstruction.objectExtraction.vFlavor = .act := rfl
 
-end Fragments.Malayic.VoiceSystem
+end Malayic.VoiceSystem

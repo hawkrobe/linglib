@@ -11,7 +11,7 @@ freely embeddable.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Hindi.Pronouns
+namespace Hindi.Pronouns
 
 open Pronoun
 
@@ -109,4 +109,4 @@ theorem three_levels :
 theorem markers_three_levels :
     allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
-end Fragments.Hindi.Pronouns
+end Hindi.Pronouns

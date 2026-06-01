@@ -34,7 +34,7 @@ marked with (p. 20) are verified from the paper's main text; others
 are from the paper's word list / online appendix.
 -/
 
-namespace Fragments.Tarifit.Inventory
+namespace Tarifit.Inventory
 
 open Phonology.Syllable
 
@@ -129,4 +129,4 @@ theorem hkem_falling : w_hkem.isFalling = true := by native_decide
 theorem skhef_plateauing : w_skhef.isPlateauing = true := by native_decide
 theorem sfen_plateauing : w_sfen.isPlateauing = true := by native_decide
 
-end Fragments.Tarifit.Inventory
+end Tarifit.Inventory

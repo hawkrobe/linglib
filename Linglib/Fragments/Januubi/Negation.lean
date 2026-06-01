@@ -41,7 +41,7 @@ clauses.
   clauses, and REGRET's EN requires a deontic modal.
 -/
 
-namespace Fragments.Januubi.Negation
+namespace Januubi.Negation
 
 open Typology.Negation
 
@@ -145,4 +145,4 @@ def regretBlocked : ENBlockingReason := .modalRestriction
 /-- Why comparatives (MORE THAN, TOO…TO) do not trigger EN in Januubi. -/
 def comparativeBlocked : ENBlockingReason := .npOnlyComplement
 
-end Fragments.Januubi.Negation
+end Januubi.Negation

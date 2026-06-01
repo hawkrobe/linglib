@@ -14,7 +14,7 @@ as an existential FCI with both NPI and FCI uses:
 - **niemand**: Negative indefinite
 -/
 
-namespace Fragments.German.PolarityItems
+namespace German.PolarityItems
 
 open Typology.PolarityItem
 
@@ -65,4 +65,4 @@ theorem german_npis_strengthening :
     [irgendein, wer, niemand].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
 
-end Fragments.German.PolarityItems
+end German.PolarityItems

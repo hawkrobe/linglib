@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Danish
+namespace Danish
 
 /-- Danish (Indo-European, Germanic): definite suffix *-en*/*-et* on nouns
     (definite affix); separate definite article *den*/*det* used when an
@@ -25,4 +25,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .differentInflection
   , pronDemRelation := some .relatedRemote }
 
-end Fragments.Danish
+end Danish

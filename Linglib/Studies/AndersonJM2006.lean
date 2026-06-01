@@ -62,7 +62,7 @@ namespace AndersonJM2006
 open Features (Case)
 open Semantics.ArgumentStructure.Linking (LinkingTheory ArgPosition)
 open Semantics.ArgumentStructure.EntailmentProfile
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ============================================================================
 -- § 0: Anderson's Case Features — Substrate
@@ -230,7 +230,7 @@ namespace AndersonJM2006
 open Features (Case)
 open Semantics.ArgumentStructure.Linking (LinkingTheory ArgPosition)
 open Semantics.ArgumentStructure.EntailmentProfile
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ============================================================================
 -- § 1: Mappings Between Case Relations and Theta Roles

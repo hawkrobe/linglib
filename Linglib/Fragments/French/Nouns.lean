@@ -7,7 +7,7 @@ import Linglib.Semantics.Kinds.NominalMappingParameter
 French NP structure with gender. Bare arguments restricted (@cite{chierchia-1998} [-arg, +pred]).
 -/
 
-namespace Fragments.French.Nouns
+namespace French.Nouns
 
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 open Features (SurfaceGender)
@@ -167,4 +167,4 @@ example : leChien.isBare = false := rfl
 example : leChien.determiner = some .le := rfl
 example : desPommes.determiner = some .des := rfl
 
-end Fragments.French.Nouns
+end French.Nouns

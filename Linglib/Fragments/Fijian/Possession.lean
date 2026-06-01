@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Fijian.Possession
+namespace Fijian.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["na liga-qu (body-part)", "na ke-qu kakana (food)", "na me-qu ti (drink)", "na no-qu vale (house)"]
   , notes := "Four-way possessive classification: direct (body/kin), ke- (edible), me- (drinkable), no- (general alienable)" }
 
-end Fragments.Fijian.Possession
+end Fijian.Possession

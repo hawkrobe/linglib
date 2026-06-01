@@ -34,7 +34,7 @@ and `Fragments/Greek/Grevena/Possession.lean` (GG, genitive lost).
 
 set_option autoImplicit false
 
-namespace Fragments.Greek.Smyrna.Possession
+namespace Greek.Smyrna.Possession
 
 open _root_.Typology.Possession
 
@@ -77,4 +77,4 @@ def possession : PossessionProfile :=
  Establishes the bidirectionality of the Modern Greek dialect continuum: SMG sits between Smyrna's\
  over-extension and Grevena's complete loss." }
 
-end Fragments.Greek.Smyrna.Possession
+end Greek.Smyrna.Possession

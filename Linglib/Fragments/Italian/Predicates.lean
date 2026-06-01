@@ -23,7 +23,7 @@ which determines the rational attitude reading.
 
 -/
 
-namespace Fragments.Italian.Predicates
+namespace Italian.Predicates
 
 open Semantics.Lexical
 open Minimalist (ComplementSize)
@@ -216,4 +216,4 @@ theorem mood_asymmetry_predicted :
     sperare.levinClass ≠ some .want := by
   exact ⟨rfl, rfl, by decide⟩
 
-end Fragments.Italian.Predicates
+end Italian.Predicates

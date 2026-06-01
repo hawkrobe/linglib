@@ -396,37 +396,37 @@ theorem qud_refinement_monotone
 /-! ### Bridge 1: "the" → the_sit -/
 
 theorem the_is_definite :
-    Fragments.English.Determiners.the.qforce = .definite := rfl
+    English.Determiners.the.qforce = .definite := rfl
 
 theorem english_the_is_uniqueness :
-    qforceToPresupType Fragments.English.Determiners.the.qforce =
+    qforceToPresupType English.Determiners.the.qforce =
     some DefPresupType.uniqueness := rfl
 
 theorem english_demonstratives_are_definite :
-    Fragments.English.Determiners.this.qforce = .definite ∧
-    Fragments.English.Determiners.that.qforce = .definite :=
+    English.Determiners.this.qforce = .definite ∧
+    English.Determiners.that.qforce = .definite :=
   ⟨rfl, rfl⟩
 
 /-! ### Bridge 3: Pronouns → the_sit + NP-deletion -/
 
 theorem it_entry_classification :
-    Fragments.English.Pronouns.it.pronounType = .personal ∧
-    Fragments.English.Pronouns.it.person = some .third ∧
-    Fragments.English.Pronouns.it.number = some .sg :=
+    English.Pronouns.it.pronounType = .personal ∧
+    English.Pronouns.it.person = some .third ∧
+    English.Pronouns.it.number = some .sg :=
   ⟨rfl, rfl, rfl⟩
 
 theorem he_entry_classification :
-    Fragments.English.Pronouns.he.pronounType = .personal ∧
-    Fragments.English.Pronouns.he.person = some .third ∧
-    Fragments.English.Pronouns.he.number = some .sg ∧
-    Fragments.English.Pronouns.he.case_ = some .nom :=
+    English.Pronouns.he.pronounType = .personal ∧
+    English.Pronouns.he.person = some .third ∧
+    English.Pronouns.he.number = some .sg ∧
+    English.Pronouns.he.case_ = some .nom :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 theorem she_entry_classification :
-    Fragments.English.Pronouns.she.pronounType = .personal ∧
-    Fragments.English.Pronouns.she.person = some .third ∧
-    Fragments.English.Pronouns.she.number = some .sg ∧
-    Fragments.English.Pronouns.she.case_ = some .nom :=
+    English.Pronouns.she.pronounType = .personal ∧
+    English.Pronouns.she.person = some .third ∧
+    English.Pronouns.she.number = some .sg ∧
+    English.Pronouns.she.case_ = some .nom :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ### Bridge 4: Donnellan → Elbourne -/

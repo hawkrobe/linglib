@@ -7,7 +7,7 @@ connective. Allows all clause types as S' except exclamatives.
 
 -/
 
-namespace Fragments.Mandarin.DiscourseParticles
+namespace Mandarin.DiscourseParticles
 
 /-- A discourse *only* particle entry. -/
 structure DiscourseOnlyParticle where
@@ -22,4 +22,4 @@ def zhishi : DiscourseOnlyParticle where
   nativeForm := "只是"
   gloss := "only (just)"
 
-end Fragments.Mandarin.DiscourseParticles
+end Mandarin.DiscourseParticles

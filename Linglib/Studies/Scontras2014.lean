@@ -58,7 +58,7 @@ namespace Phenomena.Quantification.Scontras2014
 
 open Semantics.Measurement
   (QuantizingNounClass ContainerReading licensesMeasureReading)
-open Fragments.English.MeasurePhrases
+open English.MeasurePhrases
 
 -- ============================================================================
 -- § 1. Empirical Observations: MEASURE Licensing

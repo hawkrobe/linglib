@@ -94,8 +94,8 @@ alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 
 namespace AissenPolian2025
 
-open Fragments.Mayan (MarkerSet ABSPosition)
-open Fragments.Mayan.Tseltalan
+open Mayan (MarkerSet ABSPosition)
+open Mayan.Tseltalan
 open Morphology.DM
 
 -- ============================================================================
@@ -821,7 +821,7 @@ theorem stranding_asymmetry_is_vP :
     associated with a robust extraction-asymmetry generalization in the
     Mayan literature: HIGH-ABS languages exhibit syntactic ergativity
     (cf. @cite{coon-mateo-pedro-preminger-2014}); LOW-ABS languages do
-    not. The shared `Fragments.Mayan.Tseltalan.absPosition` constant is
+    not. The shared `Mayan.Tseltalan.absPosition` constant is
     the per-subgroup source of truth, definitionally equal to the
     Tsotsil and Tseltal per-language values.
 
@@ -830,7 +830,7 @@ theorem stranding_asymmetry_is_vP :
     languages). Rather, they are about A-movement (possessor raising)
     being blocked by a closer A-positioned DP, preventing the possessor
     from reaching an external position from which it could Ā-extract. -/
-abbrev tseltalanABSPosition : ABSPosition := Fragments.Mayan.Tseltalan.absPosition
+abbrev tseltalanABSPosition : ABSPosition := Mayan.Tseltalan.absPosition
 
 theorem tseltalan_is_low_abs :
     tseltalanABSPosition = .low := rfl
@@ -838,8 +838,8 @@ theorem tseltalan_is_low_abs :
 /-- LOW-ABS languages have ABS=DEF (v° assigns case to transitive
     object), not ABS=NOM (Infl° assigns case). -/
 theorem tseltalan_case_locus :
-    Fragments.Mayan.toCaseLocus tseltalanABSPosition =
-    Fragments.Mayan.CaseLocus.absDef := rfl
+    Mayan.toCaseLocus tseltalanABSPosition =
+    Mayan.CaseLocus.absDef := rfl
 
 -- ============================================================================
 -- § 15: Tree-Geometric Derivation (Attract Closest)

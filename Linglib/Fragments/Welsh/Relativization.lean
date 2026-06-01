@@ -12,7 +12,7 @@ Two relative clause markers (discussed §1.3.2):
 Data from @cite{keenan-comrie-1977} Table 1 and §1.3.2.
 -/
 
-namespace Fragments.Welsh
+namespace Welsh
 
 open RelativeClause
 
@@ -52,4 +52,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Gap on subject (particle a); resumptive on obliques; "
           ++ "VSO language with post-nominal RC" }
 
-end Fragments.Welsh
+end Welsh

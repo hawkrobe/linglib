@@ -10,7 +10,7 @@ Lexical entry for French modal indefinite *n'importe quel*.
 
 set_option autoImplicit false
 
-namespace Fragments.French.ModalIndefinites
+namespace French.ModalIndefinites
 
 open Features.ModalIndefinite
 
@@ -38,4 +38,4 @@ def nimporteQuelEntry : ModalIndefiniteEntry where
 def paradigm : List ModalIndefiniteEntry := [nimporteQuelEntry]
 
 
-end Fragments.French.ModalIndefinites
+end French.ModalIndefinites

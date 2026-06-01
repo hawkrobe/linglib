@@ -61,7 +61,7 @@ doesn't formalize but that the structural framework supports:
   versions of the architecture-comparison results (single-vs-split exh,
   witness countermodels).
 
-Table 2 typology is canonicalized in `Fragments.Farsi.Determiners`
+Table 2 typology is canonicalized in `Farsi.Determiners`
 (`EFCIRescue` enum, per-item `yeki`/`irgendein_de`/`vreun_ro` entries,
 per-item root-reading theorems). See the EFCI Typology section below.
 
@@ -102,7 +102,7 @@ open Exhaustification (innocent tolerant predToFinset altsFromPreds
   innocent_exh_singleton_proper
   innocent_exh_pairwise_disjoint_partial)
 open Data.Examples (LinguisticExample)
-export Fragments.Farsi.Determiners (EFCIRescue EFCIReading)
+export Farsi.Determiners (EFCIRescue EFCIReading)
 export Semantics.Modality (ModalFlavor)
 
 
@@ -657,17 +657,17 @@ parameters — modal insertion and partial exhaustification.
 
 | Type        | Modal insertion | Partial exh | Lexicon entry |
 |-------------|:-:|:-:|---|
-| *vreun*     | − | − | `Fragments.Farsi.Determiners.vreun_ro` |
-| *irgendein* | + | − | `Fragments.Farsi.Determiners.irgendein_de` |
-| *yek-i*     | − | + | `Fragments.Farsi.Determiners.yeki` |
+| *vreun*     | − | − | `Farsi.Determiners.vreun_ro` |
+| *irgendein* | + | − | `Farsi.Determiners.irgendein_de` |
+| *yek-i*     | − | + | `Farsi.Determiners.yeki` |
 
-The typology is canonicalized in `Fragments.Farsi.Determiners.EFCIRescue`
+The typology is canonicalized in `Farsi.Determiners.EFCIRescue`
 (re-exported above), and the per-item root-reading predictions are
 checked there:
 
-- `Fragments.Farsi.Determiners.yeki_root : getReading yeki rootContext = some .uniqueness`
-- `Fragments.Farsi.Determiners.irgendein_root : getReading irgendein_de rootContext = some .epistemicIgnorance`
-- `Fragments.Farsi.Determiners.vreun_root_ungrammatical : getReading vreun_ro rootContext = none`
+- `Farsi.Determiners.yeki_root : getReading yeki rootContext = some .uniqueness`
+- `Farsi.Determiners.irgendein_root : getReading irgendein_de rootContext = some .epistemicIgnorance`
+- `Farsi.Determiners.vreun_root_ungrammatical : getReading vreun_ro rootContext = none`
 -/
 
 

@@ -31,7 +31,7 @@ a negative polarity is salient. This class is distinct from plain
 affirmative particles like Dutch *wel* and from Verum focus.
 -/
 
-namespace Fragments.French.PolarityMarking
+namespace French.PolarityMarking
 
 open Typology.PolarityMarking (Entry Strategy Env)
 
@@ -54,4 +54,4 @@ theorem si_not_contrastOk : Env.contrast ∉ si.environments := by decide
 theorem si_correctionOk : Env.correction ∈ si.environments := by decide
 theorem si_strategy : si.strategy = .polarityReversal := rfl
 
-end Fragments.French.PolarityMarking
+end French.PolarityMarking

@@ -19,11 +19,11 @@ guo has no such presupposition.
 ## Cross-Module Connections
 
 - `Core.Time`: ATOM-DIST and antiAtomDistLicensed
-- `Fragments.Mandarin.Particles`: existing Mandarin particle pattern
+- `Mandarin.Particles`: existing Mandarin particle pattern
 
 -/
 
-namespace Fragments.Mandarin.AspectComparison
+namespace Mandarin.AspectComparison
 
 open Core.Time
 
@@ -119,4 +119,4 @@ theorem guo_always_licensed {Event α : Type*} [LinearOrder α]
     isLicensed guo τ V := by
   left; rfl
 
-end Fragments.Mandarin.AspectComparison
+end Mandarin.AspectComparison

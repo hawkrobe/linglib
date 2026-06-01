@@ -237,7 +237,7 @@ by |A|, laryngeals (ʔ, h) have |A| as operator.
 
 /-- Element-Theoretic decomposition of Tigrinya/Tigre vowels per
     @cite{faust-lampitelli-2026} eq. 20-22. -/
-def vowelET : Fragments.Tigrinya.Phonology.Vowel → ETBundle
+def vowelET : Tigrinya.Phonology.Vowel → ETBundle
   | .a     => ETBundle.headOnly .A           -- [a]: headed |A|
   | .aBare => ETBundle.bareOnly .A           -- [ʌ]: non-headed |A|
   | .i     => ETBundle.headOnly .I           -- [i]: headed |I|
@@ -249,21 +249,21 @@ def vowelET : Fragments.Tigrinya.Phonology.Vowel → ETBundle
 /-- Element-Theoretic decomposition of Tigrinya/Tigre gutturals per
     paper eq. 20. All gutturals contain |A|; pharyngeals (ħ, ʕ) have
     |A| as head, laryngeals (ʔ, h) have |A| as operator. -/
-def gutturalET : Fragments.Tigrinya.Phonology.Guttural → ETBundle
+def gutturalET : Tigrinya.Phonology.Guttural → ETBundle
   | .glottalStop         => ETBundle.headPlusOp .glottal .A
   | .h                   => ETBundle.headPlusOp .noise .A
   | .pharyngealVoiced    => ETBundle.headPlusOp .A .glottal
   | .pharyngealVoiceless => ETBundle.headPlusOp .A .noise
 
 /-- Vowel `v` contains the |A| element. -/
-def VowelHasA (v : Fragments.Tigrinya.Phonology.Vowel) : Prop :=
+def VowelHasA (v : Tigrinya.Phonology.Vowel) : Prop :=
   ETBundle.HasElement (vowelET v) .A
 
 instance : DecidablePred VowelHasA :=
   fun v => inferInstanceAs (Decidable (ETBundle.HasElement (vowelET v) .A))
 
 /-- Guttural `g` contains |A|. By paper eq. 20, all four do. -/
-def GutturalHasA (g : Fragments.Tigrinya.Phonology.Guttural) : Prop :=
+def GutturalHasA (g : Tigrinya.Phonology.Guttural) : Prop :=
   ETBundle.HasElement (gutturalET g) .A
 
 instance : DecidablePred GutturalHasA :=
@@ -271,7 +271,7 @@ instance : DecidablePred GutturalHasA :=
 
 /-- All four attested gutturals contain |A| (paper eq. 20). -/
 theorem all_gutturals_have_A :
-    ∀ g : Fragments.Tigrinya.Phonology.Guttural, GutturalHasA g := by
+    ∀ g : Tigrinya.Phonology.Guttural, GutturalHasA g := by
   intro g; cases g <;> decide
 
 /-- Pharyngeals are headed by |A| (paper eq. 20: ħ, ʕ have A

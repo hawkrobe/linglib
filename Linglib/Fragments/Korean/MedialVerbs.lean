@@ -27,7 +27,7 @@ the single final (independent) verb.
 
 -/
 
-namespace Fragments.Korean.MedialVerbs
+namespace Korean.MedialVerbs
 
 /-- A Korean conjunctive suffix entry. -/
 structure ConjSuffixEntry where
@@ -124,4 +124,4 @@ theorem untensed_count : untensedSuffixes.length = 5 := rfl
 theorem tense_partition :
     tensedSuffixes.length + untensedSuffixes.length = allSuffixes.length := rfl
 
-end Fragments.Korean.MedialVerbs
+end Korean.MedialVerbs

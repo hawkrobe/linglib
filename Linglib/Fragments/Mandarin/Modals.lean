@@ -9,7 +9,7 @@ Modal expressions from Mandarin (Sino-Tibetan), based on
 Mandarin has many modals, extensive synonymy, but all satisfy IFF.
 -/
 
-namespace Fragments.Mandarin.Modals
+namespace Mandarin.Modals
 
 open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
@@ -37,4 +37,4 @@ def neng : ModalExpression := ⟨"néng", [pd, pc]⟩
 def allExpressions : List ModalExpression :=
   [yiding, biran, juedui, bixu, yao, dei, yinggai, dagai, keneng, keyi, yexu, neng]
 
-end Fragments.Mandarin.Modals
+end Mandarin.Modals

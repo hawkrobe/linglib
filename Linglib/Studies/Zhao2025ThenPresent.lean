@@ -50,14 +50,14 @@ open Semantics.Tense.Perspective
 
 /-- All "then" adverbs from Fragment entries. -/
 def thenAdverbs : List ThenAdverb :=
-  [ Fragments.English.TemporalDeictic.then_
-  , Fragments.German.TemporalDeictic.damals
-  , Fragments.Mandarin.TemporalDeictic.nashi
-  , Fragments.Japanese.TemporalDeictic.sonotoki
-  , Fragments.Greek.StandardModern.TemporalDeictic.tote
-  , Fragments.Slavic.Russian.TemporalDeictic.togda
-  , Fragments.Hebrew.TemporalDeictic.az
-  , Fragments.Hungarian.TemporalDeictic.akkor ]
+  [ English.TemporalDeictic.then_
+  , German.TemporalDeictic.damals
+  , Mandarin.TemporalDeictic.nashi
+  , Japanese.TemporalDeictic.sonotoki
+  , Greek.StandardModern.TemporalDeictic.tote
+  , Russian.TemporalDeictic.togda
+  , Hebrew.TemporalDeictic.az
+  , Hungarian.TemporalDeictic.akkor ]
 
 /-- Every "then" adverb in our inventory shifts perspective. -/
 theorem all_then_shift_perspective :

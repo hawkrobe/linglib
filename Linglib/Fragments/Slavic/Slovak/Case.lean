@@ -16,8 +16,8 @@ without productive VOC. `caseInventory` aliases the shared
 `Slavic.Case.coreInventory`.
 -/
 
-namespace Fragments.Slavic.Slovak.Case
+namespace Slovak.Case
 
-abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
 
-end Fragments.Slavic.Slovak.Case
+end Slovak.Case

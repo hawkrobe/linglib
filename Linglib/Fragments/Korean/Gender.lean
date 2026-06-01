@@ -7,7 +7,7 @@ import Linglib.Typology.Gender
 No grammatical gender. WALS Ch 30/31/32 = none.
 -/
 
-namespace Fragments.Korean.Gender
+namespace Korean.Gender
 
 open Typology.Gender
 
@@ -19,4 +19,4 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "kor" ∧ genderTypology.name = "Korean" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Korean.Gender
+end Korean.Gender

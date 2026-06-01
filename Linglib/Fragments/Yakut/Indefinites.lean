@@ -32,7 +32,7 @@ outside D&A's SK/SU/NS subdivision; their D&A surface-classification is
 
 set_option autoImplicit false
 
-namespace Fragments.Yakut.Indefinites
+namespace Yakut.Indefinites
 
 open Typology.Indefinite
 
@@ -101,4 +101,4 @@ theorem yakut_paradigm_is_ABB :
 theorem yakut_paradigm_is_interrogativeBased :
     paradigm.toWALS46A = some .interrogativeBased := rfl
 
-end Fragments.Yakut.Indefinites
+end Yakut.Indefinites

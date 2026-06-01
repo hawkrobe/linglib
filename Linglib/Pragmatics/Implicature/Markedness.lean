@@ -32,7 +32,7 @@ open Semantics.Gradability
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
 open Semantics.Gradability (ThresholdPair)
 open Features (NegationType)
-open Fragments.English.Predicates.Adjectival (tall short happy unhappy)
+open English.Predicates.Adjectival (tall short happy unhappy)
 
 
 /--

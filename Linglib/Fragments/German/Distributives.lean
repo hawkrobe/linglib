@@ -27,7 +27,7 @@ following the compositional grounding principle: Fragment entries import and use
 Theory definitions, never stipulating their own meaning functions.
 -/
 
-namespace Fragments.German.Distributives
+namespace German.Distributives
 
 open Semantics.Plurality
 open Semantics.Plurality.Distributivity
@@ -156,4 +156,4 @@ theorem dp_use_implies_maximal_for_attested :
     jeweilsEntry.hasDPUse = false ∧ ¬ jeweilsEntry.distMaxClass.isMaximal := by
   decide
 
-end Fragments.German.Distributives
+end German.Distributives

@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
 /-- Finnish (Uralic): no grammatical perfective/imperfective; inflectional
     past (*-i*); no inflectional future (present used for future reference);
@@ -15,4 +15,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .none, past := .marked, future := .none
   , perfect := .other, affixPosition := .suffixing }
 
-end Fragments.Finnish
+end Finnish

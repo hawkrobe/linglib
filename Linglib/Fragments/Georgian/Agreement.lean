@@ -39,7 +39,7 @@ is person-conditioned regardless of the case frame.
 
 -/
 
-namespace Fragments.Georgian.Agreement
+namespace Georgian.Agreement
 
 open Features.Prominence
 
@@ -278,4 +278,4 @@ theorem erg_iff_nonderived :
     takesErgInAorist .class2 = false ∧ takesErgInAorist .class4 = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.Georgian.Agreement
+end Georgian.Agreement

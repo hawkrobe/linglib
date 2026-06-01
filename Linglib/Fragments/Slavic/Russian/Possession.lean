@@ -32,7 +32,7 @@ Russian lives in `Studies/Heine1997.lean`.
 
 set_option autoImplicit false
 
-namespace Fragments.Slavic.Russian.Possession
+namespace Russian.Possession
 
 open _root_.Typology.Possession
 
@@ -115,4 +115,4 @@ def possession : PossessionProfile :=
   , examples := ["u menja est' kniga", "kniga Ivana"]
   , notes := "Locational: u + GEN + est'; adnominal: NP-GEN" }
 
-end Fragments.Slavic.Russian.Possession
+end Russian.Possession

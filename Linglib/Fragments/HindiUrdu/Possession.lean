@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.HindiUrdu.Possession
+namespace HindiUrdu.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["mere paas kitaab hai", "Raam kaa ghar"]
   , notes := "Postposition paas 'near' for predicative; kaa/ke/kii agreeing genitive postposition for adnominal" }
 
-end Fragments.HindiUrdu.Possession
+end HindiUrdu.Possession

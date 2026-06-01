@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese: second-person-only morphological imperative (suffix *-e*/*-ro*:
     *ike!* 'go!', *tabero!* 'eat!'); Type 2 prohibitive (*iku-na!* — imperative
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Plain imperative -e/-ro; prohibitive -na is special negation; " ++
              "volitional -ou/-you is distinct from hortative." }
 
-end Fragments.Japanese
+end Japanese

@@ -411,7 +411,7 @@ break these theorems. -/
 
 section FrenchFragmentBridge
 
-open Fragments.French.Modals (devoir pouvoir ilEstPossible)
+open French.Modals (devoir pouvoir ilEstPossible)
 open Semantics.Modality (ForceFlavor)
 
 /-- *Vous devez VP* = deontic necessity, present in *devoir*'s

@@ -10,7 +10,7 @@ Turkish is the textbook example of rule-governed (vowel-harmony) suffix
 allomorphy with no class-conditioned variation.
 -/
 
-namespace Fragments.Turkish
+namespace Turkish
 
 open Morphology
 
@@ -31,4 +31,4 @@ example : morphProfile.iso = "tur" ∧ morphProfile.language = "Turkish" := ⟨r
 /-- B&N 2001 places Turkish in the canonical "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
-end Fragments.Turkish
+end Turkish

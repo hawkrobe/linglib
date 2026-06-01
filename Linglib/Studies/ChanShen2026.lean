@@ -150,9 +150,9 @@ end Minimalist.ANDL
 
 namespace ChanShen2026
 
-open Fragments.Singlish.Questions (WhStrategy fullMovement partialMovement
+open Singlish.Questions (WhStrategy fullMovement partialMovement
   whInSitu theHell)
-open Fragments.Mandarin.Questions (daodi)
+open Mandarin.Questions (daodi)
 open Typology.Question (WhInterpMechanism)
 open Phenomena.Islands (IslandSource)
 open Typology.ExpressiveModifier

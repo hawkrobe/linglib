@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Mayan.Tseltal
+namespace Tseltal
 
 /-- Tseltal (Mayan, Mesoamerica): ordinals not productively formed. Numeral
     classifiers obligatory (distinct from Mayan noun classifiers). No
@@ -19,4 +19,4 @@ def numeralProfile : Numeral.Profile :=
     ordinal := .noOrdinals
     numeralBase := some .vigesimal }
 
-end Fragments.Mayan.Tseltal
+end Tseltal

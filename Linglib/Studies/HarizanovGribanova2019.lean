@@ -49,7 +49,7 @@ kit — is the position of the embedded finite verb relative to
 sentence adverbs (e.g. *oft*, *wahrscheinlich*) and negation. Both
 analyses derive verb-final surface order; they disagree about whether
 V crosses I on the way there. The codebase records Westergaard's
-positive claim via `Fragments.German.german`'s `.Fin` membership;
+positive claim via `German.german`'s `.Fin` membership;
 @cite{harizanov-gribanova-2019}'s denial lives in prose ("no V-to-I"
 is not a positive Lean witness), but the contradiction with
 Westergaard is formalized as a refutation theorem below via the
@@ -91,7 +91,7 @@ theorem root_sentence :
     refutation theorem below via the `westergaardToMovementParam`
     projection. -/
 theorem westergaard_german_plus_fin :
-    ForceHead.Fin ∈ Fragments.German.german :=
+    ForceHead.Fin ∈ German.german :=
   Westergaard2009.fin_only_german.1
 
 -- ============================================================================
@@ -121,6 +121,6 @@ def germanHG : VMovementParam := .inSitu
     object — formalizing the long-standing Vikner-vs.-Haider /
     Westergaard-vs.-H&G dispute about V-to-I in German. -/
 theorem hg_westergaard_german_disagree :
-    germanHG ≠ westergaardToMovementParam Fragments.German.german := by decide
+    germanHG ≠ westergaardToMovementParam German.german := by decide
 
 end HarizanovGribanova2019

@@ -8,7 +8,7 @@ import Linglib.Typology.Gender
 in Africa. Sample maximum in Corbett's 22-language exemplar.
 -/
 
-namespace Fragments.Fula.Gender
+namespace Fula.Gender
 
 open Typology.Gender
 
@@ -28,4 +28,4 @@ example : genderTypology.iso639 = "ful" ∧ genderTypology.name = "Fula" :=
 /-- Fula is a noun-class system (20+ classes per @cite{corbett-1991}). -/
 example : genderTypology.IsNounClassSystem := by decide
 
-end Fragments.Fula.Gender
+end Fula.Gender

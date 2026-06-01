@@ -12,7 +12,7 @@ event is not entailed to have actually occurred.
 
 -/
 
-namespace Fragments.Korean.Predicates
+namespace Korean.Predicates
 
 open Semantics.Lexical
 open Features (Causative)
@@ -78,4 +78,4 @@ def allVerbs : List KoreanVerbEntry := [wus_ke_ha, ilk_ke_ha, cwuk_i]
 def lookup (form : String) : Option KoreanVerbEntry :=
   allVerbs.find? (·.form == form)
 
-end Fragments.Korean.Predicates
+end Korean.Predicates

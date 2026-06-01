@@ -186,11 +186,11 @@ theorem exactly_two_violations : permittedViolations.length = 2 := rfl
 -- ============================================================================
 
 /-- English is VO: complements follow the selecting verb. -/
-theorem english_is_vo : Fragments.English.wordOrder.ovOrder = .vo := rfl
+theorem english_is_vo : English.wordOrder.ovOrder = .vo := rfl
 
 /-- English complement position maps to postverbal. -/
 theorem english_complement_postverbal :
-    OVOrder.verbPosition Fragments.English.wordOrder.ovOrder = some .postverbal := rfl
+    OVOrder.verbPosition English.wordOrder.ovOrder = some .postverbal := rfl
 
 /-- B&AK predict DP-first in English complement position: the first
     conjunct is closest to V.

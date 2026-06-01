@@ -313,22 +313,22 @@ def DonkeyArticleDatum.articleSystem (d : DonkeyArticleDatum) : ArticleType :=
 def germanDonkey : DonkeyArticleDatum :=
   { language := "German", isoCode := "deu"
     form := "strong article (von dem)"
-    articleInventory := Fragments.German.Definiteness.articleInventory }
+    articleInventory := German.Definiteness.articleInventory }
 
 def thaiDonkey : DonkeyArticleDatum :=
   { language := "Thai", isoCode := "tha"
     form := "demonstrative"
-    articleInventory := Fragments.Thai.Definiteness.articleInventory }
+    articleInventory := Thai.Definiteness.articleInventory }
 
 def mandarinDonkey : DonkeyArticleDatum :=
   { language := "Mandarin", isoCode := "cmn"
     form := "demonstrative"
-    articleInventory := Fragments.Mandarin.Definiteness.articleInventory }
+    articleInventory := Mandarin.Definiteness.articleInventory }
 
 def shanDonkey : DonkeyArticleDatum :=
   { language := "Shan", isoCode := "shn"
     form := "bare noun"
-    articleInventory := Fragments.Shan.Definiteness.articleInventory }
+    articleInventory := Shan.Definiteness.articleInventory }
 
 /-- All cross-linguistic donkey article data. -/
 def donkeyArticleData : List DonkeyArticleDatum :=

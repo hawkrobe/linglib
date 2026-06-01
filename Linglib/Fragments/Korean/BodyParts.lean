@@ -5,7 +5,7 @@ import Linglib.Typology.BodyParts
 @cite{wals-2013}
 -/
 
-namespace Fragments.Korean
+namespace Korean
 
 /-- Korean: distinct hand vs arm; distinct finger vs hand. -/
 def bodyPartProfile : Typology.BodyPartProfile :=
@@ -15,4 +15,4 @@ def bodyPartProfile : Typology.BodyPartProfile :=
   , handArm := some .different
   , fingerHand := some .different }
 
-end Fragments.Korean
+end Korean

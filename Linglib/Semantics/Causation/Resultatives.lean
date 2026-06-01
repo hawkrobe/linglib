@@ -34,7 +34,7 @@ Sections:
 7. **Cross-linguistic typological parameters**: `ResultativeRealization`,
    `ResultOrientation`. Mandarin-specific phase-complement morpheme data
    (`PhaseComplement` enum + `cosType`) lives in
-   `Fragments.Mandarin.Resultatives`.
+   `Mandarin.Resultatives`.
 -/
 
 namespace Semantics.Causation.Resultatives
@@ -233,7 +233,7 @@ theorem decomposition_reflects_transitivity :
 `ResultativeRealization` and `ResultOrientation` are theory-neutral
 typological parameters. Mandarin-specific phase complements
 (`PhaseComplement` enum + per-morpheme `cosType`) live in
-`Fragments.Mandarin.Resultatives`. -/
+`Mandarin.Resultatives`. -/
 
 inductive ResultativeRealization where
   | syntacticAdjunct

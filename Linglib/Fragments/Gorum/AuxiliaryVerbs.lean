@@ -12,7 +12,7 @@ and TAM (tense, affectedness/version).
 Source: Aze 1973, cited in @cite{anderson-2006}.
 -/
 
-namespace Fragments.Gorum.AuxiliaryVerbs
+namespace Gorum.AuxiliaryVerbs
 
 open Morphology (InflDistribution MorphCategory)
 
@@ -41,4 +41,4 @@ def inflDistribution : InflDistribution :=
   { onAux := [.agreement .subj, .tense, .voice]
   , onLex := [.agreement .subj, .tense, .voice] }
 
-end Fragments.Gorum.AuxiliaryVerbs
+end Gorum.AuxiliaryVerbs

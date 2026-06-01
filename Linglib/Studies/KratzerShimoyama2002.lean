@@ -578,8 +578,8 @@ theorem beck_generalization :
 -- Bridge to Fragment Entries
 -- ════════════════════════════════════════════════════════════════
 
-open Fragments.Japanese.Determiners (dare_ka dare_mo)
-open Fragments.German.ModalIndefinites (irgendeinEntry)
+open Japanese.Determiners (dare_ka dare_mo)
+open German.ModalIndefinites (irgendeinEntry)
 
 /-- Same base (*dare*), different force via particle alternation. -/
 theorem same_base_different_force :
@@ -621,7 +621,7 @@ ne- under direct negation, jeb- indirect negation/comparatives/FC).
 Latvian paradigm data imported from `Fragments/Latvian/IndeterminatePronouns.lean`.
 -/
 
-open Fragments.Latvian.IndeterminatePronouns (paradigm)
+open Latvian.IndeterminatePronouns (paradigm)
 
 /-- Latvian is morphologically marked (selective); Japanese is not. -/
 theorem selective_contrast :

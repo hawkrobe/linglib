@@ -7,7 +7,7 @@ import Linglib.Semantics.Kinds.NominalMappingParameter
 English NP structure. Bare plurals/mass nouns OK, bare singulars blocked.
 -/
 
-namespace Fragments.English.Nouns
+namespace English.Nouns
 
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 
@@ -261,4 +261,4 @@ example : waterNP.isBareMass = true := rfl
 example : theDog.isBare = false := rfl
 example : aDog.determiner = some "a" := rfl
 
-end Fragments.English.Nouns
+end English.Nouns

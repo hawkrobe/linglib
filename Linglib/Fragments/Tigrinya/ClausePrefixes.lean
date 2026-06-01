@@ -29,7 +29,7 @@ spell-outs of distinct heads in a cartographic left periphery.
 
 -/
 
-namespace Fragments.Tigrinya.ClausePrefixes
+namespace Tigrinya.ClausePrefixes
 
 open Minimalist
 open Morphology.Circumfix
@@ -154,4 +154,4 @@ theorem ki_has_agreement : ki.takesAgreementSuffix = true := rfl
 theorem ay_is_discontinuous : ay_n.isDiscontinuous = true := rfl
 theorem ki_is_continuous : ki.isDiscontinuous = false := rfl
 
-end Fragments.Tigrinya.ClausePrefixes
+end Tigrinya.ClausePrefixes

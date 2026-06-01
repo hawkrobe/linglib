@@ -6,7 +6,7 @@ import Linglib.Typology.RelativeClause.WALS
 Typological-summary `RelativeClause.Profile` for Tagalog (ISO `tgl`).
 -/
 
-namespace Fragments.Tagalog
+namespace Tagalog
 
 /-- Tagalog relativization: gap on subjects (*ang*-phrase only); voice
     alternation required for non-subject relativization; linker *na/ng*;
@@ -19,4 +19,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Gap on subjects (ang-phrase only); voice alternation for "
           ++ "non-subject relativization; linker na/ng" }
 
-end Fragments.Tagalog
+end Tagalog

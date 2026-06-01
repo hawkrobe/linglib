@@ -33,7 +33,7 @@ namespace Aissen2003
 open Features.Prominence
 open Phenomena.Agreement.DifferentialIndexing
 open Minimalist
-open Fragments.Mayan.Kaqchikel
+open Kaqchikel
 
 -- ============================================================================
 -- § 1: DOM ↔ DifferentialMarkingProfile Structural Isomorphism
@@ -91,7 +91,7 @@ theorem personLevel_rank_matches_probe_rank :
     This makes it non-differential: no prominence condition gates indexing. -/
 theorem kaqchikel_indexes_all (p : ArgPosition) (h : p ∈ kaqArgPositions) :
     ArgPosition.IsPhiAgreed p :=
-  Fragments.Mayan.Kaqchikel.all_positions_agreed p h
+  Kaqchikel.all_positions_agreed p h
 
 /-- Both A (agent) and P (patient) are indexed in Kaqchikel:
     agent via Set A on Voice/v, patient via Set B on Infl/T. -/
@@ -169,59 +169,59 @@ theorem two_probe_surface_ranking :
 -- § 6: Basque Fragment ↔ Just's IndexingFragment
 -- ============================================================================
 
-/-! The Basque agreement fragment (`Fragments.Basque.Agreement`) encodes
+/-! The Basque agreement fragment (`Basque.Agreement`) encodes
     the same person-conditioned P indexing that @cite{just-2024} reports.
     We prove that the Fragment's `pIsIndexed` matches the survey data. -/
 
 /-- Basque Fragment's P indexing matches the Just survey: SAP → indexed,
     3rd → not indexed, exactly as `basque.personIndexed`. -/
 theorem basque_fragment_matches_survey :
-    Fragments.Basque.Agreement.pIsIndexed .p1sg =
+    Basque.Agreement.pIsIndexed .p1sg =
       basque.personIndexed .sap ∧
-    Fragments.Basque.Agreement.pIsIndexed .p2sg =
+    Basque.Agreement.pIsIndexed .p2sg =
       basque.personIndexed .sap ∧
-    Fragments.Basque.Agreement.pIsIndexed .p3sg =
+    Basque.Agreement.pIsIndexed .p3sg =
       basque.personIndexed .third := ⟨rfl, rfl, rfl⟩
 
 /-- Basque Fragment confirms differential P indexing: some indexed, some not. -/
 theorem basque_fragment_is_differential :
-    Fragments.Basque.Agreement.allPersonNumbers.any
-      Fragments.Basque.Agreement.pIsIndexed = true ∧
-    !(Fragments.Basque.Agreement.allPersonNumbers.all
-      Fragments.Basque.Agreement.pIsIndexed) = true :=
+    Basque.Agreement.allPersonNumbers.any
+      Basque.Agreement.pIsIndexed = true ∧
+    !(Basque.Agreement.allPersonNumbers.all
+      Basque.Agreement.pIsIndexed) = true :=
   ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- § 7: Georgian Fragment ↔ Just's IndexingFragment
 -- ============================================================================
 
-/-! The Georgian agreement fragment (`Fragments.Georgian.Agreement`) derives
+/-! The Georgian agreement fragment (`Georgian.Agreement`) derives
     P indexing from the presence of object agreement prefixes (m-, g-, gv-).
     The indexed/not-indexed split aligns with SAP vs 3rd — same as the
     Just survey data. -/
 
 /-- Georgian Fragment's P indexing matches the Just survey. -/
 theorem georgian_fragment_matches_survey :
-    Fragments.Georgian.Agreement.pIsIndexed .p1sg =
+    Georgian.Agreement.pIsIndexed .p1sg =
       georgian.personIndexed .sap ∧
-    Fragments.Georgian.Agreement.pIsIndexed .p2sg =
+    Georgian.Agreement.pIsIndexed .p2sg =
       georgian.personIndexed .sap ∧
-    Fragments.Georgian.Agreement.pIsIndexed .p3sg =
+    Georgian.Agreement.pIsIndexed .p3sg =
       georgian.personIndexed .third := ⟨rfl, rfl, rfl⟩
 
 /-- Georgian Fragment's P indexing is grounded in object prefix morphology:
     indexed iff has overt prefix. Not stipulated — follows from the data. -/
 theorem georgian_indexing_grounded :
-    Fragments.Georgian.Agreement.allPersonNumbers.all (λ pn =>
-      Fragments.Georgian.Agreement.pIsIndexed pn ==
-      (Fragments.Georgian.Agreement.objectPrefix pn).isSome) = true := by
+    Georgian.Agreement.allPersonNumbers.all (λ pn =>
+      Georgian.Agreement.pIsIndexed pn ==
+      (Georgian.Agreement.objectPrefix pn).isSome) = true := by
   native_decide
 
 -- ============================================================================
 -- § 8: Hungarian Fragment ↔ Just's IndexingFragment
 -- ============================================================================
 
-/-! The Hungarian predicate fragment (`Fragments.Hungarian.Predicates`)
+/-! The Hungarian predicate fragment (`Hungarian.Predicates`)
     models the definite/indefinite conjugation split. This IS Just's
     differential P indexing by definiteness: the verb's agreement paradigm
     changes depending on whether the object is definite.
@@ -233,12 +233,12 @@ theorem georgian_indexing_grounded :
     This IS the morphological reflex of differential P indexing by
     definiteness. -/
 theorem hungarian_conjugation_split :
-    Fragments.Hungarian.Predicates.tud.formPastDef ≠
-      Fragments.Hungarian.Predicates.tud.formPastIndef ∧
-    Fragments.Hungarian.Predicates.mond.formPastDef ≠
-      Fragments.Hungarian.Predicates.mond.formPastIndef ∧
-    Fragments.Hungarian.Predicates.hisz.formPastDef ≠
-      Fragments.Hungarian.Predicates.hisz.formPastIndef := by decide
+    Hungarian.Predicates.tud.formPastDef ≠
+      Hungarian.Predicates.tud.formPastIndef ∧
+    Hungarian.Predicates.mond.formPastDef ≠
+      Hungarian.Predicates.mond.formPastIndef ∧
+    Hungarian.Predicates.hisz.formPastDef ≠
+      Hungarian.Predicates.hisz.formPastIndef := by decide
 
 /-- Hungarian is definiteness-conditioned (derived from the marking
     predicate), confirming the Fragment's conjugation split. -/

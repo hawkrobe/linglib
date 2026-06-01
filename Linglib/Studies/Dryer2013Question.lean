@@ -20,7 +20,7 @@ This study file holds **cross-linguistic generalisations** that consume the
 Fragment-side `def question : QuestionProfile` data with non-trivial
 semantic content. Per-language Fragment-vs-WALS data-equality theorems are
 **deliberately absent** — verifying that
-`Fragments.X.Questions.question.field` equals `Data.WALS.lookup "iso"`
+`X.Questions.question.field` equals `Data.WALS.lookup "iso"`
 is "encoding conclusions as definitions": the typed Fragment value already
 encodes the WALS coding at definition site, and the substrate's
 distribution theorems already capture the corpus-level claims.
@@ -41,12 +41,12 @@ open Typology.Question
 /-- The 6-language sample drawn from per-language Fragment Question files.
     Italian + Singlish are partial (not in all WALS chapters). -/
 def allQuestionProfiles : List QuestionProfile :=
-  [ Fragments.English.Questions.question
-  , Fragments.HindiUrdu.Questions.question
-  , Fragments.Japanese.Questions.question
-  , Fragments.Italian.Questions.question
-  , Fragments.Singlish.Questions.question
-  , Fragments.Mandarin.Questions.question ]
+  [ English.Questions.question
+  , HindiUrdu.Questions.question
+  , Japanese.Questions.question
+  , Italian.Questions.question
+  , Singlish.Questions.question
+  , Mandarin.Questions.question ]
 
 -- ============================================================================
 -- §2. Sample-level summaries

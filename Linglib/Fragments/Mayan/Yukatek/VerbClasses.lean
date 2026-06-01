@@ -39,11 +39,11 @@ perfective status → S marked like U (ergative); imperfective status →
 S marked like A (accusative).
 -/
 
-namespace Fragments.Mayan.Yukatek
+namespace Yukatek
 
 open Semantics.Aspect (ViewpointAspectB)
 open Semantics.Lexical.EventStructure (EventType InternalExternalCause)
-open Fragments.Mayan (MarkerSet)
+open Mayan (MarkerSet)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Verb Stem Classes
@@ -327,4 +327,4 @@ theorem yukatek_hindi_same_split :
     yukatekSplit.alignment .incompletive = Typology.Alignment.hindiSplit.alignment .imperfective :=
   ⟨rfl, rfl⟩
 
-end Fragments.Mayan.Yukatek
+end Yukatek

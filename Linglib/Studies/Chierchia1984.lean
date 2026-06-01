@@ -473,7 +473,7 @@ theorem subjectControl_allows_detransitivization :
     cpBlocksAlternation .subjectControl antipassivization = false := rfl
 
 section VerbVerification
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ── Per-verb Chierchia class verification ──
 
@@ -599,7 +599,7 @@ theorem cp_requires_syntactic_controller (c : ChierchiaControlClass)
 -- ── Per-verb cross-system consistency ──
 
 section CrossSystemVerification
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 /-! ### Non-attitude verbs: Chierchia and Landau agree
 

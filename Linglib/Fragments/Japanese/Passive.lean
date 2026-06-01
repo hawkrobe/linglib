@@ -15,7 +15,7 @@ dative agent marker *ni* to be replaced with *niyotte*; indirect passives
 do not (@cite{jo-seo-2023}).
 -/
 
-namespace Fragments.Japanese.Passive
+namespace Japanese.Passive
 
 /-- Types of passive in Japanese. -/
 inductive PassiveType where
@@ -28,4 +28,4 @@ def PassiveType.requiresThematicVoice : PassiveType → Bool
   | .direct => true
   | .indirect => false
 
-end Fragments.Japanese.Passive
+end Japanese.Passive

@@ -398,7 +398,7 @@ theorem logical_property_asymmetry :
 -- ════════════════════════════════════════════════════════════════
 
 open Semantics.Tense.TemporalConnectives
-open Fragments.English.TemporalExpressions
+open English.TemporalExpressions
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10: Fragment ↔ Data Agreement
@@ -624,7 +624,7 @@ theorem npi_datum_matches_fragment :
 -- § 17: Cross-Linguistic Bridge (Japanese)
 -- ════════════════════════════════════════════════════════════════
 
-open Fragments.Japanese.TemporalConnectives in
+open Japanese.TemporalConnectives in
 /-- The Japanese Fragment entry for *mae* agrees with the cross-linguistic
     datum: both record that *mae* supports the non-veridicality analysis. -/
 theorem japanese_mae_matches_datum :
@@ -632,7 +632,7 @@ theorem japanese_mae_matches_datum :
     japanese_mae.supportsNonveridicality = true :=
   ⟨rfl, rfl⟩
 
-open Fragments.Japanese.TemporalConnectives in
+open Japanese.TemporalConnectives in
 /-- The Japanese Fragment entry for *ato* agrees with the cross-linguistic
     datum: *ato* is veridical and does not support non-veridicality. -/
 theorem japanese_ato_matches_datum :
@@ -969,7 +969,7 @@ namespace OgiharaST2024.VeridicalityBridge
 open Core.Time
 open Core.Time.Interval
 open Semantics.Tense.TemporalConnectives
-open Fragments.English.TemporalExpressions
+open English.TemporalExpressions
 open OgiharaST2024
 
 -- ============================================================================

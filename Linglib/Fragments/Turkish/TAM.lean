@@ -16,7 +16,7 @@ categories and three **modal** categories, occupying a single paradigmatic slot.
 
 2. **Aorist negation is asymmetric**: affirmative -(I)r becomes negative -mAz
    rather than the expected *-mA-(I)r. All other categories use regular
-   -mA- negation (see also `Fragments.Turkish.Negation`).
+   -mA- negation (see also `Turkish.Negation`).
 
 3. **Compound tenses** are formed by adding a copular suffix (-DI, -mIş,
    -(y)sA) to the basic form: *geliyordu* (progressive + past copula).
@@ -24,12 +24,12 @@ categories and three **modal** categories, occupying a single paradigmatic slot.
 ## Suffix notation
 
 Capital letters indicate vowel harmony alternation
-(see `Fragments.Turkish.VowelHarmony`):
+(see `Turkish.VowelHarmony`):
 - **A** = a/e (twofold), **I** = ı/i/u/ü (fourfold)
 - **D** = d/t (voicing assimilation)
 -/
 
-namespace Fragments.Turkish.TAM
+namespace Turkish.TAM
 
 /-- The eight TAM categories of Turkish. -/
 inductive TAMCategory where
@@ -110,4 +110,4 @@ theorem tam_negation_aorist_agreement :
     (Negation.gelParadigm.filter (fun e => !e.symmetric)).head!.formLabel = "aorist" :=
   ⟨by native_decide, rfl⟩
 
-end Fragments.Turkish.TAM
+end Turkish.TAM

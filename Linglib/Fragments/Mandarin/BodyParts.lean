@@ -5,7 +5,7 @@ import Linglib.Typology.BodyParts
 @cite{wals-2013}
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin Chinese: distinct *shou* (hand) vs *bei*/*gebo* (arm); distinct
     finger vs hand. -/
@@ -16,4 +16,4 @@ def bodyPartProfile : Typology.BodyPartProfile :=
   , handArm := some .different
   , fingerHand := some .different }
 
-end Fragments.Mandarin
+end Mandarin

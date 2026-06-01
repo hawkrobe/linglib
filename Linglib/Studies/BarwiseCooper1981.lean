@@ -7,7 +7,7 @@ import Linglib.Semantics.Quantification.DomainRestriction
 # Quantifier Universals Bridge
 @cite{barwise-cooper-1981} @cite{mostowski-1957} @cite{peters-westerstahl-2006} @cite{van-benthem-1984} @cite{van-de-pol-etal-2023}
 
-Bridges the English determiner fragment (`Fragments.English.Determiners.QuantityWord`)
+Bridges the English determiner fragment (`English.Determiners.QuantityWord`)
 to the GQ property predicates in `Core.Quantification` and
 `Semantics.Quantification.Quantifier`.
 
@@ -45,7 +45,7 @@ to the GQ property predicates in `Core.Quantification` and
   `outerNeg`, `innerNeg`, `dualQ`
 - **Concrete denotations**: `Semantics.Quantification.Quantifier` —
   `every_sem`, `some_sem`, `no_sem`, `most_sem`, `few_sem`, `half_sem`
-- **Fragment entries**: `Fragments.English.Determiners.QuantityWord.gqDenotation`
+- **Fragment entries**: `English.Determiners.QuantityWord.gqDenotation`
 - **Domain restriction**: `Semantics.Quantification.DomainRestriction` —
   `DomainRestrictor`, `DDRP`, `conservative_domain_restricted`
 - **Impossibility theorems**: `Core.Quantification.NumberTreeGQ` —
@@ -56,7 +56,7 @@ to the GQ property predicates in `Core.Quantification` and
 
 namespace Phenomena.Quantification.Bridge
 
-open Fragments.English.Determiners (Monotonicity Strength)
+open English.Determiners (Monotonicity Strength)
 open Phenomena.Quantification.Inventory
 open Core.Logic.Intensional (Frame)
 open Semantics.Quantification.Quantifier
@@ -313,7 +313,7 @@ theorem positive_strong_determiners_upward_monotone :
    Additional structural results:
    - `zwarts_refl_trans_scopeUp`:  CONSERV + reflexive + transitive → MON↑
 
-   Bridge theorems in `Fragments.English.Determiners`:
+   Bridge theorems in `English.Determiners`:
      `all_inferential_bridge`, `some_inferential_bridge`, `none_inferential_bridge`
 
    NPI licensing connection (via `Ladusaw1979`):

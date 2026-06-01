@@ -11,7 +11,7 @@ enum cannot represent — `walsFusion` returns `none` and the fallback
 because the largely isolating typology renders them inapplicable.
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 open Morphology
 
@@ -28,4 +28,4 @@ def morphProfile : MorphProfile :=
 example : morphProfile.iso = "cmn" ∧ morphProfile.language = "Mandarin Chinese" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Mandarin
+end Mandarin

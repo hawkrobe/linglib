@@ -25,7 +25,7 @@ lexical primitives; the left-peripheral layer assignment lives in
 
 -/
 
-namespace Fragments.Mandarin.QuestionParticles
+namespace Mandarin.QuestionParticles
 
 open Semantics.Modality.BiasedPQ (OriginalBias ContextualEvidence)
 
@@ -165,4 +165,4 @@ theorem no_double_bias :
       (λ p => !(p.requiresEvidentialBias && p.requiresEpistemicBias)) = true := by
   native_decide
 
-end Fragments.Mandarin.QuestionParticles
+end Mandarin.QuestionParticles

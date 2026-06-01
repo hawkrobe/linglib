@@ -5,7 +5,7 @@ import Linglib.Typology.BodyParts
 @cite{wals-2013}
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese: *te* covers both 'hand' and 'arm' (identical); distinct finger
     (*yubi*) vs hand (*te*). -/
@@ -16,4 +16,4 @@ def bodyPartProfile : Typology.BodyPartProfile :=
   , handArm := some .identical
   , fingerHand := some .different }
 
-end Fragments.Japanese
+end Japanese

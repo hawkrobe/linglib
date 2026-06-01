@@ -43,7 +43,7 @@ quantification = interrogative (all are ∨ over elements).
 - BillEtAl2025.lean: `mu_is_distributive_check`
 -/
 
-namespace Fragments.Japanese.Coordination
+namespace Japanese.Coordination
 
 open Features.Coordination
 
@@ -138,8 +138,8 @@ theorem mo_ka_quantifier_bridge :
     -- Coordination: mo is MU, ka is disjunction
     mo.role = .mu ∧ ka.role = .disj ∧
     -- Determiners: mo-particle is universal, ka-particle is existential
-    Fragments.Japanese.Determiners.dare_mo.particle = some "mo" ∧
-    Fragments.Japanese.Determiners.dare_ka.particle = some "ka" ∧
+    Japanese.Determiners.dare_mo.particle = some "mo" ∧
+    Japanese.Determiners.dare_ka.particle = some "ka" ∧
     -- The coordination forms match the quantifier particles
     mo.form = "mo" ∧ ka.form = "ka" := by
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
@@ -154,11 +154,11 @@ theorem mo_ka_quantifier_bridge :
     ∧ (mo) and ∨ (ka) are the two operations of Boolean algebra. -/
 theorem boolean_duality_in_quantifiers :
     -- All mo-particle quantifiers are universal (∧ family)
-    (Fragments.Japanese.Determiners.allQuantifiers.filter
+    (Japanese.Determiners.allQuantifiers.filter
       (·.particle == some "mo")).all (·.qforce == .universal) = true ∧
     -- All ka-particle quantifiers are existential (∨ family)
-    (Fragments.Japanese.Determiners.allQuantifiers.filter
+    (Japanese.Determiners.allQuantifiers.filter
       (·.particle == some "ka")).all (·.qforce == .existential) = true := by
   exact ⟨by native_decide, by native_decide⟩
 
-end Fragments.Japanese.Coordination
+end Japanese.Coordination

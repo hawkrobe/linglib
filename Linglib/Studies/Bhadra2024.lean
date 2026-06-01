@@ -518,7 +518,7 @@ theorem wipe_is_ie :
 -- § 9. End-to-End: Fragment Verb → LevinClass → un-/re- Prediction
 -- ════════════════════════════════════════════════════
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- End-to-end chain: the Fragment entry for "kick" (Levin 18.1 hit class)
     derives IE classification and correctly predicts both un- and re- blocking.
     kick.levinClass → .hit → .impingementEffecting → unCompatible=false, reCompatible=false -/
@@ -532,12 +532,12 @@ theorem kick_end_to_end :
     derives PFC classification and correctly predicts both un- and re- compatibility.
     bend.levinClass → .bend → .potentialForChange → unCompatible=true, reCompatible=true -/
 theorem bend_end_to_end :
-    Fragments.English.Predicates.Verbal.bend.toVerbCore.levinClass = some .bend ∧
+    English.Predicates.Verbal.bend.toVerbCore.levinClass = some .bend ∧
     (LevinClass.forceTransmissionClass .bend) = .potentialForChange ∧
     (LevinClass.forceTransmissionClass .bend).unCompatible = true ∧
     LevinClass.reCompatible .bend = true := ⟨rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- End-to-end chain: the Fragment entry for "break" (Levin 45.1)
     derives COS classification → un- blocked, re- allowed.
     break.levinClass → .break_ → .integralChange → unCompatible=false, reCompatible=true -/

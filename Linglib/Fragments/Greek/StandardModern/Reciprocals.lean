@@ -16,7 +16,7 @@ Greek allows discontinuous reciprocals (@cite{nordlinger-2023} ex. 27b),
 which per Siloni's analysis implies lexical formation (Dimitriadis 2004, 2008).
 -/
 
-namespace Fragments.Greek.StandardModern.Reciprocals
+namespace Greek.StandardModern.Reciprocals
 
 open Morphology
 
@@ -36,4 +36,4 @@ def nonactiveVoiceSuffix : MorphRule Bool :=
 theorem nonactive_is_voice :
     nonactiveVoiceSuffix.category = .voice := rfl
 
-end Fragments.Greek.StandardModern.Reciprocals
+end Greek.StandardModern.Reciprocals

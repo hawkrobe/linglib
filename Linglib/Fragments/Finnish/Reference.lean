@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
 /-- Finnish (Uralic): no definite or indefinite articles; two-way demonstrative
     distance: *tämä* (proximal) vs *tuo*/*se* (distal); same forms for
@@ -23,4 +23,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .relatedNonhuman }
 
-end Fragments.Finnish
+end Finnish

@@ -829,68 +829,68 @@ theorem most_common_form_count :
 section FragmentBridges
 
 theorem english_any_covers_question :
-    Fragments.English.PolarityItems.any.licensingContexts.contains .question = true := by
+    English.PolarityItems.any.licensingContexts.contains .question = true := by
   decide
 
 theorem italian_nessuno_covers_negation :
-    Fragments.Italian.PolarityItems.nessuno.licensingContexts.contains .negation = true := by
+    Italian.PolarityItems.nessuno.licensingContexts.contains .negation = true := by
   decide
 
 theorem russian_nikto_covers_negation :
-    Fragments.Slavic.Russian.PolarityItems.nikto.licensingContexts.contains .negation = true := by
+    Russian.PolarityItems.nikto.licensingContexts.contains .negation = true := by
   decide
 
 theorem german_irgendein_is_npi_fci :
-    Fragments.German.PolarityItems.irgendein.polarityType = .npiFci := rfl
+    German.PolarityItems.irgendein.polarityType = .npiFci := rfl
 
 theorem german_niemand_covers_negation :
-    Fragments.German.PolarityItems.niemand.licensingContexts.contains .negation = true := by
+    German.PolarityItems.niemand.licensingContexts.contains .negation = true := by
   decide
 
 theorem japanese_dareMo_covers_negation :
-    Fragments.Japanese.PolarityItems.dareMo.licensingContexts.contains .negation = true := by
+    Japanese.PolarityItems.dareMo.licensingContexts.contains .negation = true := by
   decide
 
 theorem korean_nwukwuTo_covers_negation :
-    Fragments.Korean.PolarityItems.nwukwuTo.licensingContexts.contains .negation = true := by
+    Korean.PolarityItems.nwukwuTo.licensingContexts.contains .negation = true := by
   decide
 
 theorem mandarin_shei_is_npi_fci :
-    Fragments.Mandarin.PolarityItems.shei.polarityType = .npiFci := rfl
+    Mandarin.PolarityItems.shei.polarityType = .npiFci := rfl
 
 theorem turkish_kimse_covers_question :
-    Fragments.Turkish.PolarityItems.kimse.licensingContexts.contains .question = true := by
+    Turkish.PolarityItems.kimse.licensingContexts.contains .question = true := by
   decide
 
 theorem finnish_kukaan_covers_question :
-    Fragments.Finnish.PolarityItems.kukaan.licensingContexts.contains .question = true := by
+    Finnish.PolarityItems.kukaan.licensingContexts.contains .question = true := by
   decide
 
 theorem hungarian_senki_covers_negation :
-    Fragments.Hungarian.PolarityItems.senki.licensingContexts.contains .negation = true := by
+    Hungarian.PolarityItems.senki.licensingContexts.contains .negation = true := by
   decide
 
 theorem georgian_aravin_covers_negation :
-    Fragments.Georgian.PolarityItems.aravin.licensingContexts.contains .negation = true := by
+    Georgian.PolarityItems.aravin.licensingContexts.contains .negation = true := by
   decide
 
 theorem quechua_manaPiPash_covers_negation :
-    Fragments.Quechua.PolarityItems.manaPiPash.licensingContexts.contains .negation = true := by
+    Quechua.PolarityItems.manaPiPash.licensingContexts.contains .negation = true := by
   decide
 
 theorem yoruba_enikeni_is_npi_fci :
-    Fragments.Yoruba.PolarityItems.enikeni.polarityType = .npiFci := rfl
+    Yoruba.PolarityItems.enikeni.polarityType = .npiFci := rfl
 
 theorem thai_majMiiKhraj_covers_negation :
-    Fragments.Thai.PolarityItems.majMiiKhraj.licensingContexts.contains .negation = true := by
+    Thai.PolarityItems.majMiiKhraj.licensingContexts.contains .negation = true := by
   decide
 
 theorem tagalog_sinuman_covers_question :
-    Fragments.Tagalog.PolarityItems.sinuman.licensingContexts.contains .question = true := by
+    Tagalog.PolarityItems.sinuman.licensingContexts.contains .question = true := by
   decide
 
 theorem swahili_hakunaMtu_covers_negation :
-    Fragments.Swahili.PolarityItems.hakunaMtu.licensingContexts.contains .negation = true := by
+    Swahili.PolarityItems.hakunaMtu.licensingContexts.contains .negation = true := by
   decide
 
 end FragmentBridges

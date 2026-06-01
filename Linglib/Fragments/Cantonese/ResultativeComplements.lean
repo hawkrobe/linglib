@@ -19,7 +19,7 @@ and following an RVC. We commit only the morphological/phonological
 data; the diagnostic-based classification lives in the Studies file.
 -/
 
-namespace Fragments.Cantonese.ResultativeComplements
+namespace Cantonese.ResultativeComplements
 
 open Minimalist (AspFlavor AspHead)
 
@@ -117,4 +117,4 @@ theorem all_inner :
     ∀ m ∈ all, (m.toAspHead).flavor = .inner := by
   intro m _; rfl
 
-end Fragments.Cantonese.ResultativeComplements
+end Cantonese.ResultativeComplements

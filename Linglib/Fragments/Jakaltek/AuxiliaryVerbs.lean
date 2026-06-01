@@ -13,7 +13,7 @@ subject appears on the auxiliary.
 Source: Craig 1977, cited in @cite{anderson-2006}.
 -/
 
-namespace Fragments.Jakaltek.AuxiliaryVerbs
+namespace Jakaltek.AuxiliaryVerbs
 
 open Morphology (InflDistribution MorphCategory)
 
@@ -38,4 +38,4 @@ def inflDistribution : InflDistribution :=
   { onAux := [.aspect, .agreement .obj]
   , onLex := [.agreement .subj] }
 
-end Fragments.Jakaltek.AuxiliaryVerbs
+end Jakaltek.AuxiliaryVerbs

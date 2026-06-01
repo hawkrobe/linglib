@@ -168,7 +168,7 @@ while the assertion commits the speaker to p via DECL (72).
 open Core.Time
 open Semantics.Presupposition
 open Semantics.Tense.Evidential
-open Fragments.Slavic.Bulgarian.Evidentials
+open Bulgarian.Evidentials
 
 /-! ### Spatiotemporal distance △ substrate (inlined) -/
 

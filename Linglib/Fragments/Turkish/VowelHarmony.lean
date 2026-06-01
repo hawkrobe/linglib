@@ -48,7 +48,7 @@ Turkish VH decomposes into two `HarmonySystem` instances:
 - `labialHarmony`: [round] spreads to high suffix vowels only (fourfold I)
 -/
 
-namespace Fragments.Turkish.VowelHarmony
+namespace Turkish.VowelHarmony
 
 open Phonology (Segment Feature)
 open Phonology.Autosegmental (agreeAt)
@@ -191,4 +191,4 @@ theorem a_o_same_back :
     a_vowel.HasValue .back true = true ∧
     o_vowel.HasValue .back true = true := ⟨by native_decide, by native_decide⟩
 
-end Fragments.Turkish.VowelHarmony
+end Turkish.VowelHarmony

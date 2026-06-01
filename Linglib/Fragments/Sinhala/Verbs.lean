@@ -37,7 +37,7 @@ correspond to roots whose causer sort excludes individuals — the
 predictive engine of B&Z's analysis.
 -/
 
-namespace Fragments.Sinhala.Verbs
+namespace Sinhala.Verbs
 
 open Semantics.Causation
 
@@ -157,4 +157,4 @@ theorem fragment_involitive_correlates_with_causer_sort :
                                   v.causerSort = .individual)) = true := by
   decide
 
-end Fragments.Sinhala.Verbs
+end Sinhala.Verbs

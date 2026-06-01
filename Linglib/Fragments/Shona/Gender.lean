@@ -7,7 +7,7 @@ import Linglib.Typology.Gender
 Bantu noun-class system. Carstens 2026 cites 8 active gender classes.
 -/
 
-namespace Fragments.Shona.Gender
+namespace Shona.Gender
 
 open Typology.Gender
 
@@ -28,4 +28,4 @@ example : genderTypology.iso639 = "sna" ∧ genderTypology.name = "Shona" :=
 /-- Shona is a noun-class system (Bantu, 8 classes per @cite{carstens-2026}). -/
 example : genderTypology.IsNounClassSystem := by decide
 
-end Fragments.Shona.Gender
+end Shona.Gender

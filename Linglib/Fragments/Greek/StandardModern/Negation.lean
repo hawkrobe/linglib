@@ -21,7 +21,7 @@ The two markers are the overt morphological reflex of the NEG₁/NEG₂
 distinction that @cite{tsiakmakis-2025} argues is cross-linguistically valid.
 -/
 
-namespace Fragments.Greek.StandardModern.Negation
+namespace Greek.StandardModern.Negation
 
 open Semantics.Modality.Kratzer (ModalBase OrderingSource necessity)
 -- NB: not opening Typology.Negation namespace-wide to avoid
@@ -134,4 +134,4 @@ def minExplSem (f : ModalBase World) (g : OrderingSource World) (p : World → P
 /-- Greek has exactly two sentential negation markers. -/
 def allMarkers : List MoodMarkerEntry := [dhen, min]
 
-end Fragments.Greek.StandardModern.Negation
+end Greek.StandardModern.Negation

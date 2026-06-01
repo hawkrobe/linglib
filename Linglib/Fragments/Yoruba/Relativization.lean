@@ -34,7 +34,7 @@ Data from @cite{awobuluyi-1978} §6.18–6.24, §3.15 + @cite{keenan-comrie-1979
 ex. 125–128.
 -/
 
-namespace Fragments.Yoruba
+namespace Yoruba
 
 open RelativeClause
 
@@ -133,4 +133,4 @@ def relativization : RelativeClause.Profile :=
           ++ "drop+repositioning (complexity not captured by oblStrategy field); "
           ++ "§6.23 GEN resumption (rẹ̀/wọn). Matches WALS F122A pronounRetention." }
 
-end Fragments.Yoruba
+end Yoruba

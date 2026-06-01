@@ -720,17 +720,17 @@ section FragmentBridges
 /-- Longobardi's `romance` parameters correctly predict the Italian
     fragment's independently-declared mapping parameter. -/
 theorem romance_matches_italian_fragment :
-    toNominalMapping romance = Fragments.Italian.Nouns.italianMapping := rfl
+    toNominalMapping romance = Italian.Nouns.italianMapping := rfl
 
 /-- Longobardi's `english` parameters correctly predict the English
     fragment's independently-declared mapping parameter. -/
 theorem english_matches_english_fragment :
-    toNominalMapping english = Fragments.English.Nouns.englishMapping := rfl
+    toNominalMapping english = English.Nouns.englishMapping := rfl
 
 /-- Longobardi's `greek` parameters correctly predict the Greek
     fragment's independently-declared mapping parameter. -/
 theorem greek_matches_greek_fragment :
-    toNominalMapping greek = Fragments.Greek.StandardModern.Nouns.greekMapping := rfl
+    toNominalMapping greek = Greek.StandardModern.Nouns.greekMapping := rfl
 
 /-- All three fragment bridges together: `DPParameter` *predicts*
     the independently-stipulated `NominalMapping` in each fragment.
@@ -742,9 +742,9 @@ theorem greek_matches_greek_fragment :
     and each fragment independently declares the same `NominalMapping`,
     so the bridge theorems verify the prediction. -/
 theorem all_fragment_mappings :
-    toNominalMapping romance = Fragments.Italian.Nouns.italianMapping ∧
-    toNominalMapping english = Fragments.English.Nouns.englishMapping ∧
-    toNominalMapping greek = Fragments.Greek.StandardModern.Nouns.greekMapping := ⟨rfl, rfl, rfl⟩
+    toNominalMapping romance = Italian.Nouns.italianMapping ∧
+    toNominalMapping english = English.Nouns.englishMapping ∧
+    toNominalMapping greek = Greek.StandardModern.Nouns.greekMapping := ⟨rfl, rfl, rfl⟩
 
 /-- Longobardi's analysis explains WHY Italian bare plurals are not
     licensed: strong D means BNs are always quantificational variables,
@@ -753,18 +753,18 @@ theorem all_fragment_mappings :
     restricted because BNs cannot function as referential (kind) names. -/
 theorem italian_bare_restriction_from_strong_d :
     bnAlwaysQuantificational romance = true ∧
-    Fragments.Italian.Nouns.barePluralLicensed = false ∧
-    Fragments.Italian.Nouns.bareSingularLicensed = false := ⟨rfl, rfl, rfl⟩
+    Italian.Nouns.barePluralLicensed = false ∧
+    Italian.Nouns.bareSingularLicensed = false := ⟨rfl, rfl, rfl⟩
 
 /-- English bare plurals are licensed (weak D allows referential BNs). -/
 theorem english_bare_plurals_licensed :
     bnCanBeReferential english = true ∧
-    Fragments.English.Nouns.barePluralLicensed = true := ⟨rfl, rfl⟩
+    English.Nouns.barePluralLicensed = true := ⟨rfl, rfl⟩
 
 /-- Greek bare plurals are not licensed (same as Italian: strong D). -/
 theorem greek_bare_restriction_from_strong_d :
     bnAlwaysQuantificational greek = true ∧
-    Fragments.Greek.StandardModern.Nouns.barePluralLicensed = false := ⟨rfl, rfl⟩
+    Greek.StandardModern.Nouns.barePluralLicensed = false := ⟨rfl, rfl⟩
 
 end FragmentBridges
 

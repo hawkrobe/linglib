@@ -177,7 +177,7 @@ theorem causatives_pattern_with_intend :
 -- ════════════════════════════════════════════════════════════════
 
 open Noonan2007 (deriveMoodSelector)
-open Fragments.English.Predicates.Verbal (want hope)
+open English.Predicates.Verbal (want hope)
 
 /-- The deriveMoodSelector function correctly classifies 'want' as
     robustly subjunctive-selecting, matching the cross-linguistic data. -/
@@ -341,7 +341,7 @@ complements but reject finite indicative complements ((115)–(119)).
 'see' + *that*-clause = indirect evidence. ((120)–(127))
 -/
 
-open Fragments.English.Predicates.Verbal (intend try_ persuade promise decide_
+open English.Predicates.Verbal (intend try_ persuade promise decide_
     start stop begin_ continue_ see remember)
 
 /-- Intention-rigid predicates reject IND like 'intend' (§6.1, (91)).
@@ -491,7 +491,7 @@ theorem intend_moodPrediction_agrees :
 /-- Causatives involve eventuality abstraction (robust SBJV). -/
 theorem causative_moodPrediction_agrees :
     DepartureKind.eventualityAbstraction.moodPrediction =
-      deriveMoodSelector Fragments.English.Predicates.Verbal.make := by native_decide
+      deriveMoodSelector English.Predicates.Verbal.make := by native_decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 8b. Bridge: deriveMoodSelector → VerbalMoodOp
@@ -542,50 +542,50 @@ is captured by deriveMoodSelector returning .crossLinguisticallyVariable. -/
 
 -- Greek fragments match Greek data
 theorem greek_want_fragment_consistent :
-    Fragments.Greek.StandardModern.MoodChoice.thelo.levinClass = some LevinClass.want ∧
+    Greek.StandardModern.MoodChoice.thelo.levinClass = some LevinClass.want ∧
     greek_want.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 theorem greek_hope_fragment_consistent :
-    Fragments.Greek.StandardModern.MoodChoice.elpizo.levinClass ≠ some LevinClass.want ∧
+    Greek.StandardModern.MoodChoice.elpizo.levinClass ≠ some LevinClass.want ∧
     greek_hope.rejectsIndicative = false := ⟨by decide, rfl⟩
 
 theorem greek_intend_fragment_consistent :
-    Fragments.Greek.StandardModern.MoodChoice.protithete.levinClass = some LevinClass.want ∧
+    Greek.StandardModern.MoodChoice.protithete.levinClass = some LevinClass.want ∧
     greek_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 theorem greek_make_fragment_consistent :
-    Fragments.Greek.StandardModern.MoodChoice.vazo.causative.isSome = true ∧
+    Greek.StandardModern.MoodChoice.vazo.causative.isSome = true ∧
     greek_make.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 -- Romanian fragments match Romanian data
 theorem romanian_want_fragment_consistent :
-    Fragments.Romanian.MoodChoice.a_vrea.levinClass = some LevinClass.want ∧
+    Romanian.MoodChoice.a_vrea.levinClass = some LevinClass.want ∧
     romanian_want.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 theorem romanian_hope_fragment_consistent :
-    Fragments.Romanian.MoodChoice.a_spera.levinClass ≠ some LevinClass.want ∧
+    Romanian.MoodChoice.a_spera.levinClass ≠ some LevinClass.want ∧
     romanian_hope.rejectsIndicative = false := ⟨by decide, rfl⟩
 
 theorem romanian_intend_fragment_consistent :
-    Fragments.Romanian.MoodChoice.a_intentiona.levinClass = some LevinClass.want ∧
+    Romanian.MoodChoice.a_intentiona.levinClass = some LevinClass.want ∧
     romanian_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 -- Spanish fragments match Spanish data
 theorem spanish_want_fragment_consistent :
-    Fragments.Spanish.MoodChoice.querer.levinClass = some LevinClass.want ∧
+    Spanish.MoodChoice.querer.levinClass = some LevinClass.want ∧
     spanish_want.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 theorem spanish_intend_fragment_consistent :
-    Fragments.Spanish.MoodChoice.tener_la_intencion.levinClass = some LevinClass.want ∧
+    Spanish.MoodChoice.tener_la_intencion.levinClass = some LevinClass.want ∧
     spanish_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 -- Portuguese fragments match Portuguese data
 theorem portuguese_want_fragment_consistent :
-    Fragments.Portuguese.MoodChoice.querer.levinClass = some LevinClass.want ∧
+    Portuguese.MoodChoice.querer.levinClass = some LevinClass.want ∧
     portuguese_want.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 theorem portuguese_intend_fragment_consistent :
-    Fragments.Portuguese.MoodChoice.pretender.levinClass = some LevinClass.want ∧
+    Portuguese.MoodChoice.pretender.levinClass = some LevinClass.want ∧
     portuguese_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 end Grano2024

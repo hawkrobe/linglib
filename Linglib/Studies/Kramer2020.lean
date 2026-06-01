@@ -129,9 +129,9 @@ open Corbett1991 (allProfiles)
 
 /-- Aliases for Kramer's three case-study languages, drawn from Fragment
     typology files (i.e. WALS-derived per Corbett 2013). -/
-private abbrev russian := Fragments.Slavic.Russian.Gender.genderTypology
-private abbrev spanish := Fragments.Spanish.Gender.genderTypology
-private abbrev hausa   := Fragments.Hausa.Gender.genderTypology
+private abbrev russian := Russian.Gender.genderTypology
+private abbrev spanish := Spanish.Gender.genderTypology
+private abbrev hausa   := Hausa.Gender.genderTypology
 
 -- ============================================================================
 -- § 1: The Semantic Core Generalization (@cite{kramer-2020} ex. 2/28)
@@ -667,7 +667,7 @@ theorem more_ns_same_genders :
 
 namespace Spanish
 
-open Fragments.Spanish.Gender (SpanishNoun SameRootEntry)
+open Spanish.Gender (SpanishNoun SameRootEntry)
 
 /-- DM Set-1 categorizing-head projection from the theory-neutral
     Spanish Fragment fields. Same Set-1 partition as `Hausa.nHead`
@@ -692,7 +692,7 @@ end Spanish
 
 namespace Russian
 
-open Fragments.Slavic.Russian.Gender (RussianNoun)
+open Russian.Gender (RussianNoun)
 
 /-- DM 5-n categorizing-head projection from theory-neutral Russian
     Fragment fields. Russian uses 3-gender VI (vs Spanish's Set 1
@@ -713,27 +713,27 @@ end Russian
 /-- Derive from fragment via Spanish.nHead projection: *hombre* 'man'
     has natural masculine gender (i[−FEM]). -/
 theorem hombre_natural_masculine :
-    (Spanish.nHead Fragments.Spanish.Gender.hombre).phi.gender =
+    (Spanish.nHead Spanish.Gender.hombre).phi.gender =
       some ⟨.i, ⟨.fem, .neg⟩⟩ := rfl
 
 /-- *mujer* 'woman' has natural feminine gender (i[+FEM]). -/
 theorem mujer_natural_feminine :
-    (Spanish.nHead Fragments.Spanish.Gender.mujer).phi.gender =
+    (Spanish.nHead Spanish.Gender.mujer).phi.gender =
       some ⟨.i, ⟨.fem, .pos⟩⟩ := rfl
 
 /-- *mesa* 'table' has arbitrary feminine gender (u[+FEM]). -/
 theorem mesa_arbitrary_feminine :
-    (Spanish.nHead Fragments.Spanish.Gender.mesa).phi.gender =
+    (Spanish.nHead Spanish.Gender.mesa).phi.gender =
       some ⟨.u, ⟨.fem, .pos⟩⟩ := rfl
 
 /-- *libro* 'book' has default masculine (plain n). -/
 theorem libro_default_masculine :
-    (Spanish.nHead Fragments.Spanish.Gender.libro).phi.gender = none := rfl
+    (Spanish.nHead Spanish.Gender.libro).phi.gender = none := rfl
 
 /-- Bridge: convert a Spanish `SameRootEntry` to the cross-linguistic
     `SameRootNominal` type. The `possibleNHeads` come from the Studies
     projection `Spanish.sameRootNHeads`. -/
-def spanishSameRoot (e : Fragments.Spanish.Gender.SameRootEntry) : SameRootNominal :=
+def spanishSameRoot (e : Spanish.Gender.SameRootEntry) : SameRootNominal :=
   { form := e.form
     language := "Spanish"
     possibleNHeads := Spanish.sameRootNHeads e }
@@ -742,15 +742,15 @@ def spanishSameRoot (e : Fragments.Spanish.Gender.SameRootEntry) : SameRootNomin
     can combine with i[+FEM] or i[−FEM]. The two licensed n-heads are
     distinct. -/
 theorem soldado_is_same_root :
-    (Spanish.sameRootNHeads Fragments.Spanish.Gender.soldado).head? ≠
-    (Spanish.sameRootNHeads Fragments.Spanish.Gender.soldado).getLast? := by decide
+    (Spanish.sameRootNHeads Spanish.Gender.soldado).head? ≠
+    (Spanish.sameRootNHeads Spanish.Gender.soldado).getLast? := by decide
 
 /-- Spanish same-root nominals are genuine same-root nominals (they
     have two possible n heads). -/
 theorem spanish_same_roots_genuine :
-    (spanishSameRoot Fragments.Spanish.Gender.soldado).isSameRoot = true ∧
-    (spanishSameRoot Fragments.Spanish.Gender.estudiante).isSameRoot = true ∧
-    (spanishSameRoot Fragments.Spanish.Gender.artista).isSameRoot = true :=
+    (spanishSameRoot Spanish.Gender.soldado).isSameRoot = true ∧
+    (spanishSameRoot Spanish.Gender.estudiante).isSameRoot = true ∧
+    (spanishSameRoot Spanish.Gender.artista).isSameRoot = true :=
   ⟨rfl, rfl, rfl⟩
 
 /-- Spanish has the full Set 1 inventory: 4 n types. -/
@@ -759,10 +759,10 @@ theorem spanish_four_n_types :
 
 /-- The fragment inventory covers all four Set-1 n-types via projection. -/
 theorem spanish_fragment_covers_inventory :
-    Fragments.Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_iFem) ∧
-    Fragments.Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_iMasc) ∧
-    Fragments.Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_uFem) ∧
-    Fragments.Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_plain) := by
+    Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_iFem) ∧
+    Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_iMasc) ∧
+    Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_uFem) ∧
+    Spanish.Gender.allNouns.any (Spanish.nHead · == CatHead.n_plain) := by
   decide
 
 -- ============================================================================
@@ -843,16 +843,16 @@ theorem root_classes_distinct_n :
 /-- Verify that the Spanish fragment's nouns project to their expected
     root classes via `Spanish.nHead`. -/
 theorem spanish_licensing_mujer :
-    Spanish.nHead Fragments.Spanish.Gender.mujer =
+    Spanish.nHead Spanish.Gender.mujer =
       RootClass.femaleReferent.licensedNHead := rfl
 theorem spanish_licensing_hombre :
-    Spanish.nHead Fragments.Spanish.Gender.hombre =
+    Spanish.nHead Spanish.Gender.hombre =
       RootClass.maleReferent.licensedNHead := rfl
 theorem spanish_licensing_mesa :
-    Spanish.nHead Fragments.Spanish.Gender.mesa =
+    Spanish.nHead Spanish.Gender.mesa =
       RootClass.arbitraryFem.licensedNHead := rfl
 theorem spanish_licensing_libro :
-    Spanish.nHead Fragments.Spanish.Gender.libro =
+    Spanish.nHead Spanish.Gender.libro =
       RootClass.default.licensedNHead := rfl
 
 /-- Bridge: the licensing type of a root class agrees with the licensing
@@ -874,19 +874,19 @@ theorem licensing_bridge_arbitraryMasc :
 
 /-- Russian fragment nouns project to their root classes via `Russian.nHead`. -/
 theorem russian_licensing_otec :
-    Russian.nHead Fragments.Slavic.Russian.Gender.otec =
+    Russian.nHead Russian.Gender.otec =
       RootClass.maleReferent.licensedNHead := rfl
 theorem russian_licensing_mat' :
-    Russian.nHead Fragments.Slavic.Russian.Gender.mat' =
+    Russian.nHead Russian.Gender.mat' =
       RootClass.femaleReferent.licensedNHead := rfl
 theorem russian_licensing_zakon :
-    Russian.nHead Fragments.Slavic.Russian.Gender.zakon =
+    Russian.nHead Russian.Gender.zakon =
       RootClass.arbitraryMasc.licensedNHead := rfl
 theorem russian_licensing_škola :
-    Russian.nHead Fragments.Slavic.Russian.Gender.škola =
+    Russian.nHead Russian.Gender.škola =
       RootClass.arbitraryFem.licensedNHead := rfl
 theorem russian_licensing_vino :
-    Russian.nHead Fragments.Slavic.Russian.Gender.vino =
+    Russian.nHead Russian.Gender.vino =
       RootClass.default.licensedNHead := rfl
 
 /-- *persona* is human-denoting but has u[+FEM] (arbitrary feminine), not
@@ -898,9 +898,9 @@ theorem russian_licensing_vino :
     despite denoting humans — its root is only licensed to combine with
     n u[+FEM], never n i[+FEM] or n i[−FEM]. -/
 theorem persona_exception :
-    Spanish.nHead Fragments.Spanish.Gender.persona =
+    Spanish.nHead Spanish.Gender.persona =
       RootClass.arbitraryFem.licensedNHead ∧
-    Fragments.Spanish.Gender.persona.gloss = "person" := ⟨rfl, rfl⟩
+    Spanish.Gender.persona.gloss = "person" := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 11: NInventory ↔ GenderProfile Bridge
@@ -997,12 +997,12 @@ theorem set2_iFem_feminine :
     surface gender computed via `Spanish.nHead` projection then Set 1 VI
     matches the entry's `attestedGender`. -/
 theorem spanish_derivation_chain :
-    (Spanish.nHead Fragments.Spanish.Gender.mujer).surfaceGenderSet1 = .feminine ∧
-    (Spanish.nHead Fragments.Spanish.Gender.hombre).surfaceGenderSet1 = .masculine ∧
-    (Spanish.nHead Fragments.Spanish.Gender.mesa).surfaceGenderSet1 = .feminine ∧
-    (Spanish.nHead Fragments.Spanish.Gender.libro).surfaceGenderSet1 = .masculine ∧
-    (Spanish.nHead Fragments.Spanish.Gender.persona).surfaceGenderSet1 = .feminine ∧
-    (Spanish.nHead Fragments.Spanish.Gender.ángel).surfaceGenderSet1 = .masculine :=
+    (Spanish.nHead Spanish.Gender.mujer).surfaceGenderSet1 = .feminine ∧
+    (Spanish.nHead Spanish.Gender.hombre).surfaceGenderSet1 = .masculine ∧
+    (Spanish.nHead Spanish.Gender.mesa).surfaceGenderSet1 = .feminine ∧
+    (Spanish.nHead Spanish.Gender.libro).surfaceGenderSet1 = .masculine ∧
+    (Spanish.nHead Spanish.Gender.persona).surfaceGenderSet1 = .feminine ∧
+    (Spanish.nHead Spanish.Gender.ángel).surfaceGenderSet1 = .masculine :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Stronger meta-theorem: for every Spanish entry, the projection
@@ -1010,14 +1010,14 @@ theorem spanish_derivation_chain :
     Fragment-side empirical fact (`attestedGender`) and the Studies-side
     structural derivation (Spanish.nHead + Set 1 VI) agree. -/
 theorem spanish_projection_round_trips :
-    Fragments.Spanish.Gender.allNouns.all (fun n =>
+    Spanish.Gender.allNouns.all (fun n =>
       (Spanish.nHead n).surfaceGenderSet1 == n.attestedGender) := by decide
 
 /-- Fixed-gender nouns: *persona* surfaces as feminine despite denoting
     persons of any sex; *ángel* surfaces as masculine. -/
 theorem fixed_gender_from_n_head :
-    (Spanish.nHead Fragments.Spanish.Gender.persona).surfaceGenderSet1 = .feminine ∧
-    (Spanish.nHead Fragments.Spanish.Gender.ángel).surfaceGenderSet1 = .masculine :=
+    (Spanish.nHead Spanish.Gender.persona).surfaceGenderSet1 = .feminine ∧
+    (Spanish.nHead Spanish.Gender.ángel).surfaceGenderSet1 = .masculine :=
   ⟨rfl, rfl⟩
 
 -- ============================================================================
@@ -1063,7 +1063,7 @@ theorem russian_assignment_consistent :
 
 /-- Projection-derived: *vrač* has morphological masculine (u[−FEM]). -/
 theorem vrač_morph_masculine :
-    (Russian.nHead Fragments.Slavic.Russian.Gender.vrač).phi.gender =
+    (Russian.nHead Russian.Gender.vrač).phi.gender =
       some ⟨.u, ⟨.fem, .neg⟩⟩ := rfl
 
 /-- *vrač* is a hybrid noun: its morphological gender (u[−FEM] = masculine)
@@ -1071,36 +1071,36 @@ theorem vrač_morph_masculine :
     ([+FEM]). This matches the `russianVrac` definition from §7. -/
 theorem vrač_matches_hybrid :
     russianVrac.morphGender = ⟨.fem, .neg⟩ ∧
-    (Russian.nHead Fragments.Slavic.Russian.Gender.vrač).phi.gender =
+    (Russian.nHead Russian.Gender.vrač).phi.gender =
       some ⟨.u, russianVrac.morphGender⟩ := ⟨rfl, rfl⟩
 
 /-- Projection-derived: *zakon* (Class I) surfaces as masculine via 3-gender VI. -/
 theorem zakon_fragment_masculine :
-    (Russian.nHead Fragments.Slavic.Russian.Gender.zakon).surfaceGenderThree =
+    (Russian.nHead Russian.Gender.zakon).surfaceGenderThree =
       .masculine := rfl
 
 /-- Projection-derived: *vino* (default) surfaces as neuter via 3-gender VI. -/
 theorem vino_fragment_neuter :
-    (Russian.nHead Fragments.Slavic.Russian.Gender.vino).surfaceGenderThree =
+    (Russian.nHead Russian.Gender.vino).surfaceGenderThree =
       .neuter := rfl
 
 /-- Russian projection round-trip: every Russian entry's projection,
     composed with 3-gender VI, recovers the entry's `attestedGender`. -/
 theorem russian_projection_round_trips :
-    Fragments.Slavic.Russian.Gender.allNouns.all (fun n =>
+    Russian.Gender.allNouns.all (fun n =>
       (Russian.nHead n).surfaceGenderThree == n.attestedGender) := by decide
 
 /-- Projection-derived: Russian Fragment covers all 5 n-types. -/
 theorem russian_fragment_covers_inventory :
-    Fragments.Slavic.Russian.Gender.allNouns.any
+    Russian.Gender.allNouns.any
       (Russian.nHead · == CatHead.n_iFem) ∧
-    Fragments.Slavic.Russian.Gender.allNouns.any
+    Russian.Gender.allNouns.any
       (Russian.nHead · == CatHead.n_iMasc) ∧
-    Fragments.Slavic.Russian.Gender.allNouns.any
+    Russian.Gender.allNouns.any
       (Russian.nHead · == CatHead.n_uFem) ∧
-    Fragments.Slavic.Russian.Gender.allNouns.any
+    Russian.Gender.allNouns.any
       (Russian.nHead · == CatHead.n_uNegFem) ∧
-    Fragments.Slavic.Russian.Gender.allNouns.any
+    Russian.Gender.allNouns.any
       (Russian.nHead · == CatHead.n_plain) := by decide
 
 -- ============================================================================
@@ -1226,7 +1226,7 @@ disagreement at theorem level. -/
 
 namespace Hausa
 
-open Fragments.Hausa.Gender (Noun)
+open Hausa.Gender (Noun)
 
 /-- DM Set-1 categorizing-head projection from the theory-neutral
     Fragment fields. The four cells of (attestedGender × isNaturalGender)
@@ -1269,7 +1269,7 @@ end Hausa
 /-- Every Hausa Fragment entry projects to the expected Set-1 n-head.
     `decide` checks all 12 entries by structural reduction. -/
 theorem hausa_nHead_projection_correct :
-    Fragments.Hausa.Gender.allNouns.all (fun n =>
+    Hausa.Gender.allNouns.all (fun n =>
       Hausa.nHead n == match n.attestedGender, n.isNaturalGender with
         | .feminine,  true  => CatHead.n_iFem
         | .masculine, true  => CatHead.n_iMasc
@@ -1280,52 +1280,52 @@ theorem hausa_nHead_projection_correct :
 /-- *yārinyā* 'girl' projects to natural feminine (i[+FEM]).
     Parallels `spanish_licensing_mujer` (§10). -/
 theorem hausa_licensing_yarinya :
-    Hausa.nHead Fragments.Hausa.Gender.yarinya =
+    Hausa.nHead Hausa.Gender.yarinya =
       RootClass.femaleReferent.licensedNHead := rfl
 
 /-- *yārō* 'boy' projects to natural masculine (i[−FEM]). -/
 theorem hausa_licensing_yaro :
-    Hausa.nHead Fragments.Hausa.Gender.yaro =
+    Hausa.nHead Hausa.Gender.yaro =
       RootClass.maleReferent.licensedNHead := rfl
 
 /-- *kāzā* 'hen' projects to natural feminine — Newman lists *kāzā*
     paired with *zàkarā* 'rooster' as a sex-paired entry, satisfying
     Kramer's "honoris causa" criterion (@cite{kramer-2020} p. 57). -/
 theorem hausa_licensing_kaza :
-    Hausa.nHead Fragments.Hausa.Gender.kaza =
+    Hausa.nHead Hausa.Gender.kaza =
       RootClass.femaleReferent.licensedNHead := rfl
 
 /-- *rīgā* 'gown' projects to arbitrary feminine (u[+FEM]). -/
 theorem hausa_licensing_riga :
-    Hausa.nHead Fragments.Hausa.Gender.riga =
+    Hausa.nHead Hausa.Gender.riga =
       RootClass.arbitraryFem.licensedNHead := rfl
 
 /-- *gidā* 'house' projects to default masculine (plain n).
     @cite{newman-2000} p. 209 erstwhile-plural class (c). -/
 theorem hausa_licensing_gida :
-    Hausa.nHead Fragments.Hausa.Gender.gida =
+    Hausa.nHead Hausa.Gender.gida =
       RootClass.default.licensedNHead := rfl
 
 /-- *kadā̀* 'crocodile' projects to default masculine (plain n).
     @cite{newman-2000} p. 209 native ā-final masculine class (a). -/
 theorem hausa_licensing_kada :
-    Hausa.nHead Fragments.Hausa.Gender.kada =
+    Hausa.nHead Hausa.Gender.kada =
       RootClass.default.licensedNHead := rfl
 
 /-- *ùbā* 'father' projects to natural masculine (i[−FEM]).
     @cite{newman-2000} p. 209 native ā-final masculine class (a),
     cited in @cite{kramer-2015} Ch. 1. -/
 theorem hausa_licensing_uba :
-    Hausa.nHead Fragments.Hausa.Gender.uba =
+    Hausa.nHead Hausa.Gender.uba =
       RootClass.maleReferent.licensedNHead := rfl
 
 /-- The Hausa Fragment covers all four Set-1 n-heads via its projection.
     Parallels `fragment_covers_inventory` for Spanish. -/
 theorem hausa_fragment_covers_inventory :
-    Fragments.Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_iFem) ∧
-    Fragments.Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_iMasc) ∧
-    Fragments.Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_uFem) ∧
-    Fragments.Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_plain) := by
+    Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_iFem) ∧
+    Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_iMasc) ∧
+    Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_uFem) ∧
+    Hausa.Gender.allNouns.any (Hausa.nHead · == CatHead.n_plain) := by
   decide
 
 -- § 15.2: §3.3.1 phonological-assignment refutation
@@ -1335,9 +1335,9 @@ theorem hausa_fragment_covers_inventory :
     Witness: *kadā̀* 'crocodile' (Kramer's cited example, attributed to
     @cite{newman-2000} p. 209): ends in *-ā* but masculine. -/
 theorem exists_aa_masculine_noun :
-    ∃ n ∈ Fragments.Hausa.Gender.allNouns,
+    ∃ n ∈ Hausa.Gender.allNouns,
       n.EndsInAa ∧ n.attestedGender = .masculine :=
-  ⟨Fragments.Hausa.Gender.kada, by decide, by decide, rfl⟩
+  ⟨Hausa.Gender.kada, by decide, by decide, rfl⟩
 
 /-- **§3.3.1 converse, Newman-anchored** (@cite{newman-2000} p. 208
     footnote [i]): the converse "feminine ⇒ ends-in-*-ā*" is also
@@ -1347,23 +1347,23 @@ theorem exists_aa_masculine_noun :
     forward direction. The converse failure is empirically real and
     well-anchored on Newman.) -/
 theorem exists_feminine_non_aa_noun :
-    ∃ n ∈ Fragments.Hausa.Gender.allNouns,
+    ∃ n ∈ Hausa.Gender.allNouns,
       n.attestedGender = .feminine ∧ ¬ n.EndsInAa :=
-  ⟨Fragments.Hausa.Gender.mace, by decide, rfl, by decide⟩
+  ⟨Hausa.Gender.mace, by decide, rfl, by decide⟩
 
 /-- *ùbā* 'father' is a second masculine *-ā* witness, beyond Kramer's
     *kadā̀*. @cite{newman-2000} p. 209 lists ùbā in native masculine
     class (a); @cite{kramer-2015} Ch. 1 cites it as a Hausa
     introductory example. -/
 theorem uba_masculine_aa :
-    Fragments.Hausa.Gender.uba.EndsInAa ∧
-    Fragments.Hausa.Gender.uba.attestedGender = .masculine := ⟨by decide, rfl⟩
+    Hausa.Gender.uba.EndsInAa ∧
+    Hausa.Gender.uba.attestedGender = .masculine := ⟨by decide, rfl⟩
 
 /-- *gidā* 'house' is a third masculine *-ā* witness, in Newman's
     erstwhile-plural class (c) — distinct historical class from kadā/ùbā. -/
 theorem gida_masculine_aa :
-    Fragments.Hausa.Gender.gida.EndsInAa ∧
-    Fragments.Hausa.Gender.gida.attestedGender = .masculine := ⟨by decide, rfl⟩
+    Hausa.Gender.gida.EndsInAa ∧
+    Hausa.Gender.gida.attestedGender = .masculine := ⟨by decide, rfl⟩
 
 -- § 15.3: Corbett-vs-Newman/Kramer disagreement (D5)
 
@@ -1372,8 +1372,8 @@ theorem gida_masculine_aa :
     predicts feminine (kadā̀ ends in *-ā*), structural predicts the
     actual fact (masculine). -/
 theorem corbett_kramer_diverge_on_kada :
-    Hausa.Predictors.corbettPhonological Fragments.Hausa.Gender.kada ≠
-    Hausa.Predictors.newmanKramerStructural Fragments.Hausa.Gender.kada := by
+    Hausa.Predictors.corbettPhonological Hausa.Gender.kada ≠
+    Hausa.Predictors.newmanKramerStructural Hausa.Gender.kada := by
   decide
 
 /-- The two rules diverge on EXACTLY four Fragment entries
@@ -1382,7 +1382,7 @@ theorem corbett_kramer_diverge_on_kada :
     phonology on 4/12 ≈ 33% of entries — a third of the Fragment
     load-bears the disagreement. -/
 theorem corbett_kramer_divergence_count :
-    (Fragments.Hausa.Gender.allNouns.filter (fun n =>
+    (Hausa.Gender.allNouns.filter (fun n =>
       Hausa.Predictors.corbettPhonological n !=
       Hausa.Predictors.newmanKramerStructural n)).length = 4 := by
   decide
@@ -1390,11 +1390,11 @@ theorem corbett_kramer_divergence_count :
 /-- The four divergent entries are exactly mācè (converse direction),
     gidā / kadā̀ / ùbā (forward direction). -/
 theorem corbett_kramer_divergent_entries :
-    Fragments.Hausa.Gender.allNouns.filter (fun n =>
+    Hausa.Gender.allNouns.filter (fun n =>
       Hausa.Predictors.corbettPhonological n !=
       Hausa.Predictors.newmanKramerStructural n) =
-    [Fragments.Hausa.Gender.mace, Fragments.Hausa.Gender.gida,
-     Fragments.Hausa.Gender.kada, Fragments.Hausa.Gender.uba] := by
+    [Hausa.Gender.mace, Hausa.Gender.gida,
+     Hausa.Gender.kada, Hausa.Gender.uba] := by
   decide
 
 -- § 15.4: Cross-language Set-1 parallels

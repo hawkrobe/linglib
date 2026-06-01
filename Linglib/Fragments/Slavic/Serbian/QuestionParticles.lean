@@ -21,7 +21,7 @@ layer assignment lives in `Simik2024`.
 
 -/
 
-namespace Fragments.Slavic.Serbian.QuestionParticles
+namespace Serbian.QuestionParticles
 
 /-- A Serbian interrogative particle entry. -/
 structure QParticleEntry where
@@ -69,4 +69,4 @@ theorem bias_contrast :
     daLi.requiresEvidentialBias = false ∧ zar_.requiresEvidentialBias = true :=
   ⟨rfl, rfl⟩
 
-end Fragments.Slavic.Serbian.QuestionParticles
+end Serbian.QuestionParticles

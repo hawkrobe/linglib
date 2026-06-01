@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Hungarian.Phonology
+namespace Hungarian.Phonology
 
 /-- Canonical Hungarian phoneme inventory: first PHOIBLE inventory for ISO `hun`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Hungarian.hun
 
-end Fragments.Hungarian.Phonology
+end Hungarian.Phonology

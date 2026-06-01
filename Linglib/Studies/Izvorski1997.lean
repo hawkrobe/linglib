@@ -166,7 +166,7 @@ open Semantics.Modality.Kratzer
 open Semantics.Presupposition
 open Features.Evidentiality
 open Semantics.Tense.Evidential
-open Fragments.Slavic.Bulgarian.Evidentials
+open Bulgarian.Evidentials
 
 abbrev World := Fin 4
 

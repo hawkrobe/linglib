@@ -8,7 +8,7 @@ WALS-derived profile for Tagalog (ISO `tgl`). B&N 2001 places Tagalog in
 the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
-namespace Fragments.Tagalog
+namespace Tagalog
 
 open Morphology
 
@@ -29,4 +29,4 @@ example : morphProfile.iso = "tgl" ∧ morphProfile.language = "Tagalog" := ⟨r
 /-- B&N 2001 places Tagalog in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
-end Fragments.Tagalog
+end Tagalog

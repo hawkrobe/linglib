@@ -33,7 +33,7 @@ already mixed; a future split into `Fragments/StandardArabic/` and
 `Fragments/EgyptianArabic/` would resolve the incoherence.
 -/
 
-namespace Fragments.Arabic.ModernStandard
+namespace Arabic.ModernStandard
 
 open RelativeClause
 
@@ -156,4 +156,4 @@ def relativization : RelativeClause.Profile :=
           ++ "Non-subject (definite head): resumptive pronoun. "
           ++ "@cite{ryding-2005} §14" }
 
-end Fragments.Arabic.ModernStandard
+end Arabic.ModernStandard

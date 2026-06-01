@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese: no morphological plural on common nouns; plural marking is always
     optional (suffix `-tachi` is limited and optional); person-number stems in
@@ -19,4 +19,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .uniquePeriphrastic }
 
-end Fragments.Japanese
+end Japanese

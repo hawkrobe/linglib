@@ -146,7 +146,7 @@ index* the template-final segment came from. -/
     root segment associates to a distinct template C-slot; no spreading,
     no misalignment. -/
 def hebrewKlt_kalat : RootTemplateMatch String :=
-  { root := Fragments.Hebrew.klt
+  { root := Hebrew.klt
     template := hebrewPst3msg
     associations :=
       [⟨.root, 0, 0⟩,    -- k → C0
@@ -157,7 +157,7 @@ def hebrewKlt_kalat : RootTemplateMatch String :=
     /l/ at root index 2 associates to template-final C[+c]; this is the
     final-of-final case and \*Misalignment is satisfied. -/
 def hebrewKll_kalal : RootTemplateMatch String :=
-  { root := Fragments.Hebrew.kll
+  { root := Hebrew.kll
     template := hebrewPst3msg
     associations :=
       [⟨.root, 0, 0⟩,    -- k → C0
@@ -170,7 +170,7 @@ def hebrewKll_kalal : RootTemplateMatch String :=
     index 4). This is the candidate template satisfaction predicts;
     @cite{faust-2026} (4) shows it is ruled out by \*Misalignment. -/
 def hebrewKlj_kalal : RootTemplateMatch String :=
-  { root := Fragments.Hebrew.klj
+  { root := Hebrew.klj
     template := hebrewPst3msg
     associations :=
       [⟨.root, 0, 0⟩,    -- k → C0
@@ -182,7 +182,7 @@ def hebrewKlj_kalal : RootTemplateMatch String :=
     because /j/ cannot satisfy [+c] and spreading /l/ would violate
     \*Misalignment. The grammar tolerates the unfilled C-slot. -/
 def hebrewKlj_kala : RootTemplateMatch String :=
-  { root := Fragments.Hebrew.klj
+  { root := Hebrew.klj
     template := hebrewPst3msg
     associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 2⟩] }
 
@@ -191,7 +191,7 @@ def hebrewKlj_kala : RootTemplateMatch String :=
     direct association succeeds and no spreading is required —
     \*Misalignment trivially satisfied, all C-slots filled. -/
 def hebrewKlj_kaluj : RootTemplateMatch String :=
-  { root := Fragments.Hebrew.klj
+  { root := Hebrew.klj
     template := hebrewPassPrtcpl
     associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 2⟩, ⟨.root, 2, 4⟩] }
 
@@ -206,7 +206,7 @@ def hebrewKlj_kaluj : RootTemplateMatch String :=
     fill the [+c] final slot we attempt to spread /m/ — but /m/ is
     nonfinal in √dmj, so this violates \*Misalignment. -/
 def hebrewDmj_illicit : RootTemplateMatch String :=
-  { root := Fragments.Hebrew.dmj
+  { root := Hebrew.dmj
     template := hebrewTaQTiL
     associations :=
       [⟨.intruder, 0, 0⟩,   -- prefix /t/ (template-internal "ta")
@@ -221,7 +221,7 @@ def hebrewDmj_illicit : RootTemplateMatch String :=
     associations (not part of √dmj), so \*Misalignment doesn't fire
     on either; the root /d/ and /m/ occupy nonfinal C-slots. -/
 def hebrewDmj_tadmit : RootTemplateMatch String :=
-  { root := Fragments.Hebrew.dmj
+  { root := Hebrew.dmj
     template := hebrewTaQTiL
     associations :=
       [⟨.intruder, 0, 0⟩,   -- prefix /t/ (template-internal "ta")
@@ -240,7 +240,7 @@ def hebrewDmj_tadmit : RootTemplateMatch String :=
     plus final C[+c] are truncated in the surface form. The unfilled
     final C-slot is precisely what the squib's analysis predicts. -/
 def amharicFdj_pfv : RootTemplateMatch String :=
-  { root := Fragments.Amharic.fdj
+  { root := Amharic.fdj
     template := amharicPfv3msg
     associations :=
       [⟨.root, 0, 0⟩,   -- f → C0
@@ -252,7 +252,7 @@ def amharicFdj_pfv : RootTemplateMatch String :=
     the gerund [-o] suffix. Because /t/ is an intruder (not a root
     segment), \*Misalignment does not block it. -/
 def amharicFdj_grnd : RootTemplateMatch String :=
-  { root := Fragments.Amharic.fdj
+  { root := Amharic.fdj
     template := amharicGrnd
     associations :=
       [⟨.root, 0, 0⟩,        -- f → C0
@@ -274,7 +274,7 @@ def amharicFdj_grnd : RootTemplateMatch String :=
     falls out of \*Misalignment alone, with no need for OCP-violating
     roots. -/
 def amharicWd_pfv : RootTemplateMatch String :=
-  { root := Fragments.Amharic.wd
+  { root := Amharic.wd
     template := amharicPfv3msg
     associations :=
       [⟨.root, 0, 0⟩,   -- w → C0
@@ -476,16 +476,16 @@ verifiable rather than asserted. -/
     level — even though [wäddäd-ä] surfaces with adjacent identical
     [d][d], the surface gemination is a template-spreading effect. -/
 theorem amharic_wd_satisfies_root_ocp :
-    Root.satisfiesOCP Fragments.Amharic.wd = true := rfl
+    Root.satisfiesOCP Amharic.wd = true := rfl
 
 /-- @cite{faust-2026}'s reanalysis: √fdj (the triradical analysis) has
     no OCP violation. -/
 theorem amharic_fdj_satisfies_root_ocp :
-    Root.satisfiesOCP Fragments.Amharic.fdj = true := rfl
+    Root.satisfiesOCP Amharic.fdj = true := rfl
 
 /-- And the Hebrew [j]-final root √klj also satisfies the OCP. -/
 theorem hebrew_klj_satisfies_root_ocp :
-    Root.satisfiesOCP Fragments.Hebrew.klj = true := rfl
+    Root.satisfiesOCP Hebrew.klj = true := rfl
 
 /-- Sanity: a hypothetical OCP-violating biradical √dd (which
     @cite{broselow-1984} would have posited but @cite{faust-2026}
@@ -545,7 +545,7 @@ def amharicInf : Template :=
     radical /a/ leaves the template-final C-slot unfilled, and right-edge
     [t]-intrusion fills it without crossing any other root line. -/
 def amharicSma_inf : RootTemplateMatch String :=
-  { root := Fragments.Amharic.sma
+  { root := Amharic.sma
     template := amharicInf
     associations :=
       [⟨.root, 0, 0⟩,        -- s → C0
@@ -557,7 +557,7 @@ def amharicSma_inf : RootTemplateMatch String :=
     radical /m/ fills the final C-slot. The medial position remains
     empty in the surface form. -/
 def amharicSam_inf : RootTemplateMatch String :=
-  { root := Fragments.Amharic.sam
+  { root := Amharic.sam
     template := amharicInf
     associations :=
       [⟨.root, 0, 0⟩,    -- s → C0
@@ -567,7 +567,7 @@ def amharicSam_inf : RootTemplateMatch String :=
     medial C-slot from the right. The /m/ at C4 forces line-crossing.
     Demonstrates why intrusion is blocked in (13b). -/
 def amharicSam_inf_intrusion : RootTemplateMatch String :=
-  { root := Fragments.Amharic.sam
+  { root := Amharic.sam
     template := amharicInf
     associations :=
       [⟨.root, 0, 0⟩,        -- s → C0
@@ -578,7 +578,7 @@ def amharicSam_inf_intrusion : RootTemplateMatch String :=
     non-consonantal medial /i/ leaves the medial C-slot unfilled, /d/
     fills the final C-slot. Same NCC blocking of [t]-intrusion. -/
 def amharicHid_inf : RootTemplateMatch String :=
-  { root := Fragments.Amharic.hid
+  { root := Amharic.hid
     template := amharicInf
     associations :=
       [⟨.root, 0, 0⟩,    -- h → C0
@@ -587,7 +587,7 @@ def amharicHid_inf : RootTemplateMatch String :=
 /-- Hypothetical [t]-intrusion candidate for √hid: same NCC violation
     as `amharicSam_inf_intrusion`. -/
 def amharicHid_inf_intrusion : RootTemplateMatch String :=
-  { root := Fragments.Amharic.hid
+  { root := Amharic.hid
     template := amharicInf
     associations :=
       [⟨.root, 0, 0⟩,
@@ -748,7 +748,7 @@ construct the empty-slot candidate explicitly to populate the tableau. -/
     Hypothetical (not the empirical winner) — included to exhibit the
     full three-way comparison. -/
 def hebrewDmj_empty : RootTemplateMatch String :=
-  { root := Fragments.Hebrew.dmj
+  { root := Hebrew.dmj
     template := hebrewTaQTiL
     associations :=
       [⟨.intruder, 0, 0⟩,   -- prefix /t/ (template-internal "ta")
@@ -988,7 +988,7 @@ fails morphological licensing. -/
     candidate, but Agr-locus precludes the n[+gen] exponent
     morphosyntactically. -/
 def hebrewDmj_pst3msg_intrusion : RootTemplateMatch String :=
-  { root := Fragments.Hebrew.dmj
+  { root := Hebrew.dmj
     template := hebrewPst3msg
     associations :=
       [⟨.root, 0, 0⟩,        -- d → C0
