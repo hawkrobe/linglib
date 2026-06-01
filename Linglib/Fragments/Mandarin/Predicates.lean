@@ -55,33 +55,17 @@ def haipa : MandarinVerbEntry := .mk' {
   opaqueContext := true
   attitude := some (.preferential (.degreeComparison .negative)) }
 
-/-!
-## yǐwéi: Postsupposition via `postsupType`
+/-- 以为 "yǐwéi" — be under the impression that.
 
-yǐwéi "be under the impression" has a POSTSUPPOSITION
-(output-context constraint) that ¬p is compatible with the Common Ground
-after the utterance. This is NOT a presupposition and cannot be derived
-from veridicality alone (@cite{glass-2025}, @cite{glass-2023}).
-
-Encoded structurally as `postsupType := some .weakContrafactive` in VerbCore,
-formalized as `Semantics.Dynamic.Postsupposition.weakContrafactive`, and exercised in
-`Glass2025`.
--/
-
-/-- 以为 "yǐwéi" — be under the impression that (weak contrafactive).
-
-Has postsupposition ◇¬p (CommonGround compatible with ¬p after utterance).
-This cannot be derived from veridicality; see @cite{glass-2025} and @cite{glass-2023}.
-The postsupposition is recorded structurally via `postsupType` and exercised
-in `Glass2025`.
--/
+A nonveridical doxastic attitude. @cite{glass-2025} analyzes its weak
+contrafactive postsupposition (◇¬p, not derivable from veridicality alone);
+that paper-specific apparatus lives in `Glass2025`, not on this entry. -/
 def yiwei : MandarinVerbEntry := .mk' {
   form := "yiwei"
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitude := some (.doxastic .nonVeridical)
-  postsupType := some .weakContrafactive }
+  attitude := some (.doxastic .nonVeridical) }
 
 /-! ## Liu & Yip 2026 complement-taking predicates
 

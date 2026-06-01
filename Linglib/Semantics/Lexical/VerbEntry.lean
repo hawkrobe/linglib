@@ -7,7 +7,6 @@ import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Semantics.Aspect.ChangeOfState
-import Linglib.Features.Dimension
 import Linglib.Semantics.Causation.Implicative
 import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Semantics.Causation.Psych
@@ -50,7 +49,6 @@ open Features
 open Semantics.Lexical
 open Semantics.Lexical.Roots
 open Features.ChangeOfState
-open Features.Dimension (Dimension)
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.Psych (CausalSource)
 open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
@@ -100,24 +98,6 @@ def PresupTriggerType.isSoft : PresupTriggerType → Bool
   | .hardTrigger => false
   | .softTrigger => true
   | .prerequisiteSoft => true
-
-/--
-Postsupposition type: output-context constraint distinct from presuppositions.
-
-@cite{glass-2025} argues that Mandarin yǐwéi has a postsupposition ◇¬p —
-after accepting "x yǐwéi p", the CommonGround must be compatible with ¬p.
-This cannot be derived from veridicality alone.
-
-The concrete `Semantics.Dynamic.Postsupposition.Postsupposition W` is parameterized
-by the world type; this enum is the world-type-independent tag stored
-in `VerbCore`.
--/
-inductive PostsupType where
-  /-- Output context must be compatible with ¬p: ◇¬p (@cite{glass-2025}). -/
-  | weakContrafactive
-  /-- Output context must entail ¬p: ⊨¬p (hypothetical, UNATTESTED). -/
-  | strongContrafactive
-  deriving DecidableEq, Repr
 
 /--
 Complement presupposition projection behavior (@cite{karttunen-1973}).
@@ -301,16 +281,9 @@ structure VerbCore where
   verbIncClass : Option VerbIncClass := none
   /-- Is the verb a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
-  /-- Output-context constraint (postsupposition), distinct from
-      presuppositions. @cite{glass-2025}: yǐwéi has ◇¬p postsupposition. -/
-  postsupType : Option PostsupType := none
   /-- How does the verb treat presuppositions of its complement?
       Orthogonal to `presupType`. @cite{karttunen-1973} -/
   projectionBehavior : Option ProjectionBehavior := none
-  /-- For measure predicates: which dimension this verb selects for.
-      Determines *per*-phrase interpretation:
-      simplex dimension → compositional, quotient → math speak. -/
-  selectsDimension : Option Dimension := none
 
   -- === Class-Specific Features ===
   /-- For CoS verbs: which type (cessation, inception, continuation)? -/
@@ -430,11 +403,6 @@ def VerbCore.presupposesComplement (v : VerbCore) : Bool :=
 /-- Is this verb a presupposition trigger? -/
 def VerbCore.isPresupTrigger (v : VerbCore) : Bool :=
   v.presupType.isSome
-
-/-- Does this verb have a postsupposition (output-context constraint)?
-    DERIVED from `postsupType`. -/
-def VerbCore.hasPostsupposition (v : VerbCore) : Bool :=
-  v.postsupType.isSome
 
 /-- Presupposition trigger type DERIVED from event structure rather than
     stipulated. @cite{roberts-simons-2024} argue that presupposition status
