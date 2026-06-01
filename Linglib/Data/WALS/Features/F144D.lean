@@ -44,7 +44,7 @@ inductive PositionOfNegativeMorphemesInSvoLanguages where
   | obligneg
   /-- OptNeg (35 languages). -/
   | optneg
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144D dataset (463 languages). -/
 def allData : List (Datapoint PositionOfNegativeMorphemesInSvoLanguages) :=
@@ -514,9 +514,9 @@ def allData : List (Datapoint PositionOfNegativeMorphemesInSvoLanguages) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PositionOfNegativeMorphemesInSvoLanguages) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PositionOfNegativeMorphemesInSvoLanguages) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F144D

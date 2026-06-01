@@ -20,7 +20,7 @@ inductive NominalAndVerbalConjunction where
   | differentiation
   /-- Both expressed by juxtaposition (15 languages). -/
   | bothExpressedByJuxtaposition
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 64A dataset (301 languages). -/
 def allData : List (Datapoint NominalAndVerbalConjunction) :=
@@ -328,9 +328,9 @@ def allData : List (Datapoint NominalAndVerbalConjunction) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint NominalAndVerbalConjunction) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint NominalAndVerbalConjunction) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F64A

@@ -22,7 +22,7 @@ inductive ImperativeHortativeSystems where
   | bothTypesOfSystem
   /-- Neither type of system (201 languages). -/
   | neitherTypeOfSystem
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 72A dataset (375 languages). -/
 def allData : List (Datapoint ImperativeHortativeSystems) :=
@@ -404,9 +404,9 @@ def allData : List (Datapoint ImperativeHortativeSystems) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ImperativeHortativeSystems) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ImperativeHortativeSystems) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F72A

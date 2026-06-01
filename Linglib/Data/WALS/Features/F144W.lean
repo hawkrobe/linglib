@@ -26,7 +26,7 @@ inductive VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndO
   | wordbetweensando
   /-- None (139 languages). -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144W dataset (151 languages). -/
 def allData : List (Datapoint VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndObject) :=
@@ -184,9 +184,9 @@ def allData : List (Datapoint VerbInitialWithNegativeThatIsImmediatelyPostverbal
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndObject) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndObject) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F144W

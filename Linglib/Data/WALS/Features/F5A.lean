@@ -24,7 +24,7 @@ inductive VoicingAndGapsInPlosiveSystems where
   | missingG
   /-- Both missing (3 languages). -/
   | bothMissing
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint VoicingAndGapsInPlosiveSystems) :=
   [ { walsCode := "xoo", iso := "nmn", value := .noneMissingInPTKBDG }
@@ -603,9 +603,9 @@ private def allData_1 : List (Datapoint VoicingAndGapsInPlosiveSystems) :=
 def allData : List (Datapoint VoicingAndGapsInPlosiveSystems) := allData_0 ++ allData_1
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint VoicingAndGapsInPlosiveSystems) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint VoicingAndGapsInPlosiveSystems) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F5A

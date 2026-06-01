@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 90B: Prenominal relative clauses
-@cite{wals-2013}
+@cite{dryer-2013-wals}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 90B`.
@@ -24,7 +24,7 @@ inductive PrenominalRelativeClauses where
   | relnOrCorrelative
   /-- RelN or double-headed (1 languages). -/
   | relnOrDoubleHeaded
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 90B dataset (191 languages). -/
 def allData : List (Datapoint PrenominalRelativeClauses) :=
@@ -222,9 +222,9 @@ def allData : List (Datapoint PrenominalRelativeClauses) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PrenominalRelativeClauses) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PrenominalRelativeClauses) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F90B

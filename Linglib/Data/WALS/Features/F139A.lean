@@ -22,7 +22,7 @@ inductive IrregularNegativesInSignLanguages where
   | some
   /-- Many (more than 5) (21 languages). -/
   | many
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 139A dataset (35 languages). -/
 def allData : List (Datapoint IrregularNegativesInSignLanguages) :=
@@ -64,9 +64,9 @@ def allData : List (Datapoint IrregularNegativesInSignLanguages) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint IrregularNegativesInSignLanguages) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint IrregularNegativesInSignLanguages) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F139A

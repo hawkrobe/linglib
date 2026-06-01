@@ -26,7 +26,7 @@ inductive AbsenceOfCommonConsonants where
   | noBilabialsOrNasals
   /-- No fricatives or nasals (1 languages). -/
   | noFricativesOrNasals
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint AbsenceOfCommonConsonants) :=
   [ { walsCode := "xoo", iso := "nmn", value := .allPresent }
@@ -605,9 +605,9 @@ private def allData_1 : List (Datapoint AbsenceOfCommonConsonants) :=
 def allData : List (Datapoint AbsenceOfCommonConsonants) := allData_0 ++ allData_1
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint AbsenceOfCommonConsonants) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint AbsenceOfCommonConsonants) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F18A

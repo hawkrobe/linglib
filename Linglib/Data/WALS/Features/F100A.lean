@@ -26,7 +26,7 @@ inductive VerbalPersonAlignment where
   | hierarchical
   /-- Split (28 languages). -/
   | split
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 100A dataset (380 languages). -/
 def allData : List (Datapoint VerbalPersonAlignment) :=
@@ -413,9 +413,9 @@ def allData : List (Datapoint VerbalPersonAlignment) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint VerbalPersonAlignment) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint VerbalPersonAlignment) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F100A

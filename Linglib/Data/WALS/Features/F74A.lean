@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 74A: Situational Possibility
-@cite{vanbogaert-2013}
+@cite{vanderauwera-ammann-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 74A`.
@@ -20,7 +20,7 @@ inductive SituationalPossibility where
   | verbalConstructions
   /-- Other kinds of markers (13 languages). -/
   | otherKindsOfMarkers
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 74A dataset (234 languages). -/
 def allData : List (Datapoint SituationalPossibility) :=
@@ -261,9 +261,9 @@ def allData : List (Datapoint SituationalPossibility) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SituationalPossibility) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SituationalPossibility) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F74A

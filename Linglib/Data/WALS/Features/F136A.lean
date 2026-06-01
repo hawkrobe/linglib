@@ -20,7 +20,7 @@ inductive MTPronouns where
   | mTPronounsParadigmatic
   /-- M-T pronouns, non-paradigmatic (3 languages). -/
   | mTPronounsNonParadigmatic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 136A dataset (230 languages). -/
 def allData : List (Datapoint MTPronouns) :=
@@ -257,9 +257,9 @@ def allData : List (Datapoint MTPronouns) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint MTPronouns) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint MTPronouns) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F136A

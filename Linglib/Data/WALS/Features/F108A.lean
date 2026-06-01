@@ -20,7 +20,7 @@ inductive AntipassiveType where
   | obliquePatient
   /-- No antipassive (146 languages). -/
   | noAntipassive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 108A dataset (194 languages). -/
 def allData : List (Datapoint AntipassiveType) :=
@@ -221,9 +221,9 @@ def allData : List (Datapoint AntipassiveType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint AntipassiveType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint AntipassiveType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F108A

@@ -20,7 +20,7 @@ inductive CulturalCategoriesOfLanguagesWithIdentityOfFingerAndHand where
   | farmerForagers
   /-- Full-fledged farmers (8 languages). -/
   | fullFledgedFarmers
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 130B dataset (72 languages). -/
 def allData : List (Datapoint CulturalCategoriesOfLanguagesWithIdentityOfFingerAndHand) :=
@@ -99,9 +99,9 @@ def allData : List (Datapoint CulturalCategoriesOfLanguagesWithIdentityOfFingerA
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint CulturalCategoriesOfLanguagesWithIdentityOfFingerAndHand) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint CulturalCategoriesOfLanguagesWithIdentityOfFingerAndHand) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F130B

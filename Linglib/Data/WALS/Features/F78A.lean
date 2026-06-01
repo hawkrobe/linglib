@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 78A: Coding of Evidentiality
-@cite{deandradedehaanValenzuela-2013}
+@cite{de-haan-2013b}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 78A`.
@@ -26,7 +26,7 @@ inductive EvidentialityCoding where
   | modalMorpheme
   /-- Mixed (10 languages). -/
   | mixed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 78A dataset (418 languages). -/
 def allData : List (Datapoint EvidentialityCoding) :=
@@ -451,9 +451,9 @@ def allData : List (Datapoint EvidentialityCoding) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint EvidentialityCoding) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint EvidentialityCoding) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F78A

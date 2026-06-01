@@ -26,7 +26,7 @@ inductive NegativeMorphemeType where
   | variationBetweenNegativeWordAndAffix
   /-- Double negation (119 languages). -/
   | doubleNegation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint NegativeMorphemeType) :=
   [ { walsCode := "ani", iso := "hnh", value := .negativeParticle }
@@ -1198,9 +1198,9 @@ private def allData_2 : List (Datapoint NegativeMorphemeType) :=
 def allData : List (Datapoint NegativeMorphemeType) := allData_0 ++ allData_1 ++ allData_2
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint NegativeMorphemeType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint NegativeMorphemeType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F112A

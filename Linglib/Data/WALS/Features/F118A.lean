@@ -20,7 +20,7 @@ inductive PredicativeAdjectiveType where
   | nonverbalEncoding
   /-- Mixed (103 languages). -/
   | mixed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 118A dataset (386 languages). -/
 def allData : List (Datapoint PredicativeAdjectiveType) :=
@@ -413,9 +413,9 @@ def allData : List (Datapoint PredicativeAdjectiveType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PredicativeAdjectiveType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PredicativeAdjectiveType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F118A
