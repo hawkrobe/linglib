@@ -3,6 +3,7 @@ import Linglib.Features.Case
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Gender
+import Linglib.Features.Deixis
 
 /-!
 # Pronoun
@@ -78,6 +79,19 @@ structure PersonalPronoun extends Pronoun where
       referential person coincides with formal person.
       @cite{adamson-zompi-2025} -/
   referentialPerson : Option Features.Prominence.PersonLevel := none
+  deriving Repr, BEq
+
+/-- A *demonstrative* pronoun (German *der/die/das*, Bavarian *de/dia*): a
+personal pronoun plus a D_deix layer. @cite{patel-grosz-grosz-2017}'s central
+thesis — DEM = PER + deixis — is *literally* this one `extends` and one field,
+the same move as `Determiner.Demonstrative extends Determiner` and sharing the
+same `Features.Deixis.Feature`. Because the PER core is recovered by
+`.toPersonalPronoun`, "a demonstrative pronoun structurally contains a personal
+pronoun" is true by construction, not a stipulated typological universal. -/
+structure DemonstrativePronoun extends PersonalPronoun where
+  /-- The D_deix feature (proximal/medial/distal/unspecified), shared with
+      `Determiner.Demonstrative` and `NominalKind.demonstrative`. -/
+  deictic : Features.Deixis.Feature := .unspecified
   deriving Repr, BEq
 
 namespace Pronoun
