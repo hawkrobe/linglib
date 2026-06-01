@@ -8,14 +8,9 @@ import Linglib.Typology.Color
 namespace Korean
 
 /-- Korean: 6 non-derived basic colors, 11 total basic colors; green vs blue
-    distinct; red vs yellow distinct. -/
+    distinct; red vs yellow distinct.
+    Derived from the WALS Chs 132–135 rows for `kor`. -/
 def colorProfile : Typology.ColorProfile :=
-  { language := "Korean"
-  , iso := "kor"
-  , family := "Koreanic"
-  , nonDerived := some .six
-  , basic := some .v11
-  , greenBlue := some .distinct
-  , redYellow := some .distinct }
+  Typology.ColorProfile.fromWALS "Korean" "kor" "Koreanic"
 
 end Korean

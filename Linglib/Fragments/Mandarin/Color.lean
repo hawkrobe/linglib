@@ -9,14 +9,9 @@ namespace Mandarin
 
 /-- Mandarin Chinese: 6 non-derived basic colors, 8–8.5 total basic colors;
     green (*lü*) vs blue (*lan*) distinct; red (*hong*) vs yellow (*huang*)
-    distinct. -/
+    distinct.
+    Derived from the WALS Chs 132–135 rows for `cmn`. -/
 def colorProfile : Typology.ColorProfile :=
-  { language := "Mandarin Chinese"
-  , iso := "cmn"
-  , family := "Sino-Tibetan"
-  , nonDerived := some .six
-  , basic := some .v8to8h
-  , greenBlue := some .distinct
-  , redYellow := some .distinct }
+  Typology.ColorProfile.fromWALS "Mandarin Chinese" "cmn" "Sino-Tibetan"
 
 end Mandarin
