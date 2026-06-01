@@ -41,7 +41,7 @@ stems show -aj (the theme can be implicit), not √ITV.
 
 -/
 
-namespace Fragments.Chuj
+namespace Chuj
 
 -- ============================================================================
 -- § 1: Abstract Root Classes
@@ -463,4 +463,4 @@ theorem aj_tracks_implicit :
     ajOnAntipassive .absolutive = true ∧
     ajOnAntipassive .incorporation = false := ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.Chuj
+end Chuj

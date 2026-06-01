@@ -27,7 +27,7 @@ verb), but some converbs allow tense or aspect marking.
 
 -/
 
-namespace Fragments.Turkish.MedialVerbs
+namespace Turkish.MedialVerbs
 
 /-- A Turkish converbal suffix entry. -/
 structure ConverbEntry where
@@ -138,4 +138,4 @@ theorem polarity_partition :
     affirmativeConverbs.length + negativeConverbs.length
     = allConverbs.length := rfl
 
-end Fragments.Turkish.MedialVerbs
+end Turkish.MedialVerbs

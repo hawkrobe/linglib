@@ -45,8 +45,8 @@ open Semantics.Attitudes.Doxastic
 open Semantics.Presupposition
 open Semantics.Dynamic.Postsupposition
 open Semantics.Lexical
-open Fragments.English.Predicates.Verbal
-open Fragments.Mandarin.Predicates
+open English.Predicates.Verbal
+open Mandarin.Predicates
 
 -- ============================================================================
 -- §1. MiniWorld Model

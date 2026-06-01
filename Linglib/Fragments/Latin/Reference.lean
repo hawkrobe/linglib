@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Latin
+namespace Latin
 
 /-- Latin (Indo-European, Italic): no definite or indefinite articles (bare
     nouns are ambiguous); textbook three-way distance-oriented demonstrative
@@ -24,4 +24,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .relatedAll }
 
-end Fragments.Latin
+end Latin

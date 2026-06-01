@@ -58,7 +58,7 @@ Two parameters (uniqueness × domain constraint) yield a 2×2 typology:
 namespace AlonsoOvalleMenendezBenito2010
 
 open Features.ModalIndefinite
-open Fragments.Spanish.ModalIndefinites
+open Spanish.ModalIndefinites
 
 
 -- ════════════════════════════════════════════════════════════════

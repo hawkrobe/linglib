@@ -37,7 +37,7 @@ b. NOM is assigned by finite T.
 c. DAT is a nonstructural case.
 -/
 
-namespace Fragments.Mongolian.Case
+namespace Mongolian.Case
 
 open Minimalist
 open Syntax.Case
@@ -207,4 +207,4 @@ theorem pp_always_reconstructs_io :
 theorem pp_always_reconstructs_subj :
     ppReconstructsOverSubj = true := rfl
 
-end Fragments.Mongolian.Case
+end Mongolian.Case

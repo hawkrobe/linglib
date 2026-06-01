@@ -57,7 +57,7 @@ Spanish/Russian/German Fragment Gender files still bake in DM `CatHead`
 fields; Hausa is the pilot for theory-neutral Fragment-layer encoding.
 -/
 
-namespace Fragments.Hausa.Gender
+namespace Hausa.Gender
 
 open Features (SurfaceGender)
 
@@ -176,4 +176,4 @@ example : genderTypology.iso639 = "hau" ∧ genderTypology.name = "Hausa" :=
     sex-based, semantic + formal). -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.Hausa.Gender
+end Hausa.Gender

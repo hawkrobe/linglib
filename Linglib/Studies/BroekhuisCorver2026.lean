@@ -35,7 +35,7 @@ not whether F is overt. See `MovedConstituent`.
 
 ## Cross-references
 
-- `Fragments.Dutch.Adpositions`: lexical inventory
+- `Dutch.Adpositions`: lexical inventory
 - `Minimalist.Formal.ExtendedProjection`: Place/Path in EP
 - `Semantics.Spatial.Path.PathShape`: bounded/unbounded/source classification
 - `Semantics.Spatial.Trace`: PathShape → telicity
@@ -46,7 +46,7 @@ not whether F is overt. See `MovedConstituent`.
 
 namespace BroekhuisCorver2026
 
-open Fragments.Dutch.Adpositions
+open Dutch.Adpositions
 open Minimalist
 open Semantics.Spatial.Path (PathShape)
 

@@ -48,7 +48,7 @@ the independent rule of homorganic-nasal-place assimilation, which
 open Phonology
 open Phonology.LocalRewrite
 
-namespace Fragments.Tagalog.Phonology
+namespace Tagalog.Phonology
 
 /-! ## § 1: Stem-initial obstruents (NS targets) -/
 
@@ -169,4 +169,4 @@ theorem ns_target_excludes_nasals :
     ŋ.matchesPattern nasalSubstitution.target = false := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
-end Fragments.Tagalog.Phonology
+end Tagalog.Phonology

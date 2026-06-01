@@ -22,7 +22,7 @@ Saračević (2024) contrast *dali* with biased particles *zar* and *neli*.
 
 -/
 
-namespace Fragments.Slavic.Macedonian.QuestionParticles
+namespace Macedonian.QuestionParticles
 
 /-- A Macedonian interrogative particle entry. -/
 structure QParticleEntry where
@@ -61,4 +61,4 @@ theorem dali_neutral :
 This is the key Macedonian-Bulgarian contrast (@cite{simik-2024} ex. 32). -/
 theorem dali_neg_unbiased : dali.negationTriggersBias = false := rfl
 
-end Fragments.Slavic.Macedonian.QuestionParticles
+end Macedonian.QuestionParticles

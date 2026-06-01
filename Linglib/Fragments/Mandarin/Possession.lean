@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Mandarin.Possession
+namespace Mandarin.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["wo you yi-ben shu", "wo de shu", "wo mama"]
   , notes := "Have-verb you; de marks adnominal possession but drops with inalienable/close relations" }
 
-end Fragments.Mandarin.Possession
+end Mandarin.Possession

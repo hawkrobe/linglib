@@ -20,7 +20,7 @@ at all. The `.numeralClassifier` tag is retained pragmatically so cross-
 language theorems can filter on `classifierType`.
 -/
 
-namespace Fragments.Armenian
+namespace Armenian
 
 /-- Western Armenian noun-categorization system: non-obligatory per
     @cite{bale-khanjian-2014} eq. 10. Empty inventory; plurals are
@@ -40,4 +40,4 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , pluralClfCooccur := false  -- plurals incompatible with CLs (BK 2014 fn 3)
   , source := "@cite{bale-khanjian-2014} eq. 10; @cite{bale-khanjian-2008}" }
 
-end Fragments.Armenian
+end Armenian

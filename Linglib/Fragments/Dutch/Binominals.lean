@@ -20,7 +20,7 @@ on Dutch data.
 - EBNP: *een schat van een kind* 'a treasure of a child'
 -/
 
-namespace Fragments.Dutch.Binominals
+namespace Dutch.Binominals
 
 open Semantics.Quantification.Binominal
 
@@ -68,4 +68,4 @@ def allN₁Entries : List BinominalN₁Entry :=
 theorem beer_n₂_headed :
     (OfBinominalType.evaluative).head = .n₂ := rfl
 
-end Fragments.Dutch.Binominals
+end Dutch.Binominals

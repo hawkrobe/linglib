@@ -26,7 +26,7 @@ The aorist asymmetry is a paradigmatic change: a different morphological
 marker appears, not just insertion of the negative morpheme.
 -/
 
-namespace Fragments.Turkish.Negation
+namespace Turkish.Negation
 
 open Typology.Negation
 
@@ -124,4 +124,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Turkish.Negation
+end Turkish.Negation

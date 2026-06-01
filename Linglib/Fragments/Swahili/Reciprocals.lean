@@ -15,7 +15,7 @@ Example: "pend-" (love) → "pend-an-a" (love each other)
 The reciprocal affix is distinct from the reflexive prefix "ji-".
 -/
 
-namespace Fragments.Swahili.Reciprocals
+namespace Swahili.Reciprocals
 
 open Morphology
 
@@ -46,4 +46,4 @@ theorem both_valence_changing :
     reciprocalAffix.category = .valence ∧
     reflexivePrefix.category = .valence := ⟨rfl, rfl⟩
 
-end Fragments.Swahili.Reciprocals
+end Swahili.Reciprocals

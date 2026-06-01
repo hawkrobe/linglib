@@ -30,7 +30,7 @@ resolution; the full Persian consonant inventory is not needed.
 
 open Phonology
 
-namespace Fragments.Farsi.Phonology
+namespace Farsi.Phonology
 
 -- ============================================================================
 -- § 1: Persian Vowel Segments
@@ -149,4 +149,4 @@ theorem candidates_length (i : HiatusInput) : (candidates i).length = 5 := by
 /-- The two vowels are featurally distinct (differ in [±front] and [±back]). -/
 theorem vowels_distinct : ¬(vowelAe == vowelAh) = true := by native_decide
 
-end Fragments.Farsi.Phonology
+end Farsi.Phonology

@@ -30,7 +30,7 @@ demonstrate size-sensitive SOT:
 
 -/
 
-namespace Fragments.Hungarian.Predicates
+namespace Hungarian.Predicates
 
 open Semantics.Lexical
 
@@ -127,4 +127,4 @@ theorem def_indef_distinct :
   rcases hv with rfl | rfl | rfl <;> simp [tud, mond, hisz]
 
 
-end Fragments.Hungarian.Predicates
+end Hungarian.Predicates

@@ -213,7 +213,7 @@ def georgian : IndexingFragment := .mk'
 
 /-- Hungarian (Uralic): definite conjugation triggered by definite objects;
     indefinite conjugation for indefinite objects.
-    See also `Fragments.Hungarian.Predicates` for the conjugation split. -/
+    See also `Hungarian.Predicates` for the conjugation split. -/
 def hungarian : IndexingFragment := .mk'
   "Hungarian" "hun" "Uralic" .P
   (λ _ => true) (λ _ => true)

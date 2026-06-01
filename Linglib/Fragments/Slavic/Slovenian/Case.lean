@@ -14,8 +14,8 @@ directory name `Slovenian` is historical; Priestly's chapter title is
 "Slovene".
 -/
 
-namespace Fragments.Slavic.Slovenian.Case
+namespace Slovenian.Case
 
-abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
 
-end Fragments.Slavic.Slovenian.Case
+end Slovenian.Case

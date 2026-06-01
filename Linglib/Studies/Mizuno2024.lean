@@ -379,13 +379,13 @@ theorem flv_data_matches_profiles :
 -- Japanese Anderson conditionals use -(r)eba, a marker that can mark
 -- both HC and PC (unlike HC-only -ra). This connects the Anderson
 -- data's antecedent form to the Fragment marker typology.
-#guard Fragments.Japanese.Conditionals.eba.markerType ==
+#guard Japanese.Conditionals.eba.markerType ==
   Semantics.Conditionals.ConditionalMarkerType.both
 
 -- Mandarin Anderson conditionals use ruguo, a general-purpose
 -- conditional marker. The O-marking/X-marking distinction is carried
 -- by consequent-final *le*, not by the conditional marker.
-#guard Fragments.Mandarin.Conditionals.ruguo.markerType ==
+#guard Mandarin.Conditionals.ruguo.markerType ==
   Semantics.Conditionals.ConditionalMarkerType.both
 
 -- ════════════════════════════════════════════════════════════════

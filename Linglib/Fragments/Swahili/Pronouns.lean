@@ -5,7 +5,7 @@ import Linglib.Typology.Pronoun.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 /-- Swahili (Niger-Congo, Bantu). No incl/excl; gender in 3rd person
     only including non-singular (via the noun-class system); no
@@ -34,4 +34,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Swahili
+end Swahili

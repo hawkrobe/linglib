@@ -23,7 +23,7 @@ free choice under deontic, modal variation under epistemic.
 @cite{alonso-ovalle-moghiseh-2025}.
 -/
 
-namespace Fragments.Farsi.Determiners
+namespace Farsi.Determiners
 
 
 /--
@@ -216,7 +216,7 @@ theorem yeki_de : getReading yeki deContext = some .plainExistential := rfl
 
 
 /-- German *irgendein*: EFCI with modal insertion available.
-Cross-linguistic comparison entry; canonical German entry in `Fragments.German.ModalIndefinites`.
+Cross-linguistic comparison entry; canonical German entry in `German.ModalIndefinites`.
 @cite{kratzer-shimoyama-2002} -/
 def irgendein_de : IndefiniteEntry :=
   { form := "irgendein"
@@ -337,4 +337,4 @@ def lookup (romanization : String) : Option IndefiniteEntry :=
   allIndefinites.find? λ e => e.romanization == romanization
 
 
-end Fragments.Farsi.Determiners
+end Farsi.Determiners

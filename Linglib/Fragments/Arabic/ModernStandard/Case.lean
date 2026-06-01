@@ -26,7 +26,7 @@ This file is therefore MSA-specific; if an Egyptian-Arabic Case
 fragment is added later it should expose `caseInventory := ∅`.
 -/
 
-namespace Fragments.Arabic.ModernStandard.Case
+namespace Arabic.ModernStandard.Case
 
 /-! ## Inventory -/
 
@@ -63,4 +63,4 @@ def caseAffixPosition : Typology.Case.CaseAffixPosition := .suffixesOnly
 def comitativeInstrumental : Typology.Case.ComitativeInstrumental :=
   .differentiation
 
-end Fragments.Arabic.ModernStandard.Case
+end Arabic.ModernStandard.Case

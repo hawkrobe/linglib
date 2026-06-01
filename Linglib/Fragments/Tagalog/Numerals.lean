@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Tagalog
+namespace Tagalog
 
 /-- Tagalog: ordinals with *pang-* prefix (*pang-una* 'first' from *una*
     'precede', *pang-alawa* 'second'). Distributive by reduplication
@@ -15,4 +15,4 @@ namespace Fragments.Tagalog
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Tagalog" "tgl" (region := .southeastAsia) (pluralMarking := .optional)
 
-end Fragments.Tagalog
+end Tagalog

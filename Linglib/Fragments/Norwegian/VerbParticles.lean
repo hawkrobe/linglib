@@ -32,7 +32,7 @@ as a cross-linguistically available operation.
 
 -/
 
-namespace Fragments.Norwegian.VerbParticles
+namespace Norwegian.VerbParticles
 
 /-- A Norwegian VPC entry. Records (i) the conventional space-separated
     citation form, (ii) the bare verb infinitive and particle, (iii) both
@@ -153,4 +153,4 @@ theorem inventory_passive_incorporated_some
     e.passiveIncorporated.isSome = true := by
   fin_cases he <;> rfl
 
-end Fragments.Norwegian.VerbParticles
+end Norwegian.VerbParticles

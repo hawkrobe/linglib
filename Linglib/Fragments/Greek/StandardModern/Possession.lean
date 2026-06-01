@@ -37,7 +37,7 @@ and `Fragments/Greek/Smyrna/Possession.lean` (over-extended genitive per
 
 set_option autoImplicit false
 
-namespace Fragments.Greek.StandardModern.Possession
+namespace Greek.StandardModern.Possession
 
 open _root_.Typology.Possession
 
@@ -74,4 +74,4 @@ def possession : PossessionProfile :=
  apo-PP alternates only in part-whole and source-like contexts and is degraded with animate possessors,\
  pronouns, and proper names (per Kampanarou & Alexiadou 2026)." }
 
-end Fragments.Greek.StandardModern.Possession
+end Greek.StandardModern.Possession

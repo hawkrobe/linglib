@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.English
+namespace English
 
 /-- English: second-person-only morphological imperative (*Go!*, *Be quiet!*) —
     typically the bare stem; Type 1 prohibitive (*Don't go!* — normal imperative
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Bare-stem imperative; periphrastic 'let's' for hortative; " ++
              "do-support in prohibitives." }
 
-end Fragments.English
+end English

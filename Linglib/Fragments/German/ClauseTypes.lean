@@ -27,7 +27,7 @@ defines DEONT, EPIS, the E modifier, and HKNOW; this file specifies
 | Imperative        | DEONT only               | "Tritt zurück!"        |
 -/
 
-namespace Fragments.German.ClauseTypes
+namespace German.ClauseTypes
 
 open Features
 open Semantics.Mood.Gutzmann
@@ -236,4 +236,4 @@ theorem declarative_fiber_underdetermines_mood :
     (GermanClauseType.v2Declarative : GermanClauseType .declarative).moodStructure := by
   decide
 
-end Fragments.German.ClauseTypes
+end German.ClauseTypes

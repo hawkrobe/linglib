@@ -17,7 +17,7 @@ The identity of "se" in reflexive and reciprocal uses is captured by
 WALS Ch 106 classifying French as "mixed."
 -/
 
-namespace Fragments.French.Reciprocals
+namespace French.Reciprocals
 
 open Pronoun
 
@@ -33,4 +33,4 @@ def lunLautre : Entry :=
 theorem bipartite_distinct_from_clitic :
     lunLautre.form ≠ se.form := by decide
 
-end Fragments.French.Reciprocals
+end French.Reciprocals

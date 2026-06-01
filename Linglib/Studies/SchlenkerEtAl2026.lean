@@ -48,7 +48,7 @@ namespace SchlenkerEtAl2026
 open Semantics.Iconic
 open Semantics.Reference.Monsters (IsTowerMonster)
 open Core.Context
-open Fragments.ASL (SigningSpace)
+open ASL (SigningSpace)
 
 -- ════════════════════════════════════════════════════════════════
 -- § Analysis I: Dynamic Viewpoints (§7)
@@ -203,8 +203,8 @@ variable {W : Type*} {T : Type*}
     is genuinely dynamic (non-constant), the traveling shot condition is
     satisfiable — there exist times where projection differs. -/
 theorem dynamicVP_enables_travelingShot
-    (projects : Fragments.ASL.Entity → StaticViewpoint SigningSpace → Bool)
-    (d : Fragments.ASL.Entity)
+    (projects : ASL.Entity → StaticViewpoint SigningSpace → Bool)
+    (d : ASL.Entity)
     (charVP : DynamicViewpoint W T SigningSpace)
     (w : W) (t₁ t₂ : T)
     (hDynamic : dynamicProjection projects d charVP w t₁ ≠
@@ -289,12 +289,12 @@ theorem travelingShot_with_and_without_RS :
 
 /-- The classifier used in paradigm (7) is POLE-cl from the ASL fragment. -/
 theorem paradigm7_uses_poleCl
-    (proj : Fragments.ASL.Entity → StaticViewpoint SigningSpace → Bool) :
-    (Fragments.ASL.poleCl proj).label = "POLE-cl" := rfl
+    (proj : ASL.Entity → StaticViewpoint SigningSpace → Bool) :
+    (ASL.poleCl proj).label = "POLE-cl" := rfl
 
 /-- The classifier used in paradigm (13) is TREE-cl from the ASL fragment. -/
 theorem paradigm13_uses_treeCl
-    (proj : Fragments.ASL.Entity → StaticViewpoint SigningSpace → Bool) :
-    (Fragments.ASL.treeCl proj).label = "TREE-cl" := rfl
+    (proj : ASL.Entity → StaticViewpoint SigningSpace → Bool) :
+    (ASL.treeCl proj).label = "TREE-cl" := rfl
 
 end SchlenkerEtAl2026

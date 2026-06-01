@@ -7,7 +7,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 V2 micro-parameter profile for Danish (Table 3.1).
 -/
 
-namespace Fragments.Danish
+namespace Danish
 
 open Minimalist (ForceHead V2Profile)
 
@@ -15,4 +15,4 @@ open Minimalist (ForceHead V2Profile)
 abbrev danish : V2Profile :=
   {.Decl, .Int, .Pol, .Excl}
 
-end Fragments.Danish
+end Danish

@@ -425,7 +425,7 @@ context. The substrate makes this `decide`-checkable.
 
 open Typology.PolarityItem (PolarityType LicensingContext)
 open Semantics.Polarity.Licensing (contextProperties)
-open Fragments.English.PolarityItems
+open English.PolarityItems
   (liftAFinger budgeAnInch inYears until_ either_npi)
 
 /-- @cite{gajewski-2011} headline made registry-checkable: no strong

@@ -223,11 +223,11 @@ linglib. Where Fragment data is available (English, French), the
 encoding here is consistent with it.
 
 Justification per cell:
-- English *all* → `.lexicalDual` because `Fragments.English.Determiners.both`
+- English *all* → `.lexicalDual` because `English.Determiners.both`
   has `numberRestriction := some .du` (see `both_neither_dual_marked`).
 - English *no* → `.lexicalDual` via *neither*.
 - French *tous* → `.unpronounceableWithIndirectAlt` because
-  `Fragments.French.Determiners.les_deux` has `numberRestriction :=
+  `French.Determiners.les_deux` has `numberRestriction :=
   some .du` and is no more complex than *tous les NP*.
 - French *aucun* → `.noCompetitor` because no Fragment entry has both
   `qforce = .negative` and `numberRestriction = some .du` and no
@@ -290,7 +290,7 @@ def predictedAntiDual (lang : Language) (q : QSlot) : Bool :=
 
 /-! Connect `lexiconCompetitor` to the actual per-language Fragment
 data where it exists. These are not stipulations about the typology
-but checks: if `Fragments.English.Determiners.both` were not
+but checks: if `English.Determiners.both` were not
 `.du`-marked, the theorem would fail and the typological encoding
 would be exposed as out of sync with the lexicon. -/
 
@@ -298,11 +298,11 @@ would be exposed as out of sync with the lexicon. -/
 lexicon carries `numberRestriction = some .du`. For English this is
 witnessed by `both` and `neither`. -/
 def englishRealizesDual : Prop :=
-  ∃ q ∈ Fragments.English.Determiners.allQuantifiers, q.numberRestriction = some .du
+  ∃ q ∈ English.Determiners.allQuantifiers, q.numberRestriction = some .du
 
 theorem english_realizes_dual : englishRealizesDual :=
-  ⟨Fragments.English.Determiners.both, by
-    simp only [Fragments.English.Determiners.allQuantifiers, List.mem_cons]
+  ⟨English.Determiners.both, by
+    simp only [English.Determiners.allQuantifiers, List.mem_cons]
     tauto, rfl⟩
 
 /-- French does NOT lexicalize a *universal* dual quantifier (no
@@ -310,14 +310,14 @@ French *both*); it does have `les_deux` realizing the dual core
 concept on the definite slot. This is the paper's central observation:
 French has the dual concept but lacks its universal lexicalization. -/
 def frenchHasDualOnDefinite : Prop :=
-  Fragments.French.Determiners.les_deux.numberRestriction = some .du
+  French.Determiners.les_deux.numberRestriction = some .du
 
 theorem french_dual_on_definite : frenchHasDualOnDefinite := rfl
 
 /-- French *tous* is plural-restricted, NOT dual — the gap the paper
 explains via Indirect Alternatives. -/
 theorem french_tous_not_lexical_dual :
-    Fragments.French.Determiners.tous.numberRestriction ≠ some .du := by
+    French.Determiners.tous.numberRestriction ≠ some .du := by
   decide
 
 /-- The grounding bridge: `lexiconCompetitor .english .universal =
@@ -325,10 +325,10 @@ theorem french_tous_not_lexical_dual :
 quantifier with `qforce = .universal` (which is *both*). -/
 theorem english_universal_competitor_grounded :
     lexiconCompetitor .english .universal = .lexicalDual ∧
-    ∃ q ∈ Fragments.English.Determiners.allQuantifiers,
+    ∃ q ∈ English.Determiners.allQuantifiers,
       q.qforce = .universal ∧ q.numberRestriction = some .du :=
-  ⟨rfl, Fragments.English.Determiners.both, by
-    simp only [Fragments.English.Determiners.allQuantifiers, List.mem_cons]
+  ⟨rfl, English.Determiners.both, by
+    simp only [English.Determiners.allQuantifiers, List.mem_cons]
     tauto, rfl, rfl⟩
 
 /-- The grounding bridge for French: `lexiconCompetitor .french
@@ -337,9 +337,9 @@ French lacking a `.du`-marked universal AND having *les deux*
 realizing dual on the definite slot (the indirect alternative). -/
 theorem french_universal_competitor_grounded :
     lexiconCompetitor .french .universal = .unpronounceableWithIndirectAlt ∧
-    Fragments.French.Determiners.tous.qforce = .universal ∧
-    Fragments.French.Determiners.tous.numberRestriction ≠ some .du ∧
-    Fragments.French.Determiners.les_deux.numberRestriction = some .du := by
+    French.Determiners.tous.qforce = .universal ∧
+    French.Determiners.tous.numberRestriction ≠ some .du ∧
+    French.Determiners.les_deux.numberRestriction = some .du := by
   refine ⟨rfl, rfl, ?_, rfl⟩
   decide
 

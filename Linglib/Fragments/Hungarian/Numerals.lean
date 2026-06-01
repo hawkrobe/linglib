@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hungarian
+namespace Hungarian
 
 /-- Hungarian: "first" (*első*) suppletive, higher ordinals regular with *-dik*
     suffix (*második* 'second', *harmadik* 'third'). Distributive by
@@ -15,4 +15,4 @@ namespace Fragments.Hungarian
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Hungarian" "hun" (region := .europe) (pluralMarking := .obligatory)
 
-end Fragments.Hungarian
+end Hungarian

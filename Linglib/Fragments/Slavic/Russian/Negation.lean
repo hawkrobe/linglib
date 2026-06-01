@@ -23,7 +23,7 @@ the sentence level, which is operator-side typology consumed by
 `Studies/Miestamo2005.lean`.
 -/
 
-namespace Fragments.Slavic.Russian.Negation
+namespace Russian.Negation
 
 open Typology.Negation
 
@@ -156,4 +156,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Slavic.Russian.Negation
+end Russian.Negation

@@ -21,8 +21,8 @@ that bare predicative INST survives — Slovene/Sorbian are the marked
 outliers in losing it.
 -/
 
-namespace Fragments.Slavic.Cassubian.Case
+namespace Cassubian.Case
 
-abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
 
-end Fragments.Slavic.Cassubian.Case
+end Cassubian.Case

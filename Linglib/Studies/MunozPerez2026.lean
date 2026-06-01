@@ -239,9 +239,9 @@ theorem negative_controls_unacceptable :
 
 open Minimalist
 open Morphology.DM.Fission
-open Fragments.Spanish.PersonFeatures
-open Fragments.Spanish.Predicates
-open Fragments.Spanish.Clitics
+open Spanish.PersonFeatures
+open Spanish.Predicates
+open Spanish.Clitics
 open Features.Person
 
 /-- The Spanish-specific realization output of Fission: two clitic
@@ -328,7 +328,7 @@ theorem stylLE_requires_inchoative :
 /-- Every Muñoz-Pérez verb that licenses stylistic LE has inchoative structure.
     DERIVED from the verb fragment. -/
 theorem stylLE_verbs_inchoative :
-    (Fragments.Spanish.Predicates.munozVerbs.filter (·.licensesStylLE)).all
+    (Spanish.Predicates.munozVerbs.filter (·.licensesStylLE)).all
       (fun v => isInchoative v.verbHead) = true := by decide
 
 /-! ### Marking restriction (Prediction 3) -/
@@ -352,7 +352,7 @@ theorem optional_licenses_stylLE :
 /-- All Muñoz-Pérez verbs blocking stylistic LE are unmarked.
     DERIVED from the fragment data. -/
 theorem blocking_verbs_all_unmarked :
-    (Fragments.Spanish.Predicates.munozVerbs.filter (!·.licensesStylLE)).all
+    (Spanish.Predicates.munozVerbs.filter (!·.licensesStylLE)).all
       (fun v => v.anticausativeMarking == .unmarked) = true := by decide
 
 /-! ### SE-optionality (Prediction 4) -/

@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.HindiUrdu
+namespace HindiUrdu
 
 /-- Hindi-Urdu: second-and-other-person morphological imperative with three
     politeness levels (*ja* intimate, *jao* familiar, *jaiye* polite, *jaae*
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Three politeness levels in imperative; prohibitive uses " ++
              "special mat (not nahin); 3SG jussive jaae." }
 
-end Fragments.HindiUrdu
+end HindiUrdu

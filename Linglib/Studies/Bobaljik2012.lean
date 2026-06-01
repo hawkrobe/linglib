@@ -98,7 +98,7 @@ end Morphology.ScaleFromParadigm
 namespace Bobaljik2012
 
 open Morphology.DegreeContainment
-open Fragments.English.Modifiers.Adjectives
+open English.Modifiers.Adjectives
 
 -- ============================================================================
 -- § 1: Pattern Verification (English)
@@ -252,24 +252,24 @@ theorem aba_unattested : ¬ aba.IsContiguous := by decide
 -- § 10: Cross-Linguistic Verification (Latin)
 -- ============================================================================
 
-open Fragments.Latin.Adjectives in
+open Latin.Adjectives in
 /-- **Latin CSG**: All Latin adjective entries satisfy contiguity. -/
 theorem latin_no_aba :
-    ∀ e ∈ Fragments.Latin.Adjectives.allEntries, e.suppletion.IsContiguous := by
+    ∀ e ∈ Latin.Adjectives.allEntries, e.suppletion.IsContiguous := by
   decide
 
-open Fragments.Latin.Adjectives in
+open Latin.Adjectives in
 /-- Latin *bonus – melior – optimus* derives ABC. -/
 theorem latin_bonus_abc : bonus.suppletion = abc := rfl
 
-open Fragments.Latin.Adjectives in
+open Latin.Adjectives in
 /-- Latin exhibits all three attested patterns (AAA, ABB, ABC),
     confirming the cross-linguistic pattern inventory against a
     language with richer suppletion than English. -/
 theorem latin_all_three_patterns :
-    Fragments.Latin.Adjectives.allEntries.any (λ e => e.suppletion == aaa) = true ∧
-    Fragments.Latin.Adjectives.allEntries.any (λ e => e.suppletion == abb) = true ∧
-    Fragments.Latin.Adjectives.allEntries.any (λ e => e.suppletion == abc) = true := by
+    Latin.Adjectives.allEntries.any (λ e => e.suppletion == aaa) = true ∧
+    Latin.Adjectives.allEntries.any (λ e => e.suppletion == abb) = true ∧
+    Latin.Adjectives.allEntries.any (λ e => e.suppletion == abc) = true := by
   exact ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================

@@ -39,7 +39,7 @@ Tonal languages without tone: downstep in Drubea and Numèè
 namespace Lionnet2025
 
 open Phonology.Autosegmental.RegisterTier
-open Fragments.Drubea.Prosody
+open Drubea.Prosody
 
 -- ============================================================================
 -- § 1: Segmental Identity of Minimal Pairs
@@ -352,7 +352,7 @@ theorem drubea_register_culminative_not_stress :
     double downstep when the final is itself underlyingly downstepped
     — preserving the registerless/downstepped contrast utterance-finally. -/
 
-open Fragments.Numee.Prosody
+open Numee.Prosody
 
 /-- Boundary `⁺%` downsteps a registerless light CV final preceded by
     a registerless syllable (@cite{lionnet-2025} ex. 24). -/

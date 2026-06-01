@@ -52,7 +52,7 @@ three levels at which "contrast" appears:
 - QUD / implicit questions: `Question`, `Question.isPartialAnswer` (@cite{roberts-2012})
 - DTS "but": `DTS.But` (@cite{merin-1999})
 - Coherence relations: `Discourse.Coherence` (@cite{kehler-2002})
-- Focus particles: `Fragments.English.FocusParticles`
+- Focus particles: `English.FocusParticles`
 -/
 
 namespace Umbach2004
@@ -240,7 +240,7 @@ prior `ExclusionVariety` substrate enum was deleted in the
 /-- The English "only" Fragment entry carries the contrast (= additional)
     exclusion. -/
 theorem only_fragment_exclusion :
-    Fragments.English.FocusParticles.only_.exclusionVariety =
+    English.FocusParticles.only_.exclusionVariety =
     some .contrast := rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -485,8 +485,8 @@ conjunct changes the contrast (§3.1, ex. 16a vs 16b).
     The Fragment entries distinguish them morphologically; the theory
     layer explains why. -/
 theorem and_but_distinct :
-    Fragments.English.FunctionWords.and_.form ≠
-    Fragments.English.FunctionWords.but.form := by decide
+    English.FunctionWords.and_.form ≠
+    English.FunctionWords.but.form := by decide
 
 /-- Both accounts agree that CONTRAST and CORRECTION are distinct.
     Merin distinguishes them by relevance sign (contrariness vs

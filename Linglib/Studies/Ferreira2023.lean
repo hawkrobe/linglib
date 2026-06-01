@@ -577,25 +577,25 @@ Note: *should* carries `tense := .Past` (morphological past = X-marking),
 while *ought* carries no tense marking. Both are semantically present-tense
 weak necessity in their default readings. -/
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- English *should* and *ought* share Portuguese *dever*'s modal force
     (`.weakNecessity`), placing them at the SN_Xg vertex. -/
 theorem english_portuguese_weakNecessity_correspondence :
-    Fragments.English.Auxiliaries.should.modalMeaning.all
+    English.Auxiliaries.should.modalMeaning.all
         (·.force == .weakNecessity) = true ∧
-    Fragments.English.Auxiliaries.ought.modalMeaning.all
+    English.Auxiliaries.ought.modalMeaning.all
         (·.force == .weakNecessity) = true ∧
     PortugueseModal.dever.force = .weakNecessity := by
   exact ⟨by decide, by decide, rfl⟩
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- English *should* has morphological past tense (X-marking), but *ought* does not.
     This reflects Iatridou's generalization: X-marking in English is realized as
     past morphology. Portuguese makes this overt: *deve* (unmarked) vs *devia*
     (past imperfect = X-marked). -/
 theorem english_should_has_xmarking_morphology :
-    Fragments.English.Auxiliaries.should.tense = some UD.Tense.Past ∧
-    Fragments.English.Auxiliaries.ought.tense = none := by
+    English.Auxiliaries.should.tense = some UD.Tense.Past ∧
+    English.Auxiliaries.ought.tense = none := by
   exact ⟨rfl, rfl⟩
 
 end Ferreira2023

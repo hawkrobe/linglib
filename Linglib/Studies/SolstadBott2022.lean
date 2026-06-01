@@ -60,7 +60,7 @@ namespace SolstadBott2022
 
 open Semantics.ArgumentStructure.EntailmentProfile
 open Discourse.Coherence
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
 -- § 1. Verb Classes and IC Bias

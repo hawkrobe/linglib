@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
 /-- Finnish: second-person morphological imperative (*mene!*, *menkää!*);
     Type 3 prohibitive (*älä mene* — imperative form of negative auxiliary
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Negative auxiliary verb has its own imperative form älä; " ++
              "connegative in prohibitive; 3SG jussive menköön." }
 
-end Fragments.Finnish
+end Finnish

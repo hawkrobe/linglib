@@ -24,12 +24,12 @@ it merely signals informational need.
 
 ## Cross-Module Connections
 
-- `Fragments.Mandarin.QuestionParticles.nandao`: cross-linguistic parallel
+- `Mandarin.QuestionParticles.nandao`: cross-linguistic parallel
 - `Kernel.nandaoFelicitous`: shared felicity mechanism (evidence + unexpectedness)
 
 -/
 
-namespace Fragments.German.QuestionParticles
+namespace German.QuestionParticles
 
 /-- A German interrogative/flavoring particle entry. -/
 structure QParticleEntry where
@@ -110,4 +110,4 @@ theorem dochWohl_stricter_than_denn :
     dochWohl.requiresEpistemicBias = true ∧
     denn.requiresEpistemicBias = false := ⟨rfl, rfl, rfl⟩
 
-end Fragments.German.QuestionParticles
+end German.QuestionParticles

@@ -30,7 +30,7 @@ in `Determiners.lean`):
 
 -/
 
-namespace Fragments.English.TemporalExpressions
+namespace English.TemporalExpressions
 
 open Features
 open Semantics.Tense.TemporalAdverbials (AdverbialType)
@@ -362,7 +362,7 @@ def allModifiers : List TemporalExprEntry :=
 -- ============================================================================
 
 section FormAgreement
-open Fragments.English.FunctionWords
+open English.FunctionWords
 
 theorem before_form_agrees : before_.form = FunctionWords.before.form := rfl
 
@@ -595,7 +595,7 @@ theorem in_readings_share_form : inTelic.form = inGap.form := rfl
 theorem in_readings_distinct_kind : inTelic.kind ≠ inGap.kind := by decide
 
 section DurationFormAgreement
-open Fragments.English.FunctionWords
+open English.FunctionWords
 
 /-- Surface form of telic *in* agrees with the canonical preposition entry. -/
 theorem inTelic_form_agrees : inTelic.form = FunctionWords.in_.form := rfl
@@ -642,4 +642,4 @@ theorem iai_classification_pattern :
     ago.iaiClassification = none :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.English.TemporalExpressions
+end English.TemporalExpressions

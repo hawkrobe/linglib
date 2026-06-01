@@ -294,7 +294,7 @@ theorem categoryMatch_fixes_applyFoC :
     live in the study file, not the fragment, so the fragment stays
     reusable across syntactic theories. -/
 
-open Fragments.Turkish.QuestionParticles
+open Turkish.QuestionParticles
 open Semantics.Polarity
 
 /-- Polarity-head labels assumed by this study (Laka-style ΣP/NEGP).

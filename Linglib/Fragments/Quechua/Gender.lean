@@ -9,7 +9,7 @@ Quechua (`quz`) specifically; the Imbabura variety (`qvi`) used by
 `Fragments/Quechua/Morph.lean` shows the same no-gender profile.
 -/
 
-namespace Fragments.Quechua.Gender
+namespace Quechua.Gender
 
 open Typology.Gender
 
@@ -21,4 +21,4 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "quz" ∧ genderTypology.name = "Quechua (Cusco)" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Quechua.Gender
+end Quechua.Gender

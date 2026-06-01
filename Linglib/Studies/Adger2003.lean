@@ -85,32 +85,32 @@ distinct across SOs that may co-occur in a derivation:
 -/
 
 -- Pronouns
-def heSO : SyntacticObject := pronounToSO Fragments.English.Pronouns.he 1
-def herSO : SyntacticObject := pronounToSO Fragments.English.Pronouns.her 2
-def theySO : SyntacticObject := pronounToSO Fragments.English.Pronouns.they 3
+def heSO : SyntacticObject := pronounToSO English.Pronouns.he 1
+def herSO : SyntacticObject := pronounToSO English.Pronouns.her 2
+def theySO : SyntacticObject := pronounToSO English.Pronouns.they 3
 
 -- Proper nouns (project as DPs per Longobardi 1994 / @cite{adger-2003} ch. 7)
-def johnSO : SyntacticObject := nounToSO Fragments.English.Nouns.john 10
-def marySO : SyntacticObject := nounToSO Fragments.English.Nouns.mary 11
+def johnSO : SyntacticObject := nounToSO English.Nouns.john 10
+def marySO : SyntacticObject := nounToSO English.Nouns.mary 11
 
 -- Common nouns (bare N — see §4 / §5 for the null-D wrapping treatment)
-def catSO : SyntacticObject := nounToSO Fragments.English.Nouns.cat 20
-def pizzaSO : SyntacticObject := nounToSO Fragments.English.Nouns.pizza 21
-def bookSO : SyntacticObject := nounToSO Fragments.English.Nouns.book 22
+def catSO : SyntacticObject := nounToSO English.Nouns.cat 20
+def pizzaSO : SyntacticObject := nounToSO English.Nouns.pizza 21
+def bookSO : SyntacticObject := nounToSO English.Nouns.book 22
 
 -- Verbs
 def sleepsSO : SyntacticObject :=
-  verbToSO Fragments.English.Predicates.Verbal.sleep 30
+  verbToSO English.Predicates.Verbal.sleep 30
 def seesSO : SyntacticObject :=
-  verbToSO Fragments.English.Predicates.Verbal.see 31
+  verbToSO English.Predicates.Verbal.see 31
 def eatsSO : SyntacticObject :=
-  verbToSO Fragments.English.Predicates.Verbal.eat 32
+  verbToSO English.Predicates.Verbal.eat 32
 def arrivesSO : SyntacticObject :=
-  verbToSO Fragments.English.Predicates.Verbal.arrive 33
+  verbToSO English.Predicates.Verbal.arrive 33
 def devoursSO : SyntacticObject :=
-  verbToSO Fragments.English.Predicates.Verbal.devour 34
+  verbToSO English.Predicates.Verbal.devour 34
 def givesSO : SyntacticObject :=
-  verbToSO Fragments.English.Predicates.Verbal.give 35
+  verbToSO English.Predicates.Verbal.give 35
 
 -- Determiner
 def theSO : SyntacticObject := mkLeafPhon .D [.N] "the" 40
@@ -212,15 +212,15 @@ theorem he_sees_her_wellFormed : he_sees_her.WellFormed := by sorry
     *arrive*'s `pending = []` so the `emR john` step has nothing to check
     against and `applyChecked` returns `none`. -/
 def mary_arrives_john_bad : Derivation :=
-  { initial := verbToSO Fragments.English.Predicates.Verbal.arrive 100
-    steps   := [.emR (nounToSO Fragments.English.Nouns.john 101),
-                .emL (nounToSO Fragments.English.Nouns.mary 102)] }
+  { initial := verbToSO English.Predicates.Verbal.arrive 100
+    steps   := [.emR (nounToSO English.Nouns.john 101),
+                .emL (nounToSO English.Nouns.mary 102)] }
 
 /-- "*John sees" — transitive missing required complement.
     *see*'s [.D] is never checked, so the final `pending = [.D]` ≠ `[]`. -/
 def john_sees_bad : Derivation :=
-  { initial := verbToSO Fragments.English.Predicates.Verbal.see 110
-    steps   := [.emL (nounToSO Fragments.English.Nouns.john 111)] }
+  { initial := verbToSO English.Predicates.Verbal.see 110
+    steps   := [.emL (nounToSO English.Nouns.john 111)] }
 
 theorem mary_arrives_john_not_wellFormed :
     ¬ mary_arrives_john_bad.WellFormed := by sorry
@@ -310,33 +310,33 @@ producing well-formed structures. The phonYield is unchanged because
 
 /-- Bare *pizza* (cat = .N) wrapped under null D, projecting a saturated DP. -/
 def pizzaDP : SyntacticObject :=
-  nullDWrap (nounToSO Fragments.English.Nouns.pizza 200) 9200
+  nullDWrap (nounToSO English.Nouns.pizza 200) 9200
 
 /-- Bare *book* under null D. -/
 def bookDP : SyntacticObject :=
-  nullDWrap (nounToSO Fragments.English.Nouns.book 201) 9201
+  nullDWrap (nounToSO English.Nouns.book 201) 9201
 
 /-- "John devours pizza" with null-D-wrapped DP complement.
     *devour*'s [uD] is checked by the wrapped DP's outer .D. -/
 def john_devours_pizza_DP : Derivation :=
-  { initial := verbToSO Fragments.English.Predicates.Verbal.devour 210
+  { initial := verbToSO English.Predicates.Verbal.devour 210
     steps   := [.emR pizzaDP,
-                .emL (nounToSO Fragments.English.Nouns.john 220)] }
+                .emL (nounToSO English.Nouns.john 220)] }
 
 /-- "Mary eats pizza" — same pattern with *eat*. -/
 def mary_eats_pizza_DP : Derivation :=
-  { initial := verbToSO Fragments.English.Predicates.Verbal.eat 211
+  { initial := verbToSO English.Predicates.Verbal.eat 211
     steps   := [.emR pizzaDP,
-                .emL (nounToSO Fragments.English.Nouns.mary 221)] }
+                .emL (nounToSO English.Nouns.mary 221)] }
 
 /-- "John gives Mary book": ditransitive with *book* as inner complement
     (direct object) wrapped under null D, *Mary* as proper-noun outer
     complement (indirect object). Both [uD] features on *give* are checked. -/
 def john_gives_mary_book_DP : Derivation :=
-  { initial := verbToSO Fragments.English.Predicates.Verbal.give 212
+  { initial := verbToSO English.Predicates.Verbal.give 212
     steps   := [.emR bookDP,
-                .emR (nounToSO Fragments.English.Nouns.mary 222),
-                .emL (nounToSO Fragments.English.Nouns.john 223)] }
+                .emR (nounToSO English.Nouns.mary 222),
+                .emL (nounToSO English.Nouns.john 223)] }
 
 theorem john_devours_pizza_DP_wellFormed :
     john_devours_pizza_DP.WellFormed := by sorry

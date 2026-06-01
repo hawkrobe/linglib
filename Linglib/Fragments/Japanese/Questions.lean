@@ -16,7 +16,7 @@ Japanese: final polar Q particle *ka*, wh-in-situ, polar formed by particle.
 
 set_option autoImplicit false
 
-namespace Fragments.Japanese.Questions
+namespace Japanese.Questions
 
 open _root_.Typology.Question
 
@@ -28,4 +28,4 @@ def question : QuestionProfile :=
   , whMovement := some .inSitu
   , polarStrategy := some .particle }
 
-end Fragments.Japanese.Questions
+end Japanese.Questions

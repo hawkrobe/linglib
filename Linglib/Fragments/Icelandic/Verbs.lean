@@ -47,7 +47,7 @@ NOM subject in passive). This distinction is encoded via `CaseAssignment`
 from `Features.Case`.
 -/
 
-namespace Fragments.Icelandic.Verbs
+namespace Icelandic.Verbs
 
 open Features (Case CaseAssignment)
 
@@ -478,4 +478,4 @@ theorem leidast_is_quirky_dn :
     leidastCF.quirkySubject = true ∧
     leidastCF.subjectCaseAssignment = .fixed := ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.Icelandic.Verbs
+end Icelandic.Verbs

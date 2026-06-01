@@ -10,7 +10,7 @@ no grammatical evidentials; modality via modal verbs (*voida* 'can',
 *täytyä* 'must', *saattaa* 'may'). Studies-side override.
 -/
 
-namespace Fragments.Finnish.Evidentiality
+namespace Finnish.Evidentiality
 
 open Typology.Modality
 
@@ -23,4 +23,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "fin" ∧ evidentialityProfile.language = "Finnish" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Finnish.Evidentiality
+end Finnish.Evidentiality

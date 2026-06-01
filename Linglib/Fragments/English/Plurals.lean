@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.English
+namespace English
 
 /-- English: suffix plural (-s), obligatory on all nouns, person-number
     stems in pronouns, no productive associative plural. -/
@@ -17,4 +17,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .absent }
 
-end Fragments.English
+end English

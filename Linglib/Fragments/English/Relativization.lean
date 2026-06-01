@@ -12,7 +12,7 @@ Two relative clause markers:
 Data from @cite{keenan-comrie-1977} Table 1.
 -/
 
-namespace Fragments.English
+namespace English
 
 open RelativeClause
 
@@ -52,4 +52,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Gap + relative pronoun; P-stranding allows gap on obliques; "
           ++ "can relativize all AH positions" }
 
-end Fragments.English
+end English

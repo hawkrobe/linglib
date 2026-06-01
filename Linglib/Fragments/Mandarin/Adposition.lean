@@ -8,10 +8,10 @@ classifies Mandarin as having both prepositions and postpositions
 (no dominant order).
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin adposition order (WALS Ch 85 by ISO lookup). -/
 def adposition : Typology.Adposition.AdpositionOrder :=
   Typology.Adposition.AdpositionOrder.ofWALS "cmn"
 
-end Fragments.Mandarin
+end Mandarin

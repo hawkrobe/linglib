@@ -56,7 +56,7 @@ namespace StapsRooryck2024
 open Core (WorldTimeIndex)
 
 open Semantics.Presupposition
-open Fragments.French.Predicates
+open French.Predicates
 open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.ArgumentStructure.Affectedness.Profile
 open Features

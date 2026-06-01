@@ -8,7 +8,7 @@ Lexical entry for English temporal "then", typed by `ThenAdverb`.
 
 -/
 
-namespace Fragments.English.TemporalDeictic
+namespace English.TemporalDeictic
 
 open Semantics.Tense
 
@@ -19,4 +19,4 @@ def then_ : ThenAdverb where
   gloss := "then"
   shiftsPerspective := true
 
-end Fragments.English.TemporalDeictic
+end English.TemporalDeictic

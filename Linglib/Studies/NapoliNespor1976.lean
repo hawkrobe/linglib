@@ -69,7 +69,7 @@ open Pragmatics.Bias
   (BiasLicensingProfile licensedProfile blockedProfile
    noContradictionProfile questionedProfile matrixNegatedProfile
    preciseProfile imperativeProfile)
-open Fragments.Italian.PolarityItems (pur affatto neanche)
+open Italian.PolarityItems (pur affatto neanche)
 open Typology.PolarityItem (LicensingContext PolarityItemEntry)
 
 -- ════════════════════════════════════════════════════
@@ -295,8 +295,8 @@ italianComparative as `.selective [pur.form]`: it licenses *some* weak
 NPIs (*pur*) and blocks others (*affatto*) for *orthogonal* reasons.
 
 The two NPIs are registered in the Italian Fragment as
-`Fragments.Italian.PolarityItems.pur` and
-`Fragments.Italian.PolarityItems.affatto`. The contrast is **already**
+`Italian.PolarityItems.pur` and
+`Italian.PolarityItems.affatto`. The contrast is **already**
 witnessed at the lexical layer (the structural theorems
 `pur_licensed_in_comparative` and `affatto_not_licensed_in_comparative`
 in the Fragment), so this study file just consumes those facts and
@@ -336,7 +336,7 @@ theorem pur_licensed_with_non2 : predictsWeakNPI licensedProfile pur := by decid
 theorem affatto_blocked_in_non2 (p : BiasLicensingProfile) :
     ¬ predictsWeakNPI p affatto := by
   intro ⟨_, h⟩
-  rw [Fragments.Italian.PolarityItems.affatto_not_licensed_in_comparative] at h
+  rw [Italian.PolarityItems.affatto_not_licensed_in_comparative] at h
   exact Bool.false_ne_true h
 
 -- ════════════════════════════════════════════════════

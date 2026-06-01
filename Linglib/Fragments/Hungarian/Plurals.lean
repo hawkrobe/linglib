@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hungarian
+namespace Hungarian
 
 /-- Hungarian: suffix plural (`-k`), obligatory on all nouns; person-number
     stem + nominal plural affix on pronouns (*én* vs *mi*, with `-k` also on
@@ -19,4 +19,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .pnStemNominalAffix
   , associativePlural := .uniqueAffixal }
 
-end Fragments.Hungarian
+end Hungarian

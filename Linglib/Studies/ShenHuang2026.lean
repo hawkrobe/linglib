@@ -533,7 +533,7 @@ theorem specificity_creates_residual_island :
 -- §11. Fragment verb integration
 -- ============================================================================
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- Does a Fragment verb predict VOC-mediated amelioration of the definite
 island effect? Derived from the verb's Levin class via `isVerbOfCreation`. -/
 def fragmentPredictsVOCEffect (v : VerbEntry) : Bool :=
@@ -548,7 +548,7 @@ of definite islands via N/D-incorporation. Per-verb theorems make the
 dependency explicit: changing a verb's `levinClass` field breaks exactly
 one theorem. -/
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 theorem voc_verbs_predict_amelioration :
     fragmentPredictsVOCEffect build = true ∧
     fragmentPredictsVOCEffect write = true ∧
@@ -564,7 +564,7 @@ Perception and communication verbs lack creation semantics. Definite
 islands should show the full effect (PIC + Specificity in English,
 Specificity alone in Chinese). -/
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 theorem nonvoc_verbs_no_amelioration :
     fragmentPredictsVOCEffect see = false ∧
     fragmentPredictsVOCEffect hear = false ∧

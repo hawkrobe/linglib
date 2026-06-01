@@ -86,7 +86,7 @@ around (71)).
 namespace BeaversZubair2013
 
 open Semantics.Causation
-open Fragments.Sinhala.Verbs
+open Sinhala.Verbs
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Causer Suppression Operator (ex. 77)

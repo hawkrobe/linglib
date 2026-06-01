@@ -41,7 +41,7 @@ particle `a` carrying class agreement to the possessum.
 
 set_option autoImplicit false
 
-namespace Fragments.Swahili.Possession
+namespace Swahili.Possession
 
 open _root_.Typology.Possession
 
@@ -64,7 +64,7 @@ theorem strategy_matches_schema :
 -- §2. The `-na` Paradigm
 -- ============================================================================
 
-open Fragments.Swahili (NounClass)
+open Swahili (NounClass)
 
 /-- The possessive form: subject prefix + "na". -/
 def possessiveForm (c : NounClass) : String :=
@@ -140,4 +140,4 @@ def possession : PossessionProfile :=
   , notes := "Comitative na- for predicative possession; " ++
              "noun-class agreement on possessive for adnominal" }
 
-end Fragments.Swahili.Possession
+end Swahili.Possession

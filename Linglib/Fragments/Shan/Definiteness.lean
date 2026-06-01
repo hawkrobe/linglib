@@ -34,7 +34,7 @@ Both carry a cardinality presupposition (unique satisfier in the
 situation) and add spatial content to the presupposition filter.
 -/
 
-namespace Fragments.Shan.Definiteness
+namespace Shan.Definiteness
 
 open Features.Definiteness
 open Semantics.Presupposition (PrProp)
@@ -179,4 +179,4 @@ def liftToPrProp {E : Type} (selector : Option E) (scope : E → Bool) :
     PrProp Unit :=
   PrProp.presupOfReferent (fun _ : Unit => selector) (fun e _ => scope e = true)
 
-end Fragments.Shan.Definiteness
+end Shan.Definiteness

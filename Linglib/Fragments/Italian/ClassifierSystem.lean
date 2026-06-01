@@ -8,7 +8,7 @@ Classifier-system data for Italian (ISO `ita`): 2-class gender system
 (masculine/feminine).
 -/
 
-namespace Fragments.Italian
+namespace Italian
 
 /-- Italian noun-class system: 2-class gender (masculine/feminine);
     semantic (sex) + morphological (-o / -a endings) assignment. -/
@@ -26,4 +26,4 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , hasObligatoryNumber := true  -- il/i, la/le, un/una
   , source := "@cite{aikhenvald-2000} §2; @cite{chierchia-1998}" }
 
-end Fragments.Italian
+end Italian

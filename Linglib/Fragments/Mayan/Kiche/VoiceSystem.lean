@@ -61,7 +61,7 @@ This is why `subjectExtraction.wiLicensed = false` in
 *wi*.
 -/
 
-namespace Fragments.Mayan.Kiche
+namespace Kiche
 
 -- ============================================================================
 -- § 1: Verb Classes
@@ -319,4 +319,4 @@ theorem neg_same_proclitic :
 -- apparatus and would belong in a `Studies/Mondloch2017.lean`
 -- if a study file were written; nothing currently consumes it.
 
-end Fragments.Mayan.Kiche
+end Kiche

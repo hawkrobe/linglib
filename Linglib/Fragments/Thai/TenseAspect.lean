@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Thai
+namespace Thai
 
 /-- Thai (Tai-Kadai): no grammatical perfective/imperfective; no inflectional
     past or future; no perfect. SE Asian isolating type. -/
@@ -14,4 +14,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .none, past := .none, future := .none
   , perfect := .none, affixPosition := .noInflection }
 
-end Fragments.Thai
+end Thai

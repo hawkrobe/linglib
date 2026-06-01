@@ -25,9 +25,9 @@ This typological pattern — PPI replacement instead of NPI *until* — was
 noted by @cite{giannakidou-2002} (ex. 47) and Declerk 1995.
 -/
 
-namespace Fragments.Dutch.TemporalConnectives
+namespace Dutch.TemporalConnectives
 
-open Fragments.English.TemporalExpressions (TemporalExprEntry Reading TemporalOrder ComplementType)
+open English.TemporalExpressions (TemporalExprEntry Reading TemporalOrder ComplementType)
 
 -- ============================================================================
 -- § 1: Connective Entries
@@ -95,7 +95,7 @@ theorem punctuality_split :
 -- § 3: Cross-Linguistic Agreement
 -- ============================================================================
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Dutch *tot* matches English durative *until* on core properties. -/
 theorem tot_matches_until :
     tot.order = until_.order ∧
@@ -103,4 +103,4 @@ theorem tot_matches_until :
     tot.defaultReading = until_.defaultReading :=
   ⟨rfl, rfl, rfl⟩
 
-end Fragments.Dutch.TemporalConnectives
+end Dutch.TemporalConnectives

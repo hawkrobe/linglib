@@ -5,7 +5,7 @@ import Linglib.Typology.Pronoun.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.HindiUrdu
+namespace HindiUrdu
 
 /-- Hindi (Indo-European, Indo-Aryan). No incl/excl; no person
     marking on verbs (WALS); no gender distinctions in pronouns
@@ -36,4 +36,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.HindiUrdu
+end HindiUrdu

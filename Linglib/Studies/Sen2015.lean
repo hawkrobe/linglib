@@ -52,7 +52,7 @@ feature-filling rather than feature-overwriting.
 ## Implementation notes
 
 The Latin Fragment exposes a single /l/ phoneme. The three positional
-allophones are derived here by `Segment.setFeature` on `Fragments.Latin.Phonology.l`,
+allophones are derived here by `Segment.setFeature` on `Latin.Phonology.l`,
 with the dorsal [+high] articulation that distinguishes /l/'s phonetic
 profile factored into `lWithDorsal`. Sen's analysis treats this dorsal
 raising as common to all three /l/ allophones — only [back] distinguishes
@@ -113,7 +113,7 @@ in ch. 4 is also deferred.
 
 namespace Sen2015
 
-open Phonology Fragments.Latin.Phonology
+open Phonology Latin.Phonology
 
 /-! ### Positional /l/ values
 

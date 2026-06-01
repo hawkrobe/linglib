@@ -166,26 +166,26 @@ bool. -/
 /-- German has both articles overtly, with no syncretism — the structural
     @cite{schwarz-2009} contrast is morphologically visible. -/
 theorem german_two_articles :
-    Fragments.German.Definiteness.articleInventory.hasUniqueArticle ∧
-    Fragments.German.Definiteness.articleInventory.hasAnaphoricArticle ∧
-    ¬ Fragments.German.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
+    German.Definiteness.articleInventory.hasUniqueArticle ∧
+    German.Definiteness.articleInventory.hasAnaphoricArticle ∧
+    ¬ German.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
   ⟨trivial, trivial, id⟩
 
 /-- English has both articles, but they are syncretic — *the* covers both.
     The @cite{schwarz-2009} contrast is real but morphologically invisible. -/
 theorem english_syncretic_articles :
-    Fragments.English.Definiteness.articleInventory.hasUniqueArticle ∧
-    Fragments.English.Definiteness.articleInventory.hasAnaphoricArticle ∧
-    Fragments.English.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
+    English.Definiteness.articleInventory.hasUniqueArticle ∧
+    English.Definiteness.articleInventory.hasAnaphoricArticle ∧
+    English.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
   ⟨trivial, trivial, trivial⟩
 
 /-- The morphological discriminator: German is `.bipartite` (two distinct
     forms), English is `.generallyMarked` (one syncretic form). Both
     distinguish the same semantic types — the surface morphology differs. -/
 theorem strategy_split :
-    Fragments.German.Definiteness.articleInventory.toMarkingStrategy
+    German.Definiteness.articleInventory.toMarkingStrategy
       = .bipartite ∧
-    Fragments.English.Definiteness.articleInventory.toMarkingStrategy
+    English.Definiteness.articleInventory.toMarkingStrategy
       = .generallyMarked := ⟨rfl, rfl⟩
 
 /-- The number of morphologically distinguished presupposition types
@@ -197,9 +197,9 @@ theorem strategy_split :
     the article system. -/
 theorem morphological_distinction_count :
     (articleTypeToDistinguishedPresup
-      Fragments.German.Definiteness.articleInventory.toArticleType).length = 2 ∧
+      German.Definiteness.articleInventory.toArticleType).length = 2 ∧
     (articleTypeToDistinguishedPresup
-      Fragments.English.Definiteness.articleInventory.toArticleType).length = 1
+      English.Definiteness.articleInventory.toArticleType).length = 1
   := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════

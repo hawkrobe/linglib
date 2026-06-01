@@ -561,7 +561,7 @@ theorem stage3_they_from_structure (ctx : ReferentContext) :
     case in VI competition. -/
 theorem elsewhere_is_epicene :
     subsetPrinciple pronounVIs ungenderedBundle = some "they" ∧
-    Fragments.English.Pronouns.genderOf "they" = .epicene :=
+    English.Pronouns.genderOf "they" = .epicene :=
   ⟨by decide, rfl⟩
 
 /-- The VI competition and the Fragment's gender paradigm are
@@ -572,10 +572,10 @@ theorem elsewhere_is_epicene :
     descriptive grammar (GenderParadigm): VI *derives* which form is used,
     and the Fragment's paradigm classification *records* the result. -/
 theorem vi_fragment_consistency :
-    Fragments.English.Pronouns.genderOf "she" = .feminine ∧
-    Fragments.English.Pronouns.genderOf "he" = .masculine ∧
-    Fragments.English.Pronouns.genderOf "it" = .neuter ∧
-    Fragments.English.Pronouns.genderOf "they" = .epicene :=
+    English.Pronouns.genderOf "she" = .feminine ∧
+    English.Pronouns.genderOf "he" = .masculine ∧
+    English.Pronouns.genderOf "it" = .neuter ∧
+    English.Pronouns.genderOf "they" = .epicene :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

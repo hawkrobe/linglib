@@ -25,7 +25,7 @@ attach in a fixed order determined by a **positional template**.
    (WALS F21A: monoexponential case)
 -/
 
-namespace Fragments.Turkish.SuffixTemplate
+namespace Turkish.SuffixTemplate
 
 /-- Verbal suffix slots, ordered innermost to outermost.
     @cite{goksel-kerslake-2005} Ch 6, 8, 13. -/
@@ -126,4 +126,4 @@ theorem future_A_resolution :
     resolveA true  = a_vowel ∧
     resolveA false = e_vowel := ⟨rfl, rfl⟩
 
-end Fragments.Turkish.SuffixTemplate
+end Turkish.SuffixTemplate

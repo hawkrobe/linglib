@@ -9,7 +9,7 @@ import Linglib.Typology.Pronoun.WALS
 Lexical entries for English pronouns (personal, reflexive, wh-).
 -/
 
-namespace Fragments.English.Pronouns
+namespace English.Pronouns
 
 -- ============================================================================
 -- Gender Paradigm
@@ -254,9 +254,9 @@ theorem themself_gender_consistent : themself.genderParadigm = some (genderOf "t
 theorem sg_pl_same_gender :
     they_sg.genderParadigm = they.genderParadigm := rfl
 
-end Fragments.English.Pronouns
+end English.Pronouns
 
-namespace Fragments.English
+namespace English
 
 /-- English (Indo-European, Germanic) WALS pronoun typology profile.
     No incl/excl; gender in 3rd sg only (he/she/it); no politeness;
@@ -286,4 +286,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.English
+end English

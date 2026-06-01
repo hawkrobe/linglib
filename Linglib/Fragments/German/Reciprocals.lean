@@ -18,7 +18,7 @@ WALS Ch 106 classifies German as "mixed" because "sich" is shared
 between reflexive and reciprocal uses.
 -/
 
-namespace Fragments.German.Reciprocals
+namespace German.Reciprocals
 
 open Pronoun
 
@@ -34,4 +34,4 @@ def einander : Entry :=
 theorem einander_distinct_from_sich :
     einander.form ≠ sich.form := by decide
 
-end Fragments.German.Reciprocals
+end German.Reciprocals

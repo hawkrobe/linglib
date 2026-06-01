@@ -7,7 +7,7 @@ semantic/pragmatic content lives in `Studies/Deo2025.lean`;
 this file just packages the basic morphological + clause-type-distribution data.
 -/
 
-namespace Fragments.Marathi.Particles
+namespace Marathi.Particles
 
 /-- A Marathi utterance-final particle entry, with the clause types and
     illocutionary acts it is felicitous in.
@@ -77,4 +77,4 @@ def na : ParticleEntry where
 /-- All Marathi utterance-final particles indexed in this file. -/
 def allParticles : List ParticleEntry := [bara, na]
 
-end Fragments.Marathi.Particles
+end Marathi.Particles

@@ -458,7 +458,7 @@ theorem unattested_type_matches_complementarity :
 -- § 13. Fragment Grounding: Chuj Roots Instantiate Theory (@cite{coon-2019})
 -- ════════════════════════════════════════════════════
 
-open Fragments.Chuj
+open Chuj
 
 /-- Chuj √TV result roots instantiate the theory's result root predictions:
     entails change, no simple stative, unmarked verb. -/

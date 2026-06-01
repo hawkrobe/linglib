@@ -19,7 +19,7 @@ ontology). @cite{li-thompson-1981} in turn cites @cite{chao-1968} §7.9 as
 the canonical inventory source.
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 open Typology (collectSemantics) in
 /-- Mandarin numeral classifier system: obligatory CL with numerals and
@@ -48,4 +48,4 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , preferredSemantics := collectSemantics Classifiers.allClassifiers
   , source := "@cite{li-thompson-1981} §4.2.1 pp. 104–112; @cite{aikhenvald-2000} (schema)" }
 
-end Fragments.Mandarin
+end Mandarin

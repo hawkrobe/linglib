@@ -15,7 +15,7 @@ the MAG: MAG condition (a) is satisfied because pred = attr featurally
 and agreement covers all φ/κ-features in the DP.
 -/
 
-namespace Fragments.Greek.StandardModern.AdjAgreement
+namespace Greek.StandardModern.AdjAgreement
 
 open Minimalist.Modification
 
@@ -45,4 +45,4 @@ theorem same_agreement : entry.sameAgreement = true := by native_decide
 /-- Greek adjectives cover all DP φ/κ-features. -/
 theorem phi_kappa_complete : entry.phiKappaComplete = true := by native_decide
 
-end Fragments.Greek.StandardModern.AdjAgreement
+end Greek.StandardModern.AdjAgreement

@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Vietnamese
+namespace Vietnamese
 
 /-- Vietnamese (Austroasiatic): no grammatical perfective/imperfective; no
     inflectional past or future; no perfect. Tense-aspect via separate
@@ -15,4 +15,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .none, past := .none, future := .none
   , perfect := .none, affixPosition := .noInflection }
 
-end Fragments.Vietnamese
+end Vietnamese

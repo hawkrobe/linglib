@@ -32,7 +32,7 @@ typological parameters (`ResultativeRealization`, `ResultOrientation`)
 remain in `Semantics.Causation.Resultatives`.
 -/
 
-namespace Fragments.Mandarin.Resultatives
+namespace Mandarin.Resultatives
 
 open Semantics.Causation.Resultatives (ResultativeRealization ResultOrientation)
 open Features.ChangeOfState (CoSType)
@@ -183,4 +183,4 @@ def phase_zhu : PhaseComplementEntry :=
 def allPhaseComplements : List PhaseComplementEntry :=
   [phase_dao, phase_wan, phase_hao, phase_diao, phase_zhu]
 
-end Fragments.Mandarin.Resultatives
+end Mandarin.Resultatives

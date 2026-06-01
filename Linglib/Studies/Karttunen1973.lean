@@ -33,7 +33,7 @@ namespace Karttunen1973
 open Semantics.Presupposition
 open Semantics.Lexical (ProjectionBehavior VerbCore)
 open CommonGround (ContextSet)
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Plug / Hole Classification (K1973 §§3–4)

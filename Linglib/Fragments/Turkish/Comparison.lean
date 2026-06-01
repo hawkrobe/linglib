@@ -18,7 +18,7 @@ localistic hypothesis: comparative markers derive from spatial case morphology.
 The optional adverb *daha* ('more') may intensify but is not required.
 -/
 
-namespace Fragments.Turkish.Comparison
+namespace Turkish.Comparison
 
 /-- Turkish comparative: separative (ablative) standard marker `-dan`/`-den`. -/
 def entry : Typology.Comparison.ComparativeEntry :=
@@ -50,4 +50,4 @@ def comparison : Typology.Comparison.ComparativeProfile :=
   , degreeMarker := "daha"
   , basicOrder := "SOV" }
 
-end Fragments.Turkish.Comparison
+end Turkish.Comparison

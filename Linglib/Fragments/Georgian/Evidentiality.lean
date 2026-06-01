@@ -9,7 +9,7 @@ analyzes Georgian's evidential perfect ("I screeve") as marking inference
 or report only — `indirectOnly`. Studies-side override.
 -/
 
-namespace Fragments.Georgian.Evidentiality
+namespace Georgian.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -27,4 +27,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "kat" ∧ evidentialityProfile.language = "Georgian" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Georgian.Evidentiality
+end Georgian.Evidentiality

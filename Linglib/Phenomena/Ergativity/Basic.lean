@@ -28,11 +28,11 @@ for non-perfective clauses, yet display contrastive alignment patterns.
 namespace Phenomena.Ergativity
 
 -- ============================================================================
--- § 1: Marker Sets (canonical definition in Fragments.Mayan.Params)
+-- § 1: Marker Sets (canonical definition in Mayan.Params)
 -- ============================================================================
 
-open Fragments.Mayan (MarkerSet)
-export Fragments.Mayan (MarkerSet)
+open Mayan (MarkerSet)
+export Mayan (MarkerSet)
 
 -- ============================================================================
 -- § 2: Accusative-Side Alignment Patterns
@@ -73,9 +73,9 @@ theorem patterns_mirror :
 -- § 4: Mayan Absolutive Parameter (observable basis)
 -- ============================================================================
 
--- `ABSPosition` is defined in `Fragments.Mayan.Params` and re-exported here
+-- `ABSPosition` is defined in `Mayan.Params` and re-exported here
 -- for backward compatibility.
-export Fragments.Mayan (ABSPosition)
+export Mayan (ABSPosition)
 
 -- ============================================================================
 -- § 5: Tada's Generalization
@@ -119,7 +119,7 @@ def tadasTable : List MayanExtractionDatum :=
   , ⟨"Lakantun",    .low,  false⟩
   , ⟨"Mopan",       .low,  false⟩
   , ⟨"Itzaj",       .low,  false⟩
-  , ⟨"Chol",        Fragments.Mayan.Chol.absPosition,  false⟩  -- derived from Chol fragment, not duplicated
+  , ⟨"Chol",        Chol.absPosition,  false⟩  -- derived from Chol fragment, not duplicated
   , ⟨"Chontal",     .low,  false⟩
   , ⟨"Tseltal",     .low,  false⟩
   , ⟨"Tsotsil",     .low,  false⟩

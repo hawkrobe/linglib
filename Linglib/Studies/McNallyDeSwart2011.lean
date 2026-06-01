@@ -97,7 +97,7 @@ namespace McNallyDeSwart2011
 
 open Semantics.Kinds.Subkinds (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
-open Fragments.Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
+open Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
 
 /-! ## §3.1: Uncategorised roots and the Dutch lexicon
 
@@ -127,8 +127,8 @@ end McNallyDeSwart2011
     omitted from the `forms` list. This adapter exercises the previously
     unread `.form` and `.formInfl` Fragment fields. Defined in the
     Fragment's namespace so dot notation `a.toRootFamily` works. -/
-def Fragments.Dutch.Adjectives.AdjEntry.toRootFamily
-    (a : Fragments.Dutch.Adjectives.AdjEntry) :
+def Dutch.Adjectives.AdjEntry.toRootFamily
+    (a : Dutch.Adjectives.AdjEntry) :
     Phenomena.Morphology.CategoryChanging.RootFamily :=
   let inflForms := match a.formInfl with
     | none   => []
@@ -143,7 +143,7 @@ namespace McNallyDeSwart2011
 
 open Semantics.Kinds.Subkinds (subkindOf disjointness_condition
   subkindOf_ne mem_subkindOf)
-open Fragments.Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
+open Dutch.Adjectives (AdjEntry Domain rood wit vreemd gezond leuk dicht)
 
 /-- The `RootFamily` derived from `rood` records all three Dutch forms
     (uninflected adj, inflected adj, derived noun). -/
@@ -152,7 +152,7 @@ example : rood.toRootFamily.forms.length = 3 := by decide
 /-- Adjectives in the inflection-exception class (e.g., `roze`) project
     to a single-form `RootFamily` (only the uninflected form), reflecting
     the morphological gap. -/
-example : Fragments.Dutch.Adjectives.roze.toRootFamily.forms.length = 1 := by
+example : Dutch.Adjectives.roze.toRootFamily.forms.length = 1 := by
   decide
 
 /-- Adjectives spanning category projections always include the
@@ -160,7 +160,7 @@ example : Fragments.Dutch.Adjectives.roze.toRootFamily.forms.length = 1 := by
 theorem toRootFamily_includes_uninflected (a : AdjEntry) :
     (a.form, Phenomena.Morphology.CategoryChanging.LexCat.adjective)
       ∈ a.toRootFamily.forms := by
-  unfold Fragments.Dutch.Adjectives.AdjEntry.toRootFamily
+  unfold Dutch.Adjectives.AdjEntry.toRootFamily
   cases a.formInfl <;> cases a.nominalHeid <;> simp
 
 /-! ## §3.1, §3.2: Shades, colour partition, and Mendia substrate
@@ -177,7 +177,7 @@ red. The subkind relation is @cite{mendia-2020}'s kind-formation framework
     `rood`), so the @cite{mendia-2020} partition is exercised non-trivially. -/
 structure Shade where
   /-- The adjective entry classifying this shade — drawn from the Dutch
-      Fragment (e.g., `Fragments.Dutch.Adjectives.rood`). -/
+      Fragment (e.g., `Dutch.Adjectives.rood`). -/
   root : AdjEntry
   /-- Distinguishing index for multiple shade-tokens of the same root. -/
   idx  : Nat
@@ -198,7 +198,7 @@ def canonicalShade (a : AdjEntry) : Shade := ⟨a, 0⟩
     denotes the set of subkinds (shades) of the colour `red`. Implemented
     as `Subkinds.subkindOf kfShade (canonicalShade rood)` — the
     equivalence class of any canonical witness. The Dutch Fragment entry
-    `Fragments.Dutch.Adjectives.rood` is the actual lexical anchor. -/
+    `Dutch.Adjectives.rood` is the actual lexical anchor. -/
 def uninflectedNominal (a : AdjEntry) : Set Shade :=
   subkindOf kfShade (canonicalShade a)
 
@@ -303,7 +303,7 @@ theorem derivedNominal_none_of_no_heid {a : AdjEntry}
     has no `-heid` form per @cite{mcnally-deswart-2011} §1, so its derived
     nominal is outside scope. -/
 theorem roze_derivedNominal_none :
-    derivedNominal Fragments.Dutch.Adjectives.roze = none :=
+    derivedNominal Dutch.Adjectives.roze = none :=
   derivedNominal_none_of_no_heid (by decide)
 
 /-! ## §1: Domain-driven felicity of inflected nominalisation
@@ -351,9 +351,9 @@ theorem domain_frequency_split :
     inflectedNominalisationFrequency dicht.domain  = .marginal := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
     simp [inflectedNominalisationFrequency,
-      Fragments.Dutch.Adjectives.rood, Fragments.Dutch.Adjectives.vreemd,
-      Fragments.Dutch.Adjectives.gezond, Fragments.Dutch.Adjectives.leuk,
-      Fragments.Dutch.Adjectives.dicht]
+      Dutch.Adjectives.rood, Dutch.Adjectives.vreemd,
+      Dutch.Adjectives.gezond, Dutch.Adjectives.leuk,
+      Dutch.Adjectives.dicht]
 
 /-! ## §3.4: Inflected `-e` form — relational trope semantics
 

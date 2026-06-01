@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Zulu.Phonology
+namespace Zulu.Phonology
 
 /-- Canonical Zulu phoneme inventory: first PHOIBLE inventory for ISO `zul`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Zulu.zul
 
-end Fragments.Zulu.Phonology
+end Zulu.Phonology

@@ -16,7 +16,7 @@ four directions (UP, DOWN, HITHER, THITHER).
 This yields a large paradigm, though not all cells are filled.
 -/
 
-namespace Fragments.Dargwa.Locatives
+namespace Dargwa.Locatives
 
 -- ============================================================================
 -- § 1: Locative Decomposition
@@ -143,4 +143,4 @@ theorem sub_translative :
 theorem translative_super_illformed :
     (LocativeForm.mk .super .translative none).wellFormed = false := rfl
 
-end Fragments.Dargwa.Locatives
+end Dargwa.Locatives

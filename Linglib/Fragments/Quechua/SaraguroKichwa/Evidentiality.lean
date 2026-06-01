@@ -33,7 +33,7 @@ Imbabura) and are queued for a separate per-variety restructure; this
 file does not touch them.
 -/
 
-namespace Fragments.Quechua.SaraguroKichwa.Evidentiality
+namespace Quechua.SaraguroKichwa.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -60,4 +60,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "qvj" ∧
     evidentialityProfile.language = "Saraguro Kichwa" := ⟨rfl, rfl⟩
 
-end Fragments.Quechua.SaraguroKichwa.Evidentiality
+end Quechua.SaraguroKichwa.Evidentiality

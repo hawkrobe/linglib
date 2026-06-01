@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Slavic.Russian
+namespace Russian
 
 /-- Russian (Indo-European, Slavic): robust perfective/imperfective (typically
     via prefixation); inflectional past; no inflectional future (periphrastic
@@ -16,4 +16,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .marked, future := .none
   , perfect := .none, affixPosition := .suffixing }
 
-end Fragments.Slavic.Russian
+end Russian

@@ -17,7 +17,7 @@ unmarked).
 
 set_option autoImplicit false
 
-namespace Fragments.English.Indefinites
+namespace English.Indefinites
 
 open Typology.Indefinite
 
@@ -48,4 +48,4 @@ theorem english_paradigm_is_AAA : paradigm.syncretism = some .AAA := rfl
 theorem english_paradigm_is_genericNounBased :
     paradigm.toWALS46A = some .genericNounBased := rfl
 
-end Fragments.English.Indefinites
+end English.Indefinites

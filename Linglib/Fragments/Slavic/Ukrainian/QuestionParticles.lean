@@ -20,7 +20,7 @@ layer assignment lives in `Simik2024`.
 
 -/
 
-namespace Fragments.Slavic.Ukrainian.QuestionParticles
+namespace Ukrainian.QuestionParticles
 
 /-- A Ukrainian interrogative particle entry. -/
 structure QParticleEntry where
@@ -72,4 +72,4 @@ theorem bias_contrast :
     cy.requiresEvidentialBias = false ∧ xiba.requiresEvidentialBias = true :=
   ⟨rfl, rfl⟩
 
-end Fragments.Slavic.Ukrainian.QuestionParticles
+end Ukrainian.QuestionParticles

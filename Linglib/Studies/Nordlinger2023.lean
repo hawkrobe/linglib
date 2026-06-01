@@ -91,7 +91,7 @@ def rp_russian : RecipProfile :=
     Can form discontinuous reciprocals with comitative "na"
     (Hurst 2012; @cite{nordlinger-2023} ex. 12, 37, 40).
     Lexically formed per Siloni's analysis. The morphological rule is
-    formalized in `Fragments.Swahili.Reciprocals.reciprocalAffix`. -/
+    formalized in `Swahili.Reciprocals.reciprocalAffix`. -/
 def rp_swahili : RecipProfile :=
   { language := "Swahili", iso := "swh"
   , primaryStrategy := .verbalAffix
@@ -398,13 +398,13 @@ theorem english_expresses_all_types :
 
 /-- The Swahili reciprocal suffix "-an-" (@cite{nordlinger-2023} ex. 40,
     citing Dimitriadis 2004) is formalized as a `MorphRule` in
-    `Fragments.Swahili.Reciprocals.reciprocalAffix`. The rule realizes
+    `Swahili.Reciprocals.reciprocalAffix`. The rule realizes
     valence reduction (transitive → intransitive), matching `rp_swahili`'s
     `verbalAffix` strategy + `monovalent` valency. -/
 theorem rp_swahili_grounded_in_fragment :
     rp_swahili.primaryStrategy = .verbalAffix ∧
     rp_swahili.valency = .monovalent ∧
-    Fragments.Swahili.Reciprocals.reciprocalAffix.category = .valence :=
+    Swahili.Reciprocals.reciprocalAffix.category = .valence :=
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -454,7 +454,7 @@ theorem reflexive_polysemy_tracks_wals :
 -- Fragment Connection: English Reciprocal-Reflexive Distinction
 -- ============================================================================
 
-open Fragments.English.Pronouns in
+open English.Pronouns in
 
 /-- The English `RecipProfile` is grounded in the Fragment: English has
     reciprocal pronouns that are categorically different from reflexive

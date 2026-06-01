@@ -35,7 +35,7 @@ The 2SG marker is identical across the clitic set (*=de*) and past
 tense (*=de*), creating a homophony that is typologically unusual.
 -/
 
-namespace Fragments.Dargwa.Agreement
+namespace Dargwa.Agreement
 
 open Features.Prominence (PersonLevel)
 
@@ -249,4 +249,4 @@ theorem gender_prefixes_distinct :
 theorem plural_syncretism :
     plGenderPrefix .sapHuman = plGenderPrefix .nonHuman := rfl
 
-end Fragments.Dargwa.Agreement
+end Dargwa.Agreement

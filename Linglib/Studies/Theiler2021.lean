@@ -29,24 +29,24 @@ open Features (QParticleLayer)
 /-- Theiler's layer assignment for *denn*. The `_` argument is unused
     because the layer is a theoretical overlay, not a computed property
     of the fragment entry. -/
-def denn_layer (_ : Fragments.German.QuestionParticles.QParticleEntry) : QParticleLayer := .perspP
+def denn_layer (_ : German.QuestionParticles.QParticleEntry) : QParticleLayer := .perspP
 
 /-- *denn* sits at PerspP, the same layer as Mandarin *nandao*. -/
 theorem denn_is_PerspP :
-    denn_layer Fragments.German.QuestionParticles.denn = .perspP := rfl
+    denn_layer German.QuestionParticles.denn = .perspP := rfl
 
 /-- *denn* requires evidential bias — the highlighting/salience condition
     is what surfaces as a positive-evidential requirement in polar
     questions. This connects the PerspP assignment to the bias profile
     in the fragment. -/
 theorem denn_evidential :
-    Fragments.German.QuestionParticles.denn.requiresEvidentialBias = true := rfl
+    German.QuestionParticles.denn.requiresEvidentialBias = true := rfl
 
 /-- Unlike Mandarin *nandao*, *denn* is compatible with *wh*-questions.
     Both are PerspP-layer particles requiring evidential bias, but
     *denn* lacks the polar-only restriction. -/
 theorem denn_wh_unlike_nandao :
-    Fragments.German.QuestionParticles.denn.whOk = true ∧
-    Fragments.Mandarin.QuestionParticles.nandao.whOk = false := ⟨rfl, rfl⟩
+    German.QuestionParticles.denn.whOk = true ∧
+    Mandarin.QuestionParticles.nandao.whOk = false := ⟨rfl, rfl⟩
 
 end Theiler2021

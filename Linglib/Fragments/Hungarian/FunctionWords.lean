@@ -19,7 +19,7 @@ style.
 
 -/
 
-namespace Fragments.Hungarian.FunctionWords
+namespace Hungarian.FunctionWords
 
 open Minimalist (ComplementSize Cat)
 
@@ -57,4 +57,4 @@ theorem hogy_obligatory :
     hogy.obligatory = true := rfl
 
 
-end Fragments.Hungarian.FunctionWords
+end Hungarian.FunctionWords

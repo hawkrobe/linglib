@@ -73,7 +73,7 @@ Position.lean:
 
 namespace Erlewine2018
 
-open Fragments.TobaBatak
+open TobaBatak
 open ColeHermon2008 (v_mangatuk n_biangi n_dakdanakan vp tobaBatakVOS)
 open Minimalist
 
@@ -229,7 +229,7 @@ theorem extraction_profile_relativization_chain :
       Spec,TP) before Ā-extraction.
     - Non-DP adjuncts: always grammatical, because adjuncts don't need
       Case licensing. -/
-def predictExtraction (voice : Fragments.TobaBatak.Voice) (extractee : Typology.Extractee) :
+def predictExtraction (voice : TobaBatak.Voice) (extractee : Typology.Extractee) :
     ExtractionJudgment :=
   match extractee with
   | .adjunct => .grammatical
@@ -317,7 +317,7 @@ theorem structural_grounding :
 
 /-- The nominal licensing analysis predicts non-DPs extract freely. -/
 theorem nonDP_unrestricted :
-    ∀ v : Fragments.TobaBatak.Voice,
+    ∀ v : TobaBatak.Voice,
       predictExtraction v .adjunct = .grammatical := by
   intro v; rfl
 

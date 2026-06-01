@@ -51,7 +51,7 @@ of the matrix tripartite pattern (probe blocking by Voice_TR).
 
 namespace Scott2023
 
-open Fragments.Mayan (MarkerSet)
+open Mayan (MarkerSet)
 
 -- ============================================================================
 -- § 1: Clause-Type-Conditioned Alignment

@@ -16,7 +16,7 @@ requirement on numerals; scope extending beyond numerals to
 quantifiers, demonstratives, and relative clauses.
 -/
 
-namespace Fragments.Shan
+namespace Shan
 
 open Typology (collectSemantics) in
 /-- Shan numeral classifier system: free morphemes appearing with
@@ -35,4 +35,4 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , pluralClfCooccur := false
   , source := "@cite{moroney-2021}; @cite{aikhenvald-2000} (schema)" }
 
-end Fragments.Shan
+end Shan

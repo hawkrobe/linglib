@@ -33,7 +33,7 @@ Napoli & Nespor 1976) surfaces obliquely via the `pur` and `affatto`
 entries in `PolarityItems.lean`.
 -/
 
-namespace Fragments.Italian.Negation
+namespace Italian.Negation
 
 open Typology.Negation
 
@@ -71,4 +71,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := some true
   , enAttested := some true }
 
-end Fragments.Italian.Negation
+end Italian.Negation

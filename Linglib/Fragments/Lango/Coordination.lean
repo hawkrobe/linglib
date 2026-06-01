@@ -14,7 +14,7 @@ classification with diachronic source from comitative. @cite{haspelmath-2007}
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.lango`).
 -/
 
-namespace Fragments.Lango.Coordination
+namespace Lango.Coordination
 
 open Features.Coordination
 
@@ -27,4 +27,4 @@ def kede : CoordEntry :=
 
 def allEntries : List CoordEntry := [kede]
 
-end Fragments.Lango.Coordination
+end Lango.Coordination

@@ -39,7 +39,7 @@ This file retains only the causative-alternation tree derivations
 
 namespace Kratzer1996
 
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════════════════════════
 -- PART III: Tree-Based Derivations — Causative Alternation

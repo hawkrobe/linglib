@@ -38,7 +38,7 @@ construction types, while reflexives require morphosyntactic plurality
    (I-)reading. @cite{dalrymple-haug-2024} §2.
 -/
 
-namespace Fragments.Hungarian.Reciprocals
+namespace Hungarian.Reciprocals
 
 open Pronoun
 open Semantics.Reference.Reciprocals
@@ -182,4 +182,4 @@ theorem reflexive_inflects :
     @cite{dalrymple-haug-2024} §2. -/
 def singularAntecedentForcesWideScope : Bool := true
 
-end Fragments.Hungarian.Reciprocals
+end Hungarian.Reciprocals

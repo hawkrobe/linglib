@@ -20,7 +20,7 @@ the lexical verb loses its finiteness under negation, and a copula verb
 becomes the finite element carrying person/tense marking.
 -/
 
-namespace Fragments.Hixkaryana.Negation
+namespace Hixkaryana.Negation
 
 open Typology.Negation
 
@@ -100,4 +100,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Hixkaryana.Negation
+end Hixkaryana.Negation

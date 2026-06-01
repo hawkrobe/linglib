@@ -199,7 +199,7 @@ theorem atMost_upTo_diverge :
 -- Section 4: Valence-Predicts-Framing Bridge (Fragment ↔ Exp2)
 -- ============================================================================
 
-/-! Connect the `evaluativeValence` field on `Fragments.English.NumeralModifiers`
+/-! Connect the `evaluativeValence` field on `English.NumeralModifiers`
 entries (the lexical claim) to the Exp2 endorsement rates (the empirical
 observation). The bridge witnesses that the lexical valence assignment
 *predicts* the framing direction observed in Exp2, and that the prediction
@@ -207,7 +207,7 @@ divergence is fully explained by valence (truth conditions are held fixed). -/
 
 section ValenceFramingBridge
 
-open Fragments.English.NumeralModifiers
+open English.NumeralModifiers
 
 /-- "at most" has negative evaluative valence and shows reversed framing.
     The lexical valence (`atMost.evaluativeValence = .negative`) and the

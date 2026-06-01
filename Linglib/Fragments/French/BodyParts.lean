@@ -5,7 +5,7 @@ import Linglib.Typology.BodyParts
 @cite{wals-2013}
 -/
 
-namespace Fragments.French
+namespace French
 
 /-- French: distinct *main*/*bras* (hand/arm) and *doigt*/*main* (finger/hand). -/
 def bodyPartProfile : Typology.BodyPartProfile :=
@@ -15,4 +15,4 @@ def bodyPartProfile : Typology.BodyPartProfile :=
   , handArm := some .different
   , fingerHand := some .different }
 
-end Fragments.French
+end French

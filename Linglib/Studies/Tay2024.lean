@@ -41,7 +41,7 @@ Connects:
   tightness, cross-linguistic parameters (`ResultativeRealization`,
   `ResultOrientation`, `PhaseComplement`)
 - `Morphology.Core.WordStructure`: `MorphWord.compound` for V-V
-- `Fragments.Mandarin.Resultatives`: compound and phase complement lexical entries
+- `Mandarin.Resultatives`: compound and phase complement lexical entries
 - `GoldbergJackendoff2004`: English
   data for cross-linguistic contrast
 -/
@@ -53,7 +53,7 @@ open Core (WorldTimeIndex)
 open Semantics.Causation.Resultatives
 open Morphology.WordStructure
 open Features.ChangeOfState (CoSType priorStatePresup)
-open Fragments.Mandarin.Resultatives
+open Mandarin.Resultatives
 
 -- ════════════════════════════════════════════════════
 -- § 1. Fragment Data — DOR Failure
@@ -68,7 +68,7 @@ Mandarin V-V compounds productively allow subject-oriented resultatives
 without reflexivization: kū-lèi "cry-tired", chī-bǎo "eat-full",
 pǎo-lèi "run-tired", hē-zuì "drink-drunk".
 
-Compound data lives in `Fragments.Mandarin.Resultatives`; theorems here
+Compound data lives in `Mandarin.Resultatives`; theorems here
 derive from those Fragment entries. -/
 
 /-- Subject-oriented Mandarin resultatives exist in the Fragment data. -/
@@ -436,7 +436,7 @@ end Tuikai
 
 /-! ## Phase complement CoS bridge
 
-Phase complement lexical entries live in `Fragments.Mandarin.Resultatives`.
+Phase complement lexical entries live in `Mandarin.Resultatives`.
 Here we prove theorems connecting them to `CoSType` infrastructure. -/
 
 /-- Phase complements connect to all three CoS types. -/

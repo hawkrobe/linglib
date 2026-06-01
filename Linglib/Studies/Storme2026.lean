@@ -31,7 +31,7 @@ distinct surface forms.
 ## Formalization
 
 We instantiate `MaxEntGrammar` with the Persian hiatus domain from
-`Fragments.Farsi.Phonology`, define the classical and systemic constraints,
+`Farsi.Phonology`, define the classical and systemic constraints,
 and verify the key prediction: homophony avoidance breaks the symmetry.
 
 ## Constraints
@@ -47,7 +47,7 @@ Following standard OT/MaxEnt constraint families:
 namespace Storme2026
 
 open Core.Constraint Phonology.Constraints
-open Fragments.Farsi.Phonology
+open Farsi.Phonology
 open Core.Constraint.OT
 
 -- Fintype instances for HiatusInput/Output (Fintype requires Mathlib,

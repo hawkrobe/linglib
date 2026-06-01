@@ -320,7 +320,7 @@ theorem connective_vs_modifier_spillover :
 -- § 9: Fragment–Experiment Connections
 -- ============================================================================
 
-open Fragments.English.TemporalExpressions
+open English.TemporalExpressions
 
 /-- Exp 2 tests the Fragment's `coercedReading` for *before*:
     COMPLET triggers the before-finish reading. -/
@@ -389,20 +389,20 @@ theorem rt_naturalness_converge :
     PFV.AIA (ability/involuntary action) → before-finish (COMPLET);
     PFV.NEUT (neutral) → before-start (no coercion). -/
 theorem tagalog_overt_coercion :
-    Fragments.Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
-    Fragments.Tagalog.TemporalConnectives.bago_aia.reading = .beforeFinish ∧
-    Fragments.Tagalog.TemporalConnectives.bago_neut.culminating = false ∧
-    Fragments.Tagalog.TemporalConnectives.bago_neut.reading = .beforeStart :=
+    Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
+    Tagalog.TemporalConnectives.bago_aia.reading = .beforeFinish ∧
+    Tagalog.TemporalConnectives.bago_neut.culminating = false ∧
+    Tagalog.TemporalConnectives.bago_neut.reading = .beforeStart :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Serbian overtly marks what English coerces covertly:
     perfective → before-finish (COMPLET);
     imperfective → before-start (no coercion). -/
 theorem serbian_overt_coercion :
-    Fragments.Slavic.Serbian.TemporalConnectives.pre_pfv.culminating = true ∧
-    Fragments.Slavic.Serbian.TemporalConnectives.pre_pfv.reading = .beforeFinish ∧
-    Fragments.Slavic.Serbian.TemporalConnectives.pre_impf.culminating = false ∧
-    Fragments.Slavic.Serbian.TemporalConnectives.pre_impf.reading = .beforeStart :=
+    Serbian.TemporalConnectives.pre_pfv.culminating = true ∧
+    Serbian.TemporalConnectives.pre_pfv.reading = .beforeFinish ∧
+    Serbian.TemporalConnectives.pre_impf.culminating = false ∧
+    Serbian.TemporalConnectives.pre_impf.reading = .beforeStart :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Triple convergence: English processing data (Exp 2), Tagalog morphology,
@@ -410,8 +410,8 @@ theorem serbian_overt_coercion :
 theorem complet_triple_convergence :
     exp2_rt.significant = true ∧
     exp2_rt.coercionType = .completive ∧
-    Fragments.Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
-    Fragments.Slavic.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
+    Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
+    Serbian.TemporalConnectives.pre_pfv.culminating = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -445,8 +445,8 @@ theorem data_supports_rett :
     realize it morphologically. -/
 theorem coercion_has_crosslinguistic_reflexes :
     rettProfile.positsCoercion = true ∧
-    Fragments.Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
-    Fragments.Slavic.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
+    Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
+    Serbian.TemporalConnectives.pre_pfv.culminating = true :=
   ⟨rfl, rfl, rfl⟩
 
 end AlstottAravind2026

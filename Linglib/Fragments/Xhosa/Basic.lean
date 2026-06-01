@@ -26,9 +26,9 @@ uniform conjoined singulars (@cite{carstens-2026} §3, Tables 13–14):
 Default agreement: class 2 *ba-* for [human], class 8 *zi-* for non-human.
 -/
 
-namespace Fragments.Xhosa
+namespace Xhosa
 
-open Fragments.Bantu
+open Bantu
 
 -- ============================================================================
 -- § 1: Noun Classes
@@ -176,4 +176,4 @@ def Gender.toSurfaceGender : Gender → Features.SurfaceGender
   | .genderA => .animate
   | _ => .inanimate
 
-end Fragments.Xhosa
+end Xhosa

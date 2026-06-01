@@ -19,7 +19,7 @@ postposition, also used in spatial 'from' contexts. This exemplifies
 from spatial case morphology.
 -/
 
-namespace Fragments.Japanese.Comparison
+namespace Japanese.Comparison
 
 /-- Japanese comparative: separative (ablative) standard marker *yori*. -/
 def entry : Typology.Comparison.ComparativeEntry :=
@@ -51,4 +51,4 @@ def comparison : Typology.Comparison.ComparativeProfile :=
   , degreeMarker := ""
   , basicOrder := "SOV" }
 
-end Fragments.Japanese.Comparison
+end Japanese.Comparison

@@ -51,7 +51,7 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 - `FIPApplication` — FIP application classification (§8)
 - `Tree`, `interp` — compositional derivation (§10–§11)
 - `Derivation` — derivation bundles (§13)
-- `Fragments.English.Nouns`, `.Predicates.Verbal` — fragment entries (§14)
+- `English.Nouns`, `.Predicates.Verbal` — fragment entries (§14)
 
 -/
 
@@ -517,7 +517,7 @@ theorem comp_grounds_fredAteRice :
     that fragment surface forms feed the compositional lexicon. -/
 
 section FragmentNouns
-open Fragments.English.Nouns
+open English.Nouns
 
 /-- Fred is a proper name in the English fragment. -/
 theorem fragment_fred_proper : fred.proper = true := rfl
@@ -542,7 +542,7 @@ theorem fragment_bean_pl_in_lexicon :
 end FragmentNouns
 
 section FragmentVerbs
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 /-- "eat" is transitive (NP complement). -/
 theorem fragment_eat_transitive : eat.complementType = .np := rfl

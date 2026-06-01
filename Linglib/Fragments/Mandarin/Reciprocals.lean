@@ -15,7 +15,7 @@ The adverb "hùxiāng" ('mutually') can also mark reciprocity but is
 not the primary morphosyntactic strategy.
 -/
 
-namespace Fragments.Mandarin.Reciprocals
+namespace Mandarin.Reciprocals
 
 /-- Compound verb pattern for Mandarin reciprocals.
     The pattern is: V-lái-V-qù (V-come-V-go). -/
@@ -44,4 +44,4 @@ def ziji : Word :=
 theorem recip_distinct_from_reflexive :
     daLaiDaQu.toForm ≠ ziji.form := by decide
 
-end Fragments.Mandarin.Reciprocals
+end Mandarin.Reciprocals

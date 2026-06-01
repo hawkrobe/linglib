@@ -7,7 +7,7 @@ WALS-derived word-order profile for Japanese (ISO `jpn`). Pure pass-through
 of `WordOrderProfile.ofWALS "jpn"`.
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese word-order profile (WALS Ch 81/82/83 by ISO lookup). -/
 def wordOrder : Typology.WordOrder.WordOrderProfile :=
@@ -19,4 +19,4 @@ set_option maxRecDepth 4096 in
     projections agree with svOrder and ovOrder when both are WALS-attested). -/
 theorem wordOrder_consistent : wordOrder.IsConsistent := by decide
 
-end Fragments.Japanese
+end Japanese

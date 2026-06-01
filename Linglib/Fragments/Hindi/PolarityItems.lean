@@ -12,7 +12,7 @@ Hindi builds polarity items from the general indefinite *koii* + particles:
 - **koii bhii**: koii + bhii (even/also) → FCI (anyone at all)
 -/
 
-namespace Fragments.Hindi.PolarityItems
+namespace Hindi.PolarityItems
 
 open Typology.PolarityItem
 
@@ -55,4 +55,4 @@ def koiiBhii : PolarityItemEntry :=
 theorem koiiNahiin_koiiBhii_distinct :
     koiiNahiin.polarityType ≠ koiiBhii.polarityType := by decide
 
-end Fragments.Hindi.PolarityItems
+end Hindi.PolarityItems

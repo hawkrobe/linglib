@@ -302,7 +302,7 @@ lexeme counts (Francis & Kučera 1982) live in
 vs-frequency theorem. -/
 
 open Morphology.UsageBased
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 /-- Extract a verb's five inflected forms as Bybee `LexicalEntry`
     instances. Token frequencies default to 0; the Fragment doesn't

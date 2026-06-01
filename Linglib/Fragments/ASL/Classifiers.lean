@@ -22,7 +22,7 @@ signing space is interpreted relative to a viewpoint.
 | CORNER-cl | two-handed L-shape | corners |
 -/
 
-namespace Fragments.ASL
+namespace ASL
 
 open Semantics.Iconic
 
@@ -172,4 +172,4 @@ theorem poleCl_free : (poleCl proj).viewpointVar = .free 0 := rfl
 theorem personCl_free : (personCl proj).viewpointVar = .free 0 := rfl
 theorem vehicleCl_free : (vehicleCl proj).viewpointVar = .free 0 := rfl
 
-end Fragments.ASL
+end ASL

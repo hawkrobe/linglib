@@ -26,7 +26,7 @@ whether a verb can anticausativize:
 
 -/
 
-namespace Fragments.Spanish.Predicates
+namespace Spanish.Predicates
 
 open Minimalist
 open Semantics.Lexical
@@ -310,4 +310,4 @@ theorem blocking_verb_is_unmarked :
     (munozVerbs.filter (!·.licensesStylLE)).all
       (fun v => v.anticausativeMarking == .unmarked) = true := by native_decide
 
-end Fragments.Spanish.Predicates
+end Spanish.Predicates

@@ -26,7 +26,7 @@ by omitting `.gen` from its `caseInventory`.
 
 set_option autoImplicit false
 
-namespace Fragments.Hungarian.Possession
+namespace Hungarian.Possession
 
 open _root_.Typology.Possession
 
@@ -43,4 +43,4 @@ def possession : PossessionProfile :=
   , examples := ["nekem van konyvem", "Janos kalap-ja"]
   , notes := "Dative possessor + van 'exists' + head-marked possessum; possessive suffixes obligatory on relational nouns" }
 
-end Fragments.Hungarian.Possession
+end Hungarian.Possession

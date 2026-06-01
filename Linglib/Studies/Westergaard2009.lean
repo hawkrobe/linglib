@@ -76,10 +76,10 @@ open Minimalist (ForceHead V2Profile WhElementStatus WhBlocksMovementTo)
 open Features (BinaryGivenness)
 
 -- Fragment data (theory-neutral)
-open Fragments.Norwegian (stdNorwegian nordmoreNorwegian)
-open Fragments.English (stdEnglish belfastEnglish)
-open Fragments.German (german)
-open Fragments.Danish (danish)
+open Norwegian (stdNorwegian nordmoreNorwegian)
+open English (stdEnglish belfastEnglish)
+open German (german)
+open Danish (danish)
 
 -- ============================================================================
 -- § 0  V2 Types
@@ -556,7 +556,7 @@ open Typology.WordOrder in
     with a profile that has BOTH +Decl° (V2 in roots → surface SVO) AND
     +Fin° (V-to-I in embedded → surface SOV). -/
 theorem german_noDominant_explained :
-    Fragments.German.wordOrder.basicOrder = .noDominant ∧
+    German.wordOrder.basicOrder = .noDominant ∧
     ForceHead.Decl ∈ german ∧
     ForceHead.Fin  ∈ german := by
   refine ⟨rfl, ?_, ?_⟩ <;> decide
@@ -566,7 +566,7 @@ open Typology.WordOrder in
     (no verb movement in declaratives → surface SVO with SVO base)
     and −Fin° (no V-to-I in embedded → embedded order also SVO). -/
 theorem english_svo_explained :
-    Fragments.English.wordOrder.basicOrder = .svo ∧
+    English.wordOrder.basicOrder = .svo ∧
     ForceHead.Decl ∉ stdEnglish ∧
     ForceHead.Fin  ∉ stdEnglish := by
   refine ⟨rfl, ?_, ?_⟩ <;> decide

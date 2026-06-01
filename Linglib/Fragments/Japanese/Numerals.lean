@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese: ordinals formed with *-banme* suffix (*ichi-banme* 'first',
     *ni-banme* 'second') — no suppletion. Distributive by reduplication
@@ -15,4 +15,4 @@ namespace Fragments.Japanese
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Japanese" "jpn" (region := .eastAsia) (pluralMarking := .none)
 
-end Fragments.Japanese
+end Japanese

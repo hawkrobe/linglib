@@ -16,7 +16,7 @@ obligatorily deleted.
 Data from @cite{keenan-comrie-1977} Table 1.
 -/
 
-namespace Fragments.Korean
+namespace Korean
 
 open RelativeClause
 
@@ -55,4 +55,4 @@ def relativization : RelativeClause.Profile :=
   , lowestRelativizable := .oblique
   , notes := "Gap strategy; pre-nominal RC; parallel to Japanese" }
 
-end Fragments.Korean
+end Korean

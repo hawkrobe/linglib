@@ -18,7 +18,7 @@ the agentless inchoative).
 namespace Levin1993
 
 open Semantics.Lexical
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 -- ════════════════════════════════════════════════════

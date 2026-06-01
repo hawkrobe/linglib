@@ -43,7 +43,7 @@ Farsi interrogative forms (`chi`, `che`) are homophonous with indefinites
 (@cite{alonso-ovalle-moghiseh-2025}, §5). The interrogative and indefinite
 share the same domain-building mechanism (⊓ ∪ ⊔ over GQs), but
 interrogatives compose with ANS while indefinites compose with existential
-closure. See `Fragments.Farsi.Determiners` and
+closure. See `Farsi.Determiners` and
 `Studies.AlonsoOvalleMoghiseh2025` for the indefinite paradigm.
 -/
 

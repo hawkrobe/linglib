@@ -42,7 +42,7 @@ namespace Rett2026
 
 open Core.Scale (Boundedness isAmbidirectional)
 open Semantics.Degree.Comparative (MannerEffect)
-open Fragments.English.Modifiers.Adjectives (AdjModifierEntry)
+open English.Modifiers.Adjectives (AdjModifierEntry)
 
 -- ════════════════════════════════════════════════════
 -- § 1. High vs Low EN (re-exported from ExpletiveNegation)
@@ -125,7 +125,7 @@ in 74 languages across 37 genera):
 - comparative *than*-clauses: 6+ languages have EN
 - *until*-clauses: reported in several languages -/
 
-open Fragments.Italian.PolarityItems (mai alcuno pur)
+open Italian.PolarityItems (mai alcuno pur)
 
 def frenchBefore : ENDatum :=
   { language := "French", construction := "avant que"
@@ -138,7 +138,7 @@ def frenchBefore : ENDatum :=
 def italianBefore : ENDatum :=
   { language := "Italian", construction := "prima che"
   , constructionType := .before
-  , negMarker := Fragments.Italian.Negation.non.form
+  , negMarker := Italian.Negation.non.form
   , enType := .low, isOptional := true
   , licensedNPIForms := [mai.form, alcuno.form] }
 
@@ -166,7 +166,7 @@ def spanishComparative : ENDatum :=
 def italianComparative : ENDatum :=
   { language := "Italian", construction := "più ... di quanto"
   , constructionType := .comparative
-  , negMarker := Fragments.Italian.Negation.non.form
+  , negMarker := Italian.Negation.non.form
   , enType := .low, isOptional := true
   , licensedNPIForms := [pur.form]
   , mannerEffect := some { evaluative := true, atypical := false } }
@@ -182,7 +182,7 @@ def frenchFear : ENDatum :=
 def italianUntil : ENDatum :=
   { language := "Italian", construction := "finché"
   , constructionType := .until
-  , negMarker := Fragments.Italian.Negation.non.form
+  , negMarker := Italian.Negation.non.form
   , enType := .low, isOptional := true
   , licensedNPIForms := [mai.form, alcuno.form] }
 
@@ -192,7 +192,7 @@ def italianUntil : ENDatum :=
 def italianExclamative : ENDatum :=
   { language := "Italian", construction := "wh-exclamative"
   , constructionType := .fear
-  , negMarker := Fragments.Italian.Negation.non.form
+  , negMarker := Italian.Negation.non.form
   , enType := .high, isOptional := false
   , licensedNPIForms := [] }
 
@@ -204,7 +204,7 @@ def italianExclamative : ENDatum :=
 def italianSneg : ENDatum :=
   { language := "Italian", construction := "surprise negation (Sneg)"
   , constructionType := .fear
-  , negMarker := Fragments.Italian.Negation.non.form
+  , negMarker := Italian.Negation.non.form
   , enType := .high, isOptional := false
   , licensedNPIForms := [] }
 
@@ -242,7 +242,7 @@ theorem italianComparative_licenses_pur :
     `affatto_not_licensed_in_comparative` registry theorem. -/
 theorem italianComparative_blocks_affatto :
     ¬ italianComparative.licensesNPIForm
-        Fragments.Italian.PolarityItems.affatto.form := by decide
+        Italian.PolarityItems.affatto.form := by decide
 
 /-- The coarse `licensesAnyNPI` projection recovers the previous Bool
     classification: italianComparative still counts as a weak-NPI
@@ -453,19 +453,19 @@ def licensesComparativeEN (b : Boundedness) : Bool :=
 
 /-- "tall" (open scale) licenses EN in comparatives. -/
 theorem tall_licenses_EN :
-    licensesComparativeEN Fragments.English.Modifiers.Adjectives.tall.scaleType = true := rfl
+    licensesComparativeEN English.Modifiers.Adjectives.tall.scaleType = true := rfl
 
 /-- "full" (closed scale) does NOT license EN in comparatives. -/
 theorem full_blocks_EN :
-    licensesComparativeEN Fragments.English.Modifiers.Adjectives.full.scaleType = false := rfl
+    licensesComparativeEN English.Modifiers.Adjectives.full.scaleType = false := rfl
 
 /-- "expensive" (open scale) licenses EN in comparatives. -/
 theorem expensive_licenses_EN :
-    licensesComparativeEN Fragments.English.Modifiers.Adjectives.expensive.scaleType = true := rfl
+    licensesComparativeEN English.Modifiers.Adjectives.expensive.scaleType = true := rfl
 
 /-- "dead" (closed scale) does NOT license EN in comparatives. -/
 theorem dead_blocks_EN :
-    licensesComparativeEN Fragments.English.Modifiers.Adjectives.dead.scaleType = false := rfl
+    licensesComparativeEN English.Modifiers.Adjectives.dead.scaleType = false := rfl
 
 /-- `licensesComparativeEN` is the De Morgan dual of "both endpoints
     exist" — EN is licensed iff some endpoint is open. This is now

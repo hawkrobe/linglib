@@ -13,7 +13,7 @@ finite verb.
 
 -/
 
-namespace Fragments.Dutch.Particles
+namespace Dutch.Particles
 
 open Typology.PolarityMarking (Entry Strategy Env)
 
@@ -36,4 +36,4 @@ theorem wel_contrastOk : Env.contrast ∈ wel.environments := by decide
 theorem wel_correctionOk : Env.correction ∈ wel.environments := by decide
 theorem wel_strategy : wel.strategy = .particle := rfl
 
-end Fragments.Dutch.Particles
+end Dutch.Particles

@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.English.Possession
+namespace English.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["I have a book", "John's book", "the book of John"]
   , notes := "Genitive clitic -'s on possessor; of-phrase alternative" }
 
-end Fragments.English.Possession
+end English.Possession

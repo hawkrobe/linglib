@@ -24,7 +24,7 @@ focused constituent without movement or a focus particle.
 
 -/
 
-namespace Fragments.Yoruba.FocusParticles
+namespace Yoruba.FocusParticles
 
 -- ============================================================================
 -- Dialect inventory
@@ -124,4 +124,4 @@ theorem standard_head_initial :
 theorem ikale_head_final :
     in_.headDir = .headFinal := rfl
 
-end Fragments.Yoruba.FocusParticles
+end Yoruba.FocusParticles

@@ -19,7 +19,7 @@ question force / focus marking — a claim that is theory-neutral up to the
 choice of denotation type for propositions.
 -/
 
-namespace Fragments.Turkish.QuestionParticles
+namespace Turkish.QuestionParticles
 
 open Semantics.Polarity
 
@@ -47,4 +47,4 @@ def mi : TurkishQParticle where
 theorem mi_denotation_id (W : Type) :
     (mi.denotation : (W → Prop) → (W → Prop)) = id := rfl
 
-end Fragments.Turkish.QuestionParticles
+end Turkish.QuestionParticles

@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Georgian
+namespace Georgian
 
 /-- Georgian: ordinals formed with *me-…-e* circumfix (*me-or-e* 'second',
     *me-sam-e* 'third'); "first" (*p'irveli*) is suppletive. Distributive by
@@ -15,4 +15,4 @@ namespace Fragments.Georgian
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Georgian" "kat" (region := .westAsia) (pluralMarking := .obligatory)
 
-end Fragments.Georgian
+end Georgian

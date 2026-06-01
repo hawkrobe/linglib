@@ -13,7 +13,7 @@ exclusive (*naangaL*). 3rd person distinguishes masculine (*avan*), feminine
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
 
-namespace Fragments.Tamil.Pronouns
+namespace Tamil.Pronouns
 
 open Pronoun
 
@@ -120,9 +120,9 @@ theorem tv_distinction :
 theorem markers_match_2p :
     allAllocMarkers.map (·.register) = secondPersonPronouns.map (·.register) := rfl
 
-end Fragments.Tamil.Pronouns
+end Tamil.Pronouns
 
-namespace Fragments.Tamil
+namespace Tamil
 
 /-- Tamil (Dravidian) pronoun typology profile, read off this fragment's
     lexical inventory rather than asserted from a WALS datapoint: full
@@ -138,4 +138,4 @@ def pronounProfile : Pronoun.Profile :=
   , politeness := some .binary
   , genderInPronouns := some .in3rdPersonSgOnly }
 
-end Fragments.Tamil
+end Tamil

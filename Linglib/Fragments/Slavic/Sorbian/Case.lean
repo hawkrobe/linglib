@@ -24,8 +24,8 @@ Cassubian @cite{stone-1993-cassubian} where bare predicative INST is
 robust).
 -/
 
-namespace Fragments.Slavic.Sorbian.Case
+namespace Sorbian.Case
 
-abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
 
-end Fragments.Slavic.Sorbian.Case
+end Sorbian.Case

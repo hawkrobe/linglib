@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hungarian
+namespace Hungarian
 
 /-- Hungarian: second-person-only morphological imperative (*menj!*,
     *menjetek!*); Type 1 prohibitive (*ne menj!* — regular *ne* negation
@@ -22,4 +22,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Imperative/subjunctive paradigm; prohibitive = ne + " ++
              "imperative; subjunctive used for 3SG/3PL jussive." }
 
-end Fragments.Hungarian
+end Hungarian

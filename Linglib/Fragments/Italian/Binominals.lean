@@ -19,7 +19,7 @@ the Latin source for both French and English evaluative BNPs.
 - EBNP: *quell'idiota di un dottore* 'that idiot of a doctor'
 -/
 
-namespace Fragments.Italian.Binominals
+namespace Italian.Binominals
 
 open Semantics.Quantification.Binominal
 
@@ -67,4 +67,4 @@ def allN₁Entries : List BinominalN₁Entry :=
 theorem bicchiere_n₂_headed :
     (OfBinominalType.pseudoPartitive).head = .n₂ := rfl
 
-end Fragments.Italian.Binominals
+end Italian.Binominals

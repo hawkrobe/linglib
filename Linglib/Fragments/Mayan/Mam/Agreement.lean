@@ -73,15 +73,15 @@ with neutral patterns in dependent clauses (England 1983b;
 
 -/
 
-namespace Fragments.Mayan.Mam
+namespace Mam
 
-open Fragments.Mayan (PersonNumber MarkerLinearity)
+open Mayan (PersonNumber MarkerLinearity)
 
 -- ============================================================================
 -- § 1: Person-Number Inventory
 -- ============================================================================
 
--- Person-number values come from the pan-Mayan `Fragments.Mayan.PersonNumber`
+-- Person-number values come from the pan-Mayan `Mayan.PersonNumber`
 -- enum (six cells: three persons × two numbers). Projections `.person`,
 -- `.isPlural`, and the full inventory `PersonNumber.all` live in
 -- `Mayan/Params.lean`.
@@ -143,14 +143,14 @@ def defaultSetB : String := "tz'="
 abbrev ArgPosition := Features.Prominence.ArgumentRole
 
 /-- The case each argument position receives. Definitionally equal to
-    `Fragments.Mayan.ergCaseMam`, which derives from
+    `Mayan.ergCaseMam`, which derives from
     `Alignment.tripartite.assignCase` in
     `Syntax/Case/Alignment.lean`: A → ERG (inherent from Voice),
     P → ACC (structural from Voice), S → ABS (structural from Infl).
     The three distinct cases are tripartite alignment per Scott's
     analysis (ch. 3 §3.4). -/
 abbrev ArgPosition.case : ArgPosition → Features.Case :=
-  Fragments.Mayan.ergCaseMam
+  Mayan.ergCaseMam
 
 /-- Does this argument position participate in φ-Agree?
 
@@ -387,12 +387,12 @@ theorem patient_person_irrelevant :
 /-- Mam is HIGH-ABS: Set B (absolutive) markers appear pre-stem on Infl,
     immediately following the aspect marker. Morpheme template:
     ASP-**ABS**-ERG-ROOT-SUFFIX (@cite{scott-2023}, §2.5.1). -/
-def absPosition : Fragments.Mayan.ABSPosition := .high
+def absPosition : Mayan.ABSPosition := .high
 
 /-- HIGH-ABS yields ABS=NOM case locus: Infl assigns case to the
     absolutive argument (@cite{scott-2023}, §3.3). -/
 theorem mam_case_locus :
-    Fragments.Mayan.toCaseLocus absPosition = .absNom := rfl
+    Mayan.toCaseLocus absPosition = .absNom := rfl
 
 /-- Set A linearity: prefixal (per @cite{scott-2023} ch. 2; pan-Mayan). -/
 def setALinearity : MarkerLinearity := .prefixal
@@ -439,4 +439,4 @@ theorem setB_1sg : setBExponent .p1sg = "chin" := rfl
 /-- Set B 3SG marker is the default "tz'=". -/
 theorem setB_3sg : setBExponent .p3sg = defaultSetB := rfl
 
-end Fragments.Mayan.Mam
+end Mam

@@ -87,7 +87,7 @@ derivation via AF (alternation strategy). Both use
 
 namespace Erlewine2016
 
-open Fragments.Mayan.Kaqchikel Minimalist
+open Kaqchikel Minimalist
 open Core.Constraint.OT (mkTableau NamedConstraint ConstraintFamily)
 
 -- ============================================================================

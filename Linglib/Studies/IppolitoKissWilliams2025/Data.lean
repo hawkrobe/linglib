@@ -44,10 +44,10 @@ allows all types except exclamatives.
 
 namespace IppolitoKissWilliams2025.Data
 
-open Fragments.Italian.DiscourseParticles (soloChe)
-open Fragments.Slavic.Russian.DiscourseParticles (tolko)
-open Fragments.Hungarian.DiscourseParticles (csak)
-open Fragments.Mandarin.DiscourseParticles (zhishi)
+open Italian.DiscourseParticles (soloChe)
+open Russian.DiscourseParticles (tolko)
+open Hungarian.DiscourseParticles (csak)
+open Mandarin.DiscourseParticles (zhishi)
 
 -- Clause Type Classification
 

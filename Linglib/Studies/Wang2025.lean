@@ -68,7 +68,7 @@ The epistemic operator K (speaker's beliefs) interacts with exhaustification:
 namespace Wang2025
 
 open Features (Acceptability)
-open Fragments.Mandarin.Particles (MandarinTrigger)
+open Mandarin.Particles (MandarinTrigger)
 
 /-- Context condition for presupposition support. -/
 inductive ContextCondition where

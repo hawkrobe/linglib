@@ -12,7 +12,7 @@ Based on @cite{le-bruyn-de-swart-2022}: scrambled BPs take wide scope but can
 still be kind-referring, supporting @cite{krifka-2004} over @cite{chierchia-1998}.
 -/
 
-namespace Fragments.Dutch.Nouns
+namespace Dutch.Nouns
 
 open Semantics.Kinds.NMP (BlockingPrinciple)
 
@@ -160,4 +160,4 @@ example : boekenUnscrambled.isScrambled = false := rfl
 example : barePluralScope boekenScrambled = "wide" := rfl
 example : barePluralScope boekenUnscrambled = "narrow" := rfl
 
-end Fragments.Dutch.Nouns
+end Dutch.Nouns

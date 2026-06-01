@@ -45,7 +45,7 @@ agent is the surface subject) and expletive-like behavior
 (dispositional middles, where the patient is the surface subject).
 -/
 
-namespace Fragments.Indonesian.VoiceSystem
+namespace Indonesian.VoiceSystem
 
 open Interfaces (VoiceEntry PivotTarget VoiceSystemProfile VoiceSystemSymmetry)
 open Minimalist (VoiceParams ExternalArgSemantics VoiceFlavor)
@@ -310,4 +310,4 @@ theorem unconstrained_third_pronoun_both :
 theorem unconstrained_first_type_two :
     effectivePassiveTypes .unconstrained .firstPerson = [.typeTwo] := rfl
 
-end Fragments.Indonesian.VoiceSystem
+end Indonesian.VoiceSystem

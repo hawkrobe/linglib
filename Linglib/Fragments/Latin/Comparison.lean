@@ -14,7 +14,7 @@ this profile live in `Studies/Stassen2013Comparison.lean`. The
 
 set_option autoImplicit false
 
-namespace Fragments.Latin.Comparison
+namespace Latin.Comparison
 
 open _root_.Typology.Comparison
 
@@ -30,4 +30,4 @@ def comparison : ComparativeProfile :=
   , degreeMarker := "-ior (suffix)"
   , basicOrder := "SOV" }
 
-end Fragments.Latin.Comparison
+end Latin.Comparison

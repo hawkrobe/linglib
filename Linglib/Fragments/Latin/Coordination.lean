@@ -20,7 +20,7 @@ encodes the structural patterns (a_co_b, a_b'co, co'a_b'co).
 
 -/
 
-namespace Fragments.Latin.Coordination
+namespace Latin.Coordination
 
 open Features.Coordination
 
@@ -104,4 +104,4 @@ theorem correlative_entries :
     (allEntries.filter (·.correlative)).length = 4 := by
   native_decide
 
-end Fragments.Latin.Coordination
+end Latin.Coordination

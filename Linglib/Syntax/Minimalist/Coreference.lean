@@ -19,7 +19,7 @@ Coreference constraints via c-command and locality following @cite{chomsky-1981}
 namespace Minimalist.Coreference
 
 open Features (NominalType)
-open Fragments.English.NominalClassification (isNominalCat classifyNominal phiAgree)
+open English.NominalClassification (isNominalCat classifyNominal phiAgree)
 
 /-- Simple clause structure for coreference checking.
     `semanticPl` tracks whether the subject denotes a plurality,

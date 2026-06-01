@@ -29,7 +29,7 @@ Swahili they are not morphologically distinct. @cite{sichel-2014} shows:
 Data from @cite{keenan-comrie-1977} Table 1 and §1.3.2.
 -/
 
-namespace Fragments.Hebrew
+namespace Hebrew
 
 open RelativeClause
 
@@ -101,4 +101,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Gap on subject, resumptive on obliques; "
           ++ "complementizer she-; classic Semitic AH shift" }
 
-end Fragments.Hebrew
+end Hebrew

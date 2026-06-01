@@ -8,7 +8,7 @@ Mandarin predicates relevant to @cite{qing-uegaki-2025}. Properties like
 C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
-namespace Fragments.Mandarin.Predicates
+namespace Mandarin.Predicates
 
 open Semantics.Lexical
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
@@ -167,4 +167,4 @@ theorem liuyip_partition :
   refine ⟨?_, rfl⟩
   decide
 
-end Fragments.Mandarin.Predicates
+end Mandarin.Predicates

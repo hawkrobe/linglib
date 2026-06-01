@@ -24,7 +24,7 @@ usually unpronounced unless topicalized or focused.
 3rd person singular Set B has no overt exponent (∅).
 
 Grammatical function classification is shared across Tseltalan — see
-`Fragments.Mayan.Tseltalan` for the shared definitions.
+`Mayan.Tseltalan` for the shared definitions.
 
 ## Alignment
 
@@ -32,12 +32,12 @@ Tseltalan languages are uniformly **ergative-absolutive** with no
 aspect-conditioned split (in contrast with Cholan; per @cite{polian-2013}).
 -/
 
-namespace Fragments.Mayan.Tsotsil
+namespace Tsotsil
 
-open Fragments.Mayan (MarkerSet PersonNumber MarkerLinearity)
+open Mayan (MarkerSet PersonNumber MarkerLinearity)
 
 -- Re-export shared Tseltalan types
-export Fragments.Mayan.Tseltalan (GramFunction)
+export Mayan.Tseltalan (GramFunction)
 
 -- ============================================================================
 -- § 1: Argument Positions (alias to canonical SAP type)
@@ -49,16 +49,16 @@ export Fragments.Mayan.Tseltalan (GramFunction)
 abbrev ArgPosition := Features.Prominence.ArgumentRole
 
 /-- Case assignment for Tsotsil. Definitionally equal to
-    `Fragments.Mayan.caseTseltalan .Perf`, which derives from
+    `Mayan.caseTseltalan .Perf`, which derives from
     `Alignment.ergative.assignCase`. Tseltalan has no aspect-conditioned
     split. -/
 abbrev ArgPosition.case : ArgPosition → Features.Case :=
-  Fragments.Mayan.caseTseltalan .Perf
+  Mayan.caseTseltalan .Perf
 
 /-- Non-perfective case assignment for Tsotsil. Identical to perfective
     (no aspect split per @cite{polian-2013}). -/
 abbrev ArgPosition.accCase : ArgPosition → Features.Case :=
-  Fragments.Mayan.caseTseltalan .Imp
+  Mayan.caseTseltalan .Imp
 
 -- ============================================================================
 -- § 2: Absolutive Position (LOW-ABS)
@@ -70,7 +70,7 @@ abbrev ArgPosition.accCase : ArgPosition → Features.Case :=
     context (see `setBLinearity`); the LOW-ABS classification refers to
     the structural position of the licensing head, not the linear
     position of every Set B exponent. -/
-def absPosition : Fragments.Mayan.ABSPosition := .low
+def absPosition : Mayan.ABSPosition := .low
 
 -- ============================================================================
 -- § 3: Agreement Marker Linearity
@@ -131,4 +131,4 @@ def extractionProfile : Typology.ExtractionProfile :=
   , distinguishesPosition := false
   , notes := "LOW-ABS Tseltalan; no AF morphology" }
 
-end Fragments.Mayan.Tsotsil
+end Tsotsil

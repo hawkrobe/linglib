@@ -12,7 +12,7 @@ Yoruba (Kwa, Nigeria) shows canonical prepositive bisyndetic coordination
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.yoruba`).
 -/
 
-namespace Fragments.Yoruba.Coordination
+namespace Yoruba.Coordination
 
 open Features.Coordination
 
@@ -25,4 +25,4 @@ def ati : CoordEntry :=
 
 def allEntries : List CoordEntry := [ati]
 
-end Fragments.Yoruba.Coordination
+end Yoruba.Coordination

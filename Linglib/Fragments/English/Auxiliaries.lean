@@ -43,11 +43,11 @@ the last audit):
   side, indirectly)
 
 To find every claim made about a particular entry, grep for
-`Fragments.English.Auxiliaries.<entry>` across `Phenomena/` and
+`English.Auxiliaries.<entry>` across `Phenomena/` and
 `Theories/`.
 -/
 
-namespace Fragments.English.Auxiliaries
+namespace English.Auxiliaries
 
 section Modals
 open Semantics.Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
@@ -329,4 +329,4 @@ end ModalAdverbs
     Used in infinitival complements: "John managed to sleep". -/
 def toInf : Word := Word.mk' "to" .PART
 
-end Fragments.English.Auxiliaries
+end English.Auxiliaries

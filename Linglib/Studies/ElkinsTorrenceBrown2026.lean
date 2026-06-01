@@ -57,7 +57,7 @@ namespace ElkinsTorrenceBrown2026
 -- Part I: Cross-Linguistic Comparison
 -- ============================================================================
 
-open Fragments.Mayan.Mam Fragments.Mayan.Kiche
+open Mam Kiche
 
 -- ============================================================================
 -- § 1: Shared Properties
@@ -70,20 +70,20 @@ theorem both_mark_oblique :
 
 /-- Both exempt temporal obliques from extraction marking. -/
 theorem both_exempt_temporal :
-    (Fragments.Mayan.Mam.temporalOblExtraction.isTemporal = true ∧
-     Fragments.Mayan.Mam.temporalOblExtraction.judgment = .blocked) ∧
-    Fragments.Mayan.Kiche.temporalOblExtraction.wiLicensed = false :=
+    (Mam.temporalOblExtraction.isTemporal = true ∧
+     Mam.temporalOblExtraction.judgment = .blocked) ∧
+    Kiche.temporalOblExtraction.wiLicensed = false :=
   ⟨⟨rfl, rfl⟩, rfl⟩
 
 /-- Neither marks subject extraction (Agent Focus instead). -/
 theorem neither_marks_subject :
     transSubjExtraction.judgment = .blocked ∧
-    Fragments.Mayan.Kiche.subjectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
+    Kiche.subjectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
 
 /-- Neither marks object extraction. -/
 theorem neither_marks_object :
     transObjExtraction.judgment = .blocked ∧
-    Fragments.Mayan.Kiche.objectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
+    Kiche.objectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 2: Parametric Differences
@@ -93,7 +93,7 @@ theorem neither_marks_object :
     Mam =(y)a' IS licensed with reason extraction; K'ichean *wi* is NOT. -/
 theorem reason_oblique_contrast :
     transOblExtraction.judgment = .licensed ∧
-    Fragments.Mayan.Kiche.reasonOblExtraction.wiLicensed = false := ⟨rfl, rfl⟩
+    Kiche.reasonOblExtraction.wiLicensed = false := ⟨rfl, rfl⟩
 
 /-- Mam =(y)a' is conditioned by clause size (Voice must project);
     K'ichean *wi* is conditioned by complementizer presence (FPG). -/
@@ -104,7 +104,7 @@ theorem clause_size_sensitivity :
 
 /-- The FPG holds for K'ichean: matrix *wi* tracks overt complementizer. -/
 theorem kichean_fpg_holds :
-    Fragments.Mayan.Kiche.ldData.all (λ d =>
+    Kiche.ldData.all (λ d =>
       d.embeddedType.hasComp == d.wiOnMatrix) = true := by
   decide
 

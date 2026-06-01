@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Thai
+namespace Thai
 
 /-- Thai: ordinals formed with *thi-* prefix (*thi-nung* 'first',
     *thi-song* 'second') — all regular. No morphological distributive.
@@ -14,4 +14,4 @@ namespace Fragments.Thai
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Thai" "tha" (region := .southeastAsia) (pluralMarking := .none)
 
-end Fragments.Thai
+end Thai

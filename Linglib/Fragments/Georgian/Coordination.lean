@@ -22,7 +22,7 @@ to the Transparency Principle prediction).
 
 -/
 
-namespace Fragments.Georgian.Coordination
+namespace Georgian.Coordination
 
 open Features.Coordination
 
@@ -79,4 +79,4 @@ theorem mu_is_additive :
     (allEntries.filter (·.role == .mu)).all (·.alsoAdditive) = true := by
   native_decide
 
-end Fragments.Georgian.Coordination
+end Georgian.Coordination

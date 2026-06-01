@@ -7,7 +7,7 @@ Modal expressions from Javanese (Austronesian), based on
 @cite{vander-klok-2013a}.
 -/
 
-namespace Fragments.Javanese.Modals
+namespace Javanese.Modals
 
 open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
@@ -47,4 +47,4 @@ def kudu1Ne : ModalExpression := ⟨"kudu1-ne", [wnd, wnc]⟩
 def allExpressions : List ModalExpression :=
   [mesthi, mesthiNe, paleng, oleh, iso, kudu1, kudu1Ne]
 
-end Fragments.Javanese.Modals
+end Javanese.Modals

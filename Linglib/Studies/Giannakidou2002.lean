@@ -486,7 +486,7 @@ theorem aspect_matches_scope :
 -- § 10: Bridge to Greek Fragment
 -- ============================================================================
 
-open Fragments.Greek.StandardModern.TemporalConnectives
+open Greek.StandardModern.TemporalConnectives
 
 /-- Greek lexicalizes the three semantic types as distinct lexemes:
     *mexri* (durative), *para monon* (eventive NPI), *prin* (before).
@@ -759,7 +759,7 @@ theorem aspect_not_required :
 
 -- Bridge to Fragment data --
 
-open Fragments.Greek.StandardModern.TemporalConnectives in
+open Greek.StandardModern.TemporalConnectives in
 /-- Greek strategy confirmed by fragment: three distinct forms. -/
 theorem greek_confirmed :
     mexri.form ≠ paraMonon.form ∧
@@ -767,7 +767,7 @@ theorem greek_confirmed :
     paraMonon.form ≠ prin.form := by
   exact ⟨by decide, by decide, by decide⟩
 
-open Fragments.Icelandic.TemporalConnectives in
+open Icelandic.TemporalConnectives in
 /-- Icelandic strategy confirmed by fragment: two distinct forms with
     veridicality split. -/
 theorem icelandic_confirmed :
@@ -776,7 +776,7 @@ theorem icelandic_confirmed :
     fyrrEn.complementVeridical = false :=
   ⟨by decide, rfl, rfl⟩
 
-open Fragments.Dutch.TemporalConnectives in
+open Dutch.TemporalConnectives in
 /-- Dutch strategy confirmed by fragment: two distinct forms with
     veridicality split. -/
 theorem dutch_confirmed :

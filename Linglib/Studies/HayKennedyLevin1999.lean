@@ -57,7 +57,7 @@ rather than docstring prose.
 namespace HayKennedyLevin1999
 
 open Core.Scale (Boundedness)
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
 -- § 1. HKL's INCREASE operator (eq 16)

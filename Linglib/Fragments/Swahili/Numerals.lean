@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 /-- Swahili: ordinals formed with *-a* prefix + cardinal (*wa-kwanza* 'first'
     has distinct root, *-a-pili* 'second' onward regular). No morphological
@@ -15,4 +15,4 @@ namespace Fragments.Swahili
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Swahili" "swh" (region := .africa) (pluralMarking := .obligatory)
 
-end Fragments.Swahili
+end Swahili

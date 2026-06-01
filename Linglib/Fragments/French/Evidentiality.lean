@@ -10,7 +10,7 @@ treats French as having no grammatical evidentials; Studies-side override
 in `Studies/Aikhenvald2004.lean`.
 -/
 
-namespace Fragments.French.Evidentiality
+namespace French.Evidentiality
 
 open Typology.Modality
 
@@ -23,4 +23,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "fra" ∧ evidentialityProfile.language = "French" :=
   ⟨rfl, rfl⟩
 
-end Fragments.French.Evidentiality
+end French.Evidentiality

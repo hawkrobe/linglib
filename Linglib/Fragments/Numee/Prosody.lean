@@ -30,7 +30,7 @@ boundary phenomenon's eligibility conditions reference syllable weight
 status — neither expressible in a flat `List TRN`.
 -/
 
-namespace Fragments.Numee.Prosody
+namespace Numee.Prosody
 
 open Phonology.Autosegmental.RegisterTier
 
@@ -149,4 +149,4 @@ def paa : Syllable := ⟨"paa", [TRN.downstep, TRN.empty]⟩
 def regCV  : Syllable := ⟨"σ", [TRN.empty]⟩
 def regCVV : Syllable := ⟨"σː", [TRN.empty, TRN.empty]⟩
 
-end Fragments.Numee.Prosody
+end Numee.Prosody

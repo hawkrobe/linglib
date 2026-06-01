@@ -16,7 +16,7 @@ produce the pattern a^m b^n c^m d^n (DAT-NPs, ACC-NPs, DAT-Vs, ACC-Vs),
 which is not context-free.
 -/
 
-namespace Fragments.SwissGerman.Case
+namespace SwissGerman.Case
 
 /-- Swiss German uses the same 4-case inventory as Standard German. -/
 def caseInventory : Finset Features.Case := {.nom, .acc, .gen, .dat}
@@ -55,4 +55,4 @@ theorem dat_acc_distinction :
 theorem loend_aastriiche_same_class :
     verbObjectCase .loend = verbObjectCase .aastriiche := by decide
 
-end Fragments.SwissGerman.Case
+end SwissGerman.Case

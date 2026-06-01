@@ -9,7 +9,7 @@ WALS @cite{de-haan-2013} F77A: `indirectOnly` (verbal-affix coding).
 TAM). Studies-side override.
 -/
 
-namespace Fragments.Abkhaz.Evidentiality
+namespace Abkhaz.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -26,4 +26,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "abk" ∧ evidentialityProfile.language = "Abkhaz" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Abkhaz.Evidentiality
+end Abkhaz.Evidentiality

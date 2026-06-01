@@ -42,7 +42,7 @@ much of the linguistics literature) appear in docstrings only.
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
 
-namespace Fragments.Korean.Pronouns
+namespace Korean.Pronouns
 
 open Pronoun
 open Features.Register (Level)
@@ -204,9 +204,9 @@ theorem gyae_gender_neutral :
     geu.gender = some .masculine ∧
     geunyeo.gender = some .feminine := ⟨rfl, rfl, rfl⟩
 
-end Fragments.Korean.Pronouns
+end Korean.Pronouns
 
-namespace Fragments.Korean
+namespace Korean
 
 /-- Korean (Koreanic) WALS pronoun typology profile. No incl/excl; no
     person marking on verbs; gender in 3rd sg only (geu/geunyeo);
@@ -236,4 +236,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Korean
+end Korean

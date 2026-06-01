@@ -24,7 +24,7 @@ has a PRESENT tense head (indexical-compatible).
 
 -/
 
-namespace Fragments.German.Tense
+namespace German.Tense
 
 open Core.Time.Tense
 open Semantics.Tense.SOT.Decomposition
@@ -84,4 +84,4 @@ theorem perfekt_always_overt (localDomain : Bool) :
     kratzerPerfekt.tenseOvertness localDomain = .overt := by
   cases localDomain <;> rfl
 
-end Fragments.German.Tense
+end German.Tense

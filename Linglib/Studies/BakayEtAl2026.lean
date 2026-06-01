@@ -31,7 +31,7 @@ c-commands the anaphor.
 We derive the retrieval predictions from three independently formalized
 components:
 
-1. **Fragment** (`Fragments.Turkish.Anaphors`): *birbirleri* is a
+1. **Fragment** (`Turkish.Anaphors`): *birbirleri* is a
    reciprocal requiring a plural antecedent
 2. **Theory** (Principle A): reciprocals require a local c-commanding
    clause-mate antecedent
@@ -86,12 +86,12 @@ inductive Feature where
 
 /-- birbirleri is a reciprocal (from the fragment) -/
 theorem birbirleri_is_reciprocal :
-    Fragments.Turkish.Anaphors.birbirleriAcc.anaphorType =
+    Turkish.Anaphors.birbirleriAcc.anaphorType =
     .reciprocal := rfl
 
 /-- Reciprocals require plural antecedents (from the fragment) -/
 theorem reciprocal_requires_plural :
-    Fragments.Turkish.Anaphors.AnaphorType.reciprocal.requiresPluralAntecedent =
+    Turkish.Anaphors.AnaphorType.reciprocal.requiresPluralAntecedent =
     true := rfl
 
 /-- Retrieval cues generated when processing *birbirleri*.

@@ -12,7 +12,7 @@ AA is Fin-based and freely embeddable.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Galician.Pronouns
+namespace Galician.Pronouns
 
 open Pronoun
 open Features.Register (Level)
@@ -133,4 +133,4 @@ theorem che_is_informal : che.register = .informal := rfl
 theorem plural_tv :
     vos_pl.register = .informal ∧ vostedes.register = .formal := ⟨rfl, rfl⟩
 
-end Fragments.Galician.Pronouns
+end Galician.Pronouns

@@ -18,7 +18,7 @@ chasing each other.' Here "wurlu-ngg-a" = 3DU.SBJ-RR-NFUT
 WALS Ch 106 classifies Wambaya as "identical to reflexive."
 -/
 
-namespace Fragments.Wambaya.Reciprocals
+namespace Wambaya.Reciprocals
 
 /-- -ngg- (RR) — reciprocal/reflexive bound morpheme in the auxiliary.
     The gloss value represents the morpheme; surface allomorphs vary
@@ -29,4 +29,4 @@ def rrMorpheme : Word :=
 /-- The same morpheme serves both reciprocal and reflexive functions. -/
 def isIdenticalToReflexive : Bool := true
 
-end Fragments.Wambaya.Reciprocals
+end Wambaya.Reciprocals

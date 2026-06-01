@@ -274,7 +274,7 @@ theorem binary_sharper_separation :
 -- §6. Fragment Factivity Bridge
 -- ============================================================================
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- Canonically factive *verbs* have `factivePresup = true` in the
     Fragment, matching D&T 2022's traditional classification. "be annoyed"
     is copular and emotive — its presupposition derives from emotive
@@ -286,7 +286,7 @@ theorem factive_entries_have_factivePresup :
     reveal.factivePresup = true := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- Nonveridical nonfactive predicates have `factivePresup = false` in the
     Fragment, matching D&T 2022's traditional classification. -/
 theorem nonfactive_entries_lack_factivePresup :
@@ -297,7 +297,7 @@ theorem nonfactive_entries_lack_factivePresup :
   exact ⟨rfl, rfl, rfl, rfl⟩
 
 open DegenTonhauser2021 in
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- The traditional classification is consistent with Fragment factivity
     for verbal entries: every verb classified as factive has
     `factivePresup = true`, every nonfactive has `false`. -/
@@ -309,7 +309,7 @@ theorem traditionalClass_consistent_with_fragment (p : Predicate)
     refine ⟨fun hc => ?_, fun hc => ?_⟩ <;> first | rfl | simp [traditionalClass] at hc
 
 open DegenTonhauser2021 in
-open Fragments.English.Predicates.Copular in
+open English.Predicates.Copular in
 /-- "be annoyed" is a presupposition trigger (emotive factive), while
     "be right" is not. This matches D&T 2022's traditional classification:
     factive predicates trigger presuppositions, veridical nonfactives do not. -/

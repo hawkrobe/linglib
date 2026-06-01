@@ -75,21 +75,21 @@ open Syntax.Case
     the assignment fixed by θ-position rather than by Agree or by NP
     configuration. -/
 theorem voice_assigns_case_by_position :
-    Fragments.Mayan.Mam.ArgPosition.case .A = .erg ∧
-    Fragments.Mayan.Mam.ArgPosition.case .P = .acc ∧
-    Fragments.Mayan.Mam.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
+    Mam.ArgPosition.case .A = .erg ∧
+    Mam.ArgPosition.case .P = .acc ∧
+    Mam.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- The three argument positions receive three distinct cases — a
     tripartite underlying system (ERG ≠ ACC ≠ ABS) at the case-assignment
     layer, prior to any morphological syncretism. Inherits from
     `Alignment.tripartite_distinguishes_all` via the substrate connection. -/
 theorem voice_based_tripartite :
-    Fragments.Mayan.Mam.ArgPosition.case .A ≠
-      Fragments.Mayan.Mam.ArgPosition.case .P ∧
-    Fragments.Mayan.Mam.ArgPosition.case .A ≠
-      Fragments.Mayan.Mam.ArgPosition.case .S ∧
-    Fragments.Mayan.Mam.ArgPosition.case .P ≠
-      Fragments.Mayan.Mam.ArgPosition.case .S :=
+    Mam.ArgPosition.case .A ≠
+      Mam.ArgPosition.case .P ∧
+    Mam.ArgPosition.case .A ≠
+      Mam.ArgPosition.case .S ∧
+    Mam.ArgPosition.case .P ≠
+      Mam.ArgPosition.case .S :=
   Alignment.tripartite_distinguishes_all
 
 -- ============================================================================

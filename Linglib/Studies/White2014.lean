@@ -33,7 +33,7 @@ namespace White2014
 open Semantics.Lexical (ComplementType)
 open Williams2026
 open Semantics.Attitudes.PreExistence
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 /-! ## §1. MCA coverage of the canonical contrast
 

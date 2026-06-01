@@ -38,7 +38,7 @@ Both types assign ergative uniformly (via transitive v⁰) and nominative
 to intransitive subjects (via Infl⁰).
 -/
 
-namespace Fragments.Mayan
+namespace Mayan
 
 -- ============================================================================
 -- § 1: Mayan Absolutive Parameter (observable)
@@ -480,4 +480,4 @@ def caseAt : MayanLang → UD.Aspect → Features.Prominence.ArgumentRole → Fe
   | .Mam,       asp, r => caseMam asp r
   | .Kiche,     asp, r => caseKiche asp r
 
-end Fragments.Mayan
+end Mayan

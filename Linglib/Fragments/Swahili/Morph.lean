@@ -10,7 +10,7 @@ unusual among the 18-language sample in being weakly prefixing rather than
 suffixing.
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 open Morphology
 
@@ -31,4 +31,4 @@ example : morphProfile.iso = "swh" ∧ morphProfile.language = "Swahili" := ⟨r
 /-- B&N 2001 places Swahili in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
-end Fragments.Swahili
+end Swahili

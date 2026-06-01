@@ -12,7 +12,7 @@ Japanese builds polarity items compositionally from wh-words + particles:
 - **dare-demo**: wh + demo → FCI (anyone/whoever)
 -/
 
-namespace Fragments.Japanese.PolarityItems
+namespace Japanese.PolarityItems
 
 open Typology.PolarityItem
 
@@ -50,4 +50,4 @@ def dareDemo : PolarityItemEntry :=
 theorem dareMo_dareDemo_distinct :
     dareMo.polarityType ≠ dareDemo.polarityType := by decide
 
-end Fragments.Japanese.PolarityItems
+end Japanese.PolarityItems
