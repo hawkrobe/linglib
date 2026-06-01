@@ -30,7 +30,7 @@ rather than within a synthetic word.
 
 -/
 
-namespace Fragments.Finnish.Negation
+namespace Finnish.Negation
 
 open Morphology (MorphCategory MorphRule InflDistribution)
 open Typology.Negation
@@ -171,4 +171,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Finnish.Negation
+end Finnish.Negation

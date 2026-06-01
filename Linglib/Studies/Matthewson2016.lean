@@ -89,7 +89,7 @@ theorem circumstantial_is_factual :
 -- ============================================================================
 
 section Gitksan
-open Fragments.Gitksan.Modals
+open Gitksan.Modals
 
 /-- Gitksan ima('a) is factual-evidential: the speaker has inferential
     evidence and cannot disbelieve the prejacent. -/
@@ -125,9 +125,9 @@ end Gitksan
     the boundary. Epistemic modals are purely epistemic; circumstantial
     modals have no epistemic readings. -/
 theorem gitksan_absolute_split :
-    Fragments.Gitksan.Modals.epistemicModals.all (fun e =>
+    Gitksan.Modals.epistemicModals.all (fun e =>
       e.meaning.all (fun ff => ff.flavor == .epistemic)) = true ∧
-    Fragments.Gitksan.Modals.circumstantialModals.all (fun e =>
+    Gitksan.Modals.circumstantialModals.all (fun e =>
       e.meaning.all (fun ff => ff.flavor != .epistemic)) = true := by
   constructor <;> decide
 
@@ -140,13 +140,13 @@ theorem gitksan_absolute_split :
 
 /-- Gitksan ima('a) and gat are both variable-force. -/
 theorem gitksan_variable_force :
-    Fragments.Gitksan.Modals.forceAnalysis Fragments.Gitksan.Modals.imaa = .variableForce ∧
-    Fragments.Gitksan.Modals.forceAnalysis Fragments.Gitksan.Modals.gat = .variableForce := by
+    Gitksan.Modals.forceAnalysis Gitksan.Modals.imaa = .variableForce ∧
+    Gitksan.Modals.forceAnalysis Gitksan.Modals.gat = .variableForce := by
   constructor <;> rfl
 
 /-- Nez Perce o'qa is a strengthened possibility modal. -/
 theorem nez_perce_strengthened :
-    Fragments.NezPerce.Modals.forceAnalysis Fragments.NezPerce.Modals.oqa =
+    NezPerce.Modals.forceAnalysis NezPerce.Modals.oqa =
       .strengthened .possibility := rfl
 
 /-- Both analyses agree: the modals lack duals. -/
@@ -176,29 +176,29 @@ private abbrev consistent := Semantics.Modality.Typology.ForceAnalysis.isConsist
 /-- Gitksan ima('a): variable-force analysis is consistent with
     multiForce pattern (both possibility and necessity in meaning). -/
 theorem gitksan_imaa_force_consistent :
-    consistent (Fragments.Gitksan.Modals.forceAnalysis Fragments.Gitksan.Modals.imaa)
-      (inferForcePattern Fragments.Gitksan.Modals.imaa.meaning) = true := by decide
+    consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.imaa)
+      (inferForcePattern Gitksan.Modals.imaa.meaning) = true := by decide
 
 /-- Gitksan gat: variable-force analysis is consistent. -/
 theorem gitksan_gat_force_consistent :
-    consistent (Fragments.Gitksan.Modals.forceAnalysis Fragments.Gitksan.Modals.gat)
-      (inferForcePattern Fragments.Gitksan.Modals.gat.meaning) = true := by decide
+    consistent (Gitksan.Modals.forceAnalysis Gitksan.Modals.gat)
+      (inferForcePattern Gitksan.Modals.gat.meaning) = true := by decide
 
 /-- Nez Perce o'qa: strengthened possibility is consistent with
     singleForce pattern (only possibility in meaning set). -/
 theorem nez_perce_oqa_force_consistent :
-    consistent (Fragments.NezPerce.Modals.forceAnalysis Fragments.NezPerce.Modals.oqa)
-      (inferForcePattern Fragments.NezPerce.Modals.oqa.meaning) = true := by decide
+    consistent (NezPerce.Modals.forceAnalysis NezPerce.Modals.oqa)
+      (inferForcePattern NezPerce.Modals.oqa.meaning) = true := by decide
 
 /-- St'át'imcets =ka: variable-force analysis is consistent. -/
 theorem statimcets_ka_force_consistent :
-    consistent (Fragments.Statimcets.Modals.forceAnalysis Fragments.Statimcets.Modals.ka)
-      (inferForcePattern Fragments.Statimcets.Modals.ka.meaning) = true := by decide
+    consistent (Statimcets.Modals.forceAnalysis Statimcets.Modals.ka)
+      (inferForcePattern Statimcets.Modals.ka.meaning) = true := by decide
 
 /-- Niuean liga: variable-force analysis is consistent. -/
 theorem niuean_liga_force_consistent :
-    consistent (Fragments.Niuean.Modals.forceAnalysis Fragments.Niuean.Modals.liga)
-      (inferForcePattern Fragments.Niuean.Modals.liga.meaning) = true := by decide
+    consistent (Niuean.Modals.forceAnalysis Niuean.Modals.liga)
+      (inferForcePattern Niuean.Modals.liga.meaning) = true := by decide
 
 -- ============================================================================
 -- §5. Flavour–force correlation (§18.5)
@@ -211,17 +211,17 @@ theorem niuean_liga_force_consistent :
 /-- Niuean: epistemic domain has one modal (both forces), circumstantial
     has two (one per force). -/
 theorem niuean_force_asymmetry :
-    (Fragments.Niuean.Modals.allExpressions.filter (fun e =>
+    (Niuean.Modals.allExpressions.filter (fun e =>
       e.meaning.any (fun ff => ff.flavor == .epistemic))).length = 1 ∧
-    (Fragments.Niuean.Modals.allExpressions.filter (fun e =>
+    (Niuean.Modals.allExpressions.filter (fun e =>
       e.meaning.any (fun ff => ff.flavor == .circumstantial))).length = 2 := by
   constructor <;> decide
 
 /-- All St'át'imcets and Niuean modals satisfy IFF. -/
 theorem all_fragments_iff :
-    Fragments.Statimcets.Modals.allExpressions.all
+    Statimcets.Modals.allExpressions.all
       (fun e => satisfiesIFF e.meaning) = true ∧
-    Fragments.Niuean.Modals.allExpressions.all
+    Niuean.Modals.allExpressions.all
       (fun e => satisfiesIFF e.meaning) = true := by
   constructor <;> decide
 
@@ -235,14 +235,14 @@ theorem all_fragments_iff :
     it is part of a flavor-keyed asymmetry (circumstantials require
     `dim` for any orientation). -/
 theorem imaa_future_requires_dim :
-    Fragments.Gitksan.Modals.requiresDim Fragments.Gitksan.Modals.imaa
+    Gitksan.Modals.requiresDim Gitksan.Modals.imaa
       .future = true := rfl
 
 /-- For epistemics, past and present orientation do not require `dim`. -/
 theorem imaa_past_present_no_dim :
-    Fragments.Gitksan.Modals.requiresDim Fragments.Gitksan.Modals.imaa
+    Gitksan.Modals.requiresDim Gitksan.Modals.imaa
       .past = false ∧
-    Fragments.Gitksan.Modals.requiresDim Fragments.Gitksan.Modals.imaa
+    Gitksan.Modals.requiresDim Gitksan.Modals.imaa
       .present = false := ⟨rfl, rfl⟩
 
 /-- English–Gitksan mirror: English obligatorily marks past orientation
@@ -276,15 +276,15 @@ theorem mirror_orientations :
 
 /-- St'át'imcets =ka satisfies SAV (varies on force, fixed deontic). -/
 theorem statimcets_ka_sav :
-    satisfiesSAV Fragments.Statimcets.Modals.ka.meaning = true := by decide
+    satisfiesSAV Statimcets.Modals.ka.meaning = true := by decide
 
 /-- Nez Perce o'qa satisfies SAV (singleton). -/
 theorem nez_perce_oqa_sav :
-    satisfiesSAV Fragments.NezPerce.Modals.oqa.meaning = true := by decide
+    satisfiesSAV NezPerce.Modals.oqa.meaning = true := by decide
 
 /-- Niuean: all modals satisfy SAV. -/
 theorem niuean_all_sav :
-    Fragments.Niuean.Modals.allExpressions.all
+    Niuean.Modals.allExpressions.all
       (fun e => satisfiesSAV e.meaning) = true := by decide
 
 -- ============================================================================
@@ -351,19 +351,19 @@ def statimcetsInventory : ModalInventory where
   language := "St'át'imcets"
   family := "Salish"
   source := "Rullmann, Matthewson & Davis (2008)"
-  expressions := Fragments.Statimcets.Modals.allExpressions
+  expressions := Statimcets.Modals.allExpressions
 
 def nezPerceInventory : ModalInventory where
   language := "Nez Perce"
   family := "Sahaptian"
   source := "Deal (2011)"
-  expressions := Fragments.NezPerce.Modals.allExpressions
+  expressions := NezPerce.Modals.allExpressions
 
 def niueanInventory : ModalInventory where
   language := "Niuean"
   family := "Polynesian"
   source := "Matthewson et al. (2012), Seiter (1980)"
-  expressions := Fragments.Niuean.Modals.allExpressions
+  expressions := Niuean.Modals.allExpressions
 
 /-- All three Matthewson 2016 inventories satisfy IFF. -/
 theorem all_inventories_iff :

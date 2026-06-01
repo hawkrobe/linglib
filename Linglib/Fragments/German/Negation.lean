@@ -24,7 +24,7 @@ no structural changes beyond the negation marker itself.
 - Constituent negation *nicht* can also negate sub-constituents
 -/
 
-namespace Fragments.German.Negation
+namespace German.Negation
 
 open Typology.Negation
 
@@ -130,4 +130,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.German.Negation
+end German.Negation

@@ -13,8 +13,8 @@ at the inventory level). For @cite{pesetsky-2013}'s POS-as-case
 reduction, see `Pesetsky2013`.
 -/
 
-namespace Fragments.Slavic.Russian.Case
+namespace Russian.Case
 
-abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
 
-end Fragments.Slavic.Russian.Case
+end Russian.Case

@@ -68,11 +68,11 @@ namespace AlonsoOvalleRoyer2024
 open Semantics.Modality (ModalFlavor)
 open Features.ModalIndefinite
 open Semantics.Modality.EventRelativity
-open Fragments.Chuj.ModalIndefinites
-open Fragments.Spanish.ModalIndefinites
-open Fragments.German.ModalIndefinites
-open Fragments.French.ModalIndefinites
-open Fragments.Italian.ModalIndefinites
+open Chuj.ModalIndefinites
+open Spanish.ModalIndefinites
+open German.ModalIndefinites
+open French.ModalIndefinites
+open Italian.ModalIndefinites
 
 
 -- ════════════════════════════════════════════════════════════════

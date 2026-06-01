@@ -24,7 +24,7 @@ This connection is proved in `Studies/AlonsoOvalleRoyer2024.lean`.
 
 set_option autoImplicit false
 
-namespace Fragments.Chuj.ModalIndefinites
+namespace Chuj.ModalIndefinites
 
 open Features.ModalIndefinite
 
@@ -78,4 +78,4 @@ theorem yalnhej_komon_flavor_difference :
   refine ⟨?_, ?_⟩ <;> decide
 
 
-end Fragments.Chuj.ModalIndefinites
+end Chuj.ModalIndefinites

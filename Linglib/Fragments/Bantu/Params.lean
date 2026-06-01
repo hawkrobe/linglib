@@ -32,7 +32,7 @@ Resolution logic (percolation, intersection) lives in the Theory layer
 (`GenderResolution.lean`); study files connect the two.
 -/
 
-namespace Fragments.Bantu
+namespace Bantu
 
 -- ============================================================================
 -- § 0: Core Noun Class Features (@cite{halpert-hammerly-2026} (19))
@@ -326,4 +326,4 @@ def SemanticCore.defaultPluralClass : SemanticCore → Nat
   | .inanimate => 8
   | .nonhuman  => 8
 
-end Fragments.Bantu
+end Bantu

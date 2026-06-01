@@ -53,23 +53,23 @@ open Typology.Comparison
     Sample shrunk from the dissolved file's 18 (dropped Martuthunira: no
     `Fragments/Martuthunira/` directory exists). -/
 def allLanguages : List ComparativeProfile :=
-  [ Fragments.English.Comparison.comparison
-  , Fragments.German.Comparison.comparison
-  , Fragments.Japanese.Comparison.comparison
-  , Fragments.Mandarin.Comparison.comparison
-  , Fragments.Korean.Comparison.comparison
-  , Fragments.Turkish.Comparison.comparison
-  , Fragments.Yoruba.Comparison.comparison
-  , Fragments.HindiUrdu.Comparison.comparison
-  , Fragments.Slavic.Russian.Comparison.comparison
-  , Fragments.Finnish.Comparison.comparison
-  , Fragments.Swahili.Comparison.comparison
-  , Fragments.Latin.Comparison.comparison
-  , Fragments.Thai.Comparison.comparison
-  , Fragments.Tagalog.Comparison.comparison
-  , Fragments.Arabic.ModernStandard.Comparison.comparison
-  , Fragments.Navajo.Comparison.comparison
-  , Fragments.French.Comparison.comparison ]
+  [ English.Comparison.comparison
+  , German.Comparison.comparison
+  , Japanese.Comparison.comparison
+  , Mandarin.Comparison.comparison
+  , Korean.Comparison.comparison
+  , Turkish.Comparison.comparison
+  , Yoruba.Comparison.comparison
+  , HindiUrdu.Comparison.comparison
+  , Russian.Comparison.comparison
+  , Finnish.Comparison.comparison
+  , Swahili.Comparison.comparison
+  , Latin.Comparison.comparison
+  , Thai.Comparison.comparison
+  , Tagalog.Comparison.comparison
+  , Arabic.ModernStandard.Comparison.comparison
+  , Navajo.Comparison.comparison
+  , French.Comparison.comparison ]
 
 -- ============================================================================
 -- §2. Sample-level distributions

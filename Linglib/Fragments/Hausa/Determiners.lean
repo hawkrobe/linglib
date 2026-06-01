@@ -9,9 +9,9 @@ etc.) live in Studies files that consume these entries.
 
 ## Main declarations
 
-* `Fragments.Hausa.Determiners.UniversalQuantifier` — the two
+* `Hausa.Determiners.UniversalQuantifier` — the two
   morphologically distinct Hausa universal quantifiers.
-* `Fragments.Hausa.Determiners.Indefinite` — bare vs. *wani*-series.
+* `Hausa.Determiners.Indefinite` — bare vs. *wani*-series.
 
 ## Implementation notes
 
@@ -21,7 +21,7 @@ Jaggar §9.5.1 Table 24). The `UniversalQuantifier.kowWh` constructor abstracts
 over this productivity rather than enumerating each surface form.
 -/
 
-namespace Fragments.Hausa.Determiners
+namespace Hausa.Determiners
 
 /-- The two morphologically distinct Hausa adnominal universal
 quantifiers (@cite{newman-2000} §17.5; @cite{jaggar-2001} §9.5). -/
@@ -49,4 +49,4 @@ inductive Indefinite where
   | wani
   deriving DecidableEq, Repr
 
-end Fragments.Hausa.Determiners
+end Hausa.Determiners

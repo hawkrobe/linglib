@@ -54,20 +54,20 @@ underdetermines Tagalog's actual paradigm: *kata* (1+2 minimal-inclusive,
 the "we two" form per S&O Chart 7 p. 88), *tayo* (1+2 augmented-inclusive
 covering any 1+2+others grouping per S&O p. 89 — not specifically 1+2+3),
 and *kami* (1+3 exclusive) instantiate Cysouw's *minimal-augmented* type
-(see `Fragments.Tagalog.clusivitySystem` in
+(see `Tagalog.clusivitySystem` in
 `Fragments/Tagalog/Pronouns.lean`). The full Table 12.2 paradigm from
 @cite{himmelmann-2005-tagalog} is also documented there.
 -/
 
 set_option autoImplicit false
 
-namespace Fragments.Tagalog
+namespace Tagalog
 
 /-- Tagalog plurality profile across @cite{wals-2013} Chs 33-36.
 
 Coding (Ch 33): plural word *mga*. Occurrence (Ch 34): all nouns, always
 optional. Pronoun plurality (Ch 35): person-number stem (refined to
-minimal-augmented in `Fragments.Tagalog.clusivitySystem`). Associative
+minimal-augmented in `Tagalog.clusivitySystem`). Associative
 (Ch 36): unique periphrastic — *sina* on personal names. -/
 def pluralityProfile : Typology.PluralityProfile :=
   { language := "Tagalog"
@@ -161,4 +161,4 @@ theorem personalNameMarkers_dat_irregular :
     personalNameMarkers.datPl ≠ personalNameMarkers.datSg ++ "na" := by
   decide
 
-end Fragments.Tagalog
+end Tagalog

@@ -5,7 +5,7 @@ import Linglib.Typology.Color
 @cite{wals-2013}
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese: 6 non-derived basic colors, 11 total basic colors; green
     (*midori*) vs blue (*ao*) distinct in modern Japanese (though *ao*
@@ -21,4 +21,4 @@ def colorProfile : Typology.ColorProfile :=
   , greenBlue := some .distinct
   , redYellow := some .distinct }
 
-end Fragments.Japanese
+end Japanese

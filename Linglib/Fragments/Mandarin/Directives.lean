@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin Chinese: no morphological imperative (commands via bare verb,
     intonation, sentence-final particles *ba*, *a*); special prohibitive
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "No morphological imperative; bare verb + intonation/particles; " ++
              "special prohibitive bie (别) vs declarative bu/mei." }
 
-end Fragments.Mandarin
+end Mandarin

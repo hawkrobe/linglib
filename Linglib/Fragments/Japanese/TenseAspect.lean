@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese (Japonic): perfective/imperfective (*ta*-form vs *te-iru*);
     inflectional past (*-ta*, *-da*); no inflectional future; no distinct
@@ -15,4 +15,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .marked, future := .none
   , perfect := .none, affixPosition := .suffixing }
 
-end Fragments.Japanese
+end Japanese

@@ -11,7 +11,7 @@ Hungarian indefinite pronoun polarity items, typed by the categories from
 - **akárki / bárki**: Free choice items
 -/
 
-namespace Fragments.Hungarian.PolarityItems
+namespace Hungarian.PolarityItems
 
 open Typology.PolarityItem
 
@@ -50,4 +50,4 @@ def akarki : PolarityItemEntry :=
 theorem senki_akarki_distinct :
     senki.polarityType ≠ akarki.polarityType := by decide
 
-end Fragments.Hungarian.PolarityItems
+end Hungarian.PolarityItems

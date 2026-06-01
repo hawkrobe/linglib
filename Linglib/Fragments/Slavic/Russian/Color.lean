@@ -5,7 +5,7 @@ import Linglib.Typology.Color
 @cite{wals-2013}
 -/
 
-namespace Fragments.Slavic.Russian
+namespace Russian
 
 /-- Russian: 6 non-derived basic colors, 11 total basic colors (famously
     distinguishes *sinij* 'dark blue' from *goluboj* 'light blue', but WALS
@@ -20,4 +20,4 @@ def colorProfile : Typology.ColorProfile :=
   , greenBlue := some .distinct
   , redYellow := some .distinct }
 
-end Fragments.Slavic.Russian
+end Russian

@@ -29,11 +29,11 @@ both manner and result; patient-salient roots have result without
 manner. Spelt out structurally below.
 -/
 
-namespace Fragments.Mayan.Yukatek.Operators
+namespace Yukatek.Operators
 
 open Semantics.Lexical.Roots
 open Morphology.Derivation
-open Fragments.Mayan.Yukatek.Roots
+open Yukatek.Roots
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Four Operators
@@ -90,4 +90,4 @@ def positionalTal : DerivOp :=
 def inventory : Inventory :=
   [affectiveT, zeroDeriv, causativeS, positionalTal]
 
-end Fragments.Mayan.Yukatek.Operators
+end Yukatek.Operators

@@ -5,7 +5,7 @@ import Linglib.Semantics.Gradability.Basic
 Gradable adjective entries following @cite{kennedy-2007}. Scale type, dimension, antonyms.
 -/
 
-namespace Fragments.English.Predicates.Adjectival
+namespace English.Predicates.Adjectival
 
 open Semantics.Gradability (AntonymRelation GradableAdjEntry)
 open Core.Scale (Boundedness)
@@ -877,4 +877,4 @@ def allEntries : List (AdjectivalPredicateEntry) := [
 def lookup (form : String) : Option (AdjectivalPredicateEntry) :=
   allEntries.find? (·.form == form)
 
-end Fragments.English.Predicates.Adjectival
+end English.Predicates.Adjectival

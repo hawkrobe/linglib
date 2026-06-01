@@ -51,7 +51,7 @@ the chapter cites.
 
 namespace Matthewson2013
 
-open Fragments.Gitksan.Modals
+open Gitksan.Modals
 open Semantics.Modality (ForceAnalysis TemporalPerspective TemporalOrientation)
 
 -- ============================================================================
@@ -146,7 +146,7 @@ theorem peterson_imaa : forceAnalysis imaa = .variableForce := rfl
 
 /-- Deal 2011: Nez Perce `o'qa` is strengthened possibility. -/
 theorem deal_oqa :
-    Fragments.NezPerce.Modals.forceAnalysis Fragments.NezPerce.Modals.oqa =
+    NezPerce.Modals.forceAnalysis NezPerce.Modals.oqa =
       .strengthened .possibility := rfl
 
 /-- `imaa` admits necessity readings (variable force). -/
@@ -154,8 +154,8 @@ theorem imaa_admits_necessity : (forceAnalysis imaa).AdmitsNecessity := by decid
 
 /-- `o'qa` admits necessity readings (pragmatically strengthened). -/
 theorem oqa_admits_necessity :
-    (Fragments.NezPerce.Modals.forceAnalysis
-      Fragments.NezPerce.Modals.oqa).AdmitsNecessity := by decide
+    (NezPerce.Modals.forceAnalysis
+      NezPerce.Modals.oqa).AdmitsNecessity := by decide
 
 -- ============================================================================
 -- §5. Figure 4 paradigm: temporal perspective × orientation for imaa

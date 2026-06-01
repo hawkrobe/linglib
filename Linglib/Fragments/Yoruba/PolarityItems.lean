@@ -13,7 +13,7 @@ form covering both NPI and FCI functions:
 
 -/
 
-namespace Fragments.Yoruba.PolarityItems
+namespace Yoruba.PolarityItems
 
 open Typology.PolarityItem
 
@@ -40,4 +40,4 @@ def enikeni : PolarityItemEntry :=
 
 theorem enikeni_is_npi_fci : enikeni.polarityType = .npiFci := rfl
 
-end Fragments.Yoruba.PolarityItems
+end Yoruba.PolarityItems

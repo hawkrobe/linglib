@@ -13,7 +13,7 @@ Quechua indefinite pronoun polarity items, typed by the categories from
 
 -/
 
-namespace Fragments.Quechua.PolarityItems
+namespace Quechua.PolarityItems
 
 open Typology.PolarityItem
 
@@ -59,4 +59,4 @@ def maijanPash : PolarityItemEntry :=
 theorem piPash_manaPiPash_distinct :
     piPash.polarityType = manaPiPash.polarityType := rfl
 
-end Fragments.Quechua.PolarityItems
+end Quechua.PolarityItems

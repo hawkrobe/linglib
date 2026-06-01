@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
 /-- Finnish: *ensimmäinen* 'first' is suppletive, *toinen* 'second' from *eri*
     'different', higher ordinals regular with *-(n)s* suffix (*kolmas* 'third').
@@ -14,4 +14,4 @@ namespace Fragments.Finnish
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Finnish" "fin" (region := .europe) (pluralMarking := .obligatory)
 
-end Fragments.Finnish
+end Finnish

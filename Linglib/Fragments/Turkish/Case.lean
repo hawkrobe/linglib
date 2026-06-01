@@ -13,7 +13,7 @@ a rich peripheral inventory built up exactly in the predicted order.
 
 -/
 
-namespace Fragments.Turkish.Case
+namespace Turkish.Case
 
 /-- Turkish case inventory: NOM(∅), ACC(-I), GEN(-In), DAT(-A),
     LOC(-DA), ABL(-DAn). -/
@@ -23,4 +23,4 @@ def caseInventory : Finset Features.Case :=
 -- Perfectly contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 3, 2).
 example : Features.Case.IsValidInventory caseInventory := by decide
 
-end Fragments.Turkish.Case
+end Turkish.Case

@@ -119,7 +119,7 @@ open Semantics.Attitudes.ClauseDenotation.Situation
 open Bondarenko2022
   (NominalSort transparentSSMapping ClauseStructurePath
    bare_argument_predicted_impossible)
-open Fragments.Greek.StandardModern.Complementizers (GreekComplementizer)
+open Greek.StandardModern.Complementizers (GreekComplementizer)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Studies-local apparatus
@@ -475,7 +475,7 @@ theorem preferential_stative_verb_exists :
     ∃ (v : VerbCore),
       (∃ p, v.attitude = some (.preferential p)) ∧
       v.vendlerClass = some .state :=
-  ⟨Fragments.Greek.StandardModern.Complementizers.metaniono,
+  ⟨Greek.StandardModern.Complementizers.metaniono,
    ⟨_, rfl⟩, rfl⟩
 
 /-- And a (doxastic, stative) verb — *pistévo* 'believe'. The
@@ -488,7 +488,7 @@ theorem doxastic_stative_verb_exists :
     ∃ (v : VerbCore),
       (∃ vd, v.attitude = some (.doxastic vd)) ∧
       v.vendlerClass = some .state :=
-  ⟨Fragments.Greek.StandardModern.Complementizers.pistevo,
+  ⟨Greek.StandardModern.Complementizers.pistevo,
    ⟨_, rfl⟩, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════

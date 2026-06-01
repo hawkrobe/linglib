@@ -52,7 +52,7 @@ Analyzed as the same case-assigning mechanism in environments where
 Infl⁰ is absent.
 -/
 
-namespace Fragments.Mayan.Qanjobal
+namespace Qanjobal
 
 open Minimalist
 
@@ -131,9 +131,9 @@ theorem af_permits_extraction :
 
 /-- Project Q'anjob'al's `VerbMorphology` (which carries the
     Q'anjob'al-specific `statusSuffix` field) down to the pan-Mayan
-    `Fragments.Mayan.VerbForm` for cross-Mayan typology theorems. The
+    `Mayan.VerbForm` for cross-Mayan typology theorems. The
     `hasAFSuffix` flag is the discriminator: AF morphology = AF form. -/
-def VerbMorphology.toMayanVerbForm (v : VerbMorphology) : Fragments.Mayan.VerbForm :=
+def VerbMorphology.toMayanVerbForm (v : VerbMorphology) : Mayan.VerbForm :=
   if v.hasAFSuffix then .agentFocus else .transitive
 
 /-- AF morphology projects to `.agentFocus`; regular transitive to
@@ -222,4 +222,4 @@ def extractionProfile : Typology.ExtractionProfile :=
   , distinguishesPosition := true
   , notes := "AF (*-on*) for 3rd person agent extraction; Coon, Mateo Pedro & Preminger 2014" }
 
-end Fragments.Mayan.Qanjobal
+end Qanjobal

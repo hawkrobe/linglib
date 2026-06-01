@@ -18,7 +18,7 @@ here per @cite{kornfilt-1997}'s enclitic analysis.
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.turkish`).
 -/
 
-namespace Fragments.Turkish.Coordination
+namespace Turkish.Coordination
 
 open Features.Coordination
 
@@ -38,4 +38,4 @@ def de : CoordEntry :=
 
 def allEntries : List CoordEntry := [ve, de]
 
-end Fragments.Turkish.Coordination
+end Turkish.Coordination

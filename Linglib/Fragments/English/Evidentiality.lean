@@ -9,7 +9,7 @@ is conveyed lexically by adverbs ("apparently", "reportedly") or hedging
 expressions, never by obligatory verbal morphology.
 -/
 
-namespace Fragments.English.Evidentiality
+namespace English.Evidentiality
 
 open Typology.Modality
 
@@ -21,4 +21,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "eng" ∧ evidentialityProfile.language = "English" :=
   ⟨rfl, rfl⟩
 
-end Fragments.English.Evidentiality
+end English.Evidentiality

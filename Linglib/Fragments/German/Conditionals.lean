@@ -13,7 +13,7 @@ Conditional connectives in German and their HC/PC restrictions.
   readings.
 -/
 
-namespace Fragments.German.Conditionals
+namespace German.Conditionals
 
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 
@@ -39,4 +39,4 @@ def wenn : ConditionalMarker where
   markerType := .both
   notes := "Can mark either HC or PC"
 
-end Fragments.German.Conditionals
+end German.Conditionals

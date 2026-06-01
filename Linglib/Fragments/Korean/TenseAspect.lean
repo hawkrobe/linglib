@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013} @cite{cumming-2026}
 -/
 
-namespace Fragments.Korean
+namespace Korean
 
 /-- Korean (Koreanic): perfective/imperfective (*-었-* vs *-고 있-*);
     inflectional past (*-었-*); inflectional future (*-겠-*); no distinct
@@ -18,4 +18,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , perfect := .none, affixPosition := .suffixing
   , evidentialityCoding := some .verbalAffix }
 
-end Fragments.Korean
+end Korean

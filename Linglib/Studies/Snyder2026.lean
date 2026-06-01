@@ -685,10 +685,10 @@ colours/tastes. The `kf{Carrier}` naming convention (`kfTWO`, `kfRed`,
     colour root has multiple tokens (e.g., several physical instances
     of `rood` on a paint swatch per @cite{snyder-2026} (94)). -/
 structure ColorToken where
-  /-- The Dutch colour-adjective entry (`Fragments.Dutch.Adjectives.rood`,
+  /-- The Dutch colour-adjective entry (`Dutch.Adjectives.rood`,
       `wit`, `groen`, ...). The colour-domain restriction is documentary;
       the type itself is `AdjEntry`. -/
-  root : Fragments.Dutch.Adjectives.AdjEntry
+  root : Dutch.Adjectives.AdjEntry
   /-- Distinguishing index for multiple tokens of the same colour root. -/
   idx : Nat
   deriving DecidableEq, Repr
@@ -710,19 +710,19 @@ def kfRed : Setoid ColorToken where
 def red : Set ColorToken := Set.univ
 
 /-- A canonical witness colour token for each colour-adjective root. -/
-def canonicalColor (a : Fragments.Dutch.Adjectives.AdjEntry) : ColorToken :=
+def canonicalColor (a : Dutch.Adjectives.AdjEntry) : ColorToken :=
   ⟨a, 0⟩
 
 /-- A canonical 6-token domain with one witness per Dutch alternating
     colour root (per @cite{mcnally-deswart-2011} §1, the inflection-
     alternating colour sub-paradigm). -/
 def canonicalColorDomain : List ColorToken :=
-  [canonicalColor Fragments.Dutch.Adjectives.rood,
-   canonicalColor Fragments.Dutch.Adjectives.wit,
-   canonicalColor Fragments.Dutch.Adjectives.groen,
-   canonicalColor Fragments.Dutch.Adjectives.geel,
-   canonicalColor Fragments.Dutch.Adjectives.blauw,
-   canonicalColor Fragments.Dutch.Adjectives.zwart]
+  [canonicalColor Dutch.Adjectives.rood,
+   canonicalColor Dutch.Adjectives.wit,
+   canonicalColor Dutch.Adjectives.groen,
+   canonicalColor Dutch.Adjectives.geel,
+   canonicalColor Dutch.Adjectives.blauw,
+   canonicalColor Dutch.Adjectives.zwart]
 
 theorem canonicalColorDomain_nodup : canonicalColorDomain.Nodup := by decide
 
@@ -736,22 +736,22 @@ claim that colour names refer polymorphically to subkinds. -/
 /-- Distinct colour roots project to distinct Mendia subkinds — the
     colour analog of `subkinds_distinct` for numerals. -/
 theorem color_subkinds_distinct
-    {a₁ a₂ : Fragments.Dutch.Adjectives.AdjEntry} (h : a₁ ≠ a₂) :
+    {a₁ a₂ : Dutch.Adjectives.AdjEntry} (h : a₁ ≠ a₂) :
     subkindOf kfRed ⟨a₁, 0⟩ ≠ subkindOf kfRed ⟨a₂, 0⟩ :=
   subkindOf_ne kfRed h
 
 /-- Indicator predicate: token `t` belongs to the colour-`a` subkind. -/
-def inColorSubkind (a : Fragments.Dutch.Adjectives.AdjEntry)
+def inColorSubkind (a : Dutch.Adjectives.AdjEntry)
     (t : ColorToken) : Bool := decide (t.root = a)
 
 /-- The colour close-appositive `the color [a]` over the canonical 6-token
     domain returns precisely the canonical witness of colour root `a`,
     when `a` is in the canonical-colour-list. -/
 theorem closeAppositive_canonical_color
-    (a : Fragments.Dutch.Adjectives.AdjEntry)
-    (h : a ∈ [Fragments.Dutch.Adjectives.rood, Fragments.Dutch.Adjectives.wit,
-             Fragments.Dutch.Adjectives.groen, Fragments.Dutch.Adjectives.geel,
-             Fragments.Dutch.Adjectives.blauw, Fragments.Dutch.Adjectives.zwart]) :
+    (a : Dutch.Adjectives.AdjEntry)
+    (h : a ∈ [Dutch.Adjectives.rood, Dutch.Adjectives.wit,
+             Dutch.Adjectives.groen, Dutch.Adjectives.geel,
+             Dutch.Adjectives.blauw, Dutch.Adjectives.zwart]) :
     closeAppositive canonicalColorDomain (inColorSubkind a) (fun _ => true)
       = some (canonicalColor a) := by
   simp only [List.mem_cons, List.not_mem_nil, or_false] at h
@@ -762,7 +762,7 @@ theorem closeAppositive_canonical_color
     distinct canonical witness tokens, supporting the polymorphic-kind
     analysis of @cite{snyder-2026} §6 (94)-(98). -/
 theorem distinct_colors_distinct_close_appositives
-    {a₁ a₂ : Fragments.Dutch.Adjectives.AdjEntry} (h : a₁ ≠ a₂) :
+    {a₁ a₂ : Dutch.Adjectives.AdjEntry} (h : a₁ ≠ a₂) :
     canonicalColor a₁ ≠ canonicalColor a₂ :=
   fun hEq => h (congrArg ColorToken.root hEq)
 

@@ -47,8 +47,8 @@ namespace TaraldsenEtAl2018
 
 open Morphology.Nanosyntax
 open Morphology.DM.VI
-open Fragments.Xhosa
-open Fragments.Bantu
+open Xhosa
+open Bantu
 open Aikhenvald2000 (xhosa)
 open Typology.NounCategorizationSystem (isNounClassType isClassifierType)
 

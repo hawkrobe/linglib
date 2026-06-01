@@ -61,8 +61,8 @@ with multiple context-dependent meanings:
 namespace Wood2023
 
 open Morphology.DM.Allosemy
-open Fragments.Icelandic.Nominalizations
-open Fragments.Icelandic.Predicates
+open Icelandic.Nominalizations
+open Icelandic.Predicates
 open Wood2015 (opnast_info)
 
 -- ============================================================================

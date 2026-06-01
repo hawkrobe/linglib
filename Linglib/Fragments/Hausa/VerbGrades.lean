@@ -33,7 +33,7 @@ or about Hausa verb lists**, not `rfl` checks on per-verb stipulations.
 Per-cell verifications appear as `example`s.
 -/
 
-namespace Fragments.Hausa.VerbGrades
+namespace Hausa.VerbGrades
 
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Semantics.Lexical (VerbCore VoiceType ComplementType)
@@ -368,4 +368,4 @@ example : ¬ gangara.canonical := by decide
     grade and tone melody are unchanged. -/
 example : gangara.grade = gr1 ∧ gangara.tones = [.H, .L] := ⟨rfl, rfl⟩
 
-end Fragments.Hausa.VerbGrades
+end Hausa.VerbGrades

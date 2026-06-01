@@ -190,7 +190,7 @@ namespace Pesetsky1995
 open Minimalist
 open Semantics.Causation.Psych
 open Phenomena.PsychVerbs
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
 -- § 1. Concrete Cascade Structures

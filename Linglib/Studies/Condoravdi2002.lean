@@ -448,9 +448,9 @@ end Adverbs
     entry), the analysis would not apply at the surface-form level.
 
     Other studies binding these Fragment entries are discoverable by
-    greping `Fragments.English.Auxiliaries.<entry>` across `Studies/`. -/
+    greping `English.Auxiliaries.<entry>` across `Studies/`. -/
 theorem might_have_distinct_aux_types :
-    Fragments.English.Auxiliaries.might.auxType ≠
-      Fragments.English.Auxiliaries.have_.auxType := by decide
+    English.Auxiliaries.might.auxType ≠
+      English.Auxiliaries.have_.auxType := by decide
 
 end Condoravdi2002

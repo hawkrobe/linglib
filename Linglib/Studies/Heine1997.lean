@@ -452,7 +452,7 @@ theorem wals_agrees_with_predicativeSource :
 
 /-! ### Russian: Location Schema (primary) + Action Schema (`imet'`, secondary). -/
 section Russian
-open Fragments.Slavic.Russian.Possession
+open Russian.Possession
 
 /-- Russian's primary Location Schema matches Heine's predictions:
     have-construction (not belong), possessee as subject. -/
@@ -486,7 +486,7 @@ end Russian
 
 /-! ### Finnish: Location Schema at Stage III. -/
 section Finnish
-open Fragments.Finnish.Possession
+open Finnish.Possession
 
 /-- Finnish's Location Schema matches Heine's predictions:
     have-construction (not belong), possessee as subject, Pred1 arity. -/
@@ -511,7 +511,7 @@ end Finnish
 
 /-! ### Turkish: Genitive Schema (primary) + Location + Equation variants. -/
 section Turkish
-open Fragments.Turkish.Possession
+open Turkish.Possession
 
 /-- Turkish's primary Genitive Schema matches Heine's predictions:
     have-construction (not belong), possessee as subject. -/
@@ -544,7 +544,7 @@ end Turkish
 
 /-! ### Swahili: Companion Schema (Bantu `-na`). -/
 section Swahili
-open Fragments.Swahili.Possession
+open Swahili.Possession
 
 /-- Swahili's Companion Schema matches Heine's predictions:
     have-construction (not belong), possessor as subject, Pred2. -/

@@ -32,7 +32,7 @@ patterns with negative concord (solidarity), necessity MC contrasts (competence)
 namespace LiuRotter2025
 
 open Phenomena.Modality.ModalConcord.LiuRotter2025
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 open Semantics.Modality (ModalForce ModalItem ConcordType ConcordType.fromModalForce)
 open Features.Register (SocialIndex)
 

@@ -29,7 +29,7 @@ acceptability breaks them too.
 
 namespace Phenomena.AuxiliaryVerbs.Diagnostics
 
-open Fragments.English.Auxiliaries (AuxEntry AuxType)
+open English.Auxiliaries (AuxEntry AuxType)
 open Phenomena.WordOrder.SubjectAuxInversion (SAIContext Acceptability SAIDatum)
 
 /-! ## Types -/
@@ -119,7 +119,7 @@ paradigm gaps at *may* and *am*. The `negForm : Option String` field in
 def hasContractedNeg (e : AuxEntry) : Bool := e.negForm.isSome
 
 section FragmentChecks
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 
 theorem can_has_neg     : hasContractedNeg can    = true  := rfl
 theorem will_has_neg    : hasContractedNeg will   = true  := rfl
@@ -138,7 +138,7 @@ end FragmentChecks
 /-! ## Aggregate collections -/
 
 section Collections
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 
 /-- Full auxiliaries (modals + do/be/have). -/
 def allFullAuxiliaries : List AuxEntry :=
@@ -202,7 +202,7 @@ auxiliary-passes and lexical-verb-fails for each NICE property, plus
 do-support successes (where `do` itself is the auxiliary). -/
 
 section SAIBridge
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 open Phenomena.WordOrder.SubjectAuxInversion
 
 /-- Pairs of (NICE profile, SAI datum) where `predictSAI` should reproduce

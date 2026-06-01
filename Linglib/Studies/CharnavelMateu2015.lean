@@ -235,7 +235,7 @@ theorem cm_unification :
     CLRViolated (.empathyLocus, .discourseParticipant) := ⟨by decide, by decide⟩
 
 -- ============================================================================
--- § 7: Spanish Anchoring (Fragments.Spanish.Clitics)
+-- § 7: Spanish Anchoring (Spanish.Clitics)
 -- ============================================================================
 
 /-- Spanish *me lo* — 1.DAT.ACC. Under C&M's typology, the 1.dat clitic is
@@ -243,22 +243,22 @@ theorem cm_unification :
     when *lo* is **not** read with an attitude-holder antecedent
     (paper §1.1, ex. 6 type: licit accusative). -/
 theorem spanish_me_lo_dat_is_discourse :
-    Fragments.Spanish.Clitics.me_dat.person = .first ∧
-    Fragments.Spanish.Clitics.lo.person = .third := ⟨rfl, rfl⟩
+    Spanish.Clitics.me_dat.person = .first ∧
+    Spanish.Clitics.lo.person = .third := ⟨rfl, rfl⟩
 
 /-- Spanish *te lo* — 2.DAT + 3.ACC. Same pattern: 2.dat is a discourse
     participant; the cluster is licit on non-attitude-holder readings. -/
 theorem spanish_te_lo_dat_is_discourse :
-    Fragments.Spanish.Clitics.te_dat.person = .second ∧
-    Fragments.Spanish.Clitics.lo.person = .third := ⟨rfl, rfl⟩
+    Spanish.Clitics.te_dat.person = .second ∧
+    Spanish.Clitics.lo.person = .third := ⟨rfl, rfl⟩
 
 /-- Spanish *le lo* (which surfaces as *se lo* by the spurious-se rule):
     3.DAT + 3.ACC. The CLR-relevant configuration — empathy locus +
     attitude holder. Bad under *de se* readings of *lo*
     (paper §1, ex. 2b; §3.4 implementation). -/
 theorem spanish_le_lo_is_clr_pair :
-    Fragments.Spanish.Clitics.le_dat.person = .third ∧
-    Fragments.Spanish.Clitics.lo.person = .third := ⟨rfl, rfl⟩
+    Spanish.Clitics.le_dat.person = .third ∧
+    Spanish.Clitics.lo.person = .third := ⟨rfl, rfl⟩
 
 /-- The clash-yielding cluster for Spanish *se lo* / *le lo* under
     a *de se* reading: empathy + attitude holder. -/
@@ -268,8 +268,8 @@ theorem spanish_le_lo_de_se_violates_clr :
 /-- The PCC pattern *le me / *le te in Spanish: 3.dat + 1/2.acc — empathy
     locus + discourse participant. -/
 theorem spanish_le_me_pcc_violates :
-    Fragments.Spanish.Clitics.le_dat.person = .third ∧
-    Fragments.Spanish.Clitics.me_acc.person = .first ∧
+    Spanish.Clitics.le_dat.person = .third ∧
+    Spanish.Clitics.me_acc.person = .first ∧
     CLRViolated (.empathyLocus, .discourseParticipant) := ⟨rfl, rfl, by decide⟩
 
 end CharnavelMateu2015

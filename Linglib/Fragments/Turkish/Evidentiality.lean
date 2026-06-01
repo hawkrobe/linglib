@@ -10,7 +10,7 @@ indirect-evidential of a major language. Fused with TAM. WALS and
 Aikhenvald agree.
 -/
 
-namespace Fragments.Turkish.Evidentiality
+namespace Turkish.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -28,4 +28,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "tur" ∧ evidentialityProfile.language = "Turkish" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Turkish.Evidentiality
+end Turkish.Evidentiality

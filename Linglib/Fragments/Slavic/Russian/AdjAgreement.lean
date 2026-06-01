@@ -15,7 +15,7 @@ fully φ/κ-specified, MAG(a) is satisfied. Russian correctly violates
 the HFF: A–XP–N is attested (24).
 -/
 
-namespace Fragments.Slavic.Russian.AdjAgreement
+namespace Russian.AdjAgreement
 
 open Minimalist.Modification
 
@@ -37,4 +37,4 @@ def entry : AdjAgreementEntry where
 theorem same_agreement : entry.sameAgreement = true := by native_decide
 theorem phi_kappa_complete : entry.phiKappaComplete = true := by native_decide
 
-end Fragments.Slavic.Russian.AdjAgreement
+end Russian.AdjAgreement

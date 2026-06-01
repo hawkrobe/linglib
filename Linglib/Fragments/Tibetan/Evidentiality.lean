@@ -9,7 +9,7 @@ Two-choice direct vs indirect via copula/auxiliary contrast. *red*/*yod*
 Egophoric system. WALS Ch 77 has no entry; the fallback fires.
 -/
 
-namespace Fragments.Tibetan.Evidentiality
+namespace Tibetan.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -27,4 +27,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "bod" ∧
     evidentialityProfile.language = "Tibetan (Lhasa)" := ⟨rfl, rfl⟩
 
-end Fragments.Tibetan.Evidentiality
+end Tibetan.Evidentiality

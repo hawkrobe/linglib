@@ -55,7 +55,7 @@ open Minimalist
 open Semantics.Causation.Psych
 open Semantics.Causation.PsychLink
 open Core.Time (Interval)
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Phenomena.PsychVerbs
 open SolstadBott2022
   (stimExpSubjectProfile stimExpObjectProfile expStimSubjectProfile)

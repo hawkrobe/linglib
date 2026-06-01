@@ -11,7 +11,7 @@ and freely embeddable.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Maithili.Pronouns
+namespace Maithili.Pronouns
 
 open Pronoun
 
@@ -117,4 +117,4 @@ theorem markers_three_levels :
 theorem third_person_honorific :
     uN.register = .informal ∧ o.register = .neutral := ⟨rfl, rfl⟩
 
-end Fragments.Maithili.Pronouns
+end Maithili.Pronouns

@@ -16,7 +16,7 @@ as μ; the latter doubles as the additive ("also") particle.
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.korean`).
 -/
 
-namespace Fragments.Korean.Coordination
+namespace Korean.Coordination
 
 open Features.Coordination
 
@@ -34,4 +34,4 @@ def to_ : CoordEntry :=
 
 def allEntries : List CoordEntry := [irang, to_]
 
-end Fragments.Korean.Coordination
+end Korean.Coordination

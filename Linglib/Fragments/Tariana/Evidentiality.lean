@@ -10,7 +10,7 @@ inferred, assumed, reported. WALS @cite{de-haan-2013} F77A codes Tariana as
 the 5-way system. Studies-side override.
 -/
 
-namespace Fragments.Tariana.Evidentiality
+namespace Tariana.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -28,4 +28,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "tae" ∧ evidentialityProfile.language = "Tariana" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Tariana.Evidentiality
+end Tariana.Evidentiality

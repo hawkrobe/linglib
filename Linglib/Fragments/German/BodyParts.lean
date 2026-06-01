@@ -5,7 +5,7 @@ import Linglib.Typology.BodyParts
 @cite{wals-2013}
 -/
 
-namespace Fragments.German
+namespace German
 
 /-- German: distinct *Hand*/*Arm* and *Finger*/*Hand*. -/
 def bodyPartProfile : Typology.BodyPartProfile :=
@@ -15,4 +15,4 @@ def bodyPartProfile : Typology.BodyPartProfile :=
   , handArm := some .different
   , fingerHand := some .different }
 
-end Fragments.German
+end German

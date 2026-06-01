@@ -29,7 +29,7 @@ The Turkish pattern is often cited in @cite{aissen-2003} as a paradigm
 case of specificity-driven DOM.
 -/
 
-namespace Fragments.Turkish.Definiteness
+namespace Turkish.Definiteness
 
 /-- Object marking types in Turkish. -/
 inductive ObjectMarking where
@@ -88,6 +88,6 @@ theorem acc_free : mustBePreverbal .accusative = false := rfl
 
 /-- The accusative case is in the Turkish case inventory. -/
 theorem acc_in_inventory :
-    .acc ∈ Fragments.Turkish.Case.caseInventory := by decide
+    .acc ∈ Turkish.Case.caseInventory := by decide
 
-end Fragments.Turkish.Definiteness
+end Turkish.Definiteness

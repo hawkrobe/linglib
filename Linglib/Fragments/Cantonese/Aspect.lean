@@ -18,7 +18,7 @@ Yip 2026's analysis and lives in
 `Studies/LiuYip2026.lean`.
 -/
 
-namespace Fragments.Cantonese.Aspect
+namespace Cantonese.Aspect
 
 open Minimalist (AspFlavor AspHead)
 
@@ -115,4 +115,4 @@ theorem gwo_is_inner : gwo.toAspHead.flavor = .inner := rfl
 theorem faan_no_dynamicity_requirement :
     faan.toAspHead.selectsDynamicity = none := rfl
 
-end Fragments.Cantonese.Aspect
+end Cantonese.Aspect

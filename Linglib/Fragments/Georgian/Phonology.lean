@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Georgian.Phonology
+namespace Georgian.Phonology
 
 /-- Canonical Georgian phoneme inventory: first PHOIBLE inventory for ISO `kat`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Georgian.kat
 
-end Fragments.Georgian.Phonology
+end Georgian.Phonology

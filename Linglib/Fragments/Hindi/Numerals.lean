@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hindi
+namespace Hindi
 
 /-- Hindi: "first" (*pehla*) suppletive, "second" (*dusra*) partially
     suppletive, higher ordinals regular with *-vam* suffix. Distributive by
@@ -14,4 +14,4 @@ namespace Fragments.Hindi
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Hindi" "hin" (region := .southAsia) (pluralMarking := .obligatory)
 
-end Fragments.Hindi
+end Hindi

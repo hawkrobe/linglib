@@ -12,7 +12,7 @@ Turkish indefinite pronoun polarity items, typed by the categories from
 - **herhangi biri**: Free choice item
 -/
 
-namespace Fragments.Turkish.PolarityItems
+namespace Turkish.PolarityItems
 
 open Typology.PolarityItem
 
@@ -62,4 +62,4 @@ theorem turkish_npis_strengthening :
     [kimse, hicKimse].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
 
-end Fragments.Turkish.PolarityItems
+end Turkish.PolarityItems

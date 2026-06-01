@@ -7,7 +7,7 @@ import Linglib.Typology.Gender
 No grammatical gender. WALS Ch 30/31/32 = none.
 -/
 
-namespace Fragments.Japanese.Gender
+namespace Japanese.Gender
 
 open Typology.Gender
 
@@ -19,4 +19,4 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "jpn" ∧ genderTypology.name = "Japanese" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Japanese.Gender
+end Japanese.Gender

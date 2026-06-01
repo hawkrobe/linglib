@@ -13,7 +13,7 @@ Finnish has:
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.finnish`).
 -/
 
-namespace Fragments.Finnish.Coordination
+namespace Finnish.Coordination
 
 open Features.Coordination
 
@@ -30,4 +30,4 @@ def kin : CoordEntry :=
 
 def allEntries : List CoordEntry := [ja, kin]
 
-end Fragments.Finnish.Coordination
+end Finnish.Coordination

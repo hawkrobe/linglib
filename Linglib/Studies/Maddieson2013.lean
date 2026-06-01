@@ -89,52 +89,52 @@ def inWALS1ABin (bin : CInventorySize) (n : Nat) : Bool :=
 -- Decide-checked facts about each Fragment-canonical PHOIBLE inventory.
 
 theorem english_consonants :
-    Fragments.English.Phonology.phonemeInventory.consonantCount = 27 := by native_decide
+    English.Phonology.phonemeInventory.consonantCount = 27 := by native_decide
 
 theorem german_consonants :
-    Fragments.German.Phonology.phonemeInventory.consonantCount = 23 := by native_decide
+    German.Phonology.phonemeInventory.consonantCount = 23 := by native_decide
 
 theorem finnish_consonants :
-    Fragments.Finnish.Phonology.phonemeInventory.consonantCount = 25 := by native_decide
+    Finnish.Phonology.phonemeInventory.consonantCount = 25 := by native_decide
 
 theorem turkish_consonants :
-    Fragments.Turkish.Phonology.phonemeInventory.consonantCount = 24 := by native_decide
+    Turkish.Phonology.phonemeInventory.consonantCount = 24 := by native_decide
 
 theorem russian_consonants :
-    Fragments.Slavic.Russian.Phonology.phonemeInventory.consonantCount = 33 := by native_decide
+    Russian.Phonology.phonemeInventory.consonantCount = 33 := by native_decide
 
 theorem french_consonants :
-    Fragments.French.Phonology.phonemeInventory.consonantCount = 23 := by native_decide
+    French.Phonology.phonemeInventory.consonantCount = 23 := by native_decide
 
 theorem spanish_consonants :
-    Fragments.Spanish.Phonology.phonemeInventory.consonantCount = 20 := by native_decide
+    Spanish.Phonology.phonemeInventory.consonantCount = 20 := by native_decide
 
 theorem japanese_consonants :
-    Fragments.Japanese.Phonology.phonemeInventory.consonantCount = 27 := by native_decide
+    Japanese.Phonology.phonemeInventory.consonantCount = 27 := by native_decide
 
 theorem mandarin_consonants :
-    Fragments.Mandarin.Phonology.phonemeInventory.consonantCount = 27 := by native_decide
+    Mandarin.Phonology.phonemeInventory.consonantCount = 27 := by native_decide
 
 theorem hindi_consonants :
-    Fragments.HindiUrdu.Phonology.phonemeInventory.consonantCount = 71 := by native_decide
+    HindiUrdu.Phonology.phonemeInventory.consonantCount = 71 := by native_decide
 
 theorem georgian_consonants :
-    Fragments.Georgian.Phonology.phonemeInventory.consonantCount = 29 := by native_decide
+    Georgian.Phonology.phonemeInventory.consonantCount = 29 := by native_decide
 
 theorem hungarian_consonants :
-    Fragments.Hungarian.Phonology.phonemeInventory.consonantCount = 50 := by native_decide
+    Hungarian.Phonology.phonemeInventory.consonantCount = 50 := by native_decide
 
 theorem swahili_consonants :
-    Fragments.Swahili.Phonology.phonemeInventory.consonantCount = 31 := by native_decide
+    Swahili.Phonology.phonemeInventory.consonantCount = 31 := by native_decide
 
 theorem yoruba_consonants :
-    Fragments.Yoruba.Phonology.phonemeInventory.consonantCount = 18 := by native_decide
+    Yoruba.Phonology.phonemeInventory.consonantCount = 18 := by native_decide
 
 theorem maori_consonants :
-    Fragments.Maori.Phonology.phonemeInventory.consonantCount = 10 := by native_decide
+    Maori.Phonology.phonemeInventory.consonantCount = 10 := by native_decide
 
 theorem zulu_consonants :
-    Fragments.Zulu.Phonology.phonemeInventory.consonantCount = 35 := by native_decide
+    Zulu.Phonology.phonemeInventory.consonantCount = 35 := by native_decide
 
 -- ============================================================================
 -- §2. WALS Ch 1 bin assignment per PHOIBLE consonant count
@@ -147,47 +147,47 @@ theorem zulu_consonants :
 
 theorem english_phoible_in_moderatelyLarge :
     inWALS1ABin .moderatelyLarge
-      Fragments.English.Phonology.phonemeInventory.consonantCount = true := by
+      English.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem german_phoible_in_average :
     inWALS1ABin .average
-      Fragments.German.Phonology.phonemeInventory.consonantCount = true := by
+      German.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem finnish_phoible_in_average :
     inWALS1ABin .average
-      Fragments.Finnish.Phonology.phonemeInventory.consonantCount = true := by
+      Finnish.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem turkish_phoible_in_average :
     inWALS1ABin .average
-      Fragments.Turkish.Phonology.phonemeInventory.consonantCount = true := by
+      Turkish.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem russian_phoible_in_moderatelyLarge :
     inWALS1ABin .moderatelyLarge
-      Fragments.Slavic.Russian.Phonology.phonemeInventory.consonantCount = true := by
+      Russian.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem french_phoible_in_average :
     inWALS1ABin .average
-      Fragments.French.Phonology.phonemeInventory.consonantCount = true := by
+      French.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem spanish_phoible_in_average :
     inWALS1ABin .average
-      Fragments.Spanish.Phonology.phonemeInventory.consonantCount = true := by
+      Spanish.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem japanese_phoible_in_moderatelyLarge :
     inWALS1ABin .moderatelyLarge
-      Fragments.Japanese.Phonology.phonemeInventory.consonantCount = true := by
+      Japanese.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem mandarin_phoible_in_moderatelyLarge :
     inWALS1ABin .moderatelyLarge
-      Fragments.Mandarin.Phonology.phonemeInventory.consonantCount = true := by
+      Mandarin.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 /-- Hindi: PHOIBLE's "hind1269" Hindi-Urdu has 71 consonants (the
@@ -195,43 +195,43 @@ theorem mandarin_phoible_in_moderatelyLarge :
     large inventory) — falls in WALS `large` (34+). -/
 theorem hindi_phoible_in_large :
     inWALS1ABin .large
-      Fragments.HindiUrdu.Phonology.phonemeInventory.consonantCount = true := by
+      HindiUrdu.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem georgian_phoible_in_moderatelyLarge :
     inWALS1ABin .moderatelyLarge
-      Fragments.Georgian.Phonology.phonemeInventory.consonantCount = true := by
+      Georgian.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem hungarian_phoible_in_large :
     inWALS1ABin .large
-      Fragments.Hungarian.Phonology.phonemeInventory.consonantCount = true := by
+      Hungarian.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 theorem swahili_phoible_in_moderatelyLarge :
     inWALS1ABin .moderatelyLarge
-      Fragments.Swahili.Phonology.phonemeInventory.consonantCount = true := by
+      Swahili.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 /-- Yoruba: 18 consonants — exceptionally small, falls in WALS
     `moderatelySmall` (15–18). -/
 theorem yoruba_phoible_in_moderatelySmall :
     inWALS1ABin .moderatelySmall
-      Fragments.Yoruba.Phonology.phonemeInventory.consonantCount = true := by
+      Yoruba.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 /-- Maori: 10 consonants — exceptionally small (Polynesian-typical).
     WALS `small` (6–14). -/
 theorem maori_phoible_in_small :
     inWALS1ABin .small
-      Fragments.Maori.Phonology.phonemeInventory.consonantCount = true := by
+      Maori.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 /-- Zulu: 35 consonants (clicks + ejectives + breathy series) puts it
     in WALS `large` (34+). -/
 theorem zulu_phoible_in_large :
     inWALS1ABin .large
-      Fragments.Zulu.Phonology.phonemeInventory.consonantCount = true := by
+      Zulu.Phonology.phonemeInventory.consonantCount = true := by
   native_decide
 
 -- ============================================================================
@@ -245,27 +245,27 @@ theorem zulu_phoible_in_large :
     `moderatelySmall`-in-WALS languages up into `average`. -/
 theorem batch_bin_distribution :
     -- 1 small
-    inWALS1ABin .small Fragments.Maori.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .small Maori.Phonology.phonemeInventory.consonantCount = true ∧
     -- 1 moderatelySmall
-    inWALS1ABin .moderatelySmall Fragments.Yoruba.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .moderatelySmall Yoruba.Phonology.phonemeInventory.consonantCount = true ∧
     -- 6 average
-    inWALS1ABin .average Fragments.German.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .average Fragments.Finnish.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .average Fragments.Turkish.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .average Fragments.French.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .average Fragments.Spanish.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .average Fragments.Mandarin.Phonology.phonemeInventory.consonantCount = false ∧
+    inWALS1ABin .average German.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .average Finnish.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .average Turkish.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .average French.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .average Spanish.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .average Mandarin.Phonology.phonemeInventory.consonantCount = false ∧
     -- 5 moderatelyLarge
-    inWALS1ABin .moderatelyLarge Fragments.English.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .moderatelyLarge Fragments.Japanese.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .moderatelyLarge Fragments.Mandarin.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .moderatelyLarge Fragments.Slavic.Russian.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .moderatelyLarge Fragments.Georgian.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .moderatelyLarge Fragments.Swahili.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .moderatelyLarge English.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .moderatelyLarge Japanese.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .moderatelyLarge Mandarin.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .moderatelyLarge Russian.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .moderatelyLarge Georgian.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .moderatelyLarge Swahili.Phonology.phonemeInventory.consonantCount = true ∧
     -- 3 large
-    inWALS1ABin .large Fragments.HindiUrdu.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .large Fragments.Hungarian.Phonology.phonemeInventory.consonantCount = true ∧
-    inWALS1ABin .large Fragments.Zulu.Phonology.phonemeInventory.consonantCount = true := by
+    inWALS1ABin .large HindiUrdu.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .large Hungarian.Phonology.phonemeInventory.consonantCount = true ∧
+    inWALS1ABin .large Zulu.Phonology.phonemeInventory.consonantCount = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     native_decide
 

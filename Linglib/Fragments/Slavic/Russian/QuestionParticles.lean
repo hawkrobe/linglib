@@ -23,7 +23,7 @@ left-peripheral layer assignment lives in
 
 -/
 
-namespace Fragments.Slavic.Russian.QuestionParticles
+namespace Russian.QuestionParticles
 
 /-- A Russian interrogative particle entry. -/
 structure QParticleEntry where
@@ -79,4 +79,4 @@ theorem bias_contrast :
     li.requiresEvidentialBias = false ∧ razve_.requiresEvidentialBias = true :=
   ⟨rfl, rfl⟩
 
-end Fragments.Slavic.Russian.QuestionParticles
+end Russian.QuestionParticles

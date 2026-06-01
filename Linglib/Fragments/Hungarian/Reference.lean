@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hungarian
+namespace Hungarian
 
 /-- Hungarian (Uralic): definite article *a*/*az* distinct from demonstratives;
     indefinite article *egy* = numeral 'one'; two-way demonstrative distance:
@@ -22,4 +22,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .unrelated }
 
-end Fragments.Hungarian
+end Hungarian

@@ -6,7 +6,7 @@ import Linglib.Typology.RelativeClause.WALS
 Typological-summary `RelativeClause.Profile` for Mandarin (ISO `cmn`).
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin relativization: gap + relativizer *de*; pre-nominal RC
     (SVO main clause but RC-N order). -/
@@ -17,4 +17,4 @@ def relativization : RelativeClause.Profile :=
   , lowestRelativizable := .oblique
   , notes := "Gap + relativizer de; pre-nominal RC; SVO but RC-N order" }
 
-end Fragments.Mandarin
+end Mandarin

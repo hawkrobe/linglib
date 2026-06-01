@@ -31,7 +31,7 @@ Finnish lives in `Studies/Heine1997.lean`.
 
 set_option autoImplicit false
 
-namespace Fragments.Finnish.Possession
+namespace Finnish.Possession
 
 open _root_.Typology.Possession
 
@@ -134,4 +134,4 @@ def possession : PossessionProfile :=
   , notes := "Adessive -lla for locational predicative possession; " ++
              "genitive + optional possessive suffix on head" }
 
-end Fragments.Finnish.Possession
+end Finnish.Possession

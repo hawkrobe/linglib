@@ -25,7 +25,7 @@ Clements 1976, Hume 1992).
 
 open Phonology
 
-namespace Fragments.Akan.Phonology
+namespace Akan.Phonology
 
 -- ============================================================================
 -- § 1: Consonant Inventory
@@ -108,4 +108,4 @@ theorem ocp_targets_palatalized :
     seg_tc.HasValue Feature.coronal true = true ∧
     seg_k.HasValue Feature.coronal true = false := ⟨by native_decide, by native_decide⟩
 
-end Fragments.Akan.Phonology
+end Akan.Phonology

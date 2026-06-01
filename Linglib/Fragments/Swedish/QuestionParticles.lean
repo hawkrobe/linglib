@@ -34,12 +34,12 @@ position, and their clause-initial uses require further investigation.
 
 ## Cross-Module Connections
 
-- `Fragments.Swedish.AnswerParticles`: *jo* (polarity reversal, not DQ marking)
-- `Fragments.German.QuestionParticles`: *doch wohl* (German RQ marker)
+- `Swedish.AnswerParticles`: *jo* (polarity reversal, not DQ marking)
+- `German.QuestionParticles`: *doch wohl* (German RQ marker)
 - `Semantics.Questions.DeclarativeQuestions`: bias profile typology
 -/
 
-namespace Fragments.Swedish.QuestionParticles
+namespace Swedish.QuestionParticles
 
 /-- A Swedish question/modal particle entry. -/
 structure QParticleEntry where
@@ -90,4 +90,4 @@ theorem val_signals_uncertainty : val.signalsEpistemicUncertainty = true := rfl
 theorem val_requires_evidential : val.requiresEvidentialBias = true := rfl
 theorem val_not_assertion : val.declOk = false := rfl
 
-end Fragments.Swedish.QuestionParticles
+end Swedish.QuestionParticles

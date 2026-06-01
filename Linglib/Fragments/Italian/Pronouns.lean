@@ -28,7 +28,7 @@ and reflexive cases, while 3sg/3pl are not.
 | 3pl    | li/le  | loro   | si   | NOT syncretic
 -/
 
-namespace Fragments.Italian.Pronouns
+namespace Italian.Pronouns
 
 open Pronoun
 open Features.Register (Level)
@@ -238,9 +238,9 @@ def cliticStrength : Strength := .clitic
 theorem clitics_more_deficient :
     Strength.rank cliticStrength < Strength.rank strongStrength := by decide
 
-end Fragments.Italian.Pronouns
+end Italian.Pronouns
 
-namespace Fragments.Italian
+namespace Italian
 
 /-- Italian (Indo-European, Romance) pronoun typology profile, read off this
     fragment's lexical inventory: no inclusive/exclusive distinction (*noi* is
@@ -255,4 +255,4 @@ def pronounProfile : Pronoun.Profile :=
   , politeness := some .binary
   , genderInPronouns := some .in3rdPersonSgOnly }
 
-end Fragments.Italian
+end Italian

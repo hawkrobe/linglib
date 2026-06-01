@@ -286,7 +286,7 @@ namespace Marantz1991
 
 open Minimalist
 open Syntax.Case
-open Fragments.Georgian.Agreement
+open Georgian.Agreement
 
 -- ============================================================================
 -- § 1: Bridge from SplitErgativity to Dependent Case
@@ -368,7 +368,7 @@ theorem abs_surfaces_as_nom : georgianSpellout .abs = .nom := rfl
 -- ============================================================================
 
 /-! The dependent case algorithm + Georgian spell-out produces exactly
-    the surface case frames recorded in `Fragments.Georgian.Agreement`.
+    the surface case frames recorded in `Georgian.Agreement`.
     This is the core empirical validation: the algorithm derives all
     8 verb-class × tense combinations for subjects. -/
 
@@ -687,7 +687,7 @@ theorem burzio_from_voice :
 
     "Split ergativity of the Georgian sort simply exploits this lack of
     correlation." This connects to the agreement data formalized in
-    `Fragments.Georgian.Agreement` and verified in
+    `Georgian.Agreement` and verified in
     `Aissen2003` and
     `BejarRezac2009`. -/
 

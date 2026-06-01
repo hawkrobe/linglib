@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.English
+namespace English
 
 /-- English: "first" and "second" suppletive, higher ordinals regular (-th
     suffix). No morphological distributive numerals (*two-each*), no numeral
@@ -14,4 +14,4 @@ namespace Fragments.English
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "English" "eng" (region := .europe) (pluralMarking := .obligatory)
 
-end Fragments.English
+end English

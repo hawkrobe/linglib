@@ -20,7 +20,7 @@ clauses. See `Studies/HarizanovGribanova2019.lean`
 for the formal contrast.
 -/
 
-namespace Fragments.German
+namespace German
 
 open Minimalist (ForceHead V2Profile)
 
@@ -29,4 +29,4 @@ open Minimalist (ForceHead V2Profile)
 abbrev german : V2Profile :=
   {.Decl, .Int, .Pol, .Fin}
 
-end Fragments.German
+end German

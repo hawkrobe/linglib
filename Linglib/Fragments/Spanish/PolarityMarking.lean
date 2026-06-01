@@ -36,7 +36,7 @@ the assertion level via prosodic prominence. Spanish *sí (que)* is
 clause-initial and targets polarity directly via a dedicated particle.
 -/
 
-namespace Fragments.Spanish.PolarityMarking
+namespace Spanish.PolarityMarking
 
 open Typology.PolarityMarking (Entry Strategy Env)
 
@@ -60,4 +60,4 @@ theorem siQue_contrastOk : Env.contrast ∈ siQue.environments := by decide
 theorem siQue_correctionOk : Env.correction ∈ siQue.environments := by decide
 theorem siQue_strategy : siQue.strategy = .polarityReversal := rfl
 
-end Fragments.Spanish.PolarityMarking
+end Spanish.PolarityMarking

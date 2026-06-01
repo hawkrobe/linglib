@@ -18,7 +18,7 @@ Theoretical-strategy assignments (CLF-for-NUM vs CLF-for-N) live in the
 paper-anchored Studies that consume this profile.
 -/
 
-namespace Fragments.Mayan.Chol
+namespace Chol
 
 open Typology (collectSemantics) in
 /-- Ch'ol numeral classifier system: suffix on the numeral stem,
@@ -37,4 +37,4 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , pluralClfCooccur := true
   , source := "@cite{bale-coon-2014}; @cite{aikhenvald-2000} (schema)" }
 
-end Fragments.Mayan.Chol
+end Chol

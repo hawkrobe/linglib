@@ -53,9 +53,9 @@ namespace CoonMateoPedroPreminger2014
 
 open Minimalist
 open Phenomena.Ergativity
-open Fragments.Mayan (ABSPosition CaseLocus toCaseLocus)
+open Mayan (ABSPosition CaseLocus toCaseLocus)
 
--- § 1 uses `CaseLocus` and `toCaseLocus` from `Fragments.Mayan.Params`.
+-- § 1 uses `CaseLocus` and `toCaseLocus` from `Mayan.Params`.
 
 -- ============================================================================
 -- § 2: Legate (2008) Abstract Case Decomposition
@@ -315,57 +315,57 @@ theorem chol_no_syntactic_ergativity :
 /-- Q'anjob'al's ergative alignment matches the standard pattern:
     transitive agent = ERG, transitive object = ABS. -/
 theorem qanjobal_erg_alignment :
-    Fragments.Mayan.Qanjobal.ArgPosition.case .A = .erg ∧
-    Fragments.Mayan.Qanjobal.ArgPosition.case .P = .abs := ⟨rfl, rfl⟩
+    Qanjobal.ArgPosition.case .A = .erg ∧
+    Qanjobal.ArgPosition.case .P = .abs := ⟨rfl, rfl⟩
 
 /-- Chol's ergative alignment matches the same standard pattern. -/
 theorem chol_erg_alignment :
-    Fragments.Mayan.Chol.ArgPosition.case .A = .erg ∧
-    Fragments.Mayan.Chol.ArgPosition.case .P = .abs := ⟨rfl, rfl⟩
+    Chol.ArgPosition.case .A = .erg ∧
+    Chol.ArgPosition.case .P = .abs := ⟨rfl, rfl⟩
 
 /-- Despite sharing ergative morphology, Q'anjob'al and Chol differ in
     whether agent extraction is banned. The difference traces to their
     distinct case loci, not to properties of the ergative NP. -/
 theorem shared_morphology_different_syntax :
     -- Same ergative case on agent
-    Fragments.Mayan.Qanjobal.ArgPosition.case .A =
-      Fragments.Mayan.Chol.ArgPosition.case .A ∧
+    Qanjobal.ArgPosition.case .A =
+      Chol.ArgPosition.case .A ∧
     -- But different syntactic ergativity predictions
     hasSyntacticErgativity .absNom ≠ hasSyntacticErgativity .absDef :=
   ⟨rfl, by decide⟩
 
 /-- Fragment-grounded ABSPosition: Q'anjob'al is HIGH-ABS. -/
 theorem qanjobal_high_abs :
-    Fragments.Mayan.Qanjobal.absPosition = .high := rfl
+    Qanjobal.absPosition = .high := rfl
 
 /-- Fragment-grounded ABSPosition: Chol is LOW-ABS. -/
 theorem chol_low_abs :
-    Fragments.Mayan.Chol.absPosition = .low := rfl
+    Chol.absPosition = .low := rfl
 
 /-- The fragment ABSPosition values derive the correct syntactic
     ergativity predictions: Q'anjob'al has it, Chol does not.
     This grounds Tada's Generalization in fragment data rather than
     hard-coded table entries. -/
 theorem fragments_ground_tada :
-    hasSyntacticErgativity (toCaseLocus Fragments.Mayan.Qanjobal.absPosition) = true ∧
-    hasSyntacticErgativity (toCaseLocus Fragments.Mayan.Chol.absPosition) = false :=
+    hasSyntacticErgativity (toCaseLocus Qanjobal.absPosition) = true ∧
+    hasSyntacticErgativity (toCaseLocus Chol.absPosition) = false :=
   ⟨rfl, rfl⟩
 
 /-- **Tada's Generalization, parameterized form**: a Mayan language
     exhibits syntactic ergativity (the analytical predicate from §4)
-    **iff** it is HIGH-ABS. Quantified over `Fragments.Mayan.MayanLang`
+    **iff** it is HIGH-ABS. Quantified over `Mayan.MayanLang`
     via the cross-Mayan `absPositionOf` dispatcher
     (`Phenomena.Ergativity.MayanAlignment`).
 
     Replaces the per-language enumeration in `fragments_ground_tada`
     with a single quantified theorem that scales as the `MayanLang`
     registry grows. -/
-theorem mayan_tada (lang : Fragments.Mayan.MayanLang) :
+theorem mayan_tada (lang : Mayan.MayanLang) :
     hasSyntacticErgativity
         (toCaseLocus (Phenomena.Ergativity.MayanAlignment.absPositionOf lang))
       = true ↔
       Phenomena.Ergativity.MayanAlignment.absPositionOf lang =
-        Fragments.Mayan.ABSPosition.high := by
+        Mayan.ABSPosition.high := by
   cases lang <;> decide
 
 /-- Q'anjob'al's extraction data is consistent with the prediction:
@@ -373,31 +373,31 @@ theorem mayan_tada (lang : Fragments.Mayan.MayanLang) :
     transitives). The substantive claim lives at `extractionProfile`'s
     `markedPositions := [.subject]` field. -/
 theorem qanjobal_extraction_consistent :
-    Fragments.Mayan.Qanjobal.extractionProfile.Marks .subject := by decide
+    Qanjobal.extractionProfile.Marks .subject := by decide
 
 /-- Chol's extraction data is consistent: no Agent Focus morphology
     required (every argument extracts freely under the absent strategy). -/
 theorem chol_extraction_consistent :
-    Fragments.Mayan.Chol.extractionProfile.strategy = .unmarked := rfl
+    Chol.extractionProfile.strategy = .unmarked := rfl
 
 /-- Q'anjob'al's AF form carries the intransitive status suffix, matching
     the prediction that AF Voice is non-phasal (intransitive v⁰). -/
 theorem qanjobal_af_itv :
-    Fragments.Mayan.Qanjobal.agentFocusForm.statusSuffix = .itv := rfl
+    Qanjobal.agentFocusForm.statusSuffix = .itv := rfl
 
 /-- The Crazy Antipassive form is identical to AF: same *-on* morpheme,
     same intransitive status suffix. Supports the unified analysis of
     *-on* as a case-assigner in environments where case is otherwise
     unavailable. -/
 theorem crazy_ap_unified :
-    Fragments.Mayan.Qanjobal.crazyAntipassiveForm = Fragments.Mayan.Qanjobal.agentFocusForm := rfl
+    Qanjobal.crazyAntipassiveForm = Qanjobal.agentFocusForm := rfl
 
 /-- Non-finite absolutive asymmetry in Chol: objects are available
     (v⁰ assigns case) but intransitive subjects are not (Infl⁰ absent).
     Follows from LOW-ABS: v⁰ handles objects, Infl⁰ handles intransitives. -/
 theorem chol_nonfinite_predictions :
-    Fragments.Mayan.Chol.absObjectInNonFinite = true ∧
-    Fragments.Mayan.Chol.absIntranSInNonFinite = false := ⟨rfl, rfl⟩
+    Chol.absObjectInNonFinite = true ∧
+    Chol.absIntranSInNonFinite = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 9: Tada's Generalization (theoretical derivation)
@@ -529,12 +529,12 @@ theorem attested_cells :
     person of the subject, because the trigger there is the absence of
     Infl⁰ (not extraction through a phase edge). -/
 theorem af_person_restriction :
-    Fragments.Mayan.Qanjobal.PersonRestriction.third.requiresAF = true ∧
-    Fragments.Mayan.Qanjobal.PersonRestriction.first.requiresAF = false := ⟨rfl, rfl⟩
+    Qanjobal.PersonRestriction.third.requiresAF = true ∧
+    Qanjobal.PersonRestriction.first.requiresAF = false := ⟨rfl, rfl⟩
 
 theorem crazy_ap_no_person_restriction :
-    Fragments.Mayan.Qanjobal.PersonRestriction.first.requiresCrazyAP = true ∧
-    Fragments.Mayan.Qanjobal.PersonRestriction.third.requiresCrazyAP = true := ⟨rfl, rfl⟩
+    Qanjobal.PersonRestriction.first.requiresCrazyAP = true ∧
+    Qanjobal.PersonRestriction.third.requiresCrazyAP = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 13: vP-Internal Extraction Ban
@@ -741,9 +741,9 @@ theorem shared_phase_problem :
 /-- Both Q'anjob'al and Kaqchikel are HIGH-ABS languages with extraction
     asymmetries: agent extraction is blocked without AF in both. -/
 theorem both_have_extraction_asymmetries :
-    Fragments.Mayan.Qanjobal.absPosition = .high ∧
-    Fragments.Mayan.Qanjobal.extractionProfile.Marks .subject ∧
-    Fragments.Mayan.Kaqchikel.kaqAFType = .afLanguage := by
+    Qanjobal.absPosition = .high ∧
+    Qanjobal.extractionProfile.Marks .subject ∧
+    Kaqchikel.kaqAFType = .afLanguage := by
   refine ⟨rfl, ?_, rfl⟩
   decide
 
@@ -751,7 +751,7 @@ theorem both_have_extraction_asymmetries :
     Q'anjob'al AF also loses Set A agreement.
     Same surface morphological effect, different underlying mechanism. -/
 theorem both_af_lose_setA :
-    Fragments.Mayan.Qanjobal.agentFocusForm.hasSetA = false ∧
-    Fragments.Mayan.Kaqchikel.VerbForm.agentFocus.hasSetA = false := ⟨rfl, rfl⟩
+    Qanjobal.agentFocusForm.hasSetA = false ∧
+    Kaqchikel.VerbForm.agentFocus.hasSetA = false := ⟨rfl, rfl⟩
 
 end CoonMateoPedroPreminger2014

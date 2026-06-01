@@ -14,7 +14,7 @@ for the data.
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.hausa`).
 -/
 
-namespace Fragments.Hausa.Coordination
+namespace Hausa.Coordination
 
 open Features.Coordination
 
@@ -27,4 +27,4 @@ def da : CoordEntry :=
 
 def allEntries : List CoordEntry := [da]
 
-end Fragments.Hausa.Coordination
+end Hausa.Coordination

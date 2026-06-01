@@ -443,18 +443,18 @@ theorem both_positions_sortal :
     Whether it DOES have a mensural reading is determined by the structure
     (§4 above), not by the lexical entry alone. -/
 theorem bei_can_be_mensural :
-    Fragments.Mandarin.Classifiers.bei.isMensural = true := rfl
+    Mandarin.Classifiers.bei.isMensural = true := rfl
 
 /-- 张 zhāng (flat surface) is the classifier in the basic structure
     (26b) and modification examples (28)–(29). It is a pure sortal
     classifier — not lexically mensural. -/
 theorem zhang_is_sortal :
-    Fragments.Mandarin.Classifiers.zhang.isMensural = false := rfl
+    Mandarin.Classifiers.zhang.isMensural = false := rfl
 
 /-- 个 gè (general) is the default classifier in the dislocation
     examples (5c), (13b), (14a). -/
 theorem ge_is_default :
-    Fragments.Mandarin.Classifiers.ge.isDefault = true := rfl
+    Mandarin.Classifiers.ge.isDefault = true := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 6. Bridge to Borer 2005
@@ -493,7 +493,7 @@ theorem q_is_individuation_locus :
     3. With 的: Cl invisible from D → mensural reading (glassful)
     4. Without-的 spine matches @cite{borer-2005}'s nominal EP -/
 theorem bei_end_to_end :
-    Fragments.Mandarin.Classifiers.bei.isMensural = true ∧
+    Mandarin.Classifiers.bei.isMensural = true ∧
     classifierReading noDe_D = .sortal ∧
     classifierReading de_D = .mensural ∧
     noDe_D.compLine = [.D, .Q, .Cl, .N] :=
@@ -579,7 +579,7 @@ variable {α : Type*} [SemilatticeSup α]
     classifiers for counting. This is the typological precondition
     for the entire mereological analysis. -/
 theorem mandarin_needs_classifiers :
-    Fragments.Mandarin.Nouns.mandarinMapping =
+    Mandarin.Nouns.mandarinMapping =
       Semantics.Kinds.NMP.NominalMapping.argOnly :=
   NMP.mandarin_mapping
 
@@ -591,10 +591,10 @@ theorem mandarin_needs_classifiers :
     5. Same root, opposite mereological properties (Interpretation) -/
 theorem full_chain (P : α → Prop) (hc : CUM P) :
     -- Chierchia: Mandarin needs classifiers
-    Fragments.Mandarin.Nouns.mandarinMapping =
+    Mandarin.Nouns.mandarinMapping =
       Semantics.Kinds.NMP.NominalMapping.argOnly ∧
     -- Fragment: bēi can be mensural
-    Fragments.Mandarin.Classifiers.bei.isMensural = true ∧
+    Mandarin.Classifiers.bei.isMensural = true ∧
     -- Structural: opposite visibility
     individuates noDe_D = true ∧
     individuates de_D = false ∧

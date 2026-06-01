@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Korean
+namespace Korean
 
 /-- Korean: suffix plural (*-tul*), optional on all nouns (number-neutral bare
     forms are common); person-number stems in pronouns (*na*/*uri*);
@@ -18,4 +18,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .sameAsAdditive }
 
-end Fragments.Korean
+end Korean

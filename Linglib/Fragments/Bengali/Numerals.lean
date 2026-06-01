@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Bengali
+namespace Bengali
 
 /-- Bengali: ordinals formed with *-tho* suffix, but "first" (*prothom*) is
     suppletive. Distributive by reduplication. Optional classifiers (*tin-ta
@@ -17,4 +17,4 @@ def numeralProfile : Numeral.Profile :=
       (pluralMarking := .optional) with
     numeralBase := some .decimal }
 
-end Fragments.Bengali
+end Bengali

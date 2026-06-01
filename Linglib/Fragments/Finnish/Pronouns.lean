@@ -5,7 +5,7 @@ import Linglib.Typology.Pronoun.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
 /-- Finnish (Uralic). No incl/excl; no gender distinctions (hän for
     all genders); binary politeness (sinä/te); special indefinite
@@ -34,4 +34,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.Finnish
+end Finnish

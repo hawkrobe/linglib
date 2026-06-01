@@ -60,7 +60,7 @@ namespace Ostrove2026
 open Minimalist.MinimalPronoun
 open Landau2015
 open Minimalist (InfinitivalTenseClass)
-open Fragments.Mixtec.SMPM (EmbeddedClauseType clauseProperties)
+open Mixtec.SMPM (EmbeddedClauseType clauseProperties)
 open Phenomena.NullSubject (ProDropProfile)
 
 -- ════════════════════════════════════════════════════════════════
@@ -371,9 +371,9 @@ theorem smpm_copy_cannot_bear_focus :
     is strictly more deficient (lower `Strength.rank`) than the nonclitic strong
     alternative. -/
 theorem smpm_controlled_must_be_clitic :
-    Pronoun.Strength.rank Fragments.Mixtec.SMPM.controlledSubjectStrength
-      < Pronoun.Strength.rank Fragments.Mixtec.SMPM.PronounForm.noncliticStrength :=
-  Fragments.Mixtec.SMPM.controlledSubject_is_most_deficient
+    Pronoun.Strength.rank Mixtec.SMPM.controlledSubjectStrength
+      < Pronoun.Strength.rank Mixtec.SMPM.PronounForm.noncliticStrength :=
+  Mixtec.SMPM.controlledSubject_is_most_deficient
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9: Exempt Anaphor Argument (§6)
@@ -385,8 +385,8 @@ theorem smpm_controlled_must_be_clitic :
     Condition A domain) ARE available in SMPM (74) but CANNOT have
     quantified antecedents (75, 78). -/
 def smpmExemptProfile : ExemptAnaphorProfile where
-  hasExemptAnaphors := Fragments.Mixtec.SMPM.exemptAnaphorsAsPossessors
-  allowsQuantifiedAntecedent := Fragments.Mixtec.SMPM.exemptAnaphorAllowsQuantifiedAntecedent
+  hasExemptAnaphors := Mixtec.SMPM.exemptAnaphorsAsPossessors
+  allowsQuantifiedAntecedent := Mixtec.SMPM.exemptAnaphorAllowsQuantifiedAntecedent
 
 theorem smpm_has_exempt_anaphors :
     smpmExemptProfile.hasExemptAnaphors = true := rfl
@@ -434,7 +434,7 @@ theorem smpm_supports_basegeneration :
 
 /-- SMPM profile derived from fragment data and inventory. -/
 def smpmProfile : ProDropProfile :=
-  { allowsProDrop := Fragments.Mixtec.SMPM.allowsProDrop
+  { allowsProDrop := Mixtec.SMPM.allowsProDrop
   , hasOvertPRO := decide smpmInventory.hasOvertPRO }
 
 def englishProfile : ProDropProfile :=

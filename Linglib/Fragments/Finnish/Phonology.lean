@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Finnish.Phonology
+namespace Finnish.Phonology
 
 /-- Canonical Finnish phoneme inventory: first PHOIBLE inventory for ISO `fin`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Finnish.fin
 
-end Fragments.Finnish.Phonology
+end Finnish.Phonology

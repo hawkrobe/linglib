@@ -37,7 +37,7 @@ denotation discipline; follow-up).
 namespace Zhao2025
 
 open Features
-open Fragments.Mandarin.AspectComparison
+open Mandarin.AspectComparison
 open Core.Time
 
 /-- `le` requires anti-AtomDist (a lexical-entry fact). -/

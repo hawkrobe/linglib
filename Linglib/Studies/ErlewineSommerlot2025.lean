@@ -60,7 +60,7 @@ overt Voice creates a contradiction, while null Voice does not.
 namespace ErlewineSommerlot2025
 
 open Minimalist.Linearization
-open Fragments.Malayic.VoiceSystem
+open Malayic.VoiceSystem
 
 -- ============================================================================
 -- § 1: VoiceP Linearizations

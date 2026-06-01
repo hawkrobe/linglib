@@ -98,7 +98,7 @@ Miestamo's own classification of MSA.
   `Fragments/Arabic/Egyptian/Negation.lean` if added later.
 -/
 
-namespace Fragments.Arabic.ModernStandard.Negation
+namespace Arabic.ModernStandard.Negation
 
 open Typology.Negation
 
@@ -152,4 +152,4 @@ def negationProfile : NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Arabic.ModernStandard.Negation
+end Arabic.ModernStandard.Negation

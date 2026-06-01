@@ -13,7 +13,7 @@ Tagalog indefinite pronoun polarity items, typed by the categories from
 
 -/
 
-namespace Fragments.Tagalog.PolarityItems
+namespace Tagalog.PolarityItems
 
 open Typology.PolarityItem
 
@@ -60,4 +60,4 @@ def kahitSino : PolarityItemEntry :=
 theorem sinuman_walang_distinct :
     sinuman.form ≠ walang.form := by decide
 
-end Fragments.Tagalog.PolarityItems
+end Tagalog.PolarityItems

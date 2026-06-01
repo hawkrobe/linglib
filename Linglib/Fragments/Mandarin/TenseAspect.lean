@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin Chinese (Sino-Tibetan): perfective *le*/*guo*, but these are
     particles (not inflectional); no inflectional past or future; no distinct
@@ -17,4 +17,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , perfect := .none, affixPosition := .noInflection
   , evidentialityCoding := some .none }
 
-end Fragments.Mandarin
+end Mandarin

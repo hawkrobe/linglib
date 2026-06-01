@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Tagalog
+namespace Tagalog
 
 /-- Tagalog (Austronesian, Malayo-Polynesian): perfective/imperfective
     (completed vs contemplated aspect); no inflectional past or future
@@ -16,4 +16,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .none, future := .none
   , perfect := .none, affixPosition := .prefixing }
 
-end Fragments.Tagalog
+end Tagalog

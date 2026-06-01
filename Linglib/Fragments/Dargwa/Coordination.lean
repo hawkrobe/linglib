@@ -30,7 +30,7 @@ absence of a J-only strategy (no free "and" between conjuncts)
 is predicted by M&S: languages can have MU without J.
 -/
 
-namespace Fragments.Dargwa.Coordination
+namespace Dargwa.Coordination
 
 open Features.Coordination
 
@@ -84,4 +84,4 @@ theorem mu_is_bound :
     (allEntries.filter (·.role == .mu)).all (·.boundness == .bound) = true := by
   native_decide
 
-end Fragments.Dargwa.Coordination
+end Dargwa.Coordination

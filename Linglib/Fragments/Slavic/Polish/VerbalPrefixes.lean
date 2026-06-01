@@ -34,9 +34,9 @@ suffix.
 
 -/
 
-namespace Fragments.Slavic.Polish.VerbalPrefixes
+namespace Polish.VerbalPrefixes
 
-open Fragments.Slavic (Aspect SuperlexicalSubtype PrefixClass)
+open Slavic (Aspect SuperlexicalSubtype PrefixClass)
 
 /-- A Polish prefixed-verb entry. Polish orthography (with diacritics:
     *ć*, *ż*, *ó*, *ł*, *ę*, *ą*) used directly. -/
@@ -169,4 +169,4 @@ theorem stemAspect_imperfective_of_isSuperlexical
     e.stemAspect = Aspect.imperfective := by
   fin_cases he <;> first | rfl | exact absurd hs (by decide)
 
-end Fragments.Slavic.Polish.VerbalPrefixes
+end Polish.VerbalPrefixes

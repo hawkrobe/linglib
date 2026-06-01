@@ -10,7 +10,7 @@ WALS @cite{de-haan-2013} F77A codes Kashaya as `directAndIndirect`;
 4-or-5-way distinction. Studies-side override per Aikhenvald.
 -/
 
-namespace Fragments.Kashaya.Evidentiality
+namespace Kashaya.Evidentiality
 
 open Typology.Modality
 open Features.Evidentiality (EvidentialSource)
@@ -29,4 +29,4 @@ def evidentialityProfile : EvidentialityProfile :=
 example : evidentialityProfile.iso = "kju" ∧ evidentialityProfile.language = "Kashaya" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Kashaya.Evidentiality
+end Kashaya.Evidentiality

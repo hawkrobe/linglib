@@ -58,7 +58,7 @@ connecting monotone map. The legacy criterion-based view via
    (@cite{lasersohn-1999}, @cite{krifka-2007}) is also wider for round
    numerals.
 
-The lexical bridge to `Fragments.English.NumeralModifiers` documents the
+The lexical bridge to `English.NumeralModifiers` documents the
 expected interaction between `requiresRound` modifiers and high k-ness
 anchors.
 -/
@@ -323,6 +323,6 @@ theorem round_wider_halo :
     *grammatical but marked* — naturalness correlates with k-ness rather than
     being a hard constraint. -/
 theorem approximately_tolerates_nonround :
-    Fragments.English.NumeralModifiers.approximately.requiresRound = false := rfl
+    English.NumeralModifiers.approximately.requiresRound = false := rfl
 
 end Cummins2015

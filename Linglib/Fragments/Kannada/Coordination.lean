@@ -14,7 +14,7 @@ The same morpheme is the Dravidian additive/focus particle ('also').
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.kannada`).
 -/
 
-namespace Fragments.Kannada.Coordination
+namespace Kannada.Coordination
 
 open Features.Coordination
 
@@ -27,4 +27,4 @@ def u : CoordEntry :=
 
 def allEntries : List CoordEntry := [u]
 
-end Fragments.Kannada.Coordination
+end Kannada.Coordination

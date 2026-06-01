@@ -35,7 +35,7 @@ Formalizes the core contributions of Israel's Scalar Model of Polarity:
 namespace Israel2001
 
 open Typology.PolarityItem
-open Fragments.English.PolarityItems
+open English.PolarityItems
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Scalar Model (Figure 1)

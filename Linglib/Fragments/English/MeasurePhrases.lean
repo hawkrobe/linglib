@@ -23,7 +23,7 @@ types, following the Theories → Fragments dependency discipline.
 
 -/
 
-namespace Fragments.English.MeasurePhrases
+namespace English.MeasurePhrases
 
 open Features.Dimension (Dimension QuotientDimension DimensionType)
 
@@ -314,4 +314,4 @@ theorem different_dimension_mathSpeak (d₁ d₂ : Dimension) (h : d₁ ≠ d₂
 theorem no_dimension_mathSpeak (d : Dimension) :
     perInterpInContext d none = .mathSpeak := rfl
 
-end Fragments.English.MeasurePhrases
+end English.MeasurePhrases

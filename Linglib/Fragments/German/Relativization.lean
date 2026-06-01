@@ -6,7 +6,7 @@ import Linglib.Typology.RelativeClause.WALS
 Typological-summary `RelativeClause.Profile` for German (ISO `deu`).
 -/
 
-namespace Fragments.German
+namespace German
 
 /-- German relativization: relative pronoun *der/die/das* on both
     subjects and obliques; postnominal RC; all AH positions
@@ -18,4 +18,4 @@ def relativization : RelativeClause.Profile :=
   , lowestRelativizable := .objComparison
   , notes := "Relative pronoun der/die/das; all AH positions relativizable" }
 
-end Fragments.German
+end German

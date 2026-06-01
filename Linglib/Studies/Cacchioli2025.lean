@@ -220,7 +220,7 @@ theorem phasal_violates_realis_finite_correspondence :
 -- § Bridge Theorems: EP position, Fragment consistency, Selection
 -- ============================================================================
 
-open Fragments.Tigrinya.ClausePrefixes
+open Tigrinya.ClausePrefixes
 
 /-- zɨ- (Rel) is at the same fValue level as Top (topic field, F5). -/
 theorem zi_fvalue_topic_field : fValue zi.headCat = fValue .Top := by decide

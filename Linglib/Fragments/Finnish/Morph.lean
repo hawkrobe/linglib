@@ -8,7 +8,7 @@ WALS-derived profile for Finnish (ISO `fin`). B&N 2001 places Finnish in the
 "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
 open Morphology
 
@@ -29,4 +29,4 @@ example : morphProfile.iso = "fin" ∧ morphProfile.language = "Finnish" := ⟨r
 /-- B&N 2001 places Finnish in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
-end Fragments.Finnish
+end Finnish

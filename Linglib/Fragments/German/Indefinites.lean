@@ -16,14 +16,14 @@ extended from non-specific to epistemic (@cite{aloni-port-2015}),
 instantiating the semantic weakening path `var(v,x) → var(∅,x)`
 (@cite{bubnov-2026} §6, Figure 3).
 
-See also `Fragments.German.ModalIndefinites` for the modal-indefinite
+See also `German.ModalIndefinites` for the modal-indefinite
 perspective on *irgendein* (domain widening per
 @cite{kratzer-shimoyama-2002}).
 -/
 
 set_option autoImplicit false
 
-namespace Fragments.German.Indefinites
+namespace German.Indefinites
 
 open Typology.Indefinite
 
@@ -58,4 +58,4 @@ def paradigm : IndefiniteParadigm where
 theorem german_paradigm_is_mixed :
     paradigm.toWALS46A = some .mixed := rfl
 
-end Fragments.German.Indefinites
+end German.Indefinites

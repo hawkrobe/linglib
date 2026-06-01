@@ -53,8 +53,8 @@ open Semantics.Montague (LexEntry Lexicon)
 open Semantics.Composition.Tree (interp)
 open Core.Tree (Tree)
 
-abbrev chol := Fragments.Mayan.Chol.classifierSystem
-abbrev shan := Fragments.Shan.classifierSystem
+abbrev chol := Chol.classifierSystem
+abbrev shan := Shan.classifierSystem
 
 /-! ### Predictions (Table 8) -/
 

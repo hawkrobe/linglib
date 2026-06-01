@@ -49,8 +49,8 @@ namespace Karttunen1971
 
 open Semantics.Causation.Implicative
 open Features (Causative)
-open Fragments.English.Predicates.Verbal
-open Fragments.English.Predicates.Copular (beAble)
+open English.Predicates.Verbal
+open English.Predicates.Copular (beAble)
 open Semantics.Lexical
 open Core.Causal
 

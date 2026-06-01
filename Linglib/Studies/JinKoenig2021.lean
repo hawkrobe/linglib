@@ -1113,31 +1113,31 @@ each language's EN markers exist and have the expected properties. -/
 /-- French uses dedicated *ne* (without *pas*) for high-entrenchment EN.
     This is distinct from standard *ne...pas* negation (@cite{jin-koenig-2021}, §4). -/
 theorem french_has_dedicated_en_marker :
-    Fragments.French.Negation.enMarker = Fragments.French.Negation.neClitic := rfl
+    French.Negation.enMarker = French.Negation.neClitic := rfl
 
 /-- Mandarin FEAR triggers use imperative negation (*bié*/*búyào*), not
     the standard *bù*/*méi*. The imperative form lexicalizes the
     prohibition component of the FEAR meaning. -/
 theorem mandarin_fear_en_is_imperative :
-    Fragments.Mandarin.Negation.bieParticle = "bié" ∧
-    Fragments.Mandarin.Negation.buyaoParticle = "búyào" := ⟨rfl, rfl⟩
+    Mandarin.Negation.bieParticle = "bié" ∧
+    Mandarin.Negation.buyaoParticle = "búyào" := ⟨rfl, rfl⟩
 
 /-- Mandarin REGRET/COMPLAIN triggers use the deontic negator *bùgāi*
     'shouldn't', connecting to the behavioral-standards semantics
     (negative inference = ¬p in worlds consistent with X's standards). -/
 theorem mandarin_regret_en_is_deontic :
-    Fragments.Mandarin.Negation.bugaiParticle = "bùgāi" := rfl
+    Mandarin.Negation.bugaiParticle = "bùgāi" := rfl
 
 /-- Januubi uses the standard negator *maa* for all EN contexts —
     no dedicated EN marker or trigger-class covariation. -/
 theorem januubi_en_is_standard :
-    Fragments.Januubi.Negation.enNegator.isStandardNeg = true := rfl
+    Januubi.Negation.enNegator.isStandardNeg = true := rfl
 
 /-- Zarma-Sonrai EN negator choice is determined by aspect (IPFV/PFV),
     not by trigger class. Both markers are standard negation markers. -/
 theorem zarma_en_determined_by_aspect :
-    Fragments.ZarmaSonrai.Negation.enIpfv.isStandardNeg = true ∧
-    Fragments.ZarmaSonrai.Negation.enPfv.isStandardNeg = true := ⟨rfl, rfl⟩
+    ZarmaSonrai.Negation.enIpfv.isStandardNeg = true ∧
+    ZarmaSonrai.Negation.enPfv.isStandardNeg = true := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 13. All Licensing Conditions Grounded
@@ -1302,7 +1302,7 @@ theorem prevent_builder_is_en_trigger (v : VerbCore)
 -- Instantiations for English fragment verbs: the conclusion follows
 -- from the general theorem applied to the verb's semantic builder.
 
-open Fragments.English.Predicates.Verbal (fear dread worry forget prevent)
+open English.Predicates.Verbal (fear dread worry forget prevent)
 
 /-- "fear" → negative valence → EN trigger. -/
 theorem english_fear_is_en_trigger :

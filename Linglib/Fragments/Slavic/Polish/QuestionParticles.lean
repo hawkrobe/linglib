@@ -20,7 +20,7 @@ layer assignment lives in `Simik2024`.
 
 -/
 
-namespace Fragments.Slavic.Polish.QuestionParticles
+namespace Polish.QuestionParticles
 
 /-- A Polish interrogative particle entry. -/
 structure QParticleEntry where
@@ -68,4 +68,4 @@ theorem bias_contrast :
     czy.requiresEvidentialBias = false ∧ czyzby.requiresEvidentialBias = true :=
   ⟨rfl, rfl⟩
 
-end Fragments.Slavic.Polish.QuestionParticles
+end Polish.QuestionParticles

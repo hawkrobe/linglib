@@ -392,7 +392,7 @@ def czechPronouns : ParadigmaticStructure :=
     distinct (suffixes: *-n*, *-t*, *-V*). No inclusive/exclusive distinction,
     unified 'we' (Pa): puhumme (*-mme*). Person marking is inflectional.
     Singular person distinction confirmed by the negative auxiliary paradigm
-    from `Fragments.Finnish.Negation`: en/et/ei are all distinct. -/
+    from `Finnish.Negation`: en/et/ei are all distinct. -/
 def finnishInflection : ParadigmaticStructure :=
   { name := "Finnish (inflection)", isoCode := "fi"
     morphClass := λ
@@ -587,7 +587,7 @@ theorem english_fragment_pa :
     englishPronouns.firstPersonComplexType = .Pa := by decide
 
 /-- English has horizontal homophony: you.sg = you.pl (2 = 2+3).
-    This is visible in the Fragment: Fragments.English.Pronouns.you and you_pl
+    This is visible in the Fragment: English.Pronouns.you and you_pl
     share the same surface form "you". -/
 theorem english_you_horizontal :
     englishPronouns.homophonous .s2 .secondGrp = true := by decide
@@ -697,7 +697,7 @@ def ParadigmaticStructure.cognitiveMapPosition
 /-- Finnish singular person distinction confirmed by the Fragment's negative
     auxiliary paradigm: the three singular forms (en/et/ei) are all distinct. -/
 theorem finnish_singular_distinct_from_fragment :
-    let sg := (Fragments.Finnish.Negation.negParadigm.filter (·.number == "sg")).map (·.form)
+    let sg := (Finnish.Negation.negParadigm.filter (·.number == "sg")).map (·.form)
     sg.eraseDups.length = 3 := by decide
 
 end Cysouw2009

@@ -16,7 +16,7 @@ relativization.
 Data from @cite{keenan-comrie-1977} Table 1.
 -/
 
-namespace Fragments.Malagasy
+namespace Malagasy
 
 open RelativeClause
 
@@ -43,4 +43,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Gap on subject only; voice alternation needed for "
           ++ "non-subject relativization; Austronesian pattern" }
 
-end Fragments.Malagasy
+end Malagasy

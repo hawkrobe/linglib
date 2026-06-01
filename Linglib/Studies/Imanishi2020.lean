@@ -204,28 +204,28 @@ theorem anticausative_ron_compatible :
     fragment: A = ERG, S = P = ABS. Confirms the ergative side is
     shared across all three languages. -/
 theorem kaqchikel_perfective_bridge :
-    Fragments.Mayan.Kaqchikel.ArgPosition.case .A = .erg ∧
-    Fragments.Mayan.Kaqchikel.ArgPosition.case .P = .abs ∧
-    Fragments.Mayan.Kaqchikel.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
+    Kaqchikel.ArgPosition.case .A = .erg ∧
+    Kaqchikel.ArgPosition.case .P = .abs ∧
+    Kaqchikel.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- Chol's perfective alignment matches the same ergative pattern. -/
 theorem chol_perfective_bridge :
-    Fragments.Mayan.Chol.ArgPosition.case .A = .erg ∧
-    Fragments.Mayan.Chol.ArgPosition.case .P = .abs ∧
-    Fragments.Mayan.Chol.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
+    Chol.ArgPosition.case .A = .erg ∧
+    Chol.ArgPosition.case .P = .abs ∧
+    Chol.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- Q'anjob'al's perfective alignment matches the same ergative pattern. -/
 theorem qanjobal_perfective_bridge :
-    Fragments.Mayan.Qanjobal.ArgPosition.case .A = .erg ∧
-    Fragments.Mayan.Qanjobal.ArgPosition.case .P = .abs ∧
-    Fragments.Mayan.Qanjobal.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
+    Qanjobal.ArgPosition.case .A = .erg ∧
+    Qanjobal.ArgPosition.case .P = .abs ∧
+    Qanjobal.ArgPosition.case .S = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- All three languages share ergative alignment in the perfective. -/
 theorem shared_ergative :
-    Fragments.Mayan.Kaqchikel.ArgPosition.case .A =
-      Fragments.Mayan.Chol.ArgPosition.case .A ∧
-    Fragments.Mayan.Chol.ArgPosition.case .A =
-      Fragments.Mayan.Qanjobal.ArgPosition.case .A := ⟨rfl, rfl⟩
+    Kaqchikel.ArgPosition.case .A =
+      Chol.ArgPosition.case .A ∧
+    Chol.ArgPosition.case .A =
+      Qanjobal.ArgPosition.case .A := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 9: Case-to-Marker Bridge
@@ -248,49 +248,49 @@ theorem erg_gen_homophonous :
 /-- Chol's fragment case values, mapped through the Mayan marker bridge,
     yield the predicted accusative-side pattern. -/
 theorem chol_case_to_marker_bridge :
-    caseToMarker (Fragments.Mayan.Chol.ArgPosition.accCase .A) = cholPattern.sMarker ∧
-    caseToMarker (Fragments.Mayan.Chol.ArgPosition.accCase .P) = cholPattern.oMarker :=
+    caseToMarker (Chol.ArgPosition.accCase .A) = cholPattern.sMarker ∧
+    caseToMarker (Chol.ArgPosition.accCase .P) = cholPattern.oMarker :=
   ⟨rfl, rfl⟩
 
 /-- Q'anjob'al's fragment case values yield the same pattern as Chol. -/
 theorem qanjobal_case_to_marker_bridge :
-    caseToMarker (Fragments.Mayan.Qanjobal.ArgPosition.accCase .A) = cholPattern.sMarker ∧
-    caseToMarker (Fragments.Mayan.Qanjobal.ArgPosition.accCase .P) = cholPattern.oMarker :=
+    caseToMarker (Qanjobal.ArgPosition.accCase .A) = cholPattern.sMarker ∧
+    caseToMarker (Qanjobal.ArgPosition.accCase .P) = cholPattern.oMarker :=
   ⟨rfl, rfl⟩
 
 /-- Kaqchikel's fragment accusative-side case values, mapped through the
     Mayan marker bridge, yield the predicted Kaqchikel alignment pattern. -/
 theorem kaqchikel_case_to_marker_bridge :
-    caseToMarker (Fragments.Mayan.Kaqchikel.ArgPosition.accCase .A) = kaqchikelPattern.sMarker ∧
-    caseToMarker (Fragments.Mayan.Kaqchikel.ArgPosition.accCase .P) = kaqchikelPattern.oMarker :=
+    caseToMarker (Kaqchikel.ArgPosition.accCase .A) = kaqchikelPattern.sMarker ∧
+    caseToMarker (Kaqchikel.ArgPosition.accCase .P) = kaqchikelPattern.oMarker :=
   ⟨rfl, rfl⟩
 
 /-- The accusative-side case contrast between Kaqchikel and Chol is a
     true mirror image: agent and patient cases are swapped. -/
 theorem acc_case_mirror :
-    Fragments.Mayan.Kaqchikel.ArgPosition.accCase .A =
-      Fragments.Mayan.Chol.ArgPosition.accCase .P ∧
-    Fragments.Mayan.Kaqchikel.ArgPosition.accCase .P =
-      Fragments.Mayan.Chol.ArgPosition.accCase .A := ⟨rfl, rfl⟩
+    Kaqchikel.ArgPosition.accCase .A =
+      Chol.ArgPosition.accCase .P ∧
+    Kaqchikel.ArgPosition.accCase .P =
+      Chol.ArgPosition.accCase .A := ⟨rfl, rfl⟩
 
 /-- End-to-end: for all three languages, the fragment case data (mapped
     through the marker bridge) matches the parametrically derived pattern.
     This closes the argumentation chain from parameters → alignment → case → markers. -/
 theorem end_to_end_all_languages :
     -- Kaqchikel: fragment cases match derived pattern
-    (caseToMarker (Fragments.Mayan.Kaqchikel.ArgPosition.accCase .A) =
+    (caseToMarker (Kaqchikel.ArgPosition.accCase .A) =
       (deriveAccPattern kaqchikelParams).sMarker ∧
-     caseToMarker (Fragments.Mayan.Kaqchikel.ArgPosition.accCase .P) =
+     caseToMarker (Kaqchikel.ArgPosition.accCase .P) =
       (deriveAccPattern kaqchikelParams).oMarker) ∧
     -- Chol: fragment cases match derived pattern
-    (caseToMarker (Fragments.Mayan.Chol.ArgPosition.accCase .A) =
+    (caseToMarker (Chol.ArgPosition.accCase .A) =
       (deriveAccPattern cholParams).sMarker ∧
-     caseToMarker (Fragments.Mayan.Chol.ArgPosition.accCase .P) =
+     caseToMarker (Chol.ArgPosition.accCase .P) =
       (deriveAccPattern cholParams).oMarker) ∧
     -- Q'anjob'al: fragment cases match derived pattern
-    (caseToMarker (Fragments.Mayan.Qanjobal.ArgPosition.accCase .A) =
+    (caseToMarker (Qanjobal.ArgPosition.accCase .A) =
       (deriveAccPattern qanjobalParams).sMarker ∧
-     caseToMarker (Fragments.Mayan.Qanjobal.ArgPosition.accCase .P) =
+     caseToMarker (Qanjobal.ArgPosition.accCase .P) =
       (deriveAccPattern qanjobalParams).oMarker) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
@@ -319,7 +319,7 @@ theorem mayan_hindi_same_split : mayanSplit = Typology.Alignment.hindiSplit := r
 -- ============================================================================
 
 open CoonMateoPedroPreminger2014 (hasSyntacticErgativity)
-open Fragments.Mayan (toCaseLocus)
+open Mayan (toCaseLocus)
 
 /-- Imanishi's RON determines the accusative-side alignment (this study),
     while CMP2014's CaseLocus determines syntactic ergativity (ergative side).

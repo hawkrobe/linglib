@@ -83,25 +83,25 @@ open Syntax.Agreement (AgreementTarget)
     The divergences are first-class theorems in §9 below — exposing them
     rather than hiding them inside the Fragment. -/
 
-private abbrev mandarin  := Fragments.Mandarin.Gender.genderTypology
-private abbrev japanese  := Fragments.Japanese.Gender.genderTypology
-private abbrev turkish   := Fragments.Turkish.Gender.genderTypology
-private abbrev finnish   := Fragments.Finnish.Gender.genderTypology
-private abbrev korean    := Fragments.Korean.Gender.genderTypology
-private abbrev quechua   := Fragments.Quechua.Gender.genderTypology
-private abbrev french    := Fragments.French.Gender.genderTypology
-private abbrev spanish   := Fragments.Spanish.Gender.genderTypology
-private abbrev hindiUrdu := Fragments.Hindi.Gender.genderTypology
-private abbrev irish     := Fragments.Irish.Gender.genderTypology
-private abbrev hebrew    := Fragments.Hebrew.Gender.genderTypology
-private abbrev hausa     := Fragments.Hausa.Gender.genderTypology
-private abbrev german    := Fragments.German.Gender.genderTypology
-private abbrev russian   := Fragments.Slavic.Russian.Gender.genderTypology
-private abbrev latin     := Fragments.Latin.Gender.genderTypology
-private abbrev romanian  := Fragments.Romanian.Gender.genderTypology
-private abbrev swahili   := Fragments.Swahili.Gender.genderTypology
-private abbrev zulu      := Fragments.Zulu.Gender.genderTypology
-private abbrev fula      := Fragments.Fula.Gender.genderTypology
+private abbrev mandarin  := Mandarin.Gender.genderTypology
+private abbrev japanese  := Japanese.Gender.genderTypology
+private abbrev turkish   := Turkish.Gender.genderTypology
+private abbrev finnish   := Finnish.Gender.genderTypology
+private abbrev korean    := Korean.Gender.genderTypology
+private abbrev quechua   := Quechua.Gender.genderTypology
+private abbrev french    := French.Gender.genderTypology
+private abbrev spanish   := Spanish.Gender.genderTypology
+private abbrev hindiUrdu := Hindi.Gender.genderTypology
+private abbrev irish     := Irish.Gender.genderTypology
+private abbrev hebrew    := Hebrew.Gender.genderTypology
+private abbrev hausa     := Hausa.Gender.genderTypology
+private abbrev german    := German.Gender.genderTypology
+private abbrev russian   := Russian.Gender.genderTypology
+private abbrev latin     := Latin.Gender.genderTypology
+private abbrev romanian  := Romanian.Gender.genderTypology
+private abbrev swahili   := Swahili.Gender.genderTypology
+private abbrev zulu      := Zulu.Gender.genderTypology
+private abbrev fula      := Fula.Gender.genderTypology
 
 /-! Corbett-1991 record-overrides for the 3 languages where Corbett's 1991
     book disagrees with his 2013 WALS chapters. -/
@@ -110,7 +110,7 @@ private abbrev fula      := Fragments.Fula.Gender.genderTypology
     pronoun distinction is natural gender, not a controller-marked system).
     WALS @cite{corbett-2013} F30A says 3-gender. Override here. -/
 private def english : GenderProfile :=
-  { Fragments.English.Gender.genderTypology with
+  { English.Gender.genderTypology with
     genderCount := .none, rawGenderCount := 0
     basis := .noGender, assignment := .noGender
     agreementTargets := [], semanticBases := []
@@ -120,7 +120,7 @@ private def english : GenderProfile :=
     criteria cut across biological sex). WALS @cite{corbett-2013} F31A says
     sex-based on the narrow "Class I includes males" criterion. Override. -/
 private def dyirbal : GenderProfile :=
-  { Fragments.Dyirbal.Gender.genderTypology with
+  { Dyirbal.Gender.genderTypology with
     basis := .nonSexBased }
 
 /-- Corbett 1991: Georgian is a 4-class non-sex-based gender system on the
@@ -128,7 +128,7 @@ private def dyirbal : GenderProfile :=
     @cite{corbett-2013} F30A/31A/32A says no gender on the noun-side-marking
     criterion. Override. -/
 private def georgian : GenderProfile :=
-  { Fragments.Georgian.Gender.genderTypology with
+  { Georgian.Gender.genderTypology with
     genderCount := .four, rawGenderCount := 4
     basis := .nonSexBased, assignment := .semanticOnly
     agreementTargets := [.personalPronoun, .verb]
@@ -319,7 +319,7 @@ theorem iso_codes_unique :
     treats the *he/she/it* pronoun distinction as a 3-gender system. -/
 theorem english_corbett1991_vs_corbett2013 :
     english.genderCount = .none ∧
-    Fragments.English.Gender.genderTypology.genderCount = .three := by decide
+    English.Gender.genderTypology.genderCount = .three := by decide
 
 /-- Corbett 1991 vs 2013: Dyirbal. The 1991 monograph treats Dyirbal as
     non-sex-based (organising principles cut across sex); the 2013 WALS
@@ -327,7 +327,7 @@ theorem english_corbett1991_vs_corbett2013 :
     criterion. -/
 theorem dyirbal_corbett1991_vs_corbett2013 :
     dyirbal.basis = .nonSexBased ∧
-    Fragments.Dyirbal.Gender.genderTypology.basis = .sexBased := by decide
+    Dyirbal.Gender.genderTypology.basis = .sexBased := by decide
 
 /-- Corbett 1991 vs 2013: Georgian. The 1991 monograph treats Georgian's
     rationality/animacy split as a 4-class gender system (agreement on
@@ -335,6 +335,6 @@ theorem dyirbal_corbett1991_vs_corbett2013 :
     noun-side-marking criterion. -/
 theorem georgian_corbett1991_vs_corbett2013 :
     georgian.genderCount = .four ∧
-    Fragments.Georgian.Gender.genderTypology.genderCount = .none := by decide
+    Georgian.Gender.genderTypology.genderCount = .none := by decide
 
 end Corbett1991

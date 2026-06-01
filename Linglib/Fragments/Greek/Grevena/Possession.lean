@@ -38,7 +38,7 @@ on a continuum between Smyrna's over-extension and GG's complete loss.
 
 set_option autoImplicit false
 
-namespace Fragments.Greek.Grevena.Possession
+namespace Greek.Grevena.Possession
 
 open _root_.Typology.Possession
 
@@ -86,4 +86,4 @@ def possession : PossessionProfile :=
  are reduced relative clauses — a structure SMG apo-PPs do NOT support (see Kampanarou & Alexiadou\
  2026 §4)." }
 
-end Fragments.Greek.Grevena.Possession
+end Greek.Grevena.Possession

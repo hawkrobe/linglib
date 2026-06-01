@@ -87,9 +87,9 @@ the agentive split. Future refinement: split into `intranSAgentive` /
 `intranSPatientive` / `intranSFluid`.
 -/
 
-namespace Fragments.Mayan.Chol
+namespace Chol
 
-open Fragments.Mayan (PersonNumber)
+open Mayan (PersonNumber)
 
 -- ============================================================================
 -- § 1: Argument Positions (alias to canonical SAP type)
@@ -102,20 +102,20 @@ open Fragments.Mayan (PersonNumber)
 abbrev ArgPosition := Features.Prominence.ArgumentRole
 
 /-- Perfective case assignment for Chol. Definitionally equal to
-    `Fragments.Mayan.ergCaseChol`, which derives from
+    `Mayan.ergCaseChol`, which derives from
     `Alignment.ergative.assignCase` in
     `Syntax/Case/Alignment.lean` — the foundation makes the
     pattern (A → ERG, S/P → ABS) explicit; the per-language wrapper
     preserves dot-notation `position.case` for consumers, uniform
     with the other Mayan fragments. -/
-abbrev ArgPosition.case : ArgPosition → Features.Case := Fragments.Mayan.ergCaseChol
+abbrev ArgPosition.case : ArgPosition → Features.Case := Mayan.ergCaseChol
 
 /-- Non-perfective case assignment for Chol. Definitionally equal to
-    `Fragments.Mayan.accCaseChol`, derived from
+    `Mayan.accCaseChol`, derived from
     `Alignment.extendedErgative.assignCase`. The "extended ergative"
     pattern (S/A → GEN, P → ABS) is shared with Q'anjob'al — both
     fragments call into the same `caseExtErg` substrate. -/
-abbrev ArgPosition.accCase : ArgPosition → Features.Case := Fragments.Mayan.accCaseChol
+abbrev ArgPosition.accCase : ArgPosition → Features.Case := Mayan.accCaseChol
 
 -- ============================================================================
 -- § 2: Absolutive Position (LOW-ABS)
@@ -124,7 +124,7 @@ abbrev ArgPosition.accCase : ArgPosition → Features.Case := Fragments.Mayan.ac
 /-- Chol's absolutive morphemes appear in low position (at the end of
     the verb stem, post-stem). Observable from morpheme order:
     ASP-ERG-ROOT-(DERIV)-SUFFIX-ABS. -/
-def absPosition : Fragments.Mayan.ABSPosition := .low
+def absPosition : Mayan.ABSPosition := .low
 
 -- ============================================================================
 -- § 3: Extraction Data
@@ -234,4 +234,4 @@ theorem p3sg_erg_allomorphy :
     setAExponentPreC .p3sg = "i-" ∧ setAExponentPreV .p3sg = "(i)y-" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Mayan.Chol
+end Chol

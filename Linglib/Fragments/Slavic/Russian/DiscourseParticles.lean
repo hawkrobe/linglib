@@ -7,7 +7,7 @@ connective. Allows all clause types as S'.
 
 -/
 
-namespace Fragments.Slavic.Russian.DiscourseParticles
+namespace Russian.DiscourseParticles
 
 /-- A discourse *only* particle entry. -/
 structure DiscourseOnlyParticle where
@@ -22,4 +22,4 @@ def tolko : DiscourseOnlyParticle where
   nativeForm := "только"
   gloss := "only"
 
-end Fragments.Slavic.Russian.DiscourseParticles
+end Russian.DiscourseParticles

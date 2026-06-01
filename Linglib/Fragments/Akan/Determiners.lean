@@ -11,8 +11,8 @@ consume these entries.
 
 ## Main declarations
 
-* `Fragments.Akan.Determiners.Definite` — bare NP vs. *nó* (the DEF marker).
-* `Fragments.Akan.Determiners.Indefinite` — bare NP vs. *bí* (the INDEF marker).
+* `Akan.Determiners.Definite` — bare NP vs. *nó* (the DEF marker).
+* `Akan.Determiners.Indefinite` — bare NP vs. *bí* (the INDEF marker).
 
 ## Implementation notes
 
@@ -23,7 +23,7 @@ Bare NPs appear under both definiteness values
 the two inductives to reflect this.
 -/
 
-namespace Fragments.Akan.Determiners
+namespace Akan.Determiners
 
 /-- Akan adnominal definiteness contrast (@cite{owusu-2022} Ch 2). -/
 inductive Definite where
@@ -42,4 +42,4 @@ inductive Indefinite where
   | bi
   deriving DecidableEq, Repr
 
-end Fragments.Akan.Determiners
+end Akan.Determiners

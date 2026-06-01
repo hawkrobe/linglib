@@ -27,7 +27,7 @@ commitments are robust across the contestation (K'iche' is verb-
 initial in both intransitive and transitive clauses).
 -/
 
-namespace Fragments.Mayan.Kiche
+namespace Kiche
 
 /-- K'iche' word-order profile, grammar-grounded from
     @cite{mondloch-2017} ("the preferred word order appears to be:
@@ -43,4 +43,4 @@ def wordOrder : Typology.WordOrder.WordOrderProfile :=
 /-- Drift sentinel: the profile is internally consistent. -/
 theorem wordOrder_consistent : wordOrder.IsConsistent := by decide
 
-end Fragments.Mayan.Kiche
+end Kiche

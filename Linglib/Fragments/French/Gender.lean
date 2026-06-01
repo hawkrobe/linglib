@@ -8,7 +8,7 @@ import Linglib.Typology.Gender
 attributive + predicate adjectives, past participles, and personal pronouns.
 -/
 
-namespace Fragments.French.Gender
+namespace French.Gender
 
 open Typology.Gender
 
@@ -30,4 +30,4 @@ example : genderTypology.iso639 = "fra" ∧ genderTypology.name = "French" :=
     sex-based, 2-or-3 gender, semantic + formal. -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.French.Gender
+end French.Gender

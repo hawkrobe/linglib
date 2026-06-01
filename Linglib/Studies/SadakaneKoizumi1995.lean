@@ -95,7 +95,7 @@ correspondingly coarse.
   happens *when Agree fails*, not Agree itself.
 - `MartinCategory.InFragmentNi` is **derived** as a `Finset` intersection
   of the per-category `fragmentCases` footprint with the Fragment's
-  `Fragments.Japanese.Case.ni.cases = {.dat, .loc, .all, .Tem}`. The
+  `Japanese.Case.ni.cases = {.dat, .loc, .all, .Tem}`. The
   conflation theorem `fragment_ni_predicts_inconsistent_signatures`
   derives the Tsujimura/Fragment vs. S&K granularity disagreement as a
   real claim about set intersection plus diagnostic-signature mismatch.
@@ -184,7 +184,7 @@ def classify : MartinCategory → Option Classification
 /-- Per-category footprint on the `Features.Case` lattice — what UD case
     feature(s) the *ni*-use of this Martin category corresponds to most
     directly. Categories whose *ni*-use does NOT fit any UD case feature
-    Tsujimura's Fragment recognises (`Fragments.Japanese.Case.ni.cases =
+    Tsujimura's Fragment recognises (`Japanese.Case.ni.cases =
     {.dat, .loc, .all, .Tem}`) map to `∅`. This is study-internal
     stipulation (the lin agent verified F's mapping is empty per the
     *GB riron-ni motozuiteiru* example). -/
@@ -203,7 +203,7 @@ def fragmentCases : MartinCategory → Finset Features.Case
     `ni.cases` — a real `Finset` operation rather than a stipulated
     lookup table. -/
 def InFragmentNi (c : MartinCategory) : Prop :=
-  (c.fragmentCases ∩ Fragments.Japanese.Case.ni.cases).Nonempty
+  (c.fragmentCases ∩ Japanese.Case.ni.cases).Nonempty
 
 instance (c : MartinCategory) : Decidable c.InFragmentNi := by
   unfold InFragmentNi; infer_instance

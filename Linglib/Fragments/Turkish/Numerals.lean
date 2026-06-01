@@ -5,7 +5,7 @@ import Linglib.Typology.Numeral.WALS
 @cite{wals-2013}
 -/
 
-namespace Fragments.Turkish
+namespace Turkish
 
 /-- Turkish: *birinci* 'first' derived regularly from *bir* 'one' via *-(i)nci*
     suffix (all ordinals so formed). Distributive numerals by suffix *-er*/*-ar*
@@ -15,4 +15,4 @@ namespace Fragments.Turkish
 def numeralProfile : Numeral.Profile :=
   Numeral.Profile.fromWALS "Turkish" "tur" (region := .westAsia) (pluralMarking := .obligatory)
 
-end Fragments.Turkish
+end Turkish

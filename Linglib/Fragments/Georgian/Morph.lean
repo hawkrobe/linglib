@@ -8,7 +8,7 @@ WALS-derived profile for Georgian (ISO `kat`). B&N 2001 places Georgian
 in the "fusional" cell (concatenative + flexive + cumulative).
 -/
 
-namespace Fragments.Georgian
+namespace Georgian
 
 open Morphology
 
@@ -29,4 +29,4 @@ example : morphProfile.iso = "kat" ∧ morphProfile.language = "Georgian" := ⟨
 /-- B&N 2001 places Georgian in the "fusional" cell. -/
 example : morphProfile.IsFusional := by decide
 
-end Fragments.Georgian
+end Georgian

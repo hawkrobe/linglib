@@ -46,12 +46,12 @@ are the most productive class. When *diri* 'self' is incorporated,
 a reflexive reading arises even for obviative roots.
 -/
 
-namespace Fragments.Indonesian.Predicates
+namespace Indonesian.Predicates
 
 open Semantics.Lexical
 open Semantics.Lexical.Roots
 open Typology.Voice
-open Fragments.Indonesian.Morphophonology
+open Indonesian.Morphophonology
 
 -- ============================================================================
 -- § 1: Root Classes
@@ -654,4 +654,4 @@ theorem all_men_forms_derived :
     allVerbs.all (fun (v : IndonesianVerbEntry) =>
       v.formMeN == deriveMeN v.form) = true := by native_decide
 
-end Fragments.Indonesian.Predicates
+end Indonesian.Predicates

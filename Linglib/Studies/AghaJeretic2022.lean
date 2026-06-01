@@ -632,7 +632,7 @@ theorem domain_restriction_wrong :
 Verify that the English fragment classifies *should*/*ought* as weak
 necessity and *must* as strong necessity, matching the paper's §2.1. -/
 
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 
 /-- *should* is classified as weak necessity in the English fragment. -/
 theorem should_is_weak :
@@ -1040,46 +1040,46 @@ in the formal lexical entries. -/
 
 /-- *mesthi* is strong necessity in the Javanese fragment. -/
 theorem javanese_mesthi_strong :
-    Fragments.Javanese.Modals.mesthi.meaning.all
+    Javanese.Modals.mesthi.meaning.all
       (·.force == .necessity) = true := by native_decide
 
 /-- *mesthi-ne* is weak necessity — NE shifts strong to weak. -/
 theorem javanese_mesthi_ne_weak :
-    Fragments.Javanese.Modals.mesthiNe.meaning.all
+    Javanese.Modals.mesthiNe.meaning.all
       (·.force == .weakNecessity) = true := by native_decide
 
 /-- The NE morpheme shifts force: *mesthi* and *mesthi-ne* share
     epistemic flavor but differ in force. -/
 theorem javanese_ne_shifts_force :
-    Fragments.Javanese.Modals.mesthi.meaning.all (·.flavor == .epistemic) = true ∧
-    Fragments.Javanese.Modals.mesthiNe.meaning.all (·.flavor == .epistemic) = true ∧
-    Fragments.Javanese.Modals.mesthi.meaning.any (·.force == .necessity) = true ∧
-    Fragments.Javanese.Modals.mesthiNe.meaning.any (·.force == .weakNecessity) = true :=
+    Javanese.Modals.mesthi.meaning.all (·.flavor == .epistemic) = true ∧
+    Javanese.Modals.mesthiNe.meaning.all (·.flavor == .epistemic) = true ∧
+    Javanese.Modals.mesthi.meaning.any (·.force == .necessity) = true ∧
+    Javanese.Modals.mesthiNe.meaning.any (·.force == .weakNecessity) = true :=
   ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
 /-- *iso* (possibility) has NO -ne form: *iso-ne is ungrammatical.
     Verified by checking that no weak-possibility expression exists. -/
 theorem javanese_no_weak_possibility :
-    Fragments.Javanese.Modals.allExpressions.all
+    Javanese.Modals.allExpressions.all
       (fun e => e.meaning.all (·.force != .weakNecessity) ||
                 e.meaning.any (·.force == .weakNecessity)) = true := by
   native_decide
 
 /-- *kudu* strong → *kudu-ne* weak, paralleling *mesthi* → *mesthi-ne*. -/
 theorem javanese_kudu_ne_weak :
-    Fragments.Javanese.Modals.kudu1.meaning.all (·.force == .necessity) = true ∧
-    Fragments.Javanese.Modals.kudu1Ne.meaning.all (·.force == .weakNecessity) = true :=
+    Javanese.Modals.kudu1.meaning.all (·.force == .necessity) = true ∧
+    Javanese.Modals.kudu1Ne.meaning.all (·.force == .weakNecessity) = true :=
   ⟨by native_decide, by native_decide⟩
 
 /-- French *devoir* is strong necessity; *devrais* (devoir+CF) is weak. -/
 theorem french_cf_weakens :
-    Fragments.French.Modals.devoir.force = .necessity ∧
-    Fragments.French.Modals.devrais.force = .weakNecessity := ⟨rfl, rfl⟩
+    French.Modals.devoir.force = .necessity ∧
+    French.Modals.devrais.force = .weakNecessity := ⟨rfl, rfl⟩
 
 /-- *Devrais* preserves *devoir*'s flavor polysemy: both are
     epistemic/deontic/circumstantial. -/
 theorem french_devrais_same_flavors :
-    Fragments.French.Modals.devrais.flavors =
-    Fragments.French.Modals.devoir.flavors := rfl
+    French.Modals.devrais.flavors =
+    French.Modals.devoir.flavors := rfl
 
 end AghaJeretic2022

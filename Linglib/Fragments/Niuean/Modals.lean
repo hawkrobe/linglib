@@ -50,7 +50,7 @@ broader cross-linguistic tendency for force distinctions to be encoded
 in the root/circumstantial domain.
 -/
 
-namespace Fragments.Niuean.Modals
+namespace Niuean.Modals
 
 open Semantics.Modality (ForceFlavor ForceAnalysis)
 open Semantics.Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
@@ -147,4 +147,4 @@ theorem circumstantial_has_duals :
       e.meaning.any (fun ff => ff.flavor == .circumstantial))).length = 2 := by
   decide
 
-end Fragments.Niuean.Modals
+end Niuean.Modals

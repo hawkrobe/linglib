@@ -42,7 +42,7 @@ open Semantics.Modality (ModalFlavor)
 -- Part I: Italian Restructuring
 -- ============================================================================
 
-open Fragments.Italian.Modals
+open Italian.Modals
 
 -- ============================================================================
 -- § 1: Restructuring = Low Position

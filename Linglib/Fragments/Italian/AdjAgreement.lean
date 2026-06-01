@@ -15,7 +15,7 @@ adjacency. Italian prenominal adjectives therefore obey the HFF. The
 analysis is given in (72).
 -/
 
-namespace Fragments.Italian.AdjAgreement
+namespace Italian.AdjAgreement
 
 open Minimalist.Modification
 
@@ -40,4 +40,4 @@ theorem same_agreement : entry.sameAgreement = true := by native_decide
 /-- Italian is NOT φ/κ-complete: adjectives lack case. -/
 theorem not_phi_kappa_complete : entry.phiKappaComplete = false := by native_decide
 
-end Fragments.Italian.AdjAgreement
+end Italian.AdjAgreement

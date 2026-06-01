@@ -21,7 +21,7 @@ Incompatible with DeclPQs (@cite{simik-2024} ex. 28).
 
 -/
 
-namespace Fragments.Slavic.Slovenian.QuestionParticles
+namespace Slovenian.QuestionParticles
 
 /-- A Slovenian interrogative particle entry. -/
 structure QParticleEntry where
@@ -51,4 +51,4 @@ theorem ali_neutral :
     ali.requiresEvidentialBias = false ∧ ali.requiresEpistemicBias = false :=
   ⟨rfl, rfl⟩
 
-end Fragments.Slavic.Slovenian.QuestionParticles
+end Slovenian.QuestionParticles

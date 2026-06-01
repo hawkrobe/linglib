@@ -118,7 +118,7 @@ favouring a paradigm-anchored account.
 
 namespace BreissKatsudaKawahara2026
 
-open Fragments.Japanese.Prosody
+open Japanese.Prosody
 open Phonology.ItemSpecificity
 open Phonology.ItemSpecificity.Scaled (scaledWeight)
 open Phonology.ParadigmUniformity (liftPairwise lcParadigm mkLCFaith lc_unanchored_zero)

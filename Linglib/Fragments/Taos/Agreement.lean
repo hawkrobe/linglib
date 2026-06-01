@@ -35,7 +35,7 @@ Number features are `[±atomic]` and `[±minimal]`
 A&N's `[−singular]` for direct compatibility with @cite{harbour-2014}.)
 -/
 
-namespace Fragments.Taos.Agreement
+namespace Taos.Agreement
 
 open Minimalist
 
@@ -150,4 +150,4 @@ def Morpheme.surface : Morpheme → String
   | .u  => "u"
   | .ô  => "ô"
 
-end Fragments.Taos.Agreement
+end Taos.Agreement

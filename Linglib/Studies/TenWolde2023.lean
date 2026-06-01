@@ -33,7 +33,7 @@ namespace TenWolde2023
 open Semantics.Quantification.Binominal
 open Semantics.Quantification.Binominal
 open Semantics.Gradability.GradableNouns (exampleIdiot)
-open Fragments.English.Binominals
+open English.Binominals
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 1: Table 4.2 — Diagnostic Profile Verification

@@ -15,7 +15,7 @@ preserving transitivity. Formally distinct from the reflexive "sig".
 @cite{nordlinger-2023} ex. 17 (citing Hurst & Nordlinger 2021).
 -/
 
-namespace Fragments.Icelandic.Reciprocals
+namespace Icelandic.Reciprocals
 
 open Pronoun
 
@@ -33,4 +33,4 @@ def sig : Entry :=
 theorem recip_distinct_from_reflexive :
     hvorAnnad.form ≠ sig.form := by decide
 
-end Fragments.Icelandic.Reciprocals
+end Icelandic.Reciprocals

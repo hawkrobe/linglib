@@ -31,35 +31,35 @@ namespace MartinRoseNichols2025.ThickThin
 
 open Semantics.Lexical
 open Semantics.Causation.ProductionDependence
-open Fragments.English.Predicates.Verbal (VerbEntry)
+open English.Predicates.Verbal (VerbEntry)
 namespace V
   -- Re-export Fragment verb entries under a short alias to avoid name clashes
   -- with the ThickThinEntry definitions in this namespace.
-  abbrev activate := Fragments.English.Predicates.Verbal.activate
-  abbrev affect := Fragments.English.Predicates.Verbal.affect
-  abbrev change := Fragments.English.Predicates.Verbal.change
-  abbrev damage := Fragments.English.Predicates.Verbal.damage
-  abbrev destroy := Fragments.English.Predicates.Verbal.destroy
-  abbrev eliminate := Fragments.English.Predicates.Verbal.eliminate
-  abbrev hurt := Fragments.English.Predicates.Verbal.hurt
-  abbrev kill := Fragments.English.Predicates.Verbal.kill
-  abbrev restore := Fragments.English.Predicates.Verbal.restore
-  abbrev start := Fragments.English.Predicates.Verbal.start
-  abbrev stop := Fragments.English.Predicates.Verbal.stop
-  abbrev trigger := Fragments.English.Predicates.Verbal.trigger
-  abbrev break_ := Fragments.English.Predicates.Verbal.break_
-  abbrev burn := Fragments.English.Predicates.Verbal.burn
-  abbrev bury := Fragments.English.Predicates.Verbal.bury
-  abbrev cut := Fragments.English.Predicates.Verbal.cut
-  abbrev drop := Fragments.English.Predicates.Verbal.drop
-  abbrev lift := Fragments.English.Predicates.Verbal.lift
-  abbrev lock := Fragments.English.Predicates.Verbal.lock
-  abbrev melt := Fragments.English.Predicates.Verbal.melt
-  abbrev mix := Fragments.English.Predicates.Verbal.mix
-  abbrev shut := Fragments.English.Predicates.Verbal.shut
-  abbrev spread := Fragments.English.Predicates.Verbal.spread
-  abbrev stretch := Fragments.English.Predicates.Verbal.stretch
-  abbrev switch := Fragments.English.Predicates.Verbal.switch
+  abbrev activate := English.Predicates.Verbal.activate
+  abbrev affect := English.Predicates.Verbal.affect
+  abbrev change := English.Predicates.Verbal.change
+  abbrev damage := English.Predicates.Verbal.damage
+  abbrev destroy := English.Predicates.Verbal.destroy
+  abbrev eliminate := English.Predicates.Verbal.eliminate
+  abbrev hurt := English.Predicates.Verbal.hurt
+  abbrev kill := English.Predicates.Verbal.kill
+  abbrev restore := English.Predicates.Verbal.restore
+  abbrev start := English.Predicates.Verbal.start
+  abbrev stop := English.Predicates.Verbal.stop
+  abbrev trigger := English.Predicates.Verbal.trigger
+  abbrev break_ := English.Predicates.Verbal.break_
+  abbrev burn := English.Predicates.Verbal.burn
+  abbrev bury := English.Predicates.Verbal.bury
+  abbrev cut := English.Predicates.Verbal.cut
+  abbrev drop := English.Predicates.Verbal.drop
+  abbrev lift := English.Predicates.Verbal.lift
+  abbrev lock := English.Predicates.Verbal.lock
+  abbrev melt := English.Predicates.Verbal.melt
+  abbrev mix := English.Predicates.Verbal.mix
+  abbrev shut := English.Predicates.Verbal.shut
+  abbrev spread := English.Predicates.Verbal.spread
+  abbrev stretch := English.Predicates.Verbal.stretch
+  abbrev switch := English.Predicates.Verbal.switch
 end V
 
 /-- A single verb entry from Table 3, extending a Fragment VerbEntry.

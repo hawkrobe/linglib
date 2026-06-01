@@ -17,7 +17,7 @@ iPossessed (with n_{body-part{D}}) → gender I; unpossessed or
 aPossessed (with n_{alienator}) → gender II.
 -/
 
-namespace Fragments.Teop
+namespace Teop
 
 open Morphology.DM
 
@@ -190,4 +190,4 @@ open Morphology.DM in
 theorem spleen_free_cathead :
     bina.gender.toCatHead = CatHead.n_plain := rfl
 
-end Fragments.Teop
+end Teop

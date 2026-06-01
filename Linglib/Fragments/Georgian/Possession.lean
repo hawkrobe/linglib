@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Georgian.Possession
+namespace Georgian.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["me m-akvs cigni", "kac-is saxl-i"]
   , notes := "Dative experiencer + verb agreeing with possessum; genitive on possessor in adnominal constructions" }
 
-end Fragments.Georgian.Possession
+end Georgian.Possession

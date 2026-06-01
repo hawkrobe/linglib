@@ -20,7 +20,7 @@ Both preverbal and postverbal n-words require *ne-* — unlike Italian/
 Spanish position-dependent NC.
 -/
 
-namespace Fragments.Slavic.Czech.PolarityItems
+namespace Czech.PolarityItems
 
 open Typology.PolarityItem
 
@@ -100,4 +100,4 @@ theorem niSeries_morphology :
     [nikdo, nic, nikdy, nikam].all (fun e => e.morphology == .indefPlusNeg) = true := by
   native_decide
 
-end Fragments.Slavic.Czech.PolarityItems
+end Czech.PolarityItems

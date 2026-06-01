@@ -11,7 +11,7 @@ B&N as the diagnostic for flexivity is the same pattern Russian instantiates
 across declension classes.
 -/
 
-namespace Fragments.Slavic.Russian
+namespace Russian
 
 open Morphology
 
@@ -32,4 +32,4 @@ example : morphProfile.iso = "rus" ∧ morphProfile.language = "Russian" := ⟨r
 /-- B&N 2001 places Russian in the canonical "fusional" cell. -/
 example : morphProfile.IsFusional := by decide
 
-end Fragments.Slavic.Russian
+end Russian

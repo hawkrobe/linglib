@@ -28,7 +28,7 @@ captured by `IndefiniteEntry.consistentWith` in
 
 set_option autoImplicit false
 
-namespace Fragments.Slavic.Russian.Indefinites
+namespace Russian.Indefinites
 
 open Typology.Indefinite
 
@@ -85,4 +85,4 @@ theorem russian_paradigm_is_ABC : paradigm.syncretism = some .ABC := rfl
 theorem russian_paradigm_is_interrogativeBased :
     paradigm.toWALS46A = some .interrogativeBased := rfl
 
-end Fragments.Slavic.Russian.Indefinites
+end Russian.Indefinites

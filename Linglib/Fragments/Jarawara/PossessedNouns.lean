@@ -27,7 +27,7 @@ The iPossessable class maps onto the upper portion of the
 cross-linguistic inalienability hierarchy from `Possession.Typology`.
 -/
 
-namespace Fragments.Jarawara
+namespace Jarawara
 
 open Typology.Possession
 
@@ -265,4 +265,4 @@ theorem core_inalienable_majority :
                   InalienabilityRank.partWhole.toNat)
     (core.map (·.memberCount)).foldl (· + ·) 0 = 118 := by native_decide
 
-end Fragments.Jarawara
+end Jarawara

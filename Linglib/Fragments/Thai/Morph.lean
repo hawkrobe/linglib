@@ -11,7 +11,7 @@ exercised. F21A returns `noCase`, mapping to `none`; the local `.noCase`
 fallback is exercised. B&N 2001 flexivity/bnExponence are not stipulated.
 -/
 
-namespace Fragments.Thai
+namespace Thai
 
 open Morphology
 
@@ -27,4 +27,4 @@ def morphProfile : MorphProfile :=
 
 example : morphProfile.iso = "tha" ∧ morphProfile.language = "Thai" := ⟨rfl, rfl⟩
 
-end Fragments.Thai
+end Thai

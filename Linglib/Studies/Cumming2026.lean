@@ -28,9 +28,9 @@ predictions.
 namespace Cumming2026
 
 open Semantics.Tense.Evidential
-open Fragments.English.Tense
-open Fragments.Korean.Evidentials
-open Fragments.Slavic.Bulgarian.Evidentials
+open English.Tense
+open Korean.Evidentials
+open Bulgarian.Evidentials
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Linguistic Collection
@@ -38,9 +38,9 @@ open Fragments.Slavic.Bulgarian.Evidentials
 
 /-- All paradigm entries across the three languages. -/
 def allParadigms : List TAMEEntry :=
-  Fragments.English.Tense.allEntries ++
-  Fragments.Korean.Evidentials.allEntries ++
-  Fragments.Slavic.Bulgarian.Evidentials.allEntries
+  English.Tense.allEntries ++
+  Korean.Evidentials.allEntries ++
+  Bulgarian.Evidentials.allEntries
 
 /-- Nonfuture paradigm entries (across all languages). -/
 def nonfutureParadigms : List TAMEEntry :=
@@ -134,7 +134,7 @@ theorem nfutL_downstream (f : EvidentialFrame ℤ) :
     is either trivially true (English bare future) or imposes A < T
     (prospective), which is the opposite of T ≤ A. -/
 theorem future_no_downstream :
-    Fragments.English.Tense.future.epConstraint ⟨⟨10, 10, 0, 5⟩, 0⟩ ∧
+    English.Tense.future.epConstraint ⟨⟨10, 10, 0, 5⟩, 0⟩ ∧
     ¬ downstreamEvidence ⟨⟨10, 10, 0, 5⟩, 0⟩ := by
   refine ⟨trivial, ?_⟩
   simp [downstreamEvidence]

@@ -19,15 +19,15 @@ English leaves covert (COMPLET/INCHOAT).
   (unbounded/atelic, the default)
 
 This parallels the Tagalog PFV.NEUT/AIA distinction (see
-`Fragments.Tagalog.TemporalConnectives`) but uses the standard
+`Tagalog.TemporalConnectives`) but uses the standard
 PFV/IMPF opposition rather than Tagalog's finer-grained system.
 
 -/
 
-namespace Fragments.Slavic.Serbian.TemporalConnectives
+namespace Serbian.TemporalConnectives
 
 open Semantics.Aspect
-open Fragments.English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
+open English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
 
 -- ============================================================================
 -- § 1: Aspect–Reading Mapping
@@ -171,7 +171,7 @@ theorem veridicality_asymmetry :
 -- § 6: Cross-Linguistic Agreement
 -- ============================================================================
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Serbian *pre* and English *before* agree on all semantic properties. -/
 theorem pre_matches_before :
     pre.order = before_.order ∧
@@ -181,7 +181,7 @@ theorem pre_matches_before :
     pre.complementVeridical = before_.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Serbian *posle* and English *after* agree on all semantic properties. -/
 theorem posle_matches_after :
     posle.order = after_.order ∧
@@ -191,4 +191,4 @@ theorem posle_matches_after :
     posle.complementVeridical = after_.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-end Fragments.Slavic.Serbian.TemporalConnectives
+end Serbian.TemporalConnectives

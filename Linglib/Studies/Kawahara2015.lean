@@ -33,7 +33,7 @@ open Phonology.Syllable (SyllWeight)
 namespace Kawahara2015
 
 open Features.Prosody
-open Fragments.Japanese.Prosody
+open Japanese.Prosody
 
 -- ============================================================================
 -- § 1: AAR vs LSR — Table 1 Completeness

@@ -62,7 +62,7 @@ namespace Mirrazi2024
 open Semantics.Quantification.ChoiceFunction
 open Semantics.Attitudes.Doxastic (AccessRel boxAt)
 open Semantics.Attitudes.NegRaising (negRaisesAt)
-open Fragments.Farsi.Determiners (ye candTa doTa PlainIndefiniteEntry)
+open Farsi.Determiners (ye candTa doTa PlainIndefiniteEntry)
 
 -- ============================================================================
 -- §1 The Scope Paradox: Three Readings

@@ -8,11 +8,11 @@ Per @cite{short-1993-czech} (p. 466), the full seven cases survive in
 Czech, with VOC morphologically distinct in roughly half the singular
 noun paradigms (NOM-syncretic in plural, adjectives, pronouns,
 numerals). `caseInventory` aliases the shared 6-case core;
-`Fragments.Slavic.Case.sevenCaseInventory` carries the +VOC form.
+`Slavic.Case.sevenCaseInventory` carries the +VOC form.
 -/
 
-namespace Fragments.Slavic.Czech.Case
+namespace Czech.Case
 
-abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
 
-end Fragments.Slavic.Czech.Case
+end Czech.Case

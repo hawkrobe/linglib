@@ -25,7 +25,7 @@ ones" (ibid.).
 
 -/
 
-namespace Fragments.Mandarin.Classifiers
+namespace Mandarin.Classifiers
 
 open Typology (ClassifierEntry SemanticParameter ShapeDimension)
 
@@ -194,4 +194,4 @@ theorem container_classifiers_have_semantics :
 /-- Full inventory: 11 sortal + 4 container = 15 classifiers. -/
 theorem inventory_size : allClassifiers.length = 15 := by native_decide
 
-end Fragments.Mandarin.Classifiers
+end Mandarin.Classifiers

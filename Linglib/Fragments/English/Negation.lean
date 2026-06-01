@@ -22,7 +22,7 @@ WALS classifies English as **mixed**:
 - *anything*, *ever* require predicate negation: *I didn't see anything* / **I saw anything*
 -/
 
-namespace Fragments.English.Negation
+namespace English.Negation
 
 open Typology.Negation
 
@@ -131,4 +131,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.English.Negation
+end English.Negation

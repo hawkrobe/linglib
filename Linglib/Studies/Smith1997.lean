@@ -384,16 +384,16 @@ theorem three_perf_stative_patterns :
     This is expected: Smith's viewpoint inventory presupposes the
     perfective/imperfective contrast is grammatically expressed. -/
 theorem smith_languages_have_wals_aspect :
-    Fragments.English.tenseAspectProfile.aspect = .grammatical ∧
-    Fragments.French.tenseAspectProfile.aspect = .grammatical ∧
-    Fragments.Mandarin.tenseAspectProfile.aspect = .grammatical := ⟨rfl, rfl, rfl⟩
+    English.tenseAspectProfile.aspect = .grammatical ∧
+    French.tenseAspectProfile.aspect = .grammatical ∧
+    Mandarin.tenseAspectProfile.aspect = .grammatical := ⟨rfl, rfl, rfl⟩
 
 /-- Smith's French has the neutral viewpoint (Futur);
     WALS French has inflectional future — consistent, since the
     Futur is the morphological expression of the neutral viewpoint. -/
 theorem french_neutral_has_inflectional_future :
     french.viewpoints.contains .neutral = true ∧
-    Fragments.French.tenseAspectProfile.future = .inflectional := ⟨rfl, rfl⟩
+    French.tenseAspectProfile.future = .inflectional := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Viewpoint × Situation Type Interactions

@@ -5,7 +5,7 @@ import Linglib.Typology.BodyParts
 @cite{wals-2013}
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 /-- Swahili: *mkono* covers both 'hand' and 'arm' (identical); distinct
     finger vs hand. -/
@@ -16,4 +16,4 @@ def bodyPartProfile : Typology.BodyPartProfile :=
   , handArm := some .identical
   , fingerHand := some .different }
 
-end Fragments.Swahili
+end Swahili

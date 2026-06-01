@@ -18,27 +18,27 @@ namespace DepGrammar.Nominal
 -- ============================================================================
 
 -- Nominal classification and φ-agreement are the shared, lexicon-driven
--- `Fragments.English.NominalClassification` definitions, re-exported here so
+-- `English.NominalClassification` definitions, re-exported here so
 -- the d-command binding analyses (`Coreference.lean`) keep referring to them
 -- through `DepGrammar.Nominal`.
 export Features (NominalType)
-export Fragments.English.NominalClassification (isNominalCat classifyNominal phiAgree)
+export English.NominalClassification (isNominalCat classifyNominal phiAgree)
 
 -- ============================================================================
 -- Shared Test Words (from Fragments, used by Coreference.lean)
 -- ============================================================================
 
-abbrev john := Fragments.English.Nouns.john.toWordSg
-abbrev mary := Fragments.English.Nouns.mary.toWordSg
-abbrev they := Fragments.English.Pronouns.they.toWord
-abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
-abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
-abbrev himself := Fragments.English.Pronouns.himself.toWord
-abbrev herself := Fragments.English.Pronouns.herself.toWord
-abbrev themselves := Fragments.English.Pronouns.themselves.toWord
-abbrev him := Fragments.English.Pronouns.him.toWord
-abbrev her := Fragments.English.Pronouns.her.toWord
-abbrev them := Fragments.English.Pronouns.them.toWord
-abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
+abbrev john := English.Nouns.john.toWordSg
+abbrev mary := English.Nouns.mary.toWordSg
+abbrev they := English.Pronouns.they.toWord
+abbrev sees := English.Predicates.Verbal.see.toWord3sg
+abbrev see := English.Predicates.Verbal.see.toWordPl
+abbrev himself := English.Pronouns.himself.toWord
+abbrev herself := English.Pronouns.herself.toWord
+abbrev themselves := English.Pronouns.themselves.toWord
+abbrev him := English.Pronouns.him.toWord
+abbrev her := English.Pronouns.her.toWord
+abbrev them := English.Pronouns.them.toWord
+abbrev eachOther := English.Pronouns.eachOther.toWord
 
 end DepGrammar.Nominal

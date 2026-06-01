@@ -13,7 +13,7 @@ traditional Japanese relies heavily on null reference.
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
 
-namespace Fragments.Japanese.Pronouns
+namespace Japanese.Pronouns
 
 open Pronoun
 open Features.Register (Level)
@@ -147,9 +147,9 @@ theorem tv_distinction :
 theorem verb_register_span :
     iku.register = .informal ∧ ikimasu.register = .formal := ⟨rfl, rfl⟩
 
-end Fragments.Japanese.Pronouns
+end Japanese.Pronouns
 
-namespace Fragments.Japanese
+namespace Japanese
 
 /-- Japanese (Japonic) WALS pronoun typology profile. No incl/excl in
     pronouns; no person marking on verbs; gender in 3rd person only
@@ -180,4 +180,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .present }
 
-end Fragments.Japanese
+end Japanese

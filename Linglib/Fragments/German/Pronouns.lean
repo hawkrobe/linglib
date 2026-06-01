@@ -27,7 +27,7 @@ in assumed-identity copular constructions (@cite{keine-et-al-2019},
 @cite{coon-keine-2021}), patterning with 3rd person ((52)–(53)).
 -/
 
-namespace Fragments.German.Pronouns
+namespace German.Pronouns
 
 open Pronoun
 open Features.Register (Level)
@@ -103,9 +103,9 @@ theorem has_all_persons :
     allPronouns.any (·.person == some .second) = true ∧
     allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
-end Fragments.German.Pronouns
+end German.Pronouns
 
-namespace Fragments.German
+namespace German
 
 /-- German (Indo-European, Germanic) WALS pronoun typology profile.
     No incl/excl; gender in 3rd sg only (er/sie/es); binary politeness
@@ -134,4 +134,4 @@ def pronounShapeProfile : Pronoun.ShapeProfile :=
   , nmPronouns := some .absent
   , mIn2sg := some .absent }
 
-end Fragments.German
+end German

@@ -18,11 +18,11 @@ core properties (R-pronominalization, complement types).
 
 ## Cross-references
 
-- `Fragments.Dutch.TemporalConnectives`: *tot* as temporal connective
+- `Dutch.TemporalConnectives`: *tot* as temporal connective
 - `Dendikken1995`: particles as P heads
 -/
 
-namespace Fragments.Dutch.Adpositions
+namespace Dutch.Adpositions
 
 open Semantics.Spatial.Path (PathShape)
 
@@ -113,7 +113,7 @@ def van : DutchAdposition :=
 /-- §2.1 ex. 6–7: *tot* indicates endpoint of a path.
     Takes PP complements: *tot [PP (diep) in het bos]* (ex. 7b).
     Takes AP complements: *tot [AP voor kort]* (ex. 8a).
-    See also `Fragments.Dutch.TemporalConnectives.tot` for the temporal
+    See also `Dutch.TemporalConnectives.tot` for the temporal
     sense, which has `complementType := .nominal` — the spatial sense
     is broader. -/
 def tot : DutchAdposition :=
@@ -326,4 +326,4 @@ theorem postP_has_both_readings :
     ∀ a ∈ dutchAdpositions, a.postPOk →
     a.locational ∧ a.directional := by native_decide
 
-end Fragments.Dutch.Adpositions
+end Dutch.Adpositions

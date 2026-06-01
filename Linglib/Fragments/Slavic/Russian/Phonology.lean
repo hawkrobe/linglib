@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Slavic.Russian.Phonology
+namespace Russian.Phonology
 
 /-- Canonical Russian phoneme inventory: first PHOIBLE inventory for ISO `rus`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Russian.rus
 
-end Fragments.Slavic.Russian.Phonology
+end Russian.Phonology

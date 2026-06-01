@@ -11,7 +11,7 @@ is the `.generallyMarked` strategy: a single form covers all
 @cite{schwarz-2009} use types.
 -/
 
-namespace Fragments.English.Definiteness
+namespace English.Definiteness
 
 open Core.Nominal (ArticleInventory)
 open Features.Definiteness (DefMarkingStrategy)
@@ -31,4 +31,4 @@ def articleInventory : ArticleInventory :=
 theorem articleInventory_marking :
     articleInventory.toMarkingStrategy = .generallyMarked := rfl
 
-end Fragments.English.Definiteness
+end English.Definiteness

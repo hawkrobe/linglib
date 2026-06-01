@@ -18,9 +18,9 @@ position (Tsotsil: prefixal/suffixal; Tseltal: consistently suffixal).
 | Set B  | S and O  | suffixal | prefixal/suffixal|
 -/
 
-namespace Fragments.Mayan.Tseltalan
+namespace Mayan.Tseltalan
 
-open Fragments.Mayan (MarkerSet)
+open Mayan (MarkerSet)
 
 -- ============================================================================
 -- § 1: Grammatical Functions
@@ -82,13 +82,13 @@ theorem abs_uniform :
 
 /-- Tseltalan absolutive morphemes appear in low (post-stem) position.
     Both Tsotsil and Tseltal share this LOW-ABS classification — see
-    `Fragments.Mayan.Tsotsil.absPosition` and `Fragments.Mayan.Tseltal.absPosition`
+    `Tsotsil.absPosition` and `Tseltal.absPosition`
     for the per-language definitions, which are definitionally equal to this
     subgroup-level constant. The LOW-ABS classification refers to the
     structural position of the licensing head, not the linear position
     of every Set B exponent (which varies by language and context).
     @cite{aissen-polian-2025} p. 97; @cite{polian-2013}. -/
-def absPosition : Fragments.Mayan.ABSPosition := .low
+def absPosition : Mayan.ABSPosition := .low
 
 -- ============================================================================
 -- § 4: Projection to Canonical ArgumentRole
@@ -118,4 +118,4 @@ def GramFunction.toArgumentRole? : GramFunction → Option Features.Prominence.A
   | .G   => some .R
   | .psr => none
 
-end Fragments.Mayan.Tseltalan
+end Mayan.Tseltalan

@@ -56,8 +56,8 @@ docstring) with a back-pointer here.
 namespace MaticNikolaeva2018
 
 open Typology.PolarityMarking (Strategy Entry)
-open Fragments.English.PolarityMarking (emphaticDo)
-open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
+open English.PolarityMarking (emphaticDo)
+open German.PolarityMarking (verumFocus dochPreUtterance)
 
 /-! ## §1 Attested salient-polarity structures (M&N examples 2–4)
 
@@ -195,8 +195,8 @@ theorem substrate_cannot_encode_germanEmphaticTun_and_englishVPFronting :
 
 /-- The substrate's `.verumFocus` constructor collects multiple distinct
     M&N structures. **This is now a claim about real Fragment data**:
-    the English *do*-support entry (`Fragments.English.PolarityMarking.emphaticDo`)
-    and the German verum-focus entry (`Fragments.German.PolarityMarking.verumFocus`)
+    the English *do*-support entry (`English.PolarityMarking.emphaticDo`)
+    and the German verum-focus entry (`German.PolarityMarking.verumFocus`)
     have the same substrate `strategy` field, even though M&N argue
     they have different distributional properties (M&N §2.2.1). -/
 theorem fragment_data_lumps_emphaticDo_with_verumFocus :

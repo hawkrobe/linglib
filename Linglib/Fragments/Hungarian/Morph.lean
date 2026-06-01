@@ -8,7 +8,7 @@ WALS-derived profile for Hungarian (ISO `hun`). B&N 2001 places Hungarian
 in the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
-namespace Fragments.Hungarian
+namespace Hungarian
 
 open Morphology
 
@@ -29,4 +29,4 @@ example : morphProfile.iso = "hun" ‚àß morphProfile.language = "Hungarian" := ‚ü
 /-- B&N 2001 places Hungarian in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
-end Fragments.Hungarian
+end Hungarian

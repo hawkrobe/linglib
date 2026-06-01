@@ -17,7 +17,7 @@ classification (no overt MU morpheme).
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.english`).
 -/
 
-namespace Fragments.English.Coordination
+namespace English.Coordination
 
 open Features.Coordination
 
@@ -47,4 +47,4 @@ def nor_ : CoordEntry :=
 
 def allEntries : List CoordEntry := [and_, or_, but_, nor_]
 
-end Fragments.English.Coordination
+end English.Coordination

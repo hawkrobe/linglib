@@ -32,21 +32,21 @@ that the fragment annotations are consistent with that derivation.
 
 namespace KennedyLevin2008
 
-open Fragments.English.Predicates.Verbal hiding clean cool warm open_
+open English.Predicates.Verbal hiding clean cool warm open_
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Lexical
 open Core.Scale (Boundedness LicensingPipeline MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 
 -- Fully qualified aliases for names shared between Verbal and Adjectival
-private def vClean := Fragments.English.Predicates.Verbal.clean
-private def vCool := Fragments.English.Predicates.Verbal.cool
-private def vWarm := Fragments.English.Predicates.Verbal.warm
-private def vOpen := Fragments.English.Predicates.Verbal.open_
-private def aClean := Fragments.English.Predicates.Adjectival.clean
-private def aCool := Fragments.English.Predicates.Adjectival.cool
-private def aWarm := Fragments.English.Predicates.Adjectival.warm
-private def aOpen := Fragments.English.Predicates.Adjectival.open_
+private def vClean := English.Predicates.Verbal.clean
+private def vCool := English.Predicates.Verbal.cool
+private def vWarm := English.Predicates.Verbal.warm
+private def vOpen := English.Predicates.Verbal.open_
+private def aClean := English.Predicates.Adjectival.clean
+private def aCool := English.Predicates.Adjectival.cool
+private def aWarm := English.Predicates.Adjectival.warm
+private def aOpen := English.Predicates.Adjectival.open_
 
 -- ════════════════════════════════════════════════════
 -- § 1. Per-Verb Derived VendlerClass Verification
@@ -130,12 +130,12 @@ theorem clean_adj_verb_scale :
 
 /-- straight (adj, closed) ↔ straighten (verb, closed scale). -/
 theorem straight_straighten_scale :
-    Fragments.English.Predicates.Adjectival.straight.scaleType =
+    English.Predicates.Adjectival.straight.scaleType =
     (straighten.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- flat (adj, closed) ↔ flatten (verb, closed scale). -/
 theorem flat_flatten_scale :
-    Fragments.English.Predicates.Adjectival.flat.scaleType =
+    English.Predicates.Adjectival.flat.scaleType =
     (flatten.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- open (adj, closed) ↔ open (verb, closed scale). -/
@@ -145,12 +145,12 @@ theorem open_adj_verb_scale :
 
 /-- long (adj, open) ↔ lengthen (verb, open scale). -/
 theorem long_lengthen_scale :
-    Fragments.English.Predicates.Adjectival.long.scaleType =
+    English.Predicates.Adjectival.long.scaleType =
     (lengthen.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- wide (adj, open) ↔ widen (verb, open scale). -/
 theorem wide_widen_scale :
-    Fragments.English.Predicates.Adjectival.wide.scaleType =
+    English.Predicates.Adjectival.wide.scaleType =
     (widen.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- cool (adj, open) ↔ cool (verb, open scale). -/
@@ -168,7 +168,7 @@ theorem warm_adj_verb_scale :
     base adjective "hot" has an open scale. @cite{kennedy-levin-2008} notes that the verb
     selects the relevant portion of the scale. -/
 theorem hot_boil_scale_diverges :
-    Fragments.English.Predicates.Adjectival.hot.scaleType = .open_ ∧
+    English.Predicates.Adjectival.hot.scaleType = .open_ ∧
     (boil.toVerbCore.degreeAchievementScale.get!).scaleBoundedness = .closed := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════

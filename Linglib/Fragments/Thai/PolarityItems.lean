@@ -12,7 +12,7 @@ Thai indefinite pronoun polarity items, typed by the categories from
 
 -/
 
-namespace Fragments.Thai.PolarityItems
+namespace Thai.PolarityItems
 
 open Typology.PolarityItem
 
@@ -49,4 +49,4 @@ def khrajKo : PolarityItemEntry :=
 theorem majMiiKhraj_khrajKo_distinct :
     majMiiKhraj.polarityType ≠ khrajKo.polarityType := by decide
 
-end Fragments.Thai.PolarityItems
+end Thai.PolarityItems

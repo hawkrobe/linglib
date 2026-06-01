@@ -55,7 +55,7 @@ The discourse production study confirms key patterns:
 - Key empirical generalizations are encoded as theorems
 -/
 
-namespace Fragments.Urdu.CausativeSystem
+namespace Urdu.CausativeSystem
 
 open Semantics.Causation.Morphological
 
@@ -362,4 +362,4 @@ theorem induced_agentivity_drives_mcv :
     CauseeAffecteeType.hasInducedAgentivity .controllingHuman = true ∧
     mcv.prototype.presentCausees = [.controllingHuman] := ⟨rfl, rfl⟩
 
-end Fragments.Urdu.CausativeSystem
+end Urdu.CausativeSystem

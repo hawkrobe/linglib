@@ -12,7 +12,7 @@ typology this is the `.bipartite` strategy: distinct forms for each
 @cite{schwarz-2009} use type.
 -/
 
-namespace Fragments.German.Definiteness
+namespace German.Definiteness
 
 open Core.Nominal (ArticleInventory)
 open Features.Definiteness (DefMarkingStrategy)
@@ -32,4 +32,4 @@ def articleInventory : ArticleInventory :=
 theorem articleInventory_marking :
     articleInventory.toMarkingStrategy = .bipartite := rfl
 
-end Fragments.German.Definiteness
+end German.Definiteness

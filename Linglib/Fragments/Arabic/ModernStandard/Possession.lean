@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Arabic.ModernStandard.Possession
+namespace Arabic.ModernStandard.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["ʿindii kitaab-un", "kitaab-u l-walad-i"]
   , notes := "Preposition ʿinda for predicative possession (lit. 'at me [there is] a book'); construct state (iḍāfa) for adnominal possession — juxtaposition with the head noun in construct state (no nunation, no definite article) and the possessor in the genitive" }
 
-end Fragments.Arabic.ModernStandard.Possession
+end Arabic.ModernStandard.Possession

@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Mandarin
+namespace Mandarin
 
 /-- Mandarin Chinese: no morphological plural on common nouns (bare nouns are
     number-neutral); person stem + nominal plural affix `-men` on pronouns
@@ -18,4 +18,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personStemNominalAffix
   , associativePlural := .sameAsAdditive }
 
-end Fragments.Mandarin
+end Mandarin

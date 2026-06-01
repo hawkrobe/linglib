@@ -8,7 +8,7 @@ import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 Re-exports verbal and adjectival predicate entries.
 -/
 
-namespace Fragments.English.Predicates
+namespace English.Predicates
 
 export Verbal (
   -- Types
@@ -47,4 +47,4 @@ theorem english_voice_count :
 theorem english_is_active_passive :
     englishVoiceSystem.isActivePassive := by decide
 
-end Fragments.English.Predicates
+end English.Predicates

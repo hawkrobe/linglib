@@ -57,18 +57,18 @@ def nominalMappingToClassifierType : NominalMapping → Option ClassifierType
   | .argAndPred => none                   -- English: no productive system
 
 /-- French mapping is [-arg, +pred]. -/
-theorem french_mapping : Fragments.French.Nouns.frenchMapping = .predOnly := rfl
+theorem french_mapping : French.Nouns.frenchMapping = .predOnly := rfl
 
 /-- Mandarin mapping is [+arg, -pred]. -/
-theorem mandarin_mapping : Fragments.Mandarin.Nouns.mandarinMapping = .argOnly := rfl
+theorem mandarin_mapping : Mandarin.Nouns.mandarinMapping = .argOnly := rfl
 
 /-- Japanese mapping is [+arg, -pred]. -/
-theorem japanese_mapping : Fragments.Japanese.Nouns.japaneseMapping = .argOnly := rfl
+theorem japanese_mapping : Japanese.Nouns.japaneseMapping = .argOnly := rfl
 
 /-- Italian mapping is [-arg, +pred]. Italian is the
     star witness for `predOnly`: bare arguments are restricted and D
     must be projected for argumenthood. -/
-theorem italian_mapping : Fragments.Italian.Nouns.italianMapping = .predOnly := rfl
+theorem italian_mapping : Italian.Nouns.italianMapping = .predOnly := rfl
 
 /-- The Chierchia-Aikhenvald bridge: [+arg, -pred] languages are numeral
     classifier languages. -/
@@ -87,27 +87,27 @@ theorem argAndPred_no_system :
 /-- Mandarin's actual classifier type matches the Chierchia prediction. -/
 theorem mandarin_chierchia_consistent :
     some mandarin.classifierType =
-      nominalMappingToClassifierType Fragments.Mandarin.Nouns.mandarinMapping := rfl
+      nominalMappingToClassifierType Mandarin.Nouns.mandarinMapping := rfl
 
 /-- Japanese's actual classifier type matches the Chierchia prediction. -/
 theorem japanese_chierchia_consistent :
     some japanese.classifierType =
-      nominalMappingToClassifierType Fragments.Japanese.Nouns.japaneseMapping := rfl
+      nominalMappingToClassifierType Japanese.Nouns.japaneseMapping := rfl
 
 /-- French's actual classifier type matches the Chierchia prediction. -/
 theorem french_chierchia_consistent :
     some french.classifierType =
-      nominalMappingToClassifierType Fragments.French.Nouns.frenchMapping := rfl
+      nominalMappingToClassifierType French.Nouns.frenchMapping := rfl
 
 /-- Italian's actual classifier type matches the Chierchia prediction. -/
 theorem italian_chierchia_consistent :
     some italian.classifierType =
-      nominalMappingToClassifierType Fragments.Italian.Nouns.italianMapping := rfl
+      nominalMappingToClassifierType Italian.Nouns.italianMapping := rfl
 
 /-- French and Italian agree on Chierchia mapping: both are predOnly. -/
 theorem french_italian_same_mapping :
-    Fragments.French.Nouns.frenchMapping =
-      Fragments.Italian.Nouns.italianMapping := rfl
+    French.Nouns.frenchMapping =
+      Italian.Nouns.italianMapping := rfl
 
 /-! ## §2: @cite{chierchia-1998}'s per-language strategy assignments
 
@@ -144,29 +144,29 @@ Parameter, verified against Fragment data. -/
 /-- Bare NPs are licensed in [+arg] languages, not in [-arg] languages
     (Chierchia's central typological prediction). -/
 theorem bare_np_tracks_arg :
-    Fragments.Mandarin.Nouns.bareNPLicensed = true ∧
-    Fragments.Japanese.Nouns.bareNPLicensed = true ∧
-    Fragments.French.Nouns.barePluralLicensed = false := ⟨rfl, rfl, rfl⟩
+    Mandarin.Nouns.bareNPLicensed = true ∧
+    Japanese.Nouns.bareNPLicensed = true ∧
+    French.Nouns.barePluralLicensed = false := ⟨rfl, rfl, rfl⟩
 
 /-- Chierchia's blocking principle: [+arg, -pred] languages have no
     articles to block covert type shifts. [-arg, +pred] languages
     block ι and ∃. -/
 theorem blocking_tracks_mapping :
-    Fragments.Mandarin.Nouns.mandarinBlocking.iotaBlocked = false ∧
-    Fragments.Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
-    Fragments.French.Nouns.frenchBlocking.iotaBlocked = true := ⟨rfl, rfl, rfl⟩
+    Mandarin.Nouns.mandarinBlocking.iotaBlocked = false ∧
+    Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
+    French.Nouns.frenchBlocking.iotaBlocked = true := ⟨rfl, rfl, rfl⟩
 
 /-- No type-shift blocking in Mandarin (`[+arg, -pred]`: ι, ∃, ∩ all
     available). -/
 theorem mandarin_no_blocking :
-    Fragments.Mandarin.Nouns.mandarinBlocking.iotaBlocked = false ∧
-    Fragments.Mandarin.Nouns.mandarinBlocking.existsBlocked = false ∧
-    Fragments.Mandarin.Nouns.mandarinBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
+    Mandarin.Nouns.mandarinBlocking.iotaBlocked = false ∧
+    Mandarin.Nouns.mandarinBlocking.existsBlocked = false ∧
+    Mandarin.Nouns.mandarinBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
 
 /-- No type-shift blocking in Japanese. -/
 theorem japanese_no_blocking :
-    Fragments.Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
-    Fragments.Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
-    Fragments.Japanese.Nouns.japaneseBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
+    Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
+    Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
+    Japanese.Nouns.japaneseBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
 
 end NMP

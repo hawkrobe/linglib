@@ -13,7 +13,7 @@ the Indo-European `SurfaceGender` enum; per-Fragment lexical files would
 expose a fine-grained `Class` type for noun-class agreement morphology.
 -/
 
-namespace Fragments.Swahili.Gender
+namespace Swahili.Gender
 
 open Typology.Gender
 
@@ -34,4 +34,4 @@ example : genderTypology.iso639 = "swh" ∧ genderTypology.name = "Swahili" :=
 /-- Swahili is a noun-class system (5+ classes per @cite{corbett-1991}). -/
 example : genderTypology.IsNounClassSystem := by decide
 
-end Fragments.Swahili.Gender
+end Swahili.Gender

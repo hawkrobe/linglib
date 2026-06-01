@@ -17,7 +17,7 @@ Each class determines the internal structure of the binominal DP
 and thereby the availability of NP-ellipsis.
 -/
 
-namespace Fragments.Spanish.Binominals
+namespace Spanish.Binominals
 
 open Semantics.Quantification.Binominal
 open Morphology.DM
@@ -64,4 +64,4 @@ theorem all_nouns_npe_from_type :
     allNouns.all (λ n => n.binominalType.licensesNPE = n.binominalType.hasNumE) = true := by
   native_decide
 
-end Fragments.Spanish.Binominals
+end Spanish.Binominals

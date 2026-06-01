@@ -20,7 +20,7 @@ The absence of a clause-typing particle means:
 
 -/
 
-namespace Fragments.HindiUrdu.Particles
+namespace HindiUrdu.Particles
 
 /-- A Hindi-Urdu particle entry. -/
 structure ParticleEntry where
@@ -69,4 +69,4 @@ def ya_nahi : ParticleEntry :=
 
 def allParticles : List ParticleEntry := [ki, kya, ya_nahi]
 
-end Fragments.HindiUrdu.Particles
+end HindiUrdu.Particles

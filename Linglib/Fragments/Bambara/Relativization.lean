@@ -6,7 +6,7 @@ import Linglib.Typology.RelativeClause.WALS
 Typological-summary `RelativeClause.Profile` for Bambara (ISO `bam`).
 -/
 
-namespace Fragments.Bambara
+namespace Bambara
 
 /-- Bambara relativization: internally-headed RC; non-reduction
     strategy; relativization limited to subject and direct object on AH;
@@ -19,4 +19,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Internally-headed RC; non-reduction strategy; "
           ++ "limited to subject and direct object on AH" }
 
-end Fragments.Bambara
+end Bambara

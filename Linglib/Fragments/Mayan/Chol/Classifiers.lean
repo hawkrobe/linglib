@@ -27,7 +27,7 @@ that the numeral requires as its first argument:
   ⟦-kojty⟧ = μ_# (atom-counting measure for animals)
 -/
 
-namespace Fragments.Mayan.Chol.Classifiers
+namespace Chol.Classifiers
 
 open Typology (ClassifierEntry SemanticParameter ShapeDimension)
 
@@ -94,4 +94,4 @@ theorem specific_classifiers_motivated :
 theorem classifiers_are_bound :
     allClassifiers.all (·.form.startsWith "-") = true := by native_decide
 
-end Fragments.Mayan.Chol.Classifiers
+end Chol.Classifiers

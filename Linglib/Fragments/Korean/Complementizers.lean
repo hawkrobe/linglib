@@ -47,7 +47,7 @@ lives in the `Bondarenko2022` Studies file.
   verb anchoring §4.4.2 theme-arg analysis)
 -/
 
-namespace Fragments.Korean.Complementizers
+namespace Korean.Complementizers
 
 open Semantics.Lexical (VerbCore)
 
@@ -158,4 +158,4 @@ theorem stativity_split :
     selmyenghata.vendlerClass = some .accomplishment :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-end Fragments.Korean.Complementizers
+end Korean.Complementizers

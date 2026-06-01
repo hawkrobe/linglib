@@ -37,7 +37,7 @@ Under vVPE, the light verb (v head) survives while the nominal root
 3. Antipassive roots (v-adjoined) cannot be elided
 -/
 
-namespace Fragments.Dargwa.ComplexPredicates
+namespace Dargwa.ComplexPredicates
 
 open Semantics.Lexical.Roots
 
@@ -331,4 +331,4 @@ def jumpCPr : AnnotatedCPr :=
   , lightVerb := { form := "Ø-uq-", gloss := "move", genderSlot := false }
   , meaning := "jump" }
 
-end Fragments.Dargwa.ComplexPredicates
+end Dargwa.ComplexPredicates

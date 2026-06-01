@@ -32,28 +32,28 @@ namespace BhattDayal2020
 open Features (QParticleLayer)
 open Question (IsSingleton SingletonQuestion declarative polar
   isSingleton_declarative not_isSingleton_polar_of_nontrivial)
-open Fragments.HindiUrdu.Particles (kya)
-open Fragments.Japanese.Particles (ka kke)
-open Fragments.English.QuestionParticles (quick)
+open HindiUrdu.Particles (kya)
+open Japanese.Particles (ka kke)
+open English.QuestionParticles (quick)
 
 -- ============================================================================
 -- §1 — Layer Assignments (per-paper theoretical overlay)
 -- ============================================================================
 
 /-- Bhatt & Dayal (2020): Hindi-Urdu *kya:* sits at PerspP. -/
-def hindi_urdu_kya_layer (_ : Fragments.HindiUrdu.Particles.ParticleEntry) :
+def hindi_urdu_kya_layer (_ : HindiUrdu.Particles.ParticleEntry) :
     QParticleLayer := .perspP
 
 /-- @cite{dayal-2025}: Japanese *ka* is the canonical CP-layer Q-morpheme. -/
-def japanese_ka_layer (_ : Fragments.Japanese.Particles.ParticleEntry) :
+def japanese_ka_layer (_ : Japanese.Particles.ParticleEntry) :
     QParticleLayer := .cp
 
 /-- @cite{sauerland-yatsushiro-2017}: Japanese *kke* is an MQP at SAP. -/
-def japanese_kke_layer (_ : Fragments.Japanese.Particles.ParticleEntry) :
+def japanese_kke_layer (_ : Japanese.Particles.ParticleEntry) :
     QParticleLayer := .sap
 
 /-- @cite{dayal-2025} ex. (19): English *quick/quickly* is an MQP-adverb at SAP. -/
-def english_quick_layer (_ : Fragments.English.QuestionParticles.QParticleEntry) :
+def english_quick_layer (_ : English.QuestionParticles.QParticleEntry) :
     QParticleLayer := .sap
 
 -- ============================================================================
@@ -211,6 +211,6 @@ theorem kya_infelicitous_two_cell_polar {p : Set W}
     given by the `IsSingleton` presupposition + identity on
     `SingletonQuestion`. -/
 theorem kya_polarQuestion_signals_singletonPresup :
-    Fragments.HindiUrdu.Particles.kya.polarQuestion = true := rfl
+    HindiUrdu.Particles.kya.polarQuestion = true := rfl
 
 end BhattDayal2020

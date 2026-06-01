@@ -16,7 +16,7 @@ grammatical category in Finnish.
 Data from @cite{keenan-comrie-1977} Table 1.
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
 open RelativeClause
 
@@ -55,4 +55,4 @@ def relativization : RelativeClause.Profile :=
   , lowestRelativizable := .oblique
   , notes := "Rel pronoun joka (declines for case); post-nominal RC" }
 
-end Fragments.Finnish
+end Finnish

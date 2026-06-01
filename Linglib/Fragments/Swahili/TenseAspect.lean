@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 /-- Swahili (Niger-Congo, Bantu): perfective/imperfective (*-li-*, *-na-*);
     past marking; no inflectional future; other perfect (*-me-*); prefixing
@@ -15,4 +15,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .marked, future := .none
   , perfect := .other, affixPosition := .prefixing }
 
-end Fragments.Swahili
+end Swahili

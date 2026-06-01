@@ -10,7 +10,7 @@ no overt indefinite or unique article. Possessives are productive. Under
 the @cite{moroney-2021} typology this is the `.markedAnaphoric` strategy.
 -/
 
-namespace Fragments.Thai.Definiteness
+namespace Thai.Definiteness
 
 open Core.Nominal (ArticleInventory)
 open Features.Definiteness (DefMarkingStrategy)
@@ -30,4 +30,4 @@ def articleInventory : ArticleInventory :=
 theorem articleInventory_marking :
     articleInventory.toMarkingStrategy = .markedAnaphoric := rfl
 
-end Fragments.Thai.Definiteness
+end Thai.Definiteness

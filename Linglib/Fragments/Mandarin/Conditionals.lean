@@ -16,7 +16,7 @@ Conditional morphemes in Mandarin and their properties.
   ex. 11–13).
 -/
 
-namespace Fragments.Mandarin.Conditionals
+namespace Mandarin.Conditionals
 
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 
@@ -33,4 +33,4 @@ def ruguo : ConditionalMarker where
   markerType := .both
   notes := "X/O marking carried by consequent le, not by conditional marker"
 
-end Fragments.Mandarin.Conditionals
+end Mandarin.Conditionals

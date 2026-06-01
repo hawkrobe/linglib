@@ -39,7 +39,7 @@ pronouns or proximal/distal on demonstratives.
 
 set_option autoImplicit false
 
-namespace Fragments.ASL.Height
+namespace ASL.Height
 
 open Semantics.Presupposition (PrProp)
 
@@ -271,4 +271,4 @@ theorem partitive_ddrp_equiv {E : Type*} [PartialOrder E]
     ∀ e, e ∈ Set.Iic z ↔ e ∈ ddrp.region h :=
   λ e => (align e).symm
 
-end Fragments.ASL.Height
+end ASL.Height

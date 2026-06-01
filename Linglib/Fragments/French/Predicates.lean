@@ -14,7 +14,7 @@ despite being separate words.
 
 -/
 
-namespace Fragments.French.Predicates
+namespace French.Predicates
 
 open Semantics.Lexical
 open Features (Causative)
@@ -374,4 +374,4 @@ def allVerbs : List FrenchVerbEntry :=
 def lookup (form : String) : Option FrenchVerbEntry :=
   allVerbs.find? (·.form == form)
 
-end Fragments.French.Predicates
+end French.Predicates

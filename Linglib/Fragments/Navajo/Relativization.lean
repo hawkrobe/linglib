@@ -6,7 +6,7 @@ import Linglib.Typology.RelativeClause.WALS
 Typological-summary `RelativeClause.Profile` for Navajo (ISO `nav`).
 -/
 
-namespace Fragments.Navajo
+namespace Navajo
 
 /-- Navajo relativization: gap on subject and direct object; limited
     relativization on lower AH positions; pre-nominal RC; SOV. -/
@@ -18,4 +18,4 @@ def relativization : RelativeClause.Profile :=
   , notes := "Gap on subject/DO; limited relativization on lower AH "
           ++ "positions; pre-nominal RC; SOV language" }
 
-end Fragments.Navajo
+end Navajo

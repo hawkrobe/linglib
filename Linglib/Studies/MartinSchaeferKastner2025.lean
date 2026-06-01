@@ -66,7 +66,7 @@ namespace MartinSchaeferKastner2025
 open Minimalist (VoiceFlavor)
 open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile PredictsUnaccusative)
 open Pragmatics.GriceanMaxims (MannerSubmaxim)
-open Fragments.French.Predicates
+open French.Predicates
 
 -- ============================================================================
 -- § 1: Core Types

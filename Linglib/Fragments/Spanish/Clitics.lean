@@ -21,7 +21,7 @@ This syncretism drives the availability of stylistic applicatives.
 
 -/
 
-namespace Fragments.Spanish.Clitics
+namespace Spanish.Clitics
 
 -- ============================================================================
 -- § 1: Clitic Cases
@@ -136,4 +136,4 @@ theorem te_forms_identical :
 /-- 3SG dative ≠ 3SG reflexive (le ≠ se). -/
 theorem le_ne_se : le_dat.form ≠ se_refl.form := by decide
 
-end Fragments.Spanish.Clitics
+end Spanish.Clitics

@@ -25,7 +25,7 @@ entry, we verify:
 namespace Kennedy2007Typology
 
 open Kennedy2007Licensing
-open Fragments.English.Predicates.Adjectival
+open English.Predicates.Adjectival
 open Core.Scale
 
 -- ════════════════════════════════════════════════════

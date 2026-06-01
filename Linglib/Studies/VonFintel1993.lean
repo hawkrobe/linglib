@@ -360,7 +360,7 @@ def exceptiveConstructionExamples : List ExceptiveConstructionExample :=
 -- Bridge: Fragment QForce ↔ Exceptive Licensing
 -- ============================================================================
 
-open Fragments.English.Determiners (QForce)
+open English.Determiners (QForce)
 open Phenomena.Quantification.Inventory (QuantityWord)
 
 /-- Map Fragment QForce to Exceptive QuantifierType. -/

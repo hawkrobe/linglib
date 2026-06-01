@@ -28,7 +28,7 @@ Theory-neutral lexical entries for polarity-sensitive items:
 import Linglib.Typology.PolarityItem
 import Linglib.Semantics.Polarity.Israel
 
-namespace Fragments.English.PolarityItems
+namespace English.PolarityItems
 
 open Typology.PolarityItem
 
@@ -540,4 +540,4 @@ example : ∀ p ∈ allPolarityItems, p.canonicityConsistent := by decide
 -- Summary
 -- ============================================================================
 
-end Fragments.English.PolarityItems
+end English.PolarityItems

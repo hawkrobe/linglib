@@ -18,7 +18,7 @@ particle.
 
 set_option autoImplicit false
 
-namespace Fragments.HindiUrdu.Questions
+namespace HindiUrdu.Questions
 
 open _root_.Typology.Question
 
@@ -30,4 +30,4 @@ def question : QuestionProfile :=
   , whMovement := some .inSitu
   , polarStrategy := some .particle }
 
-end Fragments.HindiUrdu.Questions
+end HindiUrdu.Questions

@@ -5,7 +5,7 @@ import Linglib.Typology.BodyParts
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hungarian
+namespace Hungarian
 
 /-- Hungarian: distinct *kéz* (hand) vs *kar* (arm); distinct *ujj* (finger)
     vs *kéz* (hand). -/
@@ -16,4 +16,4 @@ def bodyPartProfile : Typology.BodyPartProfile :=
   , handArm := some .different
   , fingerHand := some .different }
 
-end Fragments.Hungarian
+end Hungarian

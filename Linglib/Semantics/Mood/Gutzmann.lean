@@ -37,7 +37,7 @@ Evidence:
 This file provides the *language-agnostic* operators. Per-language
 clause-type taxonomies and their mood compositions live in
 `Fragments/<Language>/ClauseTypes.lean` (e.g.,
-`Fragments.German.ClauseTypes` for the German V2/VL/dass-VL/imperative
+`German.ClauseTypes` for the German V2/VL/dass-VL/imperative
 inventory analyzed in @cite{gutzmann-2015}, Ch 5).
 -/
 
@@ -131,7 +131,7 @@ def hknow {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
 Language-agnostic predicate over a (possibly language-specific) clause
 type, recording which of DEONT, EPIS, and HKNOW the clause composes.
 Used by per-language clause-type fragments to declare their mood
-inventories (e.g., `Fragments.German.ClauseTypes.GermanClauseType.moodStructure`). -/
+inventories (e.g., `German.ClauseTypes.GermanClauseType.moodStructure`). -/
 structure MoodStructure where
   hasDeontic : Bool
   hasEpistemic : Bool

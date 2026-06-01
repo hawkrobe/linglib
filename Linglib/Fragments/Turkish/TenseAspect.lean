@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Turkish
+namespace Turkish
 
 /-- Turkish (Turkic): perfective/imperfective (*-di* vs *-iyor*); inflectional
     past; inflectional future (*-ecek*); other perfect (*-miş*, from
@@ -17,4 +17,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , perfect := .other, affixPosition := .suffixing
   , evidentialityCoding := some .partOfTense }
 
-end Fragments.Turkish
+end Turkish

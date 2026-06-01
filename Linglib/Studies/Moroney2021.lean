@@ -258,10 +258,10 @@ on covert type-shifting. Crucially, both ι AND ι^x are unblocked —
 this is what allows Shan bare nouns to express both unique and anaphoric
 definiteness (@cite{moroney-2021} §4.3).
 
-Derived from `Fragments.Shan.Definiteness.blocking` — the single source
+Derived from `Shan.Definiteness.blocking` — the single source
 of truth for Shan's article inventory. -/
 def shanBlocking : NMP.BlockingPrinciple :=
-  Fragments.Shan.Definiteness.blocking
+  Shan.Definiteness.blocking
 
 /-- When a Shan bare noun is used in a context requiring unique definiteness,
 the preferred type-shift is ι (definite), by Meaning Preservation
@@ -422,13 +422,13 @@ theorem unmarked_distinct_from_existing :
     not stipulated — it is derived by `ArticleInventory.toMarkingStrategy`
     from the morphological inventory bools. -/
 theorem derive_all_languages :
-    Fragments.English.Definiteness.articleInventory.toMarkingStrategy =
+    English.Definiteness.articleInventory.toMarkingStrategy =
       .generallyMarked ∧
-    Fragments.German.Definiteness.articleInventory.toMarkingStrategy =
+    German.Definiteness.articleInventory.toMarkingStrategy =
       .bipartite ∧
-    Fragments.Thai.Definiteness.articleInventory.toMarkingStrategy =
+    Thai.Definiteness.articleInventory.toMarkingStrategy =
       .markedAnaphoric ∧
-    Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy =
+    Shan.Definiteness.articleInventory.toMarkingStrategy =
       .unmarked := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- The inventory-derived `ArticleType` agrees with Schwarz's stipulated
@@ -436,10 +436,10 @@ theorem derive_all_languages :
     derived rather than assigned by fiat — `toArticleType` composes
     `toMarkingStrategy` with the strategy → articleType collapse. -/
 theorem derive_consistent_with_stipulated :
-    Fragments.English.Definiteness.articleInventory.toArticleType = .weakOnly ∧
-    Fragments.German.Definiteness.articleInventory.toArticleType = .weakAndStrong ∧
-    Fragments.Thai.Definiteness.articleInventory.toArticleType = .weakOnly ∧
-    Fragments.Shan.Definiteness.articleInventory.toArticleType = .none_ :=
+    English.Definiteness.articleInventory.toArticleType = .weakOnly ∧
+    German.Definiteness.articleInventory.toArticleType = .weakAndStrong ∧
+    Thai.Definiteness.articleInventory.toArticleType = .weakOnly ∧
+    Shan.Definiteness.articleInventory.toArticleType = .none_ :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -573,10 +573,10 @@ theorem isDog_not_gHomogeneous : ¬ Mereology.gHomogeneous isDog := by
     single parameter from which both the typological classification AND the
     available interpretations of bare nouns are derived. -/
 theorem blocking_strategy_correspondence :
-    let englishInv := Fragments.English.Definiteness.articleInventory
-    let germanInv  := Fragments.German.Definiteness.articleInventory
-    let thaiInv    := Fragments.Thai.Definiteness.articleInventory
-    let shanInv    := Fragments.Shan.Definiteness.articleInventory
+    let englishInv := English.Definiteness.articleInventory
+    let germanInv  := German.Definiteness.articleInventory
+    let thaiInv    := Thai.Definiteness.articleInventory
+    let shanInv    := Shan.Definiteness.articleInventory
     -- English: both forms, syncretic → generallyMarked
     (englishInv.toMarkingStrategy = .generallyMarked ∧
      englishInv.hasUniqueArticle ∧
@@ -620,19 +620,19 @@ theorem blocking_strategy_correspondence :
 
     When the bare definite already selects a referent that satisfies the
     demonstrative's spatial predicate, the demonstrative agrees with the
-    bare form (handled by `Fragments.Shan.Definiteness.dem_refines_bare`). -/
+    bare form (handled by `Shan.Definiteness.dem_refines_bare`). -/
 theorem demonstrative_adds_spatial_info {E : Type}
     (domain : List E) (restrictor : E → Bool)
     (spatialPred : Feature → E → Bool) :
-    Fragments.Shan.Definiteness.demDenotation domain
-      Fragments.Shan.Definiteness.naj restrictor spatialPred =
+    Shan.Definiteness.demDenotation domain
+      Shan.Definiteness.naj restrictor spatialPred =
       Core.Nominal.russellIotaList domain
         (fun e => restrictor e && spatialPred .proximal e) ∧
-    Fragments.Shan.Definiteness.demDenotation domain
-      Fragments.Shan.Definiteness.nan restrictor spatialPred =
+    Shan.Definiteness.demDenotation domain
+      Shan.Definiteness.nan restrictor spatialPred =
       Core.Nominal.russellIotaList domain
         (fun e => restrictor e && spatialPred .distal e) ∧
-    Fragments.Shan.Definiteness.bareDefinite domain restrictor =
+    Shan.Definiteness.bareDefinite domain restrictor =
       Core.Nominal.russellIotaList domain restrictor :=
   ⟨rfl, rfl, rfl⟩
 
@@ -678,11 +678,11 @@ open Core.Nominal (ArticleInventory NominalKind)
     its language fragment (`Fragments.{Lang}.Definiteness.articleInventory`).
     Centralizing the names here keeps the §14 theorems readable without
     duplicating fragment-level data. -/
-abbrev englishInv  := Fragments.English.Definiteness.articleInventory
-abbrev germanInv   := Fragments.German.Definiteness.articleInventory
-abbrev mandarinInv := Fragments.Mandarin.Definiteness.articleInventory
-abbrev thaiInv     := Fragments.Thai.Definiteness.articleInventory
-abbrev shanInv     := Fragments.Shan.Definiteness.articleInventory
+abbrev englishInv  := English.Definiteness.articleInventory
+abbrev germanInv   := German.Definiteness.articleInventory
+abbrev mandarinInv := Mandarin.Definiteness.articleInventory
+abbrev thaiInv     := Thai.Definiteness.articleInventory
+abbrev shanInv     := Shan.Definiteness.articleInventory
 
 /-- Inventory-derived strategies match §7's `derive_all_languages` for the
     four Table 4.4 languages. The inventory subsumes the params layer
@@ -803,9 +803,9 @@ new content is the joint statement that Shan instantiates a strategy
     @cite{jenks-2018}-attested set (imported from
     `Jenks2018.jenksAttestedStrategies`). -/
 theorem shan_strategy_not_jenks_attested :
-    Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy
+    Shan.Definiteness.articleInventory.toMarkingStrategy
       ∉ Jenks2018.jenksAttestedStrategies := by
-  rw [show Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy
+  rw [show Shan.Definiteness.articleInventory.toMarkingStrategy
         = .unmarked from rfl]
   decide
 
@@ -814,7 +814,7 @@ theorem shan_strategy_not_jenks_attested :
     This is the formal content of the prose claim "contra
     @cite{jenks-2018}'s prediction" in this file's module docstring. -/
 theorem moroney_shan_refutes_jenks_typology :
-    Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy
+    Shan.Definiteness.articleInventory.toMarkingStrategy
       = .unmarked ∧
     .unmarked ∉ Jenks2018.jenksAttestedStrategies :=
   ⟨rfl, by decide⟩

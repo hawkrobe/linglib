@@ -8,7 +8,7 @@ import Linglib.Typology.Gender
 fem in the plural; "ambigeneric"). Sex-based, semantic + formal.
 -/
 
-namespace Fragments.Romanian.Gender
+namespace Romanian.Gender
 
 open Typology.Gender
 
@@ -29,4 +29,4 @@ example : genderTypology.iso639 = "ron" ∧ genderTypology.name = "Romanian" :=
 /-- Romanian is in @cite{corbett-1991}'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.Romanian.Gender
+end Romanian.Gender

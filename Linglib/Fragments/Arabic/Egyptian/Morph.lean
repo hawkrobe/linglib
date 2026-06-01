@@ -12,7 +12,7 @@ the language is NOT in the "fusional" cell because that requires
 is the canonical non-concatenative case.
 -/
 
-namespace Fragments.Arabic.Egyptian
+namespace Arabic.Egyptian
 
 open Morphology
 
@@ -40,4 +40,4 @@ example : ¬ morphProfile.IsFusional := by decide
     fails the concatenative requirement. -/
 example : ¬ morphProfile.IsAgglutinating := by decide
 
-end Fragments.Arabic.Egyptian
+end Arabic.Egyptian

@@ -8,7 +8,7 @@ Lexical entry for German "damals" (back then), typed by `ThenAdverb`.
 
 -/
 
-namespace Fragments.German.TemporalDeictic
+namespace German.TemporalDeictic
 
 open Semantics.Tense
 
@@ -19,4 +19,4 @@ def damals : ThenAdverb where
   gloss := "back then"
   shiftsPerspective := true
 
-end Fragments.German.TemporalDeictic
+end German.TemporalDeictic

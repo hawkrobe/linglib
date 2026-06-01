@@ -234,7 +234,7 @@ def ppiItemTested : String := "some"
 
 open Core.NaturalLogic
 open Typology.PolarityItem
-open Fragments.English.PolarityItems
+open English.PolarityItems
 
 /-- Map the paper's environments to canonical entailment signatures. -/
 def envSignature : MonotonicityEnv → Option EntailmentSig

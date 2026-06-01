@@ -51,7 +51,7 @@ test case. Key claims:
   `surfaceDAType` / `consistentWith` projections from entries to D&A types.
 - `Fragments.{Russian,English,German,Latin,Yakut,Kannada}.Indefinites`:
   per-language indefinite paradigms witnessing the typology.
-- `Fragments.German.ModalIndefinites`: bridge connecting D&A's typology to
+- `German.ModalIndefinites`: bridge connecting D&A's typology to
   Alonso-Ovalle & Royer's modal-indefinite typology for *irgend-*.
 -/
 
@@ -64,13 +64,13 @@ open DeganoAloni2025.DependenceLogic
 open Morphology.Nanosyntax
 open Dekier2021
 open Typology.Indefinite
-open Fragments.Slavic.Russian.Indefinites
-open Fragments.English.Indefinites
-open Fragments.German.Indefinites
-open Fragments.German.ModalIndefinites
-open Fragments.Latin.Indefinites
-open Fragments.Yakut.Indefinites
-open Fragments.Kannada.Indefinites
+open Russian.Indefinites
+open English.Indefinites
+open German.Indefinites
+open German.ModalIndefinites
+open Latin.Indefinites
+open Yakut.Indefinites
+open Kannada.Indefinites
 
 /-- Substring check on `List Char`. Kernel-reducible (no `String.splitOn`). -/
 private def listContainsSub : List Char → List Char → Bool
@@ -351,7 +351,7 @@ open Haspelmath1997Polarity in
     competition. Both are defensible readings of D&A's framework. -/
 theorem fragment_polarity_disagree_on_kto_to :
     russian.forms[1]?.map (·.functions) ≠
-    some Fragments.Slavic.Russian.Indefinites.toEntry.functions := by decide
+    some Russian.Indefinites.toEntry.functions := by decide
 
 open Haspelmath1997Polarity in
 /-- **English *some-*: genuine cross-framework disagreement.** The Fragment
@@ -368,7 +368,7 @@ open Haspelmath1997Polarity in
     The contrast is methodological, not just data-interpretation. -/
 theorem fragment_polarity_disagree_on_some :
     english.forms[0]?.map (·.functions) ≠
-    some Fragments.English.Indefinites.someEntry.functions := by decide
+    some English.Indefinites.someEntry.functions := by decide
 
 /-- **German *irgend-*/*irgendein-*: cross-framework consistency check.**
     `Fragments/German/Indefinites.lean:33`'s `irgendEntry.functions` ({SU,
@@ -383,8 +383,8 @@ theorem fragment_polarity_disagree_on_some :
     is a regression test for that consistency — if either Fragment changes,
     this breaks. Real value: catches drift between the two Fragments. -/
 theorem irgend_irgendein_agree_on_epistemic :
-    Fragments.German.Indefinites.irgendEntry.surfaceDAType = some .epistemic ∧
-    Fragments.German.ModalIndefinites.irgendeinEntry.flavors.contains .epistemic = true := by
+    German.Indefinites.irgendEntry.surfaceDAType = some .epistemic ∧
+    German.ModalIndefinites.irgendeinEntry.flavors.contains .epistemic = true := by
   refine ⟨?_, ?_⟩
   · decide
   · decide

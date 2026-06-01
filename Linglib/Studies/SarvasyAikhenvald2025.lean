@@ -239,11 +239,11 @@ namespace SarvasyAikhenvald2025
 
 open Phenomena.ClauseChaining
 open Typology.ClauseChaining
-open Fragments.Nungon.MedialVerbs (SRCategory dsParadigm ssSuffixes ds2du ds3du ds2pl ds3pl)
-open Fragments.Manambu.MedialVerbs (allMarkers ssMarkers dsMarkers neutralMarkers
+open Nungon.MedialVerbs (SRCategory dsParadigm ssSuffixes ds2du ds3du ds2pl ds3pl)
+open Manambu.MedialVerbs (allMarkers ssMarkers dsMarkers neutralMarkers
   markersWithSubjAgreement MarkerEntry SRValue)
-open Fragments.Korean.MedialVerbs (allSuffixes tensedSuffixes)
-open Fragments.Turkish.MedialVerbs (allConverbs affirmativeConverbs negativeConverbs)
+open Korean.MedialVerbs (allSuffixes tensedSuffixes)
+open Turkish.MedialVerbs (allConverbs affirmativeConverbs negativeConverbs)
 
 -- ============================================================================
 -- § Nungon bridges

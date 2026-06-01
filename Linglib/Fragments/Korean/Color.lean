@@ -5,7 +5,7 @@ import Linglib.Typology.Color
 @cite{wals-2013}
 -/
 
-namespace Fragments.Korean
+namespace Korean
 
 /-- Korean: 6 non-derived basic colors, 11 total basic colors; green vs blue
     distinct; red vs yellow distinct. -/
@@ -18,4 +18,4 @@ def colorProfile : Typology.ColorProfile :=
   , greenBlue := some .distinct
   , redYellow := some .distinct }
 
-end Fragments.Korean
+end Korean
