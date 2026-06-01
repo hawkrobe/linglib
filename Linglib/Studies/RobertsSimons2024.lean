@@ -326,7 +326,7 @@ theorem cos_eventphase_agrees_with_prprop (t : CoSType) (P : W → Prop) :
 /-- R&S argue that presupposition status follows from event structure,
     not from a stipulated `presupType`. A verb presupposes its complement
     iff it has factivity or CoS event structure. The `derivedPresupType`
-    accessor on `VerbCore` implements this derivation. -/
+    accessor on `Verb` implements this derivation. -/
 theorem presupposition_derivable_from_event_structure
     (isFactive hasCosType : Bool) :
     (isFactive || hasCosType) = true ↔

@@ -56,7 +56,7 @@ Bruening's positions Lean-checkable against linglib's existing Pylkkänen
 (*melt/build*-class transitives don't license `.np_np` as their alt frame).
 
 **What is deferred**:
-- G4 (frame-conditioned licensing) requires extending `VerbCore` with
+- G4 (frame-conditioned licensing) requires extending `Verb` with
   per-frame implicit fields; schema change is out of scope for this study.
 
 **G1** (sluicing asymmetry) is formalized as a sibling in

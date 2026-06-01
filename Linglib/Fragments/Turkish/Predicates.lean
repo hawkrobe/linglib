@@ -15,8 +15,8 @@ open Semantics.Lexical
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 open Features (Causative)
 
-/-- Turkish verb entry: extends VerbCore with Turkish inflectional paradigm. -/
-structure TurkishVerbEntry extends VerbCore where
+/-- Turkish verb entry: extends Verb with Turkish inflectional paradigm. -/
+structure TurkishVerbEntry extends Verb where
   /-- Progressive form (-yor) -/
   formProg : String
   /-- Past form (-dı, -tı) -/

@@ -1265,7 +1265,7 @@ theorem fear_triggers_are_rett_ambidirectional :
 
 /-! ### Connecting English fragment verb entries to EN trigger status
 
-Each of the three branches of `VerbCore.isENTrigger` corresponds to
+Each of the three branches of `Verb.isENTrigger` corresponds to
 one class of JK2021 triggers. The general theorems below show that
 the semantic property (negative valence, negative implicativity,
 causative blocking) is *sufficient* for EN trigger status — the
@@ -1276,26 +1276,26 @@ conclusion follows from the hypothesis, not by enumerating cases.
 /-- Any verb with negative preferential valence is an EN trigger.
     This captures the FEAR class: negative valence activates both p
     (attitude content) and ¬p (desire content). -/
-theorem negative_valence_is_en_trigger (v : VerbCore)
+theorem negative_valence_is_en_trigger (v : Verb)
     (h : v.preferentialValence = some .negative) :
     v.isENTrigger = true := by
-  simp only [VerbCore.isENTrigger, h, show (some AttitudeValence.negative ==
+  simp only [Verb.isENTrigger, h, show (some AttitudeValence.negative ==
     some AttitudeValence.negative) = true from rfl, Bool.true_or]
 
 /-- Any negative implicative verb is an EN trigger.
     This captures the FORGET class: "X forgot to p" entails ¬p in w₀. -/
-theorem negative_implicative_is_en_trigger (v : VerbCore)
+theorem negative_implicative_is_en_trigger (v : Verb)
     (h : v.implicative = some .negative) :
     v.isENTrigger = true := by
-  simp only [VerbCore.isENTrigger, h, show (some Implicative.negative ==
+  simp only [Verb.isENTrigger, h, show (some Implicative.negative ==
     some Implicative.negative) = true from rfl, Bool.true_or, Bool.or_true]
 
 /-- Any causative-prevent verb is an EN trigger.
     This captures the STOP/PREVENT class: blocking entails ¬p in w₀. -/
-theorem prevent_builder_is_en_trigger (v : VerbCore)
+theorem prevent_builder_is_en_trigger (v : Verb)
     (h : v.causative = some .prevent) :
     v.isENTrigger = true := by
-  simp only [VerbCore.isENTrigger, h, show (some Causative.prevent ==
+  simp only [Verb.isENTrigger, h, show (some Causative.prevent ==
     some Causative.prevent) = true from rfl, Bool.or_true]
 
 -- Instantiations for English fragment verbs: the conclusion follows
@@ -1305,27 +1305,27 @@ open English.Predicates.Verbal (fear dread worry forget prevent)
 
 /-- "fear" → negative valence → EN trigger. -/
 theorem english_fear_is_en_trigger :
-    fear.toVerbCore.isENTrigger = true :=
+    fear.toVerb.isENTrigger = true :=
   negative_valence_is_en_trigger _ rfl
 
 /-- "dread" → negative valence → EN trigger. -/
 theorem english_dread_is_en_trigger :
-    dread.toVerbCore.isENTrigger = true :=
+    dread.toVerb.isENTrigger = true :=
   negative_valence_is_en_trigger _ rfl
 
 /-- "worry" → negative valence (uncertainty-based) → EN trigger. -/
 theorem english_worry_is_en_trigger :
-    worry.toVerbCore.isENTrigger = true :=
+    worry.toVerb.isENTrigger = true :=
   negative_valence_is_en_trigger _ rfl
 
 /-- "forget" → negative implicative → EN trigger. -/
 theorem english_forget_is_en_trigger :
-    forget.toVerbCore.isENTrigger = true :=
+    forget.toVerb.isENTrigger = true :=
   negative_implicative_is_en_trigger _ rfl
 
 /-- "prevent" → causative blocking → EN trigger. -/
 theorem english_prevent_is_en_trigger :
-    prevent.toVerbCore.isENTrigger = true :=
+    prevent.toVerb.isENTrigger = true :=
   prevent_builder_is_en_trigger _ rfl
 
 -- ════════════════════════════════════════════════════

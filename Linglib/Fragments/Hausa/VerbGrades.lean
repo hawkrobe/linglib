@@ -16,8 +16,8 @@ derivational stem-templates (gr0–gr7) defined by a fixed pairing of
 This file is the *interpretation* of two existing Theory interfaces in
 Hausa, not a parallel hierarchy:
 
-- `Semantics/Lexical/VerbEntry.VerbCore` carries argument
-  structure, voice, and Vendler class. A Hausa verb is a `VerbCore`
+- `Semantics/Lexical/VerbEntry.Verb` carries argument
+  structure, voice, and Vendler class. A Hausa verb is a `Verb`
   *plus* a Parsons grade.
 - `Phonology/Autosegmental/RegisterTier.TRN` carries
   the autosegmental tone primitives. A grade's tone melody is a list
@@ -25,7 +25,7 @@ Hausa, not a parallel hierarchy:
 
 The grade itself is a **record of predictions** (`StemTemplate`): tone,
 final-vowel template, derivational function, and the argument-structure
-defaults the grade entails. Concrete verbs derive their `VerbCore`
+defaults the grade entails. Concrete verbs derive their `Verb`
 fields from their grade by default; per-verb overrides are explicit.
 
 The named theorems below are **universal claims about the grade system
@@ -84,7 +84,7 @@ instance (t : FVTemplate) : Decidable t.threeWayChanging :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 -- ============================================================================
--- § 3: Stem Templates (tone × vowel × function × VerbCore defaults)
+-- § 3: Stem Templates (tone × vowel × function × Verb defaults)
 -- ============================================================================
 
 /-- Coarse derivational function of a grade (@cite{newman-2000}
@@ -96,13 +96,13 @@ inductive GradeFunction where
   | efferential | ventive | sustentative
   deriving DecidableEq, Repr
 
-/-- Default `VerbCore.complementType` predicted by the grade's primary
+/-- Default `Verb.complementType` predicted by the grade's primary
     function. -/
 def GradeFunction.defaultCT : GradeFunction → ComplementType
   | .intransitive | .sustentative => .none
   | _                              => .np
 
-/-- Default `VerbCore.voiceType` predicted by the grade's primary
+/-- Default `Verb.voiceType` predicted by the grade's primary
     function. The sustentative (passive-like) gr7 selects nonThematic
     Voice; everything else introduces an external argument. -/
 def GradeFunction.defaultVoice : GradeFunction → VoiceType
@@ -188,13 +188,13 @@ def parsons : List StemTemplate :=
   [gr0, gr1, gr2, gr3, gr4, gr5, gr6, gr7]
 
 -- ============================================================================
--- § 5: Hausa Verb Entries (extending VerbCore)
+-- § 5: Hausa Verb Entries (extending Verb)
 -- ============================================================================
 
-/-- A Hausa verb extends `VerbCore` with its Parsons grade and its
+/-- A Hausa verb extends `Verb` with its Parsons grade and its
     A-form citation tones (which may be lexical for gr0). All other
     morphological data is **derived** from the grade. -/
-structure HausaVerb extends VerbCore where
+structure HausaVerb extends Verb where
   /-- The Parsons grade fixing tone, final vowel, and argument-structure
       defaults. -/
   grade    : StemTemplate
@@ -213,7 +213,7 @@ def HausaVerb.tones (v : HausaVerb) : List TRN :=
 def HausaVerb.fv (v : HausaVerb) (f : SynForm) : FinalVowel :=
   v.grade.fv f
 
-/-- A verb is **canonical** iff its `VerbCore` argument-structure
+/-- A verb is **canonical** iff its `Verb` argument-structure
     fields agree with the defaults predicted by its grade. Per-verb
     overrides break canonicity (and become explicit empirical claims). -/
 def HausaVerb.canonical (v : HausaVerb) : Prop :=
@@ -224,7 +224,7 @@ instance (v : HausaVerb) : Decidable v.canonical :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Smart constructor: builds a canonical `HausaVerb` from form and
-    grade by filling `VerbCore` from the grade's defaults. Concrete
+    grade by filling `Verb` from the grade's defaults. Concrete
     verb definitions use this; per-verb overrides spell out which
     field departs from the default. -/
 def mkVerb (form : String) (g : StemTemplate)
@@ -333,7 +333,7 @@ theorem mkVerb_is_canonical (form : String) (g : StemTemplate)
   ⟨rfl, rfl⟩
 
 /-- **Grades 5 and 6 introduce an external argument.** The two H–H
-    grades are both agentive at the `VerbCore` level. -/
+    grades are both agentive at the `Verb` level. -/
 theorem hh_grades_agentive :
     gr5.defaultVoice = .agentive ∧ gr6.defaultVoice = .agentive :=
   ⟨rfl, rfl⟩

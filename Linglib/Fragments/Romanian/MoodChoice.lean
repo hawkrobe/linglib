@@ -27,7 +27,7 @@ open Semantics.Lexical
 
 /-- *a vrea* 'want' — robustly subjunctive-selecting via *să*.
     @cite{grano-2024}, (6): *să* (SBJV) required, *că* (IND) rejected. -/
-def a_vrea : VerbCore where
+def a_vrea : Verb where
   form := "a vrea"
   complementType := .finiteClause
   passivizable := false
@@ -37,7 +37,7 @@ def a_vrea : VerbCore where
 
 /-- *a spera* 'hope' — cross-linguistically variable (IND/SBJV).
     @cite{grano-2024}, (14): both *să* (SBJV) and *că* (IND) accepted. -/
-def a_spera : VerbCore where
+def a_spera : Verb where
   form := "a spera"
   complementType := .finiteClause
   passivizable := false
@@ -46,7 +46,7 @@ def a_spera : VerbCore where
 
 /-- *a intenționa* 'intend' — robustly rejects indicative.
     @cite{grano-2024}, (23): *să* (SBJV) required, *că* (IND) rejected. -/
-def a_intentiona : VerbCore where
+def a_intentiona : Verb where
   form := "a intenționa"
   complementType := .finiteClause
   passivizable := false
@@ -56,7 +56,7 @@ def a_intentiona : VerbCore where
 
 /-- *a face* 'make' — causative, subjunctive-selecting via *să*.
     @cite{grano-2024}, (46): *să* (SBJV) required, *că* (IND) rejected. -/
-def a_face : VerbCore where
+def a_face : Verb where
   form := "a face"
   complementType := .finiteClause
   controlType := .objectControl

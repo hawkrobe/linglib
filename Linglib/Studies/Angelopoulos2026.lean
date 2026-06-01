@@ -460,7 +460,7 @@ theorem angelopoulos_refutes_selection_argument_only
     However, **content/situation selection is not currently a
     Fragment field** — per integration auditor N3, it is paper-
     specific apparatus that lives in this Studies file rather than
-    in `VerbCore`. Without a Fragment field, the orthogonality
+    in `Verb`. Without a Fragment field, the orthogonality
     theorem can only state a *Vendler-stativity* witness, which is
     a proxy for situation-selection (since *pu*-complements
     require stative matrix predicates per Puzzle 3) but not
@@ -471,7 +471,7 @@ theorem angelopoulos_refutes_selection_argument_only
     selection requires a Fragment-level `selectsClauseSort` field,
     queued for a follow-up substrate refactor. -/
 theorem preferential_stative_verb_exists :
-    ∃ (v : VerbCore),
+    ∃ (v : Verb),
       (∃ p, v.attitude = some (.preferential p)) ∧
       v.vendlerClass = some .state :=
   ⟨Greek.StandardModern.Complementizers.metaniono,
@@ -484,7 +484,7 @@ theorem preferential_stative_verb_exists :
     (content), this is the closest we can come to the orthogonality
     claim without a `selectsClauseSort` Fragment field. -/
 theorem doxastic_stative_verb_exists :
-    ∃ (v : VerbCore),
+    ∃ (v : Verb),
       (∃ vd, v.attitude = some (.doxastic vd)) ∧
       v.vendlerClass = some .state :=
   ⟨Greek.StandardModern.Complementizers.pistevo,

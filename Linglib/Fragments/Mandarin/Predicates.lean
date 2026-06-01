@@ -14,14 +14,14 @@ namespace Mandarin.Predicates
 open Semantics.Lexical
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 
-/-- Mandarin verb entry: extends VerbCore with no inflectional morphology
+/-- Mandarin verb entry: extends Verb with no inflectional morphology
     (Mandarin is an isolating language). -/
-structure MandarinVerbEntry extends VerbCore where
+structure MandarinVerbEntry extends Verb where
   deriving Repr, BEq
 
 /-- Smart constructor: sets only the citation form (no inflection). -/
-def MandarinVerbEntry.mk' (core : VerbCore) : MandarinVerbEntry :=
-  { toVerbCore := core }
+def MandarinVerbEntry.mk' (core : Verb) : MandarinVerbEntry :=
+  { toVerb := core }
 
 /-- 期待 "qidai" — look forward to (Class 1: positive, non-C-distributive, takes questions). -/
 def qidai : MandarinVerbEntry := .mk' {

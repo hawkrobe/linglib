@@ -523,7 +523,7 @@ open English.Predicates.Verbal in
     derives IE classification and correctly predicts both un- and re- blocking.
     kick.levinClass → .hit → .impingementEffecting → unCompatible=false, reCompatible=false -/
 theorem kick_end_to_end :
-    kick.toVerbCore.levinClass = some .hit ∧
+    kick.toVerb.levinClass = some .hit ∧
     (LevinClass.forceTransmissionClass .hit) = .impingementEffecting ∧
     (LevinClass.forceTransmissionClass .hit).unCompatible = false ∧
     LevinClass.reCompatible .hit = false := ⟨rfl, rfl, rfl, rfl⟩
@@ -532,7 +532,7 @@ theorem kick_end_to_end :
     derives PFC classification and correctly predicts both un- and re- compatibility.
     bend.levinClass → .bend → .potentialForChange → unCompatible=true, reCompatible=true -/
 theorem bend_end_to_end :
-    English.Predicates.Verbal.bend.toVerbCore.levinClass = some .bend ∧
+    English.Predicates.Verbal.bend.toVerb.levinClass = some .bend ∧
     (LevinClass.forceTransmissionClass .bend) = .potentialForChange ∧
     (LevinClass.forceTransmissionClass .bend).unCompatible = true ∧
     LevinClass.reCompatible .bend = true := ⟨rfl, rfl, rfl, rfl⟩
@@ -542,7 +542,7 @@ open English.Predicates.Verbal in
     derives COS classification → un- blocked, re- allowed.
     break.levinClass → .break_ → .integralChange → unCompatible=false, reCompatible=true -/
 theorem break_end_to_end :
-    break_.toVerbCore.levinClass = some .break_ ∧
+    break_.toVerb.levinClass = some .break_ ∧
     (LevinClass.forceTransmissionClass .break_) = .integralChange ∧
     (LevinClass.forceTransmissionClass .break_).unCompatible = false ∧
     LevinClass.reCompatible .break_ = true := ⟨rfl, rfl, rfl, rfl⟩

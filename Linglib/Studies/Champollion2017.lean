@@ -286,10 +286,10 @@ theorem meet_matches_postulates :
 
 /-- Fragment verb entries have the right Vendler class for SDR alignment. -/
 theorem verb_vendler_for_sdr :
-    see.toVerbCore.vendlerClass = some .state ∧
-    kill.toVerbCore.vendlerClass = some .accomplishment ∧
-    meet.toVerbCore.vendlerClass = some .achievement ∧
-    eat.toVerbCore.vendlerClass = some .accomplishment :=
+    see.toVerb.vendlerClass = some .state ∧
+    kill.toVerb.vendlerClass = some .accomplishment ∧
+    meet.toVerb.vendlerClass = some .achievement ∧
+    eat.toVerb.vendlerClass = some .accomplishment :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ### `SSR_univ` ↔ Vendler Bridge -/
@@ -329,18 +329,18 @@ theorem telic_classes_accept_inX :
     inXPrediction .accomplishment = .accept := ⟨rfl, rfl⟩
 
 /-- "sleep" (state) → SSR expected. -/
-theorem sleep_ssr : predictsSSR sleep.toVerbCore.vendlerClass = true := rfl
+theorem sleep_ssr : predictsSSR sleep.toVerb.vendlerClass = true := rfl
 
 /-- "run" (activity) → SSR expected. -/
-theorem run_ssr : predictsSSR run.toVerbCore.vendlerClass = true := rfl
+theorem run_ssr : predictsSSR run.toVerb.vendlerClass = true := rfl
 
 /-- "arrive" (achievement) → no SSR. -/
-theorem arrive_no_ssr : predictsSSR arrive.toVerbCore.vendlerClass = false := rfl
+theorem arrive_no_ssr : predictsSSR arrive.toVerb.vendlerClass = false := rfl
 
 /-- "eat" (accomplishment) → no SSR. -/
-theorem eat_no_ssr : predictsSSR eat.toVerbCore.vendlerClass = false := rfl
+theorem eat_no_ssr : predictsSSR eat.toVerb.vendlerClass = false := rfl
 
 /-- "see" (state) → SSR expected. -/
-theorem see_ssr : predictsSSR see.toVerbCore.vendlerClass = true := rfl
+theorem see_ssr : predictsSSR see.toVerb.vendlerClass = true := rfl
 
 end Champollion2017

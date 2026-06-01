@@ -68,9 +68,9 @@ inductive CauserSpec where
 
 /-- A Spanish verb with its causative alternation properties.
 
-    Extends `VerbCore` with Spanish-specific fields for anticausative
+    Extends `Verb` with Spanish-specific fields for anticausative
     marking and event-structural decomposition. -/
-structure SpanishVerbEntry extends VerbCore where
+structure SpanishVerbEntry extends Verb where
   /-- How the anticausative is marked -/
   anticausativeMarking : AnticausativeMarking
   /-- Participates in causative/anticausative alternation -/

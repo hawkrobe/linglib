@@ -16,7 +16,7 @@ content/situation typing of the matrix-verb selection that
 @cite{angelopoulos-2026} introduces (following @cite{bondarenko-2022})
 is paper-specific apparatus and lives in
 `Studies/Angelopoulos2026.lean` as a
-projection over these `VerbCore` entries — it does not pollute the
+projection over these `Verb` entries — it does not pollute the
 fragment schema.
 
 ## Three complementizers
@@ -89,14 +89,14 @@ theorem n_bearing_complementizers :
 
 /-- *léo* (λέω) 'say' — past tense *ípe* in @cite{angelopoulos-2026}
     ex. 1a. Speech-act verb, eventive (activity). -/
-def leo : VerbCore where
+def leo : Verb where
   form := "léo"
   complementType := .finiteClause
   speechActVerb := true
   vendlerClass := some .activity
 
 /-- *pistévo* (πιστεύω) 'believe' — doxastic, stative. -/
-def pistevo : VerbCore where
+def pistevo : Verb where
   form := "pistévo"
   complementType := .finiteClause
   attitude := some (.doxastic .nonVeridical)
@@ -106,7 +106,7 @@ def pistevo : VerbCore where
 
 /-- *kséro* (ξέρω) 'know' (alongside *gnorízo*) — factive doxastic,
     stative. Rejects manner adverbs (@cite{angelopoulos-2026} ex. 21a). -/
-def ksero : VerbCore where
+def ksero : Verb where
   form := "kséro"
   complementType := .finiteClause
   attitude := some (.doxastic .veridical)
@@ -116,7 +116,7 @@ def ksero : VerbCore where
 /-- *katalavéno* (καταλαβαίνω) 'understand' — eventive (allows
     manner adverbs in @cite{angelopoulos-2026} ex. 21b, 22a),
     factive doxastic. -/
-def katalaveno : VerbCore where
+def katalaveno : Verb where
   form := "katalavéno"
   complementType := .finiteClause
   attitude := some (.doxastic .veridical)
@@ -124,7 +124,7 @@ def katalaveno : VerbCore where
 
 /-- *sinidhitopió* (συνειδητοποιώ) 'realize' — eventive (achievement),
     factive doxastic (@cite{angelopoulos-2026} ex. 21b). -/
-def sinidhitopio : VerbCore where
+def sinidhitopio : Verb where
   form := "sinidhitopió"
   complementType := .finiteClause
   attitude := some (.doxastic .veridical)
@@ -132,7 +132,7 @@ def sinidhitopio : VerbCore where
 
 /-- *eksigó* (εξηγώ) 'explain' — accomplishment, takes *oti*
     yielding *explanans* reading (@cite{angelopoulos-2026} ex. 4a). -/
-def eksigo : VerbCore where
+def eksigo : Verb where
   form := "eksigó"
   complementType := .finiteClause
   vendlerClass := some .accomplishment
@@ -146,7 +146,7 @@ def eksigo : VerbCore where
 
 /-- *metanióno* (μετανιώνω) 'regret' — preferential (negative
     valence), stative. @cite{angelopoulos-2026} ex. 1b, 20. -/
-def metaniono : VerbCore where
+def metaniono : Verb where
   form := "metanióno"
   complementType := .finiteClause
   attitude := some (.preferential (.degreeComparison .negative))
@@ -154,7 +154,7 @@ def metaniono : VerbCore where
 
 /-- *aréso* (αρέσω) 'appeal to / be liked by' — Class III experiencer,
     stative (@cite{angelopoulos-2026} ex. 13, 14; @cite{landau-2009}). -/
-def areso : VerbCore where
+def areso : Verb where
   form := "aréso"
   complementType := .finiteClause
   attitude := some (.preferential (.degreeComparison .positive))
@@ -163,7 +163,7 @@ def areso : VerbCore where
 
 /-- *xérome* (χαίρομαι) 'be happy/glad' — preferential positive,
     stative. -/
-def xerome : VerbCore where
+def xerome : Verb where
   form := "xérome"
   complementType := .finiteClause
   attitude := some (.preferential (.degreeComparison .positive))
@@ -184,7 +184,7 @@ def xerome : VerbCore where
     perception (eventive, with *oti*) and stative recollection
     (with *pu*). Citation form is the eventive one;
     @cite{angelopoulos-2026} ex. 22 contrasts the two. -/
-def thimame : VerbCore where
+def thimame : Verb where
   form := "thimáme"
   complementType := .finiteClause
   altComplementType := some .finiteClause  -- pu-complement available
@@ -194,7 +194,7 @@ def thimame : VerbCore where
 /-- *thimóno* (θυμώνω) 'get/be angry' — eventive (achievement)
     normally; stative when taking *pu* (@cite{angelopoulos-2026}
     ex. 19, 23). -/
-def thimono : VerbCore where
+def thimono : Verb where
   form := "thimóno"
   complementType := .finiteClause
   altComplementType := some .finiteClause

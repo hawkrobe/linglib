@@ -9,8 +9,8 @@ English clause-embedding adjectives that appear in copular constructions:
 
 The adjective entries use `ClauseEmbeddingAdj` (cross-linguistic type);
 the copular realization ("be" + adjective) is English-specific. The
-`toVerbCore` helper constructs the combined form for bridge theorems
-that need a uniform `VerbCore` interface.
+`toVerb` helper constructs the combined form for bridge theorems
+that need a uniform `Verb` interface.
 -/
 
 namespace English.Predicates.Copular
@@ -21,7 +21,7 @@ open Semantics.Lexical
 /-- "annoyed (that p)" — emotive factive clause-embedding adjective.
     @cite{degen-tonhauser-2021}, @cite{degen-tonhauser-2022}: canonically factive.
     Presupposes its complement via emotive semantics, not doxastic
-    veridicality — hence `factivePresup` on the derived `VerbCore` is
+    veridicality — hence `factivePresup` on the derived `Verb` is
     `false`, while `presupType = some .softTrigger`. -/
 def beAnnoyed : ClauseEmbeddingAdj where
   adjForm := "annoyed"
@@ -39,9 +39,9 @@ def beRight : ClauseEmbeddingAdj where
     entailment arises in perfective contexts, not from the lexicon. Therefore
     NO `implicative`: the entailment is not unconditional like *manage*.
 
-    Not modeled via `ClauseEmbeddingAdj` because `toVerbCore` doesn't transfer
-    `controlType`. Constructed as a direct `VerbCore` instead. -/
-def beAble : VerbCore where
+    Not modeled via `ClauseEmbeddingAdj` because `toVerb` doesn't transfer
+    `controlType`. Constructed as a direct `Verb` instead. -/
+def beAble : Verb where
   form := "be able"
   complementType := .infinitival
   controlType := .subjectControl
@@ -53,12 +53,12 @@ end English.Predicates.Copular
 -- ════════════════════════════════════════════════════
 
 open Semantics.Lexical in
-/-- Construct a `VerbCore` for an English copular predicate.
+/-- Construct a `Verb` for an English copular predicate.
     The copula contributes "be"; the adjective contributes the semantics.
     This is English-specific — other languages realize clause-embedding
     adjectives differently (zero copula, verbal adjectives, etc.). -/
-def Semantics.Gradability.ClauseEmbeddingAdj.toVerbCore
-    (a : Semantics.Gradability.ClauseEmbeddingAdj) : VerbCore where
+def Semantics.Gradability.ClauseEmbeddingAdj.toVerb
+    (a : Semantics.Gradability.ClauseEmbeddingAdj) : Verb where
   form := "be " ++ a.adjForm
   complementType := a.complementType
   presupType := a.presupType

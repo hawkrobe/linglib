@@ -315,17 +315,17 @@ theorem experiencer_agent_distinct_same_rank :
   exact ⟨by decide, rfl⟩
 
 -- ============================================================================
--- § 3: VerbCore → Scenario (End-to-End Bridge)
+-- § 3: Verb → Scenario (End-to-End Bridge)
 -- ============================================================================
 
-private def subjectRole (v : VerbCore) : Option ThetaRole :=
+private def subjectRole (v : Verb) : Option ThetaRole :=
   v.effectiveSubjectEntailments.bind (·.toRole)
 
-private def objectRole (v : VerbCore) : Option ThetaRole :=
+private def objectRole (v : Verb) : Option ThetaRole :=
   v.effectiveObjectEntailments.bind (·.toRole)
 
 /-- Derive Anderson's `Scenario` from a Fragment verb entry's derived roles. -/
-def toScenario (v : VerbCore) : Scenario :=
+def toScenario (v : Verb) : Scenario :=
   ⟨(subjectRole v |>.map thetaToCaseRelation).toList ++
    (objectRole v |>.map thetaToCaseRelation).toList⟩
 
@@ -345,7 +345,7 @@ def andersonLinking : LinkingTheory Scenario Unit where
     | _             => none
 
 /-- Anderson's predicted subject theta role for a verb entry. -/
-def andersonPredictedSubjectTheta (v : VerbCore) : Option ThetaRole :=
+def andersonPredictedSubjectTheta (v : Verb) : Option ThetaRole :=
   andersonLinking.predict (toScenario v) () .subject
 
 -- ============================================================================
@@ -378,8 +378,8 @@ theorem experiencer_correctly_predicted :
     verb has a derived subject role. -/
 theorem anderson_linking_accuracy :
     (allVerbs.filter λ v =>
-      (andersonPredictedSubjectTheta v.toVerbCore).isSome ==
-      (subjectRole v.toVerbCore).isSome).length = allVerbs.length := by
+      (andersonPredictedSubjectTheta v.toVerb).isSome ==
+      (subjectRole v.toVerb).isSome).length = allVerbs.length := by
   native_decide
 
 -- ============================================================================
@@ -421,10 +421,10 @@ theorem experiencer_distinguished :
     not collapsed into agent (for verbs with entailment profiles). -/
 theorem experiencer_verbs_correct :
     (allVerbs.filter λ v =>
-      (subjectRole v.toVerbCore) == some .experiencer ∧
-      andersonPredictedSubjectTheta v.toVerbCore == some .experiencer).length =
+      (subjectRole v.toVerb) == some .experiencer ∧
+      andersonPredictedSubjectTheta v.toVerb == some .experiencer).length =
     (allVerbs.filter λ v =>
-      (subjectRole v.toVerbCore) == some .experiencer).length := by
+      (subjectRole v.toVerb) == some .experiencer).length := by
   native_decide
 
 -- ============================================================================

@@ -8,15 +8,15 @@ English verb lexical entries with morphology, argument structure, semantic class
 and links to compositional semantics (CoS, attitudes, causatives).
 
 Semantic types (`ComplementType`, `Attitude`, etc.) and the
-cross-linguistic `VerbCore` structure live in `Core/Verbs.lean`. This file
-defines `VerbEntry extends VerbCore` with English-specific inflectional fields
+cross-linguistic `Verb` structure live in `Core/Verbs.lean`. This file
+defines `VerbEntry extends Verb` with English-specific inflectional fields
 and provides smart constructors for regular verbs.
 -/
 
 namespace English.Predicates.Verbal
 
 -- Re-export Features verb-entry vocabulary so downstream files that open this
--- namespace continue to find it. The `VerbCore`/`ComplementType`/… types now
+-- namespace continue to find it. The `Verb`/`ComplementType`/… types now
 -- live at the root namespace (`Semantics/Verb/Defs`), so they need no re-export.
 export Features (Preferential Attitude Causative Implicative)
 
@@ -64,16 +64,16 @@ def regularPresPart (stem : String) : String :=
   else stem ++ "ing"
 
 -- ════════════════════════════════════════════════════
--- § VerbEntry (extends VerbCore with English morphology)
+-- § VerbEntry (extends Verb with English morphology)
 -- ════════════════════════════════════════════════════
 
 /--
 A complete English lexical entry for a verb.
 
-Extends the cross-linguistic `VerbCore` (argument structure, semantic class,
+Extends the cross-linguistic `Verb` (argument structure, semantic class,
 compositional links) with English-specific inflectional morphology.
 -/
-structure VerbEntry extends VerbCore where
+structure VerbEntry extends Verb where
   /-- Third person singular present (for agreement) -/
   form3sg : String
   /-- Past tense form -/
@@ -94,8 +94,8 @@ structure VerbEntry extends VerbCore where
     def kick : VerbEntry :=.mkRegular {
       form := "kick", complementType :=.np }
     ``` -/
-def VerbEntry.mkRegular (core : VerbCore) : VerbEntry :=
-  { toVerbCore := core
+def VerbEntry.mkRegular (core : Verb) : VerbEntry :=
+  { toVerb := core
     form3sg := regular3sg core.form
     formPast := regularPast core.form
     formPastPart := regularPast core.form
@@ -3406,16 +3406,16 @@ referenced `Causative.toSemantics` over `CausalDynamics`) were removed
 in Phase D-G in favor of the polymorphic V2 versions. -/
 
 /-- "make" asserts sufficiency — derived from its builder. -/
-theorem make_asserts_sufficiency : make.toVerbCore.assertsSufficiency = true := by native_decide
+theorem make_asserts_sufficiency : make.toVerb.assertsSufficiency = true := by native_decide
 
 /-- "cause" asserts necessity — derived from its builder. -/
-theorem cause_asserts_necessity : cause.toVerbCore.assertsNecessity = true := by native_decide
+theorem cause_asserts_necessity : cause.toVerb.assertsNecessity = true := by native_decide
 
 /-- "make" does NOT assert necessity. -/
-theorem make_not_necessity : make.toVerbCore.assertsNecessity = false := by native_decide
+theorem make_not_necessity : make.toVerb.assertsNecessity = false := by native_decide
 
 /-- "cause" does NOT assert sufficiency. -/
-theorem cause_not_sufficiency : cause.toVerbCore.assertsSufficiency = false := by native_decide
+theorem cause_not_sufficiency : cause.toVerb.assertsSufficiency = false := by native_decide
 
 /-- make-type verbs (make, have, get) share the `.make` builder. -/
 theorem make_type_verbs_share_semantics :
@@ -3433,13 +3433,13 @@ theorem let_is_permissive :
 /-- "prevent" asserts neither sufficiency nor necessity —
     it uses the dual `preventSem` (blocking). -/
 theorem prevent_not_sufficiency :
-    prevent.toVerbCore.assertsSufficiency = false := by native_decide
+    prevent.toVerb.assertsSufficiency = false := by native_decide
 
 /-- "prevent" is an EN trigger — it entails ¬p in w₀ (complement
     falsity), satisfying the FORGET class licensing condition
     (@cite{jin-koenig-2021}, §6.1.4). -/
 theorem prevent_is_en_trigger :
-    prevent.toVerbCore.isENTrigger = true := rfl
+    prevent.toVerb.isENTrigger = true := rfl
 
 /-- make, force, and let have different builders despite shared truth conditions. -/
 theorem causative_builders_distinguished :
@@ -3460,11 +3460,11 @@ theorem lexical_causatives_use_make :
 
 /-- Lexical causatives all assert sufficiency — like periphrastic "make". -/
 theorem lexical_causatives_assert_sufficiency :
-    kill.toVerbCore.assertsSufficiency = true ∧
-    break_.toVerbCore.assertsSufficiency = true ∧
-    burn.toVerbCore.assertsSufficiency = true ∧
-    destroy.toVerbCore.assertsSufficiency = true ∧
-    melt.toVerbCore.assertsSufficiency = true := by
+    kill.toVerb.assertsSufficiency = true ∧
+    break_.toVerb.assertsSufficiency = true ∧
+    burn.toVerb.assertsSufficiency = true ∧
+    destroy.toVerb.assertsSufficiency = true ∧
+    melt.toVerb.assertsSufficiency = true := by
   refine ⟨by native_decide, by native_decide, by native_decide,
           by native_decide, by native_decide⟩
 
@@ -3485,19 +3485,19 @@ removed in Phase D-G. -/
 
 /-- "manage" entails the complement — derived from its builder. -/
 theorem manage_entails_complement_derived :
-    manage.toVerbCore.entailsComplement = some true := by native_decide
+    manage.toVerb.entailsComplement = some true := by native_decide
 
 /-- "fail" entails NOT the complement — derived from its builder. -/
 theorem fail_entails_not_complement_derived :
-    fail.toVerbCore.entailsComplement = some false := by native_decide
+    fail.toVerb.entailsComplement = some false := by native_decide
 
 /-- "remember" entails the complement — derived from its builder. -/
 theorem remember_entails_complement_derived :
-    remember.toVerbCore.entailsComplement = some true := by native_decide
+    remember.toVerb.entailsComplement = some true := by native_decide
 
 /-- "forget" entails NOT the complement — derived from its builder. -/
 theorem forget_entails_not_complement_derived :
-    forget.toVerbCore.entailsComplement = some false := by native_decide
+    forget.toVerb.entailsComplement = some false := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § Morphological Stem + Vacuity

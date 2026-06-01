@@ -283,7 +283,7 @@ theorem run_both_agree :
     PredictsUnergative runSubjectProfile := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 6. Fragment Bridge: Profiles Match VerbCore Fields
+-- § 6. Fragment Bridge: Profiles Match Verb Fields
 -- ════════════════════════════════════════════════════
 
 /-! These theorems verify that the canonical verb profiles in
@@ -291,37 +291,37 @@ theorem run_both_agree :
     English Fragment verb entries. -/
 
 theorem kick_subject_profile_matches :
-    kick.toVerbCore.subjectEntailments = some kickSubjectProfile := rfl
+    kick.toVerb.subjectEntailments = some kickSubjectProfile := rfl
 
 theorem kick_object_profile_matches :
-    kick.toVerbCore.objectEntailments = some kickObjectProfile := rfl
+    kick.toVerb.objectEntailments = some kickObjectProfile := rfl
 
 theorem eat_subject_profile_matches :
-    eat.toVerbCore.subjectEntailments = some eatSubjectProfile := rfl
+    eat.toVerb.subjectEntailments = some eatSubjectProfile := rfl
 
 theorem eat_object_profile_matches :
-    eat.toVerbCore.objectEntailments = some eatObjectProfile := rfl
+    eat.toVerb.objectEntailments = some eatObjectProfile := rfl
 
 theorem build_subject_profile_matches :
-    build.toVerbCore.subjectEntailments = some buildSubjectProfile := rfl
+    build.toVerb.subjectEntailments = some buildSubjectProfile := rfl
 
 theorem build_object_profile_matches :
-    build.toVerbCore.objectEntailments = some buildObjectProfile := rfl
+    build.toVerb.objectEntailments = some buildObjectProfile := rfl
 
 theorem run_subject_profile_matches :
-    run.toVerbCore.subjectEntailments = some runSubjectProfile := rfl
+    run.toVerb.subjectEntailments = some runSubjectProfile := rfl
 
 theorem arrive_subject_profile_matches :
-    arrive.toVerbCore.subjectEntailments = some arriveSubjectProfile := rfl
+    arrive.toVerb.subjectEntailments = some arriveSubjectProfile := rfl
 
 theorem see_subject_profile_matches :
-    see.toVerbCore.subjectEntailments = some seeSubjectProfile := rfl
+    see.toVerb.subjectEntailments = some seeSubjectProfile := rfl
 
 theorem sweep_subject_profile_matches :
-    sweep.toVerbCore.subjectEntailments = some sweepBasicSubjectProfile := rfl
+    sweep.toVerb.subjectEntailments = some sweepBasicSubjectProfile := rfl
 
 theorem sweep_instr_subject_profile_matches :
-    sweep_instr.toVerbCore.subjectEntailments = some sweepBroomSubjectProfile := rfl
+    sweep_instr.toVerb.subjectEntailments = some sweepBroomSubjectProfile := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 7. Fragment Bridge: Predictions Match Annotations

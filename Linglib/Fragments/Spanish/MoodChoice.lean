@@ -23,7 +23,7 @@ open Semantics.Lexical
 
 /-- *querer* 'want' — robustly subjunctive-selecting.
     @cite{grano-2024}, (1a): SBJV required, IND rejected. -/
-def querer : VerbCore where
+def querer : Verb where
   form := "querer"
   complementType := .finiteClause
   controlType := .subjectControl
@@ -35,7 +35,7 @@ def querer : VerbCore where
 
 /-- *esperar* 'hope' — subjunctive in Spanish (unlike Portuguese/French).
     @cite{grano-2024}, (9): SBJV required, IND rejected. -/
-def esperar : VerbCore where
+def esperar : Verb where
   form := "esperar"
   complementType := .finiteClause
   controlType := .subjectControl
@@ -47,7 +47,7 @@ def esperar : VerbCore where
 /-- *tener la intención (de)* 'intend' — robustly rejects indicative.
     @cite{grano-2024}, (25): SBJV required in non-control complements.
     Periphrastic form (nominal predicate). -/
-def tener_la_intencion : VerbCore where
+def tener_la_intencion : Verb where
   form := "tener la intención"
   complementType := .infinitival
   controlType := .subjectControl
@@ -59,7 +59,7 @@ def tener_la_intencion : VerbCore where
 /-- *hacer* 'make' — causative, robustly subjunctive-selecting.
     @cite{grano-2024}, (40): SBJV required, IND rejected.
     Infinitival complements with object control. -/
-def hacer : VerbCore where
+def hacer : Verb where
   form := "hacer"
   complementType := .infinitival
   controlType := .objectControl
@@ -71,7 +71,7 @@ def hacer : VerbCore where
       un aumento al jefe" (SBJV)
     IND complement → belief: "Alice convenció a Emily de que estaba
       diciendo la verdad" (IND) -/
-def convencer : VerbCore where
+def convencer : Verb where
   form := "convencer"
   complementType := .infinitival
   controlType := .objectControl

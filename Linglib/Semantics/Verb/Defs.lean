@@ -17,21 +17,21 @@ import Linglib.Semantics.Lexical.LevinClassProfiles
 /-! # Verb entry — core type
 
 Framework-agnostic types for verb semantics: the selectional/inflectional enums
-(`ComplementType`, `VoiceType`, …) and the `VerbCore` structure that bundles the
+(`ComplementType`, `VoiceType`, …) and the `Verb` structure that bundles the
 semantic fields shared across languages.
 
-`VerbCore` is the **semantic spine** of a verb entry. Its fields are organised
+`Verb` is the **semantic spine** of a verb entry. Its fields are organised
 into facet structures under the `Verb` namespace — `Verb.ArgStructure`,
 `Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation`, `Verb.Attitude`,
-`Verb.Root` — which `VerbCore` composes via `extends`. Flat field access
+`Verb.Root` — which `Verb` composes via `extends`. Flat field access
 (`v.complementType`, `v.attitude`, …) is preserved by `extends`-flattening, and
-language fragments extend `VerbCore` with their own inflectional paradigms.
+language fragments extend `Verb` with their own inflectional paradigms.
 
 Verb classification (factive, causative, attitude, …) is DERIVED from these
 primitive fields in `Semantics/Verb/Basic.lean`, not stipulated as an enum.
 
 ## Main declarations
-* `VerbCore` — the composed verb entry spine
+* `Verb` — the composed verb entry spine
 * `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition`, `Verb.Causation`,
   `Verb.Attitude`, `Verb.Root` — the field facets
 
@@ -217,7 +217,7 @@ def complementToValence : ComplementType → Valence
 
 /-! ### Field facets
 
-Each facet groups a concern's fields; `VerbCore` composes them via `extends`,
+Each facet groups a concern's fields; `Verb` composes them via `extends`,
 so flat access (`v.complementType`) is preserved. -/
 
 namespace Verb
@@ -343,7 +343,7 @@ causation, attitude, root) plus the citation form, speech-act status, and a
 polysemy disambiguator. Language-specific fragments extend this with
 morphological fields appropriate to their inflectional system.
 -/
-structure VerbCore extends
+structure Verb extends
     Verb.ArgStructure, Verb.Aspect, Verb.Presupposition,
     Verb.Causation, Verb.Attitude, Verb.Root where
   /-- Citation form (cross-linguistic) -/
