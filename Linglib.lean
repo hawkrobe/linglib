@@ -683,6 +683,12 @@ import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.German.Definiteness
+import Linglib.Fragments.Fering.Definiteness
+import Linglib.Fragments.Akan.Definiteness
+import Linglib.Fragments.MauritianCreole.Definiteness
+import Linglib.Fragments.Lakhota.Definiteness
+import Linglib.Fragments.Hausa.Definiteness
+import Linglib.Fragments.HaitianCreole.Definiteness
 import Linglib.Fragments.German.Tense
 import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.German.PolarityMarking
@@ -1187,7 +1193,6 @@ import Linglib.Studies.Dekker2012
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
-import Linglib.Studies.Schwarz2013
 import Linglib.Studies.PatelGroszGrosz2017
 import Linglib.Studies.Spector2025
 import Linglib.Studies.Charlow2018
