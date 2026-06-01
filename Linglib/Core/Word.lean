@@ -1,4 +1,5 @@
 import Linglib.Core.UD
+import Linglib.Core.Valence
 
 /-!
 # Word
@@ -106,17 +107,6 @@ inductive MassCount where
   | mass   -- mass nouns: *mold*, *pollen*, *milk*, *gold*
   | count  -- count nouns: *spider*, *pollen grain*, *dog*, *cup*
   deriving Repr, DecidableEq, Hashable
-
-/-- Transitivity / argument structure. No direct UD equivalent. -/
-inductive Valence where
-  | intransitive  -- sleep, arrive
-  | transitive    -- see, eat
-  | ditransitive  -- give, send (double object)
-  | dative        -- give X to Y (prepositional dative)
-  | locative      -- put X on Y
-  | copular       -- be (takes predicate)
-  | clausal       -- manage to VP, believe that S (xcomp/ccomp complement)
-  deriving Repr, DecidableEq, Inhabited
 
 /-- Head direction of a syntactic construction.
     Used for word-order typology and

@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Valence
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
