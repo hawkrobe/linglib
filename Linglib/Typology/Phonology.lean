@@ -21,7 +21,7 @@ import Linglib.Data.WALS.Features.F19A
 
 /-!
 # Phonological typology — WALS substrate (Chapters 1–19)
-@cite{dryer-haspelmath-2013} @cite{maddieson-2013} @cite{goedemans-van-der-hulst-2013}
+@cite{dryer-haspelmath-2013} @cite{maddieson-2013} @cite{hajek-2013} @cite{goedemans-van-der-hulst-2013}
 
 Theory-neutral phonological-typology substrate distilled from WALS Chapters
 1–19, in the same `Linglib/Typology/{Domain}.lean` mould as `Case.lean`,
@@ -34,7 +34,8 @@ The 19 chapters are NOT all by Maddieson — the file's previous incarnation
 (`Phenomena/Phonology/Typology.lean`) cited only `@cite{maddieson-2013}`,
 which is an attribution error. Correct split:
 
-- **Chs 1–13, 18–19**: Maddieson 2013 (segmental inventory + tone)
+- **Chs 1–9, 11–13, 18–19**: Maddieson 2013 (segmental inventory + tone)
+- **Ch 10 (10A, 10B)**: Hajek 2013 (vowel nasalization, incl. West Africa)
 - **Chs 14–17**: Goedemans & van der Hulst 2013 (stress location, weight-
   sensitivity, weight factors, rhythm). Different framework: StressTyp
   database, presupposes a metrical-grid view where every word has a
@@ -162,7 +163,7 @@ inductive VelarNasalStatus where
   deriving DecidableEq, Repr
 
 /-- Nasal vowel contrast type in West Africa (WALS Ch 10B,
-    @cite{maddieson-2013}). Areal sub-feature of Ch 10A. -/
+    @cite{hajek-2013}). Areal sub-feature of Ch 10A. -/
 inductive NasalVowelWA where
   | noContrast
   | twoWayNoSpreading | twoWaySpreading
