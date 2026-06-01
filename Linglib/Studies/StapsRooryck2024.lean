@@ -1,3 +1,4 @@
+import Linglib.Core.WorldTimeIndex
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.French.Predicates
 import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
