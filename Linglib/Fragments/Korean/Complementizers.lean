@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Korean Complementizers and Clause-Embedding Verbs
@@ -49,7 +49,6 @@ lives in the `Bondarenko2022` Studies file.
 
 namespace Korean.Complementizers
 
-open Semantics.Lexical (VerbCore)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Clause-typing morpheme inventory

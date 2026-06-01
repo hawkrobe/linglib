@@ -1272,7 +1272,6 @@ causative blocking) is *sufficient* for EN trigger status — the
 conclusion follows from the hypothesis, not by enumerating cases.
 -/
 
-open Semantics.Lexical (VerbCore)
 
 /-- Any verb with negative preferential valence is an EN trigger.
     This captures the FEAR class: negative valence activates both p

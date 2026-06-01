@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Selection
 import Linglib.Syntax.Minimalist.CategorialFeatures
 import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 import Linglib.Studies.Bondarenko2022
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 
@@ -111,7 +111,6 @@ complement *pu* from v_State.
 namespace Angelopoulos2026
 
 open Minimalist
-open Semantics.Lexical (VerbCore)
 open Semantics.Attitudes (ContentIndividual)
 open Semantics.Attitudes.ClauseDenotation.Content (compC ContentNoun)
 open Semantics.Attitudes.ClauseDenotation.Situation

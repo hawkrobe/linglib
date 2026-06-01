@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Modern Greek Complementizers @cite{christidis-1982} @cite{roussou-2010}
@@ -36,7 +36,6 @@ fragment schema.
 
 namespace Greek.StandardModern.Complementizers
 
-open Semantics.Lexical (VerbCore)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Complementizer Inventory

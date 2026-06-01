@@ -151,7 +151,8 @@ import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Defs
+import Linglib.Semantics.Verb.Basic
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Constraint.Profile
 import Linglib.Core.Constraint.Weighted

@@ -52,7 +52,6 @@ namespace Schwarzer2026
 
 open Features
 open Features.Coordination
-open Semantics.Lexical (ComplementType VerbCore)
 open German.Predicates
 open Typology.WordOrder
 open BrueningAlKhalaf2020

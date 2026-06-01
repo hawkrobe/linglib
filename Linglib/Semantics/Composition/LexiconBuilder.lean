@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Semantics.Composition.LexEntry
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Lexicon Builder
@@ -15,7 +15,7 @@ semantics. Provides:
    list of named entries, replacing the hand-written match-on-strings pattern
    that Studies currently use.
 
-3. **Entry construction** (`VerbCore.mkLexEntry`): given a VerbCore and a
+3. **Entry construction** (`mkLexEntry`): given a VerbCore and a
    denotation of the appropriate type, produce a `LexEntry F`.
 
 ## Design
@@ -50,8 +50,6 @@ open Semantics.Montague (LexEntry Lexicon)
 
 /-! ## Type Dispatch -/
 
-namespace Semantics.Lexical
-
 open Core.Logic.Intensional (Ty)
 
 /-- Map a verb's complement type to its Montague semantic type.
@@ -80,11 +78,8 @@ def ComplementType.toTy : ComplementType → Ty
 def VerbCore.semanticType (v : VerbCore) : Ty :=
   v.complementType.toTy
 
-end Semantics.Lexical
-
 namespace Semantics.Composition.LexiconBuilder
 
-open Semantics.Lexical (ComplementType VerbCore)
 
 /-! ## Lexicon Construction -/
 
@@ -121,7 +116,7 @@ def mergeLexicons {F : Frame} (lex1 lex2 : Lexicon F) : Lexicon F :=
 
     This ensures the entry's type tag matches the verb's argument structure
     by construction. -/
-def VerbCore.mkLexEntry (v : VerbCore) (F : Frame) (denot : F.Denot v.semanticType)
+def mkLexEntry (v : VerbCore) (F : Frame) (denot : F.Denot v.semanticType)
     : LexEntry F :=
   ⟨v.semanticType, denot⟩
 

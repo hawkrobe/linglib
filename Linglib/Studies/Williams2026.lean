@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Williams 2026: The Presuppositions of *forget*
@@ -51,7 +51,6 @@ The Fragment split is a practical separation of entailment patterns;
 
 namespace Williams2026
 
-open Semantics.Lexical (ComplementType)
 
 /-- Whether a factive presupposition has modal content.
 

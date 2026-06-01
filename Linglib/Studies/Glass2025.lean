@@ -2,7 +2,7 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Dynamic.Postsupposition
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 
