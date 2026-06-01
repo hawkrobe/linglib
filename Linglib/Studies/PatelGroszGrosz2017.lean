@@ -3,7 +3,7 @@ import Linglib.Features.Definiteness
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Core.Nominal.Determiner
 import Linglib.Phenomena.Anaphora.Coreference
-import Linglib.Studies.Schwarz2013
+import Linglib.Fragments.German.Definiteness
 import Linglib.Phenomena.Reference.DirectReference
 
 /-!
@@ -20,7 +20,8 @@ into two structural types:
 Minimize DP! makes PER the default; DEM requires pragmatic licensing
 (emotivity, disambiguation, register). The structural account builds directly
 on @cite{schwarz-2009}/@cite{schwarz-2013}'s weak/strong article typology
-(formalized in `Studies/Schwarz2013.lean`); §F-§G below give the bridge.
+(German's inventory is `Fragments/German/Definiteness.lean`); §F-§G below
+give the bridge.
 
 ## Key Claims
 
@@ -468,19 +469,20 @@ Structural mapping:
 - Schwarz weak article = PG&G D_det layer = PER pronoun
 - Schwarz strong article = PG&G D_deix + D_det = DEM pronoun
 
-Schwarz's full article-typology dataset and generalizations live in
-`Studies/Schwarz2013.lean`. -/
+Each weak/strong article inventory lives in its language's
+`Fragments/{Lang}/Definiteness.lean` (German, Fering, Akan, Lakhota, Hausa,
+Mauritian/Haitian Creole). -/
 
 /-- Languages with two overt article forms in @cite{schwarz-2013} correspond
     to 2-D-layer languages in @cite{patel-grosz-grosz-2017}. Verified for
-    German, which appears in both datasets: Schwarz codes German as having
-    both *dem* (strong) and *vom* (weak); PG&G code German as 2-D-layer
-    with the `weakAndStrong` article type. -/
+    German, which appears in both datasets: German's inventory derives the
+    `.bipartite` cell (two distinct articles, *vom* weak / *dem* strong); PG&G
+    code German as 2-D-layer with the `weakAndStrong` article type. -/
 theorem schwarz_pgg_german_consistent :
-    Schwarz2013.german.strongForm.isSome ∧
-    Schwarz2013.german.weakForm.isSome ∧
+    Determiner.markingStrategy German.Definiteness.determiners = .bipartite ∧
     germanData.dLayers == 2 ∧
-    germanData.articleType == .weakAndStrong := by decide
+    germanData.articleType == .weakAndStrong :=
+  ⟨German.Definiteness.marking, by decide⟩
 
 -- ============================================================================
 -- §G: Bridges
