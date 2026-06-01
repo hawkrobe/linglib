@@ -9,7 +9,7 @@ Per @cite{buring-2012} §3, a bound pronoun has the *same* denotation as a free
 one — the variable `g(i)` — with binding supplied externally by the β-operator.
 That assignment-based binding is the project-canonical `interpPronoun` /
 `lambdaAbsG` (`Core.Logic.Intensional.Variables`), also the selector of the
-unified pronoun denotation `Pronoun.Entry.denote`; this file develops the
+unified pronoun denotation `PersonalPronoun.denote`; this file develops the
 continuation rendering (`W`, `hkBinding`/`bsBinding`) and the cylindric-algebra
 view of the assignment update.
 

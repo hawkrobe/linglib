@@ -9,6 +9,7 @@ import Linglib.Features.Dimension
 import Linglib.Features.Gender
 import Linglib.Core.Valence
 import Linglib.Core.Word
+import Linglib.Typology.NegativeConcord
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Negation
 import Linglib.Features.ClauseForm
@@ -257,6 +258,7 @@ import Linglib.Core.Nominal.Interpret
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
+import Linglib.Features.OntologicalCategory
 import Linglib.Features.Genericity
 import Linglib.Core.Computability.Subregular.Defs
 import Linglib.Core.Computability.Subregular.StrictlyLocal

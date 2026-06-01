@@ -163,7 +163,7 @@ instance : ToString BareNumeral where
     of, under a choice of bare-numeral semantics (`bareMeaning` exact vs.
     `atLeastMeaning` lower-bound — only the bare `.eq` form consults `bare`; the
     four modified forms are theory-independent `relationalGQ` denotations). A
-    method on the numeral object, mirroring `Pronoun.Entry.denote`. -/
+    method on the numeral object, mirroring `PersonalPronoun.denote`. -/
 def _root_.Numeral.Entry.denoteUnder (e : Numeral.Entry) (bare : Nat → Nat → Prop) :
     Nat → Prop :=
   match e.comparison with
@@ -364,7 +364,7 @@ end GQTBridge
 The lexical numeral object (`Core.Scale.Comparison`, `Numeral.Entry`) is owned by
 `Typology/Numeral/Basic.lean`; this section is the *semantics* side — it imports
 that object and provides its `relationalGQ` denotation, mirroring how
-`Semantics/Reference/PronounDenotation.lean` denotes the `Pronoun.Entry` object.
+`Semantics/Reference/PronounDenotation.lean` denotes the `PersonalPronoun` object.
 The denotation is **by construction** a `Core.Scale.relationalGQ`, so every lemma
 about `relationalGQ` transfers to every numeral entry. `Comparison.rel` lives in
 `Core.Scale`; `Entry.denoteUnder` (the cardinal, theory-parameterized reading) is

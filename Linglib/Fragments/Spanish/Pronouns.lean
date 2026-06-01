@@ -37,11 +37,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *yo* — 1sg. -/
-def yo : Entry :=
+def yo : PersonalPronoun :=
   { form := "yo", person := some .first, number := some .sg }
 
 /-- *tú* — 2sg familiar (T form). -/
-def tu : Entry :=
+def tu : PersonalPronoun :=
   { form := "tú", person := some .second, number := some .sg, register := .informal }
 
 /-- *usted* — polite 2sg (V form, triggers 3sg agreement).
@@ -49,36 +49,36 @@ def tu : Entry :=
     effects: *la* as USTED.ACC is banned in 3>USTED configurations
     (@cite{rezac-2011}, @cite{adamson-zompi-2025} §6.1).
     @cite{adamson-zompi-2025} -/
-def usted : Entry :=
+def usted : PersonalPronoun :=
   { form := "usted", person := some .third, number := some .sg, register := .formal,
     referentialPerson := some .second }
 
 /-- *él* — 3sg masculine. -/
-def el : Entry :=
+def el : PersonalPronoun :=
   { form := "él", person := some .third, number := some .sg }
 
 /-- *ella* — 3sg feminine. -/
-def ella : Entry :=
+def ella : PersonalPronoun :=
   { form := "ella", person := some .third, number := some .sg }
 
 /-- *nosotros* — 1pl. -/
-def nosotros : Entry :=
+def nosotros : PersonalPronoun :=
   { form := "nosotros", person := some .first, number := some .pl }
 
 /-- *vosotros* — 2pl familiar (Peninsular). -/
-def vosotros : Entry :=
+def vosotros : PersonalPronoun :=
   { form := "vosotros", person := some .second, number := some .pl, register := .informal }
 
 /-- *ustedes* — 2pl formal / general (triggers 3pl agreement). -/
-def ustedes : Entry :=
+def ustedes : PersonalPronoun :=
   { form := "ustedes", person := some .third, number := some .pl, register := .formal,
     referentialPerson := some .second }
 
 /-- *ellos* — 3pl masculine. -/
-def ellos : Entry :=
+def ellos : PersonalPronoun :=
   { form := "ellos", person := some .third, number := some .pl }
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [yo, tu, usted, el, ella, nosotros, vosotros, ustedes, ellos]
 
 -- ============================================================================

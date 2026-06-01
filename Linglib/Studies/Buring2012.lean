@@ -7,7 +7,7 @@ import Linglib.Semantics.Reference.PronounDenotation
 
 @cite{buring-2012}'s handbook survey of pronoun semantics makes several claims
 this file states as theorems about the *unified* pronoun denotation
-(`Pronoun.Entry.denote` / `Pronoun.Entry.phiPresup`) applied to the English
+(`PersonalPronoun.denote` / `PersonalPronoun.phiPresup`) applied to the English
 Fragment's lexical entries (`English.Pronouns`) — not about a local
 re-implementation. This is the "theory-hub denotation as study-file constraint":
 the object the rest of the codebase attributes to pronouns is the object these
@@ -70,7 +70,7 @@ lexeme; the lexical entry is identical, binding lives in the assignment. -/
 theorem she_bound_reading (b : F.Entity) :
     (she.entry.denote i spk adr isFemale isInanimate).selector (g.update i b) ⟨⟩
       = some b := by
-  simp only [Pronoun.Entry.denote, interpPronoun, Assignment.update_at]
+  simp only [PersonalPronoun.denote, interpPronoun, Assignment.update_at]
 
 /-- Epicene *they* (@cite{arnold-2026}) carries no gender presupposition: its
 denotation is defined of a referent regardless of gender — the structural

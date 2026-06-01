@@ -34,6 +34,7 @@ def nikdo : PolarityItemEntry :=
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
   , morphology := .indefPlusNeg
+  , nWordStatus := some .nWord
   , notes := "Strict-NC n-word; *Nikdo nepřišel* / *Neviděl nikoho*" }
 
 /-- *nic* — N-word for non-human ('nothing'). -/
@@ -44,6 +45,7 @@ def nic : PolarityItemEntry :=
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
   , morphology := .indefPlusNeg
+  , nWordStatus := some .nWord
   , notes := "Non-human n-word; *Nic neviděl*" }
 
 /-- *nikdy* — Temporal n-word ('never'). -/
@@ -54,6 +56,7 @@ def nikdy : PolarityItemEntry :=
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
   , morphology := .indefPlusNeg
+  , nWordStatus := some .nWord
   , notes := "Temporal n-word; *Nikdy nepřišel*" }
 
 /-- *nikam* — Locative n-word ('nowhere'). -/
@@ -64,6 +67,7 @@ def nikam : PolarityItemEntry :=
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
   , morphology := .indefPlusNeg
+  , nWordStatus := some .nWord
   , notes := "Locative directional n-word; *Nikam nejde* 'goes nowhere'" }
 
 /-- *žádný* — Determiner n-word ('no/none'). -/
@@ -73,6 +77,7 @@ def zadny : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
+  , nWordStatus := some .nWord
   , notes :=
       "Determiner/pronoun n-word ('no/none'); morphologically distinct " ++
       "from the *ni-* series but functionally parallel" }

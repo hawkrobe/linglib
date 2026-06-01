@@ -1,35 +1,27 @@
 import Linglib.Core.Word
+import Linglib.Features.OntologicalCategory
 
 /-!
 # Questions: Basic Types and Shared Infrastructure
 @cite{dayal-2016} @cite{groenendijk-stokhof-1984} @cite{anand-hardt-mccloskey-2021}
 
-Theory-neutral types for question-answer phenomena.
+Theory-neutral types for question-answer phenomena. The semantic type of a wh-phrase
+(*who*/*what*/*where*/…) is the shared `Features.OntologicalCategory` axis — its
+wh-side distribution is empirically motivated by the Santa Cruz Sluicing Corpus
+(@cite{anand-hardt-mccloskey-2021}), where these categories show radically different
+frequencies.
 
 -/
 
 namespace Phenomena.Questions
-
-/-- Semantic type of a wh-phrase, classifying what domain the wh-word
-    ranges over. The taxonomy is empirically motivated by distributional
-    patterns in the Santa Cruz Sluicing Corpus, where these types show radically different frequencies. -/
-inductive WhSemanticType where
-  | entity          -- who, what, which N — ranges over individuals
-  | degree          -- how much, how many, how ADJ — ranges over degrees
-  | reason          -- why — ranges over reasons/causes
-  | manner          -- how — ranges over manners
-  | temporal        -- when — ranges over times
-  | locative        -- where — ranges over locations
-  | classificatory  -- what kind of, what sort of — ranges over kinds
-  deriving DecidableEq, Repr, Inhabited
 
 -- Question Types
 
 /-- Classification of question types by answer form.
 
     Note: this classifies the *form* of the question and expected answer,
-    not the semantic type of the wh-phrase. For semantic type (entity,
-    degree, reason, etc.), see `WhSemanticType`. -/
+    not the semantic type of the wh-phrase. For semantic type (person/thing/
+    amount/reason/…), see `Features.OntologicalCategory`. -/
 inductive QuestionType where
   | polar           -- Yes/no questions: "Did John leave?"
   | whSingular      -- Singular wh: "Who left?"
@@ -39,17 +31,17 @@ inductive QuestionType where
   | whManner        -- Manner: "How did John leave?"
   deriving DecidableEq, Repr
 
-/-- The semantic type of the wh-phrase, when the question is a wh-question.
-    Returns `none` for polar and alternative questions. For `whSingular`
-    and `whPlural`, the semantic type depends on the specific wh-word used,
-    so we default to `entity` — the caller should refine if needed. -/
-def QuestionType.whSemanticType : QuestionType → Option WhSemanticType
-  | .polar      => none
+/-- The ontological category of the wh-phrase, when the question is a wh-question.
+    Returns `none` for polar and alternative questions. For `whSingular`/`whPlural`
+    the person/thing split depends on the specific wh-word (*who* vs *what*/*which*),
+    so we default to `person` — the caller should refine per wh-word. -/
+def QuestionType.whSemanticType : QuestionType → Option Features.OntologicalCategory
+  | .polar       => none
   | .alternative => none
-  | .whSingular => some .entity   -- default; could be temporal, locative, etc.
-  | .whPlural   => some .entity
-  | .whReason   => some .reason
-  | .whManner   => some .manner
+  | .whSingular  => some .person   -- default; *who* vs *what* refined per wh-word
+  | .whPlural    => some .person
+  | .whReason    => some .reason
+  | .whManner    => some .manner
 
 /-- Answer completeness -/
 inductive AnswerCompleteness where

@@ -2,70 +2,88 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Russian Polarity-Sensitive Items
-@cite{haspelmath-1997}
+@cite{haspelmath-1997} @cite{zeijlstra-2004} @cite{giannakidou-1998}
 
-Russian indefinite pronoun polarity items, typed by the categories from
-`Typology.PolarityItem`.
+Russian indefinite-pronoun polarity items, typed by the theory-neutral
+categories from `Typology.PolarityItem`. The classification follows
+@cite{haspelmath-1997}'s implicational map for the Russian series: the
+*-либо* series spans the weak-NPI functions (irrealis non-specific,
+question, conditional, comparative, indirect negation), while the *ни-*
+series occupies the *direct negation* function as strict negative-concord
+items, obligatorily co-occurring with clausemate verbal negation *не*.
 
-- **кто-либо** (kto-libo): Weak NPI (questions, conditionals, indirect negation)
-- **никто** (nikto): N-word, negative concord
-- **кто угодно** (kto ugodno): Free choice item
+- **кто-либо** (kto-libo): weak NPI — questions, conditionals,
+  comparatives, indirect negation.
+- **никто / ничего / никогда** (nikto / nichego / nikogda): strict-NC
+  *ни-* words, obligatory clausemate *не* (@cite{zeijlstra-2004},
+  @cite{giannakidou-1998}).
+- **кто угодно** (kto ugodno): free-choice item.
+
+The substrate has no dedicated n-word/negative-concord `PolarityType` case
+(negative concord is a planned extension), so the strict-NC *ни-* series is
+approximated as `.npiStrong` (anti-additive licensing) — the same choice the
+Czech sibling fragment makes for its cognate *ni-* series.
 -/
 
 namespace Russian.PolarityItems
 
 open Typology.PolarityItem
 
--- ============================================================================
--- NPIs
--- ============================================================================
+/-! ### Weak NPI (the *-либо* series) -/
 
-/-- *кто-либо* (kto-libo) — Weak NPI.
-    Polarity-sensitive indefinite licensed in questions, conditionals,
-    and indirect negation scope. -/
+/-- *кто-либо* (kto-libo) — weak NPI. The *-либо* series is licensed across
+    the DE functions of @cite{haspelmath-1997}'s map: questions, conditionals,
+    comparatives, and indirect (non-clausemate) negation — distinct from the
+    direct-negation *ни-* series below. -/
 def ktoLibo : PolarityItemEntry :=
   { form := "кто-либо (kto-libo)"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.question, .conditionalAntecedent, .negation]
+  , licensingContexts := [.question, .conditionalAntecedent, .negation, .comparativeS]
   , scalarDirection := .strengthening
-  , notes := "Polarity-sensitive indefinite" }
+  , notes := "Polarity-sensitive indefinite; spans the weak-NPI functions" }
 
-/-- *никто* (nikto) — N-word, negative concord.
-    Requires clause-level negation: 'nikto ne prišël' (nobody NEG came). -/
+/-! ### Strict-NC *ни-* words (the direct-negation series) -/
+
+/-- *никто* (nikto) — strict-NC n-word ('nobody'). Direct-negation series;
+    requires clausemate negation: 'nikto ne prišël' (nobody NEG came). -/
 def nikto : PolarityItemEntry :=
   { form := "никто (nikto)"
-  , polarityType := .npiWeak
+  , polarityType := .npiStrong
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
-  , notes := "N-word; negative concord: 'nikto ne prišël'" }
+  , morphology := .indefPlusNeg
+  , nWordStatus := some .nWord
+  , notes := "Strict-NC n-word; negative concord: 'nikto ne prišël'" }
 
-/-- *ничего* (nichego) — Non-human N-word; obligatory negative concord.
-    'Ničego ne videl' (NEG saw nothing) = "(I) saw nothing". -/
+/-- *ничего* (nichego) — non-human strict-NC n-word ('nothing').
+    'Ničego ne videl' = '(I) saw nothing'. -/
 def nichego : PolarityItemEntry :=
   { form := "ничего (nichego)"
-  , polarityType := .npiWeak
+  , polarityType := .npiStrong
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
-  , notes := "Non-human N-word; genitive form ничего; co-occurs with не" }
+  , morphology := .indefPlusNeg
+  , nWordStatus := some .nWord
+  , notes := "Non-human n-word; genitive form ничего; co-occurs with не" }
 
-/-- *никогда* (nikogda) — Temporal N-word; obligatory negative concord.
-    'Nikogda ne prixodil' (never NEG came) = "(He) never came". -/
+/-- *никогда* (nikogda) — temporal strict-NC n-word ('never').
+    'Nikogda ne prixodil' = '(He) never came'. -/
 def nikogda : PolarityItemEntry :=
   { form := "никогда (nikogda)"
-  , polarityType := .npiWeak
+  , polarityType := .npiStrong
   , baseForce := .temporal
   , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
-  , notes := "Temporal N-word; co-occurs with не" }
+  , morphology := .indefPlusNeg
+  , nWordStatus := some .nWord
+  , notes := "Temporal n-word; co-occurs with не" }
 
--- ============================================================================
--- FCI
--- ============================================================================
+/-! ### Free choice item -/
 
-/-- *кто угодно* (kto ugodno) — Free choice item.
+/-- *кто угодно* (kto ugodno) — free choice item.
     Universal-like: 'anyone at all'. -/
 def ktoUgodno : PolarityItemEntry :=
   { form := "кто угодно (kto ugodno)"
@@ -74,24 +92,32 @@ def ktoUgodno : PolarityItemEntry :=
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "Free choice: 'kto ugodno možet èto sdelat'' (anyone can do that)" }
 
--- ============================================================================
--- Joint
--- ============================================================================
+/-! ### Inventory -/
 
 /-- The Russian polarity-item inventory: the Fragment-side joint listing
     every polarity item this fragment defines. -/
 def items : List PolarityItemEntry :=
   [ktoLibo, nikto, nichego, nikogda, ktoUgodno]
 
--- ============================================================================
--- Verification
--- ============================================================================
+/-! ### Verification -/
 
+/-- The strict-NC *ни-* word `nikto` and the free-choice `kto ugodno` have
+    distinct polarity types. -/
 theorem nikto_ktoUgodno_distinct :
     nikto.polarityType ≠ ktoUgodno.polarityType := by decide
 
-theorem russian_npis_strengthening :
-    [ktoLibo, nikto, nichego, nikogda].all
-      (λ e => e.scalarDirection == .strengthening) = true := by native_decide
+/-- Every NPI in the inventory is scalar-strengthening. The free-choice
+    `kto ugodno` is correctly excluded by the substrate `isNPI` guard rather
+    than dropped from a hand-listed sublist. -/
+theorem npis_strengthening :
+    ∀ e ∈ items, e.isNPI → e.scalarDirection = .strengthening := by
+  decide
+
+/-- The strict-NC *ни-* series is classified as n-words via `nWordStatus`, no longer
+    leaning on the strong-NPI `polarityType` slot: every `.npiStrong` entry in the
+    inventory carries `some .nWord`. -/
+theorem niSeries_are_nwords :
+    ∀ e ∈ items, e.polarityType = .npiStrong → e.nWordStatus = some .nWord := by
+  decide
 
 end Russian.PolarityItems
