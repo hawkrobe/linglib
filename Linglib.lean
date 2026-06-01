@@ -7,6 +7,7 @@ and their interfaces. See README.md for documentation links.
 -- Core
 import Linglib.Features.Dimension
 import Linglib.Features.Gender
+import Linglib.Core.Valence
 import Linglib.Core.Word
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Negation
