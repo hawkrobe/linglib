@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # French Reciprocal Fragment

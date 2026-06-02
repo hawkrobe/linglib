@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Linglib.Data.WALS.Features.F46A
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # Indefinite-pronoun typology — consensus substrate
@@ -10,7 +10,7 @@ import Linglib.Typology.Pronoun.Basic
 Theory-neutral types for cross-linguistic indefinite-pronoun data, following
 the same `Typology/{Domain}.lean` pattern as `WordOrder.lean`,
 `Adposition.lean`, `MorphProfile.lean`. The lexical object `IndefinitePronoun`
-`extends` the general `Pronoun` (`Typology/Pronoun/Basic.lean`), so an
+`extends` the general `Pronoun` (`Syntax/Pronoun/Basic.lean`), so an
 indefinite pronoun is a single object that flows through the Pronoun API and
 carries its own implicational-map distribution.
 

@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 import Linglib.Core.Nominal.Determiner
 import Linglib.Fragments.German.Definiteness
 import Linglib.Studies.Schwarz2009
