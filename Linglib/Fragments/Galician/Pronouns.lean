@@ -10,7 +10,7 @@ AA is Fin-based and freely embeddable.
 
 -/
 
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 namespace Galician.Pronouns
 

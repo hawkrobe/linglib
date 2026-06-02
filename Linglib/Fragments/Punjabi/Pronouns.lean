@@ -8,7 +8,7 @@ forms (*uh* for both sg and pl). AA is Fin-based with limited embeddability.
 
 -/
 
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 namespace Punjabi.Pronouns
 

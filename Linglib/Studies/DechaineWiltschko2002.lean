@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # Déchaine & Wiltschko 2002: Decomposing Pronouns

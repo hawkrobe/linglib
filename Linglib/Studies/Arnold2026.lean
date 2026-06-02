@@ -1,8 +1,9 @@
 import Linglib.Features.Gender
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 import Linglib.Discourse.CommonGround
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns
+import Linglib.Studies.KonnellyCowper2020
 
 /-!
 # @cite{arnold-2026}
@@ -278,5 +279,21 @@ theorem fullName_implies_underspecified :
 theorem structural_gender_consistency :
     English.Pronouns.they_sg.gender =
     English.Pronouns.they.gender := rfl
+
+-- ============================================================================
+-- § 9: Bridge to Konnelly & Cowper 2020 (morphosyntactic stages)
+-- ============================================================================
+
+/-- **Bridge to @cite{konnelly-cowper-2020}'s grammatical stages.** Arnold's
+    pragmatic *underspecified they* aligns with their Stage 1: while the grammar
+    still obligatorily projects [MASC]/[FEM] for known-gender referents
+    (`Stage.stage1`, `genderObligatory = true`), *they* surfaces only where
+    gender is unknown — the thin-discourse condition that licenses
+    underspecified *they*. (At the gender-default Stage 3, `genderObligatory =
+    false`, so *they* is produced regardless of discourse state, naturally
+    accommodating personal *they*.) -/
+theorem stage1_aligns_with_underspecified_they :
+    licensesUnderspecified DiscourseElaboration.underspecified = true ∧
+    KonnellyCowper2020.Stage.stage1.genderObligatory = true := ⟨rfl, rfl⟩
 
 end Arnold2026

@@ -9,7 +9,7 @@ and freely embeddable.
 
 -/
 
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 namespace Maithili.Pronouns
 

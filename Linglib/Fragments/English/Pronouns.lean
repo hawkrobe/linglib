@@ -1,7 +1,7 @@
 import Linglib.Core.Word
 import Linglib.Features.Case
 import Linglib.Features.Gender
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # English Pronoun Lexicon Fragment
