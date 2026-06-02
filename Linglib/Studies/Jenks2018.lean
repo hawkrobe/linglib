@@ -24,7 +24,7 @@ Maximize Presupposition + @cite{schlenker-2012} Gricean reduction)
 selects between them.
 
 The substrate already operationalizes the inventory layer:
-`Core.Nominal.NominalKind.{unique,anaphoric}` are ι and ι^x;
+`Core.Nominal.Description.{unique,anaphoric}` are ι and ι^x;
 `Core.Nominal.Determiner.markingStrategy` derives the four-cell
 typology directly named after Jenks 2018 in `Features.Definiteness`.
 The Mandarin Fragment commits `marking := .markedAnaphoric`.
@@ -137,7 +137,7 @@ theorem demonstrative_licensed
 /-- A Mandarin bare definite and its `.unique` counterpart over the
     same restrictor pick the same referent — the bare-N route to
     unique definiteness (paper §4.1: ι via Chierchia type-shift) is
-    extensionally the `NominalKind.unique` denotation at the API
+    extensionally the `Description.unique` denotation at the API
     layer. Parallels `Moroney2021.shan_bare_unique_agreement`. -/
 theorem bare_unique_agreement
     (R : DenotGS F .et) (sIdx : Nat)
@@ -262,7 +262,7 @@ theorem clf_is_atomization {α : Type*} [PartialOrder α]
 /-! Jenks (2018, p. 513) is explicit that his anaphoric article ι^x
 takes an index argument of type ⟨e,t⟩ (a property), departing from
 @cite{schwarz-2009}/@cite{schwarz-2013}'s type ⟨e⟩ (an individual).
-The substrate's `NominalKind.anaphoric R d` carries `d : Nat` — a
+The substrate's `Description.anaphoric R d` carries `d : Nat` — a
 discourse-index slot resolved through the entity assignment, which
 matches Schwarz's individual-typed index, not Jenks's property-typed
 one. For Schwarz-style and ordinary demonstrative cases this divergence
@@ -272,7 +272,7 @@ proper names + demonstratives composing as `Pred(Zhangsan) +
 Dem-Clf-N`).
 
 Faithfully formalizing §4.4 requires a property-typed-index variant
-on `NominalKind.anaphoric`. This is recorded as a TODO at the substrate
+on `Description.anaphoric`. This is recorded as a TODO at the substrate
 level (`Core/Nominal/Description.lean`) rather than encoded as a
 placeholder theorem. -/
 
@@ -290,7 +290,7 @@ the natural slot for any MP-instance.
 The `IndexCandidate` carrier below is a minimal 2-bit witness type
 sufficient to demonstrate the principle's qualitative behavior
 (prefer indexed when index is available; neutral otherwise). A
-fuller instantiation would parameterize over `NominalKind F` and the
+fuller instantiation would parameterize over `Description F` and the
 discourse-context predicate licensing the index — that refactor
 belongs in a substrate file (`Semantics/Presupposition/Index.lean`)
 when a second consumer needs it. -/
@@ -356,7 +356,7 @@ Two empirical points the paper makes (p. 524-526):
 The substrate has `Roberts2012` QUD machinery in
 `Phenomena/Discourse/Strategy/QUDStack.lean` (per memory:
 `project_qud_dissolution.md`). A faithful formalization of paper §5.3
-would need a topic predicate over `NominalKind` configurations
+would need a topic predicate over `Description` configurations
 co-occurring with QUD-stack state — substrate the linglib has but
 that this study file does not yet plug into.
 
@@ -444,7 +444,7 @@ properly). -/
     This is one half of paper §4.3's covariation contrast (the
     *strict* half). The other half — bare N covarying via situation
     binding — requires the property-typed index variant on
-    `NominalKind.anaphoric` flagged in §5 to express cleanly, and is
+    `Description.anaphoric` flagged in §5 to express cleanly, and is
     deferred. -/
 theorem demonstrative_strict_under_situation_variation
     (R : DenotGS F .et) (deictic : Features.Deixis.Feature)

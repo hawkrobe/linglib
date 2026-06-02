@@ -11,14 +11,14 @@ Coreference constraints via c-command and locality following @cite{chomsky-1981}
 
 ## Main definitions
 
-- `NominalType`, `SimpleClause`
+- `BindingClass`, `SimpleClause`
 - `reflexiveLicensed`, `pronounLocallyFree`, `grammaticalForCoreference`
 
 -/
 
 namespace Minimalist.Coreference
 
-open Features (NominalType)
+open Features (BindingClass)
 open English.NominalClassification (isNominalCat classifyNominal phiAgree)
 
 /-- Simple clause structure for coreference checking.

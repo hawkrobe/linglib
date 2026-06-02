@@ -37,7 +37,7 @@ private abbrev eachOther := English.Pronouns.eachOther.toWord
 
 namespace HPSG.Coreference
 
-open Features (NominalType)
+open Features (BindingClass)
 open English.NominalClassification (isNominalCat classifyNominal phiAgree)
 
 -- ============================================================================

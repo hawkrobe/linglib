@@ -5,7 +5,7 @@ import Linglib.Fragments.English.Pronouns
 /-!
 # English nominal classification for binding
 
-Lexicon-driven classification of English nominals into `Features.NominalType`,
+Lexicon-driven classification of English nominals into `Features.BindingClass`,
 plus φ-feature agreement, shared by the coreference/binding analyses in every
 syntactic framework (`Syntax.Minimalist.Coreference`, `Syntax.HPSG.Coreference`,
 `Syntax.DependencyGrammar`). Each previously re-stipulated these with hardcoded
@@ -14,7 +14,7 @@ the three frameworks classify against one lexicon.
 
 ## Main definitions
 
-* `classifyNominal` — `Word → Option Features.NominalType`, via the English
+* `classifyNominal` — `Word → Option Features.BindingClass`, via the English
   pronoun lexicon lists (`reflexives`/`reciprocals`/personal/`whWords`) with a
   UPOS fallback for R-expressions.
 * `phiAgree` — person/number/gender agreement between two nominals, as a `Prop`
@@ -23,7 +23,7 @@ the three frameworks classify against one lexicon.
 
 namespace English.NominalClassification
 
-open Features (NominalType)
+open Features (BindingClass)
 
 /-- Is this a nominal category (proper noun, common noun, or pronoun)? -/
 def isNominalCat (c : UD.UPOS) : Bool :=
@@ -35,7 +35,7 @@ def isNominalCat (c : UD.UPOS) : Bool :=
     than a per-entry tag: a form in `reflexives` or `reciprocals` is an anaphor,
     a form in the personal or wh lists is a pronoun, and any other nominal
     category is an R-expression. -/
-def classifyNominal (w : Word) : Option NominalType :=
+def classifyNominal (w : Word) : Option BindingClass :=
   if English.Pronouns.reflexives.any (·.form == w.form) then some .reflexive
   else if English.Pronouns.reciprocals.any (·.form == w.form) then some .reciprocal
   else if English.pronouns.any (·.form == w.form)

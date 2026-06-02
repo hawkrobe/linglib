@@ -124,15 +124,15 @@ example {F : Frame} [PartialOrder F.Entity] (g : Assignment F.Entity) (i : ℕ)
 /-! ### Pronouns are definite descriptions (@cite{elbourne-2005}, @cite{patel-grosz-grosz-2017})
 
 A referential pronoun *is* a (null-NP) definite description over its φ-feature
-restrictor — a `NominalKind`. @cite{patel-grosz-grosz-2017}'s proposal is that the
+restrictor — a `Description`. @cite{patel-grosz-grosz-2017}'s proposal is that the
 personal/demonstrative split is the @cite{schwarz-2009} weak/strong-article split:
-PER (*er*) the **weak** article (`NominalKind.ofPresupType .uniqueness` = `.unique`),
+PER (*er*) the **weak** article (`Description.ofPresupType .uniqueness` = `.unique`),
 "DEM" (*der*) the **strong** article (`…ofPresupType .familiarity` = `.anaphoric`,
 the weak description plus an anaphoric index). PG&G's "DEM = PER + index" is the
 weak/strong refinement `Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`;
 the strength round-trips through `expectedPresupType`. The extra layer is that index,
 **not** spatial deixis (footnote 1) — *der* is a strong *personal* pronoun, not a
-separate type; genuine deictic demonstratives are `NominalKind.demonstrative`.
+separate type; genuine deictic demonstratives are `Description.demonstrative`.
 
 Caveat on `denote` below: the project's canonical `PersonalPronoun.denote` realizes
 the @cite{buring-2012} assignment lookup `g i` — the *indexed/anaphoric* referent,
@@ -143,7 +143,7 @@ exactly when `g i` is the unique satisfier. -/
 
 /-- A pronoun's @cite{buring-2012} variable-lookup referent equals its definite
 description whenever the restrictor holds of the indexed referent: the
-**strong-article** (`NominalKind.ofPresupType .familiarity`) reading, since the
+**strong-article** (`Description.ofPresupType .familiarity`) reading, since the
 anaphoric index *is* the indexed entity. The **weak** reading coincides too when
 that entity is the unique satisfier (`Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`). -/
 theorem PersonalPronoun.denote_selector_eq_ofPresupType {F : Frame} [PartialOrder F.Entity]
@@ -152,6 +152,6 @@ theorem PersonalPronoun.denote_selector_eq_ofPresupType {F : Frame} [PartialOrde
     (g : Assignment F.Entity) (gs : SitAssignment F) (w : PUnit)
     (h : R g gs (g i)) :
     (e.denote i speaker addressee isFemale isInanimate).selector g w
-      = Core.Nominal.interpret (Core.Nominal.NominalKind.ofPresupType .familiarity R i) g gs := by
+      = Core.Nominal.interpret (Core.Nominal.Description.ofPresupType .familiarity R i) g gs := by
   show some (g i) = Core.Nominal.interpret (.anaphoric R i) g gs
   rw [Core.Nominal.interpret_anaphoric, if_pos h]

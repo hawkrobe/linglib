@@ -15,7 +15,7 @@ denotation of their own).
 The pronoun *kind* is encoded by **which lexicon list** a form sits in
 (`English.pronouns`, `reflexives`, `reciprocals`, `whWords`) — there is no
 per-entry kind tag. Binding theories read
-`English.NominalClassification.classifyNominal` (→ `Features.NominalType`),
+`English.NominalClassification.classifyNominal` (→ `Features.BindingClass`),
 dispatching on those lists, rather than any English-local type.
 
 ## Gender (@cite{konnelly-cowper-2020})

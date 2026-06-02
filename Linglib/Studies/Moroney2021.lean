@@ -667,7 +667,7 @@ finding: Shan licenses anaphoric definiteness without any anaphoric article. -/
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
-open Core.Nominal (NominalKind)
+open Core.Nominal (Description)
 
 /-- Shorthand handles for the four Table 4.4 determiner sets, each defined in
     its language fragment (`Fragments.{Lang}.Definiteness.determiners`).
@@ -699,7 +699,7 @@ theorem mandarin_in_markedAnaphoric :
   Mandarin.Definiteness.marking
 
 /-- Moroney's central observation, stated against the determiner set:
-    Shan has *no* determiner that licenses an `.anaphoric` `NominalKind`,
+    Shan has *no* determiner that licenses an `.anaphoric` `Description`,
     yet expresses anaphoric definiteness through bare nouns and optional
     demonstratives. The licensing predicate makes this morphologically
     visible — `.anaphoric` is not licensed (no determiner expones a

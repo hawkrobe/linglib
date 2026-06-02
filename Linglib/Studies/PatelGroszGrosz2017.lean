@@ -16,7 +16,7 @@ PER the *weak* article ("the latter are anaphoric in a way that the former are
 not"). The extra layer is that index, **not** spatial deixis — their footnote 1
 stresses "it is far from clear that there is anything truly 'demonstrative' about"
 German DEMs. So here *der/die/das* are **strong-article `PersonalPronoun`s**, not a
-separate demonstrative type; the genuinely deictic `NominalKind.demonstrative` is a
+separate demonstrative type; the genuinely deictic `Description.demonstrative` is a
 different object. The PER/DEM distribution then follows from **structural economy**
 (*Minimize DP!*): PER, being less structured, is the default; DEM is licensed only
 by an added pragmatic effect (emotivity §5.1, disambiguation §5.2, register §5.3).
@@ -28,8 +28,8 @@ The contributions are made *true by construction* on shared substrate:
   (DEM, `.anaphoric`) and the weak description (PER, `.unique`) over one restrictor
   pick the same referent exactly when the indexed entity is the unique satisfier —
   off that, DEM is anaphoric in a way PER is not. Both denote via
-  `NominalKind.ofPresupType`, with the strength round-tripping through
-  `expectedPresupType` (`NominalKind.expectedPresupType_ofPresupType`); the
+  `Description.ofPresupType`, with the strength round-tripping through
+  `expectedPresupType` (`Description.expectedPresupType_ofPresupType`); the
   off-uniqueness **divergence** — DEM and PER picking *different* referents — is
   `der_er_can_diverge`, reusing @cite{schwarz-2009} §8's two-satisfier scenario.
 * The **two-series ↔ two-article** correlation (§4) is read off the determiner
@@ -147,10 +147,10 @@ theorem schwarz_pgg_german_consistent :
     only under uniqueness. -/
 theorem der_er_can_diverge :
     Core.Nominal.interpret
-        (Core.Nominal.NominalKind.ofPresupType .uniqueness Schwarz2009.studentRestr 0)
+        (Core.Nominal.Description.ofPresupType .uniqueness Schwarz2009.studentRestr 0)
         Schwarz2009.gAlice Schwarz2009.gs0
       ≠ Core.Nominal.interpret
-        (Core.Nominal.NominalKind.ofPresupType .familiarity Schwarz2009.studentRestr 0)
+        (Core.Nominal.Description.ofPresupType .familiarity Schwarz2009.studentRestr 0)
         Schwarz2009.gAlice Schwarz2009.gs0 :=
   Schwarz2009.two_articles_can_disagree
 

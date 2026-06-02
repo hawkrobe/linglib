@@ -30,11 +30,11 @@ the distinction at the surface.
 
 The split is operationalized in the Core layer by:
 
-- **`Core.Nominal.NominalKind`** — distinct `.unique` (weak) and
+- **`Core.Nominal.Description`** — distinct `.unique` (weak) and
   `.anaphoric` (strong) constructors, with different argument shapes
   (`.unique` carries a *situation* index for resource-situation binding;
   `.anaphoric` carries a *discourse* index for antecedent lookup).
-- **`Core.Nominal.NominalKind.expectedPresupType`** — projects each kind
+- **`Core.Nominal.Description.expectedPresupType`** — projects each kind
   to the @cite{schwarz-2009} presupposition type it expresses.
 - **`Core.Nominal.Determiner`** — the declared determiner set records the
   morphological inventory; `Determiner.IsSyncretic` is the predicate that
@@ -96,19 +96,19 @@ variable {F : Frame}
 /-- The weak article (`.unique` in the Core sum type) projects to the
     uniqueness presupposition. -/
 theorem unique_is_uniqueness (R : DenotGS F .et) (sIdx : Nat) :
-    (NominalKind.unique R sIdx).expectedPresupType = some .uniqueness := rfl
+    (Description.unique R sIdx).expectedPresupType = some .uniqueness := rfl
 
 /-- The strong article (`.anaphoric` in the Core sum type) projects to the
     familiarity presupposition. -/
 theorem anaphoric_is_familiarity (R : DenotGS F .et) (d : Nat) :
-    (NominalKind.anaphoric R d).expectedPresupType = some .familiarity := rfl
+    (Description.anaphoric R d).expectedPresupType = some .familiarity := rfl
 
 /-- The two articles project to distinct presupposition types — the
     central @cite{schwarz-2009} contrast at the type level. -/
 theorem unique_anaphoric_presup_distinct
     (R : DenotGS F .et) (sIdx d : Nat) :
-    (NominalKind.unique R sIdx).expectedPresupType ≠
-      (NominalKind.anaphoric R d).expectedPresupType := by
+    (Description.unique R sIdx).expectedPresupType ≠
+      (Description.anaphoric R d).expectedPresupType := by
   rw [unique_is_uniqueness, anaphoric_is_familiarity]
   intro h
   exact two_presup_types_distinct (Option.some_inj.mp h)
@@ -151,8 +151,8 @@ theorem strong_article_consults_entity_assignment
     claim that uniqueness is *situational* and familiarity is *anaphoric*. -/
 theorem situation_binding_classifies_articles
     (R : DenotGS F .et) (sIdx d : Nat) :
-    (NominalKind.unique R sIdx).usesSituationPronoun = true ∧
-    (NominalKind.anaphoric R d).usesSituationPronoun = false := ⟨rfl, rfl⟩
+    (Description.unique R sIdx).usesSituationPronoun = true ∧
+    (Description.anaphoric R d).usesSituationPronoun = false := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- §4: Morphological correlate — German bipartite vs English syncretic
