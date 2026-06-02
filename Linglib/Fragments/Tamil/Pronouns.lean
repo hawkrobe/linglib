@@ -11,7 +11,6 @@ exclusive (*naangaL*). 3rd person distinguishes masculine (*avan*), feminine
 -/
 
 import Linglib.Typology.Pronoun.Basic
-import Linglib.Typology.Pronoun.WALS
 
 namespace Tamil.Pronouns
 
@@ -121,21 +120,3 @@ theorem markers_match_2p :
     allAllocMarkers.map (·.register) = secondPersonPronouns.map (·.register) := rfl
 
 end Tamil.Pronouns
-
-namespace Tamil
-
-/-- Tamil (Dravidian) pronoun typology profile, read off this fragment's
-    lexical inventory rather than asserted from a WALS datapoint: full
-    inclusive/exclusive 1pl (*naam* vs *naangaL*), a two-level honorific
-    register split in 2nd person (*nii*/*niingaL*, a binary T/V-style
-    distinction), and gender in the 3rd-person singular (*avan*/*avaL*).
-    Fields not evidenced by the inventory are left unsurveyed (`.none`). -/
-def pronounProfile : Pronoun.Profile :=
-  { language := "Tamil"
-  , family := "Dravidian"
-  , iso := "tam"
-  , inclusiveExclusive := some .inclusiveExclusive
-  , politeness := some .binary
-  , genderInPronouns := some .in3rdPersonSgOnly }
-
-end Tamil

@@ -1,5 +1,4 @@
 import Linglib.Typology.Pronoun.Basic
-import Linglib.Typology.Pronoun.WALS
 
 /-!
 # Spanish Pronoun Fragment
@@ -107,34 +106,3 @@ theorem has_all_persons :
     allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
 end Spanish.Pronouns
-
-namespace Spanish
-
-/-- Spanish (Indo-European, Romance) WALS pronoun typology profile.
-    No incl/excl; gender in 3rd AND 1st/2nd person (nosotros/nosotras
-    etc.); binary politeness (tú/usted); special indefinite forms
-    (alguien, algo); intensifier (mismo) differentiated from reflexive
-    (se); no person marking on adpositions. -/
-def pronounProfile : Pronoun.Profile :=
-  { language := "Spanish"
-  , family := "Indo-European"
-  , iso := "spa"
-  , inclusiveExclusive := some .noDistinction
-  , inclusiveExclusiveVerbal := some .noDistinction
-  , genderInPronouns := some .in3rdAndOtherPersons
-  , politeness := some .binary
-  , indefiniteType := some .special
-  , intensifierReflexive := some .differentiated
-  , personMarkingAdpositions := some .noPersonMarking }
-
-/-- Spanish pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
-    (*me*/*te*); 1SG has /m/; no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Pronoun.ShapeProfile :=
-  { language := "Spanish"
-  , iso := "spa"
-  , mtPronouns := some .paradigmatic
-  , mIn1sg := some .present
-  , nmPronouns := some .absent
-  , mIn2sg := some .absent }
-
-end Spanish

@@ -36,7 +36,7 @@ referents, of any number; @cite{schachter-otanes-1972} p. 89 glosses it
 as "you (singular) and I (and others)" / "you (plural) and I"); the
 exclusive *kami* remains a single category. This is a finer typological
 cut than WALS Ch 39's binary incl/excl coding can express, which is why
-the WALS-shaped `inclusiveExclusive` field below underdetermines the
+the WALS-derived `Pronoun.inclusiveExclusive "tgl"` underdetermines the
 paradigm.
 
 The *kitá* / *katá* cell warrants care. @cite{schachter-otanes-1972}
@@ -56,41 +56,13 @@ collapses to plain inclExcl.
 
 namespace Tagalog
 
-/-- Tagalog (Austronesian, Philippine). Inclusive/exclusive in
-    independent pronouns (kami vs tayo); no person marking on verbs
-    (WALS); no gender distinctions (siya is gender-neutral); multiple
-    politeness distinctions (ikaw/kayo/po); existential construction
-    for indefinite reference; intensifier (mismo) differentiated from
-    reflexive (sarili); no adpositions per WALS Ch 48. -/
-def pronounProfile : Pronoun.Profile :=
-  { language := "Tagalog"
-  , family := "Austronesian"
-  , iso := "tgl"
-  , inclusiveExclusive := some .inclusiveExclusive
-  , inclusiveExclusiveVerbal := some .noPersonMarking
-  , genderInPronouns := some .noGenderDistinctions
-  , politeness := some .multiple
-  , indefiniteType := some .existentialConstruction
-  , intensifierReflexive := some .differentiated
-  , personMarkingAdpositions := some .noAdpositions }
-
-/-- Tagalog pronoun phonological shape (WALS Chs 136–137): no M-T; no /m/
-    in 1SG (*ako*); no N-M; /m/ present in 2SG (*mo*). -/
-def pronounShapeProfile : Pronoun.ShapeProfile :=
-  { language := "Tagalog"
-  , iso := "tgl"
-  , mtPronouns := some .absent
-  , mIn1sg := some .absent
-  , nmPronouns := some .absent
-  , mIn2sg := some .present }
-
 /-- Tagalog clusivity system per @cite{cysouw-2009}: minimal-augmented,
     with the historical 1-dual-inclusive *kata*
     (@cite{schachter-otanes-1972} p. 88) alongside the augmented-inclusive
     *tayo* and the exclusive *kami*. Modern Manila Tagalog has largely
     lost the dual; this field reflects the textbook paradigm, not
     colloquial usage. Refines the binary WALS Ch 39 value
-    `pronounProfile.inclusiveExclusive = some .inclusiveExclusive`. -/
+    `Pronoun.inclusiveExclusive "tgl"` (derived from `Data.WALS`). -/
 def clusivitySystem : Features.Clusivity.System := .minimalAugmented
 
 -- ============================================================================
@@ -142,11 +114,12 @@ theorem clusivity_system_consistent_with_paradigm :
     (pronounParadigm.map (·.category)).contains .minIncl =
       clusivitySystem.hasMinimalAugmented := by decide
 
-/-- The WALS Ch 39 image of Tagalog's Cysouw clusivity system agrees with
-    the WALS-side commitment in `pronounProfile.inclusiveExclusive`. This
-    catches drift if either commitment changes without the other. -/
+/-- WALS Ch 39's coding of Tagalog agrees with the image of its Cysouw
+    clusivity system under `fromClusivity`. The WALS value is derived from the
+    `Data.WALS` layer by ISO (no hand-stipulation), so this catches drift
+    between WALS and the clusivity commitment. -/
 theorem wals_clusivity_consistent :
-    pronounProfile.inclusiveExclusive =
-      some (Pronoun.InclusiveExclusive.fromClusivity clusivitySystem) := rfl
+    Pronoun.inclusiveExclusive "tgl" =
+      some (Pronoun.InclusiveExclusive.fromClusivity clusivitySystem) := by decide
 
 end Tagalog

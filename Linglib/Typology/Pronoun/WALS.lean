@@ -17,17 +17,25 @@ import Linglib.Features.Clusivity
 # Pronoun — typological survey (WALS)
 @cite{wals-2013} @cite{nichols-peterson-2013}
 
-The cross-linguistic WALS-survey facet of the pronoun object: per-language
-feature-system `Profile` (Chs 39–48) and phonological `ShapeProfile`
-(Chs 136–137), with the WALS converters and distribution theorems.
+The cross-linguistic WALS-survey facet of the pronoun object: the friendly
+feature enums (Chs 39–48) and phonological-shape enums (Chs 136–137), their
+`fromWALS*` converters, the iso-keyed accessors that read a language's value
+from the `Data.WALS` layer, and the distribution theorems.
+
+A language's WALS pronoun fact is a *function of its ISO code*
+(`Pronoun.genderDistinction "kor"`), derived from `Data.WALS` — there is no
+per-language `Profile` bundle (that was write-only and is gone). When a study
+needs to ground a Fragment analysis against WALS, it states a `decide`-checked
+theorem over the accessor in that study file.
 
 ## Main declarations
 
-* `Pronoun.Profile` — per-language feature-system survey (incl/excl, gender,
-  politeness, indefinite strategy, intensifier–reflexive, adpositional person
-  marking), WALS Chs 39–48.
-* `Pronoun.ShapeProfile` — per-language M-T / N-M phonological-shape survey,
-  WALS Chs 136–137 (@cite{nichols-peterson-2013}).
+* `Pronoun.genderDistinction`, `politeness`, `inclusiveExclusive`, … —
+  iso-keyed accessors for the WALS Chs 39–48 feature-system survey, derived
+  from `Data.WALS` via the `fromWALS*` converters.
+* `Pronoun.mtPattern`, `mIn1sg`, `nmPattern`, `mIn2sg` — iso-keyed accessors
+  for the M-T / N-M phonological-shape survey, WALS Chs 136–137
+  (@cite{nichols-peterson-2013}).
 * `Pronoun.Plurality` — how independent personal pronouns encode number,
   WALS Ch 35. The canonical home for this pronoun-paradigm feature; the
   per-language values are carried by `Typology.PluralityProfile` (which bundles
@@ -140,29 +148,6 @@ inductive PersonMarkingOnAdpositions where
   | pronounsAndNouns
   deriving DecidableEq, Repr
 
-/-- A language's pronoun-system profile across WALS Chs 39–40, 44–48.
-    Not all chapters have data for every language (sample varies by
-    chapter), so each field is `Option`. -/
-structure Profile where
-  language : String
-  family : String
-  iso : String := ""
-  /-- Ch 39: incl/excl in independent pronouns. -/
-  inclusiveExclusive : Option InclusiveExclusive := .none
-  /-- Ch 40: incl/excl in verbal inflection. -/
-  inclusiveExclusiveVerbal : Option InclusiveExclusiveVerbal := .none
-  /-- Ch 44: gender distinctions. -/
-  genderInPronouns : Option GenderDistinction := .none
-  /-- Ch 45: politeness distinctions. -/
-  politeness : Option PolitenessDistinction := .none
-  /-- Ch 46: indefinite pronoun strategy. -/
-  indefiniteType : Option IndefiniteType := .none
-  /-- Ch 47: intensifier-reflexive relationship. -/
-  intensifierReflexive : Option IntensifierReflexive := .none
-  /-- Ch 48: person marking on adpositions. -/
-  personMarkingAdpositions : Option PersonMarkingOnAdpositions := .none
-  deriving Repr, DecidableEq
-
 end Pronoun
 
 /-! ### WALS converters (Chs 39, 39B, 40, 44–48) -/
@@ -222,6 +207,42 @@ def fromWALS48A : Data.WALS.F48A.PersonMarkingOnAdpositions → PersonMarkingOnA
   | .noPersonMarking => .noPersonMarking
   | .pronounsOnly => .pronounsOnly
   | .pronounsAndNouns => .pronounsAndNouns
+
+/-! ### Per-language WALS accessors (Chs 39–48)
+
+Each pronoun-system feature is a function of a language's ISO 639-3 code, derived
+from the `Data.WALS` layer through the `fromWALS*` converters — no per-language
+stipulation, replacing the former hand-stipulated `Profile` bundle. A fragment
+attaches a feature as a `Lang.pronoun…` one-liner over its `iso`; `none` means
+WALS did not sample that language for that chapter. -/
+
+/-- WALS Ch 39: incl/excl distinction in independent pronouns. -/
+def inclusiveExclusive (iso : String) : Option InclusiveExclusive :=
+  (Data.WALS.F39A.lookupISO iso).map (fromWALS39A ·.value)
+
+/-- WALS Ch 40: incl/excl distinction in verbal inflection. -/
+def inclusiveExclusiveVerbal (iso : String) : Option InclusiveExclusiveVerbal :=
+  (Data.WALS.F40A.lookupISO iso).map (fromWALS40A ·.value)
+
+/-- WALS Ch 44: gender distinctions in the pronoun paradigm. -/
+def genderDistinction (iso : String) : Option GenderDistinction :=
+  (Data.WALS.F44A.lookupISO iso).map (fromWALS44A ·.value)
+
+/-- WALS Ch 45: politeness distinctions in pronouns. -/
+def politeness (iso : String) : Option PolitenessDistinction :=
+  (Data.WALS.F45A.lookupISO iso).map (fromWALS45A ·.value)
+
+/-- WALS Ch 46: indefinite-pronoun strategy. -/
+def indefiniteType (iso : String) : Option IndefiniteType :=
+  (Data.WALS.F46A.lookupISO iso).map (fromWALS46A ·.value)
+
+/-- WALS Ch 47: intensifier–reflexive relationship. -/
+def intensifierReflexive (iso : String) : Option IntensifierReflexive :=
+  (Data.WALS.F47A.lookupISO iso).map (fromWALS47A ·.value)
+
+/-- WALS Ch 48: person marking on adpositions. -/
+def personMarkingAdpositions (iso : String) : Option PersonMarkingOnAdpositions :=
+  (Data.WALS.F48A.lookupISO iso).map (fromWALS48A ·.value)
 
 /-! ### Distribution theorems -/
 
@@ -295,23 +316,6 @@ inductive MIn2SG where
   | present
   deriving DecidableEq, Repr
 
-/-- A language's pronoun-shape profile across @cite{wals-2013} Chs 136–137.
-    Sister to `Profile` (Chs 39–48). Kept as a separate struct to
-    avoid contaminating the feature-system bundle with phonological-shape
-    fields. -/
-structure ShapeProfile where
-  language : String
-  iso : String := ""
-  /-- Ch 136A: M-T pronoun pattern. -/
-  mtPronouns : Option MTPattern := none
-  /-- Ch 136B: M in 1SG. -/
-  mIn1sg : Option MIn1SG := none
-  /-- Ch 137A: N-M pronoun pattern. -/
-  nmPronouns : Option NMPattern := none
-  /-- Ch 137B: M in 2SG. -/
-  mIn2sg : Option MIn2SG := none
-  deriving Repr, DecidableEq
-
 -- WALS converters for the four shape features.
 
 def fromWALS136A : Data.WALS.F136A.MTPronouns → MTPattern
@@ -331,6 +335,24 @@ def fromWALS137A : Data.WALS.F137A.NMPronouns → NMPattern
 def fromWALS137B : Data.WALS.F137B.MInSecondPersonSingular → MIn2SG
   | .noMInSecondPersonSingular => .absent
   | .mInSecondPersonSingular   => .present
+
+/-! ### Per-language pronoun-shape accessors (Chs 136–137) -/
+
+/-- WALS Ch 136A: M-T pronoun pattern, for the language with ISO `iso`. -/
+def mtPattern (iso : String) : Option MTPattern :=
+  (Data.WALS.F136A.lookupISO iso).map (fromWALS136A ·.value)
+
+/-- WALS Ch 136B: /m/ in 1SG. -/
+def mIn1sg (iso : String) : Option MIn1SG :=
+  (Data.WALS.F136B.lookupISO iso).map (fromWALS136B ·.value)
+
+/-- WALS Ch 137A: N-M pronoun pattern. -/
+def nmPattern (iso : String) : Option NMPattern :=
+  (Data.WALS.F137A.lookupISO iso).map (fromWALS137A ·.value)
+
+/-- WALS Ch 137B: /m/ in 2SG. -/
+def mIn2sg (iso : String) : Option MIn2SG :=
+  (Data.WALS.F137B.lookupISO iso).map (fromWALS137B ·.value)
 
 /-- WALS Ch 136A distribution: M-T pronoun patterns
     (@cite{nichols-peterson-2013}, n = 230). -/

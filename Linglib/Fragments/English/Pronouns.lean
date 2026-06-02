@@ -2,7 +2,6 @@ import Linglib.Core.Word
 import Linglib.Features.Case
 import Linglib.Features.Gender
 import Linglib.Typology.Pronoun.Basic
-import Linglib.Typology.Pronoun.WALS
 
 /-!
 # English Pronoun Lexicon Fragment
@@ -158,33 +157,5 @@ theorem they_gender_none : Pronouns.they.gender = none := rfl
     observation that underspecified and personal *they* share the ungendered
     morphosyntactic feature. -/
 theorem sg_pl_same_gender : Pronouns.they_sg.gender = Pronouns.they.gender := rfl
-
-/-- English (Indo-European, Germanic) WALS pronoun typology profile.
-    No incl/excl; gender in 3rd sg only (he/she/it); no politeness;
-    generic-noun-based indefinites (somebody, something); intensifier
-    and reflexive identical (himself); no person marking on
-    adpositions. (WALS Chs 39, 40, 44–48.) -/
-def pronounProfile : Pronoun.Profile :=
-  { language := "English"
-  , family := "Indo-European"
-  , iso := "eng"
-  , inclusiveExclusive := some .noDistinction
-  , inclusiveExclusiveVerbal := some .weEqualsI
-  , genderInPronouns := some .in3rdPersonSgOnly
-  , politeness := some .none
-  , indefiniteType := some .genericNounBased
-  , intensifierReflexive := some .identical
-  , personMarkingAdpositions := some .noPersonMarking }
-
-/-- English pronoun phonological shape (WALS Chs 136–137,
-    @cite{nichols-peterson-2013}): no M-T pattern (1SG *I*/*me*, 2SG *you*),
-    but 1SG has /m/ in *me*/*my*; no N-M pattern; no /m/ in 2SG. -/
-def pronounShapeProfile : Pronoun.ShapeProfile :=
-  { language := "English"
-  , iso := "eng"
-  , mtPronouns := some .absent
-  , mIn1sg := some .present
-  , nmPronouns := some .absent
-  , mIn2sg := some .absent }
 
 end English

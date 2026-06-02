@@ -1,5 +1,4 @@
 import Linglib.Typology.Pronoun.Basic
-import Linglib.Typology.Pronoun.WALS
 
 /-!
 # German Pronoun Fragment
@@ -104,34 +103,3 @@ theorem has_all_persons :
     allPronouns.any (·.person == some .third) = true := ⟨rfl, rfl, rfl⟩
 
 end German.Pronouns
-
-namespace German
-
-/-- German (Indo-European, Germanic) WALS pronoun typology profile.
-    No incl/excl; gender in 3rd sg only (er/sie/es); binary politeness
-    (du/Sie); mixed indefinite strategy (jemand special, irgendwer
-    interrogative-based); intensifier (selbst) differentiated from
-    reflexive (sich); no person marking on adpositions. -/
-def pronounProfile : Pronoun.Profile :=
-  { language := "German"
-  , family := "Indo-European"
-  , iso := "deu"
-  , inclusiveExclusive := some .noDistinction
-  , inclusiveExclusiveVerbal := some .noDistinction
-  , genderInPronouns := some .in3rdPersonSgOnly
-  , politeness := some .binary
-  , indefiniteType := some .mixed
-  , intensifierReflexive := some .differentiated
-  , personMarkingAdpositions := some .noPersonMarking }
-
-/-- German pronoun phonological shape (WALS Chs 136–137): paradigmatic M-T
-    (*mich*/*dich*); 1SG has /m/; no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Pronoun.ShapeProfile :=
-  { language := "German"
-  , iso := "deu"
-  , mtPronouns := some .paradigmatic
-  , mIn1sg := some .present
-  , nmPronouns := some .absent
-  , mIn2sg := some .absent }
-
-end German
