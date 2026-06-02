@@ -1,3 +1,4 @@
+import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Features.Clusivity
 import Linglib.Features.Person
@@ -66,53 +67,92 @@ namespace Tagalog
 def clusivitySystem : Features.Clusivity.System := .minimalAugmented
 
 -- ============================================================================
--- Pronoun paradigm (structured)
+-- Pronoun paradigm (person + number + clusivity, three case series)
 -- ============================================================================
 
-/-- A row of the Tagalog pronoun paradigm: a Cysouw 2009 person/number
-    category and its three case forms. -/
-structure PronounRow where
-  category : Features.Person.Category
-  /-- *ang*-form (SPEC / NOM). -/
-  angForm : String
-  /-- *ng*-form (POSS / GEN). -/
-  ngForm : String
-  /-- *sa*-form (LOC / DAT). -/
-  saForm : String
-  deriving Repr
+/-! The independent-pronoun paradigm per @cite{schachter-otanes-1972} Chart 7
+    (p. 88): each cell is a `PersonalPronoun` carrying person, number, and
+    clusivity, in three case series — *ang* (NOM), *ng* (GEN), *sa* (DAT). The
+    @cite{cysouw-2009} `category` is *derived* from those features
+    (`Pronoun.category`), not stored. The minimal-augmented split is the dual
+    inclusive *kata* (1+2) vs the plural inclusive *tayo* (1+2+others), with the
+    exclusive *kami* (1+others). The *kitá* form @cite{himmelmann-2005-tagalog}
+    Table 12.2 lists alongside *katá* is a separate 1sg.GEN+2sg.NOM portmanteau
+    (@cite{schachter-otanes-1972} p. 89), not a 1du.in pronoun. -/
 
-/-- The Tagalog independent-pronoun paradigm per @cite{schachter-otanes-1972}
-    Chart 7 (p. 88), mapped onto Cysouw 2009 categories.
+open Features.Person (Category)
 
-    The 1.DU.IN.NOM cell is *kata* per S&O Chart 7; the *kitá* form
-    @cite{himmelmann-2005-tagalog} Table 12.2 lists alongside *katá* is
-    in S&O p. 89 a separate portmanteau combining 1sg.GEN with 2sg.NOM
-    (in 'I [verb] you' clauses), not a 1du.in pronoun. -/
-def pronounParadigm : List PronounRow :=
-  [ { category := .s1,        angForm := "ako",   ngForm := "ko",     saForm := "akin"   }
-  , { category := .s2,        angForm := "ikaw",  ngForm := "mo",     saForm := "iyo"    }
-  , { category := .s3,        angForm := "siya",  ngForm := "niya",   saForm := "kaniya" }
-  , { category := .minIncl,   angForm := "kata",  ngForm := "nita",   saForm := "kanita" }
-  , { category := .augIncl,   angForm := "tayo",  ngForm := "natin",  saForm := "atin"   }
-  , { category := .excl,      angForm := "kami",  ngForm := "namin",  saForm := "amin"   }
-  , { category := .secondGrp, angForm := "kayo",  ngForm := "ninyo",  saForm := "inyo"   }
-  , { category := .thirdGrp,  angForm := "sila",  ngForm := "nila",   saForm := "kanila" }
-  ]
+-- 1st singular
+def ako    : PersonalPronoun := { form := "ako",    person := some .first,  number := some .sg, case_ := some .Nom }
+def ko     : PersonalPronoun := { form := "ko",     person := some .first,  number := some .sg, case_ := some .Gen }
+def akin   : PersonalPronoun := { form := "akin",   person := some .first,  number := some .sg, case_ := some .Dat }
+-- 2nd singular
+def ikaw   : PersonalPronoun := { form := "ikaw",   person := some .second, number := some .sg, case_ := some .Nom }
+def mo     : PersonalPronoun := { form := "mo",     person := some .second, number := some .sg, case_ := some .Gen }
+def iyo    : PersonalPronoun := { form := "iyo",    person := some .second, number := some .sg, case_ := some .Dat }
+-- 3rd singular
+def siya   : PersonalPronoun := { form := "siya",   person := some .third,  number := some .sg, case_ := some .Nom }
+def niya   : PersonalPronoun := { form := "niya",   person := some .third,  number := some .sg, case_ := some .Gen }
+def kaniya : PersonalPronoun := { form := "kaniya", person := some .third,  number := some .sg, case_ := some .Dat }
+-- 1st dual inclusive (minimal inclusive): *kata*
+def kata   : PersonalPronoun := { form := "kata",   person := some .first,  number := some .du, clusivity := some .inclusive, case_ := some .Nom }
+def nita   : PersonalPronoun := { form := "nita",   person := some .first,  number := some .du, clusivity := some .inclusive, case_ := some .Gen }
+def kanita : PersonalPronoun := { form := "kanita", person := some .first,  number := some .du, clusivity := some .inclusive, case_ := some .Dat }
+-- 1st plural inclusive (augmented inclusive): *tayo*
+def tayo   : PersonalPronoun := { form := "tayo",   person := some .first,  number := some .pl, clusivity := some .inclusive, case_ := some .Nom }
+def natin  : PersonalPronoun := { form := "natin",  person := some .first,  number := some .pl, clusivity := some .inclusive, case_ := some .Gen }
+def atin   : PersonalPronoun := { form := "atin",   person := some .first,  number := some .pl, clusivity := some .inclusive, case_ := some .Dat }
+-- 1st plural exclusive: *kami*
+def kami   : PersonalPronoun := { form := "kami",   person := some .first,  number := some .pl, clusivity := some .exclusive, case_ := some .Nom }
+def namin  : PersonalPronoun := { form := "namin",  person := some .first,  number := some .pl, clusivity := some .exclusive, case_ := some .Gen }
+def amin   : PersonalPronoun := { form := "amin",   person := some .first,  number := some .pl, clusivity := some .exclusive, case_ := some .Dat }
+-- 2nd plural
+def kayo   : PersonalPronoun := { form := "kayo",   person := some .second, number := some .pl, case_ := some .Nom }
+def ninyo  : PersonalPronoun := { form := "ninyo",  person := some .second, number := some .pl, case_ := some .Gen }
+def inyo   : PersonalPronoun := { form := "inyo",   person := some .second, number := some .pl, case_ := some .Dat }
+-- 3rd plural
+def sila   : PersonalPronoun := { form := "sila",   person := some .third,  number := some .pl, case_ := some .Nom }
+def nila   : PersonalPronoun := { form := "nila",   person := some .third,  number := some .pl, case_ := some .Gen }
+def kanila : PersonalPronoun := { form := "kanila", person := some .third,  number := some .pl, case_ := some .Dat }
 
-/-- The categories enumerated by the paradigm are exactly Cysouw's
-    canonical ordering (singulars first, then groups). Subsumes a
-    `length = Category.all.length` claim. -/
-theorem pronounParadigm_categories_match :
-    pronounParadigm.map (·.category) = Features.Person.Category.all := rfl
+/-- The Tagalog independent-pronoun inventory (all three case series). -/
+def pronouns : List PersonalPronoun :=
+  [ako, ko, akin, ikaw, mo, iyo, siya, niya, kaniya,
+   kata, nita, kanita, tayo, natin, atin, kami, namin, amin,
+   kayo, ninyo, inyo, sila, nila, kanila]
 
-/-- Cross-substrate consistency: the paradigm includes a minimal-inclusive
-    row iff the language commits to the minimal-augmented clusivity
-    system. The forward direction encodes the minimal-augmented type's
-    definition (a separate "we two" form for speaker + addressee only);
-    the converse here holds because Tagalog has both. -/
-theorem clusivity_system_consistent_with_paradigm :
-    (pronounParadigm.map (·.category)).contains .minIncl =
+/-- The *ang* (nominative) series, one form per @cite{cysouw-2009} category in
+    canonical order. -/
+def angSeries : List PersonalPronoun := [ako, ikaw, siya, kata, tayo, kami, kayo, sila]
+
+/-- The *ang* series realizes exactly @cite{cysouw-2009}'s eight person
+    categories — *derived* from each form's person + number + clusivity, not
+    stored as a tag. -/
+theorem angSeries_categories_match :
+    angSeries.map (·.category) = Category.all.map some := by decide
+
+/-- Tagalog marks inclusive/exclusive in the first-person plural: *tayo* is
+    inclusive, *kami* exclusive — read off the object's `clusivity` field. -/
+theorem incl_excl_distinct :
+    tayo.clusivity = some .inclusive ∧ kami.clusivity = some .exclusive := ⟨rfl, rfl⟩
+
+/-- The minimal-augmented property: a dual inclusive *kata* (1+2) alongside the
+    plural inclusive *tayo* — what makes Tagalog minimal-augmented rather than
+    plain inclusive/exclusive (@cite{cysouw-2009}). -/
+theorem minimal_augmented :
+    kata.number = some .du ∧ kata.clusivity = some .inclusive ∧
+    tayo.number = some .pl ∧ tayo.clusivity = some .inclusive := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Cross-substrate consistency: the inventory contains a minimal-inclusive
+    (dual inclusive) form iff the language commits to the minimal-augmented
+    clusivity system. -/
+theorem clusivity_system_consistent :
+    pronouns.any (fun p => decide (p.category = some .minIncl)) =
       clusivitySystem.hasMinimalAugmented := by decide
+
+/-- Every Tagalog pronoun is well-formed: clusivity is borne only by the
+    first-person dual/plural forms (`Pronoun.WellFormed`). -/
+theorem all_wellFormed : pronouns.all (fun p => decide p.WellFormed) = true := by decide
 
 /-- WALS Ch 39's coding of Tagalog agrees with the image of its Cysouw
     clusivity system under `fromClusivity`. The WALS value is derived from the
