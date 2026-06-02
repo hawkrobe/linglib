@@ -700,17 +700,17 @@ theorem case_direction_changes :
     prefixes — is defined once for all tense series, not parameterized by
     tense. This is the formal content of agreement-case independence. -/
 theorem agreement_invariant_across_series :
-    -- The SAME pIsIndexed function applies in both series:
+    -- The SAME isIndexed function applies in both series:
     -- SAP objects are indexed regardless of case direction
-    pIsIndexed .p1sg = true ∧ pIsIndexed .p2sg = true ∧
-    pIsIndexed .p3sg = false ∧
+    isIndexed (.pn .first .Sing) = true ∧ isIndexed (.pn .second .Sing) = true ∧
+    isIndexed (.pn .third .Sing) = false ∧
     -- And case direction differs:
     georgianLangType .present = .accusative ∧
     georgianLangType .aorist = .ergative := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Subject agreement is non-differential regardless of tense series. -/
 theorem subject_agreement_invariant :
-    allPersonNumbers.all subjectIsIndexed = true := by native_decide
+    Agreement.Cell.pnCells.all subjectIsIndexed = true := by decide
 
 /-- The split is in case only, not in agreement.
     Case patterns differ across tense series (all 4 verb classes checked),
@@ -719,11 +719,11 @@ theorem subject_agreement_invariant :
 theorem case_splits_but_agreement_does_not :
     -- Case patterns differ: at least one class shows different subject case
     verbClassSubjectCase .class1 .present ≠ verbClassSubjectCase .class1 .aorist ∧
-    -- All 6 person-number values give the same pIsIndexed result
-    -- regardless of which series we're in (it's not parameterized)
-    allPersonNumbers.all (λ pn => pIsIndexed pn == pn.isSAP) = true := by
+    -- All 6 φ-cells give the same isIndexed result regardless of which series
+    -- we're in (it's not parameterized)
+    Agreement.Cell.pnCells.all (fun c => isIndexed c == c.isSAP) = true := by
   constructor
   · decide
-  · native_decide
+  · decide
 
 end Marantz1991

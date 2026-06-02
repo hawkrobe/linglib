@@ -323,12 +323,12 @@ theorem constraint_iii_holds :
 
 /-! ### The Agreement Hierarchy (Ch 6, §6.2) -/
 
-open Syntax.Agreement (AgreementTarget)
+open Agreement (AgreementTarget)
 
 /-- Whether agreement is determined by morphological form (syntactic)
     or by referential meaning (semantic).
 
-    Distinct from `Syntax.Agreement.AgreementType` (grammatical vs. pronominal,
+    Distinct from `Agreement.AgreementType` (grammatical vs. pronominal,
     @cite{bickel-nichols-2001}), which is about whether the agreement
     marker has referential autonomy. This type is about what *controls*
     agreement — the formal features of the controller or its semantic
@@ -347,13 +347,13 @@ structure AgreementProfile where
   semanticTargets : List AgreementTarget
 
 /-- The four positions of @cite{corbett-1991}'s Agreement Hierarchy (`verb`
-    is not one of them — see `Syntax.Agreement.AgreementTarget`). -/
+    is not one of them — see `Agreement.AgreementTarget`). -/
 private def hierarchyPositions : List AgreementTarget :=
   [.attributive, .predicate, .relativePronoun, .personalPronoun]
 
 /-- The Agreement Hierarchy monotonicity constraint: once semantic agreement
     becomes possible at a target, it remains possible at all targets further
-    right (= lower `Syntax.Agreement.AgreementTarget.rank`) on the hierarchy. -/
+    right (= lower `Agreement.AgreementTarget.rank`) on the hierarchy. -/
 def AgreementProfile.RespectsHierarchy (p : AgreementProfile) : Prop :=
   ∀ t1 ∈ hierarchyPositions, ∀ t2 ∈ hierarchyPositions,
     t1.rank ≤ t2.rank ∨ t1 ∉ p.semanticTargets ∨ t2 ∈ p.semanticTargets
@@ -900,7 +900,7 @@ theorem japanese_count_mass_uniform :
 
 /-! ### Predicate Hierarchy Bridge -/
 
-open Syntax.Agreement (PredicateTarget)
+open Agreement (PredicateTarget)
 
 /-- A predicate-hierarchy profile records the sub-positions (verb, participle,
     adjective, noun) where semantic agreement is possible for a controller —

@@ -1,6 +1,6 @@
 import Linglib.Features.Prominence
 import Linglib.Features.Case
-import Linglib.Features.Case
+import Linglib.Syntax.Agreement.Paradigm
 /-!
 # Basque Agreement Fragment @cite{just-2024}
 @cite{laka-1996} @cite{preminger-2014} @cite{blake-1994}
@@ -28,32 +28,10 @@ person objects are not.
 namespace Basque.Agreement
 
 open Features.Prominence
+open _root_.Agreement
 
 -- ============================================================================
--- § 1: Person-Number Values
--- ============================================================================
-
-/-- Person-number combinations in the Basque agreement paradigm. -/
-inductive PersonNumber where
-  | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, Repr
-
-/-- All person-number values. -/
-def allPersonNumbers : List PersonNumber :=
-  [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
-
-/-- Person value (1, 2, or 3). -/
-def PersonNumber.person : PersonNumber → Nat
-  | .p1sg | .p1pl => 1
-  | .p2sg | .p2pl => 2
-  | .p3sg | .p3pl => 3
-
-/-- Is this a SAP (speech act participant)? -/
-def PersonNumber.isSAP (pn : PersonNumber) : Bool :=
-  pn.person == 1 || pn.person == 2
-
--- ============================================================================
--- § 2: Argument Positions
+-- § 1: Argument Positions
 -- ============================================================================
 
 /-- Argument positions in a Basque clause. -/
@@ -67,41 +45,41 @@ inductive ArgPosition where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- § 3: Differential P Indexing
+-- § 2: Differential P Indexing
 -- ============================================================================
 
-/-- Whether a P argument at a given person-number is indexed on the verb.
+/-- Whether a P argument at a given φ-cell is indexed on the verb. Basque
+    cross-references SAP objects (1st/2nd person) but not 3rd person objects in
+    the relevant constructions; A/S arguments are always indexed. Keyed by the
+    canonical φ-cell (`Agreement.Cell`), so a pronoun's `Word.agrCell`
+    drives it directly. -/
+def pIsIndexed (c : Cell) : Bool := c.isSAP
 
-    Basque cross-references SAP objects (1st/2nd person) but not 3rd
-    person objects in the relevant constructions.
-    A and S arguments are always indexed regardless of person. -/
-def pIsIndexed (pn : PersonNumber) : Bool := pn.isSAP
-
-/-- Whether an A/S argument at a given person-number is indexed.
-    Always true — A and S indexing is not differential in Basque. -/
-def asIsIndexed (_ : PersonNumber) : Bool := true
+/-- Whether an A/S argument is indexed. Always true — A and S indexing is not
+    differential in Basque. -/
+def asIsIndexed (_ : Cell) : Bool := true
 
 -- ============================================================================
--- § 4: Verification
+-- § 3: Verification
 -- ============================================================================
 
 /-- SAP objects are indexed. -/
 theorem sap_objects_indexed :
-    pIsIndexed .p1sg = true ∧ pIsIndexed .p2sg = true ∧
-    pIsIndexed .p1pl = true ∧ pIsIndexed .p2pl = true := ⟨rfl, rfl, rfl, rfl⟩
+    pIsIndexed (.pn .first .Sing) = true ∧ pIsIndexed (.pn .second .Sing) = true ∧
+    pIsIndexed (.pn .first .Plur) = true ∧ pIsIndexed (.pn .second .Plur) = true := by decide
 
 /-- 3rd person objects are NOT indexed. -/
 theorem third_objects_not_indexed :
-    pIsIndexed .p3sg = false ∧ pIsIndexed .p3pl = false := ⟨rfl, rfl⟩
+    pIsIndexed (.pn .third .Sing) = false ∧ pIsIndexed (.pn .third .Plur) = false := by decide
 
-/-- P indexing is differential: some person-numbers indexed, some not. -/
+/-- P indexing is differential: some φ-cells indexed, some not. -/
 theorem p_indexing_differential :
-    allPersonNumbers.any pIsIndexed = true ∧
-    !(allPersonNumbers.all pIsIndexed) = true := ⟨by native_decide, by native_decide⟩
+    Cell.pnCells.any pIsIndexed = true ∧
+    !(Cell.pnCells.all pIsIndexed) = true := by decide
 
-/-- A/S indexing is NOT differential: all person-numbers indexed. -/
+/-- A/S indexing is NOT differential: all φ-cells indexed. -/
 theorem as_indexing_uniform :
-    allPersonNumbers.all asIsIndexed = true := by native_decide
+    Cell.pnCells.all asIsIndexed = true := by decide
 
 -- ============================================================================
 -- § 5: Case Inventory Validation (@cite{blake-1994})

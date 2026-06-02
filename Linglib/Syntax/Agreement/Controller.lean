@@ -64,7 +64,7 @@ With the parametric form, the projection round-trips:
   @cite{corbett-2006} ch 6, not controller-role labels.
 -/
 
-namespace Syntax.Agreement
+namespace Agreement
 
 /-- Grammatical role of the agreement controller. Cross-linguistically
     motivated typological labels per @cite{corbett-2006} §6.6. -/
@@ -94,4 +94,4 @@ inductive Controller where
   | defaultAgr
   deriving DecidableEq, Repr, Inhabited
 
-end Syntax.Agreement
+end Agreement

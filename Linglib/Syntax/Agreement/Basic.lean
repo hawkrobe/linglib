@@ -18,7 +18,7 @@ This type is shared by gender typology (`Linglib/Typology/Gender.lean` and
 (`Studies/Corbett2000.lean`).
 -/
 
-namespace Syntax.Agreement
+namespace Agreement
 
 /-- Morphosyntactic targets where agreement can surface, ranked by
     @cite{corbett-1991}'s Agreement Hierarchy (with `verb` as a linglib
@@ -157,4 +157,4 @@ inductive AgreementDirection where
   | dependentDriven  -- dependent drives features → head carries morphology (verb agreement)
   deriving DecidableEq, Repr, Inhabited
 
-end Syntax.Agreement
+end Agreement

@@ -176,20 +176,19 @@ theorem two_probe_surface_ranking :
 /-- Basque Fragment's P indexing matches the Just survey: SAP → indexed,
     3rd → not indexed, exactly as `basque.personIndexed`. -/
 theorem basque_fragment_matches_survey :
-    Basque.Agreement.pIsIndexed .p1sg =
+    Basque.Agreement.pIsIndexed (.pn .first .Sing) =
       basque.personIndexed .sap ∧
-    Basque.Agreement.pIsIndexed .p2sg =
+    Basque.Agreement.pIsIndexed (.pn .second .Sing) =
       basque.personIndexed .sap ∧
-    Basque.Agreement.pIsIndexed .p3sg =
+    Basque.Agreement.pIsIndexed (.pn .third .Sing) =
       basque.personIndexed .third := ⟨rfl, rfl, rfl⟩
 
 /-- Basque Fragment confirms differential P indexing: some indexed, some not. -/
 theorem basque_fragment_is_differential :
-    Basque.Agreement.allPersonNumbers.any
+    Agreement.Cell.pnCells.any
       Basque.Agreement.pIsIndexed = true ∧
-    !(Basque.Agreement.allPersonNumbers.all
-      Basque.Agreement.pIsIndexed) = true :=
-  ⟨by native_decide, by native_decide⟩
+    !(Agreement.Cell.pnCells.all
+      Basque.Agreement.pIsIndexed) = true := by decide
 
 -- ============================================================================
 -- § 7: Georgian Fragment ↔ Just's IndexingFragment
@@ -202,20 +201,21 @@ theorem basque_fragment_is_differential :
 
 /-- Georgian Fragment's P indexing matches the Just survey. -/
 theorem georgian_fragment_matches_survey :
-    Georgian.Agreement.pIsIndexed .p1sg =
+    Georgian.Agreement.isIndexed (.pn .first .Sing) =
       georgian.personIndexed .sap ∧
-    Georgian.Agreement.pIsIndexed .p2sg =
+    Georgian.Agreement.isIndexed (.pn .second .Sing) =
       georgian.personIndexed .sap ∧
-    Georgian.Agreement.pIsIndexed .p3sg =
-      georgian.personIndexed .third := ⟨rfl, rfl, rfl⟩
+    Georgian.Agreement.isIndexed (.pn .third .Sing) =
+      georgian.personIndexed .third := by decide
 
 /-- Georgian Fragment's P indexing is grounded in object prefix morphology:
-    indexed iff has overt prefix. Not stipulated — follows from the data. -/
+    indexed iff the object paradigm realizes the cell. Not stipulated — follows
+    from the data. -/
 theorem georgian_indexing_grounded :
-    Georgian.Agreement.allPersonNumbers.all (λ pn =>
-      Georgian.Agreement.pIsIndexed pn ==
-      (Georgian.Agreement.objectPrefix pn).isSome) = true := by
-  native_decide
+    Agreement.Cell.pnCells.all (fun c =>
+      Georgian.Agreement.isIndexed c ==
+      (Georgian.Agreement.objectAgr.realize c).isSome) = true := by
+  decide
 
 -- ============================================================================
 -- § 8: Hungarian Fragment ↔ Just's IndexingFragment
