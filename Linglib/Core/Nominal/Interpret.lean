@@ -202,4 +202,19 @@ theorem interpret_anaphoric_isSome_iff
   · simp [h]
   · simp [h]
 
+/-- @cite{patel-grosz-grosz-2017}'s "DEM = PER + index": the **strong** article
+    (`anaphoric` at index `i`) and the **weak** article (`unique`) over a shared
+    restrictor pick the same referent exactly when the indexed entity `g i` is the
+    unique satisfier of `R`. The hypotheses are load-bearing — off this condition
+    the strong (the indexed entity) and weak (the unique satisfier) articles
+    diverge, PG&G's point that the strong article is anaphoric in a way the weak
+    one is not. -/
+theorem interpret_anaphoric_eq_unique_of_existsUnique
+    (R : DenotGS F .et) (sIdx i : Nat)
+    (g : Assignment F.Entity) (gs : SitAssignment F)
+    (hSat : R g gs (g i)) (hUniq : ∀ y, R g gs y → y = g i) :
+    interpret (.anaphoric R i) g gs = interpret (.unique R sIdx) g gs := by
+  rw [interpret_unique_eq_some_of_existsUnique R sIdx g gs (g i) hSat hUniq,
+      interpret_anaphoric, if_pos hSat]
+
 end Core.Nominal

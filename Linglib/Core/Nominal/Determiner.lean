@@ -33,12 +33,15 @@ localized to a single declaration.
 
 ## Implementation notes
 
-The semantic side — `Article.denote`, `Demonstrative.denote`, the `Quantifier`
-denotation as a generalized quantifier (`Core/Logic/Quantification`), the
-`Possessive` possession relation — is deferred to the migration of the
-nominal-description substrate; this file is the Frame-free lexical and
-typological layer only. `Quantifier` and `Possessive` are therefore declared but
-not yet fleshed out beyond the shared `form`.
+An `Article`'s admissible @cite{schwarz-2009} strengths are `Article.presupTypes`
+(Frame-free, read off `uses`); its denotation is `Article.toNominalKinds`
+(`Core/Nominal/DeterminerLicensing.lean`, Frame-aware) — the set of `NominalKind`s
+those strengths admit via `NominalKind.ofPresupType`, so a syncretic article like
+English *the* denotes *both* the weak and the strong description.
+`Demonstrative.denote` (deictic), the `Quantifier` generalized quantifier
+(`Core/Logic/Quantification`), and the `Possessive` possession relation remain
+deferred; `Quantifier`/`Possessive` are declared but not fleshed out beyond `form`.
+This file stays the Frame-free lexical/typological layer.
 -/
 
 open Features.Definiteness
@@ -238,3 +241,30 @@ example : markingStrategy
     = .unmarked := by decide
 
 end Determiner
+
+/-! ### Admissible article strengths
+
+The @cite{schwarz-2009} presupposition types an article *can* express — its
+admissible readings, read off `uses`. A syncretic article (English *the*) admits
+both; a weak- or strong-only article admits one. The image of these under
+`NominalKind.ofPresupType` is the article's set of possible denotations
+(`Article.toNominalKinds`, in `DeterminerLicensing.lean`). -/
+
+/-- The @cite{schwarz-2009} strengths an article admits, read off its `uses` (as a
+list — `DefPresupType` is binary, so its content is the membership-closure). -/
+def Article.presupTypes (a : Article) : List DefPresupType :=
+  a.uses.map useTypeToPresupType
+
+/-- An article admits strength `p` iff a one-article inventory containing it marks
+`p` — the single-article case of `Determiner.MarksPresup`. -/
+theorem Article.mem_presupTypes_iff_marksPresup (a : Article) (p : DefPresupType) :
+    p ∈ a.presupTypes ↔ Determiner.MarksPresup [.article a] p := by
+  unfold Article.presupTypes Determiner.MarksPresup
+  rw [List.mem_map]
+  constructor
+  · rintro ⟨u, hu, rfl⟩
+    exact ⟨.article a, List.mem_singleton_self _, u, hu, rfl⟩
+  · rintro ⟨e, he, u, hu, rfl⟩
+    rw [List.mem_singleton] at he
+    subst he
+    exact ⟨u, hu, rfl⟩

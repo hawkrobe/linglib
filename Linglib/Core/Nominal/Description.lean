@@ -5,7 +5,7 @@ import Linglib.Features.Definiteness
 /-!
 # Nominal Descriptions: Unified Sum Type
 @cite{coppock-beaver-2015} @cite{patel-grosz-grosz-2017} @cite{hanink-2021}
-@cite{bondarenko-2023} @cite{moroney-2021} @cite{schwarz-2009} @cite{schwarz-2013}
+@cite{moroney-2021} @cite{schwarz-2009} @cite{schwarz-2013}
 @cite{sharvy-1980} @cite{kriz-2015}
 
 A single sum type `NominalKind F` covering the principal flavors of nominal
@@ -14,8 +14,8 @@ description that the syntax–semantics interface needs to distinguish:
 - bare noun (number-neutral; covert type-shifts decide the reading)
 - indefinite (∃; introduces a new discourse referent)
 - unique (Coppock–Beaver weak/uniqueness; Sharvy/Križ maximal)
-- anaphoric (Schwarz strong-article familiarity; Hanink-indexed)
-- demonstrative (Patel-Grosz–Grosz/Davis: a separate object, not "strong the")
+- anaphoric (Schwarz strong-article familiarity; Hanink-indexed; PG&G's German *der*)
+- demonstrative (genuinely deictic this/that: a deictic feature, distinct from the strong article)
 - possessive (definite via a possession relation)
 
 The whole type is parameterized by a `Core.Logic.Intensional.Frame`, so all
@@ -25,9 +25,9 @@ unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
 ## Design notes
 
 - **Restrictors are `DenotGS F .et`.** Both entity assignments and situation
-  assignments are first-class. This is the @cite{hanink-2021} /
-  @cite{bondarenko-2023} position: a noun's resource situation is a *bound
-  variable* in the structure, not a free contextual parameter.
+  assignments are first-class. This is the @cite{hanink-2021} position: a noun's
+  resource situation is a *bound variable* in the structure, not a free
+  contextual parameter.
 
 - **`unique` carries a situation-pronoun index.** Weak-article
   (@cite{coppock-beaver-2015} uniqueness) definites are evaluated at a
@@ -39,12 +39,13 @@ unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
   discourse referent, the `discourseIdx`-th entity slot. This is the entity
   assignment's role.
 
-- **`demonstrative` is a separate constructor.** @cite{patel-grosz-grosz-2017}
-  and the Patel-Grosz–Grosz–Davis tradition reject the pure "demonstrative =
-  strong article" identification. A demonstrative carries **both** a discourse
-  index *and* a deictic feature (`Features.Deixis.Feature`). Its restrictor is
-  also evaluated at a situation pronoun (the situation in which the deictic
-  predicate is checked).
+- **`demonstrative` is a separate constructor** for *genuinely deictic*
+  demonstratives (this/that; @cite{moroney-2021} Shan *nâj*/*nân*): it carries
+  **both** a discourse/pointing index *and* a deictic feature
+  (`Features.Deixis.Feature`), checked at a situation pronoun. This is **distinct**
+  from the @cite{schwarz-2009} strong article (`anaphoric`): @cite{patel-grosz-grosz-2017}
+  analyze German *der* as the strong article (`anaphoric`), not as a deictic
+  demonstrative — their footnote 1 doubts *der* is truly demonstrative at all.
 
 - **`possessive` carries possessor + relation expressions** rather than
   conflating them with the restrictor. The relation has type `e ⇒ e ⇒ t`,
@@ -86,10 +87,10 @@ inductive NominalKind (F : Frame) where
   /-- Schwarz strong-article / Hanink-indexed anaphoric definite. The
       `discourseIdx`-th entity-assignment slot is the antecedent. -/
   | anaphoric (restrictor : DenotGS F .et) (discourseIdx : Nat)
-  /-- Demonstrative (this/that). Carries a deictic feature
-      (@cite{patel-grosz-grosz-2017} D-deix layer; @cite{moroney-2021} §2.1.3
-      Shan *nâj*/*nân*) and a discourse/pointing index. The restrictor is
-      checked at the resource situation pointed to by `situationIdx`. -/
+  /-- Demonstrative (genuinely deictic this/that). Carries a deictic feature
+      (@cite{moroney-2021} Shan *nâj*/*nân*) and a discourse/pointing index; the
+      restrictor is checked at the resource situation `situationIdx`. Distinct from
+      the @cite{schwarz-2009} strong article `anaphoric` (PG&G's German *der*). -/
   | demonstrative
       (restrictor : DenotGS F .et)
       (deictic : Features.Deixis.Feature)
@@ -166,6 +167,28 @@ theorem isAnaphoric_implies_familiarity (n : NominalKind F)
     n.expectedPresupType = some .familiarity := by
   cases n <;> simp [isAnaphoric] at h
   all_goals rfl
+
+/-- The definite description for a @cite{schwarz-2009} presupposition type: the
+    **weak** article (uniqueness) is `unique`, the **strong** article (familiarity)
+    is `anaphoric`. A section of `expectedPresupType` over the two article
+    strengths, so any item carrying a `DefPresupType` — a determiner, a definite,
+    or (per @cite{patel-grosz-grosz-2017}) a personal/demonstrative pronoun —
+    denotes by `ofPresupType` and recovers its strength via `expectedPresupType`.
+
+    `idx` is the strong article's anaphoric/discourse index; for the weak article
+    it fills the situation-pronoun slot, which `interpret` discards
+    (`interpret_unique_index_irrelevant`). -/
+def ofPresupType (p : Features.Definiteness.DefPresupType)
+    (restrictor : DenotGS F .et) (idx : Nat) : NominalKind F :=
+  match p with
+  | .uniqueness  => .unique restrictor idx
+  | .familiarity => .anaphoric restrictor idx
+
+/-- `ofPresupType` is a section of `expectedPresupType`: the strength round-trips. -/
+theorem expectedPresupType_ofPresupType
+    (p : Features.Definiteness.DefPresupType) (R : DenotGS F .et) (idx : Nat) :
+    (ofPresupType p R idx).expectedPresupType = some p := by
+  cases p <;> rfl
 
 end NominalKind
 

@@ -1,19 +1,38 @@
-/-
-Dependency grammar coreference (binding) via dependency paths and d-command.
-Reflexives require short dependency paths; locality = same subgraph rooted at verb.
-
-References: @cite{hudson-1990}, @cite{gibson-2025}
--/
-
-import Linglib.Core.Dependency.Basic
-import Linglib.Syntax.DependencyGrammar.Core.Nominal
+import Linglib.Syntax.DependencyGrammar.Basic
+import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Features.CoreferenceStatus
+
+/-!
+# Dependency-grammar coreference (binding)
+
+Reflexives require short dependency paths; locality is defined as the
+subgraph rooted at the verb of the matrix clause. The c-command analogue
+in dependency grammar is *d-command*: a node `x` d-commands `y` iff `y` is
+in the subtree rooted at `x`'s mother. @cite{hudson-1990},
+@cite{gibson-2025}.
+
+## Main declarations
+
+* `SimpleClause` — clause-rooted subgraph for binding-domain bookkeeping.
+* `dCommands`, `sameLocalDomain` — the d-command relation and its locality
+  restriction.
+* `reflexiveLicensed`, `reciprocalLicensed`, `pronounLocallyFree` — the
+  binding-theory licensing predicates over a simple clause.
+* `grammaticalForCoreference` — top-level acceptability check consumed by
+  `Studies/Hudson1990.lean`.
+
+## Implementation notes
+
+* Predicate-shape definitions are `Bool`-valued, inheriting the
+  substrate-wide convention from `Basic.lean`. A migration to
+  `Prop` + `[DecidablePred]` is a project-wide refactor target.
+-/
 
 namespace DepGrammar.Coreference
 
 open DepGrammar Nominal
 
-section DependencyBasedLocality
+/-! ### Clauses and locality -/
 
 /-- Simple clause structure: a subgraph rooted at the main verb. -/
 structure SimpleClause where
@@ -60,31 +79,18 @@ def sameLocalDomain (clause : SimpleClause) : Bool :=
   | none => true
   | some _ =>
     let tree := clause.toDepTree
-    (tree.deps.any fun d => d.depIdx == 0 && d.headIdx == tree.rootIdx) &&
-    (tree.deps.any fun d => d.depIdx == 2 && d.headIdx == tree.rootIdx)
+    (tree.deps.any λ d => d.depIdx == 0 && d.headIdx == tree.rootIdx) &&
+    (tree.deps.any λ d => d.depIdx == 2 && d.headIdx == tree.rootIdx)
 
-/-- Path length from subject to object: count edges through the shared
-    head (subject → verb → object). -/
-def pathLength (clause : SimpleClause) : Nat :=
-  match clause.object with
-  | none => 0
-  | some _ =>
-    let tree := clause.toDepTree
-    let subjEdge := if tree.deps.any (fun d => d.depIdx == 0) then 1 else 0
-    let objEdge := if tree.deps.any (fun d => d.depIdx == 2) then 1 else 0
-    subjEdge + objEdge
-
-end DependencyBasedLocality
-
-section DependencyBasedCommand
+/-! ### D-command -/
 
 /-- D-command: word at index `i` d-commands word at index `j` in a
     dependency tree if both are dependents of the same head and `i`
     bears the subject relation (nsubj). -/
 def dCommands (tree : DepTree) (i j : Nat) : Bool :=
-  tree.deps.any fun di =>
+  tree.deps.any λ di =>
     di.depIdx == i && di.depType == .nsubj &&
-    tree.deps.any fun dj =>
+    tree.deps.any λ dj =>
       dj.depIdx == j && di.headIdx == dj.headIdx
 
 /-- Subject d-commands object: derived from the dependency tree.
@@ -94,20 +100,10 @@ def subjectDCommandsObject (clause : SimpleClause) : Bool :=
   | none => false
   | some _ => dCommands clause.toDepTree 0 2
 
-/-- Object does not d-command subject: derived from the tree.
-    The object bears obj, not nsubj, so d-command fails. -/
-def objectDCommandsSubject (clause : SimpleClause) : Bool :=
-  match clause.object with
-  | none => false
-  | some _ => dCommands clause.toDepTree 2 0
+/-! ### Binding-theory licensing -/
 
-end DependencyBasedCommand
-
--- phi-feature agreement: imported from Core.Nominal
-
-section CoreferenceConstraints
-
-/-- Reflexive is licensed if d-commanded by an agreeing antecedent in the local domain. -/
+/-- Reflexive is licensed if d-commanded by an agreeing antecedent in the
+    local domain. -/
 def reflexiveLicensed (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => false
@@ -143,21 +139,7 @@ def pronounLocallyFree (clause : SimpleClause) : Bool :=
       !(subjectDCommandsObject clause && sameLocalDomain clause)
     | _ => true
 
-/-- R-expression freedom in dependency grammar -/
-def rExpressionFree (clause : SimpleClause) : Bool :=
-  match classifyNominal clause.subject with
-  | some .pronoun =>
-    match clause.object with
-    | some obj =>
-      match classifyNominal obj with
-      | some .rExpression => true  -- Pronoun subject, R-expression object is fine
-      | _ => true
-    | none => true
-  | _ => true
-
--- ============================================================================
--- Part 6: Combined Coreference Check
--- ============================================================================
+/-! ### Top-level acceptability -/
 
 /-- Is a sentence grammatical for coreference under dependency binding? -/
 def grammaticalForCoreference (ws : List Word) : Bool :=
@@ -176,115 +158,5 @@ def grammaticalForCoreference (ws : List Word) : Bool :=
         | some .reciprocal => reciprocalLicensed clause
         | some .pronoun => false
         | _ => true
-
-/-- Check if reflexive is licensed in a sentence -/
-def reflexiveLicensedInSentence (ws : List Word) : Bool :=
-  match parseSimpleClause ws with
-  | none => false
-  | some clause => reflexiveLicensed clause
-
-/-- Check if pronoun coreference is blocked -/
-def pronounCoreferenceBlocked (ws : List Word) : Bool :=
-  match parseSimpleClause ws with
-  | none => false
-  | some clause => !pronounLocallyFree clause
-
--- Binding theory tests are verified by native_decide theorems in
--- Hudson1990
-
--- ============================================================================
--- Part 10: Dependency Grammar Configuration
--- ============================================================================
-
-/-- Dependency grammar coreference configuration -/
-structure DepGrammarCoreferenceConfig where
-  /-- Whether to use strict path-length locality -/
-  strictLocality : Bool := true
-
-/-- Default configuration for coreference -/
-def defaultConfig : DepGrammarCoreferenceConfig := {}
-
--- ============================================================================
--- Part 11: Theoretical Notes
--- ============================================================================
-
-/-
-## Dependency Grammar Binding Theory
-
-### D-Command
-
-In dependency grammar, the analogue of c-command is "d-command":
-- A word W1 d-commands W2 if W1 is a co-dependent of W2
-  (both are dependents of the same head) and W1 is the designated binder
-  (typically the subject)
-
-### Dependency Paths
-
-Locality can be measured by dependency path length:
-- In "John saw himself", the path John → saw ← himself has length 2
-- In "John thinks Mary saw himself", path is longer (crosses clause boundary)
-
-### Comparison with Phrase Structure Approaches
-
-| Concept | Phrase Structure | Dependency |
-|---------|-----------------|------------|
-| Locality | Dominating nodes | Path length |
-| Command | Sister's descendants | Co-dependents |
-| Domain | Clause/phase | Subgraph rooted at V |
-
-The predictions are the same for simple cases because:
-- Subject c-commands object ↔ Subject d-commands object
-- Same clause ↔ Same dependency subgraph
-- Both require agreement for coreference
--/
-
--- ============================================================================
--- Part 12: CoreferenceTheory Interface Implementation
--- ============================================================================
-
-/-- Compute coreference status using d-command (dependency paths) -/
-def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Features.CoreferenceStatus :=
-  if i == 0 && j == 2 then
-    -- Subject-object: subject d-commands object (both depend on verb)
-    match clause.object with
-    | none => .unspecified
-    | some obj =>
-      match classifyNominal obj with
-      | some .reflexive =>
-        if subjectDCommandsObject clause && sameLocalDomain clause && phiAgree clause.subject obj
-        then .obligatory
-        else .blocked
-      | some .reciprocal =>
-        if subjectDCommandsObject clause && sameLocalDomain clause &&
-           clause.semanticPl
-        then .obligatory
-        else .blocked
-      | some .pronoun =>
-        if subjectDCommandsObject clause && sameLocalDomain clause
-        then .blocked
-        else .possible
-      | some .rExpression => .possible
-      | none => .unspecified
-  else if i == 2 && j == 0 then
-    -- Does the object d-command the subject?
-    -- Derived: object bears .obj (not .nsubj), so d-command fails
-    match classifyNominal clause.subject with
-    | some .reflexive =>
-      if objectDCommandsSubject clause && sameLocalDomain clause
-      then .obligatory
-      else .blocked
-    | some .reciprocal =>
-      if objectDCommandsSubject clause && sameLocalDomain clause
-      then .obligatory
-      else .blocked
-    | some .pronoun =>
-      if objectDCommandsSubject clause && sameLocalDomain clause
-      then .blocked
-      else .possible
-    | _ => .possible
-  else
-    .unspecified
-
-end CoreferenceConstraints
 
 end DepGrammar.Coreference

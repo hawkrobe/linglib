@@ -123,48 +123,35 @@ example {F : Frame} [PartialOrder F.Entity] (g : Assignment F.Entity) (i : ℕ)
 
 /-! ### Pronouns are definite descriptions (@cite{elbourne-2005}, @cite{patel-grosz-grosz-2017})
 
-The thesis that a pronoun *is* a (null-NP) definite description, and a
-demonstrative pronoun is that description plus a D_deix layer, is made concrete
-by routing pronoun denotation through `NominalKind`: a personal pronoun is the
-`.anaphoric` (Schwarz strong-article) definite, a demonstrative pronoun is the
-`.demonstrative` one — which the substrate already proves differ only by the
-deixis presupposition filter (`interpret_demonstrative_eq_anaphoric`). -/
+A referential pronoun *is* a (null-NP) definite description over its φ-feature
+restrictor — a `NominalKind`. @cite{patel-grosz-grosz-2017}'s proposal is that the
+personal/demonstrative split is the @cite{schwarz-2009} weak/strong-article split:
+PER (*er*) the **weak** article (`NominalKind.ofPresupType .uniqueness` = `.unique`),
+"DEM" (*der*) the **strong** article (`…ofPresupType .familiarity` = `.anaphoric`,
+the weak description plus an anaphoric index). PG&G's "DEM = PER + index" is the
+weak/strong refinement `Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`;
+the strength round-trips through `expectedPresupType`. The extra layer is that index,
+**not** spatial deixis (footnote 1) — *der* is a strong *personal* pronoun, not a
+separate type; genuine deictic demonstratives are `NominalKind.demonstrative`.
 
-/-- A personal pronoun *is* a definite description: structurally the anaphoric
-(Schwarz strong-article) definite over its restrictor `R` (the φ-feature NP) at
-discourse index `i`. @cite{patel-grosz-grosz-2017}'s "pronoun = null NP + Ddet",
-as a `NominalKind`. -/
-def PersonalPronoun.toNominalKind {F : Frame} (_e : PersonalPronoun)
-    (R : DenotGS F .et) (i : ℕ) : Core.Nominal.NominalKind F :=
-  .anaphoric R i
+Caveat on `denote` below: the project's canonical `PersonalPronoun.denote` realizes
+the @cite{buring-2012} assignment lookup `g i` — the *indexed/anaphoric* referent,
+i.e. the **strong** arm — so the bridge proves `denote` = `ofPresupType .familiarity`.
+PG&G's *weak* PER (`ofPresupType .uniqueness`, the uniqueness iota over the
+φ-restrictor) is a distinct denotation `denote` does not compute; the two arms agree
+exactly when `g i` is the unique satisfier. -/
 
-/-- A demonstrative pronoun is the same definite description plus the D_deix
-layer: `NominalKind.demonstrative` is `.anaphoric` with a deictic feature
-(@cite{patel-grosz-grosz-2017}: DEM = PER + deixis). -/
-def DemonstrativePronoun.toNominalKind {F : Frame} (p : DemonstrativePronoun)
-    (R : DenotGS F .et) (sIdx i : ℕ) : Core.Nominal.NominalKind F :=
-  .demonstrative R p.deictic sIdx i
-
-/-- DEM = PER + deixis at the referential level: erasing the deixis layer
-(`toPersonalPronoun`) leaves the same referent — the deictic feature is a
-presupposition filter, not a selector (@cite{patel-grosz-grosz-2017} §4). -/
-theorem DemonstrativePronoun.referent_eq_personal {F : Frame}
-    (p : DemonstrativePronoun) (R : DenotGS F .et) (sIdx i : ℕ)
-    (g : Assignment F.Entity) (gs : SitAssignment F) :
-    Core.Nominal.interpret (p.toNominalKind R sIdx i) g gs
-      = Core.Nominal.interpret (p.toPersonalPronoun.toNominalKind R i) g gs :=
-  Core.Nominal.interpret_demonstrative_eq_anaphoric R p.deictic sIdx i g gs
-
-/-- "Pronouns are definite descriptions," made precise: the pronoun's referent
-selector (`PersonalPronoun.denote`) coincides with the interpretation of its
-anaphoric-definite structure, whenever the restrictor (φ-features) holds of the
-indexed referent. -/
-theorem PersonalPronoun.denote_selector_eq_toNominalKind {F : Frame} [PartialOrder F.Entity]
+/-- A pronoun's @cite{buring-2012} variable-lookup referent equals its definite
+description whenever the restrictor holds of the indexed referent: the
+**strong-article** (`NominalKind.ofPresupType .familiarity`) reading, since the
+anaphoric index *is* the indexed entity. The **weak** reading coincides too when
+that entity is the unique satisfier (`Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`). -/
+theorem PersonalPronoun.denote_selector_eq_ofPresupType {F : Frame} [PartialOrder F.Entity]
     (e : PersonalPronoun) (i : ℕ) (R : DenotGS F .et)
     (speaker addressee : F.Entity) (isFemale isInanimate : F.Entity → Prop)
     (g : Assignment F.Entity) (gs : SitAssignment F) (w : PUnit)
     (h : R g gs (g i)) :
     (e.denote i speaker addressee isFemale isInanimate).selector g w
-      = Core.Nominal.interpret (e.toNominalKind R i) g gs := by
-  simp [PersonalPronoun.denote, PersonalPronoun.toNominalKind,
-        Core.Nominal.interpret_anaphoric, interpPronoun, h]
+      = Core.Nominal.interpret (Core.Nominal.NominalKind.ofPresupType .familiarity R i) g gs := by
+  show some (g i) = Core.Nominal.interpret (.anaphoric R i) g gs
+  rw [Core.Nominal.interpret_anaphoric, if_pos h]
