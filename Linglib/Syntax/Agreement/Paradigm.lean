@@ -1,4 +1,5 @@
 import Linglib.Core.Word
+import Linglib.Features.Prominence
 
 /-!
 # Agreement paradigms — the descriptive realization table
@@ -60,6 +61,18 @@ def Cell.pn (p : UD.Person) (n : UD.Number) : Cell :=
     person-conditioned phenomena like differential indexing (@cite{corbett-1998}). -/
 def Cell.isSAP (c : Cell) : Bool :=
   c.person == some .first || c.person == some .second
+
+/-- The person level of a cell, on the `Features.Prominence.PersonLevel` scale
+    (an unspecified or 0-person cell maps to `.third`). Adapts a φ-cell to
+    consumers that reason on person prominence (decomposition, indexing). -/
+def Cell.toPersonLevel (c : Cell) : Features.Prominence.PersonLevel :=
+  match c.person with
+  | some .first => .first
+  | some .second => .second
+  | _ => .third
+
+/-- Is this a plural cell? -/
+def Cell.isPlural (c : Cell) : Bool := c.number == some .Plur
 
 /-- The basic 3-person × {singular, plural} inventory of φ-cells — the cells a
     person/number agreement paradigm ranges over. -/

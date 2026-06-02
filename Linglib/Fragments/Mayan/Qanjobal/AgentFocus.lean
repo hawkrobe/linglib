@@ -56,10 +56,10 @@ namespace Qanjobal
 
 open Minimalist
 
--- Person-number paradigm and Set A / Set B exponent tables
--- (`PersonNumber`, `setAExponent`, `setAExponentPreC`, `setAExponentPreV`,
--- `setBExponent`) live in Qanjobal/Agreement.lean — agreement morphology
--- is general, not AF-specific.
+-- Person-number paradigm (keyed by the canonical φ-cell `Agreement.Cell`)
+-- and Set A / Set B exponent tables (`setAExponent`, `setAExponentPreC`,
+-- `setAExponentPreV`, `setBExponent`) live in Qanjobal/Agreement.lean —
+-- agreement morphology is general, not AF-specific.
 
 -- ============================================================================
 -- § 1: Status Suffixes
